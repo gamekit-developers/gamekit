@@ -1,27 +1,27 @@
+/*
+GameKit
+Copyright (c) 2009 Erwin Coumans  http://gamekit.googlecode.com
 
+This software is provided 'as-is', without any express or implied warranty.
+In no event will the authors be held liable for any damages arising from the use of this software.
+Permission is granted to anyone to use this software for any purpose, 
+including commercial applications, and to alter it and redistribute it freely, 
+subject to the following restrictions:
 
-
-/** Example 003 Custom SceneNode
-
-This Tutorial is more advanced than the previous ones.
-If you are currently just playing around with the Irrlicht
-engine, you may want to look at other examples first.
-This tutorials shows how to create a custom scene node and
-how to use it in the engine. A custom scene node is needed
-if you want to implement a render technique the Irrlicht
-Engine currently does not support. For example, you can write
-an indoor portal based renderer or an advanced terrain scene
-node with it. By creating custom scene nodes, you can
-easily extend the Irrlicht Engine and adapt it to your own
-needs.
-
-I will keep the tutorial simple: Keep everything very
-short, everything in one .cpp file, and I'll use the engine
-here as in all other tutorials.
-
-To start, I include the header files, use the irr namespace,
-and tell the linker to link with the .lib file.
+1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
+2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+3. This notice may not be removed or altered from any source distribution.
 */
+
+///Note: this is based on Irrlicht Example 003 Custom SceneNode, so the copyright of the original parts belongs to Irrlicht
+
+
+///you can disable custom node, to use irr::scene::SAnimatedMesh in Irrlicht 1.5
+#define USE_CUSTOM_NODE 1
+
+///You can enable vertex buffer objects (VBO) for Irrlicht 1.5
+//#define USE_VBO 1
+
 #include <irrlicht.h>
 #include <iostream>
 
@@ -122,23 +122,8 @@ void	MatrixToEuler(const btMatrix3x3& mat,btVector3& TEuler)
 }
 
 
-
-/*
-Here comes the more sophisticated part of this tutorial:
-The class of our very own custom scene node. To keep it simple,
-our scene node will not be an indoor portal renderer nor a terrain
-scene node, but a simple tetraeder, a 3d object consisting of 4
-connected vertices, which only draws itself and does nothing more.
-Note that this scenario does not require a custom scene node in Irrlicht.
-Instead one would create a mesh from the geometry and pass it to a
-irr::scene::IMeshSceneNode. This example just illustrates creation of a custom
-scene node in a very simple setting.
-
-To let our scene node be able to be inserted into the Irrlicht
-Engine scene, the class we create needs to be derived from the
-irr::scene::ISceneNode class and has to override some methods.
-*/
-
+///temporary support for custom node
+#ifdef USE_CUSTOM_NODE
 class CSampleSceneNode : public scene::ISceneNode
 {
 
@@ -272,7 +257,7 @@ public:
 
 
 
-
+#endif //USE_CUSTOM_NODE
 
 
 
@@ -563,7 +548,7 @@ public:
 		if (texture0)
 		{
 
-	#define USE_CUSTOM_NODE 1
+	
 	#ifdef USE_CUSTOM_NODE
 				myNode = new CSampleSceneNode(m_sceneManager->getRootSceneNode(), m_sceneManager, m_guid++,vertices,numVertices,indices,numTriangles,texture0);
 	#else
@@ -770,7 +755,3 @@ int main(int argc,char** argv)
 	
 	return 0;
 }
-
-/*
-That's it. Compile and play around with the program.
-**/
