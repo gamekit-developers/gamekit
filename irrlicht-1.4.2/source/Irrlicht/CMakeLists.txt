@@ -1,6 +1,16 @@
-INCLUDE_DIRECTORIES( ${IRRLICHT_SOURCE_DIR}/include ${IRRLICHT_SOURCE_DIR}/source/Irrlicht/zlib  )
+INCLUDE_DIRECTORIES( ${IRRLICHT_SOURCE_DIR}/include ${IRRLICHT_SOURCE_DIR}/source/Irrlicht/zlib ${IRRLICHT_SOURCE_DIR}/source/Irrlicht  ${IRRLICHT_SOURCE_DIR}/source/Irrlicht/MacOSX )
 
 ADD_DEFINITIONS(-D_IRR_STATIC_LIB_)
+
+IF (WIN32)
+ADD_DEFINITIONS(-DJPEG_CJPEG_DJPEG)
+ELSE (WIN32)
+
+ENDIF (WIN32)
+
+IF (APPLE)
+ADD_DEFINITIONS(-D_IRR_USE_OSX_DEVICE_ -DMACOSX)
+ENDIF (APPLE)
 
 SET( Irrlicht_SRCS
 CDefaultGUIElementFactory.cpp
@@ -371,6 +381,9 @@ CTimer.h
 Irrlicht.cpp
 os.cpp
 os.h
+)
+
+SET(zlib_SRCS
 zlib/adler32.c
 zlib/compress.c
 zlib/crc32.c
@@ -390,6 +403,9 @@ zlib/zconf.h
 zlib/zlib.h
 zlib/zutil.c
 zlib/zutil.h
+)
+
+SET(jpeg_SRCS
 jpeglib/cderror.h
 jpeglib/cdjpeg.c
 jpeglib/cdjpeg.h
@@ -450,6 +466,29 @@ jpeglib/jquant1.c
 jpeglib/jquant2.c
 jpeglib/jutils.c
 jpeglib/jversion.h
+)
+IF (APPLE)
+SET(libpng_SRCS
+libpng_osx/png.c
+libpng_osx/png.h
+libpng_osx/pngconf.h
+libpng_osx/pngerror.c
+libpng_osx/pngget.c
+libpng_osx/pngmem.c
+libpng_osx/pngpread.c
+libpng_osx/pngread.c
+libpng_osx/pngrio.c
+libpng_osx/pngrtran.c
+libpng_osx/pngrutil.c
+libpng_osx/pngset.c
+libpng_osx/pngtrans.c
+libpng_osx/pngwio.c
+libpng_osx/pngwrite.c
+libpng_osx/pngwtran.c
+libpng_osx/pngwutil.c
+)
+ELSE (APPLE)
+SET(libpng_SRCS
 libpng/png.c
 libpng/png.h
 libpng/pngconf.h
@@ -469,4 +508,13 @@ libpng/pngwtran.c
 libpng/pngwutil.c
 )
 
+ENDIF (APPLE)
+
+
+
+IF (APPLE)
+ADD_LIBRARY(Irrlicht MacOSX/CIrrDeviceMacOSX.mm MacOSX/OSXClipboard.mm MacOSX/AppDelegate.mm ${Irrlicht_SRCS}  ${jpeg_SRCS} ${libpng_SRCS} ${zlib_SRCS}  MacOSX/CIrrDeviceMacOSX.mm )
+ELSE (APPLE)
 ADD_LIBRARY(Irrlicht ${Irrlicht_SRCS} )
+ENDIF (APPLE)
+

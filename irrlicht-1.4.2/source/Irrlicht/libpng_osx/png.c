@@ -779,9 +779,6 @@ png_access_version_number(void)
 }
 
 
-#if defined(PNG_READ_SUPPORTED) && defined(PNG_ASSEMBLER_CODE_SUPPORTED)
-#if !defined(PNG_1_0_X)
-#if defined(PNG_MMX_CODE_SUPPORTED)
 /* this INTERNAL function was added to libpng 1.2.0 */
 void /* PRIVATE */
 png_init_mmx_flags (png_structp png_ptr)
@@ -790,56 +787,12 @@ png_init_mmx_flags (png_structp png_ptr)
     png_ptr->mmx_rowbytes_threshold = 0;
     png_ptr->mmx_bitdepth_threshold = 0;
 
-#  if (defined(PNG_USE_PNGVCRD) || defined(PNG_USE_PNGGCCRD))
-
-    png_ptr->asm_flags |= PNG_ASM_FLAG_MMX_SUPPORT_COMPILED;
-
-    if (png_mmx_support() > 0) {
-        png_ptr->asm_flags |= PNG_ASM_FLAG_MMX_SUPPORT_IN_CPU
-#    ifdef PNG_HAVE_ASSEMBLER_COMBINE_ROW
-                              | PNG_ASM_FLAG_MMX_READ_COMBINE_ROW
-#    endif
-#    ifdef PNG_HAVE_ASSEMBLER_READ_INTERLACE
-                              | PNG_ASM_FLAG_MMX_READ_INTERLACE
-#    endif
-#    ifndef PNG_HAVE_ASSEMBLER_READ_FILTER_ROW
-                              ;
-#    else
-                              | PNG_ASM_FLAG_MMX_READ_FILTER_SUB
-                              | PNG_ASM_FLAG_MMX_READ_FILTER_UP
-                              | PNG_ASM_FLAG_MMX_READ_FILTER_AVG
-                              | PNG_ASM_FLAG_MMX_READ_FILTER_PAETH ;
-
-        png_ptr->mmx_rowbytes_threshold = PNG_MMX_ROWBYTES_THRESHOLD_DEFAULT;
-        png_ptr->mmx_bitdepth_threshold = PNG_MMX_BITDEPTH_THRESHOLD_DEFAULT;
-#    endif
-    } else {
-        png_ptr->asm_flags &= ~( PNG_ASM_FLAG_MMX_SUPPORT_IN_CPU
-                               | PNG_MMX_READ_FLAGS
-                               | PNG_MMX_WRITE_FLAGS );
-    }
-
-#  else /* !(PNGVCRD || PNGGCCRD) */
-
     /* clear all MMX flags; no support is compiled in */
     png_ptr->asm_flags &= ~( PNG_MMX_FLAGS );
 
-#  endif /* ?(PNGVCRD || PNGGCCRD) */
 }
 
-#endif /* !(PNG_MMX_CODE_SUPPORTED) */
 
-/* this function was added to libpng 1.2.0 */
-#if !defined(PNG_USE_PNGGCCRD) && \
-    !(defined(PNG_MMX_CODE_SUPPORTED) && defined(PNG_USE_PNGVCRD))
-int PNGAPI
-png_mmx_support(void)
-{
-    return -1;
-}
-#endif
-#endif /* PNG_1_0_X  && PNG_ASSEMBLER_CODE_SUPPORTED */
-#endif /* PNG_READ_SUPPORTED */
 
 #if defined(PNG_READ_SUPPORTED) || defined(PNG_WRITE_SUPPORTED)
 #ifdef PNG_SIZE_T

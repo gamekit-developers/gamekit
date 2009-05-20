@@ -125,7 +125,7 @@ bool CIrrDeviceMacOSX::createWindow(const irr::core::dimension2d<irr::s32>& wind
 	CGLPixelFormatAttribute		fullattribs[32];
 	NSOpenGLPixelFormatAttribute	windowattribs[32];
 	CFDictionaryRef			displaymode,olddisplaymode;
-	long				numPixelFormats,newSwapInterval;
+	GLint				numPixelFormats,newSwapInterval;
 
 	result = false;
 	display = CGMainDisplayID();

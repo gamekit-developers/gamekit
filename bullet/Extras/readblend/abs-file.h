@@ -10,13 +10,18 @@
 #ifndef _ABS_FILE_H
 #define _ABS_FILE_H
 
+#ifdef WIN32
+
 		typedef unsigned char     uint8_t;
 		typedef unsigned long int uint64_t;
 		typedef unsigned int      uint32_t;
 		typedef int      int32_t;
 		typedef unsigned short    uint16_t;
 		typedef short    int16_t;
+#else
+#include <stdint.h>
 
+#endif
 
 /*
 PLEASE NOTE: This license applies to abs-file.h ONLY; The version of

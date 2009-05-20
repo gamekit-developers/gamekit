@@ -157,7 +157,7 @@ int main()
 	// let user select driver type
 
 	video::E_DRIVER_TYPE driverType;
-
+#if 0
 	printf("Please select the driver you want for this example:\n"\
 		" (a) Direct3D 9.0c\n (b) Direct3D 8.1\n (c) OpenGL 1.5\n"\
 		" (d) Software Renderer\n (e) Burning's Software Renderer\n"\
@@ -176,6 +176,9 @@ int main()
 		case 'f': driverType = video::EDT_NULL;     break;
 		default: return 0;
 	}
+#else
+	driverType = video::EDT_OPENGL;
+#endif
 
 	// create device
 
