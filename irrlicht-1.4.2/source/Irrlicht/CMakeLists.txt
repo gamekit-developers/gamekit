@@ -3,8 +3,9 @@ INCLUDE_DIRECTORIES( ${IRRLICHT_SOURCE_DIR}/include ${IRRLICHT_SOURCE_DIR}/sourc
 ADD_DEFINITIONS(-D_IRR_STATIC_LIB_)
 
 IF (WIN32)
-ADD_DEFINITIONS(-DJPEG_CJPEG_DJPEG)
+#ADD_DEFINITIONS(-DJPEG_CJPEG_DJPEG)
 ELSE (WIN32)
+
 
 ENDIF (WIN32)
 
@@ -515,6 +516,6 @@ ENDIF (APPLE)
 IF (APPLE)
 ADD_LIBRARY(Irrlicht MacOSX/CIrrDeviceMacOSX.mm MacOSX/OSXClipboard.mm MacOSX/AppDelegate.mm ${Irrlicht_SRCS}  ${jpeg_SRCS} ${libpng_SRCS} ${zlib_SRCS}  MacOSX/CIrrDeviceMacOSX.mm )
 ELSE (APPLE)
-ADD_LIBRARY(Irrlicht ${Irrlicht_SRCS} )
+ADD_LIBRARY(Irrlicht ${Irrlicht_SRCS}  ${jpeg_SRCS} ${libpng_SRCS} ${zlib_SRCS}  )
 ENDIF (APPLE)
 

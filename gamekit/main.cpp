@@ -15,7 +15,6 @@ subject to the following restrictions:
 
 ///Note: this is based on Irrlicht Example 003 Custom SceneNode, so the copyright of the original parts belongs to Irrlicht
 
-
 ///you can disable custom node, to use irr::scene::SAnimatedMesh in Irrlicht 1.5
 #define USE_CUSTOM_NODE 1
 
