@@ -104,19 +104,21 @@ public:
 		Name.make_lower();
 	}
 
-	//! destructor
-	virtual ~ITexture() {}
-
 	//! Lock function.
 	/** Locks the Texture and returns a pointer to access the
 	pixels. After lock() has been called and all operations on the pixels
 	are done, you must call unlock().
+	Locks are not accumulating, hence one unlock will do for an arbitrary
+	number of previous locks.
+	\param readOnly Specifies that no changes to the locked texture are
+	made. Unspecified behavior will arise if still write access happens.
 	\return Returns a pointer to the pixel data. The format of the pixel can
-	be determinated by using getColorFormat(). NULL is returned, if
+	be determined by using getColorFormat(). 0 is returned, if
 	the texture cannot be locked. */
-	virtual void* lock() = 0;
+	virtual void* lock(bool readOnly = false) = 0;
 
 	//! Unlock function. Must be called after a lock() to the texture.
+	/** One should avoid to call unlock more than once before another lock. */
 	virtual void unlock() = 0;
 
 	//! Returns original size of the texture.
@@ -157,7 +159,7 @@ public:
 	virtual bool hasMipMaps() const { return false; }
 
 	//! Regenerates the mip map levels of the texture.
-	/** Useful after locking and modifying the texture */
+	/** Required after locking and modifying the texture */
 	virtual void regenerateMipMapLevels() = 0;
 
 	//! Returns whether the texture is a render target

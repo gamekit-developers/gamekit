@@ -18,7 +18,7 @@ namespace scene
 	{
 	public:
 		//! Default constructor for empty meshbuffer
-		CMeshBuffer() // everything's default constructed
+		CMeshBuffer():ChangedID_Vertex(1),ChangedID_Index(1),MappingHint_Vertex(EHM_NEVER), MappingHint_Index(EHM_NEVER)
 		{
 			#ifdef _DEBUG
 			setDebugName("SMeshBuffer");
@@ -65,6 +65,12 @@ namespace scene
 			return Vertices.size();
 		}
 
+		//! Get type of index data which is stored in this meshbuffer.
+		/** \return Index type of this buffer. */
+		virtual video::E_INDEX_TYPE getIndexType() const
+		{
+			return video::EIT_16BIT;
+		}
 
 		//! Get pointer to indices
 		/** \return Pointer to indices. */
@@ -129,6 +135,42 @@ namespace scene
 			return T().getType();
 		}
 
+		//! returns position of vertex i
+		virtual const core::vector3df& getPosition(u32 i) const
+		{
+			return Vertices[i].Pos;
+		}
+
+		//! returns position of vertex i
+		virtual core::vector3df& getPosition(u32 i)
+		{
+			return Vertices[i].Pos;
+		}
+
+		//! returns normal of vertex i
+		virtual const core::vector3df& getNormal(u32 i) const
+		{
+			return Vertices[i].Normal;
+		}
+
+		//! returns normal of vertex i
+		virtual core::vector3df& getNormal(u32 i)
+		{
+			return Vertices[i].Normal;
+		}
+
+		//! returns texture coord of vertex i
+		virtual const core::vector2df& getTCoords(u32 i) const
+		{
+			return Vertices[i].TCoords;
+		}
+
+		//! returns texture coord of vertex i
+		virtual core::vector2df& getTCoords(u32 i)
+		{
+			return Vertices[i].TCoords;
+		}
+
 
 		//! Append the vertices and indices to the current buffer
 		/** Only works for compatible types, i.e. either the same type
@@ -166,6 +208,7 @@ namespace scene
 		*/
 		virtual void append(const IMeshBuffer* const other)
 		{
+			/*
 			if (this==other)
 				return;
 
@@ -184,7 +227,55 @@ namespace scene
 				Indices.push_back(other->getIndices()[i]+vertexCount);
 			}
 			BoundingBox.addInternalBox(other->getBoundingBox());
+			*/
 		}
+
+
+		//! get the current hardware mapping hint
+		virtual E_HARDWARE_MAPPING getHardwareMappingHint_Vertex() const
+		{
+			return MappingHint_Vertex;
+		}
+
+		//! get the current hardware mapping hint
+		virtual E_HARDWARE_MAPPING getHardwareMappingHint_Index() const
+		{
+			return MappingHint_Index;
+		}
+
+		//! set the hardware mapping hint, for driver
+		virtual void setHardwareMappingHint( E_HARDWARE_MAPPING NewMappingHint, E_BUFFER_TYPE Buffer=EBT_VERTEX_AND_INDEX )
+		{
+			if (Buffer==EBT_VERTEX_AND_INDEX || Buffer==EBT_VERTEX)
+				MappingHint_Vertex=NewMappingHint;
+			if (Buffer==EBT_VERTEX_AND_INDEX || Buffer==EBT_INDEX)
+				MappingHint_Index=NewMappingHint;
+		}
+
+
+		//! flags the mesh as changed, reloads hardware buffers
+		virtual void setDirty(E_BUFFER_TYPE Buffer=EBT_VERTEX_AND_INDEX)
+		{
+			if (Buffer==EBT_VERTEX_AND_INDEX ||Buffer==EBT_VERTEX)
+				++ChangedID_Vertex;
+			if (Buffer==EBT_VERTEX_AND_INDEX || Buffer==EBT_INDEX)
+				++ChangedID_Index;
+		}
+
+		//! Get the currently used ID for identification of changes.
+		/** This shouldn't be used for anything outside the VideoDriver. */
+		virtual u32 getChangedID_Vertex() const {return ChangedID_Vertex;}
+
+		//! Get the currently used ID for identification of changes.
+		/** This shouldn't be used for anything outside the VideoDriver. */
+		virtual u32 getChangedID_Index() const {return ChangedID_Index;}
+
+		u32 ChangedID_Vertex;
+		u32 ChangedID_Index;
+
+		//! hardware mapping hint
+		E_HARDWARE_MAPPING MappingHint_Vertex;
+		E_HARDWARE_MAPPING MappingHint_Index;
 
 		//! Material for this meshbuffer.
 		video::SMaterial Material;
@@ -206,4 +297,5 @@ namespace scene
 } // end namespace irr
 
 #endif
+
 

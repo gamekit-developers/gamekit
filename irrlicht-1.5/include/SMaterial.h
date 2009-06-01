@@ -71,7 +71,7 @@ namespace video
 			EmissiveColor(0,0,0,0), SpecularColor(255,255,255,255),
 			Shininess(0.0f), MaterialTypeParam(0.0f), MaterialTypeParam2(0.0f), Thickness(1.0f),
 			Wireframe(false), PointCloud(false), GouraudShading(true), Lighting(true),
-			ZWriteEnable(true), BackfaceCulling(true),
+			ZWriteEnable(true), BackfaceCulling(true), FrontfaceCulling(false),
 			FogEnable(false), NormalizeNormals(false), ZBuffer(1)
 		{ }
 
@@ -89,6 +89,10 @@ namespace video
 		/** \param other Material to copy from. */
 		SMaterial& operator=(const SMaterial& other)
 		{
+			// Check for self-assignment!
+			if (this == &other)
+				return *this;
+
 			MaterialType = other.MaterialType;
 
 			AmbientColor = other.AmbientColor;
@@ -110,6 +114,7 @@ namespace video
 			Lighting = other.Lighting;
 			ZWriteEnable = other.ZWriteEnable;
 			BackfaceCulling = other.BackfaceCulling;
+			FrontfaceCulling = other.FrontfaceCulling;
 			FogEnable = other.FogEnable;
 			NormalizeNormals = other.NormalizeNormals;
 			ZBuffer = other.ZBuffer;
@@ -208,6 +213,9 @@ namespace video
 		//! Is backface culling enabled? Default: true
 		bool BackfaceCulling;
 
+		//! Is frontface culling enabled? Default: false
+		bool FrontfaceCulling;
+
 		//! Is fog enabled? Default: false
 		bool FogEnable;
 
@@ -218,7 +226,7 @@ namespace video
 		/** Changed from bool to integer
 		(0 == ZBuffer Off, 1 == ZBuffer LessEqual, 2 == ZBuffer Equal)
 		*/
-		u32 ZBuffer;
+		char ZBuffer;
 
 		//! Gets the texture transformation matrix for level i
 		/** \param i The desired level. Must not be larger than MATERIAL_MAX_TEXTURES.
@@ -254,10 +262,7 @@ namespace video
 		\return Texture for texture level i, if defined, else 0. */
 		ITexture* getTexture(u32 i) const
 		{
-			if (i>=MATERIAL_MAX_TEXTURES)
-				return 0;
-			else
-				return TextureLayer[i].Texture;
+			return i < MATERIAL_MAX_TEXTURES ? TextureLayer[i].Texture : 0;
 		}
 
 		//! Sets the i-th texture
@@ -292,6 +297,8 @@ namespace video
 					ZWriteEnable = value; break;
 				case EMF_BACK_FACE_CULLING:
 					BackfaceCulling = value; break;
+				case EMF_FRONT_FACE_CULLING:
+					FrontfaceCulling = value; break;
 				case EMF_BILINEAR_FILTER:
 				{
 					for (u32 i=0; i<MATERIAL_MAX_TEXTURES; ++i)
@@ -346,6 +353,8 @@ namespace video
 					return ZWriteEnable;
 				case EMF_BACK_FACE_CULLING:
 					return BackfaceCulling;
+				case EMF_FRONT_FACE_CULLING:
+					return FrontfaceCulling;
 				case EMF_BILINEAR_FILTER:
 					return TextureLayer[0].BilinearFilter;
 				case EMF_TRILINEAR_FILTER:
@@ -390,6 +399,7 @@ namespace video
 				ZBuffer != b.ZBuffer ||
 				ZWriteEnable != b.ZWriteEnable ||
 				BackfaceCulling != b.BackfaceCulling ||
+				FrontfaceCulling != b.FrontfaceCulling ||
 				FogEnable != b.FogEnable ||
 				NormalizeNormals != b.NormalizeNormals;
 			for (u32 i=0; (i<MATERIAL_MAX_TEXTURES) && !different; ++i)

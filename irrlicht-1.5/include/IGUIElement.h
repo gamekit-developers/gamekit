@@ -11,6 +11,7 @@
 #include "irrString.h"
 #include "IEventReceiver.h"
 #include "EGUIElementTypes.h"
+#include "EGUIAlignment.h"
 #include "IAttributes.h"
 
 namespace irr
@@ -19,28 +20,6 @@ namespace gui
 {
 
 class IGUIEnvironment;
-
-enum EGUI_ALIGNMENT
-{
-	//! Aligned to parent's top or left side (default)
-	EGUIA_UPPERLEFT=0,
-	//! Aligned to parent's bottom or right side
-	EGUIA_LOWERRIGHT,
-	//! Aligned to the center of parent
-	EGUIA_CENTER,
-	//! Scaled within its parent
-	EGUIA_SCALE
-};
-
-//! Names for alignments
-const c8* const GUIAlignmentNames[] =
-{
-	"upperLeft",
-	"lowerRight",
-	"center",
-	"scale",
-	0
-};
 
 //! Base class of all GUI elements.
 class IGUIElement : public virtual io::IAttributeExchangingObject, public IEventReceiver
@@ -104,6 +83,7 @@ public:
 
 
 	//! Sets the relative rectangle of this element.
+	/** \param r	The absolute position to set */
 	void setRelativePosition(const core::rect<s32>& r)
 	{
 		if (Parent)
@@ -126,9 +106,23 @@ public:
 		updateAbsolutePosition();
 	}
 
+	//! Sets the relative rectangle of this element, maintaining its current width and height
+	/** \param position	The new relative position to set. Width and height will not be changed. */
+	void setRelativePosition(const core::position2di & position)
+	{
+		const core::dimension2di mySize = RelativeRect.getSize();
+		const core::rect<s32> rectangle(position.X, position.Y, 
+										position.X + mySize.Width, position.Y + mySize.Height);
+		setRelativePosition(rectangle);
+	}
 
-	//! Sets the relative rectangle of this element.
-	void setRelativePosition(const core::rect<f32>& r)
+
+	//! Sets the relative rectangle of this element as a proportion of its parent's area.
+	/** \note This method used to be 'void setRelativePosition(const core::rect<f32>& r)'
+	\param r  The rectangle to set, interpreted as a proportion of the parent's area. 
+	Meaningful values are in the range [0...1], unless you intend this element to spill
+	outside its parent. */
+	void setRelativePositionProportional(const core::rect<f32>& r) 
 	{
 		if (!Parent)
 			return;
@@ -147,7 +141,7 @@ public:
 	}
 
 
-	//! Returns the absolute rectangle of element.
+	//! Gets the absolute rectangle of this element
 	core::rect<s32> getAbsolutePosition() const
 	{
 		return AbsoluteRect;
@@ -162,6 +156,7 @@ public:
 
 
 	//! Sets whether the element will ignore its parent's clipping rectangle
+	/** \param noClip	If true, the element will not be clipped by its parent's clipping rectangle. */
 	void setNotClipped(bool noClip)
 	{
 		NoClip = noClip;
@@ -169,6 +164,7 @@ public:
 
 
 	//! Gets whether the element will ignore its parent's clipping rectangle
+	/** \return true if the element is not clipped by its parent's clipping rectangle. */
 	bool isNotClipped() const
 	{
 		return NoClip;
@@ -244,7 +240,6 @@ public:
 				parentAbsoluteClip = Parent->AbsoluteClippingRect;
 		}
 
-
 		diffx = parentAbsolute.getWidth() - LastParentRect.getWidth();
 		diffy = parentAbsolute.getHeight() - LastParentRect.getHeight();
 
@@ -253,7 +248,6 @@ public:
 
 		if (AlignTop == EGUIA_SCALE || AlignBottom == EGUIA_SCALE)
 			fh = (f32)parentAbsolute.getHeight();
-
 
 		switch (AlignLeft)
 		{
@@ -317,8 +311,8 @@ public:
 
 		RelativeRect = DesiredRect;
 
-		s32 w = RelativeRect.getWidth();
-		s32 h = RelativeRect.getHeight();
+		const s32 w = RelativeRect.getWidth();
+		const s32 h = RelativeRect.getHeight();
 
 		// make sure the desired rectangle is allowed
 		if (w < MinSize.Width)
@@ -384,7 +378,6 @@ public:
 	{
 		return AbsoluteClippingRect.isPointInside(point);
 	}
-
 
 	//! Adds a GUI element as new child of this element.
 	virtual void addChild(IGUIElement* child)

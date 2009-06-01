@@ -300,6 +300,20 @@ class aabbox3d
 				(other.MaxEdge*inv) + (MaxEdge*d));
 		}
 
+		//! Get the volume enclosed by the box in cubed units
+		T getVolume() const
+		{
+			const vector3d<T> e = getExtent();
+			return e.X * e.Y * e.Z;
+		}
+
+		//! Get the surface area of the box in squared units
+		T getArea() const
+		{
+			const vector3d<T> e = getExtent();
+			return 2*(e.X*e.Y + e.X*e.Z + e.Y*e.Z);
+		}
+
 		//! The near edge
 		vector3d<T> MinEdge;
 		//! The far edge

@@ -24,9 +24,6 @@ namespace video
 	{
 	public:
 
-		//! destructor
-		virtual ~IVideoModeList() {}
-
 		//! Gets amount of video modes in the list.
 		/** \return Returns amount of video modes. */
 		virtual s32 getVideoModeCount() const = 0;
@@ -36,6 +33,13 @@ namespace video
 		\return Size of screen in pixels of the specified video mode. */
 		virtual core::dimension2d<s32> getVideoModeResolution(s32 modeNumber) const = 0;
 
+		//! Get a supported screen size with certain constraints.
+		/** \param minSize: Minimum dimensions required.
+		\param maxSize: Maximum dimensions allowed.
+		\return Size of screen in pixels which matches the requirements.
+		as good as possible. */
+		virtual core::dimension2d<s32> getVideoModeResolution(const core::dimension2d<s32>& minSize, const core::dimension2d<s32>& maxSize) const = 0;
+
 		//! Get the pixel depth of a video mode in bits.
 		/** \param modeNumber: zero based index of the video mode.
 		\return Size of each pixel of the specified video mode in bits. */
@@ -43,7 +47,7 @@ namespace video
 
 		//! Get current desktop screen resolution.
 		/** \return Size of screen in pixels of the current desktop video mode. */
-		virtual core::dimension2d<s32> getDesktopResolution() const = 0;
+		virtual const core::dimension2d<s32>& getDesktopResolution() const = 0;
 
 		//! Get the pixel depth of a video mode in bits.
 		/** \return Size of each pixel of the current desktop video mode in bits. */

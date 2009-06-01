@@ -16,7 +16,7 @@ namespace scene
 	struct SSharedMeshBuffer : public IMeshBuffer
 	{
 		//! constructor
-		SSharedMeshBuffer() : IMeshBuffer(), Vertices(0)
+		SSharedMeshBuffer() : IMeshBuffer(), ChangedID_Vertex(1), ChangedID_Index(1), Vertices(0), MappingHint(EHM_NEVER)
 		{
 			#ifdef _DEBUG
 			setDebugName("SSharedMeshBuffer");
@@ -30,9 +30,6 @@ namespace scene
 			setDebugName("SSharedMeshBuffer");
 			#endif
 		}
-
-		//! destructor
-		virtual ~SSharedMeshBuffer() { }
 
 		//! returns the material of this meshbuffer
 		virtual const video::SMaterial& getMaterial() const
@@ -128,7 +125,43 @@ namespace scene
 		//! append the meshbuffer to the current buffer
 		virtual void append(const IMeshBuffer* const other) {}
 
-		//! material of this meshBuffer
+
+		//! get the current hardware mapping hint
+		virtual E_HARDWARE_MAPPING getHardwareMappingHint() const
+		{
+			return MappingHint;
+		}
+
+		//! set the hardware mapping hint, for driver
+		virtual void setHardwareMappingHint( E_HARDWARE_MAPPING NewMappingHint )
+		{
+			MappingHint=NewMappingHint;
+		}
+
+		//! flags the mesh as changed, reloads hardware buffers
+		virtual void setDirty(E_BUFFER_TYPE Buffer=EBT_VERTEX_AND_INDEX)
+		{
+			if (Buffer==EBT_VERTEX_AND_INDEX || Buffer==EBT_VERTEX)
+				++ChangedID_Vertex;
+			if (Buffer==EBT_VERTEX_AND_INDEX || Buffer==EBT_INDEX)
+				++ChangedID_Index;
+		}
+
+		//! Get the currently used ID for identification of changes.
+		/** This shouldn't be used for anything outside the VideoDriver. */
+		virtual u32 getChangedID_Vertex() const {return ChangedID_Vertex;}
+
+		//! Get the currently used ID for identification of changes.
+		/** This shouldn't be used for anything outside the VideoDriver. */
+		virtual u32 getChangedID_Index() const {return ChangedID_Index;}
+
+		//! ID used for hardware buffer management
+		u32 ChangedID_Vertex;
+
+		//! ID used for hardware buffer management
+		u32 ChangedID_Index;
+
+		//! Material of this meshBuffer
 		video::SMaterial Material;
 		//! Shared Array of vertices
 		core::array<video::S3DVertex> *Vertices;
@@ -136,6 +169,9 @@ namespace scene
 		core::array<u16> Indices;
 		//! Bounding box
 		core::aabbox3df BoundingBox;
+		//! hardware mapping hint
+		E_HARDWARE_MAPPING MappingHint;
+
 	};
 
 

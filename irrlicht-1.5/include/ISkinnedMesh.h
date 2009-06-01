@@ -69,7 +69,11 @@ namespace scene
 		//! Preforms a software skin on this mesh based of joint positions
 		virtual void skinMesh() = 0;
 
+		//! converts the vertex type of all meshbuffers to tangents. eg for bumpmapping
 		virtual void convertMeshToTangents() = 0;
+
+		//! (This feature is not implementated in irrlicht yet)
+		virtual bool setHardwareSkinning(bool on) = 0;
 
 		//! A vertex weight
 		struct SWeight
@@ -153,8 +157,6 @@ namespace scene
 			core::vector3df Animatedscale;
 			core::quaternion Animatedrotation;
 
-
-
 			core::matrix4 GlobalInversedMatrix; //the x format pre-calculates this
 
 		private:
@@ -188,16 +190,16 @@ namespace scene
 		//! loaders should call this after populating the mesh
 		virtual void finalize() = 0;
 
-
 		virtual SSkinMeshBuffer *createBuffer() = 0;
 
 		virtual SJoint *createJoint(SJoint *parent=0) = 0;
+		virtual SWeight *createWeight(SJoint *joint) = 0;
 
 		virtual SPositionKey *createPositionKey(SJoint *joint) = 0;
 		virtual SScaleKey *createScaleKey(SJoint *joint) = 0;
 		virtual SRotationKey *createRotationKey(SJoint *joint) = 0;
 
-		virtual SWeight *createWeight(SJoint *joint) = 0;
+		virtual bool isStatic()=0;
 	};
 
 } // end namespace scene

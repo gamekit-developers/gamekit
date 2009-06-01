@@ -32,7 +32,7 @@ namespace scene
 	example easily possible to attach a light to a moving car, or to place
 	a walking character on a moving platform on a moving ship.
 	*/
-	class ISceneNode : public io::IAttributeExchangingObject
+	class ISceneNode : virtual public io::IAttributeExchangingObject
 	{
 	public:
 
@@ -42,12 +42,12 @@ namespace scene
 				const core::vector3df& rotation = core::vector3df(0,0,0),
 				const core::vector3df& scale = core::vector3df(1.0f, 1.0f, 1.0f))
 			: RelativeTranslation(position), RelativeRotation(rotation), RelativeScale(scale),
-				Parent(parent), ID(id), SceneManager(mgr), TriangleSelector(0),
+				Parent(0), ID(id), SceneManager(mgr), TriangleSelector(0),
 				AutomaticCullingState(EAC_BOX), IsVisible(true),
 				DebugDataVisible(EDS_OFF), IsDebugObject(false)
 		{
-			if (Parent)
-				Parent->addChild(this);
+			if (parent)
+				parent->addChild(this);
 
 			updateAbsolutePosition();
 		}
@@ -142,6 +142,14 @@ namespace scene
 		}
 
 
+		//! Sets the name of the node.
+		/** \param name New name of the scene node. */
+		virtual void setName(const core::stringc& name)
+		{
+			Name = name;
+		}
+
+
 		//! Get the axis aligned, not transformed bounding box of this node.
 		/** This means that if this node is an animated 3d character,
 		moving in a room, the bounding box will always be around the
@@ -158,14 +166,14 @@ namespace scene
 		virtual const core::aabbox3d<f32> getTransformedBoundingBox() const
 		{
 			core::aabbox3d<f32> box = getBoundingBox();
-			AbsoluteTransformation.transformBox(box);
+			AbsoluteTransformation.transformBoxEx(box);
 			return box;
 		}
 
 
 		//! Get the absolute transformation of the node. Is recalculated every OnAnimate()-call.
 		//! \return The absolute transformation matrix.
-		const core::matrix4& getAbsoluteTransformation() const
+		virtual const core::matrix4& getAbsoluteTransformation() const
 		{
 			return AbsoluteTransformation;
 		}
@@ -240,6 +248,10 @@ namespace scene
 		{
 			if (child && (child != this))
 			{
+				// Change scene manager?
+				if (SceneManager != child->SceneManager)
+					child->setSceneManager(SceneManager);
+
 				child->grab();
 				child->remove(); // remove from old parent
 				Children.push_back(child);
@@ -396,7 +408,7 @@ namespace scene
 
 		//! Gets the relative scale of the scene node.
 		/** \return The scale of the scene node. */
-		virtual core::vector3df getScale() const
+		virtual const core::vector3df& getScale() const
 		{
 			return RelativeScale;
 		}
@@ -431,7 +443,7 @@ namespace scene
 		//! Gets the position of the node.
 		/** Note that the position is relative to the parent.
 		\return The current position of the node relative to the parent. */
-		virtual const core::vector3df getPosition() const
+		virtual const core::vector3df& getPosition() const
 		{
 			return RelativeTranslation;
 		}
@@ -476,8 +488,8 @@ namespace scene
 
 
 		//! Sets if debug data like bounding boxes should be drawn.
-		/** A bitwise OR of the types is supported.
-		Please note that not all scene nodes support this feature.
+		/** A bitwise OR of the types from @ref irr::scene::E_DEBUG_SCENE_TYPE. 
+		Please note that not all scene nodes support all debug data types.
 		\param state The debug data visibility state to be used. */
 		virtual void setDebugDataVisible(s32 state)
 		{
@@ -485,7 +497,8 @@ namespace scene
 		}
 
 		//! Returns if debug data like bounding boxes are drawn.
-		/** \return A bitwise OR of the debug data values currently visible. */
+		/** \return A bitwise OR of the debug data values from 
+		@ref irr::scene::E_DEBUG_SCENE_TYPE that are currently visible. */
 		s32 isDebugDataVisible() const
 		{
 			return DebugDataVisible;
@@ -707,6 +720,17 @@ namespace scene
 					anim->drop();
 				}
 			}
+		}
+
+		//! Sets the new scene manager for this node and all children.
+		//! Called by addChild when moving nodes between scene managers
+		void setSceneManager(ISceneManager* newManager)
+		{
+			SceneManager = newManager;
+
+			core::list<ISceneNode*>::Iterator it = Children.begin();
+			for (; it != Children.end(); ++it)
+				(*it)->setSceneManager(newManager);
 		}
 
 		//! Name of the scene node.

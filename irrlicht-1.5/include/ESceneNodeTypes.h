@@ -57,12 +57,6 @@ namespace scene
 		//! Camera Scene Node
 		ESNT_CAMERA         = MAKE_IRR_ID('c','a','m','_'),
 
-		//! Maya Camera Scene Node
-		ESNT_CAMERA_MAYA    = MAKE_IRR_ID('c','a','m','M'),
-
-		//! First Person Shooter style Camera
-		ESNT_CAMERA_FPS     = MAKE_IRR_ID('c','a','m','F'),
-
 		//! Billboard Scene Node
 		ESNT_BILLBOARD      = MAKE_IRR_ID('b','i','l','l'),
 
@@ -75,8 +69,19 @@ namespace scene
 		//! Quake3 Model Scene Node ( has tag to link to )
 		ESNT_MD3_SCENE_NODE  = MAKE_IRR_ID('m','d','3','_'),
 
+		//! Maya Camera Scene Node
+		//! Legacy, for loading version <= 1.4.x .irr files
+		ESNT_CAMERA_MAYA    = MAKE_IRR_ID('c','a','m','M'),
+
+		//! First Person Shooter Camera
+		//! Legacy, for loading version <= 1.4.x .irr files
+		ESNT_CAMERA_FPS     = MAKE_IRR_ID('c','a','m','F'),
+
 		//! Unknown scene node
-		ESNT_UNKNOWN        = MAKE_IRR_ID('u','n','k','n')
+		ESNT_UNKNOWN        = MAKE_IRR_ID('u','n','k','n'),
+
+		//! Will match with any scene node when checking types
+		ESNT_ANY            = MAKE_IRR_ID('a','n','y','_')
 	};
 
 

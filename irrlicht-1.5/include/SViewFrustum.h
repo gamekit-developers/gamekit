@@ -85,6 +85,7 @@ namespace scene
 		//! recalculates the bounding box member based on the planes
 		inline void recalculateBoundingBox();
 
+		//! update the given state's matrix
 		void setTransformState( video::E_TRANSFORMATION_STATE state);
 
 		//! the position of the camera
@@ -298,16 +299,16 @@ namespace scene
 		{
 			case video::ETS_VIEW:
 				Matrices[ETS_VIEW_PROJECTION_3].setbyproduct_nocheck(
-						Matrices[ video::ETS_PROJECTION],
-						Matrices[ video::ETS_VIEW]);
-				Matrices[ETS_VIEW_MODEL_INVERSE_3] = Matrices[ video::ETS_VIEW];
+						Matrices[video::ETS_PROJECTION],
+						Matrices[video::ETS_VIEW]);
+				Matrices[ETS_VIEW_MODEL_INVERSE_3] = Matrices[video::ETS_VIEW];
 				Matrices[ETS_VIEW_MODEL_INVERSE_3].makeInverse();
 				break;
 
 			case video::ETS_WORLD:
 				Matrices[ETS_CURRENT_3].setbyproduct(
-						Matrices[ ETS_VIEW_PROJECTION_3 ],
-						Matrices[ video::ETS_WORLD]);
+						Matrices[ETS_VIEW_PROJECTION_3 ],
+						Matrices[video::ETS_WORLD]);
 				break;
 			default:
 				break;

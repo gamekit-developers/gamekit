@@ -18,10 +18,15 @@ namespace core
 {
 
 //! Very simple string class with some useful features.
-/** string<c8> and string<wchar_t> work both with unicode AND ascii,
-so you can assign unicode to string<c8> and ascii to string<wchar_t>
-(and the other way round) if your ever would want to.
-Note that the conversation between both is not done using an encoding.
+/** string<c8> and string<wchar_t> both accept Unicode AND ASCII/Latin-1,
+so you can assign Unicode to string<c8> and ASCII/Latin-1 to string<wchar_t>
+(and the other way round) if you want to.
+
+However, note that the conversation between both is not done using any encoding.
+This means that c8 strings are treated as ASCII/Latin-1, not UTF-8, and 
+are simply expanded to the equivalent wchar_t, while Unicode/wchar_t 
+characters are truncated to 8-bit ASCII/Latin-1 characters, discarding all
+other information in the wchar_t.
 
 Known bugs:
 Special characters like umlauts are ignored in the
@@ -41,7 +46,6 @@ public:
 	}
 
 
-
 	//! Constructor
 	string(const string<T>& other)
 	: array(0), allocated(0), used(0)
@@ -49,10 +53,17 @@ public:
 		*this = other;
 	}
 
+	//! Constructor from other string types
+	template <class B>
+	string(const string<B>& other)
+	: array(0), allocated(0), used(0)
+	{
+		*this = other;
+	}
 
 
 	//! Constructs a string from a float
-	string(const double number)
+	explicit string(const double number)
 	: array(0), allocated(0), used(0)
 	{
 		c8 tmpbuf[255];
@@ -61,9 +72,8 @@ public:
 	}
 
 
-
 	//! Constructs a string from an int
-	string(int number)
+	explicit string(int number)
 	: array(0), allocated(0), used(0)
 	{
 		// store if negative and make positive
@@ -111,9 +121,8 @@ public:
 	}
 
 
-
 	//! Constructs a string from an unsigned int
-	string(unsigned int number)
+	explicit string(unsigned int number)
 	: array(0), allocated(0), used(0)
 	{
 		// temporary buffer for 16 numbers
@@ -144,7 +153,6 @@ public:
 	}
 
 
-
 	//! Constructor for copying a string from a pointer with a given length
 	template <class B>
 	string(const B* const c, u32 length)
@@ -167,7 +175,6 @@ public:
 	}
 
 
-
 	//! Constructor for unicode and ascii strings
 	template <class B>
 	string(const B* const c)
@@ -177,13 +184,11 @@ public:
 	}
 
 
-
 	//! destructor
 	~string()
 	{
 		allocator.deallocate(array); // delete [] array;
 	}
-
 
 
 	//! Assignment operator
@@ -203,6 +208,13 @@ public:
 		return *this;
 	}
 
+	//! Assignment operator for other string types
+	template <class B>
+	string<T>& operator=(const string<B>& other)
+	{
+		*this = other.c_str();
+		return *this;
+	}
 
 
 	//! Assignment operator for strings, ascii and unicode
@@ -247,7 +259,8 @@ public:
 		return *this;
 	}
 
-	//! Add operator for other strings
+
+	//! Append operator for other strings
 	string<T> operator+(const string<T>& other) const
 	{
 		string<T> str(*this);
@@ -256,7 +269,8 @@ public:
 		return str;
 	}
 
-	//! Add operator for strings, ascii and unicode
+
+	//! Append operator for strings, ascii and unicode
 	template <class B>
 	string<T> operator+(const B* const c) const
 	{
@@ -283,7 +297,7 @@ public:
 	}
 
 
-	//! Comparison operator
+	//! Equality operator
 	bool operator ==(const T* const str) const
 	{
 		if (!str)
@@ -298,8 +312,7 @@ public:
 	}
 
 
-
-	//! Comparison operator
+	//! Equality operator
 	bool operator ==(const string<T>& other) const
 	{
 		for(u32 i=0; array[i] && other.array[i]; ++i)
@@ -310,7 +323,7 @@ public:
 	}
 
 
-	//! Is smaller operator
+	//! Is smaller comparator
 	bool operator <(const string<T>& other) const
 	{
 		for(u32 i=0; array[i] && other.array[i]; ++i)
@@ -328,39 +341,34 @@ public:
 	}
 
 
-
-	//! Equals not operator
+	//! Inequality operator
 	bool operator !=(const T* const str) const
 	{
 		return !(*this == str);
 	}
 
 
-
-	//! Equals not operator
+	//! Inequality operator
 	bool operator !=(const string<T>& other) const
 	{
 		return !(*this == other);
 	}
 
 
-
 	//! Returns length of string
-	/** \return Returns length of the string in characters. */
+	/** \return Length of the string in characters. */
 	u32 size() const
 	{
 		return used-1;
 	}
 
 
-
 	//! Returns character string
-	/** \return Returns pointer to C-style zero terminated string. */
+	/** \return pointer to C-style zero terminated string. */
 	const T* c_str() const
 	{
 		return array;
 	}
-
 
 
 	//! Makes the string lower case.
@@ -369,7 +377,6 @@ public:
 		for (u32 i=0; i<used; ++i)
 			array[i] = ansi_lower ( array[i] );
 	}
-
 
 
 	//! Makes the string upper case.
@@ -387,10 +394,9 @@ public:
 	}
 
 
-
-	//! Compares the string ignoring case.
+	//! Compares the strings ignoring case.
 	/** \param other: Other string to compare.
-	\return Returns true if the string are equal ignoring case. */
+	\return True if the strings are equal ignoring case. */
 	bool equals_ignore_case(const string<T>& other) const
 	{
 		for(u32 i=0; array[i] && other[i]; ++i)
@@ -400,9 +406,10 @@ public:
 		return used == other.used;
 	}
 
-	//! Compares the string ignoring case.
+
+	//! Compares the strings ignoring case.
 	/** \param other: Other string to compare.
-	\return Returns true if the string is smaller ignoring case. */
+	\return True if this string is smaller ignoring case. */
 	bool lower_ignore_case(const string<T>& other) const
 	{
 		for(u32 i=0; array[i] && other.array[i]; ++i)
@@ -416,8 +423,10 @@ public:
 	}
 
 
-
 	//! compares the first n characters of the strings
+	/** \param other Other string to compare.
+	\param n Number of characters to compare
+	\return True if the n first characters of this string are smaller. */
 	bool equalsn(const string<T>& other, u32 n) const
 	{
 		u32 i;
@@ -432,6 +441,9 @@ public:
 
 
 	//! compares the first n characters of the strings
+	/** \param str Other string to compare.
+	\param n Number of characters to compare
+	\return True if the n first characters of this string are smaller. */
 	bool equalsn(const T* const str, u32 n) const
 	{
 		if (!str)
@@ -459,6 +471,7 @@ public:
 		array[used-2] = character;
 		array[used-1] = 0;
 	}
+
 
 	//! Appends a char string to this string
 	/** \param other: Char string to append. */
@@ -544,7 +557,7 @@ public:
 
 	//! finds first occurrence of character in string
 	/** \param c: Character to search for.
-	\return Returns position where the character has been found,
+	\return Position where the character has been found,
 	or -1 if not found. */
 	s32 findFirst(T c) const
 	{
@@ -560,7 +573,7 @@ public:
 	should find the first occurrence of 'a' or 'b', this parameter should be "ab".
 	\param count: Amount of characters in the list. Usually,
 	this should be strlen(c)
-	\return Returns position where one of the characters has been found,
+	\return Position where one of the characters has been found,
 	or -1 if not found. */
 	s32 findFirstChar(const T* const c, u32 count) const
 	{
@@ -581,7 +594,7 @@ public:
 	should find the first occurrence of a character not 'a' or 'b', this parameter should be "ab".
 	\param count: Amount of characters in the list. Usually,
 	this should be strlen(c)
-	\return Returns position where the character has been found,
+	\return Position where the character has been found,
 	or -1 if not found. */
 	template <class B>
 	s32 findFirstCharNotInList(const B* const c, u32 count) const
@@ -605,7 +618,7 @@ public:
 	should find the first occurrence of a character not 'a' or 'b', this parameter should be "ab".
 	\param count: Amount of characters in the list. Usually,
 	this should be strlen(c)
-	\return Returns position where the character has been found,
+	\return Position where the character has been found,
 	or -1 if not found. */
 	template <class B>
 	s32 findLastCharNotInList(const B* const c, u32 count) const
@@ -627,7 +640,7 @@ public:
 	//! finds next occurrence of character in string
 	/** \param c: Character to search for.
 	\param startPos: Position in string to start searching.
-	\return Returns position where the character has been found,
+	\return Position where the character has been found,
 	or -1 if not found. */
 	s32 findNext(T c, u32 startPos) const
 	{
@@ -640,10 +653,10 @@ public:
 
 
 	//! finds last occurrence of character in string
-	//! \param c: Character to search for.
-	//! \param start: start to search reverse ( default = -1, on end )
-	//! \return Returns position where the character has been found,
-	//! or -1 if not found.
+	/** \param c: Character to search for.
+	\param start: start to search reverse ( default = -1, on end )
+	\return Position where the character has been found,
+	or -1 if not found. */
 	s32 findLast(T c, s32 start = -1) const
 	{
 		start = core::clamp ( start < 0 ? (s32)(used) - 1 : start, 0, (s32)(used) - 1 );
@@ -659,7 +672,7 @@ public:
 	should find the last occurrence of 'a' or 'b', this parameter should be "ab".
 	\param count: Amount of characters in the list. Usually,
 	this should be strlen(c)
-	\return Returns position where one of the characters has been found,
+	\return Position where one of the characters has been found,
 	or -1 if not found. */
 	s32 findLastChar(const T* const c, u32 count) const
 	{
@@ -676,9 +689,9 @@ public:
 
 
 	//! finds another string in this string
-	//! \param str: Another string
-	//! \return Returns positions where the string has been found,
-	//! or -1 if not found.
+	/** \param str: Another string
+	\return Positions where the string has been found,
+	or -1 if not found. */
 	template <class B>
 	s32 find(const B* const str) const
 	{
@@ -709,14 +722,17 @@ public:
 
 
 	//! Returns a substring
-	//! \param begin: Start of substring.
-	//! \param length: Length of substring.
+	/** \param begin: Start of substring.
+	\param length: Length of substring. */
 	string<T> subString(u32 begin, s32 length) const
 	{
+		// if start after string
+		// or no proper substring length
+		if ((length <= 0) || (begin>=size()))
+			return string<T>("");
+		// clamp length to maximal value
 		if ((length+begin) > size())
 			length = size()-begin;
-		if (length <= 0)
-			return string<T>("");
 
 		string<T> o;
 		o.reserve(length+1);
@@ -731,6 +747,8 @@ public:
 	}
 
 
+	//! Appends a character to this string
+	/** \param character: Character to append. */
 	string<T>& operator += (T c)
 	{
 		append(c);
@@ -738,6 +756,8 @@ public:
 	}
 
 
+	//! Appends a char string to this string
+	/** \param other: Char string to append. */
 	string<T>& operator += (const T* const c)
 	{
 		append(c);
@@ -745,6 +765,8 @@ public:
 	}
 
 
+	//! Appends a string to this string
+	/** \param other: String to append. */
 	string<T>& operator += (const string<T>& other)
 	{
 		append(other);
@@ -802,27 +824,27 @@ public:
 				array[i] = replaceWith;
 	}
 
-	//! trims the string.
-	/** Removes whitespace from begin and end of the string. */
-	string<T>& trim()
-	{
-		const c8 whitespace[] = " \t\n\r";
-		const u32 whitespacecount = 4;
 
-		// find start and end of real string without whitespace
-		s32 begin = findFirstCharNotInList(whitespace, whitespacecount);
+	//! trims the string.
+	/** Removes the specified characters (by default, Latin-1 whitespace) 
+	from the begining and the end of the string. */
+	string<T>& trim(const string<T> & whitespace = " \t\n\r")
+	{
+		// find start and end of the substring without the specified characters
+		const s32 begin = findFirstCharNotInList(whitespace.c_str(), whitespace.used);
 		if (begin == -1)
 			return (*this="");
 
-		s32 end = findLastCharNotInList(whitespace, whitespacecount);
+		const s32 end = findLastCharNotInList(whitespace.c_str(), whitespace.used);
 
 		return (*this = subString(begin, (end +1) - begin));
 	}
 
 
-	//! Erases a character from the string. May be slow, because all elements
-	//! following after the erased element have to be copied.
-	//! \param index: Index of element to be erased.
+	//! Erases a character from the string.
+	/** May be slow, because all elements
+	following after the erased element have to be copied.
+	\param index: Index of element to be erased. */
 	void erase(u32 index)
 	{
 		_IRR_DEBUG_BREAK_IF(index>=used) // access violation
@@ -832,8 +854,6 @@ public:
 
 		--used;
 	}
-
-
 
 private:
 /*

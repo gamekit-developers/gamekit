@@ -73,11 +73,17 @@ namespace video
 		//! Is HLSL supported?
 		EVDF_HLSL,
 
+		//! Are non-square textures supported?
+		EVDF_TEXTURE_NSQUARE,
+
 		//! Are non-power-of-two textures supported?
 		EVDF_TEXTURE_NPOT,
 
 		//! Are framebuffer objects supported?
 		EVDF_FRAMEBUFFER_OBJECT,
+
+		//! Are vertex buffer objects supported?
+		EVDF_VERTEX_BUFFER_OBJECT,
 
 		//! Only used for counting the elements of this enum
 		EVDF_COUNT

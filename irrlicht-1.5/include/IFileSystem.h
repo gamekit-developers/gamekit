@@ -32,9 +32,6 @@ class IFileSystem : public virtual IReferenceCounted
 {
 public:
 
-	//! Destructor
-	virtual ~IFileSystem() {}
-
 	//! Opens a file for read access.
 	/** \param filename: Name of file to open.
 	\return Returns a pointer to the created file interface.
@@ -120,6 +117,11 @@ public:
 	\return String containing the directory of the file. */
 	virtual core::stringc getFileDir(const core::stringc& filename) const = 0;
 
+	//! Returns the base part of a filename, i.e. the name without the directory
+	//! part. If no directory is prefixed, the full name is returned.
+	/** \param filename: The file to get the basename from */
+	virtual core::stringc getFileBasename(const core::stringc& filename, bool keepExtension=true) const = 0;
+
 	//! Creates a list of files and directories in the current working directory and returns it.
 	/** \return a Pointer to the created IFileList is returned. After the list has been used
 	it has to be deleted using its IFileList::drop() method.
@@ -130,6 +132,11 @@ public:
 	/** \param filename is the string identifying the file which should be tested for existence.
 	\return Returns true if file exists, and false if it does not exist or an error occured. */
 	virtual bool existFile(const c8* filename) const = 0;
+
+	//! Determines if a file exists and could be opened.
+	/** \param filename is the string identifying the file which should be tested for existence.
+	\return Returns true if file exists, and false if it does not exist or an error occured. */
+	virtual bool existFile(const core::stringc& filename) const = 0;
 
 	//! Creates a XML Reader from a file which returns all parsed strings as wide characters (wchar_t*).
 	/** Use createXMLReaderUTF8() if you prefer char* instead of wchar_t*. See IIrrXMLReader for
@@ -184,7 +191,7 @@ public:
 	//! Creates a new empty collection of attributes, usable for serialization and more.
 	/** \param driver: Video driver to be used to load textures when specified as attribute values.
 	Can be null to prevent automatic texture loading by attributes.
-	\return Returns a pointer to the created object.
+	\return Pointer to the created object.
 	If you no longer need the object, you should call IAttributes::drop().
 	See IReferenceCounted::drop() for more information. */
 	virtual IAttributes* createEmptyAttributes(video::IVideoDriver* driver=0) = 0;

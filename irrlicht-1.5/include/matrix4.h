@@ -179,19 +179,16 @@ namespace core
 			//! Transforms a plane by this matrix
 			void transformPlane( core::plane3d<f32> &plane) const;
 
-			//! Transforms a plane by this matrix ( some problems to solve..)
-			void transformPlane_new( core::plane3d<f32> &plane) const;
-
 			//! Transforms a plane by this matrix
 			void transformPlane( const core::plane3d<f32> &in, core::plane3d<f32> &out) const;
 
 			//! Transforms a axis aligned bounding box
-			/** The result box of this operation may not be very accurate. For
-			accurate results, use transformBoxEx() */
+			/** The result box of this operation may not be accurate at all. For
+			correct results, use transformBoxEx() */
 			void transformBox(core::aabbox3d<f32>& box) const;
 
-			//! Transforms a axis aligned bounding box more accurately than transformBox()
-			/** The result box of this operation should by quite accurate, but this operation
+			//! Transforms a axis aligned bounding box
+			/** The result box of this operation should by accurate, but this operation
 			is slower than transformBox(). */
 			void transformBoxEx(core::aabbox3d<f32>& box) const;
 
@@ -287,6 +284,13 @@ namespace core
 			\param y Offset on y axis
 			\return Altered matrix */
 			CMatrix4<T>& setTextureTranslate( f32 x, f32 y );
+
+			//! Set texture transformation translation, using a transposed representation
+			/** Doesn't clear other elements than those affected.
+			\param x Offset on x axis
+			\param y Offset on y axis
+			\return Altered matrix */
+			CMatrix4<T>& setTextureTranslateTransposed( f32 x, f32 y );
 
 			//! Set texture transformation scale
 			/** Doesn't clear other elements than those affected.
@@ -705,8 +709,10 @@ namespace core
 	}
 
 
-	//! Returns the rotation, as set by setRotation(). This code was sent
-	//! in by Chev.
+	//! Returns a rotation that is equivalent to that set by setRotationDegrees().
+	/** This code was sent in by Chev.  Note that it does not necessarily return
+	the *same* Euler angles as those set by setRotationDegrees(), but the rotation will
+	be equivalent, i.e. will have the same result when used to rotate a vector or node. */
 	template <class T>
 	inline core::vector3d<T> CMatrix4<T>::getRotationDegrees() const
 	{
@@ -921,31 +927,26 @@ namespace core
 	inline void CMatrix4<T>::transformPlane( core::plane3d<f32> &plane) const
 	{
 		vector3df member;
+		// Fully transform the plane member point, i.e. rotate, translate and scale it.
 		transformVect(member, plane.getMemberPoint());
 
-		vector3df origin(0,0,0);
-		transformVect(plane.Normal);
-		transformVect(origin);
+		vector3df normal = plane.Normal;
+		normal.normalize();
 
-		plane.Normal -= origin;
-		plane.D = - member.dotProduct(plane.Normal);
-	}
+		// The normal needs to be rotated and inverse scaled, but not translated.
+		const vector3df scale = getScale();
 
-	//! Transforms a plane by this matrix
-	template <class T>
-	inline void CMatrix4<T>::transformPlane_new( core::plane3d<f32> &plane) const
-	{
-		// rotate normal -> rotateVect ( plane.n );
-		vector3df n;
-		n.X = plane.Normal.X*M[0] + plane.Normal.Y*M[4] + plane.Normal.Z*M[8];
-		n.Y = plane.Normal.X*M[1] + plane.Normal.Y*M[5] + plane.Normal.Z*M[9];
-		n.Z = plane.Normal.X*M[2] + plane.Normal.Y*M[6] + plane.Normal.Z*M[10];
+		if(!equals(scale.X, 0.f) && !equals(scale.Y, 0.f) && !equals(scale.Z, 0.f)
+			&& (!equals(scale.X, 1.f) || !equals(scale.Y, 1.f) || !equals(scale.Z, 1.f)))
+		{
+			// Rotating the vector will also apply the scale, so we have to invert it twice.
+			normal /= (scale * scale);
+		}
 
-		// compute new d. -> getTranslation(). dotproduct ( plane.n )
-		plane.D -= M[12] * n.X + M[13] * n.Y + M[14] * n.Z;
-		plane.Normal.X = n.X;
-		plane.Normal.Y = n.Y;
-		plane.Normal.Z = n.Z;
+		rotateVect(normal);
+
+		normal.normalize();
+		plane.setPlane(member, normal);
 	}
 
 	//! Transforms a plane by this matrix
@@ -1658,6 +1659,15 @@ namespace core
 
 
 	template <class T>
+	inline CMatrix4<T>& CMatrix4<T>::setTextureTranslateTransposed ( f32 x, f32 y )
+	{
+		M[2] = (T)x;
+		M[6] = (T)y;
+		definitelyIdentityMatrix = definitelyIdentityMatrix && (x==0.0f) && (y==0.0f) ;
+		return *this;
+	}
+
+	template <class T>
 	inline CMatrix4<T>& CMatrix4<T>::setTextureScale ( f32 sx, f32 sy )
 	{
 		M[0] = (T)sx;
@@ -1717,7 +1727,7 @@ namespace core
 	//! Typedef for f32 matrix
 	typedef CMatrix4<f32> matrix4;
 	//! global const identity matrix
-	const matrix4 IdentityMatrix(matrix4::EM4CONST_IDENTITY);
+	IRRLICHT_API extern const matrix4 IdentityMatrix;
 
 } // end namespace core
 } // end namespace irr

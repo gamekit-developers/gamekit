@@ -21,8 +21,26 @@ class IShaderConstantSetCallBack : public virtual IReferenceCounted
 {
 public:
 
-	//! Destructor.
-	virtual ~IShaderConstantSetCallBack() {}
+	//! Called to let the callBack know the used material (optional method)
+	/**
+	 \code
+	class MyCallBack : public IShaderConstantSetCallBack
+	{
+		const video::SMaterial *UsedMaterial;
+
+		OnSetMaterial(const video::SMaterial& material)
+		{
+			UsedMaterial=&material;
+		}
+
+		OnSetConstants(IMaterialRendererServices* services, s32 userData)
+		{
+			services->setVertexShaderConstant("myColor", reinterpret_cast<f32*>(&UsedMaterial->color), 4);
+		}
+	}
+	\endcode
+	*/
+	virtual void OnSetMaterial(const SMaterial& material) { }
 
 	//! Called by the engine when the vertex and/or pixel shader constants for an material renderer should be set.
 	/**

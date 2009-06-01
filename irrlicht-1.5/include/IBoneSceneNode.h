@@ -60,7 +60,8 @@ namespace scene
 			ISceneNode(parent, mgr, id),positionHint(-1),scaleHint(-1),rotationHint(-1) { }
 
 		//! Get the name of the bone
-		virtual const c8* getBoneName() const = 0;
+		/** \deprecated Use getName instead. */
+		virtual const c8* getBoneName() const { return getName(); }
 
 		//! Get the index of the bone
 		virtual u32 getBoneIndex() const = 0;
@@ -89,7 +90,7 @@ namespace scene
 		virtual void setSkinningSpace( E_BONE_SKINNING_SPACE space ) =0;
 
 		//! How the relative transformation of the bone is used
-		virtual E_BONE_SKINNING_SPACE getSkinningSpace() const=0;
+		virtual E_BONE_SKINNING_SPACE getSkinningSpace() const =0;
 
 		//! Updates the absolute position based on the relative and the parents position
 		virtual void updateAbsolutePositionOfAllChildren()=0;

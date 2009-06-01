@@ -19,16 +19,7 @@ namespace scene
 	struct SAnimatedMesh : public IAnimatedMesh
 	{
 		//! constructor
-		SAnimatedMesh() : IAnimatedMesh(), Type(EAMT_UNKNOWN)
-		{
-			#ifdef _DEBUG
-			setDebugName("SAnimatedMesh");
-			#endif
-		}
-
-
-		//! constructor
-		SAnimatedMesh(scene::IMesh* mesh, scene::E_ANIMATED_MESH_TYPE type) : IAnimatedMesh(), Type(type)
+		SAnimatedMesh(scene::IMesh* mesh=0, scene::E_ANIMATED_MESH_TYPE type=scene::EAMT_UNKNOWN) : IAnimatedMesh(), Type(type)
 		{
 			#ifdef _DEBUG
 			setDebugName("SAnimatedMesh");
@@ -92,7 +83,7 @@ namespace scene
 
 
 		//! set user axis aligned bounding box
-		virtual void setBoundingBox( const core::aabbox3df& box)
+		virtual void setBoundingBox(const core::aabbox3df& box)
 		{
 			Box = box;
 		}
@@ -157,6 +148,20 @@ namespace scene
 		{
 			for (u32 i=0; i<Meshes.size(); ++i)
 				Meshes[i]->setMaterialFlag(flag, newvalue);
+		}
+
+		//! set the hardware mapping hint, for driver
+		virtual void setHardwareMappingHint( E_HARDWARE_MAPPING newMappingHint, E_BUFFER_TYPE buffer=EBT_VERTEX_AND_INDEX )
+		{
+			for (u32 i=0; i<Meshes.size(); ++i)
+				Meshes[i]->setHardwareMappingHint(newMappingHint, buffer);
+		}
+
+		//! flags the meshbuffer as changed, reloads hardware buffers
+		virtual void setDirty(E_BUFFER_TYPE buffer=EBT_VERTEX_AND_INDEX)
+		{
+			for (u32 i=0; i<Meshes.size(); ++i)
+				Meshes[i]->setDirty(buffer);
 		}
 
 		//! The bounding box of this mesh

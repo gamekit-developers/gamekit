@@ -41,9 +41,6 @@ namespace irr
 	{
 	public:
 
-		//! Destructor
-		virtual ~IrrlichtDevice() {}
-
 		//! Runs the device.
 		/** Also increments the virtual timer by calling
 		ITimer::tick();. You can prevent this
@@ -154,6 +151,22 @@ namespace irr
 		\return True if window is active. */
 		virtual bool isWindowActive() const = 0;
 
+		//! Checks if the Irrlicht window has focus
+		/** \return True if window has focus. */
+		virtual bool isWindowFocused() const = 0;
+
+		//! Checks if the Irrlicht window is minimized
+		/** \return True if window is minimized. */
+		virtual bool isWindowMinimized() const = 0;
+
+		//! Checks if the Irrlicht window is running in fullscreen mode
+		/** \return True if window is fullscreen. */
+		virtual bool isFullscreen() const = 0;
+
+		//! Get the current color format of the window
+		/** \return Color format of the window. */
+		virtual video::ECOLOR_FORMAT getColorFormat() const = 0;
+
 		//! Notifies the device that it should close itself.
 		/** IrrlichtDevice::run() will always return false after closeDevice() was called. */
 		virtual void closeDevice() = 0;
@@ -164,8 +177,11 @@ namespace irr
 		\return String which contains the version. */
 		virtual const c8* getVersion() const = 0;
 
-		//! Sets a new event receiver to receive events.
-		/** \param receiver New receiver to be used. */
+		//! Sets a new user event receiver which will receive events from the engine. 
+		/** Return true in IEventReceiver::OnEvent to prevent the event from continuing along 
+		the chain of event receivers. The path that an event takes through the system depends
+		on its type. See irr::EEVENT_TYPE for details.
+		\param receiver New receiver to be used. */
 		virtual void setEventReceiver(IEventReceiver* receiver) = 0;
 
 		//! Provides access to the current event receiver.
@@ -191,6 +207,16 @@ namespace irr
 		mode.
 		\param resize Flag whether the window should be resizeable. */
 		virtual void setResizeAble(bool resize=false) = 0;
+
+		//! Activate any joysticks, and generate events for them.
+		/** Irrlicht contains support for joysticks, but does not generate joystick events by default,
+		as this would consume joystick info that 3rd party libraries might rely on. Call this method to 
+		activate joystick support in Irrlicht and to receive @ref SJoystickEvent events.
+		\param joystickInfo On return, this will contain an array of each joystick that was found and activated.
+		\return true if joysticks are supported on this device and _IRR_COMPILE_WITH_JOYSTICK_EVENTS_
+				is defined, false if joysticks are not supported or support is compiled out.
+		*/
+		virtual bool activateJoysticks(core::array<SJoystickInfo> & joystickInfo) = 0;
 	};
 
 } // end namespace irr
