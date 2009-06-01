@@ -22,13 +22,15 @@ namespace scene
 			const core::vector3df& position = core::vector3df(0,0,0),
 			const core::vector3df& lookat = core::vector3df(0,0,100));
 
-		//! destructor
-		virtual ~CCameraSceneNode();
-
-		//! Sets the projection matrix of the camera. The core::matrix4 class has some methods
-		//! to build a projection matrix. e.g: core::matrix4::buildProjectionMatrixPerspectiveFovLH
-		//! \param projection: The new projection matrix of the camera. 
-		virtual void setProjectionMatrix(const core::matrix4& projection);
+		//! Sets the projection matrix of the camera.
+		/** The core::matrix4 class has some methods
+		to build a projection matrix. e.g: core::matrix4::buildProjectionMatrixPerspectiveFovLH.
+		Note that the matrix will only stay as set by this method until one of
+		the following Methods are called: setNearValue, setFarValue, setAspectRatio, setFOV.
+		\param projection The new projection matrix of the camera.
+		\param isOrthogonal Set this to true if the matrix is an orthogonal one (e.g.
+		from matrix4::buildProjectionMatrixOrthoLH(). */
+		virtual void setProjectionMatrix(const core::matrix4& projection, bool isOrthogonal = false);
 
 		//! Gets the current projection matrix of the camera
 		//! \return Returns the current projection matrix of the camera.
@@ -45,13 +47,22 @@ namespace scene
 		//! for changing their position, look at target or whatever. 
 		virtual bool OnEvent(const SEvent& event);
 
-		//! sets the look at target of the camera
-		//! \param pos: Look at target of the camera.
+		//! Sets the look at target of the camera
+		/** If the camera's target and rotation are bound ( @see bindTargetAndRotation() )
+		then calling this will also change the camera's scene node rotation to match the target.
+		\param pos: Look at target of the camera. */
 		virtual void setTarget(const core::vector3df& pos);
 
+		//! Sets the rotation of the node.
+		/** This only modifies the relative rotation of the node.
+		If the camera's target and rotation are bound ( @see bindTargetAndRotation() )
+		then calling this will also change the camera's target to match the rotation.
+		\param rotation New rotation of the node in degrees. */
+		virtual void setRotation(const core::vector3df& rotation);
+
 		//! Gets the current look at target of the camera
-		//! \return Returns the current look at target of the camera
-		virtual core::vector3df getTarget() const;
+		/** \return The current look at target of the camera */
+		virtual const core::vector3df& getTarget() const;
 
 		//! Sets the up vector of the camera.
 		//! \param pos: New upvector of the camera.
@@ -59,7 +70,7 @@ namespace scene
 
 		//! Gets the up vector of the camera.
 		//! \return Returns the up vector of the camera.
-		virtual core::vector3df getUpVector() const;
+		virtual const core::vector3df& getUpVector() const;
 
 		//! Gets distance from the camera to the near plane.
 		//! \return Value of the near plane of the camera.
@@ -118,7 +129,11 @@ namespace scene
 		//! Returns type of the scene node
 		virtual ESCENE_NODE_TYPE getType() const { return ESNT_CAMERA; }
 
-		virtual core::vector3df getAbsolutePosition() const;
+		//! Binds the camera scene node's rotation to its target position and vice vera, or unbinds them.
+		virtual void bindTargetAndRotation(bool bound);
+
+		//! Queries if the camera scene node's rotation and its target position are bound together.
+		virtual bool getTargetAndRotationBinding(void) const;
 
 	protected:
 
@@ -136,6 +151,8 @@ namespace scene
 		SViewFrustum ViewArea;
 
 		bool InputReceiverEnabled;
+
+		bool TargetAndRotationAreBound;
 	};
 
 } // end namespace

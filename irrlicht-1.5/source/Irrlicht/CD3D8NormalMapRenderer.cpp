@@ -115,6 +115,11 @@ namespace video
 		: CD3D8ShaderMaterialRenderer(d3ddev, driver, 0, baseMaterial), 
 		CompiledShaders(true)
 	{
+
+		#ifdef _DEBUG
+		setDebugName("CD3D8NormalMapRenderer");
+		#endif
+
 		// set this as callback. We could have done this in 
 		// the initialization list, but some compilers don't like it.
 
@@ -151,7 +156,11 @@ namespace video
 			// compile shaders on our own
 			init(outMaterialTypeNr, D3D8_NORMAL_MAP_VSH, D3D8_NORMAL_MAP_PSH, EVT_TANGENTS);
 		}
+		// something failed, use base material
+		if (-1==outMaterialTypeNr)
+			driver->addMaterialRenderer(this);
 	}
+
 
 	CD3D8NormalMapRenderer::~CD3D8NormalMapRenderer()
 	{
@@ -165,6 +174,7 @@ namespace video
 			PixelShader = 0;
 		}
 	}
+
 
 	bool CD3D8NormalMapRenderer::OnRender(IMaterialRendererServices* service, E_VERTEX_TYPE vtxtype)
 	{

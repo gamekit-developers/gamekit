@@ -32,7 +32,7 @@ namespace video
 
 //! rendertarget constructor
 CD3D8Texture::CD3D8Texture(CD3D8Driver* driver, core::dimension2d<s32> size, const char* name)
-: ITexture(name), Image(0), Texture(0), RTTSurface(0), Driver(driver),
+: ITexture(name), Texture(0), RTTSurface(0), Driver(driver),
 	TextureSize(size), ImageSize(size), Pitch(0),
 	HasMipMaps(false), IsRenderTarget(true)
 {
@@ -51,7 +51,7 @@ CD3D8Texture::CD3D8Texture(CD3D8Driver* driver, core::dimension2d<s32> size, con
 //! constructor
 CD3D8Texture::CD3D8Texture(IImage* image, CD3D8Driver* driver,
 				u32 flags, const char* name)
-: ITexture(name), Image(image), Texture(0), RTTSurface(0), Driver(driver),
+: ITexture(name), Texture(0), RTTSurface(0), Driver(driver),
 TextureSize(0,0), ImageSize(0,0), Pitch(0),
 HasMipMaps(false), IsRenderTarget(false)
 {
@@ -65,13 +65,11 @@ HasMipMaps(false), IsRenderTarget(false)
 	if (Device)
 		Device->AddRef();
 
-	if (Image)
+	if (image)
 	{
-		Image->grab();
-
-		if (createTexture(flags))
+		if (createTexture(image, flags))
 		{
-			if (copyTexture() && generateMipLevels)
+			if (copyTexture(image) && generateMipLevels)
 			{
 				// create mip maps.
 
@@ -100,32 +98,29 @@ HasMipMaps(false), IsRenderTarget(false)
 //! destructor
 CD3D8Texture::~CD3D8Texture()
 {
-	if (Device)
-		Device->Release();
-
-	if (Image)
-		Image->drop();
-
 	if (Texture)
 		Texture->Release();
 
 	if (RTTSurface)
 		RTTSurface->Release();
+
+	if (Device)
+		Device->Release();
 }
 
 
 //! creates the hardware texture
-bool CD3D8Texture::createTexture(u32 flags)
+bool CD3D8Texture::createTexture(video::IImage* image, u32 flags)
 {
 	core::dimension2d<s32> optSize;
-	ImageSize = Image->getDimension();
+	ImageSize = image->getDimension();
 
 	if (Driver->queryFeature(EVDF_TEXTURE_NPOT))
 		optSize=ImageSize;
 	else
 	{
-		optSize.Width = getTextureSizeFromImageSize(ImageSize.Width);
-		optSize.Height = getTextureSizeFromImageSize(ImageSize.Height);
+		optSize.Width = getTextureSizeFromSurfaceSize(ImageSize.Width);
+		optSize.Height = getTextureSizeFromSurfaceSize(ImageSize.Height);
 	}
 
 	HRESULT hr;
@@ -139,7 +134,7 @@ bool CD3D8Texture::createTexture(u32 flags)
 		format = D3DFMT_A8R8G8B8; break;
 	case ETCF_OPTIMIZED_FOR_QUALITY:
 		{
-			switch(Image->getColorFormat())
+			switch(image->getColorFormat())
 			{
 			case ECF_R8G8B8:
 			case ECF_A8R8G8B8:
@@ -187,11 +182,10 @@ bool CD3D8Texture::createTexture(u32 flags)
 }
 
 
-
 //! copies the image to the texture
-bool CD3D8Texture::copyTexture()
+bool CD3D8Texture::copyTexture(video::IImage* image)
 {
-	if (Texture && Image)
+	if (Texture && image)
 	{
 		D3DSURFACE_DESC desc;
 		Texture->GetLevelDesc(0, &desc);
@@ -208,7 +202,7 @@ bool CD3D8Texture::copyTexture()
 		}
 
 		Pitch = rect.Pitch;
-		Image->copyToScaling(rect.pBits, TextureSize.Width, TextureSize.Height, ColorFormat, Pitch);
+		image->copyToScaling(rect.pBits, TextureSize.Width, TextureSize.Height, ColorFormat, Pitch);
 
 		hr = Texture->UnlockRect(0);
 		if (FAILED(hr))
@@ -223,7 +217,7 @@ bool CD3D8Texture::copyTexture()
 
 
 //! lock function
-void* CD3D8Texture::lock()
+void* CD3D8Texture::lock(bool readOnly)
 {
 	if (!Texture)
 		return 0;
@@ -232,7 +226,7 @@ void* CD3D8Texture::lock()
 	D3DLOCKED_RECT rect;
 	if(!IsRenderTarget)
 	{
-		hr = Texture->LockRect(0, &rect, 0, 0);
+		hr = Texture->LockRect(0, &rect, 0, readOnly?D3DLOCK_READONLY:0);
 	}
 	else
 	{
@@ -248,21 +242,21 @@ void* CD3D8Texture::lock()
 			}
 		}
 
-		IDirect3DSurface8 *surface = NULL;
+		IDirect3DSurface8 *surface = 0;
 		hr = Texture->GetSurfaceLevel(0, &surface);
 		if (FAILED(hr))
 		{
 			os::Printer::log("Could not lock DIRECT3D8 Texture.", ELL_ERROR);
 			return 0;
 		}
-		hr = Device->CopyRects(surface, NULL, 0, RTTSurface, NULL);
+		hr = Device->CopyRects(surface, 0, 0, RTTSurface, 0);
 		surface->Release();
 		if(FAILED(hr))
 		{
 			os::Printer::log("Could not lock DIRECT3D8 Texture.", ELL_ERROR);
 			return 0;
 		}
-		hr = RTTSurface->LockRect(&rect, NULL, 0);
+		hr = RTTSurface->LockRect(&rect, 0, readOnly?D3DLOCK_READONLY:0);
 		if(FAILED(hr))
 		{
 			os::Printer::log("Could not lock DIRECT3D8 Texture.", ELL_ERROR);
@@ -278,7 +272,6 @@ void* CD3D8Texture::lock()
 
 	return rect.pBits;
 }
-
 
 
 //! unlock function
@@ -309,7 +302,7 @@ const core::dimension2d<s32>& CD3D8Texture::getSize() const
 
 
 //! returns the size of a texture which would be the optimize size for rendering it
-inline s32 CD3D8Texture::getTextureSizeFromImageSize(s32 size) const
+inline s32 CD3D8Texture::getTextureSizeFromSurfaceSize(s32 size) const
 {
 	s32 ts = 0x01;
 
@@ -559,8 +552,8 @@ void CD3D8Texture::copy32BitMipMap(char* src, char* tgt,
 
 void CD3D8Texture::createRenderTarget()
 {
-	TextureSize.Width = getTextureSizeFromImageSize(TextureSize.Width);
-	TextureSize.Height = getTextureSizeFromImageSize(TextureSize.Height);
+	TextureSize.Width = getTextureSizeFromSurfaceSize(TextureSize.Width);
+	TextureSize.Height = getTextureSizeFromSurfaceSize(TextureSize.Height);
 
 	// get backbuffer format to create the render target in the
 	// same format

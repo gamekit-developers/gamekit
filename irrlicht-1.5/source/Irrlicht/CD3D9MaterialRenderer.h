@@ -102,7 +102,9 @@ public:
 			unpack_texureBlendFunc ( srcFact, dstFact, modulate, material.MaterialTypeParam );
 
 			if (srcFact == EBF_SRC_COLOR && dstFact == EBF_ZERO)
+			{
 				pID3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+			}
 			else
 			{
 				pID3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
@@ -137,7 +139,7 @@ public:
 		u32 getD3DBlend ( E_BLEND_FACTOR factor ) const
 		{
 			u32 r = 0;
-		switch ( factor )
+			switch ( factor )
 			{
 				case EBF_ZERO:					r = D3DBLEND_ZERO; break;
 				case EBF_ONE:					r = D3DBLEND_ONE; break;
@@ -157,7 +159,7 @@ public:
 		u32 getTexelAlpha ( E_BLEND_FACTOR factor ) const
 		{
 			u32 r = 0;
-		switch ( factor )
+			switch ( factor )
 			{
 				case EBF_SRC_ALPHA:				r = 1; break;
 				case EBF_ONE_MINUS_SRC_ALPHA:	r = 1; break;
@@ -179,6 +181,8 @@ public:
 			}
 			return r;
 		}
+
+		bool transparent;
 
 };
 
@@ -314,14 +318,9 @@ public:
 			pID3DDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 			pID3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
 
-			s32 refValue = core::floor32(material.MaterialTypeParam * 255.f);
-			if ( !refValue )
-				refValue = 127; // default value
-
-			pID3DDevice->SetRenderState(D3DRS_ALPHAREF, refValue);
+			pID3DDevice->SetRenderState(D3DRS_ALPHAREF, core::floor32(material.MaterialTypeParam * 255.f));
 			pID3DDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
 			pID3DDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-
 		}
 
 		services->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
@@ -366,11 +365,7 @@ public:
 
 			pID3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 
-			s32 refValue = core::floor32(material.MaterialTypeParam * 255);
-			if ( !refValue )
-				refValue = 127; // default value
-
-			pID3DDevice->SetRenderState(D3DRS_ALPHAREF,refValue);
+			pID3DDevice->SetRenderState(D3DRS_ALPHAREF, core::floor32(material.MaterialTypeParam * 255));
 			pID3DDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
 			pID3DDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 		}

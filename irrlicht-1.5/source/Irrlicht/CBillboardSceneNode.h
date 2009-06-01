@@ -15,14 +15,14 @@ namespace scene
 
 //! Scene node which is a billboard. A billboard is like a 3d sprite: A 2d element,
 //! which always looks to the camera. 
-class CBillboardSceneNode : public IBillboardSceneNode
+class CBillboardSceneNode : virtual public IBillboardSceneNode
 {
 public:
 
 	//! constructor
 	CBillboardSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 id,	
 		const core::vector3df& position, const core::dimension2d<f32>& size,
-		video::SColor shade_top=video::SColor(0xFFFFFFFF),video::SColor shade_down=video::SColor(0xFFFFFFFF));
+		video::SColor colorTop=video::SColor(0xFFFFFFFF),video::SColor colorBottom=video::SColor(0xFFFFFFFF));
 
 	//! pre render event
 	virtual void OnRegisterSceneNode();

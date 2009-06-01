@@ -18,6 +18,8 @@ namespace video
 {
 
 class CD3D9Driver;
+// forward declaration for RTT depth buffer handling
+struct SDepthSurface;
 /*!
 	interface for a Video Driver dependent Texture.
 */
@@ -30,13 +32,13 @@ public:
 		u32 flags, const char* name);
 
 	//! rendertarget constructor
-	CD3D9Texture(CD3D9Driver* driver, core::dimension2d<s32> size, const char* name);
+	CD3D9Texture(CD3D9Driver* driver, const core::dimension2d<s32>& size, const char* name);
 
 	//! destructor
 	virtual ~CD3D9Texture();
 
 	//! lock function
-	virtual void* lock();
+	virtual void* lock(bool readOnly = false);
 
 	//! unlock function
 	virtual void unlock();
@@ -57,7 +59,7 @@ public:
 	virtual u32 getPitch() const;
 
 	//! returns the DIRECT3D9 Texture
-	IDirect3DTexture9* getDX9Texture() const;
+	IDirect3DBaseTexture9* getDX9Texture() const;
 
 	//! returns if texture has mipmap levels
 	bool hasMipMaps() const;
@@ -73,23 +75,18 @@ public:
 	IDirect3DSurface9* getRenderTargetSurface();
 
 private:
+	friend class CD3D9Driver;
 
 	void createRenderTarget();
 
 	//! returns the size of a texture which would be the optimize size for rendering it
-	inline s32 getTextureSizeFromImageSize(s32 size) const;
+	inline s32 getTextureSizeFromSurfaceSize(s32 size) const;
 
 	//! creates the hardware texture
-	bool createTexture(u32 flags);
+	bool createTexture(u32 flags, IImage * image);
 
 	//! copies the image to the texture
-	bool copyTexture();
-
-	//! Get D3D color format from Irrlicht color format.
-	D3DFORMAT getD3DFormatFromColorFormat(ECOLOR_FORMAT format) const;
-
-	//! Get Irrlicht color format from D3D color format.
-	ECOLOR_FORMAT getColorFormatFromD3DFormat(D3DFORMAT format);
+	bool copyTexture(IImage * image);
 
 	//! Helper function for mipmap generation.
 	bool createMipMaps(u32 level=1);
@@ -102,11 +99,14 @@ private:
 	void copy32BitMipMap(char* src, char* tgt,
 		s32 width, s32 height,  s32 pitchsrc, s32 pitchtgt) const;
 
-	IImage* Image;
+	//! set Pitch based on the d3d format
+	void setPitch(D3DFORMAT d3dformat);
+
 	IDirect3DDevice9* Device;
 	IDirect3DTexture9* Texture;
 	IDirect3DSurface9* RTTSurface;
 	CD3D9Driver* Driver;
+	SDepthSurface* DepthSurface;
 	core::dimension2d<s32> TextureSize;
 	core::dimension2d<s32> ImageSize;
 	s32 Pitch;
@@ -124,4 +124,5 @@ private:
 #endif // _IRR_COMPILE_WITH_DIRECT3D_9_
 
 #endif // __C_DIRECTX9_TEXTURE_H_INCLUDED__
+
 

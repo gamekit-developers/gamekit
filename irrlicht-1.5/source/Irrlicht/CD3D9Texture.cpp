@@ -30,8 +30,8 @@ namespace video
 {
 
 //! rendertarget constructor
-CD3D9Texture::CD3D9Texture(CD3D9Driver* driver, core::dimension2d<s32> size, const char* name)
-: ITexture(name), Image(0), Texture(0), RTTSurface(0), Driver(driver),
+CD3D9Texture::CD3D9Texture(CD3D9Driver* driver, const core::dimension2d<s32>& size, const char* name)
+: ITexture(name), Texture(0), RTTSurface(0), Driver(driver), DepthSurface(0),
 	TextureSize(size), ImageSize(size), Pitch(0),
 	HasMipMaps(false), HardwareMipMaps(false), IsRenderTarget(true)
 {
@@ -50,7 +50,7 @@ CD3D9Texture::CD3D9Texture(CD3D9Driver* driver, core::dimension2d<s32> size, con
 //! constructor
 CD3D9Texture::CD3D9Texture(IImage* image, CD3D9Driver* driver,
 					   u32 flags, const char* name)
-: ITexture(name), Image(image), Texture(0), RTTSurface(0), Driver(driver),
+: ITexture(name), Texture(0), RTTSurface(0), Driver(driver), DepthSurface(0),
 TextureSize(0,0), ImageSize(0,0), Pitch(0),
 HasMipMaps(false), HardwareMipMaps(false), IsRenderTarget(false)
 {
@@ -64,13 +64,11 @@ HasMipMaps(false), HardwareMipMaps(false), IsRenderTarget(false)
 	if (Device)
 		Device->AddRef();
 
-	if (Image)
+	if (image)
 	{
-		Image->grab();
-
-		if (createTexture(flags))
+		if (createTexture(flags, image))
 		{
-			if (copyTexture() && generateMipLevels)
+			if (copyTexture(image) && generateMipLevels)
 			{
 				// create mip maps.
 				#ifdef _IRR_USE_D3DXFilterTexture_
@@ -97,48 +95,39 @@ HasMipMaps(false), HardwareMipMaps(false), IsRenderTarget(false)
 //! destructor
 CD3D9Texture::~CD3D9Texture()
 {
-	if (Device)
-		Device->Release();
-
-	if (Image)
-		Image->drop();
-
 	if (Texture)
 		Texture->Release();
 
 	if (RTTSurface)
 		RTTSurface->Release();
+
+	// if this texture was the last one using the depth buffer
+	// we can release the surface. We only use the value of the pointer
+	// hence it is safe to use the dropped pointer...
+	if (DepthSurface)
+		if (DepthSurface->drop())
+			Driver->removeDepthSurface(DepthSurface);
+
+	if (Device)
+		Device->Release();
 }
 
 
 void CD3D9Texture::createRenderTarget()
 {
-	TextureSize.Width = getTextureSizeFromImageSize(TextureSize.Width);
-	TextureSize.Height = getTextureSizeFromImageSize(TextureSize.Height);
-
-	// get backbuffer format to create the render target in the
-	// same format
-
-	IDirect3DSurface9* bb;
-	D3DFORMAT d3DFormat = D3DFMT_A8R8G8B8;
-
-	if (!FAILED(Device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &bb)))
+	// are texture size restrictions there ?
+	if(!Driver->queryFeature(EVDF_TEXTURE_NPOT))
 	{
-		D3DSURFACE_DESC desc;
-		bb->GetDesc(&desc);
-		d3DFormat = desc.Format;
-
-		if (d3DFormat == D3DFMT_X8R8G8B8)
-			d3DFormat = D3DFMT_A8R8G8B8;
-
-		bb->Release();
+		TextureSize.Width = getTextureSizeFromSurfaceSize(TextureSize.Width);
+		TextureSize.Height = getTextureSizeFromSurfaceSize(TextureSize.Height);
+		if (TextureSize != ImageSize)
+			os::Printer::log("RenderTarget size has to be a power of two", ELL_INFORMATION);
 	}
-	else
-	{
-		os::Printer::log("Could not create RenderTarget texture: could not get BackBuffer.",
-			ELL_WARNING);
-		return;
-	}
+
+	// get irrlicht format from backbuffer
+	ColorFormat = Driver->getColorFormat();
+	D3DFORMAT d3dformat = Driver->getD3DColorFormat();
+	setPitch(d3dformat);
 
 	// create texture
 	HRESULT hr;
@@ -148,16 +137,24 @@ void CD3D9Texture::createRenderTarget()
 		TextureSize.Height,
 		1, // mip map level count, we don't want mipmaps here
 		D3DUSAGE_RENDERTARGET,
-		d3DFormat,
+		d3dformat,
 		D3DPOOL_DEFAULT,
 		&Texture,
 		NULL);
 
-	// get irrlicht format from D3D format
-	ColorFormat = getColorFormatFromD3DFormat(d3DFormat);
-
 	if (FAILED(hr))
-		os::Printer::log("Could not create render target texture");
+	{
+		if (D3DERR_INVALIDCALL == hr)
+			os::Printer::log("Could not create render target texture", "Invalid Call");
+		else
+		if (D3DERR_OUTOFVIDEOMEMORY == hr)
+			os::Printer::log("Could not create render target texture", "Out of Video Memory");
+		else
+		if (E_OUTOFMEMORY == hr)
+			os::Printer::log("Could not create render target texture", "Out of Memory");
+		else
+			os::Printer::log("Could not create render target texture");
+	}
 }
 
 
@@ -250,7 +247,7 @@ bool CD3D9Texture::createMipMaps(u32 level)
 	upperSurface->Release();
 	lowerSurface->Release();
 
-	if (!result || (upperDesc.Width < 3 && upperDesc.Height < 3))
+	if (!result || (upperDesc.Width <= 3 && upperDesc.Height <= 3))
 		return result; // stop generating levels
 
 	// generate next level
@@ -259,17 +256,17 @@ bool CD3D9Texture::createMipMaps(u32 level)
 
 
 //! creates the hardware texture
-bool CD3D9Texture::createTexture(u32 flags)
+bool CD3D9Texture::createTexture(u32 flags, IImage * image)
 {
 	core::dimension2d<s32> optSize;
-	ImageSize = Image->getDimension();
+	ImageSize = image->getDimension();
 
 	if (Driver->queryFeature(EVDF_TEXTURE_NPOT))
 		optSize=ImageSize;
 	else
 	{
-		optSize.Width = getTextureSizeFromImageSize(ImageSize.Width);
-		optSize.Height = getTextureSizeFromImageSize(ImageSize.Height);
+		optSize.Width = getTextureSizeFromSurfaceSize(ImageSize.Width);
+		optSize.Height = getTextureSizeFromSurfaceSize(ImageSize.Height);
 	}
 
 	HRESULT hr;
@@ -283,7 +280,7 @@ bool CD3D9Texture::createTexture(u32 flags)
 		format = D3DFMT_A8R8G8B8; break;
 	case ETCF_OPTIMIZED_FOR_QUALITY:
 		{
-			switch(Image->getColorFormat())
+			switch(image->getColorFormat())
 			{
 			case ECF_R8G8B8:
 			case ECF_A8R8G8B8:
@@ -347,57 +344,16 @@ bool CD3D9Texture::createTexture(u32 flags)
 			0, format, D3DPOOL_MANAGED, &Texture, NULL);
 	}
 
-	ColorFormat = getColorFormatFromD3DFormat(format);
+	ColorFormat = Driver->getColorFormatFromD3DFormat(format);
+	setPitch(format);
 	return (SUCCEEDED(hr));
 }
 
 
-D3DFORMAT CD3D9Texture::getD3DFormatFromColorFormat(ECOLOR_FORMAT format) const
-{
-	switch(format)
-	{
-		case ECF_A1R5G5B5:
-			return D3DFMT_A1R5G5B5;
-		case ECF_R5G6B5:
-			return D3DFMT_R5G6B5;
-		case ECF_R8G8B8:
-			return D3DFMT_R8G8B8;
-		case ECF_A8R8G8B8:
-			return D3DFMT_A8R8G8B8;
-	}
-	return D3DFMT_UNKNOWN;
-}
-
-
-ECOLOR_FORMAT CD3D9Texture::getColorFormatFromD3DFormat(D3DFORMAT format)
-{
-	switch(format)
-	{
-	case D3DFMT_X1R5G5B5:
-	case D3DFMT_A1R5G5B5:
-		Pitch = TextureSize.Width * 2;
-		return ECF_A1R5G5B5;
-	case D3DFMT_A8B8G8R8:
-	case D3DFMT_A8R8G8B8:
-	case D3DFMT_X8R8G8B8:
-		Pitch = TextureSize.Width * 4;
-		return ECF_A8R8G8B8;
-	case D3DFMT_R5G6B5:
-		Pitch = TextureSize.Width * 2;
-		return ECF_R5G6B5;
-	case D3DFMT_R8G8B8:
-		Pitch = TextureSize.Width * 3;
-		return ECF_R8G8B8;
-	default:
-		return (ECOLOR_FORMAT)0;
-	};
-}
-
-
 //! copies the image to the texture
-bool CD3D9Texture::copyTexture()
+bool CD3D9Texture::copyTexture(IImage * image)
 {
-	if (Texture && Image)
+	if (Texture && image)
 	{
 		D3DSURFACE_DESC desc;
 		Texture->GetLevelDesc(0, &desc);
@@ -409,17 +365,17 @@ bool CD3D9Texture::copyTexture()
 		HRESULT hr = Texture->LockRect(0, &rect, 0, 0);
 		if (FAILED(hr))
 		{
-			os::Printer::log("Could not lock D3D9 Texture.", ELL_ERROR);
+			os::Printer::log("Texture data not copied", "Could not LockRect D3D9 Texture.", ELL_ERROR);
 			return false;
 		}
 
 		Pitch = rect.Pitch;
-		Image->copyToScaling(rect.pBits, TextureSize.Width, TextureSize.Height, ColorFormat, Pitch);
+		image->copyToScaling(rect.pBits, TextureSize.Width, TextureSize.Height, ColorFormat, Pitch);
 
 		hr = Texture->UnlockRect(0);
 		if (FAILED(hr))
 		{
-			os::Printer::log("Could not unlock D3D9 Texture.", ELL_ERROR);
+			os::Printer::log("Texture data not copied", "Could not UnlockRect D3D9 Texture.", ELL_ERROR);
 			return false;
 		}
 	}
@@ -429,7 +385,7 @@ bool CD3D9Texture::copyTexture()
 
 
 //! lock function
-void* CD3D9Texture::lock()
+void* CD3D9Texture::lock(bool readOnly)
 {
 	if (!Texture)
 		return 0;
@@ -438,7 +394,14 @@ void* CD3D9Texture::lock()
 	D3DLOCKED_RECT rect;
 	if(!IsRenderTarget)
 	{
-		hr = Texture->LockRect(0, &rect, 0, 0);
+		hr = Texture->LockRect(0, &rect, 0, readOnly?D3DLOCK_READONLY:0);
+		if (FAILED(hr))
+		{
+			os::Printer::log("Could not lock DIRECT3D9 Texture.", ELL_ERROR);
+			return 0;
+		}
+
+		return rect.pBits;
 	}
 	else
 	{
@@ -446,45 +409,37 @@ void* CD3D9Texture::lock()
 		Texture->GetLevelDesc(0, &desc);
 		if (!RTTSurface)
 		{
-			hr = Device->CreateOffscreenPlainSurface(desc.Width, desc.Height, desc.Format, D3DPOOL_SYSTEMMEM, &RTTSurface, NULL);
+			hr = Device->CreateOffscreenPlainSurface(desc.Width, desc.Height, desc.Format, D3DPOOL_SYSTEMMEM, &RTTSurface, 0);
 			if (FAILED(hr))
 			{
-				os::Printer::log("Could not lock DIRECT3D9 Texture.", ELL_ERROR);
+				os::Printer::log("Could not lock DIRECT3D9 Texture", "Offscreen surface creation failed.", ELL_ERROR);
 				return 0;
 			}
 		}
 
-		IDirect3DSurface9 *surface = NULL;
+		IDirect3DSurface9 *surface = 0;
 		hr = Texture->GetSurfaceLevel(0, &surface);
 		if (FAILED(hr))
 		{
-			os::Printer::log("Could not lock DIRECT3D9 Texture.", ELL_ERROR);
+			os::Printer::log("Could not lock DIRECT3D9 Texture", "Could not get surface.", ELL_ERROR);
 			return 0;
 		}
 		hr = Device->GetRenderTargetData(surface, RTTSurface);
 		surface->Release();
 		if(FAILED(hr))
 		{
-			os::Printer::log("Could not lock DIRECT3D9 Texture.", ELL_ERROR);
+			os::Printer::log("Could not lock DIRECT3D9 Texture", "Data copy failed.", ELL_ERROR);
 			return 0;
 		}
-		hr = RTTSurface->LockRect(&rect, NULL, 0);
+		hr = RTTSurface->LockRect(&rect, 0, readOnly?D3DLOCK_READONLY:0);
 		if(FAILED(hr))
 		{
-			os::Printer::log("Could not lock DIRECT3D9 Texture.", ELL_ERROR);
+			os::Printer::log("Could not lock DIRECT3D9 Texture", "LockRect failed.", ELL_ERROR);
 			return 0;
 		}
 		return rect.pBits;
 	}
-	if (FAILED(hr))
-	{
-		os::Printer::log("Could not lock DIRECT3D9 Texture.", ELL_ERROR);
-		return 0;
-	}
-
-	return rect.pBits;
 }
-
 
 
 //! unlock function
@@ -515,7 +470,7 @@ const core::dimension2d<s32>& CD3D9Texture::getSize() const
 
 
 //! returns the size of a texture which would be the optimize size for rendering it
-inline s32 CD3D9Texture::getTextureSizeFromImageSize(s32 size) const
+inline s32 CD3D9Texture::getTextureSizeFromSurfaceSize(s32 size) const
 {
 	s32 ts = 0x01;
 
@@ -552,7 +507,7 @@ u32 CD3D9Texture::getPitch() const
 
 
 //! returns the DIRECT3D9 Texture
-IDirect3DTexture9* CD3D9Texture::getDX9Texture() const
+IDirect3DBaseTexture9* CD3D9Texture::getDX9Texture() const
 {
 	return Texture;
 }
@@ -665,6 +620,7 @@ bool CD3D9Texture::isRenderTarget() const
 	return IsRenderTarget;
 }
 
+
 //! Returns pointer to the render target surface
 IDirect3DSurface9* CD3D9Texture::getRenderTargetSurface()
 {
@@ -682,8 +638,34 @@ IDirect3DSurface9* CD3D9Texture::getRenderTargetSurface()
 }
 
 
+void CD3D9Texture::setPitch(D3DFORMAT d3dformat)
+{
+	switch(d3dformat)
+	{
+	case D3DFMT_X1R5G5B5:
+	case D3DFMT_A1R5G5B5:
+		Pitch = TextureSize.Width * 2;
+	break;
+	case D3DFMT_A8B8G8R8:
+	case D3DFMT_A8R8G8B8:
+	case D3DFMT_X8R8G8B8:
+		Pitch = TextureSize.Width * 4;
+	break;
+	case D3DFMT_R5G6B5:
+		Pitch = TextureSize.Width * 2;
+	break;
+	case D3DFMT_R8G8B8:
+		Pitch = TextureSize.Width * 3;
+	break;
+	default:
+		Pitch = 0;
+	};
+}
+
+
 } // end namespace video
 } // end namespace irr
 
 #endif // _IRR_COMPILE_WITH_DIRECT3D_9_
+
 
