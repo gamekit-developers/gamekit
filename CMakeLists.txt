@@ -15,5 +15,5 @@ IF(COMMAND cmake_policy)
 ENDIF(COMMAND cmake_policy)
    
 SUBDIRS(bullet)
-SUBDIRS(irrlicht-1.4.2)
+SUBDIRS(irrlicht-1.5)
 SUBDIRS(gamekit)
