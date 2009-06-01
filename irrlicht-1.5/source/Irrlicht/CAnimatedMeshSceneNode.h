@@ -72,8 +72,8 @@ namespace scene
 
 		//! Creates shadow volume scene node as child of this node
 		//! and returns a pointer to it.
-		virtual IShadowVolumeSceneNode* addShadowVolumeSceneNode(s32 id,
-			bool zfailmethod=true, f32 infinity=10000.0f);
+		virtual IShadowVolumeSceneNode* addShadowVolumeSceneNode(const IMesh* shadowMesh,
+			s32 id, bool zfailmethod=true, f32 infinity=10000.0f);
 
 		//! Returns a pointer to a child node, which has the same transformation as
 		//! the corrsesponding joint, if the mesh in this scene node is a skinned mesh.
@@ -81,6 +81,9 @@ namespace scene
 
 		//! same as getJointNode(const c8* jointName), but based on id
 		virtual IBoneSceneNode* getJointNode(u32 jointID);
+
+		//! Gets joint count.
+		virtual u32 getJointCount() const;
 
 		//! Redundant command, please use getJointNode.
 		virtual ISceneNode* getMS3DJointNode(const c8* jointName);
@@ -147,10 +150,19 @@ namespace scene
 		//! updates the joint positions of this mesh
 		virtual void animateJoints(bool CalculateAbsolutePositions=true);
 
-		//! render mesh ignoring it's transformation. Used with ragdolls. (culling is unaffected)
+		//! render mesh ignoring its transformation. Used with ragdolls. (culling is unaffected)
 		virtual void setRenderFromIdentity( bool On );
 
+		//! Creates a clone of this scene node and its children.
+		/** \param newParent An optional new parent.
+		\param newManager An optional new scene manager.
+		\return The newly created clone of this node. */
+		virtual ISceneNode* clone(ISceneNode* newParent=0, ISceneManager* newManager=0);
+
 	private:
+
+		//! Get a static mesh for the current frame of this animated mesh
+		IMesh* getMeshForCurrentFrame(void);
 
 		f32 buildFrameNr( u32 timeMs);
 		void checkJoints();
@@ -159,23 +171,26 @@ namespace scene
 		core::array<video::SMaterial> Materials;
 		core::aabbox3d<f32> Box;
 		IAnimatedMesh* Mesh;
+		IMesh* MeshForCurrentFrame;
 
 		u32 BeginFrameTime;
 		s32 StartFrame;
 		s32 EndFrame;
 		f32 FramesPerSecond;
 		f32 CurrentFrameNr;
+		f32 FrameWhenCurrentMeshWasGenerated;
 
-		E_JOINT_UPDATE_ON_RENDER JointMode; //0-unused, 1-get joints only, 2-set joints only, 3-move and set
+		//0-unused, 1-get joints only, 2-set joints only, 3-move and set
+		E_JOINT_UPDATE_ON_RENDER JointMode;
 		bool JointsUsed;
 
 		u32 TransitionTime; //Transition time in millisecs
-
 		f32 Transiting; //is mesh transiting (plus cache of TransitionTime)
 		f32 TransitingBlend; //0-1, calculated on buildFrameNr
 
 		bool Looping;
 		bool ReadOnlyMaterials;
+		bool RenderFromIdentity;
 
 		IAnimationEndCallBack* LoopCallBack;
 		s32 PassCount;
@@ -185,15 +200,19 @@ namespace scene
 		core::array<IBoneSceneNode* > JointChildSceneNodes;
 		core::array<core::matrix4> PretransitingSave;
 
-		bool RenderFromIdentity;
-
 		struct SMD3Special
 		{
 			core::stringc Tagname;
 			SMD3QuaterionTagList AbsoluteTagList;
+
+			SMD3Special & operator = (const SMD3Special & copyMe)
+			{
+				Tagname = copyMe.Tagname;
+				AbsoluteTagList = copyMe.AbsoluteTagList;
+				return *this;
+			}
 		};
 		SMD3Special MD3Special;
-
 	};
 
 } // end namespace scene

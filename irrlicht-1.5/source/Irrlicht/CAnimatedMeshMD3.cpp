@@ -58,15 +58,16 @@ struct SMD3Skin
 
 
 //! Constructor
-CAnimatedMeshMD3::CAnimatedMeshMD3 ()
-: Mesh ( 0 )
+CAnimatedMeshMD3::CAnimatedMeshMD3()
+// TODO: Correct initial values needed
+: Mesh(0), IPolShift(0), LoopMode(0), Scaling(1.f)
 {
 #ifdef _DEBUG
 	setDebugName("CAnimatedMeshMD3");
 #endif
 
-	Mesh = new SMD3Mesh ();
-	memset ( &Mesh->MD3Header, 0, sizeof ( Mesh->MD3Header ) );
+	Mesh = new SMD3Mesh();
+	memset( &Mesh->MD3Header, 0, sizeof ( Mesh->MD3Header ) );
 
 	setInterpolationShift ( 0, 0 );
 }
@@ -75,8 +76,8 @@ CAnimatedMeshMD3::CAnimatedMeshMD3 ()
 //! Destructor
 CAnimatedMeshMD3::~CAnimatedMeshMD3()
 {
-	if ( Mesh )
-		Mesh->drop ();
+	if (Mesh)
+		Mesh->drop();
 }
 
 
@@ -91,6 +92,22 @@ u32 CAnimatedMeshMD3::getFrameCount() const
 void CAnimatedMeshMD3::setInterpolationShift ( u32 shift, u32 loopMode )
 {
 	IPolShift = shift;
+	LoopMode = loopMode;
+}
+
+
+//! set the hardware mapping hint, for driver
+void CAnimatedMeshMD3::setHardwareMappingHint(E_HARDWARE_MAPPING newMappingHint,
+		E_BUFFER_TYPE buffer)
+{
+	MeshIPol.setHardwareMappingHint(newMappingHint, buffer);
+}
+
+
+//! flags the meshbuffer as changed, reloads hardware buffers
+void CAnimatedMeshMD3::setDirty(E_BUFFER_TYPE buffer)
+{
+	MeshIPol.setDirty(buffer);
 }
 
 
@@ -170,17 +187,18 @@ IMesh* CAnimatedMeshMD3::getMesh(s32 frame, s32 detailLevel, s32 startFrameLoop,
 	return &MeshIPol;
 }
 
+
 //! create a Irrlicht MeshBuffer for a MD3 MeshBuffer
-IMeshBuffer * CAnimatedMeshMD3::createMeshBuffer ( const SMD3MeshBuffer * source )
+IMeshBuffer * CAnimatedMeshMD3::createMeshBuffer(const SMD3MeshBuffer* source)
 {
-	SMeshBuffer * dest = new SMeshBuffer ();
-	dest->Vertices.set_used ( source->MeshHeader.numVertices );
-	dest->Indices.set_used ( source->Indices.size () );
+	SMeshBuffer * dest = new SMeshBuffer();
+	dest->Vertices.set_used( source->MeshHeader.numVertices );
+	dest->Indices.set_used( source->Indices.size () );
 
 	u32 i;
 
 	// fill in static face info
-	for ( i = 0; i < source->Indices.size (); i += 3 )
+	for ( i = 0; i < source->Indices.size(); i += 3 )
 	{
 		dest->Indices[i + 0 ] = (u16) source->Indices[i + 0];
 		dest->Indices[i + 1 ] = (u16) source->Indices[i + 1];
@@ -190,7 +208,7 @@ IMeshBuffer * CAnimatedMeshMD3::createMeshBuffer ( const SMD3MeshBuffer * source
 	// fill in static vertex info
 	for ( i = 0; i!= (u32)source->MeshHeader.numVertices; ++i )
 	{
-		video::S3DVertex &v = dest->Vertices [ i ];
+		video::S3DVertex &v = dest->Vertices[i];
 		v.Color = 0xFFFFFFFF;
 		v.TCoords.X = source->Tex[i].u;
 		v.TCoords.Y = source->Tex[i].v;
