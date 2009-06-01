@@ -16,6 +16,11 @@
 #include "IrrCompileConfig.h" 
 #ifdef _IRR_COMPILE_WITH_DMF_LOADER_
 
+#ifdef _DEBUG
+#define _IRR_DMF_DEBUG_
+#include "os.h"
+#endif
+
 #include "CDMFLoader.h"
 #include "ISceneManager.h"
 #include "IAttributes.h"
@@ -24,6 +29,7 @@
 #include "irrString.h"
 #include "irrMath.h"
 #include "dmfsupport.h"
+#include "CImage.h"
 
 namespace irr
 {
@@ -31,55 +37,12 @@ namespace scene
 {
 
 /** Constructor*/
-CDMFLoader::CDMFLoader(video::IVideoDriver* driver, ISceneManager* smgr)
-: Driver(driver) , SceneMgr(smgr)
+CDMFLoader::CDMFLoader(ISceneManager* smgr, io::IFileSystem* filesys)
+: SceneMgr(smgr), FileSystem(filesys)
 {
 	#ifdef _DEBUG
 	IReferenceCounted::setDebugName("CDMFLoader");
 	#endif
-
-	if (Driver)
-		Driver->grab();
-}
-
-
-/** Destructor*/
-CDMFLoader::~CDMFLoader()
-{
-	if (Driver)
-		Driver->drop();
-}
-
-
-
-/** Given first three points of a face, returns a face normal*/
-void CDMFLoader::GetFaceNormal(	f32 a[3], //First point
-				f32 b[3], //Second point
-				f32 c[3], //Third point
-				f32 out[3]) //Normal computed
-{
-	f32 v1[3], v2[3];
-
-	v1[0] = a[0] - b[0];
-	v1[1] = a[1] - b[1];
-	v1[2] = a[2] - b[2];
-
-	v2[0] = b[0] - c[0];
-	v2[1] = b[1] - c[1];
-	v2[2] = b[2] - c[2];
-
-	out[0] = (v1[1] * v2[2]) - (v1[2] * v2[1]);
-	out[1] = (v1[2] * v2[0]) - (v1[0] * v2[2]);
-	out[2] = (v1[0] * v2[1]) - (v1[1] * v2[0]);
-
-	f32 dist = (f32)sqrtf((out[0] * out[0]) + (out[1] * out[1]) + (out[2] * out[2]));
-
-	if (dist == 0.0f)
-		dist = 0.001f;
-
-	out[0] /= dist;
-	out[1] /= dist;
-	out[2] /= dist;
 }
 
 
@@ -91,6 +54,7 @@ IAnimatedMesh* CDMFLoader::createMesh(io::IReadFile* file)
 {
 	if (!file)
 		return 0;
+	video::IVideoDriver* driver = SceneMgr->getVideoDriver();
 
 	//Load stringlist
 	StringList dmfRawFile(file);
@@ -98,7 +62,7 @@ IAnimatedMesh* CDMFLoader::createMesh(io::IReadFile* file)
 	if (dmfRawFile.size()==0)
 		return 0;
 
-	SMesh * Mesh = new SMesh();
+	SMesh * mesh = new SMesh();
 
 	u32 i;
 
@@ -108,23 +72,31 @@ IAnimatedMesh* CDMFLoader::createMesh(io::IReadFile* file)
 	if (GetDMFHeader(dmfRawFile, header))
 	{
 		//let's set ambient light
-		SceneMgr->setAmbientLight( header.dmfAmbient);
+		SceneMgr->setAmbientLight(header.dmfAmbient);
 
 		//let's create the correct number of materials, vertices and faces
-		dmfMaterial *materiali=new dmfMaterial[header.numMaterials];
+		core::array<dmfMaterial> materiali;
 		dmfVert *verts=new dmfVert[header.numVertices];
 		dmfFace *faces=new dmfFace[header.numFaces];
 
 		//let's get the materials
-		bool use_mat_dirs=false;
-		use_mat_dirs=SceneMgr->getParameters()->getAttributeAsBool(DMF_USE_MATERIALS_DIRS);
+		const bool use_mat_dirs=SceneMgr->getParameters()->getAttributeAsBool(DMF_USE_MATERIALS_DIRS);
 
-		GetDMFMaterials(dmfRawFile , materiali,header.numMaterials,use_mat_dirs);
+#ifdef _IRR_DMF_DEBUG_
+		os::Printer::log("Loading materials", core::stringc(header.numMaterials).c_str());
+#endif
+		GetDMFMaterials(dmfRawFile, materiali, header.numMaterials, use_mat_dirs);
 
 		//let's get vertices and faces
-		GetDMFVerticesFaces(dmfRawFile, verts,faces);
+#ifdef _IRR_DMF_DEBUG_
+		os::Printer::log("Loading geometry");
+#endif
+		GetDMFVerticesFaces(dmfRawFile, verts, faces);
 
 		//create a meshbuffer for each material, then we'll remove empty ones
+#ifdef _IRR_DMF_DEBUG_
+		os::Printer::log("Creating meshbuffers.");
+#endif
 		for (i=0; i<header.numMaterials; i++)
 		{
 			//create a new SMeshBufferLightMap for each material
@@ -132,43 +104,43 @@ IAnimatedMesh* CDMFLoader::createMesh(io::IReadFile* file)
 			buffer->Material.MaterialType = video::EMT_LIGHTMAP_LIGHTING;
 			buffer->Material.Wireframe = false;
 			buffer->Material.Lighting = true;
-			Mesh->addMeshBuffer(buffer);
+			mesh->addMeshBuffer(buffer);
 			buffer->drop();
 		}
 
 		// Build the mesh buffers
+#ifdef _IRR_DMF_DEBUG_
+		os::Printer::log("Adding geometry to mesh.");
+#endif
 		for (i = 0; i < header.numFaces; i++)
 		{
+#ifdef _IRR_DMF_DEBUG_
+		os::Printer::log("Polygon with #vertices", core::stringc(faces[i].numVerts).c_str());
+#endif
 			if (faces[i].numVerts < 3)
 				continue;
 
-			f32 normal[3];
+			const core::vector3df normal =
+				core::triangle3df(verts[faces[i].firstVert].pos,
+						verts[faces[i].firstVert+1].pos,
+						verts[faces[i].firstVert+2].pos).getNormal().normalize();
 
-			GetFaceNormal(verts[faces[i].firstVert].pos,
-					verts[faces[i].firstVert+1].pos, verts[faces[i].firstVert+2].pos, normal);
-
-			SMeshBufferLightMap * meshBuffer = (SMeshBufferLightMap*)Mesh->getMeshBuffer(
+			SMeshBufferLightMap * meshBuffer = (SMeshBufferLightMap*)mesh->getMeshBuffer(
 					faces[i].materialID);
 
-			u32 base = meshBuffer->Vertices.size();
+			const u32 base = meshBuffer->Vertices.size();
 
 			// Add this face's verts
 			u32 v;
 			for (v = 0; v < faces[i].numVerts; v++)
 			{
-				dmfVert * vv = &verts[faces[i].firstVert + v];
-				video::S3DVertex2TCoords vert(vv->pos[0], vv->pos[1], vv->pos[2],
-					normal[0], normal[1], normal[2], video::SColor(0,255,255,255), 0.0f, 0.0f);
-				if ( materiali[faces[i].materialID].textureBlend==4 &&
-					SceneMgr->getParameters()->getAttributeAsBool(DMF_FLIP_ALPHA_TEXTURES))
+				const dmfVert& vv = verts[faces[i].firstVert + v];
+				video::S3DVertex2TCoords vert(vv.pos,
+					normal, video::SColor(255,255,255,255), vv.tc, vv.lc);
+				if (materiali[faces[i].materialID].textureBlend==4 &&
+						SceneMgr->getParameters()->getAttributeAsBool(DMF_FLIP_ALPHA_TEXTURES))
 				{
-					vert.TCoords.set(vv->tc[0],-vv->tc[1]);
-					vert.TCoords2.set(vv->lc[0],vv->lc[1]);
-				}
-				else
-				{
-					vert.TCoords.set(vv->tc[0], vv->tc[1]);
-					vert.TCoords2.set(vv->lc[0], vv->lc[1]);
+					vert.TCoords.set(vv.tc.X,-vv.tc.Y);
 				}
 				meshBuffer->Vertices.push_back(vert);
 			}
@@ -176,22 +148,22 @@ IAnimatedMesh* CDMFLoader::createMesh(io::IReadFile* file)
 			// Now add the indices
 			// This weird loop turns convex polygons into triangle strips.
 			// I do it this way instead of a simple fan because it usually
-			// looks  a lot better in wireframe, for example.
+			// looks a lot better in wireframe, for example.
 			u32 h = faces[i].numVerts - 1, l = 0, c; // High, Low, Center
 			for (v = 0; v < faces[i].numVerts - 2; v++)
 			{
-				if (v & 1)
+				if (v & 1) // odd
 					c = h - 1;
-				else
+				else // even
 					c = l + 1;
 
 				meshBuffer->Indices.push_back(base + h);
 				meshBuffer->Indices.push_back(base + l);
 				meshBuffer->Indices.push_back(base + c);
 
-				if (v & 1)
+				if (v & 1) // odd
 					h--;
-				else
+				else // even
 					l++;
 			}
 		}
@@ -199,73 +171,58 @@ IAnimatedMesh* CDMFLoader::createMesh(io::IReadFile* file)
 		//load textures and lightmaps in materials.
 		//don't worry if you receive a could not load texture, cause if you don't need
 		//a particular material in your scene it will be loaded and then destroyed.
+#ifdef _IRR_DMF_DEBUG_
+		os::Printer::log("Loading textures.");
+#endif
 		for (i=0; i<header.numMaterials; i++)
 		{
-			String path = "";
-			if ( !SceneMgr->getParameters()->existsAttribute(DMF_TEXTURE_PATH) )
-			{
-				//get the right path for textures
-				StringList filepath = SubdivideString(String(file->getFileName()),"\\");
-				StringList filepath1 = SubdivideString(String(file->getFileName()),"/");
-				if(filepath1.size()>filepath.size())
-				{
-					filepath.clear();
-					filepath=filepath1;
-				}
-
-				for (u32 j=0; j<filepath.size()-1; ++j)
-					path = path + filepath[j] + String("/");
-			}
+			core::stringc path;
+			if ( SceneMgr->getParameters()->existsAttribute(DMF_TEXTURE_PATH) )
+				path = SceneMgr->getParameters()->getAttributeAsString(DMF_TEXTURE_PATH);
 			else
-				path = path +
-						String( SceneMgr->getParameters()->getAttributeAsString(DMF_TEXTURE_PATH)) + String("/");
+				path = FileSystem->getFileDir(file->getFileName());
+			path += ('/');
 
 			//texture and lightmap
 			ITexture *tex = 0;
 			ITexture *lig = 0;
 
 			//current buffer to apply material
-			SMeshBufferLightMap* buffer = (SMeshBufferLightMap*)Mesh->getMeshBuffer(i);
+			SMeshBufferLightMap* buffer = (SMeshBufferLightMap*)mesh->getMeshBuffer(i);
 
 			//Primary texture is normal
-			if ((materiali[i].textureFlag==0) || (materiali[i].textureBlend==4))
-				Driver->setTextureCreationFlag(ETCF_ALWAYS_32_BIT,true);
-			tex = Driver->getTexture((path+String(materiali[i].textureName)).c_str());
-
-			//Primary texture is just a colour
-			if(materiali[i].textureFlag==1)
+			if (materiali[i].textureFlag==0)
 			{
-				String colour(materiali[i].textureName);
-				String alpha,red,green,blue;
-
-				alpha.append((char*)&colour[0]);
-				alpha.append((char*)&colour[1]);
-				blue.append((char*)&colour[2]);
-				blue.append((char*)&colour[3]);
-				green.append((char*)&colour[4]);
-				green.append((char*)&colour[5]);
-				red.append((char*)&colour[6]);
-				red.append((char*)&colour[7]);
-
-				SColor color(axtoi(alpha.c_str()),
-					axtoi(red.c_str()),axtoi(green.c_str()),
-					axtoi(blue.c_str()));
-
-				s32 col = color.color;
-				s32 buf[64];
-
-				for (int k=0; k<64; k++)
-					buf[k]=col;
+				if (materiali[i].textureBlend==4)
+					driver->setTextureCreationFlag(ETCF_ALWAYS_32_BIT,true);
+				if (FileSystem->existFile(path+materiali[i].textureName))
+					tex = driver->getTexture((path+materiali[i].textureName).c_str());
+				else if (FileSystem->existFile(path+FileSystem->getFileBasename(materiali[i].textureName)))
+					tex = driver->getTexture((path+FileSystem->getFileBasename(materiali[i].textureName)).c_str());
+				else if (FileSystem->existFile(materiali[i].textureName))
+					tex = driver->getTexture(materiali[i].textureName.c_str());
+				else if (FileSystem->existFile(FileSystem->getFileBasename(materiali[i].textureName)))
+					tex = driver->getTexture(FileSystem->getFileBasename(materiali[i].textureName).c_str());
+#ifdef _IRR_DMF_DEBUG_
+				else
+					os::Printer::log("Could not load texture", materiali[i].textureName.c_str());
+#endif // _IRR_DMF_DEBUG_
+			}
+			//Primary texture is just a colour
+			else if(materiali[i].textureFlag==1)
+			{
+				SColor color(axtoi(materiali[i].textureName.c_str()));
 
 				//just for compatibility with older Irrlicht versions
 				//to support transparent materials
 				if (color.getAlpha()!=255 && materiali[i].textureBlend==4)
-					Driver->setTextureCreationFlag(ETCF_ALWAYS_32_BIT,true);
+					driver->setTextureCreationFlag(ETCF_ALWAYS_32_BIT,true);
 
-				IImage *immagine=Driver->createImageFromData(ECF_A8R8G8B8,
-					core::dimension2d<s32>(8,8),buf);
-
-				tex = Driver->addTexture("", immagine);
+				CImage *immagine= new CImage(ECF_A8R8G8B8,
+					core::dimension2d<s32>(8,8));
+				immagine->fill(color);
+				tex = driver->addTexture("", immagine);
+				immagine->drop();
 
 				//to support transparent materials
 				if(color.getAlpha()!=255 && materiali[i].textureBlend==4)
@@ -273,42 +230,33 @@ IAnimatedMesh* CDMFLoader::createMesh(io::IReadFile* file)
 					buffer->Material.MaterialType = video::EMT_TRANSPARENT_ALPHA_CHANNEL;
 					buffer->Material.MaterialTypeParam =(((f32) (color.getAlpha()-1))/255.0f);
 				}
-				immagine->drop();
 			}
 
 			//Lightmap is present
 			if (materiali[i].lightmapFlag == 0)
-				lig = Driver->getTexture((path+String(materiali[i].lightmapName)).c_str());
+				lig = driver->getTexture((path+materiali[i].lightmapName).c_str());
 			else //no lightmap
 			{
-				lig = 0;
 				buffer->Material.MaterialType = video::EMT_SOLID;
 				const f32 mult = 100.0f - header.dmfShadow;
 				buffer->Material.AmbientColor=header.dmfAmbient.getInterpolated(SColor(255,0,0,0),mult/100.f);
 			}
 
-			if(materiali[i].textureBlend==4)
+			if (materiali[i].textureBlend==4)
 			{
 				buffer->Material.MaterialType = video::EMT_TRANSPARENT_ALPHA_CHANNEL;
-				buffer->Material.MaterialTypeParam =SceneMgr->getParameters()->getAttributeAsFloat(DMF_ALPHA_CHANNEL_REF);
+				buffer->Material.MaterialTypeParam =
+					SceneMgr->getParameters()->getAttributeAsFloat(DMF_ALPHA_CHANNEL_REF);
 			}
 
-			core::dimension2d<s32> texsize;
-			core::dimension2d<s32> ligsize;
-
-			if (tex && header.dmfVersion<1.1)
-				texsize=tex->getSize();
-
-			if (lig && header.dmfVersion<1.1)
-				ligsize=lig->getSize();
-
-			//if texture is present mirror vertically owing to DeleD rapresentation
+			//if texture is present mirror vertically owing to DeleD representation
 			if (tex && header.dmfVersion<1.1)
 			{
+				const core::dimension2d<s32> texsize = tex->getSize();
 				void* pp = tex->lock();
 				if (pp)
 				{
-					video::ECOLOR_FORMAT format = tex->getColorFormat();
+					const video::ECOLOR_FORMAT format = tex->getColorFormat();
 					if (format == video::ECF_A1R5G5B5)
 					{
 						s16* p = (s16*)pp;
@@ -335,10 +283,6 @@ IAnimatedMesh* CDMFLoader::createMesh(io::IReadFile* file)
 							}
 					}
 				}
-			}
-
-			if(tex && header.dmfVersion<1.1)
-			{
 				tex->unlock();
 				tex->regenerateMipMapLevels();
 			}
@@ -346,6 +290,7 @@ IAnimatedMesh* CDMFLoader::createMesh(io::IReadFile* file)
 			//if lightmap is present mirror vertically owing to DeleD rapresentation
 			if (lig && header.dmfVersion<1.1)
 			{
+				const core::dimension2d<s32> ligsize=lig->getSize();
 				void* pp = lig->lock();
 				if (pp)
 				{
@@ -379,10 +324,6 @@ IAnimatedMesh* CDMFLoader::createMesh(io::IReadFile* file)
 						}
 					}
 				}
-			}
-
-			if (lig && header.dmfVersion<1.1)
-			{
 				lig->unlock();
 				lig->regenerateMipMapLevels();
 			}
@@ -393,20 +334,21 @@ IAnimatedMesh* CDMFLoader::createMesh(io::IReadFile* file)
 
 		delete verts;
 		delete faces;
-		delete materiali;
 	}
 
 	// delete all buffers without geometry in it.
+#ifdef _IRR_DMF_DEBUG_
+	os::Printer::log("Cleaning meshbuffers.");
+#endif
 	i = 0;
-	while(i < Mesh->MeshBuffers.size())
+	while(i < mesh->MeshBuffers.size())
 	{
-		if (Mesh->MeshBuffers[i]->getVertexCount() == 0 ||
-			Mesh->MeshBuffers[i]->getIndexCount() == 0 ||
-			Mesh->MeshBuffers[i]->getMaterial().getTexture(0) == 0)
+		if (mesh->MeshBuffers[i]->getVertexCount() == 0 ||
+			mesh->MeshBuffers[i]->getIndexCount() == 0)
 		{
 			// Meshbuffer is empty -- drop it
-			Mesh->MeshBuffers[i]->drop();
-			Mesh->MeshBuffers.erase(i);
+			mesh->MeshBuffers[i]->drop();
+			mesh->MeshBuffers.erase(i);
 		}
 		else
 		{
@@ -415,18 +357,18 @@ IAnimatedMesh* CDMFLoader::createMesh(io::IReadFile* file)
 	}
 
 	// create bounding box
-	for (i = 0; i < Mesh->MeshBuffers.size(); i++)
+	for (i = 0; i < mesh->MeshBuffers.size(); ++i)
 	{
-		((SMeshBufferLightMap*)Mesh->MeshBuffers[i])->recalculateBoundingBox();
+		mesh->MeshBuffers[i]->recalculateBoundingBox();
 	}
-	Mesh->recalculateBoundingBox();
+	mesh->recalculateBoundingBox();
 
 	// Set up an animated mesh to hold the mesh
 	SAnimatedMesh* AMesh = new SAnimatedMesh();
 	AMesh->Type = EAMT_UNKNOWN;
-	AMesh->addMesh(Mesh);
+	AMesh->addMesh(mesh);
 	AMesh->recalculateBoundingBox();
-	Mesh->drop();
+	mesh->drop();
 
 	return AMesh;
 }

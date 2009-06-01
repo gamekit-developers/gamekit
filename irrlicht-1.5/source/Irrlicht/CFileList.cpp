@@ -7,14 +7,8 @@
 #include "irrArray.h"
 #include <stdlib.h>
 
-namespace irr
-{
-namespace io
-{
-
 #if (defined(_IRR_POSIX_API_) || defined(_IRR_OSX_PLATFORM_))
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include <sys/types.h>
@@ -24,9 +18,16 @@ namespace io
 #endif
 
 #ifdef _IRR_WINDOWS_API_
-#include <io.h>
-#include <direct.h>
+	#if !defined ( _WIN32_WCE )
+		#include <io.h>
+		#include <direct.h>
+	#endif
 #endif
+
+namespace irr
+{
+namespace io
+{
 
 
 CFileList::CFileList()
@@ -38,7 +39,7 @@ CFileList::CFileList()
 	// --------------------------------------------
 	// Windows version
 	#ifdef _IRR_WINDOWS_API_
-
+	#if !defined ( _WIN32_WCE )
 	char tmp[_MAX_PATH];
 	_getcwd(tmp, _MAX_PATH);
 	Path = tmp;
@@ -60,6 +61,7 @@ CFileList::CFileList()
 
 		_findclose( hFile );
 	}
+	#endif
 
 	//TODO add drives
 	//entry.Name = "E:\\";
@@ -168,10 +170,8 @@ const c8* CFileList::getFullFileName(u32 index)
 
 bool CFileList::isDirectory(u32 index) const
 {
-	bool ret;
-	if (index >= Files.size())
-		ret = false;
-	else
+	bool ret = false;
+	if (index < Files.size())
 		ret = Files[index].isDirectory;
 
 	_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;

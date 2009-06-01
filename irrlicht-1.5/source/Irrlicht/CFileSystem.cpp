@@ -16,12 +16,14 @@
 #include "CAttributes.h"
 #include "CMemoryReadFile.h"
 
-#ifdef _IRR_WINDOWS_API_
-#include <direct.h> // for _chdir
+#if defined (_IRR_WINDOWS_API_)
+	#if !defined ( _WIN32_WCE )
+		#include <direct.h> // for _chdir
+	#endif
 #else
-#include <unistd.h>
-#include <limits.h>
-#include <stdlib.h>
+	#include <unistd.h>
+	#include <limits.h>
+	#include <stdlib.h>
 #endif
 
 namespace irr
@@ -39,7 +41,6 @@ CFileSystem::CFileSystem()
 }
 
 
-
 //! destructor
 CFileSystem::~CFileSystem()
 {
@@ -54,7 +55,6 @@ CFileSystem::~CFileSystem()
 	for ( i= 0; i<UnZipFileSystems.size(); ++i)
 		UnZipFileSystems[i]->drop();
 }
-
 
 
 //! opens a file for read access
@@ -84,9 +84,11 @@ IReadFile* CFileSystem::createAndOpenFile(const c8* filename)
 			return file;
 	}
 
-	file = createReadFile(filename);
-	return file;
+	// Create the file using an absolute path so that it matches
+	// the scheme used by CNullDriver::getTexture().
+	return createReadFile(getAbsolutePath(filename).c_str());
 }
+
 
 //! Creates an IReadFile interface for treating memory like a file.
 IReadFile* CFileSystem::createMemoryReadFile(void* memory, s32 len, 
@@ -98,6 +100,7 @@ IReadFile* CFileSystem::createMemoryReadFile(void* memory, s32 len,
 		return new CMemoryReadFile(memory, len, fileName, deleteMemoryWhenDropped);
 }
 
+
 //! Opens a file for write access.
 IWriteFile* CFileSystem::createAndWriteFile(const c8* filename, bool append)
 {
@@ -107,76 +110,64 @@ IWriteFile* CFileSystem::createAndWriteFile(const c8* filename, bool append)
 
 bool CFileSystem::addFolderFileArchive(const c8* filename, bool ignoreCase, bool ignorePaths)
 {
-	bool ret = false;
-
-	CUnZipReader* zr = new CUnZipReader( this, filename, ignoreCase, ignorePaths);
+	CUnZipReader* zr = new CUnZipReader(this, filename, ignoreCase, ignorePaths);
 	if (zr)
-	{
 		UnZipFileSystems.push_back(zr);
-		ret = true;
-	}
-
 	#ifdef _DEBUG
-	if ( false == ret )
+	else
 	{
-		os::Printer::log("Could not open file. UnZipfile not added", filename, ELL_ERROR);
+		os::Printer::log("Could not open file. Folderfile not added", filename, ELL_ERROR);
 	}
 	#endif
 
-	return ret;
-
+	_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
+	return (zr!=0);
 }
 
 
 //! adds an zip archive to the filesystem
 bool CFileSystem::addZipFileArchive(const c8* filename, bool ignoreCase, bool ignorePaths)
 {
-	IReadFile* file = createReadFile(filename);
+	CZipReader* zr = 0;
+	IReadFile* file = createAndOpenFile(filename);
 	if (file)
 	{
-		CZipReader* zr = new CZipReader(file, ignoreCase, ignorePaths);
+		zr = new CZipReader(file, ignoreCase, ignorePaths);
 		if (zr)
 			ZipFileSystems.push_back(zr);
 
 		file->drop();
-
-		bool ret = (zr != 0);
-		_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
-		return ret;
 	}
-
 	#ifdef _DEBUG
-	os::Printer::log("Could not open file. Zipfile not added", filename, ELL_ERROR);
+	else
+		os::Printer::log("Could not open file. Zipfile not added", filename, ELL_ERROR);
 	#endif
 
 	_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
-	return false;
+	return (zr != 0);
 }
 
 
 //! adds an pak archive to the filesystem
 bool CFileSystem::addPakFileArchive(const c8* filename, bool ignoreCase, bool ignorePaths)
 {
-	IReadFile* file = createReadFile(filename);
+	CPakReader* zr = 0;
+	IReadFile* file = createAndOpenFile(filename);
 	if (file)
 	{
-		CPakReader* zr = new CPakReader(file, ignoreCase, ignorePaths);
+		zr = new CPakReader(file, ignoreCase, ignorePaths);
 		if (zr)
 			PakFileSystems.push_back(zr);
 
 		file->drop();
-
-		bool ret = (zr != 0);
-		_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
-		return ret;
 	}
-
 	#ifdef _DEBUG
-	os::Printer::log("Could not open file. Pakfile not added", filename, ELL_ERROR);
+	else
+		os::Printer::log("Could not open file. Pakfile not added", filename, ELL_ERROR);
 	#endif
 
 	_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
-	return false;
+	return (zr != 0);
 }
 
 
@@ -184,7 +175,9 @@ bool CFileSystem::addPakFileArchive(const c8* filename, bool ignoreCase, bool ig
 const c8* CFileSystem::getWorkingDirectory()
 {
 #ifdef _IRR_WINDOWS_API_
-	_getcwd(WorkingDirectory, FILE_SYSTEM_MAX_PATH);
+	#if !defined ( _WIN32_WCE )
+		_getcwd(WorkingDirectory, FILE_SYSTEM_MAX_PATH);
+	#endif
 #endif
 
 #if (defined(_IRR_POSIX_API_) || defined(_IRR_OSX_PLATFORM_))
@@ -195,42 +188,58 @@ const c8* CFileSystem::getWorkingDirectory()
 
 
 //! Changes the current Working Directory to the given string.
-//! The string is operating system dependent. Under Windows it will look
-//! like this: "drive:\directory\sudirectory\"
-//! \return Returns true if successful, otherwise false.
 bool CFileSystem::changeWorkingDirectoryTo(const c8* newDirectory)
 {
 	bool success=false;
 #ifdef _MSC_VER
-	success=(_chdir(newDirectory) == 0);
+	#if !defined ( _WIN32_WCE )
+		success=(_chdir(newDirectory) == 0);
+	#endif
 #else
 	success=(chdir(newDirectory) == 0);
 #endif
 	return success;
 }
 
+
 core::stringc CFileSystem::getAbsolutePath(const core::stringc& filename) const
 {
 	c8 *p=0;
-	core::stringc ret;
 
 #ifdef _IRR_WINDOWS_API_
-
+	#if !defined ( _WIN32_WCE )
 	c8 fpath[_MAX_PATH];
 	p = _fullpath( fpath, filename.c_str(), _MAX_PATH);
-	ret = p;
+	#endif
 
 #elif (defined(_IRR_POSIX_API_) || defined(_IRR_OSX_PLATFORM_))
-
 	c8 fpath[4096];
+	fpath[0]=0;
 	p = realpath(filename.c_str(), fpath);
-	ret = p;
+	if (!p)
+	{
+		// content in fpath is undefined at this point
+		if ('0'==fpath[0]) // seems like fpath wasn't altered
+		{
+			// at least remove a ./ prefix
+			if ('.'==filename[0] && '/'==filename[1])
+				return filename.subString(2, filename.size()-2);
+			else
+				return filename;
+		}
+		else
+			return core::stringc(fpath);
+	}
 
 #endif
 
-	return ret;
+	return core::stringc(p);
 }
 
+
+//! returns the directory part of a filename, i.e. all until the first
+//! slash or backslash, excluding it. If no directory path is prefixed, a '.'
+//! is returned.
 core::stringc CFileSystem::getFileDir(const core::stringc& filename) const
 {
 	// find last forward or backslash
@@ -243,6 +252,34 @@ core::stringc CFileSystem::getFileDir(const core::stringc& filename) const
 	else
 		return ".";
 }
+
+
+//! returns the base part of a filename, i.e. all except for the directory
+//! part. If no directory path is prefixed, the full name is returned.
+core::stringc CFileSystem::getFileBasename(const core::stringc& filename, bool keepExtension) const
+{
+	// find last forward or backslash
+	s32 lastSlash = filename.findLast('/');
+	const s32 lastBackSlash = filename.findLast('\\');
+	lastSlash = core::max_(lastSlash, lastBackSlash);
+	s32 end = 0;
+	if (!keepExtension)
+	{
+		end = filename.findLast('.');
+		if (end == -1)
+			end=0;
+		else
+			end = filename.size()-end;
+	}
+
+	if ((u32)lastSlash < filename.size())
+		return filename.subString(lastSlash+1, filename.size()-lastSlash-1-end);
+	else if (end != 0)
+		return filename.subString(0, filename.size()-end);
+	else
+		return filename;
+}
+
 
 //! Creates a list of files and directories in the current working directory 
 IFileList* CFileSystem::createFileList() const
@@ -302,6 +339,7 @@ IXMLReader* CFileSystem::createXMLReader(IReadFile* file)
 	return createIXMLReader(file);
 }
 
+
 //! Creates a XML Reader from a file.
 IXMLReaderUTF8* CFileSystem::createXMLReaderUTF8(const c8* filename)
 {
@@ -313,6 +351,7 @@ IXMLReaderUTF8* CFileSystem::createXMLReaderUTF8(const c8* filename)
 	file->drop();
 	return reader;
 }
+
 
 //! Creates a XML Reader from a file.
 IXMLReaderUTF8* CFileSystem::createXMLReaderUTF8(IReadFile* file)
@@ -348,11 +387,13 @@ IFileSystem* createFileSystem()
 	return new CFileSystem();
 }
 
+
 //! Creates a new empty collection of attributes, usable for serialization and more.
 IAttributes* CFileSystem::createEmptyAttributes(video::IVideoDriver* driver)
 {
 	return new CAttributes(driver);
 }
+
 
 } // end namespace irr
 } // end namespace io
