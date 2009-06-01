@@ -6,29 +6,35 @@
 #ifdef _IRR_COMPILE_WITH_OBJ_LOADER_
 
 #include "COBJMeshFileLoader.h"
+#include "IMeshManipulator.h"
+#include "IVideoDriver.h"
 #include "SMesh.h"
 #include "SMeshBuffer.h"
 #include "SAnimatedMesh.h"
 #include "IReadFile.h"
+#include "IAttributes.h"
 #include "fast_atof.h"
 #include "coreutil.h"
+#include "os.h"
 
 namespace irr
 {
 namespace scene
 {
 
+#ifdef _DEBUG
+#define _IRR_DEBUG_OBJ_LOADER_
+#endif
+
+static const u32 WORD_BUFFER_LENGTH = 512;
+
 //! Constructor
-COBJMeshFileLoader::COBJMeshFileLoader(io::IFileSystem* fs, video::IVideoDriver* driver)
-: FileSystem(fs), Driver(driver)
+COBJMeshFileLoader::COBJMeshFileLoader(scene::ISceneManager* smgr, io::IFileSystem* fs)
+: SceneManager(smgr), FileSystem(fs)
 {
 	if (FileSystem)
 		FileSystem->grab();
-
-	if (Driver)
-		Driver->grab();
 }
-
 
 
 //! destructor
@@ -36,11 +42,7 @@ COBJMeshFileLoader::~COBJMeshFileLoader()
 {
 	if (FileSystem)
 		FileSystem->drop();
-
-	if (Driver)
-		Driver->drop();
 }
-
 
 
 //! returns true if the file maybe is able to be loaded by this class
@@ -49,7 +51,6 @@ bool COBJMeshFileLoader::isALoadableFileExtension(const c8* filename) const
 {
 	return strstr(filename, ".obj")!=0;
 }
-
 
 
 //! creates/loads an animated mesh from the file.
@@ -64,34 +65,16 @@ IAnimatedMesh* COBJMeshFileLoader::createMesh(io::IReadFile* file)
 
 	const u32 WORD_BUFFER_LENGTH = 512;
 
-	SMesh* mesh = new SMesh();
-
 	core::array<core::vector3df> vertexBuffer;
-	core::array<core::vector2df> textureCoordBuffer;
 	core::array<core::vector3df> normalsBuffer;
+	core::array<core::vector2df> textureCoordBuffer;
+
 	SObjMtl * currMtl = new SObjMtl();
-	currMtl->Name="";
 	Materials.push_back(currMtl);
 	u32 smoothingGroup=0;
 
-	// ********************************************************************
-	// Patch to locate the file in the same folder as the .obj.
-	// If you load the file as "data/some.obj" and mtllib contains
-	// "mtlname test.mtl" (as usual), the loading will fail. Instead it
-	// must look for data/test.tml. This patch does exactly that.
-	//
-	// patch by mandrav@codeblocks.org
-	// ********************************************************************
-	core::stringc obj_fullname = file->getFileName();
-	core::stringc obj_relpath = "";
-	s32 pathend = obj_fullname.findLast('/');
-	if (pathend == -1)
-		pathend = obj_fullname.findLast('\\');
-	if (pathend != -1)
-		obj_relpath = obj_fullname.subString(0, pathend + 1);
-	// ********************************************************************
-	// end of mtl folder patch
-	// ********************************************************************
+	const core::stringc fullName = file->getFileName();
+	const core::stringc relPath = FileSystem->getFileDir(fullName)+"/";
 
 	c8* buf = new c8[filesize];
 	memset(buf, 0, filesize);
@@ -100,6 +83,8 @@ IAnimatedMesh* COBJMeshFileLoader::createMesh(io::IReadFile* file)
 
 	// Process obj information
 	const c8* bufPtr = buf;
+	core::stringc grpName;
+	bool useGroups = !SceneManager->getParameters()->getAttributeAsBool(OBJ_LOADER_IGNORE_GROUPS);
 	while(bufPtr != bufEnd)
 	{
 		switch(bufPtr[0])
@@ -108,7 +93,10 @@ IAnimatedMesh* COBJMeshFileLoader::createMesh(io::IReadFile* file)
 		{
 			c8 name[WORD_BUFFER_LENGTH];
 			bufPtr = goAndCopyNextWord(name, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
-			readMTL(name, obj_relpath);
+#ifdef _IRR_DEBUG_OBJ_LOADER_
+	os::Printer::log("Reading material file",name);
+#endif
+			readMTL(name, relPath);
 		}
 			break;
 
@@ -134,15 +122,27 @@ IAnimatedMesh* COBJMeshFileLoader::createMesh(io::IReadFile* file)
 			case 't':       // texcoord
 				{
 					core::vector2df vec;
-					bufPtr = readVec2(bufPtr, vec, bufEnd);
+					bufPtr = readUV(bufPtr, vec, bufEnd);
 					textureCoordBuffer.push_back(vec);
 				}
 				break;
 			}
 			break;
 
-		case 'g': // group names skipped
+		case 'g': // group name
 			{
+				c8 grp[WORD_BUFFER_LENGTH];
+				bufPtr = goAndCopyNextWord(grp, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
+#ifdef _IRR_DEBUG_OBJ_LOADER_
+	os::Printer::log("Loaded group start",grp);
+#endif
+				if (useGroups)
+				{
+					if (0 != grp[0])
+						grpName = grp;
+					else
+						grpName = "default";
+				}
 			}
 			break;
 
@@ -150,6 +150,9 @@ IAnimatedMesh* COBJMeshFileLoader::createMesh(io::IReadFile* file)
 			{
 				c8 smooth[WORD_BUFFER_LENGTH];
 				bufPtr = goAndCopyNextWord(smooth, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
+#ifdef _IRR_DEBUG_OBJ_LOADER_
+	os::Printer::log("Loaded smoothing group start",smooth);
+#endif
 				if (core::stringc("off")==smooth)
 					smoothingGroup=0;
 				else
@@ -162,8 +165,11 @@ IAnimatedMesh* COBJMeshFileLoader::createMesh(io::IReadFile* file)
 			{
 				c8 matName[WORD_BUFFER_LENGTH];
 				bufPtr = goAndCopyNextWord(matName, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
+#ifdef _IRR_DEBUG_OBJ_LOADER_
+	os::Printer::log("Loaded material start",matName);
+#endif
 				// retrieve the material
-				SObjMtl *useMtl = findMtl(matName);
+				SObjMtl *useMtl = findMtl(matName, grpName);
 				// only change material if we found it
 				if (useMtl)
 					currMtl = useMtl;
@@ -208,7 +214,10 @@ IAnimatedMesh* COBJMeshFileLoader::createMesh(io::IReadFile* file)
 				if ( -1 != Idx[2] )
 					v.Normal = normalsBuffer[Idx[2]];
 				else
+				{
 					v.Normal.set(0.0f,0.0f,0.0f);
+					currMtl->RecalculateNormals=true;
+				}
 
 				int vertLocation;
 				core::map<video::S3DVertex, int>::Node* n = currMtl->VertMap.find(v);
@@ -250,13 +259,26 @@ IAnimatedMesh* COBJMeshFileLoader::createMesh(io::IReadFile* file)
 		bufPtr = goNextLine(bufPtr, bufEnd);
 	}	// end while(bufPtr && (bufPtr-buf<filesize))
 
+	SMesh* mesh = new SMesh();
+
 	// Combine all the groups (meshbuffers) into the mesh
 	for ( u32 m = 0; m < Materials.size(); ++m )
 	{
 		if ( Materials[m]->Meshbuffer->getIndexCount() > 0 )
 		{
 			Materials[m]->Meshbuffer->recalculateBoundingBox();
-			mesh->addMeshBuffer( Materials[m]->Meshbuffer );
+			if (Materials[m]->RecalculateNormals)
+				SceneManager->getMeshManipulator()->recalculateNormals(Materials[m]->Meshbuffer);
+			if (Materials[m]->Meshbuffer->Material.MaterialType == video::EMT_PARALLAX_MAP_SOLID)
+			{
+				SMesh tmp;
+				tmp.addMeshBuffer(Materials[m]->Meshbuffer);
+				IMesh* tangentMesh = SceneManager->getMeshManipulator()->createMeshWithTangents(&tmp);
+				mesh->addMeshBuffer(tangentMesh->getMeshBuffer(0));
+				tangentMesh->drop();
+			}
+			else
+				mesh->addMeshBuffer( Materials[m]->Meshbuffer );
 		}
 	}
 
@@ -281,10 +303,147 @@ IAnimatedMesh* COBJMeshFileLoader::createMesh(io::IReadFile* file)
 }
 
 
-void COBJMeshFileLoader::readMTL(const c8* fileName, core::stringc relPath)
+const c8* COBJMeshFileLoader::readTextures(const c8* bufPtr, const c8* const bufEnd, SObjMtl* currMaterial, const core::stringc& relPath)
 {
-	const u32 WORD_BUFFER_LENGTH = 512;
+	u8 type=0; // map_Kd - diffuse color texture map
+	// map_Ks - specular color texture map
+	// map_Ka - ambient color texture map
+	if ((!strncmp(bufPtr,"map_bump",8)) || (!strncmp(bufPtr,"bump",4)))
+		type=1; // normal map
+	else if (!strncmp(bufPtr,"map_d",5))
+		type=2; // opactity map
+	else if (!strncmp(bufPtr,"map_refl",8))
+		type=3; // reflection map
+	// extract new material's name
+	c8 textureNameBuf[WORD_BUFFER_LENGTH];
+	bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
 
+	f32 bumpiness = 6.0f;
+	bool clamp = false;
+	// handle options
+	while (textureNameBuf[0]=='-')
+	{
+		if (!strncmp(bufPtr,"-bm",3))
+		{
+			bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
+			currMaterial->Meshbuffer->Material.MaterialTypeParam=core::fast_atof(textureNameBuf);
+			bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
+			continue;
+		}
+		else
+		if (!strncmp(bufPtr,"-blendu",7))
+			bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
+		else
+		if (!strncmp(bufPtr,"-blendv",7))
+			bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
+		else
+		if (!strncmp(bufPtr,"-cc",3))
+			bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
+		else
+		if (!strncmp(bufPtr,"-clamp",6))
+			bufPtr = readBool(bufPtr, clamp, bufEnd);
+		else
+		if (!strncmp(bufPtr,"-texres",7))
+			bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
+		else
+		if (!strncmp(bufPtr,"-type",5))
+			bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
+		else
+		if (!strncmp(bufPtr,"-mm",3))
+		{
+			bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
+			bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
+		}
+		else
+		if (!strncmp(bufPtr,"-o",2)) // texture coord translation
+		{
+			bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
+			// next parameters are optional, so skip rest of loop if no number is found
+			bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
+			if (!core::isdigit(textureNameBuf[0]))
+				continue;
+			bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
+			if (!core::isdigit(textureNameBuf[0]))
+				continue;
+		}
+		else
+		if (!strncmp(bufPtr,"-s",2)) // texture coord scale
+		{
+			bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
+			// next parameters are optional, so skip rest of loop if no number is found
+			bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
+			if (!core::isdigit(textureNameBuf[0]))
+				continue;
+			bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
+			if (!core::isdigit(textureNameBuf[0]))
+				continue;
+		}
+		else
+		if (!strncmp(bufPtr,"-t",2))
+		{
+			bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
+			// next parameters are optional, so skip rest of loop if no number is found
+			bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
+			if (!core::isdigit(textureNameBuf[0]))
+				continue;
+			bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
+			if (!core::isdigit(textureNameBuf[0]))
+				continue;
+		}
+		// get next word
+		bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
+	}
+
+	if ((type==1) && (core::isdigit(textureNameBuf[0])))
+	{
+		currMaterial->Meshbuffer->Material.MaterialTypeParam=core::fast_atof(textureNameBuf);
+		bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
+	}
+	if (clamp)
+		currMaterial->Meshbuffer->Material.setFlag(video::EMF_TEXTURE_WRAP, video::ETC_CLAMP);
+
+	core::stringc texname(textureNameBuf);
+	texname.replace('\\', '/');
+
+	video::ITexture * texture = 0;
+	if (FileSystem->existFile(texname.c_str()))
+		texture = SceneManager->getVideoDriver()->getTexture(texname.c_str());
+	else
+		// try to read in the relative path, the .obj is loaded from
+		texture = SceneManager->getVideoDriver()->getTexture( (relPath + texname).c_str() );
+	if ( texture )
+	{
+		if (type==0)
+			currMaterial->Meshbuffer->Material.setTexture(0, texture);
+		else if (type==1)
+		{
+			SceneManager->getVideoDriver()->makeNormalMapTexture(texture, bumpiness);
+			currMaterial->Meshbuffer->Material.setTexture(1, texture);
+			currMaterial->Meshbuffer->Material.MaterialType=video::EMT_PARALLAX_MAP_SOLID;
+			currMaterial->Meshbuffer->Material.MaterialTypeParam=0.035f;
+		}
+		else if (type==2)
+		{
+			currMaterial->Meshbuffer->Material.setTexture(0, texture);
+			currMaterial->Meshbuffer->Material.MaterialType=video::EMT_TRANSPARENT_ADD_COLOR;
+		}
+		else if (type==3)
+		{
+//						currMaterial->Meshbuffer->Material.Textures[1] = texture;
+//						currMaterial->Meshbuffer->Material.MaterialType=video::EMT_REFLECTION_2_LAYER;
+		}
+		// Set diffuse material colour to white so as not to affect texture colour
+		// Because Maya set diffuse colour Kd to black when you use a diffuse colour map
+		// But is this the right thing to do?
+		currMaterial->Meshbuffer->Material.DiffuseColor.set(
+			currMaterial->Meshbuffer->Material.DiffuseColor.getAlpha(), 255, 255, 255 );
+	}
+	return bufPtr;
+}
+
+
+void COBJMeshFileLoader::readMTL(const c8* fileName, const core::stringc& relPath)
+{
 	io::IReadFile * mtlReader;
 	if (FileSystem->existFile(fileName))
 		mtlReader = FileSystem->createAndOpenFile(fileName);
@@ -333,18 +492,31 @@ void COBJMeshFileLoader::readMTL(const c8* fileName, core::stringc relPath)
 				currMaterial->Illumination = (c8)atol(illumStr);
 			}
 			break;
-			case 'N': // Ns - shininess
+			case 'N':
 			if ( currMaterial )
 			{
-				const u32 COLOR_BUFFER_LENGTH = 16;
-				c8 nsStr[COLOR_BUFFER_LENGTH];
+				switch(bufPtr[1])
+				{
+				case 's': // Ns - shininess
+					{
+						const u32 COLOR_BUFFER_LENGTH = 16;
+						c8 nsStr[COLOR_BUFFER_LENGTH];
 
-				bufPtr = goAndCopyNextWord(nsStr, bufPtr, COLOR_BUFFER_LENGTH, bufEnd);
-				f32 shininessValue = core::fast_atof(nsStr);
+						bufPtr = goAndCopyNextWord(nsStr, bufPtr, COLOR_BUFFER_LENGTH, bufEnd);
+						f32 shininessValue = core::fast_atof(nsStr);
 
-				// wavefront shininess is from [0, 1000], so scale for OpenGL
-				shininessValue *= 0.128f;
-				currMaterial->Meshbuffer->Material.Shininess = shininessValue;
+						// wavefront shininess is from [0, 1000], so scale for OpenGL
+						shininessValue *= 0.128f;
+						currMaterial->Meshbuffer->Material.Shininess = shininessValue;
+					}
+				break;
+				case 'i': // Ni - refraction index
+					{
+						c8 tmpbuf[WORD_BUFFER_LENGTH];
+						bufPtr = goAndCopyNextWord(tmpbuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
+					}
+				break;
+				}
 			}
 			break;
 			case 'K':
@@ -378,111 +550,11 @@ void COBJMeshFileLoader::readMTL(const c8* fileName, core::stringc relPath)
 				}	// end switch(bufPtr[1])
 			}	// end case 'K': if ( 0 != currMaterial )...
 			break;
+			case 'b': // bump
 			case 'm': // texture maps
 			if (currMaterial)
 			{
-				u8 type=0; // map_Kd - diffuse texture map
-				if (!strncmp(bufPtr,"map_bump",8))
-					type=1;
-				else if (!strncmp(bufPtr,"map_d",5))
-					type=2;
-				else if (!strncmp(bufPtr,"map_refl",8))
-					type=3;
-				// extract new material's name
-				c8 textureNameBuf[WORD_BUFFER_LENGTH];
-				bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
-				// handle options
-				while (textureNameBuf[0]=='-')
-				{
-					if (!strncmp(bufPtr,"-blendu",7))
-						bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
-					if (!strncmp(bufPtr,"-blendv",7))
-						bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
-					if (!strncmp(bufPtr,"-cc",3))
-						bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
-					if (!strncmp(bufPtr,"-clamp",6))
-						bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
-					if (!strncmp(bufPtr,"-texres",7))
-						bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
-					if (!strncmp(bufPtr,"-mm",3))
-					{
-						bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
-						bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
-					}
-					if (!strncmp(bufPtr,"-o",2))
-					{
-						bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
-						// next parameters are optional, so skip rest of loop if no number is found
-						bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
-						if (!core::isdigit(textureNameBuf[0]))
-							continue;
-						bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
-						if (!core::isdigit(textureNameBuf[0]))
-							continue;
-					}
-					if (!strncmp(bufPtr,"-s",2))
-					{
-						bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
-						// next parameters are optional, so skip rest of loop if no number is found
-						bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
-						if (!core::isdigit(textureNameBuf[0]))
-							continue;
-						bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
-						if (!core::isdigit(textureNameBuf[0]))
-							continue;
-					}
-					if (!strncmp(bufPtr,"-t",2))
-					{
-						bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
-						// next parameters are optional, so skip rest of loop if no number is found
-						bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
-						if (!core::isdigit(textureNameBuf[0]))
-							continue;
-						bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
-						if (!core::isdigit(textureNameBuf[0]))
-							continue;
-					}
-					// get next word
-					bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
-				}
-				if (type==1)
-				{
-					currMaterial->Meshbuffer->Material.MaterialTypeParam=core::fast_atof(textureNameBuf);
-					bufPtr = goAndCopyNextWord(textureNameBuf, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
-				}
-
-				video::ITexture * texture = 0;
-				if (FileSystem->existFile(textureNameBuf))
-					texture = Driver->getTexture( textureNameBuf );
-				else
-					// try to read in the relative path, the .obj is loaded from
-					texture = Driver->getTexture( (relPath + textureNameBuf).c_str() );
-				if ( texture )
-				{
-					if (type==0)
-						currMaterial->Meshbuffer->Material.setTexture(0, texture);
-					else if (type==1)
-					{
-						Driver->makeNormalMapTexture(texture);
-						currMaterial->Meshbuffer->Material.setTexture(1, texture);
-						currMaterial->Meshbuffer->Material.MaterialType=video::EMT_PARALLAX_MAP_SOLID;
-					}
-					else if (type==2)
-					{
-						currMaterial->Meshbuffer->Material.setTexture(0, texture);
-						currMaterial->Meshbuffer->Material.MaterialType=video::EMT_TRANSPARENT_ADD_COLOR;
-					}
-					else if (type==3)
-					{
-//						currMaterial->Meshbuffer->Material.Textures[1] = texture;
-//						currMaterial->Meshbuffer->Material.MaterialType=video::EMT_REFLECTION_2_LAYER;
-					}
-					// Set diffuse material colour to white so as not to affect texture colour
-					// Because Maya set diffuse colour Kd to black when you use a diffuse colour map
-					// But is this the right thing to do?
-					currMaterial->Meshbuffer->Material.DiffuseColor.set(
-						currMaterial->Meshbuffer->Material.DiffuseColor.getAlpha(), 255, 255, 255 );
-				}
+				bufPtr=readTextures(bufPtr, bufEnd, currMaterial, relPath);
 			}
 			break;
 			case 'd': // d - transparency
@@ -531,14 +603,12 @@ void COBJMeshFileLoader::readMTL(const c8* fileName, core::stringc relPath)
 
 	// end of file. if there's an existing material, store it
 	if ( currMaterial )
-	{
 		Materials.push_back( currMaterial );
-		currMaterial = 0;
-	}
 
 	delete [] buf;
 	mtlReader->drop();
 }
+
 
 //! Read RGB color
 const c8* COBJMeshFileLoader::readColor(const c8* bufPtr, video::SColor& color, const c8* const bufEnd)
@@ -574,7 +644,7 @@ const c8* COBJMeshFileLoader::readVec3(const c8* bufPtr, core::vector3df& vec, c
 
 
 //! Read 2d vector of floats
-const c8* COBJMeshFileLoader::readVec2(const c8* bufPtr, core::vector2df& vec, const c8* const bufEnd)
+const c8* COBJMeshFileLoader::readUV(const c8* bufPtr, core::vector2df& vec, const c8* const bufEnd)
 {
 	const u32 WORD_BUFFER_LENGTH = 256;
 	c8 wordBuffer[WORD_BUFFER_LENGTH];
@@ -582,7 +652,7 @@ const c8* COBJMeshFileLoader::readVec2(const c8* bufPtr, core::vector2df& vec, c
 	bufPtr = goAndCopyNextWord(wordBuffer, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
 	vec.X=core::fast_atof(wordBuffer);
 	bufPtr = goAndCopyNextWord(wordBuffer, bufPtr, WORD_BUFFER_LENGTH, bufEnd);
-	vec.Y=-core::fast_atof(wordBuffer); // change handedness
+	vec.Y=1-core::fast_atof(wordBuffer); // change handedness
 	return bufPtr;
 }
 
@@ -599,37 +669,53 @@ const c8* COBJMeshFileLoader::readBool(const c8* bufPtr, bool& tf, const c8* con
 }
 
 
-COBJMeshFileLoader::SObjMtl* COBJMeshFileLoader::findMtl(const c8* mtlName)
+COBJMeshFileLoader::SObjMtl* COBJMeshFileLoader::findMtl(const core::stringc& mtlName, const core::stringc& grpName)
 {
+	COBJMeshFileLoader::SObjMtl* defMaterial = 0;
 	for (u32 i = 0; i < Materials.size(); ++i)
 	{
 		if ( Materials[i]->Name == mtlName )
-			return Materials[i];
+		{
+			if ( Materials[i]->Group == grpName )
+				return Materials[i];
+			else
+			if ( Materials[i]->Group == "" )
+				defMaterial = Materials[i];
+		}
+	}
+	if (defMaterial)
+	{
+		Materials.push_back(new SObjMtl(*defMaterial));
+		Materials.getLast()->Group = grpName;
+		return Materials.getLast();
 	}
 	return 0;
 }
 
 
-
 //! skip space characters and stop on first non-space
-const c8* COBJMeshFileLoader::goFirstWord(const c8* buf, const c8* const bufEnd)
+const c8* COBJMeshFileLoader::goFirstWord(const c8* buf, const c8* const bufEnd, bool acrossNewlines)
 {
 	// skip space characters
-	while((buf != bufEnd) && core::isspace(*buf))
-		++buf;
+	if (acrossNewlines)
+		while((buf != bufEnd) && core::isspace(*buf))
+			++buf;
+	else
+		while((buf != bufEnd) && core::isspace(*buf) && (*buf != '\n'))
+			++buf;
 
 	return buf;
 }
 
 
 //! skip current word and stop at beginning of next one
-const c8* COBJMeshFileLoader::goNextWord(const c8* buf, const c8* const bufEnd)
+const c8* COBJMeshFileLoader::goNextWord(const c8* buf, const c8* const bufEnd, bool acrossNewlines)
 {
 	// skip current word
 	while(( buf != bufEnd ) && !core::isspace(*buf))
 		++buf;
 
-	return goFirstWord(buf, bufEnd);
+	return goFirstWord(buf, bufEnd, acrossNewlines);
 }
 
 
@@ -687,13 +773,13 @@ core::stringc COBJMeshFileLoader::copyLine(const c8* inBuf, const c8* bufEnd)
 			break;
 		++ptr;
 	}
-	return core::stringc(inBuf, ptr-inBuf+1);
+	return core::stringc(inBuf, (u32)(ptr-inBuf+1));
 }
 
 
 const c8* COBJMeshFileLoader::goAndCopyNextWord(c8* outBuf, const c8* inBuf, u32 outBufLength, const c8* bufEnd)
 {
-	inBuf = goNextWord(inBuf, bufEnd);
+	inBuf = goNextWord(inBuf, bufEnd, false);
 	copyWord(outBuf, inBuf, outBufLength, bufEnd);
 	return inBuf;
 }
@@ -771,9 +857,7 @@ bool COBJMeshFileLoader::retrieveVertexIndices(c8* vertexData, s32* idx, const c
 
 void COBJMeshFileLoader::cleanUp()
 {
-	u32 i;
-
-	for (i = 0; i < Materials.size(); ++i )
+	for (u32 i=0; i < Materials.size(); ++i )
 	{
 		Materials[i]->Meshbuffer->drop();
 		delete Materials[i];
@@ -786,5 +870,5 @@ void COBJMeshFileLoader::cleanUp()
 } // end namespace scene
 } // end namespace irr
 
-
 #endif // _IRR_COMPILE_WITH_OBJ_LOADER_
+

@@ -25,6 +25,11 @@ COpenGLShaderMaterialRenderer::COpenGLShaderMaterialRenderer(video::COpenGLDrive
 	: Driver(driver), CallBack(callback), BaseMaterial(baseMaterial),
 		VertexShader(0), PixelShader(0), UserData(userData)
 {
+
+	#ifdef _DEBUG
+	setDebugName("COpenGLShaderMaterialRenderer");
+	#endif
+
 	if (BaseMaterial)
 		BaseMaterial->grab();
 
@@ -38,8 +43,8 @@ COpenGLShaderMaterialRenderer::COpenGLShaderMaterialRenderer(video::COpenGLDrive
 //! constructor only for use by derived classes who want to
 //! create a fall back material for example.
 COpenGLShaderMaterialRenderer::COpenGLShaderMaterialRenderer(COpenGLDriver* driver,
-							IShaderConstantSetCallBack* callback,
-							IMaterialRenderer* baseMaterial, s32 userData)
+				IShaderConstantSetCallBack* callback,
+				IMaterialRenderer* baseMaterial, s32 userData)
 : Driver(driver), CallBack(callback), BaseMaterial(baseMaterial),
 		VertexShader(0), PixelShader(0), UserData(userData)
 {
@@ -64,25 +69,28 @@ COpenGLShaderMaterialRenderer::~COpenGLShaderMaterialRenderer()
 		Driver->extGlDeletePrograms(1, &PixelShader);
 
 	if (BaseMaterial)
-		BaseMaterial->drop ();
+		BaseMaterial->drop();
 }
+
 
 void COpenGLShaderMaterialRenderer::init(s32& outMaterialTypeNr, const c8* vertexShaderProgram,
 	const c8* pixelShaderProgram, E_VERTEX_TYPE type)
 {
 	outMaterialTypeNr = -1;
 
+	bool success;
+
 	// create vertex shader
-	if (!createVertexShader(vertexShaderProgram))
-		return;
+	success=createVertexShader(vertexShaderProgram);
 
 	// create pixel shader
-	if (!createPixelShader(pixelShaderProgram))
+	if (!createPixelShader(pixelShaderProgram) || !success)
 		return;
 
 	// register as a new material
 	outMaterialTypeNr = Driver->addMaterialRenderer(this);
 }
+
 
 bool COpenGLShaderMaterialRenderer::OnRender(IMaterialRendererServices* service, E_VERTEX_TYPE vtxtype)
 {
@@ -121,6 +129,10 @@ void COpenGLShaderMaterialRenderer::OnSetMaterial(const video::SMaterial& materi
 			BaseMaterial->OnSetMaterial(material, material, true, services);
 	}
 
+	//let callback know used material
+	if (CallBack)
+		CallBack->OnSetMaterial(material);
+
 	for (u32 i=0; i<MATERIAL_MAX_TEXTURES; ++i)
 		Driver->setTexture(i, material.getTexture(i));
 	Driver->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
@@ -144,11 +156,13 @@ void COpenGLShaderMaterialRenderer::OnUnsetMaterial()
 		BaseMaterial->OnUnsetMaterial();
 }
 
+
 //! Returns if the material is transparent.
 bool COpenGLShaderMaterialRenderer::isTransparent() const
 {
 	return BaseMaterial ? BaseMaterial->isTransparent() : false;
 }
+
 
 bool COpenGLShaderMaterialRenderer::createPixelShader(const c8* pxsh)
 {
@@ -181,6 +195,9 @@ bool COpenGLShaderMaterialRenderer::createPixelShader(const c8* pxsh)
 		sprintf(tmp, "Pixel shader compilation failed at position %d:\n%s", errPos, errString);
 		os::Printer::log(tmp);
 
+		Driver->extGlDeletePrograms(1, &PixelShader);
+		PixelShader=0;
+
 		return false;
 	}
 #else
@@ -190,7 +207,8 @@ bool COpenGLShaderMaterialRenderer::createPixelShader(const c8* pxsh)
 	return true;
 }
 
-bool COpenGLShaderMaterialRenderer::createVertexShader(const char* vtxsh)
+
+bool COpenGLShaderMaterialRenderer::createVertexShader(const c8* vtxsh)
 {
 	if (!vtxsh)
 		return true;
@@ -201,7 +219,7 @@ bool COpenGLShaderMaterialRenderer::createVertexShader(const char* vtxsh)
 
 	// clear error buffer
 	while(glGetError() != GL_NO_ERROR)
-		{}
+	{}
 
 	// compile
 	Driver->extGlProgramString(GL_VERTEX_PROGRAM_ARB, GL_PROGRAM_FORMAT_ASCII_ARB,
@@ -218,6 +236,9 @@ bool COpenGLShaderMaterialRenderer::createVertexShader(const char* vtxsh)
 		char tmp[2048];
 		sprintf(tmp, "Vertex shader compilation failed at position %d:\n%s", errPos, errString);
 		os::Printer::log(tmp);
+
+		Driver->extGlDeletePrograms(1, &VertexShader);
+		VertexShader=0;
 
 		return false;
 	}

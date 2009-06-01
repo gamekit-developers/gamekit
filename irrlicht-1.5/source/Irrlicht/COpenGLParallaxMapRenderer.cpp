@@ -211,6 +211,11 @@ COpenGLParallaxMapRenderer::COpenGLParallaxMapRenderer(video::COpenGLDriver* dri
 	s32& outMaterialTypeNr, IMaterialRenderer* baseMaterial)
 	: COpenGLShaderMaterialRenderer(driver, 0, baseMaterial), CompiledShaders(true)
 {
+
+	#ifdef _DEBUG
+	setDebugName("COpenGLParallaxMapRenderer");
+	#endif
+
 	// set this as callback. We could have done this in
 	// the initialization list, but some compilers don't like it.
 
@@ -248,6 +253,10 @@ COpenGLParallaxMapRenderer::COpenGLParallaxMapRenderer(video::COpenGLDriver* dri
 		// compile shaders on our own
 		init(outMaterialTypeNr, OPENGL_PARALLAX_MAP_VSH, OPENGL_PARALLAX_MAP_PSH, EVT_TANGENTS);
 	}
+
+	// fallback if compilation has failed
+	if (-1==outMaterialTypeNr)
+		outMaterialTypeNr = driver->addMaterialRenderer(this);
 }
 
 

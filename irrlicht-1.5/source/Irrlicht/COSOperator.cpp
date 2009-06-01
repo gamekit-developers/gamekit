@@ -11,7 +11,7 @@
 #include <string.h>
 #include <unistd.h>
 #ifdef _IRR_USE_OSX_DEVICE_
-#include "OSXClipboard.h"
+#include "MacOSX/OSXClipboard.h"
 #endif
 #ifdef _IRR_OSX_PLATFORM_
 #include <sys/types.h>
@@ -25,7 +25,11 @@ namespace irr
 
 // constructor
 COSOperator::COSOperator(const c8* osVersion) : OperatingSystem(osVersion)
-{ }
+{
+	#ifdef _DEBUG
+	setDebugName("COSOperator");
+	#endif
+}
 
 
 //! returns the current operating system version as string.
@@ -100,7 +104,7 @@ c8* COSOperator::getTextFromClipboard() const
 
 bool COSOperator::getProcessorSpeedMHz(u32* MHz) const
 {
-#if defined(_IRR_WINDOWS_API_)
+#if defined(_IRR_WINDOWS_API_) && !defined(_WIN32_WCE )
 	LONG Error;
 	
 	HKEY Key;

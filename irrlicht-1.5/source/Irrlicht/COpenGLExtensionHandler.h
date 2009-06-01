@@ -6,7 +6,6 @@
 #define __C_OPEN_GL_FEATURE_MAP_H_INCLUDED__
 
 #include "IrrCompileConfig.h"
-
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 
 #include "EDriverFeatures.h"
@@ -39,8 +38,9 @@
 		#define GL_GLEXT_PROTOTYPES 1
 		#define GLX_GLXEXT_PROTOTYPES 1
 	#endif
-	#include <SDL/SDL_opengl.h>
 	#define NO_SDL_GLEXT
+	#include <SDL/SDL_video.h>
+	#include <SDL/SDL_opengl.h>
 	#include "glext.h"
 #else
 	#if defined(_IRR_OPENGL_USE_EXTPOINTER_)
@@ -79,13 +79,21 @@ static const char* const OpenGLFeatureStrings[] = {
 	"GL_APPLE_vertex_array_range",
 	"GL_APPLE_ycbcr_422",
 	"GL_ARB_color_buffer_float",
+	"GL_ARB_depth_buffer_float",
 	"GL_ARB_depth_texture",
 	"GL_ARB_draw_buffers",
+	"GL_ARB_draw_instanced",
 	"GL_ARB_fragment_program",
 	"GL_ARB_fragment_program_shadow",
 	"GL_ARB_fragment_shader",
+	"GL_ARB_framebuffer_object",
+	"GL_ARB_framebuffer_sRGB",
+	"GL_ARB_geometry_shader4",
 	"GL_ARB_half_float_pixel",
+	"GL_ARB_half_float_vertex",
 	"GL_ARB_imaging",
+	"GL_ARB_instanced_arrays",
+	"GL_ARB_map_buffer_range",
 	"GL_ARB_matrix_palette",
 	"GL_ARB_multisample",
 	"GL_ARB_multitexture",
@@ -98,7 +106,9 @@ static const char* const OpenGLFeatureStrings[] = {
 	"GL_ARB_shadow",
 	"GL_ARB_shadow_ambient",
 	"GL_ARB_texture_border_clamp",
+	"GL_ARB_texture_buffer_object",
 	"GL_ARB_texture_compression",
+	"GL_ARB_texture_compression_rgtc",
 	"GL_ARB_texture_cube_map",
 	"GL_ARB_texture_env_add",
 	"GL_ARB_texture_env_combine",
@@ -108,7 +118,9 @@ static const char* const OpenGLFeatureStrings[] = {
 	"GL_ARB_texture_mirrored_repeat",
 	"GL_ARB_texture_non_power_of_two",
 	"GL_ARB_texture_rectangle",
+	"GL_ARB_texture_rg",
 	"GL_ARB_transpose_matrix",
+	"GL_ARB_vertex_array_object",
 	"GL_ARB_vertex_blend",
 	"GL_ARB_vertex_buffer_object",
 	"GL_ARB_vertex_program",
@@ -148,6 +160,7 @@ static const char* const OpenGLFeatureStrings[] = {
 	"GL_EXT_copy_texture",
 	"GL_EXT_cull_vertex",
 	"GL_EXT_depth_bounds_test",
+	"GL_EXT_direct_state_access",
 	"GL_EXT_draw_buffers2",
 	"GL_EXT_draw_instanced",
 	"GL_EXT_draw_range_elements",
@@ -206,10 +219,13 @@ static const char* const OpenGLFeatureStrings[] = {
 	"GL_EXT_texture_shared_exponent",
 	"GL_EXT_texture_sRGB",
 	"GL_EXT_timer_query",
+	"GL_EXT_transform_feedback",
 	"GL_EXT_vertex_array",
+	"GL_EXT_vertex_array_bgra",
 	"GL_EXT_vertex_shader",
 	"GL_EXT_vertex_weighting",
 	"GL_FfdMaskSGIX",
+	"GL_GREMEDY_frame_terminator",
 	"GL_GREMEDY_string_marker",
 	"GL_HP_convolution_border_modes",
 	"GL_HP_image_transform",
@@ -232,6 +248,7 @@ static const char* const OpenGLFeatureStrings[] = {
 	"GL_MESAX_texture_stack",
 	"GL_MESA_ycbcr_texture",
 	"GL_NV_blend_square",
+	"GL_NV_conditional_render",
 	"GL_NV_copy_depth_to_color",
 	"GL_NV_depth_buffer_float",
 	"GL_NV_depth_clamp",
@@ -255,6 +272,7 @@ static const char* const OpenGLFeatureStrings[] = {
 	"GL_NV_parameter_buffer_object",
 	"GL_NV_pixel_data_range",
 	"GL_NV_point_sprite",
+	"GL_NV_present_video",
 	"GL_NV_primitive_restart",
 	"GL_NV_register_combiners",
 	"GL_NV_register_combiners2",
@@ -373,13 +391,21 @@ class COpenGLExtensionHandler
 		IRR_APPLE_vertex_array_range,
 		IRR_APPLE_ycbcr_422,
 		IRR_ARB_color_buffer_float,
+		IRR_ARB_depth_buffer_float,
 		IRR_ARB_depth_texture,
 		IRR_ARB_draw_buffers,
+		IRR_ARB_draw_instanced,
 		IRR_ARB_fragment_program,
 		IRR_ARB_fragment_program_shadow,
 		IRR_ARB_fragment_shader,
+		IRR_ARB_framebuffer_object,
+		IRR_ARB_framebuffer_sRGB,
+		IRR_ARB_geometry_shader4,
 		IRR_ARB_half_float_pixel,
+		IRR_ARB_half_float_vertex,
 		IRR_ARB_imaging,
+		IRR_ARB_instanced_arrays,
+		IRR_ARB_map_buffer_range,
 		IRR_ARB_matrix_palette,
 		IRR_ARB_multisample,
 		IRR_ARB_multitexture,
@@ -392,7 +418,9 @@ class COpenGLExtensionHandler
 		IRR_ARB_shadow,
 		IRR_ARB_shadow_ambient,
 		IRR_ARB_texture_border_clamp,
+		IRR_ARB_texture_buffer_object,
 		IRR_ARB_texture_compression,
+		IRR_ARB_texture_compression_rgtc,
 		IRR_ARB_texture_cube_map,
 		IRR_ARB_texture_env_add,
 		IRR_ARB_texture_env_combine,
@@ -402,7 +430,9 @@ class COpenGLExtensionHandler
 		IRR_ARB_texture_mirrored_repeat,
 		IRR_ARB_texture_non_power_of_two,
 		IRR_ARB_texture_rectangle,
+		IRR_ARB_texture_rg,
 		IRR_ARB_transpose_matrix,
+		IRR_ARB_vertex_array_object,
 		IRR_ARB_vertex_blend,
 		IRR_ARB_vertex_buffer_object,
 		IRR_ARB_vertex_program,
@@ -442,6 +472,7 @@ class COpenGLExtensionHandler
 		IRR_EXT_copy_texture,
 		IRR_EXT_cull_vertex,
 		IRR_EXT_depth_bounds_test,
+		IRR_EXT_direct_state_access,
 		IRR_EXT_draw_buffers2,
 		IRR_EXT_draw_instanced,
 		IRR_EXT_draw_range_elements,
@@ -500,10 +531,13 @@ class COpenGLExtensionHandler
 		IRR_EXT_texture_shared_exponent,
 		IRR_EXT_texture_sRGB,
 		IRR_EXT_timer_query,
+		IRR_EXT_transform_feedback,
 		IRR_EXT_vertex_array,
+		IRR_EXT_vertex_array_bgra,
 		IRR_EXT_vertex_shader,
 		IRR_EXT_vertex_weighting,
 		IRR_FfdMaskSGIX,
+		IRR_GREMEDY_frame_terminator,
 		IRR_GREMEDY_string_marker,
 		IRR_HP_convolution_border_modes,
 		IRR_HP_image_transform,
@@ -526,6 +560,7 @@ class COpenGLExtensionHandler
 		IRR_MESAX_texture_stack,
 		IRR_MESA_ycbcr_texture,
 		IRR_NV_blend_square,
+		IRR_NV_conditional_render,
 		IRR_NV_copy_depth_to_color,
 		IRR_NV_depth_buffer_float,
 		IRR_NV_depth_clamp,
@@ -549,6 +584,7 @@ class COpenGLExtensionHandler
 		IRR_NV_parameter_buffer_object,
 		IRR_NV_pixel_data_range,
 		IRR_NV_point_sprite,
+		IRR_NV_present_video,
 		IRR_NV_primitive_restart,
 		IRR_NV_register_combiners,
 		IRR_NV_register_combiners2,
@@ -650,6 +686,7 @@ class COpenGLExtensionHandler
 		IRR_OpenGL_Feature_Count
 	};
 
+
 	// constructor
 	COpenGLExtensionHandler();
 
@@ -659,6 +696,12 @@ class COpenGLExtensionHandler
 	//! queries the features of the driver, returns true if feature is available
 	bool queryFeature(E_VIDEO_DRIVER_FEATURE feature) const;
 
+	//! queries the features of the driver, returns true if feature is available
+	bool queryOpenGLFeature(EOpenGLFeatures feature) const
+	{
+		return FeatureAvailable[feature];
+	}
+
 	//! show all features with availablity
 	void dump() const;
 
@@ -667,9 +710,7 @@ class COpenGLExtensionHandler
 	bool MultiTextureExtension;
 	bool MultiSamplingExtension;
 	bool AnisotropyExtension;
-	bool SeparateStencilExtension;
 	bool TextureCompressionExtension;
-	bool PackedDepthStencilExtension;
 
 	// Some non-boolean properties
 	//! Maxmimum texture layers supported by the fixed pipeline
@@ -740,6 +781,20 @@ class COpenGLExtensionHandler
 	void extGlFramebufferRenderbuffer(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer);
 	void extGlActiveStencilFace(GLenum face);
 
+	// vertex buffer object
+	void extGlGenBuffers(GLsizei n, GLuint *buffers);
+	void extGlBindBuffer(GLenum target, GLuint buffer);
+	void extGlBufferData(GLenum target, GLsizeiptrARB size, const GLvoid *data, GLenum usage);
+	void extGlDeleteBuffers(GLsizei n, const GLuint *buffers);
+	void extGlBufferSubData (GLenum target, GLintptrARB offset, GLsizeiptrARB size, const GLvoid *data);
+	void extGlGetBufferSubData (GLenum target, GLintptrARB offset, GLsizeiptrARB size, GLvoid *data);
+	void *extGlMapBuffer (GLenum target, GLenum access);
+	GLboolean extGlUnmapBuffer (GLenum target);
+	GLboolean extGlIsBuffer (GLuint buffer);
+	void extGlGetBufferParameteriv (GLenum target, GLenum pname, GLint *params);
+	void extGlGetBufferPointerv (GLenum target, GLenum pname, GLvoid **params);
+
+
 	protected:
 	// the global feature array
 	bool FeatureAvailable[IRR_OpenGL_Feature_Count];
@@ -796,6 +851,17 @@ class COpenGLExtensionHandler
 		PFNGLRENDERBUFFERSTORAGEEXTPROC pGlRenderbufferStorageEXT;
 		PFNGLFRAMEBUFFERRENDERBUFFEREXTPROC pGlFramebufferRenderbufferEXT;
 		PFNGLACTIVESTENCILFACEEXTPROC pGlActiveStencilFaceEXT;
+		PFNGLGENBUFFERSARBPROC pGlGenBuffersARB;
+		PFNGLBINDBUFFERARBPROC pGlBindBufferARB;
+		PFNGLBUFFERDATAARBPROC pGlBufferDataARB;
+		PFNGLDELETEBUFFERSARBPROC pGlDeleteBuffersARB;
+		PFNGLBUFFERSUBDATAARBPROC pGlBufferSubDataARB;
+		PFNGLGETBUFFERSUBDATAARBPROC pGlGetBufferSubDataARB;
+		PFNGLMAPBUFFERARBPROC pGlMapBufferARB;
+		PFNGLUNMAPBUFFERARBPROC pGlUnmapBufferARB;
+		PFNGLISBUFFERARBPROC pGlIsBufferARB;
+		PFNGLGETBUFFERPARAMETERIVARBPROC pGlGetBufferParameterivARB;
+		PFNGLGETBUFFERPOINTERVARBPROC pGlGetBufferPointervARB;
 	#endif
 };
 
@@ -1325,6 +1391,145 @@ inline void COpenGLExtensionHandler::extGlActiveStencilFace(GLenum face)
 	glActiveStencilFaceEXT(face);
 #else
 	os::Printer::log("glActiveStencilFace not supported", ELL_ERROR);
+#endif
+}
+
+
+inline void COpenGLExtensionHandler::extGlGenBuffers(GLsizei n, GLuint *buffers)
+{
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
+	if (pGlGenBuffersARB)
+		pGlGenBuffersARB(n, buffers);
+#elif defined(GL_ARB_vertex_buffer_object)
+	glGenBuffers(n, buffers);
+#else
+	os::Printer::log("glGenBuffers not supported", ELL_ERROR);
+#endif
+}
+
+inline void COpenGLExtensionHandler::extGlBindBuffer(GLenum target, GLuint buffer)
+{
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
+	if (pGlBindBufferARB)
+		pGlBindBufferARB(target, buffer);
+#elif defined(GL_ARB_vertex_buffer_object)
+	glBindBuffer(target, buffer);
+#else
+	os::Printer::log("glBindBuffer not supported", ELL_ERROR);
+#endif
+}
+
+inline void COpenGLExtensionHandler::extGlBufferData(GLenum target, GLsizeiptrARB size, const GLvoid *data, GLenum usage)
+{
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
+	if (pGlBufferDataARB)
+		pGlBufferDataARB(target, size, data, usage);
+#elif defined(GL_ARB_vertex_buffer_object)
+	glBufferData(target, size, data, usage);
+#else
+	os::Printer::log("glBufferData not supported", ELL_ERROR);
+#endif
+}
+
+inline void COpenGLExtensionHandler::extGlDeleteBuffers(GLsizei n, const GLuint *buffers)
+{
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
+	if (pGlDeleteBuffersARB)
+		pGlDeleteBuffersARB(n, buffers);
+#elif defined(GL_ARB_vertex_buffer_object)
+	glDeleteBuffers(n, buffers);
+#else
+	os::Printer::log("glDeleteBuffers not supported", ELL_ERROR);
+#endif
+}
+
+inline void COpenGLExtensionHandler::extGlBufferSubData(GLenum target, GLintptrARB offset, GLsizeiptrARB size, const GLvoid *data)
+{
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
+	if (pGlBufferSubDataARB)
+		pGlBufferSubDataARB(target, offset, size, data);
+#elif defined(GL_ARB_vertex_buffer_object)
+	glBufferSubData(target, offset, size, data);
+#else
+	os::Printer::log("glBufferSubData not supported", ELL_ERROR);
+#endif
+}
+
+inline void COpenGLExtensionHandler::extGlGetBufferSubData(GLenum target, GLintptrARB offset, GLsizeiptrARB size, GLvoid *data)
+{
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
+	if (pGlGetBufferSubDataARB)
+		pGlGetBufferSubDataARB(target, offset, size, data);
+#elif defined(GL_ARB_vertex_buffer_object)
+	glGetBufferSubData(target, offset, size, data);
+#else
+	os::Printer::log("glGetBufferSubData not supported", ELL_ERROR);
+#endif
+}
+
+inline void *COpenGLExtensionHandler::extGlMapBuffer(GLenum target, GLenum access)
+{
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
+	if (pGlMapBufferARB)
+		return pGlMapBufferARB(target, access);
+	return 0;
+#elif defined(GL_ARB_vertex_buffer_object)
+	return glMapBuffer(target, access);
+#else
+	os::Printer::log("glMapBuffer not supported", ELL_ERROR);
+	return 0;
+#endif
+}
+
+inline GLboolean COpenGLExtensionHandler::extGlUnmapBuffer (GLenum target)
+{
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
+	if (pGlUnmapBufferARB)
+		return pGlUnmapBufferARB(target);
+	return false;
+#elif defined(GL_ARB_vertex_buffer_object)
+	return glUnmapBuffer(target);
+#else
+	os::Printer::log("glUnmapBuffer not supported", ELL_ERROR);
+	return false;
+#endif
+}
+
+inline GLboolean COpenGLExtensionHandler::extGlIsBuffer (GLuint buffer)
+{
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
+	if (pGlIsBufferARB)
+		return pGlIsBufferARB(buffer);
+	return false;
+#elif defined(GL_ARB_vertex_buffer_object)
+	return glIsBuffer(buffer);
+#else
+	os::Printer::log("glDeleteBuffers not supported", ELL_ERROR);
+	return false;
+#endif
+}
+
+inline void COpenGLExtensionHandler::extGlGetBufferParameteriv (GLenum target, GLenum pname, GLint *params)
+{
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
+	if (pGlGetBufferParameterivARB)
+		pGlGetBufferParameterivARB(target, pname, params);
+#elif defined(GL_ARB_vertex_buffer_object)
+	glGetBufferParameteriv(target, pname, params);
+#else
+	os::Printer::log("glGetBufferParameteriv not supported", ELL_ERROR);
+#endif
+}
+
+inline void COpenGLExtensionHandler::extGlGetBufferPointerv (GLenum target, GLenum pname, GLvoid **params)
+{
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
+	if (pGlGetBufferPointervARB)
+		pGlGetBufferPointervARB(target, pname, params);
+#elif defined(GL_ARB_vertex_buffer_object)
+	glGetBufferPointerv(target, pname, params);
+#else
+	os::Printer::log("glGetBufferPointerv not supported", ELL_ERROR);
 #endif
 }
 

@@ -7,7 +7,7 @@
 
 #include "IMeshLoader.h"
 #include "IFileSystem.h"
-#include "IVideoDriver.h"
+#include "ISceneManager.h"
 #include "irrString.h"
 #include "SMeshBuffer.h"
 #include "irrMap.h"
@@ -23,7 +23,7 @@ class COBJMeshFileLoader : public IMeshLoader
 public:
 
 	//! Constructor
-	COBJMeshFileLoader(io::IFileSystem* fs, video::IVideoDriver* driver);
+	COBJMeshFileLoader(scene::ISceneManager* smgr, io::IFileSystem* fs);
 
 	//! destructor
 	virtual ~COBJMeshFileLoader();
@@ -42,7 +42,9 @@ private:
 
 	struct SObjMtl
 	{
-		SObjMtl() : Meshbuffer(0), Illumination(0) {
+		SObjMtl() : Meshbuffer(0), Bumpiness (1.0f), Illumination(0),
+			RecalculateNormals(false)
+		{
 			Meshbuffer = new SMeshBuffer();
 			Meshbuffer->Material.Shininess = 0.0f;
 			Meshbuffer->Material.AmbientColor = video::SColorf(0.2f, 0.2f, 0.2f, 1.0f).toSColor();
@@ -50,18 +52,31 @@ private:
 			Meshbuffer->Material.SpecularColor = video::SColorf(1.0f, 1.0f, 1.0f, 1.0f).toSColor();
 		}
 
-		SObjMtl(SObjMtl& o) : Meshbuffer(o.Meshbuffer), Name(o.Name), Illumination(o.Illumination) { o.Meshbuffer->grab(); }
+		SObjMtl(const SObjMtl& o)
+			: Name(o.Name), Group(o.Group),
+			Bumpiness(o.Bumpiness), Illumination(o.Illumination),
+			RecalculateNormals(false)
+		{
+			Meshbuffer = new SMeshBuffer();
+			Meshbuffer->Material = o.Meshbuffer->Material;
+		}
 
 		core::map<video::S3DVertex, int> VertMap;
 		scene::SMeshBuffer *Meshbuffer;
 		core::stringc Name;
+		core::stringc Group;
+		f32 Bumpiness;
 		c8 Illumination;
+		bool RecalculateNormals;
 	};
 
+	// helper method for material reading
+	const c8* readTextures(const c8* bufPtr, const c8* const bufEnd, SObjMtl* currMaterial, const core::stringc& relPath);
+
 	// returns a pointer to the first printable character available in the buffer
-	const c8* goFirstWord(const c8* buf, const c8* const bufEnd);
+	const c8* goFirstWord(const c8* buf, const c8* const bufEnd, bool acrossNewlines=true);
 	// returns a pointer to the first printable character after the first non-printable
-	const c8* goNextWord(const c8* buf, const c8* const bufEnd);
+	const c8* goNextWord(const c8* buf, const c8* const bufEnd, bool acrossNewlines=true);
 	// returns a pointer to the next printable character after the first line break
 	const c8* goNextLine(const c8* buf, const c8* const bufEnd);
 	// copies the current word from the inBuf to the outBuf
@@ -72,16 +87,16 @@ private:
 	const c8* goAndCopyNextWord(c8* outBuf, const c8* inBuf, u32 outBufLength, const c8* const pBufEnd);
 
 	//! Read the material from the given file
-	void readMTL(const c8* fileName, core::stringc relPath);
+	void readMTL(const c8* fileName, const core::stringc& relPath);
 	//! Find and return the material with the given name
-	SObjMtl * findMtl(const c8* mtlName);
+	SObjMtl* findMtl(const core::stringc& mtlName, const core::stringc& grpName);
 
 	//! Read RGB color
 	const c8* readColor(const c8* bufPtr, video::SColor& color, const c8* const pBufEnd);
 	//! Read 3d vector of floats
 	const c8* readVec3(const c8* bufPtr, core::vector3df& vec, const c8* const pBufEnd);
 	//! Read 2d vector of floats
-	const c8* readVec2(const c8* bufPtr, core::vector2df& vec, const c8* const pBufEnd);
+	const c8* readUV(const c8* bufPtr, core::vector2df& vec, const c8* const pBufEnd);
 	//! Read boolean value represented as 'on' or 'off'
 	const c8* readBool(const c8* bufPtr, bool& tf, const c8* const bufEnd);
 
@@ -92,8 +107,8 @@ private:
 
 	void cleanUp();
 
+	scene::ISceneManager* SceneManager;
 	io::IFileSystem* FileSystem;
-	video::IVideoDriver* Driver;
 
 	core::array<SObjMtl*> Materials;
 };

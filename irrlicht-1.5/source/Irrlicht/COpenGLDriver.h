@@ -15,6 +15,8 @@
 	#include "CIrrDeviceMacOSX.h"
 #endif
 
+#include "SIrrCreationParameters.h"
+
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 
 #include "CNullDriver.h"
@@ -24,6 +26,7 @@
 #if defined(_IRR_WINDOWS_API_)
 	#include <GL/gl.h>
 	#include "glext.h"
+	#include "wglext.h"
 #ifdef _MSC_VER
 	#pragma comment(lib, "OpenGL32.lib")
 	#pragma comment(lib, "GLu32.lib")
@@ -44,8 +47,8 @@
 		#define GL_GLEXT_PROTOTYPES 1
 		#define GLX_GLXEXT_PROTOTYPES 1
 	#endif
-	#include <SDL/SDL_opengl.h>
 	#define NO_SDL_GLEXT
+	#include <SDL/SDL_opengl.h>
 	#include "glext.h"
 #else
 	#if defined(_IRR_OPENGL_USE_EXTPOINTER_)
@@ -74,52 +77,72 @@ namespace video
 	{
 	public:
 
-		#ifdef _IRR_WINDOWS_API_
-		//! win32 constructor
-		COpenGLDriver(const core::dimension2d<s32>& screenSize, HWND window, bool fullscreen,
-			bool stencilBuffer, io::IFileSystem* io, bool antiAlias);
-
-		//! inits the windows specific parts of the open gl driver
-		bool initDriver(const core::dimension2d<s32>& screenSize, HWND window,
-			u32 bits, bool fullscreen, bool vsync, bool stencilBuffer);
-		#endif
-
-		#ifdef _IRR_USE_LINUX_DEVICE_
-		COpenGLDriver(const core::dimension2d<s32>& screenSize, bool fullscreen,
-			bool stencilBuffer, io::IFileSystem* io, bool vsync, bool antiAlias);
+		#if defined(_IRR_WINDOWS_API_) || defined(_IRR_USE_LINUX_DEVICE_) || defined(_IRR_USE_SDL_DEVICE_)
+		COpenGLDriver(const SIrrlichtCreationParameters& params, io::IFileSystem* io);
 		#endif
 
 		#ifdef _IRR_USE_OSX_DEVICE_
-		COpenGLDriver(const core::dimension2d<s32>& screenSize, bool fullscreen,
-			bool stencilBuffer, CIrrDeviceMacOSX *device,io::IFileSystem* io, bool vsync, bool antiAlias);
+		COpenGLDriver(const SIrrlichtCreationParameters& params,
+				io::IFileSystem* io, CIrrDeviceMacOSX *device);
 		#endif
 
-		#ifdef _IRR_USE_SDL_DEVICE_
-		COpenGLDriver(const core::dimension2d<s32>& screenSize, bool fullscreen,
-			bool stencilBuffer, io::IFileSystem* io, bool vsync, bool antiAlias);
+		#ifdef _IRR_WINDOWS_API_
+		//! inits the windows specific parts of the open gl driver
+		bool initDriver(SIrrlichtCreationParameters params);
 		#endif
 
 		//! destructor
 		virtual ~COpenGLDriver();
 
 		//! clears the zbuffer
-		virtual bool beginScene(bool backBuffer, bool zBuffer, SColor color);
+		virtual bool beginScene(bool backBuffer=true, bool zBuffer=true,
+				SColor color=SColor(255,0,0,0),
+				void* windowId=0,
+				core::rect<s32>* sourceRect=0);
 
 		//! presents the rendered scene on the screen, returns false if failed
-		virtual bool endScene( s32 windowId, core::rect<s32>* sourceRect=0 );
+		virtual bool endScene();
 
 		//! sets transformation
 		virtual void setTransform(E_TRANSFORMATION_STATE state, const core::matrix4& mat);
 
+
+		struct SHWBufferLink_opengl : public SHWBufferLink
+		{
+			SHWBufferLink_opengl(const scene::IMeshBuffer *_MeshBuffer): SHWBufferLink(_MeshBuffer), vbo_verticesID(0),vbo_indicesID(0){}
+
+			GLuint vbo_verticesID; //tmp
+			GLuint vbo_indicesID; //tmp
+
+			GLuint vbo_verticesSize; //tmp
+			GLuint vbo_indicesSize; //tmp
+
+		};
+
+		bool updateVertexHardwareBuffer(SHWBufferLink_opengl *HWBuffer);
+		bool updateIndexHardwareBuffer(SHWBufferLink_opengl *HWBuffer);
+
+		//! updates hardware buffer if needed
+		virtual bool updateHardwareBuffer(SHWBufferLink *HWBuffer);
+
+		//! Create hardware buffer from mesh
+		virtual SHWBufferLink *createHardwareBuffer(const scene::IMeshBuffer* mb);
+
+		//! Delete hardware buffer (only some drivers can)
+		virtual void deleteHardwareBuffer(SHWBufferLink *HWBuffer);
+
+		//! Draw hardware buffer
+		virtual void drawHardwareBuffer(SHWBufferLink *HWBuffer);
+
 		//! draws a vertex primitive list
 		virtual void drawVertexPrimitiveList(const void* vertices, u32 vertexCount,
-				const u16* indexList, u32 primitiveCount,
-				E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType);
+				const void* indexList, u32 primitiveCount,
+				E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType, E_INDEX_TYPE iType);
 
 		//! queries the features of the driver, returns true if feature is available
 		virtual bool queryFeature(E_VIDEO_DRIVER_FEATURE feature) const
 		{
-			return COpenGLExtensionHandler::queryFeature(feature);
+			return FeatureEnabled[feature] && COpenGLExtensionHandler::queryFeature(feature);
 		}
 
 		//! Sets a material. All 3d drawing functions draw geometry now
@@ -159,7 +182,7 @@ namespace video
 		//! Draws a part of the texture into the rectangle.
 		virtual void draw2DImage(const video::ITexture* texture, const core::rect<s32>& destRect,
 			const core::rect<s32>& sourceRect, const core::rect<s32>* clipRect = 0,
-			video::SColor* colors=0, bool useAlphaChannelOfTexture=false);
+			const video::SColor* const colors=0, bool useAlphaChannelOfTexture=false);
 
 		//! draw an 2d rectangle
 		virtual void draw2DRectangle(SColor color, const core::rect<s32>& pos,
@@ -174,6 +197,9 @@ namespace video
 		virtual void draw2DLine(const core::position2d<s32>& start,
 					const core::position2d<s32>& end,
 					SColor color=SColor(255,255,255,255));
+
+		//! Draws a single pixel
+		virtual void drawPixel(u32 x, u32 y, const SColor & color);
 
 		//! Draws a 3d line.
 		virtual void draw3DLine(const core::vector3df& start,
@@ -226,6 +252,9 @@ namespace video
 		//! Returns type of video driver
 		virtual E_DRIVER_TYPE getDriverType() const;
 
+		//! get color format of the current color buffer
+		virtual ECOLOR_FORMAT getColorFormat() const;
+
 		//! Returns the transformation set by setTransform
 		virtual const core::matrix4& getTransform(E_TRANSFORMATION_STATE state) const;
 
@@ -277,7 +306,8 @@ namespace video
 		//! call.
 		virtual u32 getMaximalPrimitiveCount() const;
 
-		virtual ITexture* createRenderTargetTexture(const core::dimension2d<s32>& size, const c8* name);
+		virtual ITexture* addRenderTargetTexture(const core::dimension2d<s32>& size,
+				const c8* name);
 
 		virtual bool setRenderTarget(video::ITexture* texture, bool clearBackBuffer,
 					bool clearZBuffer, SColor color);
@@ -305,6 +335,12 @@ namespace video
 		//! \param enable: If true, enable the clipping plane else disable it.
 		virtual void enableClipPlane(u32 index, bool enable);
 
+		//! Returns the graphics card vendor name.
+		virtual core::stringc getVendorInfo() {return vendorName;}
+
+		ITexture* createDepthTexture(ITexture* texture, bool shared=true);
+		void removeDepthTexture(ITexture* texture);
+
 	private:
 
 		void uploadClipPlane(u32 index);
@@ -318,6 +354,9 @@ namespace video
 		inline void createGLMatrix(GLfloat gl_matrix[16], const core::matrix4& m);
 		inline void createGLTextureMatrix(GLfloat gl_matrix[16], const core::matrix4& m);
 
+		//! Set GL pipeline to desired texture wrap modes of the material
+		void setWrapMode(const SMaterial& material);
+
 		//! sets the needed renderstates
 		void setRenderStates3DMode();
 
@@ -328,6 +367,7 @@ namespace video
 		virtual const core::dimension2d<s32>& getCurrentRenderTargetSize() const;
 
 		void createMaterialRenderers();
+
 
 		core::stringw Name;
 		core::matrix4 Matrices[ETS_COUNT];
@@ -350,19 +390,26 @@ namespace video
 		SMaterial Material, LastMaterial;
 		COpenGLTexture* RenderTargetTexture;
 		const ITexture* CurrentTexture[MATERIAL_MAX_TEXTURES];
+		core::array<ITexture*> DepthTextures;
 		s32 LastSetLight;
 		core::array<core::plane3df> UserClipPlane;
 		core::array<bool> UserClipPlaneEnabled;
 
 		core::dimension2d<s32> CurrentRendertargetSize;
 
+		core::stringc vendorName;
+
+		core::matrix4 TextureFlipMatrix;
+
+		//! Color buffer format
+		ECOLOR_FORMAT ColorFormat;
+
 		#ifdef _IRR_WINDOWS_API_
 			HDC HDc; // Private GDI Device Context
 			HWND Window;
 			HGLRC HRc; // Permanent Rendering Context
 		#elif defined(_IRR_USE_LINUX_DEVICE_)
-			GLXDrawable XWindow;
-			Display* XDisplay;
+			GLXDrawable Drawable;
 		#elif defined(_IRR_USE_OSX_DEVICE_)
 			CIrrDeviceMacOSX *_device;
 		#endif
@@ -374,5 +421,4 @@ namespace video
 
 #endif // _IRR_COMPILE_WITH_OPENGL_
 #endif
-
 
