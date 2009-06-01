@@ -19,7 +19,7 @@ subject to the following restrictions:
 #define USE_CUSTOM_NODE 1
 
 ///You can enable vertex buffer objects (VBO) for Irrlicht 1.5
-//#define USE_VBO 1
+#define USE_VBO 1
 
 #include <irrlicht.h>
 #include <iostream>
@@ -659,8 +659,8 @@ int main(int argc,char** argv)
 	video::IVideoDriver* driver = device->getVideoDriver();
 	scene::ISceneManager* smgr = device->getSceneManager();
 
-	//irr::scene::ICameraSceneNode* cam = smgr->addCameraSceneNodeFPS(0,20,0.01,100);
-	irr::scene::ICameraSceneNode* cam = smgr->addCameraSceneNodeMaya(0,-100,10,10);//>addCameraSceneNode(0, core::vector3df(0,-40,0), core::vector3df(0,0,0));
+	irr::scene::ICameraSceneNode* cam = smgr->addCameraSceneNodeFPS(0,20,0.01,100);
+	//irr::scene::ICameraSceneNode* cam = smgr->addCameraSceneNodeMaya(0, core::vector3df(0,-40,0), core::vector3df(0,0,0));
 	//irr::scene::ICameraSceneNode* cam = smgr->addCameraSceneNodeFPS(0,10,10);
 	//irr::scene::ICameraSceneNode* cam = smgr->addCameraSceneNode(0, core::vector3df(0,50,30), core::vector3df(0,0,0));
 	//cam->setUpVector(irr::core::vector3df(0,1,0));
