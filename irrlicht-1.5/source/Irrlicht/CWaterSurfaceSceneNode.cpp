@@ -20,8 +20,7 @@ CWaterSurfaceSceneNode::CWaterSurfaceSceneNode(f32 waveHeight, f32 waveSpeed, f3
 		IMesh* mesh, ISceneNode* parent, ISceneManager* mgr, s32 id,
 		const core::vector3df& position, const core::vector3df& rotation,
 		const core::vector3df& scale)
-: CMeshSceneNode(mesh, parent, mgr, id, position, rotation, scale),
-	WaveLength(waveLength), OneByWaveLength(1.0f/waveLength),
+: CMeshSceneNode(mesh, parent, mgr, id, position, rotation, scale), WaveLength(waveLength),
 	WaveSpeed(waveSpeed), WaveHeight(waveHeight), OriginalMesh(0)
 {
 	#ifdef _DEBUG
@@ -77,52 +76,10 @@ void CWaterSurfaceSceneNode::animateWaterSurface()
 	{
 		const u32 vtxCnt = Mesh->getMeshBuffer(b)->getVertexCount();
 
-		switch(Mesh->getMeshBuffer(b)->getVertexType())
-		{
-		case video::EVT_STANDARD:
-			{
-				video::S3DVertex* v =
-					(video::S3DVertex*)Mesh->getMeshBuffer(b)->getVertices();
-
-				video::S3DVertex* v2 =
-					(video::S3DVertex*)OriginalMesh->getMeshBuffer(b)->getVertices();
-
-				for (u32 i=0; i<vtxCnt; ++i)
-				{
-					addWave(v[i].Pos, v2[i].Pos, time);
-				}
-
-			}
-			break;
-		case video::EVT_2TCOORDS:
-			{
-				video::S3DVertex2TCoords* v =
-					(video::S3DVertex2TCoords*)Mesh->getMeshBuffer(b)->getVertices();
-
-				video::S3DVertex2TCoords* v2 =
-					(video::S3DVertex2TCoords*)OriginalMesh->getMeshBuffer(b)->getVertices();
-
-				for (u32 i=0; i<vtxCnt; ++i)
-				{
-					addWave(v[i].Pos, v2[i].Pos, time);
-				}
-			}
-			break;
-		case video::EVT_TANGENTS:
-			{
-				video::S3DVertexTangents* v =
-					(video::S3DVertexTangents*)Mesh->getMeshBuffer(b)->getVertices();
-
-				video::S3DVertexTangents* v2 =
-					(video::S3DVertexTangents*)OriginalMesh->getMeshBuffer(b)->getVertices();
-
-				for (u32 i=0; i<vtxCnt; ++i)
-				{
-					addWave(v[i].Pos, v2[i].Pos, time);
-				}
-			}
-			break;
-		} // end switch
+		for (u32 i=0; i<vtxCnt; ++i)
+			addWave(Mesh->getMeshBuffer(b)->getPosition(i),
+				OriginalMesh->getMeshBuffer(b)->getPosition(i),
+				time);
 	}// end for all mesh buffers
 
 	SceneManager->getMeshManipulator()->recalculateNormals(Mesh);
@@ -147,7 +104,6 @@ void CWaterSurfaceSceneNode::serializeAttributes(io::IAttributes* out, io::SAttr
 void CWaterSurfaceSceneNode::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options)
 {
 	WaveLength = in->getAttributeAsFloat("WaveLength");
-	OneByWaveLength = 1.0f/WaveLength;
 	WaveSpeed  = in->getAttributeAsFloat("WaveSpeed");
 	WaveHeight = in->getAttributeAsFloat("WaveHeight");
 	

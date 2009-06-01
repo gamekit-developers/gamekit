@@ -23,6 +23,10 @@ namespace scene
 CSTLMeshWriter::CSTLMeshWriter(scene::ISceneManager* smgr)
 	: SceneManager(smgr)
 {
+	#ifdef _DEBUG
+	setDebugName("CSTLMeshWriter");
+	#endif
+
 	if (SceneManager)
 		SceneManager->grab();
 }
@@ -86,61 +90,19 @@ bool CSTLMeshWriter::writeMeshBinary(io::IWriteFile* file, scene::IMesh* mesh, s
 		IMeshBuffer* buffer = mesh->getMeshBuffer(i);
 		if (buffer)
 		{
-			const u16 indexCount = buffer->getIndexCount();
-
-			switch(buffer->getVertexType())
+			const u32 indexCount = buffer->getIndexCount();
+			const u16 attributes = 0;
+			for (u32 j=0; j<indexCount; j+=3)
 			{
-			case video::EVT_STANDARD:
-				{
-					video::S3DVertex* vtx = (video::S3DVertex*)buffer->getVertices();
-					const u16 attributes = 0;
-					for (u32 j=0; j<indexCount; j+=3)
-					{
-						const core::plane3df tmpplane(vtx[buffer->getIndices()[j]].Pos,
-								vtx[buffer->getIndices()[j+1]].Pos,
-								vtx[buffer->getIndices()[j+2]].Pos);
-						file->write(&tmpplane.Normal, 12);
-						file->write(&vtx[buffer->getIndices()[j]].Pos, 12);
-						file->write(&vtx[buffer->getIndices()[j+1]].Pos, 12);
-						file->write(&vtx[buffer->getIndices()[j+2]].Pos, 12);
-						file->write(&attributes, 2);
-					}
-				}
-				break;
-			case video::EVT_2TCOORDS:
-				{
-					video::S3DVertex2TCoords* vtx = (video::S3DVertex2TCoords*)buffer->getVertices();
-					const u16 attributes = 0;
-					for (u32 j=0; j<indexCount; j+=3)
-					{
-						const core::plane3df tmpplane(vtx[buffer->getIndices()[j]].Pos,
-								vtx[buffer->getIndices()[j+1]].Pos,
-								vtx[buffer->getIndices()[j+2]].Pos);
-						file->write(&tmpplane.Normal, 12);
-						file->write(&vtx[buffer->getIndices()[j]].Pos, 12);
-						file->write(&vtx[buffer->getIndices()[j+1]].Pos, 12);
-						file->write(&vtx[buffer->getIndices()[j+2]].Pos, 12);
-						file->write(&attributes, 2);
-					}
-				}
-				break;
-			case video::EVT_TANGENTS:
-				{
-					video::S3DVertexTangents* vtx = (video::S3DVertexTangents*)buffer->getVertices();
-					const u16 attributes = 0;
-					for (u32 j=0; j<indexCount; j+=3)
-					{
-						const core::plane3df tmpplane(vtx[buffer->getIndices()[j]].Pos,
-								vtx[buffer->getIndices()[j+1]].Pos,
-								vtx[buffer->getIndices()[j+2]].Pos);
-						file->write(&tmpplane.Normal, 12);
-						file->write(&vtx[buffer->getIndices()[j]].Pos, 12);
-						file->write(&vtx[buffer->getIndices()[j+1]].Pos, 12);
-						file->write(&vtx[buffer->getIndices()[j+2]].Pos, 12);
-						file->write(&attributes, 2);
-					}
-				}
-				break;
+				const core::vector3df& v1 = buffer->getPosition(buffer->getIndices()[j]);
+				const core::vector3df& v2 = buffer->getPosition(buffer->getIndices()[j+1]);
+				const core::vector3df& v3 = buffer->getPosition(buffer->getIndices()[j+2]);
+				const core::plane3df tmpplane(v1,v2,v3);
+				file->write(&tmpplane.Normal, 12);
+				file->write(&v1, 12);
+				file->write(&v2, 12);
+				file->write(&v3, 12);
+				file->write(&attributes, 2);
 			}
 		}
 	}
@@ -164,40 +126,13 @@ bool CSTLMeshWriter::writeMeshASCII(io::IWriteFile* file, scene::IMesh* mesh, s3
 		IMeshBuffer* buffer = mesh->getMeshBuffer(i);
 		if (buffer)
 		{
-			const u16 indexCount = buffer->getIndexCount();
-
-			switch(buffer->getVertexType())
+			const u32 indexCount = buffer->getIndexCount();
+			for (u32 j=0; j<indexCount; j+=3)
 			{
-			case video::EVT_STANDARD:
-				{
-					video::S3DVertex* vtx = (video::S3DVertex*)buffer->getVertices();
-					for (u32 j=0; j<indexCount; j+=3)
-						writeFace(file,
-							vtx[buffer->getIndices()[j]].Pos,
-							vtx[buffer->getIndices()[j+1]].Pos,
-							vtx[buffer->getIndices()[j+2]].Pos);
-				}
-				break;
-			case video::EVT_2TCOORDS:
-				{
-					video::S3DVertex2TCoords* vtx = (video::S3DVertex2TCoords*)buffer->getVertices();
-					for (u32 j=0; j<indexCount; j+=3)
-						writeFace(file,
-							vtx[buffer->getIndices()[j]].Pos,
-							vtx[buffer->getIndices()[j+1]].Pos,
-							vtx[buffer->getIndices()[j+2]].Pos);
-				}
-				break;
-			case video::EVT_TANGENTS:
-				{
-					video::S3DVertexTangents* vtx = (video::S3DVertexTangents*)buffer->getVertices();
-					for (u32 j=0; j<indexCount; j+=3)
-						writeFace(file,
-							vtx[buffer->getIndices()[j]].Pos,
-							vtx[buffer->getIndices()[j+1]].Pos,
-							vtx[buffer->getIndices()[j+2]].Pos);
-				}
-				break;
+				writeFace(file,
+					buffer->getPosition(buffer->getIndices()[j]),
+					buffer->getPosition(buffer->getIndices()[j+1]),
+					buffer->getPosition(buffer->getIndices()[j+2]));
 			}
 			file->write("\n",1);
 		}
@@ -212,11 +147,11 @@ bool CSTLMeshWriter::writeMeshASCII(io::IWriteFile* file, scene::IMesh* mesh, s3
 
 void CSTLMeshWriter::getVectorAsStringLine(const core::vector3df& v, core::stringc& s) const
 {
-	s = v.X;
+	s = core::stringc(v.X);
 	s += " ";
-	s += v.Y;
+	s += core::stringc(v.Y);
 	s += " ";
-	s += v.Z;
+	s += core::stringc(v.Z);
 	s += "\n";
 }
 

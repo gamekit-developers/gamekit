@@ -46,10 +46,9 @@ CTextSceneNode::~CTextSceneNode()
 void CTextSceneNode::OnRegisterSceneNode()
 {
 	if (IsVisible)
-	{
 		SceneManager->registerNodeForRendering(this, ESNRP_TRANSPARENT);
-		ISceneNode::OnRegisterSceneNode();
-	}
+
+	ISceneNode::OnRegisterSceneNode();
 }
 
 //! renders the node.
@@ -93,19 +92,19 @@ void CTextSceneNode::setTextColor(video::SColor color)
 CBillboardTextSceneNode::CBillboardTextSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 id,	
 	gui::IGUIFont* font,const wchar_t* text,
 	const core::vector3df& position, const core::dimension2d<f32>& size,
-	video::SColor shade_top,video::SColor shade_bottom )
-: ITextSceneNode(parent, mgr, id, position),
-	Font(0), Shade_top(shade_top), Shade_bottom(shade_bottom), Mesh(0)
+	video::SColor colorTop,video::SColor shade_bottom )
+: IBillboardTextSceneNode(parent, mgr, id, position),
+	Font(0), ColorTop(colorTop), ColorBottom(shade_bottom), Mesh(0)
 {
 	#ifdef _DEBUG
 	setDebugName("CBillboardTextSceneNode");
 	#endif
 
-	Material.MaterialType = video::EMT_TRANSPARENT_ALPHA_CHANNEL_REF;
-	Material.MaterialTypeParam = 0.5f;
+	Material.MaterialType = video::EMT_TRANSPARENT_ALPHA_CHANNEL;
+	Material.MaterialTypeParam = 1.f / 255.f;
 	Material.BackfaceCulling = false;
 	Material.Lighting = false;
-	Material.ZBuffer = false;
+	Material.ZBuffer = true;
 	Material.ZWriteEnable = false;
 
 	if (font)
@@ -206,17 +205,17 @@ void CBillboardTextSceneNode::setText(const wchar_t* text)
 		buf->Vertices[firstVert+2].TCoords.set(tex[3], tex[2]);
 		buf->Vertices[firstVert+3].TCoords.set(tex[3], tex[1]);
 
-		buf->Vertices[firstVert+0].Color = Shade_bottom;
-		buf->Vertices[firstVert+3].Color = Shade_bottom;
-		buf->Vertices[firstVert+1].Color = Shade_top;
-		buf->Vertices[firstVert+2].Color = Shade_top;
+		buf->Vertices[firstVert+0].Color = ColorBottom;
+		buf->Vertices[firstVert+3].Color = ColorBottom;
+		buf->Vertices[firstVert+1].Color = ColorTop;
+		buf->Vertices[firstVert+2].Color = ColorTop;
 
-		buf->Indices[firstInd+0] = firstVert+0;
-		buf->Indices[firstInd+1] = firstVert+2;
-		buf->Indices[firstInd+2] = firstVert+1;
-		buf->Indices[firstInd+3] = firstVert+0;
-		buf->Indices[firstInd+4] = firstVert+3;
-		buf->Indices[firstInd+5] = firstVert+2;
+		buf->Indices[firstInd+0] = (u16)firstVert+0;
+		buf->Indices[firstInd+1] = (u16)firstVert+2;
+		buf->Indices[firstInd+2] = (u16)firstVert+1;
+		buf->Indices[firstInd+3] = (u16)firstVert+0;
+		buf->Indices[firstInd+4] = (u16)firstVert+3;
+		buf->Indices[firstInd+5] = (u16)firstVert+2;
 
 		wchar_t *tp = 0;
 		if (i>0) 
@@ -229,7 +228,6 @@ void CBillboardTextSceneNode::setText(const wchar_t* text)
 		info.firstVert = firstVert;
 
 		Symbol.push_back(info);
-
 	}
 }
 
@@ -312,13 +310,12 @@ void CBillboardTextSceneNode::OnRegisterSceneNode()
 	// make bounding box
 
 	for (i=0; i< Mesh->getMeshBufferCount() ; ++i)
-		((SMeshBuffer*)Mesh->getMeshBuffer(i))->recalculateBoundingBox();
+		Mesh->getMeshBuffer(i)->recalculateBoundingBox();
 	Mesh->recalculateBoundingBox();
 
 	BBox = Mesh->getBoundingBox();
-	core::matrix4 mat = getAbsoluteTransformation();
-	mat.makeInverse();
-	mat.transformBox(BBox);
+	core::matrix4 mat( getAbsoluteTransformation(), core::matrix4::EM4CONST_INVERSE );
+	mat.transformBoxEx(BBox);
 
 	SceneManager->registerNodeForRendering(this, ESNRP_TRANSPARENT);
 	ISceneNode::OnRegisterSceneNode();
@@ -334,10 +331,7 @@ void CBillboardTextSceneNode::render()
 	core::matrix4 mat;
 	driver->setTransform(video::ETS_WORLD, mat);
 
-	
-
-	u32 i;
-	for ( i = 0; i < Mesh->getMeshBufferCount(); ++i )
+	for (u32 i = 0; i < Mesh->getMeshBufferCount(); ++i)
 	{
 		driver->setMaterial(Mesh->getMeshBuffer(i)->getMaterial());
 		driver->drawMeshBuffer(Mesh->getMeshBuffer(i));
@@ -351,8 +345,8 @@ void CBillboardTextSceneNode::render()
 		driver->setMaterial(m);
 		driver->draw3DBox(BBox, video::SColor(0,208,195,152));
 	}
-
 }
+
 
 //! returns the axis aligned bounding box of this node
 const core::aabbox3d<f32>& CBillboardTextSceneNode::getBoundingBox() const
@@ -398,18 +392,60 @@ u32 CBillboardTextSceneNode::getMaterialCount() const
 
 
 //! gets the size of the billboard
-const core::dimension2d<f32>& CBillboardTextSceneNode::getSize()
+const core::dimension2d<f32>& CBillboardTextSceneNode::getSize() const
 {
 	return Size;
 }
-
-
 
 
 //! sets the color of the text
 void CBillboardTextSceneNode::setTextColor(video::SColor color)
 {
 	Color = color;
+}
+
+//! Set the color of all vertices of the billboard
+//! \param overallColor: the color to set
+void CBillboardTextSceneNode::setColor(const video::SColor & overallColor)
+{
+	for ( u32 i = 0; i != Text.size (); ++i )
+	{
+		const SSymbolInfo &info = Symbol[i];
+		SMeshBuffer* buf = (SMeshBuffer*)Mesh->getMeshBuffer(info.bufNo);
+		buf->Vertices[info.firstVert+0].Color = overallColor;
+		buf->Vertices[info.firstVert+1].Color = overallColor;
+		buf->Vertices[info.firstVert+2].Color = overallColor;
+		buf->Vertices[info.firstVert+3].Color = overallColor;
+	}
+}
+
+
+//! Set the color of the top and bottom vertices of the billboard
+//! \param topColor: the color to set the top vertices
+//! \param bottomColor: the color to set the bottom vertices
+void CBillboardTextSceneNode::setColor(const video::SColor & topColor, const video::SColor & bottomColor)
+{
+	ColorBottom = bottomColor;
+	ColorTop = topColor;
+	for ( u32 i = 0; i != Text.size (); ++i )
+	{
+		const SSymbolInfo &info = Symbol[i];
+		SMeshBuffer* buf = (SMeshBuffer*)Mesh->getMeshBuffer(info.bufNo);
+		buf->Vertices[info.firstVert+0].Color = ColorBottom;
+		buf->Vertices[info.firstVert+3].Color = ColorBottom;
+		buf->Vertices[info.firstVert+1].Color = ColorTop;
+		buf->Vertices[info.firstVert+2].Color = ColorTop;
+	}
+}
+
+
+//! Gets the color of the top and bottom vertices of the billboard
+//! \param topColor: stores the color of the top vertices
+//! \param bottomColor: stores the color of the bottom vertices
+void CBillboardTextSceneNode::getColor(video::SColor & topColor, video::SColor & bottomColor) const
+{
+	topColor = ColorTop;
+	bottomColor = ColorBottom;
 }
 
 

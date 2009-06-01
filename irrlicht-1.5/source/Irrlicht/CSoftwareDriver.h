@@ -24,9 +24,6 @@ namespace video
 		//! destructor
 		virtual ~CSoftwareDriver();
 
-		//! presents the rendered scene on the screen, returns false if failed
-		virtual bool endScene( s32 windowId = 0, core::rect<s32>* sourceRect=0 );
-
 		//! queries the features of the driver, returns true if feature is available
 		virtual bool queryFeature(E_VIDEO_DRIVER_FEATURE feature) const;
 
@@ -43,7 +40,13 @@ namespace video
 		virtual void setViewPort(const core::rect<s32>& area);
 
 		//! clears the zbuffer
-		virtual bool beginScene(bool backBuffer, bool zBuffer, SColor color);
+		virtual bool beginScene(bool backBuffer=true, bool zBuffer=true,
+				SColor color=SColor(255,0,0,0),
+				void* windowId=0,
+				core::rect<s32>* sourceRect=0);
+
+		//! presents the rendered scene on the screen, returns false if failed
+		virtual bool endScene();
 
 		//! Only used by the internal engine. Used to notify the driver that
 		//! the window was resized.
@@ -54,8 +57,8 @@ namespace video
 
 		//! draws a vertex primitive list
 		void drawVertexPrimitiveList(const void* vertices, u32 vertexCount,
-				const u16* indexList, u32 primitiveCount,
-				E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType);
+				const void* indexList, u32 primitiveCount,
+				E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType, E_INDEX_TYPE iType);
 
 		//! Draws a 3d line.
 		virtual void draw3DLine(const core::vector3df& start,
@@ -80,6 +83,9 @@ namespace video
 								const core::position2d<s32>& end,
 								SColor color=SColor(255,255,255,255));
 
+		//! Draws a single pixel
+		virtual void drawPixel(u32 x, u32 y, const SColor & color); 
+
 		//! \return Returns the name of the video driver. Example: In case of the Direct3D8
 		//! driver, it would return "Direct3D8.1".
 		virtual const wchar_t* getName() const;
@@ -87,11 +93,15 @@ namespace video
 		//! Returns type of video driver
 		virtual E_DRIVER_TYPE getDriverType() const;
 
+		//! get color format of the current color buffer
+		virtual ECOLOR_FORMAT getColorFormat() const;
+
 		//! Returns the transformation set by setTransform
 		virtual const core::matrix4& getTransform(E_TRANSFORMATION_STATE state) const;
 
 		//! Creates a render target texture.
-		virtual ITexture* createRenderTargetTexture(const core::dimension2d<s32>& size, const c8* name);
+		virtual ITexture* addRenderTargetTexture(const core::dimension2d<s32>& size,
+				const c8* name);
 
 		//! Clears the ZBuffer.
 		virtual void clearZBuffer();
@@ -106,20 +116,11 @@ namespace video
 
 	protected:
 
-		struct splane
-		{
-			core::vector3df Normal;
-			f32 Dist;
-		};
-
 		//! sets a render target
 		void setRenderTarget(video::CImage* image);
 
 		//! sets the current Texture
 		bool setTexture(video::ITexture* texture);
-
-		video::CImage* BackBuffer;
-		video::IImagePresenter* Presenter;
 
 		//! switches to a triangle renderer
 		void switchToTriangleRenderer(ETriangleRenderer renderer);
@@ -130,12 +131,21 @@ namespace video
 		//! clips a triangle agains the viewing frustum
 		void clipTriangle(f32* transformedPos);
 
-		//! creates the clipping planes from the view matrix
-		void createPlanes(const core::matrix4& mat);
+
+		//! draws a vertex primitive list
+		void drawVertexPrimitiveList16(const void* vertices, u32 vertexCount,
+				const u16* indexList, u32 primitiveCount,
+				E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType);
+
 
 		template<class VERTEXTYPE>
 		void drawClippedIndexedTriangleListT(const VERTEXTYPE* vertices,
 			s32 vertexCount, const u16* indexList, s32 triangleCount);
+
+		video::CImage* BackBuffer;
+		video::IImagePresenter* Presenter;
+		void* WindowId;
+		core::rect<s32>* SceneSourceRect;
 
 		core::array<S2DVertex> TransformedPoints;
 
@@ -154,11 +164,8 @@ namespace video
 		IZBuffer* ZBuffer;
 
 		video::ITexture* Texture;
-		scene::SViewFrustum Frustum;
 
 		SMaterial Material;
-
-		splane planes[6]; // current planes of the view frustum
 	};
 
 } // end namespace video
@@ -166,4 +173,5 @@ namespace video
 
 
 #endif
+
 

@@ -7,10 +7,11 @@
 
 @interface AppDelegate : NSObject
 {
-	BOOL					_quit;
+	BOOL			_quit;
 	irr::CIrrDeviceMacOSX	*_device;
 }
 
 - (id)initWithDevice:(irr::CIrrDeviceMacOSX *)device;
+- (BOOL)isQuit;
 
 @end

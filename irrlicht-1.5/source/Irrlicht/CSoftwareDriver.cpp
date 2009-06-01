@@ -19,7 +19,8 @@ namespace video
 
 //! constructor
 CSoftwareDriver::CSoftwareDriver(const core::dimension2d<s32>& windowSize, bool fullscreen, io::IFileSystem* io, video::IImagePresenter* presenter)
-: CNullDriver(io, windowSize), RenderTargetTexture(0), RenderTargetSurface(0),
+: CNullDriver(io, windowSize), BackBuffer(0), Presenter(presenter), WindowId(0),
+	SceneSourceRect(0), RenderTargetTexture(0), RenderTargetSurface(0),
 	CurrentTriangleRenderer(0), ZBuffer(0), Texture(0)
 {
 	#ifdef _DEBUG
@@ -29,15 +30,13 @@ CSoftwareDriver::CSoftwareDriver(const core::dimension2d<s32>& windowSize, bool 
 	// create backbuffer
 
 	BackBuffer = new CImage(ECF_A1R5G5B5, windowSize);
-	BackBuffer->fill(SColor(0));
+	if (BackBuffer)
+	{
+		BackBuffer->fill(SColor(0));
 
-	// get presenter
-
-	Presenter = presenter;
-
-	// create z buffer
-
-	ZBuffer = video::createZBuffer(BackBuffer->getDimension());
+		// create z buffer
+		ZBuffer = video::createZBuffer(BackBuffer->getDimension());
+	}
 
 	// create triangle renderers
 
@@ -67,7 +66,8 @@ CSoftwareDriver::CSoftwareDriver(const core::dimension2d<s32>& windowSize, bool 
 CSoftwareDriver::~CSoftwareDriver()
 {
 	// delete Backbuffer
-	BackBuffer->drop();
+	if (BackBuffer)
+		BackBuffer->drop();
 
 	// delete triangle renderers
 
@@ -154,26 +154,14 @@ void CSoftwareDriver::selectRightTriangleRenderer()
 }
 
 
-
-
-//! presents the rendered scene on the screen, returns false if failed
-bool CSoftwareDriver::endScene( s32 windowId, core::rect<s32>* sourceRect )
-{
-	CNullDriver::endScene();
-
-	Presenter->present(BackBuffer, windowId, sourceRect );
-	return true;
-}
-
-
-
 //! queries the features of the driver, returns true if feature is available
 bool CSoftwareDriver::queryFeature(E_VIDEO_DRIVER_FEATURE feature) const
 {
 	switch (feature)
 	{
 	case EVDF_RENDER_TO_TARGET:
-		return true;
+	case EVDF_TEXTURE_NSQUARE:
+		return FeatureEnabled[feature];
 	default:
 		return false;
 	};
@@ -228,17 +216,29 @@ void CSoftwareDriver::setMaterial(const SMaterial& material)
 
 
 //! clears the zbuffer
-bool CSoftwareDriver::beginScene(bool backBuffer, bool zBuffer, SColor color)
+bool CSoftwareDriver::beginScene(bool backBuffer, bool zBuffer, SColor color,
+		void* windowId, core::rect<s32>* sourceRect)
 {
-	CNullDriver::beginScene(backBuffer, zBuffer, color);
+	CNullDriver::beginScene(backBuffer, zBuffer, color, windowId, sourceRect);
+	WindowId=windowId;
+	SceneSourceRect = sourceRect;
 
-	if (backBuffer)
-		BackBuffer->fill( color );
+	if (backBuffer && BackBuffer)
+		BackBuffer->fill(color);
 
 	if (ZBuffer && zBuffer)
 		ZBuffer->clear();
 
 	return true;
+}
+
+
+//! presents the rendered scene on the screen, returns false if failed
+bool CSoftwareDriver::endScene()
+{
+	CNullDriver::endScene();
+
+	return Presenter->present(BackBuffer, WindowId, SceneSourceRect);
 }
 
 
@@ -324,9 +324,30 @@ void CSoftwareDriver::setViewPort(const core::rect<s32>& area)
 		CurrentTriangleRenderer->setRenderTarget(RenderTargetSurface, ViewPort);
 }
 
+void CSoftwareDriver::drawVertexPrimitiveList(const void* vertices, u32 vertexCount,
+				const void* indexList, u32 primitiveCount,
+				E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType, E_INDEX_TYPE iType)
+
+{
+	switch (iType)
+	{
+		case (EIT_16BIT):
+		{
+			drawVertexPrimitiveList16(vertices, vertexCount, (const u16*)indexList, primitiveCount, vType, pType);
+			break;
+		}
+		case (EIT_32BIT):
+		{
+			os::Printer::log("Software driver can not render 32bit buffers", ELL_ERROR);
+			break;
+		}
+	}
+
+
+}
 
 //! draws a vertex primitive list
-void CSoftwareDriver::drawVertexPrimitiveList(const void* vertices, u32 vertexCount, const u16* indexList, u32 primitiveCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType)
+void CSoftwareDriver::drawVertexPrimitiveList16(const void* vertices, u32 vertexCount, const u16* indexList, u32 primitiveCount, E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType)
 {
 	const u16* indexPointer=0;
 	core::array<u16> newBuffer;
@@ -364,7 +385,7 @@ void CSoftwareDriver::drawVertexPrimitiveList(const void* vertices, u32 vertexCo
 			}
 			return;
 		case scene::EPT_LINE_LOOP:
-			drawVertexPrimitiveList(vertices, vertexCount, indexList, primitiveCount-1, vType, scene::EPT_LINE_STRIP);
+			drawVertexPrimitiveList16(vertices, vertexCount, indexList, primitiveCount-1, vType, scene::EPT_LINE_STRIP);
 			switch (vType)
 			{
 				case EVT_STANDARD:
@@ -628,7 +649,7 @@ void CSoftwareDriver::drawClippedIndexedTriangleListT(const VERTEXTYPE* vertices
 	// draw triangles
 
 	CNullDriver::drawVertexPrimitiveList(clippedVertices.pointer(), clippedVertices.size(),
-		clippedIndices.pointer(), clippedIndices.size()/3, EVT_STANDARD, scene::EPT_TRIANGLES);
+		clippedIndices.pointer(), clippedIndices.size()/3, EVT_STANDARD, scene::EPT_TRIANGLES, EIT_16BIT);
 
 	if (TransformedPoints.size() < clippedVertices.size())
 		TransformedPoints.set_used(clippedVertices.size());
@@ -684,7 +705,6 @@ void CSoftwareDriver::drawClippedIndexedTriangleListT(const VERTEXTYPE* vertices
 }
 
 
-
 //! Draws a 3d line.
 void CSoftwareDriver::draw3DLine(const core::vector3df& start,
 				const core::vector3df& end, SColor color)
@@ -712,20 +732,10 @@ void CSoftwareDriver::draw3DLine(const core::vector3df& start,
 }
 
 
-
 //! clips a triangle against the viewing frustum
 void CSoftwareDriver::clipTriangle(f32* transformedPos)
 {
 }
-
-
-
-//! creates the clipping planes from the matrix
-void CSoftwareDriver::createPlanes(const core::matrix4& mat)
-{
-	Frustum = scene::SViewFrustum(mat);
-}
-
 
 
 //! Only used by the internal engine. Used to notify the driver that
@@ -753,7 +763,8 @@ void CSoftwareDriver::OnResize(const core::dimension2d<s32>& size)
 
 		bool resetRT = (RenderTargetSurface == BackBuffer);
 
-		BackBuffer->drop();
+		if (BackBuffer)
+			BackBuffer->drop();
 		BackBuffer = new CImage(ECF_A1R5G5B5, realSize);
 
 		if (resetRT)
@@ -801,7 +812,12 @@ void CSoftwareDriver::draw2DLine(const core::position2d<s32>& start,
 	((CImage*)RenderTargetSurface)->drawLine(start, end, color );
 }
 
-
+//! Draws a pixel
+void CSoftwareDriver::drawPixel(u32 x, u32 y, const SColor & color)
+{
+	((CImage*)BackBuffer)->setPixel(x, y, color);
+}
+  
 
 //! draw a 2d rectangle
 void CSoftwareDriver::draw2DRectangle(SColor color, const core::rect<s32>& pos,
@@ -853,18 +869,33 @@ E_DRIVER_TYPE CSoftwareDriver::getDriverType() const
 }
 
 
+//! returns color format
+ECOLOR_FORMAT CSoftwareDriver::getColorFormat() const
+{
+	if (BackBuffer)
+		return BackBuffer->getColorFormat();
+	else
+		return CNullDriver::getColorFormat();
+}
+
+
 //! Returns the transformation set by setTransform
 const core::matrix4& CSoftwareDriver::getTransform(E_TRANSFORMATION_STATE state) const
 {
 	return TransformationMatrix[state];
 }
 
+
 //! Creates a render target texture.
-ITexture* CSoftwareDriver::createRenderTargetTexture(const core::dimension2d<s32>& size, const c8* name)
+ITexture* CSoftwareDriver::addRenderTargetTexture(const core::dimension2d<s32>& size, const c8* name)
 {
 	CImage* img = new CImage(video::ECF_A1R5G5B5, size);
+	if (!name)
+		name="rt";
 	ITexture* tex = new CSoftwareTexture(img, name, true);
 	img->drop();
+	addTexture(tex);
+	tex->drop();
 	return tex;
 }
 
@@ -880,7 +911,10 @@ void CSoftwareDriver::clearZBuffer()
 //! Returns an image created from the last rendered frame.
 IImage* CSoftwareDriver::createScreenShot()
 {
-	return new CImage(BackBuffer->getColorFormat(), BackBuffer);
+	if (BackBuffer)
+		return new CImage(BackBuffer->getColorFormat(), BackBuffer);
+	else
+		return 0;
 }
 
 

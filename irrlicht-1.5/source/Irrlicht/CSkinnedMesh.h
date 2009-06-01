@@ -66,6 +66,12 @@ namespace scene
 		//! sets a flag of all contained materials to a new value
 		virtual void setMaterialFlag(video::E_MATERIAL_FLAG flag, bool newvalue);
 
+		//! set the hardware mapping hint, for driver
+		virtual void setHardwareMappingHint(E_HARDWARE_MAPPING newMappingHint, E_BUFFER_TYPE buffer=EBT_VERTEX_AND_INDEX);
+
+		//! flags the meshbuffer as changed, reloads hardware buffers
+		virtual void setDirty(E_BUFFER_TYPE buffer=EBT_VERTEX_AND_INDEX);
+
 		//! Returns the type of the animated mesh.
 		virtual E_ANIMATED_MESH_TYPE getMeshType() const;
 
@@ -95,6 +101,9 @@ namespace scene
 		//! Tranfers the joint data to the mesh
 		virtual void transferJointsToMesh(const core::array<IBoneSceneNode*> &JointChildSceneNodes);
 
+		//! Tranfers the joint hints to the mesh
+		virtual void transferOnlyJointsHintsToMesh(const core::array<IBoneSceneNode*> &JointChildSceneNodes);
+
 		//! Creates an array of joints from this mesh
 		virtual void createJoints(core::array<IBoneSceneNode*> &JointChildSceneNodes,
 				IAnimatedMeshSceneNode* AnimatedMeshSceneNode,
@@ -102,6 +111,12 @@ namespace scene
 
 		//! Convertes the mesh to contain tangent information
 		virtual void convertMeshToTangents();
+
+		//! Does the mesh have no animation
+		virtual bool isStatic();
+
+		//! (This feature is not implemented in irrlicht yet)
+		virtual bool setHardwareSkinning(bool on);
 
 		//Interface for the mesh loaders (finalize should lock these functions, and they should have some prefix like loader_
 
@@ -119,22 +134,17 @@ namespace scene
 		//! loaders should call this after populating the mesh
 		virtual void finalize();
 
-
-
-
 		virtual SSkinMeshBuffer *createBuffer();
 
 		virtual SJoint *createJoint(SJoint *parent=0);
 
 		virtual SPositionKey *createPositionKey(SJoint *joint);
-		virtual SScaleKey *createScaleKey(SJoint *joint);
 		virtual SRotationKey *createRotationKey(SJoint *joint);
+		virtual SScaleKey *createScaleKey(SJoint *joint);
 
 		virtual SWeight *createWeight(SJoint *joint);
 
-
-
-
+		virtual void updateBoundingBox(void);
 
 private:
 
@@ -160,7 +170,6 @@ private:
 			core::vector3df& vt1, core::vector3df& vt2, core::vector3df& vt3,
 			core::vector2df& tc1, core::vector2df& tc2, core::vector2df& tc3);
 
-
 		core::array<SSkinMeshBuffer*> *SkinningBuffers; //Meshbuffer to skin, default is to skin localBuffers
 
 		core::array<SSkinMeshBuffer*> LocalBuffers;
@@ -179,6 +188,9 @@ private:
 		bool BoneControlUsed;
 
 		bool AnimateNormals;
+
+		bool HardwareSkinning;
+
 
 		E_INTERPOLATION_MODE InterpolationMode;
 

@@ -16,18 +16,15 @@ namespace irr
 {
 namespace video
 {
-	class CSoftwareDriver2 : public CNullDriver
+	class CBurningVideoDriver : public CNullDriver
 	{
 	public:
 
 		//! constructor
-		CSoftwareDriver2(const core::dimension2d<s32>& windowSize, bool fullscreen, io::IFileSystem* io, video::IImagePresenter* presenter);
+		CBurningVideoDriver(const core::dimension2d<s32>& windowSize, bool fullscreen, io::IFileSystem* io, video::IImagePresenter* presenter);
 
 		//! destructor
-		virtual ~CSoftwareDriver2();
-
-		//! presents the rendered scene on the screen, returns false if failed
-		virtual bool endScene( s32 windowId = 0, core::rect<s32>* sourceRect=0 );
+		virtual ~CBurningVideoDriver();
 
 		//! queries the features of the driver, returns true if feature is available
 		virtual bool queryFeature(E_VIDEO_DRIVER_FEATURE feature) const;
@@ -45,7 +42,13 @@ namespace video
 		virtual void setViewPort(const core::rect<s32>& area);
 
 		//! clears the zbuffer
-		virtual bool beginScene(bool backBuffer, bool zBuffer, SColor color);
+		virtual bool beginScene(bool backBuffer=true, bool zBuffer=true,
+				SColor color=SColor(255,0,0,0),
+				void* windowId=0,
+				core::rect<s32>* sourceRect=0);
+
+		//! presents the rendered scene on the screen, returns false if failed
+		virtual bool endScene();
 
 		//! Only used by the internal engine. Used to notify the driver that
 		//! the window was resized.
@@ -70,8 +73,8 @@ namespace video
 
 		//! draws a vertex primitive list
 		void drawVertexPrimitiveList(const void* vertices, u32 vertexCount,
-				const u16* indexList, u32 primitiveCount,
-				E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType);
+				const void* indexList, u32 primitiveCount,
+				E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType, E_INDEX_TYPE iType);
 
 		//! draws an 2d image, using a color (if color is other then Color(255,255,255,255)) and the alpha channel of the texture if wanted.
 		virtual void draw2DImage(const video::ITexture* texture, const core::position2d<s32>& destPos,
@@ -96,6 +99,9 @@ namespace video
 					const core::position2d<s32>& end,
 					SColor color=SColor(255,255,255,255));
 
+		//! Draws a single pixel
+		virtual void drawPixel(u32 x, u32 y, const SColor & color);
+
 		//! \return Returns the name of the video driver. Example: In case of the DirectX8
 		//! driver, it would return "Direct3D8.1".
 		virtual const wchar_t* getName() const;
@@ -103,11 +109,14 @@ namespace video
 		//! Returns type of video driver
 		virtual E_DRIVER_TYPE getDriverType() const;
 
+		//! get color format of the current color buffer
+		virtual ECOLOR_FORMAT getColorFormat() const;
+
 		//! Returns the transformation set by setTransform
 		virtual const core::matrix4& getTransform(E_TRANSFORMATION_STATE state) const;
 
 		//! Creates a render target texture.
-		virtual ITexture* createRenderTargetTexture(const core::dimension2d<s32>& size, const c8* name);
+		virtual ITexture* addRenderTargetTexture(const core::dimension2d<s32>& size, const c8* name);
 
 		//! Clears the DepthBuffer.
 		virtual void clearZBuffer();
@@ -120,13 +129,33 @@ namespace video
 		//! call.
 		virtual u32 getMaximalPrimitiveCount() const;
 
+		//! Draws a shadow volume into the stencil buffer. To draw a stencil shadow, do
+		//! this: First, draw all geometry. Then use this method, to draw the shadow
+		//! volume. Then, use IVideoDriver::drawStencilShadow() to visualize the shadow.
+		virtual void drawStencilShadowVolume(const core::vector3df* triangles, s32 count, bool zfail);
+
+		//! Fills the stencil shadow with color. After the shadow volume has been drawn
+		//! into the stencil buffer using IVideoDriver::drawStencilShadowVolume(), use this
+		//! to draw the color of the shadow.
+		virtual void drawStencilShadow(bool clearStencilBuffer=false,
+			video::SColor leftUpEdge = video::SColor(0,0,0,0),
+			video::SColor rightUpEdge = video::SColor(0,0,0,0),
+			video::SColor leftDownEdge = video::SColor(0,0,0,0),
+			video::SColor rightDownEdge = video::SColor(0,0,0,0));
+
 	protected:
+
+
+		void drawVertexPrimitiveList16(const void* vertices, u32 vertexCount,
+				const u16* indexList, u32 primitiveCount,
+				E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType);
+
 
 		//! sets a render target
 		void setRenderTarget(video::CImage* image);
 
 		//! sets the current Texture
-		bool setTexture(u32 stage, video::ITexture* texture);
+		//bool setTexture(u32 stage, video::ITexture* texture);
 
 		//! returns a device dependent texture from a software surface (IImage)
 		//! THIS METHOD HAS TO BE OVERRIDDEN BY DERIVED DRIVERS WITH OWN TEXTURES
@@ -134,6 +163,9 @@ namespace video
 
 		video::CImage* BackBuffer;
 		video::IImagePresenter* Presenter;
+
+		void* WindowId;
+		core::rect<s32>* SceneSourceRect;
 
 		video::ITexture* RenderTargetTexture;
 		video::IImage* RenderTargetSurface;
@@ -147,8 +179,6 @@ namespace video
 
 		IDepthBuffer* DepthBuffer;
 
-		video::ITexture* Texture[2];
-		sInternalTexture Texmap[2];
 
 		/*
 			extend Matrix Stack
@@ -217,37 +247,8 @@ namespace video
 		void select_polygon_mipmap2 ( s4DVertex **source, s32 tex ) const;
 
 
-		sVec4 Global_AmbientLight;
-
-		struct SInternalLight
-		{
-			SLight org;
-
-			sVec4 posEyeSpace;
-
-			f32 constantAttenuation;
-			f32 linearAttenuation;
-			f32 quadraticAttenuation;
-
-			sVec4 AmbientColor;
-			sVec4 DiffuseColor;
-			sVec4 SpecularColor;
-		};
-		core::array<SInternalLight> Light;
-
-		struct SInternalMaterial
-		{
-			SMaterial org;
-
-			sVec4 AmbientColor;
-			sVec4 DiffuseColor;
-			sVec4 SpecularColor;
-			sVec4 EmissiveColor;
-
-			u32 SpecularEnabled;	// == Power2
-		};
-
-		SInternalMaterial Material;
+		SBurningShaderLightSpace LightSpace;
+		SBurningShaderMaterial Material;
 
 		static const sVec4 NDCPlane[6];
 
@@ -258,4 +259,5 @@ namespace video
 
 
 #endif
+
 

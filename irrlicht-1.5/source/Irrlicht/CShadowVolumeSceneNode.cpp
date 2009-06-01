@@ -15,27 +15,28 @@ namespace scene
 
 
 //! constructor
-CShadowVolumeSceneNode::CShadowVolumeSceneNode(ISceneNode* parent,
-					ISceneManager* mgr, s32 id,
-					bool zfailmethod, f32 infinity)
-: IShadowVolumeSceneNode(parent, mgr, id), Indices(0), Vertices(0),
-	Adjacency(0), FaceData(0), UseZFailMethod(zfailmethod),
+CShadowVolumeSceneNode::CShadowVolumeSceneNode(const IMesh* shadowMesh, ISceneNode* parent,
+		ISceneManager* mgr, s32 id, bool zfailmethod, f32 infinity)
+: IShadowVolumeSceneNode(parent, mgr, id), Vertices(0), Indices(0),
+	Adjacency(0), Edges(0), FaceData(0), ShadowMesh(0),
 	IndexCountAllocated(0), VertexCountAllocated(0),
-	IndexCount(0), VertexCount(0), ShadowVolumesUsed(0),
-	Edges(0), EdgeCount(0), Infinity(infinity)
+	IndexCount(0), VertexCount(0), EdgeCount(0), ShadowVolumesUsed(0),
+	Infinity(infinity), UseZFailMethod(zfailmethod)
 {
 	#ifdef _DEBUG
 	setDebugName("CShadowVolumeSceneNode");
 	#endif
-
+	setShadowMesh(shadowMesh);
 	setAutomaticCulling(scene::EAC_OFF);
 }
-
 
 
 //! destructor
 CShadowVolumeSceneNode::~CShadowVolumeSceneNode()
 {
+	if (ShadowMesh)
+		ShadowMesh->drop();
+
 	delete [] Edges;
 
 	for (u32 i=0; i<ShadowVolumes.size(); ++i)
@@ -46,7 +47,6 @@ CShadowVolumeSceneNode::~CShadowVolumeSceneNode()
 	delete [] Adjacency;
 	delete [] FaceData;
 }
-
 
 
 void CShadowVolumeSceneNode::createShadowVolume(const core::vector3df& light)
@@ -106,7 +106,6 @@ void CShadowVolumeSceneNode::createShadowVolume(const core::vector3df& light)
 	// is used
 	createZPassVolume(faceCount, numEdges, light, svp, UseZFailMethod);
 
-
 	for (s32 i=0; i<numEdges; ++i)
 	{
 		core::vector3df &v1 = Vertices[Edges[2*i+0]];
@@ -127,6 +126,7 @@ void CShadowVolumeSceneNode::createShadowVolume(const core::vector3df& light)
 		}
 	}
 }
+
 
 void CShadowVolumeSceneNode::createZFailVolume(s32 faceCount, s32& numEdges,
 						const core::vector3df& light,
@@ -206,6 +206,7 @@ void CShadowVolumeSceneNode::createZFailVolume(s32 faceCount, s32& numEdges,
 	}
 }
 
+
 void CShadowVolumeSceneNode::createZPassVolume(s32 faceCount,
 						s32& numEdges,
 						core::vector3df light,
@@ -249,17 +250,27 @@ void CShadowVolumeSceneNode::createZPassVolume(s32 faceCount,
 	}
 }
 
-//! sets the mesh from which the shadow volume should be generated.
-void CShadowVolumeSceneNode::setMeshToRenderFrom(const IMesh* mesh)
-{
-	ShadowVolumesUsed = 0;
 
-	s32 oldIndexCount = IndexCount;
-	s32 oldVertexCount = VertexCount;
+void CShadowVolumeSceneNode::setShadowMesh(const IMesh* mesh)
+{
+	if (ShadowMesh)
+		ShadowMesh->drop();
+	ShadowMesh = mesh;
+	if (ShadowMesh)
+		ShadowMesh->grab();
+}
+
+
+void CShadowVolumeSceneNode::updateShadowVolumes()
+{
+	const s32 oldIndexCount = IndexCount;
+	const s32 oldVertexCount = VertexCount;
 
 	VertexCount = 0;
 	IndexCount = 0;
+	ShadowVolumesUsed = 0;
 
+	const IMesh* const mesh = ShadowMesh;
 	if (!mesh)
 		return;
 
@@ -268,14 +279,13 @@ void CShadowVolumeSceneNode::setMeshToRenderFrom(const IMesh* mesh)
 	u32 i;
 	s32 totalVertices = 0;
 	s32 totalIndices = 0;
-	u32 bufcnt = mesh->getMeshBufferCount();
-	const IMeshBuffer* b;
+	const u32 bufcnt = mesh->getMeshBufferCount();
 
 	for (i=0; i<bufcnt; ++i)
 	{
-		b = mesh->getMeshBuffer(i);
-		totalIndices += b->getIndexCount();
-		totalVertices += b->getVertexCount();
+		const IMeshBuffer* buf = mesh->getMeshBuffer(i);
+		totalIndices += buf->getIndexCount();
+		totalVertices += buf->getVertexCount();
 	}
 
 	// allocate memory if necessary
@@ -304,49 +314,16 @@ void CShadowVolumeSceneNode::setMeshToRenderFrom(const IMesh* mesh)
 
 	for (i=0; i<bufcnt; ++i)
 	{
-		b = mesh->getMeshBuffer(i);
+		const IMeshBuffer* buf = mesh->getMeshBuffer(i);
 
-		s32 idxcnt = b->getIndexCount();
-		s32 vtxnow = VertexCount;
-
-		const u16* idxp = b->getIndices();
-		const u16* idxpend = idxp + idxcnt;
-
+		const u16* idxp = buf->getIndices();
+		const u16* idxpend = idxp + buf->getIndexCount();
 		for (; idxp!=idxpend; ++idxp)
-			Indices[IndexCount++] = *idxp + vtxnow;
+			Indices[IndexCount++] = *idxp + VertexCount;
 
-		s32 vtxcnt = b->getVertexCount();
-
-		switch(b->getVertexType())
-		{
-		case video::EVT_STANDARD:
-			{
-				const video::S3DVertex* vp = (video::S3DVertex*)b->getVertices();
-				const video::S3DVertex* const vpend = vp + vtxcnt;
-
-				for (; vp!=vpend; ++vp)
-					Vertices[VertexCount++] = (*vp).Pos;
-			}
-			break;
-		case video::EVT_2TCOORDS:
-			{
-				const video::S3DVertex2TCoords* vp = (video::S3DVertex2TCoords*)b->getVertices();
-				const video::S3DVertex2TCoords* const vpend = vp + vtxcnt;
-
-				for (; vp!=vpend; ++vp)
-					Vertices[VertexCount++] = (*vp).Pos;
-			}
-			break;
-		case video::EVT_TANGENTS:
-			{
-				const video::S3DVertexTangents* vp = (video::S3DVertexTangents*)b->getVertices();
-				const video::S3DVertexTangents* const vpend = vp + vtxcnt;
-
-				for (; vp!=vpend; ++vp)
-					Vertices[VertexCount++] = (*vp).Pos;
-			}
-			break;
-		}
+		const u32 vtxcnt = buf->getVertexCount();
+		for (u32 j=0; j<vtxcnt; ++j)
+			Vertices[VertexCount++] = buf->getPosition(j);
 	}
 
 	// recalculate adjacency if necessary
@@ -378,7 +355,6 @@ void CShadowVolumeSceneNode::setMeshToRenderFrom(const IMesh* mesh)
 }
 
 
-
 //! pre render method
 void CShadowVolumeSceneNode::OnRegisterSceneNode()
 {
@@ -388,7 +364,6 @@ void CShadowVolumeSceneNode::OnRegisterSceneNode()
 		ISceneNode::OnRegisterSceneNode();
 	}
 }
-
 
 
 //! renders the node.
@@ -404,8 +379,22 @@ void CShadowVolumeSceneNode::render()
 	for (s32 i=0; i<ShadowVolumesUsed; ++i)
 		driver->drawStencilShadowVolume(ShadowVolumes[i].vertices,
 			ShadowVolumes[i].count, UseZFailMethod);
-}
 
+/*
+	if ( DebugDataVisible & scene::EDS_MESH_WIRE_OVERLAY )
+	{
+		video::SMaterial mat;
+		mat.Lighting = false;
+		mat.Wireframe = true;
+		mat.ZBuffer = true;
+		driver->setMaterial(mat);
+
+		for (s32 i=0; i<ShadowVolumesUsed; ++i)
+			driver->drawVertexPrimitiveList(ShadowVolumes[i].vertices,
+			ShadowVolumes[i].count,0,0,video::EVT_STANDARD,scene::EPT_LINES);
+	}
+*/
+}
 
 
 //! returns the axis aligned bounding box of this node
@@ -470,4 +459,5 @@ void CShadowVolumeSceneNode::calculateAdjacency(f32 epsilon)
 
 } // end namespace scene
 } // end namespace irr
+
 

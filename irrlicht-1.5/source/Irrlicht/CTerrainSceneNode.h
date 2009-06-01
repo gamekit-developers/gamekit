@@ -3,14 +3,15 @@
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
 // The code for the TerrainSceneNode is based on the GeoMipMapSceneNode
-// developed by Spintz. He made it available for Irrlicht and allowed it to be 
-// distributed under this licence. I only modified some parts. A lot of thanks go to him. 
+// developed by Spintz. He made it available for Irrlicht and allowed it to be
+// distributed under this licence. I only modified some parts. A lot of thanks go to him.
 
 #ifndef __C_TERRAIN_SCENE_NODE_H__
 #define __C_TERRAIN_SCENE_NODE_H__
 
 #include "ITerrainSceneNode.h"
 #include "SMesh.h"
+#include "CDynamicMeshBuffer.h"
 
 namespace irr
 {
@@ -24,10 +25,6 @@ namespace scene
 	class ITextSceneNode;
 
 	//! A scene node for displaying terrain using the geo mip map algorithm.
-	/** The code for the TerrainSceneNode is based on the GeoMipMapSceneNode
-	 * developed by Spintz. He made it available for Irrlicht and allowed it to be 
-	 * distributed under this licence. I only modified some parts. A lot of thanks go to him. 
-	 **/
 	class CTerrainSceneNode : public ITerrainSceneNode
 	{
 	public:
@@ -44,7 +41,7 @@ namespace scene
 		//! \param scale: The scale factor for the terrain.  If you're using a heightmap of size 128x128 and would like
 		//! your terrain to be 12800x12800 in game units, then use a scale factor of ( core::vector ( 100.0f, 100.0f, 100.0f ).
 		//! If you use a Y scaling factor of 0.0f, then your terrain will be flat.
-		CTerrainSceneNode(ISceneNode* parent, ISceneManager* mgr, io::IFileSystem* fs, s32 id, 
+		CTerrainSceneNode(ISceneNode* parent, ISceneManager* mgr, io::IFileSystem* fs, s32 id,
 			s32 maxLOD = 4, E_TERRAIN_PATCH_SIZE patchSize = ETPS_17,
 			const core::vector3df& position = core::vector3df(0.0f, 0.0f, 0.0f),
 			const core::vector3df& rotation = core::vector3df(0.0f, 0.0f, 0.0f),
@@ -53,19 +50,19 @@ namespace scene
 		virtual ~CTerrainSceneNode();
 
 		//! Initializes the terrain data.  Loads the vertices from the heightMapFile.
-		virtual bool loadHeightMap(io::IReadFile* file, 
+		virtual bool loadHeightMap(io::IReadFile* file,
 			video::SColor vertexColor = video::SColor ( 255, 255, 255, 255 ), s32 smoothFactor = 0 );
 
 		//! Initializes the terrain data.  Loads the vertices from the heightMapFile.
 		virtual bool loadHeightMapRAW(io::IReadFile* file, s32 bitsPerPixel = 16,
-			video::SColor vertexColor = video::SColor ( 255, 255, 255, 255 ), s32 smoothFactor = 0 );
+			bool signedData=true, bool floatVals=false, s32 width=0, video::SColor vertexColor = video::SColor ( 255, 255, 255, 255 ), s32 smoothFactor = 0 );
 
 		//! Returns the material based on the zero based index i. This scene node only uses
 		//! 1 material.
 		//! \param i: Zero based index i. UNUSED, left in for virtual purposes.
 		//! \return Returns the single material this scene node uses.
-		virtual video::SMaterial& getMaterial ( u32 i ) 
-		{ 
+		virtual video::SMaterial& getMaterial ( u32 i )
+		{
 			return Mesh.getMeshBuffer(i)->getMaterial();
 		}
 
@@ -73,19 +70,19 @@ namespace scene
 		//! \return Returns current count of materials used by this scene node ( always 1 )
 		virtual u32 getMaterialCount() const
 		{
-			return Mesh.getMeshBufferCount(); 
+			return Mesh.getMeshBufferCount();
 		}
 
-		//! Gets the last scaling factor applied to the scene node.  This value only represents the 
-		//! last scaling factor presented to the node.  For instance, if you make create the node 
-		//! with a scale factor of ( 1.0f, 1.0f, 1.0f ) then call setScale ( 50.0f, 5.0f, 50.0f ), 
-		//! then make another call to setScale with the values ( 2.0f, 2.0f, 2.0f ), this will return 
+		//! Gets the last scaling factor applied to the scene node.  This value only represents the
+		//! last scaling factor presented to the node.  For instance, if you make create the node
+		//! with a scale factor of ( 1.0f, 1.0f, 1.0f ) then call setScale ( 50.0f, 5.0f, 50.0f ),
+		//! then make another call to setScale with the values ( 2.0f, 2.0f, 2.0f ), this will return
 		//! core::vector3df ( 2.0f, 2.0f, 2.0f ), although the total scaling of the scene node is
 		//! core::vector3df ( 100.0f, 10.0f, 100.0f ).
 		//! \return Returns the last scaling factor passed to the scene node.
-		virtual core::vector3df getScale() const
+		virtual const core::vector3df& getScale() const
 		{
-			return TerrainData.Scale; 
+			return TerrainData.Scale;
 		}
 
 		//! Scales the scene nodes vertices by the vector specified.
@@ -94,7 +91,7 @@ namespace scene
 
 		//! Gets the last rotation factor applied to the scene node.
 		//! \return Returns the last rotation factor applied to the scene node.
-		virtual const core::vector3df& getRotation() const 
+		virtual const core::vector3df& getRotation() const
 		{
 			return TerrainData.Rotation;
 		}
@@ -107,9 +104,9 @@ namespace scene
 		//! NOTE: The default for the RotationPivot will be the center of the individual tile.
 		virtual void setRotationPivot( const core::vector3df& pivot );
 
-		//! Gets the last positioning vector applied to the scene node. 
+		//! Gets the last positioning vector applied to the scene node.
 		//! \return Returns the last position vector applied to the scene node.
-		virtual const core::vector3df getPosition() const
+		virtual const core::vector3df& getPosition() const
 		{
 			return TerrainData.Position;
 		}
@@ -119,7 +116,7 @@ namespace scene
 		virtual void setPosition(const core::vector3df& newpos);
 
 		//! Updates the scene nodes indices if the camera has moved or rotated by a certain
-		//! threshold, which can be changed using the SetCameraMovementDeltaThreshold and 
+		//! threshold, which can be changed using the SetCameraMovementDeltaThreshold and
 		//! SetCameraRotationDeltaThreshold functions.  This also determines if a given patch
 		//! for the scene node is within the view frustum and if it's not the indices are not
 		//! generated for that patch.
@@ -140,21 +137,24 @@ namespace scene
 		//! Returns the mesh
 		virtual IMesh* getMesh() { return &Mesh; }
 
-		//! Gets the meshbuffer data based on a specified Level of Detail.
-		//! \param mb: A reference to an SMeshBufferLightMap object
-		//! \param LOD: The Level Of Detail you want the indices from.
-		virtual void getMeshBufferForLOD(SMeshBufferLightMap& mb, s32 LOD ) const;
+		//! Returns a pointer to the buffer used by the terrain (most users will not need this)
+		virtual IMeshBuffer* getRenderBuffer() { return RenderBuffer; }
 
-		//! Gets the indices for a specified patch at a specified Level of Detail.  
+		//! Gets the meshbuffer data based on a specified Level of Detail.
+		//! \param mb: A reference to an IDynamicMeshBuffer object
+		//! \param LOD: The Level Of Detail you want the indices from.
+		virtual void getMeshBufferForLOD(IDynamicMeshBuffer& mb, s32 LOD=0) const;
+
+		//! Gets the indices for a specified patch at a specified Level of Detail.
 		//! \param indices: A reference to an array of u32 indices.
 		//! \param patchX: Patch x coordinate.
 		//! \param patchZ: Patch z coordinate.
-		//! \param LOD: The level of detail to get for that patch.  If -1, then get 
+		//! \param LOD: The level of detail to get for that patch.  If -1, then get
 		//! the CurrentLOD.  If the CurrentLOD is set to -1, meaning it's not shown,
-		//! then it will retrieve the triangles at the highest LOD ( 0 ).
+		//! then it will retrieve the triangles at the highest LOD (0).
 		//! \return: Number of indices put into the buffer.
 		virtual s32 getIndicesForPatch(core::array<u32>& indices,
-			s32 patchX, s32 patchZ, s32 LOD = 0 );
+			s32 patchX, s32 patchZ, s32 LOD=0);
 
 		//! Populates an array with the CurrentLOD of each patch.
 		//! \param LODs: A reference to a core::array<s32> to hold the values
@@ -165,7 +165,7 @@ namespace scene
 		//! \param patchX: Patch x coordinate.
 		//! \param patchZ: Patch z coordinate.
 		//! \param LOD: The level of detail to set the patch to.
-		virtual void setLODOfPatch( s32 patchX, s32 patchZ, s32 LOD );
+		virtual void setLODOfPatch(s32 patchX, s32 patchZ, s32 LOD=0);
 
 		//! Returns center of terrain.
 		virtual const core::vector3df& getTerrainCenter() const
@@ -178,7 +178,7 @@ namespace scene
 
 		//! Sets the movement camera threshold which is used to determine when to recalculate
 		//! indices for the scene node.  The default value is 10.0f.
-		virtual void setCameraMovementDelta(f32 delta) 
+		virtual void setCameraMovementDelta(f32 delta)
 		{
 			CameraMovementDelta = delta;
 		}
@@ -190,16 +190,15 @@ namespace scene
 			CameraRotationDelta = delta;
 		}
 
-		//! Sets whether or not the node should dynamically update it's associated selector when
+		//! Sets whether or not the node should dynamically update it its associated selector when
 		//! the geomipmap data changes.
 		//! param bVal: Boolean value representing whether or not to update selector dynamically.
 		//! NOTE: Temporarily disabled while working out issues with DynamicSelectorUpdate
 		virtual void setDynamicSelectorUpdate(bool bVal ) { DynamicSelectorUpdate = false; }
-		//virtual void setDynamicSelectorUpdate ( bool bVal ) { DynamicSelectorUpdate = bVal; }
 
 		//! Override the default generation of distance thresholds for determining the LOD a patch
 		//! is rendered at. If any LOD is overridden, then the scene node will no longer apply
-		//! scaling factors to these values. If you override these distances, and then apply
+		//! scaling factors to these values. If you override these distances and then apply
 		//! a scale to the scene node, it is your responsibility to update the new distances to
 		//! work best with your new terrain size.
 		virtual bool overrideLODDistance( s32 LOD, f64 newDistance );
@@ -248,7 +247,7 @@ namespace scene
 			: Size(0), PatchSize(0), CalcPatchSize(0),
 				PatchCount(0), MaxLOD(0),
 				BoundingBox(core::aabbox3df( 99999.9f, 99999.9f, 99999.9f, -99999.9f, -99999.9f, -99999.9f)),
-				LODDistanceThreshold(0), Patches(0)
+				Patches(0)
 			{
 			}
 
@@ -257,7 +256,7 @@ namespace scene
 				PatchSize(patchSize), CalcPatchSize(patchSize-1),
 				PatchCount(0), MaxLOD(maxLOD),
 				BoundingBox(core::aabbox3df( 99999.9f, 99999.9f, 99999.9f, -99999.9f, -99999.9f, -99999.9f)),
-				LODDistanceThreshold(0), Patches(0)
+				Patches(0)
 			{
 			}
 
@@ -272,18 +271,24 @@ namespace scene
 			s32		PatchCount;
 			s32		MaxLOD;
 			core::aabbox3df	BoundingBox;
-			f64*		LODDistanceThreshold;
+			core::array<f64> LODDistanceThreshold;
 			SPatch*		Patches;
 		};
 
 		virtual void preRenderLODCalculations();
 		virtual void preRenderIndicesCalculations();
 
+		template<class INDEX_TYPE>
+		void preRenderIndicesCalculationsDirect(INDEX_TYPE* IndexBuffer);
+
 		//! get indices when generating index data for patches at varying levels of detail.
 		u32 getIndex(const s32 PatchX, const s32 PatchZ, const s32 PatchIndex, u32 vX, u32 vZ) const;
 
-		//! calculate smooth normals 
-		void calculateNormals(SMeshBufferLightMap* pMeshBuffer );
+		//! smooth the terrain
+		void smoothTerrain(CDynamicMeshBuffer* mb, s32 smoothFactor);
+
+		//! calculate smooth normals
+		void calculateNormals(CDynamicMeshBuffer* mb);
 
 		//! create patches, stuff that needs to only be done once for patches goes here.
 		void createPatches();
@@ -305,7 +310,9 @@ namespace scene
 
 		STerrainData TerrainData;
 		SMesh Mesh;
-		SMeshBufferLightMap RenderBuffer;
+
+		CDynamicMeshBuffer *RenderBuffer;
+
 		u32 VerticesToRender;
 		u32 IndicesToRender;
 
@@ -316,8 +323,10 @@ namespace scene
 
 		core::vector3df	OldCameraPosition;
 		core::vector3df	OldCameraRotation;
+		f32				OldCameraFOV;
 		f32 CameraMovementDelta;
 		f32 CameraRotationDelta;
+		f32 CameraFOVDelta;
 
 		// needed for (de)serialization
 		f32 TCoordScale1;
@@ -331,4 +340,5 @@ namespace scene
 } // end namespace irr
 
 #endif // __C_TERRAIN_SCENE_NODE_H__
+
 

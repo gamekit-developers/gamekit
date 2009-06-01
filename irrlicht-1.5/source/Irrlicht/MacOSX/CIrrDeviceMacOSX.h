@@ -25,12 +25,7 @@ namespace irr
 	public:
 
 		//! constructor
-		CIrrDeviceMacOSX(video::E_DRIVER_TYPE driverType,
-			const core::dimension2d<s32>& windowSize,
-			u32 bits, bool fullscreen,
-			bool sbuffer, bool vsync,
-			bool antiAlias, IEventReceiver* receiver,
-			const char* version);
+		CIrrDeviceMacOSX(const SIrrlichtCreationParameters& params);
 
 		//! destructor
 		virtual ~CIrrDeviceMacOSX();
@@ -51,14 +46,27 @@ namespace irr
 		//! returns if window is active. if not, nothing need to be drawn
 		virtual bool isWindowActive() const;
 
+		//! Checks if the Irrlicht window has focus
+		virtual bool isWindowFocused() const;
+
+		//! Checks if the Irrlicht window is minimized
+		virtual bool isWindowMinimized() const;
+
 		//! presents a surface in the client area
-		virtual void present(video::IImage* surface, s32 windowId = 0, core::rect<s32>* src=0 );
+		virtual bool present(video::IImage* surface, void* windowId=0, core::rect<s32>* src=0 );
 
 		//! notifies the device that it should close itself
 		virtual void closeDevice();
 
 		//! Sets if the window should be resizeable in windowed mode.
 		virtual void setResizeAble(bool resize);
+
+		//! Activate any joysticks, and generate events for them.
+		virtual bool activateJoysticks(core::array<SJoystickInfo> & joystickInfo);
+
+		//! \return Returns a pointer to a list with all video modes
+		//! supported by the gfx adapter.
+		virtual video::IVideoModeList* getVideoModeList();
 
 		void flush();
 		void setMouseLocation(int x,int y);
@@ -68,9 +76,7 @@ namespace irr
 	private:
 
 		//! create the driver
-		void createDriver(video::E_DRIVER_TYPE driverType,
-			const core::dimension2d<s32>& windowSize, u32 bits, bool fullscreen,
-			bool stencilbuffer, bool vsync, bool antiAlias);
+		void createDriver();
 
 		//! Implementation of the macos x cursor control
 		class CCursorControl : public gui::ICursorControl
@@ -180,20 +186,17 @@ namespace irr
 			core::position2d<s32> CursorPos;
 			core::dimension2d<s32> WindowSize;
 			core::dimension2d<float> InvWindowSize;
-			CIrrDeviceMacOSX	*_device;
+			core::rect<s32> ReferenceRect;
+			CIrrDeviceMacOSX *_device;
 			bool IsVisible;
 			bool UseReferenceRect;
-			core::rect<s32> ReferenceRect;
 		};
 
-		bool createWindow(const irr::core::dimension2d<irr::s32>& windowSize, irr::u32 bits, bool fullscreen, bool vsync, bool stencilBuffer);
+		bool createWindow();
 		void initKeycodes();
 		void storeMouseLocation();
 		void postMouseEvent(void *event,irr::SEvent &ievent);
 		void postKeyEvent(void *event,irr::SEvent &ievent,bool pressed);
-
-		video::E_DRIVER_TYPE DriverType;
-		bool stencilbuffer;
 
 		void			*_window;
 		CGLContextObj		_cglcontext;
@@ -204,6 +207,8 @@ namespace irr
 		int			_screenWidth;
 		int			_screenHeight;
 		bool			_active;
+
+		void pollJoysticks();
 	};
 
 
