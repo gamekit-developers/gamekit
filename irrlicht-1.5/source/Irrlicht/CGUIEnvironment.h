@@ -2,8 +2,8 @@
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
-#ifndef __C_GUI_ENVIRNMENT_H_INCLUDED__
-#define __C_GUI_ENVIRNMENT_H_INCLUDED__
+#ifndef __C_GUI_ENVIRONMENT_H_INCLUDED__
+#define __C_GUI_ENVIRONMENT_H_INCLUDED__
 
 #include "IrrCompileConfig.h"
 #ifdef _IRR_COMPILE_WITH_GUI_
@@ -155,6 +155,10 @@ public:
 	virtual IGUIComboBox* addComboBox(const core::rect<s32>& rectangle,
 		IGUIElement* parent=0, s32 id=-1);
 
+	//! Adds a table element.
+	virtual IGUITable* addTable(const core::rect<s32>& rectangle, 
+		IGUIElement* parent=0, s32 id=-1, bool drawBackground=false);
+
 	//! sets the focus to an element
 	virtual bool setFocus(IGUIElement* element);
 
@@ -290,5 +294,6 @@ private:
 
 #endif // _IRR_COMPILE_WITH_GUI_
 
-#endif // __C_GUI_ENVIRNMENT_H_INCLUDED__
+#endif // __C_GUI_ENVIRONMENT_H_INCLUDED__
+
 

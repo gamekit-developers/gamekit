@@ -32,6 +32,7 @@
 #include "CGUIComboBox.h"
 #include "CGUIMenu.h"
 #include "CGUIToolBar.h"
+#include "CGUITable.h"
 
 #include "CDefaultGUIElementFactory.h"
 #include "IWriteFile.h"
@@ -161,7 +162,7 @@ void CGUIEnvironment::loadBuiltInFont()
 	CGUIFont* font = new CGUIFont(this, "#DefaultFont");
 	if (!font->load(file))
 	{
-		os::Printer::log("Error: Could not load built-in Font.", ELL_ERROR);
+		os::Printer::log("Error: Could not load built-in Font. Did you compile without the BMP loader?", ELL_ERROR);
 		font->drop();
 		file->drop();
 		return;
@@ -366,8 +367,10 @@ void CGUIEnvironment::clear()
 bool CGUIEnvironment::OnEvent(const SEvent& event)
 {
 	bool ret = false;
-	if (UserReceiver && (event.EventType != EET_MOUSE_INPUT_EVENT) &&
-		(event.EventType != EET_GUI_EVENT || event.GUIEvent.Caller != this))
+	if (UserReceiver
+		&& (event.EventType != EET_MOUSE_INPUT_EVENT)
+		&& (event.EventType != EET_KEY_INPUT_EVENT)
+		&& (event.EventType != EET_GUI_EVENT || event.GUIEvent.Caller != this)) 
 	{
 		ret = UserReceiver->OnEvent(event);
 	}
@@ -1013,6 +1016,12 @@ IGUIScrollBar* CGUIEnvironment::addScrollBar(bool horizontal, const core::rect<s
 	return bar;
 }
 
+IGUITable* CGUIEnvironment::addTable(const core::rect<s32>& rectangle, IGUIElement* parent, s32 id, bool drawBackground)
+{
+	CGUITable* b = new CGUITable(this, parent ? parent : this, id, rectangle, true, drawBackground, false);
+	b->drop();
+	return b;
+}
 
 //! Adds an image element. 
 IGUIImage* CGUIEnvironment::addImage(video::ITexture* image, core::position2d<s32> pos,
@@ -1521,4 +1530,5 @@ IGUIEnvironment* createGUIEnvironment(io::IFileSystem* fs,
 } // end namespace irr
 
 #endif // _IRR_COMPILE_WITH_GUI_
+
 

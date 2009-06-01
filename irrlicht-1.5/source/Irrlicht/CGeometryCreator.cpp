@@ -6,6 +6,7 @@
 #include "SAnimatedMesh.h"
 #include "SMeshBuffer.h"
 #include "SMesh.h"
+#include "IMesh.h"
 #include "IVideoDriver.h"
 #include "CImage.h"
 #include "os.h"
@@ -31,7 +32,7 @@ IMesh* CGeometryCreator::createHillPlaneMesh(
 		countHills.Height = 1.f;
 
 	// center
-	const core::position2d<f32> center((tileSize.Width * tileCount.Width) / 2.0f, (tileSize.Height * tileCount.Height) / 2.0f);
+	const core::position2d<f32> center((tileSize.Width * tileCount.Width) * 0.5f, (tileSize.Height * tileCount.Height) * 0.5f);
 
 	// texture coord step
 	const core::dimension2d<f32> tx(
@@ -59,9 +60,9 @@ IMesh* CGeometryCreator::createHillPlaneMesh(
 			vtx.TCoords.set(tsx, 1.0f - tsy);
 
 			if (hillHeight != 0.0f)
-				vtx.Pos.Y = (f32)(sin(vtx.Pos.X * countHills.Width * core::PI / center.X) *
-					cos(vtx.Pos.Z * countHills.Height * core::PI / center.Y))
-					*hillHeight;
+				vtx.Pos.Y = sinf(vtx.Pos.X * countHills.Width * core::PI / center.X) *
+					cosf(vtx.Pos.Z * countHills.Height * core::PI / center.Y) *
+					hillHeight;
 
 			buffer->Vertices.push_back(vtx);
 			sy += tileSize.Height;
@@ -92,14 +93,14 @@ IMesh* CGeometryCreator::createHillPlaneMesh(
 	// recalculate normals
 	for (u32 i=0; i<buffer->Indices.size(); i+=3)
 	{
-		core::plane3d<f32> p(
+		const core::vector3df normal = core::plane3d<f32>(
 			buffer->Vertices[buffer->Indices[i+0]].Pos,
 			buffer->Vertices[buffer->Indices[i+1]].Pos,
-			buffer->Vertices[buffer->Indices[i+2]].Pos);
+			buffer->Vertices[buffer->Indices[i+2]].Pos).Normal;
 
-		buffer->Vertices[buffer->Indices[i+0]].Normal = p.Normal;
-		buffer->Vertices[buffer->Indices[i+1]].Normal = p.Normal;
-		buffer->Vertices[buffer->Indices[i+2]].Normal = p.Normal;
+		buffer->Vertices[buffer->Indices[i+0]].Normal = normal;
+		buffer->Vertices[buffer->Indices[i+1]].Normal = normal;
+		buffer->Vertices[buffer->Indices[i+2]].Normal = normal;
 	}
 
 	if (material)
@@ -115,11 +116,10 @@ IMesh* CGeometryCreator::createHillPlaneMesh(
 }
 
 
-
 IMesh* CGeometryCreator::createTerrainMesh(video::IImage* texture,
 		video::IImage* heightmap, const core::dimension2d<f32>& stretchSize,
 		f32 maxHeight, video::IVideoDriver* driver,
-		const core::dimension2d<s32> maxVtxBlockSize,
+		const core::dimension2d<s32>& maxVtxBlockSize,
 		bool debugBorders)
 {
 	if (!texture || !heightmap)
@@ -136,9 +136,8 @@ IMesh* CGeometryCreator::createTerrainMesh(video::IImage* texture,
 	const u32 tm = os::Timer::getRealTime()/1000;
 	const core::dimension2d<s32> hMapSize= heightmap->getDimension();
 	const core::dimension2d<s32> tMapSize= texture->getDimension();
-	const core::position2d<f32> thRel((f32)tMapSize.Width / hMapSize.Width, (f32)tMapSize.Height / hMapSize.Height);
-
-	video::SMaterial material;
+	const core::position2d<f32> thRel(static_cast<f32>(tMapSize.Width) / hMapSize.Width, static_cast<f32>(tMapSize.Height) / hMapSize.Height);
+	maxHeight /= 255.0f; // height step per color value
 
 	core::position2d<s32> processed(0,0);
 	while (processed.Y<hMapSize.Height)
@@ -152,32 +151,39 @@ IMesh* CGeometryCreator::createTerrainMesh(video::IImage* texture,
 				blockSize.Height = hMapSize.Height - processed.Y;
 
 			SMeshBuffer* buffer = new SMeshBuffer();
-
+			buffer->setHardwareMappingHint(scene::EHM_STATIC);
+			buffer->Vertices.reallocate(blockSize.getArea());
 			// add vertices of vertex block
 			s32 y;
-
+			core::vector2df pos(0.f, processed.Y*stretchSize.Height);
+			const core::vector2df bs(1.f/blockSize.Width, 1.f/blockSize.Height);
+			core::vector2df tc(0.f, 0.5f*bs.Y);
 			for (y=0; y<blockSize.Height; ++y)
 			{
+				pos.X=processed.X*stretchSize.Width;
+				tc.X=0.5f*bs.X;
 				for (s32 x=0; x<blockSize.Width; ++x)
 				{
-					video::SColor clr = heightmap->getPixel(x+processed.X, y+processed.Y);
-					const f32 height = ((clr.getRed() + clr.getGreen() + clr.getBlue()) / 3.0f)/255.0f * maxHeight;
+					const f32 height = heightmap->getPixel(x+processed.X, y+processed.Y).getAverage() * maxHeight;
 
-					vtx.Pos.set((f32)(x+processed.X) * stretchSize.Width,
-						height, (f32)(y+processed.Y) * stretchSize.Height);
-
-					vtx.TCoords.set((x+0.5f) / blockSize.Width,
-						(y+0.5f) / blockSize.Height);
+					vtx.Pos.set(pos.X, height, pos.Y);
+					vtx.TCoords.set(tc);
 					buffer->Vertices.push_back(vtx);
+					pos.X += stretchSize.Width;
+					tc.X += bs.X;
 				}
+				pos.Y += stretchSize.Height;
+				tc.Y += bs.Y;
 			}
 
+			buffer->Indices.reallocate((blockSize.Height-1)*(blockSize.Width-1)*6);
 			// add indices of vertex block
+			s32 c1 = 0;
 			for (y=0; y<blockSize.Height-1; ++y)
 			{
 				for (s32 x=0; x<blockSize.Width-1; ++x)
 				{
-					s32 c = (y*blockSize.Width) + x;
+					const s32 c = c1 + x;
 
 					buffer->Indices.push_back(c);
 					buffer->Indices.push_back(c + blockSize.Width);
@@ -187,20 +193,20 @@ IMesh* CGeometryCreator::createTerrainMesh(video::IImage* texture,
 					buffer->Indices.push_back(c + blockSize.Width);
 					buffer->Indices.push_back(c + 1 + blockSize.Width);
 				}
+				c1 += blockSize.Width;
 			}
 
 			// recalculate normals
-			for (s32 i=0; i<(s32)buffer->Indices.size(); i+=3)
+			for (u32 i=0; i<buffer->Indices.size(); i+=3)
 			{
-				core::plane3d<f32> p(
+				const core::vector3df normal = core::plane3d<f32>(
 					buffer->Vertices[buffer->Indices[i+0]].Pos,
 					buffer->Vertices[buffer->Indices[i+1]].Pos,
-					buffer->Vertices[buffer->Indices[i+2]].Pos);
-				p.Normal.normalize();
+					buffer->Vertices[buffer->Indices[i+2]].Pos).Normal;
 
-				buffer->Vertices[buffer->Indices[i+0]].Normal = p.Normal;
-				buffer->Vertices[buffer->Indices[i+1]].Normal = p.Normal;
-				buffer->Vertices[buffer->Indices[i+2]].Normal = p.Normal;
+				buffer->Vertices[buffer->Indices[i+0]].Normal = normal;
+				buffer->Vertices[buffer->Indices[i+1]].Normal = normal;
+				buffer->Vertices[buffer->Indices[i+2]].Normal = normal;
 			}
 
 			if (buffer->Vertices.size())
@@ -213,21 +219,20 @@ IMesh* CGeometryCreator::createTerrainMesh(video::IImage* texture,
 
 				sprintf(textureName, "terrain%u_%u", tm, mesh->getMeshBufferCount());
 
-				material.setTexture(0, driver->addTexture(textureName, img));
+				buffer->Material.setTexture(0, driver->addTexture(textureName, img));
 
-				if (material.getTexture(0))
+				if (buffer->Material.getTexture(0))
 				{
 					c8 tmp[255];
 					sprintf(tmp, "Generated terrain texture (%dx%d): %s",
-						material.getTexture(0)->getSize().Width,
-						material.getTexture(0)->getSize().Height,
+						buffer->Material.getTexture(0)->getSize().Width,
+						buffer->Material.getTexture(0)->getSize().Height,
 						textureName);
 					os::Printer::log(tmp);
 				}
 				else
 					os::Printer::log("Could not create terrain texture.", textureName, ELL_ERROR);
 
-				buffer->Material = material;
 				img->drop();
 			}
 
@@ -248,6 +253,7 @@ IMesh* CGeometryCreator::createTerrainMesh(video::IImage* texture,
 	return mesh;
 }
 
+
 /*
 	a cylinder, a cone and a cross
 	point up on (0,1.f, 0.f )
@@ -261,209 +267,20 @@ IMesh* CGeometryCreator::createArrowMesh(const u32 tesselationCylinder,
 						const video::SColor vtxColor0,
 						const video::SColor vtxColor1)
 {
-	SMeshBuffer* buffer;
-	video::S3DVertex v;
-	u32 i;
+	SMesh* mesh = (SMesh*)createCylinderMesh(width0, cylinderHeight, tesselationCylinder, vtxColor0, false);
 
-	v.Color = vtxColor0;
-
-	// cylinder
-	buffer = new SMeshBuffer();
-
-	// floor, bottom
-	f32 angleStep = (core::PI * 2.f ) / tesselationCylinder;
-
-	for ( i = 0; i != tesselationCylinder; ++i )
+	IMesh* mesh2 = createConeMesh(width1, height-cylinderHeight, tesselationCone, vtxColor1, vtxColor0);
+	for (u32 i=0; i<mesh2->getMeshBufferCount(); ++i)
 	{
-		f32 angle = angleStep * f32(i);
-		v.Color = vtxColor0;
-		v.Pos.X = width0 * cosf ( angle );
-		v.Pos.Y = 0.f;
-		v.Pos.Z = width0 * sinf ( angle );
-		v.Normal = v.Pos;
-		v.Normal.normalize ();
-		buffer->Vertices.push_back ( v );
-
-		v.Pos.X = width0 * 0.5f * cosf ( angle );
-		v.Pos.Y = cylinderHeight;
-		v.Pos.Z = width0 * 0.5f * sinf ( angle );
-		v.Normal = v.Pos;
-		v.Normal.normalize ();
-		buffer->Vertices.push_back ( v );
-
-		angle += ( angleStep / 2.f );
-		v.Color = vtxColor1;
-		v.Pos.X = ( width0 * 0.75f ) * cosf ( angle );
-		v.Pos.Y = 0.f;
-		v.Pos.Z = ( width0 * 0.75f ) * sinf ( angle );
-		v.Normal = v.Pos;
-		v.Normal.normalize ();
-		buffer->Vertices.push_back ( v );
-
-		v.Pos.X = ( width0 * 0.25f ) * cosf ( angle );
-		v.Pos.Y = cylinderHeight;
-		v.Pos.Z = ( width0 * 0.25f ) * sinf ( angle );
-		v.Normal = v.Pos;
-		v.Normal.normalize ();
-		buffer->Vertices.push_back ( v );
-
+		scene::IMeshBuffer* buffer = mesh2->getMeshBuffer(i);
+		for (u32 j=0; j<buffer->getVertexCount(); ++j)
+			buffer->getPosition(j).Y += cylinderHeight;
+		mesh->addMeshBuffer(buffer);
 	}
+	mesh2->drop();
 
-	u32 nonWrappedSize = ( ( tesselationCylinder * 2 ) - 1 ) * 2;
-	for ( i = 0; i != nonWrappedSize; i += 2 )
-	{
-		buffer->Indices.push_back ( i + 2 );
-		buffer->Indices.push_back ( i + 0 );
-		buffer->Indices.push_back ( i + 1 );
-
-		buffer->Indices.push_back ( i + 2 );
-		buffer->Indices.push_back ( i + 1 );
-		buffer->Indices.push_back ( i + 3 );
-	}
-
-	buffer->Indices.push_back ( 0 );
-	buffer->Indices.push_back ( i + 0 );
-	buffer->Indices.push_back ( i + 1 );
-
-	buffer->Indices.push_back ( 0 );
-	buffer->Indices.push_back ( i + 1 );
-	buffer->Indices.push_back ( 1 );
-
-	// close down
-	v.Pos.X = 0.f;
-	v.Pos.Y = 0.f;
-	v.Pos.Z = 0.f;
-	v.Normal.X = 0.f;
-	v.Normal.Y = -1.f;
-	v.Normal.Z = 0.f;
-	buffer->Vertices.push_back ( v );
-
-	u32 index = buffer->Vertices.size () - 1;
-
-	for ( i = 0; i != nonWrappedSize; i += 2 )
-	{
-		buffer->Indices.push_back ( index );
-		buffer->Indices.push_back ( i + 0 );
-		buffer->Indices.push_back ( i + 2 );
-	}
-
-	buffer->Indices.push_back ( index );
-	buffer->Indices.push_back ( i + 0 );
-	buffer->Indices.push_back ( 0 );
-
-/*
-	// close top
-	v.Pos.X = 0.f;
-	v.Pos.Y = cylinderHeight;
-	v.Pos.Z = 0.f;
-	v.Normal.X = 0.f;
-	v.Normal.Y = 1.f;
-	v.Normal.Z = 0.f;
-	buffer->Vertices.push_back ( v );
-
-	index = buffer->Vertices.size () - 1;
-
-	for ( i = 0; i != nonWrappedSize; i += 2 )
-	{
-		buffer->Indices.push_back ( i + 1 );
-		buffer->Indices.push_back ( index );
-		buffer->Indices.push_back ( i + 3 );
-	}
-
-	buffer->Indices.push_back ( i + 1 );
-	buffer->Indices.push_back ( index );
-	buffer->Indices.push_back ( 1 );
-*/
-	// add to mesh
-	SMesh* mesh = new SMesh();
-	buffer->recalculateBoundingBox();
-	mesh->addMeshBuffer(buffer);
-	buffer->drop();
-
-	// cone
-	buffer = new SMeshBuffer();
-
-	angleStep = (core::PI * 2.f ) / tesselationCone;
-
-	v.Color = vtxColor0;
-	for ( i = 0; i != tesselationCone; ++i )
-	{
-		f32 angle = angleStep * f32(i);
-
-		v.Color = vtxColor0;
-		v.Pos.X = width1 * cosf ( angle );
-		v.Pos.Y = cylinderHeight;
-		v.Pos.Z = width1 * sinf ( angle );
-		v.Normal = v.Pos;
-		v.Normal.normalize ();
-
-		buffer->Vertices.push_back ( v );
-
-		angle += angleStep / 2.f;
-		v.Color = vtxColor1;
-		v.Pos.X = (width1 * 0.75f ) * cosf ( angle );
-		v.Pos.Y = cylinderHeight;
-		v.Pos.Z = (width1 * 0.75f ) * sinf ( angle );
-		v.Normal = v.Pos;
-		v.Normal.normalize ();
-
-		buffer->Vertices.push_back ( v );
-	}
-	nonWrappedSize = buffer->Vertices.size () - 1;
-
-	// close top
-	v.Pos.X = 0.f;
-	v.Pos.Y = height;
-	v.Pos.Z = 0.f;
-	v.Normal.X = 0.f;
-	v.Normal.Y = 1.f;
-	v.Normal.Z = 0.f;
-	buffer->Vertices.push_back ( v );
-
-	index = buffer->Vertices.size () - 1;
-
-	for ( i = 0; i != nonWrappedSize; i += 1 )
-	{
-		buffer->Indices.push_back ( i + 0 );
-		buffer->Indices.push_back ( index );
-		buffer->Indices.push_back ( i + 1 );
-	}
-
-	buffer->Indices.push_back ( i + 0 );
-	buffer->Indices.push_back ( index );
-	buffer->Indices.push_back ( 0 );
-
-	// close down
-	v.Pos.X = 0.f;
-	v.Pos.Y = cylinderHeight;
-	v.Pos.Z = 0.f;
-	v.Normal.X = 0.f;
-	v.Normal.Y = -1.f;
-	v.Normal.Z = 0.f;
-	buffer->Vertices.push_back ( v );
-
-	index = buffer->Vertices.size () - 1;
-
-	for ( i = 0; i != nonWrappedSize; i += 1 )
-	{
-		buffer->Indices.push_back ( index );
-		buffer->Indices.push_back ( i + 0 );
-		buffer->Indices.push_back ( i + 1 );
-	}
-
-	buffer->Indices.push_back ( index );
-	buffer->Indices.push_back ( i + 0 );
-	buffer->Indices.push_back ( 0 );
-
-	// add to already existing mesh
-	buffer->recalculateBoundingBox();
-	mesh->addMeshBuffer(buffer);
-	buffer->drop();
-
-	mesh->recalculateBoundingBox();
 	return mesh;
 }
-
 
 
 /* A sphere with proper normals and texture coords */
@@ -492,7 +309,7 @@ IMesh* CGeometryCreator::createSphereMesh(f32 radius, u32 polyCountX, u32 polyCo
 	buffer->Vertices.set_used((polyCountXPitch * polyCountY) + 2);
 	buffer->Indices.set_used((polyCountX * polyCountY) * 6);
 
-	video::SColor clr(100, 255,255,255);
+	const video::SColor clr(100, 255,255,255);
 
 	u32 i=0;
 	u32 level = 0;
@@ -581,9 +398,9 @@ IMesh* CGeometryCreator::createSphereMesh(f32 radius, u32 polyCountX, u32 polyCo
 		{
 			// calculate points position
 
-			const core::vector3df pos((f32)(radius * cos(axz) * sinay),
-						(f32)(radius * cos(ay)),
-						(f32)(radius * sin(axz) * sinay));
+			const core::vector3df pos(static_cast<f32>(radius * cos(axz) * sinay),
+						static_cast<f32>(radius * cos(ay)),
+						static_cast<f32>(radius * sin(axz) * sinay));
 			// for spheres the normal is the position
 			core::vector3df normal(pos);
 			normal.normalize();
@@ -594,7 +411,7 @@ IMesh* CGeometryCreator::createSphereMesh(f32 radius, u32 polyCountX, u32 polyCo
 			if (y==0)
 			{
 				if (normal.Y != -1.0f && normal.Y != 1.0f)
-					tu = (f32)(acos(core::clamp(normal.X/sinay, -1.0, 1.0)) * 0.5 *core::RECIPROCAL_PI64);
+					tu = static_cast<f32>(acos(core::clamp(normal.X/sinay, -1.0, 1.0)) * 0.5 *core::RECIPROCAL_PI64);
 				if (normal.Z < 0.0f)
 					tu=1-tu;
 			}
@@ -603,7 +420,7 @@ IMesh* CGeometryCreator::createSphereMesh(f32 radius, u32 polyCountX, u32 polyCo
 			buffer->Vertices[i] = video::S3DVertex(pos.X, pos.Y, pos.Z,
 						normal.X, normal.Y, normal.Z,
 						clr, tu,
-						(f32)(ay*core::RECIPROCAL_PI64));
+						static_cast<f32>(ay*core::RECIPROCAL_PI64));
 			++i;
 			axz += AngleX;
 		}
@@ -637,5 +454,228 @@ IMesh* CGeometryCreator::createSphereMesh(f32 radius, u32 polyCountX, u32 polyCo
 	return mesh;
 }
 
+
+/* A cylinder with proper normals and texture coords */
+IMesh* CGeometryCreator::createCylinderMesh(f32 radius, f32 length, u32 tesselation, const video::SColor& color, bool closeTop, f32 oblique)
+{
+	SMeshBuffer* buffer = new SMeshBuffer();
+
+	const f32 recTesselation = core::reciprocal((f32)tesselation);
+	const f32 recTesselationHalf = recTesselation * 0.5f;
+	const f32 angleStep = (core::PI * 2.f ) * recTesselation;
+	const f32 angleStepHalf = angleStep*0.5f;
+
+	u32 i;
+	video::S3DVertex v;
+	v.Color = color;
+	buffer->Vertices.reallocate(tesselation*4+(closeTop?2:1));
+	buffer->Indices.reallocate((tesselation*2)*(closeTop?12:9));
+	f32 tcx = 0.f;
+	for ( i = 0; i != tesselation; ++i )
+	{
+		const f32 angle = angleStep * i;
+		v.Pos.X = radius * cosf(angle);
+		v.Pos.Y = 0.f;
+		v.Pos.Z = radius * sinf(angle);
+		v.Normal = v.Pos;
+		v.Normal.normalize();
+		v.TCoords.X=tcx;
+		v.TCoords.Y=0.f;
+		buffer->Vertices.push_back(v);
+
+		v.Pos.X += oblique;
+		v.Pos.Y = length;
+		v.Normal = v.Pos;
+		v.Normal.normalize();
+		v.TCoords.Y=1.f;
+		buffer->Vertices.push_back(v);
+
+		v.Pos.X = radius * cosf(angle + angleStepHalf);
+		v.Pos.Y = 0.f;
+		v.Pos.Z = radius * sinf(angle + angleStepHalf);
+		v.Normal = v.Pos;
+		v.Normal.normalize();
+		v.TCoords.X=tcx+recTesselationHalf;
+		v.TCoords.Y=0.f;
+		buffer->Vertices.push_back(v);
+
+		v.Pos.X += oblique;
+		v.Pos.Y = length;
+		v.Normal = v.Pos;
+		v.Normal.normalize();
+		v.TCoords.Y=1.f;
+		buffer->Vertices.push_back(v);
+		tcx += recTesselation;
+	}
+
+	const u32 nonWrappedSize = ( tesselation* 4 ) - 2;
+	for ( i = 0; i != nonWrappedSize; i += 2 )
+	{
+		buffer->Indices.push_back ( i + 2 );
+		buffer->Indices.push_back ( i + 0 );
+		buffer->Indices.push_back ( i + 1 );
+
+		buffer->Indices.push_back ( i + 2 );
+		buffer->Indices.push_back ( i + 1 );
+		buffer->Indices.push_back ( i + 3 );
+	}
+
+	buffer->Indices.push_back ( 0 );
+	buffer->Indices.push_back ( i + 0 );
+	buffer->Indices.push_back ( i + 1 );
+
+	buffer->Indices.push_back ( 0 );
+	buffer->Indices.push_back ( i + 1 );
+	buffer->Indices.push_back ( 1 );
+
+	// close down
+	v.Pos.X = 0.f;
+	v.Pos.Y = 0.f;
+	v.Pos.Z = 0.f;
+	v.Normal.X = 0.f;
+	v.Normal.Y = -1.f;
+	v.Normal.Z = 0.f;
+	v.TCoords.X = 1.f;
+	v.TCoords.Y = 1.f;
+	buffer->Vertices.push_back ( v );
+
+	u32 index = buffer->Vertices.size () - 1;
+
+	for ( i = 0; i != nonWrappedSize; i += 2 )
+	{
+		buffer->Indices.push_back ( index );
+		buffer->Indices.push_back ( i + 0 );
+		buffer->Indices.push_back ( i + 2 );
+	}
+
+	buffer->Indices.push_back ( index );
+	buffer->Indices.push_back ( i + 0 );
+	buffer->Indices.push_back ( 0 );
+
+	if (closeTop)
+	{
+		// close top
+		v.Pos.X = oblique;
+		v.Pos.Y = length;
+		v.Pos.Z = 0.f;
+		v.Normal.X = 0.f;
+		v.Normal.Y = 1.f;
+		v.Normal.Z = 0.f;
+		v.TCoords.X = 0.f;
+		v.TCoords.Y = 0.f;
+		buffer->Vertices.push_back ( v );
+
+		index = buffer->Vertices.size () - 1;
+
+		for ( i = 0; i != nonWrappedSize; i += 2 )
+		{
+			buffer->Indices.push_back ( i + 1 );
+			buffer->Indices.push_back ( index );
+			buffer->Indices.push_back ( i + 3 );
+		}
+
+		buffer->Indices.push_back ( i + 1 );
+		buffer->Indices.push_back ( index );
+		buffer->Indices.push_back ( 1 );
+	}
+
+	buffer->recalculateBoundingBox();
+	SMesh* mesh = new SMesh();
+	mesh->addMeshBuffer(buffer);
+	mesh->recalculateBoundingBox();
+	buffer->drop();
+	return mesh;
+}
+
+
+/* A cone with proper normals and texture coords */
+IMesh* CGeometryCreator::createConeMesh(f32 radius, f32 length, u32 tesselation, const video::SColor& colorTop, const video::SColor& colorBottom, f32 oblique)
+{
+	SMeshBuffer* buffer = new SMeshBuffer();
+
+	const f32 angleStep = (core::PI * 2.f ) / tesselation;
+	const f32 angleStepHalf = angleStep*0.5f;
+
+	video::S3DVertex v;
+	u32 i;
+
+	v.Color = colorTop;
+	for ( i = 0; i != tesselation; ++i )
+	{
+		f32 angle = angleStep * f32(i);
+
+		v.Pos.X = radius * cosf(angle);
+		v.Pos.Y = 0.f;
+		v.Pos.Z = radius * sinf(angle);
+		v.Normal = v.Pos;
+		v.Normal.normalize();
+		buffer->Vertices.push_back(v);
+
+		angle += angleStepHalf;
+		v.Pos.X = radius * cosf(angle);
+		v.Pos.Y = 0.f;
+		v.Pos.Z = radius * sinf(angle);
+		v.Normal = v.Pos;
+		v.Normal.normalize();
+		buffer->Vertices.push_back(v);
+	}
+	const u32 nonWrappedSize = buffer->Vertices.size() - 1;
+
+	// close top
+	v.Pos.X = oblique;
+	v.Pos.Y = length;
+	v.Pos.Z = 0.f;
+	v.Normal.X = 0.f;
+	v.Normal.Y = 1.f;
+	v.Normal.Z = 0.f;
+	buffer->Vertices.push_back(v);
+
+	u32 index = buffer->Vertices.size() - 1;
+
+	for ( i = 0; i != nonWrappedSize; i += 1 )
+	{
+		buffer->Indices.push_back ( i + 0 );
+		buffer->Indices.push_back ( index );
+		buffer->Indices.push_back ( i + 1 );
+	}
+
+	buffer->Indices.push_back(i + 0);
+	buffer->Indices.push_back(index);
+	buffer->Indices.push_back(0);
+
+	// close down
+	v.Color = colorBottom;
+	v.Pos.X = 0.f;
+	v.Pos.Y = 0.f;
+	v.Pos.Z = 0.f;
+	v.Normal.X = 0.f;
+	v.Normal.Y = -1.f;
+	v.Normal.Z = 0.f;
+	buffer->Vertices.push_back(v);
+
+	index = buffer->Vertices.size() - 1;
+
+	for ( i = 0; i != nonWrappedSize; i += 1 )
+	{
+		buffer->Indices.push_back(index);
+		buffer->Indices.push_back(i + 0);
+		buffer->Indices.push_back(i + 1);
+	}
+
+	buffer->Indices.push_back(index);
+	buffer->Indices.push_back(i + 0);
+	buffer->Indices.push_back(0);
+
+	buffer->recalculateBoundingBox();
+	SMesh* mesh = new SMesh();
+	mesh->addMeshBuffer(buffer);
+	buffer->drop();
+
+	mesh->recalculateBoundingBox();
+	return mesh;
+}
+
+
 } // end namespace scene
 } // end namespace irr
+

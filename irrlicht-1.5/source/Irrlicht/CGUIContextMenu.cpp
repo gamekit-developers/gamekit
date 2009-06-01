@@ -218,61 +218,62 @@ void CGUIContextMenu::removeAllItems()
 //! called if an event happened.
 bool CGUIContextMenu::OnEvent(const SEvent& event)
 {
-	if (!IsEnabled)
-		return Parent ? Parent->OnEvent(event) : false;
-
-	switch(event.EventType)
+	if (IsEnabled)
 	{
-	case EET_GUI_EVENT:
-		switch(event.GUIEvent.EventType)
+
+		switch(event.EventType)
 		{
-		case EGET_ELEMENT_FOCUS_LOST:
-			if (event.GUIEvent.Caller == this && !isMyChild(event.GUIEvent.Element) && AllowFocus)
+		case EET_GUI_EVENT:
+			switch(event.GUIEvent.EventType)
 			{
-				// set event parent of submenus
-				setEventParent(Parent);
-				remove();
-				return false;
+			case EGET_ELEMENT_FOCUS_LOST:
+				if (event.GUIEvent.Caller == this && !isMyChild(event.GUIEvent.Element) && AllowFocus)
+				{
+					// set event parent of submenus
+					setEventParent(Parent);
+					remove();
+					return false;
+				}
+				break;
+			case EGET_ELEMENT_FOCUSED:
+				if (event.GUIEvent.Caller == this && !AllowFocus)
+				{
+					return true;
+				}
+				break;
+			default:
+ 				break;
 			}
 			break;
-		case EGET_ELEMENT_FOCUSED:
-			if (event.GUIEvent.Caller == this && !AllowFocus)
+		case EET_MOUSE_INPUT_EVENT:
+			switch(event.MouseInput.Event)
 			{
+			case EMIE_LMOUSE_LEFT_UP:
+				{
+					// menu might be removed if it loses focus in sendClick, so grab a reference
+					grab();
+					const u32 t = sendClick(core::position2d<s32>(event.MouseInput.X, event.MouseInput.Y));
+					if ((t==0 || t==1) && Environment->hasFocus(this))
+						Environment->removeFocus(this);
+					drop();
+				}
 				return true;
+			case EMIE_LMOUSE_PRESSED_DOWN:
+				return true;
+			case EMIE_MOUSE_MOVED:
+				if (Environment->hasFocus(this))
+					highlight(core::position2d<s32>(event.MouseInput.X, event.MouseInput.Y), true);
+				return true;
+			default:
+ 				break;
 			}
 			break;
 		default:
- 			break;
+			break;
 		}
-		break;
-	case EET_MOUSE_INPUT_EVENT:
-		switch(event.MouseInput.Event)
-		{
-		case EMIE_LMOUSE_LEFT_UP:
-			{
-				// menu might be removed if it loses focus in sendClick, so grab a reference
-				grab();
-				const u32 t = sendClick(core::position2d<s32>(event.MouseInput.X, event.MouseInput.Y));
-				if ((t==0 || t==1) && Environment->hasFocus(this))
-					Environment->removeFocus(this);
-				drop();
-			}
-			return true;
-		case EMIE_LMOUSE_PRESSED_DOWN:
-			return true;
-		case EMIE_MOUSE_MOVED:
-			if (Environment->hasFocus(this))
-				highlight(core::position2d<s32>(event.MouseInput.X, event.MouseInput.Y), true);
-			return true;
-		default:
- 			break;
-		}
-		break;
-	default:
-		break;
 	}
 
-	return Parent ? Parent->OnEvent(event) : false;
+	return IGUIElement::OnEvent(event);
 }
 
 
@@ -377,7 +378,7 @@ bool CGUIContextMenu::highlight(const core::position2d<s32>& p, bool canOpenSubM
 				for (s32 j=0; j<(s32)Items.size(); ++j)
 					if (Items[j].SubMenu)
 					{
-						if ( j == i && canOpenSubMenu )
+						if ( j == i && canOpenSubMenu && Items[j].Enabled )
 							Items[j].SubMenu->setVisible(true);
 						else if ( j != i )
 							Items[j].SubMenu->setVisible(false);
@@ -730,9 +731,9 @@ void CGUIContextMenu::setEventParent(IGUIElement *parent)
 bool CGUIContextMenu::hasOpenSubMenu() const
 {
 	for (u32 i=0; i<Items.size(); ++i)
-		if (Items[i].SubMenu)
-			if ( Items[i].SubMenu->isVisible() )
-				return true;
+		if (Items[i].SubMenu && Items[i].SubMenu->isVisible())
+			return true;
+
 	return false;
 }
 
