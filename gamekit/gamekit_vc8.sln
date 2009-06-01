@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gamekit_vc8", "gamekit_vc8.vcproj", "{171CCDFA-C140-4956-8EB7-F0168F4521D3}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gamekit", "gamekit_vc8.vcproj", "{171CCDFA-C140-4956-8EB7-F0168F4521D3}"
 	ProjectSection(ProjectDependencies) = postProject
 		{6ADA430D-009C-2ED4-A787-2AC2D6FEB8CE} = {6ADA430D-009C-2ED4-A787-2AC2D6FEB8CE}
 		{C04EA8AC-D96C-0E1F-0823-094C1010F087} = {C04EA8AC-D96C-0E1F-0823-094C1010F087}
@@ -10,7 +10,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gamekit_vc8", "gamekit_vc8.
 		{E08E042A-6C45-411B-92BE-3CC31331019F} = {E08E042A-6C45-411B-92BE-3CC31331019F}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Irrlicht", "..\irrlicht-1.4.2\source\Irrlicht\Irrlicht8.0.vcproj", "{E08E042A-6C45-411B-92BE-3CC31331019F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Irrlicht", "..\irrlicht-1.5\source\Irrlicht\Irrlicht8.0.vcproj", "{E08E042A-6C45-411B-92BE-3CC31331019F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libbulletmath", "..\bullet\msvc\8\libbulletmath.vcproj", "{7D6E339F-9C2C-31DA-FDB0-5EE50973CF2A}"
 EndProject
@@ -45,16 +45,16 @@ Global
 		{171CCDFA-C140-4956-8EB7-F0168F4521D3}.ReleaseDll|Win32.Build.0 = Release|Win32
 		{171CCDFA-C140-4956-8EB7-F0168F4521D3}.ReleaseDoublePrecision|Win32.ActiveCfg = Release|Win32
 		{171CCDFA-C140-4956-8EB7-F0168F4521D3}.ReleaseDoublePrecision|Win32.Build.0 = Release|Win32
-		{E08E042A-6C45-411B-92BE-3CC31331019F}.Debug|Win32.ActiveCfg = Debug|Win32
-		{E08E042A-6C45-411B-92BE-3CC31331019F}.Debug|Win32.Build.0 = Debug|Win32
+		{E08E042A-6C45-411B-92BE-3CC31331019F}.Debug|Win32.ActiveCfg = Static lib - Debug|Win32
+		{E08E042A-6C45-411B-92BE-3CC31331019F}.Debug|Win32.Build.0 = Static lib - Debug|Win32
 		{E08E042A-6C45-411B-92BE-3CC31331019F}.DebugDll|Win32.ActiveCfg = Debug|Win32
 		{E08E042A-6C45-411B-92BE-3CC31331019F}.DebugDll|Win32.Build.0 = Debug|Win32
 		{E08E042A-6C45-411B-92BE-3CC31331019F}.DebugDoublePrecision|Win32.ActiveCfg = Debug|Win32
 		{E08E042A-6C45-411B-92BE-3CC31331019F}.DebugDoublePrecision|Win32.Build.0 = Debug|Win32
 		{E08E042A-6C45-411B-92BE-3CC31331019F}.Release - Fast FPU|Win32.ActiveCfg = Release - Fast FPU|Win32
 		{E08E042A-6C45-411B-92BE-3CC31331019F}.Release - Fast FPU|Win32.Build.0 = Release - Fast FPU|Win32
-		{E08E042A-6C45-411B-92BE-3CC31331019F}.Release|Win32.ActiveCfg = Release|Win32
-		{E08E042A-6C45-411B-92BE-3CC31331019F}.Release|Win32.Build.0 = Release|Win32
+		{E08E042A-6C45-411B-92BE-3CC31331019F}.Release|Win32.ActiveCfg = Static lib - Release|Win32
+		{E08E042A-6C45-411B-92BE-3CC31331019F}.Release|Win32.Build.0 = Static lib - Release|Win32
 		{E08E042A-6C45-411B-92BE-3CC31331019F}.ReleaseDll|Win32.ActiveCfg = Release - Fast FPU|Win32
 		{E08E042A-6C45-411B-92BE-3CC31331019F}.ReleaseDll|Win32.Build.0 = Release - Fast FPU|Win32
 		{E08E042A-6C45-411B-92BE-3CC31331019F}.ReleaseDoublePrecision|Win32.ActiveCfg = Release - Fast FPU|Win32

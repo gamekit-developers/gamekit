@@ -44,8 +44,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;..\irrlicht-1.4.2\include&quot;;..\bullet\src;..\bullet\Extras\readblend"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
+				AdditionalIncludeDirectories="&quot;..\irrlicht-1.5\include&quot;;..\bullet\src;..\bullet\Extras\readblend"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_IRR_STATIC_LIB_"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
@@ -71,10 +71,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/DYNAMICBASE"
 				OutputFile="gamekitDebug.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;..\\irrlicht-1.4.2\lib\Win32-visualstudio&quot;"
+				AdditionalLibraryDirectories="&quot;..\\irrlicht-1.5\lib\Win32-visualstudio&quot;"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Debug/CustomSceneNode.pdb"
 				SubSystem="1"
@@ -136,8 +137,8 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="&quot;..\irrlicht-1.4.2\include&quot;;..\bullet\src;..\bullet\Extras\readblend"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
+				AdditionalIncludeDirectories="&quot;..\irrlicht-1.5\include&quot;;..\bullet\src;..\bullet\Extras\readblend"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_IRR_STATIC_LIB_"
 				StringPooling="true"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
@@ -163,10 +164,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/DYNAMICBASE"
 				OutputFile="gamekit.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;..\\irrlicht-1.4.2\lib\Win32-visualstudio&quot;"
+				AdditionalLibraryDirectories="&quot;..\\irrlicht-1.5\lib\Win32-visualstudio&quot;"
 				ProgramDatabaseFile=".\Release/CustomSceneNode.pdb"
 				SubSystem="1"
 				TargetMachine="1"
