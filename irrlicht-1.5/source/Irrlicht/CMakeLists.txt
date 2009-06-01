@@ -382,6 +382,26 @@ CTimer.h
 Irrlicht.cpp
 os.cpp
 os.h
+CBurningShader_Raster_Reference.cpp
+CGUITable.cpp
+CImageLoaderWAL.cpp
+CIrrDeviceWinCE.cpp
+CLWOMeshFileLoader.cpp
+COBJMeshWriter.cpp
+CParticleScaleAffector.cpp
+CSceneNodeAnimatorCameraFPS.cpp
+CSceneNodeAnimatorCameraMaya.cpp
+CVolumeLightSceneNode.cpp
+CGUITable.h
+CImageLoaderWAL.h
+CIrrDeviceWinCE.h
+CLWOMeshFileLoader.h
+COBJMeshWriter.h
+CParticleScaleAffector.h
+CSceneNodeAnimatorCameraFPS.h
+CSceneNodeAnimatorCameraMaya.h
+CVolumeLightSceneNode.h
+wglext.h
 )
 
 SET(zlib_SRCS

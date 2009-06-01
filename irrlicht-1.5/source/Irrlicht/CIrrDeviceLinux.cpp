@@ -20,12 +20,26 @@
 #include "SIrrCreationParameters.h"
 #include <X11/XKBlib.h>
 
+#if defined _IRR_COMPILE_WITH_JOYSTICK_EVENTS_
+#include <fcntl.h>
+#include <unistd.h>
+
+// linux/joystick.h includes linux/input.h, which #defines values for various KEY_FOO keys.
+// These override the irr::KEY_FOO equivalents, which stops key handling from working.
+// As a workaround, defining _INPUT_H stops linux/input.h from being included; it
+// doesn't actually seem to be necessary except to pull in sys/ioctl.h.
+#define _INPUT_H
+#include <sys/ioctl.h> // Would normally be included in linux/input.h
+#include <linux/joystick.h>
+#undef _INPUT_H
+#endif // _IRR_COMPILE_WITH_JOYSTICK_EVENTS_
+
 namespace irr
 {
 	namespace video
 	{
-		IVideoDriver* createOpenGLDriver(const core::dimension2d<s32>& screenSize,
-			bool fullscreen, bool stencilBuffer, io::IFileSystem* io, bool vsync, bool antiAlias);
+		IVideoDriver* createOpenGLDriver(const SIrrlichtCreationParameters& params,
+				io::IFileSystem* io);
 	}
 } // end namespace irr
 
@@ -37,23 +51,16 @@ namespace irr
 const char* wmDeleteWindow = "WM_DELETE_WINDOW";
 
 //! constructor
-CIrrDeviceLinux::CIrrDeviceLinux(video::E_DRIVER_TYPE driverType,
-	const core::dimension2d<s32>& windowSize,
-	u32 bits, bool fullscreen,
-	bool sbuffer, bool vsync, bool antiAlias,
-	IEventReceiver* receiver,
-	const char* version)
- : CIrrDeviceStub(version, receiver),
+CIrrDeviceLinux::CIrrDeviceLinux(const SIrrlichtCreationParameters& param)
+ : CIrrDeviceStub(param),
 #ifdef _IRR_COMPILE_WITH_X11_
 	display(0), visual(0), screennr(0), window(0), StdHints(0), SoftwareImage(0),
-#endif
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 	Context(0),
 #endif
-	Fullscreen(fullscreen), StencilBuffer(sbuffer),
-	AntiAlias(antiAlias), DriverType(driverType),
-	Width(windowSize.Width), Height(windowSize.Height), Depth(24), 
-	Close(false), WindowActive(false), WindowMinimized(false),
+#endif
+	Width(param.WindowSize.Width), Height(param.WindowSize.Height),
+	Close(false), WindowHasFocus(false), WindowMinimized(false),
 	UseXVidMode(false), UseXRandR(false), UseGLXWindow(false),
 	AutorepeatSupport(0)
 {
@@ -64,7 +71,7 @@ CIrrDeviceLinux::CIrrDeviceLinux(video::E_DRIVER_TYPE driverType,
 	// print version, distribution etc.
 	// thx to LynxLuna for pointing me to the uname function
 	core::stringc linuxversion;
-	struct utsname LinuxInfo; 
+	struct utsname LinuxInfo;
 	uname(&LinuxInfo);
 
 	linuxversion += LinuxInfo.sysname;
@@ -82,18 +89,18 @@ CIrrDeviceLinux::CIrrDeviceLinux(video::E_DRIVER_TYPE driverType,
 	createKeyMap();
 
 	// create window
-	if (driverType != video::EDT_NULL)
+	if (CreationParams.DriverType != video::EDT_NULL)
 	{
 		// create the window, only if we do not use the null device
-		if (!createWindow(windowSize, bits))
+		if (!createWindow())
 			return;
 	}
 
 	// create cursor control
-	CursorControl = new CCursorControl(this, driverType == video::EDT_NULL);
+	CursorControl = new CCursorControl(this, CreationParams.DriverType == video::EDT_NULL);
 
 	// create driver
-	createDriver(windowSize, vsync);
+	createDriver();
 
 	if (!VideoDriver)
 		return;
@@ -113,23 +120,31 @@ CIrrDeviceLinux::~CIrrDeviceLinux()
 		#ifdef _IRR_COMPILE_WITH_OPENGL_
 		if (Context)
 		{
-			if (!glXMakeCurrent(display, None, NULL))
-				os::Printer::log("Could not release glx context.", ELL_WARNING);
+			if (glxWin)
+			{
+				if (!glXMakeContextCurrent(display, None, None, NULL))
+					os::Printer::log("Could not release glx context.", ELL_WARNING);
+			}
+			else
+			{
+				if (!glXMakeCurrent(display, None, NULL))
+					os::Printer::log("Could not release glx context.", ELL_WARNING);
+			}
 			glXDestroyContext(display, Context);
-			if (UseGLXWindow)
+			if (glxWin)
 				glXDestroyWindow(display, glxWin);
 		}
 		#endif // #ifdef _IRR_COMPILE_WITH_OPENGL_
 
 		#ifdef _IRR_LINUX_X11_VIDMODE_
-		if (UseXVidMode && Fullscreen)
+		if (UseXVidMode && CreationParams.Fullscreen)
 		{
 			XF86VidModeSwitchToMode(display, screennr, &oldVideoMode);
 			XF86VidModeSetViewPort(display, screennr, 0, 0);
 		}
 		#endif
 		#ifdef _IRR_LINUX_X11_RANDR_
-		if (UseXRandR && Fullscreen)
+		if (UseXRandR && CreationParams.Fullscreen)
 		{
 			XRRScreenConfiguration *config=XRRGetScreenInfo(display,DefaultRootWindow(display));
 			XRRSetScreenConfig(display,config,DefaultRootWindow(display),oldRandrMode,oldRandrRotation,CurrentTime);
@@ -137,7 +152,7 @@ CIrrDeviceLinux::~CIrrDeviceLinux()
 		}
 		#endif
 
-		if (DriverType == video::EDT_SOFTWARE || DriverType == video::EDT_BURNINGSVIDEO)
+		if (SoftwareImage)
 			XDestroyImage(SoftwareImage);
 		XDestroyWindow(display,window);
 		XCloseDisplay(display);
@@ -146,28 +161,37 @@ CIrrDeviceLinux::~CIrrDeviceLinux()
 		XFree(visual);
 
 #endif // #ifdef _IRR_COMPILE_WITH_X11_
-}
 
+#if defined(_IRR_COMPILE_WITH_JOYSTICK_EVENTS_)
+	for(u32 joystick = 0; joystick < ActiveJoysticks.size(); ++joystick)
+	{
+		if(ActiveJoysticks[joystick].fd >= 0)
+		{
+			close(ActiveJoysticks[joystick].fd);
+		}
+	}
+#endif
+}
 
 
 #if defined(_IRR_COMPILE_WITH_X11_) && defined(_DEBUG)
 int IrrPrintXError(Display *display, XErrorEvent *event)
 {
 	char msg[256];
+	char msg2[256];
 
+	snprintf(msg, 256, "%d", event->request_code);
+	XGetErrorDatabaseText(display, "XRequest", msg, "unknown", msg2, 256);
 	XGetErrorText(display, event->error_code, msg, 256);
-	os::Printer::log("XErrorEvent", msg, ELL_WARNING);
+	os::Printer::log("X Error", msg, ELL_WARNING);
+	os::Printer::log("From call ", msg2, ELL_WARNING);
 	return 0;
 }
 #endif
 
 
-bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
-						u32 bits)
+bool CIrrDeviceLinux::createWindow()
 {
-	Width = windowSize.Width;
-	Height = windowSize.Height;
-
 #ifdef _IRR_COMPILE_WITH_X11_
 #ifdef _DEBUG
 	os::Printer::log("Creating X window...", ELL_INFORMATION);
@@ -178,6 +202,7 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 	if (!display)
 	{
 		os::Printer::log("Error: Need running XServer to start Irrlicht Engine.", ELL_ERROR);
+		os::Printer::log("Could not open display", XDisplayName(0), ELL_ERROR);
 		return false;
 	}
 
@@ -185,11 +210,13 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 
 	// query extension
 
-	if (Fullscreen)
+	if (CreationParams.Fullscreen)
 	{
+		getVideoModeList();
+		#if defined(_IRR_LINUX_X11_VIDMODE_) || defined(_IRR_LINUX_X11_RANDR_)
 		s32 eventbase, errorbase;
 		s32 bestMode = -1;
-		s32 defaultDepth=DefaultDepth(display,screennr);
+		#endif
 
 		#ifdef _IRR_LINUX_X11_VIDMODE_
 		if (XF86VidModeQueryExtension(display, &eventbase, &errorbase))
@@ -200,13 +227,7 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 
 			XF86VidModeGetAllModeLines(display, screennr, &modeCount, &modes);
 
-			// save current video mode
-			oldVideoMode = *modes[0];
-
 			// find fitting mode
-
-			VideoModeList.setDesktop(defaultDepth, core::dimension2d<s32>(
-				modes[0]->hdisplay, modes[0]->vdisplay));
 			for (s32 i = 0; i<modeCount; ++i)
 			{
 				if (bestMode==-1 && modes[i]->hdisplay >= Width && modes[i]->vdisplay >= Height)
@@ -217,8 +238,6 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 						modes[i]->hdisplay < modes[bestMode]->hdisplay &&
 						modes[i]->vdisplay < modes[bestMode]->vdisplay)
 					bestMode = i;
-				VideoModeList.addMode(core::dimension2d<s32>(
-					modes[i]->hdisplay, modes[i]->vdisplay), defaultDepth);
 			}
 			if (bestMode != -1)
 			{
@@ -230,7 +249,7 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 			else
 			{
 				os::Printer::log("Could not find specified video mode, running windowed.", ELL_WARNING);
-				Fullscreen = false;
+				CreationParams.Fullscreen = false;
 			}
 
 			XFree(modes);
@@ -242,10 +261,7 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 		{
 			s32 modeCount;
 			XRRScreenConfiguration *config=XRRGetScreenInfo(display,DefaultRootWindow(display));
-			oldRandrMode=XRRConfigCurrentConfiguration(config,&oldRandrRotation);
 			XRRScreenSize *modes=XRRConfigSizes(config,&modeCount);
-			VideoModeList.setDesktop(defaultDepth, core::dimension2d<s32>(
-				modes[oldRandrMode].width, modes[oldRandrMode].height));
 			for (s32 i = 0; i<modeCount; ++i)
 			{
 				if (bestMode==-1 && (u32)modes[i].width >= Width && (u32)modes[i].height >= Height)
@@ -256,8 +272,6 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 						modes[i].width < modes[bestMode].width &&
 						modes[i].height < modes[bestMode].height)
 					bestMode = i;
-				VideoModeList.addMode(core::dimension2d<s32>(
-					modes[i].width, modes[i].height), defaultDepth);
 			}
 			if (bestMode != -1)
 			{
@@ -271,17 +285,16 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 		{
 			os::Printer::log("VidMode or RandR extension must be installed to allow Irrlicht "
 			"to switch to fullscreen mode. Running in windowed mode instead.", ELL_WARNING);
-			Fullscreen = false;
+			CreationParams.Fullscreen = false;
 		}
 	}
-	
+
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 
-	Context=0;
 	GLXFBConfig glxFBConfig;
 	int major, minor;
 	bool isAvailableGLX=false;
-	if (DriverType==video::EDT_OPENGL)
+	if (CreationParams.DriverType==video::EDT_OPENGL)
 	{
 		isAvailableGLX=glXQueryExtension(display,&major,&minor);
 		if (isAvailableGLX && glXQueryVersion(display, &major, &minor))
@@ -292,30 +305,30 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 				// attribute array for the draw buffer
 				int visualAttrBuffer[] =
 				{
-				    GLX_RENDER_TYPE, GLX_RGBA_BIT,
-				    GLX_RED_SIZE, 4,
-				    GLX_GREEN_SIZE, 4,
-				    GLX_BLUE_SIZE, 4,
-				    GLX_ALPHA_SIZE, 4,
-				    GLX_DEPTH_SIZE, 16,
-				    GLX_DOUBLEBUFFER, GL_TRUE,
-				    GLX_STENCIL_SIZE, 1,
-				    GLX_SAMPLE_BUFFERS_ARB, GL_TRUE,
-				    GLX_SAMPLES_ARB, MAX_SAMPLES,
-				    None
+					GLX_RENDER_TYPE, GLX_RGBA_BIT,
+					GLX_RED_SIZE, 4,
+					GLX_GREEN_SIZE, 4,
+					GLX_BLUE_SIZE, 4,
+					GLX_ALPHA_SIZE, CreationParams.WithAlphaChannel?1:0,
+					GLX_DEPTH_SIZE, CreationParams.ZBufferBits,
+					GLX_DOUBLEBUFFER, GL_TRUE,
+					GLX_STENCIL_SIZE, 1,
+					GLX_SAMPLE_BUFFERS_ARB, 1,
+					GLX_SAMPLES_ARB, MAX_SAMPLES,
+					None
 				};
 
 				GLXFBConfig *configList=0;
 				int nitems=0;
-				if (!AntiAlias)
+				if (!CreationParams.AntiAlias)
 				{
-					visualAttrBuffer[17] = GL_FALSE;
+					visualAttrBuffer[17] = 0;
 					visualAttrBuffer[19] = 0;
 				}
-				if (StencilBuffer)
+				if (CreationParams.Stencilbuffer)
 				{
 					configList=glXChooseFBConfig(display, screennr, visualAttrBuffer,&nitems);
-					if (!configList && AntiAlias)
+					if (!configList && CreationParams.AntiAlias)
 					{
 						while (!configList && (visualAttrBuffer[19]>1))
 						{
@@ -324,18 +337,18 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 						}
 						if (!configList)
 						{
-							visualAttrBuffer[17] = GL_FALSE;
+							visualAttrBuffer[17] = 0;
 							visualAttrBuffer[19] = 0;
 							configList=glXChooseFBConfig(display, screennr, visualAttrBuffer,&nitems);
 							if (configList)
 							{
 								os::Printer::log("No FSAA available.", ELL_WARNING);
-								AntiAlias=false;
+								CreationParams.AntiAlias=false;
 							}
 							else
 							{
 								//reenable multisampling
-								visualAttrBuffer[17] = GL_TRUE;
+								visualAttrBuffer[17] = 1;
 								visualAttrBuffer[19] = MAX_SAMPLES;
 							}
 						}
@@ -344,13 +357,13 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 				// Next try without stencil buffer
 				if (!configList)
 				{
-					if (StencilBuffer)
+					if (CreationParams.Stencilbuffer)
 						os::Printer::log("No stencilbuffer available, disabling stencil shadows.", ELL_WARNING);
-					StencilBuffer = false;
+					CreationParams.Stencilbuffer = false;
 					visualAttrBuffer[15]=0;
 
 					configList=glXChooseFBConfig(display, screennr, visualAttrBuffer,&nitems);
-					if (!configList && AntiAlias)
+					if (!configList && CreationParams.AntiAlias)
 					{
 						while (!configList && (visualAttrBuffer[19]>1))
 						{
@@ -359,18 +372,18 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 						}
 						if (!configList)
 						{
-							visualAttrBuffer[17] = GL_FALSE;
+							visualAttrBuffer[17] = 0;
 							visualAttrBuffer[19] = 0;
 							configList=glXChooseFBConfig(display, screennr, visualAttrBuffer,&nitems);
 							if (configList)
 							{
 								os::Printer::log("No FSAA available.", ELL_WARNING);
-								AntiAlias=false;
+								CreationParams.AntiAlias=false;
 							}
 							else
 							{
 								//reenable multisampling
-								visualAttrBuffer[17] = GL_TRUE;
+								visualAttrBuffer[17] = 1;
 								visualAttrBuffer[19] = MAX_SAMPLES;
 							}
 						}
@@ -382,7 +395,7 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 					os::Printer::log("No doublebuffering available.", ELL_WARNING);
 					visualAttrBuffer[13] = GL_FALSE;
 					configList=glXChooseFBConfig(display, screennr, visualAttrBuffer,&nitems);
-					if (!configList && AntiAlias)
+					if (!configList && CreationParams.AntiAlias)
 					{
 						while (!configList && (visualAttrBuffer[19]>1))
 						{
@@ -391,18 +404,18 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 						}
 						if (!configList)
 						{
-							visualAttrBuffer[17] = GL_FALSE;
+							visualAttrBuffer[17] = 0;
 							visualAttrBuffer[19] = 0;
 							configList=glXChooseFBConfig(display, screennr, visualAttrBuffer,&nitems);
 							if (configList)
 							{
 								os::Printer::log("No FSAA available.", ELL_WARNING);
-								AntiAlias=false;
+								CreationParams.AntiAlias=false;
 							}
 							else
 							{
 								//reenable multisampling
-								visualAttrBuffer[17] = GL_TRUE;
+								visualAttrBuffer[17] = 1;
 								visualAttrBuffer[19] = MAX_SAMPLES;
 							}
 						}
@@ -421,25 +434,25 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 				// attribute array for the draw buffer
 				int visualAttrBuffer[] =
 				{
-				    GLX_RGBA, GL_TRUE,
-				    GLX_RED_SIZE, 4,
-				    GLX_GREEN_SIZE, 4,
-				    GLX_BLUE_SIZE, 4,
-				    GLX_ALPHA_SIZE, 4,
-				    GLX_DEPTH_SIZE, 16,
-				    GLX_DOUBLEBUFFER, GL_TRUE,
-				    GLX_STENCIL_SIZE, 1,
-				    None
+					GLX_RGBA, GL_TRUE,
+					GLX_RED_SIZE, 4,
+					GLX_GREEN_SIZE, 4,
+					GLX_BLUE_SIZE, 4,
+					GLX_ALPHA_SIZE, CreationParams.WithAlphaChannel?1:0,
+					GLX_DEPTH_SIZE, CreationParams.ZBufferBits,
+					GLX_DOUBLEBUFFER, GL_TRUE,
+					GLX_STENCIL_SIZE, 1,
+					None
 				};
 
-				if (StencilBuffer)
+				if (CreationParams.Stencilbuffer)
 					visual=glXChooseVisual(display, screennr, visualAttrBuffer);
 				if (!visual)
 				{
-					if (StencilBuffer)
+					if (CreationParams.Stencilbuffer)
 					{
-						os::Printer::log("No stencilbuffer available, disabling stencil shadows.", ELL_WARNING);
-						StencilBuffer = false;
+						os::Printer::log("No stencilbuffer available, disabling.", ELL_WARNING);
+						CreationParams.Stencilbuffer = false;
 					}
 					visualAttrBuffer[15]=0;
 
@@ -456,7 +469,7 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 		else
 			os::Printer::log("No GLX support available. OpenGL driver will not work.", ELL_WARNING);
 	}
-	
+
 #endif // _IRR_COMPILE_WITH_OPENGL_
 
 	// create visual with standard X methods
@@ -466,12 +479,13 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 		int visNumber; // Return value of available visuals
 
 		visTempl.screen = screennr;
-		visTempl.depth = 16;
-		while ((!visual) && (visTempl.depth<=32))
+		// ARGB visuals should be avoided for usual applications
+		visTempl.depth = CreationParams.WithAlphaChannel?32:24;
+		while ((!visual) && (visTempl.depth>=16))
 		{
 			visual = XGetVisualInfo(display, VisualScreenMask|VisualDepthMask,
 				&visTempl, &visNumber);
-			visTempl.depth+=8;
+			visTempl.depth -= 8;
 		}
 	}
 
@@ -482,21 +496,27 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 		display=0;
 		return false;
 	}
+#ifdef _DEBUG
+	else
+		os::Printer::log("Visual chosen: ", core::stringc(static_cast<u32>(visual->visualid)).c_str(), ELL_INFORMATION);
+#endif
 
 	// create color map
 	Colormap colormap;
 	colormap = XCreateColormap(display,
-			    RootWindow(display, visual->screen),
-			    visual->visual, AllocNone);
+			RootWindow(display, visual->screen),
+			visual->visual, AllocNone);
 
 	attributes.colormap = colormap;
 	attributes.border_pixel = 0;
-	attributes.event_mask = KeyPressMask | ButtonPressMask |
-			StructureNotifyMask | PointerMotionMask |
-			ButtonReleaseMask | KeyReleaseMask;
+	attributes.event_mask = StructureNotifyMask | FocusChangeMask;
+	if (!CreationParams.IgnoreInput)
+		attributes.event_mask |= PointerMotionMask |
+				ButtonPressMask | KeyPressMask |
+				ButtonReleaseMask | KeyReleaseMask;
 
 	// create Window, either for Fullscreen or windowed mode
-	if (Fullscreen)
+	if (CreationParams.Fullscreen)
 	{
 		attributes.override_redirect = True;
 
@@ -504,8 +524,9 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 				RootWindow(display, visual->screen),
 				0, 0, Width, Height, 0, visual->depth,
 				InputOutput, visual->visual,
-				CWBorderPixel | CWColormap | CWEventMask |
-				CWOverrideRedirect, &attributes);
+				CWBorderPixel | CWColormap | CWEventMask | CWOverrideRedirect,
+				&attributes);
+		CreationParams.WindowId = (void*)window;
 
 		XWarpPointer(display, None, window, 0, 0, 0, 0, 0, 0);
 		XMapRaised(display, window);
@@ -519,25 +540,39 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 		attributes.event_mask |= ExposureMask;
 		attributes.event_mask |= FocusChangeMask;
 
-		window = XCreateWindow(display,
-				RootWindow(display, visual->screen),
-				0, 0, Width, Height, 0, visual->depth,
-				InputOutput, visual->visual,
-				CWBorderPixel | CWColormap | CWEventMask,
-				&attributes);
+		if(!CreationParams.WindowId)
+		{
+			window = XCreateWindow(display,
+					RootWindow(display, visual->screen),
+					0, 0, Width, Height, 0, visual->depth,
+					InputOutput, visual->visual,
+					CWBorderPixel | CWColormap | CWEventMask,
+					&attributes);
+		}
+		else
+		{
+			window = XCreateWindow(display,
+					(Window)CreationParams.WindowId,
+					0, 0, Width, Height, 0, visual->depth,
+					InputOutput, visual->visual,
+					CWBorderPixel | CWColormap | CWEventMask,
+					&attributes);
+		}
+		CreationParams.WindowId = (void*)window;
 
 		Atom wmDelete;
 		wmDelete = XInternAtom(display, wmDeleteWindow, True);
 		XSetWMProtocols(display, window, &wmDelete, 1);
 		XMapRaised(display, window);
 	}
-	WindowActive=true;
+	WindowMinimized=false;
 	XkbSetDetectableAutoRepeat(display, True, &AutorepeatSupport);
 
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 
 	// connect glx context to window
-	if (isAvailableGLX && DriverType==video::EDT_OPENGL)
+	Context=0;
+	if (isAvailableGLX && CreationParams.DriverType==video::EDT_OPENGL)
 	{
 	if (UseGLXWindow)
 	{
@@ -586,25 +621,28 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 	Window tmp;
 	u32 borderWidth;
 	int x,y;
+	unsigned int bits;
 
-	XGetGeometry(display, window, &tmp, &x, &y, &Width, &Height, &borderWidth, &Depth);
+	XGetGeometry(display, window, &tmp, &x, &y, &Width, &Height, &borderWidth, &bits);
+	CreationParams.Bits = bits;
 	StdHints = XAllocSizeHints();
 	long num;
 	XGetWMNormalHints(display, window, StdHints, &num);
 
-	// create an XImage for the software renderer 
+	// create an XImage for the software renderer
 	//(thx to Nadav for some clues on how to do that!)
 
-	if (DriverType == video::EDT_SOFTWARE || DriverType == video::EDT_BURNINGSVIDEO)
+	if (CreationParams.DriverType == video::EDT_SOFTWARE || CreationParams.DriverType == video::EDT_BURNINGSVIDEO)
 	{
-		SoftwareImage = XCreateImage(display, 
-			visual->visual, visual->depth, 
+		SoftwareImage = XCreateImage(display,
+			visual->visual, visual->depth,
 			ZPixmap, 0, 0, Width, Height,
 			BitmapPad(display), 0);
 
 		// use malloc because X will free it later on
-		SoftwareImage->data = (char*) malloc(SoftwareImage->bytes_per_line * SoftwareImage->height * sizeof(char));
-	} 
+		if (SoftwareImage)
+			SoftwareImage->data = (char*) malloc(SoftwareImage->bytes_per_line * SoftwareImage->height * sizeof(char));
+	}
 
 #endif // #ifdef _IRR_COMPILE_WITH_X11_
 	return true;
@@ -612,24 +650,23 @@ bool CIrrDeviceLinux::createWindow(const core::dimension2d<s32>& windowSize,
 
 
 //! create the driver
-void CIrrDeviceLinux::createDriver(const core::dimension2d<s32>& windowSize,
-				   bool vsync)
+void CIrrDeviceLinux::createDriver()
 {
-	switch(DriverType)
+	switch(CreationParams.DriverType)
 	{
 #ifdef _IRR_COMPILE_WITH_X11_
 
 	case video::EDT_SOFTWARE:
 		#ifdef _IRR_COMPILE_WITH_SOFTWARE_
-		VideoDriver = video::createSoftwareDriver(windowSize, Fullscreen, FileSystem, this);
+		VideoDriver = video::createSoftwareDriver(CreationParams.WindowSize, CreationParams.Fullscreen, FileSystem, this);
 		#else
 		os::Printer::log("No Software driver support compiled in.", ELL_ERROR);
 		#endif
 		break;
-		
+
 	case video::EDT_BURNINGSVIDEO:
 		#ifdef _IRR_COMPILE_WITH_BURNINGSVIDEO_
-		VideoDriver = video::createSoftwareDriver2(windowSize, Fullscreen, FileSystem, this);
+		VideoDriver = video::createSoftwareDriver2(CreationParams.WindowSize, CreationParams.Fullscreen, FileSystem, this);
 		#else
 		os::Printer::log("Burning's video driver was not compiled in.", ELL_ERROR);
 		#endif
@@ -638,7 +675,7 @@ void CIrrDeviceLinux::createDriver(const core::dimension2d<s32>& windowSize,
 	case video::EDT_OPENGL:
 	#ifdef _IRR_COMPILE_WITH_OPENGL_
 		if (Context)
-			VideoDriver = video::createOpenGLDriver(windowSize, Fullscreen, StencilBuffer, FileSystem, vsync, AntiAlias);
+			VideoDriver = video::createOpenGLDriver(CreationParams, FileSystem);
 	#else
 		os::Printer::log("No OpenGL support compiled in.", ELL_ERROR);
 	#endif
@@ -651,7 +688,7 @@ void CIrrDeviceLinux::createDriver(const core::dimension2d<s32>& windowSize,
 		break;
 
 	case video::EDT_NULL:
-		VideoDriver = video::createNullDriver(FileSystem, windowSize);
+		VideoDriver = video::createNullDriver(FileSystem, CreationParams.WindowSize);
 		break;
 
 	default:
@@ -659,7 +696,7 @@ void CIrrDeviceLinux::createDriver(const core::dimension2d<s32>& windowSize,
 		break;
 #else
 	case video::EDT_NULL:
-		VideoDriver = video::createNullDriver(FileSystem, windowSize);
+		VideoDriver = video::createNullDriver(FileSystem, CreationParams.WindowSize);
 		break;
 	default:
 		os::Printer::log("No X11 support compiled in. Only Null driver available.", ELL_ERROR);
@@ -669,14 +706,13 @@ void CIrrDeviceLinux::createDriver(const core::dimension2d<s32>& windowSize,
 }
 
 
-
 //! runs the device. Returns false if device wants to be deleted
 bool CIrrDeviceLinux::run()
 {
 	os::Timer::tick();
 
 #ifdef _IRR_COMPILE_WITH_X11_
-	if ((DriverType != video::EDT_NULL) && display)
+	if ((CreationParams.DriverType != video::EDT_NULL) && display)
 	{
 		SEvent irrevent;
 
@@ -696,18 +732,19 @@ bool CIrrDeviceLinux::run()
 					Height = event.xconfigure.height;
 
 					// resize image data
-					if (DriverType == video::EDT_SOFTWARE || DriverType == video::EDT_BURNINGSVIDEO)
+					if (SoftwareImage)
 					{
 						XDestroyImage(SoftwareImage);
 
-						SoftwareImage = XCreateImage(display, 
-							visual->visual, visual->depth, 
+						SoftwareImage = XCreateImage(display,
+							visual->visual, visual->depth,
 							ZPixmap, 0, 0, Width, Height,
 							BitmapPad(display), 0);
 
 						// use malloc because X will free it later on
-						SoftwareImage->data = (char*) malloc(SoftwareImage->bytes_per_line * SoftwareImage->height * sizeof(char));
-					} 
+						if (SoftwareImage)
+							SoftwareImage->data = (char*) malloc(SoftwareImage->bytes_per_line * SoftwareImage->height * sizeof(char));
+					}
 
 					if (VideoDriver)
 						VideoDriver->OnResize(core::dimension2d<s32>(Width, Height));
@@ -723,11 +760,11 @@ bool CIrrDeviceLinux::run()
 				break;
 
 			case FocusIn:
-				WindowActive=true;
+				WindowHasFocus=true;
 				break;
 
 			case FocusOut:
-				WindowActive=false;
+				WindowHasFocus=false;
 				break;
 
 			case MotionNotify:
@@ -804,11 +841,10 @@ bool CIrrDeviceLinux::run()
 			case KeyPress:
 				{
 					SKeyMap mp;
-					//mp.X11Key = XLookupKeysym(&event.xkey, 0);
-					char buf[5]="\0\0\0\0";
-					XLookupString(&event.xkey, buf, 4, &mp.X11Key, NULL);
+					char buf[8]={0};
+					XLookupString(&event.xkey, buf, sizeof(buf), &mp.X11Key, NULL);
 
-					s32 idx = KeyMap.binary_search(mp);
+					const s32 idx = KeyMap.binary_search(mp);
 
 					if (idx != -1)
 						irrevent.KeyInput.Key = (EKEY_CODE)KeyMap[idx].Win32Key;
@@ -819,7 +855,8 @@ bool CIrrDeviceLinux::run()
 					}
 					irrevent.EventType = irr::EET_KEY_INPUT_EVENT;
 					irrevent.KeyInput.PressedDown = (event.type == KeyPress);
-					mbtowc(&irrevent.KeyInput.Char, buf, 4);
+//					mbtowc(&irrevent.KeyInput.Char, buf, sizeof(buf));
+					irrevent.KeyInput.Char = ((wchar_t*)(buf))[0];
 					irrevent.KeyInput.Control = (event.xkey.state & ControlMask) != 0;
 					irrevent.KeyInput.Shift = (event.xkey.state & ShiftMask) != 0;
 					postEventFromUser(irrevent);
@@ -834,6 +871,14 @@ bool CIrrDeviceLinux::run()
 						os::Printer::log("Quit message received.", ELL_INFORMATION);
 						Close = true;
 					}
+					else
+					{
+						// we assume it's a user message
+						irrevent.EventType = irr::EET_USER_EVENT;
+						irrevent.UserEvent.UserData1 = (s32)event.xclient.data.l[0];
+						irrevent.UserEvent.UserData2 = (s32)event.xclient.data.l[1];
+						postEventFromUser(irrevent);
+					}
 					XFree(atom);
 				}
 				break;
@@ -846,6 +891,9 @@ bool CIrrDeviceLinux::run()
 	}
 #endif //_IRR_COMPILE_WITH_X11_
 
+	if(!Close)
+		pollJoysticks();
+
 	return !Close;
 }
 
@@ -857,11 +905,12 @@ void CIrrDeviceLinux::yield()
 	nanosleep(&ts, NULL);
 }
 
+
 //! Pause execution and let other processes to run for a specified amount of time.
 void CIrrDeviceLinux::sleep(u32 timeMs, bool pauseTimer=false)
 {
-	bool wasStopped = Timer ? Timer->isStopped() : true;
-	
+	const bool wasStopped = Timer ? Timer->isStopped() : true;
+
 	struct timespec ts;
 	ts.tv_sec = (time_t) (timeMs / 1000);
 	ts.tv_nsec = (long) (timeMs % 1000) * 1000000;
@@ -875,11 +924,12 @@ void CIrrDeviceLinux::sleep(u32 timeMs, bool pauseTimer=false)
 		Timer->start();
 }
 
+
 //! sets the caption of the window
 void CIrrDeviceLinux::setWindowCaption(const wchar_t* text)
 {
 #ifdef _IRR_COMPILE_WITH_X11_
-	if (DriverType == video::EDT_NULL)
+	if (CreationParams.DriverType == video::EDT_NULL)
 		return;
 
 	XTextProperty txt;
@@ -891,116 +941,59 @@ void CIrrDeviceLinux::setWindowCaption(const wchar_t* text)
 }
 
 
-
 //! presents a surface in the client area
-void CIrrDeviceLinux::present(video::IImage* image, s32 windowId, core::rect<s32>* src )
+bool CIrrDeviceLinux::present(video::IImage* image, void* windowId, core::rect<s32>* srcRect)
 {
 #ifdef _IRR_COMPILE_WITH_X11_
 	// this is only necessary for software drivers.
-	if (DriverType != video::EDT_SOFTWARE && DriverType != video::EDT_BURNINGSVIDEO)
-		return;
+	if (!SoftwareImage)
+		return true;
 
-	// thx to Nadav, who send me some clues of how to display the image 
+	// thx to Nadav, who send me some clues of how to display the image
 	// to the X Server.
 
-	if (image->getColorFormat() != video::ECF_A1R5G5B5 &&
-	    image->getColorFormat() != video::ECF_A8R8G8B8)
+	const int destwidth = SoftwareImage->width;
+	const int minWidth = core::min_(image->getDimension().Width, destwidth);
+	const int destPitch = SoftwareImage->bytes_per_line;
+
+	video::ECOLOR_FORMAT destColor;
+	switch (SoftwareImage->bits_per_pixel)
 	{
-		os::Printer::log("Internal error, can only present A1R5G5B5 and A8R8G8B8 pictures.");
-		return;
-	}
-	
-	int destwidth = SoftwareImage->width;
-	int destheight = SoftwareImage->height;
-	int srcwidth = image->getDimension().Width;
-	int srcheight = image->getDimension().Height;
-	// clip images
-	srcheight = srcheight < destheight ? srcheight : destheight;
-	
-	if ( image->getColorFormat() == video::ECF_A8R8G8B8 )
-	{
-		// display 24/32 bit image
-		
-		s32* srcdata = (s32*)image->lock();
-		
-		if ((Depth == 32)||(Depth == 24))
-		{	
-			int destPitch = SoftwareImage->bytes_per_line;
-			u8* destData = reinterpret_cast<u8*>(SoftwareImage->data);
-			
-			for (int y=0; y<srcheight; ++y)
-			{
-				video::CColorConverter::convert_A8R8G8B8toA8R8G8B8(srcdata,srcwidth<destwidth?srcwidth:destwidth,destData);
-				srcdata+=srcwidth;
-				destData+=destPitch;
-			}
-		}
-		else
-		if (Depth == 16)
-		{
-			// convert to R5G6B6
-			
-			int destPitch = SoftwareImage->bytes_per_line;
-			u8* destData = reinterpret_cast<u8*>(SoftwareImage->data);
-			
-			for (int y=0; y<srcheight; ++y)
-			{
-				video::CColorConverter::convert_A8R8G8B8toR5G6B5(srcdata,srcwidth<destwidth?srcwidth:destwidth,destData);
-				srcdata+=srcwidth;
-				destData+=destPitch;
-			}
-		}
-		else
+		case 16:
+			if (SoftwareImage->depth==16)
+				destColor = video::ECF_R5G6B5;
+			else
+				destColor = video::ECF_A1R5G5B5;
+		break;
+		case 24: destColor = video::ECF_R8G8B8; break;
+		case 32: destColor = video::ECF_A8R8G8B8; break;
+		default:
 			os::Printer::log("Unsupported screen depth.");
-		
-		image->unlock();
+			return false;
 	}
-	else
+
+	u8* srcdata = reinterpret_cast<u8*>(image->lock());
+	u8* destData = reinterpret_cast<u8*>(SoftwareImage->data);
+
+	const int destheight = SoftwareImage->height;
+	const int srcheight = core::min_(image->getDimension().Height, destheight);
+	const int srcPitch = image->getPitch();
+	for (int y=0; y!=srcheight; ++y)
 	{
-		// display 16 bit image
-	
-		s16* srcdata = (s16*)image->lock();
-	
-		if (Depth == 16)
-		{
-			// convert from A1R5G5B5 to R5G6B6
-			
-			int destPitch = SoftwareImage->bytes_per_line;
-			u8* destData = reinterpret_cast<u8*>(SoftwareImage->data);
-			
-			for (int y=0; y<srcheight; ++y)
-			{
-				video::CColorConverter::convert_A1R5G5B5toR5G6B5(srcdata,srcwidth<destwidth?srcwidth:destwidth,destData);
-				srcdata+=srcwidth;
-				destData+=destPitch;
-			}
-		}
-		else
-		if ((Depth == 32)||(Depth == 24))
-		{
-			// convert from A1R5G5B5 to X8R8G8B8
-				
-			int destPitch = SoftwareImage->bytes_per_line;
-			u8* destData = reinterpret_cast<u8*>(SoftwareImage->data);
-			
-			for (int y=0; y<srcheight; ++y)
-			{
-				video::CColorConverter::convert_A1R5G5B5toA8R8G8B8(srcdata,srcwidth<destwidth?srcwidth:destwidth,destData);
-				srcdata+=srcwidth;
-				destData+=destPitch;
-			}
-		}
-		else
-			os::Printer::log("Unsupported screen depth.");
-	
-		image->unlock();
+		video::CColorConverter::convert_viaFormat(srcdata,image->getColorFormat(), minWidth, destData, destColor);
+		srcdata+=srcPitch;
+		destData+=destPitch;
 	}
+	image->unlock();
 
 	GC gc = DefaultGC(display, DefaultScreen(display));
-	XPutImage(display, window, gc, SoftwareImage, 0, 0, 0, 0, destwidth, destheight);
+	Window myWindow=window;
+	if (windowId)
+		myWindow = reinterpret_cast<Window>(windowId);
+	XPutImage(display, myWindow, gc, SoftwareImage, 0, 0, 0, 0, destwidth, destheight);
 #endif
+	return true;
 }
-
 
 
 //! notifies the device that it should close itself
@@ -1010,20 +1003,44 @@ void CIrrDeviceLinux::closeDevice()
 }
 
 
-
 //! returns if window is active. if not, nothing need to be drawn
 bool CIrrDeviceLinux::isWindowActive() const
 {
-	return WindowActive;
+	return (WindowHasFocus && !WindowMinimized);
 }
 
+
+//! returns if window has focus.
+bool CIrrDeviceLinux::isWindowFocused() const
+{
+	return WindowHasFocus;
+}
+
+
+//! returns if window is minimized.
+bool CIrrDeviceLinux::isWindowMinimized() const
+{
+	return WindowMinimized;
+}
+
+
+//! returns color format of the window.
+video::ECOLOR_FORMAT CIrrDeviceLinux::getColorFormat() const
+{
+#ifdef _IRR_COMPILE_WITH_X11_
+	if (visual && (visual->depth != 16))
+		return video::ECF_R8G8B8;
+	else
+#endif
+		return video::ECF_R5G6B5;
+}
 
 
 //! Sets if the window should be resizeable in windowed mode.
 void CIrrDeviceLinux::setResizeAble(bool resize)
 {
 #ifdef _IRR_COMPILE_WITH_X11_
-	if (DriverType == video::EDT_NULL)
+	if (CreationParams.DriverType == video::EDT_NULL)
 		return;
 
 	XUnmapWindow(display, window);
@@ -1047,8 +1064,7 @@ void CIrrDeviceLinux::setResizeAble(bool resize)
 }
 
 
-//! \return Returns a pointer to a list with all video modes supported
-//! by the gfx adapter.
+//! Return pointer to a list with all video modes supported by the gfx adapter.
 video::IVideoModeList* CIrrDeviceLinux::getVideoModeList()
 {
 #ifdef _IRR_COMPILE_WITH_X11_
@@ -1063,8 +1079,10 @@ video::IVideoModeList* CIrrDeviceLinux::getVideoModeList()
 		}
 		if (display)
 		{
+			#if defined(_IRR_LINUX_X11_VIDMODE_) || defined(_IRR_LINUX_X11_RANDR_)
 			s32 eventbase, errorbase;
 			s32 defaultDepth=DefaultDepth(display,screennr);
+			#endif
 
 			#ifdef _IRR_LINUX_X11_VIDMODE_
 			if (XF86VidModeQueryExtension(display, &eventbase, &errorbase))
@@ -1125,7 +1143,6 @@ video::IVideoModeList* CIrrDeviceLinux::getVideoModeList()
 }
 
 
-
 void CIrrDeviceLinux::createKeyMap()
 {
 	// I don't know if this is the best method  to create
@@ -1133,6 +1150,7 @@ void CIrrDeviceLinux::createKeyMap()
 	// I find a better version.
 
 #ifdef _IRR_COMPILE_WITH_X11_
+	KeyMap.reallocate(84);
 	KeyMap.push_back(SKeyMap(XK_BackSpace, KEY_BACK));
 	KeyMap.push_back(SKeyMap(XK_Tab, KEY_TAB));
 	KeyMap.push_back(SKeyMap(XK_Linefeed, 0)); // ???
@@ -1230,7 +1248,7 @@ void CIrrDeviceLinux::createKeyMap()
 	KeyMap.push_back(SKeyMap(XK_plus, KEY_PLUS)); //?
 	KeyMap.push_back(SKeyMap(XK_comma, KEY_COMMA)); //?
 	KeyMap.push_back(SKeyMap(XK_minus, KEY_MINUS)); //?
-	KeyMap.push_back(SKeyMap(XK_period, KEY_PERIOD)); //? 
+	KeyMap.push_back(SKeyMap(XK_period, KEY_PERIOD)); //?
 	KeyMap.push_back(SKeyMap(XK_slash, 0)); //?
 	KeyMap.push_back(SKeyMap(XK_0, KEY_KEY_0));
 	KeyMap.push_back(SKeyMap(XK_1, KEY_KEY_1));
@@ -1324,20 +1342,121 @@ void CIrrDeviceLinux::createKeyMap()
 #endif
 }
 
+bool CIrrDeviceLinux::activateJoysticks(core::array<SJoystickInfo> & joystickInfo)
+{
+#if defined (_IRR_COMPILE_WITH_JOYSTICK_EVENTS_)
+
+	joystickInfo.clear();
+
+	u32 joystick;
+	for(joystick = 0; joystick < 32; ++joystick)
+	{
+		// The joystick device could be here...
+		core::stringc devName = "/dev/js";
+		devName += joystick;
+
+		SJoystickInfo returnInfo;
+		JoystickInfo info;
+
+		info.fd = open(devName.c_str(), O_RDONLY);
+		if(-1 == info.fd)
+		{
+			// ...but Ubuntu and possibly other distros 
+			// create the devices in /dev/input
+			devName = "/dev/input/js";
+			devName += joystick;
+			info.fd = open(devName.c_str(), O_RDONLY);
+		}
+
+		if(-1 == info.fd)
+			continue;
+
+		ioctl( info.fd, JSIOCGAXES, &(info.axes) );
+		ioctl( info.fd, JSIOCGBUTTONS, &(info.buttons) );
+
+		fcntl( info.fd, F_SETFL, O_NONBLOCK );
+
+		(void)memset(&info.persistentData, 0, sizeof(info.persistentData));
+		info.persistentData.EventType = irr::EET_JOYSTICK_INPUT_EVENT;
+		info.persistentData.JoystickEvent.Joystick = ActiveJoysticks.size();
+
+		// There's no obvious way to determine which (if any) axes represent a POV
+		// hat, so we'll just set it to "not used" and forget about it.
+		info.persistentData.JoystickEvent.POV = 65535;
+
+		ActiveJoysticks.push_back(info);
+
+		returnInfo.Joystick = joystick;
+		returnInfo.PovHat = SJoystickInfo::POV_HAT_UNKNOWN;
+		returnInfo.Axes = info.axes;
+		returnInfo.Buttons = info.buttons;
+
+		char name[80];
+		ioctl( info.fd, JSIOCGNAME(80), name);
+		returnInfo.Name = name;
+	
+		joystickInfo.push_back(returnInfo);
+	}
+
+	for(joystick = 0; joystick < joystickInfo.size(); ++joystick)
+	{
+		char logString[256];
+		(void)sprintf(logString, "Found joystick %u, %u axes, %u buttons '%s'",
+			joystick, joystickInfo[joystick].Axes, 
+			joystickInfo[joystick].Buttons, joystickInfo[joystick].Name.c_str());
+		os::Printer::log(logString, ELL_INFORMATION);
+	}
+
+	return true;
+#else
+	return false;
+#endif // _IRR_COMPILE_WITH_JOYSTICK_EVENTS_
+}
+
+
+void CIrrDeviceLinux::pollJoysticks()
+{
+#if defined (_IRR_COMPILE_WITH_JOYSTICK_EVENTS_)
+	if(0 == ActiveJoysticks.size())
+		return;
+
+	u32 joystick;
+	for(joystick = 0; joystick < ActiveJoysticks.size(); ++joystick)
+	{
+		JoystickInfo & info =  ActiveJoysticks[joystick];
+
+		struct js_event event;
+		while(sizeof(event) == read(info.fd, &event, sizeof(event)))
+		{
+			switch(event.type & ~JS_EVENT_INIT)
+			{
+			case JS_EVENT_BUTTON:
+				if (event.value)
+	        			info.persistentData.JoystickEvent.ButtonStates |= (1 << event.number);
+	   			else
+	      				info.persistentData.JoystickEvent.ButtonStates &= ~(1 << event.number);
+				break;
+
+			case JS_EVENT_AXIS:
+				info.persistentData.JoystickEvent.Axis[event.number] = event.value;
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		// Send an irrlicht joystick event once per ::run() even if no new data were received.
+		(void)postEventFromUser(info.persistentData);
+	}
+#endif // _IRR_COMPILE_WITH_JOYSTICK_EVENTS_
+} 
+
 
 IRRLICHT_API IrrlichtDevice* IRRCALLCONV createDeviceEx(const SIrrlichtCreationParameters& param)
 {
-	CIrrDeviceLinux* dev = new CIrrDeviceLinux(
-		param.DriverType,
-		param.WindowSize,
-		param.Bits,
-		param.Fullscreen,
-		param.Stencilbuffer,
-		param.Vsync,
-		param.AntiAlias,
-		param.EventReceiver,
-		param.SDK_version_do_not_use);
-	
+	CIrrDeviceLinux* dev = new CIrrDeviceLinux(param);
+
 	if (dev && !dev->getVideoDriver() && param.DriverType != video::EDT_NULL)
 	{
 		dev->drop();

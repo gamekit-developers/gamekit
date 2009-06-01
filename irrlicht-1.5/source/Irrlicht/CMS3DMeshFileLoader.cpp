@@ -113,6 +113,9 @@ struct SGroup
 CMS3DMeshFileLoader::CMS3DMeshFileLoader(video::IVideoDriver *driver)
 : Driver(driver), AnimatedMesh(0)
 {
+	#ifdef _DEBUG
+	setDebugName("CMS3DMeshFileLoader");
+	#endif
 }
 
 
@@ -209,11 +212,16 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 		os::Printer::log("Loading failed. Corrupted data found.", file->getFileName(), ELL_ERROR);
 		return false;
 	}
-#ifdef __BIG_ENDIAN__
 	for (u16 tmp=0; tmp<numVertices; ++tmp)
-		for (u16 j=0; j<3; ++j)
-			vertices[tmp].Vertex[j] = os::Byteswap::byteswap(vertices[tmp].Vertex[j]);
+	{
+#ifdef __BIG_ENDIAN__
+		vertices[tmp].Vertex[0] = os::Byteswap::byteswap(vertices[tmp].Vertex[0]);
+		vertices[tmp].Vertex[1] = os::Byteswap::byteswap(vertices[tmp].Vertex[1]);
+		vertices[tmp].Vertex[2] = -os::Byteswap::byteswap(vertices[tmp].Vertex[2]);
+#else
+		vertices[tmp].Vertex[2] = -vertices[tmp].Vertex[2];
 #endif
+	}
 
 	// triangles
 	u16 numTriangles = *(u16*)pPtr;
@@ -229,20 +237,25 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 		os::Printer::log("Loading failed. Corrupted data found.", file->getFileName(), ELL_ERROR);
 		return false;
 	}
-#ifdef __BIG_ENDIAN__
 	for (u16 tmp=0; tmp<numTriangles; ++tmp)
 	{
+#ifdef __BIG_ENDIAN__
 		triangles[tmp].Flags = os::Byteswap::byteswap(triangles[tmp].Flags);
 		for (u16 j=0; j<3; ++j)
 		{
 			triangles[tmp].VertexIndices[j] = os::Byteswap::byteswap(triangles[tmp].VertexIndices[j]);
-			for (u16 k=0; k<3; ++k)
-				triangles[tmp].VertexNormals[j][k] = os::Byteswap::byteswap(triangles[tmp].VertexNormals[j][k]);
+			triangles[tmp].VertexNormals[j][0] = os::Byteswap::byteswap(triangles[tmp].VertexNormals[j][0]);
+			triangles[tmp].VertexNormals[j][1] = os::Byteswap::byteswap(triangles[tmp].VertexNormals[j][1]);
+			triangles[tmp].VertexNormals[j][2] = -os::Byteswap::byteswap(triangles[tmp].VertexNormals[j][2]);
 			triangles[tmp].S[j] = os::Byteswap::byteswap(triangles[tmp].S[j]);
 			triangles[tmp].T[j] = os::Byteswap::byteswap(triangles[tmp].T[j]);
 		}
-	}
+#else
+		triangles[tmp].VertexNormals[0][2] = -triangles[tmp].VertexNormals[0][2];
+		triangles[tmp].VertexNormals[1][2] = -triangles[tmp].VertexNormals[1][2];
+		triangles[tmp].VertexNormals[2][2] = -triangles[tmp].VertexNormals[2][2];
 #endif
+	}
 
 	// groups
 	u16 numGroups = *(u16*)pPtr;
@@ -346,16 +359,14 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 		tmpBuffer->Material.Shininess = material->Shininess;
 
 		core::stringc TexturePath(material->Texture);
-		TexturePath.trim();
-		if (TexturePath!="")
+		if (TexturePath.trim()!="")
 		{
 			TexturePath=stripPathFromString(file->getFileName(),true) + stripPathFromString(TexturePath,false);
 			tmpBuffer->Material.setTexture(0, Driver->getTexture(TexturePath.c_str()) );
 		}
 
 		core::stringc AlphamapPath=(const c8*)material->Alphamap;
-		AlphamapPath.trim();
-		if (AlphamapPath!="")
+		if (AlphamapPath.trim()!="")
 		{
 			AlphamapPath=stripPathFromString(file->getFileName(),true) + stripPathFromString(AlphamapPath,false);
 			tmpBuffer->Material.setTexture(2, Driver->getTexture(AlphamapPath.c_str()) );
@@ -379,7 +390,6 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 //	frameCount = os::Byteswap::byteswap(frameCount);
 #endif
 	pPtr += sizeof(int);
-
 
 	u16 jointCount = *(u16*)pPtr;
 #ifdef __BIG_ENDIAN__
@@ -423,18 +433,25 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 		jnt->LocalMatrix.makeIdentity();
 		jnt->LocalMatrix.setRotationRadians(
 			core::vector3df(pJoint->Rotation[0], pJoint->Rotation[1], pJoint->Rotation[2]) );
+		// convert right-handed to left-handed
+		jnt->LocalMatrix[2]=-jnt->LocalMatrix[2];
+		jnt->LocalMatrix[6]=-jnt->LocalMatrix[6];
+		jnt->LocalMatrix[8]=-jnt->LocalMatrix[8];
+		jnt->LocalMatrix[9]=-jnt->LocalMatrix[9];
 
 		jnt->LocalMatrix.setTranslation(
-			core::vector3df(pJoint->Translation[0], pJoint->Translation[1], pJoint->Translation[2]) );
+			core::vector3df(pJoint->Translation[0], pJoint->Translation[1], -pJoint->Translation[2]) );
 
 		parentNames.push_back( (c8*)pJoint->ParentName );
 
 		/*if (pJoint->NumRotationKeyframes ||
 			pJoint->NumTranslationKeyframes)
-			HasAnimation = true;*/
+			HasAnimation = true;
+		 */
 
 		// get rotation keyframes
-		for (j=0; j < pJoint->NumRotationKeyframes; ++j)
+		const u16 numRotationKeyframes = pJoint->NumRotationKeyframes;
+		for (j=0; j < numRotationKeyframes; ++j)
 		{
 			MS3DKeyframe* kf = (MS3DKeyframe*)pPtr;
 #ifdef __BIG_ENDIAN__
@@ -457,6 +474,11 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 
 			tmpMatrix.setRotationRadians(
 				core::vector3df(kf->Parameter[0], kf->Parameter[1], kf->Parameter[2]) );
+			// convert right-handed to left-handed
+			tmpMatrix[2]=-tmpMatrix[2];
+			tmpMatrix[6]=-tmpMatrix[6];
+			tmpMatrix[8]=-tmpMatrix[8];
+			tmpMatrix[9]=-tmpMatrix[9];
 
 			tmpMatrix=jnt->LocalMatrix*tmpMatrix;
 
@@ -464,7 +486,8 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 		}
 
 		// get translation keyframes
-		for (j=0; j<pJoint->NumTranslationKeyframes; ++j)
+		const u16 numTranslationKeyframes = pJoint->NumTranslationKeyframes;
+		for (j=0; j<numTranslationKeyframes; ++j)
 		{
 			MS3DKeyframe* kf = (MS3DKeyframe*)pPtr;
 #ifdef __BIG_ENDIAN__
@@ -486,7 +509,7 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 			k->position = core::vector3df
 				(kf->Parameter[0]+pJoint->Translation[0],
 				 kf->Parameter[1]+pJoint->Translation[1],
-				 kf->Parameter[2]+pJoint->Translation[2]);
+				 -kf->Parameter[2]-pJoint->Translation[2]);
 		}
 	}
 
@@ -604,8 +627,10 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 		u32 tmp = groups[triangles[i].GroupIndex].MaterialIdx;
 		Vertices = &AnimatedMesh->getMeshBuffers()[tmp]->Vertices_Standard;
 
-		for (u16 j = 0; j<3; ++j)
+		for (s32 j = 2; j!=-1; --j)
 		{
+			const u32 vertidx = triangles[i].VertexIndices[j];
+
 			v.TCoords.X = triangles[i].S[j];
 			v.TCoords.Y = triangles[i].T[j];
 
@@ -613,13 +638,15 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 			v.Normal.Y = triangles[i].VertexNormals[j][1];
 			v.Normal.Z = triangles[i].VertexNormals[j][2];
 
-			if(triangles[i].GroupIndex < groups.size() && groups[triangles[i].GroupIndex].MaterialIdx < AnimatedMesh->getMeshBuffers().size())
+			if(triangles[i].GroupIndex < groups.size() &&
+					groups[triangles[i].GroupIndex].MaterialIdx < AnimatedMesh->getMeshBuffers().size())
 				v.Color = AnimatedMesh->getMeshBuffers()[groups[triangles[i].GroupIndex].MaterialIdx]->Material.DiffuseColor;
 			else
 				v.Color.set(255,255,255,255);
-			v.Pos.X = vertices[triangles[i].VertexIndices[j]].Vertex[0];
-			v.Pos.Y = vertices[triangles[i].VertexIndices[j]].Vertex[1];
-			v.Pos.Z = vertices[triangles[i].VertexIndices[j]].Vertex[2];
+
+			v.Pos.X = vertices[vertidx].Vertex[0];
+			v.Pos.Y = vertices[vertidx].Vertex[1];
+			v.Pos.Z = vertices[vertidx].Vertex[2];
 
 			// check if we already have this vertex in our vertex array
 			s32 index = -1;
@@ -631,10 +658,10 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 					break;
 				}
 			}
+
 			if (index == -1)
 			{
 				index = Vertices->size();
-				const u32 vertidx = triangles[i].VertexIndices[j];
 				const u32 matidx = groups[triangles[i].GroupIndex].MaterialIdx;
 				if (vertexWeights.size()==0)
 				{
@@ -721,10 +748,10 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 }
 
 
-core::stringc CMS3DMeshFileLoader::stripPathFromString(core::stringc string, bool returnPath)
+core::stringc CMS3DMeshFileLoader::stripPathFromString(const core::stringc& inString, bool returnPath) const
 {
-	s32 slashIndex=string.findLast('/'); // forward slash
-	s32 backSlash=string.findLast('\\'); // back slash
+	s32 slashIndex=inString.findLast('/'); // forward slash
+	s32 backSlash=inString.findLast('\\'); // back slash
 
 	if (backSlash>slashIndex) slashIndex=backSlash;
 
@@ -733,13 +760,13 @@ core::stringc CMS3DMeshFileLoader::stripPathFromString(core::stringc string, boo
 		if (returnPath)
 			return core::stringc(); //no path to return
 		else
-			return string;
+			return inString;
 	}
 
 	if (returnPath)
-		return string.subString(0, slashIndex + 1);
+		return inString.subString(0, slashIndex + 1);
 	else
-		return string.subString(slashIndex+1, string.size() - (slashIndex+1));
+		return inString.subString(slashIndex+1, inString.size() - (slashIndex+1));
 }
 
 
