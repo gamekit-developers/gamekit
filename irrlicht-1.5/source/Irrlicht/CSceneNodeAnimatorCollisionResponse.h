@@ -51,6 +51,9 @@ namespace scene
 		//! Sets the gravity of the environment.
 		virtual void setGravity(const core::vector3df& gravity);
 
+		//! 'Jump' the animator, by adding a jump speed opposite to its gravity
+		virtual void jump(f32 jumpSpeed);
+
 		//! Returns current vector of gravity.
 		virtual core::vector3df getGravity() const;
 
@@ -79,22 +82,33 @@ namespace scene
 
 		//! Returns type of the scene node animator
 		virtual ESCENE_NODE_ANIMATOR_TYPE getType() const { return ESNAT_COLLISION_RESPONSE; }
+		
+		//! Creates a clone of this animator.
+		/** Please note that you will have to drop
+		(IReferenceCounted::drop()) the returned pointer after calling
+		this. */
+		virtual ISceneNodeAnimator* createClone(ISceneNode* node, ISceneManager* newManager=0);
 
 	private:
-		core::vector3df LastPosition;
+
+		void setNode(ISceneNode* node);
+
 		core::vector3df Radius;
 		core::vector3df Gravity;
 		core::vector3df Translation;
+		core::vector3df FallingVelocity; // In the direction of Gravity.
+
+		core::vector3df LastPosition;
+		core::triangle3df RefTriangle;
 		
 		ITriangleSelector* World;
 		ISceneNode* Object;
 		ISceneManager* SceneManager;
 		u32 LastTime;
-		u32 FallStartTime;
 		f32 SlidingSpeed;
 		bool Falling;
-
-		core::triangle3df RefTriangle;
+		bool IsCamera;
+		bool AnimateCameraTarget;
 	};
 
 } // end namespace scene

@@ -24,7 +24,7 @@ namespace scene
 	public:
 
 		//! constructor
-		CQ3LevelMesh(io::IFileSystem* fs, video::IVideoDriver* driver,  scene::ISceneManager* smgr);
+		CQ3LevelMesh(io::IFileSystem* fs, scene::ISceneManager* smgr);
 
 		//! destructor
 		virtual ~CQ3LevelMesh();
@@ -43,7 +43,7 @@ namespace scene
 		virtual IMesh* getMesh(s32 frameInMs, s32 detailLevel=255,
 				s32 startFrameLoop=-1, s32 endFrameLoop=-1);
 
-		virtual void releaseMesh ( s32 index );
+		virtual void releaseMesh( s32 index );
 
 		//! Returns an axis aligned bounding box of the mesh.
 		//! \return A bounding box of this mesh is returned.
@@ -56,14 +56,14 @@ namespace scene
 		virtual E_ANIMATED_MESH_TYPE getMeshType() const;
 
 		//! loads the shader definition
-		virtual const quake3::SShader * getShader ( const c8 * filename, s32 fileNameIsValid );
+		virtual const quake3::SShader * getShader( const c8 * filename, bool fileNameIsValid=true );
 
 		//! returns a already loaded Shader
-		virtual const quake3::SShader * getShader ( u32 index  ) const;
+		virtual const quake3::SShader * getShader( u32 index  ) const;
 
 
 		//! get's an interface to the entities
-		virtual const quake3::tQ3EntityList & getEntityList ();
+		virtual const quake3::tQ3EntityList & getEntityList();
 
 
 
@@ -84,8 +84,7 @@ namespace scene
 
 		//! Returns pointer to a mesh buffer which fits a material
  		/** \param material: material to search for
-		\return Returns the pointer to the mesh buffer or
-		NULL if there is no such mesh buffer. */
+		\return Pointer to the mesh buffer or 0 if there is no such mesh buffer. */
 		virtual IMeshBuffer* getMeshBuffer( const video::SMaterial &material) const
 		{
 			return 0;
@@ -96,8 +95,17 @@ namespace scene
 			return;
 		}
 
+		//! set the hardware mapping hint, for driver
+		virtual void setHardwareMappingHint(E_HARDWARE_MAPPING newMappingHint, E_BUFFER_TYPE buffer=EBT_VERTEX_AND_INDEX)
+		{
+			return;
+		}
 
-
+		//! flags the meshbuffer as changed, reloads hardware buffers
+		virtual void setDirty(E_BUFFER_TYPE buffer=EBT_VERTEX_AND_INDEX)
+		{
+			return;
+		}
 
 	private:
 
@@ -301,7 +309,7 @@ namespace scene
 			core::vector2d<f64> TCoords;
 			core::vector2d<f64> TCoords2;
 
-			void copyto ( video::S3DVertex2TCoords &dest ) const;
+			void copyto( video::S3DVertex2TCoords &dest ) const;
 
 			S3DVertex2TCoords_64() {}
 			S3DVertex2TCoords_64(const core::vector3d<f64>& pos, const core::vector3d<f64>& normal, const video::SColorf& color,
@@ -320,9 +328,9 @@ namespace scene
 			}
 		};
 
-		inline void copy ( video::S3DVertex2TCoords * dest, const tBSPVertex * source,
+		inline void copy( video::S3DVertex2TCoords * dest, const tBSPVertex * source,
 				s32 vertexcolor ) const;
-		void copy ( S3DVertex2TCoords_64 * dest, const tBSPVertex * source, s32 vertexcolor ) const;
+		void copy( S3DVertex2TCoords_64 * dest, const tBSPVertex * source, s32 vertexcolor ) const;
 
 
 		struct SBezier
@@ -406,24 +414,24 @@ namespace scene
 		SQ3Parser Parser;
 
 
-		typedef void ( CQ3LevelMesh::*tParserCallback ) ( quake3::SVarGroupList *& groupList );
-		void parser_parse ( const void * data, u32 size, tParserCallback callback );
-		void parser_nextToken ();
+		typedef void( CQ3LevelMesh::*tParserCallback ) ( quake3::SVarGroupList *& groupList );
+		void parser_parse( const void * data, u32 size, tParserCallback callback );
+		void parser_nextToken();
 
-		void dumpVarGroup ( const quake3::SVarGroup * group, s32 stack ) const;
+		void dumpVarGroup( const quake3::SVarGroup * group, s32 stack ) const;
 
-		void scriptcallback_entity ( quake3::SVarGroupList *& grouplist );
+		void scriptcallback_entity( quake3::SVarGroupList *& grouplist );
 		quake3::tQ3EntityList Entity;
 
-		void scriptcallback_shader ( quake3::SVarGroupList *& grouplist );
+		void scriptcallback_shader( quake3::SVarGroupList *& grouplist );
 		core::array < quake3::SShader > Shader;
 		quake3::tStringList ShaderFile;
-		void InitShader ();
-		void ReleaseShader ();
-		void ReleaseEntity ();
+		void InitShader();
+		void ReleaseShader();
+		void ReleaseEntity();
 
 
-		s32 setShaderMaterial ( video::SMaterial & material, const tBSPFace * face ) const;
+		s32 setShaderMaterial( video::SMaterial & material, const tBSPFace * face ) const;
 
 		struct SToBuffer
 		{
@@ -431,8 +439,8 @@ namespace scene
 			u32 index;
 		};
 
-		void cleanMeshes ();
-		void calcBoundingBoxes ();
+		void cleanMeshes();
+		void calcBoundingBoxes();
 
 	};
 

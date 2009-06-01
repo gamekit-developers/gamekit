@@ -33,7 +33,7 @@ namespace scene
 
 		//! constructor
 		CSceneManager(video::IVideoDriver* driver, io::IFileSystem* fs,
-			gui::ICursorControl* cursorControl, IMeshCache* cache = 0, 
+			gui::ICursorControl* cursorControl, IMeshCache* cache = 0,
 			gui::IGUIEnvironment *guiEnvironment = 0);
 
 		//! destructor
@@ -53,15 +53,23 @@ namespace scene
 
 		virtual gui::IGUIEnvironment* getGUIEnvironment();
 
-		//! adds a cube scene node to the scene. It is a simple cube of (1,1,1) size. 
+		//! adds Volume Lighting Scene Node.
 		//! the returned pointer must not be dropped.
-		virtual ISceneNode* addCubeSceneNode(f32 size=10.0f, ISceneNode* parent=0, s32 id=-1,
+		virtual IVolumeLightSceneNode* addVolumeLightSceneNode(ISceneNode* parent=0, s32 id=-1,
+			const u32 subdivU = 32, const u32 subdivV = 32,
+			const video::SColor foot = video::SColor(51, 0, 230, 180),
+			const video::SColor tail = video::SColor(0, 0, 0, 0),
 			const core::vector3df& position = core::vector3df(0,0,0),
 			const core::vector3df& rotation = core::vector3df(0,0,0),
 			const core::vector3df& scale = core::vector3df(1.0f, 1.0f, 1.0f));
 
+		//! adds a cube scene node to the scene. It is a simple cube of (1,1,1) size.
+		//! the returned pointer must not be dropped.
+		virtual IMeshSceneNode* addCubeSceneNode(f32 size=10.0f, ISceneNode* parent=0, s32 id=-1,
+			const core::vector3df& position = core::vector3df(0,0,0),	const core::vector3df& rotation = core::vector3df(0,0,0),	const core::vector3df& scale = core::vector3df(1.0f, 1.0f, 1.0f));
+
 		//! Adds a sphere scene node to the scene.
-		virtual ISceneNode* addSphereSceneNode(f32 radius=5.0f, s32 polyCount=16, ISceneNode* parent=0, s32 id=-1,
+		virtual IMeshSceneNode* addSphereSceneNode(f32 radius=5.0f, s32 polyCount=16, ISceneNode* parent=0, s32 id=-1,
 			const core::vector3df& position = core::vector3df(0,0,0),
 			const core::vector3df& rotation = core::vector3df(0,0,0),
 			const core::vector3df& scale = core::vector3df(1.0f, 1.0f, 1.0f));
@@ -76,7 +84,7 @@ namespace scene
 		//! adds a scene node for rendering a static mesh
 		//! the returned pointer must not be dropped.
 		virtual IMeshSceneNode* addMeshSceneNode(IMesh* mesh, ISceneNode* parent=0, s32 id=-1,
-			const core::vector3df& position = core::vector3df(0,0,0), 
+			const core::vector3df& position = core::vector3df(0,0,0),
 			const core::vector3df& rotation = core::vector3df(0,0,0),
 			const core::vector3df& scale = core::vector3df(1.0f, 1.0f, 1.0f),
 			bool alsoAddIfMeshPointerZero=false);
@@ -99,16 +107,16 @@ namespace scene
 		//! draws all scene nodes
 		virtual void drawAll();
 
-		//! Adds a scene node for rendering using a octtree to the scene graph. This a good method for rendering 
+		//! Adds a scene node for rendering using a octtree to the scene graph. This a good method for rendering
 		//! scenes with lots of geometry. The Octree is built on the fly from the mesh, much
 		//! faster then a bsp tree.
-		virtual ISceneNode* addOctTreeSceneNode(IAnimatedMesh* mesh, ISceneNode* parent=0, 
-			s32 id=-1, s32 minimalPolysPerNode=128, bool alsoAddIfMeshPointerZero=false);
+		virtual ISceneNode* addOctTreeSceneNode(IAnimatedMesh* mesh, ISceneNode* parent=0,
+			s32 id=-1, s32 minimalPolysPerNode=512, bool alsoAddIfMeshPointerZero=false);
 
-		//! Adss a scene node for rendering using a octtree. This a good method for rendering 
+		//! Adss a scene node for rendering using a octtree. This a good method for rendering
 		//! scenes with lots of geometry. The Octree is built on the fly from the mesh, much
 		//! faster then a bsp tree.
-		virtual ISceneNode* addOctTreeSceneNode(IMesh* mesh, ISceneNode* parent=0, 
+		virtual ISceneNode* addOctTreeSceneNode(IMesh* mesh, ISceneNode* parent=0,
 			s32 id=-1, s32 minimalPolysPerNode=128, bool alsoAddIfMeshPointerZero=false);
 
 		//! Adds a camera scene node to the tree and sets it as active camera.
@@ -116,21 +124,21 @@ namespace scene
 		//! \param lookat: Position where the camera will look at. Also known as target.
 		//! \param parent: Parent scene node of the camera. Can be null. If the parent moves,
 		//! the camera will move too.
-		//! \return Returns pointer to interface to camera
+		//! \return Pointer to interface to camera
 		virtual ICameraSceneNode* addCameraSceneNode(ISceneNode* parent = 0,
-			const core::vector3df& position = core::vector3df(0,0,0), 
-			const core::vector3df& lookat = core::vector3df(0,0,0), s32 id=-1);
+			const core::vector3df& position = core::vector3df(0,0,0),
+			const core::vector3df& lookat = core::vector3df(0,0,100), s32 id=-1);
 
 		//! Adds a camera scene node which is able to be controlle with the mouse similar
 		//! like in the 3D Software Maya by Alias Wavefront.
 		//! The returned pointer must not be dropped.
 		virtual ICameraSceneNode* addCameraSceneNodeMaya(ISceneNode* parent = 0,
-			f32 rotateSpeed = -1500.0f, f32 zoomSpeed = 200.0f, f32 translationSpeed = 100.0f, s32 id=-1);
+			f32 rotateSpeed = -1500.0f, f32 zoomSpeed = 200.0f, f32 translationSpeed = 1500.0f, s32 id=-1);
 
 		//! Adds a camera scene node which is able to be controled with the mouse and keys
-		//! like in most first person shooters (FPS): 
+		//! like in most first person shooters (FPS):
 		virtual ICameraSceneNode* addCameraSceneNodeFPS(ISceneNode* parent = 0,
-			f32 rotateSpeed = 1500.0f, f32 moveSpeed = 200.0f, s32 id=-1,
+			f32 rotateSpeed = 100.0f, f32 moveSpeed = .5f, s32 id=-1,
 			SKeyMap* keyMapArray=0, s32 keyMapSize=0, bool noVerticalMovement=false,
 			f32 jumpSpeed = 0.f);
 
@@ -139,7 +147,8 @@ namespace scene
 		//! turned on. (This is the default setting in most scene nodes).
 		virtual ILightSceneNode* addLightSceneNode(ISceneNode* parent = 0,
 			const core::vector3df& position = core::vector3df(0,0,0),
-			video::SColorf color = video::SColorf(1.0f, 1.0f, 1.0f),	f32 range=100.0f, s32 id=-1);
+			video::SColorf color = video::SColorf(1.0f, 1.0f, 1.0f),
+			f32 range=100.0f, s32 id=-1);
 
 		//! Adds a billboard scene node to the scene. A billboard is like a 3d sprite: A 2d element,
 		//! which always looks to the camera. It is usually used for things like explosions, fire,
@@ -147,10 +156,10 @@ namespace scene
 		virtual IBillboardSceneNode* addBillboardSceneNode(ISceneNode* parent = 0,
 			const core::dimension2d<f32>& size = core::dimension2d<f32>(10.0f, 10.0f),
 			const core::vector3df& position = core::vector3df(0,0,0), s32 id=-1,
-			video::SColor shade_top = 0xFFFFFFFF, video::SColor shade_down = 0xFFFFFFFF);
+			video::SColor shadeTop = 0xFFFFFFFF, video::SColor shadeBottom = 0xFFFFFFFF);
 
 		//! Adds a skybox scene node. A skybox is a big cube with 6 textures on it and
-		//! is drawn around the camera position. 
+		//! is drawn around the camera position.
 		virtual ISceneNode* addSkyBoxSceneNode(video::ITexture* top, video::ITexture* bottom,
 			video::ITexture* left, video::ITexture* right, video::ITexture* front,
 			video::ITexture* back, ISceneNode* parent = 0, s32 id=-1);
@@ -158,22 +167,23 @@ namespace scene
 		//! Adds a skydome scene node. A skydome is a large (half-) sphere with a
 		//! panoramic texture on it and is drawn around the camera position.
 		virtual ISceneNode* addSkyDomeSceneNode(video::ITexture* texture,
-			u32 horiRes, u32 vertRes, f64 texturePercentage,
-			f64 spherePercentage, ISceneNode* parent=0, s32 id=-1);
+			u32 horiRes=16, u32 vertRes=8,
+			f64 texturePercentage=0.9, f64 spherePercentage=2.0,
+			ISceneNode* parent=0, s32 id=-1);
 
-		//! Adds a text scene node, which is able to display 
+		//! Adds a text scene node, which is able to display
 		//! 2d text at a position in three dimensional space
 		virtual ITextSceneNode* addTextSceneNode(gui::IGUIFont* font, const wchar_t* text,
-			video::SColor color=video::SColor(100,255,255,255), 
+			video::SColor color=video::SColor(100,255,255,255),
 			ISceneNode* parent = 0,	const core::vector3df& position = core::vector3df(0,0,0),
 			s32 id=-1);
 
 		//! Adds a text scene node, which uses billboards
-		virtual ITextSceneNode* addBillboardTextSceneNode(gui::IGUIFont* font, const wchar_t* text,
+		virtual IBillboardTextSceneNode* addBillboardTextSceneNode(gui::IGUIFont* font, const wchar_t* text,
 			ISceneNode* parent = 0,
 			const core::dimension2d<f32>& size = core::dimension2d<f32>(10.0f, 10.0f),
 			const core::vector3df& position = core::vector3df(0,0,0), s32 id=-1,
-			video::SColor shade_top = 0xFFFFFFFF, video::SColor shade_down = 0xFFFFFFFF);
+			video::SColor colorTop = 0xFFFFFFFF, video::SColor colorBottom = 0xFFFFFFFF);
 
 		//! Adds a scene node, which can render a quake3 shader
 		virtual ISceneNode* addQuake3SceneNode(IMeshBuffer* meshBuffer, const quake3::SShader * shader,
@@ -190,7 +200,7 @@ namespace scene
 		//! name as parameter.
 		virtual IAnimatedMesh* addHillPlaneMesh(const c8* name,
 			const core::dimension2d<f32>& tileSize, const core::dimension2d<u32>& tileCount,
-			video::SMaterial* material = 0,	f32 hillHeight = 0.0f, 
+			video::SMaterial* material = 0,	f32 hillHeight = 0.0f,
 			const core::dimension2d<f32>& countHills = core::dimension2d<f32>(1.0f, 1.0f),
 			const core::dimension2d<f32>& textureRepeatCount = core::dimension2d<f32>(1.0f, 1.0f));
 
@@ -210,7 +220,7 @@ namespace scene
 		IAnimatedMesh* addSphereMesh(const c8* name,
 				f32 radius, u32 polyCountX, u32 polyCountY);
 
-		//! Adds a particle system scene node. 
+		//! Adds a particle system scene node.
 		virtual IParticleSystemSceneNode* addParticleSystemSceneNode(
 			bool withDefaultEmitter=true, ISceneNode* parent=0, s32 id=-1,
 			const core::vector3df& position = core::vector3df(0,0,0),
@@ -219,8 +229,8 @@ namespace scene
 
 		//! Adds a terrain scene node to the scene graph.
 		virtual ITerrainSceneNode* addTerrainSceneNode(
-			const c8* heightMapFileName, 
-			ISceneNode* parent=0, s32 id=-1, 
+			const c8* heightMapFileName,
+			ISceneNode* parent=0, s32 id=-1,
 			const core::vector3df& position = core::vector3df(0.0f,0.0f,0.0f),
 			const core::vector3df& rotation = core::vector3df(0.0f,0.0f,0.0f),
 			const core::vector3df& scale = core::vector3df(1.0f,1.0f,1.0f),
@@ -230,8 +240,8 @@ namespace scene
 
 		//! Adds a terrain scene node to the scene graph.
 		virtual ITerrainSceneNode* addTerrainSceneNode(
-			io::IReadFile* heightMap, 
-			ISceneNode* parent=0, s32 id=-1, 
+			io::IReadFile* heightMap,
+			ISceneNode* parent=0, s32 id=-1,
 			const core::vector3df& position = core::vector3df(0.0f,0.0f,0.0f),
 			const core::vector3df& rotation = core::vector3df(0.0f,0.0f,0.0f),
 			const core::vector3df& scale = core::vector3df(1.0f,1.0f,1.0f),
@@ -246,11 +256,11 @@ namespace scene
 		//! Adds an empty scene node.
 		virtual ISceneNode* addEmptySceneNode(ISceneNode* parent, s32 id=-1);
 
-		//! Returns the root scene node. This is the scene node wich is parent 
+		//! Returns the root scene node. This is the scene node wich is parent
 		//! of all scene nodes. The root scene node is a special scene node which
 		//! only exists to manage all scene nodes. It is not rendered and cannot
 		//! be removed from the scene.
-		//! \return Returns a pointer to the root scene node.
+		//! \return Pointer to the root scene node.
 		virtual ISceneNode* getRootSceneNode();
 
 		//! Returns the current active camera.
@@ -264,7 +274,7 @@ namespace scene
 
 		//! creates a rotation animator, which rotates the attached scene node around itself.
 		//! \param rotationPerSecond: Specifies the speed of the animation
-		//! \return Returns the animator. Attach it to a scene node with ISceneNode::addAnimator()
+		//! \return The animator. Attach it to a scene node with ISceneNode::addAnimator()
 		//! and the animator will animate it.
 		virtual ISceneNodeAnimator* createRotationAnimator(const core::vector3df& rotationPerSecond);
 
@@ -294,10 +304,10 @@ namespace scene
 		virtual ISceneNodeAnimator* createDeleteAnimator(u32 timeMS);
 
 
-		//! Creates a special scene node animator for doing automatic collision detection 
+		//! Creates a special scene node animator for doing automatic collision detection
 		//! and response.
 		virtual ISceneNodeAnimatorCollisionResponse* createCollisionResponseAnimator(
-			ITriangleSelector* world, ISceneNode* sceneNode, 
+			ITriangleSelector* world, ISceneNode* sceneNode,
 			const core::vector3df& ellipsoidRadius = core::vector3df(30,60,30),
 			const core::vector3df& gravityPerSecond = core::vector3df(0,-1.0f,0),
 			const core::vector3df& ellipsoidTranslation = core::vector3df(0,0,0),
@@ -337,7 +347,7 @@ namespace scene
 
 		//! Returns a pointer to the mesh manipulator.
 		virtual IMeshManipulator* getMeshManipulator();
-		
+
 		//! Sets the color of stencil buffers shadows drawn by the scene manager.
 		virtual void setShadowColor(video::SColor color);
 
@@ -363,7 +373,7 @@ namespace scene
 		//! use this method, it is used by the internal engine.
 		virtual bool postEventFromUser(const SEvent& event);
 
-		//! Clears the whole scene. All scene nodes are removed. 
+		//! Clears the whole scene. All scene nodes are removed.
 		virtual void clear();
 
 		//! Removes all children of this scene node
@@ -372,10 +382,10 @@ namespace scene
 		//! Returns interface to the parameters set in this scene.
 		virtual io::IAttributes* getParameters();
 
-		//! Returns current render pass. 
+		//! Returns current render pass.
 		virtual E_SCENE_NODE_RENDER_PASS getSceneNodeRenderPass() const;
 
-		//! Creates a new scene manager. 
+		//! Creates a new scene manager.
 		virtual ISceneManager* createNewSceneManager(bool cloneContent);
 
 		//! Returns type of the scene node
@@ -385,7 +395,7 @@ namespace scene
 		virtual ISceneNodeFactory* getDefaultSceneNodeFactory();
 
 		//! Adds a scene node factory to the scene manager.
-		/** Use this to extend the scene manager with new scene node types which it should be 
+		/** Use this to extend the scene manager with new scene node types which it should be
 		able to create automaticly, for example when loading data from xml files. */
 		virtual void registerSceneNodeFactory(ISceneNodeFactory* factoryToAdd);
 
@@ -425,11 +435,11 @@ namespace scene
 		virtual bool loadScene(const c8* filename, ISceneUserDataSerializer* userDataSerializer=0);
 
 		//! Loads a scene. Note that the current scene is not cleared before.
-		virtual bool loadScene(io::IReadFile* file, ISceneUserDataSerializer* userDataSerializer=0);	
+		virtual bool loadScene(io::IReadFile* file, ISceneUserDataSerializer* userDataSerializer=0);
 
 		//! Writes attributes of the scene node.
 		virtual void serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options=0) const;
-	
+
 		//! Reads attributes of the scene node.
 		virtual void deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options=0);
 
@@ -467,99 +477,66 @@ namespace scene
 
 		//! reads user data of a node
 		void readUserData(io::IXMLReader* reader, ISceneNode* node, ISceneUserDataSerializer* userDataSerializer);
-		
+
 		struct DefaultNodeEntry
 		{
-			DefaultNodeEntry() {};
-
-			DefaultNodeEntry(ISceneNode* n)
+			DefaultNodeEntry(ISceneNode* n) :
+				Node(n), TextureValue(0)
 			{
-				textureValue = 0;
-
 				if (n->getMaterialCount())
-					textureValue = (n->getMaterial(0).getTexture(0));
-
-				node = n;
+					TextureValue = (n->getMaterial(0).getTexture(0));
 			}
-
-			ISceneNode* node;
-			void* textureValue;
 
 			bool operator < (const DefaultNodeEntry& other) const
 			{
-				return (textureValue < other.textureValue);
-			}
-		};
-
-		struct ShaderNodeEntry
-		{
-			ShaderNodeEntry() {};
-
-			ShaderNodeEntry(ISceneNode* n, u32 sceneTime )
-			{
-				textureValue = n->getMaterial( sceneTime ).getTexture(0);
-
-				node = n;
+				return (TextureValue < other.TextureValue);
 			}
 
-			ISceneNode* node;
-			void* textureValue;
-
-			bool operator < (const ShaderNodeEntry& other) const
-			{
-				return (textureValue < other.textureValue);
-			}
+			ISceneNode* Node;
+			private:
+			void* TextureValue;
 		};
 
 
 		struct TransparentNodeEntry
 		{
-			TransparentNodeEntry() {};
-
-			TransparentNodeEntry(ISceneNode* n, const core::vector3df &camera)
+			TransparentNodeEntry(ISceneNode* n, const core::vector3df& camera)
+				: Node(n)
 			{
-				node = n;
-
-				// TODO: this could be optimized, by not using sqrt
-				distance = (f32)(node->getAbsoluteTransformation().getTranslation().getDistanceFrom(camera));
+				Distance = (f32)(Node->getAbsoluteTransformation().getTranslation().getDistanceFromSQ(camera));
 			}
-
-			ISceneNode* node;
-			f32 distance;
 
 			bool operator < (const TransparentNodeEntry& other) const
 			{
-				return (distance > other.distance);
+				return (Distance > other.Distance);
 			}
+
+			ISceneNode* Node;
+			private:
+			f32 Distance;
 		};
 
 		//! sort on distance (sphere) to camera
 		struct DistanceNodeEntry
 		{
-			DistanceNodeEntry() {};
-
 			DistanceNodeEntry(ISceneNode* n, f64 d)
+				: Node(n), Distance(d) {}
+
+			DistanceNodeEntry(ISceneNode* n, const core::vector3df& cameraPos)
+				: Node(n)
 			{
-				node = n;
-				distance = d;
+				Distance = Node->getAbsoluteTransformation().getTranslation().getDistanceFromSQ(cameraPos);
+				Distance -= Node->getBoundingBox().getExtent().getLengthSQ() * 0.5;
 			}
-
-			DistanceNodeEntry(ISceneNode* n, const core::vector3df &cameraPos)
-			{
-				node = n;
-				
-				distance = (node->getAbsoluteTransformation().getTranslation().getDistanceFromSQ(cameraPos));
-				distance -= node->getBoundingBox().getExtent().getLengthSQ() / 2.0;
-			}
-
-			ISceneNode* node;
-
-			f64 distance;
 
 			bool operator < (const DistanceNodeEntry& other) const
 			{
-				return distance < other.distance;
+				return Distance < other.Distance;
 			}
+
+			ISceneNode* Node;
+			private:
+			f64 Distance;
 		};
 
 		//! video driver
@@ -584,7 +561,6 @@ namespace scene
 		core::array<ISceneNode*> SkyBoxList;
 		core::array<DefaultNodeEntry> SolidNodeList;
 		core::array<TransparentNodeEntry> TransparentNodeList;
-		core::array<ShaderNodeEntry> ShaderNodeList[ ESNRP_SHADER_10 - ESNRP_SHADER_0 + 1];
 
 		core::array<IMeshLoader*> MeshLoaderList;
 		core::array<ISceneNode*> DeletionList;

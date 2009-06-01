@@ -5,7 +5,6 @@
 #include "IrrCompileConfig.h"
 #include "CParticleSphereEmitter.h"
 #include "os.h"
-#include <math.h>
 
 namespace irr
 {
@@ -18,13 +17,21 @@ CParticleSphereEmitter::CParticleSphereEmitter(
 	const core::vector3df& direction, u32 minParticlesPerSecond,
 	u32 maxParticlesPerSecond, const video::SColor& minStartColor,
 	const video::SColor& maxStartColor, u32 lifeTimeMin, u32 lifeTimeMax,
-	s32 maxAngleDegrees)
-	: Center(center), Radius(radius), Direction(direction), MinParticlesPerSecond(minParticlesPerSecond),
+	s32 maxAngleDegrees,
+	const core::dimension2df& minStartSize,
+	const core::dimension2df& maxStartSize )
+	: Center(center), Radius(radius), Direction(direction),
+	MinStartSize(minStartSize), MaxStartSize(maxStartSize),
+	MinParticlesPerSecond(minParticlesPerSecond),
 	MaxParticlesPerSecond(maxParticlesPerSecond),
 	MinStartColor(minStartColor), MaxStartColor(maxStartColor),
-	MinLifeTime(lifeTimeMin), MaxLifeTime(lifeTimeMax), Time(0), Emitted(0),
-	MaxAngleDegrees(maxAngleDegrees)
+	MinLifeTime(lifeTimeMin), MaxLifeTime(lifeTimeMax),
+	Time(0), Emitted(0), MaxAngleDegrees(maxAngleDegrees)
 {
+	#ifdef _DEBUG
+	setDebugName("CParticleSphereEmitter");
+	#endif
+
 }
 
 
@@ -34,9 +41,9 @@ s32 CParticleSphereEmitter::emitt(u32 now, u32 timeSinceLastCall, SParticle*& ou
 {
 	Time += timeSinceLastCall;
 
-	u32 pps = (MaxParticlesPerSecond - MinParticlesPerSecond);
-	f32 perSecond = pps ? (f32)MinParticlesPerSecond + (os::Randomizer::rand() % pps) : MinParticlesPerSecond;
-	f32 everyWhatMillisecond = 1000.0f / perSecond;
+	const u32 pps = (MaxParticlesPerSecond - MinParticlesPerSecond);
+	const f32 perSecond = pps ? (f32)MinParticlesPerSecond + (os::Randomizer::rand() % pps) : MinParticlesPerSecond;
+	const f32 everyWhatMillisecond = 1000.0f / perSecond;
 
 	if(Time > everyWhatMillisecond)
 	{
@@ -54,9 +61,7 @@ s32 CParticleSphereEmitter::emitt(u32 now, u32 timeSinceLastCall, SParticle*& ou
 			f32 distance = fmodf( (f32)os::Randomizer::rand(), Radius * 1000.0f ) * 0.001f;
 
 			// Random direction from center
-			p.pos.X = Center.X + distance;
-			p.pos.Y = Center.Y + distance;
-			p.pos.Z = Center.Z + distance;
+			p.pos.set(Center + distance);
 			p.pos.rotateXYBy( os::Randomizer::rand() % 360, Center );
 			p.pos.rotateYZBy( os::Randomizer::rand() % 360, Center );
 			p.pos.rotateXZBy( os::Randomizer::rand() % 360, Center );
@@ -67,9 +72,9 @@ s32 CParticleSphereEmitter::emitt(u32 now, u32 timeSinceLastCall, SParticle*& ou
 			if(MaxAngleDegrees)
 			{
 				core::vector3df tgt = Direction;
-				tgt.rotateXYBy((os::Randomizer::rand()%(MaxAngleDegrees*2)) - MaxAngleDegrees, core::vector3df());
-				tgt.rotateYZBy((os::Randomizer::rand()%(MaxAngleDegrees*2)) - MaxAngleDegrees, core::vector3df());
-				tgt.rotateXZBy((os::Randomizer::rand()%(MaxAngleDegrees*2)) - MaxAngleDegrees, core::vector3df());
+				tgt.rotateXYBy((os::Randomizer::rand()%(MaxAngleDegrees*2)) - MaxAngleDegrees);
+				tgt.rotateYZBy((os::Randomizer::rand()%(MaxAngleDegrees*2)) - MaxAngleDegrees);
+				tgt.rotateXZBy((os::Randomizer::rand()%(MaxAngleDegrees*2)) - MaxAngleDegrees);
 				p.vector = tgt;
 			}
 
@@ -83,6 +88,13 @@ s32 CParticleSphereEmitter::emitt(u32 now, u32 timeSinceLastCall, SParticle*& ou
 
 			p.startColor = p.color;
 			p.startVector = p.vector;
+
+			if (MinStartSize==MaxStartSize)
+				p.startSize = MinStartSize;
+			else
+				p.startSize = MinStartSize.getInterpolated(
+					MaxStartSize, (os::Randomizer::rand() % 100) / 100.0f);
+			p.size = p.startSize;
 
 			Particles.push_back(p);
 		}
