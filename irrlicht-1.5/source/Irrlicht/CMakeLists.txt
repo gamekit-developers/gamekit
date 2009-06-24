@@ -18,8 +18,8 @@ CDefaultGUIElementFactory.cpp
 CDefaultGUIElementFactory.h
 CGUIButton.cpp
 CGUIButton.h
-CGUICheckbox.cpp
-CGUICheckbox.h
+CGUICheckBox.cpp
+CGUICheckBox.h
 CGUIColorSelectDialog.cpp
 CGUIColorSelectDialog.h
 CGUIComboBox.cpp

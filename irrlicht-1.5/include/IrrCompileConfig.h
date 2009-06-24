@@ -120,7 +120,7 @@ define out. */
 //! On some Linux systems the XF86 vidmode extension or X11 RandR are missing. Use these flags
 //! to remove the dependencies such that Irrlicht will compile on those systems, too.
 #if defined(_IRR_LINUX_PLATFORM_) && defined(_IRR_COMPILE_WITH_X11_)
-#define _IRR_LINUX_X11_VIDMODE_
+//#define _IRR_LINUX_X11_VIDMODE_
 //#define _IRR_LINUX_X11_RANDR_
 #endif
 

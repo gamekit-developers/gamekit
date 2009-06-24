@@ -733,12 +733,12 @@
 #  ifndef PNG_ASSEMBLER_CODE_SUPPORTED
 #    define PNG_ASSEMBLER_CODE_SUPPORTED
 #  endif
-#  if defined(XP_MACOSX) && !defined(PNG_NO_MMX_CODE)
-     /* work around Intel-Mac compiler bug */
+#  if (defined(XP_MACOSX) ||  defined(__x86_64__)) && !defined(PNG_NO_MMX_CODE)
+     /* work around Intel-Mac compiler bug and x86-64 linking */
 #    define PNG_NO_MMX_CODE
 #  endif
 #  if !defined(PNG_MMX_CODE_SUPPORTED) && !defined(PNG_NO_MMX_CODE) && \
-     defined(__MMX__)
+     defined(__MMX__) 
 #    define PNG_MMX_CODE_SUPPORTED
 #  endif
 #  if !defined(PNG_USE_PNGGCCRD) && !defined(PNG_NO_MMX_CODE) && \
