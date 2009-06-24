@@ -565,7 +565,7 @@ blend_read_data(MY_FILETYPE* file, BlendFile* bf)
 BlendFile*
 blend_read(MY_FILETYPE* file)
 {
-	char blender_mark[8] = {0,0,0,0, 0,0,0,0};
+	char blender_mark[10] = {0,0,0,0, 0,0,0,0,0,0};
 	BlendFile *bf;
 	long sdnaname_offs, type_offs, tlen_offs, strc_offs, endb_offs;
 	long sdnaname_size, type_size, tlen_size, strc_size;
@@ -575,9 +575,9 @@ blend_read(MY_FILETYPE* file)
 
 	/* Check file signature */
 
-	MY_READ(blender_mark, 1, 7, file);
-	if (strcmp(blender_mark, "BLENDER") != 0) {
-		dprintf(stderr, "Not a Blender file.\n");
+	MY_READ(blender_mark, 1, 9, file);
+	if (strcmp(blender_mark, "BLENDER_v") != 0) {
+		dprintf(stderr, "Not a valid Blender file (.blend file needs to be written on a 32bit little-endian machine)\n");
 		return NULL;
 	}
 

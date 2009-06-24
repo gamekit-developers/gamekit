@@ -688,7 +688,10 @@ int main(int argc,char** argv)
 	//bulletBlendReader.openFile("../../media/jenga_physics_test.blend");
 	if (argc>1)
 	{
-		bulletBlendReader.openFile(argv[1]);
+		if (!bulletBlendReader.openFile(argv[1]))
+		{
+			exit(0);
+		}
 	} else
 	{
 		//bulletBlendReader.openFile("level_2_home.blend");//minilevel_demo_arena7_repacked.blend");
