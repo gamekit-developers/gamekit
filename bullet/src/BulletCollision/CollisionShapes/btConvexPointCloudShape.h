@@ -21,13 +21,21 @@ subject to the following restrictions:
 #include "LinearMath/btAlignedObjectArray.h"
 
 ///The btConvexPointCloudShape implements an implicit convex hull of an array of vertices.
-ATTRIBUTE_ALIGNED16(class) btConvexPointCloudShape : public btPolyhedralConvexShape
+ATTRIBUTE_ALIGNED16(class) btConvexPointCloudShape : public btPolyhedralConvexAabbCachingShape
 {
 	btVector3* m_unscaledPoints;
 	int m_numPoints;
 
 public:
 	BT_DECLARE_ALIGNED_ALLOCATOR();
+
+	btConvexPointCloudShape()
+	{
+		m_localScaling.setValue(1.f,1.f,1.f);
+		m_shapeType = CONVEX_POINT_CLOUD_SHAPE_PROXYTYPE;
+		m_unscaledPoints = 0;
+		m_numPoints = 0;
+	}
 
 	btConvexPointCloudShape(btVector3* points,int numPoints, const btVector3& localScaling,bool computeAabb = true)
 	{
@@ -40,10 +48,11 @@ public:
 			recalcLocalAabb();
 	}
 
-	void setPoints (btVector3* points, int numPoints, bool computeAabb = true)
+	void setPoints (btVector3* points, int numPoints, bool computeAabb = true,const btVector3& localScaling=btVector3(1.f,1.f,1.f))
 	{
 		m_unscaledPoints = points;
 		m_numPoints = numPoints;
+		m_localScaling = localScaling;
 
 		if (computeAabb)
 			recalcLocalAabb();

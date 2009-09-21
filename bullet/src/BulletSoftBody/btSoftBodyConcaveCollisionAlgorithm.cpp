@@ -95,7 +95,7 @@ void btSoftBodyTriangleCallback::processTriangle(btVector3* triangle,int partId,
 	ci.m_dispatcher1 = m_dispatcher;
 
 	///debug drawing of the overlapping triangles
-	if (m_dispatchInfoPtr && m_dispatchInfoPtr->m_debugDraw && m_dispatchInfoPtr->m_debugDraw->getDebugMode() > 0)
+	if (m_dispatchInfoPtr && m_dispatchInfoPtr->m_debugDraw && m_dispatchInfoPtr->m_debugDraw->getDebugMode() &btIDebugDraw::DBG_DrawWireframe)
 	{
 		btVector3 color(255,255,0);
 		btTransform& tr = ob->getWorldTransform();
@@ -168,8 +168,7 @@ void btSoftBodyTriangleCallback::processTriangle(btVector3* triangle,int partId,
 		///this should use the btDispatcher, so the actual registered algorithm is used
 		//		btConvexConvexAlgorithm cvxcvxalgo(m_manifoldPtr,ci,m_convexBody,m_triBody);
 
-		//m_resultOut->setShapeIdentifiers(-1,-1,partId,triangleIndex);
-		//	cvxcvxalgo.setShapeIdentifiers(-1,-1,partId,triangleIndex);
+		//m_resultOut->setShapeIdentifiersB(partId,triangleIndex);
 		//		cvxcvxalgo.processCollision(m_convexBody,m_triBody,*m_dispatchInfoPtr,m_resultOut);
 		colAlgo->processCollision(m_softBody,m_triBody,*m_dispatchInfoPtr,m_resultOut);
 		colAlgo->~btCollisionAlgorithm();
@@ -219,7 +218,7 @@ void btSoftBodyConcaveCollisionAlgorithm::processCollision (btCollisionObject* b
 {
 
 
-	btCollisionObject* convexBody = m_isSwapped ? body1 : body0;
+	//btCollisionObject* convexBody = m_isSwapped ? body1 : body0;
 	btCollisionObject* triBody = m_isSwapped ? body0 : body1;
 
 	if (triBody->getCollisionShape()->isConcave())

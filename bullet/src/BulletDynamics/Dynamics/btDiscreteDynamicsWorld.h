@@ -42,6 +42,8 @@ protected:
 
 	btAlignedObjectArray<btTypedConstraint*> m_constraints;
 
+	btAlignedObjectArray<btRigidBody*> m_nonStaticRigidBodies;
+
 	btVector3	m_gravity;
 
 	//for variable timesteps
@@ -50,6 +52,7 @@ protected:
 
 	bool	m_ownsIslandManager;
 	bool	m_ownsConstraintSolver;
+	bool	m_synchronizeAllMotionStates;
 
 	btAlignedObjectArray<btActionInterface*>	m_actions;
 	
@@ -121,11 +124,16 @@ public:
 
 	virtual btVector3 getGravity () const;
 
+	virtual void	addCollisionObject(btCollisionObject* collisionObject,short int collisionFilterGroup=btBroadphaseProxy::StaticFilter,short int collisionFilterMask=btBroadphaseProxy::AllFilter ^ btBroadphaseProxy::StaticFilter);
+
 	virtual void	addRigidBody(btRigidBody* body);
 
 	virtual void	addRigidBody(btRigidBody* body, short group, short mask);
 
 	virtual void	removeRigidBody(btRigidBody* body);
+
+	///removeCollisionObject will first check if it is a rigid body, if so call removeRigidBody otherwise call btCollisionWorld::removeCollisionObject
+	virtual void	removeCollisionObject(btCollisionObject* collisionObject);
 
 	void	debugDrawObject(const btTransform& worldTransform, const btCollisionShape* shape, const btVector3& color);
 
@@ -174,6 +182,15 @@ public:
 	virtual void	addCharacter(btActionInterface* character);
 	///obsolete, use removeAction instead
 	virtual void	removeCharacter(btActionInterface* character);
+
+	void	setSynchronizeAllMotionStates(bool synchronizeAll)
+	{
+		m_synchronizeAllMotionStates = synchronizeAll;
+	}
+	bool getSynchronizeAllMotionStates() const
+	{
+		return m_synchronizeAllMotionStates;
+	}
 
 };
 

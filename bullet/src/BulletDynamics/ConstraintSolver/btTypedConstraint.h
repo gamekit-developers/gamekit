@@ -19,27 +19,25 @@ subject to the following restrictions:
 class btRigidBody;
 #include "LinearMath/btScalar.h"
 #include "btSolverConstraint.h"
+#include "BulletCollision/NarrowPhaseCollision/btPersistentManifold.h"
 struct  btSolverBody;
-
-
-
 
 enum btTypedConstraintType
 {
-	POINT2POINT_CONSTRAINT_TYPE,
+	POINT2POINT_CONSTRAINT_TYPE=MAX_CONTACT_MANIFOLD_TYPE+1,
 	HINGE_CONSTRAINT_TYPE,
 	CONETWIST_CONSTRAINT_TYPE,
 	D6_CONSTRAINT_TYPE,
-	SLIDER_CONSTRAINT_TYPE
+	SLIDER_CONSTRAINT_TYPE,
+	CONTACT_CONSTRAINT_TYPE
 };
 
 ///TypedConstraint is the baseclass for Bullet constraints and vehicles
-class btTypedConstraint
+class btTypedConstraint : public btTypedObject
 {
 	int	m_userConstraintType;
 	int	m_userConstraintId;
-
-	btTypedConstraintType m_constraintType;
+	bool m_needsFeedback;
 
 	btTypedConstraint&	operator=(btTypedConstraint&	other)
 	{
@@ -54,6 +52,9 @@ protected:
 	btScalar	m_appliedImpulse;
 	btScalar	m_dbgDrawSize;
 
+	btVector3	m_appliedLinearImpulse;
+	btVector3	m_appliedAngularImpulseA;
+	btVector3	m_appliedAngularImpulseB;
 
 public:
 
@@ -93,20 +94,34 @@ public:
 		// note that the returned indexes are relative to the first index of
 		// the constraint.
 		int *findex;
+		// number of solver iterations
+		int m_numIterations;
 	};
 
-
+	///internal method used by the constraint solver, don't use them directly
 	virtual void	buildJacobian() = 0;
 
+	///internal method used by the constraint solver, don't use them directly
 	virtual	void	setupSolverConstraint(btConstraintArray& ca, int solverBodyA,int solverBodyB, btScalar timeStep)
 	{
 	}
+	
+	///internal method used by the constraint solver, don't use them directly
 	virtual void getInfo1 (btConstraintInfo1* info)=0;
 
+	///internal method used by the constraint solver, don't use them directly
 	virtual void getInfo2 (btConstraintInfo2* info)=0;
 
+	///internal method used by the constraint solver, don't use them directly
+	void	internalSetAppliedImpulse(btScalar appliedImpulse)
+	{
+		m_appliedImpulse = appliedImpulse;
+	}
+
+	///internal method used by the constraint solver, don't use them directly
 	virtual	void	solveConstraintObsolete(btSolverBody& bodyA,btSolverBody& bodyB,btScalar	timeStep) = 0;
 
+	///internal method used by the constraint solver, don't use them directly
 	btScalar getMotorFactor(btScalar pos, btScalar lowLim, btScalar uppLim, btScalar vel, btScalar timeFact);
 	
 	const btRigidBody& getRigidBodyA() const
@@ -152,14 +167,67 @@ public:
 		return m_userConstraintId;   
 	} 
 
+	bool	needsFeedback() const
+	{
+		return m_needsFeedback;
+	}
+
+	///enableFeedback will allow to read the applied linear and angular impulse
+	///use getAppliedImpulse, getAppliedLinearImpulse and getAppliedAngularImpulse to read feedback information
+	void	enableFeedback(bool needsFeedback)
+	{
+		m_needsFeedback = needsFeedback;
+	}
+
+	///getAppliedImpulse is an estimated total applied impulse. 
+	///This feedback could be used to determine breaking constraints or playing sounds.
 	btScalar	getAppliedImpulse() const
 	{
+		btAssert(m_needsFeedback);
 		return m_appliedImpulse;
 	}
 
+	const btVector3& getAppliedLinearImpulse() const
+	{
+		btAssert(m_needsFeedback);
+		return m_appliedLinearImpulse;
+	}
+
+	btVector3& getAppliedLinearImpulse()
+	{
+		btAssert(m_needsFeedback);
+		return m_appliedLinearImpulse;
+	}
+
+	const btVector3& getAppliedAngularImpulseA() const
+	{
+		btAssert(m_needsFeedback);
+		return m_appliedAngularImpulseA;
+	}
+
+	btVector3& getAppliedAngularImpulseA()
+	{
+		btAssert(m_needsFeedback);
+		return m_appliedAngularImpulseA;
+	}
+
+	const btVector3& getAppliedAngularImpulseB() const
+	{
+		btAssert(m_needsFeedback);
+		return m_appliedAngularImpulseB;
+	}
+
+	btVector3& getAppliedAngularImpulseB()
+	{
+		btAssert(m_needsFeedback);
+		return m_appliedAngularImpulseB;
+	}
+
+	
+
 	btTypedConstraintType getConstraintType () const
 	{
-		return m_constraintType;
+		return btTypedConstraintType(m_objectType);
 	}
 	
 	void setDbgDrawSize(btScalar dbgDrawSize)
@@ -172,5 +240,32 @@ public:
 	}
 	
 };
+
+// returns angle in range [-SIMD_2_PI, SIMD_2_PI], closest to one of the limits 
+// all arguments should be normalized angles (i.e. in range [-SIMD_PI, SIMD_PI])
+SIMD_FORCE_INLINE btScalar btAdjustAngleToLimits(btScalar angleInRadians, btScalar angleLowerLimitInRadians, btScalar angleUpperLimitInRadians)
+{
+	if(angleLowerLimitInRadians >= angleUpperLimitInRadians)
+	{
+		return angleInRadians;
+	}
+	else if(angleInRadians < angleLowerLimitInRadians)
+	{
+		btScalar diffLo = btNormalizeAngle(angleLowerLimitInRadians - angleInRadians); // this is positive
+		btScalar diffHi = btFabs(btNormalizeAngle(angleUpperLimitInRadians - angleInRadians));
+		return (diffLo < diffHi) ? angleInRadians : (angleInRadians + SIMD_2_PI);
+	}
+	else if(angleInRadians > angleUpperLimitInRadians)
+	{
+		btScalar diffHi = btNormalizeAngle(angleInRadians - angleUpperLimitInRadians); // this is positive
+		btScalar diffLo = btFabs(btNormalizeAngle(angleInRadians - angleLowerLimitInRadians));
+		return (diffLo < diffHi) ? (angleInRadians - SIMD_2_PI) : angleInRadians;
+	}
+	else
+	{
+		return angleInRadians;
+	}
+}
+
 
 #endif //TYPED_CONSTRAINT_H

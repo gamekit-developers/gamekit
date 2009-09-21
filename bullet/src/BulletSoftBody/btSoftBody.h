@@ -110,9 +110,10 @@ public:
 		SDF_RS	=	0x0001,	///SDF based rigid vs soft
 		CL_RS	=	0x0002, ///Cluster vs convex rigid vs soft
 
-		SVSmask	=	0x00f0,	///Rigid versus soft mask		
+		SVSmask	=	0x0030,	///Rigid versus soft mask		
 		VF_SS	=	0x0010,	///Vertex vs face soft vs soft handling
 		CL_SS	=	0x0020, ///Cluster vs cluster soft vs soft handling
+		CL_SELF =	0x0040, ///Cluster soft body self collision
 		/* presets	*/ 
 		Default	=	SDF_RS,
 		END
@@ -220,6 +221,16 @@ public:
 		btScalar				m_ra;			// Rest area
 		btDbvtNode*				m_leaf;			// Leaf data
 	};
+	/* Tetra		*/ 
+	struct	Tetra : Feature
+	{
+		Node*					m_n[4];			// Node pointers		
+		btScalar				m_rv;			// Rest volume
+		btDbvtNode*				m_leaf;			// Leaf data
+		btVector3				m_c0[4];		// gradients
+		btScalar				m_c1;			// (4*kVST)/(im0+im1+im2+im3)
+		btScalar				m_c2;			// m_c1/sum(|g0..3|^2)
+	};
 	/* RContact		*/ 
 	struct	RContact
 	{
@@ -297,9 +308,16 @@ public:
 		btScalar					m_ldamping;	/* Linear damping	*/ 
 		btScalar					m_adamping;	/* Angular damping	*/ 
 		btScalar					m_matching;
+		btScalar					m_maxSelfCollisionImpulse;
+		btScalar					m_selfCollisionImpulseFactor;
+		bool						m_containsAnchor;
 		bool						m_collide;
 		int							m_clusterIndex;
-		Cluster() : m_leaf(0),m_ndamping(0),m_ldamping(0),m_adamping(0),m_matching(0) {}
+		Cluster() : m_leaf(0),m_ndamping(0),m_ldamping(0),m_adamping(0),m_matching(0) 
+		,m_maxSelfCollisionImpulse(100.f),
+		m_selfCollisionImpulseFactor(0.01f),
+		m_containsAnchor(false)
+		{}
 	};
 	/* Impulse		*/ 
 	struct	Impulse
@@ -370,8 +388,8 @@ public:
 		}
 		btVector3					angularVelocity(const btVector3& rpos) const
 		{			
-			if(m_rigid) return(cross(m_rigid->getAngularVelocity(),rpos));
-			if(m_soft)	return(cross(m_soft->m_av,rpos));
+			if(m_rigid) return(btCross(m_rigid->getAngularVelocity(),rpos));
+			if(m_soft)	return(btCross(m_soft->m_av,rpos));
 			return(btVector3(0,0,0));
 		}
 		btVector3					angularVelocity() const
@@ -396,8 +414,16 @@ public:
 		}		
 		void						applyImpulse(const Impulse& impulse,const btVector3& rpos) const
 		{
-			if(impulse.m_asVelocity)	applyVImpulse(impulse.m_velocity,rpos);
-			if(impulse.m_asDrift)		applyDImpulse(impulse.m_drift,rpos);
+			if(impulse.m_asVelocity)	
+			{
+//				printf("impulse.m_velocity = %f,%f,%f\n",impulse.m_velocity.getX(),impulse.m_velocity.getY(),impulse.m_velocity.getZ());
+				applyVImpulse(impulse.m_velocity,rpos);
+			}
+			if(impulse.m_asDrift)		
+			{
+//				printf("impulse.m_drift = %f,%f,%f\n",impulse.m_drift.getX(),impulse.m_drift.getY(),impulse.m_drift.getZ());
+				applyDImpulse(impulse.m_drift,rpos);
+			}
 		}
 		void						applyVAImpulse(const btVector3& impulse) const
 		{
@@ -574,6 +600,7 @@ public:
 	typedef btAlignedObjectArray<btDbvtNode*>	tLeafArray;
 	typedef btAlignedObjectArray<Link>			tLinkArray;
 	typedef btAlignedObjectArray<Face>			tFaceArray;
+	typedef btAlignedObjectArray<Tetra>			tTetraArray;
 	typedef btAlignedObjectArray<Anchor>		tAnchorArray;
 	typedef btAlignedObjectArray<RContact>		tRContactArray;
 	typedef btAlignedObjectArray<SContact>		tSContactArray;
@@ -594,6 +621,7 @@ public:
 	tNodeArray				m_nodes;		// Nodes
 	tLinkArray				m_links;		// Links
 	tFaceArray				m_faces;		// Faces
+	tTetraArray				m_tetras;		// Tetras
 	tAnchorArray			m_anchors;		// Anchors
 	tRContactArray			m_rcontacts;	// Rigid contacts
 	tSContactArray			m_scontacts;	// Soft contacts
@@ -681,6 +709,15 @@ public:
 		int node1,
 		int node2,
 		Material* mat=0);
+	void			appendTetra(int model,Material* mat);
+	//
+	void			appendTetra(int node0,
+										int node1,
+										int node2,
+										int node3,
+										Material* mat=0);
+
+
 	/* Append anchor														*/ 
 	void				appendAnchor(	int node,
 		btRigidBody* body, bool disableCollisionBetweenLinkedBodies=false);
@@ -718,6 +755,10 @@ public:
 		bool fromfaces=false);
 	/* Set total density													*/ 
 	void				setTotalDensity(btScalar density);
+	/* Set volume mass (using tetrahedrons)									*/
+	void				setVolumeMass(		btScalar mass);
+	/* Set volume density (using tetrahedrons)								*/
+	void				setVolumeDensity(	btScalar density);
 	/* Transform															*/ 
 	void				transform(		const btTransform& trs);
 	/* Translate															*/ 
@@ -755,6 +796,8 @@ public:
 	void				releaseCluster(int index);
 	void				releaseClusters();
 	/* Generate clusters (K-mean)											*/ 
+	///generateClusters with k=0 will create a convex cluster for each tetrahedron or triangle
+	///otherwise an approximation will be used (better performance)
 	int					generateClusters(int k,int maxiterations=8192);
 	/* Refine																*/ 
 	void				refine(ImplicitFn* ifn,btScalar accurary,bool cut);

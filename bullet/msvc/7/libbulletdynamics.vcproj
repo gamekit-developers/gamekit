@@ -99,6 +99,7 @@
                                 Optimization="2"
                                 StringPooling="TRUE"
                                 EnableFunctionLevelLinking="TRUE"
+                                FloatingPointModel="2"
                                 RuntimeLibrary="2"
                                 DebugInformationFormat="3"
                                 BufferSecurityCheck="FALSE"
@@ -317,6 +318,9 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				LinkIncremental="2"
+				GenerateDebugInformation="TRUE"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD"
 				AdditionalOptions=" "
 				AdditionalDependencies=""
 				IgnoreImportLibrary="TRUE"
@@ -383,6 +387,9 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				LinkIncremental="2"
+				GenerateDebugInformation="TRUE"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD"
 				AdditionalOptions=" "
 				AdditionalDependencies=""
 				IgnoreImportLibrary="TRUE"
@@ -435,6 +442,12 @@
 				RelativePath="..\..\src\BulletDynamics\ConstraintSolver\btGeneric6DofConstraint.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\BulletDynamics\ConstraintSolver\btGeneric6DofSpringConstraint.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\BulletDynamics\ConstraintSolver\btHinge2Constraint.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\BulletDynamics\ConstraintSolver\btHingeConstraint.cpp">
 			</File>
 			<File
@@ -451,6 +464,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\BulletDynamics\ConstraintSolver\btTypedConstraint.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\BulletDynamics\ConstraintSolver\btUniversalConstraint.cpp">
 			</File>
 			<File
 				RelativePath="..\..\src\BulletDynamics\Dynamics\btContinuousDynamicsWorld.cpp">
@@ -499,6 +515,12 @@
 				RelativePath="..\..\src\BulletDynamics\ConstraintSolver\btGeneric6DofConstraint.h">
 			</File>
 			<File
+				RelativePath="..\..\src\BulletDynamics\ConstraintSolver\btGeneric6DofSpringConstraint.h">
+			</File>
+			<File
+				RelativePath="..\..\src\BulletDynamics\ConstraintSolver\btHinge2Constraint.h">
+			</File>
+			<File
 				RelativePath="..\..\src\BulletDynamics\ConstraintSolver\btHingeConstraint.h">
 			</File>
 			<File
@@ -524,6 +546,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\BulletDynamics\ConstraintSolver\btTypedConstraint.h">
+			</File>
+			<File
+				RelativePath="..\..\src\BulletDynamics\ConstraintSolver\btUniversalConstraint.h">
 			</File>
 			<File
 				RelativePath="..\..\src\BulletDynamics\Dynamics\btActionInterface.h">

@@ -684,8 +684,7 @@ int main(int argc,char** argv)
 //#endif //SWAP_COORDINATE_SYSTEMS
 
 	IrrlichtBulletBlendReader	bulletBlendReader(smgr,physicsWorld);
-	//bulletBlendReader.openFile("../../media/AlternatingBrick.blend");//jenga_physics_test.blend");
-	//bulletBlendReader.openFile("../../media/jenga_physics_test.blend");
+	
 	if (argc>1)
 	{
 		if (!bulletBlendReader.openFile(argv[1]))
@@ -694,13 +693,8 @@ int main(int argc,char** argv)
 		}
 	} else
 	{
-		//bulletBlendReader.openFile("level_2_home.blend");//minilevel_demo_arena7_repacked.blend");
-		//bulletBlendReader.openFile("island2.blend");//minilevel_demo_arena7_repacked.blend");
-		//bulletBlendReader.openFile("../../media/jenga_physics_test.blend");
-		//bulletBlendReader.openFile("../../bin/Win32-VisualStudio/level_2_home.blend");
-		//if (!bulletBlendReader.openFile("0_FPS_Template.blend"))
 		if (!bulletBlendReader.openFile("PhysicsAnimationBakingDemo.blend"))
-			
+		//if (!bulletBlendReader.openFile("clubsilo_packed.blend"))
 		{
 			printf("trying again with different path\n");
 			//if (!bulletBlendReader.openFile("../../bin/Win32-VisualStudio/PhysicsAnimationBakingDemo.blend"))

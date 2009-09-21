@@ -18,12 +18,12 @@ subject to the following restrictions:
 #include "BulletCollision/BroadphaseCollision/btDbvt.h"
 
 btCompoundShape::btCompoundShape(bool enableDynamicAabbTree)
-: m_localAabbMin(btScalar(1e30),btScalar(1e30),btScalar(1e30)),
-m_localAabbMax(btScalar(-1e30),btScalar(-1e30),btScalar(-1e30)),
-m_collisionMargin(btScalar(0.)),
-m_localScaling(btScalar(1.),btScalar(1.),btScalar(1.)),
+: m_localAabbMin(btScalar(BT_LARGE_FLOAT),btScalar(BT_LARGE_FLOAT),btScalar(BT_LARGE_FLOAT)),
+m_localAabbMax(btScalar(-BT_LARGE_FLOAT),btScalar(-BT_LARGE_FLOAT),btScalar(-BT_LARGE_FLOAT)),
 m_dynamicAabbTree(0),
-m_updateRevision(1)
+m_updateRevision(1),
+m_collisionMargin(btScalar(0.)),
+m_localScaling(btScalar(1.),btScalar(1.),btScalar(1.))
 {
 	m_shapeType = COMPOUND_SHAPE_PROXYTYPE;
 
@@ -93,7 +93,7 @@ void	btCompoundShape::updateChildTransform(int childIndex, const btTransform& ne
 		btVector3 localAabbMin,localAabbMax;
 		m_children[childIndex].m_childShape->getAabb(newChildTransform,localAabbMin,localAabbMax);
 		ATTRIBUTE_ALIGNED16(btDbvtVolume)	bounds=btDbvtVolume::FromMM(localAabbMin,localAabbMax);
-		int index = m_children.size()-1;
+		//int index = m_children.size()-1;
 		m_dynamicAabbTree->update(m_children[childIndex].m_node,bounds);
 	}
 
@@ -138,8 +138,8 @@ void btCompoundShape::recalculateLocalAabb()
 	// Recalculate the local aabb
 	// Brute force, it iterates over all the shapes left.
 
-	m_localAabbMin = btVector3(btScalar(1e30),btScalar(1e30),btScalar(1e30));
-	m_localAabbMax = btVector3(btScalar(-1e30),btScalar(-1e30),btScalar(-1e30));
+	m_localAabbMin = btVector3(btScalar(BT_LARGE_FLOAT),btScalar(BT_LARGE_FLOAT),btScalar(BT_LARGE_FLOAT));
+	m_localAabbMax = btVector3(btScalar(-BT_LARGE_FLOAT),btScalar(-BT_LARGE_FLOAT),btScalar(-BT_LARGE_FLOAT));
 
 	//extend the local aabbMin/aabbMax
 	for (int j = 0; j < m_children.size(); j++)

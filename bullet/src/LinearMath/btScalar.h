@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2003-2006 Gino van den Bergen / Erwin Coumans  http://continuousphysics.com/Bullet/
+Copyright (c) 2003-2009 Erwin Coumans  http://bullet.googlecode.com
 
 This software is provided 'as-is', without any express or implied warranty.
 In no event will the authors be held liable for any damages arising from the use of this software.
@@ -18,13 +18,12 @@ subject to the following restrictions:
 #define SIMD___SCALAR_H
 
 #include <math.h>
-
 #include <stdlib.h>//size_t for MSVC 6.0
-
 #include <cstdlib>
 #include <cfloat>
 #include <float.h>
 
+/* SVN $Revision$ on $Date$ from http://bullet.googlecode.com*/
 #define BT_BULLET_VERSION 275
 
 inline int	btGetVersion()
@@ -129,6 +128,31 @@ inline int	btGetVersion()
 #else
 	//non-windows systems
 
+#if (defined (__APPLE__) && defined (__i386__) && (!defined (BT_USE_DOUBLE_PRECISION)))
+	#define BT_USE_SSE
+	#include <emmintrin.h>
+
+	#define SIMD_FORCE_INLINE inline
+///@todo: check out alignment methods for other platforms/compilers
+	#define ATTRIBUTE_ALIGNED16(a) a __attribute__ ((aligned (16)))
+	#define ATTRIBUTE_ALIGNED128(a) a __attribute__ ((aligned (128)))
+	#ifndef assert
+	#include <assert.h>
+	#endif
+
+	#if defined(DEBUG) || defined (_DEBUG)
+		#define btAssert assert
+	#else
+		#define btAssert(x)
+	#endif
+
+	//btFullAssert is optional, slows down a lot
+	#define btFullAssert(x)
+	#define btLikely(_c)  _c
+	#define btUnlikely(_c) _c
+
+#else
+
 		#define SIMD_FORCE_INLINE inline
 		///@todo: check out alignment methods for other platforms/compilers
 		///#define ATTRIBUTE_ALIGNED16(a) a __attribute__ ((aligned (16)))
@@ -149,27 +173,23 @@ inline int	btGetVersion()
 		#define btFullAssert(x)
 		#define btLikely(_c)  _c
 		#define btUnlikely(_c) _c
-
+#endif //__APPLE__ 
 
 #endif // LIBSPE2
 
 #endif	//__CELLOS_LV2__
 #endif
 
-/// older compilers (gcc 3.x) and Sun needs double version of sqrt etc.
-/// exclude Apple Intel (i's assumed to be a Macbook or new Intel Dual Core Processor)
-#if defined (__sun) || defined (__sun__) || defined (__sparc) || (defined (__APPLE__) && ! defined (__i386__))
-//use slow double float precision operation on those platforms
-#ifndef BT_USE_DOUBLE_PRECISION
-#define BT_FORCE_DOUBLE_FUNCTIONS
-#endif
-#endif
 
 ///The btScalar type abstracts floating point numbers, to easily switch between double and single floating point precision.
 #if defined(BT_USE_DOUBLE_PRECISION)
 typedef double btScalar;
+//this number could be bigger in double precision
+#define BT_LARGE_FLOAT 1e30
 #else
 typedef float btScalar;
+//keep BT_LARGE_FLOAT*BT_LARGE_FLOAT < FLT_MAX
+#define BT_LARGE_FLOAT 1e18f
 #endif
 
 
@@ -200,6 +220,7 @@ SIMD_FORCE_INLINE btScalar btAtan2(btScalar x, btScalar y) { return atan2(x, y);
 SIMD_FORCE_INLINE btScalar btExp(btScalar x) { return exp(x); }
 SIMD_FORCE_INLINE btScalar btLog(btScalar x) { return log(x); }
 SIMD_FORCE_INLINE btScalar btPow(btScalar x,btScalar y) { return pow(x,y); }
+SIMD_FORCE_INLINE btScalar btFmod(btScalar x,btScalar y) { return fmod(x,y); }
 
 #else
 		
@@ -237,6 +258,7 @@ SIMD_FORCE_INLINE btScalar btAtan2(btScalar x, btScalar y) { return atan2f(x, y)
 SIMD_FORCE_INLINE btScalar btExp(btScalar x) { return expf(x); }
 SIMD_FORCE_INLINE btScalar btLog(btScalar x) { return logf(x); }
 SIMD_FORCE_INLINE btScalar btPow(btScalar x,btScalar y) { return powf(x,y); }
+SIMD_FORCE_INLINE btScalar btFmod(btScalar x,btScalar y) { return fmodf(x,y); }
 	
 #endif
 
@@ -245,6 +267,10 @@ SIMD_FORCE_INLINE btScalar btPow(btScalar x,btScalar y) { return powf(x,y); }
 #define SIMD_HALF_PI      (SIMD_2_PI * btScalar(0.25))
 #define SIMD_RADS_PER_DEG (SIMD_2_PI / btScalar(360.0))
 #define SIMD_DEGS_PER_RAD  (btScalar(360.0) / SIMD_2_PI)
+#define SIMDSQRT12 btScalar(0.7071067811865475244008443621048490)
+
+#define btRecipSqrt(x) ((btScalar)(btScalar(1.0)/btSqrt(btScalar(x))))		/* reciprocal square root */
+
 
 #ifdef BT_USE_DOUBLE_PRECISION
 #define SIMD_EPSILON      DBL_EPSILON
@@ -435,5 +461,35 @@ SIMD_FORCE_INLINE double btUnswapEndianDouble(const unsigned char *src)
 	return d;
 }
 
+// returns normalized value in range [-SIMD_PI, SIMD_PI]
+SIMD_FORCE_INLINE btScalar btNormalizeAngle(btScalar angleInRadians) 
+{
+	angleInRadians = btFmod(angleInRadians, SIMD_2_PI);
+	if(angleInRadians < -SIMD_PI)
+	{
+		return angleInRadians + SIMD_2_PI;
+	}
+	else if(angleInRadians > SIMD_PI)
+	{
+		return angleInRadians - SIMD_2_PI;
+	}
+	else
+	{
+		return angleInRadians;
+	}
+}
 
+///rudimentary class to provide type info
+struct btTypedObject
+{
+	btTypedObject(int objectType)
+		:m_objectType(objectType)
+	{
+	}
+	int	m_objectType;
+	inline int getObjectType() const
+	{
+		return m_objectType;
+	}
+};
 #endif //SIMD___SCALAR_H

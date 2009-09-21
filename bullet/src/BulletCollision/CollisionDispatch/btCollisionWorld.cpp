@@ -45,7 +45,8 @@ subject to the following restrictions:
 btCollisionWorld::btCollisionWorld(btDispatcher* dispatcher,btBroadphaseInterface* pairCache, btCollisionConfiguration* collisionConfiguration)
 :m_dispatcher1(dispatcher),
 m_broadphasePairCache(pairCache),
-m_debugDrawer(0)
+m_debugDrawer(0),
+m_forceUpdateAllAabbs(true)
 {
 	m_stackAlloc = collisionConfiguration->getStackAllocator();
 	m_dispatchInfo.m_stackAllocator = m_stackAlloc;
@@ -87,6 +88,8 @@ btCollisionWorld::~btCollisionWorld()
 
 void	btCollisionWorld::addCollisionObject(btCollisionObject* collisionObject,short int collisionFilterGroup,short int collisionFilterMask)
 {
+
+	btAssert(collisionObject);
 
 	//check that the object isn't already added
 		btAssert( m_collisionObjects.findLinearSearch(collisionObject)  == m_collisionObjects.size());
@@ -162,7 +165,7 @@ void	btCollisionWorld::updateAabbs()
 		btCollisionObject* colObj = m_collisionObjects[i];
 
 		//only update aabb of active objects
-		if (colObj->isActive())
+		if (m_forceUpdateAllAabbs || colObj->isActive())
 		{
 			updateSingleAabb(colObj);
 		}
@@ -296,13 +299,16 @@ void	btCollisionWorld::rayTestSingle(const btTransform& rayFromTrans,const btTra
 					btCollisionObject*	m_collisionObject;
 					btTriangleMeshShape*	m_triangleMesh;
 
+               btTransform m_colObjWorldTransform;
+
 					BridgeTriangleRaycastCallback( const btVector3& from,const btVector3& to,
-						btCollisionWorld::RayResultCallback* resultCallback, btCollisionObject* collisionObject,btTriangleMeshShape*	triangleMesh):
+						btCollisionWorld::RayResultCallback* resultCallback, btCollisionObject* collisionObject,btTriangleMeshShape*	triangleMesh,const btTransform& colObjWorldTransform):
                   //@BP Mod
 						btTriangleRaycastCallback(from,to, resultCallback->m_flags),
 							m_resultCallback(resultCallback),
 							m_collisionObject(collisionObject),
-							m_triangleMesh(triangleMesh)
+							m_triangleMesh(triangleMesh),
+                     m_colObjWorldTransform(colObjWorldTransform)
 						{
 						}
 
@@ -313,19 +319,21 @@ void	btCollisionWorld::rayTestSingle(const btTransform& rayFromTrans,const btTra
 						shapeInfo.m_shapePart = partId;
 						shapeInfo.m_triangleIndex = triangleIndex;
 
+                  btVector3 hitNormalWorld = m_colObjWorldTransform.getBasis() * hitNormalLocal;
+
 						btCollisionWorld::LocalRayResult rayResult
 						(m_collisionObject,
 							&shapeInfo,
-							hitNormalLocal,
+							hitNormalWorld,
 							hitFraction);
 
-						bool	normalInWorldSpace = false;
+						bool	normalInWorldSpace = true;
 						return m_resultCallback->addSingleResult(rayResult,normalInWorldSpace);
 					}
 
 				};
 
-				BridgeTriangleRaycastCallback rcb(rayFromLocal,rayToLocal,&resultCallback,collisionObject,triangleMesh);
+				BridgeTriangleRaycastCallback rcb(rayFromLocal,rayToLocal,&resultCallback,collisionObject,triangleMesh,colObjWorldTransform);
 				rcb.m_hitFraction = resultCallback.m_closestHitFraction;
 				triangleMesh->performRaycast(&rcb,rayFromLocal,rayToLocal);
 			} else
@@ -346,13 +354,16 @@ void	btCollisionWorld::rayTestSingle(const btTransform& rayFromTrans,const btTra
 					btCollisionObject*	m_collisionObject;
 					btConcaveShape*	m_triangleMesh;
 
+               btTransform m_colObjWorldTransform;
+
 					BridgeTriangleRaycastCallback( const btVector3& from,const btVector3& to,
-						btCollisionWorld::RayResultCallback* resultCallback, btCollisionObject* collisionObject,btConcaveShape*	triangleMesh):
+						btCollisionWorld::RayResultCallback* resultCallback, btCollisionObject* collisionObject,btConcaveShape*	triangleMesh, const btTransform& colObjWorldTransform):
                   //@BP Mod
                   btTriangleRaycastCallback(from,to, resultCallback->m_flags),
 							m_resultCallback(resultCallback),
 							m_collisionObject(collisionObject),
-							m_triangleMesh(triangleMesh)
+							m_triangleMesh(triangleMesh),
+                     m_colObjWorldTransform(colObjWorldTransform)
 						{
 						}
 
@@ -363,22 +374,22 @@ void	btCollisionWorld::rayTestSingle(const btTransform& rayFromTrans,const btTra
 						shapeInfo.m_shapePart = partId;
 						shapeInfo.m_triangleIndex = triangleIndex;
 
+                  btVector3 hitNormalWorld = m_colObjWorldTransform.getBasis() * hitNormalLocal;
+
 						btCollisionWorld::LocalRayResult rayResult
 						(m_collisionObject,
 							&shapeInfo,
-							hitNormalLocal,
+							hitNormalWorld,
 							hitFraction);
 
-						bool	normalInWorldSpace = false;
+						bool	normalInWorldSpace = true;
 						return m_resultCallback->addSingleResult(rayResult,normalInWorldSpace);
-
-
 					}
 
 				};
 
 
-				BridgeTriangleRaycastCallback	rcb(rayFromLocal,rayToLocal,&resultCallback,collisionObject,concaveShape);
+				BridgeTriangleRaycastCallback	rcb(rayFromLocal,rayToLocal,&resultCallback,collisionObject,concaveShape, colObjWorldTransform);
 				rcb.m_hitFraction = resultCallback.m_closestHitFraction;
 
 				btVector3 rayAabbMinLocal = rayFromLocal;
@@ -643,10 +654,10 @@ struct btSingleRayCallback : public btBroadphaseRayCallback
 		btVector3 rayDir = (rayToWorld-rayFromWorld);
 
 		rayDir.normalize ();
-		///what about division by zero? --> just set rayDirection[i] to INF/1e30
-		m_rayDirectionInverse[0] = rayDir[0] == btScalar(0.0) ? btScalar(1e30) : btScalar(1.0) / rayDir[0];
-		m_rayDirectionInverse[1] = rayDir[1] == btScalar(0.0) ? btScalar(1e30) : btScalar(1.0) / rayDir[1];
-		m_rayDirectionInverse[2] = rayDir[2] == btScalar(0.0) ? btScalar(1e30) : btScalar(1.0) / rayDir[2];
+		///what about division by zero? --> just set rayDirection[i] to INF/BT_LARGE_FLOAT
+		m_rayDirectionInverse[0] = rayDir[0] == btScalar(0.0) ? btScalar(BT_LARGE_FLOAT) : btScalar(1.0) / rayDir[0];
+		m_rayDirectionInverse[1] = rayDir[1] == btScalar(0.0) ? btScalar(BT_LARGE_FLOAT) : btScalar(1.0) / rayDir[1];
+		m_rayDirectionInverse[2] = rayDir[2] == btScalar(0.0) ? btScalar(BT_LARGE_FLOAT) : btScalar(1.0) / rayDir[2];
 		m_signs[0] = m_rayDirectionInverse[0] < 0.0;
 		m_signs[1] = m_rayDirectionInverse[1] < 0.0;
 		m_signs[2] = m_rayDirectionInverse[2] < 0.0;
@@ -697,7 +708,7 @@ struct btSingleRayCallback : public btBroadphaseRayCallback
 
 void	btCollisionWorld::rayTest(const btVector3& rayFromWorld, const btVector3& rayToWorld, RayResultCallback& resultCallback) const
 {
-	BT_PROFILE("rayTest");
+	//BT_PROFILE("rayTest");
 	/// use the broadphase to accelerate the search for objects, based on their aabb
 	/// and for each object with ray-aabb overlap, perform an exact ray test
 	btSingleRayCallback rayCB(rayFromWorld,rayToWorld,this,resultCallback);
@@ -736,10 +747,10 @@ struct btSingleSweepCallback : public btBroadphaseRayCallback
 	{
 		btVector3 unnormalizedRayDir = (m_convexToTrans.getOrigin()-m_convexFromTrans.getOrigin());
 		btVector3 rayDir = unnormalizedRayDir.normalized();
-		///what about division by zero? --> just set rayDirection[i] to INF/1e30
-		m_rayDirectionInverse[0] = rayDir[0] == btScalar(0.0) ? btScalar(1e30) : btScalar(1.0) / rayDir[0];
-		m_rayDirectionInverse[1] = rayDir[1] == btScalar(0.0) ? btScalar(1e30) : btScalar(1.0) / rayDir[1];
-		m_rayDirectionInverse[2] = rayDir[2] == btScalar(0.0) ? btScalar(1e30) : btScalar(1.0) / rayDir[2];
+		///what about division by zero? --> just set rayDirection[i] to INF/BT_LARGE_FLOAT
+		m_rayDirectionInverse[0] = rayDir[0] == btScalar(0.0) ? btScalar(BT_LARGE_FLOAT) : btScalar(1.0) / rayDir[0];
+		m_rayDirectionInverse[1] = rayDir[1] == btScalar(0.0) ? btScalar(BT_LARGE_FLOAT) : btScalar(1.0) / rayDir[1];
+		m_rayDirectionInverse[2] = rayDir[2] == btScalar(0.0) ? btScalar(BT_LARGE_FLOAT) : btScalar(1.0) / rayDir[2];
 		m_signs[0] = m_rayDirectionInverse[0] < 0.0;
 		m_signs[1] = m_rayDirectionInverse[1] < 0.0;
 		m_signs[2] = m_rayDirectionInverse[2] < 0.0;

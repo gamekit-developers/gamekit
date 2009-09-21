@@ -31,14 +31,11 @@ ATTRIBUTE_ALIGNED16(class) btVector3
 public:
 
 #if defined (__SPU__) && defined (__CELLOS_LV2__)
-	union {
-		vec_float4 mVec128;
 		btScalar	m_floats[4];
-	};
 public:
-	vec_float4	get128() const
+	SIMD_FORCE_INLINE const vec_float4&	get128() const
 	{
-		return mVec128;
+		return *((const vec_float4*)&m_floats[0]);
 	}
 public:
 #else //__CELLOS_LV2__ __SPU__
@@ -306,7 +303,7 @@ public:
 			m_floats[0]=x;
 			m_floats[1]=y;
 			m_floats[2]=z;
-			m_floats[3] = 0.f;
+			m_floats[3] = btScalar(0.);
 		}
 
 		void	getSkewSymmetricMatrix(btVector3* v0,btVector3* v1,btVector3* v2) const
@@ -314,6 +311,11 @@ public:
 			v0->setValue(0.		,-z()		,y());
 			v1->setValue(z()	,0.			,-x());
 			v2->setValue(-y()	,x()	,0.);
+		}
+
+		void	setZero()
+		{
+			setValue(btScalar(0.),btScalar(0.),btScalar(0.));
 		}
 
 };
@@ -376,7 +378,7 @@ operator/(const btVector3& v1, const btVector3& v2)
 
 /**@brief Return the dot product between two vectors */
 SIMD_FORCE_INLINE btScalar 
-dot(const btVector3& v1, const btVector3& v2) 
+btDot(const btVector3& v1, const btVector3& v2) 
 { 
 	return v1.dot(v2); 
 }
@@ -384,7 +386,7 @@ dot(const btVector3& v1, const btVector3& v2)
 
 /**@brief Return the distance squared between two vectors */
 SIMD_FORCE_INLINE btScalar
-distance2(const btVector3& v1, const btVector3& v2) 
+btDistance2(const btVector3& v1, const btVector3& v2) 
 { 
 	return v1.distance2(v2); 
 }
@@ -392,27 +394,27 @@ distance2(const btVector3& v1, const btVector3& v2)
 
 /**@brief Return the distance between two vectors */
 SIMD_FORCE_INLINE btScalar
-distance(const btVector3& v1, const btVector3& v2) 
+btDistance(const btVector3& v1, const btVector3& v2) 
 { 
 	return v1.distance(v2); 
 }
 
 /**@brief Return the angle between two vectors */
 SIMD_FORCE_INLINE btScalar
-angle(const btVector3& v1, const btVector3& v2) 
+btAngle(const btVector3& v1, const btVector3& v2) 
 { 
 	return v1.angle(v2); 
 }
 
 /**@brief Return the cross product of two vectors */
 SIMD_FORCE_INLINE btVector3 
-cross(const btVector3& v1, const btVector3& v2) 
+btCross(const btVector3& v1, const btVector3& v2) 
 { 
 	return v1.cross(v2); 
 }
 
 SIMD_FORCE_INLINE btScalar
-triple(const btVector3& v1, const btVector3& v2, const btVector3& v3)
+btTriple(const btVector3& v1, const btVector3& v2, const btVector3& v3)
 {
 	return v1.triple(v2, v3);
 }
@@ -488,7 +490,7 @@ public:
 		SIMD_FORCE_INLINE int maxAxis4() const
 	{
 		int maxIndex = -1;
-		btScalar maxVal = btScalar(-1e30);
+		btScalar maxVal = btScalar(-BT_LARGE_FLOAT);
 		if (m_floats[0] > maxVal)
 		{
 			maxIndex = 0;
@@ -521,7 +523,7 @@ public:
 	SIMD_FORCE_INLINE int minAxis4() const
 	{
 		int minIndex = -1;
-		btScalar minVal = btScalar(1e30);
+		btScalar minVal = btScalar(BT_LARGE_FLOAT);
 		if (m_floats[0] < minVal)
 		{
 			minIndex = 0;
@@ -633,6 +635,26 @@ SIMD_FORCE_INLINE void	btUnSwapVector3Endian(btVector3& vector)
 		btSwapScalarEndian(vector[i],swappedVec[i]);
 	}
 	vector = swappedVec;
+}
+
+SIMD_FORCE_INLINE void btPlaneSpace1 (const btVector3& n, btVector3& p, btVector3& q)
+{
+  if (btFabs(n.z()) > SIMDSQRT12) {
+    // choose p in y-z plane
+    btScalar a = n[1]*n[1] + n[2]*n[2];
+    btScalar k = btRecipSqrt (a);
+    p.setValue(0,-n[2]*k,n[1]*k);
+    // set q = n x p
+    q.setValue(a*k,-n[0]*p[2],n[0]*p[1]);
+  }
+  else {
+    // choose p in x-y plane
+    btScalar a = n.x()*n.x() + n.y()*n.y();
+    btScalar k = btRecipSqrt (a);
+    p.setValue(-n.y()*k,n.x()*k,0);
+    // set q = n x p
+    q.setValue(-n.z()*p.y(),n.z()*p.x(),a*k);
+  }
 }
 
 #endif //SIMD__VECTOR3_H

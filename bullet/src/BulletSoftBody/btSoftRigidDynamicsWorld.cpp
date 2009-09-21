@@ -102,13 +102,13 @@ void	btSoftRigidDynamicsWorld::solveSoftBodiesConstraints()
 	}	
 }
 
-void	btSoftRigidDynamicsWorld::addSoftBody(btSoftBody* body)
+void	btSoftRigidDynamicsWorld::addSoftBody(btSoftBody* body,short int collisionFilterGroup,short int collisionFilterMask)
 {
 	m_softBodies.push_back(body);
 
 	btCollisionWorld::addCollisionObject(body,
-		btBroadphaseProxy::DefaultFilter,
-		btBroadphaseProxy::AllFilter);
+		collisionFilterGroup,
+		collisionFilterMask);
 
 }
 
@@ -117,6 +117,15 @@ void	btSoftRigidDynamicsWorld::removeSoftBody(btSoftBody* body)
 	m_softBodies.remove(body);
 
 	btCollisionWorld::removeCollisionObject(body);
+}
+
+void	btSoftRigidDynamicsWorld::removeCollisionObject(btCollisionObject* collisionObject)
+{
+	btSoftBody* body = btSoftBody::upcast(collisionObject);
+	if (body)
+		removeSoftBody(body);
+	else
+		btDiscreteDynamicsWorld::removeCollisionObject(collisionObject);
 }
 
 void	btSoftRigidDynamicsWorld::debugDrawWorld()

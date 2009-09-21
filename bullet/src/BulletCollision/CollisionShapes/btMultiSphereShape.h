@@ -19,21 +19,18 @@ subject to the following restrictions:
 #include "btConvexInternalShape.h"
 #include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h" // for the types
 #include "LinearMath/btAlignedObjectArray.h"
+#include "LinearMath/btAabbUtil2.h"
 
 ///The btMultiSphereShape represents the convex hull of a collection of spheres. You can create special capsules or other smooth volumes.
-///It is possible to animate the spheres for deformation.
-class btMultiSphereShape : public btConvexInternalShape
-
+///It is possible to animate the spheres for deformation, but call 'recalcLocalAabb' after changing any sphere position/radius
+class btMultiSphereShape : public btConvexInternalAabbCachingShape
 {
 	
 	btAlignedObjectArray<btVector3> m_localPositionArray;
 	btAlignedObjectArray<btScalar>  m_radiArray;
-	btVector3	m_inertiaHalfExtents;
-
-
-
+	
 public:
-	btMultiSphereShape (const btVector3& inertiaHalfExtents,const btVector3* positions,const btScalar* radi,int numSpheres);
+	btMultiSphereShape (const btVector3* positions,const btScalar* radi,int numSpheres);
 
 	///CollisionShape Interface
 	virtual void	calculateLocalInertia(btScalar mass,btVector3& inertia) const;
@@ -63,6 +60,7 @@ public:
 	{
 		return "MultiSphere";
 	}
+
 
 };
 

@@ -94,7 +94,10 @@ protected:
 
 	btIDebugDraw*	m_debugDrawer;
 
-	
+	///m_forceUpdateAllAabbs can be set to false as an optimization to only update active object AABBs
+	///it is true by default, because it is error-prone (setting the position of static objects wouldn't update their AABB)
+	bool m_forceUpdateAllAabbs;
+
 public:
 
 	//this constructor doesn't own the dispatcher and paircache/broadphase
@@ -377,7 +380,7 @@ public:
 					  const btTransform& colObjWorldTransform,
 					  ConvexResultCallback& resultCallback, btScalar	allowedPenetration);
 
-	void	addCollisionObject(btCollisionObject* collisionObject,short int collisionFilterGroup=btBroadphaseProxy::DefaultFilter,short int collisionFilterMask=btBroadphaseProxy::AllFilter);
+	virtual void	addCollisionObject(btCollisionObject* collisionObject,short int collisionFilterGroup=btBroadphaseProxy::DefaultFilter,short int collisionFilterMask=btBroadphaseProxy::AllFilter);
 
 	btCollisionObjectArray& getCollisionObjectArray()
 	{
@@ -390,7 +393,7 @@ public:
 	}
 
 
-	void	removeCollisionObject(btCollisionObject* collisionObject);
+	virtual void	removeCollisionObject(btCollisionObject* collisionObject);
 
 	virtual void	performDiscreteCollisionDetection();
 
@@ -402,6 +405,15 @@ public:
 	const btDispatcherInfo& getDispatchInfo() const
 	{
 		return m_dispatchInfo;
+	}
+	
+	bool	getForceUpdateAllAabbs() const
+	{
+		return m_forceUpdateAllAabbs;
+	}
+	void setForceUpdateAllAabbs( bool forceUpdateAllAabbs)
+	{
+		m_forceUpdateAllAabbs = forceUpdateAllAabbs;
 	}
 
 };

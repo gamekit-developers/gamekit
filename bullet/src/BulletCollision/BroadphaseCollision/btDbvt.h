@@ -57,7 +57,7 @@ subject to the following restrictions:
 // Specific methods implementation
 
 //SSE gives errors on a MSVC 7.1
-#ifdef BT_USE_SSE
+#if defined (BT_USE_SSE) && defined (WIN32)
 #define DBVT_SELECT_IMPL		DBVT_IMPL_SSE
 #define DBVT_MERGE_IMPL			DBVT_IMPL_SSE
 #define DBVT_INT0_IMPL			DBVT_IMPL_SSE
@@ -484,8 +484,8 @@ DBVT_INLINE int		btDbvtAabbMm::Classify(const btVector3& n,btScalar o,int s) con
 	case	(1+2+4):	px=btVector3(mx.x(),mx.y(),mx.z());
 		pi=btVector3(mi.x(),mi.y(),mi.z());break;
 	}
-	if((dot(n,px)+o)<0)		return(-1);
-	if((dot(n,pi)+o)>=0)	return(+1);
+	if((btDot(n,px)+o)<0)		return(-1);
+	if((btDot(n,pi)+o)>=0)	return(+1);
 	return(0);
 }
 
@@ -496,7 +496,7 @@ DBVT_INLINE btScalar	btDbvtAabbMm::ProjectMinimum(const btVector3& v,unsigned si
 	const btVector3		p(	b[(signs>>0)&1]->x(),
 		b[(signs>>1)&1]->y(),
 		b[(signs>>2)&1]->z());
-	return(dot(p,v));
+	return(btDot(p,v));
 }
 
 //
@@ -1000,11 +1000,11 @@ inline void		btDbvt::rayTest(	const btDbvtNode* root,
 			btVector3 rayDir = (rayTo-rayFrom);
 			rayDir.normalize ();
 
-			///what about division by zero? --> just set rayDirection[i] to INF/1e30
+			///what about division by zero? --> just set rayDirection[i] to INF/BT_LARGE_FLOAT
 			btVector3 rayDirectionInverse;
-			rayDirectionInverse[0] = rayDir[0] == btScalar(0.0) ? btScalar(1e30) : btScalar(1.0) / rayDir[0];
-			rayDirectionInverse[1] = rayDir[1] == btScalar(0.0) ? btScalar(1e30) : btScalar(1.0) / rayDir[1];
-			rayDirectionInverse[2] = rayDir[2] == btScalar(0.0) ? btScalar(1e30) : btScalar(1.0) / rayDir[2];
+			rayDirectionInverse[0] = rayDir[0] == btScalar(0.0) ? btScalar(BT_LARGE_FLOAT) : btScalar(1.0) / rayDir[0];
+			rayDirectionInverse[1] = rayDir[1] == btScalar(0.0) ? btScalar(BT_LARGE_FLOAT) : btScalar(1.0) / rayDir[1];
+			rayDirectionInverse[2] = rayDir[2] == btScalar(0.0) ? btScalar(BT_LARGE_FLOAT) : btScalar(1.0) / rayDir[2];
 			unsigned int signs[3] = { rayDirectionInverse[0] < 0.0, rayDirectionInverse[1] < 0.0, rayDirectionInverse[2] < 0.0};
 
 			btScalar lambda_max = rayDir.dot(rayTo-rayFrom);

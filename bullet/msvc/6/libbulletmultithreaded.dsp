@@ -230,15 +230,19 @@ SOURCE=..\..\src\BulletMultiThreaded\btThreadSupportInterface.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\BulletMultiThreaded\MiniCLTask\MiniCLTask.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\BulletMultiThreaded\MiniCLTaskScheduler.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\BulletMultiThreaded\PosixThreadSupport.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\src\BulletMultiThreaded\SequentialThreadSupport.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\BulletMultiThreaded\SpuBatchRaycaster.cpp
 # End Source File
 # Begin Source File
 
@@ -278,19 +282,7 @@ SOURCE=..\..\src\BulletMultiThreaded\SpuNarrowPhaseCollisionTask\SpuContactResul
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\BulletMultiThreaded\SpuNarrowPhaseCollisionTask\SpuEpaPenetrationDepthSolver.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\BulletMultiThreaded\SpuNarrowPhaseCollisionTask\SpuGatheringCollisionTask.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\BulletMultiThreaded\SpuNarrowPhaseCollisionTask\SpuGjkEpa2.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\BulletMultiThreaded\SpuNarrowPhaseCollisionTask\SpuGjkPairDetector.cpp
 # End Source File
 # Begin Source File
 
@@ -298,23 +290,7 @@ SOURCE=..\..\src\BulletMultiThreaded\SpuNarrowPhaseCollisionTask\SpuMinkowskiPen
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\BulletMultiThreaded\SpuNarrowPhaseCollisionTask\SpuVoronoiSimplexSolver.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\BulletMultiThreaded\SpuParallelSolver.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\BulletMultiThreaded\SpuRaycastTaskProcess.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\BulletMultiThreaded\SpuSampleTaskProcess.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\BulletMultiThreaded\SpuSolverTask\SpuParallellSolverTask.cpp
 # End Source File
 # Begin Source File
 
@@ -324,6 +300,90 @@ SOURCE=..\..\src\BulletMultiThreaded\Win32ThreadSupport.cpp
 # Begin Group "Header Files"
 
 # PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\..\src\BulletMultiThreaded\btGpu3DGridBroadphase.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\BulletMultiThreaded\btGpu3DGridBroadphaseSharedCode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\BulletMultiThreaded\btGpu3DGridBroadphaseSharedDefs.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\BulletMultiThreaded\btGpu3DGridBroadphaseSharedTypes.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\BulletMultiThreaded\btGpuDefines.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\BulletMultiThreaded\btGpuUtilsSharedCode.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\BulletMultiThreaded\btGpuUtilsSharedDefs.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\BulletMultiThreaded\btThreadSupportInterface.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\BulletMultiThreaded\MiniCLTask\MiniCLTask.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\BulletMultiThreaded\MiniCLTaskScheduler.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\BulletMultiThreaded\PlatformDefinitions.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\BulletMultiThreaded\PosixThreadSupport.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\BulletMultiThreaded\PpuAddressSpace.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\BulletMultiThreaded\SequentialThreadSupport.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\BulletMultiThreaded\SpuCollisionObjectWrapper.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\BulletMultiThreaded\SpuCollisionTaskProcess.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\BulletMultiThreaded\SpuContactManifoldCollisionAlgorithm.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\BulletMultiThreaded\SpuDoubleBuffer.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\BulletMultiThreaded\SpuFakeDma.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\BulletMultiThreaded\SpuGatheringCollisionDispatcher.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\BulletMultiThreaded\SpuLibspe2Support.h
+# End Source File
 # Begin Source File
 
 SOURCE=..\..\src\BulletMultiThreaded\SpuNarrowPhaseCollisionTask\Box.h
@@ -346,19 +406,7 @@ SOURCE=..\..\src\BulletMultiThreaded\SpuNarrowPhaseCollisionTask\SpuConvexPenetr
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\BulletMultiThreaded\SpuNarrowPhaseCollisionTask\SpuEpaPenetrationDepthSolver.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\BulletMultiThreaded\SpuNarrowPhaseCollisionTask\SpuGatheringCollisionTask.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\BulletMultiThreaded\SpuNarrowPhaseCollisionTask\SpuGjkEpa2.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\BulletMultiThreaded\SpuNarrowPhaseCollisionTask\SpuGjkPairDetector.h
 # End Source File
 # Begin Source File
 
@@ -374,11 +422,19 @@ SOURCE=..\..\src\BulletMultiThreaded\SpuNarrowPhaseCollisionTask\SpuPreferredPen
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\BulletMultiThreaded\SpuNarrowPhaseCollisionTask\SpuVoronoiSimplexSolver.h
+SOURCE=..\..\src\BulletMultiThreaded\SpuSampleTaskProcess.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\BulletMultiThreaded\SpuSolverTask\SpuParallellSolverTask.h
+SOURCE=..\..\src\BulletMultiThreaded\SpuSync.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\BulletMultiThreaded\vectormath2bullet.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\BulletMultiThreaded\Win32ThreadSupport.h
 # End Source File
 # End Group
 # End Target

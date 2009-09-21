@@ -26,7 +26,7 @@ class btRigidBody;
 
 /// hinge constraint between two rigidbodies each with a pivotpoint that descibes the axis location in local space
 /// axis defines the orientation of the hinge axis
-class btHingeConstraint : public btTypedConstraint
+ATTRIBUTE_ALIGNED16(class) btHingeConstraint : public btTypedConstraint
 {
 #ifdef IN_PARALLELL_SOLVER
 public:
@@ -62,6 +62,8 @@ public:
 	bool		m_useSolveConstraintObsolete;
 	bool		m_useReferenceFrameA;
 
+	btScalar	m_accMotorImpulse;
+
 	
 public:
 
@@ -79,8 +81,14 @@ public:
 
 	virtual void getInfo1 (btConstraintInfo1* info);
 
+	void getInfo1NonVirtual(btConstraintInfo1* info);
+
 	virtual void getInfo2 (btConstraintInfo2* info);
-	
+
+	void	getInfo2NonVirtual(btConstraintInfo2* info,const btTransform& transA,const btTransform& transB,const btVector3& angVelA,const btVector3& angVelB);
+
+	void	getInfo2Internal(btConstraintInfo2* info,const btTransform& transA,const btTransform& transB,const btVector3& angVelA,const btVector3& angVelB);
+		
 	virtual	void	solveConstraintObsolete(btSolverBody& bodyA,btSolverBody& bodyB,btScalar	timeStep);
 
 	void	updateRHS(btScalar	timeStep);
@@ -116,10 +124,19 @@ public:
 		m_maxMotorImpulse = maxMotorImpulse;
 	}
 
+	// extra motor API, including ability to set a target rotation (as opposed to angular velocity)
+	// note: setMotorTarget sets angular velocity under the hood, so you must call it every tick to
+	//       maintain a given angular target.
+	void enableMotor(bool enableMotor) 	{ m_enableAngularMotor = enableMotor; }
+	void setMaxMotorImpulse(btScalar maxMotorImpulse) { m_maxMotorImpulse = maxMotorImpulse; }
+	void setMotorTarget(const btQuaternion& qAinB, btScalar dt); // qAinB is rotation of body A wrt body B.
+	void setMotorTarget(btScalar targetAngle, btScalar dt);
+
+
 	void	setLimit(btScalar low,btScalar high,btScalar _softness = 0.9f, btScalar _biasFactor = 0.3f, btScalar _relaxationFactor = 1.0f)
 	{
-		m_lowerLimit = low;
-		m_upperLimit = high;
+		m_lowerLimit = btNormalizeAngle(low);
+		m_upperLimit = btNormalizeAngle(high);
 
 		m_limitSoftness =  _softness;
 		m_biasFactor = _biasFactor;
@@ -163,7 +180,9 @@ public:
 
 	btScalar getHingeAngle();
 
-	void testLimit();
+	btScalar getHingeAngle(const btTransform& transA,const btTransform& transB);
+
+	void testLimit(const btTransform& transA,const btTransform& transB);
 
 
 	const btTransform& getAFrame() const { return m_rbAFrame; };	

@@ -7,7 +7,6 @@ nobase_bullet_include_HEADERS = \
 if CONDITIONAL_BUILD_MULTITHREADED
 nobase_bullet_include_HEADERS += \
 	BulletMultiThreaded/PosixThreadSupport.h \
-	BulletMultiThreaded/SpuRaycastTaskProcess.h \
 	BulletMultiThreaded/vectormath/scalar/cpp/mat_aos.h \
 	BulletMultiThreaded/vectormath/scalar/cpp/vec_aos.h \
 	BulletMultiThreaded/vectormath/scalar/cpp/quat_aos.h \
@@ -20,21 +19,14 @@ nobase_bullet_include_HEADERS += \
 	BulletMultiThreaded/SpuCollisionObjectWrapper.h \
 	BulletMultiThreaded/SpuSampleTaskProcess.h \
 	BulletMultiThreaded/SpuNarrowPhaseCollisionTask/boxBoxDistance.h \
-	BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuVoronoiSimplexSolver.h \
 	BulletMultiThreaded/SpuNarrowPhaseCollisionTask/Box.h \
 	BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuMinkowskiPenetrationDepthSolver.h \
-	BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuGjkEpa2.h \
 	BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuLocalSupport.h \
 	BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuCollisionShapes.h \
 	BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuGatheringCollisionTask.h \
-	BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuGjkPairDetector.h \
-	BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuEpaPenetrationDepthSolver.h \
 	BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuConvexPenetrationDepthSolver.h \
 	BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuContactResult.h \
 	BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuPreferredPenetrationDirections.h \
-	BulletMultiThreaded/SpuRaycastTask/SpuRaycastTask.h \
-	BulletMultiThreaded/SpuRaycastTask/SpuSubSimplexConvexCast.h \
-	BulletMultiThreaded/SpuBatchRaycaster.h \
 	BulletMultiThreaded/SpuSync.h \
 	BulletMultiThreaded/btThreadSupportInterface.h \
 	BulletMultiThreaded/SpuLibspe2Support.h \
@@ -42,8 +34,6 @@ nobase_bullet_include_HEADERS += \
 	BulletMultiThreaded/SpuFakeDma.h \
 	BulletMultiThreaded/SpuContactManifoldCollisionAlgorithm.h \
 	BulletMultiThreaded/SpuDoubleBuffer.h \
-	BulletMultiThreaded/SpuSolverTask/SpuParallellSolverTask.h \
-	BulletMultiThreaded/SpuParallelSolver.h \
 	BulletMultiThreaded/Win32ThreadSupport.h \
 	BulletMultiThreaded/SequentialThreadSupport.h
 
@@ -54,25 +44,15 @@ libbulletmultithreaded_la_SOURCES =\
 		BulletMultiThreaded/SpuCollisionObjectWrapper.cpp \
 		BulletMultiThreaded/SpuSampleTask/SpuSampleTask.cpp \
 		BulletMultiThreaded/SpuLibspe2Support.cpp \
-		BulletMultiThreaded/SpuBatchRaycaster.cpp \
-		BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuGjkEpa2.cpp \
-		BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuEpaPenetrationDepthSolver.cpp \
 		BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuContactResult.cpp \
 		BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuGatheringCollisionTask.cpp \
-		BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuGjkPairDetector.cpp \
-		BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuVoronoiSimplexSolver.cpp \
 		BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuMinkowskiPenetrationDepthSolver.cpp \
 		BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuCollisionShapes.cpp \
-		BulletMultiThreaded/SpuRaycastTask/SpuRaycastTask.cpp \
-		BulletMultiThreaded/SpuRaycastTask/SpuSubSimplexConvexCast.cpp \
-		BulletMultiThreaded/SpuParallelSolver.cpp \
-		BulletMultiThreaded/SpuSolverTask/SpuParallellSolverTask.cpp \
 		BulletMultiThreaded/btThreadSupportInterface.cpp \
 		BulletMultiThreaded/SequentialThreadSupport.cpp \
 		BulletMultiThreaded/SpuGatheringCollisionDispatcher.cpp \
 		BulletMultiThreaded/Win32ThreadSupport.cpp \
 		BulletMultiThreaded/SpuFakeDma.cpp \
-		BulletMultiThreaded/SpuRaycastTaskProcess.cpp \
 		BulletMultiThreaded/PosixThreadSupport.cpp \
 		BulletMultiThreaded/SpuCollisionTaskProcess.cpp \
 		BulletMultiThreaded/SpuContactManifoldCollisionAlgorithm.cpp \
@@ -84,32 +64,22 @@ libbulletmultithreaded_la_SOURCES =\
 		BulletMultiThreaded/PlatformDefinitions.h \
 		BulletMultiThreaded/Win32ThreadSupport.h \
 		BulletMultiThreaded/SpuContactManifoldCollisionAlgorithm.h \
-		BulletMultiThreaded/SpuParallelSolver.h \
 		BulletMultiThreaded/btThreadSupportInterface.h \
 		BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuGatheringCollisionTask.h \
-		BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuGjkEpa2.h \
-		BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuEpaPenetrationDepthSolver.h \
-		BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuVoronoiSimplexSolver.h \
 		BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuConvexPenetrationDepthSolver.h \
 		BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuPreferredPenetrationDirections.h \
 		BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuCollisionShapes.h \
-		BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuGjkPairDetector.h \
 		BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuLocalSupport.h \
 		BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuMinkowskiPenetrationDepthSolver.h \
 		BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuContactResult.h \
-		BulletMultiThreaded/SpuRaycastTask/SpuSubSimplexConvexCast.h \
-		BulletMultiThreaded/SpuRaycastTask/SpuRaycastTask.h \
-		BulletMultiThreaded/SpuSolverTask/SpuParallellSolverTask.h \
 		BulletMultiThreaded/SpuGatheringCollisionDispatcher.h \
 		BulletMultiThreaded/SpuFakeDma.h \
 		BulletMultiThreaded/SpuSync.h \
 		BulletMultiThreaded/SpuCollisionObjectWrapper.h \
 		BulletMultiThreaded/SpuDoubleBuffer.h \
 		BulletMultiThreaded/SpuCollisionTaskProcess.h \
-		BulletMultiThreaded/SpuBatchRaycaster.h \
 		BulletMultiThreaded/PosixThreadSupport.h \
 		BulletMultiThreaded/SpuLibspe2Support.h \
-		BulletMultiThreaded/SpuRaycastTaskProcess.h \
 		BulletMultiThreaded/SpuNarrowPhaseCollisionTask/boxBoxDistance.cpp \
 		BulletMultiThreaded/SpuNarrowPhaseCollisionTask/boxBoxDistance.h \
 		BulletMultiThreaded/SpuNarrowPhaseCollisionTask/Box.h
@@ -325,6 +295,7 @@ libbulletdynamics_la_SOURCES = \
 		BulletDynamics/Dynamics/Bullet-C-API.cpp \
 		BulletDynamics/Dynamics/btDiscreteDynamicsWorld.cpp \
 		BulletDynamics/ConstraintSolver/btGeneric6DofConstraint.cpp \
+		BulletDynamics/ConstraintSolver/btGeneric6DofSpringConstraint.cpp \
 		BulletDynamics/ConstraintSolver/btSolve2LinearConstraint.cpp \
 		BulletDynamics/ConstraintSolver/btPoint2PointConstraint.cpp \
 		BulletDynamics/ConstraintSolver/btTypedConstraint.cpp \
@@ -332,6 +303,8 @@ libbulletdynamics_la_SOURCES = \
 		BulletDynamics/ConstraintSolver/btSliderConstraint.cpp \
 		BulletDynamics/ConstraintSolver/btConeTwistConstraint.cpp \
 		BulletDynamics/ConstraintSolver/btHingeConstraint.cpp \
+		BulletDynamics/ConstraintSolver/btHinge2Constraint.cpp \
+		BulletDynamics/ConstraintSolver/btUniversalConstraint.cpp \
 		BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolver.cpp \
 		BulletDynamics/Vehicle/btWheelInfo.cpp \
 		BulletDynamics/Vehicle/btRaycastVehicle.cpp \
@@ -354,8 +327,11 @@ libbulletdynamics_la_SOURCES = \
 		BulletDynamics/ConstraintSolver/btSolverConstraint.h \
 		BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolver.h \
 		BulletDynamics/ConstraintSolver/btGeneric6DofConstraint.h \
+		BulletDynamics/ConstraintSolver/btGeneric6DofSpringConstraint.h \
 		BulletDynamics/ConstraintSolver/btSliderConstraint.h \
 		BulletDynamics/ConstraintSolver/btHingeConstraint.h \
+		BulletDynamics/ConstraintSolver/btHinge2Constraint.h \
+		BulletDynamics/ConstraintSolver/btUniversalConstraint.h \
 		BulletDynamics/ConstraintSolver/btSolve2LinearConstraint.h \
 		BulletDynamics/Vehicle/btVehicleRaycaster.h \
 		BulletDynamics/Vehicle/btRaycastVehicle.h \
@@ -408,10 +384,13 @@ nobase_bullet_include_HEADERS += \
 	BulletDynamics/ConstraintSolver/btContactConstraint.h \
 	BulletDynamics/ConstraintSolver/btContactSolverInfo.h \
 	BulletDynamics/ConstraintSolver/btGeneric6DofConstraint.h \
+	BulletDynamics/ConstraintSolver/btGeneric6DofSpringConstraint.h \
 	BulletDynamics/ConstraintSolver/btJacobianEntry.h \
 	BulletDynamics/ConstraintSolver/btSolve2LinearConstraint.h \
 	BulletDynamics/ConstraintSolver/btConeTwistConstraint.h \
 	BulletDynamics/ConstraintSolver/btHingeConstraint.h \
+	BulletDynamics/ConstraintSolver/btHinge2Constraint.h \
+	BulletDynamics/ConstraintSolver/btUniversalConstraint.h \
 	BulletDynamics/ConstraintSolver/btSolverBody.h \
 	BulletDynamics/Character/btCharacterControllerInterface.h \
 	BulletDynamics/Character/btKinematicCharacterController.h \

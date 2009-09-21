@@ -212,7 +212,7 @@ void cullPoints2 (int n, btScalar p[], int m, int i0, int iret[])
 		a = 1.f/(btScalar(3.0)*(a+q));
 	} else
 	{
-		a=1e30f;
+		a=BT_LARGE_FLOAT;
 	}
     cx = a*(cx + q*(p[n*2-2]+p[0]));
     cy = a*(cy + q*(p[n*2-1]+p[1]));
@@ -267,7 +267,7 @@ int dBoxBox2 (const btVector3& p1, const dMatrix3 R1,
 		 int maxc, dContactGeom * /*contact*/, int /*skip*/,btDiscreteCollisionDetectorInterface::Result& output)
 {
   const btScalar fudge_factor = btScalar(1.05);
-  btVector3 p,pp,normalC;
+  btVector3 p,pp,normalC(0.f,0.f,0.f);
   const btScalar *normalR = 0;
   btScalar A[3],B[3],R11,R12,R13,R21,R22,R23,R31,R32,R33,
     Q11,Q12,Q13,Q21,Q22,Q23,Q31,Q32,Q33,s,s2,l;

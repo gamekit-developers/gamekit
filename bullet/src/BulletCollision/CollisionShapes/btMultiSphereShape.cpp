@@ -19,11 +19,11 @@ subject to the following restrictions:
 #include "BulletCollision/CollisionShapes/btCollisionMargin.h"
 #include "LinearMath/btQuaternion.h"
 
-btMultiSphereShape::btMultiSphereShape (const btVector3& inertiaHalfExtents,const btVector3* positions,const btScalar* radi,int numSpheres)
-:btConvexInternalShape (), m_inertiaHalfExtents(inertiaHalfExtents)
+btMultiSphereShape::btMultiSphereShape (const btVector3* positions,const btScalar* radi,int numSpheres)
+:btConvexInternalAabbCachingShape ()
 {
 	m_shapeType = MULTI_SPHERE_SHAPE_PROXYTYPE;
-	btScalar startMargin = btScalar(1e30);
+	//btScalar startMargin = btScalar(BT_LARGE_FLOAT);
 
 	m_localPositionArray.resize(numSpheres);
 	m_radiArray.resize(numSpheres);
@@ -34,10 +34,9 @@ btMultiSphereShape::btMultiSphereShape (const btVector3& inertiaHalfExtents,cons
 		
 	}
 
+	recalcLocalAabb();
 
 }
-
-
 
  
  btVector3	btMultiSphereShape::localGetSupportingVertexWithoutMargin(const btVector3& vec0)const
@@ -45,7 +44,7 @@ btMultiSphereShape::btMultiSphereShape (const btVector3& inertiaHalfExtents,cons
 	int i;
 	btVector3 supVec(0,0,0);
 
-	btScalar maxDot(btScalar(-1e30));
+	btScalar maxDot(btScalar(-BT_LARGE_FLOAT));
 
 
 	btVector3 vec = vec0;
@@ -88,7 +87,7 @@ btMultiSphereShape::btMultiSphereShape (const btVector3& inertiaHalfExtents,cons
 
 	for (int j=0;j<numVectors;j++)
 	{
-		btScalar maxDot(btScalar(-1e30));
+		btScalar maxDot(btScalar(-BT_LARGE_FLOAT));
 
 		const btVector3& vec = vectors[j];
 
@@ -124,29 +123,18 @@ void	btMultiSphereShape::calculateLocalInertia(btScalar mass,btVector3& inertia)
 {
 	//as an approximation, take the inertia of the box that bounds the spheres
 
-	btTransform ident;
-	ident.setIdentity();
-//	btVector3 aabbMin,aabbMax;
+	btVector3 localAabbMin,localAabbMax;
+	getCachedLocalAabb(localAabbMin,localAabbMax);
+	btVector3 halfExtents = (localAabbMax-localAabbMin)*btScalar(0.5);
 
-//	getAabb(ident,aabbMin,aabbMax);
+	btScalar lx=btScalar(2.)*(halfExtents.x());
+	btScalar ly=btScalar(2.)*(halfExtents.y());
+	btScalar lz=btScalar(2.)*(halfExtents.z());
 
-	btVector3 halfExtents = m_inertiaHalfExtents;//(aabbMax - aabbMin)* btScalar(0.5);
-
-	btScalar margin = CONVEX_DISTANCE_MARGIN;
-
-	btScalar lx=btScalar(2.)*(halfExtents[0]+margin);
-	btScalar ly=btScalar(2.)*(halfExtents[1]+margin);
-	btScalar lz=btScalar(2.)*(halfExtents[2]+margin);
-	const btScalar x2 = lx*lx;
-	const btScalar y2 = ly*ly;
-	const btScalar z2 = lz*lz;
-	const btScalar scaledmass = mass * btScalar(.08333333);
-
-	inertia[0] = scaledmass * (y2+z2);
-	inertia[1] = scaledmass * (x2+z2);
-	inertia[2] = scaledmass * (x2+y2);
+	inertia.setValue(mass/(btScalar(12.0)) * (ly*ly + lz*lz),
+					mass/(btScalar(12.0)) * (lx*lx + lz*lz),
+					mass/(btScalar(12.0)) * (lx*lx + ly*ly));
 
 }
-
 
 

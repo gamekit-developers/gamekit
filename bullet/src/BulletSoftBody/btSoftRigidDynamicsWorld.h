@@ -50,9 +50,12 @@ public:
 
 	virtual void	debugDrawWorld();
 
-	void	addSoftBody(btSoftBody* body);
+	void	addSoftBody(btSoftBody* body,short int collisionFilterGroup=btBroadphaseProxy::DefaultFilter,short int collisionFilterMask=btBroadphaseProxy::AllFilter);
 
 	void	removeSoftBody(btSoftBody* body);
+
+	///removeCollisionObject will first check if it is a rigid body, if so call removeRigidBody otherwise call btDiscreteDynamicsWorld::removeCollisionObject
+	virtual void	removeCollisionObject(btCollisionObject* collisionObject);
 
 	int		getDrawFlags() const { return(m_drawFlags); }
 	void	setDrawFlags(int f)	{ m_drawFlags=f; }

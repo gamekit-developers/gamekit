@@ -21,8 +21,8 @@ class btIDebugDraw;
 #include "btContactConstraint.h"
 #include "btSolverBody.h"
 #include "btSolverConstraint.h"
-
-
+#include "btTypedConstraint.h"
+#include "BulletCollision/NarrowPhaseCollision/btManifoldPoint.h"
 
 ///The btSequentialImpulseConstraintSolver is a fast SIMD implementation of the Projected Gauss Seidel (iterative LCP) method.
 class btSequentialImpulseConstraintSolver : public btConstraintSolver
@@ -35,6 +35,7 @@ protected:
 	btConstraintArray			m_tmpSolverContactFrictionConstraintPool;
 	btAlignedObjectArray<int>	m_orderTmpConstraintPool;
 	btAlignedObjectArray<int>	m_orderFrictionConstraintPool;
+	btAlignedObjectArray<btTypedConstraint::btConstraintInfo1> m_tmpConstraintSizesPool;
 
 	btSolverConstraint&	addFrictionConstraint(const btVector3& normalAxis,int solverBodyIdA,int solverBodyIdB,int frictionIndex,btManifoldPoint& cp,const btVector3& rel_pos1,const btVector3& rel_pos2,btCollisionObject* colObj0,btCollisionObject* colObj1, btScalar relaxation);
 	
@@ -46,11 +47,16 @@ protected:
 
 	void	convertContact(btPersistentManifold* manifold,const btContactSolverInfo& infoGlobal);
 
+
+	void	resolveSplitPenetrationSIMD(
+        btSolverBody& body1,
+        btSolverBody& body2,
+        const btSolverConstraint& contactConstraint);
+
 	void	resolveSplitPenetrationImpulseCacheFriendly(
         btSolverBody& body1,
         btSolverBody& body2,
-        const btSolverConstraint& contactConstraint,
-        const btContactSolverInfo& solverInfo);
+        const btSolverConstraint& contactConstraint);
 
 	//internal method
 	int	getOrInitSolverBody(btCollisionObject& body);

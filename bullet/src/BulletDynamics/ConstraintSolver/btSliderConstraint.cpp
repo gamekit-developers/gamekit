@@ -18,14 +18,14 @@ Added by Roman Ponomarev (rponom@gmail.com)
 April 04, 2008
 */
 
-//-----------------------------------------------------------------------------
+
 
 #include "btSliderConstraint.h"
 #include "BulletDynamics/Dynamics/btRigidBody.h"
 #include "LinearMath/btTransformUtil.h"
 #include <new>
 
-//-----------------------------------------------------------------------------
+
 
 void btSliderConstraint::initParams()
 {
@@ -62,49 +62,45 @@ void btSliderConstraint::initParams()
     m_maxAngMotorForce = btScalar(0.);
 	m_accumulatedAngMotorImpulse = btScalar(0.0);
 
-} // btSliderConstraint::initParams()
+}
 
-//-----------------------------------------------------------------------------
+
 
 btSliderConstraint::btSliderConstraint()
         :btTypedConstraint(SLIDER_CONSTRAINT_TYPE),
-		m_useLinearReferenceFrameA(true),
-		m_useSolveConstraintObsolete(false)
-//		m_useSolveConstraintObsolete(true)
+		m_useSolveConstraintObsolete(false),
+		m_useLinearReferenceFrameA(true)
 {
 	initParams();
-} // btSliderConstraint::btSliderConstraint()
+}
 
-//-----------------------------------------------------------------------------
+
 
 btSliderConstraint::btSliderConstraint(btRigidBody& rbA, btRigidBody& rbB, const btTransform& frameInA, const btTransform& frameInB, bool useLinearReferenceFrameA)
-        : btTypedConstraint(SLIDER_CONSTRAINT_TYPE, rbA, rbB)
-        , m_frameInA(frameInA)
-        , m_frameInB(frameInB),
-		m_useLinearReferenceFrameA(useLinearReferenceFrameA),
-		m_useSolveConstraintObsolete(false)
-//		m_useSolveConstraintObsolete(true)
+        : btTypedConstraint(SLIDER_CONSTRAINT_TYPE, rbA, rbB),
+		m_useSolveConstraintObsolete(false),
+		m_frameInA(frameInA),
+        m_frameInB(frameInB),
+		m_useLinearReferenceFrameA(useLinearReferenceFrameA)
 {
 	initParams();
-} // btSliderConstraint::btSliderConstraint()
+}
 
-//-----------------------------------------------------------------------------
+
 static btRigidBody s_fixed(0, 0, 0);
 btSliderConstraint::btSliderConstraint(btRigidBody& rbB, const btTransform& frameInB, bool useLinearReferenceFrameB)
-        : btTypedConstraint(SLIDER_CONSTRAINT_TYPE, s_fixed, rbB)
-        ,
-        m_frameInB(frameInB),
-		m_useLinearReferenceFrameA(useLinearReferenceFrameB),
-		m_useSolveConstraintObsolete(false)
-//		m_useSolveConstraintObsolete(true)
+        : btTypedConstraint(SLIDER_CONSTRAINT_TYPE, s_fixed, rbB),
+		m_useSolveConstraintObsolete(false),
+		m_frameInB(frameInB),
+		m_useLinearReferenceFrameA(useLinearReferenceFrameB)
 {
 	///not providing rigidbody B means implicitly using worldspace for body B
 //	m_frameInA.getOrigin() = m_rbA.getCenterOfMassTransform()(m_frameInA.getOrigin());
 
 	initParams();
-} // btSliderConstraint::btSliderConstraint()
+}
 
-//-----------------------------------------------------------------------------
+
 
 void btSliderConstraint::buildJacobian()
 {
@@ -120,12 +116,13 @@ void btSliderConstraint::buildJacobian()
 	{
 		buildJacobianInt(m_rbB, m_rbA, m_frameInB, m_frameInA);
 	}
-} // btSliderConstraint::buildJacobian()
+}
 
-//-----------------------------------------------------------------------------
+
 
 void btSliderConstraint::buildJacobianInt(btRigidBody& rbA, btRigidBody& rbB, const btTransform& frameInA, const btTransform& frameInB)
 {
+#ifndef __SPU__
 	//calculate transforms
     m_calculatedTransformA = rbA.getCenterOfMassTransform() * frameInA;
     m_calculatedTransformB = rbB.getCenterOfMassTransform() * frameInB;
@@ -175,9 +172,9 @@ void btSliderConstraint::buildJacobianInt(btRigidBody& rbA, btRigidBody& rbB, co
 	// clear accumulator for motors
 	m_accumulatedLinMotorImpulse = btScalar(0.0);
 	m_accumulatedAngMotorImpulse = btScalar(0.0);
-} // btSliderConstraint::buildJacobianInt()
+#endif //__SPU__
+}
 
-//-----------------------------------------------------------------------------
 
 void btSliderConstraint::getInfo1(btConstraintInfo1* info)
 {
@@ -191,7 +188,7 @@ void btSliderConstraint::getInfo1(btConstraintInfo1* info)
 		info->m_numConstraintRows = 4; // Fixed 2 linear + 2 angular
 		info->nub = 2; 
 		//prepare constraint
-		calculateTransforms();
+		calculateTransforms(m_rbA.getCenterOfMassTransform(),m_rbB.getCenterOfMassTransform());
 		testLinLimits();
 		if(getSolveLinLimit() || getPoweredLinMotor())
 		{
@@ -205,16 +202,33 @@ void btSliderConstraint::getInfo1(btConstraintInfo1* info)
 			info->nub--; 
 		}
 	}
-} // btSliderConstraint::getInfo1()
+}
 
-//-----------------------------------------------------------------------------
+void btSliderConstraint::getInfo1NonVirtual(btConstraintInfo1* info)
+{
+
+	info->m_numConstraintRows = 6; // Fixed 2 linear + 2 angular + 1 limit (even if not used)
+	info->nub = 0; 
+}
 
 void btSliderConstraint::getInfo2(btConstraintInfo2* info)
 {
-	btAssert(!m_useSolveConstraintObsolete);
-	int i, s = info->rowskip;
+	getInfo2NonVirtual(info,m_rbA.getCenterOfMassTransform(),m_rbB.getCenterOfMassTransform(), m_rbA.getLinearVelocity(),m_rbB.getLinearVelocity(), m_rbA.getInvMass(),m_rbB.getInvMass());
+}
+
+void btSliderConstraint::getInfo2NonVirtual(btConstraintInfo2* info, const btTransform& transA,const btTransform& transB, const btVector3& linVelA,const btVector3& linVelB, btScalar rbAinvMass,btScalar rbBinvMass  )
+{
+	//prepare constraint
+	calculateTransforms(transA,transB);
+	testLinLimits();
+	testAngLimits();
+
 	const btTransform& trA = getCalculatedTransformA();
 	const btTransform& trB = getCalculatedTransformB();
+	
+	btAssert(!m_useSolveConstraintObsolete);
+	int i, s = info->rowskip;
+	
 	btScalar signFact = m_useLinearReferenceFrameA ? btScalar(1.0f) : btScalar(-1.0f);
 	// make rotations around Y and Z equal
 	// the slider axis should be the only unconstrained
@@ -269,12 +283,12 @@ void btSliderConstraint::getInfo2(btConstraintInfo2* info)
 	// result in three equations, so we project along the planespace vectors
 	// so that sliding along the slider axis is disregarded. for symmetry we
 	// also consider rotation around center of mass of two bodies (factA and factB).
-	btTransform bodyA_trans = m_rbA.getCenterOfMassTransform();
-	btTransform bodyB_trans = m_rbB.getCenterOfMassTransform();
+	btTransform bodyA_trans = transA;
+	btTransform bodyB_trans = transB;
 	int s2 = 2 * s, s3 = 3 * s;
 	btVector3 c;
-	btScalar miA = m_rbA.getInvMass();
-	btScalar miB = m_rbB.getInvMass();
+	btScalar miA = rbAinvMass;
+	btScalar miB = rbBinvMass;
 	btScalar miS = miA + miB;
 	btScalar factA, factB;
 	if(miS > btScalar(0.f))
@@ -389,8 +403,8 @@ void btSliderConstraint::getInfo2(btConstraintInfo2* info)
 			btScalar bounce = btFabs(btScalar(1.0) - getDampingLimLin());
 			if(bounce > btScalar(0.0))
 			{
-				btScalar vel = m_rbA.getLinearVelocity().dot(ax1);
-				vel -= m_rbB.getLinearVelocity().dot(ax1);
+				btScalar vel = linVelA.dot(ax1);
+				vel -= linVelB.dot(ax1);
 				vel *= signFact;
 				// only apply bounce if the velocity is incoming, and if the
 				// resulting c[] exceeds what we already have.
@@ -515,9 +529,9 @@ void btSliderConstraint::getInfo2(btConstraintInfo2* info)
 			info->m_constraintError[srow] *= getSoftnessLimAng();
 		} // if(limit)
 	} // if angular limit or powered
-} // btSliderConstraint::getInfo2()
+}
 
-//-----------------------------------------------------------------------------
+
 
 void btSliderConstraint::solveConstraintObsolete(btSolverBody& bodyA,btSolverBody& bodyB,btScalar timeStep)
 {
@@ -533,12 +547,13 @@ void btSliderConstraint::solveConstraintObsolete(btSolverBody& bodyA,btSolverBod
 			solveConstraintInt(m_rbB,bodyB, m_rbA,bodyA);
 		}
 	}
-} // btSliderConstraint::solveConstraint()
+}
 
-//-----------------------------------------------------------------------------
+
 
 void btSliderConstraint::solveConstraintInt(btRigidBody& rbA, btSolverBody& bodyA,btRigidBody& rbB, btSolverBody& bodyB)
 {
+#ifndef __SPU__
     int i;
     // linear
     btVector3 velA;
@@ -719,22 +734,24 @@ void btSliderConstraint::solveConstraintInt(btRigidBody& rbA, btSolverBody& body
 			bodyB.applyImpulse(btVector3(0,0,0), rbB.getInvInertiaTensorWorld()*axisA,-angImpulse);
 		}
 	}
-} // btSliderConstraint::solveConstraint()
+#endif //__SPU__
+}
 
-//-----------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
 
-void btSliderConstraint::calculateTransforms(void){
+
+
+void btSliderConstraint::calculateTransforms(const btTransform& transA,const btTransform& transB)
+{
 	if(m_useLinearReferenceFrameA || (!m_useSolveConstraintObsolete))
 	{
-		m_calculatedTransformA = m_rbA.getCenterOfMassTransform() * m_frameInA;
-		m_calculatedTransformB = m_rbB.getCenterOfMassTransform() * m_frameInB;
+		m_calculatedTransformA = transA * m_frameInA;
+		m_calculatedTransformB = transB * m_frameInB;
 	}
 	else
 	{
-		m_calculatedTransformA = m_rbB.getCenterOfMassTransform() * m_frameInB;
-		m_calculatedTransformB = m_rbA.getCenterOfMassTransform() * m_frameInA;
+		m_calculatedTransformA = transB * m_frameInB;
+		m_calculatedTransformB = transA * m_frameInA;
 	}
 	m_realPivotAInW = m_calculatedTransformA.getOrigin();
 	m_realPivotBInW = m_calculatedTransformB.getOrigin();
@@ -756,9 +773,9 @@ void btSliderConstraint::calculateTransforms(void){
 		normalWorld = m_calculatedTransformA.getBasis().getColumn(i);
 		m_depth[i] = m_delta.dot(normalWorld);
     }
-} // btSliderConstraint::calculateTransforms()
+}
  
-//-----------------------------------------------------------------------------
+
 
 void btSliderConstraint::testLinLimits(void)
 {
@@ -785,9 +802,9 @@ void btSliderConstraint::testLinLimits(void)
 	{
 		m_depth[0] = btScalar(0.);
 	}
-} // btSliderConstraint::testLinLimits()
+}
 
-//-----------------------------------------------------------------------------
+
 
 void btSliderConstraint::testAngLimits(void)
 {
@@ -799,6 +816,7 @@ void btSliderConstraint::testAngLimits(void)
 		const btVector3 axisA1 = m_calculatedTransformA.getBasis().getColumn(2);
 		const btVector3 axisB0 = m_calculatedTransformB.getBasis().getColumn(1);
 		btScalar rot = btAtan2Fast(axisB0.dot(axisA1), axisB0.dot(axisA0));  
+		rot = btAdjustAngleToLimits(rot, m_lowerAngLimit, m_upperAngLimit);
 		m_angPos = rot;
 		if(rot < m_lowerAngLimit)
 		{
@@ -811,9 +829,9 @@ void btSliderConstraint::testAngLimits(void)
 			m_solveAngLim = true;
 		}
 	}
-} // btSliderConstraint::testAngLimits()
+}
 	
-//-----------------------------------------------------------------------------
+
 
 btVector3 btSliderConstraint::getAncorInA(void)
 {
@@ -821,13 +839,13 @@ btVector3 btSliderConstraint::getAncorInA(void)
 	ancorInA = m_realPivotAInW + (m_lowerLinLimit + m_upperLinLimit) * btScalar(0.5) * m_sliderAxis;
 	ancorInA = m_rbA.getCenterOfMassTransform().inverse() * ancorInA;
 	return ancorInA;
-} // btSliderConstraint::getAncorInA()
+}
 
-//-----------------------------------------------------------------------------
+
 
 btVector3 btSliderConstraint::getAncorInB(void)
 {
 	btVector3 ancorInB;
 	ancorInB = m_frameInB.getOrigin();
 	return ancorInB;
-} // btSliderConstraint::getAncorInB();
+}
