@@ -13,11 +13,11 @@ subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-//--------------------------------------------------------------------------
+
 
 // definitions for "GPU on CPU" code
 
-//--------------------------------------------------------------------------
+
 #ifndef BT_GPU_DEFINES_H
 #define BT_GPU_DEFINES_H
 
@@ -130,7 +130,7 @@ inline float4& operator*=(float4& a, float fact)
 	a = fact * a;
 	return a;
 }
-inline float4& operator+=(float4& a, float4& b)
+inline float4& operator+=(float4& a, const float4& b)
 {
 	a = a + b;
 	return a;
@@ -169,12 +169,12 @@ inline float3 operator*(const float3& a, float fact)
 }
 
 
-inline float3& operator+=(float3& a, float3& b)
+inline float3& operator+=(float3& a, const float3& b)
 {
 	a = a + b;
 	return a;
 }
-inline float3& operator-=(float3& a, float3& b)
+inline float3& operator-=(float3& a, const float3& b)
 {
 	a = a - b;
 	return a;
@@ -207,8 +207,5 @@ static uint2 s_blockIdx, s_blockDim, s_threadIdx;
 
 #define BT_GPU_CHECK_ERROR(s)
 
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
 
 #endif //BT_GPU_DEFINES_H

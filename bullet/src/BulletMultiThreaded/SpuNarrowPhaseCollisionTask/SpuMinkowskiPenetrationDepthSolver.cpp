@@ -14,12 +14,10 @@ subject to the following restrictions:
 */
 
 #include "SpuMinkowskiPenetrationDepthSolver.h"
-#include "SpuVoronoiSimplexSolver.h"
-#include "SpuGjkPairDetector.h"
 #include "SpuContactResult.h"
 #include "SpuPreferredPenetrationDirections.h"
-
-
+#include "BulletCollision/NarrowPhaseCollision/btVoronoiSimplexSolver.h"
+#include "BulletCollision/NarrowPhaseCollision/btGjkPairDetector.h"
 #include "SpuCollisionShapes.h"
 
 #define NUM_UNITSPHERE_POINTS 42
@@ -69,16 +67,14 @@ btVector3(btScalar(-0.425323) , btScalar(0.309011),btScalar(0.850654)),
 btVector3(btScalar(0.162456) , btScalar(0.499995),btScalar(0.850654))
 };
 
-bool SpuMinkowskiPenetrationDepthSolver::calcPenDepth( SpuVoronoiSimplexSolver& simplexSolver,
-	        void* convexA,void* convexB,int shapeTypeA, int shapeTypeB, float marginA, float marginB,
-            btTransform& transA,const btTransform& transB,
-			btVector3& v, btVector3& pa, btVector3& pb,
-			class btIDebugDraw* debugDraw,btStackAlloc* stackAlloc,
-			struct SpuConvexPolyhedronVertexData* convexVertexDataA,
-			struct SpuConvexPolyhedronVertexData* convexVertexDataB
-			) const
-{
 
+bool SpuMinkowskiPenetrationDepthSolver::calcPenDepth( btSimplexSolverInterface& simplexSolver,
+		const btConvexShape* convexA,const btConvexShape* convexB,
+					const btTransform& transA,const btTransform& transB,
+				btVector3& v, btVector3& pa, btVector3& pb,
+				class btIDebugDraw* debugDraw,btStackAlloc* stackAlloc)
+{
+#if 0
 	(void)stackAlloc;
 	(void)v;
 	
@@ -95,10 +91,14 @@ bool SpuMinkowskiPenetrationDepthSolver::calcPenDepth( SpuVoronoiSimplexSolver& 
 		btScalar m_depth;
 		bool	m_hasResult;
 
-		virtual void setShapeIdentifiers(int partId0,int index0,	int partId1,int index1)
+		virtual void setShapeIdentifiersA(int partId0,int index0)
 		{
 			(void)partId0;
 			(void)index0;
+		}
+
+		virtual void setShapeIdentifiersB(int partId1,int index1)
+		{
 			(void)partId1;
 			(void)index1;
 		}
@@ -112,8 +112,8 @@ bool SpuMinkowskiPenetrationDepthSolver::calcPenDepth( SpuVoronoiSimplexSolver& 
 	};
 
 	//just take fixed number of orientation, and sample the penetration depth in that direction
-	btScalar minProj = btScalar(1e30);
-	btVector3 minNorm;
+	btScalar minProj = btScalar(BT_LARGE_FLOAT);
+	btVector3 minNorm(0.f,0.f,0.f);
 	btVector3 minVertex;
 	btVector3 minA,minB;
 	btVector3 seperatingAxisInA,seperatingAxisInB;
@@ -242,8 +242,8 @@ bool SpuMinkowskiPenetrationDepthSolver::calcPenDepth( SpuVoronoiSimplexSolver& 
 		seperatingAxisInA = (-norm)* transA.getBasis();
 		seperatingAxisInB = norm* transB.getBasis();
 
-		pInA = localGetSupportingVertexWithoutMargin(shapeTypeA, convexA, seperatingAxisInA,convexVertexDataA);//, NULL);
-		qInB = localGetSupportingVertexWithoutMargin(shapeTypeB, convexB, seperatingAxisInB,convexVertexDataB);//, NULL);
+		pInA = convexA->localGetSupportVertexWithoutMarginNonVirtual( seperatingAxisInA);//, NULL);
+		qInB = convexB->localGetSupportVertexWithoutMarginNonVirtual(seperatingAxisInB);//, NULL);
 
 	//	pInA = convexA->localGetSupportingVertexWithoutMargin(seperatingAxisInA);
 	//	qInB = convexB->localGetSupportingVertexWithoutMargin(seperatingAxisInB);
@@ -292,8 +292,7 @@ bool SpuMinkowskiPenetrationDepthSolver::calcPenDepth( SpuVoronoiSimplexSolver& 
 #endif //DEBUG_DRAW
 
 	
-
-	SpuGjkPairDetector gjkdet(convexA,convexB,shapeTypeA,shapeTypeB,marginA,marginB,&simplexSolver,0);
+	btGjkPairDetector gjkdet(convexA,convexB,&simplexSolver,0);
 
 	btScalar offsetDist = minProj;
 	btVector3 offset = minNorm * offsetDist;
@@ -309,10 +308,10 @@ bool SpuMinkowskiPenetrationDepthSolver::calcPenDepth( SpuVoronoiSimplexSolver& 
 
 	input.m_transformA = displacedTrans;
 	input.m_transformB = transB;
-	input.m_maximumDistanceSquared = btScalar(1e30);//minProj;
+	input.m_maximumDistanceSquared = btScalar(BT_LARGE_FLOAT);//minProj;
 	
 	btIntermediateResult res;
-	gjkdet.getClosestPoints(input,res);
+	gjkdet.getClosestPoints(input,res,0);
 
 	btScalar correctedMinNorm = minProj - res.m_depth;
 
@@ -341,6 +340,8 @@ bool SpuMinkowskiPenetrationDepthSolver::calcPenDepth( SpuVoronoiSimplexSolver& 
 		//btAssert (false);
 	}
 	return res.m_hasResult;
+#endif
+	return false;
 }
 
 

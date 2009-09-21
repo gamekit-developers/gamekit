@@ -32,6 +32,7 @@ subject to the following restrictions:
 ///Setup and initialize SPU/CELL/Libspe2
 Win32ThreadSupport::Win32ThreadSupport(const Win32ThreadConstructionInfo & threadConstructionInfo)
 {
+	m_maxNumTasks = threadConstructionInfo.m_numThreads;
 	startThreads(threadConstructionInfo);
 }
 
@@ -107,7 +108,7 @@ void Win32ThreadSupport::sendRequest(uint32_t uiCommand, ppu_address_t uiArgumen
 
 			btSpuStatus&	spuStatus = m_activeSpuStatus[taskId];
 			btAssert(taskId>=0);
-			btAssert(taskId<m_activeSpuStatus.size());
+			btAssert(int(taskId)<m_activeSpuStatus.size());
 
 			spuStatus.m_commandId = uiCommand;
 			spuStatus.m_status = 1;
@@ -181,6 +182,8 @@ void Win32ThreadSupport::startThreads(const Win32ThreadConstructionInfo& threadC
 
 	m_activeSpuStatus.resize(threadConstructionInfo.m_numThreads);
 	m_completeHandles.resize(threadConstructionInfo.m_numThreads);
+
+	m_maxNumTasks = threadConstructionInfo.m_numThreads;
 
 	for (int i=0;i<threadConstructionInfo.m_numThreads;i++)
 	{

@@ -15,20 +15,20 @@ subject to the following restrictions:
 */
 
 
-#ifndef CONVEX_PENETRATION_DEPTH_H
-#define CONVEX_PENETRATION_DEPTH_H
+#ifndef SPU_CONVEX_PENETRATION_DEPTH_H
+#define SPU_CONVEX_PENETRATION_DEPTH_H
 
 
 
 class btStackAlloc;
 class btIDebugDraw;
-class SpuVoronoiSimplexSolver;
+#include "BulletCollision/NarrowphaseCollision/btConvexPenetrationDepthSolver.h"
 
 #include <LinearMath/btTransform.h>
 
 
 ///ConvexPenetrationDepthSolver provides an interface for penetration depth calculation.
-class SpuConvexPenetrationDepthSolver
+class SpuConvexPenetrationDepthSolver : public btConvexPenetrationDepthSolver
 {
 public:	
 	
@@ -47,5 +47,5 @@ public:
 
 
 
-#endif //CONVEX_PENETRATION_DEPTH_H
+#endif //SPU_CONVEX_PENETRATION_DEPTH_H
 

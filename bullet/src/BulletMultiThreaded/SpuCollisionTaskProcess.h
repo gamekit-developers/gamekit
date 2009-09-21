@@ -74,7 +74,7 @@ class btDispatcher;
 
 
 ///MidphaseWorkUnitInput stores individual primitive versus mesh collision detection input, to be processed by the SPU.
-struct SpuGatherAndProcessWorkUnitInput
+ATTRIBUTE_ALIGNED16(struct) SpuGatherAndProcessWorkUnitInput
 {
 	uint64_t m_pairArrayPtr;
 	int		m_startIndex;
@@ -132,6 +132,14 @@ public:
 
 	///call flush to submit potential outstanding work to SPUs and wait for all involved SPUs to be finished
 	void flush2();
+
+	/// set the maximum number of SPU tasks allocated
+	void	setNumTasks(int maxNumTasks);
+
+	int		getNumTasks() const
+	{
+		return m_maxNumOutstandingTasks;
+	}
 };
 
 
@@ -143,6 +151,7 @@ public:
 
 
 #define MIDPHASE_WORKUNIT_PAGE_SIZE (16)
+//#define MIDPHASE_WORKUNIT_PAGE_SIZE (128)
 
 #define MIDPHASE_NUM_WORKUNIT_PAGES 1
 #define MIDPHASE_WORKUNIT_TASK_SIZE (MIDPHASE_WORKUNIT_PAGE_SIZE*MIDPHASE_NUM_WORKUNIT_PAGES)

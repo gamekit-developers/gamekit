@@ -31,6 +31,8 @@
 #define AOS_VECTORMATH_BULLET_CONVERT_H
 
 #include <vectormath_aos.h>
+//#include "BulletMultiThreaded/vectormath/scalar/cpp/vectormath_aos.h"
+
 #include "LinearMath/btVector3.h"
 #include "LinearMath/btQuaternion.h"
 #include "LinearMath/btMatrix3x3.h"

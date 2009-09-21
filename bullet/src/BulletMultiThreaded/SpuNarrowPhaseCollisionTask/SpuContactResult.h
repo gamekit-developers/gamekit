@@ -30,12 +30,15 @@ subject to the following restrictions:
 
 
 #include "BulletCollision/NarrowPhaseCollision/btPersistentManifold.h"
+#include "BulletCollision/NarrowPhaseCollision/btDiscreteCollisionDetectorInterface.h"
+
+class btCollisionShape;
 
 
 struct SpuCollisionPairInput
 {
 	ppu_address_t m_collisionShapes[2];
-	void*	m_spuCollisionShapes[2];
+	btCollisionShape*	m_spuCollisionShapes[2];
 
 	ppu_address_t m_persistentManifoldPtr;
 	btVector3	m_primitiveDimensions0;
@@ -53,24 +56,14 @@ struct SpuCollisionPairInput
 };
 
 
-struct SpuClosestPointInput
+struct SpuClosestPointInput : public btDiscreteCollisionDetectorInterface::ClosestPointInput
 {
-    SpuClosestPointInput()
-        :m_maximumDistanceSquared(float(1e30)),
-        m_stackAlloc(0)
-    {
-    }
-
-    btTransform m_transformA;
-    btTransform m_transformB;
-    float	m_maximumDistanceSquared;
-    class	btStackAlloc* m_stackAlloc;
 	struct SpuConvexPolyhedronVertexData* m_convexVertexData[2];
 };
 
 ///SpuContactResult exports the contact points using double-buffered DMA transfers, only when needed
 ///So when an existing contact point is duplicated, no transfer/refresh is performed.
-class SpuContactResult
+class SpuContactResult : public btDiscreteCollisionDetectorInterface::Result
 {
     btTransform		m_rootWorldTransform0;
 	btTransform		m_rootWorldTransform1;
@@ -94,14 +87,15 @@ class SpuContactResult
 			return m_spuManifold;
 		}
 
-		virtual void setShapeIdentifiers(int partId0,int index0,	int partId1,int index1);
+		virtual void setShapeIdentifiersA(int partId0,int index0);
+		virtual void setShapeIdentifiersB(int partId1,int index1);
 
 		void	setContactInfo(btPersistentManifold* spuManifold, ppu_address_t	manifoldAddress,const btTransform& worldTrans0,const btTransform& worldTrans1, btScalar restitution0,btScalar restitution1, btScalar friction0,btScalar friction01, bool isSwapped);
 
 
         void writeDoubleBufferedManifold(btPersistentManifold* lsManifold, btPersistentManifold* mmManifold);
 
-        virtual void addContactPoint(const btVector3& normalOnBInWorld,const btVector3& pointInWorld,float depth);
+        virtual void addContactPoint(const btVector3& normalOnBInWorld,const btVector3& pointInWorld,btScalar depth);
 
 		void flush();
 };
