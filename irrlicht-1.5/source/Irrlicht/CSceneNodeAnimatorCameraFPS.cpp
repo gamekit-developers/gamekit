@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2008 Nikolaus Gebhardt
+// Copyright (C) 2002-2009 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -96,7 +96,7 @@ bool CSceneNodeAnimatorCameraFPS::OnEvent(const SEvent& evt)
 
 void CSceneNodeAnimatorCameraFPS::animateNode(ISceneNode* node, u32 timeMs)
 {
-	if (node->getType() != ESNT_CAMERA)
+	if (!node || node->getType() != ESNT_CAMERA)
 		return;
 
 	ICameraSceneNode* camera = static_cast<ICameraSceneNode*>(node);
@@ -114,6 +114,14 @@ void CSceneNodeAnimatorCameraFPS::animateNode(ISceneNode* node, u32 timeMs)
 
 		firstUpdate = false;
 	}
+
+	// If the camera isn't the active camera, and receiving input, then don't process it.
+	if(!camera->isInputReceiverEnabled())
+		return;
+
+	scene::ISceneManager * smgr = camera->getSceneManager();
+	if(smgr && smgr->getActiveCamera() != camera)
+		return;
 
 	// get time
 	f32 timeDiff = (f32) ( timeMs - LastAnimationTime );
@@ -146,14 +154,15 @@ void CSceneNodeAnimatorCameraFPS::animateNode(ISceneNode* node, u32 timeMs)
 			{
 				relativeRotation.X = MaxVerticalAngle;
 			}
-
-			// reset cursor position
-			CursorControl->setPosition(0.5f, 0.5f);
-			CenterCursor = CursorControl->getRelativePosition();
-			// needed to avoid problems when the ecent receiver is
-			// disabled
-			CursorPos = CenterCursor;
 		}
+
+		// reset cursor position to the centre of the window. Do this unconditionally 
+		// to cope with the case where the mouse has escaped our window in a single
+		// tick, so we don't get messages for it.
+		CursorControl->setPosition(0.5f, 0.5f);
+		CenterCursor = CursorControl->getRelativePosition();
+		// needed to avoid problems when the event receiver is disabled
+		CursorPos = CenterCursor;
 	}
 
 	// set target

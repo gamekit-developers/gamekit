@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2008 Nikolaus Gebhardt
+// Copyright (C) 2002-2009 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -132,6 +132,16 @@ public:
 
 		services->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
 
+	}
+
+	//! Returns if the material is transparent.
+	/** The scene management needs to know this for being able to sort the
+	materials by opaque and transparent.
+	The return value could be optimized, but we'd need to know the
+	MaterialTypeParam for it. */
+	virtual bool isTransparent() const
+	{
+		return true;
 	}
 
 	private:
@@ -365,7 +375,8 @@ public:
 
 			pID3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 
-			pID3DDevice->SetRenderState(D3DRS_ALPHAREF, core::floor32(material.MaterialTypeParam * 255));
+			// 127 is required by EMT_TRANSPARENT_ALPHA_CHANNEL_REF
+			pID3DDevice->SetRenderState(D3DRS_ALPHAREF, 127); 
 			pID3DDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
 			pID3DDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 		}

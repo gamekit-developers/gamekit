@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2008 Nikolaus Gebhardt
+// Copyright (C) 2002-2009 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -32,9 +32,8 @@ CAnimatedMeshSceneNode::CAnimatedMeshSceneNode(IAnimatedMesh* mesh,
 		const core::vector3df& rotation,
 		const core::vector3df& scale)
 : IAnimatedMeshSceneNode(parent, mgr, id, position, rotation, scale), Mesh(0),
-	MeshForCurrentFrame(0),
 	BeginFrameTime(0), StartFrame(0), EndFrame(0), FramesPerSecond(0.f),
-	CurrentFrameNr(0.f), FrameWhenCurrentMeshWasGenerated(0.f),
+	CurrentFrameNr(0.f),
 	JointMode(EJUOR_NONE), JointsUsed(false),
 	TransitionTime(0), Transiting(0.f), TransitingBlend(0.f),
 	Looping(true), ReadOnlyMaterials(false), RenderFromIdentity(0),
@@ -205,8 +204,7 @@ IMesh * CAnimatedMeshSceneNode::getMeshForCurrentFrame(void)
 {
 	if(Mesh->getMeshType() != EAMT_SKINNED)
 	{
-		if(!MeshForCurrentFrame || !core::equals(CurrentFrameNr, FrameWhenCurrentMeshWasGenerated))
-			MeshForCurrentFrame = Mesh->getMesh((s32)getFrameNr(), 255, StartFrame, EndFrame);
+		return Mesh->getMesh((s32)getFrameNr(), 255, StartFrame, EndFrame);
 	}
 	else
 	{
@@ -241,11 +239,8 @@ IMesh * CAnimatedMeshSceneNode::getMeshForCurrentFrame(void)
 			skinnedMesh->updateBoundingBox();
 		}
 
-		MeshForCurrentFrame = skinnedMesh;
+		return skinnedMesh;
 	}
-
-	FrameWhenCurrentMeshWasGenerated = CurrentFrameNr;
-	return MeshForCurrentFrame;
 }
 
 
@@ -681,7 +676,6 @@ bool CAnimatedMeshSceneNode::removeChild(ISceneNode* child)
 	{
 		Shadow->drop();
 		Shadow = 0;
-		return true;
 	}
 
 	if (ISceneNode::removeChild(child))

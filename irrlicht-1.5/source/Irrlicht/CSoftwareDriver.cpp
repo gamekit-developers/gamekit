@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2008 Nikolaus Gebhardt
+// Copyright (C) 2002-2009 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -453,6 +453,8 @@ void CSoftwareDriver::drawVertexPrimitiveList16(const void* vertices, u32 vertex
 		case scene::EPT_TRIANGLES:
 			indexPointer=indexList;
 			break;
+		default:
+			return;
 	}
 	switch (vType)
 	{
@@ -817,7 +819,7 @@ void CSoftwareDriver::drawPixel(u32 x, u32 y, const SColor & color)
 {
 	((CImage*)BackBuffer)->setPixel(x, y, color);
 }
-  
+
 
 //! draw a 2d rectangle
 void CSoftwareDriver::draw2DRectangle(SColor color, const core::rect<s32>& pos,

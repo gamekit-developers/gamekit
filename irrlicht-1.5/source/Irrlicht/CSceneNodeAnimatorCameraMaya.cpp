@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2008 Nikolaus Gebhardt
+// Copyright (C) 2002-2009 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -6,6 +6,7 @@
 #include "ICursorControl.h"
 #include "ICameraSceneNode.h"
 #include "SViewFrustum.h"
+#include "ISceneManager.h"
 
 namespace irr
 {
@@ -90,10 +91,18 @@ void CSceneNodeAnimatorCameraMaya::animateNode(ISceneNode *node, u32 timeMs)
 	//Alt + LM + MM = Dolly forth/back in view direction (speed % distance camera pivot - max distance to pivot)
 	//Alt + MM = Move on camera plane (Screen center is about the mouse pointer, depending on move speed)
 
-	if (node->getType() != ESNT_CAMERA)
+	if (!node || node->getType() != ESNT_CAMERA)
 		return;
 
 	ICameraSceneNode* camera = static_cast<ICameraSceneNode*>(node);
+
+	// If the camera isn't the active camera, and receiving input, then don't process it.
+	if(!camera->isInputReceiverEnabled())
+		return;
+
+	scene::ISceneManager * smgr = camera->getSceneManager();
+	if(smgr && smgr->getActiveCamera() != camera)
+		return;
 
 	if (OldCamera != camera)
 	{

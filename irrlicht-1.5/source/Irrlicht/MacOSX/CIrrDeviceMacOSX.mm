@@ -1,4 +1,4 @@
-// Copyright (C) 2005-2008 Etienne Petitjean
+// Copyright (C) 2005-2009 Etienne Petitjean
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in Irrlicht.h
 
@@ -329,7 +329,8 @@ namespace irr
 {
 //! constructor
 CIrrDeviceMacOSX::CIrrDeviceMacOSX(const SIrrlichtCreationParameters& param)
-	: CIrrDeviceStub(param), _window(NULL), _active(true), _oglcontext(NULL), _cglcontext(NULL)
+	: CIrrDeviceStub(param), _window(NULL), _active(true), _oglcontext(NULL), _cglcontext(NULL),
+	IsShiftDown(false), IsControlDown(false)
 {
 	struct utsname name;
 	NSString	*path;
@@ -433,7 +434,7 @@ bool CIrrDeviceMacOSX::createWindow()
 	display = CGMainDisplayID();
 	_screenWidth = (int) CGDisplayPixelsWide(display);
 	_screenHeight = (int) CGDisplayPixelsHigh(display);
-
+	
 	VideoModeList.setDesktop(CreationParams.Bits,core::dimension2d<s32>(_screenWidth, _screenHeight));
 
 	if (!CreationParams.Fullscreen)
@@ -544,8 +545,8 @@ bool CIrrDeviceMacOSX::createWindow()
 					{
 						CGLSetFullScreen(_cglcontext);
 						displayRect = CGDisplayBounds(display);
-						_width = (int)displayRect.size.width;
-						_height = (int)displayRect.size.height;
+						_screenWidth = _width = (int)displayRect.size.width;
+						_screenHeight = _height = (int)displayRect.size.height;
 						result = true;
 					}
 				}
@@ -659,6 +660,36 @@ bool CIrrDeviceMacOSX::run()
 				postKeyEvent(event,ievent,false);
 				break;
 
+			case NSFlagsChanged:
+				ievent.EventType = irr::EET_KEY_INPUT_EVENT;
+				ievent.KeyInput.Shift = ([(NSEvent *)event modifierFlags] & NSShiftKeyMask) != 0;
+				ievent.KeyInput.Control = ([(NSEvent *)event modifierFlags] & NSControlKeyMask) != 0;
+				
+				if (IsShiftDown != ievent.KeyInput.Shift)
+				{
+					ievent.KeyInput.Char = irr::KEY_SHIFT;
+					ievent.KeyInput.Key = irr::KEY_SHIFT;
+					ievent.KeyInput.PressedDown = ievent.KeyInput.Shift;
+					
+					IsShiftDown = ievent.KeyInput.Shift;
+					
+					postEventFromUser(ievent);
+				}
+				
+				if (IsControlDown != ievent.KeyInput.Control)
+				{
+					ievent.KeyInput.Char = irr::KEY_CONTROL;
+					ievent.KeyInput.Key = irr::KEY_CONTROL;
+					ievent.KeyInput.PressedDown = ievent.KeyInput.Control;
+					
+					IsControlDown = ievent.KeyInput.Control;
+					
+					postEventFromUser(ievent);
+				}
+				
+				[NSApp sendEvent:event];
+				break;				
+				
 			case NSLeftMouseDown:
 				ievent.EventType = irr::EET_MOUSE_INPUT_EVENT;
 				ievent.MouseInput.Event = irr::EMIE_LMOUSE_PRESSED_DOWN;
@@ -884,6 +915,7 @@ void CIrrDeviceMacOSX::setMouseLocation(int x,int y)
 
 	if (_window != NULL)
 	{
+		// Irrlicht window exists
 		p.x = (float) x;
 		p.y = (float) (_height - y);
 		p = [(NSWindow *)_window convertBaseToScreen:p];
@@ -1149,10 +1181,10 @@ void CIrrDeviceMacOSX::pollJoysticks()
 				hidEvent.value = 0;
 				result = (*(ActiveJoysticks[joystick].interface))->getElementValue(ActiveJoysticks[joystick].interface, ActiveJoysticks[joystick].axisComp[n].cookie, &hidEvent);
 				if (kIOReturnSuccess == result) {
-					f32 min = -32768.0f;
-					f32 max = 32768.0f;
-					f32 deviceScale = max - min;
-					f32 readScale = (f32)ActiveJoysticks[joystick].axisComp[n].maxRead - (f32)ActiveJoysticks[joystick].axisComp[n].minRead;
+					const f32 min = -32768.0f;
+					const f32 max = 32767.0f;
+					const f32 deviceScale = max - min;
+					const f32 readScale = (f32)ActiveJoysticks[joystick].axisComp[n].maxRead - (f32)ActiveJoysticks[joystick].axisComp[n].minRead;
 
 					if (hidEvent.value < ActiveJoysticks[joystick].axisComp[n].minRead)
 						ActiveJoysticks[joystick].axisComp[n].minRead = hidEvent.value;

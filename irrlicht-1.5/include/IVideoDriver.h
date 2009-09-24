@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2008 Nikolaus Gebhardt
+// Copyright (C) 2002-2009 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -353,19 +353,23 @@ namespace video
 		virtual const core::rect<s32>& getViewPort() const = 0;
 
 		//! Draws a vertex primitive list
-		/** Note that there may be at maximum 65536 vertices, because
-		the index list is an array of 16 bit values each with a maximum
-		value of 65536. If there are more than 65536 vertices in the
-		list, results of this operation are not defined.
+		/** Note that, depending on the index type, some vertices might be not
+		accessible through the index list. The limit is at 65535 vertices for 16bit
+		indices. Please note that currently not all primitives are available for
+		all drivers, and some might be emulated via triangle renders.
 		\param vertices Pointer to array of vertices.
 		\param vertexCount Amount of vertices in the array.
-		\param indexList Pointer to array of indices.
+		\param indexList Pointer to array of indices. These define the vertices used
+		for each primitive. Depending on the pType, indices are interpreted as single
+		objects (for point like primitives), pairs (for lines), triplets (for
+		triangles), or quads.
 		\param primCount Amount of Primitives
-		\param vType Vertex type, e.g. EVT_STANDARD for S3DVertex.
-		\param pType Primitive type, e.g. EPT_TRIANGLE_FAN for a triangle fan. */
+		\param vType Vertex type, e.g. video::EVT_STANDARD for S3DVertex.
+		\param pType Primitive type, e.g. scene::EPT_TRIANGLE_FAN for a triangle fan.
+		\param iType Index type, e.g. video::EIT_16BIT for a triangle fan. */
 		virtual void drawVertexPrimitiveList(const void* vertices, u32 vertexCount,
 				const void* indexList, u32 primCount,
-				E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType, E_INDEX_TYPE iType) = 0;
+				E_VERTEX_TYPE vType=EVT_STANDARD, scene::E_PRIMITIVE_TYPE pType=scene::EPT_TRIANGLES, E_INDEX_TYPE iType=EIT_16BIT) = 0;
 
 		//! Draws an indexed triangle list.
 		/** Note that there may be at maximum 65536 vertices, because
@@ -558,7 +562,7 @@ namespace video
 		virtual void draw2DRectangle(SColor color, const core::rect<s32>& pos,
 			const core::rect<s32>* clip = 0) = 0;
 
-		//! Draws an 2d rectangle with a gradient.
+		//! Draws a 2d rectangle with a gradient.
 		/** \param colorLeftUp Color of the upper left corner to draw.
 		The alpha component will not be ignored and specifies how
 		transparent the rectangle will be.
@@ -580,20 +584,28 @@ namespace video
 				SColor colorLeftDown, SColor colorRightDown,
 				const core::rect<s32>* clip = 0) = 0;
 
+		//! Draws the outline of a 2D rectangle.
+		/** \param pos Position of the rectangle.
+		\param color Color of the rectangle to draw. The alpha component
+		specifies how transparent the rectangle outline will be. */
+		virtual void draw2DRectangleOutline(const core::recti& pos,
+				SColor color=SColor(255,255,255,255)) = 0 ;
+
 		//! Draws a 2d line.
-		/** \param start: Screen coordinates of the start of the line
+		/** \param start Screen coordinates of the start of the line
 		in pixels.
-		\param end: Screen coordinates of the start of the line in
+		\param end Screen coordinates of the start of the line in
 		pixels.
-		\param color: Color of the line to draw. */
+		\param color Color of the line to draw. */
 		virtual void draw2DLine(const core::position2d<s32>& start,
 					const core::position2d<s32>& end,
 					SColor color=SColor(255,255,255,255)) = 0;
 
 		//! Draws a pixel.
-		/** \param position: the position of the pixel.
-		\param color: Color of the pixel to draw. */
-		virtual void drawPixel(u32 x, u32 y, const SColor & color) = 0; 
+		/** \param x The x-position of the pixel.
+		\param y The y-position of the pixel.
+		\param color Color of the pixel to draw. */
+		virtual void drawPixel(u32 x, u32 y, const SColor& color) = 0; 
 
 		//! Draws a non filled concyclic regular 2d polyon.
 		/** This method can be used to draw circles, but also
@@ -654,8 +666,8 @@ namespace video
 			video::SColor rightDownEdge = video::SColor(255,0,0,0)) = 0;
 
 		//! Draws a mesh buffer
-		/** \param mb: Buffer to draw; */
-		virtual void drawMeshBuffer( const scene::IMeshBuffer* mb) = 0;
+		/** \param mb Buffer to draw; */
+		virtual void drawMeshBuffer(const scene::IMeshBuffer* mb) = 0;
 
 		//! Sets the fog mode.
 		/** These are global values attached to each 3d object rendered,
@@ -673,8 +685,8 @@ namespace video
 		you want per-pixel fog.
 		\param rangeFog Set this to true to enable range-based vertex
 		fog. The distance from the viewer is used to compute the fog,
-		not the z-coordinate. This is better, but slower. This is only
-		available with D3D and vertex fog. */
+		not the z-coordinate. This is better, but slower. This might not
+		be available with all drivers and fog settings. */
 		virtual void setFog(SColor color=SColor(0,255,255,255),
 				bool linearFog=true, f32 start=50.0f, f32 end=100.0f,
 				f32 density=0.01f,

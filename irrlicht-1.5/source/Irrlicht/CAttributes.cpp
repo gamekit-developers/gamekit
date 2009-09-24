@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2008 Nikolaus Gebhardt
+// Copyright (C) 2002-2009 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -1363,6 +1363,12 @@ void CAttributes::readAttributeFromXML(io::IXMLReader* reader)
 	if (element == L"enum")
 	{
 		addEnum(name.c_str(), 0, 0);
+		Attributes.getLast()->setString(reader->getAttributeValue(L"value"));
+	}
+	else
+	if (element == L"binary")
+	{
+		addBinary(name.c_str(), 0, 0);
 		Attributes.getLast()->setString(reader->getAttributeValue(L"value"));
 	}
 	else

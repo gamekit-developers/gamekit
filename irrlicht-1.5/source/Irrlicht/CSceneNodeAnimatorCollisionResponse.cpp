@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2008 Nikolaus Gebhardt
+// Copyright (C) 2002-2009 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -29,7 +29,7 @@ CSceneNodeAnimatorCollisionResponse::CSceneNodeAnimatorCollisionResponse(
 	#ifdef _DEBUG
 	setDebugName("CSceneNodeAnimatorCollisionResponse");
 	#endif
-	
+
 	if (World)
 		World->grab();
 
@@ -116,13 +116,13 @@ void CSceneNodeAnimatorCollisionResponse::setWorld(ITriangleSelector* newWorld)
 
 	LastTime = os::Timer::getTime();
 
-	if (World)
-		World->drop();
+    if (newWorld)
+        newWorld->grab();
 
-	World = newWorld;
-	if (World)
-		World->grab();
+    if (World)
+        World->drop();
 
+    World = newWorld;
 }
 
 
@@ -233,7 +233,7 @@ ISceneNodeAnimator* CSceneNodeAnimatorCollisionResponse::createClone(ISceneNode*
 {
 	if (!newManager) newManager = SceneManager;
 
-	CSceneNodeAnimatorCollisionResponse * newAnimator = 
+	CSceneNodeAnimatorCollisionResponse * newAnimator =
 		new CSceneNodeAnimatorCollisionResponse(newManager, World, Object, Radius, (Gravity * 1000.0f), Translation,
 													SlidingSpeed);
 

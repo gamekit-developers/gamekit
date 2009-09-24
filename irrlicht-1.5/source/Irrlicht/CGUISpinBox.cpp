@@ -1,4 +1,4 @@
-// Copyright (C) 2006-2008 Michael Zeilfelder
+// Copyright (C) 2006-2009 Michael Zeilfelder
 // This file uses the licence of the Irrlicht Engine.
 
 #include "CGUISpinBox.h"
@@ -26,6 +26,10 @@ CGUISpinBox::CGUISpinBox(const wchar_t* text, IGUIEnvironment* environment,
 	RangeMin(-FLT_MAX), RangeMax(FLT_MAX), FormatString(L"%f"),
 	DecimalPlaces(-1)
 {
+	#ifdef _DEBUG
+	setDebugName("CGUISpinBox");
+	#endif
+
 	s32 ButtonWidth = 16;
 	IGUISpriteBank *sb = 0;
 	if (environment && environment->getSkin())
@@ -254,6 +258,7 @@ void CGUISpinBox::serializeAttributes(io::IAttributes* out, io::SAttributeReadWr
 	out->addFloat("Step", getStepSize());
 	out->addInt("DecimalPlaces", DecimalPlaces);
 }
+
 
 //! Reads attributes of the element
 void CGUISpinBox::deserializeAttributes(io::IAttributes* in, io::SAttributeReadWriteOptions* options)

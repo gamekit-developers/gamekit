@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2008 Nikolaus Gebhardt
+// Copyright (C) 2002-2009 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -23,8 +23,8 @@ namespace gui
 CGUIContextMenu::CGUIContextMenu(IGUIEnvironment* environment,
 				IGUIElement* parent, s32 id,
 				core::rect<s32> rectangle, bool getFocus, bool allowFocus)
-	: IGUIContextMenu(environment, parent, id, rectangle), HighLighted(-1),
-		ChangeTime(0), EventParent(0), AllowFocus(allowFocus), LastFont(0)
+	: IGUIContextMenu(environment, parent, id, rectangle), EventParent(0), LastFont(0),
+		HighLighted(-1), ChangeTime(0), AllowFocus(allowFocus)
 {
 	#ifdef _DEBUG
 	setDebugName("CGUIContextMenu");
@@ -90,6 +90,8 @@ void CGUIContextMenu::setSubMenu(u32 index, CGUIContextMenu* menu)
 	if (index >= Items.size())
 		return;
 
+    if (menu)
+        menu->grab();
 	if (Items[index].SubMenu)
 		Items[index].SubMenu->drop();
 
@@ -98,7 +100,6 @@ void CGUIContextMenu::setSubMenu(u32 index, CGUIContextMenu* menu)
 
 	if (Items[index].SubMenu)
 	{
-		menu->grab();
 		menu->AllowFocus = false;
 		if ( Environment->getFocus() == menu )
 		{
@@ -242,7 +243,7 @@ bool CGUIContextMenu::OnEvent(const SEvent& event)
 				}
 				break;
 			default:
- 				break;
+				break;
 			}
 			break;
 		case EET_MOUSE_INPUT_EVENT:
@@ -265,7 +266,7 @@ bool CGUIContextMenu::OnEvent(const SEvent& event)
 					highlight(core::position2d<s32>(event.MouseInput.X, event.MouseInput.Y), true);
 				return true;
 			default:
- 				break;
+				break;
 			}
 			break;
 		default:
@@ -530,8 +531,7 @@ void CGUIContextMenu::draw()
 
 void CGUIContextMenu::recalculateSize()
 {
-	IGUISkin* skin = Environment->getSkin();
-	IGUIFont* font = skin->getFont(EGDF_MENU);
+	IGUIFont* font = Environment->getSkin()->getFont(EGDF_MENU);
 
 	if (!font)
 		return;

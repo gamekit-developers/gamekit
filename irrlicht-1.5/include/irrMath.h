@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2008 Nikolaus Gebhardt
+// Copyright (C) 2002-2009 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -180,6 +180,12 @@ namespace core
 	inline bool equals(const u32 a, const u32 b, const u32 tolerance = 0)
 	{
 		return (a + tolerance >= b) && (a - tolerance <= b);
+	}
+
+	//! returns if a equals zero, taking rounding errors into account
+	inline bool iszero(const f64 a, const f64 tolerance = ROUNDING_ERROR_64)
+	{
+		return fabs(a) <= tolerance;
 	}
 
 	//! returns if a equals zero, taking rounding errors into account

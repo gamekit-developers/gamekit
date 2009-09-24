@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2008 Nikolaus Gebhardt
+// Copyright (C) 2002-2009 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine" and the "irrXML" project.
 // For conditions of distribution and use, see copyright notice in irrlicht.h and/or irrXML.h
 
@@ -16,7 +16,7 @@
   Welcome to the irrXML API documentation.
   Here you'll find any information you'll need to develop applications with
   irrXML. If you look for a tutorial on how to start, take a look at the \ref irrxmlexample,
-  at the homepage of irrXML at <A HREF="http://xml.irrlicht3d.org" >xml.irrlicht3d.org</A>
+  at the homepage of irrXML at <A HREF="http://www.ambiera.com/irrxml/">www.ambiera.com/irrxml/</A>
   or into the SDK in the directory \example.
 
   irrXML is intended to be a high speed and easy-to-use XML Parser for C++, and
@@ -120,7 +120,7 @@
 	The irrXML license is based on the zlib license. Basicly, this means you can do with
 	irrXML whatever you want:
 
-	Copyright (C) 2002-2008 Nikolaus Gebhardt
+	Copyright (C) 2002-2009 Nikolaus Gebhardt
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -432,10 +432,13 @@ namespace io
 	\param callback: Callback for file read abstraction. Implement your own
 	callback to make the xml parser read in other things than just files. See
 	IFileReadCallBack for more information about this.
+	\param deleteCallback: if true, the callback will be deleted after the file
+	has been read.  Otherwise the caller si responsible for cleaning it up.
 	\return Returns a pointer to the created xml parser. This pointer should be
 	deleted using 'delete' after no longer needed. Returns 0 if an error occured
 	and the file could not be opened. */
-	IRRLICHT_API IrrXMLReader* IRRCALLCONV createIrrXMLReader(IFileReadCallBack* callback);
+	IRRLICHT_API IrrXMLReader* IRRCALLCONV createIrrXMLReader(IFileReadCallBack* callback,
+																bool deleteCallback = false);
 
 	//! Creates an instance of an UFT-16 xml parser.
 	/** This means that
@@ -469,10 +472,13 @@ namespace io
 	\param callback: Callback for file read abstraction. Implement your own
 	callback to make the xml parser read in other things than just files. See
 	IFileReadCallBack for more information about this.
+	\param deleteCallback: if true, the callback will be deleted after the file
+	has been read.  Otherwise the caller si responsible for cleaning it up.
 	\return Returns a pointer to the created xml parser. This pointer should be
 	deleted using 'delete' after no longer needed. Returns 0 if an error occured
 	and the file could not be opened. */
-	IRRLICHT_API IrrXMLReaderUTF16* IRRCALLCONV createIrrXMLReaderUTF16(IFileReadCallBack* callback);
+	IRRLICHT_API IrrXMLReaderUTF16* IRRCALLCONV createIrrXMLReaderUTF16(IFileReadCallBack* callback,
+																		bool deleteCallback = false);
 
 
 	//! Creates an instance of an UFT-32 xml parser.
@@ -507,10 +513,13 @@ namespace io
 	\param callback: Callback for file read abstraction. Implement your own
 	callback to make the xml parser read in other things than just files. See
 	IFileReadCallBack for more information about this.
+	\param deleteCallback: if true, the callback will be deleted after the file
+	has been read.  Otherwise the caller si responsible for cleaning it up.
 	\return Returns a pointer to the created xml parser. This pointer should be
 	deleted using 'delete' after no longer needed. Returns 0 if an error occured
 	and the file could not be opened. */
-	IRRLICHT_API IrrXMLReaderUTF32* IRRCALLCONV createIrrXMLReaderUTF32(IFileReadCallBack* callback);
+	IRRLICHT_API IrrXMLReaderUTF32* IRRCALLCONV createIrrXMLReaderUTF32(IFileReadCallBack* callback,
+																		bool deleteCallback = false);
 
 
 	/*! \file irrxml.h

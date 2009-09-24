@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2008 Nikolaus Gebhardt
+// Copyright (C) 2002-2009 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -1708,9 +1708,9 @@ public:
 		return L"string";
 	}
 
-	virtual void getBinary(void* outdata, s32 maxLenght)
+	virtual void getBinary(void* outdata, s32 maxLength)
 	{
-		s32 dataSize = maxLenght;
+		s32 dataSize = maxLength;
 		c8* datac8 = (c8*)(outdata);
 		s32 p = 0;
 		const c8* dataString = Value.c_str();
@@ -1730,9 +1730,9 @@ public:
 		}
 	};
 
-	virtual void setBinary(void* data, s32 maxLenght)
+	virtual void setBinary(void* data, s32 maxLength)
 	{
-		s32 dataSize = maxLenght;
+		s32 dataSize = maxLength;
 		c8* datac8 = (c8*)(data);
 		char tmp[3];
 		tmp[2] = 0;

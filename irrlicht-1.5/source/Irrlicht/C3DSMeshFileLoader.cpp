@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2008 Nikolaus Gebhardt
+// Copyright (C) 2002-2009 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -366,6 +366,7 @@ bool C3DSMeshFileLoader::readMaterialChunk(io::IReadFile* file, ChunkData* paren
 			break;
 		case C3DS_MATSHININESS:
 			readPercentageChunk(file, &data, CurrentMaterial.Material.Shininess);
+			CurrentMaterial.Material.Shininess = (1.f-CurrentMaterial.Material.Shininess)*128.f;
 			break;
 		case C3DS_TRANSPARENCY:
 			{

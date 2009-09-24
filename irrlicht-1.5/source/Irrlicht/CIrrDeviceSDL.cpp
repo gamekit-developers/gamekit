@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2008 Nikolaus Gebhardt
+// Copyright (C) 2002-2009 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -117,10 +117,6 @@ CIrrDeviceSDL::~CIrrDeviceSDL()
 	for (u32 i=0; i<numJoysticks; ++i)
 		SDL_JoystickClose(Joysticks[i]);
 #endif
-
-	// only free surfaces created by us
-	if (Screen && !CreationParams.WindowId)
-		SDL_FreeSurface(Screen);
 	SDL_Quit();
 }
 
@@ -299,8 +295,6 @@ bool CIrrDeviceSDL::run()
 			{
 				Width = SDL_event.resize.w;
 				Height = SDL_event.resize.h;
-				if (Screen)
-					SDL_FreeSurface(Screen);
 				Screen = SDL_SetVideoMode( Width, Height, CreationParams.Bits, SDL_Flags );
 				if (VideoDriver)
 					VideoDriver->OnResize(core::dimension2d<s32>(Width, Height));
@@ -599,8 +593,6 @@ void CIrrDeviceSDL::setResizeAble(bool resize)
 			SDL_Flags |= SDL_RESIZABLE;
 		else
 			SDL_Flags &= ~SDL_RESIZABLE;
-		if (Screen)
-			SDL_FreeSurface(Screen);
 		Screen = SDL_SetVideoMode( Width, Height, CreationParams.Bits, SDL_Flags );
 		Resizeable = resize;
 	}

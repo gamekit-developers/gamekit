@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2008 Nikolaus Gebhardt
+// Copyright (C) 2002-2009 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -178,7 +178,7 @@ void COpenGLTexture::copyTexture(bool newTexture)
 			break;
 	}
 
-	glBindTexture(GL_TEXTURE_2D, TextureName);
+	Driver->setTexture(0, this);
 	if (Driver->testGLError())
 		os::Printer::log("Could not bind Texture", ELL_ERROR);
 
@@ -416,7 +416,7 @@ void COpenGLTexture::bindRTT()
 //! Unbind Render Target Texture
 void COpenGLTexture::unbindRTT()
 {
-	glBindTexture(GL_TEXTURE_2D, getOpenGLTextureName());
+	Driver->setTexture(0, this);
 
 	// Copy Our ViewPort To The Texture
 	glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, getSize().Width, getSize().Height);
@@ -425,11 +425,8 @@ void COpenGLTexture::unbindRTT()
 
 /* FBO Textures */
 
-#ifdef GL_EXT_framebuffer_object
 // helper function for render to texture
 static bool checkFBOStatus(COpenGLDriver* Driver);
-#endif
-
 
 //! RTT ColorFrameBuffer constructor
 COpenGLFBOTexture::COpenGLFBOTexture(const core::dimension2d<s32>& size,
@@ -456,7 +453,7 @@ COpenGLFBOTexture::COpenGLFBOTexture(const core::dimension2d<s32>& size,
 
 	// generate color texture
 	glGenTextures(1, &TextureName);
-	glBindTexture(GL_TEXTURE_2D, TextureName);
+	Driver->setTexture(0, this);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -597,10 +594,10 @@ COpenGLFBODepthTexture::~COpenGLFBODepthTexture()
 
 
 //combine depth texture and rtt
-void COpenGLFBODepthTexture::attach(ITexture* renderTex)
+bool COpenGLFBODepthTexture::attach(ITexture* renderTex)
 {
 	if (!renderTex)
-		return;
+		return false;
 	video::COpenGLFBOTexture* rtt = static_cast<video::COpenGLFBOTexture*>(renderTex);
 	rtt->bindRTT();
 #ifdef GL_EXT_framebuffer_object
@@ -628,13 +625,17 @@ void COpenGLFBODepthTexture::attach(ITexture* renderTex)
 						GL_RENDERBUFFER_EXT,
 						DepthRenderBuffer);
 	}
+#endif
 	// check the status
 	if (!checkFBOStatus(Driver))
+	{
 		os::Printer::log("FBO incomplete");
-#endif
+		return false;
+	}
 	rtt->DepthTexture=this;
 	grab(); // grab the depth buffer, not the RTT
 	rtt->unbindRTT();
+	return true;
 }
 
 
@@ -650,9 +651,9 @@ void COpenGLFBODepthTexture::unbindRTT()
 }
 
 
-#ifdef GL_EXT_framebuffer_object
 bool checkFBOStatus(COpenGLDriver* Driver)
 {
+#ifdef GL_EXT_framebuffer_object
 	GLenum status = Driver->extGlCheckFramebufferStatus(GL_FRAMEBUFFER_EXT);
 
 	switch (status)
@@ -699,10 +700,10 @@ bool checkFBOStatus(COpenGLDriver* Driver)
 		default:
 			break;
 	}
+#endif
 	os::Printer::log("FBO error", ELL_ERROR);
 	return false;
 }
-#endif
 
 
 } // end namespace video

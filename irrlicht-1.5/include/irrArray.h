@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2008 Nikolaus Gebhardt
+// Copyright (C) 2002-2009 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine" and the "irrXML" project.
 // For conditions of distribution and use, see copyright notice in irrlicht.h and irrXML.h
 
@@ -310,8 +310,8 @@ public:
 	}
 
 
-	//! Get size of array.
-	/** \return Size of elements used in the array. */
+	//! Get number of occupied elements of the array.
+	/** \return Size of elements in the array which are actually occupied. */
 	u32 size() const
 	{
 		return used;
@@ -320,7 +320,7 @@ public:
 
 	//! Get amount of memory allocated.
 	/** \return Amount of memory allocated. The amount of bytes
-	allocated would be allocated_size() * sizeof(ElementsUsed); */
+	allocated would be allocated_size() * sizeof(ElementTypeUsed); */
 	u32 allocated_size() const
 	{
 		return allocated;

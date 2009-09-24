@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2008 Nikolaus Gebhardt
+// Copyright (C) 2002-2009 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -297,7 +297,7 @@ CIrrDeviceWinCE::CIrrDeviceWinCE(const SIrrlichtCreationParameters& params)
 		// Register Class
 		WNDCLASS wc;
 		wc.style		= CS_HREDRAW | CS_VREDRAW;
-		wc.lpfnWndProc		= (WNDPROC)WndProc;
+		wc.lpfnWndProc		= WndProc;
 		wc.cbClsExtra		= 0;
 		wc.cbWndExtra		= 0;
 		wc.hInstance		= hInstance;

@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2008 Nikolaus Gebhardt
+// Copyright (C) 2002-2009 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -207,7 +207,9 @@ core::stringc CFileSystem::getAbsolutePath(const core::stringc& filename) const
 	c8 *p=0;
 
 #ifdef _IRR_WINDOWS_API_
-	#if !defined ( _WIN32_WCE )
+	#if defined ( _WIN32_WCE )
+	return filename;
+	#else
 	c8 fpath[_MAX_PATH];
 	p = _fullpath( fpath, filename.c_str(), _MAX_PATH);
 	#endif
@@ -262,10 +264,14 @@ core::stringc CFileSystem::getFileBasename(const core::stringc& filename, bool k
 	s32 lastSlash = filename.findLast('/');
 	const s32 lastBackSlash = filename.findLast('\\');
 	lastSlash = core::max_(lastSlash, lastBackSlash);
+
+	// get number of chars after last dot
 	s32 end = 0;
 	if (!keepExtension)
 	{
-		end = filename.findLast('.');
+		// take care to search only after last slash to check only for
+		// dots in the filename
+		end = filename.findLast('.', lastSlash);
 		if (end == -1)
 			end=0;
 		else

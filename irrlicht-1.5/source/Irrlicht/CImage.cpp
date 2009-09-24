@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2008 Nikolaus Gebhardt / Thomas Alten
+// Copyright (C) 2002-2009 Nikolaus Gebhardt / Thomas Alten
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -579,7 +579,7 @@ static void executeBlit_TextureCopy_32_to_24( const SBlitJob * job )
 		src = (u32*) ( (u8*) (src) + job->srcPitch );
 		dst += job->dstPitch ;
 	}
-	
+
 }
 
 
@@ -1037,6 +1037,10 @@ CImage::CImage(IImage* imageToCopy, const core::position2d<s32>& pos,
 //! assumes format and size has been set and creates the rest
 void CImage::initData()
 {
+	#ifdef _DEBUG
+	setDebugName("CImage");
+	#endif
+
 	setBitMasks();
 	BitsPerPixel = getBitsPerPixelFromFormat(Format);
 	BytesPerPixel = BitsPerPixel / 8;
@@ -1312,6 +1316,8 @@ void CImage::drawLine(const core::position2d<s32>& from, const core::position2d<
 					RenderLine32_Blend( this, p[0], p[1], color.color, alpha );
 				}
 				break;
+			default:
+				break;
 		}
 	}
 }
@@ -1340,14 +1346,17 @@ void CImage::copyToScaling(void* target, s32 width, s32 height, ECOLOR_FORMAT fo
 		else
 		{
 			u8* tgtpos = (u8*) target;
-			u8* dstpos = (u8*) Data;
+			u8* srcpos = (u8*) Data;
 			const u32 bwidth = width*bpp;
+			const u32 rest = pitch-bwidth;
 			for (s32 y=0; y<height; ++y)
 			{
-				memcpy(target, Data, height*pitch);
-				memset(tgtpos+width, 0, pitch-bwidth);
+				// copy scanline
+				memcpy(tgtpos, srcpos, bwidth);
+				// clear pitch
+				memset(tgtpos+bwidth, 0, rest);
 				tgtpos += pitch;
-				dstpos += Pitch;
+				srcpos += Pitch;
 			}
 			return;
 		}

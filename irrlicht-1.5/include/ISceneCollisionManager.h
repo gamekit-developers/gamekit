@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2008 Nikolaus Gebhardt
+// Copyright (C) 2002-2009 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -24,9 +24,6 @@ namespace scene
 	class ISceneCollisionManager : public virtual IReferenceCounted
 	{
 	public:
-
-		//! Destructor
-		virtual ~ISceneCollisionManager() {}
 
 		//! Finds the collision point of a line and lots of triangles, if there is one.
 		/** \param ray: Line with witch collisions are tested.
@@ -107,6 +104,8 @@ namespace scene
 		\param idBitMask: Only scene nodes with an id with bits set
 		like in this mask will be tested. If the BitMask is 0, this
 		feature is disabled.
+		Please note that the default node id of -1 will match with
+		every bitmask != 0
 		\param bNoDebugObjects: Doesn't take debug objects into account
 		when true. These are scene nodes with IsDebugObject() = true.
 		\return Visible scene node under screen coordinates with
@@ -122,6 +121,8 @@ namespace scene
 		\param idBitMask: Only scene nodes with an id with bits set
 		like in this mask will be tested. If the BitMask is 0, this
 		feature is disabled.
+		Please note that the default node id of -1 will match with
+		every bitmask != 0
 		\param bNoDebugObjects: Doesn't take debug objects into account
 		when true. These are scene nodes with IsDebugObject() = true.
 		\return Scene node nearest to ray.start, which collides with
@@ -139,6 +140,8 @@ namespace scene
 		\param idBitMask: Only scene nodes with an id with bits set
 		like in this mask will be tested. If the BitMask is 0, this
 		feature is disabled.
+		Please note that the default node id of -1 will match with
+		every bitmask != 0
 		\param bNoDebugObjects: Doesn't take debug objects into account
 		when true. These are scene nodes with IsDebugObject() = true.
 		\return Scene node nearest to the camera, which collides with

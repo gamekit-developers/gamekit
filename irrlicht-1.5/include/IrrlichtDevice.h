@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2008 Nikolaus Gebhardt
+// Copyright (C) 2002-2009 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -33,9 +33,10 @@ namespace irr
 	} // end namespace scene
 
 	//! The Irrlicht device. You can create it with createDevice() or createDeviceEx().
-	/** This is the most important class of the Irrlicht Engine. You can access everything
-	in the engine if you have a pointer to an instance of this class.
-	There should be only one instance of this class at any time.
+	/** This is the most important class of the Irrlicht Engine. You can
+	access everything in the engine if you have a pointer to an instance of
+	this class.  There should be only one instance of this class at any
+	time.
 	*/
 	class IrrlichtDevice : public virtual IReferenceCounted
 	{
@@ -211,12 +212,56 @@ namespace irr
 		//! Activate any joysticks, and generate events for them.
 		/** Irrlicht contains support for joysticks, but does not generate joystick events by default,
 		as this would consume joystick info that 3rd party libraries might rely on. Call this method to 
-		activate joystick support in Irrlicht and to receive @ref SJoystickEvent events.
+		activate joystick support in Irrlicht and to receive irr::SJoystickEvent events.
 		\param joystickInfo On return, this will contain an array of each joystick that was found and activated.
 		\return true if joysticks are supported on this device and _IRR_COMPILE_WITH_JOYSTICK_EVENTS_
 				is defined, false if joysticks are not supported or support is compiled out.
 		*/
 		virtual bool activateJoysticks(core::array<SJoystickInfo> & joystickInfo) = 0;
+
+		//! Allows to check which drivers are supported by the engine.
+		/** Even if true is returned the driver needs not be available
+		for an actual configuration requested upon device creation. */
+		static bool isDriverSupported(video::E_DRIVER_TYPE driver)
+		{
+			switch (driver)
+			{
+				case video::EDT_NULL:
+					return true;
+				case video::EDT_SOFTWARE:
+#ifdef _IRR_COMPILE_WITH_SOFTWARE_
+					return true;
+#else
+					return false;
+#endif
+				case video::EDT_BURNINGSVIDEO:
+#ifdef _IRR_COMPILE_WITH_BURNINGSVIDEO_
+					return true;
+#else
+					return false;
+#endif
+				case video::EDT_DIRECT3D8:
+#ifdef _IRR_COMPILE_WITH_DIRECT3D_8_
+					return true;
+#else
+					return false;
+#endif
+				case video::EDT_DIRECT3D9:
+#ifdef _IRR_COMPILE_WITH_DIRECT3D_9_
+					return true;
+#else
+					return false;
+#endif
+				case video::EDT_OPENGL:
+#ifdef _IRR_COMPILE_WITH_OPENGL_
+					return true;
+#else
+					return false;
+#endif
+				default:
+					return false;
+			}
+		}
 	};
 
 } // end namespace irr

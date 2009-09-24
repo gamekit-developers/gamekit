@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2008 Nikolaus Gebhardt
+// Copyright (C) 2002-2009 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -21,7 +21,7 @@ COpenGLExtensionHandler::COpenGLExtensionHandler() :
 		MultiTextureExtension(false), MultiSamplingExtension(false), AnisotropyExtension(false),
 		TextureCompressionExtension(false),
 		MaxTextureUnits(1), MaxLights(1), MaxIndices(65535),
-		MaxAnisotropy(1.0f), MaxUserClipPlanes(0),
+		MaxAnisotropy(1.0f), MaxUserClipPlanes(0), MaxMultipleRenderTargets(1),
 		Version(0), ShaderLanguageVersion(0)
 #ifdef _IRR_OPENGL_USE_EXTPOINTER_
 	,pGlActiveTextureARB(0), pGlClientActiveTextureARB(0),
@@ -45,6 +45,7 @@ COpenGLExtensionHandler::COpenGLExtensionHandler() :
 	pGlCheckFramebufferStatusEXT(0), pGlFramebufferTexture2DEXT(0),
 	pGlBindRenderbufferEXT(0), pGlDeleteRenderbuffersEXT(0), pGlGenRenderbuffersEXT(0),
 	pGlRenderbufferStorageEXT(0), pGlFramebufferRenderbufferEXT(0),
+	pGlDrawBuffersARB(0), pGlDrawBuffersATI(0),
 	pGlGenBuffersARB(0), pGlBindBufferARB(0), pGlBufferDataARB(0), pGlDeleteBuffersARB(0),
 	pGlBufferSubDataARB(0), pGlGetBufferSubDataARB(0), pGlMapBufferARB(0), pGlUnmapBufferARB(0),
 	pGlIsBufferARB(0), pGlGetBufferParameterivARB(0), pGlGetBufferPointervARB(0)
@@ -54,6 +55,14 @@ COpenGLExtensionHandler::COpenGLExtensionHandler() :
 {
 	for (u32 i=0; i<IRR_OpenGL_Feature_Count; ++i)
 		FeatureAvailable[i]=false;
+	DimAliasedLine[0]=1.f;
+	DimAliasedLine[1]=1.f;
+	DimAliasedPoint[0]=1.f;
+	DimAliasedPoint[1]=1.f;
+	DimSmoothedLine[0]=1.f;
+	DimSmoothedLine[1]=1.f;
+	DimSmoothedPoint[0]=1.f;
+	DimSmoothedPoint[1]=1.f;
 }
 
 
@@ -66,7 +75,7 @@ void COpenGLExtensionHandler::dump() const
 void COpenGLExtensionHandler::initExtensions(bool stencilBuffer)
 {
 	const f32 ogl_ver = core::fast_atof(reinterpret_cast<const c8*>(glGetString(GL_VERSION)));
-	Version = core::floor32(ogl_ver)*100+core::ceil32(core::fract(ogl_ver)*10.0f);
+	Version = core::floor32(ogl_ver)*100+core::round32(core::fract(ogl_ver)*10.0f);
 	if ( Version >= 102)
 		os::Printer::log("OpenGL driver version is 1.2 or better.", ELL_INFORMATION);
 	else
@@ -163,6 +172,8 @@ void COpenGLExtensionHandler::initExtensions(bool stencilBuffer)
 	pGlGenRenderbuffersEXT = (PFNGLGENRENDERBUFFERSEXTPROC) wglGetProcAddress("glGenRenderbuffersEXT");
 	pGlRenderbufferStorageEXT = (PFNGLRENDERBUFFERSTORAGEEXTPROC) wglGetProcAddress("glRenderbufferStorageEXT");
 	pGlFramebufferRenderbufferEXT = (PFNGLFRAMEBUFFERRENDERBUFFEREXTPROC) wglGetProcAddress("glFramebufferRenderbufferEXT");
+	pGlDrawBuffersARB = (PFNGLDRAWBUFFERSARBPROC) wglGetProcAddress("glDrawBuffersARB");
+	pGlDrawBuffersATI = (PFNGLDRAWBUFFERSATIPROC) wglGetProcAddress("glDrawBuffersATI");
 
 	// get vertex buffer extension
 	pGlGenBuffersARB = (PFNGLGENBUFFERSARBPROC) wglGetProcAddress("glGenBuffersARB");
@@ -352,6 +363,12 @@ void COpenGLExtensionHandler::initExtensions(bool stencilBuffer)
 	pGlFramebufferRenderbufferEXT = (PFNGLFRAMEBUFFERRENDERBUFFEREXTPROC)
 	IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glFramebufferRenderbufferEXT"));
 
+	pGlDrawBuffersARB = (PFNGLDRAWBUFFERSARBPROC)
+	IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glDrawBuffersARB"));
+
+	pGlDrawBuffersATI = (PFNGLDRAWBUFFERSATIPROC)
+	IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glDrawBuffersATI"));
+
 	pGlGenBuffersARB = (PFNGLGENBUFFERSARBPROC)
 	IRR_OGL_LOAD_EXTENSION(reinterpret_cast<const GLubyte*>("glGenBuffersARB"));
 
@@ -407,7 +424,24 @@ void COpenGLExtensionHandler::initExtensions(bool stencilBuffer)
 	if (Version>101)
 		glGetIntegerv(GL_MAX_ELEMENTS_INDICES, &MaxIndices);
 #endif
+#ifdef ARB_draw_buffers
+	if (FeatureAvailable[IRR_ARB_draw_buffers])
+	{
+		glGetIntegerv(GL_MAX_DRAW_BUFFERS_ARB, reinterpret_cast<GLint*>(&MaxUserClipPlanes));
+		MaxMultipleRenderTargets = static_cast<u8>(MaxUserClipPlanes);
+	}
+#elif defined(ATI_draw_buffers)
+	if (FeatureAvailable[IRR_ATI_draw_buffers])
+	{
+		glGetIntegerv(GL_MAX_DRAW_BUFFERS_ATI, reinterpret_cast<GLint*>(&MaxUserClipPlanes));
+		MaxMultipleRenderTargets = static_cast<u8>(MaxUserClipPlanes);
+	}
+#endif
 	glGetIntegerv(GL_MAX_CLIP_PLANES, reinterpret_cast<GLint*>(&MaxUserClipPlanes));
+	glGetFloatv(GL_ALIASED_LINE_WIDTH_RANGE, DimAliasedLine);
+	glGetFloatv(GL_ALIASED_POINT_SIZE_RANGE, DimAliasedPoint);
+	glGetFloatv(GL_SMOOTH_LINE_WIDTH_RANGE, DimSmoothedLine);
+	glGetFloatv(GL_SMOOTH_POINT_SIZE_RANGE, DimSmoothedPoint);
 #if defined(GL_ARB_shading_language_100) || defined (GL_VERSION_2_0)
 	if (FeatureAvailable[IRR_ARB_shading_language_100] || Version>=200)
 	{
@@ -422,7 +456,7 @@ void COpenGLExtensionHandler::initExtensions(bool stencilBuffer)
 		else
 		{
 			const f32 sl_ver = core::fast_atof(reinterpret_cast<const c8*>(shaderVersion));
-			ShaderLanguageVersion = core::floor32(sl_ver)*100+core::ceil32(core::fract(sl_ver)*10.0f);
+			ShaderLanguageVersion = core::floor32(sl_ver)*100+core::round32(core::fract(sl_ver)*10.0f);
 		}
 	}
 #endif

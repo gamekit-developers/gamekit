@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2008 Nikolaus Gebhardt
+// Copyright (C) 2002-2009 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -40,14 +40,12 @@ CGUIMeshViewer::~CGUIMeshViewer()
 //! sets the mesh to be shown
 void CGUIMeshViewer::setMesh(scene::IAnimatedMesh* mesh)
 {
+    if (mesh)
+        mesh->grab();
 	if (Mesh)
 		Mesh->drop();
 
 	Mesh = mesh;
-	if (!Mesh)
-		return;
-	else
-		Mesh->grab();
 
 	/* This might be used for proper transformation etc.
 	core::vector3df center(0.0f,0.0f,0.0f);
@@ -171,5 +169,4 @@ void CGUIMeshViewer::draw()
 } // end namespace irr
 
 #endif // _IRR_COMPILE_WITH_GUI_
-
 

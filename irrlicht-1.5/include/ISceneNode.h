@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2008 Nikolaus Gebhardt
+// Copyright (C) 2002-2009 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -107,8 +107,15 @@ namespace scene
 				// animate this node with all animators
 
 				core::list<ISceneNodeAnimator*>::Iterator ait = Animators.begin();
-				for (; ait != Animators.end(); ++ait)
-					(*ait)->animateNode(this, timeMs);
+				while (ait != Animators.end())
+					{
+					// continue to the next node before calling animateNode()
+					// so that the animator may remove itself from the scene
+					// node without the iterator becoming invalid
+					ISceneNodeAnimator* anim = *ait;
+					++ait;
+					anim->animateNode(this, timeMs);
+				} 
 
 				// update absolute position
 				updateAbsolutePosition();
@@ -201,20 +208,20 @@ namespace scene
 		}
 
 
-		//! Returns true if the node is visible.
+		//! Returns whether the node should be visible (if all of its parents are visible).
 		/** This is only an option set by the user, but has nothing to
 		do with geometry culling
-		\return The visibility of the node, true means visible. */
+		\return The requested visibility of the node, true means visible (if all parents are also visible). */
 		virtual bool isVisible() const
 		{
 			_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
 			return IsVisible;
 		}
 
-
 		//! Sets if the node should be visible or not.
 		/** All children of this node won't be visible either, when set
-		to false.
+		to false.  Invisible nodes are not valid candidates for selection by
+		collision manager bounding box methods.
 		\param isVisible If the node shall be visible. */
 		virtual void setVisible(bool isVisible)
 		{
@@ -406,8 +413,11 @@ namespace scene
 		}
 
 
-		//! Gets the relative scale of the scene node.
-		/** \return The scale of the scene node. */
+		//! Gets the scale of the scene node relative to its parent.
+		/** This is the scale of this node relative to its parent. 
+        If you want the absolute scale, use 
+        getAbsoluteTransformation().getScale()
+        \return The scale of the scene node. */
 		virtual const core::vector3df& getScale() const
 		{
 			return RelativeScale;
@@ -415,15 +425,17 @@ namespace scene
 
 
 		//! Sets the relative scale of the scene node.
-		/** \param scale New scale of the node */
+		/** \param scale New scale of the node, relative to its parent. */
 		virtual void setScale(const core::vector3df& scale)
 		{
 			RelativeScale = scale;
 		}
 
 
-		//! Gets the rotation of the node.
+		//! Gets the rotation of the node relative to its parent.
 		/** Note that this is the relative rotation of the node.
+        If you want the absolute rotation, use
+        getAbsoluteTransformation().getRotation()
 		\return Current relative rotation of the scene node. */
 		virtual const core::vector3df& getRotation() const
 		{
@@ -431,7 +443,7 @@ namespace scene
 		}
 
 
-		//! Sets the rotation of the node.
+		//! Sets the rotation of the node relative to its parent.
 		/** This only modifies the relative rotation of the node.
 		\param rotation New rotation of the node in degrees. */
 		virtual void setRotation(const core::vector3df& rotation)
@@ -440,8 +452,9 @@ namespace scene
 		}
 
 
-		//! Gets the position of the node.
-		/** Note that the position is relative to the parent.
+		//! Gets the position of the node relative to its parent.
+		/** Note that the position is relative to the parent. If you want
+        the position in world coordinates, use getAbsolutePosition() instead.
 		\return The current position of the node relative to the parent. */
 		virtual const core::vector3df& getPosition() const
 		{
@@ -449,17 +462,19 @@ namespace scene
 		}
 
 
-		//! Sets the position of the node.
+		//! Sets the position of the node relative to its parent.
 		/** Note that the position is relative to the parent.
-		\param newpos New relative postition of the scene node. */
+		\param newpos New relative position of the scene node. */
 		virtual void setPosition(const core::vector3df& newpos)
 		{
 			RelativeTranslation = newpos;
 		}
 
 
-		//! Gets the abolute position of the node.
-		/** \return The current absolute position of the scene node. */
+		//! Gets the absolute position of the node in world coordinates.
+		/** If you want the position of the node relative to its parent,
+        use getPosition() instead.
+        \return The current absolute position of the scene node. */
 		virtual core::vector3df getAbsolutePosition() const
 		{
 			return AbsoluteTransformation.getTranslation();
@@ -675,6 +690,10 @@ namespace scene
 		{
 			return 0; // to be implemented by derived classes
 		}
+
+		//! Retrieve the scene manager for this node.
+		/** \return The node's scene manager. */
+		virtual ISceneManager* getSceneManager(void) const { return SceneManager; }
 
 	protected:
 

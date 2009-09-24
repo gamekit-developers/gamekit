@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2008 Nikolaus Gebhardt
+// Copyright (C) 2002-2009 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -96,7 +96,7 @@ bool CGUIFont::load(io::IXMLReader* xml)
 					if (alpha == core::stringw("false"))
 						Driver->makeColorKeyTexture(SpriteBank->getTexture(i), core::position2di(0,0));
 				}
-			} 
+			}
 			else if (core::stringw(L"c") == xml->getNodeName())
 			{
 				// adding a character to this font
@@ -112,45 +112,45 @@ bool CGUIFont::load(io::IXMLReader* xml)
 
 				// parse rectangle
 				core::stringc rectstr	= xml->getAttributeValue(L"r");
-				wchar_t ch				= xml->getAttributeValue(L"c")[0];
+				wchar_t ch		= xml->getAttributeValue(L"c")[0];
 
 				const c8 *c = rectstr.c_str();
 				s32 val;
 				val = 0;
-				while (*c >= '0' && *c <= '9') 
-				{ 
-					val *= 10; 
-					val += *c - '0'; 
+				while (*c >= '0' && *c <= '9')
+				{
+					val *= 10;
+					val += *c - '0';
 					c++;
 				}
 				rectangle.UpperLeftCorner.X = val;
 				while (*c == L' ' || *c == L',') c++;
 
 				val = 0;
-				while (*c >= '0' && *c <= '9') 
-				{ 
-					val *= 10; 
-					val += *c - '0'; 
+				while (*c >= '0' && *c <= '9')
+				{
+					val *= 10;
+					val += *c - '0';
 					c++;
 				}
 				rectangle.UpperLeftCorner.Y = val;
 				while (*c == L' ' || *c == L',') c++;
 
 				val = 0;
-				while (*c >= '0' && *c <= '9') 
-				{ 
-					val *= 10; 
-					val += *c - '0'; 
+				while (*c >= '0' && *c <= '9')
+				{
+					val *= 10;
+					val += *c - '0';
 					c++;
 				}
 				rectangle.LowerRightCorner.X = val;
 				while (*c == L' ' || *c == L',') c++;
 
 				val = 0;
-				while (*c >= '0' && *c <= '9') 
-				{ 
-					val *= 10; 
-					val += *c - '0'; 
+				while (*c >= '0' && *c <= '9')
+				{
+					val *= 10;
+					val += *c - '0';
 					c++;
 				}
 				rectangle.LowerRightCorner.Y = val;
@@ -158,7 +158,7 @@ bool CGUIFont::load(io::IXMLReader* xml)
 				CharacterMap.insert(ch,Areas.size());
 
 				// make frame
-				f.rectNumber = 	SpriteBank->getPositions().size();
+				f.rectNumber = SpriteBank->getPositions().size();
 				f.textureNumber = texno;
 
 				// add frame to sprite
@@ -481,7 +481,7 @@ core::dimension2d<s32> CGUIFont::getDimension(const wchar_t* text) const
 
 
 //! set an Pixel Offset on Drawing ( scale position on width )
-void CGUIFont::setKerningWidth ( s32 kerning )
+void CGUIFont::setKerningWidth(s32 kerning)
 {
 	GlobalKerningWidth = kerning;
 }
@@ -507,7 +507,7 @@ s32 CGUIFont::getKerningWidth(const wchar_t* thisLetter, const wchar_t* previous
 
 
 //! set an Pixel Offset on Drawing ( scale position on height )
-void CGUIFont::setKerningHeight ( s32 kerning )
+void CGUIFont::setKerningHeight(s32 kerning)
 {
 	GlobalKerningHeight = kerning;
 }
@@ -625,7 +625,7 @@ s32 CGUIFont::getCharacterFromPos(const wchar_t* text, s32 pixel_x) const
 	{
 		const SFontArea& a = Areas[getAreaFromCharacter(text[idx])];
 
-		x += a.width + a.overhang + a.underhang;
+		x += a.width + a.overhang + a.underhang + GlobalKerningWidth;
 
 		if (x >= pixel_x)
 			return idx;
@@ -646,3 +646,4 @@ IGUISpriteBank* CGUIFont::getSpriteBank() const
 } // end namespace irr
 
 #endif // _IRR_COMPILE_WITH_GUI_
+

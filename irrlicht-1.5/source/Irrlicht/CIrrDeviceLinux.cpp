@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2008 Nikolaus Gebhardt
+// Copyright (C) 2002-2009 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -566,7 +566,8 @@ bool CIrrDeviceLinux::createWindow()
 		XMapRaised(display, window);
 	}
 	WindowMinimized=false;
-	XkbSetDetectableAutoRepeat(display, True, &AutorepeatSupport);
+ 	// Currently broken in X, see Bug ID 2795321
+ 	// XkbSetDetectableAutoRepeat(display, True, &AutorepeatSupport);
 
 #ifdef _IRR_COMPILE_WITH_OPENGL_
 
@@ -822,7 +823,7 @@ bool CIrrDeviceLinux::run()
 				break;
 
 			case KeyRelease:
-				if (0 == AutorepeatSupport)
+				if (0 == AutorepeatSupport && (XPending( display ) > 0) )
 				{
 					// check for Autorepeat manually
 					// We'll do the same as Windows does: Only send KeyPressed
@@ -831,7 +832,7 @@ bool CIrrDeviceLinux::run()
 					XPeekEvent (event.xkey.display, &next_event);
 					if ((next_event.type == KeyPress) &&
 						(next_event.xkey.keycode == event.xkey.keycode) &&
-						(next_event.xkey.time == event.xkey.time))
+						(next_event.xkey.time - event.xkey.time) < 2)	// usually same time, but on some systems a difference of 1 is possible
 					{
 						/* Ignore the key release event */
 						break;
@@ -1361,7 +1362,7 @@ bool CIrrDeviceLinux::activateJoysticks(core::array<SJoystickInfo> & joystickInf
 		info.fd = open(devName.c_str(), O_RDONLY);
 		if(-1 == info.fd)
 		{
-			// ...but Ubuntu and possibly other distros 
+			// ...but Ubuntu and possibly other distros
 			// create the devices in /dev/input
 			devName = "/dev/input/js";
 			devName += joystick;
@@ -1394,7 +1395,7 @@ bool CIrrDeviceLinux::activateJoysticks(core::array<SJoystickInfo> & joystickInf
 		char name[80];
 		ioctl( info.fd, JSIOCGNAME(80), name);
 		returnInfo.Name = name;
-	
+
 		joystickInfo.push_back(returnInfo);
 	}
 
@@ -1402,7 +1403,7 @@ bool CIrrDeviceLinux::activateJoysticks(core::array<SJoystickInfo> & joystickInf
 	{
 		char logString[256];
 		(void)sprintf(logString, "Found joystick %u, %u axes, %u buttons '%s'",
-			joystick, joystickInfo[joystick].Axes, 
+			joystick, joystickInfo[joystick].Axes,
 			joystickInfo[joystick].Buttons, joystickInfo[joystick].Name.c_str());
 		os::Printer::log(logString, ELL_INFORMATION);
 	}
@@ -1450,7 +1451,7 @@ void CIrrDeviceLinux::pollJoysticks()
 		(void)postEventFromUser(info.persistentData);
 	}
 #endif // _IRR_COMPILE_WITH_JOYSTICK_EVENTS_
-} 
+}
 
 
 IRRLICHT_API IrrlichtDevice* IRRCALLCONV createDeviceEx(const SIrrlichtCreationParameters& param)

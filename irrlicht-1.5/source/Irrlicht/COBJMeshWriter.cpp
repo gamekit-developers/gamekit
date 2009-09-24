@@ -1,4 +1,4 @@
-// Copyright (C) 2008 Christian Stehno
+// Copyright (C) 2008-2009 Christian Stehno
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -186,7 +186,9 @@ bool COBJMeshWriter::writeMesh(io::IWriteFile* file, scene::IMesh* mesh, s32 fla
 			getColorAsStringLine(mat[i]->EmissiveColor, "Ke", num);
 			file->write(num.c_str(),num.size());
 			num = core::stringc(mat[i]->Shininess/0.128f);
+			file->write("Ns ", 3);
 			file->write(num.c_str(),num.size());
+			file->write("\n", 1);
 			if (mat[i]->getTexture(0))
 			{
 				file->write("map_Kd ", 7);

@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2008 Nikolaus Gebhardt
+// Copyright (C) 2002-2009 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in Irrlicht.h
 
@@ -723,6 +723,16 @@ class COpenGLExtensionHandler
 	f32 MaxAnisotropy;
 	//! Number of user clipplanes
 	u32 MaxUserClipPlanes;
+	//! Number of rendertargets available as MRTs
+	u8 MaxMultipleRenderTargets;
+	//! Minimal and maximal supported thickness for lines without smoothing
+	GLfloat DimAliasedLine[2];
+	//! Minimal and maximal supported thickness for points without smoothing
+	GLfloat DimAliasedPoint[2];
+	//! Minimal and maximal supported thickness for lines with smoothing
+	GLfloat DimSmoothedLine[2];
+	//! Minimal and maximal supported thickness for points with smoothing
+	GLfloat DimSmoothedPoint[2];
 
 	//! OpenGL version as Integer: 100*Major+Minor, i.e. 2.1 becomes 201
 	u32 Version;
@@ -780,6 +790,7 @@ class COpenGLExtensionHandler
 	void extGlRenderbufferStorage(GLenum target, GLenum internalformat, GLsizei width, GLsizei height);
 	void extGlFramebufferRenderbuffer(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer);
 	void extGlActiveStencilFace(GLenum face);
+	void extGlDrawBuffers(GLsizei n, const GLenum *bufs);
 
 	// vertex buffer object
 	void extGlGenBuffers(GLsizei n, GLuint *buffers);
@@ -851,6 +862,8 @@ class COpenGLExtensionHandler
 		PFNGLRENDERBUFFERSTORAGEEXTPROC pGlRenderbufferStorageEXT;
 		PFNGLFRAMEBUFFERRENDERBUFFEREXTPROC pGlFramebufferRenderbufferEXT;
 		PFNGLACTIVESTENCILFACEEXTPROC pGlActiveStencilFaceEXT;
+		PFNGLDRAWBUFFERSARBPROC pGlDrawBuffersARB;
+		PFNGLDRAWBUFFERSATIPROC pGlDrawBuffersATI;
 		PFNGLGENBUFFERSARBPROC pGlGenBuffersARB;
 		PFNGLBINDBUFFERARBPROC pGlBindBufferARB;
 		PFNGLBUFFERDATAARBPROC pGlBufferDataARB;
@@ -1391,6 +1404,22 @@ inline void COpenGLExtensionHandler::extGlActiveStencilFace(GLenum face)
 	glActiveStencilFaceEXT(face);
 #else
 	os::Printer::log("glActiveStencilFace not supported", ELL_ERROR);
+#endif
+}
+
+inline void COpenGLExtensionHandler::extGlDrawBuffers(GLsizei n, const GLenum *bufs)
+{
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
+	if (pGlDrawBuffersARB)
+		pGlDrawBuffersARB(n, bufs);
+	else if (pGlDrawBuffersATI)
+		pGlDrawBuffersATI(n, bufs);
+#elif defined(GL_ARB_draw_buffers)
+	glDrawBuffersARB(n, bufs);
+#elif defined(GL_ATI_draw_buffers)
+	glDrawBuffersATI(n, bufs);
+#else
+	os::Printer::log("glDrawBuffers not supported", ELL_ERROR);
 #endif
 }
 

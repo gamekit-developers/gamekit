@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2008 Nikolaus Gebhardt
+// Copyright (C) 2002-2009 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -32,6 +32,10 @@ static const u32 WORD_BUFFER_LENGTH = 512;
 COBJMeshFileLoader::COBJMeshFileLoader(scene::ISceneManager* smgr, io::IFileSystem* fs)
 : SceneManager(smgr), FileSystem(fs)
 {
+	#ifdef _DEBUG
+	setDebugName("COBJMeshFileLoader");
+	#endif
+
 	if (FileSystem)
 		FileSystem->grab();
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2008 Nikolaus Gebhardt
+// Copyright (C) 2002-2009 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -246,9 +246,13 @@ private:
 	//! reads a <float> element
 	f32 readFloatNode(io::IXMLReaderUTF8* reader);
 
-	//! reads a <instance> node and creates a scene node from it
+	//! reads a <instance> node
 	void readInstanceNode(io::IXMLReaderUTF8* reader, scene::ISceneNode* parent,
 		scene::ISceneNode** outNode, CScenePrefab* p=0);
+
+	//! creates a scene node from Prefabs (with name given in 'url')
+	void instantiateNode(scene::ISceneNode* parent, scene::ISceneNode** outNode=0,
+			CScenePrefab* p=0, const core::stringc& url="");
 
 	//! reads a <light> element and stores it as prefab
 	void readLightPrefab(io::IXMLReaderUTF8* reader);

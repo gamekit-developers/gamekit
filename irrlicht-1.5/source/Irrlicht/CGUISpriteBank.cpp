@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2008 Nikolaus Gebhardt
+// Copyright (C) 2002-2009 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -17,6 +17,10 @@ namespace gui
 CGUISpriteBank::CGUISpriteBank(IGUIEnvironment* env) :
 	Environment(env), Driver(0)
 {
+	#ifdef _DEBUG
+	setDebugName("CGUISpriteBank");
+	#endif
+
 	if (Environment)
 	{
 		Driver = Environment->getVideoDriver();
@@ -80,11 +84,11 @@ void CGUISpriteBank::setTexture(u32 index, video::ITexture* texture)
 	while (index > Textures.size())
 		Textures.push_back(0);
 
-	if (Textures[index])
-		Textures[index]->drop();
-
 	if (texture)
 		texture->grab();
+
+	if (Textures[index])
+		Textures[index]->drop();
 
 	Textures[index] = texture;
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2008 Nikolaus Gebhardt
+// Copyright (C) 2002-2009 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -12,7 +12,7 @@
     #ifndef _IRR_USE_NON_SYSTEM_ZLIB_
     #include <zlib.h> // use system lib
     #else // _IRR_USE_NON_SYSTEM_ZLIB_
-    #include "zlib/zlib.h" 
+    #include "zlib/zlib.h"
     #endif // _IRR_USE_NON_SYSTEM_ZLIB_
 #endif // _IRR_COMPILE_WITH_ZLIB_
 
@@ -34,7 +34,7 @@ CZipReader::CZipReader(IReadFile* file, bool ignoreCase, bool ignorePaths)
 		File->grab();
 
 		// scan local headers
-		while (scanLocalHeader());
+		while (scanLocalHeader()) ;
 
 		// prepare file index for binary search
 		FileList.sort();
@@ -61,7 +61,7 @@ void CZipReader::extractFilename(SZipFileEntry* entry)
 		entry->zipFileName.make_lower();
 
 	const c8* p = entry->zipFileName.c_str() + lorfn;
-	
+
 	// suche ein slash oder den anfang.
 
 	while (*p!='/' && p!=entry->zipFileName.c_str())
@@ -86,7 +86,7 @@ void CZipReader::extractFilename(SZipFileEntry* entry)
 	if (thereIsAPath)
 	{
 		lorfn = (s32)(p - entry->zipFileName.c_str());
-		
+
 		entry->path = entry->zipFileName.subString ( 0, lorfn );
 
 		//entry->path.append(entry->zipFileName, lorfn);
@@ -207,8 +207,8 @@ IReadFile* CZipReader::openFile(s32 index)
 	case 8:
 		{
   			#ifdef _IRR_COMPILE_WITH_ZLIB_
-			
-			const u32 uncompressedSize = FileList[index].header.DataDescriptor.UncompressedSize;			
+
+			const u32 uncompressedSize = FileList[index].header.DataDescriptor.UncompressedSize;
 			const u32 compressedSize = FileList[index].header.DataDescriptor.CompressedSize;
 
 			void* pBuf = new c8[ uncompressedSize ];
@@ -228,7 +228,7 @@ IReadFile* CZipReader::openFile(s32 index)
 			//memset(pcData, 0, compressedSize );
 			File->seek(FileList[index].fileDataPosition);
 			File->read(pcData, compressedSize );
-			
+
 			// Setup the inflate stream.
 			z_stream stream;
 			s32 err;
@@ -254,7 +254,7 @@ IReadFile* CZipReader::openFile(s32 index)
 
 
 			delete[] pcData;
-			
+
 			if (err != Z_OK)
 			{
 				os::Printer::log("Error decompressing", FileList[index].simpleFileName.c_str(), ELL_ERROR);
@@ -263,7 +263,7 @@ IReadFile* CZipReader::openFile(s32 index)
 			}
 			else
 				return io::createMemoryReadFile(pBuf, uncompressedSize, FileList[index].zipFileName.c_str(), true);
-			
+
 			#else
 			return 0; // zlib not compiled, we cannot decompress the data.
 			#endif
@@ -383,6 +383,9 @@ void CUnZipReader::buildDirectory ( )
 //! opens a file by file name
 IReadFile* CUnZipReader::openFile(const c8* filename)
 {
+    if ( !filename || !strlen(filename) )
+        return 0;
+
 	core::stringc fname;
 	fname = Base;
 	fname += filename;

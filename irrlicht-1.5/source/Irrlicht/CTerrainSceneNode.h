@@ -1,4 +1,4 @@
-// Copyright (C) 2002-2008 Nikolaus Gebhardt
+// Copyright (C) 2002-2009 Nikolaus Gebhardt
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
@@ -323,6 +323,7 @@ namespace scene
 
 		core::vector3df	OldCameraPosition;
 		core::vector3df	OldCameraRotation;
+		core::vector3df	OldCameraUp;
 		f32				OldCameraFOV;
 		f32 CameraMovementDelta;
 		f32 CameraRotationDelta;
