@@ -15,6 +15,7 @@ subject to the following restrictions:
 
 
 //#define DUMP_TYPEDEFS 1
+//#define DUMP_BLOCK_NAMES 1
 
 #include "BulletBlendReader.h"
 #include <stdlib.h>
@@ -102,8 +103,10 @@ void	BulletBlendReader::convertAllObjects()
 				{
 					const char* type_name = m_bf->types[obj.type].name;
 
-					//printf("type_name=%s. ",type_name);
-					//printf("block blenderptr = %lx\n",m_bf->blocks[j].blender_pointer);
+#if DUMP_BLOCK_NAMES
+					printf("type_name=%s. ",type_name);
+					printf("block blenderptr = %lx\n",m_bf->blocks[j].blender_pointer);
+#endif //DUMP_BLOCK_NAMES
 
 					
 					if (strcmp(type_name,"Object")==0)
