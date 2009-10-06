@@ -485,7 +485,7 @@ blend_read_data(MY_FILETYPE* file, BlendFile* bf)
 
 
 			if (strcmp(section_name, "IP") == 0) {
-//				printf("ipo\n");
+				printf("ipo\n");
 			}
 
 			section_size    = read_ulong(file);
@@ -1725,6 +1725,8 @@ blend_acquire_obj_from_obj(BlendFile *bf, BlendObject *objobj,
 	}
 
 
+
+
 	if ((blend_object_structure_getfield(bf, &obj, *objobj,"ipo") && blend_object_getdata(bf, &ipoblock, obj)))
 	{
 		if (ipoblock)
@@ -1743,12 +1745,77 @@ blend_acquire_obj_from_obj(BlendFile *bf, BlendObject *objobj,
 
 
 				void** ptrptr = &block->array_entries->field_bytes[block->array_entries->field_offsets[obj2.field_index]];
+				BlendBlockPointer ptrlast;
 				BlendBlockPointer ptr = *ptrptr;
+				ptrptr++;
+				 ptrlast= *ptrptr;
 				//ptrptr++; contains the 'last' pointer
 				if (ptr)
 				{
 					BlendBlockPointer curveblockptr = blend_block_from_blendpointer(bf, ptr);
-					BlendObject curve = blend_block_get_object(bf, curveblockptr, 0);
+					BlendObject curve;
+					BlendBlock* block3;
+					BlendBlock* block2;
+					BlendObject newObj,nextOb;
+					BlendBlockPointer nextPtr;
+					BlendBlockPointer bezTriplePtr;
+					printf("Found IpoCurve (ListBase)\n");
+
+					curve = blend_block_get_object(bf, curveblockptr, 0);
+					block3 = (BlendBlock*)curve.block;
+					
+				
+					block2 = (BlendBlock*)obj.block;
+										
+					//blend_acquire_obj_from_obj(bf,&obj,&tmpObj,0);
+					if (!(blend_object_structure_getfield(bf, &nextOb, curve,"next") &&	blend_object_getdata(bf, &nextPtr, nextOb))) 
+					{
+						printf("error: no next?\n");
+					} else
+					{
+						///this 'next' object would let you iterate over the linked list until next == 0
+						BlendBlock* block = (BlendBlock*)nextOb.block;
+						BlendObject next2Ob;
+						BlendBlock* block3;
+						next2Ob = blend_block_get_object(bf, nextPtr, 0);
+						block3 = (BlendBlock*)next2Ob.block;
+					}
+					
+
+					//blend_acquire_obj_from_obj(bf,&obj,&tmpObj,0);
+					if (!(blend_object_structure_getfield(bf, &newObj, curve,"bezt") &&	blend_object_getdata(bf, &bezTriplePtr, newObj))) 
+					{
+						printf("invalid bezTriplePtr 0x1\n");
+					}
+					
+					if (bezTriplePtr)
+					{
+						BlendObject bezTriple;
+						BlendBlockPointer vecPtr;
+						bezTriple = blend_block_get_object(bf, bezTriplePtr, 0);
+						{
+							BlendObject vecOb;
+						
+							if (blend_object_structure_getfield(bf, &vecOb, bezTriple, "vec"))
+							{
+								float v0;
+								int i,j;
+
+								for (i=0;i<3;i++)
+								{
+									for (j=0;j<3;j++)
+									{
+										if (blend_object_array_getdata(bf, &v0, vecOb, i,j))
+										{
+											printf("IpoCurve.bezt.vec[%d][%d]=%f\n",i,j,v0);
+										}
+									}
+								}
+							} 
+
+						}
+					}
+
 
 				}
 
