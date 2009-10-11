@@ -362,7 +362,6 @@ public:
 			if (tmpObject->data.mesh->vert_count> 16300)
 			{
 				printf("tmpObject->data.mesh->vert_count = %d\n",tmpObject->data.mesh->vert_count);
-				return;
 			}
 
 			int maxVerts = btMin(16300,btMax(tmpObject->data.mesh->face_count*3*2,(tmpObject->data.mesh->vert_count-6)));
@@ -382,13 +381,7 @@ public:
 			int numIndices = 0;
 			int currentIndex = 0;
 
-			typedef struct _bMesh{
-			  bVert *vert;
-			  int vert_count;
-			  bFace *face;
-			  int face_count;
-			  bMaterial *material; /* or NULL if none */
-			} bMesh;
+			
 
 			int maxNumIndices = tmpObject->data.mesh->face_count*4*2;
 
@@ -694,6 +687,10 @@ int main(int argc,char** argv)
 	} else
 	{
 		if (!bulletBlendReader.openFile("PhysicsAnimationBakingDemo.blend"))
+		
+		//if (!bulletBlendReader.openFile("cube_ipo_various_250.blend"))
+		//if (!bulletBlendReader.openFile("cube_ipo_204.blend"))
+		//if (!bulletBlendReader.openFile("cube_ipo_249.blend"))
 		//if (!bulletBlendReader.openFile("clubsilo_packed.blend"))
 		{
 			printf("trying again with different path\n");

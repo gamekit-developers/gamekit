@@ -16,6 +16,7 @@ subject to the following restrictions:
 
 //#define DUMP_TYPEDEFS 1
 //#define DUMP_BLOCK_NAMES 1
+#define DUMP_VERBOSE_OBJECTS 1
 
 #include "BulletBlendReader.h"
 #include <stdlib.h>
@@ -86,6 +87,10 @@ void	BulletBlendReader::convertAllObjects()
 		return;
 	}
 
+#ifdef DUMP_VERBOSE_OBJECTS
+				blend_dump_blocks(m_bf);
+#endif //DUMP_VERBOSE_OBJECTS
+
 	int j;
 	for (j=0; j<m_bf->blocks_count; ++j) 
 	{
@@ -94,7 +99,10 @@ void	BulletBlendReader::convertAllObjects()
 			for (int i=0; i<entry_count; ++i) 
 			{
 				BlendObject obj = blend_block_get_object(m_bf, &m_bf->blocks[j], i);
-				//crawl(blend_file, obj);
+				
+
+
+				
 				BlendObject data_obj;
 				BlendObject data_obj2;
 

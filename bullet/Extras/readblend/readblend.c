@@ -993,8 +993,7 @@ blend_object_array_getdata(BlendFile* blend_file,
 			return 0;
 	}
 
-	data = &bf->field_bytes[bf->field_offsets[obj.field_index +
-		dim2*dim_index_1 + dim_index_2]];
+	data = &bf->field_bytes[bf->field_offsets[obj.field_index +	dim2*dim_index_1 + dim_index_2]];
 	/*dprintf(stderr, "fi[%d]byteo[%d]", obj.field_index,
 	bf->field_offsets[obj.field_index +
 	dim2*dim_index_1 + dim_index_2]);*/
@@ -1355,11 +1354,250 @@ blend_dump_typedefs(BlendFile* bf)
 }
 
 
+int
+blend_object_dump_field(BlendFile* blend_file,
+								BlendObject obj)
+{
+	BlendObject *result = 0;
+	int field_index = 0;
+	BlendBlock* block = (BlendBlock*)obj.block;
+	int fieldType;
+	int fieldName;
+	void** ptrptr ;
+	int dim1,dim2,l,k;
+	int index;
+	char namebuf[1024];
+		
+	BlendObjType objType;
+
+	if (blend_file->types[obj.type].is_struct) {
+		int i;
+		int field_index = 0;
+		for (i=0; i<blend_file->types[obj.type].fieldnames_count; ++i) {
+			//printf("filename = %s\n",blend_file->names[blend_file->types[obj.type].fieldnames[i]]);
+			fieldType = blend_file->types[obj.type].fieldtypes[i];
+			fieldName =  blend_file->types[obj.type].fieldnames[i];
+			printf("	%s %s = ",blend_file->types[fieldType].name, blend_file->names[fieldName]);
+
+			dim1=1;
+			dim2=1;
+			name_is_array(blend_file->names[fieldName], &dim1, &dim2);
+
+
+
+			if (!stricmp(blend_file->types[fieldType].name,"char") && (dim1>1 || dim2>1))
+			{
+				
+				index=0;
+
+
+
+				for (k=0;k<dim1;k++)
+				{
+					for (l=0;l<dim2;l++)
+					{
+						ptrptr = &block->array_entries->field_bytes[block->array_entries->field_offsets[field_index+dim2*k+ l]];
+									
+						objType = typestring_to_blendobj_type(blend_file, blend_file->types[fieldType].name) ;
+						if (ptrptr && index<1023)
+						{
+							char val = *(char*)ptrptr;
+							namebuf[index++]=val;
+						}
+					}
+				}
+
+				namebuf[index]=0;
+				printf("\"%s\"",namebuf);
+			}
+			else
+			{
+				for (k=0;k<dim1;k++)
+				{
+					if (dim1>1 || dim2>1)
+					{
+						printf("[");
+					}
+					for (l=0;l<dim2;l++)
+					{
+						ptrptr = &block->array_entries->field_bytes[block->array_entries->field_offsets[field_index+dim2*k+ l]];
+									
+						objType = typestring_to_blendobj_type(blend_file, blend_file->types[fieldType].name) ;
+						if (ptrptr)
+						{
+							switch (objType)
+							{
+							case BLEND_OBJ_NULL:
+								{
+									printf("NULL ");
+									break;
+								}
+							case BLEND_OBJ_OPAQUE:
+								{
+									printf("OPAQUE? ");
+									break;
+								}
+							case BLEND_OBJ_UCHAR8:
+								{
+									unsigned char val = *(unsigned char*)ptrptr;
+									printf("%d ",val);
+									break;
+								}
+							case BLEND_OBJ_CHAR8:
+								{
+									char val = *(char*)ptrptr;
+									printf("%d ",val);
+									break;
+								}
+							case BLEND_OBJ_USHORT16:
+								{
+									unsigned short int val = *(unsigned short int*)ptrptr;
+									printf("%d ",val);
+									break;
+								}
+							case BLEND_OBJ_SHORT16:
+								{
+									short int val = *(short int*)ptrptr;
+									printf("%d ",val);
+									break;
+								}
+							case BLEND_OBJ_ULONG32:
+								{
+									unsigned int val = *(unsigned int*)ptrptr;
+									printf("%d ",val);
+									break;
+								}
+							case BLEND_OBJ_LONG32:
+								{
+									int val = *(int*)ptrptr;
+									printf("%d ",val);
+									break;
+								}
+							case BLEND_OBJ_FLOAT:
+								{
+									float val = *(float *)ptrptr;
+									printf("%f ",val);
+									break;
+								}
+							case BLEND_OBJ_DOUBLE:
+								{
+									double  val = *(double *)ptrptr;
+									printf("%f ",val);
+									break;
+								}
+							case BLEND_OBJ_POINTER:
+								{
+									void* val = *ptrptr;
+									printf("%x ",val);
+									break;
+								}
+							case BLEND_OBJ_STRUCT:
+								{
+									BlendBlockPointer ptr = *ptrptr;
+									if (ptr)
+									{
+										BlendObject idstruc_obj;
+										BlendBlock* block;
+										BlendObject name_obj;
+										char	dest[1024];
+										int max_chars = 1023;
+
+										BlendBlockPointer curveblockptr = blend_block_from_blendpointer(blend_file, ptr);
+										if (curveblockptr)
+										{
+											idstruc_obj = blend_block_get_object(blend_file, curveblockptr, 0);
+											block = (BlendBlock*)idstruc_obj.block;
+											
+											if (BLEND_OBJ_STRUCT == blend_object_type(blend_file, idstruc_obj) &&
+												blend_object_structure_getfield(blend_file, &name_obj,
+												idstruc_obj, "name")) {
+													/* great, get the string from the 'name' field. */
+													if (blend_object_getstring(blend_file, name_obj,
+														dest, max_chars)) {
+															printf("\"%s\" ",dest);
+															
+													} else {
+														printf("%x ",block->blender_pointer);
+													}
+											} else {
+												printf("%x ",block->blender_pointer);
+
+											}
+											
+										} else
+										{
+											printf("NULL ");
+										}
+
+									} else
+									{
+										printf("NULL ");
+									}
+#if 0
+									BlendObject objobj;
+									BlendBlockPointer block,ipoblock;
+
+									if (blend_object_structure_getfield(blend_file, &objobj, obj, blend_file->names[fieldName]))
+									{
+										block = 
+										if (blend_object_getdata(blend_file, &ipoblock, obj))
+										{
+											printf("hello\n");
+										} else
+										{
+											printf("ay\n");
+										}
+
+									}
+									else
+									{
+										printf("NULL ");
+									}
+#endif
+
+									break;
+								}
+							default:
+								{
+									printf("unknown value");
+								}
+							}
+						}
+					}
+					if (dim1>1 || dim2>1)
+					{
+						printf("]");
+					}
+				}
+			}
+			
+			printf("\n");
+			
+			{
+				int fos;
+				BlendObject qo = obj;
+				qo.type = blend_file->types[obj.type].fieldtypes[i];
+				qo.name = blend_file->types[obj.type].fieldnames[i];
+				qo.field_index = field_index;
+				fos = get_num_type_segments(blend_file, qo);
+				field_index += fos;
+			}
+		}
+		
+		return 0;
+	} else {
+		dprintf(stderr, "Indexed object isn't a structure!\n");
+		return 0;
+	}
+}
+
+
 void
 blend_dump_blocks(BlendFile* bf)
 {
-	int i;
+	int i,j;
 	IDFinderData ifd;
+	int entry_count;
 
 	ifd.success = 0;
 	ifd.IDname = NULL;
@@ -1367,11 +1605,107 @@ blend_dump_blocks(BlendFile* bf)
 
 	for (i=0; i<bf->blocks_count; ++i) {
 		BlendBlock* bb = &bf->blocks[i];
-		printf("tag='%s'\tptr=%p\ttype=%s\t[%4d]",
+		printf("tag='%s'\tptr=%p\ttype=%s\t[%4d]\n",
 			bb->tag, /*bb->blender_pointer,*/ bb,
 			bf->types[bb->type_index].name,
 			bb->array_entries_count);
 		block_ID_finder(bb, bf, &ifd);
+
+		if (!stricmp(bf->types[bb->type_index].name,"TreeStoreElem"))
+			continue;
+
+		if (!stricmp(bf->types[bb->type_index].name,"CustomDataLayer"))
+			continue;
+
+		if (!stricmp(bf->types[bb->type_index].name,"Mesh"))
+			continue;
+
+		if (!stricmp(bf->types[bb->type_index].name,"MFace"))
+			continue;
+
+		if (!stricmp(bf->types[bb->type_index].name,"MTFace"))
+			continue;
+
+		if (!stricmp(bf->types[bb->type_index].name,"TFace"))
+			continue;
+
+		if (!stricmp(bf->types[bb->type_index].name,"MVert"))
+			continue;
+		if (!stricmp(bf->types[bb->type_index].name,"MEdge"))
+			continue;
+
+		if (!stricmp(bf->types[bb->type_index].name,"Base"))
+			continue;
+
+		if (!stricmp(bf->types[bb->type_index].name,"SpaceTime"))
+			continue;
+
+		if (!stricmp(bf->types[bb->type_index].name,"SpaceAction"))
+			continue;
+
+		if (!stricmp(bf->types[bb->type_index].name,"SpaceText"))
+			continue;
+
+		if (!stricmp(bf->types[bb->type_index].name,"SpaceOops"))
+			continue;
+
+		if (!stricmp(bf->types[bb->type_index].name,"SpaceSound"))
+			continue;
+
+		if (!stricmp(bf->types[bb->type_index].name,"SpaceFile"))
+			continue;
+
+		if (!stricmp(bf->types[bb->type_index].name,"SpaceButs"))
+			continue;
+
+		if (!stricmp(bf->types[bb->type_index].name,"SpaceIpo"))
+			continue;
+
+		if (!stricmp(bf->types[bb->type_index].name,"View3D"))
+			continue;
+
+		if (!stricmp(bf->types[bb->type_index].name,"bScreen"))
+			continue;
+
+		if (!stricmp(bf->types[bb->type_index].name,"Panel"))
+			continue;
+
+		if (!stricmp(bf->types[bb->type_index].name,"ScrEdge"))
+			continue;
+
+		if (!stricmp(bf->types[bb->type_index].name,"ScrVert"))
+			continue;
+
+		if (!stricmp(bf->types[bb->type_index].name,"ScrArea"))
+			continue;
+
+		if (!stricmp(bf->types[bb->type_index].name,"MCol"))
+			continue;
+
+		if (!stricmp(bf->types[bb->type_index].name,"IpoCurve"))
+			continue;
+
+		if (!stricmp(bf->types[bb->type_index].name,"Ipo"))
+			continue;
+
+		if (!stricmp(bf->types[bb->type_index].name,"BezTriple"))
+			continue;
+
+
+		{
+			entry_count = blend_block_get_entry_count(bf, bb);
+			for (j=0;j<entry_count;j++)
+			{
+				BlendObject obj = blend_block_get_object(bf, bb, j);
+
+				printf("structure %s\n{\n",bf->types[bb->type_index].name);
+				blend_object_dump_field(bf,obj);
+				printf("}\n");
+
+
+			}
+		}
+
 		printf("\n");
 	}
 }
