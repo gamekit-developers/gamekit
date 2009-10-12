@@ -239,6 +239,7 @@ extern "C" {
 
 
 long MY_FILELENGTH(FILE *fp);
+MY_FILETYPE* MY_FILE_OPEN_FOR_READ(FILE* fp);
 MY_FILETYPE* MY_OPEN_FOR_READ(const char *const filename);
 int MY_GETC(MY_FILETYPE *const fp);
 void MY_SEEK(MY_FILETYPE* fp,int pos);

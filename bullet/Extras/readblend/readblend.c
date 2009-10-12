@@ -27,21 +27,28 @@ long MY_FILELENGTH(FILE *fp) {
 }
 
 
-MY_FILETYPE* MY_OPEN_FOR_READ(const char * filename)
+MY_FILETYPE* MY_FILE_OPEN_FOR_READ(FILE* fp)
 {
-	FILE* gFile = fopen(filename,"r");
-	if (gFile)
-	{
-		long currentpos = ftell(gFile); /* save current cursor position */
+		long currentpos = ftell(fp); /* save current cursor position */
 		long newpos;
 		int bytesRead;
 
-		fseek(gFile, 0, SEEK_END); /* seek to end */
-		newpos = ftell(gFile); /* find position of end -- this is the length */
-		fseek(gFile, currentpos, SEEK_SET); /* restore previous cursor position */
+		fseek(fp, 0, SEEK_END); /* seek to end */
+		newpos = ftell(fp); /* find position of end -- this is the length */
+		fseek(fp, currentpos, SEEK_SET); /* restore previous cursor position */
 		gFileSize = newpos;
 		gBuffer = (char*)malloc(gFileSize);
-		bytesRead = fread(gBuffer,gFileSize,1,gFile);
+		bytesRead = fread(gBuffer,gFileSize,1,fp);
+		return gBuffer;
+}
+
+
+MY_FILETYPE* MY_OPEN_FOR_READ(const char *const filename)
+{
+	FILE* gFile = fopen(filename,"rb");
+	if (gFile)
+	{
+		MY_FILE_OPEN_FOR_READ (gFile);
 		gCurrentFilePtr = 0;
 		fclose(gFile);
 		gFile = 0;
