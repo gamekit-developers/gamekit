@@ -27,9 +27,9 @@ long MY_FILELENGTH(FILE *fp) {
 }
 
 
-MY_FILETYPE* MY_OPEN_FOR_READ(const char *const filename)
+MY_FILETYPE* MY_OPEN_FOR_READ(const char * filename)
 {
-	FILE* gFile = fopen(filename,"rb");
+	FILE* gFile = fopen(filename,"r");
 	if (gFile)
 	{
 		long currentpos = ftell(gFile); /* save current cursor position */
@@ -1385,7 +1385,7 @@ blend_object_dump_field(BlendFile* blend_file,
 
 
 
-			if (!stricmp(blend_file->types[fieldType].name,"char") && (dim1>1 || dim2>1))
+			if (!strcmp(blend_file->types[fieldType].name,"char") && (dim1>1 || dim2>1))
 			{
 				
 				index=0;
@@ -1611,84 +1611,84 @@ blend_dump_blocks(BlendFile* bf)
 			bb->array_entries_count);
 		block_ID_finder(bb, bf, &ifd);
 
-		if (!stricmp(bf->types[bb->type_index].name,"TreeStoreElem"))
+		if (!strcmp(bf->types[bb->type_index].name,"TreeStoreElem"))
 			continue;
 
-		if (!stricmp(bf->types[bb->type_index].name,"CustomDataLayer"))
+		if (!strcmp(bf->types[bb->type_index].name,"CustomDataLayer"))
 			continue;
 
-		if (!stricmp(bf->types[bb->type_index].name,"Mesh"))
+		if (!strcmp(bf->types[bb->type_index].name,"Mesh"))
 			continue;
 
-		if (!stricmp(bf->types[bb->type_index].name,"MFace"))
+		if (!strcmp(bf->types[bb->type_index].name,"MFace"))
 			continue;
 
-		if (!stricmp(bf->types[bb->type_index].name,"MTFace"))
+		if (!strcmp(bf->types[bb->type_index].name,"MTFace"))
 			continue;
 
-		if (!stricmp(bf->types[bb->type_index].name,"TFace"))
+		if (!strcmp(bf->types[bb->type_index].name,"TFace"))
 			continue;
 
-		if (!stricmp(bf->types[bb->type_index].name,"MVert"))
+		if (!strcmp(bf->types[bb->type_index].name,"MVert"))
 			continue;
-		if (!stricmp(bf->types[bb->type_index].name,"MEdge"))
-			continue;
-
-		if (!stricmp(bf->types[bb->type_index].name,"Base"))
+		if (!strcmp(bf->types[bb->type_index].name,"MEdge"))
 			continue;
 
-		if (!stricmp(bf->types[bb->type_index].name,"SpaceTime"))
+		if (!strcmp(bf->types[bb->type_index].name,"Base"))
 			continue;
 
-		if (!stricmp(bf->types[bb->type_index].name,"SpaceAction"))
+		if (!strcmp(bf->types[bb->type_index].name,"SpaceTime"))
 			continue;
 
-		if (!stricmp(bf->types[bb->type_index].name,"SpaceText"))
+		if (!strcmp(bf->types[bb->type_index].name,"SpaceAction"))
 			continue;
 
-		if (!stricmp(bf->types[bb->type_index].name,"SpaceOops"))
+		if (!strcmp(bf->types[bb->type_index].name,"SpaceText"))
 			continue;
 
-		if (!stricmp(bf->types[bb->type_index].name,"SpaceSound"))
+		if (!strcmp(bf->types[bb->type_index].name,"SpaceOops"))
 			continue;
 
-		if (!stricmp(bf->types[bb->type_index].name,"SpaceFile"))
+		if (!strcmp(bf->types[bb->type_index].name,"SpaceSound"))
 			continue;
 
-		if (!stricmp(bf->types[bb->type_index].name,"SpaceButs"))
+		if (!strcmp(bf->types[bb->type_index].name,"SpaceFile"))
 			continue;
 
-		if (!stricmp(bf->types[bb->type_index].name,"SpaceIpo"))
+		if (!strcmp(bf->types[bb->type_index].name,"SpaceButs"))
 			continue;
 
-		if (!stricmp(bf->types[bb->type_index].name,"View3D"))
+		if (!strcmp(bf->types[bb->type_index].name,"SpaceIpo"))
 			continue;
 
-		if (!stricmp(bf->types[bb->type_index].name,"bScreen"))
+		if (!strcmp(bf->types[bb->type_index].name,"View3D"))
 			continue;
 
-		if (!stricmp(bf->types[bb->type_index].name,"Panel"))
+		if (!strcmp(bf->types[bb->type_index].name,"bScreen"))
 			continue;
 
-		if (!stricmp(bf->types[bb->type_index].name,"ScrEdge"))
+		if (!strcmp(bf->types[bb->type_index].name,"Panel"))
 			continue;
 
-		if (!stricmp(bf->types[bb->type_index].name,"ScrVert"))
+		if (!strcmp(bf->types[bb->type_index].name,"ScrEdge"))
 			continue;
 
-		if (!stricmp(bf->types[bb->type_index].name,"ScrArea"))
+		if (!strcmp(bf->types[bb->type_index].name,"ScrVert"))
 			continue;
 
-		if (!stricmp(bf->types[bb->type_index].name,"MCol"))
+		if (!strcmp(bf->types[bb->type_index].name,"ScrArea"))
 			continue;
 
-		if (!stricmp(bf->types[bb->type_index].name,"IpoCurve"))
+		if (!strcmp(bf->types[bb->type_index].name,"MCol"))
 			continue;
 
-		if (!stricmp(bf->types[bb->type_index].name,"Ipo"))
+		if (!strcmp(bf->types[bb->type_index].name,"IpoCurve"))
 			continue;
 
-		if (!stricmp(bf->types[bb->type_index].name,"BezTriple"))
+		if (!strcmp(bf->types[bb->type_index].name,"Ipo"))
+			continue;
+
+		if (!strcmp(bf->types[bb->type_index].name,"BezTriple"))
 			continue;
 
 
