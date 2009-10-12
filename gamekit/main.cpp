@@ -612,6 +612,21 @@ the engine, create the scene node and a camera, and look at the result.
 */
 int main(int argc,char** argv)
 {
+	const char* fileName = "PhysicsAnimationBakingDemo.blend";
+	
+	if ((argc>1) && argv[1])
+	{
+		fileName = argv[1];
+	}
+
+	FILE* file = fopen(fileName,"rb");
+	if (!file)
+	{
+		printf("cannot open file %s.\n",argv[1]);
+		exit(0);
+	}
+
+
 	// let user select driver type
 
 	video::E_DRIVER_TYPE driverType;
@@ -677,32 +692,13 @@ int main(int argc,char** argv)
 //#endif //SWAP_COORDINATE_SYSTEMS
 
 	IrrlichtBulletBlendReader	bulletBlendReader(smgr,physicsWorld);
-	
-	if (argc>1)
+	if (!bulletBlendReader.readFile(file))
 	{
-		if (!bulletBlendReader.openFile(argv[1]))
-		{
-			exit(0);
-		}
-	} else
-	{
-		if (!bulletBlendReader.openFile("PhysicsAnimationBakingDemo.blend"))
-		
-		//if (!bulletBlendReader.openFile("cube_ipo_various_250.blend"))
-		//if (!bulletBlendReader.openFile("cube_ipo_204.blend"))
-		//if (!bulletBlendReader.openFile("cube_ipo_249.blend"))
-		//if (!bulletBlendReader.openFile("clubsilo_packed.blend"))
-		{
-			printf("trying again with different path\n");
-			//if (!bulletBlendReader.openFile("../../bin/Win32-VisualStudio/PhysicsAnimationBakingDemo.blend"))
-			if (!bulletBlendReader.openFile("0_FPS_Template.blend"))
-			{
-				exit(0);
-			}
-		}
+		printf("cannot read Blender file %s.\n",argv[1]);
+		fclose(file);
+		exit(0);
 	}
 	
-
 //				//io::IReadFile* file = io::createMemoryReadFile(jpgData, jpgSize, fileName, false);
 //				irr::io::CMemoryReadFile* file = new irr::io::CMemoryReadFile(jpgData, jpgSize, fileName, false);
 				

@@ -30,6 +30,7 @@ subject to the following restrictions:
 #include "btBulletDynamicsCommon.h"
 #include "BulletCollision/CollisionShapes/btScaledBvhTriangleMeshShape.h"
 #include "BulletCollision/Gimpact/btGImpactShape.h"
+#include <stdio.h>
 
 BulletBlendReader::BulletBlendReader(btDynamicsWorld* destinationWorld)
 :m_bf(0),
@@ -38,37 +39,31 @@ m_destinationWorld(destinationWorld)
 
 }
 
-
-int	BulletBlendReader::openFile(const char* fileName)
+int	BulletBlendReader::readFile(FILE* posixFile)
 {
-	MY_FILETYPE *file;
+	MY_FILETYPE* buffer;
 
-	file = MY_OPEN_FOR_READ(fileName);
+	buffer = MY_FILE_OPEN_FOR_READ(posixFile);
 
-	if (!file) {
-		fprintf(stderr,"couldn't open file %s\n",fileName);
-		return 0;
-	}
+	m_bf =  blend_read(buffer);
 
-	m_bf =  blend_read(file);
-
-	if (!m_bf) {
+	if (!m_bf)
+	{
 		fprintf(stderr, "couldn't read blender file. :(\n");
-		MY_CLOSE(file);
-		m_bf=0;
+		MY_CLOSE(buffer);
 		return 0;
 	}
-
-
+	
 #ifdef DUMP_TYPEDEFS
 	blend_dump_typedefs(m_bf);
 #endif //DUMP_TYPEDEFS
-
-	MY_CLOSE(file);
-	return 1;
-
 	
+	MY_CLOSE(buffer);
+
+	return 1;
 }
+
+
 
 BulletBlendReader::~BulletBlendReader()
 {

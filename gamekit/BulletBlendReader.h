@@ -16,7 +16,7 @@ subject to the following restrictions:
 #ifndef BULLET_BLEND_READER_H
 #define BULLET_BLEND_READER_H
 
-
+#include <stdio.h>
 
 class	BulletBlendReader
 {
@@ -30,7 +30,11 @@ public:
 
 	virtual ~BulletBlendReader();
 
-	int		openFile(const char* fileName);
+	///if you already have a file pointer, call readFile
+	int		readFile( FILE* file);
+
+	///if you only have a fileName, call openFile
+	//int		openFile(const char* fileName);
 
 	void	convertAllObjects();
 
