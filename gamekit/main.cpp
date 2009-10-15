@@ -654,11 +654,32 @@ int main(int argc,char** argv)
 {
 	const char* fileName = "PhysicsAnimationBakingDemo.blend";
 	
-	if ((argc>1) && argv[1])
+	int verboseDumpAllTypes = false;
+	int verboseDumpAllBlocks = false;
+
+	printf("Usage:\nGameKit [-verbose] [blendfile.blend]\n");
+
+	if (argc>1 && argv[1])
 	{
-		fileName = argv[1];
+		if (!strcmp(argv[1],"-verbose"))
+		{
+			verboseDumpAllTypes = true;
+			verboseDumpAllBlocks = true;
+			printf("enable verbose output: verboseDumpAllTypes and verboseDumpAllBlocks\n");
+			if (argc>2 && argv[2])
+			{
+				fileName = argv[2];
+			}
+		} else
+		{
+			fileName = argv[1];
+		}
 	}
 
+
+
+
+	
 	FILE* file = fopen(fileName,"rb");
 	if (!file)
 	{
@@ -740,7 +761,7 @@ int main(int argc,char** argv)
 //#endif //SWAP_COORDINATE_SYSTEMS
 
 	IrrlichtBulletBlendReader	bulletBlendReader(smgr,physicsWorld);
-	if (!bulletBlendReader.readFile(file))
+	if (!bulletBlendReader.readFile(file,verboseDumpAllTypes))
 	{
 		printf("cannot read Blender file %s.\n",argv[1]);
 		fclose(file);
@@ -753,7 +774,7 @@ int main(int argc,char** argv)
 
 	
 
-	bulletBlendReader.convertAllObjects();
+	bulletBlendReader.convertAllObjects(verboseDumpAllBlocks);
 	//now create graphics objects for each Bullet object?
 
 	

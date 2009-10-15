@@ -31,12 +31,12 @@ public:
 	virtual ~BulletBlendReader();
 
 	///if you already have a file pointer, call readFile
-	int		readFile( FILE* file);
+	int		readFile( FILE* file, int verboseDumpAllTypes = false);
 
 	///if you only have a fileName, call openFile
 	//int		openFile(const char* fileName);
 
-	void	convertAllObjects();
+	void	convertAllObjects(int verboseDumpAllBlocks=false);
 
 	///for each Blender Object, this method will be called to convert/retrieve data from the bObj
 	virtual	void convertSingleObject(struct _bObj* object);
