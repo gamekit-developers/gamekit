@@ -606,6 +606,46 @@ public:
 	}
 };
 
+
+
+class MyEventReceiver : public IEventReceiver
+{
+public:
+	// This is the one method that we have to implement
+	virtual bool OnEvent(const SEvent& event)
+	{
+		// Remember whether each key is down or up
+		if (event.EventType == irr::EET_KEY_INPUT_EVENT)
+		{
+			KeyIsDown[event.KeyInput.Key] = event.KeyInput.PressedDown;
+			
+
+			if (IsKeyDown(irr::KEY_KEY_Q))
+			{
+				exit(0);
+			}
+		}
+
+		return false;
+	}
+
+	// This is used to check whether a key is being held down
+	virtual bool IsKeyDown(EKEY_CODE keyCode) const
+	{
+		return KeyIsDown[keyCode];
+	}
+	
+	MyEventReceiver()
+	{
+		for (u32 i=0; i<KEY_KEY_CODES_COUNT; ++i)
+			KeyIsDown[i] = false;
+	}
+
+private:
+	// We use this array to store the current state of each key
+	bool KeyIsDown[KEY_KEY_CODES_COUNT];
+};
+
 /*
 That's it. The Scene node is done. Now we simply have to start
 the engine, create the scene node and a camera, and look at the result.
@@ -653,7 +693,15 @@ int main(int argc,char** argv)
 #endif
 	// create device
 
-	device = createDevice(driverType,		core::dimension2d<s32>(640, 480), 16, false);
+	MyEventReceiver receiver;
+
+	device = createDevice(driverType,		core::dimension2d<s32>(640, 480), 32, false,false,false,&receiver);
+	//device = createDevice(driverType,		core::dimension2d<s32>(640, 480), 32, false,false,true,&receiver);
+	//device = createDevice(driverType,		core::dimension2d<s32>(640, 480), 32, true,false,true,&receiver);
+	device->setResizeAble(true);
+
+
+
 	//device = createDevice(driverType,		core::dimension2d<s32>(1024, 768), 32, true);
 		
 	if (device == 0)
@@ -734,6 +782,7 @@ int main(int argc,char** argv)
 			str += driver->getName();
 			str += L"] FPS: ";
 			str += (s32)driver->getFPS();
+			str += L" (press q to quit)";
 
 			device->setWindowCaption(str.c_str());
 			frames=0;

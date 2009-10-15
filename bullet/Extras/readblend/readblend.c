@@ -1500,45 +1500,70 @@ blend_object_dump_field(BlendFile* blend_file,
 								}
 							case BLEND_OBJ_STRUCT:
 								{
-									BlendBlockPointer ptr = *ptrptr;
-									if (ptr)
+									char	dest[1024];
+									int isListBase = 0;
+									int max_chars = 1023;
+
+									
+									if (!strcmp(blend_file->types[blend_file->types[obj.type].fieldtypes[i]].name,"ListBase"))
 									{
-										BlendObject idstruc_obj;
-										BlendBlock* block;
-										BlendObject name_obj;
-										char	dest[1024];
-										int max_chars = 1023;
+										isListBase  =1;
+									}
+									if (name_is_pointer(blend_file->names[blend_file->types[obj.type].fieldnames[i]]) || isListBase)
+									{
 
-										BlendBlockPointer curveblockptr = blend_block_from_blendpointer(blend_file, ptr);
-										if (curveblockptr)
+										BlendBlockPointer ptr = *ptrptr;
+										if (ptr)
 										{
-											idstruc_obj = blend_block_get_object(blend_file, curveblockptr, 0);
-											block = (BlendBlock*)idstruc_obj.block;
+											BlendObject idstruc_obj;
+											BlendBlock* block;
+											BlendObject name_obj;
 											
-											if (BLEND_OBJ_STRUCT == blend_object_type(blend_file, idstruc_obj) &&
-												blend_object_structure_getfield(blend_file, &name_obj,
-												idstruc_obj, "name")) {
-													/* great, get the string from the 'name' field. */
-													if (blend_object_getstring(blend_file, name_obj,
-														dest, max_chars)) {
-															printf("\"%s\" ",dest);
-															
-													} else {
-														printf("%x ",block->blender_pointer);
-													}
-											} else {
-												printf("%x ",block->blender_pointer);
 
-											}
 											
+											BlendBlockPointer curveblockptr = blend_block_from_blendpointer(blend_file, ptr);
+											if (curveblockptr)
+											{
+												idstruc_obj = blend_block_get_object(blend_file, curveblockptr, 0);
+												block = (BlendBlock*)idstruc_obj.block;
+												
+												if (BLEND_OBJ_STRUCT == blend_object_type(blend_file, idstruc_obj) &&
+													blend_object_structure_getfield(blend_file, &name_obj,
+													idstruc_obj, "name")) {
+														/* great, get the string from the 'name' field. */
+														if (blend_object_getstring(blend_file, name_obj,
+															dest, max_chars)) {
+																printf("\"%s\" ",dest);
+																
+														} else {
+															printf("%x ",block->blender_pointer);
+														}
+												} else {
+													printf("%x ",block->blender_pointer);
+
+												}
+												
+											} else
+											{
+												printf("NULL ");
+											}
+
 										} else
 										{
 											printf("NULL ");
 										}
-
 									} else
 									{
-										printf("NULL ");
+										if (!strcmp(blend_file->names[blend_file->types[obj.type].fieldnames[i]],"id"))
+										{
+											if (blend_object_get_IDname(blend_file, obj, dest, max_chars)) 
+											{
+												printf("\"%s\" ",dest);
+												break;
+											}
+										} 
+										printf("Embedded struct\n");
+
 									}
 #if 0
 									BlendObject objobj;
@@ -2142,6 +2167,7 @@ blend_acquire_obj_from_obj(BlendFile *bf, BlendObject *objobj,
 
 			if (blend_object_structure_getfield(bf, &obj2, ipo,"curve"))
 			{
+
 				BlendBlock* block = (BlendBlock*)obj2.block;
 
 
@@ -2150,6 +2176,8 @@ blend_acquire_obj_from_obj(BlendFile *bf, BlendObject *objobj,
 				BlendBlockPointer ptr = *ptrptr;
 				ptrptr++;
 				 ptrlast= *ptrptr;
+
+
 				//ptrptr++; contains the 'last' pointer
 				if (ptr)
 				{
