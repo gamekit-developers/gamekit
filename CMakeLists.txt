@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.4)
 
 PROJECT(GAMEKIT)
-SET(GAMEKIT 2.74)
+SET(GAMEKIT 2.75)
 
 IF (NOT CMAKE_BUILD_TYPE)
 # SET(CMAKE_BUILD_TYPE "Debug")
@@ -15,5 +15,5 @@ IF(COMMAND cmake_policy)
 ENDIF(COMMAND cmake_policy)
    
 SUBDIRS(bullet)
-SUBDIRS(irrlicht-1.5)
+SUBDIRS(irrlicht-1.6)
 SUBDIRS(gamekit)

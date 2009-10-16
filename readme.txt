@@ -2,7 +2,7 @@
 GameKit is a prototyping environment that includes 
 
 + Bullet Physics Library for physics
-+ Irrlicht 1.5 for Graphics
++ Irrlicht 1.6 for Graphics
 + readblend to read 32bit little-endian .blend files
 + some example .blend files included in the GameKit folder
 
