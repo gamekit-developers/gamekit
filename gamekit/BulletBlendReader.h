@@ -17,6 +17,52 @@ subject to the following restrictions:
 #define BULLET_BLEND_READER_H
 
 #include <stdio.h>
+#include "readblend.h"
+#include "LinearMath/btAlignedObjectArray.h"
+#include "LinearMath/btHashMap.h"
+
+struct	btDataValue
+{
+	int	m_type;
+	int	m_name;
+	
+	btAlignedObjectArray<btDataValue> m_valueArray;
+	union
+	{
+		char m_cValue;
+		unsigned char m_ucValue;
+		int		m_iValue;
+		unsigned int m_uiValue;
+		float	m_fValue;
+		void*	m_ptr;
+	};
+};
+
+struct	btDataObject
+{
+	btHashMap<btHashString,btDataValue*>	m_dataMap;
+	int	getIntValue(const char* fieldName, int defaultValue=0)
+	{
+		btDataValue** valPtr = m_dataMap[fieldName];
+		if (valPtr && *valPtr)
+		{
+			return (*valPtr)->m_iValue;
+		}
+		return defaultValue;
+	}
+
+	float getFloatValue(const char* fieldName, float defaultValue=0.)
+	{
+		btDataValue** valPtr = m_dataMap[fieldName];
+		if (valPtr && *valPtr)
+		{
+			return (*valPtr)->m_fValue;
+		}
+		return defaultValue;
+	}
+};
+
+
 
 class	BulletBlendReader
 {
@@ -35,6 +81,8 @@ public:
 
 	///if you only have a fileName, call openFile
 	//int		openFile(const char* fileName);
+
+	btDataObject* extractSingleObject(BlendObject*);
 
 	void	convertAllObjects(int verboseDumpAllBlocks=false);
 

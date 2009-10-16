@@ -72,6 +72,623 @@ BulletBlendReader::~BulletBlendReader()
 	
 }
 
+static int
+name_is_pointer(char* name) {
+	int len = strlen(name);
+	/*fprintf(stderr,"[%s]",name);*/
+	if (len >= 1) {
+		if (name[0] == '*')
+			return 1;
+	}
+	if (len >= 2) {
+		if (name[1] == '*')
+			return 1;
+	}
+	return 0;
+}
+
+static int
+name_is_array(char* name, int* dim1, int* dim2) {
+	int len = strlen(name);
+	/*fprintf(stderr,"[%s]",name);*/
+	/*if (len >= 1) {
+	if (name[len-1] != ']')
+	return 1;
+	}
+	return 0;*/
+	char *bp;
+	int num;
+	if (dim1) {
+		*dim1 = 1;
+	}
+	if (dim2) {
+		*dim2 = 1;
+	}
+	bp = strchr(name, '[');
+	if (!bp) {
+		return 0;
+	}
+	num = 0;
+	while (++bp < name+len-1) {
+		const char c = *bp;
+		if (c == ']') {
+			break;
+		}
+		if (c <= '9' && c >= '0') {
+			num *= 10;
+			num += (c - '0');
+		} else {
+			printf("array parse error.\n");
+			return 0;
+		}
+	}
+	if (dim2) {
+		*dim2 = num;
+	}
+
+	/* find second dim, if any. */
+	bp = strchr(bp, '[');
+	if (!bp) {
+		return 1; /* at least we got the first dim. */
+	}
+	num = 0;
+	while (++bp < name+len-1) {
+		const char c = *bp;
+		if (c == ']') {
+			break;
+		}
+		if (c <= '9' && c >= '0') {
+			num *= 10;
+			num += (c - '0');
+		} else {
+			printf("array2 parse error.\n");
+			return 1;
+		}
+	}
+	if (dim1) {
+		if (dim2) {
+			*dim1 = *dim2;
+			*dim2 = num;
+		} else {
+			*dim1 = num;
+		}
+	}
+
+	return 1;
+}
+
+
+
+#if 0
+	if (!strcmp(m_bf->types[fieldType].name,"char") && (dim1>1 || dim2>1))
+			{
+				
+				index=0;
+
+
+
+				for (k=0;k<dim1;k++)
+				{
+					for (l=0;l<dim2;l++)
+					{
+						ptrptr = &block->array_entries->field_bytes[block->array_entries->field_offsets[field_index+dim2*k+ l]];
+									
+						objType = typestring_to_blendobj_type(m_bf, m_bf->types[fieldType].name) ;
+						if (ptrptr && index<1023)
+						{
+							char val = *(char*)ptrptr;
+							namebuf[index++]=val;
+						}
+					}
+				}
+
+				namebuf[index]=0;
+				printf("\"%s\"",namebuf);
+			}
+			else
+			{
+				for (k=0;k<dim1;k++)
+				{
+					if (dim1>1 || dim2>1)
+					{
+						printf("[");
+					}
+					for (l=0;l<dim2;l++)
+					{
+						ptrptr = &block->array_entries->field_bytes[block->array_entries->field_offsets[field_index+dim2*k+ l]];
+									
+						objType = typestring_to_blendobj_type(m_bf, m_bf->types[fieldType].name) ;
+						if (ptrptr)
+						{
+							switch (objType)
+							{
+							case BLEND_OBJ_NULL:
+								{
+									printf("NULL ");
+									break;
+								}
+							case BLEND_OBJ_OPAQUE:
+								{
+									printf("OPAQUE? ");
+									break;
+								}
+							case BLEND_OBJ_UCHAR8:
+								{
+									unsigned char val = *(unsigned char*)ptrptr;
+									printf("%d ",val);
+									break;
+								}
+							case BLEND_OBJ_CHAR8:
+								{
+									char val = *(char*)ptrptr;
+									printf("%d ",val);
+									break;
+								}
+							case BLEND_OBJ_USHORT16:
+								{
+									unsigned short int val = *(unsigned short int*)ptrptr;
+									printf("%d ",val);
+									break;
+								}
+							case BLEND_OBJ_SHORT16:
+								{
+									short int val = *(short int*)ptrptr;
+									printf("%d ",val);
+									break;
+								}
+							case BLEND_OBJ_ULONG32:
+								{
+									unsigned int val = *(unsigned int*)ptrptr;
+									printf("%d ",val);
+									break;
+								}
+							case BLEND_OBJ_LONG32:
+								{
+									int val = *(int*)ptrptr;
+									printf("%d ",val);
+									break;
+								}
+							case BLEND_OBJ_FLOAT:
+								{
+									float val = *(float *)ptrptr;
+									printf("%f ",val);
+									break;
+								}
+							case BLEND_OBJ_DOUBLE:
+								{
+									double  val = *(double *)ptrptr;
+									printf("%f ",val);
+									break;
+								}
+							case BLEND_OBJ_POINTER:
+								{
+									void* val = *ptrptr;
+									printf("%x ",val);
+									break;
+								}
+							case BLEND_OBJ_STRUCT:
+								{
+									char	dest[1024];
+									int isListBase = 0;
+									int max_chars = 1023;
+
+									
+									if (!strcmp(m_bf->types[m_bf->types[obj.type].fieldtypes[i]].name,"ListBase"))
+									{
+										isListBase  =1;
+									}
+									if (name_is_pointer(m_bf->names[m_bf->types[obj.type].fieldnames[i]]) || isListBase)
+									{
+
+										BlendBlockPointer ptr = *ptrptr;
+										if (ptr)
+										{
+											BlendObject idstruc_obj;
+											BlendBlock* block;
+											BlendObject name_obj;
+											
+
+											
+											BlendBlockPointer curveblockptr = blend_block_from_blendpointer(m_bf, ptr);
+											if (curveblockptr)
+											{
+												idstruc_obj = blend_block_get_object(m_bf, curveblockptr, 0);
+												block = (BlendBlock*)idstruc_obj.block;
+												
+												if (BLEND_OBJ_STRUCT == blend_object_type(m_bf, idstruc_obj) &&
+													blend_object_structure_getfield(m_bf, &name_obj,
+													idstruc_obj, "name")) {
+														/* great, get the string from the 'name' field. */
+														if (blend_object_getstring(m_bf, name_obj,
+															dest, max_chars)) {
+																printf("\"%s\" ",dest);
+																
+														} else {
+															printf("%x ",block->blender_pointer);
+														}
+												} else {
+													printf("%x ",block->blender_pointer);
+
+												}
+												
+											} else
+											{
+												printf("NULL ");
+											}
+
+										} else
+										{
+											printf("NULL ");
+										}
+									} else
+									{
+										if (!strcmp(m_bf->names[m_bf->types[obj.type].fieldnames[i]],"id"))
+										{
+											if (blend_object_get_IDname(m_bf, obj, dest, max_chars)) 
+											{
+												printf("\"%s\" ",dest);
+												break;
+											}
+										} 
+										printf("Embedded struct\n");
+
+									}
+									break;
+								}
+							default:
+								{
+									printf("unknown value");
+								}
+							}
+						}
+					}
+					if (dim1>1 || dim2>1)
+					{
+						printf("]");
+					}
+				}
+			}
+			
+			printf("\n");
+			
+			{
+				int fos;
+				BlendObject qo = obj;
+				qo.type = m_bf->types[obj.type].fieldtypes[i];
+				qo.name = m_bf->types[obj.type].fieldnames[i];
+				qo.field_index = field_index;
+				fos = get_num_type_segments(m_bf, qo);
+				field_index += fos;
+			}
+		}
+#endif
+
+
+
+		/* recursively count the number of fields and array items in this
+structure, for the purposes of skipping in the field offset array */
+static long
+get_num_type_segments(BlendFile* blend_file,
+					  BlendObject obj)
+{
+	int i;
+	long rtn = 0;
+	int dim1,dim2;
+
+	name_is_array(blend_file->names[obj.name],
+		&dim1, &dim2);
+
+	if (name_is_pointer(blend_file->names[obj.name]) ||
+		!blend_file->types[obj.type].is_struct) {
+			return (1 * dim1 * dim2);
+	}
+
+	/* fprintf(stderr, "STRUCTYAYYY ");*/
+
+	for (i=0; i<blend_file->types[obj.type].fieldnames_count; ++i) {
+		BlendObject qo = obj;
+		qo.type = blend_file->types[obj.type].fieldtypes[i];
+		qo.name = blend_file->types[obj.type].fieldnames[i];
+		qo.field_index = i;
+		rtn += get_num_type_segments(blend_file, qo) * dim1 * dim2;
+	}
+
+	return (rtn);
+}
+
+
+static int
+blend_type_basename_compare(const char *fancy, const char *raw) {
+	const int flen = strlen(fancy);
+	const int rlen = strlen(raw);
+	int i, strcmp_result = 123;
+
+	i = 0;
+	while (i < flen && (fancy[i]=='*' || fancy[i]=='(')) {
+		++i;
+	}
+
+	strcmp_result = strncmp(&fancy[i], raw, rlen);
+
+	if (strcmp_result == 0 && flen > rlen+i) {
+		i = rlen + i;
+		if (fancy[i] != ')' && fancy[i] != '(' && fancy[i] != '[') {
+			strcmp_result = -1;
+		}
+	}
+
+	return strcmp_result;
+}
+
+
+static BlendObjType
+typestring_to_blendobj_type(BlendFile* blend_file,
+							const char* type_name) 
+{
+	if (blend_type_basename_compare(type_name, "char") == 0) {
+		return BLEND_OBJ_CHAR8;
+	} else if (blend_type_basename_compare(type_name, "uchar") == 0) {
+		return BLEND_OBJ_UCHAR8;
+	} else if (blend_type_basename_compare(type_name, "short") == 0) {
+		return BLEND_OBJ_SHORT16;
+	} else if (blend_type_basename_compare(type_name, "ushort") == 0) {
+		return BLEND_OBJ_USHORT16;
+	} else if (blend_type_basename_compare(type_name, "int") == 0) {
+		return BLEND_OBJ_LONG32;
+	} else if (blend_type_basename_compare(type_name, "long") == 0) {
+		return BLEND_OBJ_LONG32;
+	} else if (blend_type_basename_compare(type_name, "ulong") == 0) {
+		return BLEND_OBJ_ULONG32;
+	} else if (blend_type_basename_compare(type_name, "float") == 0) {
+		return BLEND_OBJ_FLOAT;
+	} else if (blend_type_basename_compare(type_name, "double") == 0) {
+		return BLEND_OBJ_DOUBLE;
+	} else if (blend_type_basename_compare(type_name, "void") == 0) {
+		return BLEND_OBJ_OPAQUE;
+	} else {
+		return BLEND_OBJ_STRUCT; /* structure */
+	}
+}
+
+
+static BlendBlockPointer
+blend_block_from_blendpointer(BlendFile *blend_file,
+							  uint32_t blendpointer)
+{
+	int i;
+
+	/* fprintf(stderr, "%04x: ", blendpointer);*/
+
+	if (blendpointer != 0) {
+		for (i=0; i<blend_file->blocks_count; ++i) {
+			/*fprintf(stderr, "%04x? ", blend_file->blocks[i].blender_pointer); */
+			if (blend_file->blocks[i].blender_pointer == blendpointer) {
+				return &blend_file->blocks[i];
+			}
+		}
+	}
+
+	return NULL;
+}
+
+btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr)
+{
+	btAssert(objPtr);
+
+	BlendObject& obj = *objPtr;
+	btDataObject* dob = new btDataObject();
+	int sz = sizeof(btDataValue);
+	BlendBlock* block = (BlendBlock*)obj.block;
+	BlendObjType objType;
+
+	int fieldType,fieldName;
+
+	if (m_bf->types[obj.type].is_struct) 
+	{
+		int i;
+		int field_index = 0;
+		for (i=0; i<m_bf->types[obj.type].fieldnames_count; ++i) {
+			//printf("filename = %s\n",m_bf->names[m_bf->types[obj.type].fieldnames[i]]);
+			fieldType = m_bf->types[obj.type].fieldtypes[i];
+			fieldName =  m_bf->types[obj.type].fieldnames[i];
+			printf("	%s %s = ",m_bf->types[fieldType].name, m_bf->names[fieldName]);
+
+
+			int dim1=1;
+			int dim2=1;
+			name_is_array(m_bf->names[fieldName], &dim1, &dim2);
+
+			int k,l;
+			void** ptrptr;
+
+			btDataValue* val = new btDataValue();
+			val->m_name = fieldName;
+			val->m_type = fieldType;
+			
+			dob->m_dataMap.insert(m_bf->names[fieldName],val);
+
+
+			for (k=0;k<dim1;k++)
+			{
+				if (dim1>1 || dim2>1)
+				{
+					printf("[");
+				}
+				for (l=0;l<dim2;l++)
+				{
+					ptrptr = (void**)&block->array_entries->field_bytes[block->array_entries->field_offsets[field_index+dim2*k+ l]];
+								
+					objType = typestring_to_blendobj_type(m_bf, m_bf->types[fieldType].name) ;
+					if (ptrptr)
+					{
+						switch (objType)
+						{
+						case BLEND_OBJ_NULL:
+							{
+								printf("NULL ");
+								break;
+							}
+						case BLEND_OBJ_OPAQUE:
+							{
+								printf("OPAQUE? ");
+								break;
+							}
+						case BLEND_OBJ_UCHAR8:
+							{
+								val->m_iValue = *(unsigned char*)ptrptr;
+								printf("%d ",val->m_iValue);
+								break;
+							}
+						case BLEND_OBJ_CHAR8:
+							{
+								val->m_iValue = *(char*)ptrptr;
+								printf("%d ",val->m_iValue);
+								break;
+							}
+						case BLEND_OBJ_USHORT16:
+							{
+								val->m_iValue = *(unsigned short int*)ptrptr;
+								printf("%d ",val->m_iValue);
+								break;
+							}
+						case BLEND_OBJ_SHORT16:
+							{
+								val->m_iValue = *(short int*)ptrptr;
+								printf("%d ",val);
+								break;
+							}
+						case BLEND_OBJ_ULONG32:
+							{
+								val->m_uiValue = *(unsigned int*)ptrptr;
+								printf("%d ",val->m_uiValue);
+								break;
+							}
+						case BLEND_OBJ_LONG32:
+							{
+								val->m_iValue = *(int*)ptrptr;
+								printf("%d ",val->m_iValue);
+								break;
+							}
+						case BLEND_OBJ_FLOAT:
+							{
+								val->m_fValue = *(float *)ptrptr;
+								printf("%f ",val->m_fValue);
+								break;
+							}
+						case BLEND_OBJ_DOUBLE:
+							{
+								double  val = *(double *)ptrptr;
+								printf("%f ",val);
+								break;
+							}
+						case BLEND_OBJ_POINTER:
+							{
+								void* val = *ptrptr;
+								printf("%x ",val);
+								break;
+							}
+						case BLEND_OBJ_STRUCT:
+							{
+								char	dest[1024];
+								int isListBase = 0;
+								int max_chars = 1023;
+
+								
+								if (!strcmp(m_bf->types[m_bf->types[obj.type].fieldtypes[i]].name,"ListBase"))
+								{
+									isListBase  =1;
+								}
+								if (name_is_pointer(m_bf->names[m_bf->types[obj.type].fieldnames[i]]) || isListBase)
+								{
+
+									uint32_t ptr = (uint32_t)*ptrptr;
+									if (ptr)
+									{
+										BlendObject idstruc_obj;
+										BlendBlock* block;
+										BlendObject name_obj;
+										
+
+										
+										BlendBlockPointer curveblockptr = blend_block_from_blendpointer(m_bf, ptr);
+										if (curveblockptr)
+										{
+											idstruc_obj = blend_block_get_object(m_bf, curveblockptr, 0);
+											block = (BlendBlock*)idstruc_obj.block;
+											
+											if (BLEND_OBJ_STRUCT == blend_object_type(m_bf, idstruc_obj) &&
+												blend_object_structure_getfield(m_bf, &name_obj,
+												idstruc_obj, "name")) {
+													/* great, get the string from the 'name' field. */
+													if (blend_object_getstring(m_bf, name_obj,
+														dest, max_chars)) {
+															printf("\"%s\" ",dest);
+															
+													} else {
+														printf("%x ",block->blender_pointer);
+													}
+											} else {
+												printf("%x ",block->blender_pointer);
+
+											}
+											
+										} else
+										{
+											printf("NULL ");
+										}
+
+									} else
+									{
+										printf("NULL ");
+									}
+								} else
+								{
+									if (!strcmp(m_bf->names[m_bf->types[obj.type].fieldnames[i]],"id"))
+									{
+										if (blend_object_get_IDname(m_bf, obj, dest, max_chars)) 
+										{
+											printf("\"%s\" ",dest);
+											break;
+										}
+									} 
+									printf("Embedded struct\n");
+
+								}
+								break;
+							}
+						default:
+							{
+								printf("unknown value");
+							}
+						}
+					}
+				}
+				if (dim1>1 || dim2>1)
+				{
+					printf("]");
+				}
+			}
+
+
+
+			printf("\n");
+			
+			{
+				int fos;
+				BlendObject qo = obj;
+				qo.type = m_bf->types[obj.type].fieldtypes[i];
+				qo.name = m_bf->types[obj.type].fieldnames[i];
+				qo.field_index = field_index;
+				fos = get_num_type_segments(m_bf, qo);
+				field_index += fos;
+			}
+		}
+		printf("bla\n");
+	}
+
+
+	return dob;
+}
 
 
 void	BulletBlendReader::convertAllObjects(int verboseDumpAllBlocks)
@@ -113,6 +730,18 @@ void	BulletBlendReader::convertAllObjects(int verboseDumpAllBlocks)
 					printf("block blenderptr = %lx\n",m_bf->blocks[j].blender_pointer);
 #endif //DUMP_BLOCK_NAMES
 
+					if (strcmp(type_name,"FileGlobal")==0)
+					{
+						
+						btDataObject* dob = extractSingleObject(&obj);
+						printf("dob\n");
+						short minversion = dob->getIntValue("minversion",123);
+						short manversion = dob->getIntValue("manversion",123);
+						printf("minversion = %d\n",minversion);
+
+						//blend_object_dump_field(m_bf,	obj);
+					
+					}
 					
 					if (strcmp(type_name,"Object")==0)
 					{
@@ -141,6 +770,7 @@ void	BulletBlendReader::convertAllObjects(int verboseDumpAllBlocks)
 ///for each Blender Object, this method will be called to convert/retrieve data from the bObj
 void BulletBlendReader::convertSingleObject(_bObj* object)
 {
+
 	switch (object->type)
 	{
 	case BOBJ_TYPE_MESH:

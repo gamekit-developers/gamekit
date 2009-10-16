@@ -32,6 +32,9 @@ subject to the following restrictions:
 using namespace irr;
 IrrlichtDevice* device=0;
 btScalar	physicsWorldScaling = 1.f;
+bool gPause=false;
+bool gWireframe = false;
+
 
 #ifdef _MSC_VER
 #pragma comment(lib, "Irrlicht.lib")
@@ -223,6 +226,7 @@ public:
 		
 		video::IVideoDriver* driver = SceneManager->getVideoDriver();
 
+		Material.Wireframe = gWireframe;
 		driver->setMaterial(Material);
 		driver->setTransform(video::ETS_WORLD, AbsoluteTransformation);
 		driver->drawIndexedTriangleList(m_vertices, m_numVertices, m_indices, m_numTriangles);
@@ -624,6 +628,14 @@ public:
 			{
 				exit(0);
 			}
+			if (IsKeyDown(irr::KEY_SPACE))
+			{
+				gPause = !gPause;
+			}
+			if (IsKeyDown(irr::KEY_KEY_W))
+			{
+				gWireframe = !gWireframe;
+			}
 		}
 
 		return false;
@@ -792,7 +804,8 @@ int main(int argc,char** argv)
 		ms = newTime;
 
 		
-		physicsWorld->stepSimulation(deltaTimeMs*0.001f);
+		if (!gPause)
+			physicsWorld->stepSimulation(deltaTimeMs*0.001f);
 
 		smgr->drawAll();
 
