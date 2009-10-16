@@ -452,7 +452,7 @@ typestring_to_blendobj_type(BlendFile* blend_file,
 
 
 static BlendBlockPointer
-blend_block_from_blendpointer(BlendFile *blend_file,
+blendBlockFromBlendpointer(BlendFile *blend_file,
 							  uint32_t blendpointer)
 {
 	int i;
@@ -610,7 +610,7 @@ btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr)
 										
 
 										
-										BlendBlockPointer curveblockptr = blend_block_from_blendpointer(m_bf, ptr);
+										BlendBlockPointer curveblockptr = blendBlockFromBlendpointer(m_bf, ptr);
 										if (curveblockptr)
 										{
 											idstruc_obj = blend_block_get_object(m_bf, curveblockptr, 0);

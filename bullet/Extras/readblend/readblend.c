@@ -949,7 +949,7 @@ blend_object_type(BlendFile* blend_file,
 }
 
 
-static BlendBlockPointer
+BlendBlockPointer
 blend_block_from_blendpointer(BlendFile *blend_file,
 							  uint32_t blendpointer)
 {

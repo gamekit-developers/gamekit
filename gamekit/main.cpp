@@ -695,8 +695,14 @@ int main(int argc,char** argv)
 	FILE* file = fopen(fileName,"rb");
 	if (!file)
 	{
-		printf("cannot open file %s.\n",argv[1]);
-		exit(0);
+		char newName[1024];
+		sprintf(newName,"../%s",fileName);
+		file = fopen(newName,"rb");
+		if (!file)
+		{
+			printf("cannot open file %s.\n",argv[1]);
+			exit(0);
+		}
 	}
 
 
