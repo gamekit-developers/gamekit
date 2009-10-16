@@ -19,13 +19,13 @@ namespace irr
 	namespace gui
 	{
 		class IGUIEnvironment;
-		IGUIEnvironment* createGUIEnvironment(io::IFileSystem* fs, 
+		IGUIEnvironment* createGUIEnvironment(io::IFileSystem* fs,
 			video::IVideoDriver* Driver, IOSOperator* op);
 	}
 
 	namespace scene
 	{
-		ISceneManager* createSceneManager(video::IVideoDriver* driver, 
+		ISceneManager* createSceneManager(video::IVideoDriver* driver,
 			io::IFileSystem* fs, gui::ICursorControl* cc, gui::IGUIEnvironment *gui);
 	}
 
@@ -36,13 +36,13 @@ namespace irr
 
 	namespace video
 	{
-		IVideoDriver* createSoftwareDriver(const core::dimension2d<s32>& windowSize,
+		IVideoDriver* createSoftwareDriver(const core::dimension2d<u32>& windowSize,
 				bool fullscreen, io::IFileSystem* io,
 				video::IImagePresenter* presenter);
-		IVideoDriver* createSoftwareDriver2(const core::dimension2d<s32>& windowSize,
+		IVideoDriver* createSoftwareDriver2(const core::dimension2d<u32>& windowSize,
 				bool fullscreen, io::IFileSystem* io,
 				video::IImagePresenter* presenter);
-		IVideoDriver* createNullDriver(io::IFileSystem* io, const core::dimension2d<s32>& screenSize);
+		IVideoDriver* createNullDriver(io::IFileSystem* io, const core::dimension2d<u32>& screenSize);
 	}
 
 
@@ -79,7 +79,7 @@ namespace irr
 		//! Returns a pointer to the ITimer object. With it the current Time can be received.
 		virtual ITimer* getTimer();
 
-		//! Returns the version of the engine. 
+		//! Returns the version of the engine.
 		virtual const char* getVersion() const;
 
 		//! send the event to the right receiver
@@ -91,7 +91,7 @@ namespace irr
 		//! Returns pointer to the current event receiver. Returns 0 if there is none.
 		virtual IEventReceiver* getEventReceiver();
 
-		//! Sets the input receiving scene manager. 
+		//! Sets the input receiving scene manager.
 		/** If set to null, the main scene manager (returned by GetSceneManager()) will receive the input */
 		virtual void setInputReceivingSceneManager(scene::ISceneManager* sceneManager);
 
@@ -110,12 +110,32 @@ namespace irr
 		//! Activate any joysticks, and generate events for them.
 		virtual bool activateJoysticks(core::array<SJoystickInfo> & joystickInfo);
 
+		//! Set the current Gamma Value for the Display
+		virtual bool setGammaRamp( f32 red, f32 green, f32 blue, f32 brightness, f32 contrast );
+
+		//! Get the current Gamma Value for the Display
+		virtual bool getGammaRamp( f32 &red, f32 &green, f32 &blue, f32 &brightness, f32 &contrast );
+
+		//! Set the maximal elapsed time between 2 clicks to generate doubleclicks for the mouse. It also affects tripleclick behaviour.
+		//! When set to 0 no double- and tripleclicks will be generated.
+		virtual void setDoubleClickTime( u32 timeMs );
+
+		//! Get the maximal elapsed time between 2 clicks to generate double- and tripleclicks for the mouse.
+		virtual u32 getDoubleClickTime() const;
+
 	protected:
 
 		void createGUIAndScene();
 
 		//! checks version of SDK and prints warning if there might be a problem
 		bool checkVersion(const char* version);
+
+		//! Compares to the last call of this function to return double and triple clicks.
+		//! \return Returns only 1,2 or 3. A 4th click will start with 1 again.
+		virtual u32 checkSuccessiveClicks(s32 mouseX, s32 mouseY);
+
+		void calculateGammaRamp ( u16 *ramp, f32 gamma, f32 relativebrightness, f32 relativecontrast );
+		void calculateGammaFromRamp ( f32 &gamma, const u16 *ramp );
 
 		video::IVideoDriver* VideoDriver;
 		gui::IGUIEnvironment* GUIEnvironment;
@@ -129,6 +149,19 @@ namespace irr
 		scene::ISceneManager* InputReceivingSceneManager;
 		video::CVideoModeList VideoModeList;
 		SIrrlichtCreationParameters CreationParams;
+
+		struct SMouseMultiClicks
+		{
+			SMouseMultiClicks()
+				: DoubleClickTime(500), CountSuccessiveClicks(0), LastClickTime(0)
+			{}
+
+			u32 DoubleClickTime;
+			u32 CountSuccessiveClicks;
+			u32 LastClickTime;
+			core::position2di LastClick;
+		};
+		SMouseMultiClicks MouseMultiClicks;
 	};
 
 } // end namespace irr

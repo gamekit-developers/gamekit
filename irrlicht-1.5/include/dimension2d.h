@@ -12,6 +12,8 @@ namespace irr
 {
 namespace core
 {
+	template <class T>
+	class vector2d;
 
 	//! Specifies a 2 dimensional size.
 	template <class T>
@@ -23,6 +25,22 @@ namespace core
 			//! Constructor with width and height
 			dimension2d(const T& width, const T& height)
 				: Width(width), Height(height) {}
+
+			dimension2d(const vector2d<T>& other); // Defined in vector2d.h
+
+			//! Use this constructor only where you are sure that the conversion is valid.
+			template <class U>
+			explicit dimension2d(const dimension2d<U>& other) :
+				Width((T)other.Width), Height((T)other.Height) { }
+
+			template <class U>
+			dimension2d<T>& operator=(const dimension2d<U>& other)
+			{ 
+				Width = (T) other.Width;
+				Height = (T) other.Height;
+				return *this;
+			}
+
 
 			//! Equality operator
 			bool operator==(const dimension2d<T>& other) const
@@ -37,6 +55,12 @@ namespace core
 				return ! (*this == other);
 			}
 
+			bool operator==(const vector2d<T>& other) const;  // Defined in vector2d.h
+
+			bool operator!=(const vector2d<T>& other) const
+			{
+				return !(*this == other);
+			}
 
 			//! Set to new values
 			dimension2d<T>& set(const T& width, const T& height)
@@ -114,12 +138,15 @@ namespace core
 			\param larger Choose whether the result is larger or
 			smaller than the current dimension. If one dimension
 			need not be changed it is kept with any value of larger.
+			\param maxValue Maximum texturesize. if value > 0 size is
+			clamped to maxValue
 			\return The optimal dimension under the given
 			constraints. */
 			dimension2d<T> getOptimalSize(
 					bool requirePowerOfTwo=true,
 					bool requireSquare=false,
-					bool larger=true) const
+					bool larger=true,
+					u32 maxValue = 0) const
 			{
 				u32 i=1;
 				u32 j=1;
@@ -147,6 +174,13 @@ namespace core
 					else
 						i=j;
 				}
+
+				if ( maxValue > 0 && i > maxValue)
+					i = maxValue;
+
+				if ( maxValue > 0 && j > maxValue)
+					j = maxValue;
+
 				return dimension2d<T>((T)i,(T)j);
 			}
 
@@ -169,8 +203,14 @@ namespace core
 
 	//! Typedef for an f32 dimension.
 	typedef dimension2d<f32> dimension2df;
+	//! Typedef for an unsigned integer dimension.
+	typedef dimension2d<u32> dimension2du;
+
 	//! Typedef for an integer dimension.
+	/** There are few cases where negative dimensions make sense. Please consider using
+		dimension2du instead. */
 	typedef dimension2d<s32> dimension2di;
+
 
 } // end namespace core
 } // end namespace irr

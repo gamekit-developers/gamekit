@@ -61,14 +61,14 @@ namespace video
 		if (RenderTarget)
 			RenderTarget->drop();
 
-		RenderTarget = surface;
+		RenderTarget = (video::CImage* ) surface;
 
 		if (RenderTarget)
 		{
 			RenderTarget->grab();
 
-			//lockedSurface = (tVideoSample*)RenderTarget->lock();
-			//lockedDepthBuffer = DepthBuffer->lock();
+			//(tVideoSample*)RenderTarget->lock() = (tVideoSample*)RenderTarget->lock();
+			//(fp24*) DepthBuffer->lock() = DepthBuffer->lock();
 		}
 
 	}
@@ -98,7 +98,7 @@ namespace video
 			// prepare for optimal fixpoint
 			it->pitchlog2 = s32_log2_s32 ( it->Texture->getPitch() );
 
-			const core::dimension2d<s32> &dim = it->Texture->getSize();
+			const core::dimension2d<u32> &dim = it->Texture->getSize();
 			it->textureXMask = s32_to_fixPoint ( dim.Width - 1 ) & FIX_POINT_UNSIGNED_MASK;
 			it->textureYMask = s32_to_fixPoint ( dim.Height - 1 ) & FIX_POINT_UNSIGNED_MASK;
 			it->data = (tVideoSample*) it->Texture->lock();

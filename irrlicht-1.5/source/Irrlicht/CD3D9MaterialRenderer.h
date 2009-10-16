@@ -99,7 +99,8 @@ public:
 
 			E_BLEND_FACTOR srcFact,dstFact;
 			E_MODULATE_FUNC modulate;
-			unpack_texureBlendFunc ( srcFact, dstFact, modulate, material.MaterialTypeParam );
+			u32 alphaSource;
+			unpack_texureBlendFunc ( srcFact, dstFact, modulate, alphaSource, material.MaterialTypeParam );
 
 			if (srcFact == EBF_SRC_COLOR && dstFact == EBF_ZERO)
 			{
@@ -116,10 +117,24 @@ public:
 			pID3DDevice->SetTextureStageState (0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
 			pID3DDevice->SetTextureStageState (0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
 
-			if ( getTexelAlpha ( srcFact ) + getTexelAlpha ( dstFact ) )
+			if ( textureBlendFunc_hasAlpha ( srcFact ) || textureBlendFunc_hasAlpha ( dstFact ) )
 			{
-				pID3DDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_SELECTARG1 );
-				pID3DDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
+				if (alphaSource==EAS_VERTEX_COLOR)
+				{
+					pID3DDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_SELECTARG1 );
+					pID3DDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_DIFFUSE );
+				}
+				else if (alphaSource==EAS_TEXTURE)
+				{
+					pID3DDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_SELECTARG1 );
+					pID3DDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
+				}
+				else
+				{
+					pID3DDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
+					pID3DDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
+					pID3DDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
+				}
 			}
 			else
 			{
@@ -162,20 +177,6 @@ public:
 				case EBF_DST_ALPHA:				r = D3DBLEND_DESTALPHA; break;
 				case EBF_ONE_MINUS_DST_ALPHA:	r = D3DBLEND_INVDESTALPHA; break;
 				case EBF_SRC_ALPHA_SATURATE:	r = D3DBLEND_SRCALPHASAT; break;
-			}
-			return r;
-		}
-
-		u32 getTexelAlpha ( E_BLEND_FACTOR factor ) const
-		{
-			u32 r = 0;
-			switch ( factor )
-			{
-				case EBF_SRC_ALPHA:				r = 1; break;
-				case EBF_ONE_MINUS_SRC_ALPHA:	r = 1; break;
-				case EBF_DST_ALPHA:				r = 1; break;
-				case EBF_ONE_MINUS_DST_ALPHA:	r = 1; break;
-				case EBF_SRC_ALPHA_SATURATE:	r = 1; break;
 			}
 			return r;
 		}
@@ -398,7 +399,7 @@ public:
 };
 
 
-//! material renderer for all kinds of linghtmaps
+//! material renderer for all kinds of lightmaps
 class CD3D9MaterialRenderer_LIGHTMAP : public CD3D9MaterialRenderer
 {
 public:

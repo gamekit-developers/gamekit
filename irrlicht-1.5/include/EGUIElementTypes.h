@@ -79,6 +79,9 @@ enum EGUI_ELEMENT_TYPE
 	//! A tool bar (IGUIToolBar)
 	EGUIET_TOOL_BAR,
 
+	//! A Tree View
+	EGUIET_TREE_VIEW,
+
 	//! A window
 	EGUIET_WINDOW,
 
@@ -117,6 +120,7 @@ const c8* const GUIElementTypeNames[] =
 	"tabControl",
 	"table",
 	"toolBar",
+	"treeview",
 	"window",
 	0
 };

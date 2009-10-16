@@ -9,7 +9,7 @@
 
 #include "IrrCompileConfig.h"
 
-#ifdef _IRR_USE_SDL_DEVICE_
+#ifdef _IRR_COMPILE_WITH_SDL_DEVICE_
 
 #include "IrrlichtDevice.h"
 #include "CIrrDeviceStub.h"
@@ -17,6 +17,7 @@
 #include "ICursorControl.h"
 
 #include <SDL/SDL.h>
+#include <SDL/SDL_syswm.h>
 
 namespace irr
 {
@@ -51,7 +52,7 @@ namespace irr
 
 		//! returns if window is minimized.
 		bool isWindowMinimized() const;
-			
+
 		//! returns color format of the window.
 		video::ECOLOR_FORMAT getColorFormat() const;
 
@@ -64,11 +65,32 @@ namespace irr
 		//! \return Returns a pointer to a list with all video modes supported
 		video::IVideoModeList* getVideoModeList();
 
-		//! Sets if the window should be resizeable in windowed mode.
-		virtual void setResizeAble(bool resize=false);
+		//! Sets if the window should be resizable in windowed mode.
+		virtual void setResizable(bool resize=false);
+
+		//! Minimizes the window.
+		virtual void minimizeWindow();
+
+		//! Maximizes the window.
+		virtual void maximizeWindow();
+
+		//! Restores the window size.
+		virtual void restoreWindow();
 
 		//! Activate any joysticks, and generate events for them.
 		virtual bool activateJoysticks(core::array<SJoystickInfo> & joystickInfo);
+
+		//! Set the current Gamma Value for the Display
+		virtual bool setGammaRamp( f32 red, f32 green, f32 blue, f32 brightness, f32 contrast );
+
+		//! Get the current Gamma Value for the Display
+		virtual bool getGammaRamp( f32 &red, f32 &green, f32 &blue, f32 &brightness, f32 &contrast );
+
+		//! Get the device type
+		virtual E_DEVICE_TYPE getType() const
+		{
+				return EIDT_SDL;
+		}
 
 		//! Implementation of the linux cursor control
 		class CCursorControl : public gui::ICursorControl
@@ -145,7 +167,7 @@ namespace irr
 			{
 				CursorPos.X = Device->MouseX;
 				CursorPos.Y = Device->MouseY;
-			
+
 				if (CursorPos.X < 0)
 					CursorPos.X = 0;
 				if (CursorPos.X > (s32)Device->Width)
@@ -177,11 +199,12 @@ namespace irr
 #endif
 
 		s32 MouseX, MouseY;
-		
+		u32 MouseButtonStates;
+
 		u32 Width, Height;
 
 		bool Close;
-		bool Resizeable;
+		bool Resizable;
 		bool WindowHasFocus;
 		bool WindowMinimized;
 
@@ -203,10 +226,11 @@ namespace irr
 		};
 
 		core::array<SKeyMap> KeyMap;
+		SDL_SysWMinfo Info;
 	};
 
 } // end namespace irr
 
-#endif // _IRR_USE_SDL_DEVICE_
+#endif // _IRR_COMPILE_WITH_SDL_DEVICE_
 #endif // __C_IRR_DEVICE_SDL_H_INCLUDED__
 

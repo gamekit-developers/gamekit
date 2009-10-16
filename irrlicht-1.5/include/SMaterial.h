@@ -8,6 +8,7 @@
 #include "SColor.h"
 #include "matrix4.h"
 #include "irrArray.h"
+#include "irrMath.h"
 #include "EMaterialTypes.h"
 #include "EMaterialFlags.h"
 #include "SMaterialLayer.h"
@@ -42,24 +43,147 @@ namespace video
 		EMFN_MODULATE_4X	= 4
 	};
 
-	//! EMT_ONETEXTURE_BLEND: pack srcFact & dstFact and Modulo to MaterialTypeParam
-	inline f32 pack_texureBlendFunc ( const E_BLEND_FACTOR srcFact, const E_BLEND_FACTOR dstFact, const E_MODULATE_FUNC modulate )
+	//! Comparison function, e.g. for depth buffer test
+	enum E_COMPARISON_FUNC
 	{
-		return (f32)(modulate << 16 | srcFact << 8 | dstFact);
+		//! Test never succeeds, this equals disable
+		ECFN_NEVER=0,
+		//! <= test, default for e.g. depth test
+		ECFN_LESSEQUAL=1,
+		//! Exact equality
+		ECFN_EQUAL=2,
+		//! exclusive less comparison, i.e. <
+		ECFN_LESS,
+		//! Succeeds almost always, except for exact equality
+		ECFN_NOTEQUAL,
+		//! >= test
+		ECFN_GREATEREQUAL,
+		//! inverse of <=
+		ECFN_GREATER,
+		//! test succeeds always
+		ECFN_ALWAYS
+	};
+
+	//! Enum values for enabling/disabling color planes for rendering
+	enum E_COLOR_PLANE
+	{
+		//! No color enabled
+		ECP_NONE=0,
+		//! Alpha enabled
+		ECP_ALPHA=1,
+		//! Red enabled
+		ECP_RED=2,
+		//! Green enabled
+		ECP_GREEN=4,
+		//! Blue enabled
+		ECP_BLUE=8,
+		//! All colors, no alpha
+		ECP_RGB=14,
+		//! All planes enabled
+		ECP_ALL=15
+	};
+
+	//! Source of the alpha value to take
+	/** This is currently only supported in EMT_ONETEXTURE_BLEND. You can use an
+	or'ed combination of values. Alpha values are modulated (multiplicated). */
+	enum E_ALPHA_SOURCE
+	{
+		//! Use no alpha, somewhat redundant with other settings
+		EAS_NONE=0,
+		//! Use vertex color alpha
+		EAS_VERTEX_COLOR,
+		//! Use texture alpha channel
+		EAS_TEXTURE
+	};
+
+	//! EMT_ONETEXTURE_BLEND: pack srcFact, dstFact, Modulate and alpha source to MaterialTypeParam
+	/** alpha source can be an OR'ed combination of E_ALPHA_SOURCE values. */
+	inline f32 pack_texureBlendFunc ( const E_BLEND_FACTOR srcFact, const E_BLEND_FACTOR dstFact, const E_MODULATE_FUNC modulate=EMFN_MODULATE_1X, const u32 alphaSource=EAS_TEXTURE )
+	{
+		const u32 tmp = (alphaSource << 24) | (modulate << 16) | (srcFact << 8) | dstFact;
+		return FR(tmp);
 	}
 
 	//! EMT_ONETEXTURE_BLEND: unpack srcFact & dstFact and Modulo to MaterialTypeParam
+	/** The fields don't use the full byte range, so we could pack even more... */
 	inline void unpack_texureBlendFunc ( E_BLEND_FACTOR &srcFact, E_BLEND_FACTOR &dstFact,
-			E_MODULATE_FUNC &modulo, const f32 param )
+			E_MODULATE_FUNC &modulo, u32& alphaSource, const f32 param )
 	{
-		const u32 state = (u32)param;
+		const u32 state = IR(param);
+		alphaSource = (state & 0xFF000000) >> 24;
 		modulo	= E_MODULATE_FUNC( ( state & 0x00FF0000 ) >> 16 );
 		srcFact = E_BLEND_FACTOR ( ( state & 0x0000FF00 ) >> 8 );
 		dstFact = E_BLEND_FACTOR ( ( state & 0x000000FF ) );
 	}
 
+	//! EMT_ONETEXTURE_BLEND: has BlendFactor Alphablending
+	inline bool textureBlendFunc_hasAlpha ( const E_BLEND_FACTOR factor )
+	{
+		switch ( factor )
+		{
+			case EBF_SRC_ALPHA:
+			case EBF_ONE_MINUS_SRC_ALPHA:
+			case EBF_DST_ALPHA:
+			case EBF_ONE_MINUS_DST_ALPHA:
+			case EBF_SRC_ALPHA_SATURATE:
+				return true;
+			default:
+				return false;
+		}
+	}
+
+
+	//! These flags are used to specify the anti-aliasing and smoothing modes
+	/** Techniques supported are multisampling, geometry smoothing, and alpha
+	to coverage.
+	Some drivers don't support a per-material setting of the anti-aliasing
+	modes. In those cases, FSAA/multisampling is defined by the device mode
+	chosen upon creation via irr::SIrrCreationParameters.
+	*/
+	enum E_ANTI_ALIASING_MODE
+	{
+		//! Use to turn off anti-aliasing for this material
+		EAAM_OFF=0,
+		//! Default anti-aliasing mode
+		EAAM_SIMPLE=1,
+		//! High-quality anti-aliasing, not always supported, automatically enables SIMPLE mode
+		EAAM_QUALITY=3,
+		//! Line smoothing
+		EAAM_LINE_SMOOTH=4,
+		//! point smoothing, often in software and slow, only with OpenGL
+		EAAM_POINT_SMOOTH=8,
+		//! All typical anti-alias and smooth modes
+		EAAM_FULL_BASIC=15,
+		//! Enhanced anti-aliasing for transparent materials
+		/** Usually used with EMT_TRANSPARENT_ALPHA_REF and multisampling. */
+		EAAM_ALPHA_TO_COVERAGE=16
+	};
+
+	//! These flags allow to define the interpretation of vertex color when lighting is enabled
+	/** Without lighting being enabled the vertex color is the only value defining the fragment color.
+	Once lighting is enabled, the four values for diffuse, ambient, emissive, and specular take over.
+	With these flags it is possible to define which lighting factor shall be defined by the vertex color
+	instead of the lighting factor which is the same for all faces of that material.
+	The default is to use vertex color for the diffuse value, another pretty common value is to use
+	vertex color for both diffuse and ambient factor. */
+	enum E_COLOR_MATERIAL
+	{
+		//! Don't use vertex color for lighting
+		ECM_NONE=0,
+		//! Use vertex color for diffuse light, this is default
+		ECM_DIFFUSE,
+		//! Use vertex color for ambient light
+		ECM_AMBIENT,
+		//! Use vertex color for emissive light
+		ECM_EMISSIVE,
+		//! Use vertex color for specular light
+		ECM_SPECULAR,
+		//! Use vertex color for both diffuse and ambient light
+		ECM_DIFFUSE_AND_AMBIENT
+	};
+
 	//! Maximum number of texture an SMaterial can have.
-	const u32 MATERIAL_MAX_TEXTURES = 4;
+	const u32 MATERIAL_MAX_TEXTURES = _IRR_MATERIAL_MAX_TEXTURES_;
 
 	//! Struct for holding parameters for a material renderer
 	class SMaterial
@@ -70,9 +194,10 @@ namespace video
 		: MaterialType(EMT_SOLID), AmbientColor(255,255,255,255), DiffuseColor(255,255,255,255),
 			EmissiveColor(0,0,0,0), SpecularColor(255,255,255,255),
 			Shininess(0.0f), MaterialTypeParam(0.0f), MaterialTypeParam2(0.0f), Thickness(1.0f),
-			Wireframe(false), PointCloud(false), GouraudShading(true), Lighting(true),
-			ZWriteEnable(true), BackfaceCulling(true), FrontfaceCulling(false),
-			FogEnable(false), NormalizeNormals(false), ZBuffer(1)
+			ZBuffer(ECFN_LESSEQUAL), AntiAliasing(EAAM_SIMPLE|EAAM_LINE_SMOOTH), ColorMask(ECP_ALL),
+			ColorMaterial(ECM_DIFFUSE),
+			Wireframe(false), PointCloud(false), GouraudShading(true), Lighting(true), ZWriteEnable(true),
+			BackfaceCulling(true), FrontfaceCulling(false), FogEnable(false), NormalizeNormals(false)
 		{ }
 
 		//! Copy constructor
@@ -118,9 +243,15 @@ namespace video
 			FogEnable = other.FogEnable;
 			NormalizeNormals = other.NormalizeNormals;
 			ZBuffer = other.ZBuffer;
+			AntiAliasing = other.AntiAliasing;
+			ColorMask = other.ColorMask;
+			ColorMaterial = other.ColorMaterial;
 
 			return *this;
 		}
+
+		//! Texture layer array.
+		SMaterialLayer TextureLayer[MATERIAL_MAX_TEXTURES];
 
 		//! Type of the material. Specifies how everything is blended together
 		E_MATERIAL_TYPE MaterialType;
@@ -146,7 +277,7 @@ namespace video
 		//! Value affecting the size of specular highlights.
 		/** A value of 20 is common. If set to 0, no specular
 		highlights are being used. To activate, simply set the
-		shininess of a material to a value other than 0:
+		shininess of a material to a value in the range [0.5;128]:
 		\code
 		sceneNode->getMaterial(0).Shininess = 20.0f;
 		\endcode
@@ -187,46 +318,64 @@ namespace video
 		//! Thickness of non-3dimensional elements such as lines and points.
 		f32 Thickness;
 
-		//! Texture layer array.
-		SMaterialLayer TextureLayer[MATERIAL_MAX_TEXTURES];
+		//! Is the ZBuffer enabled? Default: ECFN_LESSEQUAL
+		/** Values are from E_COMPARISON_FUNC. */
+		u8 ZBuffer;
+
+		//! Sets the antialiasing mode
+		/** Values are chosen from E_ANTI_ALIASING_MODE. Default is 
+		EAAM_SIMPLE|EAAM_LINE_SMOOTH, i.e. simple multi-sample
+		anti-aliasing and lime smoothing is enabled. */
+		u8 AntiAliasing;
+
+		//! Defines the enabled color planes
+		/** Values are defined as or'ed values of the E_COLOR_PLANE enum.
+		Only enabled color planes will be rendered to the current render
+		target. Typical use is to disable all colors when rendering only to
+		depth or stencil buffer, or using Red and Green for Stereo rendering. */
+		u8 ColorMask:4;
+
+		//! Defines the interpretation of vertex color in the lighting equation
+		/** Values should be chosen from E_COLOR_MATERIAL.
+		When lighting is enabled, vertex color can be used instead of the 
+		material values for light modulation. This allows to easily change e.g. the
+		diffuse light behavior of each face. The default, ECM_DIFFUSE, will result in
+		a very similar rendering as with lighting turned off, just with light shading. */
+		u8 ColorMaterial:3;
 
 		//! Draw as wireframe or filled triangles? Default: false
 		/** The user can access a material flag using
 		\code material.Wireframe=true \endcode
 		or \code material.setFlag(EMF_WIREFRAME, true); \endcode */
-		bool Wireframe;
+		bool Wireframe:1;
 
 		//! Draw as point cloud or filled triangles? Default: false
-		bool PointCloud;
+		bool PointCloud:1;
 
 		//! Flat or Gouraud shading? Default: true
-		bool GouraudShading;
+		bool GouraudShading:1;
 
 		//! Will this material be lighted? Default: true
-		bool Lighting;
+		bool Lighting:1;
 
 		//! Is the zbuffer writeable or is it read-only. Default: true.
-		/** This flag is ignored if the MaterialType is a transparent
-		type. */
-		bool ZWriteEnable;
+		/** This flag is forced to false if the MaterialType is a
+		transparent type and the scene parameter
+		ALLOW_ZWRITE_ON_TRANSPARENT is not set. */
+		bool ZWriteEnable:1;
 
 		//! Is backface culling enabled? Default: true
-		bool BackfaceCulling;
+		bool BackfaceCulling:1;
 
 		//! Is frontface culling enabled? Default: false
-		bool FrontfaceCulling;
+		bool FrontfaceCulling:1;
 
 		//! Is fog enabled? Default: false
-		bool FogEnable;
+		bool FogEnable:1;
 
-		//! Should normals be normalized? Default: false
-		bool NormalizeNormals;
-
-		//! Is the ZBuffer enabled? Default: 1
-		/** Changed from bool to integer
-		(0 == ZBuffer Off, 1 == ZBuffer LessEqual, 2 == ZBuffer Equal)
-		*/
-		char ZBuffer;
+		//! Should normals be normalized?
+		/** Always use this if the mesh lit and scaled. Default: false */
+		bool NormalizeNormals:1;
 
 		//! Gets the texture transformation matrix for level i
 		/** \param i The desired level. Must not be larger than MATERIAL_MAX_TEXTURES.
@@ -313,8 +462,12 @@ namespace video
 				break;
 				case EMF_ANISOTROPIC_FILTER:
 				{
-					for (u32 i=0; i<MATERIAL_MAX_TEXTURES; ++i)
-						TextureLayer[i].AnisotropicFilter = value;
+					if (value)
+						for (u32 i=0; i<MATERIAL_MAX_TEXTURES; ++i)
+							TextureLayer[i].AnisotropicFilter = 0xFF;
+					else
+						for (u32 i=0; i<MATERIAL_MAX_TEXTURES; ++i)
+							TextureLayer[i].AnisotropicFilter = 0;
 				}
 				break;
 				case EMF_FOG_ENABLE:
@@ -327,6 +480,15 @@ namespace video
 						TextureLayer[i].TextureWrap = (E_TEXTURE_CLAMP)value;
 				}
 				break;
+				case EMF_ANTI_ALIASING:
+					AntiAliasing = value?EAAM_SIMPLE:EAAM_OFF;
+					break;
+				case EMF_COLOR_MASK:
+					ColorMask = value?ECP_ALL:ECP_NONE;
+					break;
+				case EMF_COLOR_MATERIAL:
+					ColorMaterial = value?ECM_DIFFUSE:ECM_NONE;
+					break;
 				default:
 					break;
 			}
@@ -348,7 +510,7 @@ namespace video
 				case EMF_LIGHTING:
 					return Lighting;
 				case EMF_ZBUFFER:
-					return ZBuffer!=0;
+					return ZBuffer!=ECFN_NEVER;
 				case EMF_ZWRITE_ENABLE:
 					return ZWriteEnable;
 				case EMF_BACK_FACE_CULLING:
@@ -360,7 +522,7 @@ namespace video
 				case EMF_TRILINEAR_FILTER:
 					return TextureLayer[0].TrilinearFilter;
 				case EMF_ANISOTROPIC_FILTER:
-					return TextureLayer[0].AnisotropicFilter;
+					return TextureLayer[0].AnisotropicFilter!=0;
 				case EMF_FOG_ENABLE:
 					return FogEnable;
 				case EMF_NORMALIZE_NORMALS:
@@ -370,8 +532,12 @@ namespace video
 							TextureLayer[1].TextureWrap ||
 							TextureLayer[2].TextureWrap ||
 							TextureLayer[3].TextureWrap);
-				case EMF_MATERIAL_FLAG_COUNT:
-					break;
+				case EMF_ANTI_ALIASING:
+					return (AntiAliasing==1);
+				case EMF_COLOR_MASK:
+					return (ColorMask!=ECP_NONE);
+				case EMF_COLOR_MATERIAL:
+					return (ColorMaterial != ECM_NONE);
 			}
 
 			return false;
@@ -401,7 +567,10 @@ namespace video
 				BackfaceCulling != b.BackfaceCulling ||
 				FrontfaceCulling != b.FrontfaceCulling ||
 				FogEnable != b.FogEnable ||
-				NormalizeNormals != b.NormalizeNormals;
+				NormalizeNormals != b.NormalizeNormals ||
+				AntiAliasing != b.AntiAliasing ||
+				ColorMask != b.ColorMask ||
+				ColorMaterial != b.ColorMaterial;
 			for (u32 i=0; (i<MATERIAL_MAX_TEXTURES) && !different; ++i)
 			{
 				different |= (TextureLayer[i] != b.TextureLayer[i]);
@@ -424,8 +593,10 @@ namespace video
 		}
 	};
 
+	//! global const identity Material
+	IRRLICHT_API extern SMaterial IdentityMaterial;
+
 } // end namespace video
 } // end namespace irr
 
 #endif
-

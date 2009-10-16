@@ -42,9 +42,9 @@ namespace scene
 				const core::vector3df& rotation = core::vector3df(0,0,0),
 				const core::vector3df& scale = core::vector3df(1.0f, 1.0f, 1.0f))
 			: RelativeTranslation(position), RelativeRotation(rotation), RelativeScale(scale),
-				Parent(0), ID(id), SceneManager(mgr), TriangleSelector(0),
-				AutomaticCullingState(EAC_BOX), IsVisible(true),
-				DebugDataVisible(EDS_OFF), IsDebugObject(false)
+				Parent(0), SceneManager(mgr), TriangleSelector(0), ID(id),
+				AutomaticCullingState(EAC_BOX), DebugDataVisible(EDS_OFF),
+				IsVisible(true), IsDebugObject(false)
 		{
 			if (parent)
 				parent->addChild(this);
@@ -211,16 +211,32 @@ namespace scene
 		//! Returns whether the node should be visible (if all of its parents are visible).
 		/** This is only an option set by the user, but has nothing to
 		do with geometry culling
-		\return The requested visibility of the node, true means visible (if all parents are also visible). */
+		\return The requested visibility of the node, true means
+		visible (if all parents are also visible). */
 		virtual bool isVisible() const
 		{
 			_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
 			return IsVisible;
 		}
 
+		//! Check whether the node is truly visible, taking into accounts its parents' visibility
+		/** \return true if the node and all its parents are visible,
+		false if this or any parent node is invisible. */
+		virtual bool isTrulyVisible() const
+		{
+			_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
+			if(!IsVisible)
+				return false;
+
+			if(!Parent)
+				return true;
+
+			return Parent->isTrulyVisible();
+		}
+
 		//! Sets if the node should be visible or not.
 		/** All children of this node won't be visible either, when set
-		to false.  Invisible nodes are not valid candidates for selection by
+		to false. Invisible nodes are not valid candidates for selection by
 		collision manager bounding box methods.
 		\param isVisible If the node shall be visible. */
 		virtual void setVisible(bool isVisible)
@@ -366,7 +382,7 @@ namespace scene
 		\return The material at that index. */
 		virtual video::SMaterial& getMaterial(u32 num)
 		{
-			return *((video::SMaterial*)0);
+			return video::IdentityMaterial;
 		}
 
 
@@ -415,9 +431,9 @@ namespace scene
 
 		//! Gets the scale of the scene node relative to its parent.
 		/** This is the scale of this node relative to its parent. 
-        If you want the absolute scale, use 
-        getAbsoluteTransformation().getScale()
-        \return The scale of the scene node. */
+		If you want the absolute scale, use 
+		getAbsoluteTransformation().getScale()
+		\return The scale of the scene node. */
 		virtual const core::vector3df& getScale() const
 		{
 			return RelativeScale;
@@ -434,8 +450,8 @@ namespace scene
 
 		//! Gets the rotation of the node relative to its parent.
 		/** Note that this is the relative rotation of the node.
-        If you want the absolute rotation, use
-        getAbsoluteTransformation().getRotation()
+		If you want the absolute rotation, use
+		getAbsoluteTransformation().getRotation()
 		\return Current relative rotation of the scene node. */
 		virtual const core::vector3df& getRotation() const
 		{
@@ -454,7 +470,7 @@ namespace scene
 
 		//! Gets the position of the node relative to its parent.
 		/** Note that the position is relative to the parent. If you want
-        the position in world coordinates, use getAbsolutePosition() instead.
+		the position in world coordinates, use getAbsolutePosition() instead.
 		\return The current position of the node relative to the parent. */
 		virtual const core::vector3df& getPosition() const
 		{
@@ -473,8 +489,8 @@ namespace scene
 
 		//! Gets the absolute position of the node in world coordinates.
 		/** If you want the position of the node relative to its parent,
-        use getPosition() instead.
-        \return The current absolute position of the scene node. */
+		use getPosition() instead.
+		\return The current absolute position of the scene node. */
 		virtual core::vector3df getAbsolutePosition() const
 		{
 			return AbsoluteTransformation.getTranslation();
@@ -591,16 +607,21 @@ namespace scene
 		\param selector New triangle selector for this scene node. */
 		virtual void setTriangleSelector(ITriangleSelector* selector)
 		{
-			if (TriangleSelector)
-				TriangleSelector->drop();
+			if (TriangleSelector != selector)
+			{
+				if (TriangleSelector)
+					TriangleSelector->drop();
 
-			TriangleSelector = selector;
-			if (TriangleSelector)
-				TriangleSelector->grab();
+				TriangleSelector = selector;
+				if (TriangleSelector)
+					TriangleSelector->grab();
+			}
 		}
 
 
 		//! Updates the absolute position based on the relative and the parents position
+		/** Note: This does not recursively update the parents absolute positions, so if you have a deeper 
+			hierarchy you might want to update the parents first.*/
 		virtual void updateAbsolutePosition()
 		{
 			if (Parent)
@@ -776,23 +797,23 @@ namespace scene
 		//! List of all animator nodes
 		core::list<ISceneNodeAnimator*> Animators;
 
-		//! ID of the node.
-		s32 ID;
-
 		//! Pointer to the scene manager
 		ISceneManager* SceneManager;
 
 		//! Pointer to the triangle selector
 		ITriangleSelector* TriangleSelector;
 
+		//! ID of the node.
+		s32 ID;
+
 		//! Automatic culling state
 		E_CULLING_TYPE AutomaticCullingState;
 
-		//! Is the node visible?
-		bool IsVisible;
-
 		//! Flag if debug data should be drawn, such as Bounding Boxes.
 		s32 DebugDataVisible;
+
+		//! Is the node visible?
+		bool IsVisible;
 
 		//! Is debug object?
 		bool IsDebugObject;

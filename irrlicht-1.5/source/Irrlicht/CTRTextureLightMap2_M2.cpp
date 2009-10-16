@@ -126,7 +126,7 @@ REALINLINE void CTRTextureLightMap2_M2::scanline_bilinear2 ()
 	const f32 invDeltaX = core::reciprocal_approxim ( line.x[1] - line.x[0] );
 
 	// search z-buffer for first not occulled pixel
-	z = lockedDepthBuffer + ( line.y * RenderTarget->getDimension().Width ) + xStart;
+	z = (fp24*) DepthBuffer->lock() + ( line.y * RenderTarget->getDimension().Width ) + xStart;
 
 	// subTexel
 	const f32 subPixel = ( (f32) xStart ) - line.x[0];
@@ -172,7 +172,7 @@ REALINLINE void CTRTextureLightMap2_M2::scanline_bilinear2 ()
 	line.z[0] = a;
 	line.z[1] = b;
 #endif
-	dst = lockedSurface + ( line.y * RenderTarget->getDimension().Width ) + xStart;
+	dst = (tVideoSample*)RenderTarget->lock() + ( line.y * RenderTarget->getDimension().Width ) + xStart;
 
 	a = (f32) i + subPixel;
 
@@ -220,11 +220,11 @@ REALINLINE void CTRTextureLightMap2_M2::scanline_bilinear2 ()
 
 			const tFixPointu d = dithermask [ dIndex | ( i ) & 3 ];
 
-			getSample_texture ( r0, g0, b0, &IT[0], d + f32_to_fixPoint ( line.t[0][0].x,inversew), d + f32_to_fixPoint ( line.t[0][0].y,inversew) );
-			getSample_texture ( r1, g1, b1, &IT[1], d + f32_to_fixPoint ( line.t[1][0].x,inversew), d + f32_to_fixPoint ( line.t[1][0].y,inversew) );
+			getSample_texture ( r0, g0, b0, &IT[0], d + tofix ( line.t[0][0].x,inversew), d + tofix ( line.t[0][0].y,inversew) );
+			getSample_texture ( r1, g1, b1, &IT[1], d + tofix ( line.t[1][0].x,inversew), d + tofix ( line.t[1][0].y,inversew) );
 #else
-			getSample_texture ( r0, g0, b0, &IT[0], f32_to_fixPoint ( line.t[0][0].x,inversew), f32_to_fixPoint ( line.t[0][0].y,inversew) );
-			getSample_texture ( r1, g1, b1, &IT[1], f32_to_fixPoint ( line.t[1][0].x,inversew), f32_to_fixPoint ( line.t[1][0].y,inversew) );
+			getSample_texture ( r0, g0, b0, &IT[0], tofix ( line.t[0][0].x,inversew), tofix ( line.t[0][0].y,inversew) );
+			getSample_texture ( r1, g1, b1, &IT[1], tofix ( line.t[1][0].x,inversew), tofix ( line.t[1][0].y,inversew) );
 
 #endif
 
@@ -253,28 +253,29 @@ void CTRTextureLightMap2_M2::drawTriangle ( const s4DVertex *a,const s4DVertex *
 
 	// sort on height, y
 	if ( F32_A_GREATER_B ( a->Pos.y , b->Pos.y ) ) swapVertexPointer(&a, &b);
-	if ( F32_A_GREATER_B ( a->Pos.y , c->Pos.y ) ) swapVertexPointer(&a, &c);
 	if ( F32_A_GREATER_B ( b->Pos.y , c->Pos.y ) ) swapVertexPointer(&b, &c);
+	if ( F32_A_GREATER_B ( a->Pos.y , b->Pos.y ) ) swapVertexPointer(&a, &b);
 
-
+	const f32 ca = c->Pos.y - a->Pos.y;
+	const f32 ba = b->Pos.y - a->Pos.y;
+	const f32 cb = c->Pos.y - b->Pos.y;
 	// calculate delta y of the edges
-	scan.invDeltaY[0] = core::reciprocal ( c->Pos.y - a->Pos.y );
-	scan.invDeltaY[1] = core::reciprocal ( b->Pos.y - a->Pos.y );
-	scan.invDeltaY[2] = core::reciprocal ( c->Pos.y - b->Pos.y );
+	scan.invDeltaY[0] = core::reciprocal( ca );
+	scan.invDeltaY[1] = core::reciprocal( ba );
+	scan.invDeltaY[2] = core::reciprocal( cb );
 
 	if ( F32_LOWER_EQUAL_0 ( scan.invDeltaY[0] )  )
 		return;
-
 
 	// find if the major edge is left or right aligned
 	f32 temp[4];
 
 	temp[0] = a->Pos.x - c->Pos.x;
-	temp[1] = a->Pos.y - c->Pos.y;
+	temp[1] = -ca;
 	temp[2] = b->Pos.x - a->Pos.x;
-	temp[3] = b->Pos.y - a->Pos.y;
+	temp[3] = ba;
 
-	scan.left = ( temp[0] * temp[3] - temp[1] * temp[2] ) > (f32) 0.0 ? 0 : 1;
+	scan.left = ( temp[0] * temp[3] - temp[1] * temp[2] ) > 0.f ? 0 : 1;
 	scan.right = 1 - scan.left;
 
 	// calculate slopes for the major edge
@@ -313,23 +314,6 @@ void CTRTextureLightMap2_M2::drawTriangle ( const s4DVertex *a,const s4DVertex *
 #ifdef SUBTEXEL
 	f32 subPixel;
 #endif
-
-	// query access to TexMaps
-
-	lockedSurface = (tVideoSample*)RenderTarget->lock();
-
-#ifdef USE_ZBUFFER
-	lockedDepthBuffer = (fp24*) DepthBuffer->lock();
-#endif
-
-#ifdef IPOL_T0
-	IT[0].data = (tVideoSample*)IT[0].Texture->lock();
-#endif
-
-#ifdef IPOL_T1
-	IT[1].data = (tVideoSample*)IT[1].Texture->lock();
-#endif
-
 
 	// rasterize upper sub-triangle
 	if ( F32_GREATER_0 ( scan.invDeltaY[1] ) )
@@ -626,20 +610,6 @@ void CTRTextureLightMap2_M2::drawTriangle ( const s4DVertex *a,const s4DVertex *
 
 		}
 	}
-
-	RenderTarget->unlock();
-
-#ifdef USE_ZBUFFER
-	DepthBuffer->unlock();
-#endif
-
-#ifdef IPOL_T0
-	IT[0].Texture->unlock();
-#endif
-
-#ifdef IPOL_T1
-	IT[1].Texture->unlock();
-#endif
 
 }
 

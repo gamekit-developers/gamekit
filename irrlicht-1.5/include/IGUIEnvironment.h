@@ -11,6 +11,7 @@
 #include "EMessageBoxFlags.h"
 #include "IEventReceiver.h"
 #include "IXMLReader.h"
+#include "path.h"
 
 namespace irr
 {
@@ -41,6 +42,8 @@ class IGUIImage;
 class IGUIMeshViewer;
 class IGUICheckBox;
 class IGUIListBox;
+class IGUITreeView;
+class IGUIImageList;
 class IGUIFileOpenDialog;
 class IGUIColorSelectDialog;
 class IGUIInOutFader;
@@ -144,13 +147,23 @@ public:
 	See IReferenceCounted::drop() for more information. */
 	virtual IGUISkin* createSkin(EGUI_SKIN_TYPE type) = 0;
 
+
+	//! Creates the image list from the given texture.
+	/** Loads the font if it was not loaded before.
+	\param filename Filename of the Font.
+	\return Pointer to the font. Returns 0 if the font could not be loaded.
+	This pointer should not be dropped. See IReferenceCounted::drop() for
+	more information. */
+	virtual IGUIImageList* createImageList( video::ITexture* texture,
+					core::dimension2d<s32>	imageSize, bool useAlphaChannel ) = 0;
+
 	//! Returns pointer to the font with the specified filename.
 	/** Loads the font if it was not loaded before.
 	\param filename Filename of the Font.
 	\return Pointer to the font. Returns 0 if the font could not be loaded.
 	This pointer should not be dropped. See IReferenceCounted::drop() for
 	more information. */
-	virtual IGUIFont* getFont(const c8* filename) = 0;
+	virtual IGUIFont* getFont(const io::path& filename) = 0;
 
 	//! Returns the default built-in font.
 	/** \return Pointer to the default built-in font.
@@ -163,18 +176,18 @@ public:
 	\param filename Filename of the sprite bank's origin.
 	\return Pointer to the sprite bank. Returns 0 if it could not be loaded.
 	This pointer should not be dropped. See IReferenceCounted::drop() for more information. */
-	virtual IGUISpriteBank* getSpriteBank(const c8* filename) = 0;
+	virtual IGUISpriteBank* getSpriteBank(const io::path& filename) = 0;
 
 	//! Adds an empty sprite bank to the manager
 	/** \param name Name of the new sprite bank.
 	\return Pointer to the sprite bank.
 	This pointer should not be dropped. See IReferenceCounted::drop() for more information. */
-	virtual IGUISpriteBank* addEmptySpriteBank(const c8 *name) = 0;
+	virtual IGUISpriteBank* addEmptySpriteBank(const io::path& name) = 0;
 
 	//! Returns the root gui element.
-	/** This is the first gui element, the (direct or indirect) parent of all 
-	other gui elements.  It is a valid IGUIElement, with dimensions the same 
-	size as the screen.	You should not need to use this method directly, unless 
+	/** This is the first gui element, the (direct or indirect) parent of all
+	other gui elements.  It is a valid IGUIElement, with dimensions the same
+	size as the screen.	You should not need to use this method directly, unless
 	you wish to reparent GUI elements to the top level.
 	\return Pointer to the root element of the GUI. The returned pointer
 	should not be dropped. See IReferenceCounted::drop() for more
@@ -295,6 +308,18 @@ public:
 	virtual IGUIListBox* addListBox(const core::rect<s32>& rectangle,
 		IGUIElement* parent=0, s32 id=-1, bool drawBackground=false) = 0;
 
+	//! Adds a tree view element.
+	/** \param rectangle Position and dimension of list box.
+	\param parent Parent gui element of the list box.
+	\param id Id to identify the gui element.
+	\param drawBackground Flag whether the background should be drawn.
+	\return Pointer to the created list box. Returns 0 if an error occured.
+	This pointer should not be dropped. See IReferenceCounted::drop() for
+	more information. */
+	virtual IGUITreeView* addTreeView(const core::rect<s32>& rectangle,
+		IGUIElement* parent=0, s32 id=-1, bool drawBackground=false,
+		bool scrollBarVertical = true, bool scrollBarHorizontal = false) = 0;
+
 	//! Adds a mesh viewer. Not 100% implemented yet.
 	/** \param rectangle Rectangle specifying the borders of the mesh viewer.
 	\param parent Parent gui element of the mesh viewer.
@@ -377,7 +402,7 @@ public:
 	This pointer should not be dropped. See IReferenceCounted::drop() for
 	more information. */
 	virtual IGUISpinBox* addSpinBox(const wchar_t* text, const core::rect<s32>& rectangle,
-		IGUIElement* parent=0, s32 id=-1) = 0;
+		bool border=true,IGUIElement* parent=0, s32 id=-1) = 0;
 
 	//! Adds an element for fading in or out.
 	/** \param rectangle Rectangle specifying the borders of the fader.
@@ -433,7 +458,7 @@ public:
 		IGUIElement* parent=0, s32 id=-1) = 0;
 
 	//! Adds a menu to the environment.
-	/* This is like the menu you can find on top of most windows in modern
+	/** This is like the menu you can find on top of most windows in modern
 	graphical user interfaces.
 	\param parent Parent item of the element, e.g. a window.
 	Set it to 0 to place the menu directly in the environment.
@@ -467,10 +492,10 @@ public:
 
 	//! Adds a table to the environment
 	/** \param rectangle Rectangle specifying the borders of the table.
-	\param parent Parent item of the element, e.g. a window.
-	Set it to 0 to place the table directly in the environment.
-	\param id An identifier for the combo box.
-	\param drawBackground Sets whether to draw the background filled.
+	\param parent Parent item of the element, e.g. a window. Set it to 0
+	to place the element directly in the environment.
+	\param id An identifier for the table.
+	\param drawBackground Flag whether the background should be drawn.
 	\return Pointer to the created table. Returns 0 if an error occured.
 	This pointer should not be dropped. See IReferenceCounted::drop() for
 	more information. */
@@ -511,7 +536,7 @@ public:
 	/** \param filename Name of the file.
 	\param start The GUIElement to start with. Root if 0.
 	\return True if saving succeeded, else false. */
-	virtual bool saveGUI(const c8* filename, IGUIElement* start=0) = 0;
+	virtual bool saveGUI(const io::path& filename, IGUIElement* start=0) = 0;
 
 	//! Saves the current gui into a file.
 	/** \param file The file to write to.
@@ -520,10 +545,10 @@ public:
 	virtual bool saveGUI(io::IWriteFile* file, IGUIElement* start=0) = 0;
 
 	//! Loads the gui. Note that the current gui is not cleared before.
-	/** \param filename Name of the file .
+	/** \param filename Name of the file.
 	\param parent Parent for the loaded GUI, root if 0.
 	\return True if loading succeeded, else false. */
-	virtual bool loadGUI(const c8* filename, IGUIElement* parent=0) = 0;
+	virtual bool loadGUI(const io::path& filename, IGUIElement* parent=0) = 0;
 
 	//! Loads the gui. Note that the current gui is not cleared before.
 	/** \param file The file to load from.
@@ -541,7 +566,7 @@ public:
 	virtual void writeGUIElement(io::IXMLWriter* writer, IGUIElement* node) =0;
 
 	//! reads an element
-	virtual void readGUIElement(io::IXMLReader* reader, IGUIElement* parent) =0;
+	virtual void readGUIElement(io::IXMLReader* reader, IGUIElement* node) =0;
 };
 
 

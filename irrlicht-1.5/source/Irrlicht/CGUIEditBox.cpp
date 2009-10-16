@@ -28,10 +28,10 @@ namespace gui
 {
 
 //! constructor
-CGUIEditBox::CGUIEditBox(const wchar_t* text, bool border, IGUIEnvironment* environment,
-			IGUIElement* parent, s32 id,
-			const core::rect<s32>& rectangle)
-: IGUIEditBox(environment, parent, id, rectangle), MouseMarking(false),
+CGUIEditBox::CGUIEditBox(const wchar_t* text, bool border,
+		IGUIEnvironment* environment, IGUIElement* parent, s32 id,
+		const core::rect<s32>& rectangle)
+	: IGUIEditBox(environment, parent, id, rectangle), MouseMarking(false),
 	Border(border), OverrideColorEnabled(false), MarkBegin(0), MarkEnd(0),
 	OverrideColor(video::SColor(101,255,255,255)), OverrideFont(0), LastBreakFont(0),
 	Operator(0), BlinkStartTime(0), CursorPos(0), HScrollPos(0), VScrollPos(0), Max(0),
@@ -67,6 +67,7 @@ CGUIEditBox::CGUIEditBox(const wchar_t* text, bool border, IGUIEnvironment* envi
 	}
 
 	breakText();
+
 	calculateScrollPos();
 }
 
@@ -132,8 +133,12 @@ void CGUIEditBox::setWordWrap(bool enable)
 
 void CGUIEditBox::updateAbsolutePosition()
 {
+    core::rect<s32> oldAbsoluteRect(AbsoluteRect);
 	IGUIElement::updateAbsolutePosition();
-	breakText();
+	if ( oldAbsoluteRect != AbsoluteRect )
+	{
+        breakText();
+	}
 }
 
 
@@ -202,8 +207,7 @@ bool CGUIEditBox::OnEvent(const SEvent& event)
 				if (event.GUIEvent.Caller == this)
 				{
 					MouseMarking = false;
-					MarkBegin = 0;
-					MarkEnd = 0;
+					setTextMarkers(0,0);
 				}
 			}
 			break;
@@ -230,24 +234,33 @@ bool CGUIEditBox::processKey(const SEvent& event)
 		return false;
 
 	bool textChanged = false;
+	s32 newMarkBegin = MarkBegin;
+	s32 newMarkEnd = MarkEnd;
 
 	// control shortcut handling
 
 	if (event.KeyInput.Control)
 	{
+		// german backlash '\' entered with control + '?'
+		if ( event.KeyInput.Char == '\\' )
+		{
+			inputChar(event.KeyInput.Char);
+			return true;
+		}
+
 		switch(event.KeyInput.Key)
 		{
 		case KEY_KEY_A:
 			// select all
-			MarkBegin = 0;
-			MarkEnd = Text.size();
+			newMarkBegin = 0;
+			newMarkEnd = Text.size();
 			break;
 		case KEY_KEY_C:
 			// copy to clipboard
 			if (!PasswordBox && Operator && MarkBegin != MarkEnd)
 			{
-				s32 realmbgn = MarkBegin < MarkEnd ? MarkBegin : MarkEnd;
-				s32 realmend = MarkBegin < MarkEnd ? MarkEnd : MarkBegin;
+				const s32 realmbgn = MarkBegin < MarkEnd ? MarkBegin : MarkEnd;
+				const s32 realmend = MarkBegin < MarkEnd ? MarkEnd : MarkBegin;
 
 				core::stringc s;
 				s = Text.subString(realmbgn, realmend - realmbgn).c_str();
@@ -258,8 +271,8 @@ bool CGUIEditBox::processKey(const SEvent& event)
 			// cut to the clipboard
 			if (!PasswordBox && Operator && MarkBegin != MarkEnd)
 			{
-				s32 realmbgn = MarkBegin < MarkEnd ? MarkBegin : MarkEnd;
-				s32 realmend = MarkBegin < MarkEnd ? MarkEnd : MarkBegin;
+				const s32 realmbgn = MarkBegin < MarkEnd ? MarkBegin : MarkEnd;
+				const s32 realmend = MarkBegin < MarkEnd ? MarkEnd : MarkBegin;
 
 				// copy
 				core::stringc sc;
@@ -275,8 +288,8 @@ bool CGUIEditBox::processKey(const SEvent& event)
 					Text = s;
 
 					CursorPos = realmbgn;
-					MarkBegin = 0;
-					MarkEnd = 0;
+					newMarkBegin = 0;
+					newMarkEnd = 0;
 					textChanged = true;
 				}
 			}
@@ -288,8 +301,8 @@ bool CGUIEditBox::processKey(const SEvent& event)
 			// paste from the clipboard
 			if (Operator)
 			{
-				s32 realmbgn = MarkBegin < MarkEnd ? MarkBegin : MarkEnd;
-				s32 realmend = MarkBegin < MarkEnd ? MarkEnd : MarkBegin;
+				const s32 realmbgn = MarkBegin < MarkEnd ? MarkBegin : MarkEnd;
+				const s32 realmend = MarkBegin < MarkEnd ? MarkEnd : MarkBegin;
 
 				// add new character
 				const c8* p = Operator->getTextFromClipboard();
@@ -326,8 +339,8 @@ bool CGUIEditBox::processKey(const SEvent& event)
 					}
 				}
 
-				MarkBegin = 0;
-				MarkEnd = 0;
+				newMarkBegin = 0;
+				newMarkEnd = 0;
 				textChanged = true;
 			}
 			break;
@@ -335,40 +348,38 @@ bool CGUIEditBox::processKey(const SEvent& event)
 			// move/highlight to start of text
 			if (event.KeyInput.Shift)
 			{
-				MarkEnd = CursorPos;
-				MarkBegin = 0;
+				newMarkEnd = CursorPos;
+				newMarkBegin = 0;
 				CursorPos = 0;
 			}
 			else
 			{
 				CursorPos = 0;
-				MarkBegin = 0;
-				MarkEnd = 0;
+				newMarkBegin = 0;
+				newMarkEnd = 0;
 			}
 			break;
 		case KEY_END:
 			// move/highlight to end of text
 			if (event.KeyInput.Shift)
 			{
-				MarkBegin = CursorPos;
-				MarkEnd = Text.size();
+				newMarkBegin = CursorPos;
+				newMarkEnd = Text.size();
 				CursorPos = 0;
 			}
 			else
 			{
 				CursorPos = Text.size();
-				MarkBegin = 0;
-				MarkEnd = 0;
+				newMarkBegin = 0;
+				newMarkEnd = 0;
 			}
 			break;
 		default:
 			return false;
 		}
 	}
-
 	// default keyboard handling
-
-	if (!event.KeyInput.Control)
+	else
 	switch(event.KeyInput.Key)
 	{
 	case KEY_END:
@@ -385,14 +396,14 @@ bool CGUIEditBox::processKey(const SEvent& event)
 			if (event.KeyInput.Shift)
 			{
 				if (MarkBegin == MarkEnd)
-					MarkBegin = CursorPos;
+					newMarkBegin = CursorPos;
 
-				MarkEnd = p;
+				newMarkEnd = p;
 			}
 			else
 			{
-				MarkBegin = 0;
-				MarkEnd = 0;
+				newMarkBegin = 0;
+				newMarkEnd = 0;
 			}
 			CursorPos = p;
 			BlinkStartTime = os::Timer::getTime();
@@ -411,13 +422,13 @@ bool CGUIEditBox::processKey(const SEvent& event)
 			if (event.KeyInput.Shift)
 			{
 				if (MarkBegin == MarkEnd)
-					MarkBegin = CursorPos;
-				MarkEnd = p;
+					newMarkBegin = CursorPos;
+				newMarkEnd = p;
 			}
 			else
 			{
-				MarkBegin = 0;
-				MarkEnd = 0;
+				newMarkBegin = 0;
+				newMarkEnd = 0;
 			}
 			CursorPos = p;
 			BlinkStartTime = os::Timer::getTime();
@@ -427,15 +438,11 @@ bool CGUIEditBox::processKey(const SEvent& event)
 		if (MultiLine)
 		{
 			inputChar(L'\n');
+			return true;
 		}
 		else
 		{
-			SEvent e;
-			e.EventType = EET_GUI_EVENT;
-			e.GUIEvent.Caller = this;
-			e.GUIEvent.Element = 0;
-			e.GUIEvent.EventType = EGET_EDITBOX_ENTER;
-			Parent->OnEvent(e);
+		    sendGuiEvent( EGET_EDITBOX_ENTER );
 		}
 		break;
 	case KEY_LEFT:
@@ -445,15 +452,15 @@ bool CGUIEditBox::processKey(const SEvent& event)
 			if (CursorPos > 0)
 			{
 				if (MarkBegin == MarkEnd)
-					MarkBegin = CursorPos;
+					newMarkBegin = CursorPos;
 
-				MarkEnd = CursorPos-1;
+				newMarkEnd = CursorPos-1;
 			}
 		}
 		else
 		{
-			MarkBegin = 0;
-			MarkEnd = 0;
+			newMarkBegin = 0;
+			newMarkEnd = 0;
 		}
 
 		if (CursorPos > 0) CursorPos--;
@@ -466,15 +473,15 @@ bool CGUIEditBox::processKey(const SEvent& event)
 			if (Text.size() > (u32)CursorPos)
 			{
 				if (MarkBegin == MarkEnd)
-					MarkBegin = CursorPos;
+					newMarkBegin = CursorPos;
 
-				MarkEnd = CursorPos+1;
+				newMarkEnd = CursorPos+1;
 			}
 		}
 		else
 		{
-			MarkBegin = 0;
-			MarkEnd = 0;
+			newMarkBegin = 0;
+			newMarkEnd = 0;
 		}
 
 		if (Text.size() > (u32)CursorPos) CursorPos++;
@@ -496,13 +503,13 @@ bool CGUIEditBox::processKey(const SEvent& event)
 
 			if (event.KeyInput.Shift)
 			{
-				MarkBegin = mb;
-				MarkEnd = CursorPos;
+				newMarkBegin = mb;
+				newMarkEnd = CursorPos;
 			}
 			else
 			{
-				MarkBegin = 0;
-				MarkEnd = 0;
+				newMarkBegin = 0;
+				newMarkEnd = 0;
 			}
 
 		}
@@ -527,13 +534,13 @@ bool CGUIEditBox::processKey(const SEvent& event)
 
 			if (event.KeyInput.Shift)
 			{
-				MarkBegin = mb;
-				MarkEnd = CursorPos;
+				newMarkBegin = mb;
+				newMarkEnd = CursorPos;
 			}
 			else
 			{
-				MarkBegin = 0;
-				MarkEnd = 0;
+				newMarkBegin = 0;
+				newMarkEnd = 0;
 			}
 
 		}
@@ -554,8 +561,8 @@ bool CGUIEditBox::processKey(const SEvent& event)
 			if (MarkBegin != MarkEnd)
 			{
 				// delete marked text
-				s32 realmbgn = MarkBegin < MarkEnd ? MarkBegin : MarkEnd;
-				s32 realmend = MarkBegin < MarkEnd ? MarkEnd : MarkBegin;
+				const s32 realmbgn = MarkBegin < MarkEnd ? MarkBegin : MarkEnd;
+				const s32 realmend = MarkBegin < MarkEnd ? MarkEnd : MarkBegin;
 
 				s = Text.subString(0, realmbgn);
 				s.append( Text.subString(realmend, Text.size()-realmend) );
@@ -578,8 +585,8 @@ bool CGUIEditBox::processKey(const SEvent& event)
 			if (CursorPos < 0)
 				CursorPos = 0;
 			BlinkStartTime = os::Timer::getTime();
-			MarkBegin = 0;
-			MarkEnd = 0;
+			newMarkBegin = 0;
+			newMarkEnd = 0;
 			textChanged = true;
 		}
 		break;
@@ -594,8 +601,8 @@ bool CGUIEditBox::processKey(const SEvent& event)
 			if (MarkBegin != MarkEnd)
 			{
 				// delete marked text
-				s32 realmbgn = MarkBegin < MarkEnd ? MarkBegin : MarkEnd;
-				s32 realmend = MarkBegin < MarkEnd ? MarkEnd : MarkBegin;
+				const s32 realmbgn = MarkBegin < MarkEnd ? MarkBegin : MarkEnd;
+				const s32 realmend = MarkBegin < MarkEnd ? MarkEnd : MarkBegin;
 
 				s = Text.subString(0, realmbgn);
 				s.append( Text.subString(realmend, Text.size()-realmend) );
@@ -615,8 +622,8 @@ bool CGUIEditBox::processKey(const SEvent& event)
 				CursorPos = (s32)Text.size();
 
 			BlinkStartTime = os::Timer::getTime();
-			MarkBegin = 0;
-			MarkEnd = 0;
+			newMarkBegin = 0;
+			newMarkEnd = 0;
 			textChanged = true;
 		}
 		break;
@@ -653,12 +660,18 @@ bool CGUIEditBox::processKey(const SEvent& event)
 
 	default:
 		inputChar(event.KeyInput.Char);
-		break;
+		return true;
 	}
+
+    // Set new text markers
+    setTextMarkers( newMarkBegin, newMarkEnd );
 
 	// break the text if it has changed
 	if (textChanged)
+	{
 		breakText();
+		sendGuiEvent(EGET_EDITBOX_CHANGED);
+	}
 
 	calculateScrollPos();
 
@@ -672,7 +685,7 @@ void CGUIEditBox::draw()
 	if (!IsVisible)
 		return;
 
-	bool focus = Environment->hasFocus(this);
+	const bool focus = Environment->hasFocus(this);
 
 	IGUISkin* skin = Environment->getSkin();
 	if (!skin)
@@ -707,7 +720,9 @@ void CGUIEditBox::draw()
 	if (font)
 	{
 		if (LastBreakFont != font)
+		{
 			breakText();
+		}
 
 		// calculate cursor pos
 
@@ -717,17 +732,17 @@ void CGUIEditBox::draw()
 		core::stringw s, s2;
 
 		// get mark position
-		bool ml = (!PasswordBox && (WordWrap || MultiLine));
-		s32 realmbgn = MarkBegin < MarkEnd ? MarkBegin : MarkEnd;
-		s32 realmend = MarkBegin < MarkEnd ? MarkEnd : MarkBegin;
-		s32 hlineStart = ml ? getLineFromPos(realmbgn) : 0;
-		s32 hlineCount = ml ? getLineFromPos(realmend) - hlineStart + 1 : 1;
-		s32 lineCount  = ml ? BrokenText.size() : 1;
+		const bool ml = (!PasswordBox && (WordWrap || MultiLine));
+		const s32 realmbgn = MarkBegin < MarkEnd ? MarkBegin : MarkEnd;
+		const s32 realmend = MarkBegin < MarkEnd ? MarkEnd : MarkBegin;
+		const s32 hlineStart = ml ? getLineFromPos(realmbgn) : 0;
+		const s32 hlineCount = ml ? getLineFromPos(realmend) - hlineStart + 1 : 1;
+		const s32 lineCount = ml ? BrokenText.size() : 1;
 
 		// Save the override color information.
 		// Then, alter it if the edit box is disabled.
-		bool prevOver = OverrideColorEnabled;
-		video::SColor prevColor = OverrideColor;
+		const bool prevOver = OverrideColorEnabled;
+		const video::SColor prevColor = OverrideColor;
 
 		if (Text.size())
 		{
@@ -790,6 +805,12 @@ void CGUIEditBox::draw()
 						// highlight start is on this line
 						s = txtLine->subString(0, realmbgn - startPos);
 						mbegin = font->getDimension(s.c_str()).Width;
+
+						// deal with kerning
+						mbegin += font->getKerningWidth( 
+							&((*txtLine)[realmbgn - startPos]), 
+							realmbgn - startPos > 0 ? &((*txtLine)[realmbgn - startPos - 1]) : 0);   
+
 						lineStartPos = realmbgn - startPos;
 					}
 					if (i == hlineStart + hlineCount - 1)
@@ -833,7 +854,8 @@ void CGUIEditBox::draw()
 			startPos = BrokenTextPositions[cursorLine];
 		}
 		s = txtLine->subString(0,CursorPos-startPos);
-		charcursorpos = font->getDimension(s.c_str()).Width;
+		charcursorpos = font->getDimension(s.c_str()).Width + 
+			font->getKerningWidth(L"_", CursorPos-startPos > 0 ? &((*txtLine)[CursorPos-startPos-1]) : 0);
 
 		if (focus && (os::Timer::getTime() - BlinkStartTime) % 700 < 350)
 		{
@@ -857,8 +879,6 @@ void CGUIEditBox::setText(const wchar_t* text)
 	Text = text;
 	CursorPos = 0;
 	HScrollPos = 0;
-	MarkBegin = 0;
-	MarkEnd = 0;
 	breakText();
 }
 
@@ -882,7 +902,7 @@ bool CGUIEditBox::isAutoScrollEnabled() const
 
 //! Gets the area of the text in the edit box
 //! \return Returns the size in pixels of the text
-core::dimension2di CGUIEditBox::getTextDimension()
+core::dimension2du CGUIEditBox::getTextDimension()
 {
 	core::rect<s32> ret;
 
@@ -896,7 +916,7 @@ core::dimension2di CGUIEditBox::getTextDimension()
 		ret.addInternalPoint(CurrentTextRect.LowerRightCorner);
 	}
 
-	return ret.getSize();
+	return core::dimension2du(ret.getSize());
 }
 
 
@@ -928,7 +948,9 @@ bool CGUIEditBox::processMouse(const SEvent& event)
 		{
 			CursorPos = getCursorPos(event.MouseInput.X, event.MouseInput.Y);
 			if (MouseMarking)
-				MarkEnd = CursorPos;
+			{
+			    setTextMarkers( MarkBegin, CursorPos );
+			}
 			MouseMarking = false;
 			calculateScrollPos();
 			return true;
@@ -939,7 +961,7 @@ bool CGUIEditBox::processMouse(const SEvent& event)
 			if (MouseMarking)
 			{
 				CursorPos = getCursorPos(event.MouseInput.X, event.MouseInput.Y);
-				MarkEnd = CursorPos;
+				setTextMarkers( MarkBegin, CursorPos );
 				calculateScrollPos();
 				return true;
 			}
@@ -951,8 +973,7 @@ bool CGUIEditBox::processMouse(const SEvent& event)
 			BlinkStartTime = os::Timer::getTime();
 			MouseMarking = true;
 			CursorPos = getCursorPos(event.MouseInput.X, event.MouseInput.Y);
-			MarkBegin = CursorPos;
-			MarkEnd = CursorPos;
+			setTextMarkers(CursorPos, CursorPos );
 			calculateScrollPos();
 			return true;
 		}
@@ -968,11 +989,12 @@ bool CGUIEditBox::processMouse(const SEvent& event)
 				// move cursor
 				CursorPos = getCursorPos(event.MouseInput.X, event.MouseInput.Y);
 
+                s32 newMarkBegin = MarkBegin;
 				if (!MouseMarking)
-					MarkBegin = CursorPos;
+					newMarkBegin = CursorPos;
 
 				MouseMarking = true;
-				MarkEnd = CursorPos;
+				setTextMarkers( newMarkBegin, CursorPos);
 				calculateScrollPos();
 				return true;
 			}
@@ -992,10 +1014,7 @@ s32 CGUIEditBox::getCursorPos(s32 x, s32 y)
 	if (!OverrideFont)
 		font = skin->getFont();
 
-	u32 lineCount = 1;
-
-	if (WordWrap || MultiLine)
-		lineCount = BrokenText.size();
+	const u32 lineCount = (WordWrap || MultiLine) ? BrokenText.size() : 1;
 
 	core::stringw *txtLine=0;
 	s32 startPos=0;
@@ -1149,18 +1168,21 @@ void CGUIEditBox::breakText()
 
 void CGUIEditBox::setTextRect(s32 line)
 {
-	core::dimension2di d;
-	s32 lineCount = 1;
+	core::dimension2du d;
 
-	IGUIFont* font = OverrideFont;
 	IGUISkin* skin = Environment->getSkin();
+	if (!skin)
+		return;
+
+	IGUIFont* font = OverrideFont ? OverrideFont : skin->getFont();
+
 	if (!font)
-		font = skin->getFont();
+		return;
 
 	// get text dimension
+	const u32 lineCount = (WordWrap || MultiLine) ? BrokenText.size() : 1;
 	if (WordWrap || MultiLine)
 	{
-		lineCount = BrokenText.size();
 		d = font->getDimension(BrokenText[line].c_str());
 	}
 	else
@@ -1248,8 +1270,8 @@ void CGUIEditBox::inputChar(wchar_t c)
 			if (MarkBegin != MarkEnd)
 			{
 				// replace marked text
-				s32 realmbgn = MarkBegin < MarkEnd ? MarkBegin : MarkEnd;
-				s32 realmend = MarkBegin < MarkEnd ? MarkEnd : MarkBegin;
+				const s32 realmbgn = MarkBegin < MarkEnd ? MarkBegin : MarkEnd;
+				const s32 realmend = MarkBegin < MarkEnd ? MarkEnd : MarkBegin;
 
 				s = Text.subString(0, realmbgn);
 				s.append(c);
@@ -1268,11 +1290,12 @@ void CGUIEditBox::inputChar(wchar_t c)
 			}
 
 			BlinkStartTime = os::Timer::getTime();
-			MarkBegin = 0;
-			MarkEnd = 0;
+			setTextMarkers(0, 0);
 		}
 	}
 	breakText();
+	sendGuiEvent(EGET_EDITBOX_CHANGED);
+	calculateScrollPos();
 }
 
 
@@ -1289,10 +1312,12 @@ void CGUIEditBox::calculateScrollPos()
 	if (!WordWrap)
 	{
 		// get cursor position
-		IGUIFont* font = OverrideFont;
 		IGUISkin* skin = Environment->getSkin();
-		if (!OverrideFont)
-			font = skin->getFont();
+		if (!skin)
+			return;
+		IGUIFont* font = OverrideFont ? OverrideFont : skin->getFont();
+		if (!font)
+			return;
 
 		core::stringw *txtLine = MultiLine ? &BrokenText[cursLine] : &Text;
 		s32 cPos = MultiLine ? CursorPos - BrokenTextPositions[cursLine] : CursorPos;
@@ -1310,7 +1335,6 @@ void CGUIEditBox::calculateScrollPos()
 			HScrollPos = 0;
 
 		// todo: adjust scrollbar
-
 	}
 
 	// vertical scroll position
@@ -1325,6 +1349,31 @@ void CGUIEditBox::calculateScrollPos()
 	// todo: adjust scrollbar
 }
 
+//! set text markers
+void CGUIEditBox::setTextMarkers(s32 begin, s32 end)
+{
+    if ( begin != MarkBegin || end != MarkEnd )
+    {
+        MarkBegin = begin;
+        MarkEnd = end;
+        sendGuiEvent(EGET_EDITBOX_MARKING_CHANGED);
+    }
+}
+
+//! send some gui event to parent
+void CGUIEditBox::sendGuiEvent(EGUI_EVENT_TYPE type)
+{
+	if ( Parent )
+	{
+        SEvent e;
+        e.EventType = EET_GUI_EVENT;
+        e.GUIEvent.Caller = this;
+        e.GUIEvent.Element = 0;
+        e.GUIEvent.EventType = type;
+
+        Parent->OnEvent(e);
+	}
+}
 
 //! Writes attributes of the element.
 void CGUIEditBox::serializeAttributes(io::IAttributes* out, io::SAttributeReadWriteOptions* options=0) const

@@ -7,8 +7,6 @@
 
 #include "IrrCompileConfig.h"
 
-#ifdef _IRR_COMPILE_WITH_BMP_LOADER_
-
 #include "IImageLoader.h"
 
 
@@ -17,9 +15,11 @@ namespace irr
 namespace video
 {
 
+#if defined(_IRR_COMPILE_WITH_BMP_LOADER_) || defined(_IRR_COMPILE_WITH_BMP_WRITER_)
+
 
 	// byte-align structures
-#if defined(_MSC_VER) ||  defined(__BORLANDC__) || defined (__BCPLUSPLUS__) 
+#if defined(_MSC_VER) ||  defined(__BORLANDC__) || defined (__BCPLUSPLUS__)
 #	pragma pack( push, packing )
 #	pragma pack( 1 )
 #	define PACK_STRUCT
@@ -66,12 +66,15 @@ namespace video
 
 
 // Default alignment
-#if defined(_MSC_VER) ||  defined(__BORLANDC__) || defined (__BCPLUSPLUS__) 
+#if defined(_MSC_VER) ||  defined(__BORLANDC__) || defined (__BCPLUSPLUS__)
 #	pragma pack( pop, packing )
 #endif
 
 #undef PACK_STRUCT
 
+#endif // defined with loader or writer
+
+#ifdef _IRR_COMPILE_WITH_BMP_LOADER_
 
 /*!
 	Surface Loader for Windows bitmaps
@@ -85,7 +88,7 @@ public:
 
 	//! returns true if the file maybe is able to be loaded by this class
 	//! based on the file extension (e.g. ".tga")
-	virtual bool isALoadableFileExtension(const c8* fileName) const;
+	virtual bool isALoadableFileExtension(const io::path& filename) const;
 
 	//! returns true if the file maybe is able to be loaded by this class
 	virtual bool isALoadableFileFormat(io::IReadFile* file) const;
@@ -101,10 +104,10 @@ private:
 };
 
 
+#endif // compiled with loader
+
 } // end namespace video
 } // end namespace irr
 
-
-#endif
 #endif
 

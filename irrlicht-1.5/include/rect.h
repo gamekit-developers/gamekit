@@ -39,9 +39,9 @@ namespace core
 			: UpperLeftCorner(upperLeft), LowerRightCorner(lowerRight) {}
 
 		//! Constructor with upper left corner and dimension
-		rect(const position2d<T>& pos, const dimension2d<T>& size)
+		template <class U>
+		rect(const position2d<T>& pos, const dimension2d<U>& size)
 			: UpperLeftCorner(pos), LowerRightCorner(pos.X + size.Width, pos.Y + size.Height) {}
-
 
 		//! move right by given numbers
 		rect<T> operator+(const position2d<T>& pos) const

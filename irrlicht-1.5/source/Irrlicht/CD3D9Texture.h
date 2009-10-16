@@ -29,10 +29,11 @@ public:
 
 	//! constructor
 	CD3D9Texture(IImage* image, CD3D9Driver* driver,
-		u32 flags, const char* name);
+		u32 flags, const io::path& name);
 
 	//! rendertarget constructor
-	CD3D9Texture(CD3D9Driver* driver, const core::dimension2d<s32>& size, const char* name);
+	CD3D9Texture(CD3D9Driver* driver, const core::dimension2d<u32>& size, const io::path& name,
+		const ECOLOR_FORMAT format = ECF_UNKNOWN);
 
 	//! destructor
 	virtual ~CD3D9Texture();
@@ -44,10 +45,10 @@ public:
 	virtual void unlock();
 
 	//! Returns original size of the texture.
-	virtual const core::dimension2d<s32>& getOriginalSize() const;
+	virtual const core::dimension2d<u32>& getOriginalSize() const;
 
 	//! Returns (=size) of the texture.
-	virtual const core::dimension2d<s32>& getSize() const;
+	virtual const core::dimension2d<u32>& getSize() const;
 
 	//! returns driver type of texture (=the driver, who created the texture)
 	virtual E_DRIVER_TYPE getDriverType() const;
@@ -77,10 +78,7 @@ public:
 private:
 	friend class CD3D9Driver;
 
-	void createRenderTarget();
-
-	//! returns the size of a texture which would be the optimize size for rendering it
-	inline s32 getTextureSizeFromSurfaceSize(s32 size) const;
+	void createRenderTarget(const ECOLOR_FORMAT format = ECF_UNKNOWN);
 
 	//! creates the hardware texture
 	bool createTexture(u32 flags, IImage * image);
@@ -107,8 +105,8 @@ private:
 	IDirect3DSurface9* RTTSurface;
 	CD3D9Driver* Driver;
 	SDepthSurface* DepthSurface;
-	core::dimension2d<s32> TextureSize;
-	core::dimension2d<s32> ImageSize;
+	core::dimension2d<u32> TextureSize;
+	core::dimension2d<u32> ImageSize;
 	s32 Pitch;
 	ECOLOR_FORMAT ColorFormat;
 

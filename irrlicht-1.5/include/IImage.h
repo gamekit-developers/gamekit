@@ -32,7 +32,30 @@ enum ECOLOR_FORMAT
 	ECF_R8G8B8,
 
 	//! Default 32 bit color format. 8 bits are used for every component: red, green, blue and alpha.
-	ECF_A8R8G8B8
+	ECF_A8R8G8B8,
+
+	/** Floating Point formats. The following formats may only be used for render target textures. */
+
+	//! 16 bit floating point format using 16 bits for the red channel.
+	ECF_R16F,
+
+	//! 32 bit floating point format using 16 bits for the red channel and 16 bits for the green channel.
+	ECF_G16R16F,
+
+	//! 64 bit floating point format 16 bits are used for the red, green, blue and alpha channels.
+	ECF_A16B16G16R16F,
+
+	//! 32 bit floating point format using 32 bits for the red channel.
+	ECF_R32F,
+
+	//! 64 bit floating point format using 32 bits for the red channel and 32 bits for the green channel.
+	ECF_G32R32F,
+
+	//! 128 bit floating point format. 32 bits are used for the red, green, blue and alpha channels.
+	ECF_A32B32G32R32F,
+
+	//! Unknown color format:
+	ECF_UNKNOWN
 };
 
 
@@ -58,7 +81,7 @@ public:
 	virtual void unlock() = 0;
 
 	//! Returns width and height of image data.
-	virtual const core::dimension2d<s32>& getDimension() const = 0;
+	virtual const core::dimension2d<u32>& getDimension() const = 0;
 
 	//! Returns bits per pixel.
 	virtual u32 getBitsPerPixel() const = 0;
@@ -76,7 +99,7 @@ public:
 	virtual SColor getPixel(u32 x, u32 y) const = 0;
 
 	//! Sets a pixel
-	virtual void setPixel(u32 x, u32 y, const SColor &color ) = 0;
+	virtual void setPixel(u32 x, u32 y, const SColor &color, bool blend = false ) = 0;
 
 	//! Returns the color format
 	virtual ECOLOR_FORMAT getColorFormat() const = 0;
@@ -97,7 +120,7 @@ public:
 	virtual u32 getPitch() const =0;
 
 	//! Copies the image into the target, scaling the image to fit
-	virtual void copyToScaling(void* target, s32 width, s32 height, ECOLOR_FORMAT format=ECF_A8R8G8B8, u32 pitch=0) =0;
+	virtual void copyToScaling(void* target, u32 width, u32 height, ECOLOR_FORMAT format=ECF_A8R8G8B8, u32 pitch=0) =0;
 
 	//! Copies the image into the target, scaling the image to fit
 	virtual void copyToScaling(IImage* target) =0;
@@ -113,8 +136,59 @@ public:
 			const core::rect<s32>& sourceRect, const SColor &color,
 			const core::rect<s32>* clipRect = 0) =0;
 
+	//! copies this surface into another, scaling it to fit, appyling a box filter
+	virtual void copyToScalingBoxFilter(IImage* target, s32 bias = 0, bool blend = false) = 0;
+
 	//! fills the surface with black or white
 	virtual void fill(const SColor &color) =0;
+
+	//! get the amount of Bits per Pixel of the given color format
+	static u32 getBitsPerPixelFromFormat(const ECOLOR_FORMAT format)
+	{
+		switch(format)
+		{
+		case ECF_A1R5G5B5:
+			return 16;
+		case ECF_R5G6B5:
+			return 16;
+		case ECF_R8G8B8:
+			return 24;
+		case ECF_A8R8G8B8:
+			return 32;
+		case ECF_R16F:
+			return 16;
+		case ECF_G16R16F:
+			return 32;
+		case ECF_A16B16G16R16F:
+			return 64;
+		case ECF_R32F:
+			return 32;
+		case ECF_G32R32F:
+			return 64;
+		case ECF_A32B32G32R32F:
+			return 128;
+		default:
+			return 0;
+		}
+	}
+
+	//! test if the color format is only viable for RenderTarget textures
+	/** Since we don't have support for e.g. floating point iimage formats
+	one should test if the color format can be used for arbitrary usage, or
+	if it is restricted to RTTs. */
+	static bool isRenderTargetOnlyFormat(const ECOLOR_FORMAT format)
+	{
+		switch(format)
+		{
+			case ECF_A1R5G5B5:
+			case ECF_R5G6B5:
+			case ECF_R8G8B8:
+			case ECF_A8R8G8B8:
+				return false;
+			default:
+				return true;
+		}
+	}
 
 };
 

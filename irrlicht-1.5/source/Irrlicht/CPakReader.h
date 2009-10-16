@@ -5,10 +5,16 @@
 #ifndef __C_PAK_READER_H_INCLUDED__
 #define __C_PAK_READER_H_INCLUDED__
 
+#include "IrrCompileConfig.h"
+
+#ifdef __IRR_COMPILE_WITH_PAK_ARCHIVE_LOADER_
+
 #include "IReferenceCounted.h"
 #include "IReadFile.h"
 #include "irrArray.h"
 #include "irrString.h"
+#include "IFileSystem.h"
+#include "CFileList.h"
 
 namespace irr
 {
@@ -21,73 +27,96 @@ namespace io
 		u32 length;
 	};
 
-
-	struct SPakFileEntry
+	//! Archiveloader capable of loading PAK Archives
+	class CArchiveLoaderPAK : public IArchiveLoader
 	{
-		core::stringc pakFileName;
-		core::stringc simpleFileName;
-		core::stringc path;
-		u32 pos;
-		u32 length;
+	public:
 
-		bool operator < (const SPakFileEntry& other) const
-		{
-			return simpleFileName < other.simpleFileName;
-		}
+		//! Constructor
+		CArchiveLoaderPAK(io::IFileSystem* fs);
 
+		//! returns true if the file maybe is able to be loaded by this class
+		//! based on the file extension (e.g. ".zip")
+		virtual bool isALoadableFileFormat(const io::path& filename) const;
 
-		bool operator == (const SPakFileEntry& other) const
-		{
-			return simpleFileName == other.simpleFileName;
-		}
+		//! Check if the file might be loaded by this class
+		/** Check might look into the file.
+		\param file File handle to check.
+		\return True if file seems to be loadable. */
+		virtual bool isALoadableFileFormat(io::IReadFile* file) const;
+
+		//! Check to see if the loader can create archives of this type.
+		/** Check based on the archive type.
+		\param fileType The archive type to check.
+		\return True if the archile loader supports this type, false if not */
+		virtual bool isALoadableFileFormat(E_FILE_ARCHIVE_TYPE fileType) const;
+
+		//! Creates an archive from the filename
+		/** \param file File handle to check.
+		\return Pointer to newly created archive, or 0 upon error. */
+		virtual IFileArchive* createArchive(const io::path& filename, bool ignoreCase, bool ignorePaths) const;
+
+		//! creates/loads an archive from the file.
+		//! \return Pointer to the created archive. Returns 0 if loading failed.
+		virtual io::IFileArchive* createArchive(io::IReadFile* file, bool ignoreCase, bool ignorePaths) const;
+
+		//! Returns the type of archive created by this loader
+		virtual E_FILE_ARCHIVE_TYPE getType() const { return EFAT_PAK; }
+
+	private:
+		io::IFileSystem* FileSystem;
 	};
 
 
-	class CPakReader : public IReferenceCounted
+	//! reads from pak
+	class CPakReader : public virtual IFileArchive, virtual CFileList
 	{
 	public:
 
 		CPakReader(IReadFile* file, bool ignoreCase, bool ignorePaths);
 		virtual ~CPakReader();
 
+		// file archive methods
+
+		//! return the id of the file Archive
+
+		virtual const io::path& getArchiveName() const
+		{
+			return File->getFileName();
+		}
+
 		//! opens a file by file name
-		virtual IReadFile* openFile(const c8* filename);
+		virtual IReadFile* createAndOpenFile(const io::path& filename);
 
 		//! opens a file by index
-		IReadFile* openFile(s32 index);
+		virtual IReadFile* createAndOpenFile(u32 index);
 
-		//! returns count of files in archive
-		s32 getFileCount();
+		//! returns the list of files
+		virtual const IFileList* getFileList() const;
 
-		//! returns data of file
-		const SPakFileEntry* getFileInfo(s32 index) const;
-
-		//! returns fileindex
-		s32 findFile(const c8* filename);
+		//! get the class Type
+		virtual E_FILE_ARCHIVE_TYPE getType() const { return EFAT_PAK; }
 
 	private:
-		
+
 		//! scans for a local header, returns false if there is no more local file header.
 		bool scanLocalHeader();
 
 		//! splits filename from zip file into useful filenames and paths
-		void extractFilename(SPakFileEntry* entry);
-
-		//! deletes the path from a filename
-		void deletePathFromFilename(core::stringc& filename);
+		//void extractFilename(SPakFileEntry* entry);
 
 		IReadFile* File;
 
 		SPAKFileHeader header;
 
-		core::array<SPakFileEntry> FileList;
-
-		bool IgnoreCase;
-		bool IgnorePaths;
+		//! Contains offsets of the files from the start of the archive file
+		core::array<u32> Offsets;
 	};
 
 } // end namespace io
 } // end namespace irr
 
-#endif
+#endif // __IRR_COMPILE_WITH_PAK_ARCHIVE_LOADER_
+
+#endif // __C_PAK_READER_H_INCLUDED__
 

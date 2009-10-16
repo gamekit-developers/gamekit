@@ -6,6 +6,7 @@
 #define __I_READ_FILE_H_INCLUDED__
 
 #include "IReferenceCounted.h"
+#include "coreutil.h"
 
 namespace irr
 {
@@ -19,7 +20,7 @@ namespace io
 		//! Reads an amount of bytes from the file.
 		/** \param buffer Pointer to buffer where read bytes are written to.
 		\param sizeToRead Amount of bytes to read from the file.
-		\return How much bytes were read. */
+		\return How many bytes were read. */
 		virtual s32 read(void* buffer, u32 sizeToRead) = 0;
 
 		//! Changes position in file
@@ -40,15 +41,15 @@ namespace io
 
 		//! Get name of file.
 		/** \return File name as zero terminated character string. */
-		virtual const c8* getFileName() const = 0;
+		virtual const io::path& getFileName() const = 0;
 	};
 
 	//! Internal function, please do not use.
-	IReadFile* createReadFile(const c8* fileName);
+	IReadFile* createReadFile(const io::path& fileName);
 	//! Internal function, please do not use.
-	IReadFile* createLimitReadFile(const c8* fileName, IReadFile* alreadyOpenedFile, long areaSize);
+	IReadFile* createLimitReadFile(const io::path& fileName, IReadFile* alreadyOpenedFile, long pos, long areaSize);
 	//! Internal function, please do not use.
-	IReadFile* createMemoryReadFile(void* memory, long size, const c8* fileName, bool deleteMemoryWhenDropped);
+	IReadFile* createMemoryReadFile(void* memory, long size, const io::path& fileName, bool deleteMemoryWhenDropped);
 
 } // end namespace io
 } // end namespace irr

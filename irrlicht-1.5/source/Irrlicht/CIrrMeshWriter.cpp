@@ -183,7 +183,7 @@ void CIrrMeshWriter::writeMeshBuffer(const scene::IMeshBuffer* buffer)
 				str += getVectorAsStringLine(vtx[j].Normal);
 
 				char tmp[12];
-				sprintf(tmp, " %08x ", vtx[j].Color.color);
+				sprintf(tmp, " %02x%02x%02x%02x ", vtx[j].Color.getAlpha(), vtx[j].Color.getRed(), vtx[j].Color.getBlue(), vtx[j].Color.getGreen());
 				str += tmp;
 
 				str += getVectorAsStringLine(vtx[j].TCoords);
@@ -203,7 +203,7 @@ void CIrrMeshWriter::writeMeshBuffer(const scene::IMeshBuffer* buffer)
 				str += getVectorAsStringLine(vtx[j].Normal);
 
 				char tmp[12];
-				sprintf(tmp, " %08x ", vtx[j].Color.color);
+				sprintf(tmp, " %02x%02x%02x%02x ", vtx[j].Color.getAlpha(), vtx[j].Color.getRed(), vtx[j].Color.getBlue(), vtx[j].Color.getGreen());
 				str += tmp;
 
 				str += getVectorAsStringLine(vtx[j].TCoords);
@@ -225,7 +225,7 @@ void CIrrMeshWriter::writeMeshBuffer(const scene::IMeshBuffer* buffer)
 				str += getVectorAsStringLine(vtx[j].Normal);
 
 				char tmp[12];
-				sprintf(tmp, " %08x ", vtx[j].Color.color);
+				sprintf(tmp, " %02x%02x%02x%02x ", vtx[j].Color.getAlpha(), vtx[j].Color.getRed(), vtx[j].Color.getBlue(), vtx[j].Color.getGreen());
 				str += tmp;
 
 				str += getVectorAsStringLine(vtx[j].TCoords);
@@ -252,13 +252,25 @@ void CIrrMeshWriter::writeMeshBuffer(const scene::IMeshBuffer* buffer)
 	Writer->writeLineBreak();
 
 	int indexCount = (int)buffer->getIndexCount();
-	const u16* idx = buffer->getIndices();
+
+	video::E_INDEX_TYPE iType = buffer->getIndexType();
+
+	const u16* idx16 = buffer->getIndices();
+	const u32* idx32 = (u32*) buffer->getIndices();
 	const int maxIndicesPerLine = 25;
 
 	for (int i=0; i<indexCount; ++i)
 	{
-		core::stringw str((int)idx[i]);
-		Writer->writeText(str.c_str());
+		if(iType == video::EIT_16BIT)
+		{
+			core::stringw str((int)idx16[i]);
+			Writer->writeText(str.c_str());
+		}
+		else
+		{
+			core::stringw str((int)idx32[i]);
+			Writer->writeText(str.c_str());
+		}
 
 		if (i % maxIndicesPerLine != maxIndicesPerLine)
 		{

@@ -13,7 +13,7 @@ namespace core
 {
 
 	//! 3d vector template class with lots of operators and methods.
-	/** The vector3d class is used in Irrlicht for three main purposes: 
+	/** The vector3d class is used in Irrlicht for three main purposes:
 		1) As a direction vector (most of the methods assume this).
 		2) As a position in 3d space (which is synonymous with a direction vector from the origin to this position).
 		3) To hold three Euler rotations, where X is pitch, Y is yaw and Z is roll.
@@ -76,7 +76,7 @@ namespace core
 		// functions
 
 		//! returns if this vector equals the other one, taking floating point rounding errors into account
-		bool equals(const vector3d<T>& other, const T tolerance = (T)ROUNDING_ERROR_32 ) const
+		bool equals(const vector3d<T>& other, const T tolerance = (T)ROUNDING_ERROR_f32 ) const
 		{
 			return core::equals(X, other.X, tolerance) &&
 				core::equals(Y, other.Y, tolerance) &&
@@ -87,7 +87,7 @@ namespace core
 		vector3d<T>& set(const vector3d<T>& p) {X=p.X; Y=p.Y; Z=p.Z;return *this;}
 
 		//! Get length of the vector.
-		T getLength() const { return (T) sqrt((f64)(X*X + Y*Y + Z*Z)); }
+		T getLength() const { return core::squareroot( X*X + Y*Y + Z*Z ); }
 
 		//! Get squared length of the vector.
 		/** This is useful because it is much faster than getLength().
@@ -140,10 +140,11 @@ namespace core
 		\return Reference to this vector after normalization. */
 		vector3d<T>& normalize()
 		{
-			f32 length = (f32)(X*X + Y*Y + Z*Z);
-			if (core::equals(length, 0.f))
+		    f64 length = (f32)(X*X + Y*Y + Z*Z);
+			if (core::equals(length, 0.0)) // this check isn't an optimization but prevents getting NAN in the sqrt.
 				return *this;
-			length = core::reciprocal_squareroot ( (f32)length );
+			length = core::reciprocal_squareroot ( (f64) (X*X + Y*Y + Z*Z) );
+
 			X = (T)(X * length);
 			Y = (T)(Y * length);
 			Z = (T)(Z * length);
@@ -265,30 +266,30 @@ namespace core
 		// Where target and seeker are of type ISceneNode*
 		const vector3df toTarget(target->getAbsolutePosition() - seeker->getAbsolutePosition());
 		const vector3df requiredRotation = toTarget.getHorizontalAngle();
-		seeker->setRotation(requiredRotation); 
+		seeker->setRotation(requiredRotation);
 
-		\return A rotation vector containing the X (pitch) and Y (raw) rotations (in degrees) that when applied to a 
-		+Z (e.g. 0, 0, 1) direction vector would make it point in the same direction as this vector. The Z (roll) rotation 
+		\return A rotation vector containing the X (pitch) and Y (raw) rotations (in degrees) that when applied to a
+		+Z (e.g. 0, 0, 1) direction vector would make it point in the same direction as this vector. The Z (roll) rotation
 		is always 0, since two Euler rotations are sufficient to point in any given direction. */
 		vector3d<T> getHorizontalAngle() const
 		{
 			vector3d<T> angle;
 
-			angle.Y = (T)(atan2(X, Z) * RADTODEG64);
+			angle.Y = (T)(atan2(X, Z) * (T) RADTODEG64);
 
 			if (angle.Y < 0.0f)
 				angle.Y += 360.0f;
 			if (angle.Y >= 360.0f)
 				angle.Y -= 360.0f;
 
-			const f64 z1 = sqrt(X*X + Z*Z);
+			const T z1 = core::squareroot(X*X + Z*Z);
 
-			angle.X = (T)(atan2(z1, (f64)Y) * RADTODEG64 - 90.0);
+			angle.X = (T)(atan2(z1, (T)Y) * (T) RADTODEG64 - (T) 90.0);
 
-			if (angle.X < 0.0f)
-				angle.X += 360.0f;
-			if (angle.X >= 360.0f)
-				angle.X -= 360.0f;
+			if (angle.X < (T) 0.0)
+				angle.X += (T) 360.0;
+			if (angle.X >= (T) 360.0)
+				angle.X -= (T) 360.0;
 
 			return angle;
 		}
@@ -297,9 +298,9 @@ namespace core
 		/** This vector is assumed to be a rotation vector composed of 3 Euler angle rotations, in degrees.
 		The implementation performs the same calculations as using a matrix to do the rotation.
 
-		\param[in] forwards  The direction representing "forwards" which will be rotated by this vector. 
+		\param[in] forwards  The direction representing "forwards" which will be rotated by this vector.
 		If you do not provide a direction, then the +Z axis (0, 0, 1) will be assumed to be forwards.
-		\return A direction vector calculated by rotating the forwards direction by the 3 Euler angles 
+		\return A direction vector calculated by rotating the forwards direction by the 3 Euler angles
 		(in degrees) represented by this vector. */
 		vector3d<T> rotationToDirection(const vector3d<T> & forwards = vector3d<T>(0, 0, 1)) const
 		{
@@ -343,8 +344,10 @@ namespace core
 
 		//! X coordinate of the vector
 		T X;
+
 		//! Y coordinate of the vector
 		T Y;
+
 		//! Z coordinate of the vector
 		T Z;
 	};
@@ -352,6 +355,7 @@ namespace core
 
 	//! Typedef for a f32 3d vector.
 	typedef vector3d<f32> vector3df;
+
 	//! Typedef for an integer 3d vector.
 	typedef vector3d<s32> vector3di;
 

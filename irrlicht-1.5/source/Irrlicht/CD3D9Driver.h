@@ -30,22 +30,24 @@ namespace video
 			setDebugName("SDepthSurface");
 			#endif
 		}
-		~SDepthSurface()
+		virtual ~SDepthSurface()
 		{
 			if (Surface)
 				Surface->Release();
 		}
 
 		IDirect3DSurface9* Surface;
-		core::dimension2di Size;
+		core::dimension2du Size;
 	};
 
 	class CD3D9Driver : public CNullDriver, IMaterialRendererServices
 	{
 	public:
 
+		friend class CD3D9Texture;
+
 		//! constructor
-		CD3D9Driver(const core::dimension2d<s32>& screenSize, HWND window, bool fullscreen,
+		CD3D9Driver(const core::dimension2d<u32>& screenSize, HWND window, bool fullscreen,
 			bool stencibuffer, io::IFileSystem* io, bool pureSoftware=false);
 
 		//! destructor
@@ -82,7 +84,10 @@ namespace video
 
 		struct SHWBufferLink_d3d9 : public SHWBufferLink
 		{
-			SHWBufferLink_d3d9(const scene::IMeshBuffer *_MeshBuffer): SHWBufferLink(_MeshBuffer), vertexBuffer(0), indexBuffer(0){}
+			SHWBufferLink_d3d9(const scene::IMeshBuffer *_MeshBuffer):
+				SHWBufferLink(_MeshBuffer),
+					vertexBuffer(0), indexBuffer(0),
+					vertexBufferSize(0), indexBufferSize(0) {}
 
 			IDirect3DVertexBuffer9* vertexBuffer;
 			IDirect3DIndexBuffer9* indexBuffer;
@@ -109,7 +114,14 @@ namespace video
 		//! draws a vertex primitive list
 		virtual void drawVertexPrimitiveList(const void* vertices, u32 vertexCount,
 				const void* indexList, u32 primitiveCount,
-				E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType, E_INDEX_TYPE iType);
+				E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType,
+				E_INDEX_TYPE iType);
+
+		//! draws a vertex primitive list in 2d
+		virtual void draw2DVertexPrimitiveList(const void* vertices, u32 vertexCount,
+				const void* indexList, u32 primitiveCount,
+				E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType,
+				E_INDEX_TYPE iType);
 
 		//! draws an 2d image, using a color (if color is other then Color(255,255,255,255)) and the alpha channel of the texture if wanted.
 		virtual void draw2DImage(const video::ITexture* texture, const core::position2d<s32>& destPos,
@@ -120,6 +132,14 @@ namespace video
 		virtual void draw2DImage(const video::ITexture* texture, const core::rect<s32>& destRect,
 			const core::rect<s32>& sourceRect, const core::rect<s32>* clipRect = 0,
 			const video::SColor* const colors=0, bool useAlphaChannelOfTexture=false);
+
+		//! Draws a set of 2d images, using a color and the alpha channel of the texture.
+		virtual void draw2DImageBatch(const video::ITexture* texture,
+				const core::array<core::position2d<s32> >& positions,
+				const core::array<core::rect<s32> >& sourceRects,
+				const core::rect<s32>* clipRect=0,
+				SColor color=SColor(255,255,255,255),
+				bool useAlphaChannelOfTexture=false);
 
 		//!Draws an 2d rectangle with a gradient.
 		virtual void draw2DRectangle(const core::rect<s32>& pos,
@@ -139,9 +159,9 @@ namespace video
 			const core::vector3df& end, SColor color = SColor(255,255,255,255));
 
 		//! initialises the Direct3D API
-		bool initDriver(const core::dimension2d<s32>& screenSize, HWND hwnd,
+		bool initDriver(const core::dimension2d<u32>& screenSize, HWND hwnd,
 				u32 bits, bool fullScreen, bool pureSoftware,
-				bool highPrecisionFPU, bool vsync, bool antiAlias);
+				bool highPrecisionFPU, bool vsync, u8 antiAlias);
 
 		//! \return Returns the name of the video driver. Example: In case of the DIRECT3D8
 		//! driver, it would return "Direct3D8.1".
@@ -150,8 +170,15 @@ namespace video
 		//! deletes all dynamic lights there are
 		virtual void deleteAllDynamicLights();
 
-		//! adds a dynamic light
-		virtual void addDynamicLight(const SLight& light);
+		//! adds a dynamic light, returning an index to the light
+		//! \param light: the light data to use to create the light
+		//! \return An index to the light, or -1 if an error occurs
+		virtual s32 addDynamicLight(const SLight& light);
+
+		//! Turns a dynamic light on or off
+		//! \param lightIndex: the index returned by addDynamicLight
+		//! \param turnOn: true to turn the light on, false to turn it off
+		virtual void turnLightOn(s32 lightIndex, bool turnOn);
 
 		//! returns the maximal amount of dynamic lights the device can handle
 		virtual u32 getMaximalDynamicLightAmount() const;
@@ -180,12 +207,12 @@ namespace video
 		virtual void setTextureCreationFlag(E_TEXTURE_CREATION_FLAG flag, bool enabled);
 
 		//! Sets the fog mode.
-		virtual void setFog(SColor color, bool linearFog, f32 start,
+		virtual void setFog(SColor color, E_FOG_TYPE fogType, f32 start,
 			f32 end, f32 density, bool pixelFog, bool rangeFog);
 
 		//! Only used by the internal engine. Used to notify the driver that
 		//! the window was resized.
-		virtual void OnResize(const core::dimension2d<s32>& size);
+		virtual void OnResize(const core::dimension2d<u32>& size);
 
 		//! Can be called by an IMaterialRenderer to make its work easier.
 		virtual void setBasicRenderStates(const SMaterial& material, const SMaterial& lastMaterial,
@@ -217,8 +244,8 @@ namespace video
 		virtual IVideoDriver* getVideoDriver();
 
 		//! Creates a render target texture.
-		virtual ITexture* addRenderTargetTexture(const core::dimension2d<s32>& size,
-				const c8* name);
+		virtual ITexture* addRenderTargetTexture(const core::dimension2d<u32>& size,
+				const io::path& name, const ECOLOR_FORMAT format = ECF_UNKNOWN);
 
 		//! Clears the ZBuffer.
 		virtual void clearZBuffer();
@@ -233,7 +260,7 @@ namespace video
 		virtual void enableClipPlane(u32 index, bool enable);
 
 		//! Returns the graphics card vendor name.
-		virtual core::stringc getVendorInfo() {return vendorName;}
+		virtual core::stringc getVendorInfo() {return VendorName;}
 
 		//! Check if the driver was recently reset.
 		virtual bool checkDriverReset() {return DriverWasReset;}
@@ -284,21 +311,21 @@ namespace video
 		void setRenderStatesStencilShadowMode(bool zfail);
 
 		//! sets the current Texture
-		bool setTexture(s32 stage, const video::ITexture* texture);
+		bool setActiveTexture(u32 stage, const video::ITexture* texture);
 
 		//! resets the device
 		bool reset();
 
 		//! returns a device dependent texture from a software surface (IImage)
 		//! THIS METHOD HAS TO BE OVERRIDDEN BY DERIVED DRIVERS WITH OWN TEXTURES
-		virtual video::ITexture* createDeviceDependentTexture(IImage* surface, const char* name);
+		virtual video::ITexture* createDeviceDependentTexture(IImage* surface, const io::path& name);
 
 		//! returns the current size of the screen or rendertarget
-		virtual const core::dimension2d<s32>& getCurrentRenderTargetSize() const;
+		virtual const core::dimension2d<u32>& getCurrentRenderTargetSize() const;
 
 		//! Check if a proper depth buffer for the RTT is available, otherwise create it.
 		void checkDepthBuffer(ITexture* tex);
-		
+
 		//! Adds a new material renderer to the VideoDriver, using pixel and/or
 		//! vertex shaders to render geometry.
 		s32 addShaderMaterial(const c8* vertexShaderProgram, const c8* pixelShaderProgram,
@@ -320,6 +347,11 @@ namespace video
 
 		void createMaterialRenderers();
 
+		void draw2D3DVertexPrimitiveList(const void* vertices,
+				u32 vertexCount, const void* indexList, u32 primitiveCount,
+				E_VERTEX_TYPE vType, scene::E_PRIMITIVE_TYPE pType,
+				E_INDEX_TYPE iType, bool is3D);
+
 		inline D3DCOLORVALUE colorToD3D(const SColor& col)
 		{
 			const f32 f = 1.0f / 255.0f;
@@ -338,6 +370,7 @@ namespace video
 		bool ResetRenderStates; // bool to make all renderstates be reseted if set.
 		bool Transformation3DChanged;
 		bool StencilBuffer;
+		u8 AntiAliasing;
 		const ITexture* CurrentTexture[MATERIAL_MAX_TEXTURES];
 		bool LastTextureMipMapsAvailable[MATERIAL_MAX_TEXTURES];
 		core::matrix4 Matrices[ETS_COUNT]; // matrizes of the 3d mode we need to restore when we switch back from the 2d mode.
@@ -347,8 +380,8 @@ namespace video
 		IDirect3DDevice9* pID3DDevice;
 
 		IDirect3DSurface9* PrevRenderTarget;
-		core::dimension2d<s32> CurrentRendertargetSize;
-		core::dimension2d<s32> CurrentDepthBufferSize;
+		core::dimension2d<u32> CurrentRendertargetSize;
+		core::dimension2d<u32> CurrentDepthBufferSize;
 
 		void* WindowId;
 		core::rect<s32>* SceneSourceRect;
@@ -359,7 +392,8 @@ namespace video
 
 		SColorf AmbientLight;
 
-		core::stringc vendorName;
+		core::stringc VendorName;
+		u16 VendorID;
 
 		core::array<SDepthSurface*> DepthBuffers;
 
@@ -368,11 +402,21 @@ namespace video
 		f32 MaxLightDistance;
 		s32 LastSetLight;
 
+		enum E_CACHE_2D_ATTRIBUTES
+		{
+			EC2D_ALPHA = 0x1,
+			EC2D_TEXTURE = 0x2,
+			EC2D_ALPHA_CHANNEL = 0x4
+		};
+
+		u32 Cached2DModeSignature;
+
 		ECOLOR_FORMAT ColorFormat;
 		D3DFORMAT D3DColorFormat;
 		bool DeviceLost;
 		bool Fullscreen;
 		bool DriverWasReset;
+		bool AlphaToCoverageSupport;
 	};
 
 

@@ -6,6 +6,7 @@
 #define __I_IRRLICHT_CREATION_PARAMETERS_H_INCLUDED__
 
 #include "EDriverTypes.h"
+#include "EDeviceTypes.h"
 #include "dimension2d.h"
 
 namespace irr
@@ -18,16 +19,19 @@ namespace irr
 	{
 		//! Constructs a SIrrlichtCreationParameters structure with default values.
 		SIrrlichtCreationParameters() :
+			DeviceType(EIDT_BEST),
 			DriverType(video::EDT_BURNINGSVIDEO),
-			WindowSize(core::dimension2d<s32>(800, 600)),
+			WindowSize(core::dimension2d<u32>(800, 600)),
 			Bits(16),
 			ZBufferBits(16),
 			Fullscreen(false),
 			Stencilbuffer(false),
 			Vsync(false),
-			AntiAlias(false),
+			AntiAlias(0),
 			WithAlphaChannel(false),
+			Doublebuffer(true),
 			IgnoreInput(false),
+			Stereobuffer(false),
 			HighPrecisionFPU(false),
 			EventReceiver(0),
 			WindowId(0),
@@ -41,6 +45,7 @@ namespace irr
 
 		SIrrlichtCreationParameters& operator=(const SIrrlichtCreationParameters& other)
 		{
+			DeviceType = other.DeviceType;
 			DriverType = other.DriverType;
 			WindowSize = other.WindowSize;
 			Bits = other.Bits;
@@ -50,7 +55,9 @@ namespace irr
 			Vsync = other.Vsync;
 			AntiAlias = other.AntiAlias;
 			WithAlphaChannel = other.WithAlphaChannel;
+			Doublebuffer = other.Doublebuffer;
 			IgnoreInput = other.IgnoreInput;
+			Stereobuffer = other.Stereobuffer;
 			HighPrecisionFPU = other.HighPrecisionFPU;
 			EventReceiver = other.EventReceiver;
 			WindowId = other.WindowId;
@@ -58,6 +65,19 @@ namespace irr
 		}
 
 		//! Type of the device.
+		/** This setting decides the windowing system used by the device, most device types are native
+		to a specific operating system and so may not be available.
+		EIDT_WIN32 is only available on Windows desktops,
+		EIDT_WINCE is only available on Windows mobile devices,
+		EIDT_COCOA is only available on Mac OSX,
+		EIDT_X11 is available on Linux, Solaris, BSD and other operating systems which use X11,
+		EIDT_SDL is available on most systems if compiled in,
+		EIDT_CONSOLE is usually available but can only render to text,
+		EIDT_BEST will select the best available device for your operating system.
+		Default: EIDT_BEST. */
+		E_DEVICE_TYPE DeviceType;
+
+		//! Type of video driver used to render graphics.
 		/** This can currently be video::EDT_NULL, video::EDT_SOFTWARE,
 		video::EDT_BURNINGSVIDEO, video::EDT_DIRECT3D8,
 		video::EDT_DIRECT3D9, and video::EDT_OPENGL.
@@ -65,7 +85,7 @@ namespace irr
 		video::E_DRIVER_TYPE DriverType;
 
 		//! Size of the window or the video mode in fullscreen mode. Default: 800x600
-		core::dimension2d<s32> WindowSize;
+		core::dimension2d<u32> WindowSize;
 
 		//! Minimum Bits per pixel of the color buffer in fullscreen mode. Ignored if windowed mode. Default: 16.
 		u8 Bits;
@@ -79,14 +99,15 @@ namespace irr
 
 		//! Specifies if the stencil buffer should be enabled.
 		/** Set this to true, if you want the engine be able to draw
-		stencil buffer shadows. Note that not all devices are able to
-		use the stencil buffer. If they don't no shadows will be drawn.
+		stencil buffer shadows. Note that not all drivers are able to
+		use the stencil buffer, hence it can be ignored during device
+		creation. Without the stencil buffer no shadows will be drawn.
 		Default: false. */
 		bool Stencilbuffer;
 
 		//! Specifies vertical syncronisation.
 		/** If set to true, the driver will wait for the vertical
-		retrace period, otherwise not.
+		retrace period, otherwise not. May be silently ignored.
 		Default: false */
 		bool Vsync;
 
@@ -99,24 +120,48 @@ namespace irr
 		writing a game/application with AntiAlias switched on, it would
 		be a good idea to make it possible to switch this option off
 		again by the user.
-		This is curently not supported in OpenGL under Windows.
-		Default value: false */
-		bool AntiAlias;
+		The value is the maximal antialiasing factor requested for
+		the device. The cretion method will automatically try smaller
+		values if no window can be created with the given value.
+		Value one is usually the same as 0 (disabled), but might be a
+		special value on some platforms. On D3D devices it maps to
+		NONMASKABLE.
+		Default value: 0 - disabled */
+		u8 AntiAlias;
 
 		//! Whether the main framebuffer uses an alpha channel.
 		/** In some situations it might be desireable to get a color
 		buffer with an alpha channel, e.g. when rendering into a
 		transparent window or overlay. If this flag is set the device
 		tries to create a framebuffer with alpha channel.
+		If this flag is set, only color buffers with alpha channel
+		are considered. Otherwise, it depends on the actual hardware
+		if the colorbuffer has an alpha channel or not.
 		Default value: false */
 		bool WithAlphaChannel;
+
+		//! Whether the main framebuffer uses doublebuffering.
+		/** This should be usually enabled, in order to avoid render
+		artifacts on the visible framebuffer. However, it might be
+		useful to use only one buffer on very small devices. If no
+		doublebuffering is available, the drivers will fall back to
+		single buffers. Default value: true */
+		bool Doublebuffer;
 
 		//! Specifies if the device should ignore input events
 		/** This is only relevant when using external I/O handlers.
 		External windows need to take care of this themselves.
-		Currently only supported under X11.
+		Currently only supported by X11.
 		Default value: false */
 		bool IgnoreInput;
+
+		//! Specifies if the device should use stereo buffers
+		/** Some high-end gfx cards support two framebuffers for direct
+		support of stereoscopic output devices. If this flag is set the
+		device tries to create a stereo context.
+		Currently only supported by OpenGL.
+		Default value: false */
+		bool Stereobuffer;
 
 		//! Specifies if the device should use high precision FPU setting
 		/** This is only relevant for DirectX Devices, which switch to

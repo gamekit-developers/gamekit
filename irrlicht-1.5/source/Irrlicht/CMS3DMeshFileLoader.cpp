@@ -16,6 +16,10 @@ namespace irr
 namespace scene
 {
 
+#ifdef _DEBUG
+#define _IRR_DEBUG_MS3D_LOADER_
+#endif
+
 // byte-align structures
 #if defined(_MSC_VER) ||  defined(__BORLANDC__) || defined (__BCPLUSPLUS__)
 #	pragma pack( push, packing )
@@ -121,11 +125,10 @@ CMS3DMeshFileLoader::CMS3DMeshFileLoader(video::IVideoDriver *driver)
 
 //! returns true if the file maybe is able to be loaded by this class
 //! based on the file extension (e.g. ".bsp")
-bool CMS3DMeshFileLoader::isALoadableFileExtension(const c8* filename) const
+bool CMS3DMeshFileLoader::isALoadableFileExtension(const io::path& filename) const
 {
-	return strstr(filename, ".ms3d")!=0;
+	return core::hasFileExtension ( filename, "ms3d" );
 }
-
 
 
 //! creates/loads an animated mesh from the file.
@@ -195,6 +198,9 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 		os::Printer::log("Only Milkshape3D version 3 and 4 (1.3 to 1.8) is supported. Loading failed", file->getFileName(), ELL_ERROR);
 		return false;
 	}
+#ifdef _IRR_DEBUG_MS3D_LOADER_
+	os::Printer::log("Loaded header version", core::stringc(pHeader->Version).c_str());
+#endif
 
 	// get pointers to data
 
@@ -202,6 +208,9 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 	u16 numVertices = *(u16*)pPtr;
 #ifdef __BIG_ENDIAN__
 	numVertices = os::Byteswap::byteswap(numVertices);
+#endif
+#ifdef _IRR_DEBUG_MS3D_LOADER_
+	os::Printer::log("Load vertices", core::stringc(numVertices).c_str());
 #endif
 	pPtr += sizeof(u16);
 	MS3DVertex *vertices = (MS3DVertex*)pPtr;
@@ -227,6 +236,9 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 	u16 numTriangles = *(u16*)pPtr;
 #ifdef __BIG_ENDIAN__
 	numTriangles = os::Byteswap::byteswap(numTriangles);
+#endif
+#ifdef _IRR_DEBUG_MS3D_LOADER_
+	os::Printer::log("Load Triangles", core::stringc(numTriangles).c_str());
 #endif
 	pPtr += sizeof(u16);
 	MS3DTriangle *triangles = (MS3DTriangle*)pPtr;
@@ -262,8 +274,11 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 #ifdef __BIG_ENDIAN__
 	numGroups = os::Byteswap::byteswap(numGroups);
 #endif
+#ifdef _IRR_DEBUG_MS3D_LOADER_
+	os::Printer::log("Load Groups", core::stringc(numGroups).c_str());
+#endif
 	pPtr += sizeof(u16);
-	
+
 	core::array<SGroup> groups;
 	groups.reallocate(numGroups);
 
@@ -314,6 +329,9 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 #ifdef __BIG_ENDIAN__
 	numMaterials = os::Byteswap::byteswap(numMaterials);
 #endif
+#ifdef _IRR_DEBUG_MS3D_LOADER_
+	os::Printer::log("Load Materials", core::stringc(numMaterials).c_str());
+#endif
 	pPtr += sizeof(u16);
 
 	// MS3DMaterial *materials = (MS3DMaterial*)pPtr;
@@ -322,7 +340,7 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 	if(numMaterials == 0)
 	{
 		// if there are no materials, add at least one buffer
-		AnimatedMesh->createBuffer();
+		AnimatedMesh->addMeshBuffer();
 	}
 
 	for (i=0; i<numMaterials; ++i)
@@ -348,7 +366,7 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 			return false;
 		}
 
-		scene::SSkinMeshBuffer *tmpBuffer = AnimatedMesh->createBuffer();
+		scene::SSkinMeshBuffer *tmpBuffer = AnimatedMesh->addMeshBuffer();
 
 		tmpBuffer->Material.MaterialType = video::EMT_SOLID;
 
@@ -362,14 +380,14 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 		if (TexturePath.trim()!="")
 		{
 			TexturePath=stripPathFromString(file->getFileName(),true) + stripPathFromString(TexturePath,false);
-			tmpBuffer->Material.setTexture(0, Driver->getTexture(TexturePath.c_str()) );
+			tmpBuffer->Material.setTexture(0, Driver->getTexture(TexturePath) );
 		}
 
 		core::stringc AlphamapPath=(const c8*)material->Alphamap;
 		if (AlphamapPath.trim()!="")
 		{
 			AlphamapPath=stripPathFromString(file->getFileName(),true) + stripPathFromString(AlphamapPath,false);
-			tmpBuffer->Material.setTexture(2, Driver->getTexture(AlphamapPath.c_str()) );
+			tmpBuffer->Material.setTexture(2, Driver->getTexture(AlphamapPath) );
 		}
 
 	}
@@ -378,6 +396,9 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 	f32 framesPerSecond = *(float*)pPtr;
 #ifdef __BIG_ENDIAN__
 	framesPerSecond = os::Byteswap::byteswap(framesPerSecond);
+#endif
+#ifdef _IRR_DEBUG_MS3D_LOADER_
+	os::Printer::log("FPS", core::stringc(framesPerSecond).c_str());
 #endif
 	pPtr += sizeof(float) * 2; // fps and current time
 
@@ -394,6 +415,9 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 	u16 jointCount = *(u16*)pPtr;
 #ifdef __BIG_ENDIAN__
 	jointCount = os::Byteswap::byteswap(jointCount);
+#endif
+#ifdef _IRR_DEBUG_MS3D_LOADER_
+	os::Printer::log("Joints", core::stringc(jointCount).c_str());
 #endif
 	pPtr += sizeof(u16);
 	if (pPtr > buffer+fileSize)
@@ -427,9 +451,14 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 			return false;
 		}
 
-		ISkinnedMesh::SJoint *jnt = AnimatedMesh->createJoint();
+		ISkinnedMesh::SJoint *jnt = AnimatedMesh->addJoint();
 
 		jnt->Name = pJoint->Name;
+#ifdef _IRR_DEBUG_MS3D_LOADER_
+		os::Printer::log("Joint", jnt->Name.c_str());
+		os::Printer::log("Rotation keyframes", core::stringc(pJoint->NumRotationKeyframes).c_str());
+		os::Printer::log("Translation keyframes", core::stringc(pJoint->NumTranslationKeyframes).c_str());
+#endif
 		jnt->LocalMatrix.makeIdentity();
 		jnt->LocalMatrix.setRotationRadians(
 			core::vector3df(pJoint->Rotation[0], pJoint->Rotation[1], pJoint->Rotation[2]) );
@@ -467,8 +496,8 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 				return false;
 			}
 
-			ISkinnedMesh::SRotationKey *k=AnimatedMesh->createRotationKey(jnt);
-			k->frame = kf->Time * framesPerSecond;
+			ISkinnedMesh::SRotationKey *k=AnimatedMesh->addRotationKey(jnt);
+			k->frame = kf->Time * framesPerSecond-1;
 
 			core::matrix4 tmpMatrix;
 
@@ -503,8 +532,8 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 				return false;
 			}
 
-			ISkinnedMesh::SPositionKey *k=AnimatedMesh->createPositionKey(jnt);
-			k->frame = kf->Time * framesPerSecond;
+			ISkinnedMesh::SPositionKey *k=AnimatedMesh->addPositionKey(jnt);
+			k->frame = kf->Time * framesPerSecond-1;
 
 			k->position = core::vector3df
 				(kf->Parameter[0]+pJoint->Translation[0],
@@ -525,6 +554,9 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 
 		for (u32 j=0; j<4; ++j) // four comment groups
 		{
+#ifdef _IRR_DEBUG_MS3D_LOADER_
+			os::Printer::log("Skipping comment group", core::stringc(j+1).c_str());
+#endif
 			u32 numComments = *(u32*)pPtr;
 #ifdef __BIG_ENDIAN__
 			numComments = os::Byteswap::byteswap(numComments);
@@ -532,7 +564,11 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 			pPtr += sizeof(u32);
 			for (i=0; i<numComments; ++i)
 			{
-				pPtr += sizeof(s32); // index
+				// according to scorpiomidget this field does
+				// not exist for model comments. So avoid to
+				// read it
+				if (j!=3)
+					pPtr += sizeof(s32); // index
 				s32 commentLength = *(s32*)pPtr;
 #ifdef __BIG_ENDIAN__
 				commentLength = os::Byteswap::byteswap(commentLength);
@@ -557,6 +593,9 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 #endif
 			pPtr += sizeof(s32);
 
+#ifdef _IRR_DEBUG_MS3D_LOADER_
+			os::Printer::log("Reading vertex weights");
+#endif
 			// read vertex weights, ignoring data 'extra' from 1.8.2
 			vertexWeights.reallocate(numVertices);
 			const char offset = (subVersion==1)?6:10;
@@ -582,6 +621,9 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 #endif
 			pPtr += sizeof(s32);
 			// skip joint colors
+#ifdef _IRR_DEBUG_MS3D_LOADER_
+			os::Printer::log("Skip joint color");
+#endif
 			pPtr += 3*sizeof(float)*jointCount;
 
 			if (pPtr > buffer+fileSize)
@@ -599,6 +641,9 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 			subVersion = os::Byteswap::byteswap(subVersion);
 #endif
 			pPtr += sizeof(s32);
+#ifdef _IRR_DEBUG_MS3D_LOADER_
+			os::Printer::log("Skip model extra information");
+#endif
 			// now the model extra information would follow
 			// we also skip this for now
 		}
@@ -668,7 +713,7 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 					const s32 boneid = vertices[vertidx].BoneID;
 					if ((u32)boneid < AnimatedMesh->getAllJoints().size())
 					{
-						ISkinnedMesh::SWeight *w=AnimatedMesh->createWeight(AnimatedMesh->getAllJoints()[boneid]);
+						ISkinnedMesh::SWeight *w=AnimatedMesh->addWeight(AnimatedMesh->getAllJoints()[boneid]);
 						w->buffer_id = matidx;
 						w->strength = 1.0f;
 						w->vertex_id = index;
@@ -680,7 +725,7 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 					s32 boneid = vertices[vertidx].BoneID;
 					if (((u32)boneid < AnimatedMesh->getAllJoints().size()) && (vertexWeights[vertidx].weights[0] != 0))
 					{
-						ISkinnedMesh::SWeight *w=AnimatedMesh->createWeight(AnimatedMesh->getAllJoints()[boneid]);
+						ISkinnedMesh::SWeight *w=AnimatedMesh->addWeight(AnimatedMesh->getAllJoints()[boneid]);
 						w->buffer_id = matidx;
 						sum -= (w->strength = vertexWeights[vertidx].weights[0]/100.f);
 						w->vertex_id = index;
@@ -688,7 +733,7 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 					boneid = vertexWeights[vertidx].boneIds[0];
 					if (((u32)boneid < AnimatedMesh->getAllJoints().size()) && (vertexWeights[vertidx].weights[1] != 0))
 					{
-						ISkinnedMesh::SWeight *w=AnimatedMesh->createWeight(AnimatedMesh->getAllJoints()[boneid]);
+						ISkinnedMesh::SWeight *w=AnimatedMesh->addWeight(AnimatedMesh->getAllJoints()[boneid]);
 						w->buffer_id = matidx;
 						sum -= (w->strength = vertexWeights[vertidx].weights[1]/100.f);
 						w->vertex_id = index;
@@ -696,7 +741,7 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 					boneid = vertexWeights[vertidx].boneIds[1];
 					if (((u32)boneid < AnimatedMesh->getAllJoints().size()) && (vertexWeights[vertidx].weights[2] != 0))
 					{
-						ISkinnedMesh::SWeight *w=AnimatedMesh->createWeight(AnimatedMesh->getAllJoints()[boneid]);
+						ISkinnedMesh::SWeight *w=AnimatedMesh->addWeight(AnimatedMesh->getAllJoints()[boneid]);
 						w->buffer_id = matidx;
 						sum -= (w->strength = vertexWeights[vertidx].weights[2]/100.f);
 						w->vertex_id = index;
@@ -704,7 +749,7 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 					boneid = vertexWeights[vertidx].boneIds[2];
 					if (((u32)boneid < AnimatedMesh->getAllJoints().size()) && (sum > 0.f))
 					{
-						ISkinnedMesh::SWeight *w=AnimatedMesh->createWeight(AnimatedMesh->getAllJoints()[boneid]);
+						ISkinnedMesh::SWeight *w=AnimatedMesh->addWeight(AnimatedMesh->getAllJoints()[boneid]);
 						w->buffer_id = matidx;
 						w->strength = sum;
 						w->vertex_id = index;
@@ -713,7 +758,7 @@ bool CMS3DMeshFileLoader::load(io::IReadFile* file)
 					boneid = vertices[vertidx].BoneID;
 					if ((sum == 1.f) && ((u32)boneid < AnimatedMesh->getAllJoints().size()))
 					{
-						ISkinnedMesh::SWeight *w=AnimatedMesh->createWeight(AnimatedMesh->getAllJoints()[boneid]);
+						ISkinnedMesh::SWeight *w=AnimatedMesh->addWeight(AnimatedMesh->getAllJoints()[boneid]);
 						w->buffer_id = matidx;
 						w->strength = 1.f;
 						w->vertex_id = index;

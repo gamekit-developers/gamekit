@@ -51,6 +51,9 @@ public:
 	//! Removes all triangle selectors from the collection.
 	virtual void removeAllTriangleSelectors();
 
+	//! Return the scene node associated with a given triangle.
+	virtual const ISceneNode* getSceneNodeForTriangle(u32 triangleIndex) const;
+
 private:
 
 	core::array<ITriangleSelector*> TriangleSelectors;

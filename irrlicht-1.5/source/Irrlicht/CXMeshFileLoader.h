@@ -31,7 +31,7 @@ public:
 
 	//! returns true if the file maybe is able to be loaded by this class
 	//! based on the file extension (e.g. ".cob")
-	virtual bool isALoadableFileExtension(const c8* fileName) const;
+	virtual bool isALoadableFileExtension(const io::path& filename) const;
 
 	//! creates/loads an animated mesh from the file.
 	//! \return Pointer to the created mesh. Returns 0 if loading failed.
@@ -62,11 +62,12 @@ public:
 		u32 MaxSkinWeightsPerFace;
 		u32 BoneCount;
 
-		core::array< u32 > IndexCountPerFace; // default 3, but could be more
+		core::array<u16> IndexCountPerFace; // default 3, but could be more
 
 		core::array<scene::SSkinMeshBuffer*> Buffers;
 
 		core::array<video::S3DVertex> Vertices;
+		core::array<core::vector2df> TCoords2;
 
 		core::array<u32> Indices;
 
@@ -74,13 +75,13 @@ public:
 
 		core::array<video::SMaterial> Materials; // material array
 
+		core::array<u32> WeightJoint;
+		core::array<u32> WeightNum;
+
 		s32 AttachedJointID;
 
 		bool HasSkinning;
 		bool HasVertexColors;
-
-		core::array<u32> WeightJoint;
-		core::array<u32> WeightNum;
 	};
 
 private:
@@ -90,7 +91,6 @@ private:
 	bool readFileIntoMemory(io::IReadFile* file);
 
 	bool parseFile();
-
 
 	bool parseDataObject();
 
@@ -155,8 +155,6 @@ private:
 
 	void readUntilEndOfLine();
 
-	core::stringc stripPathFromString(core::stringc string, bool returnPath);
-
 	u16 readBinWord();
 	u32 readBinDWord();
 	u32 readInt();
@@ -167,35 +165,34 @@ private:
 	bool readRGB(video::SColor& color);
 	bool readRGBA(video::SColor& color);
 
-	ISceneManager*	SceneManager;
-	io::IFileSystem*	FileSystem;
+	ISceneManager* SceneManager;
+	io::IFileSystem* FileSystem;
 
 	core::array<CSkinnedMesh::SJoint*> *AllJoints;
 
 	CSkinnedMesh* AnimatedMesh;
 
-	u32 MajorVersion;
-	u32 MinorVersion;
-	bool BinaryFormat;
-	// counter for number arrays in binary format
-	u32 BinaryNumCount;
-
 	c8* Buffer;
 	const c8* P;
 	c8* End;
-	c8 FloatSize;
+	// counter for number arrays in binary format
+	u32 BinaryNumCount;
 	u32 Line;
-	core::stringc FilePath;
+	io::path FilePath;
 
 	CSkinnedMesh::SJoint *CurFrame;
 
 	core::array<SXMesh*> Meshes;
 
 	core::array<SXTemplateMaterial> TemplateMaterials;
+
+	u32 MajorVersion;
+	u32 MinorVersion;
+	bool BinaryFormat;
+	c8 FloatSize;
 };
 
 } // end namespace scene
 } // end namespace irr
 
 #endif
-

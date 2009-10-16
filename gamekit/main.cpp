@@ -531,7 +531,7 @@ public:
 						pi[1]=pi[2]=c;pi+=3;
 					}
 				}
-				irr::core::dimension2d<int> dim(256,256);
+				irr::core::dimension2d<unsigned int> dim(256,256);
 				irr::video::IImage* image = driver->createImageFromData(irr::video::ECF_R8G8B8,dim,imageData);
 				delete imageData;
 				notFoundTexture = driver->addTexture("notFound",image);
@@ -728,10 +728,11 @@ int main(int argc,char** argv)
 
 	MyEventReceiver receiver;
 
-	device = createDevice(driverType,		core::dimension2d<s32>(640, 480), 32, false,false,false,&receiver);
+	core::dimension2d<unsigned int>dim(640, 480);
+	device = createDevice(driverType,		dim, 32, false,false,false,&receiver);
 	//device = createDevice(driverType,		core::dimension2d<s32>(640, 480), 32, false,false,true,&receiver);
 	//device = createDevice(driverType,		core::dimension2d<s32>(640, 480), 32, true,false,true,&receiver);
-	device->setResizeAble(true);
+//	device->setResizeAble(true);
 
 
 

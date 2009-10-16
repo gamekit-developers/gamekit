@@ -52,6 +52,11 @@ public:
 	//! Returns amount of all available triangles in this selector
 	virtual s32 getTriangleCount() const;
 
+	//! Return the scene node associated with a given triangle.
+	/** ITerrainSceneNode is an ISceneNode, we just don't know it yet. */
+	virtual const ISceneNode* getSceneNodeForTriangle(u32 triangleIndex) const
+		{ return (ISceneNode*)SceneNode; }
+
 private:
 
 	friend class CTerrainSceneNode;

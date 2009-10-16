@@ -184,10 +184,10 @@ void CTRTextureDetailMap2::scanline_bilinear ()
 #endif
 #endif
 
-	dst = lockedSurface + ( line.y * RenderTarget->getDimension().Width ) + xStart;
+	dst = (tVideoSample*)RenderTarget->lock() + ( line.y * RenderTarget->getDimension().Width ) + xStart;
 
 #ifdef USE_ZBUFFER
-	z = lockedDepthBuffer + ( line.y * RenderTarget->getDimension().Width ) + xStart;
+	z = (fp24*) DepthBuffer->lock() + ( line.y * RenderTarget->getDimension().Width ) + xStart;
 #endif
 
 
@@ -216,16 +216,16 @@ void CTRTextureDetailMap2::scanline_bilinear ()
 #ifdef INVERSE_W
 			inversew = fix_inverse32 ( line.w[0] );
 
-			tx0 = f32_to_fixPoint ( line.t[0][0].x,inversew);
-			ty0 = f32_to_fixPoint ( line.t[0][0].y,inversew);
-			tx1 = f32_to_fixPoint ( line.t[1][0].x,inversew);
-			ty1 = f32_to_fixPoint ( line.t[1][0].y,inversew);
+			tx0 = tofix ( line.t[0][0].x,inversew);
+			ty0 = tofix ( line.t[0][0].y,inversew);
+			tx1 = tofix ( line.t[1][0].x,inversew);
+			ty1 = tofix ( line.t[1][0].y,inversew);
 
 #else
-			tx0 = f32_to_fixPoint ( line.t[0][0].x );
-			ty0 = f32_to_fixPoint ( line.t[0][0].y );
-			tx1 = f32_to_fixPoint ( line.t[1][0].x );
-			ty1 = f32_to_fixPoint ( line.t[1][0].y );
+			tx0 = tofix ( line.t[0][0].x );
+			ty0 = tofix ( line.t[0][0].y );
+			tx1 = tofix ( line.t[1][0].x );
+			ty1 = tofix ( line.t[1][0].y );
 #endif
 			getSample_texture ( r0, g0, b0, &IT[0], tx0,ty0 );
 			getSample_texture ( r1, g1, b1, &IT[1], tx1,ty1 );
@@ -275,14 +275,16 @@ void CTRTextureDetailMap2::drawTriangle ( const s4DVertex *a,const s4DVertex *b,
 {
 	// sort on height, y
 	if ( F32_A_GREATER_B ( a->Pos.y , b->Pos.y ) ) swapVertexPointer(&a, &b);
-	if ( F32_A_GREATER_B ( a->Pos.y , c->Pos.y ) ) swapVertexPointer(&a, &c);
 	if ( F32_A_GREATER_B ( b->Pos.y , c->Pos.y ) ) swapVertexPointer(&b, &c);
+	if ( F32_A_GREATER_B ( a->Pos.y , b->Pos.y ) ) swapVertexPointer(&a, &b);
 
-
+	const f32 ca = c->Pos.y - a->Pos.y;
+	const f32 ba = b->Pos.y - a->Pos.y;
+	const f32 cb = c->Pos.y - b->Pos.y;
 	// calculate delta y of the edges
-	scan.invDeltaY[0] = core::reciprocal ( c->Pos.y - a->Pos.y );
-	scan.invDeltaY[1] = core::reciprocal ( b->Pos.y - a->Pos.y );
-	scan.invDeltaY[2] = core::reciprocal ( c->Pos.y - b->Pos.y );
+	scan.invDeltaY[0] = core::reciprocal( ca );
+	scan.invDeltaY[1] = core::reciprocal( ba );
+	scan.invDeltaY[2] = core::reciprocal( cb );
 
 	if ( F32_LOWER_EQUAL_0 ( scan.invDeltaY[0] ) )
 		return;
@@ -291,11 +293,11 @@ void CTRTextureDetailMap2::drawTriangle ( const s4DVertex *a,const s4DVertex *b,
 	f32 temp[4];
 
 	temp[0] = a->Pos.x - c->Pos.x;
-	temp[1] = a->Pos.y - c->Pos.y;
+	temp[1] = -ca;
 	temp[2] = b->Pos.x - a->Pos.x;
-	temp[3] = b->Pos.y - a->Pos.y;
+	temp[3] = ba;
 
-	scan.left = ( temp[0] * temp[3] - temp[1] * temp[2] ) > (f32) 0.0 ? 0 : 1;
+	scan.left = ( temp[0] * temp[3] - temp[1] * temp[2] ) > 0.f ? 0 : 1;
 	scan.right = 1 - scan.left;
 
 	// calculate slopes for the major edge
@@ -333,20 +335,6 @@ void CTRTextureDetailMap2::drawTriangle ( const s4DVertex *a,const s4DVertex *b,
 
 #ifdef SUBTEXEL
 	f32 subPixel;
-#endif
-
-	lockedSurface = (tVideoSample*)RenderTarget->lock();
-
-#ifdef USE_ZBUFFER
-	lockedDepthBuffer = (fp24*) DepthBuffer->lock();
-#endif
-
-#ifdef IPOL_T0
-	IT[0].data = (tVideoSample*)IT[0].Texture->lock();
-#endif
-
-#ifdef IPOL_T1
-	IT[1].data = (tVideoSample*)IT[1].Texture->lock();
 #endif
 
 	// rasterize upper sub-triangle
@@ -643,20 +631,6 @@ void CTRTextureDetailMap2::drawTriangle ( const s4DVertex *a,const s4DVertex *b,
 
 		}
 	}
-
-	RenderTarget->unlock();
-
-#ifdef USE_ZBUFFER
-	DepthBuffer->unlock();
-#endif
-
-#ifdef IPOL_T0
-	IT[0].Texture->unlock();
-#endif
-
-#ifdef IPOL_T1
-	IT[1].Texture->unlock();
-#endif
 
 }
 

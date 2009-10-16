@@ -17,7 +17,7 @@ namespace scene
 //! constructor
 CLightSceneNode::CLightSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 id,
 		const core::vector3df& position, video::SColorf color, f32 radius)
-: ILightSceneNode(parent, mgr, id, position)
+: ILightSceneNode(parent, mgr, id, position), DriverLightIndex(-1), LightIsOn(true)
 {
 	#ifdef _DEBUG
 	setDebugName("CLightSceneNode");
@@ -28,7 +28,6 @@ CLightSceneNode::CLightSceneNode(ISceneNode* parent, ISceneManager* mgr, s32 id,
 	LightData.SpecularColor = color.getInterpolated(video::SColor(255,255,255,255),0.7f);
 
 	setRadius(radius);
-	doLightRecalc();
 }
 
 
@@ -72,7 +71,9 @@ void CLightSceneNode::render()
 				break;
 		}
 	}
-	driver->addDynamicLight(LightData);
+
+	DriverLightIndex = driver->addDynamicLight(LightData);
+	setVisible(LightIsOn);
 }
 
 
@@ -96,6 +97,19 @@ video::SLight& CLightSceneNode::getLightData()
 	return LightData;
 }
 
+void CLightSceneNode::setVisible(bool isVisible)
+{
+	ISceneNode::setVisible(isVisible);
+
+	if(DriverLightIndex < 0)
+		return;
+	video::IVideoDriver* driver = SceneManager->getVideoDriver();
+	if (!driver)
+		return;
+
+	LightIsOn = isVisible;
+	driver->turnLightOn((u32)DriverLightIndex, LightIsOn);
+}
 
 //! returns the axis aligned bounding box of this node
 const core::aabbox3d<f32>& CLightSceneNode::getBoundingBox() const
@@ -114,6 +128,7 @@ void CLightSceneNode::setRadius(f32 radius)
 {
 	LightData.Radius=radius;
 	LightData.Attenuation.set(0.f, 1.f/radius, 0.f);
+	doLightRecalc();
 }
 
 
@@ -207,17 +222,27 @@ void CLightSceneNode::deserializeAttributes(io::IAttributes* in, io::SAttributeR
 	LightData.AmbientColor =	in->getAttributeAsColorf("AmbientColor");
 	LightData.DiffuseColor =	in->getAttributeAsColorf("DiffuseColor");
 	LightData.SpecularColor =	in->getAttributeAsColorf("SpecularColor");
+
+	//TODO: clearify Radius and Linear Attenuation
+#if 0
+	setRadius ( in->getAttributeAsFloat("Radius") );
+#else
+	LightData.Radius = in->getAttributeAsFloat("Radius");
+#endif
+
 	if (in->existsAttribute("Attenuation")) // might not exist in older files
 		LightData.Attenuation =	in->getAttributeAsVector3d("Attenuation");
+
 	if (in->existsAttribute("OuterCone")) // might not exist in older files
 		LightData.OuterCone =	in->getAttributeAsFloat("OuterCone");
 	if (in->existsAttribute("InnerCone")) // might not exist in older files
 		LightData.InnerCone =	in->getAttributeAsFloat("InnerCone");
 	if (in->existsAttribute("Falloff")) // might not exist in older files
 		LightData.Falloff =	in->getAttributeAsFloat("Falloff");
-	LightData.Radius =		in->getAttributeAsFloat("Radius");
 	LightData.CastShadows =		in->getAttributeAsBool("CastShadows");
 	LightData.Type =		(video::E_LIGHT_TYPE)in->getAttributeAsEnumeration("LightType", video::LightTypeNames);
+
+	doLightRecalc ();
 
 	ILightSceneNode::deserializeAttributes(in, options);
 }

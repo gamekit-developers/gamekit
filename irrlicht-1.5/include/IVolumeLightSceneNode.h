@@ -13,6 +13,8 @@ namespace irr
 {
 namespace scene
 {
+	class IMeshBuffer;
+
 	class IVolumeLightSceneNode : public ISceneNode
 	{
 	public:
@@ -25,23 +27,34 @@ namespace scene
 			: ISceneNode(parent, mgr, id, position, rotation, scale) {};
 
 		//! Returns type of the scene node
-		virtual ESCENE_NODE_TYPE getType() const { return ESNT_CUBE; }
+		virtual ESCENE_NODE_TYPE getType() const { return ESNT_VOLUME_LIGHT; }
 
-		virtual void setSubDivideU (const u32 inU) =0;
-		virtual void setSubDivideV (const u32 inV) =0;
+		//! Sets the number of segments across the U axis
+		virtual void setSubDivideU(const u32 inU) =0;
+		
+		//! Sets the number of segments across the V axis
+		virtual void setSubDivideV(const u32 inV) =0;
 
-		virtual u32 getSubDivideU () const =0;
-		virtual u32 getSubDivideV () const =0;
+		//! Returns the number of segments across the U axis
+		virtual u32 getSubDivideU() const =0;
 
-		virtual void setFootColour(const video::SColor inColour) =0;
-		virtual void setTailColour(const video::SColor inColour) =0;
+		//! Returns the number of segments across the V axis
+		virtual u32 getSubDivideV() const =0;
 
-		virtual video::SColor getFootColour () const =0;
-		virtual video::SColor getTailColour () const =0;
+		//! Sets the color of the base of the light
+		virtual void setFootColor(const video::SColor inColour) =0;
+
+		//! Sets the color of the tip of the light
+		virtual void setTailColor(const video::SColor inColour) =0;
+
+		//! Returns the color of the base of the light
+		virtual video::SColor getFootColor() const =0;
+
+		//! Returns the color of the tip of the light
+		virtual video::SColor getTailColor() const =0;
 	};
 
 } // end namespace scene
 } // end namespace irr
 
 #endif
-

@@ -209,7 +209,7 @@ IAnimatedMesh* COCTLoader::createMesh(io::IReadFile* file)
 			tex.push_back(SceneManager->getVideoDriver()->getTexture(path));
 		else
 			// try to read in the relative path of the OCT file
-			tex.push_back(SceneManager->getVideoDriver()->getTexture( (relpath + path).c_str() ));
+			tex.push_back(SceneManager->getVideoDriver()->getTexture( (relpath + path) ));
 	}
 
 	// prepare lightmaps
@@ -219,7 +219,7 @@ IAnimatedMesh* COCTLoader::createMesh(io::IReadFile* file)
 
 	const u32 lightmapWidth = 128;
 	const u32 lightmapHeight = 128;
-	const core::dimension2d<s32> lmapsize(lightmapWidth, lightmapHeight);
+	const core::dimension2d<u32> lmapsize(lightmapWidth, lightmapHeight);
 
 	bool oldMipMapState = SceneManager->getVideoDriver()->getTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS);
 	SceneManager->getVideoDriver()->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, false);
@@ -323,9 +323,9 @@ IAnimatedMesh* COCTLoader::createMesh(io::IReadFile* file)
 
 //! returns true if the file maybe is able to be loaded by this class
 //! based on the file extension (e.g. ".bsp")
-bool COCTLoader::isALoadableFileExtension(const c8* filename) const
+bool COCTLoader::isALoadableFileExtension(const io::path& filename) const
 {
-	return strstr(filename, ".oct")!=0;
+	return core::hasFileExtension ( filename, "oct" );
 }
 
 

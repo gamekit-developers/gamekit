@@ -28,9 +28,9 @@ CImageWriterPSD::CImageWriterPSD()
 #endif
 }
 
-bool CImageWriterPSD::isAWriteableFileExtension(const c8* fileName) const
+bool CImageWriterPSD::isAWriteableFileExtension(const io::path& filename) const
 {
-	return strstr(fileName, ".psd") != 0;
+	return core::hasFileExtension ( filename, "psd" );
 }
 
 bool CImageWriterPSD::writeImage(io::IWriteFile *file, IImage *image,u32 param) const

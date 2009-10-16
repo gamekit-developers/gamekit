@@ -6,6 +6,7 @@
 #define __I_GUI_FILE_OPEN_DIALOG_H_INCLUDED__
 
 #include "IGUIElement.h"
+#include "path.h"
 
 namespace irr
 {
@@ -23,6 +24,9 @@ namespace gui
 
 		//! Returns the filename of the selected file. Returns NULL, if no file was selected.
 		virtual const wchar_t* getFileName() const = 0;
+
+		//! Returns the directory of the selected file. Returns NULL, if no directory was selected.
+		virtual const io::path& getDirectoryName() = 0;
 	};
 
 

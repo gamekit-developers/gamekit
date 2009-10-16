@@ -76,7 +76,7 @@ void CTerrainTriangleSelector::setTriangleData(ITerrainSceneNode* node, s32 LOD)
 
 //! Gets all triangles.
 void CTerrainTriangleSelector::getTriangles ( core::triangle3df* triangles, s32 arraySize,
-	s32& outTriangleCount, const core::matrix4* transform ) const
+	s32& outTriangleCount, const core::matrix4* transform) const
 {
 	s32 count = TrianglePatches.TotalTriangles;
 

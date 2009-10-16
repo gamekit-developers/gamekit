@@ -15,17 +15,17 @@ namespace irr
 namespace io
 {
 
-	/*! this is a read file, which is limited to some boundaries, 
+	/*! this is a read file, which is limited to some boundaries,
 		so that it may only start from a certain file position
 		and may only read until a certain file position.
 		This can be useful, for example for reading uncompressed files
-		in an archive (zip).
+		in an archive (zip, tar).
 	!*/
 	class CLimitReadFile : public IReadFile
 	{
 	public:
 
-		CLimitReadFile(IReadFile* alreadyOpenedFile, long areaSize, const c8* name);
+		CLimitReadFile(IReadFile* alreadyOpenedFile, long pos, long areaSize, const io::path& name);
 
 		virtual ~CLimitReadFile();
 
@@ -44,16 +44,14 @@ namespace io
 		virtual long getPos() const;
 
 		//! returns name of file
-		virtual const c8* getFileName() const;
+		virtual const io::path& getFileName() const;
 
 	private:
 
-		void init();
-
-		core::stringc Filename;
-		long AreaSize;
+		io::path Filename;
 		long AreaStart;
 		long AreaEnd;
+		long Pos;
 		IReadFile* File;
 	};
 

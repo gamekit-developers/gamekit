@@ -28,7 +28,7 @@ namespace irr
 
 	If you want to create a texture, you may want to call an imaginable method
 	IDriver::createTexture. You call
-	ITexture* texture = driver->createTexture(dimension2d<s32>(128, 128));
+	ITexture* texture = driver->createTexture(dimension2d<u32>(128, 128));
 	If you no longer need the texture, call texture->drop().
 
 	If you want to load a texture, you may want to call imaginable method
@@ -44,7 +44,7 @@ namespace irr
 
 		//! Constructor.
 		IReferenceCounted()
-			: ReferenceCounter(1), DebugName(0)
+			: DebugName(0), ReferenceCounter(1)
 		{
 		}
 
@@ -75,7 +75,7 @@ namespace irr
 
 		If you want to create a texture, you may want to call an
 		imaginable method IDriver::createTexture. You call
-		ITexture* texture = driver->createTexture(dimension2d<s32>(128, 128));
+		ITexture* texture = driver->createTexture(dimension2d<u32>(128, 128));
 		If you no longer need the texture, call texture->drop().
 		If you want to load a texture, you may want to call imaginable
 		method IDriver::loadTexture. You do this like
@@ -104,7 +104,7 @@ namespace irr
 
 		If you want to create a texture, you may want to call an
 		imaginable method IDriver::createTexture. You call
-		ITexture* texture = driver->createTexture(dimension2d<s32>(128, 128));
+		ITexture* texture = driver->createTexture(dimension2d<u32>(128, 128));
 		If you no longer need the texture, call texture->drop().
 		If you want to load a texture, you may want to call imaginable
 		method IDriver::loadTexture. You do this like
@@ -156,10 +156,12 @@ namespace irr
 		}
 
 	private:
-		//! The reference counter. Mutable to do reference counting on const objects.
-		mutable s32 ReferenceCounter;
+
 		//! The debug name.
 		const c8* DebugName;
+
+		//! The reference counter. Mutable to do reference counting on const objects.
+		mutable s32 ReferenceCounter;
 	};
 
 } // end namespace irr

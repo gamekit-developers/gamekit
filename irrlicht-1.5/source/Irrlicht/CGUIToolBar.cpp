@@ -124,7 +124,7 @@ IGUIButton* CGUIToolBar::addButton(s32 id, const wchar_t* text,const wchar_t* to
 	core::rect<s32> rectangle(ButtonX,2,0,0);
 	if ( img )
 	{
-		const core::dimension2di &size = img->getOriginalSize();
+		const core::dimension2du &size = img->getOriginalSize();
 		rectangle.LowerRightCorner.X = rectangle.UpperLeftCorner.X + size.Width + 8;
 		rectangle.LowerRightCorner.Y = rectangle.UpperLeftCorner.Y + size.Height + 6;
 	}

@@ -123,9 +123,9 @@ void CLMTSMeshFileLoader::cleanup()
 }
 
 
-bool CLMTSMeshFileLoader::isALoadableFileExtension(const c8* filename) const
+bool CLMTSMeshFileLoader::isALoadableFileExtension(const io::path& filename) const
 {
-	return strstr(filename, ".lmts") != 0;
+	return core::hasFileExtension ( filename, "lmts" );
 }
 
 
@@ -178,7 +178,7 @@ IAnimatedMesh* CLMTSMeshFileLoader::createMesh(io::IReadFile* file)
 		for (i=0; i<Header.TextureCount; ++i)
 			Textures[i].Flags = os::Byteswap::byteswap(Textures[i].Flags);
 	}
-	
+
 	// SUBSETS
 
 	file->read(&id, sizeof(u32));

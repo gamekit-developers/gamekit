@@ -14,7 +14,7 @@ namespace video
 {
 
 //! constructor
-CSoftwareTexture::CSoftwareTexture(IImage* image, const char* name, bool renderTarget)
+CSoftwareTexture::CSoftwareTexture(IImage* image, const io::path& name, bool renderTarget)
 : ITexture(name), Texture(0), IsRenderTarget(renderTarget)
 {
 	#ifdef _DEBUG
@@ -23,11 +23,8 @@ CSoftwareTexture::CSoftwareTexture(IImage* image, const char* name, bool renderT
 
 	if (image)
 	{
-		core::dimension2d<s32> optSize;
 		OrigSize = image->getDimension();
-
-		optSize.Width = getTextureSizeFromSurfaceSize(OrigSize.Width);
-		optSize.Height = getTextureSizeFromSurfaceSize(OrigSize.Height);
+		core::dimension2d<u32> optSize=OrigSize.getOptimalSize();
 
 		Image = new CImage(ECF_A1R5G5B5, image);
 
@@ -80,14 +77,14 @@ void CSoftwareTexture::unlock()
 
 
 //! Returns original size of the texture.
-const core::dimension2d<s32>& CSoftwareTexture::getOriginalSize() const
+const core::dimension2d<u32>& CSoftwareTexture::getOriginalSize() const
 {
 	return OrigSize;
 }
 
 
 //! Returns (=size) of the texture.
-const core::dimension2d<s32>& CSoftwareTexture::getSize() const
+const core::dimension2d<u32>& CSoftwareTexture::getSize() const
 {
 	return Image->getDimension();
 }
@@ -105,18 +102,6 @@ CImage* CSoftwareTexture::getImage()
 CImage* CSoftwareTexture::getTexture()
 {
 	return Texture;
-}
-
-
-
-//! returns the size of a texture which would be the optimize size for rendering it
-inline s32 CSoftwareTexture::getTextureSizeFromSurfaceSize(s32 size) const
-{
-	s32 ts = 0x01;
-	while(ts < size)
-		ts <<= 1;
-
-	return ts;
 }
 
 

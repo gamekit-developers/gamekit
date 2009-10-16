@@ -554,8 +554,8 @@ void CBurningShader_Raster_Reference::pShader_EMT_LIGHTMAP_M4 ()
 
 	f32 inversew = fix_inverse32 ( line.w[0] );
 
-	getSample_texture ( r0, g0, b0, &IT[0], f32_to_fixPoint ( line.t[0][0].x,inversew), f32_to_fixPoint ( line.t[0][0].y,inversew) );
-	getSample_texture ( r1, g1, b1, &IT[1], f32_to_fixPoint ( line.t[1][0].x,inversew), f32_to_fixPoint ( line.t[1][0].y,inversew) );
+	getSample_texture ( r0, g0, b0, &IT[0], tofix ( line.t[0][0].x,inversew), tofix ( line.t[0][0].y,inversew) );
+	getSample_texture ( r1, g1, b1, &IT[1], tofix ( line.t[1][0].x,inversew), tofix ( line.t[1][0].y,inversew) );
 
 
 	pShader.dst[pShader.i] = fix_to_color ( clampfix_maxcolor ( imulFix_tex2 ( r0, r1 ) ),
@@ -574,8 +574,8 @@ void CBurningShader_Raster_Reference::pShader_1 ()
 
 	const f32 inversew = fix_inverse32 ( line.w[0] );
 
-	tx0 = f32_to_fixPoint ( line.t[0][0].x, inversew );
-	ty0 = f32_to_fixPoint ( line.t[0][0].y, inversew );
+	tx0 = tofix ( line.t[0][0].x, inversew );
+	ty0 = tofix ( line.t[0][0].y, inversew );
 
 	getSample_texture ( r0, g0, b0, &IT[0], tx0, ty0 );
 	pShader.dst[pShader.i] = fix_to_color ( r0, g0, b0 );
@@ -622,16 +622,40 @@ void CBurningShader_Raster_Reference::setMaterial ( const SBurningShaderMaterial
 	enable = F32_LOWER_EQUAL_0 ( m.Shininess );
 	ShaderParam.SetRenderState( BD3DRS_SPECULARENABLE, enable);
 	ShaderParam.SetRenderState( BD3DRS_NORMALIZENORMALS, enable);
-	ShaderParam.SetRenderState( BD3DRS_SPECULARMATERIALSOURCE, BD3DMCS_MATERIAL);
+	ShaderParam.SetRenderState( BD3DRS_SPECULARMATERIALSOURCE, (m.ColorMaterial==ECM_SPECULAR)?BD3DMCS_COLOR1:BD3DMCS_MATERIAL);
 
 	// depth buffer enable and compare
-	ShaderParam.SetRenderState( BD3DRS_ZENABLE, material.org.ZBuffer ? BD3DZB_USEW : BD3DZB_FALSE);
-	ShaderParam.SetRenderState( BD3DRS_ZFUNC, material.org.ZBuffer == 2 ? BD3DCMP_EQUAL : BD3DCMP_LESSEQUAL );
+	ShaderParam.SetRenderState( BD3DRS_ZENABLE, (material.org.ZBuffer==video::ECFN_NEVER) ? BD3DZB_FALSE : BD3DZB_USEW);
+	switch (material.org.ZBuffer)
+	{
+	case ECFN_NEVER:
+		ShaderParam.SetRenderState(BD3DRS_ZFUNC, BD3DCMP_NEVER);
+		break;
+	case ECFN_LESSEQUAL:
+		ShaderParam.SetRenderState(BD3DRS_ZFUNC, BD3DCMP_LESSEQUAL);
+		break;
+	case ECFN_EQUAL:
+		ShaderParam.SetRenderState(BD3DRS_ZFUNC, BD3DCMP_EQUAL);
+		break;
+	case ECFN_LESS:
+		ShaderParam.SetRenderState(BD3DRS_ZFUNC, BD3DCMP_LESSEQUAL);
+		break;
+	case ECFN_NOTEQUAL:
+		ShaderParam.SetRenderState(BD3DRS_ZFUNC, BD3DCMP_NOTEQUAL);
+		break;
+	case ECFN_GREATEREQUAL:
+		ShaderParam.SetRenderState(BD3DRS_ZFUNC, BD3DCMP_GREATEREQUAL);
+		break;
+	case ECFN_GREATER:
+		ShaderParam.SetRenderState(BD3DRS_ZFUNC, BD3DCMP_GREATER);
+		break;
+	case ECFN_ALWAYS:
+		ShaderParam.SetRenderState(BD3DRS_ZFUNC, BD3DCMP_ALWAYS);
+		break;
+	}
 
 	// depth buffer write
 	ShaderParam.SetRenderState( BD3DRS_ZWRITEENABLE, m.ZWriteEnable );
-
-
 }
 
 /*!
@@ -832,8 +856,8 @@ void CBurningShader_Raster_Reference::drawTriangle ( const s4DVertex *a,const s4
 
 	// sort on height, y
 	if ( F32_A_GREATER_B ( a->Pos.y , b->Pos.y ) ) swapVertexPointer(&a, &b);
-	if ( F32_A_GREATER_B ( a->Pos.y , c->Pos.y ) ) swapVertexPointer(&a, &c);
 	if ( F32_A_GREATER_B ( b->Pos.y , c->Pos.y ) ) swapVertexPointer(&b, &c);
+	if ( F32_A_GREATER_B ( a->Pos.y , b->Pos.y ) ) swapVertexPointer(&a, &b);
 
 
 	// calculate delta y of the edges

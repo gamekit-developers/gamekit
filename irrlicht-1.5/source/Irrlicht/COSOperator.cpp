@@ -3,14 +3,16 @@
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
 #include "COSOperator.h"
-#include "IrrCompileConfig.h"
 
 #ifdef _IRR_WINDOWS_API_
+#ifdef _IRR_XBOX_PLATFORM_
+#else
 #include <windows.h>
+#endif
 #else
 #include <string.h>
 #include <unistd.h>
-#ifdef _IRR_USE_OSX_DEVICE_
+#ifdef _IRR_COMPILE_WITH_OSX_DEVICE_
 #include "MacOSX/OSXClipboard.h"
 #endif
 #ifdef _IRR_OSX_PLATFORM_
@@ -19,9 +21,20 @@
 #endif
 #endif
 
+#if defined(_IRR_COMPILE_WITH_X11_DEVICE_)
+#include "CIrrDeviceLinux.h"
+#endif
+
 namespace irr
 {
 
+#if defined(_IRR_COMPILE_WITH_X11_DEVICE_)
+// constructor  linux
+COSOperator::COSOperator(const c8* osversion, CIrrDeviceLinux* device)
+: IrrDeviceLinux(device)
+{
+}
+#endif
 
 // constructor
 COSOperator::COSOperator(const c8* osVersion) : OperatingSystem(osVersion)
@@ -46,7 +59,8 @@ void COSOperator::copyToClipboard(const c8* text) const
 		return;
 
 // Windows version
-#if defined(_IRR_WINDOWS_API_)
+#if defined(_IRR_XBOX_PLATFORM_)
+#elif defined(_IRR_WINDOWS_API_)
 	if (!OpenClipboard(NULL) || text == 0)
 		return;
 
@@ -65,24 +79,29 @@ void COSOperator::copyToClipboard(const c8* text) const
 	CloseClipboard();
 
 // MacOSX version
-#elif defined(_IRR_USE_OSX_DEVICE_)
+#elif defined(_IRR_COMPILE_WITH_OSX_DEVICE_)
 
 	OSXCopyToClipboard(text);
+
+#elif defined(_IRR_COMPILE_WITH_X11_DEVICE_)
+    if ( IrrDeviceLinux )
+        IrrDeviceLinux->copyToClipboard(text);
 #else
 
-// todo: Linux version
 #endif
 }
 
 
 //! gets text from the clipboard
 //! \return Returns 0 if no string is in there.
-c8* COSOperator::getTextFromClipboard() const
+const c8* COSOperator::getTextFromClipboard() const
 {
-#if defined(_IRR_WINDOWS_API_)
+#if defined(_IRR_XBOX_PLATFORM_)
+		return 0;
+#elif defined(_IRR_WINDOWS_API_)
 	if (!OpenClipboard(NULL))
 		return 0;
-	
+
 	char * buffer = 0;
 
 	HANDLE hData = GetClipboardData( CF_TEXT );
@@ -91,11 +110,15 @@ c8* COSOperator::getTextFromClipboard() const
 	CloseClipboard();
 	return buffer;
 
-#elif defined(_IRR_USE_OSX_DEVICE_)
+#elif defined(_IRR_COMPILE_WITH_OSX_DEVICE_)
 	return (OSXCopyFromClipboard());
-#else
 
-// todo: Linux version
+#elif defined(_IRR_COMPILE_WITH_X11_DEVICE_)
+    if ( IrrDeviceLinux )
+        return IrrDeviceLinux->getTextFromClipboard();
+    return 0;
+
+#else
 
 	return 0;
 #endif
@@ -104,9 +127,9 @@ c8* COSOperator::getTextFromClipboard() const
 
 bool COSOperator::getProcessorSpeedMHz(u32* MHz) const
 {
-#if defined(_IRR_WINDOWS_API_) && !defined(_WIN32_WCE )
+#if defined(_IRR_WINDOWS_API_) && !defined(_WIN32_WCE ) && !defined (_IRR_XBOX_PLATFORM_)
 	LONG Error;
-	
+
 	HKEY Key;
 	Error = RegOpenKeyEx(HKEY_LOCAL_MACHINE,
 			"HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0",
@@ -146,7 +169,7 @@ bool COSOperator::getProcessorSpeedMHz(u32* MHz) const
 
 bool COSOperator::getSystemMemory(u32* Total, u32* Avail) const
 {
-#if defined(_IRR_WINDOWS_API_)
+#if defined(_IRR_WINDOWS_API_) && !defined (_IRR_XBOX_PLATFORM_)
 	MEMORYSTATUS MemoryStatus;
 	MemoryStatus.dwLength = sizeof(MEMORYSTATUS);
 
@@ -157,7 +180,7 @@ bool COSOperator::getSystemMemory(u32* Total, u32* Avail) const
 		*Total = (u32)(MemoryStatus.dwTotalPhys>>10);
 	if (Avail)
 		*Avail = (u32)(MemoryStatus.dwAvailPhys>>10);
-	
+
 	_IRR_IMPLEMENT_MANAGED_MARSHALLING_BUGFIX;
 	return true;
 
@@ -166,7 +189,7 @@ bool COSOperator::getSystemMemory(u32* Total, u32* Avail) const
         long ps = sysconf(_SC_PAGESIZE);
         long pp = sysconf(_SC_PHYS_PAGES);
         long ap = sysconf(_SC_AVPHYS_PAGES);
- 
+
 	if ((ps==-1)||(pp==-1)||(ap==-1))
 		return false;
 
@@ -180,7 +203,7 @@ bool COSOperator::getSystemMemory(u32* Total, u32* Avail) const
 	return false;
 #endif
 #else
-	// TODO: implement for OSX 
+	// TODO: implement for OSX
 	return false;
 #endif
 }

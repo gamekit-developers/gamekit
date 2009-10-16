@@ -7,50 +7,73 @@
 
 //! Irrlicht SDK Version
 #define IRRLICHT_VERSION_MAJOR 1
-#define IRRLICHT_VERSION_MINOR 5
-#define IRRLICHT_VERSION_REVISION 1
+#define IRRLICHT_VERSION_MINOR 6
+#define IRRLICHT_VERSION_REVISION 0
 // This flag will be defined only in SVN, the official release code will have
 // it undefined
 //#define IRRLICHT_VERSION_SVN
-#define IRRLICHT_SDK_VERSION "1.5.1"
+#define IRRLICHT_SDK_VERSION "1.6"
 
 #include <stdio.h> // TODO: Although included elsewhere this is required at least for mingw
 
 //! The defines for different operating system are:
 //! _IRR_XBOX_PLATFORM_ for XBox
 //! _IRR_WINDOWS_ for all irrlicht supported Windows versions
+//! _IRR_WINDOWS_CE_PLATFORM_ for Windows CE
 //! _IRR_WINDOWS_API_ for Windows or XBox
 //! _IRR_LINUX_PLATFORM_ for Linux (it is defined here if no other os is defined)
 //! _IRR_SOLARIS_PLATFORM_ for Solaris
 //! _IRR_OSX_PLATFORM_ for Apple systems running OSX
 //! _IRR_POSIX_API_ for Posix compatible systems
-//! _IRR_USE_SDL_DEVICE_ for platform independent SDL framework
-//! _IRR_USE_WINDOWS_DEVICE_ for Windows API based device
-//! _IRR_USE_WINDOWS_CE_DEVICE_ for Windows CE API based device
-//! _IRR_USE_LINUX_DEVICE_ for X11 based device
-//! _IRR_USE_OSX_DEVICE_ for Cocoa native windowing on OSX
-//! Note: PLATFORM defines the OS specific layer, API can groups several platforms
-//! DEVICE is the windowing system used, several PLATFORMs support more than one DEVICE
-//! Moreover, the DEVICE defined here is not directly related to the Irrlicht devices created in the app (but may depend on each other).
+//! Note: PLATFORM defines the OS specific layer, API can group several platforms
 
-//#define _IRR_USE_SDL_DEVICE_ 1
+//! DEVICE is the windowing system used, several PLATFORMs support more than one DEVICE
+//! Irrlicht can be compiled with more than one device
+//! _IRR_COMPILE_WITH_WINDOWS_DEVICE_ for Windows API based device
+//! _IRR_COMPILE_WITH_WINDOWS_CE_DEVICE_ for Windows CE API based device
+//! _IRR_COMPILE_WITH_OSX_DEVICE_ for Cocoa native windowing on OSX
+//! _IRR_COMPILE_WITH_X11_DEVICE_ for Linux X11 based device
+//! _IRR_COMPILE_WITH_SDL_DEVICE_ for platform independent SDL framework
+//! _IRR_COMPILE_WITH_CONSOLE_DEVICE_ for no windowing system, used as a fallback
+
+
+//! Uncomment this line to compile with the SDL device
+//#define _IRR_COMPILE_WITH_SDL_DEVICE_
+
+//! Comment this line to compile without the fallback console device.
+#define _IRR_COMPILE_WITH_CONSOLE_DEVICE_
 
 //! WIN32 for Windows32
 //! WIN64 for Windows64
 // The windows platform and API support SDL and WINDOW device
-#if defined(_WIN32) || defined(_WIN64) || defined(WIN32) || defined(WIN64) || defined(_WIN32_WCE)
+#if defined(_WIN32) || defined(_WIN64) || defined(WIN32) || defined(WIN64)
 #define _IRR_WINDOWS_
 #define _IRR_WINDOWS_API_
-#ifndef _IRR_USE_SDL_DEVICE_
-#define _IRR_USE_WINDOWS_DEVICE_
+#define _IRR_COMPILE_WITH_WINDOWS_DEVICE_
 #endif
+
+//! WINCE is a very restricted environment for mobile devices
+#if defined(_WIN32_WCE)
+#define _IRR_WINDOWS_
+#define _IRR_WINDOWS_API_
+#define _IRR_WINDOWS_CE_PLATFORM_
+#define _IRR_COMPILE_WITH_WINDOWS_CE_DEVICE_
+#endif
+
+#if defined(_MSC_VER) && (_MSC_VER < 1300)
+#  error "Only Microsoft Visual Studio 7.0 and later are supported."
 #endif
 
 // XBox only suppots the native Window stuff
 #if defined(_XBOX)
-#define _IRR_XBOX_PLATFORM_
-#define _IRR_WINDOWS_API_
-#define _IRR_USE_WINDOWS_DEVICE_
+	#undef _IRR_WINDOWS_
+	#define _IRR_XBOX_PLATFORM_
+	#define _IRR_WINDOWS_API_
+	//#define _IRR_COMPILE_WITH_WINDOWS_DEVICE_
+	#undef _IRR_COMPILE_WITH_WINDOWS_DEVICE_
+	//#define _IRR_COMPILE_WITH_SDL_DEVICE_
+
+	#include <xtl.h>
 #endif
 
 #if defined(__APPLE__) || defined(MACOSX)
@@ -58,9 +81,7 @@
 #define MACOSX // legacy support
 #endif
 #define _IRR_OSX_PLATFORM_
-#if !defined(_IRR_USE_LINUX_DEVICE_) // for X11 windowing declare this
-#define _IRR_USE_OSX_DEVICE_
-#endif
+#define _IRR_COMPILE_WITH_OSX_DEVICE_
 #endif
 
 #if !defined(_IRR_WINDOWS_API_) && !defined(_IRR_OSX_PLATFORM_)
@@ -71,14 +92,14 @@
 #define _IRR_LINUX_PLATFORM_
 #endif
 #define _IRR_POSIX_API_
-
-#ifndef _IRR_USE_SDL_DEVICE_
-#define _IRR_USE_LINUX_DEVICE_
-#endif
+#define _IRR_COMPILE_WITH_X11_DEVICE_
 #endif
 
 //! Define _IRR_COMPILE_WITH_JOYSTICK_SUPPORT_ if you want joystick events.
 //#define _IRR_COMPILE_WITH_JOYSTICK_EVENTS_
+
+//! Maximum number of texture an SMaterial can have, up to 8 are supported by Irrlicht.
+#define _IRR_MATERIAL_MAX_TEXTURES_ 4
 
 //! Define _IRR_COMPILE_WITH_DIRECT3D_8_ and _IRR_COMPILE_WITH_DIRECT3D_9_ to
 //! compile the Irrlicht engine with Direct3D8 and/or DIRECT3D9.
@@ -90,14 +111,14 @@ _IRR_COMPILE_WITH_DX9_DEV_PACK_. So you simply need to add something like this
 to the compiler settings: -DIRR_COMPILE_WITH_DX9_DEV_PACK
 and this to the linker settings: -ld3dx9 -ld3dx8
 
-Microsoft have chosen to remove D3D8 headers from their recent DXSDKs, and 
-so D3D8 support is now disabled by default.  If you really want to build 
-with D3D8 support, then you will have to source a DXSDK with the appropriate 
+Microsoft have chosen to remove D3D8 headers from their recent DXSDKs, and
+so D3D8 support is now disabled by default.  If you really want to build
+with D3D8 support, then you will have to source a DXSDK with the appropriate
 headers, e.g. Summer 2004.  This is a Microsoft issue, not an Irrlicht one.
 */
 #if defined(_IRR_WINDOWS_API_) && (!defined(__GNUC__) || defined(IRR_COMPILE_WITH_DX9_DEV_PACK))
 
-//! Only define _IRR_COMPILE_WITH_DIRECT3D_8_ if you have an appropriate DXSDK, e.g. Summer 2004 
+//! Only define _IRR_COMPILE_WITH_DIRECT3D_8_ if you have an appropriate DXSDK, e.g. Summer 2004
 //#define _IRR_COMPILE_WITH_DIRECT3D_8_
 //#define _IRR_COMPILE_WITH_DIRECT3D_9_
 
@@ -133,7 +154,7 @@ define out. */
 //! On some Linux systems the XF86 vidmode extension or X11 RandR are missing. Use these flags
 //! to remove the dependencies such that Irrlicht will compile on those systems, too.
 #if defined(_IRR_LINUX_PLATFORM_) && defined(_IRR_COMPILE_WITH_X11_)
-//#define _IRR_LINUX_X11_VIDMODE_
+#define _IRR_LINUX_X11_VIDMODE_
 //#define _IRR_LINUX_X11_RANDR_
 #endif
 
@@ -141,6 +162,13 @@ define out. */
 /** Disable this if you are using an external library to draw the GUI. If you disable this then
 you will not be able to use anything provided by the GUI Environment, including loading fonts. */
 #define _IRR_COMPILE_WITH_GUI_
+
+
+//! Define _IRR_WCHAR_FILESYSTEM to enable unicode filesystem support for the engine.
+/** This enables the engine to read/write from unicode filesystem. If you
+disable this feature, the engine behave as before (ansi). This is currently only supported
+for Windows based systems. */
+//#define _IRR_WCHAR_FILESYSTEM
 
 //! Define _IRR_COMPILE_WITH_ZLIB_ to enable compiling the engine using zlib.
 /** This enables the engine to read from compressed .zip archives. If you
@@ -188,6 +216,13 @@ watch registers, variables etc. This works with ASM, HLSL, and both with pixel a
 Note that the engine will run in D3D REF for this, which is a lot slower than HAL. */
 #define _IRR_D3D_NO_SHADER_DEBUGGING
 
+//! Define _IRR_D3D_USE_LEGACY_HLSL_COMPILER to enable the old HLSL compiler in recent DX SDKs
+/** This enables support for ps_1_x shaders for recent DX SDKs. Otherwise, support
+for this shader model is not available anymore in SDKs after Oct2006. You need to
+distribute the OCT2006_d3dx9_31_x86.cab or OCT2006_d3dx9_31_x64.cab though, in order
+to provide the user with the proper DLL. That's why it's disabled by default. */
+//#define _IRR_D3D_USE_LEGACY_HLSL_COMPILER
+
 //! Define _IRR_USE_NVIDIA_PERFHUD_ to opt-in to using the nVidia PerHUD tool
 /** Enable, by opting-in, to use the nVidia PerfHUD performance analysis driver
 tool <http://developer.nvidia.com/object/nvperfhud_home.html>. */
@@ -214,7 +249,10 @@ tool <http://developer.nvidia.com/object/nvperfhud_home.html>. */
 #define BURNINGVIDEO_RENDERER_BEAUTIFUL
 //#define BURNINGVIDEO_RENDERER_FAST
 //#define BURNINGVIDEO_RENDERER_ULTRA_FAST
+//#define BURNINGVIDEO_RENDERER_CE
 
+//! Uncomment the following line if you want to ignore the deprecated warnings
+//#define IGNORE_DEPRECATED_WARNING
 
 //! Define _IRR_COMPILE_WITH_SKINNED_MESH_SUPPORT_ if you want to use bone based
 /** animated meshes. If you compile without this, you will be unable to load
@@ -224,7 +262,7 @@ B3D, MS3D or X meshes */
 #ifdef _IRR_COMPILE_WITH_SKINNED_MESH_SUPPORT_
 //! Define _IRR_COMPILE_WITH_B3D_LOADER_ if you want to use Blitz3D files
 #define _IRR_COMPILE_WITH_B3D_LOADER_
-//! Define _IRR_COMPILE_WITH_B3D_LOADER_ if you want to Milkshape files
+//! Define _IRR_COMPILE_WITH_MS3D_LOADER_ if you want to Milkshape files
 #define _IRR_COMPILE_WITH_MS3D_LOADER_
 //! Define _IRR_COMPILE_WITH_X_LOADER_ if you want to use Microsoft X files
 #define _IRR_COMPILE_WITH_X_LOADER_
@@ -260,10 +298,12 @@ B3D, MS3D or X meshes */
 #define _IRR_COMPILE_WITH_OGRE_LOADER_
 //! Define _IRR_COMPILE_WITH_LWO_LOADER_ if you want to load Lightwave3D files
 #define _IRR_COMPILE_WITH_LWO_LOADER_
-//! Define _IRR_COMPILE_WITH_STL_LOADER_ if you want to load .stl files
+//! Define _IRR_COMPILE_WITH_STL_LOADER_ if you want to load stereolithography files
 #define _IRR_COMPILE_WITH_STL_LOADER_
+//! Define _IRR_COMPILE_WITH_PLY_LOADER_ if you want to load Polygon (Stanford Triangle) files
+#define _IRR_COMPILE_WITH_PLY_LOADER_
 
-//! Define _IRR_COMPILE_WITH_IRR_WRITER_ if you want to write static .irr files
+//! Define _IRR_COMPILE_WITH_IRR_WRITER_ if you want to write static .irrMesh files
 #define _IRR_COMPILE_WITH_IRR_WRITER_
 //! Define _IRR_COMPILE_WITH_COLLADA_WRITER_ if you want to write Collada files
 #define _IRR_COMPILE_WITH_COLLADA_WRITER_
@@ -271,6 +311,8 @@ B3D, MS3D or X meshes */
 #define _IRR_COMPILE_WITH_STL_WRITER_
 //! Define _IRR_COMPILE_WITH_OBJ_WRITER_ if you want to write .obj files
 #define _IRR_COMPILE_WITH_OBJ_WRITER_
+//! Define _IRR_COMPILE_WITH_PLY_WRITER_ if you want to write .ply files
+#define _IRR_COMPILE_WITH_PLY_WRITER_
 
 //! Define _IRR_COMPILE_WITH_BMP_LOADER_ if you want to load .bmp files
 //! Disabling this loader will also disable the built-in font
@@ -289,6 +331,8 @@ B3D, MS3D or X meshes */
 #define _IRR_COMPILE_WITH_TGA_LOADER_
 //! Define _IRR_COMPILE_WITH_WAL_LOADER_ if you want to load .wal files
 #define _IRR_COMPILE_WITH_WAL_LOADER_
+//! Define _IRR_COMPILE_WITH_RGB_LOADER_ if you want to load Silicon Graphics .rgb/.rgba/.sgi/.int/.inta/.bw files
+#define _IRR_COMPILE_WITH_RGB_LOADER_
 
 //! Define _IRR_COMPILE_WITH_BMP_WRITER_ if you want to write .bmp files
 #define _IRR_COMPILE_WITH_BMP_WRITER_
@@ -304,6 +348,15 @@ B3D, MS3D or X meshes */
 #define _IRR_COMPILE_WITH_PSD_WRITER_
 //! Define _IRR_COMPILE_WITH_TGA_WRITER_ if you want to write .tga files
 #define _IRR_COMPILE_WITH_TGA_WRITER_
+
+//! Define __IRR_COMPILE_WITH_ZIP_ARCHIVE_LOADER_ if you want to open ZIP and GZIP archives
+#define __IRR_COMPILE_WITH_ZIP_ARCHIVE_LOADER_
+//! Define __IRR_COMPILE_WITH_MOUNT_ARCHIVE_LOADER_ if you want to mount folders as archives
+#define __IRR_COMPILE_WITH_MOUNT_ARCHIVE_LOADER_
+//! Define __IRR_COMPILE_WITH_PAK_ARCHIVE_LOADER_ if you want to open ID software PAK archives
+#define __IRR_COMPILE_WITH_PAK_ARCHIVE_LOADER_
+//! Define __IRR_COMPILE_WITH_TAR_ARCHIVE_LOADER_ if you want to open TAR archives
+#define __IRR_COMPILE_WITH_TAR_ARCHIVE_LOADER_
 
 //! Set FPU settings
 /** Irrlicht should use approximate float and integer fpu techniques
@@ -336,9 +389,17 @@ precision will be lower but speed higher. currently X86 only
 #define IRRCALLCONV __cdecl
 #endif // STDCALL_SUPPORTED
 
+#else // _IRR_WINDOWS_API_
+
+// Force symbol export in shared libraries built with gcc.
+#if (__GNUC__ >= 4) && !defined(_IRR_STATIC_LIB_) && defined(IRRLICHT_EXPORTS)
+#define IRRLICHT_API __attribute__ ((visibility("default")))
 #else
 #define IRRLICHT_API
+#endif
+
 #define IRRCALLCONV
+
 #endif // _IRR_WINDOWS_API_
 
 // We need to disable DIRECT3D9 support for Visual Studio 6.0 because
@@ -354,24 +415,68 @@ precision will be lower but speed higher. currently X86 only
 
 // XBox does not have OpenGL or DirectX9
 #if defined(_IRR_XBOX_PLATFORM_)
-#undef _IRR_COMPILE_WITH_OPENGL_
-#undef _IRR_COMPILE_WITH_DIRECT3D_9_
+	#undef _IRR_COMPILE_WITH_OPENGL_
+	#undef _IRR_COMPILE_WITH_DIRECT3D_9_
 #endif
 
-// WinCE does not have OpenGL or DirectX9
+//! WinCE does not have OpenGL or DirectX9. use minimal loaders
 #if defined(_WIN32_WCE)
 	#undef _IRR_COMPILE_WITH_OPENGL_
 	#undef _IRR_COMPILE_WITH_DIRECT3D_8_
 	#undef _IRR_COMPILE_WITH_DIRECT3D_9_
-	#undef _IRR_COMPILE_WITH_SOFTWARE_
+
 	#undef BURNINGVIDEO_RENDERER_BEAUTIFUL
-	#undef _IRR_USE_WINDOWS_DEVICE_
-	#define _IRR_USE_WINDOWS_CE_DEVICE_
+	#undef BURNINGVIDEO_RENDERER_FAST
+	#undef BURNINGVIDEO_RENDERER_ULTRA_FAST
 	#define BURNINGVIDEO_RENDERER_CE
+
+	#undef _IRR_COMPILE_WITH_WINDOWS_DEVICE_
+	#define _IRR_COMPILE_WITH_WINDOWS_CE_DEVICE_
+	//#define _IRR_WCHAR_FILESYSTEM
+
+	#undef _IRR_COMPILE_WITH_IRR_MESH_LOADER_
+	//#undef _IRR_COMPILE_WITH_MD2_LOADER_
+	#undef _IRR_COMPILE_WITH_MD3_LOADER_
+	#undef _IRR_COMPILE_WITH_3DS_LOADER_
+	#undef _IRR_COMPILE_WITH_COLLADA_LOADER_
+	#undef _IRR_COMPILE_WITH_CSM_LOADER_
+	#undef _IRR_COMPILE_WITH_BSP_LOADER_
+	#undef _IRR_COMPILE_WITH_DMF_LOADER_
+	#undef _IRR_COMPILE_WITH_LMTS_LOADER_
+	#undef _IRR_COMPILE_WITH_MY3D_LOADER_
+	#undef _IRR_COMPILE_WITH_OBJ_LOADER_
+	#undef _IRR_COMPILE_WITH_OCT_LOADER_
+	#undef _IRR_COMPILE_WITH_OGRE_LOADER_
+	#undef _IRR_COMPILE_WITH_LWO_LOADER_
+	#undef _IRR_COMPILE_WITH_STL_LOADER_
+	#undef _IRR_COMPILE_WITH_IRR_WRITER_
+	#undef _IRR_COMPILE_WITH_COLLADA_WRITER_
+	#undef _IRR_COMPILE_WITH_STL_WRITER_
+	#undef _IRR_COMPILE_WITH_OBJ_WRITER_
+	//#undef _IRR_COMPILE_WITH_BMP_LOADER_
+	//#undef _IRR_COMPILE_WITH_JPG_LOADER_
+	#undef _IRR_COMPILE_WITH_PCX_LOADER_
+	//#undef _IRR_COMPILE_WITH_PNG_LOADER_
+	#undef _IRR_COMPILE_WITH_PPM_LOADER_
+	#undef _IRR_COMPILE_WITH_PSD_LOADER_
+	//#undef _IRR_COMPILE_WITH_TGA_LOADER_
+	#undef _IRR_COMPILE_WITH_WAL_LOADER_
+	#undef _IRR_COMPILE_WITH_BMP_WRITER_
+	#undef _IRR_COMPILE_WITH_JPG_WRITER_
+	#undef _IRR_COMPILE_WITH_PCX_WRITER_
+	#undef _IRR_COMPILE_WITH_PNG_WRITER_
+	#undef _IRR_COMPILE_WITH_PPM_WRITER_
+	#undef _IRR_COMPILE_WITH_PSD_WRITER_
+	#undef _IRR_COMPILE_WITH_TGA_WRITER_
+
+#endif
+
+#ifndef _IRR_WINDOWS_API_
+	#undef _IRR_WCHAR_FILESYSTEM
 #endif
 
 #if defined(_IRR_SOLARIS_PLATFORM_)
-#undef _IRR_COMPILE_WITH_JOYSTICK_EVENTS_
+	#undef _IRR_COMPILE_WITH_JOYSTICK_EVENTS_
 #endif
 
 #endif // __IRR_COMPILE_CONFIG_H_INCLUDED__

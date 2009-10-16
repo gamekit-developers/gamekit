@@ -66,7 +66,7 @@ namespace gui
 
 		//! Gets the size area of the text in the edit box
 		//! \return Returns the size in pixels of the text
-		virtual core::dimension2di getTextDimension();
+		virtual core::dimension2du getTextDimension();
 
 		//! Sets text justification
 		virtual void setTextAlignment(EGUI_ALIGNMENT horizontal, EGUI_ALIGNMENT vertical);
@@ -117,6 +117,10 @@ namespace gui
 		void inputChar(wchar_t c);
 		//! calculates the current scroll position
 		void calculateScrollPos();
+		//! send some gui event to parent
+		void sendGuiEvent(EGUI_EVENT_TYPE type);
+		//! set text markers
+		void setTextMarkers(s32 begin, s32 end);
 
 		bool processKey(const SEvent& event);
 		bool processMouse(const SEvent& event);
