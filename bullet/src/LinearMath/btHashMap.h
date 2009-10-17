@@ -339,6 +339,10 @@ class btHashMap
 		return &m_valueArray[index];
 	}
 
+	const Key& 	getKey(int index) const
+	{
+		return m_keyArray[index];
+	}
 
 	int	findIndex(const Key& key) const
 	{

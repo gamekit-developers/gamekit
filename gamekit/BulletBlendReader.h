@@ -20,12 +20,18 @@ subject to the following restrictions:
 #include "readblend.h"
 #include "LinearMath/btAlignedObjectArray.h"
 #include "LinearMath/btHashMap.h"
+class btCollisionObject;
 
 struct	btDataValue
 {
 	int	m_type;
 	int	m_name;
 	
+	btDataValue()
+		:m_ptr(0)
+	{
+
+	}
 	btAlignedObjectArray<btDataValue> m_valueArray;
 	union
 	{
@@ -38,9 +44,21 @@ struct	btDataValue
 	};
 };
 
+
+
+
 struct	btDataObject
 {
 	btHashMap<btHashString,btDataValue*>	m_dataMap;
+	unsigned int			m_blenderPointer;
+	void*					m_userPointer;
+
+	btDataObject()
+		:m_blenderPointer(0),
+		m_userPointer(0)
+	{
+	}
+
 	int	getIntValue(const char* fieldName, int defaultValue=0)
 	{
 		btDataValue** valPtr = m_dataMap[fieldName];
@@ -63,12 +81,18 @@ struct	btDataObject
 };
 
 
+typedef btHashKey<int> btHashInt;
 
 class	BulletBlendReader
 {
 	struct _BlendFile* m_bf;
 
 	class btDynamicsWorld* m_destinationWorld;
+
+	btHashMap<btHashInt,btDataObject*>	m_dataObjects;
+	
+	///m_visibleGameObjects is a subset of m_dataObjects of only the visible game objects, handy for iterating, adding logic bricks/physics constraints etc
+	btAlignedObjectArray<btDataObject*>	m_visibleGameObjects;
 
 public:
 
@@ -87,7 +111,7 @@ public:
 	void	convertAllObjects(int verboseDumpAllBlocks=false);
 
 	///for each Blender Object, this method will be called to convert/retrieve data from the bObj
-	virtual	void convertSingleObject(struct _bObj* object);
+	virtual	btCollisionObject* convertSingleObject(struct _bObj* object);
 
 	virtual	void convertSingleMesh(struct _bMesh* mesh);
 

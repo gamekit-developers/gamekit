@@ -528,11 +528,7 @@ btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr)
 								printf("NULL ");
 								break;
 							}
-						case BLEND_OBJ_OPAQUE:
-							{
-								printf("OPAQUE? ");
-								break;
-							}
+						
 						case BLEND_OBJ_UCHAR8:
 							{
 								val->m_iValue = *(unsigned char*)ptrptr;
@@ -587,6 +583,7 @@ btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr)
 								printf("%x ",val);
 								break;
 							}
+						case BLEND_OBJ_OPAQUE:
 						case BLEND_OBJ_STRUCT:
 							{
 								char	dest[1024];
@@ -615,6 +612,7 @@ btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr)
 										{
 											idstruc_obj = blend_block_get_object(m_bf, curveblockptr, 0);
 											block = (BlendBlock*)idstruc_obj.block;
+											val->m_uiValue =  block->blender_pointer;
 											
 											if (BLEND_OBJ_STRUCT == blend_object_type(m_bf, idstruc_obj) &&
 												blend_object_structure_getfield(m_bf, &name_obj,
@@ -629,9 +627,7 @@ btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr)
 													}
 											} else {
 												printf("%x ",block->blender_pointer);
-
 											}
-											
 										} else
 										{
 											printf("NULL ");
@@ -686,6 +682,8 @@ btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr)
 		printf("bla\n");
 	}
 
+	dob->m_blenderPointer = block->blender_pointer;
+	m_dataObjects.insert(block->blender_pointer,dob);
 
 	return dob;
 }
@@ -704,6 +702,10 @@ void	BulletBlendReader::convertAllObjects(int verboseDumpAllBlocks)
 	{
 		blend_dump_blocks(m_bf);
 	}
+
+	int sceneVisibleLayer = 0;
+	btDataObject* fileGlobalObject =0;
+
 
 	int j;
 	for (j=0; j<m_bf->blocks_count; ++j) 
@@ -734,21 +736,59 @@ void	BulletBlendReader::convertAllObjects(int verboseDumpAllBlocks)
 					{
 						
 						btDataObject* dob = extractSingleObject(&obj);
-						printf("dob\n");
+						printf("Found FileGlobal\n");
 						short minversion = dob->getIntValue("minversion",123);
 						short manversion = dob->getIntValue("manversion",123);
+						int curScene = dob->getIntValue("*curscene",0);
 						printf("minversion = %d\n",minversion);
-
+						BlendBlock* block = (BlendBlock*)obj.block;
+						fileGlobalObject = dob;
 						//blend_object_dump_field(m_bf,	obj);
 					
 					}
 					
+					if (strcmp(type_name,"Scene")==0)
+					{
+						printf("Found a scene\n");
+						btDataObject* dob = extractSingleObject(&obj);
+						
+						if (fileGlobalObject && fileGlobalObject->getIntValue("*curscene",0)==dob->m_blenderPointer)
+						{
+							sceneVisibleLayer = dob->getIntValue("lay",0);
+						}
+						
+
+					}
+
+					if (strcmp(type_name,"bRigidBodyJointConstraint")==0)
+					{
+						btDataObject* dob = extractSingleObject(&obj);
+						printf("Found a bRigidBodyJointConstraint\n");
+					}
+
+					if (strcmp(type_name,"bConstraint")==0)
+					{
+						btDataObject* dob = extractSingleObject(&obj);
+						printf("Found a bConstraint\n");
+					}
+
 					if (strcmp(type_name,"Object")==0)
 					{
 						bObj tmpObj;
 						blend_acquire_obj_from_obj(m_bf,&obj,&tmpObj,0);
-						
-						convertSingleObject(&tmpObj);
+						btDataObject* dob = extractSingleObject(&obj);
+						int obLayer = dob->getIntValue("lay",0);
+
+						///only convert objects that are in a visible layer
+						if (1)//obLayer & sceneVisibleLayer)
+						{
+							btCollisionObject* colObj = convertSingleObject(&tmpObj);
+							if (colObj)
+							{
+								dob->m_userPointer = colObj;
+							}
+							m_visibleGameObjects.push_back(dob);
+						}
 
 					}
 
@@ -763,12 +803,134 @@ void	BulletBlendReader::convertAllObjects(int verboseDumpAllBlocks)
 			}
 		}
 	}
+
+	///now fix up some constraint and logic bricks
+
+#define CONSTRAINT_TYPE_RIGIDBODYJOINT 17
+#define CONSTRAINT_RB_BALL		1
+#define CONSTRAINT_RB_HINGE		2
+#define CONSTRAINT_RB_CONETWIST 4
+#define CONSTRAINT_RB_VEHICLE	11
+#define CONSTRAINT_RB_GENERIC6DOF 12
+
+
+
+
+	int i;
+	for (i=0;i<m_visibleGameObjects.size();i++)
+	{
+		btDataObject* ob = m_visibleGameObjects[i];
+		unsigned int cPtr = ob->getIntValue("constraints");
+		if (cPtr)
+		{
+			btDataObject** constraintPtr = m_dataObjects[cPtr];
+			if (constraintPtr && *constraintPtr)
+			{
+				btDataObject* constraint = *constraintPtr;
+				int constraintType = constraint->getIntValue("type",0);
+				if (constraintType==CONSTRAINT_TYPE_RIGIDBODYJOINT)
+				{
+					unsigned int dataPtr = constraint->getIntValue("*data",0);
+					if (dataPtr)
+					{
+
+						btDataObject** rbConstraintPtr = m_dataObjects[dataPtr];
+						if (rbConstraintPtr && *rbConstraintPtr)
+						{
+							btDataObject* rbConstraint = *rbConstraintPtr;
+
+							unsigned int rbConstraintType = rbConstraint->getIntValue("type",0);
+
+///some debugging, spit out all the fields
+#if 0
+							for (int k=0;k<rbConstraint->m_dataMap.size();k++)
+							{
+								const btHashString& structName = rbConstraint->m_dataMap.getKey(k);
+								const btDataValue* valPtr = *rbConstraint->m_dataMap.find(structName);
+								printf("hello\n");
+							}
+#endif
+							
+
+							/* important: these defines need to match up with PHY_DynamicTypes headerfile */
+							switch (rbConstraintType)
+							{
+
+							case CONSTRAINT_RB_BALL:
+								{
+									btVector3 pivotInA(rbConstraint->getFloatValue("pivX"),rbConstraint->getFloatValue("pivY"),rbConstraint->getFloatValue("pivZ"));
+																		
+									btCollisionObject* colObj = (btCollisionObject*) ob->m_userPointer;
+									btRigidBody* rbA = btRigidBody::upcast(colObj);
+									if (rbA)
+									{
+										btCollisionObject* colObjB = 0;
+										unsigned int objectBPtr = rbConstraint->getIntValue("*tar");
+										if (objectBPtr)
+										{
+											btDataObject** dataBPtr = m_dataObjects[objectBPtr];
+											if (dataBPtr && *dataBPtr)
+											{
+												btDataObject* dataB = *dataBPtr;
+												colObjB = (btCollisionObject*)dataB->m_userPointer;
+											}
+										}
+										btPoint2PointConstraint* p2p = 0;
+
+										if (colObjB && btRigidBody::upcast(colObjB))
+										{
+											btRigidBody* rbB = btRigidBody::upcast(colObjB);
+
+											btVector3 pivotInB = rbB->getCenterOfMassTransform().inverse()(rbA->getCenterOfMassTransform()(pivotInA));
+											p2p = new btPoint2PointConstraint(*rbA,*rbB,pivotInA,pivotInB);
+
+										} else
+										{
+											p2p = new btPoint2PointConstraint(*rbA,pivotInA);
+										}
+										m_destinationWorld->addConstraint(p2p);
+									}
+
+
+									break;
+								}
+							case CONSTRAINT_RB_HINGE:
+								{
+									break;
+								}
+							case CONSTRAINT_RB_CONETWIST:
+								{
+									break;
+								}
+							case CONSTRAINT_RB_VEHICLE:
+								{
+									break;
+								}
+							case CONSTRAINT_RB_GENERIC6DOF:
+								{
+									break;
+								}
+							
+							default:
+								{
+									printf("unsupported rigid body constraint type\n");
+								}
+							}
+						}
+					}
+
+				}
+			}
+		}
+
+	}
+
 }
 
 
 
 ///for each Blender Object, this method will be called to convert/retrieve data from the bObj
-void BulletBlendReader::convertSingleObject(_bObj* object)
+btCollisionObject* BulletBlendReader::convertSingleObject(_bObj* object)
 {
 
 	switch (object->type)
@@ -778,10 +940,10 @@ void BulletBlendReader::convertSingleObject(_bObj* object)
 
 	case BOBJ_TYPE_CAMERA:
 		addCamera(object);
-		return;
+		return 0;
 	case BOBJ_TYPE_LAMP:
 		addLight(object);
-		return;
+		return 0;
 	default:
 		{
 		}
@@ -818,7 +980,7 @@ void BulletBlendReader::convertSingleObject(_bObj* object)
 			}
 		}
 		if (!meshInterface->getNumTriangles())
-			return;
+			return 0;
 
 /* boundtype */
 #define OB_BOUND_BOX		0
@@ -927,6 +1089,7 @@ void BulletBlendReader::convertSingleObject(_bObj* object)
 				//body->setActivationState(DISABLE_DEACTIVATION);
 
 				createGraphicsObject(object,body);
+				return body;
 			}
 
 		} else
@@ -951,10 +1114,13 @@ void BulletBlendReader::convertSingleObject(_bObj* object)
 				m_destinationWorld->addCollisionObject(colObj);
 			
 				createGraphicsObject(object,colObj);
+				return colObj;
+
 			}
 			
 		}
 	}
+	return 0;
 }
 
 void BulletBlendReader::convertSingleMesh(_bMesh* mesh)
