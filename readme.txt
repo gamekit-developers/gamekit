@@ -6,6 +6,8 @@ GameKit is a prototyping environment that includes
 + readblend to read 32bit little-endian .blend files
 + some example .blend files included in the GameKit folder
 
+On Apple, you can copy a user file called game.blend next to the GameKit.app bundle, to override the default .blend file.
+
 It has been tested on Windows, Mac OS X and Linux.
 
 Some notes:

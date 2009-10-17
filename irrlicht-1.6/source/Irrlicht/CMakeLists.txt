@@ -9,10 +9,6 @@ ELSE (WIN32)
 
 ENDIF (WIN32)
 
-IF (APPLE)
-ADD_DEFINITIONS( -DMACOSX)
-set_source_files_properties(MacOSX/MainMenu.nib PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
-ENDIF (APPLE)
 
 SET( Irrlicht_SRCS
 CDefaultGUIElementFactory.cpp
@@ -547,7 +543,7 @@ ENDIF (APPLE)
 
 
 IF (APPLE)
-ADD_LIBRARY(Irrlicht MacOSX/CIrrDeviceMacOSX.mm MacOSX/OSXClipboard.mm MacOSX/AppDelegate.mm ${Irrlicht_SRCS}  ${jpeg_SRCS} ${libpng_SRCS} ${zlib_SRCS}  MacOSX/CIrrDeviceMacOSX.mm MacOSX/MainMenu.nib )
+ADD_LIBRARY(Irrlicht MacOSX/CIrrDeviceMacOSX.mm MacOSX/OSXClipboard.mm MacOSX/AppDelegate.mm ${Irrlicht_SRCS}  ${jpeg_SRCS} ${libpng_SRCS} ${zlib_SRCS}  MacOSX/CIrrDeviceMacOSX.mm )
 ELSE (APPLE)
 ADD_LIBRARY(Irrlicht ${Irrlicht_SRCS}  ${jpeg_SRCS} ${libpng_SRCS} ${zlib_SRCS}  )
 ENDIF (APPLE)

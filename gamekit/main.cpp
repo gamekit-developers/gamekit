@@ -658,12 +658,35 @@ private:
 	bool KeyIsDown[KEY_KEY_CODES_COUNT];
 };
 
+
+#ifdef __APPLE__
+#define MAXPATHLEN 512
+char* AppleGetBundleDirectory(void) {
+	CFURLRef bundleURL;
+	CFStringRef pathStr;
+	static char path[MAXPATHLEN];
+	memset(path,MAXPATHLEN,0);
+	CFBundleRef mainBundle = CFBundleGetMainBundle();
+	
+	bundleURL = CFBundleCopyBundleURL(mainBundle);
+	pathStr = CFURLCopyFileSystemPath(bundleURL, kCFURLPOSIXPathStyle);
+	CFStringGetCString(pathStr, path, MAXPATHLEN, kCFStringEncodingASCII);
+	CFRelease(pathStr);
+	CFRelease(bundleURL);	
+	return path;
+}
+#endif
 /*
 That's it. The Scene node is done. Now we simply have to start
 the engine, create the scene node and a camera, and look at the result.
 */
 int main(int argc,char** argv)
 {
+
+	
+	if (argv[0])
+		printf("argv[0]=%s\n",argv[0]);
+	
 	const char* fileName = "PhysicsAnimationBakingDemo.blend";
 	
 	int verboseDumpAllTypes = false;
@@ -671,33 +694,63 @@ int main(int argc,char** argv)
 
 	printf("Usage:\nGameKit [-verbose] [blendfile.blend]\n");
 
-	if (argc>1 && argv[1])
-	{
-		if (!strcmp(argv[1],"-verbose"))
-		{
-			verboseDumpAllTypes = true;
-			verboseDumpAllBlocks = true;
-			printf("enable verbose output: verboseDumpAllTypes and verboseDumpAllBlocks\n");
-			if (argc>2 && argv[2])
-			{
-				fileName = argv[2];
-			}
-		} else
-		{
-			fileName = argv[1];
-		}
-	}
-
-
-
-
+#if __APPLE__
+	printf("Or double-click on the GameKit application. You can copy a file game.blend in the same directory as the GameKit application (not inside the bundle)\n");
+#endif
 	
 	FILE* file = fopen(fileName,"rb");
 	if (!file)
 	{
+#if __APPLE__
+
+		char newName[1024];
+
+		char* bundlePath = AppleGetBundleDirectory();
+		//cut off the .app filename
+		char* lastSlash=0;
+		if( lastSlash = strrchr( bundlePath, '/' ) )
+			*lastSlash = '\0';
+		sprintf(newName,"%s/%s",bundlePath,"game.blend");
+		file = fopen(newName,"rb");
+	
+		// how do you debug the Bundle execution, without a console?		
+		FILE* dump = fopen ("/out.txt","wb");
+		fwrite(newName,1,strlen(newName),dump);
+		fclose(dump);
+		
+		if (!file)
+		{
+			sprintf(newName,"%s/%s/%s",AppleGetBundleDirectory(),"Contents/Resources",fileName);
+			file=fopen(newName,"rb");
+			printf("cannot open file %s.\n",newName);
+		}
+
+
+		
+#else
+		if (argc>1 && argv[1])
+		{
+			if (!strcmp(argv[1],"-verbose"))
+			{
+				verboseDumpAllTypes = true;
+				verboseDumpAllBlocks = true;
+				printf("enable verbose output: verboseDumpAllTypes and verboseDumpAllBlocks\n");
+				if (argc>2 && argv[2])
+				{
+					fileName = argv[2];
+				}
+			} else
+			{
+				fileName = argv[1];
+			}
+		}
+		
 		char newName[1024];
 		sprintf(newName,"../%s",fileName);
 		file = fopen(newName,"rb");
+		printf("cannot open file %s.\n",newName);
+
+#endif//__APPLE__
 		if (!file)
 		{
 			printf("cannot open file %s.\n",argv[1]);

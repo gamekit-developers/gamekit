@@ -18,7 +18,10 @@ ${IRRLICHT_SOURCE_DIR}/include ${BULLET_PHYSICS_SOURCE_DIR}/Extras/readblend ${B
 )
 
 IF(APPLE)
-   #SET(GUI_TYPE MACOSX_BUNDLE)
+	SET(EXETYPE MACOSX_BUNDLE)   
+	set_source_files_properties(MainMenu.nib PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+
+	#SET(GUI_TYPE MACOSX_BUNDLE)
    INCLUDE_DIRECTORIES ( /Developer/Headers/FlatCarbon )
    FIND_LIBRARY(CARBON_LIBRARY Carbon)
    FIND_LIBRARY(QUICKTIME_LIBRARY QuickTime )
@@ -26,23 +29,34 @@ IF(APPLE)
    FIND_LIBRARY(Foundation_FRAMEWORKS  Foundation )
    FIND_LIBRARY(CoreFoundation_FRAMEWORKS CoreFoundation )
    FIND_LIBRARY(APPKIT_LIBRARY AppKit )  
- MARK_AS_ADVANCED (CARBON_LIBRARY
+	 MARK_AS_ADVANCED (CARBON_LIBRARY
                      QUICKTIME_LIBRARY
                      APP_SERVICES_LIBRARY)
    SET(EXTRA_LIBS ${APPKIT_LIBRARY} ${Foundation_FRAMEWORKS} ${CoreFoundation_FRAMEWORKS}  ${CARBON_LIBRARY} ${QUICKTIME_LIBRARY} ${APP_SERVICES_LIBRARY})
 ELSE (APPLE)
-SET(EXTRA_LIBS )
+	SET(EXTRA_LIBS )
 ENDIF (APPLE)
 
 LINK_LIBRARIES(
-readblend  BulletSoftBody BulletDynamics BulletCollision LinearMath Irrlicht ${EXTRA_LIBS} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY}
+	readblend  BulletSoftBody BulletDynamics BulletCollision LinearMath Irrlicht ${EXTRA_LIBS} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY}
 )
 
 
-
-ADD_EXECUTABLE(GameKit
-BulletBlendReader.cpp
-BulletBlendReader.h
-main.cpp
-)
+IF (APPLE)
+	SET (NibFile MainMenu.nib)
+	SET (RESOURCES $(NibFile))
+	SET_SOURCE_FILES_PROPERTIES( PhysicsAnimationBakingDemo.blend   PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
+	ADD_EXECUTABLE(GameKit
+	MACOSX_BUNDLE
+	MainMenu.nib
+	PhysicsAnimationBakingDemo.blend
+	BulletBlendReader.cpp
+	BulletBlendReader.h
+	main.cpp)
+ELSE (APPLE)
+	ADD_EXECUTABLE(GameKit
+	BulletBlendReader.cpp
+	BulletBlendReader.h
+	main.cpp)
+ENDIF (APPLE)
 
