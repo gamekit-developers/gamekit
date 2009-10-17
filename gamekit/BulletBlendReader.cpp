@@ -780,7 +780,7 @@ void	BulletBlendReader::convertAllObjects(int verboseDumpAllBlocks)
 						int obLayer = dob->getIntValue("lay",0);
 
 						///only convert objects that are in a visible layer
-						if (1)//obLayer & sceneVisibleLayer)
+						if (obLayer & sceneVisibleLayer)
 						{
 							btCollisionObject* colObj = convertSingleObject(&tmpObj);
 							if (colObj)
