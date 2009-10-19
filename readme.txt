@@ -1,5 +1,6 @@
 
-GameKit is a prototyping environment that includes 
+GameKit is a prototyping environment that includes
+http://gamekit.googlecode.com
 
 + Bullet Physics Library for physics
 + Irrlicht 1.6 for Graphics

@@ -39,6 +39,9 @@ m_destinationWorld(destinationWorld)
 
 }
 
+
+
+
 int	BulletBlendReader::readFile(FILE* posixFile, int verboseDumpAllTypes)
 {
 	MY_FILETYPE* buffer;
@@ -264,17 +267,17 @@ blendBlockFromBlendpointer(BlendFile *blend_file,
 	return NULL;
 }
 
-char* keywords[] = {"FileGlobal", "Scene", "Object", "bSensor", "bKeyboardSensor", "bAlwaysSensor", "bRigidBodyJointConstraint", "bConstraint",0};
+char* keywords[8] = {"FileGlobal", "Scene", "Object", "bSensor", "bKeyboardSensor", "bAlwaysSensor", "bRigidBodyJointConstraint", "bConstraint"};
 
 bool	BulletBlendReader::needsExtraction(const char* type_name)
 {
 	bool found = false;
 
-	for (int i=0;i<sizeof(keywords);i++)
+	for (int i=0;i<8;i++)
 	{
 		char* keyword = keywords[i];
 
-		if (keywords[i] && strcmp(type_name,keyword)==0)
+		if (strcmp(type_name,keyword)==0)
 			return true;
 	}
 	return false;
@@ -401,7 +404,7 @@ btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr)
 								if (name_is_pointer(m_bf->names[m_bf->types[obj.type].fieldnames[i]]) || isListBase)
 								{
 
-									uint32_t ptr = (uint32_t)*ptrptr;
+									uint32_t ptr = *(uint32_t*)ptrptr;
 									if (ptr)
 									{
 										BlendObject idstruc_obj;
