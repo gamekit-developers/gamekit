@@ -676,6 +676,10 @@ char* AppleGetBundleDirectory(void) {
 	return path;
 }
 #endif
+
+
+
+
 /*
 That's it. The Scene node is done. Now we simply have to start
 the engine, create the scene node and a camera, and look at the result.
@@ -693,6 +697,16 @@ int main(int argc,char** argv)
 	int verboseDumpAllBlocks = false;
 
 	printf("Usage:\nGameKit [-verbose] [blendfile.blend]\n");
+
+	if (argc>1 && argv[1])
+	{
+		if (!strcmp(argv[1],"-verbose"))
+		{
+			verboseDumpAllTypes = true;
+			verboseDumpAllBlocks = true;
+			printf("enable verbose output: verboseDumpAllTypes and verboseDumpAllBlocks\n");
+		}
+	}
 
 #if __APPLE__
 	printf("Or double-click on the GameKit application. You can copy a file game.blend in the same directory as the GameKit application (not inside the bundle)\n");
@@ -728,24 +742,29 @@ int main(int argc,char** argv)
 
 		
 #else
-		if (argc>1 && argv[1])
+
+		char newName[1024];
+		newName[0] = 0;
+
+		switch (argc)
 		{
-			if (!strcmp(argv[1],"-verbose"))
+		case 2:
 			{
-				verboseDumpAllTypes = true;
-				verboseDumpAllBlocks = true;
-				printf("enable verbose output: verboseDumpAllTypes and verboseDumpAllBlocks\n");
-				if (argc>2 && argv[2])
-				{
+				if (argv[1])
+					fileName = argv[1];
+				break;
+			}
+		case 3:
+			{
+				if (argv[2])
 					fileName = argv[2];
-				}
-			} else
+			}
+
+		default:
 			{
-				fileName = argv[1];
 			}
 		}
 		
-		char newName[1024];
 		sprintf(newName,"../%s",fileName);
 		file = fopen(newName,"rb");
 		printf("cannot open file %s.\n",newName);
@@ -826,6 +845,8 @@ int main(int argc,char** argv)
 	btDispatcher* dispatcher = new btCollisionDispatcher(collisionConfiguration);
 	btConstraintSolver* constraintSolver = new btSequentialImpulseConstraintSolver();
 	btDiscreteDynamicsWorld* physicsWorld = new btDiscreteDynamicsWorld(dispatcher,pairCache,constraintSolver,collisionConfiguration);
+
+	btLogicManager* logicManager = new btLogicManager();
 
 	
 //#ifdef SWAP_COORDINATE_SYSTEMS

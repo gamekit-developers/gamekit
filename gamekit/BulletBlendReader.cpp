@@ -158,214 +158,7 @@ name_is_array(char* name, int* dim1, int* dim2) {
 }
 
 
-
-#if 0
-	if (!strcmp(m_bf->types[fieldType].name,"char") && (dim1>1 || dim2>1))
-			{
-				
-				index=0;
-
-
-
-				for (k=0;k<dim1;k++)
-				{
-					for (l=0;l<dim2;l++)
-					{
-						ptrptr = &block->array_entries->field_bytes[block->array_entries->field_offsets[field_index+dim2*k+ l]];
-									
-						objType = typestring_to_blendobj_type(m_bf, m_bf->types[fieldType].name) ;
-						if (ptrptr && index<1023)
-						{
-							char val = *(char*)ptrptr;
-							namebuf[index++]=val;
-						}
-					}
-				}
-
-				namebuf[index]=0;
-				printf("\"%s\"",namebuf);
-			}
-			else
-			{
-				for (k=0;k<dim1;k++)
-				{
-					if (dim1>1 || dim2>1)
-					{
-						printf("[");
-					}
-					for (l=0;l<dim2;l++)
-					{
-						ptrptr = &block->array_entries->field_bytes[block->array_entries->field_offsets[field_index+dim2*k+ l]];
-									
-						objType = typestring_to_blendobj_type(m_bf, m_bf->types[fieldType].name) ;
-						if (ptrptr)
-						{
-							switch (objType)
-							{
-							case BLEND_OBJ_NULL:
-								{
-									printf("NULL ");
-									break;
-								}
-							case BLEND_OBJ_OPAQUE:
-								{
-									printf("OPAQUE? ");
-									break;
-								}
-							case BLEND_OBJ_UCHAR8:
-								{
-									unsigned char val = *(unsigned char*)ptrptr;
-									printf("%d ",val);
-									break;
-								}
-							case BLEND_OBJ_CHAR8:
-								{
-									char val = *(char*)ptrptr;
-									printf("%d ",val);
-									break;
-								}
-							case BLEND_OBJ_USHORT16:
-								{
-									unsigned short int val = *(unsigned short int*)ptrptr;
-									printf("%d ",val);
-									break;
-								}
-							case BLEND_OBJ_SHORT16:
-								{
-									short int val = *(short int*)ptrptr;
-									printf("%d ",val);
-									break;
-								}
-							case BLEND_OBJ_ULONG32:
-								{
-									unsigned int val = *(unsigned int*)ptrptr;
-									printf("%d ",val);
-									break;
-								}
-							case BLEND_OBJ_LONG32:
-								{
-									int val = *(int*)ptrptr;
-									printf("%d ",val);
-									break;
-								}
-							case BLEND_OBJ_FLOAT:
-								{
-									float val = *(float *)ptrptr;
-									printf("%f ",val);
-									break;
-								}
-							case BLEND_OBJ_DOUBLE:
-								{
-									double  val = *(double *)ptrptr;
-									printf("%f ",val);
-									break;
-								}
-							case BLEND_OBJ_POINTER:
-								{
-									void* val = *ptrptr;
-									printf("%x ",val);
-									break;
-								}
-							case BLEND_OBJ_STRUCT:
-								{
-									char	dest[1024];
-									int isListBase = 0;
-									int max_chars = 1023;
-
-									
-									if (!strcmp(m_bf->types[m_bf->types[obj.type].fieldtypes[i]].name,"ListBase"))
-									{
-										isListBase  =1;
-									}
-									if (name_is_pointer(m_bf->names[m_bf->types[obj.type].fieldnames[i]]) || isListBase)
-									{
-
-										BlendBlockPointer ptr = *ptrptr;
-										if (ptr)
-										{
-											BlendObject idstruc_obj;
-											BlendBlock* block;
-											BlendObject name_obj;
-											
-
-											
-											BlendBlockPointer curveblockptr = blend_block_from_blendpointer(m_bf, ptr);
-											if (curveblockptr)
-											{
-												idstruc_obj = blend_block_get_object(m_bf, curveblockptr, 0);
-												block = (BlendBlock*)idstruc_obj.block;
-												
-												if (BLEND_OBJ_STRUCT == blend_object_type(m_bf, idstruc_obj) &&
-													blend_object_structure_getfield(m_bf, &name_obj,
-													idstruc_obj, "name")) {
-														/* great, get the string from the 'name' field. */
-														if (blend_object_getstring(m_bf, name_obj,
-															dest, max_chars)) {
-																printf("\"%s\" ",dest);
-																
-														} else {
-															printf("%x ",block->blender_pointer);
-														}
-												} else {
-													printf("%x ",block->blender_pointer);
-
-												}
-												
-											} else
-											{
-												printf("NULL ");
-											}
-
-										} else
-										{
-											printf("NULL ");
-										}
-									} else
-									{
-										if (!strcmp(m_bf->names[m_bf->types[obj.type].fieldnames[i]],"id"))
-										{
-											if (blend_object_get_IDname(m_bf, obj, dest, max_chars)) 
-											{
-												printf("\"%s\" ",dest);
-												break;
-											}
-										} 
-										printf("Embedded struct\n");
-
-									}
-									break;
-								}
-							default:
-								{
-									printf("unknown value");
-								}
-							}
-						}
-					}
-					if (dim1>1 || dim2>1)
-					{
-						printf("]");
-					}
-				}
-			}
-			
-			printf("\n");
-			
-			{
-				int fos;
-				BlendObject qo = obj;
-				qo.type = m_bf->types[obj.type].fieldtypes[i];
-				qo.name = m_bf->types[obj.type].fieldnames[i];
-				qo.field_index = field_index;
-				fos = get_num_type_segments(m_bf, qo);
-				field_index += fos;
-			}
-		}
-#endif
-
-
-
-		/* recursively count the number of fields and array items in this
+/* recursively count the number of fields and array items in this
 structure, for the purposes of skipping in the field offset array */
 static long
 get_num_type_segments(BlendFile* blend_file,
@@ -471,6 +264,21 @@ blendBlockFromBlendpointer(BlendFile *blend_file,
 	return NULL;
 }
 
+char* keywords[] = {"FileGlobal", "Scene", "Object", "bSensor", "bKeyboardSensor", "bAlwaysSensor", "bRigidBodyJointConstraint", "bConstraint",0};
+
+bool	BulletBlendReader::needsExtraction(const char* type_name)
+{
+	bool found = false;
+
+	for (int i=0;i<sizeof(keywords);i++)
+	{
+		char* keyword = keywords[i];
+
+		if (keywords[i] && strcmp(type_name,keyword)==0)
+			return true;
+	}
+	return false;
+}
 btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr)
 {
 	btAssert(objPtr);
@@ -491,7 +299,7 @@ btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr)
 			//printf("filename = %s\n",m_bf->names[m_bf->types[obj.type].fieldnames[i]]);
 			fieldType = m_bf->types[obj.type].fieldtypes[i];
 			fieldName =  m_bf->types[obj.type].fieldnames[i];
-			printf("	%s %s = ",m_bf->types[fieldType].name, m_bf->names[fieldName]);
+//			printf("	%s %s = ",m_bf->types[fieldType].name, m_bf->names[fieldName]);
 
 
 			int dim1=1;
@@ -510,10 +318,6 @@ btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr)
 
 			for (k=0;k<dim1;k++)
 			{
-				if (dim1>1 || dim2>1)
-				{
-					printf("[");
-				}
 				for (l=0;l<dim2;l++)
 				{
 					ptrptr = (void**)&block->array_entries->field_bytes[block->array_entries->field_offsets[field_index+dim2*k+ l]];
@@ -525,62 +329,61 @@ btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr)
 						{
 						case BLEND_OBJ_NULL:
 							{
-								printf("NULL ");
 								break;
 							}
 						
 						case BLEND_OBJ_UCHAR8:
 							{
 								val->m_iValue = *(unsigned char*)ptrptr;
-								printf("%d ",val->m_iValue);
+//								printf("%d ",val->m_iValue);
 								break;
 							}
 						case BLEND_OBJ_CHAR8:
 							{
 								val->m_iValue = *(char*)ptrptr;
-								printf("%d ",val->m_iValue);
+//								printf("%d ",val->m_iValue);
 								break;
 							}
 						case BLEND_OBJ_USHORT16:
 							{
 								val->m_iValue = *(unsigned short int*)ptrptr;
-								printf("%d ",val->m_iValue);
+//								printf("%d ",val->m_iValue);
 								break;
 							}
 						case BLEND_OBJ_SHORT16:
 							{
 								val->m_iValue = *(short int*)ptrptr;
-								printf("%d ",val);
+//								printf("%d ",val);
 								break;
 							}
 						case BLEND_OBJ_ULONG32:
 							{
 								val->m_uiValue = *(unsigned int*)ptrptr;
-								printf("%d ",val->m_uiValue);
+//								printf("%d ",val->m_uiValue);
 								break;
 							}
 						case BLEND_OBJ_LONG32:
 							{
 								val->m_iValue = *(int*)ptrptr;
-								printf("%d ",val->m_iValue);
+//								printf("%d ",val->m_iValue);
 								break;
 							}
 						case BLEND_OBJ_FLOAT:
 							{
 								val->m_fValue = *(float *)ptrptr;
-								printf("%f ",val->m_fValue);
+//								printf("%f ",val->m_fValue);
 								break;
 							}
 						case BLEND_OBJ_DOUBLE:
 							{
 								double  val = *(double *)ptrptr;
-								printf("%f ",val);
+//								printf("%f ",val);
 								break;
 							}
 						case BLEND_OBJ_POINTER:
 							{
 								void* val = *ptrptr;
-								printf("%x ",val);
+//								printf("%x ",val);
 								break;
 							}
 						case BLEND_OBJ_OPAQUE:
@@ -620,22 +423,22 @@ btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr)
 													/* great, get the string from the 'name' field. */
 													if (blend_object_getstring(m_bf, name_obj,
 														dest, max_chars)) {
-															printf("\"%s\" ",dest);
+//															printf("\"%s\" ",dest);
 															
 													} else {
-														printf("%x ",block->blender_pointer);
+//														printf("%x ",block->blender_pointer);
 													}
 											} else {
-												printf("%x ",block->blender_pointer);
+//												printf("%x ",block->blender_pointer);
 											}
 										} else
 										{
-											printf("NULL ");
+//											printf("NULL ");
 										}
 
 									} else
 									{
-										printf("NULL ");
+//										printf("NULL ");
 									}
 								} else
 								{
@@ -643,32 +446,26 @@ btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr)
 									{
 										if (blend_object_get_IDname(m_bf, obj, dest, max_chars)) 
 										{
-											printf("\"%s\" ",dest);
+//											printf("\"%s\" ",dest);
 											break;
 										}
 									} 
-									printf("Embedded struct\n");
+//									printf("Embedded struct\n");
 
 								}
 								break;
 							}
 						default:
 							{
-								printf("unknown value");
+//								printf("unknown value");
 							}
 						}
 					}
-				}
-				if (dim1>1 || dim2>1)
-				{
-					printf("]");
 				}
 			}
 
 
 
-			printf("\n");
-			
 			{
 				int fos;
 				BlendObject qo = obj;
@@ -679,7 +476,6 @@ btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr)
 				field_index += fos;
 			}
 		}
-		printf("bla\n");
 	}
 
 	dob->m_blenderPointer = block->blender_pointer;
@@ -689,122 +485,63 @@ btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr)
 }
 
 
-void	BulletBlendReader::convertAllObjects(int verboseDumpAllBlocks)
+
+
+#define SENS_ALWAYS		0
+#define SENS_TOUCH		1
+#define SENS_NEAR		2
+#define SENS_KEYBOARD	3
+#define SENS_PROPERTY	4
+#define SENS_MOUSE		5
+#define SENS_COLLISION	6
+#define SENS_RADAR		7
+#define SENS_RANDOM     8
+#define SENS_RAY        9
+#define SENS_MESSAGE   10
+#define SENS_JOYSTICK  11
+#define SENS_ACTUATOR  12
+#define SENS_DELAY     13
+#define SENS_ARMATURE  14
+
+void	BulletBlendReader::convertLogicBricks()
 {
-
-	if (!m_bf)
+	int i;
+	for (i=0;i<m_visibleGameObjects.size();i++)
 	{
-		printf("ERROR: no file loaded, use openFile first\n");
-		return;
-	}
-
-	if (verboseDumpAllBlocks)
-	{
-		blend_dump_blocks(m_bf);
-	}
-
-	int sceneVisibleLayer = 0;
-	btDataObject* fileGlobalObject =0;
-
-
-	int j;
-	for (j=0; j<m_bf->blocks_count; ++j) 
-	{
+		btDataObject* ob = m_visibleGameObjects[i];
+		unsigned int cPtr = ob->getIntValue("sensors");
+		if (cPtr)
 		{
-			int entry_count = blend_block_get_entry_count(m_bf, &m_bf->blocks[j]);
-			for (int i=0; i<entry_count; ++i) 
+			btDataObject** sensorsPtr = m_dataObjects[cPtr];
+
+			if (sensorsPtr && *sensorsPtr)
 			{
-				BlendObject obj = blend_block_get_object(m_bf, &m_bf->blocks[j], i);
-				
-
-
-				
-				BlendObject data_obj;
-				BlendObject data_obj2;
-
-				BlendBlock* tmpBlock=0;
-
+				btDataObject* sensorOb = *sensorsPtr;
+				while (sensorOb)
 				{
-					const char* type_name = m_bf->types[obj.type].name;
-
-#if DUMP_BLOCK_NAMES
-					printf("type_name=%s. ",type_name);
-					printf("block blenderptr = %lx\n",m_bf->blocks[j].blender_pointer);
-#endif //DUMP_BLOCK_NAMES
-
-					if (strcmp(type_name,"FileGlobal")==0)
+					switch (sensorOb->getIntValue("type"))
 					{
-						
-						btDataObject* dob = extractSingleObject(&obj);
-						printf("Found FileGlobal\n");
-						short minversion = dob->getIntValue("minversion",123);
-						short manversion = dob->getIntValue("manversion",123);
-						int curScene = dob->getIntValue("*curscene",0);
-						printf("minversion = %d\n",minversion);
-						BlendBlock* block = (BlendBlock*)obj.block;
-						fileGlobalObject = dob;
-						//blend_object_dump_field(m_bf,	obj);
-					
-					}
-					
-					if (strcmp(type_name,"Scene")==0)
-					{
-						printf("Found a scene\n");
-						btDataObject* dob = extractSingleObject(&obj);
-						
-						if (fileGlobalObject && fileGlobalObject->getIntValue("*curscene",0)==dob->m_blenderPointer)
+					case SENS_ALWAYS:
 						{
-							sceneVisibleLayer = dob->getIntValue("lay",0);
-						}
-						
 
-					}
 
-					if (strcmp(type_name,"bRigidBodyJointConstraint")==0)
-					{
-						btDataObject* dob = extractSingleObject(&obj);
-						printf("Found a bRigidBodyJointConstraint\n");
-					}
 
-					if (strcmp(type_name,"bConstraint")==0)
-					{
-						btDataObject* dob = extractSingleObject(&obj);
-						printf("Found a bConstraint\n");
-					}
-
-					if (strcmp(type_name,"Object")==0)
-					{
-						bObj tmpObj;
-						blend_acquire_obj_from_obj(m_bf,&obj,&tmpObj,0);
-						btDataObject* dob = extractSingleObject(&obj);
-						int obLayer = dob->getIntValue("lay",0);
-
-						///only convert objects that are in a visible layer
-						if (obLayer & sceneVisibleLayer)
-						{
-							btCollisionObject* colObj = convertSingleObject(&tmpObj);
-							if (colObj)
-							{
-								dob->m_userPointer = colObj;
-							}
-							m_visibleGameObjects.push_back(dob);
+							break;
 						}
 
+					default:
+						{
+						}
 					}
 
-					if (strcmp(type_name,"Mesh")==0)
-					{
-						//printf("object type_name = %s\n",type_name);
-						bMesh tmpMesh;
-						blend_acquire_mesh_from_obj(m_bf, &obj, &tmpMesh);
-						convertSingleMesh(&tmpMesh);
-					}
+					unsigned int nextIntPtr = sensorOb->getIntValue("*next");
+					sensorOb = nextIntPtr ? *m_dataObjects[nextIntPtr] : 0;
 				}
 			}
 		}
 	}
+}
 
-	///now fix up some constraint and logic bricks
 
 #define CONSTRAINT_TYPE_RIGIDBODYJOINT 17
 #define CONSTRAINT_RB_BALL		1
@@ -813,9 +550,9 @@ void	BulletBlendReader::convertAllObjects(int verboseDumpAllBlocks)
 #define CONSTRAINT_RB_VEHICLE	11
 #define CONSTRAINT_RB_GENERIC6DOF 12
 
-
-
-
+void	BulletBlendReader::convertConstraints()
+{
+	
 	int i;
 	for (i=0;i<m_visibleGameObjects.size();i++)
 	{
@@ -924,6 +661,120 @@ void	BulletBlendReader::convertAllObjects(int verboseDumpAllBlocks)
 		}
 
 	}
+}
+
+void	BulletBlendReader::convertAllObjects(int verboseDumpAllBlocks)
+{
+
+	if (!m_bf)
+	{
+		printf("ERROR: no file loaded, use openFile first\n");
+		return;
+	}
+
+	if (verboseDumpAllBlocks)
+	{
+		blend_dump_blocks(m_bf);
+	}
+
+	int sceneVisibleLayer = 0;
+	btDataObject* fileGlobalObject =0;
+
+
+	int j;
+	for (j=0; j<m_bf->blocks_count; ++j) 
+	{
+		{
+			int entry_count = blend_block_get_entry_count(m_bf, &m_bf->blocks[j]);
+			for (int i=0; i<entry_count; ++i) 
+			{
+				BlendObject obj = blend_block_get_object(m_bf, &m_bf->blocks[j], i);
+				
+
+
+				
+				BlendObject data_obj;
+				BlendObject data_obj2;
+
+				BlendBlock* tmpBlock=0;
+
+				{
+					const char* type_name = m_bf->types[obj.type].name;
+
+#if DUMP_BLOCK_NAMES
+					printf("type_name=%s. ",type_name);
+					printf("block blenderptr = %lx\n",m_bf->blocks[j].blender_pointer);
+#endif //DUMP_BLOCK_NAMES
+
+					btDataObject* dob = 0;
+
+					if (needsExtraction(type_name))
+					{
+						dob = extractSingleObject(&obj);
+					}
+					
+					if (strcmp(type_name,"FileGlobal")==0)
+					{
+						printf("Found FileGlobal\n");
+						short minversion = dob->getIntValue("minversion",123);
+						short manversion = dob->getIntValue("manversion",123);
+						int curScene = dob->getIntValue("*curscene",0);
+						printf("minversion = %d\n",minversion);
+						BlendBlock* block = (BlendBlock*)obj.block;
+						fileGlobalObject = dob;
+						//blend_object_dump_field(m_bf,	obj);
+					}
+					
+					if (strcmp(type_name,"Scene")==0)
+					{
+						printf("Found a scene\n");
+												
+						if (fileGlobalObject && fileGlobalObject->getIntValue("*curscene",0)==dob->m_blenderPointer)
+						{
+							sceneVisibleLayer = dob->getIntValue("lay",0);
+						}
+						
+
+					}
+
+
+					if (strcmp(type_name,"Object")==0)
+					{
+						bObj tmpObj;
+						blend_acquire_obj_from_obj(m_bf,&obj,&tmpObj,0);
+						int obLayer = dob->getIntValue("lay",0);
+
+						///only convert objects that are in a visible layer
+						if (obLayer & sceneVisibleLayer)
+						{
+							btCollisionObject* colObj = convertSingleObject(&tmpObj);
+							if (colObj)
+							{
+								dob->m_userPointer = colObj;
+							}
+							m_visibleGameObjects.push_back(dob);
+						}
+
+					}
+
+					if (strcmp(type_name,"Mesh")==0)
+					{
+						//printf("object type_name = %s\n",type_name);
+						bMesh tmpMesh;
+						blend_acquire_mesh_from_obj(m_bf, &obj, &tmpMesh);
+						convertSingleMesh(&tmpMesh);
+					}
+				}
+			}
+		}
+	}
+
+
+	///now fix up some constraint and logic bricks
+
+	convertConstraints();
+
+	convertLogicBricks();
 
 }
 

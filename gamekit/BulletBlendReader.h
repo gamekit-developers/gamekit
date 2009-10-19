@@ -81,6 +81,51 @@ struct	btDataObject
 };
 
 
+//quick prototyping of some logic brick converting and processing system
+struct	btSensor
+{
+};
+
+struct	btController
+{
+};
+
+struct	btActuator
+{
+};
+
+struct	btLogicManager
+{
+	btAlignedObjectArray<btSensor*> m_sensors;
+	btAlignedObjectArray<btController*> m_controllers;
+	btAlignedObjectArray<btActuator*> m_actuators;
+
+	void	processLogicBricks(btScalar	deltaTime)
+	{
+		int i;
+		//process all sensors
+		
+		for (i=0;i<m_sensors.size();i++)
+		{
+		}
+
+		//process all controllers
+		for (i=0;i<m_controllers.size();i++)
+		{
+		}
+
+		//process all actuators
+		//process all controllers
+		for (i=0;i<m_actuators.size();i++)
+		{
+		}
+
+	}
+	
+};
+
+
+
 typedef btHashKey<int> btHashInt;
 
 class	BulletBlendReader
@@ -106,6 +151,8 @@ public:
 	///if you only have a fileName, call openFile
 	//int		openFile(const char* fileName);
 
+	bool	needsExtraction(const char* type_name);
+	
 	btDataObject* extractSingleObject(BlendObject*);
 
 	void	convertAllObjects(int verboseDumpAllBlocks=false);
@@ -114,6 +161,10 @@ public:
 	virtual	btCollisionObject* convertSingleObject(struct _bObj* object);
 
 	virtual	void convertSingleMesh(struct _bMesh* mesh);
+
+	void	convertConstraints();
+
+	void	convertLogicBricks();
 
 	//after each object is converter, including collision object, create a graphics object (and bind them)
 	virtual void createGraphicsObject(_bObj* tmpObject, class btCollisionObject* bulletObject)=0;
