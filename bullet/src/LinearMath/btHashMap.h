@@ -18,8 +18,8 @@ struct btHashString
 		:m_string(name)
 	{
 		/* magic numbers from http://www.isthe.com/chongo/tech/comp/fnv/ */
-		static const unsigned int  InitialFNV = 2166136261;
-		static const unsigned int FNVMultiple = 16777619;
+		static const unsigned int  InitialFNV = 2166136261u;
+		static const unsigned int FNVMultiple = 16777619u;
 
 		/* Fowler / Noll / Vo (FNV) Hash */
 		unsigned int hash = InitialFNV;
@@ -259,7 +259,6 @@ class btHashMap
 		}
 
 		// Remove the last pair from the hash table.
-		const Value* lastValue = &m_valueArray[lastPairIndex];
 		int lastHash = m_keyArray[lastPairIndex].getHash() & (m_valueArray.capacity()-1);
 
 		index = m_hashTable[lastHash];
@@ -339,10 +338,6 @@ class btHashMap
 		return &m_valueArray[index];
 	}
 
-	const Key& 	getKey(int index) const
-	{
-		return m_keyArray[index];
-	}
 
 	int	findIndex(const Key& key) const
 	{

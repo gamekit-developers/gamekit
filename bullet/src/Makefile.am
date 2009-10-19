@@ -143,11 +143,13 @@ libbulletcollision_la_SOURCES = \
 		BulletCollision/CollisionDispatch/btConvexPlaneCollisionAlgorithm.cpp \
 		BulletCollision/CollisionDispatch/btConvexConcaveCollisionAlgorithm.cpp \
 		BulletCollision/CollisionDispatch/btBoxBoxCollisionAlgorithm.cpp \
+		BulletCollision/CollisionDispatch/btBox2dBox2dCollisionAlgorithm.cpp \
 		BulletCollision/CollisionDispatch/SphereTriangleDetector.cpp \
 		BulletCollision/CollisionDispatch/btManifoldResult.cpp \
 		BulletCollision/CollisionDispatch/btCollisionWorld.cpp \
 		BulletCollision/CollisionDispatch/btSphereTriangleCollisionAlgorithm.cpp \
 		BulletCollision/CollisionDispatch/btConvexConvexAlgorithm.cpp \
+		BulletCollision/CollisionDispatch/btConvex2dConvex2dAlgorithm.cpp \
 		BulletCollision/CollisionDispatch/btUnionFind.cpp \
 		BulletCollision/CollisionDispatch/btCompoundCollisionAlgorithm.cpp \
 		BulletCollision/CollisionShapes/btTetrahedronShape.cpp \
@@ -167,6 +169,7 @@ libbulletcollision_la_SOURCES = \
 		BulletCollision/CollisionShapes/btEmptyShape.cpp \
 		BulletCollision/CollisionShapes/btCollisionShape.cpp \
 		BulletCollision/CollisionShapes/btConvexShape.cpp \
+		BulletCollision/CollisionShapes/btConvex2dShape.cpp \
 		BulletCollision/CollisionShapes/btConvexInternalShape.cpp \
 		BulletCollision/CollisionShapes/btConvexHullShape.cpp \
 		BulletCollision/CollisionShapes/btTriangleCallback.cpp \
@@ -175,6 +178,7 @@ libbulletcollision_la_SOURCES = \
 		BulletCollision/CollisionShapes/btConcaveShape.cpp \
 		BulletCollision/CollisionShapes/btConvexPointCloudShape.cpp \
 		BulletCollision/CollisionShapes/btBoxShape.cpp \
+		BulletCollision/CollisionShapes/btBox2dShape.cpp \
 		BulletCollision/CollisionShapes/btOptimizedBvh.cpp \
 		BulletCollision/CollisionShapes/btHeightfieldTerrainShape.cpp \
 		BulletCollision/CollisionShapes/btMultimaterialTriangleMeshShape.cpp \
@@ -213,10 +217,12 @@ libbulletcollision_la_SOURCES = \
 		BulletCollision/CollisionDispatch/btGhostObject.h \
 		BulletCollision/CollisionDispatch/btSphereTriangleCollisionAlgorithm.h \
 		BulletCollision/CollisionDispatch/btBoxBoxCollisionAlgorithm.h \
+		BulletCollision/CollisionDispatch/btBox2dBox2dCollisionAlgorithm.h \
 		BulletCollision/CollisionDispatch/btConvexPlaneCollisionAlgorithm.h \
 		BulletCollision/CollisionDispatch/btEmptyCollisionAlgorithm.h \
 		BulletCollision/CollisionDispatch/btCollisionCreateFunc.h \
 		BulletCollision/CollisionDispatch/btConvexConvexAlgorithm.h \
+		BulletCollision/CollisionDispatch/btConvex2dConvex2dAlgorithm.h \
 		BulletCollision/CollisionDispatch/btBoxBoxDetector.h \
 		BulletCollision/CollisionDispatch/btCollisionDispatcher.h \
 		BulletCollision/CollisionDispatch/SphereTriangleDetector.h \
@@ -231,11 +237,13 @@ libbulletcollision_la_SOURCES = \
 		BulletCollision/CollisionDispatch/btSphereBoxCollisionAlgorithm.h \
 		BulletCollision/CollisionDispatch/btCollisionConfiguration.h \
 		BulletCollision/CollisionShapes/btConvexShape.h \
+		BulletCollision/CollisionShapes/btConvex2dShape.h \
 		BulletCollision/CollisionShapes/btTriangleCallback.h \
 		BulletCollision/CollisionShapes/btPolyhedralConvexShape.h \
 		BulletCollision/CollisionShapes/btMultimaterialTriangleMeshShape.h \
 		BulletCollision/CollisionShapes/btCompoundShape.h \
 		BulletCollision/CollisionShapes/btBoxShape.h \
+		BulletCollision/CollisionShapes/btBox2dShape.h \
 		BulletCollision/CollisionShapes/btMultiSphereShape.h \
 		BulletCollision/CollisionShapes/btCollisionMargin.h \
 		BulletCollision/CollisionShapes/btConcaveShape.h \
@@ -311,6 +319,7 @@ libbulletdynamics_la_SOURCES = \
 		BulletDynamics/Character/btKinematicCharacterController.cpp \
 		BulletDynamics/Character/btKinematicCharacterController.h \
 		BulletDynamics/Character/btCharacterControllerInterface.h \		
+		BulletDynamics/Dynamics/btActionInterface.h \
 		BulletDynamics/Dynamics/btContinuousDynamicsWorld.h \
 		BulletDynamics/Dynamics/btSimpleDynamicsWorld.h \
 		BulletDynamics/Dynamics/btRigidBody.h \
@@ -370,6 +379,7 @@ nobase_bullet_include_HEADERS += \
 	BulletDynamics/Vehicle/btRaycastVehicle.h \
 	BulletDynamics/Vehicle/btWheelInfo.h \
 	BulletDynamics/Vehicle/btVehicleRaycaster.h \
+	BulletDynamics/Dynamics/btActionInterface.h \
 	BulletDynamics/Dynamics/btContinuousDynamicsWorld.h \
 	BulletDynamics/Dynamics/btRigidBody.h \
 	BulletDynamics/Dynamics/btDynamicsWorld.h \
@@ -420,11 +430,13 @@ nobase_bullet_include_HEADERS += \
 	BulletCollision/CollisionShapes/btTriangleIndexVertexArray.h \
 	BulletCollision/CollisionShapes/btTriangleBuffer.h \
 	BulletCollision/CollisionShapes/btConvexShape.h \
+	BulletCollision/CollisionShapes/btConvex2dShape.h \
 	BulletCollision/CollisionShapes/btStaticPlaneShape.h \
 	BulletCollision/CollisionShapes/btConeShape.h \
 	BulletCollision/CollisionShapes/btCollisionShape.h \
 	BulletCollision/CollisionShapes/btTriangleShape.h \
 	BulletCollision/CollisionShapes/btBoxShape.h \
+	BulletCollision/CollisionShapes/btBox2dShape.h \
 	BulletCollision/CollisionShapes/btMinkowskiSumShape.h \
 	BulletCollision/CollisionShapes/btTriangleMeshShape.h \
 	BulletCollision/CollisionShapes/btMaterial.h \
@@ -467,9 +479,11 @@ nobase_bullet_include_HEADERS += \
 	BulletCollision/CollisionDispatch/btCollisionCreateFunc.h \
 	BulletCollision/CollisionDispatch/btSphereTriangleCollisionAlgorithm.h \
 	BulletCollision/CollisionDispatch/btConvexConvexAlgorithm.h \
+	BulletCollision/CollisionDispatch/btConvex2dConvex2dAlgorithm.h \
 	BulletCollision/CollisionDispatch/btCollisionObject.h \
 	BulletCollision/CollisionDispatch/btConvexPlaneCollisionAlgorithm.h \
 	BulletCollision/CollisionDispatch/btBoxBoxCollisionAlgorithm.h \
+	BulletCollision/CollisionDispatch/btBox2dBox2dCollisionAlgorithm.h \
 	BulletCollision/CollisionDispatch/btDefaultCollisionConfiguration.h \
 	BulletCollision/CollisionDispatch/btCompoundCollisionAlgorithm.h \
 	BulletCollision/CollisionDispatch/btSphereBoxCollisionAlgorithm.h \
