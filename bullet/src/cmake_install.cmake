@@ -37,7 +37,6 @@ ENDIF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unsp
 
 IF(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  INCLUDE("/Users/erwincoumans/develop/gamekit/bullet/src/BulletMultiThreaded/cmake_install.cmake")
   INCLUDE("/Users/erwincoumans/develop/gamekit/bullet/src/BulletSoftBody/cmake_install.cmake")
   INCLUDE("/Users/erwincoumans/develop/gamekit/bullet/src/BulletCollision/cmake_install.cmake")
   INCLUDE("/Users/erwincoumans/develop/gamekit/bullet/src/BulletDynamics/cmake_install.cmake")
