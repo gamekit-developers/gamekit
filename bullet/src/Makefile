@@ -39,10 +39,10 @@ RM = "/Applications/CMake 2.6-4.app/Contents/bin/cmake" -E remove -f
 CMAKE_EDIT_COMMAND = "/Applications/CMake 2.6-4.app/Contents/bin/ccmake"
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/erwincoumans/develop/wtf
+CMAKE_SOURCE_DIR = /Users/erwincoumans/develop/gamekit
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/erwincoumans/develop/wtf
+CMAKE_BINARY_DIR = /Users/erwincoumans/develop/gamekit
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -110,14 +110,14 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	cd /Users/erwincoumans/develop/wtf && $(CMAKE_COMMAND) -E cmake_progress_start /Users/erwincoumans/develop/wtf/CMakeFiles /Users/erwincoumans/develop/wtf/bullet/src/CMakeFiles/progress.make
-	cd /Users/erwincoumans/develop/wtf && $(MAKE) -f CMakeFiles/Makefile2 bullet/src/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/erwincoumans/develop/wtf/CMakeFiles 0
+	cd /Users/erwincoumans/develop/gamekit && $(CMAKE_COMMAND) -E cmake_progress_start /Users/erwincoumans/develop/gamekit/CMakeFiles /Users/erwincoumans/develop/gamekit/bullet/src/CMakeFiles/progress.make
+	cd /Users/erwincoumans/develop/gamekit && $(MAKE) -f CMakeFiles/Makefile2 bullet/src/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/erwincoumans/develop/gamekit/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /Users/erwincoumans/develop/wtf && $(MAKE) -f CMakeFiles/Makefile2 bullet/src/clean
+	cd /Users/erwincoumans/develop/gamekit && $(MAKE) -f CMakeFiles/Makefile2 bullet/src/clean
 .PHONY : clean
 
 # The main clean target
@@ -126,17 +126,17 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /Users/erwincoumans/develop/wtf && $(MAKE) -f CMakeFiles/Makefile2 bullet/src/preinstall
+	cd /Users/erwincoumans/develop/gamekit && $(MAKE) -f CMakeFiles/Makefile2 bullet/src/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /Users/erwincoumans/develop/wtf && $(MAKE) -f CMakeFiles/Makefile2 bullet/src/preinstall
+	cd /Users/erwincoumans/develop/gamekit && $(MAKE) -f CMakeFiles/Makefile2 bullet/src/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /Users/erwincoumans/develop/wtf && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /Users/erwincoumans/develop/gamekit && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Help Target
@@ -162,6 +162,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /Users/erwincoumans/develop/wtf && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /Users/erwincoumans/develop/gamekit && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

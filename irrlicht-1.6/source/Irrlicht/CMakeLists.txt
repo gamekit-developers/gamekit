@@ -543,7 +543,7 @@ ENDIF (APPLE)
 
 
 IF (APPLE)
-ADD_LIBRARY(Irrlicht MacOSX/CIrrDeviceMacOSX.mm MacOSX/OSXClipboard.mm MacOSX/AppDelegate.mm ${Irrlicht_SRCS}  ${jpeg_SRCS} ${libpng_SRCS} ${zlib_SRCS}  MacOSX/CIrrDeviceMacOSX.mm )
+ADD_LIBRARY(Irrlicht MacOSX/CIrrDeviceMacOSX.mm MacOSX/OSXClipboard.mm MacOSX/AppDelegate.mm ${Irrlicht_SRCS}  ${jpeg_SRCS} ${libpng_SRCS} ${zlib_SRCS} )
 ELSE (APPLE)
 ADD_LIBRARY(Irrlicht ${Irrlicht_SRCS}  ${jpeg_SRCS} ${libpng_SRCS} ${zlib_SRCS}  )
 ENDIF (APPLE)
