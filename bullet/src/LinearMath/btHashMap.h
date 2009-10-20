@@ -318,6 +318,11 @@ class btHashMap
 		return find(key);
 	}
 
+	const Key& 		getKey(int index) const
+	{
+		return m_keyArray[index];
+	}
+
 	const Value*	find(const Key& key) const
 	{
 		int index = findIndex(key);

@@ -319,10 +319,39 @@ btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr)
 			dob->m_dataMap.insert(m_bf->names[fieldName],val);
 
 
+			///for arrays, use an aligned object array. This is very bloated.
+			
+			btDataValue* arrayVal =  0;
+
+			
+
+			///this access is a bloated, will probably make special cases for common arrays
+			if (dim1>1 || dim2>1)
+			{
+				arrayVal = val;
+				arrayVal->m_valueArray.resize(dim1);
+				for (int i=0;i<dim1;i++)
+				{
+					arrayVal->m_valueArray[i].m_name = fieldName;
+					arrayVal->m_valueArray[i].m_type = fieldType;
+					arrayVal->m_valueArray[i].m_valueArray.resize(dim2);
+
+					for (int j=0;j<dim2;j++)
+					{
+						arrayVal->m_valueArray[i].m_valueArray[j].m_name = fieldName;
+						arrayVal->m_valueArray[i].m_valueArray[j].m_type = fieldType;
+					}
+				}
+			}
+			
+
 			for (k=0;k<dim1;k++)
 			{
 				for (l=0;l<dim2;l++)
 				{
+					if (arrayVal)
+						val = &arrayVal->m_valueArray[k].m_valueArray[l];
+
 					ptrptr = (void**)&block->array_entries->field_bytes[block->array_entries->field_offsets[field_index+dim2*k+ l]];
 								
 					objType = typestring_to_blendobj_type(m_bf, m_bf->types[fieldType].name) ;
@@ -590,7 +619,6 @@ void	BulletBlendReader::convertConstraints()
 							{
 								const btHashString& structName = rbConstraint->m_dataMap.getKey(k);
 								const btDataValue* valPtr = *rbConstraint->m_dataMap.find(structName);
-								printf("hello\n");
 							}
 #endif
 							
@@ -684,6 +712,42 @@ void	BulletBlendReader::convertConstraints()
 									}
 								case CONSTRAINT_RB_GENERIC6DOF:
 									{
+
+										btTransform frameInA;
+										btTransform frameInB;
+										if (axis1.length() == 0.0)
+										{
+											btPlaneSpace1( axisInA, axis1, axis2 );
+										}
+										frameInA.getBasis().setValue( axisInA.x(), axis1.x(), axis2.x(),
+																	  axisInA.y(), axis1.y(), axis2.y(),
+																	  axisInA.z(), axis1.z(), axis2.z() );
+										frameInA.setOrigin( pivotInA );
+										btTransform inv = rbB->getCenterOfMassTransform().inverse();
+										btTransform globalFrameA = rbA->getCenterOfMassTransform() * frameInA;
+										frameInB = inv  * globalFrameA;
+										bool useReferenceFrameA = true;
+										btGeneric6DofSpringConstraint* genericConstraint = new btGeneric6DofSpringConstraint(*rbA,*rbB,	frameInA,frameInB,useReferenceFrameA);
+										m_destinationWorld->addConstraint(genericConstraint,disableCollisionBetweenLinkedBodies);
+
+										//if it is a generic 6DOF constraint, set all the limits accordingly
+										int dof;
+										int dofbit=1;
+										for (dof=0;dof<6;dof++)
+										{
+											if (flag & dofbit)
+											{
+												///this access is a bloated, will probably make special cases for common arrays
+												btScalar minLimit = (*rbConstraint->m_dataMap.find("minLimit[6]"))->m_valueArray[0].m_valueArray[dof].m_fValue;
+												btScalar maxLimit = (*rbConstraint->m_dataMap.find("maxLimit[6]"))->m_valueArray[0].m_valueArray[dof].m_fValue;
+												genericConstraint->setLimit(dof,minLimit,maxLimit);
+											} else
+											{
+												//minLimit > maxLimit means free(disabled limit) for this degree of freedom
+												genericConstraint->setLimit(dof,1,-1);
+											}
+											dofbit<<=1;
+										}
 										break;
 									}
 								
