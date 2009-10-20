@@ -553,6 +553,9 @@ void	BulletBlendReader::convertLogicBricks()
 #define CONSTRAINT_RB_VEHICLE	11
 #define CONSTRAINT_RB_GENERIC6DOF 12
 
+///flags
+#define CONSTRAINT_DISABLE_LINKED_COLLISION 0x80
+
 void	BulletBlendReader::convertConstraints()
 {
 	
@@ -591,71 +594,105 @@ void	BulletBlendReader::convertConstraints()
 							}
 #endif
 							
+							btVector3 pivotInA(rbConstraint->getFloatValue("pivX"),rbConstraint->getFloatValue("pivY"),rbConstraint->getFloatValue("pivZ"));
+							btVector3 pivotInB(0,0,0);
+							btCollisionObject* colObj = (btCollisionObject*) ob->m_userPointer;
+							btRigidBody* rbA = btRigidBody::upcast(colObj);
+							btRigidBody* rbB = 0;
+							
+							int flag = rbConstraint->getIntValue("flag");
+							bool disableCollisionBetweenLinkedBodies = (flag & CONSTRAINT_DISABLE_LINKED_COLLISION) != 0;
 
-							/* important: these defines need to match up with PHY_DynamicTypes headerfile */
-							switch (rbConstraintType)
+							if (rbA)
 							{
-
-							case CONSTRAINT_RB_BALL:
+								unsigned int objectBPtr = rbConstraint->getIntValue("*tar");
+								if (objectBPtr)
 								{
-									btVector3 pivotInA(rbConstraint->getFloatValue("pivX"),rbConstraint->getFloatValue("pivY"),rbConstraint->getFloatValue("pivZ"));
-																		
-									btCollisionObject* colObj = (btCollisionObject*) ob->m_userPointer;
-									btRigidBody* rbA = btRigidBody::upcast(colObj);
-									if (rbA)
+									btDataObject** dataBPtr = m_dataObjects[objectBPtr];
+									if (dataBPtr && *dataBPtr)
 									{
-										btCollisionObject* colObjB = 0;
-										unsigned int objectBPtr = rbConstraint->getIntValue("*tar");
-										if (objectBPtr)
-										{
-											btDataObject** dataBPtr = m_dataObjects[objectBPtr];
-											if (dataBPtr && *dataBPtr)
-											{
-												btDataObject* dataB = *dataBPtr;
-												colObjB = (btCollisionObject*)dataB->m_userPointer;
-											}
-										}
+										btDataObject* dataB = *dataBPtr;
+										btCollisionObject* colObjB = (btCollisionObject*)dataB->m_userPointer;
+										rbB = btRigidBody::upcast(colObjB);
+										pivotInB = rbB->getCenterOfMassTransform().inverse()(rbA->getCenterOfMassTransform()(pivotInA));
+									}
+								}
+								
+								float radsPerDeg = 6.283185307179586232f / 360.f;
+
+								//localConstraintFrameBasis
+								btMatrix3x3 localCFrame;
+								localCFrame.setEulerZYX(radsPerDeg*rbConstraint->getFloatValue("axX"),radsPerDeg*rbConstraint->getFloatValue("axY"),radsPerDeg*rbConstraint->getFloatValue("axZ"));
+								btVector3& axisInA = localCFrame.getColumn(0);
+								btVector3 axis1 = localCFrame.getColumn(1);
+								btVector3 axis2 = localCFrame.getColumn(2);
+								bool angularOnly = false;
+								
+
+								/* important: these defines need to match up with PHY_DynamicTypes headerfile */
+								switch (rbConstraintType)
+								{
+
+								case CONSTRAINT_RB_BALL:
+									{
 										btPoint2PointConstraint* p2p = 0;
 
-										if (colObjB && btRigidBody::upcast(colObjB))
+										if (rbB)
 										{
-											btRigidBody* rbB = btRigidBody::upcast(colObjB);
-
-											btVector3 pivotInB = rbB->getCenterOfMassTransform().inverse()(rbA->getCenterOfMassTransform()(pivotInA));
 											p2p = new btPoint2PointConstraint(*rbA,*rbB,pivotInA,pivotInB);
-
 										} else
 										{
 											p2p = new btPoint2PointConstraint(*rbA,pivotInA);
 										}
+										
 										m_destinationWorld->addConstraint(p2p);
+										
+										break;
 									}
+								case CONSTRAINT_RB_HINGE:
+									{
+										btHingeConstraint* hinge = 0;
+										if (rbB)
+										{
+											btVector3 axisInB = rbB ? 
+											(rbB->getCenterOfMassTransform().getBasis().inverse()*(rbA->getCenterOfMassTransform().getBasis() * axisInA)) : 
+											rbA->getCenterOfMassTransform().getBasis() * axisInA;
+
+											hinge = new btHingeConstraint(*rbA,*rbB,pivotInA,pivotInB,axisInA,axisInB);
 
 
-									break;
+										} else
+										{
+											hinge = new btHingeConstraint(*rbA,	pivotInA,axisInA);
+
+										}
+										hinge->setAngularOnly(angularOnly);
+
+										//m_constraints.push_back(hinge);
+										m_destinationWorld->addConstraint(hinge,disableCollisionBetweenLinkedBodies);
+										//hinge->setUserConstraintId(gConstraintUid++);
+										//hinge->setUserConstraintType(type);
+										break;
+									}
+								case CONSTRAINT_RB_CONETWIST:
+									{
+										break;
+									}
+								case CONSTRAINT_RB_VEHICLE:
+									{
+										break;
+									}
+								case CONSTRAINT_RB_GENERIC6DOF:
+									{
+										break;
+									}
+								
+								default:
+									{
+										printf("unsupported rigid body constraint type\n");
+									}
 								}
-							case CONSTRAINT_RB_HINGE:
-								{
-									break;
-								}
-							case CONSTRAINT_RB_CONETWIST:
-								{
-									break;
-								}
-							case CONSTRAINT_RB_VEHICLE:
-								{
-									break;
-								}
-							case CONSTRAINT_RB_GENERIC6DOF:
-								{
-									break;
-								}
-							
-							default:
-								{
-									printf("unsupported rigid body constraint type\n");
-								}
-							}
+							} //if (rbA)
 						}
 					}
 
@@ -948,9 +985,7 @@ btCollisionObject* BulletBlendReader::convertSingleObject(_bObj* object)
 
 		} else
 		{
-			btCollisionObject* colObj = new btCollisionObject();
-			colObj->setWorldTransform(worldTrans);
-
+			
 			btCollisionShape* colShape =0;
 			if (meshInterface->getNumTriangles()>0)
 			{
@@ -963,9 +998,13 @@ btCollisionObject* BulletBlendReader::convertSingleObject(_bObj* object)
 				{
 					colShape = childShape;
 				}
+				
+				btVector3 inertia(0,0,0);
+				btRigidBody* colObj = new btRigidBody(0.f,0,colShape,inertia);
+				colObj->setWorldTransform(worldTrans);
 				colObj->setCollisionShape(colShape);
 
-				m_destinationWorld->addCollisionObject(colObj);
+				m_destinationWorld->addRigidBody(colObj);
 			
 				createGraphicsObject(object,colObj);
 				return colObj;
