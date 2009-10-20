@@ -10,8 +10,7 @@
 #ifndef _ABS_FILE_H
 #define _ABS_FILE_H
 
-#ifdef WIN32
-
+#ifdef _MSC_VER
 		typedef unsigned char     uint8_t;
 		typedef unsigned long int uint64_t;
 		typedef unsigned int      uint32_t;
@@ -175,7 +174,7 @@ static int MY_PUTC(int c, MY_FILETYPE *const fp) {
   if (MY_WRITE(&cc, 1, 1, fp) != 1) {
     return EOF;
   }
-  return (int)cc;  
+  return (int)cc;
 }
 static int MY_PUTS(const char *s, MY_FILETYPE *const fp) {
   int i = 0;
@@ -232,7 +231,7 @@ static long MY_FILELENGTH(FILE *fp) {
 #include <string.h>
 
 #ifdef __cplusplus
-extern "C" { 
+extern "C" {
 #endif
 
 #define	MY_FILETYPE char

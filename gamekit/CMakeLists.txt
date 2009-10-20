@@ -3,9 +3,9 @@
 ########################################################
 
 
-IF (WIN32)
+IF (WIN32 AND MSVC)
  SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /DYNAMICBASE")
-ENDIF (WIN32)
+ENDIF (WIN32 AND MSVC)
 
 
 LINK_DIRECTORIES(

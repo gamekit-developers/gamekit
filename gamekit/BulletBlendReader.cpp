@@ -4,8 +4,8 @@ Copyright (c) 2009 Erwin Coumans  http://gamekit.googlecode.com
 
 This software is provided 'as-is', without any express or implied warranty.
 In no event will the authors be held liable for any damages arising from the use of this software.
-Permission is granted to anyone to use this software for any purpose, 
-including commercial applications, and to alter it and redistribute it freely, 
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute it freely,
 subject to the following restrictions:
 
 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
@@ -56,12 +56,12 @@ int	BulletBlendReader::readFile(FILE* posixFile, int verboseDumpAllTypes)
 		MY_CLOSE(buffer);
 		return 0;
 	}
-	
+
 	if (verboseDumpAllTypes)
 	{
 		blend_dump_typedefs(m_bf);
 	}
-	
+
 	MY_CLOSE(buffer);
 
 	return 1;
@@ -72,7 +72,7 @@ int	BulletBlendReader::readFile(FILE* posixFile, int verboseDumpAllTypes)
 BulletBlendReader::~BulletBlendReader()
 {
 	///@todo: delete/close file/data structures
-	
+
 }
 
 static int
@@ -219,7 +219,7 @@ blend_type_basename_compare(const char *fancy, const char *raw) {
 
 static BlendObjType
 typestring_to_blendobj_type(BlendFile* blend_file,
-							const char* type_name) 
+							const char* type_name)
 {
 	if (blend_type_basename_compare(type_name, "char") == 0) {
 		return BLEND_OBJ_CHAR8;
@@ -294,7 +294,7 @@ btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr)
 
 	int fieldType,fieldName;
 
-	if (m_bf->types[obj.type].is_struct) 
+	if (m_bf->types[obj.type].is_struct)
 	{
 		int i;
 		int field_index = 0;
@@ -315,15 +315,15 @@ btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr)
 			btDataValue* val = new btDataValue();
 			val->m_name = fieldName;
 			val->m_type = fieldType;
-			
+
 			dob->m_dataMap.insert(m_bf->names[fieldName],val);
 
 
 			///for arrays, use an aligned object array. This is very bloated.
-			
+
 			btDataValue* arrayVal =  0;
 
-			
+
 
 			///this access is a bloated, will probably make special cases for common arrays
 			if (dim1>1 || dim2>1)
@@ -343,7 +343,7 @@ btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr)
 					}
 				}
 			}
-			
+
 
 			for (k=0;k<dim1;k++)
 			{
@@ -353,7 +353,7 @@ btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr)
 						val = &arrayVal->m_valueArray[k].m_valueArray[l];
 
 					ptrptr = (void**)&block->array_entries->field_bytes[block->array_entries->field_offsets[field_index+dim2*k+ l]];
-								
+
 					objType = typestring_to_blendobj_type(m_bf, m_bf->types[fieldType].name) ;
 					if (ptrptr)
 					{
@@ -363,7 +363,7 @@ btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr)
 							{
 								break;
 							}
-						
+
 						case BLEND_OBJ_UCHAR8:
 							{
 								val->m_iValue = *(unsigned char*)ptrptr;
@@ -425,7 +425,7 @@ btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr)
 								int isListBase = 0;
 								int max_chars = 1023;
 
-								
+
 								if (!strcmp(m_bf->types[m_bf->types[obj.type].fieldtypes[i]].name,"ListBase"))
 								{
 									isListBase  =1;
@@ -439,16 +439,16 @@ btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr)
 										BlendObject idstruc_obj;
 										BlendBlock* block;
 										BlendObject name_obj;
-										
 
-										
+
+
 										BlendBlockPointer curveblockptr = blendBlockFromBlendpointer(m_bf, ptr);
 										if (curveblockptr)
 										{
 											idstruc_obj = blend_block_get_object(m_bf, curveblockptr, 0);
 											block = (BlendBlock*)idstruc_obj.block;
 											val->m_uiValue =  block->blender_pointer;
-											
+
 											if (BLEND_OBJ_STRUCT == blend_object_type(m_bf, idstruc_obj) &&
 												blend_object_structure_getfield(m_bf, &name_obj,
 												idstruc_obj, "name")) {
@@ -456,7 +456,7 @@ btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr)
 													if (blend_object_getstring(m_bf, name_obj,
 														dest, max_chars)) {
 //															printf("\"%s\" ",dest);
-															
+
 													} else {
 //														printf("%x ",block->blender_pointer);
 													}
@@ -476,12 +476,12 @@ btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr)
 								{
 									if (!strcmp(m_bf->names[m_bf->types[obj.type].fieldnames[i]],"id"))
 									{
-										if (blend_object_get_IDname(m_bf, obj, dest, max_chars)) 
+										if (blend_object_get_IDname(m_bf, obj, dest, max_chars))
 										{
 //											printf("\"%s\" ",dest);
 											break;
 										}
-									} 
+									}
 //									printf("Embedded struct\n");
 
 								}
@@ -587,7 +587,7 @@ void	BulletBlendReader::convertLogicBricks()
 
 void	BulletBlendReader::convertConstraints()
 {
-	
+
 	int i;
 	for (i=0;i<m_visibleGameObjects.size();i++)
 	{
@@ -621,13 +621,13 @@ void	BulletBlendReader::convertConstraints()
 								const btDataValue* valPtr = *rbConstraint->m_dataMap.find(structName);
 							}
 #endif
-							
+
 							btVector3 pivotInA(rbConstraint->getFloatValue("pivX"),rbConstraint->getFloatValue("pivY"),rbConstraint->getFloatValue("pivZ"));
 							btVector3 pivotInB(0,0,0);
 							btCollisionObject* colObj = (btCollisionObject*) ob->m_userPointer;
 							btRigidBody* rbA = btRigidBody::upcast(colObj);
 							btRigidBody* rbB = 0;
-							
+
 							int flag = rbConstraint->getIntValue("flag");
 							bool disableCollisionBetweenLinkedBodies = (flag & CONSTRAINT_DISABLE_LINKED_COLLISION) != 0;
 
@@ -645,17 +645,17 @@ void	BulletBlendReader::convertConstraints()
 										pivotInB = rbB->getCenterOfMassTransform().inverse()(rbA->getCenterOfMassTransform()(pivotInA));
 									}
 								}
-								
+
 								float radsPerDeg = 6.283185307179586232f / 360.f;
 
 								//localConstraintFrameBasis
 								btMatrix3x3 localCFrame;
 								localCFrame.setEulerZYX(radsPerDeg*rbConstraint->getFloatValue("axX"),radsPerDeg*rbConstraint->getFloatValue("axY"),radsPerDeg*rbConstraint->getFloatValue("axZ"));
-								btVector3& axisInA = localCFrame.getColumn(0);
+								btVector3 axisInA = localCFrame.getColumn(0);
 								btVector3 axis1 = localCFrame.getColumn(1);
 								btVector3 axis2 = localCFrame.getColumn(2);
 								bool angularOnly = false;
-								
+
 
 								/* important: these defines need to match up with PHY_DynamicTypes headerfile */
 								switch (rbConstraintType)
@@ -672,9 +672,9 @@ void	BulletBlendReader::convertConstraints()
 										{
 											p2p = new btPoint2PointConstraint(*rbA,pivotInA);
 										}
-										
+
 										m_destinationWorld->addConstraint(p2p);
-										
+
 										break;
 									}
 								case CONSTRAINT_RB_HINGE:
@@ -682,8 +682,8 @@ void	BulletBlendReader::convertConstraints()
 										btHingeConstraint* hinge = 0;
 										if (rbB)
 										{
-											btVector3 axisInB = rbB ? 
-											(rbB->getCenterOfMassTransform().getBasis().inverse()*(rbA->getCenterOfMassTransform().getBasis() * axisInA)) : 
+											btVector3 axisInB = rbB ?
+											(rbB->getCenterOfMassTransform().getBasis().inverse()*(rbA->getCenterOfMassTransform().getBasis() * axisInA)) :
 											rbA->getCenterOfMassTransform().getBasis() * axisInA;
 
 											hinge = new btHingeConstraint(*rbA,*rbB,pivotInA,pivotInB,axisInA,axisInB);
@@ -750,7 +750,7 @@ void	BulletBlendReader::convertConstraints()
 										}
 										break;
 									}
-								
+
 								default:
 									{
 										printf("unsupported rigid body constraint type\n");
@@ -786,17 +786,17 @@ void	BulletBlendReader::convertAllObjects(int verboseDumpAllBlocks)
 
 
 	int j;
-	for (j=0; j<m_bf->blocks_count; ++j) 
+	for (j=0; j<m_bf->blocks_count; ++j)
 	{
 		{
 			int entry_count = blend_block_get_entry_count(m_bf, &m_bf->blocks[j]);
-			for (int i=0; i<entry_count; ++i) 
+			for (int i=0; i<entry_count; ++i)
 			{
 				BlendObject obj = blend_block_get_object(m_bf, &m_bf->blocks[j], i);
-				
 
 
-				
+
+
 				BlendObject data_obj;
 				BlendObject data_obj2;
 
@@ -816,7 +816,7 @@ void	BulletBlendReader::convertAllObjects(int verboseDumpAllBlocks)
 					{
 						dob = extractSingleObject(&obj);
 					}
-					
+
 					if (strcmp(type_name,"FileGlobal")==0)
 					{
 						printf("Found FileGlobal\n");
@@ -828,16 +828,16 @@ void	BulletBlendReader::convertAllObjects(int verboseDumpAllBlocks)
 						fileGlobalObject = dob;
 						//blend_object_dump_field(m_bf,	obj);
 					}
-					
+
 					if (strcmp(type_name,"Scene")==0)
 					{
 						printf("Found a scene\n");
-												
+
 						if (fileGlobalObject && fileGlobalObject->getIntValue("*curscene",0)==dob->m_blenderPointer)
 						{
 							sceneVisibleLayer = dob->getIntValue("lay",0);
 						}
-						
+
 
 					}
 
@@ -909,12 +909,12 @@ btCollisionObject* BulletBlendReader::convertSingleObject(_bObj* object)
 	if (object->data.mesh)
 	{
 		btTriangleMesh* meshInterface = new btTriangleMesh();
-		
+
 		btVector3 minVert(1e30f,1e3f,1e30f);
 		btVector3 maxVert(-1e30f,-1e30f,-1e30f);
 		for (int t=0;t<object->data.mesh->face_count;t++)
 		{
-			
+
 			float* vt0 = object->data.mesh->vert[object->data.mesh->face[t].v[0]].xyz;
 			btVector3 vtx0(vt0[0],vt0[1],vt0[2]);
 			minVert.setMin(vtx0); maxVert.setMax(vtx0);
@@ -925,7 +925,7 @@ btCollisionObject* BulletBlendReader::convertSingleObject(_bObj* object)
 			btVector3 vtx2(vt2[0],vt2[1],vt2[2]);
 			minVert.setMin(vtx2); maxVert.setMax(vtx2);
 			meshInterface ->addTriangle(vtx0,vtx1,vtx2);
-			
+
 			if (object->data.mesh->face[t].v[3])
 			{
 				float* vt3 = object->data.mesh->vert[object->data.mesh->face[t].v[3]].xyz;
@@ -967,12 +967,12 @@ btCollisionObject* BulletBlendReader::convertSingleObject(_bObj* object)
 		btVector3 localPos = (minVert+maxVert)*0.5f;
 		btVector3 localSize= (maxVert-minVert)*0.5f;
 
-		
+
 		btTransform	worldTrans;
 		worldTrans.setIdentity();
 		worldTrans.setOrigin(btVector3(object->location[0],object->location[1],object->location[2]));
 		//		blenderobject->loc[0]+blenderobject->dloc[0]//??
-		
+
 		//btVector3 eulerXYZ(object->rotphr[0],object->rotphr[1],object->rotphr[2]);
 		worldTrans.getBasis().setEulerZYX(object->rotphr[0],object->rotphr[1],object->rotphr[2]);
 		btVector3 scale(object->scaling[0],object->scaling[1],object->scaling[2]);
@@ -1008,7 +1008,7 @@ btCollisionObject* BulletBlendReader::convertSingleObject(_bObj* object)
 					break;
 				}
 			case OB_BOUND_POLYT:
-			
+
 				{
 					//better to approximate it, using btShapeHull
 					colShape = new btConvexTriangleMeshShape(meshInterface);
@@ -1028,7 +1028,7 @@ btCollisionObject* BulletBlendReader::convertSingleObject(_bObj* object)
 
 				}
 			};
-			
+
 			if (colShape)
 			{
 				colShape->setLocalScaling(scale);
@@ -1049,12 +1049,12 @@ btCollisionObject* BulletBlendReader::convertSingleObject(_bObj* object)
 
 		} else
 		{
-			
+
 			btCollisionShape* colShape =0;
 			if (meshInterface->getNumTriangles()>0)
 			{
 				btBvhTriangleMeshShape* childShape = new btBvhTriangleMeshShape(meshInterface,true);
-				
+
 				if (scale[0]!=1. || scale[1]!=1. || scale[2]!=1.)
 				{
 					colShape = new btScaledBvhTriangleMeshShape(childShape,scale);
@@ -1062,19 +1062,19 @@ btCollisionObject* BulletBlendReader::convertSingleObject(_bObj* object)
 				{
 					colShape = childShape;
 				}
-				
+
 				btVector3 inertia(0,0,0);
 				btRigidBody* colObj = new btRigidBody(0.f,0,colShape,inertia);
 				colObj->setWorldTransform(worldTrans);
 				colObj->setCollisionShape(colShape);
 
 				m_destinationWorld->addRigidBody(colObj);
-			
+
 				createGraphicsObject(object,colObj);
 				return colObj;
 
 			}
-			
+
 		}
 	}
 	return 0;
