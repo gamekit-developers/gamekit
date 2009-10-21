@@ -308,6 +308,12 @@ public:
 
 };
 
+
+struct	IrrlichtMeshContainer
+{
+	btAlignedObjectArray<scene::ISceneNode*>	m_sceneNodes;
+};
+
 class IrrlichtBulletBlendReader : public BulletBlendReader
 {
 
@@ -344,9 +350,12 @@ public:
 	}
 
 
-	virtual void createGraphicsObject(_bObj* tmpObject, class btCollisionObject* bulletObject)
+	virtual void* createGraphicsObject(_bObj* tmpObject, class btCollisionObject* bulletObject)
 	{
 
+		IrrlichtMeshContainer* meshContainer = 0;
+
+		
 		btRigidBody* body = btRigidBody::upcast(bulletObject);
 		IrrMotionState* newMotionState = 0;
 
@@ -462,6 +471,10 @@ public:
 				if (numVertices>=maxVerts)
 				{
 					scene::ISceneNode* node = createMeshNode(newVertices,numVertices,indices,numIndices,numTriangles,bulletObject,tmpObject);
+					if (!meshContainer)
+						meshContainer = new IrrlichtMeshContainer();
+					meshContainer->m_sceneNodes.push_back(node);
+
 					if (newMotionState && node)
 						newMotionState->addIrrlichtNode(node);
 					
@@ -479,12 +492,19 @@ public:
 			if (numTriangles>0)
 			{
 				scene::ISceneNode* node = createMeshNode(newVertices,numVertices,indices,numIndices,numTriangles,bulletObject,tmpObject);
+
+				if (!meshContainer)
+						meshContainer = new IrrlichtMeshContainer();
+				meshContainer->m_sceneNodes.push_back(node);
+
 				if (newMotionState && node)
 					newMotionState->addIrrlichtNode(node);
+				
 
 			}
 		}
 	
+		return meshContainer;
 		
 	}
 
@@ -608,6 +628,72 @@ public:
 			}
 		return myNode;
 	}
+
+
+	virtual	void	createParentChildHierarchy()
+	{
+		int i;
+		for (i=0;i<m_visibleGameObjects.size();i++)
+		{
+			btDataObject* ob = m_visibleGameObjects[i];
+			
+			int parentBlendPtr = ob->getIntValue("*parent");
+			if (parentBlendPtr)
+			{
+				btDataObject* parentPtr = *m_dataObjects[parentBlendPtr];
+
+				btCollisionObject* colParent = (btCollisionObject*) parentPtr->m_userPointer;
+				btCollisionObject* colObj = (btCollisionObject*)ob->m_userPointer;
+				if (colObj && colParent)
+				{
+					IrrlichtMeshContainer* childNode = (IrrlichtMeshContainer*) colObj->getUserPointer();
+					IrrlichtMeshContainer* parentNode = (IrrlichtMeshContainer*) colParent->getUserPointer();
+					if (childNode && parentNode)
+					{
+						for (int i=0;i<childNode->m_sceneNodes.size();i++)
+						{
+							if (parentNode->m_sceneNodes.size() && childNode->m_sceneNodes.size())
+							{
+								
+								//don't do physics with this
+								//todo: add it to the collision compound (if flags are set)
+								m_destinationWorld->removeCollisionObject(colObj);
+								
+								childNode->m_sceneNodes[i]->setParent(parentNode->m_sceneNodes[0]);
+
+#if 0
+								///todo: deal with 'parentinv'
+								btDataValue* parentInverseOb = *ob->m_dataMap.find("parentinv[4][4]");
+								btScalar m[16];
+
+								{
+								for (int i=0;i<4;i++)
+									for (int j=0;j<4;j++)
+									{
+										m[i+j*4] = parentInverseOb->m_valueArray[i].m_valueArray[j].m_fValue;
+									}
+								}
+
+								btTransform trans;
+								trans.setFromOpenGLMatrix(m);
+#endif
+								///disconnect the rigidbody update for child objects
+								colObj->setUserPointer(0);
+								//childNode->m_sceneNodes[i]->setPosition(irr::core::vector3df(trans.getOrigin()[0],trans.getOrigin()[1],trans.getOrigin()[2]));
+								//childNode->m_sceneNodes[i]->setRotation(irr::core::vector3df(0,0,0));
+
+							}
+						}
+					}
+				}
+			}
+
+			
+				
+		
+		}
+	}
+
 };
 
 
@@ -869,7 +955,6 @@ int main(int argc,char** argv)
 
 	bulletBlendReader.convertAllObjects(verboseDumpAllBlocks);
 	//now create graphics objects for each Bullet object?
-
 	
 	/*
 	Now draw everything and finish.

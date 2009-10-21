@@ -130,12 +130,16 @@ typedef btHashKey<int> btHashInt;
 
 class	BulletBlendReader
 {
+
 	struct _BlendFile* m_bf;
+
+protected:
 
 	class btDynamicsWorld* m_destinationWorld;
 
 	btHashMap<btHashInt,btDataObject*>	m_dataObjects;
 	
+
 	///m_visibleGameObjects is a subset of m_dataObjects of only the visible game objects, handy for iterating, adding logic bricks/physics constraints etc
 	btAlignedObjectArray<btDataObject*>	m_visibleGameObjects;
 
@@ -162,12 +166,14 @@ public:
 
 	virtual	void convertSingleMesh(struct _bMesh* mesh);
 
-	void	convertConstraints();
+	virtual	void	convertConstraints();
 
-	void	convertLogicBricks();
+	virtual	void	convertLogicBricks();
 
+	virtual	void	createParentChildHierarchy()=0;
+	
 	//after each object is converter, including collision object, create a graphics object (and bind them)
-	virtual void createGraphicsObject(_bObj* tmpObject, class btCollisionObject* bulletObject)=0;
+	virtual void* createGraphicsObject(_bObj* tmpObject, class btCollisionObject* bulletObject)=0;
 
 	virtual	void	addCamera(_bObj* tmpObject)=0;
 

@@ -518,7 +518,6 @@ btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr)
 
 
 
-
 #define SENS_ALWAYS		0
 #define SENS_TOUCH		1
 #define SENS_NEAR		2
@@ -584,6 +583,8 @@ void	BulletBlendReader::convertLogicBricks()
 
 ///flags
 #define CONSTRAINT_DISABLE_LINKED_COLLISION 0x80
+
+
 
 void	BulletBlendReader::convertConstraints()
 {
@@ -873,9 +874,10 @@ void	BulletBlendReader::convertAllObjects(int verboseDumpAllBlocks)
 		}
 	}
 
+	createParentChildHierarchy();
 
 	///now fix up some constraint and logic bricks
-
+	
 	convertConstraints();
 
 	convertLogicBricks();
@@ -1043,7 +1045,9 @@ btCollisionObject* BulletBlendReader::convertSingleObject(_bObj* object)
 				m_destinationWorld->addRigidBody(body);
 				//body->setActivationState(DISABLE_DEACTIVATION);
 
-				createGraphicsObject(object,body);
+				void* gfxObject = createGraphicsObject(object,body);
+				body->setUserPointer(gfxObject);
+
 				return body;
 			}
 
@@ -1070,7 +1074,9 @@ btCollisionObject* BulletBlendReader::convertSingleObject(_bObj* object)
 
 				m_destinationWorld->addRigidBody(colObj);
 
-				createGraphicsObject(object,colObj);
+				void* gfxObject = createGraphicsObject(object,colObj);
+				colObj->setUserPointer(gfxObject);
+
 				return colObj;
 
 			}
