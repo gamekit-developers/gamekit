@@ -799,7 +799,7 @@ int main(int argc,char** argv)
 #endif
 	
 	FILE* file = fopen(fileName,"rb");
-	if (!file)
+	if (argc>1)
 	{
 #if __APPLE__
 
@@ -851,9 +851,9 @@ int main(int argc,char** argv)
 			}
 		}
 		
-		sprintf(newName,"../%s",fileName);
+		sprintf(newName,"%s",fileName);
 		file = fopen(newName,"rb");
-		printf("cannot open file %s.\n",newName);
+		//printf("cannot open file %s.\n",newName);
 
 #endif//__APPLE__
 		if (!file)
