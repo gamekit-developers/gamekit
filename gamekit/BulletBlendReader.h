@@ -81,17 +81,43 @@ struct	btDataObject
 };
 
 
+struct btTypedLogicBrick
+{
+	int	m_type;
+	btDataObject* m_ownerObject;
+
+	btTypedLogicBrick(btDataObject* ownerObject, int type)
+		:m_type(type),
+		m_ownerObject(ownerObject)
+	{
+	}
+
+};
+
 //quick prototyping of some logic brick converting and processing system
-struct	btSensor
+struct	btSensor : public btTypedLogicBrick
 {
+	btSensor(btDataObject* ownerObject,int type)
+		:btTypedLogicBrick(ownerObject,type)
+	{
+	}
+
 };
 
-struct	btController
+struct	btController  : public btTypedLogicBrick
 {
+	btController(btDataObject* ownerObject,int type)
+	:btTypedLogicBrick(ownerObject,type)
+	{
+	}
 };
 
-struct	btActuator
+struct	btActuator : public btTypedLogicBrick
 {
+	btActuator(btDataObject* ownerObject,int type)
+		:btTypedLogicBrick(ownerObject,type)
+	{
+	}
 };
 
 struct	btLogicManager
@@ -107,17 +133,19 @@ struct	btLogicManager
 		
 		for (i=0;i<m_sensors.size();i++)
 		{
+//			printf("processing a sensor of type %d\n",m_sensors[i]->m_type);
 		}
 
 		//process all controllers
 		for (i=0;i<m_controllers.size();i++)
 		{
+//			printf("processing a controller of type %d\n",m_controllers[i]->m_type);
 		}
 
 		//process all actuators
-		//process all controllers
 		for (i=0;i<m_actuators.size();i++)
 		{
+//			printf("processing an actuator of type %d\n",m_actuators[i]->m_type);
 		}
 
 	}
@@ -168,7 +196,7 @@ public:
 
 	virtual	void	convertConstraints();
 
-	virtual	void	convertLogicBricks();
+	virtual	void	convertLogicBricks() = 0;
 
 	virtual	void	createParentChildHierarchy()=0;
 	

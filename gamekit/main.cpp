@@ -318,12 +318,15 @@ class IrrlichtBulletBlendReader : public BulletBlendReader
 {
 
 	scene::ISceneManager* m_sceneManager;
+	btLogicManager* m_logicManager;
+
 	int	m_guid;
 
 public:
-	IrrlichtBulletBlendReader(scene::ISceneManager* irrlichtSceneManager, btDiscreteDynamicsWorld* bulletWorld)
+	IrrlichtBulletBlendReader(scene::ISceneManager* irrlichtSceneManager, btDiscreteDynamicsWorld* bulletWorld, btLogicManager* logicManager)
 		:BulletBlendReader(bulletWorld),
 		m_sceneManager(irrlichtSceneManager),
+		m_logicManager(logicManager),
 		m_guid(666)
 	{
 	}
@@ -694,6 +697,166 @@ public:
 		}
 	}
 
+	
+
+#define SENS_ALWAYS		0
+#define SENS_TOUCH		1
+#define SENS_NEAR		2
+#define SENS_KEYBOARD	3
+#define SENS_PROPERTY	4
+#define SENS_MOUSE		5
+#define SENS_COLLISION	6
+#define SENS_RADAR		7
+#define SENS_RANDOM     8
+#define SENS_RAY        9
+#define SENS_MESSAGE   10
+#define SENS_JOYSTICK  11
+#define SENS_ACTUATOR  12
+#define SENS_DELAY     13
+#define SENS_ARMATURE  14
+
+#define CONT_LOGIC_AND	0
+#define CONT_LOGIC_OR	1
+#define CONT_EXPRESSION	2
+#define CONT_PYTHON		3
+#define CONT_LOGIC_NAND	4
+#define CONT_LOGIC_NOR	5
+#define CONT_LOGIC_XOR	6
+#define CONT_LOGIC_XNOR	7
+
+
+#define ACT_OBJECT		0
+#define ACT_IPO			1
+#define ACT_LAMP		2
+#define ACT_CAMERA		3
+#define ACT_MATERIAL	4
+#define ACT_SOUND		5
+#define ACT_PROPERTY	6
+	/* these two obsolete since 2.02 */
+#define ACT_ADD_OBJECT	7
+#define ACT_END_OBJECT	8
+
+#define ACT_CONSTRAINT	9
+#define ACT_EDIT_OBJECT	10
+#define ACT_SCENE		11
+#define ACT_GROUP		12
+#define ACT_RANDOM      13
+#define ACT_MESSAGE     14
+#define ACT_ACTION		15	/* __ NLA */
+#define ACT_GAME		17
+#define ACT_VISIBILITY          18
+#define ACT_2DFILTER	19
+#define ACT_PARENT      20
+#define ACT_SHAPEACTION 21
+#define ACT_STATE		22
+#define ACT_ARMATURE	23
+
+	btDataObject* getObjectMemberPtrByName(btDataObject* ob, const char* ptrName)
+	{
+			unsigned int cPtr = ob->getIntValue(ptrName);
+			if (cPtr)
+			{
+				btDataObject** dataPtr = m_dataObjects[cPtr];
+
+				if (dataPtr&& *dataPtr)
+				{
+					btDataObject* dataObject = *dataPtr;
+					return dataObject;
+				}
+			}
+			return 0;
+	}
+
+	virtual	void	convertLogicBricks()
+	{
+		int i;
+		for (i=0;i<m_visibleGameObjects.size();i++)
+		{
+			btDataObject* ob = m_visibleGameObjects[i];
+			{
+				btDataObject* sensorOb  = getObjectMemberPtrByName(ob,"sensors");
+				while (sensorOb)
+				{
+					int sensType = sensorOb->getIntValue("type");
+					switch (sensType)
+					{
+					case SENS_ALWAYS:
+						{
+
+							btSensor* sensor = new btSensor(ob,sensType);
+							m_logicManager->m_sensors.push_back(sensor);
+							break;
+						}
+
+					default:
+						{
+							printf("Unsupported sensor type %d\n",sensType);
+						}
+					}
+
+					unsigned int nextIntPtr = sensorOb->getIntValue("*next");
+					sensorOb = nextIntPtr ? *m_dataObjects[nextIntPtr] : 0;
+				}
+			}
+
+			{
+				btDataObject* controllerOb  = getObjectMemberPtrByName(ob,"controllers");
+				while (controllerOb)
+				{
+					int conType = controllerOb->getIntValue("type");
+					switch (conType)
+					{
+					case CONT_LOGIC_AND:
+						{
+
+							btController* controller = new btController(ob,conType);
+							m_logicManager->m_controllers.push_back(controller);
+							break;
+						}
+
+					default:
+						{
+							printf("Unsupported controller type %d\n",conType);
+						}
+					}
+
+					unsigned int nextIntPtr = controllerOb->getIntValue("*next");
+					controllerOb = nextIntPtr ? *m_dataObjects[nextIntPtr] : 0;
+				}
+			}
+			
+			{
+				btDataObject* actuatorOb  = getObjectMemberPtrByName(ob,"actuators");
+				while (actuatorOb )
+				{
+					int acType = actuatorOb ->getIntValue("type");
+					switch (acType)
+					{
+					case ACT_SCENE:
+					case ACT_IPO:
+						{
+
+							btActuator* actuator = new btActuator(ob,acType);
+							m_logicManager->m_actuators.push_back(actuator);
+							break;
+						}
+
+					
+					default:
+						{
+							printf("Unsupported actuator type %d\n",acType);
+						}
+					}
+
+					unsigned int nextIntPtr = actuatorOb ->getIntValue("*next");
+					actuatorOb  = nextIntPtr ? *m_dataObjects[nextIntPtr] : 0;
+				}
+			}
+			
+
+		}
+	}
+
 };
 
 
@@ -939,7 +1102,7 @@ int main(int argc,char** argv)
 	physicsWorld->setGravity(btVector3(0,0,-10));
 //#endif //SWAP_COORDINATE_SYSTEMS
 
-	IrrlichtBulletBlendReader	bulletBlendReader(smgr,physicsWorld);
+	IrrlichtBulletBlendReader	bulletBlendReader(smgr,physicsWorld,logicManager);
 	if (!bulletBlendReader.readFile(file,verboseDumpAllTypes))
 	{
 		printf("cannot read Blender file %s.\n",argv[1]);
@@ -968,10 +1131,13 @@ int main(int argc,char** argv)
 		int newTime = device->getTimer()->getTime();
 		int deltaTimeMs = newTime-ms;
 		ms = newTime;
+		btScalar deltaTime = deltaTimeMs*0.001f;
 
 		
 		if (!gPause)
-			physicsWorld->stepSimulation(deltaTimeMs*0.001f);
+			physicsWorld->stepSimulation(deltaTime);
+
+		logicManager->processLogicBricks(deltaTime);
 
 		smgr->drawAll();
 

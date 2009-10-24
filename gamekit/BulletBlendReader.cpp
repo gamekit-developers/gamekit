@@ -267,13 +267,14 @@ blendBlockFromBlendpointer(BlendFile *blend_file,
 	return NULL;
 }
 
-char* keywords[8] = {"FileGlobal", "Scene", "Object", "bSensor", "bKeyboardSensor", "bAlwaysSensor", "bRigidBodyJointConstraint", "bConstraint"};
+#define NUM_KEYWORDS 11
+char* keywords[NUM_KEYWORDS] = {"FileGlobal", "Scene", "Object", "bSensor", "bKeyboardSensor", "bAlwaysSensor", "bController","bActuator","bIpoActuator","bRigidBodyJointConstraint", "bConstraint"};
 
 bool	BulletBlendReader::needsExtraction(const char* type_name)
 {
 	bool found = false;
 
-	for (int i=0;i<8;i++)
+	for (int i=0;i<NUM_KEYWORDS;i++)
 	{
 		char* keyword = keywords[i];
 
@@ -517,61 +518,6 @@ btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr)
 }
 
 
-
-#define SENS_ALWAYS		0
-#define SENS_TOUCH		1
-#define SENS_NEAR		2
-#define SENS_KEYBOARD	3
-#define SENS_PROPERTY	4
-#define SENS_MOUSE		5
-#define SENS_COLLISION	6
-#define SENS_RADAR		7
-#define SENS_RANDOM     8
-#define SENS_RAY        9
-#define SENS_MESSAGE   10
-#define SENS_JOYSTICK  11
-#define SENS_ACTUATOR  12
-#define SENS_DELAY     13
-#define SENS_ARMATURE  14
-
-void	BulletBlendReader::convertLogicBricks()
-{
-	int i;
-	for (i=0;i<m_visibleGameObjects.size();i++)
-	{
-		btDataObject* ob = m_visibleGameObjects[i];
-		unsigned int cPtr = ob->getIntValue("sensors");
-		if (cPtr)
-		{
-			btDataObject** sensorsPtr = m_dataObjects[cPtr];
-
-			if (sensorsPtr && *sensorsPtr)
-			{
-				btDataObject* sensorOb = *sensorsPtr;
-				while (sensorOb)
-				{
-					switch (sensorOb->getIntValue("type"))
-					{
-					case SENS_ALWAYS:
-						{
-
-
-
-							break;
-						}
-
-					default:
-						{
-						}
-					}
-
-					unsigned int nextIntPtr = sensorOb->getIntValue("*next");
-					sensorOb = nextIntPtr ? *m_dataObjects[nextIntPtr] : 0;
-				}
-			}
-		}
-	}
-}
 
 
 #define CONSTRAINT_TYPE_RIGIDBODYJOINT 17
