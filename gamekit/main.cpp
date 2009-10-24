@@ -962,7 +962,7 @@ int main(int argc,char** argv)
 #endif
 	
 	FILE* file = fopen(fileName,"rb");
-	if (argc>1)
+	if (argc>1 || !file)
 	{
 #if __APPLE__
 
@@ -985,7 +985,8 @@ int main(int argc,char** argv)
 		{
 			sprintf(newName,"%s/%s/%s",AppleGetBundleDirectory(),"Contents/Resources",fileName);
 			file=fopen(newName,"rb");
-			printf("cannot open file %s.\n",newName);
+			if (!file)
+				printf("cannot open file %s.\n",newName);
 		}
 
 
