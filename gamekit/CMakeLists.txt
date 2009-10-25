@@ -49,13 +49,6 @@ ENDIF (X11_VIDEO_LIBRARY)
 
 ENDIF (APPLE)
 
-                if( X11_VIDEO_LIBRARY )
-                        message( "found again" )
-		else( X11_VIDEO_LIBRARY )
-                        message( "not found" )
-                endif( X11_VIDEO_LIBRARY )
-
-#ENDIF (LINUX)
 
 
 LINK_LIBRARIES(
