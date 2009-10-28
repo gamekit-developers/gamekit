@@ -13,7 +13,7 @@ LINK_DIRECTORIES(
 )
 
 INCLUDE_DIRECTORIES(
-${IRRLICHT_SOURCE_DIR}/include ${BULLET_PHYSICS_SOURCE_DIR}/Extras/readblend ${BULLET_PHYSICS_SOURCE_DIR}/src
+${IRRLICHT_SOURCE_DIR}/include ${BULLET_PHYSICS_SOURCE_DIR}/src
 )
 
 SET (EXTRA_LIBS )
@@ -52,7 +52,7 @@ ENDIF (APPLE)
 
 
 LINK_LIBRARIES(
-	readblend  BulletSoftBody BulletDynamics BulletCollision LinearMath Irrlicht ${EXTRA_LIBS} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} ${X11_VIDEO_LIBRARY}
+	BulletSoftBody BulletDynamics BulletCollision LinearMath Irrlicht ${EXTRA_LIBS} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} ${X11_VIDEO_LIBRARY}
 )
 
 IF (APPLE)

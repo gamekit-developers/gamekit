@@ -16,7 +16,7 @@ subject to the following restrictions:
 ///Note: this is based on Irrlicht Example 003 Custom SceneNode, so the copyright of the original parts belongs to Irrlicht
 
 ///you can disable custom node, to use irr::scene::SAnimatedMesh in Irrlicht 1.5
-#define USE_CUSTOM_NODE 1
+//#define USE_CUSTOM_NODE 1
 
 ///You can enable vertex buffer objects (VBO) for Irrlicht 1.5
 #define USE_VBO 1
@@ -530,7 +530,11 @@ public:
 				if (jpgSize)
 				{
 					io::IReadFile* file = device->getFileSystem()->createMemoryReadFile(jpgData,jpgSize,fileName,false);
-					texture0 = driver->getTexture(file);
+					if (file)
+					{
+						texture0 = driver->getTexture(file);
+						printf("width = %d, height = %d\n",texture0->getSize().Width,texture0->getSize().Height);
+					}
 				}
 			}
 		}
@@ -940,7 +944,9 @@ int main(int argc,char** argv)
 	if (argv[0])
 		printf("argv[0]=%s\n",argv[0]);
 	
+	//const char* fileName = "clubsilo_packed.blend";
 	const char* fileName = "PhysicsAnimationBakingDemo.blend";
+	
 	
 	int verboseDumpAllTypes = false;
 	int verboseDumpAllBlocks = false;
@@ -1050,7 +1056,9 @@ int main(int argc,char** argv)
 		default: return 0;
 	}
 #else
+	//driverType = video::EDT_BURNINGSVIDEO;
 	driverType = video::EDT_OPENGL;
+	
 #endif
 	// create device
 
@@ -1126,9 +1134,8 @@ int main(int argc,char** argv)
 	u32 frames=0;
 	while(device->run())
 	{
-		driver->beginScene(true, true, video::SColor(0,100,100,100));
 
-		static int ms = device->getTimer()->getTime();
+			static int ms = device->getTimer()->getTime();
 		int newTime = device->getTimer()->getTime();
 		int deltaTimeMs = newTime-ms;
 		ms = newTime;
@@ -1137,6 +1144,9 @@ int main(int argc,char** argv)
 		
 		if (!gPause)
 			physicsWorld->stepSimulation(deltaTime);
+
+		
+		driver->beginScene(true, true, video::SColor(0,100,100,100));
 
 		logicManager->processLogicBricks(deltaTime);
 
@@ -1154,6 +1164,8 @@ int main(int argc,char** argv)
 			device->setWindowCaption(str.c_str());
 			frames=0;
 		}
+		
+
 	}
 
 	device->drop();

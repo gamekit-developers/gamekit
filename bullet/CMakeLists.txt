@@ -59,9 +59,6 @@ ELSE (WIN32)
 ENDIF (WIN32)
 
 
-OPTION(BUILD_EXTRAS "Set when you want to build the extras" ON)
-IF(BUILD_EXTRAS)
-  SUBDIRS(Extras)
-ENDIF(BUILD_EXTRAS)
+
 
 SUBDIRS(src)

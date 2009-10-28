@@ -22,6 +22,79 @@ subject to the following restrictions:
 #include "LinearMath/btHashMap.h"
 class btCollisionObject;
 
+
+
+typedef struct _BlendField BlendField;
+struct _BlendField {
+  char* field_bytes;
+  int field_bytes_count;
+
+  /* the offset into field_bytes at which each field of a
+     structure begins.  this is so we can keep the data aligned
+     correctly for various architectures.  a non-structure type
+     is equivalent to a structure with a single field.
+  */
+  btAlignedObjectArray<int> m_field_offsets;
+  int field_offsets_count;
+};
+struct _BlendBlock {
+  char tag[5];
+  uint32_t blender_pointer;
+  /*void* fixed_pointer;*/
+
+  int type_index;
+  /* a block is simply an array of its type as defined by type_index.
+     array_entries is an array of pointers to each entry in the block's
+     array.     
+   */
+  btAlignedObjectArray<BlendField*> m_array_entries_;
+  
+  void* customData; /* for Link blocks, with custom data such as .jpg pictures etc */
+  int customDataSize;
+};
+
+
+typedef struct _BlendBlock BlendBlock;
+
+/* the types extracted from the Blender file */
+typedef struct _BlendType BlendType;
+struct _BlendType {
+	char* name;
+	int size;
+
+	int is_struct;
+
+	/* if is_struct... this defines the types of each of the structure fields */
+	int fieldtypes_count;
+	int* fieldtypes; /* type indices */
+	int fieldnames_count;
+	int* fieldnames; /* name indices */
+};
+
+
+
+
+
+
+/* the opaque BlendFile structure */
+struct BlendFile{
+	BlendType* types;
+	int types_count;
+
+	char* *names;
+	int names_count;
+
+	int* strc_indices;
+	int strc_indices_count;
+
+	btAlignedObjectArray<BlendBlock*>	m_blocks;
+	//int blocks_count;
+
+	int name_undef; /* index of the name we add specially for top blocks */
+
+};
+
+
 struct	btDataValue
 {
 	int	m_type;
@@ -159,7 +232,7 @@ typedef btHashKey<int> btHashInt;
 class	BulletBlendReader
 {
 
-	struct _BlendFile* m_bf;
+	struct BlendFile* m_bf;
 
 protected:
 
@@ -170,6 +243,9 @@ protected:
 
 	///m_visibleGameObjects is a subset of m_dataObjects of only the visible game objects, handy for iterating, adding logic bricks/physics constraints etc
 	btAlignedObjectArray<btDataObject*>	m_visibleGameObjects;
+
+	void	read_type(char* file, BlendFile* bf, unsigned long section_type, BlendField & rtn);
+	int readData(char* file, BlendFile* bf);
 
 public:
 

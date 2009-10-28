@@ -58,7 +58,7 @@ extern "C" {
    .blend data handle is returned.
 */
 
-BlendFile* blend_read(MY_FILETYPE* file);
+struct BlendFile* blend_read(MY_FILETYPE* file);
 
 
 /* Free all of the given BlendFile data (note: obviously, do not attempt
@@ -383,12 +383,12 @@ typedef enum {
 
 typedef struct {
   char *filename; /* image file name -- absolute path! -- NULL if not image. */
-  bTexLayerAffects    affects_mask;
-  bTexLayerBlendmode  blend_mode;
+  int    affects_mask;
+  int  blend_mode;
   bTexLayerCoordsType coords_type;
   /* Tex substruct */
   int is_st_clamped; /* otherwise, repeat... (GL texwrap mode.) */
-  bTexImageFlags flags;
+  int	 flags;
   short Nflags, Ntype; /* not decoded yet */
   short xrepeat, yrepeat; /* amounts to scale texcoords by, really */
 } bTexLayer;
@@ -404,7 +404,8 @@ typedef enum {
 #define BLENDER_MAX_TEX_LAYERS 8
 typedef struct {
   bTexLayer *tex_layer[BLENDER_MAX_TEX_LAYERS];
-  bMatFeatureMask feature_mask;
+  //bMatFeatureMask feature_mask;
+  int feature_mask;
   float colour_rgba[4]; /* main material colour */
   float emit; /* emissive strength, 0..1 */
 } bMaterial;

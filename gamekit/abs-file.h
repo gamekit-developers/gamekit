@@ -244,6 +244,7 @@ int MY_GETC(MY_FILETYPE *const fp);
 void MY_SEEK(MY_FILETYPE* fp,int pos);
 #define MY_REWIND(fp) MY_SEEK(fp,0)
 int MY_READ(unsigned char* dest,int size,int num,MY_FILETYPE* fp);
+unsigned char* MY_FAKE_READ(int size,int num,MY_FILETYPE* fp);
 
 void	MY_CLOSE(MY_FILETYPE* fp);
 int	MY_TELL(MY_FILETYPE* fp);
