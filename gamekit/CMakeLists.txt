@@ -7,7 +7,6 @@ IF (WIN32 AND MSVC)
  SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /DYNAMICBASE")
 ENDIF (WIN32 AND MSVC)
 
-
 LINK_DIRECTORIES(
 "C:/MinGW/lib"
 )
@@ -65,6 +64,8 @@ IF (APPLE)
 	PhysicsAnimationBakingDemo.blend
 	BulletBlendReader.cpp
 	BulletBlendReader.h
+	IrrBlend.cpp
+	IrrBlend.h
 	main.cpp)
 ELSE (APPLE)
 	ADD_EXECUTABLE(GameKit
