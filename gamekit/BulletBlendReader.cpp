@@ -61,10 +61,19 @@ MY_FILETYPE* MY_FILE_OPEN_FOR_READ(FILE* fp)
 		fseek(fp, 0, SEEK_END); /* seek to end */
 		newpos = ftell(fp); /* find position of end -- this is the length */
 		fseek(fp, currentpos, SEEK_SET); /* restore previous cursor position */
+		
 		gFileSize = newpos;
+		
 		gBuffer = (char*)malloc(gFileSize);
 		bytesRead = fread(gBuffer,gFileSize,1,fp);
 		return gBuffer;
+}
+
+char* btReadBuffer(FILE* fp, int* fileSize)
+{
+	char* membuf = MY_FILE_OPEN_FOR_READ(fp);
+	*fileSize = gFileSize;
+	return membuf;
 }
 
 
@@ -161,7 +170,7 @@ int	BulletBlendReader::readFile(FILE* posixFile, int verboseDumpAllTypes)
 
 	if (verboseDumpAllTypes)
 	{
-		//blend_dump_typedefs(m_bf);
+		blend_dump_typedefs(m_bf);
 	}
 
 	MY_CLOSE(buffer);
@@ -351,7 +360,7 @@ typestring_to_blendobj_type(BlendFile* blend_file,
 }
 
 
-static BlendBlockPointer
+static BlendBlock *
 blendBlockFromBlendpointer(BlendFile *blend_file,
 							  uint32_t blendpointer)
 {
@@ -362,7 +371,7 @@ blendBlockFromBlendpointer(BlendFile *blend_file,
 	if (blendpointer != 0) {
 		for (i=0; i<blend_file->m_blocks.size(); ++i) {
 			/*fprintf(stderr, "%04x? ", blend_file->blocks[i].blender_pointer); */
-			if (blend_file->m_blocks[i]->blender_pointer == blendpointer) {
+			if (blend_file->m_blocks[i]->blender_pointer1 == blendpointer) {
 				return blend_file->m_blocks[i];
 			}
 		}
@@ -630,12 +639,12 @@ btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr)
 
 
 
-										BlendBlockPointer curveblockptr = blendBlockFromBlendpointer(m_bf, ptr);
+										BlendBlock * curveblockptr = blendBlockFromBlendpointer(m_bf, ptr);
 										if (curveblockptr)
 										{
 											idstruc_obj = blend_block_get_object(m_bf, curveblockptr, 0);
 											block = (BlendBlock*)idstruc_obj.block;
-											val->m_uiValue =  block->blender_pointer;
+											val->m_uiValue =  block->blender_pointer1;
 
 											if (BLEND_OBJ_STRUCT == blend_object_type(m_bf, idstruc_obj) &&
 												blend_object_structure_getfield(m_bf, &name_obj,
@@ -698,8 +707,8 @@ btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr)
 		}
 	}
 
-	dob->m_blenderPointer = block->blender_pointer;
-	m_dataObjects.insert(block->blender_pointer,dob);
+	dob->m_blenderPointer = block->blender_pointer1;
+	m_dataObjects.insert(block->blender_pointer1,dob);
 
 	return dob;
 }
@@ -912,10 +921,10 @@ void	BulletBlendReader::convertAllObjects(int verboseDumpAllBlocks)
 
 	if (verboseDumpAllBlocks)
 	{
-//		blend_dump_blocks(m_bf);
+		blend_dump_blocks(m_bf);
 	}
 
-	int sceneVisibleLayer = 0;
+	int sceneVisibleLayer = 1;
 	btDataObject* fileGlobalObject =0;
 
 
@@ -924,6 +933,10 @@ void	BulletBlendReader::convertAllObjects(int verboseDumpAllBlocks)
 	{
 		{
 			int entry_count = blend_block_get_entry_count(m_bf, m_bf->m_blocks[j]);
+			if (entry_count!=1)
+			{
+				printf("entry_count=%d\n",entry_count);
+			}
 			for (int i=0; i<entry_count; ++i)
 			{
 				BlendObject obj = blend_block_get_object(m_bf, m_bf->m_blocks[j], i);
@@ -1374,7 +1387,7 @@ recursively_read_type(MY_FILETYPE* file, BlendFile* bf,
 		}
 	} else {
 		/*fprintf(stderr, "type%d(%s)plain(%d) ", section_type, bf->types[section_type].name, bf->types[section_type].size);     */
-		new_data_size = SIZE_ROUNDUP(bf->types[section_type].size);
+		new_data_size = SIZE_ROUNDUP(bf->types[section_type].m_size);
 		/*fprintf(stderr, "%d... ", bf->types[section_type].size);
 		if (bf->types[section_type].size > 4) {
 		fprintf(stderr, "%d ", field->field_bytes_count);
@@ -1390,7 +1403,7 @@ recursively_read_type(MY_FILETYPE* file, BlendFile* bf,
 			free(new_data);
 #else
 			new_data =  &gTmpFieldBuffer[field->field_bytes_count];//(char*)malloc(new_data_size);
-			MY_READ((unsigned char*)new_data, 1, bf->types[section_type].size, file);
+			MY_READ((unsigned char*)new_data, 1, bf->types[section_type].m_size, file);
 
 			//new_data = (char*)MY_FAKE_READ(1, bf->types[section_type].size, file);
 			//EXPANDO3(field->field_offsets, field->field_bytes_count);
@@ -1413,7 +1426,7 @@ recursively_read_type(MY_FILETYPE* file, BlendFile* bf,
 #endif//REAL_READ
 		} else {
 			//dprintf(stderr, " <NUL[%d]> ",			bf->types[section_type].size);
-			printf(" <NUL[%d]> ",			bf->types[section_type].size);
+			printf(" <NUL[%d]> ",			bf->types[section_type].m_size);
 		}
 	}
 
@@ -1490,7 +1503,7 @@ int BulletBlendReader::readData(char* file, BlendFile* bf)
 			memcpy(block.tag, section_name, 4);
 			block.tag[4] = '\0';
 			block.type_index = section_type;
-			block.blender_pointer = section_pointer;
+			block.blender_pointer1 = section_pointer;
 			/*block.fixed_pointer = NULL;*/
 			//block.array_entries = NULL;
 
@@ -1613,7 +1626,7 @@ BlendFile* blend_read(char* file)
 	MY_READ((unsigned char*)blender_mark, 1, 9, file);
 	if (strcmp(blender_mark, "BLENDER_v") != 0) {
 		printf("Not a valid Blender file (.blend file needs to be written on a 32bit little-endian machine)\n");
-		return NULL;
+	//	return NULL;
 	}
 
 	/* Alloc a handle to return */
@@ -1727,7 +1740,7 @@ BlendFile* blend_read(char* file)
 			} while (!finished_type);
 
 			bt.name = this_type_chars;
-			bt.size = -1;
+			bt.m_size = -1;
 			bt.is_struct = 0;
 			bt.fieldtypes_count = 0;
 			bt.fieldtypes = NULL;
@@ -1747,7 +1760,7 @@ BlendFile* blend_read(char* file)
 		int i;
 		for (i=0; i<bf->types_count; ++i) {
 			unsigned short len = read_ushort(file);
-			bf->types[i].size = len;
+			bf->types[i].m_size = len;
 			/*fprintf(stderr, "sizeof(%s)=%d ", bf->types[i].name, len); */
 		}
 	}
@@ -1853,7 +1866,7 @@ blend_object_array_getdata(BlendFile* blend_file,
 	dim2*dim_index_1 + dim_index_2]);*/
 
 	if (name_is_pointer(blend_file->names[obj.name])) {
-		*(BlendBlockPointer*)dest =
+		*(BlendBlock **)dest =
 			blend_block_from_blendpointer(blend_file,
 			BGETLEUINT32(data));
 		return 1;
@@ -1964,7 +1977,7 @@ blend_object_structure_getfield(BlendFile* blend_file,
 
 BlendObject
 blend_block_get_object(BlendFile* blend_file,
-					   BlendBlockPointer block,
+					   BlendBlock * block,
 					   int entry_index)
 {
 	BlendObject bo;
@@ -1981,7 +1994,7 @@ blend_block_get_object(BlendFile* blend_file,
 }
 
 #define MAX_CACHED_IMAGES 1024
-BlendBlockPointer tCachedTPage[MAX_CACHED_IMAGES];
+BlendBlock * tCachedTPage[MAX_CACHED_IMAGES];
 bImage* tCachedImages[MAX_CACHED_IMAGES];
 int gNumCachedImages=0;
 
@@ -2015,7 +2028,7 @@ blend_acquire_mesh_from_obj(BlendFile *bf, BlendObject *meobj, bMesh *mesh)
 {
 	{
 		BlendObject obj;
-		BlendBlockPointer vblock, fblock, cblock, ttblock,mtblock,dblock, matlink;
+		BlendBlock * vblock, *fblock, *cblock, *ttblock,*mtblock,*dblock, *matlink;
 		int i;
 		int32_t ldata = 123456;
 		float fdata1, fdata2, fdata3;
@@ -2059,7 +2072,7 @@ blend_acquire_mesh_from_obj(BlendFile *bf, BlendObject *meobj, bMesh *mesh)
 			blend_object_getdata(bf, &matlink, obj) && matlink) {
 				/* found an indirect material link, follow it */
 				BlendObject matlinkobj = blend_block_get_object(bf, matlink, 0);
-				BlendBlockPointer matblock;
+				BlendBlock * matblock;
 				if (obj.block)
 				{
 					if (blend_object_structure_getfield(bf, &obj, matlinkobj,
@@ -2336,7 +2349,7 @@ blend_acquire_mesh_from_obj(BlendFile *bf, BlendObject *meobj, bMesh *mesh)
 				unsigned char flag;
 				unsigned short int mode;
 
-				BlendBlockPointer tpageptr;
+				BlendBlock * tpageptr;
 
 				if (blend_object_structure_getfield(bf, &obj3, obj, "flag"))
 				{
@@ -2456,7 +2469,7 @@ blend_acquire_mesh_from_obj(BlendFile *bf, BlendObject *meobj, bMesh *mesh)
 
 							mesh->face[i].image_id = 0;
 							{
-								BlendBlockPointer packptr;
+								BlendBlock * packptr;
 
 								if ((blend_object_structure_getfield(bf, &obj3, tpage, "packedfile")
 									&& blend_object_getdata(bf, &packptr, obj3)))
@@ -2464,7 +2477,7 @@ blend_acquire_mesh_from_obj(BlendFile *bf, BlendObject *meobj, bMesh *mesh)
 									if (packptr)
 									{
 										BlendObject packfile= blend_block_get_object(bf,packptr,0);
-										BlendBlockPointer dataptr;
+										BlendBlock * dataptr;
 										if ((blend_object_structure_getfield(bf, &obj3, packfile, "data")
 											&& blend_object_getdata(bf, &dataptr, obj3)))
 										{
@@ -2481,15 +2494,15 @@ blend_acquire_mesh_from_obj(BlendFile *bf, BlendObject *meobj, bMesh *mesh)
 
 
 												void** ptrptr = (void**) &block->m_array_entries_[0]->field_bytes[block->m_array_entries_[0]->m_field_offsets[obj3.field_index]];
-												BlendBlockPointer ptr = *ptrptr;
+												BlendBlock * ptr = (BlendBlock *)*ptrptr;
 												if (ptr)
 												{
 													///todo: fix ptr issue
-													BlendBlockPointer curveblockptr = blend_block_from_blendpointer(bf, (uint32_t)ptr);
+													BlendBlock * curveblockptr = blend_block_from_blendpointer(bf, (uint32_t)ptr);
 													BlendObject curve = blend_block_get_object(bf, curveblockptr, 0);
 													BlendBlock* bb = (BlendBlock* )curve.block;
 													BlendBlock imgblock;
-													mesh->face[i].image_id = (BlendBlockPointer)bb->blender_pointer;
+													mesh->face[i].image_id = (BlendBlock *)bb->blender_pointer1;
 													//imgblock = blend_block_get_object(bf, bb->blender_pointer, 0);
 													bimg->m_packedImagePtr = bb->customData;
 													bimg->m_sizePackedImage = bb->customDataSize;
@@ -2546,7 +2559,7 @@ blend_acquire_mesh_from_obj(BlendFile *bf, BlendObject *meobj, bMesh *mesh)
 						blend_object_getdata(bf, &pdata, aobj))) {
 							abort();
 					}
-					mesh->face[i].image_id = pdata;
+					mesh->face[i].image_id = (BlendBlock *)pdata;
 
 					for (j=0; j<4; ++j) {
 						uint32_t uldata;
@@ -2606,7 +2619,7 @@ blend_acquire_mesh_from_obj(BlendFile *bf, BlendObject *meobj, bMesh *mesh)
 				int j;
 				int32_t ldata;
 				float fdata;
-				BlendBlockPointer pdata;
+				BlendBlock * pdata;
 				BlendObject aobj;
 				BlendObject obj = blend_block_get_object(bf, dblock, i);
 
@@ -2650,7 +2663,7 @@ blend_acquire_mesh_from_obj(BlendFile *bf, BlendObject *meobj, bMesh *mesh)
 
 int
 blend_block_get_entry_count(BlendFile* blend_file,
-							BlendBlockPointer block)
+							BlendBlock * block)
 {
 	const BlendBlock* bb = (const BlendBlock*)block;
 	return bb->m_array_entries_.size();//>array_entries_count;;
@@ -2672,7 +2685,7 @@ blend_init_mesh(bMesh *mesh)
 void extract_curve_bezier_triples(BlendFile *bf, BlendObject* curve)
 {
 	BlendObject newObj;
-	BlendBlockPointer bezTriplePtr;
+	BlendBlock * bezTriplePtr;
 	int i;
 	int totvert=0;
 	
@@ -2700,7 +2713,7 @@ void extract_curve_bezier_triples(BlendFile *bf, BlendObject* curve)
 		if (bezTriplePtr)
 		{
 			BlendObject bezTriple;
-			BlendBlockPointer vecPtr;
+			BlendBlock * vecPtr;
 			bezTriple = blend_block_get_object(bf, bezTriplePtr, i);
 			{
 				BlendObject vecOb;
@@ -2736,7 +2749,7 @@ blend_acquire_obj_from_obj(BlendFile *bf, BlendObject *objobj,
 {
 
 	BlendObject obj, dataobj;
-	BlendBlockPointer block,ipoblock,curveblock=0;
+	BlendBlock * block,*ipoblock,*curveblock=0;
 	short sdata = 12345;
 
 #define B_IDNAME_MAX_SIZE 80
@@ -2867,21 +2880,21 @@ blend_acquire_obj_from_obj(BlendFile *bf, BlendObject *objobj,
 
 
 						void** ptrptr = (void**)&block->m_array_entries_[0]->field_bytes[block->m_array_entries_[0]->m_field_offsets[obj2.field_index]];
-				BlendBlockPointer ptrlast;
-				BlendBlockPointer ptr = *ptrptr;
+				BlendBlock * ptrlast;
+				BlendBlock * ptr = (BlendBlock *)*ptrptr;
 				ptrptr++;
-				 ptrlast= *ptrptr;
+				 ptrlast= (BlendBlock *)*ptrptr;
 
 
 				//ptrptr++; contains the 'last' pointer
 				if (ptr)
 				{
-					BlendBlockPointer curveblockptr = blend_block_from_blendpointer(bf, (uint32_t)ptr);
+					BlendBlock * curveblockptr = blend_block_from_blendpointer(bf, (uint32_t)ptr);
 					BlendObject curve;
 					BlendBlock* block3;
 					BlendBlock* block2;
 					BlendObject newObj,nextOb;
-					BlendBlockPointer nextPtr;
+					BlendBlock * nextPtr;
 					
 					printf("Found IpoCurve(s) (ListBase)\n");
 
@@ -3005,7 +3018,7 @@ blend_acquire_obj_from_obj(BlendFile *bf, BlendObject *objobj,
 
 
 
-BlendBlockPointer
+BlendBlock *
 blend_block_from_blendpointer(BlendFile *blend_file,
 							  uint32_t blendpointer)
 {
@@ -3016,7 +3029,7 @@ blend_block_from_blendpointer(BlendFile *blend_file,
 	if (blendpointer != 0) {
 		for (i=0; i<blend_file->m_blocks.size(); ++i) {
 			/*fprintf(stderr, "%04x? ", blend_file->blocks[i].blender_pointer); */
-			if (blend_file->m_blocks[i]->blender_pointer == blendpointer) {
+			if (blend_file->m_blocks[i]->blender_pointer1 == blendpointer) {
 				return blend_file->m_blocks[i];
 			}
 		}
@@ -3079,7 +3092,7 @@ blend_acquire_material_from_obj(BlendFile *bf, BlendObject *matobj,
 	}
 
 	for (i=0; i<BLENDER_MAX_TEX_LAYERS; ++i) {
-		BlendBlockPointer texl_block;
+		BlendBlock * texl_block;
 		if (blend_object_structure_getfield(bf, &obj, *matobj, "mtex") &&
 			blend_object_array_getdata(bf, &texl_block, obj, 0,i) && texl_block) {
 				BlendObject tlobj = blend_block_get_object(bf, texl_block, 0);
@@ -3155,7 +3168,7 @@ blend_acquire_texlayer_from_obj(BlendFile *bf, BlendObject *tlobj,
 								bTexLayer *tl) 
 {
 	BlendObject obj;
-	BlendBlockPointer tex_block;
+	BlendBlock * tex_block;
 	short sdata = 12345;
 
 	blend_init_texlayer(tl);
@@ -3214,7 +3227,7 @@ blend_acquire_texlayer_from_obj(BlendFile *bf, BlendObject *tlobj,
 	if (blend_object_structure_getfield(bf, &obj, *tlobj, "tex") &&
 		blend_object_getdata(bf, &tex_block, obj) && tex_block) {
 			BlendObject tobj = blend_block_get_object(bf, tex_block, 0);
-			BlendBlockPointer im_block;
+			BlendBlock * im_block;
 			BlendObject obj;
 
 			if (!(blend_object_structure_getfield(bf, &obj, tobj, "extend") &&
@@ -3307,4 +3320,103 @@ blend_init_texlayer(bTexLayer *tl) {
 	tl->flags = 0;
 	tl->Nflags = tl->Ntype = 0;
 	tl->xrepeat = tl->yrepeat = 1;
+}
+
+
+void
+blend_dump_typedefs(BlendFile* bf)
+{
+	int i;
+
+	/* dump out display of types and their sizes */
+	for (i=0; i<bf->types_count; ++i) {
+		/* if (!bf->types[i].is_struct)*/
+		{
+			printf("%3d: sizeof(%s%s)=%d",
+				i,
+				bf->types[i].is_struct ? "struct " : "atomic ",
+				bf->types[i].name, bf->types[i].m_size);
+			if (bf->types[i].is_struct) {
+				int j;
+				printf(", %d fields: { ", bf->types[i].fieldtypes_count);
+				for (j=0; j<bf->types[i].fieldtypes_count; ++j) {
+					printf("%s %s",
+						bf->types[bf->types[i].fieldtypes[j]].name,
+						bf->names[bf->types[i].fieldnames[j]]);
+					if (j == bf->types[i].fieldtypes_count-1) {
+						printf(";}");
+					} else {
+						printf("; ");
+					}
+				}
+			}
+			printf("\n\n");
+
+		}
+	}
+}
+
+
+typedef struct {
+	BlendObject found;
+	int success;
+	const char* IDname;
+	int just_print_it;
+} IDFinderData;
+
+
+static BLENDBLOCKCALLBACK_RETURN
+block_ID_finder(BLENDBLOCKCALLBACK_ARGS) {
+	int entry_count = blend_block_get_entry_count(blend_file, block);
+	int want_more = 1;
+	IDFinderData *ifd = (IDFinderData*)userdata;
+	int i;
+
+	if (ifd->IDname) { /* don't freak out, but hmm, do we do the right thing? */
+		const int strl = strlen(ifd->IDname);
+		char *obj_string = (char *)malloc(3+ strl);
+
+		for (i=0; i<entry_count; ++i) {
+			BlendObject obj = blend_block_get_object(blend_file, block, i);
+			blend_object_get_IDname(blend_file, obj,
+				obj_string, strl+1);
+
+			if (strcmp(obj_string, ifd->IDname) == 0) {
+				ifd->found = obj;
+				ifd->success = 1;
+				want_more = 0;
+				goto done;
+			} else {
+				/* next entry please. */
+			}
+		}
+
+done:;
+		free(obj_string);
+	}
+
+	return want_more;
+}
+
+
+
+void
+blend_dump_blocks(BlendFile* bf)
+{
+	int i;
+	IDFinderData ifd;
+
+	ifd.success = 0;
+	ifd.IDname = NULL;
+	ifd.just_print_it = 1;
+
+	for (i=0; i<bf->m_blocks.size(); ++i) {
+		BlendBlock* bb = bf->m_blocks[i];
+		printf("tag='%s'\tptr=%p\ttype=%s\t[%4d]",
+			bb->tag, /*bb->blender_pointer,*/ bb->blender_pointer1,
+			bf->types[bb->type_index].name,
+			bb->m_array_entries_.size());
+		block_ID_finder(bb, bf, &ifd);
+		printf("\n");
+	}
 }

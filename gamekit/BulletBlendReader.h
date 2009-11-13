@@ -37,9 +37,9 @@ struct _BlendField {
   btAlignedObjectArray<int> m_field_offsets;
   int field_offsets_count;
 };
-struct _BlendBlock {
+struct BlendBlock {
   char tag[5];
-  uint32_t blender_pointer;
+  uint32_t blender_pointer1;
   /*void* fixed_pointer;*/
 
   int type_index;
@@ -54,13 +54,13 @@ struct _BlendBlock {
 };
 
 
-typedef struct _BlendBlock BlendBlock;
+
 
 /* the types extracted from the Blender file */
 typedef struct _BlendType BlendType;
 struct _BlendType {
 	char* name;
-	int size;
+	int m_size;
 
 	int is_struct;
 
@@ -226,6 +226,7 @@ struct	btLogicManager
 };
 
 
+char* btReadBuffer(FILE* fp, int* fileSize=0);
 
 typedef btHashKey<int> btHashInt;
 

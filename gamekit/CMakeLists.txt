@@ -70,6 +70,8 @@ ELSE (APPLE)
 	ADD_EXECUTABLE(GameKit
 	BulletBlendReader.cpp
 	BulletBlendReader.h
+	IrrBlend.cpp
+	IrrBlend.h
 	main.cpp)
 ENDIF (APPLE)
 

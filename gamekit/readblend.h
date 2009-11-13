@@ -45,6 +45,7 @@ extern "C" {
 #endif
 
 
+struct BlendBlock;
 
 /**************************************/
 /* .blend handle load/free functions */
@@ -93,11 +94,11 @@ typedef enum {
   BLEND_OBJ_STRUCT
 } BlendObjType;
 
-typedef void* BlendBlockPointer;
+
 
 /* note: treat this as an opaque type and you'll live longer. */
 typedef struct {
-  long type;   long name;   BlendBlockPointer block;
+  long type;   long name;   BlendBlock * block;
   long entry_index;   long field_index;
 } BlendObject;
 
@@ -105,7 +106,7 @@ typedef struct {
 /* The callback type for passing to blend_foreach_block() (the callback
    should return zero if it doesn't want to see any more blocks.) */
 #define BLENDBLOCKCALLBACK_RETURN int
-#define BLENDBLOCKCALLBACK_ARGS BlendBlockPointer block, \
+#define BLENDBLOCKCALLBACK_ARGS BlendBlock * block, \
 				BlendFile* blend_file, \
 				void* userdata
 typedef BLENDBLOCKCALLBACK_RETURN(BlendBlockCallback)
@@ -158,31 +159,31 @@ void blend_foreach_block(BlendFile* blend_file,
 /* Returns the tag-name ('IM', 'DATA', 'ME', etc) for the given
    top-level data block. */
 const char* blend_block_get_tagname(BlendFile* blend_file,
-				    BlendBlockPointer block);
+				    BlendBlock * block);
 
 /* Returns the type of the given top-level data block in raw
    string form ('uchar', 'float', 'MFace', 'Mesh', etc). */
 const char* blend_block_get_typename(BlendFile* blend_file,
-				     BlendBlockPointer block);
+				     BlendBlock * block);
 
-/* Translate a pointer from the file's raw data into a BlendBlockPointer
+/* Translate a pointer from the file's raw data into a BlendBlock *
    that you can query via the API.  You will usually NOT need to ever
    use this unless you're manually extracting pointers from opaque raw data
    types.  Returns NULL on failure or if the input pointer is really NULL. */
-BlendBlockPointer blend_block_from_blendpointer(BlendFile *blend_file,
+BlendBlock * blend_block_from_blendpointer(BlendFile *blend_file,
 						uint32_t blendpointer);
 
 /* Returns the number of entries there are in the given top-level
    data block (a top-level data block is like an array of entries of a specific
    Blender type, this type usually being one of Blender's structs). */
 int blend_block_get_entry_count(BlendFile* blend_file,
-				BlendBlockPointer block);
+				BlendBlock * block);
 
 /* This gets an object handle on the Nth piece of data (in the range
    0..TOTAL-1, where TOTAL is the figure returned by
    blend_block_get_entry_count() ) in the given top-level block. */
 BlendObject blend_block_get_object(BlendFile* blend_file,
-				   BlendBlockPointer block,
+				   BlendBlock * block,
 				   int entry_index);
 
 /* Returns a BlendObjType enum handy for checking that the general type
@@ -294,7 +295,7 @@ BlendLayerMask blend_obj_get_layermask(BlendFile *bf, BlendObject *objobj);
 int blend_obj_get_childcount(BlendFile *bf, BlendObject *objobj);
 /* Gets child number childnum of the Object.  childnum=0 returns
    the first, childnum=1 returns the second, etc. */
-BlendBlockPointer blend_obj_get_child(BlendFile *bf, BlendObject *objobj,
+BlendBlock * blend_obj_get_child(BlendFile *bf, BlendObject *objobj,
                                       int childnum);
 
 /*********************************/
@@ -344,7 +345,7 @@ typedef struct {
   unsigned char flags;
   int	m_flag;
   int	m_mode;
-    BlendBlockPointer image_id;
+    BlendBlock * image_id;
 } bFace;
 
 
