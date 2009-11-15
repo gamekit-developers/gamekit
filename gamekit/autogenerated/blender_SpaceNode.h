@@ -37,6 +37,7 @@ namespace Blender {
         int spacetype;
         float blockscale;
         ScrArea *area;
+        short blockhandler[8];
         View2D v2d;
         ID *id;
         ID *from;
@@ -49,7 +50,9 @@ namespace Blender {
         bNodeTree *nodetree;
         bNodeTree *edittree;
         int treetype;
-        int pad;
+        short texfrom;
+        short pad;
+        bGPdata *gpd;
     };
 }
 

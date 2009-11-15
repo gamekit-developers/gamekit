@@ -38,6 +38,9 @@ namespace Blender {
         float ctime;
         vec3f stride_offset;
         vec3f cyclic_offset;
+        ListBase agroups;
+        int active_group;
+        int pad;
     };
 }
 

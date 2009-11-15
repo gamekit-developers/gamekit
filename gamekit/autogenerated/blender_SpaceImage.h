@@ -48,18 +48,20 @@ namespace Blender {
         short imanr;
         short curtile;
         int flag;
+        short selectmode;
         short imtypenr;
         short lock;
-        short showspare;
-        short pad2;
+        short pin;
         float zoom;
+        char dt_uv;
+        char sticky;
+        char dt_uvstretch;
+        char pad[5];
         float xof;
         float yof;
         float centx;
         float centy;
-        char *info_str;
-        char *info_spare;
-        bInvalidHandle *spare;
+        bGPdata *gpd;
     };
 }
 

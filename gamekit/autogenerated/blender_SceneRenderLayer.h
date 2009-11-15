@@ -37,7 +37,9 @@ namespace Blender {
         Material *mat_override;
         Group *light_override;
         int lay;
+        int lay_zmask;
         int layflag;
+        int pad;
         int passflag;
         int pass_xor;
     };

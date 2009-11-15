@@ -66,11 +66,19 @@ namespace Blender {
         float generateParticles;
         float surfaceSmoothing;
         int surfaceSubdivs;
-        int unusedDNADummy;
+        int flag;
         float particleInfSize;
         float particleInfAlpha;
         float farFieldSize;
         MVert *meshSurfNormals;
+        float cpsTimeStart;
+        float cpsTimeEnd;
+        float cpsQuality;
+        float attractforceStrength;
+        float attractforceRadius;
+        float velocityforceStrength;
+        float velocityforceRadius;
+        int lastgoodframe;
     };
 }
 

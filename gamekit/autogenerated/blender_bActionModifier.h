@@ -36,7 +36,9 @@ namespace Blender {
         short type;
         short flag;
         char channel[32];
-        short pad;
+        float noisesize;
+        float turbul;
+        short channels;
         short no_rot_axis;
         Object *ob;
     };

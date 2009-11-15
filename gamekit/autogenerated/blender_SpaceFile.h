@@ -40,7 +40,7 @@ namespace Blender {
         bInvalidHandle *filelist;
         int totfile;
         char title[24];
-        char dir[160];
+        char dir[240];
         char file[80];
         short type;
         short ofs;
@@ -48,6 +48,10 @@ namespace Blender {
         short sort;
         short maxnamelen;
         short collums;
+        short f_fp;
+        short pad1;
+        int pad2;
+        char fp_str[8];
         bInvalidHandle *libfiledata;
         short retval;
         short menu;

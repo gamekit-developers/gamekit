@@ -34,6 +34,7 @@ namespace Blender {
     public:
         bActionChannel *next;
         bActionChannel *prev;
+        bActionGroup *grp;
         Ipo *ipo;
         ListBase constraintChannels;
         int flag;

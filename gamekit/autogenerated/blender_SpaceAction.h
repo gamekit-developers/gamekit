@@ -40,10 +40,11 @@ namespace Blender {
         short blockhandler[8];
         View2D v2d;
         bAction *action;
+        char mode;
+        char autosnap;
         short flag;
-        short autosnap;
-        short pin;
         short actnr;
+        short pin;
         short lock;
         short actwidth;
         float timeslide;

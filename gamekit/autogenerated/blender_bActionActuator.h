@@ -37,8 +37,10 @@ namespace Blender {
         int sta;
         int end;
         char name[32];
-        int blendin;
+        char frameProp[32];
+        short blendin;
         short priority;
+        short end_reset;
         short strideaxis;
         float stridelength;
     };

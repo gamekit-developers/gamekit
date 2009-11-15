@@ -32,6 +32,9 @@ namespace Blender {
     {
     public:
         Text *text;
+        char module[64];
+        int mode;
+        int flag;
     };
 }
 

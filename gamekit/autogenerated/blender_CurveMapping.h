@@ -41,7 +41,7 @@ namespace Blender {
         vec3f black;
         vec3f white;
         vec3f bwmul;
-        float padf;
+        vec3f sample;
     };
 }
 

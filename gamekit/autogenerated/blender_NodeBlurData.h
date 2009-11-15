@@ -36,12 +36,17 @@ namespace Blender {
         short samples;
         short maxspeed;
         short minspeed;
-        short pad1;
+        short relative;
         float fac;
+        float percentx;
+        float percenty;
         short filtertype;
         char bokeh;
         char gamma;
-        int pad2;
+        short curved;
+        short pad;
+        int image_in_width;
+        int image_in_height;
     };
 }
 

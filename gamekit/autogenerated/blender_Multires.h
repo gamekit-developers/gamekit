@@ -34,6 +34,7 @@ namespace Blender {
     {
     public:
         ListBase levels;
+        MVert *verts;
         char level_count;
         char current;
         char newlvl;
@@ -41,7 +42,7 @@ namespace Blender {
         char pinlvl;
         char renderlvl;
         char use_col;
-        char pad;
+        char flag;
         CustomData vdata;
         CustomData fdata;
         short *edge_flags;

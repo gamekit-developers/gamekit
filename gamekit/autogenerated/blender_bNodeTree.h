@@ -36,13 +36,16 @@ namespace Blender {
         ID id;
         ListBase nodes;
         ListBase links;
-        bNodeStack **stack;
+        bNodeStack *stack;
+        ListBase *threadstack;
         int type;
         int init;
         int stacksize;
         int cur_index;
-        bInvalidHandle **alltypes;
+        ListBase alltypes;
         bInvalidHandle *owntype;
+        bNodeSocket *selin;
+        bNodeSocket *selout;
         void (*timecursor)();
         void (*stats_draw)();
         int (*test_break)();

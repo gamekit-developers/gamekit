@@ -38,10 +38,10 @@ namespace Blender {
         char type;
         char subtype;
         short flag;
+        int saved;
         IDPropertyData data;
         int len;
         int totallen;
-        int saved;
     };
 }
 

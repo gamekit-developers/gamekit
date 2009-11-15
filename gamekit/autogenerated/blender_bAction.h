@@ -35,6 +35,10 @@ namespace Blender {
     public:
         ID id;
         ListBase chanbase;
+        ListBase groups;
+        ListBase markers;
+        int active_marker;
+        int pad;
     };
 }
 

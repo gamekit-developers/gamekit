@@ -42,11 +42,12 @@ namespace Blender {
         float xof;
         float yof;
         short mainb;
-        short zoom;
+        short render_size;
         short chanshown;
-        short pad2;
+        short zebra;
         int flag;
-        int pad;
+        float zoom;
+        bGPdata *gpd;
     };
 }
 

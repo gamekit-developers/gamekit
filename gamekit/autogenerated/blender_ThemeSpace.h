@@ -62,6 +62,8 @@ namespace Blender {
         char bone_pose[4];
         char strip[4];
         char strip_select[4];
+        char cframe[4];
+        char pad[4];
         char vertex_size;
         char facedot_size;
         char bpad[2];
@@ -78,7 +80,11 @@ namespace Blender {
         char plugin[4];
         char transition[4];
         char meta[4];
-        char bpad1[4];
+        char editmesh_active[4];
+        char handle_vertex[4];
+        char handle_vertex_select[4];
+        char handle_vertex_size;
+        char hpad[7];
     };
 }
 

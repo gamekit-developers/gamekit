@@ -34,7 +34,8 @@ namespace Blender {
         Brush *brush;
         short flag;
         short tool;
-        int pad3;
+        short seam_bleed;
+        short normal_angle;
     };
 }
 

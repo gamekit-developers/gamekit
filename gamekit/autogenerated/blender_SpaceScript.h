@@ -36,10 +36,11 @@ namespace Blender {
         int spacetype;
         float blockscale;
         ScrArea *area;
-        bInvalidHandle *script;
-        int pad2;
+        Script *script;
         short flags;
         short menunr;
+        int pad1;
+        void *but_refs;
     };
 }
 

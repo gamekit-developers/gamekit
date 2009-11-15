@@ -41,6 +41,8 @@ namespace Blender {
         float yFin;
         float rotIni;
         float rotFin;
+        int percent;
+        int interpolation;
     };
 }
 

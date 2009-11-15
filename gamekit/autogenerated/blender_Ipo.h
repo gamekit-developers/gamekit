@@ -39,7 +39,8 @@ namespace Blender {
         rctf cur;
         short blocktype;
         short showkey;
-        int pad;
+        short muteipo;
+        short pad;
     };
 }
 

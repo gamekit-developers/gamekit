@@ -46,8 +46,9 @@ namespace Blender {
         bController **links;
         Object *ob;
         short invert;
-        short freq2;
-        int pad;
+        short level;
+        short tap;
+        short pad;
     };
 }
 

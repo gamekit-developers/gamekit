@@ -23,6 +23,7 @@
 
 // -------------------------------------------------- //
 #include "blender_Common.h"
+#include "blender_ColorBand.h"
 #include "blender_ListBase.h"
 #include "blender_SolidLight.h"
 
@@ -64,7 +65,11 @@ namespace Blender {
         char fontname[256];
         ListBase themes;
         short undosteps;
-        short curssize;
+        short undomemory;
+        short gp_manhattendist;
+        short gp_euclideandist;
+        short gp_eraser;
+        short gp_settings;
         short tb_leftmouse;
         short tb_rightmouse;
         SolidLight light[3];
@@ -75,14 +80,26 @@ namespace Blender {
         int textimeout;
         int texcollectrate;
         int memcachelimit;
+        int prefetchframes;
         short frameserverport;
         short pad_rot_angle;
         short obcenter_dia;
         short rvisize;
         short rvibright;
+        short recent_files;
+        short smooth_viewtx;
+        short glreslimit;
+        short ndof_pan;
+        short ndof_rotate;
+        short curssize;
+        short pad1;
+        char pad[8];
         char versemaster[160];
         char verseuser[160];
-        short pad;
+        float glalphaclip;
+        short autokey_mode;
+        short autokey_flag;
+        ColorBand coba_weight;
     };
 }
 

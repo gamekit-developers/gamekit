@@ -31,13 +31,18 @@ namespace Blender {
     class bConstraintActuator
     {
     public:
+        short type;
+        short mode;
         short flag;
         short damp;
-        float slow;
+        short time;
+        short rotdamp;
+        int pad;
         vec3f minloc;
         vec3f maxloc;
         vec3f minrot;
         vec3f maxrot;
+        char matprop[32];
     };
 }
 

@@ -33,10 +33,10 @@ namespace Blender {
     public:
         MultiresLevel *next;
         MultiresLevel *prev;
-        MVert *verts;
         MultiresFace *faces;
         MultiresColFace *colfaces;
         MultiresEdge *edges;
+        char *edge_boundary_states;
         ListBase *vert_edge_map;
         ListBase *vert_face_map;
         bInvalidHandle *map_mem;
@@ -44,6 +44,7 @@ namespace Blender {
         int totface;
         int totedge;
         int pad;
+        MVert *verts;
     };
 }
 

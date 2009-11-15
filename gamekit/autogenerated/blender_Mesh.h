@@ -50,8 +50,6 @@ namespace Blender {
         MSticky *msticky;
         Mesh *texcomesh;
         MSelect *mselect;
-        OcInfo *oc;
-        void *sumohandle;
         CustomData vdata;
         CustomData edata;
         CustomData fdata;
@@ -59,7 +57,7 @@ namespace Blender {
         int totedge;
         int totface;
         int totselect;
-        int pad2;
+        int act_face;
         int texflag;
         vec3f loc;
         vec3f size;

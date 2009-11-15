@@ -34,6 +34,7 @@ namespace Blender {
     public:
         bNodeSocket *next;
         bNodeSocket *prev;
+        bNodeSocket *new_sock;
         char name[32];
         bNodeStack ns;
         short type;

@@ -23,6 +23,8 @@
 
 // -------------------------------------------------- //
 #include "blender_Common.h"
+#include "blender_View2D.h"
+#include "blender_rcti.h"
 
 namespace Blender {
 
@@ -36,82 +38,43 @@ namespace Blender {
         int spacetype;
         float blockscale;
         ScrArea *area;
-        char title[28];
-        int fase;
-        short mode;
-        short subfase;
-        short mouse_move_redraw;
-        short imafase;
-        short mx;
-        short my;
-        short dirsli;
-        short dirsli_lines;
-        short dirsli_sx;
-        short dirsli_ey;
-        short dirsli_ex;
-        short dirsli_h;
-        short imasli;
-        short fileselmenuitem;
-        short imasli_sx;
-        short imasli_ey;
-        short imasli_ex;
-        short imasli_h;
-        short dssx;
-        short dssy;
-        short dsex;
-        short dsey;
-        short desx;
-        short desy;
-        short deex;
-        short deey;
-        short fssx;
-        short fssy;
-        short fsex;
-        short fsey;
-        short dsdh;
-        short fsdh;
-        short fesx;
-        short fesy;
-        short feex;
-        short feey;
-        short infsx;
-        short infsy;
-        short infex;
-        short infey;
-        short dnsx;
-        short dnsy;
-        short dnw;
-        short dnh;
-        short fnsx;
-        short fnsy;
-        short fnw;
-        short fnh;
-        char fole[128];
-        char dor[128];
-        char file[128];
-        char dir[128];
-        bInvalidHandle *firstdir;
-        bInvalidHandle *firstfile;
-        int topdir;
-        int totaldirs;
-        int hilite;
-        int topfile;
-        int totalfiles;
-        float image_slider;
-        float slider_height;
-        float slider_space;
-        short topima;
-        short totalima;
-        short curimax;
-        short curimay;
-        bInvalidHandle *first_sel_ima;
-        bInvalidHandle *hilite_ima;
-        short total_selected;
-        short ima_redraw;
-        int pad2;
-        bInvalidHandle *cmap;
+        short blockhandler[8];
+        View2D v2d;
+        bInvalidHandle *files;
+        char title[24];
+        char dir[240];
+        char file[80];
+        short type;
+        short menu;
+        short flag;
+        short sort;
+        void *curfont;
+        int active_file;
+        int numtilesx;
+        int numtilesy;
+        int selstate;
+        rcti viewrect;
+        rcti bookmarkrect;
+        float scrollpos;
+        float scrollheight;
+        float scrollarea;
+        float aspect;
+        short retval;
+        short ipotype;
+        short filter;
+        short active_bookmark;
+        short pad;
+        short pad1;
+        short prv_w;
+        short prv_h;
         void (*returnfunc)();
+        void (*returnfunc_event)();
+        void (*returnfunc_args)();
         void *arg1;
+        void *arg2;
+        short *menup;
+        char *pupmenu;
+        bInvalidHandle *img;
     };
 }
 

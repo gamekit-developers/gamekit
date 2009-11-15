@@ -35,7 +35,7 @@ namespace Blender {
         float globalSpeed;
         int flags;
         int length;
-        int pad;
+        int lastValidFrame;
     };
 }
 

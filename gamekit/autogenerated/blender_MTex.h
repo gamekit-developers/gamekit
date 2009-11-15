@@ -46,11 +46,17 @@ namespace Blender {
         vec3f size;
         short texflag;
         short colormodel;
+        short pmapto;
+        short pmaptoneg;
+        short normapspace;
+        short which_output;
+        short pad[2];
         float r;
         float g;
         float b;
         float k;
         float def_var;
+        float rt;
         float colfac;
         float norfac;
         float varfac;

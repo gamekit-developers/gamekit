@@ -42,10 +42,12 @@ namespace Blender {
         TextLine *sell;
         int curc;
         int selc;
+        ListBase markers;
         char *undo_buf;
         int undo_pos;
         int undo_len;
         void *compiled;
+        double mtime;
     };
 }
 

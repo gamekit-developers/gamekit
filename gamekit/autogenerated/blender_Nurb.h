@@ -49,8 +49,9 @@ namespace Blender {
         float *knotsv;
         BPoint *bp;
         BezTriple *bezt;
+        short tilt_interp;
+        short radius_interp;
         int charidx;
-        int pad;
     };
 }
 

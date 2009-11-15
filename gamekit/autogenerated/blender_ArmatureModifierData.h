@@ -34,9 +34,10 @@ namespace Blender {
     public:
         ModifierData modifier;
         short deformflag;
-        short pad1;
+        short multi;
         int pad2;
         Object *object;
+        float *prevCos;
         char defgrp_name[32];
     };
 }

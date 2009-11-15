@@ -49,6 +49,8 @@ namespace Blender {
         float ymin;
         float ymax;
         int bitmask;
+        float slide_min;
+        float slide_max;
         float curval;
         IpoDriver *driver;
     };

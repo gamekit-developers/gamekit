@@ -36,6 +36,7 @@ namespace Blender {
         int maxlayer;
         int totsize;
         int pad;
+        void *pool;
     };
 }
 

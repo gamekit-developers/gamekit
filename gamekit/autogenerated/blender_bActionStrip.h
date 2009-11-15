@@ -46,9 +46,9 @@ namespace Blender {
         float actstart;
         float actend;
         float actoffs;
-        float padf;
         float stridelen;
         float repeat;
+        float scale;
         float blendin;
         float blendout;
         char stridechannel[32];

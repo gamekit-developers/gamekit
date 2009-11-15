@@ -40,7 +40,8 @@ namespace Blender {
         short blockhandler[8];
         short menunr;
         short lock;
-        int flag;
+        short autosnap;
+        short flag;
         View2D v2d;
     };
 }

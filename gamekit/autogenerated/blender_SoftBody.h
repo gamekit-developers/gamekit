@@ -31,11 +31,12 @@ namespace Blender {
     class SoftBody
     {
     public:
+        ParticleSystem *particles;
         int totpoint;
         int totspring;
         bInvalidHandle *bpoint;
         bInvalidHandle *bspring;
-        float ctime;
+        float pad;
         float nodemass;
         float grav;
         float mediafrict;
@@ -67,10 +68,13 @@ namespace Blender {
         short minloops;
         short maxloops;
         short choke;
-        short pad3;
-        short pad4;
-        short pad5;
+        short solver_ID;
+        short plastic;
+        short springpreload;
         bInvalidHandle *scratch;
+        float shearstiff;
+        float inpush;
+        PointCache *pointcache;
     };
 }
 

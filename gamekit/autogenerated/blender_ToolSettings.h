@@ -24,6 +24,7 @@
 // -------------------------------------------------- //
 #include "blender_Common.h"
 #include "blender_ImagePaintSettings.h"
+#include "blender_ParticleEditSettings.h"
 
 namespace Blender {
 
@@ -46,19 +47,48 @@ namespace Blender {
         short unwrapper;
         float uvcalc_radius;
         float uvcalc_cubesize;
+        float uvcalc_margin;
+        float pad;
         short uvcalc_mapdir;
         short uvcalc_mapalign;
         short uvcalc_flag;
-        short pad2;
-        float select_thresh;
+        short autoik_chainlen;
         ImagePaintSettings imapaint;
+        ParticleEditSettings particle;
+        float select_thresh;
         float clean_thresh;
         char retopo_mode;
         char retopo_paint_tool;
         char line_div;
         char ellipse_div;
         char retopo_hotspot;
-        char pad4[3];
+        char multires_subdiv_type;
+        short skgen_resolution;
+        float skgen_threshold_internal;
+        float skgen_threshold_external;
+        float skgen_length_ratio;
+        float skgen_length_limit;
+        float skgen_angle_limit;
+        float skgen_correlation_limit;
+        float skgen_symmetry_limit;
+        float skgen_retarget_angle_weight;
+        float skgen_retarget_length_weight;
+        float skgen_retarget_distance_weight;
+        short skgen_options;
+        char skgen_postpro;
+        char skgen_postpro_passes;
+        char skgen_subdivisions[3];
+        char skgen_multi_level;
+        Object *skgen_template;
+        char bone_sketching;
+        char bone_sketching_convert;
+        char skgen_subdivision_number;
+        char skgen_retarget_options;
+        char skgen_retarget_roll;
+        char skgen_side_string[8];
+        char skgen_num_string[8];
+        char edge_mode;
+        char pad3[2];
     };
 }
 

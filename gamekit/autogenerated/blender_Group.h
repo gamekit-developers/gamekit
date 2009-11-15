@@ -36,7 +36,7 @@ namespace Blender {
         ID id;
         ListBase gobject;
         int layer;
-        int pad;
+        vec3f dupli_ofs;
     };
 }
 

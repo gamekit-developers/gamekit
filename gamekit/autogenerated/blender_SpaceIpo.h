@@ -49,6 +49,7 @@ namespace Blender {
         ID *from;
         char actname[32];
         char constname[32];
+        char bonename[32];
         short totipo;
         short pin;
         short butofs;

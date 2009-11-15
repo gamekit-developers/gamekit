@@ -34,12 +34,15 @@ namespace Blender {
         Object *tar;
         short iterations;
         short flag;
-        int rootbone;
+        short rootbone;
+        short max_rootbone;
         char subtarget[32];
+        Object *poletar;
+        char polesubtarget[32];
+        float poleangle;
         float weight;
         float orientweight;
         vec3f grabtarget;
-        int pad;
     };
 }
 

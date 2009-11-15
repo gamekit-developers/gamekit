@@ -60,7 +60,12 @@ namespace Blender {
         float activityBoxRadius;
         short skytype;
         short mode;
-        int physicsEngine;
+        short occlusionRes;
+        short physicsEngine;
+        short ticrate;
+        short maxlogicstep;
+        short physubstep;
+        short maxphystep;
         float misi;
         float miststa;
         float mistdist;
@@ -85,10 +90,19 @@ namespace Blender {
         short aosamp;
         short aomix;
         short aocolor;
+        float ao_adapt_thresh;
+        float ao_adapt_speed_fac;
+        float ao_approx_error;
+        float ao_approx_correction;
+        short ao_samp_method;
+        short ao_gather_method;
+        short ao_approx_passes;
+        short pad1;
         float *aosphere;
         float *aotables;
         Ipo *ipo;
-        MTex *mtex[10];
+        MTex *mtex[18];
+        PreviewImage *preview;
         ScriptLink scriptlink;
     };
 }

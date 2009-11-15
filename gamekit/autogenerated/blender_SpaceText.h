@@ -50,10 +50,12 @@ namespace Blender {
         int tabnumber;
         int currtab_set;
         int showsyntax;
-        int unused_padd;
+        int overwrite;
         float pix_per_line;
         rcti txtscroll;
         rcti txtbar;
+        int wordwrap;
+        int doplugins;
     };
 }
 

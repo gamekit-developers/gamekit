@@ -35,7 +35,7 @@ namespace Blender {
         void *pointer;
         ListBase group;
         int val;
-        int pad;
+        int val2;
     };
 }
 

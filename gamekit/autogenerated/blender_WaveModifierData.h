@@ -34,6 +34,9 @@ namespace Blender {
     public:
         ModifierData modifier;
         Object *objectcenter;
+        char defgrp_name[32];
+        Tex *texture;
+        Object *map_object;
         short flag;
         short pad;
         float startx;
@@ -43,8 +46,13 @@ namespace Blender {
         float narrow;
         float speed;
         float damp;
+        float falloff;
+        int texmapping;
+        int uvlayer_tmp;
+        char uvlayer_name[32];
         float timeoffs;
         float lifetime;
+        float pad1;
     };
 }
 

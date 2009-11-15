@@ -35,6 +35,8 @@ namespace Blender {
         short no[3];
         char flag;
         char mat_nr;
+        char bweight;
+        char pad[3];
     };
 }
 

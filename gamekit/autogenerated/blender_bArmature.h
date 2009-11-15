@@ -50,6 +50,8 @@ namespace Blender {
         int ghostef;
         int pathsf;
         int pathef;
+        int pathbc;
+        int pathac;
     };
 }
 

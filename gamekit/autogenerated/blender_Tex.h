@@ -80,11 +80,15 @@ namespace Blender {
         float nabla;
         float norfac;
         ImageUser iuser;
+        bNodeTree *nodetree;
         Ipo *ipo;
         Image *ima;
         PluginTex *plugin;
         ColorBand *coba;
         EnvMap *env;
+        PreviewImage *preview;
+        char use_nodes;
+        char pad[7];
     };
 }
 

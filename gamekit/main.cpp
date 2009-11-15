@@ -26,6 +26,17 @@ subject to the following restrictions:
 #include "IrrBlend.h"
 #include "btBulletDynamicsCommon.h"
 
+
+///The TEST_ECHO_BLEND_READER define is to test reading .blend files using another 'readblend' implementation by Charlie C from 2006
+///it has been written in C++ and is compatible with 32,64 bit .blend files, and both little and big endian
+
+//#define TEST_ECHO_BLEND_READER 1
+
+#ifdef TEST_ECHO_BLEND_READER
+extern void loadBlend(char* buf,int len);
+#endif
+
+
 using namespace irr;
 IrrlichtDevice* device=0;
 
@@ -121,8 +132,8 @@ int main(int argc,char** argv)
 	
 	//const char* fileName = "clubsilo_packed.blend";
 	const char* fileName = "PhysicsAnimationBakingDemo.blend";
-	//const char* fileName = "BigEndian.blend";
-	//const char* fileName = "BigEndian.blend";
+//	const char* fileName = "BigEndian.blend";
+	//const char* fileName = "cube_ipo_249.blend";
 	//const char* fileName = "PhysicsAnimationBakingDemo_250.blend";
 	//const char* fileName = "test32bit.blend";
 	//const char* fileName = "test32bit_204.blend";
@@ -294,6 +305,17 @@ int main(int argc,char** argv)
 	physicsWorld->setGravity(btVector3(0,0,-10));
 //#endif //SWAP_COORDINATE_SYSTEMS
 
+#ifdef TEST_ECHO_BLEND_READER
+
+	int fileLen;
+	char*memoryBuffer =  btReadBuffer(file,&fileLen);
+	
+	loadBlend(memoryBuffer,fileLen);
+
+	fseek(file, 0, SEEK_SET); /* seek to start */
+
+#endif //TEST_NEW_BLEND_READER
+
 
 	IrrlichtBulletBlendReader	bulletBlendReader(device,smgr,physicsWorld,logicManager);
 	if (!bulletBlendReader.readFile(file,verboseDumpAllTypes))
@@ -302,6 +324,7 @@ int main(int argc,char** argv)
 		fclose(file);
 		exit(0);
 	}
+
 	
 
 	bulletBlendReader.convertAllObjects(verboseDumpAllBlocks);

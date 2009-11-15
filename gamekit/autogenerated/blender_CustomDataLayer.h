@@ -35,6 +35,10 @@ namespace Blender {
         int offset;
         int flag;
         int active;
+        int active_rnd;
+        int active_clone;
+        int active_mask;
+        char pad[4];
         char name[32];
         void *data;
     };

@@ -48,7 +48,7 @@ namespace Blender {
         bSensor **slinks;
         short val;
         short valo;
-        int pad5;
+        int state_mask;
     };
 }
 

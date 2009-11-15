@@ -25,6 +25,7 @@
 #include "blender_Common.h"
 #include "blender_ThemeSpace.h"
 #include "blender_ThemeUI.h"
+#include "blender_ThemeWireColor.h"
 
 namespace Blender {
 
@@ -52,6 +53,7 @@ namespace Blender {
         ThemeSpace toops;
         ThemeSpace ttime;
         ThemeSpace tnode;
+        ThemeWireColor tarm[20];
         char bpad[4];
         char bpad1[4];
     };

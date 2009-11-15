@@ -34,8 +34,8 @@ namespace Blender {
         short size;
         char strength;
         char dir;
-        char airbrush;
         char view;
+        char flag;
         char pad[2];
     };
 }

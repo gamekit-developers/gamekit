@@ -31,9 +31,12 @@ namespace Blender {
     class PreviewImage
     {
     public:
-        int w;
-        int h;
-        int *rect;
+        int w[2];
+        int h[2];
+        short changed[2];
+        short pad0;
+        short pad1;
+        int *rect[2];
     };
 }
 

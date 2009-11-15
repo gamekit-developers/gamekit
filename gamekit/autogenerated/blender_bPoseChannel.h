@@ -41,7 +41,7 @@ namespace Blender {
         short ikflag;
         short selectflag;
         short protectflag;
-        short pad2;
+        short agrp_index;
         int pathlen;
         int pathsf;
         int pathef;
@@ -50,11 +50,14 @@ namespace Blender {
         bPoseChannel *child;
         ListBase iktree;
         void *b_bone_mats;
+        void *dual_quat;
+        void *b_bone_dual_quats;
         vec3f loc;
         vec3f size;
         vec4f quat;
         float chan_mat[4][4];
         float pose_mat[4][4];
+        float constinv[4][4];
         vec3f pose_head;
         vec3f pose_tail;
         vec3f limitmin;

@@ -36,9 +36,13 @@ namespace Blender {
         void *data;
         short type;
         short flag;
-        short reserved1;
+        char ownspace;
+        char tarspace;
         char name[30];
         float enforce;
+        float headtail;
+        int pad;
+        Ipo *ipo;
     };
 }
 

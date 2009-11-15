@@ -37,10 +37,21 @@ namespace Blender {
         int len;
         int us;
         int done;
+        int startstill;
+        int endstill;
         StripElem *stripdata;
         char dir[160];
         int orx;
         int ory;
+        StripProxy *proxy;
+        StripCrop *crop;
+        StripTransform *transform;
+        StripColorBalance *color_balance;
+        TStripElem *tstripdata;
+        TStripElem *tstripdata_startstill;
+        TStripElem *tstripdata_endstill;
+        bInvalidHandle *ibuf_startstill;
+        bInvalidHandle *ibuf_endstill;
     };
 }
 

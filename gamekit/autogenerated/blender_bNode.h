@@ -37,6 +37,7 @@ namespace Blender {
         bNode *prev;
         bNode *new_node;
         char name[32];
+        char username[32];
         short type;
         short flag;
         short done;
@@ -55,6 +56,8 @@ namespace Blender {
         float miniwidth;
         short custom1;
         short custom2;
+        float custom3;
+        float custom4;
         short need_exec;
         short exec;
         rctf totr;

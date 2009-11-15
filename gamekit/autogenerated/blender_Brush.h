@@ -44,7 +44,7 @@ namespace Blender {
         float alpha;
         short texact;
         short pad;
-        MTex *mtex[10];
+        MTex *mtex[18];
         BrushClone clone;
     };
 }

@@ -34,11 +34,11 @@ namespace Blender {
     public:
         Sequence *next;
         Sequence *prev;
-        Sequence *newseq;
+        void *tmp;
         void *lib;
         char name[24];
-        short flag;
-        short type;
+        int flag;
+        int type;
         int len;
         int start;
         int startofs;
@@ -52,8 +52,8 @@ namespace Blender {
         float mul;
         float handsize;
         int sfra;
+        int anim_preseek;
         Strip *strip;
-        StripElem *curelem;
         Ipo *ipo;
         Scene *scene;
         bInvalidHandle *anim;
@@ -71,7 +71,11 @@ namespace Blender {
         int curpos;
         float strobe;
         void *effectdata;
-        int anim_preseek;
+        int anim_startofs;
+        int anim_endofs;
+        int blend_mode;
+        float blend_opacity;
+        int scenenr;
         int pad;
     };
 }

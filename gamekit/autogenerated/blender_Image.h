@@ -36,6 +36,7 @@ namespace Blender {
         ID id;
         char name[240];
         ListBase ibufs;
+        bInvalidHandle *gputexture;
         bInvalidHandle *anim;
         bInvalidHandle *rr;
         short ok;
@@ -61,6 +62,8 @@ namespace Blender {
         short gen_x;
         short gen_y;
         short gen_type;
+        float aspx;
+        float aspy;
         void *vnode;
     };
 }

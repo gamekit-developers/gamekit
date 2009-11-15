@@ -32,13 +32,6 @@ namespace Blender {
     {
     public:
         char name[80];
-        bInvalidHandle *ibuf;
-        StripElem *se1;
-        StripElem *se2;
-        StripElem *se3;
-        short ok;
-        short pad;
-        int nr;
     };
 }
 

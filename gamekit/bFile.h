@@ -93,6 +93,10 @@ namespace bParse {
 			return mFileDNA;
 		}
 
+		int	getFlags() const
+		{
+			return mFlags;
+		}
 
 		bool ok();
 

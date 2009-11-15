@@ -36,6 +36,7 @@ namespace Blender {
         short axis;
         short flag;
         float tolerance;
+        Object *mirror_ob;
     };
 }
 

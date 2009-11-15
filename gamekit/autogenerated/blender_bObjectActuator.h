@@ -31,8 +31,10 @@ namespace Blender {
     class bObjectActuator
     {
     public:
-        int flag;
-        int type;
+        short flag;
+        short type;
+        short otype;
+        short damping;
         vec3f forceloc;
         vec3f forcerot;
         vec3f loc;
@@ -41,6 +43,7 @@ namespace Blender {
         vec3f drot;
         vec3f linearvelocity;
         vec3f angularvelocity;
+        Object *reference;
     };
 }
 

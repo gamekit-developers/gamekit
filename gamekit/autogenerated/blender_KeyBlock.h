@@ -37,7 +37,10 @@ namespace Blender {
         float curval;
         short type;
         short adrcode;
+        short relative;
+        short flag;
         int totelem;
+        int pad2;
         void *data;
         float *weights;
         char name[32];

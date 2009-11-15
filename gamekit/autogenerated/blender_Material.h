@@ -24,6 +24,7 @@
 // -------------------------------------------------- //
 #include "blender_Common.h"
 #include "blender_ID.h"
+#include "blender_ListBase.h"
 #include "blender_ScriptLink.h"
 
 namespace Blender {
@@ -71,6 +72,16 @@ namespace Blender {
         short har;
         char seed1;
         char seed2;
+        float gloss_mir;
+        float gloss_tra;
+        short samp_gloss_mir;
+        short samp_gloss_tra;
+        float adapt_thresh_mir;
+        float adapt_thresh_tra;
+        float aniso_gloss_mir;
+        float dist_mir;
+        short fadeto_mir;
+        short shade_flag;
         int mode;
         int mode_l;
         short flarec;
@@ -84,16 +95,21 @@ namespace Blender {
         float strand_sta;
         float strand_end;
         float strand_ease;
+        float strand_surfnor;
+        float strand_min;
+        float strand_widthfade;
+        char strand_uvname[32];
         float sbias;
+        float lbias;
         float shad_alpha;
-        float padf;
+        int septex;
         char rgbsel;
         char texact;
         char pr_type;
         char use_nodes;
         short pr_back;
         short pr_lamp;
-        short septex;
+        short pad4;
         short ml_flag;
         short diff_shader;
         short spec_shader;
@@ -114,10 +130,11 @@ namespace Blender {
         short pad3;
         float rampfac_col;
         float rampfac_spec;
-        MTex *mtex[10];
+        MTex *mtex[18];
         bNodeTree *nodetree;
         Ipo *ipo;
         Group *group;
+        PreviewImage *preview;
         float friction;
         float fh;
         float reflect;
@@ -125,6 +142,17 @@ namespace Blender {
         float xyfrict;
         short dynamode;
         short pad2;
+        vec3f sss_radius;
+        vec3f sss_col;
+        float sss_error;
+        float sss_scale;
+        float sss_ior;
+        float sss_colfac;
+        float sss_texfac;
+        float sss_front;
+        float sss_back;
+        short sss_flag;
+        short sss_preset;
         float YF_ar;
         float YF_ag;
         float YF_ab;
@@ -134,6 +162,7 @@ namespace Blender {
         int YF_preset;
         int YF_djit;
         ScriptLink scriptlink;
+        ListBase gpumaterial;
     };
 }
 

@@ -49,6 +49,9 @@ namespace Blender {
         short oldwinx;
         short oldwiny;
         int flag;
+        float cursor[2];
+        short around;
+        char pad[6];
     };
 }
 

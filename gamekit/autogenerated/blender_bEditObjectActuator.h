@@ -38,8 +38,10 @@ namespace Blender {
         Mesh *me;
         char name[32];
         vec3f linVelocity;
+        vec3f angVelocity;
+        float mass;
         short localflag;
-        short pad;
+        short dyn_operation;
     };
 }
 

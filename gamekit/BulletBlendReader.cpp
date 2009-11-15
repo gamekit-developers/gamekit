@@ -1626,7 +1626,7 @@ BlendFile* blend_read(char* file)
 	MY_READ((unsigned char*)blender_mark, 1, 9, file);
 	if (strcmp(blender_mark, "BLENDER_v") != 0) {
 		printf("Not a valid Blender file (.blend file needs to be written on a 32bit little-endian machine)\n");
-	//	return NULL;
+		return NULL;
 	}
 
 	/* Alloc a handle to return */

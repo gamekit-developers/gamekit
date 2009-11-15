@@ -33,13 +33,16 @@ namespace Blender {
     {
     public:
         bInvalidHandle *session;
-        MTex *mtex[10];
+        MTex *mtex[18];
+        CurveMapping *cumap;
         BrushData drawbrush;
         BrushData smoothbrush;
         BrushData pinchbrush;
         BrushData inflatebrush;
         BrushData grabbrush;
         BrushData layerbrush;
+        BrushData flattenbrush;
+        vec3f pivot;
         short brush_type;
         short texact;
         short texnr;
@@ -48,10 +51,13 @@ namespace Blender {
         char texfade;
         char texsep;
         char averaging;
-        char draw_flag;
+        char flags;
         char tablet_size;
         char tablet_strength;
         char symm;
+        char rake;
+        char axislock;
+        char pad[2];
     };
 }
 

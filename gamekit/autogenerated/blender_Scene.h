@@ -54,27 +54,33 @@ namespace Blender {
         short selectmode;
         short proportional;
         short prop_mode;
+        short automerge;
+        short pad5;
+        short pad6;
+        short autokey_mode;
         short use_nodes;
         bNodeTree *nodetree;
         void *ed;
         Radio *radio;
-        void *sumohandle;
         GameFraming framing;
         ToolSettings *toolsettings;
         RenderData r;
         AudioData audio;
         ScriptLink scriptlink;
         ListBase markers;
+        ListBase transform_spaces;
         short jumpframe;
-        short pad1;
-        short pad2;
-        short pad3;
+        short snap_mode;
+        short snap_flag;
+        short snap_target;
         bInvalidHandle *theDag;
         short dagisvalid;
         short dagflags;
         short pad4;
         short recalc;
         SculptData sculptdata;
+        int frame_step;
+        int pad;
     };
 }
 

@@ -35,13 +35,18 @@ namespace Blender {
     public:
         ID id;
         short type;
-        short mode;
+        short pad3;
+        int mode;
         short colormodel;
         short totex;
         float r;
         float g;
         float b;
         float k;
+        float shdwr;
+        float shdwg;
+        float shdwb;
+        float shdwpad;
         float energy;
         float dist;
         float spotsize;
@@ -49,6 +54,9 @@ namespace Blender {
         float haint;
         float att1;
         float att2;
+        CurveMapping *curfalloff;
+        short falloff_type;
+        short pad2;
         float clipsta;
         float clipend;
         float shadspotsize;
@@ -68,8 +76,27 @@ namespace Blender {
         float area_size;
         float area_sizey;
         float area_sizez;
+        float adapt_thresh;
+        short ray_samp_method;
+        short pad1;
         short texact;
         short shadhalostep;
+        short sun_effect_type;
+        short skyblendtype;
+        float horizon_brightness;
+        float spread;
+        float sun_brightness;
+        float sun_size;
+        float backscattered_light;
+        float sun_intensity;
+        float atm_turbidity;
+        float atm_inscattering_factor;
+        float atm_extinction_factor;
+        float atm_distance_factor;
+        float skyblendfac;
+        float sky_exposure;
+        short sky_colorspace;
+        short pad4;
         int YF_numphotons;
         int YF_numsearch;
         short YF_phdepth;
@@ -82,8 +109,9 @@ namespace Blender {
         float YF_glowofs;
         short YF_glowtype;
         short YF_pad2;
-        MTex *mtex[10];
+        MTex *mtex[18];
         Ipo *ipo;
+        PreviewImage *preview;
         ScriptLink scriptlink;
     };
 }

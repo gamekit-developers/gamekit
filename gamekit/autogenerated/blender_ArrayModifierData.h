@@ -33,6 +33,8 @@ namespace Blender {
     {
     public:
         ModifierData modifier;
+        Object *start_cap;
+        Object *end_cap;
         Object *curve_ob;
         Object *offset_ob;
         vec3f offset;

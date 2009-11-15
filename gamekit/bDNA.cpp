@@ -194,7 +194,8 @@ void bDNA::initCmpFlags(bDNA *memDNA)
 			mCMPFlags[i] = FDF_NONE;
 			continue;
 		}
-
+#define SLOW_FORWARD_COMPATIBLE 1
+#ifdef SLOW_FORWARD_COMPATIBLE
 		char* typeName = mTypes[oldLookup];
 		int newLookup = memDNA->getReverseType(typeName);
 		if (newLookup == -1)
@@ -202,11 +203,12 @@ void bDNA::initCmpFlags(bDNA *memDNA)
 			mCMPFlags[i] = FDF_NONE;
 			continue;
 		}
-
-		// memory for file
-		//short *curStruct = memDNA->mStructs[oldLookup];
-		
 		short *curStruct = memDNA->mStructs[newLookup];
+#else
+		// memory for file
+		short *curStruct = memDNA->mStructs[oldLookup];
+#endif	
+	
 		
 
 		// rebuild...

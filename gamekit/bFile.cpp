@@ -279,7 +279,7 @@ char* bFile::readStruct(char *head, bChunkInd&  dataChunk)
 	if (mFlags & FD_SWAP)
 		swap(head, dataChunk);
 
-	if (1)//mFileDNA->flagNotEqual(dataChunk.dna_nr))
+	if (mFileDNA->flagNotEqual(dataChunk.dna_nr))
 	{
 		// Ouch! need to rebuild the struct
 		short *oldStruct,*curStruct;

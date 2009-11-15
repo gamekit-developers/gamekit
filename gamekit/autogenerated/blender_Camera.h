@@ -37,7 +37,7 @@ namespace Blender {
         short type;
         short flag;
         float passepartalpha;
-        float pad1;
+        float angle;
         float clipsta;
         float clipend;
         float lens;
@@ -52,6 +52,7 @@ namespace Blender {
         float YF_bkhrot;
         Ipo *ipo;
         ScriptLink scriptlink;
+        Object *dof_ob;
     };
 }
 

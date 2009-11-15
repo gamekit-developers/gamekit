@@ -38,7 +38,7 @@ namespace Blender {
         float zmin;
         float zmax;
         short flag;
-        short pad1;
+        short flag2;
     };
 }
 

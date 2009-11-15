@@ -33,7 +33,6 @@ namespace Blender {
     public:
         int v[4];
         int mid;
-        int childrenstart;
         char flag;
         char mat_nr;
         char pad[2];

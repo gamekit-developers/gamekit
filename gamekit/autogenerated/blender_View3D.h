@@ -25,9 +25,6 @@
 #include "blender_Common.h"
 #include "blender_ListBase.h"
 
-#undef near
-#undef far
-
 namespace Blender {
 
 
@@ -50,7 +47,7 @@ namespace Blender {
         vec4f viewquat;
         float dist;
         float zfac;
-        float pad0;
+        int lay_used;
         short persp;
         short view;
         Object *camera;
@@ -100,9 +97,16 @@ namespace Blender {
         short flag;
         short flag2;
         short gridsubdiv;
-        short snap_target;
-        short pad2;
+        short keyflags;
+        char ndofmode;
+        char ndoffilter;
         void *properties_storage;
+        bGPdata *gpd;
+        vec4f lviewquat;
+        short lpersp;
+        short lview;
+        short pad5;
+        short pad6;
     };
 }
 

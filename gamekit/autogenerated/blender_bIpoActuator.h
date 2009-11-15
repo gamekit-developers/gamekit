@@ -36,6 +36,7 @@ namespace Blender {
         int sta;
         int end;
         char name[32];
+        char frameProp[32];
         short pad1;
         short cur;
         short butsta;

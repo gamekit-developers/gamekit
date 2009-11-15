@@ -34,7 +34,7 @@ namespace Blender {
         int v1;
         int v2;
         char crease;
-        char pad;
+        char bweight;
         short flag;
     };
 }

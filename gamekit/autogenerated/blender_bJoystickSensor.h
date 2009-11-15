@@ -32,12 +32,13 @@ namespace Blender {
     {
     public:
         char name[32];
-        short type;
-        short pad;
-        int axis;
+        char type;
+        char joyindex;
+        short flag;
+        short axis;
+        short axis_single;
         int axisf;
         int button;
-        int buttonf;
         int hat;
         int hatf;
         int precision;
