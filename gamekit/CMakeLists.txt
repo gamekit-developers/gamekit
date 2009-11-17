@@ -19,7 +19,6 @@ SET (EXTRA_LIBS )
 
 IF(APPLE)
 	SET(EXETYPE MACOSX_BUNDLE)   
-	set_source_files_properties(MainMenu.nib PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
 
 	#SET(GUI_TYPE MACOSX_BUNDLE)
    INCLUDE_DIRECTORIES ( /Developer/Headers/FlatCarbon )
@@ -87,7 +86,6 @@ LINK_LIBRARIES(
 
 IF (APPLE)
 	SET (NibFile MainMenu.nib)
-	SET (RESOURCES $(NibFile))
 	SET_SOURCE_FILES_PROPERTIES( PhysicsAnimationBakingDemo.blend   PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
 	
 	ADD_EXECUTABLE(GameKit
