@@ -1,136 +1,12 @@
 
-#include "IrrBlend.h"
 
-btScalar	physicsWorldScaling = 1.f;
+
+#include "IrrBlend.h"
+#include "BulletIrrlichtUtils.h"
+
+
 using namespace irr;
 
-//Blender/OpenGL
-//left/right = X axis 
-//front/back = Y axis 
-//top/bottom = Z axis 
-//
-//In DirectX's and Irrlicht's and many other coordinate systems it's like this 
-//
-//left/right = X axis 
-//top/bottom = Y axis 
-//front/back = Z axis 
-
-
-///mapping between right handed and left-handed coordinate system
-#define SWAP_COORDINATE_SYSTEMS
-#ifdef SWAP_COORDINATE_SYSTEMS
-
-#define IRR_X 0
-#define IRR_Y 2
-#define IRR_Z 1
-
-#define IRR_X_M 1.f
-#define IRR_Y_M 1.f
-#define IRR_Z_M 1.f
-
-///also winding is different
-#define IRR_TRI_0_X 0
-#define IRR_TRI_0_Y 2
-#define IRR_TRI_0_Z 1
-
-#define IRR_TRI_1_X 0
-#define IRR_TRI_1_Y 3
-#define IRR_TRI_1_Z 2
-#else
-#define IRR_X 0
-#define IRR_Y 1
-#define IRR_Z 2
-
-#define IRR_X_M 1.f
-#define IRR_Y_M 1.f
-#define IRR_Z_M 1.f
-
-///also winding is different
-#define IRR_TRI_0_X 0
-#define IRR_TRI_0_Y 1
-#define IRR_TRI_0_Z 2
-
-#define IRR_TRI_1_X 0
-#define IRR_TRI_1_Y 2
-#define IRR_TRI_1_Z 3
-#endif
-
-void	MatrixToEuler(const btMatrix3x3& mat,btVector3& TEuler)
-{
-	irr::core::matrix4 imat;
-	float m[16];
-	m[0] = mat[IRR_X][IRR_X];
-	m[1] = IRR_X_M*IRR_Y_M*mat[IRR_Y][IRR_X];
-	m[2] = IRR_X_M*IRR_Z_M*mat[IRR_Z][IRR_X];
-	m[3] = 0;
-
-	m[4] = IRR_X_M*IRR_Y_M*mat[IRR_X][IRR_Y];
-	m[5] = mat[IRR_Y][IRR_Y];
-	m[6] = IRR_Y_M*IRR_Z_M*mat[IRR_Z][IRR_Y];
-	m[7] = 0;
-
-	m[8] = IRR_X_M*IRR_Z_M*mat[IRR_X][IRR_Z];
-	m[9] = IRR_Y_M*IRR_Z_M*mat[IRR_Y][IRR_Z];
-	m[10] = mat[IRR_Z][IRR_Z];
-	m[11] = 0;
-	
-	m[12] = 0;//IRR_X_M*btr.getOrigin()[IRR_X];
-	m[13] = 0;//IRR_Y_M*btr.getOrigin()[IRR_Y];
-	m[14] = 0;//IRR_Z_M*btr.getOrigin()[IRR_Z];
-	m[15] = 0;
-
-	imat.setM(m);
-	
-	irr::core::vector3df eulerrot = imat.getRotationDegrees();
-	TEuler[0] = eulerrot.X;
-	TEuler[1] = eulerrot.Y;
-	TEuler[2] = eulerrot.Z;
-}
-
-
-
-///This class sychronizes the world transform between Bullet rigid bodies and their accompanying Irrlicht nodes
-class IrrMotionState : public btDefaultMotionState
-{
-	btAlignedObjectArray<irr::scene::ISceneNode*> m_irrNodes;
-public:
-
-	IrrMotionState()
-	{
-	}
-	///synchronizes world transform from user to physics
-	virtual void	getWorldTransform(btTransform& centerOfMassWorldTrans ) const 
-	{
-		centerOfMassWorldTrans = m_graphicsWorldTrans;
-	}
-
-	void	addIrrlichtNode(irr::scene::ISceneNode* node)
-	{
-		m_irrNodes.push_back(node);
-	}
-
-	///synchronizes world transform from physics to user
-	///Bullet only calls the update of worldtransform for active objects
-	virtual void	setWorldTransform(const btTransform& centerOfMassWorldTrans)
-	{
-		
-		m_startWorldTrans = centerOfMassWorldTrans;
-		m_graphicsWorldTrans = centerOfMassWorldTrans;
-
-		const btVector3& Point = centerOfMassWorldTrans.getOrigin();
-		// Set rotation
-		btVector3 EulerRotation;
-		MatrixToEuler(centerOfMassWorldTrans.getBasis(), EulerRotation);
-	
-		for (int i=0;i<m_irrNodes.size();i++)
-		{
-			m_irrNodes[i]->setPosition(irr::core::vector3df((f32)Point[IRR_X], (f32)Point[IRR_Y], (f32)Point[IRR_Z])/physicsWorldScaling);
-			m_irrNodes[i]->setRotation(irr::core::vector3df(EulerRotation[0], EulerRotation[1], EulerRotation[2]));
-			
-		}
-	}
-
-};
 
 
 struct	IrrlichtMeshContainer
@@ -221,7 +97,7 @@ void* IrrlichtBulletBlendReader::createGraphicsObject(_bObj* tmpObject, class bt
 
 		for (int t=0;t<tmpObject->data.mesh->face_count;t++)
 		{
-			if (currentIndex>maxNumIndices-10)
+			if (currentIndex>maxNumIndices)
 				break;
 
 			int originalIndex = tmpObject->data.mesh->face[t].v[IRR_TRI_0_X];

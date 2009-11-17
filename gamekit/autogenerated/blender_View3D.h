@@ -25,6 +25,9 @@
 #include "blender_Common.h"
 #include "blender_ListBase.h"
 
+#undef near
+#undef far
+
 namespace Blender {
 
 

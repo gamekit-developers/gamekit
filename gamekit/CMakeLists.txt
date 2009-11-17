@@ -48,7 +48,38 @@ ENDIF (X11_VIDEO_LIBRARY)
 
 ENDIF (APPLE)
 
+SET(bParse_SRCS
+	bChunk.cpp
+	bChunk.h
+	bCommon.h
+	bDefines.h
+	bDNA.cpp
+	bDNA.h
+	bFile.cpp
+	bFile.h
+	bLog.cpp
+	bLog.h
+	bMain.cpp
+	bMain.h
+	dna249.cpp
+)
 
+
+SET(GameKit_SRCS
+	PhysicsAnimationBakingDemo.blend
+	BulletBlendReader.cpp
+	BulletBlendReader.h
+	BulletBlendReaderNew.cpp
+	BulletBlendReaderNew.h
+	BulletIrrlichtUtils.cpp
+	BulletIrrlichtUtils.h
+	IrrBlend.cpp
+	IrrBlend.h
+	IrrBlendNew.cpp
+	IrrBlendNew.h
+	main.cpp
+)
+	
 
 LINK_LIBRARIES(
 	BulletSoftBody BulletDynamics BulletCollision LinearMath Irrlicht ${EXTRA_LIBS} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} ${X11_VIDEO_LIBRARY}
@@ -58,21 +89,17 @@ IF (APPLE)
 	SET (NibFile MainMenu.nib)
 	SET (RESOURCES $(NibFile))
 	SET_SOURCE_FILES_PROPERTIES( PhysicsAnimationBakingDemo.blend   PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
+	
 	ADD_EXECUTABLE(GameKit
 	MACOSX_BUNDLE
 	MainMenu.nib
-	PhysicsAnimationBakingDemo.blend
-	BulletBlendReader.cpp
-	BulletBlendReader.h
-	IrrBlend.cpp
-	IrrBlend.h
-	main.cpp)
+	${GameKit_SRCS}
+	${bParse_SRCS}
+	)
 ELSE (APPLE)
 	ADD_EXECUTABLE(GameKit
-	BulletBlendReader.cpp
-	BulletBlendReader.h
-	IrrBlend.cpp
-	IrrBlend.h
-	main.cpp)
+	${GameKit_SRCS}
+	${bParse_SRCS}
+	)
 ENDIF (APPLE)
 

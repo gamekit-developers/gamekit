@@ -24,6 +24,7 @@ subject to the following restrictions:
 #include <irrlicht.h>
 #include <iostream>
 #include "IrrBlend.h"
+#include "IrrBlendNew.h"
 #include "btBulletDynamicsCommon.h"
 
 
@@ -42,12 +43,6 @@ IrrlichtDevice* device=0;
 
 bool gPause=false;
 bool gWireframe = false;
-
-
-#ifdef _MSC_VER
-#pragma comment(lib, "Irrlicht.lib")
-#endif
-
 
 
 
@@ -132,12 +127,12 @@ int main(int argc,char** argv)
 	
 	//const char* fileName = "clubsilo_packed.blend";
 	const char* fileName = "PhysicsAnimationBakingDemo.blend";
-//	const char* fileName = "BigEndian.blend";
+	//const char* fileName = "BigEndian.blend";
 	//const char* fileName = "cube_ipo_249.blend";
 	//const char* fileName = "PhysicsAnimationBakingDemo_250.blend";
 	//const char* fileName = "test32bit.blend";
 	//const char* fileName = "test32bit_204.blend";
-	//const char* fileName = "test32bit_243.blend";
+	//const char* fileName = "cube_ipo_249b.blend";
 	//const char* fileName = "land_rover_92_.blend";
 	
 	int verboseDumpAllTypes = false;//true;
@@ -310,12 +305,24 @@ int main(int argc,char** argv)
 	int fileLen;
 	char*memoryBuffer =  btReadBuffer(file,&fileLen);
 	
-	loadBlend(memoryBuffer,fileLen);
+	
 
+
+
+	IrrBlendNew	bulletBlendReaderNew(device,smgr,physicsWorld,logicManager);
+	if (!bulletBlendReaderNew.readFile(memoryBuffer,fileLen,verboseDumpAllTypes))
+	{
+		printf("cannot read Blender file %s.\n",argv[1]);
+		fclose(file);
+		exit(0);
+	}
+	bulletBlendReaderNew.convertAllObjects(verboseDumpAllBlocks);
+
+	
 	fseek(file, 0, SEEK_SET); /* seek to start */
 
-#endif //TEST_NEW_BLEND_READER
 
+#endif //TEST_NEW_BLEND_READER
 
 	IrrlichtBulletBlendReader	bulletBlendReader(device,smgr,physicsWorld,logicManager);
 	if (!bulletBlendReader.readFile(file,verboseDumpAllTypes))
@@ -324,8 +331,6 @@ int main(int argc,char** argv)
 		fclose(file);
 		exit(0);
 	}
-
-	
 
 	bulletBlendReader.convertAllObjects(verboseDumpAllBlocks);
 

@@ -4,8 +4,6 @@
 #include "BulletBlendReader.h"
 
 #include <irrlicht.h>
-#include <iostream>
-
 #include "btBulletDynamicsCommon.h"
 
 
