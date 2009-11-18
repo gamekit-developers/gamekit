@@ -9,10 +9,6 @@ using namespace irr;
 
 
 
-struct	IrrlichtMeshContainer
-{
-	btAlignedObjectArray<irr::scene::ISceneNode*>	m_sceneNodes;
-};
 
 IrrlichtBulletBlendReader::IrrlichtBulletBlendReader(irr::IrrlichtDevice* device,irr::scene::ISceneManager* irrlichtSceneManager, btDiscreteDynamicsWorld* bulletWorld, btLogicManager* logicManager)
 		:BulletBlendReader(bulletWorld),

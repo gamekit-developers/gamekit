@@ -279,7 +279,9 @@ char* bFile::readStruct(char *head, bChunkInd&  dataChunk)
 	if (mFlags & FD_SWAP)
 		swap(head, dataChunk);
 
-	if (mFileDNA->flagNotEqual(dataChunk.dna_nr))
+	
+
+	if (1)//mFileDNA->flagNotEqual(dataChunk.dna_nr))
 	{
 		// Ouch! need to rebuild the struct
 		short *oldStruct,*curStruct;
@@ -294,56 +296,59 @@ char* bFile::readStruct(char *head, bChunkInd&  dataChunk)
 
 		reverseOld = mMemoryDNA->getReverseType(oldType);
 
-		if (reverseOld==-1)
-			return 0;
+		bool isLink = false;
 
-		// make sure it's here
-		//assert(reverseOld!= -1 && "getReverseType() returned -1, struct required!");
-
-		//
-		curStruct = mMemoryDNA->getStruct(reverseOld);
-		newType = mMemoryDNA->getType(curStruct[0]);
-		curLen = mMemoryDNA->getLength(curStruct[0]);
-
-
-
-		// make sure it's the same
-		assert((strcmp(oldType, newType)==0) && "internal error, struct mismatch!");
-
-
-	    // numBlocks * length
-    	char *dataAlloc = new char[(dataChunk.nr*curLen)+1];
-		memset(dataAlloc, 0, (dataChunk.nr*curLen)+1);
-
-		// track allocated
-		mMain->addDatablock(dataAlloc);
-
-		char *cur = dataAlloc;
-		char *old = head;
-		for (int block=0; block<dataChunk.nr; block++)
+		if (strcmp("Link",oldType)==0)
 		{
-			parseStruct(cur, old, dataChunk.dna_nr, reverseOld);
-
-			cur += curLen;
-			old += oldLen;
+			isLink = true;
 		}
-		return dataAlloc;
+
+
+		if ((reverseOld!=-1) && (!isLink))
+		{
+			// make sure it's here
+			//assert(reverseOld!= -1 && "getReverseType() returned -1, struct required!");
+
+			//
+			curStruct = mMemoryDNA->getStruct(reverseOld);
+			newType = mMemoryDNA->getType(curStruct[0]);
+			curLen = mMemoryDNA->getLength(curStruct[0]);
+
+
+
+			// make sure it's the same
+			assert((strcmp(oldType, newType)==0) && "internal error, struct mismatch!");
+
+
+			// numBlocks * length
+    		char *dataAlloc = new char[(dataChunk.nr*curLen)+1];
+			memset(dataAlloc, 0, (dataChunk.nr*curLen)+1);
+
+			// track allocated
+			mMain->addDatablock(dataAlloc);
+
+			char *cur = dataAlloc;
+			char *old = head;
+			for (int block=0; block<dataChunk.nr; block++)
+			{
+				parseStruct(cur, old, dataChunk.dna_nr, reverseOld);
+
+				cur += curLen;
+				old += oldLen;
+			}
+			return dataAlloc;
+		}
 	}
 
-	else // its the same
-	{
-		char *dataAlloc = new char[(dataChunk.len)+1];
-		memset(dataAlloc, 0, dataChunk.len+1);
+	char *dataAlloc = new char[(dataChunk.len)+1];
+	memset(dataAlloc, 0, dataChunk.len+1);
 
 
-		// track allocated
-		mMain->addDatablock(dataAlloc);
-		memcpy(dataAlloc, head, dataChunk.len);
-		return dataAlloc;
-	}
+	// track allocated
+	mMain->addDatablock(dataAlloc);
+	memcpy(dataAlloc, head, dataChunk.len);
+	return dataAlloc;
 
-	assert(0);
-	return 0;
 }
 
 

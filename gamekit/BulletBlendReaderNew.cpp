@@ -33,6 +33,8 @@ int		BulletBlendReaderNew::readFile(char* memoryBuffer, int fileLen, int verbose
 	if (ok)
 		m_blendFile->parse();
 	
+//	m_blendFile->getMain()->dumpChunks(m_blendFile->getFileDNA());
+	
 	return ok;
 }
 

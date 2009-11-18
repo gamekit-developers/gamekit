@@ -125,15 +125,22 @@ int main(int argc,char** argv)
 	if (argv[0])
 		printf("argv[0]=%s\n",argv[0]);
 	
-	//const char* fileName = "clubsilo_packed.blend";
-	const char* fileName = "PhysicsAnimationBakingDemo.blend";
+	const char* fileName = "clubsilo_packed.blend";
+	//const char* fileName = "clubsilo_small.blend";
+	//const char* fileName = "PhysicsAnimationBakingDemo.blend";
+	//const char* fileName = "land_rover_92.blend";//64 bit .blend test
+	//const char* fileName = "land_rover_92_249.blend";
 	//const char* fileName = "BigEndian.blend";
-	//const char* fileName = "cube_ipo_249.blend";
+	//const char* fileName = "BigEndian_250.blend"; //forward compatibility
+	//const char* fileName = "hinge_249b.blend";
 	//const char* fileName = "PhysicsAnimationBakingDemo_250.blend";
 	//const char* fileName = "test32bit.blend";
 	//const char* fileName = "test32bit_204.blend";
 	//const char* fileName = "cube_ipo_249b.blend";
 	//const char* fileName = "land_rover_92_.blend";
+	//const char* fileName = "cube_250_unzipped.blend";
+	
+
 	
 	int verboseDumpAllTypes = false;//true;
 	int verboseDumpAllBlocks = false;//true;
@@ -322,7 +329,7 @@ int main(int argc,char** argv)
 	fseek(file, 0, SEEK_SET); /* seek to start */
 
 
-#endif //TEST_NEW_BLEND_READER
+#else
 
 	IrrlichtBulletBlendReader	bulletBlendReader(device,smgr,physicsWorld,logicManager);
 	if (!bulletBlendReader.readFile(file,verboseDumpAllTypes))
@@ -330,10 +337,11 @@ int main(int argc,char** argv)
 		printf("cannot read Blender file %s.\n",argv[1]);
 		fclose(file);
 		exit(0);
+	} else
+	{
+		bulletBlendReader.convertAllObjects(verboseDumpAllBlocks);
 	}
-
-	bulletBlendReader.convertAllObjects(verboseDumpAllBlocks);
-
+#endif //TEST_ECHO_BLEND_READER
 	
 	/*
 	Now draw everything and finish.

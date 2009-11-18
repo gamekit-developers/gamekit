@@ -25,6 +25,7 @@ class IrrBlendNew : public BulletBlendReaderNew
 
 	int	m_guid;
 
+
 public:
 	IrrBlendNew(irr::IrrlichtDevice* device,irr::scene::ISceneManager* irrlichtSceneManager, btDiscreteDynamicsWorld* bulletWorld, btLogicManager* logicManager);
 

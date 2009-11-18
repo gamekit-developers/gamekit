@@ -10,6 +10,8 @@ namespace irr
 	}
 };
 
+
+
 class btTransform;
 class btMatrix3x3;
 class btVector3;
@@ -17,6 +19,10 @@ class btVector3;
 #include "LinearMath/btAlignedObjectArray.h"
 #include "LinearMath/btDefaultMotionState.h"
 
+struct	IrrlichtMeshContainer
+{
+	btAlignedObjectArray<irr::scene::ISceneNode*>	m_sceneNodes;
+};
 
 ///mapping between right handed and left-handed coordinate system
 #define SWAP_COORDINATE_SYSTEMS
