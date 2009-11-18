@@ -281,7 +281,7 @@ char* bFile::readStruct(char *head, bChunkInd&  dataChunk)
 
 	
 
-	if (1)//mFileDNA->flagNotEqual(dataChunk.dna_nr))
+	if (!mFileDNA->flagEqual(dataChunk.dna_nr))
 	{
 		// Ouch! need to rebuild the struct
 		short *oldStruct,*curStruct;
@@ -338,7 +338,11 @@ char* bFile::readStruct(char *head, bChunkInd&  dataChunk)
 			}
 			return dataAlloc;
 		}
+	} else
+	{
+		//printf("equal, just memcpy");
 	}
+
 
 	char *dataAlloc = new char[(dataChunk.len)+1];
 	memset(dataAlloc, 0, dataChunk.len+1);
