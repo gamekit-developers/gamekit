@@ -67,6 +67,7 @@ SET(bParse_SRCS
 
 
 SET(GameKit_SRCS
+	clubsilo_packed.blend
 	PhysicsAnimationBakingDemo.blend
 	BulletBlendReader.cpp
 	BulletBlendReader.h
@@ -90,7 +91,7 @@ IF (APPLE)
 	SET (NibFile MainMenu.nib)
 	SET (RESOURCS $(NibFile))
 	SET_SOURCE_FILES_PROPERTIES( PhysicsAnimationBakingDemo.blend   PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
-	
+	SET_SOURCE_FILES_PROPERTIES( clubsilo_packed.blend   PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
 	ADD_EXECUTABLE(GameKit
 	MACOSX_BUNDLE
 	MainMenu.nib
