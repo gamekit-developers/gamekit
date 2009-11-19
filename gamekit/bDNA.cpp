@@ -20,7 +20,6 @@
 
 #include "bDNA.h"
 #include "bChunk.h"
-#include "bFile.h"
 
 using namespace bParse;
 
@@ -123,7 +122,8 @@ bool bDNA::flagNotEqual(int dna_nr)
 bool bDNA::flagEqual(int dna_nr)
 {
 	assert(dna_nr <=	(int)mCMPFlags.size());
-	return mCMPFlags[dna_nr] == FDF_STRUCT_EQU;
+	int flag = mCMPFlags[dna_nr];
+	return  flag == FDF_STRUCT_EQU;
 }
 
 // ----------------------------------------------------- //
@@ -194,7 +194,7 @@ void bDNA::initCmpFlags(bDNA *memDNA)
 			mCMPFlags[i] = FDF_NONE;
 			continue;
 		}
-#define SLOW_FORWARD_COMPATIBLE 1
+//#define SLOW_FORWARD_COMPATIBLE 1
 #ifdef SLOW_FORWARD_COMPATIBLE
 		char* typeName = mTypes[oldLookup];
 		int newLookup = memDNA->getReverseType(typeName);

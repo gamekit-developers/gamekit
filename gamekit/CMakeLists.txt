@@ -56,6 +56,8 @@ SET(bParse_SRCS
 	bDNA.h
 	bFile.cpp
 	bFile.h
+	bBlenderFile.cpp
+	bBlenderFile.h
 	bLog.cpp
 	bLog.h
 	bMain.cpp

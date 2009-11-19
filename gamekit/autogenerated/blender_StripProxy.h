@@ -34,6 +34,9 @@ namespace Blender {
         char dir[160];
         char file[80];
         bInvalidHandle *anim;
+        short size;
+        short quality;
+        int pad;
     };
 }
 

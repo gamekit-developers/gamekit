@@ -33,9 +33,7 @@ subject to the following restrictions:
 
 //#define TEST_ECHO_BLEND_READER 1
 
-#ifdef TEST_ECHO_BLEND_READER
-extern void loadBlend(char* buf,int len);
-#endif
+
 
 
 using namespace irr;
@@ -125,8 +123,7 @@ int main(int argc,char** argv)
 	if (argv[0])
 		printf("argv[0]=%s\n",argv[0]);
 	
-	const char* fileName = "clubsilo_packed.blend";
-	//const char* fileName = "clubsilo_small.blend";
+	const char* fileName = "clubsilo_packed.blend"; //blender 2.49b -> no conversion if using bParse
 	//const char* fileName = "PhysicsAnimationBakingDemo.blend";
 	//const char* fileName = "land_rover_92.blend";//64 bit .blend test
 	//const char* fileName = "land_rover_92_249.blend";
@@ -138,12 +135,12 @@ int main(int argc,char** argv)
 	//const char* fileName = "test32bit_204.blend";
 	//const char* fileName = "cube_ipo_249b.blend";
 	//const char* fileName = "land_rover_92_.blend";
-	//const char* fileName = "cube_250_unzipped.blend";
-	
+	//const char* fileName = "cube_tex_204.blend"; //test exported from an old Blender 2.04 version
+
 
 	
 	int verboseDumpAllTypes = false;//true;
-	int verboseDumpAllBlocks = false;//true;
+	int verboseDumpAllBlocks = false;//false;//true;
 
 	printf("Usage:\nGameKit [-verbose] [blendfile.blend]\n");
 
@@ -315,15 +312,25 @@ int main(int argc,char** argv)
 	
 
 
-
-	IrrBlendNew	bulletBlendReaderNew(device,smgr,physicsWorld,logicManager);
-	if (!bulletBlendReaderNew.readFile(memoryBuffer,fileLen,verboseDumpAllTypes))
+	
+//	char* copyBuf = (char*) malloc (fileLen);
+	
+//	for (int i=0;i<10;i++)
 	{
-		printf("cannot read Blender file %s.\n",argv[1]);
-		fclose(file);
-		exit(0);
+//		memcpy(copyBuf,memoryBuffer,fileLen);
+
+
+		IrrBlendNew	bulletBlendReaderNew(device,smgr,physicsWorld,logicManager);
+		if (!bulletBlendReaderNew.readFile(memoryBuffer,fileLen,verboseDumpAllTypes))
+		{
+			printf("cannot read Blender file %s.\n",argv[1]);
+			fclose(file);
+			exit(0);
+		}
+		bulletBlendReaderNew.convertAllObjects(verboseDumpAllBlocks);
 	}
-	bulletBlendReaderNew.convertAllObjects(verboseDumpAllBlocks);
+
+	
 
 	
 	fseek(file, 0, SEEK_SET); /* seek to start */

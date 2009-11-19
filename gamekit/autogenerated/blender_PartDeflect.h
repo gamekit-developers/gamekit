@@ -66,7 +66,7 @@ namespace Blender {
         Tex *tex;
         bInvalidHandle *rng;
         float f_noise;
-        int pad;
+        int seed;
     };
 }
 

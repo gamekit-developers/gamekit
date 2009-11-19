@@ -36,8 +36,11 @@ namespace Blender {
         int totspring;
         bInvalidHandle *bpoint;
         bInvalidHandle *bspring;
-        float pad;
+        char pad;
+        char msg_lock;
+        short msg_value;
         float nodemass;
+        char namedVG_Mass[32];
         float grav;
         float mediafrict;
         float rklimit;
@@ -48,9 +51,11 @@ namespace Blender {
         float maxgoal;
         float defgoal;
         short vertgroup;
+        char namedVG_Softgoal[32];
         short fuzzyness;
         float inspring;
         float infrict;
+        char namedVG_Spring_K[32];
         int sfra;
         int efra;
         int interval;

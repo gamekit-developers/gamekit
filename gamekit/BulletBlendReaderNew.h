@@ -9,7 +9,7 @@ namespace Blender
 };
 namespace bParse
 {
-	class bFile;
+	class bBlenderFile;
 };
 
 class btCollisionObject;
@@ -21,7 +21,7 @@ class	BulletBlendReaderNew
 
 protected:
 
-	bParse::bFile* m_blendFile;
+	bParse::bBlenderFile* m_blendFile;
 
 	class btDynamicsWorld* m_destinationWorld;
 

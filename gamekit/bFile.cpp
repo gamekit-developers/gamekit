@@ -23,21 +23,28 @@
 #include "bChunk.h"
 #include "bDNA.h"
 #include <math.h>
+#include <string.h>
+#include <stdlib.h>
+
 using namespace bParse;
 
 
 // ----------------------------------------------------- //
-bFile::bFile(const char *filename)
-	:	mOwnsBuffer(false),
+bFile::bFile(const char *filename, const char headerString[7])
+	:	mOwnsBuffer(true),
 		mFileBuffer(0),
 		mFileLen(0),
 		mVersion(0),
 		mDataStart(0),
 		mFileDNA(0),
 		mMemoryDNA(0),
-		mMain(0),
 		mFlags(FD_INVALID)
 {
+	for (int i=0;i<7;i++)
+	{
+		m_headerString[i] = headerString[i];
+	}
+
 	FILE *fp = fopen(filename, "rb");
 	if (fp)
 	{
@@ -52,27 +59,30 @@ bFile::bFile(const char *filename)
 
 		//
 		parseHeader();
-		mMain= new bMain(this, filename, mVersion);
+		
 	}
 }
 
 // ----------------------------------------------------- //
-bFile::bFile( char *memoryBuffer, int len)
-:	mOwnsBuffer(true),
+bFile::bFile( char *memoryBuffer, int len, const char headerString[7])
+:	mOwnsBuffer(false),
 	mFileBuffer(0),
 		mFileLen(0),
 		mVersion(0),
 		mDataStart(0),
 		mFileDNA(0),
 		mMemoryDNA(0),
-		mMain(0),
 		mFlags(FD_INVALID)
 {
+	for (int i=0;i<7;i++)
+	{
+		m_headerString[i] = headerString[i];
+	}
 	mFileBuffer = memoryBuffer;
 	mFileLen = len;
 	
 	parseHeader();
-	mMain= new bMain(this, "memoryBuf", mVersion);
+	
 }
 
 
@@ -85,17 +95,13 @@ bFile::~bFile()
 		mFileBuffer = 0;
 	}
 
-	delete mMain;
+
 	delete mMemoryDNA;
 	delete mFileDNA;
 }
 
 
-// ----------------------------------------------------- //
-bMain *bFile::getMain()
-{
-	return mMain;
-}
+
 
 
 // ----------------------------------------------------- //
@@ -106,7 +112,7 @@ void bFile::parseHeader()
 	memcpy(header, blenderBuf, SIZEOFBLENDERHEADER);
 	header[SIZEOFBLENDERHEADER]='\0';
 
-	if (strncmp(header, "BLENDER", 7)!=0)
+	if (strncmp(header, m_headerString, 7)!=0)
 	{
 		print ("Invalid blend file...");
 		return;
@@ -155,7 +161,7 @@ bool bFile::ok()
 }
 
 // ----------------------------------------------------- //
-void bFile::parse()
+void bFile::parse(bool verboseDumpAllTypes)
 {
 	if ( (mFlags &FD_OK) ==0)
 		return;
@@ -181,7 +187,10 @@ void bFile::parse()
 	mFileDNA = new bDNA();
 	mFileDNA->init(blenderData+sdnaPos, mFileLen-sdnaPos, (mFlags & FD_SWAP)!=0);
 
-	mFileDNA->dumpTypeDefinitions();
+	if (verboseDumpAllTypes)
+	{
+		mFileDNA->dumpTypeDefinitions();
+	}
 
 	mMemoryDNA = new bDNA();
 	mMemoryDNA->initMemory();
@@ -200,64 +209,6 @@ void bFile::parse()
 }
 
 
-// ----------------------------------------------------- //
-void bFile::parseData()
-{
-	print ("Building datablocks");
-	print ("Chunk size = " << CHUNK_HEADER_LEN);
-	print ("File chunk size = " << ChunkUtils::getOffset(mFlags));
-
-	const bool swap = (mFlags&FD_SWAP)!=0;
-	int seek = 0;
-
-
-	char *dataPtr = mFileBuffer+mDataStart;
-
-	bChunkInd dataChunk;
-	dataChunk.code = 0;
-
-
-	dataPtr += ChunkUtils::getNextBlock(&dataChunk, dataPtr, mFlags);
-	char *dataPtrHead = 0;
-
-	while (dataChunk.code != DNA1)
-	{
-		
-
-//		if (dataChunk.code == GLOB)
-//		{
-//			dataPtr += seek;
-//			continue;
-//		}
-
-		// one behind
-		if (dataChunk.code == DNA1) break;
-
-		// same as (BHEAD+DATA dependancy)
-		dataPtrHead = dataPtr+ChunkUtils::getOffset(mFlags);
-		char *id = readStruct(dataPtrHead, dataChunk);
-
-		// lookup maps
-		if (id)
-		{
-			mLibPointers.insert(std::make_pair(dataChunk.oldPtr, (bStructHandle*)id));
-
-			mMain->m_chunks.push_back(dataChunk);
-			// block it
-			bListBasePtr *listID = mMain->getListBasePtr(dataChunk.code);
-			if (listID)
-				listID->push_back((bStructHandle*)id);
-		}
-
-		// next please!
-		dataPtr += seek;
-
-		seek =  ChunkUtils::getNextBlock(&dataChunk, dataPtr, mFlags);
-		if (seek < 0)
-			break;
-	}
-
-}
 
 // ----------------------------------------------------- //
 void bFile::swap(char *head, bChunkInd& dataChunk)
@@ -293,54 +244,59 @@ char* bFile::readStruct(char *head, bChunkInd&  dataChunk)
 		oldType = mFileDNA->getType(oldStruct[0]);
 		oldLen = mFileDNA->getLength(oldStruct[0]);
 
-
-		reverseOld = mMemoryDNA->getReverseType(oldType);
-
-		bool isLink = false;
-
-		if (strcmp("Link",oldType)==0)
+		///don't try to convert Link block data, just memcpy it. Other data can be converted.
+		if (strcmp("Link",oldType)!=0)
 		{
-			isLink = true;
-		}
+			reverseOld = mMemoryDNA->getReverseType(oldType);
 
-
-		if ((reverseOld!=-1) && (!isLink))
-		{
-			// make sure it's here
-			//assert(reverseOld!= -1 && "getReverseType() returned -1, struct required!");
-
-			//
-			curStruct = mMemoryDNA->getStruct(reverseOld);
-			newType = mMemoryDNA->getType(curStruct[0]);
-			curLen = mMemoryDNA->getLength(curStruct[0]);
-
-
-
-			// make sure it's the same
-			assert((strcmp(oldType, newType)==0) && "internal error, struct mismatch!");
-
-
-			// numBlocks * length
-    		char *dataAlloc = new char[(dataChunk.nr*curLen)+1];
-			memset(dataAlloc, 0, (dataChunk.nr*curLen)+1);
-
-			// track allocated
-			mMain->addDatablock(dataAlloc);
-
-			char *cur = dataAlloc;
-			char *old = head;
-			for (int block=0; block<dataChunk.nr; block++)
+			if ((reverseOld!=-1))
 			{
-				parseStruct(cur, old, dataChunk.dna_nr, reverseOld);
+				// make sure it's here
+				//assert(reverseOld!= -1 && "getReverseType() returned -1, struct required!");
 
-				cur += curLen;
-				old += oldLen;
+				//
+				curStruct = mMemoryDNA->getStruct(reverseOld);
+				newType = mMemoryDNA->getType(curStruct[0]);
+				curLen = mMemoryDNA->getLength(curStruct[0]);
+
+
+
+				// make sure it's the same
+				assert((strcmp(oldType, newType)==0) && "internal error, struct mismatch!");
+
+
+				// numBlocks * length
+    			char *dataAlloc = new char[(dataChunk.nr*curLen)+1];
+				memset(dataAlloc, 0, (dataChunk.nr*curLen)+1);
+
+				// track allocated
+				addDataBlock(dataAlloc);
+
+				char *cur = dataAlloc;
+				char *old = head;
+				for (int block=0; block<dataChunk.nr; block++)
+				{
+					parseStruct(cur, old, dataChunk.dna_nr, reverseOld);
+
+					cur += curLen;
+					old += oldLen;
+				}
+				return dataAlloc;
 			}
-			return dataAlloc;
+		} else
+		{
+			//printf("Link found\n");
 		}
 	} else
 	{
-		//printf("equal, just memcpy");
+//#define DEBUG_EQUAL_STRUCTS
+#ifdef DEBUG_EQUAL_STRUCTS
+		short *oldStruct;
+		char *oldType;
+		oldStruct = mFileDNA->getStruct(dataChunk.dna_nr);
+		oldType = mFileDNA->getType(oldStruct[0]);
+		printf("%s equal structure, just memcpy\n",oldType);
+#endif //
 	}
 
 
@@ -349,7 +305,8 @@ char* bFile::readStruct(char *head, bChunkInd&  dataChunk)
 
 
 	// track allocated
-	mMain->addDatablock(dataAlloc);
+	addDataBlock(dataAlloc);
+
 	memcpy(dataAlloc, head, dataChunk.len);
 	return dataAlloc;
 
@@ -449,6 +406,8 @@ static void getElement(int arrayLen, const char *cur, const char *old, char *old
 		setEle(value, cur, "char",   char,   sizeof(char),   curData);
 		getEle(value, old, "short",  short,  sizeof(short),  oldPtr);
 		setEle(value, cur, "short",  short,  sizeof(short),  curData);
+		getEle(value, old, "ushort",  short,  sizeof(unsigned short),  oldPtr);
+		setEle(value, cur, "ushort",  short,  sizeof(unsigned short),  curData);
 		getEle(value, old, "int",    int,    sizeof(int),    oldPtr);
 		setEle(value, cur, "int",    int,    sizeof(int),    curData);
 		getEle(value, old, "long",   int,    sizeof(int),    oldPtr);

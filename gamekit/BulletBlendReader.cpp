@@ -479,7 +479,7 @@ blend_object_get_IDname(BlendFile* blend_file,
 }
 
 
-btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr)
+btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr, bool verboseDumpAllBlocks)
 {
 	btAssert(objPtr);
 
@@ -496,10 +496,11 @@ btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr)
 		int i;
 		int field_index = 0;
 		for (i=0; i<m_bf->types[obj.type].fieldnames_count; ++i) {
-			//printf("filename = %s\n",m_bf->names[m_bf->types[obj.type].fieldnames[i]]);
+		//printf("filename = %s\n",m_bf->names[m_bf->types[obj.type].fieldnames[i]]);
 			fieldType = m_bf->types[obj.type].fieldtypes[i];
 			fieldName =  m_bf->types[obj.type].fieldnames[i];
-//			printf("	%s %s = ",m_bf->types[fieldType].name, m_bf->names[fieldName]);
+			if (verboseDumpAllBlocks)
+				printf("\n	%s %s = ",m_bf->types[fieldType].name, m_bf->names[fieldName]);
 
 
 			int dim1=1;
@@ -564,55 +565,64 @@ btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr)
 						case BLEND_OBJ_UCHAR8:
 							{
 								val->m_iValue = *(unsigned char*)ptrptr;
-//								printf("%d ",val->m_iValue);
+								if (verboseDumpAllBlocks)
+									printf("%d ",val->m_iValue);
 								break;
 							}
 						case BLEND_OBJ_CHAR8:
 							{
 								val->m_iValue = *(char*)ptrptr;
-//								printf("%d ",val->m_iValue);
+								if (verboseDumpAllBlocks)
+									printf("%d ",val->m_iValue);
 								break;
 							}
 						case BLEND_OBJ_USHORT16:
 							{
 								val->m_iValue = *(unsigned short int*)ptrptr;
-//								printf("%d ",val->m_iValue);
+								if (verboseDumpAllBlocks)
+									printf("%d ",val->m_iValue);
 								break;
 							}
 						case BLEND_OBJ_SHORT16:
 							{
 								val->m_iValue = *(short int*)ptrptr;
-//								printf("%d ",val);
+								if (verboseDumpAllBlocks)
+									printf("%d ",val->m_iValue);
 								break;
 							}
 						case BLEND_OBJ_ULONG32:
 							{
 								val->m_uiValue = *(unsigned int*)ptrptr;
-//								printf("%d ",val->m_uiValue);
+								if (verboseDumpAllBlocks)
+									printf("%d ",val->m_uiValue);
 								break;
 							}
 						case BLEND_OBJ_LONG32:
 							{
 								val->m_iValue = *(int*)ptrptr;
-//								printf("%d ",val->m_iValue);
+								if (verboseDumpAllBlocks)
+									printf("%d ",val->m_iValue);
 								break;
 							}
 						case BLEND_OBJ_FLOAT:
 							{
 								val->m_fValue = *(float *)ptrptr;
-//								printf("%f ",val->m_fValue);
+								if (verboseDumpAllBlocks)
+									printf("%f ",val->m_fValue);
 								break;
 							}
 						case BLEND_OBJ_DOUBLE:
 							{
 								double  val = *(double *)ptrptr;
-//								printf("%f ",val);
+								if (verboseDumpAllBlocks)
+									printf("%f ",val);
 								break;
 							}
 						case BLEND_OBJ_POINTER:
 							{
 								void* val = *ptrptr;
-//								printf("%x ",val);
+								if (verboseDumpAllBlocks)
+									printf("0x%x ",val);
 								break;
 							}
 						case BLEND_OBJ_OPAQUE:
@@ -652,22 +662,27 @@ btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr)
 													/* great, get the string from the 'name' field. */
 													if (blend_object_getstring(m_bf, name_obj,
 														dest, max_chars)) {
-//															printf("\"%s\" ",dest);
+															if (verboseDumpAllBlocks)
+																printf("\"%s\" ",dest);
 
 													} else {
-//														printf("%x ",block->blender_pointer);
+														if (verboseDumpAllBlocks)
+															printf("0x%x ",block->blender_pointer1);
 													}
 											} else {
-//												printf("%x ",block->blender_pointer);
+												if (verboseDumpAllBlocks)
+													printf("0x%x ",block->blender_pointer1);
 											}
 										} else
 										{
-//											printf("NULL ");
+											if (verboseDumpAllBlocks)
+												printf("NULL ");
 										}
 
 									} else
 									{
-//										printf("NULL ");
+										if (verboseDumpAllBlocks)
+											printf("NULL ");
 									}
 								} else
 								{
@@ -675,18 +690,21 @@ btDataObject* BulletBlendReader::extractSingleObject(BlendObject* objPtr)
 									{
 										if (blend_object_get_IDname(m_bf, obj, dest, max_chars))
 										{
-//											printf("\"%s\" ",dest);
+											if (verboseDumpAllBlocks)
+												printf("\"%s\" ",dest);
 											break;
 										}
 									}
-//									printf("Embedded struct\n");
+									if (verboseDumpAllBlocks)
+										printf("Embedded struct");
 
 								}
 								break;
 							}
 						default:
 							{
-//								printf("unknown value");
+								if (verboseDumpAllBlocks)
+									printf("unknown value");
 							}
 						}
 					}
@@ -935,7 +953,7 @@ void	BulletBlendReader::convertAllObjects(int verboseDumpAllBlocks)
 			int entry_count = blend_block_get_entry_count(m_bf, m_bf->m_blocks[j]);
 			if (entry_count!=1)
 			{
-				printf("entry_count=%d\n",entry_count);
+				//printf("entry_count=%d\n",entry_count);
 			}
 			for (int i=0; i<entry_count; ++i)
 			{
@@ -952,16 +970,17 @@ void	BulletBlendReader::convertAllObjects(int verboseDumpAllBlocks)
 				{
 					const char* type_name = m_bf->types[obj.type].name;
 
-#if DUMP_BLOCK_NAMES
-					printf("type_name=%s. ",type_name);
-					printf("block blenderptr = %lx\n",m_bf->m_blocks[j]->blender_pointer);
-#endif //DUMP_BLOCK_NAMES
+					if (verboseDumpAllBlocks)
+					{
+						printf("\ntype_name=%s. ",type_name);
+						printf("block blenderptr = 0x%lx",m_bf->m_blocks[j]->blender_pointer1);
+					}
 
 					btDataObject* dob = 0;
 
 					if (needsExtraction(type_name))
 					{
-						dob = extractSingleObject(&obj);
+						dob = extractSingleObject(&obj,verboseDumpAllBlocks);
 					}
 
 					if (strcmp(type_name,"FileGlobal")==0)

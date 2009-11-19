@@ -17,7 +17,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 #include "bMain.h"
-#include "bFile.h"
+#include "bBlenderFile.h"
 #include "bDefines.h"
 #include "bChunk.h"
 #include "bDNA.h"
@@ -26,7 +26,7 @@ using namespace bParse;
 
 
 // ----------------------------------------------------- //
-bMain::bMain(bFile *filePtr, const char *baseName, int fileVersion)
+bMain::bMain(bBlenderFile *filePtr, const char *baseName, int fileVersion)
 	:	mFP(filePtr),
 		mVersion(fileVersion),
 		mName(baseName)	
@@ -94,8 +94,8 @@ void bMain::addDatablock(void *allocated)
 // ----------------------------------------------------- //
 void *bMain::findLibPointer(void *ptr)
 {
-	bPtrMap::iterator it = mFP->mLibPointers.find(ptr);
-	if (it != mFP->mLibPointers.end())
+	bPtrMap::iterator it = mFP->getLibPointers().find(ptr);
+	if (it != mFP->getLibPointers().end())
 		return it->second;
 	return 0;
 }

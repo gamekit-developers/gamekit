@@ -25,6 +25,8 @@
 namespace bParse
 {
 	class bDNA;
+
+	class bBlenderFile;
 };
 
 
@@ -41,7 +43,7 @@ namespace bParse {
 	{
 	//private:
 	public:
-		bFile*			mFP;
+		bBlenderFile*			mFP;
 		bListBasePtr	mPool;
 
 		int				mVersion;
@@ -55,7 +57,7 @@ namespace bParse {
 		bListBasePtr *_findCode(int code);
 
 	public:
-		bMain(bFile *filePtr, const char *baseName, int fileVersion);
+		bMain(bBlenderFile  *filePtr, const char *baseName, int fileVersion);
 		~bMain();
 
 		int getVersion();

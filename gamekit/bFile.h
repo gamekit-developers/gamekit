@@ -38,8 +38,9 @@ namespace bParse {
 	// ----------------------------------------------------- //
 	class bFile
 	{
-	private:
-		friend class bMain;
+	protected:
+		
+		char				m_headerString[7];
 
 		bool				mOwnsBuffer;
 		char*				mFileBuffer;
@@ -53,16 +54,16 @@ namespace bParse {
 
 
 		// 
-		bPtrMap				mLibPointers;
+	
 		bPtrMap				mDataPointers;
 
 
-		bMain*				mMain;
+		
 		int					mFlags;
 
-		void parseHeader();
-		void parseData();
-
+		virtual	void parseHeader();
+		
+		virtual	void parseData() = 0;
 
 		void parseStruct(char *strcPtr, char *dtPtr, int old_dna, int new_dna);
 		void getMatchingFileDNA(short* old, bString lookupName, bString lookupType, char *strcData, char *data);
@@ -81,17 +82,19 @@ namespace bParse {
 		char *getAsString(int code);
 
 	public:
-		bFile(const char *filename);
+		bFile(const char *filename, const char headerString[7]);
 		
 		//todo: make memoryBuffer const char
 		//bFile( const char *memoryBuffer, int len);
-		bFile( char *memoryBuffer, int len);
+		bFile( char *memoryBuffer, int len, const char headerString[7]);
 		~bFile();
 
 		bDNA*				getFileDNA()
 		{
 			return mFileDNA;
 		}
+
+		virtual	void	addDataBlock(char* dataBlock) = 0;
 
 		int	getFlags() const
 		{
@@ -100,8 +103,8 @@ namespace bParse {
 
 		bool ok();
 
-		void parse();
-		bMain *getMain();
+		void parse(bool verboseDumpAllTypes);
+		
 	};
 }
 

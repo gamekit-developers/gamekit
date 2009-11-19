@@ -44,6 +44,7 @@ void	IrrlichtBulletBlendReader::addLight(_bObj* tmpObject)
 void* IrrlichtBulletBlendReader::createGraphicsObject(_bObj* tmpObject, class btCollisionObject* bulletObject)
 {
 
+	
 	IrrlichtMeshContainer* meshContainer = 0;
 
 	
@@ -85,8 +86,7 @@ void* IrrlichtBulletBlendReader::createGraphicsObject(_bObj* tmpObject, class bt
 		int numIndices = 0;
 		int currentIndex = 0;
 
-		
-
+	
 		int maxNumIndices = tmpObject->data.mesh->face_count*4*2;
 
 		unsigned short int* indices= new unsigned short int[maxNumIndices];
@@ -221,7 +221,7 @@ scene::ISceneNode*	IrrlichtBulletBlendReader::createMeshNode(video::S3DVertex* v
 				if (file)
 				{
 					texture0 = driver->getTexture(file);
-					printf("width = %d, height = %d\n",texture0->getSize().Width,texture0->getSize().Height);
+					//printf("width = %d, height = %d\n",texture0->getSize().Width,texture0->getSize().Height);
 				}
 			}
 		}

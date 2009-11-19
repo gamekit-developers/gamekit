@@ -36,6 +36,8 @@ namespace Blender {
         int flags;
         int length;
         int lastValidFrame;
+        int blendFrames;
+        int pad;
     };
 }
 

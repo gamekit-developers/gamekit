@@ -68,15 +68,13 @@ namespace Blender {
         bInvalidHandle *hdaudio;
         float level;
         float pan;
-        int curpos;
+        int scenenr;
         float strobe;
         void *effectdata;
         int anim_startofs;
         int anim_endofs;
         int blend_mode;
         float blend_opacity;
-        int scenenr;
-        int pad;
     };
 }
 

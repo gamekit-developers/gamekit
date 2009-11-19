@@ -35,9 +35,11 @@ namespace Blender {
         vec3f gamma;
         vec3f gain;
         int flag;
-        int pad;
+        int mode;
         float exposure;
         float saturation;
+        int pad;
+        bInvalidHandle *gui;
     };
 }
 

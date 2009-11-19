@@ -262,7 +262,7 @@ public:
 
 	bool	needsExtraction(const char* type_name);
 	
-	btDataObject* extractSingleObject(BlendObject*);
+	btDataObject* extractSingleObject(BlendObject*, bool verboseDumpAllBlocks);
 
 	void	convertAllObjects(int verboseDumpAllBlocks=false);
 
