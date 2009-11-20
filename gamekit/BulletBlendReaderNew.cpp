@@ -193,7 +193,7 @@ btCollisionObject* BulletBlendReaderNew::createBulletObject(Blender::Object* obj
 	Blender::Mesh *me = (Blender::Mesh*)object->data;
 
 	//let's try to create some static collision shapes from the triangle meshes
-	if (me)
+	if (me && me->mface)
 	{
 		btTriangleMesh* meshInterface = new btTriangleMesh();
 
@@ -201,6 +201,7 @@ btCollisionObject* BulletBlendReaderNew::createBulletObject(Blender::Object* obj
 		btVector3 maxVert(-1e30f,-1e30f,-1e30f);
 		for (int t=0;t<me->totface;t++)
 		{
+
 
 			int v[4] = {me->mface[t].v1,me->mface[t].v2,me->mface[t].v3,me->mface[t].v4};
 
