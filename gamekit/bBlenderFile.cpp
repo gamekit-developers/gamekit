@@ -40,7 +40,7 @@ void bBlenderFile::parseData()
 	print ("Chunk size = " << CHUNK_HEADER_LEN);
 	print ("File chunk size = " << ChunkUtils::getOffset(mFlags));
 
-	const bool swap = (mFlags&FD_SWAP)!=0;
+	const bool swap = (mFlags&FD_ENDIAN_SWAP)!=0;
 	int seek = 0;
 
 
@@ -98,104 +98,146 @@ void	bBlenderFile::addDataBlock(char* dataBlock)
 	mMain->addDatablock(dataBlock);
 }
 
+void bBlenderFile::resolvePointersMismatch()
+{
+	printf("resolvePointersStructMismatch\n");
+
+	int i;
+	for (i=0;i<	m_listBaseFixupArray.size();i++)
+	{
+		char* cur = m_listBaseFixupArray.at(i);
+		void** ptrptr = (void**) cur;
+		void* listBasePtr = *ptrptr;
+		listBasePtr = mMain->findLibPointer(listBasePtr);
+		if (listBasePtr)
+		{
+			*(ptrptr) = listBasePtr;
+			mMain->linkList(listBasePtr);
+		}
+	}
+	
+	for (i=0;i<	m_pointerFixupArray.size();i++)
+	{
+		char* cur = m_pointerFixupArray.at(i);
+		void** ptrptr = (void**) cur;
+		void* ptr = *ptrptr;
+		ptr = mMain->findLibPointer(ptr);
+		if (ptr)
+		{
+			//printf("Fixup pointer!\n");
+			*(ptrptr) = ptr;
+		}
+	}
+}
+
+///this loop only works fine if the Blender DNA structure of the file matches the headerfiles
+void bBlenderFile::resolvePointersStruct(bChunkInd& dataChunk)
+{
+	bool patched = false;
+	short int* oldStruct = mFileDNA->getStruct(dataChunk.dna_nr);
+	short oldLen = mFileDNA->getLength(oldStruct[0]);
+
+	char* cur	= (char*)mMain->findLibPointer(dataChunk.oldPtr);
+	for (int block=0; block<dataChunk.nr; block++)
+	{
+		oldStruct = mFileDNA->getStruct(dataChunk.dna_nr);
+		
+		int elementLength = oldStruct[1];
+		oldStruct+=2;
+
+
+		char* memType;
+		char* memName;
+
+		char* elemPtr= cur;
+
+		for (int ele=0; ele<elementLength; ele++, oldStruct+=2)
+		{
+
+			memType = mFileDNA->getType(oldStruct[0]);
+			memName = mFileDNA->getName(oldStruct[1]);
+			//printf("%s %s\n",memType,memName);
+			if (memName[0] == '*')
+			{
+				void** ptrptr = (void**) elemPtr;
+				void* ptr = *ptrptr;
+				ptr = mMain->findLibPointer(ptr);
+				if (ptr)
+				{
+					//printf("Fixup pointer!\n");
+					*(ptrptr) = ptr;
+					patched = true;
+				}
+			}
+			if (strcmp(memType,"ListBase")==0)
+			{
+			//	printf("Fixup ListBase!\n");
+				void** ptrptr = (void**) elemPtr;
+				void* listBasePtr = *ptrptr;
+				listBasePtr = mMain->findLibPointer(listBasePtr);
+				if (listBasePtr)
+				{
+					*(ptrptr) = listBasePtr;
+					mMain->linkList(listBasePtr);
+					patched = true;
+				}
+			}
+
+			int size = mFileDNA->getElementSize(oldStruct[0], oldStruct[1]);
+			elemPtr+=size;
+
+		}
+		cur += oldLen;
+	}
+
+	if (!patched)
+	{
+		//printf("not patched %s, #%d\n",oldType,dataChunk.nr);
+	}
+}
+
 
 ///Resolve pointers replaces the original pointers in structures, and linked lists by the new in-memory structures
 void bBlenderFile::resolvePointers()
 {
 	char *dataPtr = mFileBuffer+mDataStart;
-	
-	for (int i=0;i<mMain->m_chunks.size();i++)
+
+	if (mFlags & (FD_BITS_VARIES | FD_VERSION_VARIES))
 	{
-		bChunkInd& dataChunk = mMain->m_chunks.at(i);
-		
-		//dataChunk.len
-		short int* oldStruct = mFileDNA->getStruct(dataChunk.dna_nr);
-		char* oldType = mFileDNA->getType(oldStruct[0]);
-		
-		
-		short oldLen = mFileDNA->getLength(oldStruct[0]);
-		//printf("------------------------------------------");
-		//printf("Struct %s\n",oldType);
-
-		bool patched = false;
-
-		//skip certain structures
-///Warning: certain structures might need to be skipped, such as CustomDataLayer, Link etc. Not skipping them causes crashes.
-		if (strcmp(oldType,"CustomDataLayer")==0)
-			continue;
-		if (strcmp(oldType,"Link")==0)
-			continue;
-///Other types are skipped just because they dont' containt pointers, just for optimization (MVert,MEdge,MFace,ScrVert)
-		if (strcmp(oldType,"MVert")==0)
-			continue;
-		if (strcmp(oldType,"MEdge")==0)
-			continue;
-		if (strcmp(oldType,"MFace")==0)
-			continue;
-		if (strcmp(oldType,"ScrVert")==0)
-			continue;
-
-
-		char* cur	= (char*)mMain->findLibPointer(dataChunk.oldPtr);
-		for (int block=0; block<dataChunk.nr; block++)
+		resolvePointersMismatch();	
+	} else
+	{
+		for (int i=0;i<mMain->m_chunks.size();i++)
 		{
-			oldStruct = mFileDNA->getStruct(dataChunk.dna_nr);
+			bChunkInd& dataChunk = mMain->m_chunks.at(i);
+			
+			//dataChunk.len
+			short int* oldStruct = mFileDNA->getStruct(dataChunk.dna_nr);
+			char* oldType = mFileDNA->getType(oldStruct[0]);
+			
+			//printf("------------------------------------------");
+			//printf("Struct %s\n",oldType);
 
+			
 
-			int elementLength = oldStruct[1];
-			oldStruct+=2;
+			//skip certain structures
+	///Warning: certain structures might need to be skipped, such as CustomDataLayer, Link etc. Not skipping them causes crashes.
+			if (strcmp(oldType,"CustomDataLayer")==0)
+				continue;
+			if (strcmp(oldType,"Link")==0)
+				continue;
+	///Other types are skipped just because they dont' containt pointers, just for optimization (MVert,MEdge,MFace,ScrVert)
+			if (strcmp(oldType,"MVert")==0)
+				continue;
+			if (strcmp(oldType,"MEdge")==0)
+				continue;
+			if (strcmp(oldType,"MFace")==0)
+				continue;
+			if (strcmp(oldType,"ScrVert")==0)
+				continue;
 
-
-			char* memType;
-			char* memName;
-
-			char* elemPtr= cur;
-
-			for (int ele=0; ele<elementLength; ele++, oldStruct+=2)
-			{
-
-				memType = mFileDNA->getType(oldStruct[0]);
-				memName = mFileDNA->getName(oldStruct[1]);
-				//printf("%s %s\n",memType,memName);
-				if (memName[0] == '*')
-				{
-					void** ptrptr = (void**) elemPtr;
-					void* ptr = *ptrptr;
-					ptr = mMain->findLibPointer(ptr);
-					if (ptr)
-					{
-						//printf("Fixup pointer!\n");
-						*(ptrptr) = ptr;
-						patched = true;
-					}
-				}
-				if (strcmp(memType,"ListBase")==0)
-				{
-				//	printf("Fixup ListBase!\n");
-					void** ptrptr = (void**) elemPtr;
-					void* listBasePtr = *ptrptr;
-					listBasePtr = mMain->findLibPointer(listBasePtr);
-					if (listBasePtr)
-					{
-						*(ptrptr) = listBasePtr;
-						mMain->linkList(listBasePtr);
-						patched = true;
-					}
-				}
-
-				int size = mFileDNA->getElementSize(oldStruct[0], oldStruct[1]);
-				elemPtr+=size;
-
-			}
-			cur += oldLen;
+			resolvePointersStruct(dataChunk);
 		}
-
-		if (!patched)
-		{
-			//printf("not patched %s, #%d\n",oldType,dataChunk.nr);
-		}
-
-		
-	
 	}
+
 }

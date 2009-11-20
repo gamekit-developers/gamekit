@@ -55,12 +55,12 @@ int ChunkUtils::getOffset(int flags)
 
 	if (VOID_IS_8)
 	{
-		if (flags &FD_VARIES)
+		if (flags &FD_BITS_VARIES)
 			res = sizeof(bChunkPtr4);
 	}
 	else
 	{
-		if (flags &FD_VARIES)
+		if (flags &FD_BITS_VARIES)
 			res = sizeof(bChunkPtr8);
 	}
 	return res;
@@ -73,8 +73,8 @@ int ChunkUtils::getNextBlock(bChunkInd *dataChunk,  char *dataPtr, const int fla
 	bool swap = false;
 	bool varies = false;
 
-	if (flags &FD_SWAP) swap = true;
-	if (flags &FD_VARIES) varies = true;
+	if (flags &FD_ENDIAN_SWAP) swap = true;
+	if (flags &FD_BITS_VARIES) varies = true;
 
 	if (VOID_IS_8)
 	{

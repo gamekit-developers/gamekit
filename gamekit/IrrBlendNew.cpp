@@ -209,6 +209,8 @@ void* IrrBlendNew::createGraphicsObject(Blender::Object* tmpObject, class btColl
 				irr::scene::ISceneNode* node = createMeshNode(newVertices,numVertices,indices,numIndices,numTriangles,bulletObject,tmpObject);
 				if (!meshContainer)
 					meshContainer = new IrrlichtMeshContainer();
+				
+				meshContainer->m_userPointer = tmpObject;
 				meshContainer->m_sceneNodes.push_back(node);
 
 				if (newMotionState && node)
@@ -231,6 +233,8 @@ void* IrrBlendNew::createGraphicsObject(Blender::Object* tmpObject, class btColl
 
 			if (!meshContainer)
 					meshContainer = new IrrlichtMeshContainer();
+					
+			meshContainer->m_userPointer = tmpObject;
 			meshContainer->m_sceneNodes.push_back(node);
 
 			if (newMotionState && node)

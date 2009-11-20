@@ -18,6 +18,10 @@ namespace bParse {
 
 		bPtrMap				mLibPointers;
 
+		void resolvePointersMismatch();
+	
+		void resolvePointersStruct(bChunkInd& dataChunk);
+
 	public:
 
 		bBlenderFile(const char* fileName);

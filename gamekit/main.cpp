@@ -31,7 +31,7 @@ subject to the following restrictions:
 ///The TEST_ECHO_BLEND_READER define is to test reading .blend files using another 'readblend' implementation by Charlie C from 2006
 ///it has been written in C++ and is compatible with 32,64 bit .blend files, and both little and big endian
 
-//#define TEST_ECHO_BLEND_READER 1
+#define TEST_ECHO_BLEND_READER 1
 
 
 
@@ -123,8 +123,8 @@ int main(int argc,char** argv)
 	if (argv[0])
 		printf("argv[0]=%s\n",argv[0]);
 	
-	//const char* fileName = "clubsilo_packed.blend"; //blender 2.49b -> no conversion if using bParse
-	const char* fileName = "PhysicsAnimationBakingDemo.blend";
+	const char* fileName = "clubsilo_packed.blend"; //blender 2.49b -> no conversion if using bParse
+	//const char* fileName = "PhysicsAnimationBakingDemo.blend";
 	//const char* fileName = "land_rover_92.blend";//64 bit .blend test
 	//const char* fileName = "land_rover_92_249.blend";
 	//const char* fileName = "BigEndian.blend";
@@ -377,7 +377,7 @@ int main(int argc,char** argv)
 		driver->endScene();
 		if (++frames==100)
 		{
-			core::stringw str = L"Irrlicht Engine [";
+			core::stringw str = L"GameKit http://gamekit.googlecode.com (Bullet+Irrlicht) [";
 			str += driver->getName();
 			str += L"] FPS: ";
 			str += (s32)driver->getFPS();

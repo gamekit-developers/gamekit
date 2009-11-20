@@ -36,6 +36,10 @@ namespace bParse {
 		int getArraySize(char* str);
 		int getElementSize(short type, short name);
 
+		int	getNumNames() const
+		{
+			return mNames.size();
+		}
 
 		char *getName(int ind);
 		char *getType(int ind);

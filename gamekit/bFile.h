@@ -29,9 +29,10 @@ namespace bParse {
 		FD_INVALID   =0,
 		FD_OK        =1,
 		FD_VOID_IS_8 =2,
-		FD_SWAP      =4,
+		FD_ENDIAN_SWAP      =4,
 		FD_FILE_64   =8,
-		FD_VARIES    =16
+		FD_BITS_VARIES    =16,
+		FD_VERSION_VARIES = 32
 	};
 
 
@@ -52,6 +53,10 @@ namespace bParse {
 		bDNA*				mFileDNA;
 		bDNA*				mMemoryDNA;
 
+		std::vector<char*>	m_pointerFixupArray;
+		
+		std::vector<char*>	m_listBaseFixupArray;
+
 
 		// 
 	
@@ -67,8 +72,8 @@ namespace bParse {
 
 		virtual void resolvePointers() = 0;
 
-		void parseStruct(char *strcPtr, char *dtPtr, int old_dna, int new_dna);
-		void getMatchingFileDNA(short* old, bString lookupName, bString lookupType, char *strcData, char *data);
+		void parseStruct(char *strcPtr, char *dtPtr, int old_dna, int new_dna, bool fixupPointers);
+		void getMatchingFileDNA(short* old, bString lookupName, bString lookupType, char *strcData, char *data, bool fixupPointers);
 		char* getFileElement(short *firstStruct, char *lookupName, char *lookupType, char *data, short **foundPos);
 
 

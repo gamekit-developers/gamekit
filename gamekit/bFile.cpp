@@ -132,23 +132,23 @@ void bFile::parseHeader()
 	{
 		mFlags |= FD_FILE_64;
 		if (!VOID_IS_8)
-			mFlags |= FD_VARIES;
+			mFlags |= FD_BITS_VARIES;
 	}
-	else if (VOID_IS_8) mFlags |= FD_VARIES;
+	else if (VOID_IS_8) mFlags |= FD_BITS_VARIES;
 
 	// swap endian...
 	if (header[8]=='V' && endian ==1)
-		mFlags |= FD_SWAP;
+		mFlags |= FD_ENDIAN_SWAP;
 	else
 		if (endian==0)
-			mFlags |= FD_SWAP;
+			mFlags |= FD_ENDIAN_SWAP;
 
 
 	print (header);
 	print ("sizeof(void*) == " << sizeof(void*));
-	print ("Swapping endian? "<< ((mFlags & FD_SWAP)!=0));
+	print ("Swapping endian? "<< ((mFlags & FD_ENDIAN_SWAP)!=0));
 	print ("File format is "<< ((mFlags &FD_FILE_64)!=0?"64":"32") << "bit");
-	print ("Varing pointer sizes? "<< ((mFlags & FD_VARIES)!=0));
+	print ("Varing pointer sizes? "<< ((mFlags & FD_BITS_VARIES)!=0));
 
 
 	mFlags |= FD_OK;
@@ -185,7 +185,7 @@ void bFile::parse(bool verboseDumpAllTypes)
 	}
 
 	mFileDNA = new bDNA();
-	mFileDNA->init(blenderData+sdnaPos, mFileLen-sdnaPos, (mFlags & FD_SWAP)!=0);
+	mFileDNA->init(blenderData+sdnaPos, mFileLen-sdnaPos, (mFlags & FD_ENDIAN_SWAP)!=0);
 
 	if (verboseDumpAllTypes)
 	{
@@ -196,12 +196,17 @@ void bFile::parse(bool verboseDumpAllTypes)
 	mMemoryDNA->initMemory();
 
 
+	///@todo we need a better version check, add version/sub version info from FileGlobal into memory DNA/header files
+	if (mMemoryDNA->getNumNames() != mFileDNA->getNumNames())
+	{
+		mFlags |= FD_VERSION_VARIES;
+		print ("Warning, file DNA is different than built in, performance is reduced. Best to re-export file with a matching version/platform");
+	}
+
 	// as long as it kept up to date it will be ok!!
 	if (mMemoryDNA->lessThan(mFileDNA))
 	{
-		//print ("Fatal error, file DNA is newer than built in...");
-		print ("Warning, file DNA is newer than built in...");
-	//	return;
+		print ("Warning, file DNA is newer than built in.");
 	}
 
 	mFileDNA->initCmpFlags(mMemoryDNA);
@@ -230,7 +235,7 @@ void bFile::swap(char *head, bChunkInd& dataChunk)
 // ----------------------------------------------------- //
 char* bFile::readStruct(char *head, bChunkInd&  dataChunk)
 {
-	if (mFlags & FD_SWAP)
+	if (mFlags & FD_ENDIAN_SWAP)
 		swap(head, dataChunk);
 
 	
@@ -279,7 +284,8 @@ char* bFile::readStruct(char *head, bChunkInd&  dataChunk)
 				char *old = head;
 				for (int block=0; block<dataChunk.nr; block++)
 				{
-					parseStruct(cur, old, dataChunk.dna_nr, reverseOld);
+					bool fixupPointers = true;
+					parseStruct(cur, old, dataChunk.dna_nr, reverseOld, fixupPointers);
 
 					cur += curLen;
 					old += oldLen;
@@ -317,7 +323,7 @@ char* bFile::readStruct(char *head, bChunkInd&  dataChunk)
 
 
 // ----------------------------------------------------- //
-void bFile::parseStruct(char *strcPtr, char *dtPtr, int old_dna, int new_dna)
+void bFile::parseStruct(char *strcPtr, char *dtPtr, int old_dna, int new_dna, bool fixupPointers)
 {
 	if (old_dna == -1) return;
 	if (new_dna == -1) return;
@@ -357,6 +363,12 @@ void bFile::parseStruct(char *strcPtr, char *dtPtr, int old_dna, int new_dna)
 		memType = mMemoryDNA->getType(memoryStruct[0]);
 		memName = mMemoryDNA->getName(memoryStruct[1]);
 
+		if (strcmp(memType,"ListBase")==0)
+		{
+			m_listBaseFixupArray.push_back(cpc);
+			fixupPointers = false;
+		}
+
 		size = mMemoryDNA->getElementSize(memoryStruct[0], memoryStruct[1]);
 		revType = mMemoryDNA->getReverseType(memoryStruct[0]);
 
@@ -370,7 +382,7 @@ void bFile::parseStruct(char *strcPtr, char *dtPtr, int old_dna, int new_dna)
 				fpLen = mFileDNA->getElementSize(filePtrOld[0], filePtrOld[1]);
 
 
-				parseStruct(cpc, cpo, old_nr, new_nr);
+				parseStruct(cpc, cpo, old_nr, new_nr,fixupPointers);
 				cpc+=size;
 				cpo+=fpLen;
 			}
@@ -379,8 +391,13 @@ void bFile::parseStruct(char *strcPtr, char *dtPtr, int old_dna, int new_dna)
 		}
 		else
 		{
-			getMatchingFileDNA(fileStruct, memName, memType, cpc, dtPtr);
+			getMatchingFileDNA(fileStruct, memName, memType, cpc, dtPtr,fixupPointers);
 			cpc+=size;
+		}
+
+		if (strcmp(memType,"ListBase")==0)
+		{
+			fixupPointers = true;
 		}
 	}
 }
@@ -426,7 +443,7 @@ static void getElement(int arrayLen, const char *cur, const char *old, char *old
 // ----------------------------------------------------- //
 void bFile::swapData(char *data, short type, int arraySize)
 {
-	if (mFlags &FD_SWAP)
+	if (mFlags &FD_ENDIAN_SWAP)
 	{
 		if (type == 2 || type == 3)
 		{
@@ -457,7 +474,7 @@ void bFile::swapData(char *data, short type, int arraySize)
 
 
 // ----------------------------------------------------- //
-void bFile::getMatchingFileDNA(short* dna_addr, bString lookupName,  bString lookupType, char *strcData, char *data)
+void bFile::getMatchingFileDNA(short* dna_addr, bString lookupName,  bString lookupType, char *strcData, char *data, bool fixupPointers)
 {
 	// find the matching memory dna data
 	// to the file being loaded. Fill the
@@ -478,8 +495,10 @@ void bFile::getMatchingFileDNA(short* dna_addr, bString lookupName,  bString loo
 		{
 			if (name[0] == '*')
 			{
-				// cast pointers
+				if (fixupPointers)
+					m_pointerFixupArray.push_back(strcData);
 
+				// cast pointers
 				int ptrFile = mFileDNA->getPointerSize();
 				int ptrMem = mMemoryDNA->getPointerSize();
 

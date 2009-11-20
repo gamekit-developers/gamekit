@@ -32,6 +32,8 @@ protected:
 
 	btCollisionObject* createBulletObject(Blender::Object* object);
 
+	btCollisionObject* findCollisionObject(Blender::Object* ob);
+	
 public:
 
 	BulletBlendReaderNew(class btDynamicsWorld* destinationWorld);

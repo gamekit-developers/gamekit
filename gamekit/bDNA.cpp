@@ -20,6 +20,8 @@
 
 #include "bDNA.h"
 #include "bChunk.h"
+#include <string.h>
+#include <stdlib.h>
 
 using namespace bParse;
 

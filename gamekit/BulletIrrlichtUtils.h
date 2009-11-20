@@ -22,6 +22,7 @@ class btVector3;
 struct	IrrlichtMeshContainer
 {
 	btAlignedObjectArray<irr::scene::ISceneNode*>	m_sceneNodes;
+	void* m_userPointer;
 };
 
 ///mapping between right handed and left-handed coordinate system
