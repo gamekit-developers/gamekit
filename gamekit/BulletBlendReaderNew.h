@@ -30,6 +30,8 @@ protected:
 	///m_visibleGameObjects is a subset of m_dataObjects of only the visible game objects, handy for iterating, adding logic bricks/physics constraints etc
 //	btAlignedObjectArray<btDataObject*>	m_visibleGameObjects;
 
+	btCollisionObject* createBulletObject(Blender::Object* object);
+
 public:
 
 	BulletBlendReaderNew(class btDynamicsWorld* destinationWorld);

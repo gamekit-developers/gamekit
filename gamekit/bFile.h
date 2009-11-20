@@ -65,6 +65,8 @@ namespace bParse {
 		
 		virtual	void parseData() = 0;
 
+		virtual void resolvePointers() = 0;
+
 		void parseStruct(char *strcPtr, char *dtPtr, int old_dna, int new_dna);
 		void getMatchingFileDNA(short* old, bString lookupName, bString lookupType, char *strcData, char *data);
 		char* getFileElement(short *firstStruct, char *lookupName, char *lookupType, char *data, short **foundPos);

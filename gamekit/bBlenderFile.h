@@ -14,6 +14,8 @@ namespace bParse {
 	protected:
 		bMain*				mMain;
 
+		bStructHandle*		m_glob;
+
 		bPtrMap				mLibPointers;
 
 	public:
@@ -33,7 +35,14 @@ namespace bParse {
 			return mLibPointers;
 		}
 
+		bStructHandle*		getFileGlobal()
+		{
+			return m_glob;
+		}
+
 		virtual	void parseData();
+
+		virtual void resolvePointers();
 
 	};
 };

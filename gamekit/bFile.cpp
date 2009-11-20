@@ -205,7 +205,10 @@ void bFile::parse(bool verboseDumpAllTypes)
 	}
 
 	mFileDNA->initCmpFlags(mMemoryDNA);
+	
 	parseData();
+	
+	resolvePointers();
 }
 
 
