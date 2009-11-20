@@ -67,9 +67,6 @@ void* IrrBlendNew::createGraphicsObject(Blender::Object* tmpObject, class btColl
 		irr::video::S3DVertex* orgVertices= new irr::video::S3DVertex[me->totvert];
 		irr::video::S3DVertex* newVertices= new irr::video::S3DVertex[maxVerts];
 		
-//		me->mvert = (Blender::MVert*)mainPtr->findLibPointer(me->mvert);
-//		me->mface = (Blender::MFace*)mainPtr->findLibPointer(me->mface);
-//		me->mtface= (Blender::MTFace*)mainPtr->findLibPointer(me->mtface);
 
 		if (!me->mvert)
 			return 0;
@@ -266,8 +263,6 @@ irr::scene::ISceneNode*	IrrBlendNew::createMeshNode(irr::video::S3DVertex* verti
 
 	if (me->mtface && me->mtface[0].tpage)
 	{
-
-//		me->mtface[0].tpage = (Blender::Image*) mainPtr->findLibPointer(me->mtface[0].tpage);
 		image = me->mtface[0].tpage;
 	}
 
@@ -278,10 +273,8 @@ irr::scene::ISceneNode*	IrrBlendNew::createMeshNode(irr::video::S3DVertex* verti
 		texture0 = driver->findTexture(fileName);
 		if (!texture0)
 		{
-//			image->packedfile = (Blender::PackedFile*) mainPtr->findLibPointer(image->packedfile);
 			if (image->packedfile)
 			{
-//				image->packedfile->data = mainPtr->findLibPointer(image->packedfile->data);
 				void* jpgData = image->packedfile->data;
 				int jpgSize = image->packedfile->size;
 				if (jpgSize)

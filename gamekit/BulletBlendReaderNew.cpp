@@ -37,8 +37,10 @@ int		BulletBlendReaderNew::readFile(char* memoryBuffer, int fileLen, int verbose
 	if (ok)
 		m_blendFile->parse(verboseDumpAllTypes);
 	
-//	m_blendFile->getMain()->dumpChunks(m_blendFile->getFileDNA());
-	
+	if (verboseDumpAllTypes)
+	{
+		m_blendFile->getMain()->dumpChunks(m_blendFile->getFileDNA());
+	}
 	return ok;
 }
 
@@ -76,18 +78,13 @@ void	BulletBlendReaderNew::convertAllObjects(int verboseDumpAllBlocks)
 		Blender::Scene *scene = (Blender::Scene*) sceneBase->at(sce);
 #else
 	{
-		Blender::Scene* scene = (Blender::Scene*) glob->curscene;//mainPtr->findLibPointer(glob->curscene);
+		Blender::Scene* scene = (Blender::Scene*) glob->curscene;
 #endif
-		// ListBase pointers must be linked
-		//mainPtr->linkList(&scene->base);
 
 		// Loop all objects in the scene.
 		Blender::Base *base = (Blender::Base*)scene->base.first;
 		while (base)
 		{
-			// Lookup object pointer.
-			//base->object = (Blender::Object*)mainPtr->findLibPointer(base->object);
-
 			if (base->object)
 			{
 				Blender::Object *ob = base->object;
@@ -106,9 +103,6 @@ void	BulletBlendReaderNew::convertAllObjects(int verboseDumpAllBlocks)
 							{
 								printf("\tObject is a mesh\n");
 							}
-
-							// Lookup data pointer
-							//ob->data = mainPtr->findLibPointer(ob->data);
 
 							if (ob->data)
 							{
@@ -133,7 +127,6 @@ void	BulletBlendReaderNew::convertAllObjects(int verboseDumpAllBlocks)
 								printf ("\tObject is a lamp\n");
 							}
 
-							//ob->data = mainPtr->findLibPointer(ob->data);
 							if (ob->data)
 							{
 								Blender::Lamp *la = (Blender::Lamp*)ob->data;
@@ -155,7 +148,6 @@ void	BulletBlendReaderNew::convertAllObjects(int verboseDumpAllBlocks)
 								printf ("\tObject is a camera\n");
 							}
 
-							//ob->data = mainPtr->findLibPointer(ob->data);
 							if (ob->data)
 							{
 								Blender::Camera *cam = (Blender::Camera*)ob->data;
@@ -413,9 +405,6 @@ void	BulletBlendReaderNew::convertConstraints()
 		if (!obj)
 			continue;
 
-
-		
-		m_blendFile->getMain()->linkList(&obj->constraints);
 		Blender::bConstraint* constraint = (Blender::bConstraint*)obj->constraints.first;
 		
 		while (constraint)
