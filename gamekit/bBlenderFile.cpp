@@ -100,7 +100,7 @@ void	bBlenderFile::addDataBlock(char* dataBlock)
 
 void bBlenderFile::resolvePointersMismatch()
 {
-	printf("resolvePointersStructMismatch\n");
+//	printf("resolvePointersStructMismatch\n");
 
 	int i;
 	for (i=0;i<	m_listBaseFixupArray.size();i++)
@@ -113,6 +113,10 @@ void bBlenderFile::resolvePointersMismatch()
 		{
 			*(ptrptr) = listBasePtr;
 			mMain->linkList(listBasePtr);
+		} else
+		{
+//			mMain->linkList(listBasePtr);
+//			printf("listbase not found %x\n",cur);
 		}
 	}
 	
@@ -126,6 +130,9 @@ void bBlenderFile::resolvePointersMismatch()
 		{
 			//printf("Fixup pointer!\n");
 			*(ptrptr) = ptr;
+		} else
+		{
+//			printf("pointer not found: %x\n",cur);
 		}
 	}
 }
@@ -200,44 +207,53 @@ void bBlenderFile::resolvePointersStruct(bChunkInd& dataChunk)
 ///Resolve pointers replaces the original pointers in structures, and linked lists by the new in-memory structures
 void bBlenderFile::resolvePointers()
 {
+	printf("resolvePointers start\n");
 	char *dataPtr = mFileBuffer+mDataStart;
 
 	if (mFlags & (FD_BITS_VARIES | FD_VERSION_VARIES))
 	{
 		resolvePointersMismatch();	
-	} else
+	}
+	
 	{
 		for (int i=0;i<mMain->m_chunks.size();i++)
 		{
 			bChunkInd& dataChunk = mMain->m_chunks.at(i);
-			
-			//dataChunk.len
-			short int* oldStruct = mFileDNA->getStruct(dataChunk.dna_nr);
-			char* oldType = mFileDNA->getType(oldStruct[0]);
-			
-			//printf("------------------------------------------");
-			//printf("Struct %s\n",oldType);
 
-			
+			if (mFileDNA->flagEqual(dataChunk.dna_nr))
+			{
+				//dataChunk.len
+				short int* oldStruct = mFileDNA->getStruct(dataChunk.dna_nr);
+				char* oldType = mFileDNA->getType(oldStruct[0]);
+				
+				//printf("------------------------------------------");
+				//printf("Struct %s\n",oldType);
 
-			//skip certain structures
-	///Warning: certain structures might need to be skipped, such as CustomDataLayer, Link etc. Not skipping them causes crashes.
-			if (strcmp(oldType,"CustomDataLayer")==0)
-				continue;
-			if (strcmp(oldType,"Link")==0)
-				continue;
-	///Other types are skipped just because they dont' containt pointers, just for optimization (MVert,MEdge,MFace,ScrVert)
-			if (strcmp(oldType,"MVert")==0)
-				continue;
-			if (strcmp(oldType,"MEdge")==0)
-				continue;
-			if (strcmp(oldType,"MFace")==0)
-				continue;
-			if (strcmp(oldType,"ScrVert")==0)
-				continue;
+				
 
-			resolvePointersStruct(dataChunk);
+				//skip certain structures
+		///Warning: certain structures might need to be skipped, such as CustomDataLayer, Link etc. Not skipping them causes crashes.
+				if (strcmp(oldType,"CustomDataLayer")==0)
+					continue;
+				if (strcmp(oldType,"Link")==0)
+					continue;
+		///Other types are skipped just because they dont' containt pointers, just for optimization (MVert,MEdge,MFace,ScrVert)
+				if (strcmp(oldType,"MVert")==0)
+					continue;
+				if (strcmp(oldType,"MEdge")==0)
+					continue;
+				if (strcmp(oldType,"MFace")==0)
+					continue;
+				if (strcmp(oldType,"ScrVert")==0)
+					continue;
+
+				resolvePointersStruct(dataChunk);
+			} else
+			{
+				//printf("skipping mStruct\n");
+			}
 		}
 	}
-
+	
+	printf("resolvePointers end\n");
 }

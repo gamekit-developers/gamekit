@@ -27,9 +27,52 @@ void	IrrBlendNew::convertLogicBricks()
 {
 }
 
+
 void	IrrBlendNew::createParentChildHierarchy()
 {
+
+	int i;
+	btAlignedObjectArray<btCollisionObject*>children;
+	
+	for (i=0;i<this->m_destinationWorld->getNumCollisionObjects();i++)
+	{
+		btCollisionObject* childColObj = m_destinationWorld->getCollisionObjectArray()[i];
+		IrrlichtMeshContainer* childNode = (IrrlichtMeshContainer*)childColObj->getUserPointer();
+		if (!childNode)
+			continue;
+		Blender::Object* obj = (Blender::Object*)childNode->m_userPointer;
+		if (!obj)
+			continue;
+
+		if (obj->parent)
+		{
+			///@todo: deal with 'parentinv'
+			btCollisionObject* colParent = (btCollisionObject*) obj->parent->vnode;
+
+			IrrlichtMeshContainer* parentNode = colParent ? (IrrlichtMeshContainer*) colParent->getUserPointer(): 0;
+
+			if(parentNode && parentNode->m_sceneNodes.size())
+			{
+				for (int i=0;i<childNode->m_sceneNodes.size();i++)
+				{
+					childNode->m_sceneNodes[i]->setParent(parentNode->m_sceneNodes[0]);
+				}
+			}
+			children.push_back(childColObj);
+		}
+	}
+
+
+	for (i=0;i<children.size();i++)
+	{
+		btCollisionObject* childColObj = children[i];
+		m_destinationWorld->removeCollisionObject(childColObj);
+		///disconnect the rigidbody update for child objects
+		childColObj->setUserPointer(0);
+	}
 }
+
+
 	
 //after each object is converter, including collision object, create a graphics object (and bind them)
 void* IrrBlendNew::createGraphicsObject(Blender::Object* tmpObject, class btCollisionObject* bulletObject)
@@ -241,6 +284,9 @@ void* IrrBlendNew::createGraphicsObject(Blender::Object* tmpObject, class btColl
 		}
 	}
 
+	///quick hack to get access to collision objects (for parent/hierarchy rebuild)
+	tmpObject->vnode = bulletObject;
+
 	return meshContainer;
 
 }
@@ -263,6 +309,7 @@ irr::scene::ISceneNode*	IrrBlendNew::createMeshNode(irr::video::S3DVertex* verti
 
 	if (me->mtface && me->mtface[0].tpage)
 	{
+		//image = (Blender::Image*)m_blendFile->getMain()->findLibPointer(me->mtface[0].tpage);
 		image = me->mtface[0].tpage;
 	}
 

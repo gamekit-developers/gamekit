@@ -71,6 +71,7 @@ void	BulletBlendReaderNew::convertAllObjects(int verboseDumpAllBlocks)
 	Blender::FileGlobal* glob = (Blender::FileGlobal*)m_blendFile->getFileGlobal();
 	
 
+//#define EXTRACT_ALL_SCENES 1
 #ifdef EXTRACT_ALL_SCENES
 	for (int sce = 0; sce<numScenes; sce++)
 	{
@@ -82,7 +83,14 @@ void	BulletBlendReaderNew::convertAllObjects(int verboseDumpAllBlocks)
 #endif
 
 		// Loop all objects in the scene.
-		Blender::Base *base = (Blender::Base*)scene->base.first;
+		Blender::Base *base = scene ? (Blender::Base*)scene->base.first : 0;
+		
+		if (!base)
+		{
+			printf("Warning: no scene, perhaps an old Blender version? Consider recompiling the source and enable EXTRACT_ALL_SCENES in BulletBlendReaderNew.cpp\n");
+		}
+
+		
 		while (base)
 		{
 			if (base->object)
@@ -167,8 +175,9 @@ void	BulletBlendReaderNew::convertAllObjects(int verboseDumpAllBlocks)
 		}
 	}
 
-	convertConstraints();
+	createParentChildHierarchy();
 
+	convertConstraints();
 
 	if (verboseDumpAllBlocks)
 	{

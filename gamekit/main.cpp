@@ -124,6 +124,12 @@ int main(int argc,char** argv)
 		printf("argv[0]=%s\n",argv[0]);
 	
 	const char* fileName = "clubsilo_packed.blend"; //blender 2.49b -> no conversion if using bParse
+	//const char* fileName = "slideshow.blend";// 32 bit, 2.48
+	//const char* fileName = "cube_tex_250_64bit.blend";// 64 bit, 2.48
+	
+
+	//const char* fileName = "slideshow_249.blend"; //blender 2.49b -> no conversion if using bParse
+	
 	//const char* fileName = "PhysicsAnimationBakingDemo.blend";
 	//const char* fileName = "land_rover_92.blend";//64 bit .blend test
 	//const char* fileName = "land_rover_92_249.blend";
@@ -132,7 +138,8 @@ int main(int argc,char** argv)
 	//const char* fileName = "hinge_249b.blend";
 	//const char* fileName = "PhysicsAnimationBakingDemo_250.blend";
 	//const char* fileName = "test32bit.blend";
-	//const char* fileName = "test32bit_204.blend";
+	//const char* fileName = "1_water_mill.blend";//testing hierarchy (child-parent)
+	//const char* fileName = "cube_ipo_180.blend";
 	//const char* fileName = "cube_ipo_249b.blend";
 	//const char* fileName = "land_rover_92_.blend";
 	//const char* fileName = "cube_tex_204.blend"; //test exported from an old Blender 2.04 version

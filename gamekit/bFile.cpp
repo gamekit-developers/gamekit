@@ -29,6 +29,8 @@
 using namespace bParse;
 
 
+int numallocs = 0;
+
 // ----------------------------------------------------- //
 bFile::bFile(const char *filename, const char headerString[7])
 	:	mOwnsBuffer(true),
@@ -214,6 +216,9 @@ void bFile::parse(bool verboseDumpAllTypes)
 	parseData();
 	
 	resolvePointers();
+
+	
+	printf("numAllocs = %d\n",numallocs);
 }
 
 
@@ -231,6 +236,8 @@ void bFile::swap(char *head, bChunkInd& dataChunk)
 		data+=len;
 	}
 }
+
+
 
 // ----------------------------------------------------- //
 char* bFile::readStruct(char *head, bChunkInd&  dataChunk)
@@ -273,6 +280,7 @@ char* bFile::readStruct(char *head, bChunkInd&  dataChunk)
 				assert((strcmp(oldType, newType)==0) && "internal error, struct mismatch!");
 
 
+				numallocs++;
 				// numBlocks * length
     			char *dataAlloc = new char[(dataChunk.nr*curLen)+1];
 				memset(dataAlloc, 0, (dataChunk.nr*curLen)+1);
@@ -328,7 +336,8 @@ void bFile::parseStruct(char *strcPtr, char *dtPtr, int old_dna, int new_dna, bo
 	if (old_dna == -1) return;
 	if (new_dna == -1) return;
 
-	if (mFileDNA->flagEqual(old_dna))
+	//disable this, because we need to fixup pointers/ListBase
+	if (0)//mFileDNA->flagEqual(old_dna))
 	{
 		short *strc = mFileDNA->getStruct(old_dna);
 		int len = mFileDNA->getLength(strc[0]);
@@ -495,8 +504,7 @@ void bFile::getMatchingFileDNA(short* dna_addr, bString lookupName,  bString loo
 		{
 			if (name[0] == '*')
 			{
-				if (fixupPointers)
-					m_pointerFixupArray.push_back(strcData);
+				
 
 				// cast pointers
 				int ptrFile = mFileDNA->getPointerSize();
@@ -518,6 +526,14 @@ void bFile::getMatchingFileDNA(short* dna_addr, bString lookupName,  bString loo
 					print (ptrFile << ' ' << ptrMem);
 					assert(0 && "Invalid pointer len");
 				}
+
+				if (fixupPointers)
+					m_pointerFixupArray.push_back(strcData);
+				else
+				{
+//					printf("skipped %s %s : %x\n",type.c_str(),name.c_str(),strcData);
+				}
+
 			}
 
 			else if (type==lookupType)

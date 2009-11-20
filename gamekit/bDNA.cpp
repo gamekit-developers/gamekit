@@ -208,51 +208,52 @@ void bDNA::initCmpFlags(bDNA *memDNA)
 		short *curStruct = memDNA->mStructs[newLookup];
 #else
 		// memory for file
-		short *curStruct = memDNA->mStructs[oldLookup];
+
+		if (oldLookup < memDNA->mStructs.size())
+		{
+			short *curStruct = memDNA->mStructs[oldLookup];
 #endif	
 	
 		
 
-		// rebuild...
-		mCMPFlags[i] = FDF_STRUCT_NEQU;
+			// rebuild...
+			mCMPFlags[i] = FDF_STRUCT_NEQU;
 
-#if 1
-
-		if (curStruct[1] == oldStruct[1])
-		{
-			// type len same ...
-			if (mTlens[oldStruct[0]] == memDNA->mTlens[curStruct[0]])
+			if (curStruct[1] == oldStruct[1])
 			{
-				bool isSame = true;
-				int elementLength = oldStruct[1];
-
-
-				curStruct+=2;
-				oldStruct+=2;
-
-
-				for (int j=0; j<elementLength; j++, curStruct+=2, oldStruct+=2)
+				// type len same ...
+				if (mTlens[oldStruct[0]] == memDNA->mTlens[curStruct[0]])
 				{
-					// type the same
-					if (strcmp(mTypes[oldStruct[0]], memDNA->mTypes[curStruct[0]])!=0)
-					{
-						isSame=false;
-						break;
-					}
+					bool isSame = true;
+					int elementLength = oldStruct[1];
 
-					// name the same
-					if (strcmp(mNames[oldStruct[1]], memDNA->mNames[curStruct[1]])!=0)
+
+					curStruct+=2;
+					oldStruct+=2;
+
+
+					for (int j=0; j<elementLength; j++, curStruct+=2, oldStruct+=2)
 					{
-						isSame=false;
-						break;
+						// type the same
+						if (strcmp(mTypes[oldStruct[0]], memDNA->mTypes[curStruct[0]])!=0)
+						{
+							isSame=false;
+							break;
+						}
+
+						// name the same
+						if (strcmp(mNames[oldStruct[1]], memDNA->mNames[curStruct[1]])!=0)
+						{
+							isSame=false;
+							break;
+						}
 					}
+					// flag valid ==
+					if (isSame)
+						mCMPFlags[i] = FDF_STRUCT_EQU;
 				}
-				// flag valid ==
-				if (isSame)
-					mCMPFlags[i] = FDF_STRUCT_EQU;
 			}
 		}
-#endif
 	}
 
 
