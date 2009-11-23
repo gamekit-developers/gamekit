@@ -435,8 +435,8 @@ static void getElement(int arrayLen, const char *cur, const char *old, char *old
 		setEle(value, cur, "char",   char,   sizeof(char),   curData);
 		getEle(value, old, "short",  short,  sizeof(short),  oldPtr);
 		setEle(value, cur, "short",  short,  sizeof(short),  curData);
-		getEle(value, old, "ushort",  short,  sizeof(unsigned short),  oldPtr);
-		setEle(value, cur, "ushort",  short,  sizeof(unsigned short),  curData);
+		getEle(value, old, "ushort",  unsigned short,  sizeof(unsigned short),  oldPtr);
+		setEle(value, cur, "ushort",  unsigned short,  sizeof(unsigned short),  curData);
 		getEle(value, old, "int",    int,    sizeof(int),    oldPtr);
 		setEle(value, cur, "int",    int,    sizeof(int),    curData);
 		getEle(value, old, "long",   int,    sizeof(int),    oldPtr);
@@ -489,7 +489,7 @@ void bFile::getMatchingFileDNA(short* dna_addr, bString lookupName,  bString loo
 	// to the file being loaded. Fill the
 	// memory with the file data...
 
-	int len = dna_addr[1], arrayLen;
+	int len = dna_addr[1];
 	dna_addr+=2;
 
 	for (int i=0; i<len; i++, dna_addr+=2)
@@ -498,10 +498,14 @@ void bFile::getMatchingFileDNA(short* dna_addr, bString lookupName,  bString loo
 		bString name = mFileDNA->getName(dna_addr[1]);
 
 		int eleLen = mFileDNA->getElementSize(dna_addr[0], dna_addr[1]);
-		arrayLen = mFileDNA->getArraySize((char*)name.c_str());
+		
 
 		if (name == lookupName)
 		{
+			//int arrayLenold = mFileDNA->getArraySize((char*)name.c_str());
+			int arrayLen = mFileDNA->getArraySizeNew(dna_addr[1]);
+			//assert(arrayLenold == arrayLen);
+			
 			if (name[0] == '*')
 			{
 				
@@ -606,7 +610,10 @@ void bFile::swapStruct(int dna_nr, char *data)
 		}
 		else
 		{
-			int arrayLen = mFileDNA->getArraySize(name);
+			//int arrayLenOld = mFileDNA->getArraySize(name);
+			int arrayLen = mFileDNA->getArraySizeNew(strc[1]);
+			//assert(arrayLenOld == arrayLen);
+
 			swapData(buf, strc[0], arrayLen);
 		}
 		buf+=size;

@@ -210,7 +210,7 @@ void bBlenderFile::resolvePointers()
 	printf("resolvePointers start\n");
 	char *dataPtr = mFileBuffer+mDataStart;
 
-	if (mFlags & (FD_BITS_VARIES | FD_VERSION_VARIES))
+	if (1) //mFlags & (FD_BITS_VARIES | FD_VERSION_VARIES))
 	{
 		resolvePointersMismatch();	
 	}

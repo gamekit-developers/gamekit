@@ -54,14 +54,14 @@ bDNA::~bDNA()
 // ----------------------------------------------------- //
 bool bDNA::lessThan(bDNA *file)
 {
-	return ( mNames.size() < file->mNames.size());
+	return ( m_Names.size() < file->m_Names.size());
 }
 
 // ----------------------------------------------------- //
 char *bDNA::getName(int ind)
 {
-	assert(ind <= (int)mNames.size());
-	return mNames[ind];
+	assert(ind <= (int)m_Names.size());
+	return m_Names[ind].m_name;
 }
 
 
@@ -161,8 +161,9 @@ void bDNA::initRecurseCmpFlags(int iter)
 			{
 				if (curStruct[0] == type)
 				{
-					char *name = mNames[curStruct[1]];
-					if (name[0] != '*')
+					//char *name = m_Names[curStruct[1]].m_name;
+					//if (name[0] != '*')
+					if (m_Names[curStruct[1]].m_isPointer)
 					{
 						mCMPFlags[i] = FDF_STRUCT_NEQU;
 						initRecurseCmpFlags(i);
@@ -181,7 +182,7 @@ void bDNA::initCmpFlags(bDNA *memDNA)
 	// this ptr should be the file data
 
 
-	assert(!mNames.empty() && "SDNA empty!");
+	assert(!m_Names.empty() && "SDNA empty!");
 	mCMPFlags.resize(mStructs.size(), FDF_NONE);
 
 
@@ -219,6 +220,7 @@ void bDNA::initCmpFlags(bDNA *memDNA)
 			// rebuild...
 			mCMPFlags[i] = FDF_STRUCT_NEQU;
 
+#if 1
 			if (curStruct[1] == oldStruct[1])
 			{
 				// type len same ...
@@ -242,7 +244,7 @@ void bDNA::initCmpFlags(bDNA *memDNA)
 						}
 
 						// name the same
-						if (strcmp(mNames[oldStruct[1]], memDNA->mNames[curStruct[1]])!=0)
+						if (strcmp(m_Names[oldStruct[1]].m_name, memDNA->m_Names[curStruct[1]].m_name)!=0)
 						{
 							isSame=false;
 							break;
@@ -253,8 +255,11 @@ void bDNA::initCmpFlags(bDNA *memDNA)
 						mCMPFlags[i] = FDF_STRUCT_EQU;
 				}
 			}
+#endif
 		}
 	}
+
+
 
 
 
@@ -279,6 +284,75 @@ void bDNA::initMemory()
 	{
 		init((char*)DNAstr, DNAlen);
 	}
+}
+
+static int name_is_array(char* name, int* dim1, int* dim2) {
+	int len = strlen(name);
+	/*fprintf(stderr,"[%s]",name);*/
+	/*if (len >= 1) {
+	if (name[len-1] != ']')
+	return 1;
+	}
+	return 0;*/
+	char *bp;
+	int num;
+	if (dim1) {
+		*dim1 = 1;
+	}
+	if (dim2) {
+		*dim2 = 1;
+	}
+	bp = strchr(name, '[');
+	if (!bp) {
+		return 0;
+	}
+	num = 0;
+	while (++bp < name+len-1) {
+		const char c = *bp;
+		if (c == ']') {
+			break;
+		}
+		if (c <= '9' && c >= '0') {
+			num *= 10;
+			num += (c - '0');
+		} else {
+			printf("array parse error.\n");
+			return 0;
+		}
+	}
+	if (dim2) {
+		*dim2 = num;
+	}
+
+	/* find second dim, if any. */
+	bp = strchr(bp, '[');
+	if (!bp) {
+		return 1; /* at least we got the first dim. */
+	}
+	num = 0;
+	while (++bp < name+len-1) {
+		const char c = *bp;
+		if (c == ']') {
+			break;
+		}
+		if (c <= '9' && c >= '0') {
+			num *= 10;
+			num += (c - '0');
+		} else {
+			printf("array2 parse error.\n");
+			return 1;
+		}
+	}
+	if (dim1) {
+		if (dim2) {
+			*dim1 = *dim2;
+			*dim2 = num;
+		} else {
+			*dim1 = num;
+		}
+	}
+
+	return 1;
 }
 
 
@@ -313,7 +387,11 @@ void bDNA::init(char *data, int len, bool swap)
 	cp = (char*)intPtr;
 	for (int i=0; i<dataLen; i++)
 	{
-		mNames.push_back(cp);
+		bNameInfo info;
+		info.m_name = cp;
+		info.m_isPointer = (info.m_name[0] == '*') || (info.m_name[1] == '*');
+		name_is_array(info.m_name,&info.m_dim0,&info.m_dim1);
+		m_Names.push_back(info);
 		while (*cp)cp++;
 		cp++;
 	}
@@ -454,34 +532,60 @@ int bDNA::getArraySize(char* string)
 	return ret;
 }
 
+#if 0
 // ----------------------------------------------------- //
 int bDNA::getElementSize(short type, short name)
 {
-	assert(name < (int)mNames.size());
+	assert(name < (int)m_Names.size());
 	assert(type < (int)mTypes.size());
 
-	char *el = mNames[name];
+	const bNameInfo& nameInfo = m_Names[name];
+
+	char *el = nameInfo.m_name;
 
 	int namelen = (int)strlen(el);
 	int ret =0;
 	int mult=1;
 
-	if (el[0] == '*' || el[1] == '*')
+	
+	if (nameInfo.m_isPointer)
+	//if (el[0] == '*' || el[1] == '*')
 	{
 		if (el[namelen-1] == ']')
-			mult = getArraySize(el);
+		{
+			//int mult1 = getArraySize(el);
+			mult = nameInfo.m_dim0*nameInfo.m_dim1;
+			//assert(mult==mult1);
+		}
 
 		ret = mPtrLen*mult;
 	}
 	else if (type <= (int)mTlens.size())
 	{
 		if (el[namelen-1] == ']')
-			mult = getArraySize(el);
+		{
+			//int mult1 = getArraySize(el);
+			mult = nameInfo.m_dim0*nameInfo.m_dim1;
+			//assert(mult==mult1);
+		}
 
 		ret= mTlens[type]*mult;
 	}
+	if (!ret)
+	{
+		printf("0\n");
+	}
+
+	int alternativeRet = nameInfo.m_isPointer ? mPtrLen*nameInfo.m_dim0*nameInfo.m_dim1 : mTlens[type]*nameInfo.m_dim0*nameInfo.m_dim1;
+	if (ret!=alternativeRet)
+	{
+		printf("misassumption\n");
+	}
+
 	return ret;
 }
+#endif
+
 
 
 void bDNA::dumpTypeDefinitions()
@@ -518,7 +622,7 @@ void bDNA::dumpTypeDefinitions()
 		printf("{");
 		int j;
 		for (j=0; j<len; ++j,oldStruct+=2) {
-			printf("%s %s",	mTypes[oldStruct[0]],mNames[oldStruct[1]]);
+			printf("%s %s",	mTypes[oldStruct[0]],m_Names[oldStruct[1]].m_name);
 			if (j == len-1) {
 				printf(";}");
 			} else {

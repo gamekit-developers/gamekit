@@ -24,6 +24,14 @@
 
 namespace bParse {
 
+	struct	bNameInfo
+	{
+		char*	m_name;
+		bool	m_isPointer;
+		int		m_dim0;
+		int		m_dim1;
+	};
+
 	class bDNA
 	{
 	public:
@@ -34,11 +42,21 @@ namespace bParse {
 		void initMemory();
 
 		int getArraySize(char* str);
-		int getElementSize(short type, short name);
+		int getArraySizeNew(short name)
+		{
+			const bNameInfo& nameInfo = m_Names[name];
+			return nameInfo.m_dim0*nameInfo.m_dim1;
+		}
+		int getElementSize(short type, short name)
+		{
+			const bNameInfo& nameInfo = m_Names[name];
+			int size = nameInfo.m_isPointer ? mPtrLen*nameInfo.m_dim0*nameInfo.m_dim1 : mTlens[type]*nameInfo.m_dim0*nameInfo.m_dim1;
+			return size;
+		}
 
 		int	getNumNames() const
 		{
-			return mNames.size();
+			return m_Names.size();
 		}
 
 		char *getName(int ind);
@@ -76,7 +94,8 @@ namespace bParse {
 		void initRecurseCmpFlags(int i);
 
 		std::vector<int>			mCMPFlags;
-		std::vector<char*>			mNames;
+
+		std::vector<bNameInfo>			m_Names;
 		std::vector<char*>			mTypes;
 		std::vector<short*>			mStructs;
 		std::vector<short>			mTlens;

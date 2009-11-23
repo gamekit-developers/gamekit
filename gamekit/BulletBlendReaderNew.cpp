@@ -82,12 +82,20 @@ void	BulletBlendReaderNew::convertAllObjects(int verboseDumpAllBlocks)
 		Blender::Scene* scene = (Blender::Scene*) glob->curscene;
 #endif
 
+		if (!scene)
+		{
+			printf("Warning: no default scene, perhaps an old Blender version? Taking first scene.\n");
+			if (numScenes)
+			{
+				scene = (Blender::Scene*) sceneBase->at(0);
+			}
+		}
 		// Loop all objects in the scene.
 		Blender::Base *base = scene ? (Blender::Base*)scene->base.first : 0;
 		
 		if (!base)
 		{
-			printf("Warning: no scene, perhaps an old Blender version? Consider recompiling the source and enable EXTRACT_ALL_SCENES in BulletBlendReaderNew.cpp\n");
+			printf("Warning: no scene\n");
 		}
 
 		
