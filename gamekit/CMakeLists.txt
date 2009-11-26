@@ -63,6 +63,7 @@ SET(bParse_SRCS
 	bMain.cpp
 	bMain.h
 	dna249.cpp
+	dna249-64bit.cpp
 )
 
 

@@ -129,6 +129,7 @@ int main(int argc,char** argv)
 	
 
 	//const char* fileName = "slideshow_249.blend"; //blender 2.49b -> no conversion if using bParse
+	//const char* fileName = "start_menu.blend"; //blender 2.49b -> no conversion if using bParse
 	
 	//const char* fileName = "PhysicsAnimationBakingDemo.blend";
 	//const char* fileName = "land_rover_92.blend";//64 bit .blend test

@@ -33,9 +33,8 @@ extern int DNAlen;
 //int DNAlen=0;
 
 
-// removed... can no longer test
- //extern unsigned char DNAstr64[];
- //extern int DNAlen64;
+extern unsigned char DNAstr64[];
+extern int DNAlen64;
 
 
 // ----------------------------------------------------- //
@@ -277,8 +276,7 @@ void bDNA::initMemory()
 {
 	if (VOID_IS_8)
 	{
-        assert(0 && "64bit blend files not supported yet");
-		//init((char*)DNAstr64, DNAlen64);
+		init((char*)DNAstr64, DNAlen64);
 	}
 	else
 	{
@@ -396,11 +394,16 @@ void bDNA::init(char *data, int len, bool swap)
 		cp++;
 	}
 
-	// ...
-	nr= (long)cp;
-	nr= (nr+3)&~3;
-	cp= (char *)nr;
-
+	
+	{
+		nr= (long)cp;
+		long mask=3;
+		nr= ((nr+3)&~3)-nr;
+		while (nr--)
+		{
+			cp++;
+		}
+	}
 
 
 	/*
@@ -425,9 +428,15 @@ void bDNA::init(char *data, int len, bool swap)
 		cp++;
 	}
 
-	nr= (long)cp;
-	nr= (nr+3)&~3;
-	cp= (char *)nr;
+{
+		nr= (long)cp;
+		long mask=3;
+		nr= ((nr+3)&~3)-nr;
+		while (nr--)
+		{
+			cp++;
+		}
+	}
 
 
 	/*
