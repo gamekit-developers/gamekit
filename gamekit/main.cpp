@@ -333,9 +333,32 @@ int main(int argc,char** argv)
 		IrrBlendNew	bulletBlendReaderNew(device,smgr,physicsWorld,logicManager);
 		if (!bulletBlendReaderNew.readFile(memoryBuffer,fileLen,verboseDumpAllTypes))
 		{
-			printf("cannot read Blender file %s.\n",argv[1]);
-			fclose(file);
-			exit(0);
+			{
+				const char* fakeName = "test.zip";
+				//irr::io::IReadFile* file = device->getFileSystem()->addZipFileArchive(fileName,ignoreCase,ignorePAth);
+				bool ignoreCase=true;
+				bool ignorePath=false;
+				bool result = device->getFileSystem()->addZipFileArchive(fileName,ignoreCase,ignorePath);
+				irr::io::IReadFile* zipfile = device->getFileSystem()->createAndOpenFile(fileName);
+				if (file)
+				{
+					char* uncompressedBuf = (char*)malloc (zipfile->getSize());
+					int readbytes = zipfile->read(uncompressedBuf,zipfile->getSize());
+					if (!bulletBlendReaderNew.readFile(uncompressedBuf,readbytes,verboseDumpAllTypes))
+					{
+						printf("Can't open compressed .blend file (%s), please submit an issue in http://gamekit.googlecode.com and attach .blend file\n",fileName);
+						fclose(file);
+						exit(0);
+					}
+				}
+				else
+				{
+					printf("Can't open .blend file (%s) please submit an issue in http://gamekit.googlecode.com and attach .blend file\n",fileName);
+					fclose(file);
+					exit(0);
+				}
+		
+			}
 		}
 		bulletBlendReaderNew.convertAllObjects(verboseDumpAllBlocks);
 	}
