@@ -334,11 +334,9 @@ int main(int argc,char** argv)
 		if (!bulletBlendReaderNew.readFile(memoryBuffer,fileLen,verboseDumpAllTypes))
 		{
 			{
-				const char* fakeName = "test.zip";
-				//irr::io::IReadFile* file = device->getFileSystem()->addZipFileArchive(fileName,ignoreCase,ignorePAth);
-				bool ignoreCase=true;
-				bool ignorePath=false;
-				bool result = device->getFileSystem()->addZipFileArchive(fileName,ignoreCase,ignorePath);
+				bool ignoreCase=false;
+				bool ignorePath=true;
+				bool result = device->getFileSystem()->addFileArchive(fileName,ignoreCase,ignorePath);
 				irr::io::IReadFile* zipfile = device->getFileSystem()->createAndOpenFile(fileName);
 				if (file)
 				{
@@ -347,14 +345,12 @@ int main(int argc,char** argv)
 					if (!bulletBlendReaderNew.readFile(uncompressedBuf,readbytes,verboseDumpAllTypes))
 					{
 						printf("Can't open compressed .blend file (%s), please submit an issue in http://gamekit.googlecode.com and attach .blend file\n",fileName);
-						fclose(file);
 						exit(0);
 					}
 				}
 				else
 				{
 					printf("Can't open .blend file (%s) please submit an issue in http://gamekit.googlecode.com and attach .blend file\n",fileName);
-					fclose(file);
 					exit(0);
 				}
 		
