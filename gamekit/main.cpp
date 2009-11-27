@@ -338,7 +338,7 @@ int main(int argc,char** argv)
 				bool ignorePath=true;
 				bool result = device->getFileSystem()->addFileArchive(fileName,ignoreCase,ignorePath);
 				irr::io::IReadFile* zipfile = device->getFileSystem()->createAndOpenFile(fileName);
-				if (file)
+				if (zipfile)
 				{
 					char* uncompressedBuf = (char*)malloc (zipfile->getSize());
 					int readbytes = zipfile->read(uncompressedBuf,zipfile->getSize());
