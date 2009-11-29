@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 Charlie C
+/* Copyright (C) 2006-2009 Charlie C & Erwin Coumans http://gamekit.googlecode.com
 *
 * This software is provided 'as-is', without any express or implied
 * warranty.  In no event will the authors be held liable for any damages
