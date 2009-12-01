@@ -355,7 +355,7 @@ int main(int argc,char** argv)
 
 		bulletBlendReaderNew.convertAllObjects(verboseDumpAllBlocks);
 
-#define TEST_FILE_WRITING 1
+//#define TEST_FILE_WRITING 1
 #if TEST_FILE_WRITING
 		bulletBlendReaderNew.writeFile("test.blend");
 
