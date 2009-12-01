@@ -39,6 +39,9 @@ struct	IrrlichtMeshContainer
 	void* m_userPointer;
 };
 
+
+#define NOR_SHORTTOFLOAT 32767.0f
+
 ///mapping between right handed and left-handed coordinate system
 #define SWAP_COORDINATE_SYSTEMS
 #ifdef SWAP_COORDINATE_SYSTEMS
@@ -80,6 +83,7 @@ struct	IrrlichtMeshContainer
 
 
 
+void norShortToFloat(const short *shnor, float *fnor);
 
 void	MatrixToEuler(const btMatrix3x3& mat,btVector3& TEuler);
 

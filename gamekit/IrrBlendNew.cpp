@@ -128,10 +128,13 @@ void* IrrBlendNew::createGraphicsObject(Blender::Object* tmpObject, class btColl
 		if (!me->mvert)
 			return 0;
 
+		float nor[3] = {0.f, 0.f, 0.f};
+		
 		for (int v=0;v<me->totvert;v++)
 		{
 			float* vt3 = &me->mvert[v].co.x;
-			orgVertices[v] = irr::video::S3DVertex(	IRR_X_M*vt3[IRR_X],	IRR_Y_M*vt3[IRR_Y],	IRR_Z_M*vt3[IRR_Z], 1,1,0,		irr::video::SColor(255,255,255,255), 0, 1);
+			norShortToFloat(me->mvert[v].no, nor);
+			orgVertices[v] = irr::video::S3DVertex(	IRR_X_M*vt3[IRR_X],	IRR_Y_M*vt3[IRR_Y],	IRR_Z_M*vt3[IRR_Z], 	nor[IRR_X], nor[IRR_Y], nor[IRR_Z], 	irr::video::SColor(255,255,255,255), 0, 1);
 		}
 
 		
@@ -152,6 +155,21 @@ void* IrrBlendNew::createGraphicsObject(Blender::Object* tmpObject, class btColl
 				break;
 
 			int v[4] = {me->mface[t].v1,me->mface[t].v2,me->mface[t].v3,me->mface[t].v4};
+			
+			bool smooth = me->mface[t].flag & 1; // ME_SMOOTH
+			
+			// if mface !ME_SMOOTH use face normal in place of vert norms
+			if(!smooth)
+			{
+				irr::core::vector3df normal = irr::core::plane3df(orgVertices[v[0]].Pos, orgVertices[v[1]].Pos, orgVertices[v[2]].Pos).Normal;
+				normal.invert();
+				
+				orgVertices[v[0]].Normal = normal;
+				orgVertices[v[1]].Normal = normal;
+				orgVertices[v[2]].Normal = normal;
+				if(v[3])
+					orgVertices[v[3]].Normal = normal;
+			}
 		
 			int originalIndex = v[IRR_TRI_0_X];
 			indices[numIndices] = currentIndex;
@@ -399,8 +417,52 @@ irr::scene::ISceneNode*	IrrBlendNew::createMeshNode(irr::video::S3DVertex* verti
 			animMesh->setHardwareMappingHint(scene::EHM_STATIC);
 #endif //USE_VBO
 			myNode = m_sceneManager->addMeshSceneNode(animMesh);
-			myNode->setMaterialTexture(0,texture0);
-			myNode->setMaterialFlag(irr::video::EMF_LIGHTING,false);
+			
+			if(me->mtface)
+			{
+				myNode->setMaterialTexture(0,texture0);
+				
+				if(me->mtface[0].mode & 16) // TF_LIGHT
+				{
+					myNode->setMaterialFlag(irr::video::EMF_LIGHTING, true);
+					myNode->setMaterialFlag(irr::video::EMF_NORMALIZE_NORMALS, true);
+				}
+				else
+				{
+					myNode->setMaterialFlag(irr::video::EMF_LIGHTING, false);
+					myNode->setMaterialFlag(irr::video::EMF_NORMALIZE_NORMALS, false);
+				}
+				
+				
+				if(me->mtface[0].mode & 512) // TF_TWOSIDE
+					myNode->getMaterial(0).BackfaceCulling = false;
+				
+				//myNode->getMaterial(0).GouraudShading = false;
+				
+				if(me->mtface[0].tpage)
+				{
+					switch(me->mtface[0].transp)
+					{
+						case 0: // TF_SOLID
+							myNode->setMaterialType(irr::video::EMT_SOLID);
+							break;
+						case 1: // TF_ADD
+							myNode->setMaterialType(irr::video::EMT_TRANSPARENT_ADD_COLOR);
+							break;
+						case 2: // TF_ALPHA
+							myNode->setMaterialType(irr::video::EMT_TRANSPARENT_ALPHA_CHANNEL);
+							break;
+						case 4:	 // TF_CLIP / BUG: no lighting with this mode, fixed in irrlicht trunk/1.7
+							myNode->setMaterialType(irr::video::EMT_TRANSPARENT_ALPHA_CHANNEL_REF);
+							break;
+					}
+				}
+			}
+			else
+			{
+				myNode->setMaterialFlag(irr::video::EMF_LIGHTING, true);
+				myNode->setMaterialFlag(irr::video::EMF_NORMALIZE_NORMALS, true);
+			}
 #endif
 		
 			// Set rotation
@@ -486,5 +548,37 @@ void	IrrBlendNew::addCamera(Blender::Object* tmpObject)
 
 void	IrrBlendNew::addLight(Blender::Object* tmpObject)
 {
-
+	float pos[3] = {tmpObject->loc.x,tmpObject->loc.y,tmpObject->loc.z};
+	float rot[3] = {irr::core::radToDeg(tmpObject->rot.x), irr::core::radToDeg(tmpObject->rot.y), irr::core::radToDeg(tmpObject->rot.z)};
+	
+	rot[0] *= -1;
+	rot[1] *= -1;
+	rot[2] *= -1;
+	
+	Blender::Lamp *la = (Blender::Lamp*)tmpObject->data;
+	
+	irr::scene::ILightSceneNode* light = m_sceneManager->addLightSceneNode(0, irr::core::vector3df(pos[IRR_X], pos[IRR_Y], pos[IRR_Z]), 
+			irr::video::SColorf(la->r*la->energy, la->g*la->energy, la->b*la->energy, 0.0f), la->dist);
+	
+	irr::video::SLight slight;
+	switch(la->type)
+	{
+		case 0:
+			light->setLightType(irr::video::ELT_POINT);
+			break;
+		case 2:
+			light->setLightType(irr::video::ELT_SPOT);
+			light->setRotation(irr::core::vector3df(90.f + rot[IRR_TRI_0_X], rot[IRR_TRI_0_Y], rot[IRR_TRI_0_Z]));
+			
+			slight = light->getLightData();
+			slight.InnerCone = la->spotblend * 180.f;
+			slight.OuterCone = la->spotsize;
+			slight.Falloff = la->spotblend * 180.f;
+			light->setLightData(slight);
+			break;
+		case 3:
+			light->setLightType(irr::video::ELT_DIRECTIONAL);
+			light->setRotation(irr::core::vector3df(90.f + rot[IRR_TRI_0_X], rot[IRR_TRI_0_Y], rot[IRR_TRI_0_Z]));
+			break;
+	}
 }

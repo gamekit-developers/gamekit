@@ -35,6 +35,14 @@ using namespace irr;
 
 
 
+void norShortToFloat(const short *shnor, float *fnor)
+{
+	fnor[0] = shnor[0] / NOR_SHORTTOFLOAT;
+	fnor[1] = shnor[1] / NOR_SHORTTOFLOAT;
+	fnor[2] = shnor[2] / NOR_SHORTTOFLOAT;
+}
+
+
 void	MatrixToEuler(const btMatrix3x3& mat,btVector3& TEuler)
 {
 	irr::core::matrix4 imat;

@@ -124,6 +124,7 @@ int main(int argc,char** argv)
 		printf("argv[0]=%s\n",argv[0]);
 	
 	const char* fileName = "clubsilo_packed.blend"; //blender 2.49b -> no conversion if using bParse
+	//const char* fileName = "light.blend";
 	//const char* fileName = "g250.blend";
 	//const char* fileName = "momo_ogreSmallAnim.blend";
 
@@ -289,17 +290,11 @@ int main(int argc,char** argv)
 	video::IVideoDriver* driver = device->getVideoDriver();
 	scene::ISceneManager* smgr = device->getSceneManager();
 
-	irr::scene::ICameraSceneNode* cam = smgr->addCameraSceneNodeFPS(0,20,0.01,100);
+	irr::scene::ICameraSceneNode* cam = smgr->addCameraSceneNodeFPS(0,20,0.01f,100);
 	//irr::scene::ICameraSceneNode* cam = smgr->addCameraSceneNodeMaya(0, core::vector3df(0,-40,0), core::vector3df(0,0,0));
 	//irr::scene::ICameraSceneNode* cam = smgr->addCameraSceneNodeFPS(0,10,10);
 	//irr::scene::ICameraSceneNode* cam = smgr->addCameraSceneNode(0, core::vector3df(0,50,30), core::vector3df(0,0,0));
 	//cam->setUpVector(irr::core::vector3df(0,1,0));
-	
-
-	// add light 1 (nearly red)
-	scene::ILightSceneNode* light1 =
-		smgr->addLightSceneNode(0, core::vector3df(400,0,0),
-		video::SColorf(0.5f, 1.0f, 0.5f, 0.0f), 800.0f);
 
 
 	btCollisionConfiguration* collisionConfiguration = new btDefaultCollisionConfiguration();
@@ -360,7 +355,7 @@ int main(int argc,char** argv)
 
 		bulletBlendReaderNew.convertAllObjects(verboseDumpAllBlocks);
 
-//#define TEST_FILE_WRITING 1
+#define TEST_FILE_WRITING 1
 #if TEST_FILE_WRITING
 		bulletBlendReaderNew.writeFile("test.blend");
 
@@ -399,6 +394,19 @@ int main(int argc,char** argv)
 		bulletBlendReader.convertAllObjects(verboseDumpAllBlocks);
 	}
 #endif //TEST_ECHO_BLEND_READER
+
+	
+	// add ambient lighting when converted scene contains zero lights
+	if(smgr->getSceneNodeFromType(irr::scene::ESNT_LIGHT) == NULL)
+	{
+		scene::ILightSceneNode* light1 =
+			smgr->addLightSceneNode(0, core::vector3df(0,0,0),
+			video::SColorf(1.0f, 1.0f, 1.0f, 0.0f), 45.f);
+		
+		light1->setLightType(irr::video::ELT_DIRECTIONAL);
+		light1->setRotation(irr::core::vector3df(90.0f, 0.0f, 0.0f));
+		smgr->setAmbientLight(video::SColor(0,20,20,20));
+	}
 	
 	/*
 	Now draw everything and finish.
