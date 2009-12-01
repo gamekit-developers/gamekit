@@ -18,6 +18,8 @@ subject to the following restrictions:
 
 #include "bCommon.h"
 
+#include <stdio.h>
+
 namespace bParse {
 
 	// ----------------------------------------------------- //
@@ -45,6 +47,8 @@ namespace bParse {
 		int					mFileLen;
 		int					mVersion;
 
+
+		bPtrMap				mLibPointers;
 
 		int					mDataStart;
 		bDNA*				mFileDNA;
@@ -108,6 +112,13 @@ namespace bParse {
 		bool ok();
 
 		void parse(bool verboseDumpAllTypes);
+
+		// experimental
+		int	write(const char* fileName);
+
+		virtual	void	writeChunks(FILE* fp) = 0;
+
+		virtual	void	writeDNA(FILE* fp) = 0;
 		
 	};
 }

@@ -30,11 +30,15 @@ namespace bParse {
 
 		bStructHandle*		m_glob;
 
-		bPtrMap				mLibPointers;
+		
 
 		void resolvePointersMismatch();
 	
-		void resolvePointersStruct(bChunkInd& dataChunk);
+		void resolvePointersChunk(bChunkInd& dataChunk);
+
+		void resolvePointersStructRecursive(char *strcPtr, int old_dna);
+
+
 
 	public:
 
@@ -61,6 +65,11 @@ namespace bParse {
 		virtual	void parseData();
 
 		virtual void resolvePointers();
+
+		virtual	void	writeChunks(FILE* fp);
+
+		virtual	void	writeDNA(FILE* fp);
+
 
 	};
 };

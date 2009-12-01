@@ -59,6 +59,10 @@ int		BulletBlendReaderNew::readFile(char* memoryBuffer, int fileLen, int verbose
 	return ok;
 }
 
+int		BulletBlendReaderNew::writeFile(const char* fileName)
+{
+	return m_blendFile->write(fileName);
+}
 
 
 void	BulletBlendReaderNew::convertAllObjects(int verboseDumpAllBlocks)
@@ -85,6 +89,22 @@ void	BulletBlendReaderNew::convertAllObjects(int verboseDumpAllBlocks)
 
 	Blender::FileGlobal* glob = (Blender::FileGlobal*)m_blendFile->getFileGlobal();
 	
+//#define CHECK_ACTIONS
+#ifdef CHECK_ACTIONS
+	bParse::bListBasePtr *ptr = mainPtr->getAction();
+    for (size_t i=0; i<ptr->size(); i++)
+	{
+		
+		Blender::bAction* action = (Blender::bAction*)ptr->at(i);
+		Blender::bActionChannel *achan= static_cast<Blender::bActionChannel*>(action->chanbase.first);
+		while (achan)
+		{
+			printf(achan->name);
+			achan= achan->next;
+		}
+	}
+#endif//CHECK_ACTIONS
+
 
 //#define EXTRACT_ALL_SCENES 1
 #ifdef EXTRACT_ALL_SCENES
@@ -138,6 +158,8 @@ void	BulletBlendReaderNew::convertAllObjects(int verboseDumpAllBlocks)
 							if (ob->data)
 							{
 								Blender::Mesh *me = (Blender::Mesh*)ob->data;
+								
+								
 								if (verboseDumpAllBlocks)
 								{
 									printf("\t\tFound mesh data for %s\n", me->id.name);
@@ -222,6 +244,7 @@ btCollisionObject* BulletBlendReaderNew::createBulletObject(Blender::Object* obj
 
 		btVector3 minVert(1e30f,1e3f,1e30f);
 		btVector3 maxVert(-1e30f,-1e30f,-1e30f);
+		
 		for (int t=0;t<me->totface;t++)
 		{
 

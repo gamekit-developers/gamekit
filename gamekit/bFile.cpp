@@ -212,7 +212,6 @@ void bFile::parse(bool verboseDumpAllTypes)
 	parseData();
 	
 	resolvePointers();
-
 	
 	printf("numAllocs = %d\n",numallocs);
 }
@@ -290,6 +289,7 @@ char* bFile::readStruct(char *head, bChunkInd&  dataChunk)
 				{
 					bool fixupPointers = true;
 					parseStruct(cur, old, dataChunk.dna_nr, reverseOld, fixupPointers);
+					mLibPointers.insert(std::make_pair(old,(bStructHandle*)cur));
 
 					cur += curLen;
 					old += oldLen;
@@ -616,4 +616,50 @@ void bFile::swapStruct(int dna_nr, char *data)
 	}
 }
 
+// experimental
+int		bFile::write(const char* fileName)
+{
+	FILE *fp = fopen(fileName, "wb");
+	if (fp)
+	{
+		char header[SIZEOFBLENDERHEADER] ;
+		memcpy(header, m_headerString, 7);
+		int endian= 1;
+		endian= ((char*)&endian)[0];
+
+		if (endian)
+		{
+			header[7] = '_';
+		} else
+		{
+			header[7] = '-';
+		}
+		if (VOID_IS_8)
+		{
+			header[8]='V';
+		} else
+		{
+			header[8]='v';
+		}
+
+		header[9] = '2';
+		header[10] = '4';
+		header[11] = '9';
+		
+		fwrite(header,SIZEOFBLENDERHEADER,1,fp);
+
+		writeChunks(fp);
+
+		writeDNA(fp);
+
+		fclose(fp);
+		
+	} else
+	{
+		printf("Error: cannot open file %s for writing\n",fileName);
+		return 0;
+	}
+	return 1;
+}
 //eof
+

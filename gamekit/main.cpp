@@ -124,6 +124,7 @@ int main(int argc,char** argv)
 		printf("argv[0]=%s\n",argv[0]);
 	
 	const char* fileName = "clubsilo_packed.blend"; //blender 2.49b -> no conversion if using bParse
+	//const char* fileName = "g250.blend";
 	//const char* fileName = "momo_ogreSmallAnim.blend";
 
 	//const char* fileName = "slideshow.blend";// 32 bit, 2.48
@@ -356,7 +357,27 @@ int main(int argc,char** argv)
 		
 			}
 		}
+
 		bulletBlendReaderNew.convertAllObjects(verboseDumpAllBlocks);
+
+//#define TEST_FILE_WRITING 1
+#if TEST_FILE_WRITING
+		bulletBlendReaderNew.writeFile("test.blend");
+
+		FILE* fileTest = fopen("test.blend","rb");
+		int fileLenTest;
+		char*memoryBufferTest =  btReadBuffer(fileTest,&fileLenTest);
+		IrrBlendNew	bulletBlendReaderNewTest(device,smgr,physicsWorld,logicManager);
+		if (!bulletBlendReaderNewTest.readFile(memoryBufferTest,fileLenTest,verboseDumpAllTypes))
+		{
+			printf("Failing reading back written test.blend\n");
+		}
+#endif
+
+
+
+		
+
 	}
 
 	

@@ -56,7 +56,7 @@ void bBlenderFile::parseData()
 	print ("File chunk size = " << ChunkUtils::getOffset(mFlags));
 
 	const bool swap = (mFlags&FD_ENDIAN_SWAP)!=0;
-	int seek = 0;
+	
 
 
 	char *dataPtr = mFileBuffer+mDataStart;
@@ -65,7 +65,9 @@ void bBlenderFile::parseData()
 	dataChunk.code = 0;
 
 
-	dataPtr += ChunkUtils::getNextBlock(&dataChunk, dataPtr, mFlags);
+	//dataPtr += ChunkUtils::getNextBlock(&dataChunk, dataPtr, mFlags);
+	int seek = ChunkUtils::getNextBlock(&dataChunk, dataPtr, mFlags);
+	//dataPtr += ChunkUtils::getOffset(mFlags);
 	char *dataPtrHead = 0;
 
 	while (dataChunk.code != DNA1)
@@ -75,7 +77,8 @@ void bBlenderFile::parseData()
 
 
 		// one behind
-		if (dataChunk.code == DNA1) break;
+		if (dataChunk.code == SDNA) break;
+		//if (dataChunk.code == DNA1) break;
 
 		// same as (BHEAD+DATA dependancy)
 		dataPtrHead = dataPtr+ChunkUtils::getOffset(mFlags);
@@ -147,26 +150,41 @@ void bBlenderFile::resolvePointersMismatch()
 	}
 }
 
+
+
+
 ///this loop only works fine if the Blender DNA structure of the file matches the headerfiles
-void bBlenderFile::resolvePointersStruct(bChunkInd& dataChunk)
+void bBlenderFile::resolvePointersChunk(bChunkInd& dataChunk)
 {
-	bool patched = false;
+
 	short int* oldStruct = mFileDNA->getStruct(dataChunk.dna_nr);
 	short oldLen = mFileDNA->getLength(oldStruct[0]);
+	char* structType = mFileDNA->getType(oldStruct[0]);
 
 	char* cur	= (char*)mMain->findLibPointer(dataChunk.oldPtr);
 	for (int block=0; block<dataChunk.nr; block++)
 	{
-		oldStruct = mFileDNA->getStruct(dataChunk.dna_nr);
+		resolvePointersStructRecursive(cur,dataChunk.dna_nr);
+		cur += oldLen;
+	}
+}
+
+
+void bBlenderFile::resolvePointersStructRecursive(char *strcPtr, int dna_nr)
+{
+	
+		char* memType;
+		char* memName;
+		short	firstStructType = mFileDNA->getStruct(0)[0];
+
+
+		char* elemPtr= strcPtr;
+
+		short int* oldStruct = mFileDNA->getStruct(dna_nr);
 		
 		int elementLength = oldStruct[1];
 		oldStruct+=2;
 
-
-		char* memType;
-		char* memName;
-
-		char* elemPtr= cur;
 
 		for (int ele=0; ele<elementLength; ele++, oldStruct+=2)
 		{
@@ -183,10 +201,19 @@ void bBlenderFile::resolvePointersStruct(bChunkInd& dataChunk)
 				{
 //					printf("Fixup pointer at 0x%x from 0x%x to 0x%x!\n",ptrptr,*ptrptr,ptr);
 					*(ptrptr) = ptr;
-					patched = true;
+				} else
+				{
+//					printf("Cannot fixup pointer at 0x%x from 0x%x to 0x%x!\n",ptrptr,*ptrptr,ptr);
+				}
+			} else
+			{
+				int revType = mFileDNA->getReverseType(oldStruct[0]);
+				if (oldStruct[0]>=firstStructType) //revType != -1 && 
+				{
+					resolvePointersStructRecursive(elemPtr,revType);
 				}
 			}
-
+#if 0
 		  if (strcmp(memType,"ListBase")==0)
             {
             //    printf("Fixup ListBase!\n");
@@ -198,20 +225,15 @@ void bBlenderFile::resolvePointersStruct(bChunkInd& dataChunk)
                 if (inspect->first && inspect->last)
                 {
                     // (ptrptr) = (void**)inspect;
-                    patched = true;
+
                 }
             }
+#endif
+
 			int size = mFileDNA->getElementSize(oldStruct[0], oldStruct[1]);
 			elemPtr+=size;
-
+			
 		}
-		cur += oldLen;
-	}
-
-	if (!patched)
-	{
-		//printf("not patched %s, #%d\n",oldType,dataChunk.nr);
-	}
 }
 
 
@@ -244,21 +266,31 @@ void bBlenderFile::resolvePointers()
 
 				//skip certain structures
 		///Warning: certain structures might need to be skipped, such as CustomDataLayer, Link etc. Not skipping them causes crashes.
-				if (strcmp(oldType,"CustomDataLayer")==0)
-					continue;
-				if (strcmp(oldType,"Link")==0)
-					continue;
-		///Other types are skipped just because they dont' containt pointers, just for optimization (MVert,MEdge,MFace,ScrVert)
-				if (strcmp(oldType,"MVert")==0)
-					continue;
-				if (strcmp(oldType,"MEdge")==0)
-					continue;
-				if (strcmp(oldType,"MFace")==0)
-					continue;
-				if (strcmp(oldType,"ScrVert")==0)
-					continue;
+				//if (strcmp(oldType,"CustomDataLayer")==0)
+				//{
+				//	Blender::CustomData* data = (Blender::CustomData*)mMain->findLibPointer(dataChunk.oldPtr);
+				//	data->totlayer = 0;
+				//	
+				//}
+//					continue;
+				//if (strcmp(oldType,"Mesh")==0)
+				//{
+				//	//printf("mesh\n");
+				//}
 
-				resolvePointersStruct(dataChunk);
+//				if (strcmp(oldType,"Link")==0)
+//					continue;
+		///Other types are skipped just because they dont' containt pointers, just for optimization (MVert,MEdge,MFace,ScrVert)
+//				if (strcmp(oldType,"MVert")==0)
+//					continue;
+//				if (strcmp(oldType,"MEdge")==0)
+//					continue;
+//				if (strcmp(oldType,"MFace")==0)
+//					continue;
+//				if (strcmp(oldType,"ScrVert")==0)
+//					continue;
+
+				resolvePointersChunk(dataChunk);
 			} else
 			{
 				//printf("skipping mStruct\n");
@@ -267,4 +299,101 @@ void bBlenderFile::resolvePointers()
 	}
 	
 	printf("resolvePointers end\n");
+}
+
+void	bBlenderFile::writeChunks(FILE* fp)
+{
+	for (int i=0;i<mMain->m_chunks.size();i++)
+	{
+		bChunkInd& dataChunk = mMain->m_chunks.at(i);
+		
+		///update dataChunk (it still refers to old file chunk)
+		dataChunk.oldPtr = mMain->findLibPointer(dataChunk.oldPtr);
+		// Ouch! need to rebuild the struct
+		short *oldStruct,*curStruct;
+		char *oldType, *newType;
+		int oldLen, curLen, reverseOld;
+
+		oldStruct = mFileDNA->getStruct(dataChunk.dna_nr);
+		oldType = mFileDNA->getType(oldStruct[0]);
+		oldLen = mFileDNA->getLength(oldStruct[0]);
+
+		///don't try to convert Link block data, just memcpy it. Other data can be converted.
+		reverseOld = mMemoryDNA->getReverseType(oldType);
+		if ((reverseOld!=-1))
+		{
+			// make sure it's here
+			//assert(reverseOld!= -1 && "getReverseType() returned -1, struct required!");
+			//
+			curStruct = mMemoryDNA->getStruct(reverseOld);
+			newType = mMemoryDNA->getType(curStruct[0]);
+			// make sure it's the same
+			assert((strcmp(oldType, newType)==0) && "internal error, struct mismatch!");
+
+			
+			curLen = mMemoryDNA->getLength(curStruct[0]);
+			dataChunk.dna_nr = reverseOld;
+			if (strcmp("Link",oldType)!=0)
+			{
+				dataChunk.len = curLen * dataChunk.nr;
+			} else
+			{
+				printf("keep length of link = %d\n",dataChunk.len);
+			}
+		
+			//write the structure header
+			fwrite(&dataChunk,sizeof(bChunkInd),1,fp);
+			
+
+
+			short int* curStruct1 = mMemoryDNA->getStruct(dataChunk.dna_nr);
+			assert(curStruct1 == curStruct);
+
+			//short oldLen = mFileDNA->getLength(oldStruct[0]);
+			char* cur	= (char*)dataChunk.oldPtr;//(char*)mMain->findLibPointer(dataChunk.oldPtr);
+
+			//write the actual contents of the structure(s)
+			fwrite(cur,dataChunk.len,1,fp);
+		} else
+		{
+			printf("serious error, struct mismatch: don't write\n");
+		}
+	}
+	
+}
+
+// 32 && 64 bit versions
+extern unsigned char DNAstr[];
+extern int DNAlen;
+
+//unsigned char DNAstr[]={0};
+//int DNAlen=0;
+
+
+extern unsigned char DNAstr64[];
+extern int DNAlen64;
+
+
+void	bBlenderFile::writeDNA(FILE* fp)
+{
+
+	bChunkInd dataChunk;
+	dataChunk.code = DNA1;
+	dataChunk.dna_nr = 0;
+	dataChunk.nr = 1;
+	
+	if (VOID_IS_8)
+	{
+		dataChunk.len = DNAlen64;
+		dataChunk.oldPtr = DNAstr64;
+		fwrite(&dataChunk,sizeof(bChunkInd),1,fp);
+		fwrite(DNAstr64, DNAlen64,1,fp);
+	}
+	else
+	{
+		dataChunk.len = DNAlen;
+		dataChunk.oldPtr = DNAstr;
+		fwrite(&dataChunk,sizeof(bChunkInd),1,fp);
+		fwrite(DNAstr, DNAlen,1,fp);
+	}
 }

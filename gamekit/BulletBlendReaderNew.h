@@ -56,6 +56,8 @@ public:
 	///if you already have a file pointer, call readFile
 	int		readFile(char* memoryBuffer, int len, int verboseDumpAllTypes = false);
 
+	int		writeFile(const char* fileName);
+
 	void	convertAllObjects(int verboseDumpAllBlocks=false);
 
 	virtual	void	convertConstraints();
