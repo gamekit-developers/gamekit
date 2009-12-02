@@ -54,7 +54,7 @@ int		BulletBlendReaderNew::readFile(char* memoryBuffer, int fileLen, int verbose
 	
 	if (verboseDumpAllTypes)
 	{
-		m_blendFile->getMain()->dumpChunks(m_blendFile->getFileDNA());
+		m_blendFile->dumpChunks(m_blendFile->getFileDNA());
 	}
 	return ok;
 }
@@ -226,7 +226,7 @@ void	BulletBlendReaderNew::convertAllObjects(int verboseDumpAllBlocks)
 
 	if (verboseDumpAllBlocks)
 	{
-		mainPtr->dumpChunks(m_blendFile->getFileDNA());
+		m_blendFile->dumpChunks(m_blendFile->getFileDNA());
 	}
 
 }

@@ -31,15 +31,6 @@ namespace bParse {
 		bStructHandle*		m_glob;
 
 		
-
-		void resolvePointersMismatch();
-	
-		void resolvePointersChunk(bChunkInd& dataChunk);
-
-		void resolvePointersStructRecursive(char *strcPtr, int old_dna);
-
-
-
 	public:
 
 		bBlenderFile(const char* fileName);
@@ -52,24 +43,19 @@ namespace bParse {
 
 		virtual	void	addDataBlock(char* dataBlock);
 
-		bPtrMap&		getLibPointers()
-		{
-			return mLibPointers;
-		}
-
 		bStructHandle*		getFileGlobal()
 		{
 			return m_glob;
 		}
 
+		// experimental
+		virtual int		write(const char* fileName);
+
+		virtual	void	parse(bool verboseDumpAllTypes);
+
 		virtual	void parseData();
 
-		virtual void resolvePointers();
-
-		virtual	void	writeChunks(FILE* fp);
-
 		virtual	void	writeDNA(FILE* fp);
-
 
 	};
 };

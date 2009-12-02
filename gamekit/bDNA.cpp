@@ -21,17 +21,6 @@ subject to the following restrictions:
 
 using namespace bParse;
 
-// 32 && 64 bit versions
-extern unsigned char DNAstr[];
-extern int DNAlen;
-
-//unsigned char DNAstr[]={0};
-//int DNAlen=0;
-
-
-extern unsigned char DNAstr64[];
-extern int DNAlen64;
-
 
 // ----------------------------------------------------- //
 bDNA::bDNA()
@@ -267,18 +256,7 @@ void bDNA::initCmpFlags(bDNA *memDNA)
 }
 
 
-// ----------------------------------------------------- //
-void bDNA::initMemory()
-{
-	if (VOID_IS_8)
-	{
-		init((char*)DNAstr64, DNAlen64);
-	}
-	else
-	{
-		init((char*)DNAstr, DNAlen);
-	}
-}
+
 
 static int name_is_array(char* name, int* dim1, int* dim2) {
 	int len = strlen(name);

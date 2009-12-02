@@ -48,7 +48,7 @@ namespace bParse {
 
 		bMainDataMap	mData;
 
-		std::vector<bParse::bChunkInd>	m_chunks;
+	
 
 
 		bListBasePtr *_findCode(int code);
@@ -91,14 +91,13 @@ namespace bParse {
 		bListBasePtr *getBrush();
 
 
-		void	dumpChunks(bParse::bDNA* dna);
-
+		
 		// tracking allocated memory
 		void addDatablock(void *allocated);
 
 
 		// --
-		void *findLibPointer(void *ptr);
+		
 		void linkList(void *listBasePtr);
 	};
 }

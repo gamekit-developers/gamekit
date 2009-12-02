@@ -88,14 +88,7 @@ void bMain::addDatablock(void *allocated)
 	mPool.push_back((bStructHandle*)allocated);
 }
 
-// ----------------------------------------------------- //
-void *bMain::findLibPointer(void *ptr)
-{
-	bPtrMap::iterator it = mFP->getLibPointers().find(ptr);
-	if (it != mFP->getLibPointers().end())
-		return it->second;
-	return 0;
-}
+
 
 
 // ------------------------------------------------------------//
@@ -120,7 +113,7 @@ void bMain::linkList(void *listBasePtr)
 	if (!base || !base->first)
 		return;
 
-	base->first = findLibPointer(base->first);
+	base->first = mFP->findLibPointer(base->first);
 	if (!base->first)
 	{
 		base->last = 0;
@@ -131,7 +124,7 @@ void bMain::linkList(void *listBasePtr)
 	Link *l = (Link*)base->first;
 	while (l)
 	{
-		l->next = findLibPointer(l->next);
+		l->next = mFP->findLibPointer(l->next);
 		l->prev = l->next;
 		prev = l->next;
 		l = (Link*)l->next;
@@ -395,51 +388,6 @@ bListBasePtr *bMain::getBrush()
 	return ptr;
 }
 
-void	bMain::dumpChunks(bParse::bDNA* dna)
-{
-	int i;
-
-	for (i=0;i<m_chunks.size();i++)
-	{
-		bChunkInd& dataChunk = m_chunks[i];
-		char* codeptr = (char*)&dataChunk.code;
-		char codestr[5] = {codeptr[0],codeptr[1],codeptr[2],codeptr[3],0};
-		
-		short* newStruct = dna->getStruct(dataChunk.dna_nr);
-		char* typeName = dna->getType(newStruct[0]);
-		printf("%3d: %s  ",i,typeName);
-
-		printf("code=%s  ",codestr);
-		
-		printf("ptr=%p  ",dataChunk.oldPtr);
-		printf("len=%d  ",dataChunk.len);
-		printf("nr=%d  ",dataChunk.nr);
-		if (dataChunk.nr!=1)
-		{
-			printf("not 1\n");
-		}
-		printf("\n");
-
-		
-		
-
-	}
-
-#if 0
-	IDFinderData ifd;
-	ifd.success = 0;
-	ifd.IDname = NULL;
-	ifd.just_print_it = 1;
-	for (i=0; i<bf->m_blocks.size(); ++i) 
-	{
-		BlendBlock* bb = bf->m_blocks[i];
-		printf("tag='%s'\tptr=%p\ttype=%s\t[%4d]",		bb->tag, bb,bf->types[bb->type_index].name,bb->m_array_entries_.size());
-		block_ID_finder(bb, bf, &ifd);
-		printf("\n");
-	}
-#endif
-
-}
 
 
 //eof

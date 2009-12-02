@@ -36,7 +36,6 @@ namespace bParse {
 		~bDNA();
 
 		void init(char *data, int len, bool swap=false);
-		void initMemory();
 
 		int getArraySize(char* str);
 		int getArraySizeNew(short name)

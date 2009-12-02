@@ -127,7 +127,8 @@ int main(int argc,char** argv)
 	//const char* fileName = "light.blend";
 	//const char* fileName = "g250.blend";
 	//const char* fileName = "momo_ogreSmallAnim.blend";
-
+	//const char* fileName = "cube_tex_4.blend";
+		
 	//const char* fileName = "slideshow.blend";// 32 bit, 2.48
 	//const char* fileName = "cube_tex_250_64bit.blend";// 64 bit, 2.48
 	

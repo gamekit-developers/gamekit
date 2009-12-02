@@ -17,7 +17,7 @@ subject to the following restrictions:
 #define __BFILE_H__
 
 #include "bCommon.h"
-
+#include "bChunk.h"
 #include <stdio.h>
 
 namespace bParse {
@@ -56,8 +56,8 @@ namespace bParse {
 
 		std::vector<char*>	m_pointerFixupArray;
 		
-		std::vector<char*>	m_listBaseFixupArray;
-
+	
+		std::vector<bChunkInd>	m_chunks;
 
 		// 
 	
@@ -71,7 +71,13 @@ namespace bParse {
 		
 		virtual	void parseData() = 0;
 
-		virtual void resolvePointers() = 0;
+		void resolvePointersMismatch();
+	
+		void resolvePointersChunk(bChunkInd& dataChunk);
+
+		void resolvePointersStructRecursive(char *strcPtr, int old_dna);
+
+		void resolvePointers();
 
 		void parseStruct(char *strcPtr, char *dtPtr, int old_dna, int new_dna, bool fixupPointers);
 		void getMatchingFileDNA(short* old, bString lookupName, bString lookupType, char *strcData, char *data, bool fixupPointers);
@@ -88,6 +94,8 @@ namespace bParse {
 
 		char* readStruct(char *head, class bChunkInd& chunk);
 		char *getAsString(int code);
+
+		void	parseInternal(bool verboseDumpAllTypes, char* memDna,int memDnaLength);
 
 	public:
 		bFile(const char *filename, const char headerString[7]);
@@ -109,16 +117,24 @@ namespace bParse {
 			return mFlags;
 		}
 
+		bPtrMap&		getLibPointers()
+		{
+			return mLibPointers;
+		}
+		
+		void* findLibPointer(void *ptr);
+
 		bool ok();
 
-		void parse(bool verboseDumpAllTypes);
+		virtual	void parse(bool verboseDumpAllTypes) = 0;
 
-		// experimental
-		int	write(const char* fileName);
+		virtual	int	write(const char* fileName) = 0;
 
-		virtual	void	writeChunks(FILE* fp) = 0;
+		virtual	void	writeChunks(FILE* fp);
 
 		virtual	void	writeDNA(FILE* fp) = 0;
+
+		void	dumpChunks(bDNA* dna);
 		
 	};
 }
