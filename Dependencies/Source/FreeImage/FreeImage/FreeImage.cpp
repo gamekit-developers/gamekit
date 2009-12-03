@@ -35,7 +35,7 @@ static const char *s_copyright = "This program uses FreeImage, a free, open sour
 
 //----------------------------------------------------------------------
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__MINGW32__)
 #ifndef FREEIMAGE_LIB
 
 BOOL APIENTRY

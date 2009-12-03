@@ -187,10 +187,6 @@
 				Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 				>
 				<File
-					RelativePath=".\IlmImf\b44ExpLogTable.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\IlmImf\ImfAttribute.cpp"
 					>
 				</File>

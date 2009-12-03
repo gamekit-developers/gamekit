@@ -4,9 +4,9 @@ cmake_minimum_required(VERSION 2.6)
 project(OGREKIT)
 SET(OGREKIT 1.0)
 
-IF(COMMAND cmake_policy)
+if(COMMAND cmake_policy)
    cmake_policy(SET CMP0003 NEW)
-ENDIF(COMMAND cmake_policy)
+endif(COMMAND cmake_policy)
 
 # ---------------------------------------------------------
 # Setup scripts
@@ -17,6 +17,8 @@ set(CMAKE_MODULE_PATH
     ${OGREKIT_SOURCE_DIR}/CMake/Templates
     )
 
+include(CMakeDependentOption)
+include(CheckCXXCompilerFlag)
 include(DependenciesOgreKit)
 
 set(OGREKIT_INSTALL_PREFIX ${OGREKIT_SOURCE_DIR}/Bin)

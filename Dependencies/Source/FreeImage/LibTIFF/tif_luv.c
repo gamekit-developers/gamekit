@@ -1,4 +1,4 @@
-/* $Id: tif_luv.c,v 1.23 2008/06/08 18:47:33 drolon Exp $ */
+/* $Id: tif_luv.c,v 1.27 2009/09/06 13:11:28 drolon Exp $ */
 
 /*
  * Copyright (c) 1997 Greg Ward Larson
@@ -451,7 +451,7 @@ LogL16Encode(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
 	tif->tif_rawcp = op;
 	tif->tif_rawcc = tif->tif_rawdatasize - occ;
 
-	return (0);
+	return (1);
 }
 
 /*
@@ -496,7 +496,7 @@ LogLuvEncode24(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
 	tif->tif_rawcp = op;
 	tif->tif_rawcc = tif->tif_rawdatasize - occ;
 
-	return (0);
+	return (1);
 }
 
 /*
@@ -585,7 +585,7 @@ LogLuvEncode32(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
 	tif->tif_rawcp = op;
 	tif->tif_rawcc = tif->tif_rawdatasize - occ;
 
-	return (0);
+	return (1);
 }
 
 /*
@@ -598,7 +598,7 @@ LogLuvEncodeStrip(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
 	tsize_t rowlen = TIFFScanlineSize(tif);
 
 	assert(cc%rowlen == 0);
-	while (cc && (*tif->tif_encoderow)(tif, bp, rowlen, s) == 0)
+	while (cc && (*tif->tif_encoderow)(tif, bp, rowlen, s) == 1)
 		bp += rowlen, cc -= rowlen;
 	return (cc == 0);
 }
@@ -613,7 +613,7 @@ LogLuvEncodeTile(TIFF* tif, tidata_t bp, tsize_t cc, tsample_t s)
 	tsize_t rowlen = TIFFTileRowSize(tif);
 
 	assert(cc%rowlen == 0);
-	while (cc && (*tif->tif_encoderow)(tif, bp, rowlen, s) == 0)
+	while (cc && (*tif->tif_encoderow)(tif, bp, rowlen, s) == 1)
 		bp += rowlen, cc -= rowlen;
 	return (cc == 0);
 }
@@ -1200,7 +1200,10 @@ LogL16InitState(TIFF* tif)
 		    "No support for converting user data format to LogL");
 		return (0);
 	}
-	sp->tbuflen = multiply(td->td_imagewidth, td->td_rowsperstrip);
+        if( isTiled(tif) )
+            sp->tbuflen = multiply(td->td_tilewidth, td->td_tilelength);
+        else
+            sp->tbuflen = multiply(td->td_imagewidth, td->td_rowsperstrip);
 	if (multiply(sp->tbuflen, sizeof (int16)) == 0 ||
 	    (sp->tbuf = (tidata_t*) _TIFFmalloc(sp->tbuflen * sizeof (int16))) == NULL) {
 		TIFFErrorExt(tif->tif_clientdata, module, "%s: No space for SGILog translation buffer",
@@ -1298,7 +1301,10 @@ LogLuvInitState(TIFF* tif)
 		    "No support for converting user data format to LogLuv");
 		return (0);
 	}
-	sp->tbuflen = multiply(td->td_imagewidth, td->td_rowsperstrip);
+        if( isTiled(tif) )
+            sp->tbuflen = multiply(td->td_tilewidth, td->td_tilelength);
+        else
+            sp->tbuflen = multiply(td->td_imagewidth, td->td_rowsperstrip);
 	if (multiply(sp->tbuflen, sizeof (uint32)) == 0 ||
 	    (sp->tbuf = (tidata_t*) _TIFFmalloc(sp->tbuflen * sizeof (uint32))) == NULL) {
 		TIFFErrorExt(tif->tif_clientdata, module, "%s: No space for SGILog translation buffer",

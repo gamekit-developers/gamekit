@@ -28,10 +28,6 @@
 
 #include "gkCommon.h"
 
-
-
-
-
 // ----------------------------------------------------------------------------
 template <typename T>
 class gkArray
@@ -159,18 +155,18 @@ public:
 		return i;
 	}
 
-	GK_INLINE T& operator[](size_t idx)			 { GK_ASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
+	GK_INLINE T& operator[](size_t idx)				{ GK_ASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
 	GK_INLINE const T& operator[](size_t idx) const { GK_ASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
-	GK_INLINE T& at(size_t idx)					 { GK_ASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
-	GK_INLINE const T& at(size_t idx) const		 { GK_ASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
-	GK_INLINE void swap(size_t a, size_t b)		 { UT_Swap<T>(m_data[a], m_data[b]); }
+	GK_INLINE T& at(size_t idx)						{ GK_ASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
+	GK_INLINE const T& at(size_t idx) const			{ GK_ASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
+	GK_INLINE void swap(size_t a, size_t b)			{ GK_Swap(m_data[a], m_data[b]); }
 
 	/// raw data access
-	GK_INLINE ConstPointer  ptr(void) const		 { return m_data; }
-	GK_INLINE Pointer	   ptr(void)			   { return m_data; }
+	GK_INLINE ConstPointer  ptr(void) const			{ return m_data; }
+	GK_INLINE Pointer	   ptr(void)				{ return m_data; }
 	GK_INLINE void expand(size_t nr)				{ reserve(m_size + nr); }
-	GK_INLINE size_t capacity(void) const		   { return m_capacity; }
-	GK_INLINE size_t size(void) const			   { return m_size; }
+	GK_INLINE size_t capacity(void) const			{ return m_capacity; }
+	GK_INLINE size_t size(void) const				{ return m_size; }
 	GK_INLINE bool empty(void) const				{ return m_size == 0;}
 
 

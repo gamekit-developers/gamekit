@@ -1,4 +1,4 @@
-/* $Id: tif_getimage.c,v 1.25 2008/06/08 18:47:33 drolon Exp $ */
+/* $Id: tif_getimage.c,v 1.29 2009/09/06 13:11:28 drolon Exp $ */
 
 /*
  * Copyright (c) 1991-1997 Sam Leffler
@@ -38,10 +38,6 @@ static int gtStripContig(TIFFRGBAImage*, uint32*, uint32, uint32);
 static int gtStripSeparate(TIFFRGBAImage*, uint32*, uint32, uint32);
 static int PickContigCase(TIFFRGBAImage*);
 static int PickSeparateCase(TIFFRGBAImage*);
-
-static int BuildMapUaToAa(TIFFRGBAImage* img);
-static int BuildMapBitdepth16To8(TIFFRGBAImage* img);
-
 static const char photoTag[] = "PhotometricInterpretation";
 
 /* 
@@ -206,11 +202,6 @@ TIFFRGBAImageEnd(TIFFRGBAImage* img)
 		_TIFFfree(img->ycbcr), img->ycbcr = NULL;
 	if (img->cielab)
 		_TIFFfree(img->cielab), img->cielab = NULL;
-	if (img->UaToAa)
-		_TIFFfree(img->UaToAa), img->UaToAa = NULL;
-	if (img->Bitdepth16To8)
-		_TIFFfree(img->Bitdepth16To8), img->Bitdepth16To8 = NULL;
-
 	if( img->redcmap ) {
 		_TIFFfree( img->redcmap );
 		_TIFFfree( img->greencmap );
@@ -431,15 +422,11 @@ TIFFRGBAImageBegin(TIFFRGBAImage* img, TIFF* tif, int stop, char emsg[1024])
 			    photoTag, img->photometric);
 			return (0);
 	}
-	img->SubsamplingHor = 1;
-	img->SubsamplingVer = 1;
 	img->Map = NULL;
 	img->BWmap = NULL;
 	img->PALmap = NULL;
 	img->ycbcr = NULL;
 	img->cielab = NULL;
-	img->UaToAa = NULL;
-	img->Bitdepth16To8 = NULL;
 	TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &img->width);
 	TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &img->height);
 	TIFFGetFieldDefaulted(tif, TIFFTAG_ORIENTATION, &img->orientation);
@@ -806,6 +793,7 @@ gtStripContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 	uint32 pos;
 	unsigned char* buf;
 	uint32 rowsperstrip;
+	uint16 subsamplinghor,subsamplingver;
 	uint32 imagewidth = img->width;
 	tsize_t scanline;
 	int32 fromskew, toskew;
@@ -828,6 +816,7 @@ gtStripContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 	}
 
 	TIFFGetFieldDefaulted(tif, TIFFTAG_ROWSPERSTRIP, &rowsperstrip);
+	TIFFGetFieldDefaulted(tif, TIFFTAG_YCBCRSUBSAMPLING, &subsamplinghor, &subsamplingver);
 	scanline = TIFFNewScanlineSize(tif);
 	fromskew = (w < imagewidth ? imagewidth - w : 0);
 	for (row = 0; row < h; row += nrow)
@@ -835,8 +824,8 @@ gtStripContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 		rowstoread = rowsperstrip - (row + img->row_offset) % rowsperstrip;
 		nrow = (row + rowstoread > h ? h - row : rowstoread);
 		nrowsub = nrow;
-		if ((nrowsub%(img->SubsamplingVer))!=0)
-			nrowsub+=img->SubsamplingVer-nrowsub%(img->SubsamplingVer);
+		if ((nrowsub%subsamplingver)!=0)
+			nrowsub+=subsamplingver-nrowsub%subsamplingver;
 		if (TIFFReadEncodedStrip(tif,
 		    TIFFComputeStrip(tif,row+img->row_offset, 0),
 		    buf,
@@ -1047,7 +1036,6 @@ gtStripSeparate(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
 #define	PACK4(r,g,b,a)	\
 	((uint32)(r)|((uint32)(g)<<8)|((uint32)(b)<<16)|((uint32)(a)<<24))
 #define W2B(v) (((v)>>8)&0xff)
-/* TODO: PACKW should have be made redundant in favor of Bitdepth16To8 LUT */
 #define	PACKW(r,g,b)	\
 	((uint32)W2B(r)|((uint32)W2B(g)<<8)|((uint32)W2B(b)<<16)|A1)
 #define	PACKW4(r,g,b,a)	\
@@ -1278,13 +1266,11 @@ DECLAREContigPutFunc(putRGBUAcontig8bittile)
 	fromskew *= samplesperpixel;
 	while (h-- > 0) {
 		uint32 r, g, b, a;
-		uint8* m;
 		for (x = w; x-- > 0;) {
 			a = pp[3];
-			m = img->UaToAa+(a<<8);
-			r = m[pp[0]];
-			g = m[pp[1]];
-			b = m[pp[2]];
+                        r = (a*pp[0] + 127) / 255;
+                        g = (a*pp[1] + 127) / 255;
+                        b = (a*pp[2] + 127) / 255;
 			*cp++ = PACK4(r,g,b,a);
 			pp += samplesperpixel;
 		}
@@ -1304,10 +1290,8 @@ DECLAREContigPutFunc(putRGBcontig16bittile)
 	fromskew *= samplesperpixel;
 	while (h-- > 0) {
 		for (x = w; x-- > 0;) {
-			*cp++ = PACK(img->Bitdepth16To8[wp[0]],
-			    img->Bitdepth16To8[wp[1]],
-			    img->Bitdepth16To8[wp[2]]);
-			wp += samplesperpixel;
+                    *cp++ = PACKW(wp[0],wp[1],wp[2]);
+                    wp += samplesperpixel;
 		}
 		cp += toskew;
 		wp += fromskew;
@@ -1326,11 +1310,8 @@ DECLAREContigPutFunc(putRGBAAcontig16bittile)
 	fromskew *= samplesperpixel;
 	while (h-- > 0) {
 		for (x = w; x-- > 0;) {
-			*cp++ = PACK4(img->Bitdepth16To8[wp[0]],
-			    img->Bitdepth16To8[wp[1]],
-			    img->Bitdepth16To8[wp[2]],
-			    img->Bitdepth16To8[wp[3]]);
-			wp += samplesperpixel;
+                    *cp++ = PACKW4(wp[0],wp[1],wp[2],wp[3]);
+                    wp += samplesperpixel;
 		}
 		cp += toskew;
 		wp += fromskew;
@@ -1349,15 +1330,13 @@ DECLAREContigPutFunc(putRGBUAcontig16bittile)
 	fromskew *= samplesperpixel;
 	while (h-- > 0) {
 		uint32 r,g,b,a;
-		uint8* m;
 		for (x = w; x-- > 0;) {
-			a = img->Bitdepth16To8[wp[3]];
-			m = img->UaToAa+(a<<8);
-			r = m[img->Bitdepth16To8[wp[0]]];
-			g = m[img->Bitdepth16To8[wp[1]]];
-			b = m[img->Bitdepth16To8[wp[2]]];
-			*cp++ = PACK4(r,g,b,a);
-			wp += samplesperpixel;
+                    a = W2B(wp[3]);
+                    r = (a*W2B(wp[0]) + 127) / 255;
+                    g = (a*W2B(wp[1]) + 127) / 255;
+                    b = (a*W2B(wp[2]) + 127) / 255;
+                    *cp++ = PACK4(r,g,b,a);
+                    wp += samplesperpixel;
 		}
 		cp += toskew;
 		wp += fromskew;
@@ -1460,13 +1439,11 @@ DECLARESepPutFunc(putRGBUAseparate8bittile)
 	(void) img; (void) y;
 	while (h-- > 0) {
 		uint32 rv, gv, bv, av;
-		uint8* m;
 		for (x = w; x-- > 0;) {
 			av = *a++;
-			m = img->UaToAa+(av<<8);
-			rv = m[*r++];
-			gv = m[*g++];
-			bv = m[*b++];
+                        rv = (av* *r++ + 127) / 255;
+                        gv = (av* *g++ + 127) / 255;
+                        bv = (av* *b++ + 127) / 255;
 			*cp++ = PACK4(rv,gv,bv,av);
 		}
 		SKEW4(r, g, b, a, fromskew);
@@ -1485,9 +1462,7 @@ DECLARESepPutFunc(putRGBseparate16bittile)
 	(void) img; (void) y; (void) a;
 	while (h-- > 0) {
 		for (x = 0; x < w; x++)
-			*cp++ = PACK(img->Bitdepth16To8[*wr++],
-			    img->Bitdepth16To8[*wg++],
-			    img->Bitdepth16To8[*wb++]);
+                    *cp++ = PACKW(*wr++,*wg++,*wb++);
 		SKEW(wr, wg, wb, fromskew);
 		cp += toskew;
 	}
@@ -1505,10 +1480,7 @@ DECLARESepPutFunc(putRGBAAseparate16bittile)
 	(void) img; (void) y;
 	while (h-- > 0) {
 		for (x = 0; x < w; x++)
-			*cp++ = PACK4(img->Bitdepth16To8[*wr++],
-			    img->Bitdepth16To8[*wg++],
-			    img->Bitdepth16To8[*wb++],
-			    img->Bitdepth16To8[*wa++]);
+                    *cp++ = PACKW4(*wr++,*wg++,*wb++,*wa++);
 		SKEW4(wr, wg, wb, wa, fromskew);
 		cp += toskew;
 	}
@@ -1526,14 +1498,12 @@ DECLARESepPutFunc(putRGBUAseparate16bittile)
 	(void) img; (void) y;
 	while (h-- > 0) {
 		uint32 r,g,b,a;
-		uint8* m;
 		for (x = w; x-- > 0;) {
-			a = img->Bitdepth16To8[*wa++];
-			m = img->UaToAa+(a<<8);
-			r = m[img->Bitdepth16To8[*wr++]];
-			g = m[img->Bitdepth16To8[*wg++]];
-			b = m[img->Bitdepth16To8[*wb++]];
-			*cp++ = PACK4(r,g,b,a);
+                    a = W2B(*wa++);
+                    r = (a*W2B(*wr++) + 127) / 255;
+                    g = (a*W2B(*wg++) + 127) / 255;
+                    b = (a*W2B(*wb++) + 127) / 255;
+                    *cp++ = PACK4(r,g,b,a);
 		}
 		SKEW4(wr, wg, wb, wa, fromskew);
 		cp += toskew;
@@ -2355,28 +2325,23 @@ PickContigCase(TIFFRGBAImage* img)
 						img->put.contig = putRGBAAcontig8bittile;
 					else if (img->alpha == EXTRASAMPLE_UNASSALPHA)
 					{
-						if (BuildMapUaToAa(img))
-							img->put.contig = putRGBUAcontig8bittile;
+                                            img->put.contig = putRGBUAcontig8bittile;
 					}
 					else
-						img->put.contig = putRGBcontig8bittile;
+                                            img->put.contig = putRGBcontig8bittile;
 					break;
 				case 16:
 					if (img->alpha == EXTRASAMPLE_ASSOCALPHA)
 					{
-						if (BuildMapBitdepth16To8(img))
-							img->put.contig = putRGBAAcontig16bittile;
+                                            img->put.contig = putRGBAAcontig16bittile;
 					}
 					else if (img->alpha == EXTRASAMPLE_UNASSALPHA)
 					{
-						if (BuildMapBitdepth16To8(img) &&
-						    BuildMapUaToAa(img))
-							img->put.contig = putRGBUAcontig16bittile;
+                                            img->put.contig = putRGBUAcontig16bittile;
 					}
 					else
 					{
-						if (BuildMapBitdepth16To8(img))
-							img->put.contig = putRGBcontig16bittile;
+                                            img->put.contig = putRGBcontig16bittile;
 					}
 					break;
 			}
@@ -2445,8 +2410,10 @@ PickContigCase(TIFFRGBAImage* img)
 					 * Joris: added support for the [1,2] case, nonetheless, to accomodate
 					 * some OJPEG files
 					 */
-					TIFFGetFieldDefaulted(img->tif, TIFFTAG_YCBCRSUBSAMPLING, &img->SubsamplingHor, &img->SubsamplingVer);
-					switch ((img->SubsamplingHor<<4)|img->SubsamplingVer) {
+					uint16 SubsamplingHor;
+					uint16 SubsamplingVer;
+					TIFFGetFieldDefaulted(img->tif, TIFFTAG_YCBCRSUBSAMPLING, &SubsamplingHor, &SubsamplingVer);
+					switch ((SubsamplingHor<<4)|SubsamplingVer) {
 						case 0x44:
 							img->put.contig = putcontig8bitYCbCr44tile;
 							break;
@@ -2501,8 +2468,7 @@ PickSeparateCase(TIFFRGBAImage* img)
 						img->put.separate = putRGBAAseparate8bittile;
 					else if (img->alpha == EXTRASAMPLE_UNASSALPHA)
 					{
-						if (BuildMapUaToAa(img))
-							img->put.separate = putRGBUAseparate8bittile;
+                                            img->put.separate = putRGBUAseparate8bittile;
 					}
 					else
 						img->put.separate = putRGBseparate8bittile;
@@ -2510,19 +2476,15 @@ PickSeparateCase(TIFFRGBAImage* img)
 				case 16:
 					if (img->alpha == EXTRASAMPLE_ASSOCALPHA)
 					{
-						if (BuildMapBitdepth16To8(img))
-							img->put.separate = putRGBAAseparate16bittile;
+                                            img->put.separate = putRGBAAseparate16bittile;
 					}
 					else if (img->alpha == EXTRASAMPLE_UNASSALPHA)
 					{
-						if (BuildMapBitdepth16To8(img) &&
-						    BuildMapUaToAa(img))
-							img->put.separate = putRGBUAseparate16bittile;
+                                            img->put.separate = putRGBUAseparate16bittile;
 					}
 					else
 					{
-						if (BuildMapBitdepth16To8(img))
-							img->put.separate = putRGBseparate16bittile;
+                                            img->put.separate = putRGBseparate16bittile;
 					}
 					break;
 			}
@@ -2546,48 +2508,6 @@ PickSeparateCase(TIFFRGBAImage* img)
 	}
 	return ((img->get!=NULL) && (img->put.separate!=NULL));
 }
-
-static int
-BuildMapUaToAa(TIFFRGBAImage* img)
-{
-	static const char module[]="BuildMapUaToAa";
-	uint8* m;
-	uint16 na,nv;
-	assert(img->UaToAa==NULL);
-	img->UaToAa=_TIFFmalloc(65536);
-	if (img->UaToAa==NULL)
-	{
-		TIFFErrorExt(img->tif,module,"Out of memory");
-		return(0);
-	}
-	m=img->UaToAa;
-	for (na=0; na<256; na++)
-	{
-		for (nv=0; nv<256; nv++)
-			*m++=(nv*na+127)/255;
-	}
-	return(1);
-}
-
-static int
-BuildMapBitdepth16To8(TIFFRGBAImage* img)
-{
-	static const char module[]="BuildMapBitdepth16To8";
-	uint8* m;
-	uint32 n;
-	assert(img->Bitdepth16To8==NULL);
-	img->Bitdepth16To8=_TIFFmalloc(65536);
-	if (img->Bitdepth16To8==NULL)
-	{
-		TIFFErrorExt(img->tif,module,"Out of memory");
-		return(0);
-	}
-	m=img->Bitdepth16To8;
-	for (n=0; n<65536; n++)
-		*m++=(n+128)/257;
-	return(1);
-}
-
 
 /*
  * Read a whole strip off data from the file, and convert to RGBA form.

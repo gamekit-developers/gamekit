@@ -36,6 +36,7 @@
 #include <stdarg.h>
 #include <ctype.h>
 #include <assert.h>
+#include <limits.h>
 
 #include <string>
 #include <list>
@@ -195,25 +196,97 @@ ReplaceExtension(char *result, const char *filename, const char *extension) {
 //   Big Endian / Little Endian utility functions
 // ==========================================================
 
+inline WORD 
+__SwapUInt16(WORD arg) { 
+#if defined(_MSC_VER) && _MSC_VER > 1310 
+	return _byteswap_ushort(arg); 
+#elif defined(__i386__) && defined(__GNUC__) 
+	__asm__("xchgb %b0, %h0" : "+q" (arg)); 
+	return arg; 
+#elif defined(__ppc__) && defined(__GNUC__) 
+	WORD result; 
+	__asm__("lhbrx %0,0,%1" : "=r" (result) : "r" (&arg), "m" (arg)); 
+	return result; 
+#else 
+	// swap bytes 
+	WORD result;
+	result = ((arg << 8) & 0xFF00) | ((arg >> 8) & 0x00FF); 
+	return result; 
+#endif 
+} 
+ 
+inline DWORD 
+__SwapUInt32(DWORD arg) { 
+#if defined(_MSC_VER) && _MSC_VER > 1310 
+	return _byteswap_ulong(arg); 
+#elif defined(__i386__) && defined(__GNUC__) 
+	__asm__("bswap %0" : "+r" (arg)); 
+	return arg; 
+#elif defined(__ppc__) && defined(__GNUC__) 
+	DWORD result; 
+	__asm__("lwbrx %0,0,%1" : "=r" (result) : "r" (&arg), "m" (arg)); 
+	return result; 
+#else 
+	// swap words then bytes
+	DWORD result; 
+	result = ((arg & 0x000000FF) << 24) | ((arg & 0x0000FF00) << 8) | ((arg >> 8) & 0x0000FF00) | ((arg >> 24) & 0x000000FF); 
+	return result; 
+#endif 
+} 
+ 
+/**
+for later use ...
+inline uint64_t 
+SwapInt64(uint64_t arg) { 
+#if defined(_MSC_VER) && _MSC_VER >= 1310 
+	return _byteswap_uint64(arg); 
+#else 
+	union Swap { 
+		uint64_t sv; 
+		uint32_t ul[2]; 
+	} tmp, result; 
+	tmp.sv = arg; 
+	result.ul[0] = SwapInt32(tmp.ul[1]);  
+	result.ul[1] = SwapInt32(tmp.ul[0]); 
+	return result.sv; 
+#endif 
+} 
+*/
+
 inline void
 SwapShort(WORD *sp) {
-	BYTE *cp = (BYTE *)sp, t = cp[0]; cp[0] = cp[1]; cp[1] = t;
+	*sp = __SwapUInt16(*sp);
 }
 
 inline void
 SwapLong(DWORD *lp) {
-	BYTE *cp = (BYTE *)lp, t = cp[0]; cp[0] = cp[3]; cp[3] = t;
-	t = cp[1]; cp[1] = cp[2]; cp[2] = t;
+	*lp = __SwapUInt32(*lp);
 }
 
 // ==========================================================
-//   Greyscale conversion
+//   Greyscale and color conversion
 // ==========================================================
 
 #define GREY(r, g, b) (BYTE)(((WORD)r * 77 + (WORD)g * 150 + (WORD)b * 29) >> 8)	// .299R + .587G + .114B
 /*
 #define GREY(r, g, b) (BYTE)(((WORD)r * 169 + (WORD)g * 256 + (WORD)b * 87) >> 9)	// .33R + 0.5G + .17B
 */
+
+#define RGB565(b, g, r) ((((b) >> 3) << FI16_565_BLUE_SHIFT) | (((g) >> 2) << FI16_565_GREEN_SHIFT) | (((r) >> 3) << FI16_565_RED_SHIFT))
+#define RGB555(b, g, r) ((((b) >> 3) << FI16_555_BLUE_SHIFT) | (((g) >> 3) << FI16_555_GREEN_SHIFT) | (((r) >> 3) << FI16_555_RED_SHIFT))
+
+#define FORMAT_RGB565(dib) ((FreeImage_GetRedMask(dib) == FI16_565_RED_MASK) &&(FreeImage_GetGreenMask(dib) == FI16_565_GREEN_MASK) &&(FreeImage_GetBlueMask(dib) == FI16_565_BLUE_MASK))
+#define RGBQUAD_TO_WORD(dib, color) (FORMAT_RGB565(dib) ? RGB565((color)->rgbBlue, (color)->rgbGreen, (color)->rgbRed) : RGB555((color)->rgbBlue, (color)->rgbGreen, (color)->rgbRed))
+
+#define CREATE_GREYSCALE_PALETTE(palette, entries) \
+	for (unsigned i = 0, v = 0; i < entries; i++, v += 0x00FFFFFF / (entries - 1)) { \
+		((unsigned *)palette)[i] = v; \
+	}
+
+#define CREATE_GREYSCALE_PALETTE_REVERSE(palette, entries) \
+	for (unsigned i = 0, v = 0x00FFFFFF; i < entries; i++, v -= (0x00FFFFFF / (entries - 1))) { \
+		((unsigned *)palette)[i] = v; \
+	}
 
 // ==========================================================
 //   Template utility functions
@@ -269,7 +342,12 @@ MAXMIN(const T* L, long n, T& max, T& min) {
 //   Generic error messages
 // ==========================================================
 
-static const char *FI_MSG_ERROR_MEMORY = "Not enough memory";
+static const char *FI_MSG_ERROR_MEMORY = "Memory allocation failed";
+static const char *FI_MSG_ERROR_DIB_MEMORY = "DIB allocation failed";
+static const char *FI_MSG_ERROR_PARSING = "Parsing error";
+static const char *FI_MSG_ERROR_MAGIC_NUMBER = "Invalid magic number";
+static const char *FI_MSG_ERROR_UNSUPPORTED_FORMAT = "Unsupported format";
+static const char *FI_MSG_ERROR_UNSUPPORTED_COMPRESSION = "Unsupported compression type";
 
 
 #endif // UTILITIES_H

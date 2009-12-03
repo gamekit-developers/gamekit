@@ -596,6 +596,7 @@ FreeImage_ConvertToType(FIBITMAP *src, FREE_IMAGE_TYPE dst_type, BOOL scale_line
 		case FIT_RGBA16:
 			switch(dst_type) {
 				case FIT_BITMAP:
+					dst = FreeImage_ConvertTo32Bits(src);
 					break;
 				case FIT_UINT16:
 					break;
@@ -614,6 +615,7 @@ FreeImage_ConvertToType(FIBITMAP *src, FREE_IMAGE_TYPE dst_type, BOOL scale_line
 				case FIT_RGB16:
 					break;
 				case FIT_RGBF:
+					dst = FreeImage_ConvertToRGBF(src);
 					break;
 				case FIT_RGBAF:
 					break;

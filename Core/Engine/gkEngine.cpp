@@ -303,7 +303,7 @@ void gkEngine::run(void)
 	mRoot->getRenderSystem()->_initRenderTargets();
 
 	unsigned long ticks= 1000 / (unsigned long)mTickRate;
-	unsigned long skip= (unsigned long(Real(mTickRate) / 5.0)), loop= 0;
+	unsigned long skip= ((unsigned long)Real(mTickRate) / 5.0), loop= 0;
 	if (skip == 0) skip= 1;
 
 	/// start time

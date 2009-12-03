@@ -81,7 +81,7 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;OPJ_STATIC"
 				StringPooling="TRUE"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="1"
 				StructMemberAlignment="0"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderFile=".\Debug/LibOpenJPEG.pch"

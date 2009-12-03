@@ -331,7 +331,7 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 			// check PCX identifier
 
 			if ((header.manufacturer != 0x0A) || (header.version > 5))
-				throw "Invalid PCX file";
+				throw FI_MSG_ERROR_MAGIC_NUMBER;
 
 			// allocate a new DIB
 
@@ -346,8 +346,9 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 
 			// if the dib couldn't be allocated, throw an error
 
-			if (!dib)
-				throw "DIB allocation failed";			
+			if (!dib) {
+				throw FI_MSG_ERROR_DIB_MEMORY;
+			}
 
 			// metrics handling code
 
@@ -531,7 +532,7 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 					bits -= pitch;
 				}
 			} else {
-				throw "Unable to read this file";
+				throw FI_MSG_ERROR_UNSUPPORTED_FORMAT;
 			}
 
 			delete [] line;

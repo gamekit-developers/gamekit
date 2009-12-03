@@ -74,7 +74,7 @@ FreeImage_ColorQuantizeEx(FIBITMAP *dib, FREE_IMAGE_QUANTIZE quantize, int Palet
 							FreeImage_CloneMetadata(dst, dib);
 						}
 						return dst;
-					} catch (char *) {
+					} catch (const char *) {
 						return NULL;
 					}
 				}

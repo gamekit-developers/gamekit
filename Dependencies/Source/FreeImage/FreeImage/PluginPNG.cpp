@@ -392,7 +392,7 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 					break;
 
 				default:
-					throw "PNG format not supported";
+					throw FI_MSG_ERROR_UNSUPPORTED_FORMAT;
 			}
 
 			// Get the background color to draw transparent and alpha images over.
@@ -507,7 +507,7 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 					break;
 
 				default:
-					throw "PNG format not supported";
+					throw FI_MSG_ERROR_UNSUPPORTED_FORMAT;
 			}
 
 			// store the background color 

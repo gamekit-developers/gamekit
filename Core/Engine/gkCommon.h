@@ -99,4 +99,11 @@ typedef gkHashTableIterator<gkGameObjectHashMap> GameObjectHashMapIterator;
 typedef gkArray<gkGameObject*> gkGameObjectArray;
 typedef gkArrayIterator<gkGameObjectArray> gkGameObjectArrayIterator;
 
+template<typename T>
+GK_INLINE void GK_Swap(T& a, T& b)
+{
+    T t(a);
+    a= b; b= t;
+}
+
 #endif//_gkCommon_h_

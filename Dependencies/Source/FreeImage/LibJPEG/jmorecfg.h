@@ -2,6 +2,7 @@
  * jmorecfg.h
  *
  * Copyright (C) 1991-1997, Thomas G. Lane.
+ * Modified 1997-2009 by Guido Vollbeding.
  * This file is part of the Independent JPEG Group's software.
  * For conditions of distribution and use, see the accompanying README file.
  *
@@ -10,9 +11,6 @@
  * optimizations.  Most users will not need to touch this file.
  */
 
-#ifdef _MSC_VER 
-#pragma warning (disable : 4142)	/* benign redefinition of type */
-#endif
 
 /*
  * Define BITS_IN_JSAMPLE as either
@@ -101,21 +99,6 @@ typedef short JSAMPLE;
 
 typedef short JCOEF;
 
-/* Defines for MMX/SSE2 support.  */
-/* Disabled for AT&T and VC++ 6.0 */
-#if defined(_M_IX86) && !defined(__GNUC__)	&& !(defined(_MSC_VER) && (_MSC_VER<1300)) 
-#define HAVE_MMX_INTEL_MNEMONICS 
-
-/* SSE2 code appears broken for some cpus (bug 247437)
-	my comment: I read the discussion about that bug and it was disabled
-	because one guy sent a bugreport - incorrectly decoded jpeg.
-	No one else seems to have this problem = probably a hardware problem.
-	(He had a P4 Celeron)
-	PS: This code comes from Mozilla/Firefox.			-= BiShop =-
-*/
-#define HAVE_SSE2_INTEL_MNEMONICS
-#endif
-
 
 /* Compressed datastreams are represented as arrays of JOCTET.
  * These must be EXACTLY 8 bits wide, at least once they are written to
@@ -176,7 +159,11 @@ typedef short INT16;
 /* INT32 must hold at least signed 32-bit values. */
 
 #ifndef XMD_H			/* X11/xmd.h correctly defines INT32 */
+#ifndef _BASETSD_H_		/* Microsoft defines it in basetsd.h */
+#ifndef QGLOBAL_H		/* Qt defines it in qglobal.h */
 typedef long INT32;
+#endif
+#endif
 #endif
 
 /* Datatype used for image dimensions.  The JPEG standard only supports
@@ -227,10 +214,12 @@ typedef unsigned int JDIMENSION;
  * explicit coding is needed; see uses of the NEED_FAR_POINTERS symbol.
  */
 
+#ifndef FAR
 #ifdef NEED_FAR_POINTERS
 #define FAR  far
 #else
 #define FAR
+#endif
 #endif
 
 
@@ -274,19 +263,18 @@ typedef int boolean;
  * (You may HAVE to do that if your compiler doesn't like null source files.)
  */
 
-/* Arithmetic coding is unsupported for legal reasons.  Complaints to IBM. */
-
 /* Capability options common to encoder and decoder: */
 
 #define DCT_ISLOW_SUPPORTED	/* slow but accurate integer algorithm */
 #define DCT_IFAST_SUPPORTED	/* faster, less accurate integer method */
-#undef DCT_FLOAT_SUPPORTED	/* floating-point: accurate, fast on fast HW */
+#define DCT_FLOAT_SUPPORTED	/* floating-point: accurate, fast on fast HW */
 
 /* Encoder capability options: */
 
-#undef  C_ARITH_CODING_SUPPORTED    /* Arithmetic coding back end? */
+#define C_ARITH_CODING_SUPPORTED    /* Arithmetic coding back end? */
 #define C_MULTISCAN_FILES_SUPPORTED /* Multiple-scan JPEG files? */
 #define C_PROGRESSIVE_SUPPORTED	    /* Progressive JPEG? (Requires MULTISCAN)*/
+#define DCT_SCALING_SUPPORTED	    /* Input rescaling via DCT? (Requires DCT_ISLOW)*/
 #define ENTROPY_OPT_SUPPORTED	    /* Optimization of entropy coding parms? */
 /* Note: if you selected 12-bit data precision, it is dangerous to turn off
  * ENTROPY_OPT_SUPPORTED.  The standard Huffman tables are only good for 8-bit
@@ -300,16 +288,16 @@ typedef int boolean;
 
 /* Decoder capability options: */
 
-#undef  D_ARITH_CODING_SUPPORTED    /* Arithmetic coding back end? */
+#define D_ARITH_CODING_SUPPORTED    /* Arithmetic coding back end? */
 #define D_MULTISCAN_FILES_SUPPORTED /* Multiple-scan JPEG files? */
 #define D_PROGRESSIVE_SUPPORTED	    /* Progressive JPEG? (Requires MULTISCAN)*/
+#define IDCT_SCALING_SUPPORTED	    /* Output rescaling via IDCT? */
 #define SAVE_MARKERS_SUPPORTED	    /* jpeg_save_markers() needed? */
 #define BLOCK_SMOOTHING_SUPPORTED   /* Block smoothing? (Progressive only) */
-#define IDCT_SCALING_SUPPORTED	    /* Output rescaling via IDCT? */
-#define UPSAMPLE_SCALING_SUPPORTED  /* Output rescaling at upsample stage? */
+#undef  UPSAMPLE_SCALING_SUPPORTED  /* Output rescaling at upsample stage? */
 #define UPSAMPLE_MERGING_SUPPORTED  /* Fast path for sloppy upsampling? */
-#undef QUANT_1PASS_SUPPORTED	    /* 1-pass color quantization? */
-#undef QUANT_2PASS_SUPPORTED	    /* 2-pass color quantization? */
+#define QUANT_1PASS_SUPPORTED	    /* 1-pass color quantization? */
+#define QUANT_2PASS_SUPPORTED	    /* 2-pass color quantization? */
 
 /* more capability options later, no doubt */
 
@@ -357,10 +345,8 @@ typedef int boolean;
  * as short on such a machine.  MULTIPLIER must be at least 16 bits wide.
  */
 
-#define int16 short
-
 #ifndef MULTIPLIER
-#define MULTIPLIER  int16		/* type for fastest integer multiply */
+#define MULTIPLIER  int		/* type for fastest integer multiply */
 #endif
 
 

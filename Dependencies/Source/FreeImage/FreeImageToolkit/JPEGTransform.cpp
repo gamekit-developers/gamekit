@@ -35,6 +35,17 @@ extern "C" {
 #include "Utilities.h"
 
 // ----------------------------------------------------------
+//   IO filename handling
+// ----------------------------------------------------------
+
+typedef struct tagFilenameIO {
+	const char *src_file;
+	const char *dst_file;
+	const wchar_t *wsrc_file;
+	const wchar_t *wdst_file;
+} FilenameIO;
+
+// ----------------------------------------------------------
 //   Error handling
 // ----------------------------------------------------------
 
@@ -78,10 +89,13 @@ ls_jpeg_output_message (j_common_ptr cinfo) {
 // ----------------------------------------------------------
 
 static BOOL  
-LosslessTransform(const char *src_file, const char *dst_file, FREE_IMAGE_JPEG_OPERATION operation, const char *crop, BOOL perfect) {
+LosslessTransform(const FilenameIO *filenameIO, FREE_IMAGE_JPEG_OPERATION operation, const char *crop, BOOL perfect) {
 	// We assume all-in-memory processing and can therefore use only a
 	// single file pointer for sequential input and output operation
 	FILE *fp = NULL;
+
+	// check for UNICODE filenames - previous structure filling was done before
+	bool bUseUnicode = filenameIO && filenameIO->wsrc_file && filenameIO->wdst_file;
 
 	// Set up the jpeglib structures
 	jpeg_decompress_struct srcinfo;
@@ -164,8 +178,20 @@ LosslessTransform(const char *src_file, const char *dst_file, FREE_IMAGE_JPEG_OP
 		}
 
 		// Open the input file
-		if((fp = fopen(src_file, "rb")) == NULL) {
-			FreeImage_OutputMessageProc(FIF_JPEG, "Cannot open %s for reading", src_file);
+		if(bUseUnicode) {
+#ifdef _WIN32
+			if((fp = _wfopen(filenameIO->wsrc_file, L"rb")) == NULL) {
+				FreeImage_OutputMessageProc(FIF_JPEG, "Cannot open input file for reading");
+			}
+#else
+			fp = NULL;
+#endif // _WIN32
+		} else {
+			if((fp = fopen(filenameIO->src_file, "rb")) == NULL) {
+				FreeImage_OutputMessageProc(FIF_JPEG, "Cannot open %s for reading", filenameIO->src_file);
+			}
+		}
+		if(fp == NULL) {
 			jpeg_destroy_compress(&dstinfo);
 			jpeg_destroy_decompress(&srcinfo);
 			return FALSE;
@@ -213,8 +239,20 @@ LosslessTransform(const char *src_file, const char *dst_file, FREE_IMAGE_JPEG_OP
 		fclose(fp);
 
 		// Open the output file
-		if((fp = fopen(dst_file, "wb")) == NULL) {
-			FreeImage_OutputMessageProc(FIF_JPEG, "Cannot open %s for writing", dst_file);
+		if(bUseUnicode) {
+#ifdef _WIN32
+			if((fp = _wfopen(filenameIO->wdst_file, L"wb")) == NULL) {
+				FreeImage_OutputMessageProc(FIF_JPEG, "Cannot open output file for writing");
+			}
+#else
+			fp = NULL;
+#endif // _WIN32
+		} else {
+			if((fp = fopen(filenameIO->dst_file, "wb")) == NULL) {
+				FreeImage_OutputMessageProc(FIF_JPEG, "Cannot open %s for writing", filenameIO->dst_file);
+			}
+		}
+		if(fp == NULL) {
 			throw(1);
 		}
 		
@@ -258,13 +296,19 @@ FreeImage_JPEGTransform(const char *src_file, const char *dst_file, FREE_IMAGE_J
 	try {
 		// check the src file format
 		if(FreeImage_GetFileType(src_file) != FIF_JPEG) {
-			throw "Input file is not a JPEG file";
+			throw FI_MSG_ERROR_MAGIC_NUMBER;
 		}
 
-		// perform the transformation
-		return LosslessTransform(src_file, dst_file, operation, NULL, perfect);
+		// setup IO
+		FilenameIO filenameIO;
+		memset(&filenameIO, 0, sizeof(FilenameIO));
+		filenameIO.src_file = src_file;
+		filenameIO.dst_file = dst_file;
 
-	} catch(char *text) {
+		// perform the transformation
+		return LosslessTransform(&filenameIO, operation, NULL, perfect);
+
+	} catch(const char *text) {
 		FreeImage_OutputMessageProc(FIF_JPEG, text);
 		return FALSE;
 	}
@@ -277,7 +321,7 @@ FreeImage_JPEGCrop(const char *src_file, const char *dst_file, int left, int top
 	try {
 		// check the src file format
 		if(FreeImage_GetFileType(src_file) != FIF_JPEG) {
-			throw "Input file is not a JPEG file";
+			throw FI_MSG_ERROR_MAGIC_NUMBER;
 		}
 		
 		// normalize the rectangle
@@ -291,11 +335,80 @@ FreeImage_JPEGCrop(const char *src_file, const char *dst_file, int left, int top
 		// build the crop option
 		sprintf(crop, "%dx%d+%d+%d", right - left, bottom - top, left, top);
 
-		// perform the transformation
-		return LosslessTransform(src_file, dst_file, FIJPEG_OP_NONE, crop, FALSE);
+		// setup IO
+		FilenameIO filenameIO;
+		memset(&filenameIO, 0, sizeof(FilenameIO));
+		filenameIO.src_file = src_file;
+		filenameIO.dst_file = dst_file;
 
-	} catch(char *text) {
+		// perform the transformation
+		return LosslessTransform(&filenameIO, FIJPEG_OP_NONE, crop, FALSE);
+
+	} catch(const char *text) {
 		FreeImage_OutputMessageProc(FIF_JPEG, text);
 		return FALSE;
 	}
+}
+
+BOOL DLL_CALLCONV 
+FreeImage_JPEGTransformU(const wchar_t *src_file, const wchar_t *dst_file, FREE_IMAGE_JPEG_OPERATION operation, BOOL perfect) {
+#ifdef _WIN32
+	try {
+		// check the src file format
+		if(FreeImage_GetFileTypeU(src_file) != FIF_JPEG) {
+			throw FI_MSG_ERROR_MAGIC_NUMBER;
+		}
+
+		// setup IO
+		FilenameIO filenameIO;
+		memset(&filenameIO, 0, sizeof(FilenameIO));
+		filenameIO.wsrc_file = src_file;
+		filenameIO.wdst_file = dst_file;
+
+		// perform the transformation
+		return LosslessTransform(&filenameIO, operation, NULL, perfect);
+
+	} catch(const char *text) {
+		FreeImage_OutputMessageProc(FIF_JPEG, text);
+	}
+#endif /// _WIN32
+	return FALSE;
+}
+
+BOOL DLL_CALLCONV 
+FreeImage_JPEGCropU(const wchar_t *src_file, const wchar_t *dst_file, int left, int top, int right, int bottom) {
+#ifdef _WIN32
+	char crop[64];
+
+	try {
+		// check the src file format
+		if(FreeImage_GetFileTypeU(src_file) != FIF_JPEG) {
+			throw FI_MSG_ERROR_MAGIC_NUMBER;
+		}
+		
+		// normalize the rectangle
+		if(right < left) {
+			INPLACESWAP(left, right);
+		}
+		if(bottom < top) {
+			INPLACESWAP(top, bottom);
+		}
+
+		// build the crop option
+		sprintf(crop, "%dx%d+%d+%d", right - left, bottom - top, left, top);
+
+		// setup IO
+		FilenameIO filenameIO;
+		memset(&filenameIO, 0, sizeof(FilenameIO));
+		filenameIO.wsrc_file = src_file;
+		filenameIO.wdst_file = dst_file;
+
+		// perform the transformation
+		return LosslessTransform(&filenameIO, FIJPEG_OP_NONE, crop, FALSE);
+
+	} catch(const char *text) {
+		FreeImage_OutputMessageProc(FIF_JPEG, text);
+	}
+#endif // _WIN32
+	return FALSE;
 }

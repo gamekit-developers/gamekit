@@ -28,9 +28,9 @@
 #endif 
 
 #include <stdlib.h>
-#if defined(_WIN32) || defined(_WIN64)
+#if defined(_WIN32) || defined(_WIN64) || defined(__MINGW32__)
 #include <malloc.h>
-#endif // _WIN32 || _WIN64
+#endif // _WIN32 || _WIN64 || __MINGW32__
 
 #include "FreeImage.h"
 #include "FreeImageIO.h"
@@ -82,7 +82,7 @@ FI_STRUCT (FREEIMAGEHEADER) {
 //  Memory allocation on a specified alignment boundary
 // ----------------------------------------------------------
 
-#if defined(_WIN32) || defined(_WIN64)
+#if (defined(_WIN32) || defined(_WIN64)) && !defined(__MINGW32__)
 
 void* FreeImage_Aligned_Malloc(size_t amount, size_t alignment) {
 	assert(alignment == FIBITMAP_ALIGNMENT);
@@ -91,6 +91,17 @@ void* FreeImage_Aligned_Malloc(size_t amount, size_t alignment) {
 
 void FreeImage_Aligned_Free(void* mem) {
 	_aligned_free(mem);
+}
+
+#elif defined (__MINGW32__)
+
+void* FreeImage_Aligned_Malloc(size_t amount, size_t alignment) {
+	assert(alignment == FIBITMAP_ALIGNMENT);
+	return __mingw_aligned_malloc (amount, alignment);
+}
+
+void FreeImage_Aligned_Free(void* mem) {
+	__mingw_aligned_free (mem);
 }
 
 #else
@@ -640,9 +651,9 @@ FreeImage_SetTransparentIndex(FIBITMAP *dib, int index) {
 	if (dib) {
 		int count = FreeImage_GetColorsUsed(dib);
 		if (count) {
-			BYTE *new_tt = (BYTE *)malloc((count - 1) * sizeof(BYTE));
+			BYTE *new_tt = (BYTE *)malloc(count * sizeof(BYTE));
 			memset(new_tt, 0xFF, count);
-			if ((index >= 0) && (index <= count)) {
+			if ((index >= 0) && (index < count)) {
 				new_tt[index] = 0x00;
 			}
 			FreeImage_SetTransparencyTable(dib, new_tt, count);
@@ -756,7 +767,7 @@ FreeImage_GetPalette(FIBITMAP *dib) {
 
 unsigned DLL_CALLCONV
 FreeImage_GetDotsPerMeterX(FIBITMAP *dib) {
-	return FreeImage_GetInfoHeader(dib)->biXPelsPerMeter;
+	return (dib) ? FreeImage_GetInfoHeader(dib)->biXPelsPerMeter : 0;
 }
 
 unsigned DLL_CALLCONV
@@ -890,9 +901,12 @@ FreeImage_CloneMetadata(FIBITMAP *dst, FIBITMAP *src) {
 	METADATAMAP *src_metadata = ((FREEIMAGEHEADER *)src->data)->metadata;
 	METADATAMAP *dst_metadata = ((FREEIMAGEHEADER *)dst->data)->metadata;
 
-	// copy metadata models
+	// copy metadata models, *except* the FIMD_ANIMATION model
 	for(METADATAMAP::iterator i = (*src_metadata).begin(); i != (*src_metadata).end(); i++) {
 		int model = (*i).first;
+		if(model == (int)FIMD_ANIMATION) {
+			continue;
+		}
 		TAGMAP *src_tagmap = (*i).second;
 
 		if(src_tagmap) {
@@ -932,7 +946,10 @@ FreeImage_SetMetadata(FREE_IMAGE_MDMODEL model, FIBITMAP *dib, const char *key, 
 
 	// get the metadata model
 	METADATAMAP *metadata = ((FREEIMAGEHEADER *)dib->data)->metadata;
-	tagmap = (*metadata)[model];
+	METADATAMAP::iterator model_iterator = metadata->find(model);
+	if (model_iterator != metadata->end()) {
+		tagmap = model_iterator->second;
+	}
 
 	if(key != NULL) {
 
@@ -1002,7 +1019,7 @@ FreeImage_SetMetadata(FREE_IMAGE_MDMODEL model, FIBITMAP *dib, const char *key, 
 			}
 
 			delete tagmap;
-			(*metadata)[model] = NULL;
+			metadata->erase(model_iterator);
 		}
 	}
 
@@ -1011,7 +1028,7 @@ FreeImage_SetMetadata(FREE_IMAGE_MDMODEL model, FIBITMAP *dib, const char *key, 
 
 BOOL DLL_CALLCONV 
 FreeImage_GetMetadata(FREE_IMAGE_MDMODEL model, FIBITMAP *dib, const char *key, FITAG **tag) {
-	if(!dib || !key) 
+	if(!dib || !key || !tag) 
 		return FALSE;
 
 	TAGMAP *tagmap = NULL;
@@ -1020,15 +1037,18 @@ FreeImage_GetMetadata(FREE_IMAGE_MDMODEL model, FIBITMAP *dib, const char *key, 
 	// get the metadata model
 	METADATAMAP *metadata = ((FREEIMAGEHEADER *)dib->data)->metadata;
 	if(!(*metadata).empty()) {
-		tagmap = (*metadata)[model];
-		if(!tagmap) {
-			// this model, doesn't exist: return
-			return FALSE;
+		METADATAMAP::iterator model_iterator = metadata->find(model);
+		if (model_iterator != metadata->end() ) {
+			// this model exists : try to get the requested tag
+			tagmap = model_iterator->second;
+			TAGMAP::iterator tag_iterator = tagmap->find(key);
+			if (tag_iterator != tagmap->end() ) {
+				// get the requested tag
+				*tag = tag_iterator->second;
+			} 
 		}
-
-		// get the requested tag
-		*tag = (*tagmap)[key];
 	}
+
 	return (*tag != NULL) ? TRUE : FALSE;
 }
 

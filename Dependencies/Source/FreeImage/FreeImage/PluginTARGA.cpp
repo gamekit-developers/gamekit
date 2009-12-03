@@ -7,7 +7,8 @@
 // - Martin Weber (martweb@gmx.net)
 // - Machiel ten Brinke (brinkem@uni-one.nl)
 // - Peter Lemmens (peter.lemmens@planetinternet.be)
-// - Hervé Drolon (drolon@infonie.fr)
+// - HervÃ© Drolon (drolon@infonie.fr)
+// - Mihail Naydenov (mnaydenov@users.sourceforge.net)
 //
 // This file is part of FreeImage 3
 //
@@ -26,7 +27,7 @@
 
 #include "FreeImage.h"
 #include "Utilities.h"
- 
+
 // ----------------------------------------------------------
 //   Constants + headers
 // ----------------------------------------------------------
@@ -84,14 +85,87 @@ typedef struct tagTGAFOOTER {
 // Internal functions
 // ==========================================================
 
+/**
+This struct is used only when loading RLE compressed images.
+It is needed because it is (really) hard to determine the size of a
+compressed line in the file (and allocate line cache as usual, refilling it at line change).
+We use an arbitrary size instead and access it through this struct, it takes care to refill when needed.
+NOTE: access must be *fast*, so safety measures are minimal.
+*/
+typedef struct tagCacheIO {
+    BYTE *ptr;
+	BYTE *home;
+	BYTE *end;
+    size_t size;
+    FreeImageIO *io;	// not necessary, but
+    fi_handle handle;	// passing them as args is slower
+} CacheIO;
+
+/**
+Returns TRUE on success and FAlSE if malloc fails
+Note however that I do not use this returned value in the code. 
+Allocating line cache even for a 100 000 wide 32bit bitmap will take under
+half a megabyte. Out of Mem is really not an issue!
+*/
+static BOOL
+cacheIO_alloc(CacheIO *ch, FreeImageIO *io, fi_handle handle, size_t size) {
+	ch->home = NULL;
+    ch->home = (BYTE*)malloc(size);
+	if(ch->home == NULL) {
+        return FALSE;
+	}
+    ch->end = ch->home + size;
+    ch->size = size;
+    ch->io = io;
+    ch->handle = handle;
+    ch->ptr = ch->end;	//will force refill on first access
+
+    return TRUE;
+}
+
+static void
+cacheIO_free(CacheIO *ch) {
+	if(ch->home != NULL) {
+        free(ch->home);
+	}
+}
+
+inline static BYTE
+cacheIO_getByte(CacheIO *ch) {
+	if(ch->ptr >= ch->end) {
+		ch->ptr = ch->home;
+		ch->io->read_proc(ch->ptr, sizeof(BYTE), (unsigned)ch->size, ch->handle);//### EOF - no problem?
+	}
+	BYTE result = *ch->ptr;
+	ch->ptr++;
+
+    return result;
+}
+
+inline static BYTE*
+cacheIO_getBytes(CacheIO *ch, size_t count /*must be < ch.size!*/) {
+	if(ch->ptr + count >= ch->end) {
+		// 'count' bytes might span two cache bounds, SEEK back to add them in the new cache
+		long read = (long)(ch->ptr - ch->home);
+		ch->io->seek_proc(ch->handle, -(((long)ch->size - read)), SEEK_CUR);
+		ch->ptr = ch->home;
+		ch->io->read_proc(ch->ptr, sizeof(BYTE), (unsigned)ch->size, ch->handle);//### EOF - no problem?
+	}
+	BYTE *result = ch->ptr;
+	ch->ptr += count;
+
+    return result;
+}
+
 static BYTE *
 Internal_GetScanLine(FIBITMAP *dib, int scanline, int flipvert) {
 	//assert ((scanline >= 0) && (scanline < (int)FreeImage_GetHeight(dib)));
 
-	if (flipvert)
+	if (flipvert) {
 		return FreeImage_GetScanLine(dib, scanline);
-	else
+	} else {
 		return FreeImage_GetScanLine(dib, FreeImage_GetHeight(dib) - scanline - 1);
+	}
 }
 
 #ifdef FREEIMAGE_BIGENDIAN
@@ -165,8 +239,9 @@ Validate(FreeImageIO *io, fi_handle handle) {
 	//   NO, according to http://cvs.sf.net/viewcvs.py/eifogl/eifogl/utility/tga/tga_file.e?rev=1.3
 	//       and it seems that the current Targa implementation for FreeImage
 	//       assumes that anything other than 0 means that there is a Color Map
-	if(header.color_map_type != 0 && header.color_map_type != 1)
+	if(header.color_map_type != 0 && header.color_map_type != 1) {
 		return FALSE;
+	}
 
 	// If the Color Map Type is 1 then we validate the map entry information...
 	// NOTA: let's stay compatible with the current FreeImage Targa implementation
@@ -193,8 +268,9 @@ Validate(FreeImageIO *io, fi_handle handle) {
 	}
 
 	// the width/height shouldn't be 0, right?
-	if(header.is_width == 0 || header.is_height == 0)
+	if(header.is_width == 0 || header.is_height == 0) {
 		return FALSE;
+	}
 
 	// the extra data (following after the header) should be there
 	if(io->read_proc(extra, 1, header.id_length, handle) != header.id_length)
@@ -203,7 +279,7 @@ Validate(FreeImageIO *io, fi_handle handle) {
 	// let's now verify all the types that are supported by FreeImage
 	// NOTE : this is our final verification
 	switch(header.is_pixel_depth) {
-		case 8: 
+		case 8:
 			switch(header.image_type) {
 			  case TGA_CMAP:
 			  case TGA_MONO:
@@ -214,7 +290,7 @@ Validate(FreeImageIO *io, fi_handle handle) {
 		case 15:
 		case 16:
 		case 24:
-		case 32: 
+		case 32:
 			switch(header.image_type) {
 				case TGA_RGB:
 				case TGA_RLERGB: return TRUE;
@@ -234,7 +310,7 @@ SupportsExportDepth(int depth) {
 		);
 }
 
-static BOOL DLL_CALLCONV 
+static BOOL DLL_CALLCONV
 SupportsExportType(FREE_IMAGE_TYPE type) {
 	return (type == FIT_BITMAP) ? TRUE : FALSE;
 }
@@ -246,8 +322,12 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 	if (handle) {
 		try {
 			// remember the start offset
-
 			long start_offset = io->tell_proc(handle);
+
+			// remember end-of-file (used for RLE cache)
+			io->seek_proc(handle, 0, SEEK_END);
+			long eof = io->tell_proc(handle);
+			io->seek_proc(handle, start_offset, SEEK_SET );
 
 			// read and process the bitmap's header
 
@@ -262,6 +342,7 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 
 			int line = CalculateLine(header.is_width, header.is_pixel_depth);
 			int pitch = CalculatePitch(line);
+			// It seems this ALWAYS is: 8 for 32bit, 1 for 16bit, 0 for 24bit
 			int alphabits = header.is_image_descriptor & 0x0f;
 			int fliphoriz = (header.is_image_descriptor & 0x10) ? 0 : 1; //currently FreeImage improperly treats this as flipvert also
 			int flipvert = (header.is_image_descriptor & 0x20) ? 1 : 0;
@@ -274,9 +355,10 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 				{
 					dib = FreeImage_Allocate(header.is_width, header.is_height, 8);
 
-					if (dib == NULL)
-						throw "DIB allocation failed";
-					
+					if (dib == NULL) {
+						throw FI_MSG_ERROR_DIB_MEMORY;
+					}
+
 					// read the palette
 
 					RGBQUAD *palette = FreeImage_GetPalette(dib);
@@ -304,7 +386,7 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 							case 16:
 							{
 								WORD *rgb555 = (WORD*)&cmap[0];
-								for (count = header.cm_first_entry; count < header.cm_length; count++) {						
+								for (count = header.cm_first_entry; count < header.cm_length; count++) {
 									palette[count].rgbRed   = (BYTE)((((*rgb555 & FI16_555_RED_MASK) >> FI16_555_RED_SHIFT) * 0xFF) / 0x1F);
 									palette[count].rgbGreen = (BYTE)((((*rgb555 & FI16_555_GREEN_MASK) >> FI16_555_GREEN_SHIFT) * 0xFF) / 0x1F);
 									palette[count].rgbBlue  = (BYTE)((((*rgb555 & FI16_555_BLUE_MASK) >> FI16_555_BLUE_SHIFT) * 0xFF) / 0x1F);
@@ -333,8 +415,8 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 								memset(trns, 0xFF, 256);
 
 								FILE_BGRA *bgra = (FILE_BGRA*)&cmap[0];
-								for (count = header.cm_first_entry; count < header.cm_length; count++) {						
-									palette[count].rgbBlue  = bgra->b;									
+								for (count = header.cm_first_entry; count < header.cm_length; count++) {
+									palette[count].rgbBlue  = bgra->b;
 									palette[count].rgbGreen = bgra->g;
 									palette[count].rgbRed   = bgra->r;
 									// alpha
@@ -350,7 +432,7 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 
 						free(cmap);
 					}
-					
+
 					// read in the bitmap bits
 
 					switch (header.image_type) {
@@ -371,80 +453,82 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 									io->read_proc(bits, sizeof(BYTE), line, handle);
 								}
 							}
-							
+
 							break;
 						}
 
 						case TGA_RLECMAP:
-						case TGA_RLEMONO:
+						case TGA_RLEMONO: //(8 bit)
 						{
-							int x = 0;
-							int y = 0;
 							BYTE rle = 0;
 							BYTE *bits;
-							
-							if (fliphoriz)
+
+							// Compute the *rough* size of a line...
+							long pixels_offset = io->tell_proc(handle);
+							long sz = ((eof - pixels_offset) / header.is_height);
+
+							// ...and allocate cache of this size (yields best results)
+							CacheIO cache;
+							cacheIO_alloc(&cache, io, handle, sz);
+
+							int y = 0, x = 0;
+
+							if (fliphoriz) {
 								bits = Internal_GetScanLine(dib, header.is_height - y - 1, flipvert);
-							else
+							} else {
 								bits = Internal_GetScanLine(dib, y, flipvert);
-
-							while(1) {
-								io->read_proc(&rle,1, 1, handle);
-								
-								if (rle>127) {
-									rle -= 127;
-
-									BYTE triple;
-
-									io->read_proc(&triple, 1, 1, handle);
-
-									for (int ix = 0; ix < rle; ix++) {
-										bits[x++] = triple;
-
-										if (x >= line) {
-											x = 0;
-
-											y++;
-
-											if (y >= header.is_height)
-												goto done89;
-											
-											if (fliphoriz)
-												bits = Internal_GetScanLine(dib, header.is_height - y - 1, flipvert);
-											else
-												bits = Internal_GetScanLine(dib, y, flipvert);
-										}
-									}
-								} else {
-									rle++;
-
-									for (int ix = 0; ix < rle; ix++) {
-										BYTE triple;		
-
-										io->read_proc(&triple, 1, 1, handle);
-
-										bits[x++] = triple;
-										
-										if (x >= line) {
-											x = 0;
-
-											y++;
-
-											if (y >= header.is_height)
-												goto done89;
-											
-											if (fliphoriz)
-												bits = Internal_GetScanLine(dib, header.is_height - y - 1, flipvert);
-											else
-												bits = Internal_GetScanLine(dib, y, flipvert);
-										}
-									}
-								}
 							}
-					done89 :
+
+							while(y < header.is_height) {
+
+								rle = cacheIO_getByte(&cache);
+
+								BOOL has_rle = rle & 0x80;
+								rle &= ~0x80;	// remove type-bit
+
+								BYTE rle_count = rle + 1;
+
+								if (has_rle) {
+
+									BYTE val = cacheIO_getByte(&cache);
+
+									for(int ix = 0; ix < rle_count; ix++) {
+										bits[x++] = val;
+
+										if(x >= line){
+											x = 0;
+											y++;
+											if (fliphoriz) {
+												bits = Internal_GetScanLine(dib, header.is_height - y - 1, flipvert);
+											} else {
+												bits = Internal_GetScanLine(dib, y, flipvert);
+											}
+										}
+									}
+
+								} else { // !has_rle
+
+									for(int ix = 0; ix < rle_count; ix++) {
+
+										BYTE val = cacheIO_getByte(&cache);
+										bits[x++] = val;
+										if(x >= line){
+											x=0;
+											y++;
+											if (fliphoriz) {
+												bits = Internal_GetScanLine(dib, header.is_height - y - 1, flipvert);
+											} else {
+												bits = Internal_GetScanLine(dib, y, flipvert);
+											}
+										}
+									}//< rle_count
+								}//< has_rle
+							}//< while y
+
+							cacheIO_free(&cache);
 							break;
 						}
-						
+
 						default :
 							FreeImage_Unload(dib);
 							return NULL;
@@ -462,153 +546,174 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 
 					if (TARGA_LOAD_RGB888 & flags) {
 						pixel_bits = 24;
-
 						dib = FreeImage_Allocate(header.is_width, header.is_height, pixel_bits, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK);
-					} else {			
+					} else {
 						pixel_bits = 16;
-
 						dib = FreeImage_Allocate(header.is_width, header.is_height, pixel_bits, FI16_555_RED_MASK, FI16_555_GREEN_MASK, FI16_555_BLUE_MASK);
 					}
 
-					if (dib == NULL)
-						throw "DIB allocation failed";
+					if (dib == NULL) {
+						throw FI_MSG_ERROR_DIB_MEMORY;
+					}
 
 					int line = CalculateLine(header.is_width, pixel_bits);
 
 					const unsigned pixel_size = unsigned(pixel_bits) / 8;
 
-					// note header.cm_size is a misleading name, it should be seen as header.cm_bits 
+					// note header.cm_size is a misleading name, it should be seen as header.cm_bits
 					// ignore current position in file and set filepointer explicitly from the beginning of the file
 
 					int garblen = 0;
 
-					if (header.color_map_type != 0)
+					if (header.color_map_type != 0) {
 						garblen = (int)((header.cm_size + 7) / 8) * header.cm_length; /* should byte align */
-					else
+					} else {
 						garblen = 0;
+					}
 
 					io->seek_proc(handle, start_offset, SEEK_SET);
 					io->seek_proc(handle, sizeof(tagTGAHEADER) + header.id_length + garblen, SEEK_SET);
 
 					// read in the bitmap bits
 
-					WORD pixel;
-							
 					switch (header.image_type) {
-						case TGA_RGB:
-						{
-							for (int y = 0; y < header.is_height; y++) {
-								BYTE *bits;
-								
-								if (fliphoriz)
-									bits = Internal_GetScanLine(dib, header.is_height - y - 1, flipvert);
-								else
-									bits = Internal_GetScanLine(dib, y, flipvert);
+					case TGA_RGB: //(16 bit)
+					{
+						// in(put)_line cache
+						WORD *in_line = (WORD*)malloc(header.is_width * sizeof(WORD));
+						if(!in_line) throw FI_MSG_ERROR_MEMORY;
 
-								for (int x = 0; x < line; ) {
-									io->read_proc(&pixel, sizeof(WORD), 1, handle);
+						const int h = header.is_height;
+						for (int y = 0; y < h; y++) {
+							BYTE *bits;
+
+							if (fliphoriz) {
+								bits = Internal_GetScanLine(dib, h - y - 1, flipvert);
+							} else {
+								bits = Internal_GetScanLine(dib, y, flipvert);
+							}
+							io->read_proc(in_line, sizeof(WORD), header.is_width, handle);
+
+							WORD *pixel = in_line;
+							for (int x = 0; x < line; x += pixel_size) {
+
 #ifdef FREEIMAGE_BIGENDIAN
-									SwapShort(&pixel);
+									SwapShort(pixel);
 #endif
-								
+
 									if (TARGA_LOAD_RGB888 & flags) {
-										bits[x + FI_RGBA_BLUE]  = (BYTE)((((pixel & FI16_555_BLUE_MASK) >> FI16_555_BLUE_SHIFT) * 0xFF) / 0x1F);
-										bits[x + FI_RGBA_GREEN] = (BYTE)((((pixel & FI16_555_GREEN_MASK) >> FI16_555_GREEN_SHIFT) * 0xFF) / 0x1F);
-										bits[x + FI_RGBA_RED]   = (BYTE)((((pixel & FI16_555_RED_MASK) >> FI16_555_RED_SHIFT) * 0xFF) / 0x1F);
+										bits[x + FI_RGBA_BLUE]  = (BYTE)((((*pixel & FI16_555_BLUE_MASK) >> FI16_555_BLUE_SHIFT) * 0xFF) / 0x1F);
+										bits[x + FI_RGBA_GREEN] = (BYTE)((((*pixel & FI16_555_GREEN_MASK) >> FI16_555_GREEN_SHIFT) * 0xFF) / 0x1F);
+										bits[x + FI_RGBA_RED]   = (BYTE)((((*pixel & FI16_555_RED_MASK) >> FI16_555_RED_SHIFT) * 0xFF) / 0x1F);
 									} else {
-										*reinterpret_cast<WORD*>(bits + x) = 0x7FFF & pixel;
+										*reinterpret_cast<WORD*>(bits + x) = 0x7FFF & *pixel;
+									}
+									pixel++;
+							}
+						}
+
+						free(in_line);
+						break;
+					}
+
+					case TGA_RLERGB: //(16 bit)
+					{
+						BYTE rle;
+						BYTE *bits;
+
+						// Compute the *rough* size of a line...
+						long pixels_offset = io->tell_proc(handle);
+						long sz = ((eof - pixels_offset) / header.is_height);
+
+						// ...and allocate cache of this size (yields best results)
+						CacheIO cache;
+						cacheIO_alloc(&cache, io, handle, sz);
+
+						int y = 0, x = 0;
+
+						if (fliphoriz) {
+							bits = Internal_GetScanLine(dib, header.is_height - y - 1, flipvert);
+						} else {
+							bits = Internal_GetScanLine(dib, y, flipvert);
+						}
+
+						while( y < header.is_height) {
+							rle = cacheIO_getByte(&cache);
+
+							BOOL has_rle = rle & 0x80;
+							rle &= ~0x80; //remove type-bit
+
+							int rle_count = rle + 1;
+
+							if (has_rle) {
+
+								WORD *val = (WORD*)cacheIO_getBytes(&cache, sizeof(WORD));
+#ifdef FREEIMAGE_BIGENDIAN
+								SwapShort(val);
+#endif
+									for (int ix = 0; ix < rle_count; ix++) {
+										if (TARGA_LOAD_RGB888 & flags) {
+											bits[x + FI_RGBA_BLUE]  = (BYTE)((((*val & FI16_555_BLUE_MASK) >> FI16_555_BLUE_SHIFT) * 0xFF) / 0x1F);
+											bits[x + FI_RGBA_GREEN] = (BYTE)((((*val & FI16_555_GREEN_MASK) >> FI16_555_GREEN_SHIFT) * 0xFF) / 0x1F);
+											bits[x + FI_RGBA_RED]   = (BYTE)((((*val & FI16_555_RED_MASK) >> FI16_555_RED_SHIFT) * 0xFF) / 0x1F);
+										} else {
+											*reinterpret_cast<WORD *>(bits + x) = 0x7FFF & *val;
+										}
+
+										x += pixel_size;
+
+										if(x >= line){
+											x = 0;
+											y++;
+
+											if (fliphoriz) {
+												bits = Internal_GetScanLine(dib, header.is_height - y - 1, flipvert);
+											} else {
+												bits = Internal_GetScanLine(dib, y, flipvert);
+											}
+										}
+									}
+
+							} else {
+
+								for (int ix = 0; ix < rle_count; ix++) {
+									WORD *val = (WORD*)cacheIO_getBytes(&cache, sizeof(WORD));
+
+#ifdef FREEIMAGE_BIGENDIAN
+									SwapShort(val);
+#endif
+
+									if (TARGA_LOAD_RGB888 & flags) {
+										bits[x + FI_RGBA_BLUE]  = (BYTE)((((*val & FI16_555_BLUE_MASK) >> FI16_555_BLUE_SHIFT) * 0xFF) / 0x1F);
+										bits[x + FI_RGBA_GREEN] = (BYTE)((((*val & FI16_555_GREEN_MASK) >> FI16_555_GREEN_SHIFT) * 0xFF) / 0x1F);
+										bits[x + FI_RGBA_RED]   = (BYTE)((((*val & FI16_555_RED_MASK) >> FI16_555_RED_SHIFT) * 0xFF) / 0x1F);
+									} else {
+										*reinterpret_cast<WORD *>(bits + x) = 0x7FFF & *val;
 									}
 
 									x += pixel_size;
-								}
-							}
 
-							break;
-						}
-
-						case TGA_RLERGB:
-						{
-							int x = 0;
-							int y = 0;
-							BYTE rle;
-							WORD pixel;
-
-							while(1) {
-								BYTE *bits;
-								
-								if (fliphoriz)
-									bits = Internal_GetScanLine(dib, header.is_height - y - 1, flipvert);
-								else
-									bits = Internal_GetScanLine(dib, y, flipvert);
-		
-								io->read_proc(&rle,1, 1, handle);
-								
-								// compressed block
-								
-								if (rle > 127) {
-									rle -= 127;
-
-									io->read_proc(&pixel, sizeof(WORD), 1, handle);
-#ifdef FREEIMAGE_BIGENDIAN
-									SwapShort(&pixel);
-#endif
-								
-									for (int ix = 0; ix < rle; ix++) {
-										if (TARGA_LOAD_RGB888 & flags) {
-											bits[x + FI_RGBA_BLUE]  = (BYTE)((((pixel & FI16_555_BLUE_MASK) >> FI16_555_BLUE_SHIFT) * 0xFF) / 0x1F);
-											bits[x + FI_RGBA_GREEN] = (BYTE)((((pixel & FI16_555_GREEN_MASK) >> FI16_555_GREEN_SHIFT) * 0xFF) / 0x1F);
-											bits[x + FI_RGBA_RED]   = (BYTE)((((pixel & FI16_555_RED_MASK) >> FI16_555_RED_SHIFT) * 0xFF) / 0x1F);
+									if(x >= line){
+										x = 0;
+										y++;
+										if (fliphoriz) {
+											bits = Internal_GetScanLine(dib, header.is_height - y - 1, flipvert);
 										} else {
-											*reinterpret_cast<WORD *>(bits + x) = 0x7FFF & pixel;
-										}
-
-										x += pixel_size;
-										
-										if (x >= line) {
-											x = 0;
-											y++;
-
-											if (y >= header.is_height)
-												goto done2;																
+											bits = Internal_GetScanLine(dib, y, flipvert);
 										}
 									}
-								} else {
-									rle++;
 
-									for (int ix = 0; ix < rle; ix++) {
-										io->read_proc(&pixel, sizeof(WORD), 1, handle);
-#ifdef FREEIMAGE_BIGENDIAN
-										SwapShort(&pixel);
-#endif
+								}//< rle_count
+							}//< has_rle
+						}//< while
 
-										if (TARGA_LOAD_RGB888 & flags) {
-											bits[x + FI_RGBA_BLUE]  = (BYTE)((((pixel & FI16_555_BLUE_MASK) >> FI16_555_BLUE_SHIFT) * 0xFF) / 0x1F);
-											bits[x + FI_RGBA_GREEN] = (BYTE)((((pixel & FI16_555_GREEN_MASK) >> FI16_555_GREEN_SHIFT) * 0xFF) / 0x1F);
-											bits[x + FI_RGBA_RED]   = (BYTE)((((pixel & FI16_555_RED_MASK) >> FI16_555_RED_SHIFT) * 0xFF) / 0x1F);
-										} else {
-											*reinterpret_cast<WORD*>(bits + x) = 0x7FFF & pixel;
-										}
+						cacheIO_free(&cache);
+						break;
+					}
 
-										x += pixel_size;
-
-										if (x >= line) {
-											x = 0;
-											y++;
-
-											if (y >= header.is_height)
-												goto done2;																
-										}
-									}
-								}
-							}
-
-					done2 :
-							break;
-						}
-
-						default :
-							FreeImage_Unload(dib);
-							return NULL;
+					default :
+						FreeImage_Unload(dib);
+						return NULL;
 					}
 
 					break;
@@ -618,175 +723,129 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 				{
 					dib = FreeImage_Allocate(header.is_width, header.is_height, 24, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK);
 
-					if (dib == 0)
-						throw "DIB allocation failed";					
+					if (dib == NULL) {
+						throw FI_MSG_ERROR_DIB_MEMORY;
+					}
 
 					// read in the bitmap bits
 
 					switch (header.image_type) {
-						case TGA_RGB:
+						case TGA_RGB://(24 bit)
 						{
-							FILE_BGR bgr;
-							if (fliphoriz)
+							FILE_BGR* bgr_line = (FILE_BGR*)malloc(header.is_width * sizeof(FILE_BGR));
+							if(!bgr_line) throw FI_MSG_ERROR_MEMORY;
+
+							if (fliphoriz) {
 								for (unsigned count = header.is_height; count > 0; count--) {
 									BYTE *bits = Internal_GetScanLine(dib, count-1, flipvert);
+									io->read_proc(bgr_line, sizeof(FILE_BGR), header.is_width, handle);
 
+									FILE_BGR *bgr = bgr_line;
 									for (int x = 0; x < line; x += 3) {
-										io->read_proc(&bgr, sizeof(FILE_BGR), 1, handle);
-
-										bits[x + FI_RGBA_BLUE]	= bgr.b;
-										bits[x + FI_RGBA_GREEN] = bgr.g;
-										bits[x + FI_RGBA_RED]	= bgr.r;
+										bits[x + FI_RGBA_BLUE]	= bgr->b;
+										bits[x + FI_RGBA_GREEN] = bgr->g;
+										bits[x + FI_RGBA_RED]	= bgr->r;
+										bgr++;
 									}
 								}
-							else
+
+							} else {
 								for (unsigned count = 0; count < header.is_height; count++) {
 									BYTE *bits = Internal_GetScanLine(dib, count, flipvert);
+									io->read_proc(bgr_line, sizeof(FILE_BGR), header.is_width, handle);
 
+									FILE_BGR *bgr = bgr_line;
 									for (int x = 0; x < line; x += 3) {
-										io->read_proc(&bgr, sizeof(FILE_BGR), 1, handle);
-
-										bits[x + FI_RGBA_BLUE]	= bgr.b;
-										bits[x + FI_RGBA_GREEN] = bgr.g;
-										bits[x + FI_RGBA_RED]	= bgr.r;
-									}
-								}
-
-							break;
-						}
-
-						case TGA_RLERGB:
-						{
-							int x = 0;
-							int y = 0;
-							BYTE rle;
-							BYTE *bits;
-							
-							if (fliphoriz)
-								bits = Internal_GetScanLine(dib, header.is_height - y - 1, flipvert);
-							else
-								bits = Internal_GetScanLine(dib, y, flipvert);
-							
-							if (alphabits) {
-								while(1) {
-									io->read_proc(&rle,1, 1, handle);
-									
-									if (rle>127) {
-										rle -= 127;
-
-										FILE_BGRA bgra;
-
-										io->read_proc(&bgra, sizeof(FILE_BGRA), 1, handle);
-
-										for (int ix = 0; ix < rle; ix++) {
-											bits[x + FI_RGBA_BLUE]	= bgra.b;
-											bits[x + FI_RGBA_GREEN] = bgra.g;
-											bits[x + FI_RGBA_RED]	= bgra.r;
-											bits[x + FI_RGBA_ALPHA] = bgra.a;
-											x += 4;
-
-											if (x >= line) {
-												x = 0;
-												y++;
-
-												if (y >= header.is_height)
-													goto done243;
-
-												if (fliphoriz)
-													bits = Internal_GetScanLine(dib, header.is_height - y - 1, flipvert);
-												else
-													bits = Internal_GetScanLine(dib, y, flipvert);
-											}
-										}
-									} else {
-										rle++;
-
-										for (int ix = 0; ix < rle; ix++) {
-											FILE_BGRA bgra;
-
-											io->read_proc(&bgra, sizeof(FILE_BGRA), 1, handle);
-
-											bits[x + FI_RGBA_BLUE]	= bgra.b;
-											bits[x + FI_RGBA_GREEN] = bgra.g;
-											bits[x + FI_RGBA_RED]	= bgra.r;
-											bits[x + FI_RGBA_ALPHA] = bgra.a;
-											x += 4;
-											
-											if (x >= line) {
-												x = 0;
-												y++;
-
-												if (y >= header.is_height)
-													goto done243;											
-
-												if (fliphoriz)
-													bits = Internal_GetScanLine(dib, header.is_height - y - 1, flipvert);
-												else
-													bits = Internal_GetScanLine(dib, y, flipvert);
-											}
-										}
-									}
-								}
-							} else {
-								while (1) {
-									io->read_proc(&rle,1, 1, handle);
-									
-									if (rle>127) {
-										rle -= 127;
-
-										FILE_BGR bgr;
-
-										io->read_proc(&bgr, sizeof(FILE_BGR), 1, handle);
-
-										for (int ix = 0; ix < rle; ix++) {
-											bits[x + FI_RGBA_BLUE]	= bgr.b;
-											bits[x + FI_RGBA_GREEN] = bgr.g;
-											bits[x + FI_RGBA_RED]	= bgr.r;
-											x += 3;
-
-											if (x >= line) {
-												x = 0;
-												y++;
-
-												if (y >= header.is_height)
-													goto done243;											
-												
-												if (fliphoriz)
-													bits = Internal_GetScanLine(dib, header.is_height - y - 1, flipvert);
-												else
-													bits = Internal_GetScanLine(dib, y, flipvert);
-											}
-										}
-									} else {
-										rle++;
-
-										for (int ix = 0; ix < rle; ix++) {
-											FILE_BGR bgr;		
-
-											io->read_proc(&bgr, sizeof(FILE_BGR), 1, handle);
-
-											bits[x + FI_RGBA_BLUE]	= bgr.b;
-											bits[x + FI_RGBA_GREEN]	= bgr.g;
-											bits[x + FI_RGBA_RED]	= bgr.r;
-											x += 3;
-											
-											if (x >= line) {
-												x = 0;
-												y++;
-
-												if (y >= header.is_height)
-													goto done243;											
-
-												if (fliphoriz)
-													bits = Internal_GetScanLine(dib, header.is_height - y - 1, flipvert);
-												else
-													bits = Internal_GetScanLine(dib, y, flipvert);
-											}
-										}
+										bits[x + FI_RGBA_BLUE]	= bgr->b;
+										bits[x + FI_RGBA_GREEN] = bgr->g;
+										bits[x + FI_RGBA_RED]	= bgr->r;
+										bgr++;
 									}
 								}
 							}
-					done243 :
+
+							free(bgr_line);
+							break;
+						}
+
+						case TGA_RLERGB://(24 bit)
+						{
+
+							BYTE rle;
+							BYTE *bits;
+
+							// Compute the *rough* size of a line...
+							long pixels_offset = io->tell_proc(handle);
+							long sz = ((eof - pixels_offset) / header.is_height);
+
+							// ...and allocate cache of this size (yields best results)
+							CacheIO cache;
+							cacheIO_alloc(&cache, io, handle, sz);
+
+							int x = 0, y = 0;
+							if (fliphoriz) {
+								bits = Internal_GetScanLine(dib, header.is_height - y - 1, flipvert);
+							} else {
+								bits = Internal_GetScanLine(dib, y, flipvert);
+							}
+
+							while( y < header.is_height) {
+								rle = cacheIO_getByte(&cache);
+
+								BOOL has_rle = rle & 0x80;
+								rle &= ~0x80; //remove type-bit
+
+								BYTE rle_count = rle + 1;
+
+								if (has_rle) {
+
+									FILE_BGR *val = (FILE_BGR*)cacheIO_getBytes(&cache, sizeof(FILE_BGR));
+
+									for (int ix = 0; ix < rle_count; ix++) {
+										bits[x + FI_RGBA_BLUE]	= val->b;
+										bits[x + FI_RGBA_GREEN] = val->g;
+										bits[x + FI_RGBA_RED]	= val->r;
+
+										x += 3;
+
+										if(x >= line){
+											x = 0;
+											y++;
+
+											if (fliphoriz) {
+												bits = Internal_GetScanLine(dib, header.is_height - y - 1, flipvert);
+											} else {
+												bits = Internal_GetScanLine(dib, y, flipvert);
+											}
+										}
+									}//<rle_count
+								} else { //<!has_rle
+
+									for (int ix = 0; ix < rle_count; ix++) {
+										FILE_BGR *val = (FILE_BGR*)cacheIO_getBytes(&cache, sizeof(FILE_BGR));
+
+										bits[x + FI_RGBA_BLUE]	= val->b;
+										bits[x + FI_RGBA_GREEN] = val->g;
+										bits[x + FI_RGBA_RED]	= val->r;
+
+										x += 3;
+
+										if(x >= line){
+											x = 0;
+											y++;
+
+											if (fliphoriz) {
+												bits = Internal_GetScanLine(dib, header.is_height - y - 1, flipvert);
+											} else {
+												bits = Internal_GetScanLine(dib, y, flipvert);
+											}
+										}
+
+									}//< rle_count
+								}//< has_rle
+							}//< while
+
+							cacheIO_free(&cache);
 							break;
 						}
 
@@ -797,16 +856,13 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 
 					break;
 				}
-				
+
 				case 32 :
 				{
 					int pixel_bits;
 
 					if (TARGA_LOAD_RGB888 & flags) {
 						pixel_bits = 24;
-
-						line = CalculateLine(header.is_width, pixel_bits);
-						pitch = CalculatePitch(line);
 					} else {
 						pixel_bits = 32;
 					}
@@ -814,183 +870,146 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 					const unsigned pixel_size = unsigned (pixel_bits) / 8;
 
 					// Allocate the DIB
+					dib = FreeImage_Allocate(header.is_width, header.is_height, pixel_bits, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK);
 
-					if( pixel_bits == 24 ) {
-						dib = FreeImage_Allocate(header.is_width, header.is_height, pixel_bits, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK);
-					} else {
-						dib = FreeImage_Allocate(header.is_width, header.is_height, pixel_bits, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK);
+					if (dib == NULL) {
+						throw FI_MSG_ERROR_DIB_MEMORY;
 					}
-					
-					if (dib == 0)
-						throw "DIB allocation failed";					
 
 					// read in the bitmap bits
 
 					switch (header.image_type) {
-						case TGA_RGB:
-						{
-							// uncompressed
+					case TGA_RGB://(32 bit)
+					{
+						// uncompressed
 
-							if (alphabits) {
-								if (fliphoriz)
-									for (unsigned count = header.is_height; count > 0; count--) {
-										BYTE *bits = bits = Internal_GetScanLine(dib, count-1, flipvert);
+						// in_line cache
+						FILE_BGRA* in_line = (FILE_BGRA*)malloc(header.is_width * 4);
+						if(!in_line) throw FI_MSG_ERROR_MEMORY;
 
-										for (unsigned cols = 0; cols < header.is_width; cols++) {
-											FILE_BGRA bgra;
+						const int w = header.is_width;  // yes, it does make a (minor) difference
+						const int h = header.is_height; // to move these outside
 
-											io->read_proc(&bgra, sizeof(FILE_BGRA), 1, handle);
-
-											if ((TARGA_LOAD_RGB888 & flags) != TARGA_LOAD_RGB888) {
-												bits[FI_RGBA_BLUE]	= bgra.b;
-												bits[FI_RGBA_GREEN] = bgra.g;
-												bits[FI_RGBA_RED]	= bgra.r;
-												bits[FI_RGBA_ALPHA] = bgra.a;
-											} else {
-												bits[FI_RGBA_BLUE]	= bgra.b;
-												bits[FI_RGBA_GREEN] = bgra.g;
-												bits[FI_RGBA_RED]	= bgra.r;
-											}
-
-											bits += pixel_size;
-										}
-									}
-								else
-									for (unsigned count = 0; count < header.is_height; count++) {
-										BYTE *bits = Internal_GetScanLine(dib, count, flipvert);
-
-										for (unsigned cols = 0; cols < header.is_width; cols++) {
-											FILE_BGRA bgra;
-
-											io->read_proc(&bgra, sizeof(FILE_BGRA), 1, handle);
-
-											if ((TARGA_LOAD_RGB888 & flags) != TARGA_LOAD_RGB888) {
-												bits[FI_RGBA_BLUE]	= bgra.b;
-												bits[FI_RGBA_GREEN] = bgra.g;
-												bits[FI_RGBA_RED]	= bgra.r;
-												bits[FI_RGBA_ALPHA] = bgra.a;
-											} else {
-												bits[FI_RGBA_BLUE]	= bgra.b;
-												bits[FI_RGBA_GREEN] = bgra.g;
-												bits[FI_RGBA_RED]	= bgra.r;
-											}
-
-											bits += pixel_size;
-										}
-									}
-
-							} else {
-
-								for (unsigned count = 0; count < header.is_height; count++) {
-									BYTE *bits;
-
-									if (fliphoriz)
-										bits = Internal_GetScanLine(dib, header.is_height - count - 1, flipvert);
-									else
-										bits = Internal_GetScanLine(dib, count, flipvert);
-
-									for (unsigned cols = 0; cols < header.is_width; cols++) {
-										FILE_BGRA bgra;
-
-										io->read_proc(&bgra, sizeof(FILE_BGRA), 1, handle);
-
-										if ((TARGA_LOAD_RGB888 & flags) != TARGA_LOAD_RGB888) {
-											bits[FI_RGBA_BLUE]	= bgra.b;
-											bits[FI_RGBA_GREEN] = bgra.g;
-											bits[FI_RGBA_RED]	= bgra.r;
-											bits[FI_RGBA_ALPHA] = bgra.a;
-										} else {
-											bits[FI_RGBA_BLUE]	= bgra.b;
-											bits[FI_RGBA_GREEN]	= bgra.g;
-											bits[FI_RGBA_RED]	= bgra.r;
-										}
-
-										bits += pixel_size;
-									}
-								}
-							}
-
-							break;
-						}
-						case TGA_RLERGB:
-						{
-							int x = 0;
-							int y = 0;
-							BYTE rle;
+						for (int y = 0; y < h; y++) {
 							BYTE *bits;
-							
-							if (fliphoriz)
-								bits = Internal_GetScanLine(dib, header.is_height - y - 1, flipvert);
-							else
+
+							if (fliphoriz) {
+								bits = Internal_GetScanLine(dib, h - y - 1, flipvert);
+							} else {
 								bits = Internal_GetScanLine(dib, y, flipvert);
-							
-							while(1) {
-								io->read_proc(&rle,1, 1, handle);
-									
-								if (rle>127) {
-									rle -= 127;
+							}
 
-									FILE_BGRA bgra;
+							io->read_proc(in_line, 4, w, handle);
 
-									io->read_proc(&bgra, sizeof(FILE_BGRA), 1, handle);
+							FILE_BGRA *bgra = in_line;
+							for (int x = 0; x < w; x++) {
+								bits[FI_RGBA_BLUE]	= bgra->b;
+								bits[FI_RGBA_GREEN] = bgra->g;
+								bits[FI_RGBA_RED]	= bgra->r;
 
-									for (int ix = 0; ix < rle; ix++) {
-										bits[x + FI_RGBA_BLUE]	= bgra.b;
-										bits[x + FI_RGBA_GREEN] = bgra.g;
-										bits[x + FI_RGBA_RED]	= bgra.r;
-										bits[x + FI_RGBA_ALPHA] = bgra.a;
-										x += 4;
+								if ((TARGA_LOAD_RGB888 & flags) != TARGA_LOAD_RGB888) {
+									bits[FI_RGBA_ALPHA] = bgra->a;
+								}
 
-										if (x >= line) {
-											x = 0;
-											y++;
+								bgra++;
+								bits += pixel_size;
+							}
+						}
 
-											if (y >= header.is_height)
-												goto done3210;
+						free(in_line);
+						break;
+					}
+					case TGA_RLERGB://(32 bit)
+					{
+						BYTE rle;
+						BYTE *bits;
 
-											if (fliphoriz)
-												bits = Internal_GetScanLine(dib, header.is_height - y - 1, flipvert);
-											else
-												bits = Internal_GetScanLine(dib, y, flipvert);
-										}
-									}
-								} else {
-									rle++;
+						// Compute the *rough* size of a line...
+						long pixels_offset = io->tell_proc(handle);
+						long sz = ((eof - pixels_offset) / header.is_height);
 
-									for (int ix = 0; ix < rle; ix++) {
-										FILE_BGRA bgra;
+						// ...and allocate cache of this size (yields best results)
+						CacheIO cache;
+						cacheIO_alloc(&cache, io, handle, sz);
 
-										io->read_proc(&bgra, sizeof(FILE_BGRA), 1, handle);
+						int x = 0, y = 0;
+						if (fliphoriz) {
+							bits = Internal_GetScanLine(dib, header.is_height - y - 1, flipvert);
+						} else {
+							bits = Internal_GetScanLine(dib, y, flipvert);
+						}
 
-										bits[x + FI_RGBA_BLUE]	= bgra.b;
-										bits[x + FI_RGBA_GREEN] = bgra.g;
-										bits[x + FI_RGBA_RED]	= bgra.r;
-										bits[x + FI_RGBA_ALPHA] = bgra.a;
-										x += 4;
-											
-										if (x >= line) {
-											x = 0;
-											y++;
+						while( y < header.is_height) {
 
-											if (y >= header.is_height)
-												goto done3210;
+							rle = cacheIO_getByte(&cache);
 
-											if (fliphoriz)
-												bits = Internal_GetScanLine(dib, header.is_height - y - 1, flipvert);
-											else
-												bits = Internal_GetScanLine(dib, y, flipvert);
+							BOOL has_rle = rle & 0x80;
+							rle &= ~0x80; // remove type-bit
+
+							BYTE rle_count = rle + 1;
+
+							if (has_rle) {
+
+								FILE_BGRA *val = (FILE_BGRA*)cacheIO_getBytes(&cache, sizeof(FILE_BGRA));
+
+								for (int ix = 0; ix < rle_count; ix++) {
+#if FREEIMAGE_COLORORDER == FREEIMAGE_COLORORDER_BGR
+									*(reinterpret_cast<unsigned*>(bits+x)) = *(reinterpret_cast<unsigned*> (val));
+#else // NOTE This is faster then doing reinterpret_cast + INPLACESWAP for RGB!
+									bits[x + FI_RGBA_BLUE]	= val->b;
+									bits[x + FI_RGBA_GREEN] = val->g;
+									bits[x + FI_RGBA_RED]	= val->r;
+									bits[x + FI_RGBA_ALPHA]	= val->a;
+#endif
+									x += 4;
+
+									if(x >= line) {
+										x = 0;
+										y++;
+
+										if (fliphoriz) {
+											bits = Internal_GetScanLine(dib, header.is_height - y - 1, flipvert);
+										} else {
+											bits = Internal_GetScanLine(dib, y, flipvert);
 										}
 									}
 								}
-							}
+							} else {//<!has_rle
 
-					done3210 :
-							break;
-						}
+								for (int ix = 0; ix < rle_count; ix++) {
+									FILE_BGRA *val = (FILE_BGRA*)cacheIO_getBytes(&cache, sizeof(FILE_BGRA));
+#if FREEIMAGE_COLORORDER == FREEIMAGE_COLORORDER_BGR
+									*(reinterpret_cast<unsigned*>(bits+x)) = *(reinterpret_cast<unsigned*> (val));
+#else
+									bits[x + FI_RGBA_BLUE]	= val->b;
+									bits[x + FI_RGBA_GREEN] = val->g;
+									bits[x + FI_RGBA_RED]	= val->r;
+									bits[x + FI_RGBA_ALPHA]	= val->a;
+#endif
+									x += 4;
+									
+									if(x >= line){
+										x = 0;
+										y++;
+										
+										if (fliphoriz) {
+											bits = Internal_GetScanLine(dib, header.is_height - y - 1, flipvert);
+										} else {
+											bits = Internal_GetScanLine(dib, y, flipvert);
+										}
+									}
 
-						default :
-							FreeImage_Unload(dib);
-							return NULL;
+								}//< rle_count
+							}//< has_rle
+						}//< while y
+
+						cacheIO_free(&cache);
+						break;
+					}
+
+					default :
+						FreeImage_Unload(dib);
+						return NULL;
 					}
 
 					break;
@@ -1053,7 +1072,7 @@ Save(FreeImageIO *io, FIBITMAP *dib, fi_handle handle, int page, int flags, void
 		SwapHeader(&header);
 #endif
 
-		// write the palette	
+		// write the palette
 
 		if (palette) {
 			if(FreeImage_IsTransparent(dib)) {

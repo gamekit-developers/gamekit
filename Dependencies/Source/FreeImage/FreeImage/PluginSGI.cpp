@@ -97,9 +97,7 @@ typedef struct tagRLEStatus {
 #pragma pack()
 #endif
 
-static const char *SGI_BAD_MALLOC = "Out of memory";
 static const char *SGI_LESS_THAN_HEADER_LENGTH = "Incorrect header size";
-static const char *SGI_BAD_MAGIC_NUMBER = "Bad magic number";
 static const char *SGI_16_BIT_COMPONENTS_NOT_SUPPORTED = "No 16 bit support";
 static const char *SGI_COLORMAPS_NOT_SUPPORTED = "No colormap support";
 static const char *SGI_EOF_IN_RLE_INDEX = "EOF in run length encoding";
@@ -233,7 +231,7 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 		SwapHeader(&sgiHeader);
 #endif
 		if(sgiHeader.magic != 474) {
-			throw SGI_BAD_MAGIC_NUMBER;
+			throw FI_MSG_ERROR_MAGIC_NUMBER;
 		}
 		
 		BOOL bIsRLE = (sgiHeader.storage == 1) ? TRUE : FALSE;
@@ -268,7 +266,7 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 			int index_len = height * zsize;
 			pRowIndex = (LONG*)malloc(index_len * sizeof(LONG));
 			if(!pRowIndex) {
-				throw SGI_BAD_MALLOC;
+				throw FI_MSG_ERROR_MEMORY;
 			}
 			
 			if ((unsigned)index_len != io->read_proc(pRowIndex, sizeof(LONG), index_len, handle)) {
@@ -310,7 +308,7 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 		
 		dib = FreeImage_Allocate(width, height, bitcount);
 		if(!dib) {
-			throw SGI_BAD_MALLOC;
+			throw FI_MSG_ERROR_DIB_MEMORY;
 		}
 		
 		if (bitcount == 8) {

@@ -69,7 +69,7 @@ FreeImage_Rescale(FIBITMAP *src, int dst_width, int dst_height, FREE_IMAGE_FILTE
 				dst24 = Engine.scale(src24, dst_width, dst_height);
 				if(!dst24) throw(1);
 				// color quantize to 8-bit
-				dst = FreeImage_ColorQuantize(dst24, FIQ_WUQUANT);
+				dst = FreeImage_ColorQuantize(dst24, FIQ_NNQUANT);
 				// free and return
 				FreeImage_Unload(src24);
 				FreeImage_Unload(dst24);

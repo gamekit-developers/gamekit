@@ -53,8 +53,8 @@
 # define gkNan(n)	_isnan((n))
 # define gkFinite(n) _finite((n))
 #else
-# define gkNan(n)	isnan((n))
-# define gkFinite(n) finite((n))
+# define gkNan(n)	_isnan((n))
+# define gkFinite(n) _finite((n))
 #endif
 
 #define gkPi  Ogre::Real(3.141592653589793238)

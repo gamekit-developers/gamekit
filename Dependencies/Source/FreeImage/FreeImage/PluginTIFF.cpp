@@ -1176,9 +1176,11 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 			fi_TIFFIO *fio = (fi_TIFFIO*)data;
 			tif = fio->tif;
 
-			if (page != -1)
-				if (!tif || !TIFFSetDirectory(tif, (tdir_t)page))
+			if (page != -1) {
+				if (!tif || !TIFFSetDirectory(tif, (tdir_t)page)) {
 					throw "Error encountered while opening TIFF file";			
+				}
+			}
 
 			// first, get the photometric, the compression and basic metadata
 			// ---------------------------------------------------------------------------------
@@ -1248,15 +1250,15 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 				// TIFFReadRGBAImage() API that we trust.
 
 				uint32 *raster = (uint32*)_TIFFmalloc(width * height * sizeof(uint32));
-
-				if (raster == NULL)
-					throw "No space for raster buffer";
+				if (raster == NULL) {
+					throw FI_MSG_ERROR_MEMORY;
+				}
 
 				// read the image in one chunk into an RGBA array
 
 				if (!TIFFReadRGBAImage(tif, width, height, raster, 0)) {
 					_TIFFfree(raster);
-					throw "Unsupported TIF format";
+					throw FI_MSG_ERROR_UNSUPPORTED_FORMAT;
 				}
 
 				// TIFFReadRGBAImage always deliveres 3 or 4 samples per pixel images
@@ -1282,7 +1284,7 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 
 					_TIFFfree(raster);
 
-					throw "DIB allocation failed";
+					throw FI_MSG_ERROR_DIB_MEMORY;
 				}
 				
 				// fill in the resolution (english or universal)
@@ -1382,7 +1384,7 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 
 						if (TIFFReadEncodedStrip(tif, TIFFComputeStrip(tif, y, 0), buf, nrow * src_line) == -1) {
 							free(buf);
-							throw "Parsing error";
+							throw FI_MSG_ERROR_PARSING;
 						}
 						for (int l = 0; l < nrow; l++) {
 							BYTE *p = bits;
@@ -1414,11 +1416,11 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 
 						if (TIFFReadEncodedStrip(tif, TIFFComputeStrip(tif, y, 0), grey, nrow * src_line) == -1) {
 							free(buf);
-							throw "Parsing error";
+							throw FI_MSG_ERROR_PARSING;
 						} 
 						if (TIFFReadEncodedStrip(tif, TIFFComputeStrip(tif, y, 1), alpha, nrow * src_line) == -1) {
 							free(buf);
-							throw "Parsing error";
+							throw FI_MSG_ERROR_PARSING;
 						} 
 
 						for (int l = 0; l < nrow; l++) {
@@ -1496,7 +1498,7 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 
 						if (TIFFReadEncodedStrip(tif, TIFFComputeStrip(tif, y, 0), buf, nrow * src_line) == -1) {
 							free(buf);
-							throw "Parsing error";
+							throw FI_MSG_ERROR_PARSING;
 						} 
 						if(isCMYKA) {
 							// CMYKA picture
@@ -1552,7 +1554,7 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 						for(sample = 0; sample < samplesperpixel; sample++) {
 							if (TIFFReadEncodedStrip(tif, TIFFComputeStrip(tif, y, sample), channel, nrow * src_line) == -1) {
 								free(buf);
-								throw "Parsing error";
+								throw FI_MSG_ERROR_PARSING;
 							} 
 							channel += stripsize;
 						}
@@ -1662,7 +1664,7 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 							bThrowMessage = TRUE;							
 							/*
 							free(buf);
-							throw "Parsing error";
+							throw FI_MSG_ERROR_PARSING;
 							*/
 						} 
 						// color/greyscale picture (1-, 4-, 8-bit) or special type (int, long, double, ...)
@@ -1701,7 +1703,7 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 								bThrowMessage = TRUE;								
 								/*
 								free(buf);
-								throw "Parsing error";
+								throw FI_MSG_ERROR_PARSING;
 								*/
 							} 
 							channel += stripsize;
@@ -1763,7 +1765,7 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 
 				// allocate tile buffer
 				BYTE *tileBuffer = (BYTE*)malloc(tileSize * sizeof(BYTE));
-				if(tileBuffer == NULL) throw "Not enough space for tile buffer";
+				if(tileBuffer == NULL) throw FI_MSG_ERROR_MEMORY;
 
 				// calculate src line and dst pitch
 				int dst_pitch = FreeImage_GetPitch(dib);
@@ -1789,7 +1791,7 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 							// read one tile
 							if (TIFFReadTile(tif, tileBuffer, x, y, 0, 0) < 0) {
 								free(tileBuffer);
-								throw "Corrupted tiled TIFF file!";
+								throw "Corrupted tiled TIFF file";
 							}
 							// convert to strip
 							if(x + tileWidth > width) {
@@ -1858,7 +1860,7 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 
 						if (TIFFReadEncodedStrip(tif, TIFFComputeStrip(tif, y, 0), buf, nrow * src_line) == -1) {
 							free(buf);
-							throw "Parsing error";
+							throw FI_MSG_ERROR_PARSING;
 						} 
 						// convert from XYZ to RGB
 						for (int l = 0; l < nrow; l++) {						
@@ -1879,7 +1881,7 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 				// Unknown or unsupported format
 				// ---------------------------------------------------------------------------------
 
-				throw "Unknown format";
+				throw FI_MSG_ERROR_UNSUPPORTED_FORMAT;
 			}
 
 			// copy ICC profile data (must be done after FreeImage_Allocate)

@@ -290,7 +290,7 @@ public:
 
 
 	gkListReverseIterator(Iterator last) :
-			m_iterator(first), m_cur(first)
+			m_iterator(last), m_cur(last)
 	{
 	}
 

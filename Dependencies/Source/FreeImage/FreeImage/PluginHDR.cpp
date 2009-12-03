@@ -614,7 +614,7 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 			// allocate a RGBF image
 			dib = FreeImage_AllocateT(FIT_RGBF, width, height);
 			if(!dib) {
-				throw "Memory allocation failed";
+				throw FI_MSG_ERROR_MEMORY;
 			}
 
 			// read the image pixels and fill the dib

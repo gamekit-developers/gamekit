@@ -238,8 +238,9 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 
 			header.TypeField = (WORD)multiByteRead(io, handle);
 
-			if (header.TypeField != 0)
-				throw "Unsupported WBMP type";			
+			if (header.TypeField != 0) {
+				throw FI_MSG_ERROR_UNSUPPORTED_FORMAT;
+			}
 
 			// FixHeaderField
 
@@ -266,9 +267,9 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 			// Allocate a new dib
 
 			dib = FreeImage_Allocate(width, height, 1);
-
-			if (!dib)
-				throw "DIB allocation failed";
+			if (!dib) {
+				throw FI_MSG_ERROR_DIB_MEMORY;
+			}
 
 			// write the palette data
 

@@ -3,6 +3,7 @@
 //
 // Design and implementation by
 // - Hervé Drolon (drolon@infonie.fr)
+// - Mihail Naydenov (mnaydenov@users.sourceforge.net)
 //
 // This file is part of FreeImage 3
 //
@@ -243,7 +244,7 @@ LuminanceFromYxy(FIBITMAP *Yxy, float *maxLum, float *minLum, float *worldLum) {
 		for(unsigned x = 0; x < width; x++) {
 			const float Y = pixel[x].red;
 			max_lum = (max_lum < Y) ? Y : max_lum;	// max Luminance in the scene
-			min_lum = (min_lum < Y) ? min_lum : Y;	// max Luminance in the scene
+			min_lum = (min_lum < Y) ? min_lum : Y;	// min Luminance in the scene
 			sum += log(2.3e-5 + Y);					// contrast constant in Tumblin paper
 		}
 		// next line
@@ -345,16 +346,17 @@ ConvertRGBFToY(FIBITMAP *src) {
 }
 
 /**
-Get the maximum, minimum and average luminance
+Get the maximum, minimum, average luminance and log average luminance from a Y image
 @param dib Source Y image to analyze
 @param maxLum Maximum luminance
 @param minLum Minimum luminance
-@param worldLum Average luminance (world adaptation luminance)
+@param Lav Average luminance
+@param Llav Log average luminance (also known as 'world adaptation luminance')
 @return Returns TRUE if successful, returns FALSE otherwise
-@see ConvertRGBFToY
+@see ConvertRGBFToY, FreeImage_TmoReinhard05Ex
 */
 BOOL 
-LuminanceFromY(FIBITMAP *dib, float *maxLum, float *minLum, float *worldLum) {
+LuminanceFromY(FIBITMAP *dib, float *maxLum, float *minLum, float *Lav, float *Llav) {
 	if(FreeImage_GetImageType(dib) != FIT_FLOAT)
 		return FALSE;
 
@@ -363,7 +365,7 @@ LuminanceFromY(FIBITMAP *dib, float *maxLum, float *minLum, float *worldLum) {
 	unsigned pitch  = FreeImage_GetPitch(dib);
 
 	float max_lum = -1e20F, min_lum = 1e20F;
-	double sum = 0;
+	double sumLum = 0, sumLogLum = 0;
 
 	BYTE *bits = (BYTE*)FreeImage_GetBits(dib);
 	for(unsigned y = 0; y < height; y++) {
@@ -372,19 +374,21 @@ LuminanceFromY(FIBITMAP *dib, float *maxLum, float *minLum, float *worldLum) {
 			const float Y = pixel[x];
 			max_lum = (max_lum < Y) ? Y : max_lum;				// max Luminance in the scene
 			min_lum = ((Y > 0) && (min_lum < Y)) ? min_lum : Y;	// min Luminance in the scene
-			sum += log(2.3e-5 + Y);								// contrast constant in Tumblin paper
+			sumLum += Y;										// average luminance
+			sumLogLum += log(2.3e-5 + Y);						// contrast constant in Tumblin paper
 		}
 		// next line
 		bits += pitch;
 	}
+
 	// maximum luminance
 	*maxLum = max_lum;
 	// minimum luminance
 	*minLum = min_lum;
-	// average log luminance
-	double avgLogLum = (sum / (width * height));
-	// world adaptation luminance
-	*worldLum = (float)exp(avgLogLum);
+	// average luminance
+	*Lav = (float)(sumLum / (width * height));
+	// average log luminance, a.k.a. world adaptation luminance
+	*Llav = (float)exp(sumLogLum / (width * height));
 
 	return TRUE;
 }

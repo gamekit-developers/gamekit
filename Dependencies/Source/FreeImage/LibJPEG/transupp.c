@@ -1,7 +1,7 @@
 /*
  * transupp.c
  *
- * Copyright (C) 1997-2001, Thomas G. Lane.
+ * Copyright (C) 1997-2009, Thomas G. Lane, Guido Vollbeding.
  * This file is part of the Independent JPEG Group's software.
  * For conditions of distribution and use, see the accompanying README file.
  *
@@ -1309,6 +1309,8 @@ jtransform_adjust_parameters (j_decompress_ptr srcinfo,
   case JXFORM_ROT_270:
     transpose_critical_parameters(dstinfo);
     break;
+  default:
+    break;
   }
 
   /* Adjust Exif properties */
@@ -1445,6 +1447,8 @@ jtransform_perfect_transform(JDIMENSION image_width, JDIMENSION image_height,
       result = FALSE;
     if (image_height % (JDIMENSION) MCU_height)
       result = FALSE;
+    break;
+  default:
     break;
   }
 

@@ -1,4 +1,4 @@
-/* $Id: tif_print.c,v 1.23 2008/06/08 18:47:34 drolon Exp $ */
+/* $Id: tif_print.c,v 1.27 2009/09/06 13:11:29 drolon Exp $ */
 
 /*
  * Copyright (c) 1988-1997 Sam Leffler
@@ -491,7 +491,7 @@ TIFFPrintDirectory(TIFF* tif, FILE* fd, long flags)
 		} else
 			fprintf(fd, "(present)\n");
 	}
-	if (TIFFFieldSet(tif, FIELD_SUBIFD)) {
+	if (TIFFFieldSet(tif, FIELD_SUBIFD) && (td->td_subifd)) {
 		fprintf(fd, "  SubIFD Offsets:");
 		for (i = 0; i < td->td_nsubifd; i++)
 			fprintf(fd, " %5lu", (long) td->td_subifd[i]);

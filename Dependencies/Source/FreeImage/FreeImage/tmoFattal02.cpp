@@ -442,11 +442,12 @@ static FIBITMAP* LogLuminance(FIBITMAP *Y) {
 		if(maxLum == minLum) throw(1);
 
 		// normalize to range 0..100 and take the logarithm
+		const float scale = 100.F / (maxLum - minLum);
 		bits = (BYTE*)FreeImage_GetBits(H);
 		for(y = 0; y < height; y++) {
 			float *pixel = (float*)bits;
 			for(x = 0; x < width; x++) {
-				const float value = 100 * (pixel[x] - minLum) / (maxLum - minLum);
+				const float value = (pixel[x] - minLum) * scale;
 				pixel[x] = log(value + EPSILON);
 			}
 			// next line

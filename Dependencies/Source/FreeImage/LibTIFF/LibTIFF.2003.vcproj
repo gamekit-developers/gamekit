@@ -3,7 +3,6 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="LibTIFF"
-	ProjectGUID="{153A762D-D3AA-497B-B4B9-406D9550BDEA}"
 	SccProjectName="&quot;$/FreeImage/LibTIFF&quot;, MKAAAAAA"
 	SccLocalPath=".">
 	<Platforms>
@@ -83,7 +82,7 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				StringPooling="TRUE"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="1"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderFile=".\Debug/LibTIFF.pch"
 				AssemblerListingLocation=".\Debug/"

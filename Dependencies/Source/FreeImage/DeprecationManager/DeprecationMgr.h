@@ -30,12 +30,30 @@
 
 // ==========================================================
 
-#define DEPRECATE(a,b) \
+#if !defined(_M_X64) && defined(_MSC_VER)
+	#define DEPRECATE(a,b) \
 	{ \
 		void *fptr;	\
 		_asm { mov fptr, ebp }	\
 		DeprecationMgr::GetInstance()->AddDeprecatedFunction(a, b, fptr); \
 	}
+
+#elif defined(__i386__) && defined(__GNUC__)
+	#define DEPRECATE(a,b) \
+	{ \
+		void *fptr;	\
+		__asm__("movl %%ebp, %0" : "=m" (fptr));	\
+		DeprecationMgr::GetInstance()->AddDeprecatedFunction(a, b, fptr); \
+	}
+
+#else
+	// default fallback case, which does not use the ebp register's content
+	#define DEPRECATE(a,b) \
+	{ \
+		void *fptr = NULL;	\
+		DeprecationMgr::GetInstance()->AddDeprecatedFunction(a, b, fptr); \
+	}
+#endif
 
 // ==========================================================
 

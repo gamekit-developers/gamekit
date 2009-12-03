@@ -89,16 +89,18 @@ Most compilers implement their own version of this keyword ...
 /* MSVC does not have lrintf */
 #ifdef _MSC_VER
 static INLINE long lrintf(float f){
+#ifdef _M_X64
+    return (long)((f > 0.0f) ? (f + 0.5f) : (f - 0.5f));
+#else 
 	int i;
-
 	_asm{
 		fld f
 		fistp i
 	};
-
 	return i;
+#endif // _M_X64
 }
-#endif
+#endif // _MSC_VER
 
 #include "j2k_lib.h"
 #include "opj_malloc.h"

@@ -319,7 +319,7 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 
 		// open a temporary memory buffer to save decoded scanlines
 		memory = FreeImage_OpenMemory();
-		if(!memory) throw "not enough memory";
+		if(!memory) throw FI_MSG_ERROR_MEMORY;
 		
 		// wrap the raw fax file
 		faxTIFF = TIFFClientOpen("(FakeInput)", "w",

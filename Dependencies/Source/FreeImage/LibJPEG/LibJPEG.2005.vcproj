@@ -174,11 +174,19 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
+				RelativePath=".\jaricom.c"
+				>
+			</File>
+			<File
 				RelativePath="jcapimin.c"
 				>
 			</File>
 			<File
 				RelativePath="jcapistd.c"
+				>
+			</File>
+			<File
+				RelativePath=".\jcarith.c"
 				>
 			</File>
 			<File
@@ -222,10 +230,6 @@
 				>
 			</File>
 			<File
-				RelativePath="jcphuff.c"
-				>
-			</File>
-			<File
 				RelativePath="jcprepct.c"
 				>
 			</File>
@@ -243,6 +247,10 @@
 			</File>
 			<File
 				RelativePath="jdapistd.c"
+				>
+			</File>
+			<File
+				RelativePath=".\jdarith.c"
 				>
 			</File>
 			<File
@@ -290,10 +298,6 @@
 				>
 			</File>
 			<File
-				RelativePath="jdphuff.c"
-				>
-			</File>
-			<File
 				RelativePath="jdpostct.c"
 				>
 			</File>
@@ -334,10 +338,6 @@
 				>
 			</File>
 			<File
-				RelativePath="jidctred.c"
-				>
-			</File>
-			<File
 				RelativePath="jmemmgr.c"
 				>
 			</File>
@@ -367,19 +367,11 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
-				RelativePath="jchuff.h"
-				>
-			</File>
-			<File
 				RelativePath="jconfig.h"
 				>
 			</File>
 			<File
 				RelativePath="jdct.h"
-				>
-			</File>
-			<File
-				RelativePath="jdhuff.h"
 				>
 			</File>
 			<File

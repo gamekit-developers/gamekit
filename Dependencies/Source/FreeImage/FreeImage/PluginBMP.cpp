@@ -35,14 +35,10 @@ static const BYTE RLE_ENDOFLINE   = 0;
 static const BYTE RLE_ENDOFBITMAP = 1;
 static const BYTE RLE_DELTA       = 2;
 
-#ifndef __MINGW32__		// prevents a bug in mingw32
-
 static const BYTE BI_RGB          = 0;
 static const BYTE BI_RLE8         = 1;
 static const BYTE BI_RLE4         = 2;
 static const BYTE BI_BITFIELDS    = 3;
-
-#endif // __MINGW32__
 
 // ----------------------------------------------------------
 
@@ -52,7 +48,6 @@ static const BYTE BI_BITFIELDS    = 3;
 #pragma pack(1)
 #endif
 
-#ifndef __MINGW32__
 typedef struct tagBITMAPCOREHEADER {
   DWORD   bcSize;
   WORD    bcWidth;
@@ -60,7 +55,6 @@ typedef struct tagBITMAPCOREHEADER {
   WORD    bcPlanes;
   WORD    bcBitCnt;
 } BITMAPCOREHEADER, *PBITMAPCOREHEADER; 
-#endif //__MINGW32__
 
 typedef struct tagBITMAPINFOOS2_1X_HEADER {
   DWORD  biSize;
@@ -70,7 +64,6 @@ typedef struct tagBITMAPINFOOS2_1X_HEADER {
   WORD   biBitCount;
 } BITMAPINFOOS2_1X_HEADER, *PBITMAPINFOOS2_1X_HEADER; 
 
-#ifndef __MINGW32__
 typedef struct tagBITMAPFILEHEADER {
   WORD    bfType; 
   DWORD   bfSize;
@@ -78,7 +71,6 @@ typedef struct tagBITMAPFILEHEADER {
   WORD    bfReserved2;
   DWORD   bfOffBits; 
 } BITMAPFILEHEADER, *PBITMAPFILEHEADER;
-#endif //__MINGW32__
 
 #ifdef _WIN32
 #pragma pack(pop)
@@ -482,9 +474,9 @@ LoadWindowsBMP(FreeImageIO *io, fi_handle handle, int flags, unsigned bitmap_bit
 				// allocate enough memory to hold the bitmap (header, palette, pixels) and read the palette
 
 				dib = FreeImage_Allocate(width, height, bit_count);
-
-				if (dib == NULL)
-					throw "DIB allocation failed";
+				if (dib == NULL) {
+					throw FI_MSG_ERROR_DIB_MEMORY;
+				}
 
 				// set resolution information
 				FreeImage_SetDotsPerMeterX(dib, bih.biXPelsPerMeter);
@@ -530,7 +522,7 @@ LoadWindowsBMP(FreeImageIO *io, fi_handle handle, int flags, unsigned bitmap_bit
 						break;
 
 					default :
-						throw "compression type not supported";
+						throw FI_MSG_ERROR_UNSUPPORTED_COMPRESSION;
 				}
 			}
 			break; // 1-, 4-, 8-bit
@@ -547,8 +539,9 @@ LoadWindowsBMP(FreeImageIO *io, fi_handle handle, int flags, unsigned bitmap_bit
 					dib = FreeImage_Allocate(width, height, bit_count, FI16_555_RED_MASK, FI16_555_GREEN_MASK, FI16_555_BLUE_MASK);
 				}
 
-				if (dib == NULL)
-					throw "DIB allocation failed";						
+				if (dib == NULL) {
+					throw FI_MSG_ERROR_DIB_MEMORY;						
+				}
 
 				// set resolution information
 				FreeImage_SetDotsPerMeterX(dib, bih.biXPelsPerMeter);
@@ -578,8 +571,9 @@ LoadWindowsBMP(FreeImageIO *io, fi_handle handle, int flags, unsigned bitmap_bit
 					}
 				}
 
-				if (dib == NULL)
-					throw "DIB allocation failed";
+				if (dib == NULL) {
+					throw FI_MSG_ERROR_DIB_MEMORY;
+				}
 
 				// set resolution information
 				FreeImage_SetDotsPerMeterX(dib, bih.biXPelsPerMeter);
@@ -655,8 +649,9 @@ LoadOS22XBMP(FreeImageIO *io, fi_handle handle, int flags, unsigned bitmap_bits_
 
 				dib = FreeImage_Allocate(width, height, bit_count);
 
-				if (dib == NULL)
-					throw "DIB allocation failed";
+				if (dib == NULL) {
+					throw FI_MSG_ERROR_DIB_MEMORY;
+				}
 
 				// set resolution information
 				FreeImage_SetDotsPerMeterX(dib, bih.biXPelsPerMeter);
@@ -709,7 +704,7 @@ LoadOS22XBMP(FreeImageIO *io, fi_handle handle, int flags, unsigned bitmap_bits_
 						break;
 
 					default :		
-						throw "compression type not supported";
+						throw FI_MSG_ERROR_UNSUPPORTED_COMPRESSION;
 				}	
 			}
 
@@ -725,8 +720,9 @@ LoadOS22XBMP(FreeImageIO *io, fi_handle handle, int flags, unsigned bitmap_bits_
 					dib = FreeImage_Allocate(width, height, bit_count, FI16_555_RED_MASK, FI16_555_GREEN_MASK, FI16_555_BLUE_MASK);
 				}
 
-				if (dib == NULL)
-					throw "DIB allocation failed";						
+				if (dib == NULL) {
+					throw FI_MSG_ERROR_DIB_MEMORY;
+				}
 
 				// set resolution information
 				FreeImage_SetDotsPerMeterX(dib, bih.biXPelsPerMeter);
@@ -751,8 +747,9 @@ LoadOS22XBMP(FreeImageIO *io, fi_handle handle, int flags, unsigned bitmap_bits_
 					dib = FreeImage_Allocate(width, height, bit_count, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK);
 				}
 
-				if (dib == NULL)
-					throw "DIB allocation failed";
+				if (dib == NULL) {
+					throw FI_MSG_ERROR_DIB_MEMORY;
+				}
 				
 				// set resolution information
 				FreeImage_SetDotsPerMeterX(dib, bih.biXPelsPerMeter);
@@ -817,8 +814,9 @@ LoadOS21XBMP(FreeImageIO *io, fi_handle handle, int flags, unsigned bitmap_bits_
 
 				dib = FreeImage_Allocate(width, height, bit_count);
 
-				if (dib == NULL)
-					throw "DIB allocation failed";						
+				if (dib == NULL) {
+					throw FI_MSG_ERROR_DIB_MEMORY;
+				}
 
 				// set resolution information to default values (72 dpi in english units)
 				FreeImage_SetDotsPerMeterX(dib, 2835);
@@ -855,8 +853,9 @@ LoadOS21XBMP(FreeImageIO *io, fi_handle handle, int flags, unsigned bitmap_bits_
 			{
 				dib = FreeImage_Allocate(width, height, bit_count, FI16_555_RED_MASK, FI16_555_GREEN_MASK, FI16_555_BLUE_MASK);
 
-				if (dib == NULL)
-					throw "DIB allocation failed";						
+				if (dib == NULL) {
+					throw FI_MSG_ERROR_DIB_MEMORY;						
+				}
 
 				// set resolution information to default values (72 dpi in english units)
 				FreeImage_SetDotsPerMeterX(dib, 2835);
@@ -877,8 +876,9 @@ LoadOS21XBMP(FreeImageIO *io, fi_handle handle, int flags, unsigned bitmap_bits_
 					dib = FreeImage_Allocate(width, height, bit_count, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK);
 				}
 
-				if (dib == NULL)
-					throw "DIB allocation failed";						
+				if (dib == NULL) {
+					throw FI_MSG_ERROR_DIB_MEMORY;						
+				}
 
 				// set resolution information to default values (72 dpi in english units)
 				FreeImage_SetDotsPerMeterX(dib, 2835);
@@ -1189,8 +1189,8 @@ Save(FreeImageIO *io, FIBITMAP *dib, fi_handle handle, int page, int flags, void
 
 		BITMAPFILEHEADER bitmapfileheader;
 		bitmapfileheader.bfType = 0x4D42;
-		bitmapfileheader.bfSize = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + FreeImage_GetHeight(dib) * FreeImage_GetPitch(dib);
 		bitmapfileheader.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + FreeImage_GetColorsUsed(dib) * sizeof(RGBQUAD);
+		bitmapfileheader.bfSize = bitmapfileheader.bfOffBits + FreeImage_GetHeight(dib) * FreeImage_GetPitch(dib);
 		bitmapfileheader.bfReserved1 = 0;
 		bitmapfileheader.bfReserved2 = 0;
 
@@ -1291,6 +1291,8 @@ Save(FreeImageIO *io, FIBITMAP *dib, fi_handle handle, int page, int flags, void
 			delete [] buffer;
 #ifdef FREEIMAGE_BIGENDIAN
 		} else if (bpp == 16) {
+			int padding = FreeImage_GetPitch(dib) - FreeImage_GetWidth(dib) * sizeof(WORD);
+			WORD pad = 0;
 			WORD pixel;
 			for(int y = 0; y < FreeImage_GetHeight(dib); y++) {
 				BYTE *line = FreeImage_GetScanLine(dib, y);
@@ -1300,10 +1302,17 @@ Save(FreeImageIO *io, FIBITMAP *dib, fi_handle handle, int page, int flags, void
 					if (io->write_proc(&pixel, sizeof(WORD), 1, handle) != 1)
 						return FALSE;
 				}
+				if(padding != 0) {
+					if(io->write_proc(&pad, padding, 1, handle) != 1) {
+						return FALSE;				
+					}
+				}
 			}
 #endif
 #if FREEIMAGE_COLORORDER == FREEIMAGE_COLORORDER_RGB
 		} else if (bpp == 24) {
+			int padding = FreeImage_GetPitch(dib) - FreeImage_GetWidth(dib) * sizeof(FILE_BGR);
+			DWORD pad = 0;
 			FILE_BGR bgr;
 			for(int y = 0; y < FreeImage_GetHeight(dib); y++) {
 				BYTE *line = FreeImage_GetScanLine(dib, y);
@@ -1314,6 +1323,11 @@ Save(FreeImageIO *io, FIBITMAP *dib, fi_handle handle, int page, int flags, void
 					bgr.r = triple->rgbtRed;
 					if (io->write_proc(&bgr, sizeof(FILE_BGR), 1, handle) != 1)
 						return FALSE;
+				}
+				if(padding != 0) {
+					if(io->write_proc(&pad, padding, 1, handle) != 1) {
+						return FALSE;					
+					}
 				}
 			}
 		} else if (bpp == 32) {

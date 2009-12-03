@@ -49,7 +49,7 @@ static inline double
 pade_log(const double x) {
 	if(x < 1) {
 		return (x * (6 + x) / (6 + 4 * x));
-	} else if(x >= 1 && x < 2) {
+	} else if(x < 2) {
 		return (x * (6 + 0.7662 * x) / (5.9897 + 3.7658 * x));
 	}
 	return log(x + 1);
@@ -63,7 +63,6 @@ Log mapping operator
 @param biasParam Bias parameter (a zero value default to 0.85)
 @param exposure Exposure parameter (default to 0)
 @return Returns TRUE if successful, returns FALSE otherwise
-@see calculateLuminance
 */
 static BOOL 
 ToneMappingDrago03(FIBITMAP *dib, const float maxLum, const float avgLum, float biasParam, const float exposure) {
@@ -102,9 +101,7 @@ ToneMappingDrago03(FIBITMAP *dib, const float maxLum, const float avgLum, float 
 		FIRGBF *pixel = (FIRGBF*)bits;
 		for(x = 0; x < width; x++) {
 			double Yw = pixel[x].red / avgLum;
-			if(exposure != 1.0) {
-				Yw *= exposure;
-			}
+			Yw *= exposure;
 			interpol = log(2 + biasFunction(biasP, Yw / Lmax) * 8);
 			L = pade_log(Yw);// log(Yw + 1)
 			pixel[x].red = (float)((L / interpol) / divider);
@@ -137,9 +134,7 @@ ToneMappingDrago03(FIBITMAP *dib, const float maxLum, const float avgLum, float 
 				for(j = 0; j < 3; j++) {
 					index = (y + i)*fpitch + (x + j);
 					image[index].red /= (float)avgLum;
-					if (exposure != 1) {
-						image[index].red *= exposure; 
-					}
+					image[index].red *= exposure; 
 					average += image[index].red;
 				}
 			}
@@ -178,9 +173,7 @@ ToneMappingDrago03(FIBITMAP *dib, const float maxLum, const float avgLum, float 
 		FIRGBF *pixel = (FIRGBF*)bits;
 		for(x = max_width; x < width; x++) {
 			double Yw = pixel[x].red / avgLum;
-			if(exposure != 1.0) {
-				Yw *= exposure;
-			}
+			Yw *= exposure;
 			interpol = log(2 + biasFunction(biasP, Yw / Lmax) * 8);
 			L = pade_log(Yw);// log(Yw + 1)
 			pixel[x].red = (float)((L / interpol) / divider);
@@ -194,9 +187,7 @@ ToneMappingDrago03(FIBITMAP *dib, const float maxLum, const float avgLum, float 
 		FIRGBF *pixel = (FIRGBF*)bits;
 		for(x = 0; x < max_width; x++) {
 			double Yw = pixel[x].red / avgLum;
-			if(exposure != 1.0) {
-				Yw *= exposure;
-			}
+			Yw *= exposure;
 			interpol = log(2 + biasFunction(biasP, Yw / Lmax) * 8);
 			L = pade_log(Yw);// log(Yw + 1)
 			pixel[x].red = (float)((L / interpol) / divider);
@@ -257,11 +248,10 @@ REC709GammaCorrection(FIBITMAP *dib, const float gammaval) {
 // ----------------------------------------------------------
 
 /**
-Apply the Adaptive Logarithmic Mapping operator to a RGBF image and convert to 24-bit RGB
-@param src Input RGBF image
+Apply the Adaptive Logarithmic Mapping operator to a HDR image and convert to 24-bit RGB
+@param src Input RGB16 or RGB[A]F image
 @param gamma Gamma correction (gamma > 0). 1 means no correction, 2.2 in the original paper.
 @param exposure Exposure parameter (0 means no correction, 0 in the original paper)
-If set to FALSE, src is left unchanged: a temporary working image is allocated. 
 @return Returns a 24-bit RGB image if successful, returns NULL otherwise
 */
 FIBITMAP* DLL_CALLCONV 

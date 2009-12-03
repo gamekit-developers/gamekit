@@ -164,7 +164,7 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 			io->seek_proc(handle, start_pos, SEEK_SET);
 			src = (BYTE*)malloc(file_length * sizeof(BYTE));
 			if(!src) {
-				throw "Memory allocation failed";
+				throw FI_MSG_ERROR_MEMORY;
 			}
 			if(io->read_proc(src, 1, file_length, handle) < 1) {
 				throw "Error while reading input stream";

@@ -23,19 +23,23 @@
 #include "Utilities.h"
 
 
-/** @brief Retrieves the red, green, blue or alpha channel of a 24- or 32-bit BGR[A] image. 
+/** @brief Retrieves the red, green, blue or alpha channel of a BGR[A] image. 
 @param src Input image to be processed.
 @param channel Color channel to extract
 @return Returns the extracted channel if successful, returns NULL otherwise.
 */
 FIBITMAP * DLL_CALLCONV 
 FreeImage_GetChannel(FIBITMAP *src, FREE_IMAGE_COLOR_CHANNEL channel) {
-	int c;
 
 	if(!src) return NULL;
 
+	FREE_IMAGE_TYPE image_type = FreeImage_GetImageType(src);
 	unsigned bpp = FreeImage_GetBPP(src);
-	if((bpp == 24) || (bpp == 32)) {
+
+	// 24- or 32-bit 
+	if(image_type == FIT_BITMAP && ((bpp == 24) || (bpp == 32))) {
+		int c;
+
 		// select the channel to extract
 		switch(channel) {
 			case FICC_BLUE:
@@ -85,13 +89,109 @@ FreeImage_GetChannel(FIBITMAP *src, FREE_IMAGE_COLOR_CHANNEL channel) {
 		return dst;
 	}
 
+	// 48-bit RGB or 64-bit RGBA images
+	if((image_type == FIT_RGB16) ||  (image_type == FIT_RGBA16)) {
+		int c;
+
+		// select the channel to extract (always RGB[A])
+		switch(channel) {
+			case FICC_BLUE:
+				c = 2;
+				break;
+			case FICC_GREEN:
+				c = 1;
+				break;
+			case FICC_RED: 
+				c = 0;
+				break;
+			case FICC_ALPHA:
+				if(bpp != 64) return NULL;
+				c = 3;
+				break;
+			default:
+				return NULL;
+		}
+
+		// allocate a greyscale dib
+		unsigned width  = FreeImage_GetWidth(src);
+		unsigned height = FreeImage_GetHeight(src);
+		FIBITMAP *dst = FreeImage_AllocateT(FIT_UINT16, width, height) ;
+		if(!dst) return NULL;
+
+		// perform extraction
+
+		int bytespp = bpp / 16;	// words / pixel
+
+		for(unsigned y = 0; y < height; y++) {
+			unsigned short *src_bits = (unsigned short*)FreeImage_GetScanLine(src, y);
+			unsigned short *dst_bits = (unsigned short*)FreeImage_GetScanLine(dst, y);
+			for(unsigned x = 0; x < width; x++) {
+				dst_bits[x] = src_bits[c];
+				src_bits += bytespp;
+			}
+		}
+
+		// copy metadata from src to dst
+		FreeImage_CloneMetadata(dst, src);
+		
+		return dst;
+	}
+
+	// 96-bit RGBF or 128-bit RGBAF images
+	if((image_type == FIT_RGBF) ||  (image_type == FIT_RGBAF)) {
+		int c;
+
+		// select the channel to extract (always RGB[A])
+		switch(channel) {
+			case FICC_BLUE:
+				c = 2;
+				break;
+			case FICC_GREEN:
+				c = 1;
+				break;
+			case FICC_RED: 
+				c = 0;
+				break;
+			case FICC_ALPHA:
+				if(bpp != 128) return NULL;
+				c = 3;
+				break;
+			default:
+				return NULL;
+		}
+
+		// allocate a greyscale dib
+		unsigned width  = FreeImage_GetWidth(src);
+		unsigned height = FreeImage_GetHeight(src);
+		FIBITMAP *dst = FreeImage_AllocateT(FIT_FLOAT, width, height) ;
+		if(!dst) return NULL;
+
+		// perform extraction
+
+		int bytespp = bpp / 32;	// floats / pixel
+
+		for(unsigned y = 0; y < height; y++) {
+			float *src_bits = (float*)FreeImage_GetScanLine(src, y);
+			float *dst_bits = (float*)FreeImage_GetScanLine(dst, y);
+			for(unsigned x = 0; x < width; x++) {
+				dst_bits[x] = src_bits[c];
+				src_bits += bytespp;
+			}
+		}
+
+		// copy metadata from src to dst
+		FreeImage_CloneMetadata(dst, src);
+		
+		return dst;
+	}
+
 	return NULL;
 }
 
-/** @brief Insert a 8-bit dib into a 24- or 32-bit image. 
+/** @brief Insert a greyscale dib into a RGB[A] image. 
 Both src and dst must have the same width and height.
-@param dst Image to modify (24- or 32-bit)
-@param src Input 8-bit image to insert
+@param dst Image to modify (RGB or RGBA)
+@param src Input greyscale image to insert
 @param channel Color channel to modify
 @return Returns TRUE if successful, FALSE otherwise.
 */
@@ -100,13 +200,7 @@ FreeImage_SetChannel(FIBITMAP *dst, FIBITMAP *src, FREE_IMAGE_COLOR_CHANNEL chan
 	int c;
 
 	if(!src || !dst) return FALSE;
-
-	// src image should be grayscale, dst image should be 24- or 32-bit
-	unsigned src_bpp = FreeImage_GetBPP(src);
-	unsigned dst_bpp = FreeImage_GetBPP(dst);
-	if((src_bpp != 8) || (dst_bpp != 24) && (dst_bpp != 32))
-		return FALSE;
-
+	
 	// src and dst images should have the same width and height
 	unsigned src_width  = FreeImage_GetWidth(src);
 	unsigned src_height = FreeImage_GetHeight(src);
@@ -115,39 +209,149 @@ FreeImage_SetChannel(FIBITMAP *dst, FIBITMAP *src, FREE_IMAGE_COLOR_CHANNEL chan
 	if((src_width != dst_width) || (src_height != dst_height))
 		return FALSE;
 
-	// select the channel to modify
-	switch(channel) {
-		case FICC_BLUE:
-			c = FI_RGBA_BLUE;
-			break;
-		case FICC_GREEN:
-			c = FI_RGBA_GREEN;
-			break;
-		case FICC_RED: 
-			c = FI_RGBA_RED;
-			break;
-		case FICC_ALPHA:
-			if(dst_bpp != 32) return FALSE;
-			c = FI_RGBA_ALPHA;
-			break;
-		default:
+	// src image should be grayscale, dst image should be RGB or RGBA
+	FREE_IMAGE_COLOR_TYPE src_type = FreeImage_GetColorType(src);
+	FREE_IMAGE_COLOR_TYPE dst_type = FreeImage_GetColorType(dst);
+	if((dst_type != FIC_RGB) && (dst_type != FIC_RGBALPHA) || (src_type != FIC_MINISBLACK)) {
+		return FALSE;
+	}
+
+	FREE_IMAGE_TYPE src_image_type = FreeImage_GetImageType(src);
+	FREE_IMAGE_TYPE dst_image_type = FreeImage_GetImageType(dst);
+
+	if((dst_image_type == FIT_BITMAP) && (src_image_type == FIT_BITMAP)) {
+
+		// src image should be grayscale, dst image should be 24- or 32-bit
+		unsigned src_bpp = FreeImage_GetBPP(src);
+		unsigned dst_bpp = FreeImage_GetBPP(dst);
+		if((src_bpp != 8) || (dst_bpp != 24) && (dst_bpp != 32))
 			return FALSE;
-	}
 
-	// perform insertion
 
-	int bytespp = dst_bpp / 8;	// bytes / pixel
-
-	for(unsigned y = 0; y < dst_height; y++) {
-		BYTE *src_bits = FreeImage_GetScanLine(src, y);
-		BYTE *dst_bits = FreeImage_GetScanLine(dst, y);
-		for(unsigned x = 0; x < dst_width; x++) {
-			dst_bits[c] = src_bits[x];
-			dst_bits += bytespp;
+		// select the channel to modify
+		switch(channel) {
+			case FICC_BLUE:
+				c = FI_RGBA_BLUE;
+				break;
+			case FICC_GREEN:
+				c = FI_RGBA_GREEN;
+				break;
+			case FICC_RED: 
+				c = FI_RGBA_RED;
+				break;
+			case FICC_ALPHA:
+				if(dst_bpp != 32) return FALSE;
+				c = FI_RGBA_ALPHA;
+				break;
+			default:
+				return FALSE;
 		}
+
+		// perform insertion
+
+		int bytespp = dst_bpp / 8;	// bytes / pixel
+
+		for(unsigned y = 0; y < dst_height; y++) {
+			BYTE *src_bits = FreeImage_GetScanLine(src, y);
+			BYTE *dst_bits = FreeImage_GetScanLine(dst, y);
+			for(unsigned x = 0; x < dst_width; x++) {
+				dst_bits[c] = src_bits[x];
+				dst_bits += bytespp;
+			}
+		}
+
+		return TRUE;
 	}
 
-	return TRUE;
+	if(((dst_image_type == FIT_RGB16) || (dst_image_type == FIT_RGBA16)) && (src_image_type == FIT_UINT16)) {
+
+		// src image should be grayscale, dst image should be 48- or 64-bit
+		unsigned src_bpp = FreeImage_GetBPP(src);
+		unsigned dst_bpp = FreeImage_GetBPP(dst);
+		if((src_bpp != 16) || (dst_bpp != 48) && (dst_bpp != 64))
+			return FALSE;
+
+
+		// select the channel to modify (always RGB[A])
+		switch(channel) {
+			case FICC_BLUE:
+				c = 2;
+				break;
+			case FICC_GREEN:
+				c = 1;
+				break;
+			case FICC_RED: 
+				c = 0;
+				break;
+			case FICC_ALPHA:
+				if(dst_bpp != 64) return FALSE;
+				c = 3;
+				break;
+			default:
+				return FALSE;
+		}
+
+		// perform insertion
+
+		int bytespp = dst_bpp / 16;	// words / pixel
+
+		for(unsigned y = 0; y < dst_height; y++) {
+			unsigned short *src_bits = (unsigned short*)FreeImage_GetScanLine(src, y);
+			unsigned short *dst_bits = (unsigned short*)FreeImage_GetScanLine(dst, y);
+			for(unsigned x = 0; x < dst_width; x++) {
+				dst_bits[c] = src_bits[x];
+				dst_bits += bytespp;
+			}
+		}
+
+		return TRUE;
+	}
+	
+	if(((dst_image_type == FIT_RGBF) || (dst_image_type == FIT_RGBAF)) && (src_image_type == FIT_FLOAT)) {
+
+		// src image should be grayscale, dst image should be 96- or 128-bit
+		unsigned src_bpp = FreeImage_GetBPP(src);
+		unsigned dst_bpp = FreeImage_GetBPP(dst);
+		if((src_bpp != 32) || (dst_bpp != 96) && (dst_bpp != 128))
+			return FALSE;
+
+
+		// select the channel to modify (always RGB[A])
+		switch(channel) {
+			case FICC_BLUE:
+				c = 2;
+				break;
+			case FICC_GREEN:
+				c = 1;
+				break;
+			case FICC_RED: 
+				c = 0;
+				break;
+			case FICC_ALPHA:
+				if(dst_bpp != 128) return FALSE;
+				c = 3;
+				break;
+			default:
+				return FALSE;
+		}
+
+		// perform insertion
+
+		int bytespp = dst_bpp / 32;	// floats / pixel
+
+		for(unsigned y = 0; y < dst_height; y++) {
+			float *src_bits = (float*)FreeImage_GetScanLine(src, y);
+			float *dst_bits = (float*)FreeImage_GetScanLine(dst, y);
+			for(unsigned x = 0; x < dst_width; x++) {
+				dst_bits[c] = src_bits[x];
+				dst_bits += bytespp;
+			}
+		}
+
+		return TRUE;
+	}
+
+	return FALSE;
 }
 
 /** @brief Retrieves the real part, imaginary part, magnitude or phase of a complex image.

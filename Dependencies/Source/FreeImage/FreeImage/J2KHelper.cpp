@@ -73,7 +73,7 @@ FIBITMAP* J2KImageToFIBITMAP(int format_id, const opj_image_t *image) {
 				numcomps = 1;
 			} else {
 				// unknown type
-				throw "Unsupported format";
+				throw FI_MSG_ERROR_UNSUPPORTED_FORMAT;
 			}
 		}
 
@@ -104,10 +104,10 @@ FIBITMAP* J2KImageToFIBITMAP(int format_id, const opj_image_t *image) {
 					break;
 			}
 		} else {
-			throw "Unsupported format";
+			throw FI_MSG_ERROR_UNSUPPORTED_FORMAT;
 		}
 		if(!dib) {
-			throw "DIB allocation failed";
+			throw FI_MSG_ERROR_DIB_MEMORY;
 		}
 		
 		if(image->comps[0].prec <= 8) {
@@ -310,7 +310,7 @@ FIBITMAP* J2KImageToFIBITMAP(int format_id, const opj_image_t *image) {
 
 		return dib;
 
-	} catch(char *text) {
+	} catch(const char *text) {
 		if(dib) FreeImage_Unload(dib);
 		FreeImage_OutputMessageProc(format_id, text);
 		return NULL;
@@ -392,7 +392,7 @@ opj_image_t* FIBITMAPToJ2KImage(int format_id, FIBITMAP *dib, const opj_cparamet
 		// create the image 
 		image = opj_image_create(numcomps, &cmptparm[0], color_space);
 		if(!image) {
-			throw "DIB allocation failed";
+			throw FI_MSG_ERROR_DIB_MEMORY;
 		}
 
 		// set image offset and reference grid 

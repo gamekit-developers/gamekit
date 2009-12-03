@@ -127,6 +127,27 @@ FreeImage_ConvertToRGBF(FIBITMAP *dib) {
 		}
 		break;
 
+		case FIT_RGBA16:
+		{
+			const BYTE *src_bits = (BYTE*)FreeImage_GetBits(src);
+			BYTE *dst_bits = (BYTE*)FreeImage_GetBits(dst);
+
+			for(unsigned y = 0; y < height; y++) {
+				const FIRGBA16 *src_pixel = (FIRGBA16*) src_bits;
+				FIRGBF  *dst_pixel = (FIRGBF*)  dst_bits;
+
+				for(unsigned x = 0; x < width; x++) {
+					// convert and scale to the range [0..1]
+					dst_pixel[x].red   = (float)(src_pixel[x].red)   / 65535;
+					dst_pixel[x].green = (float)(src_pixel[x].green) / 65535;
+					dst_pixel[x].blue  = (float)(src_pixel[x].blue)  / 65535;
+				}
+				src_bits += src_pitch;
+				dst_bits += dst_pitch;
+			}
+		}
+		break;
+
 		case FIT_RGBAF:
 		{
 			const BYTE *src_bits = (BYTE*)FreeImage_GetBits(src);

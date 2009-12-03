@@ -371,6 +371,64 @@ FreeImage_OpenMultiBitmap(FREE_IMAGE_FORMAT fif, const char *filename, BOOL crea
 	return NULL;
 }
 
+FIMULTIBITMAP * DLL_CALLCONV
+FreeImage_OpenMultiBitmapFromHandle(FREE_IMAGE_FORMAT fif, FreeImageIO *io, fi_handle handle, int flags) {
+	
+	if (io && handle) {
+		
+		// retrieve the plugin list to find the node belonging to this plugin
+		PluginList *list = FreeImage_GetPluginList();
+		
+		if (list) {
+			PluginNode *node = list->FindNodeFromFIF(fif);
+			
+			if (node) {
+				FIMULTIBITMAP *bitmap = new FIMULTIBITMAP;
+				
+				if (bitmap) {
+					MULTIBITMAPHEADER *header = new MULTIBITMAPHEADER;
+					
+					if (header) {
+						header->io = new FreeImageIO;
+						
+						if (header->io) {
+							
+							header->m_filename = NULL;
+							header->node = node;
+							header->fif = fif;
+							*header->io = *io;
+							header->handle = handle;						
+							header->changed = FALSE;						
+							header->read_only = TRUE;
+							header->m_cachefile = NULL;
+							header->cache_fif = fif;
+							header->load_flags = flags;
+							
+							// store the MULTIBITMAPHEADER in the surrounding FIMULTIBITMAP structure
+
+							bitmap->data = header;
+
+							// cache the page count
+
+							header->page_count = FreeImage_InternalGetPageCount(bitmap);
+
+							// allocate a continueus block to describe the bitmap
+
+							header->m_blocks.push_back((BlockTypeS *)new BlockContinueus(0, header->page_count - 1));
+
+							return bitmap;
+						}
+						delete header;
+					}
+					delete bitmap;
+				}
+			}
+		}
+	}
+
+	return NULL;
+}
+
 BOOL DLL_CALLCONV
 FreeImage_CloseMultiBitmap(FIMULTIBITMAP *bitmap, int flags) {
 	if (bitmap) {

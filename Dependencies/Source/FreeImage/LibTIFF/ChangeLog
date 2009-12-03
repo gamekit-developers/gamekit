@@ -1,4 +1,172 @@
+2009-08-28  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff 3.9.1 released.
+
+2009-08-28  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_dirwrite.c: Back out changes from 2007-11-22 that
+	resulted in the final strip not being written in some circumstances.
+	http://bugzilla.maptools.org/show_bug.cgi?id=2088
+
+2009-08-27  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/tif_write.c (TIFFAppendToStrip): Remove cast which
+	caused libtiff to output a wrong last strip with byte-count and
+	strip-offset of zero.  This cast was added on the day of the 3.9.0
+	release.
+
+	* libtiff/tif_config.vc.h: tiffiop.h needs the TIFF_INT64_T and
+	TIFF_UINT64_T defines in order to compile.  Copy existing
+	definitions from tiffconf.vc.h.
+
+2009-08-21  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* test/Makefile.am (AUTOMAKE_OPTIONS): Colorized tests was not
+	actually activated since it needed to be enabled in this
+	Makefile.am.  Also activated parallel-tests mode since it offers
+	useful features such as per-test .log files and a summary test
+	report .log file.
+
+2009-08-20  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff 3.9.0 released.
+
+	* libtiff/tif_print.c (TIFFPrintDirectory): Applied patch for "tag
+	error may cause segfault in tif_print.c."
+	http://bugzilla.maptools.org/show_bug.cgi?id=1896
+
+	* tools/{rgb2ycbcr.c, tiff2rgba.c}: Applied patch for
+	CVE-2009-2347 libtiff: integer overflows in various inter-color
+	space conversion tools.
+	http://bugzilla.maptools.org/show_bug.cgi?id=2079
+
+	* configure.ac: Updated autotools.  Autoconf 2.64, Automake 1.11,
+	libtool 2.2.6.  Enabled support for silent build rules
+	(--enable-silent-rules or 'make V=0') and colorized tests.
+
+2009-06-30  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_luv.c: correct return codes from encoderow to be
+	1 on success instead of zero.
+	http://bugzilla.maptools.org/show_bug.cgi?id=2069
+
+2009-06-22  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_lzw.c: Fix buffer underflow bug. 
+	http://bugzilla.maptools.org/show_bug.cgi?id=2065
+
+2009-06-03  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_write.c: do not override the planar configuration to be
+	contig for one sample files if planar configuration is already set.
+	http://bugzilla.maptools.org/show_bug.cgi?id=2057
+
+2009-02-12  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_luv.c: Fix handling of tiled logluv images. 
+	http://bugzilla.maptools.org/show_bug.cgi?id=2005
+
+2009-01-23  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_predict.c: Add support for 32bit integer horz. predictors.
+	http://bugzilla.maptools.org/show_bug.cgi?id=1911
+
+2009-01-20  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* tools/tiffsplit.c: fix sampleformat to be shortv instead of longv.
+
+2009-01-12  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* tools/tiff2ps.c: Remove spurious message printed to stderr. 
+
+2009-01-11  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* tools/tiff2ps.c: Incorporated significant functionality update
+	from Richard Nolde.  In particular, support for rotating the image
+	by 90, 180, 270, and 'auto' has been added.
+
+	* tools/tiffcrop.c: Incorporated significant functionality update
+	from Richard Nolde.
+
+2009-01-06  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* libtiff/tiffiop.h: Add private type declarations for int64, and
+	uint64 so that bundled utilities (like tiffcrop) can use it when
+	necessary.
+
+2009-01-01  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* configure.ac: Updated to test for 64-bit types.  This version of
+	the library does not require a 64-bit type, but tiffcrop needs it.
+
+2008-12-31  Bob Friesenhahn  <bfriesen@simple.dallas.tx.us>
+
+	* Update to use current FSF autotools versions.
+	* libtiff/tiffio.h: GCC will now validate format specifications
+	for TIFFError(), TIFFErrorExt(), TIFFWarning(), and
+	TIFFWarningExt() in order to reveal bugs.  Cleaned up resulting
+	warnings throughout for 32 bit build only.
+
+2008-12-31  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* tools/tiffcrop.c, man/tiffcrop.1: A major update from Richard
+	Nolde.  
+
+2008-12-21  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_jpeg.c: Avoid errors if the application writes a full
+	strip for the last partial strip in a jpeg compressed file.
+	http://bugzilla.maptools.org/show_bug.cgi?id=1981
+
+2008-12-21  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_getimage.c, tiffio.h: More ABI corrections. 
+	Removed SubsamplingHor/Ver from TIFFRGBAImage structure.
+	  http://bugzilla.maptools.org/show_bug.cgi?id=1980
+
+2008-12-18  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* libtiff/tif_getimage.c,tiffio.h: removed all use of UaToAa and
+	Bitmap16to8 arrays in TIFFRGBAImage structure to restore ABI
+	compatability.  These were just an attempt to speed up processing
+	with precalculated tables.
+	  http://bugzilla.maptools.org/show_bug.cgi?id=1979
+
+	* libtiff/tif_codec.c: Avoid printing c->name if it does not exist.
+
+2008-10-21  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* libtiff/tif_jbig.c: Support the JBIG-KIT 2.0 (compatibility with
+	the older versions retained).
+
+2008-09-05  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* tools/tiffsplit.c: Use dynamically allocated array instead of static
+	when constructing output file names.
+
+2008-09-03  Andrey Kiselev  <dron@ak4719.spb.edu>
+
+	* tools/tiffsplit.c: Get rid of unsafe strcpy()/strcat() calls when
+	doing the filename/path construction.
+
+	* tools/tiff2pdf.c: More appropriate format string in
+	t2p_write_pdf_string(); avoid signed/unsigned mismatch.
+
+	* libtiff/tif_lzw.c: Properly zero out the codetable. As per bug
+
+	http://bugzilla.maptools.org/show_bug.cgi?id=1929
+
+	* libtiff/tif_lzw.c: Properly zero out the string table. Fixes
+	CVE-2008-2327 security issue.
+
 2008-05-24  Frank Warmerdam  <warmerdam@pobox.com>
+
+	* tif_codec.c: Avoid NULL pointer dereferencing for exotic 
+	compression codec codes.
+
+	* tif_dirread.c: zero tif->tif_dir after freeing the directory
+	in TIFFReadCustomDirectory().  I don't exactly remember why this
+	was important. 
 
 	* tif_dirwrite.c: Fix potential memory leak writing large double
 	tags. 

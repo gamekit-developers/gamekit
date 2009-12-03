@@ -1,4 +1,4 @@
-/* $Id: tiffio.h,v 1.23 2008/06/08 18:47:38 drolon Exp $ */
+/* $Id: tiffio.h,v 1.27 2009/09/06 13:11:29 drolon Exp $ */
 
 /*
  * Copyright (c) 1988-1997 Sam Leffler
@@ -194,8 +194,6 @@ struct _TIFFRGBAImage {
 	int alpha;                              /* type of alpha data present */
 	uint32 width;                           /* image width */
 	uint32 height;                          /* image height */
-	uint16 SubsamplingHor;                  /* subsampling factors */
-	uint16 SubsamplingVer;
 	uint16 bitspersample;                   /* image bits/sample */
 	uint16 samplesperpixel;                 /* image samples/pixel */
 	uint16 orientation;                     /* image orientation */
@@ -217,9 +215,6 @@ struct _TIFFRGBAImage {
 	uint32** PALmap;                        /* palette image map */
 	TIFFYCbCrToRGB* ycbcr;                  /* YCbCr conversion state */
 	TIFFCIELabToRGB* cielab;                /* CIE L*a*b conversion state */
-
-	uint8* UaToAa;                          /* Unassociated alpha to associated alpha convertion LUT */
-	uint8* Bitdepth16To8;                   /* LUT for conversion from 16bit to 8bit values */
 
 	int row_offset;
 	int col_offset;
@@ -254,6 +249,10 @@ typedef struct {
 /* share internal LogLuv conversion routines? */
 #ifndef LOGLUV_PUBLIC
 #define LOGLUV_PUBLIC		1
+#endif
+
+#if !defined(__GNUC__) && !defined(__attribute__)
+#  define __attribute__(x) /*nothing*/
 #endif
 
 #if defined(c_plusplus) || defined(__cplusplus)
@@ -438,10 +437,10 @@ extern	TIFF* TIFFClientOpen(const char*, const char*,
 	    TIFFMapFileProc, TIFFUnmapFileProc);
 extern	const char* TIFFFileName(TIFF*);
 extern	const char* TIFFSetFileName(TIFF*, const char *);
-extern	void TIFFError(const char*, const char*, ...);
-extern	void TIFFErrorExt(thandle_t, const char*, const char*, ...);
-extern	void TIFFWarning(const char*, const char*, ...);
-extern	void TIFFWarningExt(thandle_t, const char*, const char*, ...);
+extern void TIFFError(const char*, const char*, ...) __attribute__((format (printf,2,3)));
+extern void TIFFErrorExt(thandle_t, const char*, const char*, ...) __attribute__((format (printf,3,4)));
+extern void TIFFWarning(const char*, const char*, ...) __attribute__((format (printf,2,3)));
+extern void TIFFWarningExt(thandle_t, const char*, const char*, ...) __attribute__((format (printf,3,4)));
 extern	TIFFErrorHandler TIFFSetErrorHandler(TIFFErrorHandler);
 extern	TIFFErrorHandlerExt TIFFSetErrorHandlerExt(TIFFErrorHandlerExt);
 extern	TIFFErrorHandler TIFFSetWarningHandler(TIFFErrorHandler);

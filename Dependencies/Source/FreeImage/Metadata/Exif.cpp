@@ -172,13 +172,19 @@ processMakerNote(FIBITMAP *dib, char *pval, BOOL msb_order, DWORD *subdirOffset,
 	FreeImage_GetMetadata(FIMD_EXIF_MAIN, dib, "Make", &tagMake);
 	const char *Maker = (char*)FreeImage_GetTagValue(tagMake);
 
-	if((strncmp("OLYMP", pval, 5) == 0) || (strncmp("EPSON", pval, 5) == 0) || (strncmp("AGFA", pval, 4) == 0)) {
-		// Olympus Makernote
+	if((strncmp("OLYMP\x00\x01", pval, 7) == 0) || (strncmp("OLYMP\x00\x02", pval, 7) == 0) || (strncmp("EPSON", pval, 5) == 0) || (strncmp("AGFA", pval, 4) == 0)) {
+		// Olympus Type 1 Makernote
 		// Epson and Agfa use Olympus maker note standard, 
 		// see: http://www.ozhiker.com/electronics/pjmt/jpeg_info/
-		*md_model = TagLib::EXIF_MAKERNOTE_OLYMPUS;
+		*md_model = TagLib::EXIF_MAKERNOTE_OLYMPUSTYPE1;
 		*subdirOffset = 8;
 	} 
+	else if(strncmp("OLYMPUS\x00\x49\x49\x03\x00", pval, 12) == 0) {
+		// Olympus Type 2 Makernote
+		// !!! NOT YET SUPPORTED !!!
+		*subdirOffset = 0;
+		*md_model = TagLib::UNKNOWN;
+	}
 	else if(strncmp("Nikon", pval, 5) == 0) {
 		/* There are two scenarios here:
 		 * Type 1:
@@ -221,6 +227,10 @@ processMakerNote(FIBITMAP *dib, char *pval, BOOL msb_order, DWORD *subdirOffset,
 		}
 	} else if ((strncmp("FUJIFILM", pval, 8) == 0) || (Maker && (FreeImage_strnicmp("Fujifilm", Maker, 8) == 0))) {
         // Fujifile Makernote
+		// Fujifilm's Makernote always use Intel order altough the Exif section maybe in Intel order or in Motorola order. 
+		// If msb_order == TRUE, the Makernote won't be read: 
+		// the value of ifdStart will be 0x0c000000 instead of 0x0000000c and the MakerNote section will be discarded later
+		// in jpeg_read_exif_dir because the IFD is too high
 		*md_model = TagLib::EXIF_MAKERNOTE_FUJIFILM;
         DWORD ifdStart = (DWORD) ReadUint32(msb_order, pval + 8);
 		*subdirOffset = ifdStart;
