@@ -812,12 +812,22 @@ void	bFile::writeChunks(FILE* fp)
 		char *oldType, *newType;
 		int oldLen, curLen, reverseOld;
 
-		oldStruct = mFileDNA->getStruct(dataChunk.dna_nr);
-		oldType = mFileDNA->getType(oldStruct[0]);
-		oldLen = mFileDNA->getLength(oldStruct[0]);
+		if (mFileDNA)
+		{
+			oldStruct = mFileDNA->getStruct(dataChunk.dna_nr);
+			oldType = mFileDNA->getType(oldStruct[0]);
+			oldLen = mFileDNA->getLength(oldStruct[0]);
+			///don't try to convert Link block data, just memcpy it. Other data can be converted.
+			reverseOld = mMemoryDNA->getReverseType(oldType);
+		} else
+		{
+			oldStruct = mMemoryDNA->getStruct(dataChunk.dna_nr);
+			oldType = mMemoryDNA->getType(oldStruct[0]);
+			oldLen = mMemoryDNA->getLength(oldStruct[0]);
+			///don't try to convert Link block data, just memcpy it. Other data can be converted.
+			reverseOld = mMemoryDNA->getReverseType(oldType);
+		}
 
-		///don't try to convert Link block data, just memcpy it. Other data can be converted.
-		reverseOld = mMemoryDNA->getReverseType(oldType);
 		if ((reverseOld!=-1))
 		{
 			// make sure it's here

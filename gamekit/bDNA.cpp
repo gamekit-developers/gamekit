@@ -584,6 +584,7 @@ void bDNA::dumpTypeDefinitions()
 
 	for (int i=0; i<(int)mStructs.size(); i++)
 	{
+		int totalBytes=0;
 		short *oldStruct = mStructs[i];
 
 		int oldLookup = getReverseType(oldStruct[0]);
@@ -605,14 +606,28 @@ void bDNA::dumpTypeDefinitions()
 		printf("{");
 		int j;
 		for (j=0; j<len; ++j,oldStruct+=2) {
-			printf("%s %s",	mTypes[oldStruct[0]],m_Names[oldStruct[1]].m_name);
+			const char* name = m_Names[oldStruct[1]].m_name;
+			printf("%s %s",	mTypes[oldStruct[0]],name);
+			int elemNumBytes= 0;
+			int arrayDimensions = getArraySizeNew(oldStruct[1]);
+
+			if (m_Names[oldStruct[1]].m_isPointer)
+			{
+				elemNumBytes = VOID_IS_8 ? 8 : 4;
+			} else
+			{
+				elemNumBytes = getLength(oldStruct[0]);
+			}
+			printf(" /* %d bytes */",elemNumBytes*arrayDimensions);
+			
 			if (j == len-1) {
 				printf(";}");
 			} else {
 				printf("; ");
 			}
+			totalBytes+=elemNumBytes*arrayDimensions;
 		}
-		printf("\n\n");
+		printf("\ntotalBytes=%d\n\n",totalBytes);
 
 	}
 	

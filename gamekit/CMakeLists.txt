@@ -58,12 +58,15 @@ SET(bParse_SRCS
 	bFile.h
 	bBlenderFile.cpp
 	bBlenderFile.h
+	btBulletFile.cpp
+	btBulletFile.h
 	bLog.cpp
 	bLog.h
 	bMain.cpp
 	bMain.h
 	dna249.cpp
 	dna249-64bit.cpp
+	BulletDNA.cpp
 )
 
 
@@ -80,12 +83,13 @@ SET(GameKit_SRCS
 	IrrBlend.h
 	IrrBlendNew.cpp
 	IrrBlendNew.h
+	
 	main.cpp
 )
 	
 
 LINK_LIBRARIES(
-	BulletSoftBody BulletDynamics BulletCollision LinearMath Irrlicht ${EXTRA_LIBS} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} ${X11_VIDEO_LIBRARY}
+	 BulletSoftBody BulletDynamics BulletCollision LinearMath Irrlicht ${EXTRA_LIBS} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} ${X11_VIDEO_LIBRARY} 
 )
 
 IF (APPLE)
@@ -98,11 +102,13 @@ IF (APPLE)
 	MainMenu.nib
 	${GameKit_SRCS}
 	${bParse_SRCS}
+
 	)
 ELSE (APPLE)
 	ADD_EXECUTABLE(GameKit
 	${GameKit_SRCS}
 	${bParse_SRCS}
+
 	)
 ENDIF (APPLE)
 
