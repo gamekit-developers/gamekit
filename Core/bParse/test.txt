@@ -1,0 +1,36 @@
+			if (memName[0] == '*')
+			{
+				void** ptrptr = (void**) elemPtr;
+				void* ptr = *ptrptr;
+				ptr = mMain->findLibPointer(ptr);
+				if (ptr)
+				{
+//					printf("Fixup pointer at 0x%x from 0x%x to 0x%x!\n",ptrptr,*ptrptr,ptr);
+					*(ptrptr) = ptr;
+					patched = true;
+				}
+
+                if (memName[1] == '*')
+                {
+                    patched = false;
+                    if (ptrptr && *ptrptr)
+                    {
+                        // This will only work if the given **array is continuous
+                        void **array = (void**)*(ptrptr);
+                        void *np = array[0];
+                        int n=0;
+                        while (np) 
+                        {
+                            np = mMain->findLibPointer(array[n]);
+                            if (np)
+                            {
+                                //printf("Fixup pointer array %i!\n", n);
+                                array[n] = np;
+                                patched = true;
+                            }
+                            n++;
+                        }
+                    }
+                }
+			}
+
