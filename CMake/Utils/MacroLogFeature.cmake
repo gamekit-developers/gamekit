@@ -38,7 +38,7 @@
 #
 # Redistribution and use is allowed according to the terms of the BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
-
+SET(OGRE_BINARY_DIR ../../Bin)
 IF (NOT _macroLogFeatureAlreadyIncluded)
    SET(_file ${OGRE_BINARY_DIR}/MissingRequirements.txt)
    IF (EXISTS ${_file})
