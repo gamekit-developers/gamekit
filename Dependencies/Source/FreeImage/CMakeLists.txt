@@ -547,10 +547,7 @@ set(fi_IlmImf_HDRS
 
 
 set(fi_IlmThread_SRCS
-		# OpenEXR/IlmThread/IlmThread.cpp
-		# OpenEXR/IlmThread/IlmThreadMutex.cpp
 		OpenEXR/IlmThread/IlmThreadPool.cpp
-		#OpenEXR/IlmThread/IlmThreadSemaphore.cpp
 		)
 
 if (WIN32)
@@ -561,6 +558,10 @@ if (WIN32)
 			)
 else (WIN32)			   
 	set(fi_IlmThread_SRCS_PLAT
+            OpenEXR/IlmThread/IlmThreadSemaphore.cpp
+		    OpenEXR/IlmThread/IlmThread.cpp
+            OpenEXR/IlmThread/IlmThreadMutex.cpp
+			OpenEXR/IlmThread/IlmThreadPosix.cpp
 			OpenEXR/IlmThread/IlmThreadMutexPosix.cpp
 			OpenEXR/IlmThread/IlmThreadSemaphorePosix.cpp
 			OpenEXR/IlmThread/IlmThreadSemaphorePosixCompat.cpp

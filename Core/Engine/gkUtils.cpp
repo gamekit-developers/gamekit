@@ -22,6 +22,8 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+#include "OgrePlatform.h"
+
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
 # include <windows.h>
 # include <process.h>

@@ -17,11 +17,13 @@ set(CMAKE_MODULE_PATH
     ${OGREKIT_SOURCE_DIR}/CMake/Templates
     )
 
+set(OGREKIT_INSTALL_PREFIX ${OGREKIT_SOURCE_DIR}/Bin)
+set(OGRE_BINARY_DIR ${OGREKIT_INSTALL_PREFIX})
+
 include(CMakeDependentOption)
 include(CheckCXXCompilerFlag)
 include(DependenciesOgreKit)
 
-set(OGREKIT_INSTALL_PREFIX ${OGREKIT_SOURCE_DIR}/Bin)
 set(OGRE_STATIC_LIB 1)
 set(OGREKIT_LIB_TYPE STATIC)
 

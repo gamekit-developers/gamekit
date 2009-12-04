@@ -82,10 +82,10 @@ Pass *gkMaterialUtils::getOrCreatePass(size_t idx)
 
 
 	if (idx < passc)
-		return mTech->getPass((ushort)idx);
+		return mTech->getPass((unsigned short)idx);
 
 	if (idx > passc)
-		return mTech->getPass(ushort(passc - 1));
+		return mTech->getPass((unsigned short)(passc - 1));
 
 	return mTech->createPass();
 }
