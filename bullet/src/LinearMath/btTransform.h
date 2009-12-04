@@ -201,9 +201,9 @@ public:
 		return identityTransform;
 	}
 
-	SIMD_FORCE_INLINE	void	serialize(struct	btTransformData& dataOut) const;
+	virtual	void	serialize(struct	btTransformData& dataOut) const;
 
-	SIMD_FORCE_INLINE	void	deSerialize(const struct	btTransformData& dataIn);
+	virtual	void	deSerialize(const struct	btTransformData& dataIn);
 
 };
 

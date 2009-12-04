@@ -83,7 +83,7 @@ int bDNA::getReverseType(short type)
 }
 
 // ----------------------------------------------------- //
-int bDNA::getReverseType(char *type)
+int bDNA::getReverseType(const char *type)
 {
 	std::map<bString, int>::iterator it = mTypeLookup.find(type);
 	if (it != mTypeLookup.end())

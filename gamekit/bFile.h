@@ -77,8 +77,6 @@ namespace bParse {
 
 		void resolvePointersStructRecursive(char *strcPtr, int old_dna);
 
-		void resolvePointers();
-
 		void parseStruct(char *strcPtr, char *dtPtr, int old_dna, int new_dna, bool fixupPointers);
 		void getMatchingFileDNA(short* old, bString lookupName, bString lookupType, char *strcData, char *data, bool fixupPointers);
 		char* getFileElement(short *firstStruct, char *lookupName, char *lookupType, char *data, short **foundPos);
@@ -133,6 +131,9 @@ namespace bParse {
 		virtual	void	writeChunks(FILE* fp);
 
 		virtual	void	writeDNA(FILE* fp) = 0;
+
+		void	updateOldPointers();
+		void	resolvePointers();
 
 		void	dumpChunks(bDNA* dna);
 		

@@ -496,9 +496,9 @@ public:
 		return m_el[r1][c1] * m_el[r2][c2] - m_el[r1][c2] * m_el[r2][c1];
 	}
 
-	SIMD_FORCE_INLINE	void	serialize(struct	btMatrix3x3Data& dataOut) const;
+	virtual	void	serialize(struct	btMatrix3x3Data& dataOut) const;
 
-	SIMD_FORCE_INLINE	void	deSerialize(const struct	btMatrix3x3Data& dataIn);
+	virtual	void	deSerialize(const struct	btMatrix3x3Data& dataIn);
 
 };
 

@@ -415,9 +415,11 @@ public:
 		return true;
 	}
 
-	void	serialize(struct btCollisionObjectData& dataOut) const;
+	virtual	int	calculateSerializeBufferSize()	const;
 
-	void	deSerialize(const  struct btCollisionObjectData& dataIn);
+	///fills the dataBuffer and returns the struct name (and 0 on failure)
+	virtual	const char*	serialize(void* dataBuffer) const;
+
 
 };
 
@@ -434,7 +436,7 @@ struct	btCollisionObjectData
 	int						m_hasAnisotropicFriction;
 	btScalar				m_contactProcessingThreshold;	
 	void					*m_broadphaseHandle;
-	btCollisionShapeData	*m_collisionShape;
+	void					*m_collisionShape;
 	btCollisionShapeData	*m_rootCollisionShape;
 	int						m_collisionFlags;
 	int						m_islandTag1;
@@ -451,39 +453,46 @@ struct	btCollisionObjectData
 	int						m_checkCollideWith;
 };
 
-SIMD_FORCE_INLINE	void	btCollisionObject::serialize(struct btCollisionObjectData& dataOut) const
+
+SIMD_FORCE_INLINE	int	btCollisionObject::calculateSerializeBufferSize() const
 {
-	m_worldTransform.serialize(dataOut.m_worldTransform);
-	m_interpolationWorldTransform.serialize(dataOut.m_interpolationWorldTransform);
-	m_interpolationLinearVelocity.serialize(dataOut.m_interpolationLinearVelocity);
-	m_interpolationAngularVelocity.serialize(dataOut.m_interpolationAngularVelocity);
-	m_anisotropicFriction.serialize(dataOut.m_anisotropicFriction);
-	dataOut.m_hasAnisotropicFriction = m_hasAnisotropicFriction;
-	dataOut.m_contactProcessingThreshold = m_contactProcessingThreshold;
-	dataOut.m_broadphaseHandle = 0;
-	dataOut.m_collisionShape = 0; //@todo
-	dataOut.m_rootCollisionShape = 0;//@todo
-	dataOut.m_collisionFlags = m_collisionFlags;
-	dataOut.m_islandTag1 = m_islandTag1;
-	dataOut.m_companionId = m_companionId;
-	dataOut.m_activationState1 = m_activationState1;
-	dataOut.m_activationState1 = m_activationState1;
-	dataOut.m_deactivationTime = m_deactivationTime;
-	dataOut.m_friction = m_friction;
-	dataOut.m_restitution = m_restitution;
-	dataOut.m_internalType = m_internalType;
-	dataOut.m_userObjectPointer = m_userObjectPointer;
-	dataOut.m_hitFraction = m_hitFraction;
-	dataOut.m_ccdSweptSphereRadius = m_ccdSweptSphereRadius;
-	dataOut.m_ccdMotionThreshold = m_ccdMotionThreshold;
-	dataOut.m_ccdMotionThreshold = m_ccdMotionThreshold;
-	dataOut.m_checkCollideWith = m_checkCollideWith;
+	return sizeof(btCollisionObjectData);
 }
 
-SIMD_FORCE_INLINE	void	deSerialize(const  struct btCollisionObjectData& dataIn)
+SIMD_FORCE_INLINE	const char* btCollisionObject::serialize(void* dataBuffer) const
 {
-	//@todo
+
+	btCollisionObjectData* dataOut = (btCollisionObjectData*)dataBuffer;
+
+	m_worldTransform.serialize(dataOut->m_worldTransform);
+	m_interpolationWorldTransform.serialize(dataOut->m_interpolationWorldTransform);
+	m_interpolationLinearVelocity.serialize(dataOut->m_interpolationLinearVelocity);
+	m_interpolationAngularVelocity.serialize(dataOut->m_interpolationAngularVelocity);
+	m_anisotropicFriction.serialize(dataOut->m_anisotropicFriction);
+	dataOut->m_hasAnisotropicFriction = m_hasAnisotropicFriction;
+	dataOut->m_contactProcessingThreshold = m_contactProcessingThreshold;
+	dataOut->m_broadphaseHandle = 0;
+	dataOut->m_collisionShape = m_collisionShape; //@todo
+	dataOut->m_rootCollisionShape = 0;//@todo
+	dataOut->m_collisionFlags = m_collisionFlags;
+	dataOut->m_islandTag1 = m_islandTag1;
+	dataOut->m_companionId = m_companionId;
+	dataOut->m_activationState1 = m_activationState1;
+	dataOut->m_activationState1 = m_activationState1;
+	dataOut->m_deactivationTime = m_deactivationTime;
+	dataOut->m_friction = m_friction;
+	dataOut->m_restitution = m_restitution;
+	dataOut->m_internalType = m_internalType;
+	dataOut->m_userObjectPointer = m_userObjectPointer;
+	dataOut->m_hitFraction = m_hitFraction;
+	dataOut->m_ccdSweptSphereRadius = m_ccdSweptSphereRadius;
+	dataOut->m_ccdMotionThreshold = m_ccdMotionThreshold;
+	dataOut->m_ccdMotionThreshold = m_ccdMotionThreshold;
+	dataOut->m_checkCollideWith = m_checkCollideWith;
+
+	return "btCollisionObjectData";
 }
+
 
 
 #endif //COLLISION_OBJECT_H

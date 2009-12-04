@@ -62,9 +62,11 @@ int		BulletBlendReaderNew::readFile(char* memoryBuffer, int fileLen, int verbose
 
 int		BulletBlendReaderNew::writeFile(const char* fileName)
 {
+	bool replaceOldPointers = true;
 	return m_blendFile->write(fileName);
 }
 
+char* serializationBuffer[1024*1024*10];//10Mb for a test
 
 void	BulletBlendReaderNew::convertAllObjects(int verboseDumpAllBlocks)
 {
@@ -233,20 +235,51 @@ void	BulletBlendReaderNew::convertAllObjects(int verboseDumpAllBlocks)
 
 //#define TEST_CREATE_BULLET_FILE
 #ifdef TEST_CREATE_BULLET_FILE
+	
+
+	
+	int bufIndex = 0;
+
+	btCollisionObject* colObj = new btCollisionObject();
+	btBoxShape* boxShape = new btBoxShape(btVector3(1,2,3));
+	colObj->setCollisionShape(boxShape);
+	
 	//try to create a Bullet file...
 	bParse::btBulletFile* bulletFile = new bParse::btBulletFile();
-	btCollisionObjectData* rbd = new btCollisionObjectData();
-	rbd->m_friction = 1.f;
-	rbd->m_collisionFlags = 0;
-	int sz = sizeof(btCollisionObjectData);
-	bulletFile->addStruct("btCollisionObjectData",rbd,sz);
+
+	{
+	void* bufPtr1 = &serializationBuffer[bufIndex];
+	const char* structName = colObj->serialize(bufPtr1);
+	int len = colObj->calculateSerializeBufferSize();
+	bulletFile->addStruct(structName,bufPtr1,len,colObj, BT_COLLISIONOBJECT_CODE);
+	bufIndex += len;
+	}
+
+	{
+	void* bufPtr1 = &serializationBuffer[bufIndex];
+	const char* structName = boxShape->serialize(bufPtr1);
+	int len = boxShape->calculateSerializeBufferSize();
+	bulletFile->addStruct(structName,bufPtr1,len,boxShape,BT_BOXSHAPE_CODE);
+	bufIndex += len;
+	}
+
+	
+
+	bulletFile->resolvePointers();
+	bulletFile->updateOldPointers();
+
 	bulletFile->write("testFile.bullet");
+	
+	//int bufSize = boxShape->calculateSerializeBufferSize();
+	//boxShape->serialize(buf);
+	
 
 	bParse::btBulletFile* bulletFile2 = new bParse::btBulletFile("testFile.bullet");
 	bool ok = (bulletFile2->getFlags()& bParse::FD_OK)!=0;
 	bool verboseDumpAllTypes = true;
 	if (ok)
 		bulletFile2->parse(verboseDumpAllTypes);
+	
 	if (verboseDumpAllTypes)
 	{
 		bulletFile2->dumpChunks(bulletFile2->getFileDNA());

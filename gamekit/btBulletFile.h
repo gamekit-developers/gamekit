@@ -18,6 +18,12 @@ subject to the following restrictions:
 
 
 #include "bFile.h"
+#include "LinearMath/btAlignedObjectArray.h"
+#include "bDefines.h"
+
+#define BT_COLLISIONOBJECT_CODE MAKE_ID('C','O','B','J')
+#define BT_RIGIDBODY_CODE		MAKE_ID('R','B','D','Y')
+#define BT_BOXSHAPE_CODE		MAKE_ID('B','O','X','S')
 
 namespace bParse {
 
@@ -27,8 +33,12 @@ namespace bParse {
 
 	protected:
 	
-		
+				
 	public:
+
+		btAlignedObjectArray<bStructHandle*>	m_collisionObjects;
+
+		btAlignedObjectArray<bStructHandle*>	m_collisionShapes;
 
 		btBulletFile();
 
@@ -50,7 +60,7 @@ namespace bParse {
 
 		virtual	void	writeDNA(FILE* fp);
 
-		void	addStruct(char* structType,void* data, int len);
+		void	addStruct(const char* structType,void* data, int len, void* oldPtr, int code);
 
 	};
 };

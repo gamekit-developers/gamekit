@@ -60,7 +60,7 @@ namespace bParse {
 		short *getStruct(int ind);
 		short getLength(int ind);
 		int getReverseType(short type);
-		int getReverseType(char *type);
+		int getReverseType(const char *type);
 
 
 		int getNumStructs();

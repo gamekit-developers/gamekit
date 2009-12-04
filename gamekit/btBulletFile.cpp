@@ -18,6 +18,7 @@ subject to the following restrictions:
 #include "bDNA.h"
 
 
+
 // 32 && 64 bit versions
 extern unsigned char BulletDNAstr[];
 extern int BulletDNAlen;
@@ -104,6 +105,16 @@ void btBulletFile::parseData()
 			//bListBasePtr *listID = mMain->getListBasePtr(dataChunk.code);
 			//if (listID)
 			//	listID->push_back((bStructHandle*)id);
+		}
+
+		if (dataChunk.code == BT_COLLISIONOBJECT_CODE)
+		{
+			m_collisionObjects.push_back((bStructHandle*) id);
+		}
+
+		if (dataChunk.code == BT_BOXSHAPE_CODE)
+		{
+			m_collisionShapes.push_back((bStructHandle*) id);
 		}
 
 //		if (dataChunk.code == GLOB)
@@ -212,17 +223,17 @@ int		btBulletFile::write(const char* fileName)
 	return 1;
 }
 
-#define BTRB MAKE_ID('B','T','R','B')
 
-void	btBulletFile::addStruct(char* structType,void* data, int len)
+
+void	btBulletFile::addStruct(const	char* structType,void* data, int len, void* oldPtr, int code)
 {
 	
 	bParse::bChunkInd dataChunk;
-	dataChunk.code = BTRB;
+	dataChunk.code = code;
 	dataChunk.nr = 1;
 	dataChunk.len = len;
 	dataChunk.dna_nr = mMemoryDNA->getReverseType(structType);
-	dataChunk.oldPtr = data;
+	dataChunk.oldPtr = oldPtr;
 
 	///Perform structure size validation
 	short* structInfo= mMemoryDNA->getStruct(dataChunk.dna_nr);

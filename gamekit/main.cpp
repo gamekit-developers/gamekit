@@ -359,8 +359,11 @@ int main(int argc,char** argv)
 //#define TEST_FILE_WRITING 1
 #if TEST_FILE_WRITING
 		bulletBlendReaderNew.writeFile("test.blend");
+		bulletBlendReaderNew.writeFile("test2.blend");
 
-		FILE* fileTest = fopen("test.blend","rb");
+
+
+		FILE* fileTest = fopen("test2.blend","rb");
 		int fileLenTest;
 		char*memoryBufferTest =  btReadBuffer(fileTest,&fileLenTest);
 		IrrBlendNew	bulletBlendReaderNewTest(device,smgr,physicsWorld,logicManager);
