@@ -25,6 +25,7 @@
 #ifndef _gkMathUtils_h_
 #define _gkMathUtils_h_
 
+#include "gkTypes.inl"
 #include "OgreVector3.h"
 #include "OgreVector2.h"
 #include "OgreMatrix3.h"
@@ -49,7 +50,7 @@
 // Rotation in degrees true, else false
 #define GK_ROTUNIT true
 
-#if OGRE_COMPILER == OGRE_COMPILER_MSVC || defined (__MINGW32__)
+#if GK_PLATFORM == GK_PLATFORM_WIN32
 # define gkNan(n)	_isnan((n))
 # define gkFinite(n) _finite((n))
 #else

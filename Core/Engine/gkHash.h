@@ -26,9 +26,9 @@
 #define _gkHash_h_
 
 #include <stdlib.h>
-#include <stddef.h>
 
 #include "gkCommon.h"
+#include "gkTypes.inl"
 
 // ----------------------------------------------------------------------------
 // Defined as (unsigned int)((0.5f * (1.f + sqrtf(5.f))) * UINT_MAX)
@@ -37,19 +37,19 @@
 
 
 // ----------------------------------------------------------------------------
-typedef size_t		  GKhash;
+typedef size_t			GKhash;
 typedef long			GKlong;
 typedef unsigned long   GKulong;
-typedef int			 GKint32;
+typedef int				GKint32;
 typedef unsigned int	GKuint32;
-typedef short		   GKint16;
+typedef short			GKint16;
 typedef unsigned short  GKuint16;
-typedef signed char	 GKint8;
+typedef signed char		GKint8;
 typedef unsigned char   GKuint8;
-typedef GKuint8		 GKubyte;
-typedef GKint8		  GKbyte;
+typedef GKuint8			GKubyte;
+typedef GKint8			GKbyte;
 typedef bool			GKint1;
-typedef float		   GKfloat;
+typedef float			GKfloat;
 
 
 // ----------------------------------------------------------------------------
@@ -103,17 +103,10 @@ GK_INLINE GKhash gkHash(GKint8 p)
 	return static_cast<GKhash>(p) * GK_GOLDEN_RATIO;
 }
 
-
-
 // ----------------------------------------------------------------------------
 GK_INLINE GKhash gkHash(GKuint8 p)
 {
 	return static_cast<GKhash>(p) * GK_GOLDEN_RATIO;
 }
-
-
-
-
-
 
 #endif//_gkHash_h_

@@ -136,8 +136,8 @@ RenderWindow* gkInternalWindowSystem::createWindow(const String& title, unsigned
 
 
 		const OIS::MouseState &st= mPrivate->mMouse->getMouseState();
-		st.width= mPrivate->mMouseData.area.width;
-		st.height= mPrivate->mMouseData.area.height;
+		st.width= (int)mPrivate->mMouseData.area.width;
+		st.height= (int)mPrivate->mMouseData.area.height;
 	}
 
 	catch (OIS::Exception &e)

@@ -22,38 +22,19 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "OgrePlatform.h"
+#include "gkMacros.inl"
 
-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
-# include <windows.h>
+#if GK_PLATFORM == GK_PLATFORM_WIN32
+#	if GK_SUBPLATFORM == GK_SUBPLATFORM_GNUWIN
+#		include <stdint.h>
+#	else
+#		include <stddef.h>
+#	endif
+#elif GK_PLATFORM == GK_PLATFORM_LINUX
+#	include <stdint.h>
 #else
-# include <unistd.h>
+#	include <inttypes.h>
 #endif
 
-#include "OgreResourceGroupManager.h"
-#include "gkUtils.h"
+#define GK_NPOS ((size_t)-1)
 
-
-// ----------------------------------------------------------------------------
-void gkUtils::sleep(int milSec)
-{
-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
-	::Sleep(milSec);
-#else
-	if (milSec >= 1000)
-	{
-		sleep(milSec / 1000);
-		milSec= (milSec % 1000);
-	}
-
-	usleep(milSec*1000);
-#endif
-}
-
-// ----------------------------------------------------------------------------
-bool gkUtils::isResource(const Ogre::String &name, const Ogre::String &group)
-{
-	if (group.empty())
-		return Ogre::ResourceGroupManager::getSingleton().resourceExistsInAnyGroup(name);
-	return Ogre::ResourceGroupManager::getSingleton().resourceExists(group, name);
-}

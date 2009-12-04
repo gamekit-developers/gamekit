@@ -30,6 +30,7 @@
 #include "gkMemoryTest.h"
 #include "gkUserDefs.h"
 #include "gkConstraint.h"
+#include "gkPath.h"
 #include "Loaders/gkBlendFile.h"
 #include "Logic/gkLogicManager.h"
 #include "Logic/gkLogicTree.h"
@@ -174,8 +175,18 @@ int main(int argc, char **argv)
 
 	try
 	{
+
 		gkEngine eng;
 		gkUserDefs &defs= eng.getUserDefs();
+
+		gkPath p(argv[0]);
+		if (p.isFile())
+		{
+			p = p.directory();
+			p.append("OgreKitStartup.conf");
+			defs.load(p.getPath());
+		}
+
 		defs.animspeed= Ogre::Real(25.0);
 		defs.tickrate= Ogre::Real(60.0);
 		defs.winsize= Ogre::Vector2(800, 600);

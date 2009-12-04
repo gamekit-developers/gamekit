@@ -101,8 +101,6 @@ gkEngine::gkEngine(const String& homeDir) :
 {
 	mPrivate= new gkEnginePrivate();
 	mDefs= new gkUserDefs();
-	mDefs->load(homeDir);
-	gkLogger::enable(mDefs->log, mDefs->verbose);
 }
 
 
@@ -125,7 +123,7 @@ void gkEngine::initialize(void)
 		return;
 
 	gkUserDefs &defs= getUserDefs();
-
+	gkLogger::enable(defs.log, defs.verbose);
 	mRoot= new Root("", "");
 
 	new gkSceneObjectManager();
@@ -157,7 +155,7 @@ void gkEngine::initialize(void)
 					"gkEngine::initialize");
 	}
 
-	sys->createWindow(defs.wintitle, defs.winsize.x, defs.winsize.y, false);
+	sys->createWindow(defs.wintitle, (unsigned int)defs.winsize.x, (unsigned int)defs.winsize.y, false);
 
 	mAnimRate= defs.animspeed;
 	mTickRate= defs.tickrate;
@@ -303,7 +301,7 @@ void gkEngine::run(void)
 	mRoot->getRenderSystem()->_initRenderTargets();
 
 	unsigned long ticks= 1000 / (unsigned long)mTickRate;
-	unsigned long skip= ((unsigned long)Real(mTickRate) / 5.0), loop= 0;
+	unsigned long skip= (unsigned long)(Real(mTickRate) / 5.0), loop= 0;
 	if (skip == 0) skip= 1;
 
 	/// start time

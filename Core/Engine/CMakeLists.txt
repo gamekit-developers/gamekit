@@ -333,8 +333,6 @@ add_library(OgreKitCore ${OGREKIT_LIB_TYPE}
 
 set(HomeFiles
     User/OgreKitStartup.conf
-    User/OgreKitResource.cfg
 )
 
-set(OGREKIT_HOME_FOLDER OgreKit)
-install(FILES ${HomeFiles} DESTINATION ${OGREKIT_INSTALL_PREFIX}/${OGREKIT_HOME_FOLDER})
+install(FILES ${HomeFiles} DESTINATION ${OGREKIT_INSTALL_PREFIX})

@@ -22,15 +22,10 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-
 #ifndef _gkUtils_h_
 #define _gkUtils_h_
 
-
 #include "gkCommon.h"
-#include "gkPath.h"
-
-
 
 // ----------------------------------------------------------------------------
 class gkUtils
@@ -39,15 +34,6 @@ public:
 	// call platform sleep
 	static void sleep(int milSec);
 	static bool isResource(const Ogre::String &name, const Ogre::String &group=Ogre::StringUtil::BLANK);
-
-	static gkPath getHome(void);
-	// get environment variable
-	static Ogre::String getEnvironment(const Ogre::String &key);
 };
-
-
-
-
-
 
 #endif//_gkUtils_h_

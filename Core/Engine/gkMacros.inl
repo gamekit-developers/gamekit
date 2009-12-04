@@ -39,7 +39,6 @@
 // ----------------------------------------------------------------------------
 #define GK_INLINE inline
 
-#define GK_NPOS (0xFFFFFFFF)
 
 // ----------------------------------------------------------------------------
 #if defined(DEBUG) || defined(_DEBUG)
@@ -47,6 +46,27 @@
 # define GK_ASSERT(x) assert(x)
 #else
 # define GK_ASSERT(x)
+#endif
+
+#define GK_PLATFORM_WIN32		0
+#define GK_PLATFORM_LINUX		1
+#define GK_PLATFORM_APPLE		2
+#define GK_SUBPLATFORM_GNUWIN	0
+#define GK_SUBPLATFORM_MSVC		1
+
+
+// ----------------------------------------------------------------------------
+#if defined(_WIN32) || defined(WIN32)
+#	define GK_PLATFORM GK_PLATFORM_WIN32
+#	if defined (__CYGWIN32__) || defined(__MINGW32__)
+#		define GK_SUBPLATFORM GK_SUBPLATFORM_GNUWIN
+#	elif defined(_MSC_VER)
+#		define GK_SUBPLATFORM GK_SUBPLATFORM_MSVC
+#	endif
+#elif defined(__APPLE__)
+#	define GK_PLATFORM GK_PLATFORM_APPLE
+#else
+#	define GK_PLATFORM GK_PLATFORM_LINUX
 #endif
 
 

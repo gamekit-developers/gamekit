@@ -65,16 +65,7 @@ void gkUserDefs::load(const String &fname)
 	String startup;
 
 	gkPath pth(fname);
-	if (fname.empty())
-		pth= gkUtils::getHome();
-
-	if (pth.isDir())
-	{
-		pth.append("OgreKitStartup.conf");
-		pth.normalizePlatform();
-		startup= pth.getPath();
-	}
-	else if (pth.isFile())
+	if (pth.isFile())
 		startup= pth.getPath();
 
 	if (startup.empty())
@@ -104,15 +95,8 @@ void gkUserDefs::load(const String &fname)
 				if (key == "plugins")
 				{
 					gkPath pth= val;
-					if (val == "home")
-						pth= gkUtils::getHome();
-
 					if (!pth.isDir())
-					{
-						OGRE_EXCEPT(Exception::ERR_FILE_NOT_FOUND, val + " is not a valid file path.",
-									"gkUserDefs::load");
-					}
-					plugins= val;
+						plugins= val;
 				}
 				else if (key == "log")
 					log= val;
