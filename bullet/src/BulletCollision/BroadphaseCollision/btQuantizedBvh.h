@@ -190,7 +190,7 @@ protected:
 	BvhSubtreeInfoArray		m_SubtreeHeaders;
 
 	//This is only used for serialization so we don't have to add serialization directly to btAlignedObjectArray
-	volatile int m_subtreeHeaderCount;
+	mutable int m_subtreeHeaderCount;
 
 	
 
