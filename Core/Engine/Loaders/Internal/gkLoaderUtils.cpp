@@ -127,6 +127,10 @@ Blender::Material* gkLoaderUtils::getMaterial(Blender::Object *ob, int index)
 	{
 		Blender::Mesh *me= (Blender::Mesh*)ob->data;
 		ma= (Blender::Material*)me->mat[index-1];
+
+		Blender::Material *found = (Blender::Material*)mFile->findLibPointer(ma);
+		if (found) return found;
+		else ma = found;
 	}
 	return ma;
 }
