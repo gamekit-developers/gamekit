@@ -108,7 +108,7 @@ void Win32NativeMouse::handleMouse( HWND hWnd, UINT msg, WPARAM wParam, LPARAM l
 
 		if (rx != 0 || ry != 0)
 		{
-			mState.X.rel = rx;	mState.Y.rel = rx;
+			mState.X.rel = rx;	mState.Y.rel = ry;
 			mState.X.abs += rx; mState.Y.abs += ry;
 
 			mState.X.abs = WNClamp(mState.X.abs, 0, mState.width);

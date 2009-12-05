@@ -94,9 +94,9 @@ gkCameraObject* createPivotCamera(gkSceneObject* ob, const Ogre::Vector3 &root, 
 }
 
 // ----------------------------------------------------------------------------
-void testAnim(gkEngine &eng)
+void loadMomo(gkEngine &eng, const Ogre::String &momo)
 {
-	gkBlendFile *blend= eng.loadBlendFile("momo_ogreSmallAnim.blend");
+	gkBlendFile *blend= eng.loadBlendFile(momo);
 	if (!blend)
 		return;
 
@@ -146,13 +146,6 @@ void testAnim(gkEngine &eng)
 	// link RelX -> Ogre::Animation Speed
 	//anim->getInputSocket(4)->link(mouse->getOutputSocket(1));	// Speed
 	ob->attachLogic(animtree);
-}
-
-
-// ----------------------------------------------------------------------------
-void createScene(gkEngine &eng)
-{
-	testAnim(eng);
 }
 
 // ----------------------------------------------------------------------------
@@ -301,11 +294,11 @@ gkCameraObject* createMouseLook(gkSceneObject *sc,  const Ogre::Vector3 &pos, co
 }
 
 // ----------------------------------------------------------------------------
-void loadBlend(gkEngine &eng, const char *fname)
+void loadBlend(gkEngine &eng, const Ogre::String& fname)
 {
-	if (strcmp(fname, "momo_ogreSmallAnim.blend")==0)
+	if (fname.find("momo_ogreSmallAnim.blend") != -1)
 	{
-		createScene(eng);
+		loadMomo(eng, fname);
 		return;
 	}
 
