@@ -138,8 +138,8 @@ void gkEngine::initialize(void)
 	if (renderers.empty())
 	{
 		OGRE_EXCEPT(Exception::ERR_INVALID_STATE,
-					"No rendersystems present",
-					"gkEngine::initialize");
+		            "No rendersystems present",
+		            "gkEngine::initialize");
 	}
 
 	mRoot->setRenderSystem(renderers[0]);
@@ -151,8 +151,8 @@ void gkEngine::initialize(void)
 	if (!sys)
 	{
 		OGRE_EXCEPT(Exception::ERR_INVALID_STATE,
-					"gkWindowSystem creation failed",
-					"gkEngine::initialize");
+		            "gkWindowSystem creation failed",
+		            "gkEngine::initialize");
 	}
 
 	sys->createWindow(defs.wintitle, (unsigned int)defs.winsize.x, (unsigned int)defs.winsize.y, false);
@@ -201,7 +201,16 @@ void gkEngine::requestExit(void)
 // ----------------------------------------------------------------------------
 gkBlendFile* gkEngine::loadBlendFile(const String& blend, const String& inResource)
 {
-	return gkBlendLoader::getSingleton().loadFile(blend, inResource);
+	gkBlendFile *file= 0;
+	try
+	{
+		file= gkBlendLoader::getSingleton().loadFile(blend, inResource);
+	}
+	catch (Ogre::Exception &e)
+	{
+		gkPrintf("%s", e.getDescription().c_str());
+	}
+	return file;
 }
 
 // ----------------------------------------------------------------------------

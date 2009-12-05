@@ -23,3 +23,14 @@ endif(WIN32)
 
 add_executable(TestApp ${SRC})
 install(TARGETS TestApp RUNTIME DESTINATION ${OGREKIT_INSTALL_PREFIX})
+
+set(HomeFiles 
+	BigEndian.blend
+	UVLayers.blend
+	VertexColors.blend
+	clubsilo_packed.blend
+	momo_ogreSmallAnim.blend
+	MultiParentTest.blend
+)
+
+install(FILES ${HomeFiles} DESTINATION ${OGREKIT_INSTALL_PREFIX})

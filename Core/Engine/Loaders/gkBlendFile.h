@@ -37,7 +37,7 @@ class gkBlendFile
 public:
 	gkBlendFile(const Ogre::String& file, const Ogre::String& group= Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 	~gkBlendFile();
-	void _parse(void);
+	bool _parse(void);
 	void _registerLoader(Ogre::ManualResourceLoader *);
 	void _registerLoader(gkManualObjectLoader *);
 	void _registerImage(Blender::Image* ima);

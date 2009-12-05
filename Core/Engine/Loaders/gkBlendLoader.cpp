@@ -47,7 +47,11 @@ gkBlendLoader::~gkBlendLoader()
 gkBlendFile* gkBlendLoader::loadFile(const String& dblend, const String& inResourceGroup)
 {
 	gkBlendFile *fp= new gkBlendFile(dblend, inResourceGroup);
-	fp->_parse();
+	if (!fp->_parse())
+	{
+		delete fp;
+		return 0;
+	}
 	mOpenFiles.push_back(fp);
 	return fp;
 }

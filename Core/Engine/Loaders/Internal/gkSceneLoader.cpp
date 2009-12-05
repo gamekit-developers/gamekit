@@ -30,6 +30,10 @@
 #include "gkBlenderDefines.h"
 #include "gkSceneObjectManager.h"
 #include "gkObjectLoader.h"
+#include "gkGameObject.h"
+#include "gkLightObject.h"
+#include "gkCameraObject.h"
+#include "gkEntityObject.h"
 #include "gkMeshLoader.h"
 #include "gkSkeletonLoader.h"
 #include "gkLoaderUtils.h"
@@ -71,8 +75,8 @@ void gkSceneObjectLoader::loadResource(Resource* resource)
 
 
 	// Apply user defined animation fps
-	gkLoaderUtils::blender_anim_rate = mScene->r.frs_sec;
-	gkEngine::getSingleton().getUserDefs().animspeed = gkLoaderUtils::blender_anim_rate;
+	gkLoaderUtils::blender_anim_rate= mScene->r.frs_sec;
+	gkEngine::getSingleton().getUserDefs().animspeed= gkLoaderUtils::blender_anim_rate;
 
 
 	if (mScene->world)
@@ -93,9 +97,21 @@ void gkSceneObjectLoader::loadResource(Resource* resource)
 	{
 		if (!base->object) continue;
 
-		// TODO DupliGroups, setup parents
-
+		Blender::Object *ob= base->object;
 		loadObject(scene, base->object);
+
+		if (ob->parent)
+		{
+			if (scene->hasObject(GKB_IDNAME(ob->parent)))
+			{
+				gkGameObject *parob= scene->getObject(GKB_IDNAME(ob->parent));
+				if (scene->hasObject(GKB_IDNAME(ob)))
+					scene->getObject(GKB_IDNAME(ob))->setParent(parob);
+			}
+		}
+
+		// TODO DupliGroups
+
 	}
 
 	scene->_loadManual();
@@ -108,27 +124,35 @@ void gkSceneObjectLoader::loadObject(gkSceneObject *current, Blender::Object *ob
 	/// only create if needed
 	if (!current->hasObject(GKB_IDNAME(ob)))
 	{
+		gkGameObject *gob= 0;
 		switch (ob->type)
 		{
+		case OB_EMPTY:
+			{
+				gkGameObjectLoader *loader= new gkGameObjectLoader(mFile, mScene, ob);
+				mFile->_registerLoader(loader);
+				gob= current->createObject(GKB_IDNAME(ob), loader);
+			}
+			break;
 		case OB_LAMP:
 			{
 				gkGameObjectLoader *loader= new gkGameObjectLoader(mFile, mScene, ob);
 				mFile->_registerLoader(loader);
-				current->createLight(GKB_IDNAME(ob), loader);
+				gob= current->createLight(GKB_IDNAME(ob), loader);
 			}
 			break;
 		case OB_CAMERA:
 			{
 				gkGameObjectLoader *loader= new gkGameObjectLoader(mFile, mScene,  ob);
 				mFile->_registerLoader(loader);
-				current->createCamera(GKB_IDNAME(ob), loader);
+				gob= current->createCamera(GKB_IDNAME(ob), loader);
 			}
 			break;
 		case OB_MESH:
 			{
 				gkGameObjectLoader *loader= new gkGameObjectLoader(mFile, mScene, ob);
 				mFile->_registerLoader(loader);
-				current->createEntity(GKB_IDNAME(ob), loader);
+				gob= current->createEntity(GKB_IDNAME(ob), loader);
 
 				gkMeshLoader *client= new gkMeshLoader(mFile, ob);
 				mFile->_registerLoader(client);
@@ -139,7 +163,7 @@ void gkSceneObjectLoader::loadObject(gkSceneObject *current, Blender::Object *ob
 			{
 				gkGameObjectLoader *loader= new gkGameObjectLoader(mFile,  mScene, ob);
 				mFile->_registerLoader(loader);
-				current->createObject(GKB_IDNAME(ob), loader);
+				gob= current->createObject(GKB_IDNAME(ob), loader);
 
 				gkSkeletonLoader *client= new gkSkeletonLoader(mFile, ob);
 				mFile->_registerLoader(client);
@@ -147,5 +171,8 @@ void gkSceneObjectLoader::loadObject(gkSceneObject *current, Blender::Object *ob
 			}
 			break;
 		}
+
+		if (gob != 0)
+			gob->setActiveLayer((mScene->lay & ob->lay) != 0);
 	}
 }

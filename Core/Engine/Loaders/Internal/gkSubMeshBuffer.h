@@ -46,7 +46,7 @@ public:
 
 	bool operator == (const gkSubMeshSlot& oth) const;
 
-	short material_nr, mode;
+	short material_nr, mode, alpha;
 	Blender::Image *tpage[8];
 
 	static bool blender_mat;
@@ -55,7 +55,7 @@ public:
 //-----------------------------------------------------------------------------
 GK_INLINE gkSubMeshSlot::gkSubMeshSlot()
 {
-	material_nr= mode= 0;
+	alpha = material_nr= mode= 0;
 	tpage[0]= 0;
 	tpage[1]= 0;
 	tpage[2]= 0;
@@ -79,7 +79,7 @@ GK_INLINE bool gkSubMeshSlot::operator == (const gkSubMeshSlot& oth) const
 	if (blender_mat)
 		return material_nr == oth.material_nr;
 
-	return ( mode  == oth.mode &&
+	return ( mode  == oth.mode && alpha == oth.alpha && 
 			 tpage[0] == oth.tpage[0] &&
 			 tpage[1] == oth.tpage[1] &&
 			 tpage[2] == oth.tpage[2] &&
@@ -96,6 +96,7 @@ GK_INLINE const gkSubMeshSlot& gkSubMeshSlot::operator= (const gkSubMeshSlot& ot
 {
 	material_nr= oth.material_nr;
 	mode= oth.mode;
+	alpha = oth.alpha;
 	tpage[0]= oth.tpage[0];
 	tpage[1]= oth.tpage[1];
 	tpage[2]= oth.tpage[2];

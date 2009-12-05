@@ -23,7 +23,6 @@ subject to the following restrictions:
 #include "bLog.h"
 #include <stdio.h>
 
-
 namespace bParse {
 
 	class bMain;

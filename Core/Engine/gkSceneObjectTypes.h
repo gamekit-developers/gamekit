@@ -48,7 +48,7 @@ public:
 // ----------------------------------------------------------------------------
 GK_INLINE gkSceneProperties::gkSceneProperties() :
 		manager("generic"),
-		world_color(Ogre::ColourValue::Black),
+		world_color(Ogre::ColourValue(0.501f, 0.501f, 0.501f, 1.f)),
 		ambient(Ogre::ColourValue::Black),
 		gravity(0, 0, -10)
 {

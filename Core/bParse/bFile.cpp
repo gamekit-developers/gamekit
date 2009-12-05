@@ -215,7 +215,9 @@ void bFile::parseInternal(bool verboseDumpAllTypes, char* memDna,int memDnaLengt
 	parseData();
 	
 	resolvePointers();
-	
+
+	updateOldPointers();
+
 	printf("numAllocs = %d\n",numallocs);
 }
 
@@ -641,10 +643,11 @@ void bFile::resolvePointersMismatch()
 ///this loop only works fine if the Blender DNA structure of the file matches the headerfiles
 void bFile::resolvePointersChunk(bChunkInd& dataChunk)
 {
+	bParse::bDNA* fileDna = mFileDNA ? mFileDNA : mMemoryDNA;
 
-	short int* oldStruct = mFileDNA->getStruct(dataChunk.dna_nr);
-	short oldLen = mFileDNA->getLength(oldStruct[0]);
-	char* structType = mFileDNA->getType(oldStruct[0]);
+	short int* oldStruct = fileDna->getStruct(dataChunk.dna_nr);
+	short oldLen = fileDna->getLength(oldStruct[0]);
+	char* structType = fileDna->getType(oldStruct[0]);
 
 	char* cur	= (char*)findLibPointer(dataChunk.oldPtr);
 	for (int block=0; block<dataChunk.nr; block++)
@@ -658,57 +661,61 @@ void bFile::resolvePointersChunk(bChunkInd& dataChunk)
 void bFile::resolvePointersStructRecursive(char *strcPtr, int dna_nr)
 {
 	
-		char* memType;
-		char* memName;
-		short	firstStructType = mFileDNA->getStruct(0)[0];
+	bParse::bDNA* fileDna = mFileDNA ? mFileDNA : mMemoryDNA;
+
+	char* memType;
+	char* memName;
+	short	firstStructType = fileDna->getStruct(0)[0];
 
 
-		char* elemPtr= strcPtr;
+	char* elemPtr= strcPtr;
 
-		short int* oldStruct = mFileDNA->getStruct(dna_nr);
-		
-		int elementLength = oldStruct[1];
-		oldStruct+=2;
+	short int* oldStruct = fileDna->getStruct(dna_nr);
+	
+	int elementLength = oldStruct[1];
+	oldStruct+=2;
 
 
-		for (int ele=0; ele<elementLength; ele++, oldStruct+=2)
+	for (int ele=0; ele<elementLength; ele++, oldStruct+=2)
+	{
+
+		memType = fileDna->getType(oldStruct[0]);
+		memName = fileDna->getName(oldStruct[1]);
+		//printf("%s %s\n",memType,memName);
+		if (memName[0] == '*')
 		{
-
-			memType = mFileDNA->getType(oldStruct[0]);
-			memName = mFileDNA->getName(oldStruct[1]);
-			//printf("%s %s\n",memType,memName);
-			if (memName[0] == '*')
+			void** ptrptr = (void**) elemPtr;
+			void* ptr = *ptrptr;
+			ptr = findLibPointer(ptr);
+			if (ptr)
 			{
-				void** ptrptr = (void**) elemPtr;
-				void* ptr = *ptrptr;
-				ptr = findLibPointer(ptr);
-				if (ptr)
-				{
-//					printf("Fixup pointer at 0x%x from 0x%x to 0x%x!\n",ptrptr,*ptrptr,ptr);
-					*(ptrptr) = ptr;
-				} else
-				{
-//					printf("Cannot fixup pointer at 0x%x from 0x%x to 0x%x!\n",ptrptr,*ptrptr,ptr);
-				}
+//				printf("Fixup pointer at 0x%x from 0x%x to 0x%x!\n",ptrptr,*ptrptr,ptr);
+				*(ptrptr) = ptr;
 			} else
 			{
-				int revType = mFileDNA->getReverseType(oldStruct[0]);
-				if (oldStruct[0]>=firstStructType) //revType != -1 && 
-				{
-					resolvePointersStructRecursive(elemPtr,revType);
-				}
+//				printf("Cannot fixup pointer at 0x%x from 0x%x to 0x%x!\n",ptrptr,*ptrptr,ptr);
 			}
-
-			int size = mFileDNA->getElementSize(oldStruct[0], oldStruct[1]);
-			elemPtr+=size;
-			
+		} else
+		{
+			int revType = fileDna->getReverseType(oldStruct[0]);
+			if (oldStruct[0]>=firstStructType) //revType != -1 && 
+			{
+				resolvePointersStructRecursive(elemPtr,revType);
+			}
 		}
+
+		int size = fileDna->getElementSize(oldStruct[0], oldStruct[1]);
+		elemPtr+=size;
+		
+	}
 }
 
 
 ///Resolve pointers replaces the original pointers in structures, and linked lists by the new in-memory structures
 void bFile::resolvePointers()
 {
+	bParse::bDNA* fileDna = mFileDNA ? mFileDNA : mMemoryDNA;
+
 	printf("resolvePointers start\n");
 	char *dataPtr = mFileBuffer+mDataStart;
 
@@ -722,11 +729,11 @@ void bFile::resolvePointers()
 		{
 			bChunkInd& dataChunk = m_chunks.at(i);
 
-			if (mFileDNA->flagEqual(dataChunk.dna_nr))
+			if (!mFileDNA || fileDna->flagEqual(dataChunk.dna_nr))
 			{
 				//dataChunk.len
-				short int* oldStruct = mFileDNA->getStruct(dataChunk.dna_nr);
-				char* oldType = mFileDNA->getType(oldStruct[0]);
+				short int* oldStruct = fileDna->getStruct(dataChunk.dna_nr);
+				char* oldType = fileDna->getType(oldStruct[0]);
 				
 				//printf("------------------------------------------");
 				//printf("Struct %s\n",oldType);
@@ -752,6 +759,17 @@ void* bFile::findLibPointer(void *ptr)
 	return 0;
 }
 
+
+void	bFile::updateOldPointers()
+{
+	int i;
+
+	for (i=0;i<m_chunks.size();i++)
+	{
+		bChunkInd& dataChunk = m_chunks[i];
+		dataChunk.oldPtr = findLibPointer(dataChunk.oldPtr);
+	}
+}
 void	bFile::dumpChunks(bParse::bDNA* dna)
 {
 	int i;
@@ -801,23 +819,24 @@ void	bFile::dumpChunks(bParse::bDNA* dna)
 
 void	bFile::writeChunks(FILE* fp)
 {
+	bParse::bDNA* fileDna = mFileDNA ? mFileDNA : mMemoryDNA;
+
 	for (int i=0;i<m_chunks.size();i++)
 	{
 		bChunkInd& dataChunk = m_chunks.at(i);
 		
-		///update dataChunk (it still refers to old file chunk)
-		dataChunk.oldPtr = findLibPointer(dataChunk.oldPtr);
 		// Ouch! need to rebuild the struct
 		short *oldStruct,*curStruct;
 		char *oldType, *newType;
 		int oldLen, curLen, reverseOld;
 
-		oldStruct = mFileDNA->getStruct(dataChunk.dna_nr);
-		oldType = mFileDNA->getType(oldStruct[0]);
-		oldLen = mFileDNA->getLength(oldStruct[0]);
-
+		oldStruct = fileDna->getStruct(dataChunk.dna_nr);
+		oldType = fileDna->getType(oldStruct[0]);
+		oldLen = fileDna->getLength(oldStruct[0]);
 		///don't try to convert Link block data, just memcpy it. Other data can be converted.
 		reverseOld = mMemoryDNA->getReverseType(oldType);
+		
+
 		if ((reverseOld!=-1))
 		{
 			// make sure it's here
@@ -836,7 +855,7 @@ void	bFile::writeChunks(FILE* fp)
 				dataChunk.len = curLen * dataChunk.nr;
 			} else
 			{
-				printf("keep length of link = %d\n",dataChunk.len);
+//				printf("keep length of link = %d\n",dataChunk.len);
 			}
 		
 			//write the structure header
@@ -847,8 +866,7 @@ void	bFile::writeChunks(FILE* fp)
 			short int* curStruct1 = mMemoryDNA->getStruct(dataChunk.dna_nr);
 			assert(curStruct1 == curStruct);
 
-			//short oldLen = mFileDNA->getLength(oldStruct[0]);
-			char* cur	= (char*)dataChunk.oldPtr;//(char*)mMain->findLibPointer(dataChunk.oldPtr);
+			char* cur	= (char*)dataChunk.oldPtr;// : (char*)findLibPointer(dataChunk.oldPtr);
 
 			//write the actual contents of the structure(s)
 			fwrite(cur,dataChunk.len,1,fp);

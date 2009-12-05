@@ -66,7 +66,7 @@ public:
 // ---------------------------------------------------------------------------
 GK_INLINE gkEntityProperties::gkEntityProperties() :
 		source(Ogre::StringUtil::BLANK),
-		prefab(-1), casts(true), group(false)
+		prefab(-1), casts(false), group(false)
 {
 }
 

@@ -28,6 +28,7 @@
 #include "gkLightObject.h"
 #include "gkCameraObject.h"
 #include "gkEntityObject.h"
+#include "gkLoaderUtils.h"
 #include "gkMathUtils.h"
 #include "gkBlenderDefines.h"
 #include "blender.h"
@@ -60,12 +61,26 @@ void gkGameObjectLoader::loadObject(gkGameObject *ob)
 
 	Quaternion quat;
 	Vector3 loc, scale;
-	gkMathUtils::extractTransform(gkMathUtils::getFromFloat(mObject->obmat), loc, quat, scale);
+
+	Matrix4 obmat = gkMathUtils::getFromFloat(mObject->obmat);
+
+	if (!mObject->parent)
+		gkMathUtils::extractTransform(obmat, loc, quat, scale);
+	else
+	{
+		Ogre::Matrix4 parent = gkMathUtils::getFromFloat(mObject->parent->obmat);
+
+		obmat = parent.inverse() * obmat;
+		gkMathUtils::extractTransform(obmat, loc, quat, scale);
+	}
+
 
 	gkGameObjectProperties &props= ob->getProperties();
 	props.position= loc;
 	props.orientation= quat;
 	props.scale= scale;
+	ob->setActiveLayer((mScene->lay & mObject->lay) != 0);
+
 
 	switch (ob->getType())
 	{
@@ -161,7 +176,10 @@ void gkGameObjectLoader::setCamera(gkGameObject *ob)
 		gkCameraProperties &props= obj->getCameraProperties();
 		props.clipend=  camera->clipend;
 		props.clipstart= camera->clipsta;
-		props.fov   =   Degree(camera->angle);
+		props.fov =   Degree(camera->angle);
+		
+		if (camera->angle == 0.0)
+			props.fov = Ogre::Degree(Ogre::Real(360) * Ogre::Math::ATan(Ogre::Real(16) / camera->lens).valueRadians() / gkPi);
 
 		// enable default camera
 		if (mScene->camera == mObject)

@@ -72,7 +72,7 @@ void gkTextureLoader::loadResource(Resource* resource)
 
 	texture->setUsage(Ogre::TU_DEFAULT);
 	texture->setTextureType(Ogre::TEX_TYPE_2D);
-	texture->setNumMipmaps(ima.getNumMipmaps());
+	texture->setNumMipmaps(5);//ima.getNumMipmaps());
 	texture->setWidth(ima.getWidth());
 	texture->setHeight(ima.getHeight());
 	texture->setDepth(ima.getDepth());

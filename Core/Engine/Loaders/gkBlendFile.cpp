@@ -30,14 +30,13 @@
 #include "gkSceneObjectManager.h"
 #include "gkSceneObject.h"
 
-
 #include "Internal/gkSceneLoader.h"
 #include "Internal/gkTextureLoader.h"
 #include "gkPath.h"
 #include "gkUtils.h"
+#include "gkLogger.h"
 
 #include "bBlenderFile.h"
-
 #include "bMain.h"
 #include "blender.h"
 
@@ -111,18 +110,17 @@ void gkBlendFile::_registerImage(Blender::Image* ima)
 //-----------------------------------------------------------------------------
 void* gkBlendFile::_findPtr(void* ptr)
 {
-	return 0;
+	return mFile->findLibPointer(ptr);
 }
 
 //-----------------------------------------------------------------------------
-void gkBlendFile::_parse(void)
+bool gkBlendFile::_parse(void)
 {
 	mFile->parse(false);
 	if (!mFile->ok())
 	{
-		OGRE_EXCEPT(Exception::ERR_INVALID_STATE,
-					"Blend file loading failed.",
-					"gkBlendLoader::loadFile");
+		gkPrintf("Blend file loading failed.");
+		return false;
 	}
 
 	bParse::bMain *mp= mFile->getMain();
@@ -159,6 +157,7 @@ void gkBlendFile::_parse(void)
 			mScenes.push_back(newscene.getPointer());
 		}
 	}
+	return true;
 }
 
 

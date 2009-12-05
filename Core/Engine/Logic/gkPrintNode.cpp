@@ -24,8 +24,7 @@
 */
 #include "gkPrintNode.h"
 #include "gkConsole.h"
-
-
+#include <stdio.h>
 
 using namespace Ogre;
 
@@ -47,4 +46,6 @@ bool gkPrintNode::evaluate(Real tick)
 // ----------------------------------------------------------------------------
 void gkPrintNode::update(Real tick)
 {
+	// TODO: print to gui
+	printf("%s\n", mSockets[1].getValueString().c_str());
 }

@@ -46,15 +46,6 @@ using namespace Ogre;
 
 
 
-
-//-----------------------------------------------------------------------------
-struct CurvePoint
-{
-	Vector3 h1;
-	Vector3 cp;
-	Vector3 h2;
-};
-
 //-----------------------------------------------------------------------------
 struct LocalBone
 {
@@ -102,7 +93,6 @@ public:
 
 	void setPoseMatrices(Blender::bPose *pose, Blender::bAction *action,  const Real& otime, const Real& time);
 	void buildPoseTreeKeyFrame(Animation *anim, Blender::Bone *cur, LocalBone *parent, const Real& time);
-	Real evaluateIpoCurve(Blender::IpoCurve *icu, const Real& time, const Real &otime);
 
 	Blender::bActionChannel *findActionChannel(const char *name, Blender::bAction *action);
 
@@ -287,65 +277,6 @@ void gkSkeletonLoaderPrivate::buildPoseTreeKeyFrame(Animation *anim, Blender::Bo
 	}
 }
 
-//-----------------------------------------------------------------------------
-Real gkSkeletonLoaderPrivate::evaluateIpoCurve(Blender::IpoCurve *icu, const Real& time, const Real &otime)
-{
-	if (!icu->bezt)
-		return Real(0.0);
-
-	Real cval= Real(0.0);
-
-	CurvePoint a,b;
-	a= *reinterpret_cast<CurvePoint*>(&icu->bezt->vec[0][0]);
-	b= *reinterpret_cast<CurvePoint*>(&(icu->bezt+(icu->totvert-1))->vec[0][0]);
-
-	// TODO: Linear, Constant
-	if (a.cp.x >= time)
-	{
-		cval= a.cp.y;
-	}
-	else if (b.cp.x <= time)
-	{
-		cval= b.cp.y;
-	}
-	else
-	{
-		Blender::BezTriple *ab= icu->bezt;
-		Blender::BezTriple *bb= ab + 1;
-
-		for (int i=0; i<icu->totvert; i++)
-		{
-			if (!ab || !bb) break;
-			a= *reinterpret_cast<CurvePoint*>(&ab->vec[0][0]);
-			b= *reinterpret_cast<CurvePoint*>(&bb->vec[0][0]);
-
-			if (b.cp.x >= time && a.cp.x <= time)
-			{
-				if (icu->ipo == IPO_CONST)
-					cval= a.cp.y;
-				else
-				{
-					Vector2 P0, P1, P2, P3;
-					P0= Vector2(a.cp.x, a.cp.y);
-					P1= Vector2(a.h2.x, a.h2.y);
-					P2= Vector2(b.h1.x, b.h1.y);
-					P3= Vector2(b.cp.x, b.cp.y);
-
-					Real y;
-					if (gkLoaderUtils::findApproximateCurve(P0, P1, P2, P3, time, y))
-					{
-						cval= y;
-						break;
-					}
-				}
-			}
-
-			ab= bb;
-			++bb;
-		}
-	}
-	return cval;
-}
 
 
 //-----------------------------------------------------------------------------
@@ -396,7 +327,7 @@ void gkSkeletonLoaderPrivate::setPoseMatrices(Blender::bPose *pose, Blender::bAc
 			{
 				Real curval= 0.f;
 				if (icu->bezt)
-					curval= evaluateIpoCurve(icu, time, otime);
+					curval= gkLoaderUtils::evaluateIpoCurve(icu, time);
 
 				switch (icu->adrcode)
 				{

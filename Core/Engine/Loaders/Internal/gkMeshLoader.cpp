@@ -176,6 +176,7 @@ void gkMeshLoaderPrivate::convertMesh(void)
 		gkSubMeshSlot tester;
 		tester.material_nr= curface.mat_nr;
 		tester.mode= 0;
+		tester.alpha = 0;
 
 		const bool isQuad= curface.v4 != 0;
 		gkFaceBufferObject tri[2]= {gkFaceBufferObject(), gkFaceBufferObject()};
@@ -327,7 +328,10 @@ void gkMeshLoaderPrivate::convertMesh(void)
 		}
 
 		if (layers[0] != 0)
+		{
 			tester.mode= layers[0][fi].mode;
+			tester.alpha = layers[0][fi].transp;
+		}
 
 		/// tpage objects
 		if (layers[0] != 0)
@@ -485,7 +489,7 @@ void gkMeshLoaderPrivate::convertMesh(void)
 
 
 				/// apply
-				util.setOgreMaterialDefault(ptr, false);
+				util.setOgreMaterialDefault(ptr, (slot.mode & TF_LIGHT) != 0, slot.mode, slot.alpha);
 
 				/// slot.tpage will be in the uv chanel,
 				/// so it's in it's own layer ;)

@@ -132,8 +132,77 @@ Blender::Material* gkLoaderUtils::getMaterial(Blender::Object *ob, int index)
 }
 
 
+
 //-----------------------------------------------------------------------------
-bool gkLoaderUtils::findApproximateCurve(Vector2 &P0, Vector2 &P1, Vector2 &P2, Vector2& P3, Real time, Real &cval)
+struct CurvePoint
+{
+	Ogre::Vector3 h1;
+	Ogre::Vector3 cp;
+	Ogre::Vector3 h2;
+};
+
+//-----------------------------------------------------------------------------
+Ogre::Real gkLoaderUtils::evaluateIpoCurve(Blender::IpoCurve *icu, const Ogre::Real& time)
+{
+	if (!icu->bezt)
+		return Ogre::Real(0.0);
+
+	Ogre::Real cval= Ogre::Real(0.0);
+
+	CurvePoint a,b;
+	a= *reinterpret_cast<CurvePoint*>(&icu->bezt->vec[0][0]);
+	b= *reinterpret_cast<CurvePoint*>(&(icu->bezt+(icu->totvert-1))->vec[0][0]);
+
+	// TODO: Linear, Constant
+	if (a.cp.x >= time)
+	{
+		cval= a.cp.y;
+	}
+	else if (b.cp.x <= time)
+	{
+		cval= b.cp.y;
+	}
+	else
+	{
+		Blender::BezTriple *ab= icu->bezt;
+		Blender::BezTriple *bb= ab + 1;
+
+		for (int i=0; i<icu->totvert; i++)
+		{
+			if (!ab || !bb) break;
+			a= *reinterpret_cast<CurvePoint*>(&ab->vec[0][0]);
+			b= *reinterpret_cast<CurvePoint*>(&bb->vec[0][0]);
+
+			if (b.cp.x >= time && a.cp.x <= time)
+			{
+				if (icu->ipo == IPO_CONST)
+					cval= a.cp.y;
+				else
+				{
+					Vector2 P0, P1, P2, P3;
+					P0= Vector2(a.cp.x, a.cp.y);
+					P1= Vector2(a.h2.x, a.h2.y);
+					P2= Vector2(b.h1.x, b.h1.y);
+					P3= Vector2(b.cp.x, b.cp.y);
+
+					Ogre::Real y;
+					if (findApproximateCurve(P0, P1, P2, P3, time, y))
+					{
+						cval= y;
+						break;
+					}
+				}
+			}
+
+			ab= bb;
+			++bb;
+		}
+	}
+	return cval;
+}
+
+//-----------------------------------------------------------------------------
+bool gkLoaderUtils::findApproximateCurve(Vector2 &P0, Vector2 &P1, Vector2 &P2, Vector2& P3, Ogre::Real time, Ogre::Real &cval)
 {
 	// Cubic Bezier curves
 	// B(t)= (1-t)^3 P0 + 3(1-t)^2 t P1 + 3(1-t)t^2 P2 + t^3 P3, t[0,1]
@@ -143,19 +212,19 @@ bool gkLoaderUtils::findApproximateCurve(Vector2 &P0, Vector2 &P1, Vector2 &P2, 
 	// Step along the path to find the closest matching time.
 	// false will mean try another set
 
-	cval= Real(0.0);
-	Real s= Real(1.0), sc, sst;
-	Real t= Real(0.0), tc, tts;
+	cval= Ogre::Real(0.0);
+	Ogre::Real s= Ogre::Real(1.0), sc, sst;
+	Ogre::Real t= Ogre::Real(0.0), tc, tts;
 
 	//gkLoaderUtils::CorrectBezier(P0, P1, P2, P3);
 
-	const Real step= Real(1.0) / blender_anim_rate;
+	const Ogre::Real step= Ogre::Real(1.0) / blender_anim_rate;
 	while (t <= 1.0)
 	{
 		sc=  s * s * s;
 		tc=  t * t * t;
-		sst= Real(3.0) * s * s * t;
-		tts= Real(3.0) * t * t * s;
+		sst= Ogre::Real(3.0) * s * s * t;
+		tts= Ogre::Real(3.0) * t * t * s;
 
 		if ((sc * P0.x + sst * P1.x + tts * P2.x + tc * P3.x) >= time)
 		{
@@ -164,7 +233,7 @@ bool gkLoaderUtils::findApproximateCurve(Vector2 &P0, Vector2 &P1, Vector2 &P2, 
 		}
 
 		t += step;
-		s= Real(1.0) - t;
+		s= Ogre::Real(1.0) - t;
 	}
 	return false;
 }

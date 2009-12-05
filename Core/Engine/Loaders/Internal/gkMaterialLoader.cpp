@@ -454,7 +454,6 @@ size_t gkMaterialUtils::getNumTextures(void)
 	if (!mOgreMat || !mBlenderMat || !mTech)
 		return 0;
 
-
 	if (mTextures.empty())
 	{
 		if (mBlenderMat->mtex != 0)
@@ -464,10 +463,10 @@ size_t gkMaterialUtils::getNumTextures(void)
 				if (mBlenderMat->mtex[i] != 0)
 				{
 					Blender::MTex *mtex= mBlenderMat->mtex[i];
-					if (mtex->tex != 0)
+					if (mtex && mtex->tex != 0)
 					{
 						if (mtex->tex->type == TEX_IMAGE)
-							mTextures.push_back(mBlenderMat->mtex[i]);
+							mTextures.push_back(mtex);
 					}
 				}
 			}
@@ -609,9 +608,9 @@ TextureUnitState* gkMaterialUtils::addTextureUnit(Pass* pass, Blender::Image *im
 }
 
 //-----------------------------------------------------------------------------
-bool gkMaterialUtils::applyTexFace(int flags)
+bool gkMaterialUtils::applyTexFace(int flags, int alpha)
 {
-	if (!mOgreMat || !mBlenderMat || !mTech)
+	if (!mOgreMat || !mTech)
 		return false;
 
 	if (flags &TF_INVISIBLE)
@@ -634,6 +633,14 @@ bool gkMaterialUtils::applyTexFace(int flags)
 		mTech->setManualCullingMode(MANUAL_CULL_NONE);
 	}
 
+	if (alpha &TF_ALPHA)
+	{
+		mTech->getPass(0)->setAlphaRejectSettings(Ogre::CMPF_GREATER_EQUAL, 128);
+		mTech->setSceneBlending(Ogre::SBF_SOURCE_ALPHA, Ogre::SBF_ONE_MINUS_SOURCE_ALPHA);
+	}
+	if (alpha &TF_ADD)
+		mTech->setSceneBlending(Ogre::SBF_ONE, Ogre::SBF_ONE);
+	
 	return true;
 }
 
@@ -681,7 +688,7 @@ void gkMaterialUtils::getOgreMaterialFromMaterial(Ogre::MaterialPtr ptr, Blender
 	}
 
 
-	if (!applyTexFace(flags))
+	if (!applyTexFace(flags, 0))
 		return;
 
 	getNumTextures();
@@ -690,9 +697,14 @@ void gkMaterialUtils::getOgreMaterialFromMaterial(Ogre::MaterialPtr ptr, Blender
 }
 
 //-----------------------------------------------------------------------------
-void gkMaterialUtils::setOgreMaterialDefault(Ogre::MaterialPtr ptr, bool lighting)
+void gkMaterialUtils::setOgreMaterialDefault(Ogre::MaterialPtr ptr, bool lighting, int flags, int alpha)
 {
+	if (ptr.isNull()) return;
+
+	mOgreMat= ptr.getPointer();
+	mTech= mOgreMat->getTechnique(0);
+
 	ptr->setLightingEnabled(lighting && lampTest());
-	if (lighting)
-		ptr->setDiffuse(1,1,1,1);
+	ptr->setDiffuse(0.8, 0.8, 0.8, 1.0);
+	applyTexFace(flags, alpha);
 }

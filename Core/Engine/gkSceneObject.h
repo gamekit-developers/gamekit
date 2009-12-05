@@ -66,6 +66,7 @@ public:
 
 	void applyViewport(Ogre::Viewport *vp);
 	void setMainCamera(gkCameraObject *cam);
+	gkCameraObject* getMainCamera(void);
 
 	bool hasObject(const gkHashedString& ob);
 	bool hasObject(gkGameObject *ob);
@@ -132,6 +133,11 @@ GK_INLINE Ogre::SceneManager* gkSceneObject::getManager()
 	return mManager;
 }
 
+// ----------------------------------------------------------------------------
+GK_INLINE gkCameraObject* gkSceneObject::getMainCamera(void)
+{
+	return mStartCam;
+}
 
 // ----------------------------------------------------------------------------
 class gkSceneObjectPtr : public Ogre::SharedPtr<gkSceneObject>

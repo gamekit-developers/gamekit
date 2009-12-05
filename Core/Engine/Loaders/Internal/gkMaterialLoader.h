@@ -59,7 +59,7 @@ public:
 
 	gkMaterialUtils(gkBlendFile *fp);
 	void getOgreMaterialFromMaterial(Ogre::MaterialPtr ptr, Blender::Material *matr, Blender::Mesh *me, int flags);
-	void setOgreMaterialDefault(Ogre::MaterialPtr ptr, bool lighting);
+	void setOgreMaterialDefault(Ogre::MaterialPtr ptr, bool lighting, int flags, int alpha);
 
 
 	void addTextureUnit(Ogre::MaterialPtr ptr, Blender::Image *ima, int layer_nr);
@@ -73,7 +73,7 @@ private:
 	void applyAmbientPass(void);
 	void applyLightPass(void);
 	void applyTexturePass(void);
-	bool applyTexFace(int flags);
+	bool applyTexFace(int flags, int alpha);
 
 	bool lampTest(void);
 

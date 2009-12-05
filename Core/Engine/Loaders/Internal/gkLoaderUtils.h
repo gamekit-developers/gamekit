@@ -40,6 +40,7 @@ public:
 
 	// animation / skeleton utils
 	int getDeformGroupIndex(Blender::Object *ob, const char *group);
+	static Ogre::Real evaluateIpoCurve(Blender::IpoCurve *icu, const Ogre::Real& time);
 
 	static bool findApproximateCurve(Ogre::Vector2 &P0,
 									 Ogre::Vector2 &P1,
