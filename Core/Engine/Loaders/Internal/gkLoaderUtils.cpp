@@ -122,15 +122,13 @@ Blender::Material* gkLoaderUtils::getMaterial(Blender::Object *ob, int index)
 	/// access changed to matbits
 	if (ob->matbits[index-1])
 #endif
+	{
 		ma= (Blender::Material*)ob->mat[index-1];
+	}
 	else
 	{
 		Blender::Mesh *me= (Blender::Mesh*)ob->data;
 		ma= (Blender::Material*)me->mat[index-1];
-
-		Blender::Material *found = (Blender::Material*)mFile->findLibPointer(ma);
-		if (found) return found;
-		else ma = found;
 	}
 	return ma;
 }

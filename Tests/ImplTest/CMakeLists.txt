@@ -31,6 +31,9 @@ set(HomeFiles
 	clubsilo_packed.blend
 	momo_ogreSmallAnim.blend
 	MultiParentTest.blend
+	MultiMat225.blend
+	MultiMat249.blend
+	monkit2.blend
 )
 
 install(FILES ${HomeFiles} DESTINATION ${OGREKIT_INSTALL_PREFIX})

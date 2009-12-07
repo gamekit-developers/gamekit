@@ -52,7 +52,8 @@
 
 using namespace Ogre;
 
-namespace Ogre {
+namespace Ogre
+{
 
 typedef std::vector<int>								AssignmentIndexList;
 typedef std::vector<Ogre::VertexBoneAssignment>		 AssignmentList;
@@ -75,7 +76,7 @@ public:
 	Ogre::Mesh *mesh;
 
 	gkBlendFile *file;
-	gkMeshLoader* loader;
+	gkMeshLoader *loader;
 };
 
 }
@@ -99,12 +100,12 @@ static unsigned int PackColour(Blender::MCol col, bool opengl)
 	return out_color.integer;
 }
 
-bool gkSubMeshSlot::blender_mat = false;
+bool gkSubMeshSlot::blender_mat= false;
 
 
 //-----------------------------------------------------------------------------
 gkMeshLoaderPrivate::gkMeshLoaderPrivate(gkBlendFile *f, gkMeshLoader *parent, Blender::Object *ob, Ogre::Mesh *m) :
-	loader(parent), object(ob), file(f), mesh(m)
+		loader(parent), object(ob), file(f), mesh(m)
 {
 	GK_ASSERT(loader);
 	GK_ASSERT(object);
@@ -115,14 +116,14 @@ gkMeshLoaderPrivate::gkMeshLoaderPrivate(gkBlendFile *f, gkMeshLoader *parent, B
 //-----------------------------------------------------------------------------
 void gkMeshLoaderPrivate::convertMesh(void)
 {
-	Blender::Mesh* bmesh= static_cast< Blender::Mesh*>(object->data);
+	Blender::Mesh *bmesh= static_cast< Blender::Mesh*>(object->data);
 	GK_ASSERT(bmesh);
 
 
 
-	Blender::MFace* mface= bmesh->mface;
-	Blender::MVert* mvert= bmesh->mvert;
-	Blender::MCol*  mcol=  0;
+	Blender::MFace *mface= bmesh->mface;
+	Blender::MVert *mvert= bmesh->mvert;
+	Blender::MCol * mcol=  0;
 
 	if (!mface || !mvert)
 	{
@@ -136,8 +137,8 @@ void gkMeshLoaderPrivate::convertMesh(void)
 		return;
 	}
 
-	// notify that sorting based in materials 
-	gkSubMeshSlot::blender_mat = gkEngine::getSingleton().getUserDefs().blendermat;
+	// notify that sorting based in materials
+	gkSubMeshSlot::blender_mat= gkEngine::getSingleton().getUserDefs().blendermat;
 
 
 	gkLoaderUtils ut(file->getInternalFile());
@@ -176,7 +177,7 @@ void gkMeshLoaderPrivate::convertMesh(void)
 		gkSubMeshSlot tester;
 		tester.material_nr= curface.mat_nr;
 		tester.mode= 0;
-		tester.alpha = 0;
+		tester.alpha= 0;
 
 		const bool isQuad= curface.v4 != 0;
 		gkFaceBufferObject tri[2]= {gkFaceBufferObject(), gkFaceBufferObject()};
@@ -330,7 +331,7 @@ void gkMeshLoaderPrivate::convertMesh(void)
 		if (layers[0] != 0)
 		{
 			tester.mode= layers[0][fi].mode;
-			tester.alpha = layers[0][fi].transp;
+			tester.alpha= layers[0][fi].transp;
 		}
 
 		/// tpage objects
@@ -351,7 +352,7 @@ void gkMeshLoaderPrivate::convertMesh(void)
 		if (layers[7] != 0)
 			tester.tpage[7]= layers[7][fi].tpage;
 
-		gkSubMeshBufferItem* foundItem= 0;
+		gkSubMeshBufferItem *foundItem= 0;
 
 
 		SubMeshBufferLookupIterator iter= SubMeshBufferLookupIterator(bufferObjects);
@@ -402,7 +403,7 @@ void gkMeshLoaderPrivate::convertMesh(void)
 	/// Setup OGRE Mesh data
 	MaterialManager &mgr= MaterialManager::getSingleton();
 
-	HardwareBufferManager* bufferManager= HardwareBufferManager::getSingletonPtr();
+	HardwareBufferManager *bufferManager= HardwareBufferManager::getSingletonPtr();
 
 	Vector3 min_aabb= Vector3(-0.5, -0.5, -0.5), max_aabb= Vector3(0.5, 0.5, 0.5);
 	Real rad_aabb= 1.0;
@@ -436,7 +437,7 @@ void gkMeshLoaderPrivate::convertMesh(void)
 		if (gkSubMeshSlot::blender_mat)
 		{
 			count ++;
-			Blender::Material *me= ut.getMaterial(object,slot.material_nr);
+			Blender::Material *me= ut.getMaterial(object,slot.material_nr+1);
 
 			if (me != 0)
 			{
@@ -465,7 +466,7 @@ void gkMeshLoaderPrivate::convertMesh(void)
 		}
 		else
 		{
-			Blender::Material *me= ut.getMaterial(object,slot.material_nr);
+			Blender::Material *me= ut.getMaterial(object,slot.material_nr+1);
 
 			{
 				/// naming scheme
@@ -526,7 +527,7 @@ void gkMeshLoaderPrivate::convertMesh(void)
 		size_t offs= 0;
 
 		/// fill in the declaration
-		VertexDeclaration* decl= submesh->vertexData->vertexDeclaration;
+		VertexDeclaration *decl= submesh->vertexData->vertexDeclaration;
 
 
 		/// position
@@ -557,21 +558,21 @@ void gkMeshLoaderPrivate::convertMesh(void)
 
 		/// the initial vertex buffer
 		HardwareVertexBufferSharedPtr vertBuf= bufferManager->createVertexBuffer(offs,
-											   submesh->vertexData->vertexCount,
-											   HardwareBuffer::HBU_STATIC_WRITE_ONLY);
+		                                       submesh->vertexData->vertexCount,
+		                                       HardwareBuffer::HBU_STATIC_WRITE_ONLY);
 		/// bind the source
-		VertexBufferBinding* bind= submesh->vertexData->vertexBufferBinding;
+		VertexBufferBinding *bind= submesh->vertexData->vertexBufferBinding;
 		bind->setBinding(0, vertBuf);
 
 
 		/// index buffer
-		size_t indx_size= currentMesh->ibuf.size() * 3;
+		size_t indx_size= currentMesh->ibuf.size() *3;
 
 		HardwareIndexBuffer::IndexType buff_type= (indx_size > 65536) ?
-				HardwareIndexBuffer::IT_32BIT : HardwareIndexBuffer::IT_16BIT;
+		        HardwareIndexBuffer::IT_32BIT : HardwareIndexBuffer::IT_16BIT;
 
 		HardwareIndexBufferSharedPtr indexBuffer= bufferManager->createIndexBuffer(buff_type, indx_size,
-				HardwareBuffer::HBU_STATIC_WRITE_ONLY);
+		        HardwareBuffer::HBU_STATIC_WRITE_ONLY);
 
 		///
 		submesh->indexData->indexCount= indx_size;
@@ -626,13 +627,13 @@ void gkMeshLoaderPrivate::convertMesh(void)
 
 			VertexData *vdata= submesh->vertexData;
 
-			VertexDeclaration* decl= vdata->vertexDeclaration;
+			VertexDeclaration *decl= vdata->vertexDeclaration;
 			VertexDeclaration::VertexElementList elems= decl->findElementsBySource(0);
 
 
 			float *floatdata= 0;
 			size_t ele_len= currentMesh->vbuf.size();
-			gkVertexBufferObject* vbuf= currentMesh->vbuf.ptr();
+			gkVertexBufferObject *vbuf= currentMesh->vbuf.ptr();
 
 			for (size_t cur= 0; cur < ele_len; ++cur)
 			{
@@ -673,7 +674,7 @@ void gkMeshLoaderPrivate::convertMesh(void)
 					{
 						vert.baseVertexPointerToElement(vertdata, &floatdata);
 
-						layer_count = gkClamp(layer_count, TL_UV0, TL_UV7);
+						layer_count= gkClamp(layer_count, TL_UV0, TL_UV7);
 						*floatdata++= vbo.uv[layer_count][0];
 						*floatdata++= 1.f - vbo.uv[layer_count][1];
 
@@ -693,7 +694,7 @@ void gkMeshLoaderPrivate::convertMesh(void)
 			vertBuf->unlock();
 			if (parentIsSkel)
 			{
-				VertexDeclaration* newDecl= decl->getAutoOrganisedDeclaration(true, false);
+				VertexDeclaration *newDecl= decl->getAutoOrganisedDeclaration(true, false);
 				vdata->reorganiseBuffers(newDecl);
 			}
 		}
@@ -792,7 +793,7 @@ gkMeshLoader::~gkMeshLoader()
 }
 
 //-----------------------------------------------------------------------------
-void gkMeshLoader::loadResource(Resource* resource)
+void gkMeshLoader::loadResource(Resource *resource)
 {
 	GK_ASSERT(mFile);
 	GK_ASSERT(mObject);

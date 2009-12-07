@@ -105,7 +105,7 @@ void gkMaterialUtils::handleMultiPass(void)
 bool gkMaterialUtils::lampTest(void)
 {
 	GK_ASSERT(mFile);
-	bParse::bMain *mp = mFile->getInternalFile()->getMain();
+	bParse::bMain *mp= mFile->getInternalFile()->getMain();
 	return !mp->getLamp()->empty();
 }
 
@@ -128,12 +128,12 @@ void gkMaterialUtils::handleStd(void)
 
 		pass->setShininess(mBlenderMat->har / 4.0);
 
-		pass->setAmbient(diffuse * mBlenderMat->amb);
-		pass->setDiffuse(diffuse * (mBlenderMat->emit + mBlenderMat->ref));
-		pass->setSpecular(spec * mBlenderMat->spec);
+		pass->setAmbient(diffuse *mBlenderMat->amb);
+		pass->setDiffuse(diffuse *(mBlenderMat->emit + mBlenderMat->ref));
+		pass->setSpecular(spec *mBlenderMat->spec);
 
 		if (mBlenderMat->emit > 0)
-			pass->setSelfIllumination(diffuse * mBlenderMat->emit);
+			pass->setSelfIllumination(diffuse *mBlenderMat->emit);
 		else
 			pass->setSelfIllumination(ColourValue::Black);
 
@@ -172,7 +172,7 @@ void gkMaterialUtils::handleStd(void)
 	size_t txcnt= getNumTextures();
 	for (size_t i=0; i<txcnt; i++)
 	{
-		Blender::MTex* mt= getTexture(i);
+		Blender::MTex *mt= getTexture(i);
 		if (mt && mt->tex && mt->tex->ima)
 		{
 			TextureUnitState *st= addTextureUnit(pass, mt);
@@ -425,10 +425,10 @@ void gkMaterialUtils::applyTexturePass(void)
 			size_t txcnt= getNumTextures();
 			for (size_t i=0; i<txcnt; i++)
 			{
-				Blender::MTex* mt= getTexture(i);
+				Blender::MTex *mt= getTexture(i);
 				if (mt && mt->tex && mt->tex->ima)
 				{
-					if (!(mt->mapto & MAP_AMB) && !(mt->mapto & MAP_NORM)) /* handled elsewhere */
+					if (!(mt->mapto & MAP_AMB) && !(mt->mapto & MAP_NORM)) / *handled elsewhere */
 					{
 						addTextureUnit(tex, mt);
 						params->setNamedConstant(String("lay[") + StringConverter::toString(cnt) + String("]"), Real(getUVLayer(mt)));
@@ -477,7 +477,7 @@ size_t gkMaterialUtils::getNumTextures(void)
 }
 
 //-----------------------------------------------------------------------------
-Blender::MTex* gkMaterialUtils::getTexture(size_t i)
+Blender::MTex *gkMaterialUtils::getTexture(size_t i)
 {
 	return (i < mTextures.size()) ? mTextures.at(i) : 0;
 }
@@ -489,7 +489,7 @@ Blender::MTex* gkMaterialUtils::getTexture(size_t i)
 // MAP_NORM	== lighting pass normal map
 // MAP_SPEC	== lighting pass specular map
 //-----------------------------------------------------------------------------
-Blender::MTex* gkMaterialUtils::getTexture(int mapto, int fallback)
+Blender::MTex *gkMaterialUtils::getTexture(int mapto, int fallback)
 {
 	for (size_t i=0; i<mTextures.size(); i++)
 	{
@@ -559,7 +559,7 @@ int gkMaterialUtils::getUVLayer(Blender::MTex *te)
 }
 
 //-----------------------------------------------------------------------------
-TextureUnitState* gkMaterialUtils::addTextureUnit(Pass* ptr, Blender::MTex *tex)
+TextureUnitState *gkMaterialUtils::addTextureUnit(Pass *ptr, Blender::MTex *tex)
 {
 	if (!tex) return 0;
 	if (!tex->tex) return 0;
@@ -576,7 +576,7 @@ void gkMaterialUtils::addTextureUnit(Ogre::MaterialPtr ptr, Blender::Image *ima,
 }
 
 //-----------------------------------------------------------------------------
-TextureUnitState* gkMaterialUtils::addTextureUnit(Pass* pass, Blender::Image *ima, int layer_nr)
+TextureUnitState *gkMaterialUtils::addTextureUnit(Pass *pass, Blender::Image *ima, int layer_nr)
 {
 	/// can only use packed file or file path
 	/// ImBuf is internal to blender
@@ -600,9 +600,9 @@ TextureUnitState* gkMaterialUtils::addTextureUnit(Pass* pass, Blender::Image *im
 	if (state)
 	{
 		state->setTextureAddressingMode(ima->tpageflag & IMA_CLAMP_U ? TextureUnitState::TAM_CLAMP : TextureUnitState::TAM_WRAP,
-										ima->tpageflag & IMA_CLAMP_V ? TextureUnitState::TAM_CLAMP : TextureUnitState::TAM_WRAP,
-										TextureUnitState::TAM_WRAP
-									   );
+		                                ima->tpageflag & IMA_CLAMP_V ? TextureUnitState::TAM_CLAMP : TextureUnitState::TAM_WRAP,
+		                                TextureUnitState::TAM_WRAP
+		                               );
 	}
 	return state;
 }
@@ -640,7 +640,7 @@ bool gkMaterialUtils::applyTexFace(int flags, int alpha)
 	}
 	if (alpha &TF_ADD)
 		mTech->setSceneBlending(Ogre::SBF_ONE, Ogre::SBF_ONE);
-	
+
 	return true;
 }
 
@@ -683,7 +683,7 @@ void gkMaterialUtils::getOgreMaterialFromMaterial(Ogre::MaterialPtr ptr, Blender
 		if (!mIsModern)
 		{
 			gkLogMessage("Needed vertex and fragment profiles are not suppoted with your graphics card.\n"
-						 "No fancy shaders will be used :(");
+			             "No fancy shaders will be used :(");
 		}
 	}
 

@@ -185,12 +185,18 @@ gkCameraObject* createMouseLook(gkSceneObject *sc,  const Ogre::Vector3 &pos, co
 		cam->getCameraProperties() = mcam->getCameraProperties();
 
 
-		Ogre::Vector3 neul = gkMathUtils::getEulerFromQuat(mcam->getProperties().orientation);
-		neul.x = 0.0;
-		neul.y = 0.0;
-		z->getProperties().orientation = gkMathUtils::getQuatFromEuler(neul);
-		z->getProperties().position = mcam->getProperties().position;
-		cam->getProperties().orientation = gkMathUtils::getQuatFromEuler(ori);
+		Ogre::Vector3 neul = gkMathUtils::getEulerFromQuat(mcam->getWorldOrientation());
+		Ogre::Vector3 zeul = Ogre::Vector3(0, 0, neul.z);
+
+		Ogre::Quaternion& zrot= z->getProperties().orientation;
+		Ogre::Quaternion& crot= cam->getProperties().orientation;
+
+		zrot = gkMathUtils::getQuatFromEuler(zeul);
+		zrot.normalise();
+		crot = gkMathUtils::getQuatFromEuler(ori);
+		crot.normalise();
+
+		z->getProperties().position = mcam->getWorldPosition();
 	}
 	else
 	{
@@ -367,6 +373,8 @@ int main(int argc, char **argv)
 		defs.wintitle= "OgreKit Test (Press Q to exit) [";
 		defs.wintitle += fname;
 		defs.wintitle += "]";
+		//defs.blendermat = true;
+
 
 		eng.initialize();
 		loadBlend(eng, fname);
