@@ -35,7 +35,7 @@ class IrrBlendNew : public BulletBlendReaderNew
 	irr::IrrlichtDevice* m_device;
 	irr::scene::ISceneManager* m_sceneManager;
 	btLogicManager* m_logicManager;
-
+	irr::video::ITexture* m_notFoundTexture;
 	int	m_guid;
 
 

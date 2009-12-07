@@ -474,6 +474,30 @@ void bFile::swapData(char *data, short type, int arraySize)
 }
 
 
+void bFile::swapPtr(char *dst, char *src)
+{
+	int ptrFile = mFileDNA->getPointerSize();
+	int ptrMem = mMemoryDNA->getPointerSize();
+
+	if (!src && !dst)
+		return;
+
+	if (ptrFile == ptrMem)
+		memcpy(dst, src, ptrMem);
+	else if (ptrMem==4 && ptrFile==8)
+	{
+		long64 longValue = *((long64*)src);
+		*((int*)dst) = (int)(longValue>>3);
+	}
+	else if (ptrMem==8 && ptrFile==4)
+		*((long64*)dst)= *((int*)src);
+	else
+	{
+		print (ptrFile << ' ' << ptrMem);
+		assert(0 && "Invalid pointer len");
+	}
+}
+
 // ----------------------------------------------------- //
 void bFile::getMatchingFileDNA(short* dna_addr, bString lookupName,  bString lookupType, char *strcData, char *data, bool fixupPointers)
 {
@@ -500,31 +524,33 @@ void bFile::getMatchingFileDNA(short* dna_addr, bString lookupName,  bString loo
 			
 			if (name[0] == '*')
 			{
-				
-
 				// cast pointers
 				int ptrFile = mFileDNA->getPointerSize();
 				int ptrMem = mMemoryDNA->getPointerSize();
 
-				if (ptrFile == ptrMem)
-					memcpy(strcData, data, ptrMem);
-
-				else if (ptrMem==4 && ptrFile==8)
-				{
-					long64 longValue = 0;
-					longValue = *((long64*)data);
-					*((int*)strcData) = longValue>>3;
-				}
-				else if (ptrMem==8 && ptrFile==4)
-					*((long64*)strcData)= *((int*)data);
-				else
-				{
-					print (ptrFile << ' ' << ptrMem);
-					assert(0 && "Invalid pointer len");
-				}
+				swapPtr(strcData, data);
 
 				if (fixupPointers)
-					m_pointerFixupArray.push_back(strcData);
+				{
+					if (arrayLen > 1)
+					{
+						void **sarray = (void**)strcData;
+						void **darray = (void**)data;
+
+						for (int a=0; a<arrayLen; a++)
+						{
+							swapPtr((char*)&sarray[a], (char*)&darray[a]);
+							m_pointerFixupArray.push_back((char*)&sarray[a]);
+						}
+					}
+					else
+					{
+						if (name[1] == '*')
+							m_pointerPtrFixupArray.push_back(strcData);
+						else
+							m_pointerFixupArray.push_back(strcData);
+					}
+				}
 				else
 				{
 //					printf("skipped %s %s : %x\n",type.c_str(),name.c_str(),strcData);
@@ -619,7 +645,7 @@ void bFile::resolvePointersMismatch()
 //	printf("resolvePointersStructMismatch\n");
 
 	int i;
-	
+
 	for (i=0;i<	m_pointerFixupArray.size();i++)
 	{
 		char* cur = m_pointerFixupArray.at(i);
@@ -635,9 +661,35 @@ void bFile::resolvePointersMismatch()
 //			printf("pointer not found: %x\n",cur);
 		}
 	}
+
+	for (i=0;i<	m_pointerPtrFixupArray.size();i++)
+	{
+		char* cur= m_pointerPtrFixupArray.at(i);
+		void** ptrptr = (void**)cur;
+		void *ptr = findLibPointer(*ptrptr);
+		if (ptr)
+		{
+			(*ptrptr) = ptr;
+
+			void **array= (void**)(*(ptrptr));
+
+			int n=0, n2=0;
+			int swapoffs = mFileDNA->getPointerSize() > mMemoryDNA->getPointerSize() ? 2 : 1;
+			void *np = array[n];
+			while(np)
+			{
+				if (mFlags & FD_BITS_VARIES)
+					swapPtr((char*)&array[n], (char*)&array[n2]);
+
+				np = findLibPointer(array[n]);
+				if (np)
+					array[n] = np;
+				++n;
+				n2 += swapoffs;
+			}
+		}
+	}
 }
-
-
 
 
 ///this loop only works fine if the Blender DNA structure of the file matches the headerfiles
@@ -682,18 +734,42 @@ void bFile::resolvePointersStructRecursive(char *strcPtr, int dna_nr)
 		memType = fileDna->getType(oldStruct[0]);
 		memName = fileDna->getName(oldStruct[1]);
 		//printf("%s %s\n",memType,memName);
+
+		int arrayLen = fileDna->getArraySizeNew(oldStruct[1]);
 		if (memName[0] == '*')
 		{
-			void** ptrptr = (void**) elemPtr;
-			void* ptr = *ptrptr;
-			ptr = findLibPointer(ptr);
-			if (ptr)
+			if (arrayLen > 1)
 			{
-//				printf("Fixup pointer at 0x%x from 0x%x to 0x%x!\n",ptrptr,*ptrptr,ptr);
-				*(ptrptr) = ptr;
-			} else
+				void **array= (void**)elemPtr;
+				for (int a=0; a<arrayLen; a++)
+					array[a] = findLibPointer(array[a]);
+			}
+			else
 			{
-//				printf("Cannot fixup pointer at 0x%x from 0x%x to 0x%x!\n",ptrptr,*ptrptr,ptr);
+				void** ptrptr = (void**) elemPtr;
+				void* ptr = *ptrptr;
+				ptr = findLibPointer(ptr);
+				if (ptr)
+				{
+	//				printf("Fixup pointer at 0x%x from 0x%x to 0x%x!\n",ptrptr,*ptrptr,ptr);
+					*(ptrptr) = ptr;
+					if (memName[1] == '*' && ptrptr && *ptrptr)
+					{
+						// This	will only work if the given	**array	is continuous
+						void **array= (void**)*(ptrptr);
+						void *np= array[0];
+						int	n=0;
+						while (np)
+						{
+							np= findLibPointer(array[n]);
+							if (np) array[n]= np;
+							n++;
+						}
+					}
+				} else
+				{
+	//				printf("Cannot fixup pointer at 0x%x from 0x%x to 0x%x!\n",ptrptr,*ptrptr,ptr);
+				}
 			}
 		} else
 		{

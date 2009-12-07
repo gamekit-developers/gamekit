@@ -21,6 +21,7 @@ subject to the following restrictions:
 #include <vector>
 #include <assert.h>
 #include "bLog.h"
+#include <stdio.h>
 
 namespace bParse {
 

@@ -25,7 +25,8 @@ IrrBlendNew::IrrBlendNew(irr::IrrlichtDevice* device,irr::scene::ISceneManager* 
 :BulletBlendReaderNew(bulletWorld),
 m_device(device),
 m_sceneManager(irrlichtSceneManager),
-m_logicManager(logicManager)
+m_logicManager(logicManager),
+m_notFoundTexture(0)
 {
 
 }
@@ -374,8 +375,8 @@ irr::scene::ISceneNode*	IrrBlendNew::createMeshNode(irr::video::S3DVertex* verti
 
 	if (!texture0)
 	{
-		static irr::video::ITexture* notFoundTexture = 0;
-		if (!notFoundTexture)
+		
+		if (!m_notFoundTexture)
 		{
 			unsigned char*	imageData=new unsigned char[256*256*3];
 			for(int y=0;y<256;++y)
@@ -394,11 +395,11 @@ irr::scene::ISceneNode*	IrrBlendNew::createMeshNode(irr::video::S3DVertex* verti
 			irr::core::dimension2d<unsigned int> dim(256,256);
 			irr::video::IImage* imag = driver->createImageFromData(irr::video::ECF_R8G8B8,dim,imageData);
 			delete imageData;
-			notFoundTexture = driver->addTexture("notFound",imag);
+			m_notFoundTexture = driver->addTexture("notFound",imag);
 			imag->drop();
 		}
 		
-		texture0 = notFoundTexture;
+		texture0 = m_notFoundTexture;
 	}
 
 	if (texture0)
