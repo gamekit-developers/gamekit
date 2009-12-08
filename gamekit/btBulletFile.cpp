@@ -19,7 +19,6 @@ subject to the following restrictions:
 #include <string.h>
 
 
-
 // 32 && 64 bit versions
 extern unsigned char BulletDNAstr[];
 extern int BulletDNAlen;
@@ -179,7 +178,7 @@ void	btBulletFile::parse(bool verboseDumpAllTypes)
 }
 
 // experimental
-int		btBulletFile::write(const char* fileName)
+int		btBulletFile::write(const char* fileName, bool fixupPointers)
 {
 	FILE *fp = fopen(fileName, "wb");
 	if (fp)
@@ -210,7 +209,7 @@ int		btBulletFile::write(const char* fileName)
 		
 		fwrite(header,SIZEOFBLENDERHEADER,1,fp);
 
-		writeChunks(fp);
+		writeChunks(fp, fixupPointers);
 
 		writeDNA(fp);
 

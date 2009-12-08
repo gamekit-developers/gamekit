@@ -60,8 +60,6 @@ SET(bParse_SRCS
 	bBlenderFile.h
 	btBulletFile.cpp
 	btBulletFile.h
-	bLog.cpp
-	bLog.h
 	bMain.cpp
 	bMain.h
 	dna249.cpp

@@ -19,6 +19,17 @@ subject to the following restrictions:
 #include "btScalar.h" // has definitions like SIMD_FORCE_INLINE
 #include "btStackAlloc.h"
 
+class btChunk
+{
+public:
+	int		m_chunkCode;
+	int		m_length;
+	void	*m_oldPtr;
+	int		m_dna_nr;
+	int		m_number;
+};
+
+
 ///Allow to serialize data in a chunk format
 class btSerializer
 {
@@ -26,47 +37,250 @@ class btSerializer
 
 		virtual ~btSerializer() {}
 
-		virtual	void*	allocate(size_t size) = 0;
+		virtual	btChunk*	allocate(size_t size,int numElements) = 0;
 
-		virtual void	addStruct(	const	char* structType,void* data, int len, void* oldPtr, int code ) = 0;
 };
 
-struct	btChunk
-{
-	const char*	m_structType;
-	void*		m_data;
-	int			m_length;
-	void*		m_oldPtr;
-	int			m_code;
-};
+
+#define BT_HEADER_LENGTH 12
+
 
 class btDefaultSerializer
 {
+public:
 
-	btStackAlloc	m_stack;
+	btAlignedObjectArray<char*>			mTypes;
+	btAlignedObjectArray<short*>			mStructs;
+	btAlignedObjectArray<short>			mTlens;
+	btHashMap<btHashInt, int>			mStructReverse;
+	btHashMap<btHashString,int>	mTypeLookup;
 
-	btAlignedObjectArray<btChunk>	m_chunks;
+	btAlignedObjectArray<btChunk*>	m_chunkPtrs;
 
-	public:
+	int					m_totalSize;
+	unsigned char*		m_buffer;
+	int					m_bufferPointer;
+	
+	
+	
+
+	void*		m_dna;
+	int					m_dnaLength;
+
 
 		btDefaultSerializer(int totalSize)
-			:m_stack(totalSize)
+			:m_totalSize(totalSize),
+			m_bufferPointer(0)
+//			m_dna(0),
+//			m_dnaLength(0)
 		{
+			m_buffer = (unsigned char*)btAlignedAlloc(16,totalSize);
+			m_bufferPointer += BT_HEADER_LENGTH;
+
+			memcpy(m_buffer, "BULLET ", 7);
+			int endian= 1;
+			endian= ((char*)&endian)[0];
+
+			if (endian)
+			{
+				m_buffer[7] = '_';
+			} else
+			{
+				m_buffer[7] = '-';
+			}
+			if (sizeof(void*)==8)
+			{
+				m_buffer[8]='V';
+			} else
+			{
+				m_buffer[8]='v';
+			}
+
+			m_buffer[9] = '2';
+			m_buffer[10] = '7';
+			m_buffer[11] = '5';
+
+			
+
 		}
 
 		virtual ~btDefaultSerializer() 
 		{
+			btAlignedFree(m_buffer);
 		}
 
-		virtual	void*	allocate(size_t size)
+		int getReverseType(const char *type) const
 		{
-			return m_stack.allocate(size);
+
+			btHashString key(type);
+			const int* valuePtr = mTypeLookup.find(key);
+			if (valuePtr)
+				return *valuePtr;
+			
+			return -1;
 		}
 
-		virtual void	addStruct(	btChunk& chunk )
+		void	writeDNA()
 		{
-			m_chunks.push_back(chunk);
+			unsigned char* dnaTarget = m_buffer+m_bufferPointer;
+			memcpy(dnaTarget,m_dna,m_dnaLength);
+			m_bufferPointer += m_dnaLength;
 		}
+
+		virtual	btChunk*	allocate(size_t size, int numElements)
+		{
+
+			unsigned char* ptr = m_buffer+m_bufferPointer;
+			m_bufferPointer += size*numElements+sizeof(btChunk);
+
+			unsigned char* data = ptr + sizeof(btChunk);
+			
+			btChunk* chunk = (btChunk*)ptr;
+			chunk->m_chunkCode = 0;
+			chunk->m_oldPtr = data;
+			chunk->m_length = size;
+			chunk->m_number = numElements;
+			
+			m_chunkPtrs.push_back(chunk);
+
+			return chunk;
+		}
+
+
+		void initDNA(const char* bdna,int dnalen)
+		{
+
+			m_dna = btAlignedAlloc(dnalen,16);
+			memcpy(m_dna,bdna,dnalen);
+			m_dnaLength = dnalen;
+
+			int *intPtr=0;short *shtPtr=0;
+			char *cp = 0;int dataLen =0;long nr=0;
+			intPtr = (int*)bdna;
+
+			/*
+				SDNA (4 bytes) (magic number)
+				NAME (4 bytes)
+				<nr> (4 bytes) amount of names (int)
+				<string>
+				<string>
+			*/
+
+			if (strncmp((const char*)bdna, "SDNA", 4)==0)
+			{
+				// skip ++ NAME
+				intPtr++; intPtr++;
+			}
+
+			// Parse names
+			
+			dataLen = *intPtr;
+			intPtr++;
+
+			cp = (char*)intPtr;
+			for (int i=0; i<dataLen; i++)
+			{
+				
+				while (*cp)cp++;
+				cp++;
+			}
+			{
+				nr= (long)cp;
+				long mask=3;
+				nr= ((nr+3)&~3)-nr;
+				while (nr--)
+				{
+					cp++;
+				}
+			}
+
+			/*
+				TYPE (4 bytes)
+				<nr> amount of types (int)
+				<string>
+				<string>
+			*/
+
+			intPtr = (int*)cp;
+			assert(strncmp(cp, "TYPE", 4)==0); intPtr++;
+
+			dataLen = *intPtr;
+			intPtr++;
+
+			cp = (char*)intPtr;
+			for (int i=0; i<dataLen; i++)
+			{
+				mTypes.push_back(cp);
+				while (*cp)cp++;
+				cp++;
+			}
+
+		{
+				nr= (long)cp;
+				long mask=3;
+				nr= ((nr+3)&~3)-nr;
+				while (nr--)
+				{
+					cp++;
+				}
+			}
+
+
+			/*
+				TLEN (4 bytes)
+				<len> (short) the lengths of types
+				<len>
+			*/
+
+			// Parse type lens
+			intPtr = (int*)cp;
+			assert(strncmp(cp, "TLEN", 4)==0); intPtr++;
+
+			dataLen = (int)mTypes.size();
+
+			shtPtr = (short*)intPtr;
+			for (int i=0; i<dataLen; i++, shtPtr++)
+			{
+				mTlens.push_back(shtPtr[0]);
+			}
+
+			if (dataLen & 1) shtPtr++;
+
+			/*
+				STRC (4 bytes)
+				<nr> amount of structs (int)
+				<typenr>
+				<nr_of_elems>
+				<typenr>
+				<namenr>
+				<typenr>
+				<namenr>
+			*/
+
+			intPtr = (int*)shtPtr;
+			cp = (char*)intPtr;
+			assert(strncmp(cp, "STRC", 4)==0); intPtr++;
+
+			dataLen = *intPtr;
+			intPtr++;
+
+
+			shtPtr = (short*)intPtr;
+			for (int i=0; i<dataLen; i++)
+			{
+				mStructs.push_back (shtPtr);
+				shtPtr+= (2*shtPtr[1])+2;
+			}
+
+			// build reverse lookups
+			for (int i=0; i<(int)mStructs.size(); i++)
+			{
+				short *strc = mStructs.at(i);
+				mStructReverse.insert(strc[0], i);
+				mTypeLookup.insert(btHashString(mTypes[strc[0]]),i);
+			}
+		}
+
 };
 
 

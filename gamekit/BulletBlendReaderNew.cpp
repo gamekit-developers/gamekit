@@ -20,11 +20,15 @@ subject to the following restrictions:
 #include "bMain.h"
 #include "bBlenderFile.h"
 #include "btBulletFile.h"
-#include "LinearMath/btSerializer.h"
+#include "LinearMath/btserializer.h"
 
 #include "BulletCollision/Gimpact/btGImpactShape.h"
 #include "BulletCollision/CollisionShapes/btScaledBvhTriangleMeshShape.h"
 
+#include "bDNA.h"
+
+extern unsigned char BulletDNAstr[];
+extern int BulletDNAlen;
 
 
 BulletBlendReaderNew::BulletBlendReaderNew(class btDynamicsWorld* destinationWorld)
@@ -67,7 +71,7 @@ int		BulletBlendReaderNew::writeFile(const char* fileName)
 	return m_blendFile->write(fileName);
 }
 
-char* serializationBuffer[1024*1024*10];//10Mb for a test
+
 
 void	BulletBlendReaderNew::convertAllObjects(int verboseDumpAllBlocks)
 {
@@ -237,40 +241,50 @@ void	BulletBlendReaderNew::convertAllObjects(int verboseDumpAllBlocks)
 //#define TEST_CREATE_BULLET_FILE
 #ifdef TEST_CREATE_BULLET_FILE
 	
-
-	btDefaultSerializer	serializer(1024*1024*10);
 	
-	int bufIndex = 0;
-
+	btDefaultSerializer*	serializer = new btDefaultSerializer(1024*1024*5);
+	serializer->initDNA((const char*)BulletDNAstr,BulletDNAlen);
+	
 	btCollisionObject* colObj = new btCollisionObject();
 	btBoxShape* boxShape = new btBoxShape(btVector3(1,2,3));
 	colObj->setCollisionShape(boxShape);
 	
 	//try to create a Bullet file...
-	bParse::btBulletFile* bulletFile = new bParse::btBulletFile();
-
-	{
-	void* bufPtr1 = &serializationBuffer[bufIndex];
-	int len = colObj->calculateSerializeBufferSize();
-	const char* structName = colObj->serialize(bufPtr1);
-	bulletFile->addStruct(structName,bufPtr1,len,colObj, BT_COLLISIONOBJECT_CODE);
-	bufIndex += len;
-	}
-
-	{
-	void* bufPtr1 = &serializationBuffer[bufIndex];
-	const char* structName = boxShape->serialize(bufPtr1);
-	int len = boxShape->calculateSerializeBufferSize();
-	bulletFile->addStruct(structName,bufPtr1,len,boxShape,BT_BOXSHAPE_CODE);
-	bufIndex += len;
-	}
-
 	
 
-	bulletFile->resolvePointers();
-	bulletFile->updateOldPointers();
+	{
+	int len = colObj->calculateSerializeBufferSize();
+	btChunk* chunk = serializer->allocate(len,1);
+	const char* structType = colObj->serialize(chunk->m_oldPtr);
+	chunk->m_dna_nr = serializer->getReverseType(structType);
+	chunk->m_chunkCode = BT_COLLISIONOBJECT_CODE;
+	chunk->m_oldPtr = colObj;
+	}
 
-	bulletFile->write("testFile.bullet");
+	{
+	int len = boxShape->calculateSerializeBufferSize();
+	btChunk* chunk = serializer->allocate(len,1);
+	const char* structType = boxShape->serialize(chunk->m_oldPtr);
+	chunk->m_dna_nr = serializer->getReverseType(structType);
+	chunk->m_chunkCode = BT_BOXSHAPE_CODE;
+	chunk->m_oldPtr = boxShape;
+	}
+
+	//bulletFile->resolvePointers();
+	//bulletFile->updateOldPointers();
+
+	bool fixupPointers = true;
+
+	serializer->writeDNA();
+
+	//bulletFile->write("testFile.bullet", fixupPointers );
+
+	FILE* f2 = fopen("testFile.bullet","wb");
+	fwrite(serializer->m_buffer,serializer->m_bufferPointer,1,f2);
+	fclose(f2);
+	
+
+	//serializer->write("testFile.bullet");
 	
 	//int bufSize = boxShape->calculateSerializeBufferSize();
 	//boxShape->serialize(buf);

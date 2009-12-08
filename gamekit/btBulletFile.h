@@ -52,7 +52,7 @@ namespace bParse {
 	
 
 		// experimental
-		virtual int		write(const char* fileName);
+		virtual int		write(const char* fileName, bool fixupPointers=false);
 
 		virtual	void	parse(bool verboseDumpAllTypes);
 

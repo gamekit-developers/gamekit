@@ -522,61 +522,6 @@ int bDNA::getArraySize(char* string)
 	return ret;
 }
 
-#if 0
-// ----------------------------------------------------- //
-int bDNA::getElementSize(short type, short name)
-{
-	assert(name < (int)m_Names.size());
-	assert(type < (int)mTypes.size());
-
-	const bNameInfo& nameInfo = m_Names[name];
-
-	char *el = nameInfo.m_name;
-
-	int namelen = (int)strlen(el);
-	int ret =0;
-	int mult=1;
-
-	
-	if (nameInfo.m_isPointer)
-	//if (el[0] == '*' || el[1] == '*')
-	{
-		if (el[namelen-1] == ']')
-		{
-			//int mult1 = getArraySize(el);
-			mult = nameInfo.m_dim0*nameInfo.m_dim1;
-			//assert(mult==mult1);
-		}
-
-		ret = mPtrLen*mult;
-	}
-	else if (type <= (int)mTlens.size())
-	{
-		if (el[namelen-1] == ']')
-		{
-			//int mult1 = getArraySize(el);
-			mult = nameInfo.m_dim0*nameInfo.m_dim1;
-			//assert(mult==mult1);
-		}
-
-		ret= mTlens[type]*mult;
-	}
-	if (!ret)
-	{
-		printf("0\n");
-	}
-
-	int alternativeRet = nameInfo.m_isPointer ? mPtrLen*nameInfo.m_dim0*nameInfo.m_dim1 : mTlens[type]*nameInfo.m_dim0*nameInfo.m_dim1;
-	if (ret!=alternativeRet)
-	{
-		printf("misassumption\n");
-	}
-
-	return ret;
-}
-#endif
-
-
 
 void bDNA::dumpTypeDefinitions()
 {

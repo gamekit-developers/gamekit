@@ -15,7 +15,6 @@ subject to the following restrictions:
 #include "bFile.h"
 #include "bCommon.h"
 #include "bMain.h"
-//#include "bDefines.h"
 #include "bChunk.h"
 #include "bDNA.h"
 #include <math.h>
@@ -896,7 +895,7 @@ void	bFile::dumpChunks(bParse::bDNA* dna)
 }
 
 
-void	bFile::writeChunks(FILE* fp)
+void	bFile::writeChunks(FILE* fp, bool fixupPointers)
 {
 	bParse::bDNA* fileDna = mFileDNA ? mFileDNA : mMemoryDNA;
 
@@ -945,7 +944,7 @@ void	bFile::writeChunks(FILE* fp)
 			short int* curStruct1 = mMemoryDNA->getStruct(dataChunk.dna_nr);
 			assert(curStruct1 == curStruct);
 
-			char* cur	= (char*)dataChunk.oldPtr;// : (char*)findLibPointer(dataChunk.oldPtr);
+			char* cur	= fixupPointers  ?  (char*)findLibPointer(dataChunk.oldPtr) : (char*)dataChunk.oldPtr;
 
 			//write the actual contents of the structure(s)
 			fwrite(cur,dataChunk.len,1,fp);
