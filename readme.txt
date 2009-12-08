@@ -3,8 +3,8 @@ GameKit is a prototyping environment that includes
 http://gamekit.googlecode.com
 
 + Bullet Physics Library for physics
-+ Irrlicht 1.6 for Graphics
-+ readblend to read 32bit little-endian .blend files
++ Ogre 1.7 or Irrlicht 1.6 for Graphics
++ bParse to read 32bit/64bit little-endian and big endian .blend files
 + some example .blend files included in the GameKit folder
 
 On Apple, you can copy a user file called game.blend next to the GameKit.app bundle, to override the default .blend file.
