@@ -28,32 +28,32 @@ bMain::bMain(bBlenderFile *filePtr, const char *baseName, int fileVersion)
 		mVersion(fileVersion),
 		mName(baseName)	
 {
-	mData[ID_SCE]  = bListBasePtr();
-	mData[ID_LI]   = bListBasePtr();
-	mData[ID_OB]   = bListBasePtr();
-	mData[ID_ME]   = bListBasePtr();
-	mData[ID_CU]   = bListBasePtr();
-	mData[ID_MB]   = bListBasePtr();
-	mData[ID_MA]   = bListBasePtr();
-	mData[ID_TE]   = bListBasePtr();
-	mData[ID_IM]   = bListBasePtr();
-	mData[ID_WV]   = bListBasePtr();
-	mData[ID_LT]   = bListBasePtr();
-	mData[ID_LA]   = bListBasePtr();
-	mData[ID_CA]   = bListBasePtr();
-	mData[ID_IP]   = bListBasePtr();
-	mData[ID_KE]   = bListBasePtr();
-	mData[ID_WO]   = bListBasePtr();
-	mData[ID_SCR]  = bListBasePtr();
-	mData[ID_VF]   = bListBasePtr();
-	mData[ID_TXT]  = bListBasePtr();
-	mData[ID_SO]   = bListBasePtr();
-	mData[ID_GR]   = bListBasePtr();
-	mData[ID_AR]   = bListBasePtr();
-	mData[ID_AC]   = bListBasePtr();
-	mData[ID_NT]   = bListBasePtr();
-	mData[ID_BR]   = bListBasePtr();
-	mData[ID_SCRIPT] = bListBasePtr();
+	mData.insert(ID_SCE,bListBasePtr());
+	mData.insert(ID_LI,bListBasePtr());
+	mData.insert(ID_OB,bListBasePtr());
+	mData.insert(ID_ME,bListBasePtr());
+	mData.insert(ID_CU,bListBasePtr());
+	mData.insert(ID_MB,bListBasePtr());
+	mData.insert(ID_MA,bListBasePtr());
+	mData.insert(ID_TE,bListBasePtr());
+	mData.insert(ID_IM,bListBasePtr());
+	mData.insert(ID_WV,bListBasePtr());
+	mData.insert(ID_LT,bListBasePtr());
+	mData.insert(ID_LA,bListBasePtr());
+	mData.insert(ID_CA,bListBasePtr());
+	mData.insert(ID_IP,bListBasePtr());
+	mData.insert(ID_KE,bListBasePtr());
+	mData.insert(ID_WO,bListBasePtr());
+	mData.insert(ID_SCR,bListBasePtr());
+	mData.insert(ID_VF,bListBasePtr());
+	mData.insert(ID_TXT,bListBasePtr());
+	mData.insert(ID_SO,bListBasePtr());
+	mData.insert(ID_GR,bListBasePtr());
+	mData.insert(ID_AR,bListBasePtr());
+	mData.insert(ID_AC,bListBasePtr());
+	mData.insert(ID_NT,bListBasePtr());
+	mData.insert(ID_BR,bListBasePtr());
+	mData.insert(ID_SCRIPT, bListBasePtr());
 }
 
 
@@ -61,11 +61,11 @@ bMain::bMain(bBlenderFile *filePtr, const char *baseName, int fileVersion)
 bMain::~bMain()
 {
 	// allocated data blocks!
-	bListBasePtr::iterator it = mPool.begin();
-	while (it != mPool.end())
+
+	int sz = mPool.size();
+	for (int i=0;i<sz;i++)
 	{
-		delete [](*it);
-		it++;
+		delete [] mPool[i];
 	}
 }
 
@@ -143,10 +143,9 @@ bListBasePtr* bMain::getListBasePtr(int listBaseCode)
 // ------------------------------------------------------------//
 bListBasePtr *bMain::_findCode(int code)
 {
-	bMainDataMap::iterator it = mData.find(code);
-	if (it != mData.end())
-		return &it->second;
-	return 0;
+	
+	bListBasePtr* lbPtr = mData.find(code);
+	return lbPtr;
 }
 
 

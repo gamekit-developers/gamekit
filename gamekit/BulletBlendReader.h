@@ -228,7 +228,6 @@ struct	btLogicManager
 
 char* btReadBuffer(FILE* fp, int* fileSize=0);
 
-typedef btHashKey<int> btHashInt;
 
 class	BulletBlendReader
 {

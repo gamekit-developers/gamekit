@@ -20,6 +20,7 @@ subject to the following restrictions:
 #include "bMain.h"
 #include "bBlenderFile.h"
 #include "btBulletFile.h"
+#include "LinearMath/btSerializer.h"
 
 #include "BulletCollision/Gimpact/btGImpactShape.h"
 #include "BulletCollision/CollisionShapes/btScaledBvhTriangleMeshShape.h"
@@ -237,6 +238,7 @@ void	BulletBlendReaderNew::convertAllObjects(int verboseDumpAllBlocks)
 #ifdef TEST_CREATE_BULLET_FILE
 	
 
+	btDefaultSerializer	serializer(1024*1024*10);
 	
 	int bufIndex = 0;
 
@@ -249,8 +251,8 @@ void	BulletBlendReaderNew::convertAllObjects(int verboseDumpAllBlocks)
 
 	{
 	void* bufPtr1 = &serializationBuffer[bufIndex];
-	const char* structName = colObj->serialize(bufPtr1);
 	int len = colObj->calculateSerializeBufferSize();
+	const char* structName = colObj->serialize(bufPtr1);
 	bulletFile->addStruct(structName,bufPtr1,len,colObj, BT_COLLISIONOBJECT_CODE);
 	bufIndex += len;
 	}

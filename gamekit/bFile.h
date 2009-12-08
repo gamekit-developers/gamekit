@@ -54,10 +54,10 @@ namespace bParse {
 		bDNA*				mFileDNA;
 		bDNA*				mMemoryDNA;
 
-		std::vector<char*>	m_pointerFixupArray;
-		std::vector<char*>	m_pointerPtrFixupArray;
+		btAlignedObjectArray<char*>	m_pointerFixupArray;
+		btAlignedObjectArray<char*>	m_pointerPtrFixupArray;
 		
-		std::vector<bChunkInd>	m_chunks;
+		btAlignedObjectArray<bChunkInd>	m_chunks;
 
 		// 
 	
@@ -72,13 +72,13 @@ namespace bParse {
 		virtual	void parseData() = 0;
 
 		void resolvePointersMismatch();
-		void resolvePointersChunk(bChunkInd& dataChunk);
+		void resolvePointersChunk(const bChunkInd& dataChunk);
 
 		void resolvePointersStructRecursive(char *strcPtr, int old_dna);
 		void swapPtr(char *dst, char *src);
 
 		void parseStruct(char *strcPtr, char *dtPtr, int old_dna, int new_dna, bool fixupPointers);
-		void getMatchingFileDNA(short* old, bString lookupName, bString lookupType, char *strcData, char *data, bool fixupPointers);
+		void getMatchingFileDNA(short* old, const char* lookupName, const char* lookupType, char *strcData, char *data, bool fixupPointers);
 		char* getFileElement(short *firstStruct, char *lookupName, char *lookupType, char *data, short **foundPos);
 
 

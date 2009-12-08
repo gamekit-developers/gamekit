@@ -16,6 +16,7 @@ subject to the following restrictions:
 #include "btBulletFile.h"
 #include "bDefines.h"
 #include "bDNA.h"
+#include <string.h>
 
 
 
@@ -61,9 +62,9 @@ btBulletFile::~btBulletFile()
 // ----------------------------------------------------- //
 void btBulletFile::parseData()
 {
-	print ("Building datablocks");
-	print ("Chunk size = " << CHUNK_HEADER_LEN);
-	print ("File chunk size = " << ChunkUtils::getOffset(mFlags));
+	printf ("Building datablocks");
+	printf ("Chunk size = %d",CHUNK_HEADER_LEN);
+	printf ("File chunk size = %d",ChunkUtils::getOffset(mFlags));
 
 	const bool swap = (mFlags&FD_ENDIAN_SWAP)!=0;
 	
@@ -98,7 +99,7 @@ void btBulletFile::parseData()
 		// lookup maps
 		if (id)
 		{
-			mLibPointers.insert(std::make_pair(dataChunk.oldPtr, (bStructHandle*)id));
+			mLibPointers.insert(dataChunk.oldPtr, (bStructHandle*)id);
 
 			m_chunks.push_back(dataChunk);
 			// block it
@@ -241,6 +242,6 @@ void	btBulletFile::addStruct(const	char* structType,void* data, int len, void* o
 //	int elemBytes = mMemoryDNA->getElementSize(structInfo[0],structInfo[1]);
 	assert(len==elemBytes);
 
-	mLibPointers.insert(std::make_pair(dataChunk.oldPtr, (bStructHandle*)data));
+	mLibPointers.insert(dataChunk.oldPtr, (bStructHandle*)data);
 	m_chunks.push_back(dataChunk);
 }
