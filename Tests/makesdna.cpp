@@ -126,7 +126,6 @@ typedef unsigned long uintptr_t;
 #include "BulletCollision/CollisionShapes/btCollisionShape.h"
 #include "BulletCollision/CollisionShapes/btBoxShape.h"
 #include "BulletCollision/CollisionDispatch/btCollisionObject.h"
-#include "BLO_sys_types.h" // for intptr_t support
 
 
 
