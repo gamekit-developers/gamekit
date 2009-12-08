@@ -13,16 +13,62 @@ subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-#include "btTriangleCallback.h"
+#ifndef BT_SERIALIZER_H
+#define BT_SERIALIZER_H
 
-btTriangleCallback::~btTriangleCallback()
+#include "btScalar.h" // has definitions like SIMD_FORCE_INLINE
+#include "btStackAlloc.h"
+
+///Allow to serialize data in a chunk format
+class btSerializer
+{
+	public:
+
+		virtual ~btSerializer() {}
+
+		virtual	void*	allocate(size_t size) = 0;
+
+		virtual void	addStruct(	const	char* structType,void* data, int len, void* oldPtr, int code ) = 0;
+};
+
+struct	btChunk
+{
+	const char*	m_structType;
+	void*		m_data;
+	int			m_length;
+	void*		m_oldPtr;
+	int			m_code;
+};
+
+class btDefaultSerializer
 {
 
-}
+	btStackAlloc	m_stack;
+
+	btAlignedObjectArray<btChunk>	m_chunks;
+
+	public:
+
+		btDefaultSerializer(int totalSize)
+			:m_stack(totalSize)
+		{
+		}
+
+		virtual ~btDefaultSerializer() 
+		{
+		}
+
+		virtual	void*	allocate(size_t size)
+		{
+			return m_stack.allocate(size);
+		}
+
+		virtual void	addStruct(	btChunk& chunk )
+		{
+			m_chunks.push_back(chunk);
+		}
+};
 
 
-btInternalTriangleIndexCallback::~btInternalTriangleIndexCallback()
-{
-
-}
+#endif //BT_SERIALIZER_H
 

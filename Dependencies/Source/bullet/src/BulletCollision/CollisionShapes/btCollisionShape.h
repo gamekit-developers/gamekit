@@ -21,6 +21,8 @@ subject to the following restrictions:
 #include "LinearMath/btMatrix3x3.h"
 #include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h" //for the shape types
 
+
+
 ///The btCollisionShape class provides an interface for collision shapes that can be shared among btCollisionObjects.
 class btCollisionShape
 {
@@ -53,7 +55,7 @@ public:
 	///result is conservative
 	void calculateTemporalAabb(const btTransform& curTrans,const btVector3& linvel,const btVector3& angvel,btScalar timeStep, btVector3& temporalAabbMin,btVector3& temporalAabbMax) const;
 
-#ifndef __SPU__
+
 
 	SIMD_FORCE_INLINE bool	isPolyhedral() const
 	{
@@ -84,7 +86,7 @@ public:
 		return btBroadphaseProxy::isInfinite(getShapeType());
 	}
 
-	
+#ifndef __SPU__
 	virtual void	setLocalScaling(const btVector3& scaling) =0;
 	virtual const btVector3& getLocalScaling() const =0;
 	virtual void	calculateLocalInertia(btScalar mass,btVector3& inertia) const = 0;
@@ -112,6 +114,15 @@ public:
 	}
 
 };	
+
+///for serialization
+struct	btCollisionShapeData
+{
+	void	*m_userPointer;
+	int		m_shapeType;
+	char	m_padding[4];
+};
+
 
 #endif //COLLISION_SHAPE_H
 

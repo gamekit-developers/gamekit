@@ -513,7 +513,7 @@ void gkSkeletonLoaderPrivate::convertSkeleton(Skeleton *skel)
 	bParse::bListBasePtr* actions= mp->getAction();
 	if (actions)
 	{
-		size_t i= 0;
+		int i= 0;
 		for (i=0; i<actions->size(); i++)
 		{
 			Blender::bAction *act= reinterpret_cast<Blender::bAction*>(actions->at(i));

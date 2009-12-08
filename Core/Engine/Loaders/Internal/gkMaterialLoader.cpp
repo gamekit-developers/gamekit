@@ -106,7 +106,7 @@ bool gkMaterialUtils::lampTest(void)
 {
 	GK_ASSERT(mFile);
 	bParse::bMain *mp= mFile->getInternalFile()->getMain();
-	return !mp->getLamp()->empty();
+	return mp->getLamp()->size() != 0;
 }
 
 //-----------------------------------------------------------------------------

@@ -12,6 +12,7 @@ include_directories(
 link_libraries(
     OgreKitCore 
     ${OGREKIT_OGRE_LIBS}
+    ${OGREKIT_BULLET_LIBS}
 )
 
 if (WIN32)

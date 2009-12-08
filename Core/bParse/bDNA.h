@@ -89,14 +89,14 @@ namespace bParse {
 
 		void initRecurseCmpFlags(int i);
 
-		std::vector<int>			mCMPFlags;
+		btAlignedObjectArray<int>			mCMPFlags;
 
-		std::vector<bNameInfo>			m_Names;
-		std::vector<char*>			mTypes;
-		std::vector<short*>			mStructs;
-		std::vector<short>			mTlens;
-		std::map<int, int>			mStructReverse;
-		std::map<bString, int>		mTypeLookup;
+		btAlignedObjectArray<bNameInfo>			m_Names;
+		btAlignedObjectArray<char*>			mTypes;
+		btAlignedObjectArray<short*>			mStructs;
+		btAlignedObjectArray<short>			mTlens;
+		btHashMap<btHashInt, int>			mStructReverse;
+		btHashMap<btHashString,int>	mTypeLookup;
 
 		int							mPtrLen;
 

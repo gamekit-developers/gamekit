@@ -113,14 +113,14 @@ void bFile::parseHeader()
 
 	if (strncmp(header, m_headerString, 7)!=0)
 	{
-		print ("Invalid blend file...");
+		printf ("Invalid blend file...");
 		return;
 	}
 
 	char *ver = header+9;
 	mVersion = atoi(ver);
 	if (mVersion <= 241)
-		print ("Warning, " << mVersion<< " not fully tested : <= 242");
+		printf ("Warning, %d not fully tested : <= 242\n", mVersion);
 
 
 	int endian= 1;
@@ -143,11 +143,14 @@ void bFile::parseHeader()
 			mFlags |= FD_ENDIAN_SWAP;
 
 
-	print (header);
-	print ("sizeof(void*) == " << sizeof(void*));
-	print ("Swapping endian? "<< ((mFlags & FD_ENDIAN_SWAP)!=0));
-	print ("File format is "<< ((mFlags &FD_FILE_64)!=0?"64":"32") << "bit");
-	print ("Varing pointer sizes? "<< ((mFlags & FD_BITS_VARIES)!=0));
+	printf (header);
+	printf ("\nsizeof(void*) == %d\n",sizeof(void*));
+	const char* endStr = ((mFlags & FD_ENDIAN_SWAP)!=0) ? "yes" : "no";
+	printf ("Swapping endian? %s\n",endStr);
+	const char* bitStr = (mFlags &FD_FILE_64)!=0 ? "64 bit" : "32bit";
+	printf ("File format is %s\n",bitStr);
+	const char* varStr = (mFlags & FD_BITS_VARIES)!=0 ? "yes" : "no";
+	printf ("Varing pointer sizes? %s\n",varStr);
 
 
 	mFlags |= FD_OK;
@@ -201,13 +204,13 @@ void bFile::parseInternal(bool verboseDumpAllTypes, char* memDna,int memDnaLengt
 	if (mMemoryDNA->getNumNames() != mFileDNA->getNumNames())
 	{
 		mFlags |= FD_VERSION_VARIES;
-		print ("Warning, file DNA is different than built in, performance is reduced. Best to re-export file with a matching version/platform");
+		printf ("Warning, file DNA is different than built in, performance is reduced. Best to re-export file with a matching version/platform");
 	}
 
 	// as long as it kept up to date it will be ok!!
 	if (mMemoryDNA->lessThan(mFileDNA))
 	{
-		print ("Warning, file DNA is newer than built in.");
+		printf ("Warning, file DNA is newer than built in.");
 	}
 
 	mFileDNA->initCmpFlags(mMemoryDNA);
@@ -294,7 +297,7 @@ char* bFile::readStruct(char *head, bChunkInd&  dataChunk)
 				{
 					bool fixupPointers = true;
 					parseStruct(cur, old, dataChunk.dna_nr, reverseOld, fixupPointers);
-					mLibPointers.insert(std::make_pair(old,(bStructHandle*)cur));
+					mLibPointers.insert(old,(bStructHandle*)cur);
 
 					cur += curLen;
 					old += oldLen;
@@ -493,13 +496,13 @@ void bFile::swapPtr(char *dst, char *src)
 		*((long64*)dst)= *((int*)src);
 	else
 	{
-		print (ptrFile << ' ' << ptrMem);
+		printf ("%d %d\n", ptrFile,ptrMem);
 		assert(0 && "Invalid pointer len");
 	}
 }
 
 // ----------------------------------------------------- //
-void bFile::getMatchingFileDNA(short* dna_addr, bString lookupName,  bString lookupType, char *strcData, char *data, bool fixupPointers)
+void bFile::getMatchingFileDNA(short* dna_addr, const char* lookupName,  const char* lookupType, char *strcData, char *data, bool fixupPointers)
 {
 	// find the matching memory dna data
 	// to the file being loaded. Fill the
@@ -510,13 +513,13 @@ void bFile::getMatchingFileDNA(short* dna_addr, bString lookupName,  bString loo
 
 	for (int i=0; i<len; i++, dna_addr+=2)
 	{
-		bString type = mFileDNA->getType(dna_addr[0]);
-		bString name = mFileDNA->getName(dna_addr[1]);
+		const char* type = mFileDNA->getType(dna_addr[0]);
+		const char* name = mFileDNA->getName(dna_addr[1]);
 
 		int eleLen = mFileDNA->getElementSize(dna_addr[0], dna_addr[1]);
 		
 
-		if (name == lookupName)
+		if (strcmp(lookupName, name)==0)
 		{
 			//int arrayLenold = mFileDNA->getArraySize((char*)name.c_str());
 			int arrayLen = mFileDNA->getArraySizeNew(dna_addr[1]);
@@ -558,10 +561,10 @@ void bFile::getMatchingFileDNA(short* dna_addr, bString lookupName,  bString loo
 
 			}
 
-			else if (type==lookupType)
+			else if (strcmp(type, lookupType)==0)
 				memcpy(strcData, data, eleLen);
 			else
-				getElement(arrayLen, lookupType.c_str(), type.c_str(), data, strcData);
+				getElement(arrayLen, lookupType, type, data, strcData);
 
 			// --
 			return;
@@ -576,7 +579,6 @@ char* bFile::getFileElement(short *firstStruct, char *lookupName, char *lookupTy
 {
 	short *old = firstStruct;//mFileDNA->getStruct(old_nr);
 	int elementLength = old[1];
-	bString sub0, sub1;
 	old+=2;
 
 	for (int i=0; i<elementLength; i++, old+=2)
@@ -693,7 +695,7 @@ void bFile::resolvePointersMismatch()
 
 
 ///this loop only works fine if the Blender DNA structure of the file matches the headerfiles
-void bFile::resolvePointersChunk(bChunkInd& dataChunk)
+void bFile::resolvePointersChunk(const bChunkInd& dataChunk)
 {
 	bParse::bDNA* fileDna = mFileDNA ? mFileDNA : mMemoryDNA;
 
@@ -803,7 +805,7 @@ void bFile::resolvePointers()
 	{
 		for (int i=0;i<m_chunks.size();i++)
 		{
-			bChunkInd& dataChunk = m_chunks.at(i);
+			const bChunkInd& dataChunk = m_chunks.at(i);
 
 			if (!mFileDNA || fileDna->flagEqual(dataChunk.dna_nr))
 			{
@@ -829,9 +831,10 @@ void bFile::resolvePointers()
 // ----------------------------------------------------- //
 void* bFile::findLibPointer(void *ptr)
 {
-	bPtrMap::iterator it = getLibPointers().find(ptr);
-	if (it != getLibPointers().end())
-		return it->second;
+
+	bStructHandle** ptrptr = getLibPointers().find(ptr);
+	if (ptrptr)
+		return *ptrptr;
 	return 0;
 }
 

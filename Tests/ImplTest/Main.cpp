@@ -216,9 +216,6 @@ gkCameraObject* createMouseLook(gkSceneObject *sc,  const Ogre::Vector3 &pos, co
 	zmot->getInputSocket(0)->link(zmou->getOutputSocket(0));
 	zmot->getInputSocket(3)->link(zmou->getOutputSocket(1));
 
-	ztree->solveOrder();
-	z->attachLogic(ztree);
-
 	// yrotation 
 	gkLogicTree *ytree= gkLogicManager::getSingleton().create();
 	gkLogicNode *ymou = ytree->createNode(NT_MOUSE);
@@ -293,6 +290,9 @@ gkCameraObject* createMouseLook(gkSceneObject *sc,  const Ogre::Vector3 &pos, co
 
 	scale2->getInputSocket(0)->link(vecstrf->getOutputSocket(0));
 	fwdmot->getInputSocket(1)->link(scale2->getOutputSocket(0));
+
+	ztree->solveOrder();
+	z->attachLogic(ztree);
 
 	if (mcam->isLoaded())
 		cam->load();

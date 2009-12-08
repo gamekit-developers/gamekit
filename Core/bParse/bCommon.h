@@ -16,12 +16,11 @@ subject to the following restrictions:
 #ifndef __BCOMMON_H__
 #define __BCOMMON_H__
 
-#include <iostream>
-#include <map>
-#include <vector>
+
 #include <assert.h>
-#include "bLog.h"
-#include <stdio.h>
+//#include "bLog.h"
+#include "LinearMath/btAlignedObjectArray.h"
+#include "LinearMath/btHashMap.h"
 
 namespace bParse {
 
@@ -32,10 +31,8 @@ namespace bParse {
 
 	// delete void* undefined
 	typedef struct bStructHandle {int unused;}bStructHandle;
-
-	typedef std::vector<bStructHandle*>			bListBasePtr;
-	typedef std::string							bString;
-	typedef std::map<void *, bStructHandle*>	bPtrMap;
+	typedef btAlignedObjectArray<bStructHandle*>	bListBasePtr;
+	typedef btHashMap<btHashKeyPtr, bStructHandle*> bPtrMap;
 }
 
 

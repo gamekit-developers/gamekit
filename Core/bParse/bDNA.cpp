@@ -18,6 +18,7 @@ subject to the following restrictions:
 #include "bChunk.h"
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 using namespace bParse;
 
@@ -76,18 +77,23 @@ short bDNA::getLength(int ind)
 // ----------------------------------------------------- //
 int bDNA::getReverseType(short type)
 {
-	std::map<int, int>::iterator it = mStructReverse.find(type);
-	if (it != mStructReverse.end())
-		return it->second;
+
+	int* intPtr = mStructReverse.find(type);
+	if (intPtr)
+		return *intPtr;
+
 	return -1;
 }
 
 // ----------------------------------------------------- //
 int bDNA::getReverseType(const char *type)
 {
-	std::map<bString, int>::iterator it = mTypeLookup.find(type);
-	if (it != mTypeLookup.end())
-		return it->second;
+
+	btHashString key(type);
+	int* valuePtr = mTypeLookup.find(key);
+	if (valuePtr)
+		return *valuePtr;
+	
 	return -1;
 }
 
@@ -166,7 +172,7 @@ void bDNA::initCmpFlags(bDNA *memDNA)
 	// this ptr should be the file data
 
 
-	assert(!m_Names.empty() && "SDNA empty!");
+	assert(!m_Names.size() == 0 && "SDNA empty!");
 	mCMPFlags.resize(mStructs.size(), FDF_NONE);
 
 
@@ -487,8 +493,8 @@ void bDNA::init(char *data, int len, bool swap)
 			mPtrLen = mTlens[strc[0]]/2;
 		}
 
-		mStructReverse.insert(std::make_pair(strc[0], i));
-		mTypeLookup.insert(std::make_pair(mTypes[strc[0]],i));
+		mStructReverse.insert(strc[0], i);
+		mTypeLookup.insert(btHashString(mTypes[strc[0]]),i);
 	}
 }
 
@@ -497,15 +503,16 @@ void bDNA::init(char *data, int len, bool swap)
 int bDNA::getArraySize(char* string)
 {
 	int ret = 1;
-	bString os = string;
+	int len = strlen(string);
 
+	
 	char* next = 0;
-	for (int i=0; i<(int)os.size(); i++)
+	for (int i=0; i<len; i++)
 	{
-		char c = os[i];
+		char c = string[i];
 
 		if (c == '[')
-			next = &os[i+1];
+			next = &string[i+1];
 		else if (c==']')
 			if (next)
 				ret *= atoi(next);

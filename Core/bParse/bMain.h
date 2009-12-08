@@ -18,6 +18,8 @@ subject to the following restrictions:
 
 #include "bCommon.h"
 #include "bChunk.h"
+#include "LinearMath/btHashMap.h"
+
 
 namespace bParse
 {
@@ -32,7 +34,9 @@ namespace bParse {
 
 
 	// ----------------------------------------------------- //
-	typedef std::map<int, bListBasePtr> bMainDataMap;
+	
+	typedef	btHashMap<btHashInt,bListBasePtr> bMainDataMap;
+
 
 
 	// ----------------------------------------------------- //

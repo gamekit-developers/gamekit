@@ -292,6 +292,7 @@ link_libraries(
     )
 
 link_directories(${OGRE_LIBDIR})
+include_directories(${OGREKIT_BULLET_INCLUDE})
 
 if (OGRE_BUILD_RENDERSYSTEM_GL)
 
