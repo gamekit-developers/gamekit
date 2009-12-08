@@ -352,7 +352,7 @@ int main(int argc, char **argv)
 
 	try
 	{
-		char *fname = "clubsilo_packed.blend";
+		char *fname = "momo_ogreSmallAnim.blend";
 		if (argc > 1)
 			fname = argv[argc-1];
 		gkEngine eng;
@@ -362,8 +362,18 @@ int main(int argc, char **argv)
 		if (p.isFile())
 		{
 			p = p.directory();
-			p.append("OgreKitStartup.conf");
-			defs.load(p.getPath());
+			if (p.isDir())
+			{
+				p.append("OgreKitStartup.conf");
+				if (p.isFile())
+					defs.load(p.getPath());
+			}
+			else
+			{
+				p = gkPath("OgreKitStartup.conf");
+				if (p.isFile())
+					defs.load(p.getPath());
+			}
 		}
 
 

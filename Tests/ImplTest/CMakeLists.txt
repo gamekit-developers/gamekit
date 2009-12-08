@@ -22,8 +22,8 @@ if (WIN32)
 	endif (CMAKE_COMPILER_IS_GNUCXX)
 endif(WIN32)
 
-add_executable(TestApp ${SRC})
-install(TARGETS TestApp RUNTIME DESTINATION ${OGREKIT_INSTALL_PREFIX})
+add_executable(OgreKit ${SRC})
+install(TARGETS OgreKit RUNTIME DESTINATION ${OGREKIT_INSTALL_PREFIX})
 
 set(HomeFiles 
 	BigEndian.blend
