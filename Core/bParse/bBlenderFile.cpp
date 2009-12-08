@@ -179,7 +179,7 @@ void	bBlenderFile::parse(bool verboseDumpAllTypes)
 }
 
 // experimental
-int		bBlenderFile::write(const char* fileName)
+int		bBlenderFile::write(const char* fileName, bool fixupPointers)
 {
 	FILE *fp = fopen(fileName, "wb");
 	if (fp)
@@ -210,7 +210,7 @@ int		bBlenderFile::write(const char* fileName)
 		
 		fwrite(header,SIZEOFBLENDERHEADER,1,fp);
 
-		writeChunks(fp);
+		writeChunks(fp, fixupPointers);
 
 		writeDNA(fp);
 

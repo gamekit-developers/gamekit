@@ -126,9 +126,9 @@ namespace bParse {
 
 		virtual	void parse(bool verboseDumpAllTypes) = 0;
 
-		virtual	int	write(const char* fileName) = 0;
+		virtual	int	write(const char* fileName, bool fixupPointers=false) = 0;
 
-		virtual	void	writeChunks(FILE* fp);
+		virtual	void	writeChunks(FILE* fp, bool fixupPointers );
 
 		virtual	void	writeDNA(FILE* fp) = 0;
 
