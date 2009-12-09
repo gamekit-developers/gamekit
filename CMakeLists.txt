@@ -49,5 +49,5 @@ ENDIF (UNIX AND NOT APPLE)
    
 SUBDIRS(bullet)
 SUBDIRS(irrlicht-1.6)
-SUBDIRS(gamekit)
-SUBDIRS(Tests)
+SUBDIRS(IrrKit)
+SUBDIRS(Serialize)
