@@ -128,6 +128,7 @@ int main(int argc,char** argv)
 {
 
 	int sz = sizeof(btCollisionObject);
+	int sz2 = sizeof(btRigidBody);
 
 	int numfiles = sizeof(fileNames);
 	for (int i=0;strlen(fileNames[i]);i++)

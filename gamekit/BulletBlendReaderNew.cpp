@@ -249,6 +249,7 @@ void	BulletBlendReaderNew::convertAllObjects(int verboseDumpAllBlocks)
 	btBoxShape* boxShape = new btBoxShape(btVector3(1,2,3));
 	colObj->setCollisionShape(boxShape);
 	
+	btRigidBody* body = new btRigidBody(1.f,0,boxShape);
 	//try to create a Bullet file...
 	
 
@@ -269,6 +270,17 @@ void	BulletBlendReaderNew::convertAllObjects(int verboseDumpAllBlocks)
 	chunk->m_chunkCode = BT_BOXSHAPE_CODE;
 	chunk->m_oldPtr = boxShape;
 	}
+
+	{
+	int len = body->calculateSerializeBufferSize();
+	btChunk* chunk = serializer->allocate(len,1);
+	const char* structType = body->serialize(chunk->m_oldPtr);
+	chunk->m_dna_nr = serializer->getReverseType(structType);
+	chunk->m_chunkCode = BT_COLLISIONOBJECT_CODE;
+	chunk->m_oldPtr = body;
+	}
+
+	
 
 	//bulletFile->resolvePointers();
 	//bulletFile->updateOldPointers();
