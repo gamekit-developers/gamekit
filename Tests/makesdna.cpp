@@ -126,7 +126,7 @@ typedef unsigned long uintptr_t;
 #include "BulletCollision/CollisionShapes/btCollisionShape.h"
 #include "BulletCollision/CollisionShapes/btBoxShape.h"
 #include "BulletCollision/CollisionDispatch/btCollisionObject.h"
-
+#include "BulletDynamics/Dynamics/btRigidBody.h"
 
 
 #ifdef HAVE_CONFIG_H
@@ -148,6 +148,7 @@ char *includefiles[] = {
 	"../bullet/src/BulletCollision/CollisionShapes/btCollisionShape.h",
 	"../bullet/src/BulletCollision/CollisionShapes/btBoxShape.h",
 	"../bullet/src/BulletCollision/CollisionDispatch/btCollisionObject.h",
+	"../bullet/src/BulletDynamics/Dynamics/btRigidBody.h",
 	// empty string to indicate end of includefiles
 	""
 };
@@ -276,7 +277,6 @@ int add_type(char *str, int len)
 	
 	return nr_types-1;
 }
-
 
 /**
  *
@@ -521,6 +521,27 @@ static void *read_file_data(char *filename, int *len_r)
 	return data;
 }
 
+
+const char* skipStructTypes[]=
+{
+	"btRigidBodyConstructionInfo",
+		""
+};
+
+int	skipStruct(const char* structType)
+{
+	int i=0;
+	while (strlen(skipStructTypes[i]))
+	{
+		if (strcmp(structType,skipStructTypes[i])==0)
+		{
+			return 1;
+		}
+		i++;
+	}
+	return 0;
+}
+
 int convert_include(char *filename)
 {
 	/* read include file, skip structs with a '#' before it.
@@ -564,87 +585,90 @@ int convert_include(char *filename)
 				if( strncmp(md1-7, "struct", 6)==0 ) {
 
 					
-					strct= add_type(md1, 0);
-					structpoin= add_struct(strct);
-					sp= structpoin+2;
+					if (!skipStruct(md1))
+					{
+						strct= add_type(md1, 0);
+						structpoin= add_struct(strct);
+						sp= structpoin+2;
 
-					if (debugSDNA > 1) printf("\t|\t|-- detected struct %s\n", types[strct]);
+						if (debugSDNA > 1) printf("\t|\t|-- detected struct %s\n", types[strct]);
 
-					/* first lets make it all nice strings */
-					md1= md+1;
-					while(*md1 != '}') {
-						if(md1>mainend) break;
-						
-						if(*md1==',' || *md1==' ') *md1= 0;
-						md1++;
-					}
-					
-					/* read types and names until first character that is not '}' */
-					md1= md+1;
-					while( *md1 != '}' ) {
-						if(md1>mainend) break;
-						
-						/* skip when it says 'struct' or 'unsigned' or 'const' */
-						if(*md1) {
-							if( strncmp(md1, "struct", 6)==0 ) md1+= 7;
-							if( strncmp(md1, "unsigned", 8)==0 ) md1+= 9;
-							if( strncmp(md1, "const", 5)==0 ) md1+= 6;
+						/* first lets make it all nice strings */
+						md1= md+1;
+						while(*md1 != '}') {
+							if(md1>mainend) break;
 							
-							/* we've got a type! */
-							type= add_type(md1, 0);
-
-							if (debugSDNA > 1) printf("\t|\t|\tfound type %s (", md1);
-
-							md1+= strlen(md1);
-
+							if(*md1==',' || *md1==' ') *md1= 0;
+							md1++;
+						}
+						
+						/* read types and names until first character that is not '}' */
+						md1= md+1;
+						while( *md1 != '}' ) {
+							if(md1>mainend) break;
 							
-							/* read until ';' */
-							while( *md1 != ';' ) {
-								if(md1>mainend) break;
+							/* skip when it says 'struct' or 'unsigned' or 'const' */
+							if(*md1) {
+								if( strncmp(md1, "struct", 6)==0 ) md1+= 7;
+								if( strncmp(md1, "unsigned", 8)==0 ) md1+= 9;
+								if( strncmp(md1, "const", 5)==0 ) md1+= 6;
 								
-								if(*md1) {
-									/* We've got a name. slen needs
-									 * correction for function
-									 * pointers! */
-									slen= (int) strlen(md1);
-									if( md1[slen-1]==';' ) {
-										md1[slen-1]= 0;
+								/* we've got a type! */
+								type= add_type(md1, 0);
 
+								if (debugSDNA > 1) printf("\t|\t|\tfound type %s (", md1);
+
+								md1+= strlen(md1);
+
+								
+								/* read until ';' */
+								while( *md1 != ';' ) {
+									if(md1>mainend) break;
+									
+									if(*md1) {
+										/* We've got a name. slen needs
+										 * correction for function
+										 * pointers! */
+										slen= (int) strlen(md1);
+										if( md1[slen-1]==';' ) {
+											md1[slen-1]= 0;
+
+
+											name= add_name(md1);
+											slen += additional_slen_offset;
+											sp[0]= type;
+											sp[1]= name;
+
+											if ((debugSDNA>1) && (names[name] != 0 )) printf("%s |", names[name]);
+
+											structpoin[1]++;
+											sp+= 2;
+																						
+											md1+= slen;
+											break;
+										}
+										
 
 										name= add_name(md1);
 										slen += additional_slen_offset;
+
 										sp[0]= type;
 										sp[1]= name;
-
-										if ((debugSDNA>1) && (names[name] != 0 )) printf("%s |", names[name]);
+										if ((debugSDNA > 1) && (names[name] != 0 )) printf("%s ||", names[name]);
 
 										structpoin[1]++;
 										sp+= 2;
-																					
+										
 										md1+= slen;
-										break;
 									}
-									
-
-									name= add_name(md1);
-									slen += additional_slen_offset;
-
-									sp[0]= type;
-									sp[1]= name;
-									if ((debugSDNA > 1) && (names[name] != 0 )) printf("%s ||", names[name]);
-
-									structpoin[1]++;
-									sp+= 2;
-									
-									md1+= slen;
+									md1++;
 								}
-								md1++;
+
+								if (debugSDNA > 1) printf(")\n");
+
 							}
-
-							if (debugSDNA > 1) printf(")\n");
-
+							md1++;
 						}
-						md1++;
 					}
 				}
 			}
