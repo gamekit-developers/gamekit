@@ -32,7 +32,7 @@ namespace bParse {
 	// delete void* undefined
 	typedef struct bStructHandle {int unused;}bStructHandle;
 	typedef btAlignedObjectArray<bStructHandle*>	bListBasePtr;
-	typedef btHashMap<btHashKeyPtr, bStructHandle*> bPtrMap;
+	typedef btHashMap<btHashPtr, bStructHandle*> bPtrMap;
 }
 
 
