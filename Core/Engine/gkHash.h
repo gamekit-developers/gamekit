@@ -52,13 +52,7 @@ typedef bool			GKint1;
 typedef float			GKfloat;
 
 
-// ----------------------------------------------------------------------------
-/// Support for generic overloading
-template <typename T>
-GK_INLINE GKhash gkHashT(const T& v)
-{
-	return gkHash(v);
-}
+
 
 
 // ----------------------------------------------------------------------------
@@ -69,11 +63,12 @@ GK_INLINE GKhash gkHash(void *p)
 	return static_cast<GKhash>((uintptr_t)(p));
 }
 
-// ----------------------------------------------------------------------------
 GK_INLINE GKhash gkHash(GKint32 p)
 {
 	return static_cast<GKhash>(p) * GK_GOLDEN_RATIO;
 }
+
+
 
 
 // ----------------------------------------------------------------------------
@@ -104,9 +99,16 @@ GK_INLINE GKhash gkHash(GKint8 p)
 }
 
 // ----------------------------------------------------------------------------
-GK_INLINE GKhash gkHash(GKuint8 p)
+GK_INLINE GKhash gkHash(const long unsigned int p)
 {
 	return static_cast<GKhash>(p) * GK_GOLDEN_RATIO;
 }
 
+// ----------------------------------------------------------------------------
+// Support for generic overloading
+template <typename T>
+GK_INLINE GKhash gkHashT(const T& v)
+{
+	return gkHash(v);
+}
 #endif//_gkHash_h_

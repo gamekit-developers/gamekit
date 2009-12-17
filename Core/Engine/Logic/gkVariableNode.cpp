@@ -228,7 +228,7 @@ bool VariableOpNode::evaluate(Real tick)
 
 	if (gkFuzzy(d))
 		d= 0.0;
-	else if (gkNan(d) || !gkFinite(d))
+	else if (!gkFinite(d))//if (gkNan(d) || !gkFinite(d))
 		return false;
 
 	mProp->setValue(d);

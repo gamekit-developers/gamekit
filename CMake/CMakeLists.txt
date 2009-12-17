@@ -50,6 +50,7 @@ if (APPLE)
   set(STATIC_INST_FILES ${STATIC_INST_FILES}
     Packages/FindCarbon.cmake
     Packages/FindCocoa.cmake
+    Packages/FindIOKit.cmake
   )
   set(STATIC_INST_FILES ${STATIC_INST_FILES}
     Packages/FindiPhoneSDK.cmake

@@ -187,7 +187,6 @@ set(fi_LibJPEG_SRCS
 )
 if (APPLE)
 	set(fi_LibJPEG_PLAT
-		LibJPEG/jmemmac.c
 	)
 endif (APPLE)
 

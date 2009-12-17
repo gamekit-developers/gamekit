@@ -129,6 +129,7 @@ typedef union {
 
 #endif /* USE_MSDOS_MEMMGR */
 
+#undef USE_MAC_MEMMGR
 #ifdef USE_MAC_MEMMGR		/* Mac-specific junk */
 #include <Files.h>
 #endif /* USE_MAC_MEMMGR */

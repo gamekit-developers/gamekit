@@ -273,6 +273,9 @@ source_group(Sound\\Source FILES ${Sound_SOURCE})
 # ---------------------------------------------------------
 # Build setup
 # ---------------------------------------------------------
+if (APPLE)
+include_directories( ${OGRELITE_SOURCE_DIR}/OgreMain/include/OSX )
+endif ()
 
 include_directories(
     ${OGREKIT_OGRE_INCLUDE} 

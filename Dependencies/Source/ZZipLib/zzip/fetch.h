@@ -5,7 +5,7 @@
 #include <zzip/format.h>
 #include <zzip/stdint.h>
 #include <zzip/__hints.h>
-
+#undef ZZIP_HAVE_BYTESWAP_H
 /* linux knows "byteswap.h" giving us an optimized variant */
 #ifdef ZZIP_HAVE_BYTESWAP_H
 #include <byteswap.h>

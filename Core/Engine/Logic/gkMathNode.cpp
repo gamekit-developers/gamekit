@@ -195,7 +195,7 @@ void gkMathNode::update(Real tick)
 	}
 
 	if (gkFuzzy(d)) d= 0.0;
-	if (gkNan(d)) d= 0.0;
+	//if (gkNan(d)) d= 0.0;
 	if (!gkFinite(d)) d= 0.0;
 
 	mSockets[2].setValue(d);

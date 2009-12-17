@@ -3,6 +3,10 @@ cmake_minimum_required(VERSION 2.6)
 
 
 
+if (APPLE)
+include_directories(${OGRELITE_SOURCE_DIR}/OgreMain/include/OSX)
+endif()
+
 set(SRC Main.cpp)
 include_directories(
     ${OGREKIT_OGRE_INCLUDE}

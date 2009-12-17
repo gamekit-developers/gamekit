@@ -63,8 +63,7 @@ if (APPLE)
         src/mac/MacKeyboard.cpp
         src/mac/MacMouse.cpp
     )
-endif()
-
+else ()
 
 if (UNIX) 
     set(OIS_PLAT 
@@ -75,6 +74,7 @@ if (UNIX)
         src/linux/LinuxKeyboard.cpp
         src/linux/LinuxMouse.cpp
     )
+endif()
 endif()
 
 include_directories(${OGREKIT_OIS_INCLUDE} )

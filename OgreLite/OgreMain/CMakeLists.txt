@@ -520,7 +520,7 @@ elseif (APPLE)
     )
     source_group(Resources FILES ${RESOURCE_FILES})
 
-    set(PLATFORM_LIBS ${Carbon_LIBRARY_FWK} ${Cocoa_LIBRARY_FWK})
+    set(PLATFORM_LIBS ${IOKit_LIBRARY_FWK} ${Carbon_LIBRARY_FWK} ${Cocoa_LIBRARY_FWK})
     set(PLATFORM_HEADER_INSTALL "OSX")
   endif ()
 elseif (UNIX)
