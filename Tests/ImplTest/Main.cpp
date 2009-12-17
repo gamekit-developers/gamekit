@@ -93,13 +93,32 @@ gkCameraObject* createPivotCamera(gkSceneObject* ob, const Ogre::Vector3 &root, 
 	return cam;
 }
 
+#ifdef __APPLE__
+#define MAXPATHLEN 512
+char* AppleGetBundleDirectory(void) {
+	CFURLRef bundleURL;
+	CFStringRef pathStr;
+	static char path[MAXPATHLEN];
+	memset(path,MAXPATHLEN,0);
+	CFBundleRef mainBundle = CFBundleGetMainBundle();
+	
+	bundleURL = CFBundleCopyBundleURL(mainBundle);
+	pathStr = CFURLCopyFileSystemPath(bundleURL, kCFURLPOSIXPathStyle);
+	CFStringGetCString(pathStr, path, MAXPATHLEN, kCFStringEncodingASCII);
+	CFRelease(pathStr);
+	CFRelease(bundleURL);
+	return path;
+}
+#endif
+
 // ----------------------------------------------------------------------------
 void loadMomo(gkEngine &eng, const Ogre::String &momo)
 {
 	gkBlendFile *blend= eng.loadBlendFile(momo);
 	if (!blend)
+	{
 		return;
-
+	}
 	gkSceneIterator it= blend->getSceneIterator();
 	if (!it.hasMoreElements())
 		return;
@@ -302,16 +321,20 @@ gkCameraObject* createMouseLook(gkSceneObject *sc,  const Ogre::Vector3 &pos, co
 // ----------------------------------------------------------------------------
 void loadBlend(gkEngine &eng, const Ogre::String& fname)
 {
+	
+	
 	if (fname.find("momo_ogreSmallAnim.blend") != -1)
 	{
 		loadMomo(eng, fname);
 		return;
 	}
 
+
 	gkBlendFile *blend= eng.loadBlendFile(fname);
 	if (!blend)
 		return;
 
+	
 	gkSceneIterator it= blend->getSceneIterator();
 	if (!it.hasMoreElements())
 		return;
@@ -349,14 +372,39 @@ void testPropertyScript(void)
 int main(int argc, char **argv)
 {
 	TestMemory;
-
+	char newName[1024];
+	
 	try
 	{
 		char *fname = "momo_ogreSmallAnim.blend";
-		if (argc > 1)
-			fname = argv[argc-1];
+
 		gkEngine eng;
 		gkUserDefs &defs= eng.getUserDefs();
+		
+#if __APPLE__
+		
+		
+		char* bundlePath = AppleGetBundleDirectory();
+		//cut off the .app filename
+		char* lastSlash=0;
+		if( lastSlash = strrchr( bundlePath, '/' ) )
+			*lastSlash = '\0';
+		sprintf(newName,"%s/%s",bundlePath,"game.blend");
+	//	eng.loadBlendFile(newName);
+		// how do you debug the Bundle execution, without a console?
+
+		sprintf(newName,"%s/%s/%s",AppleGetBundleDirectory(),"Contents/Resources",fname);
+		fname = newName;
+		//FILE* dump = fopen ("out.txt","wb");
+		//fwrite(newName,1,strlen(newName),dump);
+		//fclose(dump);
+				
+#else
+		if (argc > 1)
+			fname = argv[argc-1];
+#endif
+
+		
 
 		gkPath p(argv[0]);
 		if (p.isFile())
@@ -388,6 +436,7 @@ int main(int argc, char **argv)
 
 		eng.initialize();
 		loadBlend(eng, fname);
+		
 		eng.run();
 	}
 

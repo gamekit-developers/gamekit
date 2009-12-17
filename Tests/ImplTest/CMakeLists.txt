@@ -5,9 +5,13 @@ cmake_minimum_required(VERSION 2.6)
 
 if (APPLE)
 include_directories(${OGRELITE_SOURCE_DIR}/OgreMain/include/OSX)
+        SET(EXETYPE MACOSX_BUNDLE)
+        SET_SOURCE_FILES_PROPERTIES( MainMenu.nib  PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
+ 	SET_SOURCE_FILES_PROPERTIES(momo_ogreSmallAnim.blend PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
+	SET (NibFile MainMenu.nib)
 endif()
 
-set(SRC Main.cpp)
+set(SRC momo_ogreSmallAnim.blend Main.cpp)
 include_directories(
     ${OGREKIT_OGRE_INCLUDE}
     ${OGREKIT_SOURCE_DIR}/Core/Engine
@@ -26,8 +30,17 @@ if (WIN32)
 	endif (CMAKE_COMPILER_IS_GNUCXX)
 endif(WIN32)
 
-add_executable(OgreKit ${SRC})
-install(TARGETS OgreKit RUNTIME DESTINATION ${OGREKIT_INSTALL_PREFIX})
+if (APPLE)
+	add_executable(
+	OgreKit 
+	MACOSX_BUNDLE
+	MainMenu.nib
+	${SRC}
+)
+else ()
+	add_executable(OgreKit ${SRC})
+	install(TARGETS OgreKit RUNTIME DESTINATION ${OGREKIT_INSTALL_PREFIX})
+endif()
 
 set(HomeFiles 
 	BigEndian.blend
