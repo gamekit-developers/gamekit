@@ -121,7 +121,10 @@ void gkEntityObject::unloadImpl(void)
 		GK_ASSERT(manager);
 
 		if (!mStartPose.empty())
+		{
 			_resetPose();
+			mDefault = 0;
+		}
 		if (mNode)
 			mNode->detachObject(mEntity);
 		manager->destroyEntity(mEntity);

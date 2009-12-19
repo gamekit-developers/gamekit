@@ -194,6 +194,8 @@ void gkSceneObject::destroyGroups()
 
 	mGroups.clear();
 }
+
+
 // ----------------------------------------------------------------------------
 void gkSceneObject::setShadows()
 {
@@ -396,9 +398,11 @@ void gkSceneObject::loadImpl()
 			setMainCamera(mStartCam);
 		else
 		{
-			OGRE_EXCEPT(Exception::ERR_INVALID_STATE,
-						"No camera was found. Specify at least one start camera",
-						"gkSceneObject::loadImpl");
+			mStartCam = createCamera(" -- No Camera -- ");
+			mStartCam->getProperties().position		= Ogre::Vector3(0, -5, 0);
+			mStartCam->getProperties().orientation	= gkMathUtils::getQuatFromEuler(Ogre::Vector3(90, 0, 0));
+			mStartCam->load();
+			setMainCamera(mStartCam);
 		}
 	}
 

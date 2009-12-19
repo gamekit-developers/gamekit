@@ -67,3 +67,4 @@ subdirs(Core)
 
 # Tests for this setup
 subdirs(Tests/ImplTest)
+subdirs(Tests/ScriptTest)

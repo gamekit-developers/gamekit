@@ -91,6 +91,8 @@ public:
 	void destroyGroup(gkGameObjectGroup* group);
 	void destroyGroups(void);
 
+	gkGameObjectList &getLoadedObjects(void);
+
 protected:
 	Ogre::SceneManager *mManager;
 	gkCameraObject *mStartCam;
@@ -137,6 +139,12 @@ GK_INLINE Ogre::SceneManager* gkSceneObject::getManager()
 GK_INLINE gkCameraObject* gkSceneObject::getMainCamera(void)
 {
 	return mStartCam;
+}
+
+// ----------------------------------------------------------------------------
+GK_INLINE gkGameObjectList &gkSceneObject::getLoadedObjects(void)
+{
+	return mLoadedObjects;
 }
 
 // ----------------------------------------------------------------------------

@@ -45,6 +45,7 @@ public:
 
 	void initialize(void);
 	void finalize(void);
+	bool isInitialized(void) {return mInitialized;}
 	void run(void);
 
 	void setActiveScene(gkSceneObject *sc);

@@ -155,7 +155,7 @@ void gkEngine::initialize(void)
 		            "gkEngine::initialize");
 	}
 
-	sys->createWindow(defs.wintitle, (unsigned int)defs.winsize.x, (unsigned int)defs.winsize.y, false);
+	sys->createWindow(defs.wintitle, (unsigned int)defs.winsize.x, (unsigned int)defs.winsize.y, defs.fullscreen);
 
 	mAnimRate= defs.animspeed;
 	mTickRate= defs.tickrate;

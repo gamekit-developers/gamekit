@@ -112,7 +112,7 @@ void bFile::parseHeader()
 
 	if (strncmp(header, m_headerString, 7)!=0)
 	{
-		printf ("Invalid blend file...");
+		printf ("Invalid blend file...\n");
 		return;
 	}
 
