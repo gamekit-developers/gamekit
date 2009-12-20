@@ -1,0 +1,35 @@
+Index: cmLocalVisualStudio7Generator.cxx
+===================================================================
+--- cmLocalVisualStudio7Generator.cxx	(revision 154)
++++ cmLocalVisualStudio7Generator.cxx	(working copy)
+@@ -744,7 +744,7 @@
+     // We need to specify a program database file name even for
+     // non-debug configurations because VS still creates .idb files.
+     fout <<  "\t\t\t\tProgramDataBaseFileName=\""
+-         << target.GetDirectory(configName) << "/"
++         << this->ConvertToOptionallyRelativeOutputPath(target.GetDirectory(configName).c_str()) << "/"
+          << target.GetPDBName(configName) << "\"\n";
+     }
+   fout << "/>\n";  // end of <Tool Name=VCCLCompilerTool
+@@ -976,6 +976,8 @@
+     temp = target.GetDirectory(configName);
+     temp += "/";
+     temp += targetNamePDB;
++	std::string tmpname =  this->ConvertToXMLOutputPathSingle(this->ConvertToOptionallyRelativeOutputPath(temp.c_str()).c_str());
++
+     fout << "\t\t\t\tProgramDataBaseFile=\"" <<
+       this->ConvertToXMLOutputPathSingle(temp.c_str()) << "\"\n";
+     if(isDebug)
+@@ -1049,8 +1051,11 @@
+     fout << "\t\t\t\tAdditionalLibraryDirectories=\"";
+     this->OutputLibraryDirectories(fout, cli.GetDirectories());
+     fout << "\"\n";
++
++	std::string path =  this->ConvertToOptionallyRelativeOutputPath(target.GetDirectory(configName).c_str());
++
+     fout << "\t\t\t\tProgramDataBaseFile=\""
+-         << target.GetDirectory(configName) << "/" << targetNamePDB
++         << path << "/" << targetNamePDB
+          << "\"\n";
+     if(isDebug)
+       {
