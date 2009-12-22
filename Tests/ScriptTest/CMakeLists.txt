@@ -1,4 +1,12 @@
 
+if (APPLE)
+include_directories(${OGRELITE_SOURCE_DIR}/OgreMain/include/OSX)
+        SET(EXETYPE MACOSX_BUNDLE)
+        SET_SOURCE_FILES_PROPERTIES( MainMenu.nib  PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
+ 	SET_SOURCE_FILES_PROPERTIES(momo_ogreSmallAnim.blend PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
+	SET (NibFile MainMenu.nib)
+endif()
+
 # ---------------------------------------------------------
 set(SCRIPT_ROOT ${CMAKE_SOURCE_DIR}/Tests/ScriptTest)
 set(LUA_INCLUDE ${SCRIPT_ROOT}/Lua/lua)
@@ -61,9 +69,21 @@ if (WIN32)
 endif(WIN32)
 
 
+if (APPLE)
+        add_executable(
+        ScriptTest
+        MACOSX_BUNDLE
+        MainMenu.nib
+	${GKS_SRC} 
+        ${GKS_HDR} 
+        ${GKS_LUA_SCRIPTS}
+)
+else ()
 add_executable(ScriptTest 
 	${GKS_SRC} 
 	${GKS_HDR} 
 	${GKS_LUA_SCRIPTS}
 	)
-install(TARGETS ScriptTest RUNTIME DESTINATION ${OGREKIT_INSTALL_PREFIX})
+endif()
+
+#install(TARGETS ScriptTest RUNTIME DESTINATION ${OGREKIT_INSTALL_PREFIX})
