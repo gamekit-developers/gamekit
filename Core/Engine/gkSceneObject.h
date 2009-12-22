@@ -33,6 +33,7 @@
 
 #include "gkSceneObjectTypes.h"
 
+class btDynamicsWorld;
 
 
 // ----------------------------------------------------------------------------
@@ -54,9 +55,8 @@ public:
 	void _notifyObjectUnloaded(gkGameObject *gobject);
 	void _notifyObjectUpdate(gkGameObject *gobject);
 	void _addTempObject(gkGameObject *gobject);
-	void _notifyObjectMoved(gkGameObject *gobject);
 
-	void update(Ogre::Real tickRate, bool smooth_tick);
+	void update(Ogre::Real variableTickRate, Ogre::Real fixedTickRate, bool smooth_tick);
 
 
 	Ogre::SceneManager* getManager(void);
@@ -93,6 +93,9 @@ public:
 
 	gkGameObjectList &getLoadedObjects(void);
 
+	void setDynamicsWorld(btDynamicsWorld *phy);
+	btDynamicsWorld* getDynamicsWorld(void);
+
 protected:
 	Ogre::SceneManager *mManager;
 	gkCameraObject *mStartCam;
@@ -104,11 +107,11 @@ protected:
 	gkGameObjectHashMap mObjects;
 	gkSceneProperties mBaseProps;
 
-	gkGameObjectArray mTransformedObjects;
 	gkGameObjectArray mUpdateObjects;
 
 	gkGameObjectList mLoadedObjects;
 	gkGameObjectList mTempObjects;
+	btDynamicsWorld* mPhsicsWorld;
 
 	void setShadows();
 
@@ -145,6 +148,18 @@ GK_INLINE gkCameraObject* gkSceneObject::getMainCamera(void)
 GK_INLINE gkGameObjectList &gkSceneObject::getLoadedObjects(void)
 {
 	return mLoadedObjects;
+}
+
+// ----------------------------------------------------------------------------
+GK_INLINE void gkSceneObject::setDynamicsWorld(btDynamicsWorld *phy)
+{
+	mPhsicsWorld = phy;
+}
+
+// ----------------------------------------------------------------------------
+GK_INLINE btDynamicsWorld* gkSceneObject::getDynamicsWorld(void)
+{
+	return mPhsicsWorld;
 }
 
 // ----------------------------------------------------------------------------

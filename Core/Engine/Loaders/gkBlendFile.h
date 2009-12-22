@@ -35,31 +35,36 @@
 class gkBlendFile
 {
 public:
-	gkBlendFile(const Ogre::String& file, const Ogre::String& group= Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+	gkBlendFile(const Ogre::String& file, const Ogre::String& group= Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, bool owner=true);
+	gkBlendFile(bParse::bBlenderFile *file, const Ogre::String& group= Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, bool owner=true);
+
 	~gkBlendFile();
 	bool _parse(void);
+	bool _parseFile(void);
 	void _registerLoader(Ogre::ManualResourceLoader *);
 	void _registerLoader(gkManualObjectLoader *);
-	void _registerImage(Blender::Image* ima);
-	void* _findPtr(void* ptr);
+	void _registerImage(Blender::Image *ima);
+	void *_findPtr(void *ptr);
 
-	gkSceneObject*	findScene(const Ogre::String& name);
-	gkSceneIterator   getSceneIterator(void);
-	gkImageIterator   getImageIterator(void);
+
+	gkSceneObject		*findScene(const Ogre::String& name);
+	gkSceneIterator		getSceneIterator(void);
+	gkImageIterator		getImageIterator(void);
 
 
 	const Ogre::String& getGroup(void);
-	bParse::bBlenderFile* getInternalFile(void);
+	bParse::bBlenderFile *getInternalFile(void);
 
 protected:
 
 	gkManualResourceLoaderList	mLoaders;   // Ogre Loaders
-	gkManualObjectLoaderList	  mObjects;   // Game Object Loaders
-	const Ogre::String				mGroup;	 // Ogre Ogre::Resource Group
-	bParse::bBlenderFile*	   mFile;	  // bParse File Pointer
-	gkSceneList				   mScenes;	// All Scenes
-	gkImageList				   mImages;	// All Textures
-	gkImageTextureHashMap		 mImageLookup;
+	gkManualObjectLoaderList	mObjects;   // Game Object Loaders
+	const Ogre::String			mGroup;		// Ogre Ogre::Resource Group
+	bParse::bBlenderFile		*mFile;		// bParse File Pointer
+	gkSceneList					mScenes;	// All Scenes
+	gkImageList					mImages;	// All Textures
+	gkImageTextureHashMap		mImageLookup;
+	bool						mOwnsFile;
 };
 
 
@@ -95,7 +100,7 @@ GK_INLINE void gkBlendFile::_registerLoader(gkManualObjectLoader *loader)
 }
 
 //-----------------------------------------------------------------------------
-GK_INLINE bParse::bBlenderFile* gkBlendFile::getInternalFile(void)
+GK_INLINE bParse::bBlenderFile *gkBlendFile::getInternalFile(void)
 {
 	GK_ASSERT(mFile);
 	return mFile;

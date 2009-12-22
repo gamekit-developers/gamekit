@@ -45,6 +45,7 @@
 #include "gkEntityObject.h"
 #include "gkLogger.h"
 
+#include "btBulletDynamicsCommon.h"
 
 using namespace Ogre;
 
@@ -107,7 +108,7 @@ gkSceneObject::gkSceneObject(ResourceManager* creator,
 						 ManualResourceLoader* loader):
 		Resource(creator, name, handle, group, isManual, loader),
 		mManager(0), mStartCam(0), mViewport(0), mLogicManager(0),
-		mBaseProps()
+		mBaseProps(), mPhsicsWorld(0)
 {
 }
 
@@ -502,45 +503,26 @@ void gkSceneObject::_notifyObjectUpdate(gkGameObject *gobject)
 }
 
 // ----------------------------------------------------------------------------
-void gkSceneObject::_notifyObjectMoved(gkGameObject *gobject)
-{
-	if (mTransformedObjects.find(gobject) == GK_NPOS)
-		mTransformedObjects.push_back(gobject);
-}
-
-// ----------------------------------------------------------------------------
-void gkSceneObject::update(Real tickRate, bool smooth_tick)
+void gkSceneObject::update(Ogre::Real variableTickRate, Ogre::Real fixedTickRate, bool smooth_tick)
 {
 	if (!isLoaded())
 		return;
 
-	if (!smooth_tick)
+	// update logic trees
+	if (smooth_tick && mLogicManager != 0)
+		mLogicManager->update(fixedTickRate);
+
+	if (mPhsicsWorld) 
 	{
-		// remove all transformed objects
-		mTransformedObjects.resize(0);
-
-		// update logic trees
-		if (mLogicManager != 0)
-			mLogicManager->update(tickRate);
-
-		// apply constraints
-		if (!mUpdateObjects.empty())
-		{
-			gkGameObjectArrayIterator con(mUpdateObjects);
-			while (con.hasMoreElements())
-				con.getNext()->update();
-		}
+		// variableTickRate will be the time delta
+		mPhsicsWorld->stepSimulation(variableTickRate, 1, fixedTickRate);
 	}
-	else
-	{
-		if (!mTransformedObjects.empty())
-		{
-			// synchronize motion states
-			tickRate= gkClamp(tickRate, 0.0, 1.0);
 
-			gkGameObjectArrayIterator sync(mTransformedObjects);
-			while (sync.hasMoreElements())
-				sync.getNext()->synchronizeMotion(tickRate);
-		}
+	// apply constraints
+	if (smooth_tick && !mUpdateObjects.empty())
+	{
+		gkGameObjectArrayIterator con(mUpdateObjects);
+		while (con.hasMoreElements())
+			con.getNext()->update();
 	}
 }

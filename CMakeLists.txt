@@ -48,10 +48,12 @@ set(OGREKIT_DX9RS_INCLUDE       ${OGRELITE_SOURCE_DIR}/RenderSystems/Direct3D9/i
 set(OGREKIT_DX10RS_INCLUDE      ${OGRELITE_SOURCE_DIR}/RenderSystems/Direct3D10/include)
 
 set(OGREKIT_OGRE_LIBS           OgreMain OIS ${OGREKIT_FREEIMAGE_TARGET} ${OGREKIT_FREETYPE_TARGET} ${OGREKIT_ZLIB_TARGET} ${OGREKIT_ZZIP_TARGET})
-set(OGREKIT_BULLET_LIBS         LinearMath)
+set(OGREKIT_BULLET_LIBS         BulletCollision BulletDynamics BulletSoftBody LinearMath)
 
 set(OGREKIT_BULLET_INCLUDE      ${OGREKIT_SOURCE_DIR}/Dependencies/Source/bullet/src)
 set(OGREKIT_OIS_INCLUDE         ${OGREKIT_SOURCE_DIR}/Dependencies/Source/OIS/include)
+
+
 
 ## TODO ADD Options/Config
 set(OGRE_BUILD_RENDERSYSTEM_GL  TRUE)
@@ -64,7 +66,7 @@ subdirs(Dependencies)
 subdirs(OgreLite)
 subdirs(Core)
 
-
 # Tests for this setup
 subdirs(Tests/ImplTest)
+subdirs(Tests/OgreKit)
 subdirs(Tests/ScriptTest)

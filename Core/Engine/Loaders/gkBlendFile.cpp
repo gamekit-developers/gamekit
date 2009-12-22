@@ -44,8 +44,15 @@ using namespace Ogre;
 
 
 //-----------------------------------------------------------------------------
-gkBlendFile::gkBlendFile(const String& file, const String& group) :
-		mGroup(group), mFile(new bParse::bBlenderFile(file.c_str()))
+gkBlendFile::gkBlendFile(const String& file, const String& group, bool owner) :
+		mGroup(group), mFile(new bParse::bBlenderFile(file.c_str())),
+		mOwnsFile(owner)
+{
+}
+
+//-----------------------------------------------------------------------------
+gkBlendFile::gkBlendFile(bParse::bBlenderFile* file, const Ogre::String& group, bool owner) :
+	mGroup(group), mFile(file), mOwnsFile(owner)
 {
 }
 
@@ -62,8 +69,11 @@ gkBlendFile::~gkBlendFile()
 	while (oit.hasMoreElements())
 		delete oit.getNext();
 
-	delete mFile;
-	mFile= 0;
+	if (mOwnsFile)
+	{
+		delete mFile;
+		mFile= 0;
+	}
 }
 
 
@@ -114,14 +124,25 @@ void* gkBlendFile::_findPtr(void* ptr)
 }
 
 //-----------------------------------------------------------------------------
-bool gkBlendFile::_parse(void)
+bool gkBlendFile::_parseFile(void)
 {
+
 	mFile->parse(false);
 	if (!mFile->ok())
 	{
 		gkPrintf("Blend file loading failed.");
 		return false;
 	}
+
+	return true;
+}
+
+//-----------------------------------------------------------------------------
+bool gkBlendFile::_parse(void)
+{
+	if (!_parseFile())
+		return false;
+
 
 	bParse::bMain *mp= mFile->getMain();
 

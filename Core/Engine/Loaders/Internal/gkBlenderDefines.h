@@ -2801,4 +2801,18 @@
 #define WOMAP_MIST							   16
 #define WO_DS_EXPAND							 (1<<0)
 
+
+#define CONSTRAINT_SPACE_LOCAL 1
+#define CONSTRAINT_TYPE_ROTLIMIT 5
+#define CONSTRAINT_TYPE_LOCLIMIT 6
+#define LIMIT_XROT 0x01
+#define LIMIT_YROT 0x02
+#define LIMIT_ZROT 0x04
+#define LIMIT_XMIN 0x01
+#define LIMIT_XMAX 0x02
+#define LIMIT_YMIN 0x04
+#define LIMIT_YMAX 0x08
+#define LIMIT_ZMIN 0x10
+#define LIMIT_ZMAX 0x20
+
 #endif//_gkBlenderDefines_h_

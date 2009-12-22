@@ -95,27 +95,30 @@ GK_INLINE gkTransformState gkTransformState::blendTransform(const gkTransformSta
 }
 
 // ----------------------------------------------------------------------------
-GK_INLINE gkTransformState gkTransformState::perdictTransform(const gkTransformState& currentTransform, Ogre::Real fact, Ogre::Real subStep)
+GK_INLINE gkTransformState gkTransformState::perdictTransform(const gkTransformState& currentTransform, Ogre::Real timeStep, Ogre::Real subStep)
 {
-	Ogre::Vector3 diff_loc= gkMathUtils::calculateLinearVelocity(pos, currentTransform.pos, 1.0);
-	Ogre::Vector3 diff_rot= gkMathUtils::calculateAngularVelocity(rot, currentTransform.rot, 1.0);
-	Ogre::Vector3 diff_scl= gkMathUtils::calculateLinearVelocity(scl, currentTransform.scl, 1.0);
+	if (timeStep <= 1.0 && timeStep >=0.0)
+	{
+		Ogre::Vector3 diff_loc= gkMathUtils::calculateLinearVelocity(pos, currentTransform.pos, timeStep);
+		Ogre::Vector3 diff_rot= gkMathUtils::calculateAngularVelocity(rot, currentTransform.rot, timeStep);
+		Ogre::Vector3 diff_scl= gkMathUtils::calculateLinearVelocity(scl, currentTransform.scl, timeStep);
 
-	if (gkFuzzyVec(diff_loc) && gkFuzzyVec(diff_rot) && gkFuzzyVec(diff_scl))
-		return *this;
+		if (subStep != 1.0)
+		{
+			diff_loc *= subStep;
+			diff_rot *= subStep;
+			diff_scl *= subStep;
+		}
 
-	diff_loc *= subStep;
-	diff_rot *= subStep;
-	diff_scl *= subStep;
+		// find ammount moved
+		gkTransformState result= currentTransform;
+		result.pos= currentTransform.pos + diff_loc;
+		result.scl= currentTransform.scl + diff_scl;
+		result.rot= gkMathUtils::calculateRotation(currentTransform.rot, diff_rot, 1.0);
+		return result;
+	}
 
-
-	// find ammount moved
-	gkTransformState result= currentTransform;
-	result.pos= currentTransform.pos + diff_loc * fact;
-	result.scl= currentTransform.scl + diff_scl * fact;
-	result.rot= gkMathUtils::calculateRotation(currentTransform.rot, diff_rot, fact);
-
-	return result;
+	return *this;
 }
 
 // ----------------------------------------------------------------------------

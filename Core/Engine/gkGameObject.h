@@ -35,7 +35,7 @@
 #include "gkVariable.h"
 #include "gkTransformState.h"
 
-
+class btRigidBody;
 
 // ---------------------------------------------------------------------------
 class gkGameObject
@@ -101,6 +101,8 @@ public:
 
 
 	void _setStartPose(const Ogre::String& pose);
+	void _stateUpdated(void);
+
 	void attachLogic(gkLogicTree *tree);
 
 	gkEntityObject* getEntity(void);
@@ -120,7 +122,7 @@ public:
 	gkGameObject *getParent(void);
 	gkGameObject *duplicate(const Ogre::String &newName);
 
-	void synchronizeMotion(Ogre::Real interp);
+	void synchronizeMotion(Ogre::Real interp, Ogre::Real timeStep);
 
 	void setActiveLayer(bool truth);
 	bool isInActiveLayer(void);
@@ -133,13 +135,14 @@ public:
 	gkGameObject *getGroupParent(void);
 	gkGameObjectGroupInstance* getGroupInstance(void);
 
+	void attachRigidBody(btRigidBody *body);
+	btRigidBody *getAttachedBody(void);
+
+	Ogre::SceneNode *getNode(void);
+
 private:
 
-	void stateUpdated(void);
-
 	void clearVariables(void);
-	void loadPhysics(void);
-	void unloadPhysics(void);
 	void applyConstraints(void);
 
 protected:
@@ -168,6 +171,7 @@ protected:
 
 	gkGameObjectGroup* mGroupRef;		 //is owner
 	gkGameObjectGroupInstance *mInstance; //is instance
+	btRigidBody* mRigidBody;
 
 	bool mActiveLayer, mOutOfDate;
 
@@ -275,15 +279,11 @@ GK_INLINE gkGameObject *gkGameObject::getParent(void)
 // ---------------------------------------------------------------------------
 GK_INLINE Ogre::Matrix4 gkGameObject::getLocalTransform(void)
 {
-	if (mNode != 0)
-	{
-		Ogre::Matrix4 mat;
-		mat.makeTransform(mNode->getPosition(),
-						  mNode->getScale(),
-						  mNode->getOrientation());
-		return mat;
-	}
-	return Ogre::Matrix4::IDENTITY;
+	Ogre::Matrix4 mat;
+	mat.makeTransform(	getPosition(),
+						getScale(),
+						getOrientation());
+	return mat;
 }
 
 // ---------------------------------------------------------------------------
@@ -291,7 +291,7 @@ GK_INLINE Ogre::Vector3 gkGameObject::getPosition(void)
 {
 	if (mNode != 0)
 		return mNode->getPosition();
-	return Ogre::Vector3::ZERO;
+	return mBaseProps.position;
 }
 
 // ---------------------------------------------------------------------------
@@ -299,7 +299,7 @@ GK_INLINE Ogre::Vector3 gkGameObject::getScale(void)
 {
 	if (mNode != 0)
 		return mNode->getScale();
-	return Ogre::Vector3::UNIT_SCALE;
+	return mBaseProps.scale;
 }
 
 // ---------------------------------------------------------------------------
@@ -307,7 +307,7 @@ GK_INLINE Ogre::Quaternion gkGameObject::getOrientation(void)
 {
 	if (mNode != 0)
 		return mNode->getOrientation();
-	return Ogre::Quaternion::IDENTITY;
+	return mBaseProps.orientation;
 }
 
 // ---------------------------------------------------------------------------
@@ -315,7 +315,7 @@ GK_INLINE Ogre::Vector3 gkGameObject::getRotation(void)
 {
 	if (mNode != 0)
 		return gkMathUtils::getEulerFromQuat(mNode->getOrientation());
-	return Ogre::Vector3::ZERO;
+	return gkMathUtils::getEulerFromQuat(mBaseProps.orientation);
 }
 
 // ---------------------------------------------------------------------------
@@ -323,7 +323,7 @@ GK_INLINE Ogre::Matrix4 gkGameObject::getWorldTransform(void)
 {
 	if (mNode != 0)
 		return mNode->_getFullTransform();
-	return Ogre::Matrix4::IDENTITY;
+	return getLocalTransform();
 }
 
 // ---------------------------------------------------------------------------
@@ -331,7 +331,7 @@ GK_INLINE Ogre::Vector3 gkGameObject::getWorldPosition(void)
 {
 	if (mNode != 0)
 		return mNode->_getDerivedPosition();
-	return Ogre::Vector3::ZERO;
+	return mBaseProps.position;
 }
 
 // ---------------------------------------------------------------------------
@@ -339,7 +339,7 @@ GK_INLINE Ogre::Vector3 gkGameObject::getWorldScale(void)
 {
 	if (mNode != 0)
 		return mNode->_getDerivedScale();
-	return Ogre::Vector3::UNIT_SCALE;
+	return mBaseProps.scale;
 }
 
 // ---------------------------------------------------------------------------
@@ -347,7 +347,7 @@ GK_INLINE Ogre::Quaternion gkGameObject::getWorldOrientation(void)
 {
 	if (mNode != 0)
 		return mNode->_getDerivedOrientation();
-	return Ogre::Quaternion::IDENTITY;
+	return mBaseProps.orientation;
 }
 
 // ---------------------------------------------------------------------------
@@ -355,7 +355,7 @@ GK_INLINE Ogre::Vector3 gkGameObject::getWorldRotation(void)
 {
 	if (mNode != 0)
 		return gkMathUtils::getEulerFromQuat(mNode->_getDerivedOrientation());
-	return Ogre::Vector3::ZERO;
+	return gkMathUtils::getEulerFromQuat(mBaseProps.orientation);
 }
 
 // ---------------------------------------------------------------------------
@@ -389,8 +389,23 @@ GK_INLINE void gkGameObject::setParent(gkGameObject* par)
 		mParent= par;
 }
 
+// ---------------------------------------------------------------------------
+GK_INLINE void gkGameObject::attachRigidBody(btRigidBody *body)
+{
+	mRigidBody = body;
+}
 
+// ---------------------------------------------------------------------------
+GK_INLINE btRigidBody *gkGameObject::getAttachedBody(void)
+{
+	return mRigidBody;
+}
 
+// ---------------------------------------------------------------------------
+GK_INLINE Ogre::SceneNode *gkGameObject::getNode(void)
+{
+	return mNode;
+}
 
 
 #endif//_gkGameObject_h_

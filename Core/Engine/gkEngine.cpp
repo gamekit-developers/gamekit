@@ -47,11 +47,24 @@
 #include "gkRenderFactory.h"
 #include "gkUserDefs.h"
 
+
+#include "LinearMath/btQuickprof.h"
+
 using namespace Ogre;
 
 
 
 
+// ----------------------------------------------------------------------------
+struct TickState
+{
+	unsigned long ticks, rate;
+	unsigned long skip, loop;
+	unsigned long cur, next, prev, allot;
+	Real blend, fixed;
+	btClock *T;
+	bool lock;
+};
 
 // ----------------------------------------------------------------------------
 class gkEnginePrivate : public FrameListener
@@ -62,15 +75,13 @@ public:
 
 
 	/// one full update
-	void tick(Real elapsed, Real dt);
-
-	/// for doing smooth ticks
+	void tick(Real delta, bool smooth);
 	bool frameRenderingQueued(const FrameEvent& evt);
 
-	gkWindowSystem*		   windowsystem;   // current window system
-	Real					frame_interpl;  // frame blending
-	gkSceneObject*			scene;		  // current scene
-	gkRenderFactoryPrivate*   plugin_factory; // static/dynamic loading
+	gkWindowSystem*				windowsystem;   // current window system
+	gkSceneObject*				scene;			// current scene
+	gkRenderFactoryPrivate*		plugin_factory; // static/dynamic loading
+	TickState					state;
 };
 
 
@@ -82,9 +93,9 @@ public:
 // ----------------------------------------------------------------------------
 gkEnginePrivate::gkEnginePrivate() :
 		windowsystem(0),
-		frame_interpl(0.0),
 		scene(0)
 {
+	memset(&state, 0, sizeof(TickState));
 	plugin_factory= new gkRenderFactoryPrivate();
 }
 
@@ -97,7 +108,8 @@ gkEnginePrivate::~gkEnginePrivate()
 // ----------------------------------------------------------------------------
 gkEngine::gkEngine(const String& homeDir) :
 		mRoot(0),
-		mInitialized(false)
+		mInitialized(false),
+		mWindow(0)
 {
 	mPrivate= new gkEnginePrivate();
 	mDefs= new gkUserDefs();
@@ -117,7 +129,7 @@ gkEngine::~gkEngine()
 
 
 // ----------------------------------------------------------------------------
-void gkEngine::initialize(void)
+void gkEngine::initialize(bool autoCreateWindow)
 {
 	if (mInitialized)
 		return;
@@ -155,15 +167,29 @@ void gkEngine::initialize(void)
 		            "gkEngine::initialize");
 	}
 
-	sys->createWindow(defs.wintitle, (unsigned int)defs.winsize.x, (unsigned int)defs.winsize.y, defs.fullscreen);
+	if (autoCreateWindow)
+		initializeWindow(defs.wintitle, (int)defs.winsize.x, (int)defs.winsize.y, defs.fullscreen);
+
 
 	mAnimRate= defs.animspeed;
 	mTickRate= defs.tickrate;
 	mTickRate= gkClamp(mTickRate, 25, 90);
 
-	if (!defs.resources.empty())
-		loadResources(defs.resources);
 	mInitialized= true;
+}
+
+// ----------------------------------------------------------------------------
+void gkEngine::initializeWindow(const Ogre::String& windowName, int w, int h, bool fullscreen)
+{
+	if (mPrivate->windowsystem && !mWindow)
+	{
+		gkWindowSystem *sys = mPrivate->windowsystem;
+		mWindow = sys->createWindow(windowName, w, h, fullscreen);
+
+		gkUserDefs &defs= getUserDefs();
+		if (!defs.resources.empty())
+			loadResources(defs.resources);
+	}
 }
 
 // ----------------------------------------------------------------------------
@@ -254,9 +280,21 @@ void gkEngine::removeDebugProperty(gkVariable *prop)
 }
 
 // ----------------------------------------------------------------------------
+#define ENGINE_TICKS_PER_SECOND Real(45)		// tick rate
+#define ENGINE_PICKS_PER_SECOND Real(60)		// physics rate
+#define ENGINE_TIME_SCALE		Real(0.001)		// milliseconds scale
+#define GET_TICK(t) ((unsigned long)(t)->getTimeMilliseconds())
+
+
+// tick states
+Real gkEngine::mTickRate= ENGINE_TICKS_PER_SECOND;
+Real gkEngine::mAnimRate= 25;
+
+
+// ----------------------------------------------------------------------------
 Real gkEngine::getStepRate(void)
 {
-	return 1.0 / mTickRate;
+	return Real(1.0) / mTickRate;
 }
 
 // ----------------------------------------------------------------------------
@@ -273,19 +311,6 @@ Real gkEngine::getAnimRate(void)
 
 
 // ----------------------------------------------------------------------------
-#define ENGINE_TICKS_PER_SECOND Real(60)
-#define GET_TICK(t) ((t).getMilliseconds())
-
-// tick states
-Real gkEngine::mTickRate= ENGINE_TICKS_PER_SECOND;
-Real gkEngine::mAnimRate= 25;
-
-// ----------------------------------------------------------------------------
-// Game loop is based on the following articles:
-// http://dewitters.koonsolo.com/gameloop.html
-// http://gafferongames.wordpress.com/game-physics/fix-your-timestep/
-// ----------------------------------------------------------------------------
-
 void gkEngine::run(void)
 {
 
@@ -303,49 +328,98 @@ void gkEngine::run(void)
 		return;
 	}
 
-	mRoot->addFrameListener(mPrivate);
-
 	// setup timer
 	mRoot->clearEventTimes();
 	mRoot->getRenderSystem()->_initRenderTargets();
+	mRoot->addFrameListener(mPrivate);
 
-	unsigned long ticks= 1000 / (unsigned long)mTickRate;
-	unsigned long skip= (unsigned long)(Real(mTickRate) / 5.0), loop= 0;
-	if (skip == 0) skip= 1;
+	btClock t; t.reset();
 
-	/// start time
-	Timer t;
-	t.reset();
+	TickState state;
+	state.rate = getTickRate();
+	state.ticks = 1000/state.rate;
+	// try best skip rate possible:
+	state.skip  = gkMax(state.rate/5, 1); 
 
-	unsigned long nextTick= GET_TICK(t);
+
+	// update physics at the default 1/60
+	// this should remain constant
+	state.fixed = Ogre::Real(1.0) / ENGINE_PICKS_PER_SECOND;
+	state.T = &t;
+	mPrivate->state = state;
+
+	RenderWindow *rw = sys->getWindow();
+	bool init = false;
 	do
 	{
-		/// update window messages per frame
+
 		sys->processEvents();
 
-		for (loop= 0; ((GET_TICK(t) > nextTick) && loop < skip); loop++, nextTick += ticks)
-			mPrivate->tick(nextTick, getStepRate());
+		state.loop = 0;
+		state.lock = false;
 
-		mPrivate->frame_interpl= Real(GET_TICK(t) + ticks - nextTick) / Real(ticks);
+		if (!init)
+		{
+			// initialize timer states
+			init = true;
+			state.cur = GET_TICK(state.T);
+			state.next = state.prev = state.cur;
+		}
+
+		while ((state.cur = GET_TICK(state.T)) > state.next && state.loop < state.skip)
+		{
+			Real dt= Real(state.cur-state.prev) * state.fixed;
+			state.prev = state.cur;
+
+			// only tick if there is a time interval
+			if (dt > 0) mPrivate->tick(dt, true);
+
+			state.next += state.ticks;
+			++state.loop;
+
+			state.allot = GET_TICK(state.T);
+			dt = (state.allot - state.cur) * ENGINE_TIME_SCALE;
+			if (dt > state.fixed)
+			{
+				// tick has gone over alloted time, abort!
+				state.lock = true;
+				state.loop = state.skip;
+				state.next = state.allot + (state.ticks/2);
+				break;
+			}
+		}
+
+		state.prev = GET_TICK(state.T);
+		mPrivate->state.blend = Ogre::Real(state.prev + state.ticks - state.next) / Ogre::Real(state.ticks);
+		mRoot->setFrameSmoothingPeriod(mPrivate->state.blend);
+
 		mRoot->renderOneFrame();
 	}
 	while (!sys->exitRequest());
+
 	mRoot->removeFrameListener(mPrivate);
 }
-
 
 // ----------------------------------------------------------------------------
 bool gkEnginePrivate::frameRenderingQueued(const FrameEvent& evt)
 {
-	// this will be called after the frame has been rendered
-	// so it's behind one frame
-	if (scene != 0)
-		scene->update(frame_interpl, true); // smooth tick
+	// setFrameSmoothingPeriod: Setting it to 0 will result in completely unsmoothed:
+	// if there is a blend time wating, call one logic tick with the smoothed frame time
+	if (state.blend > 0 && state.blend <= 1)
+	{
+		if (evt.timeSinceLastFrame > 0)
+		{
+			// this will only effect physics
+			// all other states are at a constant fps
+			scene->update(evt.timeSinceLastFrame, state.fixed, false);
+		}
+	}
+
 	return true;
 }
 
 // ----------------------------------------------------------------------------
-void gkEnginePrivate::tick(Real elapsed, Real dt)
+void gkEnginePrivate::tick(Real dt, bool smooth)
 {
 	/// Proccess one full game tick
 	GK_ASSERT(windowsystem);
@@ -355,7 +429,7 @@ void gkEnginePrivate::tick(Real elapsed, Real dt)
 	windowsystem->dispatchEvents();
 
 	/// update main scene
-	scene->update(dt, false);
+	scene->update(dt, state.fixed, smooth);
 
 	/// clear per frame stuff
 	windowsystem->endFrame();

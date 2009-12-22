@@ -43,10 +43,13 @@ public:
 	static gkEngine& getSingleton();
 	static gkEngine* getSingletonPtr();
 
-	void initialize(void);
+	void initialize(bool autoCreateWindow = true);
 	void finalize(void);
 	bool isInitialized(void) {return mInitialized;}
 	void run(void);
+
+	void initializeWindow(const Ogre::String& windowName, int w, int h, bool fullscreen = false);
+
 
 	void setActiveScene(gkSceneObject *sc);
 
@@ -66,6 +69,7 @@ public:
 private:
 
 	Ogre::Root* mRoot;
+	Ogre::RenderWindow *mWindow;
 	bool mInitialized;
 	gkUserDefs* mDefs;
 
