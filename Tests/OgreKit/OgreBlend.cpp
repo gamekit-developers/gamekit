@@ -91,8 +91,8 @@ public:
 
 		if (m_object != 0)
 		{
-			Ogre::Quaternion &rot = m_object->getWorldOrientation();
-			Ogre::Vector3& loc = m_object->getWorldPosition();
+			Ogre::Quaternion rot = m_object->getWorldOrientation();
+			Ogre::Vector3 loc = m_object->getWorldPosition();
 
 			worldTrans.setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w));
 			worldTrans.setOrigin(btVector3(loc.x, loc.y, loc.z));
@@ -231,7 +231,7 @@ gkCameraObject* createMouseLook(gkSceneObject *sc,  const Ogre::Vector3 &pos, co
 	y->setParent(z);
 	cam->setParent(y);
 
-	// zrotation 
+	// zrotation
 	gkLogicTree *ztree= gkLogicManager::getSingleton().create();
 	gkLogicNode *zmou = ztree->createNode(NT_MOUSE);
 	gkLogicNode *zmot = ztree->createNode(NT_MOTION);
@@ -240,7 +240,7 @@ gkCameraObject* createMouseLook(gkSceneObject *sc,  const Ogre::Vector3 &pos, co
 	zmot->getInputSocket(0)->link(zmou->getOutputSocket(0));
 	zmot->getInputSocket(3)->link(zmou->getOutputSocket(1));
 
-	// yrotation 
+	// yrotation
 	gkLogicTree *ytree= gkLogicManager::getSingleton().create();
 	gkLogicNode *ymou = ytree->createNode(NT_MOUSE);
 	gkLogicNode *ymot = ytree->createNode(NT_MOTION);
@@ -274,7 +274,7 @@ gkCameraObject* createMouseLook(gkSceneObject *sc,  const Ogre::Vector3 &pos, co
 	lft->setKey(KC_LEFTARROWKEY);
 	rgt->setKey(KC_RIGHTARROWKEY);
 
-	const Ogre::Real scale = 0.5; 
+	const Ogre::Real scale = 0.5;
 
 	gkMathNode *scale1 = (gkMathNode*)ztree->createNode(NT_MATH);
 	gkMathNode *scale2 = (gkMathNode*)ztree->createNode(NT_MATH);
@@ -285,7 +285,7 @@ gkCameraObject* createMouseLook(gkSceneObject *sc,  const Ogre::Vector3 &pos, co
 
 
 
-	/// math node 
+	/// math node
 	// subtract (bak - fwd) out -> link to y movement
 	gkMathNode *vecfwd = (gkMathNode*)ztree->createNode(NT_MATH);
 
@@ -304,7 +304,7 @@ gkCameraObject* createMouseLook(gkSceneObject *sc,  const Ogre::Vector3 &pos, co
 	fwdmot->setOtherObject("createMouseLook::y");
 
 
-	/// math node 
+	/// math node
 	// subtract (lft - rgt) out -> link to x movement
 	gkMathNode *vecstrf = (gkMathNode*)ztree->createNode(NT_MATH);
 
@@ -362,7 +362,7 @@ void loadMomo(gkSceneObject* scene)
 
 
 
-OgreBlend::OgreBlend(class btDynamicsWorld* destinationWorld) : 
+OgreBlend::OgreBlend(class btDynamicsWorld* destinationWorld) :
 	BulletBlendReaderNew(destinationWorld),
 	m_file(0), m_scene(0), m_blenScene(0)
 {
@@ -382,7 +382,7 @@ OgreBlend::~OgreBlend()
 
 int OgreBlend::_readFile(char *fname)
 {
-	// TEMP: so manual loaders can be registered and freed 
+	// TEMP: so manual loaders can be registered and freed
 	// (mainly image loaders, which are internal to the mesh loader)
 
 	m_file = new gkBlendFile(fname, "General", false);
@@ -398,7 +398,7 @@ int OgreBlend::_readFile(char *fname)
 
 void OgreBlend::load()
 {
-	if (m_scene) 
+	if (m_scene)
 	{
 
 		if (m_curFile.find("momo_ogreSmallAnim.blend") != -1)
@@ -408,7 +408,7 @@ void OgreBlend::load()
 			m_scene->load();
 
 		}
-		else 
+		else
 		{
 			m_scene->load();
 			gkCameraObject *cam = createMouseLook(m_scene, Ogre::Vector3(0, -7, 2), Ogre::Vector3(90, 0,0));
@@ -424,7 +424,7 @@ void OgreBlend::beginScene(Blender::Scene *scene)
 
 	m_blenScene = scene;
 
-	// set scene 
+	// set scene
 	m_scene = (gkSceneObject*)gkSceneObjectManager::getSingleton().create(scene->id.name + 2, "General").getPointer();
 
 	if (m_destinationWorld)
@@ -437,7 +437,7 @@ void OgreBlend::beginScene(Blender::Scene *scene)
 	// needed for animation loop (Defined in render buttons)
 	gkLoaderUtils::blender_anim_rate= scene->r.frs_sec;
 
-	// apply to ogre animations as well 
+	// apply to ogre animations as well
 	m_engine->getUserDefs().animspeed= scene->r.frs_sec;
 
 	if (scene->world)
@@ -729,9 +729,9 @@ void OgreBlend::addLight(Blender::Object* tmpObject)
 	if (la->type != LA_LOCAL)
 		props.type= la->type == LA_SPOT ? Ogre::Light::LT_SPOTLIGHT : Ogre::Light::LT_DIRECTIONAL;
 
-	// lamp casts shadows 
+	// lamp casts shadows
 	props.casts= true;
-	
+
 	props.spot_inner= Ogre::Radian(la->spotblend).valueDegrees();
 	props.spot_outer= la->spotsize > 128 ? 128 : la->spotsize;
 	props.falloff=   128.0 * la->spotblend;
@@ -763,7 +763,7 @@ void OgreBlend::applyObjectProperties(Blender::Object* tmpObject, gkGameObject *
 		obmat = parent.inverse() * obmat;
 		gkMathUtils::extractTransform(obmat, loc, quat, scale);
 
-		// blender lists are sorted internally 
+		// blender lists are sorted internally
 		// so parents will be first in the base loop
 		if (m_scene->hasObject(tmpObject->parent->id.name + 2))
 		{
