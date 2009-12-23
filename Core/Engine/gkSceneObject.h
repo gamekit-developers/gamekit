@@ -55,6 +55,7 @@ public:
 	void _notifyObjectUnloaded(gkGameObject *gobject);
 	void _notifyObjectUpdate(gkGameObject *gobject);
 	void _addTempObject(gkGameObject *gobject);
+	void _addTransformObject(gkGameObject *gobject);
 
 	void update(Ogre::Real variableTickRate, Ogre::Real fixedTickRate, bool smooth_tick);
 
@@ -96,6 +97,8 @@ public:
 	void setDynamicsWorld(btDynamicsWorld *phy);
 	btDynamicsWorld* getDynamicsWorld(void);
 
+	void synchronizeMotion(Ogre::Real step, Ogre::Real blend);
+
 protected:
 	Ogre::SceneManager *mManager;
 	gkCameraObject *mStartCam;
@@ -108,6 +111,7 @@ protected:
 	gkSceneProperties mBaseProps;
 
 	gkGameObjectArray mUpdateObjects;
+	gkGameObjectArray mTransformObjects;
 
 	gkGameObjectList mLoadedObjects;
 	gkGameObjectList mTempObjects;
@@ -160,6 +164,12 @@ GK_INLINE void gkSceneObject::setDynamicsWorld(btDynamicsWorld *phy)
 GK_INLINE btDynamicsWorld* gkSceneObject::getDynamicsWorld(void)
 {
 	return mPhsicsWorld;
+}
+
+// ----------------------------------------------------------------------------
+GK_INLINE void gkSceneObject::_addTransformObject(gkGameObject *gobject)
+{
+	mTransformObjects.push_back(gobject);
 }
 
 // ----------------------------------------------------------------------------

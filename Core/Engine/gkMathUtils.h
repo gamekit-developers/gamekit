@@ -97,7 +97,7 @@ public:
 	static void makeLocEulScale(Ogre::Matrix4 &dest, const Ogre::Vector3& loc, const Ogre::Vector3& eul, const Ogre::Vector3 &scale, bool inDegrees= GK_ROTUNIT);
 	static void makeLocQuatScale(Ogre::Matrix4 &dest, const Ogre::Vector3& loc, const Ogre::Quaternion& q, const Ogre::Vector3 &scale);
 
-	static Ogre::Quaternion interp(const Ogre::Quaternion &a, const Ogre::Quaternion &b, Ogre::Real t);
+	static Ogre::Quaternion interp(const Ogre::Quaternion &a, const Ogre::Quaternion &b, Ogre::Real t, bool fast=true);
 	static Ogre::Vector2 interp(const Ogre::Vector2 &a, const Ogre::Vector2 &b, Ogre::Real t);
 	static Ogre::Vector3 interp(const Ogre::Vector3 &a, const Ogre::Vector3 &b, Ogre::Real t);
 	static Ogre::Real interp(const Ogre::Real &a, const Ogre::Real &b, Ogre::Real t);

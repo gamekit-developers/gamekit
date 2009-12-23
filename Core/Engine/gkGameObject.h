@@ -142,6 +142,7 @@ public:
 
 private:
 
+	void applyTransformState(const gkTransformState& newstate);
 	void clearVariables(void);
 	void applyConstraints(void);
 

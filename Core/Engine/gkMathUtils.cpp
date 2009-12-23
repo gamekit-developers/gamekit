@@ -163,9 +163,10 @@ void gkMathUtils::makeLocQuatScale(Matrix4 &dest, const Vector3& loc, const Quat
 }
 
 // ----------------------------------------------------------------------------
-Quaternion gkMathUtils::interp(const Quaternion &a, const Quaternion &b, Real t)
+Quaternion gkMathUtils::interp(const Quaternion &a, const Quaternion &b, Real t, bool fast)
 {
-	return Quaternion::Slerp(t, a, b, a.Dot(b) < 0.0);
+	return fast ?	Quaternion::nlerp(t, a, b, a.Dot(b) < 0.0) :
+					Quaternion::Slerp(t, a, b, a.Dot(b) < 0.0);
 }
 
 // ----------------------------------------------------------------------------

@@ -37,24 +37,33 @@ class gkTransformState
 {
 public:
 
-	gkTransformState();
+	gkTransformState() {}
+
+	gkTransformState(const Ogre::Vector3& loc, const Ogre::Quaternion& rot, const Ogre::Vector3 &scl);
+
 	const gkTransformState &operator= (const gkTransformState &o);
+
 	bool operator != (const gkTransformState &o);
 
 	gkTransformState blendTransform(const gkTransformState& currentTransform, Ogre::Real fact);
+
 	gkTransformState perdictTransform(const gkTransformState& currentTransform, Ogre::Real fact, Ogre::Real subStep);
 
 	void setIdentity();
 
-	Ogre::Quaternion  rot;
-	Ogre::Vector3	 pos;
-	Ogre::Vector3	 scl;
+	Ogre::Quaternion	rot;
+	Ogre::Vector3		loc;
+	Ogre::Vector3		scl;
 };
 
+
 // ----------------------------------------------------------------------------
-GK_INLINE gkTransformState::gkTransformState() :
-		rot(Ogre::Quaternion::IDENTITY), pos(Ogre::Vector3::ZERO), scl(Ogre::Vector3::UNIT_SCALE)
+GK_INLINE gkTransformState::gkTransformState(const Ogre::Vector3& oloc, const Ogre::Quaternion& orot, const Ogre::Vector3 &oscl)
 {
+	rot.w= orot.w;
+	rot.x= orot.x; rot.y= orot.y; rot.z= orot.z;
+	loc.x= oloc.x; loc.y= oloc.y; loc.z= oloc.z;
+	scl.x= oscl.x; scl.y= oscl.y; scl.z= oscl.z;
 }
 
 // ----------------------------------------------------------------------------
@@ -62,7 +71,7 @@ GK_INLINE const gkTransformState &gkTransformState::operator= (const gkTransform
 {
 	rot.w= o.rot.w;
 	rot.x= o.rot.x; rot.y= o.rot.y; rot.z= o.rot.z;
-	pos.x= o.pos.x; pos.y= o.pos.y; pos.z= o.pos.z;
+	loc.x= o.loc.x; loc.y= o.loc.y; loc.z= o.loc.z;
 	scl.x= o.scl.x; scl.y= o.scl.y; scl.z= o.scl.z;
 	return *this;
 }
@@ -74,9 +83,9 @@ GK_INLINE bool gkTransformState::operator != (const gkTransformState &o)
 			(rot.x != o.rot.x) ||
 			(rot.y != o.rot.y) ||
 			(rot.z != o.rot.z) ||
-			(pos.x != o.pos.x) ||
-			(pos.y != o.pos.y) ||
-			(pos.z != o.pos.z) ||
+			(loc.x != o.loc.x) ||
+			(loc.y != o.loc.y) ||
+			(loc.z != o.loc.z) ||
 			(scl.x != o.scl.x) ||
 			(scl.y != o.scl.y) ||
 			(scl.z != o.scl.z)
@@ -88,37 +97,17 @@ GK_INLINE bool gkTransformState::operator != (const gkTransformState &o)
 GK_INLINE gkTransformState gkTransformState::blendTransform(const gkTransformState& currentTransform, Ogre::Real fact)
 {
 	gkTransformState result;
-	result.pos= gkMathUtils::interp(pos, currentTransform.pos, fact);
+	result.loc= gkMathUtils::interp(loc, currentTransform.loc, fact);
 	result.rot= gkMathUtils::interp(rot, currentTransform.rot, fact);
 	result.scl= gkMathUtils::interp(scl, currentTransform.scl, fact);
 	return result;
 }
 
 // ----------------------------------------------------------------------------
-GK_INLINE gkTransformState gkTransformState::perdictTransform(const gkTransformState& currentTransform, Ogre::Real timeStep, Ogre::Real subStep)
+GK_INLINE gkTransformState gkTransformState::perdictTransform(const gkTransformState& currentTransform, Ogre::Real intrp, Ogre::Real subStep)
 {
-	if (timeStep <= 1.0 && timeStep >=0.0)
-	{
-		Ogre::Vector3 diff_loc= gkMathUtils::calculateLinearVelocity(pos, currentTransform.pos, timeStep);
-		Ogre::Vector3 diff_rot= gkMathUtils::calculateAngularVelocity(rot, currentTransform.rot, timeStep);
-		Ogre::Vector3 diff_scl= gkMathUtils::calculateLinearVelocity(scl, currentTransform.scl, timeStep);
-
-		if (subStep != 1.0)
-		{
-			diff_loc *= subStep;
-			diff_rot *= subStep;
-			diff_scl *= subStep;
-		}
-
-		// find ammount moved
-		gkTransformState result= currentTransform;
-		result.pos= currentTransform.pos + diff_loc;
-		result.scl= currentTransform.scl + diff_scl;
-		result.rot= gkMathUtils::calculateRotation(currentTransform.rot, diff_rot, 1.0);
-		return result;
-	}
-
-	return *this;
+	gkTransformState result;
+	return result;
 }
 
 // ----------------------------------------------------------------------------
@@ -126,13 +115,8 @@ GK_INLINE void gkTransformState::setIdentity()
 {
 	rot.w= Ogre::Real(1.0);
 	rot.x= Ogre::Real(0.0); rot.y= Ogre::Real(0.0); rot.z= Ogre::Real(0.0);
-	pos.x= Ogre::Real(0.0); pos.y= Ogre::Real(0.0); pos.z= Ogre::Real(0.0);
+	loc.x= Ogre::Real(0.0); loc.y= Ogre::Real(0.0); loc.z= Ogre::Real(0.0);
 	scl.x= Ogre::Real(1.0); scl.y= Ogre::Real(1.0); scl.z= Ogre::Real(1.0);
 }
-
-
-
-
-
 
 #endif//_gkTransformState_h_

@@ -228,7 +228,7 @@ void gkGameObject::loadImpl(void)
 	mNode->setScale(mBaseProps.scale);
 	mNode->showBoundingBox(mBaseProps.showAABB);
 
-	mCState.pos= mBaseProps.position;
+	mCState.loc= mBaseProps.position;
 	mCState.rot= mBaseProps.orientation;
 	mCState.scl= mBaseProps.scale;
 	mPState= mCState;
@@ -282,19 +282,54 @@ void gkGameObject::_stateUpdated(void)
 	/// tell scene about this transform
 	if (mScene && mNode != 0)
 	{
-		mOutOfDate= true;
-		mPState = mCState;
+		if (!mOutOfDate) 
+		{
+			mScene->_addTransformObject(this);
+			mOutOfDate= true;
+		}
 
-		mCState.pos= mNode->getPosition();
+		mPState = mCState;
+		mCState.loc= mNode->getPosition();
 		mCState.rot= mNode->getOrientation();
 		mCState.scl= mNode->getScale();
+	}
+}
+
+
+// ----------------------------------------------------------------------------
+void gkGameObject::applyTransformState(const gkTransformState& newstate)
+{
+	if (mNode)
+	{
+		mNode->setPosition(newstate.loc);
+		mNode->setOrientation(newstate.rot);
+		mNode->setScale(newstate.scl);
+
+		if (mRigidBody && !mRigidBody->isStaticOrKinematicObject())
+		{
+			btTransform t;
+			t.setIdentity();
+			t.setOrigin(toVector3(newstate.loc));
+			t.setRotation(toQuat(newstate.rot));
+			mRigidBody->setCenterOfMassTransform(t);
+		}
 	}
 }
 
 // ----------------------------------------------------------------------------
 void gkGameObject::synchronizeMotion(Real interpol, Real timeStep)
 {
+	if (mScene && mNode && mOutOfDate)
+	{
+		Ogre::Vector3 dloc= gkMathUtils::interp(mPState.loc, mCState.loc, interpol);
+		Ogre::Vector3 dscl= gkMathUtils::interp(mPState.scl, mCState.scl, interpol);
+		Ogre::Quaternion drot= gkMathUtils::interp(mPState.rot, mCState.rot, interpol);
+
+		if (interpol >= 0.9) mOutOfDate = false;
+		applyTransformState(gkTransformState(dloc, drot, dscl));
+	}
 }
+
 
 // ----------------------------------------------------------------------------
 void gkGameObject::update(void)

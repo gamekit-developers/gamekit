@@ -367,8 +367,6 @@ OgreBlend::OgreBlend(class btDynamicsWorld* destinationWorld) :
 	m_file(0), m_scene(0), m_blenScene(0)
 {
 	m_engine = new gkEngine();
-	// does not effect physics, which will step at 1/60
-	m_engine->getUserDefs().tickrate = 60;
 	m_engine->initialize(false);
 }
 

@@ -61,9 +61,9 @@ struct TickState
 	unsigned long ticks, rate;
 	unsigned long skip, loop;
 	unsigned long cur, next, prev, allot;
-	Real blend, fixed;
+	Real blend, fixed, invt;
 	btClock *T;
-	bool lock;
+	bool lock, init;
 };
 
 // ----------------------------------------------------------------------------
@@ -82,6 +82,7 @@ public:
 	gkSceneObject*				scene;			// current scene
 	gkRenderFactoryPrivate*		plugin_factory; // static/dynamic loading
 	TickState					state;
+	Ogre::Root*					root;
 };
 
 
@@ -280,11 +281,9 @@ void gkEngine::removeDebugProperty(gkVariable *prop)
 }
 
 // ----------------------------------------------------------------------------
-#define ENGINE_TICKS_PER_SECOND Real(45)		// tick rate
-#define ENGINE_PICKS_PER_SECOND Real(60)		// physics rate
-#define ENGINE_TIME_SCALE		Real(0.001)		// milliseconds scale
+#define ENGINE_TICKS_PER_SECOND Real(60)
+#define ENGINE_TIME_SCALE		Real(0.001)
 #define GET_TICK(t) ((unsigned long)(t)->getTimeMilliseconds())
-
 
 // tick states
 Real gkEngine::mTickRate= ENGINE_TICKS_PER_SECOND;
@@ -294,13 +293,13 @@ Real gkEngine::mAnimRate= 25;
 // ----------------------------------------------------------------------------
 Real gkEngine::getStepRate(void)
 {
-	return Real(1.0) / mTickRate;
+	return Real(1.0) / ENGINE_TICKS_PER_SECOND;
 }
 
 // ----------------------------------------------------------------------------
 Real gkEngine::getTickRate(void)
 {
-	return mTickRate;
+	return ENGINE_TICKS_PER_SECOND;
 }
 
 // ----------------------------------------------------------------------------
@@ -336,63 +335,19 @@ void gkEngine::run(void)
 	btClock t; t.reset();
 
 	TickState state;
-	state.rate = getTickRate();
+	state.rate = ENGINE_TICKS_PER_SECOND;
 	state.ticks = 1000/state.rate;
-	// try best skip rate possible:
 	state.skip  = gkMax(state.rate/5, 1); 
-
-
-	// update physics at the default 1/60
-	// this should remain constant
-	state.fixed = Ogre::Real(1.0) / ENGINE_PICKS_PER_SECOND;
+	state.invt  = 1.0 / state.ticks;
+	state.fixed = 1.0 / ENGINE_TICKS_PER_SECOND;
 	state.T = &t;
+	state.init = false;
 	mPrivate->state = state;
+	mPrivate->root = mRoot;
 
-	RenderWindow *rw = sys->getWindow();
-	bool init = false;
 	do
 	{
-
 		sys->processEvents();
-
-		state.loop = 0;
-		state.lock = false;
-
-		if (!init)
-		{
-			// initialize timer states
-			init = true;
-			state.cur = GET_TICK(state.T);
-			state.next = state.prev = state.cur;
-		}
-
-		while ((state.cur = GET_TICK(state.T)) > state.next && state.loop < state.skip)
-		{
-			Real dt= Real(state.cur-state.prev) * state.fixed;
-			state.prev = state.cur;
-
-			// only tick if there is a time interval
-			if (dt > 0) mPrivate->tick(dt, true);
-
-			state.next += state.ticks;
-			++state.loop;
-
-			state.allot = GET_TICK(state.T);
-			dt = (state.allot - state.cur) * ENGINE_TIME_SCALE;
-			if (dt > state.fixed)
-			{
-				// tick has gone over alloted time, abort!
-				state.lock = true;
-				state.loop = state.skip;
-				state.next = state.allot + (state.ticks/2);
-				break;
-			}
-		}
-
-		state.prev = GET_TICK(state.T);
-		mPrivate->state.blend = Ogre::Real(state.prev + state.ticks - state.next) / Ogre::Real(state.ticks);
-		mRoot->setFrameSmoothingPeriod(mPrivate->state.blend);
-
 		mRoot->renderOneFrame();
 	}
 	while (!sys->exitRequest());
@@ -403,18 +358,30 @@ void gkEngine::run(void)
 // ----------------------------------------------------------------------------
 bool gkEnginePrivate::frameRenderingQueued(const FrameEvent& evt)
 {
-	// setFrameSmoothingPeriod: Setting it to 0 will result in completely unsmoothed:
-	// if there is a blend time wating, call one logic tick with the smoothed frame time
-	if (state.blend > 0 && state.blend <= 1)
+	state.loop = 0;
+	state.lock = false;
+
+	if (!state.init)
 	{
-		if (evt.timeSinceLastFrame > 0)
-		{
-			// this will only effect physics
-			// all other states are at a constant fps
-			scene->update(evt.timeSinceLastFrame, state.fixed, false);
-		}
+		// initialize timer states
+		state.init = true;
+		state.cur = GET_TICK(state.T);
+		state.next = state.prev = state.cur;
 	}
 
+	while ((state.cur = GET_TICK(state.T)) > state.next && state.loop < state.skip)
+	{
+		if (!state.lock) tick(state.fixed, true);
+		if (((GET_TICK(state.T) - state.cur) * ENGINE_TIME_SCALE) > state.fixed)
+			state.lock = true;
+
+		state.next += state.ticks;
+		++state.loop;
+	}
+
+	state.blend = Ogre::Real(GET_TICK(state.T) + state.ticks - state.next) * state.invt;
+	if (state.blend >= 0 && state.blend <= 1)
+		scene->synchronizeMotion(1.0, state.blend);
 	return true;
 }
 

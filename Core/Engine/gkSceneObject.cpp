@@ -503,6 +503,26 @@ void gkSceneObject::_notifyObjectUpdate(gkGameObject *gobject)
 }
 
 // ----------------------------------------------------------------------------
+void gkSceneObject::synchronizeMotion(Ogre::Real step, Ogre::Real blend)
+{
+	gkGameObjectArray::Pointer buffer = mTransformObjects.ptr();
+	size_t size = mTransformObjects.size();
+
+	size_t i = 0;
+	while(i<size) (buffer[i++])->synchronizeMotion(blend, 1.0);
+
+	static int sync_nr = 0;
+	++sync_nr;
+	if (sync_nr > 1000)
+	{
+		sync_nr = 0;
+		mTransformObjects.clear();
+	}
+	else mTransformObjects.resize(0);
+
+}
+
+// ----------------------------------------------------------------------------
 void gkSceneObject::update(Ogre::Real variableTickRate, Ogre::Real fixedTickRate, bool smooth_tick)
 {
 	if (!isLoaded())
