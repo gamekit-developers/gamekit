@@ -91,11 +91,25 @@ static unsigned int PackColour(Blender::MCol col, bool opengl)
 		unsigned char cp[4];
 	} out_color, in_color;
 
+
 	in_color.col= col;
-	out_color.cp[0]= in_color.cp[3]; // red
-	out_color.cp[1]= in_color.cp[2]; // green
-	out_color.cp[2]= in_color.cp[1]; // blue
-	out_color.cp[3]= in_color.cp[0]; // alpha
+
+
+	if (opengl) // abgr
+	{
+		out_color.cp[0]= in_color.cp[3]; // red
+		out_color.cp[1]= in_color.cp[2]; // green
+		out_color.cp[2]= in_color.cp[1]; // blue
+		out_color.cp[3]= in_color.cp[0]; // alpha
+	}
+	else // argb
+	{
+		// vertex buffer is packed with VET_COLOUR_ABGR, swap b,r
+		out_color.cp[2]= in_color.cp[3]; // red
+		out_color.cp[1]= in_color.cp[2]; // green
+		out_color.cp[0]= in_color.cp[1]; // blue
+		out_color.cp[3]= in_color.cp[0]; // alpha
+	}
 
 	return out_color.integer;
 }
@@ -163,6 +177,10 @@ void gkMeshLoaderPrivate::convertMesh(void)
 	SubMeshBufferLookupMap bufferObjects;
 	bufferObjects.reserve(15);
 
+	gkUserDefs &defs = gkEngine::getSingleton().getUserDefs();
+
+	bool openglVertexColor = defs.rendersystem == OGRE_RS_GL || defs.rendersystem == OGRE_RS_GLES;
+
 
 	/// parse all faces and convert
 	for (int fi= 0; fi < bmesh->totface; fi++)
@@ -187,10 +205,10 @@ void gkMeshLoaderPrivate::convertMesh(void)
 			unsigned int vcol[4]= {0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF};
 			if (mcol != 0)
 			{
-				vcol[0]= PackColour(mcol[0], true);
-				vcol[1]= PackColour(mcol[1], true);
-				vcol[2]= PackColour(mcol[2], true);
-				vcol[3]= PackColour(mcol[3], true);
+				vcol[0]= PackColour(mcol[0], openglVertexColor);
+				vcol[1]= PackColour(mcol[1], openglVertexColor);
+				vcol[2]= PackColour(mcol[2], openglVertexColor);
+				vcol[3]= PackColour(mcol[3], openglVertexColor);
 			}
 
 			Blender::MVert verts[4];
@@ -295,9 +313,9 @@ void gkMeshLoaderPrivate::convertMesh(void)
 			unsigned int vcol[3]= {0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF};
 			if (mcol != 0)
 			{
-				vcol[0]= PackColour(mcol[0], true);
-				vcol[1]= PackColour(mcol[1], true);
-				vcol[2]= PackColour(mcol[2], true);
+				vcol[0]= PackColour(mcol[0], openglVertexColor);
+				vcol[1]= PackColour(mcol[1], openglVertexColor);
+				vcol[2]= PackColour(mcol[2], openglVertexColor);
 			}
 
 			Blender::MVert verts[3];

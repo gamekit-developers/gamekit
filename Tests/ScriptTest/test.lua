@@ -30,16 +30,19 @@ System.import("KeyCodes")
 
 local exit_key = KeyCodes.KC_QKEY
 local exit_str = "(press Q Key to exit)"
+local renderer = GameKit.OGRE_RS_GL
 
 local engine		= GameKit.Engine()
-engine.title		= "Lua Test " .. exit_str 
+engine.rendersystem = renderer
+engine.title		= "Lua Test " .. exit_str .. ' - ' .. getRenderSystemString(renderer, GameKit)
 engine.blenmat		= false
 engine.quiet		= true
 engine.width		= 800
 engine.height		= 600
 engine.fullscreen	= false
 
--- FIXME, needs to use video enumeration
+
+
 --setWideFullScreen(engine)
 --setFullScreen(engine)
 
@@ -52,7 +55,6 @@ local scene = blend:getScene()
 scene:load()
 
 if (scene:isLoaded()) then
-
 	-- internal gamelogic (not setup in lua right now)
 
 	-- scale applied to relitave mouse movement

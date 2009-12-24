@@ -27,6 +27,7 @@
 
 #include "gkCommon.h"
 #include "gkMathUtils.h"
+#include "gkRenderFactory.h"
 
 
 
@@ -39,25 +40,25 @@ public:
 	gkUserDefs();
 	void load(const Ogre::String &fname);
 
-	Ogre::String  plugins;			// default plugin dir
-	Ogre::String  rendersystem;	   // main render system
-	Ogre::String  log;				// name of output log
-	bool	verbose;			// print everything Ogre has to say
-	Ogre::Vector2 winsize;			// window size
-	Ogre::String  wintitle;
-	bool	fullscreen;
-	Ogre::String  resources;		  // resources to load
-	Ogre::Real	animspeed;
-	Ogre::Real	startframe;
-	Ogre::Real	tickrate;
-	bool	blendermat;
+	Ogre::String		plugins;			// default plugin dir
+	OgreRenderSystem	rendersystem;		// main render system
+	Ogre::String		log;				// name of output log
+	bool				verbose;			// print everything Ogre has to say
+	Ogre::Vector2		winsize;			// window size
+	Ogre::String		wintitle;
+	bool				fullscreen;
+	Ogre::String		resources;			// resources to load
+	Ogre::Real			animspeed;
+	Ogre::Real			startframe;
+	Ogre::Real			tickrate;
+	bool				blendermat;
 
 	// disabled for now
-	bool		multipassmat;
-	Ogre::String	  gl_vert_profile;	// arbvp1
-	Ogre::String	  gl_frag_profile;	// arbfp1
-	Ogre::String	  dx_vert_profile;	// vs_1_1
-	Ogre::String	  dx_frag_profile;	// ps_2_x
+	bool				multipassmat;
+	Ogre::String		gl_vert_profile;	// arbvp1
+	Ogre::String		gl_frag_profile;	// arbfp1
+	Ogre::String		dx_vert_profile;	// vs_1_1
+	Ogre::String		dx_frag_profile;	// ps_2_x
 };
 
 

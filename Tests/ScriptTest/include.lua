@@ -126,6 +126,15 @@ function gameObjectTypeString(t)
 end
 
 
+
+function getRenderSystemString(rs, gk)
+	if (rs == gk.OGRE_RS_D3D9) then return "Direct3D 9" end
+	if (rs == gk.OGRE_RS_D3D10) then return "Direct3D 10" end
+	if (rs == gk.OGRE_RS_GL) then return "OpenGL" end
+	if (rs == gk.OGRE_RS_GLES) then return "OpenGL ES" end
+	return "unknown render system";
+end
+
 function clamp(x, mi, ma)
 	if (x < mi) then return mi end
 	if (x > ma) then return ma end

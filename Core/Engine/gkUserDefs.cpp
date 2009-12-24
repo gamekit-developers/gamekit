@@ -40,7 +40,7 @@ using namespace Ogre;
 // ----------------------------------------------------------------------------
 gkUserDefs::gkUserDefs() :
 		plugins(StringUtil::BLANK),
-		rendersystem("OpenGL"),
+		rendersystem(OGRE_RS_GL),
 		log("OgreKit.log"),
 		verbose(true),
 		winsize(800, 600),

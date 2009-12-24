@@ -29,8 +29,32 @@
 #include "OgreGLPlugin.h"
 #endif
 
+#ifdef OGREKIT_D3D9RS
+#include "OgreD3D9Plugin.h"
+#endif
 
-using namespace Ogre;
+#ifdef OGREKIT_D3D10RS
+#include "OgreD3D10Plugin.h"
+#endif
+
+
+OgreRenderSystem gkFindRenderSystem(OgreRenderSystem wanted)
+{
+#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
+# ifdef OGREKIT_D3D9RS
+	if (wanted == OGRE_RS_D3D9) return OGRE_RS_D3D9;
+# endif
+# ifdef OGREKIT_D3D10RS
+	if (wanted == OGRE_RS_D3D10) return OGRE_RS_D3D10;
+# endif
+#endif
+	// TODO setup OpenGL ES
+#ifdef OGREKIT_GLRS
+	// OpenGL is the default 
+	return OGRE_RS_GL;
+#endif
+	return OGRE_RS_UNKNOWN;
+}
 
 
 // ----------------------------------------------------------------------------
@@ -50,20 +74,36 @@ gkRenderFactoryPrivate::~gkRenderFactoryPrivate()
 }
 
 // ----------------------------------------------------------------------------
-void gkRenderFactoryPrivate::createRenderSystem(Root * r, OgreRenderSystem backend)
+void gkRenderFactoryPrivate::createRenderSystem(Ogre::Root* r, OgreRenderSystem backend)
 {
 	if (mRenderSystem != 0)
 		return;
 
-	switch (backend)
+	switch (gkFindRenderSystem(backend))
 	{
-	case OGRE_RS_GL:
-#ifdef OGREKIT_GLRS
-		mRenderSystem= new GLPlugin();
+	case OGRE_RS_D3D10:
+#if OGREKIT_D3D10RS
+		mRenderSystem= new Ogre::D3D10Plugin();
 		r->installPlugin(mRenderSystem);
 #endif
+		break;
+	case OGRE_RS_D3D9:
+#ifdef OGREKIT_D3D9RS
+		mRenderSystem= new Ogre::D3D9Plugin();
+		r->installPlugin(mRenderSystem);
+#endif
+		break;
+	case OGRE_RS_GLES:
+	case OGRE_RS_GL:
+#ifdef OGREKIT_GLRS
+		mRenderSystem= new Ogre::GLPlugin();
+		r->installPlugin(mRenderSystem);
+#endif
+		break;
+	case OGRE_RS_UNKNOWN:
 	default:
 		break;
 	}
 
+	GK_ASSERT(mRenderSystem);
 }

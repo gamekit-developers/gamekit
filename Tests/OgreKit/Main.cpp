@@ -26,8 +26,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "OgreBlend.h"
-#include "btBulletDynamicsCommon.h"
 #include "gkEngine.h"
+#include "gkUserDefs.h"
+#include "btBulletDynamicsCommon.h"
 
 
 #ifdef __APPLE__
@@ -47,6 +48,19 @@ char* AppleGetBundleDirectory(void) {
 	return path;
 }
 #endif
+
+
+Ogre::String getRenderSystemString(OgreRenderSystem sys)
+{
+	switch (sys)
+	{
+	case OGRE_RS_D3D9:	return "Direct3D 9";
+	case OGRE_RS_D3D10: return "Direct3D 10";
+	case OGRE_RS_GL:	return "OpenGL";
+	case OGRE_RS_GLES:	return "OpenGL ES";
+	}
+	return "unknown render system";
+}
 
 int main(int argc, char **argv)
 {
@@ -84,23 +98,31 @@ int main(int argc, char **argv)
 	btDiscreteDynamicsWorld* physicsWorld= new btDiscreteDynamicsWorld(dispatcher,pairCache,constraintSolver,collisionConfiguration);
 
 
-	OgreBlend *blend= new OgreBlend(physicsWorld);
-	
-	int status= static_cast<OgreBlend*>(blend)->_readFile(fname);
-	if (status)
+	gkEngine *eng = new gkEngine();
+	eng->getUserDefs().rendersystem = gkFindRenderSystem(OGRE_RS_D3D9);
+	eng ->initialize(false);
+	if (eng->isInitialized())
 	{
-		blend->convertAllObjects();
+		OgreBlend *blend= new OgreBlend(physicsWorld);
+		
+		int status= static_cast<OgreBlend*>(blend)->_readFile(fname);
+		if (status)
+		{
+			blend->convertAllObjects();
 
-		gkEngine &eng= gkEngine::getSingleton();
-		eng.initializeWindow(Ogre::String("OgreKit Test (Press Q to exit) [") + fname + "]", 800, 600, false);
 
+			eng->initializeWindow(Ogre::String("OgreKit Test (Press Q to exit) [") + fname + "] - " + 
+				getRenderSystemString(eng->getUserDefs().rendersystem), 800, 600, false);
+			//eng->initializeWindow("", 1360, 768, true);
 
-		//eng.initializeWindow("", 1360, 768, true);
-		static_cast<OgreBlend*>(blend)->load();
-		eng.run();
+			static_cast<OgreBlend*>(blend)->load();
+			eng->run();
+		}
+
+		delete blend;
 	}
 
-	delete blend;
+	delete eng;
 	delete physicsWorld;
 	delete constraintSolver;
 	delete dispatcher;

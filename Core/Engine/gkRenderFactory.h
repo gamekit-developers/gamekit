@@ -33,21 +33,21 @@ class Root;
 class Plugin;
 }
 
+typedef enum OgreRenderSystem
+{
+	OGRE_RS_GL,
+	OGRE_RS_GLES,
+	OGRE_RS_D3D9,
+	OGRE_RS_D3D10,
+	OGRE_RS_UNKNOWN,
+}OgreRenderSystem;
+
+extern OgreRenderSystem gkFindRenderSystem(OgreRenderSystem wanted);
 
 
 // ----------------------------------------------------------------------------
 class gkRenderFactoryPrivate
 {
-public:
-
-	typedef enum OgreRenderSystem
-	{
-		OGRE_RS_GL,
-		OGRE_RS_GLES,
-		OGRE_RS_D3D9,
-		OGRE_RS_D3D10,
-	}OgreRenderSystem;
-
 public:
 	gkRenderFactoryPrivate();
 	~gkRenderFactoryPrivate();

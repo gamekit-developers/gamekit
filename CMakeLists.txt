@@ -54,12 +54,41 @@ set(OGREKIT_BULLET_INCLUDE      ${OGREKIT_SOURCE_DIR}/Dependencies/Source/bullet
 set(OGREKIT_OIS_INCLUDE         ${OGREKIT_SOURCE_DIR}/Dependencies/Source/OIS/include)
 
 
+option(OGREKIT_BUILD_GLRS		"Enable the OpenGL render system"		ON)
 
-## TODO ADD Options/Config
-set(OGRE_BUILD_RENDERSYSTEM_GL  TRUE)
-set(OPENGL_FOUND                TRUE)
-set(OGREKIT_GLRS_LIBS           RenderSystem_GL)
-set(OGREKIT_GLRS_ROOT           ${OGRELITE_SOURCE_DIR}/RenderSystems/GL)
+if (OPENGL_FOUND AND OGREKIT_BUILD_GLRS)
+
+	set(OGRE_BUILD_RENDERSYSTEM_GL  TRUE)
+	set(OGREKIT_GLRS_LIBS           RenderSystem_GL)
+	set(OGREKIT_GLRS_ROOT           ${OGRELITE_SOURCE_DIR}/RenderSystems/GL)
+
+endif()
+
+set(OGREKIT_MINGW_DIRECT3D TRUE)
+
+if (CMAKE_COMPILER_IS_GNUCXX)
+	# Some Issues with unresolved symbols
+	set(OGREKIT_MINGW_DIRECT3D FALSE)
+endif()
+
+
+if (WIN32 AND OGREKIT_MINGW_DIRECT3D)
+	option(OGREKIT_BUILD_D3D9RS		"Enable the Direct3D 9 render system"	ON)
+	option(OGREKIT_BUILD_D3D10RS	"Enable the Direct3D 10 render system"	OFF)
+
+	if (DirectX_FOUND AND OGREKIT_BUILD_D3D9RS)
+		set(OGRE_BUILD_RENDERSYSTEM_D3D9	TRUE)
+		set(OGREKIT_D3D9_LIBS				RenderSystem_Direct3D9)
+		set(OGREKIT_D3D9_ROOT				${OGRELITE_SOURCE_DIR}/RenderSystems/Direct3D9)
+	endif()
+
+	if (DirectX_FOUND AND OGREKIT_BUILD_D3D10RS)
+		set(OGRE_BUILD_RENDERSYSTEM_D3D10	TRUE)
+		set(OGREKIT_D3D10_LIBS				RenderSystem_Direct3D10)
+		set(OGREKIT_D3D10_ROOT				${OGRELITE_SOURCE_DIR}/RenderSystems/Direct3D10)
+	endif()
+
+endif()
 
 
 subdirs(Dependencies)
@@ -67,6 +96,6 @@ subdirs(OgreLite)
 subdirs(Core)
 
 # Tests for this setup
-subdirs(Tests/ImplTest)
+#subdirs(Tests/ImplTest)
 subdirs(Tests/OgreKit)
 subdirs(Tests/ScriptTest)

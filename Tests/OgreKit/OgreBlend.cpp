@@ -366,15 +366,13 @@ OgreBlend::OgreBlend(class btDynamicsWorld* destinationWorld) :
 	BulletBlendReaderNew(destinationWorld),
 	m_file(0), m_scene(0), m_blenScene(0)
 {
-	m_engine = new gkEngine();
-	m_engine->initialize(false);
+	m_engine = gkEngine::getSingletonPtr();
 }
 
 
 OgreBlend::~OgreBlend()
 {
 	delete m_file;
-	delete m_engine;
 }
 
 

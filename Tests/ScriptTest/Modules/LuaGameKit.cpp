@@ -33,7 +33,6 @@
 
 #include "Loaders/gkBlendFile.h"
 
-
 #define ModuleName "GameKit"
 
 struct LuaGameKit;
@@ -440,6 +439,16 @@ int LuaGameKit::Set(LuaState *L)
 	char *var= 0;
 	if (LuaBind::getArg(L, 0, &var) && var)
 	{
+
+		if (LuaCharEq(var, "rendersystem"))
+		{
+			int rs;
+			if (!LuaBind::getArg(L, 1, &rs))
+				return LuaBind::seterror(L, "invalid integer for %s", var);
+
+			defs.rendersystem= gkFindRenderSystem((OgreRenderSystem)rs);
+		}
+
 		if (LuaCharEq(var, "title"))
 		{
 			char *title;
@@ -580,6 +589,11 @@ void LuaGameKit_initialize(LuaState *L)
 {
 	int tval= LuaBind::beginBinding(L);
 	LuaBind::table(L, ModuleName);
+
+	LuaBind::set(L, "OGRE_RS_GL",	(int)OGRE_RS_GL);
+	LuaBind::set(L, "OGRE_RS_GLES", (int)OGRE_RS_GLES);
+	LuaBind::set(L, "OGRE_RS_D3D9",	(int)OGRE_RS_D3D9);
+	LuaBind::set(L, "OGRE_RS_D3D10",(int)OGRE_RS_D3D10);
 
 	LuaBind::set(L, &LuaGameKit::Type);
 	LuaBind::set(L, &LuaBlendFile::Type);

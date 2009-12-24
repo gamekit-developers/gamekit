@@ -137,6 +137,13 @@ void gkEngine::initialize(bool autoCreateWindow)
 
 	gkUserDefs &defs= getUserDefs();
 	gkLogger::enable(defs.log, defs.verbose);
+
+	if (defs.rendersystem == OGRE_RS_UNKNOWN)
+	{
+		gkPrintf("Unknown rendersystem!");
+		return;
+	}
+
 	mRoot= new Root("", "");
 
 	new gkSceneObjectManager();
@@ -145,7 +152,7 @@ void gkEngine::initialize(bool autoCreateWindow)
 
 	gkScriptManager::initialize();
 
-	mPrivate->plugin_factory->createRenderSystem(mRoot, gkRenderFactoryPrivate::OGRE_RS_GL);
+	mPrivate->plugin_factory->createRenderSystem(mRoot, defs.rendersystem);
 
 	const RenderSystemList &renderers= mRoot->getAvailableRenderers();
 	if (renderers.empty())
