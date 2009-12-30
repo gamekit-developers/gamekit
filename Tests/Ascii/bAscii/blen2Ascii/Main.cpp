@@ -27,7 +27,7 @@
 #include "bMain.h"
 #include "Writer.h"
 #include "Defines.h"
-#include "bAsciiKeyWords.h"
+#include "bAsciiKeywords.h"
 
 #define B2AV "Blend 2 Ascii Version 1"
 #define IDNAME(x) (x+2)

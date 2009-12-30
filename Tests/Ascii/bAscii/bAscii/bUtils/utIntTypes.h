@@ -35,7 +35,8 @@
 #		include <stddef.h>
 #	endif
 #elif UT_PLATFORM == UT_PLATFORM_LINUX
-#	include <stdint.h>
+#       include <stddef.h>
+#       include <stdint.h>
 #else
 #	include <inttypes.h>
 #endif
