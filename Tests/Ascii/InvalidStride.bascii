@@ -1,0 +1,7 @@
+MeshLibrary: {
+    Mesh: "Nil" {
+        VertexBuffer: 2 {
+            vertices = 0.096133, 0.019122, -0.995185, 0.191341;
+		}
+	}
+}    
