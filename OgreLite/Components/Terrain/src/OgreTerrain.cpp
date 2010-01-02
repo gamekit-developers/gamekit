@@ -46,6 +46,7 @@ THE SOFTWARE.
 #include "OgrePlane.h"
 #include "OgreTerrainMaterialGeneratorA.h"
 #include "OgreMaterialManager.h"
+#include "OgreHardwareBufferManager.h"
 
 
 #if OGRE_COMPILER == OGRE_COMPILER_MSVC
@@ -97,6 +98,7 @@ namespace Ogre
 	ColourValue TerrainGlobalOptions::msCompositeMapAmbient = ColourValue::White;
 	ColourValue TerrainGlobalOptions::msCompositeMapDiffuse = ColourValue::White;
 	Real TerrainGlobalOptions::msCompositeMapDistance = 4000;
+	String TerrainGlobalOptions::msResourceGroup = ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME;
 	//---------------------------------------------------------------------
 	void TerrainGlobalOptions::setDefaultMaterialGenerator(TerrainMaterialGeneratorPtr gen)
 	{
@@ -119,6 +121,9 @@ namespace Ogre
 	//---------------------------------------------------------------------
 	Terrain::Terrain(SceneManager* sm)
 		: mSceneMgr(sm)
+		, mResourceGroup(StringUtil::BLANK)
+		, mIsLoaded(false)
+		, mModified(false)
 		, mHeightData(0)
 		, mDeltaData(0)
 		, mPos(Vector3::ZERO)
@@ -152,6 +157,8 @@ namespace Ogre
 		, mCpuTerrainNormalMap(0)
 		, mLastLODCamera(0)
 		, mLastLODFrame(0)
+		, mLastViewportHeight(0)
+		, mCustomGpuBufferAllocator(0)
 
 	{
 		mRootNode = sm->getRootSceneNode()->createChildSceneNode();
@@ -198,6 +205,16 @@ namespace Ogre
 			return mQuadTree->getAABB();
 	}
 	//---------------------------------------------------------------------
+	AxisAlignedBox Terrain::getWorldAABB() const
+	{
+		Matrix4 m = Matrix4::IDENTITY;
+		m.setTrans(getPosition());
+
+		AxisAlignedBox ret = getAABB();
+		ret.transformAffine(m);
+		return ret;
+	}
+	//---------------------------------------------------------------------
 	Real Terrain::getMinHeight() const
 	{
 		if (!mQuadTree)
@@ -224,22 +241,28 @@ namespace Ogre
 	//---------------------------------------------------------------------
 	void Terrain::save(const String& filename)
 	{
-		std::fstream fs;
-		fs.open(filename.c_str(), std::ios::out | std::ios::binary);
-		if (!fs)
-			OGRE_EXCEPT(Exception::ERR_CANNOT_WRITE_TO_FILE, 
-				"Can't open " + filename + " for writing", __FUNCTION__);
-
-		DataStreamPtr stream = DataStreamPtr(OGRE_NEW FileStreamDataStream(filename, &fs, false));
+		DataStreamPtr stream = Root::getSingleton().createFileStream(filename, _getDerivedResourceGroup(), true);
 		StreamSerialiser ser(stream);
 		save(ser);
-
 	}
 	//---------------------------------------------------------------------
 	void Terrain::save(StreamSerialiser& stream)
 	{
 		// wait for any queued processes to finish
 		waitForDerivedProcesses();
+
+		if (mModified)
+		{
+			// When modifying, for efficiency we only increase the max deltas at each LOD,
+			// we never reduce them (since that would require re-examining more samples)
+			// Since we now save this data in the file though, we need to make sure we've
+			// calculated the optimal
+			Rect rect;
+			rect.top = 0; rect.bottom = mSize;
+			rect.left = 0; rect.right = mSize;
+			calculateHeightDeltas(rect);
+			finaliseHeightDeltas(rect, false);
+		}
 
 		stream.writeChunkBegin(TERRAIN_CHUNK_ID, TERRAIN_CHUNK_VERSION);
 
@@ -253,54 +276,12 @@ namespace Ogre
 		stream.write(&mPos);
 		stream.write(mHeightData, mSize * mSize);
 
-		// Layer declaration
-		stream.writeChunkBegin(TERRAINLAYERDECLARATION_CHUNK_ID, TERRAINLAYERDECLARATION_CHUNK_VERSION);
-		//  samplers
-		uint8 numSamplers = (uint8)mLayerDecl.samplers.size();
-		stream.write(&numSamplers);
-		for (TerrainLayerSamplerList::const_iterator i = mLayerDecl.samplers.begin(); 
-			i != mLayerDecl.samplers.end(); ++i)
-		{
-			const TerrainLayerSampler& sampler = *i;
-			stream.writeChunkBegin(TERRAINLAYERSAMPLER_CHUNK_ID, TERRAINLAYERSAMPLER_CHUNK_VERSION);
-			stream.write(&sampler.alias);
-			uint8 pixFmt = (uint8)sampler.format;
-			stream.write(&pixFmt);
-			stream.writeChunkEnd(TERRAINLAYERSAMPLER_CHUNK_ID);
-		}
-		//  elements
-		uint8 numElems = (uint8)mLayerDecl.elements.size();
-		stream.write(&numElems);
-		for (TerrainLayerSamplerElementList::const_iterator i = mLayerDecl.elements.begin(); 
-			i != mLayerDecl.elements.end(); ++i)
-		{
-			const TerrainLayerSamplerElement& elem= *i;
-			stream.writeChunkBegin(TERRAINLAYERSAMPLERELEMENT_CHUNK_ID, TERRAINLAYERSAMPLERELEMENT_CHUNK_VERSION);
-			stream.write(&elem.source);
-			uint8 sem = (uint8)elem.semantic;
-			stream.write(&sem);
-			stream.write(&elem.elementStart);
-			stream.write(&elem.elementCount);
-			stream.writeChunkEnd(TERRAINLAYERSAMPLERELEMENT_CHUNK_ID);
-		}
-		stream.writeChunkEnd(TERRAINLAYERDECLARATION_CHUNK_ID);
+		writeLayerDeclaration(mLayerDecl, stream);
 
 		// Layers
 		checkLayers(false);
 		uint8 numLayers = (uint8)mLayers.size();
-		stream.write(&numLayers);
-		for (LayerInstanceList::const_iterator i = mLayers.begin(); i != mLayers.end(); ++i)
-		{
-			const LayerInstance& inst = *i;
-			stream.writeChunkBegin(TERRAINLAYERINSTANCE_CHUNK_ID, TERRAINLAYERINSTANCE_CHUNK_VERSION);
-			stream.write(&inst.worldSize);
-			for (StringVector::const_iterator t = inst.textureNames.begin(); 
-				t != inst.textureNames.end(); ++t)
-			{
-				stream.write(&(*t));
-			}
-			stream.writeChunkEnd(TERRAINLAYERINSTANCE_CHUNK_ID);
-		}
+		writeLayerInstanceList(mLayers, stream);
 
 		// Packed layer blend data
 		if(!mCpuBlendMapStorage.empty())
@@ -371,7 +352,7 @@ namespace Ogre
 			stream.writeChunkBegin(TERRAINDERIVEDDATA_CHUNK_ID, TERRAINDERIVEDDATA_CHUNK_VERSION);
 			String colourDataType("colourmap");
 			stream.write(&colourDataType);
-			stream.write(&mSize);
+			stream.write(&mGlobalColourMapSize);
 			if (mCpuColourMapStorage)
 			{
 				// save from CPU data if it's there, it means GPU data was never created
@@ -436,31 +417,145 @@ namespace Ogre
 			stream.writeChunkEnd(TERRAINDERIVEDDATA_CHUNK_ID);
 		}
 
-		// TODO - write deltas
+		// write deltas
+		stream.write(mDeltaData, mSize * mSize);
+		// write the quadtree
+		mQuadTree->save(stream);
 
 		stream.writeChunkEnd(TERRAIN_CHUNK_ID);
+
+		mModified = false;
+
+	}
+	//---------------------------------------------------------------------
+	void Terrain::writeLayerDeclaration(const TerrainLayerDeclaration& decl, StreamSerialiser& stream)
+	{
+		// Layer declaration
+		stream.writeChunkBegin(TERRAINLAYERDECLARATION_CHUNK_ID, TERRAINLAYERDECLARATION_CHUNK_VERSION);
+		//  samplers
+		uint8 numSamplers = (uint8)decl.samplers.size();
+		stream.write(&numSamplers);
+		for (TerrainLayerSamplerList::const_iterator i = decl.samplers.begin(); 
+			i != decl.samplers.end(); ++i)
+		{
+			const TerrainLayerSampler& sampler = *i;
+			stream.writeChunkBegin(TERRAINLAYERSAMPLER_CHUNK_ID, TERRAINLAYERSAMPLER_CHUNK_VERSION);
+			stream.write(&sampler.alias);
+			uint8 pixFmt = (uint8)sampler.format;
+			stream.write(&pixFmt);
+			stream.writeChunkEnd(TERRAINLAYERSAMPLER_CHUNK_ID);
+		}
+		//  elements
+		uint8 numElems = (uint8)decl.elements.size();
+		stream.write(&numElems);
+		for (TerrainLayerSamplerElementList::const_iterator i = decl.elements.begin(); 
+			i != decl.elements.end(); ++i)
+		{
+			const TerrainLayerSamplerElement& elem= *i;
+			stream.writeChunkBegin(TERRAINLAYERSAMPLERELEMENT_CHUNK_ID, TERRAINLAYERSAMPLERELEMENT_CHUNK_VERSION);
+			stream.write(&elem.source);
+			uint8 sem = (uint8)elem.semantic;
+			stream.write(&sem);
+			stream.write(&elem.elementStart);
+			stream.write(&elem.elementCount);
+			stream.writeChunkEnd(TERRAINLAYERSAMPLERELEMENT_CHUNK_ID);
+		}
+		stream.writeChunkEnd(TERRAINLAYERDECLARATION_CHUNK_ID);
+	}
+	//---------------------------------------------------------------------
+	bool Terrain::readLayerDeclaration(StreamSerialiser& stream, TerrainLayerDeclaration& targetdecl)
+	{
+		if (!stream.readChunkBegin(TERRAINLAYERDECLARATION_CHUNK_ID, TERRAINLAYERDECLARATION_CHUNK_VERSION))
+			return false;
+		//  samplers
+		uint8 numSamplers;
+		stream.read(&numSamplers);
+		targetdecl.samplers.resize(numSamplers);
+		for (uint8 s = 0; s < numSamplers; ++s)
+		{
+			if (!stream.readChunkBegin(TERRAINLAYERSAMPLER_CHUNK_ID, TERRAINLAYERSAMPLER_CHUNK_VERSION))
+				return false;
+
+			stream.read(&(targetdecl.samplers[s].alias));
+			uint8 pixFmt;
+			stream.read(&pixFmt);
+			targetdecl.samplers[s].format = (PixelFormat)pixFmt;
+			stream.readChunkEnd(TERRAINLAYERSAMPLER_CHUNK_ID);
+		}
+		//  elements
+		uint8 numElems;
+		stream.read(&numElems);
+		targetdecl.elements.resize(numElems);
+		for (uint8 e = 0; e < numElems; ++e)
+		{
+			if (!stream.readChunkBegin(TERRAINLAYERSAMPLERELEMENT_CHUNK_ID, TERRAINLAYERSAMPLERELEMENT_CHUNK_VERSION))
+				return false;
+
+			stream.read(&(targetdecl.elements[e].source));
+			uint8 sem;
+			stream.read(&sem);
+			targetdecl.elements[e].semantic = (TerrainLayerSamplerSemantic)sem;
+			stream.read(&(targetdecl.elements[e].elementStart));
+			stream.read(&(targetdecl.elements[e].elementCount));
+			stream.readChunkEnd(TERRAINLAYERSAMPLERELEMENT_CHUNK_ID);
+		}
+		stream.readChunkEnd(TERRAINLAYERDECLARATION_CHUNK_ID);
+
+		return true;
+	}
+	//---------------------------------------------------------------------
+	void Terrain::writeLayerInstanceList(const Terrain::LayerInstanceList& layers, StreamSerialiser& stream)
+	{
+		uint8 numLayers = (uint8)layers.size();
+		stream.write(&numLayers);
+		for (LayerInstanceList::const_iterator i = layers.begin(); i != layers.end(); ++i)
+		{
+			const LayerInstance& inst = *i;
+			stream.writeChunkBegin(TERRAINLAYERINSTANCE_CHUNK_ID, TERRAINLAYERINSTANCE_CHUNK_VERSION);
+			stream.write(&inst.worldSize);
+			for (StringVector::const_iterator t = inst.textureNames.begin(); 
+				t != inst.textureNames.end(); ++t)
+			{
+				stream.write(&(*t));
+			}
+			stream.writeChunkEnd(TERRAINLAYERINSTANCE_CHUNK_ID);
+		}
+
+	}
+	//---------------------------------------------------------------------
+	bool Terrain::readLayerInstanceList(StreamSerialiser& stream, size_t numSamplers, Terrain::LayerInstanceList& targetlayers)
+	{
+		uint8 numLayers;
+		stream.read(&numLayers);
+		targetlayers.resize(numLayers);
+		for (uint8 l = 0; l < numLayers; ++l)
+		{
+			if (!stream.readChunkBegin(TERRAINLAYERINSTANCE_CHUNK_ID, TERRAINLAYERINSTANCE_CHUNK_VERSION))
+				return false;
+			stream.read(&targetlayers[l].worldSize);
+			targetlayers[l].textureNames.resize(numSamplers);
+			for (size_t t = 0; t < numSamplers; ++t)
+			{
+				stream.read(&(targetlayers[l].textureNames[t]));
+			}
+			stream.readChunkEnd(TERRAINLAYERINSTANCE_CHUNK_ID);
+		}
+
+		return true;
+	}
+	//---------------------------------------------------------------------
+	const String& Terrain::_getDerivedResourceGroup() const
+	{
+		if (mResourceGroup.empty())
+			return TerrainGlobalOptions::getDefaultResourceGroup();
+		else
+			return mResourceGroup;
 	}
 	//---------------------------------------------------------------------
 	bool Terrain::prepare(const String& filename)
 	{
-		DataStreamPtr stream;
-		if (ResourceGroupManager::getSingleton().resourceExists(
-				ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, filename))
-		{
-			stream = ResourceGroupManager::getSingleton().openResource(
-				filename, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-		}
-		else
-		{
-			// try direct
-			std::ifstream *ifs = OGRE_NEW_T(std::ifstream, MEMCATEGORY_GENERAL);
-			ifs->open(filename.c_str(), std::ios::in | std::ios::binary);
-			if(!*ifs)
-				OGRE_EXCEPT(
-				Exception::ERR_FILE_NOT_FOUND, "'" + filename + "' file not found!", __FUNCTION__);
-			stream.bind(OGRE_NEW FileStreamDataStream(filename, ifs));
-		}
-
+		DataStreamPtr stream = Root::getSingleton().openFileStream(filename, 
+			_getDerivedResourceGroup());
 		StreamSerialiser ser(stream);
 		return prepare(ser);
 	}
@@ -493,64 +588,18 @@ namespace Ogre
 
 
 		// Layer declaration
-		if (!stream.readChunkBegin(TERRAINLAYERDECLARATION_CHUNK_ID, TERRAINLAYERDECLARATION_CHUNK_VERSION))
+		if (!readLayerDeclaration(stream, mLayerDecl))
 			return false;
-
-		//  samplers
-		uint8 numSamplers;
-		stream.read(&numSamplers);
-		mLayerDecl.samplers.resize(numSamplers);
-		for (uint8 s = 0; s < numSamplers; ++s)
-		{
-			if (!stream.readChunkBegin(TERRAINLAYERSAMPLER_CHUNK_ID, TERRAINLAYERSAMPLER_CHUNK_VERSION))
-				return false;
-
-			stream.read(&(mLayerDecl.samplers[s].alias));
-			uint8 pixFmt;
-			stream.read(&pixFmt);
-			mLayerDecl.samplers[s].format = (PixelFormat)pixFmt;
-			stream.readChunkEnd(TERRAINLAYERSAMPLER_CHUNK_ID);
-		}
-		//  elements
-		uint8 numElems;
-		stream.read(&numElems);
-		mLayerDecl.elements.resize(numElems);
-		for (uint8 e = 0; e < numElems; ++e)
-		{
-			if (!stream.readChunkBegin(TERRAINLAYERSAMPLERELEMENT_CHUNK_ID, TERRAINLAYERSAMPLERELEMENT_CHUNK_VERSION))
-				return false;
-
-			stream.read(&(mLayerDecl.elements[e].source));
-			uint8 sem;
-			stream.read(&sem);
-			mLayerDecl.elements[e].semantic = (TerrainLayerSamplerSemantic)sem;
-			stream.read(&(mLayerDecl.elements[e].elementStart));
-			stream.read(&(mLayerDecl.elements[e].elementCount));
-			stream.readChunkEnd(TERRAINLAYERSAMPLERELEMENT_CHUNK_ID);
-		}
-		stream.readChunkEnd(TERRAINLAYERDECLARATION_CHUNK_ID);
 		checkDeclaration();
 
 
 		// Layers
-		uint8 numLayers;
-		stream.read(&numLayers);
-		mLayers.resize(numLayers);
-		for (uint8 l = 0; l < numLayers; ++l)
-		{
-			if (!stream.readChunkBegin(TERRAINLAYERINSTANCE_CHUNK_ID, TERRAINLAYERINSTANCE_CHUNK_VERSION))
-				return false;
-			stream.read(&mLayers[l].worldSize);
-			mLayers[l].textureNames.resize(mLayerDecl.samplers.size());
-			for (size_t t = 0; t < mLayerDecl.samplers.size(); ++t)
-			{
-				stream.read(&(mLayers[l].textureNames[t]));
-			}
-			stream.readChunkEnd(TERRAINLAYERINSTANCE_CHUNK_ID);
-		}
+		if (!readLayerInstanceList(stream, mLayerDecl.samplers.size(), mLayers))
+			return false;
 		deriveUVMultipliers();
 
 		// Packed layer blend data
+		uint8 numLayers = (uint8)mLayers.size();
 		stream.read(&mLayerBlendMapSize);
 		mLayerBlendMapSizeActual = mLayerBlendMapSize; // for now, until we check
 		// load packed CPU data
@@ -577,6 +626,7 @@ namespace Ogre
 			stream.read(&sz);
 			if (name == "normalmap")
 			{
+				mNormalMapRequired = true;
 				uint8* pData = static_cast<uint8*>(OGRE_MALLOC(sz * sz * 3, MEMCATEGORY_GENERAL));
 				mCpuTerrainNormalMap = OGRE_NEW PixelBox(sz, sz, 1, PF_BYTE_RGB, pData);
 
@@ -610,22 +660,19 @@ namespace Ogre
 
 		}
 
-		stream.readChunkEnd(TERRAIN_CHUNK_ID);
-
-		mQuadTree = OGRE_NEW TerrainQuadTreeNode(this, 0, 0, 0, mSize, mNumLodLevels - 1, 0, 0);
-		mQuadTree->prepare();
-
+		// Load delta data
 		mDeltaData = OGRE_ALLOC_T(float, numVertices, MEMCATEGORY_GEOMETRY);
-		memset(mDeltaData, 0, sizeof(float) * numVertices);
-		// calculate entire terrain
-		Rect rect;
-		rect.top = 0; rect.bottom = mSize;
-		rect.left = 0; rect.right = mSize;
-		calculateHeightDeltas(rect);
-		finaliseHeightDeltas(rect, true);
+		stream.read(mDeltaData, numVertices);
+
+		// Create & load quadtree
+		mQuadTree = OGRE_NEW TerrainQuadTreeNode(this, 0, 0, 0, mSize, mNumLodLevels - 1, 0, 0);
+		mQuadTree->prepare(stream);
+
+		stream.readChunkEnd(TERRAIN_CHUNK_ID);
 
 		distributeVertexData();
 
+		mModified = false;
 
 		return true;
 	}
@@ -729,7 +776,15 @@ namespace Ogre
 		else
 		{
 			// start with flat terrain
-			memset(mHeightData, 0, sizeof(float) * mSize * mSize);
+			if (importData.constantHeight == 0)
+				memset(mHeightData, 0, sizeof(float) * mSize * mSize);
+			else
+			{
+				float* pFloat = mHeightData;
+				for (long i = 0 ; i < mSize * mSize; ++i)
+					*pFloat++ = importData.constantHeight;
+
+			}
 		}
 
 		mDeltaData = OGRE_ALLOC_T(float, numVertices, MEMCATEGORY_GEOMETRY);
@@ -746,6 +801,10 @@ namespace Ogre
 		finaliseHeightDeltas(rect, true);
 
 		distributeVertexData();
+
+		// Imported data is treated as modified because it's not saved
+		mModified = true;
+
 
 		return true;
 
@@ -949,6 +1008,9 @@ namespace Ogre
 	//---------------------------------------------------------------------
 	void Terrain::load()
 	{
+		if (mIsLoaded)
+			return;
+
 		if (mQuadTree)
 			mQuadTree->load();
 		
@@ -960,12 +1022,24 @@ namespace Ogre
 		
 		mMaterialGenerator->requestOptions(this);
 
+		mIsLoaded = true;
+
 	}
 	//---------------------------------------------------------------------
 	void Terrain::unload()
 	{
+		if (!mIsLoaded)
+			return;
+
 		if (mQuadTree)
 			mQuadTree->unload();
+
+		// free own buffers if used, but not custom
+		mDefaultGpuBufferAllocator.freeAllBuffers();
+
+		mIsLoaded = false;
+		mModified = false;
+
 	}
 	//---------------------------------------------------------------------
 	void Terrain::unprepare()
@@ -1138,7 +1212,8 @@ namespace Ogre
 			{
 			case WORLD_SPACE:
 				// In all cases, transition to local space
-				outVec = outVec - mPos;
+				if (translation)
+					outVec -= mPos;
 				currSpace = LOCAL_SPACE;
 				break;
 			case LOCAL_SPACE:
@@ -1154,8 +1229,10 @@ namespace Ogre
 					// go via terrain space
 					outVec = convertWorldToTerrainAxes(outVec);
 					if (translation)
+					{
 						outVec.x -= mBase; outVec.y -= mBase;
-					outVec.x /= (mSize - 1) * mScale; outVec.y /= (mSize - 1) * mScale;
+						outVec.x /= (mSize - 1) * mScale; outVec.y /= (mSize - 1) * mScale;
+					}
 					currSpace = TERRAIN_SPACE;
 					break;
 				};
@@ -1166,25 +1243,31 @@ namespace Ogre
 				case WORLD_SPACE:
 				case LOCAL_SPACE:
 					// go via local space
-					outVec.x *= (mSize - 1) * mScale; outVec.y *= (mSize - 1) * mScale;
 					if (translation)
+					{
+						outVec.x *= (mSize - 1) * mScale; outVec.y *= (mSize - 1) * mScale;
 						outVec.x += mBase; outVec.y += mBase;
+					}
 					outVec = convertTerrainToWorldAxes(outVec);
 					currSpace = LOCAL_SPACE;
 					break;
 				case POINT_SPACE:
-					outVec.x *= (mSize - 1); outVec.y *= (mSize - 1); 
-					// rounding up/down
-					// this is why POINT_SPACE is the last on the list, because it loses data
-					outVec.x = static_cast<Real>(static_cast<int>(outVec.x + 0.5));
-					outVec.y = static_cast<Real>(static_cast<int>(outVec.y + 0.5));
+					if (translation)
+					{
+						outVec.x *= (mSize - 1); outVec.y *= (mSize - 1); 
+						// rounding up/down
+						// this is why POINT_SPACE is the last on the list, because it loses data
+						outVec.x = static_cast<Real>(static_cast<int>(outVec.x + 0.5));
+						outVec.y = static_cast<Real>(static_cast<int>(outVec.y + 0.5));
+					}
 					currSpace = POINT_SPACE;
 					break;
 				};
 				break;
 			case POINT_SPACE:
 				// always go via terrain space
-				outVec.x /= (mSize - 1); outVec.y /= (mSize - 1); 
+				if (translation)
+					outVec.x /= (mSize - 1); outVec.y /= (mSize - 1); 
 				currSpace = TERRAIN_SPACE;
 				break;
 
@@ -1193,25 +1276,52 @@ namespace Ogre
 
 	}
 	//---------------------------------------------------------------------
+	void Terrain::convertWorldToTerrainAxes(Alignment align, const Vector3& worldVec, Vector3* terrainVec) 
+	{
+		switch (align)
+		{
+		case ALIGN_X_Z:
+			terrainVec->z = worldVec.y;
+			terrainVec->x = worldVec.x;
+			terrainVec->y = -worldVec.z;
+			break;
+		case ALIGN_Y_Z:
+			terrainVec->z = worldVec.x;
+			terrainVec->x = -worldVec.z;
+			terrainVec->y = worldVec.y;
+			break;
+		case ALIGN_X_Y:
+			*terrainVec = worldVec;
+			break;
+		};
+
+	}
+	//---------------------------------------------------------------------
+	void Terrain::convertTerrainToWorldAxes(Alignment align, const Vector3& terrainVec, Vector3* worldVec)
+	{
+		switch (align)
+		{
+		case ALIGN_X_Z:
+			worldVec->x = terrainVec.x;
+			worldVec->y = terrainVec.z;
+			worldVec->z = -terrainVec.y;
+			break;
+		case ALIGN_Y_Z:
+			worldVec->x = terrainVec.z;
+			worldVec->y = terrainVec.y;
+			worldVec->z = -terrainVec.x;
+			break;
+		case ALIGN_X_Y:
+			*worldVec = terrainVec;
+			break;
+		};
+
+	}
+	//---------------------------------------------------------------------
 	Vector3 Terrain::convertWorldToTerrainAxes(const Vector3& inVec) const
 	{
 		Vector3 ret;
-		switch (mAlign)
-		{
-		case ALIGN_X_Z:
-			ret.z = inVec.y;
-			ret.x = inVec.x;
-			ret.y = -inVec.z;
-			break;
-		case ALIGN_Y_Z:
-			ret.z = inVec.x;
-			ret.x = -inVec.z;
-			ret.y = inVec.y;
-			break;
-		case ALIGN_X_Y:
-			ret = inVec;
-			break;
-		};
+		convertWorldToTerrainAxes(mAlign, inVec, &ret);
 
 		return ret;
 	}
@@ -1219,22 +1329,7 @@ namespace Ogre
 	Vector3 Terrain::convertTerrainToWorldAxes(const Vector3& inVec) const
 	{
 		Vector3 ret;
-		switch (mAlign)
-		{
-		case ALIGN_X_Z:
-			ret.x = inVec.x;
-			ret.y = inVec.z;
-			ret.z = -inVec.y;
-			break;
-		case ALIGN_Y_Z:
-			ret.x = inVec.z;
-			ret.y = inVec.y;
-			ret.z = -inVec.x;
-			break;
-		case ALIGN_X_Y:
-			ret = inVec;
-			break;
-		};
+		convertTerrainToWorldAxes(mAlign, inVec, &ret);
 
 		return ret;
 	}
@@ -1575,11 +1670,15 @@ namespace Ogre
 		mDirtyGeometryRectForNeighbours.merge(rect);
 		mDirtyDerivedDataRect.merge(rect);
 		mCompositeMapDirtyRect.merge(rect);
+
+		mModified = true;
+
 	}
 	//---------------------------------------------------------------------
 	void Terrain::_dirtyCompositeMapRect(const Rect& rect)
 	{
 		mCompositeMapDirtyRect.merge(rect);
+		mModified = true;
 	}
 	//---------------------------------------------------------------------
 	void Terrain::update(bool synchronous)
@@ -1604,6 +1703,7 @@ namespace Ogre
 	{
 		if (!mDirtyDerivedDataRect.isNull() || !mDirtyLightmapFromNeighboursRect.isNull())
 		{
+			mModified = true;
 			if (mDerivedDataUpdateInProgress)
 			{
 				// Don't launch many updates, instead wait for the other one 
@@ -1924,6 +2024,10 @@ namespace Ogre
 	void Terrain::preFindVisibleObjects(SceneManager* source, 
 		SceneManager::IlluminationRenderStage irs, Viewport* v)
 	{
+		// Early-out
+		if (!mIsLoaded)
+			return;
+
 		// check deferred updates
 		unsigned long currMillis = Root::getSingleton().getTimer()->getMilliseconds();
 		unsigned long elapsedMillis = currMillis - mLastMillis;
@@ -1938,15 +2042,16 @@ namespace Ogre
 				updateCompositeMap();
 		}
 		mLastMillis = currMillis;
-		// only calculate LOD once per LOD camera, per frame
-		// shadow renders will pick up LOD camera from main viewport and so LOD will only
-		// be calculated once for that case
+		// only calculate LOD once per LOD camera, per frame, per viewport height
 		const Camera* lodCamera = v->getCamera()->getLodCamera();
 		unsigned long frameNum = Root::getSingleton().getNextFrameNumber();
-		if (mLastLODCamera != lodCamera || frameNum != mLastLODFrame)
+		int vpHeight = v->getActualHeight();
+		if (mLastLODCamera != lodCamera || frameNum != mLastLODFrame
+			|| mLastViewportHeight != vpHeight)
 		{
 			mLastLODCamera = lodCamera;
 			mLastLODFrame = frameNum;
+			mLastViewportHeight = vpHeight;
 			calculateCurrentLod(v);
 		}
 	}
@@ -2198,6 +2303,7 @@ namespace Ogre
 			mMaterialGenerator->updateParams(mMaterial, this);
 			if(mCompositeMapRequired)
 				mMaterialGenerator->updateParamsForCompositeMap(mCompositeMapMaterial, this);
+			mMaterialParamsDirty = false;
 
 		}
 
@@ -2357,7 +2463,7 @@ namespace Ogre
 			// in normal circumstances, so we don't want TU_DYNAMIC. Also we will 
 			// read it (if we've cleared local temp areas) so no WRITE_ONLY
 			mBlendTextureList[i] = TextureManager::getSingleton().createManual(
-				msBlendTextureGenerator.generate(), ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, 
+				msBlendTextureGenerator.generate(), _getDerivedResourceGroup(), 
 				TEX_TYPE_2D, mLayerBlendMapSize, mLayerBlendMapSize, 1, 0, fmt, TU_STATIC);
 
 			mLayerBlendMapSizeActual = mBlendTextureList[i]->getWidth();
@@ -2405,7 +2511,7 @@ namespace Ogre
 		{
 			// create
 			mTerrainNormalMap = TextureManager::getSingleton().createManual(
-				mMaterialName + "/nm", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, 
+				mMaterialName + "/nm", _getDerivedResourceGroup(), 
 				TEX_TYPE_2D, mSize, mSize, 1, 0, PF_BYTE_RGB, TU_STATIC);
 
 			// Upload loaded normal data if present
@@ -2589,8 +2695,6 @@ namespace Ogre
 			ddres.remainingTypeMask &= ~ DERIVED_DATA_LIGHTMAP;
 		}
 
-		// TODO other data
-
 		ddres.terrain = ddr.terrain;
 		WorkQueue::Response* response = OGRE_NEW WorkQueue::Response(req, true, Any(ddres));
 		return response;
@@ -2624,8 +2728,6 @@ namespace Ogre
 			mCompositeMapDirtyRectLightmapUpdate = true;
 		}
 		
-		// TODO other data
-
 		mDerivedDataUpdateInProgress = false;
 
 		// Re-trigger another request if there are still things to do, or if
@@ -2853,8 +2955,6 @@ namespace Ogre
 	//---------------------------------------------------------------------
 	PixelBox* Terrain::calculateLightmap(const Rect& rect, const Rect& extraTargetRect, Rect& outFinalRect)
 	{
-		// TODO - handle neighbour page casting
-
 		// as well as calculating the lighting changes for the area that is
 		// dirty, we also need to calculate the effect on casting shadow on
 		// other areas. To do this, we project the dirt rect by the light direction
@@ -2914,9 +3014,6 @@ namespace Ogre
 				// than world size
 				std::pair<bool, Vector3> rayHit = rayIntersects(ray, true, mWorldSize);
 
-				// TODO - cast multiple rays to antialias?
-				// TODO - fade by distance?
-
 				if (rayHit.first)
 					litVal = 0.0f;
 
@@ -2969,6 +3066,7 @@ namespace Ogre
 		// All done in the render thread
 		if (mCompositeMapRequired && !mCompositeMapDirtyRect.isNull())
 		{
+			mModified = true;
 			createOrDestroyGPUCompositeMap();
 			if (mCompositeMapDirtyRectLightmapUpdate &&
 				(mCompositeMapDirtyRect.width() < mSize	|| mCompositeMapDirtyRect.height() < mSize))
@@ -3042,8 +3140,9 @@ namespace Ogre
 		{
 			// create
 			mColourMap = TextureManager::getSingleton().createManual(
-				mMaterialName + "/cm", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, 
-				TEX_TYPE_2D, mGlobalColourMapSize, mGlobalColourMapSize, MIP_DEFAULT, PF_BYTE_RGB);
+				mMaterialName + "/cm", _getDerivedResourceGroup(), 
+				TEX_TYPE_2D, mGlobalColourMapSize, mGlobalColourMapSize, MIP_DEFAULT, 
+				PF_BYTE_RGB, TU_STATIC);
 
 			if (mCpuColourMapStorage)
 			{
@@ -3071,7 +3170,7 @@ namespace Ogre
 		{
 			// create
 			mLightmap = TextureManager::getSingleton().createManual(
-				mMaterialName + "/lm", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, 
+				mMaterialName + "/lm", _getDerivedResourceGroup(), 
 				TEX_TYPE_2D, mLightmapSize, mLightmapSize, 0, PF_L8, TU_STATIC);
 
 			mLightmapSizeActual = mLightmap->getWidth();
@@ -3112,7 +3211,7 @@ namespace Ogre
 		{
 			// create
 			mCompositeMap = TextureManager::getSingleton().createManual(
-				mMaterialName + "/comp", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, 
+				mMaterialName + "/comp", _getDerivedResourceGroup(), 
 				TEX_TYPE_2D, mCompositeMapSize, mCompositeMapSize, 0, PF_BYTE_RGBA, TU_STATIC);
 
 			mCompositeMapSizeActual = mCompositeMap->getWidth();
@@ -3157,6 +3256,8 @@ namespace Ogre
 	{
 		if (mNeighbours[index] != neighbour)
 		{
+			assert(neighbour != this && "Can't set self as own neighbour!");
+
 			// detach existing
 			if (mNeighbours[index] && notifyOther)
 				mNeighbours[index]->setNeighbour(getOppositeNeighbour(index), 0, false, false);
@@ -3181,6 +3282,42 @@ namespace Ogre
 		intindex += NEIGHBOUR_COUNT / 2;
 		intindex = intindex % NEIGHBOUR_COUNT;
 		return static_cast<NeighbourIndex>(intindex);
+	}
+	//---------------------------------------------------------------------
+	Terrain::NeighbourIndex Terrain::getNeighbourIndex(long x, long y)
+	{
+		if (x < 0)
+		{
+			if (y < 0)
+				return NEIGHBOUR_SOUTHWEST;
+			else if (y > 0)
+				return NEIGHBOUR_NORTHWEST;
+			else
+				return NEIGHBOUR_WEST;
+		}
+		else if (x > 0)
+		{
+			if (y < 0)
+				return NEIGHBOUR_SOUTHEAST;
+			else if (y > 0)
+				return NEIGHBOUR_NORTHEAST;
+			else
+				return NEIGHBOUR_EAST;
+		}
+
+		if (y < 0)
+		{
+			if (x == 0)
+				return NEIGHBOUR_SOUTH;
+		}
+		else if (y > 0)
+		{
+			if (x == 0)
+				return NEIGHBOUR_NORTH;
+		}
+
+		return NEIGHBOUR_NORTH;
+
 	}
 	//---------------------------------------------------------------------
 	void Terrain::notifyNeighbours()
@@ -3521,51 +3658,73 @@ namespace Ogre
 	//---------------------------------------------------------------------
 	Terrain* Terrain::raySelectNeighbour(const Ray& ray, Real distanceLimit /* = 0 */)
 	{
-		Real dNear, dFar;
-		Ray localRay(ray.getOrigin() - getPosition(), ray.getDirection());
+		Ray modifiedRay(ray.getOrigin(), ray.getDirection());
 		// Move back half a square - if we're on the edge of the AABB we might
 		// miss the intersection otherwise; it's ok for everywhere else since
 		// we want the far intersection anyway
-		localRay.setOrigin(localRay.getPoint(-mWorldSize/mSize * 0.5f));
-		if (Math::intersects(localRay, getAABB(), &dNear, &dFar))
+		modifiedRay.setOrigin(modifiedRay.getPoint(-mWorldSize/mSize * 0.5f));
+
+		// transform into terrain space
+		Vector3 tPos, tDir;
+		convertPosition(WORLD_SPACE, modifiedRay.getOrigin(), TERRAIN_SPACE, tPos);
+		convertDirection(WORLD_SPACE, modifiedRay.getDirection(), TERRAIN_SPACE, tDir);
+		// Discard rays with no lateral component
+		if (Math::RealEqual(tDir.x, 0.0f, 1e-4) && Math::RealEqual(tDir.y, 0.0f, 1e-4))
+			return 0;
+
+		Ray terrainRay(tPos, tDir);
+		// Intersect with boundary planes 
+		// Only collide with the positive (exit) side of the plane, because we may be
+		// querying from a point outside ourselves if we've cascaded more than once
+		Real dist = std::numeric_limits<Real>::max();
+		std::pair<bool, Real> intersectResult;
+		if (tDir.x < 0.0f)
 		{
-			// discard out of range
-			if (dFar <= 0 || (distanceLimit && dFar > distanceLimit))
-				return 0;
-
-			// we're interested in the exit point
-			// convert to standard form so we can use x/y always
-			Ray terrainRay(convertWorldToTerrainAxes(localRay.getOrigin()), 
-				convertWorldToTerrainAxes(localRay.getDirection()));
-
-
-			Vector3 terrainIntersectPos = terrainRay.getPoint(dFar);
-			Real x = terrainIntersectPos.x;
-			Real y = terrainIntersectPos.y;
-			Real dx = terrainRay.getDirection().x;
-			Real dy = terrainRay.getDirection().y;
-
-			if (Math::RealEqual(Math::Abs(x), Math::Abs(y)))
-			{
-				if (x > 0 && y > 0 && dx > 0 && dy > 0)
-					return getNeighbour(NEIGHBOUR_NORTHEAST);
-				if (x > 0 && y < 0 && dx > 0 && dy < 0)
-					return getNeighbour(NEIGHBOUR_SOUTHEAST);
-				if (x < 0 && y > 0 && dx < 0 && dy > 0)
-					return getNeighbour(NEIGHBOUR_NORTHWEST);
-				if (x < 0 && y < 0 && dx < 0 && dy < 0)
-					return getNeighbour(NEIGHBOUR_SOUTHWEST);
-			}
-			if (x > 0 && x > y && dx > 0)
-				return getNeighbour(NEIGHBOUR_EAST);
-			if (x < 0 && x < y && dx < 0)
-				return getNeighbour(NEIGHBOUR_WEST);
-			if (y > 0 && y > x && dy > 0)
-				return getNeighbour(NEIGHBOUR_NORTH);
-			if (y < 0 && y < x && dy < 0)
-				return getNeighbour(NEIGHBOUR_SOUTH);
-
+			intersectResult = Math::intersects(terrainRay, Plane(Vector3::UNIT_X, Vector3::ZERO));
+			if (intersectResult.first && intersectResult.second < dist)
+				dist = intersectResult.second;
 		}
+		else if (tDir.x > 0.0f)
+		{
+			intersectResult = Math::intersects(terrainRay, Plane(Vector3::NEGATIVE_UNIT_X, Vector3(1,0,0)));
+			if (intersectResult.first && intersectResult.second < dist)
+				dist = intersectResult.second;
+		}
+		if (tDir.y < 0.0f)
+		{
+			intersectResult = Math::intersects(terrainRay, Plane(Vector3::UNIT_Y, Vector3::ZERO));
+			if (intersectResult.first && intersectResult.second < dist)
+				dist = intersectResult.second;
+		}
+		else if (tDir.y > 0.0f)
+		{
+			intersectResult = Math::intersects(terrainRay, Plane(Vector3::NEGATIVE_UNIT_Y, Vector3(0,1,0)));
+			if (intersectResult.first && intersectResult.second < dist)
+				dist = intersectResult.second;
+		}
+
+
+		// discard out of range
+		if (dist * mWorldSize > distanceLimit)
+			return 0;
+
+		Vector3 terrainIntersectPos = terrainRay.getPoint(dist);
+		Real x = terrainIntersectPos.x;
+		Real y = terrainIntersectPos.y;
+		Real dx = tDir.x;
+		Real dy = tDir.y;
+
+		// Never return diagonal directions, we will navigate those recursively anyway
+		if (Math::RealEqual(x, 1.0f, 1e-4f) && dx > 0)
+			return getNeighbour(NEIGHBOUR_EAST);
+		else if (Math::RealEqual(x, 0.0f, 1e-4f) && dx < 0)
+			return getNeighbour(NEIGHBOUR_WEST);
+		else if (Math::RealEqual(y, 1.0f, 1e-4f) && dy > 0)
+			return getNeighbour(NEIGHBOUR_NORTH);
+		else if (Math::RealEqual(y, 0.0f, 1e-4f) && dy < 0)
+			return getNeighbour(NEIGHBOUR_SOUTH);
+
+
 
 		return 0;
 	}
@@ -3612,6 +3771,309 @@ namespace Ogre
 		}
 
 	}
+	//---------------------------------------------------------------------
+	void Terrain::setGpuBufferAllocator(GpuBufferAllocator* alloc)
+	{
+		if (alloc != getGpuBufferAllocator())
+		{
+			if (isLoaded())
+				OGRE_EXCEPT(Exception::ERR_INVALID_STATE,
+				"Cannot alter the allocator when loaded!", __FUNCTION__);
+
+			mCustomGpuBufferAllocator = alloc;
+		}
+	}
+	//---------------------------------------------------------------------
+	Terrain::GpuBufferAllocator* Terrain::getGpuBufferAllocator()
+	{
+		if (mCustomGpuBufferAllocator)
+			return mCustomGpuBufferAllocator;
+		else
+			return &mDefaultGpuBufferAllocator;
+	}
+	//---------------------------------------------------------------------
+	size_t Terrain::getPositionBufVertexSize() const
+	{
+		size_t sz = 0;
+		// float3 position
+		// TODO we can compress this when shaders in use if we use parametric positioning
+		sz += sizeof(float) * 3;
+		// float2 uv
+		// TODO we can omit these where shaders are being used & calculate
+		sz += sizeof(float) * 2;
+
+		return sz;
+
+	}
+	//---------------------------------------------------------------------
+	size_t Terrain::getDeltaBufVertexSize() const
+	{
+		// float2(delta, deltaLODthreshold)
+		return sizeof(float) * 2;
+	}
+	//---------------------------------------------------------------------
+	size_t Terrain::_getNumIndexesForBatchSize(uint16 batchSize)
+	{
+		size_t mainIndexesPerRow = batchSize * 2 + 1;
+		size_t numRows = batchSize - 1;
+		size_t mainIndexCount = mainIndexesPerRow * numRows;
+		// skirts share edges, so they take 1 less row per side than batchSize, 
+		// but with 2 extra at the end (repeated) to finish the strip
+		// * 2 for the vertical line, * 4 for the sides, +2 to finish
+		size_t skirtIndexCount = (batchSize - 1) * 2 * 4 + 2;
+		return mainIndexCount + skirtIndexCount;
+
+	}
+	//---------------------------------------------------------------------
+	void Terrain::_populateIndexBuffer(uint16* pI, uint16 batchSize, 
+		uint16 vdatasize, size_t vertexIncrement, uint16 xoffset, uint16 yoffset, uint16 numSkirtRowsCols, 
+		uint16 skirtRowColSkip)
+	{
+		/* For even / odd tri strip rows, triangles are this shape:
+		6---7---8
+		| \ | \ |
+		3---4---5
+		| / | / |
+		0---1---2
+		Note how vertex rows count upwards. In order to match up the anti-clockwise
+		winding and this upward transitioning list, we need to start from the
+		right hand side. So we get (2,5,1,4,0,3) etc on even lines (right-left)
+		and (3,6,4,7,5,8) etc on odd lines (left-right). At the turn, we emit the end index 
+		twice, this forms a degenerate triangle, which lets us turn without any artefacts. 
+		So the full list in this simple case is (2,5,1,4,0,3,3,6,4,7,5,8)
+
+		Skirts are part of the same strip, so after finishing on 8, where sX is
+		the skirt vertex corresponding to main vertex X, we go
+		anticlockwise around the edge, (s8,7,s7,6,s6) to do the top skirt, 
+		then (3,s3,0,s0),(1,s1,2,s2),(5,s5,8,s8) to finish the left, bottom, and
+		right skirts respectively.
+		*/
+
+		// to issue a complete row, it takes issuing the upper and lower row
+		// and one extra index, which is the degenerate triangle and also turning
+		// around the winding
+
+		size_t rowSize = vdatasize * vertexIncrement;
+		size_t numRows = batchSize - 1;
+
+		// Start on the right
+		uint16 currentVertex = (batchSize - 1) * vertexIncrement;
+		// but, our quad area might not start at 0 in this vertex data
+		// offsets are at main terrain resolution, remember
+		uint16 columnStart = xoffset;
+		uint16 rowStart = yoffset;
+		currentVertex += rowStart * vdatasize + columnStart;
+		bool rightToLeft = true;
+		for (uint16 r = 0; r < numRows; ++r)
+		{
+			for (uint16 c = 0; c < batchSize; ++c)
+			{
+
+				*pI++ = currentVertex;
+				*pI++ = currentVertex + rowSize;
+
+				// don't increment / decrement at a border, keep this vertex for next
+				// row as we 'snake' across the tile
+				if (c+1 < batchSize)
+				{
+					currentVertex = rightToLeft ? 
+						currentVertex - vertexIncrement : currentVertex + vertexIncrement;
+				}				
+			}
+			rightToLeft = !rightToLeft;
+			currentVertex += rowSize;
+			// issue one extra index to turn winding around
+			*pI++ = currentVertex;
+		}
+
+		// Skirts
+		for (uint16 s = 0; s < 4; ++s)
+		{
+			// edgeIncrement is the index offset from one original edge vertex to the next
+			// in this row or column. Columns skip based on a row size here
+			// skirtIncrement is the index offset from one skirt vertex to the next, 
+			// because skirts are packed in rows/cols then there is no row multiplier for
+			// processing columns
+			int edgeIncrement = 0, skirtIncrement = 0;
+			switch(s)
+			{
+			case 0: // top
+				edgeIncrement = -static_cast<int>(vertexIncrement);
+				skirtIncrement = -static_cast<int>(vertexIncrement);
+				break;
+			case 1: // left
+				edgeIncrement = -static_cast<int>(rowSize);
+				skirtIncrement = -static_cast<int>(vertexIncrement);
+				break;
+			case 2: // bottom
+				edgeIncrement = static_cast<int>(vertexIncrement);
+				skirtIncrement = static_cast<int>(vertexIncrement);
+				break;
+			case 3: // right
+				edgeIncrement = static_cast<int>(rowSize);
+				skirtIncrement = static_cast<int>(vertexIncrement);
+				break;
+			}
+			// Skirts are stored in contiguous rows / columns (rows 0/2, cols 1/3)
+			uint16 skirtIndex = _calcSkirtVertexIndex(currentVertex, vdatasize, 
+				(s % 2) != 0, numSkirtRowsCols, skirtRowColSkip);
+			for (uint16 c = 0; c < batchSize - 1; ++c)
+			{
+				*pI++ = currentVertex;
+				*pI++ = skirtIndex;	
+				currentVertex += edgeIncrement;
+				skirtIndex += skirtIncrement;
+			}
+			if (s == 3)
+			{
+				// we issue an extra 2 indices to finish the skirt off
+				*pI++ = currentVertex;
+				*pI++ = skirtIndex;
+				currentVertex += edgeIncrement;
+				skirtIndex += skirtIncrement;
+			}
+		}
+
+	}
+	//---------------------------------------------------------------------
+	uint16 Terrain::_calcSkirtVertexIndex(uint16 mainIndex, uint16 vdatasize, bool isCol, 
+		uint16 numSkirtRowsCols, uint16 skirtRowColSkip)
+	{
+		// row / col in main vertex resolution
+		uint16 row = mainIndex / vdatasize;
+		uint16 col = mainIndex % vdatasize;
+
+		// skrits are after main vertices, so skip them
+		uint16 base = vdatasize * vdatasize;
+
+		// The layout in vertex data is:
+		// 1. row skirts
+		//    numSkirtRowsCols rows of resolution vertices each
+		// 2. column skirts
+		//    numSkirtRowsCols cols of resolution vertices each
+
+		// No offsets used here, this is an index into the current vertex data, 
+		// which is already relative
+		if (isCol)
+		{
+			uint16 skirtNum = col / skirtRowColSkip;
+			uint16 colbase = numSkirtRowsCols * vdatasize;
+			return base + colbase + vdatasize * skirtNum + row;
+		}
+		else
+		{
+			uint16 skirtNum = row / skirtRowColSkip;
+			return base + vdatasize * skirtNum + col;
+		}
+
+	}
+	//---------------------------------------------------------------------
+	//---------------------------------------------------------------------
+	Terrain::DefaultGpuBufferAllocator::DefaultGpuBufferAllocator()
+	{
+
+	}
+	//---------------------------------------------------------------------
+	Terrain::DefaultGpuBufferAllocator::~DefaultGpuBufferAllocator()
+	{
+		freeAllBuffers();
+	}
+	//---------------------------------------------------------------------
+	void Terrain::DefaultGpuBufferAllocator::allocateVertexBuffers(Terrain* forTerrain, 
+		size_t numVertices, HardwareVertexBufferSharedPtr& destPos, HardwareVertexBufferSharedPtr& destDelta)
+	{
+		destPos = getVertexBuffer(mFreePosBufList, forTerrain->getPositionBufVertexSize(), numVertices);
+		destDelta = getVertexBuffer(mFreeDeltaBufList, forTerrain->getDeltaBufVertexSize(), numVertices);
+
+	}
+	//---------------------------------------------------------------------
+	HardwareVertexBufferSharedPtr Terrain::DefaultGpuBufferAllocator::getVertexBuffer(
+		VBufList& list, size_t vertexSize, size_t numVertices)
+	{
+		size_t sz = vertexSize * numVertices;
+		for (VBufList::iterator i = list.begin(); i != list.end(); ++i)
+		{
+			if ((*i)->getSizeInBytes() == sz)
+			{
+				HardwareVertexBufferSharedPtr ret = *i;
+				list.erase(i);
+				return ret;
+			}
+		}
+		// Didn't find one?
+		return HardwareBufferManager::getSingleton()
+			.createVertexBuffer(vertexSize, numVertices, HardwareBuffer::HBU_STATIC_WRITE_ONLY);
+
+
+	}
+	//---------------------------------------------------------------------
+	void Terrain::DefaultGpuBufferAllocator::freeVertexBuffers(
+		const HardwareVertexBufferSharedPtr& posbuf, const HardwareVertexBufferSharedPtr& deltabuf)
+	{
+		mFreePosBufList.push_back(posbuf);
+		mFreeDeltaBufList.push_back(deltabuf);
+	}
+	//---------------------------------------------------------------------
+	HardwareIndexBufferSharedPtr Terrain::DefaultGpuBufferAllocator::getSharedIndexBuffer(uint16 batchSize, 
+		uint16 vdatasize, size_t vertexIncrement, uint16 xoffset, uint16 yoffset, uint16 numSkirtRowsCols, 
+		uint16 skirtRowColSkip)
+	{
+		uint32 hsh = hashIndexBuffer(batchSize, vdatasize, vertexIncrement, xoffset, yoffset, 
+			numSkirtRowsCols, skirtRowColSkip);
+
+		IBufMap::iterator i = mSharedIBufMap.find(hsh);
+		if (i == mSharedIBufMap.end())
+		{
+			// create new
+			size_t indexCount = Terrain::_getNumIndexesForBatchSize(batchSize);
+			HardwareIndexBufferSharedPtr ret = HardwareBufferManager::getSingleton()
+				.createIndexBuffer(HardwareIndexBuffer::IT_16BIT, indexCount, 
+				HardwareBuffer::HBU_STATIC_WRITE_ONLY);
+			uint16* pI = static_cast<uint16*>(ret->lock(HardwareBuffer::HBL_DISCARD));
+			Terrain::_populateIndexBuffer(pI, batchSize, vdatasize, vertexIncrement, xoffset, yoffset, numSkirtRowsCols, skirtRowColSkip);
+			ret->unlock();
+
+			mSharedIBufMap[hsh] = ret;
+			return ret;
+		}
+		else
+			return i->second;
+
+	}
+	//---------------------------------------------------------------------
+	void Terrain::DefaultGpuBufferAllocator::freeAllBuffers()
+	{
+		mFreePosBufList.clear();
+		mFreeDeltaBufList.clear();
+		mSharedIBufMap.clear();
+	}
+	//---------------------------------------------------------------------
+	void Terrain::DefaultGpuBufferAllocator::warmStart(size_t numInstances, uint16 terrainSize, uint16 maxBatchSize, 
+		uint16 mMinBatchSize)
+	{
+		// TODO
+
+	}
+	//---------------------------------------------------------------------
+	uint32 Terrain::DefaultGpuBufferAllocator::hashIndexBuffer(uint16 batchSize, 
+		uint16 vdatasize, size_t vertexIncrement, uint16 xoffset, uint16 yoffset, uint16 numSkirtRowsCols, 
+		uint16 skirtRowColSkip)
+	{
+		uint32 ret = 0;
+		ret = HashCombine(ret, batchSize);
+		ret = HashCombine(ret, vdatasize);
+		ret = HashCombine(ret, vertexIncrement);
+		ret = HashCombine(ret, xoffset);
+		ret = HashCombine(ret, yoffset);
+		ret = HashCombine(ret, numSkirtRowsCols);
+		ret = HashCombine(ret, skirtRowColSkip);
+		return ret;
+
+	}
+
+
+
+
 
 
 

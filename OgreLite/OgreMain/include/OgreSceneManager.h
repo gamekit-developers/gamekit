@@ -53,7 +53,7 @@ Torus Knot Software Ltd.
 #include "OgreCamera.h"
 #include "OgreInstancedGeometry.h"
 #include "OgreLodListener.h"
-
+#include "OgreRenderSystem.h"
 namespace Ogre {
 	/** \addtogroup Core
 	*  @{
@@ -74,11 +74,12 @@ namespace Ogre {
 	class DefaultRaySceneQuery;
 	class DefaultSphereSceneQuery;
 	class DefaultAxisAlignedBoxSceneQuery;
+	class CompositorChain;
 
 	/** Structure collecting together information about the visible objects
 	that have been discovered in a scene.
 	*/
-	struct VisibleObjectsBoundsInfo
+	struct _OgreExport VisibleObjectsBoundsInfo
 	{
 		/// The axis-aligned bounds of the visible objects
 		AxisAlignedBox aabb;
@@ -93,48 +94,15 @@ namespace Ogre {
 		/// The farthest object in the frustum regardless of visibility / shadow caster flags
 		Real maxDistanceInFrustum;
 
-		VisibleObjectsBoundsInfo()
-		{
-			reset();
-		}
-
-		void reset()
-		{
-			aabb.setNull();
-			receiverAabb.setNull();
-			minDistance = minDistanceInFrustum = std::numeric_limits<Real>::infinity();
-			maxDistance = maxDistanceInFrustum = 0;
-		}
-
+		VisibleObjectsBoundsInfo();
+		void reset();
 		void merge(const AxisAlignedBox& boxBounds, const Sphere& sphereBounds, 
-			const Camera* cam, bool receiver=true)
-		{
-			aabb.merge(boxBounds);
-			if (receiver)
-				receiverAabb.merge(boxBounds);
-			// use view matrix to determine distance, works with custom view matrices
-			Vector3 vsSpherePos = cam->getViewMatrix(true) * sphereBounds.getCenter();
-			Real camDistToCenter = vsSpherePos.length();
-			minDistance = (std::min)(minDistance, (std::max)((Real)0, camDistToCenter - sphereBounds.getRadius()));
-			maxDistance = (std::max)(maxDistance, camDistToCenter + sphereBounds.getRadius());
-			minDistanceInFrustum = (std::min)(minDistanceInFrustum, (std::max)((Real)0, camDistToCenter - sphereBounds.getRadius()));
-			maxDistanceInFrustum = (std::max)(maxDistanceInFrustum, camDistToCenter + sphereBounds.getRadius());
-		}
-
+			const Camera* cam, bool receiver=true);
 		/** Merge an object that is not being rendered because it's not a shadow caster, 
 			but is a shadow receiver so should be included in the range.
 		*/
 		void mergeNonRenderedButInFrustum(const AxisAlignedBox& boxBounds, 
-			const Sphere& sphereBounds, const Camera* cam)
-		{
-                        (void)boxBounds;
-			// use view matrix to determine distance, works with custom view matrices
-			Vector3 vsSpherePos = cam->getViewMatrix(true) * sphereBounds.getCenter();
-			Real camDistToCenter = vsSpherePos.length();
-			minDistanceInFrustum = (std::min)(minDistanceInFrustum, (std::max)((Real)0, camDistToCenter - sphereBounds.getRadius()));
-			maxDistanceInFrustum = (std::max)(maxDistanceInFrustum, camDistToCenter + sphereBounds.getRadius());
-
-		}
+			const Sphere& sphereBounds, const Camera* cam);
 
 
 	};
@@ -728,6 +696,9 @@ namespace Ogre {
         /// Utility class for calculating automatic parameters for gpu programs
         AutoParamDataSource* mAutoParamDataSource;
 
+		CompositorChain* mActiveCompositorChain;
+		bool mLateMaterialResolving;
+
         ShadowTechnique mShadowTechnique;
         bool mDebugShadows;
         ColourValue mShadowColour;
@@ -802,9 +773,14 @@ namespace Ogre {
         virtual void prepareShadowTextures(Camera* cam, Viewport* vp, const LightList* lightList = 0);
 
 		//A render context, used to store internal data for pausing/resuming rendering
-		//TODO GSOC : Should the struct be declared here so that other SM implementations
-		//will be able to subclass here?
-		struct RenderContext;
+		struct RenderContext
+		{
+			RenderQueue* renderQueue;	
+			Viewport* viewport;
+			Camera* camera;
+			CompositorChain* activeChain;
+			RenderSystem::RenderSystemContext* rsContext;
+		};
 
 		/** Pause rendering of the frame. This has to be called when inside a renderScene call
 			(Usually using a listener of some sort)
@@ -1659,7 +1635,7 @@ namespace Ogre {
             This method should be overridden by SceneManagers that provide
             custom world geometry that can take some time to load. They should
             return from this method a count of the number of stages of progress
-            they can report on whilst loading. During real loading (setWorldGeomtry),
+            they can report on whilst loading. During real loading (setWorldGeometry),
             they should call ResourceGroupManager::_notifyWorldGeometryProgress exactly
             that number of times when loading the geometry for real.
         @note 
@@ -2392,7 +2368,7 @@ namespace Ogre {
             Calling it regularly per frame will cause frame rate drops!
         @param rend A RenderOperation object describing the rendering op
         @param pass The Pass to use for this render
-        @param vp Pointer to the viewport to render to
+        @param vp Pointer to the viewport to render to, or 0 to use the current viewport
         @param worldMatrix The transform to apply from object to world space
         @param viewMatrix The transform to apply from world to view space
         @param projMatrix The transform to apply from view to screen space
@@ -2404,7 +2380,31 @@ namespace Ogre {
             const Matrix4& worldMatrix, const Matrix4& viewMatrix, const Matrix4& projMatrix, 
             bool doBeginEndFrame = false) ;
 
-        /** Retrieves the internal render queue, for advanced users only.
+		/** Manual rendering method for rendering a single object. 
+		@remarks
+		@param rend The renderable to issue to the pipeline
+		@param pass The pass to use
+		@param vp Pointer to the viewport to render to, or 0 to use the existing viewport
+		@param doBeginEndFrame If true, beginFrame() and endFrame() are called, 
+		otherwise not. You should leave this as false if you are calling
+		this within the main render loop.
+        @param viewMatrix The transform to apply from world to view space
+        @param projMatrix The transform to apply from view to screen space
+		@param lightScissoringClipping If true, passes that have the getLightScissorEnabled
+		and/or getLightClipPlanesEnabled flags will cause calculation and setting of 
+		scissor rectangle and user clip planes. 
+		@param doLightIteration If true, this method will issue the renderable to
+		the pipeline possibly multiple times, if the pass indicates it should be
+		done once per light
+		@param manualLightList Only applicable if doLightIteration is false, this
+		method allows you to pass in a previously determined set of lights
+		which will be used for a single render of this object.
+		*/
+		virtual void manualRender(Renderable* rend, const Pass* pass, Viewport* vp, 
+			const Matrix4& viewMatrix, const Matrix4& projMatrix, bool doBeginEndFrame = false, bool lightScissoringClipping = true, 
+			bool doLightIteration = true, const LightList* manualLightList = 0);
+
+		/** Retrieves the internal render queue, for advanced users only.
         @remarks
             The render queue is mainly used internally to manage the scene object 
 			rendering queue, it also exports some methods to allow advanced users 
@@ -3010,6 +3010,25 @@ namespace Ogre {
 		planes should be used to restrict light rendering.
 		*/
 		virtual bool getShadowUseLightClipPlanes() const { return mShadowAdditiveLightClip; }
+
+		/** Sets the active compositor chain of the current scene being rendered.
+			@note CompositorChain does this automatically, no need to call manually.
+		*/
+		virtual void _setActiveCompositorChain(CompositorChain* chain) { mActiveCompositorChain = chain; }
+
+		/** Sets whether to use late material resolving or not. If set, materials will be resolved
+			from the materials at the pass-setting stage and not at the render queue building stage.
+			This is useful when the active material scheme during the render queue building stage
+			is different from the one during the rendering stage.
+		*/
+		virtual void setLateMaterialResolving(bool isLate) { mLateMaterialResolving = isLate; }
+		
+		/** Gets whether using late material resolving or not.
+			@see setLateMaterialResolving */
+		virtual bool isLateMaterialResolving() const { return mLateMaterialResolving; }
+
+		/** Gets the active compositor chain of the current scene being rendered */
+		virtual CompositorChain* _getActiveCompositorChain() const { return mActiveCompositorChain; }
 
 		/** Add a listener which will get called back on scene manager events.
 		*/

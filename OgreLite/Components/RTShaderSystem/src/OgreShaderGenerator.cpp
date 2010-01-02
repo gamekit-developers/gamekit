@@ -35,8 +35,11 @@ THE SOFTWARE.
 #include "OgreViewport.h"
 #include "OgreShaderExPerPixelLighting.h"
 #include "OgreShaderExNormalMapLighting.h"
+#include "OgreShaderExIntegratedPSSM3.h"
 #include "OgreShaderMaterialSerializerListener.h"
 #include "OgreShaderProgramWriterManager.h"
+#include "OgreHighLevelGpuProgramManager.h"
+
 
 namespace Ogre {
 
@@ -68,14 +71,10 @@ ShaderGenerator& ShaderGenerator::getSingleton()
 //-----------------------------------------------------------------------------
 ShaderGenerator::ShaderGenerator()
 {
-	mShaderLanguage				= "cg";
-	mVertexShaderProfiles		= "gpu_vp gp4vp vp40 vp30 arbvp1 vs_3_0 vs_2_x vs_2_a vs_2_0 vs_1_1";
-	mFragmentShaderProfiles		= "ps_3_x ps_3_0 fp40 fp30 fp20 arbfp1 ps_2_x ps_2_a ps_2_b ps_2_0 ps_1_4 ps_1_3 ps_1_2 ps_1_1";
-	
 	mProgramWriterManager		= NULL;
 	mProgramManager				= NULL;
 	mFFPRenderStateBuilder		= NULL;
-	mSceneMgr					= NULL;
+	mActiveSceneMgr				= NULL;
 	mRenderObjectListener		= NULL;
 	mSceneManagerListener		= NULL;
 	mScriptTranslatorManager	= NULL;
@@ -85,6 +84,39 @@ ShaderGenerator::ShaderGenerator()
 	mLightCount[1]				= 0;
 	mLightCount[2]				= 0;
 	mVSOutputCompactPolicy		= VSOCP_LOW;
+
+
+	mShaderLanguage = "";
+	
+	HighLevelGpuProgramManager& hmgr = HighLevelGpuProgramManager::getSingleton();
+
+	if (hmgr.isLanguageSupported("cg"))
+	{
+		mShaderLanguage	= "cg";
+	}
+	else if (hmgr.isLanguageSupported("glsl"))
+	{
+		mShaderLanguage	= "glsl";
+	}
+	else if (hmgr.isLanguageSupported("hlsl"))
+	{
+		mShaderLanguage	= "hlsl";
+	}
+	else
+	{
+		// ASSAF: This is disabled for now - to stop an exception on the iPhone
+		// when running with the OpenGL ES 1.x that doesn't support shaders...
+		/*
+		OGRE_EXCEPT( Exception::ERR_INTERNAL_ERROR, 
+			"ShaderGenerator creation error: None of the profiles is supported.", 
+			"ShaderGenerator::ShaderGenerator" );
+
+		*/
+		mShaderLanguage	= "cg"; // HACK for now
+	}
+
+	setVertexShaderProfiles("gpu_vp gp4vp vp40 vp30 arbvp1 vs_4_0 vs_3_0 vs_2_x vs_2_a vs_2_0 vs_1_1");
+	setFragmentShaderProfiles("ps_4_0 ps_3_x ps_3_0 fp40 fp30 fp20 arbfp1 ps_2_x ps_2_a ps_2_b ps_2_0 ps_1_4 ps_1_3 ps_1_2 ps_1_1");
 }
 
 //-----------------------------------------------------------------------------
@@ -122,9 +154,11 @@ bool ShaderGenerator::_initialize()
 	mProgramManager			= OGRE_NEW ProgramManager;
 
 	// Allocate and initialize FFP render state builder.
+#ifdef RTSHADER_SYSTEM_BUILD_CORE_SHADERS
 	mFFPRenderStateBuilder	= OGRE_NEW FFPRenderStateBuilder;
 	if (false == mFFPRenderStateBuilder->initialize())
 		return false;
+#endif
 
 	// Create extensions factories.
 	createSubRenderStateExFactories();
@@ -135,12 +169,18 @@ bool ShaderGenerator::_initialize()
 
 	addCustomScriptTranslator("rtshader_system", &mCoreScriptTranslaotr);
 
+	// Create the default scheme.
+	createScheme(DEFAULT_SCHEME_NAME);
+
 	return true;
 }
+
+
 
 //-----------------------------------------------------------------------------
 void ShaderGenerator::createSubRenderStateExFactories()
 {
+#ifdef RTSHADER_SYSTEM_BUILD_EXT_SHADERS
 	OGRE_LOCK_AUTO_MUTEX
 
 	SubRenderStateFactory* curFactory;
@@ -152,6 +192,12 @@ void ShaderGenerator::createSubRenderStateExFactories()
 	curFactory = OGRE_NEW NormalMapLightingFactory;	
 	addSubRenderStateFactory(curFactory);
 	mSubRenderStateExFactories[curFactory->getType()] = (curFactory);
+
+	curFactory = OGRE_NEW IntegratedPSSM3Factory;	
+	addSubRenderStateFactory(curFactory);
+	mSubRenderStateExFactories[curFactory->getType()] = (curFactory);
+
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -199,6 +245,7 @@ void ShaderGenerator::_finalize()
 	// Destroy extensions factories.
 	destroySubRenderStateExFactories();
 
+#ifdef RTSHADER_SYSTEM_BUILD_CORE_SHADERS
 	// Delete FFP Emulator.
 	if (mFFPRenderStateBuilder != NULL)
 	{
@@ -206,6 +253,7 @@ void ShaderGenerator::_finalize()
 		OGRE_DELETE mFFPRenderStateBuilder;
 		mFFPRenderStateBuilder = NULL;
 	}
+#endif
 
 	// Delete Program manager.
 	if (mProgramManager != NULL)
@@ -238,8 +286,13 @@ void ShaderGenerator::_finalize()
 		mMaterialSerializerListener = NULL;
 	}
 
-	// Remove current scene manager listeners.
-	setSceneManager(NULL);
+	// Remove all scene managers.	
+	while (mSceneManagerMap.empty() == false)
+	{
+		SceneManagerIterator itSceneMgr    = mSceneManagerMap.begin();
+
+		removeSceneManager(itSceneMgr->second);
+	}
 
 	// Delete render object listener.
 	if (mRenderObjectListener != NULL)
@@ -352,6 +405,20 @@ SubRenderState*	ShaderGenerator::createSubRenderState(ScriptCompiler* compiler,
 	return subRenderState;
 }
 
+//-----------------------------------------------------------------------------
+void ShaderGenerator::createScheme(const String& schemeName)
+{
+	OGRE_LOCK_AUTO_MUTEX
+
+	SGSchemeIterator itFind = mSchemeEntriesMap.find(schemeName);
+	SGScheme* schemeEntry   = NULL;
+
+	if (itFind == mSchemeEntriesMap.end())
+	{
+		schemeEntry = OGRE_NEW SGScheme(schemeName);
+		mSchemeEntriesMap[schemeName] = schemeEntry;
+	}
+}
 
 //-----------------------------------------------------------------------------
 RenderState* ShaderGenerator::getRenderState(const String& schemeName)
@@ -359,19 +426,15 @@ RenderState* ShaderGenerator::getRenderState(const String& schemeName)
 	OGRE_LOCK_AUTO_MUTEX
 
 	SGSchemeIterator itFind = mSchemeEntriesMap.find(schemeName);
-	SGScheme* schemeEntry   = NULL;
-
-	if (itFind != mSchemeEntriesMap.end())
+	
+	if (itFind == mSchemeEntriesMap.end())
 	{
-		schemeEntry = itFind->second;
+		OGRE_EXCEPT(Exception::ERR_ITEM_NOT_FOUND,
+			"A scheme named'" + schemeName + "' doesn't exists.",
+			"ShaderGenerator::getRenderState");	
 	}	
-	else
-	{
-		schemeEntry = OGRE_NEW SGScheme(schemeName);
-		mSchemeEntriesMap[schemeName] = schemeEntry;
-	}
-
-	return schemeEntry->getRenderState();
+	
+	return itFind->second->getRenderState();
 }
 
 //-----------------------------------------------------------------------------
@@ -387,44 +450,74 @@ RenderState* ShaderGenerator::getRenderState(const String& schemeName,
 	{
 		OGRE_EXCEPT(Exception::ERR_ITEM_NOT_FOUND,
 			"A scheme named'" + schemeName + "' doesn't exists.",
-			"ShaderGenerator::getRenderStateList");
+			"ShaderGenerator::getRenderState");
 	}
 
 	return itFind->second->getRenderState(materialName, passIndex);
 }
 
 //-----------------------------------------------------------------------------
-void ShaderGenerator::setSceneManager(SceneManager* sceneMgr)
+void ShaderGenerator::addSceneManager(SceneManager* sceneMgr)
 {
-	if (mSceneMgr != sceneMgr)
-	{
-		if (mSceneMgr != NULL)
-		{
-			mSceneMgr->removeRenderObjectListener(mRenderObjectListener);		
-			mSceneMgr->removeListener(mSceneManagerListener);			
-		}
+	// Make sure this scene manager not exists in the map.
+	SceneManagerIterator itFind = mSceneManagerMap.find(sceneMgr->getName());
+	
+	if (itFind != mSceneManagerMap.end())
+		return;
 
-		mSceneMgr = sceneMgr;
+	if (mRenderObjectListener == NULL)
+		mRenderObjectListener = OGRE_NEW SGRenderObjectListener(this);
+	
+	sceneMgr->addRenderObjectListener(mRenderObjectListener);
 
-		if (mSceneMgr != NULL)
-		{
-			if (mRenderObjectListener == NULL)
-				mRenderObjectListener = OGRE_NEW SGRenderObjectListener(this);
-			
-			mSceneMgr->addRenderObjectListener(mRenderObjectListener);
+	if (mSceneManagerListener == NULL)
+		mSceneManagerListener = OGRE_NEW SGSceneManagerListener(this);
+	
+	sceneMgr->addListener(mSceneManagerListener);
 
-			if (mSceneManagerListener == NULL)
-				mSceneManagerListener = OGRE_NEW SGSceneManagerListener(this);
-			
-			mSceneMgr->addListener(mSceneManagerListener);
-		}
-	}	
+	mSceneManagerMap[sceneMgr->getName()] = sceneMgr;
+
+	// Update the active scene manager.
+	if (mActiveSceneMgr == NULL)
+		mActiveSceneMgr = sceneMgr;
 }
 
 //-----------------------------------------------------------------------------
-SceneManager* ShaderGenerator::getSceneManager()
+void ShaderGenerator::removeSceneManager(SceneManager* sceneMgr)
 {
-	return mSceneMgr;
+	// Make sure this scene manager exists in the map.
+	SceneManagerIterator itFind = mSceneManagerMap.find(sceneMgr->getName());
+	
+	if (itFind != mSceneManagerMap.end())
+	{
+		itFind->second->removeRenderObjectListener(mRenderObjectListener);		
+		itFind->second->removeListener(mSceneManagerListener);	
+
+		mSceneManagerMap.erase(itFind);
+
+		// Update the active scene manager.
+		if (mActiveSceneMgr == sceneMgr)
+			mActiveSceneMgr = NULL;
+	}
+}
+
+//-----------------------------------------------------------------------------
+SceneManager* ShaderGenerator::getActiveSceneManager()
+{
+	return mActiveSceneMgr;
+}
+
+//-----------------------------------------------------------------------------
+void ShaderGenerator::setVertexShaderProfiles(const String& vertexShaderProfiles)
+{
+	mVertexShaderProfiles = vertexShaderProfiles;
+	mVertexShaderProfilesList = StringUtil::split(vertexShaderProfiles);
+}
+//-----------------------------------------------------------------------------
+void ShaderGenerator::setFragmentShaderProfiles(const String& fragmentShaderProfiles)
+{
+	mFragmentShaderProfiles = fragmentShaderProfiles;
+	mFragmentShaderProfilesList = StringUtil::split(fragmentShaderProfiles);
 }
 
 //-----------------------------------------------------------------------------
@@ -682,6 +775,7 @@ void ShaderGenerator::preFindVisibleObjects(SceneManager* source,
 
 	const String& curMaterialScheme = v->getMaterialScheme();
 		
+	mActiveSceneMgr      = source;
 	mActiveViewportValid = validateScheme(curMaterialScheme);
 }
 
@@ -782,16 +876,6 @@ SGMaterialSerializerListener* ShaderGenerator::getMaterialSerializerListener()
 		mMaterialSerializerListener = OGRE_NEW SGMaterialSerializerListener;
 
 	return mMaterialSerializerListener;
-}
-
-//-----------------------------------------------------------------------------
-void ShaderGenerator::setShaderCachePath( const String& cachePath )
-{
-	if (mShaderCachePath.length() > 0)	
-		ResourceGroupManager::getSingleton().removeResourceLocation(mShaderCachePath);	
-	
-	mShaderCachePath = cachePath;
-	ResourceGroupManager::getSingleton().addResourceLocation(mShaderCachePath, "FileSystem");
 }
 
 //-----------------------------------------------------------------------------
@@ -993,8 +1077,10 @@ void ShaderGenerator::SGPass::buildRenderState()
 	
 	localRenderState->setLightCount(lightCount);
 			
+#ifdef RTSHADER_SYSTEM_BUILD_CORE_SHADERS
 	// Build the FFP state.	
 	FFPRenderStateBuilder::getSingleton().buildRenderState(this, localRenderState);
+#endif
 
 
 	// Merge custom render state of this pass if exists.
@@ -1428,7 +1514,7 @@ void ShaderGenerator::SGScheme::validate()
 //-----------------------------------------------------------------------------
 void ShaderGenerator::SGScheme::synchronizeWithLightSettings()
 {
-	SceneManager* sceneManager = ShaderGenerator::getSingleton().getSceneManager();
+	SceneManager* sceneManager = ShaderGenerator::getSingleton().getActiveSceneManager();
 
 	if (sceneManager != NULL)
 	{
@@ -1461,7 +1547,7 @@ void ShaderGenerator::SGScheme::synchronizeWithLightSettings()
 //-----------------------------------------------------------------------------
 void ShaderGenerator::SGScheme::synchronizeWithFogSettings()
 {
-	SceneManager* sceneManager = ShaderGenerator::getSingleton().getSceneManager();
+	SceneManager* sceneManager = ShaderGenerator::getSingleton().getActiveSceneManager();
 
 	if (sceneManager != NULL && sceneManager->getFogMode() != mFogMode)
 	{
@@ -1473,6 +1559,13 @@ void ShaderGenerator::SGScheme::synchronizeWithFogSettings()
 //-----------------------------------------------------------------------------
 bool ShaderGenerator::SGScheme::validate(const String& materialName)
 {
+	// Synchronize with light settings.
+	synchronizeWithLightSettings();
+
+	// Synchronize with fog settings.
+	synchronizeWithFogSettings();
+
+
 	SGTechniqueIterator itTech;
 	
 	// Find the desired technique.

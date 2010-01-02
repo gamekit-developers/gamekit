@@ -117,20 +117,22 @@ namespace Ogre
 
 		/// Prepare node and children (perform CPU tasks, may be background thread)
 		void prepare();
+		/// Prepare node from a stream
+		void prepare(StreamSerialiser& stream);
 		/// Load node and children (perform GPU tasks, will be render thread)
 		void load();
 		/// Unload node and children (perform GPU tasks, will be render thread)
 		void unload();
 		/// Unprepare node and children (perform CPU tasks, may be background thread)
 		void unprepare();
+		/// Save node to a stream
+		void save(StreamSerialiser& stream);
 
 		struct _OgreTerrainExport LodLevel : public TerrainAlloc
 		{
 			/// Number of vertices rendered down one side (not including skirts)
 			uint16 batchSize;
-			/// index data referencing the main vertex data but in CPU buffers (built in background)
-			IndexData* cpuIndexData;
-			/// "Real" index data on the gpu
+			/// Index data on the gpu
 			IndexData* gpuIndexData;
 			/// Maximum delta height between this and the next lower lod
 			Real maxHeightDelta;
@@ -141,7 +143,7 @@ namespace Ogre
 			/// The cFactor value used to calculate transitionDist
 			Real lastCFactor;
 
-			LodLevel() : cpuIndexData(0), gpuIndexData(0), maxHeightDelta(0), calcMaxHeightDelta(0),
+			LodLevel() : gpuIndexData(0), maxHeightDelta(0), calcMaxHeightDelta(0),
 				lastTransitionDist(0), lastCFactor(0) {}
 		};
 		typedef vector<LodLevel*>::type LodLevelList;
@@ -323,7 +325,7 @@ namespace Ogre
 			a SceneManager::Listener to precalculate which nodes will be displayed 
 			when it comes to purely a LOD basis.
 		*/
-		class Movable : public MovableObject
+		class _OgreTerrainExport Movable : public MovableObject
 		{
 		protected:
 			TerrainQuadTreeNode* mParent;
@@ -340,13 +342,15 @@ namespace Ogre
 			bool isVisible(void) const;
 			uint32 getVisibilityFlags(void) const;
 			uint32 getQueryFlags(void) const;
+			bool getCastShadows(void) const;
 
 		};
 		Movable* mMovable;
 		friend class Movable;
+		SceneNode* mLocalNode;
 
 		/// Hook to the render queue
-		class Rend : public Renderable, public TerrainAlloc
+		class _OgreTerrainExport Rend : public Renderable, public TerrainAlloc
 		{
 		protected:
 			TerrainQuadTreeNode* mParent;
@@ -385,9 +389,7 @@ namespace Ogre
 			not the local vertex data (which may use a subset)
 		*/
 		void updateVertexBuffer(HardwareVertexBufferSharedPtr& posbuf, HardwareVertexBufferSharedPtr& deltabuf, const Rect& rect);
-		void createCpuIndexData();
 		void destroyCpuVertexData();
-		void destroyCpuIndexData();
 
 		void createGpuVertexData();
 		void destroyGpuVertexData();
@@ -395,7 +397,7 @@ namespace Ogre
 		void createGpuIndexData();
 		void destroyGpuIndexData();
 
-		void createTriangleStripBuffer(uint16 batchSize, IndexData* destData);
+		void populateIndexData(uint16 batchSize, IndexData* destData);
 		
 		uint16 calcSkirtVertexIndex(uint16 mainIndex, bool isCol);
 

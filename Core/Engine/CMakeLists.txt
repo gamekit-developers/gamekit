@@ -297,53 +297,8 @@ link_libraries(
 link_directories(${OGRE_LIBDIR})
 include_directories(${OGREKIT_BULLET_INCLUDE})
 
-if (OGRE_BUILD_RENDERSYSTEM_GL)
+configure_rendersystem()
 
-    add_definitions(-DOGREKIT_GLRS)
-    
-    include_directories(
-        ${OGREKIT_GLRS_ROOT}/include
-        ${OGREKIT_GLRS_ROOT}/src/GLSL/include
-        ${OGREKIT_GLRS_ROOT}/src/atifs/include
-    )
-    
-    link_libraries(
-        ${OGREKIT_GLRS_LIBS} 
-        ${OPENGL_gl_LIBRARY}
-        ${OPENGL_glu_LIBRARY}
-    )
-        
-endif ()
-
-if (OGRE_BUILD_RENDERSYSTEM_D3D9)
-
-    add_definitions(-DOGREKIT_D3D9RS)
-    
-    include_directories(
-        ${OGREKIT_D3D9_ROOT}/include
-    )
-    
-    link_libraries(
-        ${DirectX_D3D9_LIBRARY}
-        ${OGREKIT_D3D9_LIBS} 
-    )
-        
-endif ()
-
-if (OGRE_BUILD_RENDERSYSTEM_D3D10)
-
-    add_definitions(-DOGREKIT_D3D10RS)
-    
-    include_directories(
-        ${OGREKIT_D3D10_ROOT}/include
-    )
-    
-    link_libraries(
-        ${OGREKIT_D3D10_LIBS} 
-        ${DirectX_D3D10_LIBRARY}
-    )
-        
-endif ()
 
 add_library(OgreKitCore ${OGREKIT_LIB_TYPE} 
     ${Core_SOURCE} 
@@ -363,9 +318,3 @@ add_library(OgreKitCore ${OGREKIT_LIB_TYPE}
     ${PropertyScript_HEADER}
     ${PropertyScript_SOURCE}
     )
-
-set(HomeFiles
-    User/OgreKitStartup.conf
-)
-
-install(FILES ${HomeFiles} DESTINATION ${OGREKIT_INSTALL_PREFIX})

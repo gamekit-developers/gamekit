@@ -32,8 +32,7 @@ THE SOFTWARE.
 #include "OgreRoot.h"
 #include "OgreRenderSystem.h"
 #include "OgreRenderSystemCapabilities.h"
-
-#define DO_SKIRTS 1
+#include "OgreStreamSerialiser.h"
 
 #if OGRE_COMPILER == OGRE_COMPILER_MSVC
 // we do lots of conversions here, casting them all is tedious & cluttered, we know what we're doing
@@ -131,8 +130,9 @@ namespace Ogre
 		mTerrain->getPoint(midpointx, midpointy, 0, &mLocalCentre);
 
 		mMovable = OGRE_NEW Movable(this);
-		mTerrain->_getRootSceneNode()->createChildSceneNode(mLocalCentre)->attachObject(mMovable);
 		mRend = OGRE_NEW Rend(this);
+
+		mLocalNode = mTerrain->_getRootSceneNode()->createChildSceneNode(mLocalCentre);
 		
 	}
 	//---------------------------------------------------------------------
@@ -143,11 +143,13 @@ namespace Ogre
 		OGRE_DELETE mRend;
 		mRend = 0;
 
+		mTerrain->_getRootSceneNode()->removeAndDestroyChild(mLocalNode->getName());
+		mLocalNode = 0;
+
 		for (int i = 0; i < 4; ++i)
 			OGRE_DELETE mChildren[i];
 
 		destroyCpuVertexData();
-		destroyCpuIndexData();
 		destroyGpuVertexData();
 		destroyGpuIndexData();
 
@@ -182,21 +184,58 @@ namespace Ogre
 	//---------------------------------------------------------------------
 	void TerrainQuadTreeNode::prepare()
 	{
-
-
-		if (isLeaf())
-		{
-
-
-		
-
-		}
-		else
+		if (!isLeaf())
 		{
 			for (int i = 0; i < 4; ++i)
 				mChildren[i]->prepare();
 		}
 
+	}
+	//---------------------------------------------------------------------
+	void TerrainQuadTreeNode::prepare(StreamSerialiser& stream)
+	{
+		// load LOD data we need
+		for (LodLevelList::iterator i = mLodLevels.begin(); i != mLodLevels.end(); ++i)
+		{
+			LodLevel* ll = *i;
+			// only read 'calc' and then copy to final (separation is only for
+			// real-time calculation
+			// Basically this is what finaliseHeightDeltas does in calc path
+			stream.read(&ll->calcMaxHeightDelta);
+			ll->maxHeightDelta = ll->calcMaxHeightDelta;
+			ll->lastCFactor = 0;
+		}
+
+		if (!isLeaf())
+		{
+			for (int i = 0; i < 4; ++i)
+				mChildren[i]->prepare(stream);
+		}
+
+		// If this is the root, do the post delta calc to finish
+		if (!mParent)
+		{
+			Rect rect;
+			rect.top = mOffsetY; rect.bottom = mBoundaryY;
+			rect.left = mOffsetX; rect.right = mBoundaryX;
+			postDeltaCalculation(rect);
+		}
+	}
+	//---------------------------------------------------------------------
+	void TerrainQuadTreeNode::save(StreamSerialiser& stream)
+	{
+		// save LOD data we need
+		for (LodLevelList::iterator i = mLodLevels.begin(); i != mLodLevels.end(); ++i)
+		{
+			LodLevel* ll = *i;
+			stream.write(&ll->maxHeightDelta);
+		}
+
+		if (!isLeaf())
+		{
+			for (int i = 0; i < 4; ++i)
+				mChildren[i]->save(stream);
+		}
 	}
 	//---------------------------------------------------------------------
 	void TerrainQuadTreeNode::load()
@@ -208,6 +247,7 @@ namespace Ogre
 			for (int i = 0; i < 4; ++i)
 				mChildren[i]->load();
 
+		mLocalNode->attachObject(mMovable);
 	}
 	//---------------------------------------------------------------------
 	void TerrainQuadTreeNode::unload()
@@ -217,6 +257,9 @@ namespace Ogre
 				mChildren[i]->unload();
 
 		destroyGpuVertexData();
+
+		if (mMovable->isAttached())
+			mLocalNode->detachObject(mMovable);
 
 	}
 	//---------------------------------------------------------------------
@@ -396,7 +439,6 @@ namespace Ogre
 			mVertexDataRecord = OGRE_NEW VertexDataRecord(resolution, sz, treeDepthEnd - treeDepthStart);
 
 			createCpuVertexData();
-			createCpuIndexData();
 
 			// pass on to children
 			if (!isLeaf() && treeDepthEnd > (mDepth + 1)) // treeDepthEnd is exclusive, and this is children
@@ -428,7 +470,6 @@ namespace Ogre
 				mChildren[i]->useAncestorVertexData(owner, treeDepthEnd, resolution);
 
 		}
-		createCpuIndexData();
 	}
 	//---------------------------------------------------------------------
 	void TerrainQuadTreeNode::updateVertexData(bool positions, bool deltas, 
@@ -479,7 +520,7 @@ namespace Ogre
 
 			}
 			// Make sure node knows to update
-			if (mMovable)
+			if (mMovable && mMovable->isAttached())
 				mMovable->getParentSceneNode()->needUpdate();
 
 
@@ -524,7 +565,6 @@ namespace Ogre
 			// Base geometry size * size
 			size_t baseNumVerts = Math::Sqr(mVertexDataRecord->size);
 			size_t numVerts = baseNumVerts;
-#if DO_SKIRTS
 			// Now add space for skirts
 			// Skirts will be rendered as copies of the edge vertices translated downwards
 			// Some people use one big fan with only 3 vertices at the bottom, 
@@ -537,7 +577,6 @@ namespace Ogre
 			mVertexDataRecord->skirtRowColSkip = (mVertexDataRecord->size - 1) / (mVertexDataRecord->numSkirtRowsCols - 1);
 			numVerts += mVertexDataRecord->size * mVertexDataRecord->numSkirtRowsCols;
 			numVerts += mVertexDataRecord->size * mVertexDataRecord->numSkirtRowsCols;
-#endif
 			// manually create CPU-side buffer
 			HardwareVertexBufferSharedPtr posbuf(
 				OGRE_NEW DefaultHardwareVertexBuffer(dcl->getVertexSize(POSITION_BUFFER), numVerts, HardwareBuffer::HBU_STATIC_WRITE_ONLY));
@@ -662,7 +701,6 @@ namespace Ogre
 
 		}
 
-#if DO_SKIRTS
 		// Skirts now
 		// skirt spacing based on top-level resolution (* inc to cope with resolution which is not the max)
 		uint16 skirtSpacing = mVertexDataRecord->skirtRowColSkip * inc;
@@ -805,7 +843,6 @@ namespace Ogre
 			if (pRowDeltaBuf)
 				pRowDeltaBuf += destDeltaRowSkip;
 		}
-#endif
 
 		if (!posbuf.isNull())
 			posbuf->unlock();
@@ -864,65 +901,10 @@ namespace Ogre
 
 	}
 	//---------------------------------------------------------------------
-	void TerrainQuadTreeNode::createCpuIndexData()
+	void TerrainQuadTreeNode::populateIndexData(uint16 batchSize, IndexData* destData)
 	{
-		for (size_t lod = 0; lod < mLodLevels.size(); ++lod)
-		{
-			LodLevel* ll = mLodLevels[lod];
-
-			OGRE_DELETE ll->cpuIndexData;
-
-			ll->cpuIndexData = OGRE_NEW IndexData();
-
-			createTriangleStripBuffer(ll->batchSize, ll->cpuIndexData);
-			
-		}
-	}
-	//---------------------------------------------------------------------
-	void TerrainQuadTreeNode::createTriangleStripBuffer(uint16 batchSize, IndexData* destData)
-	{
-		/* For even / odd tri strip rows, triangles are this shape:
-		6---7---8
-		| \ | \ |
-		3---4---5
-		| / | / |
-		0---1---2
-		Note how vertex rows count upwards. In order to match up the anti-clockwise
-		winding and this upward transitioning list, we need to start from the
-		right hand side. So we get (2,5,1,4,0,3) etc on even lines (right-left)
-		and (3,6,4,7,5,8) etc on odd lines (left-right). At the turn, we emit the end index 
-		twice, this forms a degenerate triangle, which lets us turn without any artefacts. 
-		So the full list in this simple case is (2,5,1,4,0,3,3,6,4,7,5,8)
-
-		Skirts are part of the same strip, so after finishing on 8, where sX is
-		 the skirt vertex corresponding to main vertex X, we go
-		 anticlockwise around the edge, (s8,7,s7,6,s6) to do the top skirt, 
-		then (3,s3,0,s0),(1,s1,2,s2),(5,s5,8,s8) to finish the left, bottom, and
-		 right skirts respectively.
-		*/
-
-		// to issue a complete row, it takes issuing the upper and lower row
-		// and one extra index, which is the degenerate triangle and also turning
-		// around the winding
 		const VertexDataRecord* vdr = getVertexDataRecord();
-		size_t mainIndexesPerRow = batchSize * 2 + 1;
-		size_t numRows = batchSize - 1;
-		size_t mainIndexCount = mainIndexesPerRow * numRows;
-		destData->indexStart = 0;
-		destData->indexCount = mainIndexCount;
-#if DO_SKIRTS
-		// skirts share edges, so they take 1 less row per side than batchSize, 
-		// but with 2 extra at the end (repeated) to finish the strip
-		// * 2 for the vertical line, * 4 for the sides, +2 to finish
-		size_t skirtIndexCount = (batchSize - 1) * 2 * 4 + 2;
-		destData->indexCount += skirtIndexCount;
-#endif
-		destData->indexBuffer.bind(OGRE_NEW DefaultHardwareIndexBuffer(
-			HardwareIndexBuffer::IT_16BIT, destData->indexCount, HardwareBuffer::HBU_STATIC)); 
-		
-		uint16* pI = static_cast<uint16*>(destData->indexBuffer->lock(HardwareBuffer::HBL_DISCARD));
-		uint16* basepI = pI;
-		
+
 		// Ratio of the main terrain resolution in relation to this vertex data resolution
 		size_t resolutionRatio = (mTerrain->getSize() - 1) / (vdr->resolution - 1);
 		// At what frequency do we sample the vertex data we're using?
@@ -930,101 +912,16 @@ namespace Ogre
 		size_t vertexIncrement = (mSize-1) / (batchSize-1);
 		// however, the vertex data we're referencing may not be at the full resolution anyway
 		vertexIncrement /= resolutionRatio;
-		size_t rowSize = vdr->size * vertexIncrement;
+		uint16 vdatasizeOffsetX = (mOffsetX - mNodeWithVertexData->mOffsetX) / resolutionRatio;
+		uint16 vdatasizeOffsetY = (mOffsetY - mNodeWithVertexData->mOffsetY) / resolutionRatio;
 
-		// Start on the right
-		uint16 currentVertex = (batchSize - 1) * vertexIncrement;
-		// but, our quad area might not start at 0 in this vertex data
-		// offsets are at main terrain resolution, remember
-		uint16 columnStart = (mOffsetX - mNodeWithVertexData->mOffsetX) / resolutionRatio;
-		uint16 rowStart = ((mOffsetY - mNodeWithVertexData->mOffsetY) / resolutionRatio);
-		currentVertex += rowStart * vdr->size + columnStart;
-		bool rightToLeft = true;
-		for (uint16 r = 0; r < numRows; ++r)
-		{
-			for (uint16 c = 0; c < batchSize; ++c)
-			{
-								
-				*pI++ = currentVertex;
-				*pI++ = currentVertex + rowSize;
-				
-				// don't increment / decrement at a border, keep this vertex for next
-				// row as we 'snake' across the tile
-				if (c+1 < batchSize)
-				{
-					currentVertex = rightToLeft ? 
-						currentVertex - vertexIncrement : currentVertex + vertexIncrement;
-				}				
-			}
-			rightToLeft = !rightToLeft;
-			currentVertex += rowSize;
-			// issue one extra index to turn winding around
-			*pI++ = currentVertex;
-		}
-		
-#if DO_SKIRTS
-		// Skirts
-		for (uint16 s = 0; s < 4; ++s)
-		{
-			// edgeIncrement is the index offset from one original edge vertex to the next
-			// in this row or column. Columns skip based on a row size here
-			// skirtIncrement is the index offset from one skirt vertex to the next, 
-			// because skirts are packed in rows/cols then there is no row multiplier for
-			// processing columns
-			int edgeIncrement = 0, skirtIncrement = 0;
-			switch(s)
-			{
-				case 0: // top
-					edgeIncrement = -static_cast<int>(vertexIncrement);
-					skirtIncrement = -static_cast<int>(vertexIncrement);
-					break;
-				case 1: // left
-					edgeIncrement = -static_cast<int>(rowSize);
-					skirtIncrement = -static_cast<int>(vertexIncrement);
-					break;
-				case 2: // bottom
-					edgeIncrement = static_cast<int>(vertexIncrement);
-					skirtIncrement = static_cast<int>(vertexIncrement);
-					break;
-				case 3: // right
-					edgeIncrement = static_cast<int>(rowSize);
-					skirtIncrement = static_cast<int>(vertexIncrement);
-					break;
-			}
-			// Skirts are stored in contiguous rows / columns (rows 0/2, cols 1/3)
-			uint16 skirtIndex = calcSkirtVertexIndex(currentVertex, (s % 2) != 0);
-			for (uint16 c = 0; c < batchSize - 1; ++c)
-			{
-				*pI++ = currentVertex;
-				*pI++ = skirtIndex;	
-				currentVertex += edgeIncrement;
-				skirtIndex += skirtIncrement;
-			}
-			if (s == 3)
-			{
-				// we issue an extra 2 indices to finish the skirt off
-				*pI++ = currentVertex;
-				*pI++ = skirtIndex;
-				currentVertex += edgeIncrement;
-				skirtIndex += skirtIncrement;
-			}
-		}
-#endif
-		assert ((pI - basepI) == (uint16)destData->indexCount);
-        (void)basepI; // Silence warning
+		destData->indexBuffer = mTerrain->getGpuBufferAllocator()->getSharedIndexBuffer(batchSize, vdr->size, 
+			vertexIncrement, vdatasizeOffsetX, vdatasizeOffsetY, 
+			vdr->numSkirtRowsCols, vdr->skirtRowColSkip);
+		destData->indexStart = 0;
+		destData->indexCount = destData->indexBuffer->getNumIndexes();
 
-	}
-	//---------------------------------------------------------------------
-	void TerrainQuadTreeNode::destroyCpuIndexData()
-	{
-		for (size_t lod = 0; lod < mLodLevels.size(); ++lod)
-		{
-			LodLevel* ll = mLodLevels[lod];
-
-			OGRE_DELETE ll->cpuIndexData;
-			ll->cpuIndexData = 0;
-		}
-
+		// shared index buffer is pre-populated		
 	}
 	//---------------------------------------------------------------------
 	void TerrainQuadTreeNode::createGpuVertexData()
@@ -1032,18 +929,54 @@ namespace Ogre
 		// TODO - mutex cpu data
 		if (mVertexDataRecord && mVertexDataRecord->cpuVertexData && !mVertexDataRecord->gpuVertexData)
 		{
+			// copy data from CPU to GPU, but re-use vertex buffers (so don't use regular clone)
+			mVertexDataRecord->gpuVertexData = OGRE_NEW VertexData();
+			VertexData* srcData = mVertexDataRecord->cpuVertexData;
+			VertexData* destData = mVertexDataRecord->gpuVertexData;
 
-			// clone CPU data into GPU data
-			// default is to create new declarations from hardware manager
-			mVertexDataRecord->gpuVertexData = mVertexDataRecord->cpuVertexData->clone();
+			// copy vertex buffers
+			// get new buffers
+			HardwareVertexBufferSharedPtr destPosBuf, destDeltaBuf;
+			mTerrain->getGpuBufferAllocator()->allocateVertexBuffers(mTerrain, srcData->vertexCount, 
+				destPosBuf, destDeltaBuf);
+				
+			// copy data
+			destPosBuf->copyData(*srcData->vertexBufferBinding->getBuffer(POSITION_BUFFER));
+			destDeltaBuf->copyData(*srcData->vertexBufferBinding->getBuffer(DELTA_BUFFER));
+
+			// set bindings
+			destData->vertexBufferBinding->setBinding(POSITION_BUFFER, destPosBuf);
+			destData->vertexBufferBinding->setBinding(DELTA_BUFFER, destDeltaBuf);
+
+			// Basic vertex info
+			destData->vertexStart = srcData->vertexStart;
+			destData->vertexCount = srcData->vertexCount;
+			// Copy elements
+			const VertexDeclaration::VertexElementList elems = 
+				srcData->vertexDeclaration->getElements();
+			VertexDeclaration::VertexElementList::const_iterator ei, eiend;
+			eiend = elems.end();
+			for (ei = elems.begin(); ei != eiend; ++ei)
+			{
+				destData->vertexDeclaration->addElement(
+					ei->getSource(),
+					ei->getOffset(),
+					ei->getType(),
+					ei->getSemantic(),
+					ei->getIndex() );
+			}
+
+
 			mVertexDataRecord->gpuVertexDataDirty = false;
+
+			// We don't need the CPU copy anymore
+			destroyCpuVertexData();
 		}
 
 	}
 	//---------------------------------------------------------------------
 	void TerrainQuadTreeNode::updateGpuVertexData()
 	{
-		// TODO - mutex cpu data
 		if (mVertexDataRecord && mVertexDataRecord->gpuVertexDataDirty)
 		{
 			mVertexDataRecord->gpuVertexData->vertexBufferBinding->getBuffer(POSITION_BUFFER)->
@@ -1058,6 +991,10 @@ namespace Ogre
 	{
 		if (mVertexDataRecord && mVertexDataRecord->gpuVertexData)
 		{
+			// Before we delete, free up the vertex buffers for someone else
+			mTerrain->getGpuBufferAllocator()->freeVertexBuffers(
+				mVertexDataRecord->gpuVertexData->vertexBufferBinding->getBuffer(POSITION_BUFFER), 
+				mVertexDataRecord->gpuVertexData->vertexBufferBinding->getBuffer(DELTA_BUFFER));
 			OGRE_DELETE mVertexDataRecord->gpuVertexData;
 			mVertexDataRecord->gpuVertexData = 0;
 		}
@@ -1074,8 +1011,10 @@ namespace Ogre
 			if (!ll->gpuIndexData)
 			{
 				// clone, using default buffer manager ie hardware
-				ll->gpuIndexData = ll->cpuIndexData->clone();
+				ll->gpuIndexData = OGRE_NEW IndexData();
+				populateIndexData(ll->batchSize, ll->gpuIndexData);
 			}
+
 		}
 
 	}
@@ -1494,6 +1433,11 @@ namespace Ogre
 	void TerrainQuadTreeNode::Movable::visitRenderables(Renderable::Visitor* visitor,  bool debugRenderables)
 	{
 		mParent->visitRenderables(visitor, debugRenderables);	
+	}
+	//---------------------------------------------------------------------
+	bool TerrainQuadTreeNode::Movable::getCastShadows(void) const
+	{
+		return mParent->getCastsShadows();
 	}
 	//------------------------------------------------------------------------
 	//---------------------------------------------------------------------

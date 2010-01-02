@@ -33,6 +33,7 @@ THE SOFTWARE.
 #include "OgreStringVector.h"
 #include "OgreOverlay.h"
 #include "OgreScriptLoader.h"
+#include "OgreFrustum.h"
 
 namespace Ogre {
 
@@ -66,6 +67,7 @@ namespace Ogre {
         
         int mLastViewportWidth, mLastViewportHeight;
         bool mViewportDimensionsChanged;
+        OrientationMode mLastViewportOrientationMode;
 
 	    bool parseChildren( DataStreamPtr& chunk, const String& line,
             Overlay* pOverlay, bool isTemplate, OverlayContainer* parent = NULL);
@@ -86,6 +88,8 @@ namespace Ogre {
 		OverlayElement* createOverlayElementImpl(const String& typeName, const String& instanceName, ElementMap& elementMap);
 
 		OverlayElement* getOverlayElementImpl(const String& name, ElementMap& elementMap);
+		
+		bool hasOverlayElementImpl(const String& name, ElementMap& elementMap);
 
 		void destroyOverlayElementImpl(const String& instanceName, ElementMap& elementMap);
 
@@ -135,6 +139,8 @@ namespace Ogre {
         int getViewportWidth(void) const;
         Real getViewportAspectRatio(void) const;
 
+        /** Gets the orientation mode of the destination viewport. */
+        OrientationMode getViewportOrientationMode(void) const;
 
 		/** Creates a new OverlayElement of the type requested.
 		@remarks
@@ -148,6 +154,9 @@ namespace Ogre {
 		/** Gets a reference to an existing element. */
 		OverlayElement* getOverlayElement(const String& name, bool isTemplate = false);
 
+		/** Tests if an element exists. */
+		bool hasOverlayElement(const String& name, bool isTemplate = false);
+		
 		/** Destroys a OverlayElement. 
 		@remarks
 		Make sure you're not still using this in an Overlay. If in

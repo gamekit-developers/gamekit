@@ -126,6 +126,16 @@ namespace Ogre
 		<td>TerrainDerivedMap list</td>
 		<td>0 or more sets of map data derived from the original terrain</td>
 	</tr>
+	<tr>
+		<td>Delta data</td>
+		<td>float[size*size]</td>
+		<td>At each vertex, delta information for the LOD at which this vertex disappears</td>
+	</tr>
+	<tr>
+		<td>Quadtree delta data</td>
+		<td>float[quadtrees*lods]</td>
+		<td>At each quadtree node, for each lod a record of the max delta value in the region</td>
+	</tr>
 	</table>
 	<b>TerrainLayerDeclaration (Identifier 'TDCL')</b>\n
 	[Version 1]
@@ -252,6 +262,9 @@ namespace Ogre
 		public WorkQueue::RequestHandler, public WorkQueue::ResponseHandler, public TerrainAlloc
 	{
 	public:
+		/** Constructor.
+		@param sm The SceneManager to use.
+		*/
 		Terrain(SceneManager* sm);
 		virtual ~Terrain();
 
@@ -348,6 +361,20 @@ namespace Ogre
 			*/
 			float* inputFloat;
 
+			/** If neither inputImage or inputFloat are supplied, the constant
+				height at which the initial terrain should be created (flat). 
+			*/
+			float constantHeight;
+
+			/** Whether this structure should 'own' the input data (inputImage and
+				inputFloat), and therefore delete it on destruction. 
+				The default is false so you have to manage your own memory. If you
+				set it to true, then you must have allocated the memory through
+				OGRE_NEW (for Image) and OGRE_ALLOC_T (for inputFloat), the latter
+				with the category MEMCATEGORY_GEOMETRY.
+			*/
+			bool deleteInputData;
+
 			/// How to scale the input values provided (if any)
 			Real inputScale;
 			/// How to bias the input values provided (if any)
@@ -373,10 +400,71 @@ namespace Ogre
 				, worldSize(1000)
 				, inputImage(0)
 				, inputFloat(0)
+				, constantHeight(0)
+				, deleteInputData(false)
 				, inputScale(1.0)
 				, inputBias(0.0)
 			{
 
+			}
+
+			ImportData(const ImportData& rhs)
+			{
+				*this = rhs;
+			}
+
+			ImportData& operator=(const ImportData& rhs)
+			{
+				// basic copy
+				terrainAlign = rhs.terrainAlign;
+				terrainSize = rhs.terrainSize;
+				maxBatchSize = rhs.maxBatchSize;
+				minBatchSize = rhs.minBatchSize;
+				pos = rhs.pos;
+				worldSize = rhs.worldSize;
+				constantHeight = rhs.constantHeight;
+				deleteInputData = rhs.deleteInputData;
+				inputScale = rhs.inputScale;
+				inputBias = rhs.inputBias;
+				layerDeclaration = rhs.layerDeclaration;
+				layerList = rhs.layerList;
+
+				// By-value copies in ownership cases
+				if (rhs.deleteInputData)
+				{
+					if (rhs.inputImage)
+						inputImage = OGRE_NEW Image(*rhs.inputImage);
+					if (rhs.inputFloat)
+					{
+						inputFloat = OGRE_ALLOC_T(float, terrainSize*terrainSize, MEMCATEGORY_GEOMETRY);
+						memcpy(inputFloat, rhs.inputFloat, sizeof(float) * terrainSize*terrainSize);
+					}
+				}
+				else
+				{
+					// re-use pointers
+					inputImage = rhs.inputImage;
+					inputFloat = rhs.inputFloat;
+				}
+				return *this;
+			}
+
+			/// Delete any input data if this struct is set to do so
+			void destroy()
+			{
+				if (deleteInputData)
+				{
+					OGRE_DELETE inputImage;
+					OGRE_FREE(inputFloat, MEMCATEGORY_GEOMETRY);
+					inputImage = 0;
+					inputFloat = 0;
+				}
+
+			}
+
+			~ImportData()
+			{
+				destroy();
 			}
 
 		};
@@ -415,6 +503,111 @@ namespace Ogre
 			POINT_SPACE = 3
 		};
 
+		/** Interface used to by the Terrain instance to allocate GPU buffers.
+		@remarks This class exists to make it easier to re-use buffers between
+			multiple instances of terrain.
+		*/
+		class _OgreTerrainExport GpuBufferAllocator : public TerrainAlloc
+		{
+		public:
+			GpuBufferAllocator() {}
+			virtual ~GpuBufferAllocator() {}
+
+			/** Allocate (or reuse) vertex buffers for a terrain LOD. 
+			@param numVertices The total number of vertices
+			@param destPos Pointer to a vertex buffer for positions, to be bound
+			@param destDelta Pointer to a vertex buffer for deltas, to be bound
+			*/
+			virtual void allocateVertexBuffers(Terrain* forTerrain, size_t numVertices, HardwareVertexBufferSharedPtr& destPos, HardwareVertexBufferSharedPtr& destDelta) = 0;
+			/** Free (or return to the pool) vertex buffers for terrain. 
+			*/
+			virtual void freeVertexBuffers(const HardwareVertexBufferSharedPtr& posbuf, const HardwareVertexBufferSharedPtr& deltabuf) = 0;
+
+			/** Get a shared index buffer for a given number of settings.
+			@remarks
+				Since all index structures are the same at the same LOD level and
+				relative position, we can share index buffers. Therefore the 
+				buffer returned from this method does not need to be 'freed' like
+				the vertex buffers since it is never owned.
+			@param batchSize The batch size along one edge
+			@param vdatasize The size of the referenced vertex data along one edge
+			@param vertexIncrement The number of vertices to increment for each new indexed row / column
+			@param xoffset The x offset from the start of vdatasize, at that resolution
+			@param yoffset The y offset from the start of vdatasize, at that resolution
+			@param numSkirtRowsCols Number of rows and columns of skirts
+			@param skirtRowColSkip The number of rows / cols to skip in between skirts
+			*/
+			virtual HardwareIndexBufferSharedPtr getSharedIndexBuffer(uint16 batchSize, 
+				uint16 vdatasize, size_t vertexIncrement, uint16 xoffset, uint16 yoffset, uint16 numSkirtRowsCols, 
+				uint16 skirtRowColSkip) = 0;
+
+			/// Free any buffers we're holding
+			virtual void freeAllBuffers() = 0;
+
+		};
+		/// Standard implementation of a buffer allocator which re-uses buffers
+		class _OgreTerrainExport DefaultGpuBufferAllocator : public GpuBufferAllocator
+		{
+		public:
+			DefaultGpuBufferAllocator();
+			~DefaultGpuBufferAllocator();
+			void allocateVertexBuffers(Terrain* forTerrain, size_t numVertices, HardwareVertexBufferSharedPtr& destPos, HardwareVertexBufferSharedPtr& destDelta);
+			void freeVertexBuffers(const HardwareVertexBufferSharedPtr& posbuf, const HardwareVertexBufferSharedPtr& deltabuf);
+			HardwareIndexBufferSharedPtr getSharedIndexBuffer(uint16 batchSize, 
+				uint16 vdatasize, size_t vertexIncrement, uint16 xoffset, uint16 yoffset, uint16 numSkirtRowsCols, 
+				uint16 skirtRowColSkip);
+			void freeAllBuffers();
+
+			/** 'Warm start' the allocator based on needing x instances of 
+				terrain with the given configuration.
+			*/
+			void warmStart(size_t numInstances, uint16 terrainSize, uint16 maxBatchSize, 
+				uint16 minBatchSize);
+
+		protected:
+			typedef list<HardwareVertexBufferSharedPtr>::type VBufList;
+			VBufList mFreePosBufList;
+			VBufList mFreeDeltaBufList;
+			typedef map<uint32, HardwareIndexBufferSharedPtr>::type IBufMap;
+			IBufMap mSharedIBufMap;
+
+			uint32 hashIndexBuffer(uint16 batchSize, 
+				uint16 vdatasize, size_t vertexIncrement, uint16 xoffset, uint16 yoffset, uint16 numSkirtRowsCols, 
+				uint16 skirtRowColSkip);
+			HardwareVertexBufferSharedPtr getVertexBuffer(VBufList& list, size_t vertexSize, size_t numVertices);
+
+		};
+
+		/** Tell this instance to use the given GpuBufferAllocator. 
+		@remarks
+			May only be called when the terrain is not loaded.
+		*/
+		void setGpuBufferAllocator(GpuBufferAllocator* alloc);
+
+		/// Get the current buffer allocator
+		GpuBufferAllocator* getGpuBufferAllocator();
+
+		/// Utility method to get the number of indexes required to render a given batch
+		static size_t _getNumIndexesForBatchSize(uint16 batchSize);
+		/** Utility method to populate a (locked) index buffer.
+		@param pIndexes Pointer to an index buffer to populate
+		@param batchSize The number of vertices down one side of the batch
+		@param vdatasize The number of vertices down one side of the vertex data being referenced
+		@param vertexIncrement The number of vertices to increment for each new indexed row / column
+		@param xoffset The x offset from the start of the vertex data being referenced
+		@param yoffset The y offset from the start of the vertex data being referenced
+		@param numSkirtRowsCols Number of rows and columns of skirts
+		@param skirtRowColSkip The number of rows / cols to skip in between skirts
+
+		*/
+		static void _populateIndexBuffer(uint16* pIndexes, uint16 batchSize, 
+			uint16 vdatasize, size_t vertexIncrement, uint16 xoffset, uint16 yoffset, uint16 numSkirtRowsCols, 
+			uint16 skirtRowColSkip);
+
+		/** Utility method to calculate the skirt index for a given original vertex index. */
+		static uint16 _calcSkirtVertexIndex(uint16 mainIndex, uint16 vdatasize, bool isCol, 
+			uint16 numSkirtRowsCols, uint16 skirtRowColSkip);
+
 		/** Convert a position from one space to another with respect to this terrain.
 		@param inSpace The space that inPos is expressed as
 		@param inPos The incoming position
@@ -444,15 +637,37 @@ namespace Ogre
 		*/
 		Vector3 convertDirection(Space inSpace, const Vector3& inDir, Space outSpace) const;
 
+		/** Set the resource group to use when loading / saving. 
+		@param resGroup Resource group name - you can set this to blank to use
+			the default in TerrainGlobalOptions.
+		*/
+		void setResourceGroup(const String& resGroup) { mResourceGroup = resGroup; }
+
+		/** Get the resource group to use when loading / saving. 
+			If this is blank, the default in TerrainGlobalOptions will be used.
+		*/
+		const String& getResourceGroup() const { return mResourceGroup; }
+
+		/** Get the final resource group to use when loading / saving. 
+		*/
+		const String& _getDerivedResourceGroup() const;
+
 		/** Save terrain data in native form to a standalone file
-		@note
-			This is a fairly basic way of saving the terrain, to save to a
-			file in the resource system, or to insert the terrain data into a
-			shared file, use the StreamSerialiser form.
+		@param filename The name of the file to save to. If this is a filename with
+			no path elements, then it is saved in the first writeable location
+			available in the resource group you have chosen to use for this
+			terrain. If the filename includes path specifiers then it is saved
+			directly instead (but note that it may not be reloadable via the
+			resource system if the location is not on the path). 
 		*/
 		void save(const String& filename);
-		/// Save terrain data in native form to a serializing stream
+		/** Save terrain data in native form to a serializing stream.
+		@remarks
+			If you want complete control over where the terrain data goes, use
+			this form.
+		*/
 		void save(StreamSerialiser& stream);
+
 		/** Prepare the terrain from a standalone file.
 		@note
 		This is safe to do in a background thread as it creates no GPU resources.
@@ -494,6 +709,19 @@ namespace Ogre
 			This method must be called in the main render thread. 
 		*/
 		void load();
+
+		/** Return whether the terrain is loaded. 
+		@remarks
+			Should only be called from the render thread really, since this is
+			where the loaded state changes.
+		*/
+		bool isLoaded() const { return mIsLoaded; }
+
+		/** Returns whether this terrain has been modified since it was first loaded / defined. 
+		@remarks
+			This flag is reset on save().
+		*/
+		bool isModified() const { return mModified; }
 
 
 		/** Unload the terrain and free GPU resources. 
@@ -982,6 +1210,8 @@ namespace Ogre
 		
 		/// Get the AABB (local coords) of the entire terrain
 		const AxisAlignedBox& getAABB() const;
+		/// Get the AABB (world coords) of the entire terrain
+		AxisAlignedBox getWorldAABB() const;
 		/// Get the minimum height of the terrain
 		Real getMinHeight() const;
 		/// Get the maximum height of the terrain
@@ -1248,7 +1478,11 @@ namespace Ogre
 			neighbour index from the perspective of the tile the other side of the
 			boundary).
 		*/
-		NeighbourIndex getOppositeNeighbour(NeighbourIndex index);
+		static NeighbourIndex getOppositeNeighbour(NeighbourIndex index);
+
+		/** Get the neighbour enum for a given offset in a grid (signed).
+		*/
+		static NeighbourIndex getNeighbourIndex(long offsetx, long offsety);
 
 		/** Tell this instance to notify all neighbours that will be affected
 			by a height change that has taken place. 
@@ -1283,9 +1517,21 @@ namespace Ogre
 
 		/** Query whether a derived data update is in progress or not. */
 		bool isDerivedDataUpdateInProgress() const { return mDerivedDataUpdateInProgress; }
-		
 
 
+		/// Utility method to convert axes from world space to terrain space (xy terrain, z up)
+		static void convertWorldToTerrainAxes(Alignment align, const Vector3& worldVec, Vector3* terrainVec);
+		/// Utility method to convert axes from terrain space (xy terrain, z up) tp world space
+		static void convertTerrainToWorldAxes(Alignment align, const Vector3& terrainVec, Vector3* worldVec);
+
+		/// Utility method to write a layer declaration to a stream
+		static void writeLayerDeclaration(const TerrainLayerDeclaration& decl, StreamSerialiser& ser);
+		/// Utility method to read a layer declaration from a stream
+		static bool readLayerDeclaration(StreamSerialiser& ser, TerrainLayerDeclaration& targetdecl);
+		/// Utility method to write a layer instance list to a stream
+		static void writeLayerInstanceList(const Terrain::LayerInstanceList& lst, StreamSerialiser& ser);
+		/// Utility method to read a layer instance list from a stream
+		static bool readLayerInstanceList(StreamSerialiser& ser, size_t numSamplers, Terrain::LayerInstanceList& targetlst);
 	protected:
 
 		void freeCPUResources();
@@ -1337,6 +1583,9 @@ namespace Ogre
 		uint16 mWorkQueueChannel;
 		SceneManager* mSceneMgr;
 		SceneNode* mRootNode;
+		String mResourceGroup;
+		bool mIsLoaded;
+		bool mModified;
 		
 		/// The height data (world coords relative to mPos)
 		float* mHeightData;
@@ -1459,8 +1708,15 @@ namespace Ogre
 
 		const Camera* mLastLODCamera;
 		unsigned long mLastLODFrame;
+		int mLastViewportHeight;
 
 		Terrain* mNeighbours[NEIGHBOUR_COUNT];
+
+		GpuBufferAllocator* mCustomGpuBufferAllocator;
+		DefaultGpuBufferAllocator mDefaultGpuBufferAllocator;
+
+		size_t getPositionBufVertexSize() const;
+		size_t getDeltaBufVertexSize() const;
 
 	};
 
@@ -1494,6 +1750,8 @@ namespace Ogre
 		static ColourValue msCompositeMapAmbient;
 		static ColourValue msCompositeMapDiffuse;
 		static Real msCompositeMapDistance;
+		static String msResourceGroup;
+
 	public:
 
 
@@ -1648,6 +1906,14 @@ namespace Ogre
 		/** Sets the default size of composite maps for a new terrain.
 		*/
 		static void setCompositeMapSize(uint16 sz) { msCompositeMapSize = sz;}
+
+		/** Set the default resource group to use to load / save terrains.
+		*/
+		static void setDefaultResourceGroup(const String& grp) { msResourceGroup = grp; }
+
+		/** Get the default resource group to use to load / save terrains.
+		*/
+		static const String& getDefaultResourceGroup() { return msResourceGroup; }
 
 	};
 

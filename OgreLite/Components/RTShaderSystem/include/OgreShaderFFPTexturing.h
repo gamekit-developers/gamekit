@@ -24,6 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
+#ifdef RTSHADER_SYSTEM_BUILD_CORE_SHADERS
 #ifndef _ShaderFFPTextureStage_
 #define _ShaderFFPTextureStage_
 
@@ -45,12 +46,12 @@ namespace RTShader {
 
 /** Texturing sub render state implementation of the Fixed Function Pipeline.
 Implements texture coordinate processing:
-@see http://msdn.microsoft.com/en-us/library/bb206247(VS.85).aspx
+@see http://msdn.microsoft.com/en-us/library/ee422494.aspx
 Implements texture blending operation:
-@see http://msdn.microsoft.com/en-us/library/bb206241(VS.85).aspx
+@see http://msdn.microsoft.com/en-us/library/ee422488.aspx
 Derives from SubRenderState class.
 */
-class FFPTexturing : public SubRenderState
+class _OgreRTSSExport FFPTexturing : public SubRenderState
 {
 
 // Interface.
@@ -95,7 +96,7 @@ public:
 protected:
 
 	// Per texture unit parameters.
-	struct TextureUnitParams
+	struct _OgreRTSSExport TextureUnitParams
 	{
 		TextureUnitState*		mTextureUnitState;				// Texture unit state.
 		const Frustum*			mTextureProjector;				// Texture projector.
@@ -222,7 +223,7 @@ protected:
 A factory that enables creation of FFPTexturing instances.
 @remarks Sub class of SubRenderStateFactory
 */
-class FFPTexturingFactory : public SubRenderStateFactory
+class _OgreRTSSExport FFPTexturingFactory : public SubRenderStateFactory
 {
 public:
 
@@ -259,5 +260,6 @@ protected:
 }
 }
 
+#endif
 #endif
 

@@ -43,10 +43,19 @@ namespace RTShader {
 
 /** A class that represents a shader based program function.
 */
-class Function : public RTShaderSystemAlloc
+class _OgreRTSSExport Function : public RTShaderSystemAlloc
 {
 // Interface.
 public:
+	enum FunctionType
+	{
+		// internal function (default)
+		FFT_INTERNAL,
+		// Vertex program main
+		FFT_VS_MAIN,
+		// Pixel shader main
+		FFT_PS_MAIN,
+	};
 
 	/** Get the name of this function */
 	const String&				getName					() const { return m_name; }
@@ -100,7 +109,7 @@ public:
 	@param name The name of the parameter to search in the list.
 	@remarks Return NULL if no matching parameter found.
 	*/
-	ParameterPtr				getParameterByName		(const ShaderParameterList& parameterList, const String& name);
+	static ParameterPtr				getParameterByName		(const ShaderParameterList& parameterList, const String& name);
 
 	/** 
 	Get parameter by a given semantic and index from the given parameter list.
@@ -109,7 +118,7 @@ public:
 	@param index The index of the parameter to search in the list.
 	@remarks Return NULL if no matching parameter found.
 	*/
-	ParameterPtr				getParameterBySemantic	(const ShaderParameterList& parameterList, const Parameter::Semantic semantic, int index);
+	static ParameterPtr				getParameterBySemantic	(const ShaderParameterList& parameterList, const Parameter::Semantic semantic, int index);
 
 
 	/** 
@@ -155,11 +164,21 @@ public:
 	/** Add output parameter to this function. */
 	void						addOutputParameter			(ParameterPtr parameter);
 
-	/** Delete input parameter to this function. */
+	/** Delete input parameter from this function. */
 	void						deleteInputParameter		(ParameterPtr parameter);
 
-	/** Delete output parameter to this function. */
+	/** Delete output parameter from this function. */
 	void						deleteOutputParameter		(ParameterPtr parameter);
+
+	/** Delete all input parameters from this function. */
+	void						deleteAllInputParameters	();
+
+	/** Delete all output parameters from this function. */
+	void						deleteAllOutputParameters	();
+
+	/** get function type. */
+	FunctionType getFunctionType() const;
+
 
 protected:
 
@@ -168,7 +187,7 @@ protected:
 	@param desc The description of this function.
 	@remarks This class is allocated via an instance of Program class. 
 	*/
-	Function			(const String& name, const String& desc);
+	Function			(const String& name, const String& desc, const FunctionType functionType);
 
 	/** Class destructor */
 	~Function			();
@@ -189,6 +208,7 @@ protected:
 	ShaderParameterList			mOutputParameters;			// Output parameters.
 	ShaderParameterList			mLocalParameters;			// Local parameters.
 	FunctionAtomInstanceList	mAtomInstances;				// Atom instances composing this function.
+	FunctionType				m_functionType;				// Function type
 	
 private:
 	friend class Program;

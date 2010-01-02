@@ -32,11 +32,6 @@ THE SOFTWARE
 // Needed for OGRE_WCHAR_T_STRINGS below
 #include <string>
 
-#if OGRE_COMPILER == OGRE_COMPILER_MSVC
-// XXX Added by Charlie C for OgreKit
-#pragma warning(disable :4305)
-#pragma warning(disable :4244)
-#endif
 
 // configure memory tracking
 #if OGRE_DEBUG_MODE 
@@ -61,7 +56,7 @@ namespace Ogre {
     #define OGRE_VERSION_MAJOR 1
     #define OGRE_VERSION_MINOR 7
     #define OGRE_VERSION_PATCH 0
-	#define OGRE_VERSION_SUFFIX "dev-unstable"
+	#define OGRE_VERSION_SUFFIX "RC1"
     #define OGRE_VERSION_NAME "Cthugha"
 
     #define OGRE_VERSION    ((OGRE_VERSION_MAJOR << 16) | (OGRE_VERSION_MINOR << 8) | OGRE_VERSION_PATCH)
@@ -453,11 +448,6 @@ namespace Ogre
 	typedef _StringStreamBase StringStream;
 	typedef StringStream stringstream;
 
-#if OGRE_WCHAR_T_STRINGS
-#define		_Char L
-#else
-#define		_Char 
-#endif
 }
 
 //for stl containter

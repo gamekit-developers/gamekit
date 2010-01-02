@@ -230,6 +230,10 @@ namespace Ogre {
 		/** Gives a name to a SubMesh
 		*/
 		void nameSubMesh(const String& name, ushort index);
+
+		/** Removes a name from a SubMesh
+		*/
+		void unnameSubMesh(const String& name);
 		
 		/** Gets the index of a submesh with a given name.
         @remarks
@@ -923,6 +927,8 @@ namespace Ogre {
 		mutable MeshPtr manualMesh;
         /// Edge list for this LOD level (may be derived from manual mesh)
         mutable EdgeData* edgeData;
+
+		MeshLodUsage() : userValue(0.0), value(0.0), edgeData(0) {}
 	};
 
 	/** @} */

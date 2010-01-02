@@ -24,6 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
+#ifdef RTSHADER_SYSTEM_BUILD_EXT_SHADERS
 #include "OgreShaderExPerPixelLighting.h"
 #include "OgreShaderFFPRenderState.h"
 #include "OgreShaderProgram.h"
@@ -111,7 +112,7 @@ void PerPixelLighting::updateGpuProgramsParams(Renderable* rend, Pass* pass, con
 		return;
 
 	GpuProgramParametersSharedPtr psGpuParams = pass->getFragmentProgramParameters();
-	SceneManager* sceneMgr = ShaderGenerator::getSingleton().getSceneManager();
+	SceneManager* sceneMgr = ShaderGenerator::getSingleton().getActiveSceneManager();
 
 	Viewport* curViewport = sceneMgr->getCurrentViewport();
 	Camera* curCamera     = curViewport->getCamera();
@@ -992,3 +993,4 @@ SubRenderState*	PerPixelLightingFactory::createInstanceImpl()
 }
 }
 
+#endif

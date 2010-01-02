@@ -30,13 +30,17 @@ THE SOFTWARE.
 #define __Ogre_TerrainPaging_H__
 
 #include "OgreTerrainPrerequisites.h"
-#include "OgrePageContent.h"
-#include "OgrePageContentFactory.h"
+#include "OgrePagedWorldSection.h"
+#include "OgrePageManager.h"
 
 
 
 namespace Ogre
 {
+	class PagedWorld;
+	class TerrainGroup;
+	class TerrainPagedWorldSection;
+
 	/** \addtogroup Optional Components
 	*  @{
 	*/
@@ -45,68 +49,83 @@ namespace Ogre
 	*  @{
 	*/
 
-
-	/** Specialisation of page content for a page of terrain.
+	/** This class is the 'core' class for paging terrain, that will integrate
+		with the larger paging system and provide the appropriate utility
+		classes required. 
+	@remarks
+		You should construct this class after PageManager and before any PagedWorlds
+		that might use it are created / loaded. Once constructed, it will make
+		the "Terrain" PagedWorldSection type available, which uses a grid strategy for
+		paging and uses TerrainGroup for the content. Other content can 
+		be embedded in the pages too but the terrain is done like this in order
+		to maintain connections between pages and other global data.
 	@par
-		This class forms a bridge between the paging system and a chunk of terrain.
+		Because PagedWorld and all attached classes have to be loadable from a stream, 
+		most of the functionality is provided behind generalised interfaces. However,
+		for constructing a paged terrain in code you can use utility methods on 
+		this class. This procedurally created data can then be saved in a generic 
+		form which will reconstruct on loading. Alternatively you can use the 
+		generic methods and simply cast based on your prior knowledge of the types
+		(or checking the type names exposed). 
 
-		The data format for this in a file is:<br/>
-		<b>TerrainContentData (Identifier 'TERR')</b>\n
-		[Version 1]
-		<table>
-		<tr>
-			<td><b>Name</b></td>
-			<td><b>Type</b></td>
-			<td><b>Description</b></td>
-		</tr>
-		<tr>
-			<td>Terrain orientation</td>
-			<td>uint8</td>
-			<td>The orientation of the terrain; XZ = 0, XY = 1, YZ = 2</td>
-		</tr>
-		</table>
 	*/
-	class _OgreTerrainExport TerrainPageContent : public PageContent
+	class _OgreTerrainExport TerrainPaging : public TerrainAlloc
 	{
 	public:
-		TerrainPageContent(PageContentFactory* creator);
-		virtual ~TerrainPageContent();
+		/** Constructor.
+		@param pageMgr The PageManager which this class should attach to.
+		*/
+		TerrainPaging(PageManager* pageMgr);
+		~TerrainPaging();
 
-		// Overridden from PageContent
-		void save(StreamSerialiser& stream);
+		/** Create a TerrainPagedWorldSection.
+		@remarks
+			This is the simplest way to create a world section which is configured
+			to contain terrain (among other objects if you want). You can also do this
+			by calling PagedWorld::createSection with the type "Terrain" but there
+			are more steps to configuring it that way (note: this is how loading 
+			works though so it remains generic).
+		@param world The PagedWorld that is to contain this section
+		@param terrainGroup A TerrainGroup which must have been pre-configured before
+			this call, to at least set the origin, the world size, and the file name
+			convention.
+		@param loadRadius The radius from the camera at which terrain pages will be loaded
+		@param holdRadius The radius from the camera at which terrain pages will be held in memory
+			but not loaded if they're not already. This must be larger than loadRadius and is used
+			to minimise thrashing if the camera goes backwards and forwards at the loading border.
+		@param minX,minY,maxX,maxY The min/max page indexes that the world will try to load pages for, 
+			as measured from the origin page at (0,0) by a signed index. The default is -10 to 10
+			in each direction or 20x20 pages.
+		@param sectionName An optional name to give the section (if none is
+			provided, one will be generated)
+		@returns The world section which is already attached to and owned by the world you passed in. 
+			There is no 'destroy' method because you destroy via the PagedWorld, this is just a
+			helper function. 
+		*/
+		TerrainPagedWorldSection* createWorldSection(PagedWorld* world, TerrainGroup* terrainGroup, 
+			Real loadRadius, Real holdRadius, 
+			int32 minX = -10, int32 minY = -10, int32 maxX = 10, int32 maxY = 10, 
+			const String& sectionName = StringUtil::BLANK);
 
 	protected:
-		// Overridden from PageLoadableUnit
-		bool prepareImpl(StreamSerialiser& stream);
-		void loadImpl();
-		void unloadImpl();
-		void unprepareImpl();
+		PageManager* mManager;
 
-		/// The actual terrain
-		Terrain* mTerrain;
+		class _OgreTerrainExport SectionFactory : public PagedWorldSectionFactory
+		{
+		public:
+			static const String FACTORY_NAME;
+			const String& getName() const;
+			PagedWorldSection* createInstance(const String& name, PagedWorld* parent, SceneManager* sm);
+			void destroyInstance(PagedWorldSection*);
+
+		};
+
+		SectionFactory mSectionFactory;
+
 	};
 
 
-	/// Factory class for TerrainPageContent
-	class _OgreTerrainExport TerrainPageContentFactory : public PageContentFactory
-	{
-	public:
-		static String FACTORY_NAME;
 
-		TerrainPageContentFactory() {}
-		~TerrainPageContentFactory() {}
-
-		const String& getName() const { return FACTORY_NAME; }
-
-		PageContent* createInstance() 
-		{
-			return OGRE_NEW TerrainPageContent(this); 
-		}
-		void destroyInstance(PageContent* c)
-		{
-			OGRE_DELETE c;
-		}
-	};
 
 
 	/** @} */

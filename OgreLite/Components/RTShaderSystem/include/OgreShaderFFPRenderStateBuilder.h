@@ -24,6 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
+#ifdef RTSHADER_SYSTEM_BUILD_CORE_SHADERS
 #ifndef _ShaderFFPRenderStateBuilder_
 #define _ShaderFFPRenderStateBuilder_
 
@@ -45,7 +46,7 @@ namespace RTShader {
 This class builds RenderState from a given pass that represents the fixed function pipeline
 that the source pass describes.
 */
-class FFPRenderStateBuilder : public Singleton<FFPRenderStateBuilder>, public RTShaderSystemAlloc
+class _OgreRTSSExport FFPRenderStateBuilder : public Singleton<FFPRenderStateBuilder>, public RTShaderSystemAlloc
 {
 // Interface.
 public:
@@ -141,4 +142,4 @@ protected:
 }
 
 #endif
-
+#endif

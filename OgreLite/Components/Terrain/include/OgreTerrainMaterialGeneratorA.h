@@ -35,6 +35,7 @@ THE SOFTWARE.
 
 namespace Ogre
 {
+	class PSSMShadowCameraSetup;
 
 	/** \addtogroup Optional Components
 	*  @{
@@ -110,6 +111,38 @@ namespace Ogre
 			in the distance (default true). 
 			*/
 			void setCompositeMapEnabled(bool enabled);
+			/** Whether to support dynamic texture shadows received from other 
+				objects, on the terrain (default true). 
+			*/
+			bool getReceiveDynamicShadowsEnabled() const  { return mReceiveDynamicShadows; }
+			/** Whether to support dynamic texture shadows received from other 
+			objects, on the terrain (default true). 
+			*/
+			void setReceiveDynamicShadowsEnabled(bool enabled);
+
+			/** Whether to use PSSM support dynamic texture shadows, and if so the 
+				settings to use (default 0). 
+			*/
+			void setReceiveDynamicShadowsPSSM(PSSMShadowCameraSetup* pssmSettings);
+			/** Whether to use PSSM support dynamic texture shadows, and if so the 
+			settings to use (default 0). 
+			*/
+			PSSMShadowCameraSetup* getReceiveDynamicShadowsPSSM() const { return mPSSM; }
+			/** Whether to use depth shadows (default false). 
+			*/
+			void setReceiveDynamicShadowsDepth(bool enabled);
+			/** Whether to use depth shadows (default false). 
+			*/
+			bool getReceiveDynamicShadowsDepth() const { return mDepthShadows; }
+			/** Whether to use shadows on low LOD material rendering (when using composite map) (default false). 
+			*/
+			void setReceiveDynamicShadowsLowLod(bool enabled);
+			/** Whether to use shadows on low LOD material rendering (when using composite map) (default false). 
+			*/
+			bool getReceiveDynamicShadowsLowLod() const { return mLowLodShadows; }
+
+			/// Internal
+			bool _isSM3Available() const { return mSM3Available; }
 		
 		protected:
 
@@ -122,7 +155,7 @@ namespace Ogre
 			void addTechnique(const MaterialPtr& mat, const Terrain* terrain, TechniqueType tt);
 
 			/// Interface definition for helper class to generate shaders
-			class ShaderHelper : public TerrainAlloc
+			class _OgreTerrainExport ShaderHelper : public TerrainAlloc
 			{
 			public:
 				ShaderHelper() {}
@@ -147,12 +180,15 @@ namespace Ogre
 				virtual void defaultFpParams(const SM2Profile* prof, const Terrain* terrain, TechniqueType tt, const HighLevelGpuProgramPtr& prog);
 				virtual void updateVpParams(const SM2Profile* prof, const Terrain* terrain, TechniqueType tt, const GpuProgramParametersSharedPtr& params);
 				virtual void updateFpParams(const SM2Profile* prof, const Terrain* terrain, TechniqueType tt, const GpuProgramParametersSharedPtr& params);
-				virtual String getChannel(uint idx);
+				static String getChannel(uint idx);
+
+				size_t mShadowSamplerStartHi;
+				size_t mShadowSamplerStartLo;
 
 			};
 
 			/// Utility class to help with generating shaders for Cg / HLSL.
-			class ShaderHelperCg : public ShaderHelper
+			class _OgreTerrainExport ShaderHelperCg : public ShaderHelper
 			{
 			protected:
 				HighLevelGpuProgramPtr createVertexProgram(const SM2Profile* prof, const Terrain* terrain, TechniqueType tt);
@@ -163,9 +199,14 @@ namespace Ogre
 				void generateFpLayer(const SM2Profile* prof, const Terrain* terrain, TechniqueType tt, uint layer, StringUtil::StrStreamType& outStream);
 				void generateVpFooter(const SM2Profile* prof, const Terrain* terrain, TechniqueType tt, StringUtil::StrStreamType& outStream);
 				void generateFpFooter(const SM2Profile* prof, const Terrain* terrain, TechniqueType tt, StringUtil::StrStreamType& outStream);
+				uint generateVpDynamicShadowsParams(uint texCoordStart, const SM2Profile* prof, const Terrain* terrain, TechniqueType tt, StringUtil::StrStreamType& outStream);
+				void generateVpDynamicShadows(const SM2Profile* prof, const Terrain* terrain, TechniqueType tt, StringUtil::StrStreamType& outStream);
+				void generateFpDynamicShadowsHelpers(const SM2Profile* prof, const Terrain* terrain, TechniqueType tt, StringUtil::StrStreamType& outStream);
+				void generateFpDynamicShadowsParams(uint* texCoord, uint* sampler, const SM2Profile* prof, const Terrain* terrain, TechniqueType tt, StringUtil::StrStreamType& outStream);
+				void generateFpDynamicShadows(const SM2Profile* prof, const Terrain* terrain, TechniqueType tt, StringUtil::StrStreamType& outStream);
 			};
 
-			class ShaderHelperHLSL : public ShaderHelperCg
+			class _OgreTerrainExport ShaderHelperHLSL : public ShaderHelperCg
 			{
 			protected:
 				HighLevelGpuProgramPtr createVertexProgram(const SM2Profile* prof, const Terrain* terrain, TechniqueType tt);
@@ -173,7 +214,7 @@ namespace Ogre
 			};
 
 			/// Utility class to help with generating shaders for GLSL.
-			class ShaderHelperGLSL : public ShaderHelper
+			class _OgreTerrainExport ShaderHelperGLSL : public ShaderHelper
 			{
 			protected:
 				HighLevelGpuProgramPtr createVertexProgram(const SM2Profile* prof, const Terrain* terrain, TechniqueType tt);
@@ -193,6 +234,13 @@ namespace Ogre
 			bool mGlobalColourMapEnabled;
 			bool mLightmapEnabled;
 			bool mCompositeMapEnabled;
+			bool mReceiveDynamicShadows;
+			PSSMShadowCameraSetup* mPSSM;
+			bool mDepthShadows;
+			bool mLowLodShadows;
+			bool mSM3Available;
+
+			bool isShadowingEnabled(TechniqueType tt, const Terrain* terrain) const;
 
 		};
 

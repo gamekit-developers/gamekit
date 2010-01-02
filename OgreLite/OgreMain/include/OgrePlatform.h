@@ -99,7 +99,7 @@ namespace Ogre {
 #   define OGRE_PLATFORM OGRE_PLATFORM_WIN32
 #elif defined( __APPLE_CC__)
     // Device                                                     Simulator
-    // Both requiring OS version 2.0 or greater
+    // Both requiring OS version 3.0 or greater
 #   if __ENVIRONMENT_IPHONE_OS_VERSION_MIN_REQUIRED__ >= 30000 || __IPHONE_OS_VERSION_MIN_REQUIRED >= 30000
 #       define OGRE_PLATFORM OGRE_PLATFORM_IPHONE
 #   else
@@ -240,11 +240,16 @@ namespace Ogre {
 typedef unsigned int uint32;
 typedef unsigned short uint16;
 typedef unsigned char uint8;
+typedef int int32;
+typedef short int16;
+typedef char int8;
 // define uint64 type
 #if OGRE_COMPILER == OGRE_COMPILER_MSVC
 	typedef unsigned __int64 uint64;
+	typedef __int64 int64;
 #else
 	typedef unsigned long long uint64;
+	typedef long long int64;
 #endif
 
 

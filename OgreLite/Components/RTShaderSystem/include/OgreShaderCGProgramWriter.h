@@ -43,7 +43,7 @@ namespace RTShader {
 /** CG target language writer implementation.
 @see ProgramWriter.
 */
-class CGProgramWriter : public ProgramWriter
+class _OgreRTSSExport CGProgramWriter : public ProgramWriter
 {
 
 // Interface.
@@ -88,7 +88,7 @@ protected:
 	void		writeLocalParameter			(std::ostream& os, ParameterPtr parameter);
 
 	/** Write a function declaration. */
-	void		writeFunctionDeclaration	(std::ostream& os, Function* function);
+	void		writeFunctionDeclaration	(std::ostream& os, Function* function, bool & needToTranslateHlsl4Color, ParameterPtr & colorParameter);
 
 	/** Write function atom instance. */
 	void		writeAtomInstance			(std::ostream& os, FunctionAtom* atom);
@@ -107,7 +107,7 @@ protected:
 /** CG program writer factory implementation.
 @see ProgramWriterFactory
 */
-class ShaderProgramWriterCGFactory : public ProgramWriterFactory
+class _OgreRTSSExport ShaderProgramWriterCGFactory : public ProgramWriterFactory
 {
 public:
 	ShaderProgramWriterCGFactory()

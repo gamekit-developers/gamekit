@@ -24,6 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
+#ifdef RTSHADER_SYSTEM_BUILD_CORE_SHADERS
 #include "OgreShaderFFPFog.h"
 #include "OgreShaderFFPRenderState.h"
 #include "OgreShaderProgram.h"
@@ -101,7 +102,7 @@ void FFPFog::updateGpuProgramsParams(Renderable* rend, Pass* pass, const AutoPar
 	}
 	else
 	{
-		SceneManager* sceneMgr = ShaderGenerator::getSingleton().getSceneManager();
+		SceneManager* sceneMgr = ShaderGenerator::getSingleton().getActiveSceneManager();
 		
 		fogMode			= sceneMgr->getFogMode();
 		newFogColour	= sceneMgr->getFogColour();
@@ -359,7 +360,7 @@ bool FFPFog::preAddToRenderState(RenderState* renderState, Pass* srcPass, Pass* 
 	}
 	else
 	{
-		SceneManager* sceneMgr = ShaderGenerator::getSingleton().getSceneManager();
+		SceneManager* sceneMgr = ShaderGenerator::getSingleton().getActiveSceneManager();
 		
 		if (sceneMgr == NULL)
 		{
@@ -375,9 +376,9 @@ bool FFPFog::preAddToRenderState(RenderState* renderState, Pass* srcPass, Pass* 
 			newFogColour	= sceneMgr->getFogColour();
 			newFogStart		= sceneMgr->getFogStart();
 			newFogEnd		= sceneMgr->getFogEnd();
-			newFogDensity	= sceneMgr->getFogDensity();
-			mPassOverrideParams = false;
-		}		
+			newFogDensity	= sceneMgr->getFogDensity();			
+		}
+		mPassOverrideParams = false;
 	}
 
 	// Set fog properties.
@@ -489,3 +490,4 @@ SubRenderState*	FFPFogFactory::createInstanceImpl()
 }
 }
 
+#endif

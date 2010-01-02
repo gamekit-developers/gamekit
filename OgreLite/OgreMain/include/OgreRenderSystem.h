@@ -271,7 +271,7 @@ namespace Ogre
 		After creation, this window can be retrieved using getRenderTarget().
 		@param
 		name The name of the window. Used in other methods
-		later like setRenderTarget and getRenderWindow.
+		later like setRenderTarget and getRenderTarget.
 		@param
 		width The width of the new window.
 		@param
@@ -1149,6 +1149,12 @@ namespace Ogre
 		/** Sets whether or not vertex windings set should be inverted; this can be important
 		for rendering reflections. */
 		virtual void setInvertVertexWinding(bool invert);
+
+		/** Indicates whether or not the vertex windings set will be inverted for the current render (e.g. reflections)
+		@see RenderSystem::setInvertVertexWinding
+		*/
+		virtual bool getVertexWindingInverted(void) const;
+
 		/** Sets the 'scissor region' ie the region of the target in which rendering can take place.
 		@remarks
 		This method allows you to 'mask off' rendering in all but a given rectangular area

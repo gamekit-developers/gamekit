@@ -42,7 +42,7 @@ namespace RTShader {
 
 /** A class that represents a shader based program parameter.
 */
-class Parameter : public RTShaderSystemAlloc
+class _OgreRTSSExport Parameter : public RTShaderSystemAlloc
 {
 public:
 	// Shader parameter semantic.
@@ -85,6 +85,16 @@ public:
 
 		/// Position in projective space
 		SPC_POSITION_PROJECTIVE_SPACE,
+
+		/// Position in light space index 0-7
+		SPC_POSITION_LIGHT_SPACE0,
+		SPC_POSITION_LIGHT_SPACE1,
+		SPC_POSITION_LIGHT_SPACE2,
+		SPC_POSITION_LIGHT_SPACE3,
+		SPC_POSITION_LIGHT_SPACE4,
+		SPC_POSITION_LIGHT_SPACE5,
+		SPC_POSITION_LIGHT_SPACE6,
+		SPC_POSITION_LIGHT_SPACE7,
 
 		/// Normal in object space
 		SPC_NORMAL_OBJECT_SPACE,
@@ -402,7 +412,7 @@ protected:
 
 /** Helper utility class that creates common parameters.
 */
-class ParameterFactory
+class _OgreRTSSExport ParameterFactory
 {
 
 	// Interface.

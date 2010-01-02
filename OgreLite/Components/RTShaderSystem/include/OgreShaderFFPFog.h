@@ -24,6 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
+#ifdef RTSHADER_SYSTEM_BUILD_CORE_SHADERS
 #ifndef _ShaderFFPFog_
 #define _ShaderFFPFog_
 
@@ -43,10 +44,10 @@ namespace RTShader {
 */
 
 /** Fog sub render state implementation of the Fixed Function Pipeline.
-@see http://msdn.microsoft.com/en-us/library/bb173398(VS.85).aspx
+@see http://msdn.microsoft.com/en-us/library/ee418582.aspx
 Derives from SubRenderState class.
 */
-class FFPFog : public SubRenderState
+class _OgreRTSSExport FFPFog : public SubRenderState
 {
 public:
 
@@ -100,7 +101,7 @@ public:
 	@param fogStart Start distance of fog, used for linear mode only.
 	@param fogEnd End distance of fog, used for linear mode only.
 	@param fogDensity Fog density used in exponential modes only.
-	@see http://msdn.microsoft.com/en-us/library/bb173401(VS.85).aspx
+	@see http://msdn.microsoft.com/en-us/library/ee418606.aspx
 	*/
 	void			setFogProperties				(FogMode fogMode, 
 		const ColourValue& fogColour, 
@@ -163,7 +164,7 @@ protected:
 A factory that enables creation of FFPFog instances.
 @remarks Sub class of SubRenderStateFactory
 */
-class FFPFogFactory : public SubRenderStateFactory
+class _OgreRTSSExport FFPFogFactory : public SubRenderStateFactory
 {
 public:
 
@@ -199,5 +200,6 @@ protected:
 }
 }
 
+#endif
 #endif
 

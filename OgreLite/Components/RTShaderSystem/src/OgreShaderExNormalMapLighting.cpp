@@ -24,6 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
+#ifdef RTSHADER_SYSTEM_BUILD_EXT_SHADERS
 #include "OgreShaderExNormalMapLighting.h"
 #include "OgreShaderFFPRenderState.h"
 #include "OgreShaderProgram.h"
@@ -121,7 +122,7 @@ void NormalMapLighting::updateGpuProgramsParams(Renderable* rend, Pass* pass, co
 
 	GpuProgramParametersSharedPtr vsGpuParams = pass->getVertexProgramParameters();
 	GpuProgramParametersSharedPtr psGpuParams = pass->getFragmentProgramParameters();
-	SceneManager* sceneMgr = ShaderGenerator::getSingleton().getSceneManager();	
+	SceneManager* sceneMgr = ShaderGenerator::getSingleton().getActiveSceneManager();	
 	const Matrix4& matWorldInv	= source->getInverseWorldMatrix();	
 	Light::LightTypes curLightType = Light::LT_DIRECTIONAL; 
 	unsigned int curSearchLightIndex = 0;
@@ -1446,3 +1447,4 @@ SubRenderState*	NormalMapLightingFactory::createInstanceImpl()
 }
 }
 
+#endif

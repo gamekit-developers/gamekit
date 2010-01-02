@@ -31,6 +31,7 @@ THE SOFTWARE.
 #include "OgrePrerequisites.h"
 #include "OgreCommon.h"
 #include "OgreColourValue.h"
+#include "OgreFrustum.h"
 
 namespace Ogre {
 	/** \addtogroup Core
@@ -54,13 +55,7 @@ namespace Ogre {
     */
 	class _OgreExport Viewport : public ViewportAlloc
     {
-    public:
-        enum Orientation {
-            OR_LANDSCAPELEFT = 0,
-            OR_LANDSCAPERIGHT = 1,
-            OR_PORTRAIT = 2
-        };
-        
+    public:       
         /** The usual constructor.
             @param
                 cam Pointer to a camera to be the source for the image.
@@ -175,20 +170,7 @@ namespace Ogre {
         */
 
         int getActualHeight(void) const;
-        
-        /** Gets the current orientation of the viewport
-         */
-        int getOrientation(void);
-        
-        /** Sets the orientation of the viewport
-             @remarks
-                Setting the orientation of a viewport is only supported on
-                iPhone at this time.  An exeption is thrown on other platforms.
-             @param
-                orient
-         */
-        void setOrientation(Orientation orient);
-
+               
         /** Sets the dimensions (after creation).
             @param
                 left
@@ -202,6 +184,22 @@ namespace Ogre {
                 target area is 0, 0, 1, 1.
         */
         void setDimensions(Real left, Real top, Real width, Real height);
+
+        /** Set the orientation mode of the viewport.
+        */
+        void setOrientationMode(OrientationMode orientationMode, bool setDefault = true);
+
+        /** Get the orientation mode of the viewport.
+        */
+        OrientationMode getOrientationMode() const;
+
+        /** Set the initial orientation mode of viewports.
+        */
+        static void setDefaultOrientationMode(OrientationMode orientationMode);
+
+        /** Get the initial orientation mode of viewports.
+        */
+        static OrientationMode getDefaultOrientationMode();
 
         /** Sets the initial background colour of the viewport (before
             rendering).
@@ -229,6 +227,23 @@ namespace Ogre {
 
 		/** Gets which buffers are to be cleared each frame. */
         unsigned int getClearBuffers(void) const;
+
+		/** Sets whether this viewport should be automatically updated 
+			if Ogre's rendering loop or RenderTarget::update is being used.
+        @remarks
+            By default, if you use Ogre's own rendering loop (Root::startRendering)
+            or call RenderTarget::update, all viewports are updated automatically.
+            This method allows you to control that behaviour, if for example you 
+			have a viewport which you only want to update periodically.
+        @param autoupdate If true, the viewport is updated during the automatic
+            render loop or when RenderTarget::update() is called. If false, the 
+            viewport is only updated when its update() method is called explicitly.
+        */
+		void setAutoUpdated(bool autoupdate);
+		/** Gets whether this viewport is automatically updated if 
+			Ogre's rendering loop or RenderTarget::update is being used.
+        */
+		bool isAutoUpdated() const;
 
 		/** Set the material scheme which the viewport should use.
 		@remarks
@@ -341,6 +356,11 @@ namespace Ogre {
 		/// Get the invocation sequence - will return null if using standard
 		RenderQueueInvocationSequence* _getRenderQueueInvocationSequence(void);
 
+        /** Convert oriented input point coordinates to screen coordinates. */
+        void pointOrientedToScreen(const Vector2 &v, int orientationMode, Vector2 &outv);
+        void pointOrientedToScreen(Real orientedX, Real orientedY, int orientationMode,
+                                   Real &screenX, Real &screenY);
+
     protected:
         Camera* mCamera;
         RenderTarget* mTarget;
@@ -350,8 +370,6 @@ namespace Ogre {
         int mActLeft, mActTop, mActWidth, mActHeight;
         /// ZOrder
         int mZOrder;
-        /// Viewport orientation
-        int mOrientation;
         /// Background options
         ColourValue mBackColour;
         bool mClearEveryFrame;
@@ -366,6 +384,12 @@ namespace Ogre {
 		RenderQueueInvocationSequence* mRQSequence;
 		/// Material scheme
 		String mMaterialSchemeName;
+        /// Viewport orientation mode
+        OrientationMode mOrientationMode;
+        static OrientationMode mDefaultOrientationMode;
+
+		/// Automatic rendering on/off
+		bool mIsAutoUpdated;
     };
 	/** @} */
 	/** @} */

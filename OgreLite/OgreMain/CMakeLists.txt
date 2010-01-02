@@ -6,13 +6,18 @@
 # The contents of this file are placed in the public domain. Feel
 # free to make use of it in any way you like.
 #-------------------------------------------------------------------
-project(OgreMain)
 
+############################################################
+# OgreMain core library
+############################################################
 
+PROJECT(OgreMain)
 include_directories(${OGREKIT_FREEIMAGE_INCLUDE})
 include_directories(${OGREKIT_FREETYPE_INCLUDE})
 include_directories(${OGREKIT_ZLIB_INCLUDE})
 include_directories(${OGREKIT_ZZIP_INCLUDE})
+
+include(PrecompiledHeader)
 
 
 # define header and source files for the library
@@ -520,7 +525,7 @@ elseif (APPLE)
     )
     source_group(Resources FILES ${RESOURCE_FILES})
 
-    set(PLATFORM_LIBS ${IOKit_LIBRARY_FWK} ${Carbon_LIBRARY_FWK} ${Cocoa_LIBRARY_FWK})
+    set(PLATFORM_LIBS ${Carbon_LIBRARY_FWK} ${Cocoa_LIBRARY_FWK})
     set(PLATFORM_HEADER_INSTALL "OSX")
   endif ()
 elseif (UNIX)
@@ -660,13 +665,14 @@ use_precompiled_header(OgreMain
   "${CMAKE_CURRENT_SOURCE_DIR}/src/OgrePrecompiledHeaders.cpp"
 )
 
-#ogre_config_lib(OgreMain)
-#install(FILES ${HEADER_FILES}
-#  DESTINATION include/OGRE
-#)
-#install(FILES ${PLATFORM_HEADER_FILES}
-#  DESTINATION include/OGRE/${PLATFORM_HEADER_INSTALL}
-#)
-#install(FILES ${THREAD_HEADER_FILES}
-#	DESTINATION include/OGRE/Threading
-#)
+# install OgreMain
+ogre_config_lib(OgreMain)
+install(FILES ${HEADER_FILES}
+  DESTINATION include/OGRE
+)
+install(FILES ${PLATFORM_HEADER_FILES}
+  DESTINATION include/OGRE/${PLATFORM_HEADER_INSTALL}
+)
+install(FILES ${THREAD_HEADER_FILES}
+	DESTINATION include/OGRE/Threading
+)

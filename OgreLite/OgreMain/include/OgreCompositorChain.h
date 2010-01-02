@@ -86,7 +86,7 @@ namespace Ogre {
          */
         CompositorInstance *getCompositor(size_t index);
 
-		/** Get compositor instance by name.
+		/** Get compositor instance by name. Returns null if not found.
          */
         CompositorInstance *getCompositor(const String& name);
 
@@ -107,6 +107,8 @@ namespace Ogre {
     
         /** @see RenderTargetListener::preRenderTargetUpdate */
 		virtual void preRenderTargetUpdate(const RenderTargetEvent& evt);
+		/** @see RenderTargetListener::postRenderTargetUpdate */
+		virtual void postRenderTargetUpdate(const RenderTargetEvent& evt);
 		/** @see RenderTargetListener::preViewportUpdate */
         virtual void preViewportUpdate(const RenderTargetViewportEvent& evt);
         /** @see RenderTargetListener::postViewportUpdate */

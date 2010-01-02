@@ -42,7 +42,7 @@ namespace RTShader {
 /** GLSL target language writer implementation.
 @see ProgramWriter.
 */
-class GLSLProgramWriter : public ProgramWriter
+class _OgreRTSSExport GLSLProgramWriter : public ProgramWriter
 {
 	// Interface.
 public:
@@ -79,7 +79,7 @@ protected:
 	void				writeLocalParameter			(std::ostream& os, ParameterPtr parameter);
 
 	/** Write forward declarations. This is needed so that we can attach library shader at a later step. */
-	void				writeForwardDeclartions		(std::ostream& os, Program* program);
+	void				writeForwardDeclarations	(std::ostream& os, Program* program);
 
 	/** Write the input params of the function */
 	void				writeInputParameters		(std::ostream& os, Function* function, GpuProgramType gpuType);
@@ -101,12 +101,13 @@ protected:
 	StringMap					mInputToGLStatesMap;			// Map parameter name to a new parameter name (sometime renaming is required to match names between vertex and fragment shader)
 	ParamContentToStringMap		mContentToPerVertexAttributes;	// Map parameter content to vertex attributes 
 	int							mGLSLVersion;					// Holds the current glsl version
+	StringVector				mFragInputParams;				// Holds the fragment input params 
 };
 
 /** GLSL program writer factory implementation.
 @see ProgramWriterFactory
 */
-class ShaderProgramWriterGLSLFactory : public ProgramWriterFactory
+class _OgreRTSSExport ShaderProgramWriterGLSLFactory : public ProgramWriterFactory
 {
 public:
 	ShaderProgramWriterGLSLFactory()

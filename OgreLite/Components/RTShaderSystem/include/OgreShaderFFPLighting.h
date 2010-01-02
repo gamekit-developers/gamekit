@@ -24,6 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
+#ifdef RTSHADER_SYSTEM_BUILD_CORE_SHADERS
 #ifndef _ShaderFFPLighting_
 #define _ShaderFFPLighting_
 
@@ -46,10 +47,10 @@ namespace RTShader {
 */
 
 /** Lighting sub render state implementation of the Fixed Function Pipeline.
-@see http://msdn.microsoft.com/en-us/library/bb147178(VS.85).aspx
+@see http://msdn.microsoft.com/en-us/library/ee422035.aspx
 Derives from SubRenderState class.
 */
-class FFPLighting : public SubRenderState
+class _OgreRTSSExport FFPLighting : public SubRenderState
 {
 
 // Interface.
@@ -95,7 +96,7 @@ public:
 protected:
 
 	// Per light parameters.
-	struct LightParams
+	struct _OgreRTSSExport LightParams
 	{
 		Light::LightTypes	mType;				// Light type.		
 		ParameterPtr		mPosition;			// Light position.
@@ -205,7 +206,7 @@ protected:
 A factory that enables creation of FFPLighting instances.
 @remarks Sub class of SubRenderStateFactory
 */
-class FFPLightingFactory : public SubRenderStateFactory
+class _OgreRTSSExport FFPLightingFactory : public SubRenderStateFactory
 {
 public:
 
@@ -242,4 +243,4 @@ protected:
 }
 
 #endif
-
+#endif

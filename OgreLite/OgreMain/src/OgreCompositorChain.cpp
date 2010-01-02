@@ -166,8 +166,7 @@ CompositorInstance *CompositorChain::getCompositor(const String& name)
 			return *it;
 		}
 	}
-	OGRE_EXCEPT(Exception::ERR_ITEM_NOT_FOUND, "Invalid compositor name",
-		"CompositorChain::getCompositor");
+	return 0;
 }
 //-----------------------------------------------------------------------
 CompositorChain::InstanceIterator CompositorChain::getCompositors()
@@ -230,6 +229,7 @@ void CompositorChain::preRenderTargetUpdate(const RenderTargetEvent& evt)
 	{
 		return;
 	}
+	cam->getSceneManager()->_setActiveCompositorChain(this);
 
     /// Iterate over compiled state
     CompositorInstance::CompiledState::iterator i;
@@ -244,6 +244,15 @@ void CompositorChain::preRenderTargetUpdate(const RenderTargetEvent& evt)
         i->target->update();
         postTargetOperation(*i, i->target->getViewport(0), cam);
     }
+}
+//-----------------------------------------------------------------------
+void CompositorChain::postRenderTargetUpdate(const RenderTargetEvent& evt)
+{
+	Camera *cam = mViewport->getCamera();
+	if (cam)
+	{
+		cam->getSceneManager()->_setActiveCompositorChain(0);
+	}
 }
 //-----------------------------------------------------------------------
 void CompositorChain::preViewportUpdate(const RenderTargetViewportEvent& evt)

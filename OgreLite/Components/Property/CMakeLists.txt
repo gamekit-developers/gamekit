@@ -33,7 +33,7 @@ include_directories(${OGRE_SOURCE_DIR}/OgreMain/include)
 include_directories(${Boost_INCLUDE_DIRS})
 
 # setup target
-add_library(OgreProperty STATIC ${HEADER_FILES} ${SOURCE_FILES} ${PLATFORM_HEADER_FILES} ${PLATFORM_SOURCE_FILES})
+add_library(OgreProperty ${OGRE_COMP_LIB_TYPE} ${HEADER_FILES} ${SOURCE_FILES} ${PLATFORM_HEADER_FILES} ${PLATFORM_SOURCE_FILES})
 set_target_properties(OgreProperty PROPERTIES VERSION ${OGRE_VERSION} SOVERSION ${OGRE_VERSION_MAJOR})
 target_link_libraries(OgreProperty OgreMain)
 if (OGRE_CONFIG_THREADS)
@@ -42,6 +42,15 @@ endif ()
 
 # install 
 ogre_config_component(OgreProperty)
+
+if (APPLE AND NOT OGRE_BUILD_PLATFORM_IPHONE)
+    # Set the INSTALL_PATH so that Components can be installed in the application package
+    set_target_properties(OgreProperty
+       PROPERTIES BUILD_WITH_INSTALL_RPATH 1
+       INSTALL_NAME_DIR "@executable_path/../Components"
+    )
+endif()
+
 install(FILES ${HEADER_FILES}
   DESTINATION include/OGRE/Property
 )

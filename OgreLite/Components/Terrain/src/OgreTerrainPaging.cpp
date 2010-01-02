@@ -26,59 +26,59 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 #include "OgreTerrainPaging.h"
-#include "OgreTerrain.h"
-#include "OgreStreamSerialiser.h"
+#include "OgreTerrainPagedWorldSection.h"
+#include "OgreTerrainGroup.h"
+#include "OgrePagedWorld.h"
 
 namespace Ogre
 {
 	//---------------------------------------------------------------------
-	TerrainPageContent::TerrainPageContent(PageContentFactory* creator)
-		: PageContent(creator)
-		, mTerrain(0)
+	TerrainPaging::TerrainPaging(PageManager* pageMgr)
+		: mManager(pageMgr)
 	{
+		mManager->addWorldSectionFactory(&mSectionFactory);
 	}
 	//---------------------------------------------------------------------
-	TerrainPageContent::~TerrainPageContent()
+	TerrainPaging::~TerrainPaging()
 	{
-		destroy();
+		mManager->removeWorldSectionFactory(&mSectionFactory);
+	}
+	//---------------------------------------------------------------------
+	TerrainPagedWorldSection* TerrainPaging::createWorldSection(
+		PagedWorld* world, TerrainGroup* terrainGroup, 
+		Real loadRadius, Real holdRadius, int32 minX, int32 minY, int32 maxX, int32 maxY, 
+		const String& sectionName)
+	{
+		TerrainPagedWorldSection* ret = static_cast<TerrainPagedWorldSection*>(
+			world->createSection(terrainGroup->getSceneManager(), SectionFactory::FACTORY_NAME, sectionName));
 
-		OGRE_DELETE mTerrain;
+		ret->init(terrainGroup);
+		ret->setLoadRadius(loadRadius);
+		ret->setHoldRadius(holdRadius);
+		ret->setPageRange(minX, minY, maxX, maxY);
+
+		return ret;
+
 	}
 	//---------------------------------------------------------------------
-	void TerrainPageContent::save(StreamSerialiser& stream)
+	//---------------------------------------------------------------------
+	const String TerrainPaging::SectionFactory::FACTORY_NAME("Terrain");
+
+	const String& TerrainPaging::SectionFactory::getName() const
 	{
-		mTerrain->save(stream);
+		return FACTORY_NAME;
 	}
 	//---------------------------------------------------------------------
-	bool TerrainPageContent::prepareImpl(StreamSerialiser& stream)
+	PagedWorldSection* TerrainPaging::SectionFactory::createInstance(const String& name, PagedWorld* parent, SceneManager* sm)
 	{
-		if (!mTerrain)
-		{
-			mTerrain = OGRE_NEW Terrain(getSceneManager());
-		}
-		return mTerrain->prepare(stream);
+		return OGRE_NEW TerrainPagedWorldSection(name, parent, sm);
 	}
 	//---------------------------------------------------------------------
-	void TerrainPageContent::loadImpl()
+	void TerrainPaging::SectionFactory::destroyInstance(PagedWorldSection* s)
 	{
-		mTerrain->load();
+		OGRE_DELETE s;
 	}
-	//---------------------------------------------------------------------
-	void TerrainPageContent::unloadImpl()
-	{
-		mTerrain->unload();
-	}
-	//---------------------------------------------------------------------
-	void TerrainPageContent::unprepareImpl()
-	{
-		mTerrain->unprepare();
-		OGRE_DELETE mTerrain;
-		mTerrain = 0;
-	}
-	//---------------------------------------------------------------------
-	//---------------------------------------------------------------------
-	String TerrainPageContentFactory::FACTORY_NAME = "Terrain";
-	//---------------------------------------------------------------------
+
 
 }
 

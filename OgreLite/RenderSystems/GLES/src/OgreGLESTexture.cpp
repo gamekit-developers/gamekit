@@ -248,6 +248,20 @@ namespace Ogre {
                             "**** Unsupported 3D texture type ****",
                             "GLESTexture::prepare" );
             }
+            
+			// If PVRTC and 0 custom mipmap disable auto mip generation and disable software mipmap creation
+            PixelFormat imageFormat = (*loadedImages)[0].getFormat();
+			if (imageFormat == PF_PVRTC_RGB2 || imageFormat == PF_PVRTC_RGBA2 ||
+                imageFormat == PF_PVRTC_RGB4 || imageFormat == PF_PVRTC_RGBA4)
+			{
+                size_t imageMips = (*loadedImages)[0].getNumMipmaps();
+                if (imageMips == 0)
+                {
+                    mNumMipmaps = mNumRequestedMipmaps = imageMips;
+                    // Disable flag for auto mip generation
+                    mUsage &= ~TU_AUTOMIPMAP;
+                }
+			}
         }
         else
         {
@@ -309,12 +323,14 @@ namespace Ogre {
 
         for (size_t face = 0; face < getNumFaces(); face++)
         {
+			size_t width = mWidth;
+			size_t height = mHeight;
             for (size_t mip = 0; mip <= getNumMipmaps(); mip++)
             {
                 GLESHardwarePixelBuffer *buf = OGRE_NEW GLESTextureBuffer(mName,
                                                                      getGLESTextureTarget(),
                                                                      mTextureID,
-                                                                     mWidth, mHeight,
+                                                                     width, height,
                                                                      GLESPixelUtil::getClosestGLInternalFormat(mFormat, mHwGamma),
                                                                      face,
                                                                      mip,
@@ -322,6 +338,21 @@ namespace Ogre {
                                                                      doSoftware && mip==0, mHwGamma, mFSAA);
 
                 mSurfaceList.push_back(HardwarePixelBufferSharedPtr(buf));
+
+                // If format is PVRTC then every mipmap is a custom one so to allow the upload of the compressed data 
+                // provided by the file we need to adjust the current mip level's dimention
+				if (mFormat == PF_PVRTC_RGB2 || mFormat == PF_PVRTC_RGBA2 ||
+                    mFormat == PF_PVRTC_RGB4 || mFormat == PF_PVRTC_RGBA4)
+				{
+					if(width > 1)
+					{
+						width = width / 2;
+					}
+					if(height > 1)
+					{
+						height = height / 2;
+					}
+				}				
 
                 /// Check for error
                 if (buf->getWidth() == 0 ||

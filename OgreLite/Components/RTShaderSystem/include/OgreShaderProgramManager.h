@@ -43,7 +43,7 @@ namespace RTShader {
 
 /** A singleton manager class that manages shader based programs.
 */
-class ProgramManager : public Singleton<ProgramManager>, public RTShaderSystemAlloc
+class _OgreRTSSExport ProgramManager : public Singleton<ProgramManager>, public RTShaderSystemAlloc
 {
 // Interface.
 public:
@@ -159,12 +159,14 @@ protected:
 	@param programWriter The program writer instance.
 	@param language The target shader language.
 	@param profiles The profiles string for program compilation.
+	@param profiles The profiles string for program compilation as string list.
 	@param cachePath The output path to write the program into.
 	*/
 	GpuProgramPtr	createGpuProgram		(Program* shaderProgram, 
 		ProgramWriter* programWriter,
 		const String& language,
 		const String& profiles,
+		const StringVector& profilesList,
 		const String& cachePath);
 
 	/** 
@@ -193,6 +195,10 @@ protected:
 
 	/** Return the number of created fragment shaders. */
 	size_t			getFragmentShaderCount		() const { return mFragmentShaderCount; }
+
+	/** Fix the input of the pixel shader to be the same as the output of the vertex shader */
+	void synchronizePixelnToBeVertexOut( ProgramSet* programSet );
+
 
 protected:
 	

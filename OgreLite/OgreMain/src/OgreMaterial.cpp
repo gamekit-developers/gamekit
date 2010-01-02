@@ -37,6 +37,7 @@ THE SOFTWARE.
 #include "OgreException.h"
 #include "OgreStringConverter.h"
 #include "OgreLodStrategy.h"
+#include "OgreLodStrategyManager.h"
 
 namespace Ogre {
 
@@ -56,6 +57,9 @@ namespace Ogre {
 				" was requested with isManual=true, but this is not applicable " 
 				"for materials; the flag has been reset to false");
 		}
+
+		// Initialise to default strategy
+		mLodStrategy = LodStrategyManager::getSingleton().getDefaultStrategy();
 
 		mLodValues.push_back(0.0f);
 
@@ -765,7 +769,7 @@ namespace Ogre {
 		iend = lodValues.end();
 		// First, clear and add single zero entry
 		mLodValues.clear();
-        mUserLodValues.push_back(std::numeric_limits<Real>::quiet_NaN());
+        mUserLodValues.push_back(0);
 		mLodValues.push_back(mLodStrategy->getBaseValue());
 		for (i = lodValues.begin(); i != iend; ++i)
 		{

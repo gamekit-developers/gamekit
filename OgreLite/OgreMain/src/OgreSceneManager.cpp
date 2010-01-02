@@ -69,6 +69,8 @@ THE SOFTWARE.
 #include "OgreRibbonTrail.h"
 #include "OgreParticleSystemManager.h"
 #include "OgreProfiler.h"
+#include "OgreCompositorManager.h"
+#include "OgreCompositorChain.h"
 // This class implements the most basic scene manager
 
 #include <cstdio>
@@ -150,7 +152,9 @@ mCameraRelativeRendering(false),
 mLastLightHash(0),
 mLastLightLimit(0),
 mLastLightHashGpuProgram(0),
-mGpuParamsDirty((uint16)GPV_ALL)
+mGpuParamsDirty((uint16)GPV_ALL),
+mActiveCompositorChain(0),
+mLateMaterialResolving(false)
 {
 
     // init sky
@@ -904,6 +908,17 @@ bool SceneManager::hasSceneNode(const String& name) const
 const Pass* SceneManager::_setPass(const Pass* pass, bool evenIfSuppressed, 
 								   bool shadowDerivation)
 {
+	//If using late material resolving, swap now.
+	if (isLateMaterialResolving()) 
+	{
+		Technique* lateTech = pass->getParent()->getParent()->getBestTechnique();
+		if (lateTech->getNumPasses() > pass->getIndex())
+		{
+			pass = lateTech->getPass(pass->getIndex());
+		}
+		//Should we warn or throw an exception if an illegal state was achieved?
+	}
+
 	if (!mSuppressRenderStateChanges || evenIfSuppressed)
 	{
 		if (mIlluminationStage == IRS_RENDER_TO_TEXTURE && shadowDerivation)
@@ -1133,6 +1148,33 @@ const Pass* SceneManager::_setPass(const Pass* pass, bool evenIfSuppressed,
 					mAutoParamDataSource->setTextureProjector(effi->second.frustum, unit);
 				}
 			}
+			if (pTex->getContentType() == TextureUnitState::CONTENT_COMPOSITOR)
+			{
+				CompositorChain* currentChain = _getActiveCompositorChain();
+				if (!currentChain)
+				{
+					OGRE_EXCEPT(Exception::ERR_INVALID_STATE,
+						"An pass that wishes to reference a compositor texutre "
+						"attempted to render in a pipeline without a compositor",
+						"SceneManager::_setPass");
+				}
+				CompositorInstance* refComp = currentChain->getCompositor(pTex->getReferencedCompositorName());
+				if (refComp == 0)
+				{
+					OGRE_EXCEPT(Exception::ERR_ITEM_NOT_FOUND,
+						"Invalid compositor content_type compositor name",
+						"SceneManager::_setPass");
+				}
+				Ogre::TexturePtr refTex = refComp->getTextureInstance(
+					pTex->getReferencedTextureName(), pTex->getReferencedMRTIndex());
+				if (refTex.isNull())
+				{
+					OGRE_EXCEPT(Exception::ERR_ITEM_NOT_FOUND,
+						"Invalid compositor content_type texture name",
+						"SceneManager::_setPass");
+				}
+				pTex->_setTexturePtr(refTex);
+			}
 			mDestRenderSystem->_setTextureUnitSettings(unit, *pTex);
 			++unit;
 		}
@@ -1252,7 +1294,7 @@ void SceneManager::_renderScene(Camera* camera, Viewport* vp, bool includeOverla
 {
 	OgreProfileGroup("_renderScene", OGREPROF_GENERAL);
 
-    Root::getSingleton()._setCurrentSceneManager(this);
+    Root::getSingleton()._pushCurrentSceneManager(this);
 	mActiveQueuedRenderableVisitor->targetSceneMgr = this;
 	mAutoParamDataSource->setCurrentSceneManager(this);
 
@@ -1473,6 +1515,7 @@ void SceneManager::_renderScene(Camera* camera, Viewport* vp, bool includeOverla
     // Notify camera of vis batches
     camera->_notifyRenderedBatches(mDestRenderSystem->_getBatchCount());
 
+	Root::getSingleton()._popCurrentSceneManager(this);
 
 }
 
@@ -2848,6 +2891,17 @@ bool SceneManager::validatePassForRendering(const Pass* pass)
         return false;
     }
 
+	// If using late material resolving, check if there is a pass with the same index
+	// as this one in the 'late' material. If not, skip.
+	if (isLateMaterialResolving())
+	{
+		Technique* lateTech = pass->getParent()->getParent()->getBestTechnique();
+		if (lateTech->getNumPasses() <= pass->getIndex())
+		{
+			return false;
+		}
+	}
+
     return true;
 }
 //-----------------------------------------------------------------------
@@ -3691,20 +3745,25 @@ void SceneManager::manualRender(RenderOperation* rend,
                                 const Matrix4& viewMatrix, const Matrix4& projMatrix, 
                                 bool doBeginEndFrame) 
 {
-    mDestRenderSystem->_setViewport(vp);
-    mDestRenderSystem->_setWorldMatrix(worldMatrix);
-    setViewMatrix(viewMatrix);
-    mDestRenderSystem->_setProjectionMatrix(projMatrix);
+	if (vp)
+		mDestRenderSystem->_setViewport(vp);
 
     if (doBeginEndFrame)
         mDestRenderSystem->_beginFrame();
 
-    _setPass(pass);
+	mDestRenderSystem->_setWorldMatrix(worldMatrix);
+	setViewMatrix(viewMatrix);
+	mDestRenderSystem->_setProjectionMatrix(projMatrix);
+
+	_setPass(pass);
 	// Do we need to update GPU program parameters?
 	if (pass->isProgrammable())
 	{
-		mAutoParamDataSource->setCurrentViewport(vp);
-		mAutoParamDataSource->setCurrentRenderTarget(vp->getTarget());
+		if (vp)
+		{
+			mAutoParamDataSource->setCurrentViewport(vp);
+			mAutoParamDataSource->setCurrentRenderTarget(vp->getTarget());
+		}
 		mAutoParamDataSource->setCurrentSceneManager(this);
 		mAutoParamDataSource->setWorldMatrices(&worldMatrix, 1);
 		Camera dummyCam(StringUtil::BLANK, 0);
@@ -3717,6 +3776,46 @@ void SceneManager::manualRender(RenderOperation* rend,
 
     if (doBeginEndFrame)
         mDestRenderSystem->_endFrame();
+
+}
+//---------------------------------------------------------------------
+void SceneManager::manualRender(Renderable* rend, const Pass* pass, Viewport* vp,
+	const Matrix4& viewMatrix, 
+	const Matrix4& projMatrix,bool doBeginEndFrame,
+	bool lightScissoringClipping, bool doLightIteration, const LightList* manualLightList)
+{
+	if (vp)
+		mDestRenderSystem->_setViewport(vp);
+
+	if (doBeginEndFrame)
+		mDestRenderSystem->_beginFrame();
+
+	setViewMatrix(viewMatrix);
+	mDestRenderSystem->_setProjectionMatrix(projMatrix);
+
+	_setPass(pass);
+	Camera dummyCam(StringUtil::BLANK, 0);
+	dummyCam.setCustomViewMatrix(true, viewMatrix);
+	dummyCam.setCustomProjectionMatrix(true, projMatrix);
+	// Do we need to update GPU program parameters?
+	if (pass->isProgrammable())
+	{
+		if (vp)
+		{
+			mAutoParamDataSource->setCurrentViewport(vp);
+			mAutoParamDataSource->setCurrentRenderTarget(vp->getTarget());
+		}
+		mAutoParamDataSource->setCurrentSceneManager(this);
+		mAutoParamDataSource->setCurrentCamera(&dummyCam, false);
+		updateGpuProgramParameters(pass);
+	}
+	if (vp)
+		mCurrentViewport = vp;
+	renderSingleObject(rend, pass, lightScissoringClipping, doLightIteration, manualLightList);
+
+
+	if (doBeginEndFrame)
+		mDestRenderSystem->_endFrame();
 
 }
 //---------------------------------------------------------------------
@@ -6082,20 +6181,14 @@ void SceneManager::prepareShadowTextures(Camera* cam, Viewport* vp, const LightL
 
 }
 //---------------------------------------------------------------------
-struct SceneManager::RenderContext {
-	RenderQueue* renderQueue;
-	Viewport* viewport;
-	Camera* camera;
-	RenderSystem::RenderSystemContext* rsContext;
-};
-//---------------------------------------------------------------------
 SceneManager::RenderContext* SceneManager::_pauseRendering()
 {
 	RenderContext* context = new RenderContext;
 	context->renderQueue = mRenderQueue;
 	context->viewport = mCurrentViewport;
 	context->camera = mCameraInProgress;
-	
+	context->activeChain = _getActiveCompositorChain();
+
 	context->rsContext = mDestRenderSystem->_pauseFrame();
 	mRenderQueue = 0;
 	return context;
@@ -6108,7 +6201,7 @@ void SceneManager::_resumeRendering(SceneManager::RenderContext* context)
 		delete mRenderQueue;
 	}
 	mRenderQueue = context->renderQueue;
-
+	_setActiveCompositorChain(context->activeChain);
 	Ogre::Viewport* vp = context->viewport;
 	Ogre::Camera* camera = context->camera;
 
@@ -6826,6 +6919,48 @@ void SceneManager::updateGpuProgramParameters(const Pass* pass)
 	}
 
 }
+//---------------------------------------------------------------------
+//---------------------------------------------------------------------
+VisibleObjectsBoundsInfo::VisibleObjectsBoundsInfo()
+{
+	reset();
+}
+//---------------------------------------------------------------------
+void VisibleObjectsBoundsInfo::reset()
+{
+	aabb.setNull();
+	receiverAabb.setNull();
+	minDistance = minDistanceInFrustum = std::numeric_limits<Real>::infinity();
+	maxDistance = maxDistanceInFrustum = 0;
+}
+//---------------------------------------------------------------------
+void VisibleObjectsBoundsInfo::merge(const AxisAlignedBox& boxBounds, const Sphere& sphereBounds, 
+		   const Camera* cam, bool receiver)
+{
+	aabb.merge(boxBounds);
+	if (receiver)
+		receiverAabb.merge(boxBounds);
+	// use view matrix to determine distance, works with custom view matrices
+	Vector3 vsSpherePos = cam->getViewMatrix(true) * sphereBounds.getCenter();
+	Real camDistToCenter = vsSpherePos.length();
+	minDistance = std::min(minDistance, std::max((Real)0, camDistToCenter - sphereBounds.getRadius()));
+	maxDistance = std::max(maxDistance, camDistToCenter + sphereBounds.getRadius());
+	minDistanceInFrustum = std::min(minDistanceInFrustum, std::max((Real)0, camDistToCenter - sphereBounds.getRadius()));
+	maxDistanceInFrustum = std::max(maxDistanceInFrustum, camDistToCenter + sphereBounds.getRadius());
+}
+//---------------------------------------------------------------------
+void VisibleObjectsBoundsInfo::mergeNonRenderedButInFrustum(const AxisAlignedBox& boxBounds, 
+								  const Sphere& sphereBounds, const Camera* cam)
+{
+	(void)boxBounds;
+	// use view matrix to determine distance, works with custom view matrices
+	Vector3 vsSpherePos = cam->getViewMatrix(true) * sphereBounds.getCenter();
+	Real camDistToCenter = vsSpherePos.length();
+	minDistanceInFrustum = std::min(minDistanceInFrustum, std::max((Real)0, camDistToCenter - sphereBounds.getRadius()));
+	maxDistanceInFrustum = std::max(maxDistanceInFrustum, camDistToCenter + sphereBounds.getRadius());
+
+}
+
 
 
 }

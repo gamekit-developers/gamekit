@@ -42,19 +42,47 @@ namespace Ogre
 	//---------------------------------------------------------------------
 	const uint32 Page::CHUNK_ID = StreamSerialiser::makeIdentifier("PAGE");
 	const uint16 Page::CHUNK_VERSION = 1;
+	const uint32 Page::CHUNK_CONTENTCOLLECTION_DECLARATION_ID = StreamSerialiser::makeIdentifier("PCNT");
+	const uint16 Page::WORKQUEUE_PREPARE_REQUEST = 1;
+	const uint16 Page::WORKQUEUE_CHANGECOLLECTION_REQUEST = 3;
+
 	//---------------------------------------------------------------------
-	Page::Page(PageID pageID)
+	Page::Page(PageID pageID, PagedWorldSection* parent)
 		: mID(pageID)
-		, mParent(0)
+		, mParent(parent)
+		, mDeferredProcessInProgress(false)
+		, mModified(false)
 		, mDebugNode(0)
 	{
+		WorkQueue* wq = Root::getSingleton().getWorkQueue();
+		mWorkQueueChannel = wq->getChannel("Ogre/Page");
+		wq->addRequestHandler(mWorkQueueChannel, this);
+		wq->addResponseHandler(mWorkQueueChannel, this);
 		touch();
 	}
 	//---------------------------------------------------------------------
 	Page::~Page()
 	{
-		destroy();
+		WorkQueue* wq = Root::getSingleton().getWorkQueue();
+		wq->removeRequestHandler(mWorkQueueChannel, this);
+		wq->removeResponseHandler(mWorkQueueChannel, this);
 
+		destroyAllContentCollections();
+		if (mDebugNode)
+		{
+			// destroy while we have the chance
+			SceneNode::ObjectIterator it = mDebugNode->getAttachedObjectIterator();
+			while(it.hasMoreElements())
+				mParent->getSceneManager()->destroyMovableObject(it.getNext());
+			mDebugNode->removeAndDestroyAllChildren();
+			mParent->getSceneManager()->destroySceneNode(mDebugNode);
+
+			mDebugNode = 0;
+		}
+	}
+	//---------------------------------------------------------------------
+	void Page::destroyAllContentCollections()
+	{
 		for (ContentCollectionList::iterator i = mContentCollections.begin(); 
 			i != mContentCollections.end(); ++i)
 		{
@@ -68,37 +96,28 @@ namespace Ogre
 		return mParent->getManager();
 	}
 	//---------------------------------------------------------------------
-	void Page::_notifyAttached(PagedWorldSection* parent)
-	{
-		if (!parent && mParent && mDebugNode)
-		{
-			// destroy while we have the chance
-			SceneNode::ObjectIterator it = mDebugNode->getAttachedObjectIterator();
-			while(it.hasMoreElements())
-				mParent->getSceneManager()->destroyMovableObject(it.getNext());
-			mDebugNode->removeAndDestroyAllChildren();
-			mParent->getSceneManager()->destroySceneNode(mDebugNode);
-
-			mDebugNode = 0;
-		}
-		mParent = parent;
-	}
-	//---------------------------------------------------------------------
 	void Page::touch()
 	{
-		mFrameLastHeld = Root::getSingleton().getNextFrameNumber() + 1;
+		mFrameLastHeld = Root::getSingleton().getNextFrameNumber();
 	}
 	//---------------------------------------------------------------------
 	bool Page::isHeld() const
 	{
 		unsigned long nextFrame = Root::getSingleton().getNextFrameNumber();
-		// 1-frame tolerance, since the next frame number varies depending which
-		// side of frameRenderingQueued you are
-		return (mFrameLastHeld == nextFrame ||
-			mFrameLastHeld + 1 == nextFrame);
+		unsigned long dist;
+		if (nextFrame < mFrameLastHeld)
+		{
+			// we must have wrapped around
+			dist = mFrameLastHeld + (std::numeric_limits<unsigned long>::max() - mFrameLastHeld);
+		}
+		else
+			dist = nextFrame - mFrameLastHeld;
+
+		// 5-frame tolerance
+		return dist <= 5;
 	}
 	//---------------------------------------------------------------------
-	bool Page::prepareImpl(StreamSerialiser& stream)
+	bool Page::prepareImpl(StreamSerialiser& stream, PageData* dataToPopulate)
 	{
 
 		// Now do the real loading
@@ -118,11 +137,12 @@ namespace Ogre
 
 		PageManager* mgr = getManager();
 		
-		while(stream.peekNextChunkID() == PageContentCollection::CHUNK_ID)
+		while(stream.peekNextChunkID() == CHUNK_CONTENTCOLLECTION_DECLARATION_ID)
 		{
 			const StreamSerialiser::Chunk* collChunk = stream.readChunkBegin();
 			String factoryName;
 			stream.read(&factoryName);
+			stream.readChunkEnd(CHUNK_CONTENTCOLLECTION_DECLARATION_ID);
 			// Supported type?
 			PageContentCollectionFactory* collFact = mgr->getContentCollectionFactory(factoryName);
 			if (collFact)
@@ -130,7 +150,7 @@ namespace Ogre
 				PageContentCollection* collInst = collFact->createInstance();
 				if (collInst->prepare(stream)) // read type-specific data
 				{
-					attachContentCollection(collInst);
+					dataToPopulate->collectionsToAdd.push_back(collInst);
 				}
 				else
 				{
@@ -150,29 +170,145 @@ namespace Ogre
 		}
 
 
+		mModified = false;
+
 		return true;
+	}
+	//---------------------------------------------------------------------
+	void Page::load(bool synchronous)
+	{
+		if (!mDeferredProcessInProgress)
+		{
+			destroyAllContentCollections();
+			PageRequest req(this);
+			mDeferredProcessInProgress = true;
+			Root::getSingleton().getWorkQueue()->addRequest(mWorkQueueChannel, WORKQUEUE_PREPARE_REQUEST, 
+				Any(req), 0, synchronous);
+		}
+
+	}
+	//---------------------------------------------------------------------
+	void Page::unload()
+	{
+		destroyAllContentCollections();
+	}
+	//---------------------------------------------------------------------
+	bool Page::canHandleRequest(const WorkQueue::Request* req, const WorkQueue* srcQ)
+	{
+		PageRequest preq = any_cast<PageRequest>(req->getData());
+		// only deal with own requests
+		// we do this because if we delete a page we want any pending tasks to be discarded
+		if (preq.srcPage != this)
+			return false;
+		else
+			return true;
+
+	}
+	//---------------------------------------------------------------------
+	bool Page::canHandleResponse(const WorkQueue::Response* res, const WorkQueue* srcQ)
+	{
+		PageRequest preq = any_cast<PageRequest>(res->getRequest()->getData());
+		// only deal with own requests
+		// we do this because if we delete a page we want any pending tasks to be discarded
+		if (preq.srcPage != this)
+			return false;
+		else
+			return true;
+
+	}
+	//---------------------------------------------------------------------
+	WorkQueue::Response* Page::handleRequest(const WorkQueue::Request* req, const WorkQueue* srcQ)
+	{
+		// Background thread (maybe)
+
+		PageRequest preq = any_cast<PageRequest>(req->getData());
+		// only deal with own requests; we shouldn't ever get here though
+		if (preq.srcPage != this)
+			return 0;
+
+		PageResponse res;
+		res.pageData = OGRE_NEW PageData();
+		WorkQueue::Response* response = 0;
+		try
+		{
+			prepareImpl(res.pageData);
+			response = OGRE_NEW WorkQueue::Response(req, true, Any(res));
+		}
+		catch (Exception& e)
+		{
+			// oops
+			response = OGRE_NEW WorkQueue::Response(req, false, Any(res), 
+				e.getFullDescription());
+		}
+
+		return response;
+	}
+	//---------------------------------------------------------------------
+	void Page::handleResponse(const WorkQueue::Response* res, const WorkQueue* srcQ)
+	{
+		// Main thread
+		PageResponse pres = any_cast<PageResponse>(res->getData());
+		PageRequest preq = any_cast<PageRequest>(res->getRequest()->getData());
+
+		// only deal with own requests
+		if (preq.srcPage!= this)
+			return;
+
+		// final loading behaviour
+		if (res->succeeded())
+		{
+			std::swap(mContentCollections, pres.pageData->collectionsToAdd);
+			loadImpl();
+		}
+
+		OGRE_DELETE pres.pageData;
+
+		mDeferredProcessInProgress = false;
+
+	}
+	//---------------------------------------------------------------------
+	bool Page::prepareImpl(PageData* dataToPopulate)
+	{
+		// Procedural preparation
+		if (mParent->_prepareProceduralPage(this))
+			return true;
+		else
+		{
+			// Background loading
+			String filename = generateFilename();
+
+			DataStreamPtr stream = Root::getSingleton().openFileStream(filename, 
+				getManager()->getPageResourceGroup());
+			StreamSerialiser ser(stream);
+			return prepareImpl(ser, dataToPopulate);
+		}
+
+
 	}
 	//---------------------------------------------------------------------
 	void Page::loadImpl()
 	{
+		mParent->_loadProceduralPage(this);
 
-		// TODO
-		
+		for (ContentCollectionList::iterator i = mContentCollections.begin();
+			i != mContentCollections.end(); ++i)
+		{
+			(*i)->load();
+		}
 	}
 	//---------------------------------------------------------------------
-	void Page::unprepareImpl()
+	void Page::save()
 	{
-
-		// TODO
-
+		String filename = generateFilename();
+		save(filename);
 	}
 	//---------------------------------------------------------------------
-	void Page::unloadImpl()
+	void Page::save(const String& filename)
 	{
-
-		// TODO
-
-
+		DataStreamPtr stream = Root::getSingleton().createFileStream(filename, 
+			getManager()->getPageResourceGroup(), true);
+		StreamSerialiser ser(stream);
+		save(ser);
 	}
 	//---------------------------------------------------------------------
 	void Page::save(StreamSerialiser& stream)
@@ -186,10 +322,17 @@ namespace Ogre
 		for (ContentCollectionList::iterator i = mContentCollections.begin();
 			i != mContentCollections.end(); ++i)
 		{
+			// declaration
+			stream.writeChunkBegin(CHUNK_CONTENTCOLLECTION_DECLARATION_ID);
+			stream.write(&(*i)->getType());
+			stream.writeChunkEnd(CHUNK_CONTENTCOLLECTION_DECLARATION_ID);
+			// data
 			(*i)->save(stream);
 		}
 
 		stream.writeChunkEnd(CHUNK_ID);
+
+		mModified = false;
 	}
 	//---------------------------------------------------------------------
 	void Page::frameStart(Real timeSinceLastFrame)
@@ -252,31 +395,20 @@ namespace Ogre
 	PageContentCollection* Page::createContentCollection(const String& typeName)
 	{
 		PageContentCollection* coll = getManager()->createContentCollection(typeName);
-		attachContentCollection(coll);
+		coll->_notifyAttached(this);
+		mContentCollections.push_back(coll);
 		return coll;
 	}
 	//---------------------------------------------------------------------
 	void Page::destroyContentCollection(PageContentCollection* coll)
 	{
-		detachContentCollection(coll);
-		getManager()->destroyContentCollection(coll);
-	}
-	//---------------------------------------------------------------------
-	void Page::attachContentCollection(PageContentCollection* coll)
-	{
-		coll->_notifyAttached(this);
-		mContentCollections.push_back(coll);
-	}
-	//---------------------------------------------------------------------
-	void Page::detachContentCollection(PageContentCollection* coll)
-	{
 		ContentCollectionList::iterator i = std::find(
 			mContentCollections.begin(), mContentCollections.end(), coll);
 		if (i != mContentCollections.end())
 		{
-			coll->_notifyAttached(0);
 			mContentCollections.erase(i);
 		}
+		getManager()->destroyContentCollection(coll);
 	}
 	//---------------------------------------------------------------------
 	size_t Page::getContentCollectionCount() const
@@ -306,6 +438,18 @@ namespace Ogre
 		o << "Page(ID:" << p.getID() << ", section:" << p.getParentSection()->getName()
 			<< ", world:" << p.getParentSection()->getWorld()->getName() << ")";
 		return o;
+	}
+	//---------------------------------------------------------------------
+	String Page::generateFilename() const
+	{
+		StringUtil::StrStreamType str;
+		if (mParent)
+			str << mParent->getWorld()->getName() << "_" <<	mParent->getName();
+
+		str	<< std::setw(8) << std::setfill('0') << std::hex << mID << ".page";
+
+		return str.str();
+
 	}
 
 

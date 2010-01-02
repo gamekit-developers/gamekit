@@ -24,6 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
+#ifdef RTSHADER_SYSTEM_BUILD_CORE_SHADERS
 #ifndef _ShaderFFPTransform_
 #define _ShaderFFPTransform_
 
@@ -41,10 +42,10 @@ namespace RTShader {
 */
 
 /** Transform sub render state implementation of the Fixed Function Pipeline.
-@see http://msdn.microsoft.com/en-us/library/bb206269(VS.85).aspx
+@see http://msdn.microsoft.com/en-us/library/ee422511.aspx
 Derives from SubRenderState class.
 */
-class FFPTransform : public SubRenderState
+class _OgreRTSSExport FFPTransform : public SubRenderState
 {
 
 // Interface.
@@ -79,7 +80,7 @@ public:
 A factory that enables creation of FFPTransform instances.
 @remarks Sub class of SubRenderStateFactory
 */
-class FFPTransformFactory : public SubRenderStateFactory
+class _OgreRTSSExport FFPTransformFactory : public SubRenderStateFactory
 {
 public:
 
@@ -117,4 +118,4 @@ protected:
 }
 
 #endif
-
+#endif

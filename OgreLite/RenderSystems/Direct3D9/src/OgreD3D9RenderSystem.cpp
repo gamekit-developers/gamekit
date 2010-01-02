@@ -707,19 +707,6 @@ namespace Ogre
 
 		attachRenderTarget( *renderWindow );
 		
-		if (renderWindow->isDepthBuffered())
-		{
-			//Insert the (automatically created) depth buffer to the pool
-			IDirect3DSurface9* depthBuffer = renderWindow->getDevice()->getDepthBuffer(renderWindow);
-			ZBufferIdentifier zBufferIdentifier = getZBufferIdentifier(renderWindow);
-			ZBufferRefQueue& zBuffers = mZBufferHash[zBufferIdentifier];
-			ZBufferRef newRef;
-			newRef.surface = depthBuffer;
-			newRef.height = height;
-			newRef.width = width;
-			zBuffers.push_back(newRef);
-		}
-
 		return renderWindow;
 	}	
 	//---------------------------------------------------------------------
@@ -829,7 +816,7 @@ namespace Ogre
 
 			if (rkCurCaps.MaxSimultaneousTextures < rsc->getNumTextureUnits())
 			{
-				rsc->setNumTextureUnits(rkCurCaps.MaxSimultaneousTextures);
+				rsc->setNumTextureUnits(static_cast<ushort>(rkCurCaps.MaxSimultaneousTextures));
 			}
 
 			// Check for Anisotropy.
@@ -1132,7 +1119,7 @@ namespace Ogre
 			// No integer params allowed
 			rsc->setVertexProgramConstantIntCount(0);
 			// float params, always 4D
-			rsc->setVertexProgramConstantFloatCount(minVSCaps.MaxVertexShaderConst);
+			rsc->setVertexProgramConstantFloatCount(static_cast<ushort>(minVSCaps.MaxVertexShaderConst));
 
 			break;
 		case 2:
@@ -1141,7 +1128,7 @@ namespace Ogre
 			// 16 integer params allowed, 4D
 			rsc->setVertexProgramConstantIntCount(16);
 			// float params, always 4D
-			rsc->setVertexProgramConstantFloatCount(minVSCaps.MaxVertexShaderConst);
+			rsc->setVertexProgramConstantFloatCount(static_cast<ushort>(minVSCaps.MaxVertexShaderConst));
 			break;
 		case 3:
 			// 16 boolean params allowed
@@ -1149,7 +1136,7 @@ namespace Ogre
 			// 16 integer params allowed, 4D
 			rsc->setVertexProgramConstantIntCount(16);
 			// float params, always 4D
-			rsc->setVertexProgramConstantFloatCount(minVSCaps.MaxVertexShaderConst);
+			rsc->setVertexProgramConstantFloatCount(static_cast<ushort>(minVSCaps.MaxVertexShaderConst));
 			break;
 		}
 
@@ -1507,8 +1494,8 @@ namespace Ogre
 		Real tanThetaX = tanThetaY * aspect; //Math::Tan(thetaX);
 		Real half_w = tanThetaX * nearPlane;
 		Real half_h = tanThetaY * nearPlane;
-		Real iw = 1.0 / half_w;
-		Real ih = 1.0 / half_h;
+		Real iw = static_cast<Real>(1.0 / half_w);
+		Real ih = static_cast<Real>(1.0 / half_h);
 		Real q;
 		if (farPlane == 0)
 		{
@@ -1516,7 +1503,7 @@ namespace Ogre
 		}
 		else
 		{
-			q = 1.0 / (farPlane - nearPlane);
+			q = static_cast<Real>(1.0 / (farPlane - nearPlane));
 		}
 
 		dest = Matrix4::ZERO;
@@ -2721,6 +2708,9 @@ namespace Ogre
 		{
 			D3D9RenderWindow *window = static_cast<D3D9RenderWindow*>(target);
 			mDeviceManager->setActiveRenderTargetDevice(window->getDevice());
+			// also make sure we validate the device; if this never went 
+			// through update() it won't be set
+			window->_validateDevice();
 		}
 
 		// Retrieve render surfaces (up to OGRE_MAX_MULTIPLE_RENDER_TARGETS)
@@ -2880,25 +2870,30 @@ namespace Ogre
 		D3D9RenderContext* context = new D3D9RenderContext;
 		context->target = mActiveRenderTarget;
 
-		//Get the matching z buffer identifier and queue
-		ZBufferIdentifier zBufferIdentifier = getZBufferIdentifier(mActiveRenderTarget);
-		ZBufferRefQueue& zBuffers = mZBufferHash[zBufferIdentifier];
-		
+		//Don't do this to backbuffers. Is there a more elegant way to check?
+		if (!dynamic_cast<D3D9RenderWindow*>(mActiveRenderTarget))
+		{
+			//Get the matching z buffer identifier and queue
+			ZBufferIdentifier zBufferIdentifier = getZBufferIdentifier(mActiveRenderTarget);
+			ZBufferRefQueue& zBuffers = mZBufferHash[zBufferIdentifier];
+			
 #ifdef OGRE_DEBUG_MODE
-		//Check that queue handling works as expected
-		IDirect3DSurface9* pDepth;
-		getActiveD3D9Device()->GetDepthStencilSurface(&pDepth);	
-		
-		// Release immediately -> each get increase the ref count.
-		if (pDepth != NULL)		
-			pDepth->Release();		
+			//Check that queue handling works as expected
+			IDirect3DSurface9* pDepth;
+			getActiveD3D9Device()->GetDepthStencilSurface(&pDepth);	
+			
+			// Release immediately -> each get increase the ref count.
+			if (pDepth != NULL)		
+				pDepth->Release();		
 
-		assert(zBuffers.front().surface == pDepth);
+			assert(zBuffers.front().surface == pDepth);
 #endif
 
-		//Store the depth buffer in the side and remove it from the queue
-		mCheckedOutTextures[mActiveRenderTarget] = zBuffers.front();
-		zBuffers.pop_front();
+			//Store the depth buffer in the side and remove it from the queue
+			mCheckedOutTextures[mActiveRenderTarget] = zBuffers.front();
+			zBuffers.pop_front();
+		}
+		
 		
 		return context;
 	}
@@ -2909,14 +2904,19 @@ namespace Ogre
 		_beginFrame();
 		D3D9RenderContext* d3dContext = static_cast<D3D9RenderContext*>(context);
 
-		///Find the stored depth buffer
-		ZBufferIdentifier zBufferIdentifier = getZBufferIdentifier(d3dContext->target);
-		ZBufferRefQueue& zBuffers = mZBufferHash[zBufferIdentifier];
-		assert(mCheckedOutTextures.find(d3dContext->target) != mCheckedOutTextures.end());
+		//Don't do this to backbuffers. Is there a more elegant way to check?
+		if (!dynamic_cast<D3D9RenderWindow*>(d3dContext->target))
+		{
+			///Find the stored depth buffer
+			ZBufferIdentifier zBufferIdentifier = getZBufferIdentifier(d3dContext->target);
+			ZBufferRefQueue& zBuffers = mZBufferHash[zBufferIdentifier];
+			assert(mCheckedOutTextures.find(d3dContext->target) != mCheckedOutTextures.end());
+			
+			//Return it to the general queue
+			zBuffers.push_front(mCheckedOutTextures[d3dContext->target]);
+			mCheckedOutTextures.erase(d3dContext->target);
+		}
 		
-		//Return it to the general queue
-		zBuffers.push_front(mCheckedOutTextures[d3dContext->target]);
-		mCheckedOutTextures.erase(d3dContext->target);
 		
 		delete context;
 	}
@@ -3811,13 +3811,6 @@ namespace Ogre
 	//---------------------------------------------------------------------
 	void D3D9RenderSystem::_cleanupDepthStencils(IDirect3DDevice9* d3d9Device)
 	{
-		IDirect3DSurface9* deviceSurface;
-		d3d9Device->GetDepthStencilSurface(&deviceSurface);
-
-		// Release immediately -> each get increase the ref count.
-		if (deviceSurface != NULL)		
-			deviceSurface->Release();		
-
 		for(ZBufferHash::iterator i = mZBufferHash.begin(); i != mZBufferHash.end();)
 		{
 			/// Release buffer
@@ -3826,11 +3819,7 @@ namespace Ogre
 				while (!i->second.empty())
 				{
 					IDirect3DSurface9* surface = i->second.front().surface;
-					if (surface != deviceSurface)
-					{
-						//Only free the manually created surfaces
-						surface->Release();
-					}
+					surface->Release();
 					i->second.pop_front();
 				}
 				ZBufferHash::iterator deadi = i++;

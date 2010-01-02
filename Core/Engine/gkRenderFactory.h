@@ -39,6 +39,7 @@ typedef enum OgreRenderSystem
 	OGRE_RS_GLES,
 	OGRE_RS_D3D9,
 	OGRE_RS_D3D10,
+	OGRE_RS_D3D11,
 	OGRE_RS_UNKNOWN,
 }OgreRenderSystem;
 

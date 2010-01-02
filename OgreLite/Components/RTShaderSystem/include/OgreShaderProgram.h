@@ -47,7 +47,7 @@ namespace RTShader {
 
 /** A class that represents a shader based program.
 */
-class Program : public RTShaderSystemAlloc
+class _OgreRTSSExport Program : public RTShaderSystemAlloc
 {
 
 // Interface.
@@ -106,7 +106,7 @@ public:
 	@param name The name of the function to create.
 	@param desc The description of the function.
 	*/
-	Function*					createFunction				(const String& name, const String& desc);
+	Function*					createFunction				(const String& name, const String& desc, const Function::FunctionType functionType);
 
 	/** Get a function by a given name. Return NULL if no matching function found.
 	@param name The name of the function to search for.

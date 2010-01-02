@@ -24,6 +24,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
+
+#ifdef RTSHADER_SYSTEM_BUILD_CORE_SHADERS
 #ifndef _ShaderFFPColur_
 #define _ShaderFFPColur_
 
@@ -44,7 +46,7 @@ namespace RTShader {
 /** Colour sub render state implementation of the Fixed Function Pipeline.
 Derives from SubRenderState class.
 */
-class FFPColour : public SubRenderState
+class _OgreRTSSExport FFPColour : public SubRenderState
 {
 public:
 
@@ -144,7 +146,7 @@ protected:
 A factory that enables creation of FFPColour instances.
 @remarks Sub class of SubRenderStateFactory
 */
-class FFPColourFactory : public SubRenderStateFactory
+class _OgreRTSSExport FFPColourFactory : public SubRenderStateFactory
 {
 public:
 
@@ -181,4 +183,4 @@ protected:
 }
 
 #endif
-
+#endif

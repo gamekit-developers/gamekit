@@ -75,7 +75,7 @@ set (SOURCE_FILES
 )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include ${DirectX_INCLUDE_DIR})
-link_directories(${DirectX_LIBRARY_PATHS})
+link_directories(${DirectX_LIBRARY_DIR})
 add_definitions(-D_USRDLL)
 
 add_library(RenderSystem_Direct3D10 ${OGRE_LIB_TYPE} ${HEADER_FILES} ${SOURCE_FILES})
@@ -97,7 +97,7 @@ if (OGRE_CONFIG_THREADS)
   target_link_libraries(RenderSystem_Direct3D10 ${Boost_LIBRARIES})
 endif ()
 
-#ogre_config_plugin(RenderSystem_Direct3D10)
-#if (OGRE_INSTALL_PLUGINS_HEADERS)
-#  install(FILES ${HEADER_FILES} DESTINATION include/OGRE/RenderSystems/Direct3D10)
-#endif ()
+ogre_config_plugin(RenderSystem_Direct3D10)
+if (OGRE_INSTALL_PLUGINS_HEADERS)
+  install(FILES ${HEADER_FILES} DESTINATION include/OGRE/RenderSystems/Direct3D10)
+endif ()

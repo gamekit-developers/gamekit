@@ -179,7 +179,7 @@ elseif (APPLE)
     src/OSX/OgreOSXGLSupport.mm
     src/OSX/OgreOSXWindow.cpp
   )
-  include_directories(src/OSX include/OSX ${OGRELITE_SOURCE_DIR}/OgreMain/include/OSX)
+  include_directories(src/OSX include/OSX "${OGRE_SOURCE_DIR}/OgreMain/include/OSX")
   set(PLATFORM_LIBS ${Carbon_LIBRARY_FWK} ${Cocoa_LIBRARY_FWK})
   set(PLATFORM_HEADER_INSTALL "OSX")
 elseif (UNIX)
@@ -223,10 +223,18 @@ if (OGRE_CONFIG_THREADS)
   target_link_libraries(RenderSystem_GL ${Boost_LIBRARIES})
 endif ()
 
-#ogre_config_plugin(RenderSystem_GL)
-#if (OGRE_INSTALL_PLUGINS_HEADERS)
-#  install(FILES ${HEADER_FILES} DESTINATION include/OGRE/RenderSystems/GL)
-#  install(FILES ${PLATFORM_HEADERS} DESTINATION include/OGRE/RenderSystems/GL/${PLATFORM_HEADER_INSTALL})
-#  install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/GL DESTINATION include/OGRE/RenderSystems/GL)
-#  install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src/GLSL/include/ DESTINATION include/OGRE/RenderSystems/GL)
-#endif ()
+if (APPLE AND NOT OGRE_BUILD_PLATFORM_IPHONE)
+    # Set the INSTALL_PATH so that Plugins can be installed in the application package
+    set_target_properties(RenderSystem_GL
+       PROPERTIES BUILD_WITH_INSTALL_RPATH 1
+       INSTALL_NAME_DIR "@executable_path/../Plugins"
+    )
+endif()
+
+ogre_config_plugin(RenderSystem_GL)
+if (OGRE_INSTALL_PLUGINS_HEADERS)
+  install(FILES ${HEADER_FILES} DESTINATION include/OGRE/RenderSystems/GL)
+  install(FILES ${PLATFORM_HEADERS} DESTINATION include/OGRE/RenderSystems/GL/${PLATFORM_HEADER_INSTALL})
+  install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/GL DESTINATION include/OGRE/RenderSystems/GL)
+  install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src/GLSL/include/ DESTINATION include/OGRE/RenderSystems/GL)
+endif ()

@@ -24,6 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
+#ifdef RTSHADER_SYSTEM_BUILD_EXT_SHADERS
 #ifndef _ShaderExPerPixelLighting_
 #define _ShaderExPerPixelLighting_
 
@@ -47,7 +48,7 @@ namespace RTShader {
 /** Per pixel Lighting extension sub render state implementation.
 Derives from SubRenderState class.
 */
-class PerPixelLighting : public SubRenderState
+class _OgreRTSSExport PerPixelLighting : public SubRenderState
 {
 
 // Interface.
@@ -94,7 +95,7 @@ public:
 protected:
 	
 	// Per light parameters.
-	struct LightParams
+	struct _OgreRTSSExport LightParams
 	{
 		Light::LightTypes	mType;				// Light type.		
 		ParameterPtr		mPosition;			// Light position.
@@ -229,7 +230,7 @@ protected:
 A factory that enables creation of PerPixelLighting instances.
 @remarks Sub class of SubRenderStateFactory
 */
-class PerPixelLightingFactory : public SubRenderStateFactory
+class _OgreRTSSExport PerPixelLightingFactory : public SubRenderStateFactory
 {
 public:
 
@@ -265,5 +266,6 @@ protected:
 }
 }
 
+#endif
 #endif
 

@@ -57,7 +57,7 @@ if(WIN32) # The only platform it makes sense to check for DirectX SDK
   find_library(DirectX_D3DX9_LIBRARY NAMES d3dx9 HINTS ${DirectX_LIB_SEARCH_PATH} PATH_SUFFIXES ${DirectX_LIBPATH_SUFFIX})
   find_library(DirectX_DXERR9_LIBRARY NAMES dxerr HINTS ${DirectX_LIB_SEARCH_PATH} PATH_SUFFIXES ${DirectX_LIBPATH_SUFFIX})
   find_library(DirectX_DXGUID_LIBRARY NAMES dxguid HINTS ${DirectX_LIB_SEARCH_PATH} PATH_SUFFIXES ${DirectX_LIBPATH_SUFFIX})
-  find_library(DirectX_DINPUT8_LIBRARY NAMES dinput8 HINTS ${DirectX_LIB_SEARCH_PATH} PATH_SUFFIXES ${DirectX_LIBPATH_SUFFIX})
+ find_library(DirectX_DINPUT8_LIBRARY NAMES dinput8 HINTS ${DirectX_LIB_SEARCH_PATH} PATH_SUFFIXES ${DirectX_LIBPATH_SUFFIX})
   
   if(DirectX_INCLUDE_DIR)
     set(DirectX_ROOT_DIR "${DirectX_INCLUDE_DIR}/..") 
@@ -84,4 +84,17 @@ if(WIN32) # The only platform it makes sense to check for DirectX SDK
 	endif ()
   endif ()
 
+  # look for D3D11 components
+  if (DirectX_FOUND)
+    find_path(DirectX_D3D11_INCLUDE_DIR NAMES D3D11Shader.h HINTS ${DirectX_INCLUDE_DIR} NO_DEFAULT_PATH)
+	get_filename_component(DirectX_LIBRARY_DIR "${DirectX_LIBRARY}" PATH)
+	message(STATUS "DX lib dir: ${DirectX_LIBRARY_DIR}")
+	find_library(DirectX_D3D11_LIBRARY NAMES d3d11 d3d11_beta HINTS ${DirectX_LIBRARY_DIR} NO_DEFAULT_PATH)
+	if (DirectX_D3D11_INCLUDE_DIR AND DirectX_D3D11_LIBRARY)
+	  set(DirectX_D3D11_FOUND TRUE)
+	  set(DirectX_D3D11_INCLUDE_DIRS ${DirectX_D3D11_INCLUDE_DIR})
+	  set(DirectX_D3D11_LIBRARIES ${DirectX_D3D11_LIBRARY})
+	endif ()
+  endif ()
+  
 endif(WIN32)

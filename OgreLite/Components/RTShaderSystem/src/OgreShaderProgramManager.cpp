@@ -34,10 +34,13 @@ THE SOFTWARE.
 #include "OgrePass.h"
 #include "OgreLogManager.h"
 #include "OgreShaderCGProgramWriter.h"
+#include "OgreShaderHLSLProgramWriter.h"
 #include "OgreShaderGLSLProgramWriter.h"
 #include "OgreShaderProgramProcessor.h"
 #include "OgreShaderCGProgramProcessor.h"
+#include "OgreShaderHLSLProgramProcessor.h"
 #include "OgreShaderGLSLProgramProcessor.h"
+#include "OgreGpuProgramManager.h"
 
 namespace Ogre {
 
@@ -139,12 +142,14 @@ void ProgramManager::releasePrograms(RenderState* renderState)
 void ProgramManager::createDefaultProgramWriterFactories()
 {
 	// Add standard shader writer factories 
-	ProgramWriterFactory* cgFactory = OGRE_NEW ShaderProgramWriterCGFactory();
-	ProgramWriterFactory* glslFactory = OGRE_NEW ShaderProgramWriterGLSLFactory();
-	mProgramWriterFactories.push_back(cgFactory);
-	mProgramWriterFactories.push_back(glslFactory);
-	ProgramWriterManager::getSingletonPtr()->addFactory(cgFactory);
-	ProgramWriterManager::getSingletonPtr()->addFactory(glslFactory);
+	mProgramWriterFactories.push_back(OGRE_NEW ShaderProgramWriterCGFactory());
+	mProgramWriterFactories.push_back(OGRE_NEW ShaderProgramWriterGLSLFactory());
+	mProgramWriterFactories.push_back(OGRE_NEW ShaderProgramWriterHLSLFactory());
+	
+	for (unsigned int i=0; i < mProgramWriterFactories.size(); ++i)
+	{
+		ProgramWriterManager::getSingletonPtr()->addFactory(mProgramWriterFactories[i]);
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -161,8 +166,10 @@ void ProgramManager::destroyDefaultProgramWriterFactories()
 //-----------------------------------------------------------------------------
 void ProgramManager::createDefaultProgramProcessors()
 {
+	// Add standard shader processors
 	mDefaultProgramProcessors.push_back(OGRE_NEW CGProgramProcessor);
 	mDefaultProgramProcessors.push_back(OGRE_NEW GLSLProgramProcessor);
+	mDefaultProgramProcessors.push_back(OGRE_NEW HLSLProgramProcessor);
 
 	for (unsigned int i=0; i < mDefaultProgramProcessors.size(); ++i)
 	{
@@ -244,6 +251,17 @@ bool ProgramManager::destroyCpuProgram(Program* shaderProgram)
 //-----------------------------------------------------------------------------
 bool ProgramManager::createGpuPrograms(ProgramSet* programSet)
 {
+	// Before we start we need to make sure that the pixel shader input
+	//  parameters are the same as the vertex output, this required by 
+	//  shader models 4 and 5.
+	// This change may incrase the number of register used in older shader
+	//  models - this is why the check is present here.
+	bool isVs4 = GpuProgramManager::getSingleton().isSyntaxSupported("vs_4_0");
+	if (isVs4)
+	{
+		synchronizePixelnToBeVertexOut(programSet);
+	}
+
 	// Grab the matching writer.
 	const String& language = ShaderGenerator::getSingleton().getTargetLanguage();
 	ProgramWriterIterator itWriter = mProgramWritersMap.find(language);
@@ -289,6 +307,7 @@ bool ProgramManager::createGpuPrograms(ProgramSet* programSet)
 		programWriter,
 		language, 
 		ShaderGenerator::getSingleton().getVertexShaderProfiles(),
+		ShaderGenerator::getSingleton().getVertexShaderProfilesList(),
 		ShaderGenerator::getSingleton().getShaderCachePath());
 
 	if (vsGpuProgram.isNull())	
@@ -304,6 +323,7 @@ bool ProgramManager::createGpuPrograms(ProgramSet* programSet)
 		programWriter,
 		language, 
 		ShaderGenerator::getSingleton().getFragmentShaderProfiles(),
+		ShaderGenerator::getSingleton().getFragmentShaderProfilesList(),
 		ShaderGenerator::getSingleton().getShaderCachePath());
 
 	if (psGpuProgram.isNull())	
@@ -326,6 +346,7 @@ GpuProgramPtr ProgramManager::createGpuProgram(Program* shaderProgram,
 											   ProgramWriter* programWriter,
 											   const String& language,
 											   const String& profiles,
+											   const StringVector& profilesList,
 											   const String& cachePath)
 {
 
@@ -362,51 +383,74 @@ GpuProgramPtr ProgramManager::createGpuProgram(Program* shaderProgram,
 	// Case the program doesn't exist yet.
 	if (pGpuProgram.isNull())
 	{
-		const String  programFileName = cachePath + programName + "." + language;	
-		std::ifstream programFile;
-		bool		  writeFile = true;
-
-
-		// Check if program file already exist.
-		programFile.open(programFileName.c_str());
-
-		// Case no matching file found -> we have to write it.
-		if (!programFile)
-		{
-			programWriter = ProgramWriterManager::getSingletonPtr()->createProgramWriter(language);
-			mProgramWritersMap[language] = programWriter;
-			writeFile = true;
-		}
-		else
-		{
-			writeFile = false;
-			programFile.close();
-		}
-
-		// Case we have to write the program to a file.
-		if (writeFile)
-		{
-			std::ofstream outFile(programFileName.c_str());
-
-			if (!outFile)
-				return GpuProgramPtr();
-
-			outFile << sourceCodeStringStream.str();
-			outFile.close();
-		}
-
-
-
 		// Create new GPU program.
 		pGpuProgram = HighLevelGpuProgramManager::getSingleton().createProgram(programName,
 			ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, language, shaderProgram->getType());
 
+		// Case cache directory specified -> create program from file.
+		if (cachePath.empty() == false)
+		{
+			const String  programFileName = cachePath + programName + "." + language;	
+			std::ifstream programFile;
+			bool		  writeFile = true;
 
-		pGpuProgram->setSourceFile(programFileName);
+
+			// Check if program file already exist.
+			programFile.open(programFileName.c_str());
+
+			// Case no matching file found -> we have to write it.
+			if (!programFile)
+			{			
+				writeFile = true;
+			}
+			else
+			{
+				writeFile = false;
+				programFile.close();
+			}
+
+			// Case we have to write the program to a file.
+			if (writeFile)
+			{
+				std::ofstream outFile(programFileName.c_str());
+
+				if (!outFile)
+					return GpuProgramPtr();
+
+				outFile << sourceCodeStringStream.str();
+				outFile.close();
+			}
+
+			pGpuProgram->setSourceFile(programFileName);
+		}
+
+		// No cache directory specified -> create program from system memory.
+		else
+		{
+			pGpuProgram->setSource(sourceCodeStringStream.str());
+		}
+		
+		
 		pGpuProgram->setParameter("entry_point", shaderProgram->getEntryPointFunction()->getName());
-		pGpuProgram->setParameter("target", profiles);
-		pGpuProgram->setParameter("profiles", profiles);
 
+		// HLSL program requires specific target profile settings - we have to split the profile string.
+		if (language == "hlsl")
+		{
+			StringVector::const_iterator it = profilesList.begin();
+			StringVector::const_iterator itEnd = profilesList.end();
+			
+			for (; it != itEnd; ++it)
+			{
+				if (GpuProgramManager::getSingleton().isSyntaxSupported(*it))
+				{
+					pGpuProgram->setParameter("target", *it);
+					break;
+				}
+			}
+		}
+		
+		pGpuProgram->setParameter("profiles", profiles);
+		pGpuProgram->load();
 
 		GpuProgramParametersSharedPtr pGpuParams = pGpuProgram->getDefaultParameters();
 		const ShaderParameterList& progParams = shaderProgram->getParameters();
@@ -481,5 +525,80 @@ void ProgramManager::destroyGpuProgram(const String& name, GpuProgramType type)
 	}
 }
 
+//-----------------------------------------------------------------------
+void ProgramManager::synchronizePixelnToBeVertexOut( ProgramSet* programSet )
+{
+	Program* vsProgram = programSet->getCpuVertexProgram();
+	Program* psProgram = programSet->getCpuFragmentProgram();
+
+	// first find the vertex shader
+	ShaderFunctionConstIterator itFunction ;
+	Function* vertexMain = NULL;
+	Function* pixelMain = NULL;
+
+	// find vertex shader main
+	{
+		const ShaderFunctionList& functionList = vsProgram->getFunctions();
+		for (itFunction=functionList.begin(); itFunction != functionList.end(); ++itFunction)
+		{
+			Function* curFunction = *itFunction;
+			if (curFunction->getFunctionType() == Function::FFT_VS_MAIN)
+			{
+				vertexMain = curFunction;
+				break;
+			}
+		}
+	}
+
+	// find pixel shader main
+	{
+		const ShaderFunctionList& functionList = psProgram->getFunctions();
+		for (itFunction=functionList.begin(); itFunction != functionList.end(); ++itFunction)
+		{
+			Function* curFunction = *itFunction;
+			if (curFunction->getFunctionType() == Function::FFT_PS_MAIN)
+			{
+				pixelMain = curFunction;
+				break;
+			}
+		}
+	}
+
+	// save the pixel program original input parameters
+	const ShaderParameterList pixelOriginalInParams = pixelMain->getInputParameters();
+
+	// set the pixel Input to be the same as the vertex prog output
+	pixelMain->deleteAllInputParameters();
+
+	// Loop the vertex shader output parameters and make sure that
+	//   all of them exist in the pixel shader input.
+	// If the parameter type exist in the original output - use it
+	// If the parameter doesn't exist - use the parameter from the 
+	//   vertex shader input.
+	// The order will be based on the vertex shader parameters order 
+	// Write output parameters.
+	ShaderParameterConstIterator it;
+	const ShaderParameterList& outParams = vertexMain->getOutputParameters();
+	for (it=outParams.begin(); it != outParams.end(); ++it)
+	{
+		ParameterPtr curOutParemter = *it;
+		ParameterPtr paramToAdd = Function::getParameterBySemantic(
+			pixelOriginalInParams, 
+			curOutParemter->getSemantic(), 
+			curOutParemter->getIndex());
+
+		if (paramToAdd.isNull())
+		{
+			// param not found - we will add the one from the vertex shader
+			paramToAdd = curOutParemter; 
+		}
+
+		pixelMain->addInputParameter(paramToAdd);
+
+	}
+}
+
+/** @} */
+/** @} */
 }
 }

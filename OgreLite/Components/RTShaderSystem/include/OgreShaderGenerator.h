@@ -49,7 +49,7 @@ namespace RTShader {
 /** Shader generator system main interface. This singleton based class
 enables automatic generation of shader code based on existing material techniques.
 */
-class ShaderGenerator : public Singleton<ShaderGenerator>, public RTShaderSystemAlloc
+class _OgreRTSSExport ShaderGenerator : public Singleton<ShaderGenerator>, public RTShaderSystemAlloc
 {
 // Interface.
 public:
@@ -103,15 +103,22 @@ public:
 	static ShaderGenerator*			getSingletonPtr	();
 
 	/** 
-	Set the target scene manager of the shader generator.
-	@param sceneMgr The scene manager that the shader generator will be bound to.
+	Add a scene manager to the shader generator scene managers list.
+	@param sceneMgr The scene manager to add to the list.
 	*/
-	void			setSceneManager				(SceneManager* sceneMgr);
+	void			addSceneManager				(SceneManager* sceneMgr);
 
 	/** 
-	Get the current scene manager that shader generator is bound to.
+	Remove a scene manager from the shader generator scene managers list.
+	@param sceneMgr The scene manager to remove from the list.
 	*/
-	SceneManager*	getSceneManager				();
+	void			removeSceneManager			(SceneManager* sceneMgr);
+
+	/** 
+	Get the active scene manager that is doint the actual scene rendering.
+	This attribute will be update on the call to preFindVisibleObjects. 
+	*/
+	SceneManager*	getActiveSceneManager		();
 	
 	/** 
 	Set the target shader language.
@@ -129,19 +136,24 @@ public:
 	Set the output vertex shader target profiles.
 	@param vertexShaderProfile The target profiles for the vertex shader.	
 	*/
-	void			setVertexShaderProfiles		(const String& vertexShaderProfile) { mVertexShaderProfiles = vertexShaderProfile; }
+	void			setVertexShaderProfiles		(const String& vertexShaderProfiles);
 
 	/** 
 	Get the output vertex shader target profiles.	
 	*/
 	const String&	getVertexShaderProfiles		() const { return mVertexShaderProfiles; }
 
+	/** 
+	Get the output vertex shader target profiles as list of strings.	
+	*/
+	const StringVector&	getVertexShaderProfilesList		() const { return mVertexShaderProfilesList; }
+
 
 	/** 
 	Set the output fragment shader target profiles.
 	@param fragmentShaderProfile The target profiles for the fragment shader.	
 	*/
-	void			setFragmentShaderProfiles	(const String& fragmentShaderProfile) { mFragmentShaderProfiles = fragmentShaderProfile; }
+	void			setFragmentShaderProfiles	(const String& fragmentShaderProfiles);
 
 	/** 
 	Get the output fragment shader target profiles.	
@@ -149,10 +161,17 @@ public:
 	const String&	getFragmentShaderProfiles	() const { return mFragmentShaderProfiles; }
 
 	/** 
-	Set the output shader cache path. Generated shader code will be written to this path.
-	@param cachePath The cache path of the shader.	
+	Get the output fragment shader target profiles as list of strings.
 	*/
-	void			setShaderCachePath			(const String& cachePath);
+	const StringVector&	getFragmentShaderProfilesList	() const { return mFragmentShaderProfilesList; }
+
+	/** 
+	Set the output shader cache path. Generated shader code will be written to this path.
+	In case of empty cache path shaders will be generated directly from system memory.
+	@param cachePath The cache path of the shader.	
+	The default is empty cache path.
+	*/
+	void			setShaderCachePath			(const String& cachePath) { mShaderCachePath = cachePath; }
 
 	/** 
 	Get the output shader cache path.
@@ -164,7 +183,7 @@ public:
 	destroy any CPU/GPU program that created by this shader generator.
 	*/
 	void			flushShaderCache			();
-	
+
 	/** 
 	Return a global render state associated with the given scheme name.
 	Modifying this render state will affect all techniques that belongs to that scheme.
@@ -246,7 +265,11 @@ public:
 	*/
 	void			removeAllShaderBasedTechniques	();
 
-
+	/** 
+	Create a scheme.
+	@param schemeName The scheme name to create.
+	*/
+	void			createScheme				(const String& schemeName);
 
 	/** 
 	Invalidate a given scheme. This action will lead to shader regeneration of all techniques belongs to the
@@ -352,7 +375,7 @@ protected:
 
 	
 	/** Shader generator pass wrapper class. */
-	class SGPass : public RTShaderSystemAlloc
+	class _OgreRTSSExport SGPass : public RTShaderSystemAlloc
 	{
 	public:
 		SGPass			(SGTechnique* parent, Pass* srcPass, Pass* dstPass);
@@ -404,7 +427,7 @@ protected:
 
 	
 	/** Shader generator technique wrapper class. */
-	class SGTechnique : public RTShaderSystemAlloc
+	class _OgreRTSSExport SGTechnique : public RTShaderSystemAlloc
 	{
 	public:
 		SGTechnique			(SGMaterial* parent, Technique* srcTechnique, const String& dstTechniqueSchemeName);		
@@ -465,7 +488,7 @@ protected:
 
 	
 	/** Shader generator material wrapper class. */
-	class SGMaterial : public RTShaderSystemAlloc
+	class _OgreRTSSExport SGMaterial : public RTShaderSystemAlloc
 	{	
 	
 	public:
@@ -488,7 +511,7 @@ protected:
 
 	
 	/** Shader generator scheme class. */
-	class SGScheme : public RTShaderSystemAlloc
+	class _OgreRTSSExport SGScheme : public RTShaderSystemAlloc
 	{	
 	public:
 		SGScheme		(const String& schemeName);
@@ -557,7 +580,7 @@ protected:
 protected:
 	
 	/** Shader generator RenderObjectListener sub class. */
-	class SGRenderObjectListener : public RenderObjectListener, public RTShaderSystemAlloc
+	class _OgreRTSSExport SGRenderObjectListener : public RenderObjectListener, public RTShaderSystemAlloc
 	{
 	public:
 		SGRenderObjectListener(ShaderGenerator* owner)
@@ -580,7 +603,7 @@ protected:
 	};
 
 	/** Shader generator scene manager sub class. */
-	class SGSceneManagerListener : public SceneManager::Listener, public RTShaderSystemAlloc
+	class _OgreRTSSExport SGSceneManagerListener : public SceneManager::Listener, public RTShaderSystemAlloc
 	{
 	public:
 		SGSceneManagerListener(ShaderGenerator* owner)
@@ -625,7 +648,7 @@ protected:
 	};
 
 	/** Shader generator ScriptTranslatorManager sub class. */
-	class SGScriptTranslatorManager : public ScriptTranslatorManager
+	class _OgreRTSSExport SGScriptTranslatorManager : public ScriptTranslatorManager
 	{
 	public:
 		SGScriptTranslatorManager(ShaderGenerator* owner)
@@ -658,6 +681,11 @@ protected:
 	typedef map<uint32, RenderStatePtr>::type 				RenderStateMap;
 	typedef RenderStateMap::iterator 						RenderStateMapIterator;
 	typedef RenderStateMap::const_iterator					RenderStateMapConstIterator;
+
+	//-----------------------------------------------------------------------------
+	typedef map<String, SceneManager*>::type 				SceneManagerMap;
+	typedef SceneManagerMap::iterator 						SceneManagerIterator;
+	typedef SceneManagerMap::const_iterator					SceneManagerConstIterator;
 
 protected:
 	/** Class default constructor */
@@ -738,7 +766,8 @@ protected:
 
 protected:	
 	OGRE_AUTO_MUTEX													// Auto mutex.
-	SceneManager*					mSceneMgr;						// The current scene manager.
+	SceneManager*					mActiveSceneMgr;				// The active scene manager.
+	SceneManagerMap					mSceneManagerMap;				// A map of all scene managers this generator is bound to.
 	SGRenderObjectListener*			mRenderObjectListener;			// Render object listener.
 	SGSceneManagerListener*			mSceneManagerListener;			// Scene manager listener.
 	SGScriptTranslatorManager*		mScriptTranslatorManager;		// Script translator manager.
@@ -747,7 +776,9 @@ protected:
 	SGScriptTranslator				mCoreScriptTranslaotr;			// The core translator of the RT Shader System.
 	String							mShaderLanguage;				// The target shader language (currently only cg supported).
 	String							mVertexShaderProfiles;			// The target vertex shader profile. Will be used as argument for program compilation.
-	String							mFragmentShaderProfiles;		// The target Fragment shader profile. Will be used as argument for program compilation.
+	StringVector					mVertexShaderProfilesList;		// List of target vertex shader profiles.
+	String							mFragmentShaderProfiles;		// The target fragment shader profile. Will be used as argument for program compilation.
+	StringVector					mFragmentShaderProfilesList;	// List of target fragment shader profiles..
 	String							mShaderCachePath;				// Path for caching the generated shaders.
 	ProgramManager*					mProgramManager;				// Shader program manager.
 	ProgramWriterManager*			mProgramWriterManager;			// Shader program writer manager.

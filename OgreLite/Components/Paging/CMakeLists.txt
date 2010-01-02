@@ -25,9 +25,7 @@ set (HEADER_FILES
 	include/OgrePagedWorld.h
 	include/OgrePagedWorldSection.h
 	include/OgrePageFileFormats.h
-	include/OgrePageLoadableUnit.h
 	include/OgrePageManager.h
-	include/OgrePageRequestQueue.h
 	include/OgrePageStrategy.h
 	include/OgrePaging.h
 	include/OgrePagingPrerequisites.h
@@ -37,17 +35,11 @@ set (HEADER_FILES
 set (SOURCE_FILES
 	src/OgreGrid2DPageStrategy.cpp
 	src/OgrePage.cpp
-	src/OgrePageConnection.cpp
 	src/OgrePageContent.cpp
 	src/OgrePageContentCollection.cpp
-	src/OgrePageContentCollectionFactory.cpp
-	src/OgrePageContentFactory.cpp
 	src/OgrePagedWorld.cpp
 	src/OgrePagedWorldSection.cpp
-	src/OgrePageLoadableUnit.cpp
 	src/OgrePageManager.cpp
-	src/OgrePageRequestQueue.cpp
-	src/OgrePageStrategy.cpp
 	src/OgreSimplePageContentCollection.cpp
 )
 
@@ -60,7 +52,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${OGRE_SOURCE_DIR}/OgreMain/include)
 
 # setup target
-add_library(OgrePaging STATIC ${HEADER_FILES} ${SOURCE_FILES} ${PLATFORM_HEADER_FILES} ${PLATFORM_SOURCE_FILES})
+add_library(OgrePaging ${OGRE_COMP_LIB_TYPE} ${HEADER_FILES} ${SOURCE_FILES} ${PLATFORM_HEADER_FILES} ${PLATFORM_SOURCE_FILES})
 set_target_properties(OgrePaging PROPERTIES VERSION ${OGRE_VERSION} SOVERSION ${OGRE_VERSION_MAJOR})
 target_link_libraries(OgrePaging OgreMain)
 if (OGRE_CONFIG_THREADS)
@@ -70,6 +62,15 @@ endif ()
 
 # install 
 ogre_config_component(OgrePaging)
+
+if (APPLE AND NOT OGRE_BUILD_PLATFORM_IPHONE)
+    # Set the INSTALL_PATH so that Components can be installed in the application package
+    set_target_properties(OgrePaging
+       PROPERTIES BUILD_WITH_INSTALL_RPATH 1
+       INSTALL_NAME_DIR "@executable_path/../Components"
+    )
+endif()
+
 install(FILES ${HEADER_FILES}
   DESTINATION include/OGRE/Paging
 )

@@ -24,6 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
+#ifdef RTSHADER_SYSTEM_BUILD_CORE_SHADERS
 #include "OgreShaderFFPLighting.h"
 #include "OgreShaderFFPRenderState.h"
 #include "OgreShaderProgram.h"
@@ -101,7 +102,7 @@ void FFPLighting::updateGpuProgramsParams(Renderable* rend, Pass* pass, const Au
 		return;
 
 	GpuProgramParametersSharedPtr vsGpuParams = pass->getVertexProgramParameters();
-	SceneManager* sceneMgr = ShaderGenerator::getSingleton().getSceneManager();
+	SceneManager* sceneMgr = ShaderGenerator::getSingleton().getActiveSceneManager();
 	Viewport* curViewport = sceneMgr->getCurrentViewport();
 	Camera* curCamera     = curViewport->getCamera();
 	const Matrix4& matView = curCamera->getViewMatrix(true);
@@ -831,3 +832,4 @@ SubRenderState*	FFPLightingFactory::createInstanceImpl()
 }
 }
 
+#endif

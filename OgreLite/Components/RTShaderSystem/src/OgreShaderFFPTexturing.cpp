@@ -24,6 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
+#ifdef RTSHADER_SYSTEM_BUILD_CORE_SHADERS
 #include "OgreShaderFFPTexturing.h"
 #include "OgreShaderFFPRenderState.h"
 #include "OgreShaderProgram.h"
@@ -962,14 +963,14 @@ void FFPTexturing::setTextureUnit(unsigned short index, TextureUnitState* textur
 	{
 		OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS,
 			"FFPTexturing unit index out of bounds !!!",
-			"FFPTexturing::setTextureState");
+			"FFPTexturing::setTextureUnit");
 	}
 
 	if (textureUnitState->getBindingType() == TextureUnitState::BT_VERTEX)
 	{
 		OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS,
 			"FFP Texture unit does not support vertex texture fetch !!!",
-			"FFPTexturing::setTextureState");
+			"FFPTexturing::setTextureUnit");
 	}
 	
 
@@ -1057,3 +1058,4 @@ SubRenderState*	FFPTexturingFactory::createInstanceImpl()
 }
 }
 
+#endif

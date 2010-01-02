@@ -1,29 +1,28 @@
 /*
 -----------------------------------------------------------------------------
 This source file is part of OGRE
-    (Object-oriented Graphics Rendering Engine)
+(Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
 Copyright (c) 2000-2009 Torus Knot Software Ltd
-Also see acknowledgements in Readme.html
 
-This program is free software you can redistribute it and/or modify it under
-the terms of the GNU Lesser General Public License as published by the Free Software
-Foundation either version 2 of the License, or (at your option) any later
-version.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
 
-You should have received a copy of the GNU Lesser General Public License along with
-this program if not, write to the Free Software Foundation, Inc., 59 Temple
-Place - Suite 330, Boston, MA 02111-1307, USA, or go to
-http://www.gnu.org/copyleft/lesser.txt.
-
-You may alternatively use this source under the terms of a specific version of
-the OGRE Unrestricted License provided you have obtained such a license from
-Torus Knot Software Ltd.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 #include "OgreD3D9HLSLProgram.h"
@@ -38,6 +37,8 @@ namespace Ogre {
     D3D9HLSLProgram::CmdPreprocessorDefines D3D9HLSLProgram::msCmdPreprocessorDefines;
     D3D9HLSLProgram::CmdColumnMajorMatrices D3D9HLSLProgram::msCmdColumnMajorMatrices;
 	D3D9HLSLProgram::CmdOptimisation D3D9HLSLProgram::msCmdOptimisation;
+	D3D9HLSLProgram::CmdMicrocode D3D9HLSLProgram::msCmdMicrocode;
+	D3D9HLSLProgram::CmdAssemblerCode D3D9HLSLProgram::msCmdAssemblerCode;
 
 	class HLSLIncludeHandler : public ID3DXInclude
 	{
@@ -384,52 +385,73 @@ namespace Ogre {
 			{
 			case D3DXPC_MATRIX_COLUMNS:
 			case D3DXPC_MATRIX_ROWS:
-				switch(d3dDesc.RegisterCount)
 				{
-				case 2:
-					switch(d3dDesc.Columns)
+					int firstDim, secondDim;
+					firstDim = d3dDesc.RegisterCount / d3dDesc.Elements;
+					if (d3dDesc.Class == D3DXPC_MATRIX_ROWS)
+					{
+						secondDim = d3dDesc.Columns;
+					}
+					else
+					{
+						secondDim = d3dDesc.Rows;
+					}
+					switch(firstDim)
 					{
 					case 2:
-						def.constType = GCT_MATRIX_2X2;
+						switch(secondDim)
+						{
+						case 2:
+							def.constType = GCT_MATRIX_2X2;
+							def.elementSize = 8; // HLSL always packs
+							break;
+						case 3:
+							def.constType = GCT_MATRIX_2X3;
+							def.elementSize = 8; // HLSL always packs
+							break;
+						case 4:
+							def.constType = GCT_MATRIX_2X4;
+							def.elementSize = 8; 
+							break;
+						} // columns
 						break;
 					case 3:
-						def.constType = GCT_MATRIX_2X3;
+						switch(secondDim)
+						{
+						case 2:
+							def.constType = GCT_MATRIX_3X2;
+							def.elementSize = 12; // HLSL always packs
+							break;
+						case 3:
+							def.constType = GCT_MATRIX_3X3;
+							def.elementSize = 12; // HLSL always packs
+							break;
+						case 4:
+							def.constType = GCT_MATRIX_3X4;
+							def.elementSize = 12; 
+							break;
+						} // columns
 						break;
 					case 4:
-						def.constType = GCT_MATRIX_2X4;
+						switch(secondDim)
+						{
+						case 2:
+							def.constType = GCT_MATRIX_4X2;
+							def.elementSize = 16; // HLSL always packs
+							break;
+						case 3:
+							def.constType = GCT_MATRIX_4X3;
+							def.elementSize = 16; // HLSL always packs
+							break;
+						case 4:
+							def.constType = GCT_MATRIX_4X4;
+							def.elementSize = 16; 
+							break;
+						} // secondDim
 						break;
-					} // columns
-					break;
-				case 3:
-					switch(d3dDesc.Columns)
-					{
-					case 2:
-						def.constType = GCT_MATRIX_3X2;
-						break;
-					case 3:
-						def.constType = GCT_MATRIX_3X3;
-						break;
-					case 4:
-						def.constType = GCT_MATRIX_3X4;
-						break;
-					} // columns
-					break;
-				case 4:
-					switch(d3dDesc.Columns)
-					{
-					case 2:
-						def.constType = GCT_MATRIX_4X2;
-						break;
-					case 3:
-						def.constType = GCT_MATRIX_4X3;
-						break;
-					case 4:
-						def.constType = GCT_MATRIX_4X4;
-						break;
-					} // columns
-					break;
 
-				} // rows
+					} // firstDim
+				}
 				break;
 			case D3DXPC_SCALAR:
 			case D3DXPC_VECTOR:
@@ -460,6 +482,12 @@ namespace Ogre {
 
 
 	}
+
+	LPD3DXBUFFER D3D9HLSLProgram::getMicroCode()
+	{
+		return mpMicroCode;
+	}
+
     //-----------------------------------------------------------------------
     D3D9HLSLProgram::D3D9HLSLProgram(ResourceManager* creator, const String& name, 
         ResourceHandle handle, const String& group, bool isManual, 
@@ -492,6 +520,12 @@ namespace Ogre {
 			dict->addParameter(ParameterDef("optimisation_level", 
 				"The optimisation level to use.",
 				PT_STRING),&msCmdOptimisation);
+			dict->addParameter(ParameterDef("micro_code", 
+				"the micro code.",
+				PT_STRING),&msCmdMicrocode);
+			dict->addParameter(ParameterDef("assemble_code", 
+				"the assemble code.",
+				PT_STRING),&msCmdAssemblerCode);
         }
         
     }
@@ -615,4 +649,58 @@ namespace Ogre {
 			static_cast<D3D9HLSLProgram*>(target)->setOptimisationLevel(OPT_3);
 	}
 
+    //-----------------------------------------------------------------------
+    String D3D9HLSLProgram::CmdMicrocode::doGet(const void *target) const
+    {
+		D3D9HLSLProgram* program=const_cast<D3D9HLSLProgram*>(static_cast<const D3D9HLSLProgram*>(target));
+		LPD3DXBUFFER buffer=program->getMicroCode();
+		if(buffer)
+		{
+			char* str  =static_cast<Ogre::String::value_type*>(buffer->GetBufferPointer());
+			size_t size=static_cast<size_t>(buffer->GetBufferSize());
+			Ogre::String code;
+			code.assign(str,size);
+			return code;
+		}
+		else
+		{
+			return String();
+		}
+    }
+    void D3D9HLSLProgram::CmdMicrocode::doSet(void *target, const String& val)
+    {
+		//nothing to do 
+		//static_cast<D3D9HLSLProgram*>(target)->setColumnMajorMatrices(StringConverter::parseBool(val));
+    }
+    //-----------------------------------------------------------------------
+    String D3D9HLSLProgram::CmdAssemblerCode::doGet(const void *target) const
+    {
+		D3D9HLSLProgram* program=const_cast<D3D9HLSLProgram*>(static_cast<const D3D9HLSLProgram*>(target));
+		LPD3DXBUFFER buffer=program->getMicroCode();
+		if(buffer)
+		{
+			CONST DWORD* code =static_cast<CONST DWORD*>(buffer->GetBufferPointer());
+			LPD3DXBUFFER pDisassembly=0;
+			HRESULT hr=D3DXDisassembleShader(code,FALSE,"// assemble code from D3D9HLSLProgram\n",&pDisassembly);
+			if(pDisassembly)
+			{
+				char* str  =static_cast<Ogre::String::value_type*>(pDisassembly->GetBufferPointer());
+				size_t size=static_cast<size_t>(pDisassembly->GetBufferSize());
+				Ogre::String assemble_code;
+				assemble_code.assign(str,size);
+				pDisassembly->Release();
+				return assemble_code;
+			}
+			return String();
+		}
+		else
+		{
+			return String();
+		}
+    }
+    void D3D9HLSLProgram::CmdAssemblerCode::doSet(void *target, const String& val)
+    {
+		//nothing to do 
+		//static_cast<D3D9HLSLProgram*>(target)->setColumnMajorMatrices(StringConverter::parseBool(val));
+    }
 }

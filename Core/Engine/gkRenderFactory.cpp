@@ -37,6 +37,9 @@
 #include "OgreD3D10Plugin.h"
 #endif
 
+#ifdef OGREKIT_D3D11RS
+#include "OgreD3D10Plugin.h"
+#endif
 
 OgreRenderSystem gkFindRenderSystem(OgreRenderSystem wanted)
 {
@@ -46,6 +49,9 @@ OgreRenderSystem gkFindRenderSystem(OgreRenderSystem wanted)
 # endif
 # ifdef OGREKIT_D3D10RS
 	if (wanted == OGRE_RS_D3D10) return OGRE_RS_D3D10;
+# endif
+# ifdef OGREKIT_D3D11RS
+	if (wanted == OGRE_RS_D3D11) return OGRE_RS_D3D11;
 # endif
 #endif
 	// TODO setup OpenGL ES
@@ -90,6 +96,12 @@ void gkRenderFactoryPrivate::createRenderSystem(Ogre::Root* r, OgreRenderSystem 
 	case OGRE_RS_D3D9:
 #ifdef OGREKIT_D3D9RS
 		mRenderSystem= new Ogre::D3D9Plugin();
+		r->installPlugin(mRenderSystem);
+#endif
+		break;
+	case OGRE_RS_D3D11:
+#ifdef OGREKIT_D3D11RS
+		mRenderSystem= new Ogre::D3D11Plugin();
 		r->installPlugin(mRenderSystem);
 #endif
 		break;
