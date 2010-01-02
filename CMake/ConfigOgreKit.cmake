@@ -1,5 +1,3 @@
-include(OgreConfigTargets)
-include(DependenciesOgreKit)
 
 
 macro (configure_ogrekit ROOT OGREPATH)
@@ -14,6 +12,10 @@ macro (configure_ogrekit ROOT OGREPATH)
 	set(OGRE_BINARY_DIR ${OGREPATH}/Bin)
 	set(OGRE_TEMPLATES_DIR ${ROOT}/CMake/Templates)
 	set(OGRELITE_SOURCE_DIR ${OGREPATH})
+
+    include(OgreConfigTargets)
+    include(DependenciesOgreKit)
+    include(MacroLogFeature)
 
 	if (APPLE)
 		set(OGREKIT_PLATFORM ${OGREPATH}/OgreMain/include/OSX )
