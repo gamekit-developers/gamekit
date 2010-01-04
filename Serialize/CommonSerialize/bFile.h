@@ -72,9 +72,9 @@ namespace bParse {
 		virtual	void parseData() = 0;
 
 		void resolvePointersMismatch();
-		void resolvePointersChunk(const bChunkInd& dataChunk);
+		void resolvePointersChunk(const bChunkInd& dataChunk, bool verboseDumpAllBlocks);
 
-		void resolvePointersStructRecursive(char *strcPtr, int old_dna);
+		void resolvePointersStructRecursive(char *strcPtr, int old_dna, bool verboseDumpAllBlocks, int recursion);
 		void swapPtr(char *dst, char *src);
 
 		void parseStruct(char *strcPtr, char *dtPtr, int old_dna, int new_dna, bool fixupPointers);
@@ -133,9 +133,11 @@ namespace bParse {
 		virtual	void	writeDNA(FILE* fp) = 0;
 
 		void	updateOldPointers();
-		void	resolvePointers();
+		void	resolvePointers(bool verboseDumpAllBlocks);
 
-		void	dumpChunks(bDNA* dna);
+		void	bFile::dumpChunks(bParse::bDNA* dna);
+		
+
 		
 	};
 }
