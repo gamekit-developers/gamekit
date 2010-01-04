@@ -255,7 +255,7 @@ bool gkInternalWindowSystemPrivate::mouseMoved(const OIS::MouseEvent &arg)
 		mMouseData.wheelDelta= arg.state.Z.rel > 0 ? 1.0 : -1.0;
 
 	mMouseData.moved= true;
-	return true;
+	return false;
 }
 
 // ----------------------------------------------------------------------------
@@ -278,7 +278,7 @@ bool gkInternalWindowSystemPrivate::keyPressed(const OIS::KeyEvent &arg)
 	if (!mParent->isEscapeKeyDisabled() && arg.key == OIS::KC_ESCAPE)
 	{
 		mParent->exit();
-		return false;
+		return true;
 	}
 
 	int kc= getKeyCode(arg.key);
@@ -286,7 +286,7 @@ bool gkInternalWindowSystemPrivate::keyPressed(const OIS::KeyEvent &arg)
 	mKeyboardData.keys[kc] |= gkKeyboardDevice::STATE_PRESSED;
 	mKeyboardData.was_pressed= true;
 	mKeyboardData.key_count += 1;
-	return true;
+	return false;
 }
 
 // ----------------------------------------------------------------------------
@@ -299,7 +299,7 @@ bool gkInternalWindowSystemPrivate::keyReleased(const OIS::KeyEvent &arg)
 	mKeyboardData.was_pressed= true;
 	mKeyboardData.key_count -= 1;
 
-	return true;
+	return false;
 }
 
 // ----------------------------------------------------------------------------

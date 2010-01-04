@@ -30,7 +30,7 @@ set(OIS_HDR
 )
 
 if (WIN32)
-	#set(DirectX_FOUND 0)
+	#set(DirectX_FOUND FALSE)
 
 	if (DirectX_FOUND)
 		set(OIS_PLAT 
@@ -41,7 +41,7 @@ if (WIN32)
 			src/win32/Win32Mouse.cpp
 			)
 		link_libraries(${DirectX_DXGUID_LIBRARY} ${DirectX_DINPUT8_LIBRARY})
-	else (DirectX_FOUND)
+	else ()
 		add_definitions(-DOIS_WIN32_NATIVE)
 		set(OIS_PLAT 
 			src/win32native/Win32NativeInputManager.cpp
@@ -49,7 +49,7 @@ if (WIN32)
 			src/win32native/Win32NativeJoystick.cpp
 			src/win32native/Win32NativeMouse.cpp
 			)
-    endif (DirectX_FOUND)
+    endif ()
 
 endif()
 
