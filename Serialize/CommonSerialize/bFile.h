@@ -135,7 +135,7 @@ namespace bParse {
 		void	updateOldPointers();
 		void	resolvePointers(bool verboseDumpAllBlocks);
 
-		void	bFile::dumpChunks(bParse::bDNA* dna);
+		void	dumpChunks(bDNA* dna);
 		
 
 		
