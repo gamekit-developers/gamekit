@@ -1,0 +1,51 @@
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Exporter", "Exporter\Exporter.vcproj", "{F33CEE79-45EF-49A5-8A33-770D9A53FEE9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "config-files", "config-files", "{4BAB174C-F023-41B0-8FA8-58B4367FE064}"
+	ProjectSection(SolutionItems) = preProject
+		data\anim.conf = data\anim.conf
+		data\boy3.conf = data\boy3.conf
+		data\character.conf = data\character.conf
+		data\middle.conf = data\middle.conf
+		data\multi-materials.conf = data\multi-materials.conf
+		data\simple-all.conf = data\simple-all.conf
+		data\simple-anims.conf = data\simple-anims.conf
+		data\simplest.conf = data\simplest.conf
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "batch-files", "batch-files", "{AEF5804C-E6C4-4DD5-A878-26A57E6A879F}"
+	ProjectSection(SolutionItems) = preProject
+		data\test.bat = data\test.bat
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "camera-files", "camera-files", "{AE99190D-5D6D-4407-9BEB-CE23ECB57B6E}"
+	ProjectSection(SolutionItems) = preProject
+		data\anim.camera = data\anim.camera
+		data\character.camera = data\character.camera
+		data\middle.camera = data\middle.camera
+		data\simple-all.camera = data\simple-all.camera
+		data\simple-anims.camera = data\simple-anims.camera
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
+		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F33CEE79-45EF-49A5-8A33-770D9A53FEE9}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F33CEE79-45EF-49A5-8A33-770D9A53FEE9}.Debug|Win32.Build.0 = Debug|Win32
+		{F33CEE79-45EF-49A5-8A33-770D9A53FEE9}.Debug|x64.ActiveCfg = Debug|x64
+		{F33CEE79-45EF-49A5-8A33-770D9A53FEE9}.Debug|x64.Build.0 = Debug|x64
+		{F33CEE79-45EF-49A5-8A33-770D9A53FEE9}.Release|Win32.ActiveCfg = Release|Win32
+		{F33CEE79-45EF-49A5-8A33-770D9A53FEE9}.Release|Win32.Build.0 = Release|Win32
+		{F33CEE79-45EF-49A5-8A33-770D9A53FEE9}.Release|x64.ActiveCfg = Release|x64
+		{F33CEE79-45EF-49A5-8A33-770D9A53FEE9}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

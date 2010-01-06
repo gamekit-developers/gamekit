@@ -1,0 +1,278 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		DAE2B66310915168005ED940 /* mm_malloc.h in Headers */ = {isa = PBXBuildFile; fileRef = DAE2B64410915168005ED940 /* mm_malloc.h */; };
+		DAE2B66510915168005ED940 /* XAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DAE2B64610915168005ED940 /* XAnimation.cpp */; };
+		DAE2B66610915168005ED940 /* XAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = DAE2B64710915168005ED940 /* XAnimation.h */; };
+		DAE2B66710915168005ED940 /* XBlendShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DAE2B64810915168005ED940 /* XBlendShape.cpp */; };
+		DAE2B66810915168005ED940 /* XBlendShape.h in Headers */ = {isa = PBXBuildFile; fileRef = DAE2B64910915168005ED940 /* XBlendShape.h */; };
+		DAE2B66910915168005ED940 /* XBlendShapeWeight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DAE2B64A10915168005ED940 /* XBlendShapeWeight.cpp */; };
+		DAE2B66A10915168005ED940 /* XBlendShapeWeight.h in Headers */ = {isa = PBXBuildFile; fileRef = DAE2B64B10915168005ED940 /* XBlendShapeWeight.h */; };
+		DAE2B66D10915168005ED940 /* XJointAnim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DAE2B64E10915168005ED940 /* XJointAnim.cpp */; };
+		DAE2B66E10915168005ED940 /* XJointAnim.h in Headers */ = {isa = PBXBuildFile; fileRef = DAE2B64F10915168005ED940 /* XJointAnim.h */; };
+		DAE2B66F10915168005ED940 /* XMaterial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DAE2B65010915168005ED940 /* XMaterial.cpp */; };
+		DAE2B67010915168005ED940 /* XMaterial.h in Headers */ = {isa = PBXBuildFile; fileRef = DAE2B65110915168005ED940 /* XMaterial.h */; };
+		DAE2B67110915168005ED940 /* XMaterialGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DAE2B65210915168005ED940 /* XMaterialGroup.cpp */; };
+		DAE2B67210915168005ED940 /* XMaterialGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = DAE2B65310915168005ED940 /* XMaterialGroup.h */; };
+		DAE2B67310915168005ED940 /* XMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DAE2B65410915168005ED940 /* XMesh.cpp */; };
+		DAE2B67410915168005ED940 /* XMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = DAE2B65510915168005ED940 /* XMesh.h */; };
+		DAE2B67510915168005ED940 /* XModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DAE2B65610915168005ED940 /* XModel.cpp */; };
+		DAE2B67610915168005ED940 /* XModel.h in Headers */ = {isa = PBXBuildFile; fileRef = DAE2B65710915168005ED940 /* XModel.h */; };
+		DAE2B67710915168005ED940 /* XOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DAE2B65810915168005ED940 /* XOptions.cpp */; };
+		DAE2B67810915168005ED940 /* XOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = DAE2B65910915168005ED940 /* XOptions.h */; };
+		DAE2B67910915168005ED940 /* XSkeleton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DAE2B65A10915168005ED940 /* XSkeleton.cpp */; };
+		DAE2B67A10915168005ED940 /* XSkeleton.h in Headers */ = {isa = PBXBuildFile; fileRef = DAE2B65B10915168005ED940 /* XSkeleton.h */; };
+		DAE2B67B10915168005ED940 /* XTextureFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DAE2B65C10915168005ED940 /* XTextureFile.cpp */; };
+		DAE2B67C10915168005ED940 /* XTextureFile.h in Headers */ = {isa = PBXBuildFile; fileRef = DAE2B65D10915168005ED940 /* XTextureFile.h */; };
+		DAE2B67D10915168005ED940 /* XTransformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DAE2B65E10915168005ED940 /* XTransformation.cpp */; };
+		DAE2B67E10915168005ED940 /* XTransformation.h in Headers */ = {isa = PBXBuildFile; fileRef = DAE2B65F10915168005ED940 /* XTransformation.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		DA23B30410090AC900B5CECE /* Loader-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Loader-Info.plist"; sourceTree = "<group>"; };
+		DA23B6701009428200B5CECE /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = System/Library/Frameworks/GLUT.framework; sourceTree = SDKROOT; };
+		DA23B6741009428C00B5CECE /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		DAE2B64410915168005ED940 /* mm_malloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mm_malloc.h; path = Loader/mm_malloc.h; sourceTree = "<group>"; };
+		DAE2B64610915168005ED940 /* XAnimation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XAnimation.cpp; path = Loader/XAnimation.cpp; sourceTree = "<group>"; };
+		DAE2B64710915168005ED940 /* XAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XAnimation.h; path = Loader/XAnimation.h; sourceTree = "<group>"; };
+		DAE2B64810915168005ED940 /* XBlendShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XBlendShape.cpp; path = Loader/XBlendShape.cpp; sourceTree = "<group>"; };
+		DAE2B64910915168005ED940 /* XBlendShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XBlendShape.h; path = Loader/XBlendShape.h; sourceTree = "<group>"; };
+		DAE2B64A10915168005ED940 /* XBlendShapeWeight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XBlendShapeWeight.cpp; path = Loader/XBlendShapeWeight.cpp; sourceTree = "<group>"; };
+		DAE2B64B10915168005ED940 /* XBlendShapeWeight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XBlendShapeWeight.h; path = Loader/XBlendShapeWeight.h; sourceTree = "<group>"; };
+		DAE2B64E10915168005ED940 /* XJointAnim.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XJointAnim.cpp; path = Loader/XJointAnim.cpp; sourceTree = "<group>"; };
+		DAE2B64F10915168005ED940 /* XJointAnim.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XJointAnim.h; path = Loader/XJointAnim.h; sourceTree = "<group>"; };
+		DAE2B65010915168005ED940 /* XMaterial.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XMaterial.cpp; path = Loader/XMaterial.cpp; sourceTree = "<group>"; };
+		DAE2B65110915168005ED940 /* XMaterial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XMaterial.h; path = Loader/XMaterial.h; sourceTree = "<group>"; };
+		DAE2B65210915168005ED940 /* XMaterialGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XMaterialGroup.cpp; path = Loader/XMaterialGroup.cpp; sourceTree = "<group>"; };
+		DAE2B65310915168005ED940 /* XMaterialGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XMaterialGroup.h; path = Loader/XMaterialGroup.h; sourceTree = "<group>"; };
+		DAE2B65410915168005ED940 /* XMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XMesh.cpp; path = Loader/XMesh.cpp; sourceTree = "<group>"; };
+		DAE2B65510915168005ED940 /* XMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XMesh.h; path = Loader/XMesh.h; sourceTree = "<group>"; };
+		DAE2B65610915168005ED940 /* XModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XModel.cpp; path = Loader/XModel.cpp; sourceTree = "<group>"; };
+		DAE2B65710915168005ED940 /* XModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XModel.h; path = Loader/XModel.h; sourceTree = "<group>"; };
+		DAE2B65810915168005ED940 /* XOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XOptions.cpp; path = Loader/XOptions.cpp; sourceTree = "<group>"; };
+		DAE2B65910915168005ED940 /* XOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XOptions.h; path = Loader/XOptions.h; sourceTree = "<group>"; };
+		DAE2B65A10915168005ED940 /* XSkeleton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XSkeleton.cpp; path = Loader/XSkeleton.cpp; sourceTree = "<group>"; };
+		DAE2B65B10915168005ED940 /* XSkeleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XSkeleton.h; path = Loader/XSkeleton.h; sourceTree = "<group>"; };
+		DAE2B65C10915168005ED940 /* XTextureFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XTextureFile.cpp; path = Loader/XTextureFile.cpp; sourceTree = "<group>"; };
+		DAE2B65D10915168005ED940 /* XTextureFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XTextureFile.h; path = Loader/XTextureFile.h; sourceTree = "<group>"; };
+		DAE2B65E10915168005ED940 /* XTransformation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XTransformation.cpp; path = Loader/XTransformation.cpp; sourceTree = "<group>"; };
+		DAE2B65F10915168005ED940 /* XTransformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XTransformation.h; path = Loader/XTransformation.h; sourceTree = "<group>"; };
+		DAE2B687109152BA005ED940 /* libSkin.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSkin.a; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		DA1EC369108EE95500399BE5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		5607DA2C07B19B9D00C2151B = {
+			isa = PBXGroup;
+			children = (
+				DAE2B64410915168005ED940 /* mm_malloc.h */,
+				DAE2B64610915168005ED940 /* XAnimation.cpp */,
+				DAE2B64710915168005ED940 /* XAnimation.h */,
+				DAE2B64810915168005ED940 /* XBlendShape.cpp */,
+				DAE2B64910915168005ED940 /* XBlendShape.h */,
+				DAE2B64A10915168005ED940 /* XBlendShapeWeight.cpp */,
+				DAE2B64B10915168005ED940 /* XBlendShapeWeight.h */,
+				DAE2B64E10915168005ED940 /* XJointAnim.cpp */,
+				DAE2B64F10915168005ED940 /* XJointAnim.h */,
+				DAE2B65010915168005ED940 /* XMaterial.cpp */,
+				DAE2B65110915168005ED940 /* XMaterial.h */,
+				DAE2B65210915168005ED940 /* XMaterialGroup.cpp */,
+				DAE2B65310915168005ED940 /* XMaterialGroup.h */,
+				DAE2B65410915168005ED940 /* XMesh.cpp */,
+				DAE2B65510915168005ED940 /* XMesh.h */,
+				DAE2B65610915168005ED940 /* XModel.cpp */,
+				DAE2B65710915168005ED940 /* XModel.h */,
+				DAE2B65810915168005ED940 /* XOptions.cpp */,
+				DAE2B65910915168005ED940 /* XOptions.h */,
+				DAE2B65A10915168005ED940 /* XSkeleton.cpp */,
+				DAE2B65B10915168005ED940 /* XSkeleton.h */,
+				DAE2B65C10915168005ED940 /* XTextureFile.cpp */,
+				DAE2B65D10915168005ED940 /* XTextureFile.h */,
+				DAE2B65E10915168005ED940 /* XTransformation.cpp */,
+				DAE2B65F10915168005ED940 /* XTransformation.h */,
+				DA23B30410090AC900B5CECE /* Loader-Info.plist */,
+				DA23B6701009428200B5CECE /* GLUT.framework */,
+				DA23B6741009428C00B5CECE /* OpenGL.framework */,
+				DAE2B687109152BA005ED940 /* libSkin.a */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		DA1EC367108EE95500399BE5 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DAE2B66310915168005ED940 /* mm_malloc.h in Headers */,
+				DAE2B66610915168005ED940 /* XAnimation.h in Headers */,
+				DAE2B66810915168005ED940 /* XBlendShape.h in Headers */,
+				DAE2B66A10915168005ED940 /* XBlendShapeWeight.h in Headers */,
+				DAE2B66E10915168005ED940 /* XJointAnim.h in Headers */,
+				DAE2B67010915168005ED940 /* XMaterial.h in Headers */,
+				DAE2B67210915168005ED940 /* XMaterialGroup.h in Headers */,
+				DAE2B67410915168005ED940 /* XMesh.h in Headers */,
+				DAE2B67610915168005ED940 /* XModel.h in Headers */,
+				DAE2B67810915168005ED940 /* XOptions.h in Headers */,
+				DAE2B67A10915168005ED940 /* XSkeleton.h in Headers */,
+				DAE2B67C10915168005ED940 /* XTextureFile.h in Headers */,
+				DAE2B67E10915168005ED940 /* XTransformation.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		DA1EC36A108EE95500399BE5 /* Skin */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DA1EC37C108EE98900399BE5 /* Build configuration list for PBXNativeTarget "Skin" */;
+			buildPhases = (
+				DA1EC367108EE95500399BE5 /* Headers */,
+				DA1EC368108EE95500399BE5 /* Sources */,
+				DA1EC369108EE95500399BE5 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Skin;
+			productName = libSkin;
+			productReference = DAE2B687109152BA005ED940 /* libSkin.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5607DA3007B19B9D00C2151B /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = F0EC25C708BBC88F006E9215 /* Build configuration list for PBXProject "Loader" */;
+			compatibilityVersion = "Xcode 2.4";
+			hasScannedForEncodings = 0;
+			mainGroup = 5607DA2C07B19B9D00C2151B;
+			productRefGroup = 5607DA2C07B19B9D00C2151B;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				DA1EC36A108EE95500399BE5 /* Skin */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		DA1EC368108EE95500399BE5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DAE2B66510915168005ED940 /* XAnimation.cpp in Sources */,
+				DAE2B66710915168005ED940 /* XBlendShape.cpp in Sources */,
+				DAE2B66910915168005ED940 /* XBlendShapeWeight.cpp in Sources */,
+				DAE2B66D10915168005ED940 /* XJointAnim.cpp in Sources */,
+				DAE2B66F10915168005ED940 /* XMaterial.cpp in Sources */,
+				DAE2B67110915168005ED940 /* XMaterialGroup.cpp in Sources */,
+				DAE2B67310915168005ED940 /* XMesh.cpp in Sources */,
+				DAE2B67510915168005ED940 /* XModel.cpp in Sources */,
+				DAE2B67710915168005ED940 /* XOptions.cpp in Sources */,
+				DAE2B67910915168005ED940 /* XSkeleton.cpp in Sources */,
+				DAE2B67B10915168005ED940 /* XTextureFile.cpp in Sources */,
+				DAE2B67D10915168005ED940 /* XTransformation.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		DA1EC36C108EE95500399BE5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PREBINDING = NO;
+				PRODUCT_NAME = Skin;
+			};
+			name = Debug;
+		};
+		DA1EC36D108EE95500399BE5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PREBINDING = NO;
+				PRODUCT_NAME = Skin;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		F0EC25C808BBC88F006E9215 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(NATIVE_ARCH)";
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "vectormathlibrary/include/**";
+				PREBINDING = NO;
+				SYMROOT = data2009;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		F0EC25C908BBC88F006E9215 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(NATIVE_ARCH)";
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "vectormathlibrary/include/**";
+				PREBINDING = NO;
+				SYMROOT = data2009;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		DA1EC37C108EE98900399BE5 /* Build configuration list for PBXNativeTarget "Skin" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DA1EC36C108EE95500399BE5 /* Debug */,
+				DA1EC36D108EE95500399BE5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F0EC25C708BBC88F006E9215 /* Build configuration list for PBXProject "Loader" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F0EC25C808BBC88F006E9215 /* Debug */,
+				F0EC25C908BBC88F006E9215 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 5607DA3007B19B9D00C2151B /* Project object */;
+}

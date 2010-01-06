@@ -1,0 +1,54 @@
+float4 main(float4 uv : TEXCOORD3) : COLOR
+{
+	return float4(1,0,0,1);
+}
+
+technique Main {
+	pass {
+		VertexProgram = NULL;
+		FragmentProgram = compile arbfp1 main();
+	}
+}
+
+technique Main_Blending {
+	pass {
+		VertexProgram = NULL;
+		FragmentProgram = compile arbfp1 main();
+	}
+}
+
+technique Main_Alphatest {
+	pass {
+		VertexProgram = NULL;
+		FragmentProgram = compile arbfp1 main();
+	}
+}
+
+technique No_Texture {
+	pass {
+		VertexProgram = NULL;
+		FragmentProgram = compile arbfp1 main();
+	}
+}
+
+technique No_Texture_Blending {
+	pass {
+		VertexProgram = NULL;
+		FragmentProgram = compile arbfp1 main();
+	}
+}
+
+technique Main_Specular {
+	pass {
+		VertexProgram = NULL;
+		FragmentProgram = compile arbfp1 main();
+	}
+}
+
+technique Main_Specular_Blending {
+	pass {
+		VertexProgram = NULL;
+		FragmentProgram = compile arbfp1 main();
+	}
+}
+
