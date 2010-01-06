@@ -19,6 +19,12 @@
 
 #define PNG_1_2_X
 
+
+#  if (defined(__APPLE__) &&  defined(__x86_64__))
+     /* work around Intel-Mac compiler bug and x86-64 linking */
+#    define PNG_NO_MMX_CODE
+#endif
+
 /* 
  * PNG_USER_CONFIG has to be defined on the compiler command line. This
  * includes the resource compiler for Windows DLL configurations.
@@ -729,6 +735,7 @@
  * PNG_NO_MMX_CODE disables the use of MMX code without changing the API.
  * When MMX code is off, then optimized C replacement functions are used.
 */
+
 #if defined(PNG_READ_SUPPORTED) && !defined(PNG_NO_ASSEMBLER_CODE)
 #  ifndef PNG_ASSEMBLER_CODE_SUPPORTED
 #    define PNG_ASSEMBLER_CODE_SUPPORTED

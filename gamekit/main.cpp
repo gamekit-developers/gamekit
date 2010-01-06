@@ -23,7 +23,7 @@ subject to the following restrictions:
 
 #include <irrlicht.h>
 #include <iostream>
-#include "IrrBlend.h"
+//#include "IrrBlend.h"
 #include "IrrBlendNew.h"
 #include "btBulletDynamicsCommon.h"
 
@@ -290,7 +290,7 @@ int main(int argc,char** argv)
 		btConstraintSolver* constraintSolver = new btSequentialImpulseConstraintSolver();
 		btDiscreteDynamicsWorld* physicsWorld = new btDiscreteDynamicsWorld(dispatcher,pairCache,constraintSolver,collisionConfiguration);
 
-		btLogicManager* logicManager = new btLogicManager();
+		//btLogicManager* logicManager = new btLogicManager();
 
 		
 	//#ifdef SWAP_COORDINATE_SYSTEMS
@@ -300,8 +300,23 @@ int main(int argc,char** argv)
 	#ifdef TEST_ECHO_BLEND_READER
 
 		int fileLen;
-		char*memoryBuffer =  btReadBuffer(file,&fileLen);
-		
+		char*memoryBuffer = 0;// btReadBuffer(file,&fileLen);
+
+		{
+			long currentpos = ftell(file); /* save current cursor position */
+			long newpos;
+			int bytesRead;
+			
+			fseek(file, 0, SEEK_END); /* seek to end */
+			newpos = ftell(file); /* find position of end -- this is the length */
+			fseek(file, currentpos, SEEK_SET); /* restore previous cursor position */
+			
+			fileLen = newpos;
+			
+			memoryBuffer = (char*)malloc(fileLen);
+			bytesRead = fread(memoryBuffer,fileLen,1,file);
+        }
+
 		
 
 
@@ -313,7 +328,7 @@ int main(int argc,char** argv)
 	//		memcpy(copyBuf,memoryBuffer,fileLen);
 
 
-			IrrBlendNew	bulletBlendReaderNew(device,smgr,physicsWorld,logicManager);
+			IrrBlendNew	bulletBlendReaderNew(device,smgr,physicsWorld,0);
 			if (!bulletBlendReaderNew.readFile(memoryBuffer,fileLen,verboseDumpAllTypes))
 			{
 				{
@@ -423,7 +438,7 @@ int main(int argc,char** argv)
 			
 			driver->beginScene(true, true, video::SColor(0,100,100,100));
 
-			logicManager->processLogicBricks(deltaTime);
+		//	logicManager->processLogicBricks(deltaTime);
 
 			smgr->drawAll();
 

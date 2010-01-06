@@ -19,6 +19,13 @@
 
 #define PNG_1_2_X
 
+
+#  if defined(__APPLE_) && defined(__x86_64__)
+     /* work around Intel-Mac compiler bug */
+#    define PNG_NO_MMX_CODE
+#  endif
+
+
 /* 
  * PNG_USER_CONFIG has to be defined on the compiler command line. This
  * includes the resource compiler for Windows DLL configurations.

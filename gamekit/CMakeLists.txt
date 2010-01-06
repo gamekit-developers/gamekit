@@ -71,14 +71,10 @@ SET(bParse_SRCS
 SET(GameKit_SRCS
 	clubsilo_packed.blend
 	PhysicsAnimationBakingDemo.blend
-	BulletBlendReader.cpp
-	BulletBlendReader.h
 	BulletBlendReaderNew.cpp
 	BulletBlendReaderNew.h
 	BulletIrrlichtUtils.cpp
 	BulletIrrlichtUtils.h
-	IrrBlend.cpp
-	IrrBlend.h
 	IrrBlendNew.cpp
 	IrrBlendNew.h
 	

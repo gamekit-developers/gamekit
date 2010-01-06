@@ -10,6 +10,7 @@
 
 #define PNG_INTERNAL
 #define PNG_NO_EXTERN
+
 #include "png.h"
 
 /* Generate a compiler error if there is an old png.h in the search path. */
@@ -778,7 +779,7 @@ png_access_version_number(void)
    return((png_uint_32) PNG_LIBPNG_VER);
 }
 
-
+#ifndef PNG_NO_MMX_CODE
 /* this INTERNAL function was added to libpng 1.2.0 */
 void /* PRIVATE */
 png_init_mmx_flags (png_structp png_ptr)
@@ -791,7 +792,7 @@ png_init_mmx_flags (png_structp png_ptr)
     png_ptr->asm_flags &= ~( PNG_MMX_FLAGS );
 
 }
-
+#endif
 
 
 #if defined(PNG_READ_SUPPORTED) || defined(PNG_WRITE_SUPPORTED)
