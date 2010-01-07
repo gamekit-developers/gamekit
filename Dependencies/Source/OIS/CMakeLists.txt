@@ -30,9 +30,17 @@ set(OIS_HDR
 )
 
 if (WIN32)
-	#set(DirectX_FOUND FALSE)
 
-	if (DirectX_FOUND)
+	set(OIS_BUILD_WIN32 FALSE)
+	if (OGREKIT_OIS_WIN32_NATIVE)
+		set(OIS_BUILD_WIN32 TRUE)
+	else ()
+		if (NOT DirectX_FOUND)
+			set(OIS_BUILD_WIN32 TRUE)
+		endif()
+	endif()
+
+	if (NOT OIS_BUILD_WIN32)
 		set(OIS_PLAT 
 			src/win32/Win32ForceFeedback.cpp
 			src/win32/Win32InputManager.cpp

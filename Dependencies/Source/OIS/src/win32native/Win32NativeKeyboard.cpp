@@ -20,7 +20,7 @@ restrictions:
 
     3. This notice may not be removed or altered from any source distribution.
 */
-/*  Win32 native support added for the Ogre GameKit port by Charlie C.
+/*  Win32 native support added for OgreKit by Charlie C.
 	http://gamekit.googlecode.com/
 */
 #include "OISInputManager.h"
@@ -45,7 +45,7 @@ Win32NativeKeyboard::~Win32NativeKeyboard()
 //-------------------------------------------------------------//
 bool Win32NativeKeyboard::isKeyDown( KeyCode key )
 {
-	return mKeyMap[key] == 1 ? true : false;
+	return KeyBuffer[key] == 1 ? true : false;
 }
 
 //-------------------------------------------------------------//
@@ -109,50 +109,47 @@ void Win32NativeKeyboard::handleKey( UINT msg, WPARAM wParam, LPARAM lParam )
 		if ( code == KC_LCONTROL || code == KC_RCONTROL )
 		{
 			if (curPress)
-				WNAddBit(mModifiers, Ctrl);
+				mModifiers|= Ctrl;
 			else
-				WNClrBit(mModifiers, Ctrl);
+				mModifiers &= ~mModifiers;
 		}
 		if ( code == KC_LMENU || code == KC_RMENU )
 		{
 			if (curPress)
-				WNAddBit(mModifiers, Alt);
+				mModifiers|= Alt;
 			else
-				WNClrBit(mModifiers, Alt);
+				mModifiers &= ~Alt;
 		}
 		if ( code == KC_LSHIFT || code == KC_RSHIFT )
 		{
 			if (curPress)
-				WNAddBit(mModifiers, Shift);
+				mModifiers |= Shift;
 			else
-				WNClrBit(mModifiers, Shift);
+				mModifiers &= ~Shift;
 		}
 
-		if (mListener && mBuffered)
+		WNKeyEvent evt;
+		evt.scancode = it->second;
+		evt.charcode = 0;
+		if (mTextMode != Off)
 		{
-			WNKeyEvent evt;
-			evt.scancode = it->second;
-			evt.charcode = 0;
-			if (mTextMode != Off)
+			// grab ascii code
+			if (mTextMode == Ascii)
 			{
-				// grab ascii code
-				if (mTextMode == Ascii)
-				{
-					MSG _key;
-					if ( ::PeekMessage( &_key, NULL, WM_CHAR, WM_SYSDEADCHAR, PM_REMOVE ) )
-						evt.charcode = ( char )_key.wParam;
-				}
-				else if (mTextMode == Unicode)
-				{
-					MSG _key;
-					if ( ::PeekMessage( &_key, NULL, 0x0109, WM_SYSDEADCHAR, PM_REMOVE ) )
-						evt.charcode = ( wchar_t )_key.wParam;
-				}
+				MSG _key;
+				if ( ::PeekMessage( &_key, NULL, WM_CHAR, WM_SYSDEADCHAR, PM_REMOVE ) )
+					evt.charcode = ( char )_key.wParam;
 			}
-
-			evt.type = curPress == 1 ? 0 : 1;
-			mEvents.push_back(evt);
+			else if (mTextMode == Unicode)
+			{
+				MSG _key;
+				if ( ::PeekMessage( &_key, NULL, 0x0109, WM_SYSDEADCHAR, PM_REMOVE ) )
+					evt.charcode = ( wchar_t )_key.wParam;
+			}
 		}
+
+		evt.type = curPress == 1 ? 0 : 1;
+		if (mListener && mBuffered) mEvents.push_back(evt);
 	}
 }
 
@@ -246,15 +243,21 @@ void Win32NativeKeyboard::_initialize()
 	WNKeyAdd(VK_INSERT, KC_INSERT);
 	WNKeyAdd(VK_KANA, KC_KANA);
 	WNKeyAdd(VK_KANJI, KC_KANJI);
-	WNKeyAdd(VK_LMENU, KC_LMENU);
-	WNKeyAdd(VK_LSHIFT, KC_LSHIFT);
 	WNKeyAdd(VK_LWIN, KC_LWIN);
 	WNKeyAdd(VK_NUMLOCK, KC_NUMLOCK);
 	WNKeyAdd(VK_PAUSE, KC_PAUSE);
-	WNKeyAdd(VK_RCONTROL, KC_RCONTROL);
-	WNKeyAdd(VK_RMENU, KC_RMENU);
-	WNKeyAdd(VK_RSHIFT, KC_RSHIFT);
+
 	WNKeyAdd(VK_RWIN, KC_RWIN);
 	WNKeyAdd(VK_SCROLL, KC_SCROLL);
 	WNKeyAdd(VK_SLEEP, KC_SLEEP);
+
+	WNKeyAdd(VK_CONTROL, KC_LCONTROL);
+	WNKeyAdd(VK_RCONTROL, KC_RCONTROL);
+	WNKeyAdd(VK_LCONTROL, KC_LCONTROL);
+	WNKeyAdd(VK_MENU,  KC_LMENU);
+	WNKeyAdd(VK_RMENU, KC_RMENU);
+	WNKeyAdd(VK_LMENU, KC_LMENU);
+	WNKeyAdd(VK_SHIFT,  KC_LSHIFT);
+	WNKeyAdd(VK_RSHIFT, KC_RSHIFT);
+	WNKeyAdd(VK_LSHIFT, KC_LSHIFT);
 }

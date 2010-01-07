@@ -34,18 +34,22 @@ struct WNMouseEvent
 {
 	int type;			// 0,1,2,3 (motion, wheel, bup, bdn)
 	int button;
+	int z;
+	HWND hWnd;
 };
+
 
 struct WNKeyEvent
 {
 	int type;			// 0,1 (press, release)
 	int scancode;
-	unsigned int charcode;			
+	unsigned int charcode;
+	int mod;
 };
 
 #define WNClamp(x, mi, ma) ((x) <  (mi) ?  (mi)  : (x) > (ma) ? (ma) : (x))
-#define WNAddBit(x, b) (x) |= (b)
-#define WNClrBit(x, b) (x) &= ~(b)
+#define WNAddBit(x, b) ((x) |=  (1 << (b)))
+#define WNClrBit(x, b) ((x) &= ~(1 << (b)))
 
 
 #define VK_KEY_0 '0'

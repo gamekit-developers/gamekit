@@ -13,9 +13,9 @@ macro (configure_ogrekit ROOT OGREPATH)
 	set(OGRE_TEMPLATES_DIR ${ROOT}/CMake/Templates)
 	set(OGRELITE_SOURCE_DIR ${OGREPATH})
 
-    include(OgreConfigTargets)
-    include(DependenciesOgreKit)
-    include(MacroLogFeature)
+	include(OgreConfigTargets)
+	include(DependenciesOgreKit)
+	include(MacroLogFeature)
 
 	if (APPLE)
 		set(OGREKIT_PLATFORM ${OGREPATH}/OgreMain/include/OSX )
@@ -33,7 +33,17 @@ macro (configure_ogrekit ROOT OGREPATH)
 	set(OGREKIT_ZZIP_INCLUDE ${OGREKIT_DEP_DIR}/ZZipLib)
 	set(OGREKIT_OIS_INCLUDE ${OGREKIT_DEP_DIR}/OIS/include)
 	set(OGREKIT_OGRE_INCLUDE ${OGREPATH}/OgreMain/include ${OGREPATH}/Settings ${OGREKIT_PLATFORM})
-	
+
+
+	if (WIN32)
+		if (NOT DirectX_FOUND)
+			option(OGREKIT_OIS_WIN32_NATIVE "Enable building of the OIS Win32 backend" ON)
+		else ()
+			option(OGREKIT_OIS_WIN32_NATIVE "Enable building of the OIS Win32 backend" OFF)
+		endif()
+		
+	endif()
+
 
 	if (OPENGL_FOUND)
 		option(OGREKIT_BUILD_GLRS "Enable the OpenGL render system" ON)

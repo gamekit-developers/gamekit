@@ -254,6 +254,11 @@ bool gkInternalWindowSystemPrivate::mouseMoved(const OIS::MouseEvent &arg)
 	if (arg.state.Z.rel != 0)
 		mMouseData.wheelDelta= arg.state.Z.rel > 0 ? 1.0 : -1.0;
 
+	//if (arg.state.Z.rel != 0)
+	//	printf("mouseMoved %i\n", arg.state.Z.abs);
+	//else
+	//	printf("mouseMoved %i %i\n", arg.state.X.abs, arg.state.Y.abs);
+
 	mMouseData.moved= true;
 	return false;
 }
@@ -261,12 +266,14 @@ bool gkInternalWindowSystemPrivate::mouseMoved(const OIS::MouseEvent &arg)
 // ----------------------------------------------------------------------------
 bool gkInternalWindowSystemPrivate::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
+	//printf("mousePressed %i\n", id);
 	return false;
 }
 
 // ----------------------------------------------------------------------------
 bool gkInternalWindowSystemPrivate::mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
+	//printf("mouseReleased %i\n", id);
 	return false;
 }
 
@@ -286,6 +293,8 @@ bool gkInternalWindowSystemPrivate::keyPressed(const OIS::KeyEvent &arg)
 	mKeyboardData.keys[kc] |= gkKeyboardDevice::STATE_PRESSED;
 	mKeyboardData.was_pressed= true;
 	mKeyboardData.key_count += 1;
+
+	//printf("keyPressed %i\n", kc);
 	return false;
 }
 
@@ -299,6 +308,7 @@ bool gkInternalWindowSystemPrivate::keyReleased(const OIS::KeyEvent &arg)
 	mKeyboardData.was_pressed= true;
 	mKeyboardData.key_count -= 1;
 
+	//printf("keyReleased %i\n", kc);
 	return false;
 }
 

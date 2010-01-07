@@ -20,7 +20,7 @@ restrictions:
 
     3. This notice may not be removed or altered from any source distribution.
 */
-/*  Win32 native support added for the Ogre GameKit port by Charlie C.
+/*  Win32 native support added for OgreKit by Charlie C.
 	http://gamekit.googlecode.com/
 */
 #ifndef _WIN32_NATIVE_KEYBOARD_H_
