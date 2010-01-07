@@ -1,6 +1,9 @@
 # ---------------------------------------------------------
 cmake_minimum_required(VERSION 2.6)
 
+#SET(CMAKE_SUPPRESS_REGENERATION  1)
+#SET(CMAKE_USE_RELATIVE_PATHS 1)
+
 project(OGREKIT)
 SET(OGREKIT 1.0)
 
