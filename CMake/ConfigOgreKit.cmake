@@ -35,7 +35,10 @@ macro (configure_ogrekit ROOT OGREPATH)
 	set(OGREKIT_OGRE_INCLUDE ${OGREPATH}/OgreMain/include ${OGREPATH}/Settings ${OGREKIT_PLATFORM})
 	
 
-	option(OGREKIT_BUILD_GLRS "Enable the OpenGL render system" ON)
+	if (OPENGL_FOUND)
+		option(OGREKIT_BUILD_GLRS "Enable the OpenGL render system" ON)
+	endif()
+	
 	if (OPENGL_FOUND AND OGREKIT_BUILD_GLRS)
 		message(STATUS "Configuring OpenGL")
 		set(OGRE_BUILD_RENDERSYSTEM_GL TRUE)
@@ -52,13 +55,14 @@ macro (configure_ogrekit ROOT OGREPATH)
 	endif()
 
 	if (WIN32 AND OGREKIT_MINGW_DIRECT3D)
-	
+
+		if (DirectX_FOUND)
+			option(OGREKIT_BUILD_D3D9RS	 "Enable the Direct3D 9 render system" ON)
+			option(OGREKIT_BUILD_D3D10RS "Enable the Direct3D 10 render system" OFF)
+			option(OGREKIT_BUILD_D3D11RS "Enable the Direct3D 11 render system" OFF)
+		endif()
 
 		if (DirectX_FOUND AND OGREKIT_BUILD_D3D9RS)
-		
-		 option(OGREKIT_BUILD_D3D9RS	 "Enable the Direct3D 9 render system" ON)
-		 option(OGREKIT_BUILD_D3D10RS "Enable the Direct3D 10 render system" OFF)
-		 option(OGREKIT_BUILD_D3D11RS "Enable the Direct3D 11 render system" OFF)
 		
 			message(STATUS "Configuring Direct3D 9")
 

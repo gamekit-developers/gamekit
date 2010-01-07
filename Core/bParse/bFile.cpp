@@ -14,14 +14,13 @@ subject to the following restrictions:
 */
 #include "bFile.h"
 #include "bCommon.h"
-#include "bMain.h"
 #include "bChunk.h"
 #include "bDNA.h"
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
 #define SIZEOFBLENDERHEADER 12
-
+#define MAX_ARRAY_LENGTH 512
 using namespace bParse;
 
 
@@ -112,7 +111,7 @@ void bFile::parseHeader()
 
 	if (strncmp(header, m_headerString, 7)!=0)
 	{
-		printf ("Invalid blend file...\n");
+		printf ("Invalid blend file...");
 		return;
 	}
 
@@ -216,7 +215,7 @@ void bFile::parseInternal(bool verboseDumpAllTypes, char* memDna,int memDnaLengt
 	
 	parseData();
 	
-	resolvePointers();
+	resolvePointers(verboseDumpAllTypes);//verboseDumpAllBlocks);
 
 	updateOldPointers();
 
@@ -694,7 +693,7 @@ void bFile::resolvePointersMismatch()
 
 
 ///this loop only works fine if the Blender DNA structure of the file matches the headerfiles
-void bFile::resolvePointersChunk(const bChunkInd& dataChunk)
+void bFile::resolvePointersChunk(const bChunkInd& dataChunk, bool verboseDumpAllBlocks)
 {
 	bParse::bDNA* fileDna = mFileDNA ? mFileDNA : mMemoryDNA;
 
@@ -705,13 +704,13 @@ void bFile::resolvePointersChunk(const bChunkInd& dataChunk)
 	char* cur	= (char*)findLibPointer(dataChunk.oldPtr);
 	for (int block=0; block<dataChunk.nr; block++)
 	{
-		resolvePointersStructRecursive(cur,dataChunk.dna_nr);
+		resolvePointersStructRecursive(cur,dataChunk.dna_nr, verboseDumpAllBlocks,1);
 		cur += oldLen;
 	}
 }
 
 
-void bFile::resolvePointersStructRecursive(char *strcPtr, int dna_nr)
+void bFile::resolvePointersStructRecursive(char *strcPtr, int dna_nr, bool verboseDumpAllBlocks,int recursion)
 {
 	
 	bParse::bDNA* fileDna = mFileDNA ? mFileDNA : mMemoryDNA;
@@ -734,7 +733,8 @@ void bFile::resolvePointersStructRecursive(char *strcPtr, int dna_nr)
 
 		memType = fileDna->getType(oldStruct[0]);
 		memName = fileDna->getName(oldStruct[1]);
-		//printf("%s %s\n",memType,memName);
+		
+		
 
 		int arrayLen = fileDna->getArraySizeNew(oldStruct[1]);
 		if (memName[0] == '*')
@@ -777,7 +777,83 @@ void bFile::resolvePointersStructRecursive(char *strcPtr, int dna_nr)
 			int revType = fileDna->getReverseType(oldStruct[0]);
 			if (oldStruct[0]>=firstStructType) //revType != -1 && 
 			{
-				resolvePointersStructRecursive(elemPtr,revType);
+				if (verboseDumpAllBlocks)
+				{
+					for (int i=0;i<recursion;i++)
+					{
+						printf("  ");
+					}
+					printf("<%s type=\"%s\">\n",memName,memType);
+				}
+				resolvePointersStructRecursive(elemPtr,revType, verboseDumpAllBlocks,recursion+1);
+				if (verboseDumpAllBlocks)
+				{
+					for (int i=0;i<recursion;i++)
+					{
+						printf("  ");
+					}
+					printf("</%s>\n",memName);
+				}
+			} else
+			{
+				//export a simple type
+				if (verboseDumpAllBlocks)
+				{
+
+					if (arrayLen>MAX_ARRAY_LENGTH)
+					{
+						printf("too long\n");
+					} else
+					{
+						//printf("%s %s\n",memType,memName);
+
+						bool isIntegerType = (strcmp(memType,"char")==0) || (strcmp(memType,"int")==0) || (strcmp(memType,"short")==0);
+
+						if (isIntegerType)
+						{
+							char* newtype="int";
+							int dbarray[MAX_ARRAY_LENGTH];
+							int* dbPtr = 0;
+							char* tmp = elemPtr;
+							dbPtr = &dbarray[0];
+							if (dbPtr)
+							{
+								getElement(arrayLen, newtype,memType, tmp, (char*)dbPtr);
+								for (int i=0;i<recursion;i++)
+									printf("  ");
+								if (arrayLen==1)
+									printf("<%s type=\"%s\">",memName,memType);
+								else
+									printf("<%s type=\"%s\" count=%d>",memName,memType,arrayLen);
+								for (int i=0;i<arrayLen;i++)
+									printf(" %d ",dbPtr[i]);
+								printf("</%s>\n",memName);
+							}
+						} else
+						{
+							float value = 1.f;
+							char* newtype="double";
+							double dbarray[MAX_ARRAY_LENGTH];
+					 		double* dbPtr = 0;
+							char* tmp = elemPtr;
+							dbPtr = &dbarray[0];
+							if (dbPtr)
+							{
+								getElement(arrayLen, newtype,memType, tmp, (char*)dbPtr);
+								for (int i=0;i<recursion;i++)
+									printf("  ");
+								if (arrayLen==1)
+									printf("<%s type=\"%s\">",memName,memType);
+								else
+									printf("<%s type=\"%s\" count=%d>",memName,memType,arrayLen);
+								for (int i=0;i<arrayLen;i++)
+									printf(" %f ",dbPtr[i]);
+								printf("</%s>\n",memName);
+							}
+						}
+					}
+					
+				}
 			}
 		}
 
@@ -789,7 +865,7 @@ void bFile::resolvePointersStructRecursive(char *strcPtr, int dna_nr)
 
 
 ///Resolve pointers replaces the original pointers in structures, and linked lists by the new in-memory structures
-void bFile::resolvePointers()
+void bFile::resolvePointers(bool verboseDumpAllBlocks)
 {
 	bParse::bDNA* fileDna = mFileDNA ? mFileDNA : mMemoryDNA;
 
@@ -812,10 +888,13 @@ void bFile::resolvePointers()
 				short int* oldStruct = fileDna->getStruct(dataChunk.dna_nr);
 				char* oldType = fileDna->getType(oldStruct[0]);
 				
-				//printf("------------------------------------------");
-				//printf("Struct %s\n",oldType);
+				if (verboseDumpAllBlocks)
+					printf("<%s>\n",oldType);
+				
+				resolvePointersChunk(dataChunk, verboseDumpAllBlocks);
 
-				resolvePointersChunk(dataChunk);
+				if (verboseDumpAllBlocks)
+					printf("</%s>\n",oldType);
 			} else
 			{
 				//printf("skipping mStruct\n");

@@ -105,7 +105,7 @@ int main(int argc, char **argv)
 	{
 		OgreBlend *blend= new OgreBlend(physicsWorld);
 		
-		int status= static_cast<OgreBlend*>(blend)->_readFile(fname);
+		int status= blend->_readFile(fname);
 		if (status)
 		{
 			blend->convertAllObjects();
