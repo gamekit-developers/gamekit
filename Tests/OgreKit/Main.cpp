@@ -29,6 +29,7 @@
 #include "gkEngine.h"
 #include "gkUserDefs.h"
 #include "btBulletDynamicsCommon.h"
+#include "btBulletCollisionCommon.h"
 
 
 #ifdef __APPLE__

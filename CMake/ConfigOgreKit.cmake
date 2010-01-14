@@ -35,8 +35,15 @@ macro (configure_ogrekit ROOT OGREPATH)
 	set(OGREKIT_OGRE_INCLUDE ${OGREPATH}/OgreMain/include ${OGREPATH}/Settings ${OGREKIT_PLATFORM})
 
 
+	set(OGREKIT_MINGW_DIRECT3D TRUE)
+	if (CMAKE_COMPILER_IS_GNUCXX)
+		# Some Issues with unresolved symbols
+		set(OGREKIT_MINGW_DIRECT3D FALSE)
+	endif()
+
+
 	if (WIN32)
-		if (NOT DirectX_FOUND)
+		if (NOT DirectX_FOUND OR NOT OGREKIT_MINGW_DIRECT3D)
 			option(OGREKIT_OIS_WIN32_NATIVE "Enable building of the OIS Win32 backend" ON)
 		else ()
 			option(OGREKIT_OIS_WIN32_NATIVE "Enable building of the OIS Win32 backend" OFF)
@@ -56,12 +63,6 @@ macro (configure_ogrekit ROOT OGREPATH)
 		set(OGREKIT_GLRS_ROOT ${OGREPATH}/RenderSystems/GL)
 		set(OGREKIT_GLESRS_INCLUDE ${OGREPATH}/RenderSystems/GLES/include)
 		set(OGREKIT_GLRS_INCLUDE ${OGREPATH}/RenderSystems/GL/include)
-	endif()
-
-	set(OGREKIT_MINGW_DIRECT3D TRUE)
-	if (CMAKE_COMPILER_IS_GNUCXX)
-		# Some Issues with unresolved symbols
-		set(OGREKIT_MINGW_DIRECT3D FALSE)
 	endif()
 
 	if (WIN32 AND OGREKIT_MINGW_DIRECT3D)
