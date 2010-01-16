@@ -36,10 +36,15 @@ subdirs(bullet)
 
 subdirs(Dependencies)
 subdirs(OgreLite)
-subdirs(Core)
+subdirs(OgreKit)
 
-# Tests for this setup
-subdirs(Tests/OgreKit)
-subdirs(Tests/Ascii/bAscii)
-subdirs(Tests/Ascii)
-subdirs(Tests/ScriptTest)
+
+# Depreciated 
+# subdirs(Core)
+
+# Todo Implement a loader
+# subdirs(Tests/Ascii/bAscii)
+# subdirs(Tests/Ascii)
+
+# Todo, update for new demo system
+# subdirs(Tests/ScriptTest)

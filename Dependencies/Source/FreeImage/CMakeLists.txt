@@ -618,6 +618,12 @@ set(fi_Imath_HDRS
 
 
 
+if (WIN32)
+	if (CMAKE_COMPILER_IS_GNUCXX)
+		# FreeImage LibRawLite dependency 
+		link_libraries(ws2_32)
+	endif (CMAKE_COMPILER_IS_GNUCXX)
+endif(WIN32)
 
 # ---------------------------------------------------------
 set(ALLSOURCE
