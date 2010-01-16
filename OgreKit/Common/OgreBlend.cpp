@@ -102,6 +102,7 @@ OgreBlend::OgreBlend() :
 OgreBlend::~OgreBlend()
 {
 	delete []m_memBuf;
+	delete m_converter;
 	delete m_destinationWorld;
 	delete m_constraintSolver;
 	delete m_dispatcher;

@@ -65,14 +65,14 @@ void ActionManager::update(Real delta)
 		if (OgreFuzzy(blendFrames))
 			blendFrames = 1;
 
-		blendFrames = 1.0 / blendFrames;
+		blendFrames = Real(1.0) / blendFrames;
 
 		m_blendTime += blendFrames;
 
 		if (m_blendTime < 1.0)
 		{
 			m_blend->setWeight(m_blendTime);
-			m_active->setWeight(1.0 - m_blendTime);
+			m_active->setWeight(Real(1.0) - m_blendTime);
 			m_blend->evaluate(delta);
 		}
 		else

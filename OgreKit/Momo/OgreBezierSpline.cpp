@@ -54,7 +54,7 @@ bool StepCubic(const Vector2 &P0, const Vector2 &P1, const Vector2 &P2, const Ve
 		ts = 60.0;
 
 
-	const Real step = (Real(1.0) / ts) / 4.0;
+	const Real step = (Real(1.0) / ts) / 4.f;
 	/// 240 max, anything else is choppy
 
 	cval = Real(0.0);
