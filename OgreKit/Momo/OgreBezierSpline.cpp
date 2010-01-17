@@ -27,11 +27,12 @@
 using namespace Ogre;
 
 
-#define SplineTOL		DBL_EPSILON
-#define SplineAbs(x)	fabs(x)
-#define SplineFuzzy( x ) (SplineAbs( x ) <= SplineTOL)
-#define SplineEq(x) ((x) >= (-SplineTOL) && (x) <= (1.+SplineTOL))
-#define SplineFuzzyEq(x, y) (SplineAbs(((x) - (y))) <= SplineTOL)
+#define SplineTOL				DBL_EPSILON
+#define SplineAbs(x)			fabs(x)
+#define SplineFuzzy( x )		(SplineAbs( x ) <= SplineTOL)
+#define SplineEq(x)				((x) >= (-SplineTOL) && (x) <= (1.+SplineTOL))
+#define SplineFuzzyEq(x, y)		(SplineAbs(((x) - (y))) <= SplineTOL)
+#define SplineMax( lhs, rhs )	((lhs) < (rhs) ? (rhs) : (lhs))
 
 
 
@@ -45,44 +46,44 @@ double CubicRoot(const double d)
 
 
 
-bool StepCubic(const Vector2 &P0, const Vector2 &P1, const Vector2 &P2, const Vector2 &P3, Real time, double &cval)
+bool StepCubic(const float *P0, const float *P1, const float *P2, const float *P3, float time, double &cval)
 {
-	Real ts = (P3.x - P0.x);
-	if (ts <= 1.0)
-		ts = 2.0;
-	if (ts >= 60.0)
-		ts = 60.0;
+	float ts = (P3[0] - P0[0]);
+	if (ts <= 1.f)
+		ts = 2.f;
+	if (ts >= 60.f)
+		ts = 60.f;
 
 
-	const Real step = (Real(1.0) / ts) / 4.f;
+	const float step = (1.f / ts) / 4.f;
 	/// 240 max, anything else is choppy
 
-	cval = Real(0.0);
-	Real s = Real(1.0), sc, sst;
-	Real t = Real(0.0), tc, tts;
+	cval = 0.0;
+	float s = 1.f, sc, sst;
+	float t = 0.f, tc, tts;
 
 
 	while (t <= 1.0)
 	{
 		sc =  s * s * s;
 		tc =  t * t * t;
-		sst = Real(3.0) * s * s * t;
-		tts = Real(3.0) * t * t * s;
+		sst = 3.f * s * s * t;
+		tts = 3.f * t * t * s;
 
-		if ((sc * P0.x + sst * P1.x + tts * P2.x + tc * P3.x) >= time)
+		if ((sc * P0[0] + sst * P1[0] + tts * P2[0] + tc * P3[0]) >= time)
 		{
-			cval = (sc * P0.y + sst * P1.y + tts * P2.y + tc * P3.y);
+			cval = (sc * P0[1] + sst * P1[1] + tts * P2[1] + tc * P3[1]);
 			return true;
 		}
 
 		t += step;
-		s = Real(1.0) - t;
+		s = 1.f - t;
 	}
 	return false;
 }
 
 
-Real BezierSpline::interpolate(const double &t,
+float BezierSpline::interpolate(const double &t,
                                const double &p0,
                                const double &p1,
                                const double &p2,
@@ -97,7 +98,7 @@ Real BezierSpline::interpolate(const double &t,
 	c2 = 3.0 * p0 - 6.0 * p1 + 3.0 * p2;
 	c3 = -p0 + 3.0 * p1 - 3.0 * p2 + p3;
 
-	return (Real)(c0 + t * c1 + t2 * c2 + t3 * c3);
+	return (float)(c0 + t * c1 + t2 * c2 + t3 * c3);
 }
 
 
@@ -224,68 +225,72 @@ int BezierSpline::solveRoots(const double &x,
 
 
 
-void BezierSpline::updateHandles(Vector2 &p0, Vector2 &p1, Vector2 &p2, Vector2 &p3) const
+void BezierSpline::updateHandles(float *p0, float *p1, float *p2, float *p3) const
 {
-	Real lh = Math::Abs((p0.x - p1.x) + (p3.x - p2.x));
+	float lh = SplineAbs((p0[0] - p1[0]) + (p3[0] - p2[0]));
 	if (lh != 0.0)
 	{
-		if (lh > (p3.x - p0.x))
+		if (lh > (p3[0] - p0[0]))
 		{
-			Real f = (p3.x - p0.x) / lh;
-			p1.x = (p0.x - f * OgreAbs((p0.x - p1.x)));
-			p1.y = (p0.y - f * OgreAbs((p0.y - p1.y)));
-			p2.x = (p3.x - f * OgreAbs((p3.x - p2.x)));
-			p2.y = (p3.y - f * OgreAbs((p3.y - p2.y)));
+			float f = (p3[0] - p0[0]) / lh;
+			p1[0] = (p0[0] - f * OgreAbs((p0[0] - p1[0])));
+			p1[1] = (p0[1] - f * OgreAbs((p0[1] - p1[1])));
+			p2[0] = (p3[0] - f * OgreAbs((p3[0] - p2[0])));
+			p2[1] = (p3[1] - f * OgreAbs((p3[1] - p2[1])));
 		}
 	}
 }
 
 
 
-Real BezierSpline::interpolate(Real delta, Real time) const
+float BezierSpline::interpolate(float delta, float time) const
 {
 	const BezierVertex *vp = m_verts.ptr();
 	int totvert = (int)m_verts.size();
+	float p0[2], p1[2], p2[2], p3[2]; 
+	double r=0.0;
 
 	if (!vp || !totvert)
 		return 0.f;
 
 	// at the start
-	if (vp[0].cp.x >= time)  return vp[0].cp.y;
+	if (vp[0].cp[0] >= time)  return vp[0].cp[1];
 
 	// at the end
-	if (vp[totvert-1].cp.x <= time) return vp[totvert-1].cp.y;
+	if (vp[totvert-1].cp[0] <= time) return vp[totvert-1].cp[1];
 
 	/// find closest segment to time
 
 	int segment = (int)(delta * (totvert-1));
-	while (segment && vp[segment].cp.x > time)
+	while (segment && vp[segment].cp[0] > time)
 		--segment;
 
-	segment = OgreMax(segment, 0);
+	segment = SplineMax(segment, 0);
 
-	Vector2 p0, p1, p2, p3; double r=0.0;
 	for (int s = segment; s < (totvert - 1); ++s)
 	{
-		if (vp[s].cp.x <= time && vp[s+1].cp.x >= time)
+		if (vp[s].cp[0] <= time && vp[s+1].cp[0] >= time)
 		{
 			if (m_interpMethod == BEZ_CONSTANT)
 			{
 				// take constant
-				return vp[s+0].cp.y;
+				return vp[s+0].cp[1];
 			}
 
-			p0 = vp[s+0].cp; p1 = vp[s+0].h2;
-			p2 = vp[s+1].h1; p3 = vp[s+1].cp;
+			p0[0] = vp[s+0].cp[0]; p0[1] = vp[s+0].cp[1]; 
+			p1[0] = vp[s+0].h2[0]; p1[1] = vp[s+0].h2[1];
+			p2[0] = vp[s+1].h1[0]; p2[1] = vp[s+1].h1[1]; 
+			p3[0] = vp[s+1].cp[0]; p3[1] = vp[s+1].cp[1];
+			
 			updateHandles(p0, p1, p2, p3);
 
-			if (solveRoots(time, p0.x, p1.x, p2.x, p3.x, r))
-				return interpolate(r, p0.y, p1.y, p2.y, p3.y);
+			if (solveRoots(time, p0[0], p1[0], p2[0], p3[0], r))
+				return interpolate(r, p0[1], p1[1], p2[1], p3[1]);
 			else
 			{
 				//printf("Failed %f\n", r);
 				if (StepCubic(p0, p1, p2, p3, time, r))
-					return (Real)r;
+					return (float)r;
 			}
 		}
 	}

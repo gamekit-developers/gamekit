@@ -42,7 +42,7 @@ class ActionManager : public AllocObject
 {
 protected:
 	Action		*m_active, *m_blend;
-	Real		m_blendTime;
+	float		m_blendTime;
 public:
 	ActionManager();
 	~ActionManager();
@@ -51,7 +51,7 @@ public:
 	void setAction(Action *act);
 
 	/// update all 
-	void update(Real delta);
+	void update(float delta);
 };
 
 }

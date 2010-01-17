@@ -240,7 +240,6 @@ protected:
 	bool					m_cache;
 	Entity*					m_momoOb;
 	int						m_curAct;
-	Vector2					m_pos, m_last;
 
 	void					buildAllActions(bParse::bListBasePtr *actions);
 	void					setupMomo(void);
@@ -263,7 +262,6 @@ MomoApp::MomoApp() :
 		m_editCam(0), m_viewport(0),
 		m_momo(0), m_actManager(0), m_cache(false), m_momoOb(0), m_curAct(0)
 {
-	m_last.x = m_last.y = 0;
 }
 
 // ----------------------------------------------------------------------------

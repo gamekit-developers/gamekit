@@ -49,30 +49,30 @@ protected:
 
 	const HashedString	m_name;
 	Channels			m_channels;
-	Real				m_start, m_end;
-	Real				m_evalTime, m_weight, m_blendFrames;
+	float				m_start, m_end;
+	float				m_evalTime, m_weight, m_blendFrames;
 
 public:
 	Action(const HashedString& name);
 	~Action();
 
-	OGRE_INLINE Real getLength(void)
+	OGRE_INLINE float getLength(void)
 	{ return m_end - m_start; }
 
 	// Sets the start frame of this action.
-	OGRE_INLINE void setStart(Real v)
+	OGRE_INLINE void setStart(float v)
 	{ m_start = v;}
 	
 	// Sets the end frame of this action.
-	OGRE_INLINE void setEnd(Real v)
+	OGRE_INLINE void setEnd(float v)
 	{ m_end = v;}
 	
 	// Gets the start frame of this action.
-	OGRE_INLINE Real getStart(void)
+	OGRE_INLINE float getStart(void)
 	{ return m_start;}
 	
 	// Sets the end frame of this action.
-	OGRE_INLINE Real getEnd(void)
+	OGRE_INLINE float getEnd(void)
 	{ return m_end;}
 
 	// Gets the action/animation name. 
@@ -91,24 +91,24 @@ public:
 	{return (int)m_channels.size();}
 
 	/// Updates matrices for the specified time 
-	void evaluate(Real time);
+	void evaluate(float time);
 
-	OGRE_INLINE void setBlendFrames(Real v)
+	OGRE_INLINE void setBlendFrames(float v)
 	{m_blendFrames = OgreClamp(v, 1, m_end);}
 
-	OGRE_INLINE Real getBlendFrames(void)
+	OGRE_INLINE float getBlendFrames(void)
 	{return m_blendFrames;}
 
-	OGRE_INLINE void setTimePosition(Real v)	
+	OGRE_INLINE void setTimePosition(float v)	
 	{m_evalTime = OgreClamp(v, m_start, m_end);}
 	
-	OGRE_INLINE Real getTimePosition(void)
+	OGRE_INLINE float getTimePosition(void)
 	{return m_evalTime;}
 
-	OGRE_INLINE void setWeight(Real w) 
+	OGRE_INLINE void setWeight(float w) 
 	{m_weight = OgreClamp(w, 0, 1); }
 
-	OGRE_INLINE Real getWeight(void)
+	OGRE_INLINE float getWeight(void)
 	{ return m_weight; }
 };
 

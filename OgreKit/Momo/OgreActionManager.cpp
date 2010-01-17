@@ -56,32 +56,32 @@ void ActionManager::setAction(Action *act)
 }
 
 
-void ActionManager::update(Real delta)
+void ActionManager::update(float delta)
 {
 	if (m_blend && m_active)
 	{
 
-		Real blendFrames = m_blend->getBlendFrames();
+		float blendFrames = m_blend->getBlendFrames();
 		if (OgreFuzzy(blendFrames))
 			blendFrames = 1;
 
-		blendFrames = Real(1.0) / blendFrames;
+		blendFrames = 1.f / blendFrames;
 
 		m_blendTime += blendFrames;
 
 		if (m_blendTime < 1.0)
 		{
 			m_blend->setWeight(m_blendTime);
-			m_active->setWeight(Real(1.0) - m_blendTime);
+			m_active->setWeight(1.f - m_blendTime);
 			m_blend->evaluate(delta);
 		}
 		else
 		{
-			m_blendTime = 0.0;
-			m_active->setWeight(0.0);
+			m_blendTime = 0.f;
+			m_active->setWeight(0.f);
 			m_active->setTimePosition(0);
 
-			m_blend->setWeight(1.0);
+			m_blend->setWeight(1.f);
 			m_active = m_blend;
 			m_blend = 0;
 		}

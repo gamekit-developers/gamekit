@@ -54,7 +54,7 @@ void Action::addChannel(ActionChannel *chan)
 }
 
 
-void Action::evaluate(Real time)
+void Action::evaluate(float time)
 {
 	// loop for now
 	if (m_evalTime <= m_start )
@@ -64,7 +64,7 @@ void Action::evaluate(Real time)
 
 	m_evalTime += time;
 
-	Real delta = (m_evalTime - m_start) / (m_end - m_start);
+	float delta = (m_evalTime - m_start) / (m_end - m_start);
 
 	ActionChannel **ptr = m_channels.ptr();
 	int len = getNumChannels(), i=0;

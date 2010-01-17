@@ -90,7 +90,7 @@ public:
 
 	/// evaluate curve for the given time. 
 	/// Sets the transform matrix 
-	void evaluate(Real time, Real delta, Real weight);
+	void evaluate(float time, float delta, float weight);
 };
 
 }

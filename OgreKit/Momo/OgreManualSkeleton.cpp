@@ -222,17 +222,17 @@ Action* ManualSkeleton::createAction(Blender::bAction *bact)
 							{
 								BezierVertex v;
 
-								v.h1.x = bezt->vec[0][0];
-								v.h1.y = bezt->vec[0][1];
-								v.cp.x = bezt->vec[1][0];
-								v.cp.y = bezt->vec[1][1];
-								v.h2.x = bezt->vec[2][0];
-								v.h2.y = bezt->vec[2][1];
+								v.h1[0] = bezt->vec[0][0];
+								v.h1[1] = bezt->vec[0][1];
+								v.cp[0] = bezt->vec[1][0];
+								v.cp[1] = bezt->vec[1][1];
+								v.h2[0] = bezt->vec[2][0];
+								v.h2[1] = bezt->vec[2][1];
 
 								
 								// calculate global time
-								if (range.x > v.cp.x) range.x = v.cp.x;
-								if (range.y < v.cp.x) range.y = v.cp.x;
+								if (range.x > v.cp[0]) range.x = v.cp[0];
+								if (range.y < v.cp[0]) range.y = v.cp[0];
 								spline->addVertex(v);
 							}
 							if (spline->getNumVerts())

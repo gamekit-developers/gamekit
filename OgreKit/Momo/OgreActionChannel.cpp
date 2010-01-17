@@ -69,7 +69,7 @@ int ActionChannel::getNumSplines(void)
 }
 
 
-void ActionChannel::evaluate(Real time, Real delta, Real weight)
+void ActionChannel::evaluate(float time, float delta, float weight)
 {
 	const BezierSpline **splines = getSplines();
 	int len = getNumSplines(), i=0, nvrt;
@@ -85,7 +85,7 @@ void ActionChannel::evaluate(Real time, Real delta, Real weight)
 		nvrt = spline->getNumVerts();
 		const BezierVertex* verts = spline->getVerts();
 
-		Real eval = 0.f;
+		float eval = 0.f;
 		if (nvrt > 0)
 			eval = spline->interpolate(delta, time);
 

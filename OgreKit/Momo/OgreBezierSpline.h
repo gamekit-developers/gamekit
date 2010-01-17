@@ -35,7 +35,9 @@ namespace Ogre
 
 struct BezierVertex
 {
-	Vector2 h1, cp, h2;
+	float h1[2];
+	float cp[2];
+	float h2[2];
 };
 
 
@@ -64,14 +66,14 @@ protected:
 	               const double p3,
 	               double &s) const;
 
-	Real interpolate(const double &t,
+	float interpolate(const double &t,
 	                 const double &p0,
 	                 const double &p1,
 	                 const double &p2,
 	                 const double &p3) const;
 
 
-	void updateHandles(Vector2 &p0, Vector2 &p1, Vector2 &p2, Vector2 &p3) const;
+	void updateHandles(float *p0, float *p1, float *p2, float *p3) const;
 
 
 public:
@@ -81,7 +83,7 @@ public:
 	/// interpolate across this spline
 	/// delta is the normalized time
 	/// time is the current frame number
-	Real interpolate(Real delta, Real time) const;
+	float interpolate(float delta, float time) const;
 
 	OGRE_INLINE void addVertex(const BezierVertex& v)
 	{m_verts.push_back(v);}
