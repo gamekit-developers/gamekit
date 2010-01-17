@@ -478,8 +478,27 @@ void MeshLoaderPrivate::convertMesh(void)
 		}
 		else
 		{
-			Blender::Material *me= ut.getMaterial(object,slot.material_nr+1);
+			bool useExternal = false;
 
+			Blender::Material *me= ut.getMaterial(object,slot.material_nr+1);
+			if (me != 0)
+			{
+				MaterialPtr ptr= mgr.getByName(OGRE_IDNAME(me));
+
+				// Share materials
+				// Note if you have a material script defined,
+				// place the name of it in the blender
+				// text box and it will be used in place of the
+				// standard material.
+
+				if (!ptr.isNull())
+				{
+					useExternal = true;
+					submesh->setMaterialName(OGRE_IDNAME(me));
+				}
+			}
+
+			if (!useExternal)
 			{
 				/// naming scheme
 				/// OB + / + MA + / unique count

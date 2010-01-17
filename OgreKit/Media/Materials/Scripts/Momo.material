@@ -1,0 +1,17 @@
+
+
+material momo_skin_body
+{
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{
+				texture char_momo_col.png
+
+			}
+		}
+	}
+
+}
