@@ -25,6 +25,10 @@
 #include "OgreKitPlugins.h"
 #include "OgreRoot.h"
 
+#ifdef OGREKIT_CG
+#include "OgreCgPlugin.h"
+#endif
+
 #ifdef OGREKIT_GLRS
 #include "OgreGLPlugin.h"
 #endif
@@ -65,7 +69,7 @@ OgreRenderSystem OgreKitFindRenderSystem(OgreRenderSystem wanted)
 
 // ----------------------------------------------------------------------------
 OgreKitPlugins::OgreKitPlugins() :
-	m_renderSystem(0)
+	m_renderSystem(0), m_cgPlugin(0)
 {
 }
 
@@ -77,6 +81,10 @@ OgreKitPlugins::~OgreKitPlugins()
 		delete m_renderSystem;
 		m_renderSystem= 0;
 	}
+#ifdef OGREKIT_CG
+	delete m_cgPlugin;
+	m_cgPlugin = 0;
+#endif
 }
 
 // ----------------------------------------------------------------------------
@@ -118,4 +126,16 @@ void OgreKitPlugins::createRenderSystem(Ogre::Root* r, OgreRenderSystem backend)
 	}
 
 	assert(m_renderSystem);
+}
+
+// ----------------------------------------------------------------------------
+void OgreKitPlugins::loadPlugins(Ogre::Root *root)
+{
+#ifdef OGREKIT_CG
+	if (!m_cgPlugin)
+	{
+		m_cgPlugin = new Ogre::CgPlugin();
+		root->installPlugin(m_cgPlugin);
+	}
+#endif
 }

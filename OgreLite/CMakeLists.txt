@@ -30,4 +30,5 @@ include_directories(${OGRELITE_SOURCE_DIR}/Settings)
 
 subdirs(OgreMain)
 subdirs(RenderSystems)
+subdirs(Plugins)
 

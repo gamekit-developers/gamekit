@@ -145,6 +145,7 @@ bool OgreKitApplication::setup(void)
 
     m_root = new Ogre::Root("", "");
 	m_loader.createRenderSystem(m_root, OGRE_RS_GL);
+	m_loader.loadPlugins(m_root);
 
 	m_root->setRenderSystem(m_root->getAvailableRenderers().at(0));
 	m_root->initialise(false);

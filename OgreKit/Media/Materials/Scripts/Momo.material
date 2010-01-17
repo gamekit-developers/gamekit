@@ -6,6 +6,12 @@ material momo_skin_body
 	{
 		pass
 		{
+			lighting on
+
+			diffuse  0.9 0.9 0.9 1.0
+			ambient  0.8 0.8 0.8 1.0
+			emissive 0.2 0.2 0.2 1.0
+
 			texture_unit
 			{
 				texture char_momo_col.png

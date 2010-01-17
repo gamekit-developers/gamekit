@@ -101,6 +101,19 @@ macro (configure_ogrekit ROOT OGREPATH)
 
 
 	endif()
+	
+	if (Cg_FOUND)
+		option(OGREKIT_BUILD_CG	 "Enable the CG plugin" ON)
+		
+		if (OGREKIT_BUILD_CG)
+			message(STATUS "Configuring CG")
+			set(OGRE_BUILD_PLUGIN_CG TRUE)
+			set(OGREKIT_CG_LIBS Plugin_CgProgramManager)
+			set(OGREKIT_CG_ROOT ${OGREPATH}/PlugIns/CgProgramManager)
+			set(OGREKIT_CG_INCLUDE ${OGREPATH}/PlugIns/CgProgramManager/include)
+		endif()
+
+	endif()
 
 	set(OGREKIT_OGRE_LIBS 
 		OgreMain 
@@ -112,6 +125,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 		${OGREKIT_D3D9_LIBS}
 		${OGREKIT_D3D10_LIBS}
 		${OGREKIT_D3D11_LIBS}
+		${OGREKIT_CG_LIBS}
 		)
 
 endmacro(configure_ogrekit)
@@ -176,6 +190,20 @@ macro(configure_rendersystem)
 		link_libraries(
 			${OGREKIT_D3D11_LIBS} 
 			${DirectX_D3D11_LIBRARY}
+		)
+
+	endif()
+	
+	if (OGREKIT_BUILD_CG)
+		add_definitions(-DOGREKIT_CG)
+	    
+		include_directories(
+			${OGREKIT_CG_ROOT}/include
+		)
+
+		link_libraries(
+			${OGREKIT_CG_LIBS} 
+			${Cg_LIBRARY_REL}
 		)
 
 	endif()
