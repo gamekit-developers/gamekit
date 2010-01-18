@@ -1,10 +1,10 @@
 # ---------------------------------------------------------
 cmake_minimum_required(VERSION 2.6)
 
+project(OgreLite)
 
 include(PrecompiledHeader)
 
-project(OgreLite)
 set(OgreLite 1.0)
 
 set(OGRE_THREAD_PROVIDER 0)
