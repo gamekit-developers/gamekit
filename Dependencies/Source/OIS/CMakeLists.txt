@@ -71,6 +71,10 @@ if (APPLE)
         src/mac/MacKeyboard.cpp
         src/mac/MacMouse.cpp
     )
+    
+    if (IOKit_FOUND)
+		link_libraries(${IOKit_LIBRARIES})
+	endif()
 else ()
 
 if (UNIX) 
