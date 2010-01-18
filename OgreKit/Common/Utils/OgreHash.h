@@ -44,7 +44,7 @@ typedef size_t hash_t;
 
 OGRE_INLINE hash_t OgreHash(void *p)        { return static_cast<hash_t>((uintptr_t)(p));}
 OGRE_INLINE hash_t OgreHash(int p)          { hash_t key = static_cast<hash_t>(p); OgreIntHash(key); return key; }
-OGRE_INLINE hash_t OgreHash(unsigned long int p) { hash_t key = static_cast<hash_t>(p); OgreIntHash(key); return key; }
+
 
 template <typename T>
 OGRE_INLINE hash_t OgreTHash(const T& v)    { return OgreHash(v); }
