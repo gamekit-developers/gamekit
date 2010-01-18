@@ -1,5 +1,15 @@
 
-set(SRC Main.cpp)
+
+if (APPLE)
+    SET(EXETYPE MACOSX_BUNDLE)
+    SET_SOURCE_FILES_PROPERTIES( MainMenu.nib  PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
+ 	SET_SOURCE_FILES_PROPERTIES( PhysicsAnimationBakingDemo.blend PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
+	SET (NibFile MainMenu.nib)
+endif()
+
+set(SRC Main.cpp
+		PhysicsAnimationBakingDemo.blend
+		)
 
 include_directories(
 	${OGREKIT_OGRE_INCLUDE}
@@ -20,4 +30,9 @@ link_libraries(
 )
 
 configure_rendersystem()
-add_executable(BlendReader ${SRC})
+
+if (APPLE)
+	add_executable( BlendReader MACOSX_BUNDLE MainMenu.nib ${SRC})
+else ()
+	add_executable(BlendReader ${SRC})
+endif()

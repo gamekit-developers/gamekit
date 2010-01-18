@@ -139,7 +139,7 @@ void OgreKitApplication::go(void)
 bool OgreKitApplication::setup(void)
 {
 	OgreKitPrefs pr;
-    if (!m_cfg.empty()) pr.load(m_cfg);
+    //if (!m_cfg.empty()) pr.load(m_cfg);
 
     m_resourcePath = pr.resources;
 
@@ -157,8 +157,7 @@ bool OgreKitApplication::setup(void)
 	m_window = m_root->createRenderWindow("OgreKit Demo", pr.w, pr.h, pr.fullscreen, &lst);
     m_private->setupInput(m_window);
 
-    if (!m_resourcePath.empty())
-        setupResources();
+	Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
     createScene();
 	m_root->addFrameListener(m_private);

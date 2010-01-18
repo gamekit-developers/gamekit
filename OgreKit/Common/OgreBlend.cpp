@@ -91,7 +91,7 @@ OgreBlend::OgreBlend() :
 		m_camera(0),
 		m_blenScene(0),
 		m_converter(0),
-		m_group("")
+		m_group("General")
 {
 	setupPhysics();
 }
@@ -152,23 +152,21 @@ bool OgreBlend::readStream(Ogre::DataStreamPtr &ptr)
 // ----------------------------------------------------------------------------
 void OgreBlend::read(const Ogre::String& resource)
 {
-	Ogre::ResourceGroupManager &resMgr = Ogre::ResourceGroupManager::getSingleton();
-	if (!resMgr.resourceExistsInAnyGroup(resource))
-	{
-		OGRE_EXCEPT(Ogre::Exception::ERR_FILE_NOT_FOUND,
-			        "blend file not found in any resource group!",
-			        "OgreBlend::read");
-	}
-
-	m_group = resMgr.findGroupContainingResource(resource);
-	Ogre::DataStreamPtr data = resMgr.openResource(resource);
-
-	if (!readStream(data))
+	FILE *fp = fopen(resource.c_str(), "rb");
+	if (!fp)
 	{
 		OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE,
-			        "blend file loading failed!",
-			        "OgreBlend::read");
+		            "Blend loading failed!",
+		            "OgreBlend::read");
 	}
+
+	if (!readStream(Ogre::DataStreamPtr(new Ogre::FileHandleDataStream(fp))))
+	{
+		OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE,
+		            "Blend loading failed!",
+		            "OgreBlend::read");
+	}
+	fclose(fp);
 }
 
 // ----------------------------------------------------------------------------

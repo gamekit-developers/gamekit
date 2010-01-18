@@ -1,4 +1,11 @@
 
+if (APPLE)
+    SET(EXETYPE MACOSX_BUNDLE)
+    SET_SOURCE_FILES_PROPERTIES( MainMenu.nib  PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
+ 	SET_SOURCE_FILES_PROPERTIES( MomoAnimation.blend PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
+	SET (NibFile MainMenu.nib)
+endif()
+
 set(HDR OgreAction.h
 		OgreActionChannel.h
 		OgreActionManager.h
@@ -15,6 +22,7 @@ set(SRC Momo.cpp
 		OgreDebugBone.cpp
 		OgreManualBone.cpp
 		OgreManualSkeleton.cpp
+		MomoAnimation.blend
 		)
 
 include_directories(
@@ -37,4 +45,9 @@ link_libraries(
 
 configure_rendersystem()
 
-add_executable(Momo ${SRC} ${HDR})
+
+if (APPLE)
+	add_executable( Momo MACOSX_BUNDLE MainMenu.nib ${SRC} ${HDR})
+else ()
+	add_executable(Momo ${SRC} ${HDR})
+endif()

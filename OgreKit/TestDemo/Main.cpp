@@ -191,13 +191,52 @@ void TestApp::endFrame(void)
 }
 
 
+
+#ifdef __APPLE__
+#define MAXPATHLEN 512
+char* AppleGetBundleDirectory(void) {
+	CFURLRef bundleURL;
+	CFStringRef pathStr;
+	static char path[MAXPATHLEN];
+	memset(path,MAXPATHLEN,0);
+	CFBundleRef mainBundle = CFBundleGetMainBundle();
+	
+	bundleURL = CFBundleCopyBundleURL(mainBundle);
+	pathStr = CFURLCopyFileSystemPath(bundleURL, kCFURLPOSIXPathStyle);
+	CFStringGetCString(pathStr, path, MAXPATHLEN, kCFStringEncodingASCII);
+	CFRelease(pathStr);
+	CFRelease(bundleURL);
+	return path;
+}
+#endif
+
+
 // ----------------------------------------------------------------------------
 int main(int argc, char**argv)
 {
-	// this will be loaded from ogre resource locations
 	char *name = "PhysicsAnimationBakingDemo.blend";
+#if __APPLE__
+	char newName[1024];
+	
+	char* bundlePath= AppleGetBundleDirectory();
+	//cut off the .app filename
+	char* lastSlash=0;
+	if (lastSlash= strrchr(bundlePath, '/'))
+		*lastSlash= '\0';
+	sprintf(newName,"%s/%s",bundlePath,"game.blend");
+	//	eng.loadBlendFile(newName);
+	// how do you debug the Bundle execution, without a console?
+
+	sprintf(newName,"%s/%s/%s",AppleGetBundleDirectory(),"Contents/Resources",fname);
+	fname= newName;
+	//FILE* dump= fopen ("out.txt","wb");
+	//fwrite(newName,1,strlen(newName),dump);
+	//fclose(dump);
+
+#else
 	if (argc > 1)
-		name = argv[argc-1];
+		name= argv[argc-1];
+#endif
 
 	TestApp app(name);
     try {
