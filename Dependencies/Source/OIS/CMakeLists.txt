@@ -62,7 +62,6 @@ if (WIN32)
 endif()
 
 
-# Cannot test this
 if (APPLE) 
     set(OIS_PLAT 
         src/mac/MacHIDManager.cpp

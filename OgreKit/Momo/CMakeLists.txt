@@ -15,7 +15,7 @@ set(SRC Momo.cpp
 		OgreDebugBone.cpp
 		OgreManualBone.cpp
 		OgreManualSkeleton.cpp
-		${OGRE_STATIC_RESOURCE})
+		)
 
 include_directories(
 	${OGREKIT_OGRE_INCLUDE}
@@ -27,13 +27,14 @@ include_directories(
 	)
 
 link_libraries(
+	OIS
+	OgreKit
 	${GAMEKIT_SERIALIZE_COMMON_TARGET}
 	${GAMEKIT_SERIALIZE_BLENDER_TARGET}
 	${OGREKIT_OGRE_LIBS}
 	${OGREKIT_BULLET_LIBS}
-	OgreKit
-	OIS
 )
 
 configure_rendersystem()
-add_executable(Momo ${SRC} ${HDR} ${EXTRA})
+
+add_executable(Momo ${SRC} ${HDR})

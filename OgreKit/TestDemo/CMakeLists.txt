@@ -11,12 +11,12 @@ include_directories(
 	)
 
 link_libraries(
+	OgreKit
+	OIS
 	${OGREKIT_OGRE_LIBS}
 	${OGREKIT_BULLET_LIBS}
 	${GAMEKIT_SERIALIZE_COMMON_TARGET}
 	${GAMEKIT_SERIALIZE_BLENDER_TARGET}
-	OgreKit
-	OIS
 )
 
 configure_rendersystem()
