@@ -19,11 +19,15 @@ macro (configure_ogrekit ROOT OGREPATH)
 
 	if (APPLE)
 		set(OGREKIT_PLATFORM ${OGREPATH}/OgreMain/include/OSX )
-	elif (UNIX)
+	  else (APPLE)
+	    if (UNIX)
 		set(OGREKIT_PLATFORM ${OGREPATH}/OgreMain/include/GLX )
-	else ()
+	    else (UNIX)
+	      if (WIN32)
 		set(OGREKIT_PLATFORM ${OGREPATH}/OgreMain/include/WIN32 )
-	endif ()
+	      endif (WIN32)
+	    endif (UNIX)
+	endif (APPLE)
 
 	set(OGREKIT_DEP_DIR ${ROOT}/Dependencies/Source)
 
