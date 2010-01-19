@@ -227,8 +227,8 @@ int main(int argc, char**argv)
 	//	eng.loadBlendFile(newName);
 	// how do you debug the Bundle execution, without a console?
 
-	sprintf(newName,"%s/%s/%s",AppleGetBundleDirectory(),"Contents/Resources",fname);
-	fname= newName;
+	sprintf(newName,"%s/%s/%s",AppleGetBundleDirectory(),"Contents/Resources",name);
+	name= newName;
 	//FILE* dump= fopen ("out.txt","wb");
 	//fwrite(newName,1,strlen(newName),dump);
 	//fclose(dump);
