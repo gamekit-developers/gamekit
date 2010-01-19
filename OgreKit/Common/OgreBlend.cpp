@@ -160,7 +160,10 @@ void OgreBlend::read(const Ogre::String& resource)
 		            "OgreBlend::read");
 	}
 
-	if (!readStream(Ogre::DataStreamPtr(new Ogre::FileHandleDataStream(fp))))
+	Ogre::DataStreamPtr stream = 
+		Ogre::DataStreamPtr(new Ogre::FileHandleDataStream(fp));
+
+	if (!readStream(stream))
 	{
 		OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE,
 		            "Blend loading failed!",
