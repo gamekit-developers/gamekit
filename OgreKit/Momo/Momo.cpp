@@ -270,7 +270,7 @@ public:
 	MomoApp();
 	virtual ~MomoApp();
 
-	void createScene(void);
+	bool createScene(void);
 	void update(Real tick);
 	void updateCamera(void);
 	void endFrame(void);
@@ -292,7 +292,7 @@ MomoApp::~MomoApp()
 }
 
 // ----------------------------------------------------------------------------
-void MomoApp::createScene(void)
+bool MomoApp::createScene(void)
 {
 	char *fname = "MomoAnimation.blend";
 #if __APPLE__
@@ -314,7 +314,10 @@ void MomoApp::createScene(void)
 	//fclose(dump);
 #endif
 
-	read(fname);
+	if (!read(fname))
+		return false;
+
+
 	convertAllObjects();
 
 	if (!m_camera)
@@ -331,6 +334,7 @@ void MomoApp::createScene(void)
 	m_editCam = new EditCamera(m_camera, m_manager);
 	m_editCam->center(Vector3::ZERO);
 	setupMomo();
+	return true;
 
 }
 

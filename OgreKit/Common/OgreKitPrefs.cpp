@@ -35,7 +35,7 @@ using namespace Ogre;
 // ----------------------------------------------------------------------------
 OgreKitPrefs::OgreKitPrefs() :
 		rendersystem(OGRE_RS_GL),
-		w(800), 
+		w(800),
 		h(600),
 		fullscreen(false),
 		resources(""),
@@ -46,40 +46,47 @@ OgreKitPrefs::OgreKitPrefs() :
 // ----------------------------------------------------------------------------
 void OgreKitPrefs::load(const String &fname)
 {
-	ConfigFile fp;
-	fp.load(fname);
-
-	ConfigFile::SectionIterator cit= fp.getSectionIterator();
-	while (cit.hasMoreElements())
+	try
 	{
-		ConfigFile::SettingsMultiMap *ptr= cit.getNext();
-		for (ConfigFile::SettingsMultiMap::iterator dit= ptr->begin(); dit != ptr->end(); ++dit)
+		ConfigFile fp;
+		fp.load(fname);
+
+		ConfigFile::SectionIterator cit = fp.getSectionIterator();
+		while (cit.hasMoreElements())
 		{
-			String key= dit->first;
-			String val= dit->second;
-
-			/// not case sensitive
-			StringUtil::toLowerCase(key);
-
-
-			if (key == "winsize")
+			ConfigFile::SettingsMultiMap *ptr = cit.getNext();
+			for (ConfigFile::SettingsMultiMap::iterator dit = ptr->begin(); dit != ptr->end(); ++dit)
 			{
-				Vector2 size = StringConverter::parseVector2(val);
-				w = (unsigned int)size.x;
-				h = (unsigned int)size.y;
+				String key = dit->first;
+				String val = dit->second;
+
+				/// not case sensitive
+				StringUtil::toLowerCase(key);
+
+
+				if (key == "winsize")
+				{
+					Vector2 size = StringConverter::parseVector2(val);
+					w = (unsigned int)size.x;
+					h = (unsigned int)size.y;
+				}
+				else if (key == "aa_level")
+				{
+					aa_level = StringConverter::parseInt(val);
+					if (aa_level < 0)
+						aa_level = 0;
+					if (aa_level > 6)
+						aa_level = 6;
+				}
+				else if (key == "fullscreen")
+					fullscreen = StringConverter::parseBool(val);
+				else if (key == "resources")
+					resources = val;
 			}
-			else if (key == "aa_level")
-			{
-				aa_level= StringConverter::parseInt(val);
-				if (aa_level < 0)
-					aa_level = 0;
-				if (aa_level > 6)
-					aa_level = 6;
-			}
-			else if (key == "fullscreen")
-				fullscreen= StringConverter::parseBool(val);
-			else if (key == "resources")
-				resources= val;
 		}
+	}
+	catch (Ogre::Exception &)
+	{
+		// ignore
 	}
 }

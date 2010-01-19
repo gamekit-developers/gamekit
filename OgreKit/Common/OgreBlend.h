@@ -49,8 +49,6 @@ private:
 	// internal reading 
 	char*		m_memBuf;
 	int			readFile(char* memoryBuffer, int len, int verboseDumpAllTypes = false);
-	bool		readStream(Ogre::DataStreamPtr &ptr);
-
 
 protected:
 
@@ -73,7 +71,7 @@ public:
 	OgreBlend();
 	virtual ~OgreBlend();
 
-	void read(const Ogre::String& resource);
+	bool read(const Ogre::String& resource);
 
 
 	void	beginScene(Blender::Scene *scene);

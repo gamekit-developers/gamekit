@@ -132,44 +132,33 @@ int OgreBlend::readFile(char* memoryBuffer, int len, int verboseDumpAllTypes)
 	int status = BulletBlendReaderNew::readFile(memoryBuffer, len, verboseDumpAllTypes);
 	if (status)
 		m_converter = new Ogre::BlendConverter(m_blendFile, m_group);
+
 	return status;
 }
 
-
 // ----------------------------------------------------------------------------
-bool OgreBlend::readStream(Ogre::DataStreamPtr &ptr)
-{
-	if (m_memBuf)
-		delete []m_memBuf;
-
-
-	size_t size = ptr->size();
-	m_memBuf = new char[size];
-	ptr->read(m_memBuf, size);
-	return readFile(m_memBuf, size, 0) != 0;
-}
-
-// ----------------------------------------------------------------------------
-void OgreBlend::read(const Ogre::String& resource)
+bool OgreBlend::read(const Ogre::String& resource)
 {
 	FILE *fp = fopen(resource.c_str(), "rb");
 	if (!fp)
 	{
-		OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE,
-		            "Blend loading failed!",
-		            "OgreBlend::read");
+		printf("Blend loading failed!\n");
+		return false;
 	}
 
-	Ogre::DataStreamPtr stream = 
-		Ogre::DataStreamPtr(new Ogre::FileHandleDataStream(fp));
+	if (m_memBuf)
+		delete []m_memBuf;
 
-	if (!readStream(stream))
-	{
-		OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE,
-		            "Blend loading failed!",
-		            "OgreBlend::read");
-	}
+	fseek(fp, 0L, SEEK_END);
+	int len = ftell(fp);
+	fseek(fp, 0L, SEEK_SET);
+
+
+	m_memBuf = new char[len+1];
+	fread(m_memBuf, len, 1, fp);
 	fclose(fp);
+
+	return readFile(m_memBuf, len, 0) != 0;
 }
 
 // ----------------------------------------------------------------------------
@@ -178,9 +167,8 @@ void OgreBlend::beginScene(Blender::Scene *scene)
 	m_blenScene = scene;
 	if (!m_blenScene)
 	{
-		OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE,
-		            "No scene present, cannot create objects!",
-		            "OgreBlend::beginScene");
+		printf("No scene present, cannot create objects!\n");
+		return;
 	}
 
 	if (!m_manager)
@@ -238,19 +226,8 @@ void OgreBlend::createParentChildHierarchy()
 void* OgreBlend::createGraphicsObject(Blender::Object* tmpObject, class btCollisionObject* bulletObject)
 {
 
-	if (!m_manager)
-	{
-		OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE,
-		            "No scene present, cannot create objects!",
-		            "OgreBlend::createGraphicsObject");
-	}
-
-	if (tmpObject->type != OB_MESH)
-	{
-		OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE,
-		            "type mismatch!",
-		            "OgreBlend::createGraphicsObject");
-	}
+	if (!m_manager || tmpObject->type != OB_MESH)
+		return 0;
 
 
 	if (tmpObject->parent && tmpObject->parent->type == OB_ARMATURE)
@@ -294,11 +271,7 @@ void OgreBlend::addArmature(Blender::Object* tmpObject)
 void OgreBlend::addEmpty(Blender::Object* tmpObject)
 {
 	if (!m_manager)
-	{
-		OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE,
-		            "No scene present, cannot create objects!",
-		            "OgreBlend::createGraphicsObject");
-	}
+		return;
 
 	Ogre::SceneNode *node = m_manager->getRootSceneNode()->createChildSceneNode(tmpObject->id.name + 2);
 	applyObjectProperties(tmpObject, node);
@@ -308,27 +281,14 @@ void OgreBlend::addEmpty(Blender::Object* tmpObject)
 void OgreBlend::addCamera(Blender::Object* tmpObject)
 {
 
-	if (!m_manager)
-	{
-		OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE,
-		            "No scene present, cannot create objects!",
-		            "OgreBlend::createGraphicsObject");
-	}
-
-	if (tmpObject->type != OB_CAMERA)
-	{
-		OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE,
-		            "type mismatch!",
-		            "OgreBlend::createGraphicsObject");
-	}
-
+	if (!m_manager || tmpObject->type != OB_CAMERA)
+		return;
 
 	Ogre::Camera *cam = m_manager->createCamera(tmpObject->id.name + 2);
 	Ogre::SceneNode *node = m_manager->getRootSceneNode()->createChildSceneNode(tmpObject->id.name + 2);
 
 	node->attachObject(cam);
 	applyObjectProperties(tmpObject, node);
-
 
 	Blender::Camera* camera = static_cast<Blender::Camera*>(tmpObject->data);
 
@@ -350,19 +310,8 @@ void OgreBlend::addCamera(Blender::Object* tmpObject)
 void OgreBlend::addLight(Blender::Object* tmpObject)
 {
 
-	if (!m_manager)
-	{
-		OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE,
-		            "No scene present, cannot create objects!",
-		            "OgreBlend::createGraphicsObject");
-	}
-
-	if (tmpObject->type != OB_LAMP)
-	{
-		OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE,
-		            "type mismatch!",
-		            "OgreBlend::createGraphicsObject");
-	}
+	if (!m_manager || tmpObject->type != OB_LAMP)
+		return;
 
 	Ogre::Light *light = m_manager->createLight(tmpObject->id.name + 2);
 	Ogre::SceneNode *node = m_manager->getRootSceneNode()->createChildSceneNode(tmpObject->id.name + 2);
@@ -422,19 +371,8 @@ void OgreBlend::addLight(Blender::Object* tmpObject)
 // ----------------------------------------------------------------------------
 void OgreBlend::applyObjectProperties(Blender::Object* tmpObject, Ogre::SceneNode *obj)
 {
-	if (!m_manager)
-	{
-		OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE,
-		            "No scene present, cannot create objects!",
-		            "OgreBlend::createGraphicsObject");
-	}
-
-	if (!tmpObject || !obj)
-	{
-		OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE,
-		            "Missing object arguments!",
-		            "OgreBlend::applyObjectProperties");
-	}
+	if (!m_manager || !tmpObject || !obj)
+		return;
 
 
 	Ogre::Quaternion quat;

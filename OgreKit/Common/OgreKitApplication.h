@@ -68,7 +68,7 @@ public:
 	virtual ~OgreKitApplication();
 
 	virtual void go(void);
-	virtual void createScene(void) = 0;
+	virtual bool createScene(void) = 0;
 };
 
 

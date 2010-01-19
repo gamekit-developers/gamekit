@@ -52,7 +52,7 @@ public:
 	TestApp(const Ogre::String& blend);
     virtual ~TestApp();
 
-    void createScene(void);
+    bool createScene(void);
 	void update(Ogre::Real tick);
     void endFrame(void);
 };
@@ -70,11 +70,12 @@ TestApp::~TestApp()
 }
 
 // ----------------------------------------------------------------------------
-void TestApp::createScene(void)
+bool TestApp::createScene(void)
 {
-	read(m_blend);
-	convertAllObjects();
+	if (!read(m_blend))
+		return false;
 
+	convertAllObjects();
 	if (!m_camera)
 		m_camera = m_manager->createCamera("NoCamera");
 
@@ -88,6 +89,7 @@ void TestApp::createScene(void)
 	m_camera->setAspectRatio((Ogre::Real)m_viewport->getActualWidth() / (Ogre::Real)m_viewport->getActualHeight());
 	setupFreeLook();
 
+	return true;
 }
 
 // ----------------------------------------------------------------------------
