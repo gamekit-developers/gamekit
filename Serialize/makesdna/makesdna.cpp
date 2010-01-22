@@ -124,7 +124,7 @@ typedef unsigned long uintptr_t;
 #include "LinearMath/btMatrix3x3.h"
 #include "LinearMath/btTransform.h"
 #include "BulletCollision/CollisionShapes/btCollisionShape.h"
-#include "BulletCollision/CollisionShapes/btBoxShape.h"
+#include "BulletCollision/CollisionShapes/btConvexInternalShape.h"
 #include "BulletCollision/CollisionDispatch/btCollisionObject.h"
 #include "BulletDynamics/Dynamics/btRigidBody.h"
 
@@ -146,7 +146,7 @@ char *includefiles[] = {
 	"../../bullet/src/LinearMath/btMatrix3x3.h",
 	"../../bullet/src/LinearMath/btTransform.h",
 	"../../bullet/src/BulletCollision/CollisionShapes/btCollisionShape.h",
-	"../../bullet/src/BulletCollision/CollisionShapes/btBoxShape.h",
+	"../../bullet/src/BulletCollision/CollisionShapes/btConvexInternalShape.h",
 	"../../bullet/src/BulletCollision/CollisionDispatch/btCollisionObject.h",
 	"../../bullet/src/BulletDynamics/Dynamics/btRigidBody.h",
 	// empty string to indicate end of includefiles

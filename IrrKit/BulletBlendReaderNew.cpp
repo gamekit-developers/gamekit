@@ -267,7 +267,7 @@ void	BulletBlendReaderNew::convertAllObjects(int verboseDumpAllBlocks)
 	btChunk* chunk = serializer->allocate(len,1);
 	const char* structType = boxShape->serialize(chunk->m_oldPtr);
 	chunk->m_dna_nr = serializer->getReverseType(structType);
-	chunk->m_chunkCode = BT_BOXSHAPE_CODE;
+	chunk->m_chunkCode = BT_SHAPE_CODE;
 	chunk->m_oldPtr = boxShape;
 	}
 
@@ -292,7 +292,7 @@ void	BulletBlendReaderNew::convertAllObjects(int verboseDumpAllBlocks)
 	//bulletFile->write("testFile.bullet", fixupPointers );
 
 	FILE* f2 = fopen("testFile.bullet","wb");
-	fwrite(serializer->m_buffer,serializer->m_bufferPointer,1,f2);
+	fwrite(serializer->m_buffer,serializer->m_currentSize,1,f2);
 	fclose(f2);
 	
 
