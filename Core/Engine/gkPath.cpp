@@ -173,8 +173,16 @@ String gkPath::directory(void) const
 	split(sp);
 
 	String dir;
-	for (size_t i=0; i<sp.size() - 1; i++)
-		dir += sp[i] + SEPERATOR;
+    if (!sp.empty())
+    {
+        size_t size = sp.size() - 1;
+	    for (size_t i=0; i<size; i++)
+        {
+		    dir += sp[i];
+            if ((i + 1) != size)
+                dir += SEPERATOR;
+        }
+    }
 	return dir;
 }
 
