@@ -147,11 +147,10 @@ public:
         m_prefs.winsize.y   = 600;
         m_prefs.wintitle    = gkString("OgreKit Demo (Press Escape to exit)[") + m_blend + gkString("]");
         m_prefs.blendermat  = false;
-        m_prefs.autoWindow  = true;
+        m_prefs.autoWindow  = false;
         m_prefs.verbose     = false;
 
         gkPath path = "OgreKitStartup.cfg";
-        path = path.getAbsPath();
         // overide settings if found
         if (path.isFile()) m_prefs.load(path.getPath());
     }
@@ -170,6 +169,10 @@ public:
             gkPrintf("File loading failed.\n");
             return false;
         }
+
+        if (!m_prefs.autoWindow)
+            m_engine->initializeWindow();
+
 
         gkSceneIterator scit = blend->getSceneIterator();
         if (!scit.hasMoreElements())

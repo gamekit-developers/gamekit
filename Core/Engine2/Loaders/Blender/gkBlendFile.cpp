@@ -45,6 +45,8 @@
 
 #include "gkTextManager.h"
 #include "gkTextFile.h"
+#include "gkEngine.h"
+#include "gkUserDefs.h"
 
 using namespace Ogre;
 
@@ -182,10 +184,20 @@ bool gkBlendFile::_parse(void)
             gkScene *newscene = sceneMgr.create(GKB_IDNAME(sc),
                                                 new gkSceneObjectLoader(this, sc));
             m_scenes.push_back(newscene);
+
+
+            gkUserDefs &defs = gkEngine::getSingleton().getUserDefs();
+            defs.winsize.x = (gkScalar)sc->r.xplay;
+            defs.winsize.y = (gkScalar)sc->r.yplay;
+            defs.fullscreen = sc->r.fullscreen != 0;
+
         }
     }
 
     buildTextFiles();
+
+
+
     return true;
 }
 

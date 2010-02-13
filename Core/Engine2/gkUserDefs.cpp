@@ -103,6 +103,8 @@ void gkUserDefs::load(const gkString &fname)
                 }
                 else if (key == "log")
                     log = val;
+                else if (key == "autowindow")
+                    autoWindow = StringConverter::parseBool(val);
                 else if (key == "verbose")
                     verbose = StringConverter::parseBool(val);
                 else if (key == "winsize")
