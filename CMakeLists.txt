@@ -35,7 +35,17 @@ configure_ogrekit(${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/OgreLite)
 set(OGREKIT_BULLET_LIBS BulletDynamics BulletCollision BulletSoftBody LinearMath)
 set(OGREKIT_BULLET_INCLUDE ${CMAKE_SOURCE_DIR}/bullet/src)
 
+
+option(OGREKIT_SANDBOX "Build Sandbox tests" OFF)
+
+
 subdirs(bullet)
 subdirs(Dependencies)
-subdirs(OgreLite)
-subdirs(Core)
+
+
+if (OGREKIT_SANDBOX)
+    subdirs(Sandbox)
+else()
+    subdirs(OgreLite)
+    subdirs(Core)
+endif()

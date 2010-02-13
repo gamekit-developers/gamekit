@@ -28,14 +28,26 @@ class Handler : public utXMLHandler
 {
 public:
 
+    int depth;
+    Handler() :depth(0) {}
+
     virtual ~Handler() {}
 
     void startElement(const utXMLString& name, utXMLHandler::AttributeList &attrs)
     {
+        for (int i=0; i<depth; i++)
+            printf("    ");
+
+        printf("<%s>\n", name.c_str());
+        ++depth;
     }
 
     void endElement(const utXMLString& name)
     {
+        --depth;
+        for (int i=0; i<depth; i++)
+            printf("    ");
+        printf("</%s>\n", name.c_str());
     }
 
 };
