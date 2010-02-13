@@ -58,9 +58,10 @@ public:
     GK_INLINE void setStartPose(const gkString& pose)       {m_startPose = pose; }
 
     // subtype access
-    GK_INLINE gkEntity* getEntity(void) {return m_type == GK_ENTITY ? (gkEntity*)this : 0; }
-    GK_INLINE gkCamera* getCamera(void) {return m_type == GK_CAMERA ? (gkCamera*)this : 0; }
-    GK_INLINE gkLight*  getLight(void)  {return m_type == GK_LIGHT ? (gkLight*)this : 0; }
+    GK_INLINE gkEntity*     getEntity(void)     {return m_type == GK_ENTITY ?   (gkEntity*)this : 0; }
+    GK_INLINE gkCamera*     getCamera(void)     {return m_type == GK_CAMERA ?   (gkCamera*)this : 0; }
+    GK_INLINE gkLight*      getLight(void)      {return m_type == GK_LIGHT ?    (gkLight*)this : 0; }
+    GK_INLINE gkSkeleton*   getSkeleton(void)   {return m_type == GK_SKELETON ? (gkSkeleton*)this : 0; }
 
     GK_INLINE gkGameObject *getParent(void)                 {return m_parent;}
     GK_INLINE void setParent(gkGameObject* par)             {if (par != 0) m_parent = par;}
@@ -162,6 +163,9 @@ public:
 
 
     void attachLogic(gkLogicTree *tree);
+
+    // Ogre base class for movables
+    Ogre::MovableObject *getMovable(void);
 
 
 protected:

@@ -26,6 +26,11 @@
 */
 #include "gkMouseSensor.h"
 #include "gkLogicManager.h"
+#include "gkCamera.h"
+#include "gkScene.h"
+
+#include "OgreCamera.h"
+#include "OgreSceneManager.h"
 
 
 gkMouseDispatch::gkMouseDispatch()
@@ -38,8 +43,8 @@ gkMouseDispatch::~gkMouseDispatch()
 
 void gkMouseDispatch::dispatch(void)
 {
-    // TODO, do tests for change
-
+    // cannot use listeners here because
+    // we need to be able to detect negative events
     if (!m_sensors.empty())
     {
         utListIterator<SensorList> it(m_sensors);
@@ -50,7 +55,7 @@ void gkMouseDispatch::dispatch(void)
 
 
 gkMouseSensor::gkMouseSensor(gkGameObject *object, const gkString &name)
-:       gkLogicSensor(object, name), m_type(MOUSE_NILL)
+:       gkLogicSensor(object, name), m_type(MOUSE_NILL), m_rayQuery(0)
 {
     // connect to dispatcher
     gkLogicManager::getSingleton().getDispatcher(DIS_MOUSE).connect(this);
@@ -81,7 +86,69 @@ bool gkMouseSensor::query(void)
     case MOUSE_MOUSE_OVER:
     case MOUSE_MOUSE_OVER_ANY:
         // use Ogre viewport to ray query
-        break;
+        return rayTest();
     }
     return false;
+}
+
+
+bool gkMouseSensor::rayTest(void)
+{
+    // cannot test no movable data, 
+    if (m_type == MOUSE_MOUSE_OVER && (m_object->getType() == GK_OBJECT || m_object->getType() == GK_SKELETON))
+        return false;
+
+
+    GK_ASSERT(m_object);
+    gkCamera *cam = m_object->getOwner()->getMainCamera();
+    Ogre::Camera *oc = cam->getCamera();
+
+
+    gkMouse *mse = gkWindowSystem::getSingleton().getMouse();
+
+    gkScalar ncx = mse->position.x / mse->winsize.x;
+    gkScalar ncy = mse->position.y / mse->winsize.y;
+
+
+    Ogre::Ray dest;
+    oc->getCameraToViewportRay(ncx, ncy, &dest);
+
+    if (m_rayQuery == 0)
+    {
+        Ogre::SceneManager *mgr = m_object->getOwner()->getManager();
+        m_rayQuery = mgr->createRayQuery(dest);
+    }
+    else m_rayQuery->setRay(dest);
+
+
+    // do the test 
+    Ogre::RaySceneQueryResult &res = m_rayQuery->execute();
+
+    bool result = false;
+    for (Ogre::RaySceneQueryResult::iterator it = res.begin(); it != res.end(); ++it)
+    {
+        Ogre::RaySceneQueryResultEntry ent = (*it);
+
+        if (ent.movable == oc)
+            continue;
+
+
+        if (ent.movable)
+        {
+            if (m_type == MOUSE_MOUSE_OVER)
+            {
+                if (ent.movable == m_object->getMovable())
+                {
+                    result = true;
+                    break;
+                }
+            }
+            else
+            {
+                result = true;
+                break;
+            }
+        }
+    }
+    return result;
 }

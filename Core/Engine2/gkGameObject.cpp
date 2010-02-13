@@ -29,16 +29,20 @@
 #include "OgreException.h"
 #include "OgreEntity.h"
 #include "OgreStringConverter.h"
-#include "gkGameObject.h"
-#include "gkScene.h"
+
 #include "gkSceneManager.h"
+#include "gkScene.h"
+#include "gkGameObject.h"
+#include "gkCamera.h"
+#include "gkLight.h"
+#include "gkEntity.h"
+
 #include "gkEngine.h"
 #include "gkLogger.h"
+
 #include "gkLogicManager.h"
-#include "gkEntity.h"
 #include "gkConstraint.h"
 #include "gkGameObjectGroup.h"
-#include "btBulletDynamicsCommon.h"
 #include "gkRigidBody.h"
 
 using namespace Ogre;
@@ -177,6 +181,24 @@ void gkGameObject::unloadImpl(void)
 
     m_scene->notifyObjectUnloaded(this);
 }
+
+Ogre::MovableObject *gkGameObject::getMovable(void)
+{
+    if (!isLoaded())
+        return 0;
+
+    switch (m_type)
+    {
+    case GK_CAMERA:
+        return getCamera()->getCamera();
+    case GK_ENTITY:
+        return getEntity()->getEntity();
+    case GK_LIGHT:
+        return getLight()->getLight();
+    }
+    return 0;
+}
+
 
 gkMatrix4 gkGameObject::getWorldTransform(void)
 {

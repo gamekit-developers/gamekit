@@ -63,6 +63,8 @@ protected:
 
     int m_type;
 
+    Ogre::RaySceneQuery* m_rayQuery;
+    bool rayTest(void);
 
 public:
     gkMouseSensor(gkGameObject *object, const gkString &name);
