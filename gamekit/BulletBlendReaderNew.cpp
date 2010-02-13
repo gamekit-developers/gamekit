@@ -20,7 +20,7 @@ subject to the following restrictions:
 #include "bMain.h"
 #include "bBlenderFile.h"
 #include "btBulletFile.h"
-#include "LinearMath/btserializer.h"
+#include "LinearMath/btSerializer.h"
 
 #include "BulletCollision/Gimpact/btGImpactShape.h"
 #include "BulletCollision/CollisionShapes/btScaledBvhTriangleMeshShape.h"
