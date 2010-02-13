@@ -30,14 +30,31 @@
 #include "gkLogicController.h"
 
 
-class gkAndController : public gkLogicController
+class gkLogicOpController : public gkLogicController
 {
 public:
+    enum Op
+    {
+        OP_NILL,
+        OP_AND,
+        OP_OR,
+        OP_XOR,
+        OP_NAND,
+        OP_NOR,
+        OP_XNOR,
+    };
+protected:
+    int m_op;
 
-    gkAndController(gkGameObject *object, const gkString &name);
-    virtual ~gkAndController() {}
+
+public:
+
+    gkLogicOpController(gkGameObject *object, const gkString &name);
+    virtual ~gkLogicOpController() {}
 
     void relay(void);
+
+    GK_INLINE void setOp(int nop) {m_op = nop;}
 };
 
 

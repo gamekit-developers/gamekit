@@ -28,6 +28,7 @@
 #include "gkLogicLink.h"
 #include "gkLogicDispatcher.h"
 #include "gkLogicActuator.h"
+#include "gkLogicController.h"
 #include "gkMouseSensor.h"
 
 
@@ -98,10 +99,19 @@ void gkLogicManager::update(gkScalar delta)
         m_sensorStack.pop();
     }
 
-    // execute in the order recieved
+    utStackIterator<ControllerStack> constant(m_controllerStack);
+    while (constant.hasMoreElements())
+    {
+        gkLogicController *cont = constant.getNext();
+        GK_ASSERT(cont->isGate());
+        cont->relay();
+    }
+
     while (!m_actuatorStack.empty())
     {
-        m_actuatorStack.top()->execute();
+        gkLogicActuator *act = m_actuatorStack.top();
+        act->execute();
+        act->setActive(false);
         m_actuatorStack.pop();
     }
 }

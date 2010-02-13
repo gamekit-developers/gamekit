@@ -30,47 +30,201 @@
 #include "gkLogicManager.h"
 
 
-gkAndController::gkAndController(gkGameObject *object, const gkString &name)
-:       gkLogicController(object, name)
+gkLogicOpController::gkLogicOpController(gkGameObject *object, const gkString &name)
+:       gkLogicController(object, name), m_op(OP_NILL)
 {
 }
 
 
-void gkAndController::relay(void)
+void gkLogicOpController::relay(void)
 {
     bool execAct = false;
 
 
     if (!m_sensors.empty()) {
 
-        // sensor && ... sensorN
-        bool fsr = true;
+        bool fsr = true, lsr = false;
 
-        utListIterator<Sensors> it(m_sensors);
-        while (it.hasMoreElements()) {
+        switch (m_op) {
+        case OP_OR: { // OR : any can be met
+                utListIterator<Sensors> it(m_sensors);
+                while (it.hasMoreElements()) {
 
-            gkLogicSensor *sens = it.getNext();
-            if (fsr) {
-                fsr = false;
-                execAct = sens->isPositive();
-            } else
-                execAct = execAct && sens->isPositive();
+                    gkLogicSensor *sens = it.getNext();
+                    if (fsr) {
+                        fsr = false;
+                        execAct = sens->isPositive();
+                    } else
+                        execAct = execAct || sens->isPositive();
 
-            // condition failed!
-            if (!execAct)
-                break;
+                }
+            }
+            break;
+        case OP_XOR: { // XOR: only one can be met
+                utListIterator<Sensors> it(m_sensors);
+                while (it.hasMoreElements()) {
+
+                    gkLogicSensor *sens = it.getNext();
+                    fsr = sens->isPositive();
+
+                    if (fsr && lsr) {
+                        execAct = false;
+                        break;
+                    } else if (fsr) execAct = true;
+
+                    if (!lsr && fsr)
+                        lsr = true;
+                }
+            }
+            break;
+        case OP_AND: { // AND: all must be met
+                utListIterator<Sensors> it(m_sensors);
+                while (it.hasMoreElements()) {
+
+                    gkLogicSensor *sens = it.getNext();
+                    if (fsr) {
+                        fsr = false;
+                        execAct = sens->isPositive();
+                    } else
+                        execAct = execAct && sens->isPositive();
+
+                }
+            }
+            break;
+        case OP_NAND: { // NAND: OR & open gate, then invert AND
+                if (!m_isGate) {
+
+                    utListIterator<Sensors> it(m_sensors);
+                    while (it.hasMoreElements()) {
+
+                        gkLogicSensor *sens = it.getNext();
+                        if (fsr) {
+                            fsr = false;
+                            execAct = sens->isPositive();
+                        } else
+                            execAct = execAct || sens->isPositive();
+
+                    }
+
+                    if (execAct) {
+                        if (!m_isGate) {
+                            m_isGate = true;
+                            gkLogicManager::getSingleton().push(this);
+                        }
+                    }
+                } else {
+
+                    utListIterator<Sensors> it(m_sensors);
+                    while (it.hasMoreElements()) {
+
+                        gkLogicSensor *sens = it.getNext();
+                        if (fsr) {
+                            fsr = false;
+                            execAct = sens->isPositive();
+                        } else
+                            execAct = execAct && sens->isPositive();
+                    }
+
+                    // invert
+                    execAct = !execAct;
+                }
+            }
+            break;
+        case OP_NOR: { // NOR: OR & open gate, then invert OR
+                if (!m_isGate) {
+
+                    utListIterator<Sensors> it(m_sensors);
+                    while (it.hasMoreElements()) {
+
+                        gkLogicSensor *sens = it.getNext();
+                        if (fsr) {
+                            fsr = false;
+                            execAct = sens->isPositive();
+                        } else
+                            execAct = execAct || sens->isPositive();
+
+                    }
+
+                    if (execAct) {
+                        if (!m_isGate) {
+                            m_isGate = true;
+                            gkLogicManager::getSingleton().push(this);
+                        }
+                    }
+                } else {
+
+                    utListIterator<Sensors> it(m_sensors);
+                    while (it.hasMoreElements()) {
+
+                        gkLogicSensor *sens = it.getNext();
+                        if (fsr) {
+                            fsr = false;
+                            execAct = sens->isPositive();
+                        } else
+                            execAct = execAct || sens->isPositive();
+                    }
+                    // invert
+                    execAct = !execAct;
+                }
+            }
+            break;
+        case OP_XNOR: {// XNOR: OR & open gate, then invert XOR
+                if (!m_isGate) {
+
+                    utListIterator<Sensors> it(m_sensors);
+                    while (it.hasMoreElements()) {
+
+                        gkLogicSensor *sens = it.getNext();
+                        if (fsr) {
+                            fsr = false;
+                            execAct = sens->isPositive();
+                        } else
+                            execAct = execAct || sens->isPositive();
+
+                    }
+
+                    if (execAct) {
+                        if (!m_isGate) {
+                            m_isGate = true;
+                            gkLogicManager::getSingleton().push(this);
+                        }
+                    }
+                } else {
+
+
+                    utListIterator<Sensors> it(m_sensors);
+                    while (it.hasMoreElements()) {
+
+                        gkLogicSensor *sens = it.getNext();
+                        fsr = sens->isPositive();
+
+                        if (fsr && lsr) {
+                            execAct = false;
+                            break;
+                        } else if (fsr) execAct = true;
+
+                        if (!lsr && fsr)
+                            lsr = true;
+                    }
+                    // invert
+                    execAct = !execAct;
+                }
+            }
+            break;
         }
     }
-
-
-
 
     if (execAct && !m_actuators.empty()) {
         gkLogicManager &mgr = gkLogicManager::getSingleton();
 
         utListIterator<Actuators> it(m_actuators);
         while (it.hasMoreElements()) {
-            mgr.push(it.getNext());
+
+            gkLogicActuator *act = it.getNext();
+            if (!act->isActive()) {
+                act->setActive(true);
+                mgr.push(act);
+            }
         }
     }
 }

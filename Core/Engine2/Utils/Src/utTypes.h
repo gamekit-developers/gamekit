@@ -744,7 +744,7 @@ public:
     UT_INLINE ValueType getNext(void) {
         UT_ASSERT((m_iterator && (m_top - 1) != UT_NPOS));
         --m_top;
-        return m_iterator[m_top+1];
+        return m_iterator[m_top];
     }
 
     UT_INLINE void next(void) {
@@ -754,8 +754,8 @@ public:
 
 
     UT_INLINE ValueType peekNext(void) {
-        UT_ASSERT((m_iterator && (m_top) != UT_NPOS));
-        return m_iterator[m_top];
+         UT_ASSERT((m_iterator && (m_top - 1) != UT_NPOS));
+        return m_iterator[m_top-1];
     }
 
 protected:

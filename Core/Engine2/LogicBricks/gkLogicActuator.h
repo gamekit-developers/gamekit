@@ -32,6 +32,9 @@
 
 class gkLogicActuator : public gkLogicBrick
 {
+protected:
+    bool m_isActive;
+
 public:
 
     gkLogicActuator(gkGameObject *object, const gkString &name);
@@ -40,6 +43,10 @@ public:
 
     // Handle incoming logic.
     virtual void execute(void) = 0;
+
+
+    GK_INLINE void setActive(bool v)    {m_isActive = v;}
+    GK_INLINE bool isActive(void)       {return m_isActive;}
 };
 
 

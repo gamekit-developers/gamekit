@@ -181,9 +181,26 @@ void gkGameObjectLoader::setLogic(gkGameObject *ob)
         gkLogicController *lc = 0;
         switch (bcont->type)
         {
+        case CONT_LOGIC_OR:
+        case CONT_LOGIC_XOR:
         case CONT_LOGIC_AND:
+        case CONT_LOGIC_NAND:
+        case CONT_LOGIC_NOR:
+        case CONT_LOGIC_XNOR:
             {
-                gkAndController *ac = new gkAndController(ob, bcont->name);
+                gkLogicOpController *ac = new gkLogicOpController(ob, bcont->name);
+                if (bcont->type == CONT_LOGIC_OR)
+                    ac->setOp(gkLogicOpController::OP_OR);
+                else if (bcont->type == CONT_LOGIC_XOR)
+                    ac->setOp(gkLogicOpController::OP_XOR);
+                else if (bcont->type == CONT_LOGIC_AND)
+                    ac->setOp(gkLogicOpController::OP_AND);
+                else if (bcont->type == CONT_LOGIC_NAND)
+                    ac->setOp(gkLogicOpController::OP_NAND);
+                else if (bcont->type == CONT_LOGIC_NOR)
+                    ac->setOp(gkLogicOpController::OP_NOR);
+                else if (bcont->type == CONT_LOGIC_XNOR)
+                    ac->setOp(gkLogicOpController::OP_XNOR);
                 lc = ac;
             }
             break;

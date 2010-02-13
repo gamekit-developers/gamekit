@@ -59,8 +59,9 @@ public:
     typedef utListClass<gkLogicLink> Links;
     typedef gkAbstractDispatcher* gkAbstractDispatcherPtr;
 
-    typedef utStack<gkLogicSensor*>     SensorStack;
-    typedef utStack<gkLogicActuator*>   ActuatorStack;
+    typedef utStack<gkLogicSensor*>         SensorStack;
+    typedef utStack<gkLogicActuator*>       ActuatorStack;
+    typedef utStack<gkLogicController*>     ControllerStack;
 
 protected:
 
@@ -69,6 +70,7 @@ protected:
     gkAbstractDispatcherPtr*    m_dispatchers;
     SensorStack                 m_sensorStack;
     ActuatorStack               m_actuatorStack;
+    ControllerStack             m_controllerStack;
 
 public:
 
@@ -91,6 +93,7 @@ public:
 
     GK_INLINE void push(gkLogicSensor *v)       {GK_ASSERT(v); m_sensorStack.push(v);}
     GK_INLINE void push(gkLogicActuator *v)     {GK_ASSERT(v); m_actuatorStack.push(v);}
+    GK_INLINE void push(gkLogicController *v)   {GK_ASSERT(v); m_controllerStack.push(v);}
 
 
     static gkLogicManager& getSingleton(void);
