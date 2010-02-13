@@ -204,7 +204,7 @@ bool gkWindowSystemPrivate::mouseMoved(const OIS::MouseEvent &arg)
 
     if (arg.state.Z.rel != 0)
         data.wheelDelta = arg.state.Z.rel > 0 ? 1.f : -1.f;
-    else  data.wheelDelta = 0;
+    else data.wheelDelta = 0;
 
     if (!m_sys->m_listeners.empty())
     {

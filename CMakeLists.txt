@@ -25,14 +25,13 @@ include(ConfigOgreKit)
 include(ConfigGameKit)
 
 
-configure_gamekit(${CMAKE_SOURCE_DIR}/GameKit ${CMAKE_SOURCE_DIR}/GameKit)
+configure_gamekit(${CMAKE_SOURCE_DIR}/bullet/Extras ${CMAKE_SOURCE_DIR}/GameKit)
 configure_ogrekit(${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/OgreLite)
 
 set(OGREKIT_BULLET_LIBS BulletDynamics BulletCollision BulletSoftBody LinearMath)
 set(OGREKIT_BULLET_INCLUDE ${CMAKE_SOURCE_DIR}/bullet/src)
 
 subdirs(bullet)
-subdirs(GameKit)
 subdirs(Dependencies)
 subdirs(OgreLite)
 subdirs(Core)
