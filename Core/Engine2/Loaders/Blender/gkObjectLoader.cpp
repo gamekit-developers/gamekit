@@ -61,7 +61,7 @@
 
 #include "gkAlwaysSensor.h"
 #include "gkMouseSensor.h"
-#include "gkAndController.h"
+#include "gkLogicOpController.h"
 #include "gkMotionActuator.h"
 
 
