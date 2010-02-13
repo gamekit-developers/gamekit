@@ -1,0 +1,824 @@
+/*
+-------------------------------------------------------------------------------
+    This file is part of OgreKit.
+    http://gamekit.googlecode.com/
+
+    Copyright (c) 2006-2010 Charlie C.
+
+    Contributor(s): none yet.
+-------------------------------------------------------------------------------
+  This software is provided 'as-is', without any express or implied
+  warranty. In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
+-------------------------------------------------------------------------------
+*/
+#include "OgreLight.h"
+#include "OgreSkeleton.h"
+#include "OgreSkeletonManager.h"
+
+#include "gkObjectLoader.h"
+#include "gkLight.h"
+#include "gkCamera.h"
+#include "gkEntity.h"
+#include "gkSkeleton.h"
+#include "gkLoaderUtils.h"
+#include "gkMathUtils.h"
+#include "gkBlenderDefines.h"
+#include "blender.h"
+
+#include "gkScene.h"
+#include "gkDynamicsWorld.h"
+#include "gkRigidBody.h"
+#include "gkAction.h"
+#include "gkActionChannel.h"
+#include "gkBlendFile.h"
+#include "gkVariable.h"
+
+#include "bBlenderFile.h"
+#include "bMain.h"
+
+#include "gkLimitLocConstraint.h"
+#include "gkLimitRotConstraint.h"
+
+// GameLogic
+#include "gkLogicLink.h"
+#include "gkLogicManager.h"
+#include "gkLogicSensor.h"
+#include "gkLogicController.h"
+#include "gkLogicActuator.h"
+
+#include "gkAlwaysSensor.h"
+#include "gkMouseSensor.h"
+#include "gkAndController.h"
+#include "gkMotionActuator.h"
+
+
+#include "btBulletDynamicsCommon.h"
+#include "BulletCollision/Gimpact/btGImpactShape.h"
+#include "BulletCollision/CollisionShapes/btScaledBvhTriangleMeshShape.h"
+
+using namespace Ogre;
+
+
+gkGameObjectLoader::gkGameObjectLoader(gkBlendFile *fp, Blender::Scene* sc, Blender::Object *ob)
+:       m_file(fp), m_object(ob), m_scene(sc)
+{
+    GK_ASSERT(m_file && m_object && m_scene);
+}
+
+gkGameObjectLoader::~gkGameObjectLoader()
+{
+}
+
+
+// Load game object information
+void gkGameObjectLoader::load(gkObject *baseClass)
+{
+    GK_ASSERT(m_file && m_object && baseClass);
+    gkGameObject *ob = static_cast<gkGameObject*>(baseClass);
+
+
+
+    gkQuaternion quat;
+    gkVector3 loc, scale;
+    gkMatrix4 obmat = gkMathUtils::getFromFloat(m_object->obmat);
+
+
+    // will be the parent or world tranform
+    if (!m_object->parent)
+        gkMathUtils::extractTransform(obmat, loc, quat, scale);
+    else
+    {
+        gkMatrix4 parent = gkMathUtils::getFromFloat(m_object->parent->obmat);
+
+        obmat = parent.inverse() * obmat;
+        gkMathUtils::extractTransform(obmat, loc, quat, scale);
+    }
+
+
+    gkGameObjectProperties &props = ob->getProperties();
+
+    props.position      = loc;
+    props.orientation   = quat;
+    props.scale         = scale;
+    ob->setActiveLayer((m_scene->lay & m_object->lay) != 0);
+
+
+
+    switch (ob->getType())
+    {
+    case GK_CAMERA:
+        setCamera(ob);
+        break;
+    case GK_ENTITY:
+        setEntity(ob);
+        break;
+    case GK_LIGHT:
+        setLight(ob);
+        break;
+    case GK_SKELETON:
+        setSkeleton(ob);
+        break;
+    }
+
+
+    setConstraints(ob);
+    setProperties(ob);
+    setLogic(ob);
+}
+
+
+void gkGameObjectLoader::setLogic(gkGameObject *ob)
+{
+    GK_ASSERT(ob && m_object);
+
+    if (!m_object->sensors.first && !m_object->controllers.first && !m_object->actuators.first)
+        return;
+
+    gkLogicManager *rlm = gkLogicManager::getSingletonPtr();
+    gkLogicLink *lnk = rlm->createLink();
+
+
+
+    for (Blender::bActuator *bact = (Blender::bActuator*)m_object->actuators.first; bact; bact = bact->next)
+    {
+        gkLogicActuator *la = 0;
+        switch (bact->type)
+        {
+        case ACT_OBJECT:
+            {
+                gkMotionActuator *ma = new gkMotionActuator(ob, bact->name);
+                la = ma;
+
+                Blender::bObjectActuator *objact = (Blender::bObjectActuator*)bact->data;
+                ma->setRot(gkVector3(objact->drot.x, objact->drot.y, objact->drot.z), (objact->flag & ACT_DROT_LOCAL) != 0);
+                ma->setLoc(gkVector3(objact->dloc.x, objact->dloc.y, objact->dloc.z), (objact->flag & ACT_DLOC_LOCAL) != 0);
+
+            }
+            break;
+        }
+
+        if (la)
+            lnk->push(la);
+
+    }
+
+
+    for (Blender::bController *bcont = (Blender::bController*)m_object->controllers.first; bcont; bcont = bcont->next)
+    {
+        gkLogicController *lc = 0;
+        switch (bcont->type)
+        {
+        case CONT_LOGIC_AND:
+            {
+                gkAndController *ac = new gkAndController(ob, bcont->name);
+                lc = ac;
+            }
+            break;
+        }
+
+        if (lc)
+        {
+            for (int i = 0; i < bcont->totlinks; ++i)
+            {
+                Blender::bActuator *a = bcont->links[i];
+                if (a)
+                {
+                    gkLogicActuator *la = lnk->findActuator(a->name);
+                    if (la) lc->link(la);
+                }
+            }
+
+            lnk->push(lc);
+        }
+    }
+
+
+    for (Blender::bSensor *bsen = (Blender::bSensor*)m_object->sensors.first; bsen; bsen = bsen->next)
+    {
+        gkLogicSensor *ls = 0;
+        switch (bsen->type)
+        {
+        case SENS_ALWAYS:
+            {
+                gkAlwaysSensor *asn = new gkAlwaysSensor(ob, bsen->name);
+                ls = asn;
+            }
+            break;
+        case SENS_MOUSE:
+            {
+                gkMouseSensor *ms = new gkMouseSensor(ob, bsen->name);
+                ls = ms;
+
+                Blender::bMouseSensor *mse = (Blender::bMouseSensor*)bsen->data;
+
+                int type = 0;
+                if (mse->type == BL_SENS_MOUSE_LEFT_BUTTON)
+                    type = gkMouseSensor::MOUSE_LEFT;
+                else if (mse->type == BL_SENS_MOUSE_MIDDLE_BUTTON)
+                    type = gkMouseSensor::MOUSE_MIDDLE;
+                else if (mse->type == BL_SENS_MOUSE_RIGHT_BUTTON)
+                    type = gkMouseSensor::MOUSE_RIGHT;
+                else if (mse->type == BL_SENS_MOUSE_WHEEL_UP)
+                    type = gkMouseSensor::MOUSE_WHEEL_UP;
+                else if (mse->type == BL_SENS_MOUSE_WHEEL_DOWN)
+                    type = gkMouseSensor::MOUSE_WHEEL_DOWN;
+                else if (mse->type == BL_SENS_MOUSE_MOVEMENT)
+                    type = gkMouseSensor::MOUSE_MOTION;
+                else if (mse->type == BL_SENS_MOUSE_MOUSEOVER)
+                    type = gkMouseSensor::MOUSE_MOUSE_OVER;
+                else if (mse->type == BL_SENS_MOUSE_MOUSEOVER_ANY)
+                    type = gkMouseSensor::MOUSE_MOUSE_OVER_ANY;
+
+                ms->setType(type);
+            }
+            break;
+        }
+
+        if (ls)
+        {
+            for (int i = 0; i < bsen->totlinks; ++i)
+            {
+                Blender::bController *c = bsen->links[i];
+                if (c)
+                {
+                    gkLogicController *lc = lnk->findController(c->name);
+                    if (lc)
+                    {
+                        ls->link(lc);
+                        lc->link(ls);
+                    }
+                }
+            }
+
+            ls->setTap(bsen->tap != 0);
+            ls->setFrequency(bsen->freq);
+            ls->invert(bsen->invert != 0);
+            int pulse = gkLogicSensor::PULSE_NONE;
+
+            if (bsen->pulse & SENS_PULSE_REPEAT)
+                pulse |= gkLogicSensor::PULSE_POSITIVE;
+            if (bsen->pulse & SENS_NEG_PULSE_MODE)
+                pulse |= gkLogicSensor::PULSE_NEGATIVE;
+
+            ls->setMode(pulse);
+            lnk->push(ls);
+        }
+    }
+
+}
+
+
+void gkGameObjectLoader::setProperties(gkGameObject *ob)
+{
+    GK_ASSERT(ob && m_object);
+
+    // Attach variables to object ( used in game logic )
+
+
+    for (Blender::bProperty *prop = (Blender::bProperty*)m_object->prop.first; prop; prop = prop->next)
+    {
+        gkVariable *gop = 0;
+
+        if (prop->type == GPROP_BOOL)
+        {
+            gop = ob->createVariable(prop->name, prop->flag != 0);
+            gop->setValue(prop->data != 0);
+        }
+        else if (prop->type == GPROP_INT)
+        {
+            gop = ob->createVariable(prop->name, prop->flag != 0);
+            gop->setValue((int)prop->data);
+        }
+        else if (prop->type == GPROP_FLOAT)
+        {
+            gop = ob->createVariable(prop->name, prop->flag != 0);
+            gop->setValue(*((gkScalar*)&prop->data));
+        }
+        else if (prop->type == GPROP_STRING)
+        {
+            gop = ob->createVariable(prop->name, prop->flag != 0);
+            gop->setValue(gkString((char*)prop->poin));
+        }
+        else if (prop->type == GPROP_TIME)
+        {
+            gop = ob->createVariable(prop->name, prop->flag != 0);
+            gop->setValue(*((gkScalar*)&prop->data));
+        }
+    }
+}
+
+
+
+void gkGameObjectLoader::setConstraints(gkGameObject *ob)
+{
+    for (Blender::bConstraint *bc = (Blender::bConstraint*)m_object->constraints.first; bc; bc = bc->next)
+    {
+        if (bc->enforce == 0.0) continue;
+
+        if (bc->type == CONSTRAINT_TYPE_ROTLIMIT)
+        {
+            Blender::bRotLimitConstraint *lr = (Blender::bRotLimitConstraint*)bc->data;
+            if (!lr->flag)
+                continue;
+
+
+            gkLimitRotConstraint *c = new gkLimitRotConstraint();
+
+            if (lr->flag & LIMIT_XROT)
+                c->setLimitX(Vector2(lr->xmin, lr->xmax));
+            if (lr->flag & LIMIT_YROT)
+                c->setLimitY(Vector2(lr->ymin, lr->ymax));
+            if (lr->flag & LIMIT_ZROT)
+                c->setLimitZ(Vector2(lr->zmin, lr->zmax));
+
+            c->setLocal(bc->ownspace == CONSTRAINT_SPACE_LOCAL);
+
+            c->setInfluence(bc->enforce);
+            ob->addConstraint(c);
+        }
+
+        else if (bc->type == CONSTRAINT_TYPE_LOCLIMIT)
+        {
+            Blender::bLocLimitConstraint *ll = (Blender::bLocLimitConstraint*)bc->data;
+            if (!ll->flag)
+                continue;
+
+            gkLimitLocConstraint *c = new gkLimitLocConstraint();
+
+            if (ll->flag & LIMIT_XMIN) c->setMinX(ll->xmin);
+            if (ll->flag & LIMIT_XMAX) c->setMaxX(ll->xmax);
+            if (ll->flag & LIMIT_YMIN) c->setMinY(ll->ymin);
+            if (ll->flag & LIMIT_YMAX) c->setMaxY(ll->ymax);
+            if (ll->flag & LIMIT_ZMIN) c->setMinZ(ll->zmin);
+            if (ll->flag & LIMIT_ZMAX) c->setMaxZ(ll->zmax);
+
+            c->setLocal(bc->ownspace == CONSTRAINT_SPACE_LOCAL);
+            c->setInfluence(bc->enforce);
+            ob->addConstraint(c);
+        }
+    }
+}
+
+// Set light serialization data
+void gkGameObjectLoader::setLight(gkGameObject *ob)
+{
+    GK_ASSERT(ob->getType() == GK_LIGHT && m_object->data);
+    gkLight *obj = static_cast<gkLight*>(ob);
+
+    gkLightProperties &props = obj->getLightProperties();
+    Blender::Lamp* la = static_cast<Blender::Lamp*>(m_object->data);
+
+    props.diffuse = ColourValue(la->r, la->g, la->b);
+    if (la->mode & LA_NO_DIFF)
+        props.diffuse = ColourValue::Black;
+
+    props.specular = ColourValue(la->r, la->g, la->b);
+    if (la->mode & LA_NO_SPEC)
+        props.specular = ColourValue::Black;
+
+    props.power = la->energy;
+    if (la->mode & LA_NEG)
+        props.power = -props.power;
+
+    props.linear = la->att1 / la->dist;
+    props.constant = 1.f;
+    props.quadratic = la->att2 / (la->dist * la->dist);
+
+    props.type = Light::LT_POINT;
+    if (la->type != LA_LOCAL)
+        props.type = la->type == LA_SPOT ? Light::LT_SPOTLIGHT : Light::LT_DIRECTIONAL;
+
+    props.casts = true;
+    props.spot_inner = gkRadian(la->spotblend).valueDegrees();
+    props.spot_outer = la->spotsize > 128 ? 128 : la->spotsize;
+    props.falloff =   128.f * la->spotblend;
+    if (props.spot_inner > props.spot_outer) props.spot_inner = props.spot_outer;
+}
+
+// Set camera serialization data
+void gkGameObjectLoader::setCamera(gkGameObject *ob)
+{
+    GK_ASSERT(ob->getType() == GK_CAMERA && m_object->data);
+    gkCamera *obj = static_cast<gkCamera*>(ob);
+
+    Blender::Camera* camera = static_cast<Blender::Camera*>(m_object->data);
+
+    gkCameraProperties &props = obj->getCameraProperties();
+    props.clipend   = camera->clipend;
+    props.clipstart = camera->clipsta;
+    props.fov       = gkScalar(360) * gkMath::ATan(gkScalar(16) / camera->lens).valueRadians() / gkPi;
+    props.start     = m_scene->camera == m_object;
+}
+
+
+// Set mesh serialization data
+void gkGameObjectLoader::setEntity(gkGameObject *ob)
+{
+    GK_ASSERT(ob->getType() == GK_ENTITY && m_object->data);
+    gkEntity *obj = static_cast<gkEntity*>(ob);
+
+    gkEntityProperties& props = obj->getEntityProperties();
+
+
+    // source is the mesh name, here it's
+    // the same name as the entity
+    props.source = GKB_IDNAME(m_object);
+
+
+    // if it has an action save the initial pose / animation name
+    if (m_object->parent)
+    {
+        Blender::Object *par = m_object->parent;
+        Blender::bAction *act = par->action;
+        if (!act && par->proxy_from)
+            act = par->proxy_from->action;
+
+        if (act) ob->setStartPose(GKB_IDNAME(act));
+    }
+}
+
+
+// Set skeleton serialization data
+void gkGameObjectLoader::setSkeleton(gkGameObject *ob)
+{
+    GK_ASSERT(ob->getType() == GK_SKELETON && m_object->data);
+    gkSkeleton *obj = static_cast<gkSkeleton*>(ob);
+
+    // client skeleton should be here
+    Ogre::SkeletonPtr skel = Ogre::SkeletonManager::getSingleton().getByName(obj->getName());
+
+
+    if (!skel.isNull())
+    {
+        // ensure loaded
+        skel->load();
+
+
+        Ogre::Skeleton::BoneIterator bit = skel->getBoneIterator();
+        while (bit.hasMoreElements())
+        {
+            Ogre::Bone *bone = bit.getNext();
+            obj->createBone(bone);
+        }
+    }
+
+    // create actions if needed
+    bParse::bBlenderFile *bf = m_file->getInternalFile();
+    bParse::bMain *mp = bf->getMain();
+
+    // for all actions convert
+    bParse::bListBasePtr *lbp = mp->getAction();
+
+    for (int i = 0; i < lbp->size(); ++i)
+    {
+        Blender::bAction *bact = (Blender::bAction*)lbp->at(i);
+
+
+        // find ownership
+        Blender::bActionChannel* bac = (Blender::bActionChannel*)bact->chanbase.first;
+
+        if (obj->hasAction(GKB_IDNAME(bact)))
+        {
+            // persistent
+            continue;
+        }
+
+        gkAction *act = obj->createAction(GKB_IDNAME(bact));
+
+        // min/max
+        gkVector2 range(FLT_MAX, -FLT_MAX);
+
+        while (bac)
+        {
+            if (obj->hasBone(bac->name))
+            {
+                gkBone *bone = obj->getBone(bac->name);
+
+                gkActionChannel *achan = new gkActionChannel(act, bone);
+                act->addChannel(achan);
+                if (bac->ipo)
+                {
+                    Blender::IpoCurve* icu = (Blender::IpoCurve*)bac->ipo->curve.first;
+                    while (icu)
+                    {
+                        if (icu->bezt)
+                        {
+                            int code = -1;
+                            switch (icu->adrcode)
+                            {
+                            case AC_QUAT_W: { code = SC_ROT_W;  break; }
+                            case AC_QUAT_X: { code = SC_ROT_X;  break; }
+                            case AC_QUAT_Y: { code = SC_ROT_Y;  break; }
+                            case AC_QUAT_Z: { code = SC_ROT_Z;  break; }
+                            case AC_LOC_X:  { code = SC_LOC_X;  break; }
+                            case AC_LOC_Y:  { code = SC_LOC_Y;  break; }
+                            case AC_LOC_Z:  { code = SC_LOC_Z;  break; }
+                            case AC_SIZE_X: { code = SC_SCL_X;  break; }
+                            case AC_SIZE_Y: { code = SC_SCL_Y;  break; }
+                            case AC_SIZE_Z: { code = SC_SCL_Z;  break; }
+                            }
+
+
+                            // ignore any other codes
+                            if (code != -1)
+                            {
+                                gkBezierSpline *spline = new gkBezierSpline(code);
+
+                                switch (icu->ipo)
+                                {
+                                case 0://BEZT_IPO_CONST:
+                                    spline->setInterpolationMethod(gkBezierSpline::BEZ_CONSTANT);
+                                    break;
+                                case 1://BEZT_IPO_LIN:
+                                    spline->setInterpolationMethod(gkBezierSpline::BEZ_LINEAR);
+                                    break;
+                                case 2://BEZT_IPO_BEZ:
+                                    spline->setInterpolationMethod(gkBezierSpline::BEZ_CUBIC);
+                                    break;
+                                }
+
+                                Blender::BezTriple *bezt = icu->bezt;
+                                for (int c = 0; c < icu->totvert; c++, bezt++)
+                                {
+                                    gkBezierVertex v;
+
+                                    v.h1[0] = bezt->vec[0][0];
+                                    v.h1[1] = bezt->vec[0][1];
+                                    v.cp[0] = bezt->vec[1][0];
+                                    v.cp[1] = bezt->vec[1][1];
+                                    v.h2[0] = bezt->vec[2][0];
+                                    v.h2[1] = bezt->vec[2][1];
+
+
+                                    // calculate global time
+                                    if (range.x > v.cp[0]) range.x = v.cp[0];
+                                    if (range.y < v.cp[0]) range.y = v.cp[0];
+                                    spline->addVertex(v);
+                                }
+                                if (spline->getNumVerts())
+                                    achan->addSpline(spline);
+                                else delete spline;
+                            }
+                        }
+                        icu = icu->next;
+                    }
+                }
+            }
+            bac = bac->next;
+        }
+
+        // apply time range
+        act->setStart(range.x);
+        act->setEnd(range.y);
+
+    }
+}
+
+
+// Rigid body loader to support dynamic loading
+// and unloading at runtime of physics bodies
+gkRigidBodyLoader::gkRigidBodyLoader(gkBlendFile *fp,
+                                     Blender::Scene* sc,
+                                     Blender::Object *ob,
+                                     gkGameObject *obj)
+:       m_file(fp), m_object(ob), m_scene(sc), m_gameObj(obj),
+        m_triMesh(0)
+{
+}
+
+
+gkRigidBodyLoader::~gkRigidBodyLoader()
+{
+    freeResources();
+}
+
+void gkRigidBodyLoader::freeResources(void)
+{
+    if (m_triMesh)
+        delete m_triMesh;
+
+    m_triMesh = 0;
+
+    for (UTsize i = 0; i < m_shapes.size(); ++i)
+        delete m_shapes[i];
+    m_shapes.clear();
+}
+
+
+void gkRigidBodyLoader::load(gkObject *ob)
+{
+    // start clean
+    freeResources();
+
+    gkRigidBody *rigid = static_cast<gkRigidBody*>(ob);
+
+    btVector3 size = btVector3(1, 1, 1);
+    btVector3 pos = btVector3(0, 0, 0);
+
+    gkLoaderUtils ut(m_file->getInternalFile());
+    Blender::Material *mat = ut.getMaterial(m_object, 0);
+
+    if (m_object->type != OB_MESH)
+    {
+        // exclude non actors if it's not a mesh
+        if (!(m_object->gameflag & OB_ACTOR))
+            return;
+
+
+        // use radius for bounding scale ?
+        size *= m_object->inertia;
+    }
+    else
+    {
+        Blender::Mesh *me = (Blender::Mesh*)m_object->data;
+
+        btVector3 v0, v1, v2, v3;
+
+        btVector3 minV(1e30f, 1e30f, 1e30f), maxV(-1e30f, -1e30f, -1e30f);
+        m_triMesh = new btTriangleMesh();
+
+        Blender::MFace *mf = me->mface;
+        Blender::MVert *mv = me->mvert;
+        for (int i = 0; i < me->totface && mf && mv; ++i, ++mf)
+        {
+            // no face just an edge
+            if (!mf->v3) continue;
+
+            v0 = btVector3(mv[mf->v1].co.x, mv[mf->v1].co.y, mv[mf->v1].co.z);
+            v1 = btVector3(mv[mf->v2].co.x, mv[mf->v2].co.y, mv[mf->v2].co.z);
+            v2 = btVector3(mv[mf->v3].co.x, mv[mf->v3].co.y, mv[mf->v3].co.z);
+
+            minV.setMin(v0); maxV.setMax(v0);
+            minV.setMin(v1); maxV.setMax(v1);
+            minV.setMin(v2); maxV.setMax(v2);
+
+            m_triMesh->addTriangle(v0, v1, v2);
+
+            if (mf->v4)
+            {
+                v3 = btVector3(mv[mf->v4].co.x, mv[mf->v4].co.y, mv[mf->v4].co.z);
+                minV.setMin(v3); maxV.setMax(v3);
+
+                m_triMesh->addTriangle(v0, v3, v2);
+            }
+        }
+
+        if (!m_triMesh->getNumTriangles())
+        {
+            delete m_triMesh;
+            m_triMesh = 0;
+        }
+
+        size = (maxV - minV) * 0.5f;
+        pos  = (minV + maxV) * 0.5f;
+    }
+
+
+    btVector3 localPos(pos.x(), pos.y(), pos.z());
+    btVector3 localSize(size.x(), size.y(), size.z());
+
+    btTransform worldTrans;
+    worldTrans.setIdentity();
+    worldTrans.setOrigin(btVector3(m_object->loc.x, m_object->loc.y, m_object->loc.z));
+
+    worldTrans.getBasis().setEulerZYX(m_object->rot.x, m_object->rot.y, m_object->rot.z);
+    btVector3 scale(m_object->size.x, m_object->size.y, m_object->size.z);
+
+
+    if ((m_object->gameflag & OB_RIGID_BODY) || (m_object->gameflag & OB_DYNAMIC))
+    {
+        btCollisionShape *colShape = 0;
+
+        switch (m_object->boundtype)
+        {
+        case OB_BOUND_BOX:
+            {
+                colShape = new btBoxShape(localSize);
+                break;
+            }
+        case OB_BOUND_CYLINDER:
+            {
+                colShape = new btCylinderShapeZ(localSize);
+                break;
+            }
+        case OB_BOUND_CONE:
+            {
+                btScalar radius = btMax(localSize[0], localSize[1]);
+                btScalar height = 2.f * localSize[2];
+                colShape = new btConeShapeZ(radius, height);
+                break;
+            }
+        case OB_BOUND_POLYT:
+            {
+                if (m_triMesh)
+                {
+                    //better to approximate it, using btShapeHull
+                    colShape = new btConvexTriangleMeshShape(m_triMesh);
+                    break;
+                }
+
+                // fall to sphere
+            }
+        case OB_BOUND_POLYH:
+        case OB_BOUND_DYN_MESH:
+            {
+                if (m_triMesh)
+                {
+                    btGImpactMeshShape* gimpact = new btGImpactMeshShape(m_triMesh);
+                    gimpact->postUpdate();
+                    colShape = gimpact;
+                    break;
+                }
+                // fall to sphere
+            }
+        case OB_BOUND_SPHERE:
+            {
+                btScalar radius = localSize[localSize.maxAxis()];
+                colShape = new btSphereShape(radius);
+                break;
+            }
+        default:
+            {
+
+            }
+        };
+
+
+        if (colShape)
+        {
+            m_shapes.push_back(colShape);
+
+            colShape->setLocalScaling(scale);
+            btVector3 inertia;
+            colShape->calculateLocalInertia(m_object->mass, inertia);
+
+
+
+
+            btRigidBody* body = new btRigidBody(m_object->mass, 0, colShape, inertia);
+            if (!(m_object->gameflag & OB_RIGID_BODY))
+                body->setAngularFactor(0.f);
+
+            if (mat)
+            {
+                body->setFriction(mat->friction);
+                body->setRestitution(mat->reflect);
+            }
+
+            body->setWorldTransform(worldTrans);
+            rigid->_reinstanceBody(body);
+        }
+    }
+    else
+    {
+        if (m_triMesh)
+        {
+            btCollisionShape* colShape = 0;
+            if (m_triMesh->getNumTriangles() > 0)
+            {
+                btBvhTriangleMeshShape* childShape = new btBvhTriangleMeshShape(m_triMesh, true);
+                m_shapes.push_back(childShape);
+
+
+                if (scale[0] != 1. || scale[1] != 1. || scale[2] != 1.)
+                {
+                    colShape = new btScaledBvhTriangleMeshShape(childShape, scale);
+                    m_shapes.push_back(colShape);
+                }
+                else
+                    colShape = childShape;
+
+                btVector3 inertia(0, 0, 0);
+                btRigidBody* colObj = new btRigidBody(0.f, 0, colShape, inertia);
+                colObj->setWorldTransform(worldTrans);
+                colObj->setCollisionShape(colShape);
+                if (mat)
+                {
+                    colObj->setFriction(mat->friction);
+                    colObj->setRestitution(mat->reflect);
+                }
+
+                rigid->_reinstanceBody(colObj);
+            }
+            else
+            {
+                delete m_triMesh;
+                m_triMesh = 0;
+            }
+
+        }
+    }
+}
