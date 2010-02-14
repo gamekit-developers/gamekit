@@ -36,6 +36,7 @@
 #include "gkMouseSensor.h"
 #include "gkLogicOpController.h"
 #include "gkMotionActuator.h"
+#include "gkStateActuator.h"
 
 
 gkLogicLoader::gkLogicLoader()
@@ -90,6 +91,7 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
     gkLogicManager *rlm = gkLogicManager::getSingletonPtr();
     gkLogicLink *lnk = rlm->createLink();
     m_createdLinks.push_back(lnk);
+    lnk->setState(bobj->init_state);
 
 
     for (Blender::bActuator *bact = (Blender::bActuator*)bobj->actuators.first; bact; bact = bact->next)
@@ -97,9 +99,32 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
         gkLogicActuator *la = 0;
         switch (bact->type)
         {
+        case ACT_STATE:
+            {
+                gkStateActuator *sa = new gkStateActuator(gobj, lnk, bact->name);
+                la = sa;
+
+                Blender::bStateActuator *bst = (Blender::bStateActuator*)bact->data;
+                
+                int op = gkStateActuator::OP_NILL;
+
+
+                switch (bst->type)
+                {
+                case 0: {op = gkStateActuator::OP_CPY; break;}
+                case 1: {op = gkStateActuator::OP_ADD; break;}
+                case 2: {op = gkStateActuator::OP_SUB; break;}
+                case 3: {op = gkStateActuator::OP_INV; break;}
+                }
+
+                sa->setOp(op);
+                sa->setStateMask(bst->mask);
+
+            }break;
+
         case ACT_OBJECT:
             {
-                gkMotionActuator *ma = new gkMotionActuator(gobj, bact->name);
+                gkMotionActuator *ma = new gkMotionActuator(gobj, lnk, bact->name);
                 la = ma;
 
                 Blender::bObjectActuator *objact = (Blender::bObjectActuator*)bact->data;
@@ -137,7 +162,7 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
         case CONT_LOGIC_NOR:
         case CONT_LOGIC_XNOR:
             {
-                gkLogicOpController *ac = new gkLogicOpController(gobj, bcont->name);
+                gkLogicOpController *ac = new gkLogicOpController(gobj, lnk, bcont->name);
                 if (bcont->type == CONT_LOGIC_OR)
                     ac->setOp(gkLogicOpController::OP_OR);
                 else if (bcont->type == CONT_LOGIC_XOR)
@@ -179,6 +204,7 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
                 }
             }
 
+            lc->setStateMask(bcont->state_mask);
             lc->setPriority((bcont->flag & CONT_PRIO) != 0);
             lnk->push(lc);
         }
@@ -192,13 +218,13 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
         {
         case SENS_ALWAYS:
             {
-                gkAlwaysSensor *asn = new gkAlwaysSensor(gobj, bsen->name);
+                gkAlwaysSensor *asn = new gkAlwaysSensor(gobj, lnk, bsen->name);
                 ls = asn;
             }
             break;
         case SENS_MOUSE:
             {
-                gkMouseSensor *ms = new gkMouseSensor(gobj, bsen->name);
+                gkMouseSensor *ms = new gkMouseSensor(gobj, lnk, bsen->name);
                 ls = ms;
 
                 Blender::bMouseSensor *mse = (Blender::bMouseSensor*)bsen->data;

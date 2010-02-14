@@ -28,10 +28,11 @@
 #include "gkLogicActuator.h"
 #include "gkLogicSensor.h"
 #include "gkLogicManager.h"
+#include "gkLogicLink.h"
 
 
-gkLogicOpController::gkLogicOpController(gkGameObject *object, const gkString &name)
-:       gkLogicController(object, name), m_op(OP_NILL)
+gkLogicOpController::gkLogicOpController(gkGameObject *object, gkLogicLink *link, const gkString &name)
+:       gkLogicController(object, link, name), m_op(OP_NILL)
 {
 }
 
@@ -42,6 +43,9 @@ void gkLogicOpController::relay(void)
         // undefined
         return;
     }
+
+    if ((m_stateMask & m_link->getState()) == 0)
+        return;
 
     bool execAct = false;
 

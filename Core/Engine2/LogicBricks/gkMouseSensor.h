@@ -67,7 +67,7 @@ protected:
     bool rayTest(void);
 
 public:
-    gkMouseSensor(gkGameObject *object, const gkString &name);
+    gkMouseSensor(gkGameObject *object, gkLogicLink *link, const gkString &name);
     virtual ~gkMouseSensor() {}
 
     bool query(void);

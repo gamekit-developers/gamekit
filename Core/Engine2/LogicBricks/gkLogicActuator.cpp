@@ -27,7 +27,7 @@
 #include "gkLogicActuator.h"
 
 
-gkLogicActuator::gkLogicActuator(gkGameObject *object, const gkString &name)
-:       gkLogicBrick(object, name), m_isActive(false)
+gkLogicActuator::gkLogicActuator(gkGameObject *object, gkLogicLink *link, const gkString &name)
+:       gkLogicBrick(object, link, name), m_isActive(false)
 {
 }

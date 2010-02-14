@@ -37,7 +37,7 @@ protected:
 
 public:
 
-    gkLogicActuator(gkGameObject *object, const gkString &name);
+    gkLogicActuator(gkGameObject *object, gkLogicLink *link, const gkString &name);
     virtual ~gkLogicActuator() {}
 
 

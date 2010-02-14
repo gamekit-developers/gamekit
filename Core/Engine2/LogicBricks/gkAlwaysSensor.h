@@ -34,7 +34,7 @@ class gkAlwaysSensor : public gkLogicSensor
 {
 public:
 
-    gkAlwaysSensor(gkGameObject *object, const gkString &name);
+    gkAlwaysSensor(gkGameObject *object, gkLogicLink *link, const gkString &name);
     virtual ~gkAlwaysSensor();
 
     bool query(void);

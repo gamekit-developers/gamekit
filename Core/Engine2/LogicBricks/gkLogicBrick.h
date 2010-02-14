@@ -34,6 +34,7 @@
 class gkLogicSensor;
 class gkLogicController;
 class gkLogicActuator;
+class gkLogicLink;
 
 // Root of the brick tree. Sensors, Controllers, and Actuators 
 // are derrived from this class
@@ -42,10 +43,11 @@ class gkLogicBrick
 protected:
     gkGameObject*       m_object;
     const gkString      m_name;
+    gkLogicLink*        m_link;
+
 
 public:
-
-    gkLogicBrick(gkGameObject *object, const gkString &name);
+    gkLogicBrick(gkGameObject *object, gkLogicLink *link, const gkString &name);
     virtual ~gkLogicBrick() {}
 
 

@@ -52,7 +52,7 @@ protected:
 
 public:
 
-    gkLogicSensor(gkGameObject *object, const gkString &name);
+    gkLogicSensor(gkGameObject *object, gkLogicLink *link, const gkString &name);
     virtual ~gkLogicSensor() {}
 
 

@@ -42,10 +42,11 @@ protected:
     Actuators   m_actuators;
     bool        m_isGate;
     bool        m_priority;
+    int         m_stateMask;
 
 public:
 
-    gkLogicController(gkGameObject *object, const gkString &name);
+    gkLogicController(gkGameObject *object, gkLogicLink *link, const gkString &name);
     virtual ~gkLogicController() {}
 
     GK_INLINE void link(gkLogicSensor *v)       {GK_ASSERT(v); m_sensors.push_back(v);}
@@ -58,6 +59,8 @@ public:
     GK_INLINE bool isGate(void)         {return m_isGate;}
     GK_INLINE void setPriority(bool v)  {m_priority = v;}
     GK_INLINE int getPriority(void)     {return m_priority ? 1 : 0;}
+    GK_INLINE void setStateMask(int v)  {m_stateMask = v;}
+    GK_INLINE int getStateMask(void)    {return m_stateMask;}
 };
 
 

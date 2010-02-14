@@ -29,8 +29,8 @@
 #include "gkLogicManager.h"
 
 
-gkLogicSensor::gkLogicSensor(gkGameObject *object, const gkString &name)
-:       gkLogicBrick(object, name), m_freq(0), m_tick(0), m_pulse(PULSE_NONE), m_invert(false), m_positive(false),
+gkLogicSensor::gkLogicSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
+:       gkLogicBrick(object, link, name), m_freq(0), m_tick(0), m_pulse(PULSE_NONE), m_invert(false), m_positive(false),
         m_suspend(false), m_tap(false), m_sorted(false)
 {
 }
@@ -71,7 +71,6 @@ void gkLogicSensor::tick(void)
             gkLogicManager::getSingleton().push(this);
 
 
-        // TODO destroy ?
         if (m_tap)
             m_suspend = true;
     }

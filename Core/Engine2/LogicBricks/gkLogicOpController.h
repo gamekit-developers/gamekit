@@ -49,7 +49,7 @@ protected:
 
 public:
 
-    gkLogicOpController(gkGameObject *object, const gkString &name);
+    gkLogicOpController(gkGameObject *object, gkLogicLink *link, const gkString &name);
     virtual ~gkLogicOpController() {}
 
     void relay(void);

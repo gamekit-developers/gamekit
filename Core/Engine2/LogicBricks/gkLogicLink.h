@@ -50,6 +50,8 @@ protected:
     SensorList      m_sensors;
     ControllerList  m_controllers;
     ActuatorList    m_actuators;
+    int             m_state;
+
 
 public:
 
@@ -63,7 +65,8 @@ public:
     GK_INLINE void push(gkLogicSensor *v)       {GK_ASSERT(v); m_sensors.push_back(v);}
     GK_INLINE void push(gkLogicController *v)   {GK_ASSERT(v); m_controllers.push_back(v);}
     GK_INLINE void push(gkLogicActuator *v)     {GK_ASSERT(v); m_actuators.push_back(v);}
+    GK_INLINE void setState(int v)              {m_state = v;}
+    GK_INLINE int getState(void)                {return m_state;}
 };
-
 
 #endif//_gkLogicLink_h_

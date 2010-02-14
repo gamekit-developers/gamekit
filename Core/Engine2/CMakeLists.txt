@@ -132,6 +132,7 @@ set(Logic_CSOURCE
 set(Logic_ASOURCE
     # ----- Actuators ----- 
     LogicBricks/gkMotionActuator.cpp
+    LogicBricks/gkStateActuator.cpp
 )
 
 set(Logic_HEADER
@@ -157,6 +158,7 @@ set(Logic_CHEADER
 set(Logic_AHEADER
     # ----- Actuators ----- 
     LogicBricks/gkMotionActuator.h
+    LogicBricks/gkStateActuator.h
 )
 
 source_group(LogicBricks\\Header                FILES ${Logic_HEADER})

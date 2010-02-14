@@ -24,22 +24,42 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "gkAlwaysSensor.h"
-#include "gkLogicManager.h"
-#include "gkLogicDispatcher.h"
+#ifndef _gkStateActuator_h_
+#define _gkStateActuator_h_
 
-gkAlwaysSensor::gkAlwaysSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
-:       gkLogicSensor(object, link, name)
+#include "gkLogicActuator.h"
+
+
+class gkStateActuator : public gkLogicActuator
 {
-    gkLogicManager::getSingleton().getDispatcher(DIS_CONSTANT).connect(this);
-}
+public:
 
-gkAlwaysSensor::~gkAlwaysSensor()
-{
-}
+    enum Op
+    {
+        OP_NILL,
+        OP_ADD,
+        OP_SUB,
+        OP_CPY,
+        OP_INV,
+    };
 
 
-bool gkAlwaysSensor::query(void)
-{
-    return true;
-}
+protected:
+
+    int m_stateMask, m_op;
+
+public:
+
+    gkStateActuator(gkGameObject *object, gkLogicLink *link, const gkString &name);
+    virtual ~gkStateActuator();
+
+
+    // Handle incoming logic.
+    void execute(void);
+
+    GK_INLINE void setStateMask(int v)  {m_stateMask = v;}
+    GK_INLINE void setOp(int op)        {m_op = op;}
+};
+
+
+#endif//_gkStateActuator_h_

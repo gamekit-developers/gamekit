@@ -29,8 +29,8 @@
 
 
 
-gkMotionActuator::gkMotionActuator(gkGameObject *object, const gkString &name) 
-:       gkLogicActuator(object, name),
+gkMotionActuator::gkMotionActuator(gkGameObject *object, gkLogicLink *link, const gkString &name) 
+:       gkLogicActuator(object, link, name),
         m_type(0), m_loc(0,0,0), m_rot(0,0,0), m_locL(false), m_rotL(false)
 {
 }

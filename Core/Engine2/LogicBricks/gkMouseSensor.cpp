@@ -54,8 +54,8 @@ void gkMouseDispatch::dispatch(void)
 }
 
 
-gkMouseSensor::gkMouseSensor(gkGameObject *object, const gkString &name)
-:       gkLogicSensor(object, name), m_type(MOUSE_NILL), m_rayQuery(0)
+gkMouseSensor::gkMouseSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
+:       gkLogicSensor(object, link, name), m_type(MOUSE_NILL), m_rayQuery(0)
 {
     // connect to dispatcher
     gkLogicManager::getSingleton().getDispatcher(DIS_MOUSE).connect(this);

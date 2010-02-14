@@ -24,22 +24,43 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "gkAlwaysSensor.h"
-#include "gkLogicManager.h"
-#include "gkLogicDispatcher.h"
+#include "gkStateActuator.h"
+#include "gkLogicLink.h"
 
-gkAlwaysSensor::gkAlwaysSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
-:       gkLogicSensor(object, link, name)
-{
-    gkLogicManager::getSingleton().getDispatcher(DIS_CONSTANT).connect(this);
-}
 
-gkAlwaysSensor::~gkAlwaysSensor()
+gkStateActuator::gkStateActuator(gkGameObject *object, gkLogicLink *link, const gkString &name)
+:       gkLogicActuator(object, link, name), m_stateMask(0), m_op(OP_NILL)
 {
 }
 
-
-bool gkAlwaysSensor::query(void)
+gkStateActuator::~gkStateActuator()
 {
-    return true;
 }
+
+void gkStateActuator::execute(void)
+{
+    int cur = m_link->getState(), next = 0;
+
+    switch (m_op)
+    {
+    case OP_ADD:
+        next = cur | m_stateMask;
+        break;
+    case OP_SUB: 
+        next = cur & ~m_stateMask;
+        break;
+    case OP_CPY: 
+        next = m_stateMask;
+        break;
+    case OP_INV: 
+        next = cur ^ m_stateMask;
+        break;
+    case OP_NILL:
+    default:
+        break;
+    }
+
+    if (next != cur)
+        m_link->setState(next);
+}
+

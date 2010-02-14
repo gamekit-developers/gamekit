@@ -30,8 +30,7 @@
 #include "gkLogicActuator.h"
 
 
-
-gkLogicLink::gkLogicLink()
+gkLogicLink::gkLogicLink() : m_state(0)
 {
 }
 

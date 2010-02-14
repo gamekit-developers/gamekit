@@ -48,7 +48,7 @@ protected:
 
 public:
 
-    gkMotionActuator(gkGameObject *object, const gkString &name);
+    gkMotionActuator(gkGameObject *object, gkLogicLink *link, const gkString &name);
     virtual ~gkMotionActuator();
 
 

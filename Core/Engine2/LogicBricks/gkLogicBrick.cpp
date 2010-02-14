@@ -27,8 +27,8 @@
 #include "gkLogicBrick.h"
 
 
-gkLogicBrick::gkLogicBrick(gkGameObject *object, const gkString &name) 
-:       m_object(object), m_name(name)
+gkLogicBrick::gkLogicBrick(gkGameObject *object, gkLogicLink *link, const gkString &name) 
+:       m_object(object), m_name(name), m_link(link)
 {
 }
 
