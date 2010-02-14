@@ -28,6 +28,6 @@
 
 
 gkLogicController::gkLogicController(gkGameObject *object, const gkString &name)
-:       gkLogicBrick(object, name), m_isGate(false)
+:       gkLogicBrick(object, name), m_isGate(false), m_priority(false)
 {
 }

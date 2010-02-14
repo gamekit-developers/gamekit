@@ -48,7 +48,7 @@ protected:
 
     int     m_freq, m_tick, m_pulse;
     bool    m_invert, m_positive, m_suspend, m_tap;
-
+    bool    m_sorted;
 
 public:
 

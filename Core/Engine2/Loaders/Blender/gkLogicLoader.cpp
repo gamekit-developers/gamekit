@@ -178,6 +178,8 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
 
                 }
             }
+
+            lc->setPriority((bcont->flag & CONT_PRIO) != 0);
             lnk->push(lc);
         }
     }

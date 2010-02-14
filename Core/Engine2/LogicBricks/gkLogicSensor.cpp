@@ -31,7 +31,7 @@
 
 gkLogicSensor::gkLogicSensor(gkGameObject *object, const gkString &name)
 :       gkLogicBrick(object, name), m_freq(0), m_tick(0), m_pulse(PULSE_NONE), m_invert(false), m_positive(false),
-        m_suspend(false), m_tap(false)
+        m_suspend(false), m_tap(false), m_sorted(false)
 {
 }
 
@@ -77,11 +77,25 @@ void gkLogicSensor::tick(void)
     }
 }
 
+
+typedef gkLogicController* T;
+bool gkLogicSensor_gSort(const T &a, const T &b)
+{
+    return a->getPriority() > b->getPriority();
+}
+
+
 void gkLogicSensor::dispatch(void)
 {
     if (!m_controllers.empty())
     {
         // send signal to all controllers
+
+        if (!m_sorted)
+        {
+            m_sorted = true;
+            m_controllers.sort(gkLogicSensor_gSort);
+        }
 
         utListIterator<Controllers> it(m_controllers);
         while (it.hasMoreElements())

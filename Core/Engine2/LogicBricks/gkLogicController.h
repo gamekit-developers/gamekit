@@ -41,6 +41,7 @@ protected:
     Sensors     m_sensors;
     Actuators   m_actuators;
     bool        m_isGate;
+    bool        m_priority;
 
 public:
 
@@ -53,8 +54,10 @@ public:
     // Process incoming events, handle then pass to actuators.
     virtual void relay(void) = 0;
 
-    GK_INLINE void setGate(bool v)  {m_isGate = v;}
-    GK_INLINE bool isGate(void)     {return m_isGate;}
+    GK_INLINE void setGate(bool v)      {m_isGate = v;}
+    GK_INLINE bool isGate(void)         {return m_isGate;}
+    GK_INLINE void setPriority(bool v)  {m_priority = v;}
+    GK_INLINE int getPriority(void)     {return m_priority ? 1 : 0;}
 };
 
 

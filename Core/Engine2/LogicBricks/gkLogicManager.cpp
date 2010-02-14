@@ -85,14 +85,12 @@ gkLogicLink *gkLogicManager::createLink(void)
 
 void gkLogicManager::update(gkScalar delta)
 {
-    // call event dispatchers 
     if (m_dispatchers) 
     {
         for (int i=0; i<DIS_MAX; ++ i) 
             m_dispatchers[i]->dispatch();
     }
 
-    // dispatch in the order recieved
     while (!m_sensorStack.empty())
     {
         m_sensorStack.top()->dispatch();
