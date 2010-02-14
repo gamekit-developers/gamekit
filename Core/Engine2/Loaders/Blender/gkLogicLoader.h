@@ -24,33 +24,49 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkSceneLoader_h_
-#define _gkSceneLoader_h_
+#ifndef _gkLogicLoader_h_
+#define _gkLogicLoader_h_
+
 
 #include "gkLoaderCommon.h"
-#include "gkObject.h"
 
-class gkDynamicsWorld;
-class gkSkyBoxGradient;
-class gkLogicLoader;
-
-class gkSceneObjectLoader : public gkObject::Loader
+namespace Blender
 {
-public:
-    gkSceneObjectLoader(gkBlendFile *fp, Blender::Scene *scene);
-    virtual ~gkSceneObjectLoader();
+class bController;
+class bActuator;
+}
+class gkLogicLink;
+class gkLogicSensor;
+class gkLogicController;
 
-    void load(gkObject* ob);
 
+
+// Convert Blender's logic brick system.
+class gkLogicLoader
+{
 protected:
-    void loadObject(gkLogicLoader &ll, gkScene *current, Blender::Object *ob);
-    void createRigidBody(gkDynamicsWorld *dyn, gkGameObject *obj, Blender::Object *ob);
-    void loadSkyBox(void);
 
-    gkSkyBoxGradient *m_grad;
-    gkBlendFile *m_file;
-    Blender::Scene* m_scene;
+    struct ResolveObject
+    {
+        gkLogicSensor* lsens;
+        gkLogicController* lcont;
+        Blender::bController *cont;
+        Blender::bActuator* act;
+    };
+
+    typedef utList<ResolveObject>   ResolveObjectList;
+    typedef utList<gkLogicLink*>    CreatedList;
+
+    ResolveObjectList               m_missing;
+    CreatedList                     m_createdLinks;
+
+public:
+    gkLogicLoader();
+    ~gkLogicLoader();
+
+    void convertObject(Blender::Object *bobj, gkGameObject *gobj);
+    void resolveLinks(void);
 };
 
 
-#endif//_gkSceneLoader_h_
+#endif//_gkLogicLoader_h_

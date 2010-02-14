@@ -53,6 +53,8 @@
 #include "gkSkeletonLoader.h"
 #include "gkLoaderUtils.h"
 #include "gkBlenderSkyBox.h"
+#include "gkLogicLoader.h"
+#include "gkLogicManager.h"
 
 #include "gkDynamicsWorld.h"
 #include "gkRigidBody.h"
@@ -130,6 +132,11 @@ void gkSceneObjectLoader::load(gkObject* baseClass)
         scene->createWorld();
 
 
+    // clear on reload
+    gkLogicManager::getSingleton().clear();
+    gkLogicLoader gameLogicLoader;
+
+
     for (Blender::Base *base = (Blender::Base*)m_scene->base.first; base; base = base->next)
     {
         if (!base->object) continue;
@@ -142,7 +149,8 @@ void gkSceneObjectLoader::load(gkObject* baseClass)
         if (!(ob->lay & m_scene->lay)) continue;
 
 
-        loadObject(scene, base->object);
+        loadObject(gameLogicLoader, scene, base->object);
+
 
         if (ob->parent)
         {
@@ -153,9 +161,12 @@ void gkSceneObjectLoader::load(gkObject* baseClass)
                     scene->getObject(GKB_IDNAME(ob))->setParent(parob);
             }
         }
-
         // TODO DupliGroups
     }
+
+    // resolve crosslinks
+    gameLogicLoader.resolveLinks();
+
 }
 
 void gkSceneObjectLoader::loadSkyBox()
@@ -177,7 +188,8 @@ void gkSceneObjectLoader::loadSkyBox()
 
 }
 
-void gkSceneObjectLoader::loadObject(gkScene *current, Blender::Object *ob)
+
+void gkSceneObjectLoader::loadObject(gkLogicLoader &gameLogicLoader, gkScene *current, Blender::Object *ob)
 {
     gkHashedString str = GKB_IDNAME(ob);
 
@@ -233,6 +245,7 @@ void gkSceneObjectLoader::loadObject(gkScene *current, Blender::Object *ob)
     {
         // apply physics  
         createRigidBody(current->getDynamicsWorld(), current->getObject(str), ob);
+        gameLogicLoader.convertObject(ob, current->getObject(str));
     }
 }
 

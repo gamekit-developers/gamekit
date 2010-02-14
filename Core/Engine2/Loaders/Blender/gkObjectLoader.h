@@ -50,7 +50,6 @@ protected:
     void setSkeleton(gkGameObject *ob);
 
     void setConstraints(gkGameObject *ob);
-    void setLogic(gkGameObject *ob);
     void setProperties(gkGameObject *ob);
 
 

@@ -180,6 +180,7 @@ set(Blend_SOURCE
     Loaders/Blender/gkLoaderUtils.cpp
     Loaders/Blender/gkMaterialLoader.cpp
     Loaders/Blender/gkMeshLoader.cpp
+    Loaders/Blender/gkLogicLoader.cpp
     Loaders/Blender/gkObjectLoader.cpp
     Loaders/Blender/gkSceneLoader.cpp
     Loaders/Blender/gkSkeletonLoader.cpp
@@ -197,6 +198,7 @@ set(Blend_HEADER
     Loaders/Blender/gkMaterialLoader.h
     Loaders/Blender/gkMeshLoader.h
     Loaders/Blender/gkMeshUtils.h
+    Loaders/Blender/gkLogicLoader.h
     Loaders/Blender/gkObjectLoader.h
     Loaders/Blender/gkSceneLoader.h
     Loaders/Blender/gkSkeletonLoader.h

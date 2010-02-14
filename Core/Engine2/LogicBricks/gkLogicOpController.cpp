@@ -38,6 +38,11 @@ gkLogicOpController::gkLogicOpController(gkGameObject *object, const gkString &n
 
 void gkLogicOpController::relay(void)
 {
+    if (m_actuators.empty()) {
+        // undefined
+        return;
+    }
+
     bool execAct = false;
 
 
@@ -168,7 +173,7 @@ void gkLogicOpController::relay(void)
                 }
             }
             break;
-        case OP_XNOR: {// XNOR: OR & open gate, then invert XOR
+        case OP_XNOR: { // XNOR: OR & open gate, then invert XOR
                 if (!m_isGate) {
 
                     utListIterator<Sensors> it(m_sensors);
@@ -214,7 +219,7 @@ void gkLogicOpController::relay(void)
         }
     }
 
-    if (execAct && !m_actuators.empty()) {
+    if (execAct) {
         gkLogicManager &mgr = gkLogicManager::getSingleton();
 
         utListIterator<Actuators> it(m_actuators);

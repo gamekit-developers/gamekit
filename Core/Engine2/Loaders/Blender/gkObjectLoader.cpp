@@ -52,18 +52,6 @@
 #include "gkLimitLocConstraint.h"
 #include "gkLimitRotConstraint.h"
 
-// GameLogic
-#include "gkLogicLink.h"
-#include "gkLogicManager.h"
-#include "gkLogicSensor.h"
-#include "gkLogicController.h"
-#include "gkLogicActuator.h"
-
-#include "gkAlwaysSensor.h"
-#include "gkMouseSensor.h"
-#include "gkLogicOpController.h"
-#include "gkMotionActuator.h"
-
 
 #include "btBulletDynamicsCommon.h"
 #include "BulletCollision/Gimpact/btGImpactShape.h"
@@ -136,175 +124,13 @@ void gkGameObjectLoader::load(gkObject *baseClass)
 
     setConstraints(ob);
     setProperties(ob);
-    setLogic(ob);
 }
-
-
-void gkGameObjectLoader::setLogic(gkGameObject *ob)
-{
-    GK_ASSERT(ob && m_object);
-
-    if (!m_object->sensors.first && !m_object->controllers.first && !m_object->actuators.first)
-        return;
-
-    gkLogicManager *rlm = gkLogicManager::getSingletonPtr();
-    gkLogicLink *lnk = rlm->createLink();
-
-
-
-    for (Blender::bActuator *bact = (Blender::bActuator*)m_object->actuators.first; bact; bact = bact->next)
-    {
-        gkLogicActuator *la = 0;
-        switch (bact->type)
-        {
-        case ACT_OBJECT:
-            {
-                gkMotionActuator *ma = new gkMotionActuator(ob, bact->name);
-                la = ma;
-
-                Blender::bObjectActuator *objact = (Blender::bObjectActuator*)bact->data;
-                ma->setRot(gkVector3(objact->drot.x, objact->drot.y, objact->drot.z), (objact->flag & ACT_DROT_LOCAL) != 0);
-                ma->setLoc(gkVector3(objact->dloc.x, objact->dloc.y, objact->dloc.z), (objact->flag & ACT_DLOC_LOCAL) != 0);
-
-            }
-            break;
-        }
-
-        if (la)
-            lnk->push(la);
-
-    }
-
-
-    for (Blender::bController *bcont = (Blender::bController*)m_object->controllers.first; bcont; bcont = bcont->next)
-    {
-        gkLogicController *lc = 0;
-        switch (bcont->type)
-        {
-        case CONT_LOGIC_OR:
-        case CONT_LOGIC_XOR:
-        case CONT_LOGIC_AND:
-        case CONT_LOGIC_NAND:
-        case CONT_LOGIC_NOR:
-        case CONT_LOGIC_XNOR:
-            {
-                gkLogicOpController *ac = new gkLogicOpController(ob, bcont->name);
-                if (bcont->type == CONT_LOGIC_OR)
-                    ac->setOp(gkLogicOpController::OP_OR);
-                else if (bcont->type == CONT_LOGIC_XOR)
-                    ac->setOp(gkLogicOpController::OP_XOR);
-                else if (bcont->type == CONT_LOGIC_AND)
-                    ac->setOp(gkLogicOpController::OP_AND);
-                else if (bcont->type == CONT_LOGIC_NAND)
-                    ac->setOp(gkLogicOpController::OP_NAND);
-                else if (bcont->type == CONT_LOGIC_NOR)
-                    ac->setOp(gkLogicOpController::OP_NOR);
-                else if (bcont->type == CONT_LOGIC_XNOR)
-                    ac->setOp(gkLogicOpController::OP_XNOR);
-                lc = ac;
-            }
-            break;
-        }
-
-        if (lc)
-        {
-            for (int i = 0; i < bcont->totlinks; ++i)
-            {
-                Blender::bActuator *a = bcont->links[i];
-                if (a)
-                {
-                    gkLogicActuator *la = lnk->findActuator(a->name);
-                    if (la) lc->link(la);
-                }
-            }
-
-            lnk->push(lc);
-        }
-    }
-
-
-    for (Blender::bSensor *bsen = (Blender::bSensor*)m_object->sensors.first; bsen; bsen = bsen->next)
-    {
-        gkLogicSensor *ls = 0;
-        switch (bsen->type)
-        {
-        case SENS_ALWAYS:
-            {
-                gkAlwaysSensor *asn = new gkAlwaysSensor(ob, bsen->name);
-                ls = asn;
-            }
-            break;
-        case SENS_MOUSE:
-            {
-                gkMouseSensor *ms = new gkMouseSensor(ob, bsen->name);
-                ls = ms;
-
-                Blender::bMouseSensor *mse = (Blender::bMouseSensor*)bsen->data;
-
-                int type = 0;
-                if (mse->type == BL_SENS_MOUSE_LEFT_BUTTON)
-                    type = gkMouseSensor::MOUSE_LEFT;
-                else if (mse->type == BL_SENS_MOUSE_MIDDLE_BUTTON)
-                    type = gkMouseSensor::MOUSE_MIDDLE;
-                else if (mse->type == BL_SENS_MOUSE_RIGHT_BUTTON)
-                    type = gkMouseSensor::MOUSE_RIGHT;
-                else if (mse->type == BL_SENS_MOUSE_WHEEL_UP)
-                    type = gkMouseSensor::MOUSE_WHEEL_UP;
-                else if (mse->type == BL_SENS_MOUSE_WHEEL_DOWN)
-                    type = gkMouseSensor::MOUSE_WHEEL_DOWN;
-                else if (mse->type == BL_SENS_MOUSE_MOVEMENT)
-                    type = gkMouseSensor::MOUSE_MOTION;
-                else if (mse->type == BL_SENS_MOUSE_MOUSEOVER)
-                    type = gkMouseSensor::MOUSE_MOUSE_OVER;
-                else if (mse->type == BL_SENS_MOUSE_MOUSEOVER_ANY)
-                    type = gkMouseSensor::MOUSE_MOUSE_OVER_ANY;
-
-                ms->setType(type);
-            }
-            break;
-        }
-
-        if (ls)
-        {
-            for (int i = 0; i < bsen->totlinks; ++i)
-            {
-                Blender::bController *c = bsen->links[i];
-                if (c)
-                {
-                    gkLogicController *lc = lnk->findController(c->name);
-                    if (lc)
-                    {
-                        ls->link(lc);
-                        lc->link(ls);
-                    }
-                }
-            }
-
-            ls->setTap(bsen->tap != 0);
-            ls->setFrequency(bsen->freq);
-            ls->invert(bsen->invert != 0);
-            int pulse = gkLogicSensor::PULSE_NONE;
-
-            if (bsen->pulse & SENS_PULSE_REPEAT)
-                pulse |= gkLogicSensor::PULSE_POSITIVE;
-            if (bsen->pulse & SENS_NEG_PULSE_MODE)
-                pulse |= gkLogicSensor::PULSE_NEGATIVE;
-
-            ls->setMode(pulse);
-            lnk->push(ls);
-        }
-    }
-
-}
-
 
 void gkGameObjectLoader::setProperties(gkGameObject *ob)
 {
     GK_ASSERT(ob && m_object);
 
     // Attach variables to object ( used in game logic )
-
-
     for (Blender::bProperty *prop = (Blender::bProperty*)m_object->prop.first; prop; prop = prop->next)
     {
         gkVariable *gop = 0;
