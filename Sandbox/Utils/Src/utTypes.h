@@ -218,6 +218,14 @@ public:
     typedef T& ReferenceType;
     typedef const T& ConstReferenceType;
 
+    void swap(Link *a, Link *b)
+    {
+        ValueType v = a->link;
+        a->link = b->link;
+        b->link = v;
+    }
+
+
 public:
 
     // default constructor
@@ -340,6 +348,26 @@ public:
 
         m_size -= 1;
         delete link;
+    }
+
+    // Bubble sort 
+    void sort(bool (*cmp)(const T& a, const T& b))
+    {
+        UTsize i, n=m_size;
+        Link *a;
+        bool swapped = false;
+        if (n < 2 || !cmp)
+            return;
+        do {
+            a = m_first;
+            for (i=0; a && a->next && i<n-1; i++, a = a->next) {
+                if (cmp(a->link, a->next->link)) {
+                    swap(a, a->next);
+                    swapped = true;
+                }
+            }
+            n-=1;
+        } while (swapped && n != UT_NPOS);
     }
 
     UT_INLINE void pop_back(void)       { erase(end()); }
