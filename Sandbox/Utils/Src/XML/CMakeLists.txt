@@ -9,4 +9,6 @@ source_group(expat FILES ${UT_EXPAT_H} ${UT_EXPAT_S})
 
 add_definitions(-DHAVE_EXPAT_CONFIG_H -DXML_STATIC)
 include_directories(. ../ expat)
+link_libraries(Utils) 
+
 add_library(UtilsXML ${UT_XML} ${UT_EXPAT_H} ${UT_EXPAT_S})
