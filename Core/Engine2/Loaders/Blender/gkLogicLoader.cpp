@@ -115,9 +115,18 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
 
     }
 
+    int uuid = 0;
 
     for (Blender::bController *bcont = (Blender::bController*)bobj->controllers.first; bcont; bcont = bcont->next)
     {
+        // might be a bug in blender, but 
+        // sometimes controller names are not unique
+        // if user lookup on the controller name is not undefined,
+        // this will need to change, I'm trying to avoid 
+        // lookup maps by storing a ptr to the controller  
+        sprintf(bcont->name, "%s_%i", bcont->name, (uuid++));
+
+
         gkLogicController *lc = 0;
         switch (bcont->type)
         {
@@ -148,9 +157,10 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
 
         if (lc)
         {
-            int i;
 
-            for (i = 0; i < bcont->totlinks; ++i)
+
+
+            for (int i = 0; i < bcont->totlinks; ++i)
             {
                 Blender::bActuator *a = bcont->links[i];
                 if (a)
