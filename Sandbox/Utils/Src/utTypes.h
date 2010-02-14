@@ -28,7 +28,7 @@
 #include "utCommon.h"
 #include <memory.h>
 
-/// List where each link is T. Not as flexible as utList, but requires less memory
+// List where each link is T. Not as flexible as utList, but requires less memory
 template <typename T>
 class utListClass
 {
@@ -44,7 +44,7 @@ public:
     typedef T* ReferenceType;
 
 
-    /// T Links
+    // T Links
     class Link
     {
     protected:
@@ -63,17 +63,17 @@ public:
     };
 public:
 
-    /// default constructor
+    // default constructor
     utListClass() : m_first(0), m_last(0), m_size(0) {}
     ~utListClass() { clear(); }
 
-    /// free links (no memory freed)
+    // free links (no memory freed)
     void clear(void) {
         m_first = m_last = 0;
         m_size = 0;
     }
 
-    /// Pushes an element to the back of the list
+    // Pushes an element to the back of the list
     void push_back(ValueType v) {
         v->m_prev = m_last;
         if (m_last) m_last->m_next = v;
@@ -82,7 +82,7 @@ public:
         m_size ++;
     }
 
-    /// Pushes an element to the front of the list
+    // Pushes an element to the front of the list
     void push_front(ValueType v) {
         v->m_next = m_first;
         if (m_first) m_first->m_prev = v;
@@ -91,7 +91,7 @@ public:
         m_size ++;
     }
 
-    /// Inserts and element
+    // Inserts and element
     void insert(ValueType from, ValueType v) {
         m_size ++;
         if (!m_first) {
@@ -117,7 +117,7 @@ public:
     }
 
 
-    /// find using a linear search (avoid if possible)
+    // find using a linear search (avoid if possible)
     ValueType find(ValueType v) {
         ValueType node = m_first;
         while (node) {
@@ -128,7 +128,7 @@ public:
     }
 
 
-    /// Gets indexed value (using a linear search (avoid if possible))
+    // Gets indexed value (using a linear search (avoid if possible))
     ValueType at(UTsize index) {
         UT_ASSERT(index < m_size);
         UTsize i = 0;
@@ -142,7 +142,7 @@ public:
         return node;
     }
 
-    /// Gets indexed value (using a linear search (avoid if possible))
+    // Gets indexed value (using a linear search (avoid if possible))
     ConstValueType at(UTsize index) const {
         UT_ASSERT(index < m_size);
         UTsize i = 0;
@@ -157,7 +157,7 @@ public:
     }
 
 
-    /// Removes the element (no memory freed)
+    // Removes the element (no memory freed)
     ValueType erase(ValueType v) {
         if (!v || m_size == 0)
             return 0;
@@ -187,7 +187,7 @@ public:
 };
 
 
-/// List where each link is a wrapper of T. More flexible than utListClass, but requires more memory
+// List where each link is a wrapper of T. More flexible than utListClass, but requires more memory
 template <typename T>
 class utList
 {
@@ -220,13 +220,13 @@ public:
 
 public:
 
-    /// default constructor
+    // default constructor
     utList() : m_first(0), m_last(0), m_size(0) {}
     ~utList() { clear(); }
 
 
 
-    /// free links
+    // free links
     void clear(void) {
         Link *node = m_first;
         while (node) {
@@ -238,7 +238,7 @@ public:
         m_size = 0;
     }
 
-    /// Pushes an element to the back of the list
+    // Pushes an element to the back of the list
     UT_INLINE void push_back(const T& v) {
         Link *link = new Link(v);
         link->prev = m_last;
@@ -248,7 +248,7 @@ public:
         m_size ++;
     }
 
-    /// Pushes an element to the front of the list
+    // Pushes an element to the front of the list
     UT_INLINE void push_front(const T& v) {
         Link *link = new Link(v);
         link->next = m_first;
@@ -258,7 +258,7 @@ public:
         m_size ++;
     }
 
-    /// Inserts and element
+    // Inserts and element
     void insert(Pointer from, const T& v) {
         Link *link = new Link(v);
         m_size ++;
@@ -279,7 +279,7 @@ public:
         link->prev = from;
     }
 
-    /// find using a linear search (avoid if possible)
+    // find using a linear search (avoid if possible)
     Pointer find(const T& v) {
         Link *node = m_first;
         while (node) {
@@ -289,7 +289,7 @@ public:
         return 0;
     }
 
-    /// Gets indexed value (using a linear search (avoid if possible))
+    // Gets indexed value (using a linear search (avoid if possible))
     ReferenceType at(UTsize index) {
         UT_ASSERT(index < m_size);
         UTsize i = 0;
@@ -303,7 +303,7 @@ public:
         return node->link;
     }
 
-    /// Gets indexed value (using a linear search (avoid if possible))
+    // Gets indexed value (using a linear search (avoid if possible))
     ConstReferenceType at(UTsize index) const {
         UT_ASSERT(index < m_size);
         UTsize i = 0;
@@ -317,7 +317,7 @@ public:
         return node->link;
     }
 
-    /// Gets indexed link (using a linear search (avoid if possible))
+    // Gets indexed link (using a linear search (avoid if possible))
     Pointer link_at(UTsize index) {
         UTsize i = 0;
         Link *node = m_first;
@@ -329,7 +329,7 @@ public:
         return 0;
     }
 
-    /// Removes the element
+    // Removes the element
     void erase(Pointer link) {
         if (!link || m_size == 0)
             return;
@@ -366,7 +366,7 @@ protected:
     UTsize      m_size;
 };
 
-/// List iterator access, Similar to Ogre iterator wrappers
+// List iterator access, Similar to Ogre iterator wrappers
 
 template <typename T>
 class utListIterator
@@ -383,10 +383,10 @@ protected:
 
 public:
 
-    /// Construct with list front
+    // Construct with list front
     utListIterator(Iterator first) : m_iterator(first), m_cur(first) {}
 
-    /// Construct with reference to the list
+    // Construct with reference to the list
     utListIterator(T& v) : m_iterator(v.begin()), m_cur(v.begin()) { }
     ~utListIterator() {}
 
@@ -408,7 +408,7 @@ public:
 };
 
 
-/// List reverse iterator access, Similar to Ogre iterator wrappers
+// List reverse iterator access, Similar to Ogre iterator wrappers
 template <typename T>
 class utListReverseIterator
 {
@@ -422,10 +422,10 @@ protected:
     Iterator    m_cur;
 
 public:
-    /// Construct with list back
+    // Construct with list back
     utListReverseIterator(Iterator last) : m_iterator(last), m_cur(last) {}
 
-    /// Construct with reference to the list
+    // Construct with reference to the list
     utListReverseIterator(T& v) : m_iterator(v.end()), m_cur(v.end()) {}
     ~utListReverseIterator() {}
 
@@ -447,7 +447,7 @@ public:
 };
 
 
-/// Simple array access, similar to std::vector
+// Simple array access, similar to std::vector
 template <typename T>
 class utArray
 {
@@ -458,10 +458,10 @@ public:
 
 public:
 
-    /// Empty constructor
+    // Empty constructor
     utArray() : m_size(0), m_capacity(0), m_data(0) {}
 
-    /// Array copy constructor (avoid where possible, pass by reference instead)
+    // Array copy constructor (avoid where possible, pass by reference instead)
     utArray(const utArray<T>& o) :
             m_size(o.size()), m_capacity(0), m_data(0) {
         reserve(m_size);
@@ -470,7 +470,7 @@ public:
 
     ~utArray() { clear(); }
 
-    /// Free used buffers
+    // Free used buffers
     void clear(void) {
         if (m_data)
             delete []m_data;
@@ -479,7 +479,7 @@ public:
         m_size = 0;
     }
 
-    /// Find using linear search
+    // Find using linear search
     UTsize find(const T& v) {
         for (UTsize i = 0; i < m_size; i++) {
             if (m_data[i] == v)
@@ -489,7 +489,7 @@ public:
     }
 
 
-    /// Appends an element to the back of the array
+    // Appends an element to the back of the array
     UT_INLINE void push_back(const T& v) {
         if (m_size == m_capacity)
             reserve(m_size == 0 ? 8 : m_size * 2);
@@ -499,13 +499,13 @@ public:
     }
 
 
-    /// Removes the last element
+    // Removes the last element
     UT_INLINE void pop_back(void) {
         m_size--;
         m_data[m_size].~T();
     }
 
-    /// Expands the buffer
+    // Expands the buffer
     void resize(UTsize nr) {
         if (nr < m_size) {
             for (UTsize i = m_size; i < nr; i++)
@@ -518,7 +518,7 @@ public:
     }
 
 
-    /// Expands the buffer and fills empty data
+    // Expands the buffer and fills empty data
     void resize(UTsize nr, const T& fill) {
         if (nr < m_size) {
             for (UTsize i = m_size; i < nr; i++)
@@ -534,7 +534,7 @@ public:
     }
 
 
-    /// Allocate buffers
+    // Allocate buffers
     void reserve(UTsize nr) {
 
         if (m_capacity < nr) {
@@ -573,7 +573,7 @@ public:
     UT_INLINE bool empty(void) const                { return m_size == 0;}
 
 
-    /// Assignment operator (avoid where possible, pass by reference instead)
+    // Assignment operator (avoid where possible, pass by reference instead)
     utArray<T> &operator= (const utArray<T> &o) {
         clear();
         UTsize os = o.size();
@@ -585,7 +585,7 @@ public:
     }
 
 
-    /// Copy buffers
+    // Copy buffers
     UT_INLINE void copy(Pointer dst, ConstPointer src, UTsize size) {
         UT_ASSERT(size <= m_size);
         for (UTsize i = 0; i < size; i++) dst[i] = src[i];
@@ -599,7 +599,7 @@ protected:
 
 
 
-/// Array iterator access, Similar to Ogre iterator wrappers
+// Array iterator access, Similar to Ogre iterator wrappers
 template <typename T>
 class utArrayIterator
 {
@@ -607,7 +607,7 @@ public:
 
     typedef typename T::Pointer Iterator;
 
-    /// T::ValueType as reference
+    // T::ValueType as reference
     typedef typename T::ValueType& ValueType;
 
 
@@ -619,10 +619,10 @@ protected:
 public:
     utArrayIterator() {}
 
-    /// Construct with array pointer and size
+    // Construct with array pointer and size
     utArrayIterator(Iterator begin, UTsize size) : m_iterator(begin), m_cur(0), m_capacity(size) {}
 
-    /// Construct with reference to the array
+    // Construct with reference to the array
     utArrayIterator(T& v) : m_iterator(v.ptr()), m_cur(0), m_capacity(v.size()) { UT_ASSERT(v.valid()); }
     ~utArrayIterator() {}
 
@@ -744,7 +744,7 @@ public:
     UT_INLINE ValueType getNext(void) {
         UT_ASSERT((m_iterator && (m_top - 1) != UT_NPOS));
         --m_top;
-        return m_iterator[m_top+1];
+        return m_iterator[m_top];
     }
 
     UT_INLINE void next(void) {
@@ -754,8 +754,8 @@ public:
 
 
     UT_INLINE ValueType peekNext(void) {
-        UT_ASSERT((m_iterator && (m_top) != UT_NPOS));
-        return m_iterator[m_top];
+         UT_ASSERT((m_iterator && (m_top - 1) != UT_NPOS));
+        return m_iterator[m_top-1];
     }
 
 protected:
@@ -765,7 +765,7 @@ protected:
 };
 
 
-/// Integer hash
+// Integer hash
 class utIntHashKey
 {
 protected:
@@ -775,10 +775,10 @@ protected:
 public:
     utIntHashKey() : m_key(0), m_hash(UT_NPOS) {}
 
-    /// Key Constructor
+    // Key Constructor
     utIntHashKey(UTint32 k) : m_key(k), m_hash(UT_NPOS) {hash();}
 
-    /// Copy constructor
+    // Copy constructor
     utIntHashKey(const utIntHashKey& k) : m_key(k.m_key), m_hash(k.m_hash) {}
 
 
@@ -794,7 +794,7 @@ public:
 };
 
 
-/// Pointer hash
+// Pointer hash
 class utPointerHashKey
 {
 protected:
@@ -804,10 +804,10 @@ protected:
 public:
     utPointerHashKey() : m_key(0), m_hash(UT_NPOS) {}
 
-    /// Key Constructor
+    // Key Constructor
     utPointerHashKey(void* k) : m_key(k), m_hash(UT_NPOS) {hash();}
 
-    /// Copy constructor
+    // Copy constructor
     utPointerHashKey(const utPointerHashKey& k) : m_key(k.m_key), m_hash(k.m_hash) {}
 
 
@@ -825,7 +825,7 @@ public:
 
 
 
-/// Char hash
+// Char hash
 class utCharHashKey
 {
 protected:
@@ -835,18 +835,18 @@ protected:
 public:
     utCharHashKey() : m_key(0), m_hash(UT_NPOS) {}
 
-    /// Key Constructor
+    // Key Constructor
     utCharHashKey(char* k) : m_key(k), m_hash(UT_NPOS) {hash();}
     utCharHashKey(const char* k) : m_key(const_cast<char*>(k)), m_hash(UT_NPOS) {}
 
-    /// Copy constructor
+    // Copy constructor
     utCharHashKey(const utCharHashKey& k) : m_key(k.m_key), m_hash(k.m_hash) {}
 
 
     UThash hash(void) const {
         if (!m_key) return UT_NPOS;
 
-        /// use cached hash
+        // use cached hash
         if (m_hash != UT_NPOS) return m_hash;
 
         // Lifted from btHashMap.h
@@ -872,7 +872,7 @@ public:
 };
 
 
-/// KeyValue pair
+// KeyValue pair
 template<typename Key, typename Value>
 struct utHashEntry {
     Key first;
@@ -881,7 +881,7 @@ struct utHashEntry {
     utHashEntry() {}
     utHashEntry(const Key &k, const Value& v) : first(k), second(v) {}
 
-    /// Assign hash entry
+    // Assign hash entry
     UT_INLINE const utHashEntry& operator=(const utHashEntry& o) {
         first = o.first;
         second = o.second;
@@ -890,8 +890,8 @@ struct utHashEntry {
 };
 
 
-/// Simple hash map access, similar to btHashMap
-/// http://code.google.com/p/bullet/
+// Simple hash map access, similar to btHashMap
+// http://code.google.com/p/bullet/
 template < typename Key, typename Value, UTsize table_size = 128 >
 class utHashTable
 {
@@ -908,19 +908,19 @@ public:
     typedef const Value&    ConstReferenceValueType;
 
 
-    /// Pointer access
+    // Pointer access
     typedef typename EntryArray::Pointer Pointer;
     typedef typename EntryArray::ConstPointer ConstPointer;
 
 public:
 
-    /// Empty constructor
+    // Empty constructor
     utHashTable() : m_size(0), m_capacity(0), m_lastPos(UT_NPOS) {}
 
-    /// construct table with an initial size
+    // construct table with an initial size
     utHashTable(UTsize capacity) : m_size(0), m_capacity(0), m_lastPos(UT_NPOS) { rehash(capacity ? capacity : 0); }
 
-    /// Table copy constructor (avoid where possible, pass by reference instead)
+    // Table copy constructor (avoid where possible, pass by reference instead)
     utHashTable(const utHashTable& o): m_size(0), m_capacity(0), m_lastPos(UT_NPOS) {
 
         if (o.m_capacity != UT_NPOS && o.m_capacity != 0 && o.m_size > 0) {
@@ -943,7 +943,7 @@ public:
     ~utHashTable() { clear(); }
 
 
-    /// Free used buffers
+    // Free used buffers
     void clear(void) {
         m_size = m_capacity = 0;
         m_lastPos = UT_NPOS;
@@ -960,7 +960,7 @@ public:
     ConstReferenceValueType at(UTsize i)const               { UT_ASSERT(i < m_size); return (m_buckets.ptr()[i]).second; }
     ConstReferenceValueType operator [](UTsize i) const     { UT_ASSERT(i < m_size); return (m_buckets.ptr()[i]).second; }
 
-    /// Find and cache key
+    // Find and cache key
     ReferenceValueType get(const Key &key) const {
 
         UT_ASSERT(!m_buckets.empty());
@@ -980,7 +980,7 @@ public:
     ReferenceValueType operator [](const Key &key) const { return get(key); }
 
 
-    /// Return array index to key
+    // Return array index to key
     UTsize find(const Key &key) const {
 
         if (m_capacity == 0 || m_capacity == UT_NPOS || m_buckets.empty())
@@ -1003,7 +1003,7 @@ public:
         return fh;
     }
 
-    /// Removes element from the table
+    // Removes element from the table
     void remove(const Key &key) {
 
         UTsize kp = find(key);
@@ -1067,7 +1067,7 @@ public:
 
     }
 
-    /// Appends an element to the table
+    // Appends an element to the table
     void insert(const Key& key, const Value &val) {
 
         if (m_capacity == UT_NPOS || find(key) != UT_NPOS)
@@ -1105,7 +1105,7 @@ public:
     UT_INLINE bool empty(void) const        { return m_size == 0; }
 
 
-    /// Allocate buffers
+    // Allocate buffers
     void reserve(UTsize nr) {
         if (m_capacity < nr)
             rehash(nr);
@@ -1115,7 +1115,7 @@ public:
 protected:
 
 
-    /// Allocate buffers and re-hash
+    // Allocate buffers and re-hash
 
     void rehash(UTsize nr) {
 
@@ -1158,7 +1158,7 @@ protected:
 
 
 
-/// Table iterator access, Similar to Ogre iterator wrappers
+// Table iterator access, Similar to Ogre iterator wrappers
 template <typename T>
 class utHashTableIterator
 {
@@ -1177,10 +1177,10 @@ protected:
 
 public:
 
-    /// Construct with table pointer and size
+    // Construct with table pointer and size
     utHashTableIterator(Iterator begin, UTsize size) : m_iterator(begin), m_cur(0), m_capacity(size) { }
 
-    /// Construct with reference to the table
+    // Construct with reference to the table
     utHashTableIterator(T& v) : m_iterator(v.ptr()), m_cur(0), m_capacity(v.size()) {}
 
     ~utHashTableIterator() {}

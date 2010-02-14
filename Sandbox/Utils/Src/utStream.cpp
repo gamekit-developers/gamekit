@@ -28,7 +28,7 @@
 #include "utStream.h"
 
 #ifdef ZLIB_SUPPORT
-#include "zlib.h"
+#include "ZLib/zlib.h"
 #define FileEOF(f)          gzeof(f)
 #define FileOpen(n, m)      gzopen(n, m)
 #define FileClose(f)        gzclose(f)

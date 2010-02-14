@@ -29,7 +29,7 @@
 #include "utCommon.h"
 
 
-/// base class for all streams
+// base class for all streams
 class utStream
 {
 public:
@@ -55,7 +55,7 @@ public:
 };
 
 
-/// File access stream
+// File access stream
 class utFileStream : public utStream
 {
 protected:

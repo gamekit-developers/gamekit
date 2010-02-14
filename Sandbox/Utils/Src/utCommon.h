@@ -142,7 +142,7 @@ typedef unsigned __int64 UTuint64;
 
 
 
-/// Arch dependent types
+// Arch dependent types
 
 
 
@@ -164,19 +164,19 @@ typedef UTsize UThash;
 // Memory config
 
 
-/// Use standard allocator
+// Use standard allocator
 #define UT_ALLOCATOR_STD    0
 
-/// Use Doug Lea malloc
+// Use Doug Lea malloc
 #define UT_ALLOCATOR_DLE    1
-/// Use Ned malloc
+// Use Ned malloc
 #define UT_ALLOCATOR_NED    2
 
 
-/// Currernt allocator
+// Currernt allocator
 #define UT_ALLOCATOR        UT_ALLOCATOR_STD
 
-/// Debug tracking
+// Debug tracking
 #define UT_ALLOC_TRACK      0
 
 

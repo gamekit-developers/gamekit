@@ -37,11 +37,11 @@
 #define utCharEqL(a, b, l)  ((a && b) && (*a == *b) && !strncmp(a, b, l))
 
 
-/// Some day I will write a reusable string class
+// Some day I will write a reusable string class
 typedef std::string utString;
 typedef utArray<utString> utStringArray;
 
-/// utString utility functions
+// utString utility functions
 class utStringUtils
 {
 public:
@@ -55,7 +55,7 @@ public:
 };
 
 
-/// For operations on a fixed size character array
+// For operations on a fixed size character array
 template <const UTuint16 L>
 class utFixedString
 {
@@ -66,10 +66,10 @@ public:
 
 
 public:
-    /// Empty constructor
+    // Empty constructor
     utFixedString() : m_size(0) { m_buffer[m_size] = 0;}
 
-    /// Copy constructor
+    // Copy constructor
     utFixedString(const utFixedString& o) : m_size(0)
     {
         if (o.size())
@@ -83,7 +83,7 @@ public:
         m_buffer[m_size] = 0;
     }
 
-    /// Copy character pointer
+    // Copy character pointer
     utFixedString(const char *o) : m_size(0)
     {
         if (o)
@@ -97,7 +97,7 @@ public:
     }
 
 
-    /// Appends charcters upto max (L)
+    // Appends charcters upto max (L)
     UT_INLINE void push_back(char ch)
     {
         if (m_size >= L) return;
@@ -106,7 +106,7 @@ public:
     }
 
 
-    /// Nulify size
+    // Nulify size
     void resize(UTuint16 ns)
     {
         if (ns < L)
