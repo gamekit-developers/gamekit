@@ -39,7 +39,15 @@
 #include "gkTextManager.h"
 #include "gkLuaManager.h"
 
-// Temporary class to test out 
+// node tests 
+#include "gkNodeManager.h"
+#include "gkKeyNode.h"
+#include "gkMouseNode.h"
+#include "gkMotionNode.h"
+#include "gkLogicTree.h"
+
+
+// Temporary class to test out
 // various aspects of OgreKit
 class Player
 {
@@ -54,13 +62,13 @@ protected:
 public:
 
 
-    Player(gkScene *scene) 
+    Player(gkScene *scene)
     :       m_scene(scene), m_mesh(0), m_zRot(0), m_xRot(0), m_player(0)
     {
         init();
     }
 
-    ~Player() 
+    ~Player()
     {
     }
 
@@ -86,7 +94,7 @@ public:
         if (m_player->hasMoved())
         {
             gkScalar tol = 0.05;
-            gkVector3 dpos = (m_player->getPosition() - (m_zRot->getPosition()+gkVector3(0, 0, -0.2f))) * tol;
+            gkVector3 dpos = (m_player->getPosition() - (m_zRot->getPosition() + gkVector3(0, 0, -0.2f))) * tol;
             m_zRot->translate(dpos);
         }
 
@@ -119,7 +127,7 @@ public:
             return;
         }
 
-        // default 
+        // default
         m_mesh->playAction("Momo_IdleNasty", 10);
     }
 };
@@ -188,13 +196,13 @@ public:
             m_prefs.blendermat = true;
             m_scene->load();
 
-            // special case temp game logic 
+            // special case temp game logic
             if (!m_player) m_player = new Player(m_scene);
         }
         else
         {
             m_scene->load();
-
+            //test13(m_scene);
         }
 
         // add input hooks
@@ -206,6 +214,34 @@ public:
     void keyReleased(const gkKeyboard& key, const gkScanCode& sc)
     {
         if (sc == KC_ESCKEY) m_engine->requestExit();
+    }
+
+    void test13(gkScene* pScene)
+    {
+        gkCamera* pCamera = pScene->getMainCamera();
+
+        gkLogicTree* pTree = gkNodeManager::getSingleton().create();
+
+        gkLogicNode* pMouseNode = pTree->createNode(NT_MOUSE);
+
+        gkLogicNode* pMathNode = pTree->createNode(NT_MATH);
+
+        pMathNode->getInputSocket(0)->link(pMouseNode->getOutputSocket(1));
+        pMathNode->getInputSocket(1)->link(pMouseNode->getOutputSocket(2));
+
+
+        gkKeyNode* pKeyNode = static_cast<gkKeyNode*>(pTree->createNode(NT_KEY));
+        pKeyNode->getInputSocket(0)->setValue(true);
+        pKeyNode->setKey(KC_AKEY);
+
+        gkLogicNode* pMotionNode = pTree->createNode(NT_MOTION);
+
+        pMotionNode->getInputSocket(0)->link(pKeyNode->getOutputSocket(0));
+        pMotionNode->getInputSocket(1)->link(pMouseNode->getOutputSocket(1));
+        pMotionNode->getInputSocket(2)->link(pMouseNode->getOutputSocket(2));
+
+        pTree->solveOrder();
+        pCamera->attachLogic(pTree);
     }
 
 
@@ -223,7 +259,7 @@ int main(int argc, char **argv)
 {
     char *fname = "momo_ogre.blend";
 
-#if GK_PLATFORM != GK_PLATFORM_APPLE 
+#if GK_PLATFORM != GK_PLATFORM_APPLE
     if (argc > 1)
         fname = argv[argc-1];
 #endif
