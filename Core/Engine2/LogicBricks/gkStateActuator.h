@@ -33,7 +33,6 @@
 class gkStateActuator : public gkLogicActuator
 {
 public:
-
     enum Op
     {
         OP_NILL,
@@ -42,8 +41,6 @@ public:
         OP_CPY,
         OP_INV,
     };
-
-
 protected:
 
     int m_stateMask, m_op;
@@ -57,7 +54,7 @@ public:
     // Handle incoming logic.
     void execute(void);
 
-    GK_INLINE void setStateMask(int v)  {m_stateMask = v;}
+    GK_INLINE void setMask(int v)       {m_stateMask = v;}
     GK_INLINE void setOp(int op)        {m_op = op;}
 };
 

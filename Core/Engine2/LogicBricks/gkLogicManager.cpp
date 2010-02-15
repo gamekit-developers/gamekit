@@ -43,7 +43,7 @@ gkLogicManager::gkLogicManager()
 
 gkLogicManager::~gkLogicManager()
 {
-    for (int i=0; i<DIS_MAX; ++ i)
+    for (int i = 0; i < DIS_MAX; ++ i)
         delete m_dispatchers[i];
 
     delete []m_dispatchers;
@@ -55,17 +55,14 @@ gkLogicManager::~gkLogicManager()
 
 void gkLogicManager::clear(void)
 {
-    if (m_dispatchers)
-    {
+    if (m_dispatchers) {
         getDispatcher(DIS_CONSTANT).clear();
         getDispatcher(DIS_MOUSE).clear();
     }
 
-    if (!m_links.empty())
-    {
+    if (!m_links.empty()) {
         gkLogicLink *node = m_links.begin();
-        while (node)
-        {
+        while (node) {
             gkLogicLink *tmp = node;
             node = node->getNext();
             delete tmp;
@@ -85,28 +82,24 @@ gkLogicLink *gkLogicManager::createLink(void)
 
 void gkLogicManager::update(gkScalar delta)
 {
-    if (m_dispatchers) 
-    {
-        for (int i=0; i<DIS_MAX; ++ i) 
+    if (m_dispatchers) {
+        for (int i = 0; i < DIS_MAX; ++ i)
             m_dispatchers[i]->dispatch();
     }
 
-    while (!m_sensorStack.empty())
-    {
+    while (!m_sensorStack.empty()) {
         m_sensorStack.top()->dispatch();
         m_sensorStack.pop();
     }
 
     utStackIterator<ControllerStack> constant(m_controllerStack);
-    while (constant.hasMoreElements())
-    {
+    while (constant.hasMoreElements()) {
         gkLogicController *cont = constant.getNext();
         GK_ASSERT(cont->isGate());
         cont->relay();
     }
 
-    while (!m_actuatorStack.empty())
-    {
+    while (!m_actuatorStack.empty()) {
         gkLogicActuator *act = m_actuatorStack.top();
         act->execute();
         act->setActive(false);

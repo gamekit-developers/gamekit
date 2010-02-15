@@ -44,8 +44,6 @@ protected:
     gkGameObject*       m_object;
     const gkString      m_name;
     gkLogicLink*        m_link;
-
-
 public:
     gkLogicBrick(gkGameObject *object, gkLogicLink *link, const gkString &name);
     virtual ~gkLogicBrick() {}

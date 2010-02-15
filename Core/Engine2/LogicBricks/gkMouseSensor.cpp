@@ -45,8 +45,7 @@ void gkMouseDispatch::dispatch(void)
 {
     // cannot use listeners here because
     // we need to be able to detect negative events
-    if (!m_sensors.empty())
-    {
+    if (!m_sensors.empty()) {
         utListIterator<SensorList> it(m_sensors);
         while (it.hasMoreElements())
             it.getNext()->tick();
@@ -69,8 +68,7 @@ bool gkMouseSensor::query(void)
 
 
     gkMouse *mse = gkWindowSystem::getSingleton().getMouse();
-    switch (m_type)
-    {
+    switch (m_type) {
     case MOUSE_LEFT:
         return mse->isButtonDown(gkMouse::Left);
     case MOUSE_MIDDLE:
@@ -94,7 +92,7 @@ bool gkMouseSensor::query(void)
 
 bool gkMouseSensor::rayTest(void)
 {
-    // cannot test no movable data, 
+    // cannot test no movable data,
     if (m_type == MOUSE_MOUSE_OVER && (m_object->getType() == GK_OBJECT || m_object->getType() == GK_SKELETON))
         return false;
 
@@ -113,38 +111,30 @@ bool gkMouseSensor::rayTest(void)
     Ogre::Ray dest;
     oc->getCameraToViewportRay(ncx, ncy, &dest);
 
-    if (m_rayQuery == 0)
-    {
+    if (m_rayQuery == 0) {
         Ogre::SceneManager *mgr = m_object->getOwner()->getManager();
         m_rayQuery = mgr->createRayQuery(dest);
-    }
-    else m_rayQuery->setRay(dest);
+    } else m_rayQuery->setRay(dest);
 
 
-    // do the test 
+    // do the test
     Ogre::RaySceneQueryResult &res = m_rayQuery->execute();
 
     bool result = false;
-    for (Ogre::RaySceneQueryResult::iterator it = res.begin(); it != res.end(); ++it)
-    {
+    for (Ogre::RaySceneQueryResult::iterator it = res.begin(); it != res.end(); ++it) {
         Ogre::RaySceneQueryResultEntry ent = (*it);
 
         if (ent.movable == oc)
             continue;
 
 
-        if (ent.movable)
-        {
-            if (m_type == MOUSE_MOUSE_OVER)
-            {
-                if (ent.movable == m_object->getMovable())
-                {
+        if (ent.movable) {
+            if (m_type == MOUSE_MOUSE_OVER) {
+                if (ent.movable == m_object->getMovable()) {
                     result = true;
                     break;
                 }
-            }
-            else
-            {
+            } else {
                 result = true;
                 break;
             }

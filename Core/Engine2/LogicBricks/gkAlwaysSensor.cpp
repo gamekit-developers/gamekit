@@ -33,13 +33,3 @@ gkAlwaysSensor::gkAlwaysSensor(gkGameObject *object, gkLogicLink *link, const gk
 {
     gkLogicManager::getSingleton().getDispatcher(DIS_CONSTANT).connect(this);
 }
-
-gkAlwaysSensor::~gkAlwaysSensor()
-{
-}
-
-
-bool gkAlwaysSensor::query(void)
-{
-    return true;
-}

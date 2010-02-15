@@ -59,8 +59,8 @@ public:
     GK_INLINE bool isGate(void)         {return m_isGate;}
     GK_INLINE void setPriority(bool v)  {m_priority = v;}
     GK_INLINE int getPriority(void)     {return m_priority ? 1 : 0;}
-    GK_INLINE void setStateMask(int v)  {m_stateMask = v;}
-    GK_INLINE int getStateMask(void)    {return m_stateMask;}
+    GK_INLINE void setMask(int v)       {m_stateMask = v;}
+    GK_INLINE int getMask(void)         {return m_stateMask;}
 };
 
 

@@ -29,9 +29,9 @@
 
 
 
-gkMotionActuator::gkMotionActuator(gkGameObject *object, gkLogicLink *link, const gkString &name) 
+gkMotionActuator::gkMotionActuator(gkGameObject *object, gkLogicLink *link, const gkString &name)
 :       gkLogicActuator(object, link, name),
-        m_type(0), m_loc(0,0,0), m_rot(0,0,0), m_locL(false), m_rotL(false)
+        m_type(0), m_loc(0, 0, 0), m_rot(0, 0, 0), m_locL(false), m_rotL(false)
 {
 }
 
@@ -45,8 +45,7 @@ void gkMotionActuator::execute(void)
     if (!m_object->isLoaded())
         return;
 
-    if (m_type == MT_SIMPLE)
-    {
+    if (m_type == MT_SIMPLE) {
         if (!gkFuzzyVec(m_loc))
             m_object->translate(m_loc, m_locL ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
         if (!gkFuzzyVec(m_rot))

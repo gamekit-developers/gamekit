@@ -31,8 +31,7 @@
 
 void gkConstantDispatch::dispatch(void)
 {
-    if (!m_sensors.empty())
-    {
+    if (!m_sensors.empty()) {
         utListIterator<SensorList> it(m_sensors);
         while (it.hasMoreElements())
             it.getNext()->tick();

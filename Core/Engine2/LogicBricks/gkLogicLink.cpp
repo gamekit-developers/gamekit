@@ -37,20 +37,17 @@ gkLogicLink::gkLogicLink() : m_state(0)
 
 gkLogicLink::~gkLogicLink()
 {
-    if (!m_sensors.empty())
-    {
+    if (!m_sensors.empty()) {
         utListIterator<SensorList> it(m_sensors);
         while (it.hasMoreElements())
             delete it.getNext();
     }
-    if (!m_controllers.empty())
-    {
+    if (!m_controllers.empty()) {
         utListIterator<ControllerList> it(m_controllers);
         while (it.hasMoreElements())
             delete it.getNext();
     }
-    if (!m_actuators.empty())
-    {
+    if (!m_actuators.empty()) {
         utListIterator<ActuatorList> it(m_actuators);
         while (it.hasMoreElements())
             delete it.getNext();
@@ -60,11 +57,9 @@ gkLogicLink::~gkLogicLink()
 
 gkLogicActuator* gkLogicLink::findActuator(const gkString& name)
 {
-    if (!m_actuators.empty())
-    {
+    if (!m_actuators.empty()) {
         utListIterator<ActuatorList> it(m_actuators);
-        while (it.hasMoreElements())
-        {
+        while (it.hasMoreElements()) {
             gkLogicActuator *ac = it.getNext();
             if (ac->getName() == name) return ac;
         }
@@ -74,11 +69,9 @@ gkLogicActuator* gkLogicLink::findActuator(const gkString& name)
 
 gkLogicController* gkLogicLink::findController(const gkString& name)
 {
-    if (!m_controllers.empty())
-    {
+    if (!m_controllers.empty()) {
         utListIterator<ControllerList> it(m_controllers);
-        while (it.hasMoreElements())
-        {
+        while (it.hasMoreElements()) {
             gkLogicController *co = it.getNext();
             if (co->getName() == name) return co;
         }

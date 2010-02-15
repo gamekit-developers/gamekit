@@ -118,7 +118,7 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
                 }
 
                 sa->setOp(op);
-                sa->setStateMask(bst->mask);
+                sa->setMask(bst->mask);
 
             }break;
 
@@ -144,7 +144,6 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
 
     for (Blender::bController *bcont = (Blender::bController*)bobj->controllers.first; bcont; bcont = bcont->next)
     {
-        // might be a bug in blender, but 
         // sometimes controller names are not unique
         // if user lookup on the controller name is not undefined,
         // this will need to change, I'm trying to avoid 
@@ -204,7 +203,7 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
                 }
             }
 
-            lc->setStateMask(bcont->state_mask);
+            lc->setMask(bcont->state_mask);
             lc->setPriority((bcont->flag & CONT_PRIO) != 0);
             lnk->push(lc);
         }
@@ -274,7 +273,7 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
                     }
                 }
             }
-
+            ls->setDetector(bsen->level != 0);
             ls->setTap(bsen->tap != 0);
             ls->setFrequency(bsen->freq);
             ls->invert(bsen->invert != 0);

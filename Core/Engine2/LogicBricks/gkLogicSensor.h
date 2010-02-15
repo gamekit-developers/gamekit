@@ -48,7 +48,8 @@ protected:
 
     int     m_freq, m_tick, m_pulse;
     bool    m_invert, m_positive, m_suspend, m_tap;
-    bool    m_sorted;
+    bool    m_sorted, m_isDetector;
+    int     m_oldState;
 
 public:
 
@@ -77,6 +78,8 @@ public:
     GK_INLINE void suspend(bool v)          {m_suspend = v;}
     GK_INLINE bool isSuspended(void)        {return m_suspend;} 
     GK_INLINE void setTap(bool v)           {m_tap = v;}
+    GK_INLINE void setDetector(bool v)      {m_isDetector = v;}
+    GK_INLINE bool isDetector(void)         {return m_isDetector;}
 
 };
 

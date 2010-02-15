@@ -39,28 +39,21 @@ gkStateActuator::~gkStateActuator()
 
 void gkStateActuator::execute(void)
 {
-    int cur = m_link->getState(), next = 0;
-
-    switch (m_op)
-    {
+    switch (m_op) {
     case OP_ADD:
-        next = cur | m_stateMask;
+        m_link->setState(m_link->getState() | m_stateMask);
         break;
-    case OP_SUB: 
-        next = cur & ~m_stateMask;
+    case OP_SUB:
+        m_link->setState(m_link->getState() & ~m_stateMask);
         break;
-    case OP_CPY: 
-        next = m_stateMask;
+    case OP_CPY:
+        m_link->setState(m_stateMask);
         break;
-    case OP_INV: 
-        next = cur ^ m_stateMask;
+    case OP_INV:
+        m_link->setState(m_link->getState() ^ m_stateMask);
         break;
     case OP_NILL:
     default:
         break;
     }
-
-    if (next != cur)
-        m_link->setState(next);
 }
-

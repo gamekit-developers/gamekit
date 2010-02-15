@@ -66,6 +66,7 @@ void gkLogicOpController::relay(void)
                     } else
                         execAct = execAct || sens->isPositive();
 
+                    if (execAct) break;
                 }
             }
             break;
@@ -113,6 +114,7 @@ void gkLogicOpController::relay(void)
                         } else
                             execAct = execAct || sens->isPositive();
 
+                        if (execAct) break;
                     }
 
                     if (execAct) {
@@ -151,7 +153,7 @@ void gkLogicOpController::relay(void)
                             execAct = sens->isPositive();
                         } else
                             execAct = execAct || sens->isPositive();
-
+                        if (execAct) break;
                     }
 
                     if (execAct) {
@@ -171,6 +173,8 @@ void gkLogicOpController::relay(void)
                             execAct = sens->isPositive();
                         } else
                             execAct = execAct || sens->isPositive();
+
+                        if (execAct) break;
                     }
                     // invert
                     execAct = !execAct;
@@ -190,6 +194,7 @@ void gkLogicOpController::relay(void)
                         } else
                             execAct = execAct || sens->isPositive();
 
+                        if (execAct) break;
                     }
 
                     if (execAct) {

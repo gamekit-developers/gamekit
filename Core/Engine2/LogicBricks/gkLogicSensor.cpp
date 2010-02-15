@@ -27,11 +27,12 @@
 #include "gkLogicSensor.h"
 #include "gkLogicController.h"
 #include "gkLogicManager.h"
+#include "gkLogicLink.h"
 
 
 gkLogicSensor::gkLogicSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
 :       gkLogicBrick(object, link, name), m_freq(0), m_tick(0), m_pulse(PULSE_NONE), m_invert(false), m_positive(false),
-        m_suspend(false), m_tap(false), m_sorted(false)
+        m_suspend(false), m_tap(false), m_sorted(false), m_oldState(-1)
 {
 }
 
@@ -40,6 +41,9 @@ void gkLogicSensor::tick(void)
 {
     if (m_suspend) return;
 
+    // seed
+    if (m_oldState == -1)
+        m_oldState = m_link->getState();
 
     bool doQuery = false;
     if (++m_tick > m_freq) {
@@ -65,9 +69,15 @@ void gkLogicSensor::tick(void)
         if (m_invert)
             m_positive = !m_positive;
 
+        if (m_isDetector) {
+            if (m_oldState != m_link->getState()) {
+                m_oldState = m_link->getState();
+                m_positive = true;
+            }
+        }
 
         // dispatch results
-        if (m_positive) 
+        if (m_positive)
             gkLogicManager::getSingleton().push(this);
 
 
@@ -86,12 +96,10 @@ bool gkLogicSensor_gSort(const T &a, const T &b)
 
 void gkLogicSensor::dispatch(void)
 {
-    if (!m_controllers.empty())
-    {
+    if (!m_controllers.empty()) {
         // send signal to all controllers
 
-        if (!m_sorted)
-        {
+        if (!m_sorted) {
             m_sorted = true;
             m_controllers.sort(gkLogicSensor_gSort);
         }
