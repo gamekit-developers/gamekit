@@ -99,7 +99,7 @@ void gkMotionNode::applyConstraints(int lrs)
         vec = m_current->getScale();
     else
     {
-        vec = m_current->getRotation();
+        vec = m_current->getRotation().toVector3();
 
         // apply limit
         x[0] = gkClampf(x[0], -MAX_ROT, MAX_ROT);

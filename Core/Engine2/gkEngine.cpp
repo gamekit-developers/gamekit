@@ -44,6 +44,8 @@
 #include "gkRenderFactory.h"
 #include "gkUserDefs.h"
 #include "gkTextManager.h"
+#include "gkNodeManager.h"
+
 
 #include "LinearMath/btQuickprof.h"
 
@@ -167,6 +169,7 @@ void gkEngine::initialize(bool autoCreateWindow)
     // gk Managers
     new gkSceneManager();
     new gkLogicManager();
+    new gkNodeManager();
     new gkBlendLoader();
     new gkTextManager();
     new gkLuaManager();
@@ -206,6 +209,7 @@ void gkEngine::finalize()
     delete gkBlendLoader::getSingletonPtr();
     delete gkLuaManager::getSingletonPtr();
     delete gkLogicManager::getSingletonPtr();
+    delete gkNodeManager::getSingletonPtr();
     delete gkWindowSystem::getSingletonPtr();
 
     delete m_root;

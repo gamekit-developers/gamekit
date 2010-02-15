@@ -35,20 +35,20 @@
 
 
 class gkGameObject;
-class gkLogicManager;
+class gkNodeManager;
 
 
 class gkLogicTree
 {
 public:
-    gkLogicTree(gkLogicManager* creator, size_t id, const gkString &name);
-    gkLogicTree(gkLogicManager* creator, size_t id);
+    gkLogicTree(gkNodeManager* creator, size_t id, const gkString &name);
+    gkLogicTree(gkNodeManager* creator, size_t id);
     ~gkLogicTree();
     void execute(gkScalar tick);
 
     const gkString& getName() const;
     const size_t getHandle();
-    gkLogicManager* getCreator();
+    gkNodeManager* getCreator();
     gkGameObject* getAttachedObject();
     bool hasNodes();
 
@@ -80,7 +80,7 @@ protected:
     const size_t        m_handle;
     const gkString      m_name;
     size_t              m_uniqueHandle;
-    gkLogicManager*     m_creator;
+    gkNodeManager*     m_creator;
 
     gkGameObject*       m_object;
     gkLogicNodeBase     m_nodes;
@@ -111,7 +111,7 @@ GK_INLINE const size_t gkLogicTree::getHandle()
 }
 
 
-GK_INLINE gkLogicManager* gkLogicTree::getCreator()
+GK_INLINE gkNodeManager* gkLogicTree::getCreator()
 {
     return m_creator;
 }

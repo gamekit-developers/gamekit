@@ -107,6 +107,61 @@ source_group(Animation\\Source FILES ${Animation_SOURCE})
 
 
 # ---------------------------------------------------------
+# Logic Nodes
+# ---------------------------------------------------------
+set(NLogic_SOURCE
+    # ----- Source ----- 
+    Logic/gkAnimationNode.cpp
+    Logic/gkExitNode.cpp
+    Logic/gkExpressionNode.cpp
+    Logic/gkGroupNode.cpp
+    Logic/gkIfNode.cpp
+    Logic/gkKeyNode.cpp
+    Logic/gkNodeManager.cpp
+    Logic/gkLogicNode.cpp
+    Logic/gkLogicSocket.cpp
+    Logic/gkLogicTree.cpp
+    Logic/gkMathNode.cpp
+    Logic/gkMotionNode.cpp
+    Logic/gkMouseNode.cpp
+    Logic/gkObjectNode.cpp
+    Logic/gkPrintNode.cpp
+    Logic/gkRandomNode.cpp
+    Logic/gkSwitchNode.cpp
+    Logic/gkTimerNode.cpp
+    Logic/gkValueNode.cpp
+    Logic/gkVariableNode.cpp
+)
+
+set(NLogic_HEADER
+    # ----- Headers ----- 
+    Logic/gkAnimationNode.h
+    Logic/gkExitNode.h
+    Logic/gkExpressionNode.h
+    Logic/gkGroupNode.h
+    Logic/gkIfNode.h
+    Logic/gkKeyNode.h
+    Logic/gkLogicCommon.h
+    Logic/gkNodeManager.h
+    Logic/gkLogicNode.h
+    Logic/gkLogicSocket.h
+    Logic/gkLogicTree.h
+    Logic/gkMathNode.h
+    Logic/gkMotionNode.h
+    Logic/gkMouseNode.h
+    Logic/gkObjectNode.h
+    Logic/gkPrintNode.h
+    Logic/gkRandomNode.h
+    Logic/gkSwitchNode.h
+    Logic/gkTimerNode.h
+    Logic/gkValueNode.h
+    Logic/gkVariableNode.h
+)
+
+source_group(LogicNodes\\Header FILES ${NLogic_HEADER})
+source_group(LogicNodes\\Source FILES ${NLogic_SOURCE})
+
+# ---------------------------------------------------------
 # Logic Bricks
 # ---------------------------------------------------------
 set(Logic_SOURCE
@@ -366,6 +421,7 @@ include_directories(
     ./Animation
     ./Constraints
     ./LogicBricks
+    ./Logic
     ./Script 
     ./Sound 
     ./Loaders/Blender
@@ -403,4 +459,5 @@ add_library(OgreKitCore STATIC
             ${Sound_SOURCE}      ${Sound_HEADER}
             ${Network_SOURCE}    ${Network_HEADER}
             ${Graphics_SOURCE}   ${Graphics_HEADER}
+            ${NLogic_SOURCE}     ${NLogic_HEADER}
     )

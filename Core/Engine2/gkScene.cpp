@@ -39,6 +39,7 @@
 #include "gkEngine.h"
 #include "gkScene.h"
 #include "gkLogicManager.h"
+#include "gkNodeManager.h"
 #include "gkLogger.h"
 #include "gkDynamicsWorld.h"
 
@@ -324,8 +325,11 @@ void gkScene::update(gkScalar tickRate)
     if (!isLoaded())
         return;
 
-    // update logic trees
+    // update logic bricks
     gkLogicManager::getSingleton().update(tickRate);
+
+    // update node trees (may be clashes with bricks)
+    gkNodeManager::getSingleton().update(tickRate);
 
     // update simulation
     if (m_physicsWorld) m_physicsWorld->step(tickRate);

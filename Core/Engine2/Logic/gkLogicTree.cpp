@@ -25,7 +25,7 @@
 -------------------------------------------------------------------------------
 */
 #include "gkLogicTree.h"
-#include "gkLogicManager.h"
+#include "gkNodeManager.h"
 
 #include "gkGroupNode.h"
 #include "gkObjectNode.h"
@@ -48,14 +48,14 @@ using namespace Ogre;
 
 
 
-gkLogicTree::gkLogicTree(gkLogicManager* creator, size_t id, const gkString &name) :
+gkLogicTree::gkLogicTree(gkNodeManager* creator, size_t id, const gkString &name) :
         m_handle(id), m_uniqueHandle(0), m_creator(creator), m_object(0),
         m_name(name), m_initialized(false)
 {
 }
 
 
-gkLogicTree::gkLogicTree(gkLogicManager* creator, size_t id) :
+gkLogicTree::gkLogicTree(gkNodeManager* creator, size_t id) :
         m_handle(id), m_uniqueHandle(0), m_creator(creator), m_object(0),
         m_name(StringUtil::BLANK), m_initialized(false)
 {

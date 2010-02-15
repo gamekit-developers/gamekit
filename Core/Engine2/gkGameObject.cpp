@@ -41,6 +41,8 @@
 #include "gkLogger.h"
 
 #include "gkLogicManager.h"
+#include "gkNodeManager.h"
+#include "gkLogicTree.h"
 #include "gkConstraint.h"
 #include "gkGameObjectGroup.h"
 #include "gkRigidBody.h"
@@ -75,8 +77,12 @@ gkGameObject *gkGameObject::duplicate(const gkString &newName)
 
 void gkGameObject::attachLogic(gkLogicTree *tree)
 {
+    if (!m_logic)
+    {
+        m_logic = tree;
+        m_logic->attachObject(this);
+    }
 }
-
 
 
 void gkGameObject::attachToGroup(gkGameObjectGroup *g)
@@ -157,7 +163,7 @@ void gkGameObject::unloadImpl(void)
     // destroy gamelogic
     if (m_logic != 0)
     {
-        //gkLogicManager::getSingleton().destroy(m_logic);
+        gkNodeManager::getSingleton().destroy(m_logic);
         m_logic = 0;
     }
 

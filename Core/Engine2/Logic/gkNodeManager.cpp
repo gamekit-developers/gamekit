@@ -24,7 +24,7 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "gkLogicManager.h"
+#include "gkNodeManager.h"
 #include "gkLogicTree.h"
 
 
@@ -32,19 +32,19 @@ using namespace Ogre;
 
 
 
-gkLogicManager::gkLogicManager() :
+gkNodeManager::gkNodeManager() :
         m_uniqueHandle(0), m_trees()
 {
 }
 
 
-gkLogicManager::~gkLogicManager()
+gkNodeManager::~gkNodeManager()
 {
     clear();
 }
 
 
-gkLogicTree* gkLogicManager::create()
+gkLogicTree* gkNodeManager::create()
 {
     // no unique id|name so make one
 
@@ -59,7 +59,7 @@ gkLogicTree* gkLogicManager::create()
 }
 
 
-gkLogicTree* gkLogicManager::create(const gkString &name)
+gkLogicTree* gkNodeManager::create(const gkString &name)
 {
     gkLogicTree *tree = new gkLogicTree(this, m_uniqueHandle, name);
     m_trees.insert(std::make_pair(m_uniqueHandle, tree));
@@ -68,14 +68,14 @@ gkLogicTree* gkLogicManager::create(const gkString &name)
 }
 
 
-gkLogicTree* gkLogicManager::get(size_t id)
+gkLogicTree* gkNodeManager::get(size_t id)
 {
     NodeTree::iterator it = m_trees.find(id);
     return it != m_trees.end() ? it->second : 0;
 }
 
 
-gkLogicTree* gkLogicManager::get(const gkString &name)
+gkLogicTree* gkNodeManager::get(const gkString &name)
 {
     // may be a dup tree
     NodeTree::iterator it = m_trees.begin(), end = m_trees.end();
@@ -87,7 +87,7 @@ gkLogicTree* gkLogicManager::get(const gkString &name)
 }
 
 
-gkLogicManager::TreeList gkLogicManager::get(gkGameObject* ob)
+gkNodeManager::TreeList gkNodeManager::get(gkGameObject* ob)
 {
     // tree list of all attached objects
     TreeList objs;
@@ -103,13 +103,13 @@ gkLogicManager::TreeList gkLogicManager::get(gkGameObject* ob)
 }
 
 
-void gkLogicManager::destroy(gkLogicTree* tree)
+void gkNodeManager::destroy(gkLogicTree* tree)
 {
     destroy(tree->getHandle());
 }
 
 
-void gkLogicManager::destroy(size_t handle)
+void gkNodeManager::destroy(size_t handle)
 {
     NodeTree::iterator it = m_trees.find(handle);
     if (it != m_trees.end())
@@ -130,7 +130,7 @@ void gkLogicManager::destroy(size_t handle)
 }
 
 
-void gkLogicManager::update(gkScalar tick)
+void gkNodeManager::update(gkScalar tick)
 {
     TreeList::iterator it = m_locals.begin(), end = m_locals.end();
     for (; it != end; ++it)
@@ -143,18 +143,18 @@ void gkLogicManager::update(gkScalar tick)
 }
 
 
-gkLogicManager::NodeTreeIterator gkLogicManager::getIterator()
+gkNodeManager::NodeTreeIterator gkNodeManager::getIterator()
 {
     return NodeTreeIterator(m_trees.begin(), m_trees.end());
 }
 
 
-void gkLogicManager::clear()
+void gkNodeManager::clear()
 {
-    for (gkLogicManager::NodeTree::iterator it = m_trees.begin(); it != m_trees.end(); ++it)
+    for (gkNodeManager::NodeTree::iterator it = m_trees.begin(); it != m_trees.end(); ++it)
         delete(it->second);
     m_trees.clear();
     m_locals.clear();
 }
 
-GK_IMPLEMENT_SINGLETON(gkLogicManager);
+GK_IMPLEMENT_SINGLETON(gkNodeManager);

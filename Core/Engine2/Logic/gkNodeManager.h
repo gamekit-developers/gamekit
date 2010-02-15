@@ -24,8 +24,8 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkLogicManager_h_
-#define _gkLogicManager_h_
+#ifndef _gkNodeManager_h_
+#define _gkNodeManager_h_
 
 #include "gkLogicCommon.h"
 #include "gkMathUtils.h"
@@ -40,7 +40,7 @@ class gkGameObject;
 
 
 
-class gkLogicManager : public Ogre::Singleton<gkLogicManager>
+class gkNodeManager : public Ogre::Singleton<gkNodeManager>
 {
 public:
     typedef std::map<size_t, gkLogicTree*> NodeTree;
@@ -48,8 +48,8 @@ public:
     typedef std::vector<gkLogicTree*> TreeList;
 
 public:
-    gkLogicManager();
-    ~gkLogicManager();
+    gkNodeManager();
+    ~gkNodeManager();
 
     gkLogicTree* create();
     gkLogicTree* create(const gkString &name);
@@ -63,8 +63,8 @@ public:
     void destroy(gkLogicTree* tree);
     void destroy(size_t handle);
 
-    static gkLogicManager& getSingleton();
-    static gkLogicManager* getSingletonPtr();
+    static gkNodeManager& getSingleton();
+    static gkNodeManager* getSingletonPtr();
 
     void update(gkScalar tick);
 
@@ -77,4 +77,4 @@ private:
 };
 
 
-#endif//_gkLogicManager_h_
+#endif//_gkNodeManager_h_
