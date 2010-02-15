@@ -56,16 +56,7 @@ void gkLogicSensor::tick(void)
         // test
         m_positive = query();
 
-        if (m_pulse != PULSE_NONE) {
-            // default to positive if negitave
-            // is set as well
-            if (!(m_pulse & PULSE_POSITIVE)) {
-                if (m_pulse & PULSE_NEGATIVE)
-                    m_positive = !m_positive;
-            }
-        }
-
-        // lastly invert
+        // invert
         if (m_invert)
             m_positive = !m_positive;
 

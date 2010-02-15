@@ -73,6 +73,7 @@ public:
 
     GK_INLINE void setFrequency(int v)      {m_freq = v;}
     GK_INLINE void setMode(int m)           {m_pulse = m;}
+    GK_INLINE int  getMode(void)            {return m_pulse;}
     GK_INLINE void invert(bool v)           {m_invert = v;}
     GK_INLINE bool isPositive(void)         {return m_positive;}
     GK_INLINE void suspend(bool v)          {m_suspend = v;}

@@ -92,13 +92,6 @@ void gkLogicManager::update(gkScalar delta)
         m_sensorStack.pop();
     }
 
-    utStackIterator<ControllerStack> constant(m_controllerStack);
-    while (constant.hasMoreElements()) {
-        gkLogicController *cont = constant.getNext();
-        GK_ASSERT(cont->isGate());
-        cont->relay();
-    }
-
     while (!m_actuatorStack.empty()) {
         gkLogicActuator *act = m_actuatorStack.top();
         act->execute();

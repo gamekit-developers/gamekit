@@ -28,6 +28,6 @@
 
 
 gkLogicController::gkLogicController(gkGameObject *object, gkLogicLink *link, const gkString &name)
-:       gkLogicBrick(object, link, name), m_isGate(false), m_priority(false), m_stateMask(1)
+:       gkLogicBrick(object, link, name), m_priority(false), m_stateMask(1)
 {
 }

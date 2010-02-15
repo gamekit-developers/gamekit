@@ -91,7 +91,7 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
     gkLogicManager *rlm = gkLogicManager::getSingletonPtr();
     gkLogicLink *lnk = rlm->createLink();
     m_createdLinks.push_back(lnk);
-    lnk->setState(bobj->init_state);
+    lnk->setState(bobj->init_state ? bobj->init_state : bobj->state);
 
 
     for (Blender::bActuator *bact = (Blender::bActuator*)bobj->actuators.first; bact; bact = bact->next)
