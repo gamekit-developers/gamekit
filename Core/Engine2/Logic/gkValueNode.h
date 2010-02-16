@@ -31,8 +31,6 @@
 
 
 
-
-
 class gkValueNode : public gkLogicNode
 {
 public:
@@ -40,6 +38,11 @@ public:
     virtual ~gkValueNode() {}
 
     void update(gkScalar tick);
+
+    // input 
+    GK_INLINE gkLogicSocket* getValue(void)    {return &m_sockets[0];}
+    // output
+    GK_INLINE gkLogicSocket* getResult(void)   {return &m_sockets[1];}
 
 private:
     gkLogicSocket m_sockets[2];

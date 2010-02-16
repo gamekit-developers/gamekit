@@ -30,9 +30,6 @@
 #include "gkLogicNode.h"
 
 
-
-
-
 class gkTimerNode : public gkLogicNode
 {
 public:
@@ -41,6 +38,15 @@ public:
 
     void update(gkScalar tick);
     bool evaluate(gkScalar tick);
+
+    // inputs 
+    GK_INLINE gkLogicSocket* getUpdate(void)    {return &m_sockets[0];}
+    GK_INLINE gkLogicSocket* getValue(void)     {return &m_sockets[1];}
+
+
+    // outputs
+    GK_INLINE gkLogicSocket* getResult(void)     {return &m_sockets[2];}
+
 
 private:
     gkLogicSocket m_sockets[3];

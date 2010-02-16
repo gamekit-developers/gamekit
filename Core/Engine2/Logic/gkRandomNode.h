@@ -29,9 +29,7 @@
 
 #include "gkLogicNode.h"
 
-
-
-
+// fire random floats
 class gkRandomNode : public gkLogicNode
 {
 
@@ -41,6 +39,14 @@ public:
 
     void update(gkScalar tick);
     bool evaluate(gkScalar tick);
+
+    // inputs
+    GK_INLINE gkLogicSocket* getUpdate(void)    {return &m_sockets[0];}
+    GK_INLINE gkLogicSocket* getMin(void)       {return &m_sockets[1];}
+    GK_INLINE gkLogicSocket* getMax(void)       {return &m_sockets[3];}
+
+    // outputs
+    GK_INLINE gkLogicSocket* getResult(void)    {return &m_sockets[3];}
 
 private:
     gkLogicSocket m_sockets[4];

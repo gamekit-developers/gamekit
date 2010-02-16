@@ -28,11 +28,8 @@
 #include "gkLogicNode.h"
 #include "gkLogger.h"
 
-using namespace Ogre;
 
-
-
-gkGameObject* gkLogicSocket::getGameObject() const
+gkGameObject* gkLogicSocket::getGameObject(void) const
 {
     if (m_from && m_from->m_parent)
         return m_from->m_parent->getAttachedObject();
@@ -40,13 +37,12 @@ gkGameObject* gkLogicSocket::getGameObject() const
 }
 
 
-bool gkLogicSocket::has_link(gkLogicNode *link)
+bool gkLogicSocket::hasLink(gkLogicNode *link)
 {
-    if (m_connected)
-        return std::find(m_nodes.begin(), m_nodes.end(), link) != m_nodes.end();
+    if (m_connected) 
+        return m_nodes.find(link) != 0;
     return false;
 }
-
 
 void gkLogicSocket::link(gkLogicSocket *fsock)
 {
@@ -65,30 +61,14 @@ void gkLogicSocket::link(gkLogicSocket *fsock)
             }
         }
     }
-
     // else error, only one from socket
 }
 
 
-void gkLogicSocket::push_link(gkLogicNode *link)
+void gkLogicSocket::push(gkLogicNode *link)
 {
-    if (m_connected)
-        m_nodes.push_back(link);
 }
-
 
 void gkLogicSocket::block(bool truth)
 {
-    // block socket io
-    if (m_connected && m_blocked != truth)
-    {
-        m_blocked = truth;
-
-        gkNodeBaseIterator iter = getNodeIterator();
-        while (iter.hasMoreElements())
-        {
-            gkLogicNode *node = iter.getNext();
-            node->block(m_blocked);
-        }
-    }
 }

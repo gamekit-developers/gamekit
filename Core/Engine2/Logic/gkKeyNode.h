@@ -38,8 +38,18 @@ public:
     virtual ~gkKeyNode() {}
 
     bool evaluate(gkScalar tick);
-    void setKey(gkScanCode key) {m_key = key;}
-    void setDelay(int d) {m_delay = d;}
+
+    GK_INLINE void setKey(gkScanCode key) {m_key = key;}
+    GK_INLINE void setDelay(int d)        {m_delay = d;}
+
+    // inputs 
+    GK_INLINE gkLogicSocket* getUpdate(void)        {return &m_sockets[0];}
+
+    // outputs
+    GK_INLINE gkLogicSocket* getIsDown(void)        {return &m_sockets[1];}
+    GK_INLINE gkLogicSocket* getPress(void)         {return &m_sockets[2];}
+    GK_INLINE gkLogicSocket* getRelease(void)       {return &m_sockets[3];}
+
 
 private:
     gkLogicSocket   m_sockets[4];

@@ -29,10 +29,6 @@
 
 #include "gkLogicNode.h"
 
-
-
-
-
 class gkMathNode : public gkLogicNode
 {
 public:
@@ -41,9 +37,17 @@ public:
 
     void update(gkScalar tick);
 
-    void setFunction(int func) {m_function = func;}
+    GK_INLINE void setFunction(int func) {m_function = func;}
 
     static gkScalar doOp(gkScalar a, gkScalar b);
+
+    // socket access
+    GK_INLINE gkLogicSocket* getA(void)         {return &m_sockets[0];}
+    GK_INLINE gkLogicSocket* getB(void)         {return &m_sockets[1];}
+
+    // outputs
+    GK_INLINE gkLogicSocket* getResult(void)    {return &m_sockets[2];}
+
 
 private:
     gkLogicSocket   m_sockets[3];

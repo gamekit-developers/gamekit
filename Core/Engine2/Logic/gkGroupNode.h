@@ -30,27 +30,27 @@
 #include "gkLogicNode.h"
 
 
-
-
+// execute x number of subtrees  
 class gkGroupNode : public gkLogicNode
 {
 public:
+    typedef utList<gkLogicTree*> Groups;
+
+
+public:
     gkGroupNode(gkLogicTree *parent, size_t id);
-    virtual ~gkGroupNode();
+    virtual ~gkGroupNode() {}
 
     void update(gkScalar tick);
+    bool evaluate(gkScalar tick);
 
-    void setTree(gkLogicTree *tree)   {m_group = tree;}
-    gkLogicTree* getTree()            {return m_group;}
-
-
-    void pushInput(gkLogicSocket *sock);
-    void pushOutput(gkLogicSocket *sock);
+    GK_INLINE void addTree(gkLogicTree *ltree)  {GK_ASSERT(ltree); m_groupList.push_back(ltree);}
+    GK_INLINE gkLogicSocket* getExecute(void)   {return &m_sockets[0];}
+    GK_INLINE gkLogicSocket* getReturn(void)    {return &m_sockets[1];}
 
 private:
-    gkSocketAlias   m_inpAlias;
-    gkSocketAlias   m_outAlias;
-    gkLogicTree*    m_group;
+    gkLogicSocket       m_sockets[2];
+    Groups              m_groupList;
 };
 
 

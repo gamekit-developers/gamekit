@@ -44,6 +44,13 @@ gkObjectNode::gkObjectNode(gkLogicTree *parent, size_t id) :
     ADD_OSOCK(m_sockets[3], this, gkLogicSocket::ST_BOOL);
     ADD_OSOCK(m_sockets[4], this, gkLogicSocket::ST_VECTOR);
     ADD_OSOCK(m_sockets[5], this, gkLogicSocket::ST_EULER);
+
+    m_sockets[0].setValue(true);
+    m_sockets[1].setValue(gkVector3::ZERO);
+    m_sockets[2].setValue(gkVector3::ZERO);
+    m_sockets[3].setValue(false);
+    m_sockets[4].setValue(gkVector3::ZERO);
+    m_sockets[5].setValue(gkVector3::ZERO);
 }
 
 
@@ -54,7 +61,7 @@ bool gkObjectNode::evaluate(gkScalar tick)
 }
 
 
-void gkObjectNode::_initialize()
+void gkObjectNode::initialize()
 {
     if (!m_otherName.empty())
     {

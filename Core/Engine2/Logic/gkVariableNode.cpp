@@ -39,10 +39,13 @@ gkVariableNode::gkVariableNode(gkLogicTree *parent, size_t id):
     ADD_ISOCK(m_sockets[0], this, gkLogicSocket::ST_BOOL);
     ADD_ISOCK(m_sockets[1], this, gkLogicSocket::ST_VARIABLE);
     ADD_OSOCK(m_sockets[2], this, gkLogicSocket::ST_VARIABLE);
+    m_sockets[0].setValue(true);
+    m_sockets[1].setValue(0.f);
+    m_sockets[2].setValue(0.f);
 }
 
 
-void gkVariableNode::_initialize()
+void gkVariableNode::initialize()
 {
     if (!m_varName.empty())
     {
@@ -86,10 +89,13 @@ VariableOpNode::VariableOpNode(gkLogicTree *parent, size_t id) :
     ADD_ISOCK(m_sockets[0], this, gkLogicSocket::ST_BOOL);
     ADD_ISOCK(m_sockets[1], this, gkLogicSocket::ST_VARIABLE);
     ADD_OSOCK(m_sockets[2], this, gkLogicSocket::ST_VARIABLE);
+    m_sockets[0].setValue(true);
+    m_sockets[1].setValue(0.f);
+    m_sockets[2].setValue(0.f);
 }
 
 
-void VariableOpNode::_initialize()
+void VariableOpNode::initialize()
 {
     if (!m_varName.empty())
     {

@@ -36,8 +36,13 @@ gkExpressionNode::gkExpressionNode(gkLogicTree *parent, size_t id) :
         gkLogicNode(parent, NT_EXPR, id), m_nr(0), m_expr(0), m_code(""), m_err(false)
 {
     ADD_ISOCK(m_sockets[0], this, gkLogicSocket::ST_BOOL);
+    m_sockets[0].setValue(true);
+
     for (int i = 1; i < 11; i++)
+    {
         ADD_ISOCK(m_sockets[i], this, gkLogicSocket::ST_REAL);
+        m_sockets[i].setValue(0.f);
+    }
 
     ADD_OSOCK(m_sockets[11], this, gkLogicSocket::ST_BOOL);
     ADD_OSOCK(m_sockets[12], this, gkLogicSocket::ST_BOOL);
@@ -50,10 +55,7 @@ bool gkExpressionNode::evaluate(gkScalar tick)
     {
         m_sockets[11].setValue(false);
         m_sockets[12].setValue(false);
-        m_sockets[11].block(true);
-        m_sockets[12].block(true);
     }
-
     return !m_err && m_sockets[0].getValueBool();
 }
 
@@ -64,7 +66,9 @@ void gkExpressionNode::update(gkScalar tick)
     {
         int nr = 0;
         for (int i = 1; i < 11 && nr < m_nr; i++, nr++)
-            m_expr->addConstant(m_sockets[i].getRealName(), m_sockets[i].getValueReal());
+        {
+            // m_expr->addConstant(m_sockets[i].getRealName(), m_sockets[i].getValueReal());
+        }
 
         int result = m_expr->run();
         if (result == gkScriptExpression::EXPR_ERROR)
@@ -72,8 +76,6 @@ void gkExpressionNode::update(gkScalar tick)
             m_err = true;
             m_sockets[11].setValue(false);
             m_sockets[12].setValue(false);
-            m_sockets[11].block(true);
-            m_sockets[12].block(true);
             return;
         }
 
@@ -85,13 +87,11 @@ void gkExpressionNode::update(gkScalar tick)
 }
 
 
-void gkExpressionNode::_initialize()
+void gkExpressionNode::initialize()
 {
     if (m_expr == 0 && !m_code.empty())
         m_expr = 0;//gkScriptManager::getSingleton().createExpression(m_code);
 
     m_sockets[11].setValue(false);
     m_sockets[12].setValue(false);
-    m_sockets[11].block(true);
-    m_sockets[12].block(true);
 }

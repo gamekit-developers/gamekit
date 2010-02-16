@@ -57,7 +57,6 @@ bool gkMotionNode::evaluate(gkScalar tick)
     return m_sockets[0].getValueBool();
 }
 
-
 void gkMotionNode::_initialize()
 {
     if (!m_otherName.empty())
@@ -111,9 +110,6 @@ void gkMotionNode::applyConstraints(int lrs)
         z[0] = gkClampf(z[0], -MAX_ROT, MAX_ROT);
         z[1] = gkClampf(z[1], -MAX_ROT, MAX_ROT);
     }
-
-
-
     if (m_flag &1)   // X
     {
         if (vec.x < x[0])

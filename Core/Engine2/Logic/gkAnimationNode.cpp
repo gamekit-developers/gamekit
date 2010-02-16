@@ -45,6 +45,12 @@ gkAnimationNode::gkAnimationNode(gkLogicTree *parent, size_t id) :
     ADD_ISOCK(m_sockets[2], this, gkLogicSocket::ST_REAL);
     ADD_ISOCK(m_sockets[3], this, gkLogicSocket::ST_REAL);
     ADD_ISOCK(m_sockets[4], this, gkLogicSocket::ST_REAL);
+
+    m_sockets[0].setValue(true);
+    m_sockets[1].setValue(0.f);
+    m_sockets[2].setValue(0.f);
+    m_sockets[3].setValue(0.f);
+    m_sockets[4].setValue(0.f);
 }
 
 

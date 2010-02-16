@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): silveira.nestor.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -30,111 +30,65 @@
 #include "gkLogicCommon.h"
 #include "gkLogicNode.h"
 
-
-
-
-
 class gkGameObject;
 class gkNodeManager;
-
 
 class gkLogicTree
 {
 public:
-    gkLogicTree(gkNodeManager* creator, size_t id, const gkString &name);
-    gkLogicTree(gkNodeManager* creator, size_t id);
+    typedef utList<gkLogicNode*>        NodeList;
+    typedef utListIterator<NodeList>    NodeIterator;
+
+
+public:
+    gkLogicTree(gkNodeManager* creator, UTsize id, const gkString &name);
+    gkLogicTree(gkNodeManager* creator, UTsize id);
     ~gkLogicTree();
+
+    // execute all nodes
     void execute(gkScalar tick);
 
-    const gkString& getName() const;
-    const size_t getHandle();
-    gkNodeManager* getCreator();
-    gkGameObject* getAttachedObject();
-    bool hasNodes();
 
-    /* only group trees have a name */
-    bool isGroup();
+    GK_INLINE const gkString& getName(void) const   {return m_name;}
+    GK_INLINE const UTsize getHandle(void)          {return m_handle;}
+    GK_INLINE gkNodeManager* getCreator(void)       {return m_creator;}
+    GK_INLINE gkGameObject* getAttachedObject(void) {return m_object;}
+    GK_INLINE bool hasNodes(void)                   {return !m_nodes.empty();}
+    GK_INLINE bool isGroup(void)                    {return !m_name.empty();}
+    GK_INLINE void markDirty(void)                  {m_initialized = false;}
+    GK_INLINE NodeIterator getNodeIterator(void)    {return NodeIterator(m_nodes);}
+
 
     void attachObject(gkGameObject *ob);
 
-    void markDirty();
+    // node access
 
+    template<class T>       
+    T* createNode(void)
+    {
+		T* pNode = new T(this, m_uniqueHandle);
+		GK_ASSERT(pNode);
 
-    /* node access */
-    gkLogicNode*          createNode(const gkNodeTypes& nt);
-    gkLogicNode*          getNode(size_t idx);
-    void                destroyNodes();
-    void                freeUnused();
-    void                solveOrder();
+		if(m_object) pNode->attachObject(m_object);
+        m_nodes.push_back(pNode);
+		m_uniqueHandle ++;
+		return pNode;
+    }
 
-    gkNodeBaseIterator    getNodeIterator();
+    gkLogicNode*            getNode(UTsize idx);
+    void                    destroyNodes(void);
+    void                    freeUnused(void);
+    void                    solveOrder(bool forceSolve=false);
 
 protected:
-    void findSubNodeForward(gkLogicNodeBase &root, gkLogicNode *rfnode, gkLogicNode *from, gkLogicSocket *caller, bool skip);
-    void pushSocketTree(gkLogicNode *from);
-
-    bool isConnectedIn(gkLogicNode *from, gkLogicNode *test);
-    void findToNodes(gkLogicSocket *from, gkLogicNodeBase &nodes);
-
-    bool                m_initialized;
-    const size_t        m_handle;
+    bool                m_initialized, m_sorted;
+    const UTsize        m_handle;
     const gkString      m_name;
     size_t              m_uniqueHandle;
-    gkNodeManager*     m_creator;
-
+    gkNodeManager*      m_creator;
     gkGameObject*       m_object;
-    gkLogicNodeBase     m_nodes;
+    NodeList            m_nodes;
 };
-
-
-GK_INLINE gkNodeBaseIterator gkLogicTree::getNodeIterator()
-{
-    return gkNodeBaseIterator(m_nodes.begin(), m_nodes.end());
-}
-
-
-GK_INLINE bool gkLogicTree::isGroup()
-{
-    return !m_name.empty();
-}
-
-
-GK_INLINE const gkString& gkLogicTree::getName() const
-{
-    return m_name;
-}
-
-
-GK_INLINE const size_t gkLogicTree::getHandle()
-{
-    return m_handle;
-}
-
-
-GK_INLINE gkNodeManager* gkLogicTree::getCreator()
-{
-    return m_creator;
-}
-
-
-GK_INLINE gkGameObject* gkLogicTree::getAttachedObject()
-{
-    return m_object;
-}
-
-
-GK_INLINE bool gkLogicTree::hasNodes()
-{
-    return !m_nodes.empty();
-}
-
-
-GK_INLINE void gkLogicTree::markDirty()
-{
-    m_initialized = false;
-}
-
-
 
 
 #endif//_gkLogicTree_h_

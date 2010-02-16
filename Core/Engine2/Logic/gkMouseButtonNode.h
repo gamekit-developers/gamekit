@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): silveira.nestor.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -24,31 +24,40 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "gkExitNode.h"
-#include "gkEngine.h"
-#include "gkWindowSystem.h"
+#ifndef _gkMouseButtonNode_h_
+#define _gkMouseButtonNode_h_
 
 
-using namespace Ogre;
+#include "gkLogicNode.h"
+#include "gkInput.h"
 
 
-
-gkExitNode::gkExitNode(gkLogicTree *parent, size_t id)
-:       gkLogicNode(parent, NT_EXIT, id)
+class gkMouseButtonNode : public gkLogicNode
 {
-    ADD_ISOCK(m_sockets[0], this, gkLogicSocket::ST_BOOL);
-    m_sockets[0].setValue(false);
-}
+public:
+    gkMouseButtonNode(gkLogicTree *parent, size_t id);
+	virtual ~gkMouseButtonNode() {}
 
-bool gkExitNode::evaluate(gkScalar tick)
-{
-    if (m_sockets[0].getValueBool())
-        gkEngine::getSingleton().requestExit();
-    return false;
-}
+	bool evaluate(gkScalar tick);
+
+    GK_INLINE void setButton(gkMouse::Buttons button)   {m_button= button;}
+	GK_INLINE void setDelay(int d)                      {m_delay= d;}
 
 
-void gkExitNode::update(gkScalar tick)
-{
-    // none
-}
+    // inputs 
+    GK_INLINE gkLogicSocket* getUpdate(void)        {return &m_sockets[0];}
+
+    // outputs
+    GK_INLINE gkLogicSocket* getIsDown(void)        {return &m_sockets[1];}
+    GK_INLINE gkLogicSocket* getPress(void)         {return &m_sockets[2];}
+    GK_INLINE gkLogicSocket* getRelease(void)       {return &m_sockets[3];}
+
+private:
+	gkLogicSocket m_sockets[4];
+	gkMouse::Buttons m_button;
+	int m_delay, m_counter;
+	bool m_isPressed, m_pressed;
+};
+
+
+#endif//_gkMouseButtonNode_h_

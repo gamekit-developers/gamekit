@@ -37,35 +37,42 @@ gkSwitchNode::gkSwitchNode(gkLogicTree *parent, size_t id) :
     ADD_ISOCK(m_sockets[0],  this, gkLogicSocket::ST_BOOL);
     ADD_ISOCK(m_sockets[1],  this, gkLogicSocket::ST_REAL);
 
+    m_sockets[0].setValue(true);
+    m_sockets[1].setValue(0.f);
+
+
     for (int i = START_IN; i < START_OT; i++)
+    {
         ADD_ISOCK(m_sockets[i], this, gkLogicSocket::ST_REAL);
+        m_sockets[i].setValue(0.f);
+    }
 
     for (int i = START_OT; i < CASE_MAX; i++)
+    {
         ADD_OSOCK(m_sockets[i], this, gkLogicSocket::ST_BOOL);
+        m_sockets[i].setValue(0.f);
+    }
 }
 
 
 bool gkSwitchNode::evaluate(gkScalar tick)
 {
-    bool res = m_sockets[0].getValueBool();
-    if (!res)   _doBlocks(-1);
-    else        _doBlocks(-2);
-    return res;
+    return m_sockets[0].getValueBool();
 }
 
-
-void gkSwitchNode::_initialize()
+void gkSwitchNode::initialize()
 {
     for (int i = START_OT; i < CASE_MAX; i++)
-    {
         m_sockets[i].setValue(false);
-        m_sockets[i].block(true);
-    }
 }
 
 
 void gkSwitchNode::update(gkScalar tick)
 {
+    // clear returns
+    for (int i = START_OT; i < CASE_MAX; i++)
+        m_sockets[i].setValue(false);
+
     gkScalar swtch = m_sockets[1].getValueReal();
 
     int ltest = 0;
@@ -75,46 +82,12 @@ void gkSwitchNode::update(gkScalar tick)
         // test label
         if (swtch == m_sockets[i].getValueReal())
         {
-            _doBlocks(START_OT + offs);
+            m_sockets[i].setValue(true);
             return;
         }
     }
 
     // default label
     if (m_sockets[START_OT].isConnected())
-        _doBlocks(START_OT);
-}
-
-
-void gkSwitchNode::_doBlocks(int idx)
-{
-    for (int i = START_OT; i < CASE_MAX; i++)
-    {
-        if (idx == -1)
-        {
-            m_sockets[i].block(true);
-            m_sockets[i].setValue(false);
-            continue;
-        }
-        else if (idx == -2)
-        {
-            m_sockets[i].block(false);
-            m_sockets[i].setValue(false);
-            continue;
-        }
-
-        if (i == idx && m_sockets[i].isConnected())
-        {
-            m_sockets[i].block(false);
-            m_sockets[i].setValue(true);
-        }
-        else
-        {
-            if (m_sockets[i].isConnected())
-            {
-                m_sockets[i].block(true);
-                m_sockets[i].setValue(false);
-            }
-        }
-    }
+         m_sockets[START_OT].setValue(true);
 }

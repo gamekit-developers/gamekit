@@ -29,26 +29,14 @@
 
 #include "gkCommon.h"
 #include "OgreStdHeaders.h"
-#include "OgreIteratorWrappers.h"
 
-#define MAX_ROT 360.0
+#define MAX_ROT         360.0
 #define MAX_TRANSLATION 100000.0
-
-
-
 
 class gkLogicNode;
 class gkLogicTree;
 class gkLogicSocket;
 class gkGameObject;
-
-typedef std::vector<gkLogicNode*>               gkLogicNodeBase;
-typedef gkLogicNodeBase::iterator               gkLogicNodeIterator;
-typedef Ogre::VectorIterator<gkLogicNodeBase>   gkNodeBaseIterator;
-typedef std::vector<gkLogicSocket*>             gkSocketBase;
-typedef Ogre::VectorIterator<gkSocketBase>      gkSocketBaseIterator;
-typedef std::map<gkLogicSocket*, gkLogicSocket*> gkSocketAlias;
-
 
 typedef enum gkNodeTypes
 {
@@ -58,6 +46,7 @@ typedef enum gkNodeTypes
     NT_KEY,
     NT_MATH,
     NT_MOTION,
+    NT_MOUSEBUTTON,
     NT_PRINT,
     NT_ANIM,
     NT_RAND,
@@ -71,7 +60,6 @@ typedef enum gkNodeTypes
     NT_EXIT,
 }gkNodeTypes;
 
-
 typedef enum gkMotionTypes
 {
     MT_NONE = -1,
@@ -82,9 +70,7 @@ typedef enum gkMotionTypes
     MT_TORQUE,
     MT_LINV,
     MT_ANGV,
-
 }gkMotionTypes;
-
 
 typedef enum gkMathFunction
 {
@@ -116,7 +102,5 @@ typedef enum gkObjectFunction
     OB_FUNC_DESTROY,
     OB_FUNC_ADD,
 }gkObjectFunction;
-
-
 
 #endif//_gkLogicCommon_h_

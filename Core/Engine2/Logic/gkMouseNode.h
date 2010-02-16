@@ -40,6 +40,18 @@ public:
 
     bool evaluate(gkScalar tick);
 
+    // inputs 
+    GK_INLINE gkLogicSocket* getScaleX(void)        {return &m_sockets[0];}
+    GK_INLINE gkLogicSocket* getScaleY(void)        {return &m_sockets[1];}
+
+    // outputs
+    GK_INLINE gkLogicSocket* getMotion(void)        {return &m_sockets[2];}
+    GK_INLINE gkLogicSocket* getRelX(void)          {return &m_sockets[3];}
+    GK_INLINE gkLogicSocket* getRelY(void)          {return &m_sockets[4];}
+    GK_INLINE gkLogicSocket* getAbsX(void)          {return &m_sockets[5];}
+    GK_INLINE gkLogicSocket* getAbsY(void)          {return &m_sockets[6];}
+    GK_INLINE gkLogicSocket* getWheel(void)         {return &m_sockets[7];}
+
 private:
     gkLogicSocket m_sockets[8];
 };

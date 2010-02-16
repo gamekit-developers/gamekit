@@ -28,10 +28,12 @@
 #define _gkExpressionNode_h_
 
 #include "gkLogicNode.h"
-
 #define EXPR_MAX 13
 
 
+// not used for now.
+// this needs either a custom lexer & parser or the 
+// use of the current scripting engine to handle 
 class gkExpressionNode : public gkLogicNode
 {
 public:
@@ -40,10 +42,25 @@ public:
 
     bool evaluate(gkScalar tick);
     void update(gkScalar tick);
-    void _initialize();
+    void initialize();
 
-    void setNr(int nr) {m_nr = nr;}
-    void setExpr(const gkString &str) {m_code = str;}
+    // number of expressions to evaluate
+    GK_INLINE void setNr(int nr)                  {m_nr = nr;}
+
+    // expression string 
+    GK_INLINE void setExpr(const gkString &str)   {m_code = str;}
+
+    // inputs
+    GK_INLINE gkLogicSocket* getUpdate(void)    { return &m_sockets[0]; }
+    GK_INLINE gkLogicSocket* getExpr(int idx) {
+        idx = gkClamp<int>(idx, 0, 9);
+        return &m_sockets[idx + 1];
+    }
+
+    // outputs
+    GK_INLINE gkLogicSocket* getTrue(void)  {return &m_sockets[EXPR_MAX - 2];}
+    GK_INLINE gkLogicSocket* getFalse(void) {return &m_sockets[EXPR_MAX - 1];}
+
 private:
     class gkScriptExpression *m_expr;
     bool            m_err;

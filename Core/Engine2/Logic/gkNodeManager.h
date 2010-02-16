@@ -29,24 +29,16 @@
 
 #include "gkLogicCommon.h"
 #include "gkMathUtils.h"
-#include "OgreIteratorWrappers.h"
-#include "OgreCommon.h"
-
 #include "OgreSingleton.h"
 
-
-
 class gkGameObject;
-
-
 
 class gkNodeManager : public Ogre::Singleton<gkNodeManager>
 {
 public:
-    typedef std::map<size_t, gkLogicTree*> NodeTree;
-    typedef Ogre::MapIterator<NodeTree> NodeTreeIterator;
-    typedef std::vector<gkLogicTree*> TreeList;
-
+    typedef utHashTable<utIntHashKey, gkLogicTree*> NodeTree;
+    typedef utHashTableIterator<NodeTree>           NodeTreeIterator;
+    typedef utList<gkLogicTree*>                    TreeList;
 public:
     gkNodeManager();
     ~gkNodeManager();
@@ -54,25 +46,23 @@ public:
     gkLogicTree* create();
     gkLogicTree* create(const gkString &name);
 
-    gkLogicTree* get(size_t id);
+    gkLogicTree* get(int id);
     gkLogicTree* get(const gkString &name);
-    TreeList get(gkGameObject* ob);
 
     NodeTreeIterator getIterator();
 
     void destroy(gkLogicTree* tree);
-    void destroy(size_t handle);
+    void destroy(int handle);
 
     static gkNodeManager& getSingleton();
     static gkNodeManager* getSingletonPtr();
 
     void update(gkScalar tick);
-
     void clear();
-private:
 
+private:
     TreeList    m_locals;
-    size_t      m_uniqueHandle;
+    int         m_uniqueHandle;
     NodeTree    m_trees;
 };
 

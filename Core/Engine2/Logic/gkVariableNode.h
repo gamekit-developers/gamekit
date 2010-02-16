@@ -29,12 +29,9 @@
 
 #include "gkLogicNode.h"
 
-
-
-
 class gkVariable;
 
-
+// these need to be reevaluated
 class gkVariableNode : public gkLogicNode
 {
 public:
@@ -42,10 +39,18 @@ public:
     virtual ~gkVariableNode() {}
 
     bool evaluate(gkScalar tick);
-    void _initialize();
+    void initialize();
 
-    void setName(const gkString &varname) {m_varName = varname;}
-    void setDebug() {m_debug = true;}
+    GK_INLINE void setName(const gkString &varname) {m_varName = varname;}
+    GK_INLINE void setDebug(void)                   {m_debug = true;}
+
+    // inputs
+    GK_INLINE gkLogicSocket* getSet(void)       {return &m_sockets[0];}
+    GK_INLINE gkLogicSocket* getValue(void)     {return &m_sockets[1];}
+
+    // outputs
+    GK_INLINE gkLogicSocket* getResult(void)    {return &m_sockets[2];}
+
 private:
     gkLogicSocket   m_sockets[3];
     gkString        m_varName;
@@ -61,11 +66,20 @@ public:
     virtual ~VariableOpNode() {}
 
     bool evaluate(gkScalar tick);
-    void _initialize();
+    void initialize();
 
-    void setFunction(int func) {m_function = func;}
-    void setName(const gkString &varname) {m_varName = varname;}
-    void setToDegree(bool v) {m_deg = v;}
+    GK_INLINE void setFunction(int func)              {m_function = func;}
+    GK_INLINE void setName(const gkString &varname)   {m_varName = varname;}
+    GK_INLINE void setToDegree(bool v)                {m_deg = v;}
+
+
+    // inputs
+    GK_INLINE gkLogicSocket* getSet(void)       {return &m_sockets[0];}
+    GK_INLINE gkLogicSocket* getValue(void)     {return &m_sockets[1];}
+
+    // outputs
+    GK_INLINE gkLogicSocket* getResult(void)    {return &m_sockets[2];}
+
 private:
     gkLogicSocket   m_sockets[3];
     int             m_function;

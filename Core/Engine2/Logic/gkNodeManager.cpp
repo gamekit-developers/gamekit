@@ -28,32 +28,23 @@
 #include "gkLogicTree.h"
 
 
-using namespace Ogre;
-
-
-
-gkNodeManager::gkNodeManager() :
-        m_uniqueHandle(0), m_trees()
+gkNodeManager::gkNodeManager() 
+:       m_uniqueHandle(0)
 {
 }
-
 
 gkNodeManager::~gkNodeManager()
 {
     clear();
 }
 
-
 gkLogicTree* gkNodeManager::create()
 {
-    // no unique id|name so make one
-
+    // this is a normal tree
     gkLogicTree *tree = new gkLogicTree(this, m_uniqueHandle);
-    m_trees.insert(std::make_pair(m_uniqueHandle, tree));
+    m_trees.insert(m_uniqueHandle, tree);
 
-    // a constant update tree
     m_locals.push_back(tree);
-
     m_uniqueHandle++;
     return tree;
 }
@@ -61,98 +52,73 @@ gkLogicTree* gkNodeManager::create()
 
 gkLogicTree* gkNodeManager::create(const gkString &name)
 {
+    // this is a group tree
     gkLogicTree *tree = new gkLogicTree(this, m_uniqueHandle, name);
-    m_trees.insert(std::make_pair(m_uniqueHandle, tree));
+    m_trees.insert(m_uniqueHandle, tree);
+
     m_uniqueHandle++;
     return tree;
 }
 
-
-gkLogicTree* gkNodeManager::get(size_t id)
+gkLogicTree* gkNodeManager::get(int id)
 {
-    NodeTree::iterator it = m_trees.find(id);
-    return it != m_trees.end() ? it->second : 0;
-}
-
-
-gkLogicTree* gkNodeManager::get(const gkString &name)
-{
-    // may be a dup tree
-    NodeTree::iterator it = m_trees.begin(), end = m_trees.end();
-    for (; it != end; ++it)
-        if (it->second->getName() == name)
-            return it->second;
-
+    UTsize pos = m_trees.find(id);
+    if (pos != UT_NPOS)
+        return m_trees.at(pos);
     return 0;
 }
 
-
-gkNodeManager::TreeList gkNodeManager::get(gkGameObject* ob)
+gkLogicTree* gkNodeManager::get(const gkString &name)
 {
-    // tree list of all attached objects
-    TreeList objs;
-
-    NodeTree::iterator it = m_trees.begin(), end = m_trees.end();
-    for (; it != end; ++it)
+    NodeTreeIterator iter(m_trees);
+    while (iter.hasMoreElements())
     {
-        if (it->second->getAttachedObject() == ob)
-            objs.push_back(it->second);
+        NodeTreeIterator::Pair kv = iter.getNext();
+        if (kv.second->getName() == name)
+            return kv.second;
     }
-
-    return objs;
+    return 0;
 }
-
 
 void gkNodeManager::destroy(gkLogicTree* tree)
 {
-    destroy(tree->getHandle());
+    if (tree)
+        destroy(tree->getHandle());
 }
 
-
-void gkNodeManager::destroy(size_t handle)
+void gkNodeManager::destroy(int handle)
 {
-    NodeTree::iterator it = m_trees.find(handle);
-    if (it != m_trees.end())
+    UTsize pos = m_trees.find(handle);
+    if (pos != UT_NPOS)
     {
-        TreeList::iterator locals = std::find(m_locals.begin(), m_locals.end(), it->second);
-        if (locals != m_locals.end())
-            m_locals.erase(locals);
+        gkLogicTree* ltree = m_trees.at(pos);
 
-        delete it->second;
-        m_trees.erase(it);
+        TreeList::Pointer node = m_locals.find(ltree);
+        if (node)
+            m_locals.erase(node);
+
+        delete ltree;
+        m_trees.remove(handle);
     }
-
-    if (m_locals.empty())
-        m_locals.clear();
-
-    if (m_trees.empty())
-        m_trees.clear();
 }
 
 
 void gkNodeManager::update(gkScalar tick)
 {
-    TreeList::iterator it = m_locals.begin(), end = m_locals.end();
-    for (; it != end; ++it)
+    // update all non group trees 
+    if (!m_locals.empty())
     {
-        gkLogicTree *tree = (*it);
-
-        // test/execute initial branches
-        tree->execute(tick);
+        utListIterator<TreeList> iter(m_locals);
+        while (iter.hasMoreElements())
+            iter.getNext()->execute(tick);
     }
 }
 
-
-gkNodeManager::NodeTreeIterator gkNodeManager::getIterator()
-{
-    return NodeTreeIterator(m_trees.begin(), m_trees.end());
-}
-
-
 void gkNodeManager::clear()
 {
-    for (gkNodeManager::NodeTree::iterator it = m_trees.begin(); it != m_trees.end(); ++it)
-        delete(it->second);
+    NodeTreeIterator iter(m_trees);
+    while (iter.hasMoreElements())
+        delete iter.getNext().second;
     m_trees.clear();
     m_locals.clear();
 }

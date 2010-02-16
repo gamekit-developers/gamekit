@@ -29,21 +29,34 @@
 
 #include "gkLogicNode.h"
 
-
-
-
-
+// This is and object channel, for passing 
+// and object over a socket or getting and setting 
+// and object's location & rotation
 class gkObjectNode : public gkLogicNode
 {
 public:
     gkObjectNode(gkLogicTree *parent, size_t id);
     virtual ~gkObjectNode() {}
-    void _initialize();
+    void initialize();
 
     void update(gkScalar tick);
     bool evaluate(gkScalar tick);
-    void setOtherObject(const gkString &name) {m_otherName = name;}
-    void setFunction(gkObjectFunction f) {m_func = f;}
+
+    // todo, just pass object ptr
+    GK_INLINE void setOtherObject(const gkString &name)   {m_otherName = name;}
+    GK_INLINE void setFunction(gkObjectFunction f)        {m_func = f;}
+
+    // inputs
+    GK_INLINE gkLogicSocket* getIn(void)            {return &m_sockets[0];}
+    GK_INLINE gkLogicSocket* getInPosition(void)    {return &m_sockets[1];}
+    GK_INLINE gkLogicSocket* getInRotation(void)    {return &m_sockets[2];}
+
+    // outputs
+    GK_INLINE gkLogicSocket* getOut(void)           {return &m_sockets[3];}
+    GK_INLINE gkLogicSocket* getPosition(void)      {return &m_sockets[4];}
+    GK_INLINE gkLogicSocket* getRotation(void)      {return &m_sockets[5];}
+
+
 private:
     gkLogicSocket       m_sockets[6];
     gkString            m_otherName;

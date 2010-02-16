@@ -31,83 +31,30 @@ using namespace Ogre;
 
 
 
-gkGroupNode::gkGroupNode(gkLogicTree *parent, size_t id) :
-        gkLogicNode(parent, NT_GROUP, id)
+gkGroupNode::gkGroupNode(gkLogicTree *parent, size_t id)
+:       gkLogicNode(parent, NT_GROUP, id)
 {
+    ADD_ISOCK(m_sockets[0], this, gkLogicSocket::ST_BOOL);
+    ADD_OSOCK(m_sockets[1], this, gkLogicSocket::ST_BOOL);
 }
 
 
-gkGroupNode::~gkGroupNode()
+bool gkGroupNode::evaluate(gkScalar tick)
 {
-    gkSocketAlias::iterator it;
-
-    it = m_inpAlias.begin();
-    while (it != m_inpAlias.end())
-    {
-        delete it->second;
-        ++it;
-    }
-
-    it = m_outAlias.begin();
-    while (it != m_outAlias.end())
-    {
-        delete it->second;
-        ++it;
-    }
+    return m_sockets[0].getValueBool() && !m_groupList.empty();
 }
-
 
 void gkGroupNode::update(gkScalar tick)
 {
-    if (m_group)
+    utListIterator<Groups> it(m_groupList);
+    while (it.hasMoreElements())
     {
-        if (m_group->getAttachedObject() != m_object)
-            m_group->attachObject(m_object);
+        gkLogicTree *ltree = it.getNext();
+        if (ltree->getAttachedObject() != m_object)
+            ltree->attachObject(m_object);
 
-        gkSocketAlias::iterator it, end;
-        it =  m_inpAlias.begin();
-        end = m_inpAlias.end();
-        while (it != end)
-        {
-            it->first->copy(*it->second);
-            ++it;
-        }
-
-        it =  m_outAlias.begin();
-        end = m_outAlias.end();
-        while (it != end)
-        {
-            it->first->copy(*it->second);
-            ++it;
-        }
-
-        // execute tree
-        m_group->execute(tick);
+        ltree->execute(tick);
     }
-}
-
-
-void gkGroupNode::pushInput(gkLogicSocket *sock)
-{
-    if (sock != 0)
-    {
-        gkLogicSocket *ret = new gkLogicSocket();
-        ret->copy(*sock);
-
-        m_inpAlias.insert(std::make_pair(sock, ret));
-        m_inputs.push_back(ret);
-    }
-}
-
-
-void gkGroupNode::pushOutput(gkLogicSocket *sock)
-{
-    if (sock != 0)
-    {
-        gkLogicSocket *ret = new gkLogicSocket();
-        ret->copy(*sock);
-
-        m_outAlias.insert(std::make_pair(sock, ret));
-        m_outputs.push_back(ret);
-    }
+    // TODO push a return from exec
+    m_sockets[1].setValue(true);
 }

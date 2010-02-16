@@ -42,25 +42,33 @@ public:
     void update(gkScalar tick);
     bool evaluate(gkScalar tick);
 
-    void setMotionType(gkMotionTypes t) {m_motionType = t;}
-    void setSpace(int ts) {m_space = ts;}
+    GK_INLINE void setMotionType(gkMotionTypes t)   {m_motionType = t;}
+    GK_INLINE void setSpace(int ts)                 {m_space = ts;}
+    GK_INLINE void keepVelocity(void)               {m_keep = true;}
 
-    void keepVelocity() {m_keep = true;}
 
-    void setMinX(gkScalar v);
-    void setMaxX(gkScalar v);
+    GK_INLINE void setMinX(gkScalar v)  {m_flag |= 1;x[0] = v;}
+    GK_INLINE void setMaxX(gkScalar v)  {m_flag |= 1;x[1] = v;}
+    GK_INLINE void setMinY(gkScalar v)  {m_flag |= 2;y[0] = v;}
+    GK_INLINE void setMaxY(gkScalar v)  {m_flag |= 2;y[1] = v;}
+    GK_INLINE void setMinZ(gkScalar v)  {m_flag |= 4;z[0] = v;}
+    GK_INLINE void setMaxZ(gkScalar v)  {m_flag |= 4;z[1] = v;}
 
-    void setMinY(gkScalar v);
-    void setMaxY(gkScalar v);
-
-    void setMinZ(gkScalar v);
-    void setMaxZ(gkScalar v);
-
+    // todo, just pass object ptr
     void setOtherObject(const gkString &obname) {m_otherName = obname;}
+
+    // socket access
+    GK_INLINE gkLogicSocket* getUpdate(void)    {return &m_sockets[0];}
+    GK_INLINE gkLogicSocket* getX(void)         {return &m_sockets[1];}
+    GK_INLINE gkLogicSocket* getY(void)         {return &m_sockets[2];}
+    GK_INLINE gkLogicSocket* getZ(void)         {return &m_sockets[3];}
+    GK_INLINE gkLogicSocket* getDamping(void)   {return &m_sockets[4];}
+
+
 private:
-    int getLRS();
-    void applyConstraints(int lrs);
-    void applyObject(gkVector3 &vec);
+    int     getLRS();
+    void    applyConstraints(int lrs);
+    void    applyObject(gkVector3 &vec);
 
     gkLogicSocket   m_sockets[5];
     gkMotionTypes   m_motionType;
@@ -74,47 +82,6 @@ private:
 };
 
 
-
-GK_INLINE void gkMotionNode::setMinX(gkScalar v)
-{
-    m_flag |= 1;
-    x[0] = v;
-}
-
-
-GK_INLINE void gkMotionNode::setMaxX(gkScalar v)
-{
-    m_flag |= 1;
-    x[1] = v;
-}
-
-
-GK_INLINE void gkMotionNode::setMinY(gkScalar v)
-{
-    m_flag |= 2;
-    y[0] = v;
-}
-
-
-GK_INLINE void gkMotionNode::setMaxY(gkScalar v)
-{
-    m_flag |= 2;
-    y[1] = v;
-}
-
-
-GK_INLINE void gkMotionNode::setMinZ(gkScalar v)
-{
-    m_flag |= 4;
-    z[0] = v;
-}
-
-
-GK_INLINE void gkMotionNode::setMaxZ(gkScalar v)
-{
-    m_flag |= 4;
-    z[1] = v;
-}
 
 
 

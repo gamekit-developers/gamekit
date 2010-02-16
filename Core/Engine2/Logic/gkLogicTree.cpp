@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): silveira.nestor.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -48,16 +48,16 @@ using namespace Ogre;
 
 
 
-gkLogicTree::gkLogicTree(gkNodeManager* creator, size_t id, const gkString &name) :
-        m_handle(id), m_uniqueHandle(0), m_creator(creator), m_object(0),
-        m_name(name), m_initialized(false)
+gkLogicTree::gkLogicTree(gkNodeManager* creator, UTsize id, const gkString &name)
+:       m_handle(id), m_uniqueHandle(0), m_creator(creator), m_object(0),
+        m_name(name), m_initialized(false), m_sorted(false)
 {
 }
 
 
-gkLogicTree::gkLogicTree(gkNodeManager* creator, size_t id) :
-        m_handle(id), m_uniqueHandle(0), m_creator(creator), m_object(0),
-        m_name(StringUtil::BLANK), m_initialized(false)
+gkLogicTree::gkLogicTree(gkNodeManager* creator, UTsize id)
+:       m_handle(id), m_uniqueHandle(0), m_creator(creator), m_object(0),
+        m_name(StringUtil::BLANK), m_initialized(false), m_sorted(false)
 {
 }
 
@@ -73,120 +73,34 @@ void gkLogicTree::attachObject(gkGameObject *ob)
     m_object = ob;
 
     // notify all
-
-    gkNodeBaseIterator iter = getNodeIterator();
-    while (iter.hasMoreElements())
-        iter.getNext()->attachObject(m_object);
+    if (!m_nodes.empty())
+    {
+        NodeIterator iter(m_nodes);
+        while (iter.hasMoreElements())
+            iter.getNext()->attachObject(m_object);
+    }
 }
 
 
-void gkLogicTree::destroyNodes()
+void gkLogicTree::destroyNodes(void)
 {
-
-    gkNodeBaseIterator iter = getNodeIterator();
-    while (iter.hasMoreElements())
-        delete iter.getNext();
-
+    if (!m_nodes.empty())
+    {
+        NodeIterator iter(m_nodes);
+        while (iter.hasMoreElements())
+            delete iter.getNext();
+    }
     m_nodes.clear();
     m_uniqueHandle = 0;
 }
 
 
-void gkLogicTree::freeUnused()
+void gkLogicTree::freeUnused(void)
 {
     // delete nodes that have no links
-
-    gkLogicNodeIterator it = m_nodes.begin(), end = m_nodes.end();
-    while (it != end)
-    {
-        if (!(*it)->hasLinks())
-        {
-            delete(*it);
-
-            m_nodes.erase(it);
-            it = m_nodes.begin(); end = m_nodes.end();
-        }
-        else
-            ++it;
-    }
-
-    if (m_nodes.empty())
-        m_nodes.clear();
 }
 
-
-gkLogicNode* gkLogicTree::createNode(const gkNodeTypes& nt)
-{
-    gkLogicNode *node = 0;
-    switch (nt)
-    {
-    case NT_GROUP:
-        node = new gkGroupNode(this, m_uniqueHandle);
-        break;
-    case NT_OBJECT:
-        node = new gkObjectNode(this, m_uniqueHandle);
-        break;
-    case NT_MOUSE:
-        node = new gkMouseNode(this, m_uniqueHandle);
-        break;
-    case NT_KEY:
-        node = new gkKeyNode(this, m_uniqueHandle);
-        break;
-    case NT_MATH:
-        node = new gkMathNode(this, m_uniqueHandle);
-        break;
-    case NT_MOTION:
-        node = new gkMotionNode(this, m_uniqueHandle);
-        break;
-    case NT_PRINT:
-        node = new gkPrintNode(this, m_uniqueHandle);
-        break;
-    case NT_ANIM:
-        node = new gkAnimationNode(this, m_uniqueHandle);
-        break;
-    case NT_RAND:
-        node = new gkRandomNode(this, m_uniqueHandle);
-        break;
-    case NT_VALUE:
-        node = new gkValueNode(this, m_uniqueHandle);
-        break;
-    case NT_VARIABLE:
-        node = new gkVariableNode(this, m_uniqueHandle);
-        break;
-    case NT_VARIABLE_OP:
-        node = new VariableOpNode(this, m_uniqueHandle);
-        break;
-    case NT_EXPR:
-        node = new gkExpressionNode(this, m_uniqueHandle);
-        break;
-    case NT_SWITCH:
-        node = new gkSwitchNode(this, m_uniqueHandle);
-        break;
-    case NT_IF:
-        node = new gkIfNode(this, m_uniqueHandle);
-        break;
-    case NT_TIMER:
-        node = new gkTimerNode(this, m_uniqueHandle);
-        break;
-    case NT_EXIT:
-        node = new gkExitNode(this, m_uniqueHandle);
-        break;
-
-    }
-
-    if (node != 0)
-    {
-        if (m_object != 0)
-            node->attachObject(m_object);
-
-        m_nodes.push_back(node);
-        m_uniqueHandle ++;
-    }
-    return node;
-}
-
-
-gkLogicNode* gkLogicTree::getNode(size_t idx)
+gkLogicNode* gkLogicTree::getNode(UTsize idx)
 {
     if (idx >= 0 && idx < m_nodes.size())
         return m_nodes.at(idx);
@@ -194,204 +108,160 @@ gkLogicNode* gkLogicTree::getNode(size_t idx)
 }
 
 
-void gkLogicTree::findToNodes(gkLogicSocket *from, gkLogicNodeBase &nodes)
+// Sort trees for optimal execution
+class gkLogicSolver
 {
-    gkNodeBaseIterator iter = getNodeIterator();
-    while (iter.hasMoreElements())
+public:
+    typedef gkLogicNode* gkLogicNodeT;
+
+    static bool sort(const gkLogicNodeT& a, const gkLogicNodeT& b)
     {
-        gkLogicNode *node = iter.getNext();
-
-        gkSocketBaseIterator inputs = node->getInputs();
-        while (inputs.hasMoreElements())
-        {
-            gkLogicSocket *isock = inputs.getNext();
-            if (!isock->isLinked())
-                continue;
-
-            if (isock->getFrom() == from)
-                nodes.push_back(isock->getParent());
-        }
+        return a->getPriority() < b->getPriority();
     }
-}
 
+public:
 
-bool has_link(gkLogicNodeBase base, gkLogicNode *node)
-{
-    return std::find(base.begin(), base.end(), node) != base.end();
-}
-
-
-bool SortLess(gkLogicNode *a, gkLogicNode *b)
-{
-    return a->getHandle() < b->getHandle();
-}
-
-
-void gkLogicTree::findSubNodeForward(gkLogicNodeBase &root, gkLogicNode *rfnode, gkLogicNode *from, gkLogicSocket *caller, bool skip)
-{
-    if (!from) return;
-
-    gkSocketBaseIterator outputs = from->getOutputs();
-    while (outputs.hasMoreElements())
+    void solve(gkLogicTree *tree)
     {
-        gkLogicSocket *osock = outputs.getNext();
-        if (!osock->isConnected())
-            continue;
-
-        // Only sort calling socket.
-        if (skip && osock != caller)
-            continue;
-
-
-        gkLogicNodeBase outs;
-        findToNodes(osock, outs);
-
-        gkNodeBaseIterator iter = gkNodeBaseIterator(outs.begin(), outs.end());
+        gkLogicTree::NodeIterator iter = tree->getNodeIterator();
         while (iter.hasMoreElements())
-        {
-            gkLogicNode *to = iter.getNext();
-
-            if (!has_link(root, to))
-            {
-                root.push_back(to);
-                findSubNodeForward(root, rfnode, to, 0, false);
-            }
-        }
-
-        // The calling socket has been sorted.
-        if (skip && osock == caller) return;
+            setPriority(tree, iter.getNext());
     }
 
-    if (!skip)   /* only test the first 'to' node onward*/
+    void setPriority(gkLogicTree* tree, gkLogicNode *node)
     {
-        gkSocketBaseIterator inputs = from->getInputs();
-        while (inputs.hasMoreElements())
+        // setting priority + 1 for each connection 
+
+        GK_ASSERT(node);
+        gkLogicNode::Sockets &sockets = node->getInputs();
+        if (!sockets.empty())
         {
-            gkLogicSocket *isock = inputs.getNext();
-            if (!isock->isLinked())
-                continue;
-
-            gkLogicNode *fnode = isock->getFrom()->getParent();
-
-            if (fnode != 0)
+            gkLogicNode::SocketIterator sockit(sockets);
+            while (sockit.hasMoreElements())
             {
-                // stop at the first input of the calling node
-                if (fnode == rfnode) continue;
-
-                if (!has_link(root, fnode))
+                gkLogicSocket *sock = sockit.getNext();
+                if (sock->isLinked())
                 {
-                    root.push_back(fnode);
-                    findSubNodeForward(root, rfnode, fnode, 0, false);
+                    gkLogicSocket *fsock = sock->getFrom();
+                    if (!fsock) continue;
+
+                    gkLogicTree::NodeIterator iter = tree->getNodeIterator();
+                    while (iter.hasMoreElements())
+                    {
+                        gkLogicNode* onode = iter.getNext();
+                        if (onode != node && onode == fsock->getParent())
+                        {
+                            onode->setPriority(node->getPriority() + 1);
+                            setPriority(tree, onode);
+                        }
+                    }
                 }
             }
         }
+
     }
+};
+
+
+#define NT_DUMP_ORDER 0
+
+#if NT_DUMP_ORDER == 1
+char *NTGetName(int nt)
+{
+    switch (nt)
+    {
+    case NT_GROUP:      return "NT_GROUP        ";
+    case NT_OBJECT:     return "NT_OBJECT       ";
+    case NT_MOUSE:      return "NT_MOUSE        ";
+    case NT_MOUSEBUTTON:return "NT_MOUSEBUTTON  ";
+    case NT_KEY:        return "NT_KEY          ";
+    case NT_MATH:       return "NT_MATH         ";
+    case NT_MOTION:     return "NT_MOTION       ";
+    case NT_PRINT:      return "NT_PRINT        ";
+    case NT_ANIM:       return "NT_ANIM         ";
+    case NT_RAND:       return "NT_RAND         ";
+    case NT_VALUE:      return "NT_VALUE        ";
+    case NT_VARIABLE:   return "NT_VARIABLE     ";
+    case NT_VARIABLE_OP:return "NT_VARIABLE_OP  ";
+    case NT_EXPR:       return "NT_EXPR         ";
+    case NT_SWITCH:     return "NT_SWITCH       ";
+    case NT_IF:         return "NT_IF           ";
+    case NT_TIMER:      return "NT_TIMER        ";
+    case NT_EXIT:       return "NT_EXIT         ";
+    }
+    return "NT_UNKNOWN      ";
 }
 
+#endif
 
-bool gkLogicTree::isConnectedIn(gkLogicNode *from, gkLogicNode *test)
+void gkLogicTree::solveOrder(bool forceSolve)
 {
-    gkSocketBaseIterator inputs = from->getInputs();
-    while (inputs.hasMoreElements())
+    if (m_sorted && !forceSolve)
+        return;
+
+    if (m_sorted)
     {
-        gkLogicSocket *isock = inputs.getNext();
-        if (!isock->isLinked())
-            continue;
-
-        gkSocketBaseIterator outputs = test->getOutputs();
-        while (outputs.hasMoreElements())
-        {
-            gkLogicSocket *osock = outputs.getNext();
-            if (!osock->isConnected())
-                continue;
-
-            if (isock->getFrom() == osock)
-                return true;
-        }
-    }
-    return false;
-}
-
-
-void gkLogicTree::pushSocketTree(gkLogicNode *from)
-{
-    gkSocketBaseIterator outputs = from->getOutputs();
-    while (outputs.hasMoreElements())
-    {
-        gkLogicSocket *osock = outputs.getNext();
-        if (!osock->isConnected())
-            continue;
-
-        gkLogicNodeBase root;
-        findSubNodeForward(root, from, from, osock, true);
-
-        if (root.empty())
-            continue;
-
-        std::sort(root.begin(), root.end(), SortLess);
-
-
-        // 'root' should contain all subnodes from  'osock's' to link
-        gkNodeBaseIterator iter = gkNodeBaseIterator(root.begin(), root.end());
+        NodeIterator iter(m_nodes);
         while (iter.hasMoreElements())
-        {
-            gkLogicNode *node = iter.getNext();
-
-            // break circular links
-            if (isConnectedIn(from, node) || node == from)
-                continue;
-
-
-            // push subtree for io blocking see gkLogicSocket::block
-            if (!osock->has_link(node)) osock->push_link(node);
-        }
+            iter.getNext()->setPriority(0);
     }
-}
+    m_sorted = true;
 
+    gkLogicSolver s;
+    s.solve(this);
 
-void gkLogicTree::solveOrder()
-{
-    //Need to store sub-trees from
-    //each socket so io blocking can
-    //take place
-    //So, for each connected socket
-    //store direct and indirect links
-    //from that socket
+#if NT_DUMP_ORDER == 0
+    m_nodes.sort(gkLogicSolver::sort);
+#else
 
-    gkNodeBaseIterator iter = getNodeIterator();
+    printf("--- node order before sort ---\n");
+    NodeIterator iter(m_nodes);
     while (iter.hasMoreElements())
     {
-        gkLogicNode *node = iter.getNext();
-        pushSocketTree(node);
+        gkLogicNode *lnode = iter.getNext();
+        printf("%s:%i\n", (NTGetName((int)lnode->getType())), lnode->getPriority());
     }
-}
 
+    m_nodes.sort(gkLogicSolver::sort);
+
+
+    printf("--- node order after sort ---\n");
+    NodeIterator iter2(m_nodes);
+    while (iter2.hasMoreElements())
+    {
+        gkLogicNode *lnode = iter2.getNext();
+        printf("%s:%i\n", (NTGetName((int)lnode->getType())), lnode->getPriority());
+    }
+#endif
+ 
+}
 
 void gkLogicTree::execute(gkScalar tick)
 {
+    if (m_nodes.empty())
+    {
+        // undefined
+        return;
+    }
+
+    if (!m_sorted)
+        solveOrder();
+
 
     if (!m_initialized)
     {
-        // first execution
-        gkNodeBaseIterator iter = getNodeIterator();
+        NodeIterator iter(m_nodes);
         while (iter.hasMoreElements())
-        {
-            gkLogicNode *node = iter.getNext();
-            node->_initialize();
-        }
-
+            iter.getNext()->initialize();
         m_initialized = true;
     }
 
-
-    gkNodeBaseIterator iter = getNodeIterator();
+    NodeIterator iter(m_nodes);
     while (iter.hasMoreElements())
     {
         gkLogicNode *node = iter.getNext();
-        if (!node->isBlocked() && node->evaluate(tick))
-        {
-            // can continue
+        // can continue
+        if (node->evaluate(tick)) 
             node->update(tick);
-        }
     }
 }

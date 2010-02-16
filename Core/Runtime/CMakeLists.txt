@@ -20,6 +20,7 @@ include_directories(
     ../Engine2/Loaders/Blender/
     ../Engine2/Physics/
     ../Engine2/LogicBricks
+    ../Engine2/Logic
     ../Engine2/Utils/Src
     ../Engine2/Animation
 )

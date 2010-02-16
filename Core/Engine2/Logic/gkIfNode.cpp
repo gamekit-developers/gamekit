@@ -32,17 +32,21 @@ using namespace Ogre;
 
 
 
-gkIfNode::gkIfNode(gkLogicTree *parent, size_t id) :
-        gkLogicNode(parent, NT_IF, id), m_stmt(CMP_NULL)
+gkIfNode::gkIfNode(gkLogicTree *parent, size_t id) 
+:       gkLogicNode(parent, NT_IF, id), m_stmt(CMP_NULL)
 {
     ADD_ISOCK(m_sockets[0], this, gkLogicSocket::ST_REAL);
     ADD_ISOCK(m_sockets[1], this, gkLogicSocket::ST_REAL);
     ADD_OSOCK(m_sockets[2], this, gkLogicSocket::ST_BOOL);
     ADD_OSOCK(m_sockets[3], this, gkLogicSocket::ST_BOOL);
+
+    m_sockets[0].setValue(0.f);
+    m_sockets[1].setValue(0.f);
+    m_sockets[2].setValue(false);
+    m_sockets[3].setValue(false);
 }
 
-
-
+        
 bool gkIfNode::evaluate(gkScalar tick)
 {
     bool result = false;
@@ -97,12 +101,6 @@ bool gkIfNode::evaluate(gkScalar tick)
     default:
         break;
     }
-
-
-    // do io blocking
-    if (m_sockets[2].isConnected()) m_sockets[2].block(!result);
-    if (m_sockets[3].isConnected()) m_sockets[3].block(result);
-
     m_sockets[2].setValue(result);
     m_sockets[3].setValue(!result);
     return false;

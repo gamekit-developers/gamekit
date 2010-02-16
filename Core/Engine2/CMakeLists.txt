@@ -124,6 +124,7 @@ set(NLogic_SOURCE
     Logic/gkMathNode.cpp
     Logic/gkMotionNode.cpp
     Logic/gkMouseNode.cpp
+    Logic/gkMouseButtonNode.cpp
     Logic/gkObjectNode.cpp
     Logic/gkPrintNode.cpp
     Logic/gkRandomNode.cpp
@@ -149,6 +150,7 @@ set(NLogic_HEADER
     Logic/gkMathNode.h
     Logic/gkMotionNode.h
     Logic/gkMouseNode.h
+    Logic/gkMouseButtonNode.h
     Logic/gkObjectNode.h
     Logic/gkPrintNode.h
     Logic/gkRandomNode.h

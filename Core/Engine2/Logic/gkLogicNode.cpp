@@ -32,14 +32,14 @@ using namespace Ogre;
 
 
 
-gkLogicNode::gkLogicNode(gkLogicTree *parent, const gkNodeTypes& nt, size_t handle) :
+gkLogicNode::gkLogicNode(gkLogicTree *parent, const gkNodeTypes& nt, UTsize handle) :
         m_handle(handle), m_object(0), m_other(0), m_type(nt), m_parent(parent),
-        m_hasLinks(false), m_blocked(false)
+        m_hasLinks(false), m_priority(0)
 {
 }
 
 
-gkLogicSocket* gkLogicNode::getInputSocket(size_t index)
+gkLogicSocket* gkLogicNode::getInputSocket(UTsize index)
 {
     if (index >= 0 && index < m_inputs.size())
         return m_inputs.at(index);
@@ -47,7 +47,7 @@ gkLogicSocket* gkLogicNode::getInputSocket(size_t index)
 }
 
 
-gkLogicSocket* gkLogicNode::getOutputSocket(size_t index)
+gkLogicSocket* gkLogicNode::getOutputSocket(UTsize index)
 {
     if (index >= 0 && index < m_outputs.size())
         return m_outputs.at(index);

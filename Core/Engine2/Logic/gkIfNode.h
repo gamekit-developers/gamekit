@@ -30,11 +30,7 @@
 #include "gkLogicNode.h"
 
 
-
-
 class gkVariable;
-
-
 
 typedef enum gkBoolStatement
 {
@@ -52,9 +48,6 @@ typedef enum gkBoolStatement
     CMP_LTHAN
 } gkBoolStatement;
 
-
-
-
 class gkIfNode : public gkLogicNode
 {
 public:
@@ -64,6 +57,19 @@ public:
     bool evaluate(gkScalar tick);
 
     void setStatement(gkBoolStatement stmt) {m_stmt = stmt;}
+
+
+    // socket access
+
+    // inputs
+    GK_INLINE gkLogicSocket* getA(void)     {return &m_sockets[0];}
+    GK_INLINE gkLogicSocket* getB(void)     {return &m_sockets[1];}
+
+    // outputs
+    GK_INLINE gkLogicSocket* getTrue(void)  {return &m_sockets[2];}
+    GK_INLINE gkLogicSocket* getFalse(void) {return &m_sockets[3];}
+
+
 private:
     gkLogicSocket   m_sockets[4];
     gkBoolStatement m_stmt;

@@ -29,14 +29,12 @@
 
 #include "gkLogicNode.h"
 
-/* switch constants */
+// switch constants
 #define START_IN 2
 #define START_OT 12
 #define CASE_MAX 23
 
-
-
-
+// switch & case support upto 10 labels 
 class gkSwitchNode : public gkLogicNode
 {
 public:
@@ -45,10 +43,27 @@ public:
 
     bool evaluate(gkScalar tick);
     void update(gkScalar tick);
-    void _initialize();
+    void initialize();
 
-    void setLabels(int nr) {m_labels = nr;}
-    void _doBlocks(int idx);
+    // number of labels to test 
+    GK_INLINE void setNrLabels(int nr)  {m_labels = gkClamp<int>(nr, 1, 10);}
+
+    // inputs 
+    GK_INLINE gkLogicSocket* getUpdate(void)        {return &m_sockets[0];}
+    GK_INLINE gkLogicSocket* getSwitch(void)        {return &m_sockets[1];}
+    GK_INLINE gkLogicSocket* getCase(int idx) {
+        idx = gkClamp<int>(idx, 0, 9);
+        return &m_sockets[START_IN + idx];
+    }
+
+    // outputs
+    GK_INLINE gkLogicSocket* getDefault(void)        {return &m_sockets[START_OT];}
+    GK_INLINE gkLogicSocket* getReturn(int idx) {
+        idx = gkClamp<int>(idx, 0, 9);
+        return &m_sockets[(START_OT + 1) + idx];
+    }
+
+
 private:
     gkLogicSocket   m_sockets[CASE_MAX];
     int             m_labels;

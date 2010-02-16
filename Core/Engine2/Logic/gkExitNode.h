@@ -41,6 +41,10 @@ public:
     void update(gkScalar tick);
     bool evaluate(gkScalar tick);
 
+    // socket access
+    GK_INLINE gkLogicSocket* getExit(void)    {return &m_sockets[0];}
+
+
 private:
     gkLogicSocket m_sockets[1];
 };

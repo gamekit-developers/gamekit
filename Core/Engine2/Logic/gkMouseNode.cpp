@@ -49,6 +49,13 @@ gkMouseNode::gkMouseNode(gkLogicTree *parent, size_t id) :
     ADD_OSOCK(m_sockets[5],  this, gkLogicSocket::ST_REAL);
     ADD_OSOCK(m_sockets[6],  this, gkLogicSocket::ST_REAL);
     ADD_OSOCK(m_sockets[7],  this, gkLogicSocket::ST_REAL);
+
+    m_sockets[2].setValue(false);
+    m_sockets[3].setValue(0.f);
+    m_sockets[4].setValue(0.f);
+    m_sockets[5].setValue(0.f);
+    m_sockets[6].setValue(0.f);
+    m_sockets[7].setValue(0.f);
 }
 
 

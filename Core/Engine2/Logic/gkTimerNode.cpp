@@ -30,31 +30,22 @@ using namespace Ogre;
 
 
 
-gkTimerNode::gkTimerNode(gkLogicTree *parent, size_t id) :
-        gkLogicNode(parent, NT_TIMER, id)
+gkTimerNode::gkTimerNode(gkLogicTree *parent, size_t id) 
+:       gkLogicNode(parent, NT_TIMER, id)
 {
     ADD_ISOCK(m_sockets[0], this, gkLogicSocket::ST_BOOL);
     ADD_ISOCK(m_sockets[1], this, gkLogicSocket::ST_REAL);
     ADD_OSOCK(m_sockets[2], this, gkLogicSocket::ST_REAL);
+    m_sockets[0].setValue(true);
+    m_sockets[1].setValue(0.f);
+    m_sockets[2].setValue(0.f);
 }
 
 
 bool gkTimerNode::evaluate(gkScalar tick)
 {
-    bool result = m_sockets[0].getValueBool();
-
-    if (!result)
-    {
-        if (!m_sockets[2].isBlocked() && m_sockets[2].isConnected())
-            m_sockets[2].block(true);
-    }
-    else
-        if (m_sockets[2].isBlocked() && m_sockets[2].isConnected())
-            m_sockets[2].block(false);
-
-    return result;
+    return m_sockets[0].getValueBool();
 }
-
 
 void gkTimerNode::update(gkScalar tick)
 {

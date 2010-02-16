@@ -29,9 +29,8 @@
 
 #include "gkLogicNode.h"
 
-
-
-
+// print incomming socket information to 
+// a specific stream, right now it's stdio 
 class gkPrintNode : public gkLogicNode
 {
 public:
@@ -40,6 +39,10 @@ public:
 
     void update(gkScalar tick);
     bool evaluate(gkScalar tick);
+
+    // inputs
+    GK_INLINE gkLogicSocket* getPrint(void)     {return &m_sockets[0];}
+    GK_INLINE gkLogicSocket* getValue(void)     {return &m_sockets[1];}
 
 private:
     gkLogicSocket m_sockets[2];

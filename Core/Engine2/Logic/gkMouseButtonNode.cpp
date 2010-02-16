@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): silveira.nestor.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -25,23 +25,19 @@
 -------------------------------------------------------------------------------
 */
 #include "gkWindowSystem.h"
-#include "gkKeyNode.h"
+#include "gkMouseButtonNode.h"
 #include "gkEngine.h"
 #include "gkLogger.h"
 
-using namespace Ogre;
 
-
-
-
-gkKeyNode::gkKeyNode(gkLogicTree *parent, size_t id) 
-:       gkLogicNode(parent, NT_KEY, id), m_isPressed(false), m_pressed(false),
-        m_delay(0), m_cnt(0), m_key(KC_NONE)
+gkMouseButtonNode::gkMouseButtonNode(gkLogicTree *parent, size_t id) 
+:       gkLogicNode(parent, NT_MOUSEBUTTON, id), m_isPressed(false), m_pressed(false),
+			m_delay(0), m_counter(0), m_button(gkMouse::Left)
 {
-    ADD_ISOCK(m_sockets[0], this, gkLogicSocket::ST_BOOL);
-    ADD_OSOCK(m_sockets[1], this, gkLogicSocket::ST_BOOL);
-    ADD_OSOCK(m_sockets[2], this, gkLogicSocket::ST_BOOL);
-    ADD_OSOCK(m_sockets[3], this, gkLogicSocket::ST_BOOL);
+	ADD_ISOCK(m_sockets[0], this, gkLogicSocket::ST_BOOL);
+	ADD_OSOCK(m_sockets[1], this, gkLogicSocket::ST_BOOL);
+	ADD_OSOCK(m_sockets[2], this, gkLogicSocket::ST_BOOL);
+	ADD_OSOCK(m_sockets[3], this, gkLogicSocket::ST_BOOL);
 
     m_sockets[0].setValue(true);
     m_sockets[1].setValue(false);
@@ -49,46 +45,43 @@ gkKeyNode::gkKeyNode(gkLogicTree *parent, size_t id)
     m_sockets[3].setValue(false);
 }
 
-
-
-bool gkKeyNode::evaluate(gkScalar tick)
+bool gkMouseButtonNode::evaluate(gkScalar tick)
 {
-    if (!m_sockets[0].getValueBool())
-    {
-        // block outputs
-        m_sockets[1].setValue(false);
-        m_sockets[2].setValue(false);
-        m_sockets[3].setValue(false);
-        return false;
-    }
+	if (!m_sockets[0].getValueBool())
+	{
+		m_sockets[1].setValue(false);
+		m_sockets[2].setValue(false);
+		m_sockets[3].setValue(false);
+		return false;
+	}
 
     if (m_delay != 0)
-    {
-        m_cnt += 1;
-        if (m_cnt < m_delay)
-            return false;
-        m_cnt = 0;
-    }
+	{
+		m_counter += 1;
+		if (m_counter < m_delay)
+			return false;
+		m_counter= 0;
+	}
 
-    m_isPressed = gkWindowSystem::getSingleton().getKeyboard()->isKeyDown(m_key);
-    m_sockets[1].setValue(m_isPressed);
+	m_isPressed= gkWindowSystem::getSingleton().getMouse()->isButtonDown(m_button);
+	m_sockets[1].setValue(m_isPressed);
 
-    if (m_isPressed && !m_pressed)
-    {
-        m_pressed = true;
-        m_sockets[2].setValue(true);
-        m_sockets[3].setValue(false);
-    }
-    else if (!m_isPressed && m_pressed)
-    {
-        m_pressed = false;
-        m_sockets[2].setValue(false);
-        m_sockets[3].setValue(true);
-    }
-    else
-    {
-        m_sockets[2].setValue(false);
-        m_sockets[3].setValue(false);
-    }
-    return false;
+	if (m_isPressed && !m_pressed)
+	{
+		m_pressed= true;
+		m_sockets[2].setValue(true);
+		m_sockets[3].setValue(false);
+	}
+	else if (!m_isPressed && m_pressed)
+	{
+		m_pressed= false;
+		m_sockets[2].setValue(false);
+		m_sockets[3].setValue(true);
+	}
+	else
+	{
+		m_sockets[2].setValue(false);
+		m_sockets[3].setValue(false);
+	}
+	return false;
 }

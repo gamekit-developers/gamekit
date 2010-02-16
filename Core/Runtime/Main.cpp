@@ -40,11 +40,19 @@
 #include "gkLuaManager.h"
 
 // node tests 
+#include "gkVariable.h"
 #include "gkNodeManager.h"
 #include "gkKeyNode.h"
+#include "gkMathNode.h"
+#include "gkIfNode.h"
 #include "gkMouseNode.h"
+#include "gkSwitchNode.h"
+#include "gkVariableNode.h"
+#include "gkGroupNode.h"
+#include "gkObjectNode.h"
 #include "gkMotionNode.h"
 #include "gkLogicTree.h"
+#include "gkMouseButtonNode.h"
 
 
 // Temporary class to test out
@@ -133,8 +141,6 @@ public:
 };
 
 
-
-
 class OgreKit :
             public gkCoreApplication,
             public gkWindowSystem::Listener
@@ -203,6 +209,7 @@ public:
         {
             m_scene->load();
             //test13(m_scene);
+            test0(m_scene);
         }
 
         // add input hooks
@@ -216,32 +223,84 @@ public:
         if (sc == KC_ESCKEY) m_engine->requestExit();
     }
 
+
+    void test0(gkScene* scene)
+    {
+        gkGameObject *ob = 0;
+
+        if (scene->hasObject("Cube"))
+            ob = scene->getObject("Cube");
+        else
+            ob = scene->getMainCamera();
+
+        gkLogicTree* tree = gkNodeManager::getSingleton().create();
+
+
+        // if (akey || leftmouse) {
+        //   rotate ob around z by mousex
+        // } else {
+        //   rotate ob around x by mousex
+        // }
+
+        gkMouseNode* mouse      = tree->createNode<gkMouseNode>();
+        gkMotionNode* motionZ   = tree->createNode<gkMotionNode>();
+        gkMotionNode* motionT   = tree->createNode<gkMotionNode>();
+        gkIfNode* ifNode        = tree->createNode<gkIfNode>();
+        gkKeyNode* ctrl         = tree->createNode<gkKeyNode>();
+        gkMouseButtonNode* left = tree->createNode<gkMouseButtonNode>();
+
+        ifNode->setStatement(CMP_OR);
+        ctrl->setKey(KC_AKEY);
+        left->setButton(gkMouse::Left);
+
+        ifNode->getA()->link(ctrl->getIsDown());
+        ifNode->getB()->link(left->getIsDown());
+
+
+        motionZ->getUpdate()->link(ifNode->getTrue());
+        motionZ->getZ()->link(mouse->getRelX());
+
+        motionT->getUpdate()->link(ifNode->getFalse());
+        motionT->getX()->link(mouse->getRelX());
+
+
+        tree->solveOrder();
+        ob->attachLogic(tree);
+    }
+
     void test13(gkScene* pScene)
     {
-        gkCamera* pCamera = pScene->getMainCamera();
+        gkGameObject *pObject = 0;
+
+        if (pScene->hasObject("Cube"))
+            pObject = pScene->getObject("Cube");
+        else
+            pObject = pScene->getMainCamera();
+
 
         gkLogicTree* pTree = gkNodeManager::getSingleton().create();
+        gkMouseNode* pMouseNode = pTree->createNode<gkMouseNode>();
+        gkMathNode* pMathNode = pTree->createNode<gkMathNode>();
 
-        gkLogicNode* pMouseNode = pTree->createNode(NT_MOUSE);
+        pMathNode->getA()->link(pMouseNode->getRelX());
+        pMathNode->getB()->link(pMouseNode->getRelY());
 
-        gkLogicNode* pMathNode = pTree->createNode(NT_MATH);
-
-        pMathNode->getInputSocket(0)->link(pMouseNode->getOutputSocket(1));
-        pMathNode->getInputSocket(1)->link(pMouseNode->getOutputSocket(2));
-
-
-        gkKeyNode* pKeyNode = static_cast<gkKeyNode*>(pTree->createNode(NT_KEY));
-        pKeyNode->getInputSocket(0)->setValue(true);
+        gkKeyNode* pKeyNode = pTree->createNode<gkKeyNode>();
         pKeyNode->setKey(KC_AKEY);
 
-        gkLogicNode* pMotionNode = pTree->createNode(NT_MOTION);
+        gkMotionNode* pMotionNode = pTree->createNode<gkMotionNode>();
 
-        pMotionNode->getInputSocket(0)->link(pKeyNode->getOutputSocket(0));
-        pMotionNode->getInputSocket(1)->link(pMouseNode->getOutputSocket(1));
-        pMotionNode->getInputSocket(2)->link(pMouseNode->getOutputSocket(2));
+        pMotionNode->getUpdate()->link(pKeyNode->getIsDown());
+        pMotionNode->getX()->link(pMouseNode->getRelX());
+        pMotionNode->getZ()->link(pMouseNode->getRelY());
+        pMotionNode->getDamping()->link(pMathNode->getResult());
+
+
+
+
 
         pTree->solveOrder();
-        pCamera->attachLogic(pTree);
+        pObject->attachLogic(pTree);
     }
 
 
@@ -257,6 +316,7 @@ public:
 
 int main(int argc, char **argv)
 {
+    TestMemory;
     char *fname = "momo_ogre.blend";
 
 #if GK_PLATFORM != GK_PLATFORM_APPLE

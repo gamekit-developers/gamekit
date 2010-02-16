@@ -31,7 +31,7 @@
 #include "gkInput.h"
 
 
-
+// TODO needs updated in gkEntity
 class gkAnimationNode : public gkLogicNode
 {
 public:
@@ -48,9 +48,15 @@ public:
     void update(gkScalar tick);
     bool evaluate(gkScalar tick);
 
-    void setFunction(int af) {m_func = af;}
-    void setAnim(const gkString &name) {m_anim = name;}
+    GK_INLINE void setFunction(int af)            {m_func = af;}
+    GK_INLINE void setAnim(const gkString &name)  {m_anim = name;}
 
+    // inputs
+    GK_INLINE gkLogicSocket* getUpdate(void)    { return &m_sockets[0]; }
+    GK_INLINE gkLogicSocket* getBlend(void)     { return &m_sockets[1]; }
+    GK_INLINE gkLogicSocket* getStart(void)     { return &m_sockets[2]; }
+    GK_INLINE gkLogicSocket* getEnd(void)       { return &m_sockets[3]; }
+    GK_INLINE gkLogicSocket* getSpeed(void)     { return &m_sockets[4]; }
 
 private:
     gkLogicSocket   m_sockets[5];
