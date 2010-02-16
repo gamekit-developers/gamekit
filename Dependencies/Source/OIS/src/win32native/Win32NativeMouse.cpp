@@ -113,7 +113,8 @@ void Win32NativeMouse::capture()
 				RECT rect; POINT pos;
 				::GetCursorPos(&pos);
 				::GetWindowRect(evt.hWnd, &rect);
-
+                pos.x -= (rect.left);
+                pos.y -= (rect.top);
 				if (!mMouseInit)
 				{
 					mLastX = pos.x;
