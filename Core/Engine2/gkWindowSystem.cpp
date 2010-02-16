@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): silveira.nestor.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -31,7 +31,6 @@
 #include "gkWindowSystem.h"
 #include "gkLogger.h"
 #include "gkUserDefs.h"
-
 
 using namespace Ogre;
 
@@ -80,6 +79,7 @@ gkWindowSystem::~gkWindowSystem()
     delete m_internal;
 }
 
+
 // Creates the main Ogre window, and sets up the OIS input system
 RenderWindow *gkWindowSystem::createMainWindow(const gkUserDefs &prefs)
 {
@@ -103,6 +103,27 @@ RenderWindow *gkWindowSystem::createMainWindow(const gkUserDefs &prefs)
 
 
         OIS::ParamList params;
+
+        if (!prefs.grabInput)
+        {
+
+#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
+            params.insert(std::make_pair(std::string("w32_mouse"),   std::string("DISCL_FOREGROUND")));
+            params.insert(std::make_pair(std::string("w32_mouse"),   std::string("DISCL_NONEXCLUSIVE")));
+            params.insert(std::make_pair(std::string("w32_keyboard"), std::string("DISCL_FOREGROUND")));
+            params.insert(std::make_pair(std::string("w32_keyboard"),  std::string("DISCL_NONEXCLUSIVE")));
+
+#elif OGRE_PLATFORM == OGRE_PLATFORM_APPLE
+            params.insert(std::make_pair(std::string("MacAutoRepeatOn"), std::string("true")));
+#else
+
+            params.insert(std::make_pair(std::string("x11_mouse_grab"),  std::string("false")));
+            params.insert(std::make_pair(std::string("x11_mouse_hide"),  std::string("false")));
+            params.insert(std::make_pair(std::string("x11_keyboard_grab"),  std::string("false")));
+            params.insert(std::make_pair(std::string("XAutoRepeatOn"), std::string("true")));
+#endif
+        }
+
         params.insert(std::make_pair("WINDOW", StringConverter::toString(handle)));
         m_internal->m_input = OIS::InputManager::createInputSystem(params);
 

@@ -55,6 +55,7 @@ public:
     gkScalar                tickrate;           // user defined tick rate, depreciated
     bool                    blendermat;         // convert meshes using blender materials
     bool                    autoWindow;         // auto create the main window or wait for other inputs first
+    bool                    grabInput;          // hide & grab the mouse
     bool                    multipassmat;       // disabled from here down
     gkString                gl_vert_profile;    // arbvp1
     gkString                gl_frag_profile;    // arbfp1

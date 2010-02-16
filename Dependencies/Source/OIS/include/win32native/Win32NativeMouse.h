@@ -37,7 +37,7 @@ namespace OIS
 	class Win32NativeMouse : public Mouse
 	{
 	public:
-		Win32NativeMouse(InputManager *creator, bool buffered);
+		Win32NativeMouse(InputManager *creator, bool buffered, bool grab, bool hide);
 		virtual ~Win32NativeMouse();
 
 		/** @copydoc Object::setBuffered */

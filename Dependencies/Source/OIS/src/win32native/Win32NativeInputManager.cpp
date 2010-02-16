@@ -49,7 +49,7 @@ static LRESULT WINAPI OIS_SystemProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
 //-------------------------------------------------------------//
 Win32NativeInputManager::Win32NativeInputManager() :
 		OIS::InputManager("Win32NativeInputManager"),
-		mKeyboard(0), mMouse(0), mOldProc(0)
+		mKeyboard(0), mMouse(0), mOldProc(0), mGrab(true), mHide(true)
 {
 	if (gMgr)
 		OIS_EXCEPT(E_InvalidParam, "Win32NativeInputManager::Win32NativeInputManager >> Only one InputManager supported by this implementation");
@@ -80,6 +80,18 @@ void Win32NativeInputManager::_initialize(ParamList &paramList)
 	mOldProc= (WNDPROC)::GetWindowLongPtr(hWnd, GWL_WNDPROC);
 	if (!mOldProc)
 		OIS_EXCEPT(E_General, "Win32NativeInputManager::Win32NativeInputManager >> Window has no existing procedure");
+
+	ParamList::iterator i = paramList.begin(), e = paramList.end();
+	for( ; i != e; ++i ) 
+	{
+		if( i->first == "w32_mouse" )
+        {
+            if (i->second == "DISCL_FOREGROUND")
+				mHide = false;
+            else if (i->second == "DISCL_NONEXCLUSIVE")
+				mGrab= false;
+        }
+	}
 
 	if (mOldProc != 0)
 	{
@@ -171,7 +183,7 @@ Object* Win32NativeInputManager::createObject(InputManager* creator, Type iType,
 		break;
 	case OISMouse:
 		if (!mMouse)
-			ret= mMouse= new Win32NativeMouse(this, bufferMode);
+			ret= mMouse= new Win32NativeMouse(this, bufferMode, mGrab, mHide);
 		break;
 	}
 	return ret;

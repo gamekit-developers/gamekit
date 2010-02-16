@@ -30,12 +30,12 @@ using namespace OIS;
 
 
 //-------------------------------------------------------------//
-Win32NativeMouse::Win32NativeMouse(InputManager *creator, bool buffered) :
+Win32NativeMouse::Win32NativeMouse(InputManager *creator, bool buffered, bool grab, bool hide) :
 	Mouse(creator->inputSystemName(), buffered, 0, creator),
 	mLastX(0), mLastY(0), 
 	mMouseInit(false), mMouseMoved(false),
-	mGrab(true), mDoGrab(true),
-	mHide(true), mDoHide(true)
+	mGrab(grab), mDoGrab(grab),
+	mHide(hide), mDoHide(hide)
 {
 }
 
@@ -74,7 +74,7 @@ void Win32NativeMouse::handleMouse( HWND hWnd, UINT msg, WPARAM wParam, LPARAM l
 		evt.button = MB_Right;
     }
     else if ( msg == WM_MOUSEMOVE )
-    {
+    { 
 		if (!mMouseMoved)
 		{
 			evt.type = 0;
@@ -129,9 +129,8 @@ void Win32NativeMouse::capture()
 				{
 					mState.X.rel = rx;	mState.Y.rel = ry;
 					mState.X.abs += rx; mState.Y.abs += ry;
-
-					mState.X.abs = WNClamp(mState.X.abs, 0, mState.width);
-					mState.Y.abs = WNClamp(mState.Y.abs, 0, mState.height);
+				    mState.X.abs = WNClamp(mState.X.abs, 0, mState.width);
+				    mState.Y.abs = WNClamp(mState.Y.abs, 0, mState.height);
 
 					if (mGrab && mDoGrab)
 					{

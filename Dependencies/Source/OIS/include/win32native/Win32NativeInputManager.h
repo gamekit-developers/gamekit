@@ -82,6 +82,7 @@ namespace OIS
 
 		/** Mouse wrapper*/
 		class Win32NativeMouse	*mMouse;	
+        bool mGrab, mHide;
 
 	};
 }

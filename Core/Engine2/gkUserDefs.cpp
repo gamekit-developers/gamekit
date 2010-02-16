@@ -54,6 +54,7 @@ gkUserDefs::gkUserDefs() :
         tickrate(45),
         blendermat(false),
         autoWindow(true),
+        grabInput(true),
         multipassmat(false),
         gl_vert_profile("arbvp1"),
         gl_frag_profile("arbfp1"),

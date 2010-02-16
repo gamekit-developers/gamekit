@@ -163,6 +163,7 @@ public:
         m_prefs.blendermat  = false;
         m_prefs.autoWindow  = false;
         m_prefs.verbose     = false;
+        m_prefs.grabInput   = true;
 
         gkPath path = "OgreKitStartup.cfg";
         // overide settings if found
