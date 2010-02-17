@@ -41,6 +41,7 @@ class btRigidBody;
 class gkRigidBody;
 class btTriangleMesh;
 class btCollisionShape;
+class gkPhysicsDebug;
 
 
 // Game dynamics world
@@ -61,6 +62,12 @@ protected:
     btDispatcher*               m_dispatcher;
     btConstraintSolver*         m_constraintSolver;
     RigidBodyList               m_bodies;
+    gkPhysicsDebug*             m_debug;
+
+
+    // drawing all but static wireframes 
+    void localDrawObject(btRigidBody *rb);
+
 
     // Notifications for collision callbacks
     void dispatchCollisions(void);

@@ -55,6 +55,8 @@ gkUserDefs::gkUserDefs() :
         blendermat(false),
         userWindow(true),
         grabInput(true),
+        debugPhysics(false),
+        debugPhysicsAabb(false),
         multipassmat(false),
         gl_vert_profile("arbvp1"),
         gl_frag_profile("arbfp1"),
@@ -104,6 +106,10 @@ void gkUserDefs::load(const gkString &fname)
                 }
                 else if (key == "log")
                     log = val;
+                else if (key == "debugphysics")
+                    debugPhysics = StringConverter::parseBool(val);
+                else if (key == "debugphysicsaabb")
+                    debugPhysicsAabb = StringConverter::parseBool(val);
                 else if (key == "userwindow")
                     userWindow = StringConverter::parseBool(val);
                 else if (key == "verbose")

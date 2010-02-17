@@ -269,10 +269,6 @@ void gkScene::unloadImpl()
             obptr->unload();
     }
 
-    // clear ogre scene manager
-    if (m_manager)
-        Root::getSingleton().destroySceneManager(m_manager);
-
     //gkLogicManager::getSingleton().clear();
 
     if (m_physicsWorld) {
@@ -282,6 +278,10 @@ void gkScene::unloadImpl()
     }
 
 
+
+    // clear ogre scene manager
+    if (m_manager)
+        Root::getSingleton().destroySceneManager(m_manager);
 
     // finalize vp
     if (m_viewport) {

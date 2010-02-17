@@ -165,6 +165,9 @@ public:
         m_prefs.verbose     = false;
         m_prefs.grabInput   = true;
 
+        m_prefs.debugPhysics = false;
+        m_prefs.debugPhysicsAabb = false;
+
         gkPath path = "OgreKitStartup.cfg";
         // overide settings if found
         if (path.isFile()) m_prefs.load(path.getPath());

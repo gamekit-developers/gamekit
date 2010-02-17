@@ -299,6 +299,7 @@ set(Physics_SOURCE
 	Physics/gkCharacter.cpp
 	Physics/gkVehicle.cpp
 	Physics/gkSoftBody.cpp
+	Physics/gkPhysicsDebug.cpp
 )
 
 set(Physics_HEADER 
@@ -309,6 +310,7 @@ set(Physics_HEADER
 	Physics/gkCharacter.h
 	Physics/gkVehicle.h
 	Physics/gkSoftBody.h
+	Physics/gkPhysicsDebug.h
 )
 
 

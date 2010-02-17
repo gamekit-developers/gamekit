@@ -26,6 +26,9 @@
 */
 #include "gkDynamicsWorld.h"
 #include "gkRigidBody.h"
+#include "gkEngine.h"
+#include "gkUserDefs.h"
+#include "gkPhysicsDebug.h"
 #include "gkGameObject.h"
 #include "gkScene.h"
 #include "btBulletDynamicsCommon.h"
@@ -35,8 +38,9 @@
 gkDynamicsWorld::gkDynamicsWorld(const gkString& name, gkScene *scene, gkObject::Loader *manual)
 :       gkObject(name, manual), m_scene(scene),
         m_dynamicsWorld(0), m_collisionConfiguration(0),
-        m_pairCache(0), m_dispatcher(0), m_constraintSolver(0)
-    
+        m_pairCache(0), m_dispatcher(0), m_constraintSolver(0),
+        m_debug(0)
+
 {
 }
 
@@ -62,8 +66,18 @@ void gkDynamicsWorld::preLoadImpl(void)
             m_collisionConfiguration);
 
     gkVector3& grav = m_scene->getProperties().gravity;
-
     m_dynamicsWorld->setGravity(btVector3(grav.x, grav.y, grav.z));
+
+    if (gkEngine::getSingleton().getUserDefs().debugPhysics)
+    {
+        m_debug = new gkPhysicsDebug(this);
+        m_dynamicsWorld->setDebugDrawer(m_debug);
+
+        if (gkEngine::getSingleton().getUserDefs().debugPhysicsAabb)
+            m_debug->setDebugMode(btIDebugDraw::DBG_DrawWireframe|btIDebugDraw::DBG_DrawAabb);
+        else
+            m_debug->setDebugMode(btIDebugDraw::DBG_DrawWireframe);
+    }
 }
 
 
@@ -109,6 +123,9 @@ void gkDynamicsWorld::unloadImpl(void)
 
     delete m_collisionConfiguration;
     m_collisionConfiguration = 0;
+
+    delete m_debug;
+    m_debug = 0;
 
     if (!m_bodies.empty())
     {
@@ -178,6 +195,41 @@ void gkDynamicsWorld::dispatchCollisions(void)
 {
 }
 
+void gkDynamicsWorld::localDrawObject(btRigidBody *colObj)
+{
+    GK_ASSERT(m_debug && m_dynamicsWorld && colObj);
+
+    btVector3 color(btScalar(1.), btScalar(1.), btScalar(1.));
+    switch (colObj->getActivationState())
+    {
+    case ACTIVE_TAG:
+        color = btVector3(btScalar(1.), btScalar(1.), btScalar(1.)); break;
+    case ISLAND_SLEEPING:
+        color = btVector3(btScalar(0.), btScalar(1.), btScalar(0.));break;
+    case WANTS_DEACTIVATION:
+        color = btVector3(btScalar(0.), btScalar(1.), btScalar(1.));break;
+    case DISABLE_DEACTIVATION:
+        color = btVector3(btScalar(1.), btScalar(0.), btScalar(0.));break;
+    case DISABLE_SIMULATION:
+        color = btVector3(btScalar(1.), btScalar(1.), btScalar(0.));break;
+    default:
+        color = btVector3(btScalar(1), btScalar(0.), btScalar(0.));
+    };
+
+    m_dynamicsWorld->debugDrawObject(colObj->getWorldTransform(),
+                                     colObj->getCollisionShape(),
+                                     color);
+
+    if (m_debug->getDebugMode() & btIDebugDraw::DBG_DrawAabb)
+    {
+        color[0] = btScalar(1.);
+        color[1] = color[2] = btScalar(0.);
+        btVector3 minAabb, maxAabb;
+        colObj->getCollisionShape()->getAabb(colObj->getWorldTransform(), minAabb, maxAabb);
+        m_debug->drawAabb(minAabb, maxAabb, color);
+    }
+}
+
 // Do one full physics step
 void gkDynamicsWorld::step(gkScalar tick)
 {
@@ -186,4 +238,25 @@ void gkDynamicsWorld::step(gkScalar tick)
 
     GK_ASSERT(m_dynamicsWorld);
     m_dynamicsWorld->stepSimulation(tick);
+
+
+    if (m_debug)
+    {
+        if (!m_bodies.empty())
+        {
+            gkRigidBody *rb = m_bodies.begin();
+
+            while (rb)
+            {
+                if (rb->isLoaded())
+                {
+                    btRigidBody *body = rb->getBody();
+                    if (!body->isStaticOrKinematicObject())
+                        localDrawObject(body);
+                }
+                rb = rb->getNext();
+            }
+        }
+        m_debug->flush();
+    }
 }

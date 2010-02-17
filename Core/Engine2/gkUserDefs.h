@@ -33,7 +33,6 @@
 #include "gkRenderFactory.h"
 
 
-
 // User defined options (TODO needs cleaned up)
 class gkUserDefs
 {
@@ -56,6 +55,8 @@ public:
     bool                    blendermat;         // convert meshes using blender materials
     bool                    userWindow;         // user defined in blender  
     bool                    grabInput;          // hide & grab the mouse
+    bool                    debugPhysics;       // enable / disable physics debugging
+    bool                    debugPhysicsAabb;   // show / hide bounding box
     bool                    multipassmat;       // disabled from here down
     gkString                gl_vert_profile;    // arbvp1
     gkString                gl_frag_profile;    // arbfp1
