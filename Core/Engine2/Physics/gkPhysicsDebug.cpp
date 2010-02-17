@@ -107,6 +107,9 @@ void gkPhysicsDebug::flush(void)
 
     // apply new bounding box
     mBox.merge(Ogre::AxisAlignedBox(m_bbmin, m_bbmax));
+
+    m_radius = gkMaxf(m_bbmax.squaredLength(), m_radius);
+    m_radius = gkMaxf(m_bbmin.squaredLength(), m_radius);
     m_radius = Ogre::Math::Sqrt(m_radius);
 
     m_bbmin = Ogre::Vector3( GK_INFINITY,  GK_INFINITY,  GK_INFINITY);
@@ -164,6 +167,8 @@ void gkPhysicsDebug::growBuffer(UTsize newSize)
 void gkPhysicsDebug::drawLine(const btVector3& from, const btVector3& to, const btVector3& color)
 {
     verifyNode();
+
+    if (!m_node) return;
 
     gkDebugVertex v0, v1;
 
