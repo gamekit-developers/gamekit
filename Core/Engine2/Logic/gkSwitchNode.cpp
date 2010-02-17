@@ -82,7 +82,7 @@ void gkSwitchNode::update(gkScalar tick)
         // test label
         if (swtch == m_sockets[i].getValueReal())
         {
-            m_sockets[i].setValue(true);
+            m_sockets[(START_OT+1) + (i-START_IN)].setValue(true);
             return;
         }
     }

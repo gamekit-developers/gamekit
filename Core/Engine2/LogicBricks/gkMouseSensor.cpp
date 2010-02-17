@@ -54,7 +54,7 @@ void gkMouseDispatch::dispatch(void)
 
 
 gkMouseSensor::gkMouseSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
-:       gkLogicSensor(object, link, name), m_type(MOUSE_NILL), m_rayQuery(0)
+:       gkLogicSensor(object, link, name), m_type(MOUSE_NILL), m_rayQuery(0), m_last(false)
 {
     // connect to dispatcher
     gkLogicManager::getSingleton().getDispatcher(DIS_MOUSE).connect(this);
@@ -84,7 +84,10 @@ bool gkMouseSensor::query(void)
     case MOUSE_MOUSE_OVER:
     case MOUSE_MOUSE_OVER_ANY:
         // use Ogre viewport to ray query
-        return rayTest();
+        if (m_last && !mse->moved) 
+            return m_last;
+        m_last = rayTest();
+        return m_last;
     }
     return false;
 }

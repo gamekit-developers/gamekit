@@ -48,8 +48,8 @@ protected:
 
     int     m_freq, m_tick, m_pulse;
     bool    m_invert, m_positive, m_suspend, m_tap;
-    bool    m_sorted, m_isDetector;
-    int     m_oldState;
+    bool    m_sorted, m_isDetector, m_inverted;
+    int     m_oldState, m_firstTap;
 
 public:
 
@@ -81,7 +81,8 @@ public:
     GK_INLINE void setTap(bool v)           {m_tap = v;}
     GK_INLINE void setDetector(bool v)      {m_isDetector = v;}
     GK_INLINE bool isDetector(void)         {return m_isDetector;}
-
+    GK_INLINE void setNegative(bool v)      {m_inverted = v;}
+    GK_INLINE bool isNegative(void)         {return m_inverted;}
 };
 
 

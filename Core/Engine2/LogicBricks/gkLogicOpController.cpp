@@ -67,6 +67,9 @@ void gkLogicOpController::relay(void)
                     } else
                         execAct = execAct || sens->isPositive();
 
+                    if (m_op == OP_NOR)
+                        sens->setNegative(true);
+
                     if (execAct) break;
                 }
                 if (m_op == OP_NOR)
@@ -88,6 +91,9 @@ void gkLogicOpController::relay(void)
 
                     if (!lsr && fsr)
                         lsr = true;
+
+                    if (m_op == OP_XNOR) 
+                        sens->setNegative(true);
                 }
                 if (m_op == OP_XNOR)
                     execAct = !execAct;
@@ -105,6 +111,8 @@ void gkLogicOpController::relay(void)
                     } else
                         execAct = execAct && sens->isPositive();
 
+                    if (m_op == OP_NAND)
+                        sens->setNegative(true);
                 }
                 if (m_op == OP_NAND)
                     execAct = !execAct;
