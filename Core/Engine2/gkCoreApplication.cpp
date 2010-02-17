@@ -54,7 +54,7 @@ void gkCoreApplication::run(void)
 bool gkCoreApplication::initialize(void)
 {
     m_engine = new gkEngine(&m_prefs);
-    m_engine->initialize(m_prefs.autoWindow);
+    m_engine->initialize(!m_prefs.userWindow);
 
     if (!m_engine->isInitialized())
         return false;

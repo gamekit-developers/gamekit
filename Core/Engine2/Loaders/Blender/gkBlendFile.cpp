@@ -187,10 +187,12 @@ bool gkBlendFile::_parse(void)
 
 
             gkUserDefs &defs = gkEngine::getSingleton().getUserDefs();
-            defs.winsize.x = (gkScalar)sc->r.xplay;
-            defs.winsize.y = (gkScalar)sc->r.yplay;
-            defs.fullscreen = sc->r.fullscreen != 0;
-
+            if (defs.userWindow)
+            {
+                defs.winsize.x = (gkScalar)sc->r.xplay;
+                defs.winsize.y = (gkScalar)sc->r.yplay;
+                defs.fullscreen = sc->r.fullscreen != 0;
+            }
         }
     }
 

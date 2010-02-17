@@ -53,7 +53,7 @@ gkUserDefs::gkUserDefs() :
         startframe(1),
         tickrate(45),
         blendermat(false),
-        autoWindow(true),
+        userWindow(true),
         grabInput(true),
         multipassmat(false),
         gl_vert_profile("arbvp1"),
@@ -104,8 +104,8 @@ void gkUserDefs::load(const gkString &fname)
                 }
                 else if (key == "log")
                     log = val;
-                else if (key == "autowindow")
-                    autoWindow = StringConverter::parseBool(val);
+                else if (key == "userwindow")
+                    userWindow = StringConverter::parseBool(val);
                 else if (key == "verbose")
                     verbose = StringConverter::parseBool(val);
                 else if (key == "winsize")

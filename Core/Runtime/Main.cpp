@@ -161,7 +161,7 @@ public:
         m_prefs.winsize.y   = 600;
         m_prefs.wintitle    = gkString("OgreKit Demo (Press Escape to exit)[") + m_blend + gkString("]");
         m_prefs.blendermat  = false;
-        m_prefs.autoWindow  = false;
+        m_prefs.userWindow  = true;
         m_prefs.verbose     = false;
         m_prefs.grabInput   = true;
 
@@ -185,7 +185,7 @@ public:
             return false;
         }
 
-        if (!m_prefs.autoWindow)
+        if (m_prefs.userWindow)
             m_engine->initializeWindow();
 
 

@@ -35,7 +35,7 @@ class gkUtils
 public:
 
     // resource existance test
-    static bool     isResource(const gkString &name, const gkString &group = Ogre::StringUtil::BLANK);
+    static bool isResource(const gkString &name, const gkString &group = Ogre::StringUtil::BLANK);
 
     // utility for command-line arguments
     static gkString getFile(const gkString& in);
