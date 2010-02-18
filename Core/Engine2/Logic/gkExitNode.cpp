@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): silveira.nestor.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -34,7 +34,7 @@ using namespace Ogre;
 
 
 gkExitNode::gkExitNode(gkLogicTree *parent, size_t id)
-:       gkLogicNode(parent, NT_EXIT, id)
+:       gkLogicNode(parent, id)
 {
     ADD_ISOCK(m_sockets[0], this, gkLogicSocket::ST_BOOL);
     m_sockets[0].setValue(false);

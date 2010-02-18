@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): silveira.nestor.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -44,7 +44,7 @@ public:
 
 
 public:
-    gkLogicNode(gkLogicTree *parent, const gkNodeTypes& nt, UTsize handle);
+    gkLogicNode(gkLogicTree *parent, UTsize handle);
     virtual ~gkLogicNode() {}
 
     // do the update logic
@@ -62,7 +62,6 @@ public:
     GK_INLINE void          attachObject(gkGameObject *ob)  {m_object = ob;}
     GK_INLINE gkGameObject* getAttachedObject(void)         {return m_other != 0 ? m_other : m_object; }
 
-    GK_INLINE gkNodeTypes   getType(void)           {return m_type;}
     GK_INLINE const UTsize  getHandle(void)         {return m_handle;}
     GK_INLINE bool          hasLinks(void)          {return m_hasLinks;}
     GK_INLINE void          setLinked(void)         {m_hasLinks = true;}
@@ -76,7 +75,6 @@ public:
 protected:
     const UTsize    m_handle;
     gkGameObject*   m_object, *m_other;
-    gkNodeTypes     m_type;
     gkLogicTree*    m_parent;
     bool            m_hasLinks;
     Sockets         m_inputs;

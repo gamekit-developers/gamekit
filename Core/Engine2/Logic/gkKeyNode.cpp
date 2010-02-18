@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): silveira.nestor.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -35,7 +35,7 @@ using namespace Ogre;
 
 
 gkKeyNode::gkKeyNode(gkLogicTree *parent, size_t id) 
-:       gkLogicNode(parent, NT_KEY, id), m_isPressed(false), m_pressed(false),
+:       gkLogicNode(parent, id), m_isPressed(false), m_pressed(false),
         m_delay(0), m_cnt(0), m_key(KC_NONE)
 {
     ADD_ISOCK(m_sockets[0], this, gkLogicSocket::ST_BOOL);

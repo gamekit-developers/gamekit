@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): silveira.nestor.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -35,7 +35,7 @@ using namespace Ogre;
 
 
 gkMotionNode::gkMotionNode(gkLogicTree *parent, size_t id)
-:       gkLogicNode(parent, NT_MOTION, id), m_motionType(MT_ROTATION), m_space(TRANSFORM_LOCAL),
+:       gkLogicNode(parent, id), m_motionType(MT_ROTATION), m_space(TRANSFORM_LOCAL),
         m_keep(false), m_flag(0), m_otherName(""), m_current(0)
 {
     ADD_ISOCK(m_sockets[0], this, gkLogicSocket::ST_BOOL);

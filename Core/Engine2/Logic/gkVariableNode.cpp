@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): silveira.nestor.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -34,7 +34,7 @@ using namespace Ogre;
 
 
 gkVariableNode::gkVariableNode(gkLogicTree *parent, size_t id):
-        gkLogicNode(parent, NT_VARIABLE, id), m_debug(false), m_prop(0), m_varName("")
+        gkLogicNode(parent, id), m_debug(false), m_prop(0), m_varName("")
 {
     ADD_ISOCK(m_sockets[0], this, gkLogicSocket::ST_BOOL);
     ADD_ISOCK(m_sockets[1], this, gkLogicSocket::ST_VARIABLE);
@@ -83,7 +83,7 @@ bool gkVariableNode::evaluate(gkScalar tick)
 
 
 VariableOpNode::VariableOpNode(gkLogicTree *parent, size_t id) :
-        gkLogicNode(parent, NT_VARIABLE_OP, id),
+        gkLogicNode(parent, id),
         m_function(MTH_NO_FUNC), m_deg(false), m_prop(0), m_varName("")
 {
     ADD_ISOCK(m_sockets[0], this, gkLogicSocket::ST_BOOL);

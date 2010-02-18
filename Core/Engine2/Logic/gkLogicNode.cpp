@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): silveira.nestor.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -32,8 +32,8 @@ using namespace Ogre;
 
 
 
-gkLogicNode::gkLogicNode(gkLogicTree *parent, const gkNodeTypes& nt, UTsize handle) :
-        m_handle(handle), m_object(0), m_other(0), m_type(nt), m_parent(parent),
+gkLogicNode::gkLogicNode(gkLogicTree *parent, UTsize handle) :
+        m_handle(handle), m_object(0), m_other(0), m_parent(parent),
         m_hasLinks(false), m_priority(0)
 {
 }

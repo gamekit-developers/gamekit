@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): silveira.nestor.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -32,7 +32,7 @@ using namespace Ogre;
 
 
 gkGroupNode::gkGroupNode(gkLogicTree *parent, size_t id)
-:       gkLogicNode(parent, NT_GROUP, id)
+:       gkLogicNode(parent, id)
 {
     ADD_ISOCK(m_sockets[0], this, gkLogicSocket::ST_BOOL);
     ADD_OSOCK(m_sockets[1], this, gkLogicSocket::ST_BOOL);

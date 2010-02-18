@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): silveira.nestor.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -37,28 +37,6 @@ class gkLogicNode;
 class gkLogicTree;
 class gkLogicSocket;
 class gkGameObject;
-
-typedef enum gkNodeTypes
-{
-    NT_GROUP = 0,
-    NT_OBJECT,
-    NT_MOUSE,
-    NT_KEY,
-    NT_MATH,
-    NT_MOTION,
-    NT_MOUSEBUTTON,
-    NT_PRINT,
-    NT_ANIM,
-    NT_RAND,
-    NT_VALUE,
-    NT_VARIABLE,
-    NT_VARIABLE_OP,
-    NT_EXPR,
-    NT_SWITCH,
-    NT_IF,
-    NT_TIMER,
-    NT_EXIT,
-}gkNodeTypes;
 
 typedef enum gkMotionTypes
 {

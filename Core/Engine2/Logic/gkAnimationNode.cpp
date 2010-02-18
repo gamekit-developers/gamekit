@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): silveira.nestor.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -37,7 +37,7 @@ using namespace Ogre;
 
 
 gkAnimationNode::gkAnimationNode(gkLogicTree *parent, size_t id) :
-        gkLogicNode(parent, NT_ANIM, id), m_anim(""), m_func(AF_LOOP)
+        gkLogicNode(parent, id), m_anim(""), m_func(AF_LOOP)
 {
 
     ADD_ISOCK(m_sockets[0], this, gkLogicSocket::ST_BOOL);

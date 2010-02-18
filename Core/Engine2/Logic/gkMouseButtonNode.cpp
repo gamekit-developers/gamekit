@@ -31,7 +31,7 @@
 
 
 gkMouseButtonNode::gkMouseButtonNode(gkLogicTree *parent, size_t id) 
-:       gkLogicNode(parent, NT_MOUSEBUTTON, id), m_isPressed(false), m_pressed(false),
+:       gkLogicNode(parent, id), m_isPressed(false), m_pressed(false),
 			m_delay(0), m_counter(0), m_button(gkMouse::Left)
 {
 	ADD_ISOCK(m_sockets[0], this, gkLogicSocket::ST_BOOL);
