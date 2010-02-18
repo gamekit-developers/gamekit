@@ -1,0 +1,53 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "app", "app\app.vcproj", "{EA358755-392F-4687-8994-5B2107A0B11C}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib", "lib\lib.vcproj", "{388B240A-DB24-4C57-88E7-1F96588DD5B0}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "roster", "roster\roster.vcproj", "{14786FAE-450A-4935-B714-2190FDA9BFFD}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "putter", "putter\putter.vcproj", "{58EAB682-E6A5-4AFE-96DF-CA9C30FC9206}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "getter", "getter\getter.vcproj", "{72EC699B-9335-4ACF-B090-67A0D21F0306}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{EA358755-392F-4687-8994-5B2107A0B11C}.Debug.ActiveCfg = Debug|Win32
+		{EA358755-392F-4687-8994-5B2107A0B11C}.Debug.Build.0 = Debug|Win32
+		{EA358755-392F-4687-8994-5B2107A0B11C}.Release.ActiveCfg = Release|Win32
+		{EA358755-392F-4687-8994-5B2107A0B11C}.Release.Build.0 = Release|Win32
+		{388B240A-DB24-4C57-88E7-1F96588DD5B0}.Debug.ActiveCfg = Debug|Win32
+		{388B240A-DB24-4C57-88E7-1F96588DD5B0}.Debug.Build.0 = Debug|Win32
+		{388B240A-DB24-4C57-88E7-1F96588DD5B0}.Release.ActiveCfg = Release|Win32
+		{388B240A-DB24-4C57-88E7-1F96588DD5B0}.Release.Build.0 = Release|Win32
+		{14786FAE-450A-4935-B714-2190FDA9BFFD}.Debug.ActiveCfg = Debug|Win32
+		{14786FAE-450A-4935-B714-2190FDA9BFFD}.Debug.Build.0 = Debug|Win32
+		{14786FAE-450A-4935-B714-2190FDA9BFFD}.Release.ActiveCfg = Release|Win32
+		{14786FAE-450A-4935-B714-2190FDA9BFFD}.Release.Build.0 = Release|Win32
+		{58EAB682-E6A5-4AFE-96DF-CA9C30FC9206}.Debug.ActiveCfg = Debug|Win32
+		{58EAB682-E6A5-4AFE-96DF-CA9C30FC9206}.Debug.Build.0 = Debug|Win32
+		{58EAB682-E6A5-4AFE-96DF-CA9C30FC9206}.Release.ActiveCfg = Release|Win32
+		{58EAB682-E6A5-4AFE-96DF-CA9C30FC9206}.Release.Build.0 = Release|Win32
+		{72EC699B-9335-4ACF-B090-67A0D21F0306}.Debug.ActiveCfg = Debug|Win32
+		{72EC699B-9335-4ACF-B090-67A0D21F0306}.Debug.Build.0 = Debug|Win32
+		{72EC699B-9335-4ACF-B090-67A0D21F0306}.Release.ActiveCfg = Release|Win32
+		{72EC699B-9335-4ACF-B090-67A0D21F0306}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

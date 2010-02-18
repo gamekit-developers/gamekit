@@ -238,7 +238,8 @@ void	BulletBlendReaderNew::convertAllObjects(int verboseDumpAllBlocks)
 	}
 
 
-#define TEST_CREATE_BULLET_FILE
+// XXX out of date 
+//#define TEST_CREATE_BULLET_FILE
 #ifdef TEST_CREATE_BULLET_FILE
 	
 	
