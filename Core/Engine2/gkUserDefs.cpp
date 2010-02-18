@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): silveira.nestor.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -110,6 +110,8 @@ void gkUserDefs::load(const gkString &fname)
                     debugPhysics = StringConverter::parseBool(val);
                 else if (key == "debugphysicsaabb")
                     debugPhysicsAabb = StringConverter::parseBool(val);
+				else if (key == "grabinput")
+					grabInput = StringConverter::parseBool(val);
                 else if (key == "userwindow")
                     userWindow = StringConverter::parseBool(val);
                 else if (key == "verbose")
