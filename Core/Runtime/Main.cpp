@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): silveira.nestor.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -53,6 +53,7 @@
 #include "gkMotionNode.h"
 #include "gkLogicTree.h"
 #include "gkMouseButtonNode.h"
+#include "gkArcBallNode.h"
 
 
 // Temporary class to test out
@@ -214,6 +215,7 @@ public:
             m_scene->load();
             //test13(m_scene);
             test0(m_scene);
+			//ArcBallTest(m_scene);
         }
 
         // add input hooks
@@ -227,6 +229,45 @@ public:
         if (sc == KC_ESCKEY) m_engine->requestExit();
     }
 
+	void ArcBallTest(gkScene* scene)
+	{
+		// Make sure you disabled grabInput
+
+        gkGameObject *ob = scene->getMainCamera();
+
+		GK_ASSERT(ob);
+
+        gkLogicTree* tree = gkNodeManager::getSingleton().create();
+
+		gkArcBallNode* arcBall = tree->createNode<gkArcBallNode>();
+
+		gkMouseButtonNode* left = tree->createNode<gkMouseButtonNode>();
+
+		gkMouseNode* mouse = tree->createNode<gkMouseNode>();
+
+		gkIfNode* ifAndNode = tree->createNode<gkIfNode>();
+		ifAndNode->setStatement(CMP_AND);
+
+		ifAndNode->getA()->link(left->getIsDown());
+		ifAndNode->getB()->link(mouse->getMotion());
+
+		gkIfNode* ifOrNode = tree->createNode<gkIfNode>();
+		ifOrNode->setStatement(CMP_OR);
+
+		ifOrNode->getA()->link(mouse->getWheel());
+		ifOrNode->getB()->link(ifAndNode->getTrue());
+
+		arcBall->getUpdateCenter()->link(left->getPress());
+		arcBall->getUpdatePosition()->link(ifOrNode->getTrue());
+		arcBall->getX()->link(mouse->getAbsX());
+		arcBall->getY()->link(mouse->getAbsY());
+		arcBall->getRelX()->link(mouse->getRelX());
+		arcBall->getRelY()->link(mouse->getRelY());
+		arcBall->getRelZ()->link(mouse->getWheel());
+
+        tree->solveOrder();
+        ob->attachLogic(tree);
+	}
 
     void test0(gkScene* scene)
     {
@@ -299,10 +340,6 @@ public:
         pMotionNode->getZ()->link(pMouseNode->getRelY());
         pMotionNode->getDamping()->link(pMathNode->getResult());
 
-
-
-
-
         pTree->solveOrder();
         pObject->attachLogic(pTree);
     }
@@ -322,6 +359,10 @@ int main(int argc, char **argv)
 {
     TestMemory;
     char *fname = "momo_ogre.blend";
+	//char *fname = "SimpleState.blend";
+	//char *fname = "clubsilo_packed.blend";
+	
+	
 
 #if GK_PLATFORM != GK_PLATFORM_APPLE
     if (argc > 1)

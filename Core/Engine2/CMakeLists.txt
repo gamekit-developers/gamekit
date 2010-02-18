@@ -132,6 +132,7 @@ set(NLogic_SOURCE
     Logic/gkTimerNode.cpp
     Logic/gkValueNode.cpp
     Logic/gkVariableNode.cpp
+    Logic/gkArcBallNode.cpp
 )
 
 set(NLogic_HEADER
@@ -158,6 +159,7 @@ set(NLogic_HEADER
     Logic/gkTimerNode.h
     Logic/gkValueNode.h
     Logic/gkVariableNode.h
+    Logic/gkArcBallNode.h
 )
 
 source_group(LogicNodes\\Header FILES ${NLogic_HEADER})
