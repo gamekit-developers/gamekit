@@ -24,47 +24,23 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkLogicLink_h_
-#define _gkLogicLink_h_
-
-#include "gkCommon.h"
-#include "gkString.h"
-
-class gkLogicBrick;
-class gkLogicActuator;
-class gkLogicController;
-class gkLogicSensor;
+#include "gkScriptController.h"
+#include "gkLuaManager.h"
 
 
-class gkLogicLink : public utListClass<gkLogicLink>::Link
+gkScriptController::gkScriptController(gkGameObject *object, gkLogicLink *link, const gkString &name)
+:       gkLogicController(object, link, name), m_script(0), m_error(false), m_isModule(false)
 {
-public:
-    typedef utList<gkLogicBrick*> BrickList;
+}
 
 
-protected:
+void gkScriptController::relay(void)
+{
+    if (m_error) 
+        return;
 
-    BrickList   m_sensors;
-    BrickList   m_controllers;
-    BrickList   m_actuators;
-    int         m_state;
+    // TODO if m_isModule
 
-
-public:
-
-    gkLogicLink();
-    ~gkLogicLink();
-
-    gkLogicActuator* findActuator(const gkString& name);
-    gkLogicController* findController(const gkString& name);
-
-    // object storage 
-    void push(gkLogicSensor *v);
-    void push(gkLogicController *v);
-    void push(gkLogicActuator *v);
-    
-    GK_INLINE void setState(int v)              {m_state = v;}
-    GK_INLINE int getState(void)                {return m_state;}
-};
-
-#endif//_gkLogicLink_h_
+    if (m_script !=0)
+        m_error = !m_script->execute();
+}

@@ -187,6 +187,7 @@ set(Logic_SSOURCE
 set(Logic_CSOURCE
     # ----- Controllers ----- 
     LogicBricks/gkLogicOpController.cpp
+    LogicBricks/gkScriptController.cpp
 )
 set(Logic_ASOURCE
     # ----- Actuators ----- 
@@ -213,6 +214,7 @@ set(Logic_SHEADER
 set(Logic_CHEADER
     # ----- Controllers ----- 
     LogicBricks/gkLogicOpController.h
+    LogicBricks/gkScriptController.h
 )
 set(Logic_AHEADER
     # ----- Actuators ----- 

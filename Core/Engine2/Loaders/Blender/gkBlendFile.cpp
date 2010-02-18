@@ -233,6 +233,8 @@ void gkBlendFile::buildTextFiles(void)
         std::stringstream ss;
         while (tl)
         {
+            tl->line[tl->len] = 0;
+
             ss << tl->line << '\n';
             tl = tl->next;
         }

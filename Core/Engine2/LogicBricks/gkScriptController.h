@@ -24,47 +24,30 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkLogicLink_h_
-#define _gkLogicLink_h_
+#ifndef _gkScriptController_h_
+#define _gkScriptController_h_
 
-#include "gkCommon.h"
-#include "gkString.h"
-
-class gkLogicBrick;
-class gkLogicActuator;
-class gkLogicController;
-class gkLogicSensor;
+#include "gkLogicController.h"
 
 
-class gkLogicLink : public utListClass<gkLogicLink>::Link
+class gkScriptController : public gkLogicController
 {
-public:
-    typedef utList<gkLogicBrick*> BrickList;
-
-
 protected:
-
-    BrickList   m_sensors;
-    BrickList   m_controllers;
-    BrickList   m_actuators;
-    int         m_state;
-
+    class gkLuaScript* m_script;
+    bool m_error, m_isModule;
 
 public:
 
-    gkLogicLink();
-    ~gkLogicLink();
+    gkScriptController(gkGameObject *object, gkLogicLink *link, const gkString &name);
+    virtual ~gkScriptController() {}
 
-    gkLogicActuator* findActuator(const gkString& name);
-    gkLogicController* findController(const gkString& name);
+    void relay(void);
 
-    // object storage 
-    void push(gkLogicSensor *v);
-    void push(gkLogicController *v);
-    void push(gkLogicActuator *v);
-    
-    GK_INLINE void setState(int v)              {m_state = v;}
-    GK_INLINE int getState(void)                {return m_state;}
+    GK_INLINE void setModule(bool v)            {m_isModule = v;}
+    GK_INLINE bool isModule(void)               {return m_isModule;}
+    GK_INLINE void setScript(gkLuaScript *sc)   {m_script = sc;}
+    GK_INLINE gkLuaScript* getScript(void)      {return m_script;}
 };
 
-#endif//_gkLogicLink_h_
+
+#endif//_gkScriptController_h_

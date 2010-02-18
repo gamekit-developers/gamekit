@@ -38,30 +38,49 @@ gkLogicLink::gkLogicLink() : m_state(0)
 gkLogicLink::~gkLogicLink()
 {
     if (!m_sensors.empty()) {
-        utListIterator<SensorList> it(m_sensors);
+        utListIterator<BrickList> it(m_sensors);
         while (it.hasMoreElements())
             delete it.getNext();
     }
     if (!m_controllers.empty()) {
-        utListIterator<ControllerList> it(m_controllers);
+        utListIterator<BrickList> it(m_controllers);
         while (it.hasMoreElements())
             delete it.getNext();
     }
     if (!m_actuators.empty()) {
-        utListIterator<ActuatorList> it(m_actuators);
+        utListIterator<BrickList> it(m_actuators);
         while (it.hasMoreElements())
             delete it.getNext();
     }
+}
+
+void gkLogicLink::push(gkLogicSensor *v)
+{
+    GK_ASSERT(v); 
+    m_sensors.push_back(v);
+}
+
+void gkLogicLink::push(gkLogicController *v)
+{
+    GK_ASSERT(v); 
+    m_controllers.push_back(v);
+}
+
+void gkLogicLink::push(gkLogicActuator *v)
+{
+    GK_ASSERT(v); 
+    m_actuators.push_back(v);
 }
 
 
 gkLogicActuator* gkLogicLink::findActuator(const gkString& name)
 {
     if (!m_actuators.empty()) {
-        utListIterator<ActuatorList> it(m_actuators);
+
+        utListIterator<BrickList> it(m_actuators);
         while (it.hasMoreElements()) {
-            gkLogicActuator *ac = it.getNext();
-            if (ac->getName() == name) return ac;
+            gkLogicBrick *ac = it.getNext();
+            if (ac->getName() == name) return static_cast<gkLogicActuator*>(ac);
         }
     }
     return 0;
@@ -70,10 +89,11 @@ gkLogicActuator* gkLogicLink::findActuator(const gkString& name)
 gkLogicController* gkLogicLink::findController(const gkString& name)
 {
     if (!m_controllers.empty()) {
-        utListIterator<ControllerList> it(m_controllers);
+
+        utListIterator<BrickList> it(m_controllers);
         while (it.hasMoreElements()) {
-            gkLogicController *co = it.getNext();
-            if (co->getName() == name) return co;
+            gkLogicBrick *co = it.getNext();
+            if (co->getName() == name) return static_cast<gkLogicController*>(co);
         }
     }
     return 0;

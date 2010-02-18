@@ -55,19 +55,67 @@ public:
     virtual void addConstant(const gkString &name, gkString v) = 0;
 };
 
+struct lua_State;
+
+
+// Lua script representation  
+class gkLuaScript
+{
+protected:
+    int m_script;
+    const gkString m_name, m_text;
+    bool m_error;
+    class gkLuaManager* m_owner;
+
+public:
+    gkLuaScript(gkLuaManager *parent, const gkString& name, const gkString& text);
+    ~gkLuaScript();
+
+    GK_INLINE const gkString& getName(void) {return m_name;}
+    GK_INLINE bool compiled(void)           {return !m_error;}
+
+
+    // compile & run the script 
+    bool execute(void);
+};
+
 
 // Lua interface to OgreKit
 class gkLuaManager : public Ogre::Singleton<gkLuaManager>
 {
-private:
-    struct lua_State *m_vm;
+public:
+    typedef utHashTable<gkHashedString, gkLuaScript*> ScriptMap;
 
+private:
+    lua_State *m_vm;
+    ScriptMap m_scripts;
 
 public:
     gkLuaManager();
     virtual ~gkLuaManager();
 
-    bool load(const gkString& name, const gkString& text);
+    // access to the lua virtual machine
+    GK_INLINE lua_State *getLua(void) {return m_vm;}
+
+    gkLuaScript* getScript(const gkString& name);
+
+    // Create new script from text buffer
+    gkLuaScript* create(const gkString& name, const gkString &text);
+
+    // create from internal text file manager
+    gkLuaScript* create(const gkString& name);
+
+    // Destroys named file
+    void destroy(const gkString& name);
+
+    // Destroys file pointer
+    void destroy(gkLuaScript *ob);
+
+    // Destroys all internal files
+    void destroyAll(void);
+
+    // Test for file existance
+    bool hasScript(const gkString& name);
 
 
     static gkLuaManager& getSingleton();

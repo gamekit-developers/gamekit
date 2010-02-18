@@ -35,9 +35,11 @@
 #include "gkAlwaysSensor.h"
 #include "gkMouseSensor.h"
 #include "gkLogicOpController.h"
+#include "gkScriptController.h"
 #include "gkMotionActuator.h"
 #include "gkStateActuator.h"
 
+#include "gkLuaManager.h"
 
 gkLogicLoader::gkLogicLoader()
 {
@@ -177,6 +179,26 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
                 lc = ac;
             }
             break;
+        case CONT_PYTHON:
+            {
+                gkScriptController *sc = new gkScriptController(gobj, lnk, bcont->name);
+                lc = sc;
+
+                Blender::bPythonCont *pcon = (Blender::bPythonCont*)bcont->data;
+                sc->setModule(false);
+
+                if (pcon->text)
+                {
+                    gkLuaManager &lua = gkLuaManager::getSingleton();
+                    if (lua.hasScript(GKB_IDNAME(pcon->text)))
+                        sc->setScript(lua.getScript(GKB_IDNAME(pcon->text)));
+                    else
+                        sc->setScript(lua.create(GKB_IDNAME(pcon->text)));
+                }
+
+            }break;
+        
+
         }
 
         if (lc)

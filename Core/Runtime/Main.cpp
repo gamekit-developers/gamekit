@@ -214,8 +214,8 @@ public:
         {
             m_scene->load();
             //test13(m_scene);
-            test0(m_scene);
-			//ArcBallTest(m_scene);
+            //test0(m_scene);
+            //ArcBallTest(m_scene);
         }
 
         // add input hooks
