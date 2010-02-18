@@ -1,51 +1,51 @@
-cmake_minimum_required(VERSION 2.4)
+# ---------------------------------------------------------
+cmake_minimum_required(VERSION 2.6)
 
-PROJECT(GAMEKIT)
-SET(GAMEKIT 2.75)
+#SET(CMAKE_SUPPRESS_REGENERATION  1)
+#SET(CMAKE_USE_RELATIVE_PATHS 1)
 
-IF (NOT CMAKE_BUILD_TYPE)
-# SET(CMAKE_BUILD_TYPE "Debug")
- SET(CMAKE_BUILD_TYPE "Release")
-ENDIF (NOT CMAKE_BUILD_TYPE) 
+project(OGREKIT)
+SET(OGREKIT 1.0)
 
- 
-  
-IF(COMMAND cmake_policy)
+if(COMMAND cmake_policy)
    cmake_policy(SET CMP0003 NEW)
-ENDIF(COMMAND cmake_policy)
+endif(COMMAND cmake_policy)
 
-#SET(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -D_IRR_STATIC_LIB_ )
-ADD_DEFINITIONS( -D_IRR_STATIC_LIB_ )
-ADD_DEFINITIONS( -D_CRT_SECURE_NO_WARNINGS )
+if (MSVC)
+	add_definitions( -D_CRT_SECURE_NO_WARNINGS )
+	add_definitions( -D_CRT_SECURE_NO_DEPRECATE )
+endif()
+
+# ---------------------------------------------------------
+set(CMAKE_MODULE_PATH
+    ${CMAKE_SOURCE_DIR}/CMake
+    ${CMAKE_SOURCE_DIR}/CMake/Utils
+    ${CMAKE_SOURCE_DIR}/CMake/Packages
+    ${CMAKE_SOURCE_DIR}/CMake/Templates
+    )
+include(CMakeDependentOption)
+include(CheckCXXCompilerFlag)
+include(ConfigOgreKit)
+include(ConfigGameKit)
 
 
-#for now, just check for this X11 library on every platform, ignore on Mac and Win
-#Linux and perhaps FreeBSD?
-IF ( UNIX AND NOT APPLE )
-find_library( X11_VIDEO_LIBRARY Xxf86vm
-                        /usr/lib64
-                        /usr/lib
-                        /usr/local/lib64
-                /usr/local/lib
-                        /sw/lib
-                        /opt/local/lib
-                        DOC "Xxf86vm"
-                )
+configure_gamekit(${CMAKE_SOURCE_DIR}/bullet/Extras ${CMAKE_SOURCE_DIR}/GameKit)
+configure_ogrekit(${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/OgreLite)
 
-                if( X11_VIDEO_LIBRARY )
-                        message( "--- Looking for Xxf86vm - found" )
-                        message( "--- Libs: " ${X11_VIDEO_LIBRARY} )
-#			SET(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -D_IRR_LINUX_X11_VIDMODE_ )
-			add_definitions( -D_IRR_LINUX_X11_VIDMODE_ )              
-		  else( X11_VIDEO_LIBRARY )
-                        message( "--- Looking for Xxf86vm - not found" )
-                endif( X11_VIDEO_LIBRARY )
+set(OGREKIT_BULLET_LIBS BulletDynamics BulletCollision BulletSoftBody LinearMath)
+set(OGREKIT_BULLET_INCLUDE ${CMAKE_SOURCE_DIR}/bullet/src)
 
-                set( X11_LIBRARIES ${X11_LIBRARIES} ${X11_VIDEO_LIBRARY} )
 
-ENDIF (UNIX AND NOT APPLE)
+option(OGREKIT_SANDBOX "Build Sandbox tests" OFF)
 
-   
-SUBDIRS(bullet)
-SUBDIRS(irrlicht-1.6)
-SUBDIRS(gamekit)
+
+subdirs(bullet)
+subdirs(Dependencies)
+
+
+if (OGREKIT_SANDBOX)
+    subdirs(Sandbox)
+else()
+    subdirs(OgreLite)
+    subdirs(Core)
+endif()

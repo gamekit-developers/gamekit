@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns="http://tempuri.org/RNA.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="http://tempuri.org/RNA.xsd" elementFormDefault="qualified" version="1.0" xml:lang="en" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd">
+
+  <!-- RNA Decl -->
+  <xs:element name="RNA" type="RNADef"/>
+  <xs:element name="Function" type="FunctionDef"/>
+  <xs:element name="Return" type="ReturnDef"/>
+  <xs:element name="Argument" type="ArgumentDef"/>
+  <xs:element name="Struct" type="StructDef"/>
+  <xs:element name="Property" type="PropertyDef"/>
+  <xs:element name="API" type="APIDef"/>
+
+  <!-- Property subtypes -->
+  <xs:element name="BooleanProperty" type="BooleanPropertyDef"/>
+  <xs:element name="IntProperty" type="IntPropertyDef"/>
+  <xs:element name="FloatProperty" type="FloatPropertyDef"/>
+  <xs:element name="StringProperty" type="StringPropertyDef"/>
+  <xs:element name="PointerProperty" type="PointerPropertyDef"/>
+  <xs:element name="CollectionProperty" type="CollectionPropertyDef"/>
+
+  <xs:element name="EnumProperty" type="EnumPropertyDef"/>
+  <xs:element name="EnumPropertyItem" type="EnumPropertyItemDef"/>
+
+
+  <!-- Base property types -->
+
+  <xs:simpleType name="TypeEnum">
+    <xs:restriction base="xs:NMTOKENS">
+      <xs:enumeration value="Boolean" />
+      <xs:enumeration value="Int" />
+      <xs:enumeration value="Float" />
+      <xs:enumeration value="String" />
+      <xs:enumeration value="Pointer" />
+      <xs:enumeration value="Collection" />
+      <xs:enumeration value="Enum"/>
+    </xs:restriction> 
+  </xs:simpleType>
+
+  <!-- Subtype property types -->
+
+  <xs:simpleType name="SubTypeEnum">
+    <xs:restriction base="xs:NMTOKENS">
+      <xs:enumeration value="None" />
+      <xs:enumeration value="Unsigned" />
+      <xs:enumeration value="FilePath" />
+      <xs:enumeration value="DirPath" />
+      <xs:enumeration value="Color" />
+      <xs:enumeration value="Vector" />
+      <xs:enumeration value="Matrix"/>
+      <xs:enumeration value="Rotation"/>
+      <xs:enumeration value="NeverNull"/>
+      <xs:enumeration value="Percentage"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Common Groups -->
+  <xs:attributeGroup name="DefaultAttrsDef">
+    <xs:attribute name="identifier" type="xs:string" use="required"/>
+    <xs:attribute name="name" type="xs:string" use="optional"/>
+    <xs:attribute name="docs" type="xs:string" use="optional"/>
+  </xs:attributeGroup>
+
+  <xs:attributeGroup name="DefaultAttrsDefEx">
+    <xs:attribute name="identifier" type="xs:string" use="required"/>
+    <xs:attribute name="name" type="xs:string" use="optional"/>
+    <xs:attribute name="docs" type="xs:string" use="optional"/>
+    <xs:attribute name="source" type="xs:string" use="optional"/>
+  </xs:attributeGroup>
+
+  
+  <!-- RNA definition  -->
+  <xs:complexType name="RNADef">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element ref="Function"/>
+      <xs:element ref="Struct"/>
+      <xs:element ref="API"/>
+    </xs:choice>
+    <xs:attribute name="string"   type="xs:string"/>
+    <xs:attribute name="version"  type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="APIDef">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element ref="Function"/>
+      <xs:element ref="Struct"/>
+    </xs:choice>
+    <xs:attribute name="source" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <!-- Struct definition  -->
+  <xs:complexType name="StructDef">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element ref="Function"/>
+      <xs:element ref="Property"/>
+    </xs:choice>
+    <xs:attributeGroup ref="DefaultAttrsDefEx"/>
+    <xs:attribute name="parent" type="xs:anyURI"/>
+  </xs:complexType>
+
+  <!-- Property definition  -->
+  <xs:complexType name="PropertyDef">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element ref="BooleanProperty"/>
+      <xs:element ref="IntProperty"/>
+      <xs:element ref="FloatProperty"/>
+      <xs:element ref="StringProperty"/>
+      <xs:element ref="PointerProperty"/>
+      <xs:element ref="CollectionProperty"/>
+      <xs:element ref="EnumProperty"/>
+    </xs:choice>
+    <xs:attributeGroup ref="DefaultAttrsDef" />
+    <xs:attribute name="type" type="TypeEnum" use="required"/>
+    <xs:attribute name="subtype" type="SubTypeEnum" use="optional"/>
+    <xs:attribute name="editable" type="xs:boolean" use="required"/>
+    <xs:attribute name="builtin" type="xs:boolean" use="optional"/>
+    <xs:attribute name="idprop" type="xs:boolean" use="optional"/>
+    <xs:attribute name="arraylength" type="xs:nonNegativeInteger" use="optional"/>
+  </xs:complexType>
+
+  <xs:complexType name="BooleanPropertyDef">
+    <xs:attribute name="default" type="xs:boolean" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="IntPropertyDef">
+    <xs:attribute name="hard_max" type="xs:int" use="required"/>
+    <xs:attribute name="hard_min" type="xs:int" use="required"/>
+    <xs:attribute name="soft_max" type="xs:int" use="required"/>
+    <xs:attribute name="soft_min" type="xs:int" use="required"/>
+    <xs:attribute name="step" type="xs:int" use="required"/>
+    <xs:attribute name="default" type="xs:int" use="optional"/>
+  </xs:complexType>
+
+  <xs:complexType name="FloatPropertyDef">
+    <xs:attribute name="hard_max" type="xs:float" use="required"/>
+    <xs:attribute name="hard_min" type="xs:float" use="required"/>
+    <xs:attribute name="soft_max" type="xs:float" use="required"/>
+    <xs:attribute name="soft_min" type="xs:float" use="required"/>
+    <xs:attribute name="step" type="xs:float" use="required"/>
+    <xs:attribute name="default" type="xs:float" use="optional"/>
+  </xs:complexType>
+
+  
+  <xs:complexType name="StringPropertyDef">
+    <xs:attribute name="maxlength" type="xs:int" use="required"/>
+    <xs:attribute name="default" type="xs:string" use="optional"/>
+  </xs:complexType>
+
+  <xs:complexType name="PointerPropertyDef">
+    <xs:attribute name="type" type="xs:anyURI" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="CollectionPropertyDef">
+    <xs:attribute name="type" type="xs:anyURI" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="EnumPropertyDef">
+    <xs:choice minOccurs="1" maxOccurs="unbounded">
+      <xs:element ref="EnumPropertyItem"/>
+    </xs:choice>
+    <xs:attribute name="default" type="xs:int" use="required"/>
+    <xs:attribute name="totitem" type="xs:int" use="optional"/>
+  </xs:complexType>
+
+  <xs:complexType name="EnumPropertyItemDef">
+    <xs:attributeGroup ref="DefaultAttrsDef"/>
+    <xs:attribute name="value" type="xs:int" use="required"/>
+  </xs:complexType>
+
+  
+  <!-- Function definition  -->
+  <xs:complexType name="FunctionDef">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element ref="Return" minOccurs="1"/>
+      <xs:element ref="Argument" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:choice>
+    <xs:attributeGroup ref="DefaultAttrsDef"/>
+    <xs:attribute name="source" type="xs:string" use="optional"/>
+  </xs:complexType>
+
+
+  <!-- Function.Return definition  -->
+  <xs:complexType name="ReturnDef">
+    <xs:attribute name="ctype" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <!-- Function.Argument definition  -->
+  <xs:complexType name="ArgumentDef">
+    <xs:attributeGroup ref="DefaultAttrsDef"/>
+    <xs:attribute name="type" type="TypeEnum" use="optional"/>
+    <xs:attribute name="subtype" type="SubTypeEnum" use="optional"/>
+  </xs:complexType>
+
+</xs:schema>

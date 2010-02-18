@@ -15,4 +15,4 @@ ENDIF(COMMAND cmake_policy)
    
 
 
-SUBDIRS(src)
+SUBDIRS(src Extras/Serialize Extras/Serialize/BlenderSerialize)
