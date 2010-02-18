@@ -17,5 +17,5 @@ endif()
 
 # ---------------------------------------------------------
 subdirs(bAscii)
-subdirs(blen2Ascii)
+#subdirs(blen2Ascii)
 

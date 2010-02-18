@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 cmake_minimum_required(VERSION 2.6)
 
-
+subdirs(bAscii)
 
 if (APPLE)
 include_directories(${OGRELITE_SOURCE_DIR}/OgreMain/include/OSX)
@@ -27,26 +27,13 @@ set(SRC
 	Main.cpp
 	)
 include_directories(
-    ${OGREKIT_OGRE_INCLUDE}
-    ${OGREKIT_SOURCE_DIR}/Tests/Ascii/bAscii/bAscii/
-    ${OGREKIT_SOURCE_DIR}/Tests/Ascii/bAscii/bAscii/bApi
-    ${OGREKIT_SOURCE_DIR}/Core/Engine
-    ${OGREKIT_SOURCE_DIR}/Core/Engine/Loaders
-    ${OGREKIT_SOURCE_DIR}/Core/Engine/Loaders/Internal
+    bAscii/bAscii/
+    bAscii/bAscii/bApi
 )
 
 link_libraries(
-    OgreKitCore 
     bAscii
-    ${OGREKIT_OGRE_LIBS}
 )
-
-if (WIN32)
-	if (CMAKE_COMPILER_IS_GNUCXX)
-		# FreeImage LibRawLite dependency 
-		link_libraries(ws2_32)
-	endif (CMAKE_COMPILER_IS_GNUCXX)
-endif(WIN32)
 
 if (APPLE)
 	add_executable(
