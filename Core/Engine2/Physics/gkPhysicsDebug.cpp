@@ -31,6 +31,8 @@
 #include "OgreHardwareBufferManager.h"
 #include "OgreRoot.h"
 #include "OgreRenderSystem.h"
+#include "OgreMaterialManager.h"
+#include "OgreMaterial.h"
 #include "gkPhysicsDebug.h"
 #include "gkDynamicsWorld.h"
 #include "gkScene.h"
@@ -78,7 +80,17 @@ void gkPhysicsDebug::verifyNode(void)
             m_node = mgr->getRootSceneNode()->createChildSceneNode();
             m_node->attachObject(this);
 
-            setMaterial("BaseWhiteNoLighting");
+            const gkString matname = "gkPhysicsDebug::Material";
+
+
+            m_pMaterial = Ogre::MaterialManager::getSingleton().getByName(matname);
+            if (m_pMaterial.isNull())
+            {
+                m_pMaterial = Ogre::MaterialManager::getSingleton().create(matname, "General");
+                m_pMaterial->setLightingEnabled(false);
+                m_pMaterial->setReceiveShadows(false);
+
+            }
         }
     }
 }
