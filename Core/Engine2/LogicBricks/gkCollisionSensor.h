@@ -24,42 +24,38 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkLogicDispatcher_h_
-#define _gkLogicDispatcher_h_
+#ifndef _gkCollisionSensor_h_
+#define _gkCollisionSensor_h_
 
-#include "gkCommon.h"
-#include "gkMathUtils.h"
+#include "gkLogicSensor.h"
+#include "gkLogicDispatcher.h"
+#include "gkDynamicsWorld.h"
 
-class gkLogicSensor;
 
-class gkAbstractDispatcher
+class gkCollisionDispatch : public gkAbstractDispatcher
 {
 public:
-    typedef utList<gkLogicSensor*> SensorList;
-
-protected:
-    SensorList  m_sensors;
-
-public:
-    gkAbstractDispatcher() {}
-    virtual ~gkAbstractDispatcher() {}
-
-    virtual void dispatch(void) = 0;
-
-    GK_INLINE void connect(gkLogicSensor *sens)     {GK_ASSERT(sens); m_sensors.push_back(sens); }
-    GK_INLINE void clear(void)                      {m_sensors.clear(); }
-};
-
-
-
-class gkConstantDispatch : public gkAbstractDispatcher
-{
-public:
-    virtual ~gkConstantDispatch() {}
+    gkCollisionDispatch();
+    virtual ~gkCollisionDispatch() {}
 
     void dispatch(void);
 };
 
 
+class gkCollisionSensor : public gkLogicSensor
+{
+protected:
+    gkString m_material, m_prop;
 
-#endif//_gkLogicDispatcher_h_
+public:
+
+    gkCollisionSensor(gkGameObject *object, gkLogicLink *link, const gkString &name);
+    virtual ~gkCollisionSensor() {}
+
+    bool query(void);
+    GK_INLINE void setMaterial(const gkString& material)    {m_material = material;}
+    GK_INLINE void setProperty(const gkString& prop)        {m_prop = prop;}
+};
+
+
+#endif//_gkCollisionSensor_h_

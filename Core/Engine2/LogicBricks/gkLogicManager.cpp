@@ -30,16 +30,17 @@
 #include "gkLogicActuator.h"
 #include "gkLogicController.h"
 #include "gkMouseSensor.h"
+#include "gkCollisionSensor.h"
 
 
 
 gkLogicManager::gkLogicManager()
 {
     m_dispatchers = new gkAbstractDispatcherPtr[DIS_MAX];
-    m_dispatchers[DIS_CONSTANT] = new gkConstantDispatch;
-    m_dispatchers[DIS_MOUSE]    = new gkMouseDispatch;
+    m_dispatchers[DIS_CONSTANT]     = new gkConstantDispatch;
+    m_dispatchers[DIS_MOUSE]        = new gkMouseDispatch;
+    m_dispatchers[DIS_COLLISION]    = new gkCollisionDispatch;
 }
-
 
 gkLogicManager::~gkLogicManager()
 {
@@ -56,8 +57,8 @@ gkLogicManager::~gkLogicManager()
 void gkLogicManager::clear(void)
 {
     if (m_dispatchers) {
-        getDispatcher(DIS_CONSTANT).clear();
-        getDispatcher(DIS_MOUSE).clear();
+        for (int i = 0; i < DIS_MAX; ++ i)
+            m_dispatchers[i]->clear();
     }
 
     if (!m_links.empty()) {

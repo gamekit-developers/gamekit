@@ -26,12 +26,11 @@
 */
 #include "gkMotionActuator.h"
 #include "gkGameObject.h"
-
-
+#include "gkRigidBody.h"
 
 gkMotionActuator::gkMotionActuator(gkGameObject *object, gkLogicLink *link, const gkString &name)
 :       gkLogicActuator(object, link, name),
-        m_type(0), m_loc(0, 0, 0), m_rot(0, 0, 0), m_locL(false), m_rotL(false)
+        m_type(0), m_linvInc(false), m_damping(1.f)
 {
 }
 
@@ -45,10 +44,30 @@ void gkMotionActuator::execute(void)
     if (!m_object->isLoaded())
         return;
 
+    gkRigidBody *body = m_object->getAttachedBody();
+
     if (m_type == MT_SIMPLE) {
-        if (!gkFuzzyVec(m_loc))
-            m_object->translate(m_loc, m_locL ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
-        if (!gkFuzzyVec(m_rot))
-            m_object->rotate(gkMathUtils::getQuatFromEuler(m_rot, false), m_rotL ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
+        if (m_loc.evaluate)
+            m_object->translate(m_loc.vec , m_loc.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
+        if (m_rot.evaluate)
+            m_object->rotate(m_quat, m_rot.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
+
+        if (body)
+        {
+            if (m_force.evaluate)
+                body->applyForce(m_force.vec* m_damping, m_force.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
+            if (m_torque.evaluate)
+                body->applyTorque(m_torque.vec* m_damping, m_torque.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
+
+            if (m_linv.evaluate)
+            {
+                gkVector3 extra(0,0,0);
+                if (m_linvInc)
+                    extra = body->getLinearVelocity();
+                body->setLinearVelocity((m_linv.vec + extra) *m_damping , m_linv.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
+            }
+            if (m_angv.evaluate)
+                body->setAngularVelocity(m_angv.vec *m_damping , m_angv.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
+        }
     }
 }

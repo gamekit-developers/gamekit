@@ -302,6 +302,12 @@ gkScalar gkEngine::getAnimRate(void)
     return m_animRate;
 }
 
+gkScene* gkEngine::getActiveScene(void)
+{
+    GK_ASSERT(m_private);
+    return m_private->scene;
+}
+
 void gkEngine::run(void)
 {
     // Start main game loop

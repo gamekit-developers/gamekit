@@ -75,6 +75,7 @@ public:
     static gkScalar getTickRate();
     static gkScalar getAnimRate();
 
+    gkScene* getActiveScene(void);
 
     // tick update hook
     GK_INLINE void setListener(Listener *listener) { m_listener = listener; }

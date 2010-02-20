@@ -183,6 +183,7 @@ set(Logic_SSOURCE
     # ----- Sensors ----- 
     LogicBricks/gkAlwaysSensor.cpp
     LogicBricks/gkMouseSensor.cpp
+    LogicBricks/gkCollisionSensor.cpp
 )
 set(Logic_CSOURCE
     # ----- Controllers ----- 
@@ -210,6 +211,7 @@ set(Logic_SHEADER
     # ----- Sensors ----- 
     LogicBricks/gkAlwaysSensor.h
     LogicBricks/gkMouseSensor.h
+    LogicBricks/gkCollisionSensor.h
 )
 set(Logic_CHEADER
     # ----- Controllers ----- 

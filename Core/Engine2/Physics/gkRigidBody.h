@@ -31,6 +31,7 @@
 #include "gkObject.h"
 #include "gkTransformState.h"
 #include "LinearMath/btMotionState.h"
+#include "BulletCollision/NarrowPhaseCollision/btManifoldPoint.h"
 
 class btDynamicsWorld;
 class btRigidBody;
@@ -41,6 +42,28 @@ class gkDynamicsWorld;
 // Game body
 class gkRigidBody : public gkObject, public btMotionState, public utListClass<gkRigidBody>::Link
 {
+public:
+
+    enum Flags
+    {
+        RBF_LIMIT_LVEL_X = 1,
+        RBF_LIMIT_LVEL_Y = 2,
+        RBF_LIMIT_LVEL_Z = 4,
+        RBF_LIMIT_AVEL_X = 8,
+        RBF_LIMIT_AVEL_Y = 16,
+        RBF_LIMIT_AVEL_Z = 32,
+        RBF_CONTACT_INFO = 64, 
+    };
+
+
+    struct ContactInfo
+    {
+        gkRigidBody*        collider;
+        btManifoldPoint     point;
+    };
+
+    typedef utArray<ContactInfo> ContactArray;
+
 protected:
 
     // Parent world
@@ -52,6 +75,16 @@ protected:
 
     // Bullet body
     btRigidBody*        m_rigidBody;
+
+    // information about collisions
+    ContactArray        m_contacts;
+
+    // misc flags
+    int                 m_flags;
+
+    // material info for sensors
+    gkString            m_sensorMaterial;
+
 
     // transform callbacks
 
@@ -69,6 +102,19 @@ public:
     void _reinstanceBody(btRigidBody *body);
 
     void setTransformState(const gkTransformState& state);
+
+    // collision contact information
+    GK_INLINE ContactArray& getContacts(void) {return m_contacts;}
+
+    GK_INLINE bool wantsContactInfo(void) 
+    {return (m_flags & RBF_CONTACT_INFO) != 0;}
+
+    GK_INLINE void setFlags(int flags)  {m_flags = flags;}
+    GK_INLINE int  getFlags(void)       {return m_flags;}
+
+    GK_INLINE void setSensorMaterial(const gkString& v) {m_sensorMaterial = v;}
+    GK_INLINE const gkString& getSensorMaterial(void)   {return m_sensorMaterial;}
+
 
     // update state based on the objects transform 
     void        updateTransform(void);

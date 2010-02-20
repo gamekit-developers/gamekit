@@ -33,6 +33,7 @@
 #include "gkLogicController.h"
 #include "gkLogicActuator.h"
 #include "gkAlwaysSensor.h"
+#include "gkCollisionSensor.h"
 #include "gkMouseSensor.h"
 #include "gkLogicOpController.h"
 #include "gkScriptController.h"
@@ -40,6 +41,8 @@
 #include "gkStateActuator.h"
 
 #include "gkLuaManager.h"
+#include "gkGameObject.h"
+#include "gkRigidBody.h"
 
 gkLogicLoader::gkLogicLoader()
 {
@@ -130,9 +133,18 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
                 la = ma;
 
                 Blender::bObjectActuator *objact = (Blender::bObjectActuator*)bact->data;
-                ma->setRot(gkVector3(objact->drot.x, objact->drot.y, objact->drot.z), (objact->flag & ACT_DROT_LOCAL) != 0);
-                ma->setLoc(gkVector3(objact->dloc.x, objact->dloc.y, objact->dloc.z), (objact->flag & ACT_DLOC_LOCAL) != 0);
+                ma->setRotation(gkVector3(objact->drot.x, objact->drot.y, objact->drot.z), (objact->flag & ACT_DROT_LOCAL) != 0);
+                ma->setTranslation(gkVector3(objact->dloc.x, objact->dloc.y, objact->dloc.z), (objact->flag & ACT_DLOC_LOCAL) != 0);
+                ma->setForce(gkVector3(objact->forceloc.x, objact->forceloc.y, objact->forceloc.z), (objact->flag & ACT_FORCE_LOCAL) != 0);
+                ma->setTorque(gkVector3(objact->forcerot.x, objact->forcerot.y, objact->forcerot.z), (objact->flag & ACT_TORQUE_LOCAL) != 0);
 
+                ma->setLinearVelocity(gkVector3(objact->linearvelocity.x, objact->linearvelocity.y, objact->linearvelocity.z), 
+                        (objact->flag & ACT_LIN_VEL_LOCAL) != 0);
+                ma->setAngularVelocity(gkVector3(objact->angularvelocity.x, objact->angularvelocity.y, objact->angularvelocity.z), 
+                    (objact->flag & ACT_ANG_VEL_LOCAL) != 0);
+
+                ma->setIncrementalVelocity((objact->flag & ACT_ADD_LIN_VEL) != 0);
+                ma->setDamping(gkScalar(objact->damping) / 1000.f);
             }
             break;
         }
@@ -237,6 +249,23 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
         gkLogicSensor *ls = 0;
         switch (bsen->type)
         {
+        case SENS_COLLISION:
+            {
+                // tell the gk world we want to collect collsion information
+                gkRigidBody *body = gobj->getAttachedBody();
+                if (body) body->setFlags(body->getFlags() | gkRigidBody::RBF_CONTACT_INFO);
+
+                gkCollisionSensor *col = new gkCollisionSensor(gobj, lnk, bsen->name);
+                ls = col;
+                Blender::bCollisionSensor *cse = (Blender::bCollisionSensor*)bsen->data;
+
+                if (cse->mode & SENS_COLLISION_MATERIAL)
+                    col->setMaterial(cse->materialName);
+                else
+                    col->setProperty(cse->name);
+
+            }break;
+
         case SENS_ALWAYS:
             {
                 gkAlwaysSensor *asn = new gkAlwaysSensor(gobj, lnk, bsen->name);
@@ -305,6 +334,11 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
                 pulse |= gkLogicSensor::PULSE_POSITIVE;
             if (bsen->pulse & SENS_NEG_PULSE_MODE)
                 pulse |= gkLogicSensor::PULSE_NEGATIVE;
+
+
+            // special case, use tap (most likely more will need this behavior)
+            if (bsen->type == SENS_COLLISION && pulse == gkLogicSensor::PULSE_NONE)
+                ls->setTap(true);
 
             ls->setMode(pulse);
             lnk->push(ls);

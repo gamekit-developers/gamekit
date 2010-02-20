@@ -46,6 +46,7 @@ enum gkDispatchedTypes
 {
     DIS_CONSTANT=0,
     DIS_MOUSE,
+    DIS_COLLISION,
     DIS_MAX,
 };
 

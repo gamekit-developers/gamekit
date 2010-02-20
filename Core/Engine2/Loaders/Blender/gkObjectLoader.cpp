@@ -3,7 +3,7 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Charlie C.
+    Copyright (c) 2006-2010 Charlie C & Erwin Coumans.
 
     Contributor(s): none yet.
 -------------------------------------------------------------------------------
@@ -476,10 +476,9 @@ void gkRigidBodyLoader::load(gkObject *ob)
 
     if (m_object->type != OB_MESH)
     {
-        // exclude non actors if it's not a mesh
+        // actor is for near & radar, so this needs updated
         if (!(m_object->gameflag & OB_ACTOR))
             return;
-
 
         // use radius for bounding scale ?
         size *= m_object->inertia;
@@ -599,28 +598,43 @@ void gkRigidBodyLoader::load(gkObject *ob)
             }
         };
 
-
         if (colShape)
         {
             m_shapes.push_back(colShape);
 
+            colShape->setMargin(m_object->margin);
             colShape->setLocalScaling(scale);
             btVector3 inertia;
             colShape->calculateLocalInertia(m_object->mass, inertia);
 
-
-
-
             btRigidBody* body = new btRigidBody(m_object->mass, 0, colShape, inertia);
             if (!(m_object->gameflag & OB_RIGID_BODY))
                 body->setAngularFactor(0.f);
-
             if (mat)
             {
+                rigid->setSensorMaterial(GKB_IDNAME(mat));
                 body->setFriction(mat->friction);
                 body->setRestitution(mat->reflect);
             }
 
+            body->setContactProcessingThreshold(m_object->m_contactProcessingThreshold);
+
+            int flags = rigid->getFlags();
+            if (m_object->gameflag2 & OB_LOCK_RIGID_BODY_X_AXIS)
+                flags |= gkRigidBody::RBF_LIMIT_LVEL_X;
+            if (m_object->gameflag2 & OB_LOCK_RIGID_BODY_Y_AXIS)
+                flags |= gkRigidBody::RBF_LIMIT_LVEL_Y;
+            if (m_object->gameflag2 & OB_LOCK_RIGID_BODY_Z_AXIS)
+                flags |= gkRigidBody::RBF_LIMIT_LVEL_Z;
+            if (m_object->gameflag2 & OB_LOCK_RIGID_BODY_X_ROT_AXIS)
+                flags |= gkRigidBody::RBF_LIMIT_AVEL_X;
+            if (m_object->gameflag2 & OB_LOCK_RIGID_BODY_Y_ROT_AXIS)
+                flags |= gkRigidBody::RBF_LIMIT_AVEL_Y;
+            if (m_object->gameflag2 & OB_LOCK_RIGID_BODY_Z_ROT_AXIS)
+                flags |= gkRigidBody::RBF_LIMIT_AVEL_Z;
+
+            rigid->setFlags(flags);
+            body->setDamping(m_object->damping, m_object->rdamping);
             body->setWorldTransform(worldTrans);
             rigid->_reinstanceBody(body);
         }
@@ -644,12 +658,15 @@ void gkRigidBodyLoader::load(gkObject *ob)
                 else
                     colShape = childShape;
 
+                colShape->setMargin(m_object->margin);
+
                 btVector3 inertia(0, 0, 0);
                 btRigidBody* colObj = new btRigidBody(0.f, 0, colShape, inertia);
                 colObj->setWorldTransform(worldTrans);
                 colObj->setCollisionShape(colShape);
                 if (mat)
                 {
+                    rigid->setSensorMaterial(GKB_IDNAME(mat));
                     colObj->setFriction(mat->friction);
                     colObj->setRestitution(mat->reflect);
                 }

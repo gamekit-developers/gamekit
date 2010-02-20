@@ -31,8 +31,8 @@
 
 
 gkLogicSensor::gkLogicSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
-:       gkLogicBrick(object, link, name), m_freq(0), m_tick(0), m_pulse(PULSE_NONE),m_tap(-1), 
-        m_invert(false), m_positive(false), m_suspend(false), m_sorted(false), m_isDetector(false), 
+:       gkLogicBrick(object, link, name), m_freq(0), m_tick(0), m_pulse(PULSE_NONE), m_tap(-1),
+        m_invert(false), m_positive(false), m_suspend(false), m_sorted(false), m_isDetector(false),
         m_inverted(false), m_oldState(-1), m_firstTap(-1)
 {
 }
@@ -48,9 +48,11 @@ void gkLogicSensor::tick(void)
         m_oldState = m_link->getState();
 
     bool doQuery = false;
-    if (++m_tick > m_freq) {
+    if (++m_tick > m_freq || (m_firstTap == -1)) {
         doQuery = true;
         m_tick = 0;
+        if (m_firstTap == -1)
+            m_firstTap = -2;
     }
 
     if (doQuery) {
@@ -59,21 +61,20 @@ void gkLogicSensor::tick(void)
         m_positive = query();
 
         // invert
-        if (m_invert)
+        if (m_invert || (m_pulse & PULSE_NEGATIVE))
             m_positive = !m_positive;
+
+        if (m_tap) {
+            if (m_firstTap != (int)m_positive)
+                m_firstTap = (int)m_positive;
+            else return;
+        }
 
         if (m_isDetector) {
             if (m_oldState != m_link->getState()) {
                 m_oldState = m_link->getState();
                 m_positive = true;
             }
-        }
-
-
-        if (m_tap)
-        {
-            if (m_firstTap != (int)m_positive)
-                m_firstTap = (int)m_positive;
             else return;
         }
 

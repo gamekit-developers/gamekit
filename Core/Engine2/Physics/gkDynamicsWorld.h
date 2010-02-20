@@ -30,7 +30,7 @@
 
 #include "gkObject.h"
 #include "gkMathUtils.h"
-
+#include "LinearMath/btScalar.h"
 
 class btDynamicsWorld;
 class btCollisionConfiguration;
@@ -63,19 +63,16 @@ protected:
     btConstraintSolver*         m_constraintSolver;
     RigidBodyList               m_bodies;
     gkPhysicsDebug*             m_debug;
-
+    bool                        m_handleContacts;
 
     // drawing all but static wireframes 
     void localDrawObject(btRigidBody *rb);
 
-
-    // Notifications for collision callbacks
-    void dispatchCollisions(void);
-
-
     void preLoadImpl(void);
     void loadImpl(void);
     void unloadImpl(void);
+
+    static void substepCallback(btDynamicsWorld *dyn, btScalar tick);
 
 public:
     gkDynamicsWorld(const gkString& name, gkScene *scene, gkObject::Loader *manual = 0);
@@ -83,6 +80,7 @@ public:
 
     // Do one full physics step
     void step(gkScalar tick);
+    void substep(gkScalar tick);
 
     void createParentChildHierarchy(void);
 
