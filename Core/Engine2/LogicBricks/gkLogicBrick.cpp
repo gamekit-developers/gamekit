@@ -25,10 +25,13 @@
 -------------------------------------------------------------------------------
 */
 #include "gkLogicBrick.h"
+#include "gkGameObject.h"
 
 
 gkLogicBrick::gkLogicBrick(gkGameObject *object, gkLogicLink *link, const gkString &name) 
 :       m_object(object), m_name(name), m_link(link)
 {
+    GK_ASSERT(m_object);
+    m_scene = m_object->getOwner();
 }
 

@@ -81,7 +81,7 @@ public:
  
     GK_INLINE void setRotation(const gkVector3& v, bool local)   
     {
-        m_quat = gkMathUtils::getQuatFromEuler(v);
+        m_quat = gkMathUtils::getQuatFromEuler(v, false);
         m_rot.vec = v; 
         m_rot.local = local; 
         m_rot.evaluate = !gkFuzzyVec(m_rot.vec);

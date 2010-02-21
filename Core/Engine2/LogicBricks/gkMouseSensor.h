@@ -69,7 +69,7 @@ protected:
 
 public:
     gkMouseSensor(gkGameObject *object, gkLogicLink *link, const gkString &name);
-    virtual ~gkMouseSensor() {}
+    virtual ~gkMouseSensor();
 
     bool query(void);
 

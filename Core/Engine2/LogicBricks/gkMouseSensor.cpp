@@ -60,6 +60,11 @@ gkMouseSensor::gkMouseSensor(gkGameObject *object, gkLogicLink *link, const gkSt
     gkLogicManager::getSingleton().getDispatcher(DIS_MOUSE).connect(this);
 }
 
+gkMouseSensor::~gkMouseSensor()
+{
+    if (m_rayQuery && m_scene->isLoaded())
+        m_scene->getManager()->destroyQuery(m_rayQuery);
+}
 
 bool gkMouseSensor::query(void)
 {

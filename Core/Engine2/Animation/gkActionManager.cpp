@@ -44,7 +44,7 @@ gkActionManager::~gkActionManager()
 
 void gkActionManager::setAction(gkAction *act)
 {
-    if (act != m_active && act)
+    if (act)
     {
         if (!m_active)
             m_active = act;

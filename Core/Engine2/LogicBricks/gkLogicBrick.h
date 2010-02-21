@@ -42,6 +42,7 @@ class gkLogicBrick
 {
 protected:
     gkGameObject*       m_object;
+    gkScene*            m_scene;
     const gkString      m_name;
     gkLogicLink*        m_link;
 public:
