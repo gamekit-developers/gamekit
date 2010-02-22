@@ -101,9 +101,11 @@ void gkGameObjectLoader::load(gkObject *baseClass)
     props.position      = loc;
     props.orientation   = quat;
     props.scale         = scale;
+		
+	gkRigidBody* rb = ob->getAttachedBody();
+	props.isStatic = rb && rb->getBody() && rb->getBody()->isStaticObject();
+
     ob->setActiveLayer((m_scene->lay & m_object->lay) != 0);
-
-
 
     switch (ob->getType())
     {

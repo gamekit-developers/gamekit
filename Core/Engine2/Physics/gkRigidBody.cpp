@@ -395,3 +395,21 @@ void gkRigidBody::setWorldTransform(const btTransform& worldTrans)
     node->setPosition(gkVector3(loc.x(), loc.y(), loc.z()));
     m_object->notifyUpdate();
 }
+
+Ogre::AxisAlignedBox gkRigidBody::getAabb() const
+{
+	if(m_rigidBody)
+	{
+		btVector3 aabbMin;
+		btVector3 aabbMax;
+
+		m_rigidBody->getAabb(aabbMin, aabbMax);
+
+		gkVector3 min_aabb(aabbMin.x(), aabbMin.y(), aabbMin.z());
+		gkVector3 max_aabb(aabbMax.x(), aabbMax.y(), aabbMax.z());
+
+		return Ogre::AxisAlignedBox(min_aabb, max_aabb);
+	}
+
+	return Ogre::AxisAlignedBox();
+}

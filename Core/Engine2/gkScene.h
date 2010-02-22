@@ -30,6 +30,7 @@
 #include "gkObject.h"
 #include "gkMathUtils.h"
 #include "gkSerialize.h"
+#include "OgreAxisAlignedBox.h"
 
 class gkDynamicsWorld;
 
@@ -86,6 +87,9 @@ public:
     // The main viewport. Only support for one at the moment.
     GK_INLINE Ogre::Viewport* getViewport(void) { return m_viewport; }
     void applyViewport(Ogre::Viewport *vp);
+
+	// Returns aabb for all static objects in the scene
+	const Ogre::AxisAlignedBox &getLimits() const { return m_Limits; }
 
     // The Ogre scene manager is only available
     // when this scene is loaded. Each scene has
@@ -167,6 +171,10 @@ protected:
 
     virtual void loadImpl();
     virtual void unloadImpl();
+
+private:
+
+	Ogre::AxisAlignedBox m_Limits;
 };
 
 #endif//_gkSceneObject_h_

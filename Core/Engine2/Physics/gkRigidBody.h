@@ -136,6 +136,8 @@ public:
     // Gain access to the game object
     gkGameObject* getObject(void)   {GK_ASSERT(m_object); return m_object;}
 
+	Ogre::AxisAlignedBox getAabb() const;
+
 };
 
 #endif//_gkRigidBody_h_

@@ -42,6 +42,7 @@
 #include "gkNodeManager.h"
 #include "gkLogger.h"
 #include "gkDynamicsWorld.h"
+#include "gkRigidBody.h"
 
 
 using namespace Ogre;
@@ -227,6 +228,12 @@ void gkScene::loadImpl(void)
 
             // call builder
             obptr->load();
+
+			if(obptr->getProperties().isStatic)
+			{
+				m_Limits.merge(obptr->getAttachedBody()->getAabb());
+			}
+
         }
     }
 
@@ -274,6 +281,8 @@ void gkScene::unloadImpl()
         delete m_physicsWorld;
         m_physicsWorld = 0;
     }
+
+	m_Limits = AxisAlignedBox::BOX_NULL;
 
     // clear per scene 
     gkLogicManager::getSingleton().clear();
