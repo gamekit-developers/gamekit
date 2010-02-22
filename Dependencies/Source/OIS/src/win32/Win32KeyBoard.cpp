@@ -156,8 +156,9 @@ void Win32Keyboard::_readBuffered()
 				ret = mListener->keyReleased( KeyEvent( this, kc, 0 ) );
 		}
 
-		if(ret == false)
-			break;
+        // disabled by, snailrose 
+		//if(ret == false)
+		//	break;
 	}
 }
 
