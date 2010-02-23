@@ -113,18 +113,23 @@ void Win32NativeMouse::capture()
 				RECT rect; POINT pos;
 				::GetCursorPos(&pos);
 				::GetWindowRect(evt.hWnd, &rect);
-                pos.x -= (rect.left);
-                pos.y -= (rect.top);
+                pos.x -= rect.left;
+                pos.y -= rect.top;
 				if (!mMouseInit)
 				{
+					mState.X.rel = 0;		mState.Y.rel = 0;
+					mState.X.abs = pos.x;	mState.Y.abs = pos.y;
+				    mState.X.abs = WNClamp(mState.X.abs, 0, mState.width);
+				    mState.Y.abs = WNClamp(mState.Y.abs, 0, mState.height);
+					mMouseInit = true;
 					mLastX = pos.x;
 					mLastY = pos.y;
-					mMouseInit = true;
 				}
-
 				int rx, ry;
-				rx = pos.x - mLastX;  ry = pos.y - mLastY;
-				mLastX = pos.x;       mLastY = pos.y;
+				rx = pos.x - mLastX;  
+				ry = pos.y - mLastY;
+				mLastX = pos.x;       
+				mLastY = pos.y;
 
 				if (rx != 0 || ry != 0)
 				{
@@ -138,6 +143,8 @@ void Win32NativeMouse::capture()
 						mLastX = (rect.left + rect.right) >> 1;
 						mLastY = (rect.top + rect.bottom) >> 1;
 						::SetCursorPos(mLastX, mLastY);
+						mLastX -= rect.left;
+						mLastY -= rect.top;
 					}
 				}
 
