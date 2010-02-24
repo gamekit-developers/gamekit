@@ -446,7 +446,7 @@ void gkLuaBind::stacktrace(gkLuaState *L, const char *function)
             sprintf(extra, "LUA_TNIL      : NULL");
             break;
         case LUA_TBOOLEAN:
-            sprintf(extra, "LUA_TBOOLEAN  : %i", lua_toboolean(L, top) ? "true" : "false");
+            sprintf(extra, "LUA_TBOOLEAN  : %s", lua_toboolean(L, top) ? "true" : "false");
             break;
         case LUA_TLIGHTUSERDATA:
             sprintf(extra, "LUA_TLIGHTUSERDATA    : %p", lua_touserdata(L, top));
@@ -455,7 +455,7 @@ void gkLuaBind::stacktrace(gkLuaState *L, const char *function)
             sprintf(extra, "LUA_TUSERDATA : %p", lua_touserdata(L, top));
             break;
         case LUA_TNUMBER:
-            sprintf(extra, "LUA_TNUMBER   : %d", lua_tonumber(L, top));
+            sprintf(extra, "LUA_TNUMBER   : %f", lua_tonumber(L, top));
             break;
         case LUA_TSTRING:
             sprintf(extra, "LUA_TSTRING   : %s", lua_tostring(L, top));
