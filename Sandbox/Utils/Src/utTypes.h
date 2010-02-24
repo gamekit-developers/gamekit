@@ -841,7 +841,7 @@ public:
 
     UT_INLINE UThash hash(void) const {
         if (m_hash != UT_NPOS) return m_hash;
-        m_hash = reinterpret_cast<UThash>(m_key);
+        m_hash = static_cast<UThash>(reinterpret_cast<UTuintPtr>(m_key));
         return m_hash;
     }
 

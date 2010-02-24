@@ -25,12 +25,6 @@
 #ifndef _utCommon_h_
 #define _utCommon_h_
 
-
-
-// Platform defines
-
-
-
 #if defined(DEBUG) || defined(_DEBUG)
 # include <assert.h>
 # define UT_DEBUG 1
@@ -57,12 +51,11 @@
 #define UT_COMPILER_MSVC    0
 #define UT_COMPILER_GNU     1
 
-
 #if defined(_MSC_VER)
 # define UT_COMPILER UT_COMPILER_MSVC
 #elif defined(__GNUC__)
 # define UT_COMPILER UT_COMPILER_GNU
-#else // bail
+#else
 # error unknown compiler
 #endif
 
@@ -77,7 +70,6 @@
 #define UT_ENDIAN UT_ENDIAN_LITTLE
 #endif
 
-
 #if UT_ENDIAN == UT_ENDIAN_BIG
 # define UT_ID(a,b,c,d) ( (int)(a)<<24 | (int)(b)<<16 | (c)<<8 | (d) )
 # define IT_ID2(c, d)   ( (c)<<8 | (d) )
@@ -85,7 +77,6 @@
 # define UT_ID(a,b,c,d) ( (int)(d)<<24 | (int)(c)<<16 | (b)<<8 | (a) )
 # define UT_ID2(c, d)   ( (d)<<8 | (c) )
 #endif
-
 
 #define UT_ARCH_32 0
 #define UT_ARCH_64 1
@@ -101,7 +92,6 @@ UT_ASSERTCOMP(sizeof(void*) == 8, VOID_IS_8);
 UT_ASSERTCOMP(sizeof(void*) == 4, VOID_IS_4);
 #endif
 
-
 #if UT_PLATFORM == UT_PLATFORM_WIN32
 # if defined(__MINGW32__) || \
      defined(__CYGWIN__)  || \
@@ -114,11 +104,7 @@ UT_ASSERTCOMP(sizeof(void*) == 4, VOID_IS_4);
 #  define UT_INLINE    inline
 #endif
 
-
 // Integer types
-
-
-
 typedef long            UTlong;
 typedef unsigned long   UTulong;
 typedef int             UTint32;
@@ -140,44 +126,18 @@ typedef __int64          UTint64;
 typedef unsigned __int64 UTuint64;
 #endif
 
-
-
 // Arch dependent types
 
-
-
 #if UT_ARCH == UT_ARCH_64
-typedef UTuint64    UTsize;
 typedef UTuint64    UTuintPtr;
 typedef UTint64     UTintPtr;
-#define UT_NPOS     0xffffffffffffffff
 #else
-typedef UTuint32    UTsize;
 typedef UTuint32    UTuintPtr;
 typedef UTint32     UTintPtr;
-#define UT_NPOS     0xffffffff
 #endif
 
-typedef UTsize UThash;
-
-
-// Memory config
-
-
-// Use standard allocator
-#define UT_ALLOCATOR_STD    0
-
-// Use Doug Lea malloc
-#define UT_ALLOCATOR_DLE    1
-// Use Ned malloc
-#define UT_ALLOCATOR_NED    2
-
-
-// Currernt allocator
-#define UT_ALLOCATOR        UT_ALLOCATOR_STD
-
-// Debug tracking
-#define UT_ALLOC_TRACK      0
-
+typedef UTuint32	UTsize;
+typedef UTsize		UThash;
+#define UT_NPOS     0xFFFFFFFF
 
 #endif//_utCommon_h_
