@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -27,6 +27,7 @@
 #include "OgreException.h"
 #include "OgreTexture.h"
 #include "OgreTextureManager.h"
+#include "OgreMaterialManager.h"
 #include "gkBlendFile.h"
 #include "gkBlendLoader.h"
 #include "gkSceneManager.h"
@@ -196,11 +197,11 @@ bool gkBlendFile::_parse(void)
         }
     }
 
+	buildAllTextures();
+
     buildTextFiles();
 
-
-
-    return true;
+	return true;
 }
 
 gkScene* gkBlendFile::findScene(const gkString& name)
@@ -245,6 +246,29 @@ void gkBlendFile::buildTextFiles(void)
         {
             gkTextFile *tf = txtMgr.create(GKB_IDNAME(txt));
             tf->setText(str);
+
+			if(tf->getName().find(".material") != gkString::npos)
+			{
+				DataStreamPtr memStream(
+					OGRE_NEW MemoryDataStream((void*)str.c_str(), str.size()));
+
+				Ogre::MaterialManager::getSingleton().parseScript(memStream, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+			}
         }
     }
 }
+
+void gkBlendFile::buildAllTextures()
+{
+    bParse::bMain *mp = m_file->getMain();
+
+    bParse::bListBasePtr* imaList = mp->getImage();
+
+    for (int i=0; i<imaList->size(); ++i)
+    {
+        Blender::Image *ima = (Blender::Image*)imaList->at(i);
+
+		_registerImage(ima);
+    }
+}
+

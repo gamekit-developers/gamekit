@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -72,6 +72,7 @@ public:
 
 protected:
     void buildTextFiles(void);    
+	void buildAllTextures();
 
     ManualResourceLoaderList  m_loaders;   // Ogre Loaders
     const gkString            m_group;     // Ogre Ogre::Resource Group
