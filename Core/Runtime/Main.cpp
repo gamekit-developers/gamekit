@@ -162,7 +162,6 @@ public:
         m_prefs.winsize.y   = 600;
         m_prefs.wintitle    = gkString("OgreKit Demo (Press Escape to exit)[") + m_blend + gkString("]");
         m_prefs.blendermat  = false;
-        m_prefs.userWindow  = true;
         m_prefs.verbose     = false;
         m_prefs.grabInput   = true;
 
@@ -172,6 +171,8 @@ public:
         gkPath path = "OgreKitStartup.cfg";
         // overide settings if found
         if (path.isFile()) m_prefs.load(path.getPath());
+
+        m_prefs.userWindow  = false;
     }
 
     virtual ~OgreKit()
