@@ -34,6 +34,7 @@ class gkCursorNode : public gkLogicNode
 public:
 	enum 
 	{
+		ENABLE,
 		UPDATED,
 		MATERIAL_NAME,
 		XPOS,
@@ -51,6 +52,7 @@ public:
 
 	bool evaluate(Ogre::Real tick);
 
+	GK_INLINE gkLogicSocket* getEnable() {return &m_sockets[ENABLE];}
 	GK_INLINE gkLogicSocket* getUpdate() {return &m_sockets[UPDATED];}
 
 	GK_INLINE gkLogicSocket* getMaterialName() {return &m_sockets[MATERIAL_NAME];}

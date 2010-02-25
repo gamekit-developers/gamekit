@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -34,8 +34,14 @@
 
 #include "OgreResourceGroupManager.h"
 #include "gkUtils.h"
+#include "gkEngine.h"
+#include "OgreRoot.h"
+#include "gkCamera.h"
+#include "gkScene.h"
+#include "gkWindowSystem.h"
+#include "OgreRenderWindow.h"
 
-
+using namespace Ogre;
 
 #ifdef __APPLE__
 #define MAXPATHLEN 512
@@ -89,3 +95,37 @@ bool gkUtils::isResource(const gkString &name, const gkString &group)
         return Ogre::ResourceGroupManager::getSingleton().resourceExistsInAnyGroup(name);
     return Ogre::ResourceGroupManager::getSingleton().resourceExists(group, name);
 }
+
+Ogre::Ray gkUtils::CreateCameraRay(gkScalar x, gkScalar y)
+{
+	gkScene* pScene = gkEngine::getSingleton().getActiveScene();
+
+	GK_ASSERT(pScene);
+
+	gkCamera* pCamera = pScene->getMainCamera();
+
+	GK_ASSERT(pCamera);
+
+	Vector2 pos(x, y);
+
+	gkWindowSystem* pWindowSystem = gkWindowSystem::getSingletonPtr();
+
+	Real width = pWindowSystem->getMainWindow()->getWidth();
+
+	Real height = pWindowSystem->getMainWindow()->getHeight();
+
+	GK_ASSERT(width && height);
+
+	Ray ray(pCamera->getCamera()->getCameraToViewportRay(pos.x/width, pos.y/height));
+
+	Vector3 p0 = ray.getOrigin();
+
+	const Real MAX_DISTANCE = 1000000;
+
+	Vector3 p1 = p0 + ray.getDirection() * MAX_DISTANCE;
+
+	ray.setDirection(p1-p0);
+
+	return ray;
+}
+

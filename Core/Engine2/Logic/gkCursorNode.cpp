@@ -37,6 +37,7 @@ m_overlay(0),
 m_panelContainer(0),
 m_panelElement(0)
 {
+	ADD_ISOCK(*getEnable(), this, gkLogicSocket::ST_BOOL);
 	ADD_ISOCK(*getUpdate(), this, gkLogicSocket::ST_BOOL);
 
 	ADD_ISOCK(*getMaterialName(), this, gkLogicSocket::ST_STRING);
@@ -81,8 +82,6 @@ m_panelElement(0)
 
 	m_overlay->add2D(m_panelContainer);
 	
-	m_overlay->show();
-
 	++idx;
 }
 
@@ -95,7 +94,24 @@ gkCursorNode::~gkCursorNode()
 
 bool gkCursorNode::evaluate(Real tick)
 {
-	return getUpdate()->getValueBool();
+	bool enable = getEnable()->getValueBool();
+
+	if(enable && !m_overlay->isVisible())
+	{
+		m_overlay->show();
+
+		if(!getUpdate()->getValueBool())
+		{
+			update(0);
+		}
+		
+	}
+	else if(!enable && m_overlay->isVisible())
+	{
+		m_overlay->hide();
+	}
+
+	return enable && getUpdate()->getValueBool();
 }
 
 void gkCursorNode::update(Real tick)

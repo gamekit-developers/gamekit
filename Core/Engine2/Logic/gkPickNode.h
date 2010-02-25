@@ -24,69 +24,60 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkArcBallNode_h_
-#define _gkArcBallNode_h_
+#ifndef _gkPickNode_h_
+#define _gkPickNode_h_
 
 #include "gkLogicNode.h"
+#include "LinearMath/btVector3.h"
 
-class SceneNode;
+class btPoint2PointConstraint;
+class btRigidBody;
 
-class gkArcBallNode : public gkLogicNode
+class gkPickNode : public gkLogicNode
 {
 public:
-
 	enum 
 	{
 		ENABLE,
-		CENTER_UPDATED,
-		POS_UPDATED,
+		CREATE_PICK,
+		RELEASE_PICK,
+		UPDATE_PICK,
 		XPOS,
 		YPOS,
-		RELX,
-		RELY,
-		RELZ,
 		MAX_SOCKETS
 	};
 
-	gkArcBallNode(gkLogicTree *parent, size_t id);
+	gkPickNode(gkLogicTree *parent, size_t id);
 
-	~gkArcBallNode();
+	~gkPickNode();
 
 	void update(Ogre::Real tick);
 
 	bool evaluate(Ogre::Real tick);
 
 	GK_INLINE gkLogicSocket* getEnable() {return &m_sockets[ENABLE];}
-    GK_INLINE gkLogicSocket* getUpdateCenter() {return &m_sockets[CENTER_UPDATED];}
-	GK_INLINE gkLogicSocket* getUpdatePosition() {return &m_sockets[POS_UPDATED];}
+	GK_INLINE gkLogicSocket* getCreatePick() {return &m_sockets[CREATE_PICK];}
+	GK_INLINE gkLogicSocket* getReleasePick() {return &m_sockets[RELEASE_PICK];}
+	GK_INLINE gkLogicSocket* getUpdate() {return &m_sockets[UPDATE_PICK];}
 
     GK_INLINE gkLogicSocket* getX() {return &m_sockets[XPOS];}
     GK_INLINE gkLogicSocket* getY() {return &m_sockets[YPOS];}
 
-    GK_INLINE gkLogicSocket* getRelX() {return &m_sockets[RELX];}
-    GK_INLINE gkLogicSocket* getRelY() {return &m_sockets[RELY];}
-    GK_INLINE gkLogicSocket* getRelZ() {return &m_sockets[RELZ];}
-
-
 private:
 
-	void SetNewPosition();
-	void GetNewCenter();
+	void CreatePick();
+	void ReleasePick();
+	void UpdatePick();
 
 private:
 
 	gkLogicSocket m_sockets[MAX_SOCKETS];
 
-	Ogre::RaySceneQuery* m_rayQuery;
-	Ogre::SceneNode* m_RotationNode;
-
-	gkGameObject* m_gameObj;
-	gkScene* m_scene;
-
-	Ogre::Vector3 m_center;
-
-	bool m_centerUpdated;
-	bool m_positionUpdated;
+	btPoint2PointConstraint* m_constraint;
+	btRigidBody* m_pickedBody;
+	btVector3 m_hitPos;
+	btVector3 m_oldPickingPos;
+	Ogre::Real m_oldPickingDist;
 };
 
-#endif//_gkArcBallNode_h_
+#endif//_gkPickNode_h_

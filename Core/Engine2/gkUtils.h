@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -28,6 +28,7 @@
 #define _gkUtils_h_
 
 #include "gkCommon.h"
+#include "gkMathUtils.h"
 
 
 class gkUtils
@@ -39,6 +40,8 @@ public:
 
     // utility for command-line arguments
     static gkString getFile(const gkString& in);
+
+	static Ogre::Ray CreateCameraRay(gkScalar x, gkScalar y);
 };
 
 

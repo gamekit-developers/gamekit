@@ -28,10 +28,8 @@
 #include "gkArcBallNode.h"
 #include "gkEngine.h"
 #include "gkGameObject.h"
-#include "gkCamera.h"
+#include "gkUtils.h"
 #include "gkScene.h"
-#include "gkWindowSystem.h"
-#include "OgreRenderWindow.h"
 #include "OgreRoot.h"
 #include "gkLogger.h"
 
@@ -47,6 +45,7 @@ m_center(Ogre::Vector3::ZERO),
 m_centerUpdated(false),
 m_positionUpdated(false)
 {
+	ADD_ISOCK(*getEnable(), this, gkLogicSocket::ST_BOOL);
 	ADD_ISOCK(*getUpdateCenter(), this, gkLogicSocket::ST_BOOL);
 	ADD_ISOCK(*getUpdatePosition(), this, gkLogicSocket::ST_BOOL);
 
@@ -73,7 +72,7 @@ bool gkArcBallNode::evaluate(Real tick)
 
 	m_positionUpdated = getUpdatePosition()->getValueBool();
 
-	return m_centerUpdated || m_positionUpdated;
+	return getEnable()->getValueBool() && (m_centerUpdated || m_positionUpdated);
 }
 
 void gkArcBallNode::update(Real tick)
@@ -111,29 +110,7 @@ void gkArcBallNode::update(Real tick)
 
 void gkArcBallNode::GetNewCenter()
 {
-	gkCamera* pCamera = m_scene->getMainCamera();
-
-	GK_ASSERT(pCamera);
-
-	Vector2 pos(getX()->getValueReal(), getY()->getValueReal());
-
-	gkWindowSystem* pWindowSystem = gkWindowSystem::getSingletonPtr();
-
-	Real width = pWindowSystem->getMainWindow()->getWidth();
-
-	Real height = pWindowSystem->getMainWindow()->getHeight();
-
-	GK_ASSERT(width && height);
-
-	Ray ray(pCamera->getCamera()->getCameraToViewportRay(pos.x/width, pos.y/height));
-
-	Vector3 p0 = ray.getOrigin();
-
-	const Real MAX_DISTANCE = 1000000;
-
-	Vector3 p1 = p0 + ray.getDirection() * MAX_DISTANCE;
-
-	ray.setDirection(p1-p0);
+	Ray ray = gkUtils::CreateCameraRay(getX()->getValueReal(), getY()->getValueReal());
 
 	m_rayQuery->setRay(ray);
 
