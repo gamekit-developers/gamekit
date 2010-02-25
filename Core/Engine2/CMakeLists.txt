@@ -459,6 +459,10 @@ include_directories(${OGREKIT_BULLET_INCLUDE})
 configure_rendersystem()
 
 
+set(HiddenCMakeLists ../CMakeLists.txt)
+
+source_group(ParentCMakeLists FILES ${HiddenCMakeLists})
+
 add_library(OgreKitCore STATIC
             ${Core_SOURCE}       ${Core_HEADER}
             ${Logic_SOURCE}      ${Logic_HEADER}
@@ -474,4 +478,5 @@ add_library(OgreKitCore STATIC
             ${Network_SOURCE}    ${Network_HEADER}
             ${Graphics_SOURCE}   ${Graphics_HEADER}
             ${NLogic_SOURCE}     ${NLogic_HEADER}
+            ${HiddenCMakeLists}
     )
