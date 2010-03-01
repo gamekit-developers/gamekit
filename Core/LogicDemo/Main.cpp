@@ -45,6 +45,7 @@
 #include "gkCursorNode.h"
 #include "gkPickNode.h"
 #include "gkTrackNode.h"
+#include "gkMotionNode.h"
 
 class OgreKit : public gkCoreApplication, public gkWindowSystem::Listener
 {
@@ -83,7 +84,9 @@ public:
         
 		pScene->load();
 
-		CreateLogic(pScene);
+		CreateCameraLogic(pScene);
+		
+		CreateMomoMeshLogic(pScene);
 
         // add input hooks
         gkWindowSystem::getSingleton().addListener(this);
@@ -96,7 +99,57 @@ public:
         if (sc == KC_ESCKEY) m_engine->requestExit();
     }
 
-	void CreateLogic(gkScene* pScene)
+	void CreateMomoMeshLogic(gkScene* pScene)
+	{
+        gkGameObject *ob = pScene->getObject("MeshMomo");
+
+		GK_ASSERT(ob);
+
+        gkLogicTree* tree = gkNodeManager::getSingleton().create();
+
+		gkKeyNode* ctrlKey = tree->createNode<gkKeyNode>();
+
+		ctrlKey->setKey(KC_LEFTCTRLKEY);
+
+		gkMouseNode* mouse = tree->createNode<gkMouseNode>();
+
+		CreateMomoMeshMotionLogic(tree, mouse, ctrlKey);
+
+        tree->solveOrder();
+
+		ob->attachLogic(tree);
+	}
+
+	void CreateMomoMeshMotionLogic(gkLogicTree* tree, gkMouseNode* mouse, gkKeyNode* ctrlKey)
+	{
+		gkIfNode* ifNode = tree->createNode<gkIfNode>();
+		ifNode->setStatement(CMP_NOT);
+		ifNode->getA()->link(ctrlKey->getIsDown());
+
+		gkMotionNode* motion = tree->createNode<gkMotionNode>();
+
+		motion->getUpdate()->link(ifNode->getTrue());
+		motion->getX()->setValue(0);
+		motion->getY()->setValue(0);
+		motion->getZ()->link(mouse->getRelX());
+
+/*		gkKeyNode* wKey = tree->createNode<gkKeyNode>();
+		wKey->setKey(KC_WKEY);
+
+		gkIfNode* wIfNode = tree->createNode<gkIfNode>();
+		ifNode->setStatement(CMP_AND);
+		ifNode->getA()->link(ifNode->getTrue());
+		ifNode->getB()->link(wKey->getIsDown());
+
+		gkAnimationNode* runAnim = tree->createNode<gkAnimationNode>();
+		runAnim->setAnim("Momo_Run");
+		runAnim->getBlend()->setValue(
+		runAnim->getUpdate()->link(wIfNode->getTrue());*/
+
+
+	}
+
+	void CreateCameraLogic(gkScene* pScene)
 	{
         gkGameObject *ob = pScene->getMainCamera();
 
@@ -116,7 +169,7 @@ public:
 
 		PickLogic(tree, mouse, ctrlKey);
 
-		TrackLogic(pScene->getObject("Player"), tree, ctrlKey);
+		TrackLogic(pScene->getObject("MeshMomo"), tree, ctrlKey);
 
         tree->solveOrder();
 

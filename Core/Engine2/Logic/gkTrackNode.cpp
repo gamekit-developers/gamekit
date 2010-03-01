@@ -80,15 +80,17 @@ void gkTrackNode::update(Real tick)
 
 	const gkVector3& currPos = pObj->getPosition();
 
-	const gkVector3& trgPos = m_target->getPosition();
+	const gkVector3& oPos = m_target->getPosition();
 
 	m_RotationNode->resetOrientation();
 
-	m_RotationNode->setDirection(trgPos - currPos);
+	m_RotationNode->setDirection(oPos - currPos);
 
 	pObj->setOrientation(m_RotationNode->getOrientation());
 
-	gkVector3 stretch = (currPos - trgPos - getOffset()->getValueVector3()) * getStiffness()->getValueReal();
+	gkVector3 targetPos = oPos + m_target->getOrientation() * getOffset()->getValueVector3();
+
+	gkVector3 stretch = (currPos - targetPos) * getStiffness()->getValueReal();
 
 	if(pObj->getAttachedBody())
 	{
