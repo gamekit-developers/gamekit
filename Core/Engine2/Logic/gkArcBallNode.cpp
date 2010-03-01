@@ -168,9 +168,7 @@ void gkArcBallNode::SetNewPosition()
 
 		q = m_RotationNode->getOrientation();
 
-		Real distance = dir.length();
-
-		Vector3 oDir = Ogre::Vector3::NEGATIVE_UNIT_Z * distance;
+		Vector3 oDir = Ogre::Vector3::NEGATIVE_UNIT_Z * dir.length();
 
 		if(offset.z)
 		{
@@ -181,9 +179,16 @@ void gkArcBallNode::SetNewPosition()
 
 		if(oDir.length() > MIN_DISTANCE)
 		{
-			Vector3 newPosition = m_center - q * oDir;
+			Vector3 newDir = q * oDir;
 
-			pGameObj->setPosition(newPosition);
+			Radian a = oDir.angleBetween(newDir);
+
+			if(a > Angle(5) && a < Angle(175))
+			{
+				Vector3 newPosition = m_center - newDir;
+
+				pGameObj->setPosition(newPosition);
+			}
 		}
 	}
 
