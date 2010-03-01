@@ -44,6 +44,7 @@
 #include "gkArcBallNode.h"
 #include "gkCursorNode.h"
 #include "gkPickNode.h"
+#include "gkTrackNode.h"
 
 class OgreKit : public gkCoreApplication, public gkWindowSystem::Listener
 {
@@ -115,6 +116,8 @@ public:
 
 		PickLogic(tree, mouse, ctrlKey);
 
+		TrackLogic(pScene->getObject("Player"), tree, ctrlKey);
+
         tree->solveOrder();
 
 		ob->attachLogic(tree);
@@ -131,8 +134,6 @@ public:
 		cursor->getMaterialName()->setValue(gkString("ArrowCursor"));
 		cursor->getWidth()->setValue(32);
 		cursor->getHeight()->setValue(32);
-		//cursor->getWidth()->link(mouse->getAbsX());
-		//cursor->getHeight()->link(mouse->getAbsY());
 
 		cursor->update(0);
 	}
@@ -181,7 +182,20 @@ public:
 		arcBall->getRelZ()->link(mouse->getWheel());
 	}
 
-    void tick(gkScalar tr)
+	void TrackLogic(gkGameObject* pTarget, gkLogicTree* tree, gkKeyNode* ctrlKey)
+	{
+		gkTrackNode* track = tree->createNode<gkTrackNode>();
+
+		gkIfNode* ifNode = tree->createNode<gkIfNode>();
+		ifNode->setStatement(CMP_NOT);
+		ifNode->getA()->link(ctrlKey->getIsDown());
+
+		track->getEnable()->link(ifNode->getTrue());
+		track->SetTarget(pTarget);
+		track->getOffset()->setValue(gkVector3(0, -1.5, -0.2));
+	}
+
+	void tick(gkScalar tr)
     {
     }
 
@@ -198,3 +212,4 @@ int main(int argc, char **argv)
     okit.run();
     return 0;
 }
+
