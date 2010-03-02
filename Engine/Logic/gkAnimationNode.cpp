@@ -34,57 +34,30 @@
 
 using namespace Ogre;
 
-
-
 gkAnimationNode::gkAnimationNode(gkLogicTree *parent, size_t id) :
         gkLogicNode(parent, id), m_anim(""), m_func(AF_LOOP)
 {
-
-    ADD_ISOCK(m_sockets[0], this, gkLogicSocket::ST_BOOL);
-    ADD_ISOCK(m_sockets[1], this, gkLogicSocket::ST_REAL);
-    ADD_ISOCK(m_sockets[2], this, gkLogicSocket::ST_REAL);
-    ADD_ISOCK(m_sockets[3], this, gkLogicSocket::ST_REAL);
-    ADD_ISOCK(m_sockets[4], this, gkLogicSocket::ST_REAL);
-
-    m_sockets[0].setValue(true);
-    m_sockets[1].setValue(0.f);
-    m_sockets[2].setValue(0.f);
-    m_sockets[3].setValue(0.f);
-    m_sockets[4].setValue(0.f);
+    ADD_ISOCK(*getUpdate(), this, gkLogicSocket::ST_BOOL);
+    ADD_ISOCK(*getBlend(), this, gkLogicSocket::ST_REAL);
 }
-
 
 bool gkAnimationNode::evaluate(gkScalar tick)
 {
-    return m_sockets[0].getValueBool();
+	return getUpdate()->getValueBool();
 }
-
 
 void gkAnimationNode::update(gkScalar tick)
 {
-    gkGameObject *ob = m_sockets[0].getGameObject();
-    if (ob == 0)
-        ob = m_object;
+    gkGameObject *ob = getUpdate()->getGameObject();
 
-    if (ob != 0)
-    {
-        // else no anim yet
-        if (ob->getType() != GK_ENTITY)
-            return;
+	GK_ASSERT(ob && ob->getType() == GK_ENTITY);
 
+	gkEntity *ent = ob->getEntity();
 
-        gkEntity *ent = ob->getEntity();
-        if (ent->isLoaded())
-        {
-            gkAnimProperties& props = ent->getAnimationProperties();
-            props.state = m_func == AF_LOOP ? gkAnimProperties::APS_LOOP : gkAnimProperties::APS_PLAY_STOP;
-            props.anim  = m_anim;
-            props.blend = m_sockets[1].getValueReal();
-            props.start = m_sockets[2].getValueReal();
-            props.end   = m_sockets[3].getValueReal();
-            props.speed = m_sockets[4].getValueReal();
+	if (ent->isLoaded())
+	{
+		GK_ASSERT(!m_anim.empty());
 
-            ent->updateAnimations();
-        }
+		ent->playAction(m_anim, getBlend()->getValueReal());
     }
 }

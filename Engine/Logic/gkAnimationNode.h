@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -28,40 +28,41 @@
 #define _gkAnimationNode_h_
 
 #include "gkLogicNode.h"
-#include "gkInput.h"
 
-
-// TODO needs updated in gkEntity
 class gkAnimationNode : public gkLogicNode
 {
 public:
-    enum AnimFunction
+    
+	enum AnimFunction
     {
         AF_LOOP = 0,
         AF_PLAY,
     };
 
-public:
+	enum
+	{
+		UPDATED,
+		BLEND_FRAMES,
+		MAX_SOCKETS
+	};
+
     gkAnimationNode(gkLogicTree *parent, size_t id);
+
     virtual ~gkAnimationNode() {}
 
     void update(gkScalar tick);
     bool evaluate(gkScalar tick);
 
-    GK_INLINE void setFunction(int af)            {m_func = af;}
-    GK_INLINE void setAnim(const gkString &name)  {m_anim = name;}
+    GK_INLINE void setFunction(AnimFunction af) {m_func = af;}
+    GK_INLINE void setAnim(const gkString &name) {m_anim = name;}
 
-    // inputs
-    GK_INLINE gkLogicSocket* getUpdate(void)    { return &m_sockets[0]; }
-    GK_INLINE gkLogicSocket* getBlend(void)     { return &m_sockets[1]; }
-    GK_INLINE gkLogicSocket* getStart(void)     { return &m_sockets[2]; }
-    GK_INLINE gkLogicSocket* getEnd(void)       { return &m_sockets[3]; }
-    GK_INLINE gkLogicSocket* getSpeed(void)     { return &m_sockets[4]; }
+    GK_INLINE gkLogicSocket* getUpdate(void)    { return &m_sockets[UPDATED]; }
+    GK_INLINE gkLogicSocket* getBlend(void)     { return &m_sockets[BLEND_FRAMES]; }
 
 private:
-    gkLogicSocket   m_sockets[5];
+    gkLogicSocket   m_sockets[MAX_SOCKETS];
     gkString        m_anim;
-    int             m_func;
+    AnimFunction	m_func;
 };
 
 
