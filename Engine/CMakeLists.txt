@@ -448,7 +448,7 @@ include_directories(
     ./Sound 
     ./Loaders/Blender
     ./Physics
-    ./Utils/Src
+    ./Utils
     )
 
 
