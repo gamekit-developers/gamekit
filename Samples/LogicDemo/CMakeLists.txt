@@ -56,14 +56,18 @@ if (WIN32)
 	endif (CMAKE_COMPILER_IS_GNUCXX)
 endif(WIN32)
 
+set(HiddenCMakeLists ../CMakeLists.txt)
+source_group(ParentCMakeLists FILES ${HiddenCMakeLists})
+
+
 if (APPLE)
 	add_executable(
 	${PROJECT_NAME}
 	MACOSX_BUNDLE
 	MainMenu.nib
-	${SRC}
+	${SRC} ${HiddenCMakeLists}
 )
 else ()
-	add_executable(${PROJECT_NAME} ${SRC})
+	add_executable(${PROJECT_NAME} ${SRC} ${HiddenCMakeLists})
 	install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${OGREKIT_INSTALL_PREFIX})
 endif()
