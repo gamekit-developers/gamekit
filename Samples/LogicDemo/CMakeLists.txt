@@ -39,7 +39,7 @@ include_directories(
     ../../Engine/Physics/
     ../../Engine/LogicBricks
     ../../Engine/Logic
-    ../../Engine/Utils/Src
+    ../../Engine/Utils
     ../../Engine/Animation
 )
 
