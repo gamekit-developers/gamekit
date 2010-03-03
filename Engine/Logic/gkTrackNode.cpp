@@ -60,7 +60,7 @@ gkTrackNode::~gkTrackNode()
 
 bool gkTrackNode::evaluate(Real tick)
 {
-	return m_target && getEnable()->getValueBool();
+	return m_target && m_target->isLoaded() && getEnable()->getValueBool();
 }
 
 void gkTrackNode::update(Real tick)
