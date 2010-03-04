@@ -142,6 +142,7 @@ set(NLogic_SOURCE
     Logic/gkCursorNode.cpp
     Logic/gkPickNode.cpp
     Logic/gkTrackNode.cpp
+    Logic/gkSetterNode.cpp
 )
 
 set(NLogic_HEADER
@@ -172,6 +173,7 @@ set(NLogic_HEADER
     Logic/gkCursorNode.h
     Logic/gkPickNode.h
     Logic/gkTrackNode.h
+    Logic/gkSetterNode.h
 )
 
 source_group(LogicNodes\\Header FILES ${NLogic_HEADER})

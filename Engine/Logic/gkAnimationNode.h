@@ -41,7 +41,6 @@ public:
 
 	enum
 	{
-		UPDATED,
 		ANIM_NAME,
 		BLEND_FRAMES,
 		MAX_SOCKETS
@@ -56,7 +55,6 @@ public:
 
     GK_INLINE void setFunction(AnimFunction af) {m_func = af;}
 
-    GK_INLINE gkLogicSocket* getUpdate()    { return &m_sockets[UPDATED]; }
 	GK_INLINE gkLogicSocket* getAnimName()  { return &m_sockets[ANIM_NAME]; }
     GK_INLINE gkLogicSocket* getBlend()     { return &m_sockets[BLEND_FRAMES]; }
 

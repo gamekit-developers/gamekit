@@ -46,6 +46,7 @@
 #include "gkNewMotionNode.h"
 #include "gkAnimationNode.h"
 #include "gkExitNode.h"
+#include "gkSetterNode.h"
 
 class OgreKit : public gkCoreApplication
 {
@@ -184,37 +185,28 @@ public:
 
 	void CreateMomoMeshLogic()
 	{
-		{
-			// Run
+		gkAnimationNode* anim = m_tree->createNode<gkAnimationNode>();
+		anim->SetTarget(m_meshMomo);
 
-			gkAnimationNode* anim = m_tree->createNode<gkAnimationNode>();
-			anim->SetTarget(m_meshMomo);
-			anim->getAnimName()->setValue(gkString("Momo_Run"));
-			anim->getUpdate()->link(m_wKeyNode->getIsDown());
-		}
+		gkSetterNode* runName = m_tree->createNode<gkSetterNode>();
+		runName->SetTarget(anim->getAnimName());
+		runName->getInput()->setValue(gkString("Momo_Run"));
+		runName->getUpdate()->link(m_wKeyNode->getIsDown());
+			
+		gkSetterNode* walkName = m_tree->createNode<gkSetterNode>();
+		walkName->SetTarget(anim->getAnimName());
+		walkName->getInput()->setValue(gkString("Momo_WalkBack"));
+		walkName->getUpdate()->link(m_sKeyNode->getIsDown());
 
-		{
-			// Walk back
+		gkIfNode* ifNode = m_tree->createNode<gkIfNode>();
+		ifNode->setStatement(CMP_AND);
+		ifNode->getA()->link(m_wKeyNode->getNotIsDown());
+		ifNode->getB()->link(m_sKeyNode->getNotIsDown());
 
-			gkAnimationNode* anim = m_tree->createNode<gkAnimationNode>();
-			anim->SetTarget(m_meshMomo);
-			anim->getAnimName()->setValue(gkString("Momo_WalkBack"));
-			anim->getUpdate()->link(m_sKeyNode->getIsDown());
-		}
-
-		{
-			// Idle nasty
-
-			gkIfNode* ifNode = m_tree->createNode<gkIfNode>();
-			ifNode->setStatement(CMP_AND);
-			ifNode->getA()->link(m_wKeyNode->getNotIsDown());
-			ifNode->getB()->link(m_sKeyNode->getNotIsDown());
-
-			gkAnimationNode* anim = m_tree->createNode<gkAnimationNode>();
-			anim->SetTarget(m_meshMomo);
-			anim->getAnimName()->setValue(gkString("Momo_IdleNasty"));
-			anim->getUpdate()->link(ifNode->getTrue());
-		}
+		gkSetterNode* ildeName = m_tree->createNode<gkSetterNode>();
+		ildeName->SetTarget(anim->getAnimName());
+		ildeName->getInput()->setValue(gkString("Momo_IdleNasty"));
+		ildeName->getUpdate()->link(ifNode->getTrue());
 	}
 
 	void CreateCameraLogic()

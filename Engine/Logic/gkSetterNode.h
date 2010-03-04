@@ -3,9 +3,9 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Charlie C.
+    Copyright (c) 2006-2010 Nestor Silveira.
 
-    Contributor(s): silveira.nestor.
+    Contributor(s): none yet.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -24,38 +24,41 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "OgreAnimation.h"
-#include "OgreEntity.h"
-#include "gkAnimationNode.h"
-#include "gkLogicSocket.h"
-#include "gkEntity.h"
-#include "gkEngine.h"
-#include "gkLogger.h"
+#ifndef _gkSetterNode_h_
+#define _gkSetterNode_h_
 
-using namespace Ogre;
+#include "gkLogicNode.h"
 
-gkAnimationNode::gkAnimationNode(gkLogicTree *parent, size_t id) 
-: gkLogicNode(parent, id), m_target(0), m_func(AF_LOOP)
+class gkSetterNode : public gkLogicNode
 {
-	ADD_ISOCK(*getAnimName(), this, gkLogicSocket::ST_STRING);
-	ADD_ISOCK(*getBlend(), this, gkLogicSocket::ST_REAL);
+public:
 
-	getBlend()->setValue(10);
-}
-
-bool gkAnimationNode::evaluate(gkScalar tick)
-{
-	return m_target && m_target->isLoaded() && !getAnimName()->getValueString().empty();
-}
-
-void gkAnimationNode::update(gkScalar tick)
-{
-	GK_ASSERT(m_target->getType() == GK_ENTITY);
-
-	gkEntity *ent = m_target->getEntity();
-
-	if (ent->isLoaded())
+	enum
 	{
-		ent->playAction(getAnimName()->getValueString(), getBlend()->getValueReal());
-    }
-}
+		UPDATE,
+		INPUT,
+		OUTPUT,
+		MAX_SOCKETS
+	};
+
+    gkSetterNode(gkLogicTree *parent, size_t id);
+
+	virtual ~gkSetterNode() {}
+
+	bool evaluate(gkScalar tick);
+	void update(gkScalar tick);
+
+
+    GK_INLINE gkLogicSocket* getUpdate() {return &m_sockets[UPDATE];}
+    GK_INLINE gkLogicSocket* getInput() {return &m_sockets[INPUT];}
+
+	void SetTarget(gkLogicSocket* target) { m_target = target; }
+
+private:
+
+	gkLogicSocket m_sockets[MAX_SOCKETS];
+
+	gkLogicSocket* m_target;
+};
+
+#endif//_gkSetterNode_h_
