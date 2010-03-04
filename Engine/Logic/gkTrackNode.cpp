@@ -38,6 +38,7 @@ using namespace Ogre;
 gkTrackNode::gkTrackNode(gkLogicTree *parent, size_t id)
 : gkLogicNode(parent, id),
 m_target(0),
+m_track(0),
 m_RotationNode(0),
 m_oldPosition(0, 0, 0),
 m_oldPositionSet(false)
@@ -60,7 +61,7 @@ gkTrackNode::~gkTrackNode()
 
 bool gkTrackNode::evaluate(Real tick)
 {
-	return m_target && m_target->isLoaded() && getEnable()->getValueBool();
+	return m_track && m_track->isLoaded() && m_target && m_target->isLoaded() && getEnable()->getValueBool();
 }
 
 void gkTrackNode::update(Real tick)
@@ -76,29 +77,27 @@ void gkTrackNode::update(Real tick)
 		m_RotationNode->setFixedYawAxis(true, Vector3::UNIT_Z);
 	}
 
-	gkGameObject* pObj = getAttachedObject();
+	const gkVector3& currPos = m_target->getPosition();
 
-	const gkVector3& currPos = pObj->getPosition();
-
-	const gkVector3& oPos = m_target->getPosition();
+	const gkVector3& oPos = m_track->getPosition();
 
 	m_RotationNode->resetOrientation();
 
 	m_RotationNode->setDirection(oPos - currPos);
 
-	pObj->setOrientation(m_RotationNode->getOrientation());
+	m_target->setOrientation(m_RotationNode->getOrientation());
 
-	gkVector3 targetPos = oPos + m_target->getOrientation() * getOffset()->getValueVector3();
+	gkVector3 targetPos = oPos + m_track->getOrientation() * getOffset()->getValueVector3();
 
 	gkVector3 stretch = (currPos - targetPos) * getStiffness()->getValueReal();
 
-	if(pObj->getAttachedBody())
+	if(m_target->getAttachedBody())
 	{
-		gkVector3 dv = pObj->getLinearVelocity() * getDamping()->getValueReal();
+		gkVector3 dv = m_target->getLinearVelocity() * getDamping()->getValueReal();
 
-		pObj->applyForce(-stretch - dv);
+		m_target->applyForce(-stretch - dv);
 
-		pObj->setAngularVelocity(gkVector3::ZERO);
+		m_target->setAngularVelocity(gkVector3::ZERO);
 	}
 	else
 	{
@@ -111,7 +110,7 @@ void gkTrackNode::update(Real tick)
 
 		gkVector3 damp = (currPos - m_oldPosition) * getDamping()->getValueReal();
 
-		pObj->translate(-stretch * tick - damp);
+		m_target->translate(-stretch * tick - damp);
 
 		m_oldPosition = currPos;
 	}

@@ -24,62 +24,81 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkTrackNode_h_
-#define _gkTrackNode_h_
+#ifndef _gkNewMotionNode_h_
+#define _gkNewMotionNode_h_
 
 #include "gkLogicNode.h"
 
-class SceneNode;
+class gkGameObject;
 
-class gkTrackNode : public gkLogicNode
+class gkNewMotionNode : public gkLogicNode
 {
 public:
 
-	enum 
+	enum
 	{
-		ENABLE,
-		OFFSET,
-		STIFFNESS,
-		DAMPING,
+		UPDATE,
+		X,
+		Y,
+		Z,
 		MAX_SOCKETS
 	};
 
-	gkTrackNode(gkLogicTree *parent, size_t id);
+    gkNewMotionNode(gkLogicTree *parent, size_t id);
+	virtual ~gkNewMotionNode() {}
+    
+    void update(gkScalar tick);
+    bool evaluate(gkScalar tick);
 
-	~gkTrackNode();
-
-	void update(Ogre::Real tick);
-
-	bool evaluate(Ogre::Real tick);
-
-	GK_INLINE gkLogicSocket* getEnable() {return &m_sockets[ENABLE];}
-	GK_INLINE gkLogicSocket* getOffset() {return &m_sockets[OFFSET];}
-
-	// How hard the spring is to extend.
-	//A high value here is as if the spring was a stick (or fixed lenght)
-	GK_INLINE gkLogicSocket* getStiffness() {return &m_sockets[STIFFNESS];}
-
-	// Controls how the spring resists the spring  boingggg effect.
-	//A higher value makes for a smoother ride, lower values and the more boing you'll get.
-	GK_INLINE gkLogicSocket* getDamping() {return &m_sockets[DAMPING];}
+    // socket access
+    GK_INLINE gkLogicSocket* getUpdate()    {return &m_sockets[UPDATE];}
+    GK_INLINE gkLogicSocket* getX()         {return &m_sockets[X];}
+    GK_INLINE gkLogicSocket* getY()         {return &m_sockets[Y];}
+    GK_INLINE gkLogicSocket* getZ()         {return &m_sockets[Z];}
 
 	void SetTarget(gkGameObject* target) { m_target = target; }
 
-	void SetTrack(gkGameObject* track) { m_track = track; }
+	virtual void DoUpdate() = 0;
 
-private:
+protected:
 
-	gkLogicSocket m_sockets[MAX_SOCKETS];
+	gkVector3 m_XYZ;
 
 	gkGameObject* m_target;
 
-	gkGameObject* m_track;
+private:
 
-	Ogre::SceneNode* m_RotationNode;
-
-	gkVector3 m_oldPosition;
-
-	bool m_oldPositionSet;
+    gkLogicSocket m_sockets[MAX_SOCKETS];
 };
 
-#endif//_gkTrackNode_h_
+class gkRotateNode : public gkNewMotionNode
+{
+public:
+
+	gkRotateNode(gkLogicTree *parent, size_t id)
+		: gkNewMotionNode(parent, id)
+	{
+	}
+	
+	~gkRotateNode() {}
+
+	void DoUpdate();
+};
+
+class gkLinearVelNode : public gkNewMotionNode
+{
+public:
+
+	gkLinearVelNode(gkLogicTree *parent, size_t id)
+		: gkNewMotionNode(parent, id)
+	{
+	}
+	
+	~gkLinearVelNode() {}
+
+	void DoUpdate();
+};
+
+
+
+#endif//_gkNewMotionNode_h_

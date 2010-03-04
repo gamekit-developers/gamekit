@@ -29,7 +29,7 @@
 
 #include "gkLogicNode.h"
 
-class SceneNode;
+class gkGameObject;
 
 class gkArcBallNode : public gkLogicNode
 {
@@ -67,6 +67,7 @@ public:
     GK_INLINE gkLogicSocket* getRelY() {return &m_sockets[RELY];}
     GK_INLINE gkLogicSocket* getRelZ() {return &m_sockets[RELZ];}
 
+	void SetTarget(gkGameObject* target) { m_target = target; }
 
 private:
 
@@ -80,13 +81,14 @@ private:
 	Ogre::RaySceneQuery* m_rayQuery;
 	Ogre::SceneNode* m_RotationNode;
 
-	gkGameObject* m_gameObj;
 	gkScene* m_scene;
 
 	Ogre::Vector3 m_center;
 
 	bool m_centerUpdated;
 	bool m_positionUpdated;
+
+	gkGameObject* m_target;
 };
 
 #endif//_gkArcBallNode_h_

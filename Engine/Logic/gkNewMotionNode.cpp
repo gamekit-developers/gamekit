@@ -3,9 +3,9 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Charlie C.
+    Copyright (c) 2006-2010 Nestor Silveira.
 
-    Contributor(s): silveira.nestor.
+    Contributor(s): none yet.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -24,41 +24,45 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "OgreAnimation.h"
-#include "OgreEntity.h"
-#include "gkAnimationNode.h"
-#include "gkLogicSocket.h"
-#include "gkEntity.h"
+#include "gkNewMotionNode.h"
 #include "gkEngine.h"
-#include "gkLogger.h"
+#include "gkGameObject.h"
 
 using namespace Ogre;
 
-gkAnimationNode::gkAnimationNode(gkLogicTree *parent, size_t id) 
-: gkLogicNode(parent, id), m_target(0), m_func(AF_LOOP)
+gkNewMotionNode::gkNewMotionNode(gkLogicTree *parent, size_t id) 
+: gkLogicNode(parent, id),
+m_XYZ(0, 0, 0),
+m_target(0)
 {
     ADD_ISOCK(*getUpdate(), this, gkLogicSocket::ST_BOOL);
-	ADD_ISOCK(*getAnimName(), this, gkLogicSocket::ST_STRING);
-	ADD_ISOCK(*getBlend(), this, gkLogicSocket::ST_REAL);
-
-	getBlend()->setValue(10);
+    ADD_ISOCK(*getX(), this, gkLogicSocket::ST_REAL);
+    ADD_ISOCK(*getY(), this, gkLogicSocket::ST_REAL);
+    ADD_ISOCK(*getZ(), this, gkLogicSocket::ST_REAL);
 }
 
-bool gkAnimationNode::evaluate(gkScalar tick)
+bool gkNewMotionNode::evaluate(gkScalar tick)
 {
-	return m_target && m_target->isLoaded() && 
-		getUpdate()->getValueBool() && 
-		!getAnimName()->getValueString().empty();
+    return m_target && m_target->isLoaded() && getUpdate()->getValueBool();
 }
 
-void gkAnimationNode::update(gkScalar tick)
+void gkNewMotionNode::update(gkScalar tick)
 {
-	GK_ASSERT(m_target->getType() == GK_ENTITY);
+    m_XYZ = gkVector3(getX()->getValueReal(), getY()->getValueReal(), getZ()->getValueReal());
 
-	gkEntity *ent = m_target->getEntity();
+	DoUpdate();
+}
 
-	if (ent->isLoaded())
-	{
-		ent->playAction(getAnimName()->getValueString(), getBlend()->getValueReal());
-    }
+////////////////////////////////////
+
+void gkRotateNode::DoUpdate()
+{
+	m_target->rotate(m_XYZ, TRANSFORM_LOCAL);
+}
+
+////////////////////////////////////
+
+void gkLinearVelNode::DoUpdate()
+{
+	m_target->setLinearVelocity(m_XYZ, TRANSFORM_LOCAL);
 }

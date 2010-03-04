@@ -39,11 +39,11 @@ gkArcBallNode::gkArcBallNode(gkLogicTree *parent, size_t id)
 : gkLogicNode(parent, id),
 m_rayQuery(0),
 m_RotationNode(0),
-m_gameObj(0),
 m_scene(0),
 m_center(Ogre::Vector3::ZERO),
 m_centerUpdated(false),
-m_positionUpdated(false)
+m_positionUpdated(false),
+m_target(0)
 {
 	ADD_ISOCK(*getEnable(), this, gkLogicSocket::ST_BOOL);
 	ADD_ISOCK(*getUpdateCenter(), this, gkLogicSocket::ST_BOOL);
@@ -72,18 +72,14 @@ bool gkArcBallNode::evaluate(Real tick)
 
 	m_positionUpdated = getUpdatePosition()->getValueBool();
 
-	return getEnable()->getValueBool() && (m_centerUpdated || m_positionUpdated);
+	return m_target && m_target->isLoaded() && getEnable()->getValueBool() && (m_centerUpdated || m_positionUpdated);
 }
 
 void gkArcBallNode::update(Real tick)
 {
 	if(!m_RotationNode)
 	{
-		m_gameObj = getAttachedObject();
-
-		GK_ASSERT(m_gameObj);
-
-		m_scene = m_gameObj->getOwner();
+		m_scene = m_target->getOwner();
 
 		GK_ASSERT(m_scene);
 
@@ -142,11 +138,7 @@ void gkArcBallNode::GetNewCenter()
 
 void gkArcBallNode::SetNewPosition()
 {
-	gkGameObject* pGameObj = getAttachedObject();
-
-	GK_ASSERT(pGameObj);
-
-	Ogre::Vector3 currentPosition = pGameObj->getPosition();
+	Ogre::Vector3 currentPosition = m_target->getPosition();
 
 	Ogre::Vector3 dir = m_center - currentPosition;
 
@@ -187,10 +179,10 @@ void gkArcBallNode::SetNewPosition()
 			{
 				Vector3 newPosition = m_center - newDir;
 
-				pGameObj->setPosition(newPosition);
+				m_target->setPosition(newPosition);
 			}
 		}
 	}
 
-	pGameObj->setOrientation(q);
+	m_target->setOrientation(q);
 }

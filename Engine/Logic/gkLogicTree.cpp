@@ -27,26 +27,7 @@
 #include "gkLogicTree.h"
 #include "gkNodeManager.h"
 
-#include "gkGroupNode.h"
-#include "gkObjectNode.h"
-#include "gkMouseNode.h"
-#include "gkKeyNode.h"
-#include "gkMathNode.h"
-#include "gkMotionNode.h"
-#include "gkPrintNode.h"
-#include "gkAnimationNode.h"
-#include "gkRandomNode.h"
-#include "gkValueNode.h"
-#include "gkVariableNode.h"
-#include "gkIfNode.h"
-#include "gkSwitchNode.h"
-#include "gkExpressionNode.h"
-#include "gkTimerNode.h"
-#include "gkExitNode.h"
-
 using namespace Ogre;
-
-
 
 gkLogicTree::gkLogicTree(gkNodeManager* creator, UTsize id, const gkString &name)
 :       m_handle(id), m_uniqueHandle(0), m_creator(creator), m_object(0),

@@ -42,7 +42,7 @@
 // node tests 
 #include "gkVariable.h"
 #include "gkNodeManager.h"
-#include "gkKeyNode.h"
+#include "gkButtonNode.h"
 #include "gkMathNode.h"
 #include "gkIfNode.h"
 #include "gkMouseNode.h"
@@ -52,7 +52,6 @@
 #include "gkObjectNode.h"
 #include "gkMotionNode.h"
 #include "gkLogicTree.h"
-#include "gkMouseButtonNode.h"
 #include "gkArcBallNode.h"
 
 
@@ -216,7 +215,6 @@ public:
             m_scene->load();
             //test13(m_scene);
             //test0(m_scene);
-            //ArcBallTest(m_scene);
         }
 
         // add input hooks
@@ -229,46 +227,6 @@ public:
     {
         if (sc == KC_ESCKEY) m_engine->requestExit();
     }
-
-	void ArcBallTest(gkScene* scene)
-	{
-		// Make sure you disabled grabInput
-
-        gkGameObject *ob = scene->getMainCamera();
-
-		GK_ASSERT(ob);
-
-        gkLogicTree* tree = gkNodeManager::getSingleton().create();
-
-		gkArcBallNode* arcBall = tree->createNode<gkArcBallNode>();
-
-		gkMouseButtonNode* left = tree->createNode<gkMouseButtonNode>();
-
-		gkMouseNode* mouse = tree->createNode<gkMouseNode>();
-
-		gkIfNode* ifAndNode = tree->createNode<gkIfNode>();
-		ifAndNode->setStatement(CMP_AND);
-
-		ifAndNode->getA()->link(left->getIsDown());
-		ifAndNode->getB()->link(mouse->getMotion());
-
-		gkIfNode* ifOrNode = tree->createNode<gkIfNode>();
-		ifOrNode->setStatement(CMP_OR);
-
-		ifOrNode->getA()->link(mouse->getWheel());
-		ifOrNode->getB()->link(ifAndNode->getTrue());
-
-		arcBall->getUpdateCenter()->link(left->getPress());
-		arcBall->getUpdatePosition()->link(ifOrNode->getTrue());
-		arcBall->getX()->link(mouse->getAbsX());
-		arcBall->getY()->link(mouse->getAbsY());
-		arcBall->getRelX()->link(mouse->getRelX());
-		arcBall->getRelY()->link(mouse->getRelY());
-		arcBall->getRelZ()->link(mouse->getWheel());
-
-        tree->solveOrder();
-        ob->attachLogic(tree);
-	}
 
     void test0(gkScene* scene)
     {

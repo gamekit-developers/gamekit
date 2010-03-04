@@ -35,16 +35,15 @@
 
 // node tests 
 #include "gkNodeManager.h"
-#include "gkKeyNode.h"
 #include "gkIfNode.h"
 #include "gkMouseNode.h"
 #include "gkLogicTree.h"
-#include "gkMouseButtonNode.h"
+#include "gkButtonNode.h"
 #include "gkArcBallNode.h"
 #include "gkCursorNode.h"
 #include "gkPickNode.h"
 #include "gkTrackNode.h"
-#include "gkMotionNode.h"
+#include "gkNewMotionNode.h"
 #include "gkAnimationNode.h"
 #include "gkExitNode.h"
 
@@ -53,7 +52,10 @@ class OgreKit : public gkCoreApplication
 public:
 
     OgreKit(const gkString &blend) 
-		: m_blend(blend)
+		: m_blend(blend), m_scene(0), m_camera(0), m_player(0), m_meshMomo(0),
+		m_tree(0), m_ctrlKeyNode(0), 
+		m_wKeyNode(0), m_sKeyNode(0), m_mouseNode(0), m_leftMouseNode(0), m_rightMouseNode(0)
+
 	{
         gkPath path = "./data/OgreKitStartup.cfg";
 
@@ -79,68 +81,82 @@ public:
 
 		GK_ASSERT(scit.hasMoreElements());
 
-        gkScene* pScene = scit.peekNext();
+        m_scene = scit.peekNext();
 
 		m_prefs.blendermat = true;
         
-		pScene->load();
+		m_scene->load();
 
-		CreateCameraLogic(pScene);
+		m_camera = m_scene->getMainCamera();
+
+		GK_ASSERT(m_camera);
+
+        m_player = m_scene->getObject("Player");
+
+		GK_ASSERT(m_player);
+
+        m_meshMomo = m_scene->getObject("MeshMomo");
+
+		GK_ASSERT(m_meshMomo);
+
+		CreateCommonTree();
+
+		ExitLogic();
+
+		CreateCameraLogic();
 		
-		CreateMomoMeshLogic(pScene);
+		CreateMomoMeshLogic();
 
-		CreateMomoPlayerLogic(pScene);
+		CreateMomoPlayerLogic();
+
+		m_tree->solveOrder();
+
+		m_camera->attachLogic(m_tree);
 
         return true;
     }
 
-	void CreateMomoPlayerLogic(gkScene* pScene)
+	void CreateCommonTree()
 	{
-        gkGameObject *ob = pScene->getObject("Player");
+		m_tree = gkNodeManager::getSingleton().create();
 
-		GK_ASSERT(ob);
+		m_ctrlKeyNode = m_tree->createNode<gkKeyNode>();
+		m_ctrlKeyNode->setKey(KC_LEFTCTRLKEY);
 
-        gkLogicTree* tree = gkNodeManager::getSingleton().create();
+		m_wKeyNode = m_tree->createNode<gkKeyNode>();
+		m_wKeyNode->setKey(KC_WKEY);
 
-		gkKeyNode* ctrlKey = tree->createNode<gkKeyNode>();
+		m_sKeyNode = m_tree->createNode<gkKeyNode>();
+		m_sKeyNode->setKey(KC_SKEY);
 
-		ctrlKey->setKey(KC_LEFTCTRLKEY);
+		m_mouseNode = m_tree->createNode<gkMouseNode>();
 
-		gkMouseNode* mouse = tree->createNode<gkMouseNode>();
-
-		CreateMomoPlayerMotionLogic(tree, mouse, ctrlKey);
-
-        tree->solveOrder();
-
-		ob->attachLogic(tree);
+		m_leftMouseNode = m_tree->createNode<gkMouseButtonNode>();
+		
+		m_rightMouseNode = m_tree->createNode<gkMouseButtonNode>();
+		m_rightMouseNode->setButton(gkMouse::Right);
 	}
 
-	void CreateMomoPlayerMotionLogic(gkLogicTree* tree, gkMouseNode* mouse, gkKeyNode* ctrlKey)
+	void CreateMomoPlayerLogic()
 	{
-		gkIfNode* ifCtrlNode = tree->createNode<gkIfNode>();
-		ifCtrlNode->setStatement(CMP_NOT);
-		ifCtrlNode->getA()->link(ctrlKey->getIsDown());
+		gkNewMotionNode* motion = m_tree->createNode<gkRotateNode>();
+		motion->SetTarget(m_player);
 
-		gkMotionNode* motion = tree->createNode<gkMotionNode>();
-
-		motion->getUpdate()->link(ifCtrlNode->getTrue());
+		motion->getUpdate()->link(m_ctrlKeyNode->getNotIsDown());
 		motion->getX()->setValue(0);
 		motion->getY()->setValue(0);
-		motion->getZ()->link(mouse->getRelX());
+		motion->getZ()->link(m_mouseNode->getRelX());
 
 		{
 			// move forward
 
-			gkKeyNode* wKey = tree->createNode<gkKeyNode>();
-			wKey->setKey(KC_WKEY);
-
-			gkIfNode* ifNode = tree->createNode<gkIfNode>();
+			gkIfNode* ifNode = m_tree->createNode<gkIfNode>();
 			ifNode->setStatement(CMP_AND);
-			ifNode->getA()->link(ifCtrlNode->getTrue());
-			ifNode->getB()->link(wKey->getIsDown());
+			ifNode->getA()->link(m_ctrlKeyNode->getNotIsDown());
+			ifNode->getB()->link(m_wKeyNode->getIsDown());
 
-			gkMotionNode* motion = tree->createNode<gkMotionNode>();
-			motion->setMotionType(MT_LINV);
+			gkNewMotionNode* motion = m_tree->createNode<gkLinearVelNode>();
+			motion->SetTarget(m_player);
 
 			motion->getUpdate()->link(ifNode->getTrue());
 			motion->getX()->setValue(0);
@@ -151,16 +167,13 @@ public:
 		{
 			// move back
 
-			gkKeyNode* sKey = tree->createNode<gkKeyNode>();
-			sKey->setKey(KC_SKEY);
-
-			gkIfNode* ifNode = tree->createNode<gkIfNode>();
+			gkIfNode* ifNode = m_tree->createNode<gkIfNode>();
 			ifNode->setStatement(CMP_AND);
-			ifNode->getA()->link(ifCtrlNode->getTrue());
-			ifNode->getB()->link(sKey->getIsDown());
+			ifNode->getA()->link(m_ctrlKeyNode->getNotIsDown());
+			ifNode->getB()->link(m_sKeyNode->getIsDown());
 
-			gkMotionNode* motion = tree->createNode<gkMotionNode>();
-			motion->setMotionType(MT_LINV);
+			gkNewMotionNode* motion = m_tree->createNode<gkLinearVelNode>();
+			motion->SetTarget(m_player);
 
 			motion->getUpdate()->link(ifNode->getTrue());
 			motion->getX()->setValue(0);
@@ -169,118 +182,71 @@ public:
 		}
 	}
 
-	void CreateMomoMeshLogic(gkScene* pScene)
+	void CreateMomoMeshLogic()
 	{
-        gkGameObject *ob = pScene->getObject("MeshMomo");
-
-		GK_ASSERT(ob);
-
-        gkLogicTree* tree = gkNodeManager::getSingleton().create();
-
-		CreateMomoMeshAnimationLogic(tree);
-
-        tree->solveOrder();
-
-		ob->attachLogic(tree);
-	}
-
-	void CreateMomoMeshAnimationLogic(gkLogicTree* tree)
-	{
-		gkKeyNode* wKey = tree->createNode<gkKeyNode>();
-		wKey->setKey(KC_WKEY);
-
-		gkKeyNode* sKey = tree->createNode<gkKeyNode>();
-		sKey->setKey(KC_SKEY);
-
 		{
 			// Run
 
-			gkAnimationNode* anim = tree->createNode<gkAnimationNode>();
-			anim->setAnim("Momo_Run");
-			anim->getBlend()->setValue(10);
-			anim->getUpdate()->link(wKey->getIsDown());
+			gkAnimationNode* anim = m_tree->createNode<gkAnimationNode>();
+			anim->SetTarget(m_meshMomo);
+			anim->getAnimName()->setValue(gkString("Momo_Run"));
+			anim->getUpdate()->link(m_wKeyNode->getIsDown());
 		}
 
 		{
 			// Walk back
 
-			gkAnimationNode* anim = tree->createNode<gkAnimationNode>();
-			anim->setAnim("Momo_WalkBack");
-			anim->getBlend()->setValue(10);
-			anim->getUpdate()->link(sKey->getIsDown());
+			gkAnimationNode* anim = m_tree->createNode<gkAnimationNode>();
+			anim->SetTarget(m_meshMomo);
+			anim->getAnimName()->setValue(gkString("Momo_WalkBack"));
+			anim->getUpdate()->link(m_sKeyNode->getIsDown());
 		}
 
 		{
 			// Idle nasty
 
-			gkIfNode* IfANode = tree->createNode<gkIfNode>();
-			IfANode->setStatement(CMP_NOT);
-			IfANode->getA()->link(wKey->getIsDown());
-
-			gkIfNode* IfBNode = tree->createNode<gkIfNode>();
-			IfBNode->setStatement(CMP_NOT);
-			IfBNode->getA()->link(sKey->getIsDown());
-
-			gkIfNode* ifNode = tree->createNode<gkIfNode>();
+			gkIfNode* ifNode = m_tree->createNode<gkIfNode>();
 			ifNode->setStatement(CMP_AND);
-			ifNode->getA()->link(IfANode->getTrue());
-			ifNode->getB()->link(IfBNode->getTrue());
+			ifNode->getA()->link(m_wKeyNode->getNotIsDown());
+			ifNode->getB()->link(m_sKeyNode->getNotIsDown());
 
-			gkAnimationNode* anim = tree->createNode<gkAnimationNode>();
-			anim->setAnim("Momo_IdleNasty");
-			anim->getBlend()->setValue(10);
+			gkAnimationNode* anim = m_tree->createNode<gkAnimationNode>();
+			anim->SetTarget(m_meshMomo);
+			anim->getAnimName()->setValue(gkString("Momo_IdleNasty"));
 			anim->getUpdate()->link(ifNode->getTrue());
 		}
 	}
 
-	void CreateCameraLogic(gkScene* pScene)
+	void CreateCameraLogic()
 	{
-        gkGameObject *ob = pScene->getMainCamera();
+        ArcBallLogic();
 
-		GK_ASSERT(ob);
+		CursorLogic();
 
-        gkLogicTree* tree = gkNodeManager::getSingleton().create();
+		PickLogic();
 
-		ExitLogic(tree);
-
-		gkKeyNode* ctrlKey = tree->createNode<gkKeyNode>();
-
-		ctrlKey->setKey(KC_LEFTCTRLKEY);
-
-		gkMouseNode* mouse = tree->createNode<gkMouseNode>();
-
-        ArcBallLogic(tree, mouse, ctrlKey);
-
-		CursorLogic(tree, mouse, ctrlKey);
-
-		PickLogic(tree, mouse, ctrlKey);
-
-		TrackLogic(pScene->getObject("Player"), tree, ctrlKey);
-
-        tree->solveOrder();
-
-		ob->attachLogic(tree);
+		TrackLogic();
 	}
 
-	void ExitLogic(gkLogicTree* tree)
+	void ExitLogic()
 	{
-		gkExitNode* exit = tree->createNode<gkExitNode>();
+		gkExitNode* exit = m_tree->createNode<gkExitNode>();
 
-		gkKeyNode* key = tree->createNode<gkKeyNode>();
+		gkKeyNode* key = m_tree->createNode<gkKeyNode>();
 
 		key->setKey(KC_ESCKEY);
 
 		exit->getExit()->link(key->getPress());
 	}
 
-	void CursorLogic(gkLogicTree* tree, gkMouseNode* mouse, gkKeyNode* ctrlKey)
+	void CursorLogic()
 	{
-		gkCursorNode* cursor = tree->createNode<gkCursorNode>();
+		gkCursorNode* cursor = m_tree->createNode<gkCursorNode>();
 
-		cursor->getEnable()->link(ctrlKey->getIsDown());
-		cursor->getUpdate()->link(mouse->getMotion());
-		cursor->getX()->link(mouse->getAbsX());
-		cursor->getY()->link(mouse->getAbsY());
+		cursor->getEnable()->link(m_ctrlKeyNode->getIsDown());
+		cursor->getUpdate()->link(m_mouseNode->getMotion());
+		cursor->getX()->link(m_mouseNode->getAbsX());
+		cursor->getY()->link(m_mouseNode->getAbsY());
 		cursor->getMaterialName()->setValue(gkString("ArrowCursor"));
 		cursor->getWidth()->setValue(32);
 		cursor->getHeight()->setValue(32);
@@ -288,68 +254,83 @@ public:
 		cursor->update(0);
 	}
 
-	void PickLogic(gkLogicTree* tree, gkMouseNode* mouse, gkKeyNode* ctrlKey)
+	void PickLogic()
 	{
-		gkMouseButtonNode* right = tree->createNode<gkMouseButtonNode>();
+		gkPickNode* pick = m_tree->createNode<gkPickNode>();
 
-		right->setButton(gkMouse::Right);
-
-		gkPickNode* pick = tree->createNode<gkPickNode>();
-
-		pick->getEnable()->link(ctrlKey->getIsDown());
-		pick->getCreatePick()->link(right->getPress());
-		pick->getReleasePick()->link(right->getRelease());
-		pick->getUpdate()->link(mouse->getMotion());
-		pick->getX()->link(mouse->getAbsX());
-		pick->getY()->link(mouse->getAbsY());
+		pick->getEnable()->link(m_ctrlKeyNode->getIsDown());
+		pick->getCreatePick()->link(m_rightMouseNode->getPress());
+		pick->getReleasePick()->link(m_rightMouseNode->getRelease());
+		pick->getUpdate()->link(m_mouseNode->getMotion());
+		pick->getX()->link(m_mouseNode->getAbsX());
+		pick->getY()->link(m_mouseNode->getAbsY());
 	}
 
-	void ArcBallLogic(gkLogicTree* tree, gkMouseNode* mouse, gkKeyNode* ctrlKey)
+	void ArcBallLogic()
 	{
-		gkArcBallNode* arcBall = tree->createNode<gkArcBallNode>();
+		gkArcBallNode* arcBall = m_tree->createNode<gkArcBallNode>();
 
-		gkMouseButtonNode* left = tree->createNode<gkMouseButtonNode>();
+		arcBall->SetTarget(m_camera);
 
-		gkIfNode* ifAndNode = tree->createNode<gkIfNode>();
+		gkIfNode* ifAndNode = m_tree->createNode<gkIfNode>();
 		ifAndNode->setStatement(CMP_AND);
 
-		ifAndNode->getA()->link(left->getIsDown());
-		ifAndNode->getB()->link(mouse->getMotion());
+		ifAndNode->getA()->link(m_leftMouseNode->getIsDown());
+		ifAndNode->getB()->link(m_mouseNode->getMotion());
 
-		gkIfNode* ifOrNode = tree->createNode<gkIfNode>();
+		gkIfNode* ifOrNode = m_tree->createNode<gkIfNode>();
 		ifOrNode->setStatement(CMP_OR);
 
-		ifOrNode->getA()->link(mouse->getWheel());
+		ifOrNode->getA()->link(m_mouseNode->getWheel());
 		ifOrNode->getB()->link(ifAndNode->getTrue());
 
-		arcBall->getEnable()->link(ctrlKey->getIsDown());
-		arcBall->getUpdateCenter()->link(left->getPress());
+		arcBall->getEnable()->link(m_ctrlKeyNode->getIsDown());
+		arcBall->getUpdateCenter()->link(m_leftMouseNode->getPress());
 		arcBall->getUpdatePosition()->link(ifOrNode->getTrue());
-		arcBall->getX()->link(mouse->getAbsX());
-		arcBall->getY()->link(mouse->getAbsY());
-		arcBall->getRelX()->link(mouse->getRelX());
-		arcBall->getRelY()->link(mouse->getRelY());
-		arcBall->getRelZ()->link(mouse->getWheel());
+		arcBall->getX()->link(m_mouseNode->getAbsX());
+		arcBall->getY()->link(m_mouseNode->getAbsY());
+		arcBall->getRelX()->link(m_mouseNode->getRelX());
+		arcBall->getRelY()->link(m_mouseNode->getRelY());
+		arcBall->getRelZ()->link(m_mouseNode->getWheel());
 	}
 
-	void TrackLogic(gkGameObject* pTarget, gkLogicTree* tree, gkKeyNode* ctrlKey)
+	void TrackLogic()
 	{
-		gkTrackNode* track = tree->createNode<gkTrackNode>();
+		gkTrackNode* track = m_tree->createNode<gkTrackNode>();
 
-		gkIfNode* ifNode = tree->createNode<gkIfNode>();
-		ifNode->setStatement(CMP_NOT);
-		ifNode->getA()->link(ctrlKey->getIsDown());
+		track->getEnable()->link(m_ctrlKeyNode->getNotIsDown());
+		track->SetTarget(m_camera);
+		track->SetTrack(m_player);
 
-		track->getEnable()->link(ifNode->getTrue());
-		track->SetTarget(pTarget);
 		track->getOffset()->setValue(gkVector3(0, -1.5, -0.2));
 	}
 
 private:
 
-   gkString m_blend;
-};
+	gkString m_blend;
 
+	gkScene* m_scene;
+
+    gkGameObject* m_camera;
+
+	gkGameObject* m_player;
+
+	gkGameObject* m_meshMomo;
+
+	gkLogicTree* m_tree;
+
+	gkKeyNode* m_ctrlKeyNode;
+
+	gkKeyNode* m_wKeyNode; 
+	
+	gkKeyNode* m_sKeyNode;
+
+	gkMouseNode* m_mouseNode;
+
+	gkMouseButtonNode* m_leftMouseNode;
+
+	gkMouseButtonNode* m_rightMouseNode;
+};
 
 int main(int argc, char **argv)
 {

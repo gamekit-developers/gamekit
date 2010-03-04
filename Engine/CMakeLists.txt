@@ -122,15 +122,15 @@ set(NLogic_SOURCE
     Logic/gkExpressionNode.cpp
     Logic/gkGroupNode.cpp
     Logic/gkIfNode.cpp
-    Logic/gkKeyNode.cpp
     Logic/gkNodeManager.cpp
     Logic/gkLogicNode.cpp
     Logic/gkLogicSocket.cpp
     Logic/gkLogicTree.cpp
     Logic/gkMathNode.cpp
     Logic/gkMotionNode.cpp
+    Logic/gkNewMotionNode.cpp
     Logic/gkMouseNode.cpp
-    Logic/gkMouseButtonNode.cpp
+    Logic/gkButtonNode.cpp
     Logic/gkObjectNode.cpp
     Logic/gkPrintNode.cpp
     Logic/gkRandomNode.cpp
@@ -151,7 +151,6 @@ set(NLogic_HEADER
     Logic/gkExpressionNode.h
     Logic/gkGroupNode.h
     Logic/gkIfNode.h
-    Logic/gkKeyNode.h
     Logic/gkLogicCommon.h
     Logic/gkNodeManager.h
     Logic/gkLogicNode.h
@@ -159,8 +158,9 @@ set(NLogic_HEADER
     Logic/gkLogicTree.h
     Logic/gkMathNode.h
     Logic/gkMotionNode.h
+    Logic/gkNewMotionNode.h
     Logic/gkMouseNode.h
-    Logic/gkMouseButtonNode.h
+    Logic/gkButtonNode.h
     Logic/gkObjectNode.h
     Logic/gkPrintNode.h
     Logic/gkRandomNode.h

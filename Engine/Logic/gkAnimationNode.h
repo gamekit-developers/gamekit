@@ -42,6 +42,7 @@ public:
 	enum
 	{
 		UPDATED,
+		ANIM_NAME,
 		BLEND_FRAMES,
 		MAX_SOCKETS
 	};
@@ -54,15 +55,17 @@ public:
     bool evaluate(gkScalar tick);
 
     GK_INLINE void setFunction(AnimFunction af) {m_func = af;}
-    GK_INLINE void setAnim(const gkString &name) {m_anim = name;}
 
-    GK_INLINE gkLogicSocket* getUpdate(void)    { return &m_sockets[UPDATED]; }
-    GK_INLINE gkLogicSocket* getBlend(void)     { return &m_sockets[BLEND_FRAMES]; }
+    GK_INLINE gkLogicSocket* getUpdate()    { return &m_sockets[UPDATED]; }
+	GK_INLINE gkLogicSocket* getAnimName()  { return &m_sockets[ANIM_NAME]; }
+    GK_INLINE gkLogicSocket* getBlend()     { return &m_sockets[BLEND_FRAMES]; }
+
+	void SetTarget(gkGameObject* target) { m_target = target; }
 
 private:
     gkLogicSocket   m_sockets[MAX_SOCKETS];
-    gkString        m_anim;
     AnimFunction	m_func;
+	gkGameObject*	m_target;
 };
 
 
