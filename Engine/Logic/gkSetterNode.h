@@ -39,6 +39,9 @@ public:
 		INPUT,
 		OUTPUT,
 		JUST_ONCE,
+		LOAD,
+		UNLOAD,
+		RELOAD,
 		MAX_SOCKETS
 	};
 
@@ -55,11 +58,15 @@ public:
 	GK_INLINE gkLogicSocket* getOutput() {return &m_sockets[OUTPUT];}
 	GK_INLINE gkLogicSocket* getJustOnce() {return &m_sockets[JUST_ONCE];}
 
+	virtual bool DoEvaluate() = 0;
+
 	virtual void DoUpdate() = 0;
 
-private:
+protected:
 
 	gkLogicSocket m_sockets[MAX_SOCKETS];
+
+private:
 
 	bool m_hasOneSet;
 };
@@ -72,6 +79,7 @@ public:
 
 	virtual ~gkStringSetterNode() {}
 
+	bool DoEvaluate();
 	void DoUpdate();
 };
 
@@ -83,6 +91,11 @@ public:
 
 	virtual ~gkObjectSetterNode() {}
 
+    GK_INLINE gkLogicSocket* getUnload() {return &m_sockets[UNLOAD];}
+	GK_INLINE gkLogicSocket* getLoad() {return &m_sockets[LOAD];}
+	GK_INLINE gkLogicSocket* getReload() {return &m_sockets[RELOAD];}
+
+	bool DoEvaluate();
 	void DoUpdate();
 };
 

@@ -130,7 +130,7 @@ public:
 
 
     // Gain access to the bullet body
-    btRigidBody* getBody(void)      {GK_ASSERT(m_rigidBody); return m_rigidBody;}
+    btRigidBody* getBody(void)      {return m_rigidBody;}
     // Gain access to the world
     gkDynamicsWorld* getWorld(void) {GK_ASSERT(m_owner); return m_owner;}
     // Gain access to the game object

@@ -183,6 +183,35 @@ public:
 			motion->getZ()->setValue(0);
 			motion->getTarget()->link(m_playerSetter->getOutput());
 		}
+
+		{
+			// reload
+
+			gkKeyNode* rKeyNode = m_tree->createNode<gkKeyNode>();
+			rKeyNode->setKey(KC_RKEY);
+
+			m_playerSetter->getReload()->link(rKeyNode->getPress());
+		}
+
+		{
+			// unload
+
+			gkKeyNode* uKeyNode = m_tree->createNode<gkKeyNode>();
+			uKeyNode->setKey(KC_UKEY);
+
+			m_playerSetter->getUnload()->link(uKeyNode->getPress());
+		}
+
+		{
+			// load
+
+			gkKeyNode* lKeyNode = m_tree->createNode<gkKeyNode>();
+			lKeyNode->setKey(KC_LKEY);
+
+			m_playerSetter->getLoad()->link(lKeyNode->getPress());
+		}
+
+
 	}
 
 	void CreateMomoMeshLogic()

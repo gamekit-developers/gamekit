@@ -41,14 +41,11 @@ m_hasOneSet(false)
 
 bool gkSetterNode::evaluate(gkScalar tick)
 {
-	return getUpdate()->getValueBool();
+	return getUpdate()->getValueBool() && (!(getJustOnce()->getValueBool() && m_hasOneSet) || DoEvaluate());
 }
 
 void gkSetterNode::update(gkScalar tick)
 {
-	if(getJustOnce()->getValueBool() && m_hasOneSet) 
-		return;
-
 	DoUpdate();
 
 	m_hasOneSet = true;
@@ -61,6 +58,10 @@ gkStringSetterNode::gkStringSetterNode(gkLogicTree *parent, size_t id)
 	ADD_OSOCK(*getOutput(), this, gkLogicSocket::ST_STRING);
 }
 
+bool gkStringSetterNode::DoEvaluate()
+{
+	return false;
+}
 
 void gkStringSetterNode::DoUpdate()
 {
@@ -73,6 +74,14 @@ gkObjectSetterNode::gkObjectSetterNode(gkLogicTree *parent, size_t id)
 	: gkSetterNode(parent, id)
 {
 	ADD_OSOCK(*getOutput(), this, gkLogicSocket::ST_GAME_OBJECT);
+	ADD_ISOCK(*getUnload(), this, gkLogicSocket::ST_BOOL);
+	ADD_ISOCK(*getLoad(), this, gkLogicSocket::ST_BOOL);
+	ADD_ISOCK(*getReload(), this, gkLogicSocket::ST_BOOL);
+}
+
+bool gkObjectSetterNode::DoEvaluate()
+{
+	return getReload()->getValueBool() || getLoad()->getValueBool() || getUnload()->getValueBool();
 }
 
 void gkObjectSetterNode::DoUpdate()
@@ -80,6 +89,19 @@ void gkObjectSetterNode::DoUpdate()
 	gkScene* pScene = gkEngine::getSingleton().getActiveScene();
 
 	gkGameObject* pObj = pScene->getObject(getInput()->getValueString());
+
+	if(getReload()->getValueBool())
+	{
+		pObj->reload();
+	}
+	else if(getLoad()->getValueBool())
+	{
+		pObj->load();
+	}
+	else if(getUnload()->getValueBool())
+	{
+		pObj->unload();
+	}
 
 	getOutput()->setValue(pObj);
 }
