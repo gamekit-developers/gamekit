@@ -41,6 +41,7 @@ public:
 		X,
 		Y,
 		Z,
+		TARGET,
 		MAX_SOCKETS
 	};
 
@@ -55,16 +56,13 @@ public:
     GK_INLINE gkLogicSocket* getX()         {return &m_sockets[X];}
     GK_INLINE gkLogicSocket* getY()         {return &m_sockets[Y];}
     GK_INLINE gkLogicSocket* getZ()         {return &m_sockets[Z];}
-
-	void SetTarget(gkGameObject* target) { m_target = target; }
+	GK_INLINE gkLogicSocket* getTarget()    {return &m_sockets[TARGET];}
 
 	virtual void DoUpdate() = 0;
 
 protected:
 
 	gkVector3 m_XYZ;
-
-	gkGameObject* m_target;
 
 private:
 

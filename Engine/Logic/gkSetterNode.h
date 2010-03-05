@@ -38,6 +38,7 @@ public:
 		UPDATE,
 		INPUT,
 		OUTPUT,
+		JUST_ONCE,
 		MAX_SOCKETS
 	};
 
@@ -46,19 +47,43 @@ public:
 	virtual ~gkSetterNode() {}
 
 	bool evaluate(gkScalar tick);
-	void update(gkScalar tick);
 
+	void update(gkScalar tick);
 
     GK_INLINE gkLogicSocket* getUpdate() {return &m_sockets[UPDATE];}
     GK_INLINE gkLogicSocket* getInput() {return &m_sockets[INPUT];}
+	GK_INLINE gkLogicSocket* getOutput() {return &m_sockets[OUTPUT];}
+	GK_INLINE gkLogicSocket* getJustOnce() {return &m_sockets[JUST_ONCE];}
 
-	void SetTarget(gkLogicSocket* target) { m_target = target; }
+	virtual void DoUpdate() = 0;
 
 private:
 
 	gkLogicSocket m_sockets[MAX_SOCKETS];
 
-	gkLogicSocket* m_target;
+	bool m_hasOneSet;
+};
+
+class gkStringSetterNode : public gkSetterNode
+{
+public:
+
+    gkStringSetterNode(gkLogicTree *parent, size_t id);
+
+	virtual ~gkStringSetterNode() {}
+
+	void DoUpdate();
+};
+
+class gkObjectSetterNode : public gkSetterNode
+{
+public:
+
+    gkObjectSetterNode(gkLogicTree *parent, size_t id);
+
+	virtual ~gkObjectSetterNode() {}
+
+	void DoUpdate();
 };
 
 #endif//_gkSetterNode_h_

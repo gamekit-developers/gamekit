@@ -69,7 +69,8 @@ bool gkVariableNode::evaluate(gkScalar tick)
     if (!m_prop) return false;
 
 
-    m_sockets[2].setValue(m_prop);
+    m_sockets[2].setValue(*m_prop);
+
     if (!m_sockets[0].isLinked() && !m_sockets[1].isLinked())
     {
         // variable will not change
@@ -236,6 +237,6 @@ bool VariableOpNode::evaluate(gkScalar tick)
     if (gkNan(d))       d = 0.0;
     if (!gkFinite(d))   d = 0.0;
     m_prop->setValue(d);
-    m_sockets[2].setValue(m_prop);
+    m_sockets[2].setValue(*m_prop);
     return false;
 }

@@ -68,6 +68,8 @@ gkArcBallNode::~gkArcBallNode()
 
 bool gkArcBallNode::evaluate(Real tick)
 {
+	m_target = getTarget()->getValueGameObject();
+
 	m_centerUpdated = getUpdateCenter()->getValueBool();
 
 	m_positionUpdated = getUpdatePosition()->getValueBool();

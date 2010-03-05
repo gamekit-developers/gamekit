@@ -32,18 +32,20 @@ using namespace Ogre;
 
 gkNewMotionNode::gkNewMotionNode(gkLogicTree *parent, size_t id) 
 : gkLogicNode(parent, id),
-m_XYZ(0, 0, 0),
-m_target(0)
+m_XYZ(0, 0, 0)
 {
     ADD_ISOCK(*getUpdate(), this, gkLogicSocket::ST_BOOL);
     ADD_ISOCK(*getX(), this, gkLogicSocket::ST_REAL);
     ADD_ISOCK(*getY(), this, gkLogicSocket::ST_REAL);
     ADD_ISOCK(*getZ(), this, gkLogicSocket::ST_REAL);
+	ADD_ISOCK(*getTarget(), this, gkLogicSocket::ST_GAME_OBJECT);
 }
 
 bool gkNewMotionNode::evaluate(gkScalar tick)
 {
-    return m_target && m_target->isLoaded() && getUpdate()->getValueBool();
+	gkGameObject* pObj = getTarget()->getValueGameObject();
+
+	return pObj && pObj->isLoaded() && getUpdate()->getValueBool();
 }
 
 void gkNewMotionNode::update(gkScalar tick)
@@ -57,12 +59,12 @@ void gkNewMotionNode::update(gkScalar tick)
 
 void gkRotateNode::DoUpdate()
 {
-	m_target->rotate(m_XYZ, TRANSFORM_LOCAL);
+	getTarget()->getValueGameObject()->rotate(m_XYZ, TRANSFORM_LOCAL);
 }
 
 ////////////////////////////////////
 
 void gkLinearVelNode::DoUpdate()
 {
-	m_target->setLinearVelocity(m_XYZ, TRANSFORM_LOCAL);
+	getTarget()->getValueGameObject()->setLinearVelocity(m_XYZ, TRANSFORM_LOCAL);
 }

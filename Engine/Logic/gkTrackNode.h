@@ -29,8 +29,6 @@
 
 #include "gkLogicNode.h"
 
-class SceneNode;
-
 class gkTrackNode : public gkLogicNode
 {
 public:
@@ -41,6 +39,8 @@ public:
 		OFFSET,
 		STIFFNESS,
 		DAMPING,
+		TARGET,
+		TRACK,
 		MAX_SOCKETS
 	};
 
@@ -63,9 +63,8 @@ public:
 	//A higher value makes for a smoother ride, lower values and the more boing you'll get.
 	GK_INLINE gkLogicSocket* getDamping() {return &m_sockets[DAMPING];}
 
-	void SetTarget(gkGameObject* target) { m_target = target; }
-
-	void SetTrack(gkGameObject* track) { m_track = track; }
+	GK_INLINE gkLogicSocket* getTarget() {return &m_sockets[TARGET];}
+	GK_INLINE gkLogicSocket* getTrack() {return &m_sockets[TRACK];}
 
 private:
 

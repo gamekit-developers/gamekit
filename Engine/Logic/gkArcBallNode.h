@@ -45,6 +45,7 @@ public:
 		RELX,
 		RELY,
 		RELZ,
+		TARGET,
 		MAX_SOCKETS
 	};
 
@@ -67,7 +68,7 @@ public:
     GK_INLINE gkLogicSocket* getRelY() {return &m_sockets[RELY];}
     GK_INLINE gkLogicSocket* getRelZ() {return &m_sockets[RELZ];}
 
-	void SetTarget(gkGameObject* target) { m_target = target; }
+	GK_INLINE gkLogicSocket* getTarget() {return &m_sockets[TARGET];}
 
 private:
 

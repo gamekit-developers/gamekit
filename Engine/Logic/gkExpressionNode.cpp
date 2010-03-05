@@ -81,8 +81,6 @@ void gkExpressionNode::update(gkScalar tick)
 
         m_sockets[11].setValue(result == gkScriptExpression::EXPR_TRUE);
         m_sockets[12].setValue(result == gkScriptExpression::EXPR_FALSE);
-        m_sockets[11].block(result != gkScriptExpression::EXPR_TRUE);
-        m_sockets[12].block(result != gkScriptExpression::EXPR_FALSE);
     }
 }
 

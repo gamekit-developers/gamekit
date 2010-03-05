@@ -47,6 +47,8 @@ m_oldPositionSet(false)
 	ADD_ISOCK(*getOffset(), this, gkLogicSocket::ST_VECTOR);
 	ADD_ISOCK(*getStiffness(), this, gkLogicSocket::ST_REAL);
 	ADD_ISOCK(*getDamping(), this, gkLogicSocket::ST_REAL);
+	ADD_ISOCK(*getTarget(), this, gkLogicSocket::ST_GAME_OBJECT);
+	ADD_ISOCK(*getTrack(), this, gkLogicSocket::ST_GAME_OBJECT);
 
 	getOffset()->setValue(gkVector3::ZERO);
 	getStiffness()->setValue(0.8f);
@@ -61,6 +63,10 @@ gkTrackNode::~gkTrackNode()
 
 bool gkTrackNode::evaluate(Real tick)
 {
+	m_track = getTrack()->getValueGameObject();
+
+	m_target = getTarget()->getValueGameObject();
+
 	return m_track && m_track->isLoaded() && m_target && m_target->isLoaded() && getEnable()->getValueBool();
 }
 

@@ -33,42 +33,41 @@ gkGameObject* gkLogicSocket::getGameObject(void) const
 {
     if (m_from && m_from->m_parent)
         return m_from->m_parent->getAttachedObject();
+
     return m_parent ? m_parent->getAttachedObject() : 0;
-}
-
-
-bool gkLogicSocket::hasLink(gkLogicNode *link)
-{
-    if (m_connected) 
-        return m_nodes.find(link) != 0;
-    return false;
 }
 
 void gkLogicSocket::link(gkLogicSocket *fsock)
 {
-    if (!m_from)
-    {
-        if (fsock)
-        {
-            fsock->m_connected = m_connected = true;
-            m_from = fsock;
+	GK_ASSERT(fsock);
 
-            if (m_parent)
-            {
-                m_parent->setLinked();
-                gkLogicNode *nd = fsock->getParent();
-                if (nd) nd->setLinked();
-            }
-        }
+	if(m_isInput)
+	{
+		GK_ASSERT(!m_from && "Only one link for input socket"); 
+
+		GK_ASSERT(!fsock->m_isInput && "Cannot link input to input");
+
+        m_from = fsock;
     }
-    // else error, only one from socket
+	else
+	{
+		GK_ASSERT(fsock->m_isInput && "Cannot link output to output");
+
+		if(!m_to.find(fsock))
+		{
+			m_to.push_back(fsock);
+		}
+	}
+
+    fsock->m_connected = m_connected = true;
+
+    if (m_parent)
+    {
+        m_parent->setLinked();
+
+        gkLogicNode *nd = fsock->getParent();
+
+        if (nd) nd->setLinked();
+    }
 }
 
-
-void gkLogicSocket::push(gkLogicNode *link)
-{
-}
-
-void gkLogicSocket::block(bool truth)
-{
-}

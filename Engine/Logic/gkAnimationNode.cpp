@@ -35,24 +35,29 @@
 using namespace Ogre;
 
 gkAnimationNode::gkAnimationNode(gkLogicTree *parent, size_t id) 
-: gkLogicNode(parent, id), m_target(0), m_func(AF_LOOP)
+: gkLogicNode(parent, id), m_func(AF_LOOP)
 {
 	ADD_ISOCK(*getAnimName(), this, gkLogicSocket::ST_STRING);
 	ADD_ISOCK(*getBlend(), this, gkLogicSocket::ST_REAL);
+	ADD_ISOCK(*getTarget(), this, gkLogicSocket::ST_GAME_OBJECT);
 
 	getBlend()->setValue(10);
 }
 
 bool gkAnimationNode::evaluate(gkScalar tick)
 {
-	return m_target && m_target->isLoaded() && !getAnimName()->getValueString().empty();
+	gkGameObject* pObj = getTarget()->getValueGameObject();
+
+	return pObj && pObj->isLoaded() && !getAnimName()->getValueString().empty();
 }
 
 void gkAnimationNode::update(gkScalar tick)
 {
-	GK_ASSERT(m_target->getType() == GK_ENTITY);
+	gkGameObject* pObj = getTarget()->getValueGameObject();
 
-	gkEntity *ent = m_target->getEntity();
+	GK_ASSERT(pObj->getType() == GK_ENTITY);
+
+	gkEntity *ent = pObj->getEntity();
 
 	if (ent->isLoaded())
 	{

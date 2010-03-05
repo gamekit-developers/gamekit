@@ -27,23 +27,61 @@
 #include "gkWindowSystem.h"
 #include "gkSetterNode.h"
 #include "gkEngine.h"
+#include "gkScene.h"
 #include "gkLogger.h"
 
 gkSetterNode::gkSetterNode(gkLogicTree *parent, size_t id) 
 : gkLogicNode(parent, id),
-m_target(0)
+m_hasOneSet(false)
 {
 	ADD_ISOCK(*getUpdate(), this, gkLogicSocket::ST_BOOL);
 	ADD_ISOCK(*getInput(), this, gkLogicSocket::ST_STRING);
+	ADD_ISOCK(*getJustOnce(), this, gkLogicSocket::ST_BOOL);
 }
 
 bool gkSetterNode::evaluate(gkScalar tick)
 {
-	return m_target && getUpdate()->getValueBool();
+	return getUpdate()->getValueBool();
 }
 
 void gkSetterNode::update(gkScalar tick)
 {
-	m_target->setValue(getInput()->getValueString());
+	if(getJustOnce()->getValueBool() && m_hasOneSet) 
+		return;
+
+	DoUpdate();
+
+	m_hasOneSet = true;
 }
+
+/////////////////////////////////////////////
+gkStringSetterNode::gkStringSetterNode(gkLogicTree *parent, size_t id)
+	: gkSetterNode(parent, id)
+{
+	ADD_OSOCK(*getOutput(), this, gkLogicSocket::ST_STRING);
+}
+
+
+void gkStringSetterNode::DoUpdate()
+{
+	getOutput()->setValue(getInput()->getValueString());
+}
+
+/////////////////////////////////////////////
+
+gkObjectSetterNode::gkObjectSetterNode(gkLogicTree *parent, size_t id)
+	: gkSetterNode(parent, id)
+{
+	ADD_OSOCK(*getOutput(), this, gkLogicSocket::ST_GAME_OBJECT);
+}
+
+void gkObjectSetterNode::DoUpdate()
+{
+	gkScene* pScene = gkEngine::getSingleton().getActiveScene();
+
+	gkGameObject* pObj = pScene->getObject(getInput()->getValueString());
+
+	getOutput()->setValue(pObj);
+}
+
 
