@@ -24,29 +24,8 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "gkCoreApplication.h"
-#include "gkScene.h"
-#include "gkCamera.h"
-#include "gkLogger.h"
-#include "gkUtils.h"
-#include "gkPath.h"
-#include "gkBlendFile.h"
-#include "gkMemoryTest.h"
 
-// node tests 
-#include "gkNodeManager.h"
-#include "gkIfNode.h"
-#include "gkMouseNode.h"
-#include "gkLogicTree.h"
-#include "gkButtonNode.h"
-#include "gkArcBallNode.h"
-#include "gkCursorNode.h"
-#include "gkPickNode.h"
-#include "gkTrackNode.h"
-#include "gkNewMotionNode.h"
-#include "gkAnimationNode.h"
-#include "gkExitNode.h"
-#include "gkSetterNode.h"
+#include "OgreKit.h"
 
 class OgreKit : public gkCoreApplication
 {
