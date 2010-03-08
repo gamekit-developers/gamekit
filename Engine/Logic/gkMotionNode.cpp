@@ -57,7 +57,7 @@ bool gkMotionNode::evaluate(gkScalar tick)
     return m_sockets[0].getValueBool();
 }
 
-void gkMotionNode::_initialize()
+void gkMotionNode::initialize()
 {
     if (!m_otherName.empty())
     {

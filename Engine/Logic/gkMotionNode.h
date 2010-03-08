@@ -37,7 +37,7 @@ class gkMotionNode : public gkLogicNode
 public:
     gkMotionNode(gkLogicTree *parent, size_t id);
     virtual ~gkMotionNode() {}
-    void _initialize();
+    void initialize();
 
     void update(gkScalar tick);
     bool evaluate(gkScalar tick);

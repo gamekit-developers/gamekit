@@ -186,8 +186,8 @@ public:
         }
         else
         {
-            // setup default mouselook 
             m_scene->load();
+            createMouseLook(m_scene, gkVector3::ZERO, gkVector3(90, 0, 0));
         }
 
         // add input hooks
@@ -195,6 +195,127 @@ public:
         return true;
     }
 
+
+    void createMouseLook(gkScene *sc, const gkVector3 &pos, const gkVector3 &ori,
+                         const float rotationScale = -0.3f,
+                         const float translationScale = 0.5f
+                        )
+    {
+        if (!sc)
+            return;
+
+        gkGameObject *x = sc->createObject("createMouseLook::x");
+        gkGameObject *z = sc->createObject("createMouseLook::z");
+        gkCamera *mcam = sc->getMainCamera();
+        gkCamera *cam = sc->createCamera("createMouseLook::cam");
+
+        if (mcam)
+        {
+            cam->getCameraProperties() = mcam->getCameraProperties();
+
+            gkVector3 neul = gkMathUtils::getEulerFromQuat(mcam->getWorldOrientation());
+            gkVector3 zeul = gkVector3(0, 0, neul.z);
+
+            gkQuaternion &zrot= z->getProperties().orientation;
+            gkQuaternion &crot= cam->getProperties().orientation;
+
+            zrot = gkMathUtils::getQuatFromEuler(zeul);
+            zrot.normalise();
+            crot = gkMathUtils::getQuatFromEuler(ori);
+            crot.normalise();
+
+            z->getProperties().position = mcam->getWorldPosition();
+        }
+        else
+        {
+            z->getProperties().position = pos;
+            cam->getProperties().orientation = gkMathUtils::getQuatFromEuler(ori);
+        }
+
+        x->setParent(z);
+        cam->setParent(x);
+
+        // zrotation
+        gkLogicTree *ztree  = gkNodeManager::getSingleton().create();
+        gkMouseNode *zmou   = ztree->createNode<gkMouseNode>();
+        gkMotionNode *zmot  = ztree->createNode<gkMotionNode>();
+
+        zmou->getScaleX()->setValue(rotationScale);
+
+        zmot->getUpdate()->link(zmou->getMotion());
+        zmot->getZ()->link(zmou->getRelX());
+
+        z->attachLogic(ztree);
+
+
+        // yrotation
+        gkLogicTree *xtree= gkNodeManager::getSingleton().create();
+        gkMouseNode *ymou = xtree->createNode<gkMouseNode>();
+        gkMotionNode *xmot = xtree->createNode<gkMotionNode>();
+        ymou->getScaleY()->setValue(rotationScale);
+
+        xmot->getUpdate()->link(ymou->getMotion());
+        xmot->getX()->link(ymou->getRelY());
+
+        /// setup -90, 90 clamp
+        xmot->setMinX(-90);
+        xmot->setMaxX(90);
+
+
+        x->attachLogic(xtree);
+
+        // keyboard controlls
+        gkKeyNode *fwd = ztree->createNode<gkKeyNode>();
+        gkKeyNode *bak = ztree->createNode<gkKeyNode>();
+        gkKeyNode *lft = ztree->createNode<gkKeyNode>();
+        gkKeyNode *rgt = ztree->createNode<gkKeyNode>();
+
+        fwd->setKey(KC_UPARROWKEY);
+        bak->setKey(KC_DOWNARROWKEY);
+        lft->setKey(KC_LEFTARROWKEY);
+        rgt->setKey(KC_RIGHTARROWKEY);
+
+        gkMathNode *scale1 = ztree->createNode<gkMathNode>();
+        gkMathNode *scale2 = ztree->createNode<gkMathNode>();
+        scale1->setFunction(MTH_MULTIPLY);
+        scale2->setFunction(MTH_MULTIPLY);
+        scale1->getB()->setValue(translationScale);
+        scale2->getB()->setValue(translationScale);
+
+        /// math node
+        // subtract (bak - fwd) out -> link to y movement
+        gkMathNode *vecfwd = ztree->createNode<gkMathNode>();
+
+        vecfwd->setFunction(MTH_SUBTRACT);
+        vecfwd->getA()->link(fwd->getIsDown());
+        vecfwd->getB()->link(bak->getIsDown());
+        scale1->getA()->link(vecfwd->getResult());
+
+
+        gkMotionNode *fwdmot = ztree->createNode<gkMotionNode>();
+        fwdmot->getY()->link(scale1->getResult());
+        fwdmot->setMotionType(MT_TRANSLATION);
+
+        // translate relitave to x GameObject
+        fwdmot->setSpace(TRANSFORM_PARENT);
+        fwdmot->setOtherObject("createMouseLook::x");
+
+
+        /// math node
+        // subtract (lft - rgt) out -> link to x movement
+        gkMathNode *vecstrf = ztree->createNode<gkMathNode>();
+
+        vecstrf->setFunction(MTH_SUBTRACT);
+        vecstrf->getA()->link(rgt->getIsDown());
+        vecstrf->getB()->link(lft->getIsDown());
+
+        scale2->getA()->link(vecstrf->getResult());
+        fwdmot->getX()->link(scale2->getResult());
+
+        cam->load();
+        m_scene->setMainCamera(cam);
+
+    }
 
     void keyReleased(const gkKeyboard &key, const gkScanCode &sc)
     {
