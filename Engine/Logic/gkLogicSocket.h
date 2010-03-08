@@ -300,7 +300,7 @@ private:
 	template<typename T>
 	void SetToValue(const T& value)
 	{
-		gkLogicNode::SocketIterator sockit(m_to);
+		SocketIterator sockit(m_to);
 		
 		while (sockit.hasMoreElements())
 		{
