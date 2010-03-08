@@ -1,5 +1,5 @@
 # ---------------------------------------------------------
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.6)
 
 project(LogicDemo)
 SET(${PROJECT_NAME} 1.0)
@@ -7,11 +7,6 @@ SET(${PROJECT_NAME} 1.0)
 #IF(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
 #MESSAGE(FATAL_ERROR "CMake generation for LogicDemo is not allowed within the source directory!")
 #ENDIF(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
-
-if(NOT (${CMAKE_CURRENT_BINARY_DIR} EQUAL ${CMAKE_SOURCE_DIR}))
-	file(COPY data DESTINATION .)
-endif()
-
 
 set(DATA 
 	./data/momo_ogre_plus.blend 
@@ -69,5 +64,17 @@ if (APPLE)
 )
 else ()
 	add_executable(${PROJECT_NAME} ${SRC} ${HiddenCMakeLists})
-	install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${OGREKIT_INSTALL_PREFIX})
+endif()
+
+if(NOT (${CMAKE_CURRENT_BINARY_DIR} EQUAL ${CMAKE_SOURCE_DIR}))
+
+	ADD_CUSTOM_COMMAND(
+		TARGET ${PROJECT_NAME}
+		POST_BUILD
+		COMMAND ${CMAKE_COMMAND} ARGS -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/data
+		COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/data/momo_ogre_plus.blend ${CMAKE_CURRENT_BINARY_DIR}/data
+		COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/data/OgreKitResource.cfg ${CMAKE_CURRENT_BINARY_DIR}/data
+		COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/data/OgreKitStartup.cfg ${CMAKE_CURRENT_BINARY_DIR}/data
+	)
+
 endif()
