@@ -34,6 +34,7 @@
 
 #include "OgreResourceGroupManager.h"
 #include "gkUtils.h"
+#include "gkPath.h"
 #include "gkEngine.h"
 #include "OgreRoot.h"
 #include "gkCamera.h"
@@ -74,10 +75,16 @@ gkString gkUtils::getFile(const gkString& in)
     char* lastSlash = 0;
     if (lastSlash = strrchr(bundlePath, '/'))
         * lastSlash = '\0';
-    sprintf(newName, "%s/%s", bundlePath, "game.blend");
+
+
     sprintf(newName, "%s/%s/%s", AppleGetBundleDirectory(), "Contents/Resources", in.c_str());
 
-
+    gkPath pth(newName);
+    if (!pth.isFile())
+    {
+        newName[0] = 0;
+        sprintf(newName, "%s/%s", bundlePath, "game.blend");
+    }
 
 #else
 
