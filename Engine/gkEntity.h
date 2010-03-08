@@ -29,7 +29,7 @@
 
 #include "gkGameObject.h"
 #include "gkSerialize.h"
-#include "gkActionManager.h"
+#include "Animation/gkActionManager.h"
 
 
 // Game entity

@@ -29,7 +29,7 @@
 
 #include "gkLogicSensor.h"
 #include "gkLogicDispatcher.h"
-#include "gkDynamicsWorld.h"
+#include "Physics/gkDynamicsWorld.h"
 
 
 class gkCollisionDispatch : public gkAbstractDispatcher

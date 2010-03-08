@@ -210,8 +210,8 @@ gkString gkPath::extension(void) const
     if (bn.empty())
         return StringUtil::BLANK;
 
-    gkStringVector arr = StringUtil::split(bn, ".");
-
+    gkStringVector arr;
+    utStringUtils::split(arr, bn, ".");
     if (arr.empty())
         return StringUtil::BLANK;
     return gkString(".") + arr.at(arr.size() - 1);
@@ -278,5 +278,5 @@ bool gkPath::isDir(void) const
 
 void gkPath::split(gkStringVector &arr) const
 {
-    arr = StringUtil::split(m_path, SEPERATOR);
+    utStringUtils::split(arr, m_path, SEPERATOR);
 }

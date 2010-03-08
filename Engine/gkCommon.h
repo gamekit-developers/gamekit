@@ -27,7 +27,7 @@
 #ifndef _gkCommon_h_
 #define _gkCommon_h_
 
-#include "utCommon.h"
+#include "Utils/utCommon.h"
 #include "gkHashedString.h"
 
 
@@ -36,7 +36,7 @@
 #include "OgrePlatform.h"
 #include "OgrePrerequisites.h"
 
-#include "utTypes.h"
+#include "Utils/utTypes.h"
 
 
 #define GK_NPOS             UT_NPOS

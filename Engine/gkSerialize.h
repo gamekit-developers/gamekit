@@ -33,8 +33,7 @@
 
 #include "gkMathUtils.h"
 #include "gkString.h"
-#include "utString.h"
-
+#include "Utils/utString.h"
 
 // Camera datatypes
 class gkCameraProperties

@@ -12,17 +12,11 @@ include_directories(${OGRELITE_SOURCE_DIR}/OgreMain/include/OSX)
 endif()
 
 set(SRC momo_ogre.blend Main.cpp)
+
 include_directories(
     ${OGREKIT_OGRE_INCLUDE}
     ${OGREKIT_BULLET_INCLUDE}
     ../../Engine/
-    ../../Engine/Script/
-    ../../Engine/Loaders/Blender/
-    ../../Engine/Physics/
-    ../../Engine/LogicBricks
-    ../../Engine/Logic
-    ../../Engine/Utils
-    ../../Engine/Animation
 )
 
 

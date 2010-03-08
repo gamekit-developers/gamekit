@@ -24,35 +24,7 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "gkCamera.h"
-#include "gkEntity.h"
-#include "gkCoreApplication.h"
-#include "gkWindowSystem.h"
-#include "gkScene.h"
-#include "gkLogger.h"
-#include "gkUtils.h"
-#include "gkPath.h"
-#include "gkBlendFile.h"
-#include "gkMemoryTest.h"
-#include "gkDynamicsWorld.h"
-#include "gkRigidBody.h"
-#include "gkTextManager.h"
-#include "gkLuaManager.h"
-
-// node tests 
-#include "gkVariable.h"
-#include "gkNodeManager.h"
-#include "gkButtonNode.h"
-#include "gkMathNode.h"
-#include "gkIfNode.h"
-#include "gkMouseNode.h"
-#include "gkSwitchNode.h"
-#include "gkVariableNode.h"
-#include "gkGroupNode.h"
-#include "gkObjectNode.h"
-#include "gkMotionNode.h"
-#include "gkLogicTree.h"
-#include "gkArcBallNode.h"
+#include "OgreKit.h"
 
 
 // Temporary class to test out
@@ -60,18 +32,19 @@
 class Player
 {
 protected:
-    gkScene*        m_scene;
-    gkEntity*       m_mesh;
+    gkScene        *m_scene;
+    gkEntity       *m_mesh;
     gkGameObject    *m_zRot, *m_xRot, *m_player, *m_view;
-    gkMouse*        m_mouse;
-    gkKeyboard*     m_keyboard;
+    gkMouse        *m_mouse;
+    gkKeyboard     *m_keyboard;
+    bool            m_assert;
 
 
 public:
 
 
     Player(gkScene *scene)
-    :       m_scene(scene), m_mesh(0), m_zRot(0), m_xRot(0), m_player(0)
+        :       m_scene(scene), m_mesh(0), m_zRot(0), m_xRot(0), m_player(0), m_assert(false)
     {
         init();
     }
@@ -80,15 +53,20 @@ public:
     {
     }
 
+    bool valid() {return m_assert;}
+
     void init(void)
     {
         GK_ASSERT(m_scene);
-        m_zRot      = m_scene->getObject("zRot");
-        m_xRot      = m_scene->getObject("xRot");
-        m_player    = m_scene->getObject("Player");
-        m_mesh      = m_scene->getObject("MeshMomo")->getEntity();
-        m_mouse     = gkWindowSystem::getSingleton().getMouse();
-        m_keyboard  = gkWindowSystem::getSingleton().getKeyboard();
+        m_zRot = m_scene->getObject("zRot");
+        m_xRot = m_scene->getObject("xRot");
+        m_player = m_scene->getObject("Player");
+        gkGameObject *ob = m_scene->getObject("MeshMomo");
+        if (ob)
+            m_mesh = ob->getEntity();
+        m_mouse = gkWindowSystem::getSingleton().getMouse();
+        m_keyboard = gkWindowSystem::getSingleton().getKeyboard();
+        m_assert = (m_zRot && m_xRot && m_player && m_mesh);
     }
 
     void update(gkScalar tick)
@@ -98,16 +76,12 @@ public:
             if (m_mouse->relitave.x != 0) m_zRot->roll(gkRadian((-m_mouse->relitave.x * tick)*0.5f));
             if (m_mouse->relitave.y != 0) m_xRot->pitch(gkRadian((-m_mouse->relitave.y * tick)*0.5f));
         }
-
         if (m_player->hasMoved())
         {
             gkScalar tol = 0.05;
             gkVector3 dpos = (m_player->getPosition() - (m_zRot->getPosition() + gkVector3(0, 0, -0.2f))) * tol;
             m_zRot->translate(dpos);
         }
-
-
-
 
         if (m_keyboard->isKeyDown(KC_WKEY) || m_keyboard->isKeyDown(KC_UPARROWKEY))
         {
@@ -128,13 +102,8 @@ public:
             v.z = m_player->getLinearVelocity().z;
             m_mesh->setOrientation(m_zRot->getOrientation());
             m_player->setLinearVelocity(v);
-
-            //v = m_mesh->getOrientation() * v;
-            //v.z = m_player->getLinearVelocity().z;
-            //m_player->setLinearVelocity(v);
             return;
         }
-
         // default
         m_mesh->playAction("Momo_IdleNasty", 10);
     }
@@ -142,20 +111,17 @@ public:
 
 
 class OgreKit :
-            public gkCoreApplication,
-            public gkWindowSystem::Listener
+    public gkCoreApplication,
+    public gkWindowSystem::Listener
 {
 public:
-
     gkString    m_blend;
-    gkScene*    m_scene;
-    Player*     m_player;
+    gkScene    *m_scene;
+    Player     *m_player;
 
 public:
-
-
     OgreKit(const gkString &blend)
-    :       m_blend(blend), m_scene(0), m_player(0)
+        :       m_blend(blend), m_scene(0), m_player(0)
     {
         m_prefs.winsize.x   = 800;
         m_prefs.winsize.y   = 600;
@@ -208,13 +174,20 @@ public:
             m_scene->load();
 
             // special case temp game logic
-            if (!m_player) m_player = new Player(m_scene);
+            if (!m_player)
+            {
+                m_player = new Player(m_scene);
+                if (!m_player->valid())
+                {
+                    delete m_player;
+                    m_player = 0;
+                }
+            }
         }
         else
         {
+            // setup default mouselook 
             m_scene->load();
-            //test13(m_scene);
-            //test0(m_scene);
         }
 
         // add input hooks
@@ -223,94 +196,16 @@ public:
     }
 
 
-    void keyReleased(const gkKeyboard& key, const gkScanCode& sc)
+    void keyReleased(const gkKeyboard &key, const gkScanCode &sc)
     {
         if (sc == KC_ESCKEY) m_engine->requestExit();
     }
 
-    void test0(gkScene* scene)
-    {
-        gkGameObject *ob = 0;
-
-        if (scene->hasObject("Cube"))
-            ob = scene->getObject("Cube");
-        else
-            ob = scene->getMainCamera();
-
-        gkLogicTree* tree = gkNodeManager::getSingleton().create();
-
-
-        // if (akey || leftmouse) {
-        //   rotate ob around z by mousex
-        // } else {
-        //   rotate ob around x by mousex
-        // }
-
-        gkMouseNode* mouse      = tree->createNode<gkMouseNode>();
-        gkMotionNode* motionZ   = tree->createNode<gkMotionNode>();
-        gkMotionNode* motionT   = tree->createNode<gkMotionNode>();
-        gkIfNode* ifNode        = tree->createNode<gkIfNode>();
-        gkKeyNode* ctrl         = tree->createNode<gkKeyNode>();
-        gkMouseButtonNode* left = tree->createNode<gkMouseButtonNode>();
-
-        ifNode->setStatement(CMP_OR);
-        ctrl->setKey(KC_AKEY);
-        left->setButton(gkMouse::Left);
-
-        ifNode->getA()->link(ctrl->getIsDown());
-        ifNode->getB()->link(left->getIsDown());
-
-
-        motionZ->getUpdate()->link(ifNode->getTrue());
-        motionZ->getZ()->link(mouse->getRelX());
-
-        motionT->getUpdate()->link(ifNode->getFalse());
-        motionT->getX()->link(mouse->getRelX());
-
-
-        tree->solveOrder();
-        ob->attachLogic(tree);
-    }
-
-    void test13(gkScene* pScene)
-    {
-        gkGameObject *pObject = 0;
-
-        if (pScene->hasObject("Cube"))
-            pObject = pScene->getObject("Cube");
-        else
-            pObject = pScene->getMainCamera();
-
-
-        gkLogicTree* pTree = gkNodeManager::getSingleton().create();
-        gkMouseNode* pMouseNode = pTree->createNode<gkMouseNode>();
-        gkMathNode* pMathNode = pTree->createNode<gkMathNode>();
-
-        pMathNode->getA()->link(pMouseNode->getRelX());
-        pMathNode->getB()->link(pMouseNode->getRelY());
-
-        gkKeyNode* pKeyNode = pTree->createNode<gkKeyNode>();
-        pKeyNode->setKey(KC_AKEY);
-
-        gkMotionNode* pMotionNode = pTree->createNode<gkMotionNode>();
-
-        pMotionNode->getUpdate()->link(pKeyNode->getIsDown());
-        pMotionNode->getX()->link(pMouseNode->getRelX());
-        pMotionNode->getZ()->link(pMouseNode->getRelY());
-        pMotionNode->getDamping()->link(pMathNode->getResult());
-
-        pTree->solveOrder();
-        pObject->attachLogic(pTree);
-    }
-
-
     void tick(gkScalar tr)
     {
         // update other states
-        if (m_player != 0)
-            m_player->update(tr);
+        if (m_player != 0) m_player->update(tr);
     }
-
 };
 
 
@@ -318,16 +213,11 @@ int main(int argc, char **argv)
 {
     TestMemory;
     char *fname = "momo_ogre.blend";
-	//char *fname = "SimpleState.blend";
-	//char *fname = "clubsilo_packed.blend";
-	
-	
 
 #if GK_PLATFORM != GK_PLATFORM_APPLE
     if (argc > 1)
         fname = argv[argc-1];
 #endif
-
     OgreKit okit(gkUtils::getFile(fname));
     okit.run();
     return 0;

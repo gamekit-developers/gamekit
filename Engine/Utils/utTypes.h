@@ -25,7 +25,7 @@
 #ifndef _utTypes_h_
 #define _utTypes_h_
 
-#include "utCommon.h"
+#include "Utils/utCommon.h"
 #include <memory.h>
 
 // List where each link is T. Not as flexible as utList, but requires less memory

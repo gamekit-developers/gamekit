@@ -27,8 +27,8 @@
 
 #include <string.h>
 #include <string>
-#include "utCommon.h"
-#include "utTypes.h"
+#include "Utils/utCommon.h"
+#include "Utils/utTypes.h"
 
 #define utStrlen            strlen
 #define utStrcpy            strncpy
