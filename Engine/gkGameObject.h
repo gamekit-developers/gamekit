@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -45,6 +45,8 @@ public:
     typedef utListIterator<ConstraintList>              ConstraintIterator;
     typedef utHashTable<gkHashedString, gkVariable*>    VariableMap;
 
+	typedef utList<gkGameObject*> GameObjects;
+	typedef utListIterator<GameObjects> GameObjectIterator;
 
 public:
 
@@ -64,9 +66,8 @@ public:
     GK_INLINE gkSkeleton*   getSkeleton(void)   {return m_type == GK_SKELETON ? (gkSkeleton*)this : 0; }
 
     GK_INLINE gkGameObject *getParent(void)                 {return m_parent;}
-    GK_INLINE void setParent(gkGameObject* par)             {if (par != 0) m_parent = par;}
-    // TODO, add child
-
+    
+	void setParent(gkGameObject* par);
 
     void notifyUpdate(void);
 
@@ -167,7 +168,6 @@ public:
     // Ogre base class for movables
     Ogre::MovableObject *getMovable(void);
 
-
 protected:
 
 
@@ -180,6 +180,8 @@ protected:
 
     // Parent object
     gkGameObject*               m_parent;
+
+	GameObjects					m_children;
 
     // Parent scene
     gkScene*                    m_scene;

@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -121,6 +121,7 @@ void gkGameObject::loadImpl(void)
     if (m_parent)
     {
         if (!m_parent->isLoaded()) m_parent->load();
+
         parentNode = m_parent->m_node;
     }
     // Create from parent or root node
@@ -130,6 +131,24 @@ void gkGameObject::loadImpl(void)
     m_node->setOrientation(m_baseProps.orientation);
     m_node->setScale(m_baseProps.scale);
     m_node->showBoundingBox(m_baseProps.showAABB);
+
+	//////////////////////////////////
+	// Reattach children (ogre) nodes
+	GameObjectIterator iter(m_children);
+	while (iter.hasMoreElements())
+	{
+		gkGameObject* pChild = iter.getNext();
+
+		if(pChild->m_node)
+		{
+			Ogre::SceneNode* pParentNode = pChild->m_node->getParentSceneNode();
+
+			Ogre::Node* pChildNode = pParentNode->removeChild(pChild->m_node);
+
+			m_node->addChild(pChildNode);
+		}
+	}
+	//////////////////////////////////
 
 
     // save transform states
@@ -156,7 +175,6 @@ void gkGameObject::unloadImpl(void)
 {
     SceneManager *manager = m_scene->getManager();
 
-
     // per loaded object
     clearVariables();
 
@@ -177,13 +195,22 @@ void gkGameObject::unloadImpl(void)
     if (m_node)
     {
         // Destroy and detach from scene graph
-        // TODO attach children to parent scene node
-        m_node->detachAllObjects();
-        m_node->removeAllChildren();
+		Ogre::SceneNode* pParentNode = m_node->getParentSceneNode();
+
+		unsigned short n = m_node->numChildren();
+
+		for(unsigned short i=0; i<n; i++)
+		{
+			Ogre::Node* pChildNode = m_node->removeChild(i);
+			
+			pParentNode->addChild(pChildNode);
+
+		}
+
         manager->destroySceneNode(m_node);
+
         m_node = 0;
     }
-
 
     m_scene->notifyObjectUnloaded(this);
 }
@@ -596,3 +623,20 @@ bool gkGameObject::hasVariable(const gkString &name)
 {
     return m_variables.find(name) != UT_NPOS;
 }
+
+void gkGameObject::setParent(gkGameObject* par)
+{
+	if(par) 
+	{
+		GK_ASSERT(!m_parent && "Already has a parent");
+
+		m_parent = par;
+
+		if(!m_parent->m_children.find(this))
+		{
+			m_parent->m_children.push_back(this);
+		}
+
+	}
+}
+
