@@ -34,7 +34,7 @@ public:
     OgreKit(const gkString &blend) 
 		: m_blend(blend), m_tree(0), m_ctrlKeyNode(0), 
 		m_wKeyNode(0), m_sKeyNode(0), m_mouseNode(0), m_leftMouseNode(0), m_rightMouseNode(0),
-		m_playerSetter(0), m_cameraSetter(0)
+		m_playerSetter(0), m_meshMomoSetter(0), m_cameraSetter(0)
 
 	{
         gkPath path = "./data/OgreKitStartup.cfg";
@@ -81,6 +81,8 @@ public:
 
 		CreateMomoPlayerLogic();
 
+		CreateLoadUnloadLogic();
+
 		m_tree->solveOrder();
 
 		pCamera->attachLogic(m_tree);
@@ -112,6 +114,11 @@ public:
 		m_playerSetter->getUpdate()->setValue(true);
 		m_playerSetter->getInput()->setValue(gkString("Player"));
 		m_playerSetter->getJustOnce()->setValue(true);
+
+		m_meshMomoSetter = m_tree->createNode<gkObjectSetterNode>();
+		m_meshMomoSetter->getUpdate()->setValue(true);
+		m_meshMomoSetter->getInput()->setValue(gkString("MeshMomo"));
+		m_meshMomoSetter->getJustOnce()->setValue(true);
 
 		m_cameraSetter = m_tree->createNode<gkObjectSetterNode>();
 		m_cameraSetter->getUpdate()->setValue(true);
@@ -162,7 +169,10 @@ public:
 			motion->getZ()->setValue(0);
 			motion->getTarget()->link(m_playerSetter->getOutput());
 		}
+	}
 
+	void CreateLoadUnloadLogic()
+	{
 		{
 			// reload
 
@@ -170,6 +180,7 @@ public:
 			rKeyNode->setKey(KC_RKEY);
 
 			m_playerSetter->getReload()->link(rKeyNode->getPress());
+			m_meshMomoSetter->getReload()->link(rKeyNode->getPress());
 		}
 
 		{
@@ -179,6 +190,7 @@ public:
 			uKeyNode->setKey(KC_UKEY);
 
 			m_playerSetter->getUnload()->link(uKeyNode->getPress());
+			m_meshMomoSetter->getUnload()->link(uKeyNode->getPress());
 		}
 
 		{
@@ -188,20 +200,14 @@ public:
 			lKeyNode->setKey(KC_LKEY);
 
 			m_playerSetter->getLoad()->link(lKeyNode->getPress());
+			m_meshMomoSetter->getLoad()->link(lKeyNode->getPress());
 		}
-
-
 	}
 
 	void CreateMomoMeshLogic()
 	{
-		gkObjectSetterNode* meshMomoSetter = m_tree->createNode<gkObjectSetterNode>();
-		meshMomoSetter->getUpdate()->setValue(true);
-		meshMomoSetter->getInput()->setValue(gkString("MeshMomo"));
-		meshMomoSetter->getJustOnce()->setValue(true);
-
 		gkAnimationNode* anim = m_tree->createNode<gkAnimationNode>();
-		anim->getTarget()->link(meshMomoSetter->getOutput());
+		anim->getTarget()->link(m_meshMomoSetter->getOutput());
 
 		gkStringSetterNode* runName = m_tree->createNode<gkStringSetterNode>();
 		runName->getOutput()->link(anim->getAnimName());
@@ -331,6 +337,8 @@ private:
 	gkMouseButtonNode* m_rightMouseNode;
 
 	gkObjectSetterNode* m_playerSetter;
+
+	gkObjectSetterNode* m_meshMomoSetter;
 
 	gkObjectSetterNode* m_cameraSetter;
 };

@@ -12,6 +12,7 @@ set(DATA
 	./data/momo_ogre_plus.blend 
 	./data/OgreKitStartup.cfg 
 	./data/OgreKitResource.cfg 
+	ReadMe.txt
 )
 
 if (APPLE)
