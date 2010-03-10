@@ -30,5 +30,7 @@ include_directories(${OGRELITE_SOURCE_DIR}/Settings)
 
 subdirs(OgreMain)
 subdirs(RenderSystems)
+
+set(OGRE_BUILD_PLUGIN_PFX TRUE)
 subdirs(PlugIns)
 

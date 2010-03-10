@@ -153,6 +153,7 @@ void gkEngine::initialize(bool autoCreateWindow)
 
     m_root = new Root("", "");
     m_private->plugin_factory->createRenderSystem(m_root, defs.rendersystem);
+	m_private->plugin_factory->createParticleSystem(m_root);
 
     const RenderSystemList &renderers = m_root->getAvailableRenderers();
     if (renderers.empty())
@@ -161,6 +162,7 @@ void gkEngine::initialize(bool autoCreateWindow)
         return;
     }
     m_root->setRenderSystem(renderers[0]);
+
     m_root->initialise(false);
 
     gkWindowSystem *sys = m_private->windowsystem = new gkWindowSystem();

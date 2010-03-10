@@ -56,8 +56,10 @@ public:
     ~gkRenderFactoryPrivate();
 
     void createRenderSystem(Ogre::Root *, OgreRenderSystem);
+	void createParticleSystem(Ogre::Root*);
 private:
     Ogre::Plugin *m_renderSystem;
+	Ogre::Plugin *m_particleSystem;
 };
 
 

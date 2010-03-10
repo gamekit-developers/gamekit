@@ -435,7 +435,8 @@ include_directories( ${OGRELITE_SOURCE_DIR}/OgreMain/include/OSX )
 endif ()
 
 include_directories(
-    ${OGREKIT_OGRE_INCLUDE} 
+    ${OGREKIT_OGRE_INCLUDE}
+    ${OGRELITE_SOURCE_DIR}/PlugIns/ParticleFX/include
     ${OGREKIT_OIS_INCLUDE}
     ${OGREKIT_LUA_INCLUDE}
     ${GAMEKIT_SERIALIZE_BLENDER}
@@ -456,6 +457,7 @@ include_directories(
 
 link_libraries(
     ${OGREKIT_OGRE_LIBS}
+    Plugin_ParticleFX
     ${GAMEKIT_SERIALIZE_BLENDER_TARGET}
     ${GAMEKIT_SERIALIZE_BULLET_TARGET}
     ${OGREKIT_BULLET_LIBS}

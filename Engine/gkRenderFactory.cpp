@@ -43,6 +43,8 @@
 #include "OgreD3D10Plugin.h"
 #endif
 
+#include "OgreParticleFXPlugin.h"
+
 OgreRenderSystem gkFindRenderSystem(OgreRenderSystem wanted)
 {
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
@@ -67,13 +69,19 @@ OgreRenderSystem gkFindRenderSystem(OgreRenderSystem wanted)
 
 
 gkRenderFactoryPrivate::gkRenderFactoryPrivate() :
-        m_renderSystem(0)
+        m_renderSystem(0), m_particleSystem(0)
 {
 }
 
 
 gkRenderFactoryPrivate::~gkRenderFactoryPrivate()
 {
+	if(m_particleSystem)
+	{
+		delete m_particleSystem;
+		m_particleSystem = 0;
+	}
+
     if (m_renderSystem)
     {
         delete m_renderSystem;
@@ -120,4 +128,10 @@ void gkRenderFactoryPrivate::createRenderSystem(Ogre::Root* r, OgreRenderSystem 
     }
 
     GK_ASSERT(m_renderSystem);
+}
+
+void gkRenderFactoryPrivate::createParticleSystem(Ogre::Root* r)
+{
+	m_particleSystem = new Ogre::ParticleFXPlugin();
+	r->installPlugin(m_particleSystem);
 }

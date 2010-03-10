@@ -28,6 +28,8 @@
 #include "OgreTexture.h"
 #include "OgreTextureManager.h"
 #include "OgreMaterialManager.h"
+#include "OgreParticleSystemManager.h"
+
 #include "gkBlendFile.h"
 #include "gkBlendLoader.h"
 #include "gkSceneManager.h"
@@ -253,6 +255,13 @@ void gkBlendFile::buildTextFiles(void)
 					OGRE_NEW MemoryDataStream((void*)str.c_str(), str.size()));
 
 				Ogre::MaterialManager::getSingleton().parseScript(memStream, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+			}
+			else if(tf->getName().find(".particle") != gkString::npos)
+			{
+				DataStreamPtr memStream(
+					OGRE_NEW MemoryDataStream((void*)str.c_str(), str.size()));
+
+				Ogre::ParticleSystemManager::getSingleton().parseScript(memStream, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 			}
         }
     }
