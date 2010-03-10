@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -83,6 +83,8 @@ public:
     void substep(gkScalar tick);
 
     void createParentChildHierarchy(void);
+
+	void EnableContacts(bool enable) { m_handleContacts = enable; }
 
     // Creates the runtime body.
     // gkRigidBody takes care of setting motion states, as well as

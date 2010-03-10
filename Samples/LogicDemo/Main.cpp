@@ -81,6 +81,8 @@ public:
 
 		CreateMomoPlayerLogic();
 
+		CreatePlayerCollisionLogic();
+
 		CreateLoadUnloadLogic();
 
 		m_tree->solveOrder();
@@ -124,6 +126,19 @@ public:
 		m_cameraSetter->getUpdate()->setValue(true);
 		m_cameraSetter->getInput()->setValue(gkString("View"));
 		m_cameraSetter->getJustOnce()->setValue(true);
+	}
+
+	void CreatePlayerCollisionLogic()
+	{
+		gkParticleNode* particle = m_tree->createNode<gkParticleNode>();
+		particle->getParticleSystemName()->setValue(gkString("Dust"));
+
+		gkCollisionNode* collision = m_tree->createNode<gkCollisionNode>();
+		collision->getEnable()->setValue(true);
+		collision->getCollidesWith()->setValue(gkString("Cube"));
+		collision->getTarget()->link(m_playerSetter->getOutput());
+		collision->getHasCollided()->link(particle->getCreate());
+		collision->getContactPosition()->link(particle->getPosition());
 	}
 
 	void CreateMomoPlayerLogic()

@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -76,6 +76,7 @@
 #include "Logic/gkAnimationNode.h"
 #include "Logic/gkArcBallNode.h"
 #include "Logic/gkButtonNode.h"
+#include "Logic/gkCollisionNode.h"
 #include "Logic/gkCursorNode.h"
 #include "Logic/gkExitNode.h"
 #include "Logic/gkExpressionNode.h"
@@ -91,6 +92,7 @@
 #include "Logic/gkNewMotionNode.h"
 #include "Logic/gkNodeManager.h"
 #include "Logic/gkObjectNode.h"
+#include "Logic/gkParticleNode.h"
 #include "Logic/gkPickNode.h"
 #include "Logic/gkPrintNode.h"
 #include "Logic/gkRandomNode.h"

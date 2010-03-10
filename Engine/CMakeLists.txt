@@ -65,6 +65,7 @@ set(Core_HEADER
     gkUtils.h
     gkVariable.h
     gkWindowSystem.h
+    OgreKit.h
     Utils/utCommon.h
     Utils/utStream.h
     Utils/utString.h
@@ -143,6 +144,8 @@ set(NLogic_SOURCE
     Logic/gkPickNode.cpp
     Logic/gkTrackNode.cpp
     Logic/gkSetterNode.cpp
+    Logic/gkCollisionNode.cpp
+    Logic/gkParticleNode.cpp
 )
 
 set(NLogic_HEADER
@@ -174,6 +177,8 @@ set(NLogic_HEADER
     Logic/gkPickNode.h
     Logic/gkTrackNode.h
     Logic/gkSetterNode.h
+    Logic/gkCollisionNode.h
+    Logic/gkParticleNode.h
 )
 
 source_group(LogicNodes\\Header FILES ${NLogic_HEADER})
