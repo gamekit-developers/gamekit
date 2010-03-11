@@ -63,6 +63,10 @@ By default there is a track node (for the camera) that follows momo orientation 
 	Reload momo.
 	(This returns momo to the original position and orientation.)
 	
+<SPACE>
+	If you are close to an object then momo will grab it while <SPACE> is pressed.
+	Release <SPACE> to throw the object.
+	
 ////////////////////////////////////////////////////////////////
 
 Notes:

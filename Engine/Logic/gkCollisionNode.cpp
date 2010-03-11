@@ -41,6 +41,7 @@ m_bBody(0)
 	ADD_ISOCK(*getTarget(), this, gkLogicSocket::ST_GAME_OBJECT);
 	ADD_ISOCK(*getCollidesWith(), this, gkLogicSocket::ST_STRING);
 	ADD_OSOCK(*getHasCollided(), this, gkLogicSocket::ST_BOOL);
+	ADD_OSOCK(*getCollided(), this, gkLogicSocket::ST_GAME_OBJECT);
 	ADD_OSOCK(*getContactPosition(), this, gkLogicSocket::ST_VECTOR);
 	
 	gkScene* pScene = gkEngine::getSingleton().getActiveScene();
@@ -83,6 +84,7 @@ void gkCollisionNode::update(Real tick)
 			if(c.collider->getObject()->getName().find(getCollidesWith()->getValueString()) != -1)
 			{
 				getContactPosition()->setValue(gkVector3(c.point.getPositionWorldOnA()));
+				getCollided()->setValue(c.collider->getObject());
 				getHasCollided()->setValue(true);
 				break;
 			}

@@ -80,6 +80,7 @@
 #include "Logic/gkCursorNode.h"
 #include "Logic/gkExitNode.h"
 #include "Logic/gkExpressionNode.h"
+#include "Logic/gkGrabNode.h"
 #include "Logic/gkGroupNode.h"
 #include "Logic/gkIfNode.h"
 #include "Logic/gkLogicCommon.h"

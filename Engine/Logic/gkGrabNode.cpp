@@ -25,7 +25,8 @@
 -------------------------------------------------------------------------------
 */
 
-#include "gkPickNode.h"
+#include "gkGrabNode.h"
+#include "gkRigidBody.h"
 #include "gkEngine.h"
 #include "gkScene.h"
 #include "gkDynamicsWorld.h"
@@ -35,63 +36,58 @@
 
 using namespace Ogre;
 
-gkPickNode::gkPickNode(gkLogicTree *parent, size_t id)
+gkGrabNode::gkGrabNode(gkLogicTree *parent, size_t id)
 : gkLogicNode(parent, id),
+m_target(0),
 m_constraint(0),
 m_hitPos(0, 0, 0),
 m_oldPickingPos(0, 0, 0),
 m_oldPickingDist(0)
 {
-	ADD_ISOCK(*getEnable(), this, gkLogicSocket::ST_BOOL);
-	ADD_ISOCK(*getCreatePick(), this, gkLogicSocket::ST_BOOL);
-	ADD_ISOCK(*getReleasePick(), this, gkLogicSocket::ST_BOOL);
-	ADD_ISOCK(*getUpdate(), this, gkLogicSocket::ST_BOOL);
+	ADD_ISOCK(*getCreateGrab(), this, gkLogicSocket::ST_BOOL);
+	ADD_ISOCK(*getReleaseGrab(), this, gkLogicSocket::ST_BOOL);
+	ADD_ISOCK(*getTarget(), this, gkLogicSocket::ST_GAME_OBJECT);
+	ADD_ISOCK(*getGrabDirection(), this, gkLogicSocket::ST_VECTOR);
+	ADD_ISOCK(*getReleaseVelocity(), this, gkLogicSocket::ST_VECTOR);
 
-	ADD_ISOCK(*getX(), this, gkLogicSocket::ST_REAL);
-	ADD_ISOCK(*getY(), this, gkLogicSocket::ST_REAL);
+	getReleaseVelocity()->setValue(gkVector3(0, 0, 0));
 }
 
-gkPickNode::~gkPickNode()
+gkGrabNode::~gkGrabNode()
 {
-	ReleasePick();
+	ReleaseGrab();
 }
 
-bool gkPickNode::evaluate(Real tick)
+bool gkGrabNode::evaluate(Real tick)
 {
-	bool enable = getEnable()->getValueBool();
+	m_target = getTarget()->getValueGameObject();
+	
+	return m_target && m_target->isLoaded();
+}
 
-	if(!enable)
+void gkGrabNode::update(Real tick)
+{
+	if(getReleaseGrab()->getValueBool())
 	{
-		ReleasePick();
+		ReleaseGrab();
 	}
-
-	return enable && (getCreatePick()->getValueBool() || getReleasePick()->getValueBool() || getUpdate()->getValueBool());
-}
-
-void gkPickNode::update(Real tick)
-{
-	if(getCreatePick()->getValueBool())
+	else if(getCreateGrab()->getValueBool())
 	{
-		CreatePick();
-	}
-	else if(getReleasePick()->getValueBool())
-	{
-		ReleasePick();
+		CreateGrab();
 	}
 	else
 	{
-		UpdatePick();
+		UpdateGrab();
 	}
 }
 
-void gkPickNode::CreatePick()
+void gkGrabNode::CreateGrab()
 {
-	ReleasePick();
+	Vector3 from = m_target->getPosition();
+	
+	Vector3 dir = m_target->getOrientation() * getGrabDirection()->getValueVector3();
 
-	Ray ray = gkUtils::CreateCameraRay(getX()->getValueReal(), getY()->getValueReal());
-
-	Vector3 from = ray.getOrigin();
-	Vector3 to = ray.getOrigin() + ray.getDirection();
+	Vector3 to = m_target->getPosition() + dir;
 
 	btVector3 rayFrom(from.x, from.y, from.z);
 	btVector3 rayTo(to.x, to.y, to.z);
@@ -146,10 +142,12 @@ void gkPickNode::CreatePick()
 	}
 }
 
-void gkPickNode::ReleasePick()
+void gkGrabNode::ReleaseGrab()
 {
 	if(m_constraint)
 	{
+		GK_ASSERT(m_constraint);
+
 		gkScene* pScene = gkEngine::getSingleton().getActiveScene();
 
 		GK_ASSERT(pScene);
@@ -163,22 +161,22 @@ void gkPickNode::ReleasePick()
 		delete m_constraint;
 
 		m_constraint = 0;
+
+		gkRigidBody* pBody = static_cast<gkRigidBody*>(m_pickedBody->getUserPointer());
+
+		pBody->setLinearVelocity(m_target->getOrientation() * getReleaseVelocity()->getValueVector3());
 	}
 }
 
-void gkPickNode::UpdatePick()
+void gkGrabNode::UpdateGrab()
 {
 	if(m_constraint)
 	{
-		Ray ray = gkUtils::CreateCameraRay(getX()->getValueReal(), getY()->getValueReal());
-
-		Vector3 dir(ray.getDirection());
-		
-		dir.normalise();
+		Vector3 dir = m_target->getOrientation() * getGrabDirection()->getValueVector3();
 		
 		dir *= m_oldPickingDist;
 
-		Vector3 newPivotB = ray.getOrigin() + dir;
+		Vector3 newPivotB = m_target->getPosition() + dir;
 
 		m_constraint->setPivotB(btVector3(newPivotB.x, newPivotB.y, newPivotB.z));
 	}

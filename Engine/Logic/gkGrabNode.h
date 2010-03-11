@@ -24,45 +24,60 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkCollisionNode_h_
-#define _gkCollisionNode_h_
+#ifndef _gkGrabNode_h_
+#define _gkGrabNode_h_
 
 #include "gkLogicNode.h"
+#include "LinearMath/btVector3.h"
 
-class gkCollisionNode : public gkLogicNode
+class btPoint2PointConstraint;
+class btRigidBody;
+
+class gkGrabNode : public gkLogicNode
 {
 public:
 	enum 
 	{
-		ENABLE,
+		CREATE_GRAB,
+		RELEASE_GRAB,
 		TARGET,
-		COLLIDES_WITH,
-		HAS_COLLIDED,
-		COLLIDED_OBJ,
-		CONTACT_POSITION,
+		GRAB_DIRECTION,
+		RELEASE_VEL,
 		MAX_SOCKETS
 	};
 
-	gkCollisionNode(gkLogicTree *parent, size_t id);
+	gkGrabNode(gkLogicTree *parent, size_t id);
 
-	~gkCollisionNode();
+	~gkGrabNode();
 
 	void update(Ogre::Real tick);
 
 	bool evaluate(Ogre::Real tick);
 
-	GK_INLINE gkLogicSocket* getEnable() {return &m_sockets[ENABLE];}
+	GK_INLINE gkLogicSocket* getCreateGrab() {return &m_sockets[CREATE_GRAB];}
+	GK_INLINE gkLogicSocket* getReleaseGrab() {return &m_sockets[RELEASE_GRAB];}
 	GK_INLINE gkLogicSocket* getTarget() {return &m_sockets[TARGET];}
-	GK_INLINE gkLogicSocket* getCollidesWith() {return &m_sockets[COLLIDES_WITH];}
-	GK_INLINE gkLogicSocket* getHasCollided() {return &m_sockets[HAS_COLLIDED];}
-	GK_INLINE gkLogicSocket* getCollided() {return &m_sockets[COLLIDED_OBJ];}
-	GK_INLINE gkLogicSocket* getContactPosition() {return &m_sockets[CONTACT_POSITION];}
+	GK_INLINE gkLogicSocket* getGrabDirection() {return &m_sockets[GRAB_DIRECTION];}
+	GK_INLINE gkLogicSocket* getReleaseVelocity() {return &m_sockets[RELEASE_VEL];}
+
+private:
+
+	void CreateGrab();
+	void ReleaseGrab();
+	void UpdateGrab();
 
 private:
 
 	gkLogicSocket m_sockets[MAX_SOCKETS];
 
-	gkRigidBody* m_bBody;
+	gkGameObject* m_target;
+
+	btPoint2PointConstraint* m_constraint;
+
+	btRigidBody* m_pickedBody;
+	btVector3 m_hitPos;
+	btVector3 m_oldPickingPos;
+	Ogre::Real m_oldPickingDist;
 };
 
-#endif//_gkCollisionNode_h_
+#endif//_gkGrabNode_h_

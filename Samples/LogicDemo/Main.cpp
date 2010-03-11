@@ -32,7 +32,7 @@ class OgreKit : public gkCoreApplication
 public:
 
     OgreKit(const gkString &blend) 
-		: m_blend(blend), m_tree(0), m_ctrlKeyNode(0), 
+		: m_blend(blend), m_tree(0), m_spaceKeyNode(0), m_ctrlKeyNode(0), 
 		m_wKeyNode(0), m_sKeyNode(0), m_mouseNode(0), m_leftMouseNode(0), m_rightMouseNode(0),
 		m_playerSetter(0), m_meshMomoSetter(0), m_cameraSetter(0)
 
@@ -86,6 +86,9 @@ public:
 	{
 		m_tree = gkNodeManager::getSingleton().create();
 
+		m_spaceKeyNode = m_tree->createNode<gkKeyNode>();
+		m_spaceKeyNode->setKey(KC_SPACEKEY);
+
 		m_ctrlKeyNode = m_tree->createNode<gkKeyNode>();
 		m_ctrlKeyNode->setKey(KC_LEFTCTRLKEY);
 
@@ -127,6 +130,18 @@ public:
 		CreateMomoCollisionLogic();
 
 		CreateMomoLoadUnloadLogic();
+
+		CreateMomoGrabLogic();
+	}
+
+	void CreateMomoGrabLogic()
+	{
+		gkGrabNode* grab = m_tree->createNode<gkGrabNode>();
+		grab->getTarget()->link(m_playerSetter->getOutput());
+		grab->getCreateGrab()->link(m_spaceKeyNode->getPress());
+		grab->getReleaseGrab()->link(m_spaceKeyNode->getRelease());
+		grab->getGrabDirection()->setValue(gkVector3(0, 1.5f, 0));
+		grab->getReleaseVelocity()->setValue(gkVector3(0, 10.5f, 0));
 	}
 
 	void CreateMomoCollisionLogic()
@@ -329,6 +344,8 @@ private:
 	gkString m_blend;
 
 	gkLogicTree* m_tree;
+
+	gkKeyNode* m_spaceKeyNode;
 
 	gkKeyNode* m_ctrlKeyNode;
 
