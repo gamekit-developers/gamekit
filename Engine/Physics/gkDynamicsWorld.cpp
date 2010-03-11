@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -246,7 +246,6 @@ void gkDynamicsWorld::step(gkScalar tick)
 
 void gkDynamicsWorld::substep(gkScalar tick)
 {
-
     if (m_handleContacts)
     {
         int nr = m_dispatcher->getNumManifolds(), i, j;
@@ -267,16 +266,33 @@ void gkDynamicsWorld::substep(gkScalar tick)
             btPersistentManifold* manifold = m_dispatcher->getManifoldByIndexInternal(i);
 
             gkRigidBody* colA = static_cast<gkRigidBody*>(static_cast<btCollisionObject*>(manifold->getBody0())->getUserPointer());
+
+            if (colA->wantsContactInfo())
+			{
+				gkRigidBody::ContactArray &destA = colA->getContacts();
+                destA.resize(0);
+			}
+
+            gkRigidBody* colB = static_cast<gkRigidBody*>(static_cast<btCollisionObject*>(manifold->getBody1())->getUserPointer());
+
+            if (colB->wantsContactInfo())
+			{
+	            gkRigidBody::ContactArray &destB = colB->getContacts();
+                destB.resize(0);
+			}
+		}
+
+        for (i = 0; i < nr; ++i)
+        {
+            btPersistentManifold* manifold = m_dispatcher->getManifoldByIndexInternal(i);
+
+            gkRigidBody* colA = static_cast<gkRigidBody*>(static_cast<btCollisionObject*>(manifold->getBody0())->getUserPointer());
             gkRigidBody* colB = static_cast<gkRigidBody*>(static_cast<btCollisionObject*>(manifold->getBody1())->getUserPointer());
 
             int nrc = manifold->getNumContacts();
 
             gkRigidBody::ContactArray &destA = colA->getContacts();
-            if (colA->wantsContactInfo())
-                destA.resize(0);
             gkRigidBody::ContactArray &destB = colB->getContacts();
-            if (colB->wantsContactInfo())
-                destB.resize(0);
 
             if (nrc)
             {
