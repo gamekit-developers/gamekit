@@ -31,6 +31,7 @@
 #include "OgreRoot.h"
 #include "OgreParticleSystem.h"
 #include "OgreParticleEmitter.h"
+#include "LinearMath/btMinMax.h"
 
 using namespace Ogre;
 
@@ -116,7 +117,7 @@ m_time_to_live(0)
 
 	for(unsigned short i=0; i<n; i++)
 	{
-		m_time_to_live = max(m_time_to_live, m_particleSystem->getEmitter(i)->getTimeToLive());
+		m_time_to_live = btMax(m_time_to_live, m_particleSystem->getEmitter(i)->getTimeToLive());
 	}
 
 	m_time_to_live *= 1000;
