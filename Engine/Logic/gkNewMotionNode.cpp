@@ -59,7 +59,7 @@ void gkNewMotionNode::update(gkScalar tick)
 
 void gkRotateNode::DoUpdate()
 {
-	getTarget()->getValueGameObject()->rotate(m_XYZ, TRANSFORM_LOCAL);
+	getTarget()->getValueGameObject()->rotate(-m_XYZ, TRANSFORM_LOCAL);
 }
 
 ////////////////////////////////////

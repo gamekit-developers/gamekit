@@ -15,7 +15,7 @@ Following are the explanations for the keyboard and mouse control.
 	Moves the cursor (arrow) to allow interaction with objects.
 	
 <LEFT CTRL> + <LEFT MOUSE BUTTON> 
-	Makes the camera to look at the clicked point in the screen.
+	Makes the camera to look at the clicked point in the scene.
 	(This will be the center of the arcball)
 
 <LEFT CTRL> + <MOUSE WHEEL MOVE> 
@@ -39,9 +39,10 @@ Following are the explanations for the keyboard and mouse control.
 ///////////////Momo control///////////////////////////////////
 
 By default there is a track node (for the camera) that follows momo orientation and translation.
+(Camera will not follow momo when <LEFT CTRL> is pressed)
 
 <MOUSE MOVE> 
-	Rotates momo to look around. 
+	Rotates momo to look around (this functionality is disabled by logic when <LEFT CTRL> is pressed). 
 	
 <W>
 	Moves momo forward.
@@ -56,9 +57,11 @@ By default there is a track node (for the camera) that follows momo orientation 
 <L>
 	Load momo.
 	This will re-enable automatically all the logic nodes related to momo.
+	(This returns momo to the original position and orientation.)
 	
 <R>
 	Reload momo.
+	(This returns momo to the original position and orientation.)
 	
 ////////////////////////////////////////////////////////////////
 

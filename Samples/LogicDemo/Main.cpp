@@ -44,9 +44,7 @@ public:
 		m_prefs.load(path.getPath());
     }
 
-	void tick(gkScalar rate)
-	{
-	}
+	void tick(gkScalar rate){}
 
     bool load()
     {
@@ -63,29 +61,21 @@ public:
 
         gkScene* pScene = scit.peekNext();
 
-		m_prefs.blendermat = true;
-        
 		pScene->load();
+
+		CreateCommonTree();
+
+		CreateExitLogic();
+
+		CreateCameraLogic();
+
+		CreateMomoLogic();
+		
+		m_tree->solveOrder();
 
 		gkGameObject* pCamera = pScene->getMainCamera();
 
 		GK_ASSERT(pCamera);
-
-		CreateCommonTree();
-
-		ExitLogic();
-
-		CreateCameraLogic();
-		
-		CreateMomoMeshLogic();
-
-		CreateMomoPlayerLogic();
-
-		CreatePlayerCollisionLogic();
-
-		CreateLoadUnloadLogic();
-
-		m_tree->solveOrder();
 
 		pCamera->attachLogic(m_tree);
 
@@ -128,7 +118,18 @@ public:
 		m_cameraSetter->getJustOnce()->setValue(true);
 	}
 
-	void CreatePlayerCollisionLogic()
+	void CreateMomoLogic()
+	{
+		CreateMomoAnimationLogic();
+
+		CreateMomoMoveLogic();
+
+		CreateMomoCollisionLogic();
+
+		CreateMomoLoadUnloadLogic();
+	}
+
+	void CreateMomoCollisionLogic()
 	{
 		gkParticleNode* particle = m_tree->createNode<gkParticleNode>();
 		particle->getParticleSystemName()->setValue(gkString("Dust"));
@@ -141,52 +142,46 @@ public:
 		collision->getContactPosition()->link(particle->getPosition());
 	}
 
-	void CreateMomoPlayerLogic()
+	void CreateMomoMoveLogic()
 	{
-		gkNewMotionNode* motion = m_tree->createNode<gkRotateNode>();
+		{
+			// Rotate Momo
 
-		motion->getUpdate()->link(m_ctrlKeyNode->getNotIsDown());
-		motion->getX()->setValue(0);
-		motion->getY()->setValue(0);
-		motion->getZ()->link(m_mouseNode->getRelX());
-		motion->getTarget()->link(m_playerSetter->getOutput());
+			gkNewMotionNode* motion = m_tree->createNode<gkRotateNode>();
+
+			motion->getUpdate()->link(m_ctrlKeyNode->getNotIsDown());
+			motion->getX()->setValue(0);
+			motion->getY()->setValue(0);
+			motion->getZ()->link(m_mouseNode->getRelX());
+			motion->getTarget()->link(m_playerSetter->getOutput());
+		}
 
 		{
-			// move forward
-
-			gkIfNode* ifNode = m_tree->createNode<gkIfNode>();
-			ifNode->setStatement(CMP_AND);
-			ifNode->getA()->link(m_ctrlKeyNode->getNotIsDown());
-			ifNode->getB()->link(m_wKeyNode->getIsDown());
+			// move Momo forward
 
 			gkNewMotionNode* motion = m_tree->createNode<gkLinearVelNode>();
 
-			motion->getUpdate()->link(ifNode->getTrue());
+			motion->getUpdate()->link(m_wKeyNode->getIsDown());
 			motion->getX()->setValue(0);
-			motion->getY()->setValue(3);
+			motion->getY()->setValue(1);
 			motion->getZ()->setValue(0);
 			motion->getTarget()->link(m_playerSetter->getOutput());
 		}
 
 		{
-			// move back
-
-			gkIfNode* ifNode = m_tree->createNode<gkIfNode>();
-			ifNode->setStatement(CMP_AND);
-			ifNode->getA()->link(m_ctrlKeyNode->getNotIsDown());
-			ifNode->getB()->link(m_sKeyNode->getIsDown());
+			// move Momo back
 
 			gkNewMotionNode* motion = m_tree->createNode<gkLinearVelNode>();
 
-			motion->getUpdate()->link(ifNode->getTrue());
+			motion->getUpdate()->link(m_sKeyNode->getIsDown());
 			motion->getX()->setValue(0);
-			motion->getY()->setValue(-2);
+			motion->getY()->setValue(-0.5f);
 			motion->getZ()->setValue(0);
 			motion->getTarget()->link(m_playerSetter->getOutput());
 		}
 	}
 
-	void CreateLoadUnloadLogic()
+	void CreateMomoLoadUnloadLogic()
 	{
 		{
 			// reload
@@ -219,7 +214,7 @@ public:
 		}
 	}
 
-	void CreateMomoMeshLogic()
+	void CreateMomoAnimationLogic()
 	{
 		gkAnimationNode* anim = m_tree->createNode<gkAnimationNode>();
 		anim->getTarget()->link(m_meshMomoSetter->getOutput());
@@ -256,7 +251,7 @@ public:
 		TrackLogic();
 	}
 
-	void ExitLogic()
+	void CreateExitLogic()
 	{
 		gkExitNode* exit = m_tree->createNode<gkExitNode>();
 
@@ -276,10 +271,6 @@ public:
 		cursor->getX()->link(m_mouseNode->getAbsX());
 		cursor->getY()->link(m_mouseNode->getAbsY());
 		cursor->getMaterialName()->setValue(gkString("ArrowCursor"));
-		cursor->getWidth()->setValue(32);
-		cursor->getHeight()->setValue(32);
-
-		cursor->update(0);
 	}
 
 	void PickLogic()
@@ -330,7 +321,7 @@ public:
 		track->getTarget()->link(m_cameraSetter->getOutput());
 		track->getTrack()->link(m_playerSetter->getOutput());
 
-		track->getOffset()->setValue(gkVector3(0, -1.5, -0.2));
+		track->getOffset()->setValue(gkVector3(0, -2, 0.2));
 	}
 
 private:
@@ -360,7 +351,17 @@ private:
 
 int main(int argc, char **argv)
 {
+	// See ReadMe.txt for how to use this demo
+
     TestMemory;
+
+	// This demo only works with momo_ogre_plus.blend file because it contains
+	// (Ogre) material definitions and (Ogre) particle definitions inside blender's TX blocks.
+	// Also logic is making reference to concrete objects inside momo_ogre_plus.blend.
+
+	// If you want to avoid blender's TX blocks in order to make (Ogre) materials and particles
+	// generic to all blender files then move them outside and load as standard Ogre resources...
+	// (Use OgreKitResource.cfg)
     OgreKit okit(gkUtils::getFile("./data/momo_ogre_plus.blend"));
     okit.run();
     return 0;
