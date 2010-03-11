@@ -50,12 +50,12 @@ m_oldPickingDist(0)
 	ADD_ISOCK(*getGrabDirection(), this, gkLogicSocket::ST_VECTOR);
 	ADD_ISOCK(*getReleaseVelocity(), this, gkLogicSocket::ST_VECTOR);
 
-	getReleaseVelocity()->setValue(gkVector3(0, 0, 0));
+	getReleaseVelocity()->setValue(gkVector3::ZERO);
 }
 
 gkGrabNode::~gkGrabNode()
 {
-	ReleaseGrab();
+	ReleaseGrab(false);
 }
 
 bool gkGrabNode::evaluate(Real tick)
@@ -69,7 +69,7 @@ void gkGrabNode::update(Real tick)
 {
 	if(getReleaseGrab()->getValueBool())
 	{
-		ReleaseGrab();
+		ReleaseGrab(true);
 	}
 	else if(getCreateGrab()->getValueBool())
 	{
@@ -83,6 +83,8 @@ void gkGrabNode::update(Real tick)
 
 void gkGrabNode::CreateGrab()
 {
+	if(m_constraint) return;
+
 	Vector3 from = m_target->getPosition();
 	
 	Vector3 dir = m_target->getOrientation() * getGrabDirection()->getValueVector3();
@@ -142,12 +144,10 @@ void gkGrabNode::CreateGrab()
 	}
 }
 
-void gkGrabNode::ReleaseGrab()
+void gkGrabNode::ReleaseGrab(bool applyVel)
 {
 	if(m_constraint)
 	{
-		GK_ASSERT(m_constraint);
-
 		gkScene* pScene = gkEngine::getSingleton().getActiveScene();
 
 		GK_ASSERT(pScene);
@@ -160,11 +160,19 @@ void gkGrabNode::ReleaseGrab()
 
 		delete m_constraint;
 
+		if(applyVel)
+		{
+			gkVector3 vel = getReleaseVelocity()->getValueVector3();
+
+			if(vel != gkVector3::ZERO)
+			{
+				gkRigidBody* pBody = static_cast<gkRigidBody*>(m_pickedBody->getUserPointer());
+
+				pBody->setLinearVelocity(m_target->getOrientation() * vel);
+			}
+		}
+
 		m_constraint = 0;
-
-		gkRigidBody* pBody = static_cast<gkRigidBody*>(m_pickedBody->getUserPointer());
-
-		pBody->setLinearVelocity(m_target->getOrientation() * getReleaseVelocity()->getValueVector3());
 	}
 }
 

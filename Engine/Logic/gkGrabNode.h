@@ -63,7 +63,7 @@ public:
 private:
 
 	void CreateGrab();
-	void ReleaseGrab();
+	void ReleaseGrab(bool applyVel);
 	void UpdateGrab();
 
 private:
