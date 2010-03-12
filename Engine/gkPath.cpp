@@ -55,6 +55,8 @@ const gkString gkPath::SEPERATOR = "/";
 
 
 
+
+
 void gkGetCurrentDir(gkString &buf)
 {
     char buffer[240];
@@ -249,6 +251,31 @@ bool gkPath::isAbs(void) const
     return false;
 }
 
+gkString gkPath::getBundlePath(void) const
+{
+#ifdef __APPLE__
+#define MAXPATHLEN 512
+    CFURLRef bundleURL;
+    CFStringRef pathStr;
+    static char path[MAXPATHLEN];
+    memset(path, MAXPATHLEN, 0);
+    CFBundleRef mainBundle = CFBundleGetMainBundle();
+
+    bundleURL = CFBundleCopyBundleURL(mainBundle);
+    pathStr = CFURLCopyFileSystemPath(bundleURL, kCFURLPOSIXPathStyle);
+    CFStringGetCString(pathStr, path, MAXPATHLEN, kCFStringEncodingASCII);
+    CFRelease(pathStr);
+    CFRelease(bundleURL);
+
+    char* lastSlash = 0;
+    if (lastSlash = strrchr((char*)path, '/'))
+        *lastSlash = '\0';
+
+    return path;
+#endif
+    return "";
+}
+
 
 bool gkPath::isRel(void) const
 {
@@ -273,6 +300,19 @@ bool gkPath::isDir(void) const
 {
     struct stat st;
     return stat(m_path.c_str(), &st) == 0 && S_ISDIR(st.st_mode);
+}
+
+bool gkPath::isFileInBundle(void) const
+{
+#ifdef __APPLE__
+    char newName[1024];
+    sprintf(newName, "%s/%s/%s", getBundlePath().c_str(), "Contents/Resources", m_path.c_str());
+    struct stat st;
+    return stat(newName, &st) == 0 && S_ISREG(st.st_mode);
+#else
+    return isFile();
+#endif
+
 }
 
 

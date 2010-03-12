@@ -11,7 +11,7 @@ include_directories(${OGRELITE_SOURCE_DIR}/OgreMain/include/OSX)
 	SET (NibFile MainMenu.nib)
 endif()
 
-set(SRC momo_ogre.blend Main.cpp)
+set(SRC momo_ogre.blend Main.cpp OnLoad.lua)
 
 include_directories(
     ${OGREKIT_OGRE_INCLUDE}
@@ -32,15 +32,17 @@ if (WIN32)
 		link_libraries(ws2_32)
 	endif (CMAKE_COMPILER_IS_GNUCXX)
 endif(WIN32)
+set(HiddenCMakeLists ../CMakeLists.txt)
+source_group(ParentCMakeLists FILES ${HiddenCMakeLists})
 
 if (APPLE)
 	add_executable(
 	OgreKit 
 	MACOSX_BUNDLE
 	MainMenu.nib
-	${SRC}
+	${SRC} ${HiddenCMakeLists}
 )
 else ()
-	add_executable(OgreKit ${SRC})
+	add_executable(OgreKit ${SRC}  ${HiddenCMakeLists})
 	install(TARGETS OgreKit RUNTIME DESTINATION ${OGREKIT_INSTALL_PREFIX})
 endif()

@@ -124,8 +124,12 @@ void gkEntity::playAction(const gkString& act, gkScalar blend)
         {
             if (act != m_active->getName())
             {
-                m_active = m_skeleton->getAction(act);
-                m_actionMgr.setAction(m_active);
+                if (m_skeleton->hasAction(act))
+                {
+                    m_active = m_skeleton->getAction(act);
+                    m_actionMgr.setAction(m_active);
+                }
+                else return;
             }
 
             m_active->setBlendFrames(blend);

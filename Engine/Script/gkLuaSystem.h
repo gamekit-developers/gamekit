@@ -24,16 +24,13 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkLuaSystem_h_
-#define _gkLuaSystem_h_
+#ifndef _luSystem_h_
+#define _luSystem_h_
 
-#include "gkLuaType.h"
+#include "luUtils.h"
 
 
 // access to the system module
-extern int gkLuaSystem_initialize(gkLuaState *L);
-extern gkLuaTypeDef* gkLuaSystem_getType(void);
+extern void luSystem_Open(ltState *L);
 
-
-
-#endif//_gkLuaSystem_h_
+#endif//_luSystem_h_

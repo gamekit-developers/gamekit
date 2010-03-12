@@ -27,6 +27,7 @@
 #include <string.h>
 #include "gkLuaType.h"
 
+#if 0
 
 bool gkLuaBind::load(gkLuaState *L, gkLuaMethod &dest)
 {
@@ -478,3 +479,4 @@ void gkLuaBind::stacktrace(gkLuaState *L, const char *function)
             break;
     }
 }
+#endif

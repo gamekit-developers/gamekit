@@ -28,7 +28,7 @@
 #define _gkLuaType_h_
 
 #include "gkCommon.h"
-
+#if 0
 
 
 extern "C" {
@@ -131,6 +131,6 @@ public:
 
 };
 
-
+#endif
 
 #endif//_gkLuaType_h_

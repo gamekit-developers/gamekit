@@ -61,7 +61,7 @@ public:
 
 
     gkVariable(const gkString &n, bool dbg)
-    :       m_numeric(gkVector4::ZERO), m_string(Ogre::StringUtil::BLANK),
+    :       m_numeric(gkVector4::ZERO), m_string(n),
             m_type(VAR_NULL), m_name(n), m_debug(dbg)
     {
     }

@@ -29,6 +29,7 @@
 
 #include "gkCommon.h"
 #include "gkMathUtils.h"
+#include "gkEngine.h"
 #include "gkString.h"
 #include "OgreSingleton.h"
 
@@ -56,16 +57,23 @@ public:
 };
 
 struct lua_State;
+class luRefObject;
+typedef utHashTable<utIntHashKey, luRefObject*> luCallbacks;
+typedef utHashTableIterator<luCallbacks> luCallbackIterator;
 
 
 // Lua script representation  
 class gkLuaScript
 {
 protected:
-    int m_script;
+    luRefObject*    m_script, *m_main;
+    luCallbacks     m_functions;
+
     const gkString m_name, m_text;
     bool m_error;
     class gkLuaManager* m_owner;
+
+    bool handleError(lua_State *L);
 
 public:
     gkLuaScript(gkLuaManager *parent, const gkString& name, const gkString& text);
@@ -74,6 +82,10 @@ public:
     GK_INLINE const gkString& getName(void) {return m_name;}
     GK_INLINE bool compiled(void)           {return !m_error;}
 
+    void addFunction(int type, luRefObject *ob) { m_functions.insert(type, ob); }
+    bool hasFunction(int type) { return m_functions.find(type) != UT_NPOS; }
+
+    void update(gkScalar tickRate);
 
     // compile & run the script 
     bool execute(void);
@@ -85,17 +97,23 @@ class gkLuaManager : public Ogre::Singleton<gkLuaManager>
 {
 public:
     typedef utHashTable<gkHashedString, gkLuaScript*> ScriptMap;
+    typedef utList<gkLuaScript*> ScriptList;
 
 private:
-    lua_State *m_vm;
-    ScriptMap m_scripts;
+    lua_State   *L;
+    ScriptMap   m_scripts;
+    ScriptList  m_updateHooks;
 
 public:
     gkLuaManager();
     virtual ~gkLuaManager();
 
     // access to the lua virtual machine
-    GK_INLINE lua_State *getLua(void) {return m_vm;}
+    GK_INLINE lua_State *getLua(void) {return L;}
+
+    void addListener(int type, lua_State *L, int index);
+    void update(gkScalar tick);
+
 
     gkLuaScript* getScript(const gkString& name);
 

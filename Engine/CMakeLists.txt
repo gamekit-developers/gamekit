@@ -350,20 +350,38 @@ source_group(Physics\\Source FILES ${Physics_SOURCE})
 # ---------------------------------------------------------
 # Script Files
 # ---------------------------------------------------------
+
 set(Script_SOURCE
     # ----- Source ----- 
     Script/gkLuaManager.cpp
-    Script/gkLuaType.cpp
     Script/gkLuaSystem.cpp  
+    
+    Script/luUtils.cpp  
+    Script/luNodeTree.cpp
+    Script/luGameKit.cpp
+    Script/luEngine.cpp
+    Script/luInput.cpp
+    Script/luLoadable.cpp
+    Script/luScene.cpp
+    Script/luGameObjects.cpp
+    Script/luMath.cpp
 )
 
 set(Script_HEADER 
     # ----- Header ----- 
     Script/gkLuaManager.h
-    Script/gkLuaType.h
     Script/gkLuaSystem.h
-)
 
+    Script/luUtils.h  
+    Script/luNodeTree.h
+    Script/luGameKit.h
+    Script/luEngine.h
+    Script/luInput.h
+    Script/luLoadable.h
+    Script/luScene.h
+    Script/luGameObjects.h
+    Script/luMath.h
+)
 
 source_group(Script\\Header FILES ${Script_HEADER})
 source_group(Script\\Source FILES ${Script_SOURCE})

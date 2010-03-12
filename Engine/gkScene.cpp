@@ -40,6 +40,7 @@
 #include "gkScene.h"
 #include "gkLogicManager.h"
 #include "gkNodeManager.h"
+#include "gkLuaManager.h"
 #include "gkLogger.h"
 #include "gkDynamicsWorld.h"
 #include "gkRigidBody.h"
@@ -344,4 +345,6 @@ void gkScene::update(gkScalar tickRate)
     // update simulation
     if (m_physicsWorld) m_physicsWorld->step(tickRate);
 
+    // update script callbacks
+    gkLuaManager::getSingleton().update(tickRate);
 }

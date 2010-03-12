@@ -35,7 +35,7 @@ gkPrintNode::gkPrintNode(gkLogicTree *parent, size_t id) :
         gkLogicNode(parent, id)
 {
     ADD_ISOCK(m_sockets[0], this, gkLogicSocket::ST_BOOL);
-    ADD_ISOCK(m_sockets[1], this, gkLogicSocket::ST_VARIABLE);
+    ADD_ISOCK(m_sockets[1], this, gkLogicSocket::ST_STRING);
     m_sockets[0].setValue(true);
     m_sockets[1].setValue(0.f);
 }

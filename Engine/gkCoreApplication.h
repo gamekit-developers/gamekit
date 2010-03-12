@@ -46,6 +46,8 @@ protected:
     gkUserDefs  m_prefs;
 
     virtual bool load(void) {return false;}
+    virtual void tick(gkScalar rate) {};
+
 
 public:
     gkCoreApplication();

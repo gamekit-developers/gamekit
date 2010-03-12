@@ -50,6 +50,7 @@
 #include "gkTextFile.h"
 #include "gkEngine.h"
 #include "gkUserDefs.h"
+#include "gkLuaManager.h"
 
 using namespace Ogre;
 
@@ -263,6 +264,8 @@ void gkBlendFile::buildTextFiles(void)
 
 				Ogre::ParticleSystemManager::getSingleton().parseScript(memStream, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 			}
+			else if(tf->getName().find(".lua") != gkString::npos)
+                gkLuaManager::getSingleton().create(GKB_IDNAME(txt), str);
         }
     }
 }

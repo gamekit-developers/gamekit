@@ -28,85 +28,167 @@
 #include "gkLuaSystem.h"
 #include "gkLuaType.h"
 #include "gkTextManager.h"
+#include "luUtils.h"
+
+static gkLuaScript *gsCurrent = 0;
 
 
-gkLuaScript::gkLuaScript(gkLuaManager *parent, const gkString& name, const gkString& text)
-:       m_script(-1), m_name(name), m_text(text), m_error(false), m_owner(parent)
+gkLuaScript::gkLuaScript(gkLuaManager *parent, const gkString &name, const gkString &text)
+    :       m_script(0),m_main(0), m_name(name), m_text(text), m_error(false), m_owner(parent)
 {
 }
 
 gkLuaScript::~gkLuaScript()
 {
-    // replace with nil
-    if (m_script != -1) {
-        gkLuaState* L = m_owner->getLua();
-        lua_pushnil(L);
-        lua_replace(L, m_script);
+    ltState *L = m_owner->getLua();
+
+    luCallbackIterator it(m_functions);
+    while (it.hasMoreElements())
+    {
+        luRefObject *ref = it.getNext().second;
+        ref->unref(L);
+        delete ref;
     }
 
+    if (m_main != 0)
+    {
+        m_main->unref(L);
+        delete m_main;
+    }
+    if (m_script != 0)
+    {
+        m_script->unref(L);
+        delete m_script;
+    }
+}
+
+
+bool gkLuaScript::handleError(lua_State *L)
+{
+    printf("%s\n", lua_tostring(L, -1));
+    lua_pop(L, 1);
+    m_error = true;
+    gsCurrent = 0;
+    return false;
 }
 
 bool gkLuaScript::execute(void)
 {
     GK_ASSERT(m_owner);
+    gsCurrent = this;
 
-    if (m_error)
+    if (m_error) 
         return false;
 
-    gkLuaState* L = m_owner->getLua();
+    ltState *L = m_owner->getLua();
+    {
+        LUA_SCOPE_LOCK;
 
-    if (m_script == -1) {
+        if (m_script == 0)
+        {
+            // compile
+            if (luaL_loadbuffer(L, m_text.c_str(), m_text.size()-1, m_name.c_str()) != 0)
+                return handleError(L);
 
-        // compile
-        if (luaL_loadbuffer(L, m_text.c_str(), m_text.size()-1, m_name.c_str()) != 0) {
-            printf("%s\n", lua_tostring(L, -1));
-            lua_pop(L, 1);
+            bool has_main = true;
+            m_script = new luRefObject();
+            m_script->addRef(L, lua_gettop(L));
+        } 
 
-            m_error = true;
-            return false;
+        m_script->push(L);
+        if (lua_pcall(L, 0, 0, 0) != 0)
+            return handleError(L);
+
+        lua_getglobal(L, "Main");
+        if (lua_isfunction(L, -1))
+        {
+            if (lua_pcall(L, 0, 0, 0) != 0)
+                return handleError(L);
         }
+        else lua_pop(L, 1);
 
-        // save stack
-        m_script = lua_gettop(L);
-    }
-
-    GK_ASSERT(m_script != -1);
-    //gkLuaBind::stacktrace(L, "execute");
-
-    lua_pushvalue(L, m_script);
-
-    // do call
-    if (lua_pcall(L, 0, LUA_MULTRET, 0) != 0) {
-        printf("%s\n", lua_tostring(L, -1));
-        lua_pop(L, 1);
-        m_error = true;
-        return false;
+        lua_gc(L, LUA_GCCOLLECT, 0);
+        gsCurrent = 0;
     }
     return true;
 }
 
 
-
-gkLuaManager::gkLuaManager()
-:       m_vm(0)
+void gkLuaScript::update(gkScalar tickRate)
 {
-    m_vm = lua_open();
-    luaL_openlibs(m_vm);
-    gkLuaSystem_initialize(m_vm);
+    if (m_error || m_script == 0 || m_functions.empty())
+        return;
+
+
+    ltState *L = m_owner->getLua();
+    {
+        LUA_SCOPE_LOCK;
+        m_script->push(L);
+
+        luCallbackIterator it(m_functions);
+        while (it.hasMoreElements())
+        {
+            LUA_SCOPE_LOCK;
+            it.getNext().second->push(L);
+            lua_pushnumber(L, tickRate);
+            if (lua_pcall(L, 1, 0, 0) != 0)
+            {
+                printf("%s\n", lua_tostring(L, -1));
+                lua_pop(L, 1);
+                m_error = true;
+                break;
+            }
+        }
+        lua_gc(L, LUA_GCSTEP, 0);
+    }
 }
 
 
+
+gkLuaManager::gkLuaManager()
+    :       L(0)
+{
+    L = lua_open();
+    {
+        LUA_SCOPE_LOCK;
+        luaL_openlibs(L);
+        luSystem_Open(L);
+    }
+}
 
 gkLuaManager::~gkLuaManager()
 {
     destroyAll();
-
-    if (m_vm)
-        lua_close(m_vm);
+    if (L) lua_close(L);
 }
 
+void gkLuaManager::addListener(int type, ltState *L, int index)
+{
+    if (gsCurrent != 0)
+    {
+        if (!gsCurrent->hasFunction(type))
+        {
+            luRefObject *ref = new luRefObject();
+            ref->addRef(L, index);
+            gsCurrent->addFunction(type, ref);
 
-gkLuaScript* gkLuaManager::getScript(const gkString& name)
+            if (m_updateHooks.find(gsCurrent) == 0)
+                m_updateHooks.push_back(gsCurrent);
+        }
+    }
+}
+
+void gkLuaManager::update(gkScalar tick)
+{
+    if (!m_updateHooks.empty())
+    {
+        utListIterator<ScriptList> it(m_updateHooks);
+        while (it.hasMoreElements())
+            it.getNext()->update(tick);
+    }
+}
+
+gkLuaScript *gkLuaManager::getScript(const gkString &name)
 {
     UTsize pos;
     if ((pos = m_scripts.find(name)) == GK_NPOS)
@@ -114,7 +196,7 @@ gkLuaScript* gkLuaManager::getScript(const gkString& name)
     return m_scripts.at(pos);
 }
 
-gkLuaScript* gkLuaManager::create(const gkString& name, const gkString &text)
+gkLuaScript *gkLuaManager::create(const gkString &name, const gkString &text)
 {
     UTsize pos;
     if ((pos = m_scripts.find(name)) != GK_NPOS)
@@ -125,7 +207,7 @@ gkLuaScript* gkLuaManager::create(const gkString& name, const gkString &text)
     return ob;
 }
 
-gkLuaScript* gkLuaManager::create(const gkString& name)
+gkLuaScript *gkLuaManager::create(const gkString &name)
 {
     UTsize pos;
     if ((pos = m_scripts.find(name)) != GK_NPOS)
@@ -133,7 +215,8 @@ gkLuaScript* gkLuaManager::create(const gkString& name)
 
     gkTextFile *intern = gkTextManager::getSingleton().getFile(name);
 
-    if (intern == 0) {
+    if (intern == 0)
+    {
         printf("Invalid internal text file %s\n", name.c_str());
         return 0;
     }
@@ -143,11 +226,17 @@ gkLuaScript* gkLuaManager::create(const gkString& name)
     return ob;
 }
 
-void gkLuaManager::destroy(const gkString& name)
+void gkLuaManager::destroy(const gkString &name)
 {
     UTsize pos;
-    if ((pos = m_scripts.find(name)) != GK_NPOS) {
+    if ((pos = m_scripts.find(name)) != GK_NPOS)
+    {
         gkLuaScript *ob = m_scripts.at(pos);
+
+        ScriptList::Pointer p;
+        if ((p = m_updateHooks.find(ob)) != 0)
+            m_updateHooks.erase(p);
+
         m_scripts.remove(name);
         delete ob;
     }
@@ -156,39 +245,27 @@ void gkLuaManager::destroy(const gkString& name)
 void gkLuaManager::destroy(gkLuaScript *ob)
 {
     GK_ASSERT(ob);
-
-    gkString name = ob->getName();
-    UTsize pos;
-    if ((pos = m_scripts.find(name)) != GK_NPOS) {
-        gkLuaScript *ob = m_scripts.at(pos);
-        m_scripts.remove(name);
-        delete ob;
-    }
+    destroy(ob->getName());
 }
-
 
 void gkLuaManager::destroyAll(void)
 {
     utHashTableIterator<ScriptMap> iter(m_scripts);
-    while (iter.hasMoreElements()) {
+    while (iter.hasMoreElements())
+    {
         gkLuaScript *ob = iter.peekNextValue();
         delete ob;
         iter.next();
-
     }
 
-    // clear stack
-    lua_pop(m_vm, lua_gettop(m_vm));
+    m_updateHooks.clear();
     m_scripts.clear();
 }
 
 
-
-bool gkLuaManager::hasScript(const gkString& name)
+bool gkLuaManager::hasScript(const gkString &name)
 {
     return m_scripts.find(name) != GK_NPOS;
 }
-
-
 
 GK_IMPLEMENT_SINGLETON(gkLuaManager);

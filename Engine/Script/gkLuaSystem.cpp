@@ -25,46 +25,83 @@
 -------------------------------------------------------------------------------
 */
 #include "gkString.h"
-#include "gkLuaSystem.h"
 #include "gkTextManager.h"
+
+#include "gkLuaSystem.h" // rename
+
+#include "luUtils.h"
+#include "luNodeTree.h"
+#include "luGameKit.h"
+#include "luMath.h"
 
 
 // System builtin module type
-struct gkSystem_Builtin {
+struct luSystem_Builtin {
     const char *    name;
     bool            imported;
-    void (*builtin)(gkLuaState*);
+    void (*builtin)(ltState*);
 };
 
 
 // System builtin module definition
-gkSystem_Builtin gkSystem_BuiltinModules[] = {
-    {0, 0, false}
+luSystem_Builtin luSystem_BuiltinModules[] = {
+    {"NodeTree",    false, luNodeTree_Open},
+    {"GameKit",     false, luGameKit_Open},
+    {"Math",        false, luMath_Open},
+    {0,             false, 0}
 };
 
 
+bool luSyatem_load(ltState *L, const char *name, char *memBuf=0, int memLen=0)
+{
+    LUA_SCOPE_LOCK;
+
+    if (memBuf)
+    {
+        if (luaL_loadbuffer(L, memBuf, memLen, name) != 0) {
+            printf("%s\n", lua_tostring(L, -1));
+            lua_pop(L, 1);
+            return false;
+        }
+    }
+    else
+    {
+        if (luaL_loadfile(L, name) != 0) {
+            printf("%s\n", lua_tostring(L, -1));
+            lua_pop(L, 1);
+            return false;
+        }
+
+    }
+
+    if (lua_pcall(L, 0, LUA_MULTRET, 0) != 0) {
+        printf("%s\n", lua_tostring(L, -1));
+        lua_pop(L, 1);
+        return false;
+    }
+    return true;
+}
+
+
 // Module lookup
-gkSystem_Builtin gkSystem_FinmdModule(const char *name, gkSystem_Builtin *modules)
+luSystem_Builtin luSystem_FinmdModule(const char *name, luSystem_Builtin *modules)
 {
     while (modules && modules->name) {
         if (utCharEq(modules->name, name))
             return *modules;
         ++modules;
     }
-    gkSystem_Builtin b = {0, 0, false};
+    luSystem_Builtin b = {0, 0, false};
     return b;
 }
 
 
 // Module/script Impoter
-static int gkSystem_import(gkLuaState *L)
+static int luSystem_import(luObject &L)
 {
-    char *import = 0;
+    luString import = L.getValueString(1);
 
-    if (!gkLuaBind::parse(L, "s", &import))
-        return gkLuaBind::seterror(L, "invalid arguments");
-
-    gkSystem_Builtin v = gkSystem_FinmdModule(import, gkSystem_BuiltinModules);
+    luSystem_Builtin v = luSystem_FinmdModule(import.c_str(), luSystem_BuiltinModules);
     if (v.builtin && !v.imported) {
 
         // execute builtin reg 
@@ -84,57 +121,32 @@ static int gkSystem_import(gkLuaState *L)
         // import internal text file
         gkTextFile *fp = gkTextManager::getSingleton().getFile(import);
 
-        if (!gkLuaBind::load(L, import, fp->getText().c_str(), fp->getSize()))
+        if (!luSyatem_load(L, import.c_str(), const_cast<char*>(fp->getText().c_str()), fp->getSize()))
             return -1;
         return 0;
     }
-
-
     // external source
-    if (!gkLuaBind::load(L, import))
+
+    if (!luSyatem_load(L, import.c_str()))
         return -1;
 
     return 0;
 }
 
 
-
-// System methods
-static gkLuaMethodDef gkSystem_Methods[] = {
-    {"import",      gkSystem_import},
+luMethodDef luSystem_Methods[] = 
+{
+    {"import", luSystem_import, LU_PARAM, "s"},
     {0, 0}
 };
 
-
-// System type definition
-static gkLuaTypeDef gkSystem_Type = {
-    "System",           // name
-    0,                  // constructor
-    0,                  // destructor
-    0,                  // get
-    0,                  // set
-    gkSystem_Methods    // methods
-};
-
-
 // Lua System module
-int gkLuaSystem_initialize(gkLuaState *L)
+void luSystem_Open(ltState *L)
 {
-    int top = gkLuaBind::beginBinding(L);
+    luBinder lua(L);
 
     // System table
-    gkLuaBind::table(L, gkSystem_Type.name);
-    gkLuaBind::set(L, gkSystem_Type.methods);
-
-    gkLuaBind::table(L);
-
-    gkLuaBind::endBinding(L, top);
-    return 0;
-}
-
-
-// System type access
-gkLuaTypeDef* gkLuaSystem_getType(void)
-{
-    return &gkSystem_Type;
+    lua.beginNamespace("System");
+    lua.addMethods(luSystem_Methods);
+    lua.endNamespace();
 }

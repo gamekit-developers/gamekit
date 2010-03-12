@@ -173,7 +173,7 @@ public:
 
 
 protected:
-    UT_INLINE UTuint16 bufMin(UTuint16 a, UTuint16 b) { return a > b ? b : a; }
+    UT_INLINE UTuint16 bufMin(UTuint16 a, UTuint16 b) const { return a > b ? b : a; }
     Pointer m_buffer;
     UTuint16 m_size;
 };

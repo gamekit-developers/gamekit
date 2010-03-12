@@ -76,8 +76,7 @@ gkString gkUtils::getFile(const gkString& in)
     if (lastSlash = strrchr(bundlePath, '/'))
         * lastSlash = '\0';
 
-
-    sprintf(newName, "%s/%s/%s", AppleGetBundleDirectory(), "Contents/Resources", in.c_str());
+    sprintf(newName, "%s/%s/%s", bundlePath, "Contents/Resources", in.c_str());
 
     gkPath pth(newName);
     if (!pth.isFile())

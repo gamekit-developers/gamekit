@@ -70,6 +70,9 @@ public:
     bool    isDir(void) const;
     void    split(gkStringVector &arr) const;
 
+    gkString    getBundlePath(void) const;
+    bool        isFileInBundle(void) const;
+
 protected:
     mutable gkString m_path;
 };
