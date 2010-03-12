@@ -40,6 +40,7 @@ gkAnimationNode::gkAnimationNode(gkLogicTree *parent, size_t id)
 	ADD_ISOCK(*getAnimName(), this, gkLogicSocket::ST_STRING);
 	ADD_ISOCK(*getBlend(), this, gkLogicSocket::ST_REAL);
 	ADD_ISOCK(*getTarget(), this, gkLogicSocket::ST_GAME_OBJECT);
+	ADD_OSOCK(*getCurrentAnimName(), this, gkLogicSocket::ST_STRING);
 
 	getBlend()->setValue(10);
 }
@@ -58,6 +59,8 @@ void gkAnimationNode::update(gkScalar tick)
 	GK_ASSERT(pObj->getType() == GK_ENTITY);
 
 	gkEntity *ent = pObj->getEntity();
+
+	getCurrentAnimName()->setValue(getAnimName()->getValueString());
 
 	if (ent->isLoaded())
 	{

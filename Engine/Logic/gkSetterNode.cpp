@@ -35,7 +35,6 @@ gkSetterNode::gkSetterNode(gkLogicTree *parent, size_t id)
 m_hasOneSet(false)
 {
 	ADD_ISOCK(*getUpdate(), this, gkLogicSocket::ST_BOOL);
-	ADD_ISOCK(*getInput(), this, gkLogicSocket::ST_STRING);
 	ADD_ISOCK(*getJustOnce(), this, gkLogicSocket::ST_BOOL);
 }
 
@@ -55,6 +54,7 @@ void gkSetterNode::update(gkScalar tick)
 gkStringSetterNode::gkStringSetterNode(gkLogicTree *parent, size_t id)
 	: gkSetterNode(parent, id)
 {
+	ADD_ISOCK(*getInput(), this, gkLogicSocket::ST_STRING);
 	ADD_OSOCK(*getOutput(), this, gkLogicSocket::ST_STRING);
 }
 
@@ -73,10 +73,11 @@ void gkStringSetterNode::DoUpdate()
 gkObjectSetterNode::gkObjectSetterNode(gkLogicTree *parent, size_t id)
 	: gkSetterNode(parent, id)
 {
-	ADD_OSOCK(*getOutput(), this, gkLogicSocket::ST_GAME_OBJECT);
+	ADD_ISOCK(*getInput(), this, gkLogicSocket::ST_STRING);
 	ADD_ISOCK(*getUnload(), this, gkLogicSocket::ST_BOOL);
 	ADD_ISOCK(*getLoad(), this, gkLogicSocket::ST_BOOL);
 	ADD_ISOCK(*getReload(), this, gkLogicSocket::ST_BOOL);
+	ADD_OSOCK(*getOutput(), this, gkLogicSocket::ST_GAME_OBJECT);
 }
 
 bool gkObjectSetterNode::DoEvaluate()
@@ -106,4 +107,40 @@ void gkObjectSetterNode::DoUpdate()
 	getOutput()->setValue(pObj);
 }
 
+//////////////////////////////////////////////////////////////
 
+gkPositionSetterNode::gkPositionSetterNode(gkLogicTree *parent, size_t id)
+	: gkSetterNode(parent, id)
+{
+	ADD_ISOCK(*getInput(), this, gkLogicSocket::ST_GAME_OBJECT);
+	ADD_OSOCK(*getOutput(), this, gkLogicSocket::ST_VECTOR);
+}
+
+bool gkPositionSetterNode::DoEvaluate()
+{
+	return false;
+}
+
+void gkPositionSetterNode::DoUpdate()
+{
+	getOutput()->setValue(getInput()->getValueGameObject()->getPosition());
+}
+
+//////////////////////////////////////////////////////////////
+
+gkOrientationSetterNode::gkOrientationSetterNode(gkLogicTree *parent, size_t id)
+	: gkSetterNode(parent, id)
+{
+	ADD_ISOCK(*getInput(), this, gkLogicSocket::ST_GAME_OBJECT);
+	ADD_OSOCK(*getOutput(), this, gkLogicSocket::ST_QUAT);
+}
+
+bool gkOrientationSetterNode::DoEvaluate()
+{
+	return false;
+}
+
+void gkOrientationSetterNode::DoUpdate()
+{
+	getOutput()->setValue(getInput()->getValueGameObject()->getOrientation());
+}

@@ -40,7 +40,10 @@ gkParticleNode::gkParticleNode(gkLogicTree *parent, size_t id)
 {
 	ADD_ISOCK(*getCreate(), this, gkLogicSocket::ST_BOOL);
 	ADD_ISOCK(*getPosition(), this, gkLogicSocket::ST_VECTOR);
+	ADD_ISOCK(*getOrientation(), this, gkLogicSocket::ST_QUAT);
 	ADD_ISOCK(*getParticleSystemName(), this, gkLogicSocket::ST_STRING);
+
+	getOrientation()->setValue(gkQuaternion::IDENTITY);
 }
 
 gkParticleNode::~gkParticleNode()
@@ -64,7 +67,10 @@ void gkParticleNode::update(Real tick)
 {
 	if(getCreate()->getValueBool())
 	{
-		m_particles.push_back(new ParticleSystem(getParticleSystemName()->getValueString(), getPosition()->getValueVector3()));
+		m_particles.push_back(
+			new ParticleSystem(getParticleSystemName()->getValueString(), 
+				getPosition()->getValueVector3(),
+				getOrientation()->getValueQuaternion()));
 	}
 	else
 	{
@@ -88,7 +94,7 @@ void gkParticleNode::update(Real tick)
 	}
 }
 
-gkParticleNode::ParticleSystem::ParticleSystem(const gkString& name, const gkVector3& position)
+gkParticleNode::ParticleSystem::ParticleSystem(const gkString& name, const gkVector3& position, const gkQuaternion& q)
 : m_node(0),
 m_particleSystem(0),
 m_time_to_live(0)
@@ -98,6 +104,7 @@ m_time_to_live(0)
 	m_node = pScene->getManager()->getRootSceneNode()->createChildSceneNode();
 
 	m_node->setPosition(position);
+	m_node->setOrientation(q);
 
 	GK_ASSERT(!m_particleSystem);
 

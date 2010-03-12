@@ -37,6 +37,7 @@ public:
 	{
 		CREATE,
 		POSITION,
+		ORIENTATION,
 		PARTICLE_SYSTEM_NAME,
 		MAX_SOCKETS
 	};
@@ -51,6 +52,7 @@ public:
 
 	GK_INLINE gkLogicSocket* getCreate() {return &m_sockets[CREATE];}
 	GK_INLINE gkLogicSocket* getPosition() {return &m_sockets[POSITION];}
+	GK_INLINE gkLogicSocket* getOrientation() {return &m_sockets[ORIENTATION];}
 	GK_INLINE gkLogicSocket* getParticleSystemName() {return &m_sockets[PARTICLE_SYSTEM_NAME];}
 
 private:
@@ -61,7 +63,7 @@ private:
 	{
 	public:
 
-		ParticleSystem(const gkString& name, const gkVector3& position);
+		ParticleSystem(const gkString& name, const gkVector3& position, const gkQuaternion& q);
 		~ParticleSystem();
 
 		bool HasExpired() { return m_timer.getTimeMilliseconds() > m_time_to_live; }

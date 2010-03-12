@@ -27,6 +27,15 @@
 
 #include "OgreKit.h"
 
+namespace
+{
+	gkString MOMO_RUN_ANIM		= "Momo_Run";
+	gkString MOMO_WALKBACK_ANIM = "Momo_WalkBack";
+	gkString MOMO_IDLENASTY_ANIM = "Momo_IdleNasty";
+	gkString DUST_RUN_PARTICLE	= "DustRun";
+	gkString DUST_WALK_PARTICLE	= "DustWalk";
+}
+
 class OgreKit : public gkCoreApplication
 {
 public:
@@ -34,7 +43,7 @@ public:
     OgreKit(const gkString &blend) 
 		: m_blend(blend), m_tree(0), m_ctrlKeyNode(0), 
 		m_wKeyNode(0), m_sKeyNode(0), m_mouseNode(0), m_leftMouseNode(0), m_rightMouseNode(0),
-		m_playerSetter(0), m_meshMomoSetter(0), m_cameraSetter(0)
+		m_playerSetter(0), m_meshMomoSetter(0), m_cameraSetter(0), m_animNode(0)
 
 	{
         gkPath path = "./data/OgreKitStartup.cfg";
@@ -116,6 +125,9 @@ public:
 		m_cameraSetter->getUpdate()->setValue(true);
 		m_cameraSetter->getInput()->setValue(gkString("View"));
 		m_cameraSetter->getJustOnce()->setValue(true);
+
+		m_animNode = m_tree->createNode<gkAnimationNode>();
+
 	}
 
 	void CreateMomoLogic()
@@ -124,11 +136,11 @@ public:
 
 		CreateMomoMoveLogic();
 
-		CreateMomoCollisionLogic();
-
 		CreateMomoLoadUnloadLogic();
 
 		CreateMomoGrabLogic();
+
+		CreateMomoDustTrailLogic();
 	}
 
 	void CreateMomoGrabLogic()
@@ -177,20 +189,6 @@ public:
 			grab1->getThrowObject()->link(ifNode->getTrue());
 			grab2->getThrowObject()->link(ifNode->getTrue());
 		}
-
-	}
-
-	void CreateMomoCollisionLogic()
-	{
-		gkParticleNode* particle = m_tree->createNode<gkParticleNode>();
-		particle->getParticleSystemName()->setValue(gkString("Dust"));
-
-		gkCollisionNode* collision = m_tree->createNode<gkCollisionNode>();
-		collision->getEnable()->setValue(true);
-		collision->getCollidesWith()->setValue(gkString("Cube"));
-		collision->getTarget()->link(m_playerSetter->getOutput());
-		collision->getHasCollided()->link(particle->getCreate());
-		collision->getContactPosition()->link(particle->getPosition());
 	}
 
 	void CreateMomoMoveLogic()
@@ -232,6 +230,51 @@ public:
 		}
 	}
 
+	void CreateMomoDustTrailLogic()
+	{
+		{
+			gkStringEqualNode* equalNode = m_tree->createNode<gkStringEqualNode>();
+
+			equalNode->getA()->setValue(MOMO_RUN_ANIM);
+			equalNode->getB()->link(m_animNode->getCurrentAnimName());
+
+			CreateMomoDustTrailLogic(DUST_RUN_PARTICLE, equalNode->getOutput());
+		}
+
+		{
+			gkStringEqualNode* equalNode = m_tree->createNode<gkStringEqualNode>();
+
+			equalNode->getA()->setValue(MOMO_WALKBACK_ANIM);
+			equalNode->getB()->link(m_animNode->getCurrentAnimName());
+
+			CreateMomoDustTrailLogic(DUST_WALK_PARTICLE, equalNode->getOutput());
+		}
+	}
+
+	void CreateMomoDustTrailLogic(const gkString& name, gkLogicSocket* pUpdateSocket)
+	{
+		gkOrientationSetterNode* orientation = m_tree->createNode<gkOrientationSetterNode>();
+		orientation->getInput()->link(m_playerSetter->getOutput());
+		orientation->getUpdate()->link(pUpdateSocket);
+
+		gkCollisionNode* collision = m_tree->createNode<gkCollisionNode>();
+		collision->getEnable()->setValue(true);
+		collision->getCollidesWith()->setValue(gkString("Plane"));
+		collision->getTarget()->link(m_playerSetter->getOutput());
+
+		gkIfNode* ifNode = m_tree->createNode<gkIfNode>();
+		ifNode->setStatement(CMP_AND);
+
+		collision->getHasCollided()->link(ifNode->getA());
+		ifNode->getB()->link(pUpdateSocket);
+
+		gkParticleNode* particle = m_tree->createNode<gkParticleNode>();
+		particle->getParticleSystemName()->setValue(name);
+		particle->getCreate()->link(ifNode->getTrue());
+		particle->getPosition()->link(collision->getContactPosition());
+		particle->getOrientation()->link(orientation->getOutput());
+	}
+
 	void CreateMomoLoadUnloadLogic()
 	{
 		{
@@ -267,17 +310,16 @@ public:
 
 	void CreateMomoAnimationLogic()
 	{
-		gkAnimationNode* anim = m_tree->createNode<gkAnimationNode>();
-		anim->getTarget()->link(m_meshMomoSetter->getOutput());
+		m_animNode->getTarget()->link(m_meshMomoSetter->getOutput());
 
 		gkStringSetterNode* runName = m_tree->createNode<gkStringSetterNode>();
-		runName->getOutput()->link(anim->getAnimName());
-		runName->getInput()->setValue(gkString("Momo_Run"));
+		runName->getOutput()->link(m_animNode->getAnimName());
+		runName->getInput()->setValue(MOMO_RUN_ANIM);
 		runName->getUpdate()->link(m_wKeyNode->getIsDown());
 			
 		gkStringSetterNode* walkName = m_tree->createNode<gkStringSetterNode>();
-		walkName->getOutput()->link(anim->getAnimName());
-		walkName->getInput()->setValue(gkString("Momo_WalkBack"));
+		walkName->getOutput()->link(m_animNode->getAnimName());
+		walkName->getInput()->setValue(MOMO_WALKBACK_ANIM);
 		walkName->getUpdate()->link(m_sKeyNode->getIsDown());
 
 		gkIfNode* ifNode = m_tree->createNode<gkIfNode>();
@@ -286,8 +328,8 @@ public:
 		ifNode->getB()->link(m_sKeyNode->getNotIsDown());
 
 		gkStringSetterNode* ildeName = m_tree->createNode<gkStringSetterNode>();
-		ildeName->getOutput()->link(anim->getAnimName());
-		ildeName->getInput()->setValue(gkString("Momo_IdleNasty"));
+		ildeName->getOutput()->link(m_animNode->getAnimName());
+		ildeName->getInput()->setValue(MOMO_IDLENASTY_ANIM);
 		ildeName->getUpdate()->link(ifNode->getTrue());
 	}
 
@@ -398,6 +440,8 @@ private:
 	gkObjectSetterNode* m_meshMomoSetter;
 
 	gkObjectSetterNode* m_cameraSetter;
+
+	gkAnimationNode* m_animNode;
 };
 
 int main(int argc, char **argv)

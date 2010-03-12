@@ -44,6 +44,7 @@ public:
 		ANIM_NAME,
 		BLEND_FRAMES,
 		TARGET,
+		CURRENT_ANIM_NAME,
 		MAX_SOCKETS
 	};
 
@@ -59,6 +60,7 @@ public:
 	GK_INLINE gkLogicSocket* getAnimName()  { return &m_sockets[ANIM_NAME]; }
     GK_INLINE gkLogicSocket* getBlend()     { return &m_sockets[BLEND_FRAMES]; }
 	GK_INLINE gkLogicSocket* getTarget()    {return &m_sockets[TARGET];}
+	GK_INLINE gkLogicSocket* getCurrentAnimName()  { return &m_sockets[CURRENT_ANIM_NAME]; }
 
 private:
     gkLogicSocket   m_sockets[MAX_SOCKETS];

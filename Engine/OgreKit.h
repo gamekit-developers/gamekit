@@ -78,6 +78,7 @@
 #include "Logic/gkButtonNode.h"
 #include "Logic/gkCollisionNode.h"
 #include "Logic/gkCursorNode.h"
+#include "Logic/gkEvaluatorNode.h"
 #include "Logic/gkExitNode.h"
 #include "Logic/gkExpressionNode.h"
 #include "Logic/gkGrabNode.h"

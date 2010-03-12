@@ -99,4 +99,29 @@ public:
 	void DoUpdate();
 };
 
+class gkPositionSetterNode : public gkSetterNode
+{
+public:
+
+    gkPositionSetterNode(gkLogicTree *parent, size_t id);
+
+	virtual ~gkPositionSetterNode() {}
+
+	bool DoEvaluate();
+	void DoUpdate();
+};
+
+class gkOrientationSetterNode : public gkSetterNode
+{
+public:
+
+    gkOrientationSetterNode(gkLogicTree *parent, size_t id);
+
+	virtual ~gkOrientationSetterNode() {}
+
+	bool DoEvaluate();
+	void DoUpdate();
+};
+
+
 #endif//_gkSetterNode_h_

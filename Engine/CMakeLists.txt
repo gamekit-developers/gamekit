@@ -147,6 +147,7 @@ set(NLogic_SOURCE
     Logic/gkCollisionNode.cpp
     Logic/gkParticleNode.cpp
     Logic/gkGrabNode.cpp
+    Logic/gkEvaluatorNode.cpp
 )
 
 set(NLogic_HEADER
@@ -181,6 +182,8 @@ set(NLogic_HEADER
     Logic/gkCollisionNode.h
     Logic/gkParticleNode.h
     Logic/gkGrabNode.h
+    Logic/gkEvaluatorNode.h
+    
 )
 
 source_group(LogicNodes\\Header FILES ${NLogic_HEADER})
