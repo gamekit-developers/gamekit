@@ -46,11 +46,15 @@ m_oldPickingDist(0)
 {
 	ADD_ISOCK(*getCreateGrab(), this, gkLogicSocket::ST_BOOL);
 	ADD_ISOCK(*getReleaseGrab(), this, gkLogicSocket::ST_BOOL);
+	ADD_ISOCK(*getThrowObject(), this, gkLogicSocket::ST_BOOL);
 	ADD_ISOCK(*getTarget(), this, gkLogicSocket::ST_GAME_OBJECT);
 	ADD_ISOCK(*getGrabDirection(), this, gkLogicSocket::ST_VECTOR);
-	ADD_ISOCK(*getReleaseVelocity(), this, gkLogicSocket::ST_VECTOR);
+	ADD_ISOCK(*getThrowVelocity(), this, gkLogicSocket::ST_VECTOR);
+	ADD_ISOCK(*getOffsetPosition(), this, gkLogicSocket::ST_VECTOR);
+	
 
-	getReleaseVelocity()->setValue(gkVector3::ZERO);
+	getThrowVelocity()->setValue(gkVector3::ZERO);
+	getOffsetPosition()->setValue(gkVector3::ZERO);
 }
 
 gkGrabNode::~gkGrabNode()
@@ -61,15 +65,24 @@ gkGrabNode::~gkGrabNode()
 bool gkGrabNode::evaluate(Real tick)
 {
 	m_target = getTarget()->getValueGameObject();
+
+	if(m_target && !m_target->isLoaded())
+	{
+		ReleaseGrab(false);
+	}
 	
 	return m_target && m_target->isLoaded();
 }
 
 void gkGrabNode::update(Real tick)
 {
-	if(getReleaseGrab()->getValueBool())
+	if(getThrowObject()->getValueBool())
 	{
 		ReleaseGrab(true);
+	}
+	else if(getReleaseGrab()->getValueBool())
+	{
+		ReleaseGrab(false);
 	}
 	else if(getCreateGrab()->getValueBool())
 	{
@@ -162,7 +175,7 @@ void gkGrabNode::ReleaseGrab(bool applyVel)
 
 		if(applyVel)
 		{
-			gkVector3 vel = getReleaseVelocity()->getValueVector3();
+			gkVector3 vel = getThrowVelocity()->getValueVector3();
 
 			if(vel != gkVector3::ZERO)
 			{
@@ -185,6 +198,10 @@ void gkGrabNode::UpdateGrab()
 		dir *= m_oldPickingDist;
 
 		Vector3 newPivotB = m_target->getPosition() + dir;
+
+		Vector3 offsetPos = m_target->getOrientation() * getOffsetPosition()->getValueVector3();
+
+		newPivotB += offsetPos;
 
 		m_constraint->setPivotB(btVector3(newPivotB.x, newPivotB.y, newPivotB.z));
 	}

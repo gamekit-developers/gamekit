@@ -32,7 +32,7 @@ class OgreKit : public gkCoreApplication
 public:
 
     OgreKit(const gkString &blend) 
-		: m_blend(blend), m_tree(0), m_spaceKeyNode(0), m_ctrlKeyNode(0), 
+		: m_blend(blend), m_tree(0), m_ctrlKeyNode(0), 
 		m_wKeyNode(0), m_sKeyNode(0), m_mouseNode(0), m_leftMouseNode(0), m_rightMouseNode(0),
 		m_playerSetter(0), m_meshMomoSetter(0), m_cameraSetter(0)
 
@@ -86,9 +86,6 @@ public:
 	{
 		m_tree = gkNodeManager::getSingleton().create();
 
-		m_spaceKeyNode = m_tree->createNode<gkKeyNode>();
-		m_spaceKeyNode->setKey(KC_SPACEKEY);
-
 		m_ctrlKeyNode = m_tree->createNode<gkKeyNode>();
 		m_ctrlKeyNode->setKey(KC_LEFTCTRLKEY);
 
@@ -136,12 +133,51 @@ public:
 
 	void CreateMomoGrabLogic()
 	{
-		gkGrabNode* grab = m_tree->createNode<gkGrabNode>();
-		grab->getTarget()->link(m_playerSetter->getOutput());
-		grab->getCreateGrab()->link(m_spaceKeyNode->getPress());
-		grab->getReleaseGrab()->link(m_spaceKeyNode->getRelease());
-		grab->getGrabDirection()->setValue(gkVector3(0, 1.5f, 0));
-		grab->getReleaseVelocity()->setValue(gkVector3(0, 10.5f, 0));
+		gkGrabNode* grab1 = m_tree->createNode<gkGrabNode>();
+		grab1->getTarget()->link(m_playerSetter->getOutput());
+		grab1->getGrabDirection()->setValue(gkVector3(0.1f, 1.1f, 0));
+		grab1->getThrowVelocity()->setValue(gkVector3(0, 20.5f, 0));
+		grab1->getOffsetPosition()->setValue(gkVector3(0, 0, 0.2));
+
+		gkGrabNode* grab2 = m_tree->createNode<gkGrabNode>();
+		grab2->getTarget()->link(m_playerSetter->getOutput());
+		grab2->getGrabDirection()->setValue(gkVector3(-0.1f, 1.1f, 0));
+		grab2->getThrowVelocity()->setValue(gkVector3(0, 20.5f, 0));
+		grab2->getOffsetPosition()->setValue(gkVector3(0, 0, 0.2));
+
+		{
+			gkIfNode* ifNode = m_tree->createNode<gkIfNode>();
+			ifNode->setStatement(CMP_AND);
+
+			ifNode->getA()->link(m_rightMouseNode->getPress());
+			ifNode->getB()->link(m_ctrlKeyNode->getNotIsDown());
+
+			grab1->getCreateGrab()->link(ifNode->getTrue());
+			grab2->getCreateGrab()->link(ifNode->getTrue());
+		}
+
+		{
+			gkIfNode* ifNode = m_tree->createNode<gkIfNode>();
+			ifNode->setStatement(CMP_AND);
+
+			ifNode->getA()->link(m_rightMouseNode->getRelease());
+			ifNode->getB()->link(m_ctrlKeyNode->getNotIsDown());
+
+			grab1->getReleaseGrab()->link(ifNode->getTrue());
+			grab2->getReleaseGrab()->link(ifNode->getTrue());
+		}
+
+		{
+			gkIfNode* ifNode = m_tree->createNode<gkIfNode>();
+			ifNode->setStatement(CMP_AND);
+
+			ifNode->getA()->link(m_leftMouseNode->getPress());
+			ifNode->getB()->link(m_ctrlKeyNode->getNotIsDown());
+
+			grab1->getThrowObject()->link(ifNode->getTrue());
+			grab2->getThrowObject()->link(ifNode->getTrue());
+		}
+
 	}
 
 	void CreateMomoCollisionLogic()
@@ -178,7 +214,7 @@ public:
 
 			motion->getUpdate()->link(m_wKeyNode->getIsDown());
 			motion->getX()->setValue(0);
-			motion->getY()->setValue(1);
+			motion->getY()->setValue(2.5f);
 			motion->getZ()->setValue(0);
 			motion->getTarget()->link(m_playerSetter->getOutput());
 		}
@@ -190,7 +226,7 @@ public:
 
 			motion->getUpdate()->link(m_sKeyNode->getIsDown());
 			motion->getX()->setValue(0);
-			motion->getY()->setValue(-0.5f);
+			motion->getY()->setValue(-1);
 			motion->getZ()->setValue(0);
 			motion->getTarget()->link(m_playerSetter->getOutput());
 		}
@@ -344,8 +380,6 @@ private:
 	gkString m_blend;
 
 	gkLogicTree* m_tree;
-
-	gkKeyNode* m_spaceKeyNode;
 
 	gkKeyNode* m_ctrlKeyNode;
 

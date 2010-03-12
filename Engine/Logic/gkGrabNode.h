@@ -40,9 +40,11 @@ public:
 	{
 		CREATE_GRAB,
 		RELEASE_GRAB,
+		THROW_OBJECT,
 		TARGET,
 		GRAB_DIRECTION,
-		RELEASE_VEL,
+		THROW_VEL,
+		RELATED_OFFSET_POSITION,
 		MAX_SOCKETS
 	};
 
@@ -56,9 +58,12 @@ public:
 
 	GK_INLINE gkLogicSocket* getCreateGrab() {return &m_sockets[CREATE_GRAB];}
 	GK_INLINE gkLogicSocket* getReleaseGrab() {return &m_sockets[RELEASE_GRAB];}
+	GK_INLINE gkLogicSocket* getThrowObject() {return &m_sockets[THROW_OBJECT];}
 	GK_INLINE gkLogicSocket* getTarget() {return &m_sockets[TARGET];}
 	GK_INLINE gkLogicSocket* getGrabDirection() {return &m_sockets[GRAB_DIRECTION];}
-	GK_INLINE gkLogicSocket* getReleaseVelocity() {return &m_sockets[RELEASE_VEL];}
+	GK_INLINE gkLogicSocket* getThrowVelocity() {return &m_sockets[THROW_VEL];}
+	GK_INLINE gkLogicSocket* getOffsetPosition() {return &m_sockets[RELATED_OFFSET_POSITION];}
+	
 
 private:
 
