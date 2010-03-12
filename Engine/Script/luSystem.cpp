@@ -27,8 +27,7 @@
 #include "gkString.h"
 #include "gkTextManager.h"
 
-#include "gkLuaSystem.h" // rename
-
+#include "luSystem.h"
 #include "luUtils.h"
 #include "luNodeTree.h"
 #include "luGameKit.h"

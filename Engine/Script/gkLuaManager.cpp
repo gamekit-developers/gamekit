@@ -25,9 +25,9 @@
 -------------------------------------------------------------------------------
 */
 #include "gkLuaManager.h"
-#include "gkLuaSystem.h"
-#include "gkLuaType.h"
 #include "gkTextManager.h"
+
+#include "luSystem.h"
 #include "luUtils.h"
 
 static gkLuaScript *gsCurrent = 0;
