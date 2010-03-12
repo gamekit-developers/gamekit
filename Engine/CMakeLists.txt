@@ -359,7 +359,6 @@ set(Script_SOURCE
     Script/luUtils.cpp  
     Script/luNodeTree.cpp
     Script/luGameKit.cpp
-    Script/luEngine.cpp
     Script/luInput.cpp
     Script/luLoadable.cpp
     Script/luScene.cpp
@@ -375,7 +374,6 @@ set(Script_HEADER
     Script/luUtils.h  
     Script/luNodeTree.h
     Script/luGameKit.h
-    Script/luEngine.h
     Script/luInput.h
     Script/luLoadable.h
     Script/luScene.h
