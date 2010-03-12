@@ -354,8 +354,7 @@ source_group(Physics\\Source FILES ${Physics_SOURCE})
 set(Script_SOURCE
     # ----- Source ----- 
     Script/gkLuaManager.cpp
-    Script/gkLuaSystem.cpp  
-    
+    Script/luSystem.cpp  
     Script/luUtils.cpp  
     Script/luNodeTree.cpp
     Script/luGameKit.cpp
@@ -369,8 +368,7 @@ set(Script_SOURCE
 set(Script_HEADER 
     # ----- Header ----- 
     Script/gkLuaManager.h
-    Script/gkLuaSystem.h
-
+    Script/luSystem.h
     Script/luUtils.h  
     Script/luNodeTree.h
     Script/luGameKit.h
