@@ -233,7 +233,7 @@ static int luMath_Vec3AddVec3(luObject &L)
 static int luMath_Vec3SubVec3(luObject &L)
 {
     if (!LU_IsVec3(L, 1) || !LU_IsVec3(L, 2))
-        return L.pushError("expected Vec3AddVec3(Vector3, Vector3)");
+        return L.pushError("expected Vec3SubVec3(Vector3, Vector3)");
 
     return LU_Vec3New(L, LU_GetVec3Arg(L, 1) - LU_GetVec3Arg(L, 2));
 }
@@ -242,7 +242,7 @@ static int luMath_Vec3SubVec3(luObject &L)
 static int luMath_Vec3MulVec3(luObject &L)
 {
     if (!LU_IsVec3(L, 1) || !LU_IsVec3(L, 2))
-        return L.pushError("expected Vec3AddVec3(Vector3, Vector3)");
+        return L.pushError("expected Vec3MulVec3(Vector3, Vector3)");
 
     return LU_Vec3New(L, LU_GetVec3Arg(L, 1) * LU_GetVec3Arg(L, 2));
 }
@@ -250,7 +250,7 @@ static int luMath_Vec3MulVec3(luObject &L)
 static int luMath_Vec3DivVec3(luObject &L)
 {
     if (!LU_IsVec3(L, 1) || !LU_IsVec3(L, 2))
-        return L.pushError("expected Vec3AddVec3(Vector3, Vector3)");
+        return L.pushError("expected Vec3DivVec3(Vector3, Vector3)");
 
     if (!LU_GetVec3Arg(L, 2).isZeroLength())
         return LU_Vec3New(L, LU_GetVec3Arg(L, 1) / LU_GetVec3Arg(L, 2));
@@ -270,7 +270,7 @@ static int luMath_Vec3MulF(luObject &L)
 static int luMath_Vec3DivF(luObject &L)
 {
     if (!LU_IsVec3(L, 1) || !L.isNumber(2))
-        return L.pushError("expected Vec3AddVec3(Vector3, float)");
+        return L.pushError("expected Vec3DivF(Vector3, float)");
 
     float v = L.tofloat(2);
     if (gkFuzzy(v))
@@ -299,7 +299,7 @@ static int luMath_Vec3Dot(luObject &L)
 static int luMath_Vec3Cross(luObject &L)
 {
     if (!LU_IsVec3(L, 1) || !LU_IsVec3(L, 2))
-        return L.pushError("expected luMath_Vec3Cross(Vector3, Vector3)");
+        return L.pushError("expected Vec3Cross(Vector3, Vector3)");
 
     return LU_Vec3New(L, LU_GetVec3Arg(L, 1).crossProduct(LU_GetVec3Arg(L, 2)));
 }
