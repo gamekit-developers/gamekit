@@ -106,12 +106,102 @@ static int luVector3_tstr(luObject &L)
 }
 
 
+
+static int luVector3_add(luObject &L)
+{
+    if (!LU_IsVec3(L, 1))
+        return L.pushError("expected Vector3 self");
+
+    gkVector3 &vec = LU_GetVec3Arg(L, 1);
+
+    if (LU_IsVec3(L, 2))
+        return LU_Vec3New(L, vec + LU_GetVec3Arg(L, 2));
+    
+    if (L.isNumber(2))
+        return LU_Vec3New(L, vec + L.tofloat(2));
+
+    return L.pushError("unknown operator for Vector3 + '%s'", lua_typename(L, 2)); 
+}
+
+static int luVector3_sub(luObject &L)
+{
+    if (!LU_IsVec3(L, 1))
+        return L.pushError("expected Vector3 self");
+
+    gkVector3 &vec = LU_GetVec3Arg(L, 1);
+
+    if (LU_IsVec3(L, 2))
+        return LU_Vec3New(L, vec - LU_GetVec3Arg(L, 2));
+    
+    if (L.isNumber(2))
+        return LU_Vec3New(L, vec - L.tofloat(2));
+
+    return L.pushError("unknown operator for Vector3 - '%s'", lua_typename(L, 2)); 
+}
+
+static int luVector3_mul(luObject &L)
+{
+    if (!LU_IsVec3(L, 1))
+        return L.pushError("expected Vector3 self");
+
+    gkVector3 &vec = LU_GetVec3Arg(L, 1);
+
+    if (LU_IsVec3(L, 2))
+        return LU_Vec3New(L, vec * LU_GetVec3Arg(L, 2));
+    
+    if (L.isNumber(2))
+        return LU_Vec3New(L, vec * L.tofloat(2));
+
+    return L.pushError("unknown operator for Vector3 * '%s'", lua_typename(L, 2)); 
+}
+
+
+
+static int luVector3_div(luObject &L)
+{
+    if (!LU_IsVec3(L, 1))
+        return L.pushError("expected Vector3 self");
+
+    gkVector3 &vec = LU_GetVec3Arg(L, 1);
+
+    if (LU_IsVec3(L, 2))
+    {
+        gkVector3 &rhs = LU_GetVec3Arg(L, 2);
+        if (rhs.isZeroLength())
+            return LU_Vec3New(L, vec);
+        return LU_Vec3New(L, vec / rhs );
+    }
+
+    if (L.isNumber(2))
+    {
+        float fv =  L.tofloat(2);
+        return LU_Vec3New(L, vec / (gkFuzzy(fv) ? 1.0 : fv));
+    }
+
+    return L.pushError("unknown operator for Vector3 / '%s'", lua_typename(L, 2)); 
+}
+
+
+
+static int luVector3_unm(luObject &L)
+{
+    if (!LU_IsVec3(L, 1))
+        return L.pushError("expected Vector3 self");
+    return LU_Vec3New(L, -LU_GetVec3Arg(L, 1));
+}
+
+
 luMethodDef luVector3::Methods[] =
 {
     {"constructor",     luVector3_new,    LU_NOPARAM, "|fff"},
     {"__tostring",      luVector3_tstr,   LU_PARAM,   "."},
     {"__getter",        luVector3_get,    LU_PARAM,   ".s"},
     {"__setter",        luVector3_set,    LU_PARAM,   ".sf"},
+    {"__add",           luVector3_add,    LU_NOPARAM, ""},
+    {"__sub",           luVector3_sub,    LU_NOPARAM, ""},
+    {"__mul",           luVector3_mul,    LU_NOPARAM, ""},
+    {"__mul",           luVector3_div,    LU_NOPARAM, ""},
+    {"__unm",           luVector3_unm,    LU_NOPARAM, ""},
     {0,0,0,0}
 };
 
@@ -196,6 +286,28 @@ static int luQuat_set(luObject &L)
     return 0;
 }
 
+
+static int luQuat_mul(luObject &L)
+{
+    if (!LU_IsQuat(L, 1))
+        return L.pushError("expected Quaternion self");
+
+    gkQuaternion &q = LU_GetQuatArg(L, 1);
+
+    if (LU_IsVec3(L, 2))
+        return LU_Vec3New(L, q * LU_GetVec3Arg(L, 2));
+
+    if (LU_IsQuat(L, 2))
+        return LU_QuatNew(L, q * LU_GetQuatArg(L, 2));
+    
+    if (L.isNumber(2))
+        return LU_QuatNew(L, q * L.tofloat(2));
+
+    return L.pushError("unknown operator for Quaternion * '%s'", lua_typename(L, 2)); 
+}
+
+
+
 static int luQuat_tstr(luObject &L)
 {
     gkQuaternion &q = L.getValueClassT<luQuat>(1)->quat;
@@ -213,6 +325,7 @@ luMethodDef luQuat::Methods[] =
     {"__tostring",      luQuat_tstr,    LU_PARAM,   "."},
     {"__getter",        luQuat_get,     LU_PARAM,   ".s"},
     {"__setter",        luQuat_set,     LU_PARAM,   ".sf"},
+    {"__mul",           luQuat_mul,     LU_PARAM,   ".|"},
     {0,0,0,0}
 };
 
@@ -221,65 +334,6 @@ luTypeDef luQuat::Type = {"Quaternion", 0, Methods};
 
 
 // ----------------------------------------------------------------------------
-
-static int luMath_Vec3AddVec3(luObject &L)
-{
-    if (!LU_IsVec3(L, 1) || !LU_IsVec3(L, 2))
-        return L.pushError("expected Vec3AddVec3(Vector3, Vector3)");
-
-    return LU_Vec3New(L, LU_GetVec3Arg(L, 1) + LU_GetVec3Arg(L, 2));
-}
-
-static int luMath_Vec3SubVec3(luObject &L)
-{
-    if (!LU_IsVec3(L, 1) || !LU_IsVec3(L, 2))
-        return L.pushError("expected Vec3SubVec3(Vector3, Vector3)");
-
-    return LU_Vec3New(L, LU_GetVec3Arg(L, 1) - LU_GetVec3Arg(L, 2));
-}
-
-
-static int luMath_Vec3MulVec3(luObject &L)
-{
-    if (!LU_IsVec3(L, 1) || !LU_IsVec3(L, 2))
-        return L.pushError("expected Vec3MulVec3(Vector3, Vector3)");
-
-    return LU_Vec3New(L, LU_GetVec3Arg(L, 1) * LU_GetVec3Arg(L, 2));
-}
-
-static int luMath_Vec3DivVec3(luObject &L)
-{
-    if (!LU_IsVec3(L, 1) || !LU_IsVec3(L, 2))
-        return L.pushError("expected Vec3DivVec3(Vector3, Vector3)");
-
-    if (!LU_GetVec3Arg(L, 2).isZeroLength())
-        return LU_Vec3New(L, LU_GetVec3Arg(L, 1) / LU_GetVec3Arg(L, 2));
-
-    return L.push(L.toclass(1));
-}
-
-
-
-static int luMath_Vec3MulF(luObject &L)
-{
-    if (!LU_IsVec3(L, 1) || !L.isNumber(2))
-        return L.pushError("expected Vec3MulF(Vector3, float)");
-    return LU_Vec3New(L, LU_GetVec3Arg(L, 1) * L.tofloat(2));
-}
-
-static int luMath_Vec3DivF(luObject &L)
-{
-    if (!LU_IsVec3(L, 1) || !L.isNumber(2))
-        return L.pushError("expected Vec3DivF(Vector3, float)");
-
-    float v = L.tofloat(2);
-    if (gkFuzzy(v))
-        v = GK_EPSILON;
-
-    return LU_Vec3New(L, LU_GetVec3Arg(L, 1) / v);
-}
-
-
 static int luMath_Vec3Normalize(luObject &L)
 {
     if (!LU_IsVec3(L, 1))
@@ -332,32 +386,6 @@ static int luMath_Vec3DistSq(luObject &L)
     if (!LU_IsVec3(L, 1) || !LU_IsVec3(L, 2))
         return L.pushError("expected Vec3DistSq(Vector3, Vector3)");
     return L.push(LU_GetVec3Arg(L, 1).squaredDistance(LU_GetVec3Arg(L, 2)));
-}
-
-
-static int luMath_QuatMulVec3(luObject &L)
-{
-    if (!LU_IsQuat(L, 1) || !LU_IsVec3(L, 2))
-        return L.pushError("expected QuatMulVec3(Quaternion, Vector3)");
-
-    return LU_Vec3New(L, LU_GetQuatArg(L, 1) * LU_GetVec3Arg(L, 2));
-}
-
-
-static int luMath_QuatMulQuat(luObject &L)
-{
-    if (!LU_IsQuat(L, 1) || !LU_IsQuat(L, 2))
-        return L.pushError("expected QuatMulQuat(Quaternion, Quaternion)");
-    return LU_QuatNew(L, LU_GetQuatArg(L, 1) * LU_GetQuatArg(L, 2));
-}
-
-
-static int luMath_QuatMulF(luObject &L)
-{
-    if (!LU_IsQuat(L, 1))
-        return L.pushError("expected QuatMulF(Quaternion, float)");
-
-    return LU_QuatNew(L, LU_GetQuatArg(L, 1) * L.tofloat(2));
 }
 
 
@@ -423,12 +451,6 @@ luMethodDef Math_Methods[] =
 {
     // Vector3
 
-    {"Vec3AddVec3",     luMath_Vec3AddVec3,         LU_PARAM, ".."},
-    {"Vec3SubVec3",     luMath_Vec3SubVec3,         LU_PARAM, ".."},
-    {"Vec3MulVec3",     luMath_Vec3MulVec3,         LU_PARAM, ".."},
-    {"Vec3MulF",        luMath_Vec3MulF,            LU_PARAM, ".f"},
-    {"Vec3DivVec3",     luMath_Vec3DivVec3,         LU_PARAM, ".."},
-    {"Vec3DivF",        luMath_Vec3DivF,            LU_PARAM, ".f"},
     {"Vec3Normalize",   luMath_Vec3Normalize,       LU_PARAM, "."},
     {"Vec3Dot",         luMath_Vec3Dot,             LU_PARAM, ".."},
     {"Vec3Cross",       luMath_Vec3Cross,           LU_PARAM, ".."},
@@ -438,9 +460,6 @@ luMethodDef Math_Methods[] =
     {"Vec3DistSq",      luMath_Vec3DistSq,          LU_PARAM, ".."},
 
     // Quaternion
-    {"QuatMulVec3",     luMath_QuatMulVec3,         LU_PARAM, ".."},
-    {"QuatMulQuat",     luMath_QuatMulQuat,         LU_PARAM, ".."},
-    {"QuatMulF",        luMath_QuatMulF,            LU_PARAM, ".f"},
     {"QuatDot",         luMath_QuatDot,             LU_PARAM, ".."},
     {"QuatNormalize",   luMath_QuatNormalize,       LU_PARAM, "."},
 

@@ -51,7 +51,14 @@ static int luDef_ToString(ltState *L)
     luTypeDef *tstr = static_cast<luTypeDef *>(lua_touserdata(L, lua_upvalueindex(LU_UPVALUETYPE)));
     if (tstr)
     {
-        lua_pushstring(L, tstr->m_name);
+        if (lua_isuserdata(L, 1))
+        {
+            char buffer[64];
+            sprintf(buffer, "%s: 0x%p", tstr->m_name, lua_topointer(L, 1));
+            lua_pushstring(L, buffer);
+        }
+        else
+            lua_pushstring(L, tstr->m_name);
         return 1;
     }
     return 0;
@@ -155,7 +162,7 @@ static luString luDef_ErrorParams(const char *meth, const char *dt)
 
         if (dt[i+1] != LU_NIL)
         {
-            if (!isOpt)
+            if (!isOpt || dt[i+1] != LU_OPT)
                 stream << ", ";
         }
     }
@@ -171,6 +178,12 @@ static unsigned int __constructor   = luBinder_hash("constructor");
 static unsigned int __destructor    = luBinder_hash("destructor");
 static unsigned int __tostring      = luBinder_hash("__tostring");
 static unsigned int __lgc           = luBinder_hash("__gc");
+static unsigned int __add           = luBinder_hash("__add");
+static unsigned int __sub           = luBinder_hash("__sub");
+static unsigned int __mul           = luBinder_hash("__mul");
+static unsigned int __div           = luBinder_hash("__div");
+static unsigned int __unm           = luBinder_hash("__unm");
+
 
 // global method wrapper
 static int luDef_MethodWrapper(ltState *L)
@@ -287,14 +300,37 @@ static int luDef_Gc(ltState *L)
     return 0;
 }
 
+static bool luDef_isBuiltinMethod(luMethodDef *meth)
+{
+    return (meth->m_hash == __constructor   ||
+            meth->m_hash == __destructor    ||
+            meth->m_hash == __getter_hash   ||
+            meth->m_hash == __setter_hash   ||
+            meth->m_hash == __tostring      ||
+            meth->m_hash == __lgc           ||
+            meth->m_hash == __add           ||
+            meth->m_hash == __sub           ||
+            meth->m_hash == __mul           ||
+            meth->m_hash == __div           ||
+            meth->m_hash == __unm
+            );
+}
+
+#define luDef_DefaultMethod(type, name, index, meth)        \
+    if (index != -1) {                                      \
+        lua_pushstring(L, name);                            \
+        lua_pushlightuserdata(L, type);                     \
+        lua_pushlightuserdata(L,  &type->m_methods[index]); \
+        lua_pushcclosure(L, meth, 2);                       \
+        lua_settable(L, -3);                                \
+    }
+
 
 void luBinder::addType(luTypeDef *type)
 {
-    int ctor = -1;
-    int dtor = -1;
-    int tstr = -1;
-    int nidx = -1;
-
+    int ctor = -1, dtor = -1, tstr = -1, nidx = -1;
+    int addi = -1, subi = -1, muli = -1, divi = -1;
+    int unmi = -1;
 
     if (type->m_methods)
     {
@@ -302,6 +338,13 @@ void luBinder::addType(luTypeDef *type)
         luBinder_findMethod("__tostring",   type->m_methods,   &tstr);
         luBinder_findMethod("destructor",   type->m_methods,   &dtor);
         luBinder_findMethod("__setter",     type->m_methods,   &nidx);
+
+        // math operators
+        luBinder_findMethod("__add",     type->m_methods,   &addi);
+        luBinder_findMethod("__sub",     type->m_methods,   &subi);
+        luBinder_findMethod("__mul",     type->m_methods,   &muli);
+        luBinder_findMethod("__div",     type->m_methods,   &divi);
+        luBinder_findMethod("__unm",     type->m_methods,   &unmi);
     }
 
 
@@ -319,6 +362,7 @@ void luBinder::addType(luTypeDef *type)
     lua_pushvalue(L, -1);
     lua_setfield(L, -2, "__index");
 
+
     if (tstr != -1)
     {
         lua_pushstring(L, "__tostring");
@@ -335,7 +379,6 @@ void luBinder::addType(luTypeDef *type)
         lua_pushcclosure(L, luDef_ToString, 1);
         lua_settable(L, -3);
     }
-
 
     if (dtor != -1)
     {
@@ -358,14 +401,13 @@ void luBinder::addType(luTypeDef *type)
     lua_pushcclosure(L, luDef_Indexer, 1);
     lua_settable(L, -3);
 
-    if (nidx != -1)
-    {
-        lua_pushstring(L, "__newindex");
-        lua_pushlightuserdata(L, type);
-        lua_pushlightuserdata(L,  &type->m_methods[nidx]);
-        lua_pushcclosure(L, luDef_NewIndexer, 2);
-        lua_settable(L, -3);
-    }
+
+    luDef_DefaultMethod(type, "__newindex", nidx, luDef_NewIndexer);
+    luDef_DefaultMethod(type, "__add",      addi, luDef_MethodWrapper);
+    luDef_DefaultMethod(type, "__sub",      subi, luDef_MethodWrapper);
+    luDef_DefaultMethod(type, "__mul",      muli, luDef_MethodWrapper);
+    luDef_DefaultMethod(type, "__div",      divi, luDef_MethodWrapper);
+    luDef_DefaultMethod(type, "__unm",      unmi, luDef_MethodWrapper);
 
     if (type->m_methods)
     {
@@ -374,13 +416,8 @@ void luBinder::addType(luTypeDef *type)
         {
             type->m_methods[i].m_hash = luBinder_hash(type->m_methods[i].m_name);
 
-            if (type->m_methods[i].m_hash == __constructor ||
-                    type->m_methods[i].m_hash == __destructor ||
-                    type->m_methods[i].m_hash == __getter_hash ||
-                    type->m_methods[i].m_hash == __setter_hash ||
-                    type->m_methods[i].m_hash == __tostring ||
-                    type->m_methods[i].m_hash == __lgc
-               ) continue;
+            if (luDef_isBuiltinMethod(&type->m_methods[i]))
+                continue;
 
 
             lua_pushstring(L, type->m_methods[i].m_name);
@@ -400,14 +437,8 @@ void luBinder::addMethods(luMethodDef *methods)
     {
 
         methods[i].m_hash = luBinder_hash(methods[i].m_name);
-        if (methods[i].m_hash == __constructor ||
-                methods[i].m_hash == __destructor ||
-                methods[i].m_hash == __getter_hash ||
-                methods[i].m_hash == __setter_hash ||
-                methods[i].m_hash == __tostring ||
-                methods[i].m_hash == __lgc
-           ) continue;
-
+        if (luDef_isBuiltinMethod(&methods[i]))
+            continue;
 
         lua_pushstring(L, methods[i].m_name);
         lua_pushnumber(L, -1);
