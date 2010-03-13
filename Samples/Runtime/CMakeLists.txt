@@ -11,7 +11,7 @@ include_directories(${OGRELITE_SOURCE_DIR}/OgreMain/include/OSX)
 	SET (NibFile MainMenu.nib)
 endif()
 
-set(SRC momo_ogre.blend Main.cpp OnLoad.lua)
+set(SRC momo_ogre.blend Main.cpp)
 
 include_directories(
     ${OGREKIT_OGRE_INCLUDE}
