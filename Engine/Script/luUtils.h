@@ -280,9 +280,11 @@ public:
         if (m_ref != -1)
             unref(L);
 
-        lua_pushvalue(L, ob);
-        m_ref = luaL_ref(L, LUA_REGISTRYINDEX);
-        lua_pop(L, 1);
+        {
+            LUA_SCOPE_LOCK
+            lua_pushvalue(L, ob);
+            m_ref = luaL_ref(L, LUA_REGISTRYINDEX);
+        }
     }
 
     void unref(ltState *L)

@@ -162,7 +162,7 @@ static luString luDef_ErrorParams(const char *meth, const char *dt)
 
         if (dt[i+1] != LU_NIL)
         {
-            if (!isOpt || dt[i+1] != LU_OPT)
+            if (!isOpt && dt[i+1] != LU_OPT)
                 stream << ", ";
         }
     }
@@ -278,7 +278,6 @@ static int luDef_NewIndexer(ltState *L)
                     return 1;
                 }
             }
-
 
             int ret = 0;
             if ((ret = mdef->m_meth(ob)) != 0)
@@ -419,7 +418,6 @@ void luBinder::addType(luTypeDef *type)
             if (luDef_isBuiltinMethod(&type->m_methods[i]))
                 continue;
 
-
             lua_pushstring(L, type->m_methods[i].m_name);
             lua_pushlightuserdata(L, type);
             lua_pushlightuserdata(L, &type->m_methods[i]);
@@ -430,12 +428,12 @@ void luBinder::addType(luTypeDef *type)
     lua_pop(L, 1);
 }
 
+
 void luBinder::addMethods(luMethodDef *methods)
 {
     int i;
     for (i=0; methods[i].m_name != 0; ++i)
     {
-
         methods[i].m_hash = luBinder_hash(methods[i].m_name);
         if (luDef_isBuiltinMethod(&methods[i]))
             continue;
@@ -447,7 +445,6 @@ void luBinder::addMethods(luMethodDef *methods)
         lua_settable(L, -3);
     }
 }
-
 
 bool luObject::isNil(int idx) const
 {

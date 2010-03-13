@@ -66,7 +66,7 @@ typedef utHashTableIterator<luCallbacks> luCallbackIterator;
 class gkLuaScript
 {
 protected:
-    luRefObject*    m_script, *m_main;
+    luRefObject*    m_script;
     luCallbacks     m_functions;
 
     const gkString m_name, m_text;

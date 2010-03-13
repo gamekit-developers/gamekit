@@ -34,7 +34,7 @@ static gkLuaScript *gsCurrent = 0;
 
 
 gkLuaScript::gkLuaScript(gkLuaManager *parent, const gkString &name, const gkString &text)
-    :       m_script(0),m_main(0), m_name(name), m_text(text), m_error(false), m_owner(parent)
+    :       m_script(0), m_name(name), m_text(text), m_error(false), m_owner(parent)
 {
 }
 
@@ -50,11 +50,6 @@ gkLuaScript::~gkLuaScript()
         delete ref;
     }
 
-    if (m_main != 0)
-    {
-        m_main->unref(L);
-        delete m_main;
-    }
     if (m_script != 0)
     {
         m_script->unref(L);
@@ -79,34 +74,33 @@ bool gkLuaScript::execute(void)
 
     if (m_error) 
         return false;
-
     ltState *L = m_owner->getLua();
+    LUA_SCOPE_LOCK;
     {
-        LUA_SCOPE_LOCK;
-
         if (m_script == 0)
         {
             // compile
             if (luaL_loadbuffer(L, m_text.c_str(), m_text.size()-1, m_name.c_str()) != 0)
                 return handleError(L);
 
-            bool has_main = true;
             m_script = new luRefObject();
             m_script->addRef(L, lua_gettop(L));
+            lua_pop(L, 1);
         } 
 
         m_script->push(L);
         if (lua_pcall(L, 0, 0, 0) != 0)
             return handleError(L);
 
+        // call main 
         lua_getglobal(L, "Main");
         if (lua_isfunction(L, -1))
         {
             if (lua_pcall(L, 0, 0, 0) != 0)
                 return handleError(L);
         }
-        else lua_pop(L, 1);
 
+        // run garbage collector
         lua_gc(L, LUA_GCCOLLECT, 0);
         gsCurrent = 0;
     }
@@ -119,30 +113,31 @@ void gkLuaScript::update(gkScalar tickRate)
     if (m_error || m_script == 0 || m_functions.empty())
         return;
 
-
     ltState *L = m_owner->getLua();
+    LUA_SCOPE_LOCK;
+
+    // base script 
+    m_script->push(L);
+
+
+    luCallbackIterator it(m_functions);
+    while (it.hasMoreElements())
     {
-        LUA_SCOPE_LOCK;
-        m_script->push(L);
+        // callback in script 
+        it.getNext().second->push(L);
 
-        luCallbackIterator it(m_functions);
-        while (it.hasMoreElements())
+        lua_pushnumber(L, tickRate);
+        if (lua_pcall(L, 1, 0, 0) != 0)
         {
-            LUA_SCOPE_LOCK;
-            it.getNext().second->push(L);
-            lua_pushnumber(L, tickRate);
-            if (lua_pcall(L, 1, 0, 0) != 0)
-            {
-                printf("%s\n", lua_tostring(L, -1));
-                lua_pop(L, 1);
-                m_error = true;
-                break;
-            }
+            handleError(L);
+            break;
         }
-        lua_gc(L, LUA_GCSTEP, 0);
-    }
-}
 
+        lua_pop(L, 1);
+    }
+    // run garbage collector
+    lua_gc(L, LUA_GCCOLLECT, 0);
+}
 
 
 gkLuaManager::gkLuaManager()
