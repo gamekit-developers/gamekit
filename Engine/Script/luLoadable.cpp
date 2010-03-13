@@ -51,19 +51,32 @@ static int luLoadable_isLoaded(luObject &L)
 
 static int luLoadable_load(luObject &L)
 {
-    // todo
+    gkObject &ob = L.getValueClassT<luLoadable>(1)->ref<gkObject>();
+
+    luClass *cls = L.getValueClass(1);
+    if (!cls->isTypeOf(cls->getType(), "Scene"))
+        ob.load();
     return 0;
 }
 
 static int luLoadable_unload(luObject &L)
 {
-    // todo
+    gkObject &ob = L.getValueClassT<luLoadable>(1)->ref<gkObject>();
+
+    luClass *cls = L.getValueClass(1);
+    if (!cls->isTypeOf(cls->getType(), "Scene"))
+        ob.unload();
     return 0;
 }
 
 static int luLoadable_reload(luObject &L)
 {
-    // todo
+    gkObject &ob = L.getValueClassT<luLoadable>(1)->ref<gkObject>();
+
+    // scenes will require a load / unload query in gkEngine
+    luClass *cls = L.getValueClass(1);
+    if (!cls->isTypeOf(cls->getType(), "Scene"))
+        ob.reload();
     return 0;
 }
 
@@ -73,6 +86,9 @@ luMethodDef luLoadable::Methods[] = {
 
     {"getName",     luLoadable_getName,     LU_NOPARAM, ""},
     {"isLoaded",    luLoadable_isLoaded,    LU_NOPARAM, ""},
+    {"load",        luLoadable_load,        LU_NOPARAM, ""},
+    {"unload",      luLoadable_unload,      LU_NOPARAM, ""},
+    {"reload",      luLoadable_reload,      LU_NOPARAM, ""},
     {0,0,0,0}
 };
 

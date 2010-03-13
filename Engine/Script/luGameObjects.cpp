@@ -26,6 +26,7 @@
 */
 #include "luGameObjects.h"
 #include "luMath.h"
+#include "luScene.h"
 #include "gkScene.h"
 #include "gkGameObject.h"
 #include "gkCamera.h"
@@ -279,6 +280,14 @@ static int luGameObject_roll(luObject &L)
     return 0;
 }
 
+static int luGameObject_getScene(luObject &L)
+{
+    if (!LU_IsGameObject(L, 1))
+        return L.pushError("expected GameObject");
+
+    return LU_NewScene(L, LU_GetGameObject(L, 1).getOwner());
+}
+
 
 luMethodDef luGameObject::Methods[] =
 {
@@ -309,6 +318,8 @@ luMethodDef luGameObject::Methods[] =
     {"yaw",                 luGameObject_yaw,                   LU_PARAM, ".n|b"},
     {"pitch",               luGameObject_pitch,                 LU_PARAM, ".n|b"},
     {"roll",                luGameObject_roll,                  LU_PARAM, ".n|b"},
+
+    {"getScene",            luGameObject_getScene,              LU_PARAM, "."},
 
     {0,0,0,0}
 };
@@ -354,7 +365,7 @@ static int luEntity_playAction(luObject &L)
     int blend = 0;
     if (L.isNumber(3)) blend = L.toint(3);
 
-    LU_GeEntity(L, 1).playAction(L.tostring(2), blend);
+    LU_GetEntity(L, 1).playAction(L.tostring(2), blend);
     return 0;
 }
 

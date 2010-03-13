@@ -228,6 +228,7 @@ public:
 
     virtual luTypeDef *getType(void) = 0;
     bool isTypeOf(luTypeDef *type, luTypeDef *def);
+    bool isTypeOf(luTypeDef *type, const char *name);
 };
 
 

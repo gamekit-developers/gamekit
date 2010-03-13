@@ -30,6 +30,7 @@
 #include "luUtils.h"
 #include "luLoadable.h"
 
+class gkScene;
 
 class luScene : public luLoadable
 {
@@ -44,6 +45,8 @@ public:
     luTypeDef *getType(void) { return &Type; }
 };
 
-
+UT_INLINE bool          LU_IsScene(luObject &L, int n)          { return L.typecheck(n, &luScene::Type); }
+UT_INLINE gkScene&      LU_GetScene(luObject &L, int n)         { return L.toclassT<luScene>(n)->ref<gkScene>(); }
+UT_INLINE int           LU_NewScene(luObject &L, gkObject *sc)  { UT_ASSERT(sc); new (&luScene::Type, L) luScene(sc); return 1;}
 
 #endif//_luScene_h_

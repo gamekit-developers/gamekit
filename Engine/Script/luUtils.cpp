@@ -600,6 +600,18 @@ bool luClass::isTypeOf(luTypeDef *root, luTypeDef *def)
 }
 
 
+bool luClass::isTypeOf(luTypeDef *root, const char *name)
+{
+    if (utCharEq(root->m_name, name))
+        return true;
+
+    if (root->m_parent)
+        return isTypeOf(root->m_parent, name);
+    return false;
+}
+
+
+
 
 luBinder::luBinder(ltState *_L) : L(_L)
 {

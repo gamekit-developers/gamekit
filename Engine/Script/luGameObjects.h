@@ -96,11 +96,10 @@ UT_INLINE bool          LU_IsLight(luObject &L, int n)          { return L.typec
 UT_INLINE bool          LU_IsCamera(luObject &L, int n)         { return L.typecheck(n, &luCamera::Type); }
 UT_INLINE bool          LU_IsEntity(luObject &L, int n)         { return L.typecheck(n, &luEntity::Type); }
 UT_INLINE bool          LU_IsGameObject(luObject &L, int n)     { return L.typecheck(n, &luGameObject::Type); }
-UT_INLINE gkEntity&     LU_GeEntity(luObject &L, int n)         { return L.toclassT<luEntity>(n)->ref<gkEntity>(); }
-UT_INLINE gkCamera&     LU_GeCamera(luObject &L, int n)         { return L.toclassT<luCamera>(n)->ref<gkCamera>(); }
-UT_INLINE gkLight&      LU_GeLight(luObject &L, int n)          { return L.toclassT<luLight>(n)->ref<gkLight>(); }
+UT_INLINE gkEntity&     LU_GetEntity(luObject &L, int n)        { return L.toclassT<luEntity>(n)->ref<gkEntity>(); }
+UT_INLINE gkCamera&     LU_GetCamera(luObject &L, int n)        { return L.toclassT<luCamera>(n)->ref<gkCamera>(); }
+UT_INLINE gkLight&      LU_GetLight(luObject &L, int n)         { return L.toclassT<luLight>(n)->ref<gkLight>(); }
 UT_INLINE gkGameObject& LU_GetGameObject(luObject &L, int n)    { return L.toclassT<luGameObject>(n)->ref<gkGameObject>(); }
-
 
 
 #endif//_luGameObjects_h_
