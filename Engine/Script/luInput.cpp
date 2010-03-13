@@ -63,6 +63,10 @@ static int luMouse_get(luObject &L)
             return L.push((int)mse.wheelDelta);
         if (str == "moved")
             return L.push(mse.moved);
+        if (str == "winx")
+            return L.push((int)mse.winsize.x);
+        if (str == "winy")
+            return L.push((int)mse.winsize.y);
     }
     return 0;
 }
