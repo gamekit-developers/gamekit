@@ -150,6 +150,9 @@ bool gkBlendFile::_parseFile(void)
     return true;
 }
 
+#define G_FILE_GAME_MAT			 (1 << 12)				/* deprecated */
+#define G_FILE_SHOW_PHYSICS		 (1 << 14)				/* deprecated */
+
 
 bool gkBlendFile::_parse(void)
 {
@@ -166,6 +169,7 @@ bool gkBlendFile::_parse(void)
 
     gkSceneManager &sceneMgr = gkSceneManager::getSingleton();
     bParse::bListBasePtr* lbp = mp->getScene();
+    gkUserDefs &defs = gkEngine::getSingleton().getUserDefs();
 
 #ifdef EXTRACT_ALL_SCENES
     for (size_t i = 0; i < lbp->size(); i++)
@@ -176,10 +180,18 @@ bool gkBlendFile::_parse(void)
         Blender::FileGlobal *glob = (Blender::FileGlobal*)m_file->getFileGlobal();
         Blender::Scene *sc = 0;
         if (glob)
+        {
+            if (glob->fileflags & G_FILE_GAME_MAT)
+                defs.blendermat = true;
+            if (glob->fileflags & G_FILE_SHOW_PHYSICS)
+                defs.debugPhysics = true;
+
             sc = (Blender::Scene *)glob->curscene;
+        }
 
         if (!sc)
             sc = (Blender::Scene*)lbp->at(0);
+
 
 #endif
 
@@ -189,8 +201,6 @@ bool gkBlendFile::_parse(void)
                                                 new gkSceneObjectLoader(this, sc));
             m_scenes.push_back(newscene);
 
-
-            gkUserDefs &defs = gkEngine::getSingleton().getUserDefs();
             if (defs.userWindow)
             {
                 defs.winsize.x = (gkScalar)sc->r.xplay;

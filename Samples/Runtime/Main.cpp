@@ -37,13 +37,13 @@ public:
     OgreKit(const gkString &blend)
         :   m_blend(blend), m_scene(0)
     {
-        m_prefs.winsize.x   = 800;
-        m_prefs.winsize.y   = 600;
-        m_prefs.wintitle    = gkString("OgreKit Demo (Press Escape to exit)[") + m_blend + gkString("]");
-        m_prefs.blendermat  = true;
-        m_prefs.verbose     = false;
-        m_prefs.grabInput   = true;
-        m_prefs.debugPhysics    = false;
+        m_prefs.winsize.x        = 800;
+        m_prefs.winsize.y        = 600;
+        m_prefs.wintitle         = gkString("OgreKit Demo (Press Escape to exit)[") + m_blend + gkString("]");
+        m_prefs.blendermat       = false;
+        m_prefs.verbose          = true;
+        m_prefs.grabInput        = true;
+        m_prefs.debugPhysics     = false;
         m_prefs.debugPhysicsAabb = false;
 
         gkPath path = "OgreKitStartup.cfg";
