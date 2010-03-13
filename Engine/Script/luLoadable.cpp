@@ -26,6 +26,7 @@
 */
 #include "luLoadable.h"
 #include "gkObject.h"
+#include "gkEngine.h"
 
 
 luLoadable::luLoadable(gkObject *ob) : m_object(ob)
@@ -52,31 +53,23 @@ static int luLoadable_isLoaded(luObject &L)
 static int luLoadable_load(luObject &L)
 {
     gkObject &ob = L.getValueClassT<luLoadable>(1)->ref<gkObject>();
-
-    luClass *cls = L.getValueClass(1);
-    if (!cls->isTypeOf(cls->getType(), "Scene"))
-        ob.load();
+    if (!ob.isLoaded())
+        gkEngine::getSingleton().addLoadable(&ob, LQ_LOAD);
     return 0;
 }
 
 static int luLoadable_unload(luObject &L)
 {
     gkObject &ob = L.getValueClassT<luLoadable>(1)->ref<gkObject>();
-
-    luClass *cls = L.getValueClass(1);
-    if (!cls->isTypeOf(cls->getType(), "Scene"))
-        ob.unload();
+    if (ob.isLoaded())
+        gkEngine::getSingleton().addLoadable(&ob, LQ_UNLOAD);
     return 0;
 }
 
 static int luLoadable_reload(luObject &L)
 {
     gkObject &ob = L.getValueClassT<luLoadable>(1)->ref<gkObject>();
-
-    // scenes will require a load / unload query in gkEngine
-    luClass *cls = L.getValueClass(1);
-    if (!cls->isTypeOf(cls->getType(), "Scene"))
-        ob.reload();
+    gkEngine::getSingleton().addLoadable(&ob, LQ_RELOAD);
     return 0;
 }
 

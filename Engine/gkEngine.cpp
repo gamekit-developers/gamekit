@@ -401,7 +401,26 @@ void gkEnginePrivate::tick(gkScalar dt)
     // update main scene
     scene->update(dt);
     // update callbacks
-    if (engine->m_listener) engine->m_listener->tick(dt);
+    if (engine->m_listener) 
+        engine->m_listener->tick(dt);
+
+    // post process 
+    if (!engine->m_loadables.empty())
+    {
+        utHashTableIterator<LoadQueryMap> it(engine->m_loadables);
+        while (it.hasMoreElements())
+        {
+            utHashTableIterator<LoadQueryMap>::Pair obpair = it.getNext();
+            if (obpair.second == LQ_RELOAD)
+                static_cast<gkObject*>(obpair.first.key())->reload();
+            else if (obpair.second == LQ_LOAD)
+                static_cast<gkObject*>(obpair.first.key())->load();
+            else if (obpair.second == LQ_UNLOAD)
+                static_cast<gkObject*>(obpair.first.key())->unload();
+        }
+        engine->m_loadables.clear();
+    }
+
 }
 
 void gkEngine::setActiveScene(gkScene *sc)

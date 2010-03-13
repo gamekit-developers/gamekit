@@ -838,6 +838,8 @@ public:
     // Copy constructor
     utPointerHashKey(const utPointerHashKey& k) : m_key(k.m_key), m_hash(k.m_hash) {}
 
+    UT_INLINE void          *key(void)       {return m_key;}
+    UT_INLINE const void    *key(void) const {return m_key;}
 
     UT_INLINE UThash hash(void) const {
         if (m_hash != UT_NPOS) return m_hash;

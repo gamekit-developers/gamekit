@@ -31,10 +31,20 @@
 #include "gkMathUtils.h"
 #include "OgreSingleton.h"
 
+enum LoadQuery
+{
+    LQ_RELOAD,
+    LQ_LOAD,
+    LQ_UNLOAD
+};
 
 
 class gkEngine : public Ogre::Singleton<gkEngine>
 {
+public:
+    typedef utHashTable<utPointerHashKey, LoadQuery> LoadQueryMap;
+
+
 public:
 
     class Listener
@@ -79,7 +89,7 @@ public:
 
     // tick update hook
     GK_INLINE void setListener(Listener *listener) { m_listener = listener; }
-
+    GK_INLINE void addLoadable(class gkObject *ob, LoadQuery type) {m_loadables.insert(ob, type);}
 
 private:
 
@@ -95,6 +105,7 @@ private:
     bool                    m_initialized, m_ownsDefs;
     gkUserDefs*             m_defs;
     Listener*               m_listener;
+    LoadQueryMap            m_loadables;
 
     static gkScalar         m_tickRate;
     static gkScalar         m_animRate;
