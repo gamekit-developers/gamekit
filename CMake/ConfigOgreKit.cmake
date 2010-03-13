@@ -28,9 +28,12 @@ macro (configure_ogrekit ROOT OGREPATH)
 	      endif (WIN32)
 	    endif (UNIX)
 	endif (APPLE)
+	
+    option(OGREKIT_BUILD_RUNTIME    "Build Samples/Runtime"     ON)
+    option(OGREKIT_BUILD_LOGICDEMO  "Build Samples/LogicDemo"   ON)
+
 
 	set(OGREKIT_DEP_DIR ${ROOT}/Dependencies/Source)
-
 	set(OGREKIT_FREEIMAGE_INCLUDE ${OGREKIT_DEP_DIR}/FreeImage)
 	set(OGREKIT_FREETYPE_INCLUDE ${OGREKIT_DEP_DIR}/FreeType/include)
 	set(OGREKIT_ZLIB_INCLUDE ${OGREKIT_DEP_DIR}/FreeImage/ZLib)
