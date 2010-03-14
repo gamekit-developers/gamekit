@@ -385,6 +385,10 @@ bool gkEnginePrivate::frameRenderingQueued(const FrameEvent& evt)
         ++state.loop;
     }
 
+    // in case the user called unload without 
+    // loading another or reloading... exit 
+    if (!scene) return false;
+
     state.blend = gkScalar(GET_TICK(state.T) + state.ticks - state.next) * state.invt;
     if (state.blend >= 0 && state.blend <= 1)
         scene->synchronizeMotion(state.blend);
