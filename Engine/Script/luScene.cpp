@@ -44,76 +44,73 @@ luScene::~luScene()
 {
 }
 
-
-static int luScene_hasObject(luObject &L)
+// bool Scene:hasObject(String)
+int luScene::hasObject(luClass *self, luObject &L)
 {
-    gkScene &sc = L.getValueClassT<luScene>(1)->ref<gkScene>();
-    return L.push(sc.hasObject(L.getValueString(2)));
+    return L.push(ref<gkScene>().hasObject(L.tostring(1)));
 }
 
-static int luScene_getObject(luObject &L)
+// GameObject Scene:getObject(String)
+int luScene::getObject(luClass *self, luObject &L)
 {
-    gkScene &sc = L.getValueClassT<luScene>(1)->ref<gkScene>();
-    luString look = L.getValueString(2);
+    gkScene &sc = ref<gkScene>();
+
+    luString look = L.tostring(2);
     if (!sc.hasObject(look))
-    {
-        return L.push();
-    }
+        return 0;
 
-    gkGameObject *ob = sc.getObject(look);
-
-    switch (ob->getType())
-    {
-    case GK_CAMERA:
-        new (&luCamera::Type, L) luCamera(ob);
-        return 1;
-    case GK_LIGHT:
-        new (&luLight::Type, L) luLight(ob);
-        return 1;
-    case GK_ENTITY:
-        new (&luEntity::Type, L) luEntity(ob);
-        return 1;
-    case GK_SKELETON:
-    case GK_OBJECT:
-        new (&luGameObject::Type, L) luGameObject(ob);
-        return 1;
-    }
-    return 0;
+    return luGameObject::create(L, sc.getObject(look));
 }
 
-static int luScene_createEmpty(luObject &L)
+// GameObject Scene:createEmpty(String)
+int luScene::createEmpty(luClass *self, luObject &L)
 {
-    gkScene &sc = L.getValueClassT<luScene>(1)->ref<gkScene>();
-    return 0;
+    return L.push("TODO");
 }
 
-static int luScene_createCamera(luObject &L)
+// GameObject Scene:createCamera(String)
+int luScene::createCamera(luClass *self, luObject &L)
 {
-    gkScene &sc = L.getValueClassT<luScene>(1)->ref<gkScene>();
-    return 0;
+    return L.push("TODO");
 }
 
-static int luScene_createMesh(luObject &L)
+// GameObject Scene:createMesh(String, String)
+int luScene::createMesh(luClass *self, luObject &L)
 {
-    gkScene &sc = L.getValueClassT<luScene>(1)->ref<gkScene>();
-    return 0;
+    return L.push("TODO");
 }
 
-static int luScene_createLamp(luObject &L)
+
+// GameObject Scene:createLamp(String)
+int luScene::createLamp(luClass *self, luObject &L)
 {
-    gkScene &sc = L.getValueClassT<luScene>(1)->ref<gkScene>();
-    return 0;
+    return L.push("TODO");
 }
 
 
-luMethodDef luScene::Methods[] = {
-    {"hasObject",       luScene_hasObject,      LU_PARAM, ".s"},
-    {"getObject",       luScene_getObject,      LU_PARAM, ".s"},
-    {"createEmpty",     luScene_createEmpty,    LU_PARAM, ".s"},
-    {"createCamera",    luScene_createCamera,   LU_PARAM, ".s"},
-    {"createMesh",      luScene_createMesh,     LU_PARAM, ".ss"},
-    {"createLamp",      luScene_createLamp,     LU_PARAM, ".s"},
-    {0,0,0,0}
-};
+int luScene::create(luObject &L, gkObject *ob)
+{
+    new (&Type, L) luScene(ob);
+    return 1;
+}
 
-luTypeDef luScene::Type = {"Scene", &luLoadable::Type, Methods};
+
+
+// ----------------------------------------------------------------------------
+// Globals
+luGlobalTableBegin(luScene)
+luGlobalTableEnd()
+
+
+// ----------------------------------------------------------------------------
+// Locals
+luClassTableBegin(luScene)
+luClassTable("hasObject",       luScene, hasObject,     LU_PARAM,   ".s")
+luClassTable("getObject",       luScene, getObject,     LU_PARAM,   ".s")
+luClassTable("createEmpty",     luScene, createEmpty,   LU_PARAM,   ".s")
+luClassTable("createCamera",    luScene, createCamera,  LU_PARAM,   ".s")
+luClassTable("createMesh",      luScene, createMesh,    LU_PARAM,   ".ss")
+luClassTable("createLamp",      luScene, createLamp,    LU_PARAM,   ".s")
+luClassTableEnd()
+
+luClassImpl("Scene", luScene, &luLoadable::Type);

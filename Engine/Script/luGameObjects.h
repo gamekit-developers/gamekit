@@ -38,68 +38,121 @@ class gkGameObject;
 
 class luGameObject : public luLoadable
 {
+    luClassHeader;
 public:
-    static luMethodDef Methods[];
-    static luTypeDef Type;
-
-public:
-    static void bind(luBinder &L);
 
     luGameObject(gkObject *ob);
     ~luGameObject();
-    luTypeDef *getType(void) { return &Type; }
-};
 
+    static int              create(luObject &L, gkGameObject *ob);
+    static luGameObject&    getArg(luObject &L, int v) { return L.toclassRefT<luGameObject>(v); }
+    static void             bind(luBinder &L);
+
+    // Math.Vector3 GameObject:getPosition()
+    int getPosition(luClass *self, luObject &L);
+
+    // Math.Vector3 GameObject:getRotation()
+    int getRotation(luClass *self, luObject &L);
+
+    // Math.Quaternion GameObject:getOrientation()
+    int getOrientation(luClass *self, luObject &L);
+
+    // Math.Vector3 GameObject:getScale()
+    int getScale(luClass *self, luObject &L);
+
+    // Math.Vector3 GameObject:getWorldPosition()
+    int getWorldPosition(luClass *self, luObject &L);
+
+    // Math.Vector3 GameObject:getWorldRotation()
+    int getWorldRotation(luClass *self, luObject &L);
+
+    // Math.Quaternion GameObject:getWorldOrientation()
+    int getWorldOrientation(luClass *self, luObject &L);
+
+    // Math.Vector3 GameObject:getLinearVelocity()
+    int getLinearVelocity(luClass *self, luObject &L);
+
+    // Math.Vector3 GameObject:getAngularVelocity()
+    int getAngularVelocity(luClass *self, luObject &L);
+
+    // nil GameObject:setLinearVelocity(Math.Vector3)
+    int setLinearVelocity(luClass *self, luObject &L);
+
+    // nil GameObject:setAngularVelocity(Math.Vector3)
+    int setAngularVelocity(luClass *self, luObject &L);
+
+    // nil GameObject:setPosition(Math.Vector3)
+    int setPosition(luClass *self, luObject &L);
+
+    // nil GameObject:setRotation(Math.Vector3)
+    int setRotation(luClass *self, luObject &L);
+
+    // nil GameObject:setOrientation(Math.Quaternion)
+    int setOrientation(luClass *self, luObject &L);
+
+    // Enum GameObject:getType()
+    int getType(luClass *self, luObject &L);
+
+    // nil GameObject:rotate(Math.Vector3, bool=false)
+    // nil GameObject:rotate(Math.Quaternion, bool=false)
+    int rotate(luClass *self, luObject &L);
+
+    // nil GameObject:translate(Math.Vector3, bool=false)
+    int translate(luClass *self, luObject &L);
+
+    // nil GameObject:scale(Math.Vector3)
+    int scale(luClass *self, luObject &L);
+
+    // nil GameObject:yaw(Number, bool=false)
+    int yaw(luClass *self, luObject &L);
+
+    // nil GameObject:pitch(Number, bool=false)
+    int pitch(luClass *self, luObject &L);
+
+    // nil GameObject:roll(Number, bool=false)
+    int roll(luClass *self, luObject &L);
+
+    // Scene GameObject:getScene()
+    int getScene(luClass *self, luObject &L);
+};
 
 class luCamera : public luGameObject
 {
-public:
-    static luMethodDef Methods[];
-    static luTypeDef Type;
-
+    luClassHeader;
 public:
 
     luCamera(gkObject *ob);
     ~luCamera();
-    luTypeDef *getType(void) { return &Type; }
+
+    static luCamera&    getArg(luObject &L, int v) { return L.toclassRefT<luCamera>(v); }
+
 };
 
 class luEntity : public luGameObject
 {
-public:
-    static luMethodDef Methods[];
-    static luTypeDef Type;
-
+    luClassHeader;
 public:
 
     luEntity(gkObject *ob);
     ~luEntity();
-    luTypeDef *getType(void) { return &Type; }
+
+    static luEntity&    getArg(luObject &L, int v) { return L.toclassRefT<luEntity>(v); }
+
+    // nil Entity:playAction(String, Number=0)
+    int playAction(luClass *self, luObject &L);
 };
 
 
 class luLight : public luGameObject
 {
-public:
-    static luMethodDef Methods[];
-    static luTypeDef Type;
-
+    luClassHeader;
 public:
 
     luLight(gkObject *ob);
     ~luLight();
-    luTypeDef *getType(void) { return &Type; }
+
+    static luLight&    getArg(luObject &L, int v) { return L.toclassRefT<luLight>(v); }
 };
-
-
-UT_INLINE bool          LU_IsLight(luObject &L, int n)          { return L.typecheck(n, &luLight::Type); }
-UT_INLINE bool          LU_IsCamera(luObject &L, int n)         { return L.typecheck(n, &luCamera::Type); }
-UT_INLINE bool          LU_IsEntity(luObject &L, int n)         { return L.typecheck(n, &luEntity::Type); }
-UT_INLINE bool          LU_IsGameObject(luObject &L, int n)     { return L.typecheck(n, &luGameObject::Type); }
-UT_INLINE gkEntity&     LU_GetEntity(luObject &L, int n)        { return L.toclassT<luEntity>(n)->ref<gkEntity>(); }
-UT_INLINE gkCamera&     LU_GetCamera(luObject &L, int n)        { return L.toclassT<luCamera>(n)->ref<gkCamera>(); }
-UT_INLINE gkLight&      LU_GetLight(luObject &L, int n)         { return L.toclassT<luLight>(n)->ref<gkLight>(); }
-UT_INLINE gkGameObject& LU_GetGameObject(luObject &L, int n)    { return L.toclassT<luGameObject>(n)->ref<gkGameObject>(); }
 
 
 #endif//_luGameObjects_h_

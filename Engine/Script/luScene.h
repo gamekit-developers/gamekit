@@ -34,15 +34,33 @@ class gkScene;
 
 class luScene : public luLoadable
 {
-public:
-    static luMethodDef Methods[];
-    static luTypeDef Type;
-
+    luClassHeader;
 public:
 
     luScene(gkObject *ob);
     ~luScene();
-    luTypeDef *getType(void) { return &Type; }
+
+    static int create(luObject &L, gkObject *ob);
+    static UT_INLINE luScene& getArg(luObject &L, int v) { return L.toclassRefT<luScene>(v); }
+
+    // bool Scene:hasObject(String)
+    int hasObject(luClass *self, luObject &L);
+
+    // GameObject Scene:getObject(String)
+    int getObject(luClass *self, luObject &L);
+
+    // GameObject Scene:createEmpty(String)
+    int createEmpty(luClass *self, luObject &L);
+
+    // GameObject Scene:createCamera(String)
+    int createCamera(luClass *self, luObject &L);
+
+    // GameObject Scene:createMesh(String, String)
+    int createMesh(luClass *self, luObject &L);
+
+    // GameObject Scene:createLamp(String)
+    int createLamp(luClass *self, luObject &L);
+
 };
 
 UT_INLINE bool          LU_IsScene(luObject &L, int n)          { return L.typecheck(n, &luScene::Type); }

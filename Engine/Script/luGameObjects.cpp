@@ -53,153 +53,149 @@ void luGameObject::bind(luBinder &L)
     L.addConstant("OB_SKELETON",   GK_SKELETON);
 }
 
-static int luGameObject_getPosition(luObject &L)
+int luGameObject::create(luObject &L, gkGameObject *ob)
 {
-    if (!LU_IsGameObject(L, 1))
-        return L.pushError("expected GameObject");
+    GK_ASSERT(ob);
 
-    return LU_Vec3New(L, LU_GetGameObject(L, 1).getPosition());
-}
-
-static int luGameObject_getRotation(luObject &L)
-{
-    if (!LU_IsGameObject(L, 1))
-        return L.pushError("expected GameObject");
-
-    return LU_Vec3New(L, LU_GetGameObject(L, 1).getRotation().toVector3());
-}
-
-
-static int luGameObject_getOrientation(luObject &L)
-{
-    if (!LU_IsGameObject(L, 1))
-        return L.pushError("expected GameObject");
-
-    return LU_QuatNew(L, LU_GetGameObject(L, 1).getOrientation());
-}
-
-
-static int luGameObject_getScale(luObject &L)
-{
-    if (!LU_IsGameObject(L, 1))
-        return L.pushError("expected GameObject");
-
-    return LU_Vec3New(L, LU_GetGameObject(L, 1).getScale());
+    switch (ob->getType())
+    {
+    case GK_CAMERA:
+        new (&luCamera::Type, L) luCamera(ob);
+        return 1;
+    case GK_LIGHT:
+        new (&luLight::Type, L) luLight(ob);
+        return 1;
+    case GK_ENTITY:
+        new (&luEntity::Type, L) luEntity(ob);
+        return 1;
+    case GK_SKELETON:
+    case GK_OBJECT:
+        new (&luGameObject::Type, L) luGameObject(ob);
+        return 1;
+    }
+    return 0;
 }
 
 
-
-static int luGameObject_getWorldPosition(luObject &L)
+// Math.Vector3 GameObject:getPosition()
+int luGameObject::getPosition(luClass *self, luObject &L)
 {
-    if (!LU_IsGameObject(L, 1))
-        return L.pushError("expected GameObject");
-
-    return LU_Vec3New(L, LU_GetGameObject(L, 1).getWorldPosition());
+    return luVector3::create(L, ref<gkGameObject>().getPosition());
 }
 
-static int luGameObject_getWorldRotation(luObject &L)
+// Math.Vector3 GameObject:getRotation()
+int luGameObject::getRotation(luClass *self, luObject &L)
 {
-    if (!LU_IsGameObject(L, 1))
-        return L.pushError("expected GameObject");
-
-    return LU_Vec3New(L, LU_GetGameObject(L, 1).getWorldRotation().toVector3());
+    return luVector3::create(L, ref<gkGameObject>().getRotation().toVector3());
 }
 
-
-static int luGameObject_getWorldOrientation(luObject &L)
+// Math.Quaternion GameObject:getOrientation()
+int luGameObject::getOrientation(luClass *self, luObject &L)
 {
-    if (!LU_IsGameObject(L, 1))
-        return L.pushError("expected GameObject");
-
-    return LU_QuatNew(L, LU_GetGameObject(L, 1).getWorldOrientation());
+    return luQuat::create(L, ref<gkGameObject>().getOrientation());
 }
 
 
-static int luGameObject_getLinearVelocity(luObject &L)
+// Math.Vector3 GameObject:getScale()
+int luGameObject::getScale(luClass *self, luObject &L)
 {
-    if (!LU_IsGameObject(L, 1))
-        return L.pushError("expected GameObject");
-
-    return LU_Vec3New(L, LU_GetGameObject(L, 1).getLinearVelocity());
+    return luVector3::create(L, ref<gkGameObject>().getScale());
 }
 
-static int luGameObject_getAngularVelocity(luObject &L)
+// Math.Vector3 GameObject:getWorldPosition()
+int luGameObject::getWorldPosition(luClass *self, luObject &L)
 {
-    if (!LU_IsGameObject(L, 1))
-        return L.pushError("expected GameObject");
-
-    return LU_Vec3New(L, LU_GetGameObject(L, 1).getAngularVelocity());
+    return luVector3::create(L, ref<gkGameObject>().getWorldPosition());
 }
 
-static int luGameObject_setLinearVelocity(luObject &L)
-{
-    if (!LU_IsGameObject(L, 1))
-        return L.pushError("expected GameObject");
 
-    if (!LU_IsVec3(L, 2))
+// Math.Vector3 GameObject:getWorldRotation()
+int luGameObject::getWorldRotation(luClass *self, luObject &L)
+{
+    return luVector3::create(L, ref<gkGameObject>().getWorldRotation().toVector3());
+}
+
+
+// Math.Quaternion GameObject:getWorldOrientation()
+int luGameObject::getWorldOrientation(luClass *self, luObject &L)
+{
+    return luQuat::create(L, ref<gkGameObject>().getWorldOrientation());
+}
+
+
+// Math.Vector3 GameObject:getLinearVelocity()
+int luGameObject::getLinearVelocity(luClass *self, luObject &L)
+{
+    return luVector3::create(L, ref<gkGameObject>().getLinearVelocity());
+}
+
+
+// Math.Vector3 GameObject:getAngularVelocity()
+int luGameObject::getAngularVelocity(luClass *self, luObject &L)
+{
+    return luVector3::create(L, ref<gkGameObject>().getAngularVelocity());
+}
+
+
+// nil GameObject:setLinearVelocity(Math.Vector3)
+int luGameObject::setLinearVelocity(luClass *self, luObject &L)
+{
+    if (!luVector3::isType(L, 2))
         return L.pushError("expected setLinearVelocity(Vector3)");
 
-    LU_GetGameObject(L, 1).setLinearVelocity(LU_GetVec3Arg(L, 2));
+    ref<gkGameObject>().setLinearVelocity(luVector3::getArg(L, 2));
     return 0;
 }
 
 
-static int luGameObject_setAngularVelocity(luObject &L)
+// nil GameObject:setAngularVelocity(Math.Vector3)
+int luGameObject::setAngularVelocity(luClass *self, luObject &L)
 {
-    if (!LU_IsGameObject(L, 1))
-        return L.pushError("expected GameObject");
-
-    if (!LU_IsVec3(L, 2))
+    if (!luVector3::isType(L, 2))
         return L.pushError("expected setAngularVelocity(Vector3)");
 
-    LU_GetGameObject(L, 1).setAngularVelocity(LU_GetVec3Arg(L, 2));
+    ref<gkGameObject>().setAngularVelocity(luVector3::getArg(L, 2));
     return 0;
 }
 
-static int luGameObject_setPosition(luObject &L)
-{
-    if (!LU_IsGameObject(L, 1))
-        return L.pushError("expected GameObject");
 
-    if (!LU_IsVec3(L, 2))
+// nil GameObject:setPosition(Math.Vector3)
+int luGameObject::setPosition(luClass *self, luObject &L)
+{
+    if (!luVector3::isType(L, 2))
         return L.pushError("expected setPosition(Vector3)");
 
-    LU_GetGameObject(L, 1).setPosition(LU_GetVec3Arg(L, 2));
+    ref<gkGameObject>().setPosition(luVector3::getArg(L, 2));
     return 0;
 }
 
-static int luGameObject_setRotation(luObject &L)
-{
-    if (!LU_IsGameObject(L, 1))
-        return L.pushError("expected GameObject");
 
-    if (!LU_IsVec3(L, 2))
+// nil GameObject:setRotation(Math.Vector3)
+int luGameObject::setRotation(luClass *self, luObject &L)
+{
+    if (!luVector3::isType(L, 2))
         return L.pushError("expected setRotation(Vector3)");
 
-    LU_GetGameObject(L, 1).setOrientation(gkEuler(LU_GetVec3Arg(L, 2)).toQuaternion());
+    ref<gkGameObject>().setOrientation(gkEuler(luVector3::getArg(L, 2)).toQuaternion());
     return 0;
 }
 
 
-static int luGameObject_setOrientation(luObject &L)
+// nil GameObject:setOrientation(Math.Quaternion)
+int luGameObject::setOrientation(luClass *self, luObject &L)
 {
-    if (!LU_IsGameObject(L, 1))
-        return L.pushError("expected GameObject");
-    if (!LU_IsQuat(L, 2))
+    if (!luQuat::isType(L, 2))
         return L.pushError("expected setOrientation(Quaternion)");
 
-    LU_GetGameObject(L, 1).setOrientation(LU_GetQuatArg(L, 2));
+    ref<gkGameObject>().setOrientation(luQuat::getArg(L, 2));
     return 0;
 }
 
 
-
-static int luGameObject_getType(luObject &L)
+// Enum GameObject:getType()
+int luGameObject::getType(luClass *self, luObject &L)
 {
-    if (!LU_IsGameObject(L, 1))
-        return L.pushError("expected GameObject");
-
-    return L.push(LU_GetGameObject(L, 1).getType());
+    return L.push((int)ref<gkGameObject>().getType());
 }
 
 static int luGameObject_getTransformSpace(luObject &L, int n)
@@ -210,121 +206,112 @@ static int luGameObject_getTransformSpace(luObject &L, int n)
     return space;
 }
 
-static int luGameObject_rotate(luObject &L)
-{
-    if (!LU_IsGameObject(L, 1))
-        return L.pushError("expected GameObject");
 
-    if (!LU_IsVec3(L, 2) || !LU_IsQuat(L, 2))
+// nil GameObject:rotate(Math.Vector3, bool=false)
+// nil GameObject:rotate(Math.Quaternion, bool=false)
+int luGameObject::rotate(luClass *self, luObject &L)
+{
+    if (!luVector3::isType(L, 2) && !luQuat::isType(L, 2))
         return L.pushError("expected rotate((Vector3 or Quaternion), bool)");
 
-    gkQuaternion rot;
-    if (LU_IsVec3(L, 2))
-        rot = gkEuler(LU_GetVec3Arg(L, 2)).toQuaternion();
-    else rot = LU_GetQuatArg(L, 2);
 
-    LU_GetGameObject(L, 1).rotate(rot, luGameObject_getTransformSpace(L, 3));
+    gkQuaternion rot;
+    if (luVector3::isType(L, 2))
+        rot = gkEuler(luVector3::getArg(L, 2)).toQuaternion();
+    else 
+        rot = luQuat::getArg(L, 2);
+
+    ref<gkGameObject>().rotate(rot, luGameObject_getTransformSpace(L, L.toboolean(3)));
     return 0;
 }
 
 
-static int luGameObject_translate(luObject &L)
+// nil GameObject:translate(Math.Vector3, bool=false)
+int luGameObject::translate(luClass *self, luObject &L)
 {
-    if (!LU_IsGameObject(L, 1))
-        return L.pushError("expected GameObject");
-
-    if (!LU_IsVec3(L, 2))
+    if (!luVector3::isType(L, 2))
         return L.pushError("expected translate(Vector3, bool)");
 
-    LU_GetGameObject(L, 1).translate(LU_GetVec3Arg(L, 2),luGameObject_getTransformSpace(L, 3));
+    ref<gkGameObject>().translate(luVector3::getArg(L, 2), luGameObject_getTransformSpace(L, L.toboolean(3)));
+    return 0;
+}
+
+// nil GameObject:scale(Math.Vector3)
+int luGameObject::scale(luClass *self, luObject &L)
+{
+    if (!luVector3::isType(L, 2))
+        return L.pushError("expected scale(Vector3)");
+
+    ref<gkGameObject>().scale(luVector3::getArg(L, 2));
     return 0;
 }
 
 
-static int luGameObject_scale(luObject &L)
+// nil GameObject:yaw(Number, bool=false)
+int luGameObject::yaw(luClass *self, luObject &L)
 {
-    if (!LU_IsGameObject(L, 1))
-        return L.pushError("expected GameObject");
-
-    if (!LU_IsVec3(L, 2))
-        return L.pushError("expected scale(Vector3, bool)");
-
-    LU_GetGameObject(L, 1).scale(LU_GetVec3Arg(L, 2));
+    ref<gkGameObject>().yaw(gkRadian(L.tofloat(2)), luGameObject_getTransformSpace(L, L.toboolean(3)));
     return 0;
 }
 
-static int luGameObject_yaw(luObject &L)
+// nil GameObject:pitch(Number, bool=false)
+int luGameObject::pitch(luClass *self, luObject &L)
 {
-    if (!LU_IsGameObject(L, 1))
-        return L.pushError("expected GameObject");
-
-    LU_GetGameObject(L, 1).yaw(gkRadian(L.tofloat(2)), luGameObject_getTransformSpace(L, 3));
+    ref<gkGameObject>().pitch(gkRadian(L.tofloat(2)), luGameObject_getTransformSpace(L, L.toboolean(3)));
     return 0;
 }
 
-static int luGameObject_pitch(luObject &L)
-{
-    if (!LU_IsGameObject(L, 1))
-        return L.pushError("expected GameObject");
 
-    LU_GetGameObject(L, 1).pitch(gkRadian(L.tofloat(2)), luGameObject_getTransformSpace(L, 3));
+// nil GameObject:roll(Number, bool=false)
+int luGameObject::roll(luClass *self, luObject &L)
+{
+    ref<gkGameObject>().roll(gkRadian(L.tofloat(2)), luGameObject_getTransformSpace(L, L.toboolean(3)));
     return 0;
 }
 
-static int luGameObject_roll(luObject &L)
+// Scene GameObject:getScene()
+int luGameObject::getScene(luClass *self, luObject &L)
 {
-    if (!LU_IsGameObject(L, 1))
-        return L.pushError("expected GameObject");
-
-    LU_GetGameObject(L, 1).roll(gkRadian(L.tofloat(2)),luGameObject_getTransformSpace(L, 3));
-    return 0;
-}
-
-static int luGameObject_getScene(luObject &L)
-{
-    if (!LU_IsGameObject(L, 1))
-        return L.pushError("expected GameObject");
-
-    return LU_NewScene(L, LU_GetGameObject(L, 1).getOwner());
+    return luScene::create(L, ref<gkGameObject>().getOwner());
 }
 
 
-luMethodDef luGameObject::Methods[] =
-{
-    {"getPosition",         luGameObject_getPosition,           LU_PARAM, "."},
-    {"getRotation",         luGameObject_getRotation,           LU_PARAM, "."},
-    {"getOrientation",      luGameObject_getOrientation,        LU_PARAM, "."},
-    {"getScale",            luGameObject_getScale,              LU_PARAM, "."},
-    {"getWorldPosition",    luGameObject_getWorldPosition,      LU_PARAM, "."},
-    {"getWorldRotation",    luGameObject_getWorldRotation,      LU_PARAM, "."},
-    {"getWorldOrientation", luGameObject_getWorldOrientation,   LU_PARAM, "."},
-
-    {"getLinearVelocity",   luGameObject_getLinearVelocity,     LU_PARAM, "."},
-    {"getAngularVelocity",  luGameObject_getAngularVelocity,    LU_PARAM, "."},
-    {"setLinearVelocity",   luGameObject_setLinearVelocity,     LU_PARAM, "."},
-    {"setAngularVelocity",  luGameObject_setAngularVelocity,    LU_PARAM, "."},
 
 
-    {"setPosition",         luGameObject_setPosition,           LU_PARAM, ".."},
-    {"setRotation",         luGameObject_setRotation,           LU_PARAM, ".."},
-    {"setOrientation",      luGameObject_setOrientation,        LU_PARAM, ".."},
-    {"getType",             luGameObject_getType,               LU_PARAM, "."},
+// ----------------------------------------------------------------------------
+// Globals
+luGlobalTableBegin(luGameObject)
+luGlobalTableEnd()
 
 
-    {"rotate",              luGameObject_rotate,                LU_PARAM, "..|b"},
-    {"translate",           luGameObject_translate,             LU_PARAM, "..|b"},
-    {"scale",               luGameObject_scale,                 LU_PARAM, ".."},
+// ----------------------------------------------------------------------------
+// Locals
+luClassTableBegin(luGameObject)
+    luClassTable("getPosition",         luGameObject,getPosition,           LU_PARAM, ".")
+    luClassTable("getRotation",         luGameObject,getRotation,           LU_PARAM, ".")
+    luClassTable("getOrientation",      luGameObject,getOrientation,        LU_PARAM, ".")
+    luClassTable("getScale",            luGameObject,getScale,              LU_PARAM, ".")
+    luClassTable("getWorldPosition",    luGameObject,getWorldPosition,      LU_PARAM, ".")
+    luClassTable("getWorldRotation",    luGameObject,getWorldRotation,      LU_PARAM, ".")
+    luClassTable("getWorldOrientation", luGameObject,getWorldOrientation,   LU_PARAM, ".")
+    luClassTable("getLinearVelocity",   luGameObject,getLinearVelocity,     LU_PARAM, ".")
+    luClassTable("getAngularVelocity",  luGameObject,getAngularVelocity,    LU_PARAM, ".")
+    luClassTable("setLinearVelocity",   luGameObject,setLinearVelocity,     LU_PARAM, ".")
+    luClassTable("setAngularVelocity",  luGameObject,setAngularVelocity,    LU_PARAM, ".")
+    luClassTable("setPosition",         luGameObject,setPosition,           LU_PARAM, "..")
+    luClassTable("setRotation",         luGameObject,setRotation,           LU_PARAM, "..")
+    luClassTable("setOrientation",      luGameObject,setOrientation,        LU_PARAM, "..")
+    luClassTable("getType",             luGameObject,getType,               LU_PARAM, ".")
+    luClassTable("rotate",              luGameObject,rotate,                LU_PARAM, "..|b")
+    luClassTable("translate",           luGameObject,translate,             LU_PARAM, "..|b")
+    luClassTable("scale",               luGameObject,scale,                 LU_PARAM, "..")
+    luClassTable("yaw",                 luGameObject,yaw,                   LU_PARAM, ".n|b")
+    luClassTable("pitch",               luGameObject,pitch,                 LU_PARAM, ".n|b")
+    luClassTable("roll",                luGameObject,roll,                  LU_PARAM, ".n|b")
+    luClassTable("getScene",            luGameObject,getScene,              LU_PARAM, ".")
+luClassTableEnd()
 
-    {"yaw",                 luGameObject_yaw,                   LU_PARAM, ".n|b"},
-    {"pitch",               luGameObject_pitch,                 LU_PARAM, ".n|b"},
-    {"roll",                luGameObject_roll,                  LU_PARAM, ".n|b"},
-
-    {"getScene",            luGameObject_getScene,              LU_PARAM, "."},
-
-    {0,0,0,0}
-};
-
-luTypeDef luGameObject::Type = {"GameObject", &luLoadable::Type, Methods};
+luClassImpl("GameObject", luGameObject, &luLoadable::Type);
 
 
 // ----------------------------------------------------------------------------
@@ -336,15 +323,16 @@ luCamera::~luCamera()
 {
 }
 
+// Globals
+luGlobalTableBegin(luCamera)
+luGlobalTableEnd()
 
+// Locals
+luClassTableBegin(luCamera)
+// TODO
+luClassTableEnd()
 
-luMethodDef luCamera::Methods[] =
-{
-    {0,0,0,0}
-};
-
-luTypeDef luCamera::Type = {"Camera", &luGameObject::Type, Methods};
-
+luClassImpl("Camera", luCamera, &luGameObject::Type);
 
 
 
@@ -357,25 +345,28 @@ luEntity::~luEntity()
 {
 }
 
-static int luEntity_playAction(luObject &L)
+// nil Entity:playAction(String, Number=0)
+int luEntity::playAction(luClass *self, luObject &L)
 {
-    if (!LU_IsEntity(L, 1))
-        return L.pushError("expected Entity");
-
     int blend = 0;
     if (L.isNumber(3)) blend = L.toint(3);
 
-    LU_GetEntity(L, 1).playAction(L.tostring(2), blend);
+    ref<gkEntity>().playAction(L.tostring(2), blend);
     return 0;
 }
 
-luMethodDef luEntity::Methods[] =
-{
-    {"playAction",         luEntity_playAction,     LU_PARAM, ".s|i"},
-    {0,0,0,0}
-};
+// Globals
+luGlobalTableBegin(luEntity)
+luGlobalTableEnd()
 
-luTypeDef luEntity::Type = {"Entity", &luGameObject::Type, Methods};
+// Locals
+luClassTableBegin(luEntity)
+    luClassTable("playAction",  luEntity,playAction,    LU_PARAM, ".s|i")
+luClassTableEnd()
+
+luClassImpl("Entity", luEntity, &luGameObject::Type);
+
+
 
 
 
@@ -388,11 +379,13 @@ luLight::~luLight()
 {
 }
 
+// Globals
+luGlobalTableBegin(luLight)
+luGlobalTableEnd()
 
+// Locals
+luClassTableBegin(luLight)
+// TODO
+luClassTableEnd()
 
-luMethodDef luLight::Methods[] =
-{
-    {0,0,0,0}
-};
-
-luTypeDef luLight::Type = {"Light", &luLight::Type, Methods};
+luClassImpl("Light", luLight, &luGameObject::Type);

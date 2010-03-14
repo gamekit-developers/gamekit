@@ -39,55 +39,53 @@ luMouse::~luMouse()
 {
 }
 
+int luMouse::getAttribute(luClass *self, luObject &L)
+{
+    if (L.isString(2))
+    {
+        const luString &str = L.getValueString(2);
+        if (str == "xpos")  return L.push((int)m_mouse->position.x);
+        if (str == "ypos")  return L.push((int)m_mouse->position.y);
+        if (str == "xrel")  return L.push((int)m_mouse->relitave.x);
+        if (str == "yrel")  return L.push((int)m_mouse->relitave.y);
+        if (str == "wheel") return L.push((int)m_mouse->wheelDelta);
+        if (str == "moved") return L.push(m_mouse->moved);
+        if (str == "winx")  return L.push((int)m_mouse->winsize.x);
+        if (str == "winy")  return L.push((int)m_mouse->winsize.y);
+    }
+    return 0;
+}
+
+
+int luMouse::isButtonDown(luClass *self, luObject &L)
+{
+    return L.push(m_mouse->isButtonDown((gkMouse::Buttons)L.getValueInt(2)));
+}
+
+
+// ----------------------------------------------------------------------------
+// Globals 
 static int luMouse_constructor(luObject &L)
 {
     new (L) luMouse();
     return 1;
 }
 
-static int luMouse_get(luObject &L)
-{
-    gkMouse &mse = L.getValueClassT<luMouse>(1)->mouse();
-    if (L.isString(2))
-    {
-        const luString &str = L.getValueString(2);
-        if (str == "xpos")
-            return L.push((int)mse.position.x);
-        if (str == "ypos")
-            return L.push((int)mse.position.y);
-        if (str == "xrel")
-            return L.push((int)mse.relitave.x);
-        if (str == "yrel")
-            return L.push((int)mse.relitave.y);
-        if (str == "wheel")
-            return L.push((int)mse.wheelDelta);
-        if (str == "moved")
-            return L.push(mse.moved);
-        if (str == "winx")
-            return L.push((int)mse.winsize.x);
-        if (str == "winy")
-            return L.push((int)mse.winsize.y);
-    }
-    return 0;
-}
+luGlobalTableBegin(luMouse)
+    luGlobalTable("constructor", luMouse_constructor, LU_NOPARAM, ".")
+luGlobalTableEnd()
 
 
-static int luMouse_isButtonDown(luObject &L)
-{
-    gkMouse &mse = L.getValueClassT<luMouse>(1)->mouse();
-    return L.push(mse.isButtonDown((gkMouse::Buttons)L.getValueInt(2)));
-}
+// ----------------------------------------------------------------------------
+// Locals
+luClassTableBegin(luMouse)
+    luClassTable("isButtonDown", luMouse, isButtonDown, LU_PARAM,   ".e")
+    luClassTable("__getter",     luMouse, getAttribute, LU_PARAM,   ".s")
+luClassTableEnd()
+
+luClassImpl("Mouse", luMouse, 0);
 
 
-luMethodDef luMouse::Methods[] =
-{
-    {"constructor",     luMouse_constructor,    LU_NOPARAM, "."},
-    {"isButtonDown",    luMouse_isButtonDown,   LU_PARAM,   ".e"},
-    {"__getter",        luMouse_get,            LU_PARAM,   ".s"},
-    {0, 0, 0}
-};
-
-luTypeDef luMouse::Type = { "Mouse", 0,  Methods};
 
 // ----------------------------------------------------------------------------
 luKeyboard::luKeyboard()
@@ -99,29 +97,32 @@ luKeyboard::~luKeyboard()
 {
 }
 
+int luKeyboard::isKeyDown(luClass *self, luObject &L)
+{
+    return L.push(m_keyboard->isKeyDown((gkScanCode)L.getValueInt(2)));
+}
 
+
+
+// ----------------------------------------------------------------------------
+// Globals 
 static int luKeyboard_constructor(luObject &L)
 {
     new (L) luKeyboard();
     return 1;
 }
 
-
-static int luKeyboard_isKeyDown(luObject &L)
-{
-    gkKeyboard &key = L.getValueClassT<luKeyboard>(1)->key();
-    return L.push(key.isKeyDown((gkScanCode)L.getValueInt(2)));
-}
-
-luMethodDef luKeyboard::Methods[] =
-{
-    {"constructor",     luKeyboard_constructor,     LU_NOPARAM, "."},
-    {"isKeyDown",       luKeyboard_isKeyDown,       LU_PARAM,   ".e"},
-    {0, 0, 0}
-};
+luGlobalTableBegin(luKeyboard)
+    luGlobalTable("constructor", luKeyboard_constructor, LU_NOPARAM, ".")
+luGlobalTableEnd()
 
 
-luTypeDef luKeyboard::Type = { "Keyboard", 0,  Methods};
+// ----------------------------------------------------------------------------
+// Locals
+luClassTableBegin(luKeyboard)
+    luClassTable("isKeyDown", luKeyboard, isKeyDown, LU_PARAM,   ".e")
+luClassTableEnd()
+luClassImpl("Keyboard", luKeyboard, 0);
 
 
 

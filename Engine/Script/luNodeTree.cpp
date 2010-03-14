@@ -25,6 +25,9 @@
 -------------------------------------------------------------------------------
 */
 #include "luUtils.h"
+#include "luMath.h"
+#include "luScene.h"
+#include "luGameObjects.h"
 #include "OgreKit.h"
 
 #define LU_GetNamdSocketFunc(cls, name, base)               \
@@ -67,55 +70,60 @@ enum luNodes
 
 
 // ----------------------------------------------------------------------------
-//
-// Socket Class
-//
-// ----------------------------------------------------------------------------
+// NodeTree.Socket
 class luSocket : public luClass
 {
+    luClassHeader;
 protected:
     gkLogicSocket *m_socket;
 
 public:
-    static luMethodDef Methods[];
-    static luTypeDef Type;
 
-public:
-
-    luSocket(gkLogicSocket *sock) : m_socket(sock) {}
-    gkLogicSocket &socket(void) {GK_ASSERT(m_socket); return *m_socket;}
-
-    luTypeDef *getType(void)
+    luSocket(gkLogicSocket *sock) 
+        :   m_socket(sock) 
     {
-        return &Type;
     }
-};
+    virtual ~luSocket() {}
 
-
-static int luSocket_setValue(luObject &L)
-{
-    luSocket *sock = L.getValueClassT<luSocket>(1);
-    if (sock)
+    static int          create(luObject &L, gkLogicSocket *sock)
     {
-        gkLogicSocket &socket = sock->socket();
-        if (socket.getType() == gkLogicSocket::ST_GAME_OBJECT)
+        GK_ASSERT(sock);
+        new (&Type, L) luSocket(sock);
+        return 1;
+    }
+
+    static luSocket&    getArg(luObject &L, int v) 
+    { 
+        return L.toclassRefT<luSocket>(v); 
+    }
+
+    // nil Socket:setValue(Any)
+    int setValue(luClass *self, luObject& L)
+    {
+        if (m_socket->getType() == gkLogicSocket::ST_GAME_OBJECT)
         {
             gkScene *sc = gkEngine::getSingleton().getActiveScene();
-
             if (L.isString(2))
-                socket.setValue(sc->getObject(L.getValueString(2)));
-            // TODO object
-        }
-        else if (socket.getType() != gkLogicSocket::ST_STRING &&
-                 socket.getType() != gkLogicSocket::ST_VARIABLE)
+                m_socket->setValue(sc->getObject(L.tostring(2)));
+            if (luGameObject::isType(L, 2))
+                m_socket->setValue(&luGameObject::getArg(L, 2).ref<gkGameObject>());
+       }
+        else if (m_socket->getType() != gkLogicSocket::ST_STRING &&
+                 m_socket->getType() != gkLogicSocket::ST_VARIABLE)
         {
             if (L.isNumber(2))
-                socket.setValue((gkScalar)L.getValueNumber(2));
+                m_socket->setValue((gkScalar)L.tonumber(2));
             else if (L.isString(2))
-                socket.setValue(L.getValueString(2));
+                m_socket->setValue(L.tostring(2));
             else if(L.isBoolean(2))
-                socket.setValue(L.getValueBool(2));
-
+                m_socket->setValue(L.toboolean(2));
+            else if (luVector3::isType(L, 2))
+                m_socket->setValue(luVector3::getArg(L, 2));
+            else if (luQuat::isType(L, 2))
+                m_socket->setValue(luQuat::getArg(L, 2));
+            else if (luGameObject::isType(L, 2))
+                m_socket->setValue(&luGameObject::getArg(L, 2).ref<gkGameObject>());
+            // TODO other math types
         }
         else
         {
@@ -126,564 +134,648 @@ static int luSocket_setValue(luObject &L)
                 var.setValue(L.getValueString(2));
             else if(L.isBoolean(2))
                 var.setValue(L.getValueBool(2));
-            socket.setValue(var.getValueString());
+            else if (luVector3::isType(L, 2))
+                var.setValue(luVector3::getArg(L, 2));
+            else if (luQuat::isType(L, 2))
+                var.setValue(luQuat::getArg(L, 2));
+            else if (luGameObject::isType(L, 2))
+                var.setValue(luGameObject::getArg(L, 2).ref<gkGameObject>().getName());
+            m_socket->setValue(var.getValueString());
         }
+        return 0;
     }
-    return 0;
-}
 
-static int luSocket_link(luObject &L)
-{
-    luSocket *sock = L.getValueClassT<luSocket>(1);
-    if (sock)
+
+    // nil Socket:link(Socket)
+    int link(luClass *self, luObject& L)
     {
-        luClass *cls = L.getValueClass(2);
-        if (cls && cls->isTypeOf(cls->getType(), &luSocket::Type))
-        {
-            luSocket *osock = (luSocket *)cls;
-            sock->socket().link(&osock->socket());
-        }
+        if (!isType(L, 2))
+            return L.pushError("expected link(Socket)");
+        m_socket->link(getArg(L, 2).m_socket);
+        return 0;
     }
-    return 0;
-}
-
-luMethodDef luSocket::Methods[] =
-{
-    {"setValue",    luSocket_setValue,  LU_PARAM, "."},
-    {"link",        luSocket_link,      LU_PARAM, ".."},
-    {0, 0, 0}
 };
-luTypeDef luSocket::Type =  { "Socket", 0,  Methods};
 
 
+// Globals
+luGlobalTableBegin(luSocket)
+luGlobalTableEnd()
+
+// Locals
+luClassTableBegin(luSocket)
+    luClassTable("setValue",    luSocket,setValue,  LU_NOPARAM, ".")
+    luClassTable("link",        luSocket,link,      LU_PARAM,   ".")
+luClassTableEnd()
+
+luClassImpl("Socket", luSocket, 0);
 
 
 // ----------------------------------------------------------------------------
-//
-// Node Base class
-//
-// ----------------------------------------------------------------------------
+// NodeTree.Node
 class luNode : public luClass
 {
+    luClassHeader;
 protected:
     gkLogicNode *m_node;
 
 public:
 
-    static luMethodDef Methods[];
-    static luTypeDef Type;
-
-public:
-
-    luNode(gkLogicNode *lnode) : m_node(lnode) {}
-
-    gkLogicNode &node(void) {GK_ASSERT(m_node); return *m_node;}
+    luNode(gkLogicNode *lnode) 
+        : m_node(lnode) 
+    {
+        GK_ASSERT(m_node);
+    }
+    virtual ~luNode(){}
 
     template<typename T> T &getRef(void)
     {GK_ASSERT(m_node); return *static_cast<T *>(m_node);}
 
 
-    virtual luTypeDef *getType(void)
-    {
-        return &Type;
-    }
+    // Socket Node:getInput(Number)
+    int getInput(luClass *self, luObject &L);
 
+    // Socket Node:getOutput(Number)
+    int getOutput(luClass *self, luObject &L);
 };
 
-static int luNode_getInput(luObject &L)
-{
-    luNode *ob = L.getValueClassT<luNode>(1);
-    if (ob)
-    {
-        gkLogicSocket *sock = ob->node().getInputSocket(L.getValueInt(2));
-        if (!sock)
-            return L.pushError("Socket index out of range!");
 
-        new (&luSocket::Type, L) luSocket(sock);
-        return 1;
-    }
-    return 0;
+// Socket Node:getInput(Number)
+int luNode::getInput(luClass *self, luObject &L)
+{
+    gkLogicSocket *sock = m_node->getInputSocket(L.toint(2));
+    if (!sock)
+        return L.pushError("Socket index out of range!");
+
+    return luSocket::create(L, sock);
 }
 
-static int luNode_getOutput(luObject &L)
+// Socket Node:getOutput(Number)
+int luNode::getOutput(luClass *self, luObject &L)
 {
-    luNode *ob = L.getValueClassT<luNode>(1);
-    if (ob)
-    {
-        gkLogicSocket *sock = ob->node().getOutputSocket(L.getValueInt(2));
-        if (!sock)
-            return L.pushError("Socket index out of range!");
+    gkLogicSocket *sock = m_node->getOutputSocket(L.toint(2));
+    if (!sock)
+        return L.pushError("Socket index out of range!");
 
-        new (&luSocket::Type, L) luSocket(sock);
-        return 1;
-    }
-    return 0;
+    return luSocket::create(L, sock);
 }
 
-luMethodDef luNode::Methods[] =
-{
-    {"getInputSocket",      luNode_getInput,  LU_PARAM, ".i"},
-    {"getOutputSocket",     luNode_getOutput, LU_PARAM, ".i"},
-    {0, 0, 0}
-};
 
-luTypeDef luNode::Type =  { "Node", 0,  Methods};
+// Globals
+luGlobalTableBegin(luNode)
+luGlobalTableEnd()
+
+// Locals
+luClassTableBegin(luNode)
+    luClassTable("getInput",    luNode,getInput,    LU_PARAM,   ".i")
+    luClassTable("getOutput",   luNode,getOutput,   LU_PARAM,   ".i")
+luClassTableEnd()
+
+luClassImpl("Node", luNode, 0);
 
 
 
 // ----------------------------------------------------------------------------
-//
-// Animation Node
-//
-// ----------------------------------------------------------------------------
+// NodeTree.AnimationNode
 class luAnimationNode : public luNode
 {
+    luClassHeader;
 public:
-    static luMethodDef Methods[];
-    static luTypeDef Type;;
-
     luAnimationNode(gkLogicNode *lnode) : luNode(lnode) {}
+    virtual ~luAnimationNode() {}
 
 
-    luTypeDef *getType(void)
+    // Socket AnimationNode:getAnimName()
+    int getAnimName(luClass *self, luObject &L)
     {
-        return &Type;
+        return luSocket::create(L, getRef<gkAnimationNode>().getAnimName());
     }
+
+    // Socket AnimationNode:getBlend()
+    int getBlend(luClass *self, luObject &L)
+    {
+        return luSocket::create(L, getRef<gkAnimationNode>().getBlend());
+    }
+
+    // Socket AnimationNode:getBlend()
+    int getTarget(luClass *self, luObject &L)
+    {
+        return luSocket::create(L, getRef<gkAnimationNode>().getTarget());
+    }
+
 };
 
-LU_GetNamdSocketFunc(luAnimationNode, getAnimName,  gkAnimationNode);
-LU_GetNamdSocketFunc(luAnimationNode, getBlend,     gkAnimationNode);
-LU_GetNamdSocketFunc(luAnimationNode, getTarget,    gkAnimationNode);
+// Globals
+luGlobalTableBegin(luAnimationNode)
+luGlobalTableEnd()
 
-luMethodDef luAnimationNode::Methods[] =
-{
-    {"getAnimName",     luAnimationNode_getAnimName,    LU_NOPARAM, "."},
-    {"getBlend",        luAnimationNode_getBlend,       LU_NOPARAM, "."},
-    {"getTarget",       luAnimationNode_getTarget,      LU_NOPARAM, "."},
-    {0, 0, 0}
-};
-luTypeDef luAnimationNode::Type =  { "AnimNode", &luNode::Type,  Methods};
+// Locals
+luClassTableBegin(luAnimationNode)
+    luClassTable("getAnimName",     luAnimationNode,getAnimName,    LU_PARAM,   ".")
+    luClassTable("getBlend",        luAnimationNode,getBlend,       LU_PARAM,   ".")
+    luClassTable("getTarget",       luAnimationNode,getTarget,      LU_PARAM,   ".")
+luClassTableEnd()
+
+luClassImpl("AnimationNode", luAnimationNode, &luNode::Type);
+
 
 
 // ----------------------------------------------------------------------------
-//
-// Button Node
-//
-// ----------------------------------------------------------------------------
+// NodeTree.ButtonNode
 class luButtonNode : public luNode
 {
+    luClassHeader;
 public:
-    static luMethodDef Methods[];
-    static luTypeDef Type;;
-
     luButtonNode(gkLogicNode *lnode) : luNode(lnode) {}
+    virtual ~luButtonNode() {}
 
-
-    luTypeDef *getType(void)
+    // Socket ButtonNode:getUpdate()
+    int getUpdate(luClass *self, luObject &L)
     {
-        return &Type;
+        return luSocket::create(L, getRef<gkButtonNode>().getUpdate());
+    }
+
+    // Socket ButtonNode:getIsDown()
+    int getIsDown(luClass *self, luObject &L)
+    {
+        return luSocket::create(L, getRef<gkButtonNode>().getIsDown());
+    }
+
+    // Socket ButtonNode:getNotIsDown()
+    int getNotIsDown(luClass *self, luObject &L)
+    {
+        return luSocket::create(L, getRef<gkButtonNode>().getNotIsDown());
+    }
+
+    // Socket ButtonNode:getOnPress()
+    int getOnPress(luClass *self, luObject &L)
+    {
+        return luSocket::create(L, getRef<gkButtonNode>().getPress());
+    }
+
+    // Socket ButtonNode:getOnRelease()
+    int getOnRelease(luClass *self, luObject &L)
+    {
+        return luSocket::create(L, getRef<gkButtonNode>().getRelease());
     }
 };
 
-LU_GetNamdSocketFunc(luButtonNode, getUpdate,       gkButtonNode);
-LU_GetNamdSocketFunc(luButtonNode, getIsDown,       gkButtonNode);
-LU_GetNamdSocketFunc(luButtonNode, getNotIsDown,    gkButtonNode);
-LU_GetNamdSocketFunc(luButtonNode, getPress,        gkButtonNode);
-LU_GetNamdSocketFunc(luButtonNode, getRelease,      gkButtonNode);
 
-luMethodDef luButtonNode::Methods[] =
-{
-    {"getUpdate",       luButtonNode_getUpdate,     LU_NOPARAM, "."},
-    {"getIsDown",       luButtonNode_getIsDown,     LU_NOPARAM, "."},
-    {"getNotIsDown",    luButtonNode_getNotIsDown,  LU_NOPARAM, "."},
-    {"getOnPress",      luButtonNode_getPress,      LU_NOPARAM, "."},
-    {"getOnRelease",    luButtonNode_getRelease,    LU_NOPARAM, "."},
-    {0, 0, 0}
-};
+// Globals
+luGlobalTableBegin(luButtonNode)
+luGlobalTableEnd()
 
-luTypeDef luButtonNode::Type =  { "ButtonNode", &luNode::Type,  Methods};
+// Locals
+luClassTableBegin(luButtonNode)
+    luClassTable("getUpdate",       luButtonNode,getUpdate,     LU_PARAM,   ".")
+    luClassTable("getIsDown",       luButtonNode,getIsDown,     LU_PARAM,   ".")
+    luClassTable("getNotIsDown",    luButtonNode,getNotIsDown,  LU_PARAM,   ".")
+    luClassTable("getOnPress",      luButtonNode,getOnPress,    LU_PARAM,   ".")
+    luClassTable("getOnRelease",    luButtonNode,getOnRelease,  LU_PARAM,   ".")
+luClassTableEnd()
+
+
+luClassImpl("ButtonNode", luButtonNode, &luNode::Type);
 
 
 // ----------------------------------------------------------------------------
-//
-// Button Key Node
-//
-// ----------------------------------------------------------------------------
+// NodeTree.KeyNode
 class luKeyNode : public luButtonNode
 {
+    luClassHeader;
 public:
-    static luMethodDef Methods[];
-    static luTypeDef Type;;
-
     luKeyNode(gkLogicNode *lnode) : luButtonNode(lnode) {}
+    virtual ~luKeyNode() {}
 
-
-    luTypeDef *getType(void)
+    // nil KeyNode:setKey(Enum)
+    int setKey(luClass *self, luObject &L)
     {
-        return &Type;
-    }
-};
+        gkKeyNode& node = getRef<gkKeyNode>();
 
-static int luKeyNode_setKey(luObject &L)
-{
-    luNode *ob = L.getValueClassT<luNode>(1);
-    if (ob)
-    {
-        gkKeyNode *nd = static_cast<gkKeyNode *>(&ob->node());
-        int val = L.getValueInt(2);
+        int val = L.toint(2);
         if (val > KC_NONE && val < KC_MAX)
-            nd->setKey((gkScanCode)val);
+            node.setKey((gkScanCode)val);
+        return 0;
     }
-    return 0;
-}
-
-luMethodDef luKeyNode::Methods[] =
-{
-    {"setKey",      luKeyNode_setKey,    LU_PARAM, ".e"},
-    {0, 0, 0}
 };
 
-luTypeDef luKeyNode::Type =  { "KeyNode", &luButtonNode::Type,  Methods};
+// Globals
+luGlobalTableBegin(luKeyNode)
+luGlobalTableEnd()
 
+// Locals
+luClassTableBegin(luKeyNode)
+    luClassTable("setKey", luKeyNode,setKey, LU_PARAM,   ".e")
+luClassTableEnd()
+
+luClassImpl("KeyNode", luKeyNode, &luButtonNode::Type);
 
 // ----------------------------------------------------------------------------
-//
-// Button Mouse Node
-//
-// ----------------------------------------------------------------------------
+// NodeTree.MouseButtonNode
 class luMouseButtonNode : public luButtonNode
 {
+    luClassHeader;
 public:
-    static luMethodDef Methods[];
-    static luTypeDef Type;;
-
     luMouseButtonNode(gkLogicNode *lnode) : luButtonNode(lnode) {}
+    virtual ~luMouseButtonNode() {}
 
-
-    luTypeDef *getType(void)
+    // nil MouseButtonNode:setButton(Enum)
+    int setButton(luClass *self, luObject &L)
     {
-        return &Type;
-    }
-};
-
-static int luMouseButtonNode_setButton(luObject &L)
-{
-    luNode *ob = L.getValueClassT<luNode>(1);
-    if (ob)
-    {
-        gkMouseButtonNode *nd = static_cast<gkMouseButtonNode *>(&ob->node());
-        int val = L.getValueInt(2);
+        int val = L.toint(2);
         if (val >= gkMouse::Left && val <= gkMouse::Right)
-            nd->setButton((gkMouse::Buttons)val);
+            getRef<gkMouseButtonNode>().setButton((gkMouse::Buttons)val);
+        return 0;
     }
-    return 0;
-}
 
-luMethodDef luMouseButtonNode::Methods[] =
-{
-    {"setButton", luMouseButtonNode_setButton,    LU_PARAM, ".e"},
-    {0, 0, 0}
 };
+// Globals
+luGlobalTableBegin(luMouseButtonNode)
+luGlobalTableEnd()
 
-luTypeDef luMouseButtonNode::Type =  { "MouseButtonNode", &luButtonNode::Type,  Methods};
+// Locals
+luClassTableBegin(luMouseButtonNode)
+    luClassTable("setButton", luMouseButtonNode,setButton, LU_PARAM,   ".e")
+luClassTableEnd()
+
+luClassImpl("MouseButtonNode", luMouseButtonNode, &luButtonNode::Type);
 
 
 // ----------------------------------------------------------------------------
-//
-// Exit Node
-//
-// ----------------------------------------------------------------------------
+// NodeTree.ExitNode
 class luExitNode : public luNode
 {
+    luClassHeader;
 public:
-    static luMethodDef Methods[];
-    static luTypeDef Type;;
-
     luExitNode(gkLogicNode *lnode) : luNode(lnode) {}
+    virtual ~luExitNode() {}
 
-
-    luTypeDef *getType(void)
+    // Socket ExitNode:getExit()
+    int getExit(luClass *self, luObject &L)
     {
-        return &Type;
+        return luSocket::create(L, getRef<gkExitNode>().getExit());
     }
+
 };
+// Globals
+luGlobalTableBegin(luExitNode)
+luGlobalTableEnd()
 
-LU_GetNamdSocketFunc(luExitNode, getExit,  gkExitNode);
+// Locals
+luClassTableBegin(luExitNode)
+    luClassTable("getExit",     luExitNode,getExit,    LU_PARAM,   ".")
+luClassTableEnd()
 
-luMethodDef luExitNode::Methods[] =
-{
-    {"getExit", luExitNode_getExit, LU_NOPARAM, "."},
-    {0, 0, 0}
-};
-luTypeDef luExitNode::Type =  { "ExitNode", &luNode::Type,  Methods};
-
+luClassImpl("ExitNode", luExitNode, &luNode::Type);
 
 
 // ----------------------------------------------------------------------------
-//
-// If Node
-//
-// ----------------------------------------------------------------------------
+// NodeTree.IfNode
 class luIfNode : public luNode
 {
+    luClassHeader;
 public:
-    static luMethodDef Methods[];
-    static luTypeDef Type;;
-
     luIfNode(gkLogicNode *lnode) : luNode(lnode) {}
+    virtual ~luIfNode() {}
 
-
-    luTypeDef *getType(void)
+    // Socket IfNode:getA()
+    int getA(luClass *self, luObject &L)
     {
-        return &Type;
+        return luSocket::create(L, getRef<gkIfNode>().getA());
     }
-};
-
-static int luIfNode_setStatement(luObject &L)
-{
-    luNode *ob = L.getValueClassT<luNode>(1);
-    if (ob)
+    // Socket IfNode:getB()
+    int getB(luClass *self, luObject &L)
     {
-        gkIfNode *nd = static_cast<gkIfNode *>(&ob->node());
-        int val = L.getValueInt(2);
+        return luSocket::create(L, getRef<gkIfNode>().getB());
+    }
+    // Socket IfNode:getTrue()
+    int getTrue(luClass *self, luObject &L)
+    {
+        return luSocket::create(L, getRef<gkIfNode>().getTrue());
+    }
+    // Socket IfNode:getFalse()
+    int getFalse(luClass *self, luObject &L)
+    {
+        return luSocket::create(L, getRef<gkIfNode>().getFalse());
+    }
+
+    // nil IfNode:setStatement()
+    int setStatement(luClass *self, luObject &L)
+    {
+        gkIfNode& node = getRef<gkIfNode>();
+        int val = L.toint(2);
         if (val >= CMP_TRUE && val <= CMP_LTHAN)
-            nd->setStatement((gkBoolStatement)val);
+            node.setStatement((gkBoolStatement)val);
+        return 0;
     }
-    return 0;
-}
-
-
-LU_GetNamdSocketFunc(luIfNode, getA,        gkIfNode);
-LU_GetNamdSocketFunc(luIfNode, getB,        gkIfNode);
-LU_GetNamdSocketFunc(luIfNode, getTrue,     gkIfNode);
-LU_GetNamdSocketFunc(luIfNode, getFalse,    gkIfNode);
-
-luMethodDef luIfNode::Methods[] =
-{
-    {"getA",            luIfNode_getA,          LU_NOPARAM, "."},
-    {"getB",            luIfNode_getB,          LU_NOPARAM, "."},
-    {"getTrue",         luIfNode_getTrue,       LU_NOPARAM, "."},
-    {"getFalse",        luIfNode_getFalse,      LU_NOPARAM, "."},
-    {"setStatement",    luIfNode_setStatement,  LU_PARAM,   ".e"},
-    {0, 0, 0}
 };
-luTypeDef luIfNode::Type =  { "IfNode", &luNode::Type,  Methods};
 
+// Globals
+luGlobalTableBegin(luIfNode)
+luGlobalTableEnd()
 
+// Locals
+luClassTableBegin(luIfNode)
+    luClassTable("getA",            luIfNode,getA,          LU_PARAM,   ".")
+    luClassTable("getB",            luIfNode,getB,          LU_PARAM,   ".")
+    luClassTable("getTrue",         luIfNode,getTrue,       LU_PARAM,   ".")
+    luClassTable("getFalse",        luIfNode,getFalse,      LU_PARAM,   ".")
+    luClassTable("setStatement",    luIfNode,setStatement,  LU_PARAM,   ".e")
+luClassTableEnd()
 
+luClassImpl("IfNode", luIfNode, &luNode::Type);
 
 // ----------------------------------------------------------------------------
-//
-// Print Node
-//
-// ----------------------------------------------------------------------------
+// NodeTree.PrintNode
 class luPrintNode : public luNode
 {
+    luClassHeader;
 public:
-    static luMethodDef Methods[];
-    static luTypeDef Type;;
-
     luPrintNode(gkLogicNode *lnode) : luNode(lnode) {}
+    virtual ~luPrintNode() {}
 
-
-    luTypeDef *getType(void)
+    // Socket PrintNode:getPrint()
+    int getPrint(luClass *self, luObject &L)
     {
-        return &Type;
+        return luSocket::create(L, getRef<gkPrintNode>().getPrint());
+    }
+
+    // Socket PrintNode:getValue()
+    int getValue(luClass *self, luObject &L)
+    {
+        return luSocket::create(L, getRef<gkPrintNode>().getValue());
     }
 };
 
-LU_GetNamdSocketFunc(luPrintNode, getPrint, gkPrintNode);
-LU_GetNamdSocketFunc(luPrintNode, getValue, gkPrintNode);
 
-luMethodDef luPrintNode::Methods[] =
-{
-    {"getPrint",    luPrintNode_getPrint,       LU_NOPARAM, "."},
-    {"getValue",    luPrintNode_getValue,       LU_NOPARAM, "."},
-    {0, 0, 0}
-};
-luTypeDef luPrintNode::Type =  { "PrintNode", &luNode::Type,  Methods};
+// Globals
+luGlobalTableBegin(luPrintNode)
+luGlobalTableEnd()
+
+// Locals
+luClassTableBegin(luPrintNode)
+    luClassTable("getPrint",    luPrintNode,getPrint,   LU_PARAM,   ".")
+    luClassTable("getValue",    luPrintNode,getValue,   LU_PARAM,   ".")
+luClassTableEnd()
+
+luClassImpl("PrintNode", luPrintNode, &luNode::Type);
 
 
 
 // ----------------------------------------------------------------------------
-//
-// Mouse Motion Node
-//
-// ----------------------------------------------------------------------------
+// NodeTree.MouseMotionNode
 class luMouseMotionNode : public luNode
 {
+    luClassHeader;
 public:
-    static luMethodDef Methods[];
-    static luTypeDef Type;;
-
     luMouseMotionNode(gkLogicNode *lnode) : luNode(lnode) {}
+    virtual ~luMouseMotionNode() {}
 
-
-    luTypeDef *getType(void)
+    // Socket MouseMotionNode:getScaleX()
+    int getScaleX(luClass *self, luObject &L)
     {
-        return &Type;
+        return luSocket::create(L, getRef<gkMouseNode>().getScaleX());
+    }
+
+    // Socket MouseMotionNode:getScaleY()
+    int getScaleY(luClass *self, luObject &L)
+    {
+        return luSocket::create(L, getRef<gkMouseNode>().getScaleX());
+    }
+    // Socket MouseMotionNode:getMotion()
+    int getMotion(luClass *self, luObject &L)
+    {
+        return luSocket::create(L, getRef<gkMouseNode>().getMotion());
+    }
+    // Socket MouseMotionNode:getRelX()
+    int getRelX(luClass *self, luObject &L)
+    {
+        return luSocket::create(L, getRef<gkMouseNode>().getRelX());
+    }
+    // Socket MouseMotionNode:getRelY()
+    int getRelY(luClass *self, luObject &L)
+    {
+        return luSocket::create(L, getRef<gkMouseNode>().getRelY());
+    }
+    // Socket MouseMotionNode:getAbsX()
+    int getAbsX(luClass *self, luObject &L)
+    {
+        return luSocket::create(L, getRef<gkMouseNode>().getAbsX());
+    }
+    // Socket MouseMotionNode:getAbsY()
+    int getAbsY(luClass *self, luObject &L)
+    {
+        return luSocket::create(L, getRef<gkMouseNode>().getAbsY());
+    }
+    // Socket MouseMotionNode:getWheel()
+    int getWheel(luClass *self, luObject &L)
+    {
+        return luSocket::create(L, getRef<gkMouseNode>().getWheel());
     }
 };
 
-LU_GetNamdSocketFunc(luMouseMotionNode, getScaleX,   gkMouseNode);
-LU_GetNamdSocketFunc(luMouseMotionNode, getScaleY,   gkMouseNode);
-LU_GetNamdSocketFunc(luMouseMotionNode, getMotion,   gkMouseNode);
-LU_GetNamdSocketFunc(luMouseMotionNode, getRelX,     gkMouseNode);
-LU_GetNamdSocketFunc(luMouseMotionNode, getRelY,     gkMouseNode);
-LU_GetNamdSocketFunc(luMouseMotionNode, getAbsX,     gkMouseNode);
-LU_GetNamdSocketFunc(luMouseMotionNode, getAbsY,     gkMouseNode);
-LU_GetNamdSocketFunc(luMouseMotionNode, getWheel,    gkMouseNode);
 
+// Globals
+luGlobalTableBegin(luMouseMotionNode)
+luGlobalTableEnd()
 
-luMethodDef luMouseMotionNode::Methods[] =
-{
-    {"getScaleX",   luMouseMotionNode_getScaleX,        LU_NOPARAM, "."},
-    {"getScaleY",   luMouseMotionNode_getScaleY,        LU_NOPARAM, "."},
-    {"getMotion",   luMouseMotionNode_getMotion,        LU_NOPARAM, "."},
-    {"getRelX",     luMouseMotionNode_getRelX,          LU_NOPARAM, "."},
-    {"getRelY",     luMouseMotionNode_getRelY,          LU_NOPARAM, "."},
-    {"getAbsX",     luMouseMotionNode_getAbsX,          LU_NOPARAM, "."},
-    {"getAbsY",     luMouseMotionNode_getAbsY,          LU_NOPARAM, "."},
-    {"getWheel",    luMouseMotionNode_getWheel,         LU_NOPARAM, "."},
-    {0, 0, 0}
+// Locals
+luClassTableBegin(luMouseMotionNode)
+    luClassTable("getScaleX",   luMouseMotionNode,getScaleX,    LU_PARAM,   ".")
+    luClassTable("getScaleY",   luMouseMotionNode,getScaleY,    LU_PARAM,   ".")
+    luClassTable("getMotion",   luMouseMotionNode,getMotion,    LU_PARAM,   ".")
+    luClassTable("getRelX",     luMouseMotionNode,getRelX,      LU_PARAM,   ".")
+    luClassTable("getRelY",     luMouseMotionNode,getRelY,      LU_PARAM,   ".")
+    luClassTable("getAbsX",     luMouseMotionNode,getAbsX,      LU_PARAM,   ".")
+    luClassTable("getAbsY",     luMouseMotionNode,getAbsY,      LU_PARAM,   ".")
+    luClassTable("getWheel",    luMouseMotionNode,getWheel,     LU_PARAM,   ".")
+luClassTableEnd()
 
-};
-luTypeDef luMouseMotionNode::Type =  { "MouseMotion", &luNode::Type,  Methods};
-
-
+luClassImpl("MouseMotionNode", luMouseMotionNode, &luNode::Type);
 
 
 // ----------------------------------------------------------------------------
-//
-// Object Motion Node
-//
-// ----------------------------------------------------------------------------
+// NodeTree.MotionNode
 class luMotionNode : public luNode
 {
+    luClassHeader;
 public:
-    static luMethodDef Methods[];
-    static luTypeDef Type;;
-
     luMotionNode(gkLogicNode *lnode) : luNode(lnode) {}
-    luTypeDef *getType(void)
+    virtual ~luMotionNode() {}
+
+    // Socket MotionNode:getUpdate()
+    int getUpdate(luClass *self, luObject &L)
     {
-        return &Type;
+        return luSocket::create(L, getRef<gkMotionNode>().getUpdate());
     }
-};
 
-static int luMotionNode_setMotionType(luObject &L)
-{
-    luNode *ob = L.getValueClassT<luNode>(1);
-    if (ob)
+    // Socket MotionNode:getX()
+    int getX(luClass *self, luObject &L)
     {
-        gkMotionNode *mn = static_cast<gkMotionNode *>(&ob->node());
+        return luSocket::create(L, getRef<gkMotionNode>().getX());
+    }
+    // Socket MotionNode:getY()
+    int getY(luClass *self, luObject &L)
+    {
+        return luSocket::create(L, getRef<gkMotionNode>().getY());
+    }
+    // Socket MotionNode:getZ()
+    int getZ(luClass *self, luObject &L)
+    {
+        return luSocket::create(L, getRef<gkMotionNode>().getZ());
+    }
+    // Socket MotionNode:getDamping()
+    int getDamping(luClass *self, luObject &L)
+    {
+        return luSocket::create(L, getRef<gkMotionNode>().getDamping());
+    }
 
-        int val = L.getValueInt(2);
+    // nil MotionNode:setMotionType(Enum)
+    int setMotionType(luClass *self, luObject &L)
+    {
+        int val = L.toint(2);
         if (val > MT_NONE && val <=MT_ANGV)
-            mn->setMotionType((gkMotionTypes)val);
-        else
-            return L.pushError("setMotionType, invalid enumeration");
+            getRef<gkMotionNode>().setMotionType((gkMotionTypes)val);
+        return L.pushError("setMotionType, invalid enumeration");
     }
-    return 0;
-}
 
-
-static int luMotionNode_setKeepVelocity(luObject &L)
-{
-    luNode *ob = L.getValueClassT<luNode>(1);
-    if (ob)
+    // nil MotionNode:setKeepVelocity(bool)
+    int setKeepVelocity(luClass *self, luObject &L)
     {
-        gkMotionNode *mn = static_cast<gkMotionNode *>(&ob->node());
-        if (L.getValueBool(2))
-            mn->keepVelocity();
+        if (L.toboolean(2))
+            getRef<gkMotionNode>().keepVelocity();
+        return 0;
     }
-    return 0;
-}
 
-static int luMotionNode_setClampX(luObject &L)
-{
-    luNode *ob = L.getValueClassT<luNode>(1);
-    if (ob)
+    // nil MotionNode:setClampX(Number, Number)
+    int setClampX(luClass *self, luObject &L)
     {
-        gkMotionNode *mn = static_cast<gkMotionNode *>(&ob->node());
-        mn->setMinX(L.getValueFloat(2));
-        mn->setMaxX(L.getValueFloat(3));
+        getRef<gkMotionNode>().setMinX(L.tofloat(2));
+        getRef<gkMotionNode>().setMaxX(L.tofloat(3));
+        return 0;
     }
-    return 0;
-}
-static int luMotionNode_setClampY(luObject &L)
-{
-    luNode *ob = L.getValueClassT<luNode>(1);
-    if (ob)
+    // nil MotionNode:setClampY(Number, Number)
+    int setClampY(luClass *self, luObject &L)
     {
-        gkMotionNode *mn = static_cast<gkMotionNode *>(&ob->node());
-        mn->setMinY(L.getValueFloat(2));
-        mn->setMaxY(L.getValueFloat(3));
+        getRef<gkMotionNode>().setMinY(L.tofloat(2));
+        getRef<gkMotionNode>().setMaxY(L.tofloat(3));
+        return 0;
     }
-    return 0;
-}
-
-static int luMotionNode_setClampZ(luObject &L)
-{
-    luNode *ob = L.getValueClassT<luNode>(1);
-    if (ob)
+    // nil MotionNode:setClampZ(Number, Number)
+    int setClampZ(luClass *self, luObject &L)
     {
-        gkMotionNode *mn = static_cast<gkMotionNode *>(&ob->node());
-        mn->setMinZ(L.getValueFloat(2));
-        mn->setMaxZ(L.getValueFloat(3));
+        getRef<gkMotionNode>().setMinZ(L.tofloat(2));
+        getRef<gkMotionNode>().setMaxZ(L.tofloat(3));
+        return 0;
     }
-    return 0;
-}
-
-
-LU_GetNamdSocketFunc(luMotionNode, getUpdate,   gkMotionNode);
-LU_GetNamdSocketFunc(luMotionNode, getX,        gkMotionNode);
-LU_GetNamdSocketFunc(luMotionNode, getY,        gkMotionNode);
-LU_GetNamdSocketFunc(luMotionNode, getZ,        gkMotionNode);
-LU_GetNamdSocketFunc(luMotionNode, getDamping,  gkMotionNode);
-
-luMethodDef luMotionNode::Methods[] =
-{
-    {"getUpdate",           luMotionNode_getUpdate,         LU_NOPARAM, "."},
-    {"getX",                luMotionNode_getX,              LU_NOPARAM, "."},
-    {"getY",                luMotionNode_getY,              LU_NOPARAM, "."},
-    {"getZ",                luMotionNode_getZ,              LU_NOPARAM, "."},
-    {"getDamping",          luMotionNode_getDamping,        LU_NOPARAM, "."},
-    {"setMotionType",       luMotionNode_setMotionType,     LU_PARAM,   ".e"},
-    {"setKeepVelocity",     luMotionNode_setKeepVelocity,   LU_PARAM,   ".b"},
-    {"setClampX",           luMotionNode_setClampX,         LU_PARAM,   ".ff"},
-    {"setClampY",           luMotionNode_setClampY,         LU_PARAM,   ".ff"},
-    {"setClampZ",           luMotionNode_setClampZ,         LU_PARAM,   ".ff"},
-    {0, 0, 0}
-
 };
 
-luTypeDef luMotionNode::Type =  { "Motion", &luNode::Type,  Methods};
+
+
+// Globals
+luGlobalTableBegin(luMotionNode)
+luGlobalTableEnd()
+
+// Locals
+luClassTableBegin(luMotionNode)
+    luClassTable("getUpdate",           luMotionNode,getUpdate,         LU_PARAM,   ".")
+    luClassTable("getX",                luMotionNode,getX,              LU_PARAM,   ".")
+    luClassTable("getY",                luMotionNode,getY,              LU_PARAM,   ".")
+    luClassTable("getZ",                luMotionNode,getZ,              LU_PARAM,   ".")
+    luClassTable("getDamping",          luMotionNode,getDamping,        LU_PARAM,   ".")
+    luClassTable("setMotionType",       luMotionNode,setMotionType,     LU_PARAM,   ".e")
+    luClassTable("setKeepVelocity",     luMotionNode,setKeepVelocity,   LU_PARAM,   ".b")
+    luClassTable("setClampX",           luMotionNode,setClampX,         LU_PARAM,   ".ff")
+    luClassTable("setClampY",           luMotionNode,setClampY,         LU_PARAM,   ".ff")
+    luClassTable("setClampZ",           luMotionNode,setClampZ,         LU_PARAM,   ".ff")
+luClassTableEnd()
+
+luClassImpl("MotionNode", luMotionNode, &luNode::Type);
 
 // ----------------------------------------------------------------------------
-//
-// Node Tree Wrapper
-//
-// ----------------------------------------------------------------------------
-
-
+// NodeTree.Tree 
 class luTree : public luClass
 {
+    luClassHeader;
 private:
     gkLogicTree *m_tree;
 
+
 public:
-    static luMethodDef Methods[];
-    static luTypeDef Type;
-
-    luTree(gkLogicTree *tree) : m_tree(tree) {}
-    gkLogicTree &tree(void) {GK_ASSERT(m_tree); return *m_tree;}
-
-    luTypeDef *getType(void)
+    luTree(gkLogicTree *tree) 
+        : m_tree(tree) 
     {
-        return &Type;
+        GK_ASSERT(m_tree);
     }
+
+    virtual ~luTree() {}
+
+    // bool Tree:isGroup()
+    int isGroup(luClass *self, luObject &L);
+
+    // nil Tree:solve()
+    int solve(luClass *self, luObject &L);
+
+    // Node Tree:createNode(Enum)
+    int createNode(luClass *self, luObject &L);
+
+    // nil Tree:attachObject(String or GameKit.GameObject)
+    int attachObject(luClass *self, luObject &L);
 };
+
+
+// bool Tree:isGroup()
+int luTree::isGroup(luClass *self, luObject &L)
+{
+    return L.push(m_tree->isGroup());
+}
+
+// nil Tree:solve()
+int luTree::solve(luClass *self, luObject &L)
+{
+    m_tree->solveOrder();
+    return 0;
+}
+
+// Node Tree:createNode(Enum)
+int luTree::createNode(luClass *self, luObject &L)
+{
+#define luNodeCase(type, cse, nt, gkt)\
+    if (type == cse) {new(&nt::Type, L) nt(m_tree->createNode<gkt>()); return 1; }
+
+    int type = L.toint(2);
+    luNodeCase(type, NT_ANIMATION,      luAnimationNode,    gkAnimationNode);
+    luNodeCase(type, NT_EXIT,           luExitNode,         gkExitNode);
+    luNodeCase(type, NT_KEY,            luKeyNode,          gkKeyNode);
+    luNodeCase(type, NT_IF,             luIfNode,           gkIfNode);
+    luNodeCase(type, NT_PRINT,          luPrintNode,        gkPrintNode);
+    luNodeCase(type, NT_MOUSE_MOTION,   luMouseMotionNode,  gkMouseNode);
+    luNodeCase(type, NT_MOUSE_BUTTON,   luMouseButtonNode,  gkMouseButtonNode);
+    luNodeCase(type, NT_MOTION,         luMotionNode,       gkMotionNode);
+
+#undef luNodeCase
+    return 0;
+}
+
+
+// nil Tree:attachObject(String or GameKit.GameObject)
+int luTree::attachObject(luClass *self, luObject &L)
+{
+    if (!L.isString(2) && !luGameObject::isType(L, 2))
+        return L.pushError("expected attachObject(String or GameObject)");
+
+    if (L.isString(2))
+    {
+        gkScene *sc = gkEngine::getSingleton().getActiveScene();
+        gkGameObject *ob = sc->getObject(L.getValueString(2));
+        if (ob)
+            m_tree->attachObject(ob);
+
+        return 0;
+    }
+
+    m_tree->attachObject(&luGameObject::getArg(L, 2).ref<gkGameObject>());
+    return 0;
+}
 
 
 // new tree
@@ -699,77 +791,22 @@ static int luTree_constructor(luObject &L)
     return 1;
 }
 
-static int luTree_isGroup(luObject &L)
-{
-    luTree *tree = L.getValueClassT<luTree>(1);
-    if (tree)
-        return L.push(tree->tree().isGroup());
-    return 0;
-}
 
-static int luTree_solve(luObject &L)
-{
-    // solve tree execution order
-    luTree *tree = L.getValueClassT<luTree>(1);
-    if (tree)
-        tree->tree().solveOrder(true);
-    return 0;
-}
-
-static int luTree_attachObject(luObject &L)
-{
-    luTree *tree = L.getValueClassT<luTree>(1);
-    if (tree)
-    {
-        gkScene *sc = gkEngine::getSingleton().getActiveScene();
-        gkGameObject *ob = sc->getObject(L.getValueString(2));
-        if (ob)
-            tree->tree().attachObject(ob);
-    }
-    return 0;
-}
+// Globals
+luGlobalTableBegin(luTree)
+    luGlobalTable("constructor", luTree_constructor, LU_PARAM,   "|s")
+luGlobalTableEnd()
 
 
+// Locals
+luClassTableBegin(luTree)
+    luClassTable("isGroup",         luTree,isGroup,         LU_NOPARAM, ".")
+    luClassTable("solve",           luTree,solve,           LU_NOPARAM, ".")
+    luClassTable("createNode",      luTree,createNode,      LU_PARAM,   ".e")
+    luClassTable("attachObject",    luTree,attachObject,    LU_PARAM,   ".|s.")
+luClassTableEnd()
 
-static int luTree_create(luObject &L)
-{
-#define luNodeCase(type, cse, nt, gkt)\
-    if (type == cse) {new(&nt::Type, L) nt(tree->tree().createNode<gkt>()); return 1; }
-
-
-    // solve tree execution order
-    luTree *tree = L.getValueClassT<luTree>(1);
-    if (tree)
-    {
-        int type = L.getValueInt(2);
-
-        luNodeCase(type, NT_ANIMATION,      luAnimationNode,    gkAnimationNode);
-        luNodeCase(type, NT_EXIT,           luExitNode,         gkExitNode);
-        luNodeCase(type, NT_KEY,            luKeyNode,          gkKeyNode);
-        luNodeCase(type, NT_IF,             luIfNode,           gkIfNode);
-        luNodeCase(type, NT_PRINT,          luPrintNode,        gkPrintNode);
-        luNodeCase(type, NT_MOUSE_MOTION,   luMouseMotionNode,  gkMouseNode);
-        luNodeCase(type, NT_MOUSE_BUTTON,   luMouseButtonNode,  gkMouseButtonNode);
-        luNodeCase(type, NT_MOTION,         luMotionNode,       gkMotionNode);
-    }
-
-#undef luNodeCase
-    return 0;
-}
-
-// global methods
-luMethodDef luTree::Methods[] =
-{
-    {"constructor", luTree_constructor, LU_PARAM,   "|s"},
-    {"isGroup",     luTree_isGroup,     LU_NOPARAM, "."},
-    {"solve",       luTree_solve,       LU_NOPARAM, "."},
-    {"createNode",  luTree_create,      LU_PARAM,   ".e"},
-    {"attachObject",luTree_attachObject,LU_PARAM,   ".s"},
-    {0, 0, 0}
-};
-
-// node tree definition
-luTypeDef luTree::Type =  { "Tree", 0, luTree::Methods };
+luClassImpl("Tree", luTree, 0);
 
 
 // Lua NodeTree module
@@ -821,20 +858,19 @@ void luNodeTree_Open(ltState *L)
     lua.addConstant("CMP_GREATER_EQ",   CMP_GTHAN); // >= ... Rename
     lua.addConstant("CMP_LESS_EQ",      CMP_LTHAN); // <=
 
-
     // types
-    lua.addType(&luTree::Type);
-    lua.addType(&luSocket::Type);
-    lua.addType(&luNode::Type);
-    lua.addType(&luPrintNode::Type);
-    lua.addType(&luMouseMotionNode::Type);
-    lua.addType(&luMotionNode::Type);
-    lua.addType(&luAnimationNode::Type);
-    lua.addType(&luExitNode::Type);
-    lua.addType(&luIfNode::Type);
-    lua.addType(&luButtonNode::Type);
-    lua.addType(&luMouseButtonNode::Type);
-    lua.addType(&luKeyNode::Type);
+    lua.addClassType(&luTree::Type);
+    lua.addClassType(&luSocket::Type);
+    lua.addClassType(&luNode::Type);
+    lua.addClassType(&luPrintNode::Type);
+    lua.addClassType(&luMouseMotionNode::Type);
+    lua.addClassType(&luMotionNode::Type);
+    lua.addClassType(&luAnimationNode::Type);
+    lua.addClassType(&luExitNode::Type);
+    lua.addClassType(&luIfNode::Type);
+    lua.addClassType(&luButtonNode::Type);
+    lua.addClassType(&luMouseButtonNode::Type);
+    lua.addClassType(&luKeyNode::Type);
 
     lua.endNamespace();
 }

@@ -49,6 +49,7 @@ typedef lua_State ltState;
 class   luClass;
 struct  luTypeDef;
 struct  luMethodDef;
+struct  luClassMethodDef;
 
 
 // c++ usage wrapper
@@ -80,22 +81,39 @@ public:
     luString    getValueString(int idx) const;
     luClass     *getValueClass(int idx) const;
 
-    luTypeDef   *getType(void);
-    luMethodDef *getMethod(void);
+    luTypeDef           *getType(void);
+    luMethodDef         *getMethod(void);
+    luClassMethodDef    *getClassMethod(void);
 
 
     bool typecheck(int idx, luTypeDef *tdef) const;
 
     // no type checks
-    UT_INLINE bool      toboolean(int idx) const { return lua_toboolean(L, idx) != 0;    }
-    UT_INLINE double    tonumber(int idx) const  { return (double)lua_tonumber(L, idx);  }
-    UT_INLINE float     tofloat(int idx) const   { return (float)lua_tonumber(L, idx);   }
-    UT_INLINE int       toint(int idx) const     { return (int)lua_tonumber(L, idx);     }
-    UT_INLINE luString  tostring(int idx) const  { return lua_tostring(L, idx);          }
-    UT_INLINE luClass  *toclass(int idx) const   { return static_cast<luClass *>(lua_touserdata(L, idx)); }
+    UT_INLINE bool      toboolean(int idx) const    { return lua_toboolean(L, idx) != 0;    }
+    UT_INLINE double    tonumber(int idx) const     { return (double)lua_tonumber(L, idx);  }
+    UT_INLINE float     tofloat(int idx) const      { return (float)lua_tonumber(L, idx);   }
+    UT_INLINE int       toint(int idx) const        { return (int)lua_tonumber(L, idx);     }
+    UT_INLINE luString  tostring(int idx) const     { return lua_tostring(L, idx);          }
+    UT_INLINE luClass   *toclass(int idx) const     { return static_cast<luClass *>(lua_touserdata(L, idx)); }
+
+    UT_INLINE luClass   &toclassRef(int idx) const  
+    { 
+        void *ptr = lua_touserdata(L, idx);
+        UT_ASSERT(ptr);
+        return *static_cast<luClass *>(ptr); 
+    }
+
+    template<typename T>
+    UT_INLINE T   &toclassRefT(int idx) const  
+    { 
+        void *ptr = lua_touserdata(L, idx);
+        UT_ASSERT(ptr);
+        return *static_cast<T *>(ptr); 
+    }
+
 
     template <typename T>
-    UT_INLINE T  *toclassT(int idx) const   
+    UT_INLINE T  *toclassT(int idx) const
     { return static_cast<T *>(lua_touserdata(L, idx)); }
 
     int push(void);
@@ -112,9 +130,11 @@ public:
 };
 
 
+class luClass;
 
 // Lua C-Function
 typedef int (*luMethod)(luObject &L);
+typedef int (luClass::*luClassMethod)(luClass *self, luObject &L);
 
 
 // up-values stored with closures
@@ -128,11 +148,56 @@ typedef int (*luMethod)(luObject &L);
 #define LU_PARAM            1
 
 
+// common implementation
+#define luClassHeader                       \
+public:                                     \
+    static luMethodDef      Globals[];      \
+    static luClassMethodDef Locals[];       \
+    static luTypeDef Type;                  \
+    virtual luTypeDef *getType(void)        \
+    { return &Type; }                       \
+    static bool isType(luObject &L, int v)  \
+    { return L.typecheck(v, &Type); }          
+
+
+// type definition implementation
+#define luClassImpl(name, cls, parent) \
+    luTypeDef cls::Type = {name, parent, Globals, Locals};
+
+#define luGlobalTable(name, global, check, params)\
+    {name, global, check, params},
+
+#define luClassTable(name, cls, local, check, params)\
+    {name, (luClassMethod)&cls::local, check, params},
+
+// global functions
+#define luGlobalTableBegin(cls)\
+    luMethodDef cls::Globals[] = {
+#define luGlobalTableEnd() {0,0,0,0}};
+
+
+// class functions
+#define luClassTableBegin(cls)\
+    luClassMethodDef cls::Locals[] = {
+#define luClassTableEnd() {0,0,0,0}};
+
+
 // Lua function definition
 struct luMethodDef
 {
     const char      *m_name;
-    luMethod         m_meth;
+    luMethod        m_meth;
+    int             m_flag;
+    const char      *m_params;
+
+    // internal
+    unsigned int    m_hash;
+};
+
+struct luClassMethodDef
+{
+    const char      *m_name;
+    luClassMethod   m_meth;
     int             m_flag;
     const char      *m_params;
 
@@ -141,11 +206,13 @@ struct luMethodDef
 };
 
 
+
 struct luTypeDef
 {
-    const char  *m_name;
-    luTypeDef   *m_parent;
-    luMethodDef *m_methods;
+    const char          *m_name;
+    luTypeDef           *m_parent;
+    luMethodDef         *m_methods;
+    luClassMethodDef    *m_classMethods;
 };
 
 
@@ -251,8 +318,7 @@ public:
     luBinder(ltState *_L);
     ~luBinder();
 
-
-    void addType(luTypeDef *type);
+    void addClassType(luTypeDef *type);
     void addMethods(luMethodDef *type);
 
     void beginNamespace(const char *title);

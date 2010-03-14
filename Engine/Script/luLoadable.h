@@ -32,21 +32,31 @@
 
 class luLoadable : public luClass
 {
+    luClassHeader;
 protected:
     class gkObject *m_object;
 
 public:
-    static luMethodDef Methods[];
-    static luTypeDef Type;
-
-public:
-
-
     luLoadable(gkObject *ob);
     ~luLoadable();
 
+
+    // String Object:getName()
+    int getName(luClass *self, luObject &L);
+
+    // bool Object:isLoaded()
+    int isLoaded(luClass *self, luObject &L);
+
+    // nil Object:load()
+    int load(luClass *self, luObject &L);
+
+    // nil Object:unload()
+    int unload(luClass *self, luObject &L);
+
+    // nil Object:reload()
+    int reload(luClass *self, luObject &L);
+
     template<typename T> T& ref(void) {UT_ASSERT(m_object); return *static_cast<T*>(m_object);}
-    luTypeDef *getType(void) { return &Type; }
 };
 
 #endif//_luLoadable_h_

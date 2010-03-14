@@ -30,43 +30,62 @@
 #include "luUtils.h"
 #include "gkMathUtils.h"
 
-class luVector3 : public luClass
+
+class luVector3 : public luClass, public gkVector3
 {
+    luClassHeader
 public:
-    static luMethodDef Methods[];
-    static luTypeDef Type;
-
-    gkVector3 vec;
-
-public:
-    luVector3(const gkVector3 &vec);
     ~luVector3();
-    luTypeDef *getType(void) { return &Type; }
+
+    static int create(luObject &L, const gkVector3 &vec);
+
+    static UT_INLINE luVector3& getArg(luObject &L, int v)
+    {
+        return L.toclassRefT<luVector3>(v);
+    }
+
+    // gkVector3 meta functions 
+    int _normalize(luClass *self, luObject &L);
+    int _dot(luClass *self, luObject &L);
+    int _cross(luClass *self, luObject &L);
+    int _length(luClass *self, luObject &L);
+    int _length2(luClass *self, luObject &L);
+    int _dist(luClass *self, luObject &L);
+    int _dist2(luClass *self, luObject &L);
+
+    int _get(luClass *self, luObject &L);
+    int _set(luClass *self, luObject &L);
+    int _add(luClass *self, luObject &L);
+    int _sub(luClass *self, luObject &L);
+    int _mul(luClass *self, luObject &L);
+    int _div(luClass *self, luObject &L);
+    int _neg(luClass *self, luObject &L);
+    int _tostring(luClass *self, luObject &L);
 };
 
-class luQuat : public luClass
+class luQuat : public luClass, public gkQuaternion
 {
+    luClassHeader
 public:
-    static luMethodDef Methods[];
-    static luTypeDef Type;
-
-    gkQuaternion quat;
-
-public:
-    luQuat(const gkQuaternion &_q);
     ~luQuat();
 
-    luTypeDef *getType(void) { return &Type; }
+    static int create(luObject &L, const gkQuaternion &vec);
+
+    static UT_INLINE luQuat& getArg(luObject &L, int v)
+    {
+        return L.toclassRefT<luQuat>(v);
+    }
+
+    int _normalize(luClass *self, luObject &L);
+    int _inverse(luClass *self, luObject &L);
+    int _dot(luClass *self, luObject &L);
+
+    int _get(luClass *self, luObject &L);
+    int _set(luClass *self, luObject &L);
+    int _mul(luClass *self, luObject &L);
+
+    int _tostring(luClass *self, luObject &L);
 };
-
-UT_INLINE bool          LU_IsVec3(luObject &L, int n)                   { return L.typecheck(n, &luVector3::Type); }
-UT_INLINE bool          LU_IsQuat(luObject &L, int n)                   { return L.typecheck(n, &luQuat::Type); }
-UT_INLINE gkVector3&    LU_GetVec3Arg(luObject &L, int n)               { return L.toclassT<luVector3>(n)->vec; }
-UT_INLINE gkQuaternion& LU_GetQuatArg(luObject &L, int n)               { return L.toclassT<luQuat>(n)->quat; }
-UT_INLINE int           LU_Vec3New(luObject &L, const gkVector3 &v)     { new(&luVector3::Type, L) luVector3(v); return 1;}
-UT_INLINE int           LU_QuatNew(luObject &L, const gkQuaternion &v)  { new(&luQuat::Type, L) luQuat(v); return 1; }
-
-
 
 
 extern void luMath_Open(ltState *L);

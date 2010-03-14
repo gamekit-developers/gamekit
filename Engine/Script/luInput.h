@@ -31,47 +31,37 @@
 
 
 
-struct luMouse : public luClass
+class luMouse : public luClass
 {
-protected:
-
+    luClassHeader;
+private:
     class gkMouse *m_mouse;
 
 public:
-    static luMethodDef Methods[];
-    static luTypeDef Type;
-
-public:
-
     luMouse();
     ~luMouse();
 
-    gkMouse& mouse(void) {UT_ASSERT(m_mouse); return *m_mouse; }
-    static void bind(luBinder &L);
+    int getAttribute(luClass *self, luObject &L);
+    int isButtonDown(luClass *self, luObject &L);
 
-    luTypeDef *getType(void) { return &Type; }
+    static void bind(luBinder &L);
 };
 
 
-struct luKeyboard : public luClass
+class luKeyboard : public luClass
 {
-protected:
+    luClassHeader;
+private:
     class gkKeyboard *m_keyboard;
-
-public:
-    static luMethodDef Methods[];
-    static luTypeDef Type;
-
-    static void bind(luBinder &L);
 
 public:
 
     luKeyboard();
     ~luKeyboard();
 
-    gkKeyboard& key(void) {UT_ASSERT(m_keyboard); return *m_keyboard; }
+    int isKeyDown(luClass *self, luObject &L);
 
-    luTypeDef *getType(void) { return &Type; }
+    static void bind(luBinder &L);
 };
 
 

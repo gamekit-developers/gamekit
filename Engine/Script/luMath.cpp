@@ -27,32 +27,68 @@
 #include "luUtils.h"
 #include "luMath.h"
 
-
 // ----------------------------------------------------------------------------
-luVector3::luVector3(const gkVector3 &_vec)
-    :   vec(_vec)
-{
-}
 luVector3::~luVector3()
 {
 }
 
-
-static int luVector3_new(luObject &L)
+int luVector3::create(luObject &L, const gkVector3 &vec)
 {
-    gkVector3 v = gkVector3::ZERO;
-    if (L.isNumber(1)) v.x = L.getValueFloat(1);
-    if (L.isNumber(2)) v.y = L.getValueFloat(2);
-    if (L.isNumber(3)) v.z = L.getValueFloat(3);
-
-    new(&luVector3::Type, L) luVector3(v);
+    luVector3 *nv = new (&Type, L) luVector3();
+    nv->x = vec.x;
+    nv->y = vec.y;
+    nv->z = vec.z;
     return 1;
 }
 
-
-static int luVector3_get(luObject &L)
+int luVector3::_normalize(luClass *self, luObject &L)
 {
-    gkVector3 &vec = L.getValueClassT<luVector3>(1)->vec;
+    return L.push(normalise());
+}
+
+int luVector3::_dot(luClass *self, luObject &L)
+{
+    if (!isType(L, 2))
+        return L.pushError("expected Vector3.dot(Vector3)");
+    return L.push(dotProduct(luVector3::getArg(L, 2)));
+}
+
+
+int luVector3::_cross(luClass *self, luObject &L)
+{
+    if (!isType(L, 2))
+        return L.pushError("expected Vector3.cross(Vector3)");
+    return create(L, crossProduct(luVector3::getArg(L, 2)));
+}
+
+
+int luVector3::_length(luClass *self, luObject &L)
+{
+    return L.push(length());
+}
+
+int luVector3::_length2(luClass *self, luObject &L)
+{
+    return L.push(squaredLength());
+}
+
+int luVector3::_dist(luClass *self, luObject &L)
+{
+    if (!isType(L, 2))
+        return L.pushError("expected Vector3.distance(Vector3)");
+    return L.push(distance(luVector3::getArg(L, 2)));
+}
+
+int luVector3::_dist2(luClass *self, luObject &L)
+{
+    if (!isType(L, 2))
+        return L.pushError("expected Vector3.distance2(Vector3)");
+    return L.push(squaredDistance(luVector3::getArg(L, 2)));
+}
+
+
+int luVector3::_get(luClass *self, luObject &L)
+{
     if (L.isString(2))
     {
         int val = L.getValueString(2)[0];
@@ -60,21 +96,20 @@ static int luVector3_get(luObject &L)
         {
         case '0':
         case 'x':
-            return L.push(vec.x);
+            return L.push(x);
         case '1':
         case 'y':
-            return L.push(vec.y);
+            return L.push(y);
         case '2':
         case 'z':
-            return L.push(vec.z);
+            return L.push(z);
         }
     }
     return 0;
 }
 
-static int luVector3_set(luObject &L)
+int luVector3::_set(luClass *self, luObject &L)
 {
-    gkVector3 &vec = L.getValueClassT<luVector3>(1)->vec;
     if (L.isString(2))
     {
         int val = L.getValueString(2)[0];
@@ -82,337 +117,269 @@ static int luVector3_set(luObject &L)
         {
         case '0':
         case 'x':
-            vec.x = L.getValueFloat(3);
+            x = L.getValueFloat(3);
             break;
         case '1':
         case 'y':
-            vec.y = L.getValueFloat(3);
+            y = L.getValueFloat(3);
             break;
         case '2':
         case 'z':
-            vec.z = L.getValueFloat(3);
+            z = L.getValueFloat(3);
             break;
         }
     }
     return 0;
 }
 
-static int luVector3_tstr(luObject &L)
+int luVector3::_add(luClass *self, luObject &L)
 {
-    gkVector3 &vec = L.getValueClassT<luVector3>(1)->vec;
-    char buf[128];
-    sprintf(buf, "%f,%f,%f", vec.x, vec.y, vec.z);
-    return L.push(buf);
-}
+    if (isType(L, 2))
+        return create(L, (*this) + luVector3::getArg(L, 2));
 
-
-
-static int luVector3_add(luObject &L)
-{
-    if (!LU_IsVec3(L, 1))
-        return L.pushError("expected Vector3 self");
-
-    gkVector3 &vec = LU_GetVec3Arg(L, 1);
-
-    if (LU_IsVec3(L, 2))
-        return LU_Vec3New(L, vec + LU_GetVec3Arg(L, 2));
-    
     if (L.isNumber(2))
-        return LU_Vec3New(L, vec + L.tofloat(2));
+        return create(L, (*this) + L.tofloat(2));
 
-    return L.pushError("unknown operator for Vector3 + '%s'", lua_typename(L, 2)); 
+    return L.pushError("unknown operator for Vector3 + '%s'", lua_typename(L, 2));
 }
 
-static int luVector3_sub(luObject &L)
+int luVector3::_sub(luClass *self, luObject &L)
 {
-    if (!LU_IsVec3(L, 1))
-        return L.pushError("expected Vector3 self");
+    if (isType(L, 2))
+        return create(L, (*this) - luVector3::getArg(L, 2));
 
-    gkVector3 &vec = LU_GetVec3Arg(L, 1);
-
-    if (LU_IsVec3(L, 2))
-        return LU_Vec3New(L, vec - LU_GetVec3Arg(L, 2));
-    
     if (L.isNumber(2))
-        return LU_Vec3New(L, vec - L.tofloat(2));
+        return create(L, (*this) - L.tofloat(2));
 
-    return L.pushError("unknown operator for Vector3 - '%s'", lua_typename(L, 2)); 
+    return L.pushError("unknown operator for Vector3 - '%s'", lua_typename(L, 2));
 }
 
-static int luVector3_mul(luObject &L)
+
+int luVector3::_mul(luClass *self, luObject &L)
 {
-    if (!LU_IsVec3(L, 1))
-        return L.pushError("expected Vector3 self");
+    if (isType(L, 2))
+        return create(L, (*this) * luVector3::getArg(L, 2));
 
-    gkVector3 &vec = LU_GetVec3Arg(L, 1);
-
-    if (LU_IsVec3(L, 2))
-        return LU_Vec3New(L, vec * LU_GetVec3Arg(L, 2));
-    
     if (L.isNumber(2))
-        return LU_Vec3New(L, vec * L.tofloat(2));
+        return create(L, (*this) * L.tofloat(2));
 
-    return L.pushError("unknown operator for Vector3 * '%s'", lua_typename(L, 2)); 
+    return L.pushError("unknown operator for Vector3 * '%s'", lua_typename(L, 2));
 }
 
-
-
-static int luVector3_div(luObject &L)
+int luVector3::_div(luClass *self, luObject &L)
 {
-    if (!LU_IsVec3(L, 1))
-        return L.pushError("expected Vector3 self");
-
-    gkVector3 &vec = LU_GetVec3Arg(L, 1);
-
-    if (LU_IsVec3(L, 2))
+    if (isType(L, 2))
     {
-        gkVector3 &rhs = LU_GetVec3Arg(L, 2);
+        gkVector3 &rhs = luVector3::getArg(L, 2);
         if (rhs.isZeroLength())
-            return LU_Vec3New(L, vec);
-        return LU_Vec3New(L, vec / rhs );
+            return create(L, *this);
+        return create(L, (*this) / rhs );
     }
 
     if (L.isNumber(2))
     {
         float fv =  L.tofloat(2);
-        return LU_Vec3New(L, vec / (gkFuzzy(fv) ? 1.0 : fv));
+        return create(L, (*this) / (gkFuzzy(fv) ? 1.0 : fv));
     }
 
-    return L.pushError("unknown operator for Vector3 / '%s'", lua_typename(L, 2)); 
+    return L.pushError("unknown operator for Vector3 / '%s'", lua_typename(L, 2));
 }
 
-
-
-static int luVector3_unm(luObject &L)
+int luVector3::_neg(luClass *self, luObject &L)
 {
-    if (!LU_IsVec3(L, 1))
-        return L.pushError("expected Vector3 self");
-    return LU_Vec3New(L, -LU_GetVec3Arg(L, 1));
+    return create(L, -(*this));
 }
+
+int luVector3::_tostring(luClass *self, luObject &L)
+{
+    char buf[128];
+    sprintf(buf, "%f,%f,%f", x, y, z);
+    return L.push(buf);
+}
+
+// ----------------------------------------------------------------------------
+// Globals
+static int luVector3_constructor(luObject &L)
+{
+    gkVector3 v = gkVector3::ZERO;
+    if (L.isNumber(1)) v.x = L.getValueFloat(1);
+    if (L.isNumber(2)) v.y = L.getValueFloat(2);
+    if (L.isNumber(3)) v.z = L.getValueFloat(3);
+    return luVector3::create(L, v);
+}
+
+luGlobalTableBegin(luVector3)
+luGlobalTable("constructor", luVector3_constructor, LU_NOPARAM, ".")
+luGlobalTableEnd()
 
 
 // ----------------------------------------------------------------------------
-static int luVector3_Normalize(luObject &L)
-{
-    if (!LU_IsVec3(L, 1))
-        return L.pushError("expected Vec3Normalize(Vector3)");
+// Locals
+luClassTableBegin(luVector3)
+luClassTable("normalize",       luVector3, _normalize,      LU_PARAM,   ".")
+luClassTable("dot",             luVector3, _dot,            LU_PARAM,   "..")
+luClassTable("cross",           luVector3, _cross,          LU_PARAM,   "..")
+luClassTable("length",          luVector3, _length,         LU_PARAM,   ".")
+luClassTable("length2",         luVector3, _length2,        LU_PARAM,   ".")
+luClassTable("distance",        luVector3, _dist,           LU_PARAM,   "..")
+luClassTable("distance2",       luVector3, _dist2,          LU_PARAM,   "..")
+luClassTable("__tostring",      luVector3, _tostring,       LU_PARAM,   ".")
+luClassTable("__getter",        luVector3, _get,            LU_PARAM,   ".s")
+luClassTable("__setter",        luVector3, _set,            LU_PARAM,   ".sf")
+luClassTable("__add",           luVector3, _add,            LU_NOPARAM, "")
+luClassTable("__sub",           luVector3, _sub,            LU_NOPARAM, "")
+luClassTable("__mul",           luVector3, _mul,            LU_NOPARAM, "")
+luClassTable("__div",           luVector3, _div,            LU_NOPARAM, "")
+luClassTable("__unm",           luVector3, _neg,            LU_NOPARAM, "")
+luClassTableEnd()
 
-    return L.push(LU_GetVec3Arg(L, 1).normalise());
-}
+luClassImpl("Vector3", luVector3, 0);
 
-static int luVector3_Dot(luObject &L)
-{
-    if (!LU_IsVec3(L, 1) || !LU_IsVec3(L, 2))
-        return L.pushError("expected Vec3Dot(Vector3, Vector3)");
-
-    return L.push(LU_GetVec3Arg(L, 1).dotProduct(LU_GetVec3Arg(L, 2)));
-}
-
-static int luVector3_Cross(luObject &L)
-{
-    if (!LU_IsVec3(L, 1) || !LU_IsVec3(L, 2))
-        return L.pushError("expected Vec3Cross(Vector3, Vector3)");
-
-    return LU_Vec3New(L, LU_GetVec3Arg(L, 1).crossProduct(LU_GetVec3Arg(L, 2)));
-}
-
-static int luVector3_Len(luObject &L)
-{
-    if (!LU_IsVec3(L, 1))
-        return L.pushError("expected Vec3Len(Vector3)");
-    return L.push(LU_GetVec3Arg(L, 1).length());
-}
-
-
-static int luVector3_LenSq(luObject &L)
-{
-    if (!LU_IsVec3(L, 1))
-        return L.pushError("expected Vec3LenSq(Vector3)");
-    return L.push(LU_GetVec3Arg(L, 1).squaredLength());
-}
-
-
-static int luVector3_Dist(luObject &L)
-{
-    if (!LU_IsVec3(L, 1) || !LU_IsVec3(L, 2))
-        return L.pushError("expected Vec3Dist(Vector3, Vector3)");
-    return L.push(LU_GetVec3Arg(L, 1).distance(LU_GetVec3Arg(L, 2)));
-}
-
-static int luVector3_DistSq(luObject &L)
-{
-    if (!LU_IsVec3(L, 1) || !LU_IsVec3(L, 2))
-        return L.pushError("expected Vec3DistSq(Vector3, Vector3)");
-    return L.push(LU_GetVec3Arg(L, 1).squaredDistance(LU_GetVec3Arg(L, 2)));
-}
-
-luMethodDef luVector3::Methods[] =
-{
-    {"constructor",     luVector3_new,          LU_NOPARAM, "|fff"},
-    {"normalize",       luVector3_Normalize,    LU_PARAM,   "."},
-    {"dot",             luVector3_Dot,          LU_PARAM,   ".."},
-    {"cross",           luVector3_Cross,        LU_PARAM,   ".."},
-    {"length",          luVector3_Len,          LU_PARAM,   "."},
-    {"length2",         luVector3_LenSq,        LU_PARAM,   "."},
-    {"distance",        luVector3_Dist,         LU_PARAM,   ".."},
-    {"distance2",       luVector3_DistSq,       LU_PARAM,   ".."},
-    {"__tostring",      luVector3_tstr,         LU_PARAM,   "."},
-    {"__getter",        luVector3_get,          LU_PARAM,   ".s"},
-    {"__setter",        luVector3_set,          LU_PARAM,   ".sf"},
-    {"__add",           luVector3_add,          LU_NOPARAM, ""},
-    {"__sub",           luVector3_sub,          LU_NOPARAM, ""},
-    {"__mul",           luVector3_mul,          LU_NOPARAM, ""},
-    {"__mul",           luVector3_div,          LU_NOPARAM, ""},
-    {"__unm",           luVector3_unm,          LU_NOPARAM, ""},
-    {0,0,0,0}
-};
-
-luTypeDef luVector3::Type = {"Vector3", 0, Methods};
 
 // ----------------------------------------------------------------------------
-luQuat::luQuat(const gkQuaternion &_q)
-    :   quat(_q)
-{
-}
 
 luQuat::~luQuat()
 {
 }
 
+int luQuat::create(luObject &L, const gkQuaternion &q)
+{
+    luQuat *nv = new (&Type, L) luQuat();
+    nv->x = q.x;
+    nv->y = q.y;
+    nv->z = q.z;
+    nv->w = q.w;
+    return 1;
+}
 
-static int luQuat_new(luObject &L)
+int luQuat::_normalize(luClass *self, luObject &L)
+{
+    return L.push(normalise());
+}
+
+int luQuat::_inverse(luClass *self, luObject &L)
+{
+    return create(L, Inverse());
+}
+
+int luQuat::_dot(luClass *self, luObject &L)
+{
+    if (!isType(L, 2))
+        return L.pushError("expected Quaternion.dot(Quaternion)");
+
+    return create(L, Dot(luQuat::getArg(L, 2)));
+
+}
+
+int luQuat::_get(luClass *self, luObject &L)
+{
+    if (L.isString(2))
+    {
+        int val = L.getValueString(2)[0];
+        switch (val)
+        {
+        case '0':
+        case 'w':
+            return L.push(w);
+        case '1':
+        case 'x':
+            return L.push(x);
+        case '2':
+        case 'y':
+            return L.push(y);
+        case '3':
+        case 'z':
+            return L.push(z);
+        }
+    }
+    return 0;
+}
+
+int luQuat::_set(luClass *self, luObject &L)
+{
+    if (L.isString(2))
+    {
+        int val = L.getValueString(2)[0];
+        switch (val)
+        {
+        case '0':
+        case 'w':
+            w = L.getValueFloat(3);
+            break;
+        case '1':
+        case 'x':
+            x = L.getValueFloat(3);
+            break;
+        case '2':
+        case 'y':
+            y = L.getValueFloat(3);
+            break;
+        case '3':
+        case 'z':
+            z = L.getValueFloat(3);
+            break;
+        }
+    }
+    return 0;
+}
+
+int luQuat::_mul(luClass *self, luObject &L)
+{
+    if (luVector3::isType(L, 2))
+        return luVector3::create(L, (*this) * luVector3::getArg(L, 2));
+
+    if (isType(L, 2))
+        return create(L, (*this) *  luQuat::getArg(L, 2));
+
+    if (L.isNumber(2))
+        return create(L, (*this) *   L.tofloat(2) );
+
+    return L.pushError("unknown operator for Quaternion * '%s'", lua_typename(L, 2));
+}
+
+
+int luQuat::_tostring(luClass *self, luObject &L)
+{
+    char buf[128];
+    sprintf(buf, "%f,%f,%f,%f", w, x, y, z);
+    return L.push(buf);
+}
+
+
+
+// ----------------------------------------------------------------------------
+// Globals
+
+static int luQuat_constructor(luObject &L)
 {
     gkQuaternion q = gkQuaternion::IDENTITY;
     if (L.isNumber(1)) q.w = L.getValueFloat(1);
     if (L.isNumber(2)) q.x = L.getValueFloat(2);
     if (L.isNumber(3)) q.y = L.getValueFloat(3);
     if (L.isNumber(4)) q.z = L.getValueFloat(4);
-
-
-    new(&luQuat::Type, L) luQuat(q);
-    return 1;
-}
-
-static int luQuat_get(luObject &L)
-{
-    gkQuaternion &q= L.getValueClassT<luQuat>(1)->quat;
-    if (L.isString(2))
-    {
-        int val = L.getValueString(2)[0];
-        switch (val)
-        {
-        case '1':
-        case 'x':
-            return L.push(q.x);
-        case '2':
-        case 'y':
-            return L.push(q.y);
-        case '3':
-        case 'z':
-            return L.push(q.z);
-        case '0':
-        case 'w':
-            return L.push(q.w);
-        }
-    }
-    return 0;
+    return luQuat::create(L, q);
 }
 
 
-static int luQuat_set(luObject &L)
-{
-    gkQuaternion &q = L.getValueClassT<luQuat>(1)->quat;
-    if (L.isString(2))
-    {
-        int val = L.getValueString(2)[0];
-        switch (val)
-        {
-        case '1':
-        case 'x':
-            q.x = L.getValueFloat(3);
-            break;
-        case '2':
-        case 'y':
-            q.y = L.getValueFloat(3);
-            break;
-        case '3':
-        case 'z':
-            q.z = L.getValueFloat(3);
-            break;
-        case '0':
-        case 'w':
-            q.w = L.getValueFloat(3);
-            break;
-        }
-    }
-    return 0;
-}
+luGlobalTableBegin(luQuat)
+luGlobalTable("constructor", luQuat_constructor, LU_NOPARAM, ".")
+luGlobalTableEnd()
 
 
-static int luQuat_mul(luObject &L)
-{
-    if (!LU_IsQuat(L, 1))
-        return L.pushError("expected Quaternion self");
+// ----------------------------------------------------------------------------
+// Locals
+luClassTableBegin(luQuat)
+luClassTable("normalize",       luQuat, _normalize,     LU_PARAM,   ".")
+luClassTable("inverse",         luQuat, _inverse,       LU_PARAM,   ".")
+luClassTable("dot",             luQuat, _dot,           LU_PARAM,   "..")
+luClassTable("__tostring",      luQuat, _tostring,      LU_PARAM,   ".")
+luClassTable("__getter",        luQuat, _get,           LU_PARAM,   ".s")
+luClassTable("__setter",        luQuat, _set,           LU_PARAM,   ".sf")
+luClassTable("__mul",           luQuat, _mul,           LU_NOPARAM, "")
+luClassTableEnd()
 
-    gkQuaternion &q = LU_GetQuatArg(L, 1);
+luClassImpl("Quaternion", luQuat, 0);
 
-    if (LU_IsVec3(L, 2))
-        return LU_Vec3New(L, q * LU_GetVec3Arg(L, 2));
-
-    if (LU_IsQuat(L, 2))
-        return LU_QuatNew(L, q * LU_GetQuatArg(L, 2));
-    
-    if (L.isNumber(2))
-        return LU_QuatNew(L, q * L.tofloat(2));
-
-    return L.pushError("unknown operator for Quaternion * '%s'", lua_typename(L, 2)); 
-}
-
-
-
-static int luQuat_tstr(luObject &L)
-{
-    gkQuaternion &q = L.getValueClassT<luQuat>(1)->quat;
-
-    char buf[128];
-    sprintf(buf, "%f,%f,%f,%f", q.w, q.x, q.y, q.z);
-    return L.push(buf);
-}
-
-
-
-static int luQuat_Dot(luObject &L)
-{
-    if (!LU_IsQuat(L, 1) || !LU_IsQuat(L, 2))
-        return L.pushError("expected QuatDot(Quaternion, Quaternion)");
-    return L.push(LU_GetQuatArg(L, 1).Dot(LU_GetQuatArg(L, 2)));
-}
-
-
-static int luQuat_Normalize(luObject &L)
-{
-    if (!LU_IsQuat(L, 1))
-        return L.pushError("expected QuatNormalize(Quaternion)");
-
-    return L.push(LU_GetQuatArg(L, 1).normalise());
-}
-
-
-
-luMethodDef luQuat::Methods[] =
-{
-    {"constructor",     luQuat_new,         LU_NOPARAM, "|fff"},
-    {"dot",             luQuat_Dot,         LU_PARAM,   ".."},
-    {"normalize",       luQuat_Normalize,   LU_PARAM,   "."},
-    {"__tostring",      luQuat_tstr,        LU_PARAM,   "."},
-    {"__getter",        luQuat_get,         LU_PARAM,   ".s"},
-    {"__setter",        luQuat_set,         LU_PARAM,   ".sf"},
-    {"__mul",           luQuat_mul,         LU_PARAM,   ".|"},
-    {0,0,0,0}
-};
-
-
-luTypeDef luQuat::Type = {"Quaternion", 0, Methods};
 
 // ----------------------------------------------------------------------------
 
@@ -423,34 +390,26 @@ static int luMath_LerpF(luObject &L)
 
 static int luMath_Vec3Lerp(luObject &L)
 {
-    if (!LU_IsVec3(L, 1) || !LU_IsVec3(L, 2))
-        return L.pushError("expected Vec3Lerp(Vector3, Vector3, float )");
+    if (!luVector3::isType(L, 1) || !luVector3::isType(L, 2))
+        return L.pushError("expected Vec3Lerp(Vector3, Vector3, float)");
 
-    return LU_Vec3New(L,
-                      gkMathUtils::interp(LU_GetVec3Arg(L, 1), LU_GetVec3Arg(L, 2),
-                                          gkClampf(L.tofloat(3),  0.f, 1.f)));
+    return luVector3::create(L, gkMathUtils::interp(luVector3::getArg(L, 1), luVector3::getArg(L, 2), gkClampf(L.tofloat(3),  0.f, 1.f)));
 }
 
 
 
 static int luMath_QuatLerp(luObject &L)
 {
-    if (!LU_IsQuat(L, 1) || !LU_IsQuat(L, 2))
+    if (!luQuat::isType(L, 1) || !luQuat::isType(L, 2))
         return L.pushError("expected QuatLerp(Quaternion, Quaternion, float)");
-    return LU_QuatNew(L,
-                      gkMathUtils::interp(LU_GetQuatArg(L, 1), LU_GetQuatArg(L, 2),
-                                          gkClampf(L.tofloat(3),  0.f, 1.f), true));
+    return luQuat::create(L, gkMathUtils::interp(luQuat::getArg(L, 1), luQuat::getArg(L, 2), gkClampf(L.tofloat(3),  0.f, 1.f), true));
 }
-
 
 static int luMath_QuatSlerp(luObject &L)
 {
-    if (!LU_IsQuat(L, 1) || !LU_IsQuat(L, 2))
-        return L.pushError("expected QuatSlerp(Quaternion, Quaternion, float)");
-
-    return LU_QuatNew(L,
-                      gkMathUtils::interp(LU_GetQuatArg(L, 1), LU_GetQuatArg(L, 2),
-                                          gkClampf(L.tofloat(3),  0.f, 1.f), false));
+    if (!luQuat::isType(L, 1) || !luQuat::isType(L, 2))
+        return L.pushError("expected QuatLerp(Quaternion, Quaternion, float)");
+    return luQuat::create(L, gkMathUtils::interp(luQuat::getArg(L, 1), luQuat::getArg(L, 2), gkClampf(L.tofloat(3),  0.f, 1.f), true));
 }
 
 
@@ -477,8 +436,8 @@ void luMath_Open(ltState *L)
     lua.addConstant("RPD",  gkRPD);
 
     lua.addMethods(Math_Methods);
-    lua.addType(&luQuat::Type);
-    lua.addType(&luVector3::Type);
+    lua.addClassType(&luQuat::Type);
+    lua.addClassType(&luVector3::Type);
 
     lua.endNamespace();
 }

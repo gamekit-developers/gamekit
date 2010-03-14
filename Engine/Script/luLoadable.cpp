@@ -31,58 +31,64 @@
 
 luLoadable::luLoadable(gkObject *ob) : m_object(ob)
 {
+    UT_ASSERT(m_object);
 }
 
 luLoadable::~luLoadable()
 {
 }
 
-
-static int luLoadable_getName(luObject &L)
+// String Object:getName()
+int luLoadable::getName(luClass *self, luObject &L)
 {
-    gkObject &ob = L.getValueClassT<luLoadable>(1)->ref<gkObject>();
-    return L.push(ob.getName().c_str());
+    return L.push(m_object->getName().c_str());
 }
 
-static int luLoadable_isLoaded(luObject &L)
+// bool Object:isLoaded()
+int luLoadable::isLoaded(luClass *self, luObject &L)
 {
-    gkObject &ob = L.getValueClassT<luLoadable>(1)->ref<gkObject>();
-    return L.push(ob.isLoaded());
+    return L.push(m_object->isLoaded());
 }
 
-static int luLoadable_load(luObject &L)
+// nil Object:load()
+int luLoadable::load(luClass *self, luObject &L)
 {
-    gkObject &ob = L.getValueClassT<luLoadable>(1)->ref<gkObject>();
-    if (!ob.isLoaded())
-        gkEngine::getSingleton().addLoadable(&ob, LQ_LOAD);
+    if (!m_object->isLoaded())
+        gkEngine::getSingleton().addLoadable(m_object, LQ_LOAD);
     return 0;
 }
 
-static int luLoadable_unload(luObject &L)
+// nil Object:unload()
+int luLoadable::unload(luClass *self, luObject &L)
 {
-    gkObject &ob = L.getValueClassT<luLoadable>(1)->ref<gkObject>();
-    if (ob.isLoaded())
-        gkEngine::getSingleton().addLoadable(&ob, LQ_UNLOAD);
+    if (m_object->isLoaded())
+        gkEngine::getSingleton().addLoadable(m_object, LQ_UNLOAD);
     return 0;
 }
 
-static int luLoadable_reload(luObject &L)
+// nil Object:reload()
+int luLoadable::reload(luClass *self, luObject &L)
 {
-    gkObject &ob = L.getValueClassT<luLoadable>(1)->ref<gkObject>();
-    gkEngine::getSingleton().addLoadable(&ob, LQ_RELOAD);
+    if (m_object->isLoaded())
+        gkEngine::getSingleton().addLoadable(m_object, LQ_RELOAD);
     return 0;
 }
 
 
+// ----------------------------------------------------------------------------
+// Globals
+luGlobalTableBegin(luLoadable)
+luGlobalTableEnd()
 
-luMethodDef luLoadable::Methods[] = {
 
-    {"getName",     luLoadable_getName,     LU_NOPARAM, ""},
-    {"isLoaded",    luLoadable_isLoaded,    LU_NOPARAM, ""},
-    {"load",        luLoadable_load,        LU_NOPARAM, ""},
-    {"unload",      luLoadable_unload,      LU_NOPARAM, ""},
-    {"reload",      luLoadable_reload,      LU_NOPARAM, ""},
-    {0,0,0,0}
-};
+// ----------------------------------------------------------------------------
+// Locals
+luClassTableBegin(luLoadable)
+luClassTable("getName",     luLoadable, getName,    LU_NOPARAM,   ".")
+luClassTable("isLoaded",    luLoadable, isLoaded,   LU_NOPARAM,   ".")
+luClassTable("load",        luLoadable, load,       LU_NOPARAM,   ".")
+luClassTable("unload",      luLoadable, unload,     LU_NOPARAM,   ".")
+luClassTable("reload",      luLoadable, reload,     LU_NOPARAM,   ".")
+luClassTableEnd()
 
-luTypeDef luLoadable::Type = {"Object", 0, Methods};
+luClassImpl("Object", luLoadable, 0);

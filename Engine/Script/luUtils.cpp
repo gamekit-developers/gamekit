@@ -32,7 +32,8 @@ unsigned int luBinder_hash(const char *key)
 
 
 // index finder
-void luBinder_findMethod(const char *name, luMethodDef *def, int *out)
+template<typename T>
+void luBinder_findMethod(const char *name, T *def, int *out)
 {
     int i;
     for (i=0; def[i].m_name != 0; ++i)
@@ -184,7 +185,6 @@ static unsigned int __mul           = luBinder_hash("__mul");
 static unsigned int __div           = luBinder_hash("__div");
 static unsigned int __unm           = luBinder_hash("__unm");
 
-
 // global method wrapper
 static int luDef_MethodWrapper(ltState *L)
 {
@@ -212,22 +212,70 @@ static int luDef_MethodWrapper(ltState *L)
     return 0;
 }
 
+static luClass *luDef_getSelf(luClassMethodDef *mdef, luTypeDef *tdef, luObject &L)
+{
+    if (!L.isClass(1))
+    {
+        luaL_error(L, "Expected class as first argument to '%s'", mdef->m_name);
+        return 0;
+    }
+    if (!L.typecheck(1, tdef))
+    {
+        luaL_error(L, "Expected class '%s' as first argument to '%s'", tdef->m_name, mdef->m_name);
+        return 0;
+    }
+    return L.toclass(1);
+}
+
+// global method wrapper
+static int luDef_ClassMethodWrapper(ltState *L)
+{
+    luObject ob(L);
+    luTypeDef *tdef = ob.getType();
+    luClassMethodDef *mdef = ob.getClassMethod();
+
+    if (mdef != 0)
+    {
+        if (mdef->m_meth != 0)
+        {
+            if (mdef->m_flag != LU_NOPARAM && mdef->m_params != 0)
+            {
+                bool isCtor = mdef->m_hash == __constructor;
+                if (!luDef_ValidateParams(mdef->m_params, ob))
+                {
+                    luaL_error(L, "%s", luDef_ErrorParams(isCtor ? ob.getType()->m_name : mdef->m_name, mdef->m_params).c_str());
+                    return 1;
+                }
+            }
+
+            luClass *cls = luDef_getSelf(mdef, tdef, ob);
+            if (!cls) 
+                return 0;
+
+            return (cls->*mdef->m_meth)(cls, ob);
+        }
+    }
+
+    luaL_error(L, "unknwon error");
+    return 0;
+}
+
 // find class / base class methods
-static int luDef_PushBaseMethod(ltState *L, unsigned int index, luTypeDef *type)
+static int luDef_PushClassBaseMethod(ltState *L, unsigned int index, luTypeDef *type)
 {
 
-    if (type->m_methods)
+    if (type->m_classMethods)
     {
         int gidx = -1, i;
-        for (i=0; type->m_methods[i].m_name != 0; ++i)
+        for (i=0; type->m_classMethods[i].m_name != 0; ++i)
         {
-            if (type->m_methods[i].m_hash == __getter_hash)
+            if (type->m_classMethods[i].m_hash == __getter_hash)
                 gidx = i;
-            else if (index == type->m_methods[i].m_hash )
+            else if (index == type->m_classMethods[i].m_hash )
             {
                 lua_pushlightuserdata(L, type);
-                lua_pushlightuserdata(L, &type->m_methods[i]);
-                lua_pushcclosure(L, luDef_MethodWrapper, 2);
+                lua_pushlightuserdata(L, &type->m_classMethods[i]);
+                lua_pushcclosure(L, luDef_ClassMethodWrapper, 2);
                 return 1;
             }
         }
@@ -236,18 +284,24 @@ static int luDef_PushBaseMethod(ltState *L, unsigned int index, luTypeDef *type)
         {
             luObject ob(L);
             int ret = 0;
-            if ((ret = type->m_methods[gidx].m_meth(ob)) != 0)
-                return ret;
+
+            luClass *cls = luDef_getSelf(&type->m_classMethods[gidx], type, ob);
+            if (cls)
+            {
+                luClassMethodDef *mdef = &type->m_classMethods[gidx];
+                if ((ret = (cls->*mdef->m_meth)(cls, ob)) != 0)
+                    return ret;
+            }
         }
     }
 
     if (type->m_parent)
-        return luDef_PushBaseMethod(L, index, type->m_parent);
+        return luDef_PushClassBaseMethod(L, index, type->m_parent);
     return 0;
 }
 
 /// index method
-static int luDef_Indexer(ltState *L)
+static int luDef_ClassIndexer(ltState *L)
 {
     luObject ob(L);
     luTypeDef *tstr = ob.getType();
@@ -255,16 +309,18 @@ static int luDef_Indexer(ltState *L)
     {
         // find by name
         if (ob.isString(2))
-            return luDef_PushBaseMethod(L, luBinder_hash(ob.getValueString(2).c_str()), tstr);
+            return luDef_PushClassBaseMethod(L, luBinder_hash(ob.getValueString(2).c_str()), tstr);
     }
     return 0;
 }
 
 
-static int luDef_NewIndexer(ltState *L)
+static int luDef_ClassNewIndexer(ltState *L)
 {
     luObject ob(L);
-    luMethodDef *mdef = ob.getMethod();
+
+    luTypeDef *tdef = ob.getType();
+    luClassMethodDef *mdef = ob.getClassMethod();
 
     if (mdef != 0)
     {
@@ -278,28 +334,31 @@ static int luDef_NewIndexer(ltState *L)
                     return 1;
                 }
             }
+            luClass *cls = luDef_getSelf(mdef, tdef, ob);
+            if (!cls) 
+                return 0;
 
-            int ret = 0;
-            if ((ret = mdef->m_meth(ob)) != 0)
-                return ret;
+            return (cls->*mdef->m_meth)(cls, ob);
         }
     }
+
+    // FIXME need to check parents as well 
     return 0;
 }
 
+// default garbage collector
 static int luDef_Gc(ltState *L)
 {
     luObject ob(L);
     luTypeDef *tstr = ob.getType();
     if (tstr)
-    {
         delete ob.getValueClass(1);
-        return 0;
-    }
     return 0;
 }
 
-static bool luDef_isBuiltinMethod(luMethodDef *meth)
+
+template<typename T>
+static bool luDef_isBuiltinMethod(T *meth)
 {
     return (meth->m_hash == __constructor   ||
             meth->m_hash == __destructor    ||
@@ -312,20 +371,21 @@ static bool luDef_isBuiltinMethod(luMethodDef *meth)
             meth->m_hash == __mul           ||
             meth->m_hash == __div           ||
             meth->m_hash == __unm
-            );
+           );
 }
 
-#define luDef_DefaultMethod(type, name, index, meth)        \
-    if (index != -1) {                                      \
-        lua_pushstring(L, name);                            \
-        lua_pushlightuserdata(L, type);                     \
-        lua_pushlightuserdata(L,  &type->m_methods[index]); \
-        lua_pushcclosure(L, meth, 2);                       \
-        lua_settable(L, -3);                                \
+#define luDef_DefaultClassMethod(type, name, index, meth)           \
+    if (index != -1) {                                              \
+        lua_pushstring(L, name);                                    \
+        lua_pushlightuserdata(L, type);                             \
+        lua_pushlightuserdata(L,  &type->m_classMethods[index]);    \
+        lua_pushcclosure(L, meth, 2);                               \
+        lua_settable(L, -3);                                        \
     }
 
 
-void luBinder::addType(luTypeDef *type)
+
+void luBinder::addClassType(luTypeDef *type)
 {
     int ctor = -1, dtor = -1, tstr = -1, nidx = -1;
     int addi = -1, subi = -1, muli = -1, divi = -1;
@@ -334,16 +394,19 @@ void luBinder::addType(luTypeDef *type)
     if (type->m_methods)
     {
         luBinder_findMethod("constructor",  type->m_methods,   &ctor);
-        luBinder_findMethod("__tostring",   type->m_methods,   &tstr);
         luBinder_findMethod("destructor",   type->m_methods,   &dtor);
-        luBinder_findMethod("__setter",     type->m_methods,   &nidx);
+    }
 
+    if (type->m_classMethods)
+    {
         // math operators
-        luBinder_findMethod("__add",     type->m_methods,   &addi);
-        luBinder_findMethod("__sub",     type->m_methods,   &subi);
-        luBinder_findMethod("__mul",     type->m_methods,   &muli);
-        luBinder_findMethod("__div",     type->m_methods,   &divi);
-        luBinder_findMethod("__unm",     type->m_methods,   &unmi);
+        luBinder_findMethod("__tostring",   type->m_classMethods,   &tstr);
+        luBinder_findMethod("__setter",     type->m_classMethods,   &nidx);
+        luBinder_findMethod("__add",        type->m_classMethods,   &addi);
+        luBinder_findMethod("__sub",        type->m_classMethods,   &subi);
+        luBinder_findMethod("__mul",        type->m_classMethods,   &muli);
+        luBinder_findMethod("__div",        type->m_classMethods,   &divi);
+        luBinder_findMethod("__unm",        type->m_classMethods,   &unmi);
     }
 
 
@@ -366,8 +429,8 @@ void luBinder::addType(luTypeDef *type)
     {
         lua_pushstring(L, "__tostring");
         lua_pushlightuserdata(L, type);
-        lua_pushlightuserdata(L,  &type->m_methods[tstr]);
-        lua_pushcclosure(L, luDef_MethodWrapper, 2);
+        lua_pushlightuserdata(L,  &type->m_classMethods[tstr]);
+        lua_pushcclosure(L, luDef_ClassMethodWrapper, 2);
         lua_settable(L, -3);
     }
     else
@@ -397,16 +460,15 @@ void luBinder::addType(luTypeDef *type)
 
     lua_pushstring(L, "__index");
     lua_pushlightuserdata(L, type);
-    lua_pushcclosure(L, luDef_Indexer, 1);
+    lua_pushcclosure(L, luDef_ClassIndexer, 1);
     lua_settable(L, -3);
 
-
-    luDef_DefaultMethod(type, "__newindex", nidx, luDef_NewIndexer);
-    luDef_DefaultMethod(type, "__add",      addi, luDef_MethodWrapper);
-    luDef_DefaultMethod(type, "__sub",      subi, luDef_MethodWrapper);
-    luDef_DefaultMethod(type, "__mul",      muli, luDef_MethodWrapper);
-    luDef_DefaultMethod(type, "__div",      divi, luDef_MethodWrapper);
-    luDef_DefaultMethod(type, "__unm",      unmi, luDef_MethodWrapper);
+    luDef_DefaultClassMethod(type, "__newindex", nidx, luDef_ClassNewIndexer);
+    luDef_DefaultClassMethod(type, "__add",      addi, luDef_ClassMethodWrapper);
+    luDef_DefaultClassMethod(type, "__sub",      subi, luDef_ClassMethodWrapper);
+    luDef_DefaultClassMethod(type, "__mul",      muli, luDef_ClassMethodWrapper);
+    luDef_DefaultClassMethod(type, "__div",      divi, luDef_ClassMethodWrapper);
+    luDef_DefaultClassMethod(type, "__unm",      unmi, luDef_ClassMethodWrapper);
 
     if (type->m_methods)
     {
@@ -422,6 +484,23 @@ void luBinder::addType(luTypeDef *type)
             lua_pushlightuserdata(L, type);
             lua_pushlightuserdata(L, &type->m_methods[i]);
             lua_pushcclosure(L, luDef_MethodWrapper, 2);
+            lua_settable(L, -3);
+        }
+    }
+
+    if (type->m_classMethods)
+    {
+        int i;
+        for (i=0; type->m_classMethods[i].m_name != 0; ++i)
+        {
+            type->m_classMethods[i].m_hash = luBinder_hash(type->m_classMethods[i].m_name);
+            if (luDef_isBuiltinMethod(&type->m_classMethods[i]))
+                continue;
+
+            lua_pushstring(L, type->m_classMethods[i].m_name);
+            lua_pushlightuserdata(L, type);
+            lua_pushlightuserdata(L, &type->m_classMethods[i]);
+            lua_pushcclosure(L, luDef_ClassMethodWrapper, 2);
             lua_settable(L, -3);
         }
     }
@@ -516,6 +595,10 @@ luMethodDef *luObject::getMethod(void)
 {
     return static_cast<luMethodDef *>(lua_touserdata(L, lua_upvalueindex(LU_UPVALUEMETHOD)));
 }
+luClassMethodDef *luObject::getClassMethod(void)
+{
+    return static_cast<luClassMethodDef *>(lua_touserdata(L, lua_upvalueindex(LU_UPVALUEMETHOD)));
+}
 
 
 int luObject::push( const char *val)
@@ -550,8 +633,8 @@ int luObject::push(luClass *val)
     {
         luTypeDef *tdef = val->getType();
 
-        lua_pushlightuserdata(L, val); 
-        // bind to table 
+        lua_pushlightuserdata(L, val);
+        // bind to table
         luaL_getmetatable(L, tdef->m_name);
         lua_setmetatable(L, -2);
         return 1;
@@ -610,9 +693,6 @@ bool luClass::isTypeOf(luTypeDef *root, const char *name)
     return false;
 }
 
-
-
-
 luBinder::luBinder(ltState *_L) : L(_L)
 {
     UT_ASSERT(L);
@@ -625,7 +705,6 @@ luBinder::~luBinder()
     lua_settop(L, m_val);
     lua_pop(L, 1);
 }
-
 
 void luBinder::beginNamespace(const char *title)
 {
@@ -655,7 +734,6 @@ void luBinder::addConstant(const char *name, const char *v)
     lua_pushstring(L, v);
     lua_setfield(L, -2, name);
 }
-
 
 void luStackDump::dump(void)
 {

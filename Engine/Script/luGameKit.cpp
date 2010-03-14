@@ -93,14 +93,15 @@ void luGameKit_Open(ltState *L)
 
     lua.addMethods(GameKit_Methods);
 
-    lua.addType(&luKeyboard::Type);
-    lua.addType(&luMouse::Type);
-    lua.addType(&luLoadable::Type);
-    lua.addType(&luScene::Type);
-    lua.addType(&luGameObject::Type);
-    lua.addType(&luCamera::Type);
-    lua.addType(&luEntity::Type);
-    lua.addType(&luLight::Type);
+    lua.addClassType(&luKeyboard::Type);
+    lua.addClassType(&luMouse::Type);
+
+    lua.addClassType(&luLoadable::Type);
+    lua.addClassType(&luScene::Type);
+    lua.addClassType(&luGameObject::Type);
+    lua.addClassType(&luCamera::Type);
+    lua.addClassType(&luEntity::Type);
+    lua.addClassType(&luLight::Type);
 
     lua.endNamespace();
 }
