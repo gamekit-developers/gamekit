@@ -30,19 +30,6 @@
 #include "luGameObjects.h"
 #include "OgreKit.h"
 
-#define LU_GetNamdSocketFunc(cls, name, base)               \
-static int cls##_##name(luObject& L)                        \
-{                                                           \
-    luNode *ob = L.getValueClassT<luNode>(1);               \
-    if (ob)                                                 \
-    {                                                       \
-    base *ncls = static_cast<base*>(&ob->node());           \
-    new (&luSocket::Type, L) luSocket(ncls->name());        \
-    return 1;                                               \
-    }                                                       \
-    return 0;                                               \
-}                                                           \
- 
 
 enum luNodes
 {
@@ -144,8 +131,6 @@ public:
         }
         return 0;
     }
-
-
     // nil Socket:link(Socket)
     int link(luClass *self, luObject& L)
     {
