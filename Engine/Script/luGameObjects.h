@@ -91,7 +91,7 @@ public:
     int setOrientation(luClass *self, luObject &L);
 
     // Enum GameObject:getType()
-    int getType(luClass *self, luObject &L);
+    int _getType(luClass *self, luObject &L);
 
     // nil GameObject:rotate(Math.Vector3, bool=false)
     // nil GameObject:rotate(Math.Quaternion, bool=false)

@@ -193,7 +193,7 @@ int luGameObject::setOrientation(luClass *self, luObject &L)
 
 
 // Enum GameObject:getType()
-int luGameObject::getType(luClass *self, luObject &L)
+int luGameObject::_getType(luClass *self, luObject &L)
 {
     return L.push((int)ref<gkGameObject>().getType());
 }
@@ -301,7 +301,7 @@ luClassTableBegin(luGameObject)
     luClassTable("setPosition",         luGameObject,setPosition,           LU_PARAM, "..")
     luClassTable("setRotation",         luGameObject,setRotation,           LU_PARAM, "..")
     luClassTable("setOrientation",      luGameObject,setOrientation,        LU_PARAM, "..")
-    luClassTable("getType",             luGameObject,getType,               LU_PARAM, ".")
+    luClassTable("getType",             luGameObject,_getType,              LU_PARAM, ".")
     luClassTable("rotate",              luGameObject,rotate,                LU_PARAM, "..|b")
     luClassTable("translate",           luGameObject,translate,             LU_PARAM, "..|b")
     luClassTable("scale",               luGameObject,scale,                 LU_PARAM, "..")
