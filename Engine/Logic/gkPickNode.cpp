@@ -29,6 +29,7 @@
 #include "gkEngine.h"
 #include "gkScene.h"
 #include "gkDynamicsWorld.h"
+#include "gkRigidBody.h"
 #include "gkUtils.h"
 #include "OgreRoot.h"
 #include "btBulletDynamicsCommon.h"
@@ -37,15 +38,14 @@ using namespace Ogre;
 
 gkPickNode::gkPickNode(gkLogicTree *parent, size_t id)
 : gkLogicNode(parent, id),
+m_pickedBody(0),
 m_constraint(0),
-m_hitPos(0, 0, 0),
 m_oldPickingPos(0, 0, 0),
 m_oldPickingDist(0)
 {
-	ADD_ISOCK(*getEnable(), this, gkLogicSocket::ST_BOOL);
+	ADD_ISOCK(*getUpdate(), this, gkLogicSocket::ST_BOOL);
 	ADD_ISOCK(*getCreatePick(), this, gkLogicSocket::ST_BOOL);
 	ADD_ISOCK(*getReleasePick(), this, gkLogicSocket::ST_BOOL);
-	ADD_ISOCK(*getUpdate(), this, gkLogicSocket::ST_BOOL);
 
 	ADD_ISOCK(*getX(), this, gkLogicSocket::ST_REAL);
 	ADD_ISOCK(*getY(), this, gkLogicSocket::ST_REAL);
@@ -58,14 +58,14 @@ gkPickNode::~gkPickNode()
 
 bool gkPickNode::evaluate(Real tick)
 {
-	bool enable = getEnable()->getValueBool();
+	bool enable = getUpdate()->getValueBool();
 
 	if(!enable)
 	{
 		ReleasePick();
 	}
 
-	return enable && (getCreatePick()->getValueBool() || getReleasePick()->getValueBool() || getUpdate()->getValueBool());
+	return enable;
 }
 
 void gkPickNode::update(Real tick)
@@ -88,60 +88,55 @@ void gkPickNode::CreatePick()
 {
 	ReleasePick();
 
-	Ray ray = gkUtils::CreateCameraRay(getX()->getValueReal(), getY()->getValueReal());
+	m_pickedBody = 0;
 
-	Vector3 from = ray.getOrigin();
-	Vector3 to = ray.getOrigin() + ray.getDirection();
+	Ogre::Ray ray = GetRay();
+	
+	gkVector3 hitPointWorld;
+	
+	m_pickedBody = gkUtils::PickBody(ray, hitPointWorld);
 
-	btVector3 rayFrom(from.x, from.y, from.z);
-	btVector3 rayTo(to.x, to.y, to.z);
-
-	btCollisionWorld::ClosestRayResultCallback rayCallback(rayFrom, rayTo);
-	rayCallback.m_collisionFilterGroup = btBroadphaseProxy::AllFilter;
-	rayCallback.m_collisionFilterMask = btBroadphaseProxy::AllFilter;
-
-	gkScene* pScene = gkEngine::getSingleton().getActiveScene();
-
-	GK_ASSERT(pScene);
-
-	btDynamicsWorld* pWorld = pScene->getDynamicsWorld()->getBulletWorld();
-
-	GK_ASSERT(pWorld);
-
-	pWorld->rayTest(rayFrom, rayTo, rayCallback);
-
-	if(rayCallback.hasHit())
+	if(m_pickedBody)
 	{
-		btRigidBody* body = btRigidBody::upcast(rayCallback.m_collisionObject);
+		btRigidBody* body = m_pickedBody->getBody();
 
-		if(body)
+		if (!(body->isStaticObject() || body->isKinematicObject()))
 		{
-			if (!(body->isStaticObject() || body->isKinematicObject()))
-			{
-				m_pickedBody = body;
+			body->setActivationState(DISABLE_DEACTIVATION);
 
-				m_pickedBody->setActivationState(DISABLE_DEACTIVATION);
+			btVector3 hitPos(hitPointWorld.x, hitPointWorld.y, hitPointWorld.z);
 
-				m_hitPos = rayCallback.m_hitPointWorld;
+			btVector3 localPivot = body->getCenterOfMassTransform().inverse() * hitPos;
 
-				btVector3 localPivot = body->getCenterOfMassTransform().inverse() * m_hitPos;
+			m_constraint = new btPoint2PointConstraint(*body, localPivot);
 
-				m_constraint = new btPoint2PointConstraint(*body, localPivot);
+			static btScalar mousePickClamping = 30.f;
 
-				static btScalar mousePickClamping = 30.f;
+			m_constraint->m_setting.m_impulseClamp = mousePickClamping;
 
-				m_constraint->m_setting.m_impulseClamp = mousePickClamping;
+			gkScene* pScene = gkEngine::getSingleton().getActiveScene();
 
-				pWorld->addConstraint(m_constraint, false);
+			GK_ASSERT(pScene);
 
-				//save mouse position for dragging
-				m_oldPickingPos = rayTo;
+			btDynamicsWorld* pWorld = pScene->getDynamicsWorld()->getBulletWorld();
 
-				m_oldPickingDist = (m_hitPos-rayFrom).length();
+			GK_ASSERT(pWorld);
 
-				//very weak constraint for picking
-				m_constraint->m_setting.m_tau = 0.1f;
-			}
+			pWorld->addConstraint(m_constraint, false);
+
+			Vector3 from = ray.getOrigin();
+			Vector3 to = ray.getOrigin() + ray.getDirection();
+
+			btVector3 rayFrom(from.x, from.y, from.z);
+			btVector3 rayTo(to.x, to.y, to.z);
+
+			//save mouse position for dragging
+			m_oldPickingPos = rayTo;
+
+			m_oldPickingDist = (hitPos-rayFrom).length();
+
+			//very weak constraint for picking
+			m_constraint->m_setting.m_tau = 0.1f;
 		}
 	}
 }
@@ -170,17 +165,28 @@ void gkPickNode::UpdatePick()
 {
 	if(m_constraint)
 	{
-		Ray ray = gkUtils::CreateCameraRay(getX()->getValueReal(), getY()->getValueReal());
-
-		Vector3 dir(ray.getDirection());
-		
-		dir.normalise();
-		
-		dir *= m_oldPickingDist;
-
-		Vector3 newPivotB = ray.getOrigin() + dir;
+		gkVector3 newPivotB = GetPivotPosition();
 
 		m_constraint->setPivotB(btVector3(newPivotB.x, newPivotB.y, newPivotB.z));
 	}
+}
+
+Ogre::Ray gkPickNode::GetRay()
+{
+	return gkUtils::CreateCameraRay(getX()->getValueReal(), getY()->getValueReal());
+}
+
+gkVector3 gkPickNode::GetPivotPosition()
+{
+	Ray ray = GetRay();
+
+	gkVector3 dir(ray.getDirection());
+	
+	dir.normalise();
+
+	dir *= m_oldPickingDist;
+
+	return ray.getOrigin() + dir;
+
 }
 

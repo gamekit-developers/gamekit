@@ -145,17 +145,12 @@ public:
 
 	void CreateMomoGrabLogic()
 	{
-		gkGrabNode* grab1 = m_tree->createNode<gkGrabNode>();
-		grab1->getTarget()->link(m_playerSetter->getOutput());
-		grab1->getGrabDirection()->setValue(gkVector3(0.1f, 1.1f, 0));
-		grab1->getThrowVelocity()->setValue(gkVector3(0, 20.5f, 0));
-		grab1->getOffsetPosition()->setValue(gkVector3(0, 0, 0.2));
-
-		gkGrabNode* grab2 = m_tree->createNode<gkGrabNode>();
-		grab2->getTarget()->link(m_playerSetter->getOutput());
-		grab2->getGrabDirection()->setValue(gkVector3(-0.1f, 1.1f, 0));
-		grab2->getThrowVelocity()->setValue(gkVector3(0, 20.5f, 0));
-		grab2->getOffsetPosition()->setValue(gkVector3(0, 0, 0.2));
+		gkGrabNode* grab = m_tree->createNode<gkGrabNode>();
+		grab->getUpdate()->setValue(true);
+		grab->getTarget()->link(m_playerSetter->getOutput());
+		grab->getGrabDirection()->setValue(gkVector3(0.1f, 1.1f, 0));
+		grab->getThrowVelocity()->setValue(gkVector3(0, 20.5f, 0));
+		grab->getOffsetPosition()->setValue(gkVector3(0, 0, 0.2));
 
 		{
 			gkIfNode* ifNode = m_tree->createNode<gkIfNode>();
@@ -164,8 +159,7 @@ public:
 			ifNode->getA()->link(m_rightMouseNode->getPress());
 			ifNode->getB()->link(m_ctrlKeyNode->getNotIsDown());
 
-			grab1->getCreateGrab()->link(ifNode->getTrue());
-			grab2->getCreateGrab()->link(ifNode->getTrue());
+			grab->getCreatePick()->link(ifNode->getTrue());
 		}
 
 		{
@@ -175,8 +169,7 @@ public:
 			ifNode->getA()->link(m_rightMouseNode->getRelease());
 			ifNode->getB()->link(m_ctrlKeyNode->getNotIsDown());
 
-			grab1->getReleaseGrab()->link(ifNode->getTrue());
-			grab2->getReleaseGrab()->link(ifNode->getTrue());
+			grab->getReleasePick()->link(ifNode->getTrue());
 		}
 
 		{
@@ -186,8 +179,7 @@ public:
 			ifNode->getA()->link(m_leftMouseNode->getPress());
 			ifNode->getB()->link(m_ctrlKeyNode->getNotIsDown());
 
-			grab1->getThrowObject()->link(ifNode->getTrue());
-			grab2->getThrowObject()->link(ifNode->getTrue());
+			grab->getThrowObject()->link(ifNode->getTrue());
 		}
 	}
 
@@ -370,40 +362,47 @@ public:
 	{
 		gkPickNode* pick = m_tree->createNode<gkPickNode>();
 
-		pick->getEnable()->link(m_ctrlKeyNode->getIsDown());
+		pick->getUpdate()->link(m_ctrlKeyNode->getIsDown());
 		pick->getCreatePick()->link(m_rightMouseNode->getPress());
 		pick->getReleasePick()->link(m_rightMouseNode->getRelease());
-		pick->getUpdate()->link(m_mouseNode->getMotion());
 		pick->getX()->link(m_mouseNode->getAbsX());
 		pick->getY()->link(m_mouseNode->getAbsY());
 	}
 
 	void ArcBallLogic()
 	{
-		gkArcBallNode* arcBall = m_tree->createNode<gkArcBallNode>();
+		gkObjectSetterNode* centerObj = m_tree->createNode<gkObjectSetterNode>();
+		centerObj->setType(gkObjectSetterNode::SCREEN_XY);
+		centerObj->getX()->link(m_mouseNode->getAbsX());
+		centerObj->getY()->link(m_mouseNode->getAbsY());
 
+		{
+			gkIfNode* ifNode = m_tree->createNode<gkIfNode>();
+			ifNode->setStatement(CMP_AND);
+
+			ifNode->getA()->link(m_leftMouseNode->getPress());
+			ifNode->getB()->link(m_ctrlKeyNode->getIsDown());
+
+			centerObj->getUpdate()->link(ifNode->getTrue());
+		}
+
+		gkArcBallNode* arcBall = m_tree->createNode<gkArcBallNode>();
+		arcBall->getCenterObj()->link(centerObj->getOutput());
+		arcBall->getCenterPosition()->link(centerObj->getRayPoint());
 		arcBall->getTarget()->link(m_cameraSetter->getOutput());
 
-		gkIfNode* ifAndNode = m_tree->createNode<gkIfNode>();
-		ifAndNode->setStatement(CMP_AND);
-
-		ifAndNode->getA()->link(m_leftMouseNode->getIsDown());
-		ifAndNode->getB()->link(m_mouseNode->getMotion());
-
-		gkIfNode* ifOrNode = m_tree->createNode<gkIfNode>();
-		ifOrNode->setStatement(CMP_OR);
-
-		ifOrNode->getA()->link(m_mouseNode->getWheel());
-		ifOrNode->getB()->link(ifAndNode->getTrue());
-
-		arcBall->getEnable()->link(m_ctrlKeyNode->getIsDown());
-		arcBall->getUpdateCenter()->link(m_leftMouseNode->getPress());
-		arcBall->getUpdatePosition()->link(ifOrNode->getTrue());
-		arcBall->getX()->link(m_mouseNode->getAbsX());
-		arcBall->getY()->link(m_mouseNode->getAbsY());
 		arcBall->getRelX()->link(m_mouseNode->getRelX());
 		arcBall->getRelY()->link(m_mouseNode->getRelY());
 		arcBall->getRelZ()->link(m_mouseNode->getWheel());
+
+		{
+			gkIfNode* ifNode = m_tree->createNode<gkIfNode>();
+			ifNode->setStatement(CMP_AND);
+			ifNode->getA()->link(m_ctrlKeyNode->getIsDown());
+			ifNode->getB()->link(m_leftMouseNode->getIsDown());
+
+			arcBall->getUpdate()->link(ifNode->getTrue());
+		}
 	}
 
 	void TrackLogic()

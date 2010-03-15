@@ -40,7 +40,10 @@
 #include "gkCamera.h"
 #include "gkScene.h"
 #include "gkWindowSystem.h"
+#include "gkDynamicsWorld.h"
 #include "OgreRenderWindow.h"
+#include "btBulletDynamicsCommon.h"
+
 
 using namespace Ogre;
 
@@ -122,7 +125,7 @@ Ogre::Ray gkUtils::CreateCameraRay(gkScalar x, gkScalar y)
 
 	GK_ASSERT(width && height);
 
-	Ray ray(pCamera->getCamera()->getCameraToViewportRay(pos.x/width, pos.y/height));
+	Ogre::Ray ray(pCamera->getCamera()->getCameraToViewportRay(pos.x/width, pos.y/height));
 
 	Vector3 p0 = ray.getOrigin();
 
@@ -134,4 +137,51 @@ Ogre::Ray gkUtils::CreateCameraRay(gkScalar x, gkScalar y)
 
 	return ray;
 }
+
+gkRigidBody* gkUtils::PickBody(const Ogre::Ray& ray, gkVector3& hitPointWorld)
+ {
+	Vector3 from = ray.getOrigin();
+	Vector3 to = ray.getOrigin() + ray.getDirection();
+
+	btVector3 rayFrom(from.x, from.y, from.z);
+	btVector3 rayTo(to.x, to.y, to.z);
+
+	btCollisionWorld::ClosestRayResultCallback rayCallback(rayFrom, rayTo);
+	rayCallback.m_collisionFilterGroup = btBroadphaseProxy::AllFilter;
+	rayCallback.m_collisionFilterMask = btBroadphaseProxy::AllFilter;
+
+	gkScene* pScene = gkEngine::getSingleton().getActiveScene();
+
+	GK_ASSERT(pScene);
+
+	btDynamicsWorld* pWorld = pScene->getDynamicsWorld()->getBulletWorld();
+
+	GK_ASSERT(pWorld);
+
+	pWorld->rayTest(rayFrom, rayTo, rayCallback);
+
+	gkRigidBody* pBody = 0;
+
+	if(rayCallback.hasHit())
+	{
+		btRigidBody* body = btRigidBody::upcast(rayCallback.m_collisionObject);
+
+		GK_ASSERT(body);
+
+		pBody = static_cast<gkRigidBody*>(body->getUserPointer());
+
+		hitPointWorld = gkVector3(rayCallback.m_hitPointWorld);
+	}
+
+	return pBody;
+ }
+
+gkRigidBody* gkUtils::PickBody(const Ogre::Ray& ray)
+ {
+	 gkVector3 hitPointWorld;
+
+	 return gkUtils::PickBody(ray, hitPointWorld);
+ }
+
+
 

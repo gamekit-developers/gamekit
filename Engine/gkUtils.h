@@ -30,6 +30,7 @@
 #include "gkCommon.h"
 #include "gkMathUtils.h"
 
+class gkRigidBody;
 
 class gkUtils
 {
@@ -42,6 +43,10 @@ public:
     static gkString getFile(const gkString& in);
 
 	static Ogre::Ray CreateCameraRay(gkScalar x, gkScalar y);
+
+	static gkRigidBody* PickBody(const Ogre::Ray& ray);
+
+	static gkRigidBody* PickBody(const Ogre::Ray& ray, gkVector3& hitPointWorld);
 };
 
 

@@ -30,6 +30,7 @@
 #include "gkLogicNode.h"
 
 class gkGameObject;
+class gkRigidBody;
 
 class gkArcBallNode : public gkLogicNode
 {
@@ -37,11 +38,9 @@ public:
 
 	enum 
 	{
-		ENABLE,
-		CENTER_UPDATED,
-		POS_UPDATED,
-		XPOS,
-		YPOS,
+		UPDATE,
+		CENTER_OBJ,
+		CENTER_POSITION,
 		RELX,
 		RELY,
 		RELZ,
@@ -57,12 +56,10 @@ public:
 
 	bool evaluate(Ogre::Real tick);
 
-	GK_INLINE gkLogicSocket* getEnable() {return &m_sockets[ENABLE];}
-    GK_INLINE gkLogicSocket* getUpdateCenter() {return &m_sockets[CENTER_UPDATED];}
-	GK_INLINE gkLogicSocket* getUpdatePosition() {return &m_sockets[POS_UPDATED];}
+	GK_INLINE gkLogicSocket* getUpdate() {return &m_sockets[UPDATE];}
 
-    GK_INLINE gkLogicSocket* getX() {return &m_sockets[XPOS];}
-    GK_INLINE gkLogicSocket* getY() {return &m_sockets[YPOS];}
+    GK_INLINE gkLogicSocket* getCenterObj() {return &m_sockets[CENTER_OBJ];}
+	GK_INLINE gkLogicSocket* getCenterPosition() {return &m_sockets[CENTER_POSITION];}
 
     GK_INLINE gkLogicSocket* getRelX() {return &m_sockets[RELX];}
     GK_INLINE gkLogicSocket* getRelY() {return &m_sockets[RELY];}
@@ -72,24 +69,15 @@ public:
 
 private:
 
-	void SetNewPosition();
-	void GetNewCenter();
-
-private:
-
 	gkLogicSocket m_sockets[MAX_SOCKETS];
 
-	Ogre::RaySceneQuery* m_rayQuery;
-	Ogre::SceneNode* m_RotationNode;
-
-	gkScene* m_scene;
-
-	Ogre::Vector3 m_center;
-
-	bool m_centerUpdated;
-	bool m_positionUpdated;
+	gkVector3 m_center;
 
 	gkGameObject* m_target;
+	gkGameObject* m_centerObj;
+
+	gkQuaternion m_rollNode;
+	gkQuaternion m_pitchNode;
 };
 
 #endif//_gkArcBallNode_h_

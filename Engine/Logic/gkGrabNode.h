@@ -27,19 +27,13 @@
 #ifndef _gkGrabNode_h_
 #define _gkGrabNode_h_
 
-#include "gkLogicNode.h"
-#include "LinearMath/btVector3.h"
+#include "gkPickNode.h"
 
-class btPoint2PointConstraint;
-class btRigidBody;
-
-class gkGrabNode : public gkLogicNode
+class gkGrabNode : public gkPickNode
 {
 public:
 	enum 
 	{
-		CREATE_GRAB,
-		RELEASE_GRAB,
 		THROW_OBJECT,
 		TARGET,
 		GRAB_DIRECTION,
@@ -56,8 +50,6 @@ public:
 
 	bool evaluate(Ogre::Real tick);
 
-	GK_INLINE gkLogicSocket* getCreateGrab() {return &m_sockets[CREATE_GRAB];}
-	GK_INLINE gkLogicSocket* getReleaseGrab() {return &m_sockets[RELEASE_GRAB];}
 	GK_INLINE gkLogicSocket* getThrowObject() {return &m_sockets[THROW_OBJECT];}
 	GK_INLINE gkLogicSocket* getTarget() {return &m_sockets[TARGET];}
 	GK_INLINE gkLogicSocket* getGrabDirection() {return &m_sockets[GRAB_DIRECTION];}
@@ -67,22 +59,15 @@ public:
 
 private:
 
-	void CreateGrab();
-	void ReleaseGrab(bool applyVel);
-	void UpdateGrab();
+	void ThrowObject();
+	Ogre::Ray GetRay();
+	gkVector3 GetPivotPosition();
 
 private:
 
 	gkLogicSocket m_sockets[MAX_SOCKETS];
 
 	gkGameObject* m_target;
-
-	btPoint2PointConstraint* m_constraint;
-
-	btRigidBody* m_pickedBody;
-	btVector3 m_hitPos;
-	btVector3 m_oldPickingPos;
-	Ogre::Real m_oldPickingDist;
 };
 
 #endif//_gkGrabNode_h_

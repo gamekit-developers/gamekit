@@ -18,7 +18,7 @@ Following are the explanations for the keyboard and mouse control.
 	Makes the camera to look at the clicked point in the scene.
 	(This will be the center of the arcball)
 
-<LEFT CTRL> + <MOUSE WHEEL MOVE> 
+<LEFT CTRL> + <LEFT MOUSE BUTTON> + <MOUSE WHEEL MOVE> 
 	Moves the camera far away from the arcball center or 
 	moves the camera closer to the arcball center.
 
@@ -77,5 +77,4 @@ Notes:
 
 	The nodes used in this demo are just examples.
 	The purpose of them is just to show how easy is to use and create logic nodes.
-	Arcball has to be improved in order to smooth movement around 90/-90.
 	

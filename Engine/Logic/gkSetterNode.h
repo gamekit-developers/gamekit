@@ -39,9 +39,6 @@ public:
 		INPUT,
 		OUTPUT,
 		JUST_ONCE,
-		LOAD,
-		UNLOAD,
-		RELOAD,
 		MAX_SOCKETS
 	};
 
@@ -87,6 +84,24 @@ class gkObjectSetterNode : public gkSetterNode
 {
 public:
 
+	enum
+	{
+		LOAD,
+		UNLOAD,
+		RELOAD,
+		XPOS,
+		YPOS,
+		RAY_POINT,
+		MAX_SOCKETS
+	};
+
+
+	enum INPUT_TYPE
+	{
+		NAME,
+		SCREEN_XY
+	};
+
     gkObjectSetterNode(gkLogicTree *parent, size_t id);
 
 	virtual ~gkObjectSetterNode() {}
@@ -95,8 +110,21 @@ public:
 	GK_INLINE gkLogicSocket* getLoad() {return &m_sockets[LOAD];}
 	GK_INLINE gkLogicSocket* getReload() {return &m_sockets[RELOAD];}
 
+    GK_INLINE gkLogicSocket* getX() {return &m_sockets[XPOS];}
+    GK_INLINE gkLogicSocket* getY() {return &m_sockets[YPOS];}
+
+	GK_INLINE gkLogicSocket* getRayPoint() {return &m_sockets[RAY_POINT];}
+
 	bool DoEvaluate();
 	void DoUpdate();
+
+	void setType(INPUT_TYPE type) {m_type = type;}
+
+private:
+
+	INPUT_TYPE m_type;
+
+	gkLogicSocket m_sockets[MAX_SOCKETS];
 };
 
 class gkPositionSetterNode : public gkSetterNode

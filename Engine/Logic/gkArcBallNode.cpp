@@ -29,162 +29,85 @@
 #include "gkEngine.h"
 #include "gkGameObject.h"
 #include "gkUtils.h"
-#include "gkScene.h"
-#include "OgreRoot.h"
 #include "gkLogger.h"
 
 using namespace Ogre;
 
 gkArcBallNode::gkArcBallNode(gkLogicTree *parent, size_t id)
 : gkLogicNode(parent, id),
-m_rayQuery(0),
-m_RotationNode(0),
-m_scene(0),
-m_center(Ogre::Vector3::ZERO),
-m_centerUpdated(false),
-m_positionUpdated(false),
-m_target(0)
+m_center(gkVector3::ZERO),
+m_target(0),
+m_centerObj(0),
+m_rollNode(gkQuaternion::IDENTITY),
+m_pitchNode(gkQuaternion::IDENTITY)
 {
-	ADD_ISOCK(*getEnable(), this, gkLogicSocket::ST_BOOL);
-	ADD_ISOCK(*getUpdateCenter(), this, gkLogicSocket::ST_BOOL);
-	ADD_ISOCK(*getUpdatePosition(), this, gkLogicSocket::ST_BOOL);
+	ADD_ISOCK(*getUpdate(), this, gkLogicSocket::ST_BOOL);
 
-	ADD_ISOCK(*getX(), this, gkLogicSocket::ST_REAL);
-	ADD_ISOCK(*getY(), this, gkLogicSocket::ST_REAL);
+	ADD_ISOCK(*getCenterPosition(), this, gkLogicSocket::ST_VECTOR);
+	ADD_ISOCK(*getCenterObj(), this, gkLogicSocket::ST_GAME_OBJECT);
 
 	ADD_ISOCK(*getRelX(), this, gkLogicSocket::ST_REAL);
 	ADD_ISOCK(*getRelY(), this, gkLogicSocket::ST_REAL);
 	ADD_ISOCK(*getRelZ(), this, gkLogicSocket::ST_REAL);
+
+	ADD_ISOCK(*getTarget(), this, gkLogicSocket::ST_GAME_OBJECT);
 }
 
 gkArcBallNode::~gkArcBallNode()
 {
-	if(m_rayQuery)
-		m_scene->getManager()->destroyQuery(m_rayQuery);
-
-	if(m_RotationNode)
-		delete m_RotationNode;
 }
 
 bool gkArcBallNode::evaluate(Real tick)
 {
+	m_centerObj = getCenterObj()->getValueGameObject();
+
 	m_target = getTarget()->getValueGameObject();
 
-	m_centerUpdated = getUpdateCenter()->getValueBool();
+	bool update = getUpdate()->getValueBool();
 
-	m_positionUpdated = getUpdatePosition()->getValueBool();
+	if(!update)
+	{
+		m_rollNode = gkQuaternion::IDENTITY;
+		
+		m_pitchNode = gkQuaternion::IDENTITY;
+	}
 
-	return m_target && m_target->isLoaded() && getEnable()->getValueBool() && (m_centerUpdated || m_positionUpdated);
+	return m_centerObj && m_target && m_centerObj->isLoaded() && m_target->isLoaded() && update;
 }
 
 void gkArcBallNode::update(Real tick)
 {
-	if(!m_RotationNode)
+	if(m_center != getCenterPosition()->getValueVector3())
 	{
-		m_scene = m_target->getOwner();
+		gkQuaternion q(m_target->getOrientation());
 
-		GK_ASSERT(m_scene);
-
-		m_rayQuery = m_scene->getManager()->createRayQuery(Ray());
-
-		m_rayQuery->setSortByDistance(true);
-
-		GK_ASSERT(m_rayQuery);
-
-		m_RotationNode = new Ogre::SceneNode(m_scene->getManager());
-
-		GK_ASSERT(m_RotationNode);
+		m_rollNode = gkQuaternion(q.getRoll(), gkVector3::UNIT_Z);
 		
-		m_RotationNode->setFixedYawAxis(true, Ogre::Vector3::UNIT_Z);
+		m_pitchNode = gkQuaternion(q.getPitch(), gkVector3::UNIT_X);
 	}
 
-	if(m_centerUpdated)
-	{
-		GetNewCenter();
-	}
+	m_center = getCenterPosition()->getValueVector3();
 
-	SetNewPosition();
-}
-
-void gkArcBallNode::GetNewCenter()
-{
-	Ray ray = gkUtils::CreateCameraRay(getX()->getValueReal(), getY()->getValueReal());
-
-	m_rayQuery->setRay(ray);
-
-	const RaySceneQueryResult& result = m_rayQuery->execute();
-
-	RaySceneQueryResult::const_iterator it = result.begin();
-
-	while(it != result.end())
-	{
-		const MovableObject* pObj = it->movable;
-
-		if(it->distance > 1)
-		{
-			// point is outside the segment(p0,p1)
-			// because query is sorted by distance then following objects will be far away...
-			break;
-		}
-
-		if(it->distance > 0 && pObj && pObj->isVisible())
-		{
-			m_center = ray.getPoint(it->distance);
-
-			break;
-		}
-
-		++it;
-	}
-}
-
-void gkArcBallNode::SetNewPosition()
-{
 	Ogre::Vector3 currentPosition = m_target->getPosition();
+
+	m_rollNode = m_rollNode * gkQuaternion(Angle(-getRelX()->getValueReal()), gkVector3::UNIT_Z);
+
+	gkQuaternion pitchNode = m_pitchNode * gkQuaternion(Angle(getRelY()->getValueReal()), gkVector3::UNIT_X);
+
+	if(pitchNode.getPitch().valueAngleUnits() >= 0)
+	{
+		m_pitchNode = pitchNode;
+	}
+
+	m_target->setOrientation(m_rollNode * m_pitchNode);
+
+	currentPosition.z += currentPosition.z * getRelZ()->getValueReal() * 0.5;
 
 	Ogre::Vector3 dir = m_center - currentPosition;
 
-	m_RotationNode->resetOrientation();
+	Vector3 oDir = Ogre::Vector3::NEGATIVE_UNIT_Z * dir.length();
 
-	m_RotationNode->setDirection(dir);
+	gkVector3 newPosition = m_center - m_target->getOrientation() * oDir;
 
-	Ogre::Quaternion q = m_RotationNode->getOrientation();
-
-	if(m_positionUpdated)
-	{
-		Ogre::Vector3 offset(getRelX()->getValueReal(), getRelY()->getValueReal(), getRelZ()->getValueReal());
-
-		Vector3 axis(offset.y, offset.x, 0);
-
-		Angle angle(axis.normalise());
-
-		m_RotationNode->rotate(axis, angle, Ogre::Node::TS_LOCAL);
-
-		q = m_RotationNode->getOrientation();
-
-		Vector3 oDir = Ogre::Vector3::NEGATIVE_UNIT_Z * dir.length();
-
-		if(offset.z)
-		{
-			oDir += oDir * offset.z * 0.5;
-		}
-
-		const Real MIN_DISTANCE = 0.01;
-
-		if(oDir.length() > MIN_DISTANCE)
-		{
-			Vector3 newDir = q * oDir;
-
-			Radian a = oDir.angleBetween(newDir);
-
-			if(a > Angle(5) && a < Angle(175))
-			{
-				Vector3 newPosition = m_center - newDir;
-
-				m_target->setPosition(newPosition);
-			}
-		}
-	}
-
-	m_target->setOrientation(q);
+	m_target->setPosition(newPosition);
 }

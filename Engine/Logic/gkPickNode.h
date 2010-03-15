@@ -31,17 +31,16 @@
 #include "LinearMath/btVector3.h"
 
 class btPoint2PointConstraint;
-class btRigidBody;
+class gkRigidBody;
 
 class gkPickNode : public gkLogicNode
 {
 public:
 	enum 
 	{
-		ENABLE,
+		UPDATE,
 		CREATE_PICK,
 		RELEASE_PICK,
-		UPDATE_PICK,
 		XPOS,
 		YPOS,
 		MAX_SOCKETS
@@ -55,27 +54,31 @@ public:
 
 	bool evaluate(Ogre::Real tick);
 
-	GK_INLINE gkLogicSocket* getEnable() {return &m_sockets[ENABLE];}
+	GK_INLINE gkLogicSocket* getUpdate() {return &m_sockets[UPDATE];}
 	GK_INLINE gkLogicSocket* getCreatePick() {return &m_sockets[CREATE_PICK];}
 	GK_INLINE gkLogicSocket* getReleasePick() {return &m_sockets[RELEASE_PICK];}
-	GK_INLINE gkLogicSocket* getUpdate() {return &m_sockets[UPDATE_PICK];}
 
     GK_INLINE gkLogicSocket* getX() {return &m_sockets[XPOS];}
     GK_INLINE gkLogicSocket* getY() {return &m_sockets[YPOS];}
 
-private:
+protected:
 
 	void CreatePick();
 	void ReleasePick();
 	void UpdatePick();
+
+	virtual Ogre::Ray GetRay();
+	virtual gkVector3 GetPivotPosition();
+
+protected:
+
+	gkRigidBody* m_pickedBody;
 
 private:
 
 	gkLogicSocket m_sockets[MAX_SOCKETS];
 
 	btPoint2PointConstraint* m_constraint;
-	btRigidBody* m_pickedBody;
-	btVector3 m_hitPos;
 	btVector3 m_oldPickingPos;
 	Ogre::Real m_oldPickingDist;
 };

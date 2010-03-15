@@ -29,6 +29,10 @@
 #include "gkEngine.h"
 #include "gkScene.h"
 #include "gkLogger.h"
+#include "gkUtils.h"
+#include "gkRigidBody.h"
+#include "btBulletDynamicsCommon.h"
+#include "OgreRoot.h"
 
 gkSetterNode::gkSetterNode(gkLogicTree *parent, size_t id) 
 : gkLogicNode(parent, id),
@@ -71,13 +75,19 @@ void gkStringSetterNode::DoUpdate()
 /////////////////////////////////////////////
 
 gkObjectSetterNode::gkObjectSetterNode(gkLogicTree *parent, size_t id)
-	: gkSetterNode(parent, id)
+	: gkSetterNode(parent, id), m_type(NAME)
 {
 	ADD_ISOCK(*getInput(), this, gkLogicSocket::ST_STRING);
 	ADD_ISOCK(*getUnload(), this, gkLogicSocket::ST_BOOL);
 	ADD_ISOCK(*getLoad(), this, gkLogicSocket::ST_BOOL);
 	ADD_ISOCK(*getReload(), this, gkLogicSocket::ST_BOOL);
+
+	ADD_ISOCK(*getX(), this, gkLogicSocket::ST_REAL);
+	ADD_ISOCK(*getY(), this, gkLogicSocket::ST_REAL);
+
 	ADD_OSOCK(*getOutput(), this, gkLogicSocket::ST_GAME_OBJECT);
+	ADD_OSOCK(*getRayPoint(), this, gkLogicSocket::ST_VECTOR);
+	
 }
 
 bool gkObjectSetterNode::DoEvaluate()
@@ -87,21 +97,46 @@ bool gkObjectSetterNode::DoEvaluate()
 
 void gkObjectSetterNode::DoUpdate()
 {
-	gkScene* pScene = gkEngine::getSingleton().getActiveScene();
+	gkGameObject* pObj = 0;
 
-	gkGameObject* pObj = pScene->getObject(getInput()->getValueString());
+	if(m_type == NAME)
+	{
+		gkScene* pScene = gkEngine::getSingleton().getActiveScene();
 
-	if(getReload()->getValueBool())
-	{
-		pObj->reload();
+		pObj = pScene->getObject(getInput()->getValueString());
 	}
-	else if(getLoad()->getValueBool())
+	else
 	{
-		pObj->load();
+		GK_ASSERT(m_type == SCREEN_XY && "Invalid type");
+
+		Ogre::Ray ray = gkUtils::CreateCameraRay(getX()->getValueReal(), getY()->getValueReal());
+
+		gkVector3 rayPoint;
+
+		gkRigidBody* pBody = gkUtils::PickBody(ray, rayPoint);
+
+		if(pBody)
+		{
+			getRayPoint()->setValue(rayPoint);
+	
+			pObj = pBody->getObject();
+		}
 	}
-	else if(getUnload()->getValueBool())
+
+	if(pObj)
 	{
-		pObj->unload();
+		if(getReload()->getValueBool())
+		{
+			pObj->reload();
+		}
+		else if(getLoad()->getValueBool())
+		{
+			pObj->load();
+		}
+		else if(getUnload()->getValueBool())
+		{
+			pObj->unload();
+		}
 	}
 
 	getOutput()->setValue(pObj);
