@@ -6,8 +6,7 @@ evt = Blender.event
 return_it = False
 
 
-
-if evt == Draw.PKEY:
+if evt == Draw.PKEY and not Blender.Window.GetKeyQualifiers():
     print "Starting GameKit Test"
 
     def findOgreKit():
@@ -25,6 +24,7 @@ if evt == Draw.PKEY:
     found = findOgreKit()
     if found != None:
         subprocess.Popen([found, Blender.Get('filename')])
+    else: return_it = True
 else:
     return_it = True
 
