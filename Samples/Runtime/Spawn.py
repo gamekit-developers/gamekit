@@ -37,5 +37,5 @@ def findOgreKit():
 
 found = findOgreKit()
 if found != None:
-	subprocess.call([found, Blender.Get('filename')])
+	subprocess.Popen([found, Blender.Get('filename')])
 
