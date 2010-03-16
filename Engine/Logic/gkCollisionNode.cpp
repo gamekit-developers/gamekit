@@ -81,7 +81,7 @@ void gkCollisionNode::update(Real tick)
 		{
 			const gkRigidBody::ContactInfo& c = contacts[i];
 
-			if(c.collider->getObject()->getName().find(getCollidesWith()->getValueString()) != -1)
+			if(getCollidesWith()->getValueString().empty() || c.collider->getObject()->getName().find(getCollidesWith()->getValueString()) != -1)
 			{
 				getContactPosition()->setValue(gkVector3(c.point.getPositionWorldOnA()));
 				getCollided()->setValue(c.collider->getObject());

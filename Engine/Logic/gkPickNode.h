@@ -43,6 +43,7 @@ public:
 		RELEASE_PICK,
 		XPOS,
 		YPOS,
+		DISABLE_ROTATION,
 		MAX_SOCKETS
 	};
 
@@ -60,6 +61,8 @@ public:
 
     GK_INLINE gkLogicSocket* getX() {return &m_sockets[XPOS];}
     GK_INLINE gkLogicSocket* getY() {return &m_sockets[YPOS];}
+
+	GK_INLINE gkLogicSocket* getDisableRotation() {return &m_sockets[DISABLE_ROTATION];}
 
 protected:
 
@@ -81,6 +84,8 @@ private:
 	btPoint2PointConstraint* m_constraint;
 	btVector3 m_oldPickingPos;
 	Ogre::Real m_oldPickingDist;
+
+	gkVector3 m_angularFactor;
 };
 
 #endif//_gkPickNode_h_

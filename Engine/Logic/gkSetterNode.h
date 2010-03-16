@@ -55,17 +55,9 @@ public:
 	GK_INLINE gkLogicSocket* getOutput() {return &m_sockets[OUTPUT];}
 	GK_INLINE gkLogicSocket* getJustOnce() {return &m_sockets[JUST_ONCE];}
 
-	virtual bool DoEvaluate() = 0;
-
-	virtual void DoUpdate() = 0;
-
 protected:
 
 	gkLogicSocket m_sockets[MAX_SOCKETS];
-
-private:
-
-	bool m_hasOneSet;
 };
 
 class gkStringSetterNode : public gkSetterNode
@@ -76,8 +68,7 @@ public:
 
 	virtual ~gkStringSetterNode() {}
 
-	bool DoEvaluate();
-	void DoUpdate();
+	void update(gkScalar tick);
 };
 
 class gkObjectSetterNode : public gkSetterNode
@@ -86,15 +77,11 @@ public:
 
 	enum
 	{
-		LOAD,
-		UNLOAD,
-		RELOAD,
 		XPOS,
 		YPOS,
-		RAY_POINT,
+		HIT_POINT,
 		MAX_SOCKETS
 	};
-
 
 	enum INPUT_TYPE
 	{
@@ -106,17 +93,12 @@ public:
 
 	virtual ~gkObjectSetterNode() {}
 
-    GK_INLINE gkLogicSocket* getUnload() {return &m_sockets[UNLOAD];}
-	GK_INLINE gkLogicSocket* getLoad() {return &m_sockets[LOAD];}
-	GK_INLINE gkLogicSocket* getReload() {return &m_sockets[RELOAD];}
-
     GK_INLINE gkLogicSocket* getX() {return &m_sockets[XPOS];}
     GK_INLINE gkLogicSocket* getY() {return &m_sockets[YPOS];}
 
-	GK_INLINE gkLogicSocket* getRayPoint() {return &m_sockets[RAY_POINT];}
+	GK_INLINE gkLogicSocket* getHitPoint() {return &m_sockets[HIT_POINT];}
 
-	bool DoEvaluate();
-	void DoUpdate();
+	void update(gkScalar tick);
 
 	void setType(INPUT_TYPE type) {m_type = type;}
 
@@ -135,8 +117,7 @@ public:
 
 	virtual ~gkPositionSetterNode() {}
 
-	bool DoEvaluate();
-	void DoUpdate();
+	void update(gkScalar tick);
 };
 
 class gkOrientationSetterNode : public gkSetterNode
@@ -147,8 +128,7 @@ public:
 
 	virtual ~gkOrientationSetterNode() {}
 
-	bool DoEvaluate();
-	void DoUpdate();
+	void update(gkScalar tick);
 };
 
 

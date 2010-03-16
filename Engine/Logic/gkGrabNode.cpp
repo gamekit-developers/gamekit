@@ -72,11 +72,6 @@ void gkGrabNode::update(Real tick)
 {
 	gkPickNode::update(tick);
 
-	if(m_pickedBody)
-	{
-		m_pickedBody->setAngularVelocity(gkVector3::ZERO);
-	}
-
 	if(getThrowObject()->getValueBool())
 	{
 		ReleasePick();

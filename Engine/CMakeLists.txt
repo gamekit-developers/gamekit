@@ -119,6 +119,7 @@ source_group(Animation\\Source FILES ${Animation_SOURCE})
 set(NLogic_SOURCE
     # ----- Source ----- 
     Logic/gkAnimationNode.cpp
+    Logic/gkButtonNode.cpp
     Logic/gkExitNode.cpp
     Logic/gkExpressionNode.cpp
     Logic/gkGroupNode.cpp
@@ -129,9 +130,8 @@ set(NLogic_SOURCE
     Logic/gkLogicTree.cpp
     Logic/gkMathNode.cpp
     Logic/gkMotionNode.cpp
-    Logic/gkNewMotionNode.cpp
     Logic/gkMouseNode.cpp
-    Logic/gkButtonNode.cpp
+    Logic/gkObjActionNode.cpp
     Logic/gkObjectNode.cpp
     Logic/gkPrintNode.cpp
     Logic/gkRandomNode.cpp
@@ -142,7 +142,6 @@ set(NLogic_SOURCE
     Logic/gkArcBallNode.cpp
     Logic/gkCursorNode.cpp
     Logic/gkPickNode.cpp
-    Logic/gkTrackNode.cpp
     Logic/gkSetterNode.cpp
     Logic/gkCollisionNode.cpp
     Logic/gkParticleNode.cpp
@@ -153,6 +152,7 @@ set(NLogic_SOURCE
 set(NLogic_HEADER
     # ----- Headers ----- 
     Logic/gkAnimationNode.h
+    Logic/gkButtonNode.h
     Logic/gkExitNode.h
     Logic/gkExpressionNode.h
     Logic/gkGroupNode.h
@@ -164,9 +164,8 @@ set(NLogic_HEADER
     Logic/gkLogicTree.h
     Logic/gkMathNode.h
     Logic/gkMotionNode.h
-    Logic/gkNewMotionNode.h
     Logic/gkMouseNode.h
-    Logic/gkButtonNode.h
+	Logic/gkObjActionNode.h
     Logic/gkObjectNode.h
     Logic/gkPrintNode.h
     Logic/gkRandomNode.h
@@ -177,7 +176,6 @@ set(NLogic_HEADER
     Logic/gkArcBallNode.h
     Logic/gkCursorNode.h
     Logic/gkPickNode.h
-    Logic/gkTrackNode.h
     Logic/gkSetterNode.h
     Logic/gkCollisionNode.h
     Logic/gkParticleNode.h

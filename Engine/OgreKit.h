@@ -91,8 +91,8 @@
 #include "Logic/gkMathNode.h"
 #include "Logic/gkMotionNode.h"
 #include "Logic/gkMouseNode.h"
-#include "Logic/gkNewMotionNode.h"
 #include "Logic/gkNodeManager.h"
+#include "Logic/gkObjActionNode.h"
 #include "Logic/gkObjectNode.h"
 #include "Logic/gkParticleNode.h"
 #include "Logic/gkPickNode.h"
@@ -101,7 +101,6 @@
 #include "Logic/gkSetterNode.h"
 #include "Logic/gkSwitchNode.h"
 #include "Logic/gkTimerNode.h"
-#include "Logic/gkTrackNode.h"
 #include "Logic/gkValueNode.h"
 #include "Logic/gkVariableNode.h"
 

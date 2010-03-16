@@ -35,8 +35,7 @@
 #include "OgreRoot.h"
 
 gkSetterNode::gkSetterNode(gkLogicTree *parent, size_t id) 
-: gkLogicNode(parent, id),
-m_hasOneSet(false)
+: gkLogicNode(parent, id)
 {
 	ADD_ISOCK(*getUpdate(), this, gkLogicSocket::ST_BOOL);
 	ADD_ISOCK(*getJustOnce(), this, gkLogicSocket::ST_BOOL);
@@ -44,14 +43,15 @@ m_hasOneSet(false)
 
 bool gkSetterNode::evaluate(gkScalar tick)
 {
-	return getUpdate()->getValueBool() && (!(getJustOnce()->getValueBool() && m_hasOneSet) || DoEvaluate());
+	return getUpdate()->getValueBool();
 }
 
 void gkSetterNode::update(gkScalar tick)
 {
-	DoUpdate();
-
-	m_hasOneSet = true;
+	if(getJustOnce()->getValueBool())
+	{
+		getUpdate()->setValue(false);
+	}
 }
 
 /////////////////////////////////////////////
@@ -62,13 +62,10 @@ gkStringSetterNode::gkStringSetterNode(gkLogicTree *parent, size_t id)
 	ADD_OSOCK(*getOutput(), this, gkLogicSocket::ST_STRING);
 }
 
-bool gkStringSetterNode::DoEvaluate()
+void gkStringSetterNode::update(gkScalar tick)
 {
-	return false;
-}
+	gkSetterNode::update(tick);
 
-void gkStringSetterNode::DoUpdate()
-{
 	getOutput()->setValue(getInput()->getValueString());
 }
 
@@ -78,25 +75,19 @@ gkObjectSetterNode::gkObjectSetterNode(gkLogicTree *parent, size_t id)
 	: gkSetterNode(parent, id), m_type(NAME)
 {
 	ADD_ISOCK(*getInput(), this, gkLogicSocket::ST_STRING);
-	ADD_ISOCK(*getUnload(), this, gkLogicSocket::ST_BOOL);
-	ADD_ISOCK(*getLoad(), this, gkLogicSocket::ST_BOOL);
-	ADD_ISOCK(*getReload(), this, gkLogicSocket::ST_BOOL);
 
 	ADD_ISOCK(*getX(), this, gkLogicSocket::ST_REAL);
 	ADD_ISOCK(*getY(), this, gkLogicSocket::ST_REAL);
 
 	ADD_OSOCK(*getOutput(), this, gkLogicSocket::ST_GAME_OBJECT);
-	ADD_OSOCK(*getRayPoint(), this, gkLogicSocket::ST_VECTOR);
+	ADD_OSOCK(*getHitPoint(), this, gkLogicSocket::ST_VECTOR);
 	
 }
 
-bool gkObjectSetterNode::DoEvaluate()
+void gkObjectSetterNode::update(gkScalar tick)
 {
-	return getReload()->getValueBool() || getLoad()->getValueBool() || getUnload()->getValueBool();
-}
+	gkSetterNode::update(tick);
 
-void gkObjectSetterNode::DoUpdate()
-{
 	gkGameObject* pObj = 0;
 
 	if(m_type == NAME)
@@ -117,25 +108,9 @@ void gkObjectSetterNode::DoUpdate()
 
 		if(pBody)
 		{
-			getRayPoint()->setValue(rayPoint);
+			getHitPoint()->setValue(rayPoint);
 	
 			pObj = pBody->getObject();
-		}
-	}
-
-	if(pObj)
-	{
-		if(getReload()->getValueBool())
-		{
-			pObj->reload();
-		}
-		else if(getLoad()->getValueBool())
-		{
-			pObj->load();
-		}
-		else if(getUnload()->getValueBool())
-		{
-			pObj->unload();
 		}
 	}
 
@@ -151,13 +126,10 @@ gkPositionSetterNode::gkPositionSetterNode(gkLogicTree *parent, size_t id)
 	ADD_OSOCK(*getOutput(), this, gkLogicSocket::ST_VECTOR);
 }
 
-bool gkPositionSetterNode::DoEvaluate()
+void gkPositionSetterNode::update(gkScalar tick)
 {
-	return false;
-}
+	gkSetterNode::update(tick);
 
-void gkPositionSetterNode::DoUpdate()
-{
 	getOutput()->setValue(getInput()->getValueGameObject()->getPosition());
 }
 
@@ -170,12 +142,9 @@ gkOrientationSetterNode::gkOrientationSetterNode(gkLogicTree *parent, size_t id)
 	ADD_OSOCK(*getOutput(), this, gkLogicSocket::ST_QUAT);
 }
 
-bool gkOrientationSetterNode::DoEvaluate()
+void gkOrientationSetterNode::update(gkScalar tick)
 {
-	return false;
-}
+	gkSetterNode::update(tick);
 
-void gkOrientationSetterNode::DoUpdate()
-{
 	getOutput()->setValue(getInput()->getValueGameObject()->getOrientation());
 }

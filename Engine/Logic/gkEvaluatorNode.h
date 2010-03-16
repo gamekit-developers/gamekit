@@ -33,6 +33,15 @@ class gkEvaluatorNode : public gkLogicNode
 {
 public:
 
+    gkEvaluatorNode(gkLogicTree *parent, size_t id);
+
+	virtual ~gkEvaluatorNode() {}
+};
+
+class gkStringEqualNode : public gkEvaluatorNode
+{
+public:
+
 	enum
 	{
 		A,
@@ -41,34 +50,18 @@ public:
 		MAX_SOCKETS
 	};
 
-    gkEvaluatorNode(gkLogicTree *parent, size_t id);
-
-	virtual ~gkEvaluatorNode() {}
-
-	virtual bool evaluate(gkScalar tick) = 0;
-
-	virtual void update(gkScalar tick) = 0;
-
-    GK_INLINE gkLogicSocket* getA() {return &m_sockets[A];}
-    GK_INLINE gkLogicSocket* getB() {return &m_sockets[B];}
-	GK_INLINE gkLogicSocket* getOutput() {return &m_sockets[OUTPUT];}
-
-protected:
-
-	gkLogicSocket m_sockets[MAX_SOCKETS];
-};
-
-class gkStringEqualNode : public gkEvaluatorNode
-{
-public:
-
     gkStringEqualNode(gkLogicTree *parent, size_t id);
 
 	~gkStringEqualNode() {}
 
 	bool evaluate(gkScalar tick);
 
-	void update(gkScalar tick);
+    GK_INLINE gkLogicSocket* getA() {return &m_sockets[A];}
+    GK_INLINE gkLogicSocket* getB() {return &m_sockets[B];}
+	GK_INLINE gkLogicSocket* getOutput() {return &m_sockets[OUTPUT];}
+
+private:
+	gkLogicSocket m_sockets[MAX_SOCKETS];
 };
 
 #endif//_gkEvaluatorNode_h_

@@ -35,7 +35,9 @@ using namespace Ogre;
 
 gkArcBallNode::gkArcBallNode(gkLogicTree *parent, size_t id)
 : gkLogicNode(parent, id),
+m_currentPosition(gkVector3::ZERO),
 m_center(gkVector3::ZERO),
+m_oldCenter(gkVector3::ZERO),
 m_target(0),
 m_centerObj(0),
 m_rollNode(gkQuaternion::IDENTITY),
@@ -50,7 +52,17 @@ m_pitchNode(gkQuaternion::IDENTITY)
 	ADD_ISOCK(*getRelY(), this, gkLogicSocket::ST_REAL);
 	ADD_ISOCK(*getRelZ(), this, gkLogicSocket::ST_REAL);
 
+	ADD_ISOCK(*getMinPitch(), this, gkLogicSocket::ST_REAL);
+	ADD_ISOCK(*getMaxPitch(), this, gkLogicSocket::ST_REAL);
+	ADD_ISOCK(*getMinRoll(), this, gkLogicSocket::ST_REAL);
+	ADD_ISOCK(*getMaxRoll(), this, gkLogicSocket::ST_REAL);
+
+	ADD_ISOCK(*getKeepDistance(), this, gkLogicSocket::ST_BOOL);
+	
 	ADD_ISOCK(*getTarget(), this, gkLogicSocket::ST_GAME_OBJECT);
+
+	ADD_OSOCK(*getRoll(), this, gkLogicSocket::ST_QUAT);
+	ADD_OSOCK(*getPitch(), this, gkLogicSocket::ST_QUAT);
 }
 
 gkArcBallNode::~gkArcBallNode()
@@ -61,7 +73,12 @@ bool gkArcBallNode::evaluate(Real tick)
 {
 	m_centerObj = getCenterObj()->getValueGameObject();
 
-	m_target = getTarget()->getValueGameObject();
+	if(m_target != getTarget()->getValueGameObject())
+	{
+		m_target = getTarget()->getValueGameObject();
+
+		m_currentPosition = m_target ? m_target->getPosition() : gkVector3::ZERO;
+	}
 
 	bool update = getUpdate()->getValueBool();
 
@@ -84,30 +101,52 @@ void gkArcBallNode::update(Real tick)
 		m_rollNode = gkQuaternion(q.getRoll(), gkVector3::UNIT_Z);
 		
 		m_pitchNode = gkQuaternion(q.getPitch(), gkVector3::UNIT_X);
+
+		m_oldCenter = m_center;
+
+		m_center = getCenterPosition()->getValueVector3();
 	}
 
-	m_center = getCenterPosition()->getValueVector3();
+	gkQuaternion rollNode = m_rollNode * gkQuaternion(Angle(-getRelX()->getValueReal()), gkVector3::UNIT_Z);
 
-	Ogre::Vector3 currentPosition = m_target->getPosition();
+	gkScalar rollDegrees = rollNode.getRoll().valueDegrees();
 
-	m_rollNode = m_rollNode * gkQuaternion(Angle(-getRelX()->getValueReal()), gkVector3::UNIT_Z);
+	if(rollDegrees >= getMinRoll()->getValueReal() && rollDegrees <= getMaxRoll()->getValueReal())
+	{
+		m_rollNode = rollNode;
+	}
 
 	gkQuaternion pitchNode = m_pitchNode * gkQuaternion(Angle(getRelY()->getValueReal()), gkVector3::UNIT_X);
 
-	if(pitchNode.getPitch().valueAngleUnits() >= 0)
+	gkScalar pitchDegrees = pitchNode.getPitch().valueDegrees();
+
+	if(pitchDegrees >= getMinPitch()->getValueReal() && pitchDegrees <= getMaxPitch()->getValueReal())
 	{
 		m_pitchNode = pitchNode;
 	}
 
 	m_target->setOrientation(m_rollNode * m_pitchNode);
 
+	gkVector3 currentPosition = m_currentPosition;
+
 	currentPosition.z += currentPosition.z * getRelZ()->getValueReal() * 0.5;
 
-	Ogre::Vector3 dir = m_center - currentPosition;
+	Ogre::Vector3 dir;
+
+	if(getKeepDistance()->getValueBool())
+	{
+		dir = m_oldCenter - currentPosition;
+	}
+	else
+	{
+		dir = m_center - currentPosition;
+	}
 
 	Vector3 oDir = Ogre::Vector3::NEGATIVE_UNIT_Z * dir.length();
 
-	gkVector3 newPosition = m_center - m_target->getOrientation() * oDir;
+	m_currentPosition = m_center - m_target->getOrientation() * oDir;
 
-	m_target->setPosition(newPosition);
+	m_target->setPosition(m_currentPosition);
+	getRoll()->setValue(m_rollNode);
+	getPitch()->setValue(m_pitchNode);
 }

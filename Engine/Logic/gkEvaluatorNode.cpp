@@ -49,7 +49,3 @@ bool gkStringEqualNode::evaluate(gkScalar tick)
 	return false;
 }
 
-void gkStringEqualNode::update(gkScalar tick)
-{
-}
-

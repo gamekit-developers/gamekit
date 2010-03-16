@@ -45,6 +45,13 @@ public:
 		RELY,
 		RELZ,
 		TARGET,
+		MIN_PITCH,
+		MAX_PITCH,
+		MIN_ROLL,
+		MAX_ROLL,
+		KEEP_DISTANCE,
+		CURRENT_ROLL,
+		CURRENT_PITCH,
 		MAX_SOCKETS
 	};
 
@@ -52,9 +59,8 @@ public:
 
 	~gkArcBallNode();
 
-	void update(Ogre::Real tick);
-
 	bool evaluate(Ogre::Real tick);
+	void update(Ogre::Real tick);
 
 	GK_INLINE gkLogicSocket* getUpdate() {return &m_sockets[UPDATE];}
 
@@ -65,13 +71,27 @@ public:
     GK_INLINE gkLogicSocket* getRelY() {return &m_sockets[RELY];}
     GK_INLINE gkLogicSocket* getRelZ() {return &m_sockets[RELZ];}
 
+	GK_INLINE gkLogicSocket* getMinPitch() {return &m_sockets[MIN_PITCH];}
+	GK_INLINE gkLogicSocket* getMaxPitch() {return &m_sockets[MAX_PITCH];}
+
+	GK_INLINE gkLogicSocket* getMinRoll() {return &m_sockets[MIN_ROLL];}
+	GK_INLINE gkLogicSocket* getMaxRoll() {return &m_sockets[MAX_ROLL];}
+
+	GK_INLINE gkLogicSocket* getKeepDistance() {return &m_sockets[KEEP_DISTANCE];}
+
+	GK_INLINE gkLogicSocket* getRoll() {return &m_sockets[CURRENT_ROLL];}
+	GK_INLINE gkLogicSocket* getPitch() {return &m_sockets[CURRENT_PITCH];}
+
 	GK_INLINE gkLogicSocket* getTarget() {return &m_sockets[TARGET];}
 
 private:
 
 	gkLogicSocket m_sockets[MAX_SOCKETS];
 
+	gkVector3 m_currentPosition;
+
 	gkVector3 m_center;
+	gkVector3 m_oldCenter;
 
 	gkGameObject* m_target;
 	gkGameObject* m_centerObj;

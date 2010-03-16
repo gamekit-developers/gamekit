@@ -41,7 +41,8 @@ gkPickNode::gkPickNode(gkLogicTree *parent, size_t id)
 m_pickedBody(0),
 m_constraint(0),
 m_oldPickingPos(0, 0, 0),
-m_oldPickingDist(0)
+m_oldPickingDist(0),
+m_angularFactor(gkVector3::ZERO)
 {
 	ADD_ISOCK(*getUpdate(), this, gkLogicSocket::ST_BOOL);
 	ADD_ISOCK(*getCreatePick(), this, gkLogicSocket::ST_BOOL);
@@ -49,6 +50,8 @@ m_oldPickingDist(0)
 
 	ADD_ISOCK(*getX(), this, gkLogicSocket::ST_REAL);
 	ADD_ISOCK(*getY(), this, gkLogicSocket::ST_REAL);
+
+	ADD_ISOCK(*getDisableRotation(), this, gkLogicSocket::ST_BOOL);
 }
 
 gkPickNode::~gkPickNode()
@@ -102,6 +105,13 @@ void gkPickNode::CreatePick()
 
 		if (!(body->isStaticObject() || body->isKinematicObject()))
 		{
+			m_angularFactor = gkVector3(body->getAngularFactor());
+
+			if(getDisableRotation()->getValueBool())
+			{
+				body->setAngularFactor(0);
+			}
+
 			body->setActivationState(DISABLE_DEACTIVATION);
 
 			btVector3 hitPos(hitPointWorld.x, hitPointWorld.y, hitPointWorld.z);
@@ -158,6 +168,10 @@ void gkPickNode::ReleasePick()
 		delete m_constraint;
 
 		m_constraint = 0;
+
+		GK_ASSERT(m_pickedBody);
+
+		m_pickedBody->getBody()->setAngularFactor(btVector3(m_angularFactor.x, m_angularFactor.y, m_angularFactor.z));
 	}
 }
 
