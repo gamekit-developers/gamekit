@@ -96,6 +96,8 @@ public:
     GK_INLINE btDynamicsWorld* getBulletWorld(void) {GK_ASSERT(m_dynamicsWorld); return m_dynamicsWorld;}
     // Access to parent scene
     GK_INLINE gkScene *getScene(void)               {GK_ASSERT(m_scene); return m_scene;}
+
+	void enableDebugPhysics(bool enable, bool debugAabb);
 };
 
 #endif//_gkDynamicsWorld_h_

@@ -95,7 +95,8 @@ public:
     OgreKit(const gkString &blend) 
 		: m_blend(blend), m_tree(0), m_ctrlKeyNode(0), 
 		m_wKeyNode(0), m_sKeyNode(0), m_mouseNode(0), m_leftMouseNode(0), m_rightMouseNode(0),
-		m_playerSetter(0), m_meshMomoSetter(0), m_cameraSetter(0), m_animNode(0), m_momoCameraArcBall(0)
+		m_playerSetter(0), m_meshMomoSetter(0), m_cameraSetter(0), m_animNode(0), m_momoCameraArcBall(0),
+		m_catchCondition(0), m_idleCondition(0)
 
 	{
         gkPath path = "./data/OgreKitStartup.cfg";
@@ -140,6 +141,8 @@ public:
 		CreateCameraLogic();
 
 		CreateMomoLogic();
+
+		CreateDebugLogic();
 		
 		m_tree->solveOrder();
 
@@ -168,24 +171,26 @@ public:
 		m_rightMouseNode = m_tree->createNode<gkMouseButtonNode>();
 		m_rightMouseNode->setButton(gkMouse::Right);
 
+		gkPulseNode* pulse =  m_tree->createNode<gkPulseNode>();
+		pulse->getUpdate()->setValue(true);
+
 		m_playerSetter = m_tree->createNode<gkObjectSetterNode>();
-		m_playerSetter->getUpdate()->setValue(true);
+		m_playerSetter->getUpdate()->link(pulse->getOutput());
 		m_playerSetter->getInput()->setValue(object::PLAYER);
-		m_playerSetter->getJustOnce()->setValue(true);
 
 		m_meshMomoSetter = m_tree->createNode<gkObjectSetterNode>();
-		m_meshMomoSetter->getUpdate()->setValue(true);
+		m_meshMomoSetter->getUpdate()->link(pulse->getOutput());
 		m_meshMomoSetter->getInput()->setValue(object::MESH_MOMO);
-		m_meshMomoSetter->getJustOnce()->setValue(true);
 
 		m_cameraSetter = m_tree->createNode<gkObjectSetterNode>();
-		m_cameraSetter->getUpdate()->setValue(true);
+		m_cameraSetter->getUpdate()->link(pulse->getOutput());
 		m_cameraSetter->getInput()->setValue(object::CAMERA);
-		m_cameraSetter->getJustOnce()->setValue(true);
 
 		m_animNode = m_tree->createNode<gkAnimationNode>();
 
 		CreateCommomMomoCameraArcBallLogic();
+
+		CreateCommonConditions();
 	}
 
 	void CreateCommomMomoCameraArcBallLogic()
@@ -202,6 +207,7 @@ public:
 
 		m_momoCameraArcBall->getRelX()->link(m_mouseNode->getRelX());
 		m_momoCameraArcBall->getRelY()->link(m_mouseNode->getRelY());
+		m_momoCameraArcBall->getRelZ()->link(m_mouseNode->getWheel());
 
 		m_momoCameraArcBall->getMinPitch()->setValue(0);
 		m_momoCameraArcBall->getMaxPitch()->setValue(90);
@@ -209,9 +215,40 @@ public:
 		m_momoCameraArcBall->getMinRoll()->setValue(-180);
 		m_momoCameraArcBall->getMaxRoll()->setValue(180);
 
+		m_momoCameraArcBall->getMinZ()->setValue(0.5f);
+		m_momoCameraArcBall->getMaxZ()->setValue(10);
+
 		m_momoCameraArcBall->getKeepDistance()->setValue(true);
 
 		m_momoCameraArcBall->getUpdate()->link(m_ctrlKeyNode->getNotIsDown());
+	}
+
+	void CreateCommonConditions()
+	{
+		{
+			m_catchCondition = m_tree->createNode<gkIfNode>();
+			m_catchCondition->setStatement(CMP_AND);
+
+			m_catchCondition->getA()->link(m_rightMouseNode->getPress());
+			m_catchCondition->getB()->link(m_ctrlKeyNode->getNotIsDown());
+		}
+
+		{
+			gkIfNode* ifANode = m_tree->createNode<gkIfNode>();
+			ifANode->setStatement(CMP_AND);
+			ifANode->getA()->link(m_rightMouseNode->getNotIsDown());
+			ifANode->getB()->link(m_ctrlKeyNode->getNotIsDown());
+
+			gkIfNode* ifBNode = m_tree->createNode<gkIfNode>();
+			ifBNode->setStatement(CMP_AND);
+			ifBNode->getA()->link(m_wKeyNode->getNotIsDown());
+			ifBNode->getB()->link(m_sKeyNode->getNotIsDown());
+
+			m_idleCondition = m_tree->createNode<gkIfNode>();
+			m_idleCondition->setStatement(CMP_AND);
+			m_idleCondition->getA()->link(ifANode->getTrue());
+			m_idleCondition->getB()->link(ifBNode->getTrue());
+		}
 	}
 
 	void CreateMomoLogic()
@@ -236,20 +273,7 @@ public:
 		grab->getThrowVelocity()->setValue(gkVector3(0, 20.5f, 0));
 		grab->getOffsetPosition()->setValue(gkVector3(0, 0, 0.2));
 
-		{
-			gkIfNode* ifNode = m_tree->createNode<gkIfNode>();
-			ifNode->setStatement(CMP_AND);
-
-			ifNode->getA()->link(m_rightMouseNode->getPress());
-			ifNode->getB()->link(m_ctrlKeyNode->getNotIsDown());
-
-			grab->getCreatePick()->link(ifNode->getTrue());
-
-			gkStringSetterNode* catchName = m_tree->createNode<gkStringSetterNode>();
-			catchName->getOutput()->link(m_animNode->getAnimName());
-			catchName->getInput()->setValue(momoAnimation::CATCH);
-			catchName->getUpdate()->link(m_rightMouseNode->getPress());
-		}
+		grab->getCreatePick()->link(m_catchCondition->getTrue());
 
 		{
 			gkIfNode* ifNode = m_tree->createNode<gkIfNode>();
@@ -435,15 +459,15 @@ public:
 		walkName->getInput()->setValue(momoAnimation::WALK_BACK);
 		walkName->getUpdate()->link(m_sKeyNode->getIsDown());
 
-		gkIfNode* ifNode = m_tree->createNode<gkIfNode>();
-		ifNode->setStatement(CMP_AND);
-		ifNode->getA()->link(m_wKeyNode->getNotIsDown());
-		ifNode->getB()->link(m_sKeyNode->getNotIsDown());
+		gkStringSetterNode* catchName = m_tree->createNode<gkStringSetterNode>();
+		catchName->getOutput()->link(m_animNode->getAnimName());
+		catchName->getInput()->setValue(momoAnimation::CATCH);
+		catchName->getUpdate()->link(m_catchCondition->getTrue());
 
 		gkStringSetterNode* ildeName = m_tree->createNode<gkStringSetterNode>();
 		ildeName->getOutput()->link(m_animNode->getAnimName());
 		ildeName->getInput()->setValue(momoAnimation::IDLE_NASTY);
-		ildeName->getUpdate()->link(ifNode->getTrue());
+		ildeName->getUpdate()->link(m_idleCondition->getTrue());
 	}
 
 	void CreateCameraLogic()
@@ -531,6 +555,15 @@ public:
 		}
 	}
 
+	void CreateDebugLogic()
+	{
+		gkKeyNode* m_cKeyNode = m_tree->createNode<gkKeyNode>();
+		m_cKeyNode->setKey(KC_CKEY);
+
+		gkShowPhysicsNode* showPhysics = m_tree->createNode<gkShowPhysicsNode>();
+		showPhysics->getEnable()->link(m_cKeyNode->getIsDown());
+	}
+
 private:
 
 	gkString m_blend;
@@ -558,6 +591,10 @@ private:
 	gkArcBallNode* m_momoCameraArcBall;
 
 	gkAnimationNode* m_animNode;
+
+	gkIfNode* m_catchCondition;
+
+	gkIfNode* m_idleCondition;
 };
 
 int main(int argc, char **argv)

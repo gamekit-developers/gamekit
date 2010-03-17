@@ -120,8 +120,11 @@ set(NLogic_SOURCE
     # ----- Source ----- 
     Logic/gkAnimationNode.cpp
     Logic/gkButtonNode.cpp
+    Logic/gkCollisionNode.cpp
+    Logic/gkEvaluatorNode.cpp
     Logic/gkExitNode.cpp
     Logic/gkExpressionNode.cpp
+    Logic/gkGrabNode.cpp
     Logic/gkGroupNode.cpp
     Logic/gkIfNode.cpp
     Logic/gkNodeManager.cpp
@@ -141,20 +144,22 @@ set(NLogic_SOURCE
     Logic/gkVariableNode.cpp
     Logic/gkArcBallNode.cpp
     Logic/gkCursorNode.cpp
-    Logic/gkPickNode.cpp
-    Logic/gkSetterNode.cpp
-    Logic/gkCollisionNode.cpp
     Logic/gkParticleNode.cpp
-    Logic/gkGrabNode.cpp
-    Logic/gkEvaluatorNode.cpp
+    Logic/gkPickNode.cpp
+    Logic/gkPulseNode.cpp
+    Logic/gkSetterNode.cpp
+    Logic/gkShowPhysicsNode.cpp
 )
 
 set(NLogic_HEADER
     # ----- Headers ----- 
     Logic/gkAnimationNode.h
     Logic/gkButtonNode.h
+    Logic/gkCollisionNode.h
+    Logic/gkEvaluatorNode.h
     Logic/gkExitNode.h
     Logic/gkExpressionNode.h
+    Logic/gkGrabNode.h
     Logic/gkGroupNode.h
     Logic/gkIfNode.h
     Logic/gkLogicCommon.h
@@ -175,13 +180,11 @@ set(NLogic_HEADER
     Logic/gkVariableNode.h
     Logic/gkArcBallNode.h
     Logic/gkCursorNode.h
-    Logic/gkPickNode.h
-    Logic/gkSetterNode.h
-    Logic/gkCollisionNode.h
     Logic/gkParticleNode.h
-    Logic/gkGrabNode.h
-    Logic/gkEvaluatorNode.h
-    
+    Logic/gkPickNode.h
+    Logic/gkPulseNode.h
+    Logic/gkSetterNode.h
+    Logic/gkShowPhysicsNode.h
 )
 
 source_group(LogicNodes\\Header FILES ${NLogic_HEADER})

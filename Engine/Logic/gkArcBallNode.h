@@ -52,6 +52,8 @@ public:
 		KEEP_DISTANCE,
 		CURRENT_ROLL,
 		CURRENT_PITCH,
+		MIN_Z,
+		MAX_Z,
 		MAX_SOCKETS
 	};
 
@@ -59,8 +61,8 @@ public:
 
 	~gkArcBallNode();
 
-	bool evaluate(Ogre::Real tick);
-	void update(Ogre::Real tick);
+	bool evaluate(gkScalar tick);
+	void update(gkScalar tick);
 
 	GK_INLINE gkLogicSocket* getUpdate() {return &m_sockets[UPDATE];}
 
@@ -81,6 +83,9 @@ public:
 
 	GK_INLINE gkLogicSocket* getRoll() {return &m_sockets[CURRENT_ROLL];}
 	GK_INLINE gkLogicSocket* getPitch() {return &m_sockets[CURRENT_PITCH];}
+
+	GK_INLINE gkLogicSocket* getMinZ() {return &m_sockets[MIN_Z];}
+	GK_INLINE gkLogicSocket* getMaxZ() {return &m_sockets[MAX_Z];}
 
 	GK_INLINE gkLogicSocket* getTarget() {return &m_sockets[TARGET];}
 

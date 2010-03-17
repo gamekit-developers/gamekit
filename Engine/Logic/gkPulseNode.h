@@ -24,32 +24,30 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkSetterNode_h_
-#define _gkSetterNode_h_
+#ifndef _gkPulseNode_h_
+#define _gkPulseNode_h_
 
 #include "gkLogicNode.h"
 
-class gkSetterNode : public gkLogicNode
+class gkPulseNode : public gkLogicNode
 {
 public:
 
 	enum
 	{
 		UPDATE,
-		INPUT,
 		OUTPUT,
-		JUST_ONCE,
 		MAX_SOCKETS
 	};
 
-    gkSetterNode(gkLogicTree *parent, size_t id);
+    gkPulseNode(gkLogicTree *parent, size_t id);
 
-	virtual ~gkSetterNode() {}
+	virtual ~gkPulseNode() {}
 
 	bool evaluate(gkScalar tick);
+	void update(gkScalar tick);
 
     GK_INLINE gkLogicSocket* getUpdate() {return &m_sockets[UPDATE];}
-    GK_INLINE gkLogicSocket* getInput() {return &m_sockets[INPUT];}
 	GK_INLINE gkLogicSocket* getOutput() {return &m_sockets[OUTPUT];}
 
 private:
@@ -57,76 +55,5 @@ private:
 	gkLogicSocket m_sockets[MAX_SOCKETS];
 };
 
-class gkStringSetterNode : public gkSetterNode
-{
-public:
 
-    gkStringSetterNode(gkLogicTree *parent, size_t id);
-
-	virtual ~gkStringSetterNode() {}
-
-	void update(gkScalar tick);
-};
-
-class gkObjectSetterNode : public gkSetterNode
-{
-public:
-
-	enum
-	{
-		XPOS,
-		YPOS,
-		HIT_POINT,
-		MAX_SOCKETS
-	};
-
-	enum INPUT_TYPE
-	{
-		NAME,
-		SCREEN_XY
-	};
-
-    gkObjectSetterNode(gkLogicTree *parent, size_t id);
-
-	virtual ~gkObjectSetterNode() {}
-
-    GK_INLINE gkLogicSocket* getX() {return &m_sockets[XPOS];}
-    GK_INLINE gkLogicSocket* getY() {return &m_sockets[YPOS];}
-
-	GK_INLINE gkLogicSocket* getHitPoint() {return &m_sockets[HIT_POINT];}
-
-	void update(gkScalar tick);
-
-	void setType(INPUT_TYPE type) {m_type = type;}
-
-private:
-
-	INPUT_TYPE m_type;
-
-	gkLogicSocket m_sockets[MAX_SOCKETS];
-};
-
-class gkPositionSetterNode : public gkSetterNode
-{
-public:
-
-    gkPositionSetterNode(gkLogicTree *parent, size_t id);
-
-	virtual ~gkPositionSetterNode() {}
-
-	void update(gkScalar tick);
-};
-
-class gkOrientationSetterNode : public gkSetterNode
-{
-public:
-
-    gkOrientationSetterNode(gkLogicTree *parent, size_t id);
-
-	virtual ~gkOrientationSetterNode() {}
-
-	void update(gkScalar tick);
-};
-
-
-#endif//_gkSetterNode_h_
+#endif//_gkPulseNode_h_

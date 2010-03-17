@@ -30,6 +30,10 @@ will allow us to make logic easily...
 
 Following are the explanations for the keyboard and mouse control of this demo.
 
+//////////////// Debug ////////////////////////////////////
+<C>
+	If pressed then shows physics shape
+
 ////////////////Arcball//////////////////////////////////////
 <LEFT CTRL> 
 	Shows a cursor (arrow) to allow interaction with objects.
@@ -66,7 +70,11 @@ By default there is a track node (for the camera) that follows momo orientation 
 (Camera will not follow momo when <LEFT CTRL> is pressed)
 
 <MOUSE MOVE> 
-	Rotates camera around Momo (this functionality is disabled by logic when <LEFT CTRL> is pressed). 
+	Rotates camera around Momo. 
+	
+<MOUSE WHEEL MOVE> 	
+	Moves the camera far away from Momo or 
+	moves the camera closer to Momo.
 	
 <W>
 	Moves momo forward.
@@ -93,7 +101,7 @@ By default there is a track node (for the camera) that follows momo orientation 
 	
 <LEFT MOUSE BUTTON>
 	If an object is carried by Momo then throw it (with velocity).
-
+	
 	
 ////////////////////////////////////////////////////////////////
 

@@ -70,18 +70,34 @@ void gkDynamicsWorld::preLoadImpl(void)
     m_dynamicsWorld->setWorldUserInfo(this);
     m_dynamicsWorld->setInternalTickCallback(substepCallback, static_cast<void*>(this));
 
-    if (gkEngine::getSingleton().getUserDefs().debugPhysics)
-    {
-        m_debug = new gkPhysicsDebug(this);
-        m_dynamicsWorld->setDebugDrawer(m_debug);
+	enableDebugPhysics(gkEngine::getSingleton().getUserDefs().debugPhysics, gkEngine::getSingleton().getUserDefs().debugPhysicsAabb);
+}
 
-        if (gkEngine::getSingleton().getUserDefs().debugPhysicsAabb)
+void gkDynamicsWorld::enableDebugPhysics(bool enable, bool debugAabb)
+{
+    if(enable)
+    {
+		if(!m_debug)
+		{
+	        m_debug = new gkPhysicsDebug(this);
+        
+			m_dynamicsWorld->setDebugDrawer(m_debug);
+		}
+
+        if (debugAabb)
             m_debug->setDebugMode(btIDebugDraw::DBG_DrawWireframe | btIDebugDraw::DBG_DrawAabb);
         else
             m_debug->setDebugMode(btIDebugDraw::DBG_DrawWireframe);
     }
-}
+	else if(m_debug)
+	{
+		m_dynamicsWorld->setDebugDrawer(0);
 
+		delete m_debug;
+
+		m_debug = 0;
+	}
+}
 
 void gkDynamicsWorld::loadImpl(void)
 {

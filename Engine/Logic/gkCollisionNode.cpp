@@ -30,6 +30,7 @@
 #include "gkScene.h"
 #include "gkDynamicsWorld.h"
 #include "gkEngine.h"
+//#include "btBulletDynamicsCommon.h"
 
 using namespace Ogre;
 
@@ -83,6 +84,7 @@ void gkCollisionNode::update(Real tick)
 
 			if(getCollidesWith()->getValueString().empty() || c.collider->getObject()->getName().find(getCollidesWith()->getValueString()) != -1)
 			{
+				//m_bBody->getBody()->setActivationState(DISABLE_DEACTIVATION);
 				getContactPosition()->setValue(gkVector3(c.point.getPositionWorldOnA()));
 				getCollided()->setValue(c.collider->getObject());
 				getHasCollided()->setValue(true);
