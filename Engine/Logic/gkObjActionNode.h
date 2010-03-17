@@ -173,6 +173,18 @@ private:
 
 };
 
+class gkDisableDeactivationNode : public gkObjActionNode
+{
+public:
+
+	gkDisableDeactivationNode(gkLogicTree *parent, size_t id)
+		: gkObjActionNode(parent, id){}
+
+	~gkDisableDeactivationNode() {}
+
+	void update(gkScalar tick);
+};
+
 
 
 #endif//_gkObjActionNode_h_

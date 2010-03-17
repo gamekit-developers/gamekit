@@ -36,7 +36,14 @@ gkPulseNode::gkPulseNode(gkLogicTree *parent, size_t id)
 
 bool gkPulseNode::evaluate(gkScalar tick)
 {
-	return getUpdate()->getValueBool();
+	bool update = getUpdate()->getValueBool();
+
+	if(!update)
+	{
+		getOutput()->setValue(false);
+	}
+
+	return update;
 }
 
 void gkPulseNode::update(gkScalar tick)

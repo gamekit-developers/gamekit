@@ -39,12 +39,17 @@ gkStringEqualNode::gkStringEqualNode(gkLogicTree *parent, size_t id)
 {
 	ADD_ISOCK(*getA(), this, gkLogicSocket::ST_STRING);
 	ADD_ISOCK(*getB(), this, gkLogicSocket::ST_STRING);
-	ADD_OSOCK(*getOutput(), this, gkLogicSocket::ST_BOOL);
+	ADD_OSOCK(*getTrue(), this, gkLogicSocket::ST_BOOL);
+	ADD_OSOCK(*getFalse(), this, gkLogicSocket::ST_BOOL);
 }
 
 bool gkStringEqualNode::evaluate(gkScalar tick)
 {
-	getOutput()->setValue(getA()->getValueString() == getB()->getValueString());
+	bool isTrue = getA()->getValueString() == getB()->getValueString();
+
+	getTrue()->setValue(isTrue);
+	
+	getFalse()->setValue(!isTrue);
 
 	return false;
 }

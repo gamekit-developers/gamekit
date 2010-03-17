@@ -46,7 +46,8 @@ public:
 	{
 		A,
 		B,
-		OUTPUT,
+		TRUE_VALUE,
+		FALSE_VALUE,
 		MAX_SOCKETS
 	};
 
@@ -58,7 +59,8 @@ public:
 
     GK_INLINE gkLogicSocket* getA() {return &m_sockets[A];}
     GK_INLINE gkLogicSocket* getB() {return &m_sockets[B];}
-	GK_INLINE gkLogicSocket* getOutput() {return &m_sockets[OUTPUT];}
+	GK_INLINE gkLogicSocket* getTrue() {return &m_sockets[TRUE_VALUE];}
+	GK_INLINE gkLogicSocket* getFalse() {return &m_sockets[FALSE_VALUE];}
 
 private:
 	gkLogicSocket m_sockets[MAX_SOCKETS];

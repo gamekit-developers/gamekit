@@ -33,18 +33,13 @@ class gkAnimationNode : public gkLogicNode
 {
 public:
     
-	enum AnimFunction
-    {
-        AF_LOOP = 0,
-        AF_PLAY,
-    };
-
 	enum
 	{
 		ANIM_NAME,
 		BLEND_FRAMES,
 		TARGET,
 		CURRENT_ANIM_NAME,
+		HAS_REACHED_END,
 		MAX_SOCKETS
 	};
 
@@ -55,16 +50,14 @@ public:
     void update(gkScalar tick);
     bool evaluate(gkScalar tick);
 
-    GK_INLINE void setFunction(AnimFunction af) {m_func = af;}
-
-	GK_INLINE gkLogicSocket* getAnimName()  { return &m_sockets[ANIM_NAME]; }
-    GK_INLINE gkLogicSocket* getBlend()     { return &m_sockets[BLEND_FRAMES]; }
-	GK_INLINE gkLogicSocket* getTarget()    {return &m_sockets[TARGET];}
-	GK_INLINE gkLogicSocket* getCurrentAnimName()  { return &m_sockets[CURRENT_ANIM_NAME]; }
+	GK_INLINE gkLogicSocket* getAnimName() { return &m_sockets[ANIM_NAME]; }
+    GK_INLINE gkLogicSocket* getBlend() { return &m_sockets[BLEND_FRAMES]; }
+	GK_INLINE gkLogicSocket* getTarget() {return &m_sockets[TARGET];}
+	GK_INLINE gkLogicSocket* getCurrentAnimName() { return &m_sockets[CURRENT_ANIM_NAME]; }
+	GK_INLINE gkLogicSocket* getHasReachedEnd() { return &m_sockets[HAS_REACHED_END]; }
 
 private:
     gkLogicSocket   m_sockets[MAX_SOCKETS];
-    AnimFunction	m_func;
 };
 
 

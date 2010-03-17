@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -51,6 +51,7 @@ public:
 
 
     void playAction(const gkString& act, gkScalar blend);
+	gkAction* getActiveAction() const {return m_active;}
 
 
     void _resetPose(void);

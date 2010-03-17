@@ -96,7 +96,7 @@ public:
 		: m_blend(blend), m_tree(0), m_ctrlKeyNode(0), 
 		m_wKeyNode(0), m_sKeyNode(0), m_mouseNode(0), m_leftMouseNode(0), m_rightMouseNode(0),
 		m_playerSetter(0), m_meshMomoSetter(0), m_cameraSetter(0), m_animNode(0), m_momoCameraArcBall(0),
-		m_catchCondition(0), m_idleCondition(0)
+		m_catchState(0), m_idleState(0), m_runState(0), m_walkBackState(0), m_carryState(0)
 
 	{
         gkPath path = "./data/OgreKitStartup.cfg";
@@ -178,6 +178,10 @@ public:
 		m_playerSetter->getUpdate()->link(pulse->getOutput());
 		m_playerSetter->getInput()->setValue(object::PLAYER);
 
+		gkDisableDeactivationNode* disableDeactivationForMomo = m_tree->createNode<gkDisableDeactivationNode>();
+		disableDeactivationForMomo->getUpdate()->link(pulse->getOutput());
+		disableDeactivationForMomo->getTarget()->link(m_playerSetter->getOutput());
+
 		m_meshMomoSetter = m_tree->createNode<gkObjectSetterNode>();
 		m_meshMomoSetter->getUpdate()->link(pulse->getOutput());
 		m_meshMomoSetter->getInput()->setValue(object::MESH_MOMO);
@@ -190,7 +194,7 @@ public:
 
 		CreateCommomMomoCameraArcBallLogic();
 
-		CreateCommonConditions();
+		CreateCommonStates();
 	}
 
 	void CreateCommomMomoCameraArcBallLogic()
@@ -223,31 +227,98 @@ public:
 		m_momoCameraArcBall->getUpdate()->link(m_ctrlKeyNode->getNotIsDown());
 	}
 
-	void CreateCommonConditions()
+	void CreateCommonStates()
 	{
-		{
-			m_catchCondition = m_tree->createNode<gkIfNode>();
-			m_catchCondition->setStatement(CMP_AND);
-
-			m_catchCondition->getA()->link(m_rightMouseNode->getPress());
-			m_catchCondition->getB()->link(m_ctrlKeyNode->getNotIsDown());
-		}
+		gkCollisionNode* collision = m_tree->createNode<gkCollisionNode>();
+		collision->getEnable()->setValue(true);
+		collision->getTarget()->link(m_playerSetter->getOutput());
 
 		{
+			// CARRY STATE
+			gkStringEqualNode* equalNode = m_tree->createNode<gkStringEqualNode>();
+
+			equalNode->getA()->setValue(momoAnimation::CATCH);
+			equalNode->getB()->link(m_animNode->getCurrentAnimName());
+
+			m_carryState = m_tree->createNode<gkIfNode>();
+			m_carryState->setStatement(CMP_OR);
+
+			{
+				gkIfNode* ifANode = m_tree->createNode<gkIfNode>();
+				ifANode->setStatement(CMP_AND);
+
+				ifANode->getA()->link(equalNode->getTrue());
+				ifANode->getB()->link(m_animNode->getHasReachedEnd());
+
+				gkStringEqualNode* equalNode = m_tree->createNode<gkStringEqualNode>();
+
+				equalNode->getA()->setValue(momoAnimation::CARRY);
+				equalNode->getB()->link(m_animNode->getCurrentAnimName());
+
+				gkIfNode* ifBNode = m_tree->createNode<gkIfNode>();
+				ifBNode->setStatement(CMP_AND);
+
+				ifBNode->getA()->link(equalNode->getTrue());
+				ifBNode->getB()->link(m_rightMouseNode->getIsDown());
+
+				m_carryState->getA()->link(ifANode->getTrue());
+				m_carryState->getB()->link(ifBNode->getTrue());
+			}
+
+		{
+			//CATCH STATE
 			gkIfNode* ifANode = m_tree->createNode<gkIfNode>();
 			ifANode->setStatement(CMP_AND);
-			ifANode->getA()->link(m_rightMouseNode->getNotIsDown());
-			ifANode->getB()->link(m_ctrlKeyNode->getNotIsDown());
+			ifANode->getA()->link(collision->getHasCollided());
+			ifANode->getB()->link(m_rightMouseNode->getIsDown());
 
 			gkIfNode* ifBNode = m_tree->createNode<gkIfNode>();
 			ifBNode->setStatement(CMP_AND);
-			ifBNode->getA()->link(m_wKeyNode->getNotIsDown());
-			ifBNode->getB()->link(m_sKeyNode->getNotIsDown());
 
-			m_idleCondition = m_tree->createNode<gkIfNode>();
-			m_idleCondition->setStatement(CMP_AND);
-			m_idleCondition->getA()->link(ifANode->getTrue());
-			m_idleCondition->getB()->link(ifBNode->getTrue());
+			ifBNode->getA()->link(m_ctrlKeyNode->getNotIsDown());
+			ifBNode->getB()->link(m_carryState->getFalse());
+
+			m_catchState = m_tree->createNode<gkIfNode>();
+			m_catchState->setStatement(CMP_AND);
+
+			m_catchState->getA()->link(ifANode->getTrue());
+			m_catchState->getB()->link(ifBNode->getTrue());
+		}
+
+		{
+			// RUN STATE
+			m_runState = m_tree->createNode<gkIfNode>();
+			m_runState->setStatement(CMP_AND);
+			m_runState->getA()->link(m_wKeyNode->getIsDown());
+			m_runState->getB()->link(collision->getHasCollided());
+		}
+
+		{
+			// WALK BACK STATE
+			m_walkBackState = m_tree->createNode<gkIfNode>();
+			m_walkBackState->setStatement(CMP_AND);
+			m_walkBackState->getA()->link(m_sKeyNode->getIsDown());
+			m_walkBackState->getB()->link(collision->getHasCollided());
+		}
+
+		}
+
+		{
+			// IDLE STATE
+			gkIfNode* ifANode = m_tree->createNode<gkIfNode>();
+			ifANode->setStatement(CMP_AND);
+			ifANode->getA()->link(m_catchState->getFalse());
+			ifANode->getB()->link(m_runState->getFalse());
+
+			gkIfNode* ifBNode = m_tree->createNode<gkIfNode>();
+			ifBNode->setStatement(CMP_AND);
+			ifBNode->getA()->link(m_walkBackState->getFalse());
+			ifBNode->getB()->link(m_carryState->getFalse());
+
+			m_idleState = m_tree->createNode<gkIfNode>();
+			m_idleState->setStatement(CMP_AND);
+			m_idleState->getA()->link(ifANode->getTrue());
+			m_idleState->getB()->link(ifBNode->getTrue());
 		}
 	}
 
@@ -271,9 +342,17 @@ public:
 		grab->getTarget()->link(m_playerSetter->getOutput());
 		grab->getGrabDirection()->setValue(gkVector3(0, 0.6f, 0));
 		grab->getThrowVelocity()->setValue(gkVector3(0, 20.5f, 0));
-		grab->getOffsetPosition()->setValue(gkVector3(0, 0, 0.2));
+		grab->getOffsetPosition()->setValue(gkVector3(0, 0, 1));
 
-		grab->getCreatePick()->link(m_catchCondition->getTrue());
+		{
+			gkIfNode* ifNode = m_tree->createNode<gkIfNode>();
+			ifNode->setStatement(CMP_AND);
+
+			ifNode->getA()->link(m_rightMouseNode->getPress());
+			ifNode->getB()->link(m_ctrlKeyNode->getNotIsDown());
+
+			grab->getCreatePick()->link(ifNode->getTrue());
+		}
 
 		{
 			gkIfNode* ifNode = m_tree->createNode<gkIfNode>();
@@ -303,8 +382,8 @@ public:
 
 			gkIfNode* ifNode = m_tree->createNode<gkIfNode>();
 			ifNode->setStatement(CMP_OR);
-			ifNode->getA()->link(m_wKeyNode->getIsDown());
-			ifNode->getB()->link(m_sKeyNode->getIsDown());
+			ifNode->getA()->link(m_runState->getTrue());
+			ifNode->getB()->link(m_walkBackState->getTrue());
 
 			gkSetOrientationNode* orientation = m_tree->createNode<gkSetOrientationNode>();
 
@@ -313,21 +392,10 @@ public:
 			orientation->getTarget()->link(m_playerSetter->getOutput());
 		}
 
-		gkCollisionNode* collision = m_tree->createNode<gkCollisionNode>();
-		collision->getEnable()->setValue(true);
-		collision->getTarget()->link(m_playerSetter->getOutput());
-
 		{
-			// move Momo forward (only if collides with some object)
-
-			gkIfNode* ifNode = m_tree->createNode<gkIfNode>();
-			ifNode->setStatement(CMP_AND);
-			ifNode->getA()->link(m_wKeyNode->getIsDown());
-			ifNode->getB()->link(collision->getHasCollided());
-
 			gkLinearVelNode* motion = m_tree->createNode<gkLinearVelNode>();
 
-			motion->getUpdate()->link(ifNode->getTrue());
+			motion->getUpdate()->link(m_runState->getTrue());
 			motion->getX()->setValue(0);
 			motion->getY()->setValue(2.5f);
 			motion->getZ()->setValue(0);
@@ -335,16 +403,9 @@ public:
 		}
 
 		{
-			// move Momo back (only if collides with some object)
-
-			gkIfNode* ifNode = m_tree->createNode<gkIfNode>();
-			ifNode->setStatement(CMP_AND);
-			ifNode->getA()->link(m_sKeyNode->getIsDown());
-			ifNode->getB()->link(collision->getHasCollided());
-
 			gkLinearVelNode* motion = m_tree->createNode<gkLinearVelNode>();
 
-			motion->getUpdate()->link(ifNode->getTrue());
+			motion->getUpdate()->link(m_walkBackState->getTrue());
 			motion->getX()->setValue(0);
 			motion->getY()->setValue(-1);
 			motion->getZ()->setValue(0);
@@ -360,7 +421,7 @@ public:
 			equalNode->getA()->setValue(momoAnimation::RUN);
 			equalNode->getB()->link(m_animNode->getCurrentAnimName());
 
-			CreateMomoDustTrailLogic(particle::DUST_RUN, equalNode->getOutput());
+			CreateMomoDustTrailLogic(particle::DUST_RUN, equalNode->getTrue());
 		}
 
 		{
@@ -369,7 +430,7 @@ public:
 			equalNode->getA()->setValue(momoAnimation::WALK_BACK);
 			equalNode->getB()->link(m_animNode->getCurrentAnimName());
 
-			CreateMomoDustTrailLogic(particle::DUST_WALK, equalNode->getOutput());
+			CreateMomoDustTrailLogic(particle::DUST_WALK, equalNode->getTrue());
 		}
 	}
 
@@ -452,22 +513,27 @@ public:
 		gkStringSetterNode* runName = m_tree->createNode<gkStringSetterNode>();
 		runName->getOutput()->link(m_animNode->getAnimName());
 		runName->getInput()->setValue(momoAnimation::RUN);
-		runName->getUpdate()->link(m_wKeyNode->getIsDown());
+		runName->getUpdate()->link(m_runState->getTrue());
 			
 		gkStringSetterNode* walkName = m_tree->createNode<gkStringSetterNode>();
 		walkName->getOutput()->link(m_animNode->getAnimName());
 		walkName->getInput()->setValue(momoAnimation::WALK_BACK);
-		walkName->getUpdate()->link(m_sKeyNode->getIsDown());
-
-		gkStringSetterNode* catchName = m_tree->createNode<gkStringSetterNode>();
-		catchName->getOutput()->link(m_animNode->getAnimName());
-		catchName->getInput()->setValue(momoAnimation::CATCH);
-		catchName->getUpdate()->link(m_catchCondition->getTrue());
+		walkName->getUpdate()->link(m_walkBackState->getTrue());
 
 		gkStringSetterNode* ildeName = m_tree->createNode<gkStringSetterNode>();
 		ildeName->getOutput()->link(m_animNode->getAnimName());
 		ildeName->getInput()->setValue(momoAnimation::IDLE_NASTY);
-		ildeName->getUpdate()->link(m_idleCondition->getTrue());
+		ildeName->getUpdate()->link(m_idleState->getTrue());
+
+		gkStringSetterNode* catchName = m_tree->createNode<gkStringSetterNode>();
+		catchName->getOutput()->link(m_animNode->getAnimName());
+		catchName->getInput()->setValue(momoAnimation::CATCH);
+		catchName->getUpdate()->link(m_catchState->getTrue());
+
+		gkStringSetterNode* carryName = m_tree->createNode<gkStringSetterNode>();
+		carryName->getOutput()->link(m_animNode->getAnimName());
+		carryName->getInput()->setValue(momoAnimation::CARRY);
+		carryName->getUpdate()->link(m_carryState->getTrue());
 	}
 
 	void CreateCameraLogic()
@@ -592,9 +658,15 @@ private:
 
 	gkAnimationNode* m_animNode;
 
-	gkIfNode* m_catchCondition;
+	gkIfNode* m_catchState;
 
-	gkIfNode* m_idleCondition;
+	gkIfNode* m_idleState;
+
+	gkIfNode* m_runState;
+
+	gkIfNode* m_walkBackState;
+
+	gkIfNode* m_carryState;
 };
 
 int main(int argc, char **argv)

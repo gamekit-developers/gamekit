@@ -27,6 +27,8 @@
 #include "gkObjActionNode.h"
 #include "gkEngine.h"
 #include "gkGameObject.h"
+#include "gkRigidBody.h"
+#include "btBulletDynamicsCommon.h"
 
 using namespace Ogre;
 
@@ -117,4 +119,18 @@ gkSetOrientationNode::gkSetOrientationNode(gkLogicTree *parent, size_t id)
 void gkSetOrientationNode::update(gkScalar tick)
 {
 	getTarget()->getValueGameObject()->setOrientation(getInput()->getValueQuaternion());
+}
+
+/////////////////////////////////////////
+
+void gkDisableDeactivationNode::update(gkScalar tick)
+{
+	gkGameObject* pObj = getTarget()->getValueGameObject();
+
+	gkRigidBody* pRigidBody = pObj->getAttachedBody();
+
+	if(pRigidBody)
+	{
+		pRigidBody->getBody()->setActivationState(DISABLE_DEACTIVATION);
+	}
 }

@@ -30,17 +30,19 @@
 #include "gkLogicSocket.h"
 #include "gkEntity.h"
 #include "gkEngine.h"
+#include "gkAction.h"
 #include "gkLogger.h"
 
 using namespace Ogre;
 
 gkAnimationNode::gkAnimationNode(gkLogicTree *parent, size_t id) 
-: gkLogicNode(parent, id), m_func(AF_LOOP)
+: gkLogicNode(parent, id)
 {
 	ADD_ISOCK(*getAnimName(), this, gkLogicSocket::ST_STRING);
 	ADD_ISOCK(*getBlend(), this, gkLogicSocket::ST_REAL);
 	ADD_ISOCK(*getTarget(), this, gkLogicSocket::ST_GAME_OBJECT);
 	ADD_OSOCK(*getCurrentAnimName(), this, gkLogicSocket::ST_STRING);
+	ADD_OSOCK(*getHasReachedEnd(), this, gkLogicSocket::ST_BOOL);
 
 	getBlend()->setValue(10);
 }
@@ -60,10 +62,33 @@ void gkAnimationNode::update(gkScalar tick)
 
 	gkEntity *ent = pObj->getEntity();
 
-	getCurrentAnimName()->setValue(getAnimName()->getValueString());
+	gkString animName = getAnimName()->getValueString();
+
+	gkString currentAnimName = getCurrentAnimName()->getValueString();
+
+	if(currentAnimName != animName)
+	{
+		getHasReachedEnd()->setValue(false);
+	}
+
+	getCurrentAnimName()->setValue(animName);
 
 	if (ent->isLoaded())
 	{
 		ent->playAction(getAnimName()->getValueString(), getBlend()->getValueReal());
+
+		if(!getHasReachedEnd()->getValueBool())
+		{
+			gkAction* pAct = ent->getActiveAction();
+
+			GK_ASSERT(pAct);
+
+			gkScalar time = pAct->getTimePosition();
+
+			if(time >= pAct->getEnd())
+			{
+				getHasReachedEnd()->setValue(true);
+			}
+		}
     }
 }
