@@ -27,6 +27,7 @@ include(CMakeDependentOption)
 include(CheckCXXCompilerFlag)
 include(ConfigOgreKit)
 include(ConfigGameKit)
+include(FindOpenAL)
 
 
 configure_gamekit(${CMAKE_SOURCE_DIR}/bullet/Extras)
