@@ -24,57 +24,78 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkEvaluatorNode_h_
-#define _gkEvaluatorNode_h_
+#ifndef _gkStateNode_h_
+#define _gkStateNode_h_
 
 #include "gkLogicNode.h"
+#include "LinearMath/btQuickprof.h"
 
-template<gkLogicSocket::SocketType type>
-class gkEqualNode  : public gkLogicNode
+class gkStateNode : public gkLogicNode
 {
 public:
 
 	enum
 	{
-		A,
-		B,
-		TRUE_VALUE,
-		FALSE_VALUE,
+		UPDATE,
+		CURRENT_STATE,
+		CURRENT_NAME,
 		MAX_SOCKETS
 	};
 
-    gkEqualNode(gkLogicTree *parent, size_t id)
-		: gkLogicNode(parent, id)
-	{
-		ADD_ISOCK(*getA(), this, type);
-		ADD_ISOCK(*getB(), this, type);
-		ADD_OSOCK(*getTrue(), this, gkLogicSocket::ST_BOOL);
-		ADD_OSOCK(*getFalse(), this, gkLogicSocket::ST_BOOL);
-	}
+    gkStateNode(gkLogicTree *parent, size_t id);
 
-	~gkEqualNode() {}
+	~gkStateNode();
 
-	bool evaluate(gkScalar tick)
-	{
-		bool isTrue = getA()->getValueString() == getB()->getValueString();
+	bool evaluate(gkScalar tick);
+	void update(gkScalar tick);
 
-		getTrue()->setValue(isTrue);
-		
-		getFalse()->setValue(!isTrue);
+    GK_INLINE gkLogicSocket* getUpdate() {return &m_sockets[UPDATE];}
+	GK_INLINE gkLogicSocket* getCurrentState() {return &m_sockets[CURRENT_STATE];}
+	GK_INLINE gkLogicSocket* getCurrentName() {return &m_sockets[CURRENT_NAME];}
 
-		return false;
-	}
+	gkLogicSocket* addTransition(int from, int to, unsigned long ms = 0);
 
-    GK_INLINE gkLogicSocket* getA() {return &m_sockets[A];}
-    GK_INLINE gkLogicSocket* getB() {return &m_sockets[B];}
-	GK_INLINE gkLogicSocket* getTrue() {return &m_sockets[TRUE_VALUE];}
-	GK_INLINE gkLogicSocket* getFalse() {return &m_sockets[FALSE_VALUE];}
+	void addTranslation(int state, const gkString& name);
 
 private:
+
 	gkLogicSocket m_sockets[MAX_SOCKETS];
+
+	typedef utPointerHashKey EVENT;
+	typedef utIntHashKey STATE;
+
+	struct Data
+	{
+		unsigned long m_ms;
+		int m_state;
+
+		Data() : m_ms(0), m_state(0) {}
+
+		Data(unsigned long ms, int state) 
+			: m_ms(ms), m_state(state)
+		{
+		}
+	};
+
+	typedef utHashTable<EVENT, Data > REACTION;
+	typedef utHashTableIterator<REACTION> REACTION_ITERATOR;
+
+	typedef utHashTable<STATE, REACTION> TRANSITIONS;
+
+	TRANSITIONS m_transitions;
+
+	typedef utHashTable<STATE, gkString> TRANSLATION;
+
+	TRANSLATION m_translation;
+
+	btClock m_timer;
+
+	int m_currentState;
+
+	typedef utArray<gkLogicSocket*> EVENTS;
+
+	EVENTS m_events;
 };
 
-typedef gkEqualNode<gkLogicSocket::ST_STRING> gkStringEqualNode;
-typedef gkEqualNode<gkLogicSocket::ST_INT> gkIntEqualNode;
 
-#endif//_gkEvaluatorNode_h_
+#endif//_gkStateNode_h_

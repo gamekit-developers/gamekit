@@ -28,29 +28,4 @@
 #include "gkEvaluatorNode.h"
 #include "gkLogger.h"
 
-gkEvaluatorNode::gkEvaluatorNode(gkLogicTree *parent, size_t id) 
-: gkLogicNode(parent, id)
-{
-}
-
-/////////////////////////////////////////////
-gkStringEqualNode::gkStringEqualNode(gkLogicTree *parent, size_t id)
-	: gkEvaluatorNode(parent, id)
-{
-	ADD_ISOCK(*getA(), this, gkLogicSocket::ST_STRING);
-	ADD_ISOCK(*getB(), this, gkLogicSocket::ST_STRING);
-	ADD_OSOCK(*getTrue(), this, gkLogicSocket::ST_BOOL);
-	ADD_OSOCK(*getFalse(), this, gkLogicSocket::ST_BOOL);
-}
-
-bool gkStringEqualNode::evaluate(gkScalar tick)
-{
-	bool isTrue = getA()->getValueString() == getB()->getValueString();
-
-	getTrue()->setValue(isTrue);
-	
-	getFalse()->setValue(!isTrue);
-
-	return false;
-}
 
