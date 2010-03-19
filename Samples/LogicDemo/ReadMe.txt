@@ -77,7 +77,10 @@ By default there is a track node (for the camera) that follows momo orientation 
 	moves the camera closer to Momo.
 	
 <W>
-	Moves momo forward.
+	Moves momo forward (First Walk then Run...)
+	
+<LEFT SHIFT> + <W>
+	Moves momo forward (Run Faster and create dust trail [particle FX])
 	
 <S> 
 	Moves momo backward.

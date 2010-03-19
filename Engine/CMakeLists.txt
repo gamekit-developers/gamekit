@@ -149,6 +149,7 @@ set(NLogic_SOURCE
     Logic/gkPulseNode.cpp
     Logic/gkSetterNode.cpp
     Logic/gkShowPhysicsNode.cpp
+    Logic/gkStateMachineNode.cpp
 )
 
 set(NLogic_HEADER
@@ -185,6 +186,7 @@ set(NLogic_HEADER
     Logic/gkPulseNode.h
     Logic/gkSetterNode.h
     Logic/gkShowPhysicsNode.h
+    Logic/gkStateMachineNode.h
 )
 
 source_group(LogicNodes\\Header FILES ${NLogic_HEADER})

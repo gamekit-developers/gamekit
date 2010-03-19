@@ -26,7 +26,6 @@
 */
 
 #include "OgreKit.h"
-#include "gkStateNode.h"
 
 namespace momoState
 {
@@ -34,7 +33,11 @@ namespace momoState
 	{
 		CARRY,
 		CATCH,
+		CATCH_ENDED,
+		THROW_WITH,
+		WALK,
 		RUN,
+		RUN_FASTER,
 		WALK_BACK,
 		IDLE_NASTY,
 		IDLE_CAPOEIRA
@@ -107,10 +110,10 @@ class OgreKit : public gkCoreApplication
 public:
 
     OgreKit(const gkString &blend) 
-		: m_blend(blend), m_tree(0), m_ctrlKeyNode(0), 
+		: m_blend(blend), m_tree(0), m_ctrlKeyNode(0), m_shiftKeyNode(0),
 		m_wKeyNode(0), m_sKeyNode(0), m_mouseNode(0), m_leftMouseNode(0), m_rightMouseNode(0),
 		m_playerSetter(0), m_meshMomoSetter(0), m_cameraSetter(0), m_animNode(0), m_momoCameraArcBall(0),
-		m_stateMachine(0)
+		m_momoGrab(0), m_stateMachine(0)
 	{
         gkPath path = "./data/OgreKitStartup.cfg";
 
@@ -171,6 +174,9 @@ public:
 		m_ctrlKeyNode = m_tree->createNode<gkKeyNode>();
 		m_ctrlKeyNode->setKey(KC_LEFTCTRLKEY);
 
+		m_shiftKeyNode = m_tree->createNode<gkKeyNode>();
+		m_shiftKeyNode->setKey(KC_LEFTSHIFTKEY);
+
 		m_wKeyNode = m_tree->createNode<gkKeyNode>();
 		m_wKeyNode->setKey(KC_WKEY);
 
@@ -207,7 +213,9 @@ public:
 
 		CreateCommomMomoCameraArcBallLogic();
 
-		CreateStateMachine();
+		CreateCommonMomoGrabLogic();
+
+		CreateMomoStateMachine();
 	}
 
 	void CreateCommomMomoCameraArcBallLogic()
@@ -240,58 +248,69 @@ public:
 		m_momoCameraArcBall->getUpdate()->link(m_ctrlKeyNode->getNotIsDown());
 	}
 
-	void CreateStateMachine()
+	void CreateMomoStateMachine()
 	{
-		m_stateMachine = m_tree->createNode<gkStateNode>();
+		m_stateMachine = m_tree->createNode<gkStateMachineNode>();
 		m_stateMachine->getUpdate()->setValue(true);
-		m_stateMachine->getCurrentState()->setValue(momoState::IDLE_NASTY);
 
-		m_stateMachine->addTranslation(momoState::CARRY, momoAnimation::CARRY);
-		m_stateMachine->addTranslation(momoState::CATCH, momoAnimation::CATCH);
-		m_stateMachine->addTranslation(momoState::RUN, momoAnimation::RUN);
-		m_stateMachine->addTranslation(momoState::WALK_BACK, momoAnimation::WALK_BACK);
-		m_stateMachine->addTranslation(momoState::IDLE_NASTY, momoAnimation::IDLE_NASTY);
-		m_stateMachine->addTranslation(momoState::IDLE_CAPOEIRA, momoAnimation::IDLE_CAPOEIRA);
+		// Initial state
+		m_stateMachine->getCurrentState()->setValue(momoState::IDLE_NASTY); 
 
-		// TRANSITIONS
+		// Transitions
 
 		m_stateMachine->addTransition(momoState::CATCH, momoState::IDLE_NASTY);
+		m_stateMachine->addTransition(momoState::CATCH_ENDED, momoState::IDLE_NASTY);
 		m_stateMachine->addTransition(momoState::CARRY, momoState::IDLE_NASTY);
-		m_stateMachine->addTransition(momoState::RUN, momoState::IDLE_NASTY);
-		m_wKeyNode->getIsDown()->link(m_stateMachine->addTransition(momoState::RUN, momoState::RUN));
+		m_stateMachine->addTransition(momoState::THROW_WITH, momoState::IDLE_NASTY);
+		m_stateMachine->addTransition(momoState::WALK, momoState::IDLE_NASTY);
 		m_stateMachine->addTransition(momoState::WALK_BACK, momoState::IDLE_NASTY);
-		m_sKeyNode->getIsDown()->link(m_stateMachine->addTransition(momoState::WALK_BACK, momoState::WALK_BACK));
 
-		m_wKeyNode->getIsDown()->link(m_stateMachine->addTransition(momoState::IDLE_NASTY, momoState::RUN));
-		m_wKeyNode->getIsDown()->link(m_stateMachine->addTransition(momoState::IDLE_CAPOEIRA, momoState::RUN));
+	
+		m_wKeyNode->getIsDown()->link(m_stateMachine->addTransition(momoState::IDLE_NASTY, momoState::WALK));
+		m_wKeyNode->getIsDown()->link(m_stateMachine->addTransition(momoState::IDLE_CAPOEIRA, momoState::WALK));
+		m_wKeyNode->getIsDown()->link(m_stateMachine->addTransition(momoState::WALK, momoState::WALK));
+		m_wKeyNode->getIsDown()->link(m_stateMachine->addTransition(momoState::WALK, momoState::RUN, 1500));
+		m_wKeyNode->getIsDown()->link(m_stateMachine->addTransition(momoState::RUN, momoState::RUN));
+		m_stateMachine->addTransition(momoState::RUN, momoState::WALK);
+
+		{
+			gkIfNode* ifNode = m_tree->createNode<gkIfNode>();
+			ifNode->setStatement(CMP_AND);
+			ifNode->getA()->link(m_shiftKeyNode->getIsDown());
+			ifNode->getB()->link(m_wKeyNode->getIsDown());
+			
+			ifNode->getTrue()->link(m_stateMachine->addTransition(momoState::RUN, momoState::RUN_FASTER));
+			ifNode->getTrue()->link(m_stateMachine->addTransition(momoState::RUN_FASTER, momoState::RUN_FASTER));
+		}
+
+		m_stateMachine->addTransition(momoState::RUN_FASTER, momoState::RUN);
+		m_stateMachine->addTransition(momoState::RUN, momoState::WALK);
+		m_sKeyNode->getIsDown()->link(m_stateMachine->addTransition(momoState::RUN, momoState::WALK_BACK));
+
+
 		m_sKeyNode->getIsDown()->link(m_stateMachine->addTransition(momoState::IDLE_NASTY, momoState::WALK_BACK));
 		m_sKeyNode->getIsDown()->link(m_stateMachine->addTransition(momoState::IDLE_CAPOEIRA, momoState::WALK_BACK));
+		m_sKeyNode->getIsDown()->link(m_stateMachine->addTransition(momoState::WALK_BACK, momoState::WALK_BACK));
+
 
 		{
 			gkIfNode* ifNode = m_tree->createNode<gkIfNode>();
 			ifNode->setStatement(CMP_AND);
 			ifNode->getA()->link(m_ctrlKeyNode->getNotIsDown());
-			ifNode->getB()->link(m_rightMouseNode->getIsDown());
+			ifNode->getB()->link(m_rightMouseNode->getPress());
 
 			ifNode->getTrue()->link(m_stateMachine->addTransition(momoState::IDLE_NASTY, momoState::CATCH));
 			ifNode->getTrue()->link(m_stateMachine->addTransition(momoState::IDLE_CAPOEIRA, momoState::CATCH));
-			ifNode->getTrue()->link(m_stateMachine->addTransition(momoState::CATCH, momoState::CATCH));
-
-			{
-				gkIfNode* ifANode = m_tree->createNode<gkIfNode>();
-				ifANode->setStatement(CMP_AND);
-				ifANode->getA()->link(ifNode->getTrue());
-				ifANode->getB()->link(m_animNode->getHasReachedEnd());
-
-				ifANode->getTrue()->link(m_stateMachine->addTransition(momoState::CATCH, momoState::CARRY));
-			}
+			m_animNode->getNotHasReachedEnd()->link(m_stateMachine->addTransition(momoState::CATCH, momoState::CATCH));
+			m_animNode->getHasReachedEnd()->link(m_stateMachine->addTransition(momoState::CATCH, momoState::CATCH_ENDED));
+			m_momoGrab->getCaughtTrue()->link(m_stateMachine->addTransition(momoState::CATCH_ENDED, momoState::CARRY));
+			m_momoGrab->getCaughtTrue()->link(m_stateMachine->addTransition(momoState::CARRY, momoState::CARRY));
+			m_momoGrab->getThrowed()->link(m_stateMachine->addTransition(momoState::CARRY, momoState::THROW_WITH));
+			m_animNode->getNotHasReachedEnd()->link(m_stateMachine->addTransition(momoState::THROW_WITH, momoState::THROW_WITH));
 		}
 
 		m_stateMachine->addTransition(momoState::IDLE_NASTY, momoState::IDLE_CAPOEIRA, 15000);
 		m_stateMachine->addTransition(momoState::IDLE_CAPOEIRA, momoState::IDLE_NASTY, 10000);
-
-		m_sKeyNode->getIsDown()->link(m_stateMachine->addTransition(momoState::RUN, momoState::WALK_BACK));
-		m_wKeyNode->getIsDown()->link(m_stateMachine->addTransition(momoState::WALK_BACK, momoState::RUN));
 	}
 
 	void CreateMomoLogic()
@@ -302,19 +321,17 @@ public:
 
 		CreateMomoLoadUnloadLogic();
 
-		CreateMomoGrabLogic();
-
 		CreateMomoDustTrailLogic();
 	}
 
-	void CreateMomoGrabLogic()
+	void CreateCommonMomoGrabLogic()
 	{
-		gkGrabNode* grab = m_tree->createNode<gkGrabNode>();
-		grab->getUpdate()->setValue(true);
-		grab->getTarget()->link(m_playerSetter->getOutput());
-		grab->getGrabDirection()->setValue(gkVector3(0, 0.6f, 0));
-		grab->getThrowVelocity()->setValue(gkVector3(0, 20.5f, 0));
-		grab->getOffsetPosition()->setValue(gkVector3(0, 0, 1));
+		m_momoGrab = m_tree->createNode<gkGrabNode>();
+		m_momoGrab->getUpdate()->setValue(true);
+		m_momoGrab->getTarget()->link(m_playerSetter->getOutput());
+		m_momoGrab->getGrabDirection()->setValue(gkVector3(0, 0.6f, 0));
+		m_momoGrab->getThrowVelocity()->setValue(gkVector3(0, 20.5f, 0));
+		m_momoGrab->getOffsetPosition()->setValue(gkVector3(0, 0, 1));
 
 		{
 			gkIfNode* ifNode = m_tree->createNode<gkIfNode>();
@@ -323,7 +340,7 @@ public:
 			ifNode->getA()->link(m_rightMouseNode->getPress());
 			ifNode->getB()->link(m_ctrlKeyNode->getNotIsDown());
 
-			grab->getCreatePick()->link(ifNode->getTrue());
+			m_momoGrab->getCreatePick()->link(ifNode->getTrue());
 		}
 
 		{
@@ -333,7 +350,7 @@ public:
 			ifNode->getA()->link(m_rightMouseNode->getRelease());
 			ifNode->getB()->link(m_ctrlKeyNode->getNotIsDown());
 
-			grab->getReleasePick()->link(ifNode->getTrue());
+			m_momoGrab->getReleasePick()->link(ifNode->getTrue());
 		}
 
 		{
@@ -343,16 +360,26 @@ public:
 			ifNode->getA()->link(m_leftMouseNode->getPress());
 			ifNode->getB()->link(m_ctrlKeyNode->getNotIsDown());
 
-			grab->getThrowObject()->link(ifNode->getTrue());
+			m_momoGrab->getThrowObject()->link(ifNode->getTrue());
 		}
 	}
 
 	void CreateMomoMoveLogic()
 	{
+		gkIntEqualNode* equalWalkNode = m_tree->createNode<gkIntEqualNode>();
+
+		equalWalkNode->getA()->setValue(momoState::WALK);
+		equalWalkNode->getB()->link(m_stateMachine->getCurrentState());
+
 		gkIntEqualNode* equalRunNode = m_tree->createNode<gkIntEqualNode>();
 
 		equalRunNode->getA()->setValue(momoState::RUN);
 		equalRunNode->getB()->link(m_stateMachine->getCurrentState());
+
+		gkIntEqualNode* equalRunFasterNode = m_tree->createNode<gkIntEqualNode>();
+
+		equalRunFasterNode->getA()->setValue(momoState::RUN_FASTER);
+		equalRunFasterNode->getB()->link(m_stateMachine->getCurrentState());
 
 		gkIntEqualNode* equalWalkBackNode = m_tree->createNode<gkIntEqualNode>();
 
@@ -363,10 +390,21 @@ public:
 		{
 			// orient Momo
 
+			gkIfNode* ifANode = m_tree->createNode<gkIfNode>();
+			ifANode->setStatement(CMP_OR);
+			ifANode->getA()->link(equalWalkNode->getTrue());
+			ifANode->getB()->link(equalWalkBackNode->getTrue());
+
+			gkIfNode* ifBNode = m_tree->createNode<gkIfNode>();
+			ifBNode->setStatement(CMP_OR);
+
+			ifBNode->getA()->link(equalRunNode->getTrue());
+			ifBNode->getB()->link(equalRunFasterNode->getTrue());
+
 			gkIfNode* ifNode = m_tree->createNode<gkIfNode>();
 			ifNode->setStatement(CMP_OR);
-			ifNode->getA()->link(equalRunNode->getTrue());
-			ifNode->getB()->link(equalWalkBackNode->getTrue());
+			ifNode->getA()->link(ifANode->getTrue());
+			ifNode->getB()->link(ifBNode->getTrue());
 
 			gkSetOrientationNode* orientation = m_tree->createNode<gkSetOrientationNode>();
 
@@ -378,9 +416,29 @@ public:
 		{
 			gkLinearVelNode* motion = m_tree->createNode<gkLinearVelNode>();
 
+			motion->getUpdate()->link(equalWalkNode->getTrue());
+			motion->getX()->setValue(0);
+			motion->getY()->setValue(1);
+			motion->getZ()->setValue(0);
+			motion->getTarget()->link(m_playerSetter->getOutput());
+		}
+
+		{
+			gkLinearVelNode* motion = m_tree->createNode<gkLinearVelNode>();
+
 			motion->getUpdate()->link(equalRunNode->getTrue());
 			motion->getX()->setValue(0);
 			motion->getY()->setValue(2.5f);
+			motion->getZ()->setValue(0);
+			motion->getTarget()->link(m_playerSetter->getOutput());
+		}
+
+		{
+			gkLinearVelNode* motion = m_tree->createNode<gkLinearVelNode>();
+
+			motion->getUpdate()->link(equalRunFasterNode->getTrue());
+			motion->getX()->setValue(0);
+			motion->getY()->setValue(4.0f);
 			motion->getZ()->setValue(0);
 			motion->getTarget()->link(m_playerSetter->getOutput());
 		}
@@ -401,12 +459,13 @@ public:
 		{
 			gkStringEqualNode* equalNode = m_tree->createNode<gkStringEqualNode>();
 
-			equalNode->getA()->setValue(momoAnimation::RUN);
+			equalNode->getA()->setValue(momoAnimation::RUN_FASTER);
 			equalNode->getB()->link(m_animNode->getCurrentAnimName());
 
 			CreateMomoDustTrailLogic(particle::DUST_RUN, equalNode->getTrue());
 		}
 
+		/*
 		{
 			gkStringEqualNode* equalNode = m_tree->createNode<gkStringEqualNode>();
 
@@ -415,6 +474,7 @@ public:
 
 			CreateMomoDustTrailLogic(particle::DUST_WALK, equalNode->getTrue());
 		}
+		*/
 	}
 
 	void CreateMomoDustTrailLogic(const gkString& name, gkLogicSocket* pUpdateSocket)
@@ -491,33 +551,19 @@ public:
 
 	void CreateMomoAnimationLogic()
 	{
+		m_stateMachine->addTranslation(momoState::CARRY, momoAnimation::CARRY);
+		m_stateMachine->addTranslation(momoState::CATCH, momoAnimation::CATCH);
+		m_stateMachine->addTranslation(momoState::CATCH_ENDED, momoAnimation::CATCH);
+		m_stateMachine->addTranslation(momoState::THROW_WITH, momoAnimation::THROW_WITH);
+		m_stateMachine->addTranslation(momoState::WALK, momoAnimation::WALK);
+		m_stateMachine->addTranslation(momoState::RUN, momoAnimation::RUN);
+		m_stateMachine->addTranslation(momoState::RUN_FASTER, momoAnimation::RUN_FASTER);
+		m_stateMachine->addTranslation(momoState::WALK_BACK, momoAnimation::WALK_BACK);
+		m_stateMachine->addTranslation(momoState::IDLE_NASTY, momoAnimation::IDLE_NASTY);
+		m_stateMachine->addTranslation(momoState::IDLE_CAPOEIRA, momoAnimation::IDLE_CAPOEIRA);
+
 		m_animNode->getTarget()->link(m_meshMomoSetter->getOutput());
 		m_stateMachine->getCurrentName()->link(m_animNode->getAnimName());
-/*
-		gkStringSetterNode* runName = m_tree->createNode<gkStringSetterNode>();
-		runName->getOutput()->link(m_animNode->getAnimName());
-		runName->getInput()->setValue(momoAnimation::RUN);
-		runName->getUpdate()->link(m_runState->getTrue());
-			
-		gkStringSetterNode* walkName = m_tree->createNode<gkStringSetterNode>();
-		walkName->getOutput()->link(m_animNode->getAnimName());
-		walkName->getInput()->setValue(momoAnimation::WALK_BACK);
-		walkName->getUpdate()->link(m_walkBackState->getTrue());
-
-		gkStringSetterNode* ildeName = m_tree->createNode<gkStringSetterNode>();
-		ildeName->getOutput()->link(m_animNode->getAnimName());
-		ildeName->getInput()->setValue(momoAnimation::IDLE_NASTY);
-		ildeName->getUpdate()->link(m_idleState->getTrue());
-
-		gkStringSetterNode* catchName = m_tree->createNode<gkStringSetterNode>();
-		catchName->getOutput()->link(m_animNode->getAnimName());
-		catchName->getInput()->setValue(momoAnimation::CATCH);
-		catchName->getUpdate()->link(m_catchState->getTrue());
-
-		gkStringSetterNode* carryName = m_tree->createNode<gkStringSetterNode>();
-		carryName->getOutput()->link(m_animNode->getAnimName());
-		carryName->getInput()->setValue(momoAnimation::CARRY);
-		carryName->getUpdate()->link(m_carryState->getTrue());*/
 	}
 
 	void CreateCameraLogic()
@@ -622,6 +668,8 @@ private:
 
 	gkKeyNode* m_ctrlKeyNode;
 
+	gkKeyNode* m_shiftKeyNode;
+
 	gkKeyNode* m_wKeyNode; 
 	
 	gkKeyNode* m_sKeyNode;
@@ -642,7 +690,9 @@ private:
 
 	gkAnimationNode* m_animNode;
 
-	gkStateNode* m_stateMachine;
+	gkGrabNode* m_momoGrab;
+
+	gkStateMachineNode* m_stateMachine;
 };
 
 int main(int argc, char **argv)

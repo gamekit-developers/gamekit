@@ -40,6 +40,7 @@ public:
 		TARGET,
 		CURRENT_ANIM_NAME,
 		HAS_REACHED_END,
+		NOT_HAS_REACHED_END,
 		MAX_SOCKETS
 	};
 
@@ -55,6 +56,7 @@ public:
 	GK_INLINE gkLogicSocket* getTarget() {return &m_sockets[TARGET];}
 	GK_INLINE gkLogicSocket* getCurrentAnimName() { return &m_sockets[CURRENT_ANIM_NAME]; }
 	GK_INLINE gkLogicSocket* getHasReachedEnd() { return &m_sockets[HAS_REACHED_END]; }
+	GK_INLINE gkLogicSocket* getNotHasReachedEnd() { return &m_sockets[NOT_HAS_REACHED_END]; }
 
 private:
     gkLogicSocket   m_sockets[MAX_SOCKETS];

@@ -44,6 +44,8 @@ public:
 		XPOS,
 		YPOS,
 		DISABLE_ROTATION,
+		CAUGHT_TRUE,
+		CAUGHT_FALSE,
 		MAX_SOCKETS
 	};
 
@@ -63,6 +65,9 @@ public:
     GK_INLINE gkLogicSocket* getY() {return &m_sockets[YPOS];}
 
 	GK_INLINE gkLogicSocket* getDisableRotation() {return &m_sockets[DISABLE_ROTATION];}
+
+	GK_INLINE gkLogicSocket* getCaughtTrue() {return &m_sockets[CAUGHT_TRUE];}
+	GK_INLINE gkLogicSocket* getCaughtFalse() {return &m_sockets[CAUGHT_FALSE];}
 
 protected:
 

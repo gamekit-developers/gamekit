@@ -46,6 +46,9 @@ m_target(0)
 	ADD_ISOCK(*getThrowVelocity(), this, gkLogicSocket::ST_VECTOR);
 	ADD_ISOCK(*getOffsetPosition(), this, gkLogicSocket::ST_VECTOR);
 
+	ADD_OSOCK(*getThrowed(), this, gkLogicSocket::ST_BOOL);
+
+
 	getThrowVelocity()->setValue(gkVector3::ZERO);
 	getOffsetPosition()->setValue(gkVector3::ZERO);
 }
@@ -61,6 +64,11 @@ bool gkGrabNode::evaluate(Real tick)
 	if(m_target && !m_target->isLoaded())
 	{
 		ReleasePick();
+	}
+
+	if(getThrowed()->getValueBool())
+	{
+		getThrowed()->setValue(false);
 	}
 
 	bool enable = gkPickNode::evaluate(tick);
@@ -86,6 +94,8 @@ void gkGrabNode::ThrowObject()
 	if(m_pickedBody && vel != gkVector3::ZERO)
 	{
 		m_pickedBody->setLinearVelocity(m_target->getOrientation() * vel);
+
+		getThrowed()->setValue(true);
 	}
 }
 

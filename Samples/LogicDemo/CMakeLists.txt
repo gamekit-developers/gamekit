@@ -24,7 +24,7 @@ include_directories(${OGRELITE_SOURCE_DIR}/OgreMain/include/OSX)
 endif()
 
 
-set(SRC ${DATA} Main.cpp gkStateNode.h gkStateNode.cpp)
+set(SRC ${DATA} Main.cpp)
 
 include_directories(
     ${OGREKIT_OGRE_INCLUDE}

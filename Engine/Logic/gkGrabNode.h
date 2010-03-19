@@ -39,6 +39,7 @@ public:
 		GRAB_DIRECTION,
 		THROW_VEL,
 		RELATED_OFFSET_POSITION,
+		THROWED,
 		MAX_SOCKETS
 	};
 
@@ -55,7 +56,7 @@ public:
 	GK_INLINE gkLogicSocket* getGrabDirection() {return &m_sockets[GRAB_DIRECTION];}
 	GK_INLINE gkLogicSocket* getThrowVelocity() {return &m_sockets[THROW_VEL];}
 	GK_INLINE gkLogicSocket* getOffsetPosition() {return &m_sockets[RELATED_OFFSET_POSITION];}
-	
+	GK_INLINE gkLogicSocket* getThrowed() {return &m_sockets[THROWED];}
 
 private:
 

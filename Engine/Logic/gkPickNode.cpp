@@ -52,6 +52,12 @@ m_angularFactor(gkVector3::ZERO)
 	ADD_ISOCK(*getY(), this, gkLogicSocket::ST_REAL);
 
 	ADD_ISOCK(*getDisableRotation(), this, gkLogicSocket::ST_BOOL);
+
+	ADD_OSOCK(*getCaughtTrue(), this, gkLogicSocket::ST_BOOL);
+	ADD_OSOCK(*getCaughtFalse(), this, gkLogicSocket::ST_BOOL);
+
+	getCaughtTrue()->setValue(false);
+	getCaughtFalse()->setValue(true);
 }
 
 gkPickNode::~gkPickNode()
@@ -147,6 +153,9 @@ void gkPickNode::CreatePick()
 
 			//very weak constraint for picking
 			m_constraint->m_setting.m_tau = 0.1f;
+
+			getCaughtTrue()->setValue(true);
+			getCaughtFalse()->setValue(false);
 		}
 	}
 }
@@ -172,6 +181,9 @@ void gkPickNode::ReleasePick()
 		GK_ASSERT(m_pickedBody);
 
 		m_pickedBody->getBody()->setAngularFactor(btVector3(m_angularFactor.x, m_angularFactor.y, m_angularFactor.z));
+
+		getCaughtTrue()->setValue(false);
+		getCaughtFalse()->setValue(true);
 	}
 }
 
