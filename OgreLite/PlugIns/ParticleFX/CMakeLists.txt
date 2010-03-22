@@ -68,6 +68,15 @@ set (SOURCE_FILES
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
+if (APPLE)
+  if (OGRE_BUILD_PLATFORM_IPHONE)
+    message(${OGRELITE_SOURCE_DIR}/OgreLite/OgreMain/include/iPhone)
+	include_directories(${OGRELITE_SOURCE_DIR}/OgreMain/include/iPhone)
+  else ()
+    message(${OGRELITE_SOURCE_DIR})
+	include_directories(${OGRELITE_SOURCE_DIR}/OgreMain/include/OSX)
+  endif()
+endif()
 add_definitions(-D_USRDLL)
 
 add_library(Plugin_ParticleFX ${OGRE_LIB_TYPE} ${HEADER_FILES} ${SOURCE_FILES})
