@@ -74,19 +74,22 @@ gkString gkUtils::getFile(const gkString& in)
 #ifdef __APPLE__
 
     char* bundlePath = AppleGetBundleDirectory();
+
     //cut off the .app filename
     char* lastSlash = 0;
     if (lastSlash = strrchr(bundlePath, '/'))
         * lastSlash = '\0';
 
-    sprintf(newName, "%s/%s/%s", bundlePath, "Contents/Resources", in.c_str());
-
-    gkPath pth(newName);
-    if (!pth.isFile())
+    sprintf(newName, "%s/%s", bundlePath, "game.blend");
+	FILE* f = fopen(newName,"rb");
+	
+	if (f)
     {
-        newName[0] = 0;
-        sprintf(newName, "%s/%s", bundlePath, "game.blend");
-    }
+		fclose(f);
+    } else 
+	{
+		sprintf(newName,"%s/%s/%s",AppleGetBundleDirectory(),"Contents/Resources",in.c_str());
+	}
 
 #else
 
