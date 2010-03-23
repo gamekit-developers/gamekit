@@ -28,6 +28,8 @@
 #define _gkExpressionNode_h_
 
 #include "gkLogicNode.h"
+
+/*
 #define EXPR_MAX 13
 
 
@@ -68,7 +70,7 @@ private:
     gkString        m_code;
     gkLogicSocket   m_sockets[EXPR_MAX];
 };
-
+*/
 
 
 #endif//_gkExpressionNode_h_

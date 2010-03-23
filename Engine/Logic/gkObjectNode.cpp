@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): silveira.nestor.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -37,29 +37,21 @@ using namespace Ogre;
 gkObjectNode::gkObjectNode(gkLogicTree *parent, size_t id) :
         gkLogicNode(parent, id), m_otherName(""), m_func(OB_FUNC_NONE)
 {
-    ADD_ISOCK(m_sockets[0], this, gkLogicSocket::ST_BOOL);
-    ADD_ISOCK(m_sockets[1], this, gkLogicSocket::ST_VECTOR);
-    ADD_ISOCK(m_sockets[2], this, gkLogicSocket::ST_EULER);
+    ADD_ISOCK(INPUT, true);
+	ADD_ISOCK(IN_POSITION, gkVector3::ZERO);
+    ADD_ISOCK(IN_ROTATION, gkVector3::ZERO);
 
-    ADD_OSOCK(m_sockets[3], this, gkLogicSocket::ST_BOOL);
-    ADD_OSOCK(m_sockets[4], this, gkLogicSocket::ST_VECTOR);
-    ADD_OSOCK(m_sockets[5], this, gkLogicSocket::ST_EULER);
-
-    m_sockets[0].setValue(true);
-    m_sockets[1].setValue(gkVector3::ZERO);
-    m_sockets[2].setValue(gkVector3::ZERO);
-    m_sockets[3].setValue(false);
-    m_sockets[4].setValue(gkVector3::ZERO);
-    m_sockets[5].setValue(gkVector3::ZERO);
+    ADD_ISOCK(OUTPUT, false);
+	ADD_ISOCK(OUT_POSITION, gkVector3::ZERO);
+    ADD_ISOCK(OUT_ROTATION, gkVector3::ZERO);
 }
 
 
 bool gkObjectNode::evaluate(gkScalar tick)
 {
-    m_sockets[3].setValue(m_sockets[0].getValueBool());
-    return m_sockets[0].getValueBool();
+    SET_SOCKET_VALUE(OUTPUT, GET_SOCKET_VALUE(INPUT));
+    return GET_SOCKET_VALUE(INPUT);
 }
-
 
 void gkObjectNode::initialize()
 {
@@ -94,17 +86,17 @@ void gkObjectNode::update(gkScalar tick)
     if (!ob)
         return;
 
-    if (m_sockets[1].isLinked())
-        ob->setPosition(m_sockets[1].getValueVector3());
+    if (GET_SOCKET(IN_POSITION)->isLinked())
+        ob->setPosition(GET_SOCKET_VALUE(IN_POSITION));
     else
-        m_sockets[4].setValue(ob->getPosition());
+        SET_SOCKET_VALUE(OUT_POSITION, ob->getPosition());
 
-    if (m_sockets[2].isLinked())
+    if (GET_SOCKET(IN_ROTATION)->isLinked())
     {
-        gkQuaternion q = gkMathUtils::getQuatFromEuler(m_sockets[2].getValueVector3(), true);
+        gkQuaternion q = gkMathUtils::getQuatFromEuler(GET_SOCKET_VALUE(IN_ROTATION), true);
         ob->setOrientation(q);
-        m_sockets[5].setValue(m_sockets[2].getValueVector3());
+        SET_SOCKET_VALUE(OUT_ROTATION, GET_SOCKET_VALUE(IN_ROTATION));
     }
     else
-        m_sockets[5].setValue(gkMathUtils::getEulerFromQuat(ob->getOrientation(), true));
+        SET_SOCKET_VALUE(OUT_ROTATION, gkMathUtils::getEulerFromQuat(ob->getOrientation(), true));
 }

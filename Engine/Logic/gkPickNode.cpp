@@ -44,20 +44,14 @@ m_oldPickingPos(0, 0, 0),
 m_oldPickingDist(0),
 m_angularFactor(gkVector3::ZERO)
 {
-	ADD_ISOCK(*getUpdate(), this, gkLogicSocket::ST_BOOL);
-	ADD_ISOCK(*getCreatePick(), this, gkLogicSocket::ST_BOOL);
-	ADD_ISOCK(*getReleasePick(), this, gkLogicSocket::ST_BOOL);
-
-	ADD_ISOCK(*getX(), this, gkLogicSocket::ST_REAL);
-	ADD_ISOCK(*getY(), this, gkLogicSocket::ST_REAL);
-
-	ADD_ISOCK(*getDisableRotation(), this, gkLogicSocket::ST_BOOL);
-
-	ADD_OSOCK(*getCaughtTrue(), this, gkLogicSocket::ST_BOOL);
-	ADD_OSOCK(*getCaughtFalse(), this, gkLogicSocket::ST_BOOL);
-
-	getCaughtTrue()->setValue(false);
-	getCaughtFalse()->setValue(true);
+	ADD_ISOCK(UPDATE, false);
+	ADD_ISOCK(CREATE_PICK, false);
+	ADD_ISOCK(RELEASE_PICK, false);
+	ADD_ISOCK(XPOS, 0);
+	ADD_ISOCK(YPOS, 0);
+	ADD_ISOCK(DISABLE_ROTATION, false);
+	ADD_OSOCK(CAUGHT_TRUE, false);
+	ADD_OSOCK(CAUGHT_FALSE, true);
 }
 
 gkPickNode::~gkPickNode()
@@ -67,7 +61,7 @@ gkPickNode::~gkPickNode()
 
 bool gkPickNode::evaluate(Real tick)
 {
-	bool enable = getUpdate()->getValueBool();
+	bool enable = GET_SOCKET_VALUE(UPDATE);
 
 	if(!enable)
 	{
@@ -79,11 +73,11 @@ bool gkPickNode::evaluate(Real tick)
 
 void gkPickNode::update(Real tick)
 {
-	if(getCreatePick()->getValueBool())
+	if(GET_SOCKET_VALUE(CREATE_PICK))
 	{
 		CreatePick();
 	}
-	else if(getReleasePick()->getValueBool())
+	else if(GET_SOCKET_VALUE(RELEASE_PICK))
 	{
 		ReleasePick();
 	}
@@ -113,7 +107,7 @@ void gkPickNode::CreatePick()
 		{
 			m_angularFactor = gkVector3(body->getAngularFactor());
 
-			if(getDisableRotation()->getValueBool())
+			if(GET_SOCKET_VALUE(DISABLE_ROTATION))
 			{
 				body->setAngularFactor(0);
 			}
@@ -154,8 +148,8 @@ void gkPickNode::CreatePick()
 			//very weak constraint for picking
 			m_constraint->m_setting.m_tau = 0.1f;
 
-			getCaughtTrue()->setValue(true);
-			getCaughtFalse()->setValue(false);
+			SET_SOCKET_VALUE(CAUGHT_TRUE, true);
+			SET_SOCKET_VALUE(CAUGHT_FALSE, false);
 		}
 	}
 }
@@ -182,8 +176,8 @@ void gkPickNode::ReleasePick()
 
 		m_pickedBody->getBody()->setAngularFactor(btVector3(m_angularFactor.x, m_angularFactor.y, m_angularFactor.z));
 
-		getCaughtTrue()->setValue(false);
-		getCaughtFalse()->setValue(true);
+		SET_SOCKET_VALUE(CAUGHT_TRUE, false);
+		SET_SOCKET_VALUE(CAUGHT_FALSE, true);
 	}
 }
 
@@ -199,7 +193,7 @@ void gkPickNode::UpdatePick()
 
 Ogre::Ray gkPickNode::GetRay()
 {
-	return gkUtils::CreateCameraRay(getX()->getValueReal(), getY()->getValueReal());
+	return gkUtils::CreateCameraRay(GET_SOCKET_VALUE(XPOS), GET_SOCKET_VALUE(YPOS));
 }
 
 gkVector3 gkPickNode::GetPivotPosition()

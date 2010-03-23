@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): silveira.nestor.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -38,23 +38,17 @@ gkMotionNode::gkMotionNode(gkLogicTree *parent, size_t id)
 :       gkLogicNode(parent, id), m_motionType(MT_ROTATION), m_space(TRANSFORM_LOCAL),
         m_keep(false), m_flag(0), m_otherName(""), m_current(0)
 {
-    ADD_ISOCK(m_sockets[0], this, gkLogicSocket::ST_BOOL);
-    ADD_ISOCK(m_sockets[1], this, gkLogicSocket::ST_REAL);
-    ADD_ISOCK(m_sockets[2], this, gkLogicSocket::ST_REAL);
-    ADD_ISOCK(m_sockets[3], this, gkLogicSocket::ST_REAL);
-    ADD_ISOCK(m_sockets[4], this, gkLogicSocket::ST_REAL);
-
-    m_sockets[0].setValue(true);
-    m_sockets[1].setValue(0.f);
-    m_sockets[2].setValue(0.f);
-    m_sockets[3].setValue(0.f);
-    m_sockets[4].setValue(0.f);
+    ADD_ISOCK(UPDATE, false);
+    ADD_ISOCK(X, 0);
+    ADD_ISOCK(Y, 0);
+    ADD_ISOCK(Z, 0);
+    ADD_ISOCK(DAMPING, 0);
 }
 
 
 bool gkMotionNode::evaluate(gkScalar tick)
 {
-    return m_sockets[0].getValueBool();
+    return GET_SOCKET_VALUE(UPDATE);
 }
 
 void gkMotionNode::initialize()
@@ -215,19 +209,19 @@ void gkMotionNode::update(gkScalar tick)
 {
     CHECK_RETV(!m_object || m_motionType == MT_NONE);
 
-    if (m_sockets[0].isConnected())
-        m_current = m_sockets[0].getGameObject();
+    if (GET_SOCKET(UPDATE)->isConnected())
+        m_current = GET_SOCKET(UPDATE)->getGameObject();
     if (!m_current) m_current = m_object;
 
     gkVector3 vec;
 
-    gkScalar d = 1.0 - m_sockets[4].getValueReal();
+    gkScalar d = 1.0 - GET_SOCKET_VALUE(DAMPING);
     gkScalar damp = gkAbs(d);
     damp = gkClampf(damp, 0.0, 1.0);
 
-    vec.x = (m_sockets[1].getValueReal() * damp);
-    vec.y = (m_sockets[2].getValueReal() * damp);
-    vec.z = (m_sockets[3].getValueReal() * damp);
+    vec.x = (GET_SOCKET_VALUE(X) * damp);
+    vec.y = (GET_SOCKET_VALUE(Y) * damp);
+    vec.z = (GET_SOCKET_VALUE(Z) * damp);
 
     if (m_motionType == MT_ROTATION)
     {
@@ -307,9 +301,9 @@ void gkMotionNode::update(gkScalar tick)
         if (m_keep)
         {
             gkVector3 ovel = m_current->getLinearVelocity();
-            if (!m_sockets[1].isConnected()) vec.x = ovel.x;
-            if (!m_sockets[2].isConnected()) vec.y = ovel.y;
-            if (!m_sockets[3].isConnected()) vec.z = ovel.z;
+            if (!GET_SOCKET(X)->isConnected()) vec.x = ovel.x;
+            if (!GET_SOCKET(Y)->isConnected()) vec.y = ovel.y;
+            if (!GET_SOCKET(Z)->isConnected()) vec.z = ovel.z;
         }
 
         if (m_other != 0) applyObject(vec);
@@ -327,9 +321,9 @@ void gkMotionNode::update(gkScalar tick)
         if (m_keep)
         {
             gkVector3 ovel = m_current->getAngularVelocity();
-            if (!m_sockets[1].isConnected()) vec.x = ovel.x;
-            if (!m_sockets[2].isConnected()) vec.y = ovel.y;
-            if (!m_sockets[3].isConnected()) vec.z = ovel.z;
+            if (!GET_SOCKET(X)->isConnected()) vec.x = ovel.x;
+            if (!GET_SOCKET(Y)->isConnected()) vec.y = ovel.y;
+            if (!GET_SOCKET(Z)->isConnected()) vec.z = ovel.z;
         }
 
         if (m_other != 0) applyObject(vec);

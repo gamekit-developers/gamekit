@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): silveira.nestor.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -30,55 +30,40 @@
 #include "gkEngine.h"
 #include "gkLogger.h"
 
-
-using namespace Ogre;
-
-
-
 gkMouseNode::gkMouseNode(gkLogicTree *parent, size_t id) :
         gkLogicNode(parent, id)
 {
-    ADD_ISOCK(m_sockets[0],  this, gkLogicSocket::ST_REAL);
-    ADD_ISOCK(m_sockets[1],  this, gkLogicSocket::ST_REAL);
-    m_sockets[0].setValue(1.f);
-    m_sockets[1].setValue(1.f);
-
-    ADD_OSOCK(m_sockets[2],  this, gkLogicSocket::ST_BOOL);
-    ADD_OSOCK(m_sockets[3],  this, gkLogicSocket::ST_REAL);
-    ADD_OSOCK(m_sockets[4],  this, gkLogicSocket::ST_REAL);
-    ADD_OSOCK(m_sockets[5],  this, gkLogicSocket::ST_REAL);
-    ADD_OSOCK(m_sockets[6],  this, gkLogicSocket::ST_REAL);
-    ADD_OSOCK(m_sockets[7],  this, gkLogicSocket::ST_REAL);
-
-    m_sockets[2].setValue(false);
-    m_sockets[3].setValue(0.f);
-    m_sockets[4].setValue(0.f);
-    m_sockets[5].setValue(0.f);
-    m_sockets[6].setValue(0.f);
-    m_sockets[7].setValue(0.f);
+    ADD_ISOCK(SCALE_X, 1);
+	ADD_ISOCK(SCALE_Y, 1);
+    ADD_OSOCK(MOTION, false);
+    ADD_OSOCK(REL_X, 0);
+    ADD_OSOCK(REL_Y, 0);
+    ADD_OSOCK(ABS_X, 0);
+    ADD_OSOCK(ABS_Y, 0);
+    ADD_OSOCK(WHEEL, 0);
 }
-
 
 bool gkMouseNode::evaluate(gkScalar tick)
 {
     gkMouse* dev = gkWindowSystem::getSingleton().getMouse();
 
     gkScalar x = 0, y = 0;
-    gkScalar x_scale = m_sockets[0].getValueReal();
-    gkScalar y_scale = m_sockets[1].getValueReal();
+    gkScalar x_scale = GET_SOCKET_VALUE(SCALE_X);
+    gkScalar y_scale = GET_SOCKET_VALUE(SCALE_Y);
 
     if (dev->moved)
     {
-        if (m_sockets[3].isConnected()) x = dev->relitave.x * x_scale;
-        if (m_sockets[4].isConnected()) y = dev->relitave.y * y_scale;
+        if (GET_SOCKET(REL_X)->isConnected()) x = dev->relitave.x * x_scale;
+        if (GET_SOCKET(REL_Y)->isConnected()) y = dev->relitave.y * y_scale;
     }
 
-    if (m_sockets[5].isConnected()) m_sockets[5].setValue(dev->position.x * x_scale);
-    if (m_sockets[6].isConnected()) m_sockets[6].setValue(dev->position.y * y_scale);
+    if (GET_SOCKET(ABS_X)->isConnected()) SET_SOCKET_VALUE(ABS_X, dev->position.x * x_scale);
+	if (GET_SOCKET(ABS_Y)->isConnected()) SET_SOCKET_VALUE(ABS_Y, dev->position.y * y_scale);
 
-    m_sockets[3].setValue(x);
-    m_sockets[4].setValue(y);
-    m_sockets[2].setValue(dev->moved);
-    m_sockets[7].setValue(dev->wheelDelta);
+    SET_SOCKET_VALUE(REL_X, x);
+	SET_SOCKET_VALUE(REL_Y, y);
+	SET_SOCKET_VALUE(MOTION, dev->moved);
+    SET_SOCKET_VALUE(WHEEL, dev->wheelDelta);
+
     return false;
 }

@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): silveira.nestor.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -35,7 +35,6 @@
 
 class gkLogicNode;
 class gkLogicTree;
-class gkLogicSocket;
 class gkGameObject;
 
 typedef enum gkMotionTypes
@@ -74,11 +73,37 @@ typedef enum gkMathFunction
     MTH_SQR,
 }gkMathFunction;
 
+typedef enum gkBoolStatement
+{
+    CMP_NULL = 0,
+    CMP_TRUE,
+    CMP_FALSE,
+    CMP_AND,
+    CMP_OR,
+    CMP_NOT,
+    CMP_EQUALS,
+    CMP_NOT_EQUAL,
+    CMP_GREATER,
+    CMP_LESS,
+    CMP_GTHAN,
+    CMP_LTHAN
+} gkBoolStatement;
+
 typedef enum gkObjectFunction
 {
     OB_FUNC_NONE = 0,
     OB_FUNC_DESTROY,
     OB_FUNC_ADD,
 }gkObjectFunction;
+
+// Generates a distinct type for each distinct constant integral
+// value. Used to call one of several different functions, depending
+// on a compile-time constant. [Alexandrescu (2000b)]
+template<int v>
+struct Int2Type
+{
+	enum { value = v };
+};
+
 
 #endif//_gkLogicCommon_h_

@@ -41,9 +41,14 @@ public:
 		IS_DOWN,
 		NOT_IS_DOWN,
 		PRESS,
-		RELEASE,
-		MAX_SOCKETS
+		RELEASE
 	};
+
+	DECLARE_SOCKET_TYPE(UPDATED, bool);
+	DECLARE_SOCKET_TYPE(IS_DOWN, bool);
+	DECLARE_SOCKET_TYPE(NOT_IS_DOWN, bool);
+	DECLARE_SOCKET_TYPE(PRESS, bool);
+	DECLARE_SOCKET_TYPE(RELEASE, bool);
 
     gkButtonNode(gkLogicTree *parent, size_t id);
 
@@ -59,19 +64,14 @@ public:
 
 	virtual bool isButtonDown() const = 0;
 
-    // inputs 
-    GK_INLINE gkLogicSocket* getUpdate()        {return &m_sockets[UPDATED];}
-
-    // outputs
-    GK_INLINE gkLogicSocket* getIsDown()        {return &m_sockets[IS_DOWN];}
-	GK_INLINE gkLogicSocket* getNotIsDown()		{return &m_sockets[NOT_IS_DOWN];}
-    GK_INLINE gkLogicSocket* getPress()         {return &m_sockets[PRESS];}
-    GK_INLINE gkLogicSocket* getRelease()       {return &m_sockets[RELEASE];}
+    GK_INLINE gkLogicSocket<bool>* getUpdate() {return GET_SOCKET(UPDATED);}
+    GK_INLINE gkLogicSocket<bool>* getIsDown() {return GET_SOCKET(IS_DOWN);}
+	GK_INLINE gkLogicSocket<bool>* getNotIsDown() {return GET_SOCKET(NOT_IS_DOWN);}
+    GK_INLINE gkLogicSocket<bool>* getPress() {return GET_SOCKET(PRESS);}
+    GK_INLINE gkLogicSocket<bool>* getRelease() {return GET_SOCKET(RELEASE);}
 
 private:
 
-	gkLogicSocket m_sockets[MAX_SOCKETS];
-	
 	int m_delay;
 	int m_counter;
 	

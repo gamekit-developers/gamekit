@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -29,12 +29,25 @@
 
 #include "gkLogicNode.h"
 
-
-
-
 class gkMotionNode : public gkLogicNode
 {
 public:
+
+	enum
+	{
+		UPDATE,
+		X,
+		Y,
+		Z,
+		DAMPING
+	};
+
+	DECLARE_SOCKET_TYPE(UPDATE, bool);
+	DECLARE_SOCKET_TYPE(X, gkScalar);
+	DECLARE_SOCKET_TYPE(Y, gkScalar);
+	DECLARE_SOCKET_TYPE(Z, gkScalar);
+	DECLARE_SOCKET_TYPE(DAMPING, gkScalar);
+
     gkMotionNode(gkLogicTree *parent, size_t id);
     virtual ~gkMotionNode() {}
     void initialize();
@@ -57,12 +70,11 @@ public:
     // todo, just pass object ptr
     void setOtherObject(const gkString &obname) {m_otherName = obname;}
 
-    // socket access
-    GK_INLINE gkLogicSocket* getUpdate(void)    {return &m_sockets[0];}
-    GK_INLINE gkLogicSocket* getX(void)         {return &m_sockets[1];}
-    GK_INLINE gkLogicSocket* getY(void)         {return &m_sockets[2];}
-    GK_INLINE gkLogicSocket* getZ(void)         {return &m_sockets[3];}
-    GK_INLINE gkLogicSocket* getDamping(void)   {return &m_sockets[4];}
+    GK_INLINE gkLogicSocket<bool>* getUpdate() {return GET_SOCKET(UPDATE);}
+    GK_INLINE gkLogicSocket<gkScalar>* getX() {return GET_SOCKET(X);}
+    GK_INLINE gkLogicSocket<gkScalar>* getY() {return GET_SOCKET(Y);}
+    GK_INLINE gkLogicSocket<gkScalar>* getZ() {return GET_SOCKET(Z);}
+    GK_INLINE gkLogicSocket<gkScalar>* getDamping() {return GET_SOCKET(DAMPING);}
 
 
 private:
@@ -70,7 +82,6 @@ private:
     void    applyConstraints(int lrs);
     void    applyObject(gkVector3 &vec);
 
-    gkLogicSocket   m_sockets[5];
     gkMotionTypes   m_motionType;
     int             m_space;
     bool            m_keep;

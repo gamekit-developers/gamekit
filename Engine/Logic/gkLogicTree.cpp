@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): silveira.nestor.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -120,10 +120,10 @@ public:
             gkLogicNode::SocketIterator sockit(sockets);
             while (sockit.hasMoreElements())
             {
-                gkLogicSocket *sock = sockit.getNext();
+                gkILogicSocket *sock = sockit.getNext();
                 if (sock->isLinked())
                 {
-                    gkLogicSocket *fsock = sock->getFrom();
+                    gkILogicSocket *fsock = sock->getFrom();
                     if (!fsock) continue;
 
                     gkLogicTree::NodeIterator iter = tree->getNodeIterator();

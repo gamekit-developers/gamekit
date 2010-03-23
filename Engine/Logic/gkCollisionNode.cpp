@@ -30,6 +30,7 @@
 #include "gkScene.h"
 #include "gkDynamicsWorld.h"
 #include "gkEngine.h"
+#include "gkGameObject.h"
 
 using namespace Ogre;
 
@@ -37,13 +38,13 @@ gkCollisionNode::gkCollisionNode(gkLogicTree *parent, size_t id)
 : gkLogicNode(parent, id),
 m_bBody(0)
 {
-	ADD_ISOCK(*getEnable(), this, gkLogicSocket::ST_BOOL);
-	ADD_ISOCK(*getTarget(), this, gkLogicSocket::ST_GAME_OBJECT);
-	ADD_ISOCK(*getCollidesWith(), this, gkLogicSocket::ST_STRING);
-	ADD_OSOCK(*getHasCollided(), this, gkLogicSocket::ST_BOOL);
-	ADD_OSOCK(*getCollided(), this, gkLogicSocket::ST_GAME_OBJECT);
-	ADD_OSOCK(*getContactPosition(), this, gkLogicSocket::ST_VECTOR);
-	
+	ADD_ISOCK(ENABLE, false);
+	ADD_ISOCK(TARGET, 0);
+	ADD_ISOCK(COLLIDES_WITH, "");
+	ADD_OSOCK(HAS_COLLIDED, false);
+	ADD_OSOCK(COLLIDED_OBJ, 0);
+	ADD_OSOCK(CONTACT_POSITION, gkVector3::ZERO);
+
 	gkScene* pScene = gkEngine::getSingleton().getActiveScene();
 
 	pScene->getDynamicsWorld()->EnableContacts(true);
@@ -55,7 +56,7 @@ gkCollisionNode::~gkCollisionNode()
 
 bool gkCollisionNode::evaluate(Real tick)
 {
-	gkGameObject* pObj = getTarget()->getValueGameObject();
+	gkGameObject* pObj = GET_SOCKET_VALUE(TARGET);
 
 	m_bBody = 0;
 
@@ -69,9 +70,9 @@ bool gkCollisionNode::evaluate(Real tick)
 
 void gkCollisionNode::update(Real tick)
 {
-	getHasCollided()->setValue(false);
+	SET_SOCKET_VALUE(HAS_COLLIDED, false);
 
-	if(getEnable()->getValueBool())
+	if(GET_SOCKET_VALUE(ENABLE))
 	{
 		m_bBody->setFlags(m_bBody->getFlags() | gkRigidBody::RBF_CONTACT_INFO);
 
@@ -81,11 +82,11 @@ void gkCollisionNode::update(Real tick)
 		{
 			const gkRigidBody::ContactInfo& c = contacts[i];
 
-			if(getCollidesWith()->getValueString().empty() || c.collider->getObject()->getName().find(getCollidesWith()->getValueString()) != -1)
+			if(GET_SOCKET_VALUE(COLLIDES_WITH).empty() || c.collider->getObject()->getName().find(GET_SOCKET_VALUE(COLLIDES_WITH)) != -1)
 			{
-				getContactPosition()->setValue(gkVector3(c.point.getPositionWorldOnA()));
-				getCollided()->setValue(c.collider->getObject());
-				getHasCollided()->setValue(true);
+				SET_SOCKET_VALUE(CONTACT_POSITION, gkVector3(c.point.getPositionWorldOnA()));
+				SET_SOCKET_VALUE(COLLIDED_OBJ, c.collider->getObject());
+				SET_SOCKET_VALUE(HAS_COLLIDED, true);
 				break;
 			}
 		}

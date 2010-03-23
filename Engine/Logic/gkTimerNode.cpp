@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): silveira.nestor.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -33,26 +33,22 @@ using namespace Ogre;
 gkTimerNode::gkTimerNode(gkLogicTree *parent, size_t id) 
 :       gkLogicNode(parent, id)
 {
-    ADD_ISOCK(m_sockets[0], this, gkLogicSocket::ST_BOOL);
-    ADD_ISOCK(m_sockets[1], this, gkLogicSocket::ST_REAL);
-    ADD_OSOCK(m_sockets[2], this, gkLogicSocket::ST_REAL);
-    m_sockets[0].setValue(true);
-    m_sockets[1].setValue(0.f);
-    m_sockets[2].setValue(0.f);
+    ADD_ISOCK(UPDATE, true);
+    ADD_ISOCK(VALUE, 0);
+    ADD_OSOCK(RESULT, 0);
 }
 
 
 bool gkTimerNode::evaluate(gkScalar tick)
 {
-    return m_sockets[0].getValueBool();
+    return GET_SOCKET_VALUE(UPDATE);
 }
 
 void gkTimerNode::update(gkScalar tick)
 {
-
-    gkScalar st = m_sockets[1].getValueReal();
+    gkScalar st = GET_SOCKET_VALUE(VALUE);
     st += tick;
 
-    m_sockets[1].setValue(st); // re apply to inital value
-    m_sockets[2].setValue(st);
+    SET_SOCKET_VALUE(VALUE, st); // re apply to inital value
+    SET_SOCKET_VALUE(RESULT, st);
 }

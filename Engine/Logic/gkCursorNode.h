@@ -40,26 +40,31 @@ public:
 		XPOS,
 		YPOS,
 		WIDTH,
-		HEIGHT,
-		MAX_SOCKETS
+		HEIGHT
 	};
+
+	DECLARE_SOCKET_TYPE(ENABLE, bool);
+	DECLARE_SOCKET_TYPE(UPDATED, bool);
+	DECLARE_SOCKET_TYPE(MATERIAL_NAME, gkString);
+	DECLARE_SOCKET_TYPE(XPOS, gkScalar);
+	DECLARE_SOCKET_TYPE(YPOS, gkScalar);
+	DECLARE_SOCKET_TYPE(WIDTH, gkScalar);
+	DECLARE_SOCKET_TYPE(HEIGHT, gkScalar);
 
 	gkCursorNode(gkLogicTree *parent, size_t id);
 
 	~gkCursorNode();
 
 	void update(Ogre::Real tick);
-
 	bool evaluate(Ogre::Real tick);
 
-	GK_INLINE gkLogicSocket* getEnable() {return &m_sockets[ENABLE];}
-	GK_INLINE gkLogicSocket* getUpdate() {return &m_sockets[UPDATED];}
-
-	GK_INLINE gkLogicSocket* getMaterialName() {return &m_sockets[MATERIAL_NAME];}
-    GK_INLINE gkLogicSocket* getX() {return &m_sockets[XPOS];}
-    GK_INLINE gkLogicSocket* getY() {return &m_sockets[YPOS];}
-    GK_INLINE gkLogicSocket* getWidth() {return &m_sockets[WIDTH];}
-	GK_INLINE gkLogicSocket* getHeight() {return &m_sockets[HEIGHT];}
+	GK_INLINE gkLogicSocket<bool>* getEnable() {return GET_SOCKET(ENABLE);}
+	GK_INLINE gkLogicSocket<bool>* getUpdate() {return GET_SOCKET(UPDATED);}
+	GK_INLINE gkLogicSocket<gkString>* getMaterialName() {return GET_SOCKET(MATERIAL_NAME);}
+    GK_INLINE gkLogicSocket<gkScalar>* getX() {return GET_SOCKET(XPOS);}
+    GK_INLINE gkLogicSocket<gkScalar>* getY() {return GET_SOCKET(YPOS);}
+    GK_INLINE gkLogicSocket<gkScalar>* getWidth() {return GET_SOCKET(WIDTH);}
+	GK_INLINE gkLogicSocket<gkScalar>* getHeight() {return GET_SOCKET(HEIGHT);}
 
 
 private:
@@ -69,8 +74,6 @@ private:
 	Ogre::OverlayContainer* m_panelContainer;
 
 	Ogre::OverlayElement* m_panelElement;
-
-	gkLogicSocket m_sockets[MAX_SOCKETS];
 };
 
 #endif//_gkCursorNode_h_

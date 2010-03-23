@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): silveira.nestor.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -30,8 +30,7 @@
 #include "gkLogicCommon.h"
 #include "gkLogicSocket.h"
 #include "gkString.h"
-
-
+#include "gkMathUtils.h"
 
 class gkGameObject;
 class gkLogicTree;
@@ -39,13 +38,14 @@ class gkLogicTree;
 class gkLogicNode
 {
 public:
-    typedef utList<gkLogicSocket*>  Sockets;
+    typedef utList<gkILogicSocket*>  Sockets;
     typedef utListIterator<Sockets> SocketIterator;
-
+	static const int N_MAX_SOCKETS = 20;
 
 public:
     gkLogicNode(gkLogicTree *parent, UTsize handle);
-    virtual ~gkLogicNode() {}
+    
+	virtual ~gkLogicNode();
 
     // do the update logic
     virtual void update(gkScalar tick) {}
@@ -56,8 +56,8 @@ public:
     // do first run initialization
     virtual void initialize(void) {}
 
-    gkLogicSocket*          getInputSocket(UTsize index);
-    gkLogicSocket*          getOutputSocket(UTsize index);
+    gkILogicSocket*          getInputSocket(UTsize index);
+    gkILogicSocket*          getOutputSocket(UTsize index);
 
     GK_INLINE void          attachObject(gkGameObject *ob)  {m_object = ob;}
     GK_INLINE gkGameObject* getAttachedObject(void)         {return m_other != 0 ? m_other : m_object; }
@@ -72,6 +72,58 @@ public:
     GK_INLINE Sockets& getInputs(void)  {return m_inputs;}
     GK_INLINE Sockets& getOutputs(void) {return m_outputs;}
 
+	template<typename T>
+	void addISock(gkILogicSocket* dest, T defaultValue)
+	{
+		dest = new gkLogicSocket<T>(this, true, defaultValue);
+
+		int idx = m_inputs.size() + m_outputs.size();
+
+		GK_ASSERT(idx < N_MAX_SOCKETS);
+
+		m_sockets[idx] = dest;
+
+		m_inputs.push_back(dest);
+	}
+
+	template<typename T>
+	void addOSock(gkILogicSocket* dest, T defaultValue)
+	{
+		dest = new gkLogicSocket<T>(this, false, defaultValue);
+
+		int idx = m_inputs.size() + m_outputs.size();
+
+		GK_ASSERT(idx < N_MAX_SOCKETS);
+
+		m_sockets[idx] = dest;
+
+		m_outputs.push_back(dest);
+	}
+
+	template<typename T>
+	gkLogicSocket<T>* getSocket(int idx) 
+	{ 
+		GK_ASSERT(idx < N_MAX_SOCKETS);
+		return static_cast<gkLogicSocket<T>*>(m_sockets[idx]); 
+	}
+
+	template<typename T>
+	T getSocketValue(int idx) 
+	{ 
+		GK_ASSERT(idx < N_MAX_SOCKETS);
+
+		return static_cast<gkLogicSocket<T>*>(m_sockets[idx])->getValue(); 
+	}
+
+	template<typename T>
+	void setSocketValue(int idx, T data) 
+	{ 
+		GK_ASSERT(idx < N_MAX_SOCKETS);
+
+		static_cast<gkLogicSocket<T>*>(m_sockets[idx])->setValue(data); 
+	}
+
+
 protected:
     const UTsize    m_handle;
     gkGameObject*   m_object, *m_other;
@@ -80,6 +132,8 @@ protected:
     Sockets         m_inputs;
     Sockets         m_outputs;
     int             m_priority;
+
+    gkILogicSocket* m_sockets[N_MAX_SOCKETS];
 };
 
 #endif//_gkLogicNode_h_

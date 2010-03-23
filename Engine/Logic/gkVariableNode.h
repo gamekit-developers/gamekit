@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -35,6 +35,18 @@ class gkVariable;
 class gkVariableNode : public gkLogicNode
 {
 public:
+
+	enum
+	{
+		SET,
+		VALUE,
+		RESULT
+	};
+
+	DECLARE_SOCKET_TYPE(SET, bool);
+	DECLARE_SOCKET_TYPE(VALUE, gkVariable);
+	DECLARE_SOCKET_TYPE(RESULT, gkVariable);
+
     gkVariableNode(gkLogicTree *parent, size_t id);
     virtual ~gkVariableNode() {}
 
@@ -44,15 +56,7 @@ public:
     GK_INLINE void setName(const gkString &varname) {m_varName = varname;}
     GK_INLINE void setDebug(void)                   {m_debug = true;}
 
-    // inputs
-    GK_INLINE gkLogicSocket* getSet(void)       {return &m_sockets[0];}
-    GK_INLINE gkLogicSocket* getValue(void)     {return &m_sockets[1];}
-
-    // outputs
-    GK_INLINE gkLogicSocket* getResult(void)    {return &m_sockets[2];}
-
 private:
-    gkLogicSocket   m_sockets[3];
     gkString        m_varName;
     gkVariable*     m_prop;
     bool            m_debug;
@@ -62,6 +66,18 @@ private:
 class VariableOpNode : public gkLogicNode
 {
 public:
+
+	enum
+	{
+		SET,
+		VALUE,
+		RESULT
+	};
+
+	DECLARE_SOCKET_TYPE(SET, bool);
+	DECLARE_SOCKET_TYPE(VALUE, gkVariable);
+	DECLARE_SOCKET_TYPE(RESULT, gkVariable);
+
     VariableOpNode(gkLogicTree *parent, size_t id);
     virtual ~VariableOpNode() {}
 
@@ -72,23 +88,11 @@ public:
     GK_INLINE void setName(const gkString &varname)   {m_varName = varname;}
     GK_INLINE void setToDegree(bool v)                {m_deg = v;}
 
-
-    // inputs
-    GK_INLINE gkLogicSocket* getSet(void)       {return &m_sockets[0];}
-    GK_INLINE gkLogicSocket* getValue(void)     {return &m_sockets[1];}
-
-    // outputs
-    GK_INLINE gkLogicSocket* getResult(void)    {return &m_sockets[2];}
-
 private:
-    gkLogicSocket   m_sockets[3];
     int             m_function;
     gkString        m_varName;
     bool            m_deg;
     gkVariable*     m_prop;
 };
-
-
-
 
 #endif//_gkVariableNode_h_

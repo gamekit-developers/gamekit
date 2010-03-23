@@ -30,45 +30,39 @@
 #include "gkEngine.h"
 #include "gkScene.h"
 #include "gkDynamicsWorld.h"
+#include "gkGameObject.h"
 #include "gkUtils.h"
 #include "OgreRoot.h"
 #include "btBulletDynamicsCommon.h"
-
-using namespace Ogre;
 
 gkGrabNode::gkGrabNode(gkLogicTree *parent, size_t id)
 : gkPickNode(parent, id),
 m_target(0)
 {
-	ADD_ISOCK(*getThrowObject(), this, gkLogicSocket::ST_BOOL);
-	ADD_ISOCK(*getTarget(), this, gkLogicSocket::ST_GAME_OBJECT);
-	ADD_ISOCK(*getGrabDirection(), this, gkLogicSocket::ST_VECTOR);
-	ADD_ISOCK(*getThrowVelocity(), this, gkLogicSocket::ST_VECTOR);
-	ADD_ISOCK(*getOffsetPosition(), this, gkLogicSocket::ST_VECTOR);
-
-	ADD_OSOCK(*getThrowed(), this, gkLogicSocket::ST_BOOL);
-
-
-	getThrowVelocity()->setValue(gkVector3::ZERO);
-	getOffsetPosition()->setValue(gkVector3::ZERO);
+	ADD_ISOCK(THROW_OBJECT, false);
+	ADD_ISOCK(TARGET, 0);
+	ADD_ISOCK(GRAB_DIRECTION, gkVector3::ZERO);
+	ADD_ISOCK(THROW_VEL, gkVector3::ZERO);
+	ADD_ISOCK(RELATED_OFFSET_POSITION, gkVector3::ZERO);
+	ADD_OSOCK(THROWED, false);
 }
 
 gkGrabNode::~gkGrabNode()
 {
 }
 
-bool gkGrabNode::evaluate(Real tick)
+bool gkGrabNode::evaluate(gkScalar tick)
 {
-	m_target = getTarget()->getValueGameObject();
+	m_target = GET_SOCKET_VALUE(TARGET);
 
 	if(m_target && !m_target->isLoaded())
 	{
 		ReleasePick();
 	}
 
-	if(getThrowed()->getValueBool())
+	if(GET_SOCKET_VALUE(THROWED))
 	{
-		getThrowed()->setValue(false);
+		SET_SOCKET_VALUE(THROWED, false);
 	}
 
 	bool enable = gkPickNode::evaluate(tick);
@@ -76,11 +70,11 @@ bool gkGrabNode::evaluate(Real tick)
 	return enable && m_target && m_target->isLoaded();
 }
 
-void gkGrabNode::update(Real tick)
+void gkGrabNode::update(gkScalar tick)
 {
 	gkPickNode::update(tick);
 
-	if(getThrowObject()->getValueBool())
+	if(GET_SOCKET_VALUE(THROW_OBJECT))
 	{
 		ReleasePick();
 		ThrowObject();
@@ -89,19 +83,19 @@ void gkGrabNode::update(Real tick)
 
 void gkGrabNode::ThrowObject()
 {
-	gkVector3 vel = getThrowVelocity()->getValueVector3();
+	gkVector3 vel = GET_SOCKET_VALUE(THROW_VEL);
 
 	if(m_pickedBody && vel != gkVector3::ZERO)
 	{
 		m_pickedBody->setLinearVelocity(m_target->getOrientation() * vel);
 
-		getThrowed()->setValue(true);
+		SET_SOCKET_VALUE(THROWED, true);
 	}
 }
 
 Ogre::Ray gkGrabNode::GetRay() 
 {
-	Vector3 dir = m_target->getOrientation() * getGrabDirection()->getValueVector3();
+	gkVector3 dir = m_target->getOrientation() * GET_SOCKET_VALUE(GRAB_DIRECTION);
 
 	Ogre::Ray ray(m_target->getPosition(), dir);
 
@@ -112,7 +106,7 @@ gkVector3 gkGrabNode::GetPivotPosition()
 {
 	gkVector3 newPivotB = gkPickNode::GetPivotPosition();
 
-	Vector3 offsetPos = m_target->getOrientation() * getOffsetPosition()->getValueVector3();
+	gkVector3 offsetPos = m_target->getOrientation() * GET_SOCKET_VALUE(RELATED_OFFSET_POSITION);
 
 	newPivotB += offsetPos;
 

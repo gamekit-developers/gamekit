@@ -29,9 +29,11 @@
 
 #include "gkLogicNode.h"
 
+class gkRigidBody;
 class gkCollisionNode : public gkLogicNode
 {
 public:
+
 	enum 
 	{
 		ENABLE,
@@ -39,28 +41,31 @@ public:
 		COLLIDES_WITH,
 		HAS_COLLIDED,
 		COLLIDED_OBJ,
-		CONTACT_POSITION,
-		MAX_SOCKETS
+		CONTACT_POSITION
 	};
+
+	DECLARE_SOCKET_TYPE(ENABLE, bool);
+	DECLARE_SOCKET_TYPE(TARGET, gkGameObject*);
+	DECLARE_SOCKET_TYPE(COLLIDES_WITH, gkString);
+	DECLARE_SOCKET_TYPE(HAS_COLLIDED, bool);
+	DECLARE_SOCKET_TYPE(COLLIDED_OBJ, gkGameObject*);
+	DECLARE_SOCKET_TYPE(CONTACT_POSITION, gkVector3);
 
 	gkCollisionNode(gkLogicTree *parent, size_t id);
 
 	~gkCollisionNode();
 
 	void update(Ogre::Real tick);
-
 	bool evaluate(Ogre::Real tick);
 
-	GK_INLINE gkLogicSocket* getEnable() {return &m_sockets[ENABLE];}
-	GK_INLINE gkLogicSocket* getTarget() {return &m_sockets[TARGET];}
-	GK_INLINE gkLogicSocket* getCollidesWith() {return &m_sockets[COLLIDES_WITH];}
-	GK_INLINE gkLogicSocket* getHasCollided() {return &m_sockets[HAS_COLLIDED];}
-	GK_INLINE gkLogicSocket* getCollided() {return &m_sockets[COLLIDED_OBJ];}
-	GK_INLINE gkLogicSocket* getContactPosition() {return &m_sockets[CONTACT_POSITION];}
+	GK_INLINE gkLogicSocket<bool>* getEnable() {return GET_SOCKET(ENABLE);}
+	GK_INLINE gkLogicSocket<gkGameObject*>* getTarget() {return GET_SOCKET(TARGET);}
+	GK_INLINE gkLogicSocket<gkString>* getCollidesWith() {return GET_SOCKET(COLLIDES_WITH);}
+	GK_INLINE gkLogicSocket<bool>* getHasCollided() {return GET_SOCKET(HAS_COLLIDED);}
+	GK_INLINE gkLogicSocket<gkGameObject*>* getCollided() {return GET_SOCKET(COLLIDED_OBJ);}
+	GK_INLINE gkLogicSocket<gkVector3>* getContactPosition() {return GET_SOCKET(CONTACT_POSITION);}
 
 private:
-
-	gkLogicSocket m_sockets[MAX_SOCKETS];
 
 	gkRigidBody* m_bBody;
 };

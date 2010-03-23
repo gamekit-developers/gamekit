@@ -31,9 +31,9 @@ gkStateMachineNode::gkStateMachineNode(gkLogicTree *parent, size_t id)
 : gkLogicNode(parent, id),
 m_currentState(-1)
 {
-	ADD_ISOCK(*getUpdate(), this, gkLogicSocket::ST_BOOL);
-	ADD_OSOCK(*getCurrentState(), this, gkLogicSocket::ST_INT);
-	ADD_OSOCK(*getCurrentName(), this, gkLogicSocket::ST_STRING);
+	ADD_ISOCK(UPDATE, false);
+	ADD_OSOCK(CURRENT_STATE, 0);
+	ADD_OSOCK(CURRENT_NAME, "");
 }
 
 gkStateMachineNode::~gkStateMachineNode()
@@ -42,7 +42,7 @@ gkStateMachineNode::~gkStateMachineNode()
 
 	for(size_t i=0; i<n; i++)
 	{
-		gkLogicSocket* pSocket = m_events[i];
+		gkILogicSocket* pSocket = m_events[i];
 
 		delete pSocket;
 	}
@@ -50,16 +50,16 @@ gkStateMachineNode::~gkStateMachineNode()
 
 bool gkStateMachineNode::evaluate(gkScalar tick)
 {
-	return getUpdate()->getValueBool();
+	return GET_SOCKET_VALUE(UPDATE);
 }
 
 void gkStateMachineNode::update(gkScalar tick)
 {
-	if(m_currentState != getCurrentState()->getValueInt())
+	if(m_currentState != GET_SOCKET_VALUE(CURRENT_STATE))
 	{
 		m_timer.reset();
 		
-		m_currentState = getCurrentState()->getValueInt();
+		m_currentState = GET_SOCKET_VALUE(CURRENT_STATE);
 	}
 
 	size_t pos = m_transitions.find(m_currentState);
@@ -74,9 +74,9 @@ void gkStateMachineNode::update(gkScalar tick)
 		{
 			const void* p = it.peekNextKey().key();
 
-			const gkLogicSocket* pSocket = static_cast<const gkLogicSocket*>(p);
+			const gkILogicSocket* pSocket = static_cast<const gkILogicSocket*>(p);
 
-			if(!pSocket->isConnected() || pSocket->getValueBool())
+			if(!pSocket->isConnected() || static_cast<const gkLogicSocket<bool>*>(pSocket)->getValue())
 			{
 				const Data* pTmpData  = &(it.peekNextValue());
 
@@ -102,7 +102,7 @@ void gkStateMachineNode::update(gkScalar tick)
 		{
 			m_currentState = pData->m_state;
 
-			getCurrentState()->setValue(m_currentState);
+			SET_SOCKET_VALUE(CURRENT_STATE, m_currentState);
 
 			size_t pos = m_translation.find(m_currentState);
 
@@ -110,7 +110,7 @@ void gkStateMachineNode::update(gkScalar tick)
 
 			gkString name = m_translation.at(pos);
 
-			getCurrentName()->setValue(name);
+			SET_SOCKET_VALUE(CURRENT_NAME, name);
 
 			gkLogMessage(name);
 
@@ -119,11 +119,9 @@ void gkStateMachineNode::update(gkScalar tick)
 	}
 }
 
-gkLogicSocket* gkStateMachineNode::addTransition(int from, int to, unsigned long ms)
+gkLogicSocket<bool>* gkStateMachineNode::addTransition(int from, int to, unsigned long ms)
 {
-	gkLogicSocket* pSocket = new gkLogicSocket();
-
-	ADD_ISOCK(*pSocket, this, gkLogicSocket::ST_BOOL);
+	gkLogicSocket<bool>* pSocket = new gkLogicSocket<bool>(this, true, false);
 
 	Data data(ms, to);
 

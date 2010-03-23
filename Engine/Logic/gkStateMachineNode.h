@@ -38,9 +38,12 @@ public:
 	{
 		UPDATE,
 		CURRENT_STATE,
-		CURRENT_NAME,
-		MAX_SOCKETS
+		CURRENT_NAME
 	};
+
+	DECLARE_SOCKET_TYPE(UPDATE, bool);
+	DECLARE_SOCKET_TYPE(CURRENT_STATE, int);
+	DECLARE_SOCKET_TYPE(CURRENT_NAME, gkString);
 
     gkStateMachineNode(gkLogicTree *parent, size_t id);
 
@@ -49,17 +52,15 @@ public:
 	bool evaluate(gkScalar tick);
 	void update(gkScalar tick);
 
-    GK_INLINE gkLogicSocket* getUpdate() {return &m_sockets[UPDATE];}
-	GK_INLINE gkLogicSocket* getCurrentState() {return &m_sockets[CURRENT_STATE];}
-	GK_INLINE gkLogicSocket* getCurrentName() {return &m_sockets[CURRENT_NAME];}
-
-	gkLogicSocket* addTransition(int from, int to, unsigned long ms = 0);
+	gkLogicSocket<bool>* addTransition(int from, int to, unsigned long ms = 0);
 
 	void addTranslation(int state, const gkString& name);
 
-private:
+    GK_INLINE gkLogicSocket<bool>* getUpdate() {return GET_SOCKET(UPDATE);}
+	GK_INLINE gkLogicSocket<int>* getCurrentState() {return GET_SOCKET(CURRENT_STATE);}
+	GK_INLINE gkLogicSocket<gkString>* getCurrentName() {return GET_SOCKET(CURRENT_NAME);}
 
-	gkLogicSocket m_sockets[MAX_SOCKETS];
+private:
 
 	typedef utPointerHashKey EVENT;
 	typedef utIntHashKey STATE;
@@ -92,7 +93,7 @@ private:
 
 	int m_currentState;
 
-	typedef utArray<gkLogicSocket*> EVENTS;
+	typedef utArray<gkILogicSocket*> EVENTS;
 
 	EVENTS m_events;
 };

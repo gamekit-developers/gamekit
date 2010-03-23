@@ -62,17 +62,17 @@ class luSocket : public luClass
 {
     luClassHeader;
 protected:
-    gkLogicSocket *m_socket;
+    gkILogicSocket *m_socket;
 
 public:
 
-    luSocket(gkLogicSocket *sock) 
+    luSocket(gkILogicSocket *sock) 
         :   m_socket(sock) 
     {
     }
     virtual ~luSocket() {}
 
-    static int          create(luObject &L, gkLogicSocket *sock)
+    static int          create(luObject &L, gkILogicSocket *sock)
     {
         GK_ASSERT(sock);
         new (&Type, L) luSocket(sock);
@@ -87,29 +87,29 @@ public:
     // nil Socket:setValue(Any)
     int setValue(luClass *self, luObject& L)
     {
-        if (m_socket->getType() == gkLogicSocket::ST_GAME_OBJECT)
+        if (m_socket->getType() == gkILogicSocket::ST_GAME_OBJECT)
         {
             gkScene *sc = gkEngine::getSingleton().getActiveScene();
             if (L.isString(2))
-                m_socket->setValue(sc->getObject(L.tostring(2)));
+                getSocket<gkGameObject*>(m_socket)->setValue(sc->getObject(L.tostring(2)));
             if (luGameObject::isType(L, 2))
-                m_socket->setValue(&luGameObject::getArg(L, 2).ref<gkGameObject>());
+                getSocket<gkGameObject*>(m_socket)->setValue(&luGameObject::getArg(L, 2).ref<gkGameObject>());
        }
-        else if (m_socket->getType() != gkLogicSocket::ST_STRING &&
-                 m_socket->getType() != gkLogicSocket::ST_VARIABLE)
+        else if (m_socket->getType() != gkILogicSocket::ST_STRING &&
+                 m_socket->getType() != gkILogicSocket::ST_VARIABLE)
         {
             if (L.isNumber(2))
-                m_socket->setValue((gkScalar)L.tonumber(2));
+                getSocket<gkScalar>(m_socket)->setValue((gkScalar)L.tonumber(2));
             else if (L.isString(2))
-                m_socket->setValue(L.tostring(2));
+                getSocket<gkString>(m_socket)->setValue(L.tostring(2));
             else if(L.isBoolean(2))
-                m_socket->setValue(L.toboolean(2));
+                getSocket<bool>(m_socket)->setValue(L.toboolean(2));
             else if (luVector3::isType(L, 2))
-                m_socket->setValue(luVector3::getArg(L, 2));
+                getSocket<gkVector3>(m_socket)->setValue(luVector3::getArg(L, 2));
             else if (luQuat::isType(L, 2))
-                m_socket->setValue(luQuat::getArg(L, 2));
+                getSocket<gkQuaternion>(m_socket)->setValue(luQuat::getArg(L, 2));
             else if (luGameObject::isType(L, 2))
-                m_socket->setValue(&luGameObject::getArg(L, 2).ref<gkGameObject>());
+                getSocket<gkGameObject*>(m_socket)->setValue(&luGameObject::getArg(L, 2).ref<gkGameObject>());
             // TODO other math types
         }
         else
@@ -127,9 +127,10 @@ public:
                 var.setValue(luQuat::getArg(L, 2));
             else if (luGameObject::isType(L, 2))
                 var.setValue(luGameObject::getArg(L, 2).ref<gkGameObject>().getName());
-            m_socket->setValue(var.getValueString());
+            getSocket<gkString>(m_socket)->setValue(var.getValueString());
         }
-        return 0;
+
+		return 0;
     }
     // nil Socket:link(Socket)
     int link(luClass *self, luObject& L)
@@ -187,7 +188,7 @@ public:
 // Socket Node:getInput(Number)
 int luNode::getInput(luClass *self, luObject &L)
 {
-    gkLogicSocket *sock = m_node->getInputSocket(L.toint(2));
+    gkILogicSocket *sock = m_node->getInputSocket(L.toint(2));
     if (!sock)
         return L.pushError("Socket index out of range!");
 
@@ -197,7 +198,7 @@ int luNode::getInput(luClass *self, luObject &L)
 // Socket Node:getOutput(Number)
 int luNode::getOutput(luClass *self, luObject &L)
 {
-    gkLogicSocket *sock = m_node->getOutputSocket(L.toint(2));
+    gkILogicSocket *sock = m_node->getOutputSocket(L.toint(2));
     if (!sock)
         return L.pushError("Socket index out of range!");
 
@@ -425,28 +426,28 @@ public:
     // Socket IfNode:getA()
     int getA(luClass *self, luObject &L)
     {
-        return luSocket::create(L, getRef<gkIfNode>().getA());
+        return luSocket::create(L, getRef<gkIfNode<gkScalar> >().getA());
     }
     // Socket IfNode:getB()
     int getB(luClass *self, luObject &L)
     {
-        return luSocket::create(L, getRef<gkIfNode>().getB());
+        return luSocket::create(L, getRef<gkIfNode<gkScalar> >().getB());
     }
     // Socket IfNode:getTrue()
     int getTrue(luClass *self, luObject &L)
     {
-        return luSocket::create(L, getRef<gkIfNode>().getTrue());
+        return luSocket::create(L, getRef<gkIfNode<gkScalar> >().getTrue());
     }
     // Socket IfNode:getFalse()
     int getFalse(luClass *self, luObject &L)
     {
-        return luSocket::create(L, getRef<gkIfNode>().getFalse());
+        return luSocket::create(L, getRef<gkIfNode<gkScalar> >().getFalse());
     }
 
     // nil IfNode:setStatement()
     int setStatement(luClass *self, luObject &L)
     {
-        gkIfNode& node = getRef<gkIfNode>();
+        gkIfNode<gkScalar>& node = getRef<gkIfNode<gkScalar> >();
         int val = L.toint(2);
         if (val >= CMP_TRUE && val <= CMP_LTHAN)
             node.setStatement((gkBoolStatement)val);
@@ -731,7 +732,7 @@ int luTree::createNode(luClass *self, luObject &L)
     luNodeCase(type, NT_ANIMATION,      luAnimationNode,    gkAnimationNode);
     luNodeCase(type, NT_EXIT,           luExitNode,         gkExitNode);
     luNodeCase(type, NT_KEY,            luKeyNode,          gkKeyNode);
-    luNodeCase(type, NT_IF,             luIfNode,           gkIfNode);
+    luNodeCase(type, NT_IF,             luIfNode,			gkIfNode<gkScalar>);
     luNodeCase(type, NT_PRINT,          luPrintNode,        gkPrintNode);
     luNodeCase(type, NT_MOUSE_MOTION,   luMouseMotionNode,  gkMouseNode);
     luNodeCase(type, NT_MOUSE_BUTTON,   luMouseButtonNode,  gkMouseButtonNode);

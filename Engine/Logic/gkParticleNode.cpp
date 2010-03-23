@@ -25,12 +25,12 @@
 -------------------------------------------------------------------------------
 */
 
-#include "gkParticleNode.h"
-#include "gkScene.h"
-#include "gkEngine.h"
 #include "OgreRoot.h"
 #include "OgreParticleSystem.h"
 #include "OgreParticleEmitter.h"
+#include "gkParticleNode.h"
+#include "gkScene.h"
+#include "gkEngine.h"
 #include "LinearMath/btMinMax.h"
 
 using namespace Ogre;
@@ -38,12 +38,10 @@ using namespace Ogre;
 gkParticleNode::gkParticleNode(gkLogicTree *parent, size_t id)
 : gkLogicNode(parent, id)
 {
-	ADD_ISOCK(*getCreate(), this, gkLogicSocket::ST_BOOL);
-	ADD_ISOCK(*getPosition(), this, gkLogicSocket::ST_VECTOR);
-	ADD_ISOCK(*getOrientation(), this, gkLogicSocket::ST_QUAT);
-	ADD_ISOCK(*getParticleSystemName(), this, gkLogicSocket::ST_STRING);
-
-	getOrientation()->setValue(gkQuaternion::IDENTITY);
+	ADD_ISOCK(CREATE, false);
+	ADD_ISOCK(POSITION, gkVector3::ZERO);
+	ADD_ISOCK(ORIENTATION, gkQuaternion::IDENTITY);
+	ADD_ISOCK(PARTICLE_SYSTEM_NAME, "");
 }
 
 gkParticleNode::~gkParticleNode()
@@ -60,17 +58,17 @@ gkParticleNode::~gkParticleNode()
 
 bool gkParticleNode::evaluate(Real tick)
 {
-	return m_particles.size() || (getCreate()->getValueBool() && !getParticleSystemName()->getValueString().empty());
+	return m_particles.size() || (GET_SOCKET_VALUE(CREATE) && !GET_SOCKET_VALUE(PARTICLE_SYSTEM_NAME).empty());
 }
 
 void gkParticleNode::update(Real tick)
 {
-	if(getCreate()->getValueBool())
+	if(GET_SOCKET_VALUE(CREATE))
 	{
 		m_particles.push_back(
-			new ParticleSystem(getParticleSystemName()->getValueString(), 
-				getPosition()->getValueVector3(),
-				getOrientation()->getValueQuaternion()));
+			new ParticleSystem(GET_SOCKET_VALUE(PARTICLE_SYSTEM_NAME), 
+				GET_SOCKET_VALUE(POSITION),
+				GET_SOCKET_VALUE(ORIENTATION)));
 	}
 	else
 	{

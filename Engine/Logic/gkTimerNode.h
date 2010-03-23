@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -29,30 +29,26 @@
 
 #include "gkLogicNode.h"
 
-
 class gkTimerNode : public gkLogicNode
 {
 public:
+
+	enum
+	{
+		UPDATE,
+		VALUE,
+		RESULT
+	};
+
+	DECLARE_SOCKET_TYPE(UPDATE, bool);
+	DECLARE_SOCKET_TYPE(VALUE, gkScalar);
+	DECLARE_SOCKET_TYPE(RESULT, gkScalar);
+
     gkTimerNode(gkLogicTree *parent, size_t id);
     virtual ~gkTimerNode() {}
 
     void update(gkScalar tick);
     bool evaluate(gkScalar tick);
-
-    // inputs 
-    GK_INLINE gkLogicSocket* getUpdate(void)    {return &m_sockets[0];}
-    GK_INLINE gkLogicSocket* getValue(void)     {return &m_sockets[1];}
-
-
-    // outputs
-    GK_INLINE gkLogicSocket* getResult(void)     {return &m_sockets[2];}
-
-
-private:
-    gkLogicSocket m_sockets[3];
 };
-
-
-
 
 #endif//_gkTimerNode_h_

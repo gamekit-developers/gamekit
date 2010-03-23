@@ -37,16 +37,16 @@ m_overlay(0),
 m_panelContainer(0),
 m_panelElement(0)
 {
-	ADD_ISOCK(*getEnable(), this, gkLogicSocket::ST_BOOL);
-	ADD_ISOCK(*getUpdate(), this, gkLogicSocket::ST_BOOL);
+	const gkScalar width = 32;
+	const gkScalar height = 32;
 
-	ADD_ISOCK(*getMaterialName(), this, gkLogicSocket::ST_STRING);
-
-	ADD_ISOCK(*getX(), this, gkLogicSocket::ST_REAL);
-	ADD_ISOCK(*getY(), this, gkLogicSocket::ST_REAL);
-
-	ADD_ISOCK(*getWidth(), this, gkLogicSocket::ST_REAL);
-	ADD_ISOCK(*getHeight(), this, gkLogicSocket::ST_REAL);
+	ADD_ISOCK(ENABLE, false);
+	ADD_ISOCK(UPDATED, false);
+	ADD_ISOCK(MATERIAL_NAME, "");
+	ADD_ISOCK(XPOS, 0);
+	ADD_ISOCK(YPOS, 0);
+	ADD_ISOCK(WIDTH, width);
+	ADD_ISOCK(HEIGHT, height);
 
 	static int idx = 0;
 
@@ -69,12 +69,6 @@ m_panelElement(0)
 
 	m_panelElement = pPanelElement;
 
-	const gkScalar width = 32;
-	getWidth()->setValue(width);
-	
-	const gkScalar height = 32;
-	getHeight()->setValue(height);
-	
 	m_panelElement->setWidth(width);
 	m_panelElement->setHeight(height);
 
@@ -94,13 +88,13 @@ gkCursorNode::~gkCursorNode()
 
 bool gkCursorNode::evaluate(Real tick)
 {
-	bool enable = getEnable()->getValueBool();
+	bool enable = GET_SOCKET_VALUE(ENABLE);
 
 	if(enable && !m_overlay->isVisible())
 	{
 		m_overlay->show();
 
-		if(!getUpdate()->getValueBool())
+		if(!GET_SOCKET_VALUE(UPDATED))
 		{
 			update(0);
 		}
@@ -111,31 +105,31 @@ bool gkCursorNode::evaluate(Real tick)
 		m_overlay->hide();
 	}
 
-	return enable && getUpdate()->getValueBool();
+	return enable && GET_SOCKET_VALUE(UPDATED);
 }
 
 void gkCursorNode::update(Real tick)
 {
-	if(m_panelElement->getMaterialName() != getMaterialName()->getValueString())
+	if(m_panelElement->getMaterialName() != GET_SOCKET_VALUE(MATERIAL_NAME))
 	{
-		m_panelElement->setMaterialName(getMaterialName()->getValueString());
+		m_panelElement->setMaterialName(GET_SOCKET_VALUE(MATERIAL_NAME));
 	}
 
-	gkScalar width = getWidth()->getValueReal();
+	gkScalar width = GET_SOCKET_VALUE(WIDTH);
 	
 	if(m_panelElement->getWidth() != width)
 	{
 		m_panelElement->setWidth(width);
 	}
 
-	gkScalar height = getHeight()->getValueReal();
+	gkScalar height = GET_SOCKET_VALUE(HEIGHT);
 	
 	if(m_panelElement->getHeight() != height)
 	{
 		m_panelElement->setHeight(height);
 	}
 
-	m_panelContainer->setPosition(getX()->getValueReal(), getY()->getValueReal());
+	m_panelContainer->setPosition(GET_SOCKET_VALUE(XPOS), GET_SOCKET_VALUE(YPOS));
 }
 
 

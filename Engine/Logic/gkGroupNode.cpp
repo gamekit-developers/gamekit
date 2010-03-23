@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): silveira.nestor.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -27,21 +27,16 @@
 #include "gkGroupNode.h"
 #include "gkLogicTree.h"
 
-using namespace Ogre;
-
-
-
-gkGroupNode::gkGroupNode(gkLogicTree *parent, size_t id)
-:       gkLogicNode(parent, id)
+gkGroupNode::gkGroupNode(gkLogicTree *parent, size_t id) 
+: gkLogicNode(parent, id)
 {
-    ADD_ISOCK(m_sockets[0], this, gkLogicSocket::ST_BOOL);
-    ADD_OSOCK(m_sockets[1], this, gkLogicSocket::ST_BOOL);
+    ADD_ISOCK(EXECUTE, false);
+    ADD_OSOCK(RETURN, false);
 }
-
 
 bool gkGroupNode::evaluate(gkScalar tick)
 {
-    return m_sockets[0].getValueBool() && !m_groupList.empty();
+	return GET_SOCKET_VALUE(EXECUTE) && !m_groupList.empty();
 }
 
 void gkGroupNode::update(gkScalar tick)
@@ -56,5 +51,5 @@ void gkGroupNode::update(gkScalar tick)
         ltree->execute(tick);
     }
     // TODO push a return from exec
-    m_sockets[1].setValue(true);
+    SET_SOCKET_VALUE(RETURN, true);
 }

@@ -53,9 +53,25 @@ public:
 		CURRENT_ROLL,
 		CURRENT_PITCH,
 		MIN_Z,
-		MAX_Z,
-		MAX_SOCKETS
+		MAX_Z
 	};
+
+	DECLARE_SOCKET_TYPE(UPDATE, bool);
+	DECLARE_SOCKET_TYPE(CENTER_OBJ, gkGameObject*);
+	DECLARE_SOCKET_TYPE(CENTER_POSITION, gkVector3);
+	DECLARE_SOCKET_TYPE(RELX, gkScalar);
+	DECLARE_SOCKET_TYPE(RELY, gkScalar);
+	DECLARE_SOCKET_TYPE(RELZ, gkScalar);
+	DECLARE_SOCKET_TYPE(TARGET, gkGameObject*);
+	DECLARE_SOCKET_TYPE(MIN_PITCH, gkScalar);
+	DECLARE_SOCKET_TYPE(MAX_PITCH, gkScalar);
+	DECLARE_SOCKET_TYPE(MIN_ROLL, gkScalar);
+	DECLARE_SOCKET_TYPE(MAX_ROLL, gkScalar);
+	DECLARE_SOCKET_TYPE(KEEP_DISTANCE, bool);
+	DECLARE_SOCKET_TYPE(CURRENT_ROLL, gkQuaternion);
+	DECLARE_SOCKET_TYPE(CURRENT_PITCH, gkQuaternion);
+	DECLARE_SOCKET_TYPE(MIN_Z, gkScalar);
+	DECLARE_SOCKET_TYPE(MAX_Z, gkScalar);
 
 	gkArcBallNode(gkLogicTree *parent, size_t id);
 
@@ -64,34 +80,32 @@ public:
 	bool evaluate(gkScalar tick);
 	void update(gkScalar tick);
 
-	GK_INLINE gkLogicSocket* getUpdate() {return &m_sockets[UPDATE];}
+	GK_INLINE gkLogicSocket<bool>* getUpdate() {return GET_SOCKET(UPDATE);}
 
-    GK_INLINE gkLogicSocket* getCenterObj() {return &m_sockets[CENTER_OBJ];}
-	GK_INLINE gkLogicSocket* getCenterPosition() {return &m_sockets[CENTER_POSITION];}
+    GK_INLINE gkLogicSocket<gkGameObject*>* getCenterObj() {return GET_SOCKET(CENTER_OBJ);}
+	GK_INLINE gkLogicSocket<gkVector3>* getCenterPosition() {return GET_SOCKET(CENTER_POSITION);}
 
-    GK_INLINE gkLogicSocket* getRelX() {return &m_sockets[RELX];}
-    GK_INLINE gkLogicSocket* getRelY() {return &m_sockets[RELY];}
-    GK_INLINE gkLogicSocket* getRelZ() {return &m_sockets[RELZ];}
+    GK_INLINE gkLogicSocket<gkScalar>* getRelX() {return GET_SOCKET(RELX);}
+    GK_INLINE gkLogicSocket<gkScalar>* getRelY() {return GET_SOCKET(RELY);}
+    GK_INLINE gkLogicSocket<gkScalar>* getRelZ() {return GET_SOCKET(RELZ);}
 
-	GK_INLINE gkLogicSocket* getMinPitch() {return &m_sockets[MIN_PITCH];}
-	GK_INLINE gkLogicSocket* getMaxPitch() {return &m_sockets[MAX_PITCH];}
+	GK_INLINE gkLogicSocket<gkScalar>* getMinPitch() {return GET_SOCKET(MIN_PITCH);}
+	GK_INLINE gkLogicSocket<gkScalar>* getMaxPitch() {return GET_SOCKET(MAX_PITCH);}
 
-	GK_INLINE gkLogicSocket* getMinRoll() {return &m_sockets[MIN_ROLL];}
-	GK_INLINE gkLogicSocket* getMaxRoll() {return &m_sockets[MAX_ROLL];}
+	GK_INLINE gkLogicSocket<gkScalar>* getMinRoll() {return GET_SOCKET(MIN_ROLL);}
+	GK_INLINE gkLogicSocket<gkScalar>* getMaxRoll() {return GET_SOCKET(MAX_ROLL);}
 
-	GK_INLINE gkLogicSocket* getKeepDistance() {return &m_sockets[KEEP_DISTANCE];}
+	GK_INLINE gkLogicSocket<bool>* getKeepDistance() {return GET_SOCKET(KEEP_DISTANCE);}
 
-	GK_INLINE gkLogicSocket* getRoll() {return &m_sockets[CURRENT_ROLL];}
-	GK_INLINE gkLogicSocket* getPitch() {return &m_sockets[CURRENT_PITCH];}
+	GK_INLINE gkLogicSocket<gkQuaternion>* getRoll() {return GET_SOCKET(CURRENT_ROLL);}
+	GK_INLINE gkLogicSocket<gkQuaternion>* getPitch() {return GET_SOCKET(CURRENT_PITCH);}
 
-	GK_INLINE gkLogicSocket* getMinZ() {return &m_sockets[MIN_Z];}
-	GK_INLINE gkLogicSocket* getMaxZ() {return &m_sockets[MAX_Z];}
+	GK_INLINE gkLogicSocket<gkScalar>* getMinZ() {return GET_SOCKET(MIN_Z);}
+	GK_INLINE gkLogicSocket<gkScalar>* getMaxZ() {return GET_SOCKET(MAX_Z);}
 
-	GK_INLINE gkLogicSocket* getTarget() {return &m_sockets[TARGET];}
+	GK_INLINE gkLogicSocket<gkGameObject*>* getTarget() {return GET_SOCKET(TARGET);}
 
 private:
-
-	gkLogicSocket m_sockets[MAX_SOCKETS];
 
 	gkVector3 m_currentPosition;
 

@@ -33,15 +33,15 @@
 gkShowPhysicsNode::gkShowPhysicsNode(gkLogicTree *parent, size_t id) 
 : gkLogicNode(parent, id)
 {
-	ADD_ISOCK(*getEnable(), this, gkLogicSocket::ST_BOOL);
-	ADD_ISOCK(*getShowAabb(), this, gkLogicSocket::ST_BOOL);
+	ADD_ISOCK(ENABLE, false);
+	ADD_ISOCK(SHOW_AABB, false);
 }
 
 bool gkShowPhysicsNode::evaluate(gkScalar tick)
 {
 	gkScene* pScene = gkEngine::getSingleton().getActiveScene();
 
-	pScene->getDynamicsWorld()->enableDebugPhysics(getEnable()->getValueBool(), getShowAabb()->getValueBool());
+	pScene->getDynamicsWorld()->enableDebugPhysics(GET_SOCKET_VALUE(ENABLE), GET_SOCKET_VALUE(SHOW_AABB));
 
 	return false;
 }

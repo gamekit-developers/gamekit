@@ -36,18 +36,16 @@ m_pressed(false),
 m_delay(0), 
 m_counter(0)
 {
-	ADD_ISOCK(*getUpdate(), this, gkLogicSocket::ST_BOOL);
-	ADD_OSOCK(*getIsDown(), this, gkLogicSocket::ST_BOOL);
-	ADD_OSOCK(*getNotIsDown(), this, gkLogicSocket::ST_BOOL);
-	ADD_OSOCK(*getPress(), this, gkLogicSocket::ST_BOOL);
-	ADD_OSOCK(*getRelease(), this, gkLogicSocket::ST_BOOL);
-
-	getUpdate()->setValue(true);
+	ADD_ISOCK(UPDATED, true);
+	ADD_OSOCK(IS_DOWN, false);
+	ADD_OSOCK(NOT_IS_DOWN, false);
+	ADD_OSOCK(PRESS, false);
+	ADD_OSOCK(RELEASE, false);
 }
 
 bool gkButtonNode::evaluate(gkScalar tick)
 {
-	bool ok = getUpdate()->getValueBool();
+	bool ok = GET_SOCKET_VALUE(UPDATED);
 
 	if(ok && ++m_counter > m_delay)
 	{
@@ -61,25 +59,25 @@ void gkButtonNode::update(gkScalar tick)
 {
 	bool isPressed = isButtonDown();
 
-	getIsDown()->setValue(isPressed);
-	getNotIsDown()->setValue(!isPressed);
+	SET_SOCKET_VALUE(IS_DOWN, isPressed);
+	SET_SOCKET_VALUE(NOT_IS_DOWN, !isPressed);
 
 	if (isPressed && !m_pressed)
 	{
 		m_pressed = true;
-		getPress()->setValue(true);
-		getRelease()->setValue(false);
+		SET_SOCKET_VALUE(PRESS, true);
+		SET_SOCKET_VALUE(RELEASE, false);
 	}
 	else if (!isPressed && m_pressed)
 	{
 		m_pressed = false;
-		getPress()->setValue(false);
-		getRelease()->setValue(true);
+		SET_SOCKET_VALUE(PRESS, false);
+		SET_SOCKET_VALUE(RELEASE, true);
 	}
 	else
 	{
-		getPress()->setValue(false);
-		getRelease()->setValue(false);
+		SET_SOCKET_VALUE(PRESS, false);
+		SET_SOCKET_VALUE(RELEASE, false);
 	}
 }
 

@@ -49,25 +49,33 @@ public:
 		MAX_SOCKETS
 	};
 
+	DECLARE_SOCKET_TYPE(UPDATE, bool);
+	DECLARE_SOCKET_TYPE(CREATE_PICK, bool);
+	DECLARE_SOCKET_TYPE(RELEASE_PICK, bool);
+	DECLARE_SOCKET_TYPE(XPOS, gkScalar);
+	DECLARE_SOCKET_TYPE(YPOS, gkScalar);
+	DECLARE_SOCKET_TYPE(DISABLE_ROTATION, bool);
+	DECLARE_SOCKET_TYPE(CAUGHT_TRUE, bool);
+	DECLARE_SOCKET_TYPE(CAUGHT_FALSE, bool);
+
 	gkPickNode(gkLogicTree *parent, size_t id);
 
 	~gkPickNode();
 
 	void update(Ogre::Real tick);
-
 	bool evaluate(Ogre::Real tick);
 
-	GK_INLINE gkLogicSocket* getUpdate() {return &m_sockets[UPDATE];}
-	GK_INLINE gkLogicSocket* getCreatePick() {return &m_sockets[CREATE_PICK];}
-	GK_INLINE gkLogicSocket* getReleasePick() {return &m_sockets[RELEASE_PICK];}
+	GK_INLINE gkLogicSocket<bool>* getUpdate() {return GET_SOCKET(UPDATE);}
+	GK_INLINE gkLogicSocket<bool>* getCreatePick() {return GET_SOCKET(CREATE_PICK);}
+	GK_INLINE gkLogicSocket<bool>* getReleasePick() {return GET_SOCKET(RELEASE_PICK);}
 
-    GK_INLINE gkLogicSocket* getX() {return &m_sockets[XPOS];}
-    GK_INLINE gkLogicSocket* getY() {return &m_sockets[YPOS];}
+    GK_INLINE gkLogicSocket<gkScalar>* getX() {return GET_SOCKET(XPOS);}
+    GK_INLINE gkLogicSocket<gkScalar>* getY() {return GET_SOCKET(YPOS);}
 
-	GK_INLINE gkLogicSocket* getDisableRotation() {return &m_sockets[DISABLE_ROTATION];}
+	GK_INLINE gkLogicSocket<bool>* getDisableRotation() {return GET_SOCKET(DISABLE_ROTATION);}
 
-	GK_INLINE gkLogicSocket* getCaughtTrue() {return &m_sockets[CAUGHT_TRUE];}
-	GK_INLINE gkLogicSocket* getCaughtFalse() {return &m_sockets[CAUGHT_FALSE];}
+	GK_INLINE gkLogicSocket<bool>* getCaughtTrue() {return GET_SOCKET(CAUGHT_TRUE);}
+	GK_INLINE gkLogicSocket<bool>* getCaughtFalse() {return GET_SOCKET(CAUGHT_FALSE);}
 
 protected:
 
@@ -83,8 +91,6 @@ protected:
 	gkRigidBody* m_pickedBody;
 
 private:
-
-	gkLogicSocket m_sockets[MAX_SOCKETS];
 
 	btPoint2PointConstraint* m_constraint;
 	btVector3 m_oldPickingPos;

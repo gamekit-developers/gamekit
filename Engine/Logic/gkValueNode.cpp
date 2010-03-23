@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): silveira.nestor.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -26,23 +26,15 @@
 */
 #include "gkValueNode.h"
 
-
-using namespace Ogre;
-
-
-
 gkValueNode::gkValueNode(gkLogicTree *parent, size_t id) :
         gkLogicNode(parent, id)
 {
-    ADD_ISOCK(m_sockets[0], this, gkLogicSocket::ST_REAL);
-    ADD_OSOCK(m_sockets[1], this, gkLogicSocket::ST_REAL);
-
-    m_sockets[0].setValue(0.f);
-    m_sockets[1].setValue(0.f);
+    ADD_ISOCK(VALUE, 0);
+    ADD_OSOCK(RESULT, 0);
 }
 
 
 void gkValueNode::update(gkScalar tick)
 {
-    m_sockets[1].setValue(m_sockets[0].getValueReal());
+    SET_SOCKET_VALUE(RESULT, GET_SOCKET_VALUE(VALUE));
 }

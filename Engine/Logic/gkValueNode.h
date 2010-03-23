@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -29,23 +29,23 @@
 
 #include "gkLogicNode.h"
 
-
-
 class gkValueNode : public gkLogicNode
 {
 public:
+
+	enum
+	{
+		VALUE,
+		RESULT
+	};
+
+	DECLARE_SOCKET_TYPE(VALUE, gkScalar);
+	DECLARE_SOCKET_TYPE(RESULT, gkScalar);
+
     gkValueNode(gkLogicTree *parent, size_t id);
     virtual ~gkValueNode() {}
 
     void update(gkScalar tick);
-
-    // input 
-    GK_INLINE gkLogicSocket* getValue(void)    {return &m_sockets[0];}
-    // output
-    GK_INLINE gkLogicSocket* getResult(void)   {return &m_sockets[1];}
-
-private:
-    gkLogicSocket m_sockets[2];
 };
 
 

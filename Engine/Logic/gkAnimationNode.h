@@ -33,16 +33,22 @@ class gkAnimationNode : public gkLogicNode
 {
 public:
     
-	enum
+	enum 
 	{
 		ANIM_NAME,
 		BLEND_FRAMES,
 		TARGET,
 		CURRENT_ANIM_NAME,
 		HAS_REACHED_END,
-		NOT_HAS_REACHED_END,
-		MAX_SOCKETS
+		NOT_HAS_REACHED_END
 	};
+
+	DECLARE_SOCKET_TYPE(ANIM_NAME, gkString);
+	DECLARE_SOCKET_TYPE(BLEND_FRAMES, gkScalar);
+	DECLARE_SOCKET_TYPE(TARGET, gkGameObject*);
+	DECLARE_SOCKET_TYPE(CURRENT_ANIM_NAME, gkString);
+	DECLARE_SOCKET_TYPE(HAS_REACHED_END, bool);
+	DECLARE_SOCKET_TYPE(NOT_HAS_REACHED_END, bool);
 
     gkAnimationNode(gkLogicTree *parent, size_t id);
 
@@ -51,15 +57,13 @@ public:
     void update(gkScalar tick);
     bool evaluate(gkScalar tick);
 
-	GK_INLINE gkLogicSocket* getAnimName() { return &m_sockets[ANIM_NAME]; }
-    GK_INLINE gkLogicSocket* getBlend() { return &m_sockets[BLEND_FRAMES]; }
-	GK_INLINE gkLogicSocket* getTarget() {return &m_sockets[TARGET];}
-	GK_INLINE gkLogicSocket* getCurrentAnimName() { return &m_sockets[CURRENT_ANIM_NAME]; }
-	GK_INLINE gkLogicSocket* getHasReachedEnd() { return &m_sockets[HAS_REACHED_END]; }
-	GK_INLINE gkLogicSocket* getNotHasReachedEnd() { return &m_sockets[NOT_HAS_REACHED_END]; }
+	GK_INLINE gkLogicSocket<gkString>* getAnimName() { return GET_SOCKET(ANIM_NAME); }
+    GK_INLINE gkLogicSocket<gkScalar>* getBlend() { return GET_SOCKET(BLEND_FRAMES); }
+	GK_INLINE gkLogicSocket<gkGameObject*>* getTarget() {return GET_SOCKET(TARGET);}
+	GK_INLINE gkLogicSocket<gkString>* getCurrentAnimName() { return GET_SOCKET(CURRENT_ANIM_NAME); }
+	GK_INLINE gkLogicSocket<bool>* getHasReachedEnd() { return GET_SOCKET(HAS_REACHED_END); }
+	GK_INLINE gkLogicSocket<bool>* getNotHasReachedEnd() { return GET_SOCKET(NOT_HAS_REACHED_END); }
 
-private:
-    gkLogicSocket   m_sockets[MAX_SOCKETS];
 };
 
 

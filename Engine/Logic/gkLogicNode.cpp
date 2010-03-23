@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): silveira.nestor.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -38,8 +38,34 @@ gkLogicNode::gkLogicNode(gkLogicTree *parent, UTsize handle) :
 {
 }
 
+gkLogicNode::~gkLogicNode()
+{
+	{
+		SocketIterator iter(m_inputs);
 
-gkLogicSocket* gkLogicNode::getInputSocket(UTsize index)
+		while(iter.hasMoreElements())
+		{
+			gkILogicSocket* pSocket = iter.getNext();
+
+			delete pSocket;
+		}
+	}
+
+	{
+		SocketIterator iter(m_outputs);
+
+		while (iter.hasMoreElements())
+		{
+			gkILogicSocket* pSocket = iter.getNext();
+
+			delete pSocket;
+		}
+	}
+}
+
+
+
+gkILogicSocket* gkLogicNode::getInputSocket(UTsize index)
 {
     if (index >= 0 && index < m_inputs.size())
         return m_inputs.at(index);
@@ -47,7 +73,7 @@ gkLogicSocket* gkLogicNode::getInputSocket(UTsize index)
 }
 
 
-gkLogicSocket* gkLogicNode::getOutputSocket(UTsize index)
+gkILogicSocket* gkLogicNode::getOutputSocket(UTsize index)
 {
     if (index >= 0 && index < m_outputs.size())
         return m_outputs.at(index);

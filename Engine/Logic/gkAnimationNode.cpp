@@ -38,50 +38,49 @@ using namespace Ogre;
 gkAnimationNode::gkAnimationNode(gkLogicTree *parent, size_t id) 
 : gkLogicNode(parent, id)
 {
-	ADD_ISOCK(*getAnimName(), this, gkLogicSocket::ST_STRING);
-	ADD_ISOCK(*getBlend(), this, gkLogicSocket::ST_REAL);
-	ADD_ISOCK(*getTarget(), this, gkLogicSocket::ST_GAME_OBJECT);
-	ADD_OSOCK(*getCurrentAnimName(), this, gkLogicSocket::ST_STRING);
-	ADD_OSOCK(*getHasReachedEnd(), this, gkLogicSocket::ST_BOOL);
-	ADD_OSOCK(*getNotHasReachedEnd(), this, gkLogicSocket::ST_BOOL);
+	ADD_ISOCK(ANIM_NAME, "");
+	ADD_ISOCK(BLEND_FRAMES, 0);
+	ADD_ISOCK(TARGET, 0);
+	ADD_OSOCK(CURRENT_ANIM_NAME, "");
+	ADD_OSOCK(HAS_REACHED_END, false);
+	ADD_OSOCK(NOT_HAS_REACHED_END, false);
 
-	getNotHasReachedEnd()->setValue(true);
-	
-	getBlend()->setValue(10);
+	SET_SOCKET_VALUE(NOT_HAS_REACHED_END, true);
+	SET_SOCKET_VALUE(BLEND_FRAMES, 10);
 }
 
 bool gkAnimationNode::evaluate(gkScalar tick)
 {
-	gkGameObject* pObj = getTarget()->getValueGameObject();
+	gkGameObject* pObj = GET_SOCKET_VALUE(TARGET);
 
-	return pObj && pObj->isLoaded() && !getAnimName()->getValueString().empty();
+	return pObj && pObj->isLoaded() && !GET_SOCKET_VALUE(ANIM_NAME).empty();
 }
 
 void gkAnimationNode::update(gkScalar tick)
 {
-	gkGameObject* pObj = getTarget()->getValueGameObject();
+	gkGameObject* pObj = GET_SOCKET_VALUE(TARGET);
 
 	GK_ASSERT(pObj->getType() == GK_ENTITY);
 
 	gkEntity *ent = pObj->getEntity();
 
-	gkString animName = getAnimName()->getValueString();
+	gkString animName = GET_SOCKET_VALUE(ANIM_NAME);
 
-	gkString currentAnimName = getCurrentAnimName()->getValueString();
+	gkString currentAnimName = GET_SOCKET_VALUE(CURRENT_ANIM_NAME);
 
 	if(currentAnimName != animName)
 	{
-		getHasReachedEnd()->setValue(false);
-		getNotHasReachedEnd()->setValue(true);
+		SET_SOCKET_VALUE(HAS_REACHED_END, false);
+		SET_SOCKET_VALUE(NOT_HAS_REACHED_END, true);
 	}
 
-	getCurrentAnimName()->setValue(animName);
+	SET_SOCKET_VALUE(CURRENT_ANIM_NAME, animName);
 
 	if (ent->isLoaded())
 	{
-		ent->playAction(getAnimName()->getValueString(), getBlend()->getValueReal());
+		ent->playAction(GET_SOCKET_VALUE(ANIM_NAME), GET_SOCKET_VALUE(BLEND_FRAMES));
 
-		if(!getHasReachedEnd()->getValueBool())
+		if(!GET_SOCKET_VALUE(HAS_REACHED_END))
 		{
 			gkAction* pAct = ent->getActiveAction();
 
@@ -91,8 +90,8 @@ void gkAnimationNode::update(gkScalar tick)
 
 			if(time >= pAct->getEnd())
 			{
-				getHasReachedEnd()->setValue(true);
-				getNotHasReachedEnd()->setValue(false);
+				SET_SOCKET_VALUE(HAS_REACHED_END, true);
+				SET_SOCKET_VALUE(NOT_HAS_REACHED_END, false);
 			}
 		}
     }

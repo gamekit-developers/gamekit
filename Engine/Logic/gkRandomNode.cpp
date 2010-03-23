@@ -26,31 +26,21 @@
 */
 #include "gkRandomNode.h"
 
-using namespace Ogre;
-
-
-
 gkRandomNode::gkRandomNode(gkLogicTree *parent, size_t id) :
         gkLogicNode(parent, id)
 {
-
-    ADD_ISOCK(m_sockets[0], this, gkLogicSocket::ST_BOOL);
-    ADD_ISOCK(m_sockets[1], this, gkLogicSocket::ST_REAL);
-    ADD_ISOCK(m_sockets[2], this, gkLogicSocket::ST_REAL);
-    ADD_OSOCK(m_sockets[3], this, gkLogicSocket::ST_REAL);
-    m_sockets[0].setValue(true);
-    m_sockets[2].setValue(0.f);
-    m_sockets[3].setValue(0.f);
-    m_sockets[4].setValue(0.f);
+    ADD_ISOCK(UPDATE, true);
+    ADD_ISOCK(MIN, 0);
+    ADD_ISOCK(MAX, 0);
+    ADD_OSOCK(RESULT, 0);
 }
-
 
 bool gkRandomNode::evaluate(gkScalar tick)
 {
-    return m_sockets[0].getValueBool();
+    return GET_SOCKET_VALUE(UPDATE);
 }
 
 void gkRandomNode::update(gkScalar tick)
 {
-    m_sockets[3].setValue(gkMath::RangeRandom(m_sockets[1].getValueReal(), m_sockets[2].getValueReal()));
+    SET_SOCKET_VALUE(RESULT, gkMath::RangeRandom(GET_SOCKET_VALUE(MIN), GET_SOCKET_VALUE(MAX)));
 }

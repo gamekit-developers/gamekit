@@ -28,7 +28,7 @@
 #define _gkStatementNode_h_
 
 #include "gkLogicNode.h"
-
+/*
 // switch constants
 #define START_IN 2
 #define START_OT 12
@@ -69,7 +69,7 @@ private:
     int             m_labels;
 };
 
-
+*/
 
 
 

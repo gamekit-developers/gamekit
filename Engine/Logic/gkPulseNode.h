@@ -36,9 +36,11 @@ public:
 	enum
 	{
 		UPDATE,
-		OUTPUT,
-		MAX_SOCKETS
+		OUTPUT
 	};
+
+	DECLARE_SOCKET_TYPE(UPDATE, bool);
+	DECLARE_SOCKET_TYPE(OUTPUT, bool);
 
     gkPulseNode(gkLogicTree *parent, size_t id);
 
@@ -47,13 +49,8 @@ public:
 	bool evaluate(gkScalar tick);
 	void update(gkScalar tick);
 
-    GK_INLINE gkLogicSocket* getUpdate() {return &m_sockets[UPDATE];}
-	GK_INLINE gkLogicSocket* getOutput() {return &m_sockets[OUTPUT];}
-
-private:
-
-	gkLogicSocket m_sockets[MAX_SOCKETS];
+    GK_INLINE gkLogicSocket<bool>* getUpdate() {return GET_SOCKET(UPDATE);}
+	GK_INLINE gkLogicSocket<bool>* getOutput() {return GET_SOCKET(OUTPUT);}
 };
-
 
 #endif//_gkPulseNode_h_

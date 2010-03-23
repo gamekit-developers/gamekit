@@ -38,26 +38,27 @@ public:
 		CREATE,
 		POSITION,
 		ORIENTATION,
-		PARTICLE_SYSTEM_NAME,
-		MAX_SOCKETS
+		PARTICLE_SYSTEM_NAME
 	};
+
+	DECLARE_SOCKET_TYPE(CREATE, bool);
+	DECLARE_SOCKET_TYPE(POSITION, gkVector3);
+	DECLARE_SOCKET_TYPE(ORIENTATION, gkQuaternion);
+	DECLARE_SOCKET_TYPE(PARTICLE_SYSTEM_NAME, gkString);
 
 	gkParticleNode(gkLogicTree *parent, size_t id);
 
 	~gkParticleNode();
 
 	void update(Ogre::Real tick);
-
 	bool evaluate(Ogre::Real tick);
 
-	GK_INLINE gkLogicSocket* getCreate() {return &m_sockets[CREATE];}
-	GK_INLINE gkLogicSocket* getPosition() {return &m_sockets[POSITION];}
-	GK_INLINE gkLogicSocket* getOrientation() {return &m_sockets[ORIENTATION];}
-	GK_INLINE gkLogicSocket* getParticleSystemName() {return &m_sockets[PARTICLE_SYSTEM_NAME];}
+	GK_INLINE gkLogicSocket<bool>* getCreate() {return GET_SOCKET(CREATE);}
+	GK_INLINE gkLogicSocket<gkVector3>* getPosition() {return GET_SOCKET(POSITION);}
+	GK_INLINE gkLogicSocket<gkQuaternion>* getOrientation() {return GET_SOCKET(ORIENTATION);}
+	GK_INLINE gkLogicSocket<gkString>* getParticleSystemName() {return GET_SOCKET(PARTICLE_SYSTEM_NAME);}
 
 private:
-
-	gkLogicSocket m_sockets[MAX_SOCKETS];
 
 	class ParticleSystem
 	{

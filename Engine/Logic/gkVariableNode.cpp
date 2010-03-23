@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): silveira.nestor.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -28,28 +28,19 @@
 #include "gkVariable.h"
 #include "gkGameObject.h"
 
-
-using namespace Ogre;
-
-
-
 gkVariableNode::gkVariableNode(gkLogicTree *parent, size_t id):
         gkLogicNode(parent, id), m_debug(false), m_prop(0), m_varName("")
 {
-    ADD_ISOCK(m_sockets[0], this, gkLogicSocket::ST_BOOL);
-    ADD_ISOCK(m_sockets[1], this, gkLogicSocket::ST_VARIABLE);
-    ADD_OSOCK(m_sockets[2], this, gkLogicSocket::ST_VARIABLE);
-    m_sockets[0].setValue(true);
-    m_sockets[1].setValue(0.f);
-    m_sockets[2].setValue(0.f);
+    ADD_ISOCK(SET, true);
+    ADD_ISOCK(VALUE, gkVariable());
+    ADD_OSOCK(RESULT, gkVariable());
 }
-
 
 void gkVariableNode::initialize()
 {
     if (!m_varName.empty())
     {
-        gkGameObject *ob = m_sockets[0].getGameObject();
+        gkGameObject *ob = GET_SOCKET(SET)->getGameObject();
         if (ob != 0)
         {
             if (!ob->hasVariable(m_varName))
@@ -57,8 +48,8 @@ void gkVariableNode::initialize()
             else
                 m_prop = ob->getVariable(m_varName);
 
-            if (m_prop && m_sockets[0].getValueBool())
-                m_prop->setValue(m_sockets[1].getValueVariable());
+            if (m_prop && GET_SOCKET_VALUE(SET))
+                m_prop->setValue(GET_SOCKET_VALUE(VALUE));
         }
     }
 }
@@ -69,16 +60,16 @@ bool gkVariableNode::evaluate(gkScalar tick)
     if (!m_prop) return false;
 
 
-    m_sockets[2].setValue(*m_prop);
+    SET_SOCKET_VALUE(RESULT, *m_prop);
 
-    if (!m_sockets[0].isLinked() && !m_sockets[1].isLinked())
+    if (!GET_SOCKET(SET)->isLinked() && !GET_SOCKET(VALUE)->isLinked())
     {
         // variable will not change
         return false;
     }
 
-    if (m_sockets[0].getValueBool())
-        m_prop->setValue(m_sockets[1].getValueVariable());
+    if (GET_SOCKET_VALUE(SET))
+        m_prop->setValue(GET_SOCKET_VALUE(VALUE));
     return false;
 }
 
@@ -87,12 +78,9 @@ VariableOpNode::VariableOpNode(gkLogicTree *parent, size_t id) :
         gkLogicNode(parent, id),
         m_function(MTH_NO_FUNC), m_deg(false), m_prop(0), m_varName("")
 {
-    ADD_ISOCK(m_sockets[0], this, gkLogicSocket::ST_BOOL);
-    ADD_ISOCK(m_sockets[1], this, gkLogicSocket::ST_VARIABLE);
-    ADD_OSOCK(m_sockets[2], this, gkLogicSocket::ST_VARIABLE);
-    m_sockets[0].setValue(true);
-    m_sockets[1].setValue(0.f);
-    m_sockets[2].setValue(0.f);
+    ADD_ISOCK(SET, true);
+    ADD_ISOCK(VALUE, gkVariable());
+    ADD_OSOCK(RESULT, gkVariable());
 }
 
 
@@ -100,7 +88,7 @@ void VariableOpNode::initialize()
 {
     if (!m_varName.empty())
     {
-        gkGameObject *ob = m_sockets[0].getGameObject();
+        gkGameObject *ob = GET_SOCKET(SET)->getGameObject();
         if (ob != 0)
             m_prop = ob->getVariable(m_varName);
     }
@@ -109,11 +97,11 @@ void VariableOpNode::initialize()
 
 bool VariableOpNode::evaluate(gkScalar tick)
 {
-    if (!m_prop || !m_sockets[0].getValueBool())
+    if (!m_prop || !GET_SOCKET_VALUE(SET))
         return false;
 
     gkScalar a = m_prop->getValueReal();
-    gkScalar b = m_sockets[1].getValueReal();
+    gkScalar b = GET_SOCKET_VALUE(VALUE).getValueReal();
     gkScalar d = 0.0;
 
     switch (m_function)
@@ -237,6 +225,6 @@ bool VariableOpNode::evaluate(gkScalar tick)
     if (gkNan(d))       d = 0.0;
     if (!gkFinite(d))   d = 0.0;
     m_prop->setValue(d);
-    m_sockets[2].setValue(*m_prop);
+    SET_SOCKET_VALUE(RESULT, *m_prop);
     return false;
 }

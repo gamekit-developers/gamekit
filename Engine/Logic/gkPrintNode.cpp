@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): silveira.nestor.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -27,27 +27,21 @@
 #include "gkPrintNode.h"
 #include <stdio.h>
 
-using namespace Ogre;
-
-
-
 gkPrintNode::gkPrintNode(gkLogicTree *parent, size_t id) :
         gkLogicNode(parent, id)
 {
-    ADD_ISOCK(m_sockets[0], this, gkLogicSocket::ST_BOOL);
-    ADD_ISOCK(m_sockets[1], this, gkLogicSocket::ST_STRING);
-    m_sockets[0].setValue(true);
-    m_sockets[1].setValue(0.f);
+    ADD_ISOCK(PRINT, true);
+    ADD_ISOCK(VALUE, "");
 }
 
 bool gkPrintNode::evaluate(gkScalar tick)
 {
-    return m_sockets[0].getValueBool();
+    return GET_SOCKET_VALUE(PRINT);
 }
 
 
 void gkPrintNode::update(gkScalar tick)
 {
     // TODO: print to gui
-    printf("%s\n", m_sockets[1].getValueString().c_str());
+    printf("%s\n", GET_SOCKET_VALUE(VALUE).c_str());
 }

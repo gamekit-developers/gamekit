@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -30,23 +30,25 @@
 #include "gkLogicNode.h"
 
 
-
-
 class gkExitNode : public gkLogicNode
 {
 public:
-    gkExitNode(gkLogicTree *parent, size_t id);
-    virtual ~gkExitNode() {}
 
-    void update(gkScalar tick);
+	enum
+	{
+		EXIT
+	};
+
+	DECLARE_SOCKET_TYPE(EXIT, bool);
+
+    gkExitNode(gkLogicTree *parent, size_t id);
+
+	virtual ~gkExitNode() {}
+
     bool evaluate(gkScalar tick);
 
-    // socket access
-    GK_INLINE gkLogicSocket* getExit(void)    {return &m_sockets[0];}
+    GK_INLINE gkLogicSocket<bool>* getExit() {return GET_SOCKET(EXIT);}
 
-
-private:
-    gkLogicSocket m_sockets[1];
 };
 
 

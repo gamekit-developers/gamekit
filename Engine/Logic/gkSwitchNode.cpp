@@ -26,7 +26,7 @@
 */
 #include "gkSwitchNode.h"
 
-
+/*
 using namespace Ogre;
 
 
@@ -91,3 +91,4 @@ void gkSwitchNode::update(gkScalar tick)
     if (m_sockets[START_OT].isConnected())
          m_sockets[START_OT].setValue(true);
 }
+*/

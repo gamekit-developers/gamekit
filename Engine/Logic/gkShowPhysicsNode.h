@@ -36,9 +36,11 @@ public:
 	enum
 	{
 		ENABLE,
-		SHOW_AABB,
-		MAX_SOCKETS
+		SHOW_AABB
 	};
+
+	DECLARE_SOCKET_TYPE(ENABLE, bool);
+	DECLARE_SOCKET_TYPE(SHOW_AABB, bool);
 
     gkShowPhysicsNode(gkLogicTree *parent, size_t id);
 
@@ -46,12 +48,9 @@ public:
 
 	bool evaluate(gkScalar tick);
 
-    GK_INLINE gkLogicSocket* getEnable() {return &m_sockets[ENABLE];}
-	GK_INLINE gkLogicSocket* getShowAabb() {return &m_sockets[SHOW_AABB];}
+    GK_INLINE gkLogicSocket<bool>* getEnable() {return GET_SOCKET(ENABLE);}
+	GK_INLINE gkLogicSocket<bool>* getShowAabb() {return GET_SOCKET(SHOW_AABB);}
 
-private:
-
-	gkLogicSocket m_sockets[MAX_SOCKETS];
 };
 
 

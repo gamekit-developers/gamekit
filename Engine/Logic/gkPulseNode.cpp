@@ -30,17 +30,17 @@
 gkPulseNode::gkPulseNode(gkLogicTree *parent, size_t id) 
 : gkLogicNode(parent, id)
 {
-	ADD_ISOCK(*getUpdate(), this, gkLogicSocket::ST_BOOL);
-	ADD_OSOCK(*getOutput(), this, gkLogicSocket::ST_BOOL);
+	ADD_ISOCK(UPDATE, false);
+	ADD_OSOCK(OUTPUT, false);
 }
 
 bool gkPulseNode::evaluate(gkScalar tick)
 {
-	bool update = getUpdate()->getValueBool();
+	bool update = GET_SOCKET_VALUE(UPDATE);
 
 	if(!update)
 	{
-		getOutput()->setValue(false);
+		SET_SOCKET_VALUE(OUTPUT, false);
 	}
 
 	return update;
@@ -48,6 +48,6 @@ bool gkPulseNode::evaluate(gkScalar tick)
 
 void gkPulseNode::update(gkScalar tick)
 {
-	getOutput()->setValue(true);
-	getUpdate()->setValue(false);
+	SET_SOCKET_VALUE(OUTPUT, true);
+	SET_SOCKET_VALUE(UPDATE, false);
 }

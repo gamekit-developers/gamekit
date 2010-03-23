@@ -27,7 +27,7 @@
 #include "gkExpressionNode.h"
 #include "gkLuaManager.h"
 
-
+/*
 using namespace Ogre;
 
 
@@ -93,3 +93,4 @@ void gkExpressionNode::initialize()
     m_sockets[11].setValue(false);
     m_sockets[12].setValue(false);
 }
+*/

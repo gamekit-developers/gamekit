@@ -36,11 +36,10 @@ public:
 	enum
 	{
 		UPDATE,
-		INPUT,
-		OUTPUT,
-		JUST_ONCE,
 		MAX_SOCKETS
 	};
+
+	DECLARE_SOCKET_TYPE(UPDATE, bool);
 
     gkSetterNode(gkLogicTree *parent, size_t id);
 
@@ -48,24 +47,31 @@ public:
 
 	bool evaluate(gkScalar tick);
 
-    GK_INLINE gkLogicSocket* getUpdate() {return &m_sockets[UPDATE];}
-    GK_INLINE gkLogicSocket* getInput() {return &m_sockets[INPUT];}
-	GK_INLINE gkLogicSocket* getOutput() {return &m_sockets[OUTPUT];}
-
-private:
-
-	gkLogicSocket m_sockets[MAX_SOCKETS];
+    GK_INLINE gkLogicSocket<bool>* getUpdate() {return GET_SOCKET(UPDATE);}
 };
 
 class gkStringSetterNode : public gkSetterNode
 {
 public:
 
+	enum
+	{
+		INPUT = MAX_SOCKETS,
+		OUTPUT
+	};
+
+	DECLARE_SOCKET_TYPE(INPUT, gkString);
+	DECLARE_SOCKET_TYPE(OUTPUT, gkString);
+
     gkStringSetterNode(gkLogicTree *parent, size_t id);
 
 	virtual ~gkStringSetterNode() {}
 
 	void update(gkScalar tick);
+
+    GK_INLINE gkLogicSocket<gkString>* getInput() {return GET_SOCKET(INPUT);}
+	GK_INLINE gkLogicSocket<gkString>* getOutput() {return GET_SOCKET(OUTPUT);}
+
 };
 
 class gkObjectSetterNode : public gkSetterNode
@@ -74,11 +80,18 @@ public:
 
 	enum
 	{
+		INPUT = MAX_SOCKETS,
+		OUTPUT,
 		XPOS,
 		YPOS,
-		HIT_POINT,
-		MAX_SOCKETS
+		HIT_POINT
 	};
+
+	DECLARE_SOCKET_TYPE(INPUT, gkString);
+	DECLARE_SOCKET_TYPE(OUTPUT, gkGameObject*);
+	DECLARE_SOCKET_TYPE(XPOS, gkScalar);
+	DECLARE_SOCKET_TYPE(YPOS, gkScalar);
+	DECLARE_SOCKET_TYPE(HIT_POINT, gkVector3);
 
 	enum INPUT_TYPE
 	{
@@ -90,43 +103,67 @@ public:
 
 	virtual ~gkObjectSetterNode() {}
 
-    GK_INLINE gkLogicSocket* getX() {return &m_sockets[XPOS];}
-    GK_INLINE gkLogicSocket* getY() {return &m_sockets[YPOS];}
-
-	GK_INLINE gkLogicSocket* getHitPoint() {return &m_sockets[HIT_POINT];}
-
 	void update(gkScalar tick);
 
 	void setType(INPUT_TYPE type) {m_type = type;}
 
+    GK_INLINE gkLogicSocket<gkString>* getInput() {return GET_SOCKET(INPUT);}
+	GK_INLINE gkLogicSocket<gkGameObject*>* getOutput() {return GET_SOCKET(OUTPUT);}
+    GK_INLINE gkLogicSocket<gkScalar>* getX() {return GET_SOCKET(XPOS);}
+    GK_INLINE gkLogicSocket<gkScalar>* getY() {return GET_SOCKET(YPOS);}
+	GK_INLINE gkLogicSocket<gkVector3>* getHitPoint() {return GET_SOCKET(HIT_POINT);}
+
 private:
 
 	INPUT_TYPE m_type;
-
-	gkLogicSocket m_sockets[MAX_SOCKETS];
 };
 
 class gkPositionSetterNode : public gkSetterNode
 {
 public:
 
+	enum
+	{
+		INPUT = MAX_SOCKETS,
+		OUTPUT
+	};
+
+	DECLARE_SOCKET_TYPE(INPUT, gkGameObject*);
+	DECLARE_SOCKET_TYPE(OUTPUT, gkVector3);
+
     gkPositionSetterNode(gkLogicTree *parent, size_t id);
 
 	virtual ~gkPositionSetterNode() {}
 
 	void update(gkScalar tick);
+
+    GK_INLINE gkLogicSocket<gkGameObject*>* getInput() {return GET_SOCKET(INPUT);}
+	GK_INLINE gkLogicSocket<gkVector3>* getOutput() {return GET_SOCKET(OUTPUT);}
 };
 
 class gkOrientationSetterNode : public gkSetterNode
 {
 public:
 
+	enum
+	{
+		INPUT = MAX_SOCKETS,
+		OUTPUT
+	};
+
+	DECLARE_SOCKET_TYPE(INPUT, gkGameObject*);
+	DECLARE_SOCKET_TYPE(OUTPUT, gkQuaternion);
+
     gkOrientationSetterNode(gkLogicTree *parent, size_t id);
 
 	virtual ~gkOrientationSetterNode() {}
 
 	void update(gkScalar tick);
+
+    GK_INLINE gkLogicSocket<gkGameObject*>* getInput() {return GET_SOCKET(INPUT);}
+	GK_INLINE gkLogicSocket<gkQuaternion>* getOutput() {return GET_SOCKET(OUTPUT);}
 };
 
 
 #endif//_gkSetterNode_h_
+

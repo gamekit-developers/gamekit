@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -29,15 +29,21 @@
 
 #include "gkLogicNode.h"
 
-
 // execute x number of subtrees  
 class gkGroupNode : public gkLogicNode
 {
 public:
     typedef utList<gkLogicTree*> Groups;
 
+	enum 
+	{
+		EXECUTE,
+		RETURN
+	};
 
-public:
+	DECLARE_SOCKET_TYPE(EXECUTE, bool);
+	DECLARE_SOCKET_TYPE(RETURN, bool);
+
     gkGroupNode(gkLogicTree *parent, size_t id);
     virtual ~gkGroupNode() {}
 
@@ -45,14 +51,9 @@ public:
     bool evaluate(gkScalar tick);
 
     GK_INLINE void addTree(gkLogicTree *ltree)  {GK_ASSERT(ltree); m_groupList.push_back(ltree);}
-    GK_INLINE gkLogicSocket* getExecute(void)   {return &m_sockets[0];}
-    GK_INLINE gkLogicSocket* getReturn(void)    {return &m_sockets[1];}
 
 private:
-    gkLogicSocket       m_sockets[2];
     Groups              m_groupList;
 };
-
-
 
 #endif//_gkGroupNode_h_

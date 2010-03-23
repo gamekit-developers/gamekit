@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -32,27 +32,26 @@
 // fire random floats
 class gkRandomNode : public gkLogicNode
 {
-
 public:
+
+	enum
+	{
+		UPDATE,
+		MIN,
+		MAX,
+		RESULT
+	};
+
+	DECLARE_SOCKET_TYPE(UPDATE, bool);
+	DECLARE_SOCKET_TYPE(MIN, gkScalar);
+	DECLARE_SOCKET_TYPE(MAX, gkScalar);
+	DECLARE_SOCKET_TYPE(RESULT, gkScalar);
+
     gkRandomNode(gkLogicTree *parent, size_t id);
     virtual ~gkRandomNode() {}
 
     void update(gkScalar tick);
     bool evaluate(gkScalar tick);
-
-    // inputs
-    GK_INLINE gkLogicSocket* getUpdate(void)    {return &m_sockets[0];}
-    GK_INLINE gkLogicSocket* getMin(void)       {return &m_sockets[1];}
-    GK_INLINE gkLogicSocket* getMax(void)       {return &m_sockets[3];}
-
-    // outputs
-    GK_INLINE gkLogicSocket* getResult(void)    {return &m_sockets[3];}
-
-private:
-    gkLogicSocket m_sockets[4];
 };
-
-
-
 
 #endif//_gkRandomNode_h_

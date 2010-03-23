@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -30,33 +30,45 @@
 #include "gkLogicNode.h"
 #include "gkInput.h"
 
-
 class gkMouseNode : public gkLogicNode
 {
-
 public:
+	
+	enum
+	{
+		SCALE_X,
+		SCALE_Y,
+		MOTION,
+		REL_X,
+		REL_Y,
+		ABS_X,
+		ABS_Y,
+		WHEEL
+	};
+
+	DECLARE_SOCKET_TYPE(SCALE_X, gkScalar);
+	DECLARE_SOCKET_TYPE(SCALE_Y, gkScalar);
+	DECLARE_SOCKET_TYPE(MOTION, bool);
+	DECLARE_SOCKET_TYPE(REL_X, gkScalar);
+	DECLARE_SOCKET_TYPE(REL_Y, gkScalar);
+	DECLARE_SOCKET_TYPE(ABS_X, gkScalar);
+	DECLARE_SOCKET_TYPE(ABS_Y, gkScalar);
+	DECLARE_SOCKET_TYPE(WHEEL, gkScalar);
+
     gkMouseNode(gkLogicTree *parent, size_t id);
+
     virtual ~gkMouseNode() {}
 
     bool evaluate(gkScalar tick);
 
-    // inputs 
-    GK_INLINE gkLogicSocket* getScaleX(void)        {return &m_sockets[0];}
-    GK_INLINE gkLogicSocket* getScaleY(void)        {return &m_sockets[1];}
-
-    // outputs
-    GK_INLINE gkLogicSocket* getMotion(void)        {return &m_sockets[2];}
-    GK_INLINE gkLogicSocket* getRelX(void)          {return &m_sockets[3];}
-    GK_INLINE gkLogicSocket* getRelY(void)          {return &m_sockets[4];}
-    GK_INLINE gkLogicSocket* getAbsX(void)          {return &m_sockets[5];}
-    GK_INLINE gkLogicSocket* getAbsY(void)          {return &m_sockets[6];}
-    GK_INLINE gkLogicSocket* getWheel(void)         {return &m_sockets[7];}
-
-private:
-    gkLogicSocket m_sockets[8];
+    GK_INLINE gkLogicSocket<gkScalar>* getScaleX() {return GET_SOCKET(SCALE_X);}
+    GK_INLINE gkLogicSocket<gkScalar>* getScaleY() {return GET_SOCKET(SCALE_Y);}
+    GK_INLINE gkLogicSocket<bool>* getMotion() {return GET_SOCKET(MOTION);}
+    GK_INLINE gkLogicSocket<gkScalar>* getRelX() {return GET_SOCKET(REL_X);}
+    GK_INLINE gkLogicSocket<gkScalar>* getRelY() {return GET_SOCKET(REL_Y);}
+    GK_INLINE gkLogicSocket<gkScalar>* getAbsX() {return GET_SOCKET(ABS_X);}
+    GK_INLINE gkLogicSocket<gkScalar>* getAbsY() {return GET_SOCKET(ABS_Y);}
+    GK_INLINE gkLogicSocket<gkScalar>* getWheel() {return GET_SOCKET(WHEEL);}
 };
-
-
-
 
 #endif//_gkMouseNode_h_

@@ -42,18 +42,16 @@ public:
 		MAX_SOCKETS
 	};
 
+	DECLARE_SOCKET_TYPE(UPDATE, bool);
+	DECLARE_SOCKET_TYPE(TARGET, gkGameObject*);
+
     gkObjActionNode(gkLogicTree *parent, size_t id);
 	virtual ~gkObjActionNode() {}
     
     bool evaluate(gkScalar tick);
 
-    // socket access
-    GK_INLINE gkLogicSocket* getUpdate()    {return &m_sockets[UPDATE];}
-	GK_INLINE gkLogicSocket* getTarget()    {return &m_sockets[TARGET];}
-
-private:
-
-    gkLogicSocket m_sockets[MAX_SOCKETS];
+    GK_INLINE gkLogicSocket<bool>* getUpdate() {return GET_SOCKET(UPDATE);}
+	GK_INLINE gkLogicSocket<gkGameObject*>* getTarget() {return GET_SOCKET(TARGET);}
 };
 
 class gkRotateNode : public gkObjActionNode
@@ -62,11 +60,14 @@ public:
 
 	enum
 	{
-		X,
+		X = MAX_SOCKETS,
 		Y,
-		Z,
-		MAX_SOCKETS
+		Z
 	};
+
+	DECLARE_SOCKET_TYPE(X, gkScalar);
+	DECLARE_SOCKET_TYPE(Y, gkScalar);
+	DECLARE_SOCKET_TYPE(Z, gkScalar);
 
 	gkRotateNode(gkLogicTree *parent, size_t id);
 
@@ -74,14 +75,9 @@ public:
 
 	void update(gkScalar tick);
 
-    GK_INLINE gkLogicSocket* getX()         {return &m_sockets[X];}
-    GK_INLINE gkLogicSocket* getY()         {return &m_sockets[Y];}
-    GK_INLINE gkLogicSocket* getZ()         {return &m_sockets[Z];}
-
-private:
-
-    gkLogicSocket m_sockets[MAX_SOCKETS];
-
+    GK_INLINE gkLogicSocket<gkScalar>* getX() {return GET_SOCKET(X);}
+    GK_INLINE gkLogicSocket<gkScalar>* getY() {return GET_SOCKET(Y);}
+    GK_INLINE gkLogicSocket<gkScalar>* getZ() {return GET_SOCKET(Z);}
 };
 
 class gkLinearVelNode : public gkObjActionNode
@@ -90,26 +86,23 @@ public:
 
 	enum
 	{
-		X,
+		X = MAX_SOCKETS,
 		Y,
-		Z,
-		MAX_SOCKETS
+		Z
 	};
 
+	DECLARE_SOCKET_TYPE(X, gkScalar);
+	DECLARE_SOCKET_TYPE(Y, gkScalar);
+	DECLARE_SOCKET_TYPE(Z, gkScalar);
 
 	gkLinearVelNode(gkLogicTree *parent, size_t id);
 	~gkLinearVelNode() {}
 
 	void update(gkScalar tick);
 
-    GK_INLINE gkLogicSocket* getX()         {return &m_sockets[X];}
-    GK_INLINE gkLogicSocket* getY()         {return &m_sockets[Y];}
-    GK_INLINE gkLogicSocket* getZ()         {return &m_sockets[Z];}
-
-private:
-
-    gkLogicSocket m_sockets[MAX_SOCKETS];
-
+    GK_INLINE gkLogicSocket<gkScalar>* getX() {return GET_SOCKET(X);}
+    GK_INLINE gkLogicSocket<gkScalar>* getY() {return GET_SOCKET(Y);}
+    GK_INLINE gkLogicSocket<gkScalar>* getZ() {return GET_SOCKET(Z);}
 };
 
 class gkLoadNode : public gkObjActionNode
@@ -155,9 +148,10 @@ public:
 
 	enum
 	{
-		INPUT,
-		MAX_SOCKETS
+		INPUT = MAX_SOCKETS
 	};
+
+	DECLARE_SOCKET_TYPE(INPUT, gkQuaternion);
 
 	gkSetOrientationNode(gkLogicTree *parent, size_t id);
 
@@ -165,12 +159,7 @@ public:
 
 	void update(gkScalar tick);
 
-    GK_INLINE gkLogicSocket* getInput()	{return &m_sockets[INPUT];}
-
-private:
-
-    gkLogicSocket m_sockets[MAX_SOCKETS];
-
+    GK_INLINE gkLogicSocket<gkQuaternion>* getInput() {return GET_SOCKET(INPUT);}
 };
 
 class gkDisableDeactivationNode : public gkObjActionNode

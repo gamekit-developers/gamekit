@@ -29,34 +29,42 @@
 
 #include "gkPickNode.h"
 
+class gkGameObject;
+
 class gkGrabNode : public gkPickNode
 {
 public:
+
 	enum 
 	{
-		THROW_OBJECT,
+		THROW_OBJECT = MAX_SOCKETS,
 		TARGET,
 		GRAB_DIRECTION,
 		THROW_VEL,
 		RELATED_OFFSET_POSITION,
-		THROWED,
-		MAX_SOCKETS
+		THROWED
 	};
+
+	DECLARE_SOCKET_TYPE(THROW_OBJECT, bool);
+	DECLARE_SOCKET_TYPE(TARGET, gkGameObject*);
+	DECLARE_SOCKET_TYPE(GRAB_DIRECTION, gkVector3);
+	DECLARE_SOCKET_TYPE(THROW_VEL, gkVector3);
+	DECLARE_SOCKET_TYPE(RELATED_OFFSET_POSITION, gkVector3);
+	DECLARE_SOCKET_TYPE(THROWED, bool);
 
 	gkGrabNode(gkLogicTree *parent, size_t id);
 
 	~gkGrabNode();
 
-	void update(Ogre::Real tick);
+	void update(gkScalar tick);
+	bool evaluate(gkScalar tick);
 
-	bool evaluate(Ogre::Real tick);
-
-	GK_INLINE gkLogicSocket* getThrowObject() {return &m_sockets[THROW_OBJECT];}
-	GK_INLINE gkLogicSocket* getTarget() {return &m_sockets[TARGET];}
-	GK_INLINE gkLogicSocket* getGrabDirection() {return &m_sockets[GRAB_DIRECTION];}
-	GK_INLINE gkLogicSocket* getThrowVelocity() {return &m_sockets[THROW_VEL];}
-	GK_INLINE gkLogicSocket* getOffsetPosition() {return &m_sockets[RELATED_OFFSET_POSITION];}
-	GK_INLINE gkLogicSocket* getThrowed() {return &m_sockets[THROWED];}
+	GK_INLINE gkLogicSocket<bool>* getThrowObject() {return GET_SOCKET(THROW_OBJECT);}
+	GK_INLINE gkLogicSocket<gkGameObject*>* getTarget() {return GET_SOCKET(TARGET);}
+	GK_INLINE gkLogicSocket<gkVector3>* getGrabDirection() {return GET_SOCKET(GRAB_DIRECTION);}
+	GK_INLINE gkLogicSocket<gkVector3>* getThrowVelocity() {return GET_SOCKET(THROW_VEL);}
+	GK_INLINE gkLogicSocket<gkVector3>* getOffsetPosition() {return GET_SOCKET(RELATED_OFFSET_POSITION);}
+	GK_INLINE gkLogicSocket<bool>* getThrowed() {return GET_SOCKET(THROWED);}
 
 private:
 
@@ -65,8 +73,6 @@ private:
 	gkVector3 GetPivotPosition();
 
 private:
-
-	gkLogicSocket m_sockets[MAX_SOCKETS];
 
 	gkGameObject* m_target;
 };

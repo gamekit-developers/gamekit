@@ -35,15 +35,15 @@ using namespace Ogre;
 gkObjActionNode::gkObjActionNode(gkLogicTree *parent, size_t id) 
 : gkLogicNode(parent, id)
 {
-    ADD_ISOCK(*getUpdate(), this, gkLogicSocket::ST_BOOL);
-	ADD_ISOCK(*getTarget(), this, gkLogicSocket::ST_GAME_OBJECT);
+    ADD_ISOCK(UPDATE, false);
+	ADD_ISOCK(TARGET, 0);
 }
 
 bool gkObjActionNode::evaluate(gkScalar tick)
 {
-	gkGameObject* pObj = getTarget()->getValueGameObject();
+	gkGameObject* pObj = GET_SOCKET_VALUE(TARGET);
 
-	return pObj && pObj->isLoaded() && getUpdate()->getValueBool();
+	return pObj && pObj->isLoaded() && GET_SOCKET_VALUE(UPDATE);
 }
 
 ////////////////////////////////////
@@ -51,16 +51,16 @@ bool gkObjActionNode::evaluate(gkScalar tick)
 gkRotateNode::gkRotateNode(gkLogicTree *parent, size_t id) 
 : gkObjActionNode(parent, id)
 {
-    ADD_ISOCK(*getX(), this, gkLogicSocket::ST_REAL);
-    ADD_ISOCK(*getY(), this, gkLogicSocket::ST_REAL);
-    ADD_ISOCK(*getZ(), this, gkLogicSocket::ST_REAL);
+    ADD_ISOCK(X, 0);
+    ADD_ISOCK(Y, 0);
+    ADD_ISOCK(Z, 0);
 }
 
 void gkRotateNode::update(gkScalar tick)
 {
-    gkVector3 xyz(getX()->getValueReal(), getY()->getValueReal(), getZ()->getValueReal());
+    gkVector3 xyz(GET_SOCKET_VALUE(X), GET_SOCKET_VALUE(Y), GET_SOCKET_VALUE(Z));
 
-	getTarget()->getValueGameObject()->rotate(-xyz, TRANSFORM_LOCAL);
+	GET_SOCKET_VALUE(TARGET)->rotate(-xyz, TRANSFORM_LOCAL);
 }
 
 ////////////////////////////////////
@@ -68,44 +68,44 @@ void gkRotateNode::update(gkScalar tick)
 gkLinearVelNode::gkLinearVelNode(gkLogicTree *parent, size_t id) 
 : gkObjActionNode(parent, id)
 {
-    ADD_ISOCK(*getX(), this, gkLogicSocket::ST_REAL);
-    ADD_ISOCK(*getY(), this, gkLogicSocket::ST_REAL);
-    ADD_ISOCK(*getZ(), this, gkLogicSocket::ST_REAL);
+    ADD_ISOCK(X, 0);
+    ADD_ISOCK(Y, 0);
+    ADD_ISOCK(Z, 0);
 }
 
 void gkLinearVelNode::update(gkScalar tick)
 {
-    gkVector3 xyz(getX()->getValueReal(), getY()->getValueReal(), getZ()->getValueReal());
+    gkVector3 xyz(GET_SOCKET_VALUE(X), GET_SOCKET_VALUE(Y), GET_SOCKET_VALUE(Z));
 
-	getTarget()->getValueGameObject()->setLinearVelocity(xyz, TRANSFORM_LOCAL);
+	GET_SOCKET_VALUE(TARGET)->setLinearVelocity(xyz, TRANSFORM_LOCAL);
 }
 
 /////////////////////////////////////////
 
 bool gkLoadNode::evaluate(gkScalar tick)
 {
-	gkGameObject* pObj = getTarget()->getValueGameObject();
+	gkGameObject* pObj = GET_SOCKET_VALUE(TARGET);
 
-	return pObj && !pObj->isLoaded() && getUpdate()->getValueBool();
+	return pObj && !pObj->isLoaded() && GET_SOCKET_VALUE(UPDATE);
 }
 
 void gkLoadNode::update(gkScalar tick)
 {
-	getTarget()->getValueGameObject()->load();
+	GET_SOCKET_VALUE(TARGET)->load();
 }
 
 /////////////////////////////////////////
 
 void gkUnloadNode::update(gkScalar tick)
 {
-	getTarget()->getValueGameObject()->unload();
+	GET_SOCKET_VALUE(TARGET)->unload();
 }
 
 /////////////////////////////////////////
 
 void gkReloadNode::update(gkScalar tick)
 {
-	getTarget()->getValueGameObject()->reload();
+	GET_SOCKET_VALUE(TARGET)->reload();
 }
 
 ////////////////////////////////////
@@ -113,19 +113,19 @@ void gkReloadNode::update(gkScalar tick)
 gkSetOrientationNode::gkSetOrientationNode(gkLogicTree *parent, size_t id) 
 : gkObjActionNode(parent, id)
 {
-    ADD_ISOCK(*getInput(), this, gkLogicSocket::ST_QUAT);
+	ADD_ISOCK(INPUT, gkQuaternion::IDENTITY);
 }
 
 void gkSetOrientationNode::update(gkScalar tick)
 {
-	getTarget()->getValueGameObject()->setOrientation(getInput()->getValueQuaternion());
+	GET_SOCKET_VALUE(TARGET)->setOrientation(GET_SOCKET_VALUE(INPUT));
 }
 
 /////////////////////////////////////////
 
 void gkDisableDeactivationNode::update(gkScalar tick)
 {
-	gkGameObject* pObj = getTarget()->getValueGameObject();
+	gkGameObject* pObj = GET_SOCKET_VALUE(TARGET);
 
 	gkRigidBody* pRigidBody = pObj->getAttachedBody();
 

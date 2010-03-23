@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -35,6 +35,24 @@
 class gkObjectNode : public gkLogicNode
 {
 public:
+	
+	enum
+	{
+		INPUT,
+		IN_POSITION,
+		IN_ROTATION,
+		OUTPUT,
+		OUT_POSITION,
+		OUT_ROTATION
+	};
+
+	DECLARE_SOCKET_TYPE(INPUT, bool);
+	DECLARE_SOCKET_TYPE(IN_POSITION, gkVector3);
+	DECLARE_SOCKET_TYPE(IN_ROTATION, gkVector3);
+	DECLARE_SOCKET_TYPE(OUTPUT, bool);
+	DECLARE_SOCKET_TYPE(OUT_POSITION, gkVector3);
+	DECLARE_SOCKET_TYPE(OUT_ROTATION, gkVector3);
+
     gkObjectNode(gkLogicTree *parent, size_t id);
     virtual ~gkObjectNode() {}
     void initialize();
@@ -46,19 +64,7 @@ public:
     GK_INLINE void setOtherObject(const gkString &name)   {m_otherName = name;}
     GK_INLINE void setFunction(gkObjectFunction f)        {m_func = f;}
 
-    // inputs
-    GK_INLINE gkLogicSocket* getIn(void)            {return &m_sockets[0];}
-    GK_INLINE gkLogicSocket* getInPosition(void)    {return &m_sockets[1];}
-    GK_INLINE gkLogicSocket* getInRotation(void)    {return &m_sockets[2];}
-
-    // outputs
-    GK_INLINE gkLogicSocket* getOut(void)           {return &m_sockets[3];}
-    GK_INLINE gkLogicSocket* getPosition(void)      {return &m_sockets[4];}
-    GK_INLINE gkLogicSocket* getRotation(void)      {return &m_sockets[5];}
-
-
 private:
-    gkLogicSocket       m_sockets[6];
     gkString            m_otherName;
     gkObjectFunction    m_func;
 };
