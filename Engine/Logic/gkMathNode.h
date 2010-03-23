@@ -57,11 +57,10 @@ public:
 
     void update(gkScalar tick)
 	{
-		T a = GET_SOCKET_VALUE(A);
-		T b = GET_SOCKET_VALUE(B);
-		T d;
+		m_a = GET_SOCKET_VALUE(A);
+		m_b = GET_SOCKET_VALUE(B);
 
-		d = doMath(Int2Type<func>());
+		T d = doMath(Int2Type<func>());
 
 		SET_SOCKET_VALUE(RESULT, d);
 	}
@@ -72,64 +71,64 @@ public:
 
 	T doMath(Int2Type<MTH_ADD>)
 	{
-		return a + b;
+		return m_a + m_b;
 	}
 
 	T doMath(Int2Type<MTH_SUBTRACT>)
 	{
-		return a - b;
+		return m_a - m_b;
 	}
 
 	T doMath(Int2Type<MTH_MULTIPLY>)
 	{
-		return a * b;
+		return m_a * m_b;
 	}
 
 	T doMath(Int2Type<MTH_DIVIDE>)
 	{
-		return a / b;
+		return m_a / m_b;
 	}
 
 	T doMath(Int2Type<MTH_SINE>)
 	{
 		if (GET_SOCKET(A)->isLinked())
-			return gkMath::Sin(gkRadian(a));
+			return gkMath::Sin(gkRadian(m_a));
 		else
-			return gkMath::Sin(gkRadian(b));
+			return gkMath::Sin(gkRadian(m_b));
 	}
 
 	T doMath(Int2Type<MTH_COSINE>)
 	{
 		if (GET_SOCKET(A)->isLinked())
-			return gkMath::Cos(gkRadian(a));
+			return gkMath::Cos(gkRadian(m_a));
 		else
-			return gkMath::Cos(gkRadian(b));
+			return gkMath::Cos(gkRadian(m_b));
 	}
 
 	T doMath(Int2Type<MTH_TANGENT>)
 	{
 		if (GET_SOCKET(A)->isLinked())
-			return gkMath::Tan(gkRadian(a));
+			return gkMath::Tan(gkRadian(m_a));
 		else
-			return gkMath::Tan(gkRadian(b));
+			return gkMath::Tan(gkRadian(m_b));
 	}
 
 	T doMath(Int2Type<MTH_ARCSINE>)
 	{
-		a = gkRadian(a).valueRadians();
-		b = gkRadian(b).valueRadians();
+		m_a = gkRadian(m_a).valueRadians();
+		m_b = gkRadian(m_b).valueRadians();
 
 		if (GET_SOCKET(A)->isLinked())
 		{
-			if (a <= 1 && a >= -1)
-				return gkMath::ASin(a).valueDegrees();
+			if (m_a <= 1 && m_a >= -1)
+				return gkMath::ASin(m_a).valueDegrees();
 			else
 				return 0;
 		}
 		else
 		{
-			if (b <= 1 && b >= -1)
-				return gkMath::ASin(b).valueDegrees();
+			if (m_b <= 1 && m_b >= -1)
+				return gkMath::ASin(m_b).valueDegrees();
 			else
 				return 0;
 		}
@@ -137,20 +136,20 @@ public:
 
 	T doMath(Int2Type<MTH_ARCCOSINE>)
 	{
-		a = gkRadian(a).valueRadians();
-		b = gkRadian(b).valueRadians();
+		m_a = gkRadian(m_a).valueRadians();
+		m_b = gkRadian(m_b).valueRadians();
 
 		if (GET_SOCKET(A)->isLinked())
 		{
-			if (a <= 1 && a >= -1)
-				return gkMath::ACos(a).valueDegrees();
+			if (m_a <= 1 && m_a >= -1)
+				return gkMath::ACos(m_a).valueDegrees();
 			else
 				return 0;
 		}
 		else
 		{
-			if (b <= 1 && b >= -1)
-				return gkMath::ACos(b).valueDegrees();
+			if (m_b <= 1 && m_b >= -1)
+				return gkMath::ACos(m_b).valueDegrees();
 			else
 				return 0;
 		}
@@ -158,20 +157,20 @@ public:
 
 	T doMath(Int2Type<MTH_ARCTANGENT>)
 	{
-		a = gkRadian(a).valueRadians();
-		b = gkRadian(b).valueRadians();
+		m_a = gkRadian(m_a).valueRadians();
+		m_b = gkRadian(m_b).valueRadians();
 
 		if (GET_SOCKET(A)->isLinked())
 		{
-			if (a <= 1 && a >= -1)
-				return gkMath::ATan(a).valueDegrees();
+			if (m_a <= 1 && m_a >= -1)
+				return gkMath::ATan(m_a).valueDegrees();
 			else
 				return 0;
 		}
 		else
 		{
-			if (b <= 1 && b >= -1)
-				return gkMath::ATan(b).valueDegrees();
+			if (m_b <= 1 && m_b >= -1)
+				return gkMath::ATan(m_b).valueDegrees();
 			else
 				return 0;
 		}
@@ -179,52 +178,55 @@ public:
 
 	T doMath(Int2Type<MTH_POWER>)
 	{
-		return a > 0 ? gkMath::Pow(a, b) : 0;
+		return m_a > 0 ? gkMath::Pow(m_a, m_b) : 0;
 	}
 
 	T doMath(Int2Type<MTH_LOGARITHM>)
 	{
-		if (a > 0 && b > 0)
-			return gkMath::Log(a) / gkMath::Log(b);
+		if (m_a > 0 && m_b > 0)
+			return gkMath::Log(m_a) / gkMath::Log(m_b);
 		else 
 			return 0;
 	}
 
 	T doMath(Int2Type<MTH_MINIMUM>)
 	{
-		return (a < b) ? a : b;
+		return (m_a < m_b) ? m_a : m_b;
 	}
 
 	T doMath(Int2Type<MTH_MAXIMUM>)
 	{
-		return (a > b) ? a : b;
+		return (m_a > m_b) ? m_a : m_b;
 	}
 
 	T doMath(Int2Type<MTH_ROUND>)
 	{
 		if (GET_SOCKET(A)->isLinked())
 		{
-			gkScalar base = gkMath::Floor(a);
-			gkScalar dec = base - a;
+			gkScalar base = gkMath::Floor(m_a);
+			gkScalar dec = base - m_a;
 			return dec > 0.5 ? base + 1 : base;
 		}
 		else
 		{
-			gkScalar base = gkMath::Floor(b);
-			gkScalar dec = base - b;
+			gkScalar base = gkMath::Floor(m_b);
+			gkScalar dec = base - m_b;
 			return dec > 0.5 ? base + 1 : base;
 		}
 	}
 
 	T doMath(Int2Type<MTH_LESS_THAN>)
 	{
-		return (a < b) ? 1 : 0;
+		return (m_a < m_b) ? 1 : 0;
 	}
 
 	T doMath(Int2Type<MTH_GREATER_THAN>)
 	{
-		return (a > b) ? 1 : 0;
+		return (m_a > m_b) ? 1 : 0;
 	}
+private:
+	T m_a;
+	T m_b;
 };
 
 
