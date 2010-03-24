@@ -156,7 +156,6 @@ set(NLogic_HEADER
     Logic/gkCollisionNode.h
     Logic/gkExitNode.h
     Logic/gkExpressionNode.h
-    Logic/gkGenericIfNode.h
     Logic/gkGrabNode.h
     Logic/gkGroupNode.h
     Logic/gkIfNode.h

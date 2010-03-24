@@ -274,7 +274,7 @@ public:
 		m_stateMachine->addTransition(momoState::RUN, momoState::WALK);
 
 		{
-			gkGenericIfNode<bool, CMP_AND>* ifNode = m_tree->createNode<gkGenericIfNode<bool, CMP_AND> >();
+			gkIfNode<bool, CMP_AND>* ifNode = m_tree->createNode<gkIfNode<bool, CMP_AND> >();
 			ifNode->getA()->link(m_shiftKeyNode->getIS_DOWN());
 			ifNode->getB()->link(m_wKeyNode->getIS_DOWN());
 			
@@ -293,7 +293,7 @@ public:
 
 
 		{
-			gkGenericIfNode<bool, CMP_AND>* ifNode = m_tree->createNode<gkGenericIfNode<bool, CMP_AND> >();
+			gkIfNode<bool, CMP_AND>* ifNode = m_tree->createNode<gkIfNode<bool, CMP_AND> >();
 			ifNode->getA()->link(m_ctrlKeyNode->getNOT_IS_DOWN());
 			ifNode->getB()->link(m_rightMouseNode->getPRESS());
 
@@ -332,7 +332,7 @@ public:
 		m_momoGrab->getRELATED_OFFSET_POSITION()->setValue(gkVector3(0, 0, 1));
 
 		{
-			gkGenericIfNode<bool, CMP_AND>* ifNode = m_tree->createNode<gkGenericIfNode<bool, CMP_AND> >();
+			gkIfNode<bool, CMP_AND>* ifNode = m_tree->createNode<gkIfNode<bool, CMP_AND> >();
 
 			ifNode->getA()->link(m_rightMouseNode->getPRESS());
 			ifNode->getB()->link(m_ctrlKeyNode->getNOT_IS_DOWN());
@@ -341,7 +341,7 @@ public:
 		}
 
 		{
-			gkGenericIfNode<bool, CMP_AND>* ifNode = m_tree->createNode<gkGenericIfNode<bool, CMP_AND> >();
+			gkIfNode<bool, CMP_AND>* ifNode = m_tree->createNode<gkIfNode<bool, CMP_AND> >();
 
 			ifNode->getA()->link(m_rightMouseNode->getRELEASE());
 			ifNode->getB()->link(m_ctrlKeyNode->getNOT_IS_DOWN());
@@ -350,7 +350,7 @@ public:
 		}
 
 		{
-			gkGenericIfNode<bool, CMP_AND>* ifNode = m_tree->createNode<gkGenericIfNode<bool, CMP_AND> >();
+			gkIfNode<bool, CMP_AND>* ifNode = m_tree->createNode<gkIfNode<bool, CMP_AND> >();
 
 			ifNode->getA()->link(m_leftMouseNode->getPRESS());
 			ifNode->getB()->link(m_ctrlKeyNode->getNOT_IS_DOWN());
@@ -361,22 +361,22 @@ public:
 
 	void CreateMomoMoveLogic()
 	{
-		gkGenericIfNode<int, CMP_EQUALS>* equalWalkNode = m_tree->createNode<gkGenericIfNode<int, CMP_EQUALS> >();
+		gkIfNode<int, CMP_EQUALS>* equalWalkNode = m_tree->createNode<gkIfNode<int, CMP_EQUALS> >();
 
 		equalWalkNode->getA()->setValue(momoState::WALK);
 		equalWalkNode->getB()->link(m_stateMachine->getCURRENT_STATE());
 
-		gkGenericIfNode<int, CMP_EQUALS>* equalRunNode = m_tree->createNode<gkGenericIfNode<int, CMP_EQUALS> >();
+		gkIfNode<int, CMP_EQUALS>* equalRunNode = m_tree->createNode<gkIfNode<int, CMP_EQUALS> >();
 
 		equalRunNode->getA()->setValue(momoState::RUN);
 		equalRunNode->getB()->link(m_stateMachine->getCURRENT_STATE());
 
-		gkGenericIfNode<int, CMP_EQUALS>* equalRunFasterNode = m_tree->createNode<gkGenericIfNode<int, CMP_EQUALS> >();
+		gkIfNode<int, CMP_EQUALS>* equalRunFasterNode = m_tree->createNode<gkIfNode<int, CMP_EQUALS> >();
 
 		equalRunFasterNode->getA()->setValue(momoState::RUN_FASTER);
 		equalRunFasterNode->getB()->link(m_stateMachine->getCURRENT_STATE());
 
-		gkGenericIfNode<int, CMP_EQUALS>* equalWalkBackNode = m_tree->createNode<gkGenericIfNode<int, CMP_EQUALS> >();
+		gkIfNode<int, CMP_EQUALS>* equalWalkBackNode = m_tree->createNode<gkIfNode<int, CMP_EQUALS> >();
 
 		equalWalkBackNode->getA()->setValue(momoState::WALK_BACK);
 		equalWalkBackNode->getB()->link(m_stateMachine->getCURRENT_STATE());
@@ -384,16 +384,16 @@ public:
 		{
 			// orient Momo
 
-			gkGenericIfNode<bool, CMP_OR>* ifANode = m_tree->createNode<gkGenericIfNode<bool, CMP_OR> >();
+			gkIfNode<bool, CMP_OR>* ifANode = m_tree->createNode<gkIfNode<bool, CMP_OR> >();
 			ifANode->getA()->link(equalWalkNode->getIS_TRUE());
 			ifANode->getB()->link(equalWalkBackNode->getIS_TRUE());
 
-			gkGenericIfNode<bool, CMP_OR>* ifBNode = m_tree->createNode<gkGenericIfNode<bool, CMP_OR> >();
+			gkIfNode<bool, CMP_OR>* ifBNode = m_tree->createNode<gkIfNode<bool, CMP_OR> >();
 
 			ifBNode->getA()->link(equalRunNode->getIS_TRUE());
 			ifBNode->getB()->link(equalRunFasterNode->getIS_TRUE());
 
-			gkGenericIfNode<bool, CMP_OR>* ifNode = m_tree->createNode<gkGenericIfNode<bool, CMP_OR> >();
+			gkIfNode<bool, CMP_OR>* ifNode = m_tree->createNode<gkIfNode<bool, CMP_OR> >();
 			ifNode->getA()->link(ifANode->getIS_TRUE());
 			ifNode->getB()->link(ifBNode->getIS_TRUE());
 
@@ -448,7 +448,7 @@ public:
 	void CreateMomoDustTrailLogic()
 	{
 		{
-			gkGenericIfNode<gkString, CMP_EQUALS>* equalNode = m_tree->createNode<gkGenericIfNode<gkString, CMP_EQUALS> >();
+			gkIfNode<gkString, CMP_EQUALS>* equalNode = m_tree->createNode<gkIfNode<gkString, CMP_EQUALS> >();
 
 			equalNode->getA()->setValue(momoAnimation::RUN_FASTER);
 			equalNode->getB()->link(m_animNode->getCURRENT_ANIM_NAME());
@@ -479,7 +479,7 @@ public:
 		collision->getCOLLIDES_WITH()->setValue(object::PLANE);
 		collision->getTARGET()->link(m_playerSetter->getOUTPUT());
 
-		gkGenericIfNode<bool, CMP_AND>* ifNode = m_tree->createNode<gkGenericIfNode<bool, CMP_AND> >();
+		gkIfNode<bool, CMP_AND>* ifNode = m_tree->createNode<gkIfNode<bool, CMP_AND> >();
 
 		collision->getHAS_COLLIDED()->link(ifNode->getA());
 		ifNode->getB()->link(pUpdateSocket);
@@ -606,7 +606,7 @@ public:
 		centerObj->getY()->link(m_mouseNode->getABS_Y());
 
 		{
-			gkGenericIfNode<bool, CMP_AND>* ifNode = m_tree->createNode<gkGenericIfNode<bool, CMP_AND> >();
+			gkIfNode<bool, CMP_AND>* ifNode = m_tree->createNode<gkIfNode<bool, CMP_AND> >();
 
 			ifNode->getA()->link(m_leftMouseNode->getPRESS());
 			ifNode->getB()->link(m_ctrlKeyNode->getIS_DOWN());
@@ -631,7 +631,7 @@ public:
 
 
 		{
-			gkGenericIfNode<bool, CMP_AND>* ifNode = m_tree->createNode<gkGenericIfNode<bool, CMP_AND> >();
+			gkIfNode<bool, CMP_AND>* ifNode = m_tree->createNode<gkIfNode<bool, CMP_AND> >();
 			ifNode->getA()->link(m_ctrlKeyNode->getIS_DOWN());
 			ifNode->getB()->link(m_leftMouseNode->getIS_DOWN());
 

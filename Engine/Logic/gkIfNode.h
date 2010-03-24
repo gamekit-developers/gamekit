@@ -3,7 +3,7 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Charlie C. & Nestor Silveira.
+    Copyright (c) 2006-2010 Charlie C & Nestor Silveira.
 
     Contributor(s): none yet.
 -------------------------------------------------------------------------------
@@ -29,7 +29,7 @@
 
 #include "gkLogicNode.h"
 
-template<typename T>
+template<typename T, gkBoolStatement stmt>
 class gkIfNode : public gkLogicNode
 {
 public:
@@ -48,10 +48,10 @@ public:
 	DECLARE_SOCKET_TYPE(IS_FALSE, bool);
 
 	gkIfNode(gkLogicTree *parent, size_t id) 
-		: gkLogicNode(parent, id), m_stmt(CMP_NULL)
+		: gkLogicNode(parent, id)
 	{
-		ADD_ISOCK(A, false);
-		ADD_ISOCK(B, false);
+		ADD_ISOCK(A, T());
+		ADD_ISOCK(B, T());
 		ADD_OSOCK(IS_TRUE, false);
 		ADD_OSOCK(IS_FALSE, false);
 	}
@@ -60,73 +60,7 @@ public:
 
     bool evaluate(gkScalar tick)
 	{
-		bool result = false;
-
-		switch (m_stmt)
-		{
-			case CMP_TRUE:
-			{
-				if (GET_SOCKET(A)->isLinked())
-				{
-					result = GET_SOCKET_VALUE(A) ? true : false;
-				}
-				else if (GET_SOCKET(B)->isLinked())
-				{
-					result = GET_SOCKET_VALUE(B) ? true : false;
-				}
-				else
-				{
-					result = GET_SOCKET_VALUE(A) ? true : false;
-				}
-			}
-			break;
-
-			case CMP_NOT:
-			case CMP_FALSE:
-			{
-				if (GET_SOCKET(A)->isLinked())
-				{
-					result = !GET_SOCKET_VALUE(A);
-				}
-				else if (GET_SOCKET(B)->isLinked())
-				{
-					result = !GET_SOCKET_VALUE(B);
-				}
-				else
-				{
-					result = !GET_SOCKET_VALUE(A);
-				}
-			}
-			break;
-
-		case CMP_AND:
-			result = GET_SOCKET_VALUE(A) && GET_SOCKET_VALUE(B);
-			break;
-		case CMP_OR:
-			result = GET_SOCKET_VALUE(A) || GET_SOCKET_VALUE(B);
-			break;
-		case CMP_EQUALS:
-			result = GET_SOCKET_VALUE(A) == GET_SOCKET_VALUE(B);
-			break;
-		case CMP_NOT_EQUAL:
-			result = GET_SOCKET_VALUE(A) != GET_SOCKET_VALUE(B);
-			break;
-		case CMP_GREATER:
-			result = GET_SOCKET_VALUE(A) > GET_SOCKET_VALUE(B);
-			break;
-		case CMP_GTHAN:
-			result = GET_SOCKET_VALUE(A) >= GET_SOCKET_VALUE(B);
-			break;
-		case CMP_LESS:
-			result = GET_SOCKET_VALUE(A) < GET_SOCKET_VALUE(B);
-			break;
-		case CMP_LTHAN:
-			result = GET_SOCKET_VALUE(A) <= GET_SOCKET_VALUE(B);
-			break;
-		case CMP_NULL:
-		default:
-			break;
-		}
+		bool result = doIf(Int2Type<stmt>());
 
 		SET_SOCKET_VALUE(IS_TRUE, result);
 		SET_SOCKET_VALUE(IS_FALSE, !result);
@@ -134,12 +68,93 @@ public:
 		return false;
 	}
 
+	bool doIf(Int2Type<CMP_TRUE>)
+	{
+		if (GET_SOCKET(A)->isLinked())
+		{
+			return GET_SOCKET_VALUE(A) ? true : false;
+		}
+		else if (GET_SOCKET(B)->isLinked())
+		{
+			return GET_SOCKET_VALUE(B) ? true : false;
+		}
+		else
+		{
+			return GET_SOCKET_VALUE(A) ? true : false;
+		}
+	}
 
-    void setStatement(gkBoolStatement stmt) {m_stmt = stmt;}
+	bool doIf(Int2Type<CMP_FALSE>)
+	{
+		if (GET_SOCKET(A)->isLinked())
+		{
+			return !GET_SOCKET_VALUE(A);
+		}
+		else if (GET_SOCKET(B)->isLinked())
+		{
+			return !GET_SOCKET_VALUE(B);
+		}
+		else
+		{
+			return !GET_SOCKET_VALUE(A);
+		}
+	}
 
-private:
+	bool doIf(Int2Type<CMP_NOT>)
+	{
+		if (GET_SOCKET(A)->isLinked())
+		{
+			return !GET_SOCKET_VALUE(A);
+		}
+		else if (GET_SOCKET(B)->isLinked())
+		{
+			return !GET_SOCKET_VALUE(B);
+		}
+		else
+		{
+			return !GET_SOCKET_VALUE(A);
+		}
+	}
 
-    gkBoolStatement m_stmt;
+	bool doIf(Int2Type<CMP_AND>)
+	{
+		return GET_SOCKET_VALUE(A) && GET_SOCKET_VALUE(B);
+	}
+
+	bool doIf(Int2Type<CMP_OR>)
+	{
+		return GET_SOCKET_VALUE(A) || GET_SOCKET_VALUE(B);
+	}
+
+	bool doIf(Int2Type<CMP_EQUALS>)
+	{
+		return GET_SOCKET_VALUE(A) == GET_SOCKET_VALUE(B);
+	}
+
+	bool doIf(Int2Type<CMP_NOT_EQUAL>)
+	{
+		return GET_SOCKET_VALUE(A) != GET_SOCKET_VALUE(B);
+	}
+
+	bool doIf(Int2Type<CMP_GREATER>)
+	{
+		return GET_SOCKET_VALUE(A) > GET_SOCKET_VALUE(B);
+	}
+
+	bool doIf(Int2Type<CMP_GTHAN>)
+	{
+		return GET_SOCKET_VALUE(A) >= GET_SOCKET_VALUE(B);
+	}
+
+	bool doIf(Int2Type<CMP_LESS>)
+	{
+		return GET_SOCKET_VALUE(A) < GET_SOCKET_VALUE(B);
+	}
+
+	bool doIf(Int2Type<CMP_LTHAN>)
+	{
+		return GET_SOCKET_VALUE(A) <= GET_SOCKET_VALUE(B);
+	}
 };
 
 #endif//_gkIfNode_h_
