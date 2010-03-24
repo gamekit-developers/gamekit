@@ -387,8 +387,9 @@ void gkMeshLoaderPrivate::convertMesh(void)
             foundItem = new gkSubMeshBufferItem();
             foundItem->submesh = mesh->createSubMesh();
 
-            foundItem->ibuf.reserve(bmesh->totface);
-            foundItem->vbuf.reserve(bmesh->totvert);
+            // to much
+            // foundItem->ibuf.reserve(bmesh->totface);
+            // foundItem->vbuf.reserve(bmesh->totvert);
 
             // track for next iteration
             gkSlotItemPair p = {new gkSubMeshSlot(tester), foundItem};

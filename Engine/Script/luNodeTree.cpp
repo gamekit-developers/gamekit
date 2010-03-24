@@ -24,6 +24,7 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+#ifdef ENABLE_NODE_BINDINGS 
 #include "luUtils.h"
 #include "luMath.h"
 #include "luScene.h"
@@ -860,3 +861,5 @@ void luNodeTree_Open(ltState *L)
 
     lua.endNamespace();
 }
+
+#endif//ENABLE_NODE_BINDINGS

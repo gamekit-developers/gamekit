@@ -27,8 +27,9 @@
 #ifndef _luNodeTree_h_
 #define _luNodeTree_h_
 
+#if ENABLE_NODE_BINDINGS
 #include "luUtils.h"
-
 extern void luNodeTree_Open(ltState *L);
+#endif
 
 #endif//_luNodeTree_h_

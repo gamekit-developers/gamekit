@@ -541,7 +541,6 @@ GK_INLINE Index gkSubMeshBufferItem::getVertexBufferObject(Index iter, const gkV
         indexmap.insert(iter, vbs);
         return vbs;
     }
-
     return (Index)found;
 }
 

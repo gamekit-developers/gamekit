@@ -44,7 +44,9 @@ struct luSystem_Builtin {
 
 // System builtin module definition
 luSystem_Builtin luSystem_BuiltinModules[] = {
+#if ENABLE_NODE_BINDINGS
     {"NodeTree",    false, luNodeTree_Open},
+#endif
     {"GameKit",     false, luGameKit_Open},
     {"Math",        false, luMath_Open},
     {0,             false, 0}
