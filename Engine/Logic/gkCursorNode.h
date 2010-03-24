@@ -35,19 +35,19 @@ public:
 	enum 
 	{
 		ENABLE,
-		UPDATED,
+		UPDATE,
 		MATERIAL_NAME,
-		XPOS,
-		YPOS,
+		X,
+		Y,
 		WIDTH,
 		HEIGHT
 	};
 
 	DECLARE_SOCKET_TYPE(ENABLE, bool);
-	DECLARE_SOCKET_TYPE(UPDATED, bool);
+	DECLARE_SOCKET_TYPE(UPDATE, bool);
 	DECLARE_SOCKET_TYPE(MATERIAL_NAME, gkString);
-	DECLARE_SOCKET_TYPE(XPOS, gkScalar);
-	DECLARE_SOCKET_TYPE(YPOS, gkScalar);
+	DECLARE_SOCKET_TYPE(X, gkScalar);
+	DECLARE_SOCKET_TYPE(Y, gkScalar);
 	DECLARE_SOCKET_TYPE(WIDTH, gkScalar);
 	DECLARE_SOCKET_TYPE(HEIGHT, gkScalar);
 
@@ -57,15 +57,6 @@ public:
 
 	void update(Ogre::Real tick);
 	bool evaluate(Ogre::Real tick);
-
-	GK_INLINE gkLogicSocket<bool>* getEnable() {return GET_SOCKET(ENABLE);}
-	GK_INLINE gkLogicSocket<bool>* getUpdate() {return GET_SOCKET(UPDATED);}
-	GK_INLINE gkLogicSocket<gkString>* getMaterialName() {return GET_SOCKET(MATERIAL_NAME);}
-    GK_INLINE gkLogicSocket<gkScalar>* getX() {return GET_SOCKET(XPOS);}
-    GK_INLINE gkLogicSocket<gkScalar>* getY() {return GET_SOCKET(YPOS);}
-    GK_INLINE gkLogicSocket<gkScalar>* getWidth() {return GET_SOCKET(WIDTH);}
-	GK_INLINE gkLogicSocket<gkScalar>* getHeight() {return GET_SOCKET(HEIGHT);}
-
 
 private:
 

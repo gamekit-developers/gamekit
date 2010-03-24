@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -87,7 +87,7 @@ public:
     // nil Socket:setValue(Any)
     int setValue(luClass *self, luObject& L)
     {
-        if (m_socket->getType() == gkILogicSocket::ST_GAME_OBJECT)
+        if (typeid(*m_socket) == typeid(gkLogicSocket<gkGameObject*>))
         {
             gkScene *sc = gkEngine::getSingleton().getActiveScene();
             if (L.isString(2))
@@ -95,8 +95,8 @@ public:
             if (luGameObject::isType(L, 2))
                 getSocket<gkGameObject*>(m_socket)->setValue(&luGameObject::getArg(L, 2).ref<gkGameObject>());
        }
-        else if (m_socket->getType() != gkILogicSocket::ST_STRING &&
-                 m_socket->getType() != gkILogicSocket::ST_VARIABLE)
+        else if (typeid(*m_socket) != typeid(gkLogicSocket<gkString>) &&
+                 typeid(*m_socket) != typeid(gkLogicSocket<gkVariable>))
         {
             if (L.isNumber(2))
                 getSocket<gkScalar>(m_socket)->setValue((gkScalar)L.tonumber(2));
@@ -233,19 +233,19 @@ public:
     // Socket AnimationNode:getAnimName()
     int getAnimName(luClass *self, luObject &L)
     {
-        return luSocket::create(L, getRef<gkAnimationNode>().getAnimName());
+        return luSocket::create(L, getRef<gkAnimationNode>().getANIM_NAME());
     }
 
     // Socket AnimationNode:getBlend()
     int getBlend(luClass *self, luObject &L)
     {
-        return luSocket::create(L, getRef<gkAnimationNode>().getBlend());
+        return luSocket::create(L, getRef<gkAnimationNode>().getBLEND_FRAMES());
     }
 
     // Socket AnimationNode:getBlend()
     int getTarget(luClass *self, luObject &L)
     {
-        return luSocket::create(L, getRef<gkAnimationNode>().getTarget());
+        return luSocket::create(L, getRef<gkAnimationNode>().getTARGET());
     }
 
 };
@@ -277,31 +277,31 @@ public:
     // Socket ButtonNode:getUpdate()
     int getUpdate(luClass *self, luObject &L)
     {
-        return luSocket::create(L, getRef<gkButtonNode>().getUpdate());
+        return luSocket::create(L, getRef<gkButtonNode>().getUPDATED());
     }
 
     // Socket ButtonNode:getIsDown()
     int getIsDown(luClass *self, luObject &L)
     {
-        return luSocket::create(L, getRef<gkButtonNode>().getIsDown());
+        return luSocket::create(L, getRef<gkButtonNode>().getIS_DOWN());
     }
 
     // Socket ButtonNode:getNotIsDown()
     int getNotIsDown(luClass *self, luObject &L)
     {
-        return luSocket::create(L, getRef<gkButtonNode>().getNotIsDown());
+        return luSocket::create(L, getRef<gkButtonNode>().getNOT_IS_DOWN());
     }
 
     // Socket ButtonNode:getOnPress()
     int getOnPress(luClass *self, luObject &L)
     {
-        return luSocket::create(L, getRef<gkButtonNode>().getPress());
+        return luSocket::create(L, getRef<gkButtonNode>().getPRESS());
     }
 
     // Socket ButtonNode:getOnRelease()
     int getOnRelease(luClass *self, luObject &L)
     {
-        return luSocket::create(L, getRef<gkButtonNode>().getRelease());
+        return luSocket::create(L, getRef<gkButtonNode>().getRELEASE());
     }
 };
 
@@ -398,7 +398,7 @@ public:
     // Socket ExitNode:getExit()
     int getExit(luClass *self, luObject &L)
     {
-        return luSocket::create(L, getRef<gkExitNode>().getExit());
+        return luSocket::create(L, getRef<gkExitNode>().getEXIT());
     }
 
 };
@@ -436,12 +436,12 @@ public:
     // Socket IfNode:getTrue()
     int getTrue(luClass *self, luObject &L)
     {
-        return luSocket::create(L, getRef<gkIfNode<gkScalar> >().getTrue());
+        return luSocket::create(L, getRef<gkIfNode<gkScalar> >().getIS_TRUE());
     }
     // Socket IfNode:getFalse()
     int getFalse(luClass *self, luObject &L)
     {
-        return luSocket::create(L, getRef<gkIfNode<gkScalar> >().getFalse());
+        return luSocket::create(L, getRef<gkIfNode<gkScalar> >().getIS_FALSE());
     }
 
     // nil IfNode:setStatement()
@@ -482,13 +482,13 @@ public:
     // Socket PrintNode:getPrint()
     int getPrint(luClass *self, luObject &L)
     {
-        return luSocket::create(L, getRef<gkPrintNode>().getPrint());
+        return luSocket::create(L, getRef<gkPrintNode>().getPRINT());
     }
 
     // Socket PrintNode:getValue()
     int getValue(luClass *self, luObject &L)
     {
-        return luSocket::create(L, getRef<gkPrintNode>().getValue());
+        return luSocket::create(L, getRef<gkPrintNode>().getVALUE());
     }
 };
 
@@ -519,43 +519,43 @@ public:
     // Socket MouseMotionNode:getScaleX()
     int getScaleX(luClass *self, luObject &L)
     {
-        return luSocket::create(L, getRef<gkMouseNode>().getScaleX());
+        return luSocket::create(L, getRef<gkMouseNode>().getSCALE_X());
     }
 
     // Socket MouseMotionNode:getScaleY()
     int getScaleY(luClass *self, luObject &L)
     {
-        return luSocket::create(L, getRef<gkMouseNode>().getScaleX());
+        return luSocket::create(L, getRef<gkMouseNode>().getSCALE_Y());
     }
     // Socket MouseMotionNode:getMotion()
     int getMotion(luClass *self, luObject &L)
     {
-        return luSocket::create(L, getRef<gkMouseNode>().getMotion());
+        return luSocket::create(L, getRef<gkMouseNode>().getMOTION());
     }
     // Socket MouseMotionNode:getRelX()
     int getRelX(luClass *self, luObject &L)
     {
-        return luSocket::create(L, getRef<gkMouseNode>().getRelX());
+        return luSocket::create(L, getRef<gkMouseNode>().getREL_X());
     }
     // Socket MouseMotionNode:getRelY()
     int getRelY(luClass *self, luObject &L)
     {
-        return luSocket::create(L, getRef<gkMouseNode>().getRelY());
+        return luSocket::create(L, getRef<gkMouseNode>().getREL_Y());
     }
     // Socket MouseMotionNode:getAbsX()
     int getAbsX(luClass *self, luObject &L)
     {
-        return luSocket::create(L, getRef<gkMouseNode>().getAbsX());
+        return luSocket::create(L, getRef<gkMouseNode>().getABS_X());
     }
     // Socket MouseMotionNode:getAbsY()
     int getAbsY(luClass *self, luObject &L)
     {
-        return luSocket::create(L, getRef<gkMouseNode>().getAbsY());
+        return luSocket::create(L, getRef<gkMouseNode>().getABS_Y());
     }
     // Socket MouseMotionNode:getWheel()
     int getWheel(luClass *self, luObject &L)
     {
-        return luSocket::create(L, getRef<gkMouseNode>().getWheel());
+        return luSocket::create(L, getRef<gkMouseNode>().getWHEEL());
     }
 };
 
@@ -591,7 +591,7 @@ public:
     // Socket MotionNode:getUpdate()
     int getUpdate(luClass *self, luObject &L)
     {
-        return luSocket::create(L, getRef<gkMotionNode>().getUpdate());
+        return luSocket::create(L, getRef<gkMotionNode>().getUPDATE());
     }
 
     // Socket MotionNode:getX()
@@ -612,7 +612,7 @@ public:
     // Socket MotionNode:getDamping()
     int getDamping(luClass *self, luObject &L)
     {
-        return luSocket::create(L, getRef<gkMotionNode>().getDamping());
+        return luSocket::create(L, getRef<gkMotionNode>().getDAMPING());
     }
 
     // nil MotionNode:setMotionType(Enum)

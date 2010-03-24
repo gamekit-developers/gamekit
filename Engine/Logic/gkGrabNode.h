@@ -59,13 +59,6 @@ public:
 	void update(gkScalar tick);
 	bool evaluate(gkScalar tick);
 
-	GK_INLINE gkLogicSocket<bool>* getThrowObject() {return GET_SOCKET(THROW_OBJECT);}
-	GK_INLINE gkLogicSocket<gkGameObject*>* getTarget() {return GET_SOCKET(TARGET);}
-	GK_INLINE gkLogicSocket<gkVector3>* getGrabDirection() {return GET_SOCKET(GRAB_DIRECTION);}
-	GK_INLINE gkLogicSocket<gkVector3>* getThrowVelocity() {return GET_SOCKET(THROW_VEL);}
-	GK_INLINE gkLogicSocket<gkVector3>* getOffsetPosition() {return GET_SOCKET(RELATED_OFFSET_POSITION);}
-	GK_INLINE gkLogicSocket<bool>* getThrowed() {return GET_SOCKET(THROWED);}
-
 private:
 
 	void ThrowObject();

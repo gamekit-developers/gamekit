@@ -58,13 +58,6 @@ public:
 	void update(Ogre::Real tick);
 	bool evaluate(Ogre::Real tick);
 
-	GK_INLINE gkLogicSocket<bool>* getEnable() {return GET_SOCKET(ENABLE);}
-	GK_INLINE gkLogicSocket<gkGameObject*>* getTarget() {return GET_SOCKET(TARGET);}
-	GK_INLINE gkLogicSocket<gkString>* getCollidesWith() {return GET_SOCKET(COLLIDES_WITH);}
-	GK_INLINE gkLogicSocket<bool>* getHasCollided() {return GET_SOCKET(HAS_COLLIDED);}
-	GK_INLINE gkLogicSocket<gkGameObject*>* getCollided() {return GET_SOCKET(COLLIDED_OBJ);}
-	GK_INLINE gkLogicSocket<gkVector3>* getContactPosition() {return GET_SOCKET(CONTACT_POSITION);}
-
 private:
 
 	gkRigidBody* m_bBody;

@@ -47,8 +47,8 @@ m_angularFactor(gkVector3::ZERO)
 	ADD_ISOCK(UPDATE, false);
 	ADD_ISOCK(CREATE_PICK, false);
 	ADD_ISOCK(RELEASE_PICK, false);
-	ADD_ISOCK(XPOS, 0);
-	ADD_ISOCK(YPOS, 0);
+	ADD_ISOCK(X, 0);
+	ADD_ISOCK(Y, 0);
 	ADD_ISOCK(DISABLE_ROTATION, false);
 	ADD_OSOCK(CAUGHT_TRUE, false);
 	ADD_OSOCK(CAUGHT_FALSE, true);
@@ -193,7 +193,7 @@ void gkPickNode::UpdatePick()
 
 Ogre::Ray gkPickNode::GetRay()
 {
-	return gkUtils::CreateCameraRay(GET_SOCKET_VALUE(XPOS), GET_SOCKET_VALUE(YPOS));
+	return gkUtils::CreateCameraRay(GET_SOCKET_VALUE(X), GET_SOCKET_VALUE(Y));
 }
 
 gkVector3 gkPickNode::GetPivotPosition()

@@ -155,15 +155,6 @@ public:
 	{
 		return GET_SOCKET_VALUE(A) <= GET_SOCKET_VALUE(B);
 	}
-
-    // inputs
-    GK_INLINE gkLogicSocket<T>* getA() {return GET_SOCKET(A);}
-    GK_INLINE gkLogicSocket<T>* getB() {return GET_SOCKET(B);}
-
-    // outputs
-    GK_INLINE gkLogicSocket<bool>* getTrue() {return GET_SOCKET(IS_TRUE);}
-    GK_INLINE gkLogicSocket<bool>* getFalse() {return GET_SOCKET(IS_FALSE);}
-
 };
 
 #endif//_gkGenericIfNode_h_

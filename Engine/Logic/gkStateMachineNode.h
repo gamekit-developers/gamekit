@@ -56,10 +56,6 @@ public:
 
 	void addTranslation(int state, const gkString& name);
 
-    GK_INLINE gkLogicSocket<bool>* getUpdate() {return GET_SOCKET(UPDATE);}
-	GK_INLINE gkLogicSocket<int>* getCurrentState() {return GET_SOCKET(CURRENT_STATE);}
-	GK_INLINE gkLogicSocket<gkString>* getCurrentName() {return GET_SOCKET(CURRENT_NAME);}
-
 private:
 
 	typedef utPointerHashKey EVENT;

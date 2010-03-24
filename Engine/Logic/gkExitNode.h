@@ -46,9 +46,6 @@ public:
 	virtual ~gkExitNode() {}
 
     bool evaluate(gkScalar tick);
-
-    GK_INLINE gkLogicSocket<bool>* getExit() {return GET_SOCKET(EXIT);}
-
 };
 
 

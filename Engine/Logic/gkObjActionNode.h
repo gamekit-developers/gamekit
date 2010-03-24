@@ -49,9 +49,6 @@ public:
 	virtual ~gkObjActionNode() {}
     
     bool evaluate(gkScalar tick);
-
-    GK_INLINE gkLogicSocket<bool>* getUpdate() {return GET_SOCKET(UPDATE);}
-	GK_INLINE gkLogicSocket<gkGameObject*>* getTarget() {return GET_SOCKET(TARGET);}
 };
 
 class gkRotateNode : public gkObjActionNode
@@ -74,10 +71,6 @@ public:
 	~gkRotateNode() {}
 
 	void update(gkScalar tick);
-
-    GK_INLINE gkLogicSocket<gkScalar>* getX() {return GET_SOCKET(X);}
-    GK_INLINE gkLogicSocket<gkScalar>* getY() {return GET_SOCKET(Y);}
-    GK_INLINE gkLogicSocket<gkScalar>* getZ() {return GET_SOCKET(Z);}
 };
 
 class gkLinearVelNode : public gkObjActionNode
@@ -99,10 +92,6 @@ public:
 	~gkLinearVelNode() {}
 
 	void update(gkScalar tick);
-
-    GK_INLINE gkLogicSocket<gkScalar>* getX() {return GET_SOCKET(X);}
-    GK_INLINE gkLogicSocket<gkScalar>* getY() {return GET_SOCKET(Y);}
-    GK_INLINE gkLogicSocket<gkScalar>* getZ() {return GET_SOCKET(Z);}
 };
 
 class gkLoadNode : public gkObjActionNode
@@ -158,8 +147,6 @@ public:
 	~gkSetOrientationNode() {}
 
 	void update(gkScalar tick);
-
-    GK_INLINE gkLogicSocket<gkQuaternion>* getInput() {return GET_SOCKET(INPUT);}
 };
 
 class gkDisableDeactivationNode : public gkObjActionNode
@@ -173,7 +160,5 @@ public:
 
 	void update(gkScalar tick);
 };
-
-
 
 #endif//_gkObjActionNode_h_

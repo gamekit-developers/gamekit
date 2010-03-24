@@ -41,10 +41,10 @@ m_panelElement(0)
 	const gkScalar height = 32;
 
 	ADD_ISOCK(ENABLE, false);
-	ADD_ISOCK(UPDATED, false);
+	ADD_ISOCK(UPDATE, false);
 	ADD_ISOCK(MATERIAL_NAME, "");
-	ADD_ISOCK(XPOS, 0);
-	ADD_ISOCK(YPOS, 0);
+	ADD_ISOCK(X, 0);
+	ADD_ISOCK(Y, 0);
 	ADD_ISOCK(WIDTH, width);
 	ADD_ISOCK(HEIGHT, height);
 
@@ -94,7 +94,7 @@ bool gkCursorNode::evaluate(Real tick)
 	{
 		m_overlay->show();
 
-		if(!GET_SOCKET_VALUE(UPDATED))
+		if(!GET_SOCKET_VALUE(UPDATE))
 		{
 			update(0);
 		}
@@ -105,7 +105,7 @@ bool gkCursorNode::evaluate(Real tick)
 		m_overlay->hide();
 	}
 
-	return enable && GET_SOCKET_VALUE(UPDATED);
+	return enable && GET_SOCKET_VALUE(UPDATE);
 }
 
 void gkCursorNode::update(Real tick)
@@ -129,7 +129,7 @@ void gkCursorNode::update(Real tick)
 		m_panelElement->setHeight(height);
 	}
 
-	m_panelContainer->setPosition(GET_SOCKET_VALUE(XPOS), GET_SOCKET_VALUE(YPOS));
+	m_panelContainer->setPosition(GET_SOCKET_VALUE(X), GET_SOCKET_VALUE(Y));
 }
 
 

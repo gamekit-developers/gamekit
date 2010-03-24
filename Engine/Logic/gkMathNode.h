@@ -65,10 +65,6 @@ public:
 		SET_SOCKET_VALUE(RESULT, d);
 	}
 
-    GK_INLINE gkILogicSocket* getA() {return GET_SOCKET(A);}
-    GK_INLINE gkILogicSocket* getB() {return GET_SOCKET(B);}
-    GK_INLINE gkILogicSocket* getResult() {return GET_SOCKET(RESULT);}
-
 	T doMath(Int2Type<MTH_ADD>)
 	{
 		return m_a + m_b;

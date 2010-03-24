@@ -56,16 +56,6 @@ public:
 
     void update(gkScalar tick);
     bool evaluate(gkScalar tick);
-
-	GK_INLINE gkLogicSocket<gkString>* getAnimName() { return GET_SOCKET(ANIM_NAME); }
-    GK_INLINE gkLogicSocket<gkScalar>* getBlend() { return GET_SOCKET(BLEND_FRAMES); }
-	GK_INLINE gkLogicSocket<gkGameObject*>* getTarget() {return GET_SOCKET(TARGET);}
-	GK_INLINE gkLogicSocket<gkString>* getCurrentAnimName() { return GET_SOCKET(CURRENT_ANIM_NAME); }
-	GK_INLINE gkLogicSocket<bool>* getHasReachedEnd() { return GET_SOCKET(HAS_REACHED_END); }
-	GK_INLINE gkLogicSocket<bool>* getNotHasReachedEnd() { return GET_SOCKET(NOT_HAS_REACHED_END); }
-
 };
-
-
 
 #endif//_gkAnimationNode_h_

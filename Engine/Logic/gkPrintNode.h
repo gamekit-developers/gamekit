@@ -49,9 +49,6 @@ public:
 
     void update(gkScalar tick);
     bool evaluate(gkScalar tick);
-
-    GK_INLINE gkLogicSocket<bool>* getPrint() {return GET_SOCKET(PRINT);}
-    GK_INLINE gkLogicSocket<gkString>* getValue() {return GET_SOCKET(VALUE);}
 };
 
 

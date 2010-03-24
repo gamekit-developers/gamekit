@@ -34,7 +34,7 @@ void gkILogicSocket::link(gkILogicSocket *fsock)
 {
 	GK_ASSERT(fsock);
 
-	GK_ASSERT(getType() == fsock->getType() && "Types have to match");
+	GK_ASSERT(typeid(*this) == typeid(*fsock) && "Types have to match");
 
 	if(m_isInput)
 	{
@@ -74,44 +74,4 @@ gkGameObject* gkILogicSocket::getGameObject()const
 	return m_parent ? m_parent->getAttachedObject() : 0;
 }
 
-gkILogicSocket::SocketType gkILogicSocket::getType()
-{
-	if(dynamic_cast<gkLogicSocket<bool>*>(this))
-	{
-		return ST_BOOL;
-	}
-	else if(dynamic_cast<gkLogicSocket<int>*>(this))
-	{
-		return ST_INT;
-	}
-	else if(dynamic_cast<gkLogicSocket<gkScalar>*>(this))
-	{
-		return ST_REAL;
-	}
-	else if(dynamic_cast<gkLogicSocket<gkVector3>*>(this))
-	{
-		return ST_VECTOR;
-	}
-	else if(dynamic_cast<gkLogicSocket<gkQuaternion>*>(this))
-	{
-		return ST_QUAT;
-	}
-	else if(dynamic_cast<gkLogicSocket<gkString>*>(this))
-	{
-		return ST_STRING;
-	}
-	else if(dynamic_cast<gkLogicSocket<gkVariable>*>(this))
-	{
-		return ST_VARIABLE;
-	}
-	else if(dynamic_cast<gkLogicSocket<gkGameObject*>*>(this))
-	{
-		return ST_GAME_OBJECT;
-	}
-	else
-	{
-		GK_ASSERT(false);
-		return ST_NULL;
-	}
-}
 

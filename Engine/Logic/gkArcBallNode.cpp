@@ -46,9 +46,9 @@ m_pitchNode(gkQuaternion::IDENTITY)
 	ADD_ISOCK(UPDATE, false);
 	ADD_ISOCK(CENTER_OBJ, 0);
 	ADD_ISOCK(CENTER_POSITION, gkVector3::ZERO);
-	ADD_ISOCK(RELX, 0);
-	ADD_ISOCK(RELY, 0);
-	ADD_ISOCK(RELZ, 0);
+	ADD_ISOCK(REL_X, 0);
+	ADD_ISOCK(REL_Y, 0);
+	ADD_ISOCK(REL_Z, 0);
 	ADD_ISOCK(TARGET, 0);
 	ADD_ISOCK(MIN_PITCH, 0);
 	ADD_ISOCK(MAX_PITCH, 0);
@@ -91,7 +91,7 @@ bool gkArcBallNode::evaluate(gkScalar tick)
 
 void gkArcBallNode::update(gkScalar tick)
 {
-	gkQuaternion rollNode = m_rollNode * gkQuaternion(Ogre::Angle(-GET_SOCKET_VALUE(RELX)), gkVector3::UNIT_Z);
+	gkQuaternion rollNode = m_rollNode * gkQuaternion(Ogre::Angle(-GET_SOCKET_VALUE(REL_X)), gkVector3::UNIT_Z);
 
 	gkScalar rollDegrees = rollNode.getRoll().valueDegrees();
 
@@ -100,7 +100,7 @@ void gkArcBallNode::update(gkScalar tick)
 		m_rollNode = rollNode;
 	}
 
-	gkQuaternion pitchNode = m_pitchNode * gkQuaternion(Ogre::Angle(GET_SOCKET_VALUE(RELY)), gkVector3::UNIT_X);
+	gkQuaternion pitchNode = m_pitchNode * gkQuaternion(Ogre::Angle(GET_SOCKET_VALUE(REL_Y)), gkVector3::UNIT_X);
 
 	gkScalar pitchDegrees = pitchNode.getPitch().valueDegrees();
 
@@ -113,7 +113,7 @@ void gkArcBallNode::update(gkScalar tick)
 
 	gkVector3 currentPosition = m_currentPosition;
 
-	currentPosition.z += currentPosition.z * GET_SOCKET_VALUE(RELZ) * 0.5;
+	currentPosition.z += currentPosition.z * GET_SOCKET_VALUE(REL_Z) * 0.5;
 
 	if(m_center != GET_SOCKET_VALUE(CENTER_POSITION))
 	{

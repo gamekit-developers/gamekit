@@ -68,8 +68,8 @@ gkObjectSetterNode::gkObjectSetterNode(gkLogicTree *parent, size_t id)
 {
 	ADD_ISOCK(INPUT, "");
 	ADD_OSOCK(OUTPUT, 0);
-	ADD_ISOCK(XPOS, 0);
-	ADD_ISOCK(YPOS, 0);
+	ADD_ISOCK(X, 0);
+	ADD_ISOCK(Y, 0);
 
 	ADD_OSOCK(HIT_POINT, gkVector3::ZERO);
 }
@@ -88,7 +88,7 @@ void gkObjectSetterNode::update(gkScalar tick)
 	{
 		GK_ASSERT(m_type == SCREEN_XY && "Invalid type");
 
-		Ogre::Ray ray = gkUtils::CreateCameraRay(GET_SOCKET_VALUE(XPOS), GET_SOCKET_VALUE(YPOS));
+		Ogre::Ray ray = gkUtils::CreateCameraRay(GET_SOCKET_VALUE(X), GET_SOCKET_VALUE(Y));
 
 		gkVector3 rayPoint;
 

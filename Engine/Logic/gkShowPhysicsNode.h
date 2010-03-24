@@ -47,10 +47,6 @@ public:
 	virtual ~gkShowPhysicsNode() {}
 
 	bool evaluate(gkScalar tick);
-
-    GK_INLINE gkLogicSocket<bool>* getEnable() {return GET_SOCKET(ENABLE);}
-	GK_INLINE gkLogicSocket<bool>* getShowAabb() {return GET_SOCKET(SHOW_AABB);}
-
 };
 
 

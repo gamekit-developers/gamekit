@@ -70,22 +70,6 @@ public:
 		return m_from; 
 	}
 
-    typedef enum SocketType
-    {
-        ST_NULL = 0,
-        ST_BOOL,
-        ST_INT,
-        ST_REAL,
-        ST_VECTOR,
-        ST_EULER,
-        ST_QUAT,
-        ST_STRING,
-        ST_VARIABLE,
-		ST_GAME_OBJECT
-    }SocketType;
-
-    SocketType getType();  
-
 protected:
 
 	bool m_isInput;
@@ -185,7 +169,9 @@ gkLogicSocket<T>* getSocket(gkILogicSocket* pSock)
 	getSocket< _SOCKET_TYPE_##name > ( (name) )	\
 
 #define DECLARE_SOCKET_TYPE( name, type)	\
-	typedef type _SOCKET_TYPE_##name	\
+	typedef type _SOCKET_TYPE_##name;	\
+	GK_INLINE gkLogicSocket< type >* get##name() { return getSocket< type > ( (name) ); } \
+
 
 #define CHECK_RETV(cond) {                  \
     if ((cond)) return;                     \

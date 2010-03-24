@@ -53,11 +53,6 @@ public:
 	void update(Ogre::Real tick);
 	bool evaluate(Ogre::Real tick);
 
-	GK_INLINE gkLogicSocket<bool>* getCreate() {return GET_SOCKET(CREATE);}
-	GK_INLINE gkLogicSocket<gkVector3>* getPosition() {return GET_SOCKET(POSITION);}
-	GK_INLINE gkLogicSocket<gkQuaternion>* getOrientation() {return GET_SOCKET(ORIENTATION);}
-	GK_INLINE gkLogicSocket<gkString>* getParticleSystemName() {return GET_SOCKET(PARTICLE_SYSTEM_NAME);}
-
 private:
 
 	class ParticleSystem

@@ -48,9 +48,6 @@ public:
 
 	bool evaluate(gkScalar tick);
 	void update(gkScalar tick);
-
-    GK_INLINE gkLogicSocket<bool>* getUpdate() {return GET_SOCKET(UPDATE);}
-	GK_INLINE gkLogicSocket<bool>* getOutput() {return GET_SOCKET(OUTPUT);}
 };
 
 #endif//_gkPulseNode_h_

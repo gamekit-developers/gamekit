@@ -64,12 +64,6 @@ public:
 
 	virtual bool isButtonDown() const = 0;
 
-    GK_INLINE gkLogicSocket<bool>* getUpdate() {return GET_SOCKET(UPDATED);}
-    GK_INLINE gkLogicSocket<bool>* getIsDown() {return GET_SOCKET(IS_DOWN);}
-	GK_INLINE gkLogicSocket<bool>* getNotIsDown() {return GET_SOCKET(NOT_IS_DOWN);}
-    GK_INLINE gkLogicSocket<bool>* getPress() {return GET_SOCKET(PRESS);}
-    GK_INLINE gkLogicSocket<bool>* getRelease() {return GET_SOCKET(RELEASE);}
-
 private:
 
 	int m_delay;

@@ -46,8 +46,6 @@ public:
 	virtual ~gkSetterNode() {}
 
 	bool evaluate(gkScalar tick);
-
-    GK_INLINE gkLogicSocket<bool>* getUpdate() {return GET_SOCKET(UPDATE);}
 };
 
 class gkStringSetterNode : public gkSetterNode
@@ -68,10 +66,6 @@ public:
 	virtual ~gkStringSetterNode() {}
 
 	void update(gkScalar tick);
-
-    GK_INLINE gkLogicSocket<gkString>* getInput() {return GET_SOCKET(INPUT);}
-	GK_INLINE gkLogicSocket<gkString>* getOutput() {return GET_SOCKET(OUTPUT);}
-
 };
 
 class gkObjectSetterNode : public gkSetterNode
@@ -82,15 +76,15 @@ public:
 	{
 		INPUT = MAX_SOCKETS,
 		OUTPUT,
-		XPOS,
-		YPOS,
+		X,
+		Y,
 		HIT_POINT
 	};
 
 	DECLARE_SOCKET_TYPE(INPUT, gkString);
 	DECLARE_SOCKET_TYPE(OUTPUT, gkGameObject*);
-	DECLARE_SOCKET_TYPE(XPOS, gkScalar);
-	DECLARE_SOCKET_TYPE(YPOS, gkScalar);
+	DECLARE_SOCKET_TYPE(X, gkScalar);
+	DECLARE_SOCKET_TYPE(Y, gkScalar);
 	DECLARE_SOCKET_TYPE(HIT_POINT, gkVector3);
 
 	enum INPUT_TYPE
@@ -106,12 +100,6 @@ public:
 	void update(gkScalar tick);
 
 	void setType(INPUT_TYPE type) {m_type = type;}
-
-    GK_INLINE gkLogicSocket<gkString>* getInput() {return GET_SOCKET(INPUT);}
-	GK_INLINE gkLogicSocket<gkGameObject*>* getOutput() {return GET_SOCKET(OUTPUT);}
-    GK_INLINE gkLogicSocket<gkScalar>* getX() {return GET_SOCKET(XPOS);}
-    GK_INLINE gkLogicSocket<gkScalar>* getY() {return GET_SOCKET(YPOS);}
-	GK_INLINE gkLogicSocket<gkVector3>* getHitPoint() {return GET_SOCKET(HIT_POINT);}
 
 private:
 
@@ -136,9 +124,6 @@ public:
 	virtual ~gkPositionSetterNode() {}
 
 	void update(gkScalar tick);
-
-    GK_INLINE gkLogicSocket<gkGameObject*>* getInput() {return GET_SOCKET(INPUT);}
-	GK_INLINE gkLogicSocket<gkVector3>* getOutput() {return GET_SOCKET(OUTPUT);}
 };
 
 class gkOrientationSetterNode : public gkSetterNode
@@ -159,9 +144,6 @@ public:
 	virtual ~gkOrientationSetterNode() {}
 
 	void update(gkScalar tick);
-
-    GK_INLINE gkLogicSocket<gkGameObject*>* getInput() {return GET_SOCKET(INPUT);}
-	GK_INLINE gkLogicSocket<gkQuaternion>* getOutput() {return GET_SOCKET(OUTPUT);}
 };
 
 

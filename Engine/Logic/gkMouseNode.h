@@ -60,15 +60,6 @@ public:
     virtual ~gkMouseNode() {}
 
     bool evaluate(gkScalar tick);
-
-    GK_INLINE gkLogicSocket<gkScalar>* getScaleX() {return GET_SOCKET(SCALE_X);}
-    GK_INLINE gkLogicSocket<gkScalar>* getScaleY() {return GET_SOCKET(SCALE_Y);}
-    GK_INLINE gkLogicSocket<bool>* getMotion() {return GET_SOCKET(MOTION);}
-    GK_INLINE gkLogicSocket<gkScalar>* getRelX() {return GET_SOCKET(REL_X);}
-    GK_INLINE gkLogicSocket<gkScalar>* getRelY() {return GET_SOCKET(REL_Y);}
-    GK_INLINE gkLogicSocket<gkScalar>* getAbsX() {return GET_SOCKET(ABS_X);}
-    GK_INLINE gkLogicSocket<gkScalar>* getAbsY() {return GET_SOCKET(ABS_Y);}
-    GK_INLINE gkLogicSocket<gkScalar>* getWheel() {return GET_SOCKET(WHEEL);}
 };
 
 #endif//_gkMouseNode_h_

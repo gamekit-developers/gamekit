@@ -41,9 +41,9 @@ public:
 		UPDATE,
 		CENTER_OBJ,
 		CENTER_POSITION,
-		RELX,
-		RELY,
-		RELZ,
+		REL_X,
+		REL_Y,
+		REL_Z,
 		TARGET,
 		MIN_PITCH,
 		MAX_PITCH,
@@ -59,9 +59,9 @@ public:
 	DECLARE_SOCKET_TYPE(UPDATE, bool);
 	DECLARE_SOCKET_TYPE(CENTER_OBJ, gkGameObject*);
 	DECLARE_SOCKET_TYPE(CENTER_POSITION, gkVector3);
-	DECLARE_SOCKET_TYPE(RELX, gkScalar);
-	DECLARE_SOCKET_TYPE(RELY, gkScalar);
-	DECLARE_SOCKET_TYPE(RELZ, gkScalar);
+	DECLARE_SOCKET_TYPE(REL_X, gkScalar);
+	DECLARE_SOCKET_TYPE(REL_Y, gkScalar);
+	DECLARE_SOCKET_TYPE(REL_Z, gkScalar);
 	DECLARE_SOCKET_TYPE(TARGET, gkGameObject*);
 	DECLARE_SOCKET_TYPE(MIN_PITCH, gkScalar);
 	DECLARE_SOCKET_TYPE(MAX_PITCH, gkScalar);
@@ -79,31 +79,6 @@ public:
 
 	bool evaluate(gkScalar tick);
 	void update(gkScalar tick);
-
-	GK_INLINE gkLogicSocket<bool>* getUpdate() {return GET_SOCKET(UPDATE);}
-
-    GK_INLINE gkLogicSocket<gkGameObject*>* getCenterObj() {return GET_SOCKET(CENTER_OBJ);}
-	GK_INLINE gkLogicSocket<gkVector3>* getCenterPosition() {return GET_SOCKET(CENTER_POSITION);}
-
-    GK_INLINE gkLogicSocket<gkScalar>* getRelX() {return GET_SOCKET(RELX);}
-    GK_INLINE gkLogicSocket<gkScalar>* getRelY() {return GET_SOCKET(RELY);}
-    GK_INLINE gkLogicSocket<gkScalar>* getRelZ() {return GET_SOCKET(RELZ);}
-
-	GK_INLINE gkLogicSocket<gkScalar>* getMinPitch() {return GET_SOCKET(MIN_PITCH);}
-	GK_INLINE gkLogicSocket<gkScalar>* getMaxPitch() {return GET_SOCKET(MAX_PITCH);}
-
-	GK_INLINE gkLogicSocket<gkScalar>* getMinRoll() {return GET_SOCKET(MIN_ROLL);}
-	GK_INLINE gkLogicSocket<gkScalar>* getMaxRoll() {return GET_SOCKET(MAX_ROLL);}
-
-	GK_INLINE gkLogicSocket<bool>* getKeepDistance() {return GET_SOCKET(KEEP_DISTANCE);}
-
-	GK_INLINE gkLogicSocket<gkQuaternion>* getRoll() {return GET_SOCKET(CURRENT_ROLL);}
-	GK_INLINE gkLogicSocket<gkQuaternion>* getPitch() {return GET_SOCKET(CURRENT_PITCH);}
-
-	GK_INLINE gkLogicSocket<gkScalar>* getMinZ() {return GET_SOCKET(MIN_Z);}
-	GK_INLINE gkLogicSocket<gkScalar>* getMaxZ() {return GET_SOCKET(MAX_Z);}
-
-	GK_INLINE gkLogicSocket<gkGameObject*>* getTarget() {return GET_SOCKET(TARGET);}
 
 private:
 

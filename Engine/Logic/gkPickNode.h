@@ -41,8 +41,8 @@ public:
 		UPDATE,
 		CREATE_PICK,
 		RELEASE_PICK,
-		XPOS,
-		YPOS,
+		X,
+		Y,
 		DISABLE_ROTATION,
 		CAUGHT_TRUE,
 		CAUGHT_FALSE,
@@ -52,8 +52,8 @@ public:
 	DECLARE_SOCKET_TYPE(UPDATE, bool);
 	DECLARE_SOCKET_TYPE(CREATE_PICK, bool);
 	DECLARE_SOCKET_TYPE(RELEASE_PICK, bool);
-	DECLARE_SOCKET_TYPE(XPOS, gkScalar);
-	DECLARE_SOCKET_TYPE(YPOS, gkScalar);
+	DECLARE_SOCKET_TYPE(X, gkScalar);
+	DECLARE_SOCKET_TYPE(Y, gkScalar);
 	DECLARE_SOCKET_TYPE(DISABLE_ROTATION, bool);
 	DECLARE_SOCKET_TYPE(CAUGHT_TRUE, bool);
 	DECLARE_SOCKET_TYPE(CAUGHT_FALSE, bool);
@@ -64,18 +64,6 @@ public:
 
 	void update(Ogre::Real tick);
 	bool evaluate(Ogre::Real tick);
-
-	GK_INLINE gkLogicSocket<bool>* getUpdate() {return GET_SOCKET(UPDATE);}
-	GK_INLINE gkLogicSocket<bool>* getCreatePick() {return GET_SOCKET(CREATE_PICK);}
-	GK_INLINE gkLogicSocket<bool>* getReleasePick() {return GET_SOCKET(RELEASE_PICK);}
-
-    GK_INLINE gkLogicSocket<gkScalar>* getX() {return GET_SOCKET(XPOS);}
-    GK_INLINE gkLogicSocket<gkScalar>* getY() {return GET_SOCKET(YPOS);}
-
-	GK_INLINE gkLogicSocket<bool>* getDisableRotation() {return GET_SOCKET(DISABLE_ROTATION);}
-
-	GK_INLINE gkLogicSocket<bool>* getCaughtTrue() {return GET_SOCKET(CAUGHT_TRUE);}
-	GK_INLINE gkLogicSocket<bool>* getCaughtFalse() {return GET_SOCKET(CAUGHT_FALSE);}
 
 protected:
 

@@ -137,14 +137,6 @@ public:
 
     void setStatement(gkBoolStatement stmt) {m_stmt = stmt;}
 
-    // inputs
-    GK_INLINE gkLogicSocket<T>* getA() {return GET_SOCKET(A);}
-    GK_INLINE gkLogicSocket<T>* getB() {return GET_SOCKET(B);}
-
-    // outputs
-    GK_INLINE gkLogicSocket<bool>* getTrue() {return GET_SOCKET(IS_TRUE);}
-    GK_INLINE gkLogicSocket<bool>* getFalse() {return GET_SOCKET(IS_FALSE);}
-
 private:
 
     gkBoolStatement m_stmt;
