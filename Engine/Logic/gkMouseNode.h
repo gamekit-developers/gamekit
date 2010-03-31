@@ -43,7 +43,8 @@ public:
 		REL_Y,
 		ABS_X,
 		ABS_Y,
-		WHEEL
+		WHEEL,
+		WHEEL_MOTION
 	};
 
 	DECLARE_SOCKET_TYPE(SCALE_X, gkScalar);
@@ -54,6 +55,7 @@ public:
 	DECLARE_SOCKET_TYPE(ABS_X, gkScalar);
 	DECLARE_SOCKET_TYPE(ABS_Y, gkScalar);
 	DECLARE_SOCKET_TYPE(WHEEL, gkScalar);
+	DECLARE_SOCKET_TYPE(WHEEL_MOTION, bool);
 
     gkMouseNode(gkLogicTree *parent, size_t id);
 

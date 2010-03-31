@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -36,6 +36,7 @@ class gkDynamicsWorld;
 
 // shorthand types
 typedef utList<gkGameObject*>                       gkGameObjectList;
+typedef utListIterator<gkGameObjectList>			gkGameObjectListIterator;
 typedef utHashTable<gkHashedString, gkGameObject*>  gkGameObjectHashMap;
 typedef utHashTableIterator<gkGameObjectHashMap>    gkGameObjectHashMapIterator;
 typedef utArray<gkGameObject*>                      gkGameObjectArray;
@@ -111,8 +112,8 @@ public:
 
     // notifications
     GK_INLINE void notifyObjectMoved(gkGameObject *gobject) { m_transformObjects.push_back(gobject); }
-    void notifyObjectLoaded(gkGameObject *gobject) {}
-    void notifyObjectUnloaded(gkGameObject *gobject) {}
+    void notifyObjectLoaded(gkGameObject *gobject);
+    void notifyObjectUnloaded(gkGameObject *gobject);
     void notifyObjectUpdate(gkGameObject *gobject);
 
 

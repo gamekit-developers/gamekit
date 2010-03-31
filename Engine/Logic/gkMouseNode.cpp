@@ -41,6 +41,8 @@ gkMouseNode::gkMouseNode(gkLogicTree *parent, size_t id) :
     ADD_OSOCK(ABS_X, 0);
     ADD_OSOCK(ABS_Y, 0);
     ADD_OSOCK(WHEEL, 0);
+	ADD_OSOCK(WHEEL_MOTION, false);
+	
 }
 
 bool gkMouseNode::evaluate(gkScalar tick)
@@ -64,6 +66,7 @@ bool gkMouseNode::evaluate(gkScalar tick)
 	SET_SOCKET_VALUE(REL_Y, y);
 	SET_SOCKET_VALUE(MOTION, dev->moved);
     SET_SOCKET_VALUE(WHEEL, dev->wheelDelta);
-
+	SET_SOCKET_VALUE(WHEEL_MOTION, dev->wheelDelta ? true : false);
+	
     return false;
 }

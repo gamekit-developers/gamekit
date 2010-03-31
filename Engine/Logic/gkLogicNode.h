@@ -40,7 +40,7 @@ class gkLogicNode
 public:
     typedef utList<gkILogicSocket*>  Sockets;
     typedef utListIterator<Sockets> SocketIterator;
-	static const int N_MAX_SOCKETS = 20;
+	static const int N_MAX_SOCKETS = 25;
 
 public:
     gkLogicNode(gkLogicTree *parent, UTsize handle);

@@ -55,6 +55,7 @@ gkGameObjectProperties::gkGameObjectProperties()
         scale(1, 1, 1),
         orientation(1, 0, 0, 0),
         isStatic(false),
+		isGhost(false),
         showAABB(false)
 {
 }

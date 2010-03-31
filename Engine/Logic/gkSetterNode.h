@@ -123,6 +123,7 @@ public:
 
 	virtual ~gkPositionSetterNode() {}
 
+	bool evaluate(gkScalar tick);
 	void update(gkScalar tick);
 };
 
@@ -143,6 +144,7 @@ public:
 
 	virtual ~gkOrientationSetterNode() {}
 
+	bool evaluate(gkScalar tick);
 	void update(gkScalar tick);
 };
 

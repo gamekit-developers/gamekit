@@ -541,6 +541,7 @@ void gkRigidBodyLoader::load(gkObject *ob)
     worldTrans.getBasis().setEulerZYX(m_object->rot.x, m_object->rot.y, m_object->rot.z);
     btVector3 scale(m_object->size.x, m_object->size.y, m_object->size.z);
 
+	rigid->getObject()->getProperties().isGhost = m_object->gameflag & OB_GHOST ? true : false;
 
     if ((m_object->gameflag & OB_RIGID_BODY) || (m_object->gameflag & OB_DYNAMIC))
     {

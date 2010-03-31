@@ -101,6 +101,7 @@
 #include "Logic/gkSetterNode.h"
 #include "Logic/gkShowPhysicsNode.h"
 #include "Logic/gkStateMachineNode.h"
+#include "Logic/gkStaticNavMeshNode.h"
 #include "Logic/gkSwitchNode.h"
 #include "Logic/gkTimerNode.h"
 #include "Logic/gkValueNode.h"

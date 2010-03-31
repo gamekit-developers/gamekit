@@ -114,6 +114,11 @@ gkPositionSetterNode::gkPositionSetterNode(gkLogicTree *parent, size_t id)
 	ADD_OSOCK(OUTPUT, gkVector3::ZERO);
 }
 
+bool gkPositionSetterNode::evaluate(gkScalar tick)
+{
+	return gkSetterNode::evaluate(tick) && GET_SOCKET_VALUE(INPUT);
+}
+
 void gkPositionSetterNode::update(gkScalar tick)
 {
 	SET_SOCKET_VALUE(OUTPUT, GET_SOCKET_VALUE(INPUT)->getPosition());
@@ -126,6 +131,11 @@ gkOrientationSetterNode::gkOrientationSetterNode(gkLogicTree *parent, size_t id)
 {
 	ADD_ISOCK(INPUT, 0);
 	ADD_OSOCK(OUTPUT, gkQuaternion::IDENTITY);
+}
+
+bool gkOrientationSetterNode::evaluate(gkScalar tick)
+{
+	return gkSetterNode::evaluate(tick) && GET_SOCKET_VALUE(INPUT);
 }
 
 void gkOrientationSetterNode::update(gkScalar tick)

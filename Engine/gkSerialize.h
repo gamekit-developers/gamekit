@@ -85,6 +85,7 @@ public:
     gkVector3           scale;
     gkQuaternion        orientation;
     bool                isStatic;
+	bool				isGhost;
     bool                showAABB;
 };
 

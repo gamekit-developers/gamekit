@@ -147,6 +147,7 @@ set(NLogic_SOURCE
     Logic/gkSetterNode.cpp
     Logic/gkShowPhysicsNode.cpp
     Logic/gkStateMachineNode.cpp
+    Logic/gkStaticNavMeshNode.cpp
 )
 
 set(NLogic_HEADER
@@ -183,6 +184,7 @@ set(NLogic_HEADER
     Logic/gkSetterNode.h
     Logic/gkShowPhysicsNode.h
     Logic/gkStateMachineNode.h
+    Logic/gkStaticNavMeshNode.h
 )
 
 source_group(LogicNodes\\Header FILES ${NLogic_HEADER})
@@ -460,6 +462,8 @@ endif ()
 include_directories(
     ${OGREKIT_OGRE_INCLUDE}
     ${OGRELITE_SOURCE_DIR}/PlugIns/ParticleFX/include
+    ${OGREKIT_RECAST_INCLUDE}
+    ${OGREKIT_DETOUR_INCLUDE}
     ${OGREKIT_OIS_INCLUDE}
     ${OGREKIT_LUA_INCLUDE}
     ${GAMEKIT_SERIALIZE_BLENDER}
@@ -493,6 +497,9 @@ include_directories(${OGREKIT_BULLET_INCLUDE})
 
 configure_rendersystem()
 
+set(HiddenDepenCMakeLists ../Dependencies/CMakeLists.txt)
+source_group(DependenciesCMakeLists FILES ${HiddenDepenCMakeLists})
+
 add_library(OgreKitCore STATIC
             ${Core_SOURCE}       ${Core_HEADER}
             ${Logic_SOURCE}      ${Logic_HEADER}
@@ -508,4 +515,6 @@ add_library(OgreKitCore STATIC
             ${Network_SOURCE}    ${Network_HEADER}
             ${Graphics_SOURCE}   ${Graphics_HEADER}
             ${NLogic_SOURCE}     ${NLogic_HEADER}
+            ${HiddenDepenCMakeLists}
     )
+

@@ -230,6 +230,8 @@ void gkScene::loadImpl(void)
             // call builder
             obptr->load();
 
+			m_loadedObjects.push_back(obptr);
+
 			if(obptr->getProperties().isStatic)
 			{
 				m_Limits.merge(obptr->getAttachedBody()->getAabb());
@@ -269,6 +271,8 @@ void gkScene::unloadImpl()
     if (m_objects.empty())
         return;
 
+	m_loadedObjects.clear();
+
     gkGameObjectHashMapIterator it(m_objects);
     while (it.hasMoreElements()) {
         gkGameObject* obptr = it.getNext().second;
@@ -305,6 +309,25 @@ void gkScene::unloadImpl()
 
     gkEngine::getSingleton().setActiveScene(0);
 }
+
+void gkScene::notifyObjectLoaded(gkGameObject *gobject)
+{
+	if(!m_loadedObjects.find(gobject))
+	{
+		m_loadedObjects.push_back(gobject);
+	}
+}
+
+void gkScene::notifyObjectUnloaded(gkGameObject *gobject) 
+{
+	gkGameObjectList::Pointer p = m_loadedObjects.find(gobject);
+
+	if(p)
+	{
+		m_loadedObjects.erase(p);
+	}
+}
+
 
 
 void gkScene::synchronizeMotion(gkScalar blend)
