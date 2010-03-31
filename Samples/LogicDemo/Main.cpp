@@ -159,6 +159,8 @@ public:
 		CreateMomoLogic();
 
 		CreateDebugLogic();
+
+		CreateNavigationNodes();
 		
 		m_tree->solveOrder();
 
@@ -167,6 +169,29 @@ public:
 		GK_ASSERT(pCamera);
 
 		pCamera->attachLogic(m_tree);
+	}
+
+	void CreateNavigationNodes()
+	{
+		gkKeyNode* nKeyNode = m_tree->createNode<gkKeyNode>();
+		nKeyNode->setKey(KC_NKEY);
+
+		gkStaticNavMeshNode* staticNavMesh = m_tree->createNode<gkStaticNavMeshNode>();
+
+		staticNavMesh->getUPDATE()->setValue(true);
+		staticNavMesh->getOBJ()->link(m_playerSetter->getOUTPUT());
+		staticNavMesh->getCREATE_NAV_MESH()->link(nKeyNode->getPRESS());
+
+		gkKeyNode* fKeyNode = m_tree->createNode<gkKeyNode>();
+		fKeyNode->setKey(KC_FKEY);
+
+		gkIfNode<bool, CMP_AND>* ifNode = m_tree->createNode<gkIfNode<bool, CMP_AND> >();
+		ifNode->getA()->link(m_ctrlKeyNode->getIS_DOWN());
+		ifNode->getB()->link(fKeyNode->getPRESS());
+
+		staticNavMesh->getFIND_PATH()->link(ifNode->getIS_TRUE());
+		staticNavMesh->getEND_X_POS()->link(m_mouseNode->getABS_X());
+		staticNavMesh->getEND_Y_POS()->link(m_mouseNode->getABS_Y());
 	}
 
 	void CreateCommonLogic()
@@ -631,9 +656,17 @@ public:
 
 
 		{
-			gkIfNode<bool, CMP_AND>* ifNode = m_tree->createNode<gkIfNode<bool, CMP_AND> >();
-			ifNode->getA()->link(m_ctrlKeyNode->getIS_DOWN());
-			ifNode->getB()->link(m_leftMouseNode->getIS_DOWN());
+			gkIfNode<bool, CMP_AND>* ifANode = m_tree->createNode<gkIfNode<bool, CMP_AND> >();
+			ifANode->getA()->link(m_ctrlKeyNode->getIS_DOWN());
+			ifANode->getB()->link(m_leftMouseNode->getIS_DOWN());
+
+			gkIfNode<bool, CMP_AND>* ifBNode = m_tree->createNode<gkIfNode<bool, CMP_AND> >();
+			ifBNode->getA()->link(m_ctrlKeyNode->getIS_DOWN());
+			ifBNode->getB()->link(m_mouseNode->getWHEEL_MOTION());
+
+			gkIfNode<bool, CMP_OR>* ifNode = m_tree->createNode<gkIfNode<bool, CMP_OR> >();
+			ifNode->getA()->link(ifANode->getIS_TRUE());
+			ifNode->getB()->link(ifBNode->getIS_TRUE());
 
 			arcBall->getUPDATE()->link(ifNode->getIS_TRUE());
 		}

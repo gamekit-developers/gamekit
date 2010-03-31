@@ -50,7 +50,7 @@ Following are the explanations for the keyboard and mouse control of this demo.
 	Moves the camera far away from the arcball center or 
 	moves the camera closer to the arcball center.
 
-<LEFT CTRL> + <LEFT MOUSE BUTTON> + <MOUSE MOVE> 
+<LEFT CTRL> + <MOUSE MOVE> 
 	Moves the camera around the arcball perimeter.
 	
 ////////////Drag&Drop/////////////////////////////////////////
@@ -63,6 +63,10 @@ Following are the explanations for the keyboard and mouse control of this demo.
 		
 	(to drop the selected object just release <RIGHT MOUSE BUTTON>)
 
+///////// Pathfinder & navigation-mesh////////////////////////
+
+<N> Creates navigation mesh
+<LEFT CTRL> + <F> Find path from momo position to hit position. (If the navigation mesh does not exist then it will create it)
 
 ///////////////Momo control///////////////////////////////////
 
