@@ -8,6 +8,8 @@ macro (configure_ogrekit ROOT OGREPATH)
 	set(OGREKIT_ZZIP_TARGET ZZipLib)
 	set(OGREKIT_FREEIMAGE_TARGET FreeImage)
 	set(OGREKIT_FREETYPE_TARGET FreeType)
+	set(OGREKIT_RECAST_TARGET Recast)
+	set(OGREKIT_DETOUR_TARGET Detour)
 
 	set(OGRE_BINARY_DIR ${OGREPATH}/Bin)
 	set(OGRE_TEMPLATES_DIR ${ROOT}/CMake/Templates)
@@ -42,7 +44,9 @@ macro (configure_ogrekit ROOT OGREPATH)
 	set(OGREKIT_OGRE_INCLUDE ${OGREPATH}/OgreMain/include ${OGREPATH}/Settings ${OGREKIT_PLATFORM})
 
 	set(OGREKIT_LUA_INCLUDE ${OGREKIT_DEP_DIR}/Lua/lua)
-
+	
+	set(OGREKIT_RECAST_INCLUDE ${OGREKIT_DEP_DIR}/Recast/Include)
+	set(OGREKIT_DETOUR_INCLUDE ${OGREKIT_DEP_DIR}/Detour/Include)
 
 	set(OGREKIT_MINGW_DIRECT3D TRUE)
 	if (CMAKE_COMPILER_IS_GNUCXX)
@@ -135,6 +139,8 @@ macro (configure_ogrekit ROOT OGREPATH)
 		${OGREKIT_D3D10_LIBS}
 		${OGREKIT_D3D11_LIBS}
 		${OGREKIT_CG_LIBS}
+		${OGREKIT_RECAST_TARGET}
+		${OGREKIT_DETOUR_TARGET}
 		)
 
 endmacro(configure_ogrekit)
