@@ -11,3 +11,6 @@ subdirs(Source/OIS)
 subdirs(Source/ZZipLib)
 subdirs(Source/FreeType)
 subdirs(Source/Lua)
+subdirs(Source/Recast)
+subdirs(Source/Detour)
+
