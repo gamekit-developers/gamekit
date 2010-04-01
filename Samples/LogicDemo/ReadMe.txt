@@ -37,7 +37,7 @@ Following are the explanations for the keyboard and mouse control of this demo.
 ////////////////Arcball//////////////////////////////////////
 <LEFT CTRL> 
 	Shows a cursor (arrow) to allow interaction with objects.
-	Disables control of Momo.
+	Disables Momo's camera.
 
 <LEFT CTRL> + <MOUSE MOVE> 
 	Moves the cursor (arrow) to allow interaction with objects.
@@ -46,11 +46,11 @@ Following are the explanations for the keyboard and mouse control of this demo.
 	Makes the camera to look at the clicked point in the scene.
 	(This will be the center of the arcball)
 
-<LEFT CTRL> + <LEFT MOUSE BUTTON> + <MOUSE WHEEL MOVE> 
+<LEFT CTRL> + <MOUSE WHEEL MOVE> 
 	Moves the camera far away from the arcball center or 
 	moves the camera closer to the arcball center.
 
-<LEFT CTRL> + <MOUSE MOVE> 
+<LEFT CTRL> + <LEFT MOUSE BUTTON> + <MOUSE MOVE> 
 	Moves the camera around the arcball perimeter.
 	
 ////////////Drag&Drop/////////////////////////////////////////
@@ -65,13 +65,13 @@ Following are the explanations for the keyboard and mouse control of this demo.
 
 ///////// Pathfinder & navigation-mesh////////////////////////
 
-<N> Creates navigation mesh
-<LEFT CTRL> + <F> Find path from momo position to hit position. (If the navigation mesh does not exist then it will create it)
+<N> Creates navigation mesh. 
+	Everytime objects change position (for example drag&drop boxes) a new navigation mesh has to be created.
+	
+<LEFT CTRL> + <F> Find path from momo position to the mouse hit position. (If the navigation mesh does not exist then it will create it)
 
 ///////////////Momo control///////////////////////////////////
 
-By default there is a track node (for the camera) that follows momo orientation and translation.
-(Camera will not follow momo when <LEFT CTRL> is pressed)
 
 <MOUSE MOVE> 
 	Rotates camera around Momo. 
