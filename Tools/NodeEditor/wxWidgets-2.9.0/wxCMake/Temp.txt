@@ -1,0 +1,305 @@
+## ====================================================================== 
+##                    Define sources for specific libraries:              
+## ====================================================================== 
+
+    ## wxBase files: 
+
+    ## Nested if would be nicer, but this works 
+    ## These are the files for PLATFORM_MACOSX 
+    set(BASE_OSX_SRC
+        <if cond="TOOLKIT=='OSX_CARBON'">$(BASE_OSX_SHARED_SRC)</if>
+        <if cond="TOOLKIT=='OSX_COCOA'">$(BASE_OSX_SHARED_SRC)</if>
+        <if cond="TOOLKIT=='COCOA'">$(BASE_OSX_NOTWXMAC_SRC)</if>
+        <if cond="TOOLKIT=='GTK'">$(BASE_OSX_NOTWXMAC_SRC)</if>
+        <if cond="TOOLKIT=='X11'">$(BASE_OSX_NOTWXMAC_SRC)</if>
+        <if cond="TOOLKIT=='MOTIF'">$(BASE_OSX_NOTWXMAC_SRC)</if>
+        ## FIXME: TOOLKIT!='MAC' is what we really want 
+
+        ## FIXME: a hack because there are two wxBase versions on
+                    Mac; once fixed, this would no longer be needed 
+        <if cond="TOOLKIT==''">$(BASE_OSX_NOTWXMAC_SRC)</if>
+    )
+    set(BASE_PLATFORM_SRC
+        <if cond="PLATFORM_UNIX=='1'">$(BASE_UNIX_SRC)</if>
+        <if cond="PLATFORM_WIN32=='1'">$(BASE_WIN32_SRC) $(BASE_WINCE_SRC)</if>
+        <if cond="PLATFORM_MACOSX=='1'">$(BASE_OSX_SHARED_SRC)</if>
+        <if cond="PLATFORM_OS2=='1'">$(BASE_OS2_SRC)</if>
+        <if cond="PLATFORM_PALMOS=='1'">$(BASE_PALMOS_SRC)</if>
+        <if cond="PLATFORM_MSDOS=='1'">$(BASE_MSDOS_SRC)</if>
+    )
+    set(BASE_AND_GUI_TOOLKIT_SRC
+        <if cond="TOOLKIT=='OSX_CARBON'">$(BASE_AND_GUI_OSX_CARBON_SRC)</if>
+        <if cond="TOOLKIT=='OSX_COCOA'">$(BASE_AND_GUI_OSX_COCOA_SRC)</if>
+    )
+    set(BASE_AND_GUI_PLATFORM_SRC
+        <if cond="PLATFORM_WIN32=='1'">$(BASE_AND_GUI_WIN32_SRC)</if>
+        <if cond="PLATFORM_PALMOS=='1'">$(BASE_AND_GUI_PALMOS_SRC)</if>
+        <if cond="PLATFORM_MSDOS=='1'">$(BASE_AND_GUI_MSDOS_SRC)</if>
+        ## At the moment, BASE_AND_GUI_TOOLKIT_SRC handles this 
+        ## if cond="PLATFORM_MACOS=='1'">$(BASE_AND_GUI_MAC_SRC)</if 
+    )
+
+    ## Nested if would be nicer, but this works 
+    ## These are the files for PLATFORM_MACOSX 
+    set(BASE_OSX_HDR
+        <if cond="TOOLKIT=='OSX_CARBON'">$(BASE_OSX_SHARED_HDR)</if>
+        <if cond="TOOLKIT=='OSX_COCOA'">$(BASE_OSX_SHARED_HDR)</if>
+        <if cond="TOOLKIT=='COCOA'">$(BASE_OSX_NOTWXMAC_HDR)</if>
+        <if cond="TOOLKIT=='GTK'">$(BASE_OSX_NOTWXMAC_HDR)</if>
+        <if cond="TOOLKIT=='X11'">$(BASE_OSX_NOTWXMAC_HDR)</if>
+        <if cond="TOOLKIT=='MOTIF'">$(BASE_OSX_NOTWXMAC_HDR)</if>
+        ## FIXME: TOOLKIT!='MAC' is what we really want 
+
+        ## FIXME: a hack because there are two wxBase versions on
+                    Mac; once fixed, this would no longer be needed 
+        <if cond="TOOLKIT==''">$(BASE_OSX_NOTWXMAC_HDR)</if>
+    )
+    set(BASE_PLATFORM_HDR
+        <if cond="PLATFORM_UNIX=='1'">$(BASE_UNIX_HDR)</if>
+        <if cond="PLATFORM_WIN32=='1'">$(BASE_WIN32_HDR) $(BASE_WINCE_HDR)</if>
+        <if cond="PLATFORM_MACOSX=='1'">$(BASE_OSX_HDR)</if>
+        <if cond="PLATFORM_PALMOS=='1'">$(BASE_PALMOS_HDR)</if>
+        <if cond="PLATFORM_MSDOS=='1'">$(BASE_MSDOS_HDR)</if>
+        <if cond="PLATFORM_OS2=='1'">$(BASE_OS2_HDR)</if>
+    )
+
+    set(BASE_SRC
+        $(BASE_CMN_SRC) $(BASE_PLATFORM_SRC)
+    )
+    set(BASE_AND_GUI_SRC
+        $(BASE_AND_GUI_CMN_SRC)
+        $(BASE_AND_GUI_PLATFORM_SRC) $(BASE_AND_GUI_TOOLKIT_SRC)
+    )
+
+
+    ## wxNet files: 
+    set(NET_PLATFORM_SRC
+        <if cond="PLATFORM_UNIX=='1'">$(NET_UNIX_SRC)</if>
+        <if cond="PLATFORM_WIN32=='1'">$(NET_WIN32_SRC) $(NET_WINCE_SRC)</if>
+        <if cond="PLATFORM_MACOSX=='1'">$(NET_UNIX_SRC) $(NET_OSX_SRC)</if>
+        <if cond="PLATFORM_OS2=='1'">$(NET_OS2_SRC)</if>
+    )
+    set(NET_PLATFORM_HDR
+        <if cond="PLATFORM_WIN32=='1'">$(NET_WIN32_HDR) $(NET_WINCE_HDR)</if>
+    )
+
+    set(NET_SRC
+        $(NET_CMN_SRC) $(NET_PLATFORM_SRC)
+    )
+
+
+    ## GUI sources: 
+
+    set(LOWLEVEL_SRC
+        <if cond="TOOLKIT=='GTK' and TOOLKIT_VERSION=='2'">$(GTK_LOWLEVEL_SRC)</if>
+        <if cond="TOOLKIT=='GTK' and TOOLKIT_VERSION==''">$(GTK1_LOWLEVEL_SRC)</if>
+        <if cond="TOOLKIT=='MOTIF'">$(MOTIF_LOWLEVEL_SRC)</if>
+        <if cond="TOOLKIT=='MSW'">$(MSW_LOWLEVEL_SRC) $(MSW_DESKTOP_LOWLEVEL_SRC)</if>
+        <if cond="TOOLKIT=='WINCE'">$(MSW_LOWLEVEL_SRC)</if>
+        <if cond="TOOLKIT=='OSX_CARBON'">$(OSX_LOWLEVEL_SRC)</if>
+        <if cond="TOOLKIT=='OSX_COCOA'">$(OSX_LOWLEVEL_SRC)</if>
+        <if cond="TOOLKIT=='COCOA'">$(COCOA_LOWLEVEL_SRC)</if>
+        <if cond="TOOLKIT=='PM'">$(OS2_LOWLEVEL_SRC)</if>
+        <if cond="TOOLKIT=='X11'">$(X11_LOWLEVEL_SRC)</if>
+        <if cond="TOOLKIT=='MGL'">$(MGL_LOWLEVEL_SRC)</if>
+        <if cond="TOOLKIT=='DFB'">$(DFB_LOWLEVEL_SRC)</if>
+    )
+    set(LOWLEVEL_HDR
+        <if cond="TOOLKIT=='GTK' and TOOLKIT_VERSION=='2'">$(GTK_LOWLEVEL_HDR)</if>
+        <if cond="TOOLKIT=='GTK' and TOOLKIT_VERSION==''">$(GTK1_LOWLEVEL_HDR)</if>
+        <if cond="TOOLKIT=='MOTIF'">$(MOTIF_LOWLEVEL_HDR)</if>
+        <if cond="TOOLKIT=='MSW'">$(MSW_LOWLEVEL_HDR) $(MSW_DESKTOP_LOWLEVEL_HDR)</if>
+        <if cond="TOOLKIT=='WINCE'">$(MSW_LOWLEVEL_HDR)</if>
+        <if cond="TOOLKIT=='OSX_CARBON'">$(OSX_LOWLEVEL_HDR)</if>
+        <if cond="TOOLKIT=='OSX_COCOA'">$(OSX_LOWLEVEL_HDR)</if>
+        <if cond="TOOLKIT=='COCOA'">$(COCOA_LOWLEVEL_HDR)</if>
+        <if cond="TOOLKIT=='PM'">$(OS2_LOWLEVEL_HDR)</if>
+        <if cond="TOOLKIT=='X11'">$(X11_LOWLEVEL_HDR)</if>
+        <if cond="TOOLKIT=='MGL'">$(MGL_LOWLEVEL_HDR)</if>
+        <if cond="TOOLKIT=='DFB'">$(DFB_LOWLEVEL_HDR)</if>
+    )
+
+    set(PLATFORM_SRC
+        <if cond="PLATFORM_UNIX=='1'">$(UNIX_SRC)</if>
+        <if cond="PLATFORM_MACOSX=='1'">$(UNIX_SRC)</if>
+    )
+
+    set(GUI_SRC
+        <if cond="TOOLKIT=='GTK' and TOOLKIT_VERSION=='2'">$(GTK_SRC)</if>
+        <if cond="TOOLKIT=='GTK' and TOOLKIT_VERSION==''">$(GTK1_SRC)</if>
+        <if cond="TOOLKIT=='MOTIF'">$(MOTIF_SRC)</if>
+        <if cond="TOOLKIT=='MSW'">$(MSW_SRC) $(MSW_DESKTOP_SRC)</if>
+        <if cond="TOOLKIT=='WINCE'">$(MSW_SRC) $(WINCE_SRC)</if>
+        <if cond="TOOLKIT=='OSX_CARBON'">$(OSX_CARBON_SRC)</if>
+        <if cond="TOOLKIT=='OSX_COCOA'">$(OSX_COCOA_SRC)</if>
+        <if cond="TOOLKIT=='COCOA'">$(COCOA_SRC)</if>
+        <if cond="TOOLKIT=='PM'">$(OS2_SRC)</if>
+    )
+    set(GUI_HDR
+        <if cond="TOOLKIT=='GTK' and TOOLKIT_VERSION=='2'">$(GTK_HDR)</if>
+        <if cond="TOOLKIT=='GTK' and TOOLKIT_VERSION==''">$(GTK1_HDR)</if>
+        <if cond="TOOLKIT=='MOTIF'">$(MOTIF_HDR)</if>
+        <if cond="TOOLKIT=='MSW'">$(MSW_HDR) $(MSW_DESKTOP_HDR)</if>
+        <if cond="TOOLKIT=='WINCE'">$(MSW_HDR) $(WINCE_HDR)</if>
+        <if cond="TOOLKIT=='OSX_CARBON'">$(OSX_SHARED_HDR) $(OSX_CARBON_HDR)</if>
+        <if cond="TOOLKIT=='OSX_COCOA'">$(OSX_SHARED_HDR) $(OSX_COCOA_HDR)</if>
+        <if cond="TOOLKIT=='COCOA'">$(COCOA_HDR)</if>
+        <if cond="TOOLKIT=='PM'">$(OS2_HDR)</if>
+    )
+
+    set(CORE_SRC
+        <if cond="USE_GUI=='1' and WXUNIV=='0'">
+            $(LOWLEVEL_SRC) $(PLATFORM_SRC) $(GUI_SRC) $(GUI_CMN_SRC)
+        </if>
+        <if cond="USE_GUI=='1' and WXUNIV=='1'">
+            $(LOWLEVEL_SRC) $(PLATFORM_SRC) $(UNIV_SRC) $(UNIV_THEMES_SRC) $(GUI_CMN_SRC)
+        </if>
+    )
+
+    ## wxAdvanced files: 
+    set(ADVANCED_PLATFORM_SRC
+        <if cond="TOOLKIT=='MSW'">$(ADVANCED_MSW_SRC) $(ADVANCED_MSW_DESKTOP_SRC)</if>
+        <if cond="TOOLKIT=='WINCE'">$(ADVANCED_MSW_SRC)</if>
+        <if cond="TOOLKIT=='OSX_CARBON'">$(ADVANCED_OSX_CARBON_SRC)</if>
+        <if cond="TOOLKIT=='OSX_COCOA'">$(ADVANCED_OSX_COCOA_SRC)</if>
+        <if cond="TOOLKIT=='COCOA'">$(ADVANCED_COCOA_SRC)</if>
+        <if cond="TOOLKIT=='MOTIF'">$(ADVANCED_UNIX_SRC) $(ADVANCED_MOTIF_SRC)</if>
+        <if cond="TOOLKIT=='GTK' and TOOLKIT_VERSION=='2'">$(ADVANCED_UNIX_SRC) $(ADVANCED_GTK_SRC)</if>
+        <if cond="TOOLKIT=='GTK' and TOOLKIT_VERSION==''">$(ADVANCED_UNIX_SRC) $(ADVANCED_GTK1_SRC)</if>
+        <if cond="TOOLKIT=='X11'">$(ADVANCED_UNIX_SRC)</if>
+        <if cond="TOOLKIT=='MGL' and PLATFORM_UNIX=='1'">$(ADVANCED_UNIX_SRC)</if>
+        <if cond="TOOLKIT=='PM'">$(ADVANCED_OS2_SRC)</if>
+    )
+    set(ADVANCED_PLATFORM_HDR
+        <if cond="TOOLKIT=='MSW'">$(ADVANCED_MSW_HDR) $(ADVANCED_MSW_DESKTOP_HDR)</if>
+        <if cond="TOOLKIT=='WINCE'">$(ADVANCED_MSW_HDR)</if>
+        <if cond="TOOLKIT=='OSX_CARBON'">$(ADVANCED_OSX_CARBON_HDR)</if>
+        <if cond="TOOLKIT=='OSX_COCOA'">$(ADVANCED_OSX_COCOA_HDR)</if>
+        <if cond="TOOLKIT=='COCOA'">$(ADVANCED_COCOA_HDR)</if>
+        <if cond="TOOLKIT=='MOTIF'">$(ADVANCED_UNIX_HDR) $(ADVANCED_MOTIF_HDR)</if>
+        <if cond="TOOLKIT=='GTK' and TOOLKIT_VERSION=='2'">$(ADVANCED_UNIX_HDR) $(ADVANCED_GTK_HDR)</if>
+        <if cond="TOOLKIT=='GTK' and TOOLKIT_VERSION==''">$(ADVANCED_UNIX_HDR) $(ADVANCED_GTK1_HDR)</if>
+        <if cond="TOOLKIT=='X11'">$(ADVANCED_UNIX_HDR)</if>
+        <if cond="TOOLKIT=='MGL' and PLATFORM_UNIX=='1'">$(ADVANCED_UNIX_HDR)</if>
+        <if cond="TOOLKIT=='PM'">$(ADVANCED_OS2_HDR)</if>
+    )
+
+    ## wxAdv files not used by wxUniv 
+    set(ADVANCED_PLATFORM_NATIVE_SRC
+        <if cond="TOOLKIT=='GTK' and TOOLKIT_VERSION=='2'">$(ADVANCED_GTK_NATIVE_SRC)</if>
+        <if cond="TOOLKIT=='MSW'">$(ADVANCED_MSW_NATIVE_SRC)</if>
+        <if cond="TOOLKIT=='WINCE'">$(ADVANCED_MSW_NATIVE_SRC)</if>
+    )
+    set(ADVANCED_PLATFORM_NATIVE_HDR
+        <if cond="TOOLKIT=='GTK' and TOOLKIT_VERSION=='2'">$(ADVANCED_GTK_NATIVE_HDR)</if>
+        <if cond="TOOLKIT=='MSW'">$(ADVANCED_MSW_NATIVE_HDR)</if>
+        <if cond="TOOLKIT=='WINCE'">$(ADVANCED_MSW_NATIVE_HDR)</if>
+    )
+
+    set(ADVANCED_SRC
+        <if cond="WXUNIV=='0'">$(ADVANCED_CMN_SRC) $(ADVANCED_PLATFORM_SRC) $(ADVANCED_PLATFORM_NATIVE_SRC)</if>
+        <if cond="WXUNIV=='1'">$(ADVANCED_CMN_SRC) $(ADVANCED_PLATFORM_SRC) $(ADVANCED_UNIV_SRC)</if>
+    )
+    set(ADVANCED_HDR
+        <if cond="WXUNIV=='0'">$(ADVANCED_CMN_HDR) $(ADVANCED_PLATFORM_HDR) $(ADVANCED_PLATFORM_NATIVE_HDR)</if>
+        <if cond="WXUNIV=='1'">$(ADVANCED_CMN_HDR) $(ADVANCED_PLATFORM_HDR) $(ADVANCED_UNIV_HDR)</if>
+    )
+
+    ## wxMedia files: 
+    set(MEDIA_PLATFORM_SRC
+        <if cond="TOOLKIT=='MSW'">$(MEDIA_MSW_SRC) $(MEDIA_MSW_DESKTOP_SRC)</if>
+        <if cond="TOOLKIT=='WINCE'">$(MEDIA_MSW_SRC)</if>
+        <if cond="TOOLKIT=='OSX_CARBON'">$(MEDIA_OSX_CARBON_SRC)</if>
+        <if cond="TOOLKIT=='OSX_COCOA'">$(MEDIA_OSX_COCOA_SRC)</if>
+        <if cond="TOOLKIT=='COCOA'">$(MEDIA_COCOA_SRC)</if>
+        <if cond="TOOLKIT=='MOTIF'">$(MEDIA_UNIX_SRC)</if>
+        <if cond="TOOLKIT=='GTK'">$(MEDIA_UNIX_SRC) $(MEDIA_GTK_SRC)</if>
+        <if cond="TOOLKIT=='X11'">$(MEDIA_UNIX_SRC)</if>
+        <if cond="TOOLKIT=='PM'">$(MEDIA_OS2_SRC)</if>
+    )
+    set(MEDIA_PLATFORM_HDR
+        <if cond="TOOLKIT=='MSW'">$(MEDIA_MSW_HDR) $(MEDIA_MSW_DESKTOP_HDR)</if>
+        <if cond="TOOLKIT=='WINCE'">$(MEDIA_MSW_HDR)</if>
+        <if cond="TOOLKIT=='OSX_CARBON'">$(MEDIA_OSX_CARBON_HDR)</if>
+        <if cond="TOOLKIT=='COCOA'">$(MEDIA_COCOA_HDR)</if>
+        <if cond="TOOLKIT=='MOTIF'">$(MEDIA_UNIX_HDR)</if>
+        <if cond="TOOLKIT=='GTK'">$(MEDIA_UNIX_HDR)</if>
+        <if cond="TOOLKIT=='X11'">$(MEDIA_UNIX_HDR)</if>
+        <if cond="TOOLKIT=='PM'">$(MEDIA_OS2_HDR)</if>
+    )
+    set(MEDIA_SRC">$(MEDIA_CMN_SRC) $(MEDIA_PLATFORM_SRC))
+    set(MEDIA_HDR">$(MEDIA_CMN_HDR) $(MEDIA_PLATFORM_HDR))
+
+
+    set(GUI_CORE_HEADERS
+        <if cond="USE_GUI=='1' and WXUNIV=='0'">$(GUI_HDR)</if>
+        <if cond="USE_GUI=='1' and WXUNIV=='1'">$(UNIV_HDR)</if>
+    )
+
+    set(ALL_GUI_HEADERS
+        <if cond="USE_GUI=='1'">
+            $(GUI_CMN_HDR)
+            $(LOWLEVEL_HDR)
+            $(GUI_CORE_HEADERS)
+            $(ADVANCED_HDR) $(MEDIA_HDR) $(HTML_HDR)
+            $(OPENGL_HDR) $(QA_HDR) $(XRC_HDR) $(AUI_HDR) $(PROPGRID_HDR)
+            $(RICHTEXT_HDR) $(STC_HDR)
+        </if>
+    )
+
+    ## for 'make install', only the headers needed for the installed port 
+    set(ALL_BASE_HEADERS" make_var="1
+        $(BASE_CMN_HDR) $(BASE_PLATFORM_HDR)
+        $(NET_CMN_HDR)
+        $(XML_HDR)
+    )
+    set(ALL_HEADERS" make_var="1
+        $(ALL_BASE_HEADERS) $(ALL_GUI_HEADERS)
+    )
+
+
+    ## used by 'make dist', should include wxBase headers for all ports 
+    set(ALL_PORTS_BASE_HEADERS" make_var="1
+        $(BASE_CMN_HDR)
+        $(BASE_UNIX_HDR)
+        $(BASE_WIN32_HDR) $(BASE_WINCE_HDR)
+        $(BASE_OSX_HDR)
+        $(BASE_PALMOS_HDR)
+        $(BASE_MSDOS_HDR)
+        $(NET_CMN_HDR)
+        $(XML_HDR)
+    )
+
+    ## used by 'make dist', should include wxBase sources for all ports 
+    set(ALL_BASE_SOURCES" make_var="1
+        $(BASE_CMN_SRC)
+        $(BASE_UNIX_SRC) $(BASE_WIN32_SRC) $(BASE_WINCE_SRC)
+        $(BASE_OSX_SRC)
+        $(BASE_OS2_SRC)
+        $(BASE_MSDOS_SRC)
+        $(BASE_PALMOS_SRC)
+        $(BASE_AND_GUI_CMN_SRC)
+        $(BASE_AND_GUI_OSX_CARBON_SRC)
+        $(BASE_AND_GUI_OSX_COCOA_SRC)
+        $(BASE_AND_GUI_WIN32_SRC)
+        $(NET_CMN_SRC) $(NET_UNIX_SRC) $(NET_OSX_SRC)
+        $(NET_WIN32_SRC) $(NET_WINCE_SRC)
+        $(XML_SRC)
+    )
+
+
+
+    ## ================================================================ 
+    ##        Define where plugins sources go if USE_PLUGINS=0          
+    ## ================================================================ 
+
+    ## wxAdv sources 
+    set(PLUGIN_ADV_SRC">
+        <if cond="FORMAT=='autoconf' and PLATFORM_UNIX=='1' and USE_PLUGINS=='0'">
+            $(UNIX_SOUND_SRC_SDL)
+        </if>
+    )
+
+    set(PLUGIN_MONOLIB_SRC">$(PLUGIN_ADV_SRC))
+
+</makefile>
