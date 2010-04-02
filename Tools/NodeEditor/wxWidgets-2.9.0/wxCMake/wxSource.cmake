@@ -35,15 +35,15 @@
 
 
 
-## ====================================================================== 
-##                               wxBase                                   
-## ====================================================================== 
+## ======================================================================
+##                               wxBase
+## ======================================================================
 
-## =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- 
-##                               UNIX                                     
-## =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- 
+## =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+##                               UNIX
+## =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-## Files used on all Unix systems, including Darwin 
+## Files used on all Unix systems, including Darwin
 set(BASE_UNIX_AND_DARWIN_SRC
     src/common/fdiodispatcher.cpp
     src/common/selectdispatcher.cpp
@@ -94,7 +94,7 @@ set(BASE_UNIX_AND_DARWIN_NOTWXMAC_HDR
 ##  better, native equivalents of the functionality they implement (e.g.
 ##  CFSocket instead of BSD sockets) or doesn't provide it at all (epoll,
 ##  backtrace())
- 
+
 set(BASE_UNIX_SRC
     ${BASE_UNIX_AND_DARWIN_NOTWXMAC_SRC}
 )
@@ -102,9 +102,9 @@ set(BASE_UNIX_HDR
     ${BASE_UNIX_AND_DARWIN_NOTWXMAC_HDR}
 )
 
-## =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- 
-##                             Windows                                    
-## =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- 
+## =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+##                             Windows
+## =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 set(BASE_WIN32_SRC
     src/msw/basemsw.cpp
     src/msw/crashrpt.cpp
@@ -162,11 +162,11 @@ set(BASE_WIN32_HDR
 ##    </if>
 ##)
 
-## =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- 
-##                                Mac                                     
-## =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- 
+## =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+##                                Mac
+## =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-## Used on Mac OS X wxMac base, and Mac OS X darwin base 
+## Used on Mac OS X wxMac base, and Mac OS X darwin base
 set(BASE_COREFOUNDATION_SRC
     src/osx/core/cfstring.cpp
     src/osx/core/stdpaths_cf.cpp
@@ -183,7 +183,7 @@ set(BASE_COREFOUNDATION_HDR
     wx/osx/core/private/strconv_cf.h
 )
 
-## Base files used by OS X ports (not Carbon) 
+## Base files used by OS X ports (not Carbon)
 set(BASE_OSX_SHARED_SRC
     src/osx/core/mimetype.cpp
     ${BASE_COREFOUNDATION_SRC}
@@ -193,7 +193,7 @@ set(BASE_OSX_SHARED_HDR
     ${BASE_COREFOUNDATION_HDR}
     ${BASE_UNIX_AND_DARWIN_HDR}
 )
-## Base and GUI files used by OS X 
+## Base and GUI files used by OS X
 set(BASE_AND_GUI_OSX_CARBON_SRC
     src/osx/carbon/utils.cpp
     src/osx/carbon/uma.cpp
@@ -203,7 +203,7 @@ set(BASE_AND_GUI_OSX_COCOA_SRC
     src/osx/cocoa/utils.mm
 )
 
-## Base files used by non-wxMac OS X builds 
+## Base files used by non-wxMac OS X builds
 set(BASE_OSX_NOTWXMAC_SRC
     ${BASE_UNIX_AND_DARWIN_NOTWXMAC_SRC}
     ${BASE_COREFOUNDATION_SRC}
@@ -213,9 +213,9 @@ set(BASE_OSX_NOTWXMAC_HDR
     ${BASE_COREFOUNDATION_HDR}
 )
 
-## =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- 
-##                               OS/2                                     
-## =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- 
+## =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+##                               OS/2
+## =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 set(BASE_OS2_SRC
     src/common/fdiodispatcher.cpp
@@ -245,9 +245,9 @@ set(BASE_OS2_HDR
     wx/os2/wxrsc.h
 )
 
-## =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- 
-##                              PalmOS                                    
-## =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- 
+## =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+##                              PalmOS
+## =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 set(BASE_PALMOS_SRC
     src/palmos/base.cpp
@@ -274,9 +274,9 @@ set(BASE_PALMOS_HDR
     wx/palmos/stdpaths.h
 )
 
-## =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- 
-##                               MSDOS                                    
-## =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- 
+## =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+##                               MSDOS
+## =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 set(BASE_MSDOS_SRC
     src/msdos/dir.cpp
@@ -289,9 +289,9 @@ set(BASE_MSDOS_HDR
     wx/msdos/mimetype.h
 )
 
-## =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- 
-##                              Common                                    
-## =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- 
+## =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+##                              Common
+## =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 set(BASE_CMN_SRC
     src/common/appbase.cpp
     src/common/arcall.cpp
@@ -523,9 +523,9 @@ set(BASE_CMN_HDR
 )
 
 
-## ====================================================================== 
-##                          wxNet (part of wxBase)                        
-## ====================================================================== 
+## ======================================================================
+##                          wxNet (part of wxBase)
+## ======================================================================
 
 set(NET_UNIX_SRC
     src/common/socketiohandler.cpp
@@ -581,9 +581,9 @@ set(NET_CMN_HDR
     wx/url.h
 )
 
-## ====================================================================== 
-##                          wxQA (non GUI library)                        
-## ====================================================================== 
+## ======================================================================
+##                          wxQA (non GUI library)
+## ======================================================================
 
 set(QA_SRC
     src/common/debugrpt.cpp
@@ -594,9 +594,9 @@ set(QA_HDR
     wx/debugrpt.h
 )
 
-## ====================================================================== 
-##                            Common GUI files                            
-## ====================================================================== 
+## ======================================================================
+##                            Common GUI files
+## ======================================================================
 
 set(GUI_CMN_SRC
     src/common/accelcmn.cpp
@@ -941,17 +941,17 @@ set(GUI_CMN_HDR
     wx/xpmhand.h
 )
 
-## ====================================================================== 
-##                            Common Unix files:                          
-## ====================================================================== 
+## ======================================================================
+##                            Common Unix files:
+## ======================================================================
 
 set(UNIX_SRC
     src/unix/apptraits.cpp
 )
 
-## ====================================================================== 
-##                            Common X11 code:                            
-## ====================================================================== 
+## ======================================================================
+##                            Common X11 code:
+## ======================================================================
 
 set(XWIN_LOWLEVEL_SRC
     src/generic/caret.cpp
@@ -970,9 +970,9 @@ set(XWIN_LOWLEVEL_HDR
 )
 
 
-## ====================================================================== 
-##                                wxGTK                                   
-## ====================================================================== 
+## ======================================================================
+##                                wxGTK
+## ======================================================================
 
 set(GTK_LOWLEVEL_SRC
     ${XWIN_LOWLEVEL_SRC}
@@ -1040,19 +1040,19 @@ set(GTK_LOWLEVEL_HDR
     wx/gtk/window.h
 )
 set(GTK_SRC
-    ## Generic implementations used by wxGTK: 
+    ## Generic implementations used by wxGTK:
     src/generic/accel.cpp
     src/generic/fdrepdlg.cpp
-    ## Needed as long as we support GTK+ < 2.6 
+    ## Needed as long as we support GTK+ < 2.6
     src/generic/filepickerg.cpp
     src/generic/graphicc.cpp
     src/generic/listctrl.cpp
     src/generic/prntdlgg.cpp
     src/generic/statusbr.cpp
-    ## Generic implementations used by wxGPE: 
+    ## Generic implementations used by wxGPE:
     src/generic/fontdlgg.cpp
     src/generic/msgdlgg.cpp
-    ## GTK+ specific files: 
+    ## GTK+ specific files:
     src/gtk/artgtk.cpp
     src/gtk/bmpbuttn.cpp
     src/gtk/button.cpp
@@ -1154,9 +1154,9 @@ set(GTK_HDR
 )
 
 
-## ====================================================================== 
-##                                wxGTK1                                  
-## ====================================================================== 
+## ======================================================================
+##                                wxGTK1
+## ======================================================================
 
 set(GTK1_LOWLEVEL_SRC
     ${XWIN_LOWLEVEL_SRC}
@@ -1221,7 +1221,7 @@ set(GTK1_LOWLEVEL_HDR
     wx/gtk1/window.h
 )
 set(GTK1_SRC
-    ## Generic implementations used by wxGTK1: 
+    ## Generic implementations used by wxGTK1:
     src/generic/accel.cpp
     src/generic/clrpickerg.cpp
     src/generic/collpaneg.cpp
@@ -1236,7 +1236,7 @@ set(GTK1_SRC
     src/generic/msgdlgg.cpp
     src/generic/prntdlgg.cpp
     src/generic/statusbr.cpp
-    ## GTK1 specific files: 
+    ## GTK1 specific files:
     src/gtk1/bmpbuttn.cpp
     src/gtk1/button.cpp
     src/gtk1/checkbox.cpp
@@ -1316,9 +1316,9 @@ set(GTK1_HDR
     wx/gtk1/treectrl.h
 )
 
-## ====================================================================== 
-##                               wxX11                                    
-## ====================================================================== 
+## ======================================================================
+##                               wxX11
+## ======================================================================
 
 
 set(X11_LOWLEVEL_SRC
@@ -1388,9 +1388,9 @@ set(X11_LOWLEVEL_HDR
 
 
 
-## ====================================================================== 
-##                                wxMSW                                   
-## ====================================================================== 
+## ======================================================================
+##                                wxMSW
+## ======================================================================
 
 set(MSW_LOWLEVEL_SRC
     src/msw/app.cpp
@@ -1600,15 +1600,15 @@ set(MSW_HDR
     wx/msw/treectrl.h
     wx/msw/window.h
 
-    ## Resources must be installed together with headers: 
+    ## Resources must be installed together with headers:
     wx/msw/wx.manifest
     wx/msw/amd64.manifest
     wx/msw/ia64.manifest
     wx/msw/wx.rc
-    ## bitmaps 
+    ## bitmaps
     wx/msw/colours.bmp
     wx/msw/csquery.bmp
-    ## cursors 
+    ## cursors
     wx/msw/blank.cur
     wx/msw/bullseye.cur
     wx/msw/cross.cur
@@ -1620,7 +1620,7 @@ set(MSW_HDR
     wx/msw/pntright.cur
     wx/msw/rightarr.cur
     wx/msw/roller.cur
-    ## icons 
+    ## icons
     wx/msw/cdrom.ico
     wx/msw/child.ico
     wx/msw/computer.ico
@@ -1635,7 +1635,7 @@ set(MSW_HDR
     wx/msw/std.ico
 )
 
-## Files used only by desktop MSW port, but *not* WindowsCE one: 
+## Files used only by desktop MSW port, but *not* WindowsCE one:
 set(MSW_DESKTOP_SRC
     src/msw/checklst.cpp
     src/msw/fdrepdlg.cpp
@@ -1649,7 +1649,7 @@ set(MSW_DESKTOP_HDR
     wx/msw/ole/uuid.h
 )
 
-## Files used by WindowsCE port but not by desktop MSW port: 
+## Files used by WindowsCE port but not by desktop MSW port:
 set(WINCE_SRC
     src/generic/dirdlgg.cpp
     src/generic/fdrepdlg.cpp
@@ -1680,9 +1680,9 @@ set(WINCE_HDR
 )
 
 
-## ====================================================================== 
-##                                wxMGL                                   
-## ====================================================================== 
+## ======================================================================
+##                                wxMGL
+## ======================================================================
 
 set(MGL_LOWLEVEL_SRC
     src/common/fontmgrcmn.cpp
@@ -1743,9 +1743,9 @@ set(MGL_LOWLEVEL_HDR
 )
 
 
-## ====================================================================== 
-##                                wxDFB                                   
-## ====================================================================== 
+## ======================================================================
+##                                wxDFB
+## ======================================================================
 
 set(DFB_LOWLEVEL_SRC
     src/common/fontmgrcmn.cpp
@@ -1758,7 +1758,7 @@ set(DFB_LOWLEVEL_SRC
     src/dfb/bitmap.cpp
     src/dfb/brush.cpp
     src/dfb/cursor.cpp
-    ##    src/dfb/data.cpp 
+    ##    src/dfb/data.cpp
     src/dfb/dc.cpp
     src/dfb/dcclient.cpp
     src/dfb/dcmemory.cpp
@@ -1806,17 +1806,17 @@ set(DFB_LOWLEVEL_HDR
 )
 
 
-## ====================================================================== 
-##                               wxOS/2                                   
-## ====================================================================== 
+## ======================================================================
+##                               wxOS/2
+## ======================================================================
 
 set(OS2_LOWLEVEL_SRC
-    ## wxUniv builds not supported under OS/2 
+    ## wxUniv builds not supported under OS/2
 )
 set(OS2_LOWLEVEL_HDR
 )
 set(OS2_SRC
-    ## Generic implementations used by wxOS2: 
+    ## Generic implementations used by wxOS2:
     src/generic/caret.cpp
     src/generic/clrpickerg.cpp
     src/generic/collpaneg.cpp
@@ -1830,7 +1830,7 @@ set(OS2_SRC
     src/generic/mdig.cpp
     src/generic/prntdlgg.cpp
     src/generic/statusbr.cpp
-    ## OS/2 specific files: 
+    ## OS/2 specific files:
     src/os2/accel.cpp
     src/os2/app.cpp
     src/os2/bitmap.cpp
@@ -1982,12 +1982,12 @@ set(OS2_HDR
 
 
 
-## ====================================================================== 
-##                                wxMac                                   
-## ====================================================================== 
+## ======================================================================
+##                                wxMac
+## ======================================================================
 
 set(OSX_LOWLEVEL_SRC
-    ## Shared wxMac and wxCocoa files 
+    ## Shared wxMac and wxCocoa files
     src/osx/accel.cpp
     src/osx/artmac.cpp
     src/osx/bmpbuttn_osx.cpp
@@ -2024,7 +2024,7 @@ set(OSX_LOWLEVEL_SRC
     src/osx/toolbar_osx.cpp
     src/osx/toplevel_osx.cpp
     src/osx/utils_osx.cpp
-    ## src/osx/treectrl.cpp 
+    ## src/osx/treectrl.cpp
     src/osx/window_osx.cpp
 
     src/osx/core/bitmap.cpp
@@ -2043,12 +2043,12 @@ set(OSX_LOWLEVEL_HDR
 
 
 set(OSX_CARBON_COCOA_SRC
-    ## wxWebKit files 
+    ## wxWebKit files
     src/html/htmlctrl/webkit/webkit.mm
-    ## Native color/font dialogs 
+    ## Native color/font dialogs
     src/osx/carbon/colordlgosx.mm
     src/osx/carbon/fontdlgosx.mm
-    ## other shared files 
+    ## other shared files
     src/osx/carbon/clipbrd.cpp
     src/osx/carbon/cursor.cpp
     src/osx/carbon/fontdlg.cpp
@@ -2074,9 +2074,9 @@ set(OSX_CARBON_COCOA_SRC
     src/osx/carbon/settings.cpp
     src/osx/carbon/statbrma.cpp
     src/osx/carbon/region.cpp
-    ## cocoa bridge 
+    ## cocoa bridge
     src/osx/carbon/utilscocoa.mm
-    ## Generic implementations used by wxOSX: 
+    ## Generic implementations used by wxOSX:
     src/generic/caret.cpp
     src/generic/clrpickerg.cpp
     src/generic/collpaneg.cpp
@@ -2093,7 +2093,7 @@ set(OSX_CARBON_COCOA_SRC
 )
 
 set(OSX_CARBON_SRC
-    ## carbon files 
+    ## carbon files
     ${OSX_CARBON_COCOA_SRC}
     src/osx/carbon/bmpbuttn.cpp
     src/osx/carbon/button.cpp
@@ -2129,11 +2129,11 @@ set(OSX_CARBON_SRC
     src/osx/carbon/window.cpp
 )
 
-## Header files like wx/osx/foo.h which include wx/osx/carbon/foo.h 
+## Header files like wx/osx/foo.h which include wx/osx/carbon/foo.h
 set(OSX_SHARED_HDR
-    ## wxWebKit headers 
+    ## wxWebKit headers
     wx/html/webkit.h
-    ## other shared headers 
+    ## other shared headers
     wx/osx/accel.h
     wx/osx/app.h
     wx/osx/bitmap.h
@@ -2211,7 +2211,7 @@ set(OSX_SHARED_HDR
     wx/osx/treectrl.h
     wx/osx/uma.h
     wx/osx/window.h
-    ## Generic implementations used by wxOSX: 
+    ## Generic implementations used by wxOSX:
     wx/generic/caret.h
     wx/generic/clrpickerg.h
     wx/generic/collpaneg.h
@@ -2226,11 +2226,11 @@ set(OSX_SHARED_HDR
     wx/generic/prntdlgg.h
     wx/generic/statusbr.h
 )
-## wxMac Carbon header files 
+## wxMac Carbon header files
 set(OSX_CARBON_HDR
-    ## core files 
+    ## core files
     wx/osx/core/colour.h
-    ## carbon files 
+    ## carbon files
     wx/osx/carbon/chkconf.h
     wx/osx/carbon/evtloop.h
     wx/osx/carbon/private.h
@@ -2242,9 +2242,9 @@ set(OSX_CARBON_HDR
     wx/osx/carbon/uma.h
 )
 
-## ====================================================================== 
-##                              wxMac/Cocoa                               
-## ====================================================================== 
+## ======================================================================
+##                              wxMac/Cocoa
+## ======================================================================
 
 set(OSX_COCOA_SRC
     ${OSX_CARBON_COCOA_SRC}
@@ -2282,13 +2282,13 @@ set(OSX_COCOA_HDR
     wx/osx/cocoa/chkconf.h
     wx/osx/cocoa/evtloop.h
     wx/osx/cocoa/private.h
-    ${OSX_CARBON_HDR} ## FIXME: these headers need moved somewhere shared... 
+    ${OSX_CARBON_HDR} ## FIXME: these headers need moved somewhere shared...
     wx/generic/region.h
 )
 
-## ====================================================================== 
-##                              wxMac/iPhone                              
-## ====================================================================== 
+## ======================================================================
+##                              wxMac/iPhone
+## ======================================================================
 
 set(OSX_IPHONE_SRC
 src/osx/iphone/nonownedwnd.mm
@@ -2296,12 +2296,12 @@ src/osx/iphone/utils.mm
 src/osx/iphone/window.mm
 )
 
-## ====================================================================== 
-##                              wxCocoa                                   
-## ====================================================================== 
+## ======================================================================
+##                              wxCocoa
+## ======================================================================
 
 set(COCOA_LOWLEVEL_SRC
-    ## Shared wxMac and wxCocoa files 
+    ## Shared wxMac and wxCocoa files
     src/osx/core/hid.cpp
     src/osx/core/utilsexc_cf.cpp
 )
@@ -2383,7 +2383,7 @@ set(COCOA_SRC
     src/cocoa/utils.mm
     src/cocoa/utilsexc.mm
     src/cocoa/window.mm
-    ## Generic implementations used by wxCocoa: 
+    ## Generic implementations used by wxCocoa:
     src/generic/accel.cpp
     src/generic/caret.cpp
     src/generic/clrpickerg.cpp
@@ -2473,9 +2473,9 @@ set(COCOA_HDR
     wx/cocoa/tooltip.h
     wx/cocoa/toplevel.h
     wx/cocoa/window.h
-    ## Semi-private headers 
+    ## Semi-private headers
     wx/cocoa/objc/objc_uniquifying.h
-    ## Generic implementations used by wxCocoa: 
+    ## Generic implementations used by wxCocoa:
     wx/generic/caret.h
     wx/generic/clrpickerg.h
     wx/generic/collpaneg.h
@@ -2491,9 +2491,9 @@ set(COCOA_HDR
 
 
 
-## ====================================================================== 
-##                              wxUniversal                               
-## ====================================================================== 
+## ======================================================================
+##                              wxUniversal
+## ======================================================================
 
 
 set(UNIV_THEMES_SRC
@@ -2612,9 +2612,9 @@ set(UNIV_HDR
     wx/univ/window.h
 )
 
-## ====================================================================== 
-##                               wxAdvanced                               
-## ====================================================================== 
+## ======================================================================
+##                               wxAdvanced
+## ======================================================================
 
 set(ADVANCED_CMN_SRC
     src/common/animatecmn.cpp
@@ -2699,7 +2699,7 @@ set(ADVANCED_MSW_HDR
     wx/msw/taskbar.h
 )
 
-## not used with wxUniv 
+## not used with wxUniv
 set(ADVANCED_MSW_NATIVE_SRC
     src/generic/animateg.cpp
     src/msw/bmpcbox.cpp
@@ -2714,7 +2714,7 @@ set(ADVANCED_MSW_NATIVE_HDR
     wx/msw/datectrl.h
 )
 
-## not built on WindowsCE: 
+## not built on WindowsCE:
 set(ADVANCED_MSW_DESKTOP_SRC
     src/msw/joystick.cpp
 )
@@ -2850,9 +2850,9 @@ set(ADVANCED_UNIV_HDR
     wx/generic/animate.h
 )
 
-## ====================================================================== 
-##                               wxMedia                                  
-## ====================================================================== 
+## ======================================================================
+##                               wxMedia
+## ======================================================================
 
 set(MEDIA_CMN_SRC
     src/common/mediactrlcmn.cpp
@@ -2869,7 +2869,7 @@ set(MEDIA_MSW_SRC
 )
 set(MEDIA_MSW_HDR
 )
-## not built on WindowsCE: 
+## not built on WindowsCE:
 set(MEDIA_MSW_DESKTOP_SRC
 )
 set(MEDIA_MSW_DESKTOP_HDR
@@ -2882,7 +2882,7 @@ set(MEDIA_OSX_CARBON_HDR
 )
 
 set(MEDIA_OSX_COCOA_SRC
-    ## src/osx/cocoa/mediactrl.mm 
+    ## src/osx/cocoa/mediactrl.mm
 )
 set(MEDIA_OSX_COCOA_HDR
 )
@@ -2910,9 +2910,9 @@ set(MEDIA_GTK_SRC
 set(MEDIA_GTK1_SRC
 )
 
-## ====================================================================== 
-##                               wxHTML                                   
-## ====================================================================== 
+## ======================================================================
+##                               wxHTML
+## ======================================================================
 
 if (WIN32)
     set(HTML_SRC_PLATFORM src/msw/helpbest.cpp)
@@ -2945,7 +2945,7 @@ set(HTML_SRC
     src/html/m_style.cpp
     src/html/m_tables.cpp
     src/html/winpars.cpp
-    ## wxHTML users: 
+    ## wxHTML users:
     src/generic/htmllbox.cpp
 )
 
@@ -2970,16 +2970,16 @@ set(HTML_HDR
     wx/html/m_templ.h
     wx/html/winpars.h
     wx/wxhtml.h
-    ## wxHTML users: 
+    ## wxHTML users:
     wx/htmllbox.h
     ${MSW_HTML_HDR}
 )
 
 
 
-## ====================================================================== 
-##                                wxXRC                                   
-## ====================================================================== 
+## ======================================================================
+##                                wxXRC
+## ======================================================================
 
 set(XRC_SRC
     src/xrc/xh_animatctrl.cpp
@@ -3018,8 +3018,8 @@ set(XRC_SRC
     src/xrc/xh_propdlg.cpp
     src/xrc/xh_radbt.cpp
     src/xrc/xh_radbx.cpp
-    ## disabled until linking problems are fixed 
-    ## src/xrc/xh_richtext.cpp 
+    ## disabled until linking problems are fixed
+    ## src/xrc/xh_richtext.cpp
     src/xrc/xh_scrol.cpp
     src/xrc/xh_scwin.cpp
     src/xrc/xh_htmllbox.cpp
@@ -3082,7 +3082,7 @@ set(XRC_HDR
     wx/xrc/xh_propdlg.h
     wx/xrc/xh_radbt.h
     wx/xrc/xh_radbx.h
-    ## wx/xrc/xh_richtext.h 
+    ## wx/xrc/xh_richtext.h
     wx/xrc/xh_scrol.h
     wx/xrc/xh_scwin.h
     wx/xrc/xh_htmllbox.h
@@ -3109,39 +3109,38 @@ set(XRC_HDR
 
 
 
-## ====================================================================== 
-##                               XML classes                              
-## ====================================================================== 
+## ======================================================================
+##                               XML classes
+## ======================================================================
 
 set(XML_SRC
     src/xml/xml.cpp
-    src/common/xtixml.cpp ## FIXME - temporary solution 
+    src/common/xtixml.cpp ## FIXME - temporary solution
 )
 set(XML_HDR
     wx/xml/xml.h
-    wx/xtixml.h ## FIXME - temporary solution 
+    wx/xtixml.h ## FIXME - temporary solution
 )
 
 
-## ====================================================================== 
-##                             OpenGL canvas                              
-## ====================================================================== 
+## ======================================================================
+##                             OpenGL canvas
+## ======================================================================
 
-set(OPENGL_SRC_PLATFORM_CARBON 
-    src/osx/carbon/glcanvas.cpp 
+set(OPENGL_SRC_PLATFORM_CARBON
+    src/osx/carbon/glcanvas.cpp
     src/osx/glcanvas_osx.cpp
 )
 
-set(OPENGL_SRC_PLATFORM_COCOA 
-    src/osx/cocoa/glcanvas.mm 
+set(OPENGL_SRC_PLATFORM_COCOA
+    src/osx/cocoa/glcanvas.mm
     src/osx/glcanvas_osx.cpp
     src/cocoa/glcanvas.mm
 )
 
 set(OPENGL_SRC_PLATFORM_GTK
-    src/osx/cocoa/glcanvas.mm 
-    src/osx/glcanvas_osx.cpp
-    src/cocoa/glcanvas.mm
+    src/gtk/glcanvas.cpp
+    src/unix/glx11.cpp
 )
 
 set(OPENGL_SRC_PLATFORM_MSW
@@ -3172,9 +3171,9 @@ set(OPENGL_HDR
 
 
 
-## ====================================================================== 
-##                                  wxAUI                                 
-## ====================================================================== 
+## ======================================================================
+##                                  wxAUI
+## ======================================================================
 
 set(AUI_SRC
     src/aui/framemanager.cpp
@@ -3194,9 +3193,9 @@ set(AUI_HDR
     wx/aui/aui.h
 )
 
-## ====================================================================== 
-##                                  wxPropertyGrid                        
-## ====================================================================== 
+## ======================================================================
+##                                  wxPropertyGrid
+## ======================================================================
 
 set(PROPGRID_SRC
     src/propgrid/advprops.cpp
@@ -3220,9 +3219,9 @@ set(PROPGRID_HDR
     wx/propgrid/props.h
 )
 
-## ====================================================================== 
-##                                  wxRichTextCtrl                        
-## ====================================================================== 
+## ======================================================================
+##                                  wxRichTextCtrl
+## ======================================================================
 
 set(RICHTEXT_SRC
     src/richtext/richtextctrl.cpp
@@ -3248,9 +3247,9 @@ set(RICHTEXT_HDR
 )
 
 
-## ====================================================================== 
-##                                wxSTC                                   
-## ====================================================================== 
+## ======================================================================
+##                                wxSTC
+## ======================================================================
 
 set(STC_SRC
     src/stc/stc.cpp

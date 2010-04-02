@@ -78,7 +78,7 @@ NSfloat nsFont::getPixelWidth(NSfloat size, const char *str, int len)
     for ( int i = 0; i < len; i++ )
     {
         char ch = str[i];
-        nsChar &fc = getChar( ch );
+        nsChar fc = getChar( ch );
 
         if ( ch == ' ' )
             xoffs += fc.width * scale;

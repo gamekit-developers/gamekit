@@ -150,34 +150,15 @@ typedef unsigned __int64 UTuint64;
 typedef UTuint64    UTsize;
 typedef UTuint64    UTuintPtr;
 typedef UTint64     UTintPtr;
-#define UT_NPOS     0xffffffffffffffff
+#define UT_NPOS     ((UTuint64)-1)
 #else
 typedef UTuint32    UTsize;
 typedef UTuint32    UTuintPtr;
 typedef UTint32     UTintPtr;
-#define UT_NPOS     0xffffffff
+#define UT_NPOS     ((UTuint32)-1)
 #endif
 
 typedef UTsize UThash;
-
-
-// Memory config
-
-
-// Use standard allocator
-#define UT_ALLOCATOR_STD    0
-
-// Use Doug Lea malloc
-#define UT_ALLOCATOR_DLE    1
-// Use Ned malloc
-#define UT_ALLOCATOR_NED    2
-
-
-// Currernt allocator
-#define UT_ALLOCATOR        UT_ALLOCATOR_STD
-
-// Debug tracking
-#define UT_ALLOC_TRACK      0
 
 
 #endif//_utCommon_h_

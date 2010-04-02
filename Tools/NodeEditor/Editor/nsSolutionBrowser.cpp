@@ -77,7 +77,7 @@ BEGIN_EVENT_TABLE( nsSolutionBrowser, wxPanel )
     EVT_TREE_ITEM_MENU(NS_WID_SOLUTION_DATA,        nsSolutionBrowser::treeOpenMenu)
     EVT_TREE_END_LABEL_EDIT(NS_WID_SOLUTION_DATA,   nsSolutionBrowser::labelEditEvent)
 
-    // menus 
+    // menus
     EVT_MENU(SBE_ADD,       nsSolutionBrowser::addTreeEvent)
     EVT_MENU(SBE_REMOVE,    nsSolutionBrowser::removeTreeEvent)
     EVT_MENU(SBE_OPEN,      nsSolutionBrowser::openTreeEvent)
@@ -92,7 +92,7 @@ nsSolutionBrowser::nsSolutionBrowser(wxWindow *parent)
 
 {
     wxSizer *size = new wxBoxSizer(wxVERTICAL);
-    m_tree = new wxTreeCtrl(this, NS_WID_SOLUTION_DATA, wxDefaultPosition, wxDefaultSize, 
+    m_tree = new wxTreeCtrl(this, NS_WID_SOLUTION_DATA, wxDefaultPosition, wxDefaultSize,
         wxTR_DEFAULT_STYLE | wxTR_EDIT_LABELS | nsBorderDefault);
     m_tree->AddRoot("Project");
 
@@ -131,7 +131,7 @@ void nsSolutionBrowser::treeEvent(nsTreeEvent &evt)
         item->m_tree = evt.ptr();
 
 
-        wxTreeItemId &root = m_tree->GetRootItem();
+        wxTreeItemId root = m_tree->GetRootItem();
         m_tree->AppendItem(root, item->m_tree->getName().c_str(), -1, -1, item);
         m_tree->Expand(root);
     }
@@ -218,7 +218,7 @@ void nsSolutionBrowser::openTreeEvent(wxCommandEvent &evt)
 // ----------------------------------------------------------------------------
 void nsSolutionBrowser::treeOpenMenu(wxTreeEvent &evt)
 {
-    // tree context menu 
+    // tree context menu
     if (evt.GetItem() == m_tree->GetRootItem())
     {
         wxMenu menu;

@@ -35,14 +35,14 @@
 #if __BIG_ENDIAN__
     /* Set the native cpu bit order */
     #define HOST_FILLORDER FILLORDER_MSB2LSB
-    
+
     /* Define to 1 if your processor stores words with the most significant byte
     first (like Motorola and SPARC, unlike Intel and VAX). */
     #define WORDS_BIGENDIAN 1
 #else
     /* Set the native cpu bit order */
     #define HOST_FILLORDER FILLORDER_LSB2MSB
-    
+
     /* Define to 1 if your processor stores words with the most significant byte
         first (like Motorola and SPARC, unlike Intel and VAX). */
     /* #undef WORDS_BIGENDIAN */
@@ -75,7 +75,9 @@
 #define HAVE_SYS_TYPES_H 1
 
 /* Define to 1 if you have the <io.h> header file. */
+#ifdef WIN32
 #define HAVE_IO_H 1
+#endif
 
 /* Define to 1 if you have the <search.h> header file. */
 #define HAVE_SEARCH_H 1

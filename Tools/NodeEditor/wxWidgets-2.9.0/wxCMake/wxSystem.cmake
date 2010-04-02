@@ -1,19 +1,21 @@
 include(wxSource)
 include(wxSupport)
+include(wxConfig)
 
 #----------------------------------------------------------
 # Base source directories
 set(wxROOT_SRC ${wxWidgets_SOURCE_DIR}/src)
 set(wxROOT_INC ${wxWidgets_SOURCE_DIR}/include)
 
+
 #----------------------------------------------------------
-# Default support directories  
+# Default support directories
 set(wxZLIB_INC  ${wxROOT_SRC}/zlib)
 set(wxJPEG_INC  ${wxROOT_SRC}/jpeg)
 set(wxPNG_INC   ${wxROOT_SRC}/png)
 set(wxTIFF_INC  ${wxROOT_SRC}/tiff/libtiff)
 set(wxEXPAT_INC ${wxROOT_SRC}/expat/lib)
-
+set(wxALL_INC  ${wxROOT_INC}/setup  ${wxROOT_INC} ${wxZLIB_INC} ${wxJPEG_INC} ${wxPNG_INC} ${wxTIFF_INC} ${wxEXPAT_INC})
 
 
 
@@ -26,12 +28,12 @@ if (WIN32)
 	    add_definitions( -D_CRT_SECURE_NO_DEPRECATE )
 	    add_definitions( -D_SCL_SECURE_NO_WARNINGS )
 	else ()
-        message(WARNING "This platform is untested and may not currently work")
+        message("WARNING: This platform is untested and may not currently work")
     endif()
 
 
-    # Using MSW Toolkit 
-    
+    # Using MSW Toolkit
+
     set(BASE_PLATFORM_SRC               ${BASE_WIN32_SRC})
     set(BASE_PLATFORM_HDR               ${BASE_WIN32_HDR})
     set(BASE_AND_GUI_PLATFORM_SRC       ${BASE_AND_GUI_WIN32_SRC})
@@ -51,13 +53,13 @@ if (WIN32)
 
     set(NET_PLATFORM_SRC                ${NET_WIN32_SRC})
     set(NET_PLATFORM_HDR                ${NET_WIN32_HDR})
-    
+
 
 else()
     if (APPLE)
-        message(WARNING "This platform is untested and may not currently work")
+        message("WARNING: This platform is untested and may not currently work")
 
-        # using OSX_COCOA Toolkit  
+        # using OSX_COCOA Toolkit
 
         set(BASE_PLATFORM_SRC           ${BASE_OSX_SHARED_SRC} )
         set(BASE_PLATFORM_HDR           ${BASE_OSX_HDR} )
@@ -85,7 +87,7 @@ else()
         set(NET_PLATFORM_HDR            ${NET_UNIX_HDR} ${NET_OSX_HDR})
 
     else()
-        message(WARNING "This platform is untested and may not currently work")
+        #message("WARNING: This platform is untested and may not currently work")
 
         # Using GTK2 Toolkit
         set(BASE_PLATFORM_SRC               ${BASE_UNIX_SRC} )
@@ -107,16 +109,16 @@ else()
         set(ADVANCED_PLATFORM_NATIVE_HDR    ${ADVANCED_GTK_NATIVE_HDR})
 
         set(NET_PLATFORM_SRC                ${NET_UNIX_SRC})
-        set(NET_PLATFORM_HDC               ${NET_UNIX_HDR})
+        set(NET_PLATFORM_HDC                ${NET_UNIX_HDR})
 
     endif()
 endif ()
 
 
-if (0)    
+if (0)
 
-    # Test to make sure headers are found by cmake 
-    set(FAKE_TEST_OSX 
+    # Test to make sure headers are found by cmake
+    set(FAKE_TEST_OSX
         ${BASE_OSX_SHARED_SRC}
         ${BASE_OSX_SHARED_SRC}
         ${BASE_AND_GUI_OSX_COCOA_SRC}
@@ -125,46 +127,20 @@ if (0)
         ${ADVANCED_OSX_COCOA_SRC}
         ${NET_OSX_SRC}
         )
-        
-    set(FAKE_TEST_GTK2 
-        ${BASE_UNIX_SRC}
-        ${GTK_LOWLEVEL_SRC}
-        ${GTK_SRC}
-        ${UNIX_SRC}
-        ${OSX_LOWLEVEL_SRC}
-        ${ADVANCED_UNIX_SRC}
-        ${ADVANCED_GTK_SRC}
-        ${ADVANCED_GTK_NATIVE_SRC}
-        ${NET_UNIX_SRC}
-        )
 
     set(FAKE_TEST_OSX_HDR
         ${BASE_OSX_SHARED_HDR}
-        #${BASE_OSX_HDR}
         ${BASE_OSX_SHARED_HDR}
-        #${BASE_OSX_SHARED_HDR}
         ${BASE_AND_GUI_OSX_COCOA_HDR}
         ${OSX_LOWLEVEL_HDR}
         ${OSX_COCOA_HDR}
         ${ADVANCED_OSX_COCOA_HDR}
         ${NET_OSX_HDR}
         )
-        
-    set(FAKE_TEST_GTK2_HDR
-        ${BASE_UNIX_HDR}
-        ${GTK_LOWLEVEL_HDR}
-        ${GTK_HDR}
-        ${UNIX_HDR}
-        ${OSX_LOWLEVEL_HDR}
-        ${ADVANCED_UNIX_HDR}
-        ${ADVANCED_GTK_HDR}
-        ${ADVANCED_GTK_NATIVE_HDR}
-        ${NET_UNIX_HDR}
-        )
 
 
-    set(FakeSRC ${FAKE_TEST_OSX} ${FAKE_TEST_GTK2})        
-    set(FakeHDR ${FAKE_TEST_OSX_HDR} ${FAKE_TEST_GTK2_HDR})        
+    set(FakeSRC ${FAKE_TEST_OSX})
+    set(FakeHDR ${FAKE_TEST_OSX_HDR})
 
  endif()
 
@@ -181,7 +157,7 @@ set(wxXML_SRC               ${XML_SRC})
 set(wxNET_SRC               ${NET_CMN_SRC} ${NET_PLATFORM_SRC})
 
 
-set(wxALL_SRC 
+set(wxALL_SRC
     ${wxBASE_SRC}
     ${wxCORE_SRC}
     ${wxADV_SRC}
@@ -204,7 +180,7 @@ set(wxGLCanvas_HDR          ${OPENGL_HDR})
 set(wxXML_HDR               ${XML_HDR})
 set(wxNET_HDR               ${NET_CMN_HDR} ${NET_PLATFORM_HDR})
 
-set(wxALL_HDR 
+set(wxALL_HDR
     ${wxBASE_HDR}
     ${wxCORE_HDR}
     ${wxADV_HDR}
@@ -224,16 +200,15 @@ set(wxSUPPORT_SOURCE
     ${wxEXPAT}
 )
 
-
 #----------------------------------------------------------
-# Copied from ogre 
+# Copied from ogre
 macro(use_precompiled_header TARGET HEADER_FILE SRC_FILE)
     get_filename_component(HEADER ${HEADER_FILE} NAME)
 
     if (MSVC)
-        add_definitions(/Yuwx/${HEADER}) 
+        add_definitions(/Yuwx/${HEADER})
         set_source_files_properties(${SRC_FILE} PROPERTIES COMPILE_FLAGS /Ycwx/${HEADER})
-    endif ()
+    endif()
 
 endmacro(use_precompiled_header)
 
@@ -246,7 +221,6 @@ macro(SORT_ARGS OUT2)
     if (${OUT2})
         list(SORT ${OUT2})
     endif()
-
 endmacro(SORT_ARGS)
 
 
@@ -283,7 +257,7 @@ macro(MAKE_HEADER OUT1)
     foreach (it ${GROUP_LIST_H})
 
         get_filename_component(PATH_FILE_EXT ${it} EXT)
-        set(EXT .cpp) 
+        set(EXT .cpp)
         if ( NOT ${PATH_FILE_EXT} STREQUAL ${EXT})
             set(${OUT1} ${${OUT1}} ${wxWidgets_SOURCE_DIR}/include/${it})
         endif()
@@ -300,23 +274,15 @@ endmacro(MAKE_HEADER)
 
 #----------------------------------------------------------
 macro(SETUP_WX_ALL TARGET)
-    
-    include_directories(
-        ${wxWidgets_SOURCE_DIR}/include/setup 
-        ${wxROOT_INC} 
-        ${wxZLIB_INC} 
-        ${wxJPEG_INC} 
-        ${wxPNG_INC} 
-        ${wxTIFF_INC} 
-        ${wxEXPAT_INC}
-    )
+
+    include_directories(${wxALL_INC})
 
     add_definitions(-DWXBUILDING -D_UNICODE -DwxUSE_BASE=1)
-    
+
     if (wxWidgets_DEBUG)
         add_definitions(-D__WXDEBUG__)
     endif()
-    
+
     if (WIN32)
         add_definitions(-D__WXMSW__)
         link_libraries(Comctl32 Rpcrt4)
@@ -325,8 +291,8 @@ macro(SETUP_WX_ALL TARGET)
             add_definitions(-D__WXCOCOA__)
             ## XXX link_libraries(May need some extra system libs here)
         else()
-            add_definitions(-D__WXGTK2__)
-            ## XXX link_libraries(May need some extra system libs here)
+            include_directories(${wxGTK2_PATHS})
+			add_definitions(${wxGTK2_PREPROCESSOR})
         endif()
     endif()
 
@@ -339,17 +305,13 @@ endmacro(SETUP_WX_ALL)
 macro(SETUP_WX_SUPPORT TARGET)
     ## all support libraries
 
-
-    include_directories(${wxZLIB_INC} 
-                        ${wxJPEG_INC} 
-                        ${wxPNG_INC} 
-                        ${wxTIFF_INC} 
-                        ${wxEXPAT_INC})
+    include_directories(${wxALL_INC})
 
     ## for expat
     if (WIN32)
         add_definitions(-DCOMPILED_FROM_DSP)
     endif()
+
     if (APPLE)
         add_definitions(-DOS2_32)
     endif()
