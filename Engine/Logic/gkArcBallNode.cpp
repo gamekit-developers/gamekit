@@ -25,6 +25,7 @@
 -------------------------------------------------------------------------------
 */
 
+#include "OgreRoot.h"
 #include "gkArcBallNode.h"
 #include "gkEngine.h"
 #include "gkGameObject.h"
@@ -59,6 +60,7 @@ m_pitchNode(gkQuaternion::IDENTITY)
 	ADD_OSOCK(CURRENT_PITCH, gkQuaternion::IDENTITY)
 	ADD_ISOCK(MIN_Z, 0);
 	ADD_ISOCK(MAX_Z, std::numeric_limits<gkScalar>::infinity());
+	ADD_ISOCK(AVOID_BLOCKING, false);
 }
 
 gkArcBallNode::~gkArcBallNode()
@@ -146,6 +148,20 @@ void gkArcBallNode::update(gkScalar tick)
 		m_currentPosition = m_center - m_target->getOrientation() * oDir;
 
 		m_target->setPosition(m_currentPosition);
+	}
+
+	if(GET_SOCKET_VALUE(AVOID_BLOCKING))
+	{
+		Ogre::Ray ray(m_center, m_currentPosition - m_center);
+
+		gkVector3 rayPoint;
+
+		gkRigidBody* pBody = gkUtils::PickBody(ray, rayPoint);
+
+		if(pBody)
+		{
+			m_target->setPosition(rayPoint);
+		}
 	}
 
 	SET_SOCKET_VALUE(CURRENT_ROLL, m_rollNode);

@@ -53,7 +53,8 @@ public:
 		CURRENT_ROLL,
 		CURRENT_PITCH,
 		MIN_Z,
-		MAX_Z
+		MAX_Z,
+		AVOID_BLOCKING
 	};
 
 	DECLARE_SOCKET_TYPE(UPDATE, bool);
@@ -72,6 +73,8 @@ public:
 	DECLARE_SOCKET_TYPE(CURRENT_PITCH, gkQuaternion);
 	DECLARE_SOCKET_TYPE(MIN_Z, gkScalar);
 	DECLARE_SOCKET_TYPE(MAX_Z, gkScalar);
+	DECLARE_SOCKET_TYPE(AVOID_BLOCKING, bool);
+	
 
 	gkArcBallNode(gkLogicTree *parent, size_t id);
 

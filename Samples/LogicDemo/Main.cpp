@@ -251,6 +251,7 @@ public:
 
 		m_momoCameraArcBall = m_tree->createNode<gkArcBallNode>();
 		m_momoCameraArcBall->getCENTER_OBJ()->link(m_playerSetter->getOUTPUT());
+		m_momoCameraArcBall->getAVOID_BLOCKING()->setValue(true);
 
 		m_momoCameraArcBall->getCENTER_POSITION()->link(posNode->getOUTPUT());
 		m_momoCameraArcBall->getTARGET()->link(m_cameraSetter->getOUTPUT());
