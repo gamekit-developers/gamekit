@@ -590,6 +590,8 @@ void gkStaticNavMeshNode::FindPath()
 		std::swap(startPos.y, startPos.z);
 		std::swap(endPos.y, endPos.z);
 
+		rcTimeVal totStartTime = rcGetPerformanceTimer();
+
 		gkVector3 polyPickExt = GET_SOCKET_VALUE(POLY_PICK_EXT);
 
 		dtQueryFilter filter;
@@ -623,6 +625,10 @@ void gkStaticNavMeshNode::FindPath()
 				m_straightPath = new gkScalar[MAX_POLYS*3];
 
 				m_nstraightPath = m_navMesh->findStraightPath(startPos.ptr(), endPos.ptr(), m_polys, m_npolys, m_straightPath, 0, 0, MAX_POLYS);
+
+				rcTimeVal totEndTime = rcGetPerformanceTimer();
+
+				gkPrintf("FINDPATH TOTAL: %.1fms", rcGetDeltaTimeUsec(totStartTime, totEndTime)/1000.0f);
 
 				std::swap(startPos.y, startPos.z);
 				std::swap(endPos.y, endPos.z);
