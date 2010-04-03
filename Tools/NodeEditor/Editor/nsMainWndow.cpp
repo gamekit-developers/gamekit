@@ -144,6 +144,8 @@ void nsMainWindow::loadSettings(void)
         def->Read("/WindowSettings/py", &pos.y);
     if (def->HasEntry("/WindowSettings/maximize"))
         def->Read("/WindowSettings/maximize", &maximize);
+    if (def->HasEntry("/WindowSettings/layout"))
+        def->Read("/WindowSettings/layout", &layout);
 
     if (!maximize)
     {
@@ -157,8 +159,17 @@ void nsMainWindow::loadSettings(void)
         Maximize();
     }
 
-    if (!layout.empty()) // TODO reload layout
-        m_auiManager->LoadPerspective(layout, false);
+    if (!layout.empty())
+    {
+        m_auiManager->LoadPerspective(layout, true);
+
+        // update menus
+        wxAuiPaneInfo inf = m_auiManager->GetPane(nsPropertyPage::getSingletonPtr());
+        m_viewProperties->Check(inf.IsShown());
+
+        inf = m_auiManager->GetPane(nsSolutionBrowser::getSingletonPtr());
+        m_viewSolution->Check(inf.IsShown());
+    }
 
     delete def;
 }
@@ -177,6 +188,7 @@ void nsMainWindow::saveSettings(void)
     def->Write("/WindowSettings/px",          pos.x);
     def->Write("/WindowSettings/py",          pos.y);
     def->Write("/WindowSettings/maximize",    IsMaximized());
+    def->Write("/WindowSettings/layout",      m_auiManager->SavePerspective());
     delete def;
 }
 
@@ -189,19 +201,20 @@ void nsMainWindow::loadWindows(void)
 
 
     nsSolutionBrowser *browser = new nsSolutionBrowser(this);
-    inf.Caption("Solution Explorer").Left().Layer(0);
+    inf.Caption("Solution Explorer").Left().Layer(0).Name("Solution");
     inf.TopDockable(false);
     m_auiManager->AddPane(browser, inf);
 
     nsPropertyPage *page = new nsPropertyPage(this);
     page->initialize();
 
-    inf.Caption("Property Browser").Right().Layer(0);
+    inf.Caption("Property Browser").Right().Layer(0).Name("Property");
     inf.TopDockable(false);
     m_auiManager->AddPane(page, inf);
 
     nsWorkspace *work = new nsWorkspace(this);
-    m_auiManager->AddPane(work, wxCENTER);
+    inf = wxAuiPaneInfo().CenterPane().Name("Workspace");
+    m_auiManager->AddPane(work, inf);
 
 }
 

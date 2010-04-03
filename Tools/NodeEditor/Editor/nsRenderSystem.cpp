@@ -62,13 +62,6 @@ NScolor ColorFromWxColor(const wxColour &v)
                1.f);
 }
 
-
-struct nsColorGradient
-{
-    NScolor a, b;
-    GLuint  ima;
-};
-
 enum Palette
 {
     PAL_DARK=0,
