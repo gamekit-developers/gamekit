@@ -35,57 +35,86 @@ node types to be loaded & used inside the editor
            elementFormDefault="qualified" version="1.0" xml:lang="en"
            xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd">
 
+    <!-- ========================= Forward Decls ========================= -->
 
-    <!-- vec2 = x,y -->
-    <!-- rect = x,y,w,h -->
-
-
-    <xs:element name="NodeTreeDef"  type="NodeTreeDefImpl"/>
-    <xs:element name="DocString"    type="DocStringImpl"/>
-    <xs:element name="Node"         type="NodeImpl"/>
-    <xs:element name="Socket"       type="SocketImpl"/>
-    <xs:element name="Property"     type="PropertyImpl"/>
-
-    <!-- Socket Subtypes -->
-
+    <xs:element name="NodeTreeDef"      type="NodeTreeDefImpl"/>
+    <xs:element name="DocString"        type="DocStringImpl"/>
+    <xs:element name="Node"             type="NodeImpl"/>
+    <xs:element name="Socket"           type="SocketImpl"/>
+    <xs:element name="ColorPalette"     type="ColorPaletteImpl"/>
     <xs:element name="BooleanSocket"    type="BooleanSocketImpl"/>
     <xs:element name="IntSocket"        type="IntSocketImpl"/>
     <xs:element name="FloatSocket"      type="FloatSocketImpl"/>
     <xs:element name="StringSocket"     type="StringSocketImpl"/>
-    <xs:element name="Vector2Socket"    type="Vector2SocketImpl"/>
-    <xs:element name="Vector3Socket"    type="Vector3SocketImpl"/>
-    <xs:element name="Vector4Socket"    type="Vector4SocketImpl"/>
-    <xs:element name="QuaternionSocket" type="QuaternionSocketImpl"/>
-    <xs:element name="Matrix3Socket"    type="Matrix3SocketImpl"/>
-    <xs:element name="Matrix4Socket"    type="Matrix4SocketImpl"/>
-    <xs:element name="PropertySocket"   type="PropertySocketImpl"/>
+    <xs:element name="Enum"             type="EnumImpl"/>
+    <xs:element name="EnumItem"         type="EnumItemImpl"/>
+    <xs:element name="Properties"       type="PropertyImpl"/>
+    <xs:element name="Variable"         type="VariableImpl"/>
+
+    <!-- ========================= Documentation ========================= -->
+
+    <xs:complexType name="DocStringImpl">
+        <xs:attribute name="docs" type="xs:string"/>
+    </xs:complexType>
+
+    
+    <!-- ========================= Node Tree ========================= -->
+
+    <xs:complexType name="NodeTreeDefImpl">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element ref="Node"/>
+            <xs:element ref="ColorPalette"/>
+        </xs:choice>
+    </xs:complexType>
+
+    
+    <!-- ========================= Node ========================= -->
+
+    <xs:complexType name="NodeImpl">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element ref="DocString"/>
+            <xs:element ref="Socket"/>
+            <xs:element ref="Properties"/>
+        </xs:choice>
+        <xs:attribute name="color"      type="ColorScheme"  use="optional"/>
+        <xs:attribute name="typename"   type="xs:string"    use="required"/>
+        <xs:attribute name="groupname"  type="xs:string"    use="required"/>
+        <xs:attribute name="size"       type="xs:string"    use="required"/>
+    </xs:complexType>
 
 
-    <!-- Typedefs -->
-    <xs:simpleType name="DisplayEnum">
-        <xs:restriction base="xs:NMTOKENS">
-            <xs:enumeration value="Circle" />
-            <xs:enumeration value="Rect" />
-        </xs:restriction>
-    </xs:simpleType>
+    <!-- ========================= Node Data ========================= -->
 
-    <xs:simpleType name="SocketType">
-        <xs:restriction base="xs:NMTOKENS">
-            <xs:enumeration value="Boolean" />
-            <xs:enumeration value="Int" />
-            <xs:enumeration value="Float" />
-            <xs:enumeration value="String" />
-            <xs:enumeration value="Vector2" />
-            <xs:enumeration value="Vector3" />
-            <xs:enumeration value="Vector4" />
-            <xs:enumeration value="Quaternion" />
-            <xs:enumeration value="Matrix3" />
-            <xs:enumeration value="Matrix4" />
-            <xs:enumeration value="Variable" />
-            <xs:enumeration value="Object" />
-            <xs:enumeration value="Pointer" />
-        </xs:restriction>
-    </xs:simpleType>
+
+    <xs:complexType name="PropertyImpl">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element ref="Enum"/>
+            <xs:element ref="Variable"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="VariableImpl">
+        <xs:attribute name="type"       type="SocketType" use="required"/>
+        <xs:attribute name="name"       type="xs:string"  use="required"/>
+        <xs:attribute name="default"    type="xs:string"  use="required"/>
+        <xs:attribute name="docs"       type="xs:string"  use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="EnumImpl">
+        <xs:choice minOccurs="1" maxOccurs="unbounded">
+            <xs:element ref="EnumItem"/>
+        </xs:choice>
+        <xs:attribute name="name"   type="xs:string" use="required"/>
+        <xs:attribute name="docs"   type="xs:string" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="EnumItemImpl">
+        <xs:attribute name="name"   type="xs:string" use="required"/>
+    </xs:complexType>
+
+
+
+    <!-- ========================= Color ========================= -->
 
     <xs:simpleType name="ColorScheme">
         <xs:restriction base="xs:NMTOKENS">
@@ -105,6 +134,43 @@ node types to be loaded & used inside the editor
         </xs:restriction>
     </xs:simpleType>
 
+    <!-- Palette used by the render system for 
+            color coding Nodes / Sockets 
+            (will replace ColorScheme)
+    -->
+    <xs:complexType name="ColorPaletteImpl">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+
+        <!-- used in the form of 'r,g,b,a'
+            values between [0, 255]
+        -->
+        <xs:attribute name="light"      type="xs:string" use="required"/>
+        <xs:attribute name="dark"       type="xs:string" use="required"/>
+        <xs:attribute name="shadow"     type="xs:string" use="required"/>
+        <xs:attribute name="highlight"  type="xs:string" use="required"/>
+        <xs:attribute name="text"       type="xs:string" use="required"/>
+        <xs:attribute name="textheader" type="xs:string" use="required"/>
+    </xs:complexType>
+
+
+    <!-- ========================= Sockets ========================= -->
+
+    <xs:simpleType name="SocketType">
+        <xs:restriction base="xs:NMTOKENS">
+            <xs:enumeration value="Boolean" />
+            <xs:enumeration value="Int" />
+            <xs:enumeration value="Float" />
+            <xs:enumeration value="String" />
+            <xs:enumeration value="Vector2" />
+            <xs:enumeration value="Vector3" />
+            <xs:enumeration value="Vector4" />
+            <xs:enumeration value="Quaternion" />
+            <xs:enumeration value="Enum" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    
+
     <xs:simpleType name="SocketDirection">
         <xs:restriction base="xs:NMTOKENS">
             <xs:enumeration value="In"/>
@@ -112,34 +178,6 @@ node types to be loaded & used inside the editor
         </xs:restriction>
     </xs:simpleType>
 
-    <!-- Documentation -->
-    <xs:complexType name="DocStringImpl">
-        <xs:attribute name="docs" type="xs:string"/>
-    </xs:complexType>
-
-
-
-    <xs:complexType name="NodeTreeDefImpl">
-        <xs:choice minOccurs="0" maxOccurs="unbounded">
-            <xs:element ref="Node"/>
-        </xs:choice>
-    </xs:complexType>
-
-
-    <!-- Node Definition  -->
-    <xs:complexType name="NodeImpl">
-        <xs:choice minOccurs="0" maxOccurs="unbounded">
-            <xs:element ref="DocString"/>
-            <xs:element ref="Socket"/>
-        </xs:choice>
-        <xs:attribute name="color"      type="ColorScheme"  use="optional"/>
-        <xs:attribute name="typename"   type="xs:string"    use="required"/>
-        <xs:attribute name="groupname"  type="xs:string"    use="required"/>
-        <xs:attribute name="size"       type="xs:string"    use="required"/>
-    </xs:complexType>
-
-
-    <!-- Abstract socket -->
 
     <xs:complexType name="SocketImpl">
         <xs:choice minOccurs="0" maxOccurs="unbounded">
@@ -147,33 +185,23 @@ node types to be loaded & used inside the editor
             <xs:element ref="IntSocket"/>
             <xs:element ref="FloatSocket"/>
             <xs:element ref="StringSocket"/>
-            <xs:element ref="Vector2Socket"/>
-            <xs:element ref="Vector3Socket"/>
-            <xs:element ref="Vector4Socket"/>
-            <xs:element ref="QuaternionSocket"/>
-            <xs:element ref="Matrix3Socket"/>
-            <xs:element ref="Matrix4Socket"/>
-            <xs:element ref="PropertySocket"/>
             <xs:element ref="DocString"/>
         </xs:choice>
 
-
-        <!-- Node tree socket index will be optional unless sepcified -->
+        <xs:attribute name="index"      type="xs:nonNegativeInteger"    use="optional"/>
         <xs:attribute name="color"      type="ColorScheme"              use="optional"/>
-        <xs:attribute name="index"      type="xs:nonNegativeInteger"  use="optional"/>
-        <xs:attribute name="type"       type="SocketType"             use="required"/>
-        <xs:attribute name="name"       type="xs:string"              use="required"/>
-        <xs:attribute name="direction"  type="SocketDirection"        use="required"/>
+        <xs:attribute name="type"       type="SocketType"               use="required"/>
+        <xs:attribute name="name"       type="xs:string"                use="required"/>
+        <xs:attribute name="direction"  type="SocketDirection"          use="required"/>
 
+        
         <!-- rect= "x,y,w,h" -->
-        <xs:attribute name="rect"   type="xs:string" use="optional"/>
-
+        <xs:attribute name="rect"       type="xs:string" use="required"/>
         <!-- default value -->
-        <xs:attribute name="def"    type="xs:string" use="optional"/>
+        <xs:attribute name="default"    type="xs:string" use="optional"/>
 
     </xs:complexType>
 
-    <!-- Boolean socket -->
     <xs:complexType name="BooleanSocketImpl">
         <xs:attribute name="default" type="xs:boolean" use="required" />
     </xs:complexType>
@@ -188,43 +216,17 @@ node types to be loaded & used inside the editor
 
 
     <!-- Float socket -->
-
     <xs:complexType name="FloatSocketImpl">
         <xs:attribute name="default" type="xs:int" use="required"/>
         <xs:attribute name="min" type="xs:int" use="required"/>
         <xs:attribute name="max" type="xs:int" use="required"/>
     </xs:complexType>
 
+
     <!-- String socket -->
     <xs:complexType name="StringSocketImpl">
         <xs:attribute name="default" type="xs:string" use="required"/>
     </xs:complexType>
 
-
-    <xs:complexType name="Vector2SocketImpl">
-        <xs:attribute name="default" type="xs:int" use="required"/>
-    </xs:complexType>
-    <xs:complexType name="Vector3SocketImpl">
-        <xs:attribute name="default" type="xs:int" use="required"/>
-    </xs:complexType>
-    <xs:complexType name="Vector4SocketImpl">
-        <xs:attribute name="default" type="xs:int" use="required"/>
-    </xs:complexType>
-    <xs:complexType name="QuaternionSocketImpl">
-        <xs:attribute name="default" type="xs:int" use="required"/>
-    </xs:complexType>
-    <xs:complexType name="Matrix3SocketImpl">
-        <xs:attribute name="default" type="xs:int" use="required"/>
-    </xs:complexType>
-    <xs:complexType name="Matrix4SocketImpl">
-        <xs:attribute name="default" type="xs:int" use="required"/>
-    </xs:complexType>
-    <xs:complexType name="PropertySocketImpl">
-        <xs:attribute name="default" type="xs:int" use="required"/>
-    </xs:complexType>
-
-
-    <xs:complexType name="PropertyImpl">
-    </xs:complexType>
-
+    
 </xs:schema>

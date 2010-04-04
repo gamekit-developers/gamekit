@@ -28,6 +28,7 @@
 #include "nsTreeProperties.h"
 #include "nsNodeProperties.h"
 #include "nsNodeManager.h"
+#include "nsSocketEditors.h"
 
 
 // ----------------------------------------------------------------------------
@@ -36,46 +37,110 @@ BEGIN_EVENT_TABLE( nsNodePropertyPage, wxPropertyGridPage )
 END_EVENT_TABLE()
 
 
+
 // ----------------------------------------------------------------------------
-nsNodePropertyPage::nsNodePropertyPage(nsPropertyManager *manager, nsNodeType *type)
-    :   m_manager(manager), 
-        m_node(0), 
-        m_nodeType(type),
-        m_type(0), 
-        m_inputs(0), 
-        m_outputs(0), 
-        m_typename(0), 
-        m_groupname(0), 
-        m_id(0),
-        m_isEdit(0)
+static void nsPropToVariable(wxPGProperty *p, nsVariable &var)
 {
+    wxVariant v = p->GetValue();
+
+    switch (var.getType())
+    {
+    case nsVariable::VAR_ENUM:
+    case nsVariable::VAR_INT:
+        var.setValue(v.IsNull() ? 0 : p->GetValue().GetInteger());
+        break;
+    case nsVariable::VAR_REAL:
+        var.setValue(v.IsNull() ? 0.f : (NSfloat)p->GetValue().GetDouble());
+        break;
+    case nsVariable::VAR_STRING:
+        var.setValue(v.IsNull() ? "" : wxToString(p->GetValue().GetString()));
+        break;
+    case nsVariable::VAR_VEC2:
+        {
+            NSvec2 vec(0,0);
+            if (!v.IsNull())
+                vec << p->GetValue();
+            var.setValue(vec);
+            break;
+        }
+    case nsVariable::VAR_VEC3:
+        {
+            NSvec3 vec(0,0,0);
+            if (!v.IsNull())
+                vec << p->GetValue();
+            var.setValue(vec);
+            break;
+        }
+    case nsVariable::VAR_VEC4:
+        {
+            NSvec4 vec(0,0,0,1);
+            if (!v.IsNull())
+                vec << p->GetValue();
+            var.setValue(vec);
+            break;
+        }
+    case nsVariable::VAR_QUAT:
+        {
+            NSquat vec(1,0,0,0);
+            if (!v.IsNull())
+                vec << p->GetValue();
+            var.setValue(vec);
+            break;
+        }
+    case nsVariable::VAR_BOOL:
+    default:
+        var.setValue(v.IsNull() ? false : p->GetValue().GetBool());
+        break;
+    }
+}
+
+// ----------------------------------------------------------------------------
+static void nsVariableToProp(wxPGProperty *p, nsVariable &var)
+{
+    switch (var.getType())
+    {
+    case nsVariable::VAR_ENUM:
+    case nsVariable::VAR_INT:
+        p->SetValue(var.getValueInt());
+        break;
+    case nsVariable::VAR_REAL:
+        p->SetValue(var.getValueReal());
+        break;
+    case nsVariable::VAR_STRING:
+        p->SetValue(var.getValueString().c_str());
+        break;
+    case nsVariable::VAR_VEC2:
+        p->SetValue(WXVARIANT(var.getValueVector2()));
+        break;
+    case nsVariable::VAR_VEC3:
+        p->SetValue(WXVARIANT(var.getValueVector3()));
+        break;
+    case nsVariable::VAR_VEC4:
+        p->SetValue(WXVARIANT(var.getValueVector4()));
+        break;
+    case nsVariable::VAR_QUAT:
+        p->SetValue(WXVARIANT(var.getValueQuaternion()));
+        break;
+    case nsVariable::VAR_BOOL:
+    default:
+        p->SetValue(var.getValueBool());
+        break;
+    }
 }
 
 
 // ----------------------------------------------------------------------------
-void nsNodePropertyPage::propertyChangeEvent(wxPropertyGridEvent &evt)
+nsNodePropertyPage::nsNodePropertyPage(nsPropertyManager *manager, nsNodeType *type)
+    :   m_manager(manager),
+        m_node(0),
+        m_nodeType(type),
+        m_type(0),
+        m_inputs(0),
+        m_vars(0),
+        m_typename(0),
+        m_groupname(0),
+        m_id(0)
 {
-    if (!m_node)
-        return;
-
-
-    wxPGProperty *prop = evt.GetProperty();
-    if (prop == m_isEdit)
-    {
-        if (m_node->getEditOutputs())
-            DisableProperty(m_outputs);
-        else
-            EnableProperty(m_outputs);
-        evt.Skip();
-        return;
-    }
-
-    UTsize pos;
-    if ((pos = m_socketMap.find(prop)) != UT_NPOS)
-    {
-        m_socketMap.at(pos)->setValue(nsVariable((const char *)prop->GetValue().GetString().mb_str()));
-        evt.Skip();
-    }
 }
 
 // ----------------------------------------------------------------------------
@@ -84,7 +149,7 @@ void nsNodePropertyPage::createProperties(void)
     if (!m_nodeType)
         return;
 
-    // type info 
+    // type info
 
     m_type = new wxPropertyCategory("Information");
     m_type->SetHelpString(m_nodeType->m_briefHelp.c_str());
@@ -104,61 +169,256 @@ void nsNodePropertyPage::createProperties(void)
     m_id->SetHelpString("Unique node identifier.");
     m_type->AppendChild(m_id);
 
+    if (!m_nodeType->m_variables.empty())
+    {
+        // variable category
+        wxString lab = wxString::Format("%s Data", m_nodeType->m_typename.c_str());
+        m_vars = new wxPropertyCategory(lab);
+        m_vars->SetHelpString("Variables attached to this node.");
+        Append(m_vars);
+        createVariables();
+    }
 
-    // input category
-
-    m_inputs = new wxPropertyCategory("Inputs");
-    m_inputs->SetHelpString("Input sockets that can be connected. Each socket may contain only one input.");
-    Append(m_inputs);
-    createInputs();
-
-
-    m_isEdit = new wxBoolProperty("Edit Outputs", wxPG_LABEL, false);
-    m_isEdit->SetHelpString("Enable or disable setting of output sockets default values.");
-    m_type->AppendChild(m_isEdit);
-
-
-    // output category
-
-    m_outputs = new wxPropertyCategory("Outputs");
-    m_outputs->SetHelpString("Output values for sockets. "
-        "Not generaly needed unless a different default output value is wanted.");
-    Append(m_outputs);
-    createOutputs();
-
+    if (!m_nodeType->m_inputs.empty())
+    {
+        // input category
+        m_inputs = new wxPropertyCategory("Inputs");
+        m_inputs->SetHelpString("Input sockets that can be connected. Each socket may contain only one input.");
+        Append(m_inputs);
+        createInputs();
+    }
 
     DisableProperty(m_type);
-    DisableProperty(m_outputs);
-    DisableProperty(m_inputs);
+}
+
+// ----------------------------------------------------------------------------
+void nsNodePropertyPage::propertyChangeEvent(wxPropertyGridEvent &evt)
+{
+    if (!m_node)
+        return;
+
+
+    wxPGProperty *prop = evt.GetProperty();
+    if (m_inputs)
+    {
+        int index = m_inputs->Index(prop);
+
+        if (index != wxNOT_FOUND)
+        {
+            void *client = prop->GetClientData();
+            if (client)
+            {
+                nsSocket *sock = static_cast<nsSocket *>(client);
+
+                nsVariable &var = sock->getValue();
+                nsPropToVariable(prop, var);
+                sock->setValue(var);
+                evt.Skip();
+            }
+        }
+    }
+
+
+    if (m_vars)
+    {
+        int index = m_vars->Index(prop);
+        void *client = prop->GetClientData();
+        if (client)
+        {
+            nsNodeData *data = static_cast<nsNodeData *>(client);
+
+            nsVariable &var = data->getValue();
+            nsPropToVariable(prop, var);
+            data->setValue(var);
+            evt.Skip();
+        }
+    }
 }
 
 
 // ----------------------------------------------------------------------------
-void nsNodePropertyPage::createGenericSocket(nsSocket *sock, wxPropertyCategory *root)
+void nsNodePropertyPage::socketEvent(nsSocketEvent &evt)
 {
+    nsSocket *sock = evt.ptr();
+    if (sock->isInput() && m_inputs)
+    {
+        unsigned int  nr = m_inputs->GetChildCount();
+        for (unsigned int i=0; i<nr; i++)
+        {
+            wxPGProperty *prop = m_inputs->Item(i);
+            if (prop && prop->GetClientData() == sock)
+                EnableProperty(prop, evt.getId() == NS_SOCKET_UNLINK);
+        }
+    }
+    else
+    {
+        // not yet
+    }
 }
-
 
 // ----------------------------------------------------------------------------
 void nsNodePropertyPage::createInputs(void)
-{ 
-}
-
-
-// ----------------------------------------------------------------------------
-void nsNodePropertyPage::createOutputs(void)     
-{ 
-}
-
-
-// ----------------------------------------------------------------------------
-wxPGProperty *nsNodePropertyPage::createProperty(nsSocketType *type)
 {
-    // the main socket property
-    // TODO custom property editors
+    if (!m_nodeType->m_inputs.empty() && m_inputs)
+    {
+        nsNodeType::SocketIterator iter = nsNodeType::SocketIterator(m_nodeType->m_inputs);
+        while (iter.hasMoreElements())
+        {
+            nsSocketType *type = iter.getNext();
+            wxPGProperty *prop = createProperty(type->m_type, type->m_name, type->m_default, type->m_briefHelp);
+            prop->SetHelpString(type->m_briefHelp.c_str());
+            m_inputs->AppendChild(prop);
+        }
+    }
+}
 
+// ----------------------------------------------------------------------------
+void nsNodePropertyPage::createVariables(void)
+{
+    if (!m_nodeType->m_variables.empty() && m_vars)
+    {
+        nsVariableIterator vars(m_nodeType->m_variables);
+        while (vars.hasMoreElements())
+        {
+            nsVariableType *varType = vars.getNext();
+            wxPGProperty *prop = createProperty(varType->m_type, 
+                                                varType->m_name, 
+                                                varType->m_value, 
+                                                varType->m_briefHelp, 
+                                                &varType->m_enum);
+            m_vars->AppendChild(prop);
+        }
+    }
+
+}
+
+// ----------------------------------------------------------------------------
+void nsNodePropertyPage::selectRoot(void)
+{
+    // select the information property
+    SetSelection(m_type);
+}
+
+// ----------------------------------------------------------------------------
+void nsNodePropertyPage::setNode(nsNode *node)
+{
+    if (m_node && m_node == node)
+        return;
+
+
+    m_node = node;
+    if (m_node && m_inputs)
+    {
+        EnableProperty(m_inputs, node != 0);
+        // setup the ID
+        m_id->SetValue(wxString::Format("%p", m_node));
+        nsSocket *sock = m_node->getFirstInput();
+        while (sock)
+        {
+            nsSocketType *type = sock->getType();
+
+            // apply client information
+            wxPGProperty *prop = m_inputs->GetPropertyByName(type->m_name.c_str());
+            prop->SetClientData(sock);
+
+            nsVariable &var = sock->getValue();
+            nsVariableToProp(prop, var);
+
+            if (!sock->isConnected())
+            {
+                if (!IsPropertyEnabled(prop))
+                    EnableProperty(prop);
+            }
+            else
+            {
+                if (IsPropertyEnabled(prop))
+                    DisableProperty(prop);
+            }
+            sock = sock->getNext();
+        }
+    }
+    if (node && m_vars)
+    {
+        EnableProperty(m_vars, node != 0);
+
+
+        nsNodeData *dt = m_node->getFirstVariable();
+
+        while (dt)
+        {
+            // apply client information
+            nsVariableType *vt = dt->getType();
+            wxPGProperty *prop = m_vars->GetPropertyByName(vt->m_name.c_str());
+            prop->SetClientData(dt);
+
+            nsVariable &var = dt->getValue();
+            nsVariableToProp(prop, var);
+
+            dt = dt->getNext();
+        }
+    }
+}
+
+
+// ----------------------------------------------------------------------------
+wxPGProperty *nsNodePropertyPage::createProperty(
+    nsVariable::PropertyTypes type,
+    const utString &name,
+    const utString &value,
+    const utString &help,
+    void *enumValue)
+{
     wxPGProperty *prop = 0;
-    prop = new wxBoolProperty(type->m_name.c_str(), wxPG_LABEL,  nsVariable(type->m_default).getValueBool());
-    prop->SetHelpString(type->m_briefHelp.c_str());
+    switch (type)
+    {
+    case nsVariable::VAR_INT:
+        prop = new wxIntProperty(name.c_str(), wxPG_LABEL, nsVariable(value).getValueInt());
+        break;
+    case nsVariable::VAR_REAL:
+        prop = new wxFloatProperty(name.c_str(), wxPG_LABEL, nsVariable(value).getValueReal());
+        break;
+    case nsVariable::VAR_STRING:
+        prop = new wxStringProperty(name.c_str(), wxPG_LABEL, value.c_str());
+        break;
+    case nsVariable::VAR_VEC2:
+        prop = new nsVector2Property(name.c_str(), wxPG_LABEL, nsVariable(value).getValueVector2());
+        break;
+    case nsVariable::VAR_VEC3:
+        prop = new nsVector3Property(name.c_str(), wxPG_LABEL, nsVariable(value).getValueVector3());
+        break;
+    case nsVariable::VAR_VEC4:
+        prop = new nsVector4Property(name.c_str(), wxPG_LABEL, nsVariable(value).getValueVector4());
+        break;
+    case nsVariable::VAR_QUAT:
+        prop = new nsQuaternionProperty(name.c_str(), wxPG_LABEL, nsVariable(value).getValueQuaternion());
+        break;
+    case nsVariable::VAR_ENUM:
+        {
+            if (enumValue)
+            {
+                wxArrayString lab;
+                wxArrayInt val;
+
+                nsEnumItemIterator iter(*static_cast<nsEnumItems*>(enumValue));
+                while (iter.hasMoreElements())
+                {
+                    nsEnumItem &item = iter.getNext();
+
+                    lab.push_back(item.m_name.c_str());
+                    val.push_back(item.m_value);
+                }
+
+                prop = new wxEnumProperty(name.c_str(), wxPG_LABEL, lab, val);
+            }
+
+        } break;
+    case nsVariable::VAR_BOOL:
+    default:
+        prop = new wxBoolProperty(name.c_str(), wxPG_LABEL,  nsVariable(value).getValueBool());
+        break;
+    }
+
+    prop->SetHelpString(help.c_str());
     return prop;
 }
+

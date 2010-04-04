@@ -60,27 +60,11 @@ enum nsColorScheme
     NS_COL_MAX,
 };
 
-
 // ----------------------------------------------------------------------------
 // Socket declaration
 class nsSocketType
 {
 public:
-
-
-    enum Type {
-        Boolean,
-        Int,
-        Float,
-        String,
-        Vector2,
-        Vector3,
-        Quaternion,
-        Matrix3,
-        Matrix4,
-        Variable,
-    };
-
     enum Direction {
         In,
         Out,
@@ -88,28 +72,55 @@ public:
 
 public:
 
-    int             m_index;
-    Type            m_type;
-    utString        m_name;
-    Direction       m_direction;
-    NSrect          m_rect;
-    utString        m_default;
-    utString        m_briefHelp;
-    nsColorScheme   m_color;
-
+    int                         m_index;
+    utString                    m_name;
+    Direction                   m_direction;
+    NSrect                      m_rect;
+    utString                    m_default;
+    utString                    m_briefHelp;
+    nsColorScheme               m_color;
+    nsVariable::PropertyTypes   m_type;
 };
+
+
+// ----------------------------------------------------------------------------
+class nsEnumItem
+{
+public:
+    utString    m_name;
+    int         m_value;
+};
+typedef utArray<nsEnumItem>             nsEnumItems;
+typedef utArrayIterator<nsEnumItems>    nsEnumItemIterator;
+
+
+
+
+// ----------------------------------------------------------------------------
+// Variable declration
+class nsVariableType
+{
+public:
+
+    utString                    m_name;
+    nsVariable::PropertyTypes   m_type;
+
+    // values
+    utString        m_value;
+    nsEnumItems     m_enum;
+    utString        m_briefHelp;
+};
+
+
+typedef utArray<nsVariableType*>        nsVariables;
+typedef utArrayIterator<nsVariables>    nsVariableIterator;
+
 
 // ----------------------------------------------------------------------------
 // Node declaration
 class nsNodeType
 {
 public:
-
-    enum DisplayType
-    {
-        NS_DT_RECT,
-        NS_DT_CIRCLE,
-    };
 
     typedef utList<nsSocketType *>          Sockets;
     typedef utListIterator<Sockets>         SocketIterator;
@@ -119,15 +130,14 @@ public:
 
     ~nsNodeType();
 
-
     utString        m_typename;
     utString        m_groupname;
     NSvec2          m_size;
-    DisplayType     m_display;
     int             m_id, m_groupId;
     Sockets         m_inputs, m_outputs;
     utString        m_briefHelp;
     nsColorScheme   m_color;
+    nsVariables     m_variables;
 };
 
 
@@ -162,7 +172,6 @@ public:
 
     // load types from file
     void                        parseTypes(const utString &path);
-
 
     NS_DECLARE_SINGLETON(nsNodeTypeInfo);
 };

@@ -30,6 +30,7 @@
 #include "nsCommon.h"
 #include "nsSingleton.h"
 #include "nsEventHandler.h"
+#include "nsVariable.h"
 #include "Utils/utTypes.h"
 #include <wx/panel.h>
 #include <wx/propgrid/manager.h>
@@ -39,32 +40,29 @@
 class nsNodePropertyPage : public wxPropertyGridPage
 {
 protected:
-
-    typedef utHashTable<utPointerHashKey, nsSocket *>       SocketMap;
-    typedef utHashTable<utPointerHashKey, wxPGProperty *>   PropertyMap;
-
     nsPropertyManager   *m_manager;
     nsNode              *m_node;
     nsNodeType          *m_nodeType;
 
 
-    wxPropertyCategory  *m_type, *m_inputs, *m_outputs;
+    wxPropertyCategory  *m_type, *m_inputs, *m_vars;
     wxStringProperty    *m_typename;
     wxStringProperty    *m_groupname;
     wxStringProperty    *m_id;
-    wxBoolProperty      *m_isEdit;
-    SocketMap           m_socketMap;
-    PropertyMap         m_propertyMap;
 
     // input sockets
     void createInputs(void);
 
-    // output sockets (read only to start with)
-    void createOutputs(void);
+    // Data attached to this node
+    void createVariables(void);
 
-    // the main socket property
-    wxPGProperty   *createProperty(nsSocketType *type);
 
+    // generic property from type
+    wxPGProperty   *createProperty(nsVariable::PropertyTypes type, 
+                                  const utString& name, 
+                                  const utString& value, 
+                                  const utString &help,
+                                  void *enumValue = 0);
 
 public:
 
@@ -72,13 +70,15 @@ public:
     virtual ~nsNodePropertyPage() {}
 
     void createProperties(void);
-    void createGenericSocket(nsSocket *sock, wxPropertyCategory *root);
-
+    void selectRoot(void);
 
     // events
     void propertyChangeEvent(wxPropertyGridEvent &evt);
+    virtual void socketEvent(nsSocketEvent &evt) sealed;
 
-    void setNode(nsNode* node) {}
+    // current node this page will operate on
+    void setNode(nsNode* node);
+
 
     DECLARE_EVENT_TABLE();
 };

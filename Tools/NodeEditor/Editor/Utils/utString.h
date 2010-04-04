@@ -58,6 +58,8 @@ public:
 };
 
 
+#define utStringSplitter ';'
+
 class utStringConverter
 {
 public:
@@ -72,7 +74,7 @@ public:
     static utString fromRect(const NSrect& v)
     {
         std::ostringstream stream;
-        stream << v.x << ',' << v.y << ',' << v.width << ',' << v.height;
+        stream << v.x << utStringSplitter << v.y << utStringSplitter << v.width << utStringSplitter << v.height;
         return stream.str();
     }
 
@@ -157,6 +159,11 @@ public:
     }
 
 
+    static utString toString(bool v)
+    {
+        return v ? "True" : "False";
+    }
+
     static utString toString(const NSvec2& v)
     {
         return toStringArray<NSfloat, 2>(v.ptr());
@@ -192,7 +199,7 @@ public:
     static utString toStringArray(const T *v)
     {
         std::ostringstream stream;
-        char pad = ',';
+        char pad = utStringSplitter;
         for (int i=0; i<size; ++i)
         {
             stream << v[i];

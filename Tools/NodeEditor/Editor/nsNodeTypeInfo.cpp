@@ -52,6 +52,10 @@ nsNodeType::~nsNodeType()
     nsNodeType::SocketIterator out(m_outputs);
     while (out.hasMoreElements())
         delete out.getNext();
+
+    nsVariableIterator var(m_variables);
+    while (var.hasMoreElements())
+        delete var.getNext();
 }
 
 
@@ -82,32 +86,31 @@ nsNodeType* nsNodeTypeInfo::findTypeInfo(int i)
     return 0;
 }
 
-// ----------------------------------------------------------------------------
-static nsSocketType::Type nsGetSocket(const utString& t)
-{
-    if (t == "Boolean")
-        return nsSocketType::Boolean;
-    if (t == "Int")
-        return nsSocketType::Int;
-    if (t == "Float")
-        return nsSocketType::Float;
-    if (t == "String")
-        return nsSocketType::String;
-    if (t == "Vector2")
-        return nsSocketType::Vector2;
-    if (t == "Vector3")
-        return nsSocketType::Vector3;
-    if (t == "Quaternion")
-        return nsSocketType::Quaternion;
-    if (t == "Matrix3")
-        return nsSocketType::Matrix3;
-    if (t == "Matrix4")
-        return nsSocketType::Matrix4;
-    if (t == "Variable")
-        return nsSocketType::Variable;
-    return nsSocketType::Boolean;
-}
 
+// ----------------------------------------------------------------------------
+static nsVariable::PropertyTypes nsGetDataType(const utString& t)
+{
+    // todo Replace socket::m_type with nsVariable::PropertyTypes
+    if (t == "Boolean")
+        return nsVariable::VAR_BOOL;
+    if (t == "Int")
+        return nsVariable::VAR_INT;
+    if (t == "Float")
+        return nsVariable::VAR_REAL;
+    if (t == "String")
+        return nsVariable::VAR_STRING;
+    if (t == "Vector2")
+        return nsVariable::VAR_VEC2;
+    if (t == "Vector3")
+        return nsVariable::VAR_VEC3;
+    if (t == "Vector4")
+        return nsVariable::VAR_VEC4;
+    if (t == "Quaternion")
+        return nsVariable::VAR_QUAT;
+    if (t == "Enum")
+        return nsVariable::VAR_ENUM;
+    return nsVariable::VAR_BOOL;
+}
 
 // ----------------------------------------------------------------------------
 static nsColorScheme nsGetColor(const utString& t)
@@ -192,14 +195,6 @@ static float nsGetAttributeFloat(const utString &attr, wxXmlNode *node, float de
     return (float)atof(wxToAscii(attrWx));
 }
 
-static utString nsGetAttributeID(const utString &attr, wxXmlNode *node, const utString& def = "")
-{
-    wxString attrWx = node->GetAttribute(wxFromAscii(attr), NS_INVALID_ATTR);
-    if (attrWx == NS_INVALID_ATTR)
-        return def;
-    return utString(wxToAscii(attrWx));
-}
-
 static utString nsGetAttributeString(const utString &attr, wxXmlNode *node, const utString& def = "")
 {
     wxString attrWx = node->GetAttribute(wxFromAscii(attr), NS_INVALID_ATTR);
@@ -237,11 +232,50 @@ static nsColorScheme nsGetAttributeColor(const utString &attr, wxXmlNode *node, 
     return nsGetColor(wxToAscii(attrWx));
 }
 
-static nsVariable nsGetAttributeVariant(const utString& name, nsSocketType::Type type)
-{
-    return nsVariable(name);
-}
 
+// ----------------------------------------------------------------------------
+static void nsParsePropertySection(wxXmlNode *propertyRoot, nsNodeType *node)
+{
+    for (wxXmlNode *props = propertyRoot->GetChildren(); props; props = props->GetNext())
+    {
+        if (!nsHasAttribute("name", props))
+            continue;
+
+        if (props->GetName() == "Enum")
+        {
+            nsVariableType *vt = new nsVariableType;
+            vt->m_name = nsGetAttributeString("name",  props);
+            vt->m_type = nsVariable::VAR_ENUM;
+            vt->m_value = "0";
+            vt->m_briefHelp = nsGetAttributeString("docs",  props);
+            node->m_variables.push_back(vt);
+
+            int enumId = 0;
+            for (wxXmlNode *items = props->GetChildren(); items; items = items->GetNext())
+            {
+                if (items->GetName() != "EnumItem")
+                    continue;
+                if (!nsHasAttribute("name", items))
+                    continue;
+
+                nsEnumItem item;
+                item.m_name = nsGetAttributeString("name",  items);
+                item.m_value = enumId++;
+
+                vt->m_enum.push_back(item);
+            }
+        }
+        else if (props->GetName() == "Variable")
+        {
+            nsVariableType *vt = new nsVariableType;
+            vt->m_name = nsGetAttributeString("name",  props);
+            vt->m_type = nsGetDataType(nsGetAttributeString("type", props));
+            vt->m_value = nsGetAttributeString("default", props, "0");
+            vt->m_briefHelp = nsGetAttributeString("docs",  props);
+            node->m_variables.push_back(vt);
+        }
+    }
+}
 
 // ----------------------------------------------------------------------------
 void nsNodeTypeInfo::parseTypes(const utString &path)
@@ -270,8 +304,8 @@ void nsNodeTypeInfo::parseTypes(const utString &path)
         nsNodeType *nt = new nsNodeType;
         nt->m_id        = nsUID++;
 
-        nt->m_typename  = nsGetAttributeID("typename",  child);
-        nt->m_groupname = nsGetAttributeID("groupname", child);
+        nt->m_typename  = nsGetAttributeString("typename",  child);
+        nt->m_groupname = nsGetAttributeString("groupname", child);
         nt->m_size      = nsGetAttributeVec2("size",    child, NSvec2(100, 100));
         nt->m_color     = nsGetAttributeColor("color", child);
         m_types.push_back(nt);
@@ -284,9 +318,17 @@ void nsNodeTypeInfo::parseTypes(const utString &path)
         m_groups.at(pos).push_back(nt);
         nt->m_groupId = (int)pos;
 
+
         int sock_id = 0;
         for (wxXmlNode *sockets = child->GetChildren(); sockets; sockets = sockets->GetNext())
         {
+            if (sockets->GetName() == ("Properties"))
+            {
+                nsParsePropertySection(sockets, nt);
+                continue;
+            }
+
+
             if (sockets->GetName() == ("DocString"))
                 nt->m_briefHelp = nsGetAttributeString("docs", sockets);
 
@@ -303,15 +345,15 @@ void nsNodeTypeInfo::parseTypes(const utString &path)
             int newId = sock_id++;
             newId = nsGetAttributeInt("index", sockets, newId).ToLong();
 
-            nsSocketType::Type defType = nsGetSocket(nsGetAttributeID("type", sockets));
+            nsVariable::PropertyTypes defType = nsGetDataType(nsGetAttributeString("type", sockets));
 
             nsSocketType *st = new nsSocketType();
             st->m_index         = newId;
             st->m_type          = defType;
-            st->m_name          = nsGetAttributeID("name", sockets);
-            st->m_direction     = nsGetDirection(nsGetAttributeID("direction", sockets));
+            st->m_name          = nsGetAttributeString("name", sockets);
+            st->m_direction     = nsGetDirection(nsGetAttributeString("direction", sockets));
             st->m_rect          = nsGetAttributeRect("rect", sockets);
-            st->m_default       = nsGetAttributeString("def", sockets, "0");
+            st->m_default       = nsGetAttributeString("default", sockets, "0");
             st->m_color         = nsGetAttributeColor("color", sockets, NS_COL_ORANGE);
             st->m_briefHelp     = "";
 

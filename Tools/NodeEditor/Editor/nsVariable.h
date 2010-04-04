@@ -32,163 +32,198 @@
 #include "Utils/utString.h"
 
 
-// Game property, supports numerical types and string types.
-// numerical types from bool to quaternion are stored in the
-// NSvec4 structure. All types can be converted to all others.
 class nsVariable
 {
 public:
-
     typedef enum PropertyTypes
     {
         VAR_NULL = 0,
         VAR_BOOL,
         VAR_REAL,
+        VAR_ENUM,
         VAR_INT,
         VAR_VEC2,
         VAR_VEC3,
         VAR_VEC4,
         VAR_QUAT,
+        VAR_RECT,
+        VAR_MAT3,
+        VAR_MAT4,
+        VAR_COLOR,
         VAR_STRING,
     }PropertyTypes;
 
     nsVariable()
-    :       m_numeric(NSvec4(0,0,0,0)), m_string(""),
-            m_type(VAR_NULL), m_name(""), m_debug(false)
+    :       m_string(""),
+            m_type(VAR_NULL)
     {
+        memset(&m_numeric, 0, sizeof(NSfloat)*16);
     }
 
-
-    nsVariable(const utString &n, bool dbg=false)
-    :       m_numeric(NSvec4(0,0,0,0)), m_string(n),
-            m_type(VAR_STRING), m_name(n), m_debug(dbg)
+    nsVariable(const utString &v)
+    :       m_string(v),
+            m_type(VAR_STRING)
     {
+        memset(&m_numeric, 0, sizeof(NSfloat)*16);
     }
 
+    UT_INLINE int  getType(void)                { return m_type; }
+    UT_INLINE void setType(PropertyTypes pt)    { m_type = pt;}
 
+    UT_INLINE void setValue(NSfloat v)
+    { 
+        m_numeric[0] = (NSfloat)v; 
+        if (!m_string.empty())
+            m_string.clear();
+    }
 
-    UT_INLINE void setValue(NSfloat v)          { m_type = VAR_REAL; m_numeric.w = (NSfloat)v; }
-    UT_INLINE void setValue(bool v)             { m_type = VAR_BOOL; m_numeric.w = v ? 1.f : 0.f; }
-    UT_INLINE void setValue(int v)              { m_type = VAR_INT; m_numeric.w = (NSfloat)v; }
-    UT_INLINE void setValue(const utString& v)  { m_type = VAR_STRING; m_string = v; }
-    UT_INLINE void setValue(const NSvec2& v)    { m_type = VAR_VEC2; m_numeric.w = v.x; m_numeric.x = v.y; }
-    UT_INLINE void setValue(const NSvec3& v)    { m_type = VAR_VEC3; m_numeric.w = v.x; m_numeric.x = v.y; m_numeric.y = v.z; }
-    UT_INLINE void setValue(const NSvec4& v)    { m_type = VAR_VEC4; m_numeric.w = v.w; m_numeric.x = v.x; m_numeric.y = v.y; m_numeric.z = v.z; }
-    UT_INLINE void setValue(const NSquat& v)    { m_type = VAR_QUAT; m_numeric.w = v.w; m_numeric.x = v.x; m_numeric.y = v.y; m_numeric.z = v.z; }
-
+    UT_INLINE void setValue(bool v)
+    { 
+        m_numeric[0] = v ? 1.f : 0.f; 
+        if (!m_string.empty())
+            m_string.clear();
+    }
+    UT_INLINE void setValue(int v)              
+    { 
+        m_numeric[0] = (NSfloat)v; 
+        if (!m_string.empty())
+            m_string.clear();
+    }
+    UT_INLINE void setValue(const utString& v)  
+    { 
+        m_string = v; 
+    }
+    UT_INLINE void setValue(const NSvec2& v)
+    { 
+        m_numeric[0] = v.x; m_numeric[1] = v.y; 
+        if (!m_string.empty())
+            m_string.clear();
+    }
+    UT_INLINE void setValue(const NSvec3& v)    
+    { 
+        m_numeric[0] = v.x; m_numeric[1] = v.y; m_numeric[2] = v.z; 
+        if (!m_string.empty())
+            m_string.clear();
+    }
+    UT_INLINE void setValue(const NSvec4& v)    
+    { 
+        m_numeric[0] = v.w; m_numeric[1] = v.x; m_numeric[2] = v.y; m_numeric[3] = v.z; 
+        if (!m_string.empty())
+            m_string.clear();
+    }
+    UT_INLINE void setValue(const NSquat& v)    
+    { 
+        m_numeric[0] = v.w; m_numeric[1] = v.x; m_numeric[2] = v.y; m_numeric[3] = v.z; 
+        if (!m_string.empty())
+            m_string.clear();
+    }
 
     // copy 
     UT_INLINE void setValue(const nsVariable& v)
     {
         m_type = v.m_type;
-        m_numeric.w = v.m_numeric.w;
-        m_numeric.x = v.m_numeric.x;
-        m_numeric.y = v.m_numeric.y;
-        m_numeric.z = v.m_numeric.z;
+        m_numeric[0] = v.m_numeric[0];
+        m_numeric[1] = v.m_numeric[1];
+        m_numeric[2] = v.m_numeric[2];
+        m_numeric[3] = v.m_numeric[3];
         m_string = v.m_string;
     }
 
     UT_INLINE nsVariable& operator = (const nsVariable& v)
     {
         m_type = v.m_type;
-        m_numeric.w = v.m_numeric.w;
-        m_numeric.x = v.m_numeric.x;
-        m_numeric.y = v.m_numeric.y;
-        m_numeric.z = v.m_numeric.z;
+        m_numeric[0] = v.m_numeric[0];
+        m_numeric[1] = v.m_numeric[1];
+        m_numeric[2] = v.m_numeric[2];
+        m_numeric[3] = v.m_numeric[3];
         m_string = v.m_string;
         return *this;
     }
 
-
-
     UT_INLINE bool getValueBool(void) const
     {
-        if (m_type == VAR_STRING)
+        if (!m_string.empty())
             return utStringConverter::toBool(m_string);
-        return m_numeric.w != 0;
+        return m_numeric[0] != 0;
     }
-
 
     UT_INLINE NSfloat getValueReal(void) const
     {
-        if (m_type == VAR_STRING)
+        if (!m_string.empty())
             return utStringConverter::toFloat(m_string);
-        return m_numeric.w;
+        return m_numeric[0];
     }
-
 
     UT_INLINE int getValueInt(void) const
     {
-        if (m_type == VAR_STRING)
+        if (!m_string.empty())
             return utStringConverter::toInt(m_string);
-        return (int)m_numeric.w;
+        return (int)m_numeric[0];
     }
-
 
     const utString getValueString(void) const
     {
         if (m_type != VAR_STRING)
         {
             if (m_type == VAR_BOOL)
-                return utStringConverter::toString(m_numeric.w != 0);
+                return utStringConverter::toString(m_numeric[0] != 0);
             if (m_type == VAR_REAL)
-                return utStringConverter::toString(m_numeric.w);
+                return utStringConverter::toString(m_numeric[0]);
             if (m_type == VAR_INT)
-                return utStringConverter::toString((int)m_numeric.w);
+                return utStringConverter::toString((int)m_numeric[0]);
             if (m_type == VAR_VEC2)
-                return utStringConverter::toString(NSvec2(m_numeric.w, m_numeric.x));
+                return utStringConverter::toString(NSvec2(m_numeric[0], m_numeric[1]));
             if (m_type == VAR_VEC3)
-                return utStringConverter::toString(NSvec3(m_numeric.w, m_numeric.x, m_numeric.y));
+                return utStringConverter::toString(NSvec3(m_numeric[0], m_numeric[1], m_numeric[2]));
             if (m_type == VAR_VEC4)
-                return utStringConverter::toString(NSvec4(m_numeric.w, m_numeric.x, m_numeric.y,  m_numeric.z));
+                return utStringConverter::toString(NSvec4(m_numeric[0], m_numeric[1], m_numeric[2],  m_numeric[3]));
             if (m_type == VAR_QUAT)
-                return utStringConverter::toString(NSquat(m_numeric.w, m_numeric.x, m_numeric.y, m_numeric.z));
+                return utStringConverter::toString(NSquat(m_numeric[0], m_numeric[1], m_numeric[2], m_numeric[3]));
          
-            return utStringConverter::toString(m_numeric.w != 0);
+            return utStringConverter::toString(m_numeric[0] != 0);
         }
         return m_string;
     }
 
-    NSvec2 getValueVector2(void) const
+    UT_INLINE NSvec2 getValueVector2(void) const
     {
-        if (m_type == VAR_STRING)
+        if (!m_string.empty())
             return utStringConverter::toVec2(m_string);
-        return NSvec2(m_numeric.w, m_numeric.x);
+        return NSvec2(m_numeric[0], m_numeric[1]);
     }
 
-    NSvec3 getValueVector3(void) const
+    UT_INLINE NSvec3 getValueVector3(void) const
     {
-        if (m_type == VAR_STRING)
+        if (!m_string.empty())
             return utStringConverter::toVec3(m_string);
-        return NSvec3(m_numeric.w, m_numeric.x, m_numeric.y);
+        return NSvec3(m_numeric[0], m_numeric[1], m_numeric[2]);
     }
 
-
-    NSvec4 getValueVector4(void) const
+    UT_INLINE NSvec4 getValueVector4(void) const
     {
-        if (m_type == VAR_STRING)
+        if (!m_string.empty())
             return utStringConverter::toVec4(m_string);
-        return NSvec4(m_numeric.w, m_numeric.x, m_numeric.y, m_numeric.z);
+        return NSvec4(m_numeric[0], m_numeric[1], m_numeric[2], m_numeric[3]);
     }
 
     UT_INLINE NSquat getValueQuaternion(void) const
     {
-        if (m_type == VAR_STRING)
+        if (!m_string.empty())
             return utStringConverter::toQuat(m_string);
-        return NSquat(m_numeric.w, m_numeric.x, m_numeric.y, m_numeric.z);
+        return NSquat(m_numeric[0], m_numeric[1], m_numeric[2], m_numeric[3]);
     }
 
-    UT_INLINE bool isDebug(void) const      { return m_debug; }
-    UT_INLINE const utString& getName(void) { return m_name; }
+    UT_INLINE operator const utString(void) const
+    {
+        return getValueString();
+    }
 
 private:
 
     // data types
-    mutable NSvec4      m_numeric;
+    mutable NSfloat     m_numeric[16];
     mutable utString    m_string;
     mutable int         m_type;
-    utString            m_name;
-    bool                m_debug;
 };
 
 #endif//_nsVariable_h_

@@ -28,3 +28,4 @@
 
 const NSmat3 NSmat3::IDENTITY= NSmat3(1, 0, 0, 0, 1, 0, 0, 0, 1);
 const NSmat4 NSmat4::IDENTITY= NSmat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+const NSmat4 NSmat4::ZERO    = NSmat4(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);

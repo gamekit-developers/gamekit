@@ -70,6 +70,9 @@ public:
     // node notifications
     void nodeEvent(nsNodeEvent &evt);
 
+    // socket notifications
+    void socketEvent(nsSocketEvent &evt);
+
     NS_DECLARE_SINGLETON(nsPropertyPage)
 
 };

@@ -87,6 +87,7 @@ protected:
 
     // for sending events to other windows
     void            sendEvent(int id, nsNode *node);
+    void            sendEvent(int id, nsSocket *sock);
     void            sendEvent(int id);
 
 

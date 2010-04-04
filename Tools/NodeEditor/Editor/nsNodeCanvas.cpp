@@ -546,6 +546,15 @@ void nsNodeCanvas::sendEvent(int id, nsNode *node)
 }
 
 // ----------------------------------------------------------------------------
+void nsNodeCanvas::sendEvent(int id, nsSocket *sock)
+{
+    nsSocketEvent evt((nsNodifierID)id, this, sock);
+
+    // push to property window
+    nsPropertyPage::getSingleton().socketEvent(evt);
+}
+
+// ----------------------------------------------------------------------------
 void nsNodeCanvas::sendEvent(int id)
 {
     nsTreeEvent evt((nsNodifierID)id, this, m_tree);
@@ -600,7 +609,8 @@ void nsNodeCanvas::leftClickEvent(wxMouseEvent &evt)
                 {
                     // disconnect & swap active socket.
                     nsSocket *sock = m_clickedSocket->getSocketLink();
-                    // TODO: notify.
+                    sendEvent(NS_SOCKET_UNLINK, sock);
+
                     m_clickedSocket->connect(0);
                     m_clickedSocket = sock;
                 }
@@ -652,7 +662,7 @@ void nsNodeCanvas::leftClickEvent(wxMouseEvent &evt)
                 {
                     if (m_clickedSocket->canConnect(sockAtPoint))
                     {
-                        // TODO: notify.
+                        sendEvent(NS_SOCKET_LINK, m_clickedSocket);
                         m_clickedSocket->connect(sockAtPoint);
                     }
                 }
@@ -660,7 +670,7 @@ void nsNodeCanvas::leftClickEvent(wxMouseEvent &evt)
                 {
                     if (sockAtPoint->canConnect(m_clickedSocket))
                     {
-                        // TODO: notify.
+                        sendEvent(NS_SOCKET_LINK, sockAtPoint);
                         sockAtPoint->connect(m_clickedSocket);
                     }
                 }

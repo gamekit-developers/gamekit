@@ -30,7 +30,6 @@
 // ----------------------------------------------------------------------------
 NS_IMPLEMENT_SINGLETON(nsNodeManager);
 
-
 // ----------------------------------------------------------------------------
 nsSocket::nsSocket(nsNode *nd, nsSocketType *st)
     :   m_rect(st->m_rect), 
@@ -41,6 +40,7 @@ nsSocket::nsSocket(nsNode *nd, nsSocketType *st)
         m_index(UT_NPOS)
 {
     UT_ASSERT(m_parent);
+    m_value.setType(st->m_type);
     m_value.setValue(st->m_default);
     updateFromParent();
 }
@@ -196,6 +196,29 @@ void nsSocket::unlink(void)
 }
 
 
+
+// ----------------------------------------------------------------------------
+nsNodeData::nsNodeData(nsNode *nd, nsVariableType *type) 
+    :   m_type(type), m_parent(nd)
+{
+    m_value.setType(type->m_type);
+    m_value.setValue(type->m_value);
+}
+
+// ----------------------------------------------------------------------------
+nsNodeData::~nsNodeData()
+{
+}
+
+// ----------------------------------------------------------------------------
+nsNodeData* nsNodeData::clone(nsNode *newParent)
+{
+    nsNodeData *newData = new nsNodeData(newParent, m_type);
+    newData->m_value = m_value;
+    return newData;
+}
+
+
 // ----------------------------------------------------------------------------
 nsNode::nsNode(nsNodeTree *tree, nsNodeType *nt)
     :   m_type(nt), 
@@ -228,6 +251,14 @@ nsNode::nsNode(nsNodeTree *tree, nsNodeType *nt)
             // save socket index, needed for re linking
         osock->setIndex(m_outputs.size());
         m_outputs.push_back(osock);
+    }
+
+    nsVariableIterator vars(nt->m_variables);
+    while (vars.hasMoreElements())
+    {
+        nsVariableType *vt = vars.getNext();
+        nsNodeData *ndt = new nsNodeData(this, vt);
+        m_data.push_back(ndt);
     }
 }
 
@@ -274,6 +305,19 @@ nsNode::nsNode(nsNode *cpy, nsNodeTree *tree)
             sock = sock->getNext();
         }
     }
+
+    if (!cpy->m_data.empty())
+    {
+        nsNodeData *ndt = cpy->m_data.begin();
+
+        while (ndt)
+        {
+            nsNodeData *newData = ndt->clone(this);
+            m_data.push_back(newData);
+            ndt = ndt->getNext();
+        }
+    }
+
 }
 
 
@@ -306,6 +350,18 @@ nsNode::~nsNode()
         }
 
         m_outputs.clear();
+    }
+
+    
+    if (!m_data.empty())
+    {
+        nsNodeData *ndt = m_data.begin(), *tmp;
+        while (ndt)
+        {
+            tmp = ndt;
+            ndt = ndt->getNext();
+            delete tmp;
+        }
     }
 }
 

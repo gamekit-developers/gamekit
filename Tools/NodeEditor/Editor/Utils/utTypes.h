@@ -699,7 +699,7 @@ public:
     utArrayIterator(Iterator begin, UTsize size) : m_iterator(begin), m_cur(0), m_capacity(size) {}
 
     // Construct with reference to the array
-    utArrayIterator(T& v) : m_iterator(v.ptr()), m_cur(0), m_capacity(v.size()) { UT_ASSERT(v.valid()); }
+    utArrayIterator(T& v) : m_iterator(v.ptr()), m_cur(0), m_capacity(v.size()) { }
     ~utArrayIterator() {}
 
     // Access queries

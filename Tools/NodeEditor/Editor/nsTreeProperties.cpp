@@ -80,7 +80,9 @@ void nsTreePropertyPage::createProperties(void)
 {
     // create default / initial properties
 
+
     m_info = new wxPropertyCategory("Node Tree");
+    m_info->SetHelpString("Single node tree that will execute per frame.");
     Append(m_info);
 
     m_name = new wxStringProperty("Tree Name", wxPG_LABEL, "");
@@ -105,6 +107,8 @@ void nsTreePropertyPage::createProperties(void)
     // read only
     DisableProperty(m_group);
     DisableProperty(m_info);
+
+
 }
 
 

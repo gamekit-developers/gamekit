@@ -12,6 +12,7 @@ set(NS_SRC
     nsMath.cpp
     nsPropertyPage.cpp
     nsRenderSystem.cpp
+    nsSocketEditors.cpp
     nsSolutionBrowser.cpp
     nsTreeProperties.cpp
     nsVariable.cpp
@@ -34,6 +35,7 @@ set(NS_HDR
     nsPropertyPage.h
     nsRenderSystem.h
     nsSingleton.h
+    nsSocketEditors.h
     nsSolutionBrowser.h
     nsTreeProperties.h
     nsVariable.h

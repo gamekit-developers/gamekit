@@ -29,6 +29,7 @@
 #include "nsTreeProperties.h"
 #include "nsNodeProperties.h"
 #include <wx/sizer.h>
+#include <wx/settings.h>
 
 // ----------------------------------------------------------------------------
 NS_IMPLEMENT_SINGLETON(nsPropertyPage);
@@ -41,7 +42,7 @@ class nsPropertyManager : public wxPropertyGridManager
 public:
     nsPropertyManager(wxWindow *parent, int id)
         :   wxPropertyGridManager(parent, id, wxPoint(0,0), wxDefaultSize,
-                                  wxPGMAN_DEFAULT_STYLE | nsBorderDefault)
+                                  wxPGMAN_DEFAULT_STYLE | wxPG_DESCRIPTION | nsBorderDefault)
     {
     }
     virtual ~nsPropertyManager() {}
@@ -56,6 +57,17 @@ nsPropertyPage::nsPropertyPage(wxWindow *parent)
     wxSizer *size = new wxBoxSizer(wxVERTICAL);
     m_manager = new nsPropertyManager(this, NS_WID_PROPERTY_DATA);
 
+    // enable VC++ looking properties 
+    wxPropertyGrid *grid = m_manager->GetGrid();
+    wxColour col = wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK);
+    wxColour winbk = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
+    grid->SetMarginColour(col);
+    grid->SetCaptionBackgroundColour(col);
+    grid->SetCellBackgroundColour(winbk);
+    grid->SetLineColour(winbk);
+
+
+
     m_tree = 0;
     m_default = 0;
 
@@ -63,7 +75,7 @@ nsPropertyPage::nsPropertyPage(wxWindow *parent)
     header->SetSize(0, 24);
 
     size->Add(header,       wxSizerFlags(0).Expand().Border(wxALL,nsHeaderBorderSize));
-    size->Add(m_manager,    wxSizerFlags(1).Expand().Border(wxALL,nsContentBorderSize));
+    size->Add(m_manager,    wxSizerFlags(1).Expand().Border(wxALL,nsHeaderBorderSize));
     SetSizer(size);
     Layout();
 }
@@ -86,6 +98,8 @@ void nsPropertyPage::initialize(void)
     m_tree = new nsTreePropertyPage(m_manager);
     m_manager->AddPage(wxEmptyString, wxNullBitmap, m_tree);
     m_tree->createProperties();
+
+
 
     // create node types
 
@@ -154,6 +168,7 @@ void nsPropertyPage::nodeEvent(nsNodeEvent &evt)
                 if (page)
                 {
                     page->setNode(node);
+                    page->selectRoot();
                     m_manager->SelectPage(page);
                 }
             }
@@ -178,5 +193,37 @@ void nsPropertyPage::nodeEvent(nsNodeEvent &evt)
         else
             m_manager->SelectPage(m_default);
     }
+
+}
+
+
+
+// ----------------------------------------------------------------------------
+void nsPropertyPage::socketEvent(nsSocketEvent &evt)
+{
+    nsSocket *sock = evt.ptr();
+    if (sock)
+    {
+        // find page from socket
+        nsNode *node = sock->getParent();
+
+        nsNodeType *type = node->getType();
+        if (type->m_id >=0 && type->m_id < (int)m_nodeTypes.size())
+        {
+            nsNodePropertyPage *page = m_nodeTypes[type->m_id];
+            if (page)
+            {
+                if (page->GetIndex() != m_manager->GetSelectedPage())
+                {
+                    page->setNode(node);
+                    m_manager->SelectPage(page);
+                }
+
+                page->socketEvent(evt);
+            }
+        }
+    }
+    else
+        m_manager->SelectPage(m_default);
 }
 

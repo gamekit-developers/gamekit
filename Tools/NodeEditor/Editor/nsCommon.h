@@ -45,6 +45,7 @@ class nsNode;
 class nsSocket;
 class nsNodeType;
 class nsSocketType;
+class nsVariableType;
 
 class wxAuiManager;
 class wxMenu;

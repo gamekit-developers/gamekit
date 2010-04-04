@@ -30,9 +30,9 @@
 #include "nsCommon.h"
 #include "Utils/utTypes.h"
 #include "Utils/utString.h"
-#include "nsVariable.h"
 #include "nsNodeTypeInfo.h"
 #include "nsSingleton.h"
+#include "nsVariable.h"
 
 
 // ----------------------------------------------------------------------------
@@ -47,9 +47,8 @@ protected:
     nsNode          *m_parent;
     nsSocket        *m_from;
     ToLinks         m_tosockets;
-    nsVariable      m_value;
+    nsVariable       m_value;
     UTsize          m_index;
-
 
 public:
     nsSocket(nsNode *nd, nsSocketType *st);
@@ -70,7 +69,7 @@ public:
     UTsize              getIndex(void)                  {return m_index;}
     void                setIndex(UTsize i)              {m_index = i;}
 
-    nsVariable         &getValue(void)                  {return m_value;}
+    nsVariable          &getValue(void)                 {return m_value;}
     void                setValue(const nsVariable &v)   {m_value = v;}
 
     nsSocketType       *getType(void)                   {return m_type;}
@@ -87,11 +86,37 @@ public:
 };
 
 
+
+// ----------------------------------------------------------------------------
+class nsNodeData : public utListClass<nsNodeData>::Link
+{
+protected:
+
+    nsVariableType  *m_type;
+    nsVariable       m_value;
+    nsNode          *m_parent;
+
+
+public:
+    nsNodeData(nsNode *nd, nsVariableType *type);
+    ~nsNodeData();
+
+    // sorting utils
+    nsNode              *getParent(void)                {return m_parent;}
+    nsVariable          &getValue(void)                 {return m_value;}
+    void                setValue(const nsVariable &v)   {m_value = v;}
+    
+    nsVariableType      *getType(void)                  {return m_type;}
+    nsNodeData*         clone(nsNode *newParent);
+};
+
+
 // ----------------------------------------------------------------------------
 class nsNode
 {
 public:
-    typedef utListClass<nsSocket> Sockets;
+    typedef utListClass<nsSocket>   Sockets;
+    typedef utListClass<nsNodeData> Data;
 
 protected:
     NSrect          m_rect;
@@ -100,6 +125,7 @@ protected:
 
     Sockets         m_inputs;
     Sockets         m_outputs;
+    Data            m_data;
     nsNodeState     m_state;
     bool            m_editOutputs;
 
@@ -119,6 +145,7 @@ public:
 
     nsSocket        *getFirstInput(void)        {if (m_inputs.empty()) return 0; return m_inputs.begin();}
     nsSocket        *getFirstOutput(void)       {if (m_outputs.empty()) return 0; return m_outputs.begin();}
+    nsNodeData      *getFirstVariable(void)     {if (m_data.empty()) return 0; return m_data.begin(); }
 
     bool            getEditOutputs(void)        {return m_editOutputs;}
     void            setEditOutputs(bool v)      {m_editOutputs = v;}

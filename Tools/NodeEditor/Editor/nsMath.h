@@ -615,6 +615,7 @@ public:
     };
 
     static const NSmat4 IDENTITY;
+    static const NSmat4 ZERO;
 };
 
 class NSmath
