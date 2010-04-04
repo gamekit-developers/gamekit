@@ -44,9 +44,11 @@ gkAnimationNode::gkAnimationNode(gkLogicTree *parent, size_t id)
 	ADD_OSOCK(CURRENT_ANIM_NAME, "");
 	ADD_OSOCK(HAS_REACHED_END, false);
 	ADD_OSOCK(NOT_HAS_REACHED_END, false);
-
+	ADD_OSOCK(TIME_POSITION, 0);
+	
 	SET_SOCKET_VALUE(NOT_HAS_REACHED_END, true);
 	SET_SOCKET_VALUE(BLEND_FRAMES, 10);
+	
 }
 
 bool gkAnimationNode::evaluate(gkScalar tick)
@@ -85,8 +87,10 @@ void gkAnimationNode::update(gkScalar tick)
 			gkAction* pAct = ent->getActiveAction();
 
 			GK_ASSERT(pAct);
-
+			
 			gkScalar time = pAct->getTimePosition();
+
+			SET_SOCKET_VALUE(TIME_POSITION, time);
 
 			if(time >= pAct->getEnd())
 			{

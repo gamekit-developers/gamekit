@@ -32,8 +32,6 @@
 #include "gkEngine.h"
 #include "gkGameObject.h"
 
-using namespace Ogre;
-
 gkCollisionNode::gkCollisionNode(gkLogicTree *parent, size_t id)
 : gkLogicNode(parent, id),
 m_bBody(0)
@@ -42,6 +40,7 @@ m_bBody(0)
 	ADD_ISOCK(TARGET, 0);
 	ADD_ISOCK(COLLIDES_WITH, "");
 	ADD_OSOCK(HAS_COLLIDED, false);
+	ADD_OSOCK(NOT_HAS_COLLIDED, true);
 	ADD_OSOCK(COLLIDED_OBJ, 0);
 	ADD_OSOCK(CONTACT_POSITION, gkVector3::ZERO);
 
@@ -54,7 +53,7 @@ gkCollisionNode::~gkCollisionNode()
 {
 }
 
-bool gkCollisionNode::evaluate(Real tick)
+bool gkCollisionNode::evaluate(gkScalar tick)
 {
 	gkGameObject* pObj = GET_SOCKET_VALUE(TARGET);
 
@@ -68,9 +67,16 @@ bool gkCollisionNode::evaluate(Real tick)
 	return m_bBody != 0;
 }
 
-void gkCollisionNode::update(Real tick)
+void gkCollisionNode::update(gkScalar tick)
 {
 	SET_SOCKET_VALUE(HAS_COLLIDED, false);
+
+	if(m_timer.getTimeMilliseconds() > 300)
+	{
+		SET_SOCKET_VALUE(NOT_HAS_COLLIDED, true);
+		m_timer.reset();
+	}
+	
 
 	if(GET_SOCKET_VALUE(ENABLE))
 	{
@@ -87,6 +93,8 @@ void gkCollisionNode::update(Real tick)
 				SET_SOCKET_VALUE(CONTACT_POSITION, gkVector3(c.point.getPositionWorldOnA()));
 				SET_SOCKET_VALUE(COLLIDED_OBJ, c.collider->getObject());
 				SET_SOCKET_VALUE(HAS_COLLIDED, true);
+				SET_SOCKET_VALUE(NOT_HAS_COLLIDED, false);
+				m_timer.reset();
 				break;
 			}
 		}

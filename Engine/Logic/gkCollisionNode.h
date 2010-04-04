@@ -27,7 +27,9 @@
 #ifndef _gkCollisionNode_h_
 #define _gkCollisionNode_h_
 
+#include "LinearMath/btQuickprof.h"
 #include "gkLogicNode.h"
+
 
 class gkRigidBody;
 class gkCollisionNode : public gkLogicNode
@@ -40,6 +42,7 @@ public:
 		TARGET,
 		COLLIDES_WITH,
 		HAS_COLLIDED,
+		NOT_HAS_COLLIDED,
 		COLLIDED_OBJ,
 		CONTACT_POSITION
 	};
@@ -48,6 +51,7 @@ public:
 	DECLARE_SOCKET_TYPE(TARGET, gkGameObject*);
 	DECLARE_SOCKET_TYPE(COLLIDES_WITH, gkString);
 	DECLARE_SOCKET_TYPE(HAS_COLLIDED, bool);
+	DECLARE_SOCKET_TYPE(NOT_HAS_COLLIDED, bool);
 	DECLARE_SOCKET_TYPE(COLLIDED_OBJ, gkGameObject*);
 	DECLARE_SOCKET_TYPE(CONTACT_POSITION, gkVector3);
 
@@ -55,12 +59,14 @@ public:
 
 	~gkCollisionNode();
 
-	void update(Ogre::Real tick);
-	bool evaluate(Ogre::Real tick);
+	void update(gkScalar tick);
+	bool evaluate(gkScalar tick);
 
 private:
 
 	gkRigidBody* m_bBody;
+
+	btClock m_timer;
 };
 
 #endif//_gkCollisionNode_h_

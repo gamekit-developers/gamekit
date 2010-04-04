@@ -40,7 +40,8 @@ public:
 		TARGET,
 		CURRENT_ANIM_NAME,
 		HAS_REACHED_END,
-		NOT_HAS_REACHED_END
+		NOT_HAS_REACHED_END,
+		TIME_POSITION
 	};
 
 	DECLARE_SOCKET_TYPE(ANIM_NAME, gkString);
@@ -49,7 +50,8 @@ public:
 	DECLARE_SOCKET_TYPE(CURRENT_ANIM_NAME, gkString);
 	DECLARE_SOCKET_TYPE(HAS_REACHED_END, bool);
 	DECLARE_SOCKET_TYPE(NOT_HAS_REACHED_END, bool);
-
+	DECLARE_SOCKET_TYPE(TIME_POSITION, gkScalar);
+	
     gkAnimationNode(gkLogicTree *parent, size_t id);
 
     virtual ~gkAnimationNode() {}
