@@ -89,6 +89,7 @@ enum nsEventID
     NS_ID_CUT,
     NS_ID_COPY,
     NS_ID_PASTE,
+    NS_ID_DUPLICATE,
     NS_ID_DELETE,
     NS_ID_GRAB,
     NS_ID_SELECT_ALL,

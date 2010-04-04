@@ -172,3 +172,26 @@ void nsClipboard::copy(nsNodes &list)
     // re-iterate & relink
     nsClipboard_link(lookup, list);
 }
+
+// ----------------------------------------------------------------------------
+void nsClipboard::duplicate(nsNodeTree *tree, nsNodes &list, nsNodes &dest)
+{
+    if (list.empty())
+        return;
+
+    nsOldNewMap lookup;
+
+    // build lookup of all items
+    nsNodeIterator it(list);
+    while (it.hasMoreElements())
+    {
+        nsNode *orig = it.getNext();
+        nsNode *next = tree->createCloneNode(orig);
+        lookup.insert(orig, next);
+
+        dest.push_back(next);
+    }
+
+    // re-iterate & relink
+    nsClipboard_link(lookup, list);
+}

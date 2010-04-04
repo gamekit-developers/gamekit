@@ -56,6 +56,7 @@ BEGIN_EVENT_TABLE( nsMainWindow, wxFrame )
     EVT_MENU(NS_ID_CUT,         nsMainWindow::cutEvent)
     EVT_MENU(NS_ID_COPY,        nsMainWindow::copyEvent)
     EVT_MENU(NS_ID_PASTE,       nsMainWindow::pasteEvent)
+    EVT_MENU(NS_ID_DUPLICATE,   nsMainWindow::duplicateEvent)
     EVT_MENU(NS_ID_GRAB,        nsMainWindow::grabCapturedEvent)
     EVT_MENU(NS_ID_DELETE,      nsMainWindow::deleteCapturedEvent)
     EVT_MENU(NS_ID_SELECT_ALL,  nsMainWindow::selectAllEvent)
@@ -317,6 +318,9 @@ void nsMainWindow::makeEditMenu(wxMenu *menu)
     item->SetHelp("Paste clipboard.");
 
     menu->AppendSeparator();
+    item = menu->Append(NS_ID_DUPLICATE, "Duplicate\tCtrl-D");
+    item->SetHelp("Duplicate selected nodes.");
+
     item = menu->Append(NS_ID_SELECT_ALL, "Select All\tCtrl-A");
     item->SetHelp("Select All nodes.");
 
@@ -518,6 +522,13 @@ void nsMainWindow::pasteEvent(wxCommandEvent &evt)
 {
     // pass down to workspace
     nsWorkspace::getSingleton().pasteEvent(evt);
+}
+
+// ----------------------------------------------------------------------------
+void nsMainWindow::duplicateEvent(wxCommandEvent &evt)
+{
+    // pass down to workspace
+    nsWorkspace::getSingleton().duplicateEvent(evt);
 }
 
 // ----------------------------------------------------------------------------

@@ -290,7 +290,6 @@ void nsNodeCanvas::captureNode(nsNode *node)
     if (!node)
         return;
 
-
     // only if not captured
     if (node->getState() != NDST_ACTIVE)
     {
@@ -533,6 +532,53 @@ void nsNodeCanvas::pasteEvent(wxCommandEvent &evt)
     }
 }
 
+// ----------------------------------------------------------------------------
+void nsNodeCanvas::duplicateEvent(wxCommandEvent &evt)
+{
+    if (!m_captured.empty())
+    {
+        // clone all nodes
+
+        nsNodes dupli;
+        nsWorkspace::getSingleton().getClipboard().duplicate(m_tree, m_captured, dupli);
+
+        releaseCapture();
+        nsNode *lastCapture = 0;
+
+        nsNodeIterator it(dupli);
+        while (it.hasMoreElements())
+        {
+            nsNode *node = it.getNext();
+
+            lastCapture = node;
+
+            node->setState(NDST_ACTIVE);
+            m_captured.push_back(node);
+            m_renderList.push_back(node);
+        }
+
+        if (lastCapture != 0)
+        {
+            m_captured.erase(lastCapture);
+            lastCapture->setState(NDST_INACTIVE);
+
+            // call capture event
+            captureNode(lastCapture);
+        }
+
+        // notify that we want to grab all
+        grabCanvas(true);
+
+        m_dragSelection = false;
+        m_grabbed = true;
+        m_hasCapture = true;
+        m_grabCapture = true;
+
+
+        evt.Skip();
+        Refresh();
+    }
+}
 // ----------------------------------------------------------------------------
 void nsNodeCanvas::sendEvent(int id, nsNode *node)
 {

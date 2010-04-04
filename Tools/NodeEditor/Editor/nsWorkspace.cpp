@@ -287,6 +287,13 @@ void nsWorkspace::pasteEvent(wxCommandEvent &evt)
         m_activeCanvas->pasteEvent(evt);
 }
 
+// ----------------------------------------------------------------------------
+void nsWorkspace::duplicateEvent(wxCommandEvent &evt)
+{
+    // pass to active canvas
+    if (m_activeCanvas)
+        m_activeCanvas->duplicateEvent(evt);
+}
 
 // ----------------------------------------------------------------------------
 // remove shared context

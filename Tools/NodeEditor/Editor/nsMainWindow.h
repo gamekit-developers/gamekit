@@ -80,6 +80,7 @@ private:
     void copyEvent(wxCommandEvent &evt);
     void pasteEvent(wxCommandEvent &evt);
     void cutEvent(wxCommandEvent &evt);
+    void duplicateEvent(wxCommandEvent &evt);
 
 
 public:
