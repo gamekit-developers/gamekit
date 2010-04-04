@@ -60,7 +60,6 @@ public:
 
     // data change notification
     void propertyChangeEvent(wxPropertyGridEvent &evt);
-    void updateData(void);
 
     void setTree(nsNodeTree *tree);
 

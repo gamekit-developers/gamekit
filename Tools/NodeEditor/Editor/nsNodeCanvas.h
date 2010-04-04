@@ -54,29 +54,29 @@ protected:
 
     // events
 
-    void            eraseEvent(wxEraseEvent& evt);
-    void            paintEvent(wxPaintEvent& evt);
-    void            sizeEvent(wxSizeEvent& evt);
+    void            eraseEvent(wxEraseEvent &evt);
+    void            paintEvent(wxPaintEvent &evt);
+    void            sizeEvent(wxSizeEvent &evt);
     void            focusLostEvent(wxMouseCaptureLostEvent &evt);
 
     // key events
-    void            keyPressEvent(wxKeyEvent& evt);
+    void            keyPressEvent(wxKeyEvent &evt);
 
     // click events
-    void            leftClickEvent(wxMouseEvent& evt);
-    void            middleClickEvent(wxMouseEvent& evt);
-    void            rightClickEvent(wxMouseEvent& evt);
+    void            leftClickEvent(wxMouseEvent &evt);
+    void            middleClickEvent(wxMouseEvent &evt);
+    void            rightClickEvent(wxMouseEvent &evt);
 
-    // movements 
-    void            motionEvent(wxMouseEvent& evt);
-    void            wheelEvent(wxMouseEvent& evt);
+    // movements
+    void            motionEvent(wxMouseEvent &evt);
+    void            wheelEvent(wxMouseEvent &evt);
 
-    // hit testing 
+    // hit testing
     nsNode          *hitTestNode(const NSvec2 &projClick);
     nsSocket        *hitTestSocket(const NSvec2 &projClick);
     void            bringToFront(nsNode *node);
 
-    // capturing 
+    // capturing
     void            captureNode(nsNode *node);
     void            captureNodes(const NSrect &rect);
     void            releaseCapture(void);

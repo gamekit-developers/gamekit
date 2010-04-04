@@ -36,9 +36,8 @@ class wxTreeEvent;
 
 
 class nsSolutionBrowser :   public wxPanel, 
-                            public nsNotifierBase,
+                            public nsNotifierBase, 
                             public nsSingleton<nsSolutionBrowser>
-
 {
 protected:
     wxTreeCtrl  *m_tree;
@@ -51,7 +50,7 @@ protected:
     void labelEditEvent(wxTreeEvent &evt);
     void labelMenuEditEvent(wxCommandEvent &evt);
 
-    // menu add 
+    // menu add
     void treeOpenMenu(wxTreeEvent &evt);
     void addTreeEvent(wxCommandEvent &evt);
     void removeTreeEvent(wxCommandEvent &evt);
@@ -65,7 +64,7 @@ public:
     void treeEvent(nsTreeEvent &evt);
 
     // access to the current tree
-    nsNodeTree* getSelectedTree(void);
+    nsNodeTree *getSelectedTree(void);
 
 
     NS_DECLARE_SINGLETON(nsSolutionBrowser);

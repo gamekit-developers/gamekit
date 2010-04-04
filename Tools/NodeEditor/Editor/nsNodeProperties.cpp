@@ -42,54 +42,55 @@ END_EVENT_TABLE()
 static void nsPropToVariable(wxPGProperty *p, nsVariable &var)
 {
     wxVariant v = p->GetValue();
+    if (v.IsNull())
+    {
+        var.makeNull();
+        return;
+    }
 
     switch (var.getType())
     {
     case nsVariable::VAR_ENUM:
     case nsVariable::VAR_INT:
-        var.setValue(v.IsNull() ? 0 : p->GetValue().GetInteger());
+        var.setValue(p->GetValue().GetInteger());
         break;
     case nsVariable::VAR_REAL:
-        var.setValue(v.IsNull() ? 0.f : (NSfloat)p->GetValue().GetDouble());
+        var.setValue((NSfloat)p->GetValue().GetDouble());
         break;
     case nsVariable::VAR_STRING:
-        var.setValue(v.IsNull() ? "" : wxToString(p->GetValue().GetString()));
+        var.setValue(wxToSTDString(p->GetValue().GetString()));
         break;
     case nsVariable::VAR_VEC2:
         {
-            NSvec2 vec(0,0);
-            if (!v.IsNull())
-                vec << p->GetValue();
+            NSvec2 vec;
+            vec << p->GetValue();
             var.setValue(vec);
             break;
         }
     case nsVariable::VAR_VEC3:
         {
-            NSvec3 vec(0,0,0);
-            if (!v.IsNull())
-                vec << p->GetValue();
+            NSvec3 vec;
+            vec << p->GetValue();
             var.setValue(vec);
             break;
         }
     case nsVariable::VAR_VEC4:
         {
-            NSvec4 vec(0,0,0,1);
-            if (!v.IsNull())
-                vec << p->GetValue();
+            NSvec4 vec;
+            vec << p->GetValue();
             var.setValue(vec);
             break;
         }
     case nsVariable::VAR_QUAT:
         {
-            NSquat vec(1,0,0,0);
-            if (!v.IsNull())
-                vec << p->GetValue();
+            NSquat vec;
+            vec << p->GetValue();
             var.setValue(vec);
             break;
         }
     case nsVariable::VAR_BOOL:
     default:
-        var.setValue(v.IsNull() ? false : p->GetValue().GetBool());
+        var.setValue(p->GetValue().GetBool());
         break;
     }
 }
@@ -201,19 +202,23 @@ void nsNodePropertyPage::propertyChangeEvent(wxPropertyGridEvent &evt)
     wxPGProperty *prop = evt.GetProperty();
     if (m_inputs)
     {
-        int index = m_inputs->Index(prop);
+        // Find property in inputs
 
+
+        int index = m_inputs->Index(prop);
         if (index != wxNOT_FOUND)
         {
             void *client = prop->GetClientData();
             if (client)
             {
                 nsSocket *sock = static_cast<nsSocket *>(client);
-
                 nsVariable &var = sock->getValue();
+
                 nsPropToVariable(prop, var);
+
                 sock->setValue(var);
                 evt.Skip();
+
                 return;
             }
         }
@@ -222,6 +227,8 @@ void nsNodePropertyPage::propertyChangeEvent(wxPropertyGridEvent &evt)
 
     if (m_vars)
     {
+        // Find property in variables
+
         int index = m_vars->Index(prop);
         if (index != wxNOT_FOUND)
         {
@@ -232,6 +239,7 @@ void nsNodePropertyPage::propertyChangeEvent(wxPropertyGridEvent &evt)
 
                 nsVariable &var = data->getValue();
                 nsPropToVariable(prop, var);
+
                 data->setValue(var);
                 evt.Skip();
             }
@@ -244,21 +252,23 @@ void nsNodePropertyPage::propertyChangeEvent(wxPropertyGridEvent &evt)
 void nsNodePropertyPage::socketEvent(nsSocketEvent &evt)
 {
     nsSocket *sock = evt.ptr();
+
     if (sock->isInput() && m_inputs)
     {
         unsigned int  nr = m_inputs->GetChildCount();
         for (unsigned int i=0; i<nr; i++)
         {
+
             wxPGProperty *prop = m_inputs->Item(i);
             if (prop && prop->GetClientData() == sock)
+            {
+                // Disable if it's linked to another
                 EnableProperty(prop, evt.getId() == NS_SOCKET_UNLINK);
+            }
         }
     }
-    else
-    {
-        // not yet
-    }
 }
+
 
 // ----------------------------------------------------------------------------
 void nsNodePropertyPage::createInputs(void)
@@ -270,6 +280,7 @@ void nsNodePropertyPage::createInputs(void)
         {
             nsSocketType *type = iter.getNext();
             wxPGProperty *prop = createProperty(type->m_type, type->m_name, type->m_default, type->m_briefHelp);
+
             prop->SetHelpString(type->m_briefHelp.c_str());
             m_inputs->AppendChild(prop);
         }
@@ -285,10 +296,11 @@ void nsNodePropertyPage::createVariables(void)
         while (vars.hasMoreElements())
         {
             nsVariableType *varType = vars.getNext();
-            wxPGProperty *prop = createProperty(varType->m_type, 
-                                                varType->m_name, 
-                                                varType->m_value, 
-                                                varType->m_briefHelp, 
+
+            wxPGProperty *prop = createProperty(varType->m_type,
+                                                varType->m_name,
+                                                varType->m_value,
+                                                varType->m_briefHelp,
                                                 &varType->m_enum);
             m_vars->AppendChild(prop);
         }
@@ -314,8 +326,11 @@ void nsNodePropertyPage::setNode(nsNode *node)
     if (m_node && m_inputs)
     {
         EnableProperty(m_inputs, node != 0);
+
         // setup the ID
         m_id->SetValue(wxString::Format("%p", m_node));
+
+
         nsSocket *sock = m_node->getFirstInput();
         while (sock)
         {
@@ -324,6 +339,7 @@ void nsNodePropertyPage::setNode(nsNode *node)
             // apply client information
             wxPGProperty *prop = m_inputs->GetPropertyByName(type->m_name.c_str());
             prop->SetClientData(sock);
+
 
             nsVariable &var = sock->getValue();
             nsVariableToProp(prop, var);
@@ -345,13 +361,12 @@ void nsNodePropertyPage::setNode(nsNode *node)
     {
         EnableProperty(m_vars, node != 0);
 
-
         nsNodeData *dt = m_node->getFirstVariable();
-
         while (dt)
         {
-            // apply client information
             nsVariableType *vt = dt->getType();
+
+            // apply client information
             wxPGProperty *prop = m_vars->GetPropertyByName(vt->m_name.c_str());
             prop->SetClientData(dt);
 
@@ -403,9 +418,10 @@ wxPGProperty *nsNodePropertyPage::createProperty(
                 wxArrayString lab;
                 wxArrayInt val;
 
-                nsEnumItemIterator iter(*static_cast<nsEnumItems*>(enumValue));
+                nsEnumItemIterator iter(*static_cast<nsEnumItems *>(enumValue));
                 while (iter.hasMoreElements())
                 {
+                    // extract labels and the id
                     nsEnumItem &item = iter.getNext();
 
                     lab.push_back(item.m_name.c_str());
@@ -414,7 +430,6 @@ wxPGProperty *nsNodePropertyPage::createProperty(
 
                 prop = new wxEnumProperty(name.c_str(), wxPG_LABEL, lab, val);
             }
-
         } break;
     case nsVariable::VAR_BOOL:
     default:
@@ -425,4 +440,3 @@ wxPGProperty *nsNodePropertyPage::createProperty(
     prop->SetHelpString(help.c_str());
     return prop;
 }
-

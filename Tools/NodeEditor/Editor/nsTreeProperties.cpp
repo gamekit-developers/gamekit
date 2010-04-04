@@ -39,10 +39,7 @@ nsTreePropertyPage::nsTreePropertyPage(nsPropertyManager *manager)
     :   m_manager(manager), m_tree(0),
         m_name(0),m_groupname(0), m_id(0), m_isGroup(0), m_info(0), m_group(0)
 {
-
 }
-
-
 
 // ----------------------------------------------------------------------------
 void nsTreePropertyPage::setTree(nsNodeTree *tree)
@@ -138,11 +135,4 @@ void nsTreePropertyPage::propertyChangeEvent(wxPropertyGridEvent &evt)
             m_tree->setGroupName((const char *)str.mb_str());
         evt.Skip();
     }
-}
-
-// ----------------------------------------------------------------------------
-void nsTreePropertyPage::updateData(void)
-{
-    if (!m_tree) return;
-
 }

@@ -47,7 +47,6 @@ public:
     void clear(void);
     void paste(nsNodeTree *tree, nsNodes &list, const NSvec2 &position);
     void copy(nsNodes &list);
-    void cut(nsNodes &list);
 };
 
 #endif//_nsClipboard_h_

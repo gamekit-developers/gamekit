@@ -37,11 +37,6 @@ NS_IMPLEMENT_SINGLETON(nsNodeTypeInfo);
 #define NS_INVALID_ATTR wxString("INVALID_ATTRIBUTE")
 
 
-// string conversion 
-#define wxFromAscii(x)  wxString(x.c_str(), x.size())
-#define wxToAscii(x)    (const char*)x.mb_str()
-
-
 // ----------------------------------------------------------------------------
 nsNodeType::~nsNodeType()
 {
@@ -74,12 +69,12 @@ nsNodeTypeInfo::~nsNodeTypeInfo()
 
 
 // ----------------------------------------------------------------------------
-nsNodeType* nsNodeTypeInfo::findTypeInfo(int i)
+nsNodeType *nsNodeTypeInfo::findTypeInfo(int i)
 {
     TypeIterator iter(m_types);
     while (iter.hasMoreElements())
     {
-        nsNodeType* nt= iter.getNext();
+        nsNodeType *nt= iter.getNext();
         if (nt->m_id == i)
             return nt;
     }
@@ -88,9 +83,8 @@ nsNodeType* nsNodeTypeInfo::findTypeInfo(int i)
 
 
 // ----------------------------------------------------------------------------
-static nsVariable::PropertyTypes nsGetDataType(const utString& t)
+static nsVariable::PropertyTypes nsGetDataType(const utString &t)
 {
-    // todo Replace socket::m_type with nsVariable::PropertyTypes
     if (t == "Boolean")
         return nsVariable::VAR_BOOL;
     if (t == "Int")
@@ -113,7 +107,7 @@ static nsVariable::PropertyTypes nsGetDataType(const utString& t)
 }
 
 // ----------------------------------------------------------------------------
-static nsColorScheme nsGetColor(const utString& t)
+static nsColorScheme nsGetColor(const utString &t)
 {
     if (t == "Red")
         return NS_COL_RED;
@@ -145,9 +139,10 @@ static nsColorScheme nsGetColor(const utString& t)
 
 
 // ----------------------------------------------------------------------------
-// Find IO type
-static nsSocketType::Direction nsGetDirection(const utString& t)
+static nsSocketType::Direction nsGetDirection(const utString &t)
 {
+    // Find IO type
+
     if (t == "In")
         return nsSocketType::In;
     return nsSocketType::Out;
@@ -155,18 +150,20 @@ static nsSocketType::Direction nsGetDirection(const utString& t)
 
 
 // ----------------------------------------------------------------------------
-// Sort function 
-static bool nsSocketSort(nsSocketType* const& a, nsSocketType* const &b)
+static bool nsSocketSort(nsSocketType *const &a, nsSocketType *const &b)
 {
+    // Sort function
     return a->m_index > b->m_index;
 }
 
+
+// ----------------------------------------------------------------------------
 static bool nsHasAttribute(const utString &attr, wxXmlNode *node)
 {
     return node->HasAttribute(wxFromAscii(attr));
 }
 
-
+// ----------------------------------------------------------------------------
 static bool nsGetAttributeBool(const utString &attr, wxXmlNode *node, bool def = false)
 {
     wxString attrWx = node->GetAttribute(wxFromAscii(attr), NS_INVALID_ATTR);
@@ -177,6 +174,7 @@ static bool nsGetAttributeBool(const utString &attr, wxXmlNode *node, bool def =
 }
 
 
+// ----------------------------------------------------------------------------
 static wxLongLong nsGetAttributeInt(const utString &attr, wxXmlNode *node, wxLongLong def = 0)
 {
     wxString attrWx = node->GetAttribute(wxFromAscii(attr), NS_INVALID_ATTR);
@@ -187,6 +185,7 @@ static wxLongLong nsGetAttributeInt(const utString &attr, wxXmlNode *node, wxLon
 }
 
 
+// ----------------------------------------------------------------------------
 static float nsGetAttributeFloat(const utString &attr, wxXmlNode *node, float def = 0)
 {
     wxString attrWx = node->GetAttribute(wxFromAscii(attr), NS_INVALID_ATTR);
@@ -195,7 +194,8 @@ static float nsGetAttributeFloat(const utString &attr, wxXmlNode *node, float de
     return (float)atof(wxToAscii(attrWx));
 }
 
-static utString nsGetAttributeString(const utString &attr, wxXmlNode *node, const utString& def = "")
+// ----------------------------------------------------------------------------
+static utString nsGetAttributeString(const utString &attr, wxXmlNode *node, const utString &def = "")
 {
     wxString attrWx = node->GetAttribute(wxFromAscii(attr), NS_INVALID_ATTR);
     if (attrWx == NS_INVALID_ATTR)
@@ -204,8 +204,8 @@ static utString nsGetAttributeString(const utString &attr, wxXmlNode *node, cons
 }
 
 
-
-static NSvec2 nsGetAttributeVec2(const utString &attr, wxXmlNode *node, const NSvec2& def = NSvec2(0,0))
+// ----------------------------------------------------------------------------
+static NSvec2 nsGetAttributeVec2(const utString &attr, wxXmlNode *node, const NSvec2 &def = NSvec2(0,0))
 {
     wxString attrWx = node->GetAttribute(wxFromAscii(attr), NS_INVALID_ATTR);
     if (attrWx == NS_INVALID_ATTR)
@@ -214,7 +214,8 @@ static NSvec2 nsGetAttributeVec2(const utString &attr, wxXmlNode *node, const NS
 }
 
 
-static NSrect nsGetAttributeRect(const utString &attr, wxXmlNode *node, const NSrect& def = NSrect(0,0,0,0))
+// ----------------------------------------------------------------------------
+static NSrect nsGetAttributeRect(const utString &attr, wxXmlNode *node, const NSrect &def = NSrect(0,0,0,0))
 {
     wxString attrWx = node->GetAttribute(wxFromAscii(attr), NS_INVALID_ATTR);
     if (attrWx == NS_INVALID_ATTR)
@@ -222,9 +223,8 @@ static NSrect nsGetAttributeRect(const utString &attr, wxXmlNode *node, const NS
     return utStringConverter::toRect(wxToAscii(attrWx));
 }
 
-
-
-static nsColorScheme nsGetAttributeColor(const utString &attr, wxXmlNode *node, const nsColorScheme& def = NS_COL_GREY)
+// ----------------------------------------------------------------------------
+static nsColorScheme nsGetAttributeColor(const utString &attr, wxXmlNode *node, const nsColorScheme &def = NS_COL_GREY)
 {
     wxString attrWx = node->GetAttribute(wxFromAscii(attr), NS_INVALID_ATTR);
     if (attrWx == NS_INVALID_ATTR)
@@ -241,14 +241,16 @@ static void nsParsePropertySection(wxXmlNode *propertyRoot, nsNodeType *node)
         if (!nsHasAttribute("name", props))
             continue;
 
+        nsVariableType *vt = 0;
+
+
         if (props->GetName() == "Enum")
         {
-            nsVariableType *vt = new nsVariableType;
-            vt->m_name = nsGetAttributeString("name",  props);
-            vt->m_type = nsVariable::VAR_ENUM;
-            vt->m_value = "0";
+            vt              = new nsVariableType;
+            vt->m_name      = nsGetAttributeString("name",  props);
+            vt->m_type      = nsVariable::VAR_ENUM;
+            vt->m_value     = "0";
             vt->m_briefHelp = nsGetAttributeString("docs",  props);
-            node->m_variables.push_back(vt);
 
             int enumId = 0;
             for (wxXmlNode *items = props->GetChildren(); items; items = items->GetNext())
@@ -261,19 +263,20 @@ static void nsParsePropertySection(wxXmlNode *propertyRoot, nsNodeType *node)
                 nsEnumItem item;
                 item.m_name = nsGetAttributeString("name",  items);
                 item.m_value = enumId++;
-
                 vt->m_enum.push_back(item);
             }
         }
         else if (props->GetName() == "Variable")
         {
-            nsVariableType *vt = new nsVariableType;
-            vt->m_name = nsGetAttributeString("name",  props);
-            vt->m_type = nsGetDataType(nsGetAttributeString("type", props));
-            vt->m_value = nsGetAttributeString("default", props, "0");
+            vt              = new nsVariableType;
+            vt->m_name      = nsGetAttributeString("name",  props);
+            vt->m_type      = nsGetDataType(nsGetAttributeString("type", props));
+            vt->m_value     = nsGetAttributeString("default", props, "0");
             vt->m_briefHelp = nsGetAttributeString("docs",  props);
-            node->m_variables.push_back(vt);
         }
+
+        if (vt)
+            node->m_variables.push_back(vt);
     }
 }
 
@@ -296,10 +299,12 @@ void nsNodeTypeInfo::parseTypes(const utString &path)
         if (child->GetName() != ("Node"))
             continue;
 
-        if (!nsHasAttribute("typename",     child) ||
-            !nsHasAttribute("groupname",    child ) ||
-            !nsHasAttribute("size",         child))
+        if (!nsHasAttribute("typename",     child)  ||
+                !nsHasAttribute("groupname",    child ) ||
+                !nsHasAttribute("size",         child))
             continue;
+
+
 
         nsNodeType *nt = new nsNodeType;
         nt->m_id        = nsUID++;
@@ -309,6 +314,7 @@ void nsNodeTypeInfo::parseTypes(const utString &path)
         nt->m_size      = nsGetAttributeVec2("size",    child, NSvec2(100, 100));
         nt->m_color     = nsGetAttributeColor("color", child);
         m_types.push_back(nt);
+
 
         // sort groups
         pos = m_groups.find(nt->m_groupname);
@@ -336,9 +342,9 @@ void nsNodeTypeInfo::parseTypes(const utString &path)
                 continue;
 
             if (!nsHasAttribute("type",     sockets)  ||
-                !nsHasAttribute("name",     sockets ) ||
-                !nsHasAttribute("rect",     sockets ) ||
-                !nsHasAttribute("direction",sockets))
+                    !nsHasAttribute("name",     sockets ) ||
+                    !nsHasAttribute("rect",     sockets ) ||
+                    !nsHasAttribute("direction",sockets))
                 continue;
 
 
@@ -347,7 +353,8 @@ void nsNodeTypeInfo::parseTypes(const utString &path)
 
             nsVariable::PropertyTypes defType = nsGetDataType(nsGetAttributeString("type", sockets));
 
-            nsSocketType *st = new nsSocketType();
+
+            nsSocketType *st    = new nsSocketType();
             st->m_index         = newId;
             st->m_type          = defType;
             st->m_name          = nsGetAttributeString("name", sockets);
@@ -364,15 +371,14 @@ void nsNodeTypeInfo::parseTypes(const utString &path)
             }
 
 
-
             if (st->m_direction == nsSocketType::In)
                 nt->m_inputs.push_back(st);
             else
-               nt->m_outputs.push_back(st);
+                nt->m_outputs.push_back(st);
         }
 
+        // sort based on ascending index
         nt->m_inputs.sort(nsSocketSort);
         nt->m_outputs.sort(nsSocketSort);
-
     }
 }

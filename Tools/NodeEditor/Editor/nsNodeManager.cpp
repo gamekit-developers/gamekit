@@ -32,11 +32,11 @@ NS_IMPLEMENT_SINGLETON(nsNodeManager);
 
 // ----------------------------------------------------------------------------
 nsSocket::nsSocket(nsNode *nd, nsSocketType *st)
-    :   m_rect(st->m_rect), 
-        m_derrivedRect(st->m_rect), 
-        m_type(st), 
-        m_parent(nd), 
-        m_from(0), 
+    :   m_rect(st->m_rect),
+        m_derrivedRect(st->m_rect),
+        m_type(st),
+        m_parent(nd),
+        m_from(0),
         m_index(UT_NPOS)
 {
     UT_ASSERT(m_parent);
@@ -55,7 +55,7 @@ nsSocket::~nsSocket()
 
 
 // ----------------------------------------------------------------------------
-void nsSocket::connect(nsSocket *oth)  
+void nsSocket::connect(nsSocket *oth)
 {
     // ignore links on the same node
     if (oth && oth->m_parent == m_parent)
@@ -73,7 +73,7 @@ void nsSocket::connect(nsSocket *oth)
         {
             ToLinks &links = m_from->m_tosockets;
 
-            // other is zero so erase this in the from node 
+            // other is zero so erase this in the from node
             UT_ASSERT((!links.empty() && links.find(this)) && "Socket improperly linked!");
             links.erase(this);
 
@@ -114,7 +114,7 @@ void nsSocket::connect(nsSocket *oth)
             }
         }
 
-        // linking to 
+        // linking to
         UT_ASSERT(oth->isOutput() && isInput());
 
         m_from = oth;
@@ -122,7 +122,7 @@ void nsSocket::connect(nsSocket *oth)
     }
     else
     {
-        // make sure this is an input 
+        // make sure this is an input
         UT_ASSERT(isInput());
 
 
@@ -130,7 +130,7 @@ void nsSocket::connect(nsSocket *oth)
         {
             ToLinks &links = m_from->m_tosockets;
 
-            // other is zero so erase this in the from node 
+            // other is zero so erase this in the from node
             UT_ASSERT((!links.empty() && links.find(this)) && "Socket improperly linked!");
             links.erase(this);
             m_from = 0;
@@ -143,8 +143,6 @@ void nsSocket::updateFromParent(void)
 {
     if (!m_parent)
         return;
-
-
     NSrect prect = m_parent->getRect();
     m_derrivedRect = m_type->m_rect;
     m_derrivedRect.x = prect.x + m_rect.x;
@@ -152,7 +150,7 @@ void nsSocket::updateFromParent(void)
 }
 
 // ----------------------------------------------------------------------------
-nsSocket* nsSocket::clone(nsNode *newParent)
+nsSocket *nsSocket::clone(nsNode *newParent)
 {
     UT_ASSERT(newParent && m_type);
 
@@ -166,7 +164,7 @@ nsSocket* nsSocket::clone(nsNode *newParent)
 // ----------------------------------------------------------------------------
 void nsSocket::unlink(void)
 {
-    // remove all refs to this 
+    // remove all refs to this
 
     if (m_type->m_direction == nsSocketType::Out)
     {
@@ -198,7 +196,7 @@ void nsSocket::unlink(void)
 
 
 // ----------------------------------------------------------------------------
-nsNodeData::nsNodeData(nsNode *nd, nsVariableType *type) 
+nsNodeData::nsNodeData(nsNode *nd, nsVariableType *type)
     :   m_type(type), m_parent(nd)
 {
     m_value.setType(type->m_type);
@@ -211,7 +209,7 @@ nsNodeData::~nsNodeData()
 }
 
 // ----------------------------------------------------------------------------
-nsNodeData* nsNodeData::clone(nsNode *newParent)
+nsNodeData *nsNodeData::clone(nsNode *newParent)
 {
     nsNodeData *newData = new nsNodeData(newParent, m_type);
     newData->m_value = m_value;
@@ -221,10 +219,10 @@ nsNodeData* nsNodeData::clone(nsNode *newParent)
 
 // ----------------------------------------------------------------------------
 nsNode::nsNode(nsNodeTree *tree, nsNodeType *nt)
-    :   m_type(nt), 
-        m_tree(tree), 
-        m_state(NDST_INACTIVE), 
-        m_editOutputs(false), 
+    :   m_type(nt),
+        m_tree(tree),
+        m_state(NDST_INACTIVE),
+        m_editOutputs(false),
         m_rect(0,0, nt->m_size.x, nt->m_size.y)
 {
 
@@ -248,7 +246,7 @@ nsNode::nsNode(nsNodeTree *tree, nsNodeType *nt)
         nsSocketType *sout= out.getNext();
         nsSocket *osock = new nsSocket(this, sout);
 
-            // save socket index, needed for re linking
+        // save socket index, needed for re linking
         osock->setIndex(m_outputs.size());
         m_outputs.push_back(osock);
     }
@@ -309,7 +307,6 @@ nsNode::nsNode(nsNode *cpy, nsNodeTree *tree)
     if (!cpy->m_data.empty())
     {
         nsNodeData *ndt = cpy->m_data.begin();
-
         while (ndt)
         {
             nsNodeData *newData = ndt->clone(this);
@@ -317,7 +314,6 @@ nsNode::nsNode(nsNode *cpy, nsNodeTree *tree)
             ndt = ndt->getNext();
         }
     }
-
 }
 
 
@@ -352,7 +348,7 @@ nsNode::~nsNode()
         m_outputs.clear();
     }
 
-    
+
     if (!m_data.empty())
     {
         nsNodeData *ndt = m_data.begin(), *tmp;
@@ -368,7 +364,7 @@ nsNode::~nsNode()
 // ----------------------------------------------------------------------------
 void nsNode::unlink(void)
 {
-    // remove all refs to this 
+    // remove all refs to this
     nsSocket *sock;
 
     if (!m_inputs.empty())
@@ -394,7 +390,7 @@ void nsNode::unlink(void)
 
 
 // ----------------------------------------------------------------------------
-nsNode* nsNode::clone(nsNodeTree *newTree)
+nsNode *nsNode::clone(nsNodeTree *newTree)
 {
     return new nsNode(this, newTree);
 }
@@ -438,13 +434,13 @@ void nsNode::setPosition(NSfloat x, NSfloat y)
 
 
 // ----------------------------------------------------------------------------
-nsNodeTree::nsNodeTree(const utString& name)
-    :   m_name(name), 
-        m_isGroup(false), 
-        m_groupName(), 
-        m_limits(0,0), 
-        m_projection(0,0,0,0), 
-        m_client(0), 
+nsNodeTree::nsNodeTree(const utString &name)
+    :   m_name(name),
+        m_isGroup(false),
+        m_groupName(),
+        m_limits(0,0),
+        m_projection(0,0,0,0),
+        m_client(0),
         m_size(0,0)
 {
 }
@@ -489,8 +485,8 @@ nsNode *nsNodeTree::createCloneNode(nsNode *nd)
 // ----------------------------------------------------------------------------
 void nsNodeTree::bringToFront(nsNodes &list, nsNode *node)
 {
-    // make node the first to be rendered / hit tested 
-    if (list.empty()) 
+    // make node the first to be rendered / hit tested
+    if (list.empty())
         return;
 
     if ( node != 0 )
@@ -557,7 +553,7 @@ void nsNodeManager::deleteTree(nsNodeTree *tree)
 }
 
 // ----------------------------------------------------------------------------
-nsNodeTree *nsNodeManager::createTree(const utString& name)
+nsNodeTree *nsNodeManager::createTree(const utString &name)
 {
     nsNodeTree *nt = new nsNodeTree(name);
     m_trees.push_back(nt);

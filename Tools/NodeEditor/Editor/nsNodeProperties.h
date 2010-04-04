@@ -58,11 +58,11 @@ protected:
 
 
     // generic property from type
-    wxPGProperty   *createProperty(nsVariable::PropertyTypes type, 
-                                  const utString& name, 
-                                  const utString& value, 
-                                  const utString &help,
-                                  void *enumValue = 0);
+    wxPGProperty   *createProperty(nsVariable::PropertyTypes type,
+                                   const utString &name,
+                                   const utString &value,
+                                   const utString &help,
+                                   void *enumValue = 0);
 
 public:
 
@@ -74,10 +74,10 @@ public:
 
     // events
     void propertyChangeEvent(wxPropertyGridEvent &evt);
-    virtual void socketEvent(nsSocketEvent &evt) sealed;
+    void socketEvent(nsSocketEvent &evt);
 
     // current node this page will operate on
-    void setNode(nsNode* node);
+    void setNode(nsNode *node);
 
 
     DECLARE_EVENT_TABLE();

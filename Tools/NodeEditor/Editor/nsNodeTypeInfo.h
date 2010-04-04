@@ -34,7 +34,7 @@
 
 
 // ----------------------------------------------------------------------------
-// Color Wheel   
+// Color Wheel
 enum nsColorScheme
 {
     // primary
@@ -65,7 +65,8 @@ enum nsColorScheme
 class nsSocketType
 {
 public:
-    enum Direction {
+    enum Direction
+    {
         In,
         Out,
     };
@@ -112,7 +113,7 @@ public:
 };
 
 
-typedef utArray<nsVariableType*>        nsVariables;
+typedef utArray<nsVariableType *>        nsVariables;
 typedef utArrayIterator<nsVariables>    nsVariableIterator;
 
 
@@ -146,7 +147,7 @@ public:
 class nsNodeTypeInfo : public nsSingleton<nsNodeTypeInfo>
 {
 public:
-    typedef utList<nsNodeType*>                     TypeList;
+    typedef utList<nsNodeType *>                     TypeList;
     typedef utListIterator<TypeList>                TypeIterator;
     typedef utHashTable<utHashedString, TypeList>   GroupTypeList;
     typedef utHashTableIterator<GroupTypeList>      GroupTypeIterator;
@@ -161,13 +162,13 @@ public:
     nsNodeTypeInfo();
     ~nsNodeTypeInfo();
 
-    nsNodeType*                 findTypeInfo(int i);
+    nsNodeType                 *findTypeInfo(int i);
 
 
     int                         getGroupSize(void)      {return (int)m_groups.size();}
     GroupTypeIterator           getGroupIterator(void)  {return GroupTypeIterator(m_groups);}
     TypeIterator                getTypeIterator(void)   {return TypeIterator(m_types);}
-    TypeList&                   getTypes(void)          {return m_types;}
+    TypeList                   &getTypes(void)          {return m_types;}
 
 
     // load types from file

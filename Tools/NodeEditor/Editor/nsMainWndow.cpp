@@ -98,7 +98,7 @@ nsMainWindow::nsMainWindow()
     m_auiManager->Update();
     Show();
 
-    // post show setup 
+    // post show setup
     nsWorkspace::getSingleton().initializeContext();
 
 
@@ -275,12 +275,12 @@ void nsMainWindow::loadMenus(void)
     item->SetCheckable(true); item->Check(m_auiManager->GetPane(nsPropertyPage::getSingletonPtr()).IsShown());
     item->SetHelp(wxT("Show Properties Window."));
     m_viewProperties = item;
-    
+
     item = view->Append(NS_ID_VARIABLES, wxT("Variable Editor\tF4"));
     item->SetCheckable(true); item->Check(false);
     item->SetHelp(wxT("Show Variable Editor."));
     view->AppendSeparator();
-    
+
     item = view->Append(NS_ID_FULLSCREEN, wxT("Full screen\tF12"));
     item->SetHelp(wxT("Switch to full screen mode."));
     menubar->Append(view, wxT("View"));
@@ -438,9 +438,9 @@ void nsMainWindow::nodeAddEvent(wxCommandEvent &evt)
     // find the calling object & tree
     nsNodeTree *tree = 0;
     if (m_addMenuCaller && m_addMenuCaller->GetId() == NS_WID_CANVAS)
-        tree = static_cast<nsNodeCanvas*>(m_addMenuCaller)->getTree();
+        tree = static_cast<nsNodeCanvas *>(m_addMenuCaller)->getTree();
     else if (m_addMenuCaller && m_addMenuCaller->GetId() == NS_WID_SOLUTION)
-        tree = static_cast<nsSolutionBrowser*>(m_addMenuCaller)->getSelectedTree();
+        tree = static_cast<nsSolutionBrowser *>(m_addMenuCaller)->getSelectedTree();
 
 
     if (!tree || !tree->getAttachedCanvas())

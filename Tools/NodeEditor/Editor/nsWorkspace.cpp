@@ -144,7 +144,7 @@ void nsWorkspace::pageChangedEvent(wxAuiNotebookEvent &evt)
 // ----------------------------------------------------------------------------
 void nsWorkspace::pageClosedEvent(wxAuiNotebookEvent &evt)
 {
-    // only notify tree deslect here 
+    // only notify tree deslect here
     // trees have persistant state
 
     nsNodeCanvas *canvas = (nsNodeCanvas *)m_book->GetPage(evt.GetSelection());
@@ -304,10 +304,10 @@ void nsWorkspace::finalizeContext(void)
         m_hidenContext->Destroy();
         m_hidenContext = 0;
 
-        // close active 
+        // close active
         m_activeCanvas = 0;
 
-        // remove the book 
+        // remove the book
         m_book->Destroy();
         m_book = 0;
 
@@ -338,4 +338,3 @@ wxGLContext *nsWorkspace::getGLContext(void)
     // access to the main context
     return m_hidenContext->getContext();
 }
-

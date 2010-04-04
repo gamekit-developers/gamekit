@@ -47,7 +47,7 @@ protected:
     nsNode          *m_parent;
     nsSocket        *m_from;
     ToLinks         m_tosockets;
-    nsVariable       m_value;
+    nsVariable      m_value;
     UTsize          m_index;
 
 public:
@@ -72,7 +72,7 @@ public:
     nsVariable          &getValue(void)                 {return m_value;}
     void                setValue(const nsVariable &v)   {m_value = v;}
 
-    nsSocketType       *getType(void)                   {return m_type;}
+    nsSocketType        *getType(void)                  {return m_type;}
     bool                isOutput(void)                  {return m_type->m_direction == nsSocketType::Out;}
     bool                isInput(void)                   {return m_type->m_direction == nsSocketType::In;}
     NSrect              &getDerrivedRect(void)          {return m_derrivedRect;}
@@ -80,7 +80,7 @@ public:
 
 
     void                unlink(void);
-    nsSocket*           clone(nsNode *newParent);
+    nsSocket            *clone(nsNode *newParent);
     void                updateFromParent(void);
     void                connect(nsSocket *oth);
 };
@@ -105,9 +105,9 @@ public:
     nsNode              *getParent(void)                {return m_parent;}
     nsVariable          &getValue(void)                 {return m_value;}
     void                setValue(const nsVariable &v)   {m_value = v;}
-    
+
     nsVariableType      *getType(void)                  {return m_type;}
-    nsNodeData*         clone(nsNode *newParent);
+    nsNodeData          *clone(nsNode *newParent);
 };
 
 
@@ -154,7 +154,7 @@ public:
     void            setState(nsNodeState st)    {m_state = st;}
 
     void            unlink(void);
-    nsNode*         clone(nsNodeTree *newTree = 0);
+    nsNode          *clone(nsNodeTree *newTree = 0);
     void            translate(NSfloat x, NSfloat y);
     void            setPosition(NSfloat x, NSfloat y);
 };
@@ -169,26 +169,26 @@ protected:
     NSrect          m_projection;
     NSvec2          m_limits;
     NSvec2          m_size;
-    nsNodeCanvas    *m_client;   
+    nsNodeCanvas    *m_client;
 
 
 public:
 
-    nsNodeTree(const utString& name);
+    nsNodeTree(const utString &name);
     ~nsNodeTree();
 
-    void                setName(const utString& name)           {m_name = name;}
-    const utString&     getName(void)                           {return m_name;}
+    void                setName(const utString &name)           {m_name = name;}
+    const utString      &getName(void)                          {return m_name;}
     void                setGroup(bool val)                      {m_isGroup = val;}
     bool                isGroup(void)                           {return m_isGroup;}
-    void                setGroupName(const utString& name)      {m_groupName = name;}
-    const utString&     getGroupName(void)                      {return m_groupName;}
+    void                setGroupName(const utString &name)      {m_groupName = name;}
+    const utString      &getGroupName(void)                     {return m_groupName;}
 
 
-    NSvec2&             getSize(void)                           {return m_size;}
+    NSvec2              &getSize(void)                          {return m_size;}
     void                setSize(const NSvec2 &size)             {m_size = size;}
 
-    NSrect&             getProjection(void)                     {return m_projection;}
+    NSrect              &getProjection(void)                    {return m_projection;}
     void                setProjection(const NSrect &proj)       {m_projection = proj;}
     nsNodeIterator      getNodeIterator(void)                   {return nsNodeIterator(m_nodes);}
 
@@ -217,7 +217,7 @@ public:
     ~nsNodeManager();
 
     void            deleteTree(nsNodeTree *tree);
-    nsNodeTree      *createTree(const utString& name = "Node Tree");
+    nsNodeTree      *createTree(const utString &name = "Node Tree");
 
     nsTreeIterator  getTreeIterator(void) {return nsTreeIterator(m_trees);}
 

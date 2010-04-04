@@ -51,19 +51,27 @@ public:
         VAR_MAT4,
         VAR_COLOR,
         VAR_STRING,
-    }PropertyTypes;
+    } PropertyTypes;
 
     nsVariable()
-    :       m_string(""),
-            m_type(VAR_NULL)
+        :       m_string(""),
+                m_type(VAR_NULL)
     {
         memset(&m_numeric, 0, sizeof(NSfloat)*16);
     }
 
     nsVariable(const utString &v)
-    :       m_string(v),
-            m_type(VAR_STRING)
+        :       m_string(v),
+                m_type(VAR_STRING)
     {
+        memset(&m_numeric, 0, sizeof(NSfloat)*16);
+    }
+
+
+
+    UT_INLINE void makeNull(void)
+    {
+        m_string.clear();
         memset(&m_numeric, 0, sizeof(NSfloat)*16);
     }
 
@@ -71,55 +79,55 @@ public:
     UT_INLINE void setType(PropertyTypes pt)    { m_type = pt;}
 
     UT_INLINE void setValue(NSfloat v)
-    { 
-        m_numeric[0] = (NSfloat)v; 
+    {
+        m_numeric[0] = (NSfloat)v;
         if (!m_string.empty())
             m_string.clear();
     }
 
     UT_INLINE void setValue(bool v)
-    { 
-        m_numeric[0] = v ? 1.f : 0.f; 
+    {
+        m_numeric[0] = v ? 1.f : 0.f;
         if (!m_string.empty())
             m_string.clear();
     }
-    UT_INLINE void setValue(int v)              
-    { 
-        m_numeric[0] = (NSfloat)v; 
+    UT_INLINE void setValue(int v)
+    {
+        m_numeric[0] = (NSfloat)v;
         if (!m_string.empty())
             m_string.clear();
     }
-    UT_INLINE void setValue(const utString& v)  
-    { 
-        m_string = v; 
+    UT_INLINE void setValue(const utString &v)
+    {
+        m_string = v;
     }
-    UT_INLINE void setValue(const NSvec2& v)
-    { 
-        m_numeric[0] = v.x; m_numeric[1] = v.y; 
+    UT_INLINE void setValue(const NSvec2 &v)
+    {
+        m_numeric[0] = v.x; m_numeric[1] = v.y;
         if (!m_string.empty())
             m_string.clear();
     }
-    UT_INLINE void setValue(const NSvec3& v)    
-    { 
-        m_numeric[0] = v.x; m_numeric[1] = v.y; m_numeric[2] = v.z; 
+    UT_INLINE void setValue(const NSvec3 &v)
+    {
+        m_numeric[0] = v.x; m_numeric[1] = v.y; m_numeric[2] = v.z;
         if (!m_string.empty())
             m_string.clear();
     }
-    UT_INLINE void setValue(const NSvec4& v)    
-    { 
-        m_numeric[0] = v.w; m_numeric[1] = v.x; m_numeric[2] = v.y; m_numeric[3] = v.z; 
+    UT_INLINE void setValue(const NSvec4 &v)
+    {
+        m_numeric[0] = v.w; m_numeric[1] = v.x; m_numeric[2] = v.y; m_numeric[3] = v.z;
         if (!m_string.empty())
             m_string.clear();
     }
-    UT_INLINE void setValue(const NSquat& v)    
-    { 
-        m_numeric[0] = v.w; m_numeric[1] = v.x; m_numeric[2] = v.y; m_numeric[3] = v.z; 
+    UT_INLINE void setValue(const NSquat &v)
+    {
+        m_numeric[0] = v.w; m_numeric[1] = v.x; m_numeric[2] = v.y; m_numeric[3] = v.z;
         if (!m_string.empty())
             m_string.clear();
     }
 
-    // copy 
-    UT_INLINE void setValue(const nsVariable& v)
+    // copy
+    UT_INLINE void setValue(const nsVariable &v)
     {
         m_type = v.m_type;
         m_numeric[0] = v.m_numeric[0];
@@ -129,7 +137,7 @@ public:
         m_string = v.m_string;
     }
 
-    UT_INLINE nsVariable& operator = (const nsVariable& v)
+    UT_INLINE nsVariable &operator = (const nsVariable &v)
     {
         m_type = v.m_type;
         m_numeric[0] = v.m_numeric[0];
@@ -179,7 +187,7 @@ public:
                 return utStringConverter::toString(NSvec4(m_numeric[0], m_numeric[1], m_numeric[2],  m_numeric[3]));
             if (m_type == VAR_QUAT)
                 return utStringConverter::toString(NSquat(m_numeric[0], m_numeric[1], m_numeric[2], m_numeric[3]));
-         
+
             return utStringConverter::toString(m_numeric[0] != 0);
         }
         return m_string;

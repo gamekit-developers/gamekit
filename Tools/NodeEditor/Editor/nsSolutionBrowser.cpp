@@ -93,7 +93,7 @@ nsSolutionBrowser::nsSolutionBrowser(wxWindow *parent)
 {
     wxSizer *size = new wxBoxSizer(wxVERTICAL);
     m_tree = new wxTreeCtrl(this, NS_WID_SOLUTION_DATA, wxDefaultPosition, wxDefaultSize,
-        wxTR_DEFAULT_STYLE | wxTR_EDIT_LABELS | nsBorderDefault);
+                            wxTR_DEFAULT_STYLE | wxTR_EDIT_LABELS | nsBorderDefault);
     m_tree->AddRoot("Project");
 
     wxPanel *header = new wxPanel(this);
@@ -113,7 +113,7 @@ nsSolutionBrowser::~nsSolutionBrowser()
 
 // ----------------------------------------------------------------------------
 // access to the current tree
-nsNodeTree* nsSolutionBrowser::getSelectedTree(void)
+nsNodeTree *nsSolutionBrowser::getSelectedTree(void)
 {
     nsTreeItem *item = (nsTreeItem *)m_tree->GetItemData(m_tree->GetSelection());
     if (item && item->m_tree)
@@ -144,7 +144,7 @@ void nsSolutionBrowser::labelEditEvent(wxTreeEvent &evt)
     if (item && item->m_tree)
     {
         nsNodeTree *ntree = item->m_tree;
-        ntree->setName((const char*)evt.GetLabel().mb_str());
+        ntree->setName((const char *)evt.GetLabel().mb_str());
 
         nsTreeEvent change(NS_TREE_CHANGED, this, ntree);
 

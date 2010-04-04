@@ -35,7 +35,7 @@
 
 // ----------------------------------------------------------------------------
 // Simple OpenGL 2D render tools
-class nsRenderSystem  : public nsSingleton<nsRenderSystem> 
+class nsRenderSystem  : public nsSingleton<nsRenderSystem>
 {
 private:
 
@@ -51,8 +51,8 @@ public:
 
     // one time setup
     void initializeContextData(void);
-    
-    // cleanup 
+
+    // cleanup
     void finalizeContextData(void);
 
     // setup viewport rendering
@@ -67,11 +67,11 @@ public:
     // back drop
     void drawBackground(void);
 
-    // node 
+    // node
     void drawNode(nsNode *nd);
 
-    // socket linking 
-    void drawConnectingSocket(nsSocket *sock, const NSvec2 &pos, const NSvec2& mouse);
+    // socket linking
+    void drawConnectingSocket(nsSocket *sock, const NSvec2 &pos, const NSvec2 &mouse);
 
     // all links
     void drawSocketLinks(nsNodes &nodes);

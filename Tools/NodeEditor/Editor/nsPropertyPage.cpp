@@ -57,7 +57,7 @@ nsPropertyPage::nsPropertyPage(wxWindow *parent)
     wxSizer *size = new wxBoxSizer(wxVERTICAL);
     m_manager = new nsPropertyManager(this, NS_WID_PROPERTY_DATA);
 
-    // enable VC++ looking properties 
+    // enable VC++ looking properties
     wxPropertyGrid *grid = m_manager->GetGrid();
     wxColour col = wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK);
     wxColour winbk = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
@@ -65,8 +65,6 @@ nsPropertyPage::nsPropertyPage(wxWindow *parent)
     grid->SetCaptionBackgroundColour(col);
     grid->SetCellBackgroundColour(winbk);
     grid->SetLineColour(winbk);
-
-
 
     m_tree = 0;
     m_default = 0;
@@ -131,7 +129,7 @@ void nsPropertyPage::treeEvent(nsTreeEvent &evt)
         nsNodeTree *ntree = evt.ptr();
         if (ntree)
         {
-            m_tree->setTree(ntree); m_tree->updateData();
+            m_tree->setTree(ntree);
             m_manager->SelectPage(m_tree);
         }
     }
@@ -141,7 +139,6 @@ void nsPropertyPage::treeEvent(nsTreeEvent &evt)
         if (ntree)
         {
             m_tree->setTree(ntree);
-            m_tree->updateData();
             m_manager->SelectPage(m_tree);
         }
     }
@@ -226,4 +223,3 @@ void nsPropertyPage::socketEvent(nsSocketEvent &evt)
     else
         m_manager->SelectPage(m_default);
 }
-

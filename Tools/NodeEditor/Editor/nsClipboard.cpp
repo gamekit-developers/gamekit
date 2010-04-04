@@ -27,7 +27,7 @@
 #include "nsClipboard.h"
 
 
-typedef utHashTable<utPointerHashKey, nsNode*> nsOldNewMap;
+typedef utHashTable<utPointerHashKey, nsNode *> nsOldNewMap;
 
 
 // ----------------------------------------------------------------------------
@@ -74,7 +74,7 @@ void nsClipboard_link(nsOldNewMap &lookup, nsNodes &list)
 
                 if (newPar)
                 {
-                    // first 
+                    // first
                     nsSocket *thisInp = next->getInput(sock->getIndex());
                     nsSocket *thisOut = newPar->getOutput(link->getIndex());
 
@@ -136,7 +136,7 @@ void nsClipboard::paste(nsNodeTree *tree, nsNodes &list, const NSvec2 &position)
         NSvec2 npos = next->getRect().getPosition();
         next->setPosition(position.x, position.y);
 
-        // maintain proportion 
+        // maintain proportion
         if (size > 1)
             next->translate(npos.x, npos.y);
 
@@ -171,12 +171,4 @@ void nsClipboard::copy(nsNodes &list)
 
     // re-iterate & relink
     nsClipboard_link(lookup, list);
-}
-
-
-// ----------------------------------------------------------------------------
-void nsClipboard::cut(nsNodes &list)
-{
-    if (list.empty())
-        return;
 }

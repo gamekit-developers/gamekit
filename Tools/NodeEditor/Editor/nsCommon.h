@@ -51,10 +51,10 @@ class wxAuiManager;
 class wxMenu;
 class wxMenuItem;
 
-typedef utList<nsNode*>                 nsNodes;
+typedef utList<nsNode *>                nsNodes;
 typedef utListIterator<nsNodes>         nsNodeIterator;
 typedef utListReverseIterator<nsNodes>  nsReverseNodeIterator;
-typedef utList<nsNodeTree*>             nsTrees;
+typedef utList<nsNodeTree *>            nsTrees;
 typedef utListIterator<nsTrees>         nsTreeIterator;
 
 
@@ -122,6 +122,12 @@ enum nsNodeState
 #define nsBorderNone        wxBORDER_NONE
 #define nsBorderDefault     wxBORDER_THEME
 
+
+
+// string conversion
+#define wxFromAscii(x)      wxString(x.c_str(), x.size())
+#define wxToAscii(x)        (const char*)x.mb_str()
+#define wxToSTDString(x)    utString(wxToAscii(x))
 
 
 #endif//_nsCommon_h_

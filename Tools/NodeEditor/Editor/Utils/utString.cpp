@@ -69,13 +69,13 @@ void utStringUtils::split(utStringArray &rval,  const utString &spl, const utStr
 }
 
 
-void utStringUtils::lower( utString& str )
+void utStringUtils::lower( utString &str )
 {
     std::transform( str.begin(), str.end(), str.begin(), tolower );
 }
 
 
-utString utStringUtils::lower( const utString& str )
+utString utStringUtils::lower( const utString &str )
 {
     utString ret= str;
     std::transform( ret.begin(), ret.end(), ret.begin(), tolower );
@@ -83,13 +83,13 @@ utString utStringUtils::lower( const utString& str )
 }
 
 
-void utStringUtils::upper( utString& str )
+void utStringUtils::upper( utString &str )
 {
     std::transform( str.begin(), str.end(), str.begin(), toupper );
 }
 
 
-utString utStringUtils::upper( const utString& str )
+utString utStringUtils::upper( const utString &str )
 {
     utString ret= str;
     std::transform( ret.begin(), ret.end(), ret.begin(), toupper );
@@ -97,7 +97,7 @@ utString utStringUtils::upper( const utString& str )
 }
 
 
-void utStringUtils::replace( utString &in, const utString& from, const utString &to )
+void utStringUtils::replace( utString &in, const utString &from, const utString &to )
 {
 
     if ( !from.empty() && from != to )
@@ -128,4 +128,3 @@ void utStringUtils::replace( utString &in, const utString& from, const utString 
         }
     }
 }
-

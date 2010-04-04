@@ -29,14 +29,14 @@
 
 // ----------------------------------------------------------------------------
 WX_PG_IMPLEMENT_PROPERTY_CLASS(nsVector2Property,wxPGProperty,
-                               NSvec2,const NSvec2&,TextCtrl);
+                               NSvec2,const NSvec2 &,TextCtrl);
 
 WX_PG_IMPLEMENT_VARIANT_DATA_DUMMY_EQ(NSvec2);
 
 // ----------------------------------------------------------------------------
 nsVector2Property::nsVector2Property(const wxString &label,
-                                       const wxString &name,
-                                       const NSvec2 &data)
+                                     const wxString &name,
+                                     const NSvec2 &data)
     : wxPGProperty(label, name)
 {
     SetValue(WXVARIANT(data));
@@ -51,14 +51,14 @@ nsVector2Property::~nsVector2Property()
 }
 
 // ----------------------------------------------------------------------------
-void nsVector2Property::ChildChanged(wxVariant& thisValue, int childIndex, wxVariant& childValue) const
+void nsVector2Property::ChildChanged(wxVariant &thisValue, int childIndex, wxVariant &childValue) const
 {
     NSvec2 vector;
     vector << thisValue;
     switch ( childIndex )
     {
-        case 0: vector.x = childValue.GetDouble(); break;
-        case 1: vector.y = childValue.GetDouble(); break;
+    case 0: vector.x = childValue.GetDouble(); break;
+    case 1: vector.y = childValue.GetDouble(); break;
     }
     thisValue << vector;
 }
@@ -67,7 +67,7 @@ void nsVector2Property::ChildChanged(wxVariant& thisValue, int childIndex, wxVar
 void nsVector2Property::RefreshChildren(void)
 {
     if ( !GetChildCount() ) return;
-    const NSvec2& vector = NSvec2RefFromVariant(m_value);
+    const NSvec2 &vector = NSvec2RefFromVariant(m_value);
     Item(0)->SetValue( vector.x );
     Item(1)->SetValue( vector.y );
 }
@@ -76,14 +76,14 @@ void nsVector2Property::RefreshChildren(void)
 
 // ----------------------------------------------------------------------------
 WX_PG_IMPLEMENT_PROPERTY_CLASS(nsVector3Property,wxPGProperty,
-                               NSvec3,const NSvec3&,TextCtrl);
+                               NSvec3,const NSvec3 &,TextCtrl);
 
 WX_PG_IMPLEMENT_VARIANT_DATA_DUMMY_EQ(NSvec3);
 
 // ----------------------------------------------------------------------------
 nsVector3Property::nsVector3Property(const wxString &label,
-                                       const wxString &name,
-                                       const NSvec3 &data)
+                                     const wxString &name,
+                                     const NSvec3 &data)
     : wxPGProperty(label, name)
 {
     SetValue(WXVARIANT(data));
@@ -99,15 +99,15 @@ nsVector3Property::~nsVector3Property()
 }
 
 // ----------------------------------------------------------------------------
-void nsVector3Property::ChildChanged(wxVariant& thisValue, int childIndex, wxVariant& childValue) const
+void nsVector3Property::ChildChanged(wxVariant &thisValue, int childIndex, wxVariant &childValue) const
 {
     NSvec3 vector;
     vector << thisValue;
     switch ( childIndex )
     {
-        case 0: vector.x = childValue.GetDouble(); break;
-        case 1: vector.y = childValue.GetDouble(); break;
-        case 2: vector.z = childValue.GetDouble(); break;
+    case 0: vector.x = childValue.GetDouble(); break;
+    case 1: vector.y = childValue.GetDouble(); break;
+    case 2: vector.z = childValue.GetDouble(); break;
     }
     thisValue << vector;
 }
@@ -116,7 +116,7 @@ void nsVector3Property::ChildChanged(wxVariant& thisValue, int childIndex, wxVar
 void nsVector3Property::RefreshChildren(void)
 {
     if ( !GetChildCount() ) return;
-    const NSvec3& vector = NSvec3RefFromVariant(m_value);
+    const NSvec3 &vector = NSvec3RefFromVariant(m_value);
     Item(0)->SetValue( vector.x );
     Item(1)->SetValue( vector.y );
     Item(2)->SetValue( vector.z );
@@ -128,14 +128,14 @@ void nsVector3Property::RefreshChildren(void)
 
 // ----------------------------------------------------------------------------
 WX_PG_IMPLEMENT_PROPERTY_CLASS(nsVector4Property,wxPGProperty,
-                               NSvec4,const NSvec4&,TextCtrl);
+                               NSvec4,const NSvec4 &,TextCtrl);
 
 WX_PG_IMPLEMENT_VARIANT_DATA_DUMMY_EQ(NSvec4);
 
 // ----------------------------------------------------------------------------
 nsVector4Property::nsVector4Property(const wxString &label,
-                                       const wxString &name,
-                                       const NSvec4 &data)
+                                     const wxString &name,
+                                     const NSvec4 &data)
     : wxPGProperty(label, name)
 {
     SetValue(WXVARIANT(data));
@@ -152,16 +152,16 @@ nsVector4Property::~nsVector4Property()
 }
 
 // ----------------------------------------------------------------------------
-void nsVector4Property::ChildChanged(wxVariant& thisValue, int childIndex, wxVariant& childValue) const
+void nsVector4Property::ChildChanged(wxVariant &thisValue, int childIndex, wxVariant &childValue) const
 {
     NSvec4 vector;
     vector << thisValue;
     switch ( childIndex )
     {
-        case 0: vector.x = childValue.GetDouble(); break;
-        case 1: vector.y = childValue.GetDouble(); break;
-        case 2: vector.z = childValue.GetDouble(); break;
-        case 3: vector.w = childValue.GetDouble(); break;
+    case 0: vector.x = childValue.GetDouble(); break;
+    case 1: vector.y = childValue.GetDouble(); break;
+    case 2: vector.z = childValue.GetDouble(); break;
+    case 3: vector.w = childValue.GetDouble(); break;
     }
     thisValue << vector;
 }
@@ -170,7 +170,7 @@ void nsVector4Property::ChildChanged(wxVariant& thisValue, int childIndex, wxVar
 void nsVector4Property::RefreshChildren(void)
 {
     if ( !GetChildCount() ) return;
-    const NSvec4& vector = NSvec4RefFromVariant(m_value);
+    const NSvec4 &vector = NSvec4RefFromVariant(m_value);
     Item(0)->SetValue( vector.x );
     Item(1)->SetValue( vector.y );
     Item(2)->SetValue( vector.z );
@@ -181,14 +181,14 @@ void nsVector4Property::RefreshChildren(void)
 
 // ----------------------------------------------------------------------------
 WX_PG_IMPLEMENT_PROPERTY_CLASS(nsQuaternionProperty,wxPGProperty,
-                               NSquat,const NSquat&,TextCtrl);
+                               NSquat,const NSquat &,TextCtrl);
 
 WX_PG_IMPLEMENT_VARIANT_DATA_DUMMY_EQ(NSquat);
 
 // ----------------------------------------------------------------------------
 nsQuaternionProperty::nsQuaternionProperty(const wxString &label,
-                                       const wxString &name,
-                                       const NSquat &data)
+        const wxString &name,
+        const NSquat &data)
     : wxPGProperty(label, name)
 {
     SetValue(WXVARIANT(data));
@@ -205,16 +205,16 @@ nsQuaternionProperty::~nsQuaternionProperty()
 }
 
 // ----------------------------------------------------------------------------
-void nsQuaternionProperty::ChildChanged(wxVariant& thisValue, int childIndex, wxVariant& childValue) const
+void nsQuaternionProperty::ChildChanged(wxVariant &thisValue, int childIndex, wxVariant &childValue) const
 {
     NSquat vector;
     vector << thisValue;
     switch ( childIndex )
     {
-        case 0: vector.w = childValue.GetDouble(); break;
-        case 1: vector.x = childValue.GetDouble(); break;
-        case 2: vector.y = childValue.GetDouble(); break;
-        case 3: vector.z = childValue.GetDouble(); break;
+    case 0: vector.w = childValue.GetDouble(); break;
+    case 1: vector.x = childValue.GetDouble(); break;
+    case 2: vector.y = childValue.GetDouble(); break;
+    case 3: vector.z = childValue.GetDouble(); break;
     }
     thisValue << vector;
 }
@@ -223,11 +223,9 @@ void nsQuaternionProperty::ChildChanged(wxVariant& thisValue, int childIndex, wx
 void nsQuaternionProperty::RefreshChildren(void)
 {
     if ( !GetChildCount() ) return;
-    const NSquat& vector = NSquatRefFromVariant(m_value);
+    const NSquat &vector = NSquatRefFromVariant(m_value);
     Item(0)->SetValue( vector.w );
     Item(1)->SetValue( vector.x );
     Item(2)->SetValue( vector.y );
     Item(3)->SetValue( vector.z );
 }
-
-

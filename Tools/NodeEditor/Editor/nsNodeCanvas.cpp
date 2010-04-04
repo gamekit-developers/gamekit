@@ -154,12 +154,10 @@ void nsNodeCanvas::addNode(nsNode *nd)
         // drop at the previous mouse coordinate
         NSvec2 dropPoint = projectPoint(m_mousePos);
 
-
         nd->setPosition(dropPoint.x, dropPoint.y);
         m_renderList.push_back(nd);
 
         sendEvent(NS_NODE_ADD, nd);
-
         Refresh();
     }
 }
@@ -422,7 +420,7 @@ void nsNodeCanvas::deleteCapturedEvent(wxCommandEvent &evt)
                 m_tree->deleteNode(nd);
             }
         }
-        
+
         m_captured.clear();
         evt.Skip();
         Refresh();
@@ -703,8 +701,8 @@ void nsNodeCanvas::rightClickEvent(wxMouseEvent &evt)
 
     if (m_hasCapture)
     {
-        // hit test for node under the menu 
-        // and capture it 
+        // hit test for node under the menu
+        // and capture it
 
         nsNode *nodeAtPoint = hitTestNode(projectPoint(m_mousePos));
         if (nodeAtPoint != 0)
@@ -893,7 +891,7 @@ void nsNodeCanvas::setZoom(NSfloat zd)
     if (NSFuzzy(zd))
         return;
 
-    // align zd to zoom min/max  
+    // align zd to zoom min/max
     NSfloat fac = 1.f / (m_zoomLimit.y - m_zoomLimit.x);
     zd += fac;
 

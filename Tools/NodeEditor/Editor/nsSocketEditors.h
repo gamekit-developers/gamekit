@@ -36,9 +36,6 @@
 #include <wx/propgrid/manager.h>
 
 
-#define wxToAscii(x)    ((const char*)x.mb_str())
-#define wxToString(x)   (utString(wxToAscii(x)))
-
 
 // Editor for NSvec2 properties
 WX_PG_DECLARE_VARIANT_DATA(NSvec2);
