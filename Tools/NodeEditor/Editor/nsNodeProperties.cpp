@@ -214,6 +214,7 @@ void nsNodePropertyPage::propertyChangeEvent(wxPropertyGridEvent &evt)
                 nsPropToVariable(prop, var);
                 sock->setValue(var);
                 evt.Skip();
+                return;
             }
         }
     }
@@ -222,15 +223,18 @@ void nsNodePropertyPage::propertyChangeEvent(wxPropertyGridEvent &evt)
     if (m_vars)
     {
         int index = m_vars->Index(prop);
-        void *client = prop->GetClientData();
-        if (client)
+        if (index != wxNOT_FOUND)
         {
-            nsNodeData *data = static_cast<nsNodeData *>(client);
+            void *client = prop->GetClientData();
+            if (client)
+            {
+                nsNodeData *data = static_cast<nsNodeData *>(client);
 
-            nsVariable &var = data->getValue();
-            nsPropToVariable(prop, var);
-            data->setValue(var);
-            evt.Skip();
+                nsVariable &var = data->getValue();
+                nsPropToVariable(prop, var);
+                data->setValue(var);
+                evt.Skip();
+            }
         }
     }
 }
