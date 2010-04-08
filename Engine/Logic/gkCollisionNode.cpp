@@ -31,10 +31,14 @@
 #include "gkDynamicsWorld.h"
 #include "gkEngine.h"
 #include "gkGameObject.h"
+#include "gkCharacter.h"
+#include "BulletCollision/CollisionDispatch/btGhostObject.h"
+#include "BulletDynamics/Character/btKinematicCharacterController.h"
+
 
 gkCollisionNode::gkCollisionNode(gkLogicTree *parent, size_t id)
 : gkLogicNode(parent, id),
-m_bBody(0)
+m_object(0)
 {
 	ADD_ISOCK(ENABLE, false);
 	ADD_ISOCK(TARGET, 0);
@@ -57,14 +61,14 @@ bool gkCollisionNode::evaluate(gkScalar tick)
 {
 	gkGameObject* pObj = GET_SOCKET_VALUE(TARGET);
 
-	m_bBody = 0;
+	m_object = 0;
 
 	if(pObj && pObj->isLoaded())
 	{
-		m_bBody = pObj->getAttachedBody();
+		m_object = pObj->getAttachedObject();
 	}
 
-	return m_bBody != 0;
+	return m_object != 0;
 }
 
 void gkCollisionNode::update(gkScalar tick)
@@ -80,13 +84,13 @@ void gkCollisionNode::update(gkScalar tick)
 
 	if(GET_SOCKET_VALUE(ENABLE))
 	{
-		m_bBody->setFlags(m_bBody->getFlags() | gkRigidBody::RBF_CONTACT_INFO);
+		m_object->setFlags(m_object->getFlags() | gkObject::RBF_CONTACT_INFO);
 
-		const gkRigidBody::ContactArray& contacts = m_bBody->getContacts();
+		const gkObject::ContactArray& contacts = m_object->getContacts();
 
 		for (size_t i = 0; i < contacts.size(); i++)
 		{
-			const gkRigidBody::ContactInfo& c = contacts[i];
+			const gkObject::ContactInfo& c = contacts[i];
 
 			if(GET_SOCKET_VALUE(COLLIDES_WITH).empty() || c.collider->getObject()->getName().find(GET_SOCKET_VALUE(COLLIDES_WITH)) != -1)
 			{
@@ -101,7 +105,7 @@ void gkCollisionNode::update(gkScalar tick)
 	}
 	else
 	{
-		m_bBody->setFlags(m_bBody->getFlags() ^ gkRigidBody::RBF_CONTACT_INFO);
+		m_object->setFlags(m_object->getFlags() ^ gkObject::RBF_CONTACT_INFO);
 	}
 }
 

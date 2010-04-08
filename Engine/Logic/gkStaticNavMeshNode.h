@@ -45,6 +45,8 @@ class btVector3;
 #include <iostream>
 #include <fstream>
 
+class gkObject;
+
 class gkNavMeshLoader : public btTriangleCallback
 {
 public:
@@ -64,7 +66,7 @@ public:
 private:
 	
 	void addTriangle(const gkVector3& v1, const gkVector3& v2, const gkVector3& v3);
-	void AddCollisionObj(gkRigidBody* pBody);
+	void AddCollisionObj(gkObject* pObject);
 
 private:
 	

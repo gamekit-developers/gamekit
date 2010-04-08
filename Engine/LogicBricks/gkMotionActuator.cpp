@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -44,30 +44,35 @@ void gkMotionActuator::execute(void)
     if (!m_object->isLoaded())
         return;
 
-    gkRigidBody *body = m_object->getAttachedBody();
-
     if (m_type == MT_SIMPLE) {
         if (m_loc.evaluate)
             m_object->translate(m_loc.vec , m_loc.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
         if (m_rot.evaluate)
             m_object->rotate(m_quat, m_rot.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
 
-        if (body)
-        {
-            if (m_force.evaluate)
-                body->applyForce(m_force.vec* m_damping, m_force.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
-            if (m_torque.evaluate)
-                body->applyTorque(m_torque.vec* m_damping, m_torque.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
+	    gkObject *object = m_object->getAttachedObject();
 
-            if (m_linv.evaluate)
-            {
-                gkVector3 extra(0,0,0);
-                if (m_linvInc)
-                    extra = body->getLinearVelocity();
-                body->setLinearVelocity((m_linv.vec + extra) *m_damping , m_linv.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
-            }
-            if (m_angv.evaluate)
-                body->setAngularVelocity(m_angv.vec *m_damping , m_angv.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
+        if (object)
+        {
+			gkRigidBody* body = dynamic_cast<gkRigidBody*>(object);
+
+			if(body)
+			{
+				if (m_force.evaluate)
+					body->applyForce(m_force.vec* m_damping, m_force.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
+				if (m_torque.evaluate)
+					body->applyTorque(m_torque.vec* m_damping, m_torque.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
+
+				if (m_linv.evaluate)
+				{
+					gkVector3 extra(0,0,0);
+					if (m_linvInc)
+						extra = body->getLinearVelocity();
+					body->setLinearVelocity((m_linv.vec + extra) *m_damping , m_linv.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
+				}
+				if (m_angv.evaluate)
+					body->setAngularVelocity(m_angv.vec *m_damping , m_angv.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
+			}
         }
     }
 }

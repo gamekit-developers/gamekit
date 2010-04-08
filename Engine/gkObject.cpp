@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -27,11 +27,10 @@
 #include "gkObject.h"
 #include "gkLogger.h"
 #include "OgreException.h"
-
-
+#include "btBulletDynamicsCommon.h"
 
 gkObject::gkObject(const gkString& name, gkObject::Loader *manual)
-:       m_name(name), m_loaded(false), m_manual(manual)
+:       m_name(name), m_loaded(false), m_manual(manual), m_flags(0), m_sensorMaterial("")
 {
 }
 
@@ -93,4 +92,45 @@ void gkObject::reload(void)
 {
     unload();
     load();
+}
+
+void gkObject::handleManifold(btPersistentManifold* manifold)
+{
+	if(!wantsContactInfo()) return;
+
+	gkObject* colA = static_cast<gkObject*>(static_cast<btCollisionObject*>(manifold->getBody0())->getUserPointer());
+	gkObject* colB = static_cast<gkObject*>(static_cast<btCollisionObject*>(manifold->getBody1())->getUserPointer());
+
+	gkObject* collider = colB;
+
+	if(collider == this)
+	{
+		collider = colA;
+	}
+
+	int nrc = manifold->getNumContacts();
+
+	if (nrc)
+	{
+		for (int j = 0; j < nrc; ++j)
+		{
+			gkObject::ContactInfo cinf;
+			btManifoldPoint &pt = manifold->getContactPoint(j);
+
+			if (pt.getDistance() < 0.f)
+			{
+				cinf.collider = collider; 
+				cinf.point = pt;
+				getContacts().push_back(cinf); 
+			}
+		}
+	}
+}
+
+void gkObject::resetContactInfo()
+{
+	if(wantsContactInfo())
+	{
+		getContacts().resize(0);
+	}
 }

@@ -156,9 +156,9 @@ void gkArcBallNode::update(gkScalar tick)
 
 		gkVector3 rayPoint;
 
-		gkRigidBody* pBody = gkUtils::PickBody(ray, rayPoint);
+		btCollisionObject* pCol = gkUtils::PickBody(ray, rayPoint);
 
-		if(pBody)
+		if(pCol)
 		{
 			m_target->setPosition(rayPoint);
 		}

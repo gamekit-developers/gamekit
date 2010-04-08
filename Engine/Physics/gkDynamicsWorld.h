@@ -39,8 +39,10 @@ class btDispatcher;
 class btConstraintSolver;
 class btRigidBody;
 class gkRigidBody;
+class gkCharacter;
 class btTriangleMesh;
 class btCollisionShape;
+class btGhostPairCallback;
 class gkPhysicsDebug;
 
 
@@ -49,7 +51,7 @@ class gkPhysicsDebug;
 class gkDynamicsWorld : public gkObject
 {
 public:
-    typedef utListClass<gkRigidBody> RigidBodyList;
+    typedef utListClass<gkObject> ObjectList;
 
 protected:
 
@@ -59,14 +61,16 @@ protected:
     btDynamicsWorld*            m_dynamicsWorld;
     btCollisionConfiguration*   m_collisionConfiguration;;
     btBroadphaseInterface*      m_pairCache;
+	btGhostPairCallback*		m_ghostPairCallback;
     btDispatcher*               m_dispatcher;
     btConstraintSolver*         m_constraintSolver;
-    RigidBodyList               m_bodies;
+    ObjectList	                m_objects;
     gkPhysicsDebug*             m_debug;
+	
     bool                        m_handleContacts;
 
     // drawing all but static wireframes 
-    void localDrawObject(btRigidBody *rb);
+    void localDrawObject(btCollisionObject *rb);
 
     void preLoadImpl(void);
     void loadImpl(void);
@@ -91,6 +95,8 @@ public:
     // applying physics calculations on a gkGameObject level
     gkRigidBody *createRigidBody(gkGameObject *state, gkObject::Loader *manual=0);
 
+	gkCharacter *createCharacter(gkGameObject *state, gkObject::Loader *manual=0);
+
 
     // Gain raw access to the bullet world
     GK_INLINE btDynamicsWorld* getBulletWorld(void) {GK_ASSERT(m_dynamicsWorld); return m_dynamicsWorld;}
@@ -98,6 +104,8 @@ public:
     GK_INLINE gkScene *getScene(void)               {GK_ASSERT(m_scene); return m_scene;}
 
 	void enableDebugPhysics(bool enable, bool debugAabb);
+
+	void resetContacts();
 };
 
 #endif//_gkDynamicsWorld_h_

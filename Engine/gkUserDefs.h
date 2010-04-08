@@ -62,6 +62,12 @@ public:
     gkString                gl_frag_profile;    // arbfp1
     gkString                dx_vert_profile;    // vs_1_1
     gkString                dx_frag_profile;    // ps_2_x
+
+	bool					enableshadows;
+	gkString				shadowtechnique;
+	gkColor					colourshadow;
+	gkScalar				fardistanceshadow;
+
 };
 
 

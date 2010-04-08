@@ -127,10 +127,10 @@ void gkDisableDeactivationNode::update(gkScalar tick)
 {
 	gkGameObject* pObj = GET_SOCKET_VALUE(TARGET);
 
-	gkRigidBody* pRigidBody = pObj->getAttachedBody();
+	gkObject* pObject = pObj->getAttachedObject();
 
-	if(pRigidBody)
+	if(pObject)
 	{
-		pRigidBody->getBody()->setActivationState(DISABLE_DEACTIVATION);
+		pObject->getCollisionObject()->setActivationState(DISABLE_DEACTIVATION);
 	}
 }

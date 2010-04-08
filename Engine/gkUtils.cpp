@@ -141,7 +141,7 @@ Ogre::Ray gkUtils::CreateCameraRay(gkScalar x, gkScalar y)
 	return ray;
 }
 
-gkRigidBody* gkUtils::PickBody(const Ogre::Ray& ray, gkVector3& hitPointWorld)
+btCollisionObject* gkUtils::PickBody(const Ogre::Ray& ray, gkVector3& hitPointWorld)
  {
 	Vector3 from = ray.getOrigin();
 	Vector3 to = ray.getOrigin() + ray.getDirection();
@@ -163,23 +163,18 @@ gkRigidBody* gkUtils::PickBody(const Ogre::Ray& ray, gkVector3& hitPointWorld)
 
 	pWorld->rayTest(rayFrom, rayTo, rayCallback);
 
-	gkRigidBody* pBody = 0;
 
 	if(rayCallback.hasHit())
 	{
-		btRigidBody* body = btRigidBody::upcast(rayCallback.m_collisionObject);
-
-		GK_ASSERT(body);
-
-		pBody = static_cast<gkRigidBody*>(body->getUserPointer());
-
 		hitPointWorld = gkVector3(rayCallback.m_hitPointWorld);
+
+		return rayCallback.m_collisionObject;
 	}
 
-	return pBody;
+	return 0;
  }
 
-gkRigidBody* gkUtils::PickBody(const Ogre::Ray& ray)
+btCollisionObject* gkUtils::PickBody(const Ogre::Ray& ray)
  {
 	 gkVector3 hitPointWorld;
 

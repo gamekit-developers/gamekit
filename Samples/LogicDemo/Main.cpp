@@ -294,21 +294,21 @@ public:
 		m_stateMachine->addTransition(momoState::WALK_BACK, momoState::IDLE_NASTY);
 
 
-		gkCollisionNode* collision = m_tree->createNode<gkCollisionNode>();
-		collision->getENABLE()->setValue(true);
-		collision->getTARGET()->link(m_playerSetter->getOUTPUT());
+		gkFallTestNode* fallTest = m_tree->createNode<gkFallTestNode>();
+		fallTest->getENABLE()->setValue(true);
+		fallTest->getTARGET()->link(m_playerSetter->getOUTPUT());
 
 
 	
 		m_wKeyNode->getIS_DOWN()->link(m_stateMachine->addTransition(momoState::IDLE_NASTY, momoState::WALK));
 		m_wKeyNode->getIS_DOWN()->link(m_stateMachine->addTransition(momoState::IDLE_CAPOEIRA, momoState::WALK));
 		m_wKeyNode->getIS_DOWN()->link(m_stateMachine->addTransition(momoState::WALK, momoState::WALK));
-		collision->getNOT_HAS_COLLIDED()->link(m_stateMachine->addTransition(momoState::WALK, momoState::FALL_UP));
-		collision->getNOT_HAS_COLLIDED()->link(m_stateMachine->addTransition(momoState::FALL_UP, momoState::FALL_UP));
-		collision->getHAS_COLLIDED()->link(m_stateMachine->addTransition(momoState::FALL_UP, momoState::IDLE_NASTY));
+		fallTest->getFALLING()->link(m_stateMachine->addTransition(momoState::WALK, momoState::FALL_UP));
+		fallTest->getFALLING()->link(m_stateMachine->addTransition(momoState::FALL_UP, momoState::FALL_UP));
+		fallTest->getNOT_FALLING()->link(m_stateMachine->addTransition(momoState::FALL_UP, momoState::IDLE_NASTY));
 		m_wKeyNode->getIS_DOWN()->link(m_stateMachine->addTransition(momoState::WALK, momoState::RUN, 1500));
 		m_wKeyNode->getIS_DOWN()->link(m_stateMachine->addTransition(momoState::RUN, momoState::RUN));
-		collision->getNOT_HAS_COLLIDED()->link(m_stateMachine->addTransition(momoState::RUN, momoState::FALL_UP));
+		fallTest->getFALLING()->link(m_stateMachine->addTransition(momoState::RUN, momoState::FALL_UP));
 		m_stateMachine->addTransition(momoState::RUN, momoState::WALK);
 
 		{
@@ -318,7 +318,7 @@ public:
 			
 			ifNode->getIS_TRUE()->link(m_stateMachine->addTransition(momoState::RUN, momoState::RUN_FASTER));
 			ifNode->getIS_TRUE()->link(m_stateMachine->addTransition(momoState::RUN_FASTER, momoState::RUN_FASTER));
-			collision->getNOT_HAS_COLLIDED()->link(m_stateMachine->addTransition(momoState::RUN_FASTER, momoState::FALL_UP));
+			fallTest->getFALLING()->link(m_stateMachine->addTransition(momoState::RUN_FASTER, momoState::FALL_UP));
 		}
 
 		m_stateMachine->addTransition(momoState::RUN_FASTER, momoState::RUN);
@@ -329,7 +329,7 @@ public:
 		m_sKeyNode->getIS_DOWN()->link(m_stateMachine->addTransition(momoState::IDLE_NASTY, momoState::WALK_BACK));
 		m_sKeyNode->getIS_DOWN()->link(m_stateMachine->addTransition(momoState::IDLE_CAPOEIRA, momoState::WALK_BACK));
 		m_sKeyNode->getIS_DOWN()->link(m_stateMachine->addTransition(momoState::WALK_BACK, momoState::WALK_BACK));
-		collision->getNOT_HAS_COLLIDED()->link(m_stateMachine->addTransition(momoState::WALK_BACK, momoState::FALL_UP));
+		fallTest->getFALLING()->link(m_stateMachine->addTransition(momoState::WALK_BACK, momoState::FALL_UP));
 
 
 		{
@@ -598,20 +598,28 @@ public:
 
 	void CreateMomoAnimationLogic()
 	{
-		m_stateMachine->addTranslation(momoState::CARRY, momoAnimation::CARRY);
-		m_stateMachine->addTranslation(momoState::CATCH, momoAnimation::CATCH);
-		m_stateMachine->addTranslation(momoState::CATCH_ENDED, momoAnimation::CATCH);
-		m_stateMachine->addTranslation(momoState::THROW_WITH, momoAnimation::THROW_WITH);
-		m_stateMachine->addTranslation(momoState::WALK, momoAnimation::WALK);
-		m_stateMachine->addTranslation(momoState::RUN, momoAnimation::RUN);
-		m_stateMachine->addTranslation(momoState::RUN_FASTER, momoAnimation::RUN_FASTER);
-		m_stateMachine->addTranslation(momoState::WALK_BACK, momoAnimation::WALK_BACK);
-		m_stateMachine->addTranslation(momoState::IDLE_NASTY, momoAnimation::IDLE_NASTY);
-		m_stateMachine->addTranslation(momoState::IDLE_CAPOEIRA, momoAnimation::IDLE_CAPOEIRA);
-		m_stateMachine->addTranslation(momoState::FALL_UP, momoAnimation::FALL_UP);
+		typedef gkMapNode<int, gkString> MAP_NODE;
+		
+		MAP_NODE* mapNode = m_tree->createNode< MAP_NODE >();
+		mapNode->getINPUT()->link(m_stateMachine->getCURRENT_STATE());
+		
+		MAP_NODE::MAP mapping;
+		mapping[momoState::CARRY] = momoAnimation::CARRY;
+		mapping[momoState::CATCH] = momoAnimation::CATCH;
+		mapping[momoState::CATCH_ENDED] = momoAnimation::CATCH;
+		mapping[momoState::THROW_WITH] = momoAnimation::THROW_WITH;
+		mapping[momoState::WALK] = momoAnimation::WALK;
+		mapping[momoState::RUN] = momoAnimation::RUN;
+		mapping[momoState::RUN_FASTER] = momoAnimation::RUN_FASTER;
+		mapping[momoState::WALK_BACK] = momoAnimation::WALK_BACK;
+		mapping[momoState::IDLE_NASTY] = momoAnimation::IDLE_NASTY;
+		mapping[momoState::IDLE_CAPOEIRA] = momoAnimation::IDLE_CAPOEIRA;
+		mapping[momoState::FALL_UP] = momoAnimation::FALL_UP;
+
+		mapNode->getMAPPING()->setValue(mapping);
 
 		m_animNode->getTARGET()->link(m_meshMomoSetter->getOUTPUT());
-		m_stateMachine->getCURRENT_NAME()->link(m_animNode->getANIM_NAME());
+		m_animNode->getANIM_NAME()->link(mapNode->getOUTPUT());
 	}
 
 	void CreateCameraLogic()

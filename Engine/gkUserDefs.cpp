@@ -61,7 +61,11 @@ gkUserDefs::gkUserDefs() :
         gl_vert_profile("arbvp1"),
         gl_frag_profile("arbfp1"),
         dx_vert_profile("vs_1_1"),
-        dx_frag_profile("ps_2_x")
+        dx_frag_profile("ps_2_x"),
+		enableshadows(false),
+		shadowtechnique("none"),
+		colourshadow(0, 0, 0),
+		fardistanceshadow(0)
 {
 }
 
@@ -145,6 +149,14 @@ void gkUserDefs::load(const gkString &fname)
                 }
                 else if (key == "blendermat")
                     blendermat = StringConverter::parseBool(val);
+				else if (key == "enableshadows")
+					enableshadows = StringConverter::parseBool(val);
+				else if (key == "shadowtechnique")
+					shadowtechnique = val;
+				else if (key == "colourshadow")
+					colourshadow = StringConverter::parseColourValue(val);
+				else if (key == "fardistanceshadow")
+					fardistanceshadow = StringConverter::parseReal(val);
             }
         }
     }

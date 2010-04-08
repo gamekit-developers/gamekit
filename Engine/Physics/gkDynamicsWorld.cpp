@@ -24,6 +24,7 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+#include "gkCharacter.h"
 #include "gkDynamicsWorld.h"
 #include "gkRigidBody.h"
 #include "gkEngine.h"
@@ -32,16 +33,23 @@
 #include "gkGameObject.h"
 #include "gkScene.h"
 #include "btBulletDynamicsCommon.h"
+#include "BulletCollision/CollisionDispatch/btGhostObject.h"
 
+
+static bool CustomMaterialCombinerCallback(btManifoldPoint& cp,	const btCollisionObject* pObj0, int partId0, int index0, const btCollisionObject* pObj1, int partId1, int index1)
+{
+	return true;
+}
 
 
 gkDynamicsWorld::gkDynamicsWorld(const gkString& name, gkScene *scene, gkObject::Loader *manual)
 :       gkObject(name, manual), m_scene(scene),
         m_dynamicsWorld(0), m_collisionConfiguration(0),
-        m_pairCache(0), m_dispatcher(0), m_constraintSolver(0),
+        m_pairCache(0), m_ghostPairCallback(0), m_dispatcher(0), m_constraintSolver(0),
         m_debug(0), m_handleContacts(false)
 
 {
+//	gContactAddedCallback = CustomMaterialCombinerCallback;
 }
 
 gkDynamicsWorld::~gkDynamicsWorld()
@@ -57,13 +65,20 @@ void gkDynamicsWorld::preLoadImpl(void)
         return;
 
     m_collisionConfiguration = new btDefaultCollisionConfiguration();
-    m_pairCache              = new btDbvtBroadphase();
-    m_dispatcher             = new btCollisionDispatcher(m_collisionConfiguration);
-    m_constraintSolver       = new btSequentialImpulseConstraintSolver();
-    m_dynamicsWorld          = new btDiscreteDynamicsWorld(m_dispatcher,
-            m_pairCache,
-            m_constraintSolver,
-            m_collisionConfiguration);
+
+    //m_pairCache = new btDbvtBroadphase();
+
+	btVector3 worldMin(-1000,-1000,-1000);
+	btVector3 worldMax(1000,1000,1000);
+	m_pairCache = new btAxisSweep3(worldMin,worldMax);
+
+
+	m_ghostPairCallback = new btGhostPairCallback();
+	m_pairCache->getOverlappingPairCache()->setInternalGhostPairCallback(m_ghostPairCallback);
+
+    m_dispatcher = new btCollisionDispatcher(m_collisionConfiguration);
+    m_constraintSolver = new btSequentialImpulseConstraintSolver();
+    m_dynamicsWorld = new btDiscreteDynamicsWorld(m_dispatcher, m_pairCache, m_constraintSolver, m_collisionConfiguration);
 
     gkVector3& grav = m_scene->getProperties().gravity;
     m_dynamicsWorld->setGravity(btVector3(grav.x, grav.y, grav.z));
@@ -108,9 +123,9 @@ void gkDynamicsWorld::loadImpl(void)
 
     m_handleContacts = false;
 
-    if (!m_bodies.empty())
+    if (!m_objects.empty())
     {
-        gkRigidBody *rb = m_bodies.begin();
+        gkObject *rb = m_objects.begin();
 
         while (rb)
         {
@@ -142,6 +157,9 @@ void gkDynamicsWorld::unloadImpl(void)
     delete m_dispatcher;
     m_dispatcher = 0;
 
+	delete m_ghostPairCallback;
+	m_ghostPairCallback = 0;
+
     delete m_pairCache;
     m_pairCache = 0;
 
@@ -151,18 +169,18 @@ void gkDynamicsWorld::unloadImpl(void)
     delete m_debug;
     m_debug = 0;
 
-    if (!m_bodies.empty())
+    if (!m_objects.empty())
     {
-        gkRigidBody *rb = m_bodies.begin();
+        gkObject *rb = m_objects.begin();
 
         while (rb)
         {
             // remove bullet body
-            gkRigidBody *tmp = rb;
+            gkObject *tmp = rb;
             rb = rb->getNext();
             delete tmp;
         }
-        m_bodies.clear();
+        m_objects.clear();
     }
 
 }
@@ -176,7 +194,7 @@ void gkDynamicsWorld::createParentChildHierarchy(void)
     for (i = 0;i < m_dynamicsWorld->getNumCollisionObjects();i++)
     {
         btCollisionObject* childColObj = m_dynamicsWorld->getCollisionObjectArray()[i];
-        gkRigidBody* childNode = (gkRigidBody*)childColObj->getUserPointer();
+        gkObject* childNode = static_cast<gkObject*>(childColObj->getUserPointer());
         if (!childNode)
             continue;
 
@@ -188,9 +206,9 @@ void gkDynamicsWorld::createParentChildHierarchy(void)
     for (i = 0;i < children.size();i++)
     {
         btCollisionObject* childColObj = children[i];
-        gkRigidBody* childNode = (gkRigidBody*)childColObj->getUserPointer();
+        gkObject* childNode = static_cast<gkObject*>(childColObj->getUserPointer());
 
-        m_bodies.erase(childNode);
+        m_objects.erase(childNode);
 
         gkGameObject *ob = childNode->getObject();
         if (ob->isInActiveLayer())
@@ -209,12 +227,22 @@ gkRigidBody *gkDynamicsWorld::createRigidBody(gkGameObject *state, gkObject::Loa
 {
     GK_ASSERT(state);
     gkRigidBody *rb = new gkRigidBody(state->getName(), state, this, manual);
-    m_bodies.push_back(rb);
+    m_objects.push_back(rb);
     return rb;
 }
 
-void gkDynamicsWorld::localDrawObject(btRigidBody *colObj)
+gkCharacter *gkDynamicsWorld::createCharacter(gkGameObject *state, gkObject::Loader *manual)
 {
+    GK_ASSERT(state);
+    gkCharacter *character = new gkCharacter(state->getName(), state, this, manual);
+    m_objects.push_back(character);
+    return character;
+}
+
+void gkDynamicsWorld::localDrawObject(btCollisionObject *colObj)
+{
+	if(colObj->isStaticObject()) return;
+
     GK_ASSERT(m_debug && m_dynamicsWorld && colObj);
 
     btVector3 color(btScalar(1.), btScalar(1.), btScalar(1.));
@@ -258,94 +286,62 @@ void gkDynamicsWorld::step(gkScalar tick)
     m_dynamicsWorld->stepSimulation(tick);
 }
 
+void gkDynamicsWorld::resetContacts()
+{
+	if (m_handleContacts && !m_objects.empty())
+	{
+		gkObject *rb = m_objects.begin();
+	    
+		while(rb)
+		{
+			if(rb->isLoaded()) 
+				rb->resetContactInfo();
 
+			rb = rb->getNext();
+		}
+	}
+}
 
 void gkDynamicsWorld::substep(gkScalar tick)
 {
     if (m_handleContacts)
     {
-        int nr = m_dispatcher->getNumManifolds(), i, j;
+        int nr = m_dispatcher->getNumManifolds();
 
-        if (!nr && !m_bodies.empty())
-        {
-            gkRigidBody *rb = m_bodies.begin();
-            while (rb)
-            {
-                if (rb->isLoaded() && rb->wantsContactInfo())
-                    rb->getContacts().resize(0);
-                rb = rb->getNext();
-            }
-        }
-
-        for (i = 0; i < nr; ++i)
+        for (int i = 0; i < nr; ++i)
         {
             btPersistentManifold* manifold = m_dispatcher->getManifoldByIndexInternal(i);
 
-            gkRigidBody* colA = static_cast<gkRigidBody*>(static_cast<btCollisionObject*>(manifold->getBody0())->getUserPointer());
+            gkObject* colA = static_cast<gkObject*>(static_cast<btCollisionObject*>(manifold->getBody0())->getUserPointer());
+            gkObject* colB = static_cast<gkObject*>(static_cast<btCollisionObject*>(manifold->getBody1())->getUserPointer());
 
-            if (colA->wantsContactInfo())
-			{
-				gkRigidBody::ContactArray &destA = colA->getContacts();
-                destA.resize(0);
-			}
-
-            gkRigidBody* colB = static_cast<gkRigidBody*>(static_cast<btCollisionObject*>(manifold->getBody1())->getUserPointer());
-
-            if (colB->wantsContactInfo())
-			{
-	            gkRigidBody::ContactArray &destB = colB->getContacts();
-                destB.resize(0);
-			}
+			colA->resetContactInfo();
+			colB->resetContactInfo();
 		}
 
-        for (i = 0; i < nr; ++i)
+        for (int i = 0; i < nr; ++i)
         {
             btPersistentManifold* manifold = m_dispatcher->getManifoldByIndexInternal(i);
 
-            gkRigidBody* colA = static_cast<gkRigidBody*>(static_cast<btCollisionObject*>(manifold->getBody0())->getUserPointer());
-            gkRigidBody* colB = static_cast<gkRigidBody*>(static_cast<btCollisionObject*>(manifold->getBody1())->getUserPointer());
+            gkObject* colA = static_cast<gkObject*>(static_cast<btCollisionObject*>(manifold->getBody0())->getUserPointer());
+            gkObject* colB = static_cast<gkObject*>(static_cast<btCollisionObject*>(manifold->getBody1())->getUserPointer());
 
-            int nrc = manifold->getNumContacts();
-
-            gkRigidBody::ContactArray &destA = colA->getContacts();
-            gkRigidBody::ContactArray &destB = colB->getContacts();
-
-            if (nrc)
-            {
-                for (j = 0; j < nrc; ++j)
-                {
-                    gkRigidBody::ContactInfo cinf;
-                    btManifoldPoint &pt = manifold->getContactPoint(j);
-
-                    if (pt.getDistance() < 0.f)
-                    {
-                        if (colA->wantsContactInfo()) {
-                            cinf.collider = colB; cinf.point = pt;
-                            destA.push_back(cinf); 
-                        }
-
-                        if (colB->wantsContactInfo()) {
-                            cinf.collider = colA; cinf.point = pt;
-                            destB.push_back(cinf);
-                        }
-                    }
-                }
-            }
+			colA->handleManifold(manifold);
+			colB->handleManifold(manifold);
         }
     }
 
     if (m_debug)
     {
-        if (!m_bodies.empty())
+        if (!m_objects.empty())
         {
-            gkRigidBody *rb = m_bodies.begin();
+            gkObject *rb = m_objects.begin();
+
             while (rb)
             {
                 if (rb->isLoaded())
                 {
-                    btRigidBody *body = rb->getBody();
-                    if (!body->isStaticOrKinematicObject())
-                        localDrawObject(body);
+					localDrawObject(rb->getCollisionObject());
                 }
                 rb = rb->getNext();
             }

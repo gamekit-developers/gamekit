@@ -30,7 +30,7 @@
 #include "gkCommon.h"
 #include "gkMathUtils.h"
 
-class gkRigidBody;
+class btCollisionObject;
 
 class gkUtils
 {
@@ -44,9 +44,9 @@ public:
 
 	static Ogre::Ray CreateCameraRay(gkScalar x, gkScalar y);
 
-	static gkRigidBody* PickBody(const Ogre::Ray& ray);
+	static btCollisionObject* PickBody(const Ogre::Ray& ray);
 
-	static gkRigidBody* PickBody(const Ogre::Ray& ray, gkVector3& hitPointWorld);
+	static btCollisionObject* PickBody(const Ogre::Ray& ray, gkVector3& hitPointWorld);
 };
 
 

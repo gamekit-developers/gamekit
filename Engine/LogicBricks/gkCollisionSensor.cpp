@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -58,21 +58,21 @@ gkCollisionSensor::gkCollisionSensor(gkGameObject *object, gkLogicLink *link, co
 
 bool gkCollisionSensor::query(void)
 {
-    gkRigidBody *rb = m_object->getAttachedBody();
-    if (!rb) return false;
+    gkObject *object = m_object->getAttachedObject();
+    if (!object) return false;
 
-    if (rb->getContacts().empty())
+    if (object->getContacts().empty())
         return false;
 
     // extra filters 
     if (!m_material.empty() || !m_prop.empty())
     {
-        gkRigidBody::ContactArray &arr = rb->getContacts();
+        gkObject::ContactArray &arr = object->getContacts();
         UTsize nr=arr.size(), i;
 
         for (i=0; i<nr; ++i)
         {
-            gkRigidBody::ContactInfo &inf = arr[i];
+            gkObject::ContactInfo &inf = arr[i];
 
             if (!m_prop.empty())
             {

@@ -33,7 +33,6 @@ m_currentState(-1)
 {
 	ADD_ISOCK(UPDATE, false);
 	ADD_OSOCK(CURRENT_STATE, 0);
-	ADD_OSOCK(CURRENT_NAME, "");
 }
 
 gkStateMachineNode::~gkStateMachineNode()
@@ -104,16 +103,6 @@ void gkStateMachineNode::update(gkScalar tick)
 
 			SET_SOCKET_VALUE(CURRENT_STATE, m_currentState);
 
-			size_t pos = m_translation.find(m_currentState);
-
-			GK_ASSERT(pos != GK_NPOS && "There is not translation for this state and translation is always assumed");
-
-			gkString name = m_translation.at(pos);
-
-			SET_SOCKET_VALUE(CURRENT_NAME, name);
-
-			gkLogMessage(name);
-
 			m_timer.reset();
 		}
 	}
@@ -145,7 +134,3 @@ gkLogicSocket<bool>* gkStateMachineNode::addTransition(int from, int to, unsigne
 	return pSocket;
 }
 
-void gkStateMachineNode::addTranslation(int state, const gkString& name)
-{
-	m_translation.insert(state, name);
-}

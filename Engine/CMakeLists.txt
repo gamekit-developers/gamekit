@@ -123,6 +123,7 @@ set(NLogic_SOURCE
     Logic/gkCollisionNode.cpp
     Logic/gkExitNode.cpp
     Logic/gkExpressionNode.cpp
+    Logic/gkFallTestNode.cpp
     Logic/gkGrabNode.cpp
     Logic/gkGroupNode.cpp
     Logic/gkNodeManager.cpp
@@ -157,6 +158,7 @@ set(NLogic_HEADER
     Logic/gkCollisionNode.h
     Logic/gkExitNode.h
     Logic/gkExpressionNode.h
+    Logic/gkFallTestNode.h
     Logic/gkGrabNode.h
     Logic/gkGroupNode.h
     Logic/gkIfNode.h
@@ -165,6 +167,7 @@ set(NLogic_HEADER
     Logic/gkLogicNode.h
     Logic/gkLogicSocket.h
     Logic/gkLogicTree.h
+	Logic/gkMapNode.h    
     Logic/gkMathNode.h
     Logic/gkMotionNode.h
     Logic/gkMouseNode.h

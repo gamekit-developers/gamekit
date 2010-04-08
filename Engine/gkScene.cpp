@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -44,6 +44,7 @@
 #include "gkLogger.h"
 #include "gkDynamicsWorld.h"
 #include "gkRigidBody.h"
+#include "gkUserDefs.h"
 
 
 using namespace Ogre;
@@ -234,7 +235,7 @@ void gkScene::loadImpl(void)
 
 			if(obptr->getProperties().isStatic)
 			{
-				m_Limits.merge(obptr->getAttachedBody()->getAabb());
+				m_Limits.merge(obptr->getAttachedObject()->getAabb());
 			}
 
         }
@@ -260,11 +261,12 @@ void gkScene::loadImpl(void)
     m_viewport->setBackgroundColour(m_baseProps.world_color);
     m_manager->setAmbientLight(m_baseProps.ambient);
 
+	//Enable Shadows?
+	setShadows();
 
     // notify main scene
     gkEngine::getSingleton().setActiveScene(this);
 }
-
 
 void gkScene::unloadImpl()
 {
@@ -308,6 +310,54 @@ void gkScene::unloadImpl()
     }
 
     gkEngine::getSingleton().setActiveScene(0);
+}
+
+static Ogre::ShadowTechnique ParseShadowTechnique(const gkString& technique)
+{
+    gkString techniqueLower = technique;
+    Ogre::StringUtil::toLowerCase(techniqueLower);
+
+    if (techniqueLower == "none")
+        return Ogre::SHADOWTYPE_NONE;
+    else if (techniqueLower == "stencilmodulative")
+        return Ogre::SHADOWTYPE_STENCIL_MODULATIVE;
+    else if (techniqueLower == "stenciladditive")
+        return Ogre::SHADOWTYPE_STENCIL_ADDITIVE;
+    else if (techniqueLower == "texturemodulative")
+        return Ogre::SHADOWTYPE_TEXTURE_MODULATIVE;
+    else if (techniqueLower == "textureadditive")
+        return Ogre::SHADOWTYPE_TEXTURE_ADDITIVE;
+    else if (techniqueLower == "texturemodulativeintegrated")
+        return Ogre::SHADOWTYPE_TEXTURE_MODULATIVE_INTEGRATED;
+    else if (techniqueLower == "textureadditiveintegrated")
+        return Ogre::SHADOWTYPE_TEXTURE_ADDITIVE_INTEGRATED;
+
+    Ogre::StringUtil::StrStreamType errorMessage;
+    errorMessage << "Invalid shadow technique specified: " << technique;
+
+    OGRE_EXCEPT
+        (
+        Ogre::Exception::ERR_INVALIDPARAMS,
+	    errorMessage.str(),
+	    "ParseShadowTechnique"
+        );
+}
+
+
+void gkScene::setShadows()
+{
+	gkUserDefs &defs = gkEngine::getSingleton().getUserDefs();
+
+	if(defs.enableshadows)
+	{
+		Ogre::ShadowTechnique shadowTechnique = ::ParseShadowTechnique(defs.shadowtechnique);
+
+		m_manager->setShadowTechnique(shadowTechnique);
+
+		m_manager->setShadowColour(defs.colourshadow);
+
+		m_manager->setShadowFarDistance(defs.fardistanceshadow);
+	}
 }
 
 void gkScene::notifyObjectLoaded(gkGameObject *gobject)

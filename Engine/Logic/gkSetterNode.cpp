@@ -92,13 +92,13 @@ void gkObjectSetterNode::update(gkScalar tick)
 
 		gkVector3 rayPoint;
 
-		gkRigidBody* pBody = gkUtils::PickBody(ray, rayPoint);
+		btCollisionObject* pCol = gkUtils::PickBody(ray, rayPoint);
 
-		if(pBody)
+		if(pCol)
 		{
 			SET_SOCKET_VALUE(HIT_POINT, rayPoint);
 	
-			pObj = pBody->getObject();
+			pObj = static_cast<gkObject*>(pCol->getUserPointer())->getObject();
 		}
 	}
 

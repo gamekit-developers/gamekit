@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -35,7 +35,7 @@
 
 
 gkRigidBody::gkRigidBody(const gkString& name, gkGameObject *object, gkDynamicsWorld *owner, gkObject::Loader *manual)
-:       gkObject(name, manual), m_owner(owner), m_object(object), m_rigidBody(0), m_flags(0), m_sensorMaterial("")
+:       gkObject(name, manual), m_owner(owner), m_object(object), m_rigidBody(0)
 {
     if (m_object)
         m_object->attachRigidBody(this);
@@ -68,6 +68,8 @@ void gkRigidBody::loadImpl(void)
     {
         // intertwine
         m_rigidBody->setUserPointer(this);
+
+		//m_rigidBody->setCollisionFlags(m_rigidBody->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
 
         if (!m_rigidBody->isStaticOrKinematicObject())
             m_rigidBody->setMotionState(this);
@@ -396,6 +398,11 @@ void gkRigidBody::setWorldTransform(const btTransform& worldTrans)
     m_object->notifyUpdate();
 }
 
+btCollisionObject* gkRigidBody::getCollisionObject() 
+{ 
+	return m_rigidBody;
+}
+
 Ogre::AxisAlignedBox gkRigidBody::getAabb() const
 {
 	if(m_rigidBody)
@@ -413,3 +420,4 @@ Ogre::AxisAlignedBox gkRigidBody::getAabb() const
 
 	return Ogre::AxisAlignedBox();
 }
+

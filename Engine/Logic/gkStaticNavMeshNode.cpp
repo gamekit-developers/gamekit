@@ -723,11 +723,11 @@ void gkNavMeshLoader::addTriangle(const gkVector3& v1, const gkVector3& v2, cons
 
 bool gkNavMeshLoader::load(gkGameObject* pObj)
 {
-	gkRigidBody* pBody = pObj->getAttachedBody();
+	gkObject* pObject = pObj->getAttachedObject();
 
-	if(pBody)
+	if(pObject)
 	{
-		AddCollisionObj(pBody);
+		AddCollisionObj(pObject);
 	}
 
 	return true;
@@ -750,7 +750,7 @@ void gkNavMeshLoader::processTriangle(btVector3* triangle,int partId, int triang
 //	m_debug->drawLine(v3, v1, btVector3(1,1,0));
 }
 
-void gkNavMeshLoader::AddCollisionObj(gkRigidBody* pBody)
+void gkNavMeshLoader::AddCollisionObj(gkObject* pObject)
 {
 	gkScene* pScene = gkEngine::getSingleton().getActiveScene();
 
@@ -762,9 +762,7 @@ void gkNavMeshLoader::AddCollisionObj(gkRigidBody* pBody)
 	aabbMin-=btVector3(BT_LARGE_FLOAT,BT_LARGE_FLOAT,BT_LARGE_FLOAT);
 	aabbMax+=btVector3(BT_LARGE_FLOAT,BT_LARGE_FLOAT,BT_LARGE_FLOAT);
 
-	btRigidBody* body = pBody->getBody();
-
-	btCollisionObject* colObj = body;
+	btCollisionObject* colObj = pObject->getCollisionObject();
 
 	const btCollisionShape* shape = colObj->getCollisionShape();
 

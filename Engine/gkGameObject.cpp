@@ -46,15 +46,15 @@
 #include "gkConstraint.h"
 #include "gkGameObjectGroup.h"
 #include "gkRigidBody.h"
+#include "gkCharacter.h"
 
 using namespace Ogre;
-
 
 gkGameObject::gkGameObject(gkScene *scene, const gkString& name, gkGameObjectTypes type, gkObject::Loader* loader)
 :       gkObject(name, loader), m_type(type), m_baseProps(), m_parent(0),
         m_scene(scene), m_startPose(StringUtil::BLANK), m_node(0),
         m_logic(0), m_activeLayer(true), m_groupRef(0), m_instance(0), m_outOfDate(false),
-        m_rigidBody(0), m_lockTransform(false)
+        m_rigidBody(0), m_character(0), m_lockTransform(false)
 {
     GK_ASSERT(m_scene);
 }
@@ -159,10 +159,15 @@ void gkGameObject::loadImpl(void)
 
     m_node->setInitialState();
 
-    if (m_rigidBody)
+    if(m_rigidBody)
+	{
         m_rigidBody->load();
+	}
+	else if(m_character)
+	{
+		m_character->load();
+	}
 }
-
 
 void gkGameObject::postLoadImpl(void)
 {
@@ -188,7 +193,13 @@ void gkGameObject::unloadImpl(void)
     detachFromGroup();
 
     if (m_rigidBody)
+	{
         m_rigidBody->unload();
+	}
+	else if(m_character)
+	{
+		m_character->unload();
+	}
 
     destroyConstraints();
 
@@ -308,11 +319,16 @@ void gkGameObject::applyTransformState(const gkTransformState& newstate)
         m_node->setOrientation(newstate.rot);
         m_node->setScale(newstate.scl);
 
-        if (m_rigidBody)
+        if(m_rigidBody)
+		{
             m_rigidBody->setTransformState(newstate);
+		}
+		else if(m_character)
+		{
+			m_character->setTransformState(newstate);
+		}
     }
 }
-
 
 void gkGameObject::blendTransform(gkScalar blend)
 {
@@ -394,7 +410,13 @@ void gkGameObject::setPosition(const gkVector3 &v)
 
         // update the rigid body state
         if (m_rigidBody != 0)
+		{
             m_rigidBody->updateTransform();
+		}
+		else if(m_character)
+		{
+			m_character->updateTransform();
+		}
     }
 }
 
@@ -418,7 +440,13 @@ void gkGameObject::setOrientation(const gkQuaternion& q)
 
         // update the rigid body state
         if (m_rigidBody != 0)
+		{
             m_rigidBody->updateTransform();
+		}
+		else if(m_character)
+		{
+			m_character->updateTransform();
+		}
     }
 }
 
@@ -433,7 +461,13 @@ void gkGameObject::setOrientation(const gkEuler& v)
 
         // update the rigid body state
         if (m_rigidBody != 0)
+		{
             m_rigidBody->updateTransform();
+		}
+		else if(m_character)
+		{
+			m_character->updateTransform();
+		}
     }
 }
 
@@ -454,11 +488,15 @@ void gkGameObject::rotate(const gkQuaternion &dq, int tspace)
 
         // update the rigid body state
         if (m_rigidBody != 0)
+		{
             m_rigidBody->updateTransform();
+		}
+		else if(m_character)
+		{
+			m_character->updateTransform();
+		}
     }
 }
-
-
 
 void gkGameObject::yaw(const gkRadian &v, int tspace)
 {
@@ -469,9 +507,14 @@ void gkGameObject::yaw(const gkRadian &v, int tspace)
 
         // update the rigid body state
         if (m_rigidBody != 0)
+		{
             m_rigidBody->updateTransform();
+		}
+		else if(m_character)
+		{
+			m_character->updateTransform();
+		}
     }
-
 }
 
 void gkGameObject::pitch(const gkRadian &v, int tspace )
@@ -483,7 +526,13 @@ void gkGameObject::pitch(const gkRadian &v, int tspace )
 
         // update the rigid body state
         if (m_rigidBody != 0)
+		{
             m_rigidBody->updateTransform();
+		}
+		else if(m_character)
+		{
+			m_character->updateTransform();
+		}
     }
 }
 
@@ -496,10 +545,15 @@ void gkGameObject::roll(const gkRadian &v, int tspace)
 
         // update the rigid body state
         if (m_rigidBody != 0)
+		{
             m_rigidBody->updateTransform();
+		}
+		else if(m_character)
+		{
+			m_character->updateTransform();
+		}
     }
 }
-
 
 void gkGameObject::translate(const gkVector3 &dloc, int tspace)
 {
@@ -510,7 +564,13 @@ void gkGameObject::translate(const gkVector3 &dloc, int tspace)
 
         // update the rigid body state
         if (m_rigidBody != 0)
+		{
             m_rigidBody->updateTransform();
+		}
+		else if(m_character)
+		{
+			m_character->updateTransform();
+		}
     }
 }
 
@@ -524,13 +584,17 @@ void gkGameObject::scale(const gkVector3 &dscale)
     }
 }
 
-
 void gkGameObject::setLinearVelocity(const gkVector3 &v, int tspace)
 {
     if (m_rigidBody != 0)
+	{
         m_rigidBody->setLinearVelocity(v, tspace);
+	}
+	else if(m_character)
+	{
+		m_character->setVelocity(m_node->getOrientation() * v, gkEngine::getStepRate());
+	}
 }
-
 
 void gkGameObject::setAngularVelocity(const gkVector3& v, int tspace)
 {
@@ -639,4 +703,20 @@ void gkGameObject::setParent(gkGameObject* par)
 
 	}
 }
+
+gkObject* gkGameObject::getAttachedObject()
+{
+	if(m_rigidBody) 
+		return m_rigidBody;
+	else if(m_character) 
+		return m_character;
+	else 
+		return 0;
+}
+
+Ogre::AxisAlignedBox gkGameObject::getAabb() const
+{
+	return m_node->_getWorldAABB();
+}
+
 

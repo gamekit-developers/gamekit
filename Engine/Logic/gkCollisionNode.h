@@ -31,7 +31,7 @@
 #include "gkLogicNode.h"
 
 
-class gkRigidBody;
+class gkObject;
 class gkCollisionNode : public gkLogicNode
 {
 public:
@@ -64,7 +64,7 @@ public:
 
 private:
 
-	gkRigidBody* m_bBody;
+	gkObject* m_object;
 
 	btClock m_timer;
 };

@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -92,6 +92,37 @@ protected:
 
 };
 
+
+class gkCharacterLoader : public gkObject::Loader
+{
+public:
+
+    typedef utArray<btCollisionShape *> ShapeArray;
+
+public:
+
+    gkCharacterLoader(  gkBlendFile *fp, 
+                        Blender::Scene* sc, 
+                        Blender::Object *ob,
+                        gkGameObject *obj
+                        );
+    virtual ~gkCharacterLoader();
+
+    void load(gkObject *ob);
+
+protected:
+
+    void freeResources(void);
+
+    gkBlendFile*        m_file;
+    Blender::Object*    m_object;
+    Blender::Scene*     m_scene;
+    gkGameObject*       m_gameObj;
+
+    ShapeArray          m_shapes;
+    btTriangleMesh*     m_triMesh;
+
+};
 
 
 

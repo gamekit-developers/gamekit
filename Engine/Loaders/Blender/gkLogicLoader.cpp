@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -252,8 +252,8 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
         case SENS_COLLISION:
             {
                 // tell the gk world we want to collect collsion information
-                gkRigidBody *body = gobj->getAttachedBody();
-                if (body) body->setFlags(body->getFlags() | gkRigidBody::RBF_CONTACT_INFO);
+                gkObject *object = gobj->getAttachedObject();
+                if (object) object->setFlags(object->getFlags() | gkObject::RBF_CONTACT_INFO);
 
                 gkCollisionSensor *col = new gkCollisionSensor(gobj, lnk, bsen->name);
                 ls = col;

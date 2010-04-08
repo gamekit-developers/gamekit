@@ -116,6 +116,15 @@ public:
 	}
 
 	template<typename T>
+	T& getSocketRefValue(int idx) 
+	{ 
+		GK_ASSERT(idx < N_MAX_SOCKETS);
+
+		return static_cast<gkLogicSocket<T>*>(m_sockets[idx])->getRefValue(); 
+	}
+
+
+	template<typename T>
 	void setSocketValue(int idx, T data) 
 	{ 
 		GK_ASSERT(idx < N_MAX_SOCKETS);

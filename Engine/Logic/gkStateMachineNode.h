@@ -37,13 +37,11 @@ public:
 	enum
 	{
 		UPDATE,
-		CURRENT_STATE,
-		CURRENT_NAME
+		CURRENT_STATE
 	};
 
 	DECLARE_SOCKET_TYPE(UPDATE, bool);
 	DECLARE_SOCKET_TYPE(CURRENT_STATE, int);
-	DECLARE_SOCKET_TYPE(CURRENT_NAME, gkString);
 
     gkStateMachineNode(gkLogicTree *parent, size_t id);
 
@@ -53,8 +51,6 @@ public:
 	void update(gkScalar tick);
 
 	gkLogicSocket<bool>* addTransition(int from, int to, unsigned long ms = 0);
-
-	void addTranslation(int state, const gkString& name);
 
 private:
 
@@ -80,10 +76,6 @@ private:
 	typedef utHashTable<STATE, REACTION> TRANSITIONS;
 
 	TRANSITIONS m_transitions;
-
-	typedef utHashTable<STATE, gkString> TRANSLATION;
-
-	TRANSLATION m_translation;
 
 	btClock m_timer;
 

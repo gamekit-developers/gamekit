@@ -45,6 +45,7 @@
 #include "gkUserDefs.h"
 #include "gkTextManager.h"
 #include "gkNodeManager.h"
+#include "gkDynamicsWorld.h"
 
 
 #include "LinearMath/btQuickprof.h"
@@ -364,6 +365,13 @@ bool gkEnginePrivate::frameRenderingQueued(const FrameEvent& evt)
 {
     state.loop = 0;
     state.lock = false;
+
+	gkDynamicsWorld* world = scene->getDynamicsWorld();
+
+	if(world)
+	{
+		world->resetContacts();
+	}
 
     if (!state.init)
     {

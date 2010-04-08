@@ -35,6 +35,7 @@
 #include "gkSerialize.h"
 
 class gkRigidBody;
+class gkCharacter;
 
 
 // Base class for all game objects
@@ -104,8 +105,11 @@ public:
     void attachToGroupInstance(gkGameObjectGroupInstance *g);
 
     // physics
-    GK_INLINE void          attachRigidBody(gkRigidBody *body)  {m_rigidBody = body;}
-    GK_INLINE gkRigidBody*  getAttachedBody(void)               {return m_rigidBody;}
+    GK_INLINE void attachRigidBody(gkRigidBody *body) {m_rigidBody = body;}
+    //GK_INLINE gkRigidBody* getAttachedBody() {return m_rigidBody;}
+    GK_INLINE void attachCharacter(gkCharacter *character) {m_character = character;}
+    //GK_INLINE gkCharacter* getAttachedCharacter() {return m_character;}
+	gkObject* getAttachedObject();
 
 
     // variables
@@ -161,12 +165,12 @@ public:
     gkVector3   getLinearVelocity(void);
     gkVector3   getAngularVelocity(void);
 
-
-
     void attachLogic(gkLogicTree *tree);
 
     // Ogre base class for movables
     Ogre::MovableObject *getMovable(void);
+
+	virtual Ogre::AxisAlignedBox getAabb() const;
 
 protected:
 
@@ -202,6 +206,7 @@ protected:
 
     // Physics body instance
     gkRigidBody*                m_rigidBody;
+	gkCharacter*                m_character;
 
     VariableMap                 m_variables;
     ConstraintList              m_constraints;

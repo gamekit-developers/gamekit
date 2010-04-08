@@ -173,6 +173,8 @@ protected:
     virtual void loadImpl();
     virtual void unloadImpl();
 
+	void setShadows();
+
 private:
 
 	Ogre::AxisAlignedBox m_Limits;

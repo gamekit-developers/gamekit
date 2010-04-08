@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -270,9 +270,10 @@ void gkSceneObjectLoader::createRigidBody(gkDynamicsWorld *dyn, gkGameObject *ob
 
     if (bobj->gameflag & OB_GHOST)
     {
-        // exclude ghosts ?
-        return;
+        dyn->createCharacter(obj, new gkCharacterLoader(m_file, m_scene, bobj, obj));
     }
-
-    dyn->createRigidBody(obj, new gkRigidBodyLoader(m_file, m_scene, bobj, obj));
+	else
+	{
+	    dyn->createRigidBody(obj, new gkRigidBodyLoader(m_file, m_scene, bobj, obj));
+	}
 }

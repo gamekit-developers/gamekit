@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C & Erwin Coumans.
 
-    Contributor(s): none yet.
+    Contributor(s): Nestor Silveira.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -41,6 +41,7 @@
 #include "gkScene.h"
 #include "gkDynamicsWorld.h"
 #include "gkRigidBody.h"
+#include "gkCharacter.h"
 #include "gkAction.h"
 #include "gkActionChannel.h"
 #include "gkBlendFile.h"
@@ -56,6 +57,8 @@
 #include "btBulletDynamicsCommon.h"
 #include "BulletCollision/Gimpact/btGImpactShape.h"
 #include "BulletCollision/CollisionShapes/btScaledBvhTriangleMeshShape.h"
+#include "BulletCollision/CollisionDispatch/btGhostObject.h"
+
 
 using namespace Ogre;
 
@@ -102,8 +105,10 @@ void gkGameObjectLoader::load(gkObject *baseClass)
     props.orientation   = quat;
     props.scale         = scale;
 		
-	gkRigidBody* rb = ob->getAttachedBody();
-	props.isStatic = rb && rb->getBody() && rb->getBody()->isStaticObject();
+	gkObject* object = ob->getAttachedObject();
+	props.isStatic = object && object->getCollisionObject() && object->getCollisionObject()->isStaticObject();
+	props.isGhost = object && object->getCollisionObject() && 
+		(object->getCollisionObject()->getCollisionFlags() & btCollisionObject::CF_CHARACTER_OBJECT);
 
     ob->setActiveLayer((m_scene->lay & m_object->lay) != 0);
 
@@ -541,7 +546,7 @@ void gkRigidBodyLoader::load(gkObject *ob)
     worldTrans.getBasis().setEulerZYX(m_object->rot.x, m_object->rot.y, m_object->rot.z);
     btVector3 scale(m_object->size.x, m_object->size.y, m_object->size.z);
 
-	rigid->getObject()->getProperties().isGhost = m_object->gameflag & OB_GHOST ? true : false;
+	GK_ASSERT(!(m_object->gameflag & OB_GHOST));
 
     if ((m_object->gameflag & OB_RIGID_BODY) || (m_object->gameflag & OB_DYNAMIC))
     {
@@ -653,15 +658,16 @@ void gkRigidBodyLoader::load(gkObject *ob)
                 m_shapes.push_back(childShape);
 
 
-                if (scale[0] != 1. || scale[1] != 1. || scale[2] != 1.)
+/*                if (scale[0] != 1. || scale[1] != 1. || scale[2] != 1.)
                 {
                     colShape = new btScaledBvhTriangleMeshShape(childShape, scale);
                     m_shapes.push_back(colShape);
                 }
-                else
+                else*/
                     colShape = childShape;
 
                 colShape->setMargin(m_object->margin);
+				colShape->setLocalScaling(scale);
 
                 btVector3 inertia(0, 0, 0);
                 btRigidBody* colObj = new btRigidBody(0.f, 0, colShape, inertia);
@@ -683,5 +689,187 @@ void gkRigidBodyLoader::load(gkObject *ob)
             }
 
         }
+    }
+}
+
+////////////////////////////////////////////
+gkCharacterLoader::gkCharacterLoader(gkBlendFile *fp,
+                                     Blender::Scene* sc,
+                                     Blender::Object *ob,
+                                     gkGameObject *obj)
+:       m_file(fp), m_object(ob), m_scene(sc), m_gameObj(obj),
+        m_triMesh(0)
+{
+}
+
+
+gkCharacterLoader::~gkCharacterLoader()
+{
+    freeResources();
+}
+
+void gkCharacterLoader::freeResources(void)
+{
+    if (m_triMesh)
+        delete m_triMesh;
+
+    m_triMesh = 0;
+
+    for (UTsize i = 0; i < m_shapes.size(); ++i)
+        delete m_shapes[i];
+    m_shapes.clear();
+}
+
+
+void gkCharacterLoader::load(gkObject *ob)
+{
+    // start clean
+    freeResources();
+
+    btVector3 size = btVector3(1, 1, 1);
+    btVector3 pos = btVector3(0, 0, 0);
+
+    gkLoaderUtils ut(m_file->getInternalFile());
+    Blender::Material *mat = ut.getMaterial(m_object, 0);
+
+    if (m_object->type != OB_MESH)
+    {
+        // actor is for near & radar, so this needs updated
+        if (!(m_object->gameflag & OB_ACTOR))
+            return;
+
+        // use radius for bounding scale ?
+        size *= m_object->inertia;
+    }
+    else
+    {
+        Blender::Mesh *me = (Blender::Mesh*)m_object->data;
+
+        btVector3 v0, v1, v2, v3;
+
+        btVector3 minV(1e30f, 1e30f, 1e30f), maxV(-1e30f, -1e30f, -1e30f);
+        m_triMesh = new btTriangleMesh();
+
+        Blender::MFace *mf = me->mface;
+        Blender::MVert *mv = me->mvert;
+        for (int i = 0; i < me->totface && mf && mv; ++i, ++mf)
+        {
+            // no face just an edge
+            if (!mf->v3) continue;
+
+            v0 = btVector3(mv[mf->v1].co.x, mv[mf->v1].co.y, mv[mf->v1].co.z);
+            v1 = btVector3(mv[mf->v2].co.x, mv[mf->v2].co.y, mv[mf->v2].co.z);
+            v2 = btVector3(mv[mf->v3].co.x, mv[mf->v3].co.y, mv[mf->v3].co.z);
+
+            minV.setMin(v0); maxV.setMax(v0);
+            minV.setMin(v1); maxV.setMax(v1);
+            minV.setMin(v2); maxV.setMax(v2);
+
+            m_triMesh->addTriangle(v0, v1, v2);
+
+            if (mf->v4)
+            {
+                v3 = btVector3(mv[mf->v4].co.x, mv[mf->v4].co.y, mv[mf->v4].co.z);
+                minV.setMin(v3); maxV.setMax(v3);
+
+                m_triMesh->addTriangle(v0, v3, v2);
+            }
+        }
+
+        if (!m_triMesh->getNumTriangles())
+        {
+            delete m_triMesh;
+            m_triMesh = 0;
+        }
+
+        size = (maxV - minV) * 0.5f;
+        pos  = (minV + maxV) * 0.5f;
+    }
+
+
+    btVector3 localPos(pos.x(), pos.y(), pos.z());
+    btVector3 localSize(size.x(), size.y(), size.z());
+
+    btTransform worldTrans;
+    worldTrans.setIdentity();
+    worldTrans.setOrigin(btVector3(m_object->loc.x, m_object->loc.y, m_object->loc.z));
+
+    worldTrans.getBasis().setEulerZYX(m_object->rot.x, m_object->rot.y, m_object->rot.z);
+    btVector3 scale(m_object->size.x, m_object->size.y, m_object->size.z);
+
+    GK_ASSERT (m_object->gameflag & OB_GHOST);
+
+    btCollisionShape *colShape = 0;
+
+    switch (m_object->boundtype)
+    {
+    case OB_BOUND_BOX:
+        {
+            colShape = new btBoxShape(localSize);
+            break;
+        }
+    case OB_BOUND_CYLINDER:
+        {
+            colShape = new btCylinderShapeZ(localSize);
+            break;
+        }
+    case OB_BOUND_CONE:
+        {
+            btScalar radius = btMax(localSize[0], localSize[1]);
+            btScalar height = 2.f * localSize[2];
+            colShape = new btConeShapeZ(radius, height);
+            break;
+        }
+    case OB_BOUND_POLYT:
+        {
+            if (m_triMesh)
+            {
+                //better to approximate it, using btShapeHull
+                colShape = new btConvexTriangleMeshShape(m_triMesh);
+                break;
+            }
+
+            // fall to sphere
+        }
+    case OB_BOUND_POLYH:
+    case OB_BOUND_DYN_MESH:
+        {
+            if (m_triMesh)
+            {
+                btGImpactMeshShape* gimpact = new btGImpactMeshShape(m_triMesh);
+                gimpact->postUpdate();
+                colShape = gimpact;
+                break;
+            }
+            // fall to sphere
+        }
+    case OB_BOUND_SPHERE:
+        {
+            btScalar radius = localSize[localSize.maxAxis()];
+            colShape = new btSphereShape(radius);
+            break;
+        }
+    default:
+        {
+			GK_ASSERT(false);
+        }
+    };
+
+    if (colShape)
+    {
+        m_shapes.push_back(colShape);
+
+        colShape->setMargin(m_object->margin);
+        colShape->setLocalScaling(scale);
+
+		btPairCachingGhostObject* ghostObject = new btPairCachingGhostObject();
+
+		ghostObject->setCollisionShape(colShape);
+
+        ghostObject->setWorldTransform(worldTrans);
+
+	    gkCharacter* character = static_cast<gkCharacter*>(ob);
+
+        character->_reinstanceCharacter(ghostObject);
     }
 }

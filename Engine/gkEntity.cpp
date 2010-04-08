@@ -83,7 +83,16 @@ void gkEntity::loadImpl(void)
     if (!m_startPose.empty())
         _resetPose();
 
-    m_entity->setCastShadows(m_entityProps.casts);
+	if(m_baseProps.isStatic)
+	{
+		//(For now) Disable shadows for static objects
+		m_entity->setCastShadows(false);
+	}
+	else
+	{
+		m_entity->setCastShadows(m_entityProps.casts);
+	}
+
     m_node->attachObject(m_entity);
 }
 

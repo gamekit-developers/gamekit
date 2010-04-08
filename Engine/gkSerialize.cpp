@@ -43,7 +43,7 @@ gkCameraProperties::gkCameraProperties()
 gkEntityProperties::gkEntityProperties()
 :       source(""),
         prefab(-1),
-        casts(false),
+        casts(true),
         group(false)
 {
 }

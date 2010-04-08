@@ -97,14 +97,18 @@ void gkPickNode::CreatePick()
 	
 	gkVector3 hitPointWorld;
 	
-	m_pickedBody = gkUtils::PickBody(ray, hitPointWorld);
+	btCollisionObject* pCol = gkUtils::PickBody(ray, hitPointWorld);
 
-	if(m_pickedBody)
+	if(pCol)
 	{
-		btRigidBody* body = m_pickedBody->getBody();
+		gkObject* pObj = static_cast<gkObject*>(pCol->getUserPointer());;
 
-		if (!(body->isStaticObject() || body->isKinematicObject()))
+		m_pickedBody = dynamic_cast<gkRigidBody*>(pObj);
+
+		if (m_pickedBody && !(pCol->isStaticObject() || pCol->isKinematicObject()))
 		{
+			btRigidBody* body = m_pickedBody->getBody();
+
 			m_angularFactor = gkVector3(body->getAngularFactor());
 
 			if(GET_SOCKET_VALUE(DISABLE_ROTATION))

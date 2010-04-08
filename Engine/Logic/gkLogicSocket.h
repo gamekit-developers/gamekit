@@ -140,6 +140,21 @@ public:
         return m_data;
     }
 
+    T& getRefValue()
+    {
+        if(m_from)
+		{
+			gkLogicSocket<T>* sock = dynamic_cast<gkLogicSocket<T>*>(m_from);
+
+			GK_ASSERT(sock && "Types have to match");
+
+			return sock->getRefValue();
+		}
+        
+        return m_data;
+    }
+
+
 private:
 
 	T m_data;
@@ -164,6 +179,9 @@ gkLogicSocket<T>* getSocket(gkILogicSocket* pSock)
 
 #define GET_SOCKET_VALUE( name )      \
 	getSocketValue< _SOCKET_TYPE_##name > ( (name) )	\
+
+#define GET_SOCKET_REF_VALUE( name )      \
+	getSocketRefValue< _SOCKET_TYPE_##name > ( (name) )	\
 
 #define GET_SOCKET( name )      \
 	getSocket< _SOCKET_TYPE_##name > ( (name) )	\
