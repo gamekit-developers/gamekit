@@ -409,14 +409,14 @@ void gkScene::update(gkScalar tickRate)
     if (!isLoaded())
         return;
 
+    // update simulation
+    if (m_physicsWorld) m_physicsWorld->step(tickRate);
+
     // update logic bricks
     gkLogicManager::getSingleton().update(tickRate);
 
     // update node trees (may be clashes with bricks)
     gkNodeManager::getSingleton().update(tickRate);
-
-    // update simulation
-    if (m_physicsWorld) m_physicsWorld->step(tickRate);
 
     // update script callbacks
     gkLuaManager::getSingleton().update(tickRate);
