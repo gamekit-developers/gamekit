@@ -87,12 +87,36 @@ namespace momoAnimation
 	gkString WALL_FLIP = "Momo_WallFlip";
 }
 
+namespace ratState
+{
+	enum STATES
+	{
+		IDLE
+	};
+}
+
+namespace ratAnimation
+{
+	gkString BEING_HIT = "rat_beinghit";
+	gkString BLINK = "rat_blink";
+	gkString DEATH = "rat_death";
+	gkString HIT = "rat_hit";
+	gkString IDLE = "rat_idle";
+	gkString RUN = "rat_run";
+	gkString STOP = "rat_stop";
+	gkString WALK = "rat_walk";
+}
+
+
 namespace object
 {
 	gkString PLAYER = "Player";
 	gkString MESH_MOMO = "MeshMomo";
 	gkString CAMERA = "View";
 	gkString PLANE = "Plane";
+
+	gkString RAT_PLAYER = "RatPlayer";
+	gkString MESH_RAT = "rat";
 }
 
 namespace material
@@ -113,8 +137,9 @@ public:
     OgreKit(const gkString &blend) 
 		: m_blend(blend), m_tree(0), m_ctrlKeyNode(0), m_shiftKeyNode(0),
 		m_wKeyNode(0), m_sKeyNode(0), m_mouseNode(0), m_leftMouseNode(0), m_rightMouseNode(0),
-		m_playerSetter(0), m_meshMomoSetter(0), m_cameraSetter(0), m_animNode(0), m_momoCameraArcBall(0),
-		m_momoGrab(0), m_stateMachine(0)
+		m_playerSetter(0), m_meshMomoSetter(0), m_ratPlayerSetter(0), m_meshRatSetter(0), 
+		m_cameraSetter(0), m_animNode(0), m_animRatNode(0), m_momoCameraArcBall(0),
+		m_momoGrab(0), m_stateMachine(0), m_stateRatMachine(0)
 	{
         gkPath path = "./data/OgreKitStartup.cfg";
 
@@ -158,6 +183,8 @@ public:
 		CreateCameraLogic();
 
 		CreateMomoLogic();
+
+		CreateRatLogic();
 
 		CreateDebugLogic();
 
@@ -223,6 +250,14 @@ public:
 		m_playerSetter->getUPDATE()->link(pulse->getOUTPUT());
 		m_playerSetter->getINPUT()->setValue(object::PLAYER);
 
+		m_ratPlayerSetter = m_tree->createNode<gkObjectSetterNode>();
+		m_ratPlayerSetter->getUPDATE()->link(pulse->getOUTPUT());
+		m_ratPlayerSetter->getINPUT()->setValue(object::RAT_PLAYER);
+
+		m_meshRatSetter = m_tree->createNode<gkObjectSetterNode>();
+		m_meshRatSetter->getUPDATE()->link(pulse->getOUTPUT());
+		m_meshRatSetter->getINPUT()->setValue(object::MESH_RAT);
+
 		gkDisableDeactivationNode* disableDeactivationForMomo = m_tree->createNode<gkDisableDeactivationNode>();
 		disableDeactivationForMomo->getUPDATE()->link(pulse->getOUTPUT());
 		disableDeactivationForMomo->getTARGET()->link(m_playerSetter->getOUTPUT());
@@ -237,6 +272,8 @@ public:
 
 		m_animNode = m_tree->createNode<gkAnimationNode>();
 
+		m_animRatNode = m_tree->createNode<gkAnimationNode>();
+
 		CreateCommomMomoCameraArcBallLogic();
 
 		m_stateMachine = m_tree->createNode<gkStateMachineNode>();
@@ -244,6 +281,10 @@ public:
 		CreateCommonMomoGrabLogic();
 
 		CreateMomoStateMachine();
+
+		m_stateRatMachine = m_tree->createNode<gkStateMachineNode>();
+
+		CreateRatStateMachine();
 	}
 
 	void CreateCommomMomoCameraArcBallLogic()
@@ -355,9 +396,19 @@ public:
 			m_animNode->getNOT_HAS_REACHED_END()->link(m_stateMachine->addTransition(momoState::THROW_WITH, momoState::THROW_WITH));
 		}
 
-		m_stateMachine->addTransition(momoState::IDLE_NASTY, momoState::IDLE_CAPOEIRA, 15000);
-		m_stateMachine->addTransition(momoState::IDLE_CAPOEIRA, momoState::IDLE_NASTY, 10000);
+		m_stateMachine->addTransition(momoState::IDLE_NASTY, momoState::IDLE_CAPOEIRA, 70000);
+		m_stateMachine->addTransition(momoState::IDLE_CAPOEIRA, momoState::IDLE_NASTY, 11000);
 	}
+
+	void CreateRatStateMachine()
+	{
+		m_stateRatMachine->getUPDATE()->setValue(true);
+
+		// Initial state
+		m_stateRatMachine->getCURRENT_STATE()->setValue(ratState::IDLE); 
+
+	}
+
 
 	void CreateMomoLogic()
 	{
@@ -368,6 +419,11 @@ public:
 		CreateMomoLoadUnloadLogic();
 
 		CreateMomoDustTrailLogic();
+	}
+
+	void CreateRatLogic()
+	{
+		CreateRatAnimationLogic();
 	}
 
 	void CreateCommonMomoGrabLogic()
@@ -622,6 +678,23 @@ public:
 		m_animNode->getANIM_NAME()->link(mapNode->getOUTPUT());
 	}
 
+	void CreateRatAnimationLogic()
+	{
+		typedef gkMapNode<int, gkString> MAP_NODE;
+		
+		MAP_NODE* mapNode = m_tree->createNode< MAP_NODE >();
+		mapNode->getINPUT()->link(m_stateRatMachine->getCURRENT_STATE());
+		
+		MAP_NODE::MAP mapping;
+		mapping[ratState::IDLE] = ratAnimation::IDLE;
+
+		mapNode->getMAPPING()->setValue(mapping);
+
+		m_animRatNode->getTARGET()->link(m_meshRatSetter->getOUTPUT());
+		m_animRatNode->getANIM_NAME()->link(mapNode->getOUTPUT());
+	}
+
+
 	void CreateCameraLogic()
 	{
         CreateCursorCameraArcBallLogic();
@@ -746,15 +819,23 @@ private:
 
 	gkObjectSetterNode* m_meshMomoSetter;
 
+	gkObjectSetterNode* m_ratPlayerSetter;
+	
+	gkObjectSetterNode* m_meshRatSetter;
+
 	gkObjectSetterNode* m_cameraSetter;
 
 	gkArcBallNode* m_momoCameraArcBall;
 
 	gkAnimationNode* m_animNode;
 
+	gkAnimationNode* m_animRatNode;
+
 	gkGrabNode* m_momoGrab;
 
 	gkStateMachineNode* m_stateMachine;
+
+	gkStateMachineNode* m_stateRatMachine;
 };
 
 int main(int argc, char **argv)

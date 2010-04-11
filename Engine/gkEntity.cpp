@@ -83,9 +83,9 @@ void gkEntity::loadImpl(void)
     if (!m_startPose.empty())
         _resetPose();
 
-	if(m_baseProps.isStatic)
+	if(m_baseProps.isStatic || m_baseProps.isGhost)
 	{
-		//(For now) Disable shadows for static objects
+		//(For now) Disable shadows for static objects & ghost objects
 		m_entity->setCastShadows(false);
 	}
 	else

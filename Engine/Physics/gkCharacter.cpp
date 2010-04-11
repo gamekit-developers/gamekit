@@ -86,7 +86,7 @@ void gkCharacter::loadImpl(void)
 
 			m_character->setUpAxis(2);
 
-			dyn->addCollisionObject(m_ghostObject, btBroadphaseProxy::CharacterFilter, btBroadphaseProxy::StaticFilter|btBroadphaseProxy::DefaultFilter);
+			dyn->addCollisionObject(m_ghostObject, btBroadphaseProxy::CharacterFilter);
 
 			dyn->addAction(this);
 
