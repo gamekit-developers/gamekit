@@ -78,6 +78,8 @@ public:
 		OUTPUT,
 		X,
 		Y,
+		RESET,
+		HAS_OBJ,
 		HIT_POINT
 	};
 
@@ -85,6 +87,8 @@ public:
 	DECLARE_SOCKET_TYPE(OUTPUT, gkGameObject*);
 	DECLARE_SOCKET_TYPE(X, gkScalar);
 	DECLARE_SOCKET_TYPE(Y, gkScalar);
+	DECLARE_SOCKET_TYPE(RESET, bool);
+	DECLARE_SOCKET_TYPE(HAS_OBJ, bool);
 	DECLARE_SOCKET_TYPE(HIT_POINT, gkVector3);
 
 	enum INPUT_TYPE

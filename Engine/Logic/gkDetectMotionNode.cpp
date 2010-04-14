@@ -24,69 +24,60 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkStateMachineNode_h_
-#define _gkStateMachineNode_h_
+#include "gkDetectMotionNode.h"
+#include "gkLogger.h"
+#include "gkEngine.h"
+#include "gkScene.h"
+#include "gkGameObject.h"
 
-#include "gkLogicNode.h"
-#include "LinearMath/btQuickprof.h"
-
-class gkStateMachineNode : public gkLogicNode
+gkDetectMotionNode::gkDetectMotionNode(gkLogicTree *parent, size_t id) 
+: gkLogicNode(parent, id),
+m_detected(true),
+m_detections(-1)
 {
-public:
+	ADD_ISOCK(UPDATE, false);
+	ADD_OSOCK(DETECTED, true);
+	ADD_OSOCK(NOT_DETECTED, false);
+}
 
-	enum
+bool gkDetectMotionNode::evaluate(gkScalar tick)
+{
+	return GET_SOCKET_VALUE(UPDATE) && m_detections;
+}
+
+void gkDetectMotionNode::update(gkScalar tick)
+{
+	gkScene* pScene = gkEngine::getSingleton().getActiveScene();
+
+	GK_ASSERT(pScene);
+
+	if(pScene->hasChanged())
 	{
-		UPDATE,
-		FORCE_STATUS,
-		CURRENT_STATE
-	};
-
-	DECLARE_SOCKET_TYPE(UPDATE, bool);
-	DECLARE_SOCKET_TYPE(FORCE_STATUS, int);
-	DECLARE_SOCKET_TYPE(CURRENT_STATE, int);
-
-    gkStateMachineNode(gkLogicTree *parent, size_t id);
-
-	~gkStateMachineNode();
-
-	bool evaluate(gkScalar tick);
-	void update(gkScalar tick);
-
-	gkLogicSocket<bool>* addTransition(int from, int to, unsigned long ms = 0);
-
-private:
-
-	typedef utPointerHashKey EVENT;
-	typedef utIntHashKey STATE;
-
-	struct Data
-	{
-		unsigned long m_ms;
-		int m_state;
-
-		Data() : m_ms(0), m_state(0) {}
-
-		Data(unsigned long ms, int state) 
-			: m_ms(ms), m_state(state)
+		if(!m_detected)
 		{
+			m_detected = true;
+
+			gkPrintf("Motion detected in scene");
+			SET_SOCKET_VALUE(DETECTED, true);
+			SET_SOCKET_VALUE(NOT_DETECTED, false);
+			updateDetecttions();
 		}
-	};
+	}
+	else if(m_detected)
+	{
+		m_detected = false;
 
-	typedef utHashTable<EVENT, Data > REACTION;
-	typedef utHashTableIterator<REACTION> REACTION_ITERATOR;
+		gkPrintf("Not motion detected in scene");
+		SET_SOCKET_VALUE(DETECTED, false);
+		SET_SOCKET_VALUE(NOT_DETECTED, true);
+		updateDetecttions();
+	}	
+}
 
-	typedef utHashTable<STATE, REACTION> TRANSITIONS;
-
-	TRANSITIONS m_transitions;
-
-	btClock m_timer;
-
-	int m_currentState;
-
-	typedef utArray<gkILogicSocket*> EVENTS;
-
-	EVENTS m_events;
-};
-
-
-#endif//_gkStateMachineNode_h_
+void gkDetectMotionNode::updateDetecttions()
+{
+	if(m_detections != -1)
+	{
+		--m_detections;
+	}
+}

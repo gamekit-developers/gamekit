@@ -24,69 +24,63 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkStateMachineNode_h_
-#define _gkStateMachineNode_h_
+#ifndef _gkFindPathNode_h_
+#define _gkFindPathNode_h_
 
 #include "gkLogicNode.h"
-#include "LinearMath/btQuickprof.h"
 
-class gkStateMachineNode : public gkLogicNode
+class dtNavMesh;
+class gkPhysicsDebug;
+
+class gkFindPathNode : public gkLogicNode
 {
 public:
 
 	enum
 	{
 		UPDATE,
-		FORCE_STATUS,
-		CURRENT_STATE
+		NAV_MESH,
+		MAX_PATH_POLYS,
+		START_POS,
+		END_POS,
+		POLY_PICK_EXT,
+		SHOW_PATH,
+		SHOW_PATH_OFFSET,
+		PATH,
+		PATH_FOUND
 	};
 
+	typedef utArray<gkVector3> PATH_POINTS;
+
 	DECLARE_SOCKET_TYPE(UPDATE, bool);
-	DECLARE_SOCKET_TYPE(FORCE_STATUS, int);
-	DECLARE_SOCKET_TYPE(CURRENT_STATE, int);
+	DECLARE_SOCKET_TYPE(NAV_MESH, dtNavMesh*);
+	DECLARE_SOCKET_TYPE(MAX_PATH_POLYS, int);
+	DECLARE_SOCKET_TYPE(START_POS, gkVector3);
+	DECLARE_SOCKET_TYPE(END_POS, gkVector3);
+	DECLARE_SOCKET_TYPE(POLY_PICK_EXT, gkVector3);
+	DECLARE_SOCKET_TYPE(SHOW_PATH, bool);
+	DECLARE_SOCKET_TYPE(SHOW_PATH_OFFSET, gkVector3);
+	
 
-    gkStateMachineNode(gkLogicTree *parent, size_t id);
+	DECLARE_SOCKET_TYPE(PATH, PATH_POINTS*);
+	DECLARE_SOCKET_TYPE(PATH_FOUND, bool);
 
-	~gkStateMachineNode();
+    gkFindPathNode(gkLogicTree *parent, size_t id);
+
+	~gkFindPathNode();
 
 	bool evaluate(gkScalar tick);
 	void update(gkScalar tick);
 
-	gkLogicSocket<bool>* addTransition(int from, int to, unsigned long ms = 0);
+private:
+
+	void findPath();
+	void showPath();
 
 private:
 
-	typedef utPointerHashKey EVENT;
-	typedef utIntHashKey STATE;
-
-	struct Data
-	{
-		unsigned long m_ms;
-		int m_state;
-
-		Data() : m_ms(0), m_state(0) {}
-
-		Data(unsigned long ms, int state) 
-			: m_ms(ms), m_state(state)
-		{
-		}
-	};
-
-	typedef utHashTable<EVENT, Data > REACTION;
-	typedef utHashTableIterator<REACTION> REACTION_ITERATOR;
-
-	typedef utHashTable<STATE, REACTION> TRANSITIONS;
-
-	TRANSITIONS m_transitions;
-
-	btClock m_timer;
-
-	int m_currentState;
-
-	typedef utArray<gkILogicSocket*> EVENTS;
-
-	EVENTS m_events;
+	gkPhysicsDebug* m_debug;
+	PATH_POINTS m_path;
 };
 
-
-#endif//_gkStateMachineNode_h_
+#endif//_gkFindPathNode_h_

@@ -113,14 +113,16 @@ public:
 
     // notifications
     GK_INLINE void notifyObjectMoved(gkGameObject *gobject) { m_transformObjects.push_back(gobject); }
+	
     void notifyObjectLoaded(gkGameObject *gobject);
     void notifyObjectUnloaded(gkGameObject *gobject);
     void notifyObjectUpdate(gkGameObject *gobject);
 
-
     bool            hasObject(const gkHashedString& ob);
     bool            hasObject(gkGameObject *ob);
     gkGameObject*   getObject(const gkHashedString& name);
+
+	bool hasChanged() const { return m_hasChanged; }
 
     // Translates to a blank scene node or empty object.
     // loader is for creating custom loading schemes based
@@ -194,6 +196,8 @@ protected:
 private:
 
 	Ogre::AxisAlignedBox m_Limits;
+
+	bool m_hasChanged;
 };
 
 #endif//_gkSceneObject_h_

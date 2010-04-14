@@ -24,69 +24,46 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkStateMachineNode_h_
-#define _gkStateMachineNode_h_
+#ifndef _gkDetectMotionNode_h_
+#define _gkDetectMotionNode_h_
 
 #include "gkLogicNode.h"
-#include "LinearMath/btQuickprof.h"
 
-class gkStateMachineNode : public gkLogicNode
+class gkGameObject;
+
+class gkDetectMotionNode : public gkLogicNode
 {
 public:
 
 	enum
 	{
 		UPDATE,
-		FORCE_STATUS,
-		CURRENT_STATE
+		DETECTED,
+		NOT_DETECTED
 	};
 
 	DECLARE_SOCKET_TYPE(UPDATE, bool);
-	DECLARE_SOCKET_TYPE(FORCE_STATUS, int);
-	DECLARE_SOCKET_TYPE(CURRENT_STATE, int);
+	DECLARE_SOCKET_TYPE(DETECTED, bool);
+	DECLARE_SOCKET_TYPE(NOT_DETECTED, bool);
 
-    gkStateMachineNode(gkLogicTree *parent, size_t id);
+    gkDetectMotionNode(gkLogicTree *parent, size_t id);
 
-	~gkStateMachineNode();
+	virtual ~gkDetectMotionNode() {}
 
 	bool evaluate(gkScalar tick);
 	void update(gkScalar tick);
 
-	gkLogicSocket<bool>* addTransition(int from, int to, unsigned long ms = 0);
+	void setDetections(int n) {m_detections = n;}
 
 private:
 
-	typedef utPointerHashKey EVENT;
-	typedef utIntHashKey STATE;
+	void updateDetecttions();
 
-	struct Data
-	{
-		unsigned long m_ms;
-		int m_state;
+private:
 
-		Data() : m_ms(0), m_state(0) {}
+	bool m_detected;
 
-		Data(unsigned long ms, int state) 
-			: m_ms(ms), m_state(state)
-		{
-		}
-	};
-
-	typedef utHashTable<EVENT, Data > REACTION;
-	typedef utHashTableIterator<REACTION> REACTION_ITERATOR;
-
-	typedef utHashTable<STATE, REACTION> TRANSITIONS;
-
-	TRANSITIONS m_transitions;
-
-	btClock m_timer;
-
-	int m_currentState;
-
-	typedef utArray<gkILogicSocket*> EVENTS;
-
-	EVENTS m_events;
+	int m_detections;
 };
 
-
-#endif//_gkStateMachineNode_h_
+#endif//_gkDetectMotionNode_h_

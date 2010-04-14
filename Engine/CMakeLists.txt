@@ -121,9 +121,12 @@ set(NLogic_SOURCE
     Logic/gkAnimationNode.cpp
     Logic/gkButtonNode.cpp
     Logic/gkCollisionNode.cpp
+    Logic/gkDetectMotionNode.cpp
     Logic/gkExitNode.cpp
     Logic/gkExpressionNode.cpp
     Logic/gkFallTestNode.cpp
+    Logic/gkFindPathNode.cpp
+    Logic/gkFollowPathNode.cpp
     Logic/gkGrabNode.cpp
     Logic/gkGroupNode.cpp
     Logic/gkNodeManager.cpp
@@ -156,9 +159,12 @@ set(NLogic_HEADER
     Logic/gkAnimationNode.h
     Logic/gkButtonNode.h
     Logic/gkCollisionNode.h
+    Logic/gkDetectMotionNode.h
     Logic/gkExitNode.h
     Logic/gkExpressionNode.h
     Logic/gkFallTestNode.h
+    Logic/gkFindPathNode.h
+    Logic/gkFollowPathNode.h
     Logic/gkGrabNode.h
     Logic/gkGroupNode.h
     Logic/gkIfNode.h

@@ -70,7 +70,8 @@ gkObjectSetterNode::gkObjectSetterNode(gkLogicTree *parent, size_t id)
 	ADD_OSOCK(OUTPUT, 0);
 	ADD_ISOCK(X, 0);
 	ADD_ISOCK(Y, 0);
-
+	ADD_ISOCK(RESET, false);
+	ADD_OSOCK(HAS_OBJ, false);
 	ADD_OSOCK(HIT_POINT, gkVector3::ZERO);
 }
 
@@ -78,30 +79,34 @@ void gkObjectSetterNode::update(gkScalar tick)
 {
 	gkGameObject* pObj = 0;
 
-	if(m_type == NAME)
+	if(!GET_SOCKET_VALUE(RESET))
 	{
-		gkScene* pScene = gkEngine::getSingleton().getActiveScene();
-
-		pObj = pScene->getObject(GET_SOCKET_VALUE(INPUT));
-	}
-	else
-	{
-		GK_ASSERT(m_type == SCREEN_XY && "Invalid type");
-
-		Ogre::Ray ray = gkUtils::CreateCameraRay(GET_SOCKET_VALUE(X), GET_SOCKET_VALUE(Y));
-
-		gkVector3 rayPoint;
-
-		btCollisionObject* pCol = gkUtils::PickBody(ray, rayPoint);
-
-		if(pCol)
+		if(m_type == NAME)
 		{
-			SET_SOCKET_VALUE(HIT_POINT, rayPoint);
-	
-			pObj = static_cast<gkObject*>(pCol->getUserPointer())->getObject();
+			gkScene* pScene = gkEngine::getSingleton().getActiveScene();
+
+			pObj = pScene->getObject(GET_SOCKET_VALUE(INPUT));
+		}
+		else
+		{
+			GK_ASSERT(m_type == SCREEN_XY && "Invalid type");
+
+			Ogre::Ray ray = gkUtils::CreateCameraRay(GET_SOCKET_VALUE(X), GET_SOCKET_VALUE(Y));
+
+			gkVector3 rayPoint;
+
+			btCollisionObject* pCol = gkUtils::PickBody(ray, rayPoint);
+
+			if(pCol)
+			{
+				SET_SOCKET_VALUE(HIT_POINT, rayPoint);
+		
+				pObj = static_cast<gkObject*>(pCol->getUserPointer())->getObject();
+			}
 		}
 	}
 
+	SET_SOCKET_VALUE(HAS_OBJ, pObj ? true : false);
 	SET_SOCKET_VALUE(OUTPUT, pObj);
 }
 

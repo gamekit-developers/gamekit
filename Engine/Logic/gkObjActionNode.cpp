@@ -71,6 +71,16 @@ gkLinearVelNode::gkLinearVelNode(gkLogicTree *parent, size_t id)
     ADD_ISOCK(X, 0);
     ADD_ISOCK(Y, 0);
     ADD_ISOCK(Z, 0);
+	ADD_OSOCK(MOTION, false);
+}
+
+bool gkLinearVelNode::evaluate(gkScalar tick)
+{
+	bool motion = gkObjActionNode::evaluate(tick);
+
+	SET_SOCKET_VALUE(MOTION, motion);
+
+	return motion;
 }
 
 void gkLinearVelNode::update(gkScalar tick)

@@ -81,16 +81,19 @@ public:
 	{
 		X = MAX_SOCKETS,
 		Y,
-		Z
+		Z,
+		MOTION
 	};
 
 	DECLARE_SOCKET_TYPE(X, gkScalar);
 	DECLARE_SOCKET_TYPE(Y, gkScalar);
 	DECLARE_SOCKET_TYPE(Z, gkScalar);
+	DECLARE_SOCKET_TYPE(MOTION, bool);
 
 	gkLinearVelNode(gkLogicTree *parent, size_t id);
 	~gkLinearVelNode() {}
 
+	bool evaluate(gkScalar tick);
 	void update(gkScalar tick);
 };
 

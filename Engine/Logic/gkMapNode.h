@@ -39,7 +39,8 @@ public:
 		UPDATE,
 		INPUT,
 		MAPPING,
-		OUTPUT
+		OUTPUT,
+		HAS_OUTPUT
 	};
 
 	typedef typename std::map<K, V> MAP;
@@ -48,6 +49,8 @@ public:
 	DECLARE_SOCKET_TYPE(MAPPING, MAP);
 	DECLARE_SOCKET_TYPE(INPUT, K);
 	DECLARE_SOCKET_TYPE(OUTPUT, V);
+	DECLARE_SOCKET_TYPE(HAS_OUTPUT, bool);
+	
 
     gkMapNode(gkLogicTree *parent, size_t id)
 		: gkLogicNode(parent, id)
@@ -56,6 +59,7 @@ public:
 		ADD_ISOCK(INPUT, K());
 		ADD_ISOCK(MAPPING, MAP());
 		ADD_OSOCK(OUTPUT, V());
+		ADD_OSOCK(HAS_OUTPUT, false);
 	}
 
 	virtual ~gkMapNode() {}
@@ -75,11 +79,16 @@ public:
 
 			typename MAP::const_iterator it = mapping.find(key);
 
-			GK_ASSERT(it != mapping.end() && "*** INPUT NOT FOUND IN THE MAP ***");
-
-			SET_SOCKET_VALUE(OUTPUT, it->second);
-
-			gkLogMessage(it->second);
+			if(it == mapping.end())
+			{
+				SET_SOCKET_VALUE(HAS_OUTPUT, false);
+			}
+			else
+			{
+				SET_SOCKET_VALUE(OUTPUT, it->second);
+				
+				SET_SOCKET_VALUE(HAS_OUTPUT, true);
+			}
 
 			m_currentKey = key;
 		}

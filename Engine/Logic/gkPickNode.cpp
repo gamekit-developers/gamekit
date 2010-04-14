@@ -101,7 +101,7 @@ void gkPickNode::CreatePick()
 
 	if(pCol)
 	{
-		gkObject* pObj = static_cast<gkObject*>(pCol->getUserPointer());;
+		gkObject* pObj = static_cast<gkObject*>(pCol->getUserPointer());
 
 		m_pickedBody = dynamic_cast<gkRigidBody*>(pObj);
 

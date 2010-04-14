@@ -52,7 +52,7 @@ using namespace Ogre;
 
 gkScene::gkScene(const gkString& name, gkObject::Loader *loader)
 :       gkObject(name, loader), m_manager(0), m_startCam(0),
-        m_viewport(0), m_baseProps(), m_physicsWorld(0)
+        m_viewport(0), m_baseProps(), m_physicsWorld(0), m_hasChanged(false)
 {
 }
 
@@ -460,7 +460,13 @@ void gkScene::notifyObjectUnloaded(gkGameObject *gobject)
 	}
 }
 
-
+void gkScene::notifyObjectUpdate(gkGameObject *gobject)
+{
+	if(!gobject->getProperties().isGhost)
+	{
+		m_hasChanged = true;
+	}
+}
 
 void gkScene::synchronizeMotion(gkScalar blend)
 {
@@ -490,6 +496,15 @@ void gkScene::update(gkScalar tickRate)
 {
     if (!isLoaded())
         return;
+
+	m_hasChanged = false;
+    gkGameObjectHashMapIterator it(m_objects);
+    while (it.hasMoreElements()) 
+	{
+        gkGameObject* obptr = it.getNext().second;
+		obptr->resetMotionDetection();
+    }
+
 
     // update simulation
     if (m_physicsWorld) m_physicsWorld->step(tickRate);

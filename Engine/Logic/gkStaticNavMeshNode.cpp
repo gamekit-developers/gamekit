@@ -50,6 +50,206 @@
 #include "btBulletDynamicsCommon.h"
 #include "BulletCollision/CollisionShapes/btShapeHull.h"
 
+#include "LinearMath/btTransform.h"
+#include "BulletCollision/CollisionShapes/btTriangleCallback.h"
+
+#include <iostream>
+#include <fstream>
+
+
+class gkNavMeshLoader : public btTriangleCallback
+{
+public:
+	gkNavMeshLoader() : m_debug(0)//, os(L"momo.obj")
+	{
+		//gkScene* pScene = gkEngine::getSingleton().getActiveScene();
+
+		//GK_ASSERT(pScene);
+
+		//m_debug = new gkPhysicsDebug(pScene->getDynamicsWorld());
+	}
+
+	~gkNavMeshLoader()
+	{
+		//delete m_debug;
+	}
+
+
+	bool load(gkGameObject* pObj)
+	{
+		gkObject* pObject = pObj->getAttachedObject();
+
+		if(pObject)
+		{
+			AddCollisionObj(pObject);
+		}
+
+		return true;
+	}
+
+	inline const float* getVerts() const { return &m_verts.ptr()->x; }
+	inline const float* getNormals() const { return &m_normals.ptr()->x; }
+	inline const int* getTris() const { return m_tris.ptr(); }
+	inline int getVertCount() const { return m_verts.size(); }
+	inline int getTriCount() const { return m_tris.size()/3; }
+
+	void processTriangle(btVector3* triangle,int partId, int triangleIndex)
+	{
+		btVector3 v1 = m * triangle[0];
+		btVector3 v2 = m * triangle[1];
+		btVector3 v3 = m * triangle[2];
+
+		gkVector3 vv1(v1.x(), v1.z(), v1.y());
+		gkVector3 vv2(v2.x(), v2.z(), v2.y());
+		gkVector3 vv3(v3.x(), v3.z(), v3.y());
+
+		addTriangle(vv1, vv2, vv3);
+
+	//	m_debug->drawLine(v1, v2, btVector3(1,1,0));
+	//	m_debug->drawLine(v2, v3, btVector3(1,1,0));
+	//	m_debug->drawLine(v3, v1, btVector3(1,1,0));
+	}
+
+private:
+	
+	void addTriangle(const gkVector3& v1, const gkVector3& v2, const gkVector3& v3)
+	{
+		size_t n = m_verts.size();
+
+		int a = n; 
+		int b = n+1;
+		int c = n+2;
+
+		m_verts.push_back(v1);
+		m_verts.push_back(v2);
+		m_verts.push_back(v3);
+
+		m_tris.push_back(a);
+		m_tris.push_back(b);
+		m_tris.push_back(c);
+
+		gkVector3 normal((v3-v1).crossProduct(v2-v1)); 
+		normal.normalise();
+
+		m_normals.push_back(normal);
+
+		m_tris.push_back(c);
+		m_tris.push_back(b);
+		m_tris.push_back(a);
+
+		m_normals.push_back(-normal);
+	/*
+		os << "v " << v1.x << " " << v1.y << " " << v1.z << "\n";
+		os << "v " << v2.x << " " << v2.y << " " << v2.z << "\n";
+		os << "v " << v3.x << " " << v3.y << " " << v3.z << "\n";
+
+		a++; b++; c++;
+		os << "f " << a  << " " << b << " " << c << "\n";
+		os << "f " << c  << " " << b << " " << a << "\n";
+	*/
+	}
+
+	void AddCollisionObj(gkObject* pObject)
+	{
+		gkScene* pScene = gkEngine::getSingleton().getActiveScene();
+
+		GK_ASSERT(pScene);
+
+		btVector3 aabbMin,aabbMax;
+		pScene->getDynamicsWorld()->getBulletWorld()->getBroadphase()->getBroadphaseAabb(aabbMin,aabbMax);
+		
+		aabbMin-=btVector3(BT_LARGE_FLOAT,BT_LARGE_FLOAT,BT_LARGE_FLOAT);
+		aabbMax+=btVector3(BT_LARGE_FLOAT,BT_LARGE_FLOAT,BT_LARGE_FLOAT);
+
+		btCollisionObject* colObj = pObject->getCollisionObject();
+
+		const btCollisionShape* shape = colObj->getCollisionShape();
+
+		m = colObj->getWorldTransform();
+
+		int shapetype=shape->getShapeType();
+
+		switch(shapetype)
+		{
+			case SPHERE_SHAPE_PROXYTYPE:
+			{
+				break;
+			}
+
+			case BOX_SHAPE_PROXYTYPE:
+			{
+				const btBoxShape* boxShape = static_cast<const btBoxShape*>(shape);
+				btVector3 halfExtent = boxShape->getHalfExtentsWithMargin();
+				
+				static int indices[36] = {
+					0,1,2,
+					3,2,1,
+					4,0,6,
+					6,0,2,
+					5,1,4,
+					4,1,0,
+					7,3,1,
+					7,1,5,
+					5,4,7,
+					7,4,6,
+					7,2,3,
+					7,6,2};
+
+				static btVector3 vertices[8]={	btVector3(1,1,1),btVector3(-1,1,1),	btVector3(1,-1,1),	btVector3(-1,-1,1),	btVector3(1,1,-1),	btVector3(-1,1,-1),	btVector3(1,-1,-1),	btVector3(-1,-1,-1)};
+				int si=36;
+				for (int i=0;i<si;i+=3)
+				{
+					btVector3 v1 = m * (vertices[indices[i]]*halfExtent);
+					btVector3 v2 = m * (vertices[indices[i+1]]*halfExtent);
+					btVector3 v3 = m * (vertices[indices[i+2]]*halfExtent);
+
+					gkVector3 vv1(v1.x(), v1.z(), v1.y());
+					gkVector3 vv2(v2.x(), v2.z(), v2.y());
+					gkVector3 vv3(v3.x(), v3.z(), v3.y());
+
+					addTriangle(vv1, vv2, vv3);
+
+					//m_debug->drawLine(v1, v2, btVector3(1,1,0));
+					//m_debug->drawLine(v2, v3, btVector3(1,1,0));
+					//m_debug->drawLine(v3, v1, btVector3(1,1,0));
+				}
+
+				break;
+			}
+
+			default:
+
+				if (shape->isConcave() && !shape->isInfinite())
+				{
+					btConcaveShape* concaveMesh = (btConcaveShape*) shape;
+
+					concaveMesh->processAllTriangles(this, aabbMin, aabbMax);
+				}
+
+				break;
+		}
+	}
+
+private:
+	
+	typedef utArray<gkVector3> VERTS;
+	VERTS m_verts;
+
+	typedef utArray<int> TRIANGLES;
+	TRIANGLES m_tris;
+
+	typedef utArray<gkVector3> NORMALS;
+
+	NORMALS m_normals;
+
+	gkPhysicsDebug* m_debug;
+
+	btTransform m;
+
+	//std::ofstream os;
+};
+
+
 // These are just sample areas to use consistent values across the samples.
 // The use should specify these base on his needs.
 enum SamplePolyAreas
@@ -73,29 +273,9 @@ enum SamplePolyFlags
 
 gkStaticNavMeshNode::gkStaticNavMeshNode(gkLogicTree *parent, size_t id) 
 : gkLogicNode(parent, id),
-m_meshLoader(0),
-m_verts(0),
-m_nverts(0),
-m_tris(0),
-m_trinorms(0),
-m_ntris(0),
-m_keepInterResults(false),
-m_triflags(0),
-m_solid(0),
-m_chf(0),
-m_cset(0),
-m_pmesh(0),
-m_dmesh(0),
-m_navMesh(0),
-m_npolys(0),
-m_polys(0),
-m_straightPath(0),
-m_nstraightPath(0),
-m_debug(0)
+m_navMesh(0)
 {
 	ADD_ISOCK(UPDATE, false);
-	ADD_ISOCK(CREATE_NAV_MESH, false);
-	ADD_ISOCK(FIND_PATH, false);
 
 	ADD_ISOCK(CELL_SIZE, 0.17f);
 	ADD_ISOCK(CELL_HEIGHT, 0.10f);
@@ -111,15 +291,7 @@ m_debug(0)
 	ADD_ISOCK(DETAIL_SAMPLE_DIST, 6.0f);
 	ADD_ISOCK(DETAIL_SAMPLE_ERROR, 1.0f);
 
-	ADD_ISOCK(MAX_PATH_POLYS, 256);
-	
-	ADD_ISOCK(OBJ, 0);
-	ADD_ISOCK(END_X_POS, 0);
-	ADD_ISOCK(END_Y_POS, 0);
-	ADD_ISOCK(POLY_PICK_EXT, gkVector3(2, 4, 2));
-	
-
-	ADD_OSOCK(PATH_FOUND, false);
+	ADD_OSOCK(OUTPUT, 0);
 }
 
 gkStaticNavMeshNode::~gkStaticNavMeshNode()
@@ -129,58 +301,18 @@ gkStaticNavMeshNode::~gkStaticNavMeshNode()
 
 bool gkStaticNavMeshNode::evaluate(gkScalar tick)
 {
-	return GET_SOCKET_VALUE(UPDATE) && GET_SOCKET_VALUE(OBJ);
+	return GET_SOCKET_VALUE(UPDATE);
 }
 
 void gkStaticNavMeshNode::ClearData()
 {
-	delete [] m_triflags;
-	m_triflags = 0;
-
-	delete m_solid;
-	m_solid = 0;
-
-	delete m_chf;
-	m_chf = 0;
-
-	delete m_cset;
-	m_cset = 0;
-
-	delete m_pmesh;
-	m_pmesh = 0;
-
-	delete m_dmesh;
-	m_dmesh = 0;
-
 	delete m_navMesh;
 	m_navMesh = 0;
-
-	delete m_meshLoader;
-	m_meshLoader = 0;
-
-	m_verts = 0;
-	m_trinorms = 0;
-	m_tris = 0;
-
-	delete[] m_polys;
-	m_polys = 0;
-	delete[] m_straightPath;
-	m_straightPath = 0;
-
-	delete m_debug;
-	m_debug = 0;
 }
 
 void gkStaticNavMeshNode::update(gkScalar tick)
 {
-	if(GET_SOCKET_VALUE(CREATE_NAV_MESH))
-	{
-		Create();
-	}
-	else if(GET_SOCKET_VALUE(FIND_PATH))
-	{
-		FindPath();
-	}
+	Create();
 }
 
 bool gkStaticNavMeshNode::Create()
@@ -189,18 +321,13 @@ bool gkStaticNavMeshNode::Create()
 
 	ClearData();
 
+	SET_SOCKET_VALUE(OUTPUT, 0);
+
+	gkNavMeshLoader meshLoader;
+
 	gkScene* pScene = gkEngine::getSingleton().getActiveScene();
 
 	GK_ASSERT(pScene);
-
-	if(!m_debug)
-	{
-		m_debug = new gkPhysicsDebug(pScene->getDynamicsWorld());
-	}
-
-	GK_ASSERT(!m_meshLoader);
-
-	m_meshLoader = new gkNavMeshLoader;
 
 	gkGameObjectList& objs = pScene->getLoadedObjects();
 
@@ -210,22 +337,24 @@ bool gkStaticNavMeshNode::Create()
 	{
 		gkGameObject* pObj = objIt.getNext();
 
-		if(pObj != GET_SOCKET_VALUE(OBJ))
+		if(!pObj->getProperties().isGhost)
 		{
-			m_meshLoader->load(pObj);
+			meshLoader.load(pObj);
 		}
 	}
 
-	if(!m_meshLoader->getVertCount())
+	if(!meshLoader.getVertCount())
 		return false;
 
-	m_verts = m_meshLoader->getVerts();
-	m_nverts = m_meshLoader->getVertCount();
-	m_tris = m_meshLoader->getTris();
-	m_trinorms = m_meshLoader->getNormals();
-	m_ntris = m_meshLoader->getTriCount();
+	gkScalar bmin[3], bmax[3];
 
-	rcCalcBounds(m_verts, m_nverts, m_bmin, m_bmax);
+	const gkScalar* verts = meshLoader.getVerts();
+	int nverts = meshLoader.getVertCount();
+	const int* tris = meshLoader.getTris();
+	const gkScalar* trinorms = meshLoader.getNormals();
+	int ntris = meshLoader.getTriCount();
+
+	rcCalcBounds(verts, nverts, bmin, bmax);
 
 	//
 	// Step 1. Initialize build config.
@@ -252,8 +381,8 @@ bool gkStaticNavMeshNode::Create()
 	// Set the area where the navigation will be build.
 	// Here the bounds of the input mesh are used, but the
 	// area could be specified by an user defined box, etc.
-	vcopy(m_cfg.bmin, m_bmin);
-	vcopy(m_cfg.bmax, m_bmax);
+	vcopy(m_cfg.bmin, bmin);
+	vcopy(m_cfg.bmax, bmax);
 	rcCalcGridSize(m_cfg.bmin, m_cfg.bmax, m_cfg.cs, &m_cfg.width, &m_cfg.height);
 
 	rcBuildTimes m_buildTimes; 
@@ -266,48 +395,35 @@ bool gkStaticNavMeshNode::Create()
 	
 	gkPrintf("Building navigation:");
 	gkPrintf(" - %d x %d cells", m_cfg.width, m_cfg.height);
-	gkPrintf(" - %.1fK verts, %.1fK tris", m_nverts/1000.0f, m_ntris/1000.0f);
+	gkPrintf(" - %.1fK verts, %.1fK tris", nverts/1000.0f, ntris/1000.0f);
 
 	//
 	// Step 2. Rasterize input polygon soup.
 	//
 	
 	// Allocate voxel heighfield where we rasterize our input data to.
-	GK_ASSERT(!m_solid);
-	m_solid = new rcHeightfield;
-	if (!m_solid)
-	{
-		gkPrintf("buildNavigation: Out of memory 'solid'.");
-		return false;
-	}
-	if (!rcCreateHeightfield(*m_solid, m_cfg.width, m_cfg.height, m_cfg.bmin, m_cfg.bmax, m_cfg.cs, m_cfg.ch))
+	rcHeightfield heightField;
+
+	if (!rcCreateHeightfield(heightField, m_cfg.width, m_cfg.height, m_cfg.bmin, m_cfg.bmax, m_cfg.cs, m_cfg.ch))
 	{
 		gkPrintf("buildNavigation: Could not create solid heightfield.");
 		return false;
 	}
 	
-	// Allocate array that can hold triangle flags.
-	// If you have multiple meshes you need to process, allocate
-	// and array which can hold the max number of triangles you need to process.
-	GK_ASSERT(!m_triflags);
-	m_triflags = new unsigned char[m_ntris];
-	if (!m_triflags)
 	{
-		gkPrintf("buildNavigation: Out of memory 'triangleFlags' (%d).", m_ntris);
-		return false;
-	}
-	
-	// Find triangles which are walkable based on their slope and rasterize them.
-	// If your input data is multiple meshes, you can transform them here, calculate
-	// the flags for each of the meshes and rasterize them.
-	memset(m_triflags, 0, m_ntris*sizeof(unsigned char));
-	rcMarkWalkableTriangles(m_cfg.walkableSlopeAngle, m_verts, m_nverts, m_tris, m_ntris, m_triflags);
-	rcRasterizeTriangles(m_verts, m_nverts, m_tris, m_triflags, m_ntris, *m_solid);
-
-	if (!m_keepInterResults)
-	{
-		delete [] m_triflags;
-		m_triflags = 0;
+		// Allocate array that can hold triangle flags.
+		// If you have multiple meshes you need to process, allocate
+		// and array which can hold the max number of triangles you need to process.
+		
+		utArray<unsigned char> triflags;
+		triflags.resize(ntris);
+		
+		// Find triangles which are walkable based on their slope and rasterize them.
+		// If your input data is multiple meshes, you can transform them here, calculate
+		// the flags for each of the meshes and rasterize them.
+		memset(triflags.ptr(), 0, ntris*sizeof(unsigned char));
+		rcMarkWalkableTriangles(m_cfg.walkableSlopeAngle, verts, nverts, tris, ntris, triflags.ptr());
+		rcRasterizeTriangles(verts, nverts, tris, triflags.ptr(), ntris, heightField);
 	}
 
 	//
@@ -317,8 +433,8 @@ bool gkStaticNavMeshNode::Create()
 	// Once all geoemtry is rasterized, we do initial pass of filtering to
 	// remove unwanted overhangs caused by the conservative rasterization
 	// as well as filter spans where the character cannot possibly stand.
-	rcFilterLedgeSpans(m_cfg.walkableHeight, m_cfg.walkableClimb, *m_solid);
-	rcFilterWalkableLowHeightSpans(m_cfg.walkableHeight, *m_solid);
+	rcFilterLedgeSpans(m_cfg.walkableHeight, m_cfg.walkableClimb, heightField);
+	rcFilterWalkableLowHeightSpans(m_cfg.walkableHeight, heightField);
 
 	//
 	// Step 4. Partition walkable surface to simple regions.
@@ -327,27 +443,15 @@ bool gkStaticNavMeshNode::Create()
 	// Compact the heightfield so that it is faster to handle from now on.
 	// This will result more cache coherent data as well as the neighbours
 	// between walkable cells will be calculated.
-	GK_ASSERT(!m_chf);
-	m_chf = new rcCompactHeightfield;
-	if (!m_chf)
-	{
-		gkPrintf("buildNavigation: Out of memory 'chf'.");
-		return false;
-	}
-	if (!rcBuildCompactHeightfield(m_cfg.walkableHeight, m_cfg.walkableClimb, RC_WALKABLE, *m_solid, *m_chf))
+	rcCompactHeightfield chf;
+	if (!rcBuildCompactHeightfield(m_cfg.walkableHeight, m_cfg.walkableClimb, RC_WALKABLE, heightField, chf))
 	{
 		gkPrintf("buildNavigation: Could not build compact data.");
 		return false;
 	}
 	
-	if (!m_keepInterResults)
-	{
-		delete m_solid;
-		m_solid = 0;
-	}
-
 	// Erode the walkable area by agent radius.
-	if (!rcErodeArea(RC_WALKABLE_AREA, m_cfg.walkableRadius, *m_chf))
+	if (!rcErodeArea(RC_WALKABLE_AREA, m_cfg.walkableRadius, chf))
 	{
 		gkPrintf("buildNavigation: Could not erode.");
 		return false;
@@ -356,18 +460,18 @@ bool gkStaticNavMeshNode::Create()
 	// (Optional) Mark areas.
 	/*const ConvexVolume* vols = m_geom->getConvexVolumes();
 	for (int i  = 0; i < m_geom->getConvexVolumeCount(); ++i)
-		rcMarkConvexPolyArea(vols[i].verts, vols[i].nverts, vols[i].hmin, vols[i].hmax, (unsigned char)vols[i].area, *m_chf);
+		rcMarkConvexPolyArea(vols[i].verts, vols[i].nverts, vols[i].hmin, vols[i].hmax, (unsigned char)vols[i].area, chf);
 	*/
 	
 	// Prepare for region partitioning, by calculating distance field along the walkable surface.
-	if (!rcBuildDistanceField(*m_chf))
+	if (!rcBuildDistanceField(chf))
 	{
 		gkPrintf("buildNavigation: Could not build distance field.");
 		return false;
 	}
 
 	// Partition the walkable surface into simple regions without holes.
-	if (!rcBuildRegions(*m_chf, m_cfg.borderSize, m_cfg.minRegionSize, m_cfg.mergeRegionSize))
+	if (!rcBuildRegions(chf, m_cfg.borderSize, m_cfg.minRegionSize, m_cfg.mergeRegionSize))
 	{
 		gkPrintf("buildNavigation: Could not build regions.");
 	}
@@ -377,14 +481,9 @@ bool gkStaticNavMeshNode::Create()
 	//
 	
 	// Create contours.
-	GK_ASSERT(!m_cset);
-	m_cset = new rcContourSet;
-	if (!m_cset)
-	{
-		gkPrintf("buildNavigation: Out of memory 'cset'.");
-		return false;
-	}
-	if (!rcBuildContours(*m_chf, m_cfg.maxSimplificationError, m_cfg.maxEdgeLen, *m_cset))
+	rcContourSet cset;
+
+	if (!rcBuildContours(chf, m_cfg.maxSimplificationError, m_cfg.maxEdgeLen, cset))
 	{
 		gkPrintf("buildNavigation: Could not create contours.");
 		return false;
@@ -395,14 +494,8 @@ bool gkStaticNavMeshNode::Create()
 	//
 	
 	// Build polygon navmesh from the contours.
-	GK_ASSERT(!m_pmesh);
-	m_pmesh = new rcPolyMesh;
-	if (!m_pmesh)
-	{
-		gkPrintf("buildNavigation: Out of memory 'pmesh'.");
-		return false;
-	}
-	if (!rcBuildPolyMesh(*m_cset, m_cfg.maxVertsPerPoly, *m_pmesh))
+	rcPolyMesh pmesh;
+	if (!rcBuildPolyMesh(cset, m_cfg.maxVertsPerPoly, pmesh))
 	{
 		gkPrintf("buildNavigation: Could not triangulate contours.");
 		return false;
@@ -412,28 +505,15 @@ bool gkStaticNavMeshNode::Create()
 	// Step 7. Create detail mesh which allows to access approximate height on each polygon.
 	//
 
-	GK_ASSERT(!m_dmesh);
-	m_dmesh = new rcPolyMeshDetail;
-	if (!m_dmesh)
+	rcPolyMeshDetail dmesh;
+
+	if (!rcBuildPolyMeshDetail(pmesh, chf, m_cfg.detailSampleDist, m_cfg.detailSampleMaxError, dmesh))
 	{
-		gkPrintf("buildNavigation: Out of memory 'pmdtl'.");
+		gkPrintf("buildNavigation: Could not build detail mesh.");
 		return false;
 	}
 
-	if (!rcBuildPolyMeshDetail(*m_pmesh, *m_chf, m_cfg.detailSampleDist, m_cfg.detailSampleMaxError, *m_dmesh))
-	{
-		gkPrintf("buildNavigation: Could not build detail mesh.");
-	}
-
-	if (!m_keepInterResults)
-	{
-		delete m_chf;
-		m_chf = 0;
-		delete m_cset;
-		m_cset = 0;
-	}
-
-	// At this point the navigation mesh data is ready, you can access it from m_pmesh.
+	// At this point the navigation mesh data is ready, you can access it from pmesh.
 	// See rcDebugDrawPolyMesh or dtCreateNavMeshData as examples how to access the data.
 	
 	//
@@ -450,46 +530,42 @@ bool gkStaticNavMeshNode::Create()
 	// Only build the detour navmesh if we do not exceed the limit.
 	if (m_cfg.maxVertsPerPoly <= DT_VERTS_PER_POLYGON)
 	{
-		unsigned char* navData = 0;
-		int navDataSize = 0;
-
 		// Update poly flags from areas.
-		for (int i = 0; i < m_pmesh->npolys; ++i)
+		for (int i = 0; i < pmesh.npolys; ++i)
 		{
-			if (m_pmesh->areas[i] == RC_WALKABLE_AREA)
-				m_pmesh->areas[i] = SAMPLE_POLYAREA_GROUND;
+			if (pmesh.areas[i] == RC_WALKABLE_AREA)
+				pmesh.areas[i] = SAMPLE_POLYAREA_GROUND;
 				
-			if (m_pmesh->areas[i] == SAMPLE_POLYAREA_GROUND ||
-				m_pmesh->areas[i] == SAMPLE_POLYAREA_GRASS ||
-				m_pmesh->areas[i] == SAMPLE_POLYAREA_ROAD)
+			if (pmesh.areas[i] == SAMPLE_POLYAREA_GROUND ||
+				pmesh.areas[i] == SAMPLE_POLYAREA_GRASS ||
+				pmesh.areas[i] == SAMPLE_POLYAREA_ROAD)
 			{
-				m_pmesh->flags[i] = SAMPLE_POLYFLAGS_WALK;
+				pmesh.flags[i] = SAMPLE_POLYFLAGS_WALK;
 			}
-			else if (m_pmesh->areas[i] == SAMPLE_POLYAREA_WATER)
+			else if (pmesh.areas[i] == SAMPLE_POLYAREA_WATER)
 			{
-				m_pmesh->flags[i] = SAMPLE_POLYFLAGS_SWIM;
+				pmesh.flags[i] = SAMPLE_POLYFLAGS_SWIM;
 			}
-			else if (m_pmesh->areas[i] == SAMPLE_POLYAREA_DOOR)
+			else if (pmesh.areas[i] == SAMPLE_POLYAREA_DOOR)
 			{
-				m_pmesh->flags[i] = SAMPLE_POLYFLAGS_WALK | SAMPLE_POLYFLAGS_DOOR;
+				pmesh.flags[i] = SAMPLE_POLYFLAGS_WALK | SAMPLE_POLYFLAGS_DOOR;
 			}
 		}
 
-
 		dtNavMeshCreateParams params;
 		memset(&params, 0, sizeof(params));
-		params.verts = m_pmesh->verts;
-		params.vertCount = m_pmesh->nverts;
-		params.polys = m_pmesh->polys;
-		params.polyAreas = m_pmesh->areas;
-		params.polyFlags = m_pmesh->flags;
-		params.polyCount = m_pmesh->npolys;
-		params.nvp = m_pmesh->nvp;
-		params.detailMeshes = m_dmesh->meshes;
-		params.detailVerts = m_dmesh->verts;
-		params.detailVertsCount = m_dmesh->nverts;
-		params.detailTris = m_dmesh->tris;
-		params.detailTriCount = m_dmesh->ntris;
+		params.verts = pmesh.verts;
+		params.vertCount = pmesh.nverts;
+		params.polys = pmesh.polys;
+		params.polyAreas = pmesh.areas;
+		params.polyFlags = pmesh.flags;
+		params.polyCount = pmesh.npolys;
+		params.nvp = pmesh.nvp;
+		params.detailMeshes = dmesh.meshes;
+		params.detailVerts = dmesh.verts;
+		params.detailVertsCount = dmesh.nverts;
+		params.detailTris = dmesh.tris;
+		params.detailTriCount = dmesh.ntris;
 /*		params.offMeshConVerts = m_geom->getOffMeshConnectionVerts();
 		params.offMeshConRad = m_geom->getOffMeshConnectionRads();
 		params.offMeshConDir = m_geom->getOffMeshConnectionDirs();
@@ -499,11 +575,13 @@ bool gkStaticNavMeshNode::Create()
 */		params.walkableHeight = GET_SOCKET_VALUE(AGENT_HEIGHT);
 		params.walkableRadius = GET_SOCKET_VALUE(AGENT_RADIUS);
 		params.walkableClimb = GET_SOCKET_VALUE(AGENT_MAX_CLIMB);
-		vcopy(params.bmin, m_pmesh->bmin);
-		vcopy(params.bmax, m_pmesh->bmax);
+		vcopy(params.bmin, pmesh.bmin);
+		vcopy(params.bmax, pmesh.bmax);
 		params.cs = m_cfg.cs;
 		params.ch = m_cfg.ch;
-
+		
+		unsigned char* navData = 0;
+		int navDataSize = 0;
 		
 		if (!dtCreateNavMeshData(&params, &navData, &navDataSize))
 		{
@@ -527,6 +605,8 @@ bool gkStaticNavMeshNode::Create()
 			return false;
 		}
 	}
+
+	SET_SOCKET_VALUE(OUTPUT, m_navMesh);
 	
 	rcTimeVal totEndTime = rcGetPerformanceTimer();
 
@@ -559,7 +639,7 @@ bool gkStaticNavMeshNode::Create()
 		gkPrintf("Build Polymesh: %.1fms (%.1f%%)", m_buildTimes.buildPolymesh/1000.0f, m_buildTimes.buildPolymesh*pc);
 		gkPrintf("Build Polymesh Detail: %.1fms (%.1f%%)", m_buildTimes.buildDetailMesh/1000.0f, m_buildTimes.buildDetailMesh*pc);
 		
-		gkPrintf("Polymesh: Verts:%d  Polys:%d", m_pmesh->nverts, m_pmesh->npolys);
+		gkPrintf("Polymesh: Verts:%d  Polys:%d", pmesh.nverts, pmesh.npolys);
 		
 		gkPrintf("TOTAL: %.1fms", rcGetDeltaTimeUsec(totStartTime, totEndTime)/1000.0f);
 	}
@@ -567,269 +647,7 @@ bool gkStaticNavMeshNode::Create()
 	return true;
 }
 
-void gkStaticNavMeshNode::FindPath()
-{
-	SET_SOCKET_VALUE(PATH_FOUND, false);
 
-	if (!m_navMesh)
-	{
-		Create();
-	}
-
-	if (m_navMesh)
-	{
-		gkVector3 startPos = GET_SOCKET_VALUE(OBJ)->getPosition();
-
-		Ogre::Ray ray = gkUtils::CreateCameraRay(GET_SOCKET_VALUE(END_X_POS), GET_SOCKET_VALUE(END_Y_POS));
-
-		gkVector3 endPos;
-		
-		if(!gkUtils::PickBody(ray, endPos))
-			return;
-
-		std::swap(startPos.y, startPos.z);
-		std::swap(endPos.y, endPos.z);
-
-		rcTimeVal totStartTime = rcGetPerformanceTimer();
-
-		gkVector3 polyPickExt = GET_SOCKET_VALUE(POLY_PICK_EXT);
-
-		dtQueryFilter filter;
-
-		dtPolyRef startRef = m_navMesh->findNearestPoly(startPos.ptr(), polyPickExt.ptr(), &filter, 0);
-
-		dtPolyRef endRef = m_navMesh->findNearestPoly(endPos.ptr(), polyPickExt.ptr(), &filter, 0);
-	
-		if (startRef && endRef)
-		{
-			if(m_polys)
-			{
-				delete m_polys;
-				m_polys = 0;
-			}
-
-			int MAX_POLYS = GET_SOCKET_VALUE(MAX_PATH_POLYS);
-
-			m_polys = new dtPolyRef[MAX_POLYS];
-
-			m_npolys = m_navMesh->findPath(startRef, endRef, startPos.ptr(), endPos.ptr(), &filter, m_polys, MAX_POLYS);
-
-			if (m_npolys)
-			{
-				if(m_straightPath)
-				{
-					delete m_straightPath;
-					m_straightPath = 0;
-				}
-
-				m_straightPath = new gkScalar[MAX_POLYS*3];
-
-				m_nstraightPath = m_navMesh->findStraightPath(startPos.ptr(), endPos.ptr(), m_polys, m_npolys, m_straightPath, 0, 0, MAX_POLYS);
-
-				rcTimeVal totEndTime = rcGetPerformanceTimer();
-
-				gkPrintf("FINDPATH TOTAL: %.1fms", rcGetDeltaTimeUsec(totStartTime, totEndTime)/1000.0f);
-
-				std::swap(startPos.y, startPos.z);
-				std::swap(endPos.y, endPos.z);
-
-				gkVector3 oldPoint = startPos;
-				gkVector3 point;
-
-				const gkScalar Z_OFFSET = 0.3f;
-
-				static const btVector3 RED_COLOR(1,0,0);
-
-				for(int i=0; i<m_nstraightPath*3; i+=3)
-				{
-					point.x = m_straightPath[i];
-					point.y = m_straightPath[i+2];
-					point.z = m_straightPath[i+1];
-
-					m_debug->drawLine(
-						btVector3(oldPoint.x, oldPoint.y, oldPoint.z + Z_OFFSET), 
-						btVector3(point.x, point.y, point.z + Z_OFFSET), 
-						RED_COLOR
-					);
-
-					oldPoint = point;
-				}
-
-				m_debug->drawLine(
-					btVector3(oldPoint.x, oldPoint.y, oldPoint.z + Z_OFFSET), 
-					btVector3(endPos.x, endPos.y, endPos.z + Z_OFFSET), 
-					RED_COLOR
-				);
-
-				m_debug->flush();
-
-				SET_SOCKET_VALUE(PATH_FOUND, true);
-			}
-		}
-	}
-}
-
-gkNavMeshLoader::gkNavMeshLoader() 
-: m_debug(0)//, os(L"momo.obj")
-{
-	//gkScene* pScene = gkEngine::getSingleton().getActiveScene();
-
-	//GK_ASSERT(pScene);
-
-	//m_debug = new gkPhysicsDebug(pScene->getDynamicsWorld());
-}
-
-gkNavMeshLoader::~gkNavMeshLoader()
-{
-	//delete m_debug;
-}
-
-void gkNavMeshLoader::addTriangle(const gkVector3& v1, const gkVector3& v2, const gkVector3& v3)
-{
-	size_t n = m_verts.size();
-
-	int a = n; 
-	int b = n+1;
-	int c = n+2;
-
-	m_verts.push_back(v1);
-	m_verts.push_back(v2);
-	m_verts.push_back(v3);
-
-	m_tris.push_back(a);
-	m_tris.push_back(b);
-	m_tris.push_back(c);
-
-	gkVector3 normal((v3-v1).crossProduct(v2-v1)); 
-	normal.normalise();
-
-	m_normals.push_back(normal);
-
-	m_tris.push_back(c);
-	m_tris.push_back(b);
-	m_tris.push_back(a);
-
-	m_normals.push_back(-normal);
-/*
-	os << "v " << v1.x << " " << v1.y << " " << v1.z << "\n";
-	os << "v " << v2.x << " " << v2.y << " " << v2.z << "\n";
-	os << "v " << v3.x << " " << v3.y << " " << v3.z << "\n";
-
-	a++; b++; c++;
-	os << "f " << a  << " " << b << " " << c << "\n";
-	os << "f " << c  << " " << b << " " << a << "\n";
-*/
-}
-
-bool gkNavMeshLoader::load(gkGameObject* pObj)
-{
-	gkObject* pObject = pObj->getAttachedObject();
-
-	if(pObject)
-	{
-		AddCollisionObj(pObject);
-	}
-
-	return true;
-}
-
-void gkNavMeshLoader::processTriangle(btVector3* triangle,int partId, int triangleIndex)
-{
-	btVector3 v1 = m * triangle[0];
-	btVector3 v2 = m * triangle[1];
-	btVector3 v3 = m * triangle[2];
-
-	gkVector3 vv1(v1.x(), v1.z(), v1.y());
-	gkVector3 vv2(v2.x(), v2.z(), v2.y());
-	gkVector3 vv3(v3.x(), v3.z(), v3.y());
-
-	addTriangle(vv1, vv2, vv3);
-
-//	m_debug->drawLine(v1, v2, btVector3(1,1,0));
-//	m_debug->drawLine(v2, v3, btVector3(1,1,0));
-//	m_debug->drawLine(v3, v1, btVector3(1,1,0));
-}
-
-void gkNavMeshLoader::AddCollisionObj(gkObject* pObject)
-{
-	gkScene* pScene = gkEngine::getSingleton().getActiveScene();
-
-	GK_ASSERT(pScene);
-
-	btVector3 aabbMin,aabbMax;
-	pScene->getDynamicsWorld()->getBulletWorld()->getBroadphase()->getBroadphaseAabb(aabbMin,aabbMax);
-	
-	aabbMin-=btVector3(BT_LARGE_FLOAT,BT_LARGE_FLOAT,BT_LARGE_FLOAT);
-	aabbMax+=btVector3(BT_LARGE_FLOAT,BT_LARGE_FLOAT,BT_LARGE_FLOAT);
-
-	btCollisionObject* colObj = pObject->getCollisionObject();
-
-	const btCollisionShape* shape = colObj->getCollisionShape();
-
-	m = colObj->getWorldTransform();
-
-	int shapetype=shape->getShapeType();
-
-	switch(shapetype)
-	{
-		case SPHERE_SHAPE_PROXYTYPE:
-		{
-			break;
-		}
-
-		case BOX_SHAPE_PROXYTYPE:
-		{
-			const btBoxShape* boxShape = static_cast<const btBoxShape*>(shape);
-			btVector3 halfExtent = boxShape->getHalfExtentsWithMargin();
-			
-			static int indices[36] = {
-				0,1,2,
-				3,2,1,
-				4,0,6,
-				6,0,2,
-				5,1,4,
-				4,1,0,
-				7,3,1,
-				7,1,5,
-				5,4,7,
-				7,4,6,
-				7,2,3,
-				7,6,2};
-
-			static btVector3 vertices[8]={	btVector3(1,1,1),btVector3(-1,1,1),	btVector3(1,-1,1),	btVector3(-1,-1,1),	btVector3(1,1,-1),	btVector3(-1,1,-1),	btVector3(1,-1,-1),	btVector3(-1,-1,-1)};
-			int si=36;
-			for (int i=0;i<si;i+=3)
-			{
-				btVector3 v1 = m * (vertices[indices[i]]*halfExtent);
-				btVector3 v2 = m * (vertices[indices[i+1]]*halfExtent);
-				btVector3 v3 = m * (vertices[indices[i+2]]*halfExtent);
-
-				gkVector3 vv1(v1.x(), v1.z(), v1.y());
-				gkVector3 vv2(v2.x(), v2.z(), v2.y());
-				gkVector3 vv3(v3.x(), v3.z(), v3.y());
-
-				addTriangle(vv1, vv2, vv3);
-
-				//m_debug->drawLine(v1, v2, btVector3(1,1,0));
-				//m_debug->drawLine(v2, v3, btVector3(1,1,0));
-				//m_debug->drawLine(v3, v1, btVector3(1,1,0));
-			}
-
-			break;
-		}
-
-		default:
-
-			if (shape->isConcave() && !shape->isInfinite())
-			{
-				btConcaveShape* concaveMesh = (btConcaveShape*) shape;
-
-				concaveMesh->processAllTriangles(this, aabbMin, aabbMax);
-			}
-
-			break;
-	}
-}
 
 
 

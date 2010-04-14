@@ -72,6 +72,7 @@ void gkAnimationNode::update(gkScalar tick)
 
 	if(currentAnimName != animName)
 	{
+		gkLogMessage(animName);
 		SET_SOCKET_VALUE(HAS_REACHED_END, false);
 		SET_SOCKET_VALUE(NOT_HAS_REACHED_END, true);
 	}

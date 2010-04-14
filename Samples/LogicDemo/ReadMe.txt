@@ -68,7 +68,7 @@ Following are the explanations for the keyboard and mouse control of this demo.
 <N> Creates navigation mesh. 
 	Everytime objects change position (for example drag&drop boxes) a new navigation mesh has to be created.
 	
-<LEFT CTRL> + <F> Find path from momo position to the mouse hit position. (If the navigation mesh does not exist then it will create it)
+<LEFT CTRL> + <F> Find path from momo position to the mouse hit position. 
 
 ///////////////Momo control///////////////////////////////////
 
