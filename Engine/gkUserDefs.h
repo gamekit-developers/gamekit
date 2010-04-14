@@ -57,17 +57,11 @@ public:
     bool                    grabInput;          // hide & grab the mouse
     bool                    debugPhysics;       // enable / disable physics debugging
     bool                    debugPhysicsAabb;   // show / hide bounding box
-    bool                    multipassmat;       // disabled from here down
-    gkString                gl_vert_profile;    // arbvp1
-    gkString                gl_frag_profile;    // arbfp1
-    gkString                dx_vert_profile;    // vs_1_1
-    gkString                dx_frag_profile;    // ps_2_x
-
+    bool                    buildInstances;     // Use instanced geometry
 	bool					enableshadows;
 	gkString				shadowtechnique;
 	gkColor					colourshadow;
 	gkScalar				fardistanceshadow;
-
 };
 
 

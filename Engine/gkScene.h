@@ -30,6 +30,7 @@
 #include "gkObject.h"
 #include "gkMathUtils.h"
 #include "gkSerialize.h"
+#include "gkGameObjectGroup.h"
 #include "OgreAxisAlignedBox.h"
 
 class gkDynamicsWorld;
@@ -148,6 +149,19 @@ public:
     // on callbacks to gather all object information.
     gkSkeleton* createSkeleton(const gkHashedString &name, gkObject::Loader *loader = 0);
 
+    // group access
+
+    gkGameObjectGroup   *createGroup(const gkHashedString &name);
+    gkGameObjectGroup   *getGroup(const gkHashedString &name);
+    void                destroyGroup(const gkHashedString &name);
+    void                destroyGroup(gkGameObjectGroup* group);
+    void                destroyGroups(void);
+
+    // instance creation
+    gkGameObjectInstance *createInstance(gkGameObject *owner, gkGameObjectGroup *group);
+
+
+    GK_INLINE bool      hasGroup(const gkHashedString &name) {return m_groups.find(name) != UT_NPOS;}
 
 protected:
 
@@ -169,6 +183,8 @@ protected:
     gkGameObjectArray       m_transformObjects;
     gkGameObjectList        m_loadedObjects;
     gkDynamicsWorld*        m_physicsWorld;
+    gkGroupTable            m_groups;
+    gkGroupInstances        m_instances;
 
     virtual void loadImpl();
     virtual void unloadImpl();

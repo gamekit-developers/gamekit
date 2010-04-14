@@ -57,12 +57,8 @@ gkUserDefs::gkUserDefs() :
         grabInput(true),
         debugPhysics(false),
         debugPhysicsAabb(false),
-        multipassmat(false),
-        gl_vert_profile("arbvp1"),
-        gl_frag_profile("arbfp1"),
-        dx_vert_profile("vs_1_1"),
-        dx_frag_profile("ps_2_x"),
 		enableshadows(false),
+        buildInstances(false),
 		shadowtechnique("none"),
 		colourshadow(0, 0, 0),
 		fardistanceshadow(0)
@@ -149,6 +145,10 @@ void gkUserDefs::load(const gkString &fname)
                 }
                 else if (key == "blendermat")
                     blendermat = StringConverter::parseBool(val);
+                else if (key == "buildinstances")
+                    buildInstances = StringConverter::parseBool(val);
+                else if (key == "fullscreen")
+                    fullscreen = StringConverter::parseBool(val);
 				else if (key == "enableshadows")
 					enableshadows = StringConverter::parseBool(val);
 				else if (key == "shadowtechnique")

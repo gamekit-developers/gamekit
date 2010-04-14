@@ -58,6 +58,8 @@ public:
     void updateAnimations(void);
 
 protected:
+    gkObject    *clone(const gkString &name);
+
     gkEntityProperties      m_entityProps;
     Ogre::Entity*           m_entity;
     gkAnimProperties        m_animProps;

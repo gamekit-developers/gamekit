@@ -54,29 +54,29 @@ public:
     gkGameObject(gkScene *scene, const gkString& name, gkGameObjectTypes type, gkObject::Loader* loader = 0);
     virtual ~gkGameObject();
 
-    GK_INLINE gkScene* getOwner(void)                       {return m_scene;}
-    GK_INLINE Ogre::SceneNode *getNode(void)                {return m_node;}
-    GK_INLINE gkGameObjectTypes getType(void)               {return m_type;}
-    GK_INLINE gkGameObjectProperties& getProperties(void)   {return m_baseProps;}
-    GK_INLINE void setStartPose(const gkString& pose)       {m_startPose = pose; }
+    GK_INLINE gkScene                   *getOwner(void)                     {return m_scene;}
+    GK_INLINE Ogre::SceneNode           *getNode(void)                      {return m_node;}
+    GK_INLINE gkGameObjectTypes         getType(void)                       {return m_type;}
+    GK_INLINE gkGameObjectProperties    &getProperties(void)                {return m_baseProps;}
+    GK_INLINE void                      setStartPose(const gkString& pose)  {m_startPose = pose; }
+
 
     // subtype access
-    GK_INLINE gkEntity*     getEntity(void)     {return m_type == GK_ENTITY ?   (gkEntity*)this : 0; }
-    GK_INLINE gkCamera*     getCamera(void)     {return m_type == GK_CAMERA ?   (gkCamera*)this : 0; }
-    GK_INLINE gkLight*      getLight(void)      {return m_type == GK_LIGHT ?    (gkLight*)this : 0; }
-    GK_INLINE gkSkeleton*   getSkeleton(void)   {return m_type == GK_SKELETON ? (gkSkeleton*)this : 0; }
-
-    GK_INLINE gkGameObject *getParent(void)                 {return m_parent;}
+    GK_INLINE gkEntity      *getEntity(void)    {return m_type == GK_ENTITY ?   (gkEntity*)this : 0; }
+    GK_INLINE gkCamera      *getCamera(void)    {return m_type == GK_CAMERA ?   (gkCamera*)this : 0; }
+    GK_INLINE gkLight       *getLight(void)     {return m_type == GK_LIGHT ?    (gkLight*)this : 0; }
+    GK_INLINE gkSkeleton    *getSkeleton(void)  {return m_type == GK_SKELETON ? (gkSkeleton*)this : 0; }
+    GK_INLINE gkGameObject  *getParent(void)    {return m_parent;}
     
 	void setParent(gkGameObject* par);
 
     void notifyUpdate(void);
 
     // constriants
-    GK_INLINE ConstraintIterator getConstraintIterator(void) 
-    { return ConstraintIterator(m_constraints); }
+    GK_INLINE ConstraintIterator getConstraintIterator(void)  { return ConstraintIterator(m_constraints); }
     void addConstraint(gkConstraint *c);
     void destroyConstraints(void);
+
     // update object constraints
     void applyConstraints(void);
 
@@ -85,6 +85,7 @@ public:
 
     GK_INLINE bool hasMoved(void) {return m_outOfDate;}
 
+
     // applies transformation to node & rigid body
     void applyTransformState(const gkTransformState& newstate);
 
@@ -92,17 +93,18 @@ public:
     GK_INLINE void setActiveLayer(bool truth)   {m_activeLayer = truth; }
     GK_INLINE bool isInActiveLayer(void)        {return m_activeLayer; }
 
+    virtual gkObject *clone(const gkString &name);
 
-    // grouping, TODO reimplement
+    // grouping
+
     GK_INLINE bool isInstance(void)                             {return m_instance != 0;}
-    GK_INLINE gkGameObjectGroupInstance* getGroupInstance(void) {return m_instance;}
+    GK_INLINE gkGameObjectInstance* getGroupInstance(void)      {return m_instance;}
 
-    gkGameObject *duplicate(const gkString &newName);
-    gkGameObject *getGroupParent(void);
+    gkGameObject    *getGroupParent(void);
+    void            attachToGroup(gkGameObjectGroup *g);
+    void            detachFromGroup(void);
+    void            attachToGroupInstance(gkGameObjectInstance *g);
 
-    void attachToGroup(gkGameObjectGroup *g);
-    void detachFromGroup(void);
-    void attachToGroupInstance(gkGameObjectGroupInstance *g);
 
     // physics
     GK_INLINE void attachRigidBody(gkRigidBody *body) {m_rigidBody = body;}
@@ -213,7 +215,7 @@ protected:
 
 
     gkGameObjectGroup*          m_groupRef;     //is owner
-    gkGameObjectGroupInstance*  m_instance;     //is instance
+    gkGameObjectInstance*       m_instance;     //is instance
 
     bool m_activeLayer, m_outOfDate, m_lockTransform;
 

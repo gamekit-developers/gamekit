@@ -166,3 +166,11 @@ gkBone* gkSkeleton::getBone(const gkHashedString& name)
         return 0;
     return m_bones.at(pos);
 }
+
+
+gkObject *gkSkeleton::clone(const gkString &name)
+{
+    // will need to set other properties in a bit!
+    return new gkSkeleton(m_scene, name, m_manual ? m_manual->clone() : 0);
+}
+

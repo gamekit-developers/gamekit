@@ -47,6 +47,8 @@ protected:
     void createRigidBody(gkDynamicsWorld *dyn, gkGameObject *obj, Blender::Object *ob);
     void loadSkyBox(void);
 
+    void applyParent(gkScene *scene, Blender::Object *ob);
+
     gkSkyBoxGradient *m_grad;
     gkBlendFile *m_file;
     Blender::Scene* m_scene;

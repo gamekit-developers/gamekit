@@ -103,3 +103,11 @@ void gkLight::unloadImpl(void)
 
     gkGameObject::unloadImpl();
 }
+
+gkObject *gkLight::clone(const gkString &name)
+{
+    // will need to set other properties in a bit!
+    return new gkLight(m_scene, name, m_manual ? m_manual->clone() : 0);
+}
+
+

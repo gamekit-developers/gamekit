@@ -53,9 +53,9 @@ public:
         Loader() : m_autoFree(true) {}
         virtual ~Loader() {}
 
-        virtual void load(gkObject *ob) = 0;
-
-        GK_INLINE bool isAuto(void) {return m_autoFree;}
+        virtual void    load(gkObject *ob) = 0;
+        virtual Loader* clone(void)     {return 0;}
+        GK_INLINE bool  isAuto(void)    {return m_autoFree;}
     };
 
 
@@ -63,7 +63,7 @@ public:
 protected:
     const gkString      m_name;
     bool                m_loaded;
-    Loader*             m_manual;
+    Loader             *m_manual;
 
     friend class gkObject::Loader;
 
@@ -84,49 +84,52 @@ public:
         RBF_LIMIT_AVEL_X = 8,
         RBF_LIMIT_AVEL_Y = 16,
         RBF_LIMIT_AVEL_Z = 32,
-        RBF_CONTACT_INFO = 64, 
+        RBF_CONTACT_INFO = 64,
     };
 
     struct ContactInfo
     {
-        gkObject*        collider;
+        gkObject        *collider;
         btManifoldPoint     point;
     };
 
     typedef utArray<ContactInfo> ContactArray;
 
-    gkObject(const gkString& name, gkObject::Loader *manual = 0);
+    gkObject(const gkString &name, gkObject::Loader *manual = 0);
     virtual ~gkObject();
 
-    GK_INLINE const gkString& getName(void) {return m_name; }
+    // duplication 
+    virtual gkObject                *clone(const gkString &name)    {return 0;}
+    virtual gkGameObject            *getObject(void)                {return 0;}
+    virtual Ogre::AxisAlignedBox     getAabb() const                {return Ogre::AxisAlignedBox::BOX_NULL;}
+    virtual btCollisionObject       *getCollisionObject()           {return 0;}
 
-
-    GK_INLINE bool  isLoaded(void) const    {return m_loaded; }
-    GK_INLINE bool  isManual(void) const    {return m_manual != 0; }
 
     void load(void);
     void unload(void);
     void reload(void);
 
-	virtual gkGameObject* getObject(void) {return 0;}
-	virtual Ogre::AxisAlignedBox getAabb() const { return Ogre::AxisAlignedBox::BOX_NULL; }
+
+    GK_INLINE const gkString    &getName(void)                          {return m_name;}
+    GK_INLINE bool              isLoaded(void) const                    {return m_loaded;}
+    GK_INLINE bool              isManual(void) const                    {return m_manual != 0;}
 
     // collision contact information
-    GK_INLINE ContactArray& getContacts(void) {return m_contacts;}
+    GK_INLINE ContactArray      &getContacts(void)                      {return m_contacts;}
+    GK_INLINE bool              wantsContactInfo(void)                  {return (m_flags & RBF_CONTACT_INFO) != 0;}
 
-    GK_INLINE bool wantsContactInfo(void) 
-    {return (m_flags & RBF_CONTACT_INFO) != 0;}
+    // misc flags
+    GK_INLINE void              setFlags(int flags)                     {m_flags = flags;}
+    GK_INLINE int               getFlags(void)                          {return m_flags;}
 
-    GK_INLINE void setFlags(int flags)  {m_flags = flags;}
-    GK_INLINE int  getFlags(void)       {return m_flags;}
-    GK_INLINE void setSensorMaterial(const gkString& v) {m_sensorMaterial = v;}
-    GK_INLINE const gkString& getSensorMaterial(void)   {return m_sensorMaterial;}
 
-	virtual btCollisionObject* getCollisionObject() { return 0;}
+    // attached material for physics
+    GK_INLINE void              setSensorMaterial(const gkString &v)    {m_sensorMaterial = v;}
+    GK_INLINE const gkString    &getSensorMaterial(void)                {return m_sensorMaterial;}
 
-	void handleManifold(btPersistentManifold* manifold);
+    void handleManifold(btPersistentManifold *manifold);
 
-	void resetContactInfo();
+    void resetContactInfo();
 
 protected:
 

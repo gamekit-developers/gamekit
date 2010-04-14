@@ -86,16 +86,24 @@ void gkGameObjectLoader::load(gkObject *baseClass)
     gkVector3 loc, scale;
     gkMatrix4 obmat = gkMathUtils::getFromFloat(m_object->obmat);
 
-
-    // will be the parent or world tranform
-    if (!m_object->parent)
-        gkMathUtils::extractTransform(obmat, loc, quat, scale);
+    if (ob->isInstance())
+    {
+        // instances are an offset from the origional dupli group 
+        gkLoaderUtils ut(m_file->getInternalFile());
+        ut.extractInstanceTransform(ob, m_object, loc, quat, scale);
+    }
     else
     {
-        gkMatrix4 parent = gkMathUtils::getFromFloat(m_object->parent->obmat);
+        // will be the parent or world tranform
+        if (!m_object->parent)
+            gkMathUtils::extractTransform(obmat, loc, quat, scale);
+        else
+        {
+            gkMatrix4 parent = gkMathUtils::getFromFloat(m_object->parent->obmat);
 
-        obmat = parent.inverse() * obmat;
-        gkMathUtils::extractTransform(obmat, loc, quat, scale);
+            obmat = parent.inverse() * obmat;
+            gkMathUtils::extractTransform(obmat, loc, quat, scale);
+        }
     }
 
 
@@ -109,8 +117,6 @@ void gkGameObjectLoader::load(gkObject *baseClass)
 	props.isStatic = object && object->getCollisionObject() && object->getCollisionObject()->isStaticObject();
 	props.isGhost = object && object->getCollisionObject() && 
 		(object->getCollisionObject()->getCollisionFlags() & btCollisionObject::CF_CHARACTER_OBJECT);
-
-    ob->setActiveLayer((m_scene->lay & m_object->lay) != 0);
 
     switch (ob->getType())
     {
@@ -286,6 +292,13 @@ void gkGameObjectLoader::setEntity(gkGameObject *ob)
     // source is the mesh name, here it's
     // the same name as the entity
     props.source = GKB_IDNAME(m_object);
+    props.casts = !(ob->getProperties().isStatic || ob->getProperties().isGhost);
+
+    gkLoaderUtils loader(m_file->getInternalFile());
+
+    Blender::Material *matr = loader.getMaterial(m_object, 0);
+    if (matr && props.casts)
+        props.casts = (matr->mode & MA_SHADBUF) != 0;
 
 
     // if it has an action save the initial pose / animation name
@@ -536,15 +549,32 @@ void gkRigidBodyLoader::load(gkObject *ob)
     }
 
 
+
     btVector3 localPos(pos.x(), pos.y(), pos.z());
     btVector3 localSize(size.x(), size.y(), size.z());
-
     btTransform worldTrans;
     worldTrans.setIdentity();
-    worldTrans.setOrigin(btVector3(m_object->loc.x, m_object->loc.y, m_object->loc.z));
+    btVector3 scale;
 
-    worldTrans.getBasis().setEulerZYX(m_object->rot.x, m_object->rot.y, m_object->rot.z);
-    btVector3 scale(m_object->size.x, m_object->size.y, m_object->size.z);
+    if (m_gameObj->isInstance())
+    {
+        // instances are an offset from the origional dupli group 
+        gkLoaderUtils ut(m_file->getInternalFile());
+        gkVector3 loc, size;
+        gkQuaternion quat;
+        ut.extractInstanceTransform(m_gameObj, m_object, loc, quat, size);
+
+        worldTrans.setOrigin(btVector3(loc.x, loc.y, loc.z));
+        worldTrans.getBasis().setRotation(btQuaternion(quat.x, quat.y, quat.z, quat.w));
+        scale = btVector3(size.x, size.y, size.z);
+
+    }
+    else
+    {
+        worldTrans.setOrigin(btVector3(m_object->loc.x, m_object->loc.y, m_object->loc.z));
+        worldTrans.getBasis().setEulerZYX(m_object->rot.x, m_object->rot.y, m_object->rot.z);
+        scale = btVector3(m_object->size.x, m_object->size.y, m_object->size.z);
+    }
 
 	GK_ASSERT(!(m_object->gameflag & OB_GHOST));
 
@@ -658,7 +688,7 @@ void gkRigidBodyLoader::load(gkObject *ob)
                 m_shapes.push_back(childShape);
 
 
-/*                if (scale[0] != 1. || scale[1] != 1. || scale[2] != 1.)
+                /*if (scale[0] != 1. || scale[1] != 1. || scale[2] != 1.)
                 {
                     colShape = new btScaledBvhTriangleMeshShape(childShape, scale);
                     m_shapes.push_back(colShape);

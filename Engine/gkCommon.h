@@ -94,7 +94,7 @@ class gkBezierSpline;
 
 
 class gkGameObjectGroup;
-class gkGameObjectGroupInstance;
+class gkGameObjectInstance;
 
 enum gkTransformSpace
 {

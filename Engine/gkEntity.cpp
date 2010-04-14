@@ -79,21 +79,30 @@ void gkEntity::loadImpl(void)
             m_skeleton->setEntity(m_entity);
         }
     }
-
     if (!m_startPose.empty())
         _resetPose();
 
-	if(m_baseProps.isStatic || m_baseProps.isGhost)
-	{
-		//(For now) Disable shadows for static objects & ghost objects
-		m_entity->setCastShadows(false);
-	}
-	else
-	{
-		m_entity->setCastShadows(m_entityProps.casts);
-	}
-
+    // moved static & ghost check to gkGameObjectLoader::setEntity
+    m_entity->setCastShadows(m_entityProps.casts);
     m_node->attachObject(m_entity);
+
+    if (m_instance != 0 && gkEngine::getSingleton().getUserDefs().buildInstances)
+    {
+        // only do something if more than one object
+        if (m_instance->getGroup()->getInstances().size() > 1) 
+        {
+            Ogre::InstancedGeometry *geom = m_instance->getGroup()->getGeometry();
+            if (!geom)
+            {
+                geom = manager->createInstancedGeometry(m_instance->getGroup()->getName().str());
+                m_instance->getGroup()->attachGeometry(geom);
+            }
+
+            if (geom)  
+                geom->addSceneNode(m_node);
+        }
+    }
+    // else no instancing but we can benefit from sharing a single mesh
 }
 
 
@@ -148,6 +157,14 @@ void gkEntity::playAction(const gkString& act, gkScalar blend)
     }
 
 }
+
+
+gkObject *gkEntity::clone(const gkString &name)
+{
+    // will need to set other properties in a bit!
+    return new gkEntity(m_scene, name, m_manual ? m_manual->clone() : 0);
+}
+
 
 
 void gkEntity::_resetPose(void)

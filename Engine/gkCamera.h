@@ -57,6 +57,8 @@ public:
     GK_INLINE bool isMainCamera(void)               {return m_cameraProps.start;}
 
 private:
+    gkObject    *clone(const gkString &name);
+
     gkCameraProperties  m_cameraProps;
     Ogre::Camera*       m_camera;
 

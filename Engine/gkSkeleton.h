@@ -97,6 +97,7 @@ public:
 
 
 protected:
+    gkObject *clone(const gkString &name);
 
     Actions     m_actions;
     Bones       m_bones;

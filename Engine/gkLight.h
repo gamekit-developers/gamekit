@@ -46,9 +46,10 @@ public:
     void updateProperties(void);
 
 private:
+    gkObject    *clone(const gkString &name);
 
-    gkLightProperties m_lightProps;
-    Ogre::Light *m_light;
+    gkLightProperties       m_lightProps;
+    Ogre::Light             *m_light;
 
     virtual void loadImpl(void);
     virtual void unloadImpl(void);

@@ -67,7 +67,7 @@
 
 
 gkSceneObjectLoader::gkSceneObjectLoader(gkBlendFile *fp, Blender::Scene *scene)
-:       m_file(fp), m_scene(scene), m_grad(0)
+    :       m_file(fp), m_scene(scene), m_grad(0)
 {
     GK_ASSERT(m_file && m_scene);
 }
@@ -81,16 +81,17 @@ gkSceneObjectLoader::~gkSceneObjectLoader()
 }
 
 
-void gkSceneObjectLoader::load(gkObject* baseClass)
+
+void gkSceneObjectLoader::load(gkObject *baseClass)
 {
     GK_ASSERT(m_file && m_scene && baseClass);
 
     // convert/ load objects
-    gkScene *scene = static_cast<gkScene*>(baseClass);
+    gkScene *scene = static_cast<gkScene *>(baseClass);
 
 
 
-    gkSceneProperties& props = scene->getProperties();
+    gkSceneProperties &props = scene->getProperties();
 
     // Apply user defined animation fps
     gkLoaderUtils::blender_anim_rate = m_scene->r.frs_sec;
@@ -111,19 +112,19 @@ void gkSceneObjectLoader::load(gkObject* baseClass)
         props.world_color.b = world->horb;
 
 
-		if ((world->skytype & WO_SKYBLEND) || (world->skytype & WO_SKYREAL))
-		{
-			// multi stop gradients are not implemented for now
-			// so WO_SKYREAL is WO_SKYBLEND
+        if ((world->skytype & WO_SKYBLEND) || (world->skytype & WO_SKYREAL))
+        {
+            // multi stop gradients are not implemented for now
+            // so WO_SKYREAL is WO_SKYBLEND
 
-            
+
             // take half far distance of the main camera
             props.skyDist = m_scene->camera && m_scene->camera->type == OB_CAMERA ?
-                ((Blender::Camera*)m_scene->camera->data)->clipend * 0.5 : 10000.f;
+                            ((Blender::Camera *)m_scene->camera->data)->clipend * 0.5 : 10000.f;
 
             props.skyMat = GKB_IDNAME(world);
             loadSkyBox();
-		}
+        }
 
     }
 
@@ -137,7 +138,7 @@ void gkSceneObjectLoader::load(gkObject* baseClass)
     gkLogicLoader gameLogicLoader;
 
 
-    for (Blender::Base *base = (Blender::Base*)m_scene->base.first; base; base = base->next)
+    for (Blender::Base *base = (Blender::Base *)m_scene->base.first; base; base = base->next)
     {
         if (!base->object) continue;
 
@@ -151,17 +152,70 @@ void gkSceneObjectLoader::load(gkObject* baseClass)
 
         loadObject(gameLogicLoader, scene, base->object);
 
-
-        if (ob->parent)
+        if (ob->transflag &OB_DUPLIGROUP && ob->dup_group != 0)
         {
-            if (scene->hasObject(GKB_IDNAME(ob->parent)))
+            // setup dupli groups
+
+            gkGameObjectGroup *grp = 0;
+
+            if (!scene->hasGroup(GKB_IDNAME(ob->dup_group)))
             {
-                gkGameObject *parob = scene->getObject(GKB_IDNAME(ob->parent));
-                if (scene->hasObject(GKB_IDNAME(ob)))
-                    scene->getObject(GKB_IDNAME(ob))->setParent(parob);
+                // create initial group objects
+                grp = scene->createGroup(GKB_IDNAME(ob->dup_group));
+
+                for (Blender::GroupObject *group = (Blender::GroupObject *)ob->dup_group->gobject.first; group;
+                        group = (Blender::GroupObject *)group->next)
+                {
+                    Blender::Object *gob = group->ob;
+
+                    loadObject(gameLogicLoader, scene, gob);
+
+                    gkGameObject *oth = scene->getObject(GKB_IDNAME(gob));
+                    if (oth)
+                        grp->addObject(oth);
+
+                    if (gob->parent)
+                        applyParent(scene, gob);
+                }
+            }
+            else
+                grp = scene->getGroup(GKB_IDNAME(ob->dup_group));
+
+
+            // create instances
+            if (grp != 0)
+            {
+                gkGameObject* obp = scene->getObject(GKB_IDNAME(ob));
+                gkGameObjectInstance *inst = scene->createInstance(obp, grp);
+
+
+                for (Blender::GroupObject *group = (Blender::GroupObject *)ob->dup_group->gobject.first; group;
+                        group = (Blender::GroupObject *)group->next)
+                {
+                    Blender::Object *gob = group->ob;
+
+                    if (inst->hasObject(GKB_IDNAME(gob)))
+                    {
+                        gkGameObject *cur = inst->getObject(GKB_IDNAME(gob));
+                        createRigidBody(scene->getDynamicsWorld(), cur, gob);
+                        cur->setActiveLayer(true);
+
+
+                        // apply parents
+                        if (gob->parent && inst->hasObject(GKB_IDNAME(gob->parent)))
+                        {
+                            gkGameObject *par = inst->getObject(GKB_IDNAME(gob->parent));
+                            cur->setParent(par);
+                        }
+                    }
+                }
             }
         }
-        // TODO DupliGroups
+        else
+        {
+            if (ob->parent)
+                applyParent(scene, ob);
+        }
     }
 
     // resolve crosslinks
@@ -169,9 +223,23 @@ void gkSceneObjectLoader::load(gkObject* baseClass)
 
 }
 
+
+void gkSceneObjectLoader::applyParent(gkScene *scene, Blender::Object *ob)
+{
+    if (ob->parent)
+    {
+        if (scene->hasObject(GKB_IDNAME(ob->parent)))
+        {
+            gkGameObject *parob = scene->getObject(GKB_IDNAME(ob->parent));
+            if (scene->hasObject(GKB_IDNAME(ob)))
+                scene->getObject(GKB_IDNAME(ob))->setParent(parob);
+        }
+    }
+}
+
 void gkSceneObjectLoader::loadSkyBox()
 {
-	Blender::World *wo = m_scene->world;
+    Blender::World *wo = m_scene->world;
     Ogre::MaterialPtr matptr = Ogre::MaterialManager::getSingleton().create(wo->id.name + 2, m_file->getGroup());
 
     if (m_grad)
@@ -180,11 +248,11 @@ void gkSceneObjectLoader::loadSkyBox()
     m_grad = new gkSkyBoxGradient(wo);
 
     Ogre::TexturePtr txptr =  Ogre::TextureManager::getSingleton().create(wo->id.name + 2, m_file->getGroup(), true, m_grad);
-	matptr->setLightingEnabled(false);
+    matptr->setLightingEnabled(false);
 
     Ogre::TextureUnitState *tus = matptr->getTechnique(0)->getPass(0)->createTextureUnitState();
-	tus->setTextureName(wo->id.name + 2, Ogre::TEX_TYPE_CUBE_MAP);
-	tus->setTextureAddressingMode(Ogre::TextureUnitState::TAM_CLAMP);
+    tus->setTextureName(wo->id.name + 2, Ogre::TEX_TYPE_CUBE_MAP);
+    tus->setTextureAddressingMode(Ogre::TextureUnitState::TAM_CLAMP);
 
 }
 
@@ -237,13 +305,12 @@ void gkSceneObjectLoader::loadObject(gkLogicLoader &gameLogicLoader, gkScene *cu
         {
             // for visibility
             gob->setActiveLayer((m_scene->lay & ob->lay) != 0);
-
         }
     }
 
     if (current->hasObject(str))
     {
-        // apply physics  
+        // apply physics
         createRigidBody(current->getDynamicsWorld(), current->getObject(str), ob);
         gameLogicLoader.convertObject(ob, current->getObject(str));
     }
@@ -254,6 +321,9 @@ void gkSceneObjectLoader::createRigidBody(gkDynamicsWorld *dyn, gkGameObject *ob
 {
     GK_ASSERT(dyn && obj && bobj);
 
+    // disable colisions
+    if (/*bobj->body_type == OB_BODY_TYPE_NO_COLLISION  || */!(bobj->gameflag & OB_COLLISION))
+        return;
 
     if (bobj->type != OB_MESH)
     {
@@ -261,19 +331,19 @@ void gkSceneObjectLoader::createRigidBody(gkDynamicsWorld *dyn, gkGameObject *ob
         if (!(bobj->gameflag & OB_ACTOR))
             return;
     }
-    else 
+    else
     {
-         Blender::Mesh *me = (Blender::Mesh*)bobj->data;
-         if (!me->mface) 
-             return;
+        Blender::Mesh *me = (Blender::Mesh *)bobj->data;
+        if (!me->mface)
+            return;
     }
 
     if (bobj->gameflag & OB_GHOST)
     {
         dyn->createCharacter(obj, new gkCharacterLoader(m_file, m_scene, bobj, obj));
     }
-	else
-	{
-	    dyn->createRigidBody(obj, new gkRigidBodyLoader(m_file, m_scene, bobj, obj));
-	}
+    else
+    {
+        dyn->createRigidBody(obj, new gkRigidBodyLoader(m_file, m_scene, bobj, obj));
+    }
 }

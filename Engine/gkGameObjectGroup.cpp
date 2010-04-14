@@ -24,3 +24,190 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+#include "gkGameObjectGroup.h"
+#include "gkGameObject.h"
+#include "OgreInstancedGeometry.h"
+
+
+gkGameObjectInstance::gkGameObjectInstance(gkGameObject *owner, gkGameObjectGroup *group, UTsize uid)
+    :   gkObject(group->getName().str()), m_owner(owner), m_parent(group), m_handle(uid)
+{
+}
+
+
+gkGameObjectInstance::~gkGameObjectInstance()
+{
+    // free all objects
+
+    utHashTableIterator<InternalObjects> iter(m_objects);
+    while (iter.hasMoreElements())
+    {
+        gkGameObject *ob = iter.getNext().second;
+        ob->unload();
+        delete ob;
+    }
+
+    m_objects.clear();
+}
+
+
+gkGameObject *gkGameObjectInstance::getObject(const gkHashedString &name)
+{
+    UTsize pos;
+    if ((pos = m_objects.find(name)) == UT_NPOS)
+    {
+        // ignore
+        return 0;
+    }
+
+    return m_objects.at(pos);
+}
+
+
+void gkGameObjectInstance::removeObject(const gkHashedString &name)
+{
+    UTsize pos;
+    if ((pos = m_objects.find(name)) == UT_NPOS)
+    {
+        // ignore
+        return;
+    }
+
+    // we own this object, so destroy 
+    gkGameObject* ob= m_objects.at(pos);
+    ob->unload();
+    m_objects.remove(name);
+    delete ob;
+
+    if (m_objects.empty())
+        m_objects.clear();
+}
+
+
+void gkGameObjectInstance::addObject(gkGameObject *v)
+{
+    gkHashedString name = v->getName();
+
+    // ignore
+    if (m_objects.find(name) != UT_NPOS)
+        return;
+
+    gkGameObject *ob = static_cast<gkGameObject*>(v->clone( m_parent->getName().str() + "/" + v->getName() + "/Handle_" + 
+                                                            Ogre::StringConverter::toString(m_handle)));
+    ob->attachToGroupInstance(this);
+    ob->setActiveLayer(v->isInActiveLayer());
+    m_objects.insert(name, ob);
+}
+
+
+void gkGameObjectInstance::loadImpl(void)
+{
+    // call load on all objects
+    utHashTableIterator<InternalObjects> iter(m_objects);
+    while (iter.hasMoreElements())
+        iter.getNext().second->load();
+}
+
+void gkGameObjectInstance::unloadImpl(void)
+{
+    // call unload on all objects
+    utHashTableIterator<InternalObjects> iter(m_objects);
+    while (iter.hasMoreElements())
+        iter.getNext().second->unload();
+}
+
+
+
+gkGameObjectGroup::gkGameObjectGroup(const gkHashedString &name) 
+    :   m_name(name), m_handle(0), m_geom(0)
+{
+}
+
+gkGameObjectGroup::~gkGameObjectGroup()
+{
+    clear();
+}
+
+
+
+void gkGameObjectGroup::addObject(gkGameObject *v)
+{
+    if (!v) return;
+
+    gkHashedString name = v->getName();
+
+    if (m_internal.find(name) != UT_NPOS)
+    {
+        // ignore duplicates
+        return;
+    }
+
+
+    v->attachToGroup(this);
+    m_internal.insert(name, v);
+}
+
+
+
+// destroy all instances
+void gkGameObjectGroup::clear(void)
+{
+    gkGroupInstanceIterator iter = gkGroupInstanceIterator(m_instances);
+    while (iter.hasMoreElements())
+        delete iter.getNext();
+
+    m_instances.clear();
+}
+
+
+// notify that the owning object to
+// this group has been unloaded / destroyed
+void gkGameObjectGroup::notifyObject(gkGameObject *ob)
+{
+    gkHashedString name = ob->getName();
+    if (m_internal.find(name) != UT_NPOS)
+    {
+        m_internal.remove(name);
+        if (m_internal.empty()) 
+            m_internal.clear();
+
+
+        // find object in instance
+        gkGroupInstanceIterator iter = gkGroupInstanceIterator(m_instances);
+        while (iter.hasMoreElements())
+        {
+            gkGameObjectInstance *inst = iter.getNext();
+
+            if (inst->hasObject(name))
+            {
+                inst->removeObject(name);
+                break;
+            }
+        }
+    }
+}
+
+
+gkGameObjectInstance* gkGameObjectGroup::createInstance(gkGameObject *instPar)
+{
+    gkGameObjectInstance *newInst = new gkGameObjectInstance(instPar, this, m_handle++);
+    m_instances.push_back(newInst);
+
+
+    // push new objects
+    utHashTableIterator<InternalObjects> iter(m_internal);
+    while (iter.hasMoreElements())
+        newInst->addObject(iter.getNext().second);
+
+    return newInst;
+}
+
+
+// build instanced geometry.
+void gkGameObjectGroup::build(void)
+{
+    if (m_geom != 0)
+        m_geom->build();
+}
+
+

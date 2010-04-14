@@ -80,6 +80,12 @@ void gkCamera::unloadImpl(void)
 }
 
 
+gkObject *gkCamera::clone(const gkString &name)
+{
+    // will need to set other properties in a bit!
+    return new gkCamera(m_scene, name, m_manual ? m_manual->clone() : 0);
+}
+
 
 void gkCamera::makeCurrent(void)
 {

@@ -44,6 +44,9 @@ public:
     // defined in scene->r.frs_sec
     static gkScalar blender_anim_rate;
 
+    void extractInstanceTransform(gkGameObject *inst,Blender::Object *ob, gkVector3 &loc, gkQuaternion &quat, gkVector3 &scale);
+
+
 private:
     bParse::bBlenderFile *m_file; // incase any file info is needed (try not to use for finding ptrs)
 };

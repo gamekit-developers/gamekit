@@ -59,10 +59,11 @@ gkScene::gkScene(const gkString& name, gkObject::Loader *loader)
 gkScene::~gkScene()
 {
     gkGameObjectHashMapIterator it(m_objects);
-    while (it.hasMoreElements()) {
+    while (it.hasMoreElements())
         delete it.getNext().second;
-    }
 }
+
+
 
 bool gkScene::hasObject(const gkHashedString& ob)
 {
@@ -79,10 +80,64 @@ bool gkScene::hasObject(gkGameObject *ob)
 
 gkGameObject* gkScene::getObject(const gkHashedString& name)
 {
-    size_t pos = m_objects.find(name);
+    UTsize pos = m_objects.find(name);
     if (pos != GK_NPOS)
         return m_objects.at(pos);
     return 0;
+}
+
+gkGameObjectGroup *gkScene::createGroup(const gkHashedString &name)
+{
+    // empty group 
+
+    if (m_groups.find(name) != UT_NPOS) {
+        gkPrintf("duplicate group '%s' found\n", name.str().c_str());
+        return 0;
+    }
+
+    gkGameObjectGroup *group = new gkGameObjectGroup(name);
+    m_groups.insert(name, group);
+    return group;
+}
+
+gkGameObjectGroup *gkScene::getGroup(const gkHashedString &name)
+{
+    UTsize pos;
+    if ( (pos = m_groups.find(name)) == UT_NPOS) {
+        gkPrintf("mossing group '%s'\n", name.str().c_str());
+        return 0;
+    }
+    return m_groups.at(pos);
+
+}
+
+void gkScene::destroyGroup(const gkHashedString &name)
+{
+    destroyGroup(getGroup(name));
+}
+
+
+void gkScene::destroyGroup(gkGameObjectGroup* group)
+{
+    if (group && hasGroup(group->getName()))
+    {
+        m_groups.remove(group->getName());
+        delete group;
+
+        if (m_groups.empty())
+            m_groups.clear();
+    }
+}
+
+
+
+void gkScene::destroyGroups(void)
+{
+    gkGroupTableIterator it(m_groups);
+    while (it.hasMoreElements())
+        delete it.getNext().second;
+
+    m_groups.clear();
 }
 
 
@@ -156,6 +211,14 @@ gkDynamicsWorld* gkScene::createWorld(gkObject::Loader *manual)
 
     m_physicsWorld = new gkDynamicsWorld(m_name, this, manual);
     return m_physicsWorld;
+}
+
+
+gkGameObjectInstance *gkScene::createInstance(gkGameObject *owner, gkGameObjectGroup *group)
+{
+    gkGameObjectInstance *inst = group->createInstance(owner);
+    m_instances.push_back(inst);
+    return inst;
 }
 
 
@@ -241,6 +304,22 @@ void gkScene::loadImpl(void)
         }
     }
 
+    if (!m_instances.empty())
+    {
+        gkGroupInstanceIterator instit(m_instances);
+        while (instit.hasMoreElements())
+            instit.getNext()->load();
+
+        if (gkEngine::getSingleton().getUserDefs().buildInstances)
+        {
+            gkGroupTableIterator instGeom(m_groups);
+            while (instGeom.hasMoreElements())
+                instGeom.getNext().second->build();
+        }
+    }
+
+
+
 
     if (!m_viewport) {
 
@@ -293,11 +372,14 @@ void gkScene::unloadImpl()
 
     // clear per scene 
     gkLogicManager::getSingleton().clear();
-
+    destroyGroups();
 
     // clear ogre scene manager
     if (m_manager)
+    {
+        m_manager->destroyAllInstancedGeometry();
         Root::getSingleton().destroySceneManager(m_manager);
+    }
     m_manager = 0;
 
     // finalize vp

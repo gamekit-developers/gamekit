@@ -26,6 +26,8 @@
 */
 #include "gkLoaderUtils.h"
 #include "gkMathUtils.h"
+#include "gkGameObject.h"
+#include "gkGameObjectGroup.h"
 #include "gkBlenderDefines.h"
 #include "blender.h"
 #include "bBlenderFile.h"
@@ -133,4 +135,45 @@ Blender::Material* gkLoaderUtils::getMaterial(Blender::Object *ob, int index)
         ma = (Blender::Material*)me->mat[index-1];
     }
     return ma;
+}
+
+void gkLoaderUtils::extractInstanceTransform(gkGameObject *inst,Blender::Object *ob, gkVector3 &loc, gkQuaternion &quat, gkVector3 &scale)
+{
+    gkGameObject *own = inst->getGroupInstance()->getOwner();
+
+    bParse::bListBasePtr *objs = m_file->getMain()->getObject();
+    Blender::Object *orig=0;
+
+    for (int i=0; i<objs->size(); ++i)
+    {
+        orig = (Blender::Object*)objs->at(i);
+        if (GKB_IDNAME(orig)==own->getName())
+            break;
+        else orig = 0;
+    }
+
+    gkMatrix4 p,c;
+    c = gkMathUtils::getFromFloat(ob->obmat);
+
+    if (orig != 0)
+    {
+        p = gkMathUtils::getFromFloat(orig->obmat);
+
+        if (!ob->parent)
+        {
+            c = p * c;
+            gkMathUtils::extractTransform(c, loc, quat, scale);
+        }
+        else
+        {
+            gkMatrix4 parent = gkMathUtils::getFromFloat(ob->parent->obmat);
+            c = parent.inverse() * c;
+            gkMathUtils::extractTransform(c, loc, quat, scale);
+        }
+
+    }
+    else
+    {
+        gkMathUtils::extractTransform(c, loc, quat, scale);
+    }
 }

@@ -42,6 +42,8 @@ public:
     virtual ~gkGameObjectLoader();
 
     void load(gkObject *ob);
+    Loader* clone(void) {return new gkGameObjectLoader(*this);}
+
 
 protected:
     void setLight(gkGameObject *ob);
@@ -51,7 +53,6 @@ protected:
 
     void setConstraints(gkGameObject *ob);
     void setProperties(gkGameObject *ob);
-
 
     gkBlendFile *m_file;
     Blender::Object*    m_object;
