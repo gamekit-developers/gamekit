@@ -123,6 +123,8 @@ void gkMaterialUtils::handleStd(void)
         gkColor sm = spec *m_blendMat->spec;
         sm.a = 1.0;
 
+        dm.a = m_blendMat->alpha;
+
         pass->setAmbient(am);
         pass->setDiffuse(dm);
         pass->setSpecular(sm);
@@ -164,7 +166,6 @@ void gkMaterialUtils::handleStd(void)
     {
         pass->setAlphaRejectSettings(Ogre::CMPF_GREATER_EQUAL, 128);
         pass->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
-        pass->setDepthWriteEnabled(false);
     }
 }
 
@@ -322,6 +323,7 @@ bool gkMaterialUtils::applyTexFace(int flags, int alpha)
 {
     if (!m_ogreMat || !m_tech)
         return false;
+    m_flags = flags;
 
     if (flags &TF_INVISIBLE)
     {
@@ -364,9 +366,11 @@ void gkMaterialUtils::getOgreMaterialFromMaterial(Ogre::MaterialPtr ptr, Blender
     m_blendMesh = me;
     m_tech = m_ogreMat->getTechnique(0);
 
-    applyTexFace(flags, 0);
-    getNumTextures();
-    handleStd();
+    if (applyTexFace(flags, 0))
+    {
+        getNumTextures();
+        handleStd();
+    }
 }
 
 

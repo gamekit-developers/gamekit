@@ -94,6 +94,7 @@ private:
     MTexList                m_textures;     // converted textures
     bool                    m_multiPass;    // use multi pass shaders (WIP)
     bool                    m_modern;       // multi pass supported ?
+    int                     m_flags;
 
 };
 
