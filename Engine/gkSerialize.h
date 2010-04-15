@@ -73,6 +73,14 @@ typedef enum gkGameObjectTypes
 }gkGameObjectTypes;
 
 
+enum gkPhysicsState
+{
+    GK_NO_COLLISION,
+    GK_STATIC,
+    GK_DYNAMIC,
+    GK_RIGID_BODY,
+    GK_GHOST_CONTROLLER,
+};
 
 // GameObject datatypes
 class gkGameObjectProperties
@@ -86,6 +94,7 @@ public:
     gkQuaternion        orientation;
     bool                isStatic;
 	bool				isGhost;
+    int                 physicsState;
     bool                showAABB;
 };
 

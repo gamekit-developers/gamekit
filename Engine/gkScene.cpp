@@ -314,7 +314,7 @@ void gkScene::loadImpl(void)
         {
             gkGroupTableIterator instGeom(m_groups);
             while (instGeom.hasMoreElements())
-                instGeom.getNext().second->build();
+                instGeom.getNext().second->build(m_manager);
         }
     }
 

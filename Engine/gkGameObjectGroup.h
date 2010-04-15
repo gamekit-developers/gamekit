@@ -40,21 +40,22 @@ typedef utArray<gkGameObjectInstance *>                     gkGroupInstances;
 typedef utArrayIterator<gkGroupInstances>                   gkGroupInstanceIterator;
 
 namespace Ogre {
-    class InstancedGeometry;
+    class StaticGeometry;
 }
 
 // Copy of original group
 class gkGameObjectInstance : public gkObject
 {
 public:
-    typedef utHashTable<gkHashedString, gkGameObject*> InternalObjects;
+    typedef utHashTable<gkHashedString, gkGameObject*>  InstanceObjects;
+    typedef utHashTableIterator<InstanceObjects>        InstanceObjectIterator;
 
 protected:
 
     gkGameObject            *m_owner;
     gkGameObjectGroup       *m_parent;
     const UTsize            m_handle;
-    InternalObjects         m_objects;
+    InstanceObjects         m_objects;
 
     void loadImpl(void);
     void unloadImpl(void);
@@ -73,6 +74,7 @@ public:
     GK_INLINE gkGameObjectGroup     *getGroup(void)     {return m_parent;}
     GK_INLINE const UTsize           getHandle(void)    {return m_handle;}
 
+    GK_INLINE InstanceObjectIterator  getObjectIterator(void) {return InstanceObjectIterator(m_objects);}
 
 
     GK_INLINE bool hasObject(const gkHashedString &name)      
@@ -100,7 +102,7 @@ protected:
     // local lookup of game objects
     InternalObjects         m_internal;
 
-    Ogre::InstancedGeometry *m_geom;
+    Ogre::StaticGeometry    *m_geom;
 
 public:
 
@@ -122,12 +124,8 @@ public:
     // duplication method
     gkGameObjectInstance* createInstance(gkGameObject *instPar);
 
-    // instancing 
-    GK_INLINE void                          attachGeometry(Ogre::InstancedGeometry *geom)   {m_geom = geom;}
-    GK_INLINE Ogre::InstancedGeometry*      getGeometry(void)                               {return m_geom;}    
-
-    // build instanced geometry.
-    void build(void);
+    // build geometry.
+    void build(Ogre::SceneManager *mgr);
 
 
 

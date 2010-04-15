@@ -213,7 +213,6 @@ void gkGameObject::unloadImpl(void)
     }
 
     destroyConstraints();
-    detachFromGroup();
 
     if (m_node)
     {

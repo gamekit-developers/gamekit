@@ -85,24 +85,6 @@ void gkEntity::loadImpl(void)
     // moved static & ghost check to gkGameObjectLoader::setEntity
     m_entity->setCastShadows(m_entityProps.casts);
     m_node->attachObject(m_entity);
-
-    if (m_instance != 0 && gkEngine::getSingleton().getUserDefs().buildInstances)
-    {
-        // only do something if more than one object
-        if (m_instance->getGroup()->getInstances().size() > 1) 
-        {
-            Ogre::InstancedGeometry *geom = m_instance->getGroup()->getGeometry();
-            if (!geom)
-            {
-                geom = manager->createInstancedGeometry(m_instance->getGroup()->getName().str());
-                m_instance->getGroup()->attachGeometry(geom);
-            }
-
-            if (geom)  
-                geom->addSceneNode(m_node);
-        }
-    }
-    // else no instancing but we can benefit from sharing a single mesh
 }
 
 

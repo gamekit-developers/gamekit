@@ -322,8 +322,11 @@ void gkSceneObjectLoader::createRigidBody(gkDynamicsWorld *dyn, gkGameObject *ob
     GK_ASSERT(dyn && obj && bobj);
 
     // disable colisions
-    if (/*bobj->body_type == OB_BODY_TYPE_NO_COLLISION  || */!(bobj->gameflag & OB_COLLISION))
+    if (!(bobj->gameflag & OB_COLLISION))
+    {
+        obj->getProperties().physicsState = GK_NO_COLLISION;
         return;
+    }
 
     if (bobj->type != OB_MESH)
     {

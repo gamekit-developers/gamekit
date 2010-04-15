@@ -26,7 +26,10 @@
 */
 #include "gkGameObjectGroup.h"
 #include "gkGameObject.h"
-#include "OgreInstancedGeometry.h"
+#include "gkEntity.h"
+#include "OgreEntity.h"
+#include "OgreStaticGeometry.h"
+#include "OgreSceneManager.h"
 
 
 gkGameObjectInstance::gkGameObjectInstance(gkGameObject *owner, gkGameObjectGroup *group, UTsize uid)
@@ -39,7 +42,7 @@ gkGameObjectInstance::~gkGameObjectInstance()
 {
     // free all objects
 
-    utHashTableIterator<InternalObjects> iter(m_objects);
+    utHashTableIterator<InstanceObjects> iter(m_objects);
     while (iter.hasMoreElements())
     {
         gkGameObject *ob = iter.getNext().second;
@@ -103,7 +106,7 @@ void gkGameObjectInstance::addObject(gkGameObject *v)
 void gkGameObjectInstance::loadImpl(void)
 {
     // call load on all objects
-    utHashTableIterator<InternalObjects> iter(m_objects);
+    utHashTableIterator<InstanceObjects> iter(m_objects);
     while (iter.hasMoreElements())
         iter.getNext().second->load();
 }
@@ -111,7 +114,7 @@ void gkGameObjectInstance::loadImpl(void)
 void gkGameObjectInstance::unloadImpl(void)
 {
     // call unload on all objects
-    utHashTableIterator<InternalObjects> iter(m_objects);
+    utHashTableIterator<InstanceObjects> iter(m_objects);
     while (iter.hasMoreElements())
         iter.getNext().second->unload();
 }
@@ -204,10 +207,46 @@ gkGameObjectInstance* gkGameObjectGroup::createInstance(gkGameObject *instPar)
 
 
 // build instanced geometry.
-void gkGameObjectGroup::build(void)
+void gkGameObjectGroup::build(Ogre::SceneManager *mgr)
 {
-    if (m_geom != 0)
-        m_geom->build();
+    if (m_geom)
+        mgr->destroyStaticGeometry(m_geom);
+
+    m_geom = mgr->createStaticGeometry(m_name.str());
+
+
+    gkGroupInstanceIterator iter = gkGroupInstanceIterator(m_instances);
+    while (iter.hasMoreElements())
+    {
+        gkGameObjectInstance *inst = iter.getNext();
+
+        gkGameObjectInstance::InstanceObjectIterator instIt = inst->getObjectIterator();
+
+        while (instIt.hasMoreElements())
+        {
+            gkGameObject *obj = instIt.getNext().second;
+            obj->load();
+
+
+            if (obj->getType()==GK_ENTITY)
+            {
+                const gkGameObjectProperties& props = obj->getProperties();
+
+                if (props.physicsState == GK_NO_COLLISION)
+                {
+
+                    gkEntity *ent = obj->getEntity();
+                    m_geom->addEntity(ent->getEntity(), obj->getWorldPosition(), 
+                                                        obj->getWorldOrientation(), 
+                                                        obj->getWorldScale());
+                    // no longer needed
+                    ent->unload();
+                }
+            }
+        }
+    }
+
+    m_geom->build();
 }
 
 

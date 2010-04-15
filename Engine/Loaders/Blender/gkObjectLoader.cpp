@@ -675,6 +675,9 @@ void gkRigidBodyLoader::load(gkObject *ob)
             body->setDamping(m_object->damping, m_object->rdamping);
             body->setWorldTransform(worldTrans);
             rigid->_reinstanceBody(body);
+
+            rigid->getObject()->getProperties().physicsState =
+                (m_object->gameflag & OB_RIGID_BODY) ? GK_RIGID_BODY : GK_DYNAMIC;
         }
     }
     else
@@ -711,6 +714,7 @@ void gkRigidBodyLoader::load(gkObject *ob)
                 }
 
                 rigid->_reinstanceBody(colObj);
+                rigid->getObject()->getProperties().physicsState = GK_STATIC;
             }
             else
             {
