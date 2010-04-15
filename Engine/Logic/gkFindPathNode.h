@@ -46,11 +46,23 @@ public:
 		POLY_PICK_EXT,
 		SHOW_PATH,
 		SHOW_PATH_OFFSET,
+		REDO_PATH_IF_FOLLOWING,
 		PATH,
 		PATH_FOUND
 	};
 
-	typedef utArray<gkVector3> PATH_POINTS;
+	struct PathData
+	{
+		typedef std::deque<gkVector3> PATH_POINTS;
+
+		PATH_POINTS path;
+
+		bool following;
+
+		int retry;
+
+		PathData() : following(false), retry(0) {}
+	};
 
 	DECLARE_SOCKET_TYPE(UPDATE, bool);
 	DECLARE_SOCKET_TYPE(NAV_MESH, dtNavMesh*);
@@ -60,9 +72,10 @@ public:
 	DECLARE_SOCKET_TYPE(POLY_PICK_EXT, gkVector3);
 	DECLARE_SOCKET_TYPE(SHOW_PATH, bool);
 	DECLARE_SOCKET_TYPE(SHOW_PATH_OFFSET, gkVector3);
+	DECLARE_SOCKET_TYPE(REDO_PATH_IF_FOLLOWING, bool);
 	
 
-	DECLARE_SOCKET_TYPE(PATH, PATH_POINTS*);
+	DECLARE_SOCKET_TYPE(PATH, PathData*);
 	DECLARE_SOCKET_TYPE(PATH_FOUND, bool);
 
     gkFindPathNode(gkLogicTree *parent, size_t id);
@@ -80,7 +93,7 @@ private:
 private:
 
 	gkPhysicsDebug* m_debug;
-	PATH_POINTS m_path;
+	PathData m_path;
 };
 
 #endif//_gkFindPathNode_h_

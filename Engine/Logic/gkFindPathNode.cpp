@@ -47,6 +47,7 @@ m_debug(0)
 	ADD_ISOCK(POLY_PICK_EXT, gkVector3(2, 4, 2));
 	ADD_ISOCK(SHOW_PATH, false);
 	ADD_ISOCK(SHOW_PATH_OFFSET, gkVector3::ZERO);
+	ADD_ISOCK(REDO_PATH_IF_FOLLOWING, false);
 	ADD_OSOCK(PATH, 0);
 	ADD_OSOCK(PATH_FOUND, false);
 }
@@ -60,7 +61,7 @@ gkFindPathNode::~gkFindPathNode()
 
 bool gkFindPathNode::evaluate(gkScalar tick)
 {
-	return GET_SOCKET_VALUE(UPDATE) && GET_SOCKET_VALUE(NAV_MESH);
+	return (GET_SOCKET_VALUE(UPDATE) || m_path.retry) && GET_SOCKET_VALUE(NAV_MESH);
 }
 
 void gkFindPathNode::update(gkScalar tick)
@@ -75,9 +76,11 @@ void gkFindPathNode::update(gkScalar tick)
 
 void gkFindPathNode::findPath()
 {
+	if(!GET_SOCKET_VALUE(REDO_PATH_IF_FOLLOWING) && m_path.following) return;
+
 	SET_SOCKET_VALUE(PATH_FOUND, false);
 	SET_SOCKET_VALUE(PATH, 0);
-	m_path.clear();
+	m_path.path.clear();
 
 	gkVector3 startPos = GET_SOCKET_VALUE(START_POS);
 
@@ -121,7 +124,7 @@ void gkFindPathNode::findPath()
 			std::swap(startPos.y, startPos.z);
 			std::swap(endPos.y, endPos.z);
 			
-			m_path.push_back(startPos);
+			m_path.path.push_back(startPos);
 
 			gkVector3 point;
 
@@ -131,10 +134,10 @@ void gkFindPathNode::findPath()
 				point.y = straightPath[i+2];
 				point.z = straightPath[i+1];
 
-				m_path.push_back(point);
+				m_path.path.push_back(point);
 			}
 
-			m_path.push_back(endPos);
+			m_path.path.push_back(endPos);
 
 			SET_SOCKET_VALUE(PATH_FOUND, true);
 			SET_SOCKET_VALUE(PATH, &m_path);
@@ -153,9 +156,9 @@ void gkFindPathNode::showPath()
 		m_debug = new gkPhysicsDebug(pScene->getDynamicsWorld());
 	}
 
-	PATH_POINTS* points = GET_SOCKET_VALUE(PATH);
+	PathData* pathData = GET_SOCKET_VALUE(PATH);
 
-	unsigned int n = points ? points->size() : 0;
+	unsigned int n = pathData ? pathData->path.size() : 0;
 
 	if(n)
 	{
@@ -163,12 +166,12 @@ void gkFindPathNode::showPath()
 
 		gkVector3 offset = GET_SOCKET_VALUE(SHOW_PATH_OFFSET);
 
-		gkVector3 oldPoint = points->at(0) + offset;
+		gkVector3 oldPoint = pathData->path.at(0) + offset;
 
 
 		for(unsigned int i=1; i<n; i++)
 		{
-			gkVector3 point = points->at(i) + offset;
+			gkVector3 point = pathData->path.at(i) + offset;
 
 			m_debug->drawLine(
 				btVector3(oldPoint.x, oldPoint.y, oldPoint.z), 
@@ -176,7 +179,7 @@ void gkFindPathNode::showPath()
 				RED_COLOR
 			);
 
-			oldPoint = points->at(i) + offset;
+			oldPoint = pathData->path.at(i) + offset;
 		}
 
 		m_debug->flush();

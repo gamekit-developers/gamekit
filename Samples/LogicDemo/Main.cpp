@@ -286,15 +286,11 @@ public:
 			gkFindPathNode* ratFindPathNode = m_tree->createNode<gkFindPathNode>();
 
 			{
-				gkIfNode<bool, CMP_OR>* ifOrNode = m_tree->createNode<gkIfNode<bool, CMP_OR> >();
-				ifOrNode->getA()->link(m_momoMotion->getMOTION());
-				ifOrNode->getB()->link(pulse->getOUTPUT());
+				gkIfNode<bool, CMP_OR>* ifNode = m_tree->createNode<gkIfNode<bool, CMP_OR> >();
+				ifNode->getA()->link(m_momoMotion->getMOTION());
+				ifNode->getB()->link(pulse->getOUTPUT());
 
-				gkIfNode<bool, CMP_AND>* ifAndNode = m_tree->createNode<gkIfNode<bool, CMP_AND> >();
-				ifAndNode->getA()->link(m_playerSetter->getHAS_OBJ());
-				ifAndNode->getB()->link(ifOrNode->getIS_TRUE());
-
-				ratFindPathNode->getUPDATE()->link(ifAndNode->getIS_TRUE());
+				ratFindPathNode->getUPDATE()->link(ifNode->getIS_TRUE());
 			}
 
 			ratFindPathNode->getNAV_MESH()->link(staticNavMesh->getOUTPUT());
@@ -311,6 +307,7 @@ public:
 			ratFollowPathNode->setIdleState(ratState::IDLE);
 			ratFollowPathNode->setWalkState(ratState::WALK, ratVelocity::WALK);
 			ratFollowPathNode->setRunState(ratState::RUN, ratVelocity::RUN);
+
 		}
 	}
 

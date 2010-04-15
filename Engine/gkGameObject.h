@@ -174,9 +174,6 @@ public:
 
 	virtual Ogre::AxisAlignedBox getAabb() const;
 
-	bool hasChanged() const { return m_hasChanged; }
-	void resetMotionDetection() {m_hasChanged = false;}
-
 
 protected:
 
@@ -226,10 +223,6 @@ protected:
     virtual void loadImpl(void);
     virtual void unloadImpl(void);
     virtual void postLoadImpl(void);
-
-private:
-
-	bool m_hasChanged;
 };
 
 #endif//_gkGameObject_h_

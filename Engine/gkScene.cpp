@@ -498,13 +498,6 @@ void gkScene::update(gkScalar tickRate)
         return;
 
 	m_hasChanged = false;
-    gkGameObjectHashMapIterator it(m_objects);
-    while (it.hasMoreElements()) 
-	{
-        gkGameObject* obptr = it.getNext().second;
-		obptr->resetMotionDetection();
-    }
-
 
     // update simulation
     if (m_physicsWorld) m_physicsWorld->step(tickRate);

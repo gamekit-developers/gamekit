@@ -30,7 +30,7 @@
 
 gkFollowPathNode::gkFollowPathNode(gkLogicTree *parent, size_t id) 
 : gkLogicNode(parent, id),
-m_following(false),
+m_path(0),
 m_target(0),
 m_dir(gkVector3::ZERO),
 m_up(gkVector3::ZERO),
@@ -55,21 +55,11 @@ m_runVelocity(0)
 
 bool gkFollowPathNode::evaluate(gkScalar tick)
 {
-	if(GET_SOCKET_VALUE(UPDATE) && GET_SOCKET_VALUE(TARGET) && animationHasBeenSet())
+	m_path = GET_SOCKET_VALUE(PATH);
+
+	if(m_path && GET_SOCKET_VALUE(UPDATE) && GET_SOCKET_VALUE(TARGET) && animationHasBeenSet())
 	{
-		PATH_POINTS* points = GET_SOCKET_VALUE(PATH);
-		
-		if(!points)
-		{
-			m_following = false;
-
-			SET_SOCKET_VALUE(HAS_REACHED_END, true);
-			SET_SOCKET_VALUE(NOT_HAS_REACHED_END, false);
-			SET_SOCKET_VALUE(CURRENT_STATE, -1);
-
-			m_points.resize(0);
-		}
-		else if(m_points.empty() && !m_following)
+		if(!m_path->following && !m_path->path.empty())
 		{
 			m_target = GET_SOCKET_VALUE(TARGET);
 			m_dir = GET_SOCKET_VALUE(ORIGINAL_TARGET_DIRECTION);
@@ -77,34 +67,15 @@ bool gkFollowPathNode::evaluate(gkScalar tick)
 			m_upMask = (gkVector3::UNIT_SCALE - m_up);
 			m_foundThreshold = GET_SOCKET_VALUE(FOUND_THRESHOLD);
 
-			size_t n = points->size()-1;
+			SET_SOCKET_VALUE(HAS_REACHED_END, false);
+			SET_SOCKET_VALUE(NOT_HAS_REACHED_END, true);
+			SET_SOCKET_VALUE(CURRENT_STATE, -1);
 
-			gkVector3 target_pos = m_target->getPosition() * m_upMask;
-			gkVector3 current_pos = points->at(n) * m_upMask;
-			gkScalar d = (target_pos - current_pos).length();
-
-			if(d > m_foundThreshold)
-			{
-				m_following = true;
-
-				size_t n = points->size()-1;
-
-				for(size_t i=n; i<=n; i--)
-				{
-					m_points.push_back(points->at(i));
-				}
-
-
-				SET_SOCKET_VALUE(HAS_REACHED_END, false);
-				SET_SOCKET_VALUE(NOT_HAS_REACHED_END, true);
-				SET_SOCKET_VALUE(CURRENT_STATE, -1);
-			}
+			m_path->following = true;
 		}
-
-		return !m_points.empty();
 	}
 
-	return false;
+	return m_path && m_path->following;
 }
 
 void gkFollowPathNode::update(gkScalar tick)
@@ -113,7 +84,7 @@ void gkFollowPathNode::update(gkScalar tick)
 
 	current_pos *= m_upMask;
 
-	gkVector3 pos = m_points.back();
+	gkVector3 pos = m_path->path.front();
 
 	pos *= m_upMask;
 
@@ -133,15 +104,24 @@ void gkFollowPathNode::update(gkScalar tick)
 
 		m_target->rotate(q, TRANSFORM_LOCAL);
 
-		setVelocity(d);
+		setVelocity(d, tick);
 	}
 	else
 	{
-		m_points.pop_back();
+		m_path->path.pop_front();
 
-		if(m_points.empty())
+		if(m_path->path.empty())
 		{
-			m_following = false;
+			m_path->following = false;
+
+			if(!m_path->retry)
+			{
+				m_path->retry = 5;
+			}
+			else
+			{
+				--m_path->retry;
+			}
 
 			SET_SOCKET_VALUE(HAS_REACHED_END, true);
 			SET_SOCKET_VALUE(NOT_HAS_REACHED_END, false);
@@ -150,18 +130,22 @@ void gkFollowPathNode::update(gkScalar tick)
 	}
 }
 
-void gkFollowPathNode::setVelocity(gkScalar v)
+void gkFollowPathNode::setVelocity(gkScalar d, gkScalar tick)
 {
-	if(v < m_runVelocity)
-	{
-		SET_SOCKET_VALUE(CURRENT_STATE, m_walkState);
-		m_target->setLinearVelocity(m_dir * m_walkVelocity);
-		
-	}
-	else
+	if(d >= m_runVelocity*tick)
 	{
 		SET_SOCKET_VALUE(CURRENT_STATE, m_runState);
 		m_target->setLinearVelocity(m_dir * m_runVelocity);
+	}
+	else if(d >= m_walkVelocity*tick)
+	{
+		SET_SOCKET_VALUE(CURRENT_STATE, m_walkState);
+		m_target->setLinearVelocity(m_dir * m_walkVelocity);
+	}
+	else
+	{
+		SET_SOCKET_VALUE(CURRENT_STATE, m_walkState);
+		m_target->setLinearVelocity(m_dir * d/tick);
 	}
 }
 

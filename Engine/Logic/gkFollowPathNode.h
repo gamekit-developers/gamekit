@@ -28,6 +28,7 @@
 #define _gkFollowPathNode_h_
 
 #include "gkLogicNode.h"
+#include "gkFindPathNode.h"
 
 class gkGameObject;
 class gkFollowPathNode : public gkLogicNode
@@ -47,14 +48,14 @@ public:
 		CURRENT_STATE
 	};
 
-	typedef utArray<gkVector3> PATH_POINTS;
+	typedef gkFindPathNode::PathData PathData;
 
 	DECLARE_SOCKET_TYPE(UPDATE, bool);
 	DECLARE_SOCKET_TYPE(TARGET, gkGameObject*);
 	DECLARE_SOCKET_TYPE(TARGET_UP_DIRECTION, gkVector3);
 	DECLARE_SOCKET_TYPE(ORIGINAL_TARGET_DIRECTION, gkVector3);
 	DECLARE_SOCKET_TYPE(FOUND_THRESHOLD, gkScalar);
-	DECLARE_SOCKET_TYPE(PATH, PATH_POINTS*);
+	DECLARE_SOCKET_TYPE(PATH, PathData*);
 	DECLARE_SOCKET_TYPE(HAS_REACHED_END, bool);
 	DECLARE_SOCKET_TYPE(NOT_HAS_REACHED_END, bool);
 	DECLARE_SOCKET_TYPE(CURRENT_STATE, int);
@@ -74,14 +75,12 @@ private:
 	gkRadian GetRotationAngleForAxis(const gkVector3& from, const gkVector3& to, const gkVector3& axis);
 	gkVector3 GetProjectionOnPlane(const gkVector3& V, const gkVector3& N);
 
-	void setVelocity(gkScalar v);
+	void setVelocity(gkScalar d, gkScalar tick);
 	bool animationHasBeenSet() const { return m_idleState!= -1 && m_walkVelocity && m_runVelocity; }
 
 private:
 
-	PATH_POINTS m_points;
-
-	bool m_following;
+	PathData* m_path;
 
 	gkGameObject* m_target;
 	gkVector3 m_dir;
