@@ -30,8 +30,8 @@
 #include "nsCommon.h"
 #include "nsSingleton.h"
 #include "nsEventHandler.h"
-#include "nsVariable.h"
-#include "Utils/utTypes.h"
+#include "nsNodeTypeInfo.h"
+
 #include <wx/panel.h>
 #include <wx/propgrid/manager.h>
 
@@ -42,32 +42,29 @@ class nsNodePropertyPage : public wxPropertyGridPage
 protected:
     nsPropertyManager   *m_manager;
     nsNode              *m_node;
-    nsNodeType          *m_nodeType;
+    nsNodeDef           *m_nodeType;
 
 
-    wxPropertyCategory  *m_type, *m_inputs, *m_vars;
+    wxPropertyCategory  *m_type, *m_inputs, *m_data;
     wxStringProperty    *m_typename;
     wxStringProperty    *m_groupname;
     wxStringProperty    *m_id;
+    wxStringProperty    *m_object;
+
 
     // input sockets
     void createInputs(void);
 
-    // Data attached to this node
-    void createVariables(void);
-
-
-    // generic property from type
-    wxPGProperty   *createProperty(nsVariable::PropertyTypes type,
-                                   const utString &name,
-                                   const utString &value,
-                                   const utString &help,
-                                   void *enumValue = 0);
+    virtual bool wantsCustomData(void)  {return false;}
+    virtual void initCustomData(void)   {}
+    virtual void doSetCustomData(void)  {}
+    virtual bool propertyChanged(wxPGProperty *prop)    {return false;}
 
 public:
 
-    nsNodePropertyPage(nsPropertyManager *manager, nsNodeType *type);
+    nsNodePropertyPage(nsPropertyManager *manager, nsNodeDef *type);
     virtual ~nsNodePropertyPage() {}
+
 
     void createProperties(void);
     void selectRoot(void);
@@ -78,7 +75,6 @@ public:
 
     // current node this page will operate on
     void setNode(nsNode *node);
-
 
     DECLARE_EVENT_TABLE();
 };

@@ -90,6 +90,9 @@ protected:
     void            sendEvent(int id, nsSocket *sock);
     void            sendEvent(int id);
 
+    // update window state 
+    void            redraw(void);
+
 
 public:
     nsNodeCanvas(wxWindow *parent, nsNodeTree *tree);

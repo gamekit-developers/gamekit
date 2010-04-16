@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<NodeTree xmlns="http://tempuri.org/NodeResource.xsd">
+    <Tree name="MomoAnimation" group="" isgroup="false" projection="-648.685 -398.71 1297.37 797.42" size="1038 638" open="false" object="">
+        <Node id="ND_03A59FF8" type="Animation" location="-43.8105 -92.9911" selected="true" object="">
+            <Socket value="true" direction="2" ioid="2"/>
+            <Socket value="false" direction="2" ioid="1"/>
+            <Socket value="" direction="2" ioid="0"/>
+            <Socket value="MeshMomo" direction="1" ioid="2"/>
+            <Socket value="1" direction="1" ioid="1"/>
+            <Socket value="Momo_Idle1" direction="1" ioid="0"/>
+        </Node>
+    </Tree>
+    <Tree name="Mouse Look" group="" isgroup="false" projection="-490.515 -526.805 1044.52 642.008" size="1038 638" open="true" object="">
+        <Node id="ND_03A4F018" type="Object Motion" location="171.919 -614.769" selected="true" object="zRot">
+            <Socket value="0" direction="1" ioid="4"/>
+            <Socket from="SK_03A57F98" value="0" direction="1" ioid="3"/>
+            <Socket value="0" direction="1" ioid="2"/>
+            <Socket value="0" direction="1" ioid="1"/>
+            <Socket from="SK_03A4F318" value="false" direction="1" ioid="0"/>
+        </Node>
+        <Node id="ND_03A50AB0" type="Mouse Motion" location="-170.058 -357.145" selected="false" object="">
+            <Socket value="false" direction="2" ioid="6"/>
+            <Socket value="0" direction="2" ioid="5"/>
+            <Socket value="0" direction="2" ioid="4"/>
+            <Socket value="0" direction="2" ioid="3"/>
+            <Socket id="SK_03A50EB0" value="0" direction="2" ioid="2"/>
+            <Socket id="SK_03A57F98" value="0" direction="2" ioid="1"/>
+            <Socket id="SK_03A4F318" value="false" direction="2" ioid="0"/>
+            <Socket value="-0.3" direction="1" ioid="1"/>
+            <Socket value="-0.3" direction="1" ioid="0"/>
+        </Node>
+        <Node id="ND_03A5DA70" type="Object Motion" location="45.3222 97.8951" selected="false" object="xRot">
+            <Socket value="0" direction="1" ioid="4"/>
+            <Socket value="0" direction="1" ioid="3"/>
+            <Socket value="0" direction="1" ioid="2"/>
+            <Socket from="SK_03A50EB0" value="0" direction="1" ioid="1"/>
+            <Socket from="SK_03A4F318" value="false" direction="1" ioid="0"/>
+        </Node>
+    </Tree>
+    <BlendPreview blend="Data\momo_ogre.blend"/>
+</NodeTree>

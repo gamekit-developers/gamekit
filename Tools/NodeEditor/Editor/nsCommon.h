@@ -27,7 +27,9 @@
 #ifndef _nsCommon_h_
 #define _nsCommon_h_
 
-#include "Utils/utTypes.h"
+#include "NodeUtils/nsTypes.h"
+#include "NodeUtils/nsCommon.h"
+#include "NodeUtils/nsString.h"
 
 // all forwards
 class nsMainWindow;
@@ -37,32 +39,42 @@ class nsGlHiddenContext;
 class nsRenderSystem;
 class nsRenderSystemPrivate;
 class nsClipboard;
+class nsSocketProperty;
+class nsNodePropertyPage;
+class nsPropertyManager;
 
 // data types
 class nsNodeManager;
 class nsNodeTree;
 class nsNode;
 class nsSocket;
-class nsNodeType;
-class nsSocketType;
-class nsVariableType;
+class nsNodeDef;
+class nsSocketDef;
 
 class wxAuiManager;
 class wxMenu;
 class wxMenuItem;
+class wxPGProperty;
 
-typedef utList<nsNode *>                nsNodes;
-typedef utListIterator<nsNodes>         nsNodeIterator;
-typedef utListReverseIterator<nsNodes>  nsReverseNodeIterator;
-typedef utList<nsNodeTree *>            nsTrees;
-typedef utListIterator<nsTrees>         nsTreeIterator;
 
+typedef nsList<nsNode *>                nsNodes;
+typedef nsListIterator<nsNodes>         nsNodeIterator;
+typedef nsListReverseIterator<nsNodes>  nsReverseNodeIterator;
+typedef nsList<nsNodeTree *>            nsTrees;
+typedef nsListIterator<nsTrees>         nsTreeIterator;
+
+typedef nsListClass<nsNodeDef>              nsNodeListClass;
+typedef nsListIterator<nsNodeListClass>     nsNodeDefIterator;
+typedef nsListClass<nsSocket>               nsSocketClass;
+typedef nsList<nsSocket*>                   nsSocketList;
+typedef nsListClass<nsSocketDef>            nsSocketListClass;
+typedef nsListIterator<nsSocketListClass>   nsSocketDefIterator;
 
 enum nsWindowId
 {
     NS_WID_MAINWINDOW,
-    NS_WID_SOLUTION,
-    NS_WID_SOLUTION_DATA,
+    NS_WID_SOLNSION,
+    NS_WID_SOLNSION_DATA,
     NS_WID_WORKSPACE,
     NS_WID_WORKSPACE_DATA,
     NS_WID_PROPERTY,
@@ -82,6 +94,8 @@ enum nsEventID
     NSID_SAVE,
     NSID_SAVEAS,
     NSID_QUIT,
+    NSID_PREVIEW_FILE,
+
 
     // Edit
     NS_ID_UNDO,
@@ -95,10 +109,13 @@ enum nsEventID
     NS_ID_SELECT_ALL,
 
     // View
-    NS_ID_SOLUTION,
+    NS_ID_SOLNSION,
     NS_ID_PROPERTIES,
     NS_ID_VARIABLES,
     NS_ID_FULLSCREEN,
+
+    // Game 
+    NS_ID_PLAY,
 
     // Project
     NS_ID_NEW_TREE,
@@ -128,7 +145,7 @@ enum nsNodeState
 // string conversion
 #define wxFromAscii(x)      wxString(x.c_str(), x.size())
 #define wxToAscii(x)        (const char*)x.mb_str()
-#define wxToSTDString(x)    utString(wxToAscii(x))
+#define wxToSTDString(x)    nsString(wxToAscii(x))
 
 
 #endif//_nsCommon_h_

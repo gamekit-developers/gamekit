@@ -65,8 +65,10 @@ nsNodeCanvas::nsNodeCanvas(wxWindow *parent, nsNodeTree *tree)
     m_mousePos      = NSvec2(0,0);
     m_lastPos       = NSvec2(0,0);
     m_clickedPos    = NSvec2(0,0);
-    m_size          = NSvec2(800, 600);
-    m_projection    = NSrect(0, 0, 800, 600);
+
+
+    m_size          = NSvec2(GetClientSize().x, GetClientSize().y);
+    m_projection    = NSrect(-(m_size.x *.5f), -(m_size.y *.5f), m_size.x, m_size.y);
     m_dragFrom      = NSvec2(0,0);
     m_dragTo        = NSvec2(0,0);
     m_viewportDirty = true;
@@ -87,13 +89,6 @@ nsNodeCanvas::nsNodeCanvas(wxWindow *parent, nsNodeTree *tree)
     m_tree->attachCanvas(this);
     nsNodeIterator it = tree->getNodeIterator();
 
-    // restore projection
-    if (it.hasMoreElements())
-    {
-        m_firstPaint = false;
-        m_size       = m_tree->getSize();
-        m_projection = m_tree->getProjection();
-    }
 
     // re-create nodes
     while (it.hasMoreElements())
@@ -125,7 +120,14 @@ void nsNodeCanvas::updateMouseCo(void)
     wxPoint pos = wxGetMousePosition();
     ScreenToClient(&pos.x, &pos.y);
     m_lastPos = m_mousePos = m_clickedPos = NSvec2(pos.x, pos.y);
+}
 
+// ----------------------------------------------------------------------------
+void nsNodeCanvas::redraw(void)
+{
+    m_tree->setSize(m_size);
+    m_tree->setProjection(m_projection);
+    Refresh();
 }
 
 // ----------------------------------------------------------------------------
@@ -136,7 +138,7 @@ NSvec2 nsNodeCanvas::projectPoint(const NSvec2 &v)
     // or std projection
     // m_projection being NSrect(0.f, 0.f, m_size.x, m_size.y)
 
-    UT_ASSERT(m_size.valid() && !m_size.isZero());
+    NS_ASSERT(m_size.valid() && !m_size.isZero());
 
     return NSvec2(
                m_projection.x + m_projection.width * v.x / m_size.x,
@@ -158,7 +160,7 @@ void nsNodeCanvas::addNode(nsNode *nd)
         m_renderList.push_back(nd);
 
         sendEvent(NS_NODE_ADD, nd);
-        Refresh();
+        redraw();
     }
 }
 
@@ -169,13 +171,13 @@ void nsNodeCanvas::grabCanvas(bool doit, bool releaseSelection)
     // release temporary states
     if (m_grabCapture)
     {
-        Refresh();
+        redraw();
         m_grabCapture   = false;
     }
 
     if (releaseSelection && m_dragSelection)
     {
-        Refresh();
+        redraw();
         m_dragSelection = false;
         m_dragFrom      = NSvec2(0,0);
         m_dragTo        = NSvec2(0,0);
@@ -286,7 +288,7 @@ void nsNodeCanvas::bringToFront(nsNode *node)
 void nsNodeCanvas::captureNode(nsNode *node)
 {
 
-    UT_ASSERT(node);
+    NS_ASSERT(node);
     if (!node)
         return;
 
@@ -299,7 +301,7 @@ void nsNodeCanvas::captureNode(nsNode *node)
         // send notifications
         sendEvent(NS_NODE_SELECT, node);
 
-        nsMainWindow::getSingleton().setStatus(0, "Captured %s : %p", node->getType()->m_typename.c_str(), node);
+        nsMainWindow::getSingleton().setStatus(0, "Captured %s : %p", node->getType()->getName().c_str(), node);
     }
 }
 
@@ -383,7 +385,7 @@ void nsNodeCanvas::grabCapturedEvent(wxCommandEvent &evt)
         m_grabCapture = true;
 
         evt.Skip();
-        Refresh();
+        redraw();
     }
 }
 
@@ -422,7 +424,7 @@ void nsNodeCanvas::deleteCapturedEvent(wxCommandEvent &evt)
 
         m_captured.clear();
         evt.Skip();
-        Refresh();
+        redraw();
     }
 }
 
@@ -460,7 +462,7 @@ void nsNodeCanvas::selectAllEvent(wxCommandEvent &evt)
 
             // redraw canvas
             evt.Skip();
-            Refresh();
+            redraw();
         }
     }
 }
@@ -492,7 +494,7 @@ void nsNodeCanvas::cutEvent(wxCommandEvent &evt)
 
         m_captured.clear();
         evt.Skip();
-        Refresh();
+        redraw();
     }
 }
 
@@ -506,7 +508,7 @@ void nsNodeCanvas::copyEvent(wxCommandEvent &evt)
         nsWorkspace::getSingleton().getClipboard().copy(m_captured);
 
         evt.Skip();
-        Refresh();
+        redraw();
     }
 }
 
@@ -528,7 +530,7 @@ void nsNodeCanvas::pasteEvent(wxCommandEvent &evt)
         }
 
         evt.Skip();
-        Refresh();
+        redraw();
     }
 }
 
@@ -576,7 +578,7 @@ void nsNodeCanvas::duplicateEvent(wxCommandEvent &evt)
 
 
         evt.Skip();
-        Refresh();
+        redraw();
     }
 }
 // ----------------------------------------------------------------------------
@@ -638,7 +640,7 @@ void nsNodeCanvas::leftClickEvent(wxMouseEvent &evt)
             // set status
             captureNode(nodeAtPoint);
             evt.Skip();
-            Refresh();
+            redraw();
         }
         else
         {
@@ -660,7 +662,7 @@ void nsNodeCanvas::leftClickEvent(wxMouseEvent &evt)
                 }
 
                 evt.Skip();
-                Refresh();
+                redraw();
             }
 
             else
@@ -675,7 +677,7 @@ void nsNodeCanvas::leftClickEvent(wxMouseEvent &evt)
 
 
                 evt.Skip();
-                Refresh();
+                redraw();
             }
         }
     }
@@ -691,7 +693,7 @@ void nsNodeCanvas::leftClickEvent(wxMouseEvent &evt)
             captureNodes(drag);
 
             evt.Skip();
-            Refresh();
+            redraw();
         }
         else if (m_clickedSocket)
         {
@@ -723,7 +725,7 @@ void nsNodeCanvas::leftClickEvent(wxMouseEvent &evt)
             m_clickedSocket = 0;
 
             evt.Skip();
-            Refresh();
+            redraw();
         }
     }
     grabCanvas(m_hasCapture, !m_hasCapture);
@@ -763,7 +765,7 @@ void nsNodeCanvas::rightClickEvent(wxMouseEvent &evt)
             // set status
             captureNode(nodeAtPoint);
             evt.Skip();
-            Refresh();
+            redraw();
         }
     }
 
@@ -804,7 +806,7 @@ void nsNodeCanvas::motionEvent(wxMouseEvent &evt)
         m_dragTo.x += relPos.x * z.x;
         m_dragTo.y += relPos.y * z.y;
 
-        Refresh();
+        redraw();
         evt.Skip();
         return;
     }
@@ -818,7 +820,7 @@ void nsNodeCanvas::motionEvent(wxMouseEvent &evt)
         relPos.y = 0.f;
         m_grabbed = false;
 
-        Refresh();
+        redraw();
         evt.Skip();
         return;
     }
@@ -826,7 +828,7 @@ void nsNodeCanvas::motionEvent(wxMouseEvent &evt)
     if (m_clickedSocket && evt.LeftIsDown())
     {
         // dragging a socket link.
-        Refresh();
+        redraw();
         evt.Skip();
         return;
     }
@@ -846,7 +848,7 @@ void nsNodeCanvas::motionEvent(wxMouseEvent &evt)
         const NSrect &newTrans = m_captured.front()->getRect();
         nsMainWindow::getSingleton().setStatus(1, "Moved [%i, %i]", ((int)newTrans.x), ((int)newTrans.y));
 
-        Refresh();
+        redraw();
         evt.Skip();
         return;
     }
@@ -866,7 +868,7 @@ void nsNodeCanvas::motionEvent(wxMouseEvent &evt)
             m_projection.x -= relPos.x * z.x;
             m_projection.y -= relPos.y * z.y;
         }
-        Refresh();
+        redraw();
         evt.Skip();
     }
 }
@@ -876,7 +878,7 @@ void nsNodeCanvas::motionEvent(wxMouseEvent &evt)
 void nsNodeCanvas::wheelEvent(wxMouseEvent &evt)
 {
     setZoom(evt.m_wheelRotation > 0 ? 16.f : -16.f);
-    Refresh();
+    redraw();
     evt.Skip();
 }
 
@@ -891,9 +893,10 @@ void nsNodeCanvas::keyPressEvent(wxKeyEvent &evt)
         m_grabCapture = false;
         m_grabbed = false;
 
-        Refresh();
+        redraw();
         evt.Skip();
     }
+    else evt.Skip();
 }
 
 
@@ -920,13 +923,16 @@ void nsNodeCanvas::sizeEvent(wxSizeEvent &evt)
     m_size.x = newSize.x;
     m_size.y = newSize.y;
     m_viewportDirty = true;
+
+    m_tree->setSize(m_size);
+    m_tree->setProjection(m_projection);
 }
 
 
 // ----------------------------------------------------------------------------
 NSvec2 nsNodeCanvas::getZoom(void)
 {
-    UT_ASSERT(m_size.valid() && !m_size.isZero());
+    NS_ASSERT(m_size.valid() && !m_size.isZero());
     // current zoom
     return NSvec2(m_projection.width / m_size.x, m_projection.height / m_size.y);
 }
@@ -980,6 +986,7 @@ void nsNodeCanvas::paintEvent(wxPaintEvent &evt)
         // reset
         m_projection = NSrect(-(m_size.x*.5f), -(m_size.y*.5f), m_size.x, m_size.y);
         m_firstPaint = false;
+        m_tree->setProjection(m_projection);
     }
 
 

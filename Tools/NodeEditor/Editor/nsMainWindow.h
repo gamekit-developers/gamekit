@@ -33,6 +33,7 @@
 #include "nsCommon.h"
 #include "nsSingleton.h"
 class wxAuiManagerEvent;
+class nsOgreKitPreview;
 
 class nsMainWindow :    public wxFrame, 
                         public nsSingleton<nsMainWindow>
@@ -44,6 +45,9 @@ protected:
     wxMenuItem          *m_viewSolution;
     wxMenuItem          *m_viewProperties;
     wxWindow            *m_addMenuCaller;
+    wxString            m_currentFile, m_preview;
+    nsOgreKitPreview    *m_previewApp;
+
 
 private:
 
@@ -56,6 +60,11 @@ private:
 
     // events
     void quitEvent(wxCommandEvent &evt);
+    void saveEvent(wxCommandEvent &evt);
+    void saveAsEvent(wxCommandEvent &evt);
+    void loadEvent(wxCommandEvent &evt);
+    void selectPreviewEvent(wxCommandEvent &evt);
+
 
     // show / hide panels
     void solutionCheckEvent(wxCommandEvent &evt);
@@ -83,6 +92,10 @@ private:
     void duplicateEvent(wxCommandEvent &evt);
 
 
+    // game menu events
+    void playEvent(wxCommandEvent &evt);
+
+
 public:
     nsMainWindow();
     virtual ~nsMainWindow();
@@ -94,9 +107,11 @@ public:
     // the base edit toolbox
     void    makeEditMenu(wxMenu *menu);
 
+    // status text nsilities
+    void    setStatus(int id, const char *fmt, ...);
 
-    // status text utilities
-    void setStatus(int id, const char *fmt, ...);
+    void                setPreviewFile(const wxString& file)    {m_preview = file;}
+    const wxString      &getPreviewFile(void)                   {return m_preview;}
 
 
     // singleton access

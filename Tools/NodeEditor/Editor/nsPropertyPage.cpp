@@ -44,6 +44,7 @@ public:
         :   wxPropertyGridManager(parent, id, wxPoint(0,0), wxDefaultSize,
                                   wxPGMAN_DEFAULT_STYLE | wxPG_DESCRIPTION | nsBorderDefault)
     {
+
     }
     virtual ~nsPropertyManager() {}
 
@@ -72,10 +73,13 @@ nsPropertyPage::nsPropertyPage(wxWindow *parent)
     wxPanel *header = new wxPanel(this, wxID_ANY);
     header->SetSize(0, 24);
 
+
     size->Add(header,       wxSizerFlags(0).Expand().Border(wxALL,nsHeaderBorderSize));
     size->Add(m_manager,    wxSizerFlags(1).Expand().Border(wxALL,nsHeaderBorderSize));
     SetSizer(size);
     Layout();
+
+
 }
 
 
@@ -98,26 +102,34 @@ void nsPropertyPage::initialize(void)
     m_tree->createProperties();
 
 
-
     // create node types
 
-    nsNodeTypeInfo::TypeList &types = nsNodeTypeInfo::getSingleton().getTypes();
+    nsNodeListClass &types = nsNodeTypeInfo::getSingleton().getTypes();
+
     m_nodeTypes.resize(types.size(), 0);
-    nsNodeTypeInfo::TypeIterator iter = nsNodeTypeInfo::TypeIterator(types);
+
+
+    nsNodeDefIterator iter = nsNodeDefIterator(types);
     while (iter.hasMoreElements())
     {
-        nsNodeType *type = iter.getNext();
-        if (type->m_id >=0 && type->m_id < (int)types.size())
+        nsNodeDef *type = iter.getNext();
+
+        int typeId = type->getId();
+        if (typeId >=0 && typeId < (int)types.size())
         {
-            nsNodePropertyPage *props = new nsNodePropertyPage(m_manager, type);
-            m_manager->AddPage(wxEmptyString, wxNullBitmap, props);
-            props->createProperties();
-            m_nodeTypes[type->m_id] = props;
+            // editor for node types
+            nsNodePropertyPage *props = type->getEditor(m_manager);
+            if (props != 0)
+            {
+                // push the page
+                m_manager->AddPage(wxEmptyString, wxNullBitmap, props);
+                props->createProperties();
+            }
+            m_nodeTypes[typeId] = props;
         }
     }
 
     m_manager->SelectPage(m_default);
-
     Refresh();
 }
 
@@ -157,11 +169,12 @@ void nsPropertyPage::nodeEvent(nsNodeEvent &evt)
         nsNode *node = evt.ptr();
         if (node)
         {
-            nsNodeType *type = node->getType();
+            nsNodeDef *type = node->getType();
 
-            if (type->m_id >=0 && type->m_id < (int)m_nodeTypes.size())
+            int typeId = type->getId();
+            if (typeId >=0 && typeId < (int)m_nodeTypes.size())
             {
-                nsNodePropertyPage *page = m_nodeTypes[type->m_id];
+                nsNodePropertyPage *page = m_nodeTypes[typeId];
                 if (page)
                 {
                     page->setNode(node);
@@ -176,10 +189,12 @@ void nsPropertyPage::nodeEvent(nsNodeEvent &evt)
         nsNode *node = evt.ptr();
         if (node)
         {
-            nsNodeType *type = node->getType();
-            if (type->m_id >=0 && type->m_id < (int)m_nodeTypes.size())
+            nsNodeDef *type = node->getType();
+
+            int typeId = type->getId();
+            if (typeId >=0 && typeId < (int)m_nodeTypes.size())
             {
-                nsNodePropertyPage *page = m_nodeTypes[type->m_id];
+                nsNodePropertyPage *page = m_nodeTypes[typeId];
                 if (page)
                     page->setNode(0);
             }
@@ -204,10 +219,10 @@ void nsPropertyPage::socketEvent(nsSocketEvent &evt)
         // find page from socket
         nsNode *node = sock->getParent();
 
-        nsNodeType *type = node->getType();
-        if (type->m_id >=0 && type->m_id < (int)m_nodeTypes.size())
+        nsNodeDef *type = node->getType();
+        if (type->getId() >=0 && type->getId() < (int)m_nodeTypes.size())
         {
-            nsNodePropertyPage *page = m_nodeTypes[type->m_id];
+            nsNodePropertyPage *page = m_nodeTypes[type->getId()];
             if (page)
             {
                 if (page->GetIndex() != m_manager->GetSelectedPage())

@@ -28,6 +28,56 @@
 
 
 // ----------------------------------------------------------------------------
+WX_PG_IMPLEMENT_PROPERTY_CLASS(nsVector2ClampProperty,wxPGProperty,
+                               NSClampedVec2,const NSClampedVec2 &,TextCtrl);
+
+WX_PG_IMPLEMENT_VARIANT_DATA_DUMMY_EQ(NSClampedVec2);
+
+// ----------------------------------------------------------------------------
+nsVector2ClampProperty::nsVector2ClampProperty(const wxString &label,
+                                     const wxString &name,
+                                     const NSClampedVec2 &data)
+    : wxPGProperty(label, name)
+{
+    SetValue(WXVARIANT(data));
+    AddPrivateChild( new wxBoolProperty("Clamp",    wxPG_LABEL,data.m_clamp));
+    AddPrivateChild( new wxFloatProperty("X",       wxPG_LABEL,data.m_data.x));
+    AddPrivateChild( new wxFloatProperty("Y",       wxPG_LABEL,data.m_data.y));
+}
+
+
+// ----------------------------------------------------------------------------
+nsVector2ClampProperty::~nsVector2ClampProperty()
+{
+}
+
+// ----------------------------------------------------------------------------
+void nsVector2ClampProperty::ChildChanged(wxVariant &thisValue, int childIndex, wxVariant &childValue) const
+{
+    NSClampedVec2 cv2;
+    cv2 << thisValue;
+    switch ( childIndex )
+    {
+    case 0: cv2.m_clamp     = childValue.GetBool();     break;
+    case 1: cv2.m_data.x    = childValue.GetDouble();   break;
+    case 2: cv2.m_data.y    = childValue.GetDouble();   break;
+    }
+    thisValue << cv2;
+}
+
+// ----------------------------------------------------------------------------
+void nsVector2ClampProperty::RefreshChildren(void)
+{
+    if ( !GetChildCount() ) return;
+
+    const NSClampedVec2 &cv2 = NSClampedVec2RefFromVariant(m_value);
+    Item(0)->SetValue( cv2.m_clamp );
+    Item(1)->SetValue( cv2.m_data.x );
+    Item(2)->SetValue( cv2.m_data.y );
+}
+
+
+// ----------------------------------------------------------------------------
 WX_PG_IMPLEMENT_PROPERTY_CLASS(nsVector2Property,wxPGProperty,
                                NSvec2,const NSvec2 &,TextCtrl);
 

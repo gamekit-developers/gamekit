@@ -28,12 +28,40 @@
 #define _nsSocketEditors_h_
 
 #include "nsCommon.h"
+#include "nsData.h"
 #include "nsSingleton.h"
 #include "nsEventHandler.h"
 #include "nsVariable.h"
-#include "Utils/utTypes.h"
+#include "NodeUtils/nsTypes.h"
 #include <wx/panel.h>
 #include <wx/propgrid/manager.h>
+
+
+// Editor for NSClampedVec2 properties
+WX_PG_DECLARE_VARIANT_DATA(NSClampedVec2);
+
+
+class nsVector2ClampProperty : public wxPGProperty
+{
+    WX_PG_DECLARE_PROPERTY_CLASS(nsVector2ClampProperty)
+private:
+
+    // op data
+    NSClampedVec2 m_data;
+
+
+public:
+    nsVector2ClampProperty(const wxString& label = wxPG_LABEL,
+                       const wxString& name = wxPG_LABEL,
+                       const NSClampedVec2 &data = NSClampedVec2());
+    virtual ~nsVector2ClampProperty();
+
+    // virtuals
+    virtual void ChildChanged(wxVariant& thisValue, int childIndex, wxVariant& childValue) const;
+    virtual void RefreshChildren(void);
+};
+
+
 
 
 

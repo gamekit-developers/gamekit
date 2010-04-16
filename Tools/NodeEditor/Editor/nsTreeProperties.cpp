@@ -37,7 +37,7 @@ END_EVENT_TABLE()
 // ----------------------------------------------------------------------------
 nsTreePropertyPage::nsTreePropertyPage(nsPropertyManager *manager)
     :   m_manager(manager), m_tree(0),
-        m_name(0),m_groupname(0), m_id(0), m_isGroup(0), m_info(0), m_group(0)
+        m_name(0),m_groupname(0), m_id(0), m_isGroup(0), m_info(0), m_group(0), m_object(0)
 {
 }
 
@@ -47,13 +47,16 @@ void nsTreePropertyPage::setTree(nsNodeTree *tree)
     m_tree = tree;
     if (m_tree)
     {
-        EnableProperty(m_group);
         m_name->SetValue(wxString(m_tree->getName().c_str()));
-
 
         wxString id = wxString::Format("%p", m_tree);
         m_id->SetValue(id);
 
+        if (m_object)
+            m_object->SetValue(wxString(m_tree->getAttachedName()));
+
+
+        EnableProperty(m_group);
         if (m_tree->isGroup())
         {
             m_isGroup->SetValue(true);
@@ -61,6 +64,7 @@ void nsTreePropertyPage::setTree(nsNodeTree *tree)
         }
         else
         {
+            DisableProperty(m_groupname);
             m_isGroup->SetValue(false);
             m_groupname->SetValue(wxEmptyString);
         }
@@ -88,6 +92,11 @@ void nsTreePropertyPage::createProperties(void)
     m_id = new wxStringProperty("Id", wxPG_LABEL, "");
     m_info->AppendChild(m_id);
 
+
+    m_object = new wxStringProperty("Attached Object", wxPG_LABEL, "");
+    m_info->AppendChild(m_object);
+
+
     // group settings
 
     m_group = new wxPropertyCategory("Grouping");
@@ -100,12 +109,10 @@ void nsTreePropertyPage::createProperties(void)
     m_isGroup = new wxBoolProperty("IsGroup", wxPG_LABEL, "");
     m_group->AppendChild(m_isGroup);
 
-
     // read only
     DisableProperty(m_group);
     DisableProperty(m_info);
-
-
+    EnableProperty(m_object);
 }
 
 
@@ -118,6 +125,7 @@ void nsTreePropertyPage::propertyChangeEvent(wxPropertyGridEvent &evt)
 
     wxPGProperty *prop = evt.GetProperty();
 
+
     if (prop == m_isGroup)
     {
         bool group = prop->GetValue().GetBool();
@@ -125,14 +133,22 @@ void nsTreePropertyPage::propertyChangeEvent(wxPropertyGridEvent &evt)
         if (group)
             EnableProperty(m_groupname);
         else
+        {
+            m_groupname->SetValue(wxEmptyString);
             DisableProperty(m_groupname);
+        }
         evt.Skip();
     }
     else if (prop == m_groupname)
     {
         wxString str = prop->GetValue().GetString();
-        if (!str.empty())
-            m_tree->setGroupName((const char *)str.mb_str());
+        if (!str.empty() && m_isGroup->GetValue().GetBool())
+            m_tree->setGroupName(nsString(str));
         evt.Skip();
+    }
+    else if (prop == m_object)
+    {
+        wxString str = prop->GetValue().GetString();
+        m_tree->setAttachedName(nsString(str));
     }
 }

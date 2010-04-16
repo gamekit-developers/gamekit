@@ -72,10 +72,10 @@ public:
 // ----------------------------------------------------------------------------
 // Event tables
 BEGIN_EVENT_TABLE( nsSolutionBrowser, wxPanel )
-    EVT_TREE_SEL_CHANGED(NS_WID_SOLUTION_DATA,      nsSolutionBrowser::itemChangeEvent)
-    EVT_TREE_ITEM_ACTIVATED(NS_WID_SOLUTION_DATA,   nsSolutionBrowser::itemActivatedEvent)
-    EVT_TREE_ITEM_MENU(NS_WID_SOLUTION_DATA,        nsSolutionBrowser::treeOpenMenu)
-    EVT_TREE_END_LABEL_EDIT(NS_WID_SOLUTION_DATA,   nsSolutionBrowser::labelEditEvent)
+    EVT_TREE_SEL_CHANGED(NS_WID_SOLNSION_DATA,      nsSolutionBrowser::itemChangeEvent)
+    EVT_TREE_ITEM_ACTIVATED(NS_WID_SOLNSION_DATA,   nsSolutionBrowser::itemActivatedEvent)
+    EVT_TREE_ITEM_MENU(NS_WID_SOLNSION_DATA,        nsSolutionBrowser::treeOpenMenu)
+    EVT_TREE_END_LABEL_EDIT(NS_WID_SOLNSION_DATA,   nsSolutionBrowser::labelEditEvent)
 
     // menus
     EVT_MENU(SBE_ADD,       nsSolutionBrowser::addTreeEvent)
@@ -88,11 +88,11 @@ END_EVENT_TABLE()
 
 // ----------------------------------------------------------------------------
 nsSolutionBrowser::nsSolutionBrowser(wxWindow *parent)
-    :   wxPanel(parent, NS_WID_SOLUTION, wxDefaultPosition, wxSize(200, 200), nsBorderNone)
+    :   wxPanel(parent, NS_WID_SOLNSION, wxDefaultPosition, wxSize(200, 200), nsBorderNone)
 
 {
     wxSizer *size = new wxBoxSizer(wxVERTICAL);
-    m_tree = new wxTreeCtrl(this, NS_WID_SOLUTION_DATA, wxDefaultPosition, wxDefaultSize,
+    m_tree = new wxTreeCtrl(this, NS_WID_SOLNSION_DATA, wxDefaultPosition, wxDefaultSize,
                             wxTR_DEFAULT_STYLE | wxTR_EDIT_LABELS | nsBorderDefault);
     m_tree->AddRoot("Project");
 
@@ -135,7 +135,30 @@ void nsSolutionBrowser::treeEvent(nsTreeEvent &evt)
         m_tree->AppendItem(root, item->m_tree->getName().c_str(), -1, -1, item);
         m_tree->Expand(root);
     }
+    else if (evt.getId() == NS_TREE_REMOVE && evt.getCaller() != this)
+    {
+        nsNodeTree *ntree = evt.ptr();
+
+
+        // remove this tree
+        wxTreeItemIdValue cookie;
+        wxTreeItemId id = m_tree->GetFirstChild(m_tree->GetRootItem(), cookie);
+
+        int max = m_tree->GetCount(), i=0;
+        for(; id.IsOk() && i < max; ++i)
+        {
+            nsTreeItem *item = (nsTreeItem*)m_tree->GetItemData(id);
+            if (item && item->m_tree == ntree)
+            {
+                m_tree->DeleteChildren(item->GetId());
+                m_tree->Delete(item->GetId());
+                return;
+            }
+            id = m_tree->GetNextSibling(id);
+        }
+    }
 }
+
 
 // ----------------------------------------------------------------------------
 void nsSolutionBrowser::labelEditEvent(wxTreeEvent &evt)

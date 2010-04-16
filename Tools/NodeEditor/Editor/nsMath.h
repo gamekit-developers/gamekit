@@ -38,7 +38,9 @@ typedef unsigned char   NSubyte;
 typedef unsigned int    NSuint;
 typedef float           NSfloat;
 
+#ifndef NS_INLINE
 #define NS_INLINE       inline
+#endif
 #define NS_EPSILON      FLT_EPSILON
 #define NS_INFINITY     FLT_MAX
 
@@ -478,6 +480,11 @@ public:
         NSrect r= *this;
         r.makeMinMax();
         return r;
+    }
+
+    NS_INLINE bool operator == (const NSrect &rhs)
+    {
+        return x == rhs.x && y == rhs.y && width == rhs.width && height == rhs.height;
     }
 
     NSfloat x, y;

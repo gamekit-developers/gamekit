@@ -48,10 +48,8 @@ public:
     {
         // load node types
         m_typeInfo = new nsNodeTypeInfo();
-        m_typeInfo->parseTypes("Resource/NodeTreeDef.xml");
+        m_typeInfo->registerTypes();
 
-
-        // TODO: parse styles from NodeTreeDef
         m_renderSystem = new nsRenderSystem();
 
         // main node manager

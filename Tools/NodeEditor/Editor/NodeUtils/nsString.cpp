@@ -22,38 +22,38 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "utString.h"
+#include "nsString.h"
 #include <iomanip>
 #include <sstream>
 #include <cctype>
 #include <algorithm>
 
+char nsStringConverter::nsStringSplitter = ' ';
 
 
-
-void utStringUtils::trim( utString &in, const utString &expr )
+void nsStringUtils::trim( nsString &in, const nsString &expr )
 {
     in.erase( in.find_last_not_of( expr ) + 1 );
     in.erase( 0, in.find_first_not_of( expr ) );
 }
 
 
-void utStringUtils::split(utStringArray &rval,  const utString &spl, const utString &expr )
+void nsStringUtils::split(nsStringArray &rval,  const nsString &spl, const nsString &expr )
 {
-    utString string= spl;
+    nsString string= spl;
     rval.reserve( 32 );
 
     for ( ;; )
     {
         size_t pos= string.find_first_of( expr );
-        if ( pos != utString::npos )
+        if ( pos != nsString::npos )
         {
             // chop first
             if ( pos == 0 )
                 pos= pos + 1;
 
-            utString sub= string.substr( 0, pos );
-            if ( !sub.empty() && expr.find( sub ) == utString::npos )
+            nsString sub= string.substr( 0, pos );
+            if ( !sub.empty() && expr.find( sub ) == nsString::npos )
                 rval.push_back( sub );
 
             string.erase( 0, pos );
@@ -69,35 +69,35 @@ void utStringUtils::split(utStringArray &rval,  const utString &spl, const utStr
 }
 
 
-void utStringUtils::lower( utString &str )
+void nsStringUtils::lower( nsString &str )
 {
     std::transform( str.begin(), str.end(), str.begin(), tolower );
 }
 
 
-utString utStringUtils::lower( const utString &str )
+nsString nsStringUtils::lower( const nsString &str )
 {
-    utString ret= str;
+    nsString ret= str;
     std::transform( ret.begin(), ret.end(), ret.begin(), tolower );
     return ret;
 }
 
 
-void utStringUtils::upper( utString &str )
+void nsStringUtils::upper( nsString &str )
 {
     std::transform( str.begin(), str.end(), str.begin(), toupper );
 }
 
 
-utString utStringUtils::upper( const utString &str )
+nsString nsStringUtils::upper( const nsString &str )
 {
-    utString ret= str;
+    nsString ret= str;
     std::transform( ret.begin(), ret.end(), ret.begin(), toupper );
     return ret;
 }
 
 
-void utStringUtils::replace( utString &in, const utString &from, const utString &to )
+void nsStringUtils::replace( nsString &in, const nsString &from, const nsString &to )
 {
 
     if ( !from.empty() && from != to )
@@ -106,20 +106,20 @@ void utStringUtils::replace( utString &in, const utString &from, const utString 
         if ( to.empty() )
         {
             size_t pos= 0;
-            while ( pos != utString::npos )
+            while ( pos != nsString::npos )
             {
                 pos= in.find( from );
-                if ( pos != utString::npos )
+                if ( pos != nsString::npos )
                     in.erase( pos, from.size() );
             }
         }
         else
         {
             size_t pos= 0;
-            while ( pos != utString::npos )
+            while ( pos != nsString::npos )
             {
                 pos= in.find( from );
-                if ( pos != utString::npos )
+                if ( pos != nsString::npos )
                 {
                     in.erase( pos, from.size() );
                     in.insert( pos, to );
@@ -128,3 +128,22 @@ void utStringUtils::replace( utString &in, const utString &from, const utString 
         }
     }
 }
+
+void nsStringUtils::loadFileAsString( nsString &dest, const nsString& file)
+{
+    FILE *fp = fopen(file.c_str(), "rb");
+    if (!fp)
+        return;
+
+    fseek(fp, 0L, SEEK_END);
+    int len = (int)ftell(fp);
+    fseek(fp, 0L, SEEK_SET);
+
+    char *buf = new char[len + 1];
+    fread(buf, len, 1, fp);
+    fclose(fp);
+
+    dest = nsString(buf, len);
+    delete []buf;
+}
+

@@ -22,20 +22,20 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _utTypes_h_
-#define _utTypes_h_
+#ifndef _nsTypes_h_
+#define _nsTypes_h_
 
-#include "utCommon.h"
+#include "NodeUtils/nsCommon.h"
 #include <memory.h>
 
-// List where each link is T. Not as flexible as utList, but requires less memory
+// List where each link is T. Not as flexible as nsList, but requires less memory
 template <typename T>
-class utListClass
+class nsListClass
 {
 protected:
     T *m_first;
     T *m_last;
-    UTsize m_size;
+    NSsize m_size;
 
 public:
     typedef const T *ConstValueType;
@@ -50,22 +50,22 @@ public:
     protected:
         T *m_next;
         T *m_prev;
-        friend class utListClass;
+        friend class nsListClass;
 
     public:
 
         Link() : m_next(0), m_prev(0) {}
         ~Link() {}
 
-        UT_INLINE T *getNext(void) {return m_next;}
-        UT_INLINE T *getPrev(void) {return m_prev;}
-        UT_INLINE T *getLink(void) {return (T *)this;}
+        NS_INLINE T *getNext(void) {return m_next;}
+        NS_INLINE T *getPrev(void) {return m_prev;}
+        NS_INLINE T *getLink(void) {return (T *)this;}
     };
 public:
 
     // default constructor
-    utListClass() : m_first(0), m_last(0), m_size(0) {}
-    ~utListClass() { clear(); }
+    nsListClass() : m_first(0), m_last(0), m_size(0) {}
+    ~nsListClass() { clear(); }
 
     // free links (no memory freed)
     void clear(void)
@@ -137,10 +137,10 @@ public:
 
 
     // Gets indexed value (using a linear search (avoid if possible))
-    ValueType at(UTsize index)
+    ValueType at(NSsize index)
     {
-        UT_ASSERT(index < m_size);
-        UTsize i = 0;
+        NS_ASSERT(index < m_size);
+        NSsize i = 0;
         ValueType node = m_first;
         while (node)
         {
@@ -148,15 +148,15 @@ public:
             node = node->m_next;
             i++;
         }
-        UT_ASSERT(node);
+        NS_ASSERT(node);
         return node;
     }
 
     // Gets indexed value (using a linear search (avoid if possible))
-    ConstValueType at(UTsize index) const
+    ConstValueType at(NSsize index) const
     {
-        UT_ASSERT(index < m_size);
-        UTsize i = 0;
+        NS_ASSERT(index < m_size);
+        NSsize i = 0;
         ValueType node = m_first;
         while (node)
         {
@@ -164,7 +164,7 @@ public:
             node = node->m_next;
             i++;
         }
-        UT_ASSERT(node);
+        NS_ASSERT(node);
         return node;
     }
 
@@ -182,27 +182,27 @@ public:
         return v;
     }
 
-    UT_INLINE ValueType pop_back(void)          { return erase(end()); }
-    UT_INLINE ValueType pop_front(void)         { return erase(begin()); }
+    NS_INLINE ValueType pop_back(void)          { return erase(end()); }
+    NS_INLINE ValueType pop_front(void)         { return erase(begin()); }
 
     // Size queries
 
-    UT_INLINE bool empty(void) const            { return m_size == 0; }
-    UT_INLINE UTsize size(void)const            { return m_size; }
+    NS_INLINE bool empty(void) const            { return m_size == 0; }
+    NS_INLINE NSsize size(void)const            { return m_size; }
 
 
     // Safe data access
 
-    UT_INLINE ValueType begin(void)             { return m_first; }
-    UT_INLINE ValueType end(void)               { return m_last; }
-    UT_INLINE ConstValueType begin(void) const  { return m_first; }
-    UT_INLINE ConstValueType end(void) const    { return m_last; }
+    NS_INLINE ValueType begin(void)             { return m_first; }
+    NS_INLINE ValueType end(void)               { return m_last; }
+    NS_INLINE ConstValueType begin(void) const  { return m_first; }
+    NS_INLINE ConstValueType end(void) const    { return m_last; }
 };
 
 
-// List where each link is a wrapper of T. More flexible than utListClass, but requires more memory
+// List where each link is a wrapper of T. More flexible than nsListClass, but requires more memory
 template <typename T>
-class utList
+class nsList
 {
 public:
 
@@ -211,7 +211,7 @@ public:
     protected:
         Link     *next;
         Link     *prev;
-        friend class utList;
+        friend class nsList;
 
     public:
 
@@ -219,9 +219,9 @@ public:
         Link(const T &v) : next(0), prev(0), link(v) {}
 
 
-        UT_INLINE Link *getNext(void) {return next;}
-        UT_INLINE Link *getPrev(void) {return prev;}
-        UT_INLINE T &getLink(void)      {return link;}
+        NS_INLINE Link *getNext(void) {return next;}
+        NS_INLINE Link *getPrev(void) {return prev;}
+        NS_INLINE T &getLink(void)      {return link;}
         T link;
     };
 
@@ -242,8 +242,8 @@ public:
 public:
 
     // default constructor
-    utList() : m_first(0), m_last(0), m_size(0) {}
-    ~utList() { clear(); }
+    nsList() : m_first(0), m_last(0), m_size(0) {}
+    ~nsList() { clear(); }
 
 
 
@@ -262,7 +262,7 @@ public:
     }
 
     // Pushes an element to the back of the list
-    UT_INLINE void push_back(const T &v)
+    NS_INLINE void push_back(const T &v)
     {
         Link *link = new Link(v);
         link->prev = m_last;
@@ -273,7 +273,7 @@ public:
     }
 
     // Pushes an element to the front of the list
-    UT_INLINE void push_front(const T &v)
+    NS_INLINE void push_front(const T &v)
     {
         Link *link = new Link(v);
         link->next = m_first;
@@ -320,10 +320,10 @@ public:
     }
 
     // Gets indexed value (using a linear search (avoid if possible))
-    ReferenceType at(UTsize index)
+    ReferenceType at(NSsize index)
     {
-        UT_ASSERT(index < m_size);
-        UTsize i = 0;
+        NS_ASSERT(index < m_size);
+        NSsize i = 0;
         Link *node = m_first;
         while (node)
         {
@@ -331,15 +331,15 @@ public:
             node = node->next;
             i++;
         }
-        UT_ASSERT(node);
+        NS_ASSERT(node);
         return node->link;
     }
 
     // Gets indexed value (using a linear search (avoid if possible))
-    ConstReferenceType at(UTsize index) const
+    ConstReferenceType at(NSsize index) const
     {
-        UT_ASSERT(index < m_size);
-        UTsize i = 0;
+        NS_ASSERT(index < m_size);
+        NSsize i = 0;
         Link *node = m_first;
         while (node)
         {
@@ -347,14 +347,14 @@ public:
             node = node->next;
             i++;
         }
-        UT_ASSERT(node);
+        NS_ASSERT(node);
         return node->link;
     }
 
     // Gets indexed link (using a linear search (avoid if possible))
-    Pointer link_at(UTsize index)
+    Pointer link_at(NSsize index)
     {
-        UTsize i = 0;
+        NSsize i = 0;
         Link *node = m_first;
         while (node)
         {
@@ -392,7 +392,7 @@ public:
     // Bubble sort
     void sort(bool (*cmp)(const T &a, const T &b))
     {
-        UTsize i, n=m_size;
+        NSsize i, n=m_size;
         Link *a;
         bool swapped = false;
         if (n < 2 || !cmp)
@@ -410,11 +410,11 @@ public:
             }
             n-=1;
         }
-        while (swapped && n != UT_NPOS);
+        while (swapped && n != NS_NPOS);
     }
     void sort(bool (*cmp)(T a, T b))
     {
-        UTsize i, n=m_size;
+        NSsize i, n=m_size;
         Link *a;
         bool swapped = false;
         if (n < 2 || !cmp)
@@ -432,38 +432,38 @@ public:
             }
             n-=1;
         }
-        while (swapped && n != UT_NPOS);
+        while (swapped && n != NS_NPOS);
     }
 
 
-    UT_INLINE void pop_back(void)       { erase(end()); }
-    UT_INLINE void pop_front(void)      { erase(begin()); }
+    NS_INLINE void pop_back(void)       { erase(end()); }
+    NS_INLINE void pop_front(void)      { erase(begin()); }
 
     // Size queries
 
-    UT_INLINE bool empty(void) const    { return m_size == 0; }
-    UT_INLINE UTsize size(void)const    { return m_size; }
+    NS_INLINE bool empty(void) const    { return m_size == 0; }
+    NS_INLINE NSsize size(void)const    { return m_size; }
 
     // Safe data access
 
-    UT_INLINE Pointer begin(void)               { return m_first; }
-    UT_INLINE Pointer end(void)                 { return m_last; }
-    UT_INLINE ConstPointer begin(void)const     { return m_first; }
-    UT_INLINE ConstPointer end(void)const       { return m_last; }
+    NS_INLINE Pointer begin(void)               { return m_first; }
+    NS_INLINE Pointer end(void)                 { return m_last; }
+    NS_INLINE ConstPointer begin(void)const     { return m_first; }
+    NS_INLINE ConstPointer end(void)const       { return m_last; }
 
-    UT_INLINE ReferenceType front(void) { UT_ASSERT(m_first); return m_first->link; }
-    UT_INLINE ReferenceType back(void)  { UT_ASSERT(m_last); return m_last->link; }
+    NS_INLINE ReferenceType front(void) { NS_ASSERT(m_first); return m_first->link; }
+    NS_INLINE ReferenceType back(void)  { NS_ASSERT(m_last); return m_last->link; }
 
 protected:
     Link     *m_first;
     Link     *m_last;
-    UTsize   m_size;
+    NSsize   m_size;
 };
 
 // List iterator access, Similar to Ogre iterator wrappers
 
 template <typename T>
-class utListIterator
+class nsListIterator
 {
 public:
 
@@ -478,27 +478,27 @@ protected:
 public:
 
     // Construct with list front
-    utListIterator(Iterator first) : m_iterator(first), m_cur(first) {}
+    nsListIterator(Iterator first) : m_iterator(first), m_cur(first) {}
 
     // Construct with reference to the list
-    utListIterator(T &v) : m_iterator(v.begin()), m_cur(v.begin()) { }
-    ~utListIterator() {}
+    nsListIterator(T &v) : m_iterator(v.begin()), m_cur(v.begin()) { }
+    ~nsListIterator() {}
 
 
-    UT_INLINE bool hasMoreElements(void)    { return (m_cur != 0); }
-    UT_INLINE void next(void)               { UT_ASSERT(m_cur != 0); m_cur = m_cur->getNext(); }
+    NS_INLINE bool hasMoreElements(void)    { return (m_cur != 0); }
+    NS_INLINE void next(void)               { NS_ASSERT(m_cur != 0); m_cur = m_cur->getNext(); }
 
 
-    UT_INLINE ValueType getNext(void)
+    NS_INLINE ValueType getNext(void)
     {
-        UT_ASSERT(m_cur != 0);
+        NS_ASSERT(m_cur != 0);
         ValueType ret = m_cur->getLink();
         m_cur = m_cur->getNext();
         return ret;
     }
-    UT_INLINE ValueType peekNext(void)
+    NS_INLINE ValueType peekNext(void)
     {
-        UT_ASSERT(m_cur != 0);
+        NS_ASSERT(m_cur != 0);
         return m_cur->getLink();
     }
 };
@@ -506,7 +506,7 @@ public:
 
 // List reverse iterator access, Similar to Ogre iterator wrappers
 template <typename T>
-class utListReverseIterator
+class nsListReverseIterator
 {
 public:
 
@@ -519,27 +519,27 @@ protected:
 
 public:
     // Construct with list back
-    utListReverseIterator(Iterator last) : m_iterator(last), m_cur(last) {}
+    nsListReverseIterator(Iterator last) : m_iterator(last), m_cur(last) {}
 
     // Construct with reference to the list
-    utListReverseIterator(T &v) : m_iterator(v.end()), m_cur(v.end()) {}
-    ~utListReverseIterator() {}
+    nsListReverseIterator(T &v) : m_iterator(v.end()), m_cur(v.end()) {}
+    ~nsListReverseIterator() {}
 
 
-    UT_INLINE bool hasMoreElements(void)    { return (m_cur != 0); }
-    UT_INLINE void next(void)               { UT_ASSERT(m_cur != 0); m_cur = m_cur->getPrev(); }
+    NS_INLINE bool hasMoreElements(void)    { return (m_cur != 0); }
+    NS_INLINE void next(void)               { NS_ASSERT(m_cur != 0); m_cur = m_cur->getPrev(); }
 
-    UT_INLINE ValueType getNext(void)
+    NS_INLINE ValueType getNext(void)
     {
-        UT_ASSERT(m_cur != 0);
+        NS_ASSERT(m_cur != 0);
         ValueType ret = m_cur->getLink();
         m_cur = m_cur->getPrev();
         return ret;
     }
 
-    UT_INLINE ValueType peekNext(void)
+    NS_INLINE ValueType peekNext(void)
     {
-        UT_ASSERT(m_cur != 0);
+        NS_ASSERT(m_cur != 0);
         return m_cur->getLink();
     }
 };
@@ -547,7 +547,7 @@ public:
 
 // Simple array access, similar to std::vector
 template <typename T>
-class utArray
+class nsArray
 {
 public:
     typedef    T          *Pointer;
@@ -557,17 +557,17 @@ public:
 public:
 
     // Empty constructor
-    utArray() : m_size(0), m_capacity(0), m_data(0), m_cacheLimit(9999), m_curCache(0) {}
+    nsArray() : m_size(0), m_capacity(0), m_data(0), m_cacheLimit(9999), m_curCache(0) {}
 
     // Array copy constructor (avoid where possible, pass by reference instead)
-    utArray(const utArray<T>& o)
+    nsArray(const nsArray<T>& o)
         : m_size(o.size()), m_capacity(0), m_data(0), m_cacheLimit(9999), m_curCache(0)
     {
         reserve(m_size);
         copy(m_data, o.m_data, m_size);
     }
 
-    ~utArray() { clear(); }
+    ~nsArray() { clear(); }
 
     // Free used buffers
     void clear(bool useCache=false)
@@ -597,19 +597,19 @@ public:
     }
 
     // Find using linear search
-    UTsize find(const T &v)
+    NSsize find(const T &v)
     {
-        for (UTsize i = 0; i < m_size; i++)
+        for (NSsize i = 0; i < m_size; i++)
         {
             if (m_data[i] == v)
                 return i;
         }
-        return UT_NPOS;
+        return NS_NPOS;
     }
 
 
     // Appends an element to the back of the array
-    UT_INLINE void push_back(const T &v)
+    NS_INLINE void push_back(const T &v)
     {
         if (m_size == m_capacity)
             reserve(m_size == 0 ? 8 : m_size * 2);
@@ -620,18 +620,18 @@ public:
 
 
     // Removes the last element
-    UT_INLINE void pop_back(void)
+    NS_INLINE void pop_back(void)
     {
         m_size--;
         m_data[m_size].~T();
     }
 
     // Expands the buffer
-    void resize(UTsize nr)
+    void resize(NSsize nr)
     {
         if (nr < m_size)
         {
-            for (UTsize i = m_size; i < nr; i++)
+            for (NSsize i = m_size; i < nr; i++)
                 m_data[i].~T();
         }
         else
@@ -644,18 +644,18 @@ public:
 
 
     // Expands the buffer and fills empty data
-    void resize(UTsize nr, const T &fill)
+    void resize(NSsize nr, const T &fill)
     {
         if (nr < m_size)
         {
-            for (UTsize i = m_size; i < nr; i++)
+            for (NSsize i = m_size; i < nr; i++)
                 m_data[i].~T();
         }
         else
         {
             if (nr > m_size)
                 reserve(nr);
-            for (UTsize i = m_size; i < nr; i++)
+            for (NSsize i = m_size; i < nr; i++)
                 m_data[i] = fill;
 
         }
@@ -664,7 +664,7 @@ public:
 
 
     // Allocate buffers
-    void reserve(UTsize nr)
+    void reserve(NSsize nr)
     {
 
         if (m_capacity < nr)
@@ -683,33 +683,33 @@ public:
 
     // Safe data access
 
-    UT_INLINE T &operator[](UTsize idx)             { UT_ASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
-    UT_INLINE const T &operator[](UTsize idx) const { UT_ASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
-    UT_INLINE T &at(UTsize idx)                     { UT_ASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
-    UT_INLINE const T &at(UTsize idx) const         { UT_ASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
-    UT_INLINE T &front(void)                        { UT_ASSERT(m_size > 0); return m_data[0]; }
-    UT_INLINE T &back(void)                         { UT_ASSERT(m_size > 0); return m_data[m_size-1]; }
+    NS_INLINE T &operator[](NSsize idx)             { NS_ASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
+    NS_INLINE const T &operator[](NSsize idx) const { NS_ASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
+    NS_INLINE T &at(NSsize idx)                     { NS_ASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
+    NS_INLINE const T &at(NSsize idx) const         { NS_ASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
+    NS_INLINE T &front(void)                        { NS_ASSERT(m_size > 0); return m_data[0]; }
+    NS_INLINE T &back(void)                         { NS_ASSERT(m_size > 0); return m_data[m_size-1]; }
 
 
     // Raw data access
 
-    UT_INLINE ConstPointer ptr(void) const          { return m_data; }
-    UT_INLINE Pointer      ptr(void)                { return m_data; }
-    UT_INLINE bool         valid(void) const        { return m_data != 0;}
+    NS_INLINE ConstPointer ptr(void) const          { return m_data; }
+    NS_INLINE Pointer      ptr(void)                { return m_data; }
+    NS_INLINE bool         valid(void) const        { return m_data != 0;}
 
 
     // Size queries
 
-    UT_INLINE UTsize capacity(void) const           { return m_capacity; }
-    UT_INLINE UTsize size(void) const               { return m_size; }
-    UT_INLINE bool empty(void) const                { return m_size == 0;}
+    NS_INLINE NSsize capacity(void) const           { return m_capacity; }
+    NS_INLINE NSsize size(void) const               { return m_size; }
+    NS_INLINE bool empty(void) const                { return m_size == 0;}
 
 
     // Assignment operator (avoid where possible, pass by reference instead)
-    utArray<T> &operator= (const utArray<T> &o)
+    nsArray<T> &operator= (const nsArray<T> &o)
     {
         clear();
-        UTsize os = o.size();
+        NSsize os = o.size();
         if (os > 0)
         {
             resize(os);
@@ -720,15 +720,15 @@ public:
 
 
     // Copy buffers
-    UT_INLINE void copy(Pointer dst, ConstPointer src, UTsize size)
+    NS_INLINE void copy(Pointer dst, ConstPointer src, NSsize size)
     {
-        UT_ASSERT(size <= m_size);
-        for (UTsize i = 0; i < size; i++) dst[i] = src[i];
+        NS_ASSERT(size <= m_size);
+        for (NSsize i = 0; i < size; i++) dst[i] = src[i];
     }
 
 protected:
-    UTsize      m_size;
-    UTsize      m_capacity;
+    NSsize      m_size;
+    NSsize      m_capacity;
     Pointer     m_data;
     int         m_cacheLimit, m_curCache;
 };
@@ -737,7 +737,7 @@ protected:
 
 // Array iterator access, Similar to Ogre iterator wrappers
 template <typename T>
-class utArrayIterator
+class nsArrayIterator
 {
 public:
 
@@ -749,29 +749,29 @@ public:
 
 protected:
     Iterator m_iterator;
-    UTsize m_cur;
-    UTsize m_capacity;
+    NSsize m_cur;
+    NSsize m_capacity;
 
 public:
-    utArrayIterator() {}
+    nsArrayIterator() {}
 
     // Construct with array pointer and size
-    utArrayIterator(Iterator begin, UTsize size) : m_iterator(begin), m_cur(0), m_capacity(size) {}
+    nsArrayIterator(Iterator begin, NSsize size) : m_iterator(begin), m_cur(0), m_capacity(size) {}
 
     // Construct with reference to the array
-    utArrayIterator(T &v) : m_iterator(v.ptr()), m_cur(0), m_capacity(v.size()) { }
-    ~utArrayIterator() {}
+    nsArrayIterator(T &v) : m_iterator(v.ptr()), m_cur(0), m_capacity(v.size()) { }
+    ~nsArrayIterator() {}
 
     // Access queries
-    UT_INLINE bool hasMoreElements(void)    { return (m_iterator && m_cur < m_capacity); }
-    UT_INLINE ValueType getNext(void)       { UT_ASSERT((m_iterator && m_cur < m_capacity)); return m_iterator[m_cur++]; }
-    UT_INLINE void next(void)               { UT_ASSERT((m_iterator && m_cur < m_capacity)); ++m_cur;}
-    UT_INLINE ValueType peekNext(void)      { UT_ASSERT((m_iterator && m_cur < m_capacity)); return m_iterator[m_cur]; }
+    NS_INLINE bool hasMoreElements(void)    { return (m_iterator && m_cur < m_capacity); }
+    NS_INLINE ValueType getNext(void)       { NS_ASSERT((m_iterator && m_cur < m_capacity)); return m_iterator[m_cur++]; }
+    NS_INLINE void next(void)               { NS_ASSERT((m_iterator && m_cur < m_capacity)); ++m_cur;}
+    NS_INLINE ValueType peekNext(void)      { NS_ASSERT((m_iterator && m_cur < m_capacity)); return m_iterator[m_cur]; }
 };
 
 
 template <typename T>
-class utStack
+class nsStack
 {
 public:
     typedef T              *Pointer;
@@ -783,17 +783,17 @@ public:
 
 public:
 
-    utStack() : m_size(0), m_capacity(0), m_top(0), m_stack(0) {}
-    utStack(UTsize rsp) : m_size(0), m_capacity(0), m_top(0), m_stack(0) { reserve(rsp); }
+    nsStack() : m_size(0), m_capacity(0), m_top(0), m_stack(0) {}
+    nsStack(NSsize rsp) : m_size(0), m_capacity(0), m_top(0), m_stack(0) { reserve(rsp); }
 
 
-    utStack(const utStack &o) : m_size(o.m_size), m_capacity(0), m_top(o.m_top), m_stack(0)
+    nsStack(const nsStack &o) : m_size(o.m_size), m_capacity(0), m_top(o.m_top), m_stack(0)
     {
         reserve(o.m_size);
-        UT_ASSERT(m_stack && o.m_stack);
+        NS_ASSERT(m_stack && o.m_stack);
         copy(m_stack, o.m_stack, o.m_size);
     }
-    ~utStack() { clear(); }
+    ~nsStack() { clear(); }
 
     void clear(void)
     {
@@ -811,7 +811,7 @@ public:
 
     void push(const T &v)
     {
-        UT_ASSERT(m_top != UT_NPOS);
+        NS_ASSERT(m_top != NS_NPOS);
         if (m_size == m_capacity)
             reserve(m_size == 0 ? 8 : m_size * 2);
         m_stack[m_top] = v;
@@ -819,23 +819,23 @@ public:
         ++m_size;
     }
 
-    UT_INLINE ReferenceType pop(void)               { UT_ASSERT(m_top != 0); --m_size; return m_stack[--m_top]; }
-    UT_INLINE ReferenceType top(void)               { UT_ASSERT(m_top != 0); return m_stack[(m_top - 1)]; }
-    UT_INLINE ConstReferenceType top(void) const    { UT_ASSERT(m_top != 0); return m_stack[(m_top - 1)]; }
+    NS_INLINE ReferenceType pop(void)               { NS_ASSERT(m_top != 0); --m_size; return m_stack[--m_top]; }
+    NS_INLINE ReferenceType top(void)               { NS_ASSERT(m_top != 0); return m_stack[(m_top - 1)]; }
+    NS_INLINE ConstReferenceType top(void) const    { NS_ASSERT(m_top != 0); return m_stack[(m_top - 1)]; }
 
-    UT_INLINE ReferenceType peek(UTsize offs)
+    NS_INLINE ReferenceType peek(NSsize offs)
     {
-        UT_ASSERT(m_top != 0 && ((m_top - 1) - offs) != UT_NPOS);
+        NS_ASSERT(m_top != 0 && ((m_top - 1) - offs) != NS_NPOS);
         return m_stack[(m_top - 1)-offs];
     }
 
-    UT_INLINE ConstReferenceType peek(UTsize offs) const
+    NS_INLINE ConstReferenceType peek(NSsize offs) const
     {
-        UT_ASSERT(m_top != 0 && ((m_top - 1) - offs) != UT_NPOS);
+        NS_ASSERT(m_top != 0 && ((m_top - 1) - offs) != NS_NPOS);
         return m_stack[(m_top - 1)-offs];
     }
 
-    void reserve(UTsize nr)
+    void reserve(NSsize nr)
     {
         if (m_capacity < nr)
         {
@@ -850,29 +850,29 @@ public:
         }
     }
 
-    UT_INLINE UTsize capacity(void) const           { return m_capacity; }
-    UT_INLINE UTsize size(void) const               { return m_size; }
-    UT_INLINE UTsize itop(void) const               { return m_top; }
-    UT_INLINE bool empty(void) const                { return m_size == 0; }
-    UT_INLINE ConstPointer begin(void) const        { return m_stack; }
-    UT_INLINE Pointer begin(void)                   { return m_stack; }
+    NS_INLINE NSsize capacity(void) const           { return m_capacity; }
+    NS_INLINE NSsize size(void) const               { return m_size; }
+    NS_INLINE NSsize itop(void) const               { return m_top; }
+    NS_INLINE bool empty(void) const                { return m_size == 0; }
+    NS_INLINE ConstPointer begin(void) const        { return m_stack; }
+    NS_INLINE Pointer begin(void)                   { return m_stack; }
 
 protected:
-    UT_INLINE void copy(Pointer dest, const Pointer src, UTsize nr)
+    NS_INLINE void copy(Pointer dest, const Pointer src, NSsize nr)
     {
-        UTsize i;
+        NSsize i;
         for (i = 0; i < nr; i++)
             dest[i] = src[i];
     }
 
-    UTsize  m_size;
-    UTsize  m_capacity;
-    UTsize  m_top;
+    NSsize  m_size;
+    NSsize  m_capacity;
+    NSsize  m_top;
     Pointer m_stack;
 };
 
 template <typename T>
-class utStackIterator
+class nsStackIterator
 {
 public:
     typedef typename T::Pointer   Iterator;
@@ -880,126 +880,132 @@ public:
 
 public:
 
-    utStackIterator(Iterator begin, UTsize top) : m_iterator(begin), m_top(top), m_capacity(top) {}
-    utStackIterator(T &v) : m_iterator(v.begin()), m_top(v.itop()), m_capacity(v.itop()) {}
+    nsStackIterator(Iterator begin, NSsize top) : m_iterator(begin), m_top(top), m_capacity(top) {}
+    nsStackIterator(T &v) : m_iterator(v.begin()), m_top(v.itop()), m_capacity(v.itop()) {}
 
-    ~utStackIterator() {}
+    ~nsStackIterator() {}
 
-    UT_INLINE bool hasMoreElements(void) { return (m_iterator && m_top != 0 && m_top != UT_NPOS); }
+    NS_INLINE bool hasMoreElements(void) { return (m_iterator && m_top != 0 && m_top != NS_NPOS); }
 
-    UT_INLINE ValueType getNext(void)
+    NS_INLINE ValueType getNext(void)
     {
-        UT_ASSERT((m_iterator && (m_top - 1) != UT_NPOS));
+        NS_ASSERT((m_iterator && (m_top - 1) != NS_NPOS));
         --m_top;
         return m_iterator[m_top];
     }
 
-    UT_INLINE void next(void)
+    NS_INLINE void next(void)
     {
-        UT_ASSERT((m_iterator && (m_top - 1) != UT_NPOS));
+        NS_ASSERT((m_iterator && (m_top - 1) != NS_NPOS));
         --m_top;
     }
 
 
-    UT_INLINE ValueType peekNext(void)
+    NS_INLINE ValueType peekNext(void)
     {
-        UT_ASSERT((m_iterator && (m_top - 1) != UT_NPOS));
+        NS_ASSERT((m_iterator && (m_top - 1) != NS_NPOS));
         return m_iterator[m_top-1];
     }
 
 protected:
     Iterator        m_iterator;
-    UTsize          m_top;
-    const UTsize    m_capacity;
+    NSsize          m_top;
+    const NSsize    m_capacity;
 };
 
 
 // Integer hash
-class utIntHashKey
+class nsIntHashKey
 {
 protected:
-    UTint32 m_key;
-    mutable UThash m_hash;
+    NSint32 m_key;
+    mutable NShash m_hash;
 
 public:
-    utIntHashKey() : m_key(0), m_hash(UT_NPOS) {}
+    nsIntHashKey() : m_key(0), m_hash(NS_NPOS) {}
 
     // Key Constructor
-    utIntHashKey(UTint32 k) : m_key(k), m_hash(UT_NPOS) {hash();}
+    nsIntHashKey(NSint32 k) : m_key(k), m_hash(NS_NPOS) {hash();}
 
     // Copy constructor
-    utIntHashKey(const utIntHashKey &k) : m_key(k.m_key), m_hash(k.m_hash) {}
+    nsIntHashKey(const nsIntHashKey &k) : m_key(k.m_key), m_hash(k.m_hash) {}
 
+    NS_INLINE operator const int(void) const  { return m_key; }
+    NS_INLINE operator int(void)              { return m_key; }
 
-    UT_INLINE UThash hash(void) const
+    NS_INLINE NShash hash(void) const
     {
-        if (m_hash != UT_NPOS) return m_hash;
-        UThash m_hash = static_cast<UThash>(m_key) * 2654435769U;
+        if (m_hash != NS_NPOS) return m_hash;
+        NShash m_hash = static_cast<NShash>(m_key) * 2654435769U;
         return m_hash;
     }
-    UT_INLINE bool operator== (const utIntHashKey &v) const {return hash() == v.hash();}
-    UT_INLINE bool operator!= (const utIntHashKey &v) const {return hash() != v.hash();}
-    UT_INLINE bool operator== (const UThash &v) const       {return hash() == v;}
-    UT_INLINE bool operator!= (const UThash &v) const       {return hash() != v;}
+    NS_INLINE bool operator== (const nsIntHashKey &v) const {return hash() == v.hash();}
+    NS_INLINE bool operator!= (const nsIntHashKey &v) const {return hash() != v.hash();}
+    NS_INLINE bool operator== (const NShash &v) const       {return hash() == v;}
+    NS_INLINE bool operator!= (const NShash &v) const       {return hash() != v;}
 };
 
 
 // Pointer hash
-class utPointerHashKey
+class nsPointerHashKey
 {
 protected:
     void *m_key;
-    mutable UThash m_hash;
+    mutable NShash m_hash;
 
 public:
-    utPointerHashKey() : m_key(0), m_hash(UT_NPOS) {}
+    nsPointerHashKey() : m_key(0), m_hash(NS_NPOS) {}
 
     // Key Constructor
-    utPointerHashKey(void *k) : m_key(k), m_hash(UT_NPOS) {hash();}
+    nsPointerHashKey(void *k) : m_key(k), m_hash(NS_NPOS) {hash();}
 
     // Copy constructor
-    utPointerHashKey(const utPointerHashKey &k) : m_key(k.m_key), m_hash(k.m_hash) {}
+    nsPointerHashKey(const nsPointerHashKey &k) : m_key(k.m_key), m_hash(k.m_hash) {}
 
 
-    UT_INLINE UThash hash(void) const
+    NS_INLINE operator const void*(void) const  { return m_key; }
+    NS_INLINE operator void*(void)              { return m_key; }
+
+    NS_INLINE NShash hash(void) const
     {
-        if (m_hash != UT_NPOS) return m_hash;
-        m_hash = reinterpret_cast<UThash>(m_key);
+        if (m_hash != NS_NPOS) return m_hash;
+        m_hash = reinterpret_cast<NShash>(m_key);
         return m_hash;
     }
 
-    UT_INLINE bool operator== (const utPointerHashKey &v) const {return hash() == v.hash();}
-    UT_INLINE bool operator!= (const utPointerHashKey &v) const {return hash() != v.hash();}
-    UT_INLINE bool operator== (const UThash &v) const           {return hash() == v;}
-    UT_INLINE bool operator!= (const UThash &v) const           {return hash() != v;}
+    NS_INLINE bool operator== (const nsPointerHashKey &v) const {return hash() == v.hash();}
+    NS_INLINE bool operator!= (const nsPointerHashKey &v) const {return hash() != v.hash();}
+    NS_INLINE bool operator== (const NShash &v) const           {return hash() == v;}
+    NS_INLINE bool operator!= (const NShash &v) const           {return hash() != v;}
 };
 
 
 
 // Char hash
-class utCharHashKey
+class nsCharHashKey
 {
 protected:
     char *m_key;
-    mutable UThash m_hash;
+    mutable NShash m_hash;
 
 public:
-    utCharHashKey() : m_key(0), m_hash(UT_NPOS) {}
+    nsCharHashKey() : m_key(0), m_hash(NS_NPOS) {}
 
     // Key Constructor
-    utCharHashKey(char *k) : m_key(k), m_hash(UT_NPOS) {hash();}
-    utCharHashKey(const char *k) : m_key(const_cast<char *>(k)), m_hash(UT_NPOS) {}
+    nsCharHashKey(char *k) : m_key(k), m_hash(NS_NPOS) {hash();}
+    nsCharHashKey(const char *k) : m_key(const_cast<char *>(k)), m_hash(NS_NPOS) {}
 
     // Copy constructor
-    utCharHashKey(const utCharHashKey &k) : m_key(k.m_key), m_hash(k.m_hash) {}
+    nsCharHashKey(const nsCharHashKey &k) : m_key(k.m_key), m_hash(k.m_hash) {}
 
+    NS_INLINE operator const char*(void) const { return m_key; }
 
-    UThash hash(void) const
+    NShash hash(void) const
     {
-        if (!m_key) return UT_NPOS;
+        if (!m_key) return NS_NPOS;
 
         // use cached hash
-        if (m_hash != UT_NPOS) return m_hash;
+        if (m_hash != NS_NPOS) return m_hash;
 
         // Lifted from btHashMap.h
 
@@ -1008,7 +1014,7 @@ public:
         static const unsigned int FNVMultiple = 16777619u;
 
         // Fowler / Noll / Vo (FNV) Hash
-        m_hash = (UThash)InitialFNV;
+        m_hash = (NShash)InitialFNV;
         for (int i = 0; m_key[i]; i++)
         {
             m_hash = m_hash ^(m_key[i]);    // xor  the low 8 bits
@@ -1017,26 +1023,26 @@ public:
         return m_hash;
     }
 
-    UT_INLINE bool operator== (const utCharHashKey &v) const    {return hash() == v.hash();}
-    UT_INLINE bool operator!= (const utCharHashKey &v) const    {return hash() != v.hash();}
-    UT_INLINE bool operator== (const UThash &v) const           {return hash() == v;}
-    UT_INLINE bool operator!= (const UThash &v) const           {return hash() != v;}
+    NS_INLINE bool operator== (const nsCharHashKey &v) const    {return hash() == v.hash();}
+    NS_INLINE bool operator!= (const nsCharHashKey &v) const    {return hash() != v.hash();}
+    NS_INLINE bool operator== (const NShash &v) const           {return hash() == v;}
+    NS_INLINE bool operator!= (const NShash &v) const           {return hash() != v;}
 
 };
 
 
 // KeyValue pair
 template<typename Key, typename Value>
-struct utHashEntry
+struct nsHashEntry
 {
     Key first;
     Value second;
 
-    utHashEntry() {}
-    utHashEntry(const Key &k, const Value &v) : first(k), second(v) {}
+    nsHashEntry() {}
+    nsHashEntry(const Key &k, const Value &v) : first(k), second(v) {}
 
     // Assign hash entry
-    UT_INLINE const utHashEntry &operator=(const utHashEntry &o)
+    NS_INLINE const nsHashEntry &operator=(const nsHashEntry &o)
     {
         first = o.first;
         second = o.second;
@@ -1047,14 +1053,14 @@ struct utHashEntry
 
 // Simple hash map access, similar to btHashMap
 // http://code.google.com/p/bullet/
-template < typename Key, typename Value, UTsize table_size = 128 >
-class utHashTable
+template < typename Key, typename Value, NSsize table_size = 128 >
+class nsHashTable
 {
 public:
 
-    typedef utHashEntry<Key, Value>     Entry;
-    typedef utArray<Entry>              EntryArray;
-    typedef utArray<UTsize>             IndexArray;
+    typedef nsHashEntry<Key, Value>     Entry;
+    typedef nsArray<Entry>              EntryArray;
+    typedef nsArray<NSsize>             IndexArray;
 
 
     typedef Key             KeyType;
@@ -1070,16 +1076,16 @@ public:
 public:
 
     // Empty constructor
-    utHashTable() : m_size(0), m_capacity(0), m_lastPos(UT_NPOS) {}
+    nsHashTable() : m_size(0), m_capacity(0), m_lastPos(NS_NPOS) {}
 
     // construct table with an initial size
-    utHashTable(UTsize capacity) : m_size(0), m_capacity(0), m_lastPos(UT_NPOS) { rehash(capacity ? capacity : 0); }
+    nsHashTable(NSsize capacity) : m_size(0), m_capacity(0), m_lastPos(NS_NPOS) { rehash(capacity ? capacity : 0); }
 
     // Table copy constructor (avoid where possible, pass by reference instead)
-    utHashTable(const utHashTable &o): m_size(0), m_capacity(0), m_lastPos(UT_NPOS)
+    nsHashTable(const nsHashTable &o): m_size(0), m_capacity(0), m_lastPos(NS_NPOS)
     {
 
-        if (o.m_capacity != UT_NPOS && o.m_capacity != 0 && o.m_size > 0)
+        if (o.m_capacity != NS_NPOS && o.m_capacity != 0 && o.m_size > 0)
         {
 
             m_size = o.m_size;
@@ -1097,14 +1103,14 @@ public:
     }
 
 
-    ~utHashTable() { clear(); }
+    ~nsHashTable() { clear(); }
 
 
     // Free used buffers
     void clear(void)
     {
         m_size = m_capacity = 0;
-        m_lastPos = UT_NPOS;
+        m_lastPos = NS_NPOS;
 
         m_chainar.clear();
         m_indices.clear();
@@ -1113,22 +1119,22 @@ public:
 
     // Safe data access
 
-    ReferenceValueType at(UTsize i)                         { UT_ASSERT(i < m_size); return (m_buckets.ptr()[i]).second; }
-    ReferenceValueType operator [](UTsize i)                { UT_ASSERT(i < m_size); return (m_buckets.ptr()[i]).second; }
-    ConstReferenceValueType at(UTsize i)const               { UT_ASSERT(i < m_size); return (m_buckets.ptr()[i]).second; }
-    ConstReferenceValueType operator [](UTsize i) const     { UT_ASSERT(i < m_size); return (m_buckets.ptr()[i]).second; }
+    ReferenceValueType at(NSsize i)                         { NS_ASSERT(i < m_size); return (m_buckets.ptr()[i]).second; }
+    ReferenceValueType operator [](NSsize i)                { NS_ASSERT(i < m_size); return (m_buckets.ptr()[i]).second; }
+    ConstReferenceValueType at(NSsize i)const               { NS_ASSERT(i < m_size); return (m_buckets.ptr()[i]).second; }
+    ConstReferenceValueType operator [](NSsize i) const     { NS_ASSERT(i < m_size); return (m_buckets.ptr()[i]).second; }
 
     // Find and cache key
     ReferenceValueType get(const Key &key) const
     {
 
-        UT_ASSERT(!m_buckets.empty());
+        NS_ASSERT(!m_buckets.empty());
 
         if (m_lastKey != key)
         {
-            UTsize i = find(key);
+            NSsize i = find(key);
 
-            UT_ASSERT(i < m_size && i != UT_NPOS);
+            NS_ASSERT(i < m_size && i != NS_NPOS);
 
             m_lastKey = key;
             m_lastPos = i;
@@ -1136,28 +1142,46 @@ public:
 
         return (m_buckets.ptr()[m_lastPos]).second;
     }
+   
+    Entry& get(const Key &key)
+    {
+        NS_ASSERT(!m_buckets.empty());
+
+        if (m_lastKey != key)
+        {
+            NSsize i = find(key);
+
+            NS_ASSERT(i < m_size && i != NS_NPOS);
+
+            m_lastKey = key;
+            m_lastPos = i;
+        }
+
+        return (m_buckets.ptr()[m_lastPos]);
+    }
+
 
     ReferenceValueType operator [](const Key &key) const { return get(key); }
 
 
     // Return array index to key
-    UTsize find(const Key &key) const
+    NSsize find(const Key &key) const
     {
 
-        if (m_capacity == 0 || m_capacity == UT_NPOS || m_buckets.empty())
-            return UT_NPOS;
+        if (m_capacity == 0 || m_capacity == NS_NPOS || m_buckets.empty())
+            return NS_NPOS;
 
-        if (m_lastPos != UT_NPOS && m_lastKey == key) return m_lastPos;
-        UThash hr = key.hash() % m_capacity;
+        if (m_lastPos != NS_NPOS && m_lastKey == key) return m_lastPos;
+        NShash hr = key.hash() % m_capacity;
 
         // debug paranoia
-        UT_ASSERT(m_indices.valid() && m_chainar.valid() && m_buckets.valid());
+        NS_ASSERT(m_indices.valid() && m_chainar.valid() && m_buckets.valid());
 
-        UThash fh = m_indices[hr];
-        while (fh != UT_NPOS && (key != m_buckets[fh].first))
+        NShash fh = m_indices[hr];
+        while (fh != NS_NPOS && (key != m_buckets[fh].first))
             fh = m_chainar[fh];
 
-        if (fh != UT_NPOS)
+        if (fh != NS_NPOS)
         {
             m_lastKey = key;
             m_lastPos = fh;
@@ -1169,8 +1193,8 @@ public:
     void remove(const Key &key)
     {
 
-        UTsize kp = find(key);
-        if (kp == UT_NPOS || m_capacity == 0 || m_buckets.empty())
+        NSsize kp = find(key);
+        if (kp == NS_NPOS || m_capacity == 0 || m_buckets.empty())
             return;
 
         typename IndexArray::Pointer ip = m_indices.ptr();
@@ -1178,12 +1202,12 @@ public:
         typename EntryArray::Pointer bp = m_buckets.ptr();
 
         // debug paranoia
-        UT_ASSERT(m_indices.valid() && m_chainar.valid() && m_buckets.valid());
+        NS_ASSERT(m_indices.valid() && m_chainar.valid() && m_buckets.valid());
 
 
-        UThash hr = key.hash() % m_capacity;
-        UThash ch = ip[hr], ph = UT_NPOS;
-        UT_ASSERT(ch != UT_NPOS);
+        NShash hr = key.hash() % m_capacity;
+        NShash ch = ip[hr], ph = NS_NPOS;
+        NS_ASSERT(ch != NS_NPOS);
 
         while (ch != kp)
         {
@@ -1191,17 +1215,17 @@ public:
             ch = ip[ch];
         }
 
-        if (ph != UT_NPOS)
+        if (ph != NS_NPOS)
         {
-            UT_ASSERT(cp[ph] == kp);
+            NS_ASSERT(cp[ph] == kp);
             cp[ph] = cp[kp];
         }
         else
             ip[hr] = cp[kp];
 
 
-        UTsize lp = m_size - 1;
-        UT_ASSERT(lp != UT_NPOS);
+        NSsize lp = m_size - 1;
+        NS_ASSERT(lp != NS_NPOS);
         if (lp == kp)
         {
             --m_size;
@@ -1212,17 +1236,17 @@ public:
         const Entry &en = bp[lp];
         hr = en.first.hash() % m_capacity;
 
-        ch = ip[hr], ph = UT_NPOS;
-        UT_ASSERT(ch != UT_NPOS);
+        ch = ip[hr], ph = NS_NPOS;
+        NS_ASSERT(ch != NS_NPOS);
         while (ch != lp)
         {
             ph = ch;
             ch = ip[ch];
         }
 
-        if (ph != UT_NPOS)
+        if (ph != NS_NPOS)
         {
-            UT_ASSERT(cp[ph] == lp);
+            NS_ASSERT(cp[ph] == lp);
             cp[ph] = cp[lp];
         }
         else
@@ -1241,13 +1265,13 @@ public:
     void insert(const Key &key, const Value &val)
     {
 
-        if (m_capacity == UT_NPOS || find(key) != UT_NPOS)
+        if (m_capacity == NS_NPOS || find(key) != NS_NPOS)
             return;
 
         if (m_capacity == 0) rehash(table_size);
 
-        UThash hr = key.hash() % m_capacity;
-        UTsize sz = m_size++;
+        NShash hr = key.hash() % m_capacity;
+        NSsize sz = m_size++;
         if (m_size > m_capacity)
         {
             rehash(m_size * 2);
@@ -1255,7 +1279,7 @@ public:
         }
 
         // debug paranoia
-        UT_ASSERT(m_indices.valid() && m_chainar.valid() && m_buckets.valid());
+        NS_ASSERT(m_indices.valid() && m_chainar.valid() && m_buckets.valid());
 
         m_buckets[sz].first  = key;
         m_buckets[sz].second = val;
@@ -1265,20 +1289,20 @@ public:
 
     // Raw data access
 
-    UT_INLINE Pointer ptr(void)             { return m_buckets.ptr(); }
-    UT_INLINE ConstPointer ptr(void) const  { return m_buckets.ptr(); }
-    UT_INLINE bool valid(void) const        { return m_buckets.valid();}
+    NS_INLINE Pointer ptr(void)             { return m_buckets.ptr(); }
+    NS_INLINE ConstPointer ptr(void) const  { return m_buckets.ptr(); }
+    NS_INLINE bool valid(void) const        { return m_buckets.valid();}
 
 
     // Size queries
 
-    UT_INLINE UTsize size(void) const       { return m_size; }
-    UT_INLINE UTsize capacity(void) const   { return capacity; }
-    UT_INLINE bool empty(void) const        { return m_size == 0; }
+    NS_INLINE NSsize size(void) const       { return m_size; }
+    NS_INLINE NSsize capacity(void) const   { return capacity; }
+    NS_INLINE bool empty(void) const        { return m_size == 0; }
 
 
     // Allocate buffers
-    void reserve(UTsize nr)
+    void reserve(NSsize nr)
     {
         if (m_capacity < nr)
             rehash(nr);
@@ -1290,7 +1314,7 @@ protected:
 
     // Allocate buffers and re-hash
 
-    void rehash(UTsize nr)
+    void rehash(NSsize nr)
     {
 
         if (nr < 16) nr = 16;
@@ -1302,8 +1326,8 @@ protected:
         typename IndexArray::Pointer ip = m_indices.ptr();
         typename IndexArray::Pointer cp = m_chainar.ptr();
 
-        memset(ip, UT_NPOS, sizeof(UTsize)*nr);
-        memset(cp, UT_NPOS, sizeof(UTsize)*nr);
+        memset(ip, NS_NPOS, sizeof(NSsize)*nr);
+        memset(cp, NS_NPOS, sizeof(NSsize)*nr);
 
         m_capacity = nr;
 
@@ -1311,11 +1335,11 @@ protected:
         ip = m_indices.ptr();
         cp = m_chainar.ptr();
 
-        UTsize sz = (m_size - 1 != UT_NPOS) ? m_size - 1 : 0;
-        for (UTsize ch = 0; ch < sz; ch++)
+        NSsize sz = (m_size - 1 != NS_NPOS) ? m_size - 1 : 0;
+        for (NSsize ch = 0; ch < sz; ch++)
         {
             const Entry &he = bp[ch];
-            UThash hr = he.first.hash() % m_capacity;
+            NShash hr = he.first.hash() % m_capacity;
 
             cp[ch] = ip[hr];
             ip[hr] = ch;
@@ -1325,8 +1349,8 @@ protected:
     EntryArray m_buckets;
     IndexArray m_indices;
     IndexArray m_chainar;
-    UTsize m_size, m_capacity;
-    mutable UTsize m_lastPos;
+    NSsize m_size, m_capacity;
+    mutable NSsize m_lastPos;
     mutable Key m_lastKey;
 };
 
@@ -1335,7 +1359,7 @@ protected:
 
 // Table iterator access, Similar to Ogre iterator wrappers
 template <typename T>
-class utHashTableIterator
+class nsHashTableIterator
 {
 public:
     typedef typename T::Pointer     Iterator;
@@ -1347,25 +1371,25 @@ public:
 protected:
 
     Iterator        m_iterator;
-    UTsize          m_cur;
-    const UTsize    m_capacity;
+    NSsize          m_cur;
+    const NSsize    m_capacity;
 
 public:
 
     // Construct with table pointer and size
-    utHashTableIterator(Iterator begin, UTsize size) : m_iterator(begin), m_cur(0), m_capacity(size) { }
+    nsHashTableIterator(Iterator begin, NSsize size) : m_iterator(begin), m_cur(0), m_capacity(size) { }
 
     // Construct with reference to the table
-    utHashTableIterator(T &v) : m_iterator(v.ptr()), m_cur(0), m_capacity(v.size()) {}
+    nsHashTableIterator(T &v) : m_iterator(v.ptr()), m_cur(0), m_capacity(v.size()) {}
 
-    ~utHashTableIterator() {}
+    ~nsHashTableIterator() {}
 
-    UT_INLINE bool hasMoreElements(void) const  { return (m_iterator && m_cur < m_capacity); }
-    UT_INLINE Pair getNext(void)                { UT_ASSERT((m_iterator && m_cur < m_capacity)); return m_iterator[m_cur++];}
-    UT_INLINE void next(void)                   { UT_ASSERT((m_iterator && m_cur < m_capacity)); ++m_cur; }
-    UT_INLINE Pair peekNext(void)               { UT_ASSERT((m_iterator && m_cur < m_capacity)); return m_iterator[m_cur]; }
-    UT_INLINE KeyType peekNextKey(void)         { UT_ASSERT((m_iterator && m_cur < m_capacity)); return m_iterator[m_cur].first;}
-    UT_INLINE ValueType peekNextValue(void)     { UT_ASSERT((m_iterator && m_cur < m_capacity)); return m_iterator[m_cur].second; }
+    NS_INLINE bool hasMoreElements(void) const  { return (m_iterator && m_cur < m_capacity); }
+    NS_INLINE Pair getNext(void)                { NS_ASSERT((m_iterator && m_cur < m_capacity)); return m_iterator[m_cur++];}
+    NS_INLINE void next(void)                   { NS_ASSERT((m_iterator && m_cur < m_capacity)); ++m_cur; }
+    NS_INLINE Pair peekNext(void)               { NS_ASSERT((m_iterator && m_cur < m_capacity)); return m_iterator[m_cur]; }
+    NS_INLINE KeyType peekNextKey(void)         { NS_ASSERT((m_iterator && m_cur < m_capacity)); return m_iterator[m_cur].first;}
+    NS_INLINE ValueType peekNextValue(void)     { NS_ASSERT((m_iterator && m_cur < m_capacity)); return m_iterator[m_cur].second; }
 };
 
-#endif//_utTypes_h_
+#endif//_nsTypes_h_

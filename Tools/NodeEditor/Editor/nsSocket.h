@@ -1,0 +1,262 @@
+/*
+-------------------------------------------------------------------------------
+    This file is part of OgreKit.
+    http://gamekit.googlecode.com/
+
+    Copyright (c) 2006-2010 Charlie C.
+
+    Contributor(s): none yet.
+-------------------------------------------------------------------------------
+  This software is provided 'as-is', without any express or implied
+  warranty. In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
+-------------------------------------------------------------------------------
+*/
+#ifndef _nsSocket_h_
+#define _nsSocket_h_
+
+#include "nsCommon.h"
+#include "nsMath.h"
+#include "nsVariable.h"
+#include "nsNodeTypeInfo.h"
+
+
+// ----------------------------------------------------------------------------
+
+
+// Base socket definition
+class nsSocketDef : public nsSocketListClass::Link
+{
+protected:
+
+    nsDirection         m_dir;
+    nsString            m_name;
+    nsString            m_docStr;
+    nsColorPalette      m_palette;
+
+    // global socket id
+    int                 m_id;
+
+    // direction unique id
+    int                 m_uid;
+
+
+    double              m_min, m_max;
+    NSrect              m_rect;
+    const nsValue       m_default;
+
+public:
+    nsSocketDef(nsDirection dir, const nsString &name, int id, double min, double max, const nsValue &val);
+    virtual ~nsSocketDef();
+
+
+    NS_INLINE nsDirection           getDirection(void) const                {return m_dir;}
+    NS_INLINE const nsString        &getName(void) const                    {return m_name;}
+    NS_INLINE nsColorPalette        &getPalette(void)                       {return m_palette;}
+    NS_INLINE const nsColorPalette  &getPalette(void) const                 {return m_palette;}
+    NS_INLINE const nsString        &getDocString(void) const               {return m_docStr;}
+    NS_INLINE int                   getId(void) const                       {return m_id;}
+    NS_INLINE double                getMin(void)const                       {return m_min;}
+    NS_INLINE double                getMax(void) const                      {return m_max;}
+    NS_INLINE const NSrect          &getRect(void) const                    {return m_rect;}
+    NS_INLINE int                   getUid(void) const                      {return m_uid;}
+
+
+    NS_INLINE void                  setDirection(const nsDirection &v)      {m_dir = v;}
+    NS_INLINE void                  setName(const nsString &v)              {m_name = v;}
+    NS_INLINE void                  setPalette(const nsColorPalette &v)     {m_palette = v;}
+    NS_INLINE void                  setDocString(const nsString &v)         {m_docStr = v;}
+    NS_INLINE void                  setId(int id)                           {m_id = id;}
+    NS_INLINE void                  setUid(int id)                          {m_uid = id;}
+    NS_INLINE void                  setMin(const double &v)                 {m_min = v;}
+    NS_INLINE void                  setMax(const double &v)                 {m_max = v;}
+    NS_INLINE void                  setRect(const NSrect &v)                {m_rect = v;}
+
+
+
+    // identity checks
+
+    NS_INLINE bool isTypeOf(nsSocketDef *def) const
+    {
+        if (!def) return false;
+        return m_default.isTypeOf(def->m_default);
+    }
+
+
+    NS_INLINE bool isOutput(void)   const { return m_dir == NS_SOCK_OUT;  }
+    NS_INLINE bool isInput(void)    const { return m_dir == NS_SOCK_IN;   }
+
+
+
+    virtual void                attachClientObject(nsSocket *sock) = 0;
+    virtual wxPGProperty        *getEditor(void) = 0;
+
+
+    nsSocket                    *create(nsNode *parent);
+
+    NS_INLINE const nsValue &getValue(void) const {return m_default;}
+};
+
+
+
+// ----------------------------------------------------------------------------
+class nsSocket : public nsSocketClass::Link
+{
+protected:
+
+    NSrect          m_rect, m_derrivedRect;
+    // instance type
+    nsSocketDef     *m_type;
+    // parent node instance
+    nsNode          *m_parent;
+    // from -> this
+    nsSocket        *m_from;
+    // this -> to
+    nsSocketList    m_tosockets;
+
+    // containing socket value
+    nsValue         m_value;
+
+public:
+    nsSocket(nsNode *nd, nsSocketDef *st);
+    ~nsSocket();
+
+    NS_INLINE bool                  isConnectedOut(void)            {return !m_tosockets.empty();}
+    NS_INLINE bool                  isConnected(void)               {return m_from != 0;}
+    NS_INLINE nsSocket              *getSocketLink(void)            {return m_from;}
+    NS_INLINE nsNode                *getParent(void)                {return m_parent;}
+    NS_INLINE nsSocketDef           *getType(void)                  {return m_type;}
+    NS_INLINE bool                  isOutput(void)                  {return m_type->isOutput();}
+    NS_INLINE bool                  isInput(void)                   {return m_type->isInput();}
+    NS_INLINE NSrect                &getDerrivedRect(void)          {return m_derrivedRect;}
+    NS_INLINE NSrect                &getRect(void)                  {return m_rect;}
+
+    NS_INLINE const nsValue         &getValue(void) const           {return m_value;}
+    NS_INLINE void                  setValue(const nsValue &v)      {m_value = v;}
+
+
+
+    // identity checks
+
+    NS_INLINE bool isTypeOf(nsSocket *def) const
+    {
+        if (!def) return false;
+        return m_type->isTypeOf(def->m_type);
+    }
+
+
+    // Remove all references to this
+    void unlink(void);
+
+    // Add references to oth
+    void connect(nsSocket *oth);
+
+    // Update derrived rect
+    void updateFromParent(void);
+
+
+    // duplicate
+    NS_INLINE nsSocket *clone(nsNode *newParent)
+    {
+        nsSocket *sock = new nsSocket(newParent, m_type);
+        sock->m_value = m_value;
+        return sock;
+    }
+
+
+    // Sockets are only allowed to connect to others of the same type
+    // Int->Float, is wrong
+    // Float->Float, is ok
+    NS_INLINE bool canConnect(nsSocket *oth)
+    {
+        if (!oth) return false;
+        return  m_parent != oth->m_parent &&  m_type->isTypeOf(oth->getType());
+    }
+};
+
+
+
+// ----------------------------------------------------------------------------
+#define NS_DECLARE_SOCKET_DEF(T)\
+class T : public nsSocketDef    \
+{   \
+private:    \
+    wxPGProperty *m_editor; \
+public: \
+    T(nsDirection dir, const nsString &name, int id, double min, double max, const nsValue &val)    \
+        :   nsSocketDef(dir, name, id, min, max, val), m_editor(0) {}   \
+    virtual ~T() {} \
+    virtual wxPGProperty *getEditor(void);  \
+    virtual void attachClientObject(nsSocket *sock);\
+};
+
+
+// ----------------------------------------------------------------------------
+#define NS_IMPLEMENT_SOCKET_DEF(T, E)\
+    wxPGProperty *T::getEditor(void) {if (!m_editor) {m_editor = new E(m_name, wxPG_LABEL, this);} return m_editor;}\
+    void T::attachClientObject(nsSocket *sock) {if (m_editor) static_cast<E*>(m_editor)->attachClientObject(sock);}
+
+
+#define NS_CREATE_SOCKET_T(T, pal, dir, name, id, min, max, val) {  \
+    nsSocketDef *def = new T(dir, name,  id, min, max, val);        \
+    def->setPalette(nsSystemPalette::getPalette(pal));              \
+    dir == NS_SOCK_IN ? addInput(def) : addOutput(def);             \
+}
+
+// ----------------------------------------------------------------------------
+// Common types
+NS_DECLARE_SOCKET_DEF(nsBoolSocketDef);
+NS_DECLARE_SOCKET_DEF(nsIntSocketDef);
+NS_DECLARE_SOCKET_DEF(nsFloatSocketDef);
+NS_DECLARE_SOCKET_DEF(nsStringSocketDef);
+NS_DECLARE_SOCKET_DEF(nsVec2SocketDef);
+NS_DECLARE_SOCKET_DEF(nsVec3SocketDef);
+NS_DECLARE_SOCKET_DEF(nsVec4SocketDef);
+NS_DECLARE_SOCKET_DEF(nsQuatSocketDef);
+NS_DECLARE_SOCKET_DEF(nsObjectSocketDef);
+
+
+
+
+// ----------------------------------------------------------------------------
+// short hand
+#define NS_CREATE_BOOL_SOCKET(dir, name, id, min, max, val)\
+    NS_CREATE_SOCKET_T(nsBoolSocketDef, NS_SPE_BOOL, dir, name, id, min, max, ((bool)val))
+
+#define NS_CREATE_INT_SOCKET(dir, name, id, min, max, val)\
+    NS_CREATE_SOCKET_T(nsIntSocketDef, NS_SPE_INT, dir, name, id, min, max, ((int)val))
+
+#define NS_CREATE_FLOAT_SOCKET(dir, name, id, min, max, val)\
+    NS_CREATE_SOCKET_T(nsFloatSocketDef, NS_SPE_FLOAT, dir, name, id,  min, max, ((NSfloat)val))
+
+#define NS_CREATE_STRING_SOCKET(dir, name, id, min, max, val)\
+    NS_CREATE_SOCKET_T(nsStringSocketDef, NS_SPE_STRING, dir, name, id, min, max, (nsString(val)))
+
+#define NS_CREATE_VEC2_SOCKET(dir, name, id, min, max, val)\
+    NS_CREATE_SOCKET_T(nsVec2SocketDef, NS_SPE_VEC2, dir, name, id,  min, max, val)
+
+#define NS_CREATE_VEC3_SOCKET(dir, name, id, min, max, val)\
+    NS_CREATE_SOCKET_T(nsVec3SocketDef, NS_SPE_VEC3, dir, name, id,  min, max, val)
+
+#define NS_CREATE_VEC4_SOCKET(dir, name, id, min, max, val)\
+    NS_CREATE_SOCKET_T(nsVec4SocketDef, NS_SPE_VEC4, dir, name, id,  min, max, val)
+
+#define NS_CREATE_QUAT_SOCKET(dir, name, id, min, max, val)\
+    NS_CREATE_SOCKET_T(nsQuatSocketDef, NS_SPE_QUAT, dir, name, id,  min, max, val)
+
+#define NS_CREATE_OBJECT_SOCKET(dir, name, id, min, max, val)\
+    NS_CREATE_SOCKET_T(nsObjectSocketDef, NS_SPE_OBJECT, dir, name, id, min, max, (nsObjectSocketData(val)))
+
+#endif//_nsSocket_h_

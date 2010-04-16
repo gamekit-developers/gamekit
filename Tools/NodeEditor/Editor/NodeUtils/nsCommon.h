@@ -22,8 +22,8 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _utCommon_h_
-#define _utCommon_h_
+#ifndef _nsUtCommon_h_
+#define _nsUtCommon_h_
 
 
 
@@ -33,85 +33,85 @@
 
 #if defined(DEBUG) || defined(_DEBUG)
 # include <assert.h>
-# define UT_DEBUG 1
-# define UT_ASSERT(x) assert(x)
+# define NS_DEBUG 1
+# define NS_ASSERT(x) assert(x)
 #else
-# define UT_DEBUG 0
-# define UT_ASSERT(x)
+# define NS_DEBUG 0
+# define NS_ASSERT(x)
 #endif
-#define UT_ASSERTSAFE(x)    ( ((x) == 0) ? true : false )
-#define UT_ASSERTCOMP(x, n) typedef bool n[(x) ? 1 : 0];
+#define NS_ASSERTSAFE(x)    ( ((x) == 0) ? true : false )
+#define NS_ASSERTCOMP(x, n) typedef bool n[(x) ? 1 : 0];
 
-#define UT_PLATFORM_WIN32    0
-#define UT_PLATFORM_LINUX    2
-#define UT_PLATFORM_APPLE    3
+#define NS_PLATFORM_WIN32    0
+#define NS_PLATFORM_LINUX    2
+#define NS_PLATFORM_APPLE    3
 
 #if defined (_WIN32)
-# define UT_PLATFORM UT_PLATFORM_WIN32
+# define NS_PLATFORM NS_PLATFORM_WIN32
 #elif defined(__APPLE__)
-# define UT_PLATFORM UT_PLATFORM_APPLE
+# define NS_PLATFORM NS_PLATFORM_APPLE
 #else
-# define UT_PLATFORM UT_PLATFORM_LINUX
+# define NS_PLATFORM NS_PLATFORM_LINUX
 #endif
 
-#define UT_COMPILER_MSVC    0
-#define UT_COMPILER_GNU     1
+#define NS_COMPILER_MSVC    0
+#define NS_COMPILER_GNU     1
 
 
 #if defined(_MSC_VER)
-# define UT_COMPILER UT_COMPILER_MSVC
+# define NS_COMPILER NS_COMPILER_MSVC
 #elif defined(__GNUC__)
-# define UT_COMPILER UT_COMPILER_GNU
+# define NS_COMPILER NS_COMPILER_GNU
 #else // bail
 # error unknown compiler
 #endif
 
-#define UT_ENDIAN_LITTLE    0
-#define UT_ENDIAN_BIG       1
+#define NS_ENDIAN_LITTLE    0
+#define NS_ENDIAN_BIG       1
 
 #if defined(__sgi)      ||  defined (__sparc)        || \
     defined (__sparc__) ||  defined (__PPC__)        || \
     defined (__ppc__)   ||  defined (__BIG_ENDIAN__)
-#define UT_ENDIAN UT_ENDIAN_BIG
+#define NS_ENDIAN NS_ENDIAN_BIG
 #else
-#define UT_ENDIAN UT_ENDIAN_LITTLE
+#define NS_ENDIAN NS_ENDIAN_LITTLE
 #endif
 
 
-#if UT_ENDIAN == UT_ENDIAN_BIG
-# define UT_ID(a,b,c,d) ( (int)(a)<<24 | (int)(b)<<16 | (c)<<8 | (d) )
+#if NS_ENDIAN == NS_ENDIAN_BIG
+# define NS_ID(a,b,c,d) ( (int)(a)<<24 | (int)(b)<<16 | (c)<<8 | (d) )
 # define IT_ID2(c, d)   ( (c)<<8 | (d) )
 #else
-# define UT_ID(a,b,c,d) ( (int)(d)<<24 | (int)(c)<<16 | (b)<<8 | (a) )
-# define UT_ID2(c, d)   ( (d)<<8 | (c) )
+# define NS_ID(a,b,c,d) ( (int)(d)<<24 | (int)(c)<<16 | (b)<<8 | (a) )
+# define NS_ID2(c, d)   ( (d)<<8 | (c) )
 #endif
 
 
-#define UT_ARCH_32 0
-#define UT_ARCH_64 1
+#define NS_ARCH_32 0
+#define NS_ARCH_64 1
 
 #if defined(__x86_64__)     || defined(_M_X64)      || \
     defined(__powerpc64__)  || defined(__alpha__)   || \
     defined(__ia64__)       || defined(__s390__)    || \
     defined(__s390x__)
-# define UT_ARCH UT_ARCH_64
-UT_ASSERTCOMP(sizeof(void*) == 8, VOID_IS_8);
+# define NS_ARCH NS_ARCH_64
+NS_ASSERTCOMP(sizeof(void*) == 8, VOID_IS_8);
 #else
-#define UT_ARCH UT_ARCH_32
-UT_ASSERTCOMP(sizeof(void*) == 4, VOID_IS_4);
+#define NS_ARCH NS_ARCH_32
+NS_ASSERTCOMP(sizeof(void*) == 4, VOID_IS_4);
 #endif
 
 
-#if UT_PLATFORM == UT_PLATFORM_WIN32
+#if NS_PLATFORM == NS_PLATFORM_WIN32
 # if defined(__MINGW32__) || \
      defined(__CYGWIN__)  || \
      (defined (_MSC_VER) && _MSC_VER < 1300)
-#  define UT_INLINE inline
+#  define NS_INLINE inline
 # else
-#  define UT_INLINE __forceinline
+#  define NS_INLINE __forceinline
 # endif
 #else
-#  define UT_INLINE    inline
+#  define NS_INLINE    inline
 #endif
 
 
@@ -119,25 +119,25 @@ UT_ASSERTCOMP(sizeof(void*) == 4, VOID_IS_4);
 
 
 
-typedef long            UTlong;
-typedef unsigned long   UTulong;
-typedef int             UTint32;
-typedef unsigned int    UTuint32;
-typedef short           UTint16;
-typedef unsigned short  UTuint16;
-typedef signed char     UTint8;
-typedef unsigned char   UTuint8;
-typedef unsigned char   UTubyte;
-typedef signed char     UTbyte;
-typedef bool            UTint1;
+typedef long            NSlong;
+typedef unsigned long   NSulong;
+typedef int             NSint32;
+typedef unsigned int    NSuint32;
+typedef short           NSint16;
+typedef unsigned short  NSuint16;
+typedef signed char     NSint8;
+typedef unsigned char   NSuint8;
+typedef unsigned char   NSubyte;
+typedef signed char     NSbyte;
+typedef bool            NSint1;
 
 
-#if UT_COMPILER == UT_COMPILER_GNU
-typedef long long          UTint64;
-typedef unsigned long long UTuint64;
+#if NS_COMPILER == NS_COMPILER_GNU
+typedef long long          NSint64;
+typedef unsigned long long NSuint64;
 #else
-typedef __int64          UTint64;
-typedef unsigned __int64 UTuint64;
+typedef __int64          NSint64;
+typedef unsigned __int64 NSuint64;
 #endif
 
 
@@ -146,19 +146,19 @@ typedef unsigned __int64 UTuint64;
 
 
 
-#if UT_ARCH == UT_ARCH_64
-typedef UTuint64    UTsize;
-typedef UTuint64    UTuintPtr;
-typedef UTint64     UTintPtr;
-#define UT_NPOS     ((UTuint64)-1)
+#if NS_ARCH == NS_ARCH_64
+typedef NSuint64    NSsize;
+typedef NSuint64    NSuintPtr;
+typedef NSint64     NSintPtr;
+#define NS_NPOS     ((NSuint64)-1)
 #else
-typedef UTuint32    UTsize;
-typedef UTuint32    UTuintPtr;
-typedef UTint32     UTintPtr;
-#define UT_NPOS     ((UTuint32)-1)
+typedef NSuint32    NSsize;
+typedef NSuint32    NSuintPtr;
+typedef NSint32     NSintPtr;
+#define NS_NPOS     ((NSuint32)-1)
 #endif
 
-typedef UTsize UThash;
+typedef NSsize NShash;
 
 
-#endif//_utCommon_h_
+#endif//_nsUtCommon_h_

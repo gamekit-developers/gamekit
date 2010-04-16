@@ -27,15 +27,15 @@
 #include "nsClipboard.h"
 
 
-typedef utHashTable<utPointerHashKey, nsNode *> nsOldNewMap;
+typedef nsHashTable<nsPointerHashKey, nsNode *> nsOldNewMap;
 
 
 // ----------------------------------------------------------------------------
 nsNode *nsClipboard_findNode(nsOldNewMap &map, nsNode *find)
 {
-    // lookup utility
-    UTsize pos = map.find(find);
-    if (pos != UT_NPOS)
+    // lookup nsility
+    NSsize pos = map.find(find);
+    if (pos != NS_NPOS)
         return map.at(pos);
     return 0;
 }
@@ -66,7 +66,7 @@ void nsClipboard_link(nsOldNewMap &lookup, nsNodes &list)
             {
                 link =sock->getSocketLink();
 
-                UT_ASSERT(link);
+                NS_ASSERT(link);
                 linkPar = link->getParent();
 
                 // from node -> parent
@@ -75,8 +75,8 @@ void nsClipboard_link(nsOldNewMap &lookup, nsNodes &list)
                 if (newPar)
                 {
                     // first
-                    nsSocket *thisInp = next->getInput(sock->getIndex());
-                    nsSocket *thisOut = newPar->getOutput(link->getIndex());
+                    nsSocket *thisInp = next->getInput(sock->getType()->getUid());
+                    nsSocket *thisOut = newPar->getOutput(link->getType()->getUid());
 
                     if (thisInp && thisOut)
                         thisInp->connect(thisOut);
@@ -119,7 +119,7 @@ void nsClipboard::paste(nsNodeTree *tree, nsNodes &list, const NSvec2 &position)
     if (m_clip.empty() || !tree)
         return;
 
-    UTsize size = m_clip.size();
+    NSsize size = m_clip.size();
 
     nsOldNewMap lookup;
     nsNodes links;

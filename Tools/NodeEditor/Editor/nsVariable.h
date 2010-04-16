@@ -29,209 +29,147 @@
 
 #include "nsCommon.h"
 #include "nsMath.h"
-#include "Utils/utString.h"
+#include "NodeUtils/nsString.h"
 
 
-class nsVariable
+// Any value adapted from Poco
+class nsValue
 {
 public:
-    typedef enum PropertyTypes
-    {
-        VAR_NULL = 0,
-        VAR_BOOL,
-        VAR_REAL,
-        VAR_ENUM,
-        VAR_INT,
-        VAR_VEC2,
-        VAR_VEC3,
-        VAR_VEC4,
-        VAR_QUAT,
-        VAR_RECT,
-        VAR_MAT3,
-        VAR_MAT4,
-        VAR_COLOR,
-        VAR_STRING,
-    } PropertyTypes;
-
-    nsVariable()
-        :       m_string(""),
-                m_type(VAR_NULL)
-    {
-        memset(&m_numeric, 0, sizeof(NSfloat)*16);
-    }
-
-    nsVariable(const utString &v)
-        :       m_string(v),
-                m_type(VAR_STRING)
-    {
-        memset(&m_numeric, 0, sizeof(NSfloat)*16);
-    }
+    typedef std::type_info Info;
 
 
+protected:
 
-    UT_INLINE void makeNull(void)
+    // abstract holder
+    class Content
     {
-        m_string.clear();
-        memset(&m_numeric, 0, sizeof(NSfloat)*16);
-    }
+    public:
+        virtual ~Content() {}
 
-    UT_INLINE int  getType(void)                { return m_type; }
-    UT_INLINE void setType(PropertyTypes pt)    { m_type = pt;}
 
-    UT_INLINE void setValue(NSfloat v)
-    {
-        m_numeric[0] = (NSfloat)v;
-        if (!m_string.empty())
-            m_string.clear();
-    }
+        virtual void            fromString(const nsString &v) = 0;
+        virtual nsString        toString(void) const = 0;
+        virtual const Info      &type(void) const = 0;
+        virtual Content         *clone(void) const = 0; 
+    };
 
-    UT_INLINE void setValue(bool v)
-    {
-        m_numeric[0] = v ? 1.f : 0.f;
-        if (!m_string.empty())
-            m_string.clear();
-    }
-    UT_INLINE void setValue(int v)
-    {
-        m_numeric[0] = (NSfloat)v;
-        if (!m_string.empty())
-            m_string.clear();
-    }
-    UT_INLINE void setValue(const utString &v)
-    {
-        m_string = v;
-    }
-    UT_INLINE void setValue(const NSvec2 &v)
-    {
-        m_numeric[0] = v.x; m_numeric[1] = v.y;
-        if (!m_string.empty())
-            m_string.clear();
-    }
-    UT_INLINE void setValue(const NSvec3 &v)
-    {
-        m_numeric[0] = v.x; m_numeric[1] = v.y; m_numeric[2] = v.z;
-        if (!m_string.empty())
-            m_string.clear();
-    }
-    UT_INLINE void setValue(const NSvec4 &v)
-    {
-        m_numeric[0] = v.w; m_numeric[1] = v.x; m_numeric[2] = v.y; m_numeric[3] = v.z;
-        if (!m_string.empty())
-            m_string.clear();
-    }
-    UT_INLINE void setValue(const NSquat &v)
-    {
-        m_numeric[0] = v.w; m_numeric[1] = v.x; m_numeric[2] = v.y; m_numeric[3] = v.z;
-        if (!m_string.empty())
-            m_string.clear();
-    }
 
-    // copy
-    UT_INLINE void setValue(const nsVariable &v)
+    // type holder
+    template <typename T>
+    class TypedContent : public Content
     {
-        m_type = v.m_type;
-        m_numeric[0] = v.m_numeric[0];
-        m_numeric[1] = v.m_numeric[1];
-        m_numeric[2] = v.m_numeric[2];
-        m_numeric[3] = v.m_numeric[3];
-        m_string = v.m_string;
-    }
+    public:
 
-    UT_INLINE nsVariable &operator = (const nsVariable &v)
+        TypedContent(const T &v) 
+            :   m_value(v)
+        {
+        }
+
+        virtual ~TypedContent() {}
+
+        NS_INLINE const Info&   type(void) const    { return typeid(T); } 
+        NS_INLINE Content       *clone(void) const  { return new TypedContent<T>(m_value); } 
+
+
+        NS_INLINE void fromString(const nsString &v)
+        {
+            nsFromString(v, m_value);
+        }
+
+        NS_INLINE nsString  toString(void) const
+        {
+            return nsToString(m_value);
+        }
+
+        T m_value;
+    };
+
+    Content *m_content;
+
+    
+    NS_INLINE nsValue& swap(nsValue &rhs)
     {
-        m_type = v.m_type;
-        m_numeric[0] = v.m_numeric[0];
-        m_numeric[1] = v.m_numeric[1];
-        m_numeric[2] = v.m_numeric[2];
-        m_numeric[3] = v.m_numeric[3];
-        m_string = v.m_string;
+        std::swap(m_content, rhs.m_content);
         return *this;
     }
 
-    UT_INLINE bool getValueBool(void) const
+public:
+
+    nsValue() 
+        :   m_content(0)    
     {
-        if (!m_string.empty())
-            return utStringConverter::toBool(m_string);
-        return m_numeric[0] != 0;
+    }
+    
+    nsValue(const nsValue &v) 
+        :   m_content(v.m_content ? v.m_content->clone() : 0) 
+    {
     }
 
-    UT_INLINE NSfloat getValueReal(void) const
+    template<typename T>
+    nsValue(const T& v)
+        :   m_content(new TypedContent<T>(v))
     {
-        if (!m_string.empty())
-            return utStringConverter::toFloat(m_string);
-        return m_numeric[0];
+    }
+    
+    ~nsValue() 
+    {
+        delete m_content;
     }
 
-    UT_INLINE int getValueInt(void) const
+    template<typename T>
+    NS_INLINE nsValue& operator = (const T &rhs) 
     {
-        if (!m_string.empty())
-            return utStringConverter::toInt(m_string);
-        return (int)m_numeric[0];
+        nsValue(rhs).swap(*this);
+        return *this;
     }
 
-    const utString getValueString(void) const
+    NS_INLINE nsValue& operator = (const nsValue &rhs) 
     {
-        if (m_type != VAR_STRING)
-        {
-            if (m_type == VAR_BOOL)
-                return utStringConverter::toString(m_numeric[0] != 0);
-            if (m_type == VAR_REAL)
-                return utStringConverter::toString(m_numeric[0]);
-            if (m_type == VAR_INT)
-                return utStringConverter::toString((int)m_numeric[0]);
-            if (m_type == VAR_VEC2)
-                return utStringConverter::toString(NSvec2(m_numeric[0], m_numeric[1]));
-            if (m_type == VAR_VEC3)
-                return utStringConverter::toString(NSvec3(m_numeric[0], m_numeric[1], m_numeric[2]));
-            if (m_type == VAR_VEC4)
-                return utStringConverter::toString(NSvec4(m_numeric[0], m_numeric[1], m_numeric[2],  m_numeric[3]));
-            if (m_type == VAR_QUAT)
-                return utStringConverter::toString(NSquat(m_numeric[0], m_numeric[1], m_numeric[2], m_numeric[3]));
-
-            return utStringConverter::toString(m_numeric[0] != 0);
-        }
-        return m_string;
+        nsValue(rhs).swap(*this);
+        return *this;
     }
 
-    UT_INLINE NSvec2 getValueVector2(void) const
+
+    template<typename T>
+    NS_INLINE operator T(void) const
     {
-        if (!m_string.empty())
-            return utStringConverter::toVec2(m_string);
-        return NSvec2(m_numeric[0], m_numeric[1]);
+        if (m_content && m_content->type() == typeid(T))
+            return static_cast<TypedContent<T>*>(m_content)->m_value;
+        return T();
     }
 
-    UT_INLINE NSvec3 getValueVector3(void) const
+    template<typename T>
+    NS_INLINE T get(const T& def = T()) const
     {
-        if (!m_string.empty())
-            return utStringConverter::toVec3(m_string);
-        return NSvec3(m_numeric[0], m_numeric[1], m_numeric[2]);
+        if (m_content && m_content->type() == typeid(T))
+            return static_cast<TypedContent<T>*>(m_content)->m_value;
+        return def;
     }
 
-    UT_INLINE NSvec4 getValueVector4(void) const
+
+    NS_INLINE nsString toString(void) const
     {
-        if (!m_string.empty())
-            return utStringConverter::toVec4(m_string);
-        return NSvec4(m_numeric[0], m_numeric[1], m_numeric[2], m_numeric[3]);
+        if (m_content)
+            return m_content->toString();
+        return "";
     }
 
-    UT_INLINE NSquat getValueQuaternion(void) const
+    NS_INLINE void fromString(const nsString& v) const
     {
-        if (!m_string.empty())
-            return utStringConverter::toQuat(m_string);
-        return NSquat(m_numeric[0], m_numeric[1], m_numeric[2], m_numeric[3]);
+        if (m_content)
+            m_content->fromString(v);
     }
 
-    UT_INLINE operator const utString(void) const
+    NS_INLINE bool isTypeOf(const nsValue& v) const
     {
-        return getValueString();
+        return m_content && v.m_content && m_content->type() ==  v.m_content->type();
     }
-
-private:
-
-    // data types
-    mutable NSfloat     m_numeric[16];
-    mutable utString    m_string;
-    mutable int         m_type;
+    NS_INLINE bool isTypeOf(const Info& v) const
+    {
+        return m_content && m_content->type() ==  v;
+    }
 };
+
 
 #endif//_nsVariable_h_

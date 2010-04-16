@@ -1,49 +1,75 @@
-
 set(NS_SRC
     nsClipboard.cpp
+    nsColorPalette.cpp
     nsEventHandler.cpp
     nsFont.cpp
     nsMain.cpp
     nsMainWndow.cpp
+    nsNode.cpp
     nsNodeCanvas.cpp
     nsNodeManager.cpp
     nsNodeProperties.cpp
+    nsNodeReader.cpp
+    nsNodeTree.cpp
     nsNodeTypeInfo.cpp
+    nsNodeWriter.cpp
     nsMath.cpp
+    nsOgreKitPreview.cpp
     nsPropertyPage.cpp
     nsRenderSystem.cpp
+    nsSocket.cpp
     nsSocketEditors.cpp
     nsSolutionBrowser.cpp
     nsTreeProperties.cpp
     nsVariable.cpp
     nsWorkspace.cpp
-    Utils/utString.cpp
+    nsXmlUtils.cpp
+    Editors/nsSocketEditors.cpp
+    Nodes/nsMouseMotionNode.cpp
+    Nodes/nsObjectMotionNode.cpp
+    Nodes/nsSkeletalAnimNode.cpp
+    NodeUtils/nsString.cpp
 )
 
 
 set(NS_HDR
     nsClipboard.h
+    nsColorPalette.h
     nsCommon.h
+    nsData.h
     nsFont.h
     nsEventHandler.h
     nsMainWindow.h
+    nsNode.h
     nsNodeCanvas.h
+    nsNodeEnums.h
     nsNodeManager.h
     nsNodeProperties.h
+    nsNodeReader.h
+    nsNodeTree.h
     nsNodeTypeInfo.h
+    nsNodeWriter.h
     nsMath.h
+    nsOgreKitPreview.h
     nsPropertyPage.h
     nsRenderSystem.h
     nsSingleton.h
+    nsSocket.h
     nsSocketEditors.h
     nsSolutionBrowser.h
     nsTreeProperties.h
     nsVariable.h
     nsWorkspace.h
-    Utils/utCommon.h
-    Utils/utTypes.h
-    Utils/utString.h
+    nsXmlUtils.h
+    Editors/nsSocketEditors.h
+    Nodes/nsMouseMotionNode.h
+    Nodes/nsObjectMotionNode.h
+    Nodes/nsSkeletalAnimNode.h
+    NodeUtils/nsCommon.h
+    NodeUtils/nsTypes.h
+    NodeUtils/nsString.h
 )
+
 if (WIN32)
 	set(PLAT_RESOURCE Win32/application.rc)
 endif()
@@ -64,8 +90,9 @@ set(ALL
     ${PLAT_RESOURCE}
 )
 
-include_directories(. Utils)
+include_directories(. ${OGREKIT_INCLUDE})
 setup_wx()
+link_libraries(OgreKitCore)
 
 if (WIN32)
     add_executable(NodeEditor WIN32 ${ALL})

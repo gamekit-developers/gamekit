@@ -52,7 +52,6 @@ NS_IMPLEMENT_SINGLETON(nsRenderSystem);
 
 // ----------------------------------------------------------------------------
 // wxColor converters
-
 NScolor ColorFromWxColor(const wxColour &v)
 {
     return NScolor(
@@ -62,109 +61,13 @@ NScolor ColorFromWxColor(const wxColour &v)
                1.f);
 }
 
-enum Palette
-{
-    PAL_DARK=0,
-    PAL_LIGHT,
-    PAL_SELECTED,
-    PAL_SHADOW,
-    PAL_HIGHLIGHT,
-    PAL_TEXT,
-    PAL_TEXT_HEADER,
-    PAL_MAX
-};
-
-static const NScolor BLACKOPAQUE    = 0x000000FF;
-static const NScolor BLACKALPHA     = 0x0000004B;
-static const NScolor BLACKALPHA2    = 0x00000080;
-static const NScolor WHITEOPAQUE    = 0xFFFFFFFF;
-static const NScolor WHITEALPHA     = 0xFFFFFFC0;
-static const NScolor SELECTED       = 0xEBE0714B;
+static const NScolor GREY[NS_PAL_MAX] = {0x292929FF, 0x808080FF, 0x0000004B, 0xFFFFFFFF, 0xFFFFFFC0, 0x000000FF};
+static NScolor  nsSysHighlight;
+static NScolor  nsSysHighlightGrad;
 
 
-// Standard color wheel  hex(RRGGBBAA)     Dark        Light       Selected    Shadow      Highlight   Text        Text Header
-static const NScolor RED[]              = {0xA83232FF, 0xEB7171FF, SELECTED, BLACKALPHA, WHITEOPAQUE, WHITEALPHA, BLACKOPAQUE};
-static const NScolor YELLOW[]           = {0xA89E32FF, 0xEBE071FF, SELECTED, BLACKALPHA, WHITEOPAQUE, WHITEALPHA, BLACKOPAQUE};
-static const NScolor BLUE[]             = {0x335EA8FF, 0x70B1EBFF, SELECTED, BLACKALPHA, WHITEOPAQUE, WHITEALPHA, BLACKALPHA2};
-static const NScolor ORANGE[]           = {0xA85A32FF, 0xEBAD71FF, SELECTED, BLACKALPHA, WHITEOPAQUE, WHITEALPHA, BLACKOPAQUE};
-static const NScolor GREEN[]            = {0x91A832FF, 0xD2EB71FF, SELECTED, BLACKALPHA, WHITEOPAQUE, WHITEALPHA, BLACKOPAQUE};
-static const NScolor PURPLE[]           = {0x5832A8FF, 0x9771EBFF, SELECTED, BLACKALPHA, WHITEOPAQUE, WHITEALPHA, BLACKOPAQUE};
-static const NScolor ORANGE_RED[]       = {0xA84232FF, 0xEB8171FF, SELECTED, BLACKALPHA, WHITEOPAQUE, WHITEALPHA, BLACKOPAQUE};
-static const NScolor YELLOW_ORANGE[]    = {0xA87132FF, 0xEBB271FF, SELECTED, BLACKALPHA, WHITEOPAQUE, WHITEALPHA, BLACKOPAQUE};
-static const NScolor YELLOW_GREEN[]     = {0x6DA832FF, 0xAEEB71FF, SELECTED, BLACKALPHA, WHITEOPAQUE, WHITEALPHA, BLACKOPAQUE};
-static const NScolor BLUE_GREEN[]       = {0x3295A8FF, 0x71D6EBFF, SELECTED, BLACKALPHA, WHITEOPAQUE, WHITEALPHA, BLACKOPAQUE};
-static const NScolor BLUE_PURPLE[]      = {0x3C32A8FF, 0x7B71EBFF, SELECTED, BLACKALPHA, WHITEOPAQUE, WHITEALPHA, BLACKOPAQUE};
-static const NScolor RED_PURPLE[]       = {0xA832A8FF, 0xEB71EBFF, SELECTED, BLACKALPHA, WHITEOPAQUE, WHITEALPHA, BLACKOPAQUE};
-static const NScolor GREY[]             = {0x292929FF, 0x808080FF, SELECTED, BLACKALPHA, WHITEOPAQUE, WHITEALPHA, BLACKOPAQUE};
-
-struct NSPalette
-{
-    GLuint image;
-    const NScolor *col;
-};
-
-
-static NSPalette STDPalette[NS_COL_MAX] =
-{
-    {0, RED},
-    {0, YELLOW},
-    {0, BLUE},
-    {0, ORANGE},
-    {0, GREEN},
-    {0, PURPLE},
-    {0, ORANGE_RED},
-    {0, YELLOW_ORANGE},
-    {0, YELLOW_GREEN},
-    {0, BLUE_GREEN},
-    {0, BLUE_PURPLE},
-    {0, RED_PURPLE},
-    {0, GREY},
-};
-
-// ----------------------------------------------------------------------------
-// Style info for the node trees, could be loaded/saved later.
-class nsStyle
-{
-public:
-    NScolor     m_background;
-    NScolor     m_nodeBack1;
-    NScolor     m_nodeBack2;
-    NScolor     m_nodeHeader1;
-    NScolor     m_nodeHeader2;
-    NScolor     m_black, m_white;
-    NScolor     m_shadow, m_refl;
-
-    NScolor     m_sysHighlight, m_sysHighlightGrad;
-
-    nsStyle() {}
-
-    void loadDefaultSettings(void)
-    {
-        m_black         = 0x000000FF;
-        m_white         = 0xFFFFFFFF;
-        m_shadow        = 0x0000004B;
-        m_refl          = 0xFFFFFF2B;
-        m_background    = GREY[PAL_LIGHT];
-        m_nodeBack1     = m_background - 0.125f;
-        m_nodeBack1.a   = 1.f;
-        m_nodeBack2     = GREY[PAL_LIGHT] + 0.125f;
-        m_nodeBack2.a   = 1.f;
-
-        m_nodeBack1.clamp();
-        m_nodeBack2.clamp();
-
-
-        m_nodeHeader1   = 0xA5D90BFF;
-        m_nodeHeader2   = 0x6BBB0CFF;
-
-
-
-        m_sysHighlight      = ColorFromWxColor(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
-        m_sysHighlightGrad  = ColorFromWxColor(wxSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTACTIVECAPTION));
-    }
-};
-
-static nsStyle paint;
+#define nsBLACK GREY[NS_PAL_TEXT_HEADER]
+#define nsWHITE GREY[NS_PAL_HIGHLIGHT]
 
 
 // ----------------------------------------------------------------------------
@@ -186,10 +89,7 @@ const int       NS_GRADIENT_SIZE    = 4;
 // text sizes
 const NSfloat   nsHeaderTextSize    = 12.f;
 const NSfloat   nsSocketTextSize    = 10.f;
-
-
-typedef utArray<nsVertex> VertexBuffer;
-
+typedef nsArray<nsVertex> VertexBuffer;
 
 
 // ----------------------------------------------------------------------------
@@ -435,18 +335,34 @@ public:
             m_font->m_tex = 0;
         }
 
-        for (int i=0; i<NS_COL_MAX; ++i)
-        {
-            if (STDPalette[i].image != 0)
-            {
-                glDeleteTextures( 1, &STDPalette[i].image );
-                STDPalette[i].image = 0;
-            }
-        }
-
         if (m_nodeBack != 0)
             glDeleteTextures( 1, &m_nodeBack );
         m_nodeBack = 0;
+
+
+        nsNodeDefIterator iter = nsNodeTypeInfo::getSingleton().getTypeIterator();
+        while (iter.hasMoreElements())
+        {
+            nsNodeDef *nt = iter.getNext();
+            if (nt->getPalette().isImageValid())
+                glDeleteTextures(1, &nt->getPalette().getImage());
+
+            nsSocketDefIterator sockit = nt->getInputIterator();
+            while (sockit.hasMoreElements())
+            {
+                nsSocketDef *st = sockit.getNext();
+                if (!st->getPalette().isImageValid())
+                    glDeleteTextures(1, &st->getPalette().getImage());
+            }
+
+            sockit = nt->getOutputIterator();
+            while (sockit.hasMoreElements())
+            {
+                nsSocketDef *st = sockit.getNext();
+                if (!st->getPalette().isImageValid())
+                    glDeleteTextures(1, &st->getPalette().getImage());
+            }
+        }
     }
 
 
@@ -486,30 +402,58 @@ public:
             m_font = new nsFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT), 96);
     }
 
+    void buildPalette(nsColorPalette &dt)
+    {
+        NScolor st = dt.getIndexedColor(NS_PAL_LIGHT);
+        NScolor en = dt.getIndexedColor(NS_PAL_DARK);
+        dt.getImage() = gradient(st, en, 0, 0, NS_GRADIENT_SIZE, 0, NS_GRADIENT_SIZE);
+    }
 
     // Setup GL resources
     void initialize(void)
     {
-        NScolor st = paint.m_nodeBack1;
-        NScolor en = paint.m_nodeBack2;
+        nsSysHighlight      = ColorFromWxColor(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
+        nsSysHighlightGrad  = nsSysHighlight + .25f;
+        nsSysHighlightGrad.clamp();
+
+
+        NScolor st = GREY[NS_PAL_LIGHT] - 0.125f;
+        NScolor en = GREY[NS_PAL_LIGHT] + 0.125f;
+        st.a = en.a = 1.f;
+        st.clamp(); en.clamp();
 
         // Gradient from [0,0] -> [1, 1]
         m_nodeBack = gradient(st, en, 0, 0, NS_GRADIENT_SIZE, NS_GRADIENT_SIZE, NS_GRADIENT_SIZE);
 
-
-        for (int i=0; i<NS_COL_MAX; ++i)
-        {
-            st = STDPalette[i].col[PAL_LIGHT];
-            en = STDPalette[i].col[PAL_DARK];
-
-            // Gradient from [0,0] -> [1, 0]
-            if (STDPalette[i].image == 0)
-                STDPalette[i].image = gradient(st, en, 0, 0, NS_GRADIENT_SIZE, 0, NS_GRADIENT_SIZE);
-        }
-
         if (!m_font->m_tex)
             m_font->m_tex = createTexture(m_font->m_width, m_font->m_height, m_font->m_imaData, false, true, true);
+
+
+        nsNodeDefIterator iter = nsNodeTypeInfo::getSingleton().getTypeIterator();
+        while (iter.hasMoreElements())
+        {
+            nsNodeDef *nt = iter.getNext();
+            if (!nt->getPalette().isImageValid())
+                buildPalette(nt->getPalette());
+
+            nsSocketDefIterator sockit = nt->getInputIterator();
+            while (sockit.hasMoreElements())
+            {
+                nsSocketDef *st = sockit.getNext();
+                if (!st->getPalette().isImageValid())
+                    buildPalette(st->getPalette());
+            }
+
+            sockit = nt->getOutputIterator();
+            while (sockit.hasMoreElements())
+            {
+                nsSocketDef *st = sockit.getNext();
+                if (!st->getPalette().isImageValid())
+                    buildPalette(st->getPalette());
+            }
+        }
     }
+
 
     // current image
     void setImage(GLuint tex) { m_curTex = tex; }
@@ -820,7 +764,7 @@ public:
 
     void makeCubic(VertexBuffer &vbuf, NSfloat subSteps, const NSvec2 &to, const NSvec2 &fr)
     {
-        makeCubicColor(vbuf, subSteps, to, fr, BLACKOPAQUE, BLACKOPAQUE);
+        makeCubicColor(vbuf, subSteps, to, fr, 0x000000FF, 0x000000FF);
     }
 
     // Nifty looking connector
@@ -860,7 +804,7 @@ public:
 
     void makeSquare(VertexBuffer &vbuf, const NSvec2 &to, const NSvec2 &from)
     {
-        makeSquareColor(vbuf, to, from, BLACKOPAQUE, BLACKOPAQUE);
+        makeSquareColor(vbuf, to, from, 0x000000FF, 0x000000FF);
     }
 
 };
@@ -870,8 +814,6 @@ public:
 // ----------------------------------------------------------------------------
 nsRenderSystem::nsRenderSystem() : m_context(new nsRenderSystemPrivate())
 {
-    paint.loadDefaultSettings();
-
     // load fonts at start up
     m_context->loadFonts();
 }
@@ -933,7 +875,7 @@ void nsRenderSystem::loadProjection(const NSrect &rect)
 // clear buffers
 void nsRenderSystem::clear(void)
 {
-    glClearColor(paint.m_background.r, paint.m_background.g, paint.m_background.b, paint.m_background.a);
+    glClearColor(GREY[NS_PAL_LIGHT].r, GREY[NS_PAL_LIGHT].g, GREY[NS_PAL_LIGHT].b, GREY[NS_PAL_LIGHT].a);
     glClear(GL_COLOR_BUFFER_BIT);
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -969,29 +911,29 @@ void nsRenderSystem::drawSocketLinks(nsNodes &nodes)
                     asel = sock->getParent()->getState() == NDST_ACTIVE;
                     bsel = link->getParent()->getState() == NDST_ACTIVE;
 
-                    const NSPalette &pala = STDPalette[((int)sock->getType()->m_color) % NS_COL_MAX];
-                    const NSPalette &palb = STDPalette[((int)link->getType()->m_color) % NS_COL_MAX];
+                    const nsColorPalette &pala = sock->getType()->getPalette();
+                    const nsColorPalette &palb = link->getType()->getPalette();
 
                     if (SOCKET_LINK == SOCKET_LINK_CURVE)
                     {
                         // cubic spline
                         m_context->makeCubicColor(buf, 24, centA, centB,
-                                                  asel ? pala.col[PAL_LIGHT] : paint.m_black,
-                                                  bsel ? palb.col[PAL_LIGHT] : paint.m_black);
+                                                  asel ? pala.getLight() : nsBLACK,
+                                                  bsel ? palb.getLight() : nsBLACK);
                     }
                     else if (SOCKET_LINK == SOCKET_LINK_BLOCK)
                     {
                         // square spline
                         m_context->makeSquareColor(buf, centA, centB,
-                                                   asel ? pala.col[PAL_LIGHT] : paint.m_black,
-                                                   bsel ? palb.col[PAL_LIGHT] : paint.m_black);
+                                                   asel ? pala.getLight() : nsBLACK,
+                                                   bsel ? palb.getLight() : nsBLACK);
                     }
                     else
                     {
                         // line
                         nsVertex a = centA, b = centB;
-                        a.col = asel ? pala.col[PAL_LIGHT].ABGR() : paint.m_black.ABGR();
-                        b.col = bsel ? palb.col[PAL_LIGHT].ABGR() : paint.m_black.ABGR();
+                        a.col = asel ? pala.getLight().ABGR() : nsBLACK.ABGR();
+                        b.col = bsel ? palb.getLight().ABGR() : nsBLACK.ABGR();
 
                         buf.push_back(a);
                         buf.push_back(b);
@@ -1016,24 +958,23 @@ void nsRenderSystem::drawSocketLinks(nsNodes &nodes)
 void nsRenderSystem::paintSocket(nsNode *parent, nsSocket *sock)
 {
     const NSrect &base = sock->getDerrivedRect();
-    const nsSocketType *type = sock->getType();
-    int curPal = (int)type->m_color;
+    const nsSocketDef *type = sock->getType();
+    const nsColorPalette &pal = type->getPalette();
+
 
     nsPath &pth = *m_context->m_workPath;
-
     NSrect trect = base;
 
     // test for clipping
     if (m_projection.contains(base))
     {
-        const NSPalette &pal = STDPalette[curPal % NS_COL_MAX];
 
         pth.clear();
         pth.rect(base);
         pth.makeUV();
-        m_context->setImage(pal.image);
-        m_context->fill(pth.buf(),      paint.m_white);
-        m_context->stroke(pth.buf(),    parent->getState() == NDST_INACTIVE ? pal.col[PAL_SHADOW] : pal.col[PAL_LIGHT]);
+        m_context->setImage(pal.getImage());
+        m_context->fill(pth.buf(),      nsWHITE);
+        m_context->stroke(pth.buf(),    parent->getState() == NDST_INACTIVE ? pal.getShadow() : pal.getLight());
         m_context->setImage(0);
 
         if (sock->isConnected() || sock->isConnectedOut())
@@ -1043,7 +984,7 @@ void nsRenderSystem::paintSocket(nsNode *parent, nsSocket *sock)
             trect.setPosition(base.center() - (trect.getSize() * .5f));
             pth.clear();
             pth.rect(trect);
-            m_context->fill(pth.buf(), pal.col[PAL_LIGHT]);
+            m_context->fill(pth.buf(), pal.getLight());
         }
     }
 
@@ -1053,12 +994,10 @@ void nsRenderSystem::paintSocket(nsNode *parent, nsSocket *sock)
 
     if (m_projection.contains(parRect))
     {
-        const utString &name = type->m_name;
-        const NSPalette &pal = STDPalette[curPal % NS_COL_MAX];
-
+        const nsString &name = type->getName();
         NSvec2 texPos;
 
-        if (type->m_direction == nsSocketType::In)
+        if (type->isInput())
         {
             texPos.x = base.getRight()  + 3;
             texPos.y = base.y;
@@ -1074,7 +1013,7 @@ void nsRenderSystem::paintSocket(nsNode *parent, nsSocket *sock)
         m_context->displayStringS(  m_context->m_font,
                                     nsSocketTextSize,
                                     name.c_str(), name.size(),
-                                    pal.col[PAL_TEXT],
+                                    pal.getText(),
                                     texPos.x,
                                     texPos.y);
     }
@@ -1089,14 +1028,16 @@ void nsRenderSystem::drawNode(nsNode *nd)
 
     nsPath &pth = *m_context->m_workPath;
 
+    nsNodeDef *type = nd->getType();
 
     // see if rect is clipped
     if (m_projection.contains(trect))
     {
         const NSrect &base = nd->getRect();
-        const utString &name = nd->getType()->m_typename;
+        const nsString &name = nd->getType()->getName();
 
-        NSPalette pal = STDPalette[ ((int)nd->getType()->m_color) % NS_COL_MAX];
+        const nsColorPalette &pal = type->getPalette();
+
 
         // drop shadow
         m_context->setImage(0);
@@ -1104,17 +1045,17 @@ void nsRenderSystem::drawNode(nsNode *nd)
         trect = base;
         trect.x += 5; trect.y += 5;
         pth.rect(trect);
-        m_context->fill(pth.buf(), GREY[PAL_SHADOW]);
+        m_context->fill(pth.buf(), GREY[NS_PAL_SHADOW]);
         if ( nd->getState() != NDST_INACTIVE )
-            m_context->stroke(pth.buf(), GREY[PAL_DARK]);
+            m_context->stroke(pth.buf(), GREY[NS_PAL_DARK]);
 
         nsPath &pth = *m_context->m_workPath;
         pth.clear();
         pth.rect(base);
         pth.makeUV();
         m_context->setImage(m_context->m_nodeBack);
-        m_context->fill(pth.buf(),      paint.m_white);
-        m_context->stroke(pth.buf(),    nd->getState() == NDST_INACTIVE ? pal.col[PAL_SHADOW] : pal.col[PAL_LIGHT]);
+        m_context->fill(pth.buf(),      nsWHITE);
+        m_context->stroke(pth.buf(),    nd->getState() == NDST_INACTIVE ? pal.getShadow() : pal.getLight());
         m_context->setImage(0);
 
         // header
@@ -1123,25 +1064,25 @@ void nsRenderSystem::drawNode(nsNode *nd)
         pth.clear();
         pth.rect(trect);
         pth.makeUV();
-        m_context->setImage(pal.image);
-        m_context->fill(pth.buf(), paint.m_white);
+        m_context->setImage(pal.getImage());
+        m_context->fill(pth.buf(), nsWHITE);
         m_context->setImage(0);
-        m_context->stroke(pth.buf(), nd->getState() == NDST_INACTIVE ? pal.col[PAL_SHADOW] : pal.col[PAL_LIGHT]);
+        m_context->stroke(pth.buf(), nd->getState() == NDST_INACTIVE ? pal.getShadow() : pal.getLight());
 
         m_context->displayString(   m_context->m_font,
                                     nsHeaderTextSize,
                                     name.c_str(),
                                     name.size(),
-                                    pal.col[PAL_TEXT_HEADER],
+                                    pal.getTextHeader(),
                                     trect.x + 3.5f,
                                     trect.y + 3.5f);
         // header outline
-        m_context->stroke(pth.buf(), pal.col[PAL_LIGHT]);
+        m_context->stroke(pth.buf(), pal.getLight());
 
         pth.clear();
         pth.moveTo(trect.x,             trect.getBottom());
         pth.lineTo(trect.getRight(),    trect.getBottom());
-        m_context->stroke(pth.buf(), paint.m_black, false);
+        m_context->stroke(pth.buf(), nsBLACK, false);
     }
 
     nsSocket *sock;
@@ -1190,8 +1131,8 @@ void nsRenderSystem::drawConnectingSocket(nsSocket *sock, const NSvec2 &pos, con
         buf.push_back(mouse);
     }
 
-    NSPalette pal = STDPalette[ ((int)sock->getType()->m_color) % NS_COL_MAX];
-    NScolor selecColor = pal.col[PAL_LIGHT];
+    const nsColorPalette &pal = sock->getType()->getPalette();
+    NScolor selecColor = pal.getLight();
     selecColor.a = 0.784f;
 
     glEnable( GL_LINE_SMOOTH );
@@ -1206,8 +1147,8 @@ void nsRenderSystem::drawDragRect(const NSrect &rect)
     nsPath &pth = *m_context->m_workPath;
 
     // use system colors for this
-    NScolor outline = paint.m_sysHighlightGrad;
-    NScolor fillcol = paint.m_sysHighlight;
+    NScolor outline = nsSysHighlightGrad;
+    NScolor fillcol = nsSysHighlight;
     fillcol.a = 0.3f;
 
     pth.clear();
@@ -1224,7 +1165,7 @@ void nsRenderSystem::drawBackground(void)
     NSfloat xmin,ymin,xmax,ymax;
     m_projection.getBounds(xmin, ymin, xmax, ymax);
 
-    NScolor col = paint.m_background - 0.025f;
+    NScolor col = GREY[NS_PAL_LIGHT] - 0.025f;
 
     glColor3f(col.r, col.g, col.b);
     glBegin(GL_LINES);

@@ -30,7 +30,7 @@
 #include "nsCommon.h"
 #include "nsSingleton.h"
 #include "nsEventHandler.h"
-#include "Utils/utTypes.h"
+#include "NodeUtils/nsTypes.h"
 #include <wx/panel.h>
 #include <wx/propgrid/manager.h>
 
@@ -46,10 +46,10 @@ protected:
     wxStringProperty    *m_groupname;
     wxStringProperty    *m_id;
     wxBoolProperty      *m_isGroup;
+    wxStringProperty    *m_object;
 
     wxPropertyCategory  *m_info;
     wxPropertyCategory  *m_group;
-
 
 public:
     nsTreePropertyPage(nsPropertyManager *manager);

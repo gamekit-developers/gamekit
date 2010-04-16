@@ -27,119 +27,14 @@
 #ifndef _nsNodeTypeInfo_h_
 #define _nsNodeTypeInfo_h_
 
+#include <wx/mstream.h>
 #include "nsCommon.h"
 #include "nsMath.h"
-#include "nsVariable.h"
 #include "nsSingleton.h"
 
-
-// ----------------------------------------------------------------------------
-// Color Wheel
-enum nsColorScheme
-{
-    // primary
-    NS_COL_RED = 0,
-    NS_COL_YELLOW,
-    NS_COL_BLUE,
-
-    // secondary
-    NS_COL_ORANGE,
-    NS_COL_GREEN,
-    NS_COL_PURPLE,
-
-    // tertiary
-    NS_COL_ORANGE_RED,
-    NS_COL_YELLOW_ORANGE,
-    NS_COL_YELLOW_GREEN,
-    NS_COL_BLUE_GREEN,
-    NS_COL_BLUE_PURPLE,
-    NS_COL_RED_PURPLE,
-    NS_COL_GREY,
-
-    //end
-    NS_COL_MAX,
-};
-
-// ----------------------------------------------------------------------------
-// Socket declaration
-class nsSocketType
-{
-public:
-    enum Direction
-    {
-        In,
-        Out,
-    };
-
-public:
-
-    int                         m_index;
-    utString                    m_name;
-    Direction                   m_direction;
-    NSrect                      m_rect;
-    utString                    m_default;
-    utString                    m_briefHelp;
-    nsColorScheme               m_color;
-    nsVariable::PropertyTypes   m_type;
-};
-
-
-// ----------------------------------------------------------------------------
-class nsEnumItem
-{
-public:
-    utString    m_name;
-    int         m_value;
-};
-typedef utArray<nsEnumItem>             nsEnumItems;
-typedef utArrayIterator<nsEnumItems>    nsEnumItemIterator;
-
-
-
-
-// ----------------------------------------------------------------------------
-// Variable declration
-class nsVariableType
-{
-public:
-
-    utString                    m_name;
-    nsVariable::PropertyTypes   m_type;
-
-    // values
-    utString        m_value;
-    nsEnumItems     m_enum;
-    utString        m_briefHelp;
-};
-
-
-typedef utArray<nsVariableType *>        nsVariables;
-typedef utArrayIterator<nsVariables>    nsVariableIterator;
-
-
-// ----------------------------------------------------------------------------
-// Node declaration
-class nsNodeType
-{
-public:
-
-    typedef utList<nsSocketType *>          Sockets;
-    typedef utListIterator<Sockets>         SocketIterator;
-    typedef utListReverseIterator<Sockets>  SocketReverseIterator;
-
-public:
-
-    ~nsNodeType();
-
-    utString        m_typename;
-    utString        m_groupname;
-    NSvec2          m_size;
-    int             m_id, m_groupId;
-    Sockets         m_inputs, m_outputs;
-    utString        m_briefHelp;
-    nsColorScheme   m_color;
-    nsVariables     m_variables;
-};
+#include "nsColorPalette.h"
+#include "nsNodeEnums.h"
+#include "nsData.h"
 
 
 // ----------------------------------------------------------------------------
@@ -147,32 +42,35 @@ public:
 class nsNodeTypeInfo : public nsSingleton<nsNodeTypeInfo>
 {
 public:
-    typedef utList<nsNodeType *>                     TypeList;
-    typedef utListIterator<TypeList>                TypeIterator;
-    typedef utHashTable<utHashedString, TypeList>   GroupTypeList;
-    typedef utHashTableIterator<GroupTypeList>      GroupTypeIterator;
+    typedef nsList<nsNodeDef *>                     GroupList;
+    typedef nsListIterator<GroupList>               GroupListIterator;
+    typedef nsHashTable<nsIntHashKey, GroupList>    GroupMap;
+    typedef nsHashTableIterator<GroupMap>           GroupIterator;
 
 
 protected:
-    TypeList        m_types;
-    GroupTypeList   m_groups;
+    nsNodeListClass     m_types;
+    GroupMap            m_groups;
+
+
+    void addType(nsNodeDef *ndef);
 
 public:
 
     nsNodeTypeInfo();
     ~nsNodeTypeInfo();
 
-    nsNodeType                 *findTypeInfo(int i);
+    nsNodeDef                   *findTypeInfo(int i);
+    nsNodeDef                   *findTypeInfo(const nsString &name);
+    nsString                    getGroupName(int in);
 
 
     int                         getGroupSize(void)      {return (int)m_groups.size();}
-    GroupTypeIterator           getGroupIterator(void)  {return GroupTypeIterator(m_groups);}
-    TypeIterator                getTypeIterator(void)   {return TypeIterator(m_types);}
-    TypeList                   &getTypes(void)          {return m_types;}
+    GroupIterator               getGroupIterator(void)  {return GroupIterator(m_groups);}
+    nsNodeDefIterator           getTypeIterator(void)   {return nsNodeDefIterator(m_types);}
+    nsNodeListClass             &getTypes(void)         {return m_types;}
 
-
-    // load types from file
-    void                        parseTypes(const utString &path);
+    void registerTypes(void);
 
     NS_DECLARE_SINGLETON(nsNodeTypeInfo);
 };

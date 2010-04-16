@@ -30,7 +30,7 @@
 #include "nsCommon.h"
 #include "nsSingleton.h"
 #include "nsEventHandler.h"
-#include "Utils/utTypes.h"
+#include "NodeUtils/nsTypes.h"
 
 #include <wx/panel.h>
 #include <wx/propgrid/manager.h>
@@ -47,7 +47,7 @@ class nsPropertyPage :  public wxPanel,
 
 {
 protected:
-    typedef utArray<nsNodePropertyPage*> NodePages;
+    typedef nsArray<nsNodePropertyPage*> NodePages;
 
     nsToolBar               *m_tool;
     nsPropertyManager       *m_manager;

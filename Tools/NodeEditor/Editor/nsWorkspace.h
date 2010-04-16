@@ -63,7 +63,7 @@ public:
     wxGLContext     *getGLContext(void);
 
     // shared access to the clipboard
-    nsClipboard&    getClipboard(void) {UT_ASSERT(m_clipboard); return *m_clipboard; }
+    nsClipboard&    getClipboard(void) {NS_ASSERT(m_clipboard); return *m_clipboard; }
 
     // access to the current canvas page.
     nsNodeCanvas    *getActiveCanvas(void) {return m_activeCanvas;}

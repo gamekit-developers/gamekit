@@ -45,7 +45,7 @@ NS_IMPLEMENT_SINGLETON(nsWorkspace);
 #define nsWorkspaceStyle    wxAUI_NB_TOP                | wxAUI_NB_TAB_MOVE     |\
                             wxAUI_NB_SCROLL_BUTTONS     | wxAUI_NB_CLOSE_BUTTON |\
                             wxAUI_NB_WINDOWLIST_BUTTON  | wxTAB_TRAVERSAL       |\
-                            nsBorderNone
+                            wxAUI_NB_TAB_SPLIT          | nsBorderNone
 
 
 
@@ -80,6 +80,7 @@ public:
 BEGIN_EVENT_TABLE( nsWorkspace, wxPanel )
     EVT_AUINOTEBOOK_PAGE_CLOSE(NS_WID_WORKSPACE_DATA,       nsWorkspace::pageClosedEvent)
     EVT_AUINOTEBOOK_PAGE_CHANGED(NS_WID_WORKSPACE_DATA,     nsWorkspace::pageChangedEvent)
+
 END_EVENT_TABLE()
 
 
@@ -128,6 +129,7 @@ void nsWorkspace::pageChangedEvent(wxAuiNotebookEvent &evt)
             nsTreeEvent deselect(NS_TREE_DESELECT, m_activeCanvas, m_activeCanvas->getTree());
             nsSolutionBrowser::getSingleton().treeEvent(deselect);
             nsPropertyPage::getSingleton().treeEvent(deselect);
+
         }
 
         m_activeCanvas = canvas;
@@ -153,6 +155,7 @@ void nsWorkspace::pageClosedEvent(wxAuiNotebookEvent &evt)
         // notify old
         nsTreeEvent deselect(NS_TREE_DESELECT, canvas, canvas->getTree());
         nsPropertyPage::getSingleton().treeEvent(deselect);
+        canvas->getTree()->setOpen(false);
         m_activeCanvas = 0;
     }
 }
@@ -204,6 +207,7 @@ void nsWorkspace::treeEvent(nsTreeEvent &evt)
 
                 nsNodeCanvas *canvas = new nsNodeCanvas(this, tree);
                 m_book->AddPage(canvas, tree->getName(), true);
+                tree->setOpen(true);
             }
             else
             {
@@ -232,7 +236,10 @@ void nsWorkspace::treeEvent(nsTreeEvent &evt)
             }
 
             if (foundPage != -1)
+            {
+                tree->setOpen(false);
                 m_book->DeletePage(foundPage);
+            }
         }
     }
 
@@ -242,8 +249,9 @@ void nsWorkspace::treeEvent(nsTreeEvent &evt)
 void nsWorkspace::grabCapturedEvent(wxCommandEvent &evt)
 {
     // pass to active canvas
-    if (m_activeCanvas)
+    if (m_activeCanvas && m_activeCanvas->HasFocus())
         m_activeCanvas->grabCapturedEvent(evt);
+    else evt.Skip();
 }
 
 
@@ -251,7 +259,7 @@ void nsWorkspace::grabCapturedEvent(wxCommandEvent &evt)
 void nsWorkspace::deleteCapturedEvent(wxCommandEvent &evt)
 {
     // pass to active canvas
-    if (m_activeCanvas)
+    if (m_activeCanvas && m_activeCanvas->HasFocus())
         m_activeCanvas->deleteCapturedEvent(evt);
 }
 
