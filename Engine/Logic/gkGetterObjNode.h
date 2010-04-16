@@ -24,76 +24,69 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkFindPathNode_h_
-#define _gkFindPathNode_h_
+#ifndef _gkGetterObjNode_h_
+#define _gkGetterObjNode_h_
 
 #include "gkLogicNode.h"
 
-class dtNavMesh;
-class gkPhysicsDebug;
-
-class gkFindPathNode : public gkLogicNode
+class gkGameObject;
+class gkGetterObjNode : public gkLogicNode
 {
 public:
 
 	enum
 	{
-		UPDATE,
-		NAV_MESH,
-		MAX_PATH_POLYS,
-		START_POS,
-		END_POS,
-		POLY_PICK_EXT,
-		SHOW_PATH,
-		SHOW_PATH_OFFSET,
-		REDO_PATH_IF_FOLLOWING,
-		PATH,
-		PATH_FOUND
+		UPDATE_OBJ,
+		UPDATE_STATE,
+		NAME,
+		OBJ,
+		X,
+		Y,
+		RESET,
+		HAS_OBJ,
+		HIT_POINT,
+		POSITION,
+		ROTATION
 	};
 
-	struct PathData
+	DECLARE_SOCKET_TYPE(UPDATE_OBJ, bool);
+	DECLARE_SOCKET_TYPE(UPDATE_STATE, bool);
+	DECLARE_SOCKET_TYPE(NAME, gkString);
+	DECLARE_SOCKET_TYPE(OBJ, gkGameObject*);
+	DECLARE_SOCKET_TYPE(X, gkScalar);
+	DECLARE_SOCKET_TYPE(Y, gkScalar);
+	DECLARE_SOCKET_TYPE(RESET, bool);
+	DECLARE_SOCKET_TYPE(HAS_OBJ, bool);
+	DECLARE_SOCKET_TYPE(HIT_POINT, gkVector3);
+	DECLARE_SOCKET_TYPE(POSITION, gkVector3);
+	DECLARE_SOCKET_TYPE(ROTATION, gkQuaternion);
+
+	enum INPUT_TYPE
 	{
-		typedef std::deque<gkVector3> PATH_POINTS;
-
-		PATH_POINTS path;
-
-		bool following;
-
-		bool retry;
-
-		PathData() : following(false), retry(false) {}
+		OBJ_NAME,
+		SCREEN_XY
 	};
 
-	DECLARE_SOCKET_TYPE(UPDATE, bool);
-	DECLARE_SOCKET_TYPE(NAV_MESH, dtNavMesh*);
-	DECLARE_SOCKET_TYPE(MAX_PATH_POLYS, int);
-	DECLARE_SOCKET_TYPE(START_POS, gkVector3);
-	DECLARE_SOCKET_TYPE(END_POS, gkVector3);
-	DECLARE_SOCKET_TYPE(POLY_PICK_EXT, gkVector3);
-	DECLARE_SOCKET_TYPE(SHOW_PATH, bool);
-	DECLARE_SOCKET_TYPE(SHOW_PATH_OFFSET, gkVector3);
-	DECLARE_SOCKET_TYPE(REDO_PATH_IF_FOLLOWING, bool);
-	
+    gkGetterObjNode(gkLogicTree *parent, size_t id);
 
-	DECLARE_SOCKET_TYPE(PATH, PathData*);
-	DECLARE_SOCKET_TYPE(PATH_FOUND, bool);
-
-    gkFindPathNode(gkLogicTree *parent, size_t id);
-
-	~gkFindPathNode();
+	virtual ~gkGetterObjNode() {}
 
 	bool evaluate(gkScalar tick);
-	void update(gkScalar tick);
+
+	void setType(INPUT_TYPE type) {m_type = type;}
 
 private:
 
-	void findPath();
-	void showPath();
+	void updateState();
 
 private:
 
-	gkPhysicsDebug* m_debug;
-	PathData m_path;
+	INPUT_TYPE m_type;
+
+	gkGameObject* m_obj;
+	gkVector3 m_position;
+	gkQuaternion m_rotation;
 };
 
-#endif//_gkFindPathNode_h_
+#endif//_gkGetterObjNode_h_
+

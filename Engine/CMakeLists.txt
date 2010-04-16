@@ -148,7 +148,7 @@ set(NLogic_SOURCE
     Logic/gkParticleNode.cpp
     Logic/gkPickNode.cpp
     Logic/gkPulseNode.cpp
-    Logic/gkSetterNode.cpp
+    Logic/gkGetterObjNode.cpp
     Logic/gkShowPhysicsNode.cpp
     Logic/gkStateMachineNode.cpp
     Logic/gkStaticNavMeshNode.cpp
@@ -190,7 +190,7 @@ set(NLogic_HEADER
     Logic/gkParticleNode.h
     Logic/gkPickNode.h
     Logic/gkPulseNode.h
-    Logic/gkSetterNode.h
+    Logic/gkGetterObjNode.h
     Logic/gkShowPhysicsNode.h
     Logic/gkStateMachineNode.h
     Logic/gkStaticNavMeshNode.h

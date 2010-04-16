@@ -30,8 +30,6 @@
 #include "gkRigidBody.h"
 #include "btBulletDynamicsCommon.h"
 
-using namespace Ogre;
-
 gkObjActionNode::gkObjActionNode(gkLogicTree *parent, size_t id) 
 : gkLogicNode(parent, id)
 {

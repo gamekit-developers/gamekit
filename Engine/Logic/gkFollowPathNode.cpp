@@ -44,6 +44,7 @@ m_runVelocity(0)
 {
 	ADD_ISOCK(UPDATE, false);
 	ADD_ISOCK(TARGET, 0);
+	ADD_ISOCK(SOURCE, 0);
 	ADD_ISOCK(TARGET_UP_DIRECTION, gkVector3::UNIT_Z);
 	ADD_ISOCK(ORIGINAL_TARGET_DIRECTION, gkVector3::UNIT_Y);
 	ADD_ISOCK(FOUND_THRESHOLD, 0.8f);
@@ -114,13 +115,20 @@ void gkFollowPathNode::update(gkScalar tick)
 		{
 			m_path->following = false;
 
-			if(!m_path->retry)
+			gkGameObject* pSource = GET_SOCKET_VALUE(SOURCE);
+
+			if(pSource && !m_path->retry)
 			{
-				m_path->retry = 5;
+				const gkVector3& sourcePos = pSource->getPosition();
+				
+				if(current_pos.distance(sourcePos) > m_foundThreshold)
+				{
+					m_path->retry = true;
+				}
 			}
 			else
 			{
-				--m_path->retry;
+				m_path->retry = false;
 			}
 
 			SET_SOCKET_VALUE(HAS_REACHED_END, true);
