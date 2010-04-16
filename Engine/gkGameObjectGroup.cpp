@@ -250,8 +250,7 @@ void gkGameObjectGroup::build(Ogre::SceneManager *mgr)
     m_geom->setCastShadows(false);
 
 
-
-#ifdef UT_DEBUG
+#if UT_DEBUG == 1
     m_geom->dump(m_name.str() + "_static.txt");
 #endif
 }

@@ -164,9 +164,10 @@ void nsFloatProperty::attachClientObject(nsSocket *sock)
 
 // ----------------------------------------------------------------------------
 nsStringProperty::nsStringProperty(const wxString &label, const wxString &name, nsSocketDef *def)
-    :   wxStringProperty(label, name, def ? wxString(def->getValue().get<nsString>()) : wxEmptyString), m_def(def), m_client(0), m_lock(false)
+    :   wxStringProperty(label, name, def ? wxString(def->getValue().get<nsString>()) : wxString("")), m_def(def), m_client(0), m_lock(false)
 {
 }
+
 
 // ----------------------------------------------------------------------------
 void nsStringProperty::OnSetValue(void)
