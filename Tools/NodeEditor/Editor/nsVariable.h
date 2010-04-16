@@ -30,6 +30,7 @@
 #include "nsCommon.h"
 #include "nsMath.h"
 #include "NodeUtils/nsString.h"
+#include <typeinfo>
 
 
 // Any value adapted from Poco
