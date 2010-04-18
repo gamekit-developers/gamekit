@@ -296,7 +296,7 @@ void gkScene::loadImpl(void)
 
 			m_loadedObjects.push_back(obptr);
 
-			if(obptr->getProperties().isStatic)
+			if(obptr->getProperties().physicsState == GK_STATIC)
 			{
 				m_Limits.merge(obptr->getAttachedObject()->getAabb());
 			}
@@ -462,7 +462,7 @@ void gkScene::notifyObjectUnloaded(gkGameObject *gobject)
 
 void gkScene::notifyObjectUpdate(gkGameObject *gobject)
 {
-	if(!gobject->getProperties().isGhost)
+	if(gobject->getProperties().physicsState == GK_DYNAMIC)
 	{
 		m_hasChanged = true;
 	}

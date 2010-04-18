@@ -113,12 +113,7 @@ void gkGameObjectLoader::load(gkObject *baseClass)
     props.orientation   = quat;
     props.scale         = scale;
 		
-	gkObject* object = ob->getAttachedObject();
-	props.isStatic = object && object->getCollisionObject() && object->getCollisionObject()->isStaticObject();
-	props.isGhost = object && object->getCollisionObject() && 
-		(object->getCollisionObject()->getCollisionFlags() & btCollisionObject::CF_CHARACTER_OBJECT);
-
-    switch (ob->getType())
+	switch (ob->getType())
     {
     case GK_CAMERA:
         setCamera(ob);
@@ -292,7 +287,7 @@ void gkGameObjectLoader::setEntity(gkGameObject *ob)
     // source is the mesh name, here it's
     // the same name as the entity
     props.source = GKB_IDNAME(m_object);
-    props.casts = !(ob->getProperties().isStatic || ob->getProperties().isGhost);
+	props.casts = ob->getProperties().physicsState == GK_RIGID_BODY || ob->getProperties().physicsState == GK_NO_COLLISION;
 
     gkLoaderUtils loader(m_file->getInternalFile());
 
@@ -891,6 +886,8 @@ void gkCharacterLoader::load(gkObject *ob)
 
     if (colShape)
     {
+		ob->getObject()->getProperties().physicsState = GK_GHOST_CONTROLLER;
+
         m_shapes.push_back(colShape);
 
         colShape->setMargin(m_object->margin);

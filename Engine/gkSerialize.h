@@ -92,8 +92,6 @@ public:
     gkVector3           position;
     gkVector3           scale;
     gkQuaternion        orientation;
-    bool                isStatic;
-	bool				isGhost;
     int                 physicsState;
     bool                showAABB;
 };

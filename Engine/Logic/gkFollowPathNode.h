@@ -80,6 +80,8 @@ private:
 	void setVelocity(gkScalar d, gkScalar tick);
 	bool animationHasBeenSet() const { return m_idleState!= -1 && m_walkVelocity && m_runVelocity; }
 
+	bool isTargetReached();
+
 private:
 
 	PathData* m_path;

@@ -93,7 +93,7 @@ void gkFollowPathNode::update(gkScalar tick)
 
 	gkScalar d = dir.length();
 
-	if(d > m_foundThreshold)
+	if(d > 0.1f && !isTargetReached())
 	{
 		gkVector3 current_dir = m_target->getOrientation() * m_dir;
 
@@ -117,14 +117,9 @@ void gkFollowPathNode::update(gkScalar tick)
 
 			gkGameObject* pSource = GET_SOCKET_VALUE(SOURCE);
 
-			if(pSource && !m_path->retry)
+			if(!m_path->retry && pSource)
 			{
-				const gkVector3& sourcePos = pSource->getPosition();
-				
-				if(current_pos.distance(sourcePos) > m_foundThreshold)
-				{
-					m_path->retry = true;
-				}
+				m_path->retry = !isTargetReached();
 			}
 			else
 			{
@@ -138,22 +133,40 @@ void gkFollowPathNode::update(gkScalar tick)
 	}
 }
 
+bool gkFollowPathNode::isTargetReached() 
+{
+	gkGameObject* pSource = GET_SOCKET_VALUE(SOURCE);
+
+	bool targetReached = false;
+
+	if(pSource)
+	{
+		const gkVector3& current_pos = m_target->getPosition();
+
+		const gkVector3& sourcePos = pSource->getPosition();
+
+		targetReached = current_pos.distance(sourcePos) < m_foundThreshold;
+	}
+
+	return targetReached;
+}
+
 void gkFollowPathNode::setVelocity(gkScalar d, gkScalar tick)
 {
 	if(d >= m_runVelocity*tick)
 	{
 		SET_SOCKET_VALUE(CURRENT_STATE, m_runState);
-		m_target->setLinearVelocity(m_dir * m_runVelocity);
+		m_target->setLinearVelocity(m_dir * m_runVelocity, TRANSFORM_LOCAL);
 	}
 	else if(d >= m_walkVelocity*tick)
 	{
 		SET_SOCKET_VALUE(CURRENT_STATE, m_walkState);
-		m_target->setLinearVelocity(m_dir * m_walkVelocity);
+		m_target->setLinearVelocity(m_dir * m_walkVelocity, TRANSFORM_LOCAL);
 	}
 	else
 	{
 		SET_SOCKET_VALUE(CURRENT_STATE, m_walkState);
-		m_target->setLinearVelocity(m_dir * d/tick);
+		m_target->setLinearVelocity(m_dir * d/tick, TRANSFORM_LOCAL);
 	}
 }
 

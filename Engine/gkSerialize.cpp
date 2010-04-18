@@ -54,8 +54,6 @@ gkGameObjectProperties::gkGameObjectProperties()
 :       position(0, 0, 0),
         scale(1, 1, 1),
         orientation(1, 0, 0, 0),
-        isStatic(false),
-		isGhost(false),
         physicsState(GK_NO_COLLISION),
         showAABB(false)
 {

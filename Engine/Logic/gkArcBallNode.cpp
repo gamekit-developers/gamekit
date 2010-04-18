@@ -102,7 +102,7 @@ void gkArcBallNode::update(gkScalar tick)
 		m_rollNode = rollNode;
 	}
 
-	gkQuaternion pitchNode = m_pitchNode * gkQuaternion(Ogre::Angle(GET_SOCKET_VALUE(REL_Y)), gkVector3::UNIT_X);
+	gkQuaternion pitchNode = m_pitchNode * gkQuaternion(Ogre::Angle(-GET_SOCKET_VALUE(REL_Y)), gkVector3::UNIT_X);
 
 	gkScalar pitchDegrees = pitchNode.getPitch().valueDegrees();
 

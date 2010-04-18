@@ -337,7 +337,7 @@ bool gkStaticNavMeshNode::Create()
 	{
 		gkGameObject* pObj = objIt.getNext();
 
-		if(!pObj->getProperties().isGhost)
+		if(pObj->getProperties().physicsState == GK_STATIC || pObj->getProperties().physicsState == GK_RIGID_BODY)
 		{
 			meshLoader.load(pObj);
 		}
