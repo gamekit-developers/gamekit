@@ -124,7 +124,6 @@ void nsFont::doCreate(void)
         wxString str((wxChar)i);
         nsChar *ch = new nsChar;
 
-
         wxCoord w,h;
         dc.GetTextExtent(str, &w, &h);
         ch->xco     = xpos;

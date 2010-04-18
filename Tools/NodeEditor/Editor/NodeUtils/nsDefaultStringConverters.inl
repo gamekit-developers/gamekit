@@ -99,6 +99,12 @@ NS_INLINE nsString nsToString(NSfloat v)
     return nsStringConverter::toString<NSfloat>(v); 
 }
 // ----------------------------------------------------------------------------
+NS_INLINE nsString nsToString(const nsString &v)
+{ 
+    return v;
+}
+
+// ----------------------------------------------------------------------------
 NS_INLINE nsString nsToString(const NSvec2& v, char split = nsStringConverter::nsStringSplitter)    
 { 
     return nsStringConverter::toStringArray<NSfloat, 2>(v.ptr(), split); 

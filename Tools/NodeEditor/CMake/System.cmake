@@ -38,6 +38,8 @@ if (UNIX AND NOT APPLE)
         -DUSE_UNIX_SETUP
         -D__WXGTK__
         -D__WXGTK20__=1
+	-D_UNICODE
+	-DUNICODE
         )
 endif()
 

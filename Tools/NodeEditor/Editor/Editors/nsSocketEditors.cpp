@@ -29,7 +29,7 @@
 
 
 // ----------------------------------------------------------------------------
-// 
+//
 // BOOLEAN VALUES
 //
 // ----------------------------------------------------------------------------
@@ -59,7 +59,7 @@ void nsBoolProperty::attachClientObject(nsSocket *sock)
 
 
 // ----------------------------------------------------------------------------
-// 
+//
 // INTEGER VALUES
 //
 // ----------------------------------------------------------------------------
@@ -77,7 +77,7 @@ void nsIntProperty::OnSetValue(void)
 {
     if (m_client && !m_lock)
     {
-        long d =GetValue().GetInteger(); 
+        long d =GetValue().GetInteger();
 
         if (d < (long)m_def->getMin())
         {
@@ -108,7 +108,7 @@ void nsIntProperty::attachClientObject(nsSocket *sock)
 
 
 // ----------------------------------------------------------------------------
-// 
+//
 // REAL VALUES
 //
 // ----------------------------------------------------------------------------
@@ -156,7 +156,7 @@ void nsFloatProperty::attachClientObject(nsSocket *sock)
 
 
 // ----------------------------------------------------------------------------
-// 
+//
 // STRING VALUES
 //
 // ----------------------------------------------------------------------------
@@ -174,7 +174,7 @@ void nsStringProperty::OnSetValue(void)
 {
     if (m_client && !m_lock)
     {
-        nsString str = GetValue().GetString();
+        nsString str = wxToAscii(GetValue().GetString());
         if (str.size() > m_def->getMax())
         {
             m_lock = true;
@@ -198,7 +198,7 @@ void nsStringProperty::attachClientObject(nsSocket *sock)
 
 
 // ----------------------------------------------------------------------------
-// 
+//
 // OBJECT VALUES
 //
 // ----------------------------------------------------------------------------
@@ -206,7 +206,7 @@ void nsStringProperty::attachClientObject(nsSocket *sock)
 
 // ----------------------------------------------------------------------------
 nsObjectProperty::nsObjectProperty(const wxString &label, const wxString &name, nsSocketDef *def)
-    :   wxStringProperty(label, name, def ? wxString(def->getValue().get<nsObjectSocketData>().getObject()) : wxEmptyString), 
+    :   wxStringProperty(label, name, def ? wxString(def->getValue().get<nsObjectSocketData>().getObject()) : wxString("")),
         m_def(def), m_client(0), m_lock(false)
 {
 }
@@ -216,7 +216,7 @@ void nsObjectProperty::OnSetValue(void)
 {
     if (m_client && !m_lock)
     {
-        nsString str = GetValue().GetString();
+        nsString str = nsString(GetValue().GetString());
         if (str.size() > m_def->getMax())
         {
             m_lock = true;

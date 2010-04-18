@@ -23,6 +23,7 @@
 -------------------------------------------------------------------------------
 */
 #include "nsString.h"
+#include <stdio.h>
 #include <iomanip>
 #include <sstream>
 #include <cctype>

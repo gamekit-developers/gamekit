@@ -60,7 +60,6 @@ protected:
 public:
     nsGlHiddenContext(wxWindow *parent) : wxGLCanvas(parent, -1, NULL)
     {
-        SetSize(1,1);
         m_context = new wxGLContext(this);
     }
 
