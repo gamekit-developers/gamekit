@@ -43,7 +43,20 @@ set(OGREKIT_BULLET_INCLUDE ${PARENT_SOURCE_DIR}/bullet/src)
 set(OGREKIT_INCLUDE ${PARENT_SOURCE_DIR}/Engine ${OGREKIT_OGRE_INCLUDE} ${OGREKIT_BULLET_INCLUDE})
 
 subdirs(${PARENT_SOURCE_DIR}/bullet)
-subdirs(${PARENT_SOURCE_DIR}/Dependencies)
+subdirs(${PARENT_SOURCE_DIR}/Dependencies/Source/FreeImage)
+subdirs(${PARENT_SOURCE_DIR}/Dependencies/Source/OIS)
+subdirs(${PARENT_SOURCE_DIR}/Dependencies/Source/ZZipLib)
+
+if (WIN32)
+    # GTK cairo uses a different FreeType 
+    subdirs(${PARENT_SOURCE_DIR}/Dependencies/Source/FreeType)
+endif ()
+
+
+subdirs(${PARENT_SOURCE_DIR}/Dependencies/Source/Lua)
+subdirs(${PARENT_SOURCE_DIR}/Dependencies/Source/Recast)
+subdirs(${PARENT_SOURCE_DIR}/Dependencies/Source/Detour)
+
 subdirs(${PARENT_SOURCE_DIR}/OgreLite)
 subdirs(${PARENT_SOURCE_DIR}/Engine)
 subdirs( ${wxWidgets_SOURCE_DIR}/wxCMake Editor)

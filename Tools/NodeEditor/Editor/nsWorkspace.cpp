@@ -339,8 +339,10 @@ void nsWorkspace::initializeContext(void)
     {
         wxGLContext *ctx = m_hidenContext->getContext();
         m_hidenContext->Show();
-        m_hidenContext->SetCurrent(*ctx);
-        nsRenderSystem::getSingleton().initializeContextData();
+        
+        bool status = m_hidenContext->SetCurrent(*ctx);
+        if (status)
+            nsRenderSystem::getSingleton().initializeContextData();
         m_hidenContext->Hide();
     }
 }

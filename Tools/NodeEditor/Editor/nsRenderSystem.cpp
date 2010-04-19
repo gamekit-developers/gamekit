@@ -228,6 +228,7 @@ public:
 class nsRenderSystemPrivate
 {
 private:
+    bool m_init;
 
     void enableTexture(GLuint tex)
     {
@@ -309,7 +310,7 @@ public:
     nsRenderSystemPrivate()
     {
         m_workPath = new nsPath();
-
+        m_init      = false;
         m_font      = 0;
         m_nodeBack  = 0;
         m_curTex    = 0;
@@ -363,17 +364,22 @@ public:
                     glDeleteTextures(1, &st->getPalette().getImage());
             }
         }
+        m_init = false;
     }
 
 
     // default texture impl
     GLuint createTexture(int w, int h, void *pixels, bool alpha=false, bool lum=false, bool mip=true)
     {
-        GLuint tex;
+        GLuint tex = 0;
         GLenum mode = alpha ? GL_RGBA : GL_RGB;
         if (lum) mode = GL_ALPHA;
+        
 
         glGenTextures( 1, &tex );
+        if (tex == 0)
+            return 0;
+
         glBindTexture( GL_TEXTURE_2D, tex );
 
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
@@ -412,6 +418,9 @@ public:
     // Setup GL resources
     void initialize(void)
     {
+        if (m_init) return;
+
+        m_init = true;
         nsSysHighlight      = ColorFromWxColor(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
         nsSysHighlightGrad  = nsSysHighlight + .25f;
         nsSysHighlightGrad.clamp();
@@ -875,6 +884,7 @@ void nsRenderSystem::loadProjection(const NSrect &rect)
 // clear buffers
 void nsRenderSystem::clear(void)
 {
+    initializeContextData();
     glClearColor(GREY[NS_PAL_LIGHT].r, GREY[NS_PAL_LIGHT].g, GREY[NS_PAL_LIGHT].b, GREY[NS_PAL_LIGHT].a);
     glClear(GL_COLOR_BUFFER_BIT);
 
