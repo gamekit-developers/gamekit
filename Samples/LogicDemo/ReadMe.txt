@@ -32,7 +32,9 @@ Following are the explanations for the keyboard and mouse control of this demo.
 
 //////////////// Debug ////////////////////////////////////
 <C>
-	If pressed then shows physics shape
+	If pressed then shows physics shape.
+<X>
+	If pressed then shows pathfinding.
 
 ////////////////Arcball//////////////////////////////////////
 <LEFT CTRL> 
@@ -63,12 +65,6 @@ Following are the explanations for the keyboard and mouse control of this demo.
 		
 	(to drop the selected object just release <RIGHT MOUSE BUTTON>)
 
-///////// Pathfinder & navigation-mesh////////////////////////
-
-<N> Creates navigation mesh. 
-	Everytime objects change position (for example drag&drop boxes) a new navigation mesh has to be created.
-	
-<LEFT CTRL> + <F> Find path from momo position to the mouse hit position. 
 
 ///////////////Momo control///////////////////////////////////
 
@@ -109,6 +105,7 @@ Following are the explanations for the keyboard and mouse control of this demo.
 <LEFT MOUSE BUTTON>
 	If an object is carried by Momo then throw it (with velocity).
 	
+<LEFT CTRL> + <Z> Momo will move to the mouse hit position. 	
 	
 ////////////////////////////////////////////////////////////////
 

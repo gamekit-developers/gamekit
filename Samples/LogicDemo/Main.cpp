@@ -127,12 +127,9 @@ namespace ratAnimation
 namespace object
 {
 	gkString PLAYER = "Player";
-	gkString MESH_MOMO = "MeshMomo";
 	gkString CAMERA = "View";
 	gkString PLANE = "Plane";
-
 	gkString RAT_PLAYER = "RatPlayer";
-	gkString MESH_RAT = "rat";
 }
 
 namespace material
@@ -152,10 +149,9 @@ public:
 
     OgreKit(const gkString &blend) 
 		: m_blend(blend), m_tree(0), m_ctrlKeyNode(0), m_shiftKeyNode(0),
-		m_wKeyNode(0), m_sKeyNode(0), m_mouseNode(0), m_leftMouseNode(0), m_rightMouseNode(0),
-		m_playerSetter(0), m_meshMomoSetter(0), m_ratPlayerSetter(0), m_meshRatSetter(0), 
-		m_cameraSetter(0), m_animNode(0), m_animRatNode(0), m_momoCameraArcBall(0),
-		m_momoGrab(0), m_stateMachine(0), m_stateRatMachine(0), m_momoFollowPathNode(0), m_momoMotion(0)
+		m_wKeyNode(0), m_sKeyNode(0), m_cKeyNode(0), m_xKeyNode(0), m_mouseNode(0), m_leftMouseNode(0), m_rightMouseNode(0),
+		m_momoPlayer(0), m_ratPlayer(0), m_cameraPlayer(0), m_animNode(0), m_animRatNode(0), m_momoCameraArcBall(0),
+		m_momoGrab(0), m_stateMachine(0), m_stateRatMachine(0), m_momoFollowPathNode(0)
 	{
         gkPath path = "./data/OgreKitStartup.cfg";
 
@@ -215,35 +211,24 @@ public:
 
 	void CreateNavigationNodes()
 	{
-		gkKeyNode* nKeyNode = m_tree->createNode<gkKeyNode>();
-		nKeyNode->setKey(KC_NKEY);
-
 		gkDetectMotionNode* detectMotion = m_tree->createNode<gkDetectMotionNode>();
 		detectMotion->getUPDATE()->setValue(true);
-		detectMotion->setDetections(1);
 
 		gkPulseNode* pulse = m_tree->createNode<gkPulseNode>();
 		detectMotion->getNOT_DETECTED()->link(pulse->getUPDATE());
 
-		gkStaticNavMeshNode* staticNavMesh = m_tree->createNode<gkStaticNavMeshNode>();
-
-		{
-			gkIfNode<bool, CMP_OR>* ifNode = m_tree->createNode<gkIfNode<bool, CMP_OR> >();
-			ifNode->getA()->link(nKeyNode->getPRESS());
-			ifNode->getB()->link(pulse->getOUTPUT());
-
-			staticNavMesh->getUPDATE()->link(ifNode->getIS_TRUE());
-		}
+		gkNavMeshNode* staticNavMesh = m_tree->createNode<gkNavMeshNode>();
+		staticNavMesh->getUPDATE()->link(pulse->getOUTPUT());
 
 		gkKeyNode* fKeyNode = m_tree->createNode<gkKeyNode>();
-		fKeyNode->setKey(KC_FKEY);
+		fKeyNode->setKey(KC_ZKEY);
 
 		gkIfNode<bool, CMP_AND>* ifNode = m_tree->createNode<gkIfNode<bool, CMP_AND> >();
 		ifNode->getA()->link(m_ctrlKeyNode->getIS_DOWN());
 		ifNode->getB()->link(fKeyNode->getPRESS());
 
-		gkGetterObjNode* targetNode = m_tree->createNode<gkGetterObjNode>();
-		targetNode->setType(gkGetterObjNode::SCREEN_XY);
+		gkObjNode* targetNode = m_tree->createNode<gkObjNode>();
+		targetNode->setType(gkObjNode::SCREEN_XY);
 		targetNode->getUPDATE_OBJ()->link(ifNode->getIS_TRUE());
 		targetNode->getX()->link(m_mouseNode->getABS_X());
 		targetNode->getY()->link(m_mouseNode->getABS_Y());
@@ -258,14 +243,14 @@ public:
 			findPathNode->getUPDATE()->link(ifANode->getIS_TRUE());
 		}
 		findPathNode->getNAV_MESH()->link(staticNavMesh->getOUTPUT());
-		findPathNode->getSTART_POS()->link(m_playerSetter->getPOSITION());
+		findPathNode->getSTART_POS()->link(m_momoPlayer->getPOSITION());
 		findPathNode->getEND_POS()->link(targetNode->getHIT_POINT());
-		findPathNode->getSHOW_PATH()->setValue(true);
+		findPathNode->getSHOW_PATH()->link(m_xKeyNode->getIS_DOWN());
 		findPathNode->getSHOW_PATH_OFFSET()->setValue(gkVector3(0, 0, 0.3f));
 
 		m_momoFollowPathNode = m_tree->createNode<gkFollowPathNode>();
 		m_momoFollowPathNode->getUPDATE()->link(findPathNode->getPATH_FOUND());
-		m_momoFollowPathNode->getTARGET()->link(m_playerSetter->getOBJ());
+		m_momoFollowPathNode->getTARGET()->link(m_momoPlayer->getOBJ());
 		m_momoFollowPathNode->getPATH()->link(findPathNode->getPATH());
 		m_momoFollowPathNode->getCURRENT_STATE()->link(m_stateMachine->getFORCE_STATUS());
 		m_momoFollowPathNode->setIdleState(momoState::IDLE_CAPOEIRA);
@@ -279,22 +264,22 @@ public:
 
 			{
 				gkIfNode<bool, CMP_OR>* ifNode = m_tree->createNode<gkIfNode<bool, CMP_OR> >();
-				ifNode->getA()->link(m_momoMotion->getMOTION());
+				ifNode->getA()->link(m_momoPlayer->getMOTION());
 				ifNode->getB()->link(pulse->getOUTPUT());
 
 				ratFindPathNode->getUPDATE()->link(ifNode->getIS_TRUE());
 			}
 
 			ratFindPathNode->getNAV_MESH()->link(staticNavMesh->getOUTPUT());
-			ratFindPathNode->getSTART_POS()->link(m_ratPlayerSetter->getPOSITION());
-			ratFindPathNode->getEND_POS()->link(m_playerSetter->getPOSITION());
-			//ratFindPathNode->getSHOW_PATH()->setValue(true);
-			//ratFindPathNode->getSHOW_PATH_OFFSET()->setValue(gkVector3(0, 0, 0.3f));
+			ratFindPathNode->getSTART_POS()->link(m_ratPlayer->getPOSITION());
+			ratFindPathNode->getEND_POS()->link(m_momoPlayer->getPOSITION());
+			ratFindPathNode->getSHOW_PATH()->link(m_xKeyNode->getIS_DOWN());
+			ratFindPathNode->getSHOW_PATH_OFFSET()->setValue(gkVector3(0, 0, 0.3f));
 
 			gkFollowPathNode* ratFollowPathNode = m_tree->createNode<gkFollowPathNode>();
 			ratFollowPathNode->getUPDATE()->link(ratFindPathNode->getPATH_FOUND());
-			ratFollowPathNode->getTARGET()->link(m_ratPlayerSetter->getOBJ());
-			ratFollowPathNode->getSOURCE()->link(m_playerSetter->getOBJ());
+			ratFollowPathNode->getTARGET()->link(m_ratPlayer->getOBJ());
+			ratFollowPathNode->getSOURCE()->link(m_momoPlayer->getOBJ());
 			ratFollowPathNode->getPATH()->link(ratFindPathNode->getPATH());
 			ratFollowPathNode->getCURRENT_STATE()->link(m_stateRatMachine->getFORCE_STATUS());
 			ratFollowPathNode->setIdleState(ratState::IDLE);
@@ -318,6 +303,12 @@ public:
 		m_sKeyNode = m_tree->createNode<gkKeyNode>();
 		m_sKeyNode->setKey(KC_SKEY);
 
+		m_cKeyNode = m_tree->createNode<gkKeyNode>();
+		m_cKeyNode->setKey(KC_CKEY);
+
+		m_xKeyNode = m_tree->createNode<gkKeyNode>();
+		m_xKeyNode->setKey(KC_XKEY);
+
 		m_mouseNode = m_tree->createNode<gkMouseNode>();
 
 		m_leftMouseNode = m_tree->createNode<gkMouseButtonNode>();
@@ -328,31 +319,17 @@ public:
 		gkPulseNode* pulse = m_tree->createNode<gkPulseNode>();
 		pulse->getUPDATE()->setValue(true);
 
-		m_playerSetter = m_tree->createNode<gkGetterObjNode>();
-		m_playerSetter->getUPDATE_OBJ()->link(pulse->getOUTPUT());
-		m_playerSetter->getNAME()->setValue(object::PLAYER);
+		m_momoPlayer = m_tree->createNode<gkObjNode>();
+		m_momoPlayer->getUPDATE_OBJ()->link(pulse->getOUTPUT());
+		m_momoPlayer->getNAME()->setValue(object::PLAYER);
 
-		m_ratPlayerSetter = m_tree->createNode<gkGetterObjNode>();
-		m_ratPlayerSetter->getUPDATE_OBJ()->link(pulse->getOUTPUT());
-		m_ratPlayerSetter->getNAME()->setValue(object::RAT_PLAYER);
+		m_ratPlayer = m_tree->createNode<gkObjNode>();
+		m_ratPlayer->getUPDATE_OBJ()->link(pulse->getOUTPUT());
+		m_ratPlayer->getNAME()->setValue(object::RAT_PLAYER);
 
-		m_meshRatSetter = m_tree->createNode<gkGetterObjNode>();
-		m_meshRatSetter->getUPDATE_OBJ()->link(pulse->getOUTPUT());
-		m_meshRatSetter->getNAME()->setValue(object::MESH_RAT);
-
-		/*
-		gkDisableDeactivationNode* disableDeactivationForMomo = m_tree->createNode<gkDisableDeactivationNode>();
-		disableDeactivationForMomo->getUPDATE()->link(pulse->getOUTPUT());
-		disableDeactivationForMomo->getTARGET()->link(m_playerSetter->getOUTPUT());
-		*/
-
-		m_meshMomoSetter = m_tree->createNode<gkGetterObjNode>();
-		m_meshMomoSetter->getUPDATE_OBJ()->link(pulse->getOUTPUT());
-		m_meshMomoSetter->getNAME()->setValue(object::MESH_MOMO);
-
-		m_cameraSetter = m_tree->createNode<gkGetterObjNode>();
-		m_cameraSetter->getUPDATE_OBJ()->link(pulse->getOUTPUT());
-		m_cameraSetter->getNAME()->setValue(object::CAMERA);
+		m_cameraPlayer = m_tree->createNode<gkObjNode>();
+		m_cameraPlayer->getUPDATE_OBJ()->link(pulse->getOUTPUT());
+		m_cameraPlayer->getNAME()->setValue(object::CAMERA);
 
 		m_animNode = m_tree->createNode<gkAnimationNode>();
 
@@ -370,19 +347,17 @@ public:
 
 		CreateRatStateMachine();
 
-		m_momoMotion = m_tree->createNode<gkLinearVelNode>();
-
 		CreateNavigationNodes();
 	}
 
 	void CreateCommomMomoCameraArcBallLogic()
 	{
 		m_momoCameraArcBall = m_tree->createNode<gkArcBallNode>();
-		m_momoCameraArcBall->getCENTER_OBJ()->link(m_playerSetter->getOBJ());
+		m_momoCameraArcBall->getCENTER_OBJ()->link(m_momoPlayer->getOBJ());
 		m_momoCameraArcBall->getAVOID_BLOCKING()->setValue(true);
 
-		m_momoCameraArcBall->getCENTER_POSITION()->link(m_playerSetter->getPOSITION());
-		m_momoCameraArcBall->getTARGET()->link(m_cameraSetter->getOBJ());
+		m_momoCameraArcBall->getCENTER_POSITION()->link(m_momoPlayer->getPOSITION());
+		m_momoCameraArcBall->getTARGET()->link(m_cameraPlayer->getOBJ());
 
 		m_momoCameraArcBall->getREL_X()->link(m_mouseNode->getREL_X());
 		m_momoCameraArcBall->getREL_Y()->link(m_mouseNode->getREL_Y());
@@ -420,7 +395,7 @@ public:
 
 		gkFallTestNode* fallTest = m_tree->createNode<gkFallTestNode>();
 		fallTest->getENABLE()->setValue(true);
-		fallTest->getTARGET()->link(m_playerSetter->getOBJ());
+		fallTest->getTARGET()->link(m_momoPlayer->getOBJ());
 	
 		m_wKeyNode->getIS_DOWN()->link(m_stateMachine->addTransition(momoState::IDLE_NASTY, momoState::WALK));
 		m_wKeyNode->getIS_DOWN()->link(m_stateMachine->addTransition(momoState::IDLE_CAPOEIRA, momoState::WALK));
@@ -509,7 +484,7 @@ public:
 	{
 		m_momoGrab = m_tree->createNode<gkGrabNode>();
 		m_momoGrab->getUPDATE()->setValue(true);
-		m_momoGrab->getTARGET()->link(m_playerSetter->getOBJ());
+		m_momoGrab->getTARGET()->link(m_momoPlayer->getOBJ());
 		m_momoGrab->getGRAB_DIRECTION()->setValue(gkVector3(0, 0.6f, 0));
 		m_momoGrab->getTHROW_VEL()->setValue(gkVector3(0, 20.5f, 0));
 		m_momoGrab->getRELATED_OFFSET_POSITION()->setValue(gkVector3(0, 0, 1));
@@ -572,20 +547,15 @@ public:
 
 		{
 			// orient Momo
-
-			gkSetOrientationNode* orientation = m_tree->createNode<gkSetOrientationNode>();
-
-			orientation->getUPDATE()->link(ifNode->getIS_TRUE());
-			orientation->getINPUT()->link(m_momoCameraArcBall->getCURRENT_ROLL());
-			orientation->getTARGET()->link(m_playerSetter->getOBJ());
+			m_momoPlayer->getSET_ROTATION()->link(ifNode->getIS_TRUE());
+			m_momoPlayer->getSET_ROTATION_VALUE()->link(m_momoCameraArcBall->getCURRENT_ROLL());
 		}
 
 		{
-			m_momoMotion->getUPDATE()->link(ifNode->getIS_TRUE());
-			m_momoMotion->getX()->setValue(0);
-			m_momoMotion->getY()->link(mapNode->getOUTPUT());
-			m_momoMotion->getZ()->setValue(0);
-			m_momoMotion->getTARGET()->link(m_playerSetter->getOBJ());
+			m_momoPlayer->getSET_LINEAR_VEL()->link(ifNode->getIS_TRUE());
+			m_momoPlayer->getSET_LINEAR_VEL_VALUE_X()->setValue(0);
+			m_momoPlayer->getSET_LINEAR_VEL_VALUE_Y()->link(mapNode->getOUTPUT());
+			m_momoPlayer->getSET_LINEAR_VEL_VALUE_Z()->setValue(0);
 		}
 	}
 
@@ -617,56 +587,32 @@ public:
 		gkParticleNode* particle = m_tree->createNode<gkParticleNode>();
 		particle->getPARTICLE_SYSTEM_NAME()->setValue(name);
 		particle->getCREATE()->link(pUpdateSocket);
-		particle->getPOSITION()->link(m_playerSetter->getPOSITION());
-		particle->getORIENTATION()->link(m_playerSetter->getROTATION());
+		particle->getPOSITION()->link(m_momoPlayer->getPOSITION());
+		particle->getORIENTATION()->link(m_momoPlayer->getROTATION());
 	}
 
 	void CreateMomoLoadUnloadLogic()
 	{
-		{
-			// reload
+		// reload
 
-			gkKeyNode* rKeyNode = m_tree->createNode<gkKeyNode>();
-			rKeyNode->setKey(KC_RKEY);
+		gkKeyNode* rKeyNode = m_tree->createNode<gkKeyNode>();
+		rKeyNode->setKey(KC_RKEY);
 
-			gkReloadNode* reloadPlayerNode = m_tree->createNode<gkReloadNode>();
-			reloadPlayerNode->getTARGET()->link(m_playerSetter->getOBJ());
-			reloadPlayerNode->getUPDATE()->link(rKeyNode->getPRESS());
+		m_momoPlayer->getRELOAD()->link(rKeyNode->getPRESS());
 
-			gkReloadNode* reloadMeshMomoNode = m_tree->createNode<gkReloadNode>();
-			reloadMeshMomoNode->getTARGET()->link(m_meshMomoSetter->getOBJ());
-			reloadMeshMomoNode->getUPDATE()->link(rKeyNode->getPRESS());
-		}
+		// unload
 
-		{
-			// unload
+		gkKeyNode* uKeyNode = m_tree->createNode<gkKeyNode>();
+		uKeyNode->setKey(KC_UKEY);
 
-			gkKeyNode* uKeyNode = m_tree->createNode<gkKeyNode>();
-			uKeyNode->setKey(KC_UKEY);
+		m_momoPlayer->getUNLOAD()->link(uKeyNode->getPRESS());
 
-			gkUnloadNode* unloadPlayerNode = m_tree->createNode<gkUnloadNode>();
-			unloadPlayerNode->getTARGET()->link(m_playerSetter->getOBJ());
-			unloadPlayerNode->getUPDATE()->link(uKeyNode->getPRESS());
+		// load
 
-			gkUnloadNode* unloadMeshMomoNode = m_tree->createNode<gkUnloadNode>();
-			unloadMeshMomoNode->getTARGET()->link(m_meshMomoSetter->getOBJ());
-			unloadMeshMomoNode->getUPDATE()->link(uKeyNode->getPRESS());
-		}
+		gkKeyNode* lKeyNode = m_tree->createNode<gkKeyNode>();
+		lKeyNode->setKey(KC_LKEY);
 
-		{
-			// load
-
-			gkKeyNode* lKeyNode = m_tree->createNode<gkKeyNode>();
-			lKeyNode->setKey(KC_LKEY);
-
-			gkLoadNode* loadPlayerNode = m_tree->createNode<gkLoadNode>();
-			loadPlayerNode->getTARGET()->link(m_playerSetter->getOBJ());
-			loadPlayerNode->getUPDATE()->link(lKeyNode->getPRESS());
-
-			gkLoadNode* loadMeshMomoNode = m_tree->createNode<gkLoadNode>();
-			loadMeshMomoNode->getTARGET()->link(m_meshMomoSetter->getOBJ());
-			loadMeshMomoNode->getUPDATE()->link(lKeyNode->getPRESS());
-		}
+		m_momoPlayer->getLOAD()->link(lKeyNode->getPRESS());
 	}
 
 	void CreateMomoAnimationLogic()
@@ -691,7 +637,7 @@ public:
 
 		mapNode->getMAPPING()->setValue(mapping);
 
-		m_animNode->getTARGET()->link(m_meshMomoSetter->getOBJ());
+		m_animNode->getTARGET()->link(m_momoPlayer->getMESH_OBJ());
 		m_animNode->getANIM_NAME()->link(mapNode->getOUTPUT());
 	}
 
@@ -709,7 +655,7 @@ public:
 
 		mapNode->getMAPPING()->setValue(mapping);
 
-		m_animRatNode->getTARGET()->link(m_meshRatSetter->getOBJ());
+		m_animRatNode->getTARGET()->link(m_ratPlayer->getMESH_OBJ());
 		m_animRatNode->getANIM_NAME()->link(mapNode->getOUTPUT());
 	}
 
@@ -758,8 +704,8 @@ public:
 
 	void CreateCursorCameraArcBallLogic()
 	{
-		gkGetterObjNode* centerObj = m_tree->createNode<gkGetterObjNode>();
-		centerObj->setType(gkGetterObjNode::SCREEN_XY);
+		gkObjNode* centerObj = m_tree->createNode<gkObjNode>();
+		centerObj->setType(gkObjNode::SCREEN_XY);
 		centerObj->getX()->link(m_mouseNode->getABS_X());
 		centerObj->getY()->link(m_mouseNode->getABS_Y());
 
@@ -776,7 +722,7 @@ public:
 		gkArcBallNode* arcBall = m_tree->createNode<gkArcBallNode>();
 		arcBall->getCENTER_OBJ()->link(centerObj->getOBJ());
 		arcBall->getCENTER_POSITION()->link(centerObj->getHIT_POINT());
-		arcBall->getTARGET()->link(m_cameraSetter->getOBJ());
+		arcBall->getTARGET()->link(m_cameraPlayer->getOBJ());
 
 		arcBall->getREL_X()->link(m_mouseNode->getREL_X());
 		arcBall->getREL_Y()->link(m_mouseNode->getREL_Y());
@@ -808,9 +754,6 @@ public:
 
 	void CreateDebugLogic()
 	{
-		gkKeyNode* m_cKeyNode = m_tree->createNode<gkKeyNode>();
-		m_cKeyNode->setKey(KC_CKEY);
-
 		gkShowPhysicsNode* showPhysics = m_tree->createNode<gkShowPhysicsNode>();
 		showPhysics->getENABLE()->link(m_cKeyNode->getIS_DOWN());
 	}
@@ -829,21 +772,21 @@ private:
 	
 	gkKeyNode* m_sKeyNode;
 
+	gkKeyNode* m_cKeyNode;
+
+	gkKeyNode* m_xKeyNode;
+
 	gkMouseNode* m_mouseNode;
 
 	gkMouseButtonNode* m_leftMouseNode;
 
 	gkMouseButtonNode* m_rightMouseNode;
 
-	gkGetterObjNode* m_playerSetter;
+	gkObjNode* m_momoPlayer;
 
-	gkGetterObjNode* m_meshMomoSetter;
-
-	gkGetterObjNode* m_ratPlayerSetter;
+	gkObjNode* m_ratPlayer;
 	
-	gkGetterObjNode* m_meshRatSetter;
-
-	gkGetterObjNode* m_cameraSetter;
+	gkObjNode* m_cameraPlayer;
 
 	gkArcBallNode* m_momoCameraArcBall;
 
@@ -858,8 +801,6 @@ private:
 	gkStateMachineNode* m_stateRatMachine;
 
 	gkFollowPathNode* m_momoFollowPathNode;
-
-	gkLinearVelNode* m_momoMotion; 
 };
 
 int main(int argc, char **argv)
