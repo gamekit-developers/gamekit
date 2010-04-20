@@ -72,6 +72,12 @@ void gkFindPathNode::update(gkScalar tick)
 	{
 		showPath();
 	}
+	else if(m_debug)
+	{
+		delete m_debug;
+		
+		m_debug = 0;
+	}
 }
 
 void gkFindPathNode::findPath()

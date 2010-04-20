@@ -102,18 +102,27 @@ public:
 
 public:
 
+	typedef std::deque<gkLogicNode*> QUEUE;
+
     void solve(gkLogicTree *tree)
     {
+		QUEUE l;
         gkLogicTree::NodeIterator iter = tree->getNodeIterator();
         while (iter.hasMoreElements())
-            setPriority(tree, iter.getNext());
+            setPriority(tree, iter.getNext(), l);
     }
 
-    void setPriority(gkLogicTree* tree, gkLogicNode *node)
+	void setPriority(gkLogicTree* tree, gkLogicNode *node, QUEUE& l)
     {
         // setting priority + 1 for each connection 
 
         GK_ASSERT(node);
+
+		QUEUE::const_iterator it = std::find(l.begin(), l.end(), node);
+		if(it != l.end()) return;
+
+		l.push_back(node);
+
         gkLogicNode::Sockets &sockets = node->getInputs();
         if (!sockets.empty())
         {
@@ -124,7 +133,8 @@ public:
                 if (sock->isLinked())
                 {
                     gkILogicSocket *fsock = sock->getFrom();
-                    if (!fsock) continue;
+
+					GK_ASSERT(fsock);
 
                     gkLogicTree::NodeIterator iter = tree->getNodeIterator();
                     while (iter.hasMoreElements())
@@ -133,13 +143,14 @@ public:
                         if (onode != node && onode == fsock->getParent())
                         {
                             onode->setPriority(node->getPriority() + 1);
-                            setPriority(tree, onode);
+                            setPriority(tree, onode, l);
                         }
                     }
                 }
             }
         }
 
+		l.pop_back();
     }
 };
 

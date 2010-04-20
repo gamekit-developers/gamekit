@@ -26,7 +26,7 @@
 */
 #include "OgreRoot.h"
 #include "gkWindowSystem.h"
-#include "gkGetterObjNode.h"
+#include "gkObjNode.h"
 #include "gkEngine.h"
 #include "gkScene.h"
 #include "gkLogger.h"
@@ -35,12 +35,21 @@
 #include "gkGameObject.h"
 #include "btBulletDynamicsCommon.h"
 
-gkGetterObjNode::gkGetterObjNode(gkLogicTree *parent, size_t id)
-: gkLogicNode(parent, id), m_type(OBJ_NAME), m_obj(0), m_position(gkVector3::ZERO),
+gkObjNode::gkObjNode(gkLogicTree *parent, size_t id)
+: gkLogicNode(parent, id), m_type(OBJ_NAME), m_obj(0), m_mesh(0), m_position(gkVector3::ZERO),
 m_rotation(gkQuaternion::IDENTITY)
 {
 	ADD_ISOCK(UPDATE_OBJ, false);
 	ADD_ISOCK(UPDATE_STATE, true);
+	ADD_ISOCK(LOAD, false);
+	ADD_ISOCK(UNLOAD, false);
+	ADD_ISOCK(RELOAD, false);
+	ADD_ISOCK(SET_LINEAR_VEL, false);
+	ADD_ISOCK(SET_LINEAR_VEL_VALUE_X, 0);
+	ADD_ISOCK(SET_LINEAR_VEL_VALUE_Y, 0);
+	ADD_ISOCK(SET_LINEAR_VEL_VALUE_Z, 0);
+	ADD_ISOCK(SET_ROTATION, false);
+	ADD_ISOCK(SET_ROTATION_VALUE, gkQuaternion::IDENTITY);
 	ADD_ISOCK(NAME, "");
 	ADD_OSOCK(OBJ, 0);
 	ADD_ISOCK(X, 0);
@@ -50,13 +59,18 @@ m_rotation(gkQuaternion::IDENTITY)
 	ADD_OSOCK(HIT_POINT, gkVector3::ZERO);
 	ADD_OSOCK(POSITION, gkVector3::ZERO);
 	ADD_OSOCK(ROTATION, gkQuaternion::IDENTITY);
+	ADD_OSOCK(MOTION, false);
+	ADD_OSOCK(MESH_OBJ, 0);
 }
 
-bool gkGetterObjNode::evaluate(gkScalar tick)
+bool gkObjNode::evaluate(gkScalar tick)
 {
+	SET_SOCKET_VALUE(MOTION, false);
+
 	if(GET_SOCKET_VALUE(UPDATE_OBJ))
 	{
 		m_obj = 0;
+		m_mesh = 0;
 
 		if(!GET_SOCKET_VALUE(RESET))
 		{
@@ -85,13 +99,52 @@ bool gkGetterObjNode::evaluate(gkScalar tick)
 			}
 		}
 
+		if(m_obj)
+		{
+			m_mesh = m_obj->getChildEntity();
+		}
+
 		SET_SOCKET_VALUE(HAS_OBJ, m_obj ? true : false);
 		SET_SOCKET_VALUE(OBJ, m_obj);
+		SET_SOCKET_VALUE(MESH_OBJ, m_mesh);
 
 		updateState();
-
 	}
-	else if(GET_SOCKET_VALUE(UPDATE_STATE))
+
+	if(m_obj && GET_SOCKET_VALUE(LOAD))
+	{
+		m_obj->load();
+
+		if(m_mesh) m_mesh->load();
+	}
+	else if(m_obj && GET_SOCKET_VALUE(UNLOAD))
+	{
+		m_obj->unload();
+
+		if(m_mesh) m_mesh->unload();
+	}
+	else if(m_obj && GET_SOCKET_VALUE(RELOAD))
+	{
+		m_obj->reload();
+
+		if(m_mesh) m_mesh->reload();
+	}
+	
+	if(m_obj && m_obj->isLoaded() && GET_SOCKET_VALUE(SET_LINEAR_VEL))
+	{
+		gkVector3 v(GET_SOCKET_VALUE(SET_LINEAR_VEL_VALUE_X), GET_SOCKET_VALUE(SET_LINEAR_VEL_VALUE_Y), GET_SOCKET_VALUE(SET_LINEAR_VEL_VALUE_Z));
+		m_obj->setLinearVelocity(v, TRANSFORM_LOCAL);
+		SET_SOCKET_VALUE(MOTION, true);
+	}
+
+	if(m_obj && m_obj->isLoaded() && GET_SOCKET_VALUE(SET_ROTATION))
+	{
+		m_obj->setOrientation(GET_SOCKET_VALUE(SET_ROTATION_VALUE));
+		SET_SOCKET_VALUE(MOTION, true);
+	}
+
+	
+	if(GET_SOCKET_VALUE(UPDATE_STATE))
 	{
 		updateState();
 	}
@@ -99,12 +152,12 @@ bool gkGetterObjNode::evaluate(gkScalar tick)
 	return false;
 }
 
-void gkGetterObjNode::updateState()
+void gkObjNode::updateState()
 {
 	gkVector3 position(gkVector3::ZERO);
 	gkQuaternion rotation(gkQuaternion::IDENTITY);
 
-	if(m_obj)
+	if(m_obj && m_obj->isLoaded())
 	{
 		position = m_obj->getPosition();
 		rotation = m_obj->getOrientation();
@@ -114,13 +167,14 @@ void gkGetterObjNode::updateState()
 	{
 		m_position = position;
 		SET_SOCKET_VALUE(POSITION, m_position);
+		SET_SOCKET_VALUE(MOTION, true);
 	}
 
 	if(m_rotation != rotation)
 	{
 		m_rotation = rotation;
 		SET_SOCKET_VALUE(ROTATION, m_rotation);
+		SET_SOCKET_VALUE(MOTION, true);
 	}
-
 }
 

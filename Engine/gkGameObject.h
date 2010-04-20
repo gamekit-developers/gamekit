@@ -174,6 +174,11 @@ public:
 
 	virtual Ogre::AxisAlignedBox getAabb() const;
 
+	GK_INLINE int getNavIndex() const { return m_navIndex; }
+
+	GK_INLINE void setNavIndex(int index) { m_navIndex = index; }
+
+	gkGameObject* getChildEntity();
 
 protected:
 
@@ -204,8 +209,7 @@ protected:
 
 
     // Current state of object transforms
-    gkTransformState            m_prev, m_cur;
-
+    gkTransformState            m_prev, m_cur,m_last;
 
     // Physics body instance
     gkRigidBody*                m_rigidBody;
@@ -223,6 +227,10 @@ protected:
     virtual void loadImpl(void);
     virtual void unloadImpl(void);
     virtual void postLoadImpl(void);
+
+private:
+
+	int m_navIndex;
 };
 
 #endif//_gkGameObject_h_

@@ -33,7 +33,6 @@
 #include "BulletCollision/CollisionDispatch/btGhostObject.h"
 #include "BulletDynamics/Character/btKinematicCharacterController.h"
 
-
 gkCharacter::gkCharacter(const gkString& name, gkGameObject *object, gkDynamicsWorld *owner, gkObject::Loader *manual) 
 : gkObject(name, manual), m_owner(owner), m_object(object), m_ghostObject(0), m_character(0)
 {

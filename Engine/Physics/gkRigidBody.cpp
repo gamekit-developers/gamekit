@@ -31,6 +31,7 @@
 #include "gkRigidBody.h"
 #include "btBulletDynamicsCommon.h"
 #include "OgreSceneNode.h"
+#include "gkNavMeshData.h"
 
 
 
@@ -94,6 +95,10 @@ void gkRigidBody::loadImpl(void)
             m_rigidBody->setLinearFactor(lf);
             m_rigidBody->setAngularFactor(af);
 
+			if(m_object->getProperties().physicsState == GK_RIGID_BODY || m_object->getProperties().physicsState == GK_STATIC)
+			{
+				m_object->getOwner()->getMeshData()->refresh(m_object);
+			}
         }
     }
 

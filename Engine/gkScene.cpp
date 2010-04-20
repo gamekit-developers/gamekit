@@ -45,19 +45,21 @@
 #include "gkDynamicsWorld.h"
 #include "gkRigidBody.h"
 #include "gkUserDefs.h"
-
+#include "gkNavMeshData.h"
 
 using namespace Ogre;
 
 
 gkScene::gkScene(const gkString& name, gkObject::Loader *loader)
 :       gkObject(name, loader), m_manager(0), m_startCam(0),
-        m_viewport(0), m_baseProps(), m_physicsWorld(0), m_hasChanged(false)
+        m_viewport(0), m_baseProps(), m_physicsWorld(0), m_hasChanged(false), m_meshData(new gkNavMeshData)
 {
 }
 
 gkScene::~gkScene()
 {
+	delete m_meshData;
+
     gkGameObjectHashMapIterator it(m_objects);
     while (it.hasMoreElements())
         delete it.getNext().second;
@@ -462,7 +464,7 @@ void gkScene::notifyObjectUnloaded(gkGameObject *gobject)
 
 void gkScene::notifyObjectUpdate(gkGameObject *gobject)
 {
-	if(gobject->getProperties().physicsState == GK_DYNAMIC)
+	if(gobject->getProperties().physicsState == GK_RIGID_BODY)
 	{
 		m_hasChanged = true;
 	}

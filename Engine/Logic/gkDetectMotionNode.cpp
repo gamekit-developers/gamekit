@@ -33,7 +33,7 @@
 gkDetectMotionNode::gkDetectMotionNode(gkLogicTree *parent, size_t id) 
 : gkLogicNode(parent, id),
 m_detected(true),
-m_detections(-1)
+m_detections(-1)//always
 {
 	ADD_ISOCK(UPDATE, false);
 	ADD_OSOCK(DETECTED, true);

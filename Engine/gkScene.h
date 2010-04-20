@@ -43,6 +43,7 @@ typedef utHashTableIterator<gkGameObjectHashMap>    gkGameObjectHashMapIterator;
 typedef utArray<gkGameObject*>                      gkGameObjectArray;
 typedef utArrayIterator<gkGameObjectArray>          gkGameObjectArrayIterator;
 
+class gkNavMeshData;
 
 // Game scene
 class gkScene : public gkObject
@@ -165,6 +166,8 @@ public:
 
     GK_INLINE bool      hasGroup(const gkHashedString &name) {return m_groups.find(name) != UT_NPOS;}
 
+	gkNavMeshData* getMeshData() const { return m_meshData; }
+
 protected:
 
 
@@ -198,6 +201,8 @@ private:
 	Ogre::AxisAlignedBox m_Limits;
 
 	bool m_hasChanged;
+
+	gkNavMeshData* m_meshData;
 };
 
 #endif//_gkSceneObject_h_

@@ -24,14 +24,16 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkStaticNavMeshNode_h_
-#define _gkStaticNavMeshNode_h_
+#ifndef _gkNavMeshNode_h_
+#define _gkNavMeshNode_h_
 
 #include "gkLogicNode.h"
+#include "gkThread.h"
 
 class dtNavMesh;
+struct ConfigData;
 
-class gkStaticNavMeshNode : public gkLogicNode
+class gkNavMeshNode : public gkLogicNode, public gkAbstractTaskHandler
 {
 public:
 
@@ -73,21 +75,26 @@ public:
 
 	DECLARE_SOCKET_TYPE(OUTPUT, dtNavMesh*);
 
-    gkStaticNavMeshNode(gkLogicTree *parent, size_t id);
+    gkNavMeshNode(gkLogicTree *parent, size_t id);
 
-	~gkStaticNavMeshNode();
+	~gkNavMeshNode();
 
 	bool evaluate(gkScalar tick);
 	void update(gkScalar tick);
 
 private:
 
-	void ClearData();
-	bool Create();
+	void run();
 
 private:
 
+	gkThreadInterface m_task;
+
+	gkCriticalSection m_cs;
+
 	dtNavMesh* m_navMesh;
+
+	ConfigData* m_cfg;
 };
 
-#endif//_gkStaticNavMeshNode_h_
+#endif//_gkNavMeshNode_h_

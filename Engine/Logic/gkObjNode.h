@@ -24,13 +24,13 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkGetterObjNode_h_
-#define _gkGetterObjNode_h_
+#ifndef _gkObjNode_h_
+#define _gkObjNode_h_
 
 #include "gkLogicNode.h"
 
 class gkGameObject;
-class gkGetterObjNode : public gkLogicNode
+class gkObjNode : public gkLogicNode
 {
 public:
 
@@ -38,6 +38,15 @@ public:
 	{
 		UPDATE_OBJ,
 		UPDATE_STATE,
+		LOAD,
+		UNLOAD,
+		RELOAD,
+		SET_LINEAR_VEL,
+		SET_LINEAR_VEL_VALUE_X,
+		SET_LINEAR_VEL_VALUE_Y,
+		SET_LINEAR_VEL_VALUE_Z,
+		SET_ROTATION,
+		SET_ROTATION_VALUE,
 		NAME,
 		OBJ,
 		X,
@@ -46,11 +55,22 @@ public:
 		HAS_OBJ,
 		HIT_POINT,
 		POSITION,
-		ROTATION
+		ROTATION,
+		MOTION,
+		MESH_OBJ
 	};
 
 	DECLARE_SOCKET_TYPE(UPDATE_OBJ, bool);
 	DECLARE_SOCKET_TYPE(UPDATE_STATE, bool);
+	DECLARE_SOCKET_TYPE(LOAD, bool);
+	DECLARE_SOCKET_TYPE(UNLOAD, bool);
+	DECLARE_SOCKET_TYPE(RELOAD, bool);
+	DECLARE_SOCKET_TYPE(SET_LINEAR_VEL, bool);
+	DECLARE_SOCKET_TYPE(SET_LINEAR_VEL_VALUE_X, gkScalar);
+	DECLARE_SOCKET_TYPE(SET_LINEAR_VEL_VALUE_Y, gkScalar);
+	DECLARE_SOCKET_TYPE(SET_LINEAR_VEL_VALUE_Z, gkScalar);
+	DECLARE_SOCKET_TYPE(SET_ROTATION, bool);
+	DECLARE_SOCKET_TYPE(SET_ROTATION_VALUE, gkQuaternion);
 	DECLARE_SOCKET_TYPE(NAME, gkString);
 	DECLARE_SOCKET_TYPE(OBJ, gkGameObject*);
 	DECLARE_SOCKET_TYPE(X, gkScalar);
@@ -60,6 +80,9 @@ public:
 	DECLARE_SOCKET_TYPE(HIT_POINT, gkVector3);
 	DECLARE_SOCKET_TYPE(POSITION, gkVector3);
 	DECLARE_SOCKET_TYPE(ROTATION, gkQuaternion);
+	DECLARE_SOCKET_TYPE(MOTION, bool);
+	DECLARE_SOCKET_TYPE(MESH_OBJ, gkGameObject*);
+	
 
 	enum INPUT_TYPE
 	{
@@ -67,9 +90,9 @@ public:
 		SCREEN_XY
 	};
 
-    gkGetterObjNode(gkLogicTree *parent, size_t id);
+    gkObjNode(gkLogicTree *parent, size_t id);
 
-	virtual ~gkGetterObjNode() {}
+	virtual ~gkObjNode() {}
 
 	bool evaluate(gkScalar tick);
 
@@ -84,9 +107,10 @@ private:
 	INPUT_TYPE m_type;
 
 	gkGameObject* m_obj;
+	gkGameObject* m_mesh;
 	gkVector3 m_position;
 	gkQuaternion m_rotation;
 };
 
-#endif//_gkGetterObjNode_h_
+#endif//_gkObjNode_h_
 

@@ -17,6 +17,7 @@ set(Core_SOURCE
     gkLight.cpp
     gkLogger.cpp
     gkMathUtils.cpp
+    gkNavMeshData.cpp
     gkObject.cpp
     gkPath.cpp
     gkTextFile.cpp
@@ -26,6 +27,7 @@ set(Core_SOURCE
     gkSceneManager.cpp
     gkSerialize.cpp
     gkSkeleton.cpp
+    gkThread.cpp
     gkUserDefs.cpp
     gkUtils.cpp
     gkWindowSystem.cpp
@@ -49,6 +51,7 @@ set(Core_HEADER
     gkLogger.h
     gkMathUtils.h
     gkMemoryTest.h
+    gkNavMeshData.h
     gkObject.h
     gkPath.h
     gkTextFile.h
@@ -62,6 +65,7 @@ set(Core_HEADER
     gkString.h
     gkTransformState.h
     gkUserDefs.h
+    gkThread.h
     gkUtils.h
     gkVariable.h
     gkWindowSystem.h
@@ -135,7 +139,6 @@ set(NLogic_SOURCE
     Logic/gkLogicTree.cpp
     Logic/gkMotionNode.cpp
     Logic/gkMouseNode.cpp
-    Logic/gkObjActionNode.cpp
     Logic/gkObjectNode.cpp
     Logic/gkPrintNode.cpp
     Logic/gkRandomNode.cpp
@@ -148,10 +151,10 @@ set(NLogic_SOURCE
     Logic/gkParticleNode.cpp
     Logic/gkPickNode.cpp
     Logic/gkPulseNode.cpp
-    Logic/gkGetterObjNode.cpp
+    Logic/gkObjNode.cpp
     Logic/gkShowPhysicsNode.cpp
     Logic/gkStateMachineNode.cpp
-    Logic/gkStaticNavMeshNode.cpp
+    Logic/gkNavMeshNode.cpp
 )
 
 set(NLogic_HEADER
@@ -177,7 +180,6 @@ set(NLogic_HEADER
     Logic/gkMathNode.h
     Logic/gkMotionNode.h
     Logic/gkMouseNode.h
-	Logic/gkObjActionNode.h
     Logic/gkObjectNode.h
     Logic/gkPrintNode.h
     Logic/gkRandomNode.h
@@ -190,10 +192,10 @@ set(NLogic_HEADER
     Logic/gkParticleNode.h
     Logic/gkPickNode.h
     Logic/gkPulseNode.h
-    Logic/gkGetterObjNode.h
+    Logic/gkObjNode.h
     Logic/gkShowPhysicsNode.h
     Logic/gkStateMachineNode.h
-    Logic/gkStaticNavMeshNode.h
+    Logic/gkNavMeshNode.h
 )
 
 source_group(LogicNodes\\Header FILES ${NLogic_HEADER})
