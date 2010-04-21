@@ -142,8 +142,11 @@ public:
                         gkLogicNode* onode = iter.getNext();
                         if (onode != node && onode == fsock->getParent())
                         {
-                            onode->setPriority(node->getPriority() + 1);
-                            setPriority(tree, onode, l);
+                            if (onode->getPriority() <= node->getPriority())
+                            {
+                                onode->setPriority(node->getPriority() + 1);
+                                setPriority(tree, onode, l);
+                            }
                         }
                     }
                 }
@@ -156,35 +159,6 @@ public:
 
 
 #define NT_DUMP_ORDER 0
-
-#if NT_DUMP_ORDER == 1
-char *NTGetName(int nt)
-{
-    switch (nt)
-    {
-    case NT_GROUP:      return "NT_GROUP        ";
-    case NT_OBJECT:     return "NT_OBJECT       ";
-    case NT_MOUSE:      return "NT_MOUSE        ";
-    case NT_MOUSEBUTTON:return "NT_MOUSEBUTTON  ";
-    case NT_KEY:        return "NT_KEY          ";
-    case NT_MATH:       return "NT_MATH         ";
-    case NT_MOTION:     return "NT_MOTION       ";
-    case NT_PRINT:      return "NT_PRINT        ";
-    case NT_ANIM:       return "NT_ANIM         ";
-    case NT_RAND:       return "NT_RAND         ";
-    case NT_VALUE:      return "NT_VALUE        ";
-    case NT_VARIABLE:   return "NT_VARIABLE     ";
-    case NT_VARIABLE_OP:return "NT_VARIABLE_OP  ";
-    case NT_EXPR:       return "NT_EXPR         ";
-    case NT_SWITCH:     return "NT_SWITCH       ";
-    case NT_IF:         return "NT_IF           ";
-    case NT_TIMER:      return "NT_TIMER        ";
-    case NT_EXIT:       return "NT_EXIT         ";
-    }
-    return "NT_UNKNOWN      ";
-}
-
-#endif
 
 void gkLogicTree::solveOrder(bool forceSolve)
 {
@@ -205,27 +179,29 @@ void gkLogicTree::solveOrder(bool forceSolve)
 #if NT_DUMP_ORDER == 0
     m_nodes.sort(gkLogicSolver::sort);
 #else
+    FILE *fp = fopen("NodeTree_dump.txt", "wb");
 
-    printf("--- node order before sort ---\n");
+    fprintf(fp, "--- node order before sort ---\n");
     NodeIterator iter(m_nodes);
     while (iter.hasMoreElements())
     {
         gkLogicNode *lnode = iter.getNext();
-        printf("%s:%i\n", (NTGetName((int)lnode->getType())), lnode->getPriority());
+        fprintf(fp, "%s:%i\n", (typeid(*lnode).name()), lnode->getPriority());
     }
 
     m_nodes.sort(gkLogicSolver::sort);
 
 
-    printf("--- node order after sort ---\n");
+    fprintf(fp, "--- node order after sort ---\n");
     NodeIterator iter2(m_nodes);
     while (iter2.hasMoreElements())
     {
         gkLogicNode *lnode = iter2.getNext();
-        printf("%s:%i\n", (NTGetName((int)lnode->getType())), lnode->getPriority());
+        fprintf(fp, "%s:%i\n", (typeid(*lnode).name()), lnode->getPriority());
     }
+    fclose(fp);
 #endif
- 
+
 }
 
 void gkLogicTree::execute(gkScalar tick)

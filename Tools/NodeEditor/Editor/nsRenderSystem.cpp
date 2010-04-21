@@ -467,8 +467,6 @@ public:
     // current image
     void setImage(GLuint tex) { m_curTex = tex; }
 
-    // Buffer filling. I'm leaving out non-zero / even-odd fills,
-    // they are not needed here
 
     void fill(const VertexBuffer &vbuf, const NScolor &col)
     {
@@ -531,8 +529,6 @@ public:
         if(col.a < 1.f)
             glDisable(GL_BLEND);
     }
-
-
 
     // default display
     void displayString( nsFont *font, NSfloat size, const char *str, int len, const NScolor &col, NSfloat x, NSfloat y)
@@ -627,10 +623,8 @@ public:
     void displayStringS( nsFont *font, NSfloat size, const char *str, int len, const NScolor &col, NSfloat x, NSfloat y)
     {
         // drop shadow (makes strings more visible)
-
         if ( !font )
             return;
-
 
         const NSfloat font_scale = size / (NSfloat)font->m_res;
         const NSfloat t_xspace = 1.f / NSfloat( font->m_width );

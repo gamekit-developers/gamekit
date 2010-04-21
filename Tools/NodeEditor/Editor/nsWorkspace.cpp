@@ -248,7 +248,7 @@ void nsWorkspace::treeEvent(nsTreeEvent &evt)
 void nsWorkspace::grabCapturedEvent(wxCommandEvent &evt)
 {
     // pass to active canvas
-    if (m_activeCanvas && m_activeCanvas->HasFocus())
+    if (m_activeCanvas)
         m_activeCanvas->grabCapturedEvent(evt);
     else evt.Skip();
 }
@@ -258,7 +258,7 @@ void nsWorkspace::grabCapturedEvent(wxCommandEvent &evt)
 void nsWorkspace::deleteCapturedEvent(wxCommandEvent &evt)
 {
     // pass to active canvas
-    if (m_activeCanvas && m_activeCanvas->HasFocus())
+    if (m_activeCanvas)
         m_activeCanvas->deleteCapturedEvent(evt);
 }
 
