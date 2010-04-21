@@ -3,7 +3,7 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Nestor Silveira.
+    Copyright (c) Nestor Silveira.
 
     Contributor(s): none yet.
 -------------------------------------------------------------------------------
@@ -24,72 +24,67 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "gkCommon.h"
-#include "gkThread.h"
+#include "gkCriticalSection.h"
 
 #ifdef WIN32
 #include <process.h>
 #endif
 
+
+////////////////////////////////////////////
+
+gkCriticalSection::gkCriticalSection()
+{		
 #ifdef WIN32
-unsigned __stdcall gkThread::task(void* p)
-{
-	gkThread* pThread = static_cast<gkThread*>(p);
-
-	pThread->run();
-
-	_endthreadex(0);
-
-	return 0;
-}
+	InitializeCriticalSection(&m_cs);
 #else
-void* gkThread::task(void* p)
-{
-	gkThread* pThread = static_cast<gkThread*>(p);
-
-	pThread->run();
-}
+	pthread_mutex_init(&m_cs, NULL);
 #endif
-
-gkThread::gkThread(gkCall* call)
-: m_call(call)
+}
+	
+gkCriticalSection::~gkCriticalSection()
 {
-	GK_ASSERT(m_call);
-
 #ifdef WIN32
-	m_hChilThread = (HANDLE)_beginthreadex(
-		0, // no security
-		65535, 
-		task, 
-		this, 
-		0, // running 
-		&m_threadId
-	);
+	DeleteCriticalSection(&m_cs);
 #else
-	int failed = pthread_create(&m_threadId, NULL, &task, this);
-
-	GK_ASSERT(!failed);
+	pthread_mutex_destroy(&m_cs);
 #endif
 }
 
-gkThread::~gkThread()
+void gkCriticalSection::BeginLock()
 {
 #ifdef WIN32
-	CloseHandle(m_hChilThread);
+	EnterCriticalSection(&m_cs);
 #else
-	pthread_cancel(m_threadId);
+	pthread_mutex_lock(&m_cs);
+#endif
+
+}
+
+void gkCriticalSection::EndLock()
+{
+#ifdef WIN32
+	LeaveCriticalSection(&m_cs);
+#else
+	pthread_mutex_unlock(&m_cs);
 #endif
 }
 
-void gkThread::join()
+gkCriticalSection::Lock::Lock(gkCriticalSection& obj)
+:m_obj(obj)
 {
-	m_syncObj.wait();
+#ifdef WIN32
+	EnterCriticalSection(&m_obj.m_cs);
+#else
+	pthread_mutex_lock(&m_obj.m_cs);
+#endif
 }
 
-void gkThread::run()
-{
-	m_call->run();
-
-	m_syncObj.signal();
+gkCriticalSection::Lock::~Lock()
+{	
+#ifdef WIN32
+	LeaveCriticalSection(&m_obj.m_cs);
+#else
+	pthread_mutex_unlock(&m_obj.m_cs);
+#endif
 }
-

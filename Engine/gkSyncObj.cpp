@@ -3,7 +3,7 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Nestor Silveira.
+    Copyright (c) Nestor Silveira.
 
     Contributor(s): none yet.
 -------------------------------------------------------------------------------
@@ -24,72 +24,69 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+#include "gkSyncObj.h"
 #include "gkCommon.h"
-#include "gkThread.h"
 
 #ifdef WIN32
 #include <process.h>
 #endif
 
+gkSyncObj::gkSyncObj()
+{
 #ifdef WIN32
-unsigned __stdcall gkThread::task(void* p)
-{
-	gkThread* pThread = static_cast<gkThread*>(p);
-
-	pThread->run();
-
-	_endthreadex(0);
-
-	return 0;
-}
+	m_syncObj = CreateSemaphore(
+			0,	// Security attributes
+			0,	// Initial count zero (everybody will wait)
+			INT_MAX, // the mamimum number of resources
+			0	// No name for this semaphore
+		);
 #else
-void* gkThread::task(void* p)
-{
-	gkThread* pThread = static_cast<gkThread*>(p);
+	int result = sem_init(&m_syncObj, 0, 0);
 
-	pThread->run();
-}
+	GK_ASSERT(result != -1);
 #endif
-
-gkThread::gkThread(gkCall* call)
-: m_call(call)
+}
+	
+gkSyncObj::~gkSyncObj()
 {
-	GK_ASSERT(m_call);
-
 #ifdef WIN32
-	m_hChilThread = (HANDLE)_beginthreadex(
-		0, // no security
-		65535, 
-		task, 
-		this, 
-		0, // running 
-		&m_threadId
-	);
+	CloseHandle(m_syncObj);
 #else
-	int failed = pthread_create(&m_threadId, NULL, &task, this);
-
-	GK_ASSERT(!failed);
+	int result = sem_destroy(&m_syncObj);
+	GK_ASSERT(result != -1);
 #endif
 }
 
-gkThread::~gkThread()
+bool gkSyncObj::wait()
+{
+	bool ok = true;
+
+#ifdef WIN32
+	switch(WaitForSingleObject(m_syncObj, INFINITE))
+	{
+		case WAIT_TIMEOUT:
+			ok = false;
+			break;
+
+		default: // OK
+			break;
+	}
+#else
+	int result = sem_wait(&m_syncObj);
+	GK_ASSERT(result != -1);
+#endif
+
+	return ok;
+}
+
+bool gkSyncObj::signal()
 {
 #ifdef WIN32
-	CloseHandle(m_hChilThread);
+	if(!ReleaseSemaphore(m_syncObj, 1, 0))
+		return false;
 #else
-	pthread_cancel(m_threadId);
+	int result = sem_post(&m_syncObj);
+	GK_ASSERT(result != -1);
 #endif
+	return true;
 }
-
-void gkThread::join()
-{
-	m_syncObj.wait();
-}
-
-void gkThread::run()
-{
-	m_call->run();
-
-	m_syncObj.signal();
-}
-

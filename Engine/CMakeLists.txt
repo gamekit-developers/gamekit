@@ -7,9 +7,11 @@ cmake_minimum_required(VERSION 2.6)
 
 set(Core_SOURCE
     # ----- Source ----- 
+    gkActiveObject.cpp
     gkCamera.cpp
     gkConstraint.cpp
     gkCoreApplication.cpp
+    gkCriticalSection.cpp
     gkEngine.cpp
     gkEntity.cpp
     gkGameObject.cpp
@@ -20,6 +22,7 @@ set(Core_SOURCE
     gkNavMeshData.cpp
     gkObject.cpp
     gkPath.cpp
+    gkPtrRef.cpp
     gkTextFile.cpp
     gkTextManager.cpp
     gkRenderFactory.cpp
@@ -27,6 +30,7 @@ set(Core_SOURCE
     gkSceneManager.cpp
     gkSerialize.cpp
     gkSkeleton.cpp
+    gkSyncObj.cpp
     gkThread.cpp
     gkUserDefs.cpp
     gkUtils.cpp
@@ -37,10 +41,12 @@ set(Core_SOURCE
 
 set(Core_HEADER
     # ----- Headers ----- 
+    gkActiveObject.h
     gkCamera.h
     gkCommon.h
     gkConstraint.h
     gkCoreApplication.h
+    gkCriticalSection.h
     gkEngine.h
     gkEntity.h
     gkGameObject.h
@@ -52,8 +58,11 @@ set(Core_HEADER
     gkMathUtils.h
     gkMemoryTest.h
     gkNavMeshData.h
+    gkNonCopyable.h
     gkObject.h
     gkPath.h
+    gkPtrRef.h
+    gkQueue.h
     gkTextFile.h
     gkTextManager.h
     gkRect.h
@@ -63,6 +72,7 @@ set(Core_HEADER
     gkSerialize.h
     gkSkeleton.h
     gkString.h
+    gkSyncObj.h
     gkTransformState.h
     gkUserDefs.h
     gkThread.h

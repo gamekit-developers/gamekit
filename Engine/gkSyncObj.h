@@ -3,7 +3,7 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Nestor Silveira.
+    Copyright (c) Nestor Silveira.
 
     Contributor(s): none yet.
 -------------------------------------------------------------------------------
@@ -24,72 +24,38 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "gkCommon.h"
-#include "gkThread.h"
+#ifndef _gkSyncObj_h_
+#define _gkSyncObj_h_
+
+#include "gkNonCopyable.h"
 
 #ifdef WIN32
-#include <process.h>
-#endif
-
-#ifdef WIN32
-unsigned __stdcall gkThread::task(void* p)
-{
-	gkThread* pThread = static_cast<gkThread*>(p);
-
-	pThread->run();
-
-	_endthreadex(0);
-
-	return 0;
-}
+#include <windows.h>
 #else
-void* gkThread::task(void* p)
-{
-	gkThread* pThread = static_cast<gkThread*>(p);
-
-	pThread->run();
-}
+#include <pthread.h>
+#include <semaphore.h>
 #endif
 
-gkThread::gkThread(gkCall* call)
-: m_call(call)
+class gkSyncObj : gkNonCopyable
 {
-	GK_ASSERT(m_call);
+public:
+
+	gkSyncObj();
+
+	~gkSyncObj();
+
+	bool wait();
+
+	bool signal();
+
+private:
 
 #ifdef WIN32
-	m_hChilThread = (HANDLE)_beginthreadex(
-		0, // no security
-		65535, 
-		task, 
-		this, 
-		0, // running 
-		&m_threadId
-	);
+	HANDLE m_syncObj;
 #else
-	int failed = pthread_create(&m_threadId, NULL, &task, this);
-
-	GK_ASSERT(!failed);
+	sem_t m_syncObj;
 #endif
-}
 
-gkThread::~gkThread()
-{
-#ifdef WIN32
-	CloseHandle(m_hChilThread);
-#else
-	pthread_cancel(m_threadId);
-#endif
-}
+};
 
-void gkThread::join()
-{
-	m_syncObj.wait();
-}
-
-void gkThread::run()
-{
-	m_call->run();
-
-	m_syncObj.signal();
-}
-
+#endif//_gkSyncObj_h_

@@ -3,7 +3,7 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Nestor Silveira.
+    Copyright (c) Nestor Silveira.
 
     Contributor(s): none yet.
 -------------------------------------------------------------------------------
@@ -24,72 +24,101 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+#ifndef _gkPtrRef_h_
+#define _gkPtrRef_h_
+
 #include "gkCommon.h"
-#include "gkThread.h"
+#include "gkCriticalSection.h"
 
-#ifdef WIN32
-#include <process.h>
-#endif
-
-#ifdef WIN32
-unsigned __stdcall gkThread::task(void* p)
+class gkReferences
 {
-	gkThread* pThread = static_cast<gkThread*>(p);
+public:
 
-	pThread->run();
+	gkReferences();
 
-	_endthreadex(0);
+	virtual ~gkReferences();
 
-	return 0;
-}
-#else
-void* gkThread::task(void* p)
+	int addRef();
+
+	int release();
+
+private:
+
+	int m_references;
+
+	gkCriticalSection m_cs;
+};
+
+template< class T >
+class gkPtrRef
 {
-	gkThread* pThread = static_cast<gkThread*>(p);
+public:
 
-	pThread->run();
-}
-#endif
+	explicit gkPtrRef(T* p = 0) 
+	: m_obj(p) 
+	{ 
+	}
 
-gkThread::gkThread(gkCall* call)
-: m_call(call)
-{
-	GK_ASSERT(m_call);
+	~gkPtrRef() 
+	{ 
+		if(m_obj)
+		{
+			m_obj->release(); 
+		}
+	}
 
-#ifdef WIN32
-	m_hChilThread = (HANDLE)_beginthreadex(
-		0, // no security
-		65535, 
-		task, 
-		this, 
-		0, // running 
-		&m_threadId
-	);
-#else
-	int failed = pthread_create(&m_threadId, NULL, &task, this);
+	gkPtrRef(const gkPtrRef& obj)
+	: m_obj(obj.m_obj)
+	{
+		if(m_obj)
+		{
+			m_obj->addRef();
+		}
+	}
 
-	GK_ASSERT(!failed);
-#endif
-}
+	gkPtrRef& operator = (const gkPtrRef& obj)
+	{
+		if(this != &obj) 
+		{
+			if(obj.m_obj)
+			{
+				obj.m_obj->addRef();
+			}
 
-gkThread::~gkThread()
-{
-#ifdef WIN32
-	CloseHandle(m_hChilThread);
-#else
-	pthread_cancel(m_threadId);
-#endif
-}
+			if(m_obj)
+			{
+				m_obj->release();
+			}
 
-void gkThread::join()
-{
-	m_syncObj.wait();
-}
+			m_obj = obj.m_obj;
+		}
 
-void gkThread::run()
-{
-	m_call->run();
+		return *this;
+	}
 
-	m_syncObj.signal();
-}
+	T* get() const
+	{ 
+		return m_obj; 
+	}
 
+
+	T& operator*() const
+	{ 
+		GK_ASSERT(m_obj); 
+		
+		return *m_obj; 
+	}
+	
+	T* operator->() const
+	{ 
+		GK_ASSERT(m_obj); 
+
+		return m_obj; 
+	}
+
+private:
+
+	T* m_obj;
+};
+
+#endif//_gkPtrRef_h_

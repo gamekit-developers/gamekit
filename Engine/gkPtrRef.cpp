@@ -3,7 +3,7 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Nestor Silveira.
+    Copyright (c) Nestor Silveira.
 
     Contributor(s): none yet.
 -------------------------------------------------------------------------------
@@ -24,72 +24,37 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "gkCommon.h"
-#include "gkThread.h"
+#include "gkPtrRef.h"
 
-#ifdef WIN32
-#include <process.h>
-#endif
-
-#ifdef WIN32
-unsigned __stdcall gkThread::task(void* p)
+gkReferences::gkReferences()
+: m_references(1)
 {
-	gkThread* pThread = static_cast<gkThread*>(p);
+}
 
-	pThread->run();
+gkReferences::~gkReferences()
+{
+}
 
-	_endthreadex(0);
+int gkReferences::addRef()
+{
+	gkCriticalSection::Lock guard(m_cs);
+
+	return ++m_references;
+}
+
+int gkReferences::release()
+{
+	{
+		gkCriticalSection::Lock tmp(m_cs);
+
+		if(--m_references != 0)
+		{
+			return m_references;
+		}
+	}
+
+	delete this;
 
 	return 0;
-}
-#else
-void* gkThread::task(void* p)
-{
-	gkThread* pThread = static_cast<gkThread*>(p);
-
-	pThread->run();
-}
-#endif
-
-gkThread::gkThread(gkCall* call)
-: m_call(call)
-{
-	GK_ASSERT(m_call);
-
-#ifdef WIN32
-	m_hChilThread = (HANDLE)_beginthreadex(
-		0, // no security
-		65535, 
-		task, 
-		this, 
-		0, // running 
-		&m_threadId
-	);
-#else
-	int failed = pthread_create(&m_threadId, NULL, &task, this);
-
-	GK_ASSERT(!failed);
-#endif
-}
-
-gkThread::~gkThread()
-{
-#ifdef WIN32
-	CloseHandle(m_hChilThread);
-#else
-	pthread_cancel(m_threadId);
-#endif
-}
-
-void gkThread::join()
-{
-	m_syncObj.wait();
-}
-
-void gkThread::run()
-{
-	m_call->run();
-
-	m_syncObj.signal();
 }
 

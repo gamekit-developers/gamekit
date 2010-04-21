@@ -3,7 +3,7 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Nestor Silveira.
+    Copyright (c) Nestor Silveira.
 
     Contributor(s): none yet.
 -------------------------------------------------------------------------------
@@ -24,72 +24,64 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "gkCommon.h"
-#include "gkThread.h"
+#include "gkActiveObject.h"
+#include "gkLogger.h"
 
-#ifdef WIN32
-#include <process.h>
-#endif
-
-#ifdef WIN32
-unsigned __stdcall gkThread::task(void* p)
+gkActiveObject::gkActiveObject(const gkString& name) 
+: m_name(name),
+m_thread(0),
+m_queue(name)
 {
-	gkThread* pThread = static_cast<gkThread*>(p);
-
-	pThread->run();
-
-	_endthreadex(0);
-
-	return 0;
-}
-#else
-void* gkThread::task(void* p)
-{
-	gkThread* pThread = static_cast<gkThread*>(p);
-
-	pThread->run();
-}
-#endif
-
-gkThread::gkThread(gkCall* call)
-: m_call(call)
-{
-	GK_ASSERT(m_call);
-
-#ifdef WIN32
-	m_hChilThread = (HANDLE)_beginthreadex(
-		0, // no security
-		65535, 
-		task, 
-		this, 
-		0, // running 
-		&m_threadId
-	);
-#else
-	int failed = pthread_create(&m_threadId, NULL, &task, this);
-
-	GK_ASSERT(!failed);
-#endif
+	m_thread = new gkThread(this);
 }
 
-gkThread::~gkThread()
+gkActiveObject::~gkActiveObject()
 {
-#ifdef WIN32
-	CloseHandle(m_hChilThread);
-#else
-	pthread_cancel(m_threadId);
-#endif
+	delete m_thread;
 }
 
-void gkThread::join()
+void gkActiveObject::run()
 {
-	m_syncObj.wait();
+	gkPtrRef<gkCall> pCall;
+
+	while(m_queue.pop(pCall))
+	{				
+		try	
+		{
+			pCall->run();
+
+			pCall = gkPtrRef<gkCall>(0);
+		}
+		catch(...) // catch all the exceptions.
+		{
+			gkLogMessage(m_name.c_str() << "call error." );
+		}
+	}
 }
 
-void gkThread::run()
+void gkActiveObject::enqueue(gkPtrRef<gkCall> pCall, bool front)
 {
-	m_call->run();
-
-	m_syncObj.signal();
+	m_queue.push(pCall, front);
 }
 
+void gkActiveObject::reset()
+{
+	m_queue.reset();
+}
+
+void gkActiveObject::resetButKeepLast()
+{
+	m_queue.resetButKeepLast();
+}
+
+void gkActiveObject::join()
+{
+	m_queue.petitionToFinish();
+
+	m_thread->join();
+}
+
+bool gkActiveObject::isEmpty() const
+{
+	return m_queue.isEmpty();
+}

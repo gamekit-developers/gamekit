@@ -29,11 +29,13 @@
 
 #include "gkLogicNode.h"
 #include "gkThread.h"
+#include "gkCriticalSection.h"
+#include "gkActiveObject.h"
 
 class dtNavMesh;
 struct ConfigData;
 
-class gkNavMeshNode : public gkLogicNode, public gkAbstractTaskHandler
+class gkNavMeshNode : public gkLogicNode, public gkActiveObject
 {
 public:
 
@@ -80,21 +82,16 @@ public:
 	~gkNavMeshNode();
 
 	bool evaluate(gkScalar tick);
-	void update(gkScalar tick);
+
+	void setNavigationMesh(dtNavMesh* navMesh);
+	dtNavMesh* getNavigationMesh() const;
+	void clearNavigationMesh();
 
 private:
 
-	void run();
-
-private:
-
-	gkThreadInterface m_task;
-
-	gkCriticalSection m_cs;
+	mutable gkCriticalSection m_cs;
 
 	dtNavMesh* m_navMesh;
-
-	ConfigData* m_cfg;
 };
 
 #endif//_gkNavMeshNode_h_

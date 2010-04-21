@@ -48,25 +48,38 @@
 #include "DetourNavMeshBuilder.h"
 #include "DetourNavMesh.h"
 
-#include "btBulletDynamicsCommon.h"
-#include "BulletCollision/CollisionShapes/btShapeHull.h"
-
-#include "LinearMath/btTransform.h"
-#include "BulletCollision/CollisionShapes/btTriangleCallback.h"
-
-struct ConfigData : public rcConfig
+class CreateNavMesh : public gkCall
 {
-	gkNavMeshData* meshData;
+public:
 
-	ConfigData()
+	CreateNavMesh(gkNavMeshNode* node) : meshData(0), m_node(node)
 	{
-		memset(this, 0, sizeof(*this));
+		memset(&cfg, 0, sizeof(cfg));
+
+		gkScene* pScene = gkEngine::getSingleton().getActiveScene();
+
+		GK_ASSERT(pScene);
+
+		meshData = pScene->getMeshData()->cloneData();
 	}
 
-	~ConfigData()
+	~CreateNavMesh()
 	{
 		delete meshData;
 	}
+
+	void run();
+
+public:
+
+	rcConfig cfg;
+
+private:
+
+	gkNavMeshData* meshData;
+
+	gkNavMeshNode* m_node;
+
 };
 
 // These are just sample areas to use consistent values across the samples.
@@ -92,9 +105,8 @@ enum SamplePolyFlags
 
 gkNavMeshNode::gkNavMeshNode(gkLogicTree *parent, size_t id) 
 : gkLogicNode(parent, id),
-m_task("navMeshTask"),
-m_navMesh(0),
-m_cfg(new ConfigData)
+gkActiveObject("navMeshTask"),
+m_navMesh(0)
 {
 	ADD_ISOCK(UPDATE, false);
 
@@ -117,96 +129,93 @@ m_cfg(new ConfigData)
 
 gkNavMeshNode::~gkNavMeshNode()
 {
-	m_task.wait();
+	join();
 
 	delete m_navMesh;
-
-	delete m_cfg;
 }
 
 bool gkNavMeshNode::evaluate(gkScalar tick)
 {
-	dtNavMesh* navMesh = 0;
-
-	{
-		gkCriticalSection::Lock guard(m_cs);
-
-		navMesh = m_navMesh;
-	}
-	
 	if(GET_SOCKET_VALUE(UPDATE))
 	{
-		if(!m_cfg->meshData)
-		{
-			update(tick);
-		}
-	}
-	else if(m_navMesh)
-	{
-		if(!m_cfg->meshData)
-		{
-			SET_SOCKET_VALUE(OUTPUT, m_navMesh);
-		}
-		else
-		{
-			delete m_cfg->meshData;
+		SET_SOCKET_VALUE(OUTPUT, 0);
 
-			m_cfg->meshData = 0;
-		}
+		CreateNavMesh* pCfg = new CreateNavMesh(this);
+
+		rcConfig& cfg = pCfg->cfg;
+
+		cfg.cs = GET_SOCKET_VALUE(CELL_SIZE);
+		cfg.ch = GET_SOCKET_VALUE(CELL_HEIGHT);
+		cfg.walkableSlopeAngle = GET_SOCKET_VALUE(AGENT_MAX_SLOPE);
+		cfg.walkableHeight = (int)ceilf(GET_SOCKET_VALUE(AGENT_HEIGHT) / cfg.ch);
+		cfg.walkableClimb = (int)ceilf(GET_SOCKET_VALUE(AGENT_MAX_CLIMB) / cfg.ch);
+		cfg.walkableRadius = (int)ceilf(GET_SOCKET_VALUE(AGENT_RADIUS) / cfg.cs);
+		cfg.maxEdgeLen = (int)(GET_SOCKET_VALUE(EDGE_MAX_LEN) / cfg.cs);
+		cfg.maxSimplificationError = GET_SOCKET_VALUE(EDGE_MAX_ERROR);
+		cfg.minRegionSize = (int)rcSqr(GET_SOCKET_VALUE(REGION_MIN_SIZE));
+		cfg.mergeRegionSize = (int)rcSqr(GET_SOCKET_VALUE(REGION_MERGE_SIZE));
+		cfg.maxVertsPerPoly = (int)GET_SOCKET_VALUE(VERTS_PER_POLY);
+		cfg.detailSampleDist = GET_SOCKET_VALUE(DETAIL_SAMPLE_DIST) < 0.9f ? 0 : cfg.cs * GET_SOCKET_VALUE(DETAIL_SAMPLE_DIST);
+		cfg.detailSampleMaxError = cfg.ch * GET_SOCKET_VALUE(DETAIL_SAMPLE_ERROR);
+
+		gkPtrRef<gkCall> pCall(pCfg);
+
+		enqueue(pCall);
+	}
+	else if(isEmpty())
+	{
+		SET_SOCKET_VALUE(OUTPUT, getNavigationMesh());
+	}
+	else
+	{
+		resetButKeepLast();
 	}
 
 	return false;
 }
 
-void gkNavMeshNode::update(gkScalar tick)
+void gkNavMeshNode::setNavigationMesh(dtNavMesh* navMesh)
 {
-	SET_SOCKET_VALUE(OUTPUT, 0);
+	gkCriticalSection::Lock guard(m_cs);
 
-	delete m_navMesh;
-	m_navMesh = 0;
-
-	ConfigData& cfg = *m_cfg;
-
-	cfg.cs = GET_SOCKET_VALUE(CELL_SIZE);
-	cfg.ch = GET_SOCKET_VALUE(CELL_HEIGHT);
-	cfg.walkableSlopeAngle = GET_SOCKET_VALUE(AGENT_MAX_SLOPE);
-	cfg.walkableHeight = (int)ceilf(GET_SOCKET_VALUE(AGENT_HEIGHT) / cfg.ch);
-	cfg.walkableClimb = (int)ceilf(GET_SOCKET_VALUE(AGENT_MAX_CLIMB) / cfg.ch);
-	cfg.walkableRadius = (int)ceilf(GET_SOCKET_VALUE(AGENT_RADIUS) / cfg.cs);
-	cfg.maxEdgeLen = (int)(GET_SOCKET_VALUE(EDGE_MAX_LEN) / cfg.cs);
-	cfg.maxSimplificationError = GET_SOCKET_VALUE(EDGE_MAX_ERROR);
-	cfg.minRegionSize = (int)rcSqr(GET_SOCKET_VALUE(REGION_MIN_SIZE));
-	cfg.mergeRegionSize = (int)rcSqr(GET_SOCKET_VALUE(REGION_MERGE_SIZE));
-	cfg.maxVertsPerPoly = (int)GET_SOCKET_VALUE(VERTS_PER_POLY);
-	cfg.detailSampleDist = GET_SOCKET_VALUE(DETAIL_SAMPLE_DIST) < 0.9f ? 0 : cfg.cs * GET_SOCKET_VALUE(DETAIL_SAMPLE_DIST);
-	cfg.detailSampleMaxError = cfg.ch * GET_SOCKET_VALUE(DETAIL_SAMPLE_ERROR);
-
-	gkScene* pScene = gkEngine::getSingleton().getActiveScene();
-
-	GK_ASSERT(pScene);
-
-	cfg.meshData = pScene->getMeshData()->cloneData();
-
-	if(cfg.meshData->getVertCount())
-		m_task.start(this);
-	else
-	{
-		delete cfg.meshData;
-		cfg.meshData = 0;
-	}
+	m_navMesh = navMesh;
 }
 
-void gkNavMeshNode::run()
+void gkNavMeshNode::clearNavigationMesh()
 {
-	ConfigData& cfg = *m_cfg;
+	gkCriticalSection::Lock guard(m_cs);
+
+	delete m_navMesh;
+
+	m_navMesh = 0;
+}
+
+dtNavMesh* gkNavMeshNode::getNavigationMesh() const
+{
+	dtNavMesh* p = 0;
+	{
+		gkCriticalSection::Lock guard(m_cs);
+
+		p = m_navMesh;
+	}
+
+	return p;
+}
+
+void CreateNavMesh::run()
+{
+	m_node->clearNavigationMesh();
+
+	if(!meshData->getVertCount())
+		return;
 
 	gkScalar bmin[3], bmax[3];
 
-	const gkScalar* verts = cfg.meshData->getVerts();
-	int nverts = cfg.meshData->getVertCount();
-	const int* tris = cfg.meshData->getTris();
-	const gkScalar* trinorms = cfg.meshData->getNormals();
-	int ntris = cfg.meshData->getTriCount();
+	const gkScalar* verts = meshData->getVerts();
+	int nverts = meshData->getVertCount();
+	const int* tris = meshData->getTris();
+	const gkScalar* trinorms = meshData->getNormals();
+	int ntris = meshData->getTriCount();
 
 	rcCalcBounds(verts, nverts, bmin, bmax);
 
@@ -412,9 +421,10 @@ void gkNavMeshNode::run()
 		params.offMeshConAreas = m_geom->getOffMeshConnectionAreas();
 		params.offMeshConFlags = m_geom->getOffMeshConnectionFlags();
 		params.offMeshConCount = m_geom->getOffMeshConnectionCount();
-*/		params.walkableHeight = GET_SOCKET_VALUE(AGENT_HEIGHT);
-		params.walkableRadius = GET_SOCKET_VALUE(AGENT_RADIUS);
-		params.walkableClimb = GET_SOCKET_VALUE(AGENT_MAX_CLIMB);
+		*/		
+		params.walkableHeight = cfg.walkableHeight*cfg.ch;
+		params.walkableRadius = cfg.walkableRadius*cfg.cs;;
+		params.walkableClimb = cfg.walkableClimb*cfg.ch;
 		vcopy(params.bmin, pmesh.bmin);
 		vcopy(params.bmax, pmesh.bmax);
 		params.cs = cfg.cs;
@@ -475,13 +485,9 @@ void gkNavMeshNode::run()
 	}
 */
 
+	m_node->setNavigationMesh(navMesh);
+
 	gkPrintf("Navigation mesh created: %.1fms", rcGetDeltaTimeUsec(totStartTime, totEndTime)/1000.0f);
-
-	gkCriticalSection::Lock guard(m_cs);
-
-	GK_ASSERT(!m_navMesh);
-
-	m_navMesh = navMesh;
 }
 
 

@@ -3,7 +3,7 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Nestor Silveira.
+    Copyright (c) Nestor Silveira.
 
     Contributor(s): none yet.
 -------------------------------------------------------------------------------
@@ -24,72 +24,49 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "gkCommon.h"
-#include "gkThread.h"
+#ifndef _gkCriticalSection_h_
+#define _gkCriticalSection_h_
+
+#include "gkNonCopyable.h"
 
 #ifdef WIN32
-#include <process.h>
-#endif
-
-#ifdef WIN32
-unsigned __stdcall gkThread::task(void* p)
-{
-	gkThread* pThread = static_cast<gkThread*>(p);
-
-	pThread->run();
-
-	_endthreadex(0);
-
-	return 0;
-}
+#include <windows.h>
 #else
-void* gkThread::task(void* p)
-{
-	gkThread* pThread = static_cast<gkThread*>(p);
-
-	pThread->run();
-}
+#include <pthread.h>
+#include <semaphore.h>
 #endif
 
-gkThread::gkThread(gkCall* call)
-: m_call(call)
+class gkCriticalSection : gkNonCopyable
 {
-	GK_ASSERT(m_call);
+public:
 
-#ifdef WIN32
-	m_hChilThread = (HANDLE)_beginthreadex(
-		0, // no security
-		65535, 
-		task, 
-		this, 
-		0, // running 
-		&m_threadId
-	);
-#else
-	int failed = pthread_create(&m_threadId, NULL, &task, this);
+	gkCriticalSection();
 
-	GK_ASSERT(!failed);
-#endif
-}
+	~gkCriticalSection();
 
-gkThread::~gkThread()
-{
-#ifdef WIN32
-	CloseHandle(m_hChilThread);
-#else
-	pthread_cancel(m_threadId);
-#endif
-}
+	class Lock
+	{
+	public:
+		Lock(gkCriticalSection& obj);
+		~Lock();
 
-void gkThread::join()
-{
-	m_syncObj.wait();
-}
+	private:
+		gkCriticalSection& m_obj;
+	};
 
-void gkThread::run()
-{
-	m_call->run();
+	friend class Lock;
 
-	m_syncObj.signal();
-}
+	void BeginLock();
 
+	void EndLock();
+
+private:
+
+	#ifdef WIN32
+	CRITICAL_SECTION m_cs;
+	#else
+	pthread_mutex_t m_cs;
+	#endif
+};
+
+#endif//_gkCriticalSection_h_

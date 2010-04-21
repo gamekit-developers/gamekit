@@ -3,9 +3,9 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Charlie C.
+    Copyright (c) 2006-2010 Nestor Silveira.
 
-    Contributor(s): Nestor Silveira.
+    Contributor(s): none yet.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -27,98 +27,58 @@
 #ifndef _gkThread_h_
 #define _gkThread_h_
 
-#include "gkCommon.h"
-
 #ifdef WIN32
 #include <windows.h>
+#else
+#include <pthread.h>
+#include <semaphore.h>
 #endif
 
+#include "gkSyncObj.h"
+#include "gkPtrRef.h"
 
-class gkAbstractTaskHandler
+class gkCall : public gkReferences
 {
 public:
+	gkCall(){};
 
-    gkAbstractTaskHandler() {}
+	virtual ~gkCall(){};
 
-	virtual ~gkAbstractTaskHandler() {}
-
-    virtual void run() = 0;
+	virtual void run() = 0;
 };
 
-class btThreadSupportInterface;
-
-class gkThreadInterface
-{
-protected:
-
-    btThreadSupportInterface *m_interface;
-
-    static void entry(void *ptr, void *lsMem)
-    {
-        static_cast<gkAbstractTaskHandler*>(ptr)->run();
-    }
-
-    static void* memorySetup()
-    {
-        return 0;
-    }
-
-public:
-
-    gkThreadInterface(const char *uniqueID);
-    
-	~gkThreadInterface();
-
-    void start(gkAbstractTaskHandler *handler);
-
-    void wait(void);
-};
-
-class gkNonCopyable
-{
-protected:
-    gkNonCopyable(){};
-
-    ~gkNonCopyable(){};
-
-private:  
-	
-    gkNonCopyable( const gkNonCopyable& );
-    
-	const gkNonCopyable& operator=( const gkNonCopyable& );
-}; 
-
-class gkCriticalSection : gkNonCopyable
+class gkThread
 {
 public:
 
-	gkCriticalSection();
+	gkThread(gkCall* call);
 
-	~gkCriticalSection();
+	~gkThread();
 
-	class Lock
-	{
-	public:
-		Lock(gkCriticalSection& obj);
-		~Lock();
-
-	private:
-		gkCriticalSection& m_obj;
-	};
-
-	friend class Lock;
-
-	void BeginLock();
-
-	void EndLock();
+	void join();
 
 private:
 
-	#ifdef WIN32
-	CRITICAL_SECTION m_cs;
-	#else
-	pthread_mutex_t m_cs;
-	#endif
+#ifdef WIN32
+	static unsigned __stdcall task(void* p);
+#else
+	static void *task(void* p);
+#endif
+
+	void run();
+
+private:
+
+	gkCall* m_call;
+	gkSyncObj m_syncObj;
+
+#ifdef WIN32
+	HANDLE m_hChilThread;
+	unsigned m_threadId;
+#else
+	pthread_t m_threadId;
+#endif
+
 };
 
 #endif//_gkThread_h_

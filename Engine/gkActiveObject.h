@@ -3,7 +3,7 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Nestor Silveira.
+    Copyright (c) Nestor Silveira.
 
     Contributor(s): none yet.
 -------------------------------------------------------------------------------
@@ -24,72 +24,44 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "gkCommon.h"
+#ifndef _gkActiveObject_h_
+#define _gkActiveObject_h_
+
+#include "gkNonCopyable.h"
 #include "gkThread.h"
+#include "gkQueue.h"
+#include "gkSyncObj.h"
+#include "gkPtrRef.h"
 
-#ifdef WIN32
-#include <process.h>
-#endif
-
-#ifdef WIN32
-unsigned __stdcall gkThread::task(void* p)
+class gkActiveObject : public gkCall, gkNonCopyable 
 {
-	gkThread* pThread = static_cast<gkThread*>(p);
+public:
 
-	pThread->run();
+	gkActiveObject(const gkString& name);
 
-	_endthreadex(0);
+	virtual ~gkActiveObject();
 
-	return 0;
-}
-#else
-void* gkThread::task(void* p)
-{
-	gkThread* pThread = static_cast<gkThread*>(p);
+	void enqueue(gkPtrRef<gkCall> call, bool front = false);
+	
+	void join();
 
-	pThread->run();
-}
-#endif
+	void reset();
 
-gkThread::gkThread(gkCall* call)
-: m_call(call)
-{
-	GK_ASSERT(m_call);
+	void resetButKeepLast();
 
-#ifdef WIN32
-	m_hChilThread = (HANDLE)_beginthreadex(
-		0, // no security
-		65535, 
-		task, 
-		this, 
-		0, // running 
-		&m_threadId
-	);
-#else
-	int failed = pthread_create(&m_threadId, NULL, &task, this);
+	bool isEmpty() const;
 
-	GK_ASSERT(!failed);
-#endif
-}
+	void run();
 
-gkThread::~gkThread()
-{
-#ifdef WIN32
-	CloseHandle(m_hChilThread);
-#else
-	pthread_cancel(m_threadId);
-#endif
-}
+private:
 
-void gkThread::join()
-{
-	m_syncObj.wait();
-}
+	gkString m_name;
 
-void gkThread::run()
-{
-	m_call->run();
+	gkThread* m_thread;
 
-	m_syncObj.signal();
-}
+	gkQueue<gkPtrRef<gkCall> > m_queue;
 
+	gkSyncObj m_syncObj;
+};
+
+#endif//_gkActiveObject_h_
