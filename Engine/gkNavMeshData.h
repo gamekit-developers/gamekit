@@ -27,42 +27,114 @@
 #ifndef _gkNavMeshData_h_
 #define _gkNavMeshData_h_
 
-#include "gkCommon.h"
-#include "gkSerialize.h"
 #include "LinearMath/btTransform.h"
 #include "BulletCollision/CollisionShapes/btTriangleCallback.h"
+
+#include "gkCommon.h"
+#include "gkSerialize.h"
+#include "gkCriticalSection.h"
+#include "gkActiveObject.h"
+#include "gkPtrRef.h"
 
 #include <iostream>
 #include <fstream>
 
 class gkGameObject;
 class gkPhysicsDebug;
+class gkScene;
+class dtNavMesh;
+struct rcConfig;
+
+struct gkNavMesh : public gkReferences
+{
+	dtNavMesh* data;
+
+	gkNavMesh(dtNavMesh* p) : data(p) {}
+	~gkNavMesh();
+};
+
+typedef gkPtrRef<gkNavMesh> PNAVMESH;
+
+class gkNavMeshData;
+class gkNavCreator : gkActiveObject 
+{
+public:
+
+	gkNavCreator(gkNavMeshData* data);
+	~gkNavCreator();
+
+	void startJob();
+
+	void set(PNAVMESH navMesh);
+	PNAVMESH get() const;
+
+private:
+
+	class Call : public gkCall
+	{
+	public:
+
+		Call(gkNavCreator& creator) : m_creator(creator) {}
+		~Call(){}
+		void run();
+
+	private:
+		gkNavCreator& m_creator;
+	};
+
+	mutable gkCriticalSection m_cs;
+
+	gkNavMeshData* m_data;
+
+	PNAVMESH m_navMesh;
+
+	rcConfig* m_cfg;
+
+	friend class Call;
+};
 
 class gkNavMeshData : public btTriangleCallback
 {
 public:
-	gkNavMeshData();
+	gkNavMeshData(gkScene* scene);
 
 	~gkNavMeshData();
 
-	bool refresh(gkGameObject* pObj);
+	void unload(gkGameObject* pObj);
+	void refresh(gkGameObject* pObj);
+	void reset();
 
-	gkNavMeshData* cloneData()
+	PNAVMESH getNavigationMesh() const { return m_navCreator->get(); }
+
+	struct Data
 	{
-		gkNavMeshData* p = new gkNavMeshData;
+		typedef std::vector<gkVector3> VERTS;
+		VERTS verts;
 
-		p->m_verts = m_verts;
-		p->m_tris = m_tris;
-		p->m_normals = m_normals;
+		typedef std::vector<int> TRIANGLES;
+		TRIANGLES tris;
+
+		typedef std::vector<gkVector3> NORMALS;
+
+		NORMALS normals;
+
+		inline const float* getVerts() const { return &verts.at(0).x; }
+		inline const float* getNormals() const { return &normals.at(0).x; }
+		inline const int* getTris() const { return &tris.at(0); }
+		inline int getVertCount() const { return verts.size(); }
+		inline int getTriCount() const { return tris.size()/3; }
+	};
+
+	Data* cloneData()
+	{
+		gkCriticalSection::Lock guard(m_cs);
+
+		Data* p = new Data;
+
+		*p = m_data;
 
 		return p;
 	}
-
-	inline const float* getVerts() const { return &m_verts.at(0).x; }
-	inline const float* getNormals() const { return &m_normals.at(0).x; }
-	inline const int* getTris() const { return &m_tris.at(0); }
-	inline int getVertCount() const { return m_verts.size(); }
-	inline int getTriCount() const { return m_tris.size()/3; }
 
 private:
 
@@ -72,23 +144,25 @@ private:
 
 	void AddCollisionObj();
 
+	bool isValid(gkGameObject* pObj) const;
+
 private:
 	
+	gkNavCreator* m_navCreator;
+
+	gkCriticalSection m_cs;
+
 	gkGameObject* m_object;
 
-	typedef std::vector<gkVector3> VERTS;
-	VERTS m_verts;
-
-	typedef std::vector<int> TRIANGLES;
-	TRIANGLES m_tris;
-
-	typedef std::vector<gkVector3> NORMALS;
-
-	NORMALS m_normals;
+	Data m_data;
 
 	//gkPhysicsDebug* m_debug;
 
 	btTransform m;
+
+	gkScene* m_scene;
+
+	bool m_createNavigation;
 
 	//std::ofstream os;
 };

@@ -174,14 +174,31 @@ public:
 
 	virtual Ogre::AxisAlignedBox getAabb() const;
 
-	GK_INLINE int getNavIndex() const { return m_navIndex; }
+	struct NavMeshData
+	{
+		int triangleBaseIndex;
+		int nIndex;
 
-	GK_INLINE void setNavIndex(int index) { m_navIndex = index; }
+		NavMeshData() : triangleBaseIndex(-1), nIndex(0) {}
+		NavMeshData(int i, int n) : triangleBaseIndex(i), nIndex(n) {}
+		bool isEmpty() const { return !nIndex; }
+	};
+
+	GK_INLINE const NavMeshData& getNavData() const { return m_navMeshData; }
+
+	GK_INLINE void setNavData(const NavMeshData& data) { m_navMeshData = data; }
+
+	void GK_INLINE recalcNavData(int i, int n)
+	{
+		if(m_navMeshData.triangleBaseIndex > i)
+		{
+			m_navMeshData.triangleBaseIndex -= n;
+		}
+	}
 
 	gkGameObject* getChildEntity();
 
 protected:
-
 
     // Base class type 
     gkGameObjectTypes           m_type;
@@ -209,7 +226,7 @@ protected:
 
 
     // Current state of object transforms
-    gkTransformState            m_prev, m_cur,m_last;
+    gkTransformState            m_prev, m_cur;
 
     // Physics body instance
     gkRigidBody*                m_rigidBody;
@@ -227,10 +244,11 @@ protected:
     virtual void loadImpl(void);
     virtual void unloadImpl(void);
     virtual void postLoadImpl(void);
+	virtual void postUnloadImpl(void);
 
 private:
 
-	int m_navIndex;
+	NavMeshData m_navMeshData;
 };
 
 #endif//_gkGameObject_h_

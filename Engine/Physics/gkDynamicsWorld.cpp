@@ -35,7 +35,6 @@
 #include "btBulletDynamicsCommon.h"
 #include "BulletCollision/CollisionDispatch/btGhostObject.h"
 
-
 static bool CustomMaterialCombinerCallback(btManifoldPoint& cp,	const btCollisionObject* pObj0, int partId0, int index0, const btCollisionObject* pObj1, int partId1, int index1)
 {
 	return true;

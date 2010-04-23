@@ -24,11 +24,11 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "gkFindPathNode.h"
 #include "gkLogger.h"
 #include "gkEngine.h"
 #include "gkPhysicsDebug.h"
 #include "gkScene.h"
+#include "gkFindPathNode.h"
 #include "Recast.h"
 #include "RecastLog.h"
 #include "RecastTimer.h"
@@ -37,10 +37,10 @@
 
 gkFindPathNode::gkFindPathNode(gkLogicTree *parent, size_t id) 
 : gkLogicNode(parent, id),
-m_debug(0)
+m_debug(0),
+m_navMesh(0)
 {
 	ADD_ISOCK(UPDATE, false);
-	ADD_ISOCK(NAV_MESH, 0);
 	ADD_ISOCK(MAX_PATH_POLYS, 256);
 	ADD_ISOCK(START_POS, gkVector3::ZERO);
 	ADD_ISOCK(END_POS, gkVector3::ZERO);
@@ -61,7 +61,11 @@ gkFindPathNode::~gkFindPathNode()
 
 bool gkFindPathNode::evaluate(gkScalar tick)
 {
-	return (GET_SOCKET_VALUE(UPDATE) || m_path.retry) && GET_SOCKET_VALUE(NAV_MESH);
+	gkScene* pScene = gkEngine::getSingleton().getActiveScene();
+
+	m_navMesh = pScene->getNavigationMesh();
+
+	return (GET_SOCKET_VALUE(UPDATE) || m_path.retry) && m_navMesh.get() && m_navMesh->data;
 }
 
 void gkFindPathNode::update(gkScalar tick)
@@ -99,13 +103,11 @@ void gkFindPathNode::findPath()
 
 	gkVector3 polyPickExt = GET_SOCKET_VALUE(POLY_PICK_EXT);
 
-	dtNavMesh* navMesh = GET_SOCKET_VALUE(NAV_MESH);
-
 	dtQueryFilter filter;
 
-	dtPolyRef startRef = navMesh->findNearestPoly(startPos.ptr(), polyPickExt.ptr(), &filter, 0);
+	dtPolyRef startRef = m_navMesh->data->findNearestPoly(startPos.ptr(), polyPickExt.ptr(), &filter, 0);
 
-	dtPolyRef endRef = navMesh->findNearestPoly(endPos.ptr(), polyPickExt.ptr(), &filter, 0);
+	dtPolyRef endRef = m_navMesh->data->findNearestPoly(endPos.ptr(), polyPickExt.ptr(), &filter, 0);
 
 	if(startRef && endRef)
 	{
@@ -114,14 +116,14 @@ void gkFindPathNode::findPath()
 		utArray<dtPolyRef> polys;
 		polys.resize(MAX_POLYS);
 
-		int npolys = navMesh->findPath(startRef, endRef, startPos.ptr(), endPos.ptr(), &filter, polys.ptr(), MAX_POLYS);
+		int npolys = m_navMesh->data->findPath(startRef, endRef, startPos.ptr(), endPos.ptr(), &filter, polys.ptr(), MAX_POLYS);
 
 		if(npolys)
 		{
 			utArray<gkScalar> straightPath;
 			straightPath.resize(MAX_POLYS*3);
 
-			int nstraightPath = navMesh->findStraightPath(startPos.ptr(), endPos.ptr(), polys.ptr(), npolys, straightPath.ptr(), 0, 0, MAX_POLYS);
+			int nstraightPath = m_navMesh->data->findStraightPath(startPos.ptr(), endPos.ptr(), polys.ptr(), npolys, straightPath.ptr(), 0, 0, MAX_POLYS);
 
 			rcTimeVal totEndTime = rcGetPerformanceTimer();
 

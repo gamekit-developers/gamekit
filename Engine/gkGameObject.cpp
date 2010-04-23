@@ -47,7 +47,6 @@
 #include "gkGameObjectGroup.h"
 #include "gkRigidBody.h"
 #include "gkCharacter.h"
-#include "gkNavMeshData.h"
 
 using namespace Ogre;
 
@@ -55,7 +54,7 @@ gkGameObject::gkGameObject(gkScene *scene, const gkString &name, gkGameObjectTyp
     :       gkObject(name, loader), m_type(type), m_baseProps(), m_parent(0),
             m_scene(scene), m_startPose(StringUtil::BLANK), m_node(0),
             m_logic(0), m_activeLayer(true), m_groupRef(0), m_instance(0), m_outOfDate(false),
-            m_rigidBody(0), m_character(0), m_lockTransform(false), m_navIndex(-1)
+            m_rigidBody(0), m_character(0), m_lockTransform(false)
 {
     GK_ASSERT(m_scene);
 }
@@ -168,7 +167,6 @@ void gkGameObject::loadImpl(void)
     m_cur.rot   = m_baseProps.orientation;
     m_cur.scl   = m_baseProps.scale;
     m_prev      = m_cur;
-	m_last		= m_cur;
 
     m_node->setInitialState();
 
@@ -186,6 +184,12 @@ void gkGameObject::postLoadImpl(void)
 {
     // tell scene
     m_scene->notifyObjectLoaded(this);
+}
+
+void gkGameObject::postUnloadImpl(void)
+{
+    // tell scene
+    m_scene->notifyObjectUnloaded(this);
 }
 
 
@@ -235,8 +239,6 @@ void gkGameObject::unloadImpl(void)
 
         m_node = 0;
     }
-
-    m_scene->notifyObjectUnloaded(this);
 }
 
 Ogre::MovableObject *gkGameObject::getMovable(void)
@@ -313,14 +315,7 @@ void gkGameObject::notifyUpdate(void)
         m_cur.rot = m_node->getOrientation();
         m_cur.scl = m_node->getScale();
 
-		if(m_baseProps.physicsState == GK_RIGID_BODY && !m_last.loc.positionEquals(m_cur.loc, 0.15f))
-		{
-			m_scene->getMeshData()->refresh(this);
-
-			m_last = m_cur;
-
-			m_scene->notifyObjectUpdate(this);
-		}
+		m_scene->notifyObjectUpdate(this);
 
         if (!m_lockTransform)
         {

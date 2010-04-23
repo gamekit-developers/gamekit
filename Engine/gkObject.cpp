@@ -57,8 +57,8 @@ void gkObject::load(void)
             m_manual->load(this);
 
         loadImpl();
-        postLoadImpl();
         m_loaded = true;
+        postLoadImpl();
     }
     catch (Ogre::Exception &e)
     {
@@ -78,8 +78,8 @@ void gkObject::unload(void)
     {
         preUnloadImpl();
         unloadImpl();
-        postUnloadImpl();
         m_loaded = false;
+        postUnloadImpl();
     }
 
     catch (Ogre::Exception &e)

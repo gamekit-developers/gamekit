@@ -36,6 +36,11 @@
 #include "OgreTechnique.h"
 #include "OgrePass.h"
 
+#include "btBulletDynamicsCommon.h"
+#include "bBlenderFile.h"
+#include "bMain.h"
+#include "blender.h"
+
 #include "gkSceneLoader.h"
 #include "gkScene.h"
 #include "gkBlendFile.h"
@@ -58,13 +63,6 @@
 
 #include "gkDynamicsWorld.h"
 #include "gkRigidBody.h"
-#include "btBulletDynamicsCommon.h"
-
-#include "bBlenderFile.h"
-#include "bMain.h"
-
-#include "blender.h"
-
 
 gkSceneObjectLoader::gkSceneObjectLoader(gkBlendFile *fp, Blender::Scene *scene)
     :       m_file(fp), m_scene(scene), m_grad(0)

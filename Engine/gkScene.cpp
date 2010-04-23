@@ -45,26 +45,26 @@
 #include "gkDynamicsWorld.h"
 #include "gkRigidBody.h"
 #include "gkUserDefs.h"
-#include "gkNavMeshData.h"
 
 using namespace Ogre;
 
 
 gkScene::gkScene(const gkString& name, gkObject::Loader *loader)
 :       gkObject(name, loader), m_manager(0), m_startCam(0),
-        m_viewport(0), m_baseProps(), m_physicsWorld(0), m_hasChanged(false), m_meshData(new gkNavMeshData)
+        m_viewport(0), m_baseProps(), m_physicsWorld(0), m_meshData(0)
 {
+	m_meshData = new gkNavMeshData(this);
 }
 
 gkScene::~gkScene()
 {
-	delete m_meshData;
-
     gkGameObjectHashMapIterator it(m_objects);
     while (it.hasMoreElements())
         delete it.getNext().second;
-}
 
+	delete m_meshData;
+	m_meshData = 0;
+}
 
 
 bool gkScene::hasObject(const gkHashedString& ob)
@@ -292,11 +292,8 @@ void gkScene::loadImpl(void)
             if (!m_startCam && obptr->getType() == GK_CAMERA)
                 m_startCam = (gkCamera*)obptr;
 
-
             // call builder
             obptr->load();
-
-			m_loadedObjects.push_back(obptr);
 
 			if(obptr->getProperties().physicsState == GK_STATIC)
 			{
@@ -354,7 +351,7 @@ void gkScene::unloadImpl()
     if (m_objects.empty())
         return;
 
-	m_loadedObjects.clear();
+	//m_meshData->reset();
 
     gkGameObjectHashMapIterator it(m_objects);
     while (it.hasMoreElements()) {
@@ -446,28 +443,24 @@ void gkScene::setShadows()
 
 void gkScene::notifyObjectLoaded(gkGameObject *gobject)
 {
-	if(!m_loadedObjects.find(gobject))
-	{
-		m_loadedObjects.push_back(gobject);
-	}
+	std::pair<gkGameObjectSet::iterator, bool> result = m_loadedObjects.insert(gobject);
+
+	GK_ASSERT(result.second);
+
+	m_meshData->refresh(gobject);
 }
 
 void gkScene::notifyObjectUnloaded(gkGameObject *gobject) 
 {
-	gkGameObjectList::Pointer p = m_loadedObjects.find(gobject);
+	m_loadedObjects.erase(gobject);
 
-	if(p)
-	{
-		m_loadedObjects.erase(p);
-	}
+	m_meshData->unload(gobject);
+
 }
 
 void gkScene::notifyObjectUpdate(gkGameObject *gobject)
 {
-	if(gobject->getProperties().physicsState == GK_RIGID_BODY)
-	{
-		m_hasChanged = true;
-	}
+	m_meshData->refresh(gobject);
 }
 
 void gkScene::synchronizeMotion(gkScalar blend)
@@ -499,8 +492,6 @@ void gkScene::update(gkScalar tickRate)
     if (!isLoaded())
         return;
 
-	m_hasChanged = false;
-
     // update simulation
     if (m_physicsWorld) m_physicsWorld->step(tickRate);
 
@@ -513,3 +504,4 @@ void gkScene::update(gkScalar tickRate)
     // update script callbacks
     gkLuaManager::getSingleton().update(tickRate);
 }
+

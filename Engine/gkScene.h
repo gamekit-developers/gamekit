@@ -32,12 +32,12 @@
 #include "gkSerialize.h"
 #include "gkGameObjectGroup.h"
 #include "OgreAxisAlignedBox.h"
+#include "gkNavMeshData.h"
 
 class gkDynamicsWorld;
 
 // shorthand types
-typedef utList<gkGameObject*>                       gkGameObjectList;
-typedef utListIterator<gkGameObjectList>			gkGameObjectListIterator;
+typedef std::set<gkGameObject*>						gkGameObjectSet;
 typedef utHashTable<gkHashedString, gkGameObject*>  gkGameObjectHashMap;
 typedef utHashTableIterator<gkGameObjectHashMap>    gkGameObjectHashMapIterator;
 typedef utArray<gkGameObject*>                      gkGameObjectArray;
@@ -105,7 +105,7 @@ public:
     GK_INLINE gkCamera* getMainCamera(void) { return m_startCam; }
     void setMainCamera(gkCamera *cam);
 
-    GK_INLINE gkGameObjectList &getLoadedObjects(void)      { return m_loadedObjects; }
+    GK_INLINE gkGameObjectSet &getLoadedObjects(void)      { return m_loadedObjects; }
 
     // physics
     GK_INLINE gkDynamicsWorld* getDynamicsWorld(void)       { return m_physicsWorld; }
@@ -122,8 +122,6 @@ public:
     bool            hasObject(const gkHashedString& ob);
     bool            hasObject(gkGameObject *ob);
     gkGameObject*   getObject(const gkHashedString& name);
-
-	bool hasChanged() const { return m_hasChanged; }
 
     // Translates to a blank scene node or empty object.
     // loader is for creating custom loading schemes based
@@ -166,7 +164,7 @@ public:
 
     GK_INLINE bool      hasGroup(const gkHashedString &name) {return m_groups.find(name) != UT_NPOS;}
 
-	gkNavMeshData* getMeshData() const { return m_meshData; }
+	PNAVMESH getNavigationMesh() const { return m_meshData->getNavigationMesh(); }
 
 protected:
 
@@ -186,7 +184,7 @@ protected:
 
 	gkGameObjectHashMap     m_objects;
     gkGameObjectArray       m_transformObjects;
-    gkGameObjectList        m_loadedObjects;
+    gkGameObjectSet			m_loadedObjects;
     gkDynamicsWorld*        m_physicsWorld;
     gkGroupTable            m_groups;
     gkGroupInstances        m_instances;
@@ -199,8 +197,6 @@ protected:
 private:
 
 	Ogre::AxisAlignedBox m_Limits;
-
-	bool m_hasChanged;
 
 	gkNavMeshData* m_meshData;
 };

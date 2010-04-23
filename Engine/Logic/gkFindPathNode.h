@@ -28,6 +28,7 @@
 #define _gkFindPathNode_h_
 
 #include "gkLogicNode.h"
+#include "gkNavMeshData.h"
 
 class dtNavMesh;
 class gkPhysicsDebug;
@@ -39,7 +40,6 @@ public:
 	enum
 	{
 		UPDATE,
-		NAV_MESH,
 		MAX_PATH_POLYS,
 		START_POS,
 		END_POS,
@@ -65,7 +65,6 @@ public:
 	};
 
 	DECLARE_SOCKET_TYPE(UPDATE, bool);
-	DECLARE_SOCKET_TYPE(NAV_MESH, dtNavMesh*);
 	DECLARE_SOCKET_TYPE(MAX_PATH_POLYS, int);
 	DECLARE_SOCKET_TYPE(START_POS, gkVector3);
 	DECLARE_SOCKET_TYPE(END_POS, gkVector3);
@@ -94,6 +93,7 @@ private:
 
 	gkPhysicsDebug* m_debug;
 	PathData m_path;
+	PNAVMESH m_navMesh;
 };
 
 #endif//_gkFindPathNode_h_

@@ -31,7 +31,7 @@ gkStateMachineNode::gkStateMachineNode(gkLogicTree *parent, size_t id)
 : gkLogicNode(parent, id),
 m_currentState(-1)
 {
-	ADD_ISOCK(UPDATE, false);
+	ADD_ISOCK(UPDATE, true);
 	ADD_ISOCK(FORCE_STATUS, -1);
 	ADD_OSOCK(CURRENT_STATE, 0);
 }

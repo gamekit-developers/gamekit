@@ -24,9 +24,9 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "gkFollowPathNode.h"
 #include "gkLogger.h"
 #include "gkGameObject.h"
+#include "gkFollowPathNode.h"
 
 gkFollowPathNode::gkFollowPathNode(gkLogicTree *parent, size_t id) 
 : gkLogicNode(parent, id),

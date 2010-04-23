@@ -135,7 +135,6 @@ set(NLogic_SOURCE
     Logic/gkAnimationNode.cpp
     Logic/gkButtonNode.cpp
     Logic/gkCollisionNode.cpp
-    Logic/gkDetectMotionNode.cpp
     Logic/gkExitNode.cpp
     Logic/gkExpressionNode.cpp
     Logic/gkFallTestNode.cpp
@@ -164,7 +163,6 @@ set(NLogic_SOURCE
     Logic/gkObjNode.cpp
     Logic/gkShowPhysicsNode.cpp
     Logic/gkStateMachineNode.cpp
-    Logic/gkNavMeshNode.cpp
 )
 
 set(NLogic_HEADER
@@ -172,7 +170,6 @@ set(NLogic_HEADER
     Logic/gkAnimationNode.h
     Logic/gkButtonNode.h
     Logic/gkCollisionNode.h
-    Logic/gkDetectMotionNode.h
     Logic/gkExitNode.h
     Logic/gkExpressionNode.h
     Logic/gkFallTestNode.h
@@ -205,7 +202,6 @@ set(NLogic_HEADER
     Logic/gkObjNode.h
     Logic/gkShowPhysicsNode.h
     Logic/gkStateMachineNode.h
-    Logic/gkNavMeshNode.h
 )
 
 source_group(LogicNodes\\Header FILES ${NLogic_HEADER})

@@ -30,6 +30,11 @@
 #include "OgreMaterialManager.h"
 #include "OgreParticleSystemManager.h"
 
+#include "bBlenderFile.h"
+#include "bMain.h"
+#include "blender.h"
+
+
 #include "gkBlendFile.h"
 #include "gkBlendLoader.h"
 #include "gkSceneManager.h"
@@ -41,10 +46,6 @@
 #include "gkPath.h"
 #include "gkUtils.h"
 #include "gkLogger.h"
-
-#include "bBlenderFile.h"
-#include "bMain.h"
-#include "blender.h"
 
 #include "gkTextManager.h"
 #include "gkTextFile.h"

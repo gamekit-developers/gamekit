@@ -41,7 +41,8 @@ namespace momoState
 		WALK_BACK,
 		IDLE_NASTY,
 		IDLE_CAPOEIRA,
-		FALL_UP
+		FALL_UP,
+		KICK
 	};
 }
 
@@ -51,6 +52,7 @@ namespace momoVelocity
 	gkScalar WALK_BACK = -1;
 	gkScalar RUN = 2.5f;
 	gkScalar RUN_FASTER = 4;
+	gkScalar CARRY = 0;
 }
 
 namespace momoAnimation
@@ -149,7 +151,8 @@ public:
 
     OgreKit(const gkString &blend) 
 		: m_blend(blend), m_tree(0), m_ctrlKeyNode(0), m_shiftKeyNode(0),
-		m_wKeyNode(0), m_sKeyNode(0), m_cKeyNode(0), m_xKeyNode(0), m_mouseNode(0), m_leftMouseNode(0), m_rightMouseNode(0),
+		m_wKeyNode(0), m_sKeyNode(0), m_cKeyNode(0), m_xKeyNode(0), m_spcKeyNode(0), 
+		m_mouseNode(0), m_leftMouseNode(0), m_rightMouseNode(0),
 		m_momoPlayer(0), m_ratPlayer(0), m_cameraPlayer(0), m_animNode(0), m_animRatNode(0), m_momoCameraArcBall(0),
 		m_momoGrab(0), m_stateMachine(0), m_stateRatMachine(0), m_momoFollowPathNode(0)
 	{
@@ -211,15 +214,6 @@ public:
 
 	void CreateNavigationNodes()
 	{
-		gkDetectMotionNode* detectMotion = m_tree->createNode<gkDetectMotionNode>();
-		detectMotion->getUPDATE()->setValue(true);
-
-		gkPulseNode* pulse = m_tree->createNode<gkPulseNode>();
-		detectMotion->getNOT_DETECTED()->link(pulse->getUPDATE());
-
-		gkNavMeshNode* staticNavMesh = m_tree->createNode<gkNavMeshNode>();
-		staticNavMesh->getUPDATE()->link(pulse->getOUTPUT());
-
 		gkKeyNode* fKeyNode = m_tree->createNode<gkKeyNode>();
 		fKeyNode->setKey(KC_ZKEY);
 
@@ -233,6 +227,8 @@ public:
 		targetNode->getX()->link(m_mouseNode->getABS_X());
 		targetNode->getY()->link(m_mouseNode->getABS_Y());
 
+		// Pathfinding for Momo
+
 		gkFindPathNode* findPathNode = m_tree->createNode<gkFindPathNode>();
 
 		{
@@ -242,7 +238,6 @@ public:
 
 			findPathNode->getUPDATE()->link(ifANode->getIS_TRUE());
 		}
-		findPathNode->getNAV_MESH()->link(staticNavMesh->getOUTPUT());
 		findPathNode->getSTART_POS()->link(m_momoPlayer->getPOSITION());
 		findPathNode->getEND_POS()->link(targetNode->getHIT_POINT());
 		findPathNode->getSHOW_PATH()->link(m_xKeyNode->getIS_DOWN());
@@ -262,15 +257,8 @@ public:
 
 			gkFindPathNode* ratFindPathNode = m_tree->createNode<gkFindPathNode>();
 
-			{
-				gkIfNode<bool, CMP_OR>* ifNode = m_tree->createNode<gkIfNode<bool, CMP_OR> >();
-				ifNode->getA()->link(m_momoPlayer->getMOTION());
-				ifNode->getB()->link(pulse->getOUTPUT());
+			ratFindPathNode->getUPDATE()->link(m_momoPlayer->getMOTION());
 
-				ratFindPathNode->getUPDATE()->link(ifNode->getIS_TRUE());
-			}
-
-			ratFindPathNode->getNAV_MESH()->link(staticNavMesh->getOUTPUT());
 			ratFindPathNode->getSTART_POS()->link(m_ratPlayer->getPOSITION());
 			ratFindPathNode->getEND_POS()->link(m_momoPlayer->getPOSITION());
 			ratFindPathNode->getSHOW_PATH()->link(m_xKeyNode->getIS_DOWN());
@@ -285,7 +273,6 @@ public:
 			ratFollowPathNode->setIdleState(ratState::IDLE);
 			ratFollowPathNode->setWalkState(ratState::WALK, ratVelocity::WALK);
 			ratFollowPathNode->setRunState(ratState::RUN, ratVelocity::RUN);
-
 		}
 	}
 
@@ -308,6 +295,9 @@ public:
 
 		m_xKeyNode = m_tree->createNode<gkKeyNode>();
 		m_xKeyNode->setKey(KC_XKEY);
+
+		m_spcKeyNode = m_tree->createNode<gkKeyNode>();
+		m_spcKeyNode->setKey(KC_SPACEKEY);
 
 		m_mouseNode = m_tree->createNode<gkMouseNode>();
 
@@ -379,35 +369,66 @@ public:
 
 	void CreateMomoStateMachine()
 	{
-		m_stateMachine->getUPDATE()->setValue(true);
-
 		// Initial state
 		m_stateMachine->getCURRENT_STATE()->setValue(momoState::IDLE_NASTY); 
 
 		// Transitions
 
+		// IDLE_NASTY TRANSITIONS
 		m_stateMachine->addTransition(momoState::CATCH, momoState::IDLE_NASTY);
 		m_stateMachine->addTransition(momoState::CATCH_ENDED, momoState::IDLE_NASTY);
 		m_stateMachine->addTransition(momoState::CARRY, momoState::IDLE_NASTY);
 		m_stateMachine->addTransition(momoState::THROW_WITH, momoState::IDLE_NASTY);
 		m_stateMachine->addTransition(momoState::WALK, momoState::IDLE_NASTY);
 		m_stateMachine->addTransition(momoState::WALK_BACK, momoState::IDLE_NASTY);
+		m_stateMachine->addTransition(momoState::KICK, momoState::IDLE_NASTY);
+		m_stateMachine->addTransition(momoState::FALL_UP, momoState::IDLE_NASTY);
+		m_stateMachine->addTransition(momoState::IDLE_CAPOEIRA, momoState::IDLE_NASTY, 11000);
+
+		// IDLE_CAPOEIRA TRANSITIONS
+		m_stateMachine->addTransition(momoState::IDLE_NASTY, momoState::IDLE_CAPOEIRA, 70000);
 
 		gkFallTestNode* fallTest = m_tree->createNode<gkFallTestNode>();
 		fallTest->getENABLE()->setValue(true);
 		fallTest->getTARGET()->link(m_momoPlayer->getOBJ());
 	
+		//WALK TRANSITIONS
 		m_wKeyNode->getIS_DOWN()->link(m_stateMachine->addTransition(momoState::IDLE_NASTY, momoState::WALK));
 		m_wKeyNode->getIS_DOWN()->link(m_stateMachine->addTransition(momoState::IDLE_CAPOEIRA, momoState::WALK));
 		m_wKeyNode->getIS_DOWN()->link(m_stateMachine->addTransition(momoState::WALK, momoState::WALK));
-		fallTest->getFALLING()->link(m_stateMachine->addTransition(momoState::WALK, momoState::FALL_UP));
-		fallTest->getFALLING()->link(m_stateMachine->addTransition(momoState::FALL_UP, momoState::FALL_UP));
-		fallTest->getNOT_FALLING()->link(m_stateMachine->addTransition(momoState::FALL_UP, momoState::IDLE_NASTY));
-		m_wKeyNode->getIS_DOWN()->link(m_stateMachine->addTransition(momoState::WALK, momoState::RUN, 1500));
-		m_wKeyNode->getIS_DOWN()->link(m_stateMachine->addTransition(momoState::RUN, momoState::RUN));
-		fallTest->getFALLING()->link(m_stateMachine->addTransition(momoState::RUN, momoState::FALL_UP));
+		m_sKeyNode->getIS_DOWN()->link(m_stateMachine->addTransition(momoState::RUN, momoState::WALK));
+		m_sKeyNode->getIS_DOWN()->link(m_stateMachine->addTransition(momoState::KICK, momoState::WALK));
 		m_stateMachine->addTransition(momoState::RUN, momoState::WALK);
 
+	
+		// WALK_BACK TRANSITIONS
+		m_sKeyNode->getIS_DOWN()->link(m_stateMachine->addTransition(momoState::WALK, momoState::WALK_BACK));
+		m_sKeyNode->getIS_DOWN()->link(m_stateMachine->addTransition(momoState::IDLE_NASTY, momoState::WALK_BACK));
+		m_sKeyNode->getIS_DOWN()->link(m_stateMachine->addTransition(momoState::IDLE_CAPOEIRA, momoState::WALK_BACK));
+		m_sKeyNode->getIS_DOWN()->link(m_stateMachine->addTransition(momoState::WALK_BACK, momoState::WALK_BACK));
+		m_sKeyNode->getIS_DOWN()->link(m_stateMachine->addTransition(momoState::KICK, momoState::WALK_BACK));
+
+		// KICK TRANSITIONS
+		m_spcKeyNode->getPRESS()->link(m_stateMachine->addTransition(momoState::WALK, momoState::KICK));
+		m_spcKeyNode->getPRESS()->link(m_stateMachine->addTransition(momoState::WALK_BACK, momoState::KICK));
+		m_spcKeyNode->getPRESS()->link(m_stateMachine->addTransition(momoState::IDLE_NASTY, momoState::KICK));
+		m_spcKeyNode->getPRESS()->link(m_stateMachine->addTransition(momoState::IDLE_CAPOEIRA, momoState::KICK));
+		m_animNode->getNOT_HAS_REACHED_END()->link(m_stateMachine->addTransition(momoState::KICK, momoState::KICK));
+
+		// FALL_UP TRANSITIONS
+		fallTest->getFALLING()->link(m_stateMachine->addTransition(momoState::WALK, momoState::FALL_UP));
+		fallTest->getFALLING()->link(m_stateMachine->addTransition(momoState::RUN, momoState::FALL_UP));
+		fallTest->getFALLING()->link(m_stateMachine->addTransition(momoState::FALL_UP, momoState::FALL_UP));
+		fallTest->getFALLING()->link(m_stateMachine->addTransition(momoState::RUN_FASTER, momoState::FALL_UP));
+		fallTest->getFALLING()->link(m_stateMachine->addTransition(momoState::WALK_BACK, momoState::FALL_UP));
+
+		// RUN TRANSITIONS
+		m_wKeyNode->getIS_DOWN()->link(m_stateMachine->addTransition(momoState::WALK, momoState::RUN, 1500));
+		m_wKeyNode->getIS_DOWN()->link(m_stateMachine->addTransition(momoState::RUN, momoState::RUN));
+		m_stateMachine->addTransition(momoState::RUN_FASTER, momoState::RUN);
+	
+
+		// RUN_FASTER TRANSITIONS
 		{
 			gkIfNode<bool, CMP_AND>* ifNode = m_tree->createNode<gkIfNode<bool, CMP_AND> >();
 			ifNode->getA()->link(m_shiftKeyNode->getIS_DOWN());
@@ -415,19 +436,10 @@ public:
 			
 			ifNode->getIS_TRUE()->link(m_stateMachine->addTransition(momoState::RUN, momoState::RUN_FASTER));
 			ifNode->getIS_TRUE()->link(m_stateMachine->addTransition(momoState::RUN_FASTER, momoState::RUN_FASTER));
-			fallTest->getFALLING()->link(m_stateMachine->addTransition(momoState::RUN_FASTER, momoState::FALL_UP));
 		}
+		
 
-		m_stateMachine->addTransition(momoState::RUN_FASTER, momoState::RUN);
-		m_stateMachine->addTransition(momoState::RUN, momoState::WALK);
-		m_sKeyNode->getIS_DOWN()->link(m_stateMachine->addTransition(momoState::RUN, momoState::WALK_BACK));
-
-
-		m_sKeyNode->getIS_DOWN()->link(m_stateMachine->addTransition(momoState::IDLE_NASTY, momoState::WALK_BACK));
-		m_sKeyNode->getIS_DOWN()->link(m_stateMachine->addTransition(momoState::IDLE_CAPOEIRA, momoState::WALK_BACK));
-		m_sKeyNode->getIS_DOWN()->link(m_stateMachine->addTransition(momoState::WALK_BACK, momoState::WALK_BACK));
-		fallTest->getFALLING()->link(m_stateMachine->addTransition(momoState::WALK_BACK, momoState::FALL_UP));
-
+		// CATCH TRANSITIONS
 
 		{
 			gkIfNode<bool, CMP_AND>* ifNode = m_tree->createNode<gkIfNode<bool, CMP_AND> >();
@@ -437,29 +449,30 @@ public:
 			ifNode->getIS_TRUE()->link(m_stateMachine->addTransition(momoState::IDLE_NASTY, momoState::CATCH));
 			ifNode->getIS_TRUE()->link(m_stateMachine->addTransition(momoState::IDLE_CAPOEIRA, momoState::CATCH));
 			m_animNode->getNOT_HAS_REACHED_END()->link(m_stateMachine->addTransition(momoState::CATCH, momoState::CATCH));
-			m_animNode->getHAS_REACHED_END()->link(m_stateMachine->addTransition(momoState::CATCH, momoState::CATCH_ENDED));
-			m_momoGrab->getCAUGHT_TRUE()->link(m_stateMachine->addTransition(momoState::CATCH_ENDED, momoState::CARRY));
-			m_momoGrab->getCAUGHT_TRUE()->link(m_stateMachine->addTransition(momoState::CARRY, momoState::CARRY));
-
-			{
-				gkIfNode<bool, CMP_AND>* ifNode = m_tree->createNode<gkIfNode<bool, CMP_AND> >();
-
-				ifNode->getA()->link(m_leftMouseNode->getPRESS());
-				ifNode->getB()->link(m_ctrlKeyNode->getNOT_IS_DOWN());
-
-				ifNode->getIS_TRUE()->link(m_stateMachine->addTransition(momoState::CARRY, momoState::THROW_WITH));
-			}
-			m_animNode->getNOT_HAS_REACHED_END()->link(m_stateMachine->addTransition(momoState::THROW_WITH, momoState::THROW_WITH));
 		}
 
-		m_stateMachine->addTransition(momoState::IDLE_NASTY, momoState::IDLE_CAPOEIRA, 70000);
-		m_stateMachine->addTransition(momoState::IDLE_CAPOEIRA, momoState::IDLE_NASTY, 11000);
+		// CATCH_ENDED TRANSITIONS
+		m_animNode->getHAS_REACHED_END()->link(m_stateMachine->addTransition(momoState::CATCH, momoState::CATCH_ENDED));
+
+		// CARRY TRANSITIONS
+		m_momoGrab->getCAUGHT_TRUE()->link(m_stateMachine->addTransition(momoState::CATCH_ENDED, momoState::CARRY));
+		m_momoGrab->getCAUGHT_TRUE()->link(m_stateMachine->addTransition(momoState::CARRY, momoState::CARRY));
+
+		// THROW_WITH TRANSITIONS
+		{
+			gkIfNode<bool, CMP_AND>* ifNode = m_tree->createNode<gkIfNode<bool, CMP_AND> >();
+
+			ifNode->getA()->link(m_leftMouseNode->getPRESS());
+			ifNode->getB()->link(m_ctrlKeyNode->getNOT_IS_DOWN());
+
+			ifNode->getIS_TRUE()->link(m_stateMachine->addTransition(momoState::CARRY, momoState::THROW_WITH));
+
+			m_animNode->getNOT_HAS_REACHED_END()->link(m_stateMachine->addTransition(momoState::THROW_WITH, momoState::THROW_WITH));
+		}
 	}
 
 	void CreateRatStateMachine()
 	{
-		m_stateRatMachine->getUPDATE()->setValue(true);
-
 		// Initial state
 		m_stateRatMachine->getCURRENT_STATE()->setValue(ratState::IDLE); 
 	}
@@ -486,8 +499,8 @@ public:
 		m_momoGrab->getUPDATE()->setValue(true);
 		m_momoGrab->getTARGET()->link(m_momoPlayer->getOBJ());
 		m_momoGrab->getGRAB_DIRECTION()->setValue(gkVector3(0, 0.6f, 0));
-		m_momoGrab->getTHROW_VEL()->setValue(gkVector3(0, 20.5f, 0));
-		m_momoGrab->getRELATED_OFFSET_POSITION()->setValue(gkVector3(0, 0, 1));
+		m_momoGrab->getTHROW_VEL()->setValue(gkVector3(0, 10, 0));
+		m_momoGrab->getRELATED_OFFSET_POSITION()->setValue(gkVector3(0, 0, 0.8f));
 
 		{
 			gkIfNode<bool, CMP_AND>* ifNode = m_tree->createNode<gkIfNode<bool, CMP_AND> >();
@@ -538,6 +551,7 @@ public:
 		mapping[momoState::RUN] = momoVelocity::RUN;
 		mapping[momoState::RUN_FASTER] = momoVelocity::RUN_FASTER;
 		mapping[momoState::WALK_BACK] = momoVelocity::WALK_BACK;
+		mapping[momoState::CARRY] = momoVelocity::CARRY;
 
 		mapNode->getMAPPING()->setValue(mapping);
 
@@ -545,18 +559,11 @@ public:
 		ifNode->getA()->link(m_momoFollowPathNode->getHAS_REACHED_END());
 		ifNode->getB()->link(mapNode->getHAS_OUTPUT());
 
-		{
-			// orient Momo
-			m_momoPlayer->getSET_ROTATION()->link(ifNode->getIS_TRUE());
-			m_momoPlayer->getSET_ROTATION_VALUE()->link(m_momoCameraArcBall->getCURRENT_ROLL());
-		}
+		m_momoPlayer->getSET_ROTATION()->link(ifNode->getIS_TRUE());
+		m_momoPlayer->getSET_ROTATION_VALUE()->link(m_momoCameraArcBall->getCURRENT_ROLL());
 
-		{
-			m_momoPlayer->getSET_LINEAR_VEL()->link(ifNode->getIS_TRUE());
-			m_momoPlayer->getSET_LINEAR_VEL_VALUE_X()->setValue(0);
-			m_momoPlayer->getSET_LINEAR_VEL_VALUE_Y()->link(mapNode->getOUTPUT());
-			m_momoPlayer->getSET_LINEAR_VEL_VALUE_Z()->setValue(0);
-		}
+		m_momoPlayer->getSET_LINEAR_VEL()->link(ifNode->getIS_TRUE());
+		m_momoPlayer->getSET_LINEAR_VEL_VALUE_Y()->link(mapNode->getOUTPUT());
 	}
 
 	void CreateMomoDustTrailLogic()
@@ -634,6 +641,7 @@ public:
 		mapping[momoState::IDLE_NASTY] = momoAnimation::IDLE_NASTY;
 		mapping[momoState::IDLE_CAPOEIRA] = momoAnimation::IDLE_CAPOEIRA;
 		mapping[momoState::FALL_UP] = momoAnimation::FALL_UP;
+		mapping[momoState::KICK] = momoAnimation::KICK;
 
 		mapNode->getMAPPING()->setValue(mapping);
 
@@ -658,7 +666,6 @@ public:
 		m_animRatNode->getTARGET()->link(m_ratPlayer->getMESH_OBJ());
 		m_animRatNode->getANIM_NAME()->link(mapNode->getOUTPUT());
 	}
-
 
 	void CreateCameraLogic()
 	{
@@ -775,6 +782,8 @@ private:
 	gkKeyNode* m_cKeyNode;
 
 	gkKeyNode* m_xKeyNode;
+
+	gkKeyNode* m_spcKeyNode;
 
 	gkMouseNode* m_mouseNode;
 
