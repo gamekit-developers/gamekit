@@ -41,27 +41,28 @@ using namespace Ogre;
 
 
 gkUserDefs::gkUserDefs() :
-        plugins(StringUtil::BLANK),
-        rendersystem(OGRE_RS_GL),
-        log("OgreKit.log"),
-        verbose(true),
-        winsize(800, 600),
-        wintitle("Ogre GameKit Demo"),
-        fullscreen(false),
-        resources(""),
-        animspeed(25),
-        startframe(1),
-        tickrate(45),
-        blendermat(false),
-        userWindow(true),
-        grabInput(true),
-        debugPhysics(false),
-        debugPhysicsAabb(false),
-		enableshadows(false),
-        buildInstances(false),
-		shadowtechnique("none"),
-		colourshadow(0, 0, 0),
-		fardistanceshadow(0)
+    plugins(StringUtil::BLANK),
+    rendersystem(OGRE_RS_GL),
+    log("OgreKit.log"),
+    verbose(true),
+    winsize(800, 600),
+    wintitle("Ogre GameKit Demo"),
+    fullscreen(false),
+    resources(""),
+    animspeed(25),
+    startframe(1),
+    tickrate(45),
+    blendermat(false),
+    userWindow(true),
+    grabInput(true),
+    debugPhysics(false),
+    debugPhysicsAabb(false),
+    enableshadows(false),
+    buildInstances(false),
+    useBulletDbvt(true),
+    shadowtechnique("none"),
+    colourshadow(0, 0, 0),
+    fardistanceshadow(0)
 {
 }
 
@@ -110,8 +111,8 @@ void gkUserDefs::load(const gkString &fname)
                     debugPhysics = StringConverter::parseBool(val);
                 else if (key == "debugphysicsaabb")
                     debugPhysicsAabb = StringConverter::parseBool(val);
-				else if (key == "grabinput")
-					grabInput = StringConverter::parseBool(val);
+                else if (key == "grabinput")
+                    grabInput = StringConverter::parseBool(val);
                 else if (key == "userwindow")
                     userWindow = StringConverter::parseBool(val);
                 else if (key == "verbose")
@@ -147,16 +148,18 @@ void gkUserDefs::load(const gkString &fname)
                     blendermat = StringConverter::parseBool(val);
                 else if (key == "buildinstances")
                     buildInstances = StringConverter::parseBool(val);
+                else if (key == "frustumculling")
+                    useBulletDbvt = StringConverter::parseBool(val);
                 else if (key == "fullscreen")
                     fullscreen = StringConverter::parseBool(val);
-				else if (key == "enableshadows")
-					enableshadows = StringConverter::parseBool(val);
-				else if (key == "shadowtechnique")
-					shadowtechnique = val;
-				else if (key == "colourshadow")
-					colourshadow = StringConverter::parseColourValue(val);
-				else if (key == "fardistanceshadow")
-					fardistanceshadow = StringConverter::parseReal(val);
+                else if (key == "enableshadows")
+                    enableshadows = StringConverter::parseBool(val);
+                else if (key == "shadowtechnique")
+                    shadowtechnique = val;
+                else if (key == "colourshadow")
+                    colourshadow = StringConverter::parseColourValue(val);
+                else if (key == "fardistanceshadow")
+                    fardistanceshadow = StringConverter::parseReal(val);
             }
         }
     }

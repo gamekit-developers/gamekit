@@ -175,13 +175,15 @@ size_t gkMaterialUtils::getNumTextures(void)
     if (!m_ogreMat || !m_blendMat || !m_tech)
         return 0;
 
+#define TestInvalidPtr(x) ( ( sizeof( UTintPtr ) == 8 ) ? (((UTintPtr)(x)) & 0x7) : (((UTintPtr)(x)) & 0x3))
+
     if (m_textures.empty())
     {
         if (m_blendMat->mtex != 0)
         {
             for (int i = 0; i < MAX_MTEX; i++)
             {
-                if (m_blendMat->mtex[i] != 0)
+                if (!TestInvalidPtr(m_blendMat->mtex[i]))
                 {
                     Blender::MTex *mtex = m_blendMat->mtex[i];
                     if (mtex && mtex->tex != 0)

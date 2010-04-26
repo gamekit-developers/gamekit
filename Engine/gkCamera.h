@@ -32,35 +32,38 @@
 #include "OgreCamera.h"
 
 
+class gkCameraCallback;
+
 // Game camera
 class gkCamera : public gkGameObject
 {
 public:
-    gkCamera(gkScene *scene, const gkString& name, gkObject::Loader* loader = 0);
+    gkCamera(gkScene *scene, const gkString &name, gkObject::Loader *loader = 0);
     virtual ~gkCamera() {}
 
     // Property access
-    GK_INLINE void setProperties(const gkCameraProperties& props)   {m_cameraProps = props;}
-    GK_INLINE gkCameraProperties& getCameraProperties(void)         {return m_cameraProps;}
+    GK_INLINE void setProperties(const gkCameraProperties &props)   {m_cameraProps = props;}
+    GK_INLINE gkCameraProperties &getCameraProperties(void)         {return m_cameraProps;}
 
 
     void setClip(gkScalar start, gkScalar end);
-    void setFov(const gkRadian& fov);
-    void setFov(const gkDegree& fov);
+    void setFov(const gkRadian &fov);
+    void setFov(const gkDegree &fov);
     void setMainCamera(bool v);
     void makeCurrent(void);
 
-    GK_INLINE Ogre::Camera* getCamera(void)         {return m_camera;}
-    GK_INLINE const gkScalar& getClipStart(void)    {return m_cameraProps.clipstart;}
-    GK_INLINE const gkScalar& getClipEnd(void)      {return m_cameraProps.clipend;}
-    GK_INLINE const gkScalar& getFov(void)          {return m_cameraProps.fov;}
+    GK_INLINE Ogre::Camera *getCamera(void)         {return m_camera;}
+    GK_INLINE const gkScalar &getClipStart(void)    {return m_cameraProps.clipstart;}
+    GK_INLINE const gkScalar &getClipEnd(void)      {return m_cameraProps.clipend;}
+    GK_INLINE const gkScalar &getFov(void)          {return m_cameraProps.fov;}
     GK_INLINE bool isMainCamera(void)               {return m_cameraProps.start;}
 
 private:
     gkObject    *clone(const gkString &name);
 
     gkCameraProperties  m_cameraProps;
-    Ogre::Camera*       m_camera;
+    Ogre::Camera        *m_camera;
+    gkCameraCallback    *m_callback;
 
     virtual void loadImpl(void);
     virtual void unloadImpl(void);

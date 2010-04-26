@@ -93,7 +93,9 @@ void gkSceneObjectLoader::load(gkObject *baseClass)
 
     // Apply user defined animation fps
     gkLoaderUtils::blender_anim_rate = m_scene->r.frs_sec;
-    gkEngine::getSingleton().getUserDefs().animspeed = gkLoaderUtils::blender_anim_rate;
+
+    gkUserDefs &defs = gkEngine::getSingleton().getUserDefs();
+    defs.animspeed = gkLoaderUtils::blender_anim_rate;
 
 
     if (m_scene->world)
@@ -124,6 +126,7 @@ void gkSceneObjectLoader::load(gkObject *baseClass)
             loadSkyBox();
         }
 
+        defs.useBulletDbvt = (world->mode & WO_DBVT_CULLING) != 0;
     }
 
     // create the physics world

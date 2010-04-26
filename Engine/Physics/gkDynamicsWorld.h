@@ -106,6 +106,8 @@ public:
 	void enableDebugPhysics(bool enable, bool debugAabb);
 
 	void resetContacts();
+
+    void handleDbvt(gkCamera *cam);
 };
 
 #endif//_gkDynamicsWorld_h_

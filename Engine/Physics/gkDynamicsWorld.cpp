@@ -32,6 +32,7 @@
 #include "gkPhysicsDebug.h"
 #include "gkGameObject.h"
 #include "gkScene.h"
+#include "gkCamera.h"
 #include "btBulletDynamicsCommon.h"
 #include "BulletCollision/CollisionDispatch/btGhostObject.h"
 
@@ -64,12 +65,15 @@ void gkDynamicsWorld::preLoadImpl(void)
         return;
 
     m_collisionConfiguration = new btDefaultCollisionConfiguration();
-
-    //m_pairCache = new btDbvtBroadphase();
-
-	btVector3 worldMin(-1000,-1000,-1000);
-	btVector3 worldMax(1000,1000,1000);
-	m_pairCache = new btAxisSweep3(worldMin,worldMax);
+    
+    if (gkEngine::getSingleton().getUserDefs().useBulletDbvt)
+        m_pairCache = new btDbvtBroadphase();
+    else
+    {
+	    btVector3 worldMin(-1000,-1000,-1000);
+	    btVector3 worldMax(1000,1000,1000);
+	    m_pairCache = new btAxisSweep3(worldMin,worldMax);
+    }
 
 
 	m_ghostPairCallback = new btGhostPairCallback();
@@ -355,3 +359,91 @@ void gkDynamicsWorld::substepCallback(btDynamicsWorld *dyn, btScalar tick)
     GK_ASSERT(world);
     world->substep(tick);
 }
+
+#define DEBUG_VISIBLE 0
+
+struct gkDbvt : public btDbvt::ICollide
+{
+#if DEBUG_VISIBLE
+    int m_tvs, m_tot;
+#endif
+
+    gkDbvt(gkDynamicsWorld::ObjectList &oblist, const Ogre::Plane *planes) 
+    {
+#if DEBUG_VISIBLE
+        m_tot = 0;
+        m_tvs = 0;
+#endif
+        if (!oblist.empty())
+        {
+            gkObject *rb = oblist.begin();
+
+            while (rb)
+            {
+                if (rb->isLoaded())
+                {
+                    gkGameObject *ob = rb->getObject();
+
+                    Ogre::MovableObject *mov = ob->getMovable();
+                    if (mov)
+                    {
+#if DEBUG_VISIBLE
+                        m_tot++;
+#endif
+                        mov->setVisible(false);
+                    }
+                }
+                rb = rb->getNext();
+            }
+        }
+    }
+#if DEBUG_VISIBLE
+    void Dump()
+    {
+        printf("Tot Visible %i, of %i Bodies\n", m_tvs, m_tot);
+    }
+#endif
+
+    void Process(const btDbvtNode *nd)
+    {
+        btBroadphaseProxy *proxy = (btBroadphaseProxy*)nd->data;
+        btCollisionObject *colob = (btCollisionObject*)proxy->m_clientObject;
+        gkGameObject *object = ((gkGameObject*)colob->getUserPointer())->getObject();
+
+        Ogre::MovableObject *mov = object->getMovable();
+        if (mov)
+        {
+            if (!mov->isVisible())
+            {
+                mov->setVisible(true);
+#if DEBUG_VISIBLE
+                m_tvs++;
+#endif
+            }
+        }
+    }
+};
+
+
+void gkDynamicsWorld::handleDbvt(gkCamera *cam)
+{
+    btDbvtBroadphase *cullTree = (btDbvtBroadphase *)m_pairCache;
+
+    const Ogre::Plane *planes = cam->getCamera()->getFrustumPlanes();
+    btVector3 normals[6];
+    btScalar offsets[6];
+
+    for (int i=0; i<6; ++i)
+    {
+        normals[i].setValue(planes[i].normal.x, planes[i].normal.y, planes[i].normal.z);
+        offsets[i] = planes[i].d;
+    }
+
+    gkDbvt dispatcher(m_objects, planes);
+    btDbvt::collideKDOP(cullTree->m_sets[1].m_root, normals, offsets, 6, dispatcher);
+    btDbvt::collideKDOP(cullTree->m_sets[0].m_root, normals, offsets, 6, dispatcher);
+#if DEBUG_VISIBLE
+    dispatcher.Dump();
+#endif
+}
+

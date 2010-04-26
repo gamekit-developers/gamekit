@@ -58,6 +58,7 @@ public:
     bool                    debugPhysics;       // enable / disable physics debugging
     bool                    debugPhysicsAabb;   // show / hide bounding box
     bool                    buildInstances;     // Use instanced geometry
+    bool                    useBulletDbvt;      // Use Bullet Dynamic AABB Tree
 	bool					enableshadows;
 	gkString				shadowtechnique;
 	gkColor					colourshadow;

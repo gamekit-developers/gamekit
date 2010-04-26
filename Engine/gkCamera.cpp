@@ -26,19 +26,48 @@
 */
 #include "gkCamera.h"
 #include "gkScene.h"
+#include "gkDynamicsWorld.h"
+#include "gkEngine.h"
+#include "gkUserDefs.h"
 #include "OgreSceneManager.h"
 #include "OgreSceneNode.h"
 
 
 
+class gkCameraCallback : public Ogre::MovableObject::Listener
+{
+private:
 
-gkCamera::gkCamera(gkScene *scene, const gkString& name, gkObject::Loader* loader)
-:       gkGameObject(scene, name, GK_CAMERA, loader),
-        m_cameraProps(),
-        m_camera(0)
+    gkCamera            *m_cam;
+    gkScene             *m_scene;
+    gkDynamicsWorld     *m_phy;
+public:
+
+    gkCameraCallback(gkCamera *cam)
+    {
+        m_cam = cam;
+        m_scene = m_cam->getOwner();
+        m_phy = m_scene->getDynamicsWorld();
+    }
+
+    virtual ~gkCameraCallback() {}
+
+
+    void objectMoved(Ogre::MovableObject *)
+    {
+        if (m_cam == m_scene->getMainCamera())
+            m_phy->handleDbvt(m_cam);
+    }
+};
+
+
+gkCamera::gkCamera(gkScene *scene, const gkString &name, gkObject::Loader *loader)
+    :       gkGameObject(scene, name, GK_CAMERA, loader),
+            m_cameraProps(),
+            m_camera(0),
+            m_callback(0)
 {
 }
-
 
 
 void gkCamera::loadImpl(void)
@@ -57,6 +86,13 @@ void gkCamera::loadImpl(void)
 
     m_node->attachObject(m_camera);
 
+    
+    if (gkEngine::getSingleton().getUserDefs().useBulletDbvt)
+    {
+        m_callback = new gkCameraCallback(this);
+        m_camera->setListener(m_callback);
+    }
+
     if (m_cameraProps.start)
         m_scene->setMainCamera(this);
 }
@@ -73,6 +109,12 @@ void gkCamera::unloadImpl(void)
 
         m_node->detachObject(m_camera);
         manager->destroyCamera(m_camera);
+
+        if (gkEngine::getSingleton().getUserDefs().useBulletDbvt)
+        {
+            delete m_callback;
+            m_callback = 0;
+        }
         m_camera = 0;
     }
 
@@ -110,7 +152,7 @@ void gkCamera::setClip(gkScalar start, gkScalar end)
 }
 
 
-void gkCamera::setFov(const gkRadian& fov)
+void gkCamera::setFov(const gkRadian &fov)
 {
     gkScalar val = fov.valueRadians();
 
@@ -122,7 +164,7 @@ void gkCamera::setFov(const gkRadian& fov)
 }
 
 
-void gkCamera::setFov(const gkDegree& fov)
+void gkCamera::setFov(const gkDegree &fov)
 {
     gkScalar val = fov.valueRadians();
     if (m_cameraProps.fov != val)
