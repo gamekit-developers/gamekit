@@ -108,6 +108,8 @@ public:
 	void resetContacts();
 
     void handleDbvt(gkCamera *cam);
+
+	gkPhysicsDebug *getDebug() const { return m_debug; }
 };
 
 #endif//_gkDynamicsWorld_h_

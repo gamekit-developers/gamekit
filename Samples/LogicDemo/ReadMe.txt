@@ -32,9 +32,7 @@ Following are the explanations for the keyboard and mouse control of this demo.
 
 //////////////// Debug ////////////////////////////////////
 <C>
-	If pressed then shows physics shape.
-<X>
-	If pressed then shows pathfinding.
+	If pressed then shows physics shape & pathfinding.
 
 ////////////////Arcball//////////////////////////////////////
 <LEFT CTRL> 

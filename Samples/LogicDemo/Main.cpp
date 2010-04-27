@@ -151,7 +151,7 @@ public:
 
     OgreKit(const gkString &blend) 
 		: m_blend(blend), m_tree(0), m_ctrlKeyNode(0), m_shiftKeyNode(0),
-		m_wKeyNode(0), m_sKeyNode(0), m_cKeyNode(0), m_xKeyNode(0), m_spcKeyNode(0), 
+		m_wKeyNode(0), m_sKeyNode(0), m_cKeyNode(0), m_spcKeyNode(0), 
 		m_mouseNode(0), m_leftMouseNode(0), m_rightMouseNode(0),
 		m_momoPlayer(0), m_ratPlayer(0), m_cameraPlayer(0), m_animNode(0), m_animRatNode(0), m_momoCameraArcBall(0),
 		m_momoGrab(0), m_stateMachine(0), m_stateRatMachine(0), m_momoFollowPathNode(0)
@@ -240,7 +240,6 @@ public:
 		}
 		findPathNode->getSTART_POS()->link(m_momoPlayer->getPOSITION());
 		findPathNode->getEND_POS()->link(targetNode->getHIT_POINT());
-		findPathNode->getSHOW_PATH()->link(m_xKeyNode->getIS_DOWN());
 		findPathNode->getSHOW_PATH_OFFSET()->setValue(gkVector3(0, 0, 0.3f));
 
 		m_momoFollowPathNode = m_tree->createNode<gkFollowPathNode>();
@@ -257,11 +256,10 @@ public:
 
 			gkFindPathNode* ratFindPathNode = m_tree->createNode<gkFindPathNode>();
 
-			ratFindPathNode->getUPDATE()->link(m_momoPlayer->getMOTION());
+			ratFindPathNode->getUPDATE()->setValue(true);//->link(m_momoPlayer->getMOTION());
 
 			ratFindPathNode->getSTART_POS()->link(m_ratPlayer->getPOSITION());
 			ratFindPathNode->getEND_POS()->link(m_momoPlayer->getPOSITION());
-			ratFindPathNode->getSHOW_PATH()->link(m_xKeyNode->getIS_DOWN());
 			ratFindPathNode->getSHOW_PATH_OFFSET()->setValue(gkVector3(0, 0, 0.3f));
 
 			gkFollowPathNode* ratFollowPathNode = m_tree->createNode<gkFollowPathNode>();
@@ -292,9 +290,6 @@ public:
 
 		m_cKeyNode = m_tree->createNode<gkKeyNode>();
 		m_cKeyNode->setKey(KC_CKEY);
-
-		m_xKeyNode = m_tree->createNode<gkKeyNode>();
-		m_xKeyNode->setKey(KC_XKEY);
 
 		m_spcKeyNode = m_tree->createNode<gkKeyNode>();
 		m_spcKeyNode->setKey(KC_SPACEKEY);
@@ -421,6 +416,7 @@ public:
 		fallTest->getFALLING()->link(m_stateMachine->addTransition(momoState::FALL_UP, momoState::FALL_UP));
 		fallTest->getFALLING()->link(m_stateMachine->addTransition(momoState::RUN_FASTER, momoState::FALL_UP));
 		fallTest->getFALLING()->link(m_stateMachine->addTransition(momoState::WALK_BACK, momoState::FALL_UP));
+		fallTest->getFALLING()->link(m_stateMachine->addTransition(momoState::IDLE_NASTY, momoState::FALL_UP));
 
 		// RUN TRANSITIONS
 		m_wKeyNode->getIS_DOWN()->link(m_stateMachine->addTransition(momoState::WALK, momoState::RUN, 1500));
@@ -780,8 +776,6 @@ private:
 	gkKeyNode* m_sKeyNode;
 
 	gkKeyNode* m_cKeyNode;
-
-	gkKeyNode* m_xKeyNode;
 
 	gkKeyNode* m_spcKeyNode;
 

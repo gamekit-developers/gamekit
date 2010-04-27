@@ -66,15 +66,7 @@ void gkDynamicsWorld::preLoadImpl(void)
 
     m_collisionConfiguration = new btDefaultCollisionConfiguration();
     
-    if (gkEngine::getSingleton().getUserDefs().useBulletDbvt)
-        m_pairCache = new btDbvtBroadphase();
-    else
-    {
-	    btVector3 worldMin(-1000,-1000,-1000);
-	    btVector3 worldMax(1000,1000,1000);
-	    m_pairCache = new btAxisSweep3(worldMin,worldMax);
-    }
-
+    m_pairCache = new btDbvtBroadphase();
 
 	m_ghostPairCallback = new btGhostPairCallback();
 	m_pairCache->getOverlappingPairCache()->setInternalGhostPairCallback(m_ghostPairCallback);

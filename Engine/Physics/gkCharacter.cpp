@@ -30,6 +30,7 @@
 #include "gkScene.h"
 #include "gkRigidBody.h"
 #include "OgreSceneNode.h"
+#include "btBulletDynamicsCommon.h"
 #include "BulletCollision/CollisionDispatch/btGhostObject.h"
 #include "BulletDynamics/Character/btKinematicCharacterController.h"
 
@@ -78,7 +79,9 @@ void gkCharacter::loadImpl(void)
 
 			m_ghostObject->setCollisionFlags(btCollisionObject::CF_CHARACTER_OBJECT);
 
-			gkScalar stepHeight = 0.4f;
+			btCollisionShape* pShape = m_ghostObject->getCollisionShape();
+
+			gkScalar stepHeight = getAabb().getSize().z/2.5f;
 
 			m_character = new btKinematicCharacterController(
 				m_ghostObject, static_cast<btConvexShape*>(m_ghostObject->getCollisionShape()), stepHeight);

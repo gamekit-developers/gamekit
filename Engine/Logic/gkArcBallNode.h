@@ -85,8 +85,6 @@ public:
 
 private:
 
-	gkVector3 m_currentPosition;
-
 	gkVector3 m_center;
 	gkVector3 m_oldCenter;
 
@@ -95,6 +93,8 @@ private:
 
 	gkQuaternion m_rollNode;
 	gkQuaternion m_pitchNode;
+
+	gkScalar m_radiusOffset;
 };
 
 #endif//_gkArcBallNode_h_
