@@ -27,6 +27,10 @@
 #include "gkLogger.h"
 #include "gkGameObject.h"
 #include "gkFollowPathNode.h"
+#include "gkEngine.h"
+#include "gkScene.h"
+#include "gkDynamicsWorld.h"
+#include "gkPhysicsDebug.h"
 
 gkFollowPathNode::gkFollowPathNode(gkLogicTree *parent, size_t id) 
 : gkLogicNode(parent, id),
@@ -36,9 +40,6 @@ m_dir(gkVector3::ZERO),
 m_up(gkVector3::ZERO),
 m_upMask(gkVector3::ZERO),
 m_foundThreshold(0),
-m_idleState(-1),
-m_walkState(-1),
-m_runState(-1),
 m_walkVelocity(0),
 m_runVelocity(0)
 {
@@ -49,34 +50,45 @@ m_runVelocity(0)
 	ADD_ISOCK(ORIGINAL_TARGET_DIRECTION, gkVector3::UNIT_Y);
 	ADD_ISOCK(FOUND_THRESHOLD, 0.8f);
 	ADD_ISOCK(PATH, 0);
+	ADD_ISOCK(SHOW_PATH_OFFSET, gkVector3::ZERO);
 	ADD_OSOCK(HAS_REACHED_END, true);
 	ADD_OSOCK(NOT_HAS_REACHED_END, false);
-	ADD_OSOCK(CURRENT_STATE, -1);
+	ADD_OSOCK(IDLE, false);
+	ADD_OSOCK(WALK, false);
+	ADD_OSOCK(RUN, false);
 }
 
 bool gkFollowPathNode::evaluate(gkScalar tick)
 {
 	m_path = GET_SOCKET_VALUE(PATH);
+	m_target = GET_SOCKET_VALUE(TARGET);
 
-	if(m_path && GET_SOCKET_VALUE(UPDATE) && GET_SOCKET_VALUE(TARGET) && animationHasBeenSet())
+	SET_SOCKET_VALUE(IDLE, false);
+	SET_SOCKET_VALUE(WALK, false);
+	SET_SOCKET_VALUE(RUN, false);
+
+	if(GET_SOCKET_VALUE(UPDATE))
 	{
-		if(!m_path->following && !m_path->path.empty())
+		if(m_path && animationHasBeenSet())
 		{
-			m_target = GET_SOCKET_VALUE(TARGET);
-			m_dir = GET_SOCKET_VALUE(ORIGINAL_TARGET_DIRECTION);
-			m_up = GET_SOCKET_VALUE(TARGET_UP_DIRECTION);
-			m_upMask = (gkVector3::UNIT_SCALE - m_up);
-			m_foundThreshold = GET_SOCKET_VALUE(FOUND_THRESHOLD);
+			if(!m_path->following && !m_path->path.empty())
+			{
+				m_dir = GET_SOCKET_VALUE(ORIGINAL_TARGET_DIRECTION);
+				m_up = GET_SOCKET_VALUE(TARGET_UP_DIRECTION);
+				m_upMask = (gkVector3::UNIT_SCALE - m_up);
+				m_foundThreshold = GET_SOCKET_VALUE(FOUND_THRESHOLD);
 
-			SET_SOCKET_VALUE(HAS_REACHED_END, false);
-			SET_SOCKET_VALUE(NOT_HAS_REACHED_END, true);
-			SET_SOCKET_VALUE(CURRENT_STATE, -1);
+				SET_SOCKET_VALUE(HAS_REACHED_END, false);
+				SET_SOCKET_VALUE(NOT_HAS_REACHED_END, true);
 
-			m_path->following = true;
+				m_path->following = true;
+			}
 		}
+
+		return m_target && m_target->isLoaded() && m_path && m_path->following;
 	}
 
-	return m_path && m_path->following;
+	return false;
 }
 
 void gkFollowPathNode::update(gkScalar tick)
@@ -117,7 +129,7 @@ void gkFollowPathNode::update(gkScalar tick)
 
 			gkGameObject* pSource = GET_SOCKET_VALUE(SOURCE);
 
-			if(!m_path->retry && pSource)
+			if(!m_path->retry && pSource && pSource->isLoaded())
 			{
 				m_path->retry = !isTargetReached();
 			}
@@ -128,7 +140,11 @@ void gkFollowPathNode::update(gkScalar tick)
 
 			SET_SOCKET_VALUE(HAS_REACHED_END, true);
 			SET_SOCKET_VALUE(NOT_HAS_REACHED_END, false);
-			SET_SOCKET_VALUE(CURRENT_STATE, m_idleState);
+			SET_SOCKET_VALUE(IDLE, true);
+		}
+		else
+		{
+			showPath();
 		}
 	}
 }
@@ -155,17 +171,17 @@ void gkFollowPathNode::setVelocity(gkScalar d, gkScalar tick)
 {
 	if(d >= m_runVelocity*tick)
 	{
-		SET_SOCKET_VALUE(CURRENT_STATE, m_runState);
+		SET_SOCKET_VALUE(RUN, true);
 		m_target->setLinearVelocity(m_dir * m_runVelocity, TRANSFORM_LOCAL);
 	}
 	else if(d >= m_walkVelocity*tick)
 	{
-		SET_SOCKET_VALUE(CURRENT_STATE, m_walkState);
+		SET_SOCKET_VALUE(WALK, true);
 		m_target->setLinearVelocity(m_dir * m_walkVelocity, TRANSFORM_LOCAL);
 	}
 	else
 	{
-		SET_SOCKET_VALUE(CURRENT_STATE, m_walkState);
+		SET_SOCKET_VALUE(WALK, true);
 		m_target->setLinearVelocity(m_dir * d/tick, TRANSFORM_LOCAL);
 	}
 }
@@ -195,6 +211,40 @@ gkVector3 gkFollowPathNode::GetProjectionOnPlane(const gkVector3& V, const gkVec
 	//U = V - (V dot N)N 
 
 	return  V - V.dotProduct(N) * N;
+}
+
+void gkFollowPathNode::showPath()
+{
+	gkScene* pScene = gkEngine::getSingleton().getActiveScene();
+	
+	gkPhysicsDebug *debug = pScene->getDynamicsWorld()->getDebug();
+	
+	if(debug)
+	{
+		unsigned int n = m_path ? m_path->path.size() : 0;
+
+		if(n)
+		{
+			static const btVector3 RED_COLOR(1,0,0);
+
+			gkVector3 offset = GET_SOCKET_VALUE(SHOW_PATH_OFFSET);
+
+			gkVector3 oldPoint = m_path->path.at(0) + offset;
+
+			for(unsigned int i=1; i<n; i++)
+			{
+				gkVector3 point = m_path->path.at(i) + offset;
+
+				debug->drawLine(
+					btVector3(oldPoint.x, oldPoint.y, oldPoint.z), 
+					btVector3(point.x, point.y, point.z), 
+					RED_COLOR
+				);
+
+				oldPoint = m_path->path.at(i) + offset;
+			}
+		}
+	}
 }
 
 

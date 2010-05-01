@@ -37,12 +37,10 @@ public:
 	enum
 	{
 		UPDATE,
-		FORCE_STATUS,
 		CURRENT_STATE
 	};
 
 	DECLARE_SOCKET_TYPE(UPDATE, bool);
-	DECLARE_SOCKET_TYPE(FORCE_STATUS, int);
 	DECLARE_SOCKET_TYPE(CURRENT_STATE, int);
 
     gkStateMachineNode(gkLogicTree *parent, size_t id);

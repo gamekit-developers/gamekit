@@ -27,6 +27,7 @@
 #ifndef _gkFallTestNode_h_
 #define _gkFallTestNode_h_
 
+#include "LinearMath/btQuickprof.h"
 #include "gkLogicNode.h"
 
 class gkGameObject;
@@ -40,7 +41,6 @@ public:
 		ENABLE,
 		TARGET,
 		GROUND_OFFSET,
-		COLLIDES_WITH,
 		FALLING,
 		NOT_FALLING,
 		COLLIDED_OBJ,
@@ -50,7 +50,6 @@ public:
 	DECLARE_SOCKET_TYPE(ENABLE, bool);
 	DECLARE_SOCKET_TYPE(TARGET, gkGameObject*);
 	DECLARE_SOCKET_TYPE(GROUND_OFFSET, gkScalar);
-	DECLARE_SOCKET_TYPE(COLLIDES_WITH, gkString);
 	DECLARE_SOCKET_TYPE(FALLING, bool);
 	DECLARE_SOCKET_TYPE(NOT_FALLING, bool);
 	DECLARE_SOCKET_TYPE(COLLIDED_OBJ, gkGameObject*);
@@ -66,6 +65,7 @@ public:
 private:
 
 	gkGameObject* m_object;
+	btClock m_timer;
 
 };
 

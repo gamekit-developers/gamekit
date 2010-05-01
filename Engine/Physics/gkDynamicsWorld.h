@@ -110,6 +110,8 @@ public:
     void handleDbvt(gkCamera *cam);
 
 	gkPhysicsDebug *getDebug() const { return m_debug; }
+
+	void DrawDebug();
 };
 
 #endif//_gkDynamicsWorld_h_

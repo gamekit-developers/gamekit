@@ -96,6 +96,9 @@ Following are the explanations for the keyboard and mouse control of this demo.
 	Reload momo.
 	(This returns momo to the original position and orientation.)
 	
+<SPACE>
+	Kick. (try to kick a rat)
+	
 <RIGHT MOUSE BUTTON>
 	When pressed then Momo grabs closest object.
 	When released then Momo release the grabbed object.

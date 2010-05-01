@@ -26,8 +26,6 @@
 */
 #include "gkLogger.h"
 #include "gkEngine.h"
-#include "gkDynamicsWorld.h"
-#include "gkPhysicsDebug.h"
 #include "gkScene.h"
 #include "gkFindPathNode.h"
 #include "Recast.h"
@@ -45,7 +43,6 @@ m_navMesh(0)
 	ADD_ISOCK(START_POS, gkVector3::ZERO);
 	ADD_ISOCK(END_POS, gkVector3::ZERO);
 	ADD_ISOCK(POLY_PICK_EXT, gkVector3(2, 4, 2));
-	ADD_ISOCK(SHOW_PATH_OFFSET, gkVector3::ZERO);
 	ADD_ISOCK(REDO_PATH_IF_FOLLOWING, false);
 	ADD_OSOCK(PATH, 0);
 	ADD_OSOCK(PATH_FOUND, false);
@@ -61,22 +58,32 @@ bool gkFindPathNode::evaluate(gkScalar tick)
 
 	m_navMesh = pScene->getNavigationMesh();
 
-	return (GET_SOCKET_VALUE(UPDATE) || m_path.retry) && m_navMesh.get() && m_navMesh->data;
+	if(GET_SOCKET_VALUE(UPDATE) || m_path.retry)
+	{
+		return m_navMesh.get() && m_navMesh->data;
+	}
+	else if(m_path.path.empty())
+	{
+		SET_SOCKET_VALUE(PATH_FOUND, false);
+	}
+
+	return false;
 }
 
 void gkFindPathNode::update(gkScalar tick)
 {
-	findPath();
+	if(!GET_SOCKET_VALUE(REDO_PATH_IF_FOLLOWING) && m_path.following) 
+		return;
 
-	showPath();
+	findPath();
 }
 
 void gkFindPathNode::findPath()
 {
-	if(!GET_SOCKET_VALUE(REDO_PATH_IF_FOLLOWING) && m_path.following) return;
-
 	SET_SOCKET_VALUE(PATH_FOUND, false);
+
 	SET_SOCKET_VALUE(PATH, 0);
+
 	m_path.path.clear();
 
 	gkVector3 startPos = GET_SOCKET_VALUE(START_POS);
@@ -140,39 +147,4 @@ void gkFindPathNode::findPath()
 	}
 }
 
-void gkFindPathNode::showPath()
-{
-	gkScene* pScene = gkEngine::getSingleton().getActiveScene();
-	
-	gkPhysicsDebug *debug = pScene->getDynamicsWorld()->getDebug();
-	
-	if(debug)
-	{
-		PathData* pathData = GET_SOCKET_VALUE(PATH);
-
-		unsigned int n = pathData ? pathData->path.size() : 0;
-
-		if(n)
-		{
-			static const btVector3 RED_COLOR(1,0,0);
-
-			gkVector3 offset = GET_SOCKET_VALUE(SHOW_PATH_OFFSET);
-
-			gkVector3 oldPoint = pathData->path.at(0) + offset;
-
-			for(unsigned int i=1; i<n; i++)
-			{
-				gkVector3 point = pathData->path.at(i) + offset;
-
-				debug->drawLine(
-					btVector3(oldPoint.x, oldPoint.y, oldPoint.z), 
-					btVector3(point.x, point.y, point.z), 
-					RED_COLOR
-				);
-
-				oldPoint = pathData->path.at(i) + offset;
-			}
-		}
-	}
-}
 

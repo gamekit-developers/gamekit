@@ -86,7 +86,8 @@ typedef enum gkBoolStatement
     CMP_GREATER,
     CMP_LESS,
     CMP_GTHAN,
-    CMP_LTHAN
+    CMP_LTHAN,
+	CMP_FIND,
 } gkBoolStatement;
 
 typedef enum gkObjectFunction

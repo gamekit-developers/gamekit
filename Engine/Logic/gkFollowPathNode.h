@@ -44,9 +44,12 @@ public:
 		ORIGINAL_TARGET_DIRECTION,
 		FOUND_THRESHOLD,
 		PATH,
+		SHOW_PATH_OFFSET,
 		HAS_REACHED_END,
 		NOT_HAS_REACHED_END,
-		CURRENT_STATE
+		IDLE,
+		WALK,
+		RUN
 	};
 
 	typedef gkFindPathNode::PathData PathData;
@@ -58,9 +61,12 @@ public:
 	DECLARE_SOCKET_TYPE(ORIGINAL_TARGET_DIRECTION, gkVector3);
 	DECLARE_SOCKET_TYPE(FOUND_THRESHOLD, gkScalar);
 	DECLARE_SOCKET_TYPE(PATH, PathData*);
+	DECLARE_SOCKET_TYPE(SHOW_PATH_OFFSET, gkVector3);
 	DECLARE_SOCKET_TYPE(HAS_REACHED_END, bool);
 	DECLARE_SOCKET_TYPE(NOT_HAS_REACHED_END, bool);
-	DECLARE_SOCKET_TYPE(CURRENT_STATE, int);
+	DECLARE_SOCKET_TYPE(IDLE, bool);
+	DECLARE_SOCKET_TYPE(WALK, bool);
+	DECLARE_SOCKET_TYPE(RUN, bool);
 
     gkFollowPathNode(gkLogicTree *parent, size_t id);
 	virtual ~gkFollowPathNode() {}
@@ -68,9 +74,8 @@ public:
 	bool evaluate(gkScalar tick);
 	void update(gkScalar tick);
 
-	void setIdleState(int state) { m_idleState = state;}
-	void setWalkState(int state, gkScalar velocity) { m_walkState = state; m_walkVelocity = velocity; }
-	void setRunState(int state, gkScalar velocity) { m_runState = state; m_runVelocity = velocity; }
+	void setWalkVelocity(gkScalar velocity) { m_walkVelocity = velocity; }
+	void setRunVelocity(gkScalar velocity) { m_runVelocity = velocity; }
 
 private:
 
@@ -78,9 +83,11 @@ private:
 	gkVector3 GetProjectionOnPlane(const gkVector3& V, const gkVector3& N);
 
 	void setVelocity(gkScalar d, gkScalar tick);
-	bool animationHasBeenSet() const { return m_idleState!= -1 && m_walkVelocity && m_runVelocity; }
+	bool animationHasBeenSet() const { return m_walkVelocity && m_runVelocity; }
 
 	bool isTargetReached();
+
+	void showPath();
 
 private:
 
@@ -91,10 +98,6 @@ private:
 	gkVector3 m_up;
 	gkVector3 m_upMask;
 	gkScalar m_foundThreshold;
-
-	int m_idleState;
-	int m_walkState;
-	int m_runState;
 
 	gkScalar m_walkVelocity;
 	gkScalar m_runVelocity;

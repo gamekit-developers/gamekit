@@ -503,5 +503,7 @@ void gkScene::update(gkScalar tickRate)
 
     // update script callbacks
     gkLuaManager::getSingleton().update(tickRate);
+
+	if (m_physicsWorld) m_physicsWorld->DrawDebug();
 }
 

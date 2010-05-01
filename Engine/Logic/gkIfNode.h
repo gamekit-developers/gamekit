@@ -155,6 +155,12 @@ public:
 	{
 		return GET_SOCKET_VALUE(A) <= GET_SOCKET_VALUE(B);
 	}
+
+	bool doIf(Int2Type<CMP_FIND>)
+	{
+		return gkString::npos != GET_SOCKET_VALUE(A).find(GET_SOCKET_VALUE(B));
+	}
+
 };
 
 #endif//_gkIfNode_h_

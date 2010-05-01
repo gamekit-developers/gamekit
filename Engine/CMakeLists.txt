@@ -151,6 +151,7 @@ set(NLogic_SOURCE
     Logic/gkObjectNode.cpp
     Logic/gkPrintNode.cpp
     Logic/gkRandomNode.cpp
+    Logic/gkRayTestNode.cpp
     Logic/gkSwitchNode.cpp
     Logic/gkTimerNode.cpp
     Logic/gkValueNode.cpp
@@ -190,6 +191,7 @@ set(NLogic_HEADER
     Logic/gkObjectNode.h
     Logic/gkPrintNode.h
     Logic/gkRandomNode.h
+    Logic/gkRayTestNode.h
     Logic/gkSwitchNode.h
     Logic/gkTimerNode.h
     Logic/gkValueNode.h

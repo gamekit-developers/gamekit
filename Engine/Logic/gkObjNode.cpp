@@ -36,7 +36,7 @@
 #include "btBulletDynamicsCommon.h"
 
 gkObjNode::gkObjNode(gkLogicTree *parent, size_t id)
-: gkLogicNode(parent, id), m_type(OBJ_NAME), m_obj(0), m_mesh(0), m_position(gkVector3::ZERO),
+: gkLogicNode(parent, id), m_type(NAME), m_obj(0), m_mesh(0), m_position(gkVector3::ZERO),
 m_rotation(gkQuaternion::IDENTITY)
 {
 	ADD_ISOCK(UPDATE_OBJ, false);
@@ -50,12 +50,13 @@ m_rotation(gkQuaternion::IDENTITY)
 	ADD_ISOCK(SET_LINEAR_VEL_VALUE_Z, 0);
 	ADD_ISOCK(SET_ROTATION, false);
 	ADD_ISOCK(SET_ROTATION_VALUE, gkQuaternion::IDENTITY);
-	ADD_ISOCK(NAME, "");
-	ADD_OSOCK(OBJ, 0);
+	ADD_ISOCK(OBJ_POINTER, 0);
 	ADD_ISOCK(X, 0);
 	ADD_ISOCK(Y, 0);
 	ADD_ISOCK(RESET, false);
 	ADD_OSOCK(HAS_OBJ, false);
+	ADD_OSOCK(OBJ, 0);
+	ADD_OSOCK(OBJ_NAME, gkString(""));
 	ADD_OSOCK(HIT_POINT, gkVector3::ZERO);
 	ADD_OSOCK(POSITION, gkVector3::ZERO);
 	ADD_OSOCK(ROTATION, gkQuaternion::IDENTITY);
@@ -74,11 +75,15 @@ bool gkObjNode::evaluate(gkScalar tick)
 
 		if(!GET_SOCKET_VALUE(RESET))
 		{
-			if(m_type == OBJ_NAME)
+			if(m_type == NAME)
 			{
 				gkScene* pScene = gkEngine::getSingleton().getActiveScene();
 
-				m_obj = pScene->getObject(GET_SOCKET_VALUE(NAME));
+				m_obj = pScene->getObject(GET_SOCKET_VALUE(OBJ_NAME));
+			}
+			else if(m_type == POINTER)
+			{
+				m_obj = GET_SOCKET_VALUE(OBJ_POINTER);
 			}
 			else
 			{

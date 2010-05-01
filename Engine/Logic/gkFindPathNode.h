@@ -43,7 +43,6 @@ public:
 		START_POS,
 		END_POS,
 		POLY_PICK_EXT,
-		SHOW_PATH_OFFSET,
 		REDO_PATH_IF_FOLLOWING,
 		PATH,
 		PATH_FOUND
@@ -67,7 +66,6 @@ public:
 	DECLARE_SOCKET_TYPE(START_POS, gkVector3);
 	DECLARE_SOCKET_TYPE(END_POS, gkVector3);
 	DECLARE_SOCKET_TYPE(POLY_PICK_EXT, gkVector3);
-	DECLARE_SOCKET_TYPE(SHOW_PATH_OFFSET, gkVector3);
 	DECLARE_SOCKET_TYPE(REDO_PATH_IF_FOLLOWING, bool);
 	
 
@@ -84,7 +82,6 @@ public:
 private:
 
 	void findPath();
-	void showPath();
 
 private:
 

@@ -36,8 +36,7 @@ gkFallTestNode::gkFallTestNode(gkLogicTree *parent, size_t id)
 {
 	ADD_ISOCK(ENABLE, false);
 	ADD_ISOCK(TARGET, 0);
-	ADD_ISOCK(GROUND_OFFSET, 0.08f);
-	ADD_ISOCK(COLLIDES_WITH, "");
+	ADD_ISOCK(GROUND_OFFSET, 0.1f);
 	ADD_OSOCK(FALLING, false);
 	ADD_OSOCK(NOT_FALLING, false);
 	ADD_OSOCK(COLLIDED_OBJ, 0);
@@ -58,38 +57,59 @@ bool gkFallTestNode::evaluate(gkScalar tick)
 
 void gkFallTestNode::update(gkScalar tick)
 {
-	SET_SOCKET_VALUE(FALLING, true);
-	SET_SOCKET_VALUE(NOT_FALLING, false);
-
 	if(GET_SOCKET_VALUE(ENABLE))
 	{
 		Ogre::AxisAlignedBox bb = m_object->getAabb();
 
 		gkScalar minZ = bb.getHalfSize().z + GET_SOCKET_VALUE(GROUND_OFFSET);
 
-		gkVector3 position = m_object->getPosition();
+		gkVector3 origin = m_object->getPosition();
 
-		gkVector3 origin = position - gkVector3(0, 0, minZ);
-
-		gkVector3 dir = position - origin;
-
-		Ogre::Ray ray(origin, dir);
+		static const int N = 9;
 		
-		gkVector3 hitPointWorld;
+		gkVector3 dir[N];
 		
-		btCollisionObject* pCol = gkUtils::PickBody(ray, hitPointWorld);
+		dir[0] = gkVector3(0, 0, -minZ);
+		dir[1] = gkVector3(0, minZ, -minZ);
+		dir[2] = gkVector3(0, -minZ, -minZ);
+		dir[3] = gkVector3(minZ, 0, -minZ);
+		dir[4] = gkVector3(-minZ, 0, -minZ);
+		dir[5] = gkVector3(minZ, minZ, -minZ);
+		dir[6] = gkVector3(minZ, -minZ, -minZ);
+		dir[7] = gkVector3(-minZ, minZ, -minZ);
+		dir[8] = gkVector3(-minZ, -minZ, -minZ);
 
-		if(pCol)
+		int i=0;
+		for(i; i<N; i++)
 		{
-			gkObject* pObj = static_cast<gkObject*>(pCol->getUserPointer());
+			Ogre::Ray ray(origin, dir[i]);
+			
+			gkVector3 hitPointWorld;
+			
+			btCollisionObject* pCol = gkUtils::PickBody(ray, hitPointWorld);
 
-			if(pObj != m_object)
+			if(pCol)
 			{
+				gkObject* pObj = static_cast<gkObject*>(pCol->getUserPointer());
+
 				SET_SOCKET_VALUE(CONTACT_POSITION, hitPointWorld);
 				SET_SOCKET_VALUE(COLLIDED_OBJ, pObj->getObject());
 				SET_SOCKET_VALUE(FALLING, false);
 				SET_SOCKET_VALUE(NOT_FALLING, true);
+
+				break;
 			}
 		}
+
+		if(i == N)
+		{
+			SET_SOCKET_VALUE(FALLING, true);
+			SET_SOCKET_VALUE(NOT_FALLING, false);
+		}
+	}
+	else
+	{
+		SET_SOCKET_VALUE(FALLING, false);
+		SET_SOCKET_VALUE(NOT_FALLING, false);
 	}
 }

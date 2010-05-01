@@ -325,7 +325,10 @@ void gkDynamicsWorld::substep(gkScalar tick)
 			colB->handleManifold(manifold);
         }
     }
+}
 
+void gkDynamicsWorld::DrawDebug()
+{
     if (m_debug)
     {
         if (!m_objects.empty())

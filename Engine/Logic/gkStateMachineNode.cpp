@@ -32,7 +32,6 @@ gkStateMachineNode::gkStateMachineNode(gkLogicTree *parent, size_t id)
 m_currentState(-1)
 {
 	ADD_ISOCK(UPDATE, true);
-	ADD_ISOCK(FORCE_STATUS, -1);
 	ADD_OSOCK(CURRENT_STATE, 0);
 }
 
@@ -62,64 +61,49 @@ void gkStateMachineNode::update(gkScalar tick)
 		m_currentState = GET_SOCKET_VALUE(CURRENT_STATE);
 	}
 
-	int forceStatus = GET_SOCKET_VALUE(FORCE_STATUS);
+	size_t pos = m_transitions.find(m_currentState);
 
-	if(forceStatus != -1)
+	if (pos != GK_NPOS)
 	{
-		if(m_currentState != forceStatus)
+		const Data* pData = 0;
+
+		REACTION_ITERATOR it(m_transitions.at(pos));
+
+		while (it.hasMoreElements()) 
 		{
-			m_currentState = forceStatus;
+			const void* p = it.peekNextKey().key();
 
-			SET_SOCKET_VALUE(CURRENT_STATE, m_currentState);
-			SET_SOCKET_VALUE(FORCE_STATUS, -1);
-		}
-	}
-	else
-	{
-		size_t pos = m_transitions.find(m_currentState);
+			const gkILogicSocket* pSocket = static_cast<const gkILogicSocket*>(p);
 
-		if (pos != GK_NPOS)
-		{
-			const Data* pData = 0;
-
-			REACTION_ITERATOR it(m_transitions.at(pos));
-
-			while (it.hasMoreElements()) 
+			if(!pSocket->isConnected() || static_cast<const gkLogicSocket<bool>*>(pSocket)->getValue())
 			{
-				const void* p = it.peekNextKey().key();
+				const Data* pTmpData  = &(it.peekNextValue());
 
-				const gkILogicSocket* pSocket = static_cast<const gkILogicSocket*>(p);
-
-				if(!pSocket->isConnected() || static_cast<const gkLogicSocket<bool>*>(pSocket)->getValue())
+				if(pSocket->isConnected())
 				{
-					const Data* pTmpData  = &(it.peekNextValue());
+					pData = pTmpData;
 
-					if(pSocket->isConnected())
+					if(pTmpData->m_state != m_currentState) 
 					{
-						pData = pTmpData;
-
-						if(pTmpData->m_state != m_currentState) 
-						{
-							break;
-						}
-					}
-					else if(!pData)
-					{
-						pData = pTmpData;
+						break;
 					}
 				}
-
-				it.next();
+				else if(!pData)
+				{
+					pData = pTmpData;
+				}
 			}
 
-			if(pData && pData->m_state != m_currentState && pData->m_ms < m_timer.getTimeMilliseconds())
-			{
-				m_currentState = pData->m_state;
+			it.next();
+		}
 
-				SET_SOCKET_VALUE(CURRENT_STATE, m_currentState);
+		if(pData && pData->m_state != m_currentState && pData->m_ms < m_timer.getTimeMilliseconds())
+		{
+			m_currentState = pData->m_state;
 
-				m_timer.reset();
-			}
+			SET_SOCKET_VALUE(CURRENT_STATE, m_currentState);
+
+			m_timer.reset();
 		}
 	}
 }
