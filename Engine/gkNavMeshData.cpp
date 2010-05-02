@@ -437,7 +437,7 @@ void gkNavCreator::Call::run()
 
 
 gkNavMeshData::gkNavMeshData(gkScene* scene) 
-: m_object(0), m_scene(scene), m_createNavigation(false)//, m_debug(0), os(L"momo.obj")
+: m_object(0), m_scene(scene)//, m_debug(0), os(L"momo.obj")
 {
 	GK_ASSERT(m_scene);
 
@@ -510,17 +510,12 @@ void gkNavMeshData::refresh(gkGameObject* pObj)
 
 	m_object = pObj;
 
-	m_createNavigation = false;
-
 	if(m_object && m_object->isLoaded())
 	{
 		AddCollisionObj();
 	}
 
-	if(m_createNavigation)
-	{
-		m_navCreator->startJob();
-	}
+	m_navCreator->startJob();
 }
 
 void gkNavMeshData::reset()
@@ -553,8 +548,6 @@ void gkNavMeshData::addTriangle(const gkVector3& v1, const gkVector3& v2, const 
 {
 	if(m_object->getNavData().isEmpty())
 	{
-		m_createNavigation = true;
-
 		size_t n = m_data.verts.size();
 
 		int a = n; 
@@ -595,14 +588,9 @@ void gkNavMeshData::addTriangle(const gkVector3& v1, const gkVector3& v2, const 
 		size_t vBaseIndex = tBaseIndex/2;
 		size_t nBaseIndex = tBaseIndex/6;
 
-		static const gkScalar MIN_DISTANCE = 0.1f;
-
 		gkVector3& ov1 = m_data.verts[vBaseIndex];
 		gkVector3& ov2 = m_data.verts[vBaseIndex+1];
 		gkVector3& ov3 = m_data.verts[vBaseIndex+2];
-
-		m_createNavigation = !v1.positionEquals(ov1, MIN_DISTANCE) || 
-			!v2.positionEquals(ov2, MIN_DISTANCE) || !v3.positionEquals(ov3, MIN_DISTANCE);
 		
 		ov1 = v1;
 		ov2 = v2;

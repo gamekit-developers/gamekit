@@ -143,9 +143,9 @@ m_rayTestNode(scene->m_tree->createNode<gkRayTestNode>())
 
 	//DEATH TRANSITION
 	{
-		gkIfNode<gkString, CMP_FIND>* ifNode = m_scene->m_tree->createNode<gkIfNode<gkString, CMP_FIND> >();
-		ifNode->getA()->link(momo->m_kickTestNode->getHIT_NAME());
-		ifNode->getB()->setValue(gkString("Rat"));
+		gkIfNode<gkGameObject*, CMP_EQUALS>* ifNode = m_scene->m_tree->createNode<gkIfNode<gkGameObject*, CMP_EQUALS> >();
+		ifNode->getA()->link(momo->m_kickTestNode->getHIT_OBJ());
+		ifNode->getB()->link(m_playerNode->getOBJ());
 
 		ifNode->getIS_TRUE()->link(m_stateMachineNode->addTransition(IDLE, DEATH));
 		ifNode->getIS_TRUE()->link(m_stateMachineNode->addTransition(RUN, DEATH));

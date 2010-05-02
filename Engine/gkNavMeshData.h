@@ -162,8 +162,6 @@ private:
 
 	gkScene* m_scene;
 
-	bool m_createNavigation;
-
 	//std::ofstream os;
 };
 

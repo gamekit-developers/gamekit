@@ -42,7 +42,8 @@ m_pickedBody(0),
 m_constraint(0),
 m_oldPickingPos(0, 0, 0),
 m_oldPickingDist(0),
-m_angularFactor(gkVector3::ZERO)
+m_angularFactor(gkVector3::ZERO),
+m_activationState(0)
 {
 	ADD_ISOCK(UPDATE, false);
 	ADD_ISOCK(CREATE_PICK, false);
@@ -116,6 +117,8 @@ void gkPickNode::CreatePick()
 				body->setAngularFactor(0);
 			}
 
+			m_activationState = body->getActivationState();
+
 			body->setActivationState(DISABLE_DEACTIVATION);
 
 			btVector3 hitPos(hitPointWorld.x, hitPointWorld.y, hitPointWorld.z);
@@ -177,6 +180,8 @@ void gkPickNode::ReleasePick()
 		m_constraint = 0;
 
 		GK_ASSERT(m_pickedBody);
+
+		m_pickedBody->getBody()->forceActivationState(m_activationState);
 
 		m_pickedBody->getBody()->setAngularFactor(btVector3(m_angularFactor.x, m_angularFactor.y, m_angularFactor.z));
 

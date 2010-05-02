@@ -85,6 +85,7 @@ private:
 	Ogre::Real m_oldPickingDist;
 
 	gkVector3 m_angularFactor;
+	int m_activationState;
 };
 
 #endif//_gkPickNode_h_
