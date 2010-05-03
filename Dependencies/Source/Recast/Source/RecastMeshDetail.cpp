@@ -90,9 +90,9 @@ static bool circumCircle(const float* p1, const float* p2, const float* p3,
 static float distPtTri(const float* p, const float* a, const float* b, const float* c)
 {
 	float v0[3], v1[3], v2[3];
-	vsub(v0, c,a);
-	vsub(v1, b,a);
-	vsub(v2, p,a);
+	rcVsub(v0, c,a);
+	rcVsub(v1, b,a);
+	rcVsub(v2, p,a);
 
 	const float dot00 = vdot2(v0, v0);
 	const float dot01 = vdot2(v0, v1);
@@ -101,15 +101,15 @@ static float distPtTri(const float* p, const float* a, const float* b, const flo
 	const float dot12 = vdot2(v1, v2);
 	
 	// Compute barycentric coordinates
-	float invDenom = 1.0f / (dot00 * dot11 - dot01 * dot01);
-	float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+	const float invDenom = 1.0f / (dot00 * dot11 - dot01 * dot01);
+	const float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
 	float v = (dot00 * dot12 - dot01 * dot02) * invDenom;
 	
 	// If point lies inside the triangle, return interpolated y-coord.
 	static const float EPS = 1e-4f;
 	if (u >= -EPS && v >= -EPS && (u+v) <= 1+EPS)
 	{
-		float y = a[1] + v0[1]*u + v1[1]*v;
+		const float y = a[1] + v0[1]*u + v1[1]*v;
 		return fabsf(y-p[1]);
 	}
 	return FLT_MAX;
@@ -160,7 +160,7 @@ static float distancePtSeg2d(const float* pt, const float* p, const float* q)
 	return dx*dx + dz*dz;
 }
 
-static float distToTriMesh(const float* p, const float* verts, int nverts, const int* tris, int ntris)
+static float distToTriMesh(const float* p, const float* verts, const int /*nverts*/, const int* tris, const int ntris)
 {
 	float dmin = FLT_MAX;
 	for (int i = 0; i < ntris; ++i)
@@ -194,7 +194,9 @@ static float distToPoly(int nvert, const float* verts, const float* p)
 }
 
 
-static unsigned short getHeight(const float fx, const float fy, const float fz, const float cs, const float ics, const float ch, const rcHeightPatch& hp)
+static unsigned short getHeight(const float fx, const float fy, const float fz,
+								const float /*cs*/, const float ics, const float ch,
+								const rcHeightPatch& hp)
 {
 	int ix = (int)floorf(fx*ics + 0.01f);
 	int iz = (int)floorf(fz*ics + 0.01f);
@@ -506,7 +508,7 @@ static bool buildPolyDetail(const float* in, const int nin,
 	nverts = 0;
 
 	for (int i = 0; i < nin; ++i)
-		vcopy(&verts[i*3], &in[i*3]);
+		rcVcopy(&verts[i*3], &in[i*3]);
 	nverts = nin;
 	
 	const float cs = chf.cs;
@@ -600,7 +602,7 @@ static bool buildPolyDetail(const float* in, const int nin,
 			{
 				for (int k = nidx-2; k > 0; --k)
 				{
-					vcopy(&verts[nverts*3], &edge[idx[k]*3]);
+					rcVcopy(&verts[nverts*3], &edge[idx[k]*3]);
 					hull[nhull++] = nverts;
 					nverts++;
 				}
@@ -609,7 +611,7 @@ static bool buildPolyDetail(const float* in, const int nin,
 			{
 				for (int k = 1; k < nidx-1; ++k)
 				{
-					vcopy(&verts[nverts*3], &edge[idx[k]*3]);
+					rcVcopy(&verts[nverts*3], &edge[idx[k]*3]);
 					hull[nhull++] = nverts;
 					nverts++;
 				}
@@ -643,12 +645,12 @@ static bool buildPolyDetail(const float* in, const int nin,
 	{
 		// Create sample locations in a grid.
 		float bmin[3], bmax[3];
-		vcopy(bmin, in);
-		vcopy(bmax, in);
+		rcVcopy(bmin, in);
+		rcVcopy(bmax, in);
 		for (int i = 1; i < nin; ++i)
 		{
-			vmin(bmin, &in[i*3]);
-			vmax(bmax, &in[i*3]);
+			rcVmin(bmin, &in[i*3]);
+			rcVmax(bmax, &in[i*3]);
 		}
 		int x0 = (int)floorf(bmin[0]/sampleDist);
 		int x1 = (int)ceilf(bmax[0]/sampleDist);
@@ -691,7 +693,7 @@ static bool buildPolyDetail(const float* in, const int nin,
 				if (d > bestd)
 				{
 					bestd = d;
-					vcopy(bestpt,pt);
+					rcVcopy(bestpt,pt);
 				}
 			}
 			// If the max error is within accepted threshold, stop tesselating.
@@ -699,7 +701,7 @@ static bool buildPolyDetail(const float* in, const int nin,
 				break;
 
 			// Add the new sample point.
-			vcopy(&verts[nverts*3],bestpt);
+			rcVcopy(&verts[nverts*3],bestpt);
 			nverts++;
 			
 			// Create new triangulation.
@@ -1070,9 +1072,9 @@ bool rcBuildPolyMeshDetail(const rcPolyMesh& mesh, const rcCompactHeightfield& c
 		// Store detail submesh.
 		const int ntris = tris.size()/4;
 		
-		dmesh.meshes[i*4+0] = dmesh.nverts;
+		dmesh.meshes[i*4+0] = (unsigned short)dmesh.nverts;
 		dmesh.meshes[i*4+1] = (unsigned short)nverts;
-		dmesh.meshes[i*4+2] = dmesh.ntris;
+		dmesh.meshes[i*4+2] = (unsigned short)dmesh.ntris;
 		dmesh.meshes[i*4+3] = (unsigned short)ntris;
 		
 		// Store vertices, allocate more memory if necessary.
@@ -1189,16 +1191,16 @@ bool rcMergePolyMeshDetails(rcPolyMeshDetail** meshes, const int nmeshes, rcPoly
 		{
 			unsigned short* dst = &mesh.meshes[mesh.nmeshes*4];
 			unsigned short* src = &dm->meshes[j*4];
-			dst[0] = mesh.nverts+src[0];
+			dst[0] = (unsigned short)mesh.nverts+src[0];
 			dst[1] = src[1];
-			dst[2] = mesh.ntris+src[2];
+			dst[2] = (unsigned short)mesh.ntris+src[2];
 			dst[3] = src[3];
 			mesh.nmeshes++;
 		}
 			
 		for (int k = 0; k < dm->nverts; ++k)
 		{
-			vcopy(&mesh.verts[mesh.nverts*3], &dm->verts[k*3]);
+			rcVcopy(&mesh.verts[mesh.nverts*3], &dm->verts[k*3]);
 			mesh.nverts++;
 		}
 		for (int k = 0; k < dm->ntris; ++k)

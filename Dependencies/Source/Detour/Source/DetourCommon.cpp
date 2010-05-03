@@ -19,32 +19,32 @@
 #include <math.h>
 #include "DetourCommon.h"
 
-void closestPtPointTriangle(float* closest, const float* p,
-							const float* a, const float* b, const float* c)
+void dtClosestPtPointTriangle(float* closest, const float* p,
+							  const float* a, const float* b, const float* c)
 {
 	// Check if P in vertex region outside A
 	float ab[3], ac[3], ap[3];
-	vsub(ab, b, a);
-	vsub(ac, c, a);
-	vsub(ap, p, a);
-	float d1 = vdot(ab, ap);
-	float d2 = vdot(ac, ap);
+	dtVsub(ab, b, a);
+	dtVsub(ac, c, a);
+	dtVsub(ap, p, a);
+	float d1 = dtVdot(ab, ap);
+	float d2 = dtVdot(ac, ap);
 	if (d1 <= 0.0f && d2 <= 0.0f)
 	{
 		// barycentric coordinates (1,0,0)
-		vcopy(closest, a);
+		dtVcopy(closest, a);
 		return;
 	}
 	
 	// Check if P in vertex region outside B
 	float bp[3];
-	vsub(bp, p, b);
-	float d3 = vdot(ab, bp);
-	float d4 = vdot(ac, bp);
+	dtVsub(bp, p, b);
+	float d3 = dtVdot(ab, bp);
+	float d4 = dtVdot(ac, bp);
 	if (d3 >= 0.0f && d4 <= d3)
 	{
 		// barycentric coordinates (0,1,0)
-		vcopy(closest, b);
+		dtVcopy(closest, b);
 		return;
 	}
 	
@@ -62,13 +62,13 @@ void closestPtPointTriangle(float* closest, const float* p,
 	
 	// Check if P in vertex region outside C
 	float cp[3];
-	vsub(cp, p, c);
-	float d5 = vdot(ab, cp);
-	float d6 = vdot(ac, cp);
+	dtVsub(cp, p, c);
+	float d5 = dtVdot(ab, cp);
+	float d6 = dtVdot(ac, cp);
 	if (d6 >= 0.0f && d5 <= d6)
 	{
 		// barycentric coordinates (0,0,1)
-		vcopy(closest, c);
+		dtVcopy(closest, c);
 		return;
 	}
 	
@@ -105,10 +105,10 @@ void closestPtPointTriangle(float* closest, const float* p,
 	closest[2] = a[2] + ab[2] * v + ac[2] * w;
 }
 
-bool intersectSegmentPoly2D(const float* p0, const float* p1,
-							const float* verts, int nverts,
-							float& tmin, float& tmax,
-							int& segMin, int& segMax)
+bool dtIntersectSegmentPoly2D(const float* p0, const float* p1,
+							  const float* verts, int nverts,
+							  float& tmin, float& tmax,
+							  int& segMin, int& segMax)
 {
 	static const float EPS = 0.00000001f;
 	
@@ -118,16 +118,16 @@ bool intersectSegmentPoly2D(const float* p0, const float* p1,
 	segMax = -1;
 	
 	float dir[3];
-	vsub(dir, p1, p0);
+	dtVsub(dir, p1, p0);
 	
 	for (int i = 0, j = nverts-1; i < nverts; j=i++)
 	{
 		float edge[3], diff[3];
-		vsub(edge, &verts[i*3], &verts[j*3]);
-		vsub(diff, p0, &verts[j*3]);
-		float n = vperp2D(edge, diff);
-		float d = -vperp2D(edge, dir);
-		if (fabs(d) < EPS)
+		dtVsub(edge, &verts[i*3], &verts[j*3]);
+		dtVsub(diff, p0, &verts[j*3]);
+		float n = dtVperp2D(edge, diff);
+		float d = -dtVperp2D(edge, dir);
+		if (fabsf(d) < EPS)
 		{
 			// S is nearly parallel to this edge
 			if (n < 0)
@@ -135,7 +135,7 @@ bool intersectSegmentPoly2D(const float* p0, const float* p1,
 			else
 				continue;
 		}
-		float t = n / d;
+		const float t = n / d;
 		if (d < 0)
 		{
 			// segment S is entering across this edge
@@ -165,7 +165,7 @@ bool intersectSegmentPoly2D(const float* p0, const float* p1,
 	return true;
 }
 
-float distancePtSegSqr2D(const float* pt, const float* p, const float* q, float& t)
+float dtDistancePtSegSqr2D(const float* pt, const float* p, const float* q, float& t)
 {
 	float pqx = q[0] - p[0];
 	float pqz = q[2] - p[2];
@@ -181,7 +181,7 @@ float distancePtSegSqr2D(const float* pt, const float* p, const float* q, float&
 	return dx*dx + dz*dz;
 }
 
-void calcPolyCenter(float* tc, const unsigned short* idx, int nidx, const float* verts)
+void dtCalcPolyCenter(float* tc, const unsigned short* idx, int nidx, const float* verts)
 {
 	tc[0] = 0.0f;
 	tc[1] = 0.0f;
@@ -199,23 +199,23 @@ void calcPolyCenter(float* tc, const unsigned short* idx, int nidx, const float*
 	tc[2] *= s;
 }
 
-bool closestHeightPointTriangle(const float* p, const float* a, const float* b, const float* c, float& h)
+bool dtClosestHeightPointTriangle(const float* p, const float* a, const float* b, const float* c, float& h)
 {
 	float v0[3], v1[3], v2[3];
-	vsub(v0, c,a);
-	vsub(v1, b,a);
-	vsub(v2, p,a);
+	dtVsub(v0, c,a);
+	dtVsub(v1, b,a);
+	dtVsub(v2, p,a);
 	
-	const float dot00 = vdot2D(v0, v0);
-	const float dot01 = vdot2D(v0, v1);
-	const float dot02 = vdot2D(v0, v2);
-	const float dot11 = vdot2D(v1, v1);
-	const float dot12 = vdot2D(v1, v2);
+	const float dot00 = dtVdot2D(v0, v0);
+	const float dot01 = dtVdot2D(v0, v1);
+	const float dot02 = dtVdot2D(v0, v2);
+	const float dot11 = dtVdot2D(v1, v1);
+	const float dot12 = dtVdot2D(v1, v2);
 	
 	// Compute barycentric coordinates
-	float invDenom = 1.0f / (dot00 * dot11 - dot01 * dot01);
-	float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
-	float v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+	const float invDenom = 1.0f / (dot00 * dot11 - dot01 * dot01);
+	const float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+	const float v = (dot00 * dot12 - dot01 * dot02) * invDenom;
 
 	// The (sloppy) epsilon is needed to allow to get height of points which
 	// are interpolated along the edges of the triangles.
@@ -231,8 +231,8 @@ bool closestHeightPointTriangle(const float* p, const float* a, const float* b, 
 	return false;
 }
 
-bool distancePtPolyEdgesSqr(const float* pt, const float* verts, const int nverts,
-							float* ed, float* et)
+bool dtDistancePtPolyEdgesSqr(const float* pt, const float* verts, const int nverts,
+							  float* ed, float* et)
 {
 	// TODO: Replace pnpoly with triArea2D tests?
 	int i, j;
@@ -244,7 +244,7 @@ bool distancePtPolyEdgesSqr(const float* pt, const float* verts, const int nvert
 		if (((vi[2] > pt[2]) != (vj[2] > pt[2])) &&
 			(pt[0] < (vj[0]-vi[0]) * (pt[2]-vi[2]) / (vj[2]-vi[2]) + vi[0]) )
 			c = !c;
-		ed[j] = distancePtSegSqr2D(pt, vj, vi, et[j]);
+		ed[j] = dtDistancePtSegSqr2D(pt, vj, vi, et[j]);
 	}
 	return c;
 }

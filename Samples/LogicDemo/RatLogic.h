@@ -42,16 +42,34 @@ public:
 	~RatLogic();
 
 private:
-	void RayTest();
+	void CreateNodes();
+	void CreatePlayer();
+	void CreateAnimation();
+	void CreatePathfinding();
+	void CreateStateMachine();
+	void CreateRayTest();
+
+	gkRayTestNode* HasHit();
+	
+	typedef gkIfNode<int, CMP_EQUALS> NODE;
+	typedef NODE* PNODE;
+	PNODE MyCurrentStatusIs(int status);
 
 private:
+	gkString m_name;
 	SceneLogic* m_scene;
+	PMOMO m_momo;
 	gkAnimationNode* m_animNode;
 	gkFindPathNode* m_pathFindingNode;
 	gkStateMachineNode* m_stateMachineNode;
 	gkFollowPathNode* m_followPathNode;
 	gkObjNode* m_playerNode;
-	gkRayTestNode* m_rayTestNode;
+
+	typedef std::map<int, PNODE> MAP;
+	MAP m_statuses;
+	gkRayTestNode* m_hasHit;
+
+
 };
 
 #endif//_RatLogic_h_

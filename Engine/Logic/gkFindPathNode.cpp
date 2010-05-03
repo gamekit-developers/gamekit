@@ -58,24 +58,15 @@ bool gkFindPathNode::evaluate(gkScalar tick)
 
 	m_navMesh = pScene->getNavigationMesh();
 
-	if(GET_SOCKET_VALUE(UPDATE) || m_path.retry)
-	{
-		return m_navMesh.get() && m_navMesh->data;
-	}
-	else if(m_path.path.empty())
-	{
-		SET_SOCKET_VALUE(PATH_FOUND, false);
-	}
-
-	return false;
+	return GET_SOCKET_VALUE(UPDATE) && m_navMesh.get() && m_navMesh->data;
 }
 
 void gkFindPathNode::update(gkScalar tick)
 {
-	if(!GET_SOCKET_VALUE(REDO_PATH_IF_FOLLOWING) && m_path.following) 
-		return;
-
-	findPath();
+	if(!m_path.following || GET_SOCKET_VALUE(REDO_PATH_IF_FOLLOWING))
+	{
+		findPath();
+	}
 }
 
 void gkFindPathNode::findPath()
@@ -126,7 +117,7 @@ void gkFindPathNode::findPath()
 			std::swap(startPos.y, startPos.z);
 			std::swap(endPos.y, endPos.z);
 			
-			m_path.path.push_back(startPos);
+			//m_path.path.push_back(startPos);
 
 			gkVector3 point;
 

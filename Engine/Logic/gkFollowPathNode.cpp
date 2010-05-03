@@ -29,8 +29,13 @@
 #include "gkFollowPathNode.h"
 #include "gkEngine.h"
 #include "gkScene.h"
+#include "gkObject.h"
 #include "gkDynamicsWorld.h"
 #include "gkPhysicsDebug.h"
+#include "gkUtils.h"
+#include "Ogre.h"
+#include "btBulletDynamicsCommon.h"
+
 
 gkFollowPathNode::gkFollowPathNode(gkLogicTree *parent, size_t id) 
 : gkLogicNode(parent, id),
@@ -48,7 +53,8 @@ m_runVelocity(0)
 	ADD_ISOCK(SOURCE, 0);
 	ADD_ISOCK(TARGET_UP_DIRECTION, gkVector3::UNIT_Z);
 	ADD_ISOCK(ORIGINAL_TARGET_DIRECTION, gkVector3::UNIT_Y);
-	ADD_ISOCK(FOUND_THRESHOLD, 0.8f);
+	ADD_ISOCK(HIT_DISTANCE, 0.6f);
+	ADD_ISOCK(FOUND_THRESHOLD, 1.3f);
 	ADD_ISOCK(PATH, 0);
 	ADD_ISOCK(SHOW_PATH_OFFSET, gkVector3::ZERO);
 	ADD_OSOCK(HAS_REACHED_END, true);
@@ -67,25 +73,24 @@ bool gkFollowPathNode::evaluate(gkScalar tick)
 	SET_SOCKET_VALUE(WALK, false);
 	SET_SOCKET_VALUE(RUN, false);
 
-	if(GET_SOCKET_VALUE(UPDATE))
+	showPath();
+
+	if(GET_SOCKET_VALUE(UPDATE) && m_path && m_target && m_target->isLoaded())
 	{
-		if(m_path && animationHasBeenSet())
+		if(!m_path->following && !m_path->path.empty())
 		{
-			if(!m_path->following && !m_path->path.empty())
-			{
-				m_dir = GET_SOCKET_VALUE(ORIGINAL_TARGET_DIRECTION);
-				m_up = GET_SOCKET_VALUE(TARGET_UP_DIRECTION);
-				m_upMask = (gkVector3::UNIT_SCALE - m_up);
-				m_foundThreshold = GET_SOCKET_VALUE(FOUND_THRESHOLD);
+			m_dir = GET_SOCKET_VALUE(ORIGINAL_TARGET_DIRECTION);
+			m_up = GET_SOCKET_VALUE(TARGET_UP_DIRECTION);
+			m_upMask = (gkVector3::UNIT_SCALE - m_up);
+			m_foundThreshold = GET_SOCKET_VALUE(FOUND_THRESHOLD);
 
-				SET_SOCKET_VALUE(HAS_REACHED_END, false);
-				SET_SOCKET_VALUE(NOT_HAS_REACHED_END, true);
+			SET_SOCKET_VALUE(HAS_REACHED_END, false);
+			SET_SOCKET_VALUE(NOT_HAS_REACHED_END, true);
 
-				m_path->following = true;
-			}
+			m_path->following = true;
 		}
 
-		return m_target && m_target->isLoaded() && m_path && m_path->following;
+		return m_path->following;
 	}
 
 	return false;
@@ -94,6 +99,7 @@ bool gkFollowPathNode::evaluate(gkScalar tick)
 void gkFollowPathNode::update(gkScalar tick)
 {
 	gkVector3 current_pos = m_target->getPosition();
+	gkVector3 current_dir = m_target->getOrientation() * m_dir;
 
 	current_pos *= m_upMask;
 
@@ -105,13 +111,11 @@ void gkFollowPathNode::update(gkScalar tick)
 
 	gkScalar d = dir.length();
 
-	if(d > 0.1f && !isTargetReached())
+	if(!dir.isZeroLength() && !isTargetReached())
 	{
-		gkVector3 current_dir = m_target->getOrientation() * m_dir;
+		gkRadian angle(GetRotationAngleForAxis(current_dir, dir, m_up));
 
 		gkQuaternion q;
-
-		gkRadian angle = GetRotationAngleForAxis(current_dir, dir, m_up);
 
 		q.FromAngleAxis(angle, m_up);
 
@@ -127,24 +131,13 @@ void gkFollowPathNode::update(gkScalar tick)
 		{
 			m_path->following = false;
 
-			gkGameObject* pSource = GET_SOCKET_VALUE(SOURCE);
-
-			if(!m_path->retry && pSource && pSource->isLoaded())
-			{
-				m_path->retry = !isTargetReached();
-			}
-			else
-			{
-				m_path->retry = false;
-			}
-
 			SET_SOCKET_VALUE(HAS_REACHED_END, true);
 			SET_SOCKET_VALUE(NOT_HAS_REACHED_END, false);
 			SET_SOCKET_VALUE(IDLE, true);
 		}
 		else
 		{
-			showPath();
+			update(tick);
 		}
 	}
 }
@@ -229,9 +222,9 @@ void gkFollowPathNode::showPath()
 
 			gkVector3 offset = GET_SOCKET_VALUE(SHOW_PATH_OFFSET);
 
-			gkVector3 oldPoint = m_path->path.at(0) + offset;
+			gkVector3 oldPoint = m_target->getPosition() + offset;
 
-			for(unsigned int i=1; i<n; i++)
+			for(unsigned int i=0; i<n; i++)
 			{
 				gkVector3 point = m_path->path.at(i) + offset;
 

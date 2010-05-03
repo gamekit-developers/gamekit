@@ -41,6 +41,7 @@ gkAnimationNode::gkAnimationNode(gkLogicTree *parent, size_t id)
 	ADD_ISOCK(ANIM_NAME, "");
 	ADD_ISOCK(BLEND_FRAMES, 0);
 	ADD_ISOCK(TARGET, 0);
+	ADD_ISOCK(LOOP, true);
 	ADD_OSOCK(CURRENT_ANIM_NAME, "");
 	ADD_OSOCK(HAS_REACHED_END, false);
 	ADD_OSOCK(NOT_HAS_REACHED_END, false);
@@ -81,10 +82,10 @@ void gkAnimationNode::update(gkScalar tick)
 
 	if (ent->isLoaded())
 	{
-		ent->playAction(GET_SOCKET_VALUE(ANIM_NAME), GET_SOCKET_VALUE(BLEND_FRAMES));
-
 		if(!GET_SOCKET_VALUE(HAS_REACHED_END))
 		{
+			ent->playAction(GET_SOCKET_VALUE(ANIM_NAME), GET_SOCKET_VALUE(BLEND_FRAMES));
+
 			gkAction* pAct = ent->getActiveAction();
 
 			GK_ASSERT(pAct);
@@ -98,6 +99,10 @@ void gkAnimationNode::update(gkScalar tick)
 				SET_SOCKET_VALUE(HAS_REACHED_END, true);
 				SET_SOCKET_VALUE(NOT_HAS_REACHED_END, false);
 			}
+		}
+		else if(GET_SOCKET_VALUE(LOOP))
+		{
+			ent->playAction(GET_SOCKET_VALUE(ANIM_NAME), GET_SOCKET_VALUE(BLEND_FRAMES));
 		}
     }
 }

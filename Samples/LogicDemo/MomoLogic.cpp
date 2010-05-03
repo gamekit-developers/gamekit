@@ -104,55 +104,21 @@ namespace particle
 	gkString DUST_WALK = "DustWalk";
 }
 
-
 MomoLogic::MomoLogic(const gkString& name, SceneLogic* scene)
-: m_scene(scene),
-m_animNode(scene->m_tree->createNode<gkAnimationNode>()),
-m_pathFindingNode(scene->m_tree->createNode<gkFindPathNode>()),
-m_stateMachineNode(scene->m_tree->createNode<gkStateMachineNode>()),
-m_followPathNode(scene->m_tree->createNode<gkFollowPathNode>()),
-m_playerNode(scene->m_tree->createNode<gkObjNode>()),
-m_momoGrab(scene->m_tree->createNode<gkGrabNode>()),
-m_kickTestNode(scene->m_tree->createNode<gkRayTestNode>()),
-m_momoCameraArcBall(scene->m_tree->createNode<gkArcBallNode>())
+: m_name(name),
+m_scene(scene),
+m_animNode(0),
+m_pathFindingNode(0),
+m_stateMachineNode(0),
+m_followPathNode(0),
+m_playerNode(0),
+m_momoGrab(0),
+m_kickTestNode(0),
+m_momoCameraArcBall(0)
 {
-	m_playerNode->getUPDATE_OBJ()->link(m_scene->m_pulseNode->getOUTPUT());
-	m_playerNode->getOBJ_NAME()->setValue(name);
-
-	gkKeyNode* fKeyNode = scene->m_tree->createNode<gkKeyNode>();
-	fKeyNode->setKey(KC_ZKEY);
-
-	gkIfNode<bool, CMP_AND>* ifNode = scene->m_tree->createNode<gkIfNode<bool, CMP_AND> >();
-	ifNode->getA()->link(scene->m_ctrlKeyNode->getIS_DOWN());
-	ifNode->getB()->link(fKeyNode->getPRESS());
-
-	// Pathfinding for Momo
-
-	gkObjNode* targetNode = scene->m_tree->createNode<gkObjNode>();
-	targetNode->setType(gkObjNode::SCREEN_XY);
-	targetNode->getUPDATE_OBJ()->link(ifNode->getIS_TRUE());
-	targetNode->getX()->link(scene->m_mouseNode->getABS_X());
-	targetNode->getY()->link(scene->m_mouseNode->getABS_Y());
-
-	{
-		gkIfNode<bool, CMP_AND>* ifANode = scene->m_tree->createNode<gkIfNode<bool, CMP_AND> >();
-		ifANode->getA()->link(ifNode->getIS_TRUE());
-		ifANode->getB()->link(targetNode->getHAS_OBJ());
-
-		m_pathFindingNode->getUPDATE()->link(ifANode->getIS_TRUE());
-	}
-
-	m_pathFindingNode->getSTART_POS()->link(m_playerNode->getPOSITION());
-	m_pathFindingNode->getEND_POS()->link(targetNode->getHIT_POINT());
-
-	m_followPathNode = scene->m_tree->createNode<gkFollowPathNode>();
-	m_followPathNode->getUPDATE()->link(m_pathFindingNode->getPATH_FOUND());
-	m_followPathNode->getTARGET()->link(m_playerNode->getOBJ());
-	m_followPathNode->getPATH()->link(m_pathFindingNode->getPATH());
-	m_followPathNode->setWalkVelocity(velocity::WALK);
-	m_followPathNode->setRunVelocity(velocity::RUN);
-	m_followPathNode->getSHOW_PATH_OFFSET()->setValue(gkVector3(0, 0, 0.3f));
-
+	CreateNodes();
+	CreatePlayer();
+	CreatePathfinding();
 	CreateKick();
 	CreateGrab();
 	CreateMove();
@@ -165,6 +131,59 @@ m_momoCameraArcBall(scene->m_tree->createNode<gkArcBallNode>())
 
 MomoLogic::~MomoLogic()
 {
+}
+
+void MomoLogic::CreateNodes()
+{
+	m_animNode = m_scene->m_tree->createNode<gkAnimationNode>();
+	m_pathFindingNode = m_scene->m_tree->createNode<gkFindPathNode>();
+	m_stateMachineNode = m_scene->m_tree->createNode<gkStateMachineNode>();
+	m_followPathNode = m_scene->m_tree->createNode<gkFollowPathNode>();
+	m_playerNode = m_scene->m_tree->createNode<gkObjNode>();
+	m_momoGrab = m_scene->m_tree->createNode<gkGrabNode>();
+	m_kickTestNode = m_scene->m_tree->createNode<gkRayTestNode>();
+	m_momoCameraArcBall = m_scene->m_tree->createNode<gkArcBallNode>();
+}
+
+void MomoLogic::CreatePlayer()
+{
+	m_playerNode->getUPDATE_OBJ()->link(m_scene->m_pulseNode->getOUTPUT());
+	m_playerNode->getOBJ_NAME()->setValue(m_name);
+}
+
+void MomoLogic::CreatePathfinding()
+{
+	gkKeyNode* fKeyNode = m_scene->m_tree->createNode<gkKeyNode>();
+	fKeyNode->setKey(KC_ZKEY);
+
+	gkIfNode<bool, CMP_AND>* ifNode = m_scene->m_tree->createNode<gkIfNode<bool, CMP_AND> >();
+	ifNode->getA()->link(m_scene->m_ctrlKeyNode->getIS_DOWN());
+	ifNode->getB()->link(fKeyNode->getPRESS());
+
+	gkObjNode* targetNode = m_scene->m_tree->createNode<gkObjNode>();
+	targetNode->setType(gkObjNode::SCREEN_XY);
+	targetNode->getUPDATE_OBJ()->link(ifNode->getIS_TRUE());
+	targetNode->getX()->link(m_scene->m_mouseNode->getABS_X());
+	targetNode->getY()->link(m_scene->m_mouseNode->getABS_Y());
+
+	{
+		gkIfNode<bool, CMP_AND>* ifANode = m_scene->m_tree->createNode<gkIfNode<bool, CMP_AND> >();
+		ifANode->getA()->link(ifNode->getIS_TRUE());
+		ifANode->getB()->link(targetNode->getHAS_OBJ());
+
+		m_pathFindingNode->getUPDATE()->link(ifANode->getIS_TRUE());
+	}
+
+	m_pathFindingNode->getSTART_POS()->link(m_playerNode->getPOSITION());
+	m_pathFindingNode->getEND_POS()->link(targetNode->getHIT_POINT());
+
+	m_followPathNode = m_scene->m_tree->createNode<gkFollowPathNode>();
+	m_followPathNode->getUPDATE()->link(m_pathFindingNode->getPATH_FOUND());
+	m_followPathNode->getTARGET()->link(m_playerNode->getOBJ());
+	m_followPathNode->getPATH()->link(m_pathFindingNode->getPATH());
+	m_followPathNode->setWalkVelocity(velocity::WALK);
+	m_followPathNode->setRunVelocity(velocity::RUN);
+	m_followPathNode->getSHOW_PATH_OFFSET()->setValue(gkVector3(0, 0, 0.3f));
 }
 
 void MomoLogic::CreateKick()
@@ -241,7 +260,6 @@ void MomoLogic::CreateMove()
 	mapping[IDLE_NASTY] = velocity::NONE;
 	mapping[IDLE_CAPOEIRA] = velocity::NONE;
 	mapping[FALL_UP] = velocity::NONE;
-	mapping[KICK] = velocity::NONE;
 
 	mapNode->getMAPPING()->setValue(mapping);
 

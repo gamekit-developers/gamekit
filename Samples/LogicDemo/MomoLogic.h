@@ -40,6 +40,9 @@ public:
 
 private:
 
+	void CreateNodes();
+	void CreatePlayer();
+	void CreatePathfinding();
 	void CreateKick();
 	void CreateGrab();
 	void CreateMove();
@@ -57,6 +60,7 @@ public:
 
 private:
 
+	gkString m_name;
 	SceneLogic* m_scene;
 	gkAnimationNode* m_animNode;
 	gkFindPathNode* m_pathFindingNode;

@@ -59,74 +59,128 @@ namespace
 }
 
 RatLogic::RatLogic(const gkString& name, SceneLogic* scene, PMOMO momo)
-: m_scene(scene),
-m_animNode(scene->m_tree->createNode<gkAnimationNode>()),
-m_pathFindingNode(scene->m_tree->createNode<gkFindPathNode>()),
-m_stateMachineNode(scene->m_tree->createNode<gkStateMachineNode>()),
-m_followPathNode(scene->m_tree->createNode<gkFollowPathNode>()),
-m_playerNode(scene->m_tree->createNode<gkObjNode>()),
-m_rayTestNode(scene->m_tree->createNode<gkRayTestNode>())
+: m_name(name),
+m_scene(scene),
+m_momo(momo),
+m_animNode(0),
+m_pathFindingNode(0),
+m_stateMachineNode(0),
+m_followPathNode(0),
+m_playerNode(0),
+m_hasHit(0)
+{
+	CreateNodes();
+	CreatePlayer();
+	CreateAnimation();
+	CreatePathfinding();
+	CreateStateMachine();	
+}
+
+RatLogic::~RatLogic()
+{
+}
+
+void RatLogic::CreateNodes()
+{
+	m_animNode = m_scene->m_tree->createNode<gkAnimationNode>();
+	m_pathFindingNode = m_scene->m_tree->createNode<gkFindPathNode>();
+	m_stateMachineNode = m_scene->m_tree->createNode<gkStateMachineNode>();
+	m_followPathNode = m_scene->m_tree->createNode<gkFollowPathNode>();
+	m_playerNode = m_scene->m_tree->createNode<gkObjNode>();
+}
+
+void RatLogic::CreatePlayer()
 {
 	m_playerNode->getUPDATE_OBJ()->link(m_scene->m_pulseNode->getOUTPUT());
-	m_playerNode->getOBJ_NAME()->setValue(name);
+	m_playerNode->getOBJ_NAME()->setValue(m_name);
+}
 
-	// Animation
-	typedef gkMapNode<int, gkString> MAP_NODE;
+void RatLogic::CreateAnimation()
+{
+	typedef gkMapNode<int, gkString> MAP_VEL_NODE;
 	
-	MAP_NODE* mapNode = m_scene->m_tree->createNode< MAP_NODE >();
-	mapNode->getINPUT()->link(m_stateMachineNode->getCURRENT_STATE());
+	MAP_VEL_NODE* mapVelNode = m_scene->m_tree->createNode< MAP_VEL_NODE >();
+	mapVelNode->getINPUT()->link(m_stateMachineNode->getCURRENT_STATE());
 	
-	MAP_NODE::MAP mapping;
-	mapping[IDLE] = animation::IDLE;
-	mapping[WALK] = animation::WALK;
-	mapping[RUN] = animation::RUN;
-	mapping[DEATH] = animation::DEATH;
+	MAP_VEL_NODE::MAP mapVel;
+	mapVel[IDLE] = animation::IDLE;
+	mapVel[WALK] = animation::WALK;
+	mapVel[RUN] = animation::RUN;
+	mapVel[DEATH] = animation::DEATH;
 
-	mapNode->getMAPPING()->setValue(mapping);
+	mapVelNode->getMAPPING()->setValue(mapVel);
 
 	m_animNode->getTARGET()->link(m_playerNode->getMESH_OBJ());
-	m_animNode->getANIM_NAME()->link(mapNode->getOUTPUT());
+	m_animNode->getANIM_NAME()->link(mapVelNode->getOUTPUT());
 
-	// Pahfinding for Rat
+	typedef gkMapNode<int, bool> MAP_LOOP_NODE;
+	
+	MAP_LOOP_NODE* mapLoopNode = m_scene->m_tree->createNode< MAP_LOOP_NODE >();
+	mapLoopNode->getINPUT()->link(m_stateMachineNode->getCURRENT_STATE());
+	
+	MAP_LOOP_NODE::MAP mapLoop;
+	mapLoop[IDLE] = true;
+	mapLoop[WALK] = true;
+	mapLoop[RUN] = true;
+	mapLoop[DEATH] = false;
 
-	gkIfNode<int, CMP_NOT_EQUAL>* ifNode = m_scene->m_tree->createNode<gkIfNode<int, CMP_NOT_EQUAL> >();
-	ifNode->getA()->setValue(DEATH);
-	ifNode->getB()->link(m_stateMachineNode->getCURRENT_STATE());
+	mapLoopNode->getMAPPING()->setValue(mapLoop);
 
-	m_pathFindingNode->getUPDATE()->link(ifNode->getIS_TRUE());
+	m_animNode->getLOOP()->link(mapLoopNode->getOUTPUT());
+}
+
+void RatLogic::CreatePathfinding()
+{
+	m_pathFindingNode->getUPDATE()->link(MyCurrentStatusIs(DEATH)->getIS_FALSE());
 
 	m_pathFindingNode->getSTART_POS()->link(m_playerNode->getPOSITION());
-	m_pathFindingNode->getEND_POS()->link(momo->m_playerNode->getPOSITION());
+	m_pathFindingNode->getEND_POS()->link(m_momo->m_playerNode->getPOSITION());
+
+	m_pathFindingNode->getREDO_PATH_IF_FOLLOWING()->link(HasHit()->getHIT());
 	
-
-	{
-		gkIfNode<gkString, CMP_FIND>* ifBNode = m_scene->m_tree->createNode<gkIfNode<gkString, CMP_FIND> >();
-		ifBNode->getA()->link(m_rayTestNode->getHIT_NAME());
-		ifBNode->getB()->setValue(gkString("Rat"));
-
-		gkIfNode<bool, CMP_AND>* ifNode = m_scene->m_tree->createNode<gkIfNode<bool, CMP_AND> >();
-		ifNode->getA()->link(m_pathFindingNode->getPATH_FOUND());
-		ifNode->getB()->link(ifBNode->getIS_FALSE());
-
-		m_followPathNode->getUPDATE()->link(ifNode->getIS_TRUE());
-		m_pathFindingNode->getREDO_PATH_IF_FOLLOWING()->link(ifBNode->getIS_TRUE());
-	}
+	m_followPathNode->getUPDATE()->setValue(true);
 	m_followPathNode->getTARGET()->link(m_playerNode->getOBJ());
-	m_followPathNode->getSOURCE()->link(momo->m_playerNode->getOBJ());
+	m_followPathNode->getSOURCE()->link(m_momo->m_playerNode->getOBJ());
 	m_followPathNode->getPATH()->link(m_pathFindingNode->getPATH());
 	m_followPathNode->setWalkVelocity(velocity::WALK);
 	m_followPathNode->setRunVelocity(velocity::RUN);
 	m_followPathNode->getSHOW_PATH_OFFSET()->setValue(gkVector3(0, 0, 0.3f));
-	
-	
+}
 
-	// State machine
+gkRayTestNode* RatLogic::HasHit()
+{
+	if(!m_hasHit)
+	{
+		m_hasHit = m_scene->m_tree->createNode<gkRayTestNode>();
+		m_hasHit->getENABLE()->setValue(true);
+		m_hasHit->getTARGET()->link(m_playerNode->getOBJ());
+		m_hasHit->getRAY_DIRECTION()->setValue(gkVector3(0, 0.5f, 0));
+	}
 
+	return m_hasHit;
+}
+
+RatLogic::PNODE RatLogic::MyCurrentStatusIs(int status)
+{
+	std::pair<MAP::iterator, bool> result = 
+		m_statuses.insert(MAP::value_type(status, m_scene->m_tree->createNode<NODE >()));
+
+	if(result.second)
+	{
+		result.first->second->getA()->setValue(status);
+		result.first->second->getB()->link(m_stateMachineNode->getCURRENT_STATE());
+	}
+
+	return result.first->second;
+}
+
+void RatLogic::CreateStateMachine()
+{
 	// Initial state
 	m_stateMachineNode->getCURRENT_STATE()->setValue(IDLE); 
 
 	//IDLE TRANSITION
-	m_animNode->getHAS_REACHED_END()->link(m_stateMachineNode->addTransition(DEATH, IDLE));
+	m_stateMachineNode->addTransition(DEATH, IDLE, 15000);
 	m_stateMachineNode->addTransition(IDLE, IDLE);
 	m_stateMachineNode->addTransition(WALK, IDLE);
 	m_stateMachineNode->addTransition(RUN, IDLE);
@@ -144,7 +198,7 @@ m_rayTestNode(scene->m_tree->createNode<gkRayTestNode>())
 	//DEATH TRANSITION
 	{
 		gkIfNode<gkGameObject*, CMP_EQUALS>* ifNode = m_scene->m_tree->createNode<gkIfNode<gkGameObject*, CMP_EQUALS> >();
-		ifNode->getA()->link(momo->m_kickTestNode->getHIT_OBJ());
+		ifNode->getA()->link(m_momo->m_kickTestNode->getHIT_OBJ());
 		ifNode->getB()->link(m_playerNode->getOBJ());
 
 		ifNode->getIS_TRUE()->link(m_stateMachineNode->addTransition(IDLE, DEATH));
@@ -152,18 +206,5 @@ m_rayTestNode(scene->m_tree->createNode<gkRayTestNode>())
 		ifNode->getIS_TRUE()->link(m_stateMachineNode->addTransition(WALK, DEATH));
 		m_animNode->getNOT_HAS_REACHED_END()->link(m_stateMachineNode->addTransition(DEATH, DEATH));
 	}
-
-	RayTest();
 }
 
-RatLogic::~RatLogic()
-{
-}
-
-void RatLogic::RayTest()
-{
-	m_rayTestNode->getENABLE()->setValue(true);
-	m_rayTestNode->getTARGET()->link(m_playerNode->getOBJ());
-	m_rayTestNode->getRAY_DIRECTION()->setValue(gkVector3(0, 0.5f, 0));
-
-}

@@ -70,7 +70,7 @@ static bool buildMeshAdjacency(unsigned short* polys, const int npolys,
 				edge.polyEdge[1] = 0;
 				// Insert edge
 				nextEdge[edgeCount] = firstEdge[v0];
-				firstEdge[v0] = edgeCount;
+				firstEdge[v0] = (unsigned short)edgeCount;
 				edgeCount++;
 			}
 		}
@@ -130,8 +130,8 @@ inline int computeVertexHash(int x, int y, int z)
 	return (int)(n & (VERTEX_BUCKET_COUNT-1));
 }
 
-static int addVertex(unsigned short x, unsigned short y, unsigned short z,
-					 unsigned short* verts, int* firstVert, int* nextVert, int& nv)
+static unsigned short addVertex(unsigned short x, unsigned short y, unsigned short z,
+								unsigned short* verts, int* firstVert, int* nextVert, int& nv)
 {
 	int bucket = computeVertexHash(x, 0, z);
 	int i = firstVert[bucket];
@@ -140,7 +140,7 @@ static int addVertex(unsigned short x, unsigned short y, unsigned short z,
 	{
 		const unsigned short* v = &verts[i*3];
 		if (v[0] == x && (rcAbs(v[1] - y) <= 2) && v[2] == z)
-			return i;
+			return (unsigned short)i;
 		i = nextVert[i]; // next
 	}
 	
@@ -153,7 +153,7 @@ static int addVertex(unsigned short x, unsigned short y, unsigned short z,
 	nextVert[i] = firstVert[bucket];
 	firstVert[bucket] = i;
 	
-	return i;
+	return (unsigned short)i;
 }
 
 inline int prev(int i, int n) { return i-1 >= 0 ? i-1 : n-1; }
@@ -748,7 +748,7 @@ static int removeVertex(rcPolyMesh& mesh, const unsigned short rem, const int ma
 	// Merge polygons.
 	if (nvp > 3)
 	{
-		while (true)
+		for (;;)
 		{
 			// Find best polygons to merge.
 			int bestMergeVal = 0;
@@ -819,8 +819,8 @@ bool rcBuildPolyMesh(rcContourSet& cset, int nvp, rcPolyMesh& mesh)
 {
 	rcTimeVal startTime = rcGetPerformanceTimer();
 
-	vcopy(mesh.bmin, cset.bmin);
-	vcopy(mesh.bmax, cset.bmax);
+	rcVcopy(mesh.bmin, cset.bmin);
+	rcVcopy(mesh.bmax, cset.bmax);
 	mesh.cs = cset.cs;
 	mesh.ch = cset.ch;
 	
@@ -996,7 +996,7 @@ bool rcBuildPolyMesh(rcContourSet& cset, int nvp, rcPolyMesh& mesh)
 		// Merge polygons.
 		if (nvp > 3)
 		{
-			while (true)
+			for(;;)
 			{
 				// Find best polygons to merge.
 				int bestMergeVal = 0;
@@ -1063,7 +1063,7 @@ bool rcBuildPolyMesh(rcContourSet& cset, int nvp, rcPolyMesh& mesh)
 	{
 		if (vflags[i])
 		{
-			int res = removeVertex(mesh, i, maxTris);
+			int res = removeVertex(mesh, (unsigned short)i, maxTris);
 			if (!res)
 			{
 				// Failed to remove vertex
@@ -1125,16 +1125,16 @@ bool rcMergePolyMeshes(rcPolyMesh** meshes, const int nmeshes, rcPolyMesh& mesh)
 	mesh.nvp = meshes[0]->nvp;
 	mesh.cs = meshes[0]->cs;
 	mesh.ch = meshes[0]->ch;
-	vcopy(mesh.bmin, meshes[0]->bmin);
-	vcopy(mesh.bmax, meshes[0]->bmax);
+	rcVcopy(mesh.bmin, meshes[0]->bmin);
+	rcVcopy(mesh.bmax, meshes[0]->bmax);
 
 	int maxVerts = 0;
 	int maxPolys = 0;
 	int maxVertsPerMesh = 0;
 	for (int i = 0; i < nmeshes; ++i)
 	{
-		vmin(mesh.bmin, meshes[i]->bmin);
-		vmax(mesh.bmax, meshes[i]->bmax);
+		rcVmin(mesh.bmin, meshes[i]->bmin);
+		rcVmax(mesh.bmax, meshes[i]->bmax);
 		maxVertsPerMesh = rcMax(maxVertsPerMesh, meshes[i]->nverts);
 		maxVerts += meshes[i]->nverts;
 		maxPolys += meshes[i]->npolys;

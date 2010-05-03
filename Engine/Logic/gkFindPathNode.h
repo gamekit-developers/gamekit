@@ -56,9 +56,7 @@ public:
 
 		bool following;
 
-		bool retry;
-
-		PathData() : following(false), retry(false) {}
+		PathData() : following(false){}
 	};
 
 	DECLARE_SOCKET_TYPE(UPDATE, bool);

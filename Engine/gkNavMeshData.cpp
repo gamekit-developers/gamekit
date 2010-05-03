@@ -169,8 +169,8 @@ void gkNavCreator::Call::run()
 	// Set the area where the navigation will be build.
 	// Here the bounds of the input mesh are used, but the
 	// area could be specified by an user defined box, etc.
-	vcopy(cfg.bmin, bmin);
-	vcopy(cfg.bmax, bmax);
+	rcVcopy(cfg.bmin, bmin);
+	rcVcopy(cfg.bmax, bmax);
 	rcCalcGridSize(cfg.bmin, cfg.bmax, cfg.cs, &cfg.width, &cfg.height);
 
 	rcBuildTimes m_buildTimes; 
@@ -367,8 +367,8 @@ void gkNavCreator::Call::run()
 		params.walkableHeight = cfg.walkableHeight*cfg.ch;
 		params.walkableRadius = cfg.walkableRadius*cfg.cs;;
 		params.walkableClimb = cfg.walkableClimb*cfg.ch;
-		vcopy(params.bmin, pmesh.bmin);
-		vcopy(params.bmax, pmesh.bmax);
+		rcVcopy(params.bmin, pmesh.bmin);
+		rcVcopy(params.bmax, pmesh.bmax);
 		params.cs = cfg.cs;
 		params.ch = cfg.ch;
 		
