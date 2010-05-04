@@ -200,8 +200,8 @@ void SceneLogic::CreateCursorCameraArcBall()
 	arcBall->getREL_Y()->link(m_mouseNode->getREL_Y());
 	arcBall->getREL_Z()->link(m_mouseNode->getWHEEL());
 
-	arcBall->getMIN_PITCH()->setValue(-90);
-	arcBall->getMAX_PITCH()->setValue(90);
+	arcBall->getMIN_PITCH()->setValue(-85);
+	arcBall->getMAX_PITCH()->setValue(85);
 
 	arcBall->getMIN_ROLL()->setValue(-180);
 	arcBall->getMAX_ROLL()->setValue(180);

@@ -131,7 +131,7 @@ void RatLogic::CreateAnimation()
 
 void RatLogic::CreatePathfinding()
 {
-	m_pathFindingNode->getUPDATE()->link(MyCurrentStatusIs(DEATH)->getIS_FALSE());
+	m_pathFindingNode->getUPDATE()->link(m_stateMachineNode->isCurrentStatus(DEATH)->getIS_FALSE());
 
 	m_pathFindingNode->getSTART_POS()->link(m_playerNode->getPOSITION());
 	m_pathFindingNode->getEND_POS()->link(m_momo->m_playerNode->getPOSITION());
@@ -158,20 +158,6 @@ gkRayTestNode* RatLogic::HasHit()
 	}
 
 	return m_hasHit;
-}
-
-RatLogic::PNODE RatLogic::MyCurrentStatusIs(int status)
-{
-	std::pair<MAP::iterator, bool> result = 
-		m_statuses.insert(MAP::value_type(status, m_scene->m_tree->createNode<NODE >()));
-
-	if(result.second)
-	{
-		result.first->second->getA()->setValue(status);
-		result.first->second->getB()->link(m_stateMachineNode->getCURRENT_STATE());
-	}
-
-	return result.first->second;
 }
 
 void RatLogic::CreateStateMachine()

@@ -30,6 +30,52 @@
 
 namespace
 {
+	template<typename T, gkBoolStatement stmt>
+	gkIfNode<T, stmt>* gkCreateIfNode(gkLogicTree* tree, gkILogicSocket *a, gkILogicSocket *b)
+	{
+		typedef gkIfNode<T, stmt> NODE_TYPE;
+
+		NODE_TYPE* ifNode = tree->createNode<NODE_TYPE >();
+		ifNode->getA()->link(a);
+		ifNode->getB()->link(b);
+
+		return ifNode;
+	}
+
+	template<typename T, gkBoolStatement stmt>
+	gkIfNode<T, stmt>* gkCreateIfNode(gkLogicTree* tree, gkILogicSocket *a, T b)
+	{
+		typedef gkIfNode<T, stmt> NODE_TYPE;
+
+		NODE_TYPE* ifNode = tree->createNode<NODE_TYPE >();
+		ifNode->getA()->link(a);
+		ifNode->getB()->setValue(b);
+
+		return ifNode;
+	}
+
+	template<typename T, gkBoolStatement stmt>
+	gkIfNode<T, stmt>* gkCreateIfNode(gkLogicTree* tree, T a, gkILogicSocket *b)
+	{
+		typedef gkIfNode<T, stmt> NODE_TYPE;
+
+		NODE_TYPE* ifNode = tree->createNode<NODE_TYPE >();
+		ifNode->getA()->setValue(a);
+		ifNode->getB()->link(b);
+
+		return ifNode;
+	}
+
+	#define BOOL_AND_NODE( a, b ) gkCreateIfNode<bool, CMP_AND>(m_scene->m_tree, a, b)
+	#define BOOL_OR_NODE( a, b ) gkCreateIfNode<bool, CMP_OR>(m_scene->m_tree, a, b)
+	#define STRING_EQUAL_NODE( a, b ) gkCreateIfNode<gkString, CMP_EQUALS>(m_scene->m_tree, a, b)
+	#define REAL_GREATER_NODE( a, b ) gkCreateIfNode<gkScalar, CMP_GREATER>(m_scene->m_tree, a, b)
+
+	#define IS_TRUE( a ) a->getIS_TRUE()
+
+	typedef gkIfNode<bool, CMP_AND> BOOL_AND_NODE_TYPE;
+	typedef gkIfNode<bool, CMP_OR> BOOL_OR_NODE_TYPE;
+
 	enum STATES
 	{
 		CARRY,
@@ -156,9 +202,7 @@ void MomoLogic::CreatePathfinding()
 	gkKeyNode* fKeyNode = m_scene->m_tree->createNode<gkKeyNode>();
 	fKeyNode->setKey(KC_ZKEY);
 
-	gkIfNode<bool, CMP_AND>* ifNode = m_scene->m_tree->createNode<gkIfNode<bool, CMP_AND> >();
-	ifNode->getA()->link(m_scene->m_ctrlKeyNode->getIS_DOWN());
-	ifNode->getB()->link(fKeyNode->getPRESS());
+	BOOL_AND_NODE_TYPE* ifNode = BOOL_AND_NODE(m_scene->m_ctrlKeyNode->getIS_DOWN(), fKeyNode->getPRESS());
 
 	gkObjNode* targetNode = m_scene->m_tree->createNode<gkObjNode>();
 	targetNode->setType(gkObjNode::SCREEN_XY);
@@ -166,13 +210,8 @@ void MomoLogic::CreatePathfinding()
 	targetNode->getX()->link(m_scene->m_mouseNode->getABS_X());
 	targetNode->getY()->link(m_scene->m_mouseNode->getABS_Y());
 
-	{
-		gkIfNode<bool, CMP_AND>* ifANode = m_scene->m_tree->createNode<gkIfNode<bool, CMP_AND> >();
-		ifANode->getA()->link(ifNode->getIS_TRUE());
-		ifANode->getB()->link(targetNode->getHAS_OBJ());
-
-		m_pathFindingNode->getUPDATE()->link(ifANode->getIS_TRUE());
-	}
+	m_pathFindingNode->getUPDATE()->link(
+		IS_TRUE(BOOL_AND_NODE(ifNode->getIS_TRUE(), targetNode->getHAS_OBJ())));
 
 	m_pathFindingNode->getSTART_POS()->link(m_playerNode->getPOSITION());
 	m_pathFindingNode->getEND_POS()->link(targetNode->getHIT_POINT());
@@ -188,12 +227,7 @@ void MomoLogic::CreatePathfinding()
 
 void MomoLogic::CreateKick()
 {
-	gkIfNode<int, CMP_EQUALS>* ifNode = m_scene->m_tree->createNode<gkIfNode<int, CMP_EQUALS> >();
-
-	ifNode->getA()->setValue(KICK);
-	ifNode->getB()->link(m_stateMachineNode->getCURRENT_STATE());
-
-	m_kickTestNode->getENABLE()->link(ifNode->getIS_TRUE());
+	m_kickTestNode->getENABLE()->link(m_stateMachineNode->isCurrentStatus(KICK)->getIS_TRUE());
 	m_kickTestNode->getTARGET()->link(m_playerNode->getOBJ());
 	m_kickTestNode->getRAY_ORIGIN_OFFSET()->setValue(gkVector3(0, 0, -0.1f));
 	m_kickTestNode->getRAY_DIRECTION()->setValue(gkVector3(0, 0.5f, 0));
@@ -207,41 +241,22 @@ void MomoLogic::CreateGrab()
 	m_momoGrab->getTHROW_VEL()->setValue(gkVector3(0, 10, 0));
 	m_momoGrab->getRELATED_OFFSET_POSITION()->setValue(gkVector3(0, -0.6f, 0.5f));
 
-	{
-		gkIfNode<bool, CMP_AND>* ifNode = m_scene->m_tree->createNode<gkIfNode<bool, CMP_AND> >();
+	m_momoGrab->getCREATE_PICK()->link(
+		IS_TRUE(BOOL_AND_NODE(m_scene->m_rightMouseNode->getPRESS(), m_scene->m_ctrlKeyNode->getNOT_IS_DOWN()))
+	);
 
-		ifNode->getA()->link(m_scene->m_rightMouseNode->getPRESS());
-		ifNode->getB()->link(m_scene->m_ctrlKeyNode->getNOT_IS_DOWN());
+	m_momoGrab->getRELEASE_PICK()->link(
+		IS_TRUE(BOOL_AND_NODE(m_scene->m_rightMouseNode->getRELEASE(), m_scene->m_ctrlKeyNode->getNOT_IS_DOWN()))
+	);
 
-		m_momoGrab->getCREATE_PICK()->link(ifNode->getIS_TRUE());
-	}
-
-	{
-		gkIfNode<bool, CMP_AND>* ifNode = m_scene->m_tree->createNode<gkIfNode<bool, CMP_AND> >();
-
-		ifNode->getA()->link(m_scene->m_rightMouseNode->getRELEASE());
-		ifNode->getB()->link(m_scene->m_ctrlKeyNode->getNOT_IS_DOWN());
-
-		m_momoGrab->getRELEASE_PICK()->link(ifNode->getIS_TRUE());
-	}
-
-	{
-		gkIfNode<int, CMP_EQUALS>* equalThrowWithNode = m_scene->m_tree->createNode<gkIfNode<int, CMP_EQUALS> >();
-
-		equalThrowWithNode->getA()->setValue(THROW_WITH);
-		equalThrowWithNode->getB()->link(m_stateMachineNode->getCURRENT_STATE());
-
-		gkIfNode<gkScalar, CMP_GREATER>* throwTimePositionNode = m_scene->m_tree->createNode<gkIfNode<gkScalar, CMP_GREATER> >();
-
-		throwTimePositionNode->getA()->link(m_animNode->getTIME_POSITION());
-		throwTimePositionNode->getB()->setValue(20.13f);
-
-		gkIfNode<bool, CMP_AND>* ifNode = m_scene->m_tree->createNode<gkIfNode<bool, CMP_AND> >();
-		ifNode->getA()->link(equalThrowWithNode->getIS_TRUE());
-		ifNode->getB()->link(throwTimePositionNode->getIS_TRUE());
-
-		m_momoGrab->getTHROW_OBJECT()->link(ifNode->getIS_TRUE());
-	}
+	m_momoGrab->getTHROW_OBJECT()->link(
+		IS_TRUE(
+			BOOL_AND_NODE(
+				m_stateMachineNode->isCurrentStatus(THROW_WITH)->getIS_TRUE(), 
+				IS_TRUE(REAL_GREATER_NODE(m_animNode->getTIME_POSITION(), 20.13f))
+			)
+		)
+	);
 }
 
 void MomoLogic::CreateMove()
@@ -263,9 +278,7 @@ void MomoLogic::CreateMove()
 
 	mapNode->getMAPPING()->setValue(mapping);
 
-	gkIfNode<bool, CMP_AND>* ifNode = m_scene->m_tree->createNode<gkIfNode<bool, CMP_AND> >();
-	ifNode->getA()->link(m_followPathNode->getHAS_REACHED_END());
-	ifNode->getB()->link(mapNode->getHAS_OUTPUT());
+	BOOL_AND_NODE_TYPE* ifNode = BOOL_AND_NODE(m_followPathNode->getHAS_REACHED_END(), mapNode->getHAS_OUTPUT());
 
 	m_playerNode->getSET_ROTATION()->link(ifNode->getIS_TRUE());
 	m_playerNode->getSET_ROTATION_VALUE()->link(m_momoCameraArcBall->getCURRENT_ROLL());
@@ -276,32 +289,9 @@ void MomoLogic::CreateMove()
 
 void MomoLogic::CreateDustTrail()
 {
-	{
-		gkIfNode<gkString, CMP_EQUALS>* equalNode = m_scene->m_tree->createNode<gkIfNode<gkString, CMP_EQUALS> >();
-
-		equalNode->getA()->setValue(animation::RUN_FASTER);
-		equalNode->getB()->link(m_animNode->getCURRENT_ANIM_NAME());
-
-		CreateDustTrail(particle::DUST_RUN, equalNode->getIS_TRUE());
-	}
-
-	/*
-	{
-		gkStringEqualNode* equalNode = m_scene->m_tree->createNode<gkStringEqualNode>();
-
-		equalNode->getA()->setValue(animation::WALK_BACK);
-		equalNode->getB()->link(m_animNode->getCurrentAnimName());
-
-		CreateMomoDustTrailLogic(particle::DUST_WALK, equalNode->getTrue());
-	}
-	*/
-}
-
-void MomoLogic::CreateDustTrail(const gkString& name, gkILogicSocket* pUpdateSocket)
-{
 	gkParticleNode* particle = m_scene->m_tree->createNode<gkParticleNode>();
-	particle->getPARTICLE_SYSTEM_NAME()->setValue(name);
-	particle->getCREATE()->link(pUpdateSocket);
+	particle->getPARTICLE_SYSTEM_NAME()->setValue(particle::DUST_RUN);
+	particle->getCREATE()->link(IS_TRUE(STRING_EQUAL_NODE(m_animNode->getCURRENT_ANIM_NAME(), animation::RUN_FASTER)));
 	particle->getPOSITION()->link(m_playerNode->getPOSITION());
 	particle->getORIENTATION()->link(m_playerNode->getROTATION());
 }
@@ -361,7 +351,25 @@ void MomoLogic::CreateAnimation()
 void MomoLogic::CreateCameraArcBall()
 {
 	m_momoCameraArcBall->getCENTER_OBJ()->link(m_playerNode->getOBJ());
-	m_momoCameraArcBall->getAVOID_BLOCKING()->setValue(true);
+
+	m_momoCameraArcBall->getAVOID_BLOCKING()->link(
+		IS_TRUE(
+			BOOL_AND_NODE(
+				IS_TRUE(
+					BOOL_AND_NODE(
+						m_stateMachineNode->isCurrentStatus(CATCH_ENDED)->getIS_FALSE(),
+						m_stateMachineNode->isCurrentStatus(THROW_WITH)->getIS_FALSE()
+					)
+				),
+				IS_TRUE(
+					BOOL_AND_NODE(
+						m_stateMachineNode->isCurrentStatus(CARRY)->getIS_FALSE(), 
+						m_stateMachineNode->isCurrentStatus(CATCH)->getIS_FALSE()
+					)
+				)
+			)
+		)
+	);
 
 	m_momoCameraArcBall->getCENTER_POSITION()->link(m_playerNode->getPOSITION());
 	m_momoCameraArcBall->getTARGET()->link(m_scene->m_cameraPlayer->getOBJ());
@@ -386,10 +394,7 @@ void MomoLogic::CreateCameraArcBall()
 
 void MomoLogic::CreateStateMachine()
 {
-	gkIfNode<bool, CMP_OR>* walkConditionNode = m_scene->m_tree->createNode<gkIfNode<bool, CMP_OR> >();
-	walkConditionNode->getA()->link(m_scene->m_wKeyNode->getIS_DOWN());
-	walkConditionNode->getB()->link(m_followPathNode->getWALK());
-
+	BOOL_OR_NODE_TYPE* walkConditionNode = BOOL_OR_NODE(m_scene->m_wKeyNode->getIS_DOWN(), m_followPathNode->getWALK());
 
 	// Initial state
 	m_stateMachineNode->getCURRENT_STATE()->setValue(IDLE_NASTY); 
@@ -459,21 +464,16 @@ void MomoLogic::CreateStateMachine()
 
 	// RUN_FASTER TRANSITIONS
 	{
-		gkIfNode<bool, CMP_AND>* ifNode = m_scene->m_tree->createNode<gkIfNode<bool, CMP_AND> >();
-		ifNode->getA()->link(m_scene->m_shiftKeyNode->getIS_DOWN());
-		ifNode->getB()->link(m_scene->m_wKeyNode->getIS_DOWN());
-		
+		BOOL_AND_NODE_TYPE* ifNode = BOOL_AND_NODE(m_scene->m_shiftKeyNode->getIS_DOWN(), m_scene->m_wKeyNode->getIS_DOWN());
+
 		ifNode->getIS_TRUE()->link(m_stateMachineNode->addTransition(RUN, RUN_FASTER));
 		ifNode->getIS_TRUE()->link(m_stateMachineNode->addTransition(RUN_FASTER, RUN_FASTER));
 	}
 	
-
 	// CATCH TRANSITIONS
 
 	{
-		gkIfNode<bool, CMP_AND>* ifNode = m_scene->m_tree->createNode<gkIfNode<bool, CMP_AND> >();
-		ifNode->getA()->link(m_scene->m_ctrlKeyNode->getNOT_IS_DOWN());
-		ifNode->getB()->link(m_scene->m_rightMouseNode->getPRESS());
+		BOOL_AND_NODE_TYPE* ifNode = BOOL_AND_NODE(m_scene->m_ctrlKeyNode->getNOT_IS_DOWN(), m_scene->m_rightMouseNode->getPRESS());
 
 		ifNode->getIS_TRUE()->link(m_stateMachineNode->addTransition(IDLE_NASTY, CATCH));
 		ifNode->getIS_TRUE()->link(m_stateMachineNode->addTransition(IDLE_CAPOEIRA, CATCH));
@@ -488,14 +488,8 @@ void MomoLogic::CreateStateMachine()
 	m_momoGrab->getCAUGHT_TRUE()->link(m_stateMachineNode->addTransition(CARRY, CARRY));
 
 	// THROW_WITH TRANSITIONS
-	{
-		gkIfNode<bool, CMP_AND>* ifNode = m_scene->m_tree->createNode<gkIfNode<bool, CMP_AND> >();
+	IS_TRUE(BOOL_AND_NODE(m_scene->m_leftMouseNode->getPRESS(), m_scene->m_ctrlKeyNode->getNOT_IS_DOWN()))->link(
+			m_stateMachineNode->addTransition(CARRY, THROW_WITH));
 
-		ifNode->getA()->link(m_scene->m_leftMouseNode->getPRESS());
-		ifNode->getB()->link(m_scene->m_ctrlKeyNode->getNOT_IS_DOWN());
-
-		ifNode->getIS_TRUE()->link(m_stateMachineNode->addTransition(CARRY, THROW_WITH));
-
-		m_animNode->getNOT_HAS_REACHED_END()->link(m_stateMachineNode->addTransition(THROW_WITH, THROW_WITH));
-	}
+	m_animNode->getNOT_HAS_REACHED_END()->link(m_stateMachineNode->addTransition(THROW_WITH, THROW_WITH));
 }

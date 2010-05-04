@@ -28,6 +28,7 @@
 #define _gkStateMachineNode_h_
 
 #include "gkLogicNode.h"
+#include "gkIfNode.h"
 #include "LinearMath/btQuickprof.h"
 
 class gkStateMachineNode : public gkLogicNode
@@ -51,6 +52,8 @@ public:
 	void update(gkScalar tick);
 
 	gkLogicSocket<bool>* addTransition(int from, int to, unsigned long ms = 0);
+
+	gkIfNode<int, CMP_EQUALS>* isCurrentStatus(int status);
 
 private:
 
@@ -84,6 +87,10 @@ private:
 	typedef utArray<gkILogicSocket*> EVENTS;
 
 	EVENTS m_events;
+
+	typedef std::map<int, gkIfNode<int, CMP_EQUALS>* > MAP;
+	MAP m_statuses;
+
 };
 
 

@@ -47,7 +47,6 @@ private:
 	void CreateGrab();
 	void CreateMove();
 	void CreateDustTrail();
-	void CreateDustTrail(const gkString& name, gkILogicSocket* pUpdateSocket);
 	void CreateLoadUnload();
 	void CreateAnimation();
 	void CreateCameraArcBall();

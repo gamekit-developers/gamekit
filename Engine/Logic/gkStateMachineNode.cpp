@@ -25,6 +25,7 @@
 -------------------------------------------------------------------------------
 */
 #include "gkStateMachineNode.h"
+#include "gkLogicTree.h"
 #include "gkLogger.h"
 
 gkStateMachineNode::gkStateMachineNode(gkLogicTree *parent, size_t id) 
@@ -132,5 +133,25 @@ gkLogicSocket<bool>* gkStateMachineNode::addTransition(int from, int to, unsigne
 	m_events.push_back(pSocket);
 
 	return pSocket;
+}
+
+gkIfNode<int, CMP_EQUALS>* gkStateMachineNode::isCurrentStatus(int status)
+{
+	const MAP::iterator it = m_statuses.find(status);
+
+	if(it == m_statuses.end())
+	{
+		std::pair<MAP::iterator, bool> result = 
+			m_statuses.insert(MAP::value_type(status, m_parent->createNode<gkIfNode<int, CMP_EQUALS> >()));
+
+		GK_ASSERT(result.second);
+
+		result.first->second->getA()->setValue(status);
+		result.first->second->getB()->link(GET_SOCKET(CURRENT_STATE));
+
+		return result.first->second;
+	}
+
+	return it->second;
 }
 

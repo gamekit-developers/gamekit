@@ -51,10 +51,6 @@ private:
 
 	gkRayTestNode* HasHit();
 	
-	typedef gkIfNode<int, CMP_EQUALS> NODE;
-	typedef NODE* PNODE;
-	PNODE MyCurrentStatusIs(int status);
-
 private:
 	gkString m_name;
 	SceneLogic* m_scene;
@@ -64,12 +60,7 @@ private:
 	gkStateMachineNode* m_stateMachineNode;
 	gkFollowPathNode* m_followPathNode;
 	gkObjNode* m_playerNode;
-
-	typedef std::map<int, PNODE> MAP;
-	MAP m_statuses;
 	gkRayTestNode* m_hasHit;
-
-
 };
 
 #endif//_RatLogic_h_
