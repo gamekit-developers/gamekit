@@ -27,6 +27,7 @@
 #include "gkRayTestNode.h"
 #include "gkLogger.h"
 #include "gkUtils.h"
+#include "gkRayTest.h"
 #include "gkGameObject.h"
 #include "Ogre.h"
 #include "btBulletDynamicsCommon.h"
@@ -73,17 +74,17 @@ void gkRayTestNode::update(gkScalar tick)
 
 		Ogre::Ray ray(origin, dir);
 		
-		gkVector3 hitPointWorld;
+		gkRayTest rayTest;
 		
-		btCollisionObject* pCol = gkUtils::PickBody(ray, hitPointWorld);
-
-		if(pCol)
+		if(rayTest.collides(ray))
 		{
+			btCollisionObject* pCol = rayTest.getCollisionObject();
+
 			gkObject* pObj = static_cast<gkObject*>(pCol->getUserPointer());
 
 			if(pObj != m_object)
 			{
-				SET_SOCKET_VALUE(HIT_POSITION, hitPointWorld);
+				SET_SOCKET_VALUE(HIT_POSITION, rayTest.getHitPoint());
 				SET_SOCKET_VALUE(HIT_OBJ, pObj->getObject());
 				SET_SOCKET_VALUE(HIT_NAME, pObj->getName());
 				SET_SOCKET_VALUE(HIT, true);

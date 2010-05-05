@@ -372,6 +372,7 @@ void MomoLogic::CreateCameraArcBall()
 	);
 
 	m_momoCameraArcBall->getCENTER_POSITION()->link(m_playerNode->getPOSITION());
+	m_momoCameraArcBall->getINITIAL_PITCH()->setValue(45);
 	m_momoCameraArcBall->getTARGET()->link(m_scene->m_cameraPlayer->getOBJ());
 
 	m_momoCameraArcBall->getREL_X()->link(m_scene->m_mouseNode->getREL_X());
@@ -379,7 +380,7 @@ void MomoLogic::CreateCameraArcBall()
 	m_momoCameraArcBall->getREL_Z()->link(m_scene->m_mouseNode->getWHEEL());
 
 	m_momoCameraArcBall->getMIN_PITCH()->setValue(0);
-	m_momoCameraArcBall->getMAX_PITCH()->setValue(90);
+	m_momoCameraArcBall->getMAX_PITCH()->setValue(80);
 
 	m_momoCameraArcBall->getMIN_ROLL()->setValue(-180);
 	m_momoCameraArcBall->getMAX_ROLL()->setValue(180);

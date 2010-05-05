@@ -3,9 +3,9 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Charlie C.
+    Copyright (c) Nestor Silveira.
 
-    Contributor(s): Nestor Silveira.
+    Contributor(s): none yet.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -24,21 +24,45 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkUtils_h_
-#define _gkUtils_h_
+#include "gkCam2ViewportRay.h"
+#include "gkEngine.h"
+#include "gkCamera.h"
+#include "gkScene.h"
+#include "gkWindowSystem.h"
+#include "gkDynamicsWorld.h"
+#include "OgreRenderWindow.h"
 
-#include "gkCommon.h"
-
-class gkUtils
+gkCam2ViewportRay::gkCam2ViewportRay(gkScalar x, gkScalar y, gkScalar rayLength)
 {
-public:
+	gkScene* pScene = gkEngine::getSingleton().getActiveScene();
 
-    // resource existance test
-    static bool isResource(const gkString &name, const gkString &group = Ogre::StringUtil::BLANK);
+	GK_ASSERT(pScene);
 
-    // utility for command-line arguments
-    static gkString getFile(const gkString& in);
-};
+	gkCamera* pCamera = pScene->getMainCamera();
 
+	GK_ASSERT(pCamera);
 
-#endif//_gkUtils_h_
+	gkVector2 pos(x, y);
+
+	gkWindowSystem* pWindowSystem = gkWindowSystem::getSingletonPtr();
+
+	gkScalar width = pWindowSystem->getMainWindow()->getWidth();
+
+	gkScalar height = pWindowSystem->getMainWindow()->getHeight();
+
+	GK_ASSERT(width && height);
+
+	Ogre::Ray ray = pCamera->getCamera()->getCameraToViewportRay(pos.x/width, pos.y/height);
+
+	gkVector3 p0 = ray.getOrigin();
+
+	gkVector3 p1 = p0 + ray.getDirection() * rayLength;
+
+	setOrigin(p0);
+	setDirection(p1-p0);
+}
+
+gkCam2ViewportRay::~gkCam2ViewportRay()
+{
+}
+

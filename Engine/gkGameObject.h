@@ -112,6 +112,7 @@ public:
     GK_INLINE void attachCharacter(gkCharacter *character) {m_character = character;}
     //GK_INLINE gkCharacter* getAttachedCharacter() {return m_character;}
 	gkObject* getAttachedObject();
+	btCollisionObject* getCollisionObject();
 
 
     // variables

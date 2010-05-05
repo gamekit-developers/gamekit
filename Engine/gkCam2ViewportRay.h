@@ -3,9 +3,9 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Charlie C.
+    Copyright (c) 2006-2010 Nestor Silveira.
 
-    Contributor(s): Nestor Silveira.
+    Contributor(s): none yet.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -24,21 +24,20 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkUtils_h_
-#define _gkUtils_h_
+#ifndef _gkCam2ViewportRay_h_
+#define _gkCam2ViewportRay_h_
 
 #include "gkCommon.h"
+#include "gkMathUtils.h"
+#include "OgreRoot.h"
 
-class gkUtils
+class gkCam2ViewportRay : public Ogre::Ray
 {
 public:
+	gkCam2ViewportRay(gkScalar x, gkScalar y, gkScalar rayLength = 10000);
 
-    // resource existance test
-    static bool isResource(const gkString &name, const gkString &group = Ogre::StringUtil::BLANK);
-
-    // utility for command-line arguments
-    static gkString getFile(const gkString& in);
+	~gkCam2ViewportRay();
 };
 
 
-#endif//_gkUtils_h_
+#endif//_gkCam2ViewportRay_h_

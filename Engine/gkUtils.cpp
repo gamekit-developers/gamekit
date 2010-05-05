@@ -35,15 +35,6 @@
 #include "OgreResourceGroupManager.h"
 #include "gkUtils.h"
 #include "gkPath.h"
-#include "gkEngine.h"
-#include "OgreRoot.h"
-#include "gkCamera.h"
-#include "gkScene.h"
-#include "gkWindowSystem.h"
-#include "gkDynamicsWorld.h"
-#include "OgreRenderWindow.h"
-#include "btBulletDynamicsCommon.h"
-
 
 using namespace Ogre;
 
@@ -107,79 +98,4 @@ bool gkUtils::isResource(const gkString &name, const gkString &group)
         return Ogre::ResourceGroupManager::getSingleton().resourceExistsInAnyGroup(name);
     return Ogre::ResourceGroupManager::getSingleton().resourceExists(group, name);
 }
-
-Ogre::Ray gkUtils::CreateCameraRay(gkScalar x, gkScalar y)
-{
-	gkScene* pScene = gkEngine::getSingleton().getActiveScene();
-
-	GK_ASSERT(pScene);
-
-	gkCamera* pCamera = pScene->getMainCamera();
-
-	GK_ASSERT(pCamera);
-
-	Vector2 pos(x, y);
-
-	gkWindowSystem* pWindowSystem = gkWindowSystem::getSingletonPtr();
-
-	Real width = pWindowSystem->getMainWindow()->getWidth();
-
-	Real height = pWindowSystem->getMainWindow()->getHeight();
-
-	GK_ASSERT(width && height);
-
-	Ogre::Ray ray(pCamera->getCamera()->getCameraToViewportRay(pos.x/width, pos.y/height));
-
-	Vector3 p0 = ray.getOrigin();
-
-	const Real MAX_DISTANCE = 1000000;
-
-	Vector3 p1 = p0 + ray.getDirection() * MAX_DISTANCE;
-
-	ray.setDirection(p1-p0);
-
-	return ray;
-}
-
-btCollisionObject* gkUtils::PickBody(const Ogre::Ray& ray, gkVector3& hitPointWorld)
- {
-	Vector3 from = ray.getOrigin();
-	Vector3 to = ray.getOrigin() + ray.getDirection();
-
-	btVector3 rayFrom(from.x, from.y, from.z);
-	btVector3 rayTo(to.x, to.y, to.z);
-
-	btCollisionWorld::ClosestRayResultCallback rayCallback(rayFrom, rayTo);
-	rayCallback.m_collisionFilterGroup = btBroadphaseProxy::AllFilter;
-	rayCallback.m_collisionFilterMask = btBroadphaseProxy::AllFilter;
-
-	gkScene* pScene = gkEngine::getSingleton().getActiveScene();
-
-	GK_ASSERT(pScene);
-
-	btDynamicsWorld* pWorld = pScene->getDynamicsWorld()->getBulletWorld();
-
-	GK_ASSERT(pWorld);
-
-	pWorld->rayTest(rayFrom, rayTo, rayCallback);
-
-
-	if(rayCallback.hasHit())
-	{
-		hitPointWorld = gkVector3(rayCallback.m_hitPointWorld);
-
-		return rayCallback.m_collisionObject;
-	}
-
-	return 0;
- }
-
-btCollisionObject* gkUtils::PickBody(const Ogre::Ray& ray)
- {
-	 gkVector3 hitPointWorld;
-
-	 return gkUtils::PickBody(ray, hitPointWorld);
- }
-
-
 

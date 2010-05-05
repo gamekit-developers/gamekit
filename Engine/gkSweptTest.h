@@ -3,9 +3,9 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Charlie C.
+    Copyright (c) 2006-2010 Nestor Silveira.
 
-    Contributor(s): Nestor Silveira.
+    Contributor(s): none yet.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -24,21 +24,36 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkUtils_h_
-#define _gkUtils_h_
+#ifndef _gkSweptTest_h_
+#define _gkSweptTest_h_
 
 #include "gkCommon.h"
+#include "gkMathUtils.h"
 
-class gkUtils
+class btCollisionObject;
+
+class gkSweptTest
 {
 public:
+	gkSweptTest();
 
-    // resource existance test
-    static bool isResource(const gkString &name, const gkString &group = Ogre::StringUtil::BLANK);
+	~gkSweptTest();
 
-    // utility for command-line arguments
-    static gkString getFile(const gkString& in);
+	bool collides(const Ogre::Ray& ray, gkScalar rayRadius, btCollisionObject* avoidMe);
+
+	const gkVector3& getHitPoint() const { return m_hitPointWorld; }
+
+	btCollisionObject* getCollisionObject() const { return m_collisionObject; }
+
+	gkGameObject* getObject() const;
+
+private:
+
+	gkVector3 m_hitPointWorld;
+
+	btCollisionObject* m_collisionObject;
+    
 };
 
 
-#endif//_gkUtils_h_
+#endif//_gkSweptTest_h_

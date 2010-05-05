@@ -31,6 +31,8 @@
 #include "gkDynamicsWorld.h"
 #include "gkRigidBody.h"
 #include "gkUtils.h"
+#include "gkRayTest.h"
+#include "gkCam2ViewportRay.h"
 #include "OgreRoot.h"
 #include "btBulletDynamicsCommon.h"
 
@@ -96,12 +98,12 @@ void gkPickNode::CreatePick()
 
 	Ogre::Ray ray = GetRay();
 	
-	gkVector3 hitPointWorld;
-	
-	btCollisionObject* pCol = gkUtils::PickBody(ray, hitPointWorld);
+	gkRayTest rayTest;
 
-	if(pCol)
+	if(rayTest.collides(ray))
 	{
+		btCollisionObject* pCol = rayTest.getCollisionObject();
+
 		gkObject* pObj = static_cast<gkObject*>(pCol->getUserPointer());
 
 		m_pickedBody = dynamic_cast<gkRigidBody*>(pObj);
@@ -120,6 +122,8 @@ void gkPickNode::CreatePick()
 			m_activationState = body->getActivationState();
 
 			body->setActivationState(DISABLE_DEACTIVATION);
+
+			const gkVector3& hitPointWorld = rayTest.getHitPoint();
 
 			btVector3 hitPos(hitPointWorld.x, hitPointWorld.y, hitPointWorld.z);
 
@@ -202,7 +206,7 @@ void gkPickNode::UpdatePick()
 
 Ogre::Ray gkPickNode::GetRay()
 {
-	return gkUtils::CreateCameraRay(GET_SOCKET_VALUE(X), GET_SOCKET_VALUE(Y));
+	return gkCam2ViewportRay(GET_SOCKET_VALUE(X), GET_SOCKET_VALUE(Y));
 }
 
 gkVector3 gkPickNode::GetPivotPosition()

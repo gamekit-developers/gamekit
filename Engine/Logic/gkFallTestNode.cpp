@@ -27,6 +27,7 @@
 #include "gkFallTestNode.h"
 #include "gkLogger.h"
 #include "gkUtils.h"
+#include "gkSweptTest.h"
 #include "gkGameObject.h"
 #include "Ogre.h"
 #include "btBulletDynamicsCommon.h"
@@ -36,7 +37,6 @@ gkFallTestNode::gkFallTestNode(gkLogicTree *parent, size_t id)
 {
 	ADD_ISOCK(ENABLE, false);
 	ADD_ISOCK(TARGET, 0);
-	ADD_ISOCK(GROUND_OFFSET, 0.1f);
 	ADD_OSOCK(FALLING, false);
 	ADD_OSOCK(NOT_FALLING, false);
 	ADD_OSOCK(COLLIDED_OBJ, 0);
@@ -59,49 +59,27 @@ void gkFallTestNode::update(gkScalar tick)
 {
 	if(GET_SOCKET_VALUE(ENABLE))
 	{
-		Ogre::AxisAlignedBox bb = m_object->getAabb();
-
-		gkScalar minZ = bb.getHalfSize().z + GET_SOCKET_VALUE(GROUND_OFFSET);
-
 		gkVector3 origin = m_object->getPosition();
 
-		static const int N = 9;
-		
-		gkVector3 dir[N];
-		
-		dir[0] = gkVector3(0, 0, -minZ);
-		dir[1] = gkVector3(0, minZ, -minZ);
-		dir[2] = gkVector3(0, -minZ, -minZ);
-		dir[3] = gkVector3(minZ, 0, -minZ);
-		dir[4] = gkVector3(-minZ, 0, -minZ);
-		dir[5] = gkVector3(minZ, minZ, -minZ);
-		dir[6] = gkVector3(minZ, -minZ, -minZ);
-		dir[7] = gkVector3(-minZ, minZ, -minZ);
-		dir[8] = gkVector3(-minZ, -minZ, -minZ);
+		btVector3 center;
+		btScalar radius;
 
-		int i=0;
-		for(i; i<N; i++)
+		m_object->getCollisionObject()->getCollisionShape()->getBoundingSphere(center, radius);
+
+		gkScalar minZ = 1.07f * radius;
+
+		gkSweptTest sweptTest;
+
+		Ogre::Ray ray(origin, gkVector3(0, 0, -minZ));
+
+		if(sweptTest.collides(ray, radius, m_object->getCollisionObject()))
 		{
-			Ogre::Ray ray(origin, dir[i]);
-			
-			gkVector3 hitPointWorld;
-			
-			btCollisionObject* pCol = gkUtils::PickBody(ray, hitPointWorld);
-
-			if(pCol)
-			{
-				gkObject* pObj = static_cast<gkObject*>(pCol->getUserPointer());
-
-				SET_SOCKET_VALUE(CONTACT_POSITION, hitPointWorld);
-				SET_SOCKET_VALUE(COLLIDED_OBJ, pObj->getObject());
-				SET_SOCKET_VALUE(FALLING, false);
-				SET_SOCKET_VALUE(NOT_FALLING, true);
-
-				break;
-			}
+			SET_SOCKET_VALUE(CONTACT_POSITION, sweptTest.getHitPoint());
+			SET_SOCKET_VALUE(COLLIDED_OBJ, sweptTest.getObject());
+			SET_SOCKET_VALUE(FALLING, false);
+			SET_SOCKET_VALUE(NOT_FALLING, true);
 		}
-
-		if(i == N)
+		else
 		{
 			SET_SOCKET_VALUE(FALLING, true);
 			SET_SOCKET_VALUE(NOT_FALLING, false);

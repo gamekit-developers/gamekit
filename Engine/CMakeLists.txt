@@ -9,6 +9,7 @@ set(Core_SOURCE
     # ----- Source ----- 
     gkActiveObject.cpp
     gkCamera.cpp
+    gkCam2ViewportRay.cpp
     gkConstraint.cpp
     gkCoreApplication.cpp
     gkCriticalSection.cpp
@@ -25,12 +26,14 @@ set(Core_SOURCE
     gkPtrRef.cpp
     gkTextFile.cpp
     gkTextManager.cpp
+    gkRayTest.cpp
     gkRenderFactory.cpp
     gkScene.cpp
     gkSceneManager.cpp
     gkSerialize.cpp
     gkSkeleton.cpp
     gkSyncObj.cpp
+    gkSweptTest.cpp
     gkThread.cpp
     gkUserDefs.cpp
     gkUtils.cpp
@@ -43,6 +46,7 @@ set(Core_HEADER
     # ----- Headers ----- 
     gkActiveObject.h
     gkCamera.h
+    gkCam2ViewportRay.h
     gkCommon.h
     gkConstraint.h
     gkCoreApplication.h
@@ -63,6 +67,7 @@ set(Core_HEADER
     gkPath.h
     gkPtrRef.h
     gkQueue.h
+    gkRayTest.h
     gkTextFile.h
     gkTextManager.h
     gkRect.h
@@ -73,6 +78,7 @@ set(Core_HEADER
     gkSkeleton.h
     gkString.h
     gkSyncObj.h
+    gkSweptTest.h
     gkTransformState.h
     gkUserDefs.h
     gkThread.h

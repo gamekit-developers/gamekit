@@ -731,6 +731,16 @@ gkObject *gkGameObject::getAttachedObject()
         return 0;
 }
 
+btCollisionObject* gkGameObject::getCollisionObject()
+{
+    if(m_rigidBody)
+        return m_rigidBody->getCollisionObject();
+    else if(m_character)
+        return m_character->getCollisionObject();
+    else
+        return 0;
+}
+
 Ogre::AxisAlignedBox gkGameObject::getAabb() const
 {
     return m_node->_getWorldAABB();

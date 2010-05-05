@@ -33,6 +33,8 @@
 #include "gkUtils.h"
 #include "gkRigidBody.h"
 #include "gkGameObject.h"
+#include "gkRayTest.h"
+#include "gkCam2ViewportRay.h"
 #include "btBulletDynamicsCommon.h"
 
 gkObjNode::gkObjNode(gkLogicTree *parent, size_t id)
@@ -89,17 +91,15 @@ bool gkObjNode::evaluate(gkScalar tick)
 			{
 				GK_ASSERT(m_type == SCREEN_XY && "Invalid type");
 
-				Ogre::Ray ray = gkUtils::CreateCameraRay(GET_SOCKET_VALUE(X), GET_SOCKET_VALUE(Y));
+				gkCam2ViewportRay ray(GET_SOCKET_VALUE(X), GET_SOCKET_VALUE(Y));
 
-				gkVector3 rayPoint;
+				gkRayTest rayTest;
 
-				btCollisionObject* pCol = gkUtils::PickBody(ray, rayPoint);
-
-				if(pCol)
+				if(rayTest.collides(ray))
 				{
-					SET_SOCKET_VALUE(HIT_POINT, rayPoint);
+					SET_SOCKET_VALUE(HIT_POINT, rayTest.getHitPoint());
 			
-					m_obj = static_cast<gkObject*>(pCol->getUserPointer())->getObject();
+					m_obj = rayTest.getObject();
 				}
 			}
 		}

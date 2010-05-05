@@ -30,9 +30,10 @@
 #include "gkEngine.h"
 #include "gkGameObject.h"
 #include "gkUtils.h"
+#include "gkSweptTest.h"
 #include "gkLogger.h"
 #include "gkCamera.h"
-
+#include "btBulletDynamicsCommon.h"
 #include <limits>
 
 gkArcBallNode::gkArcBallNode(gkLogicTree *parent, size_t id)
@@ -48,6 +49,8 @@ m_radiusOffset(0)
 	ADD_ISOCK(UPDATE, false);
 	ADD_ISOCK(CENTER_OBJ, 0);
 	ADD_ISOCK(CENTER_POSITION, gkVector3::ZERO);
+	ADD_ISOCK(INITIAL_ROLL, 0);
+	ADD_ISOCK(INITIAL_PITCH, 0);
 	ADD_ISOCK(REL_X, 0);
 	ADD_ISOCK(REL_Y, 0);
 	ADD_ISOCK(REL_Z, 0);
@@ -57,11 +60,12 @@ m_radiusOffset(0)
 	ADD_ISOCK(MIN_ROLL, 0);
 	ADD_ISOCK(MAX_ROLL, 0);
 	ADD_ISOCK(KEEP_DISTANCE, false);
-	ADD_OSOCK(CURRENT_ROLL, gkQuaternion::IDENTITY);
-	ADD_OSOCK(CURRENT_PITCH, gkQuaternion::IDENTITY)
 	ADD_ISOCK(MIN_Z, 0);
 	ADD_ISOCK(MAX_Z, std::numeric_limits<gkScalar>::infinity());
 	ADD_ISOCK(AVOID_BLOCKING, false);
+	ADD_ISOCK(BLOCKING_RADIUS, 0.3f);
+	ADD_OSOCK(CURRENT_ROLL, gkQuaternion::IDENTITY);
+	ADD_OSOCK(CURRENT_PITCH, gkQuaternion::IDENTITY)
 }
 
 gkArcBallNode::~gkArcBallNode()
@@ -76,11 +80,9 @@ bool gkArcBallNode::evaluate(gkScalar tick)
 	{
 		m_target = GET_SOCKET_VALUE(TARGET);
 
-		gkQuaternion q(m_target->getOrientation());
-
-		m_rollNode = gkQuaternion(q.getRoll(), gkVector3::UNIT_Z);
+		m_rollNode = gkQuaternion(gkDegree(GET_SOCKET_VALUE(INITIAL_ROLL)), gkVector3::UNIT_Z);
 		
-		m_pitchNode = gkQuaternion(q.getPitch(), gkVector3::UNIT_X);
+		m_pitchNode = gkQuaternion(gkDegree(GET_SOCKET_VALUE(INITIAL_PITCH)), gkVector3::UNIT_X);
 
 		m_oldCenter = m_center = GET_SOCKET_VALUE(CENTER_POSITION);
 	}
@@ -177,12 +179,14 @@ void gkArcBallNode::update(gkScalar tick)
 	{
 		Ogre::Ray ray(m_center, currentPosition - m_center);
 
-		gkVector3 rayPoint;
+		gkSweptTest sweptTest;
 
-		btCollisionObject* pCol = gkUtils::PickBody(ray, rayPoint);
-
-		if(pCol)
+		if(sweptTest.collides(ray, GET_SOCKET_VALUE(BLOCKING_RADIUS), m_centerObj->getAttachedObject()->getCollisionObject()))
 		{
+			gkGameObject* pObj = sweptTest.getObject();
+
+			const gkVector3& rayPoint = sweptTest.getHitPoint();
+
 			m_target->setPosition(rayPoint);
 
 			m_radiusOffset += rayPoint.distance(currentPosition);
