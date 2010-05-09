@@ -24,49 +24,59 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+#ifndef _gkMultiplexerNode_h_
+#define _gkMultiplexerNode_h_
 
-#ifndef _MomoLogic_h_
-#define _MomoLogic_h_
+#include "gkLogicNode.h"
 
-#include "OgreKit.h"
-
-class SceneLogic;
-
-class MomoLogic : public gkReferences
+template<typename T>
+class gkMultiplexerNode : public gkLogicNode
 {
 public:
-	MomoLogic(const gkString& name, SceneLogic* scene);
-	~MomoLogic();
 
-private:
+	enum
+	{	
+		UPDATE,
+		INPUT_FALSE,
+		INPUT_TRUE,
+		SEL,
+		OUTPUT
+	};
 
-	void CreateNodes();
-	void CreatePlayer();
-	void CreatePathfinding();
-	void CreateKick();
-	void CreateGrab();
-	void CreateMove();
-	void CreateDustTrail();
-	void CreateLoadUnload();
-	void CreateAnimation();
-	void CreateCameraArcBall();
-	void CreateStateMachine();
+	DECLARE_SOCKET_TYPE(UPDATE, bool);
+	DECLARE_SOCKET_TYPE(INPUT_FALSE, T);
+	DECLARE_SOCKET_TYPE(INPUT_TRUE, T);
+	DECLARE_SOCKET_TYPE(SEL, bool);
+	DECLARE_SOCKET_TYPE(OUTPUT, T);
 
-public:
+	gkMultiplexerNode(gkLogicTree *parent, size_t id) 
+		: gkLogicNode(parent, id)
+	{
+		ADD_ISOCK(UPDATE, true);
+		ADD_ISOCK(INPUT_FALSE, T());
+		ADD_ISOCK(INPUT_TRUE, T());
+		ADD_ISOCK(SEL, false);
+		ADD_OSOCK(OUTPUT, T());
+	}
 
-	gkObjNode* m_playerNode;
-	gkRayTestNode* m_kickTestNode;
+    virtual ~gkMultiplexerNode() {}
 
-private:
+    bool evaluate(gkScalar tick)
+	{
+		if(GET_SOCKET_VALUE(UPDATE))
+		{
+			if(GET_SOCKET_VALUE(SEL))
+			{
+				SET_SOCKET_VALUE(OUTPUT, GET_SOCKET_VALUE(INPUT_TRUE));
+			}
+			else
+			{
+				SET_SOCKET_VALUE(OUTPUT, GET_SOCKET_VALUE(INPUT_FALSE));
+			}
+		}
 
-	gkString m_name;
-	SceneLogic* m_scene;
-	gkAnimationNode* m_animNode;
-	gkFindPathNode* m_pathFindingNode;
-	gkStateMachineNode* m_stateMachineNode;
-	gkFollowPathNode* m_followPathNode;
-	gkGrabNode* m_momoGrab;
-	gkCameraNode* m_cameraNode;
+		return false;
+	}
 };
 
-#endif//_MomoLogic_h_
+#endif//_gkMultiplexerNode_h_

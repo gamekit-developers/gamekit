@@ -53,6 +53,8 @@ m_activationState(0)
 	ADD_ISOCK(X, 0);
 	ADD_ISOCK(Y, 0);
 	ADD_ISOCK(DISABLE_ROTATION, true);
+	
+	ADD_OSOCK(PICKED_OBJ, 0);
 	ADD_OSOCK(CAUGHT_TRUE, false);
 	ADD_OSOCK(CAUGHT_FALSE, true);
 }
@@ -159,8 +161,13 @@ void gkPickNode::CreatePick()
 			//very weak constraint for picking
 			m_constraint->m_setting.m_tau = 0.1f;
 
+			SET_SOCKET_VALUE(PICKED_OBJ, m_pickedBody->getObject());
 			SET_SOCKET_VALUE(CAUGHT_TRUE, true);
 			SET_SOCKET_VALUE(CAUGHT_FALSE, false);
+		}
+		else
+		{
+			m_pickedBody = 0;
 		}
 	}
 }
@@ -191,6 +198,9 @@ void gkPickNode::ReleasePick()
 
 		SET_SOCKET_VALUE(CAUGHT_TRUE, false);
 		SET_SOCKET_VALUE(CAUGHT_FALSE, true);
+		SET_SOCKET_VALUE(PICKED_OBJ, 0);
+
+		m_pickedBody = 0;
 	}
 }
 

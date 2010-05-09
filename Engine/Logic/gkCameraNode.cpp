@@ -26,7 +26,7 @@
 */
 
 #include "OgreRoot.h"
-#include "gkArcBallNode.h"
+#include "gkCameraNode.h"
 #include "gkEngine.h"
 #include "gkGameObject.h"
 #include "gkUtils.h"
@@ -36,7 +36,7 @@
 #include "btBulletDynamicsCommon.h"
 #include <limits>
 
-gkArcBallNode::gkArcBallNode(gkLogicTree *parent, size_t id)
+gkCameraNode::gkCameraNode(gkLogicTree *parent, size_t id)
 : gkLogicNode(parent, id),
 m_center(gkVector3::ZERO),
 m_oldCenter(gkVector3::ZERO),
@@ -44,7 +44,10 @@ m_target(0),
 m_centerObj(0),
 m_rollNode(gkQuaternion::IDENTITY),
 m_pitchNode(gkQuaternion::IDENTITY),
-m_radiusOffset(0)
+m_idealRadius(0),
+m_radiusIdealIsSet(false),
+m_oldRadius(0),
+m_oldRadiusIsSet(false)
 {
 	ADD_ISOCK(UPDATE, false);
 	ADD_ISOCK(CENTER_OBJ, 0);
@@ -64,20 +67,26 @@ m_radiusOffset(0)
 	ADD_ISOCK(MAX_Z, std::numeric_limits<gkScalar>::infinity());
 	ADD_ISOCK(AVOID_BLOCKING, false);
 	ADD_ISOCK(BLOCKING_RADIUS, 0.3f);
+	ADD_ISOCK(STIFNESS, 0.8f);
+	ADD_ISOCK(DAMPING, 0.3f);
 	ADD_OSOCK(CURRENT_ROLL, gkQuaternion::IDENTITY);
 	ADD_OSOCK(CURRENT_PITCH, gkQuaternion::IDENTITY)
 }
 
-gkArcBallNode::~gkArcBallNode()
+gkCameraNode::~gkCameraNode()
 {
 }
 
-bool gkArcBallNode::evaluate(gkScalar tick)
+bool gkCameraNode::evaluate(gkScalar tick)
 {
 	m_centerObj = GET_SOCKET_VALUE(CENTER_OBJ);
 
 	if(m_target != GET_SOCKET_VALUE(TARGET))
 	{
+		m_radiusIdealIsSet = false;
+
+		m_oldRadiusIsSet = false;
+
 		m_target = GET_SOCKET_VALUE(TARGET);
 
 		m_rollNode = gkQuaternion(gkDegree(GET_SOCKET_VALUE(INITIAL_ROLL)), gkVector3::UNIT_Z);
@@ -89,10 +98,10 @@ bool gkArcBallNode::evaluate(gkScalar tick)
 
 	bool update = GET_SOCKET_VALUE(UPDATE);
 
-	return m_centerObj && m_target && m_centerObj->isLoaded() && m_target->isLoaded() && update;
+	return update && m_centerObj && m_target && m_centerObj->isLoaded() && m_target->isLoaded();
 }
 
-void gkArcBallNode::update(gkScalar tick)
+void gkCameraNode::update(gkScalar tick)
 {
 	gkQuaternion rollNode = m_rollNode * gkQuaternion(Ogre::Angle(-GET_SOCKET_VALUE(REL_X)), gkVector3::UNIT_Z);
 
@@ -130,9 +139,9 @@ void gkArcBallNode::update(gkScalar tick)
 
 		if(GET_SOCKET_VALUE(REL_Z))
 		{
-			m_radiusOffset = 0;
-
 			newZPosition.z += newZPosition.z * GET_SOCKET_VALUE(REL_Z) * 0.5;
+
+			m_radiusIdealIsSet = false;
 		}
 
 		if(GET_SOCKET_VALUE(KEEP_DISTANCE))
@@ -146,19 +155,30 @@ void gkArcBallNode::update(gkScalar tick)
 			dir = m_center - newZPosition;
 		}
 	}
-
 	
 	gkScalar radius = dir.length();
 
+	if(!m_radiusIdealIsSet)
+	{
+		m_idealRadius = radius;
+		
+		m_radiusIdealIsSet = true;
+	}
+
+	if(!m_oldRadiusIsSet)
+	{
+		m_oldRadius = radius;
+		
+		m_oldRadiusIsSet = true;
+	}
+
+	gkScalar stretch = (radius - m_idealRadius) * GET_SOCKET_VALUE(STIFNESS);
+	gkScalar damp = (radius - m_oldRadius) * GET_SOCKET_VALUE(DAMPING);
+
+	radius += -stretch * tick - damp;
+
 	gkScalar minZ = GET_SOCKET_VALUE(MIN_Z);
 	gkScalar maxZ = GET_SOCKET_VALUE(MAX_Z);
-
-	gkScalar recoverRadiusStep = m_radiusOffset*tick;
-	radius += recoverRadiusStep;
-	m_radiusOffset -= recoverRadiusStep;
-
-	if(m_radiusOffset<0) 
-		m_radiusOffset = 0;
 
 	if(radius < minZ)
 	{
@@ -169,30 +189,52 @@ void gkArcBallNode::update(gkScalar tick)
 		radius = maxZ;
 	}
 
-	gkVector3 oDir = gkVector3::NEGATIVE_UNIT_Z * radius;
+	m_oldRadius = radius;
 
-	currentPosition = m_center - m_target->getOrientation() * oDir;
-
-	m_target->setPosition(currentPosition);
-
-	if(GET_SOCKET_VALUE(AVOID_BLOCKING))
-	{
-		Ogre::Ray ray(m_center, currentPosition - m_center);
-
-		gkSweptTest sweptTest;
-
-		if(sweptTest.collides(ray, GET_SOCKET_VALUE(BLOCKING_RADIUS), m_centerObj->getAttachedObject()->getCollisionObject()))
-		{
-			gkGameObject* pObj = sweptTest.getObject();
-
-			const gkVector3& rayPoint = sweptTest.getHitPoint();
-
-			m_target->setPosition(rayPoint);
-
-			m_radiusOffset += rayPoint.distance(currentPosition);
-		}
-	}
+	calculateNewPosition(currentPosition, radius, tick);
 
 	SET_SOCKET_VALUE(CURRENT_ROLL, m_rollNode);
 	SET_SOCKET_VALUE(CURRENT_PITCH, m_pitchNode);
 }
+
+void gkCameraNode::calculateNewPosition(const gkVector3& currentPosition, gkScalar rayLength, gkScalar tick)
+{
+	gkVector3 oDir = gkVector3::NEGATIVE_UNIT_Z * rayLength;
+
+	gkVector3 tmpPosition = m_center - m_target->getOrientation() * oDir;
+
+	bool newPosSet = false;
+
+	if(GET_SOCKET_VALUE(AVOID_BLOCKING))
+	{
+		gkVector3 direction = tmpPosition - m_center;
+		
+		Ogre::Ray ray(m_center, direction);
+
+		gkSweptTest::AVOID_LIST avoidList;
+		avoidList.insert(m_centerObj->getAttachedObject()->getCollisionObject());
+
+		gkSweptTest sweptTest(avoidList);
+
+		gkScalar blokingRadius = GET_SOCKET_VALUE(BLOCKING_RADIUS);
+
+		if(sweptTest.collides(ray, blokingRadius))
+		{
+			const gkVector3& rayPoint = sweptTest.getHitPoint();
+			const gkVector3& hitNormal = sweptTest.getHitNormal();
+			gkVector3 reflection = (direction).reflect(hitNormal);
+
+			gkVector3 parallelComponent = reflection.dotProduct(hitNormal) * hitNormal;
+			gkVector3 perpendicularComponent = reflection - parallelComponent;
+
+			m_target->setPosition(currentPosition + (rayPoint - currentPosition + perpendicularComponent) * tick);
+			newPosSet = true;
+		}
+	}
+	
+	if(!newPosSet)
+	{
+		m_target->setPosition(tmpPosition);
+	}
+}
+

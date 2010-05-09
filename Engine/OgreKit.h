@@ -75,8 +75,8 @@
 #include "Loaders/Blender/gkBlendLoader.h"
 
 #include "Logic/gkAnimationNode.h"
-#include "Logic/gkArcBallNode.h"
 #include "Logic/gkButtonNode.h"
+#include "Logic/gkCameraNode.h"
 #include "Logic/gkCollisionNode.h"
 #include "Logic/gkCursorNode.h"
 #include "Logic/gkExitNode.h"
@@ -95,6 +95,7 @@
 #include "Logic/gkMathNode.h"
 #include "Logic/gkMotionNode.h"
 #include "Logic/gkMouseNode.h"
+#include "Logic/gkMultiplexerNode.h"
 #include "Logic/gkNodeManager.h"
 #include "Logic/gkObjectNode.h"
 #include "Logic/gkObjNode.h"

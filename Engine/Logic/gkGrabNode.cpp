@@ -76,7 +76,6 @@ void gkGrabNode::update(gkScalar tick)
 
 	if(GET_SOCKET_VALUE(THROW_OBJECT))
 	{
-		ReleasePick();
 		ThrowObject();
 	}
 }
@@ -88,6 +87,8 @@ void gkGrabNode::ThrowObject()
 	if(m_pickedBody && vel != gkVector3::ZERO)
 	{
 		m_pickedBody->setLinearVelocity(m_target->getOrientation() * vel);
+
+		ReleasePick();
 
 		SET_SOCKET_VALUE(THROWED, true);
 	}

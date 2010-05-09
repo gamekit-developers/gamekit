@@ -31,38 +31,27 @@
 #include "OgreRoot.h"
 #include "btBulletDynamicsCommon.h"
 
-
-gkSweptTest::gkSweptTest()
-: m_hitPointWorld(gkVector3::ZERO),
-m_collisionObject(0)
+class SweptTestResultCallback : public btCollisionWorld::ClosestConvexResultCallback
 {
-}
-
-gkSweptTest::~gkSweptTest()
-{
-}
-
-class btClosestNotMeConvexResultCallback : public btCollisionWorld::ClosestConvexResultCallback
-{
-	btCollisionObject* m_me;
+	const gkSweptTest::AVOID_LIST& m_avoidList;
 	btScalar m_allowedPenetration;
 	btOverlappingPairCache* m_pairCache;
 	btDispatcher* m_dispatcher;
 
 
 public:
-	btClosestNotMeConvexResultCallback (btCollisionObject* me,const btVector3& fromA,const btVector3& toA,btOverlappingPairCache* pairCache,btDispatcher* dispatcher) : 
-	  btCollisionWorld::ClosestConvexResultCallback(fromA,toA),
-		m_me(me),
+	SweptTestResultCallback(const gkSweptTest::AVOID_LIST& avoidList, const btVector3& fromA, const btVector3& toA,btOverlappingPairCache* pairCache,btDispatcher* dispatcher) : 
+	  btCollisionWorld::ClosestConvexResultCallback(fromA, toA),
+		m_avoidList(avoidList),
 		m_allowedPenetration(0.0f),
 		m_pairCache(pairCache),
 		m_dispatcher(dispatcher)
 	{
 	}
 
-	virtual btScalar addSingleResult(btCollisionWorld::LocalConvexResult& convexResult,bool normalInWorldSpace)
+	btScalar addSingleResult(btCollisionWorld::LocalConvexResult& convexResult,bool normalInWorldSpace)
 	{
-		if (convexResult.m_hitCollisionObject == m_me)
+		if (m_avoidList.end() != m_avoidList.find(convexResult.m_hitCollisionObject))
 			return 1.0f;
 
 		//ignore result if there is no contact response
@@ -71,7 +60,7 @@ public:
 
 		btVector3 linVelA,linVelB;
 		linVelA = m_convexToWorld-m_convexFromWorld;
-		linVelB = btVector3(0,0,0);//toB.getOrigin()-fromB.getOrigin();
+		linVelB = btVector3(0,0,0);
 
 		btVector3 relativeVelocity = (linVelA-linVelB);
 		//don't report time of impact for motion away from the contact normal (or causes minor penetration)
@@ -81,46 +70,34 @@ public:
 		return ClosestConvexResultCallback::addSingleResult (convexResult, normalInWorldSpace);
 	}
 
-	virtual bool needsCollision(btBroadphaseProxy* proxy0) const
+	bool needsCollision(btBroadphaseProxy* proxy0) const
 	{
 		//don't collide with itself
-		if (proxy0->m_clientObject == m_me)
+		if (m_avoidList.end() != m_avoidList.find(static_cast<btCollisionObject*>(proxy0->m_clientObject)))
 			return false;
 
 		///don't do CCD when the collision filters are not matching
 		if (!ClosestConvexResultCallback::needsCollision(proxy0))
 			return false;
 
-/*		btCollisionObject* otherObj = (btCollisionObject*) proxy0->m_clientObject;
-
-		//call needsResponse, see http://code.google.com/p/bullet/issues/detail?id=179
-		if (m_dispatcher->needsResponse(m_me,otherObj))
-		{
-			///don't do CCD when there are already contact points (touching contact/penetration)
-			btAlignedObjectArray<btPersistentManifold*> manifoldArray;
-			btBroadphasePair* collisionPair = m_pairCache->findPair(m_me->getBroadphaseHandle(),proxy0);
-			if (collisionPair)
-			{
-				if (collisionPair->m_algorithm)
-				{
-					manifoldArray.resize(0);
-					collisionPair->m_algorithm->getAllContactManifolds(manifoldArray);
-					for (int j=0;j<manifoldArray.size();j++)
-					{
-						btPersistentManifold* manifold = manifoldArray[j];
-						if (manifold->getNumContacts()>0)
-							return false;
-					}
-				}
-			}
-		}*/
-
 		return true;
 	}
 };
 
+/////////////////////////////////////////////////////////////////////////////
 
-bool gkSweptTest::collides(const Ogre::Ray& ray, gkScalar rayRadius, btCollisionObject* avoidMe)
+gkSweptTest::gkSweptTest(const AVOID_LIST& avoidList)
+: m_hitPointWorld(gkVector3::ZERO),
+m_collisionObject(0),
+m_avoidList(avoidList)
+{
+}
+
+gkSweptTest::~gkSweptTest()
+{
+}
+
+bool gkSweptTest::collides(const Ogre::Ray& ray, gkScalar rayRadius)
 {
 	gkVector3 from = ray.getOrigin();
 	gkVector3 to = ray.getOrigin() + ray.getDirection();
@@ -143,7 +120,7 @@ bool gkSweptTest::collides(const Ogre::Ray& ray, gkScalar rayRadius, btCollision
 
 	GK_ASSERT(pWorld);
 
-	btClosestNotMeConvexResultCallback rayCallback(avoidMe, rayFrom, rayTo, pWorld->getBroadphase()->getOverlappingPairCache(), pWorld->getDispatcher());
+	SweptTestResultCallback rayCallback(m_avoidList, rayFrom, rayTo, pWorld->getBroadphase()->getOverlappingPairCache(), pWorld->getDispatcher());
 	rayCallback.m_collisionFilterGroup = btBroadphaseProxy::AllFilter;
 	rayCallback.m_collisionFilterMask = btBroadphaseProxy::AllFilter;
 
@@ -155,6 +132,8 @@ bool gkSweptTest::collides(const Ogre::Ray& ray, gkScalar rayRadius, btCollision
 		m_hitPointWorld = gkVector3(rayCallback.m_hitPointWorld);
 
 		m_collisionObject = rayCallback.m_hitCollisionObject;
+
+		m_hitNormalWorld = gkVector3(rayCallback.m_hitNormalWorld);
 
 		return true;
 	}

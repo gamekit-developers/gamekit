@@ -80,6 +80,9 @@ Following are the explanations for the keyboard and mouse control of this demo.
 <LEFT SHIFT> + <W>
 	Moves momo forward (Run Faster and create dust trail [particle FX])
 	
+<LEFT SHIFT> + <LEFT MOUSE BUTTON>
+	 Momo will move to the clicked point in the scene.
+	
 <S> 
 	Moves momo backward.
 	
@@ -96,17 +99,14 @@ Following are the explanations for the keyboard and mouse control of this demo.
 	Reload momo.
 	(This returns momo to the original position and orientation.)
 	
-<SPACE>
-	Kick. (try to kick a rat)
-	
-<RIGHT MOUSE BUTTON>
-	When pressed then Momo grabs closest object.
-	When released then Momo release the grabbed object.
-	
 <LEFT MOUSE BUTTON>
+	Kick. (try to kick a rat)
 	If an object is carried by Momo then throw it (with velocity).
 	
-<LEFT CTRL> + <Z> Momo will move to the mouse hit position. 	
+<RIGHT MOUSE BUTTON>
+	When pressed then Momo grabs closest object (cubes only).
+	When released then Momo release the grabbed object.
+	
 	
 ////////////////////////////////////////////////////////////////
 

@@ -140,6 +140,7 @@ set(NLogic_SOURCE
     # ----- Source ----- 
     Logic/gkAnimationNode.cpp
     Logic/gkButtonNode.cpp
+    Logic/gkCameraNode.cpp
     Logic/gkCollisionNode.cpp
     Logic/gkExitNode.cpp
     Logic/gkExpressionNode.cpp
@@ -162,7 +163,6 @@ set(NLogic_SOURCE
     Logic/gkTimerNode.cpp
     Logic/gkValueNode.cpp
     Logic/gkVariableNode.cpp
-    Logic/gkArcBallNode.cpp
     Logic/gkCursorNode.cpp
     Logic/gkParticleNode.cpp
     Logic/gkPickNode.cpp
@@ -176,6 +176,7 @@ set(NLogic_HEADER
     # ----- Headers ----- 
     Logic/gkAnimationNode.h
     Logic/gkButtonNode.h
+    Logic/gkCameraNode.h
     Logic/gkCollisionNode.h
     Logic/gkExitNode.h
     Logic/gkExpressionNode.h
@@ -194,6 +195,7 @@ set(NLogic_HEADER
     Logic/gkMathNode.h
     Logic/gkMotionNode.h
     Logic/gkMouseNode.h
+    Logic/gkMultiplexerNode.h
     Logic/gkObjectNode.h
     Logic/gkPrintNode.h
     Logic/gkRandomNode.h
@@ -202,7 +204,6 @@ set(NLogic_HEADER
     Logic/gkTimerNode.h
     Logic/gkValueNode.h
     Logic/gkVariableNode.h
-    Logic/gkArcBallNode.h
     Logic/gkCursorNode.h
     Logic/gkParticleNode.h
     Logic/gkPickNode.h

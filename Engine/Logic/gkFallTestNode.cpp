@@ -68,11 +68,14 @@ void gkFallTestNode::update(gkScalar tick)
 
 		gkScalar minZ = 1.07f * radius;
 
-		gkSweptTest sweptTest;
+		gkSweptTest::AVOID_LIST avoidList;
+		avoidList.insert(m_object->getCollisionObject());
+		
+		gkSweptTest sweptTest(avoidList);
 
 		Ogre::Ray ray(origin, gkVector3(0, 0, -minZ));
 
-		if(sweptTest.collides(ray, radius, m_object->getCollisionObject()))
+		if(sweptTest.collides(ray, radius))
 		{
 			SET_SOCKET_VALUE(CONTACT_POSITION, sweptTest.getHitPoint());
 			SET_SOCKET_VALUE(COLLIDED_OBJ, sweptTest.getObject());

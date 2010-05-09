@@ -35,13 +35,17 @@ class btCollisionObject;
 class gkSweptTest
 {
 public:
-	gkSweptTest();
+	typedef std::set<btCollisionObject*> AVOID_LIST;
+
+	gkSweptTest(const AVOID_LIST& avoidList);
 
 	~gkSweptTest();
 
-	bool collides(const Ogre::Ray& ray, gkScalar rayRadius, btCollisionObject* avoidMe);
+	bool collides(const Ogre::Ray& ray, gkScalar rayRadius);
 
 	const gkVector3& getHitPoint() const { return m_hitPointWorld; }
+
+	const gkVector3& getHitNormal() const { return m_hitNormalWorld; }
 
 	btCollisionObject* getCollisionObject() const { return m_collisionObject; }
 
@@ -49,9 +53,13 @@ public:
 
 private:
 
+	const AVOID_LIST& m_avoidList;
+
 	gkVector3 m_hitPointWorld;
 
 	btCollisionObject* m_collisionObject;
+
+	gkVector3 m_hitNormalWorld;
     
 };
 

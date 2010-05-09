@@ -72,6 +72,7 @@ namespace
 	#define REAL_GREATER_NODE( a, b ) gkCreateIfNode<gkScalar, CMP_GREATER>(m_scene->m_tree, a, b)
 
 	#define IS_TRUE( a ) a->getIS_TRUE()
+	#define IS_FALSE( a ) a->getIS_FALSE()
 
 	typedef gkIfNode<bool, CMP_AND> BOOL_AND_NODE_TYPE;
 	typedef gkIfNode<bool, CMP_OR> BOOL_OR_NODE_TYPE;
@@ -160,7 +161,7 @@ m_followPathNode(0),
 m_playerNode(0),
 m_momoGrab(0),
 m_kickTestNode(0),
-m_momoCameraArcBall(0)
+m_cameraNode(0)
 {
 	CreateNodes();
 	CreatePlayer();
@@ -188,21 +189,28 @@ void MomoLogic::CreateNodes()
 	m_playerNode = m_scene->m_tree->createNode<gkObjNode>();
 	m_momoGrab = m_scene->m_tree->createNode<gkGrabNode>();
 	m_kickTestNode = m_scene->m_tree->createNode<gkRayTestNode>();
-	m_momoCameraArcBall = m_scene->m_tree->createNode<gkArcBallNode>();
+	m_cameraNode = m_scene->m_tree->createNode<gkCameraNode>();
 }
 
 void MomoLogic::CreatePlayer()
 {
-	m_playerNode->getUPDATE_OBJ()->link(m_scene->m_pulseNode->getOUTPUT());
-	m_playerNode->getOBJ_NAME()->setValue(m_name);
+	gkObjNode* obj = m_scene->m_tree->createNode<gkObjNode>();
+	
+	obj->getUPDATE_OBJ()->link(m_scene->m_pulseNode->getOUTPUT());
+	obj->getOBJ_NAME()->setValue(m_name);
+
+	m_playerNode->getUPDATE_OBJ()->setValue(true);
+	m_playerNode->setType(gkObjNode::POINTER);
+	m_playerNode->getOBJ_POINTER()->link(obj->getOBJ());
 }
 
 void MomoLogic::CreatePathfinding()
 {
-	gkKeyNode* fKeyNode = m_scene->m_tree->createNode<gkKeyNode>();
-	fKeyNode->setKey(KC_ZKEY);
+	gkKeyNode* zKeyNode = m_scene->m_tree->createNode<gkKeyNode>();
+	zKeyNode->setKey(KC_ZKEY);
 
-	BOOL_AND_NODE_TYPE* ifNode = BOOL_AND_NODE(m_scene->m_ctrlKeyNode->getIS_DOWN(), fKeyNode->getPRESS());
+	BOOL_AND_NODE_TYPE* ifNode = BOOL_AND_NODE(m_scene->m_shiftKeyNode->getIS_DOWN(), 
+		m_scene->m_leftMouseNode->getPRESS());
 
 	gkObjNode* targetNode = m_scene->m_tree->createNode<gkObjNode>();
 	targetNode->setType(gkObjNode::SCREEN_XY);
@@ -281,7 +289,7 @@ void MomoLogic::CreateMove()
 	BOOL_AND_NODE_TYPE* ifNode = BOOL_AND_NODE(m_followPathNode->getHAS_REACHED_END(), mapNode->getHAS_OUTPUT());
 
 	m_playerNode->getSET_ROTATION()->link(ifNode->getIS_TRUE());
-	m_playerNode->getSET_ROTATION_VALUE()->link(m_momoCameraArcBall->getCURRENT_ROLL());
+	m_playerNode->getSET_ROTATION_VALUE()->link(m_cameraNode->getCURRENT_ROLL());
 
 	m_playerNode->getSET_LINEAR_VEL()->link(ifNode->getIS_TRUE());
 	m_playerNode->getSET_LINEAR_VEL_VALUE_Y()->link(mapNode->getOUTPUT());
@@ -350,47 +358,55 @@ void MomoLogic::CreateAnimation()
 
 void MomoLogic::CreateCameraArcBall()
 {
-	m_momoCameraArcBall->getCENTER_OBJ()->link(m_playerNode->getOBJ());
+	gkObjNode* centerObj0 = m_scene->m_tree->createNode<gkObjNode>();
+	centerObj0->setType(gkObjNode::SCREEN_XY);
+	centerObj0->getX()->link(m_scene->m_mouseNode->getABS_X());
+	centerObj0->getY()->link(m_scene->m_mouseNode->getABS_Y());
+	centerObj0->getUPDATE_OBJ()->link(IS_TRUE(BOOL_AND_NODE(m_scene->m_leftMouseNode->getPRESS(), 
+		m_scene->m_ctrlKeyNode->getIS_DOWN())));
+	centerObj0->getUPDATE_STATE()->setValue(false);
+	centerObj0->getHIT_POINT()->link(m_cameraNode->getCENTER_POSITION());
 
-	m_momoCameraArcBall->getAVOID_BLOCKING()->link(
-		IS_TRUE(
-			BOOL_AND_NODE(
-				IS_TRUE(
-					BOOL_AND_NODE(
-						m_stateMachineNode->isCurrentStatus(CATCH_ENDED)->getIS_FALSE(),
-						m_stateMachineNode->isCurrentStatus(THROW_WITH)->getIS_FALSE()
-					)
-				),
-				IS_TRUE(
-					BOOL_AND_NODE(
-						m_stateMachineNode->isCurrentStatus(CARRY)->getIS_FALSE(), 
-						m_stateMachineNode->isCurrentStatus(CATCH)->getIS_FALSE()
-					)
-				)
-			)
-		)
-	);
+	gkObjNode* centerObj1 = m_scene->m_tree->createNode<gkObjNode>();
+	centerObj1->setType(gkObjNode::POINTER);
+	centerObj1->getOBJ_POINTER()->link(m_playerNode->getOBJ());
+	centerObj1->getUPDATE_OBJ()->link(m_scene->m_ctrlKeyNode->getNOT_IS_DOWN());
+	centerObj1->getUPDATE_STATE()->link(m_scene->m_ctrlKeyNode->getNOT_IS_DOWN());
+	centerObj1->getPOSITION()->link(m_cameraNode->getCENTER_POSITION());
 
-	m_momoCameraArcBall->getCENTER_POSITION()->link(m_playerNode->getPOSITION());
-	m_momoCameraArcBall->getINITIAL_PITCH()->setValue(45);
-	m_momoCameraArcBall->getTARGET()->link(m_scene->m_cameraPlayer->getOBJ());
+	gkMultiplexerNode<gkGameObject*>* selObj0 = m_scene->m_tree->createNode<gkMultiplexerNode<gkGameObject*> >();
+	selObj0->getINPUT_FALSE()->setValue(0);
+	selObj0->getINPUT_TRUE()->link(centerObj1->getOBJ());
+	selObj0->getSEL()->link(m_scene->m_ctrlKeyNode->getNOT_IS_DOWN());
 
-	m_momoCameraArcBall->getREL_X()->link(m_scene->m_mouseNode->getREL_X());
-	m_momoCameraArcBall->getREL_Y()->link(m_scene->m_mouseNode->getREL_Y());
-	m_momoCameraArcBall->getREL_Z()->link(m_scene->m_mouseNode->getWHEEL());
+	gkMultiplexerNode<gkGameObject*>* selObj = m_scene->m_tree->createNode<gkMultiplexerNode<gkGameObject*> >();
+	selObj->getINPUT_FALSE()->link(selObj0->getOUTPUT());
+	selObj->getINPUT_TRUE()->link(centerObj0->getOBJ());
+	selObj->getSEL()->link(IS_TRUE(BOOL_AND_NODE(m_scene->m_leftMouseNode->getIS_DOWN(), 
+			m_scene->m_ctrlKeyNode->getIS_DOWN())));
 
-	m_momoCameraArcBall->getMIN_PITCH()->setValue(0);
-	m_momoCameraArcBall->getMAX_PITCH()->setValue(80);
+	m_cameraNode->getUPDATE()->setValue(true);
+	m_cameraNode->getCENTER_OBJ()->link(selObj->getOUTPUT());
 
-	m_momoCameraArcBall->getMIN_ROLL()->setValue(-180);
-	m_momoCameraArcBall->getMAX_ROLL()->setValue(180);
+	m_cameraNode->getAVOID_BLOCKING()->link(m_scene->m_ctrlKeyNode->getNOT_IS_DOWN());
+	
+	m_cameraNode->getINITIAL_PITCH()->setValue(45);
+	m_cameraNode->getTARGET()->link(m_scene->m_cameraPlayer->getOBJ());
 
-	m_momoCameraArcBall->getMIN_Z()->setValue(0.5f);
-	m_momoCameraArcBall->getMAX_Z()->setValue(10);
+	m_cameraNode->getREL_X()->link(m_scene->m_mouseNode->getREL_X());
+	m_cameraNode->getREL_Y()->link(m_scene->m_mouseNode->getREL_Y());
+	m_cameraNode->getREL_Z()->link(m_scene->m_mouseNode->getWHEEL());
 
-	m_momoCameraArcBall->getKEEP_DISTANCE()->setValue(true);
+	m_cameraNode->getMIN_PITCH()->setValue(0);
+	m_cameraNode->getMAX_PITCH()->setValue(80);
 
-	m_momoCameraArcBall->getUPDATE()->link(m_scene->m_ctrlKeyNode->getNOT_IS_DOWN());
+	m_cameraNode->getMIN_ROLL()->setValue(-180);
+	m_cameraNode->getMAX_ROLL()->setValue(180);
+
+	m_cameraNode->getMIN_Z()->setValue(0.5f);
+	m_cameraNode->getMAX_Z()->setValue(10);
+
+	m_cameraNode->getKEEP_DISTANCE()->setValue(true);
 }
 
 void MomoLogic::CreateStateMachine()
@@ -436,11 +452,15 @@ void MomoLogic::CreateStateMachine()
 	m_scene->m_sKeyNode->getIS_DOWN()->link(m_stateMachineNode->addTransition(WALK_BACK, WALK_BACK));
 	m_scene->m_sKeyNode->getIS_DOWN()->link(m_stateMachineNode->addTransition(KICK, WALK_BACK));
 
+	BOOL_AND_NODE_TYPE* ifKick = BOOL_AND_NODE(
+		BOOL_AND_NODE(m_scene->m_leftMouseNode->getPRESS(), m_scene->m_ctrlKeyNode->getNOT_IS_DOWN())->getIS_TRUE(),
+		m_scene->m_shiftKeyNode->getNOT_IS_DOWN());
+
 	// KICK TRANSITIONS
-	m_scene->m_spcKeyNode->getPRESS()->link(m_stateMachineNode->addTransition(WALK, KICK));
-	m_scene->m_spcKeyNode->getPRESS()->link(m_stateMachineNode->addTransition(WALK_BACK, KICK));
-	m_scene->m_spcKeyNode->getPRESS()->link(m_stateMachineNode->addTransition(IDLE_NASTY, KICK));
-	m_scene->m_spcKeyNode->getPRESS()->link(m_stateMachineNode->addTransition(IDLE_CAPOEIRA, KICK));
+	IS_TRUE(ifKick)->link(m_stateMachineNode->addTransition(WALK, KICK));
+	IS_TRUE(ifKick)->link(m_stateMachineNode->addTransition(WALK_BACK, KICK));
+	IS_TRUE(ifKick)->link(m_stateMachineNode->addTransition(IDLE_NASTY, KICK));
+	IS_TRUE(ifKick)->link(m_stateMachineNode->addTransition(IDLE_CAPOEIRA, KICK));
 	m_animNode->getNOT_HAS_REACHED_END()->link(m_stateMachineNode->addTransition(KICK, KICK));
 
 	// FALL_UP TRANSITIONS

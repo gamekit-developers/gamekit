@@ -60,7 +60,6 @@ m_momo(0)
 	CreateExit();
 	CreateCursor();
 	CreatePick();
-	CreateCursorCameraArcBall();
 	CreateDebug();
 
 	m_tree->solveOrder();
@@ -96,12 +95,6 @@ void SceneLogic::CreateRats()
 			if(ob->getName().find("Rat") != gkString::npos)
 			{
 				m_rats.push_back(PRAT(new RatLogic(ob->getName(), this, m_momo)));
-
-				//gkGameObject* obClone = static_cast<gkGameObject*>(ob->clone("RatCloned"));
-
-				//obClone->load();
-
-				//m_rats.push_back(PRAT(new RatLogic(obClone->getName(), this, m_momo)));
 			}
 		}
 
@@ -172,57 +165,6 @@ void SceneLogic::CreatePick()
 	pick->getRELEASE_PICK()->link(m_rightMouseNode->getRELEASE());
 	pick->getX()->link(m_mouseNode->getABS_X());
 	pick->getY()->link(m_mouseNode->getABS_Y());
-}
-
-void SceneLogic::CreateCursorCameraArcBall()
-{
-	gkObjNode* centerObj = m_tree->createNode<gkObjNode>();
-	centerObj->setType(gkObjNode::SCREEN_XY);
-	centerObj->getX()->link(m_mouseNode->getABS_X());
-	centerObj->getY()->link(m_mouseNode->getABS_Y());
-
-	centerObj->getRESET()->link(m_ctrlKeyNode->getRELEASE());
-	{
-		gkIfNode<bool, CMP_AND>* ifNode = m_tree->createNode<gkIfNode<bool, CMP_AND> >();
-
-		ifNode->getA()->link(m_leftMouseNode->getPRESS());
-		ifNode->getB()->link(m_ctrlKeyNode->getIS_DOWN());
-
-		centerObj->getUPDATE_OBJ()->link(ifNode->getIS_TRUE());
-	}
-
-	gkArcBallNode* arcBall = m_tree->createNode<gkArcBallNode>();
-	arcBall->getCENTER_OBJ()->link(centerObj->getOBJ());
-	arcBall->getCENTER_POSITION()->link(centerObj->getHIT_POINT());
-	arcBall->getINITIAL_PITCH()->setValue(45);
-	arcBall->getTARGET()->link(m_cameraPlayer->getOBJ());
-
-	arcBall->getREL_X()->link(m_mouseNode->getREL_X());
-	arcBall->getREL_Y()->link(m_mouseNode->getREL_Y());
-	arcBall->getREL_Z()->link(m_mouseNode->getWHEEL());
-
-	arcBall->getMIN_PITCH()->setValue(-90);
-	arcBall->getMAX_PITCH()->setValue(90);
-
-	arcBall->getMIN_ROLL()->setValue(-180);
-	arcBall->getMAX_ROLL()->setValue(180);
-
-
-	{
-		gkIfNode<bool, CMP_AND>* ifANode = m_tree->createNode<gkIfNode<bool, CMP_AND> >();
-		ifANode->getA()->link(m_ctrlKeyNode->getIS_DOWN());
-		ifANode->getB()->link(m_leftMouseNode->getIS_DOWN());
-
-		gkIfNode<bool, CMP_AND>* ifBNode = m_tree->createNode<gkIfNode<bool, CMP_AND> >();
-		ifBNode->getA()->link(m_ctrlKeyNode->getIS_DOWN());
-		ifBNode->getB()->link(m_mouseNode->getWHEEL_MOTION());
-
-		gkIfNode<bool, CMP_OR>* ifNode = m_tree->createNode<gkIfNode<bool, CMP_OR> >();
-		ifNode->getA()->link(ifANode->getIS_TRUE());
-		ifNode->getB()->link(ifBNode->getIS_TRUE());
-
-		arcBall->getUPDATE()->link(ifNode->getIS_TRUE());
-	}
 }
 
 void SceneLogic::CreateDebug()

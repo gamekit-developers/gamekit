@@ -70,37 +70,40 @@ bool gkObjNode::evaluate(gkScalar tick)
 {
 	SET_SOCKET_VALUE(MOTION, false);
 
+	if(GET_SOCKET_VALUE(RESET))
+	{
+		m_obj = 0;
+		m_mesh = 0;
+	}
+
 	if(GET_SOCKET_VALUE(UPDATE_OBJ))
 	{
 		m_obj = 0;
 		m_mesh = 0;
 
-		if(!GET_SOCKET_VALUE(RESET))
+		if(m_type == NAME)
 		{
-			if(m_type == NAME)
+			gkScene* pScene = gkEngine::getSingleton().getActiveScene();
+
+			m_obj = pScene->getObject(GET_SOCKET_VALUE(OBJ_NAME));
+		}
+		else if(m_type == POINTER)
+		{
+			m_obj = GET_SOCKET_VALUE(OBJ_POINTER);
+		}
+		else
+		{
+			GK_ASSERT(m_type == SCREEN_XY && "Invalid type");
+
+			gkCam2ViewportRay ray(GET_SOCKET_VALUE(X), GET_SOCKET_VALUE(Y));
+
+			gkRayTest rayTest;
+
+			if(rayTest.collides(ray))
 			{
-				gkScene* pScene = gkEngine::getSingleton().getActiveScene();
-
-				m_obj = pScene->getObject(GET_SOCKET_VALUE(OBJ_NAME));
-			}
-			else if(m_type == POINTER)
-			{
-				m_obj = GET_SOCKET_VALUE(OBJ_POINTER);
-			}
-			else
-			{
-				GK_ASSERT(m_type == SCREEN_XY && "Invalid type");
-
-				gkCam2ViewportRay ray(GET_SOCKET_VALUE(X), GET_SOCKET_VALUE(Y));
-
-				gkRayTest rayTest;
-
-				if(rayTest.collides(ray))
-				{
-					SET_SOCKET_VALUE(HIT_POINT, rayTest.getHitPoint());
-			
-					m_obj = rayTest.getObject();
-				}
+				SET_SOCKET_VALUE(HIT_POINT, rayTest.getHitPoint());
+		
+				m_obj = rayTest.getObject();
 			}
 		}
 
@@ -108,12 +111,6 @@ bool gkObjNode::evaluate(gkScalar tick)
 		{
 			m_mesh = m_obj->getChildEntity();
 		}
-
-		SET_SOCKET_VALUE(HAS_OBJ, m_obj ? true : false);
-		SET_SOCKET_VALUE(OBJ, m_obj);
-		SET_SOCKET_VALUE(MESH_OBJ, m_mesh);
-
-		updateState();
 	}
 
 	if(m_obj && GET_SOCKET_VALUE(LOAD))
@@ -149,6 +146,13 @@ bool gkObjNode::evaluate(gkScalar tick)
 	}
 
 	
+	if(GET_SOCKET_VALUE(UPDATE_OBJ))
+	{
+		SET_SOCKET_VALUE(HAS_OBJ, m_obj ? true : false);
+		SET_SOCKET_VALUE(OBJ, m_obj);
+		SET_SOCKET_VALUE(MESH_OBJ, m_mesh);
+	}
+
 	if(GET_SOCKET_VALUE(UPDATE_STATE))
 	{
 		updateState();
