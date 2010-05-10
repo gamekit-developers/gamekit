@@ -50,6 +50,7 @@ private:
 	void CreateDebug();
 	void CreateMomo();
 	void CreateRats();
+	void CreateCamera();
 
 public:
 

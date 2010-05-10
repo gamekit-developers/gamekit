@@ -28,6 +28,7 @@
 #include "SceneLogic.h"
 #include "MomoLogic.h"
 #include "RatLogic.h"
+#include "Common.h"
 
 namespace object
 {
@@ -46,9 +47,6 @@ m_tree(gkNodeManager::getSingleton().create()),
 m_momo(0)
 {
 	CreateInput();
-
-	gkPulseNode* pulse = m_tree->createNode<gkPulseNode>();
-	pulse->getUPDATE()->setValue(true);
 
 	m_cameraPlayer = m_tree->createNode<gkObjNode>();
 	m_cameraPlayer->getUPDATE_OBJ()->link(m_pulseNode->getOUTPUT());
@@ -172,6 +170,8 @@ void SceneLogic::CreateDebug()
 	gkShowPhysicsNode* showPhysics = m_tree->createNode<gkShowPhysicsNode>();
 	showPhysics->getENABLE()->link(m_cKeyNode->getIS_DOWN());
 }
+
+
 
 
 

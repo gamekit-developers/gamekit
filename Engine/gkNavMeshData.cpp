@@ -700,7 +700,9 @@ bool gkNavMeshData::isValid(gkGameObject* pObj) const
 {
 	const int& physicsState = pObj->getProperties().physicsState;
 
-	return physicsState == GK_RIGID_BODY || physicsState == GK_STATIC;
+	bool active = pObj->getCollisionObject() && pObj->getCollisionObject()->getActivationState() == WANTS_DEACTIVATION;
+
+	return !active && (physicsState == GK_RIGID_BODY || physicsState == GK_STATIC);
 }
 
 

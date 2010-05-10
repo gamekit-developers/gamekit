@@ -48,7 +48,7 @@ m_foundThreshold(0),
 m_walkVelocity(0),
 m_runVelocity(0)
 {
-	ADD_ISOCK(UPDATE, false);
+	ADD_ISOCK(UPDATE, true);
 	ADD_ISOCK(TARGET, 0);
 	ADD_ISOCK(SOURCE, 0);
 	ADD_ISOCK(TARGET_UP_DIRECTION, gkVector3::UNIT_Z);

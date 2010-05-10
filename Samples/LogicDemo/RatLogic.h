@@ -54,6 +54,7 @@ private:
 private:
 	gkString m_name;
 	SceneLogic* m_scene;
+	gkLogicTree* m_tree;
 	PMOMO m_momo;
 	gkAnimationNode* m_animNode;
 	gkFindPathNode* m_pathFindingNode;

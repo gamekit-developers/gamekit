@@ -24,7 +24,7 @@ include_directories(${OGRELITE_SOURCE_DIR}/OgreMain/include/OSX)
 endif()
 
 
-set(SRC ${DATA} Main.cpp RatLogic.h RatLogic.cpp MomoLogic.h MomoLogic.cpp SceneLogic.h SceneLogic.cpp)
+set(SRC ${DATA} Main.cpp Common.h RatLogic.h RatLogic.cpp MomoLogic.h MomoLogic.cpp SceneLogic.h SceneLogic.cpp)
 
 include_directories(
     ${OGREKIT_OGRE_INCLUDE}

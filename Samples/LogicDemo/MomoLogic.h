@@ -49,8 +49,8 @@ private:
 	void CreateDustTrail();
 	void CreateLoadUnload();
 	void CreateAnimation();
-	void CreateCameraArcBall();
 	void CreateStateMachine();
+	void CreateCamera();
 
 public:
 
@@ -61,6 +61,7 @@ private:
 
 	gkString m_name;
 	SceneLogic* m_scene;
+	gkLogicTree* m_tree;
 	gkAnimationNode* m_animNode;
 	gkFindPathNode* m_pathFindingNode;
 	gkStateMachineNode* m_stateMachineNode;

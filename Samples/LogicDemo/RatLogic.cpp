@@ -28,6 +28,7 @@
 #include "RatLogic.h"
 #include "SceneLogic.h"
 #include "MomoLogic.h"
+#include "Common.h"
 
 namespace
 {
@@ -61,6 +62,7 @@ namespace
 RatLogic::RatLogic(const gkString& name, SceneLogic* scene, PMOMO momo)
 : m_name(name),
 m_scene(scene),
+m_tree(scene->m_tree),
 m_momo(momo),
 m_animNode(0),
 m_pathFindingNode(0),
@@ -82,11 +84,11 @@ RatLogic::~RatLogic()
 
 void RatLogic::CreateNodes()
 {
-	m_animNode = m_scene->m_tree->createNode<gkAnimationNode>();
-	m_pathFindingNode = m_scene->m_tree->createNode<gkFindPathNode>();
-	m_stateMachineNode = m_scene->m_tree->createNode<gkStateMachineNode>();
-	m_followPathNode = m_scene->m_tree->createNode<gkFollowPathNode>();
-	m_playerNode = m_scene->m_tree->createNode<gkObjNode>();
+	m_animNode = m_tree->createNode<gkAnimationNode>();
+	m_pathFindingNode = m_tree->createNode<gkFindPathNode>();
+	m_stateMachineNode = m_tree->createNode<gkStateMachineNode>();
+	m_followPathNode = m_tree->createNode<gkFollowPathNode>();
+	m_playerNode = m_tree->createNode<gkObjNode>();
 }
 
 void RatLogic::CreatePlayer()
@@ -99,7 +101,7 @@ void RatLogic::CreateAnimation()
 {
 	typedef gkMapNode<int, gkString> MAP_VEL_NODE;
 	
-	MAP_VEL_NODE* mapVelNode = m_scene->m_tree->createNode< MAP_VEL_NODE >();
+	MAP_VEL_NODE* mapVelNode = m_tree->createNode< MAP_VEL_NODE >();
 	mapVelNode->getINPUT()->link(m_stateMachineNode->getCURRENT_STATE());
 	
 	MAP_VEL_NODE::MAP mapVel;
@@ -115,7 +117,7 @@ void RatLogic::CreateAnimation()
 
 	typedef gkMapNode<int, bool> MAP_LOOP_NODE;
 	
-	MAP_LOOP_NODE* mapLoopNode = m_scene->m_tree->createNode< MAP_LOOP_NODE >();
+	MAP_LOOP_NODE* mapLoopNode = m_tree->createNode< MAP_LOOP_NODE >();
 	mapLoopNode->getINPUT()->link(m_stateMachineNode->getCURRENT_STATE());
 	
 	MAP_LOOP_NODE::MAP mapLoop;
@@ -138,7 +140,6 @@ void RatLogic::CreatePathfinding()
 
 	m_pathFindingNode->getREDO_PATH_IF_FOLLOWING()->link(HasHit()->getHIT());
 	
-	m_followPathNode->getUPDATE()->setValue(true);
 	m_followPathNode->getTARGET()->link(m_playerNode->getOBJ());
 	m_followPathNode->getSOURCE()->link(m_momo->m_playerNode->getOBJ());
 	m_followPathNode->getPATH()->link(m_pathFindingNode->getPATH());
@@ -151,8 +152,7 @@ gkRayTestNode* RatLogic::HasHit()
 {
 	if(!m_hasHit)
 	{
-		m_hasHit = m_scene->m_tree->createNode<gkRayTestNode>();
-		m_hasHit->getENABLE()->setValue(true);
+		m_hasHit = m_tree->createNode<gkRayTestNode>();
 		m_hasHit->getTARGET()->link(m_playerNode->getOBJ());
 		m_hasHit->getRAY_DIRECTION()->setValue(gkVector3(0, 0.5f, 0));
 	}
@@ -183,13 +183,10 @@ void RatLogic::CreateStateMachine()
 
 	//DEATH TRANSITION
 	{
-		gkIfNode<gkGameObject*, CMP_EQUALS>* ifNode = m_scene->m_tree->createNode<gkIfNode<gkGameObject*, CMP_EQUALS> >();
-		ifNode->getA()->link(m_momo->m_kickTestNode->getHIT_OBJ());
-		ifNode->getB()->link(m_playerNode->getOBJ());
-
-		ifNode->getIS_TRUE()->link(m_stateMachineNode->addTransition(IDLE, DEATH));
-		ifNode->getIS_TRUE()->link(m_stateMachineNode->addTransition(RUN, DEATH));
-		ifNode->getIS_TRUE()->link(m_stateMachineNode->addTransition(WALK, DEATH));
+		PGAMEOBJ_EQUAL_NODE_TYPE* ifNode = PGAMEOBJ_EQUAL_NODE(m_momo->m_kickTestNode->getHIT_OBJ(), m_playerNode->getOBJ());
+		IS_TRUE(ifNode)->link(m_stateMachineNode->addTransition(IDLE, DEATH));
+		IS_TRUE(ifNode)->link(m_stateMachineNode->addTransition(RUN, DEATH));
+		IS_TRUE(ifNode)->link(m_stateMachineNode->addTransition(WALK, DEATH));
 		m_animNode->getNOT_HAS_REACHED_END()->link(m_stateMachineNode->addTransition(DEATH, DEATH));
 	}
 }

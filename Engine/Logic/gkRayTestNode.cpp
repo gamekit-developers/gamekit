@@ -35,7 +35,7 @@
 gkRayTestNode::gkRayTestNode(gkLogicTree *parent, size_t id) 
 : gkLogicNode(parent, id)
 {
-	ADD_ISOCK(ENABLE, false);
+	ADD_ISOCK(ENABLE, true);
 	ADD_ISOCK(TARGET, 0);
 	ADD_ISOCK(RAY_ORIGIN_OFFSET, gkVector3::ZERO);
 	ADD_ISOCK(RAY_DIRECTION, gkVector3::UNIT_Y);
