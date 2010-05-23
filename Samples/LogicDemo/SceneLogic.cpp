@@ -75,7 +75,7 @@ SceneLogic::~SceneLogic()
 
 void SceneLogic::CreateMomo()
 {
-	m_momo = PMOMO(new MomoLogic(object::PLAYER, this));
+	m_momo = PMOMO(new MomoLogic(m_scene->getObject(object::PLAYER), this));
 }
 
 void SceneLogic::CreateRats()
@@ -92,7 +92,7 @@ void SceneLogic::CreateRats()
 		{
 			if(ob->getName().find("Rat") != gkString::npos)
 			{
-				m_rats.push_back(PRAT(new RatLogic(ob->getName(), this, m_momo)));
+				m_rats.push_back(PRAT(new RatLogic(ob, this, m_momo)));
 			}
 		}
 

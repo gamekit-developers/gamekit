@@ -31,6 +31,10 @@
 
 #ifdef WIN32
 #include <windows.h>
+#elif __APPLE__
+#include <pthread.h>
+#include <semaphore.h>
+#include <Carbon/Carbon.h>
 #else
 #include <pthread.h>
 #include <semaphore.h>
@@ -52,6 +56,8 @@ private:
 
 #ifdef WIN32
 	HANDLE m_syncObj;
+#elif __APPLE__
+	MPSemaphoreID m_syncObj;
 #else
 	sem_t m_syncObj;
 #endif

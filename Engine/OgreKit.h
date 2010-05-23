@@ -77,6 +77,7 @@
 #include "Logic/gkAnimationNode.h"
 #include "Logic/gkButtonNode.h"
 #include "Logic/gkCameraNode.h"
+#include "Logic/gkCharacterNode.h"
 #include "Logic/gkCollisionNode.h"
 #include "Logic/gkCursorNode.h"
 #include "Logic/gkExitNode.h"

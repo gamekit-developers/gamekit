@@ -25,6 +25,8 @@
 #ifndef _utCommon_h_
 #define _utCommon_h_
 
+#define DEBUG 1
+
 #if defined(DEBUG) || defined(_DEBUG)
 # include <assert.h>
 # define UT_DEBUG 1

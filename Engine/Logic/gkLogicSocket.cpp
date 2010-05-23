@@ -28,6 +28,7 @@
 #include "gkLogicNode.h"
 #include "gkVariable.h"
 #include "gkLogger.h"
+#include <typeinfo>
 
 
 void gkILogicSocket::link(gkILogicSocket *fsock)

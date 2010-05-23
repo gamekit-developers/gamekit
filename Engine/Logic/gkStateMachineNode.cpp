@@ -50,6 +50,11 @@ gkStateMachineNode::~gkStateMachineNode()
 
 bool gkStateMachineNode::evaluate(gkScalar tick)
 {
+	if(m_currentState == -1)
+	{
+		setState(GET_SOCKET_VALUE(CURRENT_STATE));
+	}
+
 	return GET_SOCKET_VALUE(UPDATE);
 }
 
@@ -100,11 +105,7 @@ void gkStateMachineNode::update(gkScalar tick)
 
 		if(pData && pData->m_state != m_currentState && pData->m_ms < m_timer.getTimeMilliseconds())
 		{
-			m_currentState = pData->m_state;
-
-			SET_SOCKET_VALUE(CURRENT_STATE, m_currentState);
-
-			m_timer.reset();
+			setState(pData->m_state);
 		}
 	}
 }
@@ -155,3 +156,13 @@ gkIfNode<int, CMP_EQUALS>* gkStateMachineNode::isCurrentStatus(int status)
 	return it->second;
 }
 
+void gkStateMachineNode::setState(int state)
+{
+	m_currentState = state;
+
+	SET_SOCKET_VALUE(CURRENT_STATE, m_currentState);
+
+	m_timer.reset();
+
+	notifyState(state);
+}

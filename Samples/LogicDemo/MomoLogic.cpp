@@ -105,64 +105,21 @@ namespace particle
 	gkString DUST_WALK = "DustWalk";
 }
 
-MomoLogic::MomoLogic(const gkString& name, SceneLogic* scene)
-: m_name(name),
+MomoLogic::MomoLogic(gkGameObject* obj, SceneLogic* scene)
+: m_characterNode(0),
+m_kickTestNode(0),
+m_obj(obj),
 m_scene(scene),
 m_tree(scene->m_tree),
-m_animNode(0),
-m_pathFindingNode(0),
-m_stateMachineNode(0),
-m_followPathNode(0),
-m_playerNode(0),
 m_momoGrab(0),
-m_kickTestNode(0),
 m_cameraNode(0)
 {
-	CreateNodes();
-	CreatePlayer();
-	CreatePathfinding();
-	CreateKick();
-	CreateGrab();
-	CreateMove();
-	CreateDustTrail();
-	CreateLoadUnload();
-	CreateAnimation();
-	CreateStateMachine();
-	CreateCamera();
-}
-
-MomoLogic::~MomoLogic()
-{
-}
-
-void MomoLogic::CreateNodes()
-{
-	m_animNode = m_tree->createNode<gkAnimationNode>();
-	m_pathFindingNode = m_tree->createNode<gkFindPathNode>();
-	m_stateMachineNode = m_tree->createNode<gkStateMachineNode>();
-	m_followPathNode = m_tree->createNode<gkFollowPathNode>();
-	m_playerNode = m_tree->createNode<gkObjNode>();
 	m_momoGrab = m_tree->createNode<gkGrabNode>();
 	m_kickTestNode = m_tree->createNode<gkRayTestNode>();
 	m_cameraNode = m_tree->createNode<gkCameraNode>();
-}
 
-void MomoLogic::CreatePlayer()
-{
-	gkObjNode* obj = m_tree->createNode<gkObjNode>();
-	
-	obj->getUPDATE_OBJ()->link(m_scene->m_pulseNode->getOUTPUT());
-	obj->getOBJ_NAME()->setValue(m_name);
-
-	m_playerNode->getUPDATE_OBJ()->setValue(true);
-	m_playerNode->setType(gkObjNode::POINTER);
-	m_playerNode->getOBJ_POINTER()->link(obj->getOBJ());
-}
-
-void MomoLogic::CreatePathfinding()
-{
-	gkKeyNode* zKeyNode = m_tree->createNode<gkKeyNode>();
-	zKeyNode->setKey(KC_ZKEY);
+	m_characterNode = m_tree->createNode<gkCharacterNode>();
+	m_characterNode->setObj(m_obj);
 
 	BOOL_AND_NODE_TYPE* ifNode = BOOL_AND_NODE(m_scene->m_shiftKeyNode->getIS_DOWN(), 
 		m_scene->m_leftMouseNode->getPRESS());
@@ -173,25 +130,45 @@ void MomoLogic::CreatePathfinding()
 	targetNode->getX()->link(m_scene->m_mouseNode->getABS_X());
 	targetNode->getY()->link(m_scene->m_mouseNode->getABS_Y());
 
-	m_pathFindingNode->getUPDATE()->link(
-		IS_TRUE(BOOL_AND_NODE(ifNode->getIS_TRUE(), targetNode->getHAS_OBJ())));
+	m_characterNode->getENABLE_GOTO()->link(IS_TRUE(BOOL_AND_NODE(ifNode->getIS_TRUE(), targetNode->getHAS_OBJ())));
+	m_characterNode->getGOTO_POSITION()->link(targetNode->getHIT_POINT());
 
-	m_pathFindingNode->getSTART_POS()->link(m_playerNode->getPOSITION());
-	m_pathFindingNode->getEND_POS()->link(targetNode->getHIT_POINT());
+	CreateStateMachine();
 
-	m_followPathNode = m_tree->createNode<gkFollowPathNode>();
-	m_followPathNode->getUPDATE()->link(m_pathFindingNode->getPATH_FOUND());
-	m_followPathNode->getTARGET()->link(m_playerNode->getOBJ());
-	m_followPathNode->getPATH()->link(m_pathFindingNode->getPATH());
-	m_followPathNode->setWalkVelocity(velocity::WALK);
-	m_followPathNode->setRunVelocity(velocity::RUN);
-	m_followPathNode->getSHOW_PATH_OFFSET()->setValue(gkVector3(0, 0, 0.3f));
+	gkCharacterNode::MAP map;
+	typedef gkCharacterNode::StateData StateData;
+	map[CARRY] = StateData(CARRY, animation::CARRY, true, velocity::NONE);
+	map[CATCH] = StateData(CATCH, animation::CATCH, true, velocity::NONE);
+	map[CATCH_ENDED] = StateData(CATCH, animation::CATCH, true, velocity::NONE);
+	map[THROW_WITH] = StateData(THROW_WITH, animation::THROW_WITH, true, velocity::NONE);
+	map[WALK] = StateData(WALK, animation::WALK, true, velocity::WALK);
+	map[RUN] = StateData(RUN, animation::RUN, true, velocity::RUN);
+	map[RUN_FASTER] = StateData(RUN_FASTER, animation::RUN_FASTER, true, velocity::RUN_FASTER);
+	map[WALK_BACK] = StateData(WALK_BACK, animation::WALK_BACK, true, velocity::WALK_BACK);
+	map[IDLE_NASTY] = StateData(IDLE_NASTY, animation::IDLE_NASTY, true, velocity::NONE, false);
+	map[IDLE_CAPOEIRA] = StateData(IDLE_CAPOEIRA, animation::IDLE_CAPOEIRA, true, velocity::NONE, false);
+	map[FALL_UP] = StateData(FALL_UP, animation::FALL_UP, true, velocity::NONE);
+	map[KICK] = StateData(KICK, animation::KICK, true, velocity::NONE, false);
+
+	m_characterNode->setMapping(map);
+
+	m_characterNode->getENABLE_ROTATION()->setValue(true);
+	m_characterNode->getROTATION_VALUE()->link(m_cameraNode->getCURRENT_ROLL());
+
+	CreateKick();
+	CreateGrab();
+	CreateDustTrail();
+	CreateCamera();
+}
+
+MomoLogic::~MomoLogic()
+{
 }
 
 void MomoLogic::CreateKick()
 {
-	m_kickTestNode->getENABLE()->link(m_stateMachineNode->isCurrentStatus(KICK)->getIS_TRUE());
-	m_kickTestNode->getTARGET()->link(m_playerNode->getOBJ());
+	m_kickTestNode->getENABLE()->link(m_characterNode->isCurrentStatus(KICK)->getIS_TRUE());
+	m_kickTestNode->getTARGET()->setValue(m_obj);
 	m_kickTestNode->getRAY_ORIGIN_OFFSET()->setValue(gkVector3(0, 0, -0.1f));
 	m_kickTestNode->getRAY_DIRECTION()->setValue(gkVector3(0, 0.5f, 0));
 }
@@ -199,7 +176,7 @@ void MomoLogic::CreateKick()
 void MomoLogic::CreateGrab()
 {
 	m_momoGrab->getUPDATE()->setValue(true);
-	m_momoGrab->getTARGET()->link(m_playerNode->getOBJ());
+	m_momoGrab->getTARGET()->setValue(m_obj);
 	m_momoGrab->getGRAB_DIRECTION()->setValue(gkVector3(0, 0.6f, 0));
 	m_momoGrab->getTHROW_VEL()->setValue(gkVector3(0, 10, 0));
 	m_momoGrab->getRELATED_OFFSET_POSITION()->setValue(gkVector3(0, -0.6f, 0.5f));
@@ -215,181 +192,106 @@ void MomoLogic::CreateGrab()
 	m_momoGrab->getTHROW_OBJECT()->link(
 		IS_TRUE(
 			BOOL_AND_NODE(
-				m_stateMachineNode->isCurrentStatus(THROW_WITH)->getIS_TRUE(), 
-				IS_TRUE(REAL_GREATER_NODE(m_animNode->getTIME_POSITION(), 20.13f))
+				m_characterNode->isCurrentStatus(THROW_WITH)->getIS_TRUE(), 
+				IS_TRUE(REAL_GREATER_NODE(m_characterNode->getANIM_TIME_POSITION(), 20.13f))
 			)
 		)
 	);
-}
-
-void MomoLogic::CreateMove()
-{
-	typedef gkMapNode<int, gkScalar> MAP_NODE;
-	
-	MAP_NODE* mapNode = m_tree->createNode< MAP_NODE >();
-	mapNode->getINPUT()->link(m_stateMachineNode->getCURRENT_STATE());
-	
-	MAP_NODE::MAP mapping;
-	mapping[WALK] = velocity::WALK;
-	mapping[RUN] = velocity::RUN;
-	mapping[RUN_FASTER] = velocity::RUN_FASTER;
-	mapping[WALK_BACK] = velocity::WALK_BACK;
-	mapping[CARRY] = velocity::NONE;
-	mapping[IDLE_NASTY] = velocity::NONE;
-	mapping[IDLE_CAPOEIRA] = velocity::NONE;
-	mapping[FALL_UP] = velocity::NONE;
-
-	mapNode->getMAPPING()->setValue(mapping);
-
-	BOOL_AND_NODE_TYPE* ifNode = BOOL_AND_NODE(m_followPathNode->getHAS_REACHED_END(), mapNode->getHAS_OUTPUT());
-
-	m_playerNode->getSET_ROTATION()->link(ifNode->getIS_TRUE());
-	m_playerNode->getSET_ROTATION_VALUE()->link(m_cameraNode->getCURRENT_ROLL());
-
-	m_playerNode->getSET_LINEAR_VEL()->link(ifNode->getIS_TRUE());
-	m_playerNode->getSET_LINEAR_VEL_VALUE_Y()->link(mapNode->getOUTPUT());
 }
 
 void MomoLogic::CreateDustTrail()
 {
 	gkParticleNode* particle = m_tree->createNode<gkParticleNode>();
 	particle->getPARTICLE_SYSTEM_NAME()->setValue(particle::DUST_RUN);
-	particle->getCREATE()->link(IS_TRUE(STRING_EQUAL_NODE(m_animNode->getCURRENT_ANIM_NAME(), animation::RUN_FASTER)));
-	particle->getPOSITION()->link(m_playerNode->getPOSITION());
-	particle->getORIENTATION()->link(m_playerNode->getROTATION());
-}
-
-void MomoLogic::CreateLoadUnload()
-{
-	// reload
-
-	gkKeyNode* rKeyNode = m_tree->createNode<gkKeyNode>();
-	rKeyNode->setKey(KC_RKEY);
-
-	m_playerNode->getRELOAD()->link(rKeyNode->getPRESS());
-
-	// unload
-
-	gkKeyNode* uKeyNode = m_tree->createNode<gkKeyNode>();
-	uKeyNode->setKey(KC_UKEY);
-
-	m_playerNode->getUNLOAD()->link(uKeyNode->getPRESS());
-
-	// load
-
-	gkKeyNode* lKeyNode = m_tree->createNode<gkKeyNode>();
-	lKeyNode->setKey(KC_LKEY);
-
-	m_playerNode->getLOAD()->link(lKeyNode->getPRESS());
-}
-
-void MomoLogic::CreateAnimation()
-{
-	typedef gkMapNode<int, gkString> MAP_NODE;
-	
-	MAP_NODE* mapNode = m_tree->createNode< MAP_NODE >();
-	mapNode->getINPUT()->link(m_stateMachineNode->getCURRENT_STATE());
-	
-	MAP_NODE::MAP mapping;
-	mapping[CARRY] = animation::CARRY;
-	mapping[CATCH] = animation::CATCH;
-	mapping[CATCH_ENDED] = animation::CATCH;
-	mapping[THROW_WITH] = animation::THROW_WITH;
-	mapping[WALK] = animation::WALK;
-	mapping[RUN] = animation::RUN;
-	mapping[RUN_FASTER] = animation::RUN_FASTER;
-	mapping[WALK_BACK] = animation::WALK_BACK;
-	mapping[IDLE_NASTY] = animation::IDLE_NASTY;
-	mapping[IDLE_CAPOEIRA] = animation::IDLE_CAPOEIRA;
-	mapping[FALL_UP] = animation::FALL_UP;
-	mapping[KICK] = animation::KICK;
-
-	mapNode->getMAPPING()->setValue(mapping);
-
-	m_animNode->getTARGET()->link(m_playerNode->getMESH_OBJ());
-	m_animNode->getANIM_NAME()->link(mapNode->getOUTPUT());
+	particle->getCREATE()->link(IS_TRUE(INT_EQUAL_NODE(m_characterNode->getCURRENT_STATE(), RUN_FASTER)));
+	particle->getPOSITION()->link(m_characterNode->getPOSITION());
+	particle->getORIENTATION()->link(m_characterNode->getROTATION());
 }
 
 void MomoLogic::CreateStateMachine()
 {
-	BOOL_OR_NODE_TYPE* walkConditionNode = BOOL_OR_NODE(m_scene->m_wKeyNode->getIS_DOWN(), m_followPathNode->getWALK());
+	INT_EQUAL_NODE_TYPE* wantToWalk = INT_EQUAL_NODE(m_characterNode->getAI_WANTED_STATE(), WALK); 
+
+	BOOL_OR_NODE_TYPE* walkConditionNode = BOOL_OR_NODE(m_scene->m_wKeyNode->getIS_DOWN(), IS_TRUE(wantToWalk));
 
 	// Initial state
-	m_stateMachineNode->getCURRENT_STATE()->setValue(IDLE_NASTY); 
+	m_characterNode->getCURRENT_STATE()->setValue(IDLE_NASTY); 
 
 	// Transitions
 
 	// IDLE_NASTY TRANSITIONS
-	m_stateMachineNode->addTransition(CATCH, IDLE_NASTY);
-	m_stateMachineNode->addTransition(CATCH_ENDED, IDLE_NASTY);
-	m_stateMachineNode->addTransition(CARRY, IDLE_NASTY);
-	m_stateMachineNode->addTransition(THROW_WITH, IDLE_NASTY);
-	m_stateMachineNode->addTransition(WALK, IDLE_NASTY);
-	m_stateMachineNode->addTransition(WALK_BACK, IDLE_NASTY);
-	m_stateMachineNode->addTransition(KICK, IDLE_NASTY);
-	m_stateMachineNode->addTransition(FALL_UP, IDLE_NASTY);
-	m_stateMachineNode->addTransition(IDLE_CAPOEIRA, IDLE_NASTY, 11000);
+	m_characterNode->addTransition(CATCH, IDLE_NASTY);
+	m_characterNode->addTransition(CATCH_ENDED, IDLE_NASTY);
+	m_characterNode->addTransition(CARRY, IDLE_NASTY);
+	m_characterNode->addTransition(THROW_WITH, IDLE_NASTY);
+	m_characterNode->addTransition(WALK, IDLE_NASTY);
+	m_characterNode->addTransition(WALK_BACK, IDLE_NASTY);
+	m_characterNode->addTransition(KICK, IDLE_NASTY);
+	m_characterNode->addTransition(FALL_UP, IDLE_NASTY);
+	m_characterNode->addTransition(IDLE_CAPOEIRA, IDLE_NASTY, 11000);
 
 	// IDLE_CAPOEIRA TRANSITIONS
-	m_stateMachineNode->addTransition(IDLE_NASTY, IDLE_CAPOEIRA, 70000);
+	m_characterNode->addTransition(IDLE_NASTY, IDLE_CAPOEIRA, 70000);
 
 	gkFallTestNode* fallTest = m_tree->createNode<gkFallTestNode>();
 	fallTest->getENABLE()->setValue(true);
-	fallTest->getTARGET()->link(m_playerNode->getOBJ());
+	fallTest->getTARGET()->setValue(m_obj);
 
 	//WALK TRANSITIONS
-	walkConditionNode->getIS_TRUE()->link(m_stateMachineNode->addTransition(IDLE_NASTY, WALK));
-	walkConditionNode->getIS_TRUE()->link(m_stateMachineNode->addTransition(IDLE_CAPOEIRA, WALK));
-	walkConditionNode->getIS_TRUE()->link(m_stateMachineNode->addTransition(WALK, WALK));
-	walkConditionNode->getIS_TRUE()->link(m_stateMachineNode->addTransition(KICK, WALK));
-	m_followPathNode->getWALK()->link(m_stateMachineNode->addTransition(RUN, WALK));
-	m_stateMachineNode->addTransition(RUN, WALK);
+	walkConditionNode->getIS_TRUE()->link(m_characterNode->addTransition(IDLE_NASTY, WALK));
+	walkConditionNode->getIS_TRUE()->link(m_characterNode->addTransition(IDLE_CAPOEIRA, WALK));
+	walkConditionNode->getIS_TRUE()->link(m_characterNode->addTransition(WALK, WALK));
+	walkConditionNode->getIS_TRUE()->link(m_characterNode->addTransition(KICK, WALK));
+	IS_TRUE(wantToWalk)->link(m_characterNode->addTransition(RUN, WALK));
+	m_characterNode->addTransition(RUN, WALK);
 
 
 	// WALK_BACK TRANSITIONS
-	m_scene->m_sKeyNode->getIS_DOWN()->link(m_stateMachineNode->addTransition(WALK, WALK_BACK));
-	m_scene->m_sKeyNode->getIS_DOWN()->link(m_stateMachineNode->addTransition(IDLE_NASTY, WALK_BACK));
-	m_scene->m_sKeyNode->getIS_DOWN()->link(m_stateMachineNode->addTransition(IDLE_CAPOEIRA, WALK_BACK));
-	m_scene->m_sKeyNode->getIS_DOWN()->link(m_stateMachineNode->addTransition(WALK_BACK, WALK_BACK));
-	m_scene->m_sKeyNode->getIS_DOWN()->link(m_stateMachineNode->addTransition(KICK, WALK_BACK));
+	m_scene->m_sKeyNode->getIS_DOWN()->link(m_characterNode->addTransition(WALK, WALK_BACK));
+	m_scene->m_sKeyNode->getIS_DOWN()->link(m_characterNode->addTransition(IDLE_NASTY, WALK_BACK));
+	m_scene->m_sKeyNode->getIS_DOWN()->link(m_characterNode->addTransition(IDLE_CAPOEIRA, WALK_BACK));
+	m_scene->m_sKeyNode->getIS_DOWN()->link(m_characterNode->addTransition(WALK_BACK, WALK_BACK));
+	m_scene->m_sKeyNode->getIS_DOWN()->link(m_characterNode->addTransition(KICK, WALK_BACK));
 
 	BOOL_AND_NODE_TYPE* ifKick = BOOL_AND_NODE(
 		BOOL_AND_NODE(m_scene->m_leftMouseNode->getPRESS(), m_scene->m_ctrlKeyNode->getNOT_IS_DOWN())->getIS_TRUE(),
 		m_scene->m_shiftKeyNode->getNOT_IS_DOWN());
 
 	// KICK TRANSITIONS
-	IS_TRUE(ifKick)->link(m_stateMachineNode->addTransition(WALK, KICK));
-	IS_TRUE(ifKick)->link(m_stateMachineNode->addTransition(WALK_BACK, KICK));
-	IS_TRUE(ifKick)->link(m_stateMachineNode->addTransition(IDLE_NASTY, KICK));
-	IS_TRUE(ifKick)->link(m_stateMachineNode->addTransition(IDLE_CAPOEIRA, KICK));
-	m_animNode->getNOT_HAS_REACHED_END()->link(m_stateMachineNode->addTransition(KICK, KICK));
+	IS_TRUE(ifKick)->link(m_characterNode->addTransition(WALK, KICK));
+	IS_TRUE(ifKick)->link(m_characterNode->addTransition(WALK_BACK, KICK));
+	IS_TRUE(ifKick)->link(m_characterNode->addTransition(IDLE_NASTY, KICK));
+	IS_TRUE(ifKick)->link(m_characterNode->addTransition(IDLE_CAPOEIRA, KICK));
+	m_characterNode->getANIM_NOT_HAS_REACHED_END()->link(m_characterNode->addTransition(KICK, KICK));
 
 	// FALL_UP TRANSITIONS
-	fallTest->getFALLING()->link(m_stateMachineNode->addTransition(WALK, FALL_UP));
-	fallTest->getFALLING()->link(m_stateMachineNode->addTransition(RUN, FALL_UP));
-	fallTest->getFALLING()->link(m_stateMachineNode->addTransition(FALL_UP, FALL_UP));
-	fallTest->getFALLING()->link(m_stateMachineNode->addTransition(RUN_FASTER, FALL_UP));
-	fallTest->getFALLING()->link(m_stateMachineNode->addTransition(WALK_BACK, FALL_UP));
-	fallTest->getFALLING()->link(m_stateMachineNode->addTransition(IDLE_NASTY, FALL_UP));
+	fallTest->getFALLING()->link(m_characterNode->addTransition(WALK, FALL_UP));
+	fallTest->getFALLING()->link(m_characterNode->addTransition(RUN, FALL_UP));
+	fallTest->getFALLING()->link(m_characterNode->addTransition(FALL_UP, FALL_UP));
+	fallTest->getFALLING()->link(m_characterNode->addTransition(RUN_FASTER, FALL_UP));
+	fallTest->getFALLING()->link(m_characterNode->addTransition(WALK_BACK, FALL_UP));
+	fallTest->getFALLING()->link(m_characterNode->addTransition(IDLE_NASTY, FALL_UP));
+
+	INT_EQUAL_NODE_TYPE* wantToRun = INT_EQUAL_NODE(m_characterNode->getAI_WANTED_STATE(), RUN); 
 
 	// RUN TRANSITIONS
-	m_scene->m_wKeyNode->getIS_DOWN()->link(m_stateMachineNode->addTransition(WALK, RUN, 1500));
-	m_followPathNode->getRUN()->link(m_stateMachineNode->addTransition(WALK, RUN));
-	m_followPathNode->getRUN()->link(m_stateMachineNode->addTransition(IDLE_NASTY, RUN));
-	m_followPathNode->getRUN()->link(m_stateMachineNode->addTransition(IDLE_CAPOEIRA, RUN));
+	m_scene->m_wKeyNode->getIS_DOWN()->link(m_characterNode->addTransition(WALK, RUN, 1500));
+	IS_TRUE(wantToRun)->link(m_characterNode->addTransition(WALK, RUN));
+	IS_TRUE(wantToRun)->link(m_characterNode->addTransition(IDLE_NASTY, RUN));
+	IS_TRUE(wantToRun)->link(m_characterNode->addTransition(IDLE_CAPOEIRA, RUN));
 
-	m_scene->m_wKeyNode->getIS_DOWN()->link(m_stateMachineNode->addTransition(RUN, RUN));
-	m_followPathNode->getRUN()->link(m_stateMachineNode->addTransition(RUN, RUN));
+	m_scene->m_wKeyNode->getIS_DOWN()->link(m_characterNode->addTransition(RUN, RUN));
+	IS_TRUE(wantToRun)->link(m_characterNode->addTransition(RUN, RUN));
 
-	m_stateMachineNode->addTransition(RUN_FASTER, RUN);
+	m_characterNode->addTransition(RUN_FASTER, RUN);
 
 
 	// RUN_FASTER TRANSITIONS
 	{
 		BOOL_AND_NODE_TYPE* ifNode = BOOL_AND_NODE(m_scene->m_shiftKeyNode->getIS_DOWN(), m_scene->m_wKeyNode->getIS_DOWN());
 
-		ifNode->getIS_TRUE()->link(m_stateMachineNode->addTransition(RUN, RUN_FASTER));
-		ifNode->getIS_TRUE()->link(m_stateMachineNode->addTransition(RUN_FASTER, RUN_FASTER));
+		ifNode->getIS_TRUE()->link(m_characterNode->addTransition(RUN, RUN_FASTER));
+		ifNode->getIS_TRUE()->link(m_characterNode->addTransition(RUN_FASTER, RUN_FASTER));
 	}
 	
 	// CATCH TRANSITIONS
@@ -397,23 +299,23 @@ void MomoLogic::CreateStateMachine()
 	{
 		BOOL_AND_NODE_TYPE* ifNode = BOOL_AND_NODE(m_scene->m_ctrlKeyNode->getNOT_IS_DOWN(), m_scene->m_rightMouseNode->getPRESS());
 
-		ifNode->getIS_TRUE()->link(m_stateMachineNode->addTransition(IDLE_NASTY, CATCH));
-		ifNode->getIS_TRUE()->link(m_stateMachineNode->addTransition(IDLE_CAPOEIRA, CATCH));
-		m_animNode->getNOT_HAS_REACHED_END()->link(m_stateMachineNode->addTransition(CATCH, CATCH));
+		ifNode->getIS_TRUE()->link(m_characterNode->addTransition(IDLE_NASTY, CATCH));
+		ifNode->getIS_TRUE()->link(m_characterNode->addTransition(IDLE_CAPOEIRA, CATCH));
+		m_characterNode->getANIM_NOT_HAS_REACHED_END()->link(m_characterNode->addTransition(CATCH, CATCH));
 	}
 
 	// CATCH_ENDED TRANSITIONS
-	m_animNode->getHAS_REACHED_END()->link(m_stateMachineNode->addTransition(CATCH, CATCH_ENDED));
+	m_characterNode->getANIM_HAS_REACHED_END()->link(m_characterNode->addTransition(CATCH, CATCH_ENDED));
 
 	// CARRY TRANSITIONS
-	m_momoGrab->getCAUGHT_TRUE()->link(m_stateMachineNode->addTransition(CATCH_ENDED, CARRY));
-	m_momoGrab->getCAUGHT_TRUE()->link(m_stateMachineNode->addTransition(CARRY, CARRY));
+	m_momoGrab->getCAUGHT_TRUE()->link(m_characterNode->addTransition(CATCH_ENDED, CARRY));
+	m_momoGrab->getCAUGHT_TRUE()->link(m_characterNode->addTransition(CARRY, CARRY));
 
 	// THROW_WITH TRANSITIONS
 	IS_TRUE(BOOL_AND_NODE(m_scene->m_leftMouseNode->getPRESS(), m_scene->m_ctrlKeyNode->getNOT_IS_DOWN()))->link(
-			m_stateMachineNode->addTransition(CARRY, THROW_WITH));
+			m_characterNode->addTransition(CARRY, THROW_WITH));
 
-	m_animNode->getNOT_HAS_REACHED_END()->link(m_stateMachineNode->addTransition(THROW_WITH, THROW_WITH));
+	m_characterNode->getANIM_NOT_HAS_REACHED_END()->link(m_characterNode->addTransition(THROW_WITH, THROW_WITH));
 }
 
 void MomoLogic::CreateCamera()
@@ -433,7 +335,7 @@ void MomoLogic::CreateCamera()
 
 	gkObjNode* centerObj1 = m_tree->createNode<gkObjNode>();
 	centerObj1->setType(gkObjNode::POINTER);
-	centerObj1->getOBJ_POINTER()->link(m_playerNode->getOBJ());
+	centerObj1->getOBJ_POINTER()->setValue(m_obj);
 	centerObj1->getUPDATE_OBJ()->link(m_scene->m_ctrlKeyNode->getNOT_IS_DOWN());
 	centerObj1->getUPDATE_STATE()->link(m_scene->m_ctrlKeyNode->getNOT_IS_DOWN());
 

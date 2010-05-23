@@ -141,6 +141,7 @@ set(NLogic_SOURCE
     Logic/gkAnimationNode.cpp
     Logic/gkButtonNode.cpp
     Logic/gkCameraNode.cpp
+    Logic/gkCharacterNode.cpp
     Logic/gkCollisionNode.cpp
     Logic/gkExitNode.cpp
     Logic/gkExpressionNode.cpp
@@ -177,6 +178,7 @@ set(NLogic_HEADER
     Logic/gkAnimationNode.h
     Logic/gkButtonNode.h
     Logic/gkCameraNode.h
+    Logic/gkCharacterNode.h
     Logic/gkCollisionNode.h
     Logic/gkExitNode.h
     Logic/gkExpressionNode.h

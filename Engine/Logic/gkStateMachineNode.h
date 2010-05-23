@@ -37,8 +37,14 @@ public:
 
 	enum
 	{
+		//Inputs
 		UPDATE,
-		CURRENT_STATE
+
+		//Outputs
+		CURRENT_STATE,
+		
+		//////////
+		MAX_SOCKETS
 	};
 
 	DECLARE_SOCKET_TYPE(UPDATE, bool);
@@ -55,7 +61,14 @@ public:
 
 	gkIfNode<int, CMP_EQUALS>* isCurrentStatus(int status);
 
+protected:
+
+	virtual void notifyState(int state) {};
+	void setState(int state);
+
 private:
+
+	int m_currentState;
 
 	typedef utPointerHashKey EVENT;
 	typedef utIntHashKey STATE;
@@ -81,8 +94,6 @@ private:
 	TRANSITIONS m_transitions;
 
 	btClock m_timer;
-
-	int m_currentState;
 
 	typedef utArray<gkILogicSocket*> EVENTS;
 

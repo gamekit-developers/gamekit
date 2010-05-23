@@ -38,30 +38,13 @@ class RatLogic : public gkReferences
 	typedef gkPtrRef<MomoLogic> PMOMO;
 
 public:
-	RatLogic(const gkString& name, SceneLogic* scene, PMOMO momo);
+	RatLogic(gkGameObject* obj, SceneLogic* scene, PMOMO momo);
 	~RatLogic();
-
 private:
-	void CreateNodes();
-	void CreatePlayer();
-	void CreateAnimation();
-	void CreatePathfinding();
-	void CreateStateMachine();
-	void CreateRayTest();
-
-	gkRayTestNode* HasHit();
-	
-private:
-	gkString m_name;
+	gkGameObject* m_obj;
 	SceneLogic* m_scene;
 	gkLogicTree* m_tree;
 	PMOMO m_momo;
-	gkAnimationNode* m_animNode;
-	gkFindPathNode* m_pathFindingNode;
-	gkStateMachineNode* m_stateMachineNode;
-	gkFollowPathNode* m_followPathNode;
-	gkObjNode* m_playerNode;
-	gkRayTestNode* m_hasHit;
 };
 
 #endif//_RatLogic_h_

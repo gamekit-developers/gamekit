@@ -86,19 +86,6 @@ Following are the explanations for the keyboard and mouse control of this demo.
 <S> 
 	Moves momo backward.
 	
-<U>
-	Unload momo.
-	This will disable automatically all the logic nodes related to momo
-	
-<L>
-	Load momo.
-	This will re-enable automatically all the logic nodes related to momo.
-	(This returns momo to the original position and orientation.)
-	
-<R>
-	Reload momo.
-	(This returns momo to the original position and orientation.)
-	
 <LEFT MOUSE BUTTON>
 	Kick. (try to kick a rat)
 	If an object is carried by Momo then throw it (with velocity).

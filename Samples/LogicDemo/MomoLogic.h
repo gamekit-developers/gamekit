@@ -35,37 +35,29 @@ class SceneLogic;
 class MomoLogic : public gkReferences
 {
 public:
-	MomoLogic(const gkString& name, SceneLogic* scene);
+	MomoLogic(gkGameObject* obj, SceneLogic* scene);
 	~MomoLogic();
 
 private:
 
-	void CreateNodes();
-	void CreatePlayer();
-	void CreatePathfinding();
 	void CreateKick();
 	void CreateGrab();
-	void CreateMove();
 	void CreateDustTrail();
-	void CreateLoadUnload();
-	void CreateAnimation();
 	void CreateStateMachine();
 	void CreateCamera();
 
 public:
 
-	gkObjNode* m_playerNode;
+	gkCharacterNode* m_characterNode;
 	gkRayTestNode* m_kickTestNode;
 
 private:
 
-	gkString m_name;
+	gkGameObject* m_obj;
 	SceneLogic* m_scene;
 	gkLogicTree* m_tree;
-	gkAnimationNode* m_animNode;
-	gkFindPathNode* m_pathFindingNode;
-	gkStateMachineNode* m_stateMachineNode;
-	gkFollowPathNode* m_followPathNode;
+	
+	
 	gkGrabNode* m_momoGrab;
 	gkCameraNode* m_cameraNode;
 };

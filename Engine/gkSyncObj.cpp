@@ -40,6 +40,11 @@ gkSyncObj::gkSyncObj()
 			INT_MAX, // the mamimum number of resources
 			0	// No name for this semaphore
 		);
+#elif __APPLE__
+	OSStatus result = MPCreateSemaphore(INT_MAX, 0, &m_syncObj);
+	
+	GK_ASSERT(result == 0);
+
 #else
 	int result = sem_init(&m_syncObj, 0, 0);
 
@@ -51,6 +56,10 @@ gkSyncObj::~gkSyncObj()
 {
 #ifdef WIN32
 	CloseHandle(m_syncObj);
+#elif __APPLE__
+	OSStatus result = MPDeleteSemaphore(m_syncObj);
+	
+	GK_ASSERT(result == 0);
 #else
 	int result = sem_destroy(&m_syncObj);
 	GK_ASSERT(result != -1);
@@ -71,6 +80,9 @@ bool gkSyncObj::wait()
 		default: // OK
 			break;
 	}
+#elif __APPLE__
+	OSStatus result = MPWaitOnSemaphore (m_syncObj, kDurationForever);
+	GK_ASSERT(result == 0);
 #else
 	int result = sem_wait(&m_syncObj);
 	GK_ASSERT(result != -1);
@@ -84,6 +96,9 @@ bool gkSyncObj::signal()
 #ifdef WIN32
 	if(!ReleaseSemaphore(m_syncObj, 1, 0))
 		return false;
+#elif __APPLE__
+	OSStatus result = MPSignalSemaphore (m_syncObj);
+	GK_ASSERT(result == 0);
 #else
 	int result = sem_post(&m_syncObj);
 	GK_ASSERT(result != -1);

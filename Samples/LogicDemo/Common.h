@@ -66,6 +66,7 @@ namespace
 	#define BOOL_AND_NODE( a, b ) gkCreateIfNode<bool, CMP_AND>(m_tree, a, b)
 	#define BOOL_OR_NODE( a, b ) gkCreateIfNode<bool, CMP_OR>(m_tree, a, b)
 	#define STRING_EQUAL_NODE( a, b ) gkCreateIfNode<gkString, CMP_EQUALS>(m_tree, a, b)
+	#define INT_EQUAL_NODE( a, b ) gkCreateIfNode<int, CMP_EQUALS>(m_tree, a, b)
 	#define PGAMEOBJ_EQUAL_NODE( a, b ) gkCreateIfNode<gkGameObject*, CMP_EQUALS>(m_tree, a, b)
 	#define REAL_GREATER_NODE( a, b ) gkCreateIfNode<gkScalar, CMP_GREATER>(m_tree, a, b)
 
@@ -75,5 +76,6 @@ namespace
 	typedef gkIfNode<bool, CMP_AND> BOOL_AND_NODE_TYPE;
 	typedef gkIfNode<bool, CMP_OR> BOOL_OR_NODE_TYPE;
 	typedef gkIfNode<gkGameObject*, CMP_EQUALS> PGAMEOBJ_EQUAL_NODE_TYPE;
+	typedef gkIfNode<int, CMP_EQUALS> INT_EQUAL_NODE_TYPE;
 	
 }

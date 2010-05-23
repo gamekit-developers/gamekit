@@ -32,14 +32,19 @@ class OgreKit : public gkCoreApplication
 {
 public:
 
-    OgreKit(const gkString &blend) 
-		: m_blend(blend), m_sceneLogic(0)
+    OgreKit(const gkString &blend, const gkString& startCfg) 
+		: m_blend(gkUtils::getFile(blend)), m_sceneLogic(0)
 	{
-        gkPath path = "./data/OgreKitStartup.cfg";
+		gkPath path = gkUtils::getFile(startCfg);
 
-		GK_ASSERT(path.isFile());
-        
-		m_prefs.load(path.getPath());
+		if(path.isFile())
+		{
+			m_prefs.load(path.getPath());
+		}
+		else
+		{
+			gkLogMessage("ERROR: FILE NOT FOUND ---> " << startCfg);
+		}
     }
 
 	~OgreKit()
@@ -53,24 +58,30 @@ public:
     {
         gkBlendFile* pBlendFile = m_engine->loadBlendFile(m_blend);
 
-		GK_ASSERT(pBlendFile);
+		if(pBlendFile)
+		{
+			if (m_prefs.userWindow)
+				m_engine->initializeWindow();
 
-        if (m_prefs.userWindow)
-            m_engine->initializeWindow();
+			gkSceneIterator scit = pBlendFile->getSceneIterator();
 
-        gkSceneIterator scit = pBlendFile->getSceneIterator();
+			GK_ASSERT(scit.hasMoreElements());
 
-		GK_ASSERT(scit.hasMoreElements());
+			gkScene* pScene = scit.peekNext();
 
-        gkScene* pScene = scit.peekNext();
+			pScene->load();
 
-		pScene->load();
+			GK_ASSERT(!m_sceneLogic);
 
-		GK_ASSERT(!m_sceneLogic);
+			m_sceneLogic = new SceneLogic(pScene);
 
-		m_sceneLogic = new SceneLogic(pScene);
-
-        return true;
+			return true;
+		}
+		else
+		{
+			gkLogMessage("ERROR: FILE NOT FOUND ---> " << m_blend);
+			return false;
+		}
     }
 
 private:
@@ -93,8 +104,13 @@ int main(int argc, char **argv)
 	// If you want to avoid blender's TX blocks in order to make (Ogre) materials and particles
 	// generic to all blender files then move them outside and load as standard Ogre resources...
 	// (Use OgreKitResource.cfg)
-    OgreKit okit(gkUtils::getFile("./data/momo_ogre_plus.blend"));
-    okit.run();
-    return 0;
+
+	gkLogger::enable("LogicDemo.log", true);
+
+	OgreKit okit("momo_ogre_plus.blend", "OgreKitStartup.cfg");
+
+	okit.run();
+
+	return 0;
 }
 
