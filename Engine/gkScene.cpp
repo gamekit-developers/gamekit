@@ -344,6 +344,8 @@ void gkScene::loadImpl(void)
 
     // notify main scene
     gkEngine::getSingleton().setActiveScene(this);
+
+	m_meshData->startJob();
 }
 
 void gkScene::unloadImpl()

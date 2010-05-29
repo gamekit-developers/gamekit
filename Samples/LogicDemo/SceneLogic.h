@@ -78,7 +78,7 @@ public:
 
 	gkMouseButtonNode* m_rightMouseNode;
 
-	gkObjNode* m_cameraPlayer;
+	gkGameObject* m_camera;
 
 private:
 

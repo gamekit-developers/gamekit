@@ -44,13 +44,10 @@ namespace material
 SceneLogic::SceneLogic(gkScene* pScene) 
 : m_scene(pScene),
 m_tree(gkNodeManager::getSingleton().create()),
-m_momo(0)
+m_momo(0),
+m_camera(pScene->getMainCamera())
 {
 	CreateInput();
-
-	m_cameraPlayer = m_tree->createNode<gkObjNode>();
-	m_cameraPlayer->getUPDATE_OBJ()->link(m_pulseNode->getOUTPUT());
-	m_cameraPlayer->getOBJ_NAME()->setValue(object::CAMERA);
 
 	CreateMomo();
 	CreateRats();
@@ -62,11 +59,7 @@ m_momo(0)
 
 	m_tree->solveOrder();
 
-	gkGameObject* pCamera = pScene->getMainCamera();
-
-	GK_ASSERT(pCamera);
-
-	pCamera->attachLogic(m_tree);
+	m_camera->attachLogic(m_tree);
 }
 
 SceneLogic::~SceneLogic()
@@ -106,7 +99,7 @@ void SceneLogic::CreateInput()
 	m_pulseNode->getUPDATE()->setValue(true);
 
 	m_ctrlKeyNode = m_tree->createNode<gkKeyNode>();
-	m_ctrlKeyNode->setKey(KC_LEFTCTRLKEY);
+	m_ctrlKeyNode->setKey(KC_TABKEY);
 
 	m_shiftKeyNode = m_tree->createNode<gkKeyNode>();
 	m_shiftKeyNode->setKey(KC_LEFTSHIFTKEY);

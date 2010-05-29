@@ -41,16 +41,19 @@ gkObjectNode::gkObjectNode(gkLogicTree *parent, size_t id) :
 	ADD_ISOCK(IN_POSITION, gkVector3::ZERO);
     ADD_ISOCK(IN_ROTATION, gkVector3::ZERO);
 
-    ADD_ISOCK(OUTPUT, false);
-	ADD_ISOCK(OUT_POSITION, gkVector3::ZERO);
-    ADD_ISOCK(OUT_ROTATION, gkVector3::ZERO);
+    ADD_OSOCK(OUTPUT, false);
+	ADD_OSOCK(OUT_POSITION, gkVector3::ZERO);
+    ADD_OSOCK(OUT_ROTATION, gkVector3::ZERO);
 }
 
 
 bool gkObjectNode::evaluate(gkScalar tick)
 {
-    SET_SOCKET_VALUE(OUTPUT, GET_SOCKET_VALUE(INPUT));
-    return GET_SOCKET_VALUE(INPUT);
+	bool update = GET_SOCKET_VALUE(INPUT);
+    
+	SET_SOCKET_VALUE(OUTPUT, update);
+    
+	return update;
 }
 
 void gkObjectNode::initialize()

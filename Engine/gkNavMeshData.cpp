@@ -515,7 +515,10 @@ void gkNavMeshData::refresh(gkGameObject* pObj)
 		AddCollisionObj();
 	}
 
-	m_navCreator->startJob();
+	if(m_scene->isLoaded())
+	{
+		m_navCreator->startJob();
+	}
 }
 
 void gkNavMeshData::reset()
@@ -705,4 +708,8 @@ bool gkNavMeshData::isValid(gkGameObject* pObj) const
 	return (physicsState == GK_RIGID_BODY || physicsState == GK_STATIC);
 }
 
+void gkNavMeshData::startJob()
+{
+	m_navCreator->startJob();
+}
 

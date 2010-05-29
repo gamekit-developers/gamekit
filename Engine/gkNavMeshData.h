@@ -136,6 +136,8 @@ public:
 		return p;
 	}
 
+	void startJob();
+
 private:
 
 	void processTriangle(btVector3* triangle,int partId, int triangleIndex);

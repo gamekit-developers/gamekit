@@ -35,30 +35,30 @@ Following are the explanations for the keyboard and mouse control of this demo.
 	If pressed then shows physics shape & pathfinding.
 
 ////////////////Arcball//////////////////////////////////////
-<LEFT CTRL> 
+<TAB> 
 	Shows a cursor (arrow) to allow interaction with objects.
 	Disables Momo's camera.
 
-<LEFT CTRL> + <MOUSE MOVE> 
+<TAB> + <MOUSE MOVE> 
 	Moves the cursor (arrow) to allow interaction with objects.
 	
-<LEFT CTRL> + <LEFT MOUSE BUTTON> 
+<TAB> + <LEFT MOUSE BUTTON> 
 	Makes the camera to look at the clicked point in the scene.
 	(This will be the center of the arcball)
 
-<LEFT CTRL> + <MOUSE WHEEL MOVE> 
+<TAB> + <MOUSE WHEEL MOVE> 
 	Moves the camera far away from the arcball center or 
 	moves the camera closer to the arcball center.
 
-<LEFT CTRL> + <LEFT MOUSE BUTTON> + <MOUSE MOVE> 
+<TAB> + <LEFT MOUSE BUTTON> + <MOUSE MOVE> 
 	Moves the camera around the arcball perimeter.
 	
 ////////////Drag&Drop/////////////////////////////////////////
 	
-<LEFT CTRL> + <RIGHT MOUSE BUTTON>
+<TAB> + <RIGHT MOUSE BUTTON>
 	Selects (pick) and object (to allow drag&drop)
 	
-	<LEFT CTRL> + <RIGHT MOUSE BUTTON> + <MOUSE MOVE> 
+	<TAB> + <RIGHT MOUSE BUTTON> + <MOUSE MOVE> 
 		Move selected object around the scene.
 		
 	(to drop the selected object just release <RIGHT MOUSE BUTTON>)

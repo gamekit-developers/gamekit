@@ -119,14 +119,16 @@ void gkCharacterNode::update_state(gkScalar tick)
 		goTo(tick);
 	}
 
+	followPath(tick);
+
 	SET_SOCKET_VALUE(AI_WANTED_STATE, m_ai_wanted_state);
 	
 	gkStateMachineNode::update(tick);
 
-	if(m_currentStateData->m_state == m_ai_wanted_state)
+	if(m_ai_wanted_state != -1)
 	{
 		m_obj->rotate(m_ai_wanted_rotation, TRANSFORM_LOCAL);
-
+		
 		m_obj->setLinearVelocity(m_dir * m_ai_wanted_velocity, TRANSFORM_LOCAL);
 	}
 	else
@@ -215,8 +217,6 @@ void gkCharacterNode::goTo(gkScalar tick)
 	{
 		findPath();
 	}
-
-	followPath(tick);
 }
 
 void gkCharacterNode::findPath()
@@ -281,6 +281,8 @@ void gkCharacterNode::findPath()
 
 void gkCharacterNode::followPath(gkScalar tick)
 {
+	m_ai_wanted_state = -1;
+	
 	if(m_path.empty()) return;
 	
 	gkVector3 current_pos = m_obj->getPosition();
@@ -295,7 +297,7 @@ void gkCharacterNode::followPath(gkScalar tick)
 
 	gkScalar d = dir.length();
 
-	if(d > m_foundThreshold)
+	if(!dir.isZeroLength() && !isTargetReached())
 	{
 		update_ai_data(dir, d, tick);
 	}
@@ -308,6 +310,15 @@ void gkCharacterNode::followPath(gkScalar tick)
 			followPath(tick);
 		}
 	}
+}
+
+bool gkCharacterNode::isTargetReached() 
+{		
+	const gkVector3& current_pos = m_obj->getPosition();
+		
+	const gkVector3& sourcePos = m_path.back();
+		
+	return current_pos.distance(sourcePos) < m_foundThreshold;
 }
 
 void gkCharacterNode::update_ai_data(const gkVector3& dir, gkScalar d, gkScalar tick)
@@ -324,20 +335,21 @@ void gkCharacterNode::update_ai_data(const gkVector3& dir, gkScalar d, gkScalar 
 
 	GK_ASSERT(it != m_statesData.begin());
 
-	m_ai_wanted_state = -1;
-
-	if(it == m_statesData.end())
+	--it;
+	
+	if(it->m_velocity == 0)
 	{
-		--it;
-		m_ai_wanted_state = it->m_state;
-		d = it->m_velocity;
+		++it;
+		m_ai_wanted_velocity = d/tick;
 	}
 	else
 	{
-		m_ai_wanted_state = it->m_state;
+		m_ai_wanted_velocity = it->m_velocity;
+		
 	}
 
-	m_ai_wanted_velocity = d;
+	m_ai_wanted_state = it->m_state;
+	
 }
 
 gkRadian gkCharacterNode::GetRotationAngleForAxis(const gkVector3& from, const gkVector3& to, const gkVector3& axis)

@@ -99,7 +99,6 @@
 #include "Logic/gkMultiplexerNode.h"
 #include "Logic/gkNodeManager.h"
 #include "Logic/gkObjectNode.h"
-#include "Logic/gkObjNode.h"
 #include "Logic/gkParticleNode.h"
 #include "Logic/gkPickNode.h"
 #include "Logic/gkPrintNode.h"

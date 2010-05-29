@@ -71,4 +71,41 @@ private:
 
 };
 
+class gkScreenRayTestNode : public gkLogicNode
+{
+public:
+
+	enum 
+	{
+		ENABLE,
+		SCREEN_X,
+		SCREEN_Y,
+		HIT,
+		NOT_HIT,
+		HIT_OBJ,
+		HIT_NAME,
+		HIT_POSITION
+	};
+
+	DECLARE_SOCKET_TYPE(ENABLE, bool);
+	DECLARE_SOCKET_TYPE(SCREEN_X, gkScalar);
+	DECLARE_SOCKET_TYPE(SCREEN_Y, gkScalar);
+	DECLARE_SOCKET_TYPE(HIT, bool);
+	DECLARE_SOCKET_TYPE(NOT_HIT, bool);
+	DECLARE_SOCKET_TYPE(HIT_OBJ, gkGameObject*);
+	DECLARE_SOCKET_TYPE(HIT_NAME, gkString);
+	DECLARE_SOCKET_TYPE(HIT_POSITION, gkVector3);
+
+    gkScreenRayTestNode(gkLogicTree *parent, size_t id);
+
+	virtual ~gkScreenRayTestNode() {}
+
+	bool evaluate(gkScalar tick);
+
+private:
+
+	gkGameObject* m_object;
+};
+
+
 #endif//_gkRayTestNode_h_

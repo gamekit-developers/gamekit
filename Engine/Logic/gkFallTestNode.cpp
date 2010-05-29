@@ -28,6 +28,7 @@
 #include "gkLogger.h"
 #include "gkUtils.h"
 #include "gkSweptTest.h"
+#include "gkRayTest.h"
 #include "gkGameObject.h"
 #include "Ogre.h"
 #include "btBulletDynamicsCommon.h"
@@ -68,17 +69,39 @@ void gkFallTestNode::update(gkScalar tick)
 
 		gkScalar minZ = 1.07f * radius;
 
-		gkSweptTest::AVOID_LIST avoidList;
-		avoidList.insert(m_object->getCollisionObject());
-		
-		gkSweptTest sweptTest(avoidList);
-
 		Ogre::Ray ray(origin, gkVector3(0, 0, -minZ));
 
-		if(sweptTest.collides(ray, radius))
+		bool collides = false;
+		gkVector3 hitPoint;
+		gkGameObject* hitObject = 0;
+
+		gkRayTest rayTest;
+
+		if(rayTest.collides(ray))
 		{
-			SET_SOCKET_VALUE(CONTACT_POSITION, sweptTest.getHitPoint());
-			SET_SOCKET_VALUE(COLLIDED_OBJ, sweptTest.getObject());
+			collides = true;
+			hitPoint = rayTest.getHitPoint();
+			hitObject = rayTest.getObject();
+		}
+		else
+		{
+			gkSweptTest::AVOID_LIST avoidList;
+			avoidList.insert(m_object->getCollisionObject());
+
+			gkSweptTest sweptTest(avoidList);
+
+			if(sweptTest.collides(ray, radius))
+			{
+				collides = true;
+				hitPoint = sweptTest.getHitPoint();
+				hitObject = sweptTest.getObject();
+			}
+		}
+
+		if(collides)
+		{
+			SET_SOCKET_VALUE(CONTACT_POSITION, hitPoint);
+			SET_SOCKET_VALUE(COLLIDED_OBJ, hitObject);
 			SET_SOCKET_VALUE(FALLING, false);
 			SET_SOCKET_VALUE(NOT_FALLING, true);
 		}

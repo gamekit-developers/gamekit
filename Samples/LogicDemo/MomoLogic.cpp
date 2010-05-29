@@ -124,14 +124,13 @@ m_cameraNode(0)
 	BOOL_AND_NODE_TYPE* ifNode = BOOL_AND_NODE(m_scene->m_shiftKeyNode->getIS_DOWN(), 
 		m_scene->m_leftMouseNode->getPRESS());
 
-	gkObjNode* targetNode = m_tree->createNode<gkObjNode>();
-	targetNode->setType(gkObjNode::SCREEN_XY);
-	targetNode->getUPDATE_OBJ()->link(ifNode->getIS_TRUE());
-	targetNode->getX()->link(m_scene->m_mouseNode->getABS_X());
-	targetNode->getY()->link(m_scene->m_mouseNode->getABS_Y());
+	gkScreenRayTestNode* targetNode = m_tree->createNode<gkScreenRayTestNode>();
+	targetNode->getENABLE()->link(ifNode->getIS_TRUE());
+	targetNode->getSCREEN_X()->link(m_scene->m_mouseNode->getABS_X());
+	targetNode->getSCREEN_Y()->link(m_scene->m_mouseNode->getABS_Y());
 
-	m_characterNode->getENABLE_GOTO()->link(IS_TRUE(BOOL_AND_NODE(ifNode->getIS_TRUE(), targetNode->getHAS_OBJ())));
-	m_characterNode->getGOTO_POSITION()->link(targetNode->getHIT_POINT());
+	m_characterNode->getENABLE_GOTO()->link(IS_TRUE(BOOL_AND_NODE(ifNode->getIS_TRUE(), targetNode->getHIT())));
+	m_characterNode->getGOTO_POSITION()->link(targetNode->getHIT_POSITION());
 
 	CreateStateMachine();
 
@@ -290,8 +289,16 @@ void MomoLogic::CreateStateMachine()
 	{
 		BOOL_AND_NODE_TYPE* ifNode = BOOL_AND_NODE(m_scene->m_shiftKeyNode->getIS_DOWN(), m_scene->m_wKeyNode->getIS_DOWN());
 
-		ifNode->getIS_TRUE()->link(m_characterNode->addTransition(RUN, RUN_FASTER));
-		ifNode->getIS_TRUE()->link(m_characterNode->addTransition(RUN_FASTER, RUN_FASTER));
+		BOOL_OR_NODE_TYPE* wantToRunFaster = BOOL_OR_NODE(
+			IS_TRUE(INT_EQUAL_NODE(m_characterNode->getAI_WANTED_STATE(), RUN_FASTER)),
+			IS_TRUE(ifNode));
+
+		IS_TRUE(wantToRunFaster)->link(m_characterNode->addTransition(RUN, RUN_FASTER));
+		IS_TRUE(wantToRunFaster)->link(m_characterNode->addTransition(RUN_FASTER, RUN_FASTER));
+		IS_TRUE(wantToRunFaster)->link(m_characterNode->addTransition(WALK, RUN_FASTER));
+		IS_TRUE(wantToRunFaster)->link(m_characterNode->addTransition(IDLE_NASTY, RUN_FASTER));
+		IS_TRUE(wantToRunFaster)->link(m_characterNode->addTransition(IDLE_CAPOEIRA, RUN_FASTER));
+
 	}
 	
 	// CATCH TRANSITIONS
@@ -320,33 +327,27 @@ void MomoLogic::CreateStateMachine()
 
 void MomoLogic::CreateCamera()
 {
-	gkObjNode* centerObj0 = m_tree->createNode<gkObjNode>();
-	centerObj0->setType(gkObjNode::SCREEN_XY);
-	centerObj0->getX()->link(m_scene->m_mouseNode->getABS_X());
-	centerObj0->getY()->link(m_scene->m_mouseNode->getABS_Y());
-	centerObj0->getUPDATE_OBJ()->link(IS_TRUE(BOOL_AND_NODE(
+	gkScreenRayTestNode* centerObj0 = m_tree->createNode<gkScreenRayTestNode>();
+	centerObj0->getSCREEN_X()->link(m_scene->m_mouseNode->getABS_X());
+	centerObj0->getSCREEN_Y()->link(m_scene->m_mouseNode->getABS_Y());
+	centerObj0->getENABLE()->link(IS_TRUE(BOOL_AND_NODE(
 		m_scene->m_shiftKeyNode->getNOT_IS_DOWN(),
 		IS_TRUE(BOOL_AND_NODE(
 			m_scene->m_leftMouseNode->getPRESS(), 
 			m_scene->m_ctrlKeyNode->getIS_DOWN())))));
 
-
-	centerObj0->getUPDATE_STATE()->setValue(false);
-
-	gkObjNode* centerObj1 = m_tree->createNode<gkObjNode>();
-	centerObj1->setType(gkObjNode::POINTER);
-	centerObj1->getOBJ_POINTER()->setValue(m_obj);
-	centerObj1->getUPDATE_OBJ()->link(m_scene->m_ctrlKeyNode->getNOT_IS_DOWN());
-	centerObj1->getUPDATE_STATE()->link(m_scene->m_ctrlKeyNode->getNOT_IS_DOWN());
+	gkObjectNode* centerObj1 = m_tree->createNode<gkObjectNode>();
+	centerObj1->getINPUT()->link(m_scene->m_ctrlKeyNode->getNOT_IS_DOWN());
+	centerObj1->setOtherObject(m_obj->getName());
 
 	gkMultiplexerNode<gkGameObject*>* selObj0 = m_tree->createNode<gkMultiplexerNode<gkGameObject*> >();
 	selObj0->getINPUT_FALSE()->setValue(0);
-	selObj0->getINPUT_TRUE()->link(centerObj1->getOBJ());
+	selObj0->getINPUT_TRUE()->setValue(m_obj);
 	selObj0->getSEL()->link(m_scene->m_ctrlKeyNode->getNOT_IS_DOWN());
 
 	gkMultiplexerNode<gkGameObject*>* selObj = m_tree->createNode<gkMultiplexerNode<gkGameObject*> >();
 	selObj->getINPUT_FALSE()->link(selObj0->getOUTPUT());
-	selObj->getINPUT_TRUE()->link(centerObj0->getOBJ());
+	selObj->getINPUT_TRUE()->link(centerObj0->getHIT_OBJ());
 	selObj->getSEL()->link(
 		IS_TRUE(BOOL_AND_NODE(
 			m_scene->m_shiftKeyNode->getNOT_IS_DOWN(),
@@ -355,14 +356,14 @@ void MomoLogic::CreateCamera()
 				m_scene->m_ctrlKeyNode->getIS_DOWN())))));
 
 	gkMultiplexerNode<gkVector3>* selPos = m_tree->createNode<gkMultiplexerNode<gkVector3> >();
-	selPos->getINPUT_FALSE()->link(centerObj0->getHIT_POINT());
-	selPos->getINPUT_TRUE()->link(centerObj1->getPOSITION());
+	selPos->getINPUT_FALSE()->link(centerObj0->getHIT_POSITION());
+	selPos->getINPUT_TRUE()->link(centerObj1->getOUT_POSITION());
 	selPos->getSEL()->link(m_scene->m_ctrlKeyNode->getNOT_IS_DOWN());
 
 	m_cameraNode->getCENTER_OBJ()->link(selObj->getOUTPUT());
 	m_cameraNode->getCENTER_POSITION()->link(selPos->getOUTPUT());
 	m_cameraNode->getAVOID_BLOCKING()->link(m_scene->m_ctrlKeyNode->getNOT_IS_DOWN());
-	m_cameraNode->getTARGET()->link(m_scene->m_cameraPlayer->getOBJ());
+	m_cameraNode->getTARGET()->setValue(m_scene->m_camera);
 	m_cameraNode->getREL_X()->link(m_scene->m_mouseNode->getREL_X());
 	m_cameraNode->getREL_Y()->link(m_scene->m_mouseNode->getREL_Y());
 	m_cameraNode->getREL_Z()->link(m_scene->m_mouseNode->getWHEEL());

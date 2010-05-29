@@ -29,6 +29,7 @@
 #include "gkUtils.h"
 #include "gkRayTest.h"
 #include "gkGameObject.h"
+#include "gkCam2ViewportRay.h"
 #include "Ogre.h"
 #include "btBulletDynamicsCommon.h"
 
@@ -92,4 +93,54 @@ void gkRayTestNode::update(gkScalar tick)
 			}
 		}
 	}
+}
+
+///////////////////////////////////////////////////
+
+gkScreenRayTestNode::gkScreenRayTestNode(gkLogicTree *parent, size_t id) 
+: gkLogicNode(parent, id)
+{
+	ADD_ISOCK(ENABLE, true);
+	ADD_ISOCK(SCREEN_X, 0);
+	ADD_ISOCK(SCREEN_Y, 0);
+	ADD_OSOCK(HIT, false);
+	ADD_OSOCK(NOT_HIT, false);
+	ADD_OSOCK(HIT_OBJ, 0);
+	ADD_OSOCK(HIT_NAME, "");
+	ADD_OSOCK(HIT_POSITION, gkVector3::ZERO);
+}
+
+bool gkScreenRayTestNode::evaluate(gkScalar tick)
+{
+
+	if(GET_SOCKET_VALUE(ENABLE))
+	{
+		gkCam2ViewportRay ray(GET_SOCKET_VALUE(SCREEN_X), GET_SOCKET_VALUE(SCREEN_Y));
+		
+		gkRayTest rayTest;
+		
+		if(rayTest.collides(ray))
+		{
+			btCollisionObject* pCol = rayTest.getCollisionObject();
+
+			gkObject* pObj = static_cast<gkObject*>(pCol->getUserPointer());
+
+			SET_SOCKET_VALUE(HIT_POSITION, rayTest.getHitPoint());
+			SET_SOCKET_VALUE(HIT_OBJ, pObj->getObject());
+			SET_SOCKET_VALUE(HIT_NAME, pObj->getName());
+			SET_SOCKET_VALUE(HIT, true);
+			SET_SOCKET_VALUE(NOT_HIT, false);
+		}
+		else 
+		{
+			SET_SOCKET_VALUE(HIT, false);
+			SET_SOCKET_VALUE(NOT_HIT, true);
+			SET_SOCKET_VALUE(HIT_OBJ, 0);
+			SET_SOCKET_VALUE(HIT_NAME, "");
+			SET_SOCKET_VALUE(HIT_POSITION, gkVector3::ZERO);	
+		}
+
+	}
+
+	return false;
 }

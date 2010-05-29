@@ -119,6 +119,7 @@ private:
 	gkVector3 GetProjectionOnPlane(const gkVector3& V, const gkVector3& N);
 	void update_ai_data(const gkVector3& dir, gkScalar d, gkScalar tick);
 	void showPath();
+	bool isTargetReached();
 
 private:
 
