@@ -24,6 +24,7 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+#include "Ogre.h"
 #include "OgreAnimation.h"
 #include "OgreEntity.h"
 #include "gkCharacterNode.h"
@@ -35,12 +36,8 @@
 #include "gkPhysicsDebug.h"
 #include "gkAction.h"
 #include "gkLogger.h"
-#include "Recast.h"
-#include "RecastLog.h"
-#include "RecastTimer.h"
-#include "DetourNavMeshBuilder.h"
-#include "DetourNavMesh.h"
-
+#include "gkSteering.h"
+#include "gkRayTest.h"
 
 gkCharacterNode::gkCharacterNode(gkLogicTree *parent, size_t id) 
 : gkStateMachineNode(parent, id),
@@ -48,16 +45,11 @@ m_obj(0),
 m_ent(0),
 m_dir(0, 1, 0),
 m_up(0, 0, 1),
-m_upMask(1, 1, 0),
 m_polyPickExt(2, 4, 2),
 m_maxPathPolys(256),
-m_foundThreshold(1.3f),
 m_currentStateData(0),
 m_scene(0),
-m_debug(0),
-m_ai_wanted_state(-1),
-m_ai_wanted_velocity(0),
-m_ai_wanted_rotation(gkQuaternion::IDENTITY)
+m_createdNavMesh(false)
 {
 	ADD_ISOCK(ANIM_BLEND_FRAMES, 10);
 	ADD_ISOCK(ENABLE_GOTO, false);
@@ -65,7 +57,6 @@ m_ai_wanted_rotation(gkQuaternion::IDENTITY)
 	ADD_ISOCK(REDO_PATH, false);
 	ADD_ISOCK(ENABLE_ROTATION, false);
 	ADD_ISOCK(ROTATION_VALUE, gkQuaternion::IDENTITY);
-
 	
 	ADD_OSOCK(ANIM_HAS_REACHED_END, false);
 	ADD_OSOCK(ANIM_NOT_HAS_REACHED_END, true);
@@ -77,31 +68,46 @@ m_ai_wanted_rotation(gkQuaternion::IDENTITY)
 
 gkCharacterNode::~gkCharacterNode()
 {
+	if(m_createdNavMesh)
+	{
+		delete gkNavMeshData::getSingletonPtr();
+	}
+}
+
+void gkCharacterNode::initialize()
+{
+	if(!gkNavMeshData::getSingletonPtr())
+	{
+		new gkNavMeshData(gkEngine::getSingleton().getActiveScene());
+		
+		m_createdNavMesh = true;
+
+		gkNavMeshData::getSingletonPtr()->loadAll();
+	}
+		
+	GK_ASSERT(m_obj);
+		
+	gkGameObject* childEntity = m_obj->getChildEntity();
+		
+	GK_ASSERT(childEntity);
+		
+	m_ent = childEntity->getEntity();
+		
+	GK_ASSERT(m_ent);
+		
+	m_scene = gkEngine::getSingleton().getActiveScene();
+		
+	GK_ASSERT(m_scene);
 }
 
 bool gkCharacterNode::evaluate(gkScalar tick)
 {
-	GK_ASSERT(m_obj);
-
-	gkGameObject* childEntity = m_obj->getChildEntity();
-
-	GK_ASSERT(childEntity);
-
-	m_ent = childEntity->getEntity();
-
-	GK_ASSERT(m_ent);
-
 	return m_ent->isLoaded() && gkStateMachineNode::evaluate(tick);
 }
 
 void gkCharacterNode::update(gkScalar tick)
 {
-	if(!m_scene)
-	{
-		m_scene = gkEngine::getSingleton().getActiveScene();
-	}
-
-	showPath();
+	m_navPath.showPath(m_scene, m_obj->getPosition());
 
 	STATE oldState = m_currentStateData->m_state;
 
@@ -112,27 +118,55 @@ void gkCharacterNode::update(gkScalar tick)
 
 void gkCharacterNode::update_state(gkScalar tick)
 {
-	m_ai_wanted_state = -1;
-
-	if(GET_SOCKET_VALUE(ENABLE_GOTO))
+	if(GET_SOCKET_VALUE(ENABLE_GOTO) && gkNavMeshData::getSingletonPtr() && (m_navPath.empty() || GET_SOCKET_VALUE(REDO_PATH)))
 	{
-		goTo(tick);
+		m_navPath.create(gkNavMeshData::getSingleton(), m_obj->getPosition(), GET_SOCKET_VALUE(GOTO_POSITION), m_polyPickExt, m_maxPathPolys); 
 	}
 
-	followPath(tick);
-
-	SET_SOCKET_VALUE(AI_WANTED_STATE, m_ai_wanted_state);
+	gkVector3 dir;
 	
-	gkStateMachineNode::update(tick);
+	gkVector3 current_position = m_obj->getPosition();
+	
+	gkScalar d = m_navPath.getDirection(current_position, 0.7f, dir); 
 
-	if(m_ai_wanted_state != -1)
+	if(d)
 	{
-		m_obj->rotate(m_ai_wanted_rotation, TRANSFORM_LOCAL);
+		gkVector3 current_dir = m_obj->getOrientation() * m_dir;
 		
-		m_obj->setLinearVelocity(m_dir * m_ai_wanted_velocity, TRANSFORM_LOCAL);
+		//Ogre::Ray ray(current_position, current_dir*0.5f);
+		
+		//gkRayTest rayTest;
+		
+		//if(!rayTest.collides(ray))
+		{
+		//	current_dir.x+=0.8f; 
+		}
+			gkSteering steer(m_up);
+
+			m_obj->rotate(steer.getRotation(current_dir, dir), TRANSFORM_LOCAL);
+		
+			STATE newState = -1;
+
+			m_obj->setLinearVelocity(m_dir * getVelocityForDistance(d, tick, newState), TRANSFORM_LOCAL);
+
+			GK_ASSERT(newState != -1);
+
+			SET_SOCKET_VALUE(AI_WANTED_STATE, newState);
+		
+			gkStateMachineNode::update(tick);
+		//}
+		//else
+	//	{
+			//m_navPath.clear();
+	//	}
+
 	}
-	else
+	else if(m_navPath.empty())
 	{
+		SET_SOCKET_VALUE(AI_WANTED_STATE, -1);
+		
+		gkStateMachineNode::update(tick);
+
 		if(GET_SOCKET_VALUE(ENABLE_ROTATION) && m_currentStateData->m_allow_rotation)
 		{
 			m_obj->setOrientation(GET_SOCKET_VALUE(ROTATION_VALUE));
@@ -152,7 +186,7 @@ void gkCharacterNode::update_animation(STATE oldState)
 		SET_SOCKET_VALUE(ANIM_HAS_REACHED_END, false);
 		SET_SOCKET_VALUE(ANIM_NOT_HAS_REACHED_END, true);
 		SET_SOCKET_VALUE(ANIM_TIME_POSITION, 0);
-		gkLogMessage(m_currentStateData->m_animName);
+		//gkLogMessage(m_currentStateData->m_animName);
 	}
 
 	if(!GET_SOCKET_VALUE(ANIM_HAS_REACHED_END))
@@ -209,127 +243,9 @@ void gkCharacterNode::setMapping(const MAP& map)
 	std::sort(m_statesData.begin(), m_statesData.end());
 }
 
-void gkCharacterNode::goTo(gkScalar tick)
-{
-	m_goToPosition = GET_SOCKET_VALUE(GOTO_POSITION);
-
-	if(m_path.empty() || GET_SOCKET_VALUE(REDO_PATH))
-	{
-		findPath();
-	}
-}
-
-void gkCharacterNode::findPath()
-{
-	m_navMesh = m_scene->getNavigationMesh();
-	
-	if(!m_navMesh.get()) return;
-	
-	m_path.clear();
-
-	gkVector3 startPos = m_obj->getPosition();
-
-	gkVector3 endPos = m_goToPosition;
-	
-	std::swap(startPos.y, startPos.z);
-	std::swap(endPos.y, endPos.z);
-
-	//rcTimeVal totStartTime = rcGetPerformanceTimer();
-
-	dtQueryFilter filter;
-
-	dtPolyRef startRef = m_navMesh->data->findNearestPoly(startPos.ptr(), m_polyPickExt.ptr(), &filter, 0);
-
-	dtPolyRef endRef = m_navMesh->data->findNearestPoly(endPos.ptr(), m_polyPickExt.ptr(), &filter, 0);
-
-	if(startRef && endRef)
-	{
-		utArray<dtPolyRef> polys;
-		polys.resize(m_maxPathPolys);
-
-		int npolys = m_navMesh->data->findPath(startRef, endRef, startPos.ptr(), endPos.ptr(), &filter, polys.ptr(), m_maxPathPolys);
-
-		if(npolys)
-		{
-			utArray<gkScalar> straightPath;
-			straightPath.resize(m_maxPathPolys*3);
-
-			int nstraightPath = m_navMesh->data->findStraightPath(startPos.ptr(), endPos.ptr(), polys.ptr(), npolys, straightPath.ptr(), 0, 0, m_maxPathPolys);
-
-			//rcTimeVal totEndTime = rcGetPerformanceTimer();
-
-			//gkPrintf("FINDPATH TOTAL: %.1fms", rcGetDeltaTimeUsec(totStartTime, totEndTime)/1000.0f);
-
-			std::swap(startPos.y, startPos.z);
-			std::swap(endPos.y, endPos.z);
-			
-			gkVector3 point;
-
-			for(int i=0; i<nstraightPath*3; i+=3)
-			{
-				point.x = straightPath[i];
-				point.y = straightPath[i+2];
-				point.z = straightPath[i+1];
-
-				m_path.push_back(point);
-			}
-
-			m_path.push_back(endPos);
-		}
-	}
-}
-
-void gkCharacterNode::followPath(gkScalar tick)
-{
-	m_ai_wanted_state = -1;
-	
-	if(m_path.empty()) return;
-	
-	gkVector3 current_pos = m_obj->getPosition();
-
-	current_pos *= m_upMask;
-
-	gkVector3 pos = m_path.front();
-
-	pos *= m_upMask;
-
-	gkVector3 dir = (pos - current_pos);
-
-	gkScalar d = dir.length();
-
-	if(!dir.isZeroLength() && !isTargetReached())
-	{
-		update_ai_data(dir, d, tick);
-	}
-	else
-	{
-		m_path.pop_front();
-
-		if(!m_path.empty())
-		{
-			followPath(tick);
-		}
-	}
-}
-
-bool gkCharacterNode::isTargetReached() 
-{		
-	const gkVector3& current_pos = m_obj->getPosition();
-		
-	const gkVector3& sourcePos = m_path.back();
-		
-	return current_pos.distance(sourcePos) < m_foundThreshold;
-}
-
-void gkCharacterNode::update_ai_data(const gkVector3& dir, gkScalar d, gkScalar tick)
+gkScalar gkCharacterNode::getVelocityForDistance(gkScalar d, gkScalar tick, STATE& state) const
 {
 	GK_ASSERT(d > 0);
-
-	gkVector3 current_dir = m_obj->getOrientation() * m_dir;
-
-	gkRadian angle(GetRotationAngleForAxis(current_dir, dir, m_up));
-
-	m_ai_wanted_rotation.FromAngleAxis(angle, m_up);
 
 	STATES_DATA::const_iterator it = std::upper_bound(m_statesData.begin(), m_statesData.end(), StateData(-1, "", false, d));
 
@@ -340,74 +256,13 @@ void gkCharacterNode::update_ai_data(const gkVector3& dir, gkScalar d, gkScalar 
 	if(it->m_velocity == 0)
 	{
 		++it;
-		m_ai_wanted_velocity = d/tick;
-	}
-	else
-	{
-		m_ai_wanted_velocity = it->m_velocity;
-		
+
+		state = it->m_state;
+
+		return d/tick;
 	}
 
-	m_ai_wanted_state = it->m_state;
-	
+	state = it->m_state;
+
+	return it->m_velocity;
 }
-
-gkRadian gkCharacterNode::GetRotationAngleForAxis(const gkVector3& from, const gkVector3& to, const gkVector3& axis)
-{
-	Ogre::Vector3 from1 = GetProjectionOnPlane(from, axis);
-
-	Ogre::Vector3 to1 = GetProjectionOnPlane(to, axis);
-
-	Ogre::Quaternion q = from1.getRotationTo(to1);
-
-	Ogre::Radian angle;
-	Ogre::Vector3 rAxis;
-	
-	q.ToAngleAxis(angle, rAxis);
-
-	rAxis = angle.valueRadians() * (rAxis * axis);
-
-	angle = rAxis.x + rAxis.y + rAxis.z;
-
-	return angle;
-}
-
-gkVector3 gkCharacterNode::GetProjectionOnPlane(const gkVector3& V, const gkVector3& N)
-{
-	//U = V - (V dot N)N 
-
-	return  V - V.dotProduct(N) * N;
-}
-
-void gkCharacterNode::showPath()
-{
-	m_debug = m_scene->getDynamicsWorld()->getDebug();
-
-	if(m_debug)
-	{
-		unsigned int n = m_path.size();
-
-		if(n)
-		{
-			static const btVector3 RED_COLOR(1,0,0);
-
-			//gkVector3 offset = GET_SOCKET_VALUE(SHOW_PATH_OFFSET);
-
-			gkVector3 oldPoint = m_obj->getPosition();// + offset;
-
-			for(unsigned int i=0; i<n; i++)
-			{
-				gkVector3 point = m_path.at(i);// + offset;
-
-				m_debug->drawLine(
-					btVector3(oldPoint.x, oldPoint.y, oldPoint.z), 
-					btVector3(point.x, point.y, point.z), 
-					RED_COLOR
-				);
-
-				oldPoint = m_path.at(i);// + offset;
-			}
-		}
-	}
-}
-

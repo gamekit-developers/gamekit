@@ -55,6 +55,7 @@ public:
 
 	~gkCursorNode();
 
+	void initialize();
 	void update(Ogre::Real tick);
 	bool evaluate(Ogre::Real tick);
 

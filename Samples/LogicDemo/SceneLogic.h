@@ -58,8 +58,6 @@ public:
 
 	gkLogicTree* m_tree;
 
-	gkPulseNode* m_pulseNode;
-
 	gkKeyNode* m_ctrlKeyNode;
 
 	gkKeyNode* m_shiftKeyNode;

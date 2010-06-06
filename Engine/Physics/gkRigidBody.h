@@ -40,6 +40,7 @@ class gkDynamicsWorld;
 // Game body
 class gkRigidBody : public gkObject, public btMotionState
 {
+
 protected:
 
     // Parent world
@@ -78,7 +79,14 @@ public:
     gkVector3   getLinearVelocity(void);
     gkVector3   getAngularVelocity(void);
 
+	GK_INLINE int setActivationState(int newActivationState)
+	{
+		int oldState = m_oldActivationState;
 
+		m_oldActivationState = newActivationState;
+
+		return oldState;
+	}
 
     // Gain access to the bullet body
     btRigidBody* getBody(void)      {return m_rigidBody;}
@@ -90,6 +98,10 @@ public:
 	btCollisionObject* getCollisionObject();
 
 	Ogre::AxisAlignedBox getAabb() const;
+
+private:
+
+	int m_oldActivationState;
 };
 
 #endif//_gkRigidBody_h_

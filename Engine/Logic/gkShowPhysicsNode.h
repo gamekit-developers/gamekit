@@ -29,6 +29,8 @@
 
 #include "gkLogicNode.h"
 
+class gkScene;
+
 class gkShowPhysicsNode : public gkLogicNode
 {
 public:
@@ -46,7 +48,11 @@ public:
 
 	virtual ~gkShowPhysicsNode() {}
 
+	void initialize();
 	bool evaluate(gkScalar tick);
+
+private:
+	gkScene* m_scene;
 };
 
 

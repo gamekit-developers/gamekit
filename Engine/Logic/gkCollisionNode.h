@@ -59,6 +59,7 @@ public:
 
 	~gkCollisionNode();
 
+	void initialize();
 	void update(gkScalar tick);
 	bool evaluate(gkScalar tick);
 

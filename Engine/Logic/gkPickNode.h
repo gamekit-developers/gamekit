@@ -30,6 +30,7 @@
 #include "gkLogicNode.h"
 #include "LinearMath/btVector3.h"
 
+class gkScene;
 class btPoint2PointConstraint;
 class gkRigidBody;
 
@@ -64,6 +65,7 @@ public:
 
 	~gkPickNode();
 
+	void initialize();
 	void update(Ogre::Real tick);
 	bool evaluate(Ogre::Real tick);
 
@@ -82,12 +84,16 @@ protected:
 
 private:
 
+	gkScene* m_scene;
+
 	btPoint2PointConstraint* m_constraint;
 	btVector3 m_oldPickingPos;
 	Ogre::Real m_oldPickingDist;
 
 	gkVector3 m_angularFactor;
 	int m_activationState;
+
+	
 };
 
 #endif//_gkPickNode_h_

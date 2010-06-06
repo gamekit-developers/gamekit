@@ -73,6 +73,7 @@ public:
 protected:
     void buildTextFiles(void);    
 	void buildAllTextures();
+	void buildAllSounds();
 
     ManualResourceLoaderList  m_loaders;   // Ogre Loaders
     const gkString            m_group;     // Ogre Ogre::Resource Group

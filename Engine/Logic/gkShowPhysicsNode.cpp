@@ -31,17 +31,21 @@
 #include "gkLogger.h"
 
 gkShowPhysicsNode::gkShowPhysicsNode(gkLogicTree *parent, size_t id) 
-: gkLogicNode(parent, id)
+: gkLogicNode(parent, id),
+m_scene(0)
 {
 	ADD_ISOCK(ENABLE, false);
 	ADD_ISOCK(SHOW_AABB, false);
 }
 
+void gkShowPhysicsNode::initialize()
+{
+	m_scene = gkEngine::getSingleton().getActiveScene();
+}
+
 bool gkShowPhysicsNode::evaluate(gkScalar tick)
 {
-	gkScene* pScene = gkEngine::getSingleton().getActiveScene();
-
-	pScene->getDynamicsWorld()->enableDebugPhysics(GET_SOCKET_VALUE(ENABLE), GET_SOCKET_VALUE(SHOW_AABB));
+	m_scene->getDynamicsWorld()->enableDebugPhysics(GET_SOCKET_VALUE(ENABLE), GET_SOCKET_VALUE(SHOW_AABB));
 
 	return false;
 }

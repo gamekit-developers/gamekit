@@ -33,7 +33,7 @@
 #include "OgreSceneNode.h"
 
 gkRigidBody::gkRigidBody(const gkString& name, gkGameObject *object, gkDynamicsWorld *owner, gkObject::Loader *manual)
-:       gkObject(name, manual), m_owner(owner), m_object(object), m_rigidBody(0)
+:       gkObject(name, manual), m_owner(owner), m_object(object), m_rigidBody(0), m_oldActivationState(-1)
 {
     if (m_object)
         m_object->attachRigidBody(this);

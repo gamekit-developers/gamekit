@@ -24,67 +24,103 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+#ifndef _gkPtrRef_h_
+#define _gkPtrRef_h_
+
+#include "gkCommon.h"
 #include "gkCriticalSection.h"
 
-#ifdef WIN32
-#include <process.h>
-#endif
+class gkReferences
+{
+public:
+
+	gkReferences();
+
+	virtual ~gkReferences();
+
+	int addRef();
+
+	int release();
+
+	int getReferences() const;
+
+private:
+
+	int m_references;
+
+	mutable gkCriticalSection m_cs;
+};
+
+template< class T >
+class gkPtrRef
+{
+public:
+
+	explicit gkPtrRef(T* p = 0) 
+	: m_obj(p) 
+	{ 
+	}
+
+	~gkPtrRef() 
+	{ 
+		if(m_obj)
+		{
+			m_obj->release(); 
+		}
+	}
+
+	gkPtrRef(const gkPtrRef& obj)
+	: m_obj(obj.m_obj)
+	{
+		if(m_obj)
+		{
+			m_obj->addRef();
+		}
+	}
+
+	gkPtrRef& operator = (const gkPtrRef& obj)
+	{
+		if(this != &obj) 
+		{
+			if(obj.m_obj)
+			{
+				obj.m_obj->addRef();
+			}
+
+			if(m_obj)
+			{
+				m_obj->release();
+			}
+
+			m_obj = obj.m_obj;
+		}
+
+		return *this;
+	}
+
+	T* get() const
+	{ 
+		return m_obj; 
+	}
 
 
-////////////////////////////////////////////
-
-gkCriticalSection::gkCriticalSection()
-{		
-#ifdef WIN32
-	InitializeCriticalSection(&m_cs);
-#else
-	pthread_mutex_init(&m_cs, NULL);
-#endif
-}
+	T& operator*() const
+	{ 
+		GK_ASSERT(m_obj); 
+		
+		return *m_obj; 
+	}
 	
-gkCriticalSection::~gkCriticalSection()
-{
-#ifdef WIN32
-	DeleteCriticalSection(&m_cs);
-#else
-	pthread_mutex_destroy(&m_cs);
-#endif
-}
+	T* operator->() const
+	{ 
+		GK_ASSERT(m_obj); 
 
-void gkCriticalSection::BeginLock()
-{
-#ifdef WIN32
-	EnterCriticalSection(&m_cs);
-#else
-	pthread_mutex_lock(&m_cs);
-#endif
+		return m_obj; 
+	}
 
-}
+private:
 
-void gkCriticalSection::EndLock()
-{
-#ifdef WIN32
-	LeaveCriticalSection(&m_cs);
-#else
-	pthread_mutex_unlock(&m_cs);
-#endif
-}
+	T* m_obj;
+};
 
-gkCriticalSection::Lock::Lock(gkCriticalSection& obj)
-:m_obj(obj)
-{
-#ifdef WIN32
-	EnterCriticalSection(&m_obj.m_cs);
-#else
-	pthread_mutex_lock(&m_obj.m_cs);
-#endif
-}
-
-gkCriticalSection::Lock::~Lock()
-{	
-#ifdef WIN32
-	LeaveCriticalSection(&m_obj.m_cs);
-#else
-	pthread_mutex_unlock(&m_obj.m_cs);
-#endif
-}
+#endif//_gkPtrRef_h_

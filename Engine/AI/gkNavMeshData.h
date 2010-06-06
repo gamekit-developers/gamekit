@@ -32,9 +32,11 @@
 
 #include "gkCommon.h"
 #include "gkSerialize.h"
-#include "gkCriticalSection.h"
-#include "gkActiveObject.h"
-#include "gkPtrRef.h"
+#include "Thread/gkCriticalSection.h"
+#include "Thread/gkActiveObject.h"
+#include "Thread/gkPtrRef.h"
+
+#include "OgreSingleton.h"
 
 #include <iostream>
 #include <fstream>
@@ -93,7 +95,9 @@ private:
 	friend class Call;
 };
 
-class gkNavMeshData : public btTriangleCallback
+class btCollisionObject;
+
+class gkNavMeshData : public btTriangleCallback, public Ogre::Singleton<gkNavMeshData>
 {
 public:
 	gkNavMeshData(gkScene* scene);
@@ -101,8 +105,9 @@ public:
 	~gkNavMeshData();
 
 	void unload(gkGameObject* pObj);
-	void refresh(gkGameObject* pObj);
-	void reset();
+	void updateOrLoad(gkGameObject* pObj, bool createNavMesh = true);
+	void unloadAll();
+	void loadAll();
 
 	PNAVMESH getNavigationMesh() const { return m_navCreator->get(); }
 
@@ -136,7 +141,10 @@ public:
 		return p;
 	}
 
-	void startJob();
+	void createNavigationMesh() { m_navCreator->startJob(); }
+
+    static gkNavMeshData& getSingleton(void);
+    static gkNavMeshData* getSingletonPtr(void);
 
 private:
 
@@ -146,7 +154,7 @@ private:
 
 	void AddCollisionObj();
 
-	bool isValid(gkGameObject* pObj) const;
+	bool isValid(gkGameObject* pObj);
 
 private:
 	

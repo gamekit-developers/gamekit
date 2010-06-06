@@ -27,6 +27,7 @@
 #include "gkEngine.h"
 #include "gkScene.h"
 #include "gkDynamicsWorld.h"
+#include "gkRigidBody.h"
 
 #include "btBulletDynamicsCommon.h"
 
@@ -450,7 +451,7 @@ gkNavMeshData::~gkNavMeshData()
 {
 	delete m_navCreator;
 
-	reset();
+	unloadAll();
 	//delete m_debug;
 }
 
@@ -458,10 +459,12 @@ void gkNavMeshData::unload(gkGameObject* pObj)
 {
 	if(!isValid(pObj)) return;
 
-	gkCriticalSection::Lock guard(m_cs);
-
-	if(m_data.tris.empty()) return;
-
+	{
+		gkCriticalSection::Lock guard(m_cs);
+	
+		if(m_data.tris.empty()) return;
+	}
+	
 	GK_ASSERT(!pObj->getNavData().isEmpty());
 
 	int indexBase = pObj->getNavData().triangleBaseIndex;
@@ -475,6 +478,8 @@ void gkNavMeshData::unload(gkGameObject* pObj)
 	int indexValue = nIndex/2;
 
 	{
+		gkCriticalSection::Lock guard(m_cs);
+
 		Data::TRIANGLES::iterator it = m_data.tris.erase(m_data.tris.begin() + indexBase, m_data.tris.begin() + indexBase + nIndex);
 		m_data.verts.erase(m_data.verts.begin() + vertexBaseIndex, m_data.verts.begin() + vertexBaseIndex + nVertex);
 		m_data.normals.erase(m_data.normals.begin() + normalBaseIndex, m_data.normals.begin() + normalBaseIndex + nNormal);
@@ -490,7 +495,7 @@ void gkNavMeshData::unload(gkGameObject* pObj)
 		}
 	}
 
-	pObj->setNavData(NavMeshData());
+	pObj->resetNavData();
 
 	gkGameObjectSet& objs = m_scene->getLoadedObjects();
 	gkGameObjectSet::iterator it = objs.begin();
@@ -502,11 +507,9 @@ void gkNavMeshData::unload(gkGameObject* pObj)
 	}
 }
 
-void gkNavMeshData::refresh(gkGameObject* pObj)
+void gkNavMeshData::updateOrLoad(gkGameObject* pObj, bool createNavMesh)
 {
 	if(!isValid(pObj)) return;
-
-	gkCriticalSection::Lock guard(m_cs);
 
 	m_object = pObj;
 
@@ -515,19 +518,42 @@ void gkNavMeshData::refresh(gkGameObject* pObj)
 		AddCollisionObj();
 	}
 
-	if(m_scene->isLoaded())
+	if(createNavMesh && m_scene->isLoaded())
 	{
-		m_navCreator->startJob();
+		createNavigationMesh();
 	}
 }
 
-void gkNavMeshData::reset()
+void gkNavMeshData::unloadAll()
 {
+	gkGameObjectSet& objs = m_scene->getLoadedObjects();
+	gkGameObjectSet::iterator it = objs.begin();
+    while(it != objs.end())
+	{
+		gkGameObject* pObj = *it;
+        pObj->resetNavData();
+		++it;
+	}
+	
 	gkCriticalSection::Lock guard(m_cs);
 
 	m_data.verts.clear();
 	m_data.tris.clear();
 	m_data.normals.clear();
+}
+
+void gkNavMeshData::loadAll()
+{
+	gkGameObjectSet& objs = m_scene->getLoadedObjects();
+	gkGameObjectSet::iterator it = objs.begin();
+    while(it != objs.end())
+	{
+		gkGameObject* pObj = *it;
+		updateOrLoad(pObj, false);
+		++it;
+	}
+
+	createNavigationMesh();
 }
 
 void gkNavMeshData::processTriangle(btVector3* triangle,int partId, int triangleIndex)
@@ -609,6 +635,8 @@ void gkNavMeshData::addTriangle(const gkVector3& v1, const gkVector3& v2, const 
 
 void gkNavMeshData::AddCollisionObj()
 {
+	gkCriticalSection::Lock guard(m_cs);
+	
 	size_t tIndex = m_data.tris.size();
 
 	gkScene* pScene = m_object->getOwner();
@@ -699,17 +727,29 @@ void gkNavMeshData::AddCollisionObj()
 	}
 }
 
-bool gkNavMeshData::isValid(gkGameObject* pObj) const
+bool gkNavMeshData::isValid(gkGameObject* pObj) 
 {
 	const int& physicsState = pObj->getProperties().physicsState;
 
-	bool active = pObj->getCollisionObject() && pObj->getCollisionObject()->getActivationState() == WANTS_DEACTIVATION;
+	bool active = false;
+	
+	btCollisionObject* pColObj = pObj->getCollisionObject();
 
-	return (physicsState == GK_RIGID_BODY || physicsState == GK_STATIC);
+	if(physicsState == GK_RIGID_BODY && pColObj)
+	{
+		int current_state = pColObj->getActivationState();
+
+		int old_state = pObj->getAttachedBody()->setActivationState(current_state);
+
+		active = current_state == WANTS_DEACTIVATION && old_state == ACTIVE_TAG;
+	}
+	else if(physicsState == GK_STATIC)
+	{
+		active = true;
+	}
+
+	return active;
 }
 
-void gkNavMeshData::startJob()
-{
-	m_navCreator->startJob();
-}
 
+GK_IMPLEMENT_SINGLETON(gkNavMeshData);

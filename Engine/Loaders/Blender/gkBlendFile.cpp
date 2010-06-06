@@ -215,6 +215,8 @@ bool gkBlendFile::_parse(void)
 
     buildTextFiles();
 
+	buildAllSounds();
+
 	return true;
 }
 
@@ -295,3 +297,14 @@ void gkBlendFile::buildAllTextures()
     }
 }
 
+void gkBlendFile::buildAllSounds()
+{
+    bParse::bMain *mp = m_file->getMain();
+
+	bParse::bListBasePtr* soundList = mp->getSound();
+
+    for (int i=0; i<soundList->size(); ++i)
+    {
+		Blender::bSound *sound = (Blender::bSound*)soundList->at(i);
+    }
+}

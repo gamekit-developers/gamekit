@@ -95,9 +95,6 @@ void SceneLogic::CreateRats()
 
 void SceneLogic::CreateInput()
 {
-	m_pulseNode = m_tree->createNode<gkPulseNode>();
-	m_pulseNode->getUPDATE()->setValue(true);
-
 	m_ctrlKeyNode = m_tree->createNode<gkKeyNode>();
 	m_ctrlKeyNode->setKey(KC_TABKEY);
 

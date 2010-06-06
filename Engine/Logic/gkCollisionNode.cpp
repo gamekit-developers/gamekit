@@ -47,14 +47,17 @@ m_object(0)
 	ADD_OSOCK(NOT_HAS_COLLIDED, true);
 	ADD_OSOCK(COLLIDED_OBJ, 0);
 	ADD_OSOCK(CONTACT_POSITION, gkVector3::ZERO);
-
-	gkScene* pScene = gkEngine::getSingleton().getActiveScene();
-
-	pScene->getDynamicsWorld()->EnableContacts(true);
 }
 
 gkCollisionNode::~gkCollisionNode()
 {
+}
+
+void gkCollisionNode::initialize()
+{
+	gkScene* pScene = gkEngine::getSingleton().getActiveScene();
+
+	pScene->getDynamicsWorld()->EnableContacts(true);
 }
 
 bool gkCollisionNode::evaluate(gkScalar tick)

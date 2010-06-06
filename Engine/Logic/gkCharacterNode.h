@@ -28,7 +28,8 @@
 #define _gkCharacterNode_h_
 
 #include "gkStateMachineNode.h"
-#include "gkNavMeshData.h"
+#include "AI/gkNavMeshData.h"
+#include "AI/gkNavPath.h"
 
 class gkGameObject;
 class gkEntity;
@@ -76,6 +77,7 @@ public:
     gkCharacterNode(gkLogicTree *parent, size_t id);
 	~gkCharacterNode();
 
+	void initialize();
 	bool evaluate(gkScalar tick);
 	void update(gkScalar tick);
 	
@@ -103,7 +105,6 @@ public:
 
 	void setMapping(const MAP& map);
 	void setObj(gkGameObject* obj) {m_obj = obj;}
-	void setFoundThreshold(gkScalar threshold) {m_foundThreshold = threshold;}
 	void setPolyPickExt(const gkVector3& polyPickExt) {m_polyPickExt = polyPickExt;}
 	void setMaxPathPolys(int maxPathPolys) {m_maxPathPolys = maxPathPolys;}
 	
@@ -112,14 +113,7 @@ private:
 	void update_animation(STATE oldState);
 	void notifyState(int state);
 	StateData* getStateData(int state);
-	void goTo(gkScalar tick);
-	void findPath();
-	void followPath(gkScalar tick);
-	gkRadian GetRotationAngleForAxis(const gkVector3& from, const gkVector3& to, const gkVector3& axis);
-	gkVector3 GetProjectionOnPlane(const gkVector3& V, const gkVector3& N);
-	void update_ai_data(const gkVector3& dir, gkScalar d, gkScalar tick);
-	void showPath();
-	bool isTargetReached();
+	gkScalar getVelocityForDistance(gkScalar d, gkScalar tick, STATE& state) const;
 
 private:
 
@@ -134,25 +128,17 @@ private:
 
 	gkVector3 m_dir;
 	gkVector3 m_up;
-	gkVector3 m_upMask;
 
-	typedef std::deque<gkVector3> PATH_POINTS;
-	PATH_POINTS m_path;
+	gkNavPath m_navPath;
 
-	PNAVMESH m_navMesh;
 	gkVector3 m_polyPickExt;
 	int m_maxPathPolys;
-	gkVector3 m_goToPosition;
-	gkScalar m_foundThreshold;
 
 	StateData* m_currentStateData;
 
 	gkScene* m_scene;
-	gkPhysicsDebug *m_debug;
 
-	STATE m_ai_wanted_state;
-	gkScalar m_ai_wanted_velocity;
-	gkQuaternion m_ai_wanted_rotation;
+	bool m_createdNavMesh;
 };
 
 

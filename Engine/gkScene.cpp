@@ -51,9 +51,8 @@ using namespace Ogre;
 
 gkScene::gkScene(const gkString& name, gkObject::Loader *loader)
 :       gkObject(name, loader), m_manager(0), m_startCam(0),
-        m_viewport(0), m_baseProps(), m_physicsWorld(0), m_meshData(0)
+        m_viewport(0), m_baseProps(), m_physicsWorld(0)
 {
-	m_meshData = new gkNavMeshData(this);
 }
 
 gkScene::~gkScene()
@@ -61,9 +60,6 @@ gkScene::~gkScene()
     gkGameObjectHashMapIterator it(m_objects);
     while (it.hasMoreElements())
         delete it.getNext().second;
-
-	delete m_meshData;
-	m_meshData = 0;
 }
 
 
@@ -71,7 +67,6 @@ bool gkScene::hasObject(const gkHashedString& ob)
 {
     return m_objects.find(ob) != GK_NPOS;
 }
-
 
 bool gkScene::hasObject(gkGameObject *ob)
 {
@@ -130,8 +125,6 @@ void gkScene::destroyGroup(gkGameObjectGroup* group)
             m_groups.clear();
     }
 }
-
-
 
 void gkScene::destroyGroups(void)
 {
@@ -255,10 +248,6 @@ void gkScene::setMainCamera(gkCamera *cam)
     applyViewport(m_viewport);
 }
 
-
-
-
-
 // Load this scene. For all created objects, call builder
 // methods to extract & convert needed information
 void gkScene::loadImpl(void)
@@ -317,9 +306,6 @@ void gkScene::loadImpl(void)
         }
     }
 
-
-
-
     if (!m_viewport) {
 
         // setMainCamera has not been called, try to call
@@ -345,7 +331,8 @@ void gkScene::loadImpl(void)
     // notify main scene
     gkEngine::getSingleton().setActiveScene(this);
 
-	m_meshData->startJob();
+	if(gkNavMeshData::getSingletonPtr())
+		gkNavMeshData::getSingletonPtr()->createNavigationMesh();
 }
 
 void gkScene::unloadImpl()
@@ -353,7 +340,8 @@ void gkScene::unloadImpl()
     if (m_objects.empty())
         return;
 
-	//m_meshData->reset();
+	if(gkNavMeshData::getSingletonPtr())
+		gkNavMeshData::getSingletonPtr()->unloadAll();
 
     gkGameObjectHashMapIterator it(m_objects);
     while (it.hasMoreElements()) {
@@ -449,20 +437,23 @@ void gkScene::notifyObjectLoaded(gkGameObject *gobject)
 
 	GK_ASSERT(result.second);
 
-	m_meshData->refresh(gobject);
+	if(gkNavMeshData::getSingletonPtr())
+		gkNavMeshData::getSingletonPtr()->updateOrLoad(gobject);
 }
 
 void gkScene::notifyObjectUnloaded(gkGameObject *gobject) 
 {
 	m_loadedObjects.erase(gobject);
 
-	m_meshData->unload(gobject);
+	if(gkNavMeshData::getSingletonPtr())
+		gkNavMeshData::getSingletonPtr()->unload(gobject);
 
 }
 
 void gkScene::notifyObjectUpdate(gkGameObject *gobject)
 {
-	m_meshData->refresh(gobject);
+	if(gkNavMeshData::getSingletonPtr())
+		gkNavMeshData::getSingletonPtr()->updateOrLoad(gobject);
 }
 
 void gkScene::synchronizeMotion(gkScalar blend)
@@ -508,4 +499,3 @@ void gkScene::update(gkScalar tickRate)
 
 	if (m_physicsWorld) m_physicsWorld->DrawDebug();
 }
-

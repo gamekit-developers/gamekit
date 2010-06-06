@@ -31,15 +31,18 @@
 
 using namespace Ogre;
 
+namespace
+{
+	const gkScalar width = 32;
+	const gkScalar height = 32;
+}
+
 gkCursorNode::gkCursorNode(gkLogicTree *parent, size_t id)
 : gkLogicNode(parent, id),
 m_overlay(0),
 m_panelContainer(0),
 m_panelElement(0)
 {
-	const gkScalar width = 32;
-	const gkScalar height = 32;
-
 	ADD_ISOCK(ENABLE, false);
 	ADD_ISOCK(UPDATE, false);
 	ADD_ISOCK(MATERIAL_NAME, "");
@@ -47,7 +50,17 @@ m_panelElement(0)
 	ADD_ISOCK(Y, 0);
 	ADD_ISOCK(WIDTH, width);
 	ADD_ISOCK(HEIGHT, height);
+}
 
+gkCursorNode::~gkCursorNode()
+{
+	Ogre::OverlayManager& om = Ogre::OverlayManager::getSingleton();
+
+	om.destroy(m_overlay);
+}
+
+void gkCursorNode::initialize()
+{
 	static int idx = 0;
 
 	Ogre::OverlayManager& om = Ogre::OverlayManager::getSingleton();
@@ -77,13 +90,6 @@ m_panelElement(0)
 	m_overlay->add2D(m_panelContainer);
 	
 	++idx;
-}
-
-gkCursorNode::~gkCursorNode()
-{
-	Ogre::OverlayManager& om = Ogre::OverlayManager::getSingleton();
-
-	om.destroy(m_overlay);
 }
 
 bool gkCursorNode::evaluate(Real tick)

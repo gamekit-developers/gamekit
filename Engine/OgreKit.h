@@ -42,7 +42,6 @@
 #include "gkMemoryTest.h"
 #include "gkObject.h"
 #include "gkPath.h"
-#include "gkPtrRef.h"
 #include "gkRect.h"
 #include "gkRenderFactory.h"
 #include "gkScene.h"
@@ -57,6 +56,9 @@
 #include "gkUtils.h"
 #include "gkVariable.h"
 #include "gkWindowSystem.h"
+
+#include "AI/gkNavMeshData.h"
+
 #include "Animation/gkAction.h"
 #include "Animation/gkActionBake.h"
 #include "Animation/gkActionChannel.h"
@@ -83,8 +85,6 @@
 #include "Logic/gkExitNode.h"
 #include "Logic/gkExpressionNode.h"
 #include "Logic/gkFallTestNode.h"
-#include "Logic/gkFindPathNode.h"
-#include "Logic/gkFollowPathNode.h"
 #include "Logic/gkGrabNode.h"
 #include "Logic/gkGroupNode.h"
 #include "Logic/gkIfNode.h"
@@ -134,6 +134,8 @@
 #include "Physics/gkRigidBody.h"
 #include "Physics/gkSoftBody.h"
 #include "Physics/gkVehicle.h"
+#include "Physics/gkRayTest.h"
+#include "Physics/gkSweptTest.h"
 
 #include "Script/gkLuaManager.h"
 
@@ -141,4 +143,15 @@
 #include "Utils/utStream.h"
 #include "Utils/utString.h"
 #include "Utils/utTypes.h"
+
+#include "Thread/gkActiveObject.h"
+#include "Thread/gkCriticalSection.h"
+#include "Thread/gkNonCopyable.h"
+#include "Thread/gkNonCopyable.h"
+#include "Thread/gkPtrRef.h"
+#include "Thread/gkQueue.h"
+#include "Thread/gkSyncObj.h"
+#include "Thread/gkThread.h"
+
+
 #endif//_OgreKit_h_

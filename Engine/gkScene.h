@@ -32,7 +32,7 @@
 #include "gkSerialize.h"
 #include "gkGameObjectGroup.h"
 #include "OgreAxisAlignedBox.h"
-#include "gkNavMeshData.h"
+#include "AI/gkNavMeshData.h"
 
 class gkDynamicsWorld;
 
@@ -161,13 +161,9 @@ public:
     // instance creation
     gkGameObjectInstance *createInstance(gkGameObject *owner, gkGameObjectGroup *group);
 
-
     GK_INLINE bool      hasGroup(const gkHashedString &name) {return m_groups.find(name) != UT_NPOS;}
 
-	PNAVMESH getNavigationMesh() const { return m_meshData->getNavigationMesh(); }
-
 protected:
-
 
     // Ogre scene manager
     Ogre::SceneManager*     m_manager;
@@ -197,8 +193,6 @@ protected:
 private:
 
 	Ogre::AxisAlignedBox m_Limits;
-
-	gkNavMeshData* m_meshData;
 };
 
 #endif//_gkSceneObject_h_

@@ -7,12 +7,10 @@ cmake_minimum_required(VERSION 2.6)
 
 set(Core_SOURCE
     # ----- Source ----- 
-    gkActiveObject.cpp
     gkCamera.cpp
     gkCam2ViewportRay.cpp
     gkConstraint.cpp
     gkCoreApplication.cpp
-    gkCriticalSection.cpp
     gkEngine.cpp
     gkEntity.cpp
     gkGameObject.cpp
@@ -20,21 +18,15 @@ set(Core_SOURCE
     gkLight.cpp
     gkLogger.cpp
     gkMathUtils.cpp
-    gkNavMeshData.cpp
     gkObject.cpp
     gkPath.cpp
-    gkPtrRef.cpp
     gkTextFile.cpp
     gkTextManager.cpp
-    gkRayTest.cpp
     gkRenderFactory.cpp
     gkScene.cpp
     gkSceneManager.cpp
     gkSerialize.cpp
     gkSkeleton.cpp
-    gkSyncObj.cpp
-    gkSweptTest.cpp
-    gkThread.cpp
     gkUserDefs.cpp
     gkUtils.cpp
     gkWindowSystem.cpp
@@ -44,13 +36,11 @@ set(Core_SOURCE
 
 set(Core_HEADER
     # ----- Headers ----- 
-    gkActiveObject.h
     gkCamera.h
     gkCam2ViewportRay.h
     gkCommon.h
     gkConstraint.h
     gkCoreApplication.h
-    gkCriticalSection.h
     gkEngine.h
     gkEntity.h
     gkGameObject.h
@@ -61,13 +51,8 @@ set(Core_HEADER
     gkLogger.h
     gkMathUtils.h
     gkMemoryTest.h
-    gkNavMeshData.h
-    gkNonCopyable.h
     gkObject.h
     gkPath.h
-    gkPtrRef.h
-    gkQueue.h
-    gkRayTest.h
     gkTextFile.h
     gkTextManager.h
     gkRect.h
@@ -77,11 +62,8 @@ set(Core_HEADER
     gkSerialize.h
     gkSkeleton.h
     gkString.h
-    gkSyncObj.h
-    gkSweptTest.h
     gkTransformState.h
     gkUserDefs.h
-    gkThread.h
     gkUtils.h
     gkVariable.h
     gkWindowSystem.h
@@ -94,6 +76,55 @@ set(Core_HEADER
 
 source_group(Core\\Header FILES ${Core_HEADER})
 source_group(Core\\Source FILES ${Core_SOURCE})
+
+# ---------------------------------------------------------
+# AI Files
+# ---------------------------------------------------------
+
+set(AI_SOURCE
+    # ----- Source ----- 
+    AI/gkNavMeshData.cpp
+    AI/gkNavPath.cpp
+    AI/gkSteering.cpp
+)
+
+set(AI_HEADER
+    # ----- Headers ----- 
+    AI/gkNavMeshData.h
+    AI/gkNavPath.h
+    AI/gkSteering.h
+)
+
+source_group(AI\\Header FILES ${AI_HEADER})
+source_group(AI\\Source FILES ${AI_SOURCE})
+
+# ---------------------------------------------------------
+# Thread Files
+# ---------------------------------------------------------
+
+set(Thread_SOURCE
+    # ----- Source ----- 
+    Thread/gkActiveObject.cpp
+    Thread/gkCriticalSection.cpp
+    Thread/gkPtrRef.cpp
+    Thread/gkSyncObj.cpp
+    Thread/gkThread.cpp
+)
+
+set(Thread_HEADER
+    # ----- Headers ----- 
+    Thread/gkActiveObject.h
+    Thread/gkCriticalSection.h
+    Thread/gkNonCopyable.h
+    Thread/gkPtrRef.h
+    Thread/gkQueue.h
+    Thread/gkSyncObj.h
+    Thread/gkThread.h
+)
+
+source_group(Thread\\Header FILES ${Thread_HEADER})
+source_group(Thread\\Source FILES ${Thread_SOURCE})
+
 
 # ---------------------------------------------------------
 # Animation Files
@@ -146,8 +177,6 @@ set(NLogic_SOURCE
     Logic/gkExitNode.cpp
     Logic/gkExpressionNode.cpp
     Logic/gkFallTestNode.cpp
-    Logic/gkFindPathNode.cpp
-    Logic/gkFollowPathNode.cpp
     Logic/gkGrabNode.cpp
     Logic/gkGroupNode.cpp
     Logic/gkNodeManager.cpp
@@ -182,8 +211,6 @@ set(NLogic_HEADER
     Logic/gkExitNode.h
     Logic/gkExpressionNode.h
     Logic/gkFallTestNode.h
-    Logic/gkFindPathNode.h
-    Logic/gkFollowPathNode.h
     Logic/gkGrabNode.h
     Logic/gkGroupNode.h
     Logic/gkIfNode.h
@@ -357,6 +384,8 @@ set(Physics_SOURCE
 	Physics/gkVehicle.cpp
 	Physics/gkSoftBody.cpp
 	Physics/gkPhysicsDebug.cpp
+    Physics/gkRayTest.cpp
+    Physics/gkSweptTest.cpp
 )
 
 set(Physics_HEADER 
@@ -368,6 +397,8 @@ set(Physics_HEADER
 	Physics/gkVehicle.h
 	Physics/gkSoftBody.h
 	Physics/gkPhysicsDebug.h
+    Physics/gkRayTest.h
+    Physics/gkSweptTest.h
 )
 
 
@@ -496,6 +527,7 @@ include_directories(
     ${GAMEKIT_SERIALIZE_BULLET}
     ${GAMEKIT_SERIALIZE_BLENDER_HEADERS}
     ./ 
+    ./AI
     ./Animation
     ./Constraints
     ./LogicBricks
@@ -505,6 +537,7 @@ include_directories(
     ./Loaders/Blender
     ./Physics
     ./Utils
+    ./Thread
     )
 
 
@@ -533,6 +566,7 @@ add_library(OgreKitCore STATIC
             ${Logic_CSOURCE}     ${Logic_CHEADER}
             ${Logic_ASOURCE}     ${Logic_AHEADER}
             ${Blend_SOURCE}      ${Blend_HEADER}
+            ${AI_SOURCE}         ${AI_HEADER}
             ${Animation_SOURCE}  ${Animation_HEADER}
             ${Constraint_SOURCE} ${Constraint_HEADER}
             ${Physics_SOURCE}    ${Physics_HEADER}
@@ -541,6 +575,7 @@ add_library(OgreKitCore STATIC
             ${Network_SOURCE}    ${Network_HEADER}
             ${Graphics_SOURCE}   ${Graphics_HEADER}
             ${NLogic_SOURCE}     ${NLogic_HEADER}
+            ${Thread_SOURCE}     ${Thread_HEADER}
             ${HiddenDepenCMakeLists}
     )
 

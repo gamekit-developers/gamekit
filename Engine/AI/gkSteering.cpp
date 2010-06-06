@@ -24,67 +24,49 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkFindPathNode_h_
-#define _gkFindPathNode_h_
+#include "Ogre.h"
+#include "gkSteering.h"
 
-#include "gkLogicNode.h"
-#include "gkNavMeshData.h"
-
-class dtNavMesh;
-
-class gkFindPathNode : public gkLogicNode
+gkSteering::gkSteering(const gkVector3& steerAxis) 
+: m_steerAxis(steerAxis)
 {
-public:
+}
 
-	enum
-	{
-		UPDATE,
-		MAX_PATH_POLYS,
-		START_POS,
-		END_POS,
-		POLY_PICK_EXT,
-		REDO_PATH_IF_FOLLOWING,
-		PATH,
-		PATH_FOUND
-	};
+gkSteering::~gkSteering() 
+{
+}
 
-	struct PathData
-	{
-		typedef std::deque<gkVector3> PATH_POINTS;
+gkRadian gkSteering::getAngle(const gkVector3& from, const gkVector3& to)
+{
+	Ogre::Vector3 from1 = getProjectionOnPlane(from, m_steerAxis);
 
-		PATH_POINTS path;
+	Ogre::Vector3 to1 = getProjectionOnPlane(to, m_steerAxis);
 
-		bool following;
+	Ogre::Quaternion q = from1.getRotationTo(to1);
 
-		PathData() : following(false){}
-	};
-
-	DECLARE_SOCKET_TYPE(UPDATE, bool);
-	DECLARE_SOCKET_TYPE(MAX_PATH_POLYS, int);
-	DECLARE_SOCKET_TYPE(START_POS, gkVector3);
-	DECLARE_SOCKET_TYPE(END_POS, gkVector3);
-	DECLARE_SOCKET_TYPE(POLY_PICK_EXT, gkVector3);
-	DECLARE_SOCKET_TYPE(REDO_PATH_IF_FOLLOWING, bool);
+	Ogre::Radian angle;
+	Ogre::Vector3 rAxis;
 	
+	q.ToAngleAxis(angle, rAxis);
 
-	DECLARE_SOCKET_TYPE(PATH, PathData*);
-	DECLARE_SOCKET_TYPE(PATH_FOUND, bool);
+	rAxis = angle.valueRadians() * (rAxis * m_steerAxis);
 
-    gkFindPathNode(gkLogicTree *parent, size_t id);
+	angle = rAxis.x + rAxis.y + rAxis.z;
 
-	~gkFindPathNode();
+	return angle;
+}
 
-	bool evaluate(gkScalar tick);
-	void update(gkScalar tick);
+gkQuaternion gkSteering::getRotation(const gkVector3& from, const gkVector3& to)
+{
+	return gkQuaternion(getAngle(from, to), m_steerAxis);
+}
 
-private:
+gkVector3 gkSteering::getProjectionOnPlane(const gkVector3& V, const gkVector3& N)
+{
+	//U = V - (V dot N)N 
 
-	void findPath();
+	return  V - V.dotProduct(N) * N;
+}
 
-private:
 
-	PathData m_path;
-	PNAVMESH m_navMesh;
-};
 
-#endif//_gkFindPathNode_h_

@@ -41,6 +41,7 @@ using namespace Ogre;
 gkPickNode::gkPickNode(gkLogicTree *parent, size_t id)
 : gkLogicNode(parent, id),
 m_pickedBody(0),
+m_scene(0),
 m_constraint(0),
 m_oldPickingPos(0, 0, 0),
 m_oldPickingDist(0),
@@ -62,6 +63,13 @@ m_activationState(0)
 gkPickNode::~gkPickNode()
 {
 	ReleasePick();
+}
+
+void gkPickNode::initialize()
+{
+	m_scene = gkEngine::getSingleton().getActiveScene();
+
+	GK_ASSERT(m_scene);
 }
 
 bool gkPickNode::evaluate(Real tick)
@@ -137,11 +145,7 @@ void gkPickNode::CreatePick()
 
 			m_constraint->m_setting.m_impulseClamp = mousePickClamping;
 
-			gkScene* pScene = gkEngine::getSingleton().getActiveScene();
-
-			GK_ASSERT(pScene);
-
-			btDynamicsWorld* pWorld = pScene->getDynamicsWorld()->getBulletWorld();
+			btDynamicsWorld* pWorld = m_scene->getDynamicsWorld()->getBulletWorld();
 
 			GK_ASSERT(pWorld);
 
@@ -176,11 +180,7 @@ void gkPickNode::ReleasePick()
 {
 	if(m_constraint)
 	{
-		gkScene* pScene = gkEngine::getSingleton().getActiveScene();
-
-		GK_ASSERT(pScene);
-
-		btDynamicsWorld* pWorld = pScene->getDynamicsWorld()->getBulletWorld();
+		btDynamicsWorld* pWorld = m_scene->getDynamicsWorld()->getBulletWorld();
 
 		GK_ASSERT(pWorld);
 

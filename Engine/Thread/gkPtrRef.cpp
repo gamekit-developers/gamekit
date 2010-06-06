@@ -58,3 +58,10 @@ int gkReferences::release()
 	return 0;
 }
 
+int gkReferences::getReferences() const
+{ 
+	gkCriticalSection::Lock tmp(m_cs);
+
+	return m_references; 
+}
+

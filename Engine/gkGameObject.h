@@ -108,7 +108,7 @@ public:
 
     // physics
     GK_INLINE void attachRigidBody(gkRigidBody *body) {m_rigidBody = body;}
-    //GK_INLINE gkRigidBody* getAttachedBody() {return m_rigidBody;}
+    GK_INLINE gkRigidBody* getAttachedBody() {return m_rigidBody;}
     GK_INLINE void attachCharacter(gkCharacter *character) {m_character = character;}
     //GK_INLINE gkCharacter* getAttachedCharacter() {return m_character;}
 	gkObject* getAttachedObject();
@@ -188,6 +188,8 @@ public:
 	GK_INLINE const NavMeshData& getNavData() const { return m_navMeshData; }
 
 	GK_INLINE void setNavData(const NavMeshData& data) { m_navMeshData = data; }
+
+	GK_INLINE void resetNavData() { m_navMeshData = NavMeshData(); }
 
 	void GK_INLINE recalcNavData(int i, int n)
 	{
