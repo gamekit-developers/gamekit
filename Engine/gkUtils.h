@@ -38,6 +38,9 @@ public:
 
     // utility for command-line arguments
     static gkString getFile(const gkString& in);
+
+    static void inflate(const gkString &infile, gkString &out);
+
 };
 
 

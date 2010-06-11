@@ -40,15 +40,14 @@ class btKinematicCharacterController;
 class btTriangleMesh;
 class gkDynamicsWorld;
 
+
 class gkCharacter : public gkObject, public btActionInterface
 {
 public:
 
-    gkCharacter(const gkString& name, gkGameObject *object, gkDynamicsWorld *owner, gkObject::Loader *manual=0);
+    gkCharacter(const gkString& name, gkGameObject *object, gkDynamicsWorld *owner);
 
     virtual ~gkCharacter();
-
-    void _reinstanceCharacter(btPairCachingGhostObject *ghostObject);
 
     void setTransformState(const gkTransformState& state);
 
@@ -93,6 +92,7 @@ protected:
 
 	btPairCachingGhostObject* m_ghostObject;
 	btKinematicCharacterController* m_character;
+    btCollisionShape* m_shape;
 	
 };
 

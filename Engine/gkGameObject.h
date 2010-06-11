@@ -36,7 +36,7 @@
 
 class gkRigidBody;
 class gkCharacter;
-
+class gkLogicLink;
 
 // Base class for all game objects
 class gkGameObject : public gkObject
@@ -49,17 +49,24 @@ public:
 	typedef utList<gkGameObject*> GameObjects;
 	typedef utListIterator<GameObjects> GameObjectIterator;
 
+
+    // life of a temporary object
+    struct LifeSpan
+    {
+        int tick;
+        int timeToLive;
+    };
+
 public:
 
-    gkGameObject(gkScene *scene, const gkString& name, gkGameObjectTypes type, gkObject::Loader* loader = 0);
+    gkGameObject(gkScene *scene, const gkString& name, gkGameObjectTypes type);
     virtual ~gkGameObject();
 
     GK_INLINE gkScene                   *getOwner(void)                     {return m_scene;}
     GK_INLINE Ogre::SceneNode           *getNode(void)                      {return m_node;}
     GK_INLINE gkGameObjectTypes         getType(void)                       {return m_type;}
     GK_INLINE gkGameObjectProperties    &getProperties(void)                {return m_baseProps;}
-    GK_INLINE void                      setStartPose(const gkString& pose)  {m_startPose = pose; }
-
+    GK_INLINE bool                      isClone(void)                       {return m_isClone;}
 
     // subtype access
     GK_INLINE gkEntity      *getEntity(void)    {return m_type == GK_ENTITY ?   (gkEntity*)this : 0; }
@@ -73,12 +80,15 @@ public:
     void notifyUpdate(void);
 
     // constriants
-    GK_INLINE ConstraintIterator getConstraintIterator(void)  { return ConstraintIterator(m_constraints); }
-    void addConstraint(gkConstraint *c);
-    void destroyConstraints(void);
+    GK_INLINE ConstraintIterator    getConstraintIterator(void)  { return ConstraintIterator(m_constraints); }
+    GK_INLINE bool                  hasConstraints(void)         { return !m_constraints.empty(); }
+    void                            addConstraint(gkConstraint *c);
+    void                            destroyConstraints(void);
+    void                            applyConstraints(void);
 
-    // update object constraints
-    void applyConstraints(void);
+
+    GK_INLINE LifeSpan &getLifeSpan(void)               {return m_life;}
+    GK_INLINE void      setLifeSpan(const LifeSpan &v)  {m_life = v;}
 
     // Object level blending
     void blendTransform(gkScalar blend);
@@ -98,7 +108,11 @@ public:
     // grouping
 
     GK_INLINE bool isInstance(void)                             {return m_instance != 0;}
+    GK_INLINE bool isGroupOwner(void)                           {return m_groupOwn != 0;}
+    GK_INLINE void setGroupOwner(bool v)                        {m_groupOwn = v;}
     GK_INLINE gkGameObjectInstance* getGroupInstance(void)      {return m_instance;}
+    GK_INLINE gkGameObjectGroup*    getGroup(void)              {return m_groupRef;}
+
 
     gkGameObject    *getGroupParent(void);
     void            attachToGroup(gkGameObjectGroup *g);
@@ -169,6 +183,8 @@ public:
     gkVector3   getAngularVelocity(void);
 
     void attachLogic(gkLogicTree *tree);
+    void attachLogic(gkLogicLink *bricks);
+
 
     // Ogre base class for movables
     Ogre::MovableObject *getMovable(void);
@@ -201,7 +217,11 @@ public:
 
 	gkGameObject* getChildEntity();
 
+    GK_INLINE void  setState(int v)     {m_state = v;}
+    GK_INLINE int   getState(void)      {return m_state;}
+
 protected:
+    void cloneImpl(gkGameObject *clob);
 
     // Base class type 
     gkGameObjectTypes           m_type;
@@ -218,14 +238,14 @@ protected:
     // Parent scene
     gkScene*                    m_scene;
 
-    // Current animation pose 
-    gkString                    m_startPose;
-
     // Ogre scenegraph node
     Ogre::SceneNode*            m_node;
 
     // Attached nodelogic trees
     gkLogicTree*                m_logic;
+
+    // Attached logic bricks
+    gkLogicLink*                m_bricks;
 
 
     // Current state of object transforms
@@ -241,8 +261,15 @@ protected:
 
     gkGameObjectGroup*          m_groupRef;     //is owner
     gkGameObjectInstance*       m_instance;     //is instance
+    bool                        m_groupOwn;
 
-    bool m_activeLayer, m_outOfDate, m_lockTransform;
+    int                         m_state;
+    bool                        m_activeLayer, m_outOfDate;
+    bool                        m_isClone;
+
+    // time to live 0 = forever
+    LifeSpan                    m_life;
+
 
     virtual void loadImpl(void);
     virtual void unloadImpl(void);
@@ -250,6 +277,8 @@ protected:
 	virtual void postUnloadImpl(void);
 
 private:
+    void loadPhysics(void);
+    void destroyPhysics(void);
 
 	NavMeshData m_navMeshData;
 };

@@ -206,9 +206,9 @@ public:
         Link(const T& v) : next(0), prev(0), link(v) {}
 
 
-        UT_INLINE Link* getNext(void) {return next;}
-        UT_INLINE Link* getPrev(void) {return prev;}
-        UT_INLINE T& getLink(void)      {return link;}
+        UT_INLINE Link  *getNext(void)  {return next;}
+        UT_INLINE Link  *getPrev(void)  {return prev;}
+        UT_INLINE T     &getLink(void)  {return link;}
         T link;
     };
 
@@ -220,11 +220,10 @@ public:
 
     void swap(Link *a, Link *b)
     {
-        ValueType v = a->link;
+        ValueType v(a->link);
         a->link = b->link;
         b->link = v;
     }
-
 
 public:
 
@@ -264,27 +263,6 @@ public:
         if (!m_last) m_last = link;
         m_first = link;
         m_size ++;
-    }
-
-    // Inserts and element
-    void insert(Pointer from, const T& v) {
-        Link *link = new Link(v);
-        m_size ++;
-        if (!m_first) {
-            m_first = m_last = link;
-            return;
-        }
-        if (from == 0) {
-            link->next = m_first;
-            link->next->prev = link;
-            m_first = link;
-            return;
-        }
-        if (m_last == from) m_last = link;
-        link->next = from->next;
-        from->next = link;
-        if (link->next) link->next->prev = link;
-        link->prev = from;
     }
 
     // find using a linear search (avoid if possible)
@@ -348,7 +326,17 @@ public:
 
         m_size -= 1;
         delete link;
+        if (m_size == 0)
+            clear();
     }
+
+    void erase(const T& v) 
+    {
+        Pointer fnd = find(v);
+        if (fnd)
+            erase(fnd);
+    }
+
 
     // Bubble sort 
     void sort(bool (*cmp)(const T& a, const T& b))
@@ -484,14 +472,23 @@ public:
     typedef    const T*    ConstPointer;
     typedef    T           ValueType;
 
+
+    void swap(UTsize a, UTsize b)
+    {
+        ValueType t= m_data[a];
+        m_data[a] = m_data[b];
+        m_data[b] = t;
+    }
+
 public:
 
     // Empty constructor
-    utArray() : m_size(0), m_capacity(0), m_data(0) {}
+    utArray() : m_size(0), m_capacity(0), m_data(0), m_cacheLimit(9999), m_curCache(0)  {}
 
     // Array copy constructor (avoid where possible, pass by reference instead)
-    utArray(const utArray<T>& o) :
-            m_size(o.size()), m_capacity(0), m_data(0) {
+    utArray(const utArray<T>& o) 
+        : m_size(o.size()), m_capacity(0), m_data(0), m_cacheLimit(9999), m_curCache(0)
+    {
         reserve(m_size);
         copy(m_data, o.m_data, m_size);
     }
@@ -499,12 +496,29 @@ public:
     ~utArray() { clear(); }
 
     // Free used buffers
-    void clear(void) {
-        if (m_data)
-            delete []m_data;
-        m_data = 0;
-        m_capacity = 0;
-        m_size = 0;
+    void clear(bool useCache=false) {
+        if (!useCache)
+        {
+            if (m_data)
+                delete []m_data;
+            m_data = 0;
+            m_capacity = 0;
+            m_size = 0;
+            m_curCache = 0;
+        }
+        else
+        {
+            // resize(0) is used a lot, so
+            // to prevent array buffers form
+            // becoming to big. Clear array in
+            // a cycle. ( from now on use clear(true) )
+
+            ++m_curCache;
+
+            if (m_curCache > m_cacheLimit)
+                clear(false);
+            else m_size = 0;
+        }
     }
 
     // Find using linear search
@@ -531,6 +545,21 @@ public:
     UT_INLINE void pop_back(void) {
         m_size--;
         m_data[m_size].~T();
+    }
+
+    
+    void erase(const T& v) 
+    {
+        if (m_size > 0)
+        {
+            UTsize pos = find(v);
+            if (pos != UT_NPOS)
+            {
+                swap(pos, m_size-1);
+                m_size--;
+                m_data[m_size].~T();
+            }
+        }
     }
 
     // Expands the buffer
@@ -576,6 +605,25 @@ public:
         }
     }
 
+    // Bubble sort 
+    void sort(bool (*cmp)(const T& a, const T& b))
+    {
+        UTsize i, n=m_size;
+        bool swapped = false;
+        if (n < 2 || !cmp)
+            return;
+        do {
+            if (n-1 == UT_NPOS)
+                break;
+            for (i=0; m_data[i] && m_data[i+1] && i<(n-1); i++) {
+                if (cmp(m_data[i], m_data[i+1])) {
+                    swap(i, i+1);
+                    swapped = true;
+                }
+            }
+            n-=1;
+        } while (swapped && n != UT_NPOS);
+    }
 
     // Safe data access
 
@@ -623,6 +671,7 @@ protected:
     UTsize      m_size;
     UTsize      m_capacity;
     Pointer     m_data;
+    int         m_cacheLimit, m_curCache;
 };
 
 
@@ -651,7 +700,7 @@ public:
     utArrayIterator(Iterator begin, UTsize size) : m_iterator(begin), m_cur(0), m_capacity(size) {}
 
     // Construct with reference to the array
-    utArrayIterator(T& v) : m_iterator(v.ptr()), m_cur(0), m_capacity(v.size()) { UT_ASSERT(v.valid()); }
+    utArrayIterator(T& v) : m_iterator(v.ptr()), m_cur(0), m_capacity(v.size()) { }
     ~utArrayIterator() {}
 
     // Access queries
@@ -977,6 +1026,7 @@ public:
     void clear(void) {
         m_size = m_capacity = 0;
         m_lastPos = UT_NPOS;
+        m_lastKey = Key();
 
         m_chainar.clear();
         m_indices.clear();

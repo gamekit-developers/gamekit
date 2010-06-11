@@ -34,8 +34,8 @@
 using namespace Ogre;
 
 
-gkLight::gkLight(gkScene *scene, const gkString& name, gkObject::Loader* loader)
-:       gkGameObject(scene, name, GK_LIGHT, loader),
+gkLight::gkLight(gkScene *scene, const gkString& name)
+:       gkGameObject(scene, name, GK_LIGHT),
         m_lightProps(), m_light(0)
 {
 }
@@ -46,32 +46,26 @@ void gkLight::updateProperties(void)
     if (!m_light)
         return;
 
-    m_light->setCastShadows(m_lightProps.casts);
-    m_light->setType((Light::LightTypes)m_lightProps.type);
+    m_light->setCastShadows(m_lightProps.m_casts);
+    m_light->setSpecularColour(m_lightProps.m_specular);
+    m_light->setSpecularColour(m_lightProps.m_specular);
+    m_light->setDiffuseColour(m_lightProps.m_diffuse * m_lightProps.m_power);
+    m_light->setAttenuation(m_lightProps.m_range, m_lightProps.m_constant, m_lightProps.m_linear, m_lightProps.m_quadratic);
 
-    m_light->setSpecularColour(m_lightProps.specular);
-    m_light->setSpecularColour(m_lightProps.specular);
-
-
-    if (m_lightProps.extra)
+    m_light->setPowerScale(m_lightProps.m_power);
+    if (m_lightProps.m_type == gkLightProperties::LI_SPOT || m_lightProps.m_type == gkLightProperties::LI_DIR)
     {
-        m_light->setAttenuation(m_lightProps.param[0], m_lightProps.param[1], m_lightProps.param[2], m_lightProps.param[3]);
-        m_light->setDiffuseColour(m_lightProps.diffuse);
+        m_light->setType(Ogre::Light::LT_DIRECTIONAL);
+        m_light->setDirection(m_lightProps.m_direction);
+
+        if (m_lightProps.m_type == gkLightProperties::LI_SPOT)
+        {
+            m_light->setType(Ogre::Light::LT_SPOTLIGHT);
+            m_light->setSpotlightRange(gkDegree(m_lightProps.m_spot.x), gkDegree(m_lightProps.m_spot.y), m_lightProps.m_falloff);
+        }
     }
     else
-    {
-        m_light->setAttenuation(m_lightProps.range, m_lightProps.constant, m_lightProps.linear, m_lightProps.quadratic);
-        m_light->setDiffuseColour(m_lightProps.diffuse * m_lightProps.power);
-    }
-
-
-    m_light->setPowerScale(m_lightProps.power);
-    if (m_lightProps.type == Ogre::Light::LT_SPOTLIGHT || m_lightProps.type == Ogre::Light::LT_DIRECTIONAL)
-    {
-        m_light->setDirection(m_lightProps.direction);
-        if (m_lightProps.type == Ogre::Light::LT_SPOTLIGHT)
-            m_light->setSpotlightRange(gkDegree(m_lightProps.spot_inner), gkDegree(m_lightProps.spot_outer), m_lightProps.falloff);
-    }
+        m_light->setType(Ogre::Light::LT_POINT);
 }
 
 
@@ -106,8 +100,11 @@ void gkLight::unloadImpl(void)
 
 gkObject *gkLight::clone(const gkString &name)
 {
-    // will need to set other properties in a bit!
-    return new gkLight(m_scene, name, m_manual ? m_manual->clone() : 0);
+    gkLight* cl = new gkLight(m_scene, name);
+    memcpy(&cl->m_lightProps, &m_lightProps, sizeof(gkLightProperties));
+
+    gkGameObject::cloneImpl(cl);
+    return cl;
 }
 
 

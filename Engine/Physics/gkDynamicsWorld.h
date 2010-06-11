@@ -46,9 +46,7 @@ class btGhostPairCallback;
 class gkPhysicsDebug;
 
 
-// Game dynamics world
-// TODO, loading via btWorldImporter & bullet serialization
-class gkDynamicsWorld : public gkObject
+class gkDynamicsWorld
 {
 public:
     typedef utListClass<gkObject> ObjectList;
@@ -69,17 +67,19 @@ protected:
 	
     bool                        m_handleContacts;
 
+    class gkDbvt*               m_dbvt;
+
+
     // drawing all but static wireframes 
     void localDrawObject(btCollisionObject *rb);
 
-    void preLoadImpl(void);
     void loadImpl(void);
     void unloadImpl(void);
 
     static void substepCallback(btDynamicsWorld *dyn, btScalar tick);
 
 public:
-    gkDynamicsWorld(const gkString& name, gkScene *scene, gkObject::Loader *manual = 0);
+    gkDynamicsWorld(const gkString& name, gkScene *scene);
     virtual ~gkDynamicsWorld();
 
     // Do one full physics step
@@ -90,13 +90,12 @@ public:
 
 	void EnableContacts(bool enable) { m_handleContacts = enable; }
 
-    // Creates the runtime body.
-    // gkRigidBody takes care of setting motion states, as well as
-    // applying physics calculations on a gkGameObject level
-    gkRigidBody *createRigidBody(gkGameObject *state, gkObject::Loader *manual=0);
 
-	gkCharacter *createCharacter(gkGameObject *state, gkObject::Loader *manual=0);
+    gkRigidBody *createRigidBody(gkGameObject *state);
 
+    gkCharacter *createCharacter(gkGameObject *state);
+
+    void destroyObject(gkObject *state);
 
     // Gain raw access to the bullet world
     GK_INLINE btDynamicsWorld* getBulletWorld(void) {GK_ASSERT(m_dynamicsWorld); return m_dynamicsWorld;}

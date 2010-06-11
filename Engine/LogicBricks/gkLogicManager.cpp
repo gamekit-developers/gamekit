@@ -30,18 +30,25 @@
 #include "gkLogicActuator.h"
 #include "gkLogicController.h"
 #include "gkMouseSensor.h"
+#include "gkKeyboardSensor.h"
 #include "gkCollisionSensor.h"
+#include "gkLogger.h"
+#include "gkDebugScreen.h"
 
 
 
+// ----------------------------------------------------------------------------
 gkLogicManager::gkLogicManager()
 {
+    m_sort = true;
     m_dispatchers = new gkAbstractDispatcherPtr[DIS_MAX];
     m_dispatchers[DIS_CONSTANT]     = new gkConstantDispatch;
+    m_dispatchers[DIS_KEY]          = new gkKeyDispatch;
     m_dispatchers[DIS_MOUSE]        = new gkMouseDispatch;
     m_dispatchers[DIS_COLLISION]    = new gkCollisionDispatch;
 }
 
+// ----------------------------------------------------------------------------
 gkLogicManager::~gkLogicManager()
 {
     for (int i = 0; i < DIS_MAX; ++ i)
@@ -54,8 +61,10 @@ gkLogicManager::~gkLogicManager()
 }
 
 
+// ----------------------------------------------------------------------------
 void gkLogicManager::clear(void)
 {
+    m_sort = true;
     if (m_dispatchers) {
         for (int i = 0; i < DIS_MAX; ++ i)
             m_dispatchers[i]->clear();
@@ -70,8 +79,51 @@ void gkLogicManager::clear(void)
         }
         m_links.clear();
     }
+    m_cin.clear();
+    m_ain.clear();
+    m_aout.clear();
 }
 
+// ----------------------------------------------------------------------------
+void gkLogicManager::destroy(gkLogicLink *link)
+{
+    if (!m_links.empty()) {
+        
+        if (m_links.find(link))
+        {
+            m_links.erase(link);
+
+
+            utListIterator<gkLogicLink::BrickList> iter(link->getControllers());
+            while (iter.hasMoreElements())
+            {
+                gkLogicController *cont = (gkLogicController*)iter.getNext();
+
+                if (m_cin.find(cont) != UT_NPOS)
+                    m_cin.erase(cont);
+
+            }
+
+            iter = utListIterator<gkLogicLink::BrickList>(link->getActuators());
+            while (iter.hasMoreElements())
+            {
+                gkLogicActuator *act = (gkLogicActuator*)iter.getNext();
+
+                if (m_ain.find(act) != UT_NPOS)
+                    m_ain.erase(act);
+                if (m_aout.find(act) != UT_NPOS)
+                    m_aout.erase(act);
+
+            }
+
+
+            delete link;
+        }
+    }
+
+}
+
+// ----------------------------------------------------------------------------
 gkLogicLink *gkLogicManager::createLink(void)
 {
     gkLogicLink *link = new gkLogicLink();
@@ -79,26 +131,172 @@ gkLogicLink *gkLogicManager::createLink(void)
     return link;
 }
 
+#define GK_DEBUG_EXEC 1
+
+// ----------------------------------------------------------------------------
+void gkLogicManager::push(gkLogicSensor *a, gkLogicController *b, bool stateValue)
+{
+    if (b->inActiveState())
+    {
+#ifdef GK_DEBUG_EXEC
+        if (b->wantsDebug())
+            dsPrintf("Push: Sensor %s to Controller %s: %s\n", a->getName().c_str(), b->getName().c_str(), (stateValue ? "On" : "Off"));
+#endif
+        push(b, a, m_cin, stateValue);
+    }
+}
 
 
+// ----------------------------------------------------------------------------
+void gkLogicManager::push(gkLogicController *a, gkLogicActuator *b, bool stateValue)
+{
+    if (a->inActiveState())
+    {
+#ifdef GK_DEBUG_EXEC
+        if (b->wantsDebug())
+            dsPrintf("Push: Controller %s to Actuator %s: %s\n", a->getName().c_str(), b->getName().c_str(), (stateValue ? "On" : "Off"));
+#endif
+        push(b, a, m_ain, stateValue);
+    }
+}
+
+// ----------------------------------------------------------------------------
+void gkLogicManager::push(gkLogicBrick *a, gkLogicBrick *b, Bricks &in, bool stateValue)
+{
+    a->setPulse(stateValue ? BM_ON : BM_OFF);
+
+    if (!a->isActive())
+    {
+        a->setActive(true);
+        in.push_back(a);
+    }
+}
+
+// ----------------------------------------------------------------------------
+void gkLogicManager::notifyState(unsigned int state)
+{
+    if (!m_ain.empty())
+    {
+        UTsize i, s, f=0;
+        Bricks::Pointer b;
+
+        i = 0; s = m_ain.size();
+        b = m_ain.ptr();
+        while (i < s)
+        {
+#ifdef GK_DEBUG_EXEC
+            if (f==0 && b[i]->wantsDebug())
+            {
+                dsPrintf("===== State Change %i =====\n", state);
+                f = 1;
+            }
+#endif
+
+            if (!(b[i]->getMask() & state))
+            {
+                m_aout.push_back(b[i]);
+#ifdef GK_DEBUG_EXEC
+                if (b[i]->wantsDebug())
+                    dsPrintf("Pop:  State %s\n", b[i]->getName().c_str());
+#endif
+            }
+            ++i;
+        }
+    }
+}
+
+
+// ----------------------------------------------------------------------------
+void gkLogicManager::notifySort(void)
+{
+    m_sort = true;
+}
+
+
+// ----------------------------------------------------------------------------
+void gkLogicManager::clearActuators(void)
+{
+    if (!m_aout.empty())
+    {
+        UTsize i, s;
+        Bricks::Pointer b;
+        i = 0; s = m_aout.size();
+        b = m_aout.ptr();
+        while (i < s)
+        {
+#ifdef GK_DEBUG_EXEC
+            if (b[i]->wantsDebug())
+                dsPrintf("Pop:  Actuator %s\n", b[i]->getName().c_str());
+#endif
+            b[i]->setActive(false);
+            m_ain.erase(b[i]);
+            ++i;
+        }
+        m_aout.clear(true);
+
+        if (m_ain.empty())
+            m_ain.clear(true);
+    }
+}
+// ----------------------------------------------------------------------------
+void gkLogicManager::sort(void)
+{
+    if (m_dispatchers)
+    {
+        UTsize i = 0;
+        while (i<DIS_MAX) m_dispatchers[i++]->sort();
+    }
+}
+
+
+// ----------------------------------------------------------------------------
 void gkLogicManager::update(gkScalar delta)
 {
-    if (m_dispatchers) {
-        for (int i = 0; i < DIS_MAX; ++ i)
-            m_dispatchers[i]->dispatch();
+
+    UTsize i, s;
+    Bricks::Pointer b;
+
+    if (m_sort)
+    {
+        sort();
+        m_sort = false;
     }
 
-    while (!m_sensorStack.empty()) {
-        m_sensorStack.top()->dispatch();
-        m_sensorStack.pop();
+    i = 0;
+    while (i<DIS_MAX) m_dispatchers[i++]->dispatch();
+
+
+    if (!m_cin.empty())
+    {
+        i = 0; s = m_cin.size();
+        b = m_cin.ptr();
+        while (i < s)
+        {
+            b[i]->execute();
+            b[i]->setActive(false);
+//#ifdef GK_DEBUG_EXEC
+//            if (b[i]->wantsDebug())
+//                dsPrintf("Remove: Controller %s\n", b[i]->getName().c_str());
+//#endif
+            ++i;
+        }
+        m_cin.clear(true);
     }
 
-    while (!m_actuatorStack.empty()) {
-        gkLogicActuator *act = m_actuatorStack.top();
-        act->execute();
-        act->setActive(false);
-        m_actuatorStack.pop();
+    if (!m_ain.empty())
+    {
+        i = 0; s = m_ain.size();
+        b = m_ain.ptr();
+        while (i < s)
+        {
+            b[i]->execute();
+            if (b[i]->isPulseOff())
+                m_aout.push_back(b[i]);
+            ++i;
+        }
     }
+
+    clearActuators();
 }
 
 

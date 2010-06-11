@@ -40,6 +40,8 @@ class gkLogicLink : public utListClass<gkLogicLink>::Link
 {
 public:
     typedef utList<gkLogicBrick*> BrickList;
+    typedef utHashTable<utPointerHashKey, gkLogicBrick *> BrickFinder;
+    typedef utArray<gkLogicLink*> OtherLinks;
 
 
 protected:
@@ -49,22 +51,42 @@ protected:
     BrickList   m_actuators;
     int         m_state;
 
+    OtherLinks  m_others;
+
+    BrickFinder m_cfind, m_afind;
+    gkGameObject *m_object;
+
 
 public:
 
     gkLogicLink();
     ~gkLogicLink();
 
+    gkLogicLink *clone(gkGameObject *dest);
+
+
     gkLogicActuator* findActuator(const gkString& name);
     gkLogicController* findController(const gkString& name);
 
+    gkLogicActuator* findActuator(void *user);
+    gkLogicController* findController(void *user);
+
     // object storage 
     void push(gkLogicSensor *v);
-    void push(gkLogicController *v);
-    void push(gkLogicActuator *v);
+    void push(gkLogicController *v, void *user=0);
+    void push(gkLogicActuator *v, void *user=0);
+
+    void notifyLink(gkLogicLink *link);
+    void notifyState(void);
     
-    GK_INLINE void setState(int v)              {m_state = v;}
-    GK_INLINE int getState(void)                {return m_state;}
+    BrickList& getSensors(void) {return m_sensors;}
+    BrickList& getControllers(void) {return m_controllers;}
+    BrickList& getActuators(void) {return m_actuators;}
+
+    GK_INLINE void          setState(int v)                 {m_state = v;}
+    GK_INLINE int           getState(void)                  {return m_state;}
+    GK_INLINE void          setObject(gkGameObject *v)      {m_object = v;}
+    GK_INLINE gkGameObject  *getObject(void)                {return m_object;}
 };
 
 #endif//_gkLogicLink_h_

@@ -32,32 +32,25 @@
 
 class gkLogicController : public gkLogicBrick
 {
-public:
-
-    typedef utList<gkLogicSensor*>      Sensors;
-    typedef utList<gkLogicActuator*>    Actuators;
-
 protected:
-    Sensors     m_sensors;
-    Actuators   m_actuators;
-    bool        m_priority;
-    int         m_stateMask;
+    gkSensors       m_sensors;
+    gkActuators     m_actuators;
+    bool            m_activeState;
+
+    void            cloneImpl(gkLogicLink *link, gkGameObject *dest);
 
 public:
 
     gkLogicController(gkGameObject *object, gkLogicLink *link, const gkString &name);
     virtual ~gkLogicController() {}
 
-    GK_INLINE void link(gkLogicSensor *v)       {GK_ASSERT(v); m_sensors.push_back(v);}
-    GK_INLINE void link(gkLogicActuator *v)     {GK_ASSERT(v); m_actuators.push_back(v);}
+    void sort(void);
+    void link(gkLogicSensor *v);
+    void link(gkLogicActuator *v);
 
-    // Process incoming events, handle then pass to actuators.
-    virtual void relay(void) = 0;
+    gkSensors&      getSensors(void)        {return m_sensors;}
+    gkActuators&    getActuators(void)      {return m_actuators;}
 
-    GK_INLINE void setPriority(bool v)  {m_priority = v;}
-    GK_INLINE int getPriority(void)     {return m_priority ? 1 : 0;}
-    GK_INLINE void setMask(int v)       {m_stateMask = v;}
-    GK_INLINE int getMask(void)         {return m_stateMask;}
 };
 
 

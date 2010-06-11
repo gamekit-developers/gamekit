@@ -35,6 +35,8 @@
 #include "AI/gkNavMeshData.h"
 
 class gkDynamicsWorld;
+class gkDebugger;
+class gkScene;
 
 // shorthand types
 typedef std::set<gkGameObject*>						gkGameObjectSet;
@@ -50,30 +52,7 @@ class gkScene : public gkObject
 {
 public:
 
-    class Listener
-    {
-    public:
-        virtual ~Listener() {}
-
-        virtual void objectCollided(gkGameObject *A, gkGameObject *B) {};
-
-        // Called when an object is moved / transformed
-        virtual void objectUpdated(gkGameObject *ob) {};
-
-        // Called when an object is added to the scene
-        virtual void objectAdded(gkGameObject *ob) {};
-
-        // Called when an object is removed from the scene
-        // (before it's deleted)
-        virtual void objectRemoved(gkGameObject *ob) {};
-
-        // Called when the scene is updated
-        virtual void update(gkScalar tick, gkScalar rate) {}
-    };
-
-public:
-
-    gkScene(const gkString& name, gkObject::Loader* loader = 0);
+    gkScene(const gkString& name);
     virtual ~gkScene();
 
     // Updates the game state
@@ -109,7 +88,6 @@ public:
 
     // physics
     GK_INLINE gkDynamicsWorld* getDynamicsWorld(void)       { return m_physicsWorld; }
-    gkDynamicsWorld* createWorld(gkObject::Loader *manual = 0);
 
 
     // notifications
@@ -123,32 +101,22 @@ public:
     bool            hasObject(gkGameObject *ob);
     gkGameObject*   getObject(const gkHashedString& name);
 
+    bool            hasMesh(const gkHashedString& ob);
+    gkMesh*         getMesh(const gkHashedString& name);
+
+
     // Translates to a blank scene node or empty object.
-    // loader is for creating custom loading schemes based
-    // on callbacks to gather all object information.
-    gkGameObject* createObject(const gkHashedString &name, gkObject::Loader *loader = 0);
-
-    // Creates a game light
-    // loader is for creating custom loading schemes based
-    // on callbacks to gather all object information.
-    gkLight* createLight(const gkHashedString &name, gkObject::Loader *loader = 0);
+    gkGameObject*   createObject(const gkHashedString &name);
+    gkLight*        createLight(const gkHashedString &name);
+    gkCamera*       createCamera(const gkHashedString &name);
+    gkEntity*       createEntity(const gkHashedString &name);
+    gkSkeleton*     createSkeleton(const gkHashedString &name);
+    gkMesh*         createMesh(const gkHashedString &name);
 
 
-    // Creates a game camera
-    // loader is for creating custom loading schemes based
-    // on callbacks to gather all object information.
-    gkCamera* createCamera(const gkHashedString &name, gkObject::Loader *loader = 0);
+    gkGameObject*   cloneObject(gkGameObject *obj, int life);
+    void            endObject(gkGameObject *obj);
 
-
-    // Creates a game entity
-    // loader is for creating custom loading schemes based
-    // on callbacks to gather all object information.
-    gkEntity* createEntity(const gkHashedString &name, gkObject::Loader *loader = 0);
-
-    // Creates a game skeleton
-    // loader is for creating custom loading schemes based
-    // on callbacks to gather all object information.
-    gkSkeleton* createSkeleton(const gkHashedString &name, gkObject::Loader *loader = 0);
 
     // group access
 
@@ -162,6 +130,11 @@ public:
     gkGameObjectInstance *createInstance(gkGameObject *owner, gkGameObjectGroup *group);
 
     GK_INLINE bool      hasGroup(const gkHashedString &name) {return m_groups.find(name) != UT_NPOS;}
+
+    // global debugging 
+    gkDebugger          *getDebugger(void);
+
+    GK_INLINE bool      hasLights(void) {return m_hasLights;}
 
 protected:
 
@@ -177,20 +150,33 @@ protected:
 	// Properties for this scene
 	gkSceneProperties       m_baseProps;
 
+    gkDebugger              *m_debugger;
 
 	gkGameObjectHashMap     m_objects;
     gkGameObjectArray       m_transformObjects;
     gkGameObjectSet			m_loadedObjects;
+    gkGameObjectArray       m_constraintObjects;
+    gkGameObjectArray       m_clones;
+    gkGameObjectArray       m_tickClones;
+    gkGameObjectArray       m_endObjects;
+
     gkDynamicsWorld*        m_physicsWorld;
     gkGroupTable            m_groups;
     gkGroupInstances        m_instances;
-
-    virtual void loadImpl();
-    virtual void unloadImpl();
-
-	void setShadows();
+    bool                    m_hasLights;
+    bool                    m_markDBVT;
 
 private:
+
+    void postLoadImpl(void);
+    void loadImpl(void);
+    void unloadImpl(void);
+	void setShadows(void);
+    void applyConstraints(void);
+    void tickClones(void);
+    void destroyClones(void);
+    void endObjects(void);
+
 
 	Ogre::AxisAlignedBox m_Limits;
 };

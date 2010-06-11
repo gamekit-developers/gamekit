@@ -29,6 +29,7 @@
 
 #include "gkGameObject.h"
 #include "gkSerialize.h"
+#include "OgreEntity.h"
 #include "Animation/gkActionManager.h"
 
 
@@ -36,38 +37,38 @@
 class gkEntity : public gkGameObject
 {
 public:
-    gkEntity(gkScene *scene, const gkString& name, gkObject::Loader* loader = 0);
-    virtual ~gkEntity() {}
+    gkEntity(gkScene *scene, const gkString &name);
+    virtual ~gkEntity();
 
-
-    GK_INLINE Ogre::Entity* getEntity(void)                             {return m_entity;}
+    GK_INLINE Ogre::Entity *getEntity(void) { return m_entity; }
 
     // Property access
-    GK_INLINE gkEntityProperties& getEntityProperties(void)             {return m_entityProps;}
-    GK_INLINE void setEntityProperties(const gkEntityProperties& v)     {m_entityProps = v;}
-    GK_INLINE gkAnimProperties& getAnimationProperties(void)            {return m_animProps;}
-    GK_INLINE void setAnimationProperties(const gkAnimProperties& v)    {m_animProps = v;}
+    GK_INLINE gkEntityProperties  &getEntityProperties(void) {return *m_entityProps;}
 
-
-
-    void playAction(const gkString& act, gkScalar blend);
-	gkAction* getActiveAction() const {return m_active;}
+    // actions 
+    void        evalAction(gkAction *act, gkScalar animTime);
+    void        playAction(const gkString &act, gkScalar blend);
+    gkAction    *getActiveAction(void) const {return m_active;}
 
 
     void _resetPose(void);
-    void updateAnimations(void);
 
 protected:
+    virtual gkBoundingBox getAabb() const;
+
+    void        createMesh(void);
     gkObject    *clone(const gkString &name);
 
-    gkEntityProperties      m_entityProps;
-    Ogre::Entity*           m_entity;
-    gkAnimProperties        m_animProps;
+    gkEntityProperties     *m_entityProps;
+    Ogre::Entity           *m_entity;
     gkActionManager         m_actionMgr;
-    gkAction*               m_active, *m_default;
-    gkScalar                m_animTime, m_blendTime;
-    gkString                m_activeName;
-    gkSkeleton*             m_skeleton;
+    gkAction               *m_active;
+    gkSkeleton             *m_skeleton;
+
+
+    // internal mesh loader
+    Ogre::ManualResourceLoader *m_meshLoader;
+
 
     virtual void loadImpl();
     virtual void unloadImpl();

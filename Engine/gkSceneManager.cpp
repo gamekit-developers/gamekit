@@ -50,13 +50,13 @@ gkScene* gkSceneManager::getScene(const gkString& name)
 
 
 
-gkScene* gkSceneManager::create(const gkString& name, gkObject::Loader *loader)
+gkScene* gkSceneManager::create(const gkString& name)
 {
     size_t pos;
     if ((pos = m_objects.find(name)) != GK_NPOS)
         return 0;
 
-    gkScene *ob = new gkScene(name, loader);
+    gkScene *ob = new gkScene(name);
     m_objects.insert(name, ob);
     return ob;
 }

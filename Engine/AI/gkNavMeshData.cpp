@@ -729,13 +729,13 @@ void gkNavMeshData::AddCollisionObj()
 
 bool gkNavMeshData::isValid(gkGameObject* pObj) 
 {
-	const int& physicsState = pObj->getProperties().physicsState;
+	const gkPhysicsProperties& physicsState = pObj->getProperties().m_physics;
 
 	bool active = false;
 	
 	btCollisionObject* pColObj = pObj->getCollisionObject();
 
-	if(physicsState == GK_RIGID_BODY && pColObj)
+	if(physicsState.isRigid() && pColObj)
 	{
 		int current_state = pColObj->getActivationState();
 
@@ -743,7 +743,7 @@ bool gkNavMeshData::isValid(gkGameObject* pObj)
 
 		active = current_state == WANTS_DEACTIVATION && old_state == ACTIVE_TAG;
 	}
-	else if(physicsState == GK_STATIC)
+	else if(physicsState.isStatic())
 	{
 		active = true;
 	}

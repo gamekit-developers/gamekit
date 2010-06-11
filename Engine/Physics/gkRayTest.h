@@ -48,12 +48,15 @@ public:
 
 	gkGameObject* getObject() const;
 
+    gkScalar getHitFraction() const {return m_hitFraction;}
+
 private:
 
 	gkVector3 m_hitPointWorld;
 
 	btCollisionObject* m_collisionObject;
     
+    gkScalar m_hitFraction;
 };
 
 

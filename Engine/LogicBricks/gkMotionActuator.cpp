@@ -28,21 +28,35 @@
 #include "gkGameObject.h"
 #include "gkRigidBody.h"
 
+
+// ----------------------------------------------------------------------------
 gkMotionActuator::gkMotionActuator(gkGameObject *object, gkLogicLink *link, const gkString &name)
 :       gkLogicActuator(object, link, name),
         m_type(0), m_linvInc(false), m_damping(1.f)
 {
 }
 
+// ----------------------------------------------------------------------------
 gkMotionActuator::~gkMotionActuator()
 {
 }
 
+
+// ----------------------------------------------------------------------------
+gkLogicBrick* gkMotionActuator::clone(gkLogicLink *link, gkGameObject *dest)
+{
+    gkMotionActuator *act = new gkMotionActuator(*this);
+    act->m_link = link;
+    act->m_object = dest;
+    return act;
+}
+
+// ----------------------------------------------------------------------------
 void gkMotionActuator::execute(void)
 {
-    GK_ASSERT(m_object);
-    if (!m_object->isLoaded())
+    if (isPulseOff())
         return;
+
 
     if (m_type == MT_SIMPLE) {
         if (m_loc.evaluate)
@@ -59,16 +73,16 @@ void gkMotionActuator::execute(void)
 			if(body)
 			{
 				if (m_force.evaluate)
-					body->applyForce(m_force.vec* m_damping, m_force.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
+					body->applyForce(m_force.vec * m_damping, m_force.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
 				if (m_torque.evaluate)
-					body->applyTorque(m_torque.vec* m_damping, m_torque.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
+					body->applyTorque(m_torque.vec * m_damping, m_torque.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
 
-				if (m_linv.evaluate)
+                if (m_linv.evaluate)
 				{
-					gkVector3 extra(0,0,0);
+					gkVector3 extra = m_linv.vec;
 					if (m_linvInc)
-						extra = body->getLinearVelocity();
-					body->setLinearVelocity((m_linv.vec + extra) *m_damping , m_linv.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
+						extra += body->getLinearVelocity();
+					body->setLinearVelocity(extra * m_damping, m_linv.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
 				}
 				if (m_angv.evaluate)
 					body->setAngularVelocity(m_angv.vec *m_damping , m_angv.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);

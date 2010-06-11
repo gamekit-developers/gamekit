@@ -28,15 +28,27 @@
 #include "gkLuaManager.h"
 
 
+// ----------------------------------------------------------------------------
 gkScriptController::gkScriptController(gkGameObject *object, gkLogicLink *link, const gkString &name)
 :       gkLogicController(object, link, name), m_script(0), m_error(false), m_isModule(false)
 {
 }
 
 
-void gkScriptController::relay(void)
+// ----------------------------------------------------------------------------
+gkLogicBrick* gkScriptController::clone(gkLogicLink *link, gkGameObject *dest)
 {
-    if (m_error) 
+    gkScriptController *cont = new gkScriptController(*this);
+    cont->cloneImpl(link, dest);
+
+    return cont;
+}
+
+
+// ----------------------------------------------------------------------------
+void gkScriptController::execute(void)
+{
+    if (m_error || m_sensors.empty()) 
         return;
 
     // TODO if m_isModule

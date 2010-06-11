@@ -60,9 +60,6 @@ public:
 
 		if(pBlendFile)
 		{
-			if (m_prefs.userWindow)
-				m_engine->initializeWindow();
-
 			gkSceneIterator scit = pBlendFile->getSceneIterator();
 
 			GK_ASSERT(scit.hasMoreElements());

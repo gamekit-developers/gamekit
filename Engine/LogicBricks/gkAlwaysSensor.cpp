@@ -28,8 +28,18 @@
 #include "gkLogicManager.h"
 #include "gkLogicDispatcher.h"
 
+// ----------------------------------------------------------------------------
 gkAlwaysSensor::gkAlwaysSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
 :       gkLogicSensor(object, link, name)
 {
-    gkLogicManager::getSingleton().getDispatcher(DIS_CONSTANT).connect(this);
+    m_dispatchType = DIS_CONSTANT;
+    connect();
+}
+
+// ----------------------------------------------------------------------------
+gkLogicBrick* gkAlwaysSensor::clone(gkLogicLink *link, gkGameObject *dest)
+{
+    gkAlwaysSensor *sens = new gkAlwaysSensor(*this);
+    sens->cloneImpl(link, dest);
+    return sens;
 }

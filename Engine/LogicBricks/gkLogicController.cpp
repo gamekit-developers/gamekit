@@ -25,9 +25,73 @@
 -------------------------------------------------------------------------------
 */
 #include "gkLogicController.h"
+#include "gkLogicSensor.h"
+#include "gkLogicActuator.h"
+#include "gkLogicLink.h"
+#include "gkGameObject.h"
 
 
+// ----------------------------------------------------------------------------
 gkLogicController::gkLogicController(gkGameObject *object, gkLogicLink *link, const gkString &name)
-:       gkLogicBrick(object, link, name), m_priority(false), m_stateMask(1)
+:       gkLogicBrick(object, link, name), m_activeState(false)
 {
+}
+
+// ----------------------------------------------------------------------------
+void gkLogicController::cloneImpl(gkLogicLink *link, gkGameObject *dest)
+{
+    gkLogicBrick::cloneImpl(link, dest);
+    m_sensors.clear();
+    m_actuators.clear();
+}
+
+
+// ----------------------------------------------------------------------------
+bool gkLogicController_sSort(gkLogicSensor *const &a, gkLogicSensor *const &b)
+{
+    return a->getPriority() < b->getPriority();
+}
+
+// ----------------------------------------------------------------------------
+bool gkLogicController_aSort(gkLogicActuator *const &a, gkLogicActuator *const &b)
+{
+    return a->getPriority() < b->getPriority();
+}
+
+// ----------------------------------------------------------------------------
+void gkLogicController::sort(void)
+{
+    m_sensors.sort(gkLogicController_sSort);
+    m_actuators.sort(gkLogicController_aSort);
+}
+
+// ----------------------------------------------------------------------------
+void gkLogicController::link(gkLogicSensor *v)
+{
+    UT_ASSERT(v && m_sensors.find(v) == UT_NPOS);
+    m_sensors.push_back(v);
+
+    // append state bits
+    v->getLink()->setState(m_link->getState());
+    m_object->setState(m_link->getState());
+    v->setMask(v->getMask() | getMask());
+    v->setDebugMask(getDebugMask());
+    m_link->notifyLink(v->getLink());
+}
+
+
+// ----------------------------------------------------------------------------
+void gkLogicController::link(gkLogicActuator *v)
+{
+    UT_ASSERT(v && m_actuators.find(v) == UT_NPOS);
+    m_actuators.push_back(v);
+
+    v->setPriority(getPriority());
+
+    // append state bits
+    v->getLink()->setState(m_link->getState());
+    m_object->setState(m_link->getState());
+    v->setMask(v->getMask() | getMask());
+    v->setDebugMask(getDebugMask());
+    m_link->notifyLink(v->getLink());
 }

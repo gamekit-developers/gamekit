@@ -67,6 +67,19 @@ gkGameObject *gkGameObjectInstance::getObject(const gkHashedString &name)
 }
 
 
+void gkGameObjectInstance::unloadObject(const gkHashedString &name)
+{
+    UTsize pos;
+    if ((pos = m_objects.find(name)) == UT_NPOS)
+    {
+        // ignore
+        return;
+    }
+    gkGameObject* ob= m_objects.at(pos);
+    ob->unload();
+}
+
+
 void gkGameObjectInstance::removeObject(const gkHashedString &name)
 {
     UTsize pos;
@@ -75,6 +88,7 @@ void gkGameObjectInstance::removeObject(const gkHashedString &name)
         // ignore
         return;
     }
+
 
     // we own this object, so destroy 
     gkGameObject* ob= m_objects.at(pos);
@@ -89,16 +103,35 @@ void gkGameObjectInstance::removeObject(const gkHashedString &name)
 
 void gkGameObjectInstance::addObject(gkGameObject *v)
 {
-    gkHashedString name = v->getName();
+    gkHashedString name = m_parent->getName().str() + "/" + v->getName() + "/Handle_" +  Ogre::StringConverter::toString(m_handle);
 
     // ignore
     if (m_objects.find(name) != UT_NPOS)
         return;
 
-    gkGameObject *ob = static_cast<gkGameObject*>(v->clone( m_parent->getName().str() + "/" + v->getName() + "/Handle_" + 
-                                                            Ogre::StringConverter::toString(m_handle)));
+    gkGameObject *ob = static_cast<gkGameObject*>(v->clone(name.str()));
     ob->attachToGroupInstance(this);
-    ob->setActiveLayer(v->isInActiveLayer());
+    ob->setActiveLayer(m_owner->isInActiveLayer());
+
+    gkGameObjectProperties &props = ob->getProperties();
+
+
+    gkMatrix4 c = props.m_transform.toMatrix();
+    gkMatrix4 p = m_owner->getProperties().m_transform.toMatrix();
+
+    
+    if (ob->getParent() == 0)
+    {
+        c = p * c;
+        gkMathUtils::extractTransform(c, props.m_transform.loc, props.m_transform.rot, props.m_transform.scl);
+    }
+    else
+    {
+        c = ob->getParent()->getProperties().m_transform.toMatrix().inverse() * c;
+        gkMathUtils::extractTransform(c, props.m_transform.loc, props.m_transform.rot, props.m_transform.scl);
+    }
+
+
     m_objects.insert(name, ob);
 }
 
@@ -106,6 +139,11 @@ void gkGameObjectInstance::addObject(gkGameObject *v)
 void gkGameObjectInstance::loadImpl(void)
 {
     // call load on all objects
+
+    if (!m_owner->isInActiveLayer())
+        return;
+
+
     utHashTableIterator<InstanceObjects> iter(m_objects);
     while (iter.hasMoreElements())
         iter.getNext().second->load();
@@ -135,7 +173,7 @@ gkGameObjectGroup::~gkGameObjectGroup()
 
 void gkGameObjectGroup::addObject(gkGameObject *v)
 {
-    if (!v) return;
+     if (!v) return;
 
     gkHashedString name = v->getName();
 
@@ -198,7 +236,7 @@ gkGameObjectInstance* gkGameObjectGroup::createInstance(gkGameObject *instPar)
 
 
     // push new objects
-    utHashTableIterator<InternalObjects> iter(m_internal);
+    utHashTableIterator<Objects> iter(m_internal);
     while (iter.hasMoreElements())
         newInst->addObject(iter.getNext().second);
 
@@ -210,10 +248,10 @@ gkGameObjectInstance* gkGameObjectGroup::createInstance(gkGameObject *instPar)
 void gkGameObjectGroup::build(Ogre::SceneManager *mgr)
 {
     if (m_geom)
+    {
         mgr->destroyStaticGeometry(m_geom);
-
-    m_geom = mgr->createStaticGeometry(m_name.str());
-
+    }
+    m_geom = 0;
 
     gkGroupInstanceIterator iter = gkGroupInstanceIterator(m_instances);
     while (iter.hasMoreElements())
@@ -232,10 +270,13 @@ void gkGameObjectGroup::build(Ogre::SceneManager *mgr)
             {
                 const gkGameObjectProperties& props = obj->getProperties();
 
-                if (props.physicsState == GK_NO_COLLISION)
+                if (!props.isPhysicsObject())
                 {
-
                     gkEntity *ent = obj->getEntity();
+
+                    if (!m_geom)
+                        m_geom = mgr->createStaticGeometry(m_name.str());
+
                     m_geom->addEntity(ent->getEntity(), obj->getWorldPosition(), 
                                                         obj->getWorldOrientation(), 
                                                         obj->getWorldScale());
@@ -246,13 +287,12 @@ void gkGameObjectGroup::build(Ogre::SceneManager *mgr)
         }
     }
 
-    m_geom->build();
-    m_geom->setCastShadows(false);
+    if (m_geom)
+    {
+        m_geom->build();
+        m_geom->setCastShadows(false);
+    }
 
-
-#if UT_DEBUG == 1
-    m_geom->dump(m_name.str() + "_static.txt");
-#endif
 }
 
 

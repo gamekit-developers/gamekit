@@ -25,76 +25,206 @@
 -------------------------------------------------------------------------------
 */
 #include "gkLogicLink.h"
+#include "gkGameObject.h"
 #include "gkLogicSensor.h"
 #include "gkLogicController.h"
 #include "gkLogicActuator.h"
+#include "gkLogicManager.h"
 
 
-gkLogicLink::gkLogicLink() : m_state(0)
+// ----------------------------------------------------------------------------
+gkLogicLink::gkLogicLink() : m_state(0), m_object(0)
 {
 }
 
 
+// ----------------------------------------------------------------------------
 gkLogicLink::~gkLogicLink()
 {
-    if (!m_sensors.empty()) {
+    if (!m_sensors.empty())
+    {
         utListIterator<BrickList> it(m_sensors);
         while (it.hasMoreElements())
             delete it.getNext();
     }
-    if (!m_controllers.empty()) {
+    if (!m_controllers.empty())
+    {
         utListIterator<BrickList> it(m_controllers);
         while (it.hasMoreElements())
             delete it.getNext();
     }
-    if (!m_actuators.empty()) {
+    if (!m_actuators.empty())
+    {
         utListIterator<BrickList> it(m_actuators);
         while (it.hasMoreElements())
             delete it.getNext();
     }
 }
 
+
+// ----------------------------------------------------------------------------
+gkLogicLink *gkLogicLink::clone(gkGameObject *dest)
+{
+    gkLogicLink *link = gkLogicManager::getSingleton().createLink();
+    link->m_object = dest;
+    link->m_state = m_state;
+
+    if (!m_actuators.empty())
+    {
+        utListIterator<BrickList> it(m_actuators);
+        while (it.hasMoreElements())
+        {
+            gkLogicActuator *oact = (gkLogicActuator*)it.getNext();
+            gkLogicActuator *nact = (gkLogicActuator*)oact->clone(link, dest);
+
+            link->push(nact, oact);
+        }
+    }
+
+    if (!m_controllers.empty())
+    {
+
+        utListIterator<BrickList> it(m_controllers);
+        while (it.hasMoreElements())
+        {
+            gkLogicController *ocont = (gkLogicController*)it.getNext();
+            gkLogicController *ncont = (gkLogicController*)ocont->clone(link, dest);
+
+            gkActuators &acts = ocont->getActuators();
+            if (!acts.empty())
+            {
+                for (UTsize i=0; i<acts.size(); ++i)
+                {
+                    gkLogicActuator *lnact = link->findActuator(acts.at(i));
+                    if (lnact)
+                        ncont->link(lnact);
+                }
+            }
+            link->push(ncont, ocont);
+        }
+    }
+
+    if (!m_sensors.empty())
+    {
+        utListIterator<BrickList> it(m_sensors);
+        while (it.hasMoreElements())
+        {
+            gkLogicSensor   *osens = (gkLogicSensor*)it.getNext();
+            gkLogicSensor   *nsens = (gkLogicSensor*)osens->clone(link, dest);
+
+            gkControllers &conts = osens->getControllers();
+            if (!conts.empty())
+            {
+                for (UTsize i=0; i<conts.size(); ++i)
+                {
+                    gkLogicController *lncont = link->findController(conts.at(i));
+                    if (lncont)
+                        nsens->link(lncont);
+                }
+            }
+            link->push(nsens);
+        }
+    }
+    return link;
+}
+
+// ----------------------------------------------------------------------------
 void gkLogicLink::push(gkLogicSensor *v)
 {
-    GK_ASSERT(v); 
+    GK_ASSERT(v);
     m_sensors.push_back(v);
 }
 
-void gkLogicLink::push(gkLogicController *v)
+// ----------------------------------------------------------------------------
+void gkLogicLink::push(gkLogicController *v, void *user)
 {
-    GK_ASSERT(v); 
+    GK_ASSERT(v);
     m_controllers.push_back(v);
+
+    if (user)
+        m_cfind.insert(user, v);
 }
 
-void gkLogicLink::push(gkLogicActuator *v)
+// ----------------------------------------------------------------------------
+void gkLogicLink::push(gkLogicActuator *v, void *user)
 {
-    GK_ASSERT(v); 
+    GK_ASSERT(v);
     m_actuators.push_back(v);
+    if (user)
+        m_afind.insert(user, v);
 }
 
 
-gkLogicActuator* gkLogicLink::findActuator(const gkString& name)
+// ----------------------------------------------------------------------------
+gkLogicActuator *gkLogicLink::findActuator(const gkString &name)
 {
-    if (!m_actuators.empty()) {
+    if (!m_actuators.empty())
+    {
 
         utListIterator<BrickList> it(m_actuators);
-        while (it.hasMoreElements()) {
+        while (it.hasMoreElements())
+        {
+
             gkLogicBrick *ac = it.getNext();
-            if (ac->getName() == name) return static_cast<gkLogicActuator*>(ac);
+            if (ac->getName() == name)
+                return static_cast<gkLogicActuator *>(ac);
         }
     }
     return 0;
 }
 
-gkLogicController* gkLogicLink::findController(const gkString& name)
+// ----------------------------------------------------------------------------
+gkLogicController *gkLogicLink::findController(const gkString &name)
 {
-    if (!m_controllers.empty()) {
+    if (!m_controllers.empty())
+    {
 
         utListIterator<BrickList> it(m_controllers);
-        while (it.hasMoreElements()) {
+        while (it.hasMoreElements())
+        {
             gkLogicBrick *co = it.getNext();
-            if (co->getName() == name) return static_cast<gkLogicController*>(co);
+            if (co->getName() == name) return static_cast<gkLogicController *>(co);
         }
     }
     return 0;
+}
+
+
+// ----------------------------------------------------------------------------
+gkLogicActuator *gkLogicLink::findActuator(void *user)
+{
+    UTsize pos = m_afind.find(user);
+    if (pos != UT_NPOS)
+        return static_cast<gkLogicActuator *>(m_afind.at(pos));
+    return 0;
+}
+
+
+// ----------------------------------------------------------------------------
+gkLogicController  *gkLogicLink::findController(void *user)
+{
+    UTsize pos = m_cfind.find(user);
+    if (pos != UT_NPOS)
+        return static_cast<gkLogicController *>(m_cfind.at(pos));
+    return 0;
+}
+
+
+
+// ----------------------------------------------------------------------------
+void gkLogicLink::notifyLink(gkLogicLink *link)
+{
+    if (this != link && m_others.find(link) == UT_NPOS)
+        m_others.push_back(link);
+}
+
+
+// ----------------------------------------------------------------------------
+void gkLogicLink::notifyState(void)
+{
+    if (!m_others.empty())
+    {
+        for (UTsize i=0; i<m_others.size(); ++i)
+            m_others[i]->m_state = m_state;
+    }
 }

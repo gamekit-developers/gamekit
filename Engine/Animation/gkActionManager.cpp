@@ -58,7 +58,7 @@ void gkActionManager::setAction(gkAction *act)
 }
 
 
-void gkActionManager::update(gkScalar delta)
+void gkActionManager::update(gkScalar delta, gkScalar blendDelta)
 {
     if (m_blend && m_active)
     {
@@ -75,7 +75,7 @@ void gkActionManager::update(gkScalar delta)
         {
             m_blend->setWeight(m_blendTime);
             m_active->setWeight(1.f - m_blendTime);
-            m_blend->evaluate(delta);
+            m_blend->evaluate(blendDelta);
         }
         else
         {
@@ -91,4 +91,10 @@ void gkActionManager::update(gkScalar delta)
 
     if (m_active)
         m_active->evaluate(delta);
+}
+
+
+void gkActionManager::update(gkScalar delta)
+{
+    update(delta, delta);
 }

@@ -48,6 +48,7 @@ public:
 
     // update all
     void update(gkScalar delta);
+    void update(gkScalar delta, gkScalar blendDelta);
 };
 
 #endif//_gkActionManager_h_

@@ -34,10 +34,10 @@
 class btDynamicsWorld;
 class btRigidBody;
 class btTriangleMesh;
+class btCollisionShape;
 class gkDynamicsWorld;
 
-
-// Game body
+// needs renamed to gkPhysicsController
 class gkRigidBody : public gkObject, public btMotionState
 {
 
@@ -50,7 +50,8 @@ protected:
     gkGameObject*       m_object;
 
     // Bullet body
-    btRigidBody*        m_rigidBody;
+    btRigidBody*        m_body;
+    btCollisionShape*   m_shape;
 
     // transform callbacks
 
@@ -62,10 +63,8 @@ protected:
 
 public:
 
-    gkRigidBody(const gkString& name, gkGameObject *object, gkDynamicsWorld *owner, gkObject::Loader *manual=0);
+    gkRigidBody(const gkString& name, gkGameObject *object, gkDynamicsWorld *owner);
     virtual ~gkRigidBody();
-
-    void _reinstanceBody(btRigidBody *body);
 
     void setTransformState(const gkTransformState& state);
 
@@ -89,7 +88,7 @@ public:
 	}
 
     // Gain access to the bullet body
-    btRigidBody* getBody(void)      {return m_rigidBody;}
+    btRigidBody* getBody(void)      {return m_body;}
     // Gain access to the world
     gkDynamicsWorld* getWorld(void) {GK_ASSERT(m_owner); return m_owner;}
     // Gain access to the game object

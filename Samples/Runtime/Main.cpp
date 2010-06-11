@@ -32,25 +32,24 @@ class OgreKit : public gkCoreApplication, public gkWindowSystem::Listener
 public:
     gkString    m_blend;
     gkScene    *m_scene;
-
 public:
     OgreKit(const gkString &blend)
         :   m_blend(blend), m_scene(0)
     {
         m_prefs.winsize.x        = 800;
         m_prefs.winsize.y        = 600;
-        m_prefs.wintitle         = gkString("OgreKit Demo (Press Escape to exit)[") + m_blend + gkString("]");
-        m_prefs.blendermat       = false;
-        m_prefs.verbose          = false;
+        m_prefs.wintitle         = gkString("OgreKit Demo (Press Escape to exit)[") + m_blend + gkString("] - ");
+        m_prefs.verbose          = true;
         m_prefs.grabInput        = true;
         m_prefs.debugPhysics     = false;
         m_prefs.debugPhysicsAabb = false;
 
         gkPath path = "OgreKitStartup.cfg";
         // overide settings if found
-        if (path.isFileInBundle()) m_prefs.load(path.getPath());
+        if (path.isFileInBundle()) 
+            m_prefs.load(path.getPath());
 
-        m_prefs.userWindow  = false;
+        m_prefs.wintitle += m_prefs.rendersystem == OGRE_RS_GL ? "OpenGL" : "Direct3D"; 
     }
 
     virtual ~OgreKit()
@@ -66,8 +65,6 @@ public:
             return false;
         }
 
-        if (m_prefs.userWindow) m_engine->initializeWindow();
-
         gkSceneIterator scit = blend->getSceneIterator();
         if (!scit.hasMoreElements())
         {
@@ -78,12 +75,6 @@ public:
         m_scene = scit.peekNext();
 
         m_scene->load();
-
-        gkLuaScript *script = gkLuaManager::getSingleton().getScript("OnLoad.lua");
-
-        // load user application
-        if (script) 
-            script->execute();
 
         // add input hooks
         gkWindowSystem::getSingleton().addListener(this);

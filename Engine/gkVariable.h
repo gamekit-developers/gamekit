@@ -66,6 +66,13 @@ public:
     {
     }
 
+    gkVariable *clone(void)
+    {
+        return new gkVariable(*this);
+    }
+
+
+    GK_INLINE int getType(void) {return m_type;}
 
 
     GK_INLINE void setValue(float v)                { m_type = VAR_REAL; m_numeric.w = (gkScalar)v; }
@@ -167,8 +174,156 @@ public:
         return gkQuaternion(m_numeric.w, m_numeric.x, m_numeric.y, m_numeric.z);
     }
 
+    GK_INLINE void setDebug(bool v)         { m_debug = v;}
     GK_INLINE bool isDebug(void) const      { return m_debug; }
     GK_INLINE const gkString& getName(void) { return m_name; }
+
+    bool identity() const
+    {
+        switch (m_type)
+        {
+        case VAR_BOOL:
+            return getValueBool();
+        case VAR_REAL:
+            return getValueReal() != 0;
+        case VAR_INT:
+            return getValueInt() != 0;
+        default:
+            return !m_string.empty();
+        }
+        return false;
+    }
+
+    bool less(const gkVariable& o) const
+    {
+        switch (m_type)
+        {
+        case VAR_BOOL:
+            return (int)getValueBool() < (int)o.getValueBool();
+        case VAR_REAL:
+            return getValueReal() < o.getValueReal();
+        case VAR_INT:
+            return getValueInt() < o.getValueInt();
+         default:
+            return getValueString() < o.getValueString();
+        }
+        return false;
+    }
+
+
+
+    bool greater(const gkVariable& o) const
+    {
+        switch (m_type)
+        {
+        case VAR_BOOL:
+            return (int)getValueBool() > (int)o.getValueBool();
+        case VAR_REAL:
+            return getValueReal() > o.getValueReal();
+        case VAR_INT:
+            return getValueInt() > o.getValueInt();
+         default:
+            return getValueString() > o.getValueString();
+        }
+        return false;
+    }
+
+    bool equal(const gkVariable& o) const
+    {
+        switch (m_type)
+        {
+        case VAR_BOOL:
+            return getValueBool() == o.getValueBool();
+        case VAR_REAL:
+            return getValueReal() == o.getValueReal();
+        case VAR_INT:
+            return getValueInt() == o.getValueInt();
+         default:
+            return getValueString() == o.getValueString();
+        }
+        return false;
+    }
+
+    bool notequal(const gkVariable& o) const
+    {
+        switch (m_type)
+        {
+        case VAR_BOOL:
+            return getValueBool() != o.getValueBool();
+        case VAR_REAL:
+            return getValueReal() != o.getValueReal();
+        case VAR_INT:
+            return getValueInt() != o.getValueInt();
+         default:
+            return getValueString() != o.getValueString();
+        }
+        return false;
+    }
+
+    void assign(const gkString& o)
+    {
+        gkVariable nv;
+        nv.setValue(o);
+
+        switch (m_type)
+        {
+        case VAR_BOOL:
+            setValue(nv.getValueBool());
+            break;
+        case VAR_REAL:
+            setValue(nv.getValueReal());
+            break;
+        case VAR_INT:
+            setValue(nv.getValueInt());
+            break;
+         default:
+            setValue(nv.getValueString());
+            break;
+        }
+    }
+
+    void add(const gkString& o)
+    {
+        gkVariable nv;
+        nv.setValue(o);
+
+        switch (m_type)
+        {
+        case VAR_BOOL:
+            setValue(nv.getValueBool());
+            break;
+        case VAR_REAL:
+            setValue(getValueReal() + nv.getValueReal());
+            break;
+        case VAR_INT:
+            setValue(getValueInt() + nv.getValueInt());
+            break;
+         default:
+            setValue(getValueString() + nv.getValueString());
+            break;
+        }
+    }
+
+    void toggle(const gkString& o)
+    {
+        gkVariable nv;
+        nv.setValue(o);
+
+        switch (m_type)
+        {
+        case VAR_BOOL:
+            setValue(!nv.getValueBool());
+            break;
+        case VAR_REAL:
+            setValue(!nv.getValueReal());
+            break;
+        case VAR_INT:
+            setValue(!nv.getValueInt());
+            break;
+         default:
+            break;
+        }
+    }
 
 private:
 

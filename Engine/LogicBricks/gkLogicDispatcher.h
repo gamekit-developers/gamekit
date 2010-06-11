@@ -32,31 +32,41 @@
 
 class gkLogicSensor;
 
+
+// ----------------------------------------------------------------------------
 class gkAbstractDispatcher
 {
 public:
-    typedef utList<gkLogicSensor*> SensorList;
+    typedef utArray<gkLogicSensor*>         SensorList;
+    typedef utArrayIterator<SensorList>     SensorIterator;
+
 
 protected:
-    SensorList  m_sensors;
+    SensorList m_sensors;
+
+    void doDispatch(SensorList &sens);
 
 public:
     gkAbstractDispatcher() {}
     virtual ~gkAbstractDispatcher() {}
 
     virtual void dispatch(void) = 0;
+    void sort(void);
+
 
     GK_INLINE void connect(gkLogicSensor *sens)     {GK_ASSERT(sens); m_sensors.push_back(sens); }
+    GK_INLINE void disconnect(gkLogicSensor *sens)  {GK_ASSERT(sens); m_sensors.erase(sens); }
     GK_INLINE void clear(void)                      {m_sensors.clear(); }
+    GK_INLINE SensorIterator getIterator(void)      {return SensorIterator(m_sensors);}
 };
 
 
 
+// ----------------------------------------------------------------------------
 class gkConstantDispatch : public gkAbstractDispatcher
 {
 public:
     virtual ~gkConstantDispatch() {}
-
     void dispatch(void);
 };
 

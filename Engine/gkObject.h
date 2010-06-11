@@ -40,32 +40,9 @@ class btPersistentManifold;
 // Base class representing a loadable object
 class gkObject : public utListClass<gkObject>::Link
 {
-public:
-
-    // Manual loader
-    class Loader
-    {
-    protected:
-        // Auto free from gkObject
-        bool m_autoFree;
-
-    public:
-        Loader() : m_autoFree(true) {}
-        virtual ~Loader() {}
-
-        virtual void    load(gkObject *ob) = 0;
-        virtual Loader* clone(void)     {return 0;}
-        GK_INLINE bool  isAuto(void)    {return m_autoFree;}
-    };
-
-
-
 protected:
     const gkString      m_name;
     bool                m_loaded;
-    Loader             *m_manual;
-
-    friend class gkObject::Loader;
 
     virtual void preLoadImpl(void) {}
     virtual void preUnloadImpl(void) {}
@@ -95,7 +72,7 @@ public:
 
     typedef utArray<ContactInfo> ContactArray;
 
-    gkObject(const gkString &name, gkObject::Loader *manual = 0);
+    gkObject(const gkString &name);
     virtual ~gkObject();
 
     // duplication 
@@ -112,7 +89,6 @@ public:
 
     GK_INLINE const gkString    &getName(void)                          {return m_name;}
     GK_INLINE bool              isLoaded(void) const                    {return m_loaded;}
-    GK_INLINE bool              isManual(void) const                    {return m_manual != 0;}
 
     // collision contact information
     GK_INLINE ContactArray      &getContacts(void)                      {return m_contacts;}

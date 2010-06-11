@@ -71,6 +71,8 @@ public:
     gkMouseSensor(gkGameObject *object, gkLogicLink *link, const gkString &name);
     virtual ~gkMouseSensor();
 
+    gkLogicBrick* clone(gkLogicLink *link, gkGameObject *dest);
+
     bool query(void);
 
     GK_INLINE void setType(int type) {m_type = type;}

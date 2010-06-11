@@ -36,32 +36,22 @@
 class gkConstraint : public utListClass<gkConstraint>::Link
 {
 public:
-
-    typedef enum ConstraintTypes
-    {
-        CONST_NONE = 0,
-        CONST_LIMIT_ROT,
-        CONST_LIMIT_LOC,
-    }ConstraintTypes;
-
-public:
-
-
-    gkConstraint(ConstraintTypes type);
+    gkConstraint();
     virtual ~gkConstraint() {}
 
-    GK_INLINE void setInfluence(gkScalar v)         {m_influence = gkClampf(v, 0.0, 1.0);}
-    GK_INLINE gkScalar getInfluence(void)           {return m_influence;}
-    GK_INLINE void setLocal(bool v)                 {m_isLocal = v;}
-    GK_INLINE bool getLocal(void)                   {return m_isLocal;}
+
+    GK_INLINE void setInfluence(gkScalar v)             {m_influence = gkClampf(v, 0.0, 1.0);}
+    GK_INLINE gkScalar getInfluence(void)               {return m_influence;}
+    GK_INLINE void setLocal(bool v)                     {m_isLocal = v;}
+    GK_INLINE bool getLocal(void)                       {return m_isLocal;}
 
     GK_INLINE void setMatrix(const gkTransformState &m) {m_matrix = m;}
     GK_INLINE gkTransformState& getMatrix(void)         {return m_matrix;}
 
-    virtual bool update(gkGameObject *ob) = 0;
+    virtual bool            update(gkGameObject *ob) = 0;
+    virtual gkConstraint*   clone(void) = 0;
 
 protected:
-    const ConstraintTypes   m_type;
     bool                    m_isLocal;
     gkScalar                m_influence;
     gkTransformState        m_matrix;

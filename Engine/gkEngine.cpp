@@ -45,11 +45,12 @@
 #include "gkUserDefs.h"
 #include "gkTextManager.h"
 #include "gkNodeManager.h"
+#include "gkMeshManager.h"
 #include "gkDynamicsWorld.h"
-
+#include "gkDebugScreen.h"
+#include "gkDebugProperty.h"
 
 #include "LinearMath/btQuickprof.h"
-
 
 using namespace Ogre;
 
@@ -82,7 +83,10 @@ public:
     Private(gkEngine *par)
     :       engine(par),
             windowsystem(0),
-            scene(0)
+            scene(0),
+            debug(0),
+            debugPage(0)
+
     {
         memset(&state, 0, sizeof(TickState));
         plugin_factory = new gkRenderFactoryPrivate();
@@ -104,6 +108,8 @@ public:
     gkRenderFactoryPrivate*     plugin_factory;     // static plugin loading
     TickState                   state;
     Ogre::Root*                 root;
+    gkDebugScreen*              debug;
+    gkDebugPropertyPage*        debugPage;
 };
 
 
@@ -176,14 +182,23 @@ void gkEngine::initialize(bool autoCreateWindow)
     new gkBlendLoader();
     new gkTextManager();
     new gkLuaManager();
+    new gkMeshManager();
 
 
     if (autoCreateWindow) initializeWindow();
 
+    // create the builtin resource group
+    Ogre::ResourceGroupManager::getSingleton().createResourceGroup("<gkBuiltin>");
+
+    // debug info 
+    m_private->debug = new gkDebugScreen();
+    m_private->debug->initialize();
+
+    m_private->debugPage = new gkDebugPropertyPage();
+    m_private->debugPage->initialize();
+
 
     m_animRate = defs.animspeed;
-    m_tickRate = defs.tickrate;
-    m_tickRate = gkClampf(m_tickRate, 25, 90);
     m_initialized = true;
 }
 
@@ -207,14 +222,17 @@ void gkEngine::finalize()
     if (!m_initialized) return;
 
 
+    delete gkNodeManager::getSingletonPtr();
     delete gkSceneManager::getSingletonPtr();
     delete gkTextManager::getSingletonPtr();
     delete gkBlendLoader::getSingletonPtr();
     delete gkLuaManager::getSingletonPtr();
     delete gkLogicManager::getSingletonPtr();
-    delete gkNodeManager::getSingletonPtr();
     delete gkWindowSystem::getSingletonPtr();
+    delete gkMeshManager::getSingletonPtr();
 
+    delete m_private->debugPage;
+    delete m_private->debug;
     delete m_root;
     delete m_private;
 
@@ -280,13 +298,24 @@ void gkEngine::loadResources(const gkString &name)
 
 void gkEngine::addDebugProperty(gkVariable *prop)
 {
-    // Soon, Evaluate third party GUI systems
+    if (m_defs->showDebugProps)
+    {
+        if (m_private->debugPage)
+        {
+            m_private->debugPage->addVariable(prop);
+            m_private->debugPage->show(true);
+        }
+    }
 }
 
 
 void gkEngine::removeDebugProperty(gkVariable *prop)
 {
-    // Soon, Evaluate third party GUI systems
+    if (m_defs->showDebugProps)
+    {
+        if (m_private->debugPage)
+            m_private->debugPage->removeVariable(prop);
+    }
 }
 
 
@@ -433,6 +462,8 @@ void gkEnginePrivate::tick(gkScalar dt)
         engine->m_loadables.clear();
     }
 
+    if (debugPage && debugPage->isShown())
+        debugPage->draw();
 }
 
 void gkEngine::setActiveScene(gkScene *sc)

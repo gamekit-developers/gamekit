@@ -29,32 +29,18 @@
 
 
 #include "gkCommon.h"
-#include "OgreSimpleRenderable.h"
-#include "OgreHardwareVertexBuffer.h"
+#include "gkDebugger.h"
 #include "LinearMath/btIDebugDraw.h"
 
 class gkDynamicsWorld;
 
-struct gkDebugVertex 
-{
-    float v[3];
-    unsigned int color;
-};
-
 
 // for debugging / building line lists 
-class gkPhysicsDebug : public Ogre::SimpleRenderable, public btIDebugDraw
+class gkPhysicsDebug : public btIDebugDraw
 {
-public:
-    typedef utArray<gkDebugVertex> Buffer;
-
 public:
     gkPhysicsDebug(gkDynamicsWorld *wo);
     virtual ~gkPhysicsDebug();
-
-
-    Ogre::Real getSquaredViewDepth(const Ogre::Camera* cam) const;
-    Ogre::Real getBoundingRadius(void) const;
 
     void drawLine(const btVector3& from, const btVector3& to, const btVector3& color);
     void drawContactPoint(const btVector3& PointOnB, const btVector3& normalOnB, btScalar distance, int lifeTime, const btVector3& color);
@@ -64,26 +50,9 @@ public:
     void setDebugMode(int debugMode);
     int getDebugMode() const;
 
-
-    // write contents to buffer
-    void flush(void);
-
 protected:
 
-    void verifyNode(void);
-    void growBuffer(UTsize newSize);
-
-    Ogre::SceneNode*    m_node;
     gkDynamicsWorld*    m_physics;
-    Ogre::Real          m_radius;
-    Buffer              m_lineBuf;
-    Ogre::Vector3       m_bbmin, m_bbmax;
-    UTsize              m_bufSize;
-    int                 m_flags;
-
-    // main buffer
-    Ogre::HardwareVertexBufferSharedPtr m_buffer;
-    
 };
 
 

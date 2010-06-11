@@ -32,15 +32,18 @@
 #include "gkString.h"
 #include "gkRenderFactory.h"
 
-
-// User defined options (TODO needs cleaned up)
+// User defined options
 class gkUserDefs
 {
+private:
+
+    void parseString(const gkString &key, const gkString &val);
+
+
 public:
     gkUserDefs();
     void load(const gkString &fname);
 
-    gkString                plugins;            // plugins to load, unused
     OgreRenderSystem        rendersystem;       // Ogre render system to use
     int                     sceneManager;       // TODO scene manager to use
     gkString                log;                // Main log file name
@@ -51,21 +54,18 @@ public:
     gkString                resources;          // resources to load
     gkScalar                animspeed;          // animation speed, depreciated
     gkScalar                startframe;         // animation frame at the start of the game
-    gkScalar                tickrate;           // user defined tick rate, depreciated
     bool                    blendermat;         // convert meshes using blender materials
-    bool                    userWindow;         // user defined in blender  
     bool                    grabInput;          // hide & grab the mouse
     bool                    debugPhysics;       // enable / disable physics debugging
     bool                    debugPhysicsAabb;   // show / hide bounding box
     bool                    buildInstances;     // Use instanced geometry
     bool                    useBulletDbvt;      // Use Bullet Dynamic AABB Tree
+    bool                    showDebugProps;     // Show variable debugging information.
 	bool					enableshadows;
 	gkString				shadowtechnique;
 	gkColor					colourshadow;
 	gkScalar				fardistanceshadow;
 };
-
-
 
 
 #endif//_gkUserDefs_h_

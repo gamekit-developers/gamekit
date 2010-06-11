@@ -26,14 +26,41 @@
 */
 #include "gkLogicDispatcher.h"
 #include "gkLogicSensor.h"
+#include "gkGameObject.h"
 
 
 
-void gkConstantDispatch::dispatch(void)
+
+// ----------------------------------------------------------------------------
+void gkAbstractDispatcher::doDispatch(SensorList &sens)
+{
+    if (!sens.empty()) 
+    {
+        SensorIterator it = SensorIterator(sens);
+
+        while (it.hasMoreElements())
+        {
+            gkLogicSensor   *sens = it.getNext();
+            gkGameObject    *obj = sens->getObject();
+
+            if (obj && obj->isLoaded())
+                sens->execute();
+        }
+    }
+}
+
+// ----------------------------------------------------------------------------
+void gkAbstractDispatcher::sort(void)
 {
     if (!m_sensors.empty()) {
-        utListIterator<SensorList> it(m_sensors);
+        gkAbstractDispatcher::SensorIterator it = getIterator();
         while (it.hasMoreElements())
-            it.getNext()->tick();
+            it.getNext()->sort();
     }
+}
+
+// ----------------------------------------------------------------------------
+void gkConstantDispatch::dispatch(void)
+{
+    doDispatch(m_sensors);
 }

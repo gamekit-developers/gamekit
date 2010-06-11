@@ -26,10 +26,8 @@
 */
 #include "gkConstraint.h"
 
-using namespace Ogre;
-
-gkConstraint::gkConstraint(ConstraintTypes type)
-:       m_type(type), m_isLocal(false), m_influence(1.0)
+gkConstraint::gkConstraint()
+:   m_isLocal(false), m_influence(1.0)
 {
     m_matrix.setIdentity();
 }

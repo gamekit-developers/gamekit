@@ -45,6 +45,7 @@ class gkAbstractDispatcher;
 enum gkDispatchedTypes
 {
     DIS_CONSTANT=0,
+    DIS_KEY,
     DIS_MOUSE,
     DIS_COLLISION,
     DIS_MAX,
@@ -60,16 +61,22 @@ public:
     typedef utListClass<gkLogicLink> Links;
     typedef gkAbstractDispatcher* gkAbstractDispatcherPtr;
 
-    typedef utStack<gkLogicSensor*>         SensorStack;
-    typedef utStack<gkLogicActuator*>       ActuatorStack;
+    typedef utArray<gkLogicBrick*>  Bricks;
+
 
 protected:
 
     Links m_links;
 
     gkAbstractDispatcherPtr*    m_dispatchers;
-    SensorStack                 m_sensorStack;
-    ActuatorStack               m_actuatorStack;
+    Bricks                      m_cin,  m_ain, m_aout;
+    bool                        m_sort;
+
+
+    void push(gkLogicBrick *a, gkLogicBrick *b, Bricks &in, bool stateValue);
+    void clearActuators(void);
+
+    void sort(void);
 
 public:
 
@@ -77,7 +84,11 @@ public:
     ~gkLogicManager();
 
     gkLogicLink *createLink(void);
+    void destroy(gkLogicLink *link);
 
+
+    void notifyState(unsigned int state);
+    void notifySort(void);
 
     // Free links & reset dispatchers
     void clear(void);
@@ -89,9 +100,9 @@ public:
     GK_INLINE gkAbstractDispatcher& getDispatcher(int dt) 
     { GK_ASSERT(m_dispatchers && dt >= 0 && dt <= DIS_MAX); return *m_dispatchers[dt]; }
 
+    void push(gkLogicSensor *s,     gkLogicController *v, bool stateValue);
+    void push(gkLogicController *c, gkLogicActuator *v,   bool stateValue);
 
-    GK_INLINE void push(gkLogicSensor *v)       {GK_ASSERT(v); m_sensorStack.push(v);}
-    GK_INLINE void push(gkLogicActuator *v)     {GK_ASSERT(v); m_actuatorStack.push(v);}
 
     static gkLogicManager& getSingleton(void);
     static gkLogicManager* getSingletonPtr(void);

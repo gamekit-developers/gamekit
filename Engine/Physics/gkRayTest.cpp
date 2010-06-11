@@ -34,7 +34,8 @@
 
 gkRayTest::gkRayTest()
 : m_hitPointWorld(gkVector3::ZERO),
-m_collisionObject(0)
+m_collisionObject(0),
+m_hitFraction(0.f)
 {
 }
 
@@ -69,6 +70,8 @@ bool gkRayTest::collides(const Ogre::Ray& ray)
 		m_hitPointWorld = gkVector3(rayCallback.m_hitPointWorld);
 
 		m_collisionObject = rayCallback.m_collisionObject;
+        
+        m_hitFraction = rayCallback.m_closestHitFraction;
 
 		return true;
 	}

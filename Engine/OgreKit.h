@@ -26,10 +26,14 @@
 */
 #ifndef _OgreKit_h_
 #define _OgreKit_h_
+
 #include "gkCamera.h"
 #include "gkCommon.h"
 #include "gkConstraint.h"
 #include "gkCoreApplication.h"
+#include "gkDebugProperty.h"
+#include "gkDebugScreen.h"
+#include "gkDebugger.h"
 #include "gkEngine.h"
 #include "gkEntity.h"
 #include "gkGameObject.h"
@@ -40,9 +44,10 @@
 #include "gkLogger.h"
 #include "gkMathUtils.h"
 #include "gkMemoryTest.h"
+#include "gkMesh.h"
+#include "gkMeshManager.h"
 #include "gkObject.h"
 #include "gkPath.h"
-#include "gkRect.h"
 #include "gkRenderFactory.h"
 #include "gkScene.h"
 #include "gkSceneManager.h"
@@ -72,9 +77,10 @@
 
 #include "Constraints/gkLimitLocConstraint.h"
 #include "Constraints/gkLimitRotConstraint.h"
+#include "Constraints/gkLimitVelocityConstraint.h"
 
-#include "Loaders/Blender/gkBlendFile.h"
-#include "Loaders/Blender/gkBlendLoader.h"
+#include "Loaders/Blender2/gkBlendFile.h"
+#include "Loaders/Blender2/gkBlendLoader.h"
 
 #include "Logic/gkAnimationNode.h"
 #include "Logic/gkButtonNode.h"
@@ -112,8 +118,12 @@
 #include "Logic/gkValueNode.h"
 #include "Logic/gkVariableNode.h"
 
+#include "LogicBricks/gkActionActuator.h"
 #include "LogicBricks/gkAlwaysSensor.h"
 #include "LogicBricks/gkCollisionSensor.h"
+#include "LogicBricks/gkEditObjectActuator.h"
+#include "LogicBricks/gkGameActuator.h"
+#include "LogicBricks/gkKeyboardSensor.h"
 #include "LogicBricks/gkLogicActuator.h"
 #include "LogicBricks/gkLogicBrick.h"
 #include "LogicBricks/gkLogicController.h"
@@ -124,8 +134,12 @@
 #include "LogicBricks/gkLogicSensor.h"
 #include "LogicBricks/gkMotionActuator.h"
 #include "LogicBricks/gkMouseSensor.h"
+#include "LogicBricks/gkPropertyActuator.h"
+#include "LogicBricks/gkPropertySensor.h"
+#include "LogicBricks/gkRaySensor.h"
 #include "LogicBricks/gkScriptController.h"
 #include "LogicBricks/gkStateActuator.h"
+#include "LogicBricks/gkVisibilityActuator.h"
 
 #include "Physics/gkCharacter.h"
 #include "Physics/gkDynamicsWorld.h"

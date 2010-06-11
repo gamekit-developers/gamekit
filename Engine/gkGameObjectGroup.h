@@ -68,6 +68,7 @@ public:
 
     gkGameObject    *getObject(const gkHashedString &name);
     void            removeObject(const gkHashedString &name);
+    void            unloadObject(const gkHashedString &name);
     void            addObject(gkGameObject *v);
 
     GK_INLINE gkGameObject          *getOwner(void)     {return m_owner;}
@@ -89,7 +90,8 @@ public:
 class gkGameObjectGroup
 {
 public:
-    typedef utHashTable<gkHashedString, gkGameObject*> InternalObjects;
+    typedef utHashTable<gkHashedString, gkGameObject*>  Objects;
+    typedef utHashTableIterator<Objects>                ObjectIterator;
 
 protected:
 
@@ -100,7 +102,7 @@ protected:
     UTsize                  m_handle;
 
     // local lookup of game objects
-    InternalObjects         m_internal;
+    Objects                 m_internal;
 
     Ogre::StaticGeometry    *m_geom;
 
@@ -131,7 +133,8 @@ public:
 
     GK_INLINE const gkHashedString      &getName(void)                  {return m_name;}
     GK_INLINE gkGroupInstanceIterator   getInstanceIterator(void)       {return gkGroupInstanceIterator(m_instances);}
-    GK_INLINE gkGroupInstances          &getInstances(void)             {return m_instances;}     
+    GK_INLINE gkGroupInstances          &getInstances(void)             {return m_instances;}
+    GK_INLINE ObjectIterator            getObjects(void)                {return ObjectIterator(m_internal);}
 
     GK_INLINE bool hasObject(gkGameObject *v)      
     {

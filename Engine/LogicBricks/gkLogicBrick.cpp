@@ -26,12 +26,56 @@
 */
 #include "gkLogicBrick.h"
 #include "gkGameObject.h"
+#include "gkLogicLink.h"
+#include "gkLogicManager.h"
 
-
+// ----------------------------------------------------------------------------
 gkLogicBrick::gkLogicBrick(gkGameObject *object, gkLogicLink *link, const gkString &name) 
-:       m_object(object), m_name(name), m_link(link)
+:       m_object(object), m_name(name), m_link(link), m_stateMask(0), m_pulseState(BM_IDLE),
+        m_debugMask(0), m_isActive(false), m_priority(0)
 {
     GK_ASSERT(m_object);
     m_scene = m_object->getOwner();
 }
 
+// ----------------------------------------------------------------------------
+void gkLogicBrick::cloneImpl(gkLogicLink *link, gkGameObject *dest)
+{
+    m_object        = dest;
+    m_scene         = m_object->getOwner();
+    m_pulseState    = BM_IDLE;
+    m_isActive      = false;
+    m_link          = link;
+
+    gkLogicManager::getSingleton().notifySort();
+}
+
+// ----------------------------------------------------------------------------
+bool gkLogicBrick::inActiveState(void)
+{
+    return (m_stateMask & m_link->getState())!=0;
+}
+ 
+// ----------------------------------------------------------------------------
+bool gkLogicBrick::wantsDebug(void)
+{
+    return (m_debugMask)!=0;
+}
+
+// ----------------------------------------------------------------------------
+void gkLogicBrick::setPriority(bool v)
+{
+    int op = m_priority;
+    m_priority = v ? 1 : 0;
+    if (op != m_priority)
+        gkLogicManager::getSingleton().notifySort();
+}
+
+// ----------------------------------------------------------------------------
+void gkLogicBrick::setPriority(int v)
+{
+    int op = m_priority;
+    m_priority = v;
+    if (op != m_priority)
+        gkLogicManager::getSingleton().notifySort();
+}

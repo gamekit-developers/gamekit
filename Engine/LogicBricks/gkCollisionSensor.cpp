@@ -34,62 +34,78 @@
 #include "btBulletDynamicsCommon.h"
 
 
+// ----------------------------------------------------------------------------
 gkCollisionDispatch::gkCollisionDispatch()
 {
 }
 
+
+// ----------------------------------------------------------------------------
 void gkCollisionDispatch::dispatch(void)
 {
-
-    if (!m_sensors.empty()) {
-        utListIterator<SensorList> it(m_sensors);
-        while (it.hasMoreElements())
-            it.getNext()->tick();
-    }
+    // TODO need to sort. 
+    doDispatch(m_sensors);
 }
 
 
+// ----------------------------------------------------------------------------
 gkCollisionSensor::gkCollisionSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
 :       gkLogicSensor(object, link, name), m_material(""), m_prop("")
 {
-    gkLogicManager::getSingleton().getDispatcher(DIS_COLLISION).connect(this);
+    m_dispatchType = DIS_COLLISION;
+    connect();
 }
 
 
+// ----------------------------------------------------------------------------
+gkLogicBrick* gkCollisionSensor::clone(gkLogicLink *link, gkGameObject *dest)
+{
+    gkCollisionSensor *sens = new gkCollisionSensor(*this);
+    sens->cloneImpl(link, dest);
+    return sens;
+}
+
+// ----------------------------------------------------------------------------
 bool gkCollisionSensor::query(void)
 {
     gkObject *object = m_object->getAttachedObject();
-    if (!object) return false;
+    if (!object) 
+        return false;
 
     if (object->getContacts().empty())
         return false;
 
-    // extra filters 
-    if (!m_material.empty() || !m_prop.empty())
+
+
+    gkObject::ContactArray &arr = object->getContacts();
+
+
+    UTsize nr=arr.size(), i;
+
+    // Global. test only for actors 
+
+    for (i=0; i<nr; ++i)
     {
-        gkObject::ContactArray &arr = object->getContacts();
-        UTsize nr=arr.size(), i;
+        gkObject::ContactInfo &inf = arr[i];
 
-        for (i=0; i<nr; ++i)
+        gkGameObject *obj = inf.collider->getObject();
+        //if (obj->getProperties().objectStateFlags & GK_OB_ACTOR)
         {
-            gkObject::ContactInfo &inf = arr[i];
-
-            if (!m_prop.empty())
-            {
-                gkGameObject *obj = inf.collider->getObject();
-                if (obj->hasVariable(m_prop))
-                    return true;
-            }
-            else if (!m_material.empty())
-            {
-                if (inf.collider->getSensorMaterial() == m_material)
-                    return true;
-            }
+            // any GK_OB_ACTOR will do 
+            if (m_prop.empty() && m_material.empty())
+                return true;
         }
-        // sub tests failed
-        return false;
-    }
 
-    // any filter
-    return true;
+        if (!m_prop.empty())
+        {
+            if (obj->hasVariable(m_prop) /*&& obj->getProperties().objectStateFlags & GK_OB_ACTOR*/)
+                return true;
+        }
+        else if (!m_material.empty())
+        {
+            if (inf.collider->getSensorMaterial() == m_material)
+                return true;
+        }
+    }
+    return false;
 }

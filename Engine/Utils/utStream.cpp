@@ -27,6 +27,8 @@
 #include <string.h>
 #include "utStream.h"
 
+#if 0
+
 #ifdef ZLIB_SUPPORT
 #include "ZLib/zlib.h"
 #define FileEOF(f)          gzeof(f)
@@ -118,3 +120,4 @@ UTint32 utFileStream::write(const void *dest, UTint32 nr)
 {
     return -1;
 }
+#endif

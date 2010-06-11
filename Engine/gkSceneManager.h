@@ -49,7 +49,7 @@ public:
 
 
     gkScene* getScene(const gkString& name);
-    gkScene* create(const gkString& name, gkObject::Loader *loader = 0);
+    gkScene* create(const gkString& name);
     void destroy(const gkString& name);
     void destroy(gkScene *ob);
     void destroyAll(void);

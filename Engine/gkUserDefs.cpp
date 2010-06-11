@@ -35,38 +35,32 @@
 #include "gkPath.h"
 
 
-using namespace Ogre;
-
-
-
-
-gkUserDefs::gkUserDefs() :
-    plugins(StringUtil::BLANK),
-    rendersystem(OGRE_RS_GL),
-    log("OgreKit.log"),
-    verbose(true),
-    winsize(800, 600),
-    wintitle("Ogre GameKit Demo"),
-    fullscreen(false),
-    resources(""),
-    animspeed(25),
-    startframe(1),
-    tickrate(45),
-    blendermat(false),
-    userWindow(true),
-    grabInput(true),
-    debugPhysics(false),
-    debugPhysicsAabb(false),
-    enableshadows(false),
-    buildInstances(false),
-    useBulletDbvt(true),
-    shadowtechnique("none"),
-    colourshadow(0, 0, 0),
-    fardistanceshadow(0)
+// ----------------------------------------------------------------------------
+gkUserDefs::gkUserDefs() 
+    :   rendersystem(OGRE_RS_GL),
+        log("OgreKit.log"),
+        verbose(true),
+        winsize(800, 600),
+        wintitle("Ogre GameKit Demo"),
+        fullscreen(false),
+        resources(""),
+        animspeed(25),
+        startframe(1),
+        blendermat(false),
+        grabInput(true),
+        debugPhysics(false),
+        debugPhysicsAabb(false),
+        enableshadows(false),
+        buildInstances(false),
+        useBulletDbvt(true),
+        showDebugProps(false),
+        shadowtechnique("none"),
+        colourshadow(0, 0, 0),
+        fardistanceshadow(0)
 {
 }
 
-
+// ----------------------------------------------------------------------------
 void gkUserDefs::load(const gkString &fname)
 {
     gkString startup;
@@ -83,88 +77,161 @@ void gkUserDefs::load(const gkString &fname)
     {
         // try and load prefs
 
-        ConfigFile fp;
+        Ogre::ConfigFile fp;
         fp.load(startup);
 
-        ConfigFile::SectionIterator cit = fp.getSectionIterator();
+        Ogre::ConfigFile::SectionIterator cit = fp.getSectionIterator();
         while (cit.hasMoreElements())
         {
-            ConfigFile::SettingsMultiMap *ptr = cit.getNext();
-            for (ConfigFile::SettingsMultiMap::iterator dit = ptr->begin(); dit != ptr->end(); ++dit)
+            Ogre::ConfigFile::SettingsMultiMap *ptr = cit.getNext();
+            for (Ogre::ConfigFile::SettingsMultiMap::iterator dit = ptr->begin(); dit != ptr->end(); ++dit)
             {
                 gkString key = dit->first;
                 gkString val = dit->second;
 
                 // not case sensitive
-                StringUtil::toLowerCase(key);
-
-
-                if (key == "plugins")
-                {
-                    gkPath pth = val;
-                    if (!pth.isDir())
-                        plugins = val;
-                }
-                else if (key == "log")
-                    log = val;
-                else if (key == "debugphysics")
-                    debugPhysics = StringConverter::parseBool(val);
-                else if (key == "debugphysicsaabb")
-                    debugPhysicsAabb = StringConverter::parseBool(val);
-                else if (key == "grabinput")
-                    grabInput = StringConverter::parseBool(val);
-                else if (key == "userwindow")
-                    userWindow = StringConverter::parseBool(val);
-                else if (key == "verbose")
-                    verbose = StringConverter::parseBool(val);
-                else if (key == "winsize")
-                    winsize = StringConverter::parseVector2(val);
-                else if (key == "wintitle")
-                    wintitle = val;
-                else if (key == "fullscreen")
-                    fullscreen = StringConverter::parseBool(val);
-                else if (key == "resources")
-                {
-                    gkPath p(val);
-                    if (p.isFile())
-                        resources = val;
-                }
-                else if (key == "animspeed")
-                {
-                    animspeed = StringConverter::parseReal(val);
-                    animspeed = gkMaxf(animspeed, 1.0);
-                }
-                else if (key == "startframe")
-                {
-                    startframe = StringConverter::parseReal(val);
-                    startframe = gkMaxf(startframe, 1.0);
-                }
-                else if (key == "tickrate")
-                {
-                    tickrate = StringConverter::parseReal(val);
-                    tickrate = gkMaxf(tickrate, 25);
-                }
-                else if (key == "blendermat")
-                    blendermat = StringConverter::parseBool(val);
-                else if (key == "buildinstances")
-                    buildInstances = StringConverter::parseBool(val);
-                else if (key == "frustumculling")
-                    useBulletDbvt = StringConverter::parseBool(val);
-                else if (key == "fullscreen")
-                    fullscreen = StringConverter::parseBool(val);
-                else if (key == "enableshadows")
-                    enableshadows = StringConverter::parseBool(val);
-                else if (key == "shadowtechnique")
-                    shadowtechnique = val;
-                else if (key == "colourshadow")
-                    colourshadow = StringConverter::parseColourValue(val);
-                else if (key == "fardistanceshadow")
-                    fardistanceshadow = StringConverter::parseReal(val);
+                Ogre::StringUtil::toLowerCase(key);
+                parseString(key, val);
             }
         }
     }
-    catch (Exception &e)
+    catch (Ogre::Exception &e)
     {
         gkLogMessage("Failed to load resource file!\n" << e.getDescription());
+    }
+}
+
+
+// ----------------------------------------------------------------------------
+void gkUserDefs::parseString(const gkString &key, const gkString &val)
+{
+#define KeyEq(b) (key == b)
+
+    if (KeyEq("rendersystem"))
+    {
+        rendersystem = OGRE_RS_GL;
+
+
+        if (val.find("d3d9") != val.npos)
+            rendersystem = OGRE_RS_D3D9;
+        if (val.find("d3d10") != val.npos)
+            rendersystem = OGRE_RS_D3D10;
+        if (val.find("d3d11") != val.npos)
+            rendersystem = OGRE_RS_D3D11;
+
+        return;
+    }
+
+    if (KeyEq("log"))
+    {
+        log = val;
+        return;
+    }
+
+
+    if (KeyEq("debugphysics"))
+    {
+        debugPhysics = Ogre::StringConverter::parseBool(val);
+        return;
+    }
+    
+    
+    if (KeyEq("debugphysicsaabb"))
+    {
+        debugPhysicsAabb = Ogre::StringConverter::parseBool(val);
+        return;
+    }
+
+    if (KeyEq("grabinput"))
+    {
+        grabInput = Ogre::StringConverter::parseBool(val);
+        return;
+    }
+    if (KeyEq("verbose"))
+    {
+        verbose = Ogre::StringConverter::parseBool(val);
+        return;
+    }
+
+    if (KeyEq("winsize"))
+    {
+        winsize = Ogre::StringConverter::parseVector2(val);
+        return;
+    }
+
+    if (KeyEq("wintitle"))
+    {
+        wintitle = val;
+        return;
+    }
+    if (KeyEq("fullscreen"))
+    {
+        fullscreen = Ogre::StringConverter::parseBool(val);
+        return;
+    }
+    if (KeyEq("resources"))
+    {
+        gkPath p(val);
+        if (p.isFile())
+            resources = val;
+
+        return;
+    }
+    if (KeyEq("animspeed"))
+    {
+        animspeed = Ogre::StringConverter::parseReal(val);
+        animspeed = gkMaxf(animspeed, 1.0);
+        return;
+    }
+    if (KeyEq("startframe"))
+    {
+        startframe = Ogre::StringConverter::parseReal(val);
+        startframe = gkMaxf(startframe, 1.0);
+        return;
+    }
+    if (KeyEq("blendermat"))
+    {
+        blendermat = Ogre::StringConverter::parseBool(val);
+        return;
+    }
+    if (KeyEq("buildinstances"))
+    {
+        buildInstances = Ogre::StringConverter::parseBool(val);
+        return;
+    }
+    if (KeyEq("frustumculling"))
+    {
+        useBulletDbvt = Ogre::StringConverter::parseBool(val);
+        return;
+    }
+    if (KeyEq("showdebugprops"))
+    {
+        showDebugProps = Ogre::StringConverter::parseBool(val);
+        return;
+    }
+    if (KeyEq("fullscreen"))
+    {
+        fullscreen = Ogre::StringConverter::parseBool(val);
+        return;
+    }
+    if (KeyEq("enableshadows"))
+    {
+        enableshadows = Ogre::StringConverter::parseBool(val);
+        return;
+    }
+    if (KeyEq("shadowtechnique"))
+    {
+        shadowtechnique = val;
+        return;
+    }
+    if (KeyEq("colourshadow"))
+    {
+        colourshadow = Ogre::StringConverter::parseColourValue(val);
+        return;
+    }
+    if (KeyEq("fardistanceshadow"))
+    {
+        fardistanceshadow = Ogre::StringConverter::parseReal(val);
+        return;
     }
 }

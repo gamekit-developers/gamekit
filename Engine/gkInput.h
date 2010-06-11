@@ -29,7 +29,6 @@
 
 #include "gkCommon.h"
 #include "gkMathUtils.h"
-#include "gkRect.h"
 
 
 // Keycode enumerations, not ordered

@@ -35,12 +35,11 @@
 class gkLight : public gkGameObject
 {
 public:
-    gkLight(gkScene *scene, const gkString& name, gkObject::Loader* loader = 0);
+    gkLight(gkScene *scene, const gkString& name);
     virtual ~gkLight() {}
 
     // Property access
     GK_INLINE gkLightProperties& getLightProperties(void)           {return m_lightProps;}
-    GK_INLINE void setLightProperties(const gkLightProperties& v)   {m_lightProps = v; }
     GK_INLINE Ogre::Light* getLight(void)                           {return m_light;}
 
     void updateProperties(void);

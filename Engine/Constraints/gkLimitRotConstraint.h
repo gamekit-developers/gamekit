@@ -29,10 +29,6 @@
 
 #include "gkConstraint.h"
 
-
-
-
-// ----------------------------- Limit Rotation ------------------------------
 class gkLimitRotConstraint : public gkConstraint
 {
 public:
@@ -41,6 +37,7 @@ public:
     virtual ~gkLimitRotConstraint() {}
 
     bool update(gkGameObject *ob);
+    gkConstraint* clone(void);
 
 
     void setLimitX(const gkVector2& v);

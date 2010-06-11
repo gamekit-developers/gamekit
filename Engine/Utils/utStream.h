@@ -24,7 +24,7 @@
 */
 #ifndef _utStream_h_
 #define _utStream_h_
-
+#if 0
 
 #include "utCommon.h"
 
@@ -71,5 +71,6 @@ public:
     virtual UTint32 write(const void *dest, UTint32 nr);
 };
 
+#endif
 
 #endif//_utStream_h_

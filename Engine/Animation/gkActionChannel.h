@@ -69,11 +69,11 @@ public:
 
     // Gain access to the pose transform
     GK_INLINE gkTransformState& getPoseTransfom(void)
-    { GK_ASSERT(m_bone); return m_bone->m_pose; }
+    { GK_ASSERT(m_bone); return m_bone->getPose(); }
 
     // Gain access to the pose matrix
     GK_INLINE gkMatrix4 getPoseMatrix(void)
-    { GK_ASSERT(m_bone); return m_bone->m_pose.toMatrix(); }
+    { GK_ASSERT(m_bone); return m_bone->getPose().toMatrix(); }
 
 
     // add spline for this channel

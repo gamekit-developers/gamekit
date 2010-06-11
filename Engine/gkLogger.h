@@ -29,7 +29,7 @@
 
 #include "gkString.h"
 #include "gkCommon.h"
-
+#include "gkDebugScreen.h"
 
 // Simple log enabler
 class gkLogger
@@ -45,10 +45,10 @@ extern void gkPrintf(const char *fmt, ...);
 
 
 // std::cout style logging
-#define gkLogMessage(msg) {             \
-    std::stringstream stream;           \
-    stream << msg;                      \
-    gkLogger::write(stream.str());        \
+#define gkLogMessage(msg) {                 \
+    std::stringstream stream;               \
+    stream << msg;                          \
+    gkLogger::write(stream.str());          \
 }
 // std::cout style logging
 #define gkPrint(x) gkLogMessage(x)

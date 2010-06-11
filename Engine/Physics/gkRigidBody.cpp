@@ -29,115 +29,162 @@
 #include "gkGameObject.h"
 #include "gkScene.h"
 #include "gkRigidBody.h"
+#include "gkEntity.h"
+#include "gkMesh.h"
 #include "btBulletDynamicsCommon.h"
 #include "OgreSceneNode.h"
 
-gkRigidBody::gkRigidBody(const gkString& name, gkGameObject *object, gkDynamicsWorld *owner, gkObject::Loader *manual)
-:       gkObject(name, manual), m_owner(owner), m_object(object), m_rigidBody(0), m_oldActivationState(-1)
+gkRigidBody::gkRigidBody(const gkString& name, gkGameObject *object, gkDynamicsWorld *owner)
+:       gkObject(name), m_owner(owner), m_object(object), m_body(0), m_shape(0), m_oldActivationState(-1)
 {
-    if (m_object)
-        m_object->attachRigidBody(this);
 }
 
 
 gkRigidBody::~gkRigidBody()
 {
-    if (m_rigidBody)
-        delete m_rigidBody;
-    if (m_object)
-        m_object->attachRigidBody(0);
-}
-
-
-void gkRigidBody::_reinstanceBody(btRigidBody *body)
-{
-
-    // do not use outside of manual loading!
-    if (m_rigidBody)
-        delete m_rigidBody;
-    m_rigidBody = body;
+    if (m_body)
+        delete m_body;
+    if (m_shape)
+        delete m_shape;
 }
 
 
 void gkRigidBody::loadImpl(void)
 {
     GK_ASSERT(m_object);
-    if (isManual() && m_rigidBody)
+
+    gkGameObjectProperties  &props  = m_object->getProperties();
+    gkPhysicsProperties     &phy    = props.m_physics;
+
+    if (phy.isContactListener())
+        setFlags(getFlags() | gkObject::RBF_CONTACT_INFO);
+
+    gkMesh *me = 0;
+    gkEntity *ent = m_object->getEntity();
+    if (ent != 0)
+        me = ent->getEntityProperties().m_mesh;
+
+    // extract the shape's size
+    gkVector3 size(1.f, 1.f, 1.f);
+    if (me != 0)
+        size = me->getBoundingBox().getHalfSize();
+    else
+        size *= phy.m_radius;
+
+    switch (phy.m_shape)
     {
-        // intertwine
-        m_rigidBody->setUserPointer(this);
-
-		//m_rigidBody->setCollisionFlags(m_rigidBody->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
-
-        if (!m_rigidBody->isStaticOrKinematicObject())
-            m_rigidBody->setMotionState(this);
-
-
-        // add body to bullet world
-        if (m_object->isInActiveLayer())
+    case SH_BOX: 
+        m_shape = new btBoxShape(btVector3(size.x, size.y, size.z));
+        break;
+    case SH_CONE: 
+        m_shape = new btConeShapeZ(gkMax(size.x, size.y), 2.f * size.z);
+        break;
+    case SH_CYLINDER: 
+        m_shape = new btCylinderShapeZ(btVector3(size.x, size.y, size.z));
+        break;
+    case SH_CONVEX_TRIMESH:
+    case SH_GIMPACT_MESH:
+    case SH_BVH_MESH:
         {
-            btDynamicsWorld *dyn = m_owner->getBulletWorld();
-            dyn->addRigidBody(m_rigidBody);
-
-            btVector3 lf = m_rigidBody->getLinearFactor();
-            btVector3 af = m_rigidBody->getAngularFactor();
- 
-            if (m_flags & RBF_LIMIT_LVEL_X) lf[0] = 0.f;
-            if (m_flags & RBF_LIMIT_LVEL_Y) lf[1] = 0.f;
-            if (m_flags & RBF_LIMIT_LVEL_Z) lf[2] = 0.f;
-            if (m_flags & RBF_LIMIT_AVEL_X) af[0] = 0.f;
-            if (m_flags & RBF_LIMIT_AVEL_Y) af[1] = 0.f;
-            if (m_flags & RBF_LIMIT_AVEL_Z) af[2] = 0.f;
-
-            m_rigidBody->setLinearFactor(lf);
-            m_rigidBody->setAngularFactor(af);
+            if (me != 0)
+            {
+                btTriangleMesh *triMesh = me->getTriMesh();
+                if (triMesh->getNumTriangles() > 0)
+                {
+                    if (phy.m_shape == SH_CONVEX_TRIMESH)
+                        m_shape = new btConvexTriangleMeshShape(triMesh);
+                    else if (phy.m_shape == SH_GIMPACT_MESH)
+                        m_shape = new btConvexTriangleMeshShape(triMesh);
+                    else
+                        m_shape = new btBvhTriangleMeshShape(triMesh, true);
+                    break;
+                }
+                else 
+                    return;
+            }
         }
+    case SH_SPHERE: 
+        m_shape = new btSphereShape(gkMax(size.x, gkMax(size.y, size.z)));
+        break;
     }
 
-    // else fixme (non manual | default) loading via btWorldImporter & bullet serialization
-    // for now this assumes manual loader callbacks
+    if (!m_shape) 
+        return;
+
+    m_shape->setMargin(phy.m_margin);
+    m_shape->setLocalScaling(props.m_transform.toLocalScaling());
+
+    if (phy.isRigidOrDynamic())
+    {
+        btVector3 inertia;
+        m_shape->calculateLocalInertia(phy.m_mass, inertia);
+
+        m_body = new btRigidBody(phy.m_mass, this, m_shape, inertia);
+
+        if (phy.isDynamic())
+            m_body->setAngularFactor(0.f);
+
+        m_body->setDamping(phy.m_linearDamp, phy.m_angularDamp);
+
+    }
+    else
+    {
+        m_body = new btRigidBody(0.f, 0, m_shape, btVector3(0,0,0));
+        m_body->setDamping(0.f, 0.f);
+        m_body->setAngularFactor(0.f);
+        m_body->setLinearFactor(btVector3(0.f, 0.f, 0.f));
+    }
+
+
+    if (m_body != 0)
+    {
+        btDynamicsWorld *dyn = m_owner->getBulletWorld();
+        m_body->setUserPointer(this);
+
+        m_body->setFriction(phy.m_friction);
+        m_body->setRestitution(phy.m_restitution);
+
+
+        m_body->setWorldTransform(props.m_transform.toTransform());
+
+        if (!phy.isDosser())
+            m_body->setActivationState(m_body->getActivationState() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
+
+        dyn->addRigidBody(m_body);
+    }
 }
 
 
 
 void gkRigidBody::unloadImpl(void)
 {
-    GK_ASSERT(m_object);
-    if (isManual() && m_rigidBody)
+    if (m_body)
     {
         // intertwine
-        m_rigidBody->setUserPointer(0);
+        m_body->setUserPointer(0);
 
-        if (!m_rigidBody->isStaticOrKinematicObject())
-            m_rigidBody->setMotionState(0);
+        if (!m_body->isStaticOrKinematicObject())
+            m_body->setMotionState(0);
 
-        // add body to bullet world
-        if (m_object->isInActiveLayer())
-            m_owner->getBulletWorld()->removeRigidBody(m_rigidBody);
+        m_owner->getBulletWorld()->removeRigidBody(m_body);
 
+        delete m_shape;
+        m_shape = 0;
 
-        delete m_rigidBody;
-        m_rigidBody = 0;
+        delete m_body;
+        m_body = 0;
     }
-
-    // else fixme (non manual | default) loading via btWorldImporter & bullet serialization
-    // for now this assumes manual loader callbacks
 }
 
 void gkRigidBody::setTransformState(const gkTransformState& state)
 {
-    if (!isLoaded())
-        return;
+    if (m_body)
+    {
+        m_body->activate();
+        m_body->setCenterOfMassTransform(state.toTransform());
+    }
 
-    if (m_rigidBody->isStaticOrKinematicObject())
-        return;
-    btTransform worldTrans;
-    worldTrans.setIdentity();
 
-    worldTrans.setRotation(btQuaternion(state.rot.x, state.rot.y, state.rot.z, state.rot.w));
-    worldTrans.setOrigin(btVector3(state.loc.x, state.loc.y, state.loc.z));
-
-    m_rigidBody->setCenterOfMassTransform(worldTrans);
 }
 
 
@@ -146,7 +193,7 @@ void gkRigidBody::updateTransform(void)
     if (!isLoaded())
         return;
 
-    if (m_rigidBody->isStaticOrKinematicObject())
+    if (m_body->isStaticOrKinematicObject())
         return;
 
     btTransform worldTrans;
@@ -173,7 +220,7 @@ void gkRigidBody::updateTransform(void)
     worldTrans.setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w));
     worldTrans.setOrigin(btVector3(loc.x, loc.y, loc.z));
 
-    m_rigidBody->setCenterOfMassTransform(worldTrans);
+    m_body->setCenterOfMassTransform(worldTrans);
 }
 
 
@@ -184,10 +231,10 @@ void gkRigidBody::setLinearVelocity(const gkVector3 &v, int tspace)
         return;
 
     // only dynamic bodies
-    if (m_rigidBody->isStaticOrKinematicObject())
+    if (m_body->isStaticOrKinematicObject())
         return;
 
-    if (v.squaredLength() > GK_EPSILON*GK_EPSILON) m_rigidBody->activate();
+    if (v.squaredLength() > GK_EPSILON*GK_EPSILON) m_body->activate();
 
 
 
@@ -197,7 +244,7 @@ void gkRigidBody::setLinearVelocity(const gkVector3 &v, int tspace)
     {
     case TRANSFORM_LOCAL:
         {
-            btTransform trans = m_rigidBody->getCenterOfMassTransform();
+            btTransform trans = m_body->getCenterOfMassTransform();
             btQuaternion quat = trans.getRotation();
             vel = gkQuaternion(quat.w(), quat.x(), quat.y(), quat.z())  * v;
         }
@@ -209,14 +256,14 @@ void gkRigidBody::setLinearVelocity(const gkVector3 &v, int tspace)
         break;
     }
 
-    btVector3 lf = m_rigidBody->getLinearFactor();
+    btVector3 lf = m_body->getLinearFactor();
     if (gkFuzzy(lf.length2()))
         return;
     btVector3 nvel = btVector3(vel.x, vel.y, vel.z) * lf;
     if (gkFuzzy(nvel.length2()))
         return;
 
-    m_rigidBody->setLinearVelocity(nvel);
+    m_body->setLinearVelocity(nvel);
     m_object->notifyUpdate();
 }
 
@@ -227,10 +274,10 @@ void gkRigidBody::setAngularVelocity(const gkVector3& v, int tspace)
         return;
 
     // only dynamic bodies
-    if (m_rigidBody->isStaticOrKinematicObject())
+    if (m_body->isStaticOrKinematicObject())
         return;
 
-    if (v.squaredLength() > GK_EPSILON*GK_EPSILON) m_rigidBody->activate();
+    if (v.squaredLength() > GK_EPSILON*GK_EPSILON) m_body->activate();
 
 
     gkVector3 vel;
@@ -238,7 +285,7 @@ void gkRigidBody::setAngularVelocity(const gkVector3& v, int tspace)
     {
     case TRANSFORM_LOCAL:
         {
-            btTransform trans = m_rigidBody->getCenterOfMassTransform();
+            btTransform trans = m_body->getCenterOfMassTransform();
             btQuaternion quat = trans.getRotation();
             vel = gkQuaternion(quat.w(), quat.x(), quat.y(), quat.z())  * v;
         }
@@ -250,14 +297,14 @@ void gkRigidBody::setAngularVelocity(const gkVector3& v, int tspace)
         break;
     }
 
-    btVector3 af = m_rigidBody->getAngularFactor();
+    btVector3 af = m_body->getAngularFactor();
     if (gkFuzzy(af.length2()))
         return;
     btVector3 nvel = btVector3(vel.x, vel.y, vel.z) * af;
     if (gkFuzzy(nvel.length2()))
         return;
  
-    m_rigidBody->setAngularVelocity(nvel);
+    m_body->setAngularVelocity(nvel);
     m_object->notifyUpdate();
 }
 
@@ -267,10 +314,10 @@ void gkRigidBody::applyTorque(const gkVector3 &v, int tspace)
     if (!isLoaded())
         return;
     // only dynamic bodies
-    if (m_rigidBody->isStaticOrKinematicObject())
+    if (m_body->isStaticOrKinematicObject())
         return;
 
-    if (v.squaredLength() > GK_EPSILON*GK_EPSILON) m_rigidBody->activate();
+    if (v.squaredLength() > GK_EPSILON*GK_EPSILON) m_body->activate();
 
     gkVector3 vel;
     switch (tspace)
@@ -278,7 +325,7 @@ void gkRigidBody::applyTorque(const gkVector3 &v, int tspace)
     case TRANSFORM_LOCAL:
         {
 
-            btTransform trans = m_rigidBody->getCenterOfMassTransform();
+            btTransform trans = m_body->getCenterOfMassTransform();
             btQuaternion quat = trans.getRotation();
             vel = gkQuaternion(quat.w(), quat.x(), quat.y(), quat.z())  * v;
         }
@@ -290,7 +337,7 @@ void gkRigidBody::applyTorque(const gkVector3 &v, int tspace)
         break;
     }
 
-    m_rigidBody->applyTorque(btVector3(vel.x, vel.y, vel.z));
+    m_body->applyTorque(btVector3(vel.x, vel.y, vel.z));
     m_object->notifyUpdate();
 }
 
@@ -301,10 +348,10 @@ void gkRigidBody::applyForce(const gkVector3 &v, int tspace)
         return;
 
     // only dynamic bodies
-    if (m_rigidBody->isStaticOrKinematicObject())
+    if (m_body->isStaticOrKinematicObject())
         return;
 
-    if (v.squaredLength() > GK_EPSILON*GK_EPSILON) m_rigidBody->activate();
+    if (v.squaredLength() > GK_EPSILON*GK_EPSILON) m_body->activate();
 
 
     gkVector3 vel;
@@ -313,7 +360,7 @@ void gkRigidBody::applyForce(const gkVector3 &v, int tspace)
     case TRANSFORM_LOCAL:
         {
 
-            btTransform trans = m_rigidBody->getCenterOfMassTransform();
+            btTransform trans = m_body->getCenterOfMassTransform();
             btQuaternion quat = trans.getRotation();
             vel = gkQuaternion(quat.w(), quat.x(), quat.y(), quat.z())  * v;
         }
@@ -325,7 +372,7 @@ void gkRigidBody::applyForce(const gkVector3 &v, int tspace)
         break;
     }
 
-    m_rigidBody->applyCentralForce(btVector3(vel.x, vel.y, vel.z));
+    m_body->applyCentralForce(btVector3(vel.x, vel.y, vel.z));
 
     m_object->notifyUpdate();
 }
@@ -333,19 +380,19 @@ void gkRigidBody::applyForce(const gkVector3 &v, int tspace)
 
 gkVector3 gkRigidBody::getLinearVelocity(void)
 {
-    if (m_rigidBody->isStaticOrKinematicObject() || !isLoaded())
+    if (m_body->isStaticOrKinematicObject() || !isLoaded())
         return gkVector3(0, 0, 0);
 
-    btVector3 vel = m_rigidBody->getLinearVelocity();
+    btVector3 vel = m_body->getLinearVelocity();
     return gkVector3(vel.x(), vel.y(), vel.z());
 }
 
 gkVector3 gkRigidBody::getAngularVelocity()
 {
-    if (m_rigidBody->isStaticOrKinematicObject() || !isLoaded())
+    if (m_body->isStaticOrKinematicObject() || !isLoaded())
         return gkVector3(0, 0, 0);
 
-    btVector3 vel = m_rigidBody->getAngularVelocity();
+    btVector3 vel = m_body->getAngularVelocity();
     return gkVector3(vel.x(), vel.y(), vel.z());
 }
 
@@ -397,17 +444,17 @@ void gkRigidBody::setWorldTransform(const btTransform& worldTrans)
 
 btCollisionObject* gkRigidBody::getCollisionObject() 
 { 
-	return m_rigidBody;
+	return m_body;
 }
 
 Ogre::AxisAlignedBox gkRigidBody::getAabb() const
 {
-	if(m_rigidBody)
+	if(m_body)
 	{
 		btVector3 aabbMin;
 		btVector3 aabbMax;
 
-		m_rigidBody->getAabb(aabbMin, aabbMax);
+		m_body->getAabb(aabbMin, aabbMax);
 
 		gkVector3 min_aabb(aabbMin.x(), aabbMin.y(), aabbMin.z());
 		gkVector3 max_aabb(aabbMax.x(), aabbMax.y(), aabbMax.z());

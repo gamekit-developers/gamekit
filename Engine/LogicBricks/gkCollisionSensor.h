@@ -52,6 +52,8 @@ public:
     gkCollisionSensor(gkGameObject *object, gkLogicLink *link, const gkString &name);
     virtual ~gkCollisionSensor() {}
 
+    gkLogicBrick* clone(gkLogicLink *link, gkGameObject *dest);
+
     bool query(void);
     GK_INLINE void setMaterial(const gkString& material)    {m_material = material;}
     GK_INLINE void setProperty(const gkString& prop)        {m_prop = prop;}

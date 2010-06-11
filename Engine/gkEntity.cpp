@@ -24,67 +24,88 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "OgreRoot.h"
-#include "OgreRenderSystem.h"
 #include "OgreSceneManager.h"
 #include "OgreEntity.h"
-#include "OgreSceneNode.h"
-#include "OgreMaterialManager.h"
 #include "OgreMesh.h"
 #include "OgreSubMesh.h"
-
+#include "OgreMeshManager.h"
+#include "OgreMaterial.h"
+#include "OgreMaterialManager.h"
 #include "gkEntity.h"
-#include "gkGameObjectGroup.h"
 #include "gkScene.h"
 #include "gkEngine.h"
-#include "gkLogger.h"
 #include "gkUserDefs.h"
 #include "gkActionManager.h"
 #include "gkAction.h"
 #include "gkSkeleton.h"
+#include "gkMesh.h"
 
-using namespace Ogre;
 
-
-gkEntity::gkEntity(gkScene *scene, const gkString& name, gkObject::Loader* loader)
-:       gkGameObject(scene, name, GK_ENTITY, loader),
-        m_entityProps(), m_entity(0), m_animProps(), m_active(0), m_default(0),
-        m_animTime(-1.0), m_blendTime(0.0), m_activeName(""),
-        m_skeleton(0)
+gkEntity::gkEntity(gkScene *scene, const gkString& name)
+:       gkGameObject(scene, name, GK_ENTITY), 
+        m_entityProps(new gkEntityProperties()), 
+        m_entity(0), 
+        m_active(0), 
+        m_skeleton(0), 
+        m_meshLoader(0)
 {
 }
+
+
+
+gkEntity::~gkEntity()
+{
+    if (m_meshLoader)
+    {
+        delete m_meshLoader;
+    }
+
+    delete m_entityProps;
+
+}
+
 
 
 void gkEntity::loadImpl(void)
 {
     gkGameObject::loadImpl();
 
-    if (m_entity != 0)
+    if (m_entity != 0 || !m_entityProps->m_mesh)
         return;
 
-    SceneManager *manager = m_scene->getManager();
+    Ogre::SceneManager *manager = m_scene->getManager();
 
-    if (m_entityProps.prefab != -1)
-        m_entity = manager->createEntity(m_name, (SceneManager::PrefabType)m_entityProps.prefab);
-    else
+    // update mesh state
+    createMesh();
+
+
+    if (m_parent && m_parent->getType() == GK_SKELETON)
     {
-        if (m_entityProps.source.empty())
-            return;
-
-        m_entity = manager->createEntity(m_name, m_entityProps.source);
-        if (m_parent && m_parent->getType() == GK_SKELETON)
-        {
-            // attach entity to skeleton
-            m_skeleton = static_cast<gkSkeleton*>(m_parent);
-            m_skeleton->setEntity(m_entity);
-        }
+        // just in case 
+        m_parent->load();
     }
-    if (!m_startPose.empty())
+
+
+    m_entity = manager->createEntity(m_name, m_entityProps->m_mesh->getName());
+
+    if (m_parent && m_parent->getType() == GK_SKELETON)
+    {
+        // attach entity to skeleton
+        m_skeleton = static_cast<gkSkeleton*>(m_parent);
+        m_skeleton->setController(this);
+        m_skeleton->setEntity(m_entity);
+    }
+
+    if (!m_entityProps->m_startPose.empty())
         _resetPose();
 
-    // moved static & ghost check to gkGameObjectLoader::setEntity
-    m_entity->setCastShadows(m_entityProps.casts);
+
+
+    m_entity->setCastShadows(m_entityProps->m_casts);
     m_node->attachObject(m_entity);
+
+    if (m_baseProps.isInvisible())
+        m_node->setVisible(false, false);
 }
 
 
@@ -94,14 +115,15 @@ void gkEntity::unloadImpl(void)
     {
         // sanity check
         GK_ASSERT(m_scene);
-        SceneManager *manager = m_scene->getManager();
+        Ogre::SceneManager *manager = m_scene->getManager();
         GK_ASSERT(manager);
 
-        if (!m_startPose.empty())
-        {
+        if (m_skeleton)
+            m_skeleton->setController(0);
+
+        if (!m_entityProps->m_startPose.empty())
             _resetPose();
-            m_default = 0;
-        }
+
         if (m_node)
             m_node->detachObject(m_entity);
 
@@ -112,9 +134,31 @@ void gkEntity::unloadImpl(void)
         m_skeleton = 0;
 
     }
-
     gkGameObject::unloadImpl();
 }
+
+
+
+void gkEntity::evalAction(gkAction* act, gkScalar animTime)
+{
+    if (m_skeleton)
+    {
+        if (m_active != 0)
+        {
+            if (act && act != m_active)
+            {
+                if (m_skeleton->hasAction(act->getName()))
+                {
+                    m_active = m_skeleton->getAction(act->getName());
+                    m_actionMgr.setAction(m_active);
+                }
+                else return;
+            }
+            m_actionMgr.update(animTime, 0.416f);
+        }
+    }
+}
+
 
 void gkEntity::playAction(const gkString& act, gkScalar blend)
 {
@@ -133,8 +177,7 @@ void gkEntity::playAction(const gkString& act, gkScalar blend)
             }
 
             m_active->setBlendFrames(blend);
-            m_animTime = 0.416f;
-            m_actionMgr.update(m_animTime);
+            m_actionMgr.update(0.416f);
         }
     }
 
@@ -143,31 +186,393 @@ void gkEntity::playAction(const gkString& act, gkScalar blend)
 
 gkObject *gkEntity::clone(const gkString &name)
 {
-    // will need to set other properties in a bit!
-    return new gkEntity(m_scene, name, m_manual ? m_manual->clone() : 0);
-}
+    gkEntity* cl= new gkEntity(m_scene, name);
 
+    memcpy(cl->m_entityProps, m_entityProps, sizeof(gkEntityProperties));
+    cl->m_entityProps->m_mesh = m_entityProps->m_mesh;
+
+    gkGameObject::cloneImpl(cl);
+    return cl;
+}
 
 
 void gkEntity::_resetPose(void)
 {
     if (m_skeleton)
     {
-        if (!m_startPose.empty())
+        if (!m_entityProps->m_startPose.empty())
         {
-
-            if (m_skeleton->hasAction(m_startPose))
+            if (m_skeleton->hasAction(m_entityProps->m_startPose))
             {
-                m_active = m_skeleton->getAction(m_startPose);
+                m_active = m_skeleton->getAction(m_entityProps->m_startPose);
                 m_actionMgr.setAction(m_active);
-                m_active->evaluate(gkEngine::getSingleton().getUserDefs().startframe);
+                m_active->setTimePosition(gkEngine::getSingleton().getUserDefs().startframe);
+                m_actionMgr.update(0.416f);
             }
         }
     }
-    m_animTime = 0;
 }
 
 
-void gkEntity::updateAnimations(void)
+
+gkBoundingBox gkEntity::getAabb() const
 {
+    return m_entityProps->m_mesh ? m_entityProps->m_mesh->getBoundingBox() : gkGameObject::getAabb();
+}
+
+
+
+class gkEntityMeshLoader : public Ogre::ManualResourceLoader
+{
+public:
+
+    gkEntityMeshLoader(gkEntity *ent);
+    virtual ~gkEntityMeshLoader() {}
+
+    void loadResource(Ogre::Resource* resource);
+    void loadMaterial(gkSubMesh *mesh);
+
+private:
+    gkEntity *m_entity;
+};
+
+
+
+void gkEntity::createMesh(void)
+{
+    if (m_meshLoader != 0)
+        return;
+
+    if (m_entityProps->m_mesh != 0)
+    {
+        Ogre::MeshPtr omesh = Ogre::MeshManager::getSingleton().getByName(m_entityProps->m_mesh->getName());
+        if (omesh.isNull())
+        {
+            m_meshLoader = new gkEntityMeshLoader(this);
+            omesh = Ogre::MeshManager::getSingleton().create(m_entityProps->m_mesh->getName(), "<gkBuiltin>", true, m_meshLoader);
+        }
+    }
+}
+
+
+
+//
+// Mesh Loader 
+//
+
+
+gkEntityMeshLoader::gkEntityMeshLoader(gkEntity *ent) 
+    :   m_entity(ent)
+{
+}
+
+
+
+void gkEntityMeshLoader::loadMaterial(gkSubMesh *mesh)
+{
+    gkMaterialProperties &gma = mesh->getMaterial();
+    if (gma.m_name.empty())
+        gma.m_name = "<gkBuiltin/DefaultMaterial>";
+
+    Ogre::MaterialPtr oma = Ogre::MaterialManager::getSingleton().getByName(gma.m_name.c_str());
+    if (!oma.isNull())
+        return;
+
+    oma = Ogre::MaterialManager::getSingleton().create(gma.m_name.c_str(), "<gkBuiltin>");
+
+    if (gma.m_mode & gkMaterialProperties::MA_INVISIBLE)
+    {
+        // disable writing to this material 
+        oma->setReceiveShadows(false);
+        oma->setColourWriteEnabled(false);
+        oma->setDepthWriteEnabled(false);
+        oma->setDepthCheckEnabled(false);
+        oma->setLightingEnabled(false);
+        return;
+    }
+
+    if (gma.m_mode & gkMaterialProperties::MA_TWOSIDE)
+    {
+        oma->setCullingMode(Ogre::CULL_NONE);
+        oma->setManualCullingMode(Ogre::MANUAL_CULL_NONE);
+    }
+
+    // apply lighting params
+
+    bool enableLights = m_entity->getOwner()->hasLights() && (gma.m_mode & gkMaterialProperties::MA_LIGHTINGENABLED) != 0;
+    oma->setReceiveShadows((gma.m_mode & gkMaterialProperties::MA_RECEIVESHADOWS) != 0);
+
+    oma->setLightingEnabled(enableLights);
+    if (enableLights)
+    {
+        gkColor emissive, ambient, specular, diffuse;
+
+        emissive    = gma.m_diffuse * gma.m_emissive;
+        ambient     = gma.m_diffuse * gma.m_ambient;
+        specular    = gma.m_specular * gma.m_spec;
+        diffuse     = gma.m_diffuse * (gma.m_emissive + gma.m_refraction);
+
+        emissive.a = ambient.a = specular.a = diffuse.a = 1.f;
+
+        oma->setSelfIllumination(emissive);
+        oma->setAmbient(ambient);
+        oma->setSpecular(specular);
+        oma->setDiffuse(diffuse);
+        oma->setShininess(gma.m_hardness);
+    }
+
+    Ogre::Pass *pass = oma->getTechnique(0)->getPass(0);
+
+    for (int i=0; i<gma.m_totaltex; ++i)
+    {
+        gkTexureProperties &gte = gma.m_textures[i];
+        Ogre::TextureUnitState *otus = pass->createTextureUnitState(gte.m_name.c_str(), gte.m_layer);
+        otus->setColourOperation(Ogre::LBO_MODULATE);
+    }
+
+    if (gma.m_mode & gkMaterialProperties::MA_ALPHABLEND)
+    {
+        pass->setAlphaRejectSettings(Ogre::CMPF_GREATER, 150);
+        pass->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
+        pass->setDepthWriteEnabled((gma.m_mode & gkMaterialProperties::MA_DEPTHWRITE) != 0);
+    }
+}
+
+
+
+void gkEntityMeshLoader::loadResource(Ogre::Resource* resource)
+{
+    using namespace Ogre;
+
+    Ogre::Mesh *omesh = static_cast<Ogre::Mesh*>(resource);
+    gkMesh *gmesh = m_entity->getEntityProperties().m_mesh;
+
+    HardwareBufferManager *bufferManager = HardwareBufferManager::getSingletonPtr();
+
+    // setup skeleton instance
+
+    gkSkeleton *skel = 0;
+
+
+    if (m_entity->getParent())
+    {
+        skel = m_entity->getParent()->getSkeleton();
+        if (skel)
+            omesh->setSkeletonName(m_entity->getParent()->getName());
+    }
+
+
+    gkMesh::SubMeshIterator iter = gmesh->getSubMeshIterator();
+    while (iter.hasMoreElements())
+    {
+        gkSubMesh *gsubmesh     = iter.getNext();
+        Ogre::SubMesh *osubmesh = omesh->createSubMesh();
+
+
+        loadMaterial(gsubmesh);
+        osubmesh->setMaterialName(gsubmesh->getMaterialName());
+        
+        osubmesh->vertexData = new VertexData();
+        osubmesh->vertexData->vertexCount = gsubmesh->getVertexBuffer().size();
+
+        // disable sharing
+        osubmesh->useSharedVertices = false;
+
+        // converting to tri list
+        osubmesh->operationType = RenderOperation::OT_TRIANGLE_LIST;
+
+        size_t offs = 0;
+
+        // fill in the declaration
+        VertexDeclaration *decl = osubmesh->vertexData->vertexDeclaration;
+
+
+        // position
+        decl->addElement(0, offs, VET_FLOAT3, VES_POSITION);
+        offs += VertexElement::getTypeSize(VET_FLOAT3);
+
+        // no, blending weights
+
+        // normals
+        decl->addElement(0, offs, VET_FLOAT3, VES_NORMAL);
+        offs += VertexElement::getTypeSize(VET_FLOAT3);
+
+        // texture coordinates
+        int maxTco = gsubmesh->getUvLayerCount();
+        for (int lay = 0; lay < maxTco; ++lay)
+        {
+            decl->addElement(0, offs, VET_FLOAT2, VES_TEXTURE_COORDINATES, lay);
+            offs += VertexElement::getTypeSize(VET_FLOAT2);
+        }
+
+        bool diffuseVert = gsubmesh->hasVertexColors();
+        if (diffuseVert)
+        {
+            // diffuse colours
+            decl->addElement(0, offs, VET_COLOUR_ABGR, VES_DIFFUSE);
+            offs += VertexElement::getTypeSize(VET_COLOUR_ABGR);
+        }
+
+        // no, specular colours
+
+        HardwareVertexBufferSharedPtr vertBuf = bufferManager->createVertexBuffer(offs,
+                                                osubmesh->vertexData->vertexCount,
+                                                HardwareBuffer::HBU_STATIC_WRITE_ONLY);
+        // bind the source
+        VertexBufferBinding *bind = osubmesh->vertexData->vertexBufferBinding;
+        bind->setBinding(0, vertBuf);
+
+
+        // index buffer
+        size_t indx_size = gsubmesh->getIndexBuffer().size() * 3;
+
+        HardwareIndexBuffer::IndexType buff_type = (indx_size > 65536) ?
+                HardwareIndexBuffer::IT_32BIT : HardwareIndexBuffer::IT_16BIT;
+
+        HardwareIndexBufferSharedPtr indexBuffer = bufferManager->createIndexBuffer(buff_type, indx_size,
+                HardwareBuffer::HBU_STATIC_WRITE_ONLY);
+
+        //
+        osubmesh->indexData->indexCount = indx_size;
+        osubmesh->indexData->indexBuffer = indexBuffer;
+
+
+        // build index items
+        {
+            bool using32 = buff_type == HardwareIndexBuffer::IT_32BIT;
+
+            unsigned int *indices32 = 0;
+            unsigned short *indices16 = 0;
+
+            if (!using32)
+                indices16 = static_cast<unsigned short*>(indexBuffer->lock(HardwareBuffer::HBL_NORMAL));
+            else
+                indices32 = static_cast<unsigned int*>(indexBuffer->lock(HardwareBuffer::HBL_NORMAL));
+
+
+            size_t ele_len = gsubmesh->getIndexBuffer().size();
+            gkTriangle *ibuf = gsubmesh->getIndexBuffer().ptr();
+
+            for (size_t cur = 0; cur < ele_len; cur++)
+            {
+                const gkTriangle& i = ibuf[cur];
+                if (using32)
+                {
+                    *indices32++ = (unsigned int)i.i0;
+                    *indices32++ = (unsigned int)i.i1;
+                    *indices32++ = (unsigned int)i.i2;
+                }
+                else
+                {
+                    *indices16++ = (unsigned short)i.i0;
+                    *indices16++ = (unsigned short)i.i1;
+                    *indices16++ = (unsigned short)i.i2;
+                }
+            }
+            indexBuffer->unlock();
+        }
+
+        // build vertex items
+        {
+            unsigned char *vptr = static_cast<unsigned char *>(vertBuf->lock(HardwareBuffer::HBL_NORMAL));
+
+            VertexData *vdata = osubmesh->vertexData;
+
+            float           *fptr = 0;
+            unsigned int    *iptr = 0;
+ 
+            
+            UTsize  totvert = gsubmesh->getVertexBuffer().size();
+            gkVertex *vbuf  = gsubmesh->getVertexBuffer().ptr();
+            UTsize vbufSize = vertBuf->getVertexSize();
+
+
+            UTsize i=0;
+            while (i < totvert)
+            {
+                const gkVertex &vtx = vbuf[i++];
+
+                // packed as 
+                // VES_POSITION | VES_NORMAL | VES_TEXTURE_COORDINATES[<8] | |= VES_DIFFUSE
+
+                // VES_POSITION
+                fptr = (float*)vptr;
+
+                *fptr++ = vtx.co.x;
+                *fptr++ = vtx.co.y;
+                *fptr++ = vtx.co.z;
+
+                // VES_NORMAL
+                *fptr++ = vtx.no.x;
+                *fptr++ = vtx.no.y;
+                *fptr++ = vtx.no.z;
+
+               
+                // VES_TEXTURE_COORDINATES
+                if (maxTco > 0)
+                {
+                    for (int tc = 0; tc < maxTco; ++tc)
+                    {
+                        *fptr++ =          vtx.uv[tc].x;
+                        *fptr++ = 1.f -    vtx.uv[tc].y;
+                    }
+                }
+
+                if (diffuseVert)
+                {
+                    // VES_DIFFUSE
+                    iptr    = (unsigned int*)fptr;
+                    *iptr++ = vtx.vcol;
+
+                    // goto next 
+                    vptr = (unsigned char *)iptr;
+                }
+                else
+                    // goto next 
+                    vptr = (unsigned char *)fptr;
+
+            }
+
+            vertBuf->unlock();
+
+            if (skel)
+            {
+                gkSubMesh::DeformVerts &dvbuf = gsubmesh->getDeformVertexBuffer();
+
+                i=0;
+                totvert = dvbuf.size();
+                gkSubMesh::DeformVerts::Pointer dvp = dvbuf.ptr();
+                while (i < totvert)
+                {
+                    gkDeformVertex &dvtx = dvp[i++];
+
+
+                    Ogre::VertexBoneAssignment vba;
+                    gkVertexGroup *vg = gmesh->findVertexGroup(dvtx.group);
+                    if (vg != 0)
+                    {
+                        gkBone *bone = skel->getBone(vg->getName());
+                        if (bone)
+                        {
+                            vba.boneIndex   = bone->getOgreBone()->getHandle();
+                            vba.vertexIndex = dvtx.vertexId;
+                            vba.weight      = dvtx.weight;
+                            osubmesh->addBoneAssignment(vba);
+                        }
+                    }
+                }
+
+                if (totvert > 0)
+                {
+                    VertexDeclaration *newDecl = decl->getAutoOrganisedDeclaration(true, false);
+                    vdata->reorganiseBuffers(newDecl);
+                }
+            }
+
+
+        }
+    }
+
+    omesh->_setBounds(gmesh->getBoundingBox(), false);
+    omesh->_setBoundingSphereRadius(gmesh->getBoundingBox().getSize().squaredLength());
 }

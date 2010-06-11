@@ -32,77 +32,23 @@
 #include "gkEngine.h"
 #include "gkString.h"
 #include "OgreSingleton.h"
-
-// Expression parsing (expression nodes, not used right now)
-class gkScriptExpression
-{
-public:
-    enum ExpressionResult
-    {
-        EXPR_ERROR = -1,
-        EXPR_FALSE,
-        EXPR_TRUE
-    };
-
-    gkScriptExpression() {}
-    virtual ~gkScriptExpression() {}
-
-    virtual size_t getHandle() = 0;
-    virtual bool isOk() = 0;
-    virtual int run() = 0;
-    virtual void addConstant(const gkString &name, int v) = 0;
-    virtual void addConstant(const gkString &name, gkScalar v) = 0;
-    virtual void addConstant(const gkString &name, bool v) = 0;
-    virtual void addConstant(const gkString &name, gkString v) = 0;
-};
+#include "Script/gkLuaScript.h"
 
 struct lua_State;
-class luRefObject;
-typedef utHashTable<utIntHashKey, luRefObject*> luCallbacks;
-typedef utHashTableIterator<luCallbacks> luCallbackIterator;
 
-
-// Lua script representation  
-class gkLuaScript
-{
-protected:
-    luRefObject*    m_script;
-    luCallbacks     m_functions;
-
-    const gkString m_name, m_text;
-    bool m_error;
-    class gkLuaManager* m_owner;
-
-    bool handleError(lua_State *L);
-
-public:
-    gkLuaScript(gkLuaManager *parent, const gkString& name, const gkString& text);
-    ~gkLuaScript();
-
-    GK_INLINE const gkString& getName(void) {return m_name;}
-    GK_INLINE bool compiled(void)           {return !m_error;}
-
-    void addFunction(int type, luRefObject *ob) { m_functions.insert(type, ob); }
-    bool hasFunction(int type) { return m_functions.find(type) != UT_NPOS; }
-
-    void update(gkScalar tickRate);
-
-    // compile & run the script 
-    bool execute(void);
-};
-
-
-// Lua interface to OgreKit
+// ----------------------------------------------------------------------------
 class gkLuaManager : public Ogre::Singleton<gkLuaManager>
 {
 public:
+
+
     typedef utHashTable<gkHashedString, gkLuaScript*> ScriptMap;
     typedef utList<gkLuaScript*> ScriptList;
 
 private:
     lua_State   *L;
     ScriptMap   m_scripts;
-    ScriptList  m_updateHooks;
+
 
 public:
     gkLuaManager();
@@ -111,8 +57,9 @@ public:
     // access to the lua virtual machine
     GK_INLINE lua_State *getLua(void) {return L;}
 
-    void addListener(int type, lua_State *L, int index);
     void update(gkScalar tick);
+
+    void unload(void);
 
 
     gkLuaScript* getScript(const gkString& name);

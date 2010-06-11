@@ -62,6 +62,7 @@ public:
     gkMotionActuator(gkGameObject *object, gkLogicLink *link, const gkString &name);
     virtual ~gkMotionActuator();
 
+    gkLogicBrick* clone(gkLogicLink *link, gkGameObject *dest);
 
     // Handle incoming logic.
     void execute(void);

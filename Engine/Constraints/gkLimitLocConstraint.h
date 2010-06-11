@@ -29,9 +29,6 @@
 
 #include "gkConstraint.h"
 
-
-
-// ----------------------------- Limit Location ------------------------------
 class gkLimitLocConstraint : public gkConstraint
 {
 public:
@@ -40,6 +37,7 @@ public:
     virtual ~gkLimitLocConstraint() {}
 
     bool update(gkGameObject *ob);
+    gkConstraint* clone(void);
 
     void setMinX(gkScalar v);
     void setMaxX(gkScalar v);

@@ -81,7 +81,7 @@ void SceneLogic::CreateRats()
 	{
 		gkGameObject* ob = *it;
 
-		if(ob->getProperties().physicsState == GK_GHOST_CONTROLLER || ob->getProperties().physicsState == GK_DYNAMIC)
+		if(ob->getProperties().isGhost() || ob->getProperties().isDynamic())
 		{
 			if(ob->getName().find("Rat") != gkString::npos)
 			{

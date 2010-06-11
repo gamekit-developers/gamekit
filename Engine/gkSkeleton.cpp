@@ -28,6 +28,8 @@
 #include "OgreBone.h"
 #include "OgreSkeleton.h"
 #include "OgreSkeletonInstance.h"
+#include "OgreSkeletonManager.h"
+#include "OgreSkeleton.h"
 
 #include "gkSkeleton.h"
 #include "gkAction.h"
@@ -35,24 +37,14 @@
 
 
 
-// Manual Bone 
-
-
-static gkTransformState ManualBone_GetConstMatrix(Ogre::Bone *bone)
+gkBone::gkBone(const gkString& name) 
+:       m_name(name), m_bone(0), m_bind(), m_parent(0)
 {
-    GK_ASSERT(bone);
-    gkTransformState r;
-    r.loc = bone->getInitialPosition();
-    r.rot = bone->getInitialOrientation();
-    r.scl = bone->getInitialScale();
-    return r;
-}
-
-gkBone::gkBone(const gkString& name, Ogre::Bone *bone) 
-:       m_name(name), m_bone(bone), m_bind(ManualBone_GetConstMatrix(bone)), m_parent(0)
-{
+    m_bind.setIdentity();
     m_pose.setIdentity();
 }
+
+
 
 gkBone::~gkBone()
 {
@@ -60,13 +52,43 @@ gkBone::~gkBone()
 
 
 
-// Skeleton 
+void gkBone::setRestPosition(const gkTransformState &st)
+{
+    m_bind = st;
+}
 
 
-gkSkeleton::gkSkeleton(gkScene *scene, const gkString& name, gkObject::Loader* loader) 
-:       gkGameObject(scene, name, GK_SKELETON, loader)
+
+void gkBone::setParent(gkBone *bone)
+{
+    if (!bone)
+        return;
+
+    if (!m_parent)
+    {
+        m_parent = bone;
+        m_parent->m_children.push_back(this);
+    }
+}
+
+
+
+void gkBone::setOgreBone(Ogre::Bone *bone)
+{
+    m_bone = bone;
+}
+
+
+
+gkSkeleton::gkSkeleton(gkScene *scene, const gkString& name) 
+:       gkGameObject(scene, name, GK_SKELETON),
+        m_controller(0),
+        m_skelLoader(0)
 {
 }
+
+
+
 
 
 gkSkeleton::~gkSkeleton()
@@ -78,19 +100,37 @@ gkSkeleton::~gkSkeleton()
     utHashTableIterator<Bones> biter(m_bones);
     while (biter.hasMoreElements())
         delete biter.getNext().second;
+
+    if (m_skelLoader != 0)
+    {
+        delete m_skelLoader;
+    }
+
 }
+
 
 
 void gkSkeleton::loadImpl(void)
 {
     gkGameObject::loadImpl();
+
+    
+    createSkeleton();
+
+    if (m_baseProps.isInvisible())
+        m_node->setVisible(false);
 }
+
+
 
 
 void gkSkeleton::unloadImpl(void)
 {
     gkGameObject::unloadImpl();
 }
+
+
+
 
 
 void gkSkeleton::setEntity(Ogre::Entity *ent)
@@ -101,39 +141,34 @@ void gkSkeleton::setEntity(Ogre::Entity *ent)
 
         if (!m_boneList.empty())
         {
-            gkBone *bone = m_boneList.begin();
-
-            while (bone)
+            for (UTsize i=0; i<m_boneList.size(); ++i)
             {
-                if (inst->hasBone(bone->m_name))
+                gkBone *bone = m_boneList.at(i);
+                if (inst->hasBone(bone->getName()))
                 {
-                    bone->m_bone = inst->getBone(bone->m_name);
-                    bone->m_bone->setManuallyControlled(true);
+                    bone->setOgreBone(inst->getBone(bone->getName()));
+                    bone->getOgreBone()->setManuallyControlled(true);
                 }
-                bone = bone->getNext();
             }
         }
     }
-
 }
 
 
-gkBone* gkSkeleton::createBone(Ogre::Bone *bone)
+
+gkBone* gkSkeleton::createBone(const gkString &name)
 {
-    if (hasBone(bone->getName()))
+    if (hasBone(name))
         return 0;
 
-    gkBone *manual = new gkBone(bone->getName(), bone);
-    bone->setManuallyControlled(true);
-    m_bones.insert(bone->getName(), manual);
-
-
-    if (bone->getParent())
-        manual->m_parent = getBone(bone->getParent()->getName());
-
+    gkBone *manual = new gkBone(name);
+    m_bones.insert(name, manual);
     m_boneList.push_back(manual);
     return manual;
 }
+
+
+
 
 gkAction* gkSkeleton::createAction(const gkHashedString& name)
 {
@@ -149,6 +184,8 @@ gkAction* gkSkeleton::createAction(const gkHashedString& name)
 }
 
 
+
+
 gkAction* gkSkeleton::getAction(const gkHashedString& name)
 {
     size_t pos;
@@ -157,6 +194,7 @@ gkAction* gkSkeleton::getAction(const gkHashedString& name)
 
     return m_actions.at(pos);
 }
+
 
 
 gkBone* gkSkeleton::getBone(const gkHashedString& name)
@@ -168,9 +206,120 @@ gkBone* gkSkeleton::getBone(const gkHashedString& name)
 }
 
 
-gkObject *gkSkeleton::clone(const gkString &name)
+
+gkBone::BoneList &gkSkeleton::getRootBoneList(void)
 {
-    // will need to set other properties in a bit!
-    return new gkSkeleton(m_scene, name, m_manual ? m_manual->clone() : 0);
+    if (m_rootBoneList.empty())
+    {
+        for (UTsize i=0; i<m_boneList.size(); ++i)
+        {
+            gkBone *bone = m_boneList.at(i);
+
+            if (bone->getParent() == 0)
+                m_rootBoneList.push_back(bone);
+        }
+    }
+    return m_rootBoneList;
 }
 
+
+
+
+gkObject *gkSkeleton::clone(const gkString &name)
+{
+    gkSkeleton* cl= new gkSkeleton(m_scene, name);
+    
+    // TODO, call clone on all bones
+
+    gkGameObject::cloneImpl(cl);
+    return cl;
+
+}
+
+
+
+class gkSkeletonLoader : public Ogre::ManualResourceLoader
+{
+public:
+
+    gkSkeletonLoader(gkSkeleton *skel);
+    virtual ~gkSkeletonLoader() {}
+
+    void loadResource(Ogre::Resource* resource);
+
+private:
+    void recurseBone(Ogre::Skeleton *skel, gkBone *cur, gkBone *par);
+
+    gkSkeleton *m_skeleton;
+
+};
+
+
+void gkSkeleton::createSkeleton(void)
+{
+    if (m_skelLoader != 0)
+        return;
+
+    Ogre::SkeletonPtr oskel = Ogre::SkeletonManager::getSingleton().getByName(m_name);
+    if (oskel.isNull())
+    {
+
+        m_skelLoader = new gkSkeletonLoader(this);
+        oskel = Ogre::SkeletonManager::getSingleton().create(m_name, "<gkBuiltin>", true, m_skelLoader);
+        oskel->load();
+    }
+
+}
+
+
+
+
+
+
+//
+// Skeleton Loader 
+//
+
+
+gkSkeletonLoader::gkSkeletonLoader(gkSkeleton *skel) 
+    :   m_skeleton(skel)
+{
+}
+
+
+
+void gkSkeletonLoader::recurseBone(Ogre::Skeleton *skel, gkBone *cur, gkBone *par)
+{
+
+    Ogre::Bone *obone = skel->createBone(cur->getName());
+    cur->setOgreBone(obone);
+
+
+    if (par != 0)
+        par->getOgreBone()->addChild(obone);
+    
+    const gkTransformState &rest = cur->getRest();
+    obone->setPosition(rest.loc);
+    obone->setOrientation(rest.rot);
+    obone->setScale(rest.scl);
+    obone->setBindingPose();
+    obone->setManuallyControlled(true);
+
+
+    gkBone::BoneList &bl = cur->getChildren();
+    for (UTsize i=0; i<bl.size(); ++i)
+        recurseBone(skel, bl[i], cur);
+}
+
+
+void gkSkeletonLoader::loadResource(Ogre::Resource* resource)
+{
+    Ogre::Skeleton *oskel = static_cast<Ogre::Skeleton*>(resource);
+
+    gkBone::BoneList &bl = m_skeleton->getRootBoneList();
+    for (UTsize i=0; i<bl.size(); ++i)
+    {
+        gkBone *gbone = bl[i];
+        recurseBone(oskel, gbone, 0);
+    }
+}

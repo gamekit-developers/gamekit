@@ -36,6 +36,8 @@
 #include "OgreQuaternion.h"
 #include "OgreColourValue.h"
 #include "OgreRectangle.h"
+#include "OgreAxisAlignedBox.h"
+#include "LinearMath/btTransform.h"
 
 #include <float.h>
 
@@ -54,17 +56,18 @@
 
 
 // Reusing math functions for simplicity
-typedef Ogre::Math          gkMath;
-typedef Ogre::Real          gkScalar;
-typedef Ogre::Degree        gkDegree;
-typedef Ogre::Radian        gkRadian;
-typedef Ogre::Vector2       gkVector2;
-typedef Ogre::Vector3       gkVector3;
-typedef Ogre::Vector4       gkVector4;
-typedef Ogre::Quaternion    gkQuaternion;
-typedef Ogre::Matrix3       gkMatrix3;
-typedef Ogre::Matrix4       gkMatrix4;
-typedef Ogre::ColourValue   gkColor;
+typedef Ogre::Math              gkMath;
+typedef Ogre::Real              gkScalar;
+typedef Ogre::Degree            gkDegree;
+typedef Ogre::Radian            gkRadian;
+typedef Ogre::Vector2           gkVector2;
+typedef Ogre::Vector3           gkVector3;
+typedef Ogre::Vector4           gkVector4;
+typedef Ogre::Quaternion        gkQuaternion;
+typedef Ogre::Matrix3           gkMatrix3;
+typedef Ogre::Matrix4           gkMatrix4;
+typedef Ogre::ColourValue       gkColor;
+typedef Ogre::AxisAlignedBox    gkBoundingBox;
 
 
 #define gkPi        gkScalar(3.141592653589793238)
@@ -151,6 +154,34 @@ public:
 };
 
 
+class gkRectangle
+{
+public:
+    gkRectangle() {}
+    gkRectangle(gkScalar xv, gkScalar yv, gkScalar wv, gkScalar hv)
+    {
+        x = xv;
+        y = yv;
+        width = wv;
+        height = hv;
+    }
+    gkRectangle(const gkRectangle& o) { *this = o; }
+
+    gkRectangle& operator= (const gkRectangle &o)
+    {
+        x = o.x;
+        y = o.y;
+        width = o.width;
+        height = o.height;
+        return *this;
+    }
+    gkScalar x, y;
+    gkScalar width, height;
+};
+
+
+
+
 class gkMathUtils
 {
 public:
@@ -177,6 +208,15 @@ public:
     static void blendMatrixFast(gkMatrix4& dest, const gkMatrix4 &A, const gkMatrix4 &B, gkScalar fact, bool fastRot = true, bool getScale = true);
 
     static void extractMatrix(const float m[][4], gkVector3 &loc, gkQuaternion &quat, gkVector3 &scale);
+
+
+
+    // Bullet converters
+    static GK_INLINE gkVector3      get(const btVector3 &v)     { return gkVector3(v.x(), v.y(), v.z()); }
+    static GK_INLINE btVector3      get(const gkVector3 &v)     { return btVector3(v.x, v.y, v.z); }
+    static GK_INLINE gkQuaternion   get(const btQuaternion &v)  { return gkQuaternion(v.w(), v.x(), v.y(), v.z()); }
+    static GK_INLINE btQuaternion   get(const gkQuaternion &v)  { return btQuaternion(v.x, v.y, v.z, v.w); }
+
 };
 
 

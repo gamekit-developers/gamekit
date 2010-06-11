@@ -50,6 +50,7 @@ public:
     gkStateActuator(gkGameObject *object, gkLogicLink *link, const gkString &name);
     virtual ~gkStateActuator();
 
+    gkLogicBrick* clone(gkLogicLink *link, gkGameObject *dest);
 
     // Handle incoming logic.
     void execute(void);

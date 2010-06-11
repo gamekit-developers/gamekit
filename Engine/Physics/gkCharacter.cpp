@@ -28,84 +28,131 @@
 #include "gkDynamicsWorld.h"
 #include "gkGameObject.h"
 #include "gkScene.h"
+#include "gkEntity.h"
+#include "gkMesh.h"
 #include "gkRigidBody.h"
 #include "OgreSceneNode.h"
 #include "btBulletDynamicsCommon.h"
 #include "BulletCollision/CollisionDispatch/btGhostObject.h"
 #include "BulletDynamics/Character/btKinematicCharacterController.h"
 
-gkCharacter::gkCharacter(const gkString& name, gkGameObject *object, gkDynamicsWorld *owner, gkObject::Loader *manual) 
-: gkObject(name, manual), m_owner(owner), m_object(object), m_ghostObject(0), m_character(0)
+gkCharacter::gkCharacter(const gkString& name, gkGameObject *object, gkDynamicsWorld *owner) 
+: gkObject(name), m_owner(owner), m_object(object), m_ghostObject(0), m_character(0), m_shape(0)
 {
-    if (m_object)
-        m_object->attachCharacter(this);
 }
 
 gkCharacter::~gkCharacter()
 {
     if (m_ghostObject)
         delete m_ghostObject;
-
-    if (m_object)
-        m_object->attachCharacter(0);
+    if (m_shape)
+        delete m_shape;
 }
-
-
-void gkCharacter::_reinstanceCharacter(btPairCachingGhostObject *ghostObject)
-{
-    // do not use outside of manual loading!
-    if (m_ghostObject)
-        delete m_ghostObject;
-
-    m_ghostObject = ghostObject;
-}
-
 
 void gkCharacter::loadImpl(void)
 {
     GK_ASSERT(m_object);
-    
-	if (isManual() && m_ghostObject)
+
+    gkGameObjectProperties  &props  = m_object->getProperties();
+    gkPhysicsProperties     &phy    = props.m_physics;
+
+    gkMesh *me = 0;
+    gkEntity *ent = m_object->getEntity();
+    if (ent != 0)
+        me = ent->getEntityProperties().m_mesh;
+
+    // extract the shape's size
+    gkVector3 size(1.f, 1.f, 1.f);
+    if (me != 0)
+        size = me->getBoundingBox().getHalfSize();
+    else
+        size *= phy.m_radius;
+
+    switch (phy.m_shape)
     {
-        // intertwine
-        m_ghostObject->setUserPointer(this);
-
-        // add character to bullet world
-        if (m_object->isInActiveLayer())
+    case SH_BOX: 
+        m_shape = new btBoxShape(btVector3(size.x, size.y, size.z));
+        break;
+    case SH_CONE: 
+        m_shape = new btConeShapeZ(gkMax(size.x, size.y), 2.f * size.z);
+        break;
+    case SH_CYLINDER: 
+        m_shape = new btCylinderShapeZ(btVector3(size.x, size.y, size.z));
+        break;
+    case SH_CONVEX_TRIMESH:
+    case SH_GIMPACT_MESH:
+    case SH_BVH_MESH:
         {
-            btDynamicsWorld *dyn = m_owner->getBulletWorld();
-
-			//m_ghostObject->setCollisionFlags(btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
-
-			m_ghostObject->setCollisionFlags(btCollisionObject::CF_CHARACTER_OBJECT);
-
-			btCollisionShape* pShape = m_ghostObject->getCollisionShape();
-
-			gkScalar stepHeight = getAabb().getSize().z/2.5f;
-
-			m_character = new btKinematicCharacterController(
-				m_ghostObject, static_cast<btConvexShape*>(m_ghostObject->getCollisionShape()), stepHeight);
-
-			m_character->setUpAxis(2);
-
-			dyn->addCollisionObject(m_ghostObject, btBroadphaseProxy::CharacterFilter);
-
-			dyn->addAction(this);
-
-	/*		m_owner->getBulletWorld()->getPairCache()->cleanProxyFromPairs(
-				m_ghostObject->getBroadphaseHandle(), m_owner->getBulletWorld()->getDispatcher());*/
+            if (me != 0)
+            {
+                btTriangleMesh *triMesh = me->getTriMesh();
+                if (triMesh->getNumTriangles() > 0)
+                {
+                    if (phy.m_shape == SH_CONVEX_TRIMESH)
+                        m_shape = new btConvexTriangleMeshShape(triMesh);
+                    else if (phy.m_shape == SH_GIMPACT_MESH)
+                        m_shape = new btConvexTriangleMeshShape(triMesh);
+                    else
+                        m_shape = new btBvhTriangleMeshShape(triMesh, true);
+                    break;
+                }
+                else 
+                    return;
+            }
         }
+    case SH_SPHERE: 
+        m_shape = new btSphereShape(gkMax(size.x, gkMax(size.y, size.z)));
+        break;
     }
 
-    // else fixme (non manual | default) loading via btWorldImporter & bullet serialization
-    // for now this assumes manual loader callbacks
+    if (!m_shape) 
+        return;
+
+    m_shape->setMargin(phy.m_margin);
+    m_shape->setLocalScaling(props.m_transform.toLocalScaling());
+
+	m_ghostObject = new btPairCachingGhostObject();
+	m_ghostObject->setCollisionShape(m_shape);
+
+
+    // basic material properties
+    m_ghostObject->setFriction(phy.m_friction);
+    m_ghostObject->setRestitution(phy.m_restitution);
+
+    m_ghostObject->setWorldTransform(props.m_transform.toTransform());
+
+
+    // intertwine
+    m_ghostObject->setUserPointer(this);
+
+    btDynamicsWorld *dyn = m_owner->getBulletWorld();
+
+	//m_ghostObject->setCollisionFlags(btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
+
+	m_ghostObject->setCollisionFlags(btCollisionObject::CF_CHARACTER_OBJECT);
+
+	btCollisionShape* pShape = m_ghostObject->getCollisionShape();
+
+	gkScalar stepHeight = getAabb().getSize().z/2.5f;
+
+	m_character = new btKinematicCharacterController(
+		m_ghostObject, static_cast<btConvexShape*>(m_ghostObject->getCollisionShape()), stepHeight);
+
+	m_character->setUpAxis(2);
+
+	dyn->addCollisionObject(m_ghostObject, btBroadphaseProxy::CharacterFilter);
+
+	dyn->addAction(this);
+
+    /*		m_owner->getBulletWorld()->getPairCache()->cleanProxyFromPairs(
+			m_ghostObject->getBroadphaseHandle(), m_owner->getBulletWorld()->getDispatcher());*/
 }
 
 void gkCharacter::unloadImpl(void)
 {
     GK_ASSERT(m_object);
 
-    if (isManual() && m_ghostObject)
+    if (m_ghostObject)
     {
         // intertwine
         m_ghostObject->setUserPointer(0);
@@ -116,6 +163,9 @@ void gkCharacter::unloadImpl(void)
 			m_owner->getBulletWorld()->removeAction(m_character);
             m_owner->getBulletWorld()->removeCollisionObject(m_ghostObject);
 		}
+        delete m_shape;
+
+        m_shape = 0;
 
 		delete m_character;
 
@@ -125,9 +175,6 @@ void gkCharacter::unloadImpl(void)
 
         m_ghostObject = 0;
     }
-
-    // else fixme (non manual | default) loading via btWorldImporter & bullet serialization
-    // for now this assumes manual loader callbacks
 }
 
 void gkCharacter::setTransformState(const gkTransformState& state)

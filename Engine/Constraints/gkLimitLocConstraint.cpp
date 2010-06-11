@@ -28,19 +28,21 @@
 #include "gkLimitLocConstraint.h"
 #include "gkGameObject.h"
 
-
-using namespace Ogre;
-
-
-
-
-gkLimitLocConstraint::gkLimitLocConstraint() :
-        gkConstraint(gkConstraint::CONST_LIMIT_LOC)
+gkLimitLocConstraint::gkLimitLocConstraint() 
+    :   gkConstraint()
 {
     m_flag[0] = m_flag[1] = 0;
     x[0] = x[1] = 0.0;
     y[0] = y[1] = 0.0;
     z[0] = z[1] = 0.0;
+}
+
+gkConstraint* gkLimitLocConstraint::clone(void)
+{
+    gkLimitLocConstraint *cl = new gkLimitLocConstraint(*this);
+    cl->m_next = 0;
+    cl->m_prev = 0;
+    return cl;
 }
 
 
@@ -109,6 +111,7 @@ bool gkLimitLocConstraint::update(gkGameObject *ob)
             doupd = true;
         }
     }
+
 
     // TODO: blend with m_influence
     return doupd;

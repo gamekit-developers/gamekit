@@ -44,16 +44,17 @@ public:
         OP_XNOR,
     };
 protected:
-    int m_op;
-
+    int     m_op;
+    bool    m_isInverter;
 
 public:
 
     gkLogicOpController(gkGameObject *object, gkLogicLink *link, const gkString &name);
     virtual ~gkLogicOpController() {}
 
-    void relay(void);
+    gkLogicBrick* clone(gkLogicLink *link, gkGameObject *dest);
 
+    void execute(void);
     GK_INLINE void setOp(int nop) {m_op = nop;}
 };
 

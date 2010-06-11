@@ -116,11 +116,11 @@ void gkActionChannel::evaluate(float time, float delta, float weight)
     GK_ASSERT(!channel.rot.isNaN());
     GK_ASSERT(!channel.scl.isNaN());
 
-    const gkTransformState &bind = m_bone->m_bind;
-    gkTransformState &pose = m_bone->m_pose;
+    const gkTransformState &bind = m_bone->getRest();
+    gkTransformState &pose = m_bone->getPose();
 
     // save previous pose
-    gkTransformState blendmat = m_bone->m_pose;
+    gkTransformState blendmat = pose;
 
     // combine relitave to binding position
     pose.loc = bind.loc + bind.rot * channel.loc;
@@ -137,7 +137,7 @@ void gkActionChannel::evaluate(float time, float delta, float weight)
     }
 
 
-    Ogre::Bone *bone = m_bone->m_bone;
+    Ogre::Bone *bone = m_bone->getOgreBone();
     bone->setPosition(pose.loc);
     bone->setOrientation(pose.rot);
     bone->setScale(pose.scl);

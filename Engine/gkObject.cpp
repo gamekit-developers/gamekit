@@ -29,8 +29,8 @@
 #include "OgreException.h"
 #include "btBulletDynamicsCommon.h"
 
-gkObject::gkObject(const gkString& name, gkObject::Loader *manual)
-:       m_name(name), m_loaded(false), m_manual(manual), m_flags(0), m_sensorMaterial("")
+gkObject::gkObject(const gkString& name)
+:       m_name(name), m_loaded(false), m_flags(0), m_sensorMaterial("")
 {
 }
 
@@ -38,9 +38,6 @@ gkObject::gkObject(const gkString& name, gkObject::Loader *manual)
 
 gkObject::~gkObject()
 {
-    if (m_manual && m_manual->isAuto())
-        delete m_manual;
-    m_manual = 0;
 }
 
 
@@ -53,9 +50,6 @@ void gkObject::load(void)
     try
     {
         preLoadImpl();
-        if (m_manual != 0)
-            m_manual->load(this);
-
         loadImpl();
         m_loaded = true;
         postLoadImpl();

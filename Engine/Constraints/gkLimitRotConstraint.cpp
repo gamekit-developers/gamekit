@@ -32,14 +32,22 @@ using namespace Ogre;
 
 
 
-gkLimitRotConstraint::gkLimitRotConstraint() :
-        gkConstraint(gkConstraint::CONST_LIMIT_ROT),
+gkLimitRotConstraint::gkLimitRotConstraint() 
+    :   gkConstraint(),
         m_flag(0),
         mXBounds(0.0, 0.0),
         mYBounds(0.0, 0.0),
         mZBounds(0.0, 0.0)
 {
 }
+gkConstraint* gkLimitRotConstraint::clone(void)
+{
+    gkLimitRotConstraint *cl = new gkLimitRotConstraint(*this);
+    cl->m_next = 0;
+    cl->m_prev = 0;
+    return cl;
+}
+
 
 
 bool gkLimitRotConstraint::update(gkGameObject *ob)
