@@ -33,6 +33,7 @@
 
 %template(ScenePtr)         Pointer<Scene>;
 %template(GameObjectPtr)    Pointer<GameObject>;
+%template(EntityPtr)        Pointer<Entity>;
 %template(RayTestPtr)       Pointer<RayTest>;
 %template(DebuggerPtr)      Pointer<Debugger>;
 

@@ -15,6 +15,7 @@
 #include "gkLuaGameObject.h"
 #include "gkLuaScene.h"
 #include "gkScene.h"
+#include "gkEntity.h"
 #include "gkLuaGameLogic.h"
 
 
@@ -339,5 +340,21 @@ int GameObject::getState(void)
     if (m_object)
         return cast<gkGameObject>()->getState();
     return -1;
+}
+
+
+
+EntityPtr GameObject::getEntity(void)
+{
+    if (m_object && cast<gkGameObject>()->getType() == GK_ENTITY)
+        return EntityPtr(new Entity(cast<gkGameObject>()));
+    return EntityPtr();
+}
+
+
+void Entity::playAction(const char *name, float blend)
+{
+    if (m_object)
+        cast<gkEntity>()->playAction(name, blend);
 }
 

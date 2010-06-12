@@ -113,6 +113,9 @@ public:
 
     int getState(void);
 
+    EntityPtr getEntity(void);
+
+
     // Scene GameObject:getScene()
     ScenePtr getScene(void);
 
@@ -123,5 +126,22 @@ public:
     void        __setitem__(const char *prop, const char* v);
 };
 
+
+class Entity : public GameObject
+{
+#ifndef SWIG
+public:
+
+    Entity(gkObject *oth) : GameObject(oth) {}
+#endif
+
+public:
+
+    Entity() : GameObject() {}
+
+    // todo expose gkAction classes
+    void playAction(const char *name, float blend);
+
+};
 
 #endif//_gkLuaGameObject_h_

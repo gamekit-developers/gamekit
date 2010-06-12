@@ -30,7 +30,11 @@ bool Scene::hasObject(const char *name)
 GameObjectPtr Scene::getObject(const char *name)
 {
     if (m_object)
-        return GameObjectPtr(new GameObject(cast<gkScene>()->getObject(name)));
+    {
+        gkGameObject *gobj = cast<gkScene>()->getObject(name);
+        if (gobj)
+            return GameObjectPtr(new GameObject(gobj));
+    }
     return GameObjectPtr();
 }
 

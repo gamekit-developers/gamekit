@@ -1510,22 +1510,24 @@ SWIG_Lua_dostring(lua_State *L, const char* str) {
 /* -------- TYPES TABLE (BEGIN) -------- */
 
 #define SWIGTYPE_p_Debugger swig_types[0]
-#define SWIGTYPE_p_GameObject swig_types[1]
-#define SWIGTYPE_p_Keyboard swig_types[2]
-#define SWIGTYPE_p_LogicBrick swig_types[3]
-#define SWIGTYPE_p_Mouse swig_types[4]
-#define SWIGTYPE_p_Object swig_types[5]
-#define SWIGTYPE_p_PointerT_Debugger_t swig_types[6]
-#define SWIGTYPE_p_PointerT_GameObject_t swig_types[7]
-#define SWIGTYPE_p_PointerT_RayTest_t swig_types[8]
-#define SWIGTYPE_p_PointerT_Scene_t swig_types[9]
-#define SWIGTYPE_p_Property swig_types[10]
-#define SWIGTYPE_p_Quaternion swig_types[11]
-#define SWIGTYPE_p_RayTest swig_types[12]
-#define SWIGTYPE_p_Scene swig_types[13]
-#define SWIGTYPE_p_Vector3 swig_types[14]
-static swig_type_info *swig_types[16];
-static swig_module_info swig_module = {swig_types, 15, 0, 0, 0, 0};
+#define SWIGTYPE_p_Entity swig_types[1]
+#define SWIGTYPE_p_GameObject swig_types[2]
+#define SWIGTYPE_p_Keyboard swig_types[3]
+#define SWIGTYPE_p_LogicBrick swig_types[4]
+#define SWIGTYPE_p_Mouse swig_types[5]
+#define SWIGTYPE_p_Object swig_types[6]
+#define SWIGTYPE_p_PointerT_Debugger_t swig_types[7]
+#define SWIGTYPE_p_PointerT_Entity_t swig_types[8]
+#define SWIGTYPE_p_PointerT_GameObject_t swig_types[9]
+#define SWIGTYPE_p_PointerT_RayTest_t swig_types[10]
+#define SWIGTYPE_p_PointerT_Scene_t swig_types[11]
+#define SWIGTYPE_p_Property swig_types[12]
+#define SWIGTYPE_p_Quaternion swig_types[13]
+#define SWIGTYPE_p_RayTest swig_types[14]
+#define SWIGTYPE_p_Scene swig_types[15]
+#define SWIGTYPE_p_Vector3 swig_types[16]
+static swig_type_info *swig_types[18];
+static swig_module_info swig_module = {swig_types, 17, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -4210,6 +4212,33 @@ fail:
 }
 
 
+static int _wrap_GameObject_getEntity(lua_State* L) {
+  int SWIG_arg = 0;
+  GameObject *arg1 = (GameObject *) 0 ;
+  EntityPtr result;
+  
+  SWIG_check_num_args("getEntity",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getEntity",1,"GameObject *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_GameObject,0))){
+    SWIG_fail_ptr("GameObject_getEntity",1,SWIGTYPE_p_GameObject);
+  }
+  
+  result = (arg1)->getEntity();
+  {
+    EntityPtr * resultptr = new EntityPtr((const EntityPtr &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PointerT_Entity_t,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_GameObject_getScene(lua_State* L) {
   int SWIG_arg = 0;
   GameObject *arg1 = (GameObject *) 0 ;
@@ -4484,6 +4513,7 @@ static swig_lua_method swig_GameObject_methods[] = {
     {"pitch", _wrap_GameObject_pitch}, 
     {"roll", _wrap_GameObject_roll}, 
     {"getState", _wrap_GameObject_getState}, 
+    {"getEntity", _wrap_GameObject_getEntity}, 
     {"getScene", _wrap_GameObject_getScene}, 
     {"__getitem", _wrap_GameObject___getitem}, 
     {"__setitem", _wrap_GameObject___setitem}, 
@@ -4495,6 +4525,67 @@ static swig_lua_attribute swig_GameObject_attributes[] = {
 static swig_lua_class *swig_GameObject_bases[] = {0,0};
 static const char *swig_GameObject_base_names[] = {"Object *",0};
 static swig_lua_class _wrap_class_GameObject = { "GameObject", &SWIGTYPE_p_GameObject,_wrap_new_GameObject, swig_delete_GameObject, swig_GameObject_methods, swig_GameObject_attributes, swig_GameObject_bases, swig_GameObject_base_names };
+
+static int _wrap_new_Entity(lua_State* L) {
+  int SWIG_arg = 0;
+  Entity *result = 0 ;
+  
+  SWIG_check_num_args("Entity",0,0)
+  result = (Entity *)new Entity();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_Entity,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Entity_playAction(lua_State* L) {
+  int SWIG_arg = 0;
+  Entity *arg1 = (Entity *) 0 ;
+  char *arg2 = (char *) 0 ;
+  float arg3 ;
+  
+  SWIG_check_num_args("playAction",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("playAction",1,"Entity *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("playAction",2,"char const *");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("playAction",3,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_Entity,0))){
+    SWIG_fail_ptr("Entity_playAction",1,SWIGTYPE_p_Entity);
+  }
+  
+  arg2 = (char *)lua_tostring(L, 2);
+  arg3 = (float)lua_tonumber(L, 3);
+  (arg1)->playAction((char const *)arg2,arg3);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_Entity(void *obj) {
+Entity *arg1 = (Entity *) obj;
+delete arg1;
+}
+static swig_lua_method swig_Entity_methods[] = {
+    {"playAction", _wrap_Entity_playAction}, 
+    {0,0}
+};
+static swig_lua_attribute swig_Entity_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_Entity_bases[] = {0,0};
+static const char *swig_Entity_base_names[] = {"GameObject *",0};
+static swig_lua_class _wrap_class_Entity = { "Entity", &SWIGTYPE_p_Entity,_wrap_new_Entity, swig_delete_Entity, swig_Entity_methods, swig_Entity_attributes, swig_Entity_bases, swig_Entity_base_names };
 
 static int _wrap_new_Mouse(lua_State* L) {
   int SWIG_arg = 0;
@@ -8031,6 +8122,33 @@ fail:
 }
 
 
+static int _wrap_GameObjectPtr_getEntity(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< GameObject > *arg1 = (Pointer< GameObject > *) 0 ;
+  EntityPtr result;
+  
+  SWIG_check_num_args("getEntity",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getEntity",1,"Pointer< GameObject > *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_GameObject_t,0))){
+    SWIG_fail_ptr("GameObjectPtr_getEntity",1,SWIGTYPE_p_PointerT_GameObject_t);
+  }
+  
+  result = (*arg1)->getEntity();
+  {
+    EntityPtr * resultptr = new EntityPtr((const EntityPtr &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PointerT_Entity_t,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_GameObjectPtr_getScene(lua_State* L) {
   int SWIG_arg = 0;
   Pointer< GameObject > *arg1 = (Pointer< GameObject > *) 0 ;
@@ -8401,6 +8519,7 @@ static swig_lua_method swig_Pointer_Sl_GameObject_Sg__methods[] = {
     {"pitch", _wrap_GameObjectPtr_pitch}, 
     {"roll", _wrap_GameObjectPtr_roll}, 
     {"getState", _wrap_GameObjectPtr_getState}, 
+    {"getEntity", _wrap_GameObjectPtr_getEntity}, 
     {"getScene", _wrap_GameObjectPtr_getScene}, 
     {"__getitem", _wrap_GameObjectPtr___getitem}, 
     {"__setitem", _wrap_GameObjectPtr___setitem}, 
@@ -8416,6 +8535,2619 @@ static swig_lua_attribute swig_Pointer_Sl_GameObject_Sg__attributes[] = {
 static swig_lua_class *swig_Pointer_Sl_GameObject_Sg__bases[] = {0};
 static const char *swig_Pointer_Sl_GameObject_Sg__base_names[] = {0};
 static swig_lua_class _wrap_class_Pointer_Sl_GameObject_Sg_ = { "GameObjectPtr", &SWIGTYPE_p_PointerT_GameObject_t,_wrap_new_GameObjectPtr, swig_delete_GameObjectPtr, swig_Pointer_Sl_GameObject_Sg__methods, swig_Pointer_Sl_GameObject_Sg__attributes, swig_Pointer_Sl_GameObject_Sg__bases, swig_Pointer_Sl_GameObject_Sg__base_names };
+
+static int _wrap_EntityPtr_isNull(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("isNull",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isNull",1,"Pointer< Entity > const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_isNull",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  result = (bool)((Pointer< Entity > const *)arg1)->isNull();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr___eq(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  Pointer< Entity > *arg2 = 0 ;
+  bool result;
+  
+  SWIG_check_num_args("operator ==",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator ==",1,"Pointer< Entity > const *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("operator ==",2,"Pointer< Entity > const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr___eq",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr___eq",2,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  result = (bool)((Pointer< Entity > const *)arg1)->operator ==((Pointer< Entity > const &)*arg2);
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr___deref__(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  Entity *result = 0 ;
+  
+  SWIG_check_num_args("operator ->",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator ->",1,"Pointer< Entity > const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr___deref__",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  result = (Entity *)((Pointer< Entity > const *)arg1)->operator ->();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_Entity,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_EntityPtr(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *result = 0 ;
+  
+  SWIG_check_num_args("Pointer<(Entity)>::Pointer<(Entity)>",0,0)
+  result = (Pointer< Entity > *)new Pointer< Entity >();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PointerT_Entity_t,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_playAction(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  char *arg2 = (char *) 0 ;
+  float arg3 ;
+  
+  SWIG_check_num_args("playAction",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("playAction",1,"Pointer< Entity > *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("playAction",2,"char const *");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("playAction",3,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_playAction",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  arg2 = (char *)lua_tostring(L, 2);
+  arg3 = (float)lua_tonumber(L, 3);
+  (*arg1)->playAction((char const *)arg2,arg3);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_getPosition(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  Vector3 result;
+  
+  SWIG_check_num_args("getPosition",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getPosition",1,"Pointer< Entity > *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_getPosition",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  result = (*arg1)->getPosition();
+  {
+    Vector3 * resultptr = new Vector3((const Vector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_Vector3,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_getRotation(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  Vector3 result;
+  
+  SWIG_check_num_args("getRotation",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getRotation",1,"Pointer< Entity > *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_getRotation",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  result = (*arg1)->getRotation();
+  {
+    Vector3 * resultptr = new Vector3((const Vector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_Vector3,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_getOrientation(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  Quaternion result;
+  
+  SWIG_check_num_args("getOrientation",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getOrientation",1,"Pointer< Entity > *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_getOrientation",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  result = (*arg1)->getOrientation();
+  {
+    Quaternion * resultptr = new Quaternion((const Quaternion &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_Quaternion,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_getScale(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  Vector3 result;
+  
+  SWIG_check_num_args("getScale",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getScale",1,"Pointer< Entity > *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_getScale",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  result = (*arg1)->getScale();
+  {
+    Vector3 * resultptr = new Vector3((const Vector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_Vector3,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_getWorldPosition(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  Vector3 result;
+  
+  SWIG_check_num_args("getWorldPosition",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getWorldPosition",1,"Pointer< Entity > *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_getWorldPosition",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  result = (*arg1)->getWorldPosition();
+  {
+    Vector3 * resultptr = new Vector3((const Vector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_Vector3,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_getWorldRotation(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  Vector3 result;
+  
+  SWIG_check_num_args("getWorldRotation",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getWorldRotation",1,"Pointer< Entity > *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_getWorldRotation",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  result = (*arg1)->getWorldRotation();
+  {
+    Vector3 * resultptr = new Vector3((const Vector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_Vector3,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_getWorldOrientation(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  Quaternion result;
+  
+  SWIG_check_num_args("getWorldOrientation",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getWorldOrientation",1,"Pointer< Entity > *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_getWorldOrientation",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  result = (*arg1)->getWorldOrientation();
+  {
+    Quaternion * resultptr = new Quaternion((const Quaternion &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_Quaternion,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_getLinearVelocity(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  Vector3 result;
+  
+  SWIG_check_num_args("getLinearVelocity",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getLinearVelocity",1,"Pointer< Entity > *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_getLinearVelocity",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  result = (*arg1)->getLinearVelocity();
+  {
+    Vector3 * resultptr = new Vector3((const Vector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_Vector3,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_getAngularVelocity(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  Vector3 result;
+  
+  SWIG_check_num_args("getAngularVelocity",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getAngularVelocity",1,"Pointer< Entity > *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_getAngularVelocity",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  result = (*arg1)->getAngularVelocity();
+  {
+    Vector3 * resultptr = new Vector3((const Vector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_Vector3,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_setLinearVelocity__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  Vector3 *arg2 = 0 ;
+  
+  SWIG_check_num_args("setLinearVelocity",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setLinearVelocity",1,"Pointer< Entity > *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setLinearVelocity",2,"Vector3 const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_setLinearVelocity",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_Vector3,0))){
+    SWIG_fail_ptr("EntityPtr_setLinearVelocity",2,SWIGTYPE_p_Vector3);
+  }
+  
+  (*arg1)->setLinearVelocity((Vector3 const &)*arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_setLinearVelocity__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  float arg2 ;
+  float arg3 ;
+  float arg4 ;
+  
+  SWIG_check_num_args("setLinearVelocity",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setLinearVelocity",1,"Pointer< Entity > *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("setLinearVelocity",2,"float");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("setLinearVelocity",3,"float");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("setLinearVelocity",4,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_setLinearVelocity",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  arg3 = (float)lua_tonumber(L, 3);
+  arg4 = (float)lua_tonumber(L, 4);
+  (*arg1)->setLinearVelocity(arg2,arg3,arg4);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_setLinearVelocity(lua_State* L) {
+  int argc;
+  int argv[5]={
+    1,2,3,4,5
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PointerT_Entity_t, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_Vector3, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        return _wrap_EntityPtr_setLinearVelocity__SWIG_0(L);
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PointerT_Entity_t, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          {
+            _v = lua_isnumber(L,argv[3]);
+          }
+          if (_v) {
+            return _wrap_EntityPtr_setLinearVelocity__SWIG_1(L);
+          }
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'EntityPtr_setLinearVelocity'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    setLinearVelocity(Pointer< Entity > *,Vector3 const &)\n"
+    "    setLinearVelocity(Pointer< Entity > *,float,float,float)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_EntityPtr_setAngularVelocity__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  Vector3 *arg2 = 0 ;
+  
+  SWIG_check_num_args("setAngularVelocity",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setAngularVelocity",1,"Pointer< Entity > *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setAngularVelocity",2,"Vector3 const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_setAngularVelocity",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_Vector3,0))){
+    SWIG_fail_ptr("EntityPtr_setAngularVelocity",2,SWIGTYPE_p_Vector3);
+  }
+  
+  (*arg1)->setAngularVelocity((Vector3 const &)*arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_setAngularVelocity__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  float arg2 ;
+  float arg3 ;
+  float arg4 ;
+  
+  SWIG_check_num_args("setAngularVelocity",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setAngularVelocity",1,"Pointer< Entity > *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("setAngularVelocity",2,"float");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("setAngularVelocity",3,"float");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("setAngularVelocity",4,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_setAngularVelocity",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  arg3 = (float)lua_tonumber(L, 3);
+  arg4 = (float)lua_tonumber(L, 4);
+  (*arg1)->setAngularVelocity(arg2,arg3,arg4);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_setAngularVelocity(lua_State* L) {
+  int argc;
+  int argv[5]={
+    1,2,3,4,5
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PointerT_Entity_t, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_Vector3, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        return _wrap_EntityPtr_setAngularVelocity__SWIG_0(L);
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PointerT_Entity_t, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          {
+            _v = lua_isnumber(L,argv[3]);
+          }
+          if (_v) {
+            return _wrap_EntityPtr_setAngularVelocity__SWIG_1(L);
+          }
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'EntityPtr_setAngularVelocity'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    setAngularVelocity(Pointer< Entity > *,Vector3 const &)\n"
+    "    setAngularVelocity(Pointer< Entity > *,float,float,float)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_EntityPtr_setPosition__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  Vector3 *arg2 = 0 ;
+  
+  SWIG_check_num_args("setPosition",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setPosition",1,"Pointer< Entity > *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setPosition",2,"Vector3 const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_setPosition",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_Vector3,0))){
+    SWIG_fail_ptr("EntityPtr_setPosition",2,SWIGTYPE_p_Vector3);
+  }
+  
+  (*arg1)->setPosition((Vector3 const &)*arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_setPosition__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  float arg2 ;
+  float arg3 ;
+  float arg4 ;
+  
+  SWIG_check_num_args("setPosition",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setPosition",1,"Pointer< Entity > *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("setPosition",2,"float");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("setPosition",3,"float");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("setPosition",4,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_setPosition",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  arg3 = (float)lua_tonumber(L, 3);
+  arg4 = (float)lua_tonumber(L, 4);
+  (*arg1)->setPosition(arg2,arg3,arg4);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_setPosition(lua_State* L) {
+  int argc;
+  int argv[5]={
+    1,2,3,4,5
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PointerT_Entity_t, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_Vector3, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        return _wrap_EntityPtr_setPosition__SWIG_0(L);
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PointerT_Entity_t, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          {
+            _v = lua_isnumber(L,argv[3]);
+          }
+          if (_v) {
+            return _wrap_EntityPtr_setPosition__SWIG_1(L);
+          }
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'EntityPtr_setPosition'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    setPosition(Pointer< Entity > *,Vector3 const &)\n"
+    "    setPosition(Pointer< Entity > *,float,float,float)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_EntityPtr_setRotation__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  Vector3 *arg2 = 0 ;
+  
+  SWIG_check_num_args("setRotation",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setRotation",1,"Pointer< Entity > *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setRotation",2,"Vector3 const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_setRotation",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_Vector3,0))){
+    SWIG_fail_ptr("EntityPtr_setRotation",2,SWIGTYPE_p_Vector3);
+  }
+  
+  (*arg1)->setRotation((Vector3 const &)*arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_setRotation__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  float arg2 ;
+  float arg3 ;
+  float arg4 ;
+  
+  SWIG_check_num_args("setRotation",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setRotation",1,"Pointer< Entity > *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("setRotation",2,"float");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("setRotation",3,"float");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("setRotation",4,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_setRotation",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  arg3 = (float)lua_tonumber(L, 3);
+  arg4 = (float)lua_tonumber(L, 4);
+  (*arg1)->setRotation(arg2,arg3,arg4);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_setRotation(lua_State* L) {
+  int argc;
+  int argv[5]={
+    1,2,3,4,5
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PointerT_Entity_t, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_Vector3, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        return _wrap_EntityPtr_setRotation__SWIG_0(L);
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PointerT_Entity_t, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          {
+            _v = lua_isnumber(L,argv[3]);
+          }
+          if (_v) {
+            return _wrap_EntityPtr_setRotation__SWIG_1(L);
+          }
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'EntityPtr_setRotation'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    setRotation(Pointer< Entity > *,Vector3 const &)\n"
+    "    setRotation(Pointer< Entity > *,float,float,float)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_EntityPtr_setOrientation__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  Quaternion *arg2 = 0 ;
+  
+  SWIG_check_num_args("setOrientation",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setOrientation",1,"Pointer< Entity > *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setOrientation",2,"Quaternion const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_setOrientation",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_Quaternion,0))){
+    SWIG_fail_ptr("EntityPtr_setOrientation",2,SWIGTYPE_p_Quaternion);
+  }
+  
+  (*arg1)->setOrientation((Quaternion const &)*arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_setOrientation__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  float arg2 ;
+  float arg3 ;
+  float arg4 ;
+  float arg5 ;
+  
+  SWIG_check_num_args("setOrientation",5,5)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setOrientation",1,"Pointer< Entity > *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("setOrientation",2,"float");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("setOrientation",3,"float");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("setOrientation",4,"float");
+  if(!lua_isnumber(L,5)) SWIG_fail_arg("setOrientation",5,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_setOrientation",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  arg3 = (float)lua_tonumber(L, 3);
+  arg4 = (float)lua_tonumber(L, 4);
+  arg5 = (float)lua_tonumber(L, 5);
+  (*arg1)->setOrientation(arg2,arg3,arg4,arg5);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_setOrientation(lua_State* L) {
+  int argc;
+  int argv[6]={
+    1,2,3,4,5,6
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PointerT_Entity_t, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_Quaternion, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        return _wrap_EntityPtr_setOrientation__SWIG_0(L);
+      }
+    }
+  }
+  if (argc == 5) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PointerT_Entity_t, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          {
+            _v = lua_isnumber(L,argv[3]);
+          }
+          if (_v) {
+            {
+              _v = lua_isnumber(L,argv[4]);
+            }
+            if (_v) {
+              return _wrap_EntityPtr_setOrientation__SWIG_1(L);
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'EntityPtr_setOrientation'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    setOrientation(Pointer< Entity > *,Quaternion const &)\n"
+    "    setOrientation(Pointer< Entity > *,float,float,float,float)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_EntityPtr_getType(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  GameObjectTypes result;
+  
+  SWIG_check_num_args("getType",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getType",1,"Pointer< Entity > *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_getType",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  result = (GameObjectTypes)(*arg1)->getType();
+  lua_pushnumber(L, (lua_Number)(int)(result)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_rotate__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  float arg2 ;
+  float arg3 ;
+  float arg4 ;
+  
+  SWIG_check_num_args("rotate",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"Pointer< Entity > *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("rotate",2,"float");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("rotate",3,"float");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("rotate",4,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_rotate",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  arg3 = (float)lua_tonumber(L, 3);
+  arg4 = (float)lua_tonumber(L, 4);
+  (*arg1)->rotate(arg2,arg3,arg4);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_rotate__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  Vector3 *arg2 = 0 ;
+  
+  SWIG_check_num_args("rotate",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"Pointer< Entity > *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("rotate",2,"Vector3 const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_rotate",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_Vector3,0))){
+    SWIG_fail_ptr("EntityPtr_rotate",2,SWIGTYPE_p_Vector3);
+  }
+  
+  (*arg1)->rotate((Vector3 const &)*arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_rotate__SWIG_2(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  Quaternion *arg2 = 0 ;
+  
+  SWIG_check_num_args("rotate",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"Pointer< Entity > *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("rotate",2,"Quaternion const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_rotate",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_Quaternion,0))){
+    SWIG_fail_ptr("EntityPtr_rotate",2,SWIGTYPE_p_Quaternion);
+  }
+  
+  (*arg1)->rotate((Quaternion const &)*arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_rotate__SWIG_3(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  float arg2 ;
+  float arg3 ;
+  float arg4 ;
+  TransformSpace arg5 ;
+  
+  SWIG_check_num_args("rotate",5,5)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"Pointer< Entity > *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("rotate",2,"float");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("rotate",3,"float");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("rotate",4,"float");
+  if(!lua_isnumber(L,5)) SWIG_fail_arg("rotate",5,"TransformSpace");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_rotate",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  arg3 = (float)lua_tonumber(L, 3);
+  arg4 = (float)lua_tonumber(L, 4);
+  arg5 = (TransformSpace)(int)lua_tonumber(L, 5);
+  (*arg1)->rotate(arg2,arg3,arg4,arg5);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_rotate__SWIG_4(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  Vector3 *arg2 = 0 ;
+  TransformSpace arg3 ;
+  
+  SWIG_check_num_args("rotate",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"Pointer< Entity > *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("rotate",2,"Vector3 const &");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("rotate",3,"TransformSpace");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_rotate",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_Vector3,0))){
+    SWIG_fail_ptr("EntityPtr_rotate",2,SWIGTYPE_p_Vector3);
+  }
+  
+  arg3 = (TransformSpace)(int)lua_tonumber(L, 3);
+  (*arg1)->rotate((Vector3 const &)*arg2,arg3);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_rotate__SWIG_5(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  Quaternion *arg2 = 0 ;
+  TransformSpace arg3 ;
+  
+  SWIG_check_num_args("rotate",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"Pointer< Entity > *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("rotate",2,"Quaternion const &");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("rotate",3,"TransformSpace");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_rotate",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_Quaternion,0))){
+    SWIG_fail_ptr("EntityPtr_rotate",2,SWIGTYPE_p_Quaternion);
+  }
+  
+  arg3 = (TransformSpace)(int)lua_tonumber(L, 3);
+  (*arg1)->rotate((Quaternion const &)*arg2,arg3);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_rotate(lua_State* L) {
+  int argc;
+  int argv[6]={
+    1,2,3,4,5,6
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PointerT_Entity_t, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_Vector3, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        return _wrap_EntityPtr_rotate__SWIG_1(L);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PointerT_Entity_t, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_Quaternion, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        return _wrap_EntityPtr_rotate__SWIG_2(L);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PointerT_Entity_t, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_Vector3, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          return _wrap_EntityPtr_rotate__SWIG_4(L);
+        }
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PointerT_Entity_t, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_Quaternion, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          return _wrap_EntityPtr_rotate__SWIG_5(L);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PointerT_Entity_t, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          {
+            _v = lua_isnumber(L,argv[3]);
+          }
+          if (_v) {
+            return _wrap_EntityPtr_rotate__SWIG_0(L);
+          }
+        }
+      }
+    }
+  }
+  if (argc == 5) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PointerT_Entity_t, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          {
+            _v = lua_isnumber(L,argv[3]);
+          }
+          if (_v) {
+            {
+              _v = lua_isnumber(L,argv[4]);
+            }
+            if (_v) {
+              return _wrap_EntityPtr_rotate__SWIG_3(L);
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'EntityPtr_rotate'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    rotate(Pointer< Entity > *,float,float,float)\n"
+    "    rotate(Pointer< Entity > *,Vector3 const &)\n"
+    "    rotate(Pointer< Entity > *,Quaternion const &)\n"
+    "    rotate(Pointer< Entity > *,float,float,float,TransformSpace)\n"
+    "    rotate(Pointer< Entity > *,Vector3 const &,TransformSpace)\n"
+    "    rotate(Pointer< Entity > *,Quaternion const &,TransformSpace)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_EntityPtr_translate__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  float arg2 ;
+  float arg3 ;
+  float arg4 ;
+  
+  SWIG_check_num_args("translate",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("translate",1,"Pointer< Entity > *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("translate",2,"float");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("translate",3,"float");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("translate",4,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_translate",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  arg3 = (float)lua_tonumber(L, 3);
+  arg4 = (float)lua_tonumber(L, 4);
+  (*arg1)->translate(arg2,arg3,arg4);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_translate__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  Vector3 *arg2 = 0 ;
+  
+  SWIG_check_num_args("translate",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("translate",1,"Pointer< Entity > *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("translate",2,"Vector3 const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_translate",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_Vector3,0))){
+    SWIG_fail_ptr("EntityPtr_translate",2,SWIGTYPE_p_Vector3);
+  }
+  
+  (*arg1)->translate((Vector3 const &)*arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_translate__SWIG_2(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  float arg2 ;
+  float arg3 ;
+  float arg4 ;
+  TransformSpace arg5 ;
+  
+  SWIG_check_num_args("translate",5,5)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("translate",1,"Pointer< Entity > *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("translate",2,"float");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("translate",3,"float");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("translate",4,"float");
+  if(!lua_isnumber(L,5)) SWIG_fail_arg("translate",5,"TransformSpace");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_translate",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  arg3 = (float)lua_tonumber(L, 3);
+  arg4 = (float)lua_tonumber(L, 4);
+  arg5 = (TransformSpace)(int)lua_tonumber(L, 5);
+  (*arg1)->translate(arg2,arg3,arg4,arg5);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_translate__SWIG_3(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  Vector3 *arg2 = 0 ;
+  TransformSpace arg3 ;
+  
+  SWIG_check_num_args("translate",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("translate",1,"Pointer< Entity > *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("translate",2,"Vector3 const &");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("translate",3,"TransformSpace");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_translate",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_Vector3,0))){
+    SWIG_fail_ptr("EntityPtr_translate",2,SWIGTYPE_p_Vector3);
+  }
+  
+  arg3 = (TransformSpace)(int)lua_tonumber(L, 3);
+  (*arg1)->translate((Vector3 const &)*arg2,arg3);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_translate(lua_State* L) {
+  int argc;
+  int argv[6]={
+    1,2,3,4,5,6
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PointerT_Entity_t, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_Vector3, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        return _wrap_EntityPtr_translate__SWIG_1(L);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PointerT_Entity_t, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_Vector3, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          return _wrap_EntityPtr_translate__SWIG_3(L);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PointerT_Entity_t, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          {
+            _v = lua_isnumber(L,argv[3]);
+          }
+          if (_v) {
+            return _wrap_EntityPtr_translate__SWIG_0(L);
+          }
+        }
+      }
+    }
+  }
+  if (argc == 5) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PointerT_Entity_t, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          {
+            _v = lua_isnumber(L,argv[3]);
+          }
+          if (_v) {
+            {
+              _v = lua_isnumber(L,argv[4]);
+            }
+            if (_v) {
+              return _wrap_EntityPtr_translate__SWIG_2(L);
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'EntityPtr_translate'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    translate(Pointer< Entity > *,float,float,float)\n"
+    "    translate(Pointer< Entity > *,Vector3 const &)\n"
+    "    translate(Pointer< Entity > *,float,float,float,TransformSpace)\n"
+    "    translate(Pointer< Entity > *,Vector3 const &,TransformSpace)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_EntityPtr_scale__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  Vector3 *arg2 = 0 ;
+  
+  SWIG_check_num_args("scale",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("scale",1,"Pointer< Entity > *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("scale",2,"Vector3 const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_scale",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_Vector3,0))){
+    SWIG_fail_ptr("EntityPtr_scale",2,SWIGTYPE_p_Vector3);
+  }
+  
+  (*arg1)->scale((Vector3 const &)*arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_scale__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  float arg2 ;
+  float arg3 ;
+  float arg4 ;
+  
+  SWIG_check_num_args("scale",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("scale",1,"Pointer< Entity > *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("scale",2,"float");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("scale",3,"float");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("scale",4,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_scale",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  arg3 = (float)lua_tonumber(L, 3);
+  arg4 = (float)lua_tonumber(L, 4);
+  (*arg1)->scale(arg2,arg3,arg4);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_scale(lua_State* L) {
+  int argc;
+  int argv[5]={
+    1,2,3,4,5
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PointerT_Entity_t, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_Vector3, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        return _wrap_EntityPtr_scale__SWIG_0(L);
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PointerT_Entity_t, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          {
+            _v = lua_isnumber(L,argv[3]);
+          }
+          if (_v) {
+            return _wrap_EntityPtr_scale__SWIG_1(L);
+          }
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'EntityPtr_scale'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    scale(Pointer< Entity > *,Vector3 const &)\n"
+    "    scale(Pointer< Entity > *,float,float,float)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_EntityPtr_yaw__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("yaw",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("yaw",1,"Pointer< Entity > *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("yaw",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_yaw",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  (*arg1)->yaw(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_yaw__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  float arg2 ;
+  TransformSpace arg3 ;
+  
+  SWIG_check_num_args("yaw",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("yaw",1,"Pointer< Entity > *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("yaw",2,"float");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("yaw",3,"TransformSpace");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_yaw",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  arg3 = (TransformSpace)(int)lua_tonumber(L, 3);
+  (*arg1)->yaw(arg2,arg3);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_yaw(lua_State* L) {
+  int argc;
+  int argv[4]={
+    1,2,3,4
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PointerT_Entity_t, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        return _wrap_EntityPtr_yaw__SWIG_0(L);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PointerT_Entity_t, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          return _wrap_EntityPtr_yaw__SWIG_1(L);
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'EntityPtr_yaw'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    yaw(Pointer< Entity > *,float)\n"
+    "    yaw(Pointer< Entity > *,float,TransformSpace)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_EntityPtr_pitch__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("pitch",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("pitch",1,"Pointer< Entity > *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("pitch",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_pitch",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  (*arg1)->pitch(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_pitch__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  float arg2 ;
+  TransformSpace arg3 ;
+  
+  SWIG_check_num_args("pitch",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("pitch",1,"Pointer< Entity > *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("pitch",2,"float");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("pitch",3,"TransformSpace");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_pitch",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  arg3 = (TransformSpace)(int)lua_tonumber(L, 3);
+  (*arg1)->pitch(arg2,arg3);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_pitch(lua_State* L) {
+  int argc;
+  int argv[4]={
+    1,2,3,4
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PointerT_Entity_t, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        return _wrap_EntityPtr_pitch__SWIG_0(L);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PointerT_Entity_t, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          return _wrap_EntityPtr_pitch__SWIG_1(L);
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'EntityPtr_pitch'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    pitch(Pointer< Entity > *,float)\n"
+    "    pitch(Pointer< Entity > *,float,TransformSpace)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_EntityPtr_roll__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("roll",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("roll",1,"Pointer< Entity > *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("roll",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_roll",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  (*arg1)->roll(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_roll__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  float arg2 ;
+  TransformSpace arg3 ;
+  
+  SWIG_check_num_args("roll",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("roll",1,"Pointer< Entity > *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("roll",2,"float");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("roll",3,"TransformSpace");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_roll",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  arg3 = (TransformSpace)(int)lua_tonumber(L, 3);
+  (*arg1)->roll(arg2,arg3);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_roll(lua_State* L) {
+  int argc;
+  int argv[4]={
+    1,2,3,4
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PointerT_Entity_t, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        return _wrap_EntityPtr_roll__SWIG_0(L);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PointerT_Entity_t, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          return _wrap_EntityPtr_roll__SWIG_1(L);
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'EntityPtr_roll'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    roll(Pointer< Entity > *,float)\n"
+    "    roll(Pointer< Entity > *,float,TransformSpace)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_EntityPtr_getState(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("getState",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getState",1,"Pointer< Entity > *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_getState",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  result = (int)(*arg1)->getState();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_getEntity(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  EntityPtr result;
+  
+  SWIG_check_num_args("getEntity",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getEntity",1,"Pointer< Entity > *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_getEntity",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  result = (*arg1)->getEntity();
+  {
+    EntityPtr * resultptr = new EntityPtr((const EntityPtr &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PointerT_Entity_t,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_getScene(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  ScenePtr result;
+  
+  SWIG_check_num_args("getScene",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getScene",1,"Pointer< Entity > *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_getScene",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  result = (*arg1)->getScene();
+  {
+    ScenePtr * resultptr = new ScenePtr((const ScenePtr &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_PointerT_Scene_t,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr___getitem(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  char *arg2 = (char *) 0 ;
+  Property result;
+  
+  SWIG_check_num_args("__getitem__",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__getitem__",1,"Pointer< Entity > *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("__getitem__",2,"char const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr___getitem",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  arg2 = (char *)lua_tostring(L, 2);
+  result = (*arg1)->__getitem__((char const *)arg2);
+  {
+    switch ((result).getType())
+    {
+    case Property::BOOL:
+      lua_pushboolean(L, (result).getValueBool());
+      return 1;
+    case Property::INT:
+      lua_pushnumber(L, (result).getValueInt());
+      return 1;
+    case Property::FLOAT:
+      lua_pushnumber(L, (result).getValueReal());
+      return 1;        
+    case Property::STRING:
+      lua_pushstring(L, (result).getValueString());
+      return 1;
+    }
+    return 0;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr___setitem__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  char *arg2 = (char *) 0 ;
+  bool arg3 ;
+  
+  SWIG_check_num_args("__setitem__",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__setitem__",1,"Pointer< Entity > *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("__setitem__",2,"char const *");
+  if(!lua_isboolean(L,3)) SWIG_fail_arg("__setitem__",3,"bool");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr___setitem",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  arg2 = (char *)lua_tostring(L, 2);
+  arg3 = (lua_toboolean(L, 3)!=0);
+  (*arg1)->__setitem__((char const *)arg2,arg3);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr___setitem__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  char *arg2 = (char *) 0 ;
+  float arg3 ;
+  
+  SWIG_check_num_args("__setitem__",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__setitem__",1,"Pointer< Entity > *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("__setitem__",2,"char const *");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("__setitem__",3,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr___setitem",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  arg2 = (char *)lua_tostring(L, 2);
+  arg3 = (float)lua_tonumber(L, 3);
+  (*arg1)->__setitem__((char const *)arg2,arg3);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr___setitem__SWIG_2(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  char *arg2 = (char *) 0 ;
+  char *arg3 = (char *) 0 ;
+  
+  SWIG_check_num_args("__setitem__",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__setitem__",1,"Pointer< Entity > *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("__setitem__",2,"char const *");
+  if(!lua_isstring(L,3)) SWIG_fail_arg("__setitem__",3,"char const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr___setitem",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  arg2 = (char *)lua_tostring(L, 2);
+  arg3 = (char *)lua_tostring(L, 3);
+  (*arg1)->__setitem__((char const *)arg2,(char const *)arg3);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr___setitem(lua_State* L) {
+  int argc;
+  int argv[4]={
+    1,2,3,4
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PointerT_Entity_t, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isboolean(L,argv[2]);
+        }
+        if (_v) {
+          return _wrap_EntityPtr___setitem__SWIG_0(L);
+        }
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PointerT_Entity_t, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          return _wrap_EntityPtr___setitem__SWIG_1(L);
+        }
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_PointerT_Entity_t, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isstring(L,argv[2]);
+        }
+        if (_v) {
+          return _wrap_EntityPtr___setitem__SWIG_2(L);
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'EntityPtr___setitem'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    __setitem__(Pointer< Entity > *,char const *,bool)\n"
+    "    __setitem__(Pointer< Entity > *,char const *,float)\n"
+    "    __setitem__(Pointer< Entity > *,char const *,char const *)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_EntityPtr_load(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  
+  SWIG_check_num_args("load",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("load",1,"Pointer< Entity > *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_load",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  (*arg1)->load();
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_unload(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  
+  SWIG_check_num_args("unload",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("unload",1,"Pointer< Entity > *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_unload",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  (*arg1)->unload();
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_reload(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  
+  SWIG_check_num_args("reload",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("reload",1,"Pointer< Entity > *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_reload",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  (*arg1)->reload();
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_EntityPtr_getName(lua_State* L) {
+  int SWIG_arg = 0;
+  Pointer< Entity > *arg1 = (Pointer< Entity > *) 0 ;
+  char *result = 0 ;
+  
+  SWIG_check_num_args("getName",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getName",1,"Pointer< Entity > *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Entity_t,0))){
+    SWIG_fail_ptr("EntityPtr_getName",1,SWIGTYPE_p_PointerT_Entity_t);
+  }
+  
+  result = (char *)(*arg1)->getName();
+  lua_pushstring(L,(const char*)result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_EntityPtr(void *obj) {
+Pointer< Entity > *arg1 = (Pointer< Entity > *) obj;
+delete arg1;
+}
+static swig_lua_method swig_Pointer_Sl_Entity_Sg__methods[] = {
+    {"isNull", _wrap_EntityPtr_isNull}, 
+    {"__eq", _wrap_EntityPtr___eq}, 
+    {"__deref__", _wrap_EntityPtr___deref__}, 
+    {"playAction", _wrap_EntityPtr_playAction}, 
+    {"getPosition", _wrap_EntityPtr_getPosition}, 
+    {"getRotation", _wrap_EntityPtr_getRotation}, 
+    {"getOrientation", _wrap_EntityPtr_getOrientation}, 
+    {"getScale", _wrap_EntityPtr_getScale}, 
+    {"getWorldPosition", _wrap_EntityPtr_getWorldPosition}, 
+    {"getWorldRotation", _wrap_EntityPtr_getWorldRotation}, 
+    {"getWorldOrientation", _wrap_EntityPtr_getWorldOrientation}, 
+    {"getLinearVelocity", _wrap_EntityPtr_getLinearVelocity}, 
+    {"getAngularVelocity", _wrap_EntityPtr_getAngularVelocity}, 
+    {"setLinearVelocity", _wrap_EntityPtr_setLinearVelocity}, 
+    {"setAngularVelocity", _wrap_EntityPtr_setAngularVelocity}, 
+    {"setPosition", _wrap_EntityPtr_setPosition}, 
+    {"setRotation", _wrap_EntityPtr_setRotation}, 
+    {"setOrientation", _wrap_EntityPtr_setOrientation}, 
+    {"getType", _wrap_EntityPtr_getType}, 
+    {"rotate", _wrap_EntityPtr_rotate}, 
+    {"translate", _wrap_EntityPtr_translate}, 
+    {"scale", _wrap_EntityPtr_scale}, 
+    {"yaw", _wrap_EntityPtr_yaw}, 
+    {"pitch", _wrap_EntityPtr_pitch}, 
+    {"roll", _wrap_EntityPtr_roll}, 
+    {"getState", _wrap_EntityPtr_getState}, 
+    {"getEntity", _wrap_EntityPtr_getEntity}, 
+    {"getScene", _wrap_EntityPtr_getScene}, 
+    {"__getitem", _wrap_EntityPtr___getitem}, 
+    {"__setitem", _wrap_EntityPtr___setitem}, 
+    {"load", _wrap_EntityPtr_load}, 
+    {"unload", _wrap_EntityPtr_unload}, 
+    {"reload", _wrap_EntityPtr_reload}, 
+    {"getName", _wrap_EntityPtr_getName}, 
+    {0,0}
+};
+static swig_lua_attribute swig_Pointer_Sl_Entity_Sg__attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_Pointer_Sl_Entity_Sg__bases[] = {0};
+static const char *swig_Pointer_Sl_Entity_Sg__base_names[] = {0};
+static swig_lua_class _wrap_class_Pointer_Sl_Entity_Sg_ = { "EntityPtr", &SWIGTYPE_p_PointerT_Entity_t,_wrap_new_EntityPtr, swig_delete_EntityPtr, swig_Pointer_Sl_Entity_Sg__methods, swig_Pointer_Sl_Entity_Sg__attributes, swig_Pointer_Sl_Entity_Sg__bases, swig_Pointer_Sl_Entity_Sg__base_names };
 
 static int _wrap_RayTestPtr_isNull(lua_State* L) {
   int SWIG_arg = 0;
@@ -9170,19 +11902,27 @@ static swig_lua_const_info swig_constants[] = {
 
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
+static void *_p_EntityTo_p_Object(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((Object *) (GameObject *) ((Entity *) x));
+}
 static void *_p_GameObjectTo_p_Object(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Object *)  ((GameObject *) x));
 }
 static void *_p_SceneTo_p_Object(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Object *)  ((Scene *) x));
 }
+static void *_p_EntityTo_p_GameObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((GameObject *)  ((Entity *) x));
+}
 static swig_type_info _swigt__p_Debugger = {"_p_Debugger", "Debugger *", 0, 0, (void*)&_wrap_class_Debugger, 0};
+static swig_type_info _swigt__p_Entity = {"_p_Entity", "Entity *", 0, 0, (void*)&_wrap_class_Entity, 0};
 static swig_type_info _swigt__p_GameObject = {"_p_GameObject", "GameObject *", 0, 0, (void*)&_wrap_class_GameObject, 0};
 static swig_type_info _swigt__p_Keyboard = {"_p_Keyboard", "Keyboard *", 0, 0, (void*)&_wrap_class_Keyboard, 0};
 static swig_type_info _swigt__p_LogicBrick = {"_p_LogicBrick", "LogicBrick *", 0, 0, (void*)&_wrap_class_LogicBrick, 0};
 static swig_type_info _swigt__p_Mouse = {"_p_Mouse", "Mouse *", 0, 0, (void*)&_wrap_class_Mouse, 0};
 static swig_type_info _swigt__p_Object = {"_p_Object", "Object *", 0, 0, (void*)&_wrap_class_Object, 0};
 static swig_type_info _swigt__p_PointerT_Debugger_t = {"_p_PointerT_Debugger_t", "Pointer< Debugger > *|DebuggerPtr *", 0, 0, (void*)&_wrap_class_Pointer_Sl_Debugger_Sg_, 0};
+static swig_type_info _swigt__p_PointerT_Entity_t = {"_p_PointerT_Entity_t", "Pointer< Entity > *|EntityPtr *", 0, 0, (void*)&_wrap_class_Pointer_Sl_Entity_Sg_, 0};
 static swig_type_info _swigt__p_PointerT_GameObject_t = {"_p_PointerT_GameObject_t", "Pointer< GameObject > *|GameObjectPtr *", 0, 0, (void*)&_wrap_class_Pointer_Sl_GameObject_Sg_, 0};
 static swig_type_info _swigt__p_PointerT_RayTest_t = {"_p_PointerT_RayTest_t", "Pointer< RayTest > *|RayTestPtr *", 0, 0, (void*)&_wrap_class_Pointer_Sl_RayTest_Sg_, 0};
 static swig_type_info _swigt__p_PointerT_Scene_t = {"_p_PointerT_Scene_t", "Pointer< Scene > *|ScenePtr *", 0, 0, (void*)&_wrap_class_Pointer_Sl_Scene_Sg_, 0};
@@ -9194,12 +11934,14 @@ static swig_type_info _swigt__p_Vector3 = {"_p_Vector3", "Vector3 *", 0, 0, (voi
 
 static swig_type_info *swig_type_initial[] = {
   &_swigt__p_Debugger,
+  &_swigt__p_Entity,
   &_swigt__p_GameObject,
   &_swigt__p_Keyboard,
   &_swigt__p_LogicBrick,
   &_swigt__p_Mouse,
   &_swigt__p_Object,
   &_swigt__p_PointerT_Debugger_t,
+  &_swigt__p_PointerT_Entity_t,
   &_swigt__p_PointerT_GameObject_t,
   &_swigt__p_PointerT_RayTest_t,
   &_swigt__p_PointerT_Scene_t,
@@ -9211,12 +11953,14 @@ static swig_type_info *swig_type_initial[] = {
 };
 
 static swig_cast_info _swigc__p_Debugger[] = {  {&_swigt__p_Debugger, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_GameObject[] = {  {&_swigt__p_GameObject, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Entity[] = {  {&_swigt__p_Entity, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_GameObject[] = {  {&_swigt__p_GameObject, 0, 0, 0},  {&_swigt__p_Entity, _p_EntityTo_p_GameObject, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Keyboard[] = {  {&_swigt__p_Keyboard, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LogicBrick[] = {  {&_swigt__p_LogicBrick, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Mouse[] = {  {&_swigt__p_Mouse, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Object[] = {  {&_swigt__p_Object, 0, 0, 0},  {&_swigt__p_GameObject, _p_GameObjectTo_p_Object, 0, 0},  {&_swigt__p_Scene, _p_SceneTo_p_Object, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Object[] = {  {&_swigt__p_Object, 0, 0, 0},  {&_swigt__p_Entity, _p_EntityTo_p_Object, 0, 0},  {&_swigt__p_GameObject, _p_GameObjectTo_p_Object, 0, 0},  {&_swigt__p_Scene, _p_SceneTo_p_Object, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_PointerT_Debugger_t[] = {  {&_swigt__p_PointerT_Debugger_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_PointerT_Entity_t[] = {  {&_swigt__p_PointerT_Entity_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_PointerT_GameObject_t[] = {  {&_swigt__p_PointerT_GameObject_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_PointerT_RayTest_t[] = {  {&_swigt__p_PointerT_RayTest_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_PointerT_Scene_t[] = {  {&_swigt__p_PointerT_Scene_t, 0, 0, 0},{0, 0, 0, 0}};
@@ -9228,12 +11972,14 @@ static swig_cast_info _swigc__p_Vector3[] = {  {&_swigt__p_Vector3, 0, 0, 0},{0,
 
 static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_Debugger,
+  _swigc__p_Entity,
   _swigc__p_GameObject,
   _swigc__p_Keyboard,
   _swigc__p_LogicBrick,
   _swigc__p_Mouse,
   _swigc__p_Object,
   _swigc__p_PointerT_Debugger_t,
+  _swigc__p_PointerT_Entity_t,
   _swigc__p_PointerT_GameObject_t,
   _swigc__p_PointerT_RayTest_t,
   _swigc__p_PointerT_Scene_t,
