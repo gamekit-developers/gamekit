@@ -99,7 +99,7 @@ private:
     DeformVerts         m_defverts;
     bool                m_hasVertexColors;
 
-    friend gkSubMeshIndexer;
+    friend class gkSubMeshIndexer;
     gkSubMeshIndexer* m_sort;
 
     gkMaterialProperties*    m_material;

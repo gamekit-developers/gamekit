@@ -93,7 +93,7 @@ public:
     void convertObject(Blender::Object *bobj, gkGameObject *gobj);
     void resolveLinks(void);
 
-    static int gkLogicLoader::getKey(int kc);
+    static int getKey(int kc);
 };
 
 

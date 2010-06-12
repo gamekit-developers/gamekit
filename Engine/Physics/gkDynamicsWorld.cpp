@@ -33,7 +33,7 @@
 #include "gkGameObject.h"
 #include "gkScene.h"
 #include "gkCamera.h"
-#include "gkvariable.h"
+#include "gkVariable.h"
 #include "btBulletDynamicsCommon.h"
 #include "BulletCollision/CollisionDispatch/btGhostObject.h"
 
