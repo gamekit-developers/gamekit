@@ -16,7 +16,9 @@ set(SRC momo_ogre.blend Main.cpp)
 include_directories(
     ${OGREKIT_OGRE_INCLUDE}
     ${OGREKIT_BULLET_INCLUDE}
+    ${OGREKIT_OPENSTEER_INCLUDE}
     ../../Engine/
+    ../../Engine/AI
 )
 
 

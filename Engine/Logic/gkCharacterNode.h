@@ -28,24 +28,29 @@
 #define _gkCharacterNode_h_
 
 #include "gkStateMachineNode.h"
-#include "AI/gkNavMeshData.h"
-#include "AI/gkNavPath.h"
 
 class gkGameObject;
 class gkEntity;
 class gkPhysicsDebug;
+class gkSteeringObject;
 
 class gkCharacterNode : public gkStateMachineNode
 {
 public:
 
+	enum STEERING_LOGIC
+	{
+		PATH_FOLLOWING,
+		SEEKER
+	};
+
 	enum 
 	{
 		//Inputs
 		ANIM_BLEND_FRAMES = MAX_SOCKETS,
-		ENABLE_GOTO,
-		GOTO_POSITION,
-		REDO_PATH,
+		AI_ENABLE,
+		AI_LOGIC,
+		AI_TARGET_POSITION,
 
 		ENABLE_ROTATION,
 		ROTATION_VALUE,
@@ -60,9 +65,9 @@ public:
 	};
 
 	DECLARE_SOCKET_TYPE(ANIM_BLEND_FRAMES, gkScalar);
-	DECLARE_SOCKET_TYPE(ENABLE_GOTO, bool);
-	DECLARE_SOCKET_TYPE(GOTO_POSITION, gkVector3);
-	DECLARE_SOCKET_TYPE(REDO_PATH, bool);
+	DECLARE_SOCKET_TYPE(AI_ENABLE, bool);
+	DECLARE_SOCKET_TYPE(AI_LOGIC, STEERING_LOGIC);
+	DECLARE_SOCKET_TYPE(AI_TARGET_POSITION, gkVector3);
 	DECLARE_SOCKET_TYPE(ENABLE_ROTATION, bool);
 	DECLARE_SOCKET_TYPE(ROTATION_VALUE, gkQuaternion);
 
@@ -103,17 +108,19 @@ public:
 
 	typedef std::map<STATE, StateData> MAP;
 
-	void setMapping(const MAP& map);
+	void setMapping(STATE idleState, const MAP& map);
 	void setObj(gkGameObject* obj) {m_obj = obj;}
 	void setPolyPickExt(const gkVector3& polyPickExt) {m_polyPickExt = polyPickExt;}
 	void setMaxPathPolys(int maxPathPolys) {m_maxPathPolys = maxPathPolys;}
+
+	void setSeekerTarget(gkGameObject* seekerTarget) { m_seekerTarget = seekerTarget; }
 	
 private:
 	void update_state(gkScalar tick);
 	void update_animation(STATE oldState);
 	void notifyState(int state);
 	StateData* getStateData(int state);
-	gkScalar getVelocityForDistance(gkScalar d, gkScalar tick, STATE& state) const;
+	STATE getStateForVelocity(gkScalar v) const;
 
 private:
 
@@ -129,8 +136,6 @@ private:
 	gkVector3 m_dir;
 	gkVector3 m_up;
 
-	gkNavPath m_navPath;
-
 	gkVector3 m_polyPickExt;
 	int m_maxPathPolys;
 
@@ -139,6 +144,14 @@ private:
 	gkScene* m_scene;
 
 	bool m_createdNavMesh;
+
+	gkSteeringObject* m_steeringObject;
+
+	gkGameObject* m_seekerTarget;
+
+	gkScalar m_maxSpeed;
+
+	bool m_followingPath;
 };
 
 

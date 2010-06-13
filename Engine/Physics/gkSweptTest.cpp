@@ -135,6 +135,12 @@ bool gkSweptTest::collides(const Ogre::Ray& ray, gkScalar rayRadius)
 
 		m_hitNormalWorld = gkVector3(rayCallback.m_hitNormalWorld);
 
+		m_reflection = ray.getDirection().reflect(m_hitNormalWorld);
+
+		gkVector3 parallelComponent = m_reflection.dotProduct(m_hitNormalWorld) * m_hitNormalWorld;
+
+		m_sliding = m_reflection - parallelComponent;
+
 		return true;
 	}
 

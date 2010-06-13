@@ -40,11 +40,13 @@ class RatLogic : public gkReferences
 public:
 	RatLogic(gkGameObject* obj, SceneLogic* scene, PMOMO momo);
 	~RatLogic();
+	gkCharacterNode* getCharacterNode() const {return m_characterNode; }
 private:
 	gkGameObject* m_obj;
 	SceneLogic* m_scene;
 	gkLogicTree* m_tree;
 	PMOMO m_momo;
+	gkCharacterNode* m_characterNode;
 };
 
 #endif//_RatLogic_h_

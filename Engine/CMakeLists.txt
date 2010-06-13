@@ -93,6 +93,9 @@ set(AI_SOURCE
     AI/gkNavMeshData.cpp
     AI/gkNavPath.cpp
     AI/gkSteering.cpp
+    AI/gkSteeringObject.cpp
+    AI/gkSteeringCapture.cpp
+    AI/gkSteeringPathFollowing.cpp
 )
 
 set(AI_HEADER
@@ -100,6 +103,9 @@ set(AI_HEADER
     AI/gkNavMeshData.h
     AI/gkNavPath.h
     AI/gkSteering.h
+    AI/gkSteeringObject.h
+    AI/gkSteeringCapture.h
+    AI/gkSteeringPathFollowing.h
 )
 
 source_group(AI\\Header FILES ${AI_HEADER})
@@ -482,6 +488,7 @@ include_directories(
     ${OGRELITE_SOURCE_DIR}/PlugIns/ParticleFX/include
     ${OGREKIT_RECAST_INCLUDE}
     ${OGREKIT_DETOUR_INCLUDE}
+    ${OGREKIT_OPENSTEER_INCLUDE}
     ${OGREKIT_OIS_INCLUDE}
     ${OGREKIT_ZLIB_INCLUDE}
     ${OGREKIT_LUA_INCLUDE}

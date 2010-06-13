@@ -50,10 +50,11 @@ public:
 
 	gkCharacterNode* m_characterNode;
 	gkRayTestNode* m_kickTestNode;
+	gkGameObject* m_obj;
 
 private:
 
-	gkGameObject* m_obj;
+	
 	SceneLogic* m_scene;
 	gkLogicTree* m_tree;
 	

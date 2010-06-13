@@ -27,17 +27,23 @@
 #include "Ogre.h"
 #include "gkNavPath.h"
 #include "gkNavMeshData.h"
+#include "gkScene.h"
+#include "gkEngine.h"
+#include "gkDynamicsWorld.h"
+#include "gkPhysicsDebug.h"
 #include "Recast.h"
 #include "RecastLog.h"
 #include "RecastTimer.h"
 #include "DetourNavMeshBuilder.h"
 #include "DetourNavMesh.h"
-#include "gkScene.h"
-#include "gkDynamicsWorld.h"
-#include "gkPhysicsDebug.h"
+
+using namespace OpenSteer;
 
 gkNavPath::gkNavPath() 
 {
+	m_scene = gkEngine::getSingleton().getActiveScene();
+		
+	GK_ASSERT(m_scene);
 }
 
 gkNavPath::~gkNavPath() 
@@ -92,7 +98,7 @@ bool gkNavPath::create(const gkNavMeshData& data, const gkVector3& from, const g
 					m_path.push_back(point);
 				}
 
-				m_path.push_back(endPos);
+				setPathway(m_path.size(), &(m_path[0]), 1, false);
 
 				return true;
 			}
@@ -102,36 +108,9 @@ bool gkNavPath::create(const gkNavMeshData& data, const gkVector3& from, const g
 	return false;
 }
 
-gkScalar gkNavPath::getDirection(const gkVector3& current_pos, gkScalar foundThreshold, gkVector3& dir)
+void gkNavPath::showPath()
 {
-	gkScalar d = 0;
-	
-	if(!m_path.empty())
-	{
-		const gkVector3& targetPos = m_path.back();
-
-		const gkVector3& pos = m_path.front();
-
-		dir = pos - current_pos;
-		
-		d = dir.length();
-
-		if(d < foundThreshold || current_pos.distance(targetPos) < foundThreshold)
-		{
-			m_path.pop_front();
-			
-			//return d;//getDirection(current_pos, foundThreshold, dir);
-		}
-
-		return d;
-	}
-
-	return d;
-}
-
-void gkNavPath::showPath(gkScene* scene, const gkVector3& from)
-{
-	gkPhysicsDebug* debug = scene->getDynamicsWorld()->getDebug();
+	gkPhysicsDebug* debug = m_scene->getDynamicsWorld()->getDebug();
 
 	if(debug)
 	{
@@ -141,9 +120,9 @@ void gkNavPath::showPath(gkScene* scene, const gkVector3& from)
 		{
 			static const btVector3 RED_COLOR(1,0,0);
 
-			gkVector3 oldPoint = from;
+			gkVector3 oldPoint = m_path.at(0);
 
-			for(unsigned int i=0; i<n; i++)
+			for(unsigned int i=1; i<n; i++)
 			{
 				gkVector3 point = m_path.at(i);
 
@@ -153,10 +132,9 @@ void gkNavPath::showPath(gkScene* scene, const gkVector3& from)
 					RED_COLOR
 				);
 
-				oldPoint = m_path.at(i);
+				oldPoint = point;
 			}
 		}
 	}
 }
-
 

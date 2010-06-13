@@ -44,6 +44,8 @@ public:
 
 	const gkVector3& getHitPoint() const { return m_hitPointWorld; }
 
+	const gkVector3& getHitNormal() const { return m_hitNormalWorld; }
+
 	btCollisionObject* getCollisionObject() const { return m_collisionObject; }
 
 	gkGameObject* getObject() const;
@@ -53,6 +55,8 @@ public:
 private:
 
 	gkVector3 m_hitPointWorld;
+
+	gkVector3 m_hitNormalWorld;
 
 	btCollisionObject* m_collisionObject;
     

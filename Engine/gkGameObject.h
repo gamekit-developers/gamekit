@@ -124,7 +124,7 @@ public:
     GK_INLINE void attachRigidBody(gkRigidBody *body) {m_rigidBody = body;}
     GK_INLINE gkRigidBody* getAttachedBody() {return m_rigidBody;}
     GK_INLINE void attachCharacter(gkCharacter *character) {m_character = character;}
-    //GK_INLINE gkCharacter* getAttachedCharacter() {return m_character;}
+    GK_INLINE gkCharacter* getAttachedCharacter() {return m_character;}
 	gkObject* getAttachedObject();
 	btCollisionObject* getCollisionObject();
 
@@ -219,6 +219,8 @@ public:
 
     GK_INLINE void  setState(int v)     {m_state = v;}
     GK_INLINE int   getState(void)      {return m_state;}
+	
+	GK_INLINE gkScalar getRadius() const { return m_radius; }
 
 protected:
     void cloneImpl(gkGameObject *clob);
@@ -281,6 +283,8 @@ private:
     void destroyPhysics(void);
 
 	NavMeshData m_navMeshData;
+
+	gkScalar m_radius;
 };
 
 #endif//_gkGameObject_h_

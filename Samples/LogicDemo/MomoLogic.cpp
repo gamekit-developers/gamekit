@@ -129,8 +129,9 @@ m_cameraNode(0)
 	targetNode->getSCREEN_X()->link(m_scene->m_mouseNode->getABS_X());
 	targetNode->getSCREEN_Y()->link(m_scene->m_mouseNode->getABS_Y());
 
-	m_characterNode->getENABLE_GOTO()->link(IS_TRUE(BOOL_AND_NODE(ifNode->getIS_TRUE(), targetNode->getHIT())));
-	m_characterNode->getGOTO_POSITION()->link(targetNode->getHIT_POSITION());
+	m_characterNode->getAI_ENABLE()->link(IS_TRUE(BOOL_AND_NODE(ifNode->getIS_TRUE(), targetNode->getHIT())));
+	m_characterNode->getAI_LOGIC()->setValue(gkCharacterNode::PATH_FOLLOWING);
+	m_characterNode->getAI_TARGET_POSITION()->link(targetNode->getHIT_POSITION());
 
 	CreateStateMachine();
 
@@ -149,7 +150,7 @@ m_cameraNode(0)
 	map[FALL_UP] = StateData(FALL_UP, animation::FALL_UP, true, velocity::NONE);
 	map[KICK] = StateData(KICK, animation::KICK, true, velocity::NONE, false);
 
-	m_characterNode->setMapping(map);
+	m_characterNode->setMapping(IDLE_NASTY, map);
 
 	m_characterNode->getENABLE_ROTATION()->setValue(true);
 	m_characterNode->getROTATION_VALUE()->link(m_cameraNode->getCURRENT_ROLL());

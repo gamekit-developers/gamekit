@@ -13,4 +13,5 @@ subdirs(Source/FreeType)
 subdirs(Source/Lua)
 subdirs(Source/Recast)
 subdirs(Source/Detour)
+subdirs(Source/OpenSteer)
 

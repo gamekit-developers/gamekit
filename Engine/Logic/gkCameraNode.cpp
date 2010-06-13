@@ -220,14 +220,10 @@ void gkCameraNode::calculateNewPosition(const gkVector3& currentPosition, gkScal
 
 		if(sweptTest.collides(ray, blokingRadius))
 		{
-			const gkVector3& rayPoint = sweptTest.getHitPoint();
-			const gkVector3& hitNormal = sweptTest.getHitNormal();
-			gkVector3 reflection = (direction).reflect(hitNormal);
+			gkVector3 displacement = (sweptTest.getHitPoint() - currentPosition) * 0.9f;
 
-			gkVector3 parallelComponent = reflection.dotProduct(hitNormal) * hitNormal;
-			gkVector3 perpendicularComponent = reflection - parallelComponent;
+			m_target->setPosition(currentPosition + (displacement + sweptTest.getSliding()) * tick);
 
-			m_target->setPosition(currentPosition + (rayPoint - currentPosition + perpendicularComponent) * tick);
 			newPosSet = true;
 		}
 	}

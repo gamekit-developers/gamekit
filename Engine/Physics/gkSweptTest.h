@@ -47,6 +47,10 @@ public:
 
 	const gkVector3& getHitNormal() const { return m_hitNormalWorld; }
 
+	const gkVector3& getReflection() const { return m_reflection; }
+
+	const gkVector3& getSliding() const { return m_sliding; }
+
 	btCollisionObject* getCollisionObject() const { return m_collisionObject; }
 
 	gkGameObject* getObject() const;
@@ -60,7 +64,13 @@ private:
 	btCollisionObject* m_collisionObject;
 
 	gkVector3 m_hitNormalWorld;
-    
+
+	// Reflection after hit
+	gkVector3 m_reflection;
+
+	// sliding vector along the plane(m_hitNormalWorld) 
+	// using the remaining component (after hit) of the ray direction component
+	gkVector3 m_sliding; 
 };
 
 

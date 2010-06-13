@@ -24,11 +24,19 @@ if (APPLE)
 endif()
 
 
-set(SRC ${DATA} Main.cpp Common.h RatLogic.h RatLogic.cpp MomoLogic.h MomoLogic.cpp SceneLogic.h SceneLogic.cpp)
+set(SRC 
+	${DATA} 
+	Main.cpp 
+	Common.h 
+	RatLogic.h RatLogic.cpp 
+	MomoLogic.h MomoLogic.cpp 
+	SceneLogic.h SceneLogic.cpp
+)
 
 include_directories(
     ${OGREKIT_OGRE_INCLUDE}
     ${OGREKIT_BULLET_INCLUDE}
+    ${OGREKIT_OPENSTEER_INCLUDE}
     ../../Engine/
     ../../Engine/Script/
     ../../Engine/Loaders/Blender/
@@ -37,6 +45,7 @@ include_directories(
     ../../Engine/Logic
     ../../Engine/Utils
     ../../Engine/Animation
+    ../../Engine/AI
 )
 
 link_libraries(

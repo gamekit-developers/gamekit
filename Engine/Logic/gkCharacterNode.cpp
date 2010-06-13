@@ -38,6 +38,8 @@
 #include "gkLogger.h"
 #include "gkSteering.h"
 #include "gkRayTest.h"
+#include "gkSteeringCapture.h"
+#include "gkSteeringPathFollowing.h"
 
 gkCharacterNode::gkCharacterNode(gkLogicTree *parent, size_t id) 
 : gkStateMachineNode(parent, id),
@@ -49,12 +51,16 @@ m_polyPickExt(2, 4, 2),
 m_maxPathPolys(256),
 m_currentStateData(0),
 m_scene(0),
-m_createdNavMesh(false)
+m_createdNavMesh(false),
+m_seekerTarget(0),
+m_steeringObject(0),
+m_maxSpeed(0),
+m_followingPath(false)
 {
 	ADD_ISOCK(ANIM_BLEND_FRAMES, 10);
-	ADD_ISOCK(ENABLE_GOTO, false);
-	ADD_ISOCK(GOTO_POSITION, gkVector3::ZERO);
-	ADD_ISOCK(REDO_PATH, false);
+	ADD_ISOCK(AI_ENABLE, false);
+	ADD_ISOCK(AI_LOGIC, PATH_FOLLOWING);
+	ADD_ISOCK(AI_TARGET_POSITION, gkVector3::ZERO);
 	ADD_ISOCK(ENABLE_ROTATION, false);
 	ADD_ISOCK(ROTATION_VALUE, gkQuaternion::IDENTITY);
 	
@@ -68,10 +74,11 @@ m_createdNavMesh(false)
 
 gkCharacterNode::~gkCharacterNode()
 {
+	if(m_steeringObject)
+		delete m_steeringObject;
+
 	if(m_createdNavMesh)
-	{
 		delete gkNavMeshData::getSingletonPtr();
-	}
 }
 
 void gkCharacterNode::initialize()
@@ -107,8 +114,6 @@ bool gkCharacterNode::evaluate(gkScalar tick)
 
 void gkCharacterNode::update(gkScalar tick)
 {
-	m_navPath.showPath(m_scene, m_obj->getPosition());
-
 	STATE oldState = m_currentStateData->m_state;
 
 	update_state(tick);
@@ -118,50 +123,46 @@ void gkCharacterNode::update(gkScalar tick)
 
 void gkCharacterNode::update_state(gkScalar tick)
 {
-	if(GET_SOCKET_VALUE(ENABLE_GOTO) && gkNavMeshData::getSingletonPtr() && (m_navPath.empty() || GET_SOCKET_VALUE(REDO_PATH)))
+	if(GET_SOCKET_VALUE(AI_ENABLE) || m_followingPath)
 	{
-		m_navPath.create(gkNavMeshData::getSingleton(), m_obj->getPosition(), GET_SOCKET_VALUE(GOTO_POSITION), m_polyPickExt, m_maxPathPolys); 
-	}
-
-	gkVector3 dir;
-	
-	gkVector3 current_position = m_obj->getPosition();
-	
-	gkScalar d = m_navPath.getDirection(current_position, 0.7f, dir); 
-
-	if(d)
-	{
-		gkVector3 current_dir = m_obj->getOrientation() * m_dir;
-		
-		//Ogre::Ray ray(current_position, current_dir*0.5f);
-		
-		//gkRayTest rayTest;
-		
-		//if(!rayTest.collides(ray))
+		if(GET_SOCKET_VALUE(AI_LOGIC) == PATH_FOLLOWING)
 		{
-		//	current_dir.x+=0.8f; 
-		}
-			gkSteering steer(m_up);
+			if(!m_steeringObject)
+			{
+				m_steeringObject = new gkSteeringPathFollowing(
+					m_obj, m_maxSpeed, m_dir, m_up, m_dir.crossProduct(m_up), m_polyPickExt, m_maxPathPolys);
+			}
+			
+			static_cast<gkSteeringPathFollowing*>(m_steeringObject)->setGoal(GET_SOCKET_VALUE(AI_TARGET_POSITION), m_obj->getRadius());
 
-			m_obj->rotate(steer.getRotation(current_dir, dir), TRANSFORM_LOCAL);
-		
-			STATE newState = -1;
+			m_steeringObject->update(tick);
 
-			m_obj->setLinearVelocity(m_dir * getVelocityForDistance(d, tick, newState), TRANSFORM_LOCAL);
-
-			GK_ASSERT(newState != -1);
+			STATE newState = getStateForVelocity(m_steeringObject->speed());
 
 			SET_SOCKET_VALUE(AI_WANTED_STATE, newState);
-		
+			
 			gkStateMachineNode::update(tick);
-		//}
-		//else
-	//	{
-			//m_navPath.clear();
-	//	}
 
+			m_followingPath = !m_steeringObject->inGoal();
+
+		}
+		else if(GET_SOCKET_VALUE(AI_LOGIC) == SEEKER)
+		{
+			if(!m_steeringObject)
+			{
+				m_steeringObject = new gkSteeringCapture(m_obj, m_maxSpeed, m_dir, m_up, m_dir.crossProduct(m_up), m_seekerTarget);
+			}
+		
+			m_steeringObject->update(tick);
+
+			STATE newState = getStateForVelocity(m_steeringObject->speed());
+
+			SET_SOCKET_VALUE(AI_WANTED_STATE, newState);
+			
+			gkStateMachineNode::update(tick);
+		}
 	}
-	else if(m_navPath.empty())
+	else
 	{
 		SET_SOCKET_VALUE(AI_WANTED_STATE, -1);
 		
@@ -227,7 +228,7 @@ gkCharacterNode::StateData* gkCharacterNode::getStateData(int state)
 	return &(it->second);
 }
 
-void gkCharacterNode::setMapping(const MAP& map)
+void gkCharacterNode::setMapping(STATE idleState, const MAP& map)
 {
 	GK_ASSERT(!map.empty());
 
@@ -236,33 +237,34 @@ void gkCharacterNode::setMapping(const MAP& map)
 	MAP::const_iterator it = m_map.begin();
 	while(it != m_map.end())
 	{
-		m_statesData.push_back(it->second);
+		if(it->second.m_velocity > 0 || it->second.m_state == idleState)
+		{
+			m_statesData.push_back(it->second);
+		}
+
 		++it;
 	}
 
 	std::sort(m_statesData.begin(), m_statesData.end());
+
+	m_maxSpeed = (m_statesData.end()-1)->m_velocity;
 }
 
-gkScalar gkCharacterNode::getVelocityForDistance(gkScalar d, gkScalar tick, STATE& state) const
+gkCharacterNode::STATE gkCharacterNode::getStateForVelocity(gkScalar v) const
 {
-	GK_ASSERT(d > 0);
-
-	STATES_DATA::const_iterator it = std::upper_bound(m_statesData.begin(), m_statesData.end(), StateData(-1, "", false, d));
-
-	GK_ASSERT(it != m_statesData.begin());
-
-	--it;
-	
-	if(it->m_velocity == 0)
+	if(v > 0)
 	{
-		++it;
+		STATES_DATA::const_iterator it = std::upper_bound(m_statesData.begin(), m_statesData.end(), StateData(-1, "", false, v));
 
-		state = it->m_state;
+		GK_ASSERT(it != m_statesData.begin());
 
-		return d/tick;
+		--it;
+
+		return it->m_state;
 	}
+	else
+	{
 
-	state = it->m_state;
-
-	return it->m_velocity;
+		return m_statesData.begin()->m_state;
+	}
 }

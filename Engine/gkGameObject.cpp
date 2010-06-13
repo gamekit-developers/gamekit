@@ -60,7 +60,7 @@ gkGameObject::gkGameObject(gkScene *scene, const gkString &name, gkGameObjectTyp
             m_logic(0),  m_bricks(0),
             m_rigidBody(0),  m_character(0),  m_groupRef(0),  m_instance(0),
             m_groupOwn(false), m_state(0),
-            m_activeLayer(true),  m_outOfDate(false), m_isClone(false)
+            m_activeLayer(true),  m_outOfDate(false), m_isClone(false), m_radius(0)
 {
     GK_ASSERT(m_scene);
     m_life.tick = 0;
@@ -820,8 +820,19 @@ void gkGameObject::loadPhysics(void)
         m_rigidBody = m_scene->getDynamicsWorld()->createRigidBody(this);
         m_rigidBody->load();
     }
-
-
+	
+	{
+		btVector3 center;
+		btScalar radius;
+		
+		getCollisionObject()->getCollisionShape()->getBoundingSphere(center, radius);
+		
+		m_radius = radius;
+		
+		GK_ASSERT(m_radius && "m_radius cannot be zero!!!");
+	}
+	
+	
 }
 
 

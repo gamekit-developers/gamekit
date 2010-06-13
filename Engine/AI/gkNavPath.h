@@ -29,34 +29,38 @@
 
 #include "gkCommon.h"
 #include "gkMathUtils.h"
+#include "PolylineSegmentedPathwaySingleRadius.h"
 
 class gkNavMeshData;
 class gkGameObject;
+class gkScene;
 
-class gkNavPath
+class gkNavPath : public OpenSteer::PolylineSegmentedPathwaySingleRadius
 {
 public:
 
 	gkNavPath();
+	
 	~gkNavPath();
 
 	bool create(const gkNavMeshData& data, const gkVector3& from, const gkVector3& to, const gkVector3& polyPickExt, int maxPathPolys);
 	
-	gkScalar getDirection(const gkVector3& current_pos, gkScalar foundThreshold, gkVector3& dir);
-
-	void showPath(gkScene* scene, const gkVector3& from);
+	void showPath();
 
 	bool empty() const { return m_path.empty(); }
 	
 	void clear(){ m_path.clear(); }
-
+	
+	gkVector3 getPoint(int index) { return m_path.at(index); }
+	
+	int getPoints() const { return m_path.size(); }
+	
 private:
 
-	gkVector3 m_upMask;
-	gkScalar m_foundThreshold;
-
-	typedef std::deque<gkVector3> PATH_POINTS;
+	typedef std::vector<OpenSteer::Vec3> PATH_POINTS;
 	PATH_POINTS m_path;
+	
+	gkScene* m_scene;
 };
 
 #endif//_gkNavPath_h_

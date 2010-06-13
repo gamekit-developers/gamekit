@@ -730,26 +730,24 @@ void gkNavMeshData::AddCollisionObj()
 bool gkNavMeshData::isValid(gkGameObject* pObj) 
 {
 	const gkPhysicsProperties& physicsState = pObj->getProperties().m_physics;
-
+	
 	bool active = false;
 	
 	btCollisionObject* pColObj = pObj->getCollisionObject();
-
+	
 	if(physicsState.isRigid() && pColObj)
 	{
 		int current_state = pColObj->getActivationState();
-
+		
 		int old_state = pObj->getAttachedBody()->setActivationState(current_state);
-
+		
 		active = current_state == WANTS_DEACTIVATION && old_state == ACTIVE_TAG;
 	}
 	else if(physicsState.isStatic())
 	{
 		active = true;
 	}
-
+	
 	return active;
 }
-
-
 GK_IMPLEMENT_SINGLETON(gkNavMeshData);

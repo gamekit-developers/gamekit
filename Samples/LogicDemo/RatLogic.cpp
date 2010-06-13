@@ -63,19 +63,20 @@ RatLogic::RatLogic(gkGameObject* obj, SceneLogic* scene, PMOMO momo)
 : m_obj(obj),
 m_scene(scene),
 m_tree(scene->m_tree),
-m_momo(momo)
+m_momo(momo),
+m_characterNode(0)
 {
 	gkCharacterNode* characterNode = m_tree->createNode<gkCharacterNode>();
+	m_characterNode = characterNode;
 	characterNode->setObj(m_obj);
 
-	characterNode->getENABLE_GOTO()->link(characterNode->isCurrentStatus(DEATH)->getIS_FALSE());
-	characterNode->getGOTO_POSITION()->link(m_momo->m_characterNode->getPOSITION());
+	characterNode->getAI_ENABLE()->link(characterNode->isCurrentStatus(DEATH)->getIS_FALSE());
+	m_characterNode->getAI_LOGIC()->setValue(gkCharacterNode::SEEKER);
+	characterNode->setSeekerTarget(m_momo->m_obj);
 
 	gkRayTestNode* hasHit = m_tree->createNode<gkRayTestNode>();
 	hasHit->getTARGET()->setValue(m_obj);
 	hasHit->getRAY_DIRECTION()->setValue(gkVector3(0, 0.5f, 0));
-
-	characterNode->getREDO_PATH()->link(hasHit->getHIT());
 
 	// Initial state
 	characterNode->getCURRENT_STATE()->setValue(IDLE); 
@@ -116,7 +117,7 @@ m_momo(momo)
 	map[RUN] = StateData(RUN, animation::RUN, true, velocity::RUN);
 	map[DEATH] = StateData(DEATH, animation::DEATH, false, 0);
 
-	characterNode->setMapping(map);
+	characterNode->setMapping(IDLE, map);
 }
 
 RatLogic::~RatLogic()
