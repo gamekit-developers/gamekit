@@ -548,6 +548,7 @@ int main(int argc, char **argv)
             }
             fprintf(bfp, "\n};\n");
             fprintf(bfp, "int DNAlen%s=sizeof(DNAstr%s);\n", (is64Bit ? "64" : ""), (is64Bit ? "64" : ""));
+            fclose(bfp);
         }
 
 
