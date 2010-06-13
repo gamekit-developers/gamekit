@@ -19,6 +19,7 @@ subject to the following restrictions:
 #include <map>
 #include <algorithm>
 #include <string>
+#include <stdio.h>
 #include <string.h>
 
 
