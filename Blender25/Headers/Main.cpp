@@ -545,7 +545,7 @@ int main(int argc, char **argv)
                 unsigned char uch = (unsigned char)dnaStr[d];
                 fprintf(bfp, "0x%02X,", uch);
                 if (d %24 == 23)
-                    fprintf(fp, "\n    ");
+                    fprintf(bfp, "\n    ");
             }
             fprintf(bfp, "\n};\n");
             fprintf(bfp, "int DNAlen%s=sizeof(DNAstr%s);\n", (is64Bit ? "64" : ""), (is64Bit ? "64" : ""));
