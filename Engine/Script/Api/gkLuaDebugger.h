@@ -18,15 +18,15 @@
 #include "gkLuaGameLogic.h"
 
 
-class Debugger
+class gkLuaDebugger
 {
 protected:
     class gkDebugger *m_debugger;
 
 public:
 
-    Debugger(const ScenePtr& sc);
-    ~Debugger() {}
+    gkLuaDebugger(const ScenePtr& sc);
+    ~gkLuaDebugger() {}
 
     void drawLine(const Vector3& from, const Vector3& to, const Vector3& color);
     void drawObjectAxis(const GameObjectPtr &ptr, float size);

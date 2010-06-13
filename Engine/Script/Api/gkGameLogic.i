@@ -21,7 +21,7 @@
 %include "gkLuaGameLogic.h"
 %include "gkLuaObject.h"
 %include "gkLuaPointer.h"
-%include "gkLuaDebugger.h"
+
 %include "gkLuaGameObject.h"
 %include "gkLuaInput.h"
 %include "gkLuaRayTest.h"
@@ -35,8 +35,10 @@
 %template(GameObjectPtr)    Pointer<GameObject>;
 %template(EntityPtr)        Pointer<Entity>;
 %template(RayTestPtr)       Pointer<RayTest>;
-%template(DebuggerPtr)      Pointer<Debugger>;
 
+%rename(Debugger)           gkLuaDebugger;
+%template(DebuggerPtr)      Pointer<gkLuaDebugger>;
+%include "gkLuaDebugger.h"
 
 typedef enum gkScanCode
 {

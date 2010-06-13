@@ -20,13 +20,11 @@
 class Scene;
 class GameObject;
 class Entity;
-class Debugger;
 class RayTest;
 
 typedef Pointer<Scene>          ScenePtr;
 typedef Pointer<GameObject>     GameObjectPtr;
 typedef Pointer<Entity>         EntityPtr;
-typedef Pointer<Debugger>       DebuggerPtr;
 typedef Pointer<RayTest>        RayTestPtr;
 
 

@@ -22,7 +22,7 @@
 
 
 
-Debugger::Debugger(const ScenePtr &sc) 
+gkLuaDebugger::gkLuaDebugger(const ScenePtr &sc) 
     :   m_debugger(0)
 {
     if (!sc.isNull())
@@ -35,14 +35,14 @@ Debugger::Debugger(const ScenePtr &sc)
 }
 
 
-void Debugger::drawLine(const Vector3& from, const Vector3& to, const Vector3& color)
+void gkLuaDebugger::drawLine(const Vector3& from, const Vector3& to, const Vector3& color)
 {
     if (m_debugger)
         m_debugger->drawLine(from, to, color);
 }
 
 
-void Debugger::drawObjectAxis(const GameObjectPtr &ptr, float size)
+void gkLuaDebugger::drawObjectAxis(const GameObjectPtr &ptr, float size)
 {
     if (m_debugger && !ptr.isNull())
     {
@@ -64,12 +64,12 @@ void Debugger::drawObjectAxis(const GameObjectPtr &ptr, float size)
     }
 }
 
-void Debugger::print(const char *str)
+void gkLuaDebugger::print(const char *str)
 {
     gkDebugScreen::printTo(str);
 }
 
-void Debugger::clear(void)
+void gkLuaDebugger::clear(void)
 {
     if (m_debugger)
         m_debugger->clear();

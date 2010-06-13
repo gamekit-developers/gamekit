@@ -1509,23 +1509,23 @@ SWIG_Lua_dostring(lua_State *L, const char* str) {
 
 /* -------- TYPES TABLE (BEGIN) -------- */
 
-#define SWIGTYPE_p_Debugger swig_types[0]
-#define SWIGTYPE_p_Entity swig_types[1]
-#define SWIGTYPE_p_GameObject swig_types[2]
-#define SWIGTYPE_p_Keyboard swig_types[3]
-#define SWIGTYPE_p_LogicBrick swig_types[4]
-#define SWIGTYPE_p_Mouse swig_types[5]
-#define SWIGTYPE_p_Object swig_types[6]
-#define SWIGTYPE_p_PointerT_Debugger_t swig_types[7]
-#define SWIGTYPE_p_PointerT_Entity_t swig_types[8]
-#define SWIGTYPE_p_PointerT_GameObject_t swig_types[9]
-#define SWIGTYPE_p_PointerT_RayTest_t swig_types[10]
-#define SWIGTYPE_p_PointerT_Scene_t swig_types[11]
-#define SWIGTYPE_p_Property swig_types[12]
-#define SWIGTYPE_p_Quaternion swig_types[13]
-#define SWIGTYPE_p_RayTest swig_types[14]
-#define SWIGTYPE_p_Scene swig_types[15]
-#define SWIGTYPE_p_Vector3 swig_types[16]
+#define SWIGTYPE_p_Entity swig_types[0]
+#define SWIGTYPE_p_GameObject swig_types[1]
+#define SWIGTYPE_p_Keyboard swig_types[2]
+#define SWIGTYPE_p_LogicBrick swig_types[3]
+#define SWIGTYPE_p_Mouse swig_types[4]
+#define SWIGTYPE_p_Object swig_types[5]
+#define SWIGTYPE_p_PointerT_Entity_t swig_types[6]
+#define SWIGTYPE_p_PointerT_GameObject_t swig_types[7]
+#define SWIGTYPE_p_PointerT_RayTest_t swig_types[8]
+#define SWIGTYPE_p_PointerT_Scene_t swig_types[9]
+#define SWIGTYPE_p_PointerT_gkLuaDebugger_t swig_types[10]
+#define SWIGTYPE_p_Property swig_types[11]
+#define SWIGTYPE_p_Quaternion swig_types[12]
+#define SWIGTYPE_p_RayTest swig_types[13]
+#define SWIGTYPE_p_Scene swig_types[14]
+#define SWIGTYPE_p_Vector3 swig_types[15]
+#define SWIGTYPE_p_gkLuaDebugger swig_types[16]
 static swig_type_info *swig_types[18];
 static swig_module_info swig_module = {swig_types, 17, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
@@ -1953,174 +1953,6 @@ static swig_lua_attribute swig_Object_attributes[] = {
 static swig_lua_class *swig_Object_bases[] = {0};
 static const char *swig_Object_base_names[] = {0};
 static swig_lua_class _wrap_class_Object = { "Object", &SWIGTYPE_p_Object,_wrap_new_Object, swig_delete_Object, swig_Object_methods, swig_Object_attributes, swig_Object_bases, swig_Object_base_names };
-
-static int _wrap_new_Debugger(lua_State* L) {
-  int SWIG_arg = 0;
-  ScenePtr *arg1 = 0 ;
-  Debugger *result = 0 ;
-  
-  SWIG_check_num_args("Debugger",1,1)
-  if(!lua_isuserdata(L,1)) SWIG_fail_arg("Debugger",1,"ScenePtr const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Scene_t,0))){
-    SWIG_fail_ptr("new_Debugger",1,SWIGTYPE_p_PointerT_Scene_t);
-  }
-  
-  result = (Debugger *)new Debugger((ScenePtr const &)*arg1);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_Debugger,1); SWIG_arg++; 
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_Debugger_drawLine(lua_State* L) {
-  int SWIG_arg = 0;
-  Debugger *arg1 = (Debugger *) 0 ;
-  Vector3 *arg2 = 0 ;
-  Vector3 *arg3 = 0 ;
-  Vector3 *arg4 = 0 ;
-  
-  SWIG_check_num_args("drawLine",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("drawLine",1,"Debugger *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("drawLine",2,"Vector3 const &");
-  if(!lua_isuserdata(L,3)) SWIG_fail_arg("drawLine",3,"Vector3 const &");
-  if(!lua_isuserdata(L,4)) SWIG_fail_arg("drawLine",4,"Vector3 const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_Debugger,0))){
-    SWIG_fail_ptr("Debugger_drawLine",1,SWIGTYPE_p_Debugger);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_Vector3,0))){
-    SWIG_fail_ptr("Debugger_drawLine",2,SWIGTYPE_p_Vector3);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_Vector3,0))){
-    SWIG_fail_ptr("Debugger_drawLine",3,SWIGTYPE_p_Vector3);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,4,(void**)&arg4,SWIGTYPE_p_Vector3,0))){
-    SWIG_fail_ptr("Debugger_drawLine",4,SWIGTYPE_p_Vector3);
-  }
-  
-  (arg1)->drawLine((Vector3 const &)*arg2,(Vector3 const &)*arg3,(Vector3 const &)*arg4);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_Debugger_drawObjectAxis(lua_State* L) {
-  int SWIG_arg = 0;
-  Debugger *arg1 = (Debugger *) 0 ;
-  GameObjectPtr *arg2 = 0 ;
-  float arg3 ;
-  
-  SWIG_check_num_args("drawObjectAxis",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("drawObjectAxis",1,"Debugger *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("drawObjectAxis",2,"GameObjectPtr const &");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("drawObjectAxis",3,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_Debugger,0))){
-    SWIG_fail_ptr("Debugger_drawObjectAxis",1,SWIGTYPE_p_Debugger);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_PointerT_GameObject_t,0))){
-    SWIG_fail_ptr("Debugger_drawObjectAxis",2,SWIGTYPE_p_PointerT_GameObject_t);
-  }
-  
-  arg3 = (float)lua_tonumber(L, 3);
-  (arg1)->drawObjectAxis((GameObjectPtr const &)*arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_Debugger_print(lua_State* L) {
-  int SWIG_arg = 0;
-  Debugger *arg1 = (Debugger *) 0 ;
-  char *arg2 = (char *) 0 ;
-  
-  SWIG_check_num_args("print",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("print",1,"Debugger *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("print",2,"char const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_Debugger,0))){
-    SWIG_fail_ptr("Debugger_print",1,SWIGTYPE_p_Debugger);
-  }
-  
-  arg2 = (char *)lua_tostring(L, 2);
-  (arg1)->print((char const *)arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_Debugger_clear(lua_State* L) {
-  int SWIG_arg = 0;
-  Debugger *arg1 = (Debugger *) 0 ;
-  
-  SWIG_check_num_args("clear",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("clear",1,"Debugger *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_Debugger,0))){
-    SWIG_fail_ptr("Debugger_clear",1,SWIGTYPE_p_Debugger);
-  }
-  
-  (arg1)->clear();
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static void swig_delete_Debugger(void *obj) {
-Debugger *arg1 = (Debugger *) obj;
-delete arg1;
-}
-static swig_lua_method swig_Debugger_methods[] = {
-    {"drawLine", _wrap_Debugger_drawLine}, 
-    {"drawObjectAxis", _wrap_Debugger_drawObjectAxis}, 
-    {"print", _wrap_Debugger_print}, 
-    {"clear", _wrap_Debugger_clear}, 
-    {0,0}
-};
-static swig_lua_attribute swig_Debugger_attributes[] = {
-    {0,0,0}
-};
-static swig_lua_class *swig_Debugger_bases[] = {0};
-static const char *swig_Debugger_base_names[] = {0};
-static swig_lua_class _wrap_class_Debugger = { "Debugger", &SWIGTYPE_p_Debugger,_wrap_new_Debugger, swig_delete_Debugger, swig_Debugger_methods, swig_Debugger_attributes, swig_Debugger_bases, swig_Debugger_base_names };
 
 static int _wrap_new_GameObject(lua_State* L) {
   int SWIG_arg = 0;
@@ -11520,17 +11352,17 @@ static swig_lua_class _wrap_class_Pointer_Sl_RayTest_Sg_ = { "RayTestPtr", &SWIG
 
 static int _wrap_DebuggerPtr_isNull(lua_State* L) {
   int SWIG_arg = 0;
-  Pointer< Debugger > *arg1 = (Pointer< Debugger > *) 0 ;
+  Pointer< gkLuaDebugger > *arg1 = (Pointer< gkLuaDebugger > *) 0 ;
   bool result;
   
   SWIG_check_num_args("isNull",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isNull",1,"Pointer< Debugger > const *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isNull",1,"Pointer< gkLuaDebugger > const *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Debugger_t,0))){
-    SWIG_fail_ptr("DebuggerPtr_isNull",1,SWIGTYPE_p_PointerT_Debugger_t);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_gkLuaDebugger_t,0))){
+    SWIG_fail_ptr("DebuggerPtr_isNull",1,SWIGTYPE_p_PointerT_gkLuaDebugger_t);
   }
   
-  result = (bool)((Pointer< Debugger > const *)arg1)->isNull();
+  result = (bool)((Pointer< gkLuaDebugger > const *)arg1)->isNull();
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -11544,24 +11376,24 @@ fail:
 
 static int _wrap_DebuggerPtr___eq(lua_State* L) {
   int SWIG_arg = 0;
-  Pointer< Debugger > *arg1 = (Pointer< Debugger > *) 0 ;
-  Pointer< Debugger > *arg2 = 0 ;
+  Pointer< gkLuaDebugger > *arg1 = (Pointer< gkLuaDebugger > *) 0 ;
+  Pointer< gkLuaDebugger > *arg2 = 0 ;
   bool result;
   
   SWIG_check_num_args("operator ==",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator ==",1,"Pointer< Debugger > const *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("operator ==",2,"Pointer< Debugger > const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator ==",1,"Pointer< gkLuaDebugger > const *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("operator ==",2,"Pointer< gkLuaDebugger > const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Debugger_t,0))){
-    SWIG_fail_ptr("DebuggerPtr___eq",1,SWIGTYPE_p_PointerT_Debugger_t);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_gkLuaDebugger_t,0))){
+    SWIG_fail_ptr("DebuggerPtr___eq",1,SWIGTYPE_p_PointerT_gkLuaDebugger_t);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_PointerT_Debugger_t,0))){
-    SWIG_fail_ptr("DebuggerPtr___eq",2,SWIGTYPE_p_PointerT_Debugger_t);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_PointerT_gkLuaDebugger_t,0))){
+    SWIG_fail_ptr("DebuggerPtr___eq",2,SWIGTYPE_p_PointerT_gkLuaDebugger_t);
   }
   
-  result = (bool)((Pointer< Debugger > const *)arg1)->operator ==((Pointer< Debugger > const &)*arg2);
+  result = (bool)((Pointer< gkLuaDebugger > const *)arg1)->operator ==((Pointer< gkLuaDebugger > const &)*arg2);
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -11575,18 +11407,18 @@ fail:
 
 static int _wrap_DebuggerPtr___deref__(lua_State* L) {
   int SWIG_arg = 0;
-  Pointer< Debugger > *arg1 = (Pointer< Debugger > *) 0 ;
-  Debugger *result = 0 ;
+  Pointer< gkLuaDebugger > *arg1 = (Pointer< gkLuaDebugger > *) 0 ;
+  gkLuaDebugger *result = 0 ;
   
   SWIG_check_num_args("operator ->",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator ->",1,"Pointer< Debugger > const *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator ->",1,"Pointer< gkLuaDebugger > const *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Debugger_t,0))){
-    SWIG_fail_ptr("DebuggerPtr___deref__",1,SWIGTYPE_p_PointerT_Debugger_t);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_gkLuaDebugger_t,0))){
+    SWIG_fail_ptr("DebuggerPtr___deref__",1,SWIGTYPE_p_PointerT_gkLuaDebugger_t);
   }
   
-  result = (Debugger *)((Pointer< Debugger > const *)arg1)->operator ->();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_Debugger,0); SWIG_arg++; 
+  result = (gkLuaDebugger *)((Pointer< gkLuaDebugger > const *)arg1)->operator ->();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkLuaDebugger,0); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -11599,11 +11431,11 @@ fail:
 
 static int _wrap_new_DebuggerPtr(lua_State* L) {
   int SWIG_arg = 0;
-  Pointer< Debugger > *result = 0 ;
+  Pointer< gkLuaDebugger > *result = 0 ;
   
-  SWIG_check_num_args("Pointer<(Debugger)>::Pointer<(Debugger)>",0,0)
-  result = (Pointer< Debugger > *)new Pointer< Debugger >();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PointerT_Debugger_t,1); SWIG_arg++; 
+  SWIG_check_num_args("Pointer<(gkLuaDebugger)>::Pointer<(gkLuaDebugger)>",0,0)
+  result = (Pointer< gkLuaDebugger > *)new Pointer< gkLuaDebugger >();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_PointerT_gkLuaDebugger_t,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -11616,19 +11448,19 @@ fail:
 
 static int _wrap_DebuggerPtr_drawLine(lua_State* L) {
   int SWIG_arg = 0;
-  Pointer< Debugger > *arg1 = (Pointer< Debugger > *) 0 ;
+  Pointer< gkLuaDebugger > *arg1 = (Pointer< gkLuaDebugger > *) 0 ;
   Vector3 *arg2 = 0 ;
   Vector3 *arg3 = 0 ;
   Vector3 *arg4 = 0 ;
   
   SWIG_check_num_args("drawLine",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("drawLine",1,"Pointer< Debugger > *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("drawLine",1,"Pointer< gkLuaDebugger > *");
   if(!lua_isuserdata(L,2)) SWIG_fail_arg("drawLine",2,"Vector3 const &");
   if(!lua_isuserdata(L,3)) SWIG_fail_arg("drawLine",3,"Vector3 const &");
   if(!lua_isuserdata(L,4)) SWIG_fail_arg("drawLine",4,"Vector3 const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Debugger_t,0))){
-    SWIG_fail_ptr("DebuggerPtr_drawLine",1,SWIGTYPE_p_PointerT_Debugger_t);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_gkLuaDebugger_t,0))){
+    SWIG_fail_ptr("DebuggerPtr_drawLine",1,SWIGTYPE_p_PointerT_gkLuaDebugger_t);
   }
   
   
@@ -11660,17 +11492,17 @@ fail:
 
 static int _wrap_DebuggerPtr_drawObjectAxis(lua_State* L) {
   int SWIG_arg = 0;
-  Pointer< Debugger > *arg1 = (Pointer< Debugger > *) 0 ;
+  Pointer< gkLuaDebugger > *arg1 = (Pointer< gkLuaDebugger > *) 0 ;
   GameObjectPtr *arg2 = 0 ;
   float arg3 ;
   
   SWIG_check_num_args("drawObjectAxis",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("drawObjectAxis",1,"Pointer< Debugger > *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("drawObjectAxis",1,"Pointer< gkLuaDebugger > *");
   if(!lua_isuserdata(L,2)) SWIG_fail_arg("drawObjectAxis",2,"GameObjectPtr const &");
   if(!lua_isnumber(L,3)) SWIG_fail_arg("drawObjectAxis",3,"float");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Debugger_t,0))){
-    SWIG_fail_ptr("DebuggerPtr_drawObjectAxis",1,SWIGTYPE_p_PointerT_Debugger_t);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_gkLuaDebugger_t,0))){
+    SWIG_fail_ptr("DebuggerPtr_drawObjectAxis",1,SWIGTYPE_p_PointerT_gkLuaDebugger_t);
   }
   
   
@@ -11693,15 +11525,15 @@ fail:
 
 static int _wrap_DebuggerPtr_print(lua_State* L) {
   int SWIG_arg = 0;
-  Pointer< Debugger > *arg1 = (Pointer< Debugger > *) 0 ;
+  Pointer< gkLuaDebugger > *arg1 = (Pointer< gkLuaDebugger > *) 0 ;
   char *arg2 = (char *) 0 ;
   
   SWIG_check_num_args("print",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("print",1,"Pointer< Debugger > *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("print",1,"Pointer< gkLuaDebugger > *");
   if(!lua_isstring(L,2)) SWIG_fail_arg("print",2,"char const *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Debugger_t,0))){
-    SWIG_fail_ptr("DebuggerPtr_print",1,SWIGTYPE_p_PointerT_Debugger_t);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_gkLuaDebugger_t,0))){
+    SWIG_fail_ptr("DebuggerPtr_print",1,SWIGTYPE_p_PointerT_gkLuaDebugger_t);
   }
   
   arg2 = (char *)lua_tostring(L, 2);
@@ -11719,13 +11551,13 @@ fail:
 
 static int _wrap_DebuggerPtr_clear(lua_State* L) {
   int SWIG_arg = 0;
-  Pointer< Debugger > *arg1 = (Pointer< Debugger > *) 0 ;
+  Pointer< gkLuaDebugger > *arg1 = (Pointer< gkLuaDebugger > *) 0 ;
   
   SWIG_check_num_args("clear",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("clear",1,"Pointer< Debugger > *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("clear",1,"Pointer< gkLuaDebugger > *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Debugger_t,0))){
-    SWIG_fail_ptr("DebuggerPtr_clear",1,SWIGTYPE_p_PointerT_Debugger_t);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_gkLuaDebugger_t,0))){
+    SWIG_fail_ptr("DebuggerPtr_clear",1,SWIGTYPE_p_PointerT_gkLuaDebugger_t);
   }
   
   (*arg1)->clear();
@@ -11741,10 +11573,10 @@ fail:
 
 
 static void swig_delete_DebuggerPtr(void *obj) {
-Pointer< Debugger > *arg1 = (Pointer< Debugger > *) obj;
+Pointer< gkLuaDebugger > *arg1 = (Pointer< gkLuaDebugger > *) obj;
 delete arg1;
 }
-static swig_lua_method swig_Pointer_Sl_Debugger_Sg__methods[] = {
+static swig_lua_method swig_Pointer_Sl_gkLuaDebugger_Sg__methods[] = {
     {"isNull", _wrap_DebuggerPtr_isNull}, 
     {"__eq", _wrap_DebuggerPtr___eq}, 
     {"__deref__", _wrap_DebuggerPtr___deref__}, 
@@ -11754,12 +11586,180 @@ static swig_lua_method swig_Pointer_Sl_Debugger_Sg__methods[] = {
     {"clear", _wrap_DebuggerPtr_clear}, 
     {0,0}
 };
-static swig_lua_attribute swig_Pointer_Sl_Debugger_Sg__attributes[] = {
+static swig_lua_attribute swig_Pointer_Sl_gkLuaDebugger_Sg__attributes[] = {
     {0,0,0}
 };
-static swig_lua_class *swig_Pointer_Sl_Debugger_Sg__bases[] = {0};
-static const char *swig_Pointer_Sl_Debugger_Sg__base_names[] = {0};
-static swig_lua_class _wrap_class_Pointer_Sl_Debugger_Sg_ = { "DebuggerPtr", &SWIGTYPE_p_PointerT_Debugger_t,_wrap_new_DebuggerPtr, swig_delete_DebuggerPtr, swig_Pointer_Sl_Debugger_Sg__methods, swig_Pointer_Sl_Debugger_Sg__attributes, swig_Pointer_Sl_Debugger_Sg__bases, swig_Pointer_Sl_Debugger_Sg__base_names };
+static swig_lua_class *swig_Pointer_Sl_gkLuaDebugger_Sg__bases[] = {0};
+static const char *swig_Pointer_Sl_gkLuaDebugger_Sg__base_names[] = {0};
+static swig_lua_class _wrap_class_Pointer_Sl_gkLuaDebugger_Sg_ = { "DebuggerPtr", &SWIGTYPE_p_PointerT_gkLuaDebugger_t,_wrap_new_DebuggerPtr, swig_delete_DebuggerPtr, swig_Pointer_Sl_gkLuaDebugger_Sg__methods, swig_Pointer_Sl_gkLuaDebugger_Sg__attributes, swig_Pointer_Sl_gkLuaDebugger_Sg__bases, swig_Pointer_Sl_gkLuaDebugger_Sg__base_names };
+
+static int _wrap_new_Debugger(lua_State* L) {
+  int SWIG_arg = 0;
+  ScenePtr *arg1 = 0 ;
+  gkLuaDebugger *result = 0 ;
+  
+  SWIG_check_num_args("gkLuaDebugger",1,1)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("gkLuaDebugger",1,"ScenePtr const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_PointerT_Scene_t,0))){
+    SWIG_fail_ptr("new_Debugger",1,SWIGTYPE_p_PointerT_Scene_t);
+  }
+  
+  result = (gkLuaDebugger *)new gkLuaDebugger((ScenePtr const &)*arg1);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gkLuaDebugger,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Debugger_drawLine(lua_State* L) {
+  int SWIG_arg = 0;
+  gkLuaDebugger *arg1 = (gkLuaDebugger *) 0 ;
+  Vector3 *arg2 = 0 ;
+  Vector3 *arg3 = 0 ;
+  Vector3 *arg4 = 0 ;
+  
+  SWIG_check_num_args("drawLine",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("drawLine",1,"gkLuaDebugger *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("drawLine",2,"Vector3 const &");
+  if(!lua_isuserdata(L,3)) SWIG_fail_arg("drawLine",3,"Vector3 const &");
+  if(!lua_isuserdata(L,4)) SWIG_fail_arg("drawLine",4,"Vector3 const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkLuaDebugger,0))){
+    SWIG_fail_ptr("Debugger_drawLine",1,SWIGTYPE_p_gkLuaDebugger);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_Vector3,0))){
+    SWIG_fail_ptr("Debugger_drawLine",2,SWIGTYPE_p_Vector3);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_Vector3,0))){
+    SWIG_fail_ptr("Debugger_drawLine",3,SWIGTYPE_p_Vector3);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,4,(void**)&arg4,SWIGTYPE_p_Vector3,0))){
+    SWIG_fail_ptr("Debugger_drawLine",4,SWIGTYPE_p_Vector3);
+  }
+  
+  (arg1)->drawLine((Vector3 const &)*arg2,(Vector3 const &)*arg3,(Vector3 const &)*arg4);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Debugger_drawObjectAxis(lua_State* L) {
+  int SWIG_arg = 0;
+  gkLuaDebugger *arg1 = (gkLuaDebugger *) 0 ;
+  GameObjectPtr *arg2 = 0 ;
+  float arg3 ;
+  
+  SWIG_check_num_args("drawObjectAxis",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("drawObjectAxis",1,"gkLuaDebugger *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("drawObjectAxis",2,"GameObjectPtr const &");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("drawObjectAxis",3,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkLuaDebugger,0))){
+    SWIG_fail_ptr("Debugger_drawObjectAxis",1,SWIGTYPE_p_gkLuaDebugger);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_PointerT_GameObject_t,0))){
+    SWIG_fail_ptr("Debugger_drawObjectAxis",2,SWIGTYPE_p_PointerT_GameObject_t);
+  }
+  
+  arg3 = (float)lua_tonumber(L, 3);
+  (arg1)->drawObjectAxis((GameObjectPtr const &)*arg2,arg3);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Debugger_print(lua_State* L) {
+  int SWIG_arg = 0;
+  gkLuaDebugger *arg1 = (gkLuaDebugger *) 0 ;
+  char *arg2 = (char *) 0 ;
+  
+  SWIG_check_num_args("print",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("print",1,"gkLuaDebugger *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("print",2,"char const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkLuaDebugger,0))){
+    SWIG_fail_ptr("Debugger_print",1,SWIGTYPE_p_gkLuaDebugger);
+  }
+  
+  arg2 = (char *)lua_tostring(L, 2);
+  (arg1)->print((char const *)arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Debugger_clear(lua_State* L) {
+  int SWIG_arg = 0;
+  gkLuaDebugger *arg1 = (gkLuaDebugger *) 0 ;
+  
+  SWIG_check_num_args("clear",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("clear",1,"gkLuaDebugger *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gkLuaDebugger,0))){
+    SWIG_fail_ptr("Debugger_clear",1,SWIGTYPE_p_gkLuaDebugger);
+  }
+  
+  (arg1)->clear();
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_Debugger(void *obj) {
+gkLuaDebugger *arg1 = (gkLuaDebugger *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gkLuaDebugger_methods[] = {
+    {"drawLine", _wrap_Debugger_drawLine}, 
+    {"drawObjectAxis", _wrap_Debugger_drawObjectAxis}, 
+    {"print", _wrap_Debugger_print}, 
+    {"clear", _wrap_Debugger_clear}, 
+    {0,0}
+};
+static swig_lua_attribute swig_gkLuaDebugger_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_gkLuaDebugger_bases[] = {0};
+static const char *swig_gkLuaDebugger_base_names[] = {0};
+static swig_lua_class _wrap_class_gkLuaDebugger = { "Debugger", &SWIGTYPE_p_gkLuaDebugger,_wrap_new_Debugger, swig_delete_Debugger, swig_gkLuaDebugger_methods, swig_gkLuaDebugger_attributes, swig_gkLuaDebugger_bases, swig_gkLuaDebugger_base_names };
 
 #ifdef __cplusplus
 }
@@ -11914,80 +11914,80 @@ static void *_p_SceneTo_p_Object(void *x, int *SWIGUNUSEDPARM(newmemory)) {
 static void *_p_EntityTo_p_GameObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((GameObject *)  ((Entity *) x));
 }
-static swig_type_info _swigt__p_Debugger = {"_p_Debugger", "Debugger *", 0, 0, (void*)&_wrap_class_Debugger, 0};
 static swig_type_info _swigt__p_Entity = {"_p_Entity", "Entity *", 0, 0, (void*)&_wrap_class_Entity, 0};
 static swig_type_info _swigt__p_GameObject = {"_p_GameObject", "GameObject *", 0, 0, (void*)&_wrap_class_GameObject, 0};
 static swig_type_info _swigt__p_Keyboard = {"_p_Keyboard", "Keyboard *", 0, 0, (void*)&_wrap_class_Keyboard, 0};
 static swig_type_info _swigt__p_LogicBrick = {"_p_LogicBrick", "LogicBrick *", 0, 0, (void*)&_wrap_class_LogicBrick, 0};
 static swig_type_info _swigt__p_Mouse = {"_p_Mouse", "Mouse *", 0, 0, (void*)&_wrap_class_Mouse, 0};
 static swig_type_info _swigt__p_Object = {"_p_Object", "Object *", 0, 0, (void*)&_wrap_class_Object, 0};
-static swig_type_info _swigt__p_PointerT_Debugger_t = {"_p_PointerT_Debugger_t", "Pointer< Debugger > *|DebuggerPtr *", 0, 0, (void*)&_wrap_class_Pointer_Sl_Debugger_Sg_, 0};
 static swig_type_info _swigt__p_PointerT_Entity_t = {"_p_PointerT_Entity_t", "Pointer< Entity > *|EntityPtr *", 0, 0, (void*)&_wrap_class_Pointer_Sl_Entity_Sg_, 0};
 static swig_type_info _swigt__p_PointerT_GameObject_t = {"_p_PointerT_GameObject_t", "Pointer< GameObject > *|GameObjectPtr *", 0, 0, (void*)&_wrap_class_Pointer_Sl_GameObject_Sg_, 0};
 static swig_type_info _swigt__p_PointerT_RayTest_t = {"_p_PointerT_RayTest_t", "Pointer< RayTest > *|RayTestPtr *", 0, 0, (void*)&_wrap_class_Pointer_Sl_RayTest_Sg_, 0};
 static swig_type_info _swigt__p_PointerT_Scene_t = {"_p_PointerT_Scene_t", "Pointer< Scene > *|ScenePtr *", 0, 0, (void*)&_wrap_class_Pointer_Sl_Scene_Sg_, 0};
+static swig_type_info _swigt__p_PointerT_gkLuaDebugger_t = {"_p_PointerT_gkLuaDebugger_t", "Pointer< gkLuaDebugger > *", 0, 0, (void*)&_wrap_class_Pointer_Sl_gkLuaDebugger_Sg_, 0};
 static swig_type_info _swigt__p_Property = {"_p_Property", "Property *", 0, 0, (void*)&_wrap_class_Property, 0};
 static swig_type_info _swigt__p_Quaternion = {"_p_Quaternion", "Quaternion *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_RayTest = {"_p_RayTest", "RayTest *", 0, 0, (void*)&_wrap_class_RayTest, 0};
 static swig_type_info _swigt__p_Scene = {"_p_Scene", "Scene *", 0, 0, (void*)&_wrap_class_Scene, 0};
 static swig_type_info _swigt__p_Vector3 = {"_p_Vector3", "Vector3 *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_gkLuaDebugger = {"_p_gkLuaDebugger", "gkLuaDebugger *", 0, 0, (void*)&_wrap_class_gkLuaDebugger, 0};
 
 static swig_type_info *swig_type_initial[] = {
-  &_swigt__p_Debugger,
   &_swigt__p_Entity,
   &_swigt__p_GameObject,
   &_swigt__p_Keyboard,
   &_swigt__p_LogicBrick,
   &_swigt__p_Mouse,
   &_swigt__p_Object,
-  &_swigt__p_PointerT_Debugger_t,
   &_swigt__p_PointerT_Entity_t,
   &_swigt__p_PointerT_GameObject_t,
   &_swigt__p_PointerT_RayTest_t,
   &_swigt__p_PointerT_Scene_t,
+  &_swigt__p_PointerT_gkLuaDebugger_t,
   &_swigt__p_Property,
   &_swigt__p_Quaternion,
   &_swigt__p_RayTest,
   &_swigt__p_Scene,
   &_swigt__p_Vector3,
+  &_swigt__p_gkLuaDebugger,
 };
 
-static swig_cast_info _swigc__p_Debugger[] = {  {&_swigt__p_Debugger, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Entity[] = {  {&_swigt__p_Entity, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_GameObject[] = {  {&_swigt__p_GameObject, 0, 0, 0},  {&_swigt__p_Entity, _p_EntityTo_p_GameObject, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Keyboard[] = {  {&_swigt__p_Keyboard, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LogicBrick[] = {  {&_swigt__p_LogicBrick, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Mouse[] = {  {&_swigt__p_Mouse, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Object[] = {  {&_swigt__p_Object, 0, 0, 0},  {&_swigt__p_Entity, _p_EntityTo_p_Object, 0, 0},  {&_swigt__p_GameObject, _p_GameObjectTo_p_Object, 0, 0},  {&_swigt__p_Scene, _p_SceneTo_p_Object, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_PointerT_Debugger_t[] = {  {&_swigt__p_PointerT_Debugger_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_PointerT_Entity_t[] = {  {&_swigt__p_PointerT_Entity_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_PointerT_GameObject_t[] = {  {&_swigt__p_PointerT_GameObject_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_PointerT_RayTest_t[] = {  {&_swigt__p_PointerT_RayTest_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_PointerT_Scene_t[] = {  {&_swigt__p_PointerT_Scene_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_PointerT_gkLuaDebugger_t[] = {  {&_swigt__p_PointerT_gkLuaDebugger_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Property[] = {  {&_swigt__p_Property, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Quaternion[] = {  {&_swigt__p_Quaternion, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_RayTest[] = {  {&_swigt__p_RayTest, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Scene[] = {  {&_swigt__p_Scene, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Vector3[] = {  {&_swigt__p_Vector3, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gkLuaDebugger[] = {  {&_swigt__p_gkLuaDebugger, 0, 0, 0},{0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
-  _swigc__p_Debugger,
   _swigc__p_Entity,
   _swigc__p_GameObject,
   _swigc__p_Keyboard,
   _swigc__p_LogicBrick,
   _swigc__p_Mouse,
   _swigc__p_Object,
-  _swigc__p_PointerT_Debugger_t,
   _swigc__p_PointerT_Entity_t,
   _swigc__p_PointerT_GameObject_t,
   _swigc__p_PointerT_RayTest_t,
   _swigc__p_PointerT_Scene_t,
+  _swigc__p_PointerT_gkLuaDebugger_t,
   _swigc__p_Property,
   _swigc__p_Quaternion,
   _swigc__p_RayTest,
   _swigc__p_Scene,
   _swigc__p_Vector3,
+  _swigc__p_gkLuaDebugger,
 };
 
 
