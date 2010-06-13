@@ -656,8 +656,8 @@ public:
     char projy;
     char projz;
     char mapping;
-    vec3f ofs;
-    vec3f size;
+    float ofs[3];
+    float size[3];
     float rot;
     short texflag;
     short colormodel;
@@ -809,13 +809,13 @@ public:
 class TexMapping
 {
 public:
-    vec3f loc;
-    vec3f rot;
-    vec3f size;
+    float loc[3];
+    float rot[3];
+    float size[3];
     int flag;
     float mat[4][4];
-    vec3f min;
-    vec3f max;
+    float min[3];
+    float max[3];
     Object *ob;
 };
 
@@ -826,9 +826,9 @@ public:
     float emission;
     float scattering;
     float reflection;
-    vec3f emission_col;
-    vec3f transmission_col;
-    vec3f reflection_col;
+    float emission_col[3];
+    float transmission_col[3];
+    float reflection_col[3];
     float density_scale;
     float depth_cutoff;
     float asymmetry;
@@ -999,7 +999,7 @@ public:
 class MVert
 {
 public:
-    vec3f co;
+    float co[3];
     short no[3];
     short mat_nr;
     char flag;
@@ -1204,7 +1204,7 @@ public:
     Object *parent;
     float parentinv[4][4];
     float mat[4][4];
-    vec3f cent;
+    float cent[3];
     float falloff;
     char name[32];
     int *indexar;
@@ -1228,7 +1228,7 @@ public:
     int animated;
     float mat[4][4];
     float omat[4][4];
-    vec3f orco;
+    float orco[3];
     float uv[2];
 };
 
@@ -1370,8 +1370,8 @@ public:
     Mesh *meshSurface;
     Mesh *meshBB;
     char surfdataPath[240];
-    vec3f bbStart;
-    vec3f bbSize;
+    float bbStart[3];
+    float bbSize[3];
     Ipo *ipo;
     short typeFlags;
     char domainNovecgen;
@@ -1529,7 +1529,7 @@ public:
 class GameFraming
 {
 public:
-    vec3f col;
+    float col[3];
     char type;
     char pad1;
     char pad2;
@@ -1602,7 +1602,7 @@ public:
 class PhysicsSettings
 {
 public:
-    vec3f gravity;
+    float gravity[3];
     int flag;
 };
 
@@ -1623,7 +1623,7 @@ public:
     float camdx;
     float camdy;
     float pixsize;
-    vec3f ofs;
+    float ofs[3];
     short camzoom;
     short viewbut;
     short twdrawflag;
@@ -1646,7 +1646,7 @@ public:
     short lpersp;
     short lview;
     float gridview;
-    vec3f twangle;
+    float twangle[3];
     float padf;
 };
 
@@ -1947,9 +1947,9 @@ public:
 class StripColorBalance
 {
 public:
-    vec3f lift;
-    vec3f gamma;
-    vec3f gain;
+    float lift[3];
+    float gamma[3];
+    float gain[3];
     int flag;
     int pad;
     float exposure;
@@ -2060,7 +2060,7 @@ public:
 class SolidColorVars
 {
 public:
-    vec3f col;
+    float col[3];
     float pad;
 };
 
@@ -2120,13 +2120,13 @@ public:
     float randfac;
     float texfac;
     float randlife;
-    vec3f force;
+    float force[3];
     float damp;
     float nabla;
     float vectsize;
     float maxlen;
     float pad;
-    vec3f defvec;
+    float defvec[3];
     float mult[4];
     float life[4];
     short child[4];
@@ -2434,8 +2434,8 @@ public:
     Object *ob;
     Mesh *me;
     char name[32];
-    vec3f linVelocity;
-    vec3f angVelocity;
+    float linVelocity[3];
+    float angVelocity[3];
     float mass;
     short localflag;
     short dyn_operation;
@@ -2468,14 +2468,14 @@ public:
     short type;
     short otype;
     short damping;
-    vec3f forceloc;
-    vec3f forcerot;
-    vec3f pad;
-    vec3f pad1;
-    vec3f dloc;
-    vec3f drot;
-    vec3f linearvelocity;
-    vec3f angularvelocity;
+    float forceloc[3];
+    float forcerot[3];
+    float pad[3];
+    float pad1[3];
+    float dloc[3];
+    float drot[3];
+    float linearvelocity[3];
+    float angularvelocity[3];
     Object *reference;
 };
 
@@ -2517,10 +2517,10 @@ public:
     short time;
     short rotdamp;
     int pad;
-    vec3f minloc;
-    vec3f maxloc;
-    vec3f minrot;
-    vec3f maxrot;
+    float minloc[3];
+    float maxloc[3];
+    float minrot[3];
+    float maxrot[3];
     char matprop[32];
 };
 
@@ -2674,7 +2674,7 @@ public:
 class bMotionPathVert
 {
 public:
-    vec3f co;
+    float co[3];
     int flag;
 };
 
@@ -2789,7 +2789,7 @@ public:
     float poleangle;
     float weight;
     float orientweight;
-    vec3f grabtarget;
+    float grabtarget[3];
     short type;
     short mode;
     float dist;
@@ -2862,7 +2862,7 @@ public:
     short stuck;
     short pad1;
     short pad2;
-    vec3f cache;
+    float cache[3];
     char subtarget[32];
 };
 
@@ -2969,10 +2969,10 @@ public:
     short to;
     char map[3];
     char expo;
-    vec3f from_min;
-    vec3f from_max;
-    vec3f to_min;
-    vec3f to_max;
+    float from_min[3];
+    float from_max[3];
+    float to_min[3];
+    float to_max[3];
 };
 
 class bLocLimitConstraint
@@ -3256,12 +3256,12 @@ public:
 class NodeColorBalance
 {
 public:
-    vec3f slope;
-    vec3f offset;
-    vec3f power;
-    vec3f lift;
-    vec3f gamma;
-    vec3f gain;
+    float slope[3];
+    float offset[3];
+    float power[3];
+    float lift[3];
+    float gamma[3];
+    float gain[3];
 };
 
 class TexNodeOutput
@@ -3353,7 +3353,7 @@ public:
 class HairKey
 {
 public:
-    vec3f co;
+    float co[3];
     float time;
     float weight;
     short editflag;
@@ -3363,10 +3363,10 @@ public:
 class ParticleKey
 {
 public:
-    vec3f co;
-    vec3f vel;
+    float co[3];
+    float vel[3];
     float rot[4];
-    vec3f ave;
+    float ave[3];
     float time;
 };
 
@@ -3413,7 +3413,7 @@ public:
     float mingoal;
     float Cdis;
     float Cvi;
-    vec3f gravity;
+    float gravity[3];
     float dt;
     float mass;
     float structural;
@@ -3659,7 +3659,7 @@ class BoidData
 {
 public:
     float health;
-    vec3f acc;
+    float acc[3];
     short state_id;
     short mode;
 };
@@ -3671,7 +3671,7 @@ public:
     ParticleSystem *psys;
     float density;
     float temp;
-    vec3f velocity;
+    float velocity[3];
     float vgrp_heat_scale[2];
     short vgroup_flow;
     short vgroup_density;
@@ -3983,7 +3983,7 @@ public:
     float bias;
     float soft;
     float compressthresh;
-    vec3f pad5;
+    float pad5[3];
     short bufsize;
     short samp;
     short buffers;
@@ -4158,8 +4158,8 @@ public:
     float xyfrict;
     short dynamode;
     short pad2;
-    vec3f sss_radius;
-    vec3f sss_col;
+    float sss_radius[3];
+    float sss_col[3];
     float sss_error;
     float sss_scale;
     float sss_ior;
@@ -4199,9 +4199,9 @@ public:
     short totcol;
     short texflag;
     short pad;
-    vec3f loc;
-    vec3f size;
-    vec3f rot;
+    float loc[3];
+    float size[3];
+    float rot[3];
     float wiresize;
     float rendersize;
     float thresh;
@@ -4225,9 +4225,9 @@ public:
     Key *key;
     Material **mat;
     ListBase bev;
-    vec3f loc;
-    vec3f size;
-    vec3f rot;
+    float loc[3];
+    float size[3];
+    float rot[3];
     short texflag;
     short pad1;
     short drawflag;
@@ -4312,9 +4312,9 @@ public:
     int act_face;
     short texflag;
     short editflag;
-    vec3f loc;
-    vec3f size;
-    vec3f rot;
+    float loc[3];
+    float size[3];
+    float rot[3];
     float cubemapsize;
     int drawflag;
     short smoothresh;
@@ -4410,8 +4410,8 @@ public:
     Object *end_cap;
     Object *curve_ob;
     Object *offset_ob;
-    vec3f offset;
-    vec3f scale;
+    float offset[3];
+    float scale[3];
     float length;
     float merge_dist;
     int fit_type;
@@ -4579,7 +4579,7 @@ public:
     Object *object;
     char subtarget[32];
     float parentinv[4][4];
-    vec3f cent;
+    float cent[3];
     float falloff;
     int *indexar;
     int totindex;
@@ -4664,7 +4664,7 @@ public:
     int *pad2;
     int dyngridsize;
     int totinfluence;
-    vec3f dyncellmin;
+    float dyncellmin[3];
     float dyncellwidth;
     float bindmat[4][4];
     void (*bindfunc)();
@@ -4845,17 +4845,17 @@ public:
     char *matbits;
     int totcol;
     int actcol;
-    vec3f loc;
-    vec3f dloc;
-    vec3f orig;
-    vec3f size;
-    vec3f dsize;
-    vec3f rot;
-    vec3f drot;
+    float loc[3];
+    float dloc[3];
+    float orig[3];
+    float size[3];
+    float dsize[3];
+    float rot[3];
+    float drot[3];
     float quat[4];
     float dquat[4];
-    vec3f rotAxis;
-    vec3f drotAxis;
+    float rotAxis[3];
+    float drotAxis[3];
     float rotAngle;
     float drotAngle;
     float obmat[4][4];
@@ -4902,7 +4902,7 @@ public:
     ListBase sensors;
     ListBase controllers;
     ListBase actuators;
-    vec3f bbsize;
+    float bbsize[3];
     short index;
     short actdef;
     float col[4];
@@ -4911,7 +4911,7 @@ public:
     BulletSoftBody *bsoft;
     short softflag;
     short recalc;
-    vec3f anisotropicFriction;
+    float anisotropicFriction[3];
     ListBase constraints;
     ListBase nlastrips;
     ListBase hooks;
@@ -5015,7 +5015,7 @@ public:
     PointCache *pointcache;
     ListBase ptcaches;
     EffectorWeights *effector_weights;
-    vec3f lcom;
+    float lcom[3];
     float lrot[3][3];
     float lscale[3][3];
     char pad4[4];
@@ -5312,7 +5312,7 @@ class Sculpt
 {
 public:
     Paint paint;
-    vec3f pivot;
+    float pivot[3];
     int flags;
     char tablet_size;
     char tablet_strength;
@@ -5422,10 +5422,10 @@ public:
     ListBase base;
     Base *basact;
     Object *obedit;
-    vec3f cursor;
-    vec3f twcent;
-    vec3f twmin;
-    vec3f twmax;
+    float cursor[3];
+    float twcent[3];
+    float twmin[3];
+    float twmax[3];
     int lay;
     short flag;
     short use_nodes;
@@ -5508,8 +5508,8 @@ public:
     float padf;
     float near;
     float far;
-    vec3f ofs;
-    vec3f cursor;
+    float ofs[3];
+    float cursor[3];
     short gridlines;
     short pad4;
     short gridflag;
@@ -6319,7 +6319,7 @@ public:
     ID id;
     ListBase gobject;
     int layer;
-    vec3f dupli_ofs;
+    float dupli_ofs[3];
 };
 
 class Bone
@@ -6332,12 +6332,12 @@ public:
     ListBase childbase;
     char name[32];
     float roll;
-    vec3f head;
-    vec3f tail;
+    float head[3];
+    float tail[3];
     float bone_mat[3][3];
     int flag;
-    vec3f arm_head;
-    vec3f arm_tail;
+    float arm_head[3];
+    float arm_tail[3];
     float arm_mat[4][4];
     float dist;
     float weight;
@@ -6348,7 +6348,7 @@ public:
     float ease2;
     float rad_head;
     float rad_tail;
-    vec3f size;
+    float size[3];
     int layer;
     short segments;
     short pad[3];
@@ -6408,22 +6408,22 @@ public:
     void *b_bone_mats;
     void *dual_quat;
     void *b_bone_dual_quats;
-    vec3f loc;
-    vec3f size;
-    vec3f eul;
+    float loc[3];
+    float size[3];
+    float eul[3];
     float quat[4];
-    vec3f rotAxis;
+    float rotAxis[3];
     float rotAngle;
     short rotmode;
     short pad;
     float chan_mat[4][4];
     float pose_mat[4][4];
     float constinv[4][4];
-    vec3f pose_head;
-    vec3f pose_tail;
-    vec3f limitmin;
-    vec3f limitmax;
-    vec3f stiffness;
+    float pose_head[3];
+    float pose_tail[3];
+    float limitmin[3];
+    float limitmax[3];
+    float stiffness[3];
     float ikstretch;
     float ikrotweight;
     float iklinweight;
@@ -6440,8 +6440,8 @@ public:
     short flag;
     short proxy_layer;
     float ctime;
-    vec3f stride_offset;
-    vec3f cyclic_offset;
+    float stride_offset[3];
+    float cyclic_offset[3];
     ListBase agroups;
     int active_group;
     int iksolver;
@@ -6650,10 +6650,10 @@ public:
     rctf curr;
     rctf clipr;
     CurveMap cm[4];
-    vec3f black;
-    vec3f white;
-    vec3f bwmul;
-    vec3f sample;
+    float black[3];
+    float white[3];
+    float bwmul[3];
+    float sample[3];
 };
 
 class Brush
@@ -6671,7 +6671,7 @@ public:
     int smooth_stroke_radius;
     float smooth_stroke_factor;
     float rate;
-    vec3f rgb;
+    float rgb[3];
     float alpha;
     char sculpt_tool;
     char vertexpaint_tool;
@@ -6684,8 +6684,8 @@ class BoidParticle
 public:
     Object *ground;
     BoidData data;
-    vec3f gravity;
-    vec3f wander;
+    float gravity[3];
+    float wander[3];
     float rt;
 };
 
@@ -6774,7 +6774,7 @@ public:
     float tanfac;
     float tanphase;
     float reactfac;
-    vec3f ob_vel;
+    float ob_vel[3];
     float rt;
     float avefac;
     float phasefac;
@@ -6784,7 +6784,7 @@ public:
     float size;
     float randsize;
     float reactshape;
-    vec3f acc;
+    float acc[3];
     float dragfac;
     float brownfac;
     float dampfac;
@@ -7074,7 +7074,7 @@ public:
     int array_index;
     char *rna_path;
     int color_mode;
-    vec3f color;
+    float color[3];
 };
 
 class AnimMapper
@@ -7186,8 +7186,8 @@ class BoidRuleFollowLeader
 public:
     BoidRule rule;
     Object *ob;
-    vec3f loc;
-    vec3f oloc;
+    float loc[3];
+    float oloc[3];
     float cfra;
     float distance;
     int options;
@@ -7272,8 +7272,8 @@ public:
     void *tex_wt;
     void *tex_shadow;
     float *shadow;
-    vec3f p0;
-    vec3f p1;
+    float p0[3];
+    float p1[3];
     float dx;
     float omega;
     float temp;

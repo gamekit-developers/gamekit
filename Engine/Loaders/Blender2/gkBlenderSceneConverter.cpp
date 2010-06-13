@@ -41,8 +41,8 @@
 #include "OgreKit.h"
 
 
-#define VEC3CPY(a, b) {a.x= b.x; a.y= b.y; a.z= b.z;}
-#define VEC2CPY(a, b) {a.x= b.x; a.y= b.y;}
+#define VEC3CPY(a, b) {a.x= b[0]; a.y= b[1]; a.z= b[2];}
+#define VEC2CPY(a, b) {a.x= b[0]; a.y= b[1];}
 
 // float normal from short
 #define VEC3CPN(a, b) {a.x= (b[0]/32767.f); a.y= (b[1]/32767.f); a.z= (b[2]/32767.f);}
@@ -483,7 +483,7 @@ void gkBlenderSceneConverter::convertObjectGeneral(gkGameObject *gobj, Blender::
     }
 
     // prevent zero scale
-    gkVector3 scaleTest = gkVector3(bobj->size.x, bobj->size.y, bobj->size.z);
+    gkVector3 scaleTest = gkVector3(bobj->size[0], bobj->size[1], bobj->size[2]);
     if (scaleTest.isZeroLength())
         scale = gkVector3(1.f, 1.f, 1.f);
 
@@ -1684,8 +1684,8 @@ void gkBlenderMeshConverter::convert(void)
 
             gkVector3 e0, e1;
 
-            e0 = (gkVector3(&mvert[curface.v1].co.x) - gkVector3(&mvert[curface.v2].co.x));
-            e1 = (gkVector3(&mvert[curface.v3].co.x) - gkVector3(&mvert[curface.v4].co.x));
+            e0 = (gkVector3(mvert[curface.v1].co) - gkVector3(mvert[curface.v2].co));
+            e1 = (gkVector3(mvert[curface.v3].co) - gkVector3(mvert[curface.v4].co));
 
             if (e0.squaredLength() < e1.squaredLength())
             {
@@ -1939,9 +1939,9 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
                 Blender::bEditObjectActuator *bea = (Blender::bEditObjectActuator *)bact->data;
 
                 ea->setLifeSpan(bea->time);
-                ea->setAngV(gkVector3(bea->angVelocity.x, bea->angVelocity.y, bea->angVelocity.z));
+                ea->setAngV(gkVector3(bea->angVelocity[0], bea->angVelocity[1], bea->angVelocity[2]));
                 ea->setAngVL((bea->localflag & ACT_EDOB_LOCAL_ANGV) != 0);
-                ea->setLinV(gkVector3(bea->linVelocity.x, bea->linVelocity.y, bea->linVelocity.z));
+                ea->setLinV(gkVector3(bea->linVelocity[0], bea->linVelocity[1], bea->linVelocity[2]));
                 ea->setLinVL((bea->localflag & ACT_EDOB_LOCAL_LINV) != 0);
                 ea->setObject(GKB_IDNAME(bea->ob));
 
@@ -2023,14 +2023,14 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
                 la = ma;
 
                 Blender::bObjectActuator *objact = (Blender::bObjectActuator *)bact->data;
-                ma->setRotation(gkVector3(objact->drot.x, objact->drot.y, objact->drot.z), (objact->flag & ACT_DROT_LOCAL) != 0);
-                ma->setTranslation(gkVector3(objact->dloc.x, objact->dloc.y, objact->dloc.z), (objact->flag & ACT_DLOC_LOCAL) != 0);
-                ma->setForce(gkVector3(objact->forceloc.x, objact->forceloc.y, objact->forceloc.z), (objact->flag & ACT_FORCE_LOCAL) != 0);
-                ma->setTorque(gkVector3(objact->forcerot.x, objact->forcerot.y, objact->forcerot.z), (objact->flag & ACT_TORQUE_LOCAL) != 0);
+                ma->setRotation(gkVector3(objact->drot[0], objact->drot[1], objact->drot[2]), (objact->flag & ACT_DROT_LOCAL) != 0);
+                ma->setTranslation(gkVector3(objact->dloc[0], objact->dloc[1], objact->dloc[2]), (objact->flag & ACT_DLOC_LOCAL) != 0);
+                ma->setForce(gkVector3(objact->forceloc[0], objact->forceloc[1], objact->forceloc[2]), (objact->flag & ACT_FORCE_LOCAL) != 0);
+                ma->setTorque(gkVector3(objact->forcerot[0], objact->forcerot[1], objact->forcerot[2]), (objact->flag & ACT_TORQUE_LOCAL) != 0);
 
-                ma->setLinearVelocity(gkVector3(objact->linearvelocity.x, objact->linearvelocity.y, objact->linearvelocity.z),
+                ma->setLinearVelocity(gkVector3(objact->linearvelocity[0], objact->linearvelocity[1], objact->linearvelocity[2]),
                                       (objact->flag & ACT_LIN_VEL_LOCAL) != 0);
-                ma->setAngularVelocity(gkVector3(objact->angularvelocity.x, objact->angularvelocity.y, objact->angularvelocity.z),
+                ma->setAngularVelocity(gkVector3(objact->angularvelocity[0], objact->angularvelocity[1], objact->angularvelocity[2]),
                                        (objact->flag & ACT_ANG_VEL_LOCAL) != 0);
 
                 ma->setIncrementalVelocity((objact->flag & ACT_ADD_LIN_VEL) != 0);

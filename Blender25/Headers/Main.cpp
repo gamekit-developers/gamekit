@@ -33,23 +33,24 @@ class DNA
 public:
     typedef std::vector<hgString>           NameArray;
     typedef std::vector<short>              ShortArray;
-    typedef std::vector<short*>             ShortPtrArray;
+    typedef std::vector<short *>             ShortPtrArray;
 
 public:
     DNA();
     ~DNA();
 
-    const short&        getStructType(size_t idx);
+    const short        &getStructType(size_t idx);
     int                 getSize(short type, short name);
     int                 getArraySize(const char *str);
     int                 getNumStructs() {return (int)m_structs.size();}
-   
-    short* getStruct(int i) {
+
+    short *getStruct(int i)
+    {
         if (i>=0 && i<getNumStructs())
             return m_structs.at(i);
         return 0;
     }
-   
+
     hgString getName(size_t i)
     {
         if (i>=0 && i<m_names.size())
@@ -71,7 +72,7 @@ protected:
     NameArray       m_names;        // list of variable names
     NameArray       m_types;        // list if type names
     ShortArray      m_lens;         // length of types
-    ShortPtrArray   m_structs;      // struct list 
+    ShortPtrArray   m_structs;      // struct list
     ShortArray      m_structType;   // find struct for m_types[idx]
     int             m_ptrSize;      // size of pointers in the file
 };
@@ -94,18 +95,18 @@ DNA::~DNA()
 void DNA::parse(char *dp)
 {
     /// dna tables
-    int *ip = (int*)dp;
+    int *ip = (int *)dp;
 
-	if (strncmp(dp, "SDNA", 4)==0)
-	{
-		// skip ++ NAME
-		ip++; ip++;
-	}
+    if (strncmp(dp, "SDNA", 4)==0)
+    {
+        // skip ++ NAME
+        ip++; ip++;
+    }
 
     // -- Name Section --
 
     m_names.reserve(*ip++);
-    char *bp = (char*)ip;
+    char *bp = (char *)ip;
 
     size_t len = m_names.capacity();
     for (size_t i=0; i<len; i++)
@@ -120,15 +121,15 @@ void DNA::parse(char *dp)
 
     balign = (size_t)bp;
     balign = (balign + 3) & ~3;
-    ip = (int*)balign;
+    ip = (int *)balign;
 
     // -- Type Section --
-    bp = (char*)ip;
+    bp = (char *)ip;
     assert(strncmp(bp, "TYPE", 4)==0); ip++;
 
 
     m_types.reserve(*ip++);
-    bp = (char*)ip;
+    bp = (char *)ip;
 
     len = m_types.capacity();
     for (size_t i=0; i<len; i++)
@@ -142,29 +143,29 @@ void DNA::parse(char *dp)
 
     balign = (size_t)bp;
     balign = (balign + 3) & ~3;
-    ip = (int*)balign;
+    ip = (int *)balign;
 
     // -- Type Length Section --
-    bp = (char*)ip;
+    bp = (char *)ip;
     assert(strncmp(bp, "TLEN", 4)==0); ip++;
 
     m_lens.reserve(m_types.capacity());
 
-    short *sp = (short*)ip;
+    short *sp = (short *)ip;
     len = m_lens.capacity();
     for (size_t i=0; i<len; i++)
         m_lens.push_back(*sp++);
 
     balign = (size_t)sp;
     balign = (balign + 3) & ~3;
-    ip = (int*)balign;
+    ip = (int *)balign;
 
-    bp = (char*)ip;
+    bp = (char *)ip;
     assert(strncmp(bp, "STRC", 4)==0); ip++;
 
     m_structs.reserve(*ip++);
 
-    short *strc = (short*)ip;
+    short *strc = (short *)ip;
 
     len = m_structs.capacity();
     m_structType.resize(m_types.size());
@@ -173,7 +174,7 @@ void DNA::parse(char *dp)
     {
         m_structs.push_back(strc);
 
-        const char* id = m_types[strc[0]].c_str();
+        const char *id = m_types[strc[0]].c_str();
         if (m_ptrSize== 0 && !strcmp(id, "ListBase"))
             m_ptrSize = m_lens[strc[0]]/2;
 
@@ -192,18 +193,18 @@ int DNA::getSize(short type, short name)
     size_t namelen = m_names[name].size();
 
     int ret =0;
-	int mult=1;
+    int mult=1;
 
     if (pt[0] == '*' || pt[1] == '*')
     {
-		if (pt[namelen-1] == ']')
+        if (pt[namelen-1] == ']')
             mult = getArraySize(pt);
         ret = m_ptrSize*mult;
     }
 
     else if (type <= (short)m_lens.size())
     {
-		if (pt[namelen-1] == ']')
+        if (pt[namelen-1] == ']')
             mult = getArraySize(pt);
         ret= m_lens[type]*mult;
     }
@@ -213,21 +214,21 @@ int DNA::getSize(short type, short name)
 // ----------------------------------------------------------------------------
 int DNA::getArraySize(const char *str)
 {
-	int ret = 1;
-    char* next = 0;
-    char *cp = (char*)str;
+    int ret = 1;
+    char *next = 0;
+    char *cp = (char *)str;
 
     while (*cp)
-	{
-		char c = *cp++;
-		if (c == '[')
-			next = cp++;
-		else if (c==']')
+    {
+        char c = *cp++;
+        if (c == '[')
+            next = cp++;
+        else if (c==']')
         {
-			if (next)
-				ret *= atoi(next);
+            if (next)
+                ret *= atoi(next);
         }
-	}
+    }
 
     return ret;
 }
@@ -235,7 +236,7 @@ int DNA::getArraySize(const char *str)
 // ----------------------------------------------------------------------------
 short *findStruct(const char *type, DNA *dna)
 {
-	for (int i=0; i<dna->getNumStructs(); i++)
+    for (int i=0; i<dna->getNumStructs(); i++)
     {
         short *sp = dna->getStruct(i);
         hgString st = dna->getType(sp[0]);
@@ -272,7 +273,7 @@ void dumpClass(FILE *fp, DNA *dna, short *strc, int max0, int max1, int index)
         hgString dt = dna->getType(strc[0]);
         hgString dn = dna->getName(strc[1]);
 
-        
+
 
         int arrlen = dna->getArraySize(dn.c_str());
 
@@ -298,13 +299,7 @@ void dumpClass(FILE *fp, DNA *dna, short *strc, int max0, int max1, int index)
 #endif
         }
 
-        if (dt == "float" && arrlen == 3)
-        {
-            // TODO remove this! and use ob->loc[0] .... 
-            sprintf(newtype, "vec3f", dt.c_str());
-            sprintf(newname, "%s", dn.substr(0, dn.find("[")).c_str());
-        }
-        else sprintf(newname, "%s", dn.c_str());
+        sprintf(newname, "%s", dn.c_str());
 
 #ifdef _DEBUG
 
@@ -327,7 +322,7 @@ void dumpClass(FILE *fp, DNA *dna, short *strc, int max0, int max1, int index)
 // ----------------------------------------------------------------------------
 void dumpForwards(FILE *fp, DNA *dna)
 {
-	for (int i=0; i<dna->getNumStructs(); i++)
+    for (int i=0; i<dna->getNumStructs(); i++)
     {
         short *sp = dna->getStruct(i);
 
@@ -342,7 +337,7 @@ struct StructName
 {
     DNA *dna;
     hgString    name;
-    short*      strc;
+    short      *strc;
     int         pri, max, max2;
 
 
@@ -353,9 +348,9 @@ struct StructName
     operator hgString() {return name;}
 };
 
-bool sortCmp(const StructName& a, const StructName& b)
+bool sortCmp(const StructName &a, const StructName &b)
 {
-    return a.pri < b.pri; 
+    return a.pri < b.pri;
 }
 
 
@@ -445,9 +440,9 @@ int main(int argc, char **argv)
     }
 
     fseek(fp, 0L, SEEK_END);
-	int len = ftell(fp);
-	fseek(fp, 0L, SEEK_SET);
-    
+    int len = ftell(fp);
+    fseek(fp, 0L, SEEK_SET);
+
 
     char *buf = new char[len+1];
     fread(buf, len, 1, fp);
@@ -464,10 +459,10 @@ int main(int argc, char **argv)
     }
 
     char *ver = buf+9;
-	int version = atoi(ver);
+    int version = atoi(ver);
 
     bool is64Bit = false;
-	if (buf[7]=='-')
+    if (buf[7]=='-')
         is64Bit = true;
 
 
@@ -497,7 +492,7 @@ int main(int argc, char **argv)
         sprintf(fname,      "%s.h", (bullet ? "Bullet" : "Blender"));
 
         FILE *bfp= fopen(fname, "wb");
-	    if (bfp)
+        if (bfp)
         {
             printf("Writing %s header from file version %i...\n", specname, version);
 
