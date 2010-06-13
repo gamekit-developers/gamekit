@@ -32,7 +32,7 @@
 
 #include "bBlenderFile.h"
 #include "bMain.h"
-#include "blender.h"
+#include "Blender.h"
 
 
 #include "gkBlendFile.h"
@@ -272,7 +272,7 @@ void gkBlendFile::doVersionTests(void)
         if (fg)
         {
             if (!fg->curscene)
-                fg->curscene = main->getScene()->at(0);
+                fg->curscene = (Blender::Scene*)main->getScene()->at(0);
         }
     }
 
@@ -293,6 +293,34 @@ void gkBlendFile::doVersionTests(void)
             else
                 ob->body_type = OB_BODY_TYPE_STATIC;
         }
+    }
+
+    if (version <= 250)
+    {
+        iter = main->getObject();
+        i=0;
+        s =iter->size(); 
+        while (i < s)
+        {
+            Blender::Object *bobj = (Blender::Object*)iter->at(i++);
+
+            for (Blender::bConstraint *bc = (Blender::bConstraint *)bobj->constraints.first; bc; bc = bc->next)
+            {
+                // convert rotation types to radians
+                if (bc->type == CONSTRAINT_TYPE_ROTLIMIT)
+                {
+                    Blender::bRotLimitConstraint *lr = (Blender::bRotLimitConstraint *)bc->data;
+                    lr->xmax *= gkRPD;
+                    lr->xmin *= gkRPD;
+                    lr->ymax *= gkRPD;
+                    lr->ymin *= gkRPD;
+                    lr->zmax *= gkRPD;
+                    lr->zmin *= gkRPD;
+                }
+            }
+        }
+
+       
     }
 
 }

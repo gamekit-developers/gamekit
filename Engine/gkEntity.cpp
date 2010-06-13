@@ -143,19 +143,19 @@ void gkEntity::evalAction(gkAction* act, gkScalar animTime)
 {
     if (m_skeleton)
     {
-        if (m_active != 0)
+        if (act && act != m_active)
         {
-            if (act && act != m_active)
+            if (m_skeleton->hasAction(act->getName()))
             {
-                if (m_skeleton->hasAction(act->getName()))
-                {
-                    m_active = m_skeleton->getAction(act->getName());
-                    m_actionMgr.setAction(m_active);
-                }
-                else return;
+                m_active = m_skeleton->getAction(act->getName());
+                m_actionMgr.setAction(m_active);
             }
-            m_actionMgr.update(animTime, 0.416f);
+            else return;
+
         }
+
+        if (m_active)
+            m_actionMgr.update(animTime, 0.416f);
     }
 }
 
@@ -164,18 +164,18 @@ void gkEntity::playAction(const gkString& act, gkScalar blend)
 {
     if (m_skeleton)
     {
-        if (m_active != 0)
+        if (m_active == 0 || act != m_active->getName())
         {
-            if (act != m_active->getName())
+            if (m_skeleton->hasAction(act))
             {
-                if (m_skeleton->hasAction(act))
-                {
-                    m_active = m_skeleton->getAction(act);
-                    m_actionMgr.setAction(m_active);
-                }
-                else return;
+                m_active = m_skeleton->getAction(act);
+                m_actionMgr.setAction(m_active);
             }
+            else  return;
+        }
 
+        if (m_active)
+        {
             m_active->setBlendFrames(blend);
             m_actionMgr.update(0.416f);
         }

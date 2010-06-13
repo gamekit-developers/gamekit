@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): xavier.thomas.1980.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -32,7 +32,7 @@
 #include "OgreMaterial.h"
 #include "OgreMaterialManager.h"
 
-#include "blender.h"
+#include "Blender.h"
 #include "bBlenderFile.h"
 #include "bMain.h"
 
@@ -547,9 +547,9 @@ void gkBlenderSceneConverter::convertObjectConstraints(gkGameObject *gobj, Blend
         if (bc->enforce == 0.0)
             continue;
 
-
         if (bc->type == CONSTRAINT_TYPE_ROTLIMIT)
         {
+            // rotation is in radians.
             Blender::bRotLimitConstraint *lr = (Blender::bRotLimitConstraint *)bc->data;
             if (!lr->flag)
                 continue;
@@ -557,11 +557,11 @@ void gkBlenderSceneConverter::convertObjectConstraints(gkGameObject *gobj, Blend
             gkLimitRotConstraint *c = new gkLimitRotConstraint();
 
             if (lr->flag & LIMIT_XROT)
-                c->setLimitX(gkVector2(lr->xmin, lr->xmax));
+                c->setLimitX(gkVector2(lr->xmin * gkDPR, lr->xmax * gkDPR));
             if (lr->flag & LIMIT_YROT)
-                c->setLimitY(gkVector2(lr->ymin, lr->ymax));
+                c->setLimitY(gkVector2(lr->ymin* gkDPR, lr->ymax* gkDPR));
             if (lr->flag & LIMIT_ZROT)
-                c->setLimitZ(gkVector2(lr->zmin, lr->zmax));
+                c->setLimitZ(gkVector2(lr->zmin* gkDPR, lr->zmax* gkDPR));
 
             c->setLocal(bc->ownspace == CONSTRAINT_SPACE_LOCAL);
             c->setInfluence(bc->enforce);
@@ -812,6 +812,7 @@ void gkBlenderSceneConverter::convertObjectActions(gkGameObject *gobj, Blender::
     GK_ASSERT(gobj->getType() == GK_SKELETON && bobj->data);
     gkSkeleton *obj = static_cast<gkSkeleton *>(gobj);
 
+
     // create actions if needed
     bParse::bMain *mp = m_file->getInternalFile()->getMain();
 
@@ -825,99 +826,202 @@ void gkBlenderSceneConverter::convertObjectActions(gkGameObject *gobj, Blender::
         // find ownership
         Blender::bActionChannel *bac = (Blender::bActionChannel *)bact->chanbase.first;
 
+
         if (obj->hasAction(GKB_IDNAME(bact)))
-        {
-            // persistent
             continue;
-        }
 
         gkAction *act = obj->createAction(GKB_IDNAME(bact));
+
         // min/max
         gkVector2 range(FLT_MAX, -FLT_MAX);
 
-        while (bac)
+        if (bac && mp->getVersion() <= 249)
         {
-            if (obj->hasBone(bac->name))
+            // for older files
+            while (bac)
             {
-                gkBone *bone = obj->getBone(bac->name);
-
-                gkActionChannel *achan = new gkActionChannel(act, bone);
-                act->addChannel(achan);
-                if (bac->ipo)
+                if (obj->hasBone(bac->name))
                 {
-                    Blender::IpoCurve *icu = (Blender::IpoCurve *)bac->ipo->curve.first;
-                    while (icu)
+                    gkBone *bone = obj->getBone(bac->name);
+
+                    gkActionChannel *achan = new gkActionChannel(act, bone);
+                    act->addChannel(achan);
+
+                    if (bac->ipo)
                     {
-                        if (icu->bezt)
+                        Blender::IpoCurve *icu = (Blender::IpoCurve *)bac->ipo->curve.first;
+                        while (icu)
                         {
-                            int code = -1;
-                            switch (icu->adrcode)
+                            if (icu->bezt)
                             {
-                            case AC_QUAT_W: { code = SC_ROT_W;  break; }
-                            case AC_QUAT_X: { code = SC_ROT_X;  break; }
-                            case AC_QUAT_Y: { code = SC_ROT_Y;  break; }
-                            case AC_QUAT_Z: { code = SC_ROT_Z;  break; }
-                            case AC_LOC_X:  { code = SC_LOC_X;  break; }
-                            case AC_LOC_Y:  { code = SC_LOC_Y;  break; }
-                            case AC_LOC_Z:  { code = SC_LOC_Z;  break; }
-                            case AC_SIZE_X: { code = SC_SCL_X;  break; }
-                            case AC_SIZE_Y: { code = SC_SCL_Y;  break; }
-                            case AC_SIZE_Z: { code = SC_SCL_Z;  break; }
-                            }
-
-
-                            // ignore any other codes
-                            if (code != -1)
-                            {
-                                gkBezierSpline *spline = new gkBezierSpline(code);
-
-                                switch (icu->ipo)
+                                int code = -1;
+                                switch (icu->adrcode)
                                 {
-                                case 0://BEZT_IPO_CONST:
-                                    spline->setInterpolationMethod(gkBezierSpline::BEZ_CONSTANT);
-                                    break;
-                                case 1://BEZT_IPO_LIN:
-                                    spline->setInterpolationMethod(gkBezierSpline::BEZ_LINEAR);
-                                    break;
-                                case 2://BEZT_IPO_BEZ:
-                                    spline->setInterpolationMethod(gkBezierSpline::BEZ_CUBIC);
-                                    break;
+                                case AC_QUAT_W: { code = SC_ROT_W;  break; }
+                                case AC_QUAT_X: { code = SC_ROT_X;  break; }
+                                case AC_QUAT_Y: { code = SC_ROT_Y;  break; }
+                                case AC_QUAT_Z: { code = SC_ROT_Z;  break; }
+                                case AC_LOC_X:  { code = SC_LOC_X;  break; }
+                                case AC_LOC_Y:  { code = SC_LOC_Y;  break; }
+                                case AC_LOC_Z:  { code = SC_LOC_Z;  break; }
+                                case AC_SIZE_X: { code = SC_SCL_X;  break; }
+                                case AC_SIZE_Y: { code = SC_SCL_Y;  break; }
+                                case AC_SIZE_Z: { code = SC_SCL_Z;  break; }
                                 }
 
-                                Blender::BezTriple *bezt = icu->bezt;
-                                for (int c = 0; c < icu->totvert; c++, bezt++)
+
+                                // ignore any other codes
+                                if (code != -1)
                                 {
-                                    gkBezierVertex v;
+                                    gkBezierSpline *spline = new gkBezierSpline(code);
 
-                                    v.h1[0] = bezt->vec[0][0];
-                                    v.h1[1] = bezt->vec[0][1];
-                                    v.cp[0] = bezt->vec[1][0];
-                                    v.cp[1] = bezt->vec[1][1];
-                                    v.h2[0] = bezt->vec[2][0];
-                                    v.h2[1] = bezt->vec[2][1];
+                                    switch (icu->ipo)
+                                    {
+                                    case 0://BEZT_IPO_CONST:
+                                        spline->setInterpolationMethod(gkBezierSpline::BEZ_CONSTANT);
+                                        break;
+                                    case 1://BEZT_IPO_LIN:
+                                        spline->setInterpolationMethod(gkBezierSpline::BEZ_LINEAR);
+                                        break;
+                                    case 2://BEZT_IPO_BEZ:
+                                        spline->setInterpolationMethod(gkBezierSpline::BEZ_CUBIC);
+                                        break;
+                                    }
+
+                                    Blender::BezTriple *bezt = icu->bezt;
+                                    for (int c = 0; c < icu->totvert; c++, bezt++)
+                                    {
+                                        gkBezierVertex v;
+
+                                        v.h1[0] = bezt->vec[0][0];
+                                        v.h1[1] = bezt->vec[0][1];
+                                        v.cp[0] = bezt->vec[1][0];
+                                        v.cp[1] = bezt->vec[1][1];
+                                        v.h2[0] = bezt->vec[2][0];
+                                        v.h2[1] = bezt->vec[2][1];
 
 
-                                    // calculate global time
-                                    if (range.x > v.cp[0]) range.x = v.cp[0];
-                                    if (range.y < v.cp[0]) range.y = v.cp[0];
-                                    spline->addVertex(v);
+                                        // calculate global time
+                                        if (range.x > v.cp[0]) range.x = v.cp[0];
+                                        if (range.y < v.cp[0]) range.y = v.cp[0];
+                                        spline->addVertex(v);
+                                    }
+                                    if (spline->getNumVerts())
+                                        achan->addSpline(spline);
+                                    else delete spline;
                                 }
-                                if (spline->getNumVerts())
-                                    achan->addSpline(spline);
-                                else delete spline;
                             }
+                            icu = icu->next;
                         }
-                        icu = icu->next;
                     }
                 }
+                bac = bac->next;
             }
-            bac = bac->next;
+        }
+        else
+        {
+            // 250 + files
+
+            Blender::FCurve *bfc = (Blender::FCurve *)bact->curves.first;
+
+            while (bfc)
+            {
+                utString rnap (bfc->rna_path);
+                utString bone_name;
+                utString transform_name;
+
+                if (rnap.substr(0,10)=="pose.bones")
+                {   
+                    // TODO use regex?
+                    size_t i = rnap.rfind('\"');
+                    bone_name = rnap.substr(12, i-12);
+                    transform_name = rnap.substr(i+3, rnap.length()-i+3);
+                }
+
+                if (obj->hasBone(bone_name))
+                {
+                    gkBone *bone = obj->getBone(bone_name);
+
+                    // add one chanel per bone only
+                    gkActionChannel *achan = act->getChannel(bone);
+                    if(!achan)
+                    {
+                        achan = new gkActionChannel(act, bone);
+                        act->addChannel(achan);
+                    }
+                    
+                    if (bfc->bezt)
+                    {
+                        int code = -1;
+                        if (transform_name=="rotation_quaternion")
+                        {
+                            if (bfc->array_index == 0) code =SC_ROT_W;
+                            else if (bfc->array_index == 1) code = SC_ROT_X;
+                            else if (bfc->array_index == 2) code = SC_ROT_Y;
+                            else if (bfc->array_index == 3) code = SC_ROT_Z;
+                        }
+                        else if (transform_name=="location")
+                        {
+                            if (bfc->array_index == 0) code =SC_LOC_X;
+                            else if (bfc->array_index == 1) code = SC_LOC_Y;
+                            else if (bfc->array_index == 2) code = SC_LOC_Z;
+                        }
+                        else if (transform_name=="scale")
+                        {
+                            if (bfc->array_index == 0) code =SC_SCL_X;
+                            else if (bfc->array_index == 1) code = SC_SCL_Y;
+                            else if (bfc->array_index == 2) code = SC_SCL_Z;
+                        }
+
+                        // ignore any other codes
+                        if (code != -1)
+                        {
+                            gkBezierSpline *spline = new gkBezierSpline(code);
+
+                            switch (bfc->bezt->ipo)
+                            {
+                            case 0://BEZT_IPO_CONST:
+                                spline->setInterpolationMethod(gkBezierSpline::BEZ_CONSTANT);
+                                break;
+                            case 1://BEZT_IPO_LIN:
+                                spline->setInterpolationMethod(gkBezierSpline::BEZ_LINEAR);
+                                break;
+                            case 2://BEZT_IPO_BEZ:
+                                spline->setInterpolationMethod(gkBezierSpline::BEZ_CUBIC);
+                                break;
+                            }
+
+                            Blender::BezTriple *bezt = bfc->bezt;
+                            for (int c = 0; c < bfc->totvert; c++, bezt++)
+                            {
+                                gkBezierVertex v;
+
+                                v.h1[0] = bezt->vec[0][0];
+                                v.h1[1] = bezt->vec[0][1];
+                                v.cp[0] = bezt->vec[1][0];
+                                v.cp[1] = bezt->vec[1][1];
+                                v.h2[0] = bezt->vec[2][0];
+                                v.h2[1] = bezt->vec[2][1];
+
+
+                                // calculate global time
+                                if (range.x > v.cp[0]) range.x = v.cp[0];
+                                if (range.y < v.cp[0]) range.y = v.cp[0];
+                                spline->addVertex(v);
+                            }
+                            if (spline->getNumVerts())
+                                achan->addSpline(spline);
+                            else delete spline;
+                        }
+                    }
+                }
+                bfc = bfc->next;
+            }
         }
 
         // apply time range
         act->setStart(range.x);
         act->setEnd(range.y);
-
     }
 }
 

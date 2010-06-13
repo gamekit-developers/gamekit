@@ -29,7 +29,7 @@
 #include "OgreFreeImageCodec.h"
 #include "gkTextureLoader.h"
 #include "gkLogger.h"
-#include "blender.h"
+#include "Blender.h"
 
 using namespace Ogre;
 

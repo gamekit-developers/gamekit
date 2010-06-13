@@ -28,6 +28,7 @@
 #include "gkBlendFile.h"
 #include "gkUtils.h"
 #include "bBlenderFile.h"
+#include "Blender.h"
 
 using namespace Ogre;
 

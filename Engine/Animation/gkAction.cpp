@@ -53,6 +53,18 @@ void gkAction::addChannel(gkActionChannel *chan)
     m_channels.push_back(chan);
 }
 
+gkActionChannel* gkAction::getChannel(gkBone *bone)
+{
+    for (UTsize i=0; i<m_channels.size(); i++)
+    {
+        gkActionChannel *chan = m_channels[i];
+        if (chan->getBone()==bone)
+        {
+            return chan;
+        }
+    }
+    return NULL;
+}
 
 void gkAction::evaluate(gkScalar time)
 {

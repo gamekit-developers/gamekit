@@ -75,6 +75,9 @@ public:
     GK_INLINE gkMatrix4 getPoseMatrix(void)
     { GK_ASSERT(m_bone); return m_bone->getPose().toMatrix(); }
 
+    // Gain access to the bone
+    GK_INLINE gkBone* getBone(void)
+    { GK_ASSERT(m_bone); return m_bone; }
 
     // add spline for this channel
     void addSpline(gkBezierSpline* spline);

@@ -30,13 +30,14 @@ include(ConfigGameKit)
 include(FindOpenAL)
 
 
-configure_gamekit(${CMAKE_SOURCE_DIR}/bullet/Extras)
+configure_gamekit(${CMAKE_SOURCE_DIR}/Blender25)
 configure_ogrekit(${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/OgreLite)
 
 set(OGREKIT_BULLET_LIBS BulletDynamics BulletCollision BulletSoftBody LinearMath)
 set(OGREKIT_BULLET_INCLUDE ${CMAKE_SOURCE_DIR}/bullet/src)
 
 subdirs(bullet)
+subdirs(Blender25)
 subdirs(Dependencies)
 subdirs(OgreLite)
 subdirs(Engine)

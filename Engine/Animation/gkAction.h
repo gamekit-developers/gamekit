@@ -30,6 +30,7 @@
 #include "gkCommon.h"
 #include "gkMathUtils.h"
 #include "gkBezierSpline.h"
+#include "gkSkeleton.h"
 
 
 class gkActionChannel;
@@ -86,6 +87,9 @@ public:
     // Gets the current channel count.
     GK_INLINE int getNumChannels(void)
     {return(int)m_channels.size();}
+    
+    //Gets the channel corresponding to a bone
+    gkActionChannel* getChannel(gkBone *bone);
 
     // Updates matrices for the specified time
     void evaluate(gkScalar time);
