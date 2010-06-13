@@ -4,4 +4,4 @@ ${BULLET_PHYSICS_SOURCE_DIR}/Extras/Serialize/BulletFileLoader
 ${BULLET_PHYSICS_SOURCE_DIR}/Extras/Serialize/BlenderSerialize
 )
 
-ADD_LIBRARY(BlenderSerialize dna_252_32.cpp dna249-64bit.todo.cpp bBlenderFile.cpp  bBlenderFile.h bMain.cpp bMain.h )
+ADD_LIBRARY(BlenderSerialize dna_252_32.cpp dna_252_64.cpp bBlenderFile.cpp  bBlenderFile.h bMain.cpp bMain.h )
