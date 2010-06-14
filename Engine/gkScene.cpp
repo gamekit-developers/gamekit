@@ -544,6 +544,9 @@ void gkScene::notifyObjectUnloaded(gkGameObject *gobject)
 {
     m_loadedObjects.erase(gobject);
 
+    if (m_transformObjects.find(gobject))
+        m_transformObjects.erase(gobject);
+
     if(gkNavMeshData::getSingletonPtr())
         gkNavMeshData::getSingletonPtr()->unload(gobject);
 
