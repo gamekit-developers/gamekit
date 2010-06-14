@@ -36,9 +36,9 @@
 
 namespace OpenSteer {
     
+    using std::size_t;
+    using std::ptrdiff_t;
     
-    typedef std::size_t size_t;
-    typedef std::ptrdiff_t ptrdiff_t;
     
 } // namespace OpenSteer
 
