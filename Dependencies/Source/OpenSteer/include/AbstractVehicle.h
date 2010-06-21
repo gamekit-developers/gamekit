@@ -39,22 +39,23 @@
 #ifndef OPENSTEER_ABSTRACTVEHICLE_H
 #define OPENSTEER_ABSTRACTVEHICLE_H
 
-
-#include "LocalSpace.h"
-
-
 // STL vector containers
 #include <vector>
-
+#include "Vec3.h"
 
 // ----------------------------------------------------------------------------
 
 namespace OpenSteer {
 
-    class AbstractVehicle : public AbstractLocalSpace 
-    {
+    class AbstractVehicle
+	{
     public:
-        virtual ~AbstractVehicle() { /* Nothing to do. */ }
+        virtual ~AbstractVehicle() {}
+
+        virtual Vec3 side (void) const = 0;
+        virtual Vec3 up (void) const = 0;
+        virtual Vec3 forward (void) const = 0;
+        virtual Vec3 position (void) const = 0;
         
         // mass (defaults to unity so acceleration=force)
         virtual float mass (void) const = 0;
@@ -79,10 +80,6 @@ namespace OpenSteer {
         // (assumes velocity remains constant)
         virtual Vec3 predictFuturePosition (const float predictionTime) const = 0;
 
-        // ----------------------------------------------------------------------
-        // XXX this vehicle-model-specific functionality functionality seems out
-        // XXX of place on the abstract base class, but for now it is expedient
-
         // the maximum steering force this vehicle can apply
         virtual float maxForce (void) const = 0;
         virtual float setMaxForce (float) = 0;
@@ -91,10 +88,8 @@ namespace OpenSteer {
         virtual float maxSpeed (void) const = 0;
         virtual float setMaxSpeed (float) = 0;
 
-		// dp - added to support heterogeneous flocks
-		virtual void update(const float currentTime, const float elapsedTime) = 0;
+		virtual int getState() const = 0;
     };
-
 
     // more convenient short names for AbstractVehicle group and iterator
     typedef AbstractVehicle::group AVGroup;

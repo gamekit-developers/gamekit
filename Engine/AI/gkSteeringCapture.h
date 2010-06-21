@@ -35,15 +35,25 @@ class gkSteeringCapture : public gkSteeringObject
 {
 public:
 
-	gkSteeringCapture(gkGameObject* obj, gkScalar maxSpeed, const gkVector3& forward, const gkVector3& up, const gkVector3& side, gkGameObject* target);
+	gkSteeringCapture(
+		gkGameObject* obj, 
+		gkScalar maxSpeed, 
+		const gkVector3& forward, 
+		const gkVector3& up, 
+		const gkVector3& side, 
+		gkGameObject* target,
+		gkScalar minPredictionTime,
+		gkScalar maxPredictionTime
+	);
 
 	~gkSteeringCapture();
 
-	void update(gkScalar tick);
-
-private:
-
-	OpenSteer::Vec3 steering();
+	const gkVector3& getGoalPosition() const;
+	gkScalar getGoalRadius() const;
+	gkVector3 steering(STATE& newState, const float elapsedTime);
+	void notifyInGoal();
+	void applyForce(const gkVector3& force, const float elapsedTime);
+	void reset();
 
 private:
 
@@ -52,6 +62,10 @@ private:
 	SceneObstacle* m_sceneObstable;
 
 	OpenSteer::ObstacleGroup m_allObstacles;
+
+	gkScalar m_minPredictionTime;
+
+	gkScalar m_maxPredictionTime;
 };
 
 #endif//_gkSteeringCapture_h_

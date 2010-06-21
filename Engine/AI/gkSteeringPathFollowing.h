@@ -41,14 +41,21 @@ public:
 		const gkVector3& up, 
 		const gkVector3& side, 
 		const gkVector3& polyPickExt,
-		int maxPathPolys
+		int maxPathPolys,
+		gkScalar minimumTurningRadius
 	);
 
 	~gkSteeringPathFollowing();
 
-	void setGoal(const gkVector3& goalPosition, gkScalar goalRadius);
+	void setGoalPosition(const gkVector3& position){ m_goalPosition = position; }
+	void setGoalRadius(gkScalar radius){ m_goalRadius = radius; }
 
-	void update(gkScalar tick);
+	const gkVector3& getGoalPosition() const { return m_goalPosition; }
+	gkScalar getGoalRadius() const { return m_goalRadius; }
+	gkVector3 steering(STATE& newState, const float elapsedTime);
+	void notifyInGoal();
+	void applyForce(const gkVector3& force, const float elapsedTime);
+	void reset();
 
 private:
 
@@ -65,9 +72,8 @@ private:
 	gkVector3 m_polyPickExt;
 	
 	int m_maxPathPolys;
-	
-	int m_pathIndex;
 
+	gkScalar m_minimumTurningRadius;
 };
 
 #endif//_gkSteeringPathFollowing_h_

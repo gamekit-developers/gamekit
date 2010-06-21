@@ -38,19 +38,21 @@ class gkCharacterNode : public gkStateMachineNode
 {
 public:
 
-	enum STEERING_LOGIC
-	{
-		PATH_FOLLOWING,
-		SEEKER
-	};
+	static const int NULL_STATE = -1;
+
+	typedef int STATE;
+
+    class Listener
+    {
+    public:
+        virtual ~Listener() {}
+		virtual STATE updateAI(gkCharacterNode* obj, gkScalar tick) = 0;
+    };
 
 	enum 
 	{
 		//Inputs
 		ANIM_BLEND_FRAMES = MAX_SOCKETS,
-		AI_ENABLE,
-		AI_LOGIC,
-		AI_TARGET_POSITION,
 
 		ENABLE_ROTATION,
 		ROTATION_VALUE,
@@ -61,13 +63,10 @@ public:
 		ANIM_TIME_POSITION,
 		POSITION,
 		ROTATION,
-		AI_WANTED_STATE
+		AI_STATE
 	};
 
 	DECLARE_SOCKET_TYPE(ANIM_BLEND_FRAMES, gkScalar);
-	DECLARE_SOCKET_TYPE(AI_ENABLE, bool);
-	DECLARE_SOCKET_TYPE(AI_LOGIC, STEERING_LOGIC);
-	DECLARE_SOCKET_TYPE(AI_TARGET_POSITION, gkVector3);
 	DECLARE_SOCKET_TYPE(ENABLE_ROTATION, bool);
 	DECLARE_SOCKET_TYPE(ROTATION_VALUE, gkQuaternion);
 
@@ -76,8 +75,7 @@ public:
 	DECLARE_SOCKET_TYPE(ANIM_TIME_POSITION, gkScalar);
 	DECLARE_SOCKET_TYPE(POSITION, gkVector3);
 	DECLARE_SOCKET_TYPE(ROTATION, gkQuaternion);
-	DECLARE_SOCKET_TYPE(AI_WANTED_STATE, int);
-	
+	DECLARE_SOCKET_TYPE(AI_STATE, STATE);
 
     gkCharacterNode(gkLogicTree *parent, size_t id);
 	~gkCharacterNode();
@@ -86,8 +84,6 @@ public:
 	bool evaluate(gkScalar tick);
 	void update(gkScalar tick);
 	
-	typedef int STATE;
-
 	struct StateData
 	{
 		STATE m_state;
@@ -99,59 +95,36 @@ public:
 		StateData() : m_state(-1), m_loop(false), m_velocity(0) {}
 		StateData(STATE state, const gkString& animName, bool loop, gkScalar velocity, bool allow_rotation = true)
 			: m_state(state), m_animName(animName), m_loop(loop), m_velocity(velocity), m_allow_rotation(allow_rotation) {}
-
-		bool operator < (const StateData& obj) const
-		{
-			return m_velocity < obj.m_velocity;
-		}
 	};
 
 	typedef std::map<STATE, StateData> MAP;
 
-	void setMapping(STATE idleState, const MAP& map);
+	void setMapping(const MAP& map);
 	void setObj(gkGameObject* obj) {m_obj = obj;}
-	void setPolyPickExt(const gkVector3& polyPickExt) {m_polyPickExt = polyPickExt;}
-	void setMaxPathPolys(int maxPathPolys) {m_maxPathPolys = maxPathPolys;}
 
-	void setSeekerTarget(gkGameObject* seekerTarget) { m_seekerTarget = seekerTarget; }
+	GK_INLINE void setListener(Listener *listener) { m_listener = listener; }
+	GK_INLINE void setForward(const gkVector3& forward) { m_forward = forward; }
 	
 private:
 	void update_state(gkScalar tick);
 	void update_animation(STATE oldState);
 	void notifyState(int state);
 	StateData* getStateData(int state);
-	STATE getStateForVelocity(gkScalar v) const;
-
+	
 private:
 
 	MAP m_map;
 
-	typedef std::vector<StateData> STATES_DATA;
-
-	STATES_DATA m_statesData;
-
 	gkGameObject* m_obj;
 	gkEntity* m_ent;
-
-	gkVector3 m_dir;
-	gkVector3 m_up;
-
-	gkVector3 m_polyPickExt;
-	int m_maxPathPolys;
 
 	StateData* m_currentStateData;
 
 	gkScene* m_scene;
 
-	bool m_createdNavMesh;
+	Listener* m_listener;
 
-	gkSteeringObject* m_steeringObject;
-
-	gkGameObject* m_seekerTarget;
-
-	gkScalar m_maxSpeed;
-
-	bool m_followingPath;
+	gkVector3 m_forward;
 };
 
 

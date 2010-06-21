@@ -50,7 +50,7 @@ gkNavPath::~gkNavPath()
 {
 }
 
-bool gkNavPath::create(const gkNavMeshData& data, const gkVector3& from, const gkVector3& to, const gkVector3& polyPickExt, int maxPathPolys)
+bool gkNavPath::create(const gkNavMeshData& data, const gkVector3& from, const gkVector3& to, const gkVector3& polyPickExt, int maxPathPolys, gkScalar pathRadius)
 {
 	PNAVMESH navMesh = data.getNavigationMesh();
 	
@@ -98,7 +98,9 @@ bool gkNavPath::create(const gkNavMeshData& data, const gkVector3& from, const g
 					m_path.push_back(point);
 				}
 
-				setPathway(m_path.size(), &(m_path[0]), 1, false);
+				m_pathRadius = PATH_RADIUS(m_path.size(), pathRadius);
+
+				setPathway(m_path.size(), &(m_path[0]), &(m_pathRadius[0]), false);
 
 				return true;
 			}
@@ -137,4 +139,3 @@ void gkNavPath::showPath()
 		}
 	}
 }
-

@@ -32,11 +32,14 @@
 
 class SceneLogic;
 
-class MomoLogic : public gkReferences
+class MomoLogic : public gkReferences, public gkCharacterNode::Listener
 {
 public:
 	MomoLogic(gkGameObject* obj, SceneLogic* scene);
+	
 	~MomoLogic();
+
+	gkCharacterNode::STATE updateAI(gkCharacterNode* obj, gkScalar tick);
 
 private:
 
@@ -57,10 +60,17 @@ private:
 	
 	SceneLogic* m_scene;
 	gkLogicTree* m_tree;
-	
-	
+		
 	gkGrabNode* m_momoGrab;
 	gkCameraNode* m_cameraNode;
+
+	gkSteeringObject* m_steeringObject;
+	gkScreenRayTestNode* m_screenTargetNode;
+	
+	gkIfNode<bool, CMP_AND>* m_ifSelectNode;
+	
+	bool m_following;
+
 };
 
 #endif//_MomoLogic_h_

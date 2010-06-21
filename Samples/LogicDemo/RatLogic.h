@@ -33,7 +33,7 @@
 class SceneLogic;
 class MomoLogic;
 
-class RatLogic : public gkReferences
+class RatLogic : public gkReferences, public gkCharacterNode::Listener
 {
 	typedef gkPtrRef<MomoLogic> PMOMO;
 
@@ -41,12 +41,20 @@ public:
 	RatLogic(gkGameObject* obj, SceneLogic* scene, PMOMO momo);
 	~RatLogic();
 	gkCharacterNode* getCharacterNode() const {return m_characterNode; }
+	gkCharacterNode::STATE updateAI(gkCharacterNode* obj, gkScalar tick);
+private:
+
+	void getBehaviour();
+
 private:
 	gkGameObject* m_obj;
 	SceneLogic* m_scene;
 	gkLogicTree* m_tree;
 	PMOMO m_momo;
 	gkCharacterNode* m_characterNode;
+	gkSteeringObject* m_steeringObject;
+	gkSteeringCapture* m_steeringCapture;
+	gkSteeringPathFollowing* m_steeringFollowing;
 };
 
 #endif//_RatLogic_h_

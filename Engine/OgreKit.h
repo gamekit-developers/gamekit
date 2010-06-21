@@ -63,6 +63,9 @@
 #include "gkWindowSystem.h"
 
 #include "AI/gkNavMeshData.h"
+#include "AI/gkSteeringObject.h"
+#include "AI/gkSteeringCapture.h"
+#include "AI/gkSteeringPathFollowing.h"
 
 #include "Animation/gkAction.h"
 #include "Animation/gkActionBake.h"

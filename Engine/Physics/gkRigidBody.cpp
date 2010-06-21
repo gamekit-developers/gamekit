@@ -264,7 +264,7 @@ void gkRigidBody::setLinearVelocity(const gkVector3 &v, int tspace)
         return;
 
     m_body->setLinearVelocity(nvel);
-    m_object->notifyUpdate();
+    //m_object->notifyUpdate();
 }
 
 
@@ -305,7 +305,7 @@ void gkRigidBody::setAngularVelocity(const gkVector3& v, int tspace)
         return;
  
     m_body->setAngularVelocity(nvel);
-    m_object->notifyUpdate();
+    //m_object->notifyUpdate();
 }
 
 
@@ -338,7 +338,7 @@ void gkRigidBody::applyTorque(const gkVector3 &v, int tspace)
     }
 
     m_body->applyTorque(btVector3(vel.x, vel.y, vel.z));
-    m_object->notifyUpdate();
+    //m_object->notifyUpdate();
 }
 
 
@@ -374,7 +374,7 @@ void gkRigidBody::applyForce(const gkVector3 &v, int tspace)
 
     m_body->applyCentralForce(btVector3(vel.x, vel.y, vel.z));
 
-    m_object->notifyUpdate();
+    //m_object->notifyUpdate();
 }
 
 

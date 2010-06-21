@@ -33,13 +33,13 @@
 
 using namespace OpenSteer;
 
-gkSteeringPathFollowing::gkSteeringPathFollowing(gkGameObject* obj, gkScalar maxSpeed, const gkVector3& forward, const gkVector3& up, const gkVector3& side, const gkVector3& polyPickExt, int maxPathPolys) 
+gkSteeringPathFollowing::gkSteeringPathFollowing(gkGameObject* obj, gkScalar maxSpeed, const gkVector3& forward, const gkVector3& up, const gkVector3& side, const gkVector3& polyPickExt, int maxPathPolys, gkScalar minimumTurningRadius) 
 : gkSteeringObject(obj, maxSpeed, forward, up, side),
 m_goalPosition(gkVector3::ZERO),
-m_goalRadius(1),
+m_goalRadius(0),
 m_polyPickExt(polyPickExt),
 m_maxPathPolys(maxPathPolys),
-m_pathIndex(0)
+m_minimumTurningRadius(minimumTurningRadius)
 {
 }
 
@@ -47,61 +47,71 @@ gkSteeringPathFollowing::~gkSteeringPathFollowing()
 {
 }
 
-void gkSteeringPathFollowing::setGoal(const gkVector3& goalPosition, gkScalar goalRadius)
-{
-	m_goalPosition = goalPosition;
-	m_goalRadius = goalRadius;
-}
-
 void gkSteeringPathFollowing::createPath()
 {
-	m_navPath.create(gkNavMeshData::getSingleton(), m_obj->getPosition(), m_goalPosition, m_polyPickExt, m_maxPathPolys); 
-	m_navPath.setRadius(radius());
-	m_pathIndex = 0;
+	m_navPath.create(gkNavMeshData::getSingleton(), m_obj->getPosition(), m_goalPosition, m_polyPickExt, m_maxPathPolys, radius()); 
 }
 
-void gkSteeringPathFollowing::update(gkScalar tick)
+gkVector3 gkSteeringPathFollowing::steering(STATE& newState, const float elapsedTime)
 {
+	gkVector3 steering(gkVector3::ZERO);
+	
 	if(m_navPath.empty())
 	{
 		reset();
+
 		createPath();
-		m_inGoal = false;
-		return;
 	}
-
-	m_navPath.showPath();
-	
-	gkVector3 steer(0, 0, 0);
-
-	float baseDistance = OpenSteer::Vec3::distance(position(), m_goalPosition);
-
-	if (baseDistance > (radius() + m_goalRadius)) 
+	else 
 	{
-		gkVector3 targetPosition = m_navPath.getPoint(m_pathIndex);
+		m_navPath.showPath();
 		
-		baseDistance = OpenSteer::Vec3::distance(position(), targetPosition);
+		newState = SEEKING_PATH;
 		
-		if (baseDistance < radius())
+		steering = steerForTargetSpeed(maxSpeedForCurvature(&m_navPath, m_minimumTurningRadius, 1));
+		
+		const Vec3 pf = steerToFollowPathLinear(1, combinedLookAheadTime(1, radius()/2.0f), m_navPath); 
+		
+		if (pf != Vec3::zero)
 		{
-			++m_pathIndex;
-			
-			if(m_pathIndex >= m_navPath.getPoints())
-				m_pathIndex = m_navPath.getPoints()-1;
+			// steer to remain on path
+			if (pf.dot (forward()) < 0)
+				steering = pf;
+			else
+				steering = pf + steering;
+		}
+		else
+		{
+			// path aligment: when neither obstacle avoidance nor
+			// path following is required, align with path segment
+			const Vec3 pathHeading = mapPointAndDirectionToTangent(m_navPath, position(), 1);
+		
+			steering += steerTowardHeading(pathHeading) * (isNearWaypoint(m_navPath, position()) ? 0.5f : 0.1f);
 		}
 
-		steer = targetPosition - position();	
-	}
-	else
-	{
-		m_inGoal = true;
-
-		setSpeed(0);
-
-		m_navPath.clear();
+		//steering = adjustSteeringForMinimumTurningRadius(steering, m_minimumTurningRadius);
 	}
 
-	
-	applyDirectForce(steer, tick);
+	return steering;
+}
+
+void gkSteeringPathFollowing::applyForce(const gkVector3& force, const float elapsedTime)
+{
+	applySteeringForce(force, elapsedTime);
+}
+
+void gkSteeringPathFollowing::reset()
+{
+	m_navPath.clear();
+
+	gkSteeringObject::reset();
+}
+
+
+void gkSteeringPathFollowing::notifyInGoal()
+{
+	setSpeed(0);
+
+	m_navPath.clear();
 }
 

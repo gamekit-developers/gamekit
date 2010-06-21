@@ -25,10 +25,11 @@
 -------------------------------------------------------------------------------
 */
 
+#include "OgreRoot.h"
+#include "gkMathUtils.h"
 #include "gkSteeringCapture.h"
 #include "gkRayTest.h"
 #include "Obstacle.h"
-#include "OgreRoot.h"
 #include "gkGameObject.h"
 #include "gkLogger.h"
 
@@ -38,40 +39,53 @@ class SceneObstacle : public Obstacle
 {
 public:
     
-	SceneObstacle() {}
+	SceneObstacle(gkScalar howFarCanSee) : m_howFarCanSee(howFarCanSee) {}
 
     ~SceneObstacle() {}
 
-	void findIntersectionWithVehiclePath (const AbstractVehicle& vehicle, PathIntersection& pi) const
+	void findIntersectionWithVehiclePath (const AbstractVehicle& vehicle, PathIntersection& pi) const;
+
+private:
+
+	gkScalar m_howFarCanSee;
+};
+
+void SceneObstacle::findIntersectionWithVehiclePath(const AbstractVehicle& vehicle, PathIntersection& pi) const
+{
+	pi.intersect = false;
+
+	Ogre::Ray ray(vehicle.position(), vehicle.forward() * m_howFarCanSee);
+
+	gkRayTest rayTest;
+
+	if(rayTest.collides(ray))
 	{
-		pi.intersect = false;
-
-		Ogre::Ray ray(vehicle.position(), vehicle.forward() * 1000);
-
-		gkRayTest rayTest;
-
-		if(rayTest.collides(ray))
+		if(rayTest.getObject()->getAttachedCharacter() == 0)
 		{
-			if(rayTest.getObject()->getAttachedCharacter() == 0)
-			{
-				pi.intersect = true;
-				pi.obstacle = this;
-				pi.distance = rayTest.getHitPoint().distance(vehicle.position());
-				pi.steerHint = rayTest.getHitNormal(); 
-				pi.surfacePoint = rayTest.getHitPoint();
-				pi.surfaceNormal = rayTest.getHitNormal();
-				pi.vehicleOutside = true;
-			}
+			pi.intersect = true;
+			pi.obstacle = this;
+			pi.distance = rayTest.getHitPoint().distance(vehicle.position());
+			pi.steerHint = rayTest.getHitNormal();
+			pi.steerHint.z = 0;
+			pi.steerHint = pi.steerHint.normalize();
+			gkScalar a = pi.steerHint.dot(vehicle.side());
+			pi.steerHint = a > 0 ? vehicle.side() : -vehicle.side();
+
+			pi.surfacePoint = rayTest.getHitPoint();
+			pi.surfaceNormal = rayTest.getHitNormal();
+			pi.vehicleOutside = true;
 		}
 	}
-};
+}
 
 ////////////////////////////////////////////
 
-gkSteeringCapture::gkSteeringCapture(gkGameObject* obj, gkScalar maxSpeed, const gkVector3& forward, const gkVector3& up, const gkVector3& side, gkGameObject* target) 
+gkSteeringCapture::gkSteeringCapture(gkGameObject* obj, gkScalar maxSpeed, const gkVector3& forward, const gkVector3& up, const gkVector3& side, gkGameObject* target, gkScalar minPredictionTime, gkScalar maxPredictionTime) 
 : gkSteeringObject(obj, maxSpeed, forward, up, side),
 m_target(target),
-m_sceneObstable(new SceneObstacle)
+m_sceneObstable(new SceneObstacle(30)),
+m_minPredictionTime(minPredictionTime),
+m_maxPredictionTime(maxPredictionTime)
 {
 	m_allObstacles.push_back(m_sceneObstable);
 }
@@ -81,45 +95,32 @@ gkSteeringCapture::~gkSteeringCapture()
 	delete m_sceneObstable;
 }
 
-void gkSteeringCapture::update(gkScalar tick)
+const gkVector3& gkSteeringCapture::getGoalPosition() const
 {
-	if(m_inGoal) 
-	{
-		m_inGoal = false;
-		
-		reset();
-	}
-
-	gkVector3 steer(0, 0, 0);
-
-	float baseDistance = Vec3::distance(position(), m_target->getPosition());
-
-	if (baseDistance > (radius() + m_target->getRadius())) 
-	{
-		steer = steering();
-	}
-	else
-	{
-		m_inGoal = true;
-
-		setSpeed(0);
-	}
-
-	applySteeringForce(steer, tick);
+	return m_target->getPosition();
 }
 
-Vec3 gkSteeringCapture::steering()
+gkScalar gkSteeringCapture::getGoalRadius() const
+{
+    const gkGameObjectProperties &props = m_target->getProperties();
+    
+	const gkPhysicsProperties &phy = props.m_physics;
+
+	return phy.m_radius;
+}
+
+gkVector3 gkSteeringCapture::steering(STATE& newState, const float elapsedTime)
 {
 	bool clearPath = clearPathToGoal(m_target->getPosition(), m_target);
 
-	adjustObstacleAvoidanceLookAhead(clearPath, m_target->getPosition());
+	gkScalar avoidancePredictTime = adjustObstacleAvoidanceLookAhead(clearPath, m_target->getPosition(), m_minPredictionTime, m_maxPredictionTime);
 
-	gkVector3 obstacleAvoidance = steerToAvoidObstacles(m_avoidancePredictTime, m_allObstacles);
+	gkVector3 obstacleAvoidance = steerToAvoidObstacles(avoidancePredictTime, m_allObstacles);
 
-    m_avoiding = (obstacleAvoidance != Vec3::zero);
-
-    if (m_avoiding)
+    if (obstacleAvoidance != Vec3::zero)
     {
+		newState = AVOIDING;
+
         return obstacleAvoidance;
     }
     else
@@ -128,12 +129,16 @@ Vec3 gkSteeringCapture::steering()
 
         if (clearPath)
         {
+			newState = SEEKING_GOAL;
+
             Vec3 s = limitMaxDeviationAngle (seek, 0.707f, forward());
 
             return s;
         }
         else
         {
+			newState = EVADING_AND_SEEKING_GOAL;
+			
             const Vec3 evade = steerToEvadeOthers(m_target);
 
 			const Vec3 steer = limitMaxDeviationAngle (seek + evade, 0.707f, forward());
@@ -143,3 +148,17 @@ Vec3 gkSteeringCapture::steering()
     }
 }
 
+void gkSteeringCapture::applyForce(const gkVector3& force, const float elapsedTime)
+{
+	applySteeringForce(force, elapsedTime);
+}
+
+void gkSteeringCapture::reset()
+{
+	gkSteeringObject::reset();
+}
+
+void gkSteeringCapture::notifyInGoal()
+{
+	setSpeed(0);
+}

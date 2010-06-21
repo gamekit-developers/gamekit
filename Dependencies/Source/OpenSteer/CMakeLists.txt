@@ -16,11 +16,11 @@ set(OPENSTEER_SRC
     src/SegmentedPathway.cpp   
     src/Path.cpp 
     src/Vec3Utilities.cpp
+    src/lq.c
 )
 
 set(OPENSTEER_HDR
     include/AbstractVehicle.h
-    include/LocalSpace.h
     include/Vec3.h
     include/Utilities.h
     include/SteerLibrary.h
@@ -44,6 +44,8 @@ set(OPENSTEER_HDR
     include/Path.h
     include/Vec3Utilities.h
     include/UnusedParameter.h
+    include/lq.h
+    include/Proximity.h
 )
 
 include_directories( 

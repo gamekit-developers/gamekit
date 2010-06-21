@@ -49,10 +49,10 @@ namespace
 
 	namespace velocity
 	{
-		gkScalar WALK = 1;
+		gkScalar WALK = 1.5;
 		gkScalar WALK_BACK = -1;
-		gkScalar RUN = 2.5f;
-		gkScalar RUN_FASTER = 4;
+		gkScalar RUN = 3.5f;
+		gkScalar RUN_FASTER = 5;
 		gkScalar NONE = 0;
 	}
 
@@ -112,8 +112,25 @@ m_obj(obj),
 m_scene(scene),
 m_tree(scene->m_tree),
 m_momoGrab(0),
-m_cameraNode(0)
+m_cameraNode(0),
+m_steeringObject(0),
+m_ifSelectNode(0),
+m_following(false)
 {
+	m_steeringObject = new gkSteeringPathFollowing(
+		obj, 
+		velocity::RUN_FASTER, 
+		gkVector3(0, 1, 0), 
+		gkVector3(0, 0, 1), 
+		gkVector3(1, 0, 0), 
+		gkVector3(2, 4, 2), 
+		256,
+		0.05f
+	);
+
+	m_steeringObject->setGoalRadius(m_steeringObject->radius());
+	m_steeringObject->setMaxForce(10);
+
 	m_momoGrab = m_tree->createNode<gkGrabNode>();
 	m_kickTestNode = m_tree->createNode<gkRayTestNode>();
 	m_cameraNode = m_tree->createNode<gkCameraNode>();
@@ -121,17 +138,15 @@ m_cameraNode(0)
 	m_characterNode = m_tree->createNode<gkCharacterNode>();
 	m_characterNode->setObj(m_obj);
 
-	BOOL_AND_NODE_TYPE* ifNode = BOOL_AND_NODE(m_scene->m_shiftKeyNode->getIS_DOWN(), 
+	m_ifSelectNode = BOOL_AND_NODE(m_scene->m_shiftKeyNode->getIS_DOWN(), 
 		m_scene->m_leftMouseNode->getPRESS());
 
-	gkScreenRayTestNode* targetNode = m_tree->createNode<gkScreenRayTestNode>();
-	targetNode->getENABLE()->link(ifNode->getIS_TRUE());
-	targetNode->getSCREEN_X()->link(m_scene->m_mouseNode->getABS_X());
-	targetNode->getSCREEN_Y()->link(m_scene->m_mouseNode->getABS_Y());
+	m_screenTargetNode = m_tree->createNode<gkScreenRayTestNode>();
+	m_screenTargetNode->getENABLE()->link(m_ifSelectNode->getIS_TRUE());
+	m_screenTargetNode->getSCREEN_X()->link(m_scene->m_mouseNode->getABS_X());
+	m_screenTargetNode->getSCREEN_Y()->link(m_scene->m_mouseNode->getABS_Y());
 
-	m_characterNode->getAI_ENABLE()->link(IS_TRUE(BOOL_AND_NODE(ifNode->getIS_TRUE(), targetNode->getHIT())));
-	m_characterNode->getAI_LOGIC()->setValue(gkCharacterNode::PATH_FOLLOWING);
-	m_characterNode->getAI_TARGET_POSITION()->link(targetNode->getHIT_POSITION());
+	m_characterNode->setForward(m_steeringObject->forward());
 
 	CreateStateMachine();
 
@@ -150,7 +165,7 @@ m_cameraNode(0)
 	map[FALL_UP] = StateData(FALL_UP, animation::FALL_UP, true, velocity::NONE);
 	map[KICK] = StateData(KICK, animation::KICK, true, velocity::NONE, false);
 
-	m_characterNode->setMapping(IDLE_NASTY, map);
+	m_characterNode->setMapping(map);
 
 	m_characterNode->getENABLE_ROTATION()->setValue(true);
 	m_characterNode->getROTATION_VALUE()->link(m_cameraNode->getCURRENT_ROLL());
@@ -159,10 +174,13 @@ m_cameraNode(0)
 	CreateGrab();
 	CreateDustTrail();
 	CreateCamera();
+
+	m_characterNode->setListener(this);
 }
 
 MomoLogic::~MomoLogic()
 {
+	delete m_steeringObject;
 }
 
 void MomoLogic::CreateKick()
@@ -210,7 +228,7 @@ void MomoLogic::CreateDustTrail()
 
 void MomoLogic::CreateStateMachine()
 {
-	INT_EQUAL_NODE_TYPE* wantToWalk = INT_EQUAL_NODE(m_characterNode->getAI_WANTED_STATE(), WALK); 
+	INT_EQUAL_NODE_TYPE* wantToWalk = INT_EQUAL_NODE(m_characterNode->getAI_STATE(), WALK); 
 
 	BOOL_OR_NODE_TYPE* walkConditionNode = BOOL_OR_NODE(m_scene->m_wKeyNode->getIS_DOWN(), IS_TRUE(wantToWalk));
 
@@ -272,7 +290,7 @@ void MomoLogic::CreateStateMachine()
 	fallTest->getFALLING()->link(m_characterNode->addTransition(WALK_BACK, FALL_UP));
 	fallTest->getFALLING()->link(m_characterNode->addTransition(IDLE_NASTY, FALL_UP));
 
-	INT_EQUAL_NODE_TYPE* wantToRun = INT_EQUAL_NODE(m_characterNode->getAI_WANTED_STATE(), RUN); 
+	INT_EQUAL_NODE_TYPE* wantToRun = INT_EQUAL_NODE(m_characterNode->getAI_STATE(), RUN); 
 
 	// RUN TRANSITIONS
 	m_scene->m_wKeyNode->getIS_DOWN()->link(m_characterNode->addTransition(WALK, RUN, 1500));
@@ -291,7 +309,7 @@ void MomoLogic::CreateStateMachine()
 		BOOL_AND_NODE_TYPE* ifNode = BOOL_AND_NODE(m_scene->m_shiftKeyNode->getIS_DOWN(), m_scene->m_wKeyNode->getIS_DOWN());
 
 		BOOL_OR_NODE_TYPE* wantToRunFaster = BOOL_OR_NODE(
-			IS_TRUE(INT_EQUAL_NODE(m_characterNode->getAI_WANTED_STATE(), RUN_FASTER)),
+			IS_TRUE(INT_EQUAL_NODE(m_characterNode->getAI_STATE(), RUN_FASTER)),
 			IS_TRUE(ifNode));
 
 		IS_TRUE(wantToRunFaster)->link(m_characterNode->addTransition(RUN, RUN_FASTER));
@@ -369,5 +387,41 @@ void MomoLogic::CreateCamera()
 	m_cameraNode->getREL_Y()->link(m_scene->m_mouseNode->getREL_Y());
 	m_cameraNode->getREL_Z()->link(m_scene->m_mouseNode->getWHEEL());
 	m_cameraNode->getMIN_Z()->setValue(0.5f);
-	m_cameraNode->getMAX_Z()->setValue(10);
+	m_cameraNode->getMAX_Z()->setValue(50);
+}
+
+gkCharacterNode::STATE MomoLogic::updateAI(gkCharacterNode* obj, gkScalar tick)
+{
+	gkCharacterNode::STATE newState = gkCharacterNode::NULL_STATE;
+
+	bool userSelectPos = m_ifSelectNode->getIS_TRUE()->getValue() && m_screenTargetNode->getHIT()->getValue();
+
+	if(userSelectPos)
+	{
+		m_steeringObject->setGoalPosition(m_screenTargetNode->getHIT_POSITION()->getValue());
+		m_following = true;
+	}
+
+	if(m_following)
+	{
+		if(m_steeringObject->update(tick))
+		{
+			gkScalar speed = m_steeringObject->speed();
+			
+			if(speed < velocity::RUN)
+				newState = WALK;
+			else if(speed < velocity::RUN_FASTER)
+				newState = RUN;
+			else
+				newState = RUN_FASTER;
+			
+			//gkLogMessage(m_steeringObject->getDebugStringState());
+		}
+		else
+		{
+			m_following = false;
+		}
+	}
+	
+	return newState;
 }

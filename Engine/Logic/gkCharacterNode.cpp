@@ -45,22 +45,12 @@ gkCharacterNode::gkCharacterNode(gkLogicTree *parent, size_t id)
 : gkStateMachineNode(parent, id),
 m_obj(0),
 m_ent(0),
-m_dir(0, 1, 0),
-m_up(0, 0, 1),
-m_polyPickExt(2, 4, 2),
-m_maxPathPolys(256),
 m_currentStateData(0),
 m_scene(0),
-m_createdNavMesh(false),
-m_seekerTarget(0),
-m_steeringObject(0),
-m_maxSpeed(0),
-m_followingPath(false)
+m_listener(0),
+m_forward(gkVector3::ZERO)
 {
 	ADD_ISOCK(ANIM_BLEND_FRAMES, 10);
-	ADD_ISOCK(AI_ENABLE, false);
-	ADD_ISOCK(AI_LOGIC, PATH_FOLLOWING);
-	ADD_ISOCK(AI_TARGET_POSITION, gkVector3::ZERO);
 	ADD_ISOCK(ENABLE_ROTATION, false);
 	ADD_ISOCK(ROTATION_VALUE, gkQuaternion::IDENTITY);
 	
@@ -69,28 +59,16 @@ m_followingPath(false)
 	ADD_OSOCK(ANIM_TIME_POSITION, 0);
 	ADD_OSOCK(POSITION, gkVector3::ZERO);
 	ADD_OSOCK(ROTATION, gkQuaternion::IDENTITY);
-	ADD_OSOCK(AI_WANTED_STATE, -1);
+	ADD_OSOCK(AI_STATE, NULL_STATE);
 }
 
 gkCharacterNode::~gkCharacterNode()
 {
-	if(m_steeringObject)
-		delete m_steeringObject;
-
-	if(m_createdNavMesh)
-		delete gkNavMeshData::getSingletonPtr();
 }
 
 void gkCharacterNode::initialize()
 {
-	if(!gkNavMeshData::getSingletonPtr())
-	{
-		new gkNavMeshData(gkEngine::getSingleton().getActiveScene());
-		
-		m_createdNavMesh = true;
-
-		gkNavMeshData::getSingletonPtr()->loadAll();
-	}
+	GK_ASSERT(m_forward != gkVector3::ZERO);
 		
 	GK_ASSERT(m_obj);
 		
@@ -123,57 +101,23 @@ void gkCharacterNode::update(gkScalar tick)
 
 void gkCharacterNode::update_state(gkScalar tick)
 {
-	if(GET_SOCKET_VALUE(AI_ENABLE) || m_followingPath)
+	STATE aiState = NULL_STATE;
+
+	if(m_listener)
+		aiState = m_listener->updateAI(this, tick);
+
+	SET_SOCKET_VALUE(AI_STATE, aiState);
+	
+	gkStateMachineNode::update(tick);
+
+	if(aiState == NULL_STATE)
 	{
-		if(GET_SOCKET_VALUE(AI_LOGIC) == PATH_FOLLOWING)
-		{
-			if(!m_steeringObject)
-			{
-				m_steeringObject = new gkSteeringPathFollowing(
-					m_obj, m_maxSpeed, m_dir, m_up, m_dir.crossProduct(m_up), m_polyPickExt, m_maxPathPolys);
-			}
-			
-			static_cast<gkSteeringPathFollowing*>(m_steeringObject)->setGoal(GET_SOCKET_VALUE(AI_TARGET_POSITION), m_obj->getRadius());
-
-			m_steeringObject->update(tick);
-
-			STATE newState = getStateForVelocity(m_steeringObject->speed());
-
-			SET_SOCKET_VALUE(AI_WANTED_STATE, newState);
-			
-			gkStateMachineNode::update(tick);
-
-			m_followingPath = !m_steeringObject->inGoal();
-
-		}
-		else if(GET_SOCKET_VALUE(AI_LOGIC) == SEEKER)
-		{
-			if(!m_steeringObject)
-			{
-				m_steeringObject = new gkSteeringCapture(m_obj, m_maxSpeed, m_dir, m_up, m_dir.crossProduct(m_up), m_seekerTarget);
-			}
-		
-			m_steeringObject->update(tick);
-
-			STATE newState = getStateForVelocity(m_steeringObject->speed());
-
-			SET_SOCKET_VALUE(AI_WANTED_STATE, newState);
-			
-			gkStateMachineNode::update(tick);
-		}
-	}
-	else
-	{
-		SET_SOCKET_VALUE(AI_WANTED_STATE, -1);
-		
-		gkStateMachineNode::update(tick);
-
 		if(GET_SOCKET_VALUE(ENABLE_ROTATION) && m_currentStateData->m_allow_rotation)
 		{
 			m_obj->setOrientation(GET_SOCKET_VALUE(ROTATION_VALUE));
 		}
 
-		m_obj->setLinearVelocity(m_dir * m_currentStateData->m_velocity, TRANSFORM_LOCAL);
+		m_obj->setLinearVelocity(m_forward * m_currentStateData->m_velocity, TRANSFORM_LOCAL);
 	}
 
 	SET_SOCKET_VALUE(POSITION, m_obj->getPosition());
@@ -228,43 +172,10 @@ gkCharacterNode::StateData* gkCharacterNode::getStateData(int state)
 	return &(it->second);
 }
 
-void gkCharacterNode::setMapping(STATE idleState, const MAP& map)
+void gkCharacterNode::setMapping(const MAP& map)
 {
 	GK_ASSERT(!map.empty());
 
 	m_map = map;
-
-	MAP::const_iterator it = m_map.begin();
-	while(it != m_map.end())
-	{
-		if(it->second.m_velocity > 0 || it->second.m_state == idleState)
-		{
-			m_statesData.push_back(it->second);
-		}
-
-		++it;
-	}
-
-	std::sort(m_statesData.begin(), m_statesData.end());
-
-	m_maxSpeed = (m_statesData.end()-1)->m_velocity;
 }
 
-gkCharacterNode::STATE gkCharacterNode::getStateForVelocity(gkScalar v) const
-{
-	if(v > 0)
-	{
-		STATES_DATA::const_iterator it = std::upper_bound(m_statesData.begin(), m_statesData.end(), StateData(-1, "", false, v));
-
-		GK_ASSERT(it != m_statesData.begin());
-
-		--it;
-
-		return it->m_state;
-	}
-	else
-	{
-
-		return m_statesData.begin()->m_state;
-	}
-}

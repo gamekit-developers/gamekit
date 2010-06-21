@@ -133,7 +133,7 @@ void gkCharacter::loadImpl(void)
 
 	btCollisionShape* pShape = m_ghostObject->getCollisionShape();
 
-	gkScalar stepHeight = getAabb().getSize().z/2.5f;
+	gkScalar stepHeight = getAabb().getSize().z/1.5f;
 
 	m_character = new btKinematicCharacterController(
 		m_ghostObject, static_cast<btConvexShape*>(m_ghostObject->getCollisionShape()), stepHeight);
@@ -231,7 +231,7 @@ void gkCharacter::setVelocity(const gkVector3& v, gkScalar timeInterval)
 
 	m_character->setVelocityForTimeInterval(velocity, timeInterval);
 
-	m_object->notifyUpdate();
+	//m_object->notifyUpdate();
 }
 
 void gkCharacter::setWorldTransform(const btTransform& worldTrans)

@@ -42,8 +42,8 @@ namespace
 
 	namespace velocity
 	{
-		gkScalar WALK = 0.5f;
-		gkScalar RUN = 1.5f;
+		gkScalar WALK = 0.7f;
+		gkScalar RUN = 2.5f;
 	}
 
 	namespace animation
@@ -64,16 +64,47 @@ RatLogic::RatLogic(gkGameObject* obj, SceneLogic* scene, PMOMO momo)
 m_scene(scene),
 m_tree(scene->m_tree),
 m_momo(momo),
-m_characterNode(0)
+m_characterNode(0),
+m_steeringObject(0),
+m_steeringCapture(0),
+m_steeringFollowing(0)
 {
+	m_steeringObject = m_steeringCapture = new gkSteeringCapture(
+		obj, 
+		velocity::RUN, 
+		gkVector3(0, 1, 0), 
+		gkVector3(0, 0, 1), 
+		gkVector3(1, 0, 0), 
+		m_momo->m_obj,
+		0.5f,
+		5
+	);
+
+	m_steeringCapture->setMaxForce(10);
+
+	m_steeringFollowing = new gkSteeringPathFollowing(
+			obj, 
+			velocity::RUN, 
+			gkVector3(0, 1, 0), 
+			gkVector3(0, 0, 1), 
+			gkVector3(1, 0, 0), 
+			gkVector3(2, 4, 2), 
+			256,
+			0.05f
+		);
+
+	m_steeringFollowing->setGoalRadius(m_steeringFollowing->radius());
+	m_steeringFollowing->setGoalPosition(m_momo->m_obj->getPosition());
+	m_steeringFollowing->setMaxForce(10);
+
 	gkCharacterNode* characterNode = m_tree->createNode<gkCharacterNode>();
 	m_characterNode = characterNode;
 	characterNode->setObj(m_obj);
+	
+	m_characterNode->setForward(m_steeringObject->forward());
+	characterNode->setListener(this);
 
-	characterNode->getAI_ENABLE()->link(characterNode->isCurrentStatus(DEATH)->getIS_FALSE());
-	m_characterNode->getAI_LOGIC()->setValue(gkCharacterNode::SEEKER);
-	characterNode->setSeekerTarget(m_momo->m_obj);
-
+	
 	gkRayTestNode* hasHit = m_tree->createNode<gkRayTestNode>();
 	hasHit->getTARGET()->setValue(m_obj);
 	hasHit->getRAY_DIRECTION()->setValue(gkVector3(0, 0.5f, 0));
@@ -87,14 +118,14 @@ m_characterNode(0)
 	characterNode->addTransition(WALK, IDLE);
 	characterNode->addTransition(RUN, IDLE);
 
-	INT_EQUAL_NODE_TYPE* wantToWalk = INT_EQUAL_NODE(characterNode->getAI_WANTED_STATE(), WALK); 
+	INT_EQUAL_NODE_TYPE* wantToWalk = INT_EQUAL_NODE(characterNode->getAI_STATE(), WALK); 
 
 	// WALK TRANSITION
 	IS_TRUE(wantToWalk)->link(characterNode->addTransition(IDLE, WALK));
 	IS_TRUE(wantToWalk)->link(characterNode->addTransition(WALK, WALK));
 	IS_TRUE(wantToWalk)->link(characterNode->addTransition(RUN, WALK));
 
-	INT_EQUAL_NODE_TYPE* wantToRun = INT_EQUAL_NODE(characterNode->getAI_WANTED_STATE(), RUN); 
+	INT_EQUAL_NODE_TYPE* wantToRun = INT_EQUAL_NODE(characterNode->getAI_STATE(), RUN); 
 
 	// RUN TRANSITION
 	IS_TRUE(wantToRun)->link(characterNode->addTransition(IDLE, RUN));
@@ -117,10 +148,63 @@ m_characterNode(0)
 	map[RUN] = StateData(RUN, animation::RUN, true, velocity::RUN);
 	map[DEATH] = StateData(DEATH, animation::DEATH, false, 0);
 
-	characterNode->setMapping(IDLE, map);
+	characterNode->setMapping(map);
 }
 
 RatLogic::~RatLogic()
 {
+	delete m_steeringFollowing;
+	delete m_steeringCapture;
 }
 
+gkCharacterNode::STATE RatLogic::updateAI(gkCharacterNode* obj, gkScalar tick)
+{
+	gkCharacterNode::STATE newState = gkCharacterNode::NULL_STATE;
+
+	if(obj->isCurrentStatus(DEATH)->getIS_FALSE()->getValue())
+	{
+		getBehaviour();
+
+		//gkCharacterNode::STATE oldState = m_steeringObject->getState();
+
+		if(m_steeringObject->update(tick))
+		{
+			gkScalar speed = m_steeringObject->speed();
+
+			if(speed < velocity::RUN)
+				newState = WALK;
+			else
+				newState = RUN;
+
+			//if(m_steeringObject->getState() != oldState)
+			//	gkLogMessage(m_steeringObject->getDebugStringState());
+		}
+		else 
+		{
+			m_steeringObject->setGoalPosition(m_momo->m_obj->getPosition());
+		}
+
+	}
+
+	return newState;
+}
+
+void RatLogic::getBehaviour()
+{
+	if(abs(m_steeringObject->position().z - m_momo->m_obj->getPosition().z) > 0.3f)
+	{
+		if(m_steeringObject == m_steeringCapture)
+		{
+			m_steeringObject = m_steeringFollowing;
+			m_steeringFollowing->reset();
+		}
+	}
+	else
+	{
+		if(m_steeringObject == m_steeringFollowing && m_steeringFollowing->getState() == gkSteeringObject::IN_GOAL)
+		{
+			m_steeringObject = m_steeringCapture;
+			m_steeringCapture->reset();
+		}
+	}
+}

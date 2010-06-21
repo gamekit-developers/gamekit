@@ -78,6 +78,8 @@ public:
 
 	gkGameObject* m_camera;
 
+	gkNavMeshData* m_navMeshData;
+
 private:
 
 	typedef gkPtrRef<MomoLogic> PMOMO;

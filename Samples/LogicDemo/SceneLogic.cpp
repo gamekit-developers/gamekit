@@ -45,7 +45,8 @@ SceneLogic::SceneLogic(gkScene* pScene)
 : m_scene(pScene),
 m_tree(gkNodeManager::getSingleton().create()),
 m_momo(0),
-m_camera(pScene->getMainCamera())
+m_camera(pScene->getMainCamera()),
+m_navMeshData(0)
 {
 	CreateInput();
 
@@ -60,10 +61,15 @@ m_camera(pScene->getMainCamera())
 	m_tree->solveOrder();
 
 	m_camera->attachLogic(m_tree);
+
+	m_navMeshData = new gkNavMeshData(pScene);
+		
+	m_navMeshData->loadAll();
 }
 
 SceneLogic::~SceneLogic()
 {
+	delete m_navMeshData;
 }
 
 void SceneLogic::CreateMomo()

@@ -95,7 +95,6 @@ public:
 
     GK_INLINE bool hasMoved(void) {return m_outOfDate;}
 
-
     // applies transformation to node & rigid body
     void applyTransformState(const gkTransformState& newstate);
 
@@ -185,7 +184,6 @@ public:
     void attachLogic(gkLogicTree *tree);
     void attachLogic(gkLogicLink *bricks);
 
-
     // Ogre base class for movables
     Ogre::MovableObject *getMovable(void);
 
@@ -219,8 +217,6 @@ public:
 
     GK_INLINE void  setState(int v)     {m_state = v;}
     GK_INLINE int   getState(void)      {return m_state;}
-	
-	GK_INLINE gkScalar getRadius() const { return m_radius; }
 
 protected:
     void cloneImpl(gkGameObject *clob);
@@ -283,8 +279,6 @@ private:
     void destroyPhysics(void);
 
 	NavMeshData m_navMeshData;
-
-	gkScalar m_radius;
 };
 
 #endif//_gkGameObject_h_
