@@ -96,6 +96,7 @@ set(AI_SOURCE
     AI/gkSteeringObject.cpp
     AI/gkSteeringCapture.cpp
     AI/gkSteeringPathFollowing.cpp
+    AI/gkSceneObstacle.cpp
 )
 
 set(AI_HEADER
@@ -106,6 +107,7 @@ set(AI_HEADER
     AI/gkSteeringObject.h
     AI/gkSteeringCapture.h
     AI/gkSteeringPathFollowing.h
+    AI/gkSceneObstacle.h
 )
 
 source_group(AI\\Header FILES ${AI_HEADER})
@@ -182,14 +184,12 @@ source_group(Animation\\Source FILES ${Animation_SOURCE})
 # ---------------------------------------------------------
 set(NLogic_SOURCE
     # ----- Source -----
-    Logic/gkAnimationNode.cpp
     Logic/gkButtonNode.cpp
     Logic/gkCameraNode.cpp
     Logic/gkCharacterNode.cpp
     Logic/gkCollisionNode.cpp
     Logic/gkExitNode.cpp
     Logic/gkExpressionNode.cpp
-    Logic/gkFallTestNode.cpp
     Logic/gkGrabNode.cpp
     Logic/gkGroupNode.cpp
     Logic/gkNodeManager.cpp
@@ -216,14 +216,12 @@ set(NLogic_SOURCE
 
 set(NLogic_HEADER
     # ----- Headers -----
-    Logic/gkAnimationNode.h
     Logic/gkButtonNode.h
     Logic/gkCameraNode.h
     Logic/gkCharacterNode.h
     Logic/gkCollisionNode.h
     Logic/gkExitNode.h
     Logic/gkExpressionNode.h
-    Logic/gkFallTestNode.h
     Logic/gkGrabNode.h
     Logic/gkGroupNode.h
     Logic/gkIfNode.h

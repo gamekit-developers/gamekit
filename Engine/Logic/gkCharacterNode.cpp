@@ -40,6 +40,8 @@
 #include "gkRayTest.h"
 #include "gkSteeringCapture.h"
 #include "gkSteeringPathFollowing.h"
+#include "gkCharacter.h"
+#include "BulletDynamics/Character/btKinematicCharacterController.h"
 
 gkCharacterNode::gkCharacterNode(gkLogicTree *parent, size_t id) 
 : gkStateMachineNode(parent, id),
@@ -60,6 +62,8 @@ m_forward(gkVector3::ZERO)
 	ADD_OSOCK(POSITION, gkVector3::ZERO);
 	ADD_OSOCK(ROTATION, gkQuaternion::IDENTITY);
 	ADD_OSOCK(AI_STATE, NULL_STATE);
+	ADD_OSOCK(FALLING, false);
+	ADD_OSOCK(NOT_FALLING, true);
 }
 
 gkCharacterNode::~gkCharacterNode()
@@ -122,6 +126,24 @@ void gkCharacterNode::update_state(gkScalar tick)
 
 	SET_SOCKET_VALUE(POSITION, m_obj->getPosition());
 	SET_SOCKET_VALUE(ROTATION, m_obj->getOrientation());
+
+	{
+		bool falling = false;
+
+		if(m_obj->getAttachedCharacter())
+		{
+			falling = !m_obj->getAttachedCharacter()->getCharacterController()->onGround();
+		}
+		else
+		{
+			const gkVector3& velocity = m_obj->getLinearVelocity();
+
+			falling = velocity.z < 0;
+		}
+
+		SET_SOCKET_VALUE(FALLING, falling);
+		SET_SOCKET_VALUE(NOT_FALLING, !falling);
+	}
 }
 
 void gkCharacterNode::update_animation(STATE oldState)

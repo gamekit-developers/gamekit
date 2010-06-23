@@ -28,8 +28,9 @@
 #define _gkSteeringCapture_h_
 
 #include "gkSteeringObject.h"
+#include "gkGameObject.h"
 
-class SceneObstacle;
+class gkSceneObstacle;
 
 class gkSteeringCapture : public gkSteeringObject
 {
@@ -48,18 +49,24 @@ public:
 
 	~gkSteeringCapture();
 
-	const gkVector3& getGoalPosition() const;
-	gkScalar getGoalRadius() const;
-	gkVector3 steering(STATE& newState, const float elapsedTime);
-	void notifyInGoal();
-	void applyForce(const gkVector3& force, const float elapsedTime);
-	void reset();
+	GK_INLINE const gkVector3& getGoalPosition() const { return m_target->getPosition(); }
+	
+	GK_INLINE gkScalar getGoalRadius() const
+	{
+		const gkGameObjectProperties &props = m_target->getProperties();
+    
+		const gkPhysicsProperties &phy = props.m_physics;
+
+		return phy.m_radius;
+	}
+
+	void steering(STATE& newState, const float elapsedTime);
 
 private:
 
 	gkGameObject* m_target;
 
-	SceneObstacle* m_sceneObstable;
+	gkSceneObstacle* m_sceneObstable;
 
 	OpenSteer::ObstacleGroup m_allObstacles;
 

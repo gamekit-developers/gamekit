@@ -30,6 +30,8 @@
 #include "gkSteeringObject.h"
 #include "gkNavPath.h"
 
+class gkSceneObstacle;
+
 class gkSteeringPathFollowing : public gkSteeringObject
 {
 public:
@@ -47,14 +49,12 @@ public:
 
 	~gkSteeringPathFollowing();
 
-	void setGoalPosition(const gkVector3& position){ m_goalPosition = position; }
-	void setGoalRadius(gkScalar radius){ m_goalRadius = radius; }
+	GK_INLINE void setGoalPosition(const gkVector3& position){ m_goalPosition = position; }
+	GK_INLINE void setGoalRadius(gkScalar radius){ m_goalRadius = radius; }
 
-	const gkVector3& getGoalPosition() const { return m_goalPosition; }
-	gkScalar getGoalRadius() const { return m_goalRadius; }
-	gkVector3 steering(STATE& newState, const float elapsedTime);
-	void notifyInGoal();
-	void applyForce(const gkVector3& force, const float elapsedTime);
+	GK_INLINE const gkVector3& getGoalPosition() const { return m_goalPosition; }
+	GK_INLINE gkScalar getGoalRadius() const { return m_goalRadius; }
+	void steering(STATE& newState, const float elapsedTime);
 	void reset();
 
 private:
@@ -62,6 +62,10 @@ private:
 	void createPath();
 	
 private:
+
+	OpenSteer::ObstacleGroup m_allObstacles;
+
+	gkSceneObstacle* m_sceneObstable;
 
 	gkVector3 m_goalPosition;
 

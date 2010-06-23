@@ -29,8 +29,6 @@
 
 #include "gkMathUtils.h"
 #include "gkSteeringObject.h"
-#include "gkGameObject.h"
-#include "gkSteering.h"
 #include "gkRigidBody.h"
 #include "gkLogger.h"
 #include "gkNavPath.h"
@@ -291,6 +289,8 @@ namespace OpenSteer
 
 /////////////////////////////////
 
+static int STUCK_RETRIES_COUNTER = 3;
+
 gkSteeringObject::gkSteeringObject(gkGameObject* obj, gkScalar maxSpeed, const gkVector3& forward, const gkVector3& up, const gkVector3& side) 
 : m_obj(obj), 
 m_mass(0), 
@@ -306,7 +306,10 @@ m_side(side),
 m_curvature(0),
 m_lastForward(Vec3::zero),
 m_lastPosition(Vec3::zero),
-m_smoothedCurvature(0)
+m_smoothedCurvature(0),
+m_lastFuturePosition(gkVector3::ZERO),
+m_stuckCounter(STUCK_RETRIES_COUNTER),
+m_steerUtility(up)
 {
     const gkGameObjectProperties &props = m_obj->getProperties();
     const gkPhysicsProperties &phy = props.m_physics;
@@ -329,7 +332,6 @@ gkSteeringObject::~gkSteeringObject()
 
 void gkSteeringObject::reset()
 {
-	m_state = UNKNOWN;
 	m_smoothedAcceleration = Vec3::zero;
 	m_speed = 0;
 	m_curvature = 0;
@@ -337,8 +339,16 @@ void gkSteeringObject::reset()
 	m_lastForward = Vec3::zero;
 	m_lastPosition = Vec3::zero;
 	m_smoothedCurvature = 0;
+
+	m_lastFuturePosition = position();
+	m_stuckCounter = STUCK_RETRIES_COUNTER;
 	
 	SimpleSteering::reset();
+}
+
+void gkSteeringObject::notifyInGoal()
+{
+	reset();
 }
 
 // ----------------------------------------------------------------------------
@@ -366,36 +376,6 @@ void gkSteeringObject::measurePathCurvature (const float elapsedTime)
     }
 }
 
-Vec3 gkSteeringObject::side() const
-{
-	return m_obj->getOrientation() * m_side;
-}
-
-Vec3 gkSteeringObject::up() const
-{
-	return m_obj->getOrientation() * m_up;
-}
-
-Vec3 gkSteeringObject::forward() const
-{
-	return m_obj->getOrientation() * m_forward;
-}
-
-Vec3 gkSteeringObject::position() const
-{
-	return m_obj->getPosition();
-}
-
-Vec3 gkSteeringObject::predictFuturePosition(const float predictionTime) const
-{
-	return position() + (velocity() * predictionTime);
-}
-
-Vec3 gkSteeringObject::velocity() const 
-{
-	return forward() * m_speed;
-}
-
 bool gkSteeringObject::update(gkScalar tick)
 {
 	gkScalar baseDistance = Vec3::distance(position(), getGoalPosition());
@@ -404,11 +384,24 @@ bool gkSteeringObject::update(gkScalar tick)
 	{
 		STATE newState = UNKNOWN;
 
-		gkVector3 force = steering(newState, tick);
+		steering(newState, tick);
 
-		applyForce(force, tick);
+		gkVector3 futurePosition = predictFuturePosition(tick);
 
-		m_state = newState;
+		if(m_lastFuturePosition.positionEquals(futurePosition) && !m_stuckCounter--)
+		{
+			m_stuckCounter = 0;
+
+			m_state = STUCK;
+		}
+		else
+		{
+			m_stuckCounter = STUCK_RETRIES_COUNTER;
+
+			m_state = newState;
+		}
+
+		m_lastFuturePosition = futurePosition;
 	}
 	else if(m_state != IN_GOAL)
 	{
@@ -460,8 +453,7 @@ void gkSteeringObject::applySteeringForce(const Vec3& force, const float elapsed
     // update Speed
     setSpeed (newVelocity.length());
 	
-	gkSteering steer(up());
-	m_obj->rotate(steer.getRotation(forward(), newVelocity.normalize()), TRANSFORM_LOCAL);
+	m_obj->rotate(m_steerUtility.getRotation(forward(), newVelocity.normalize()), TRANSFORM_LOCAL);
 	
 	m_obj->setLinearVelocity(m_forward * m_speed);
 
@@ -522,7 +514,7 @@ bool gkSteeringObject::clearPathToGoal(const gkVector3& goalPosition, gkGameObje
 			const float alongCorridor = goalDirection.dot (eOffset);
 			const bool inCorridor = ((alongCorridor > -behindThreshold) && 
 									 (alongCorridor < goalDistance));
-			const float eForwardDistance = forward().dot (eOffset);
+			const float eForwardDistance = forward().dotProduct(eOffset);
 
 			// consider as potential blocker if within the corridor
 			if (inCorridor)
@@ -532,7 +524,7 @@ bool gkSteeringObject::clearPathToGoal(const gkVector3& goalPosition, gkGameObje
 				if (acrossCorridor < sideThreshold)
 				{
 					// not a blocker if behind us and we are perp to corridor
-					const float eFront = eForwardDistance + e.radius ();
+					const float eFront = eForwardDistance + (e.radius ()*0.9f);
 
 					const bool eIsBehind = eFront < -behindThreshold;
 					const bool eIsWayBehind = eFront < (-2 * behindThreshold);
@@ -604,7 +596,7 @@ Vec3 gkSteeringObject::steerToEvadeOthers(const gkGameObject* target)
 			// steering to flee from eFuture (enemy's future position)
 			const Vec3 flee = xxxsteerForFlee(eFuture);
 
-			const float eForwardDistance = forward().dot (eOffset);
+			const float eForwardDistance = forward().dotProduct(eOffset);
 			const float behindThreshold = radius() * -2;
 
 			const float distanceWeight = 4 / eDistance;
@@ -804,12 +796,8 @@ Vec3 gkSteeringObject::adjustSteeringForMinimumTurningRadius (const Vec3& steeri
         const Vec3 thrust = steering.parallelComponent (forward ());
         const Vec3 trimmed = thrust.truncateLength (maxForce ());
         const Vec3 widenOut = side () * maxForce () * sign;
-        {
-            // annotation
-            const Vec3 localCenterOfCurvature = side () * signedRadius;
-            const Vec3 center = position () + localCenterOfCurvature;
-        }
-        return trimmed + widenOut;
+
+		return trimmed + widenOut;
     }
 
     // otherwise just return unmodified input
@@ -841,24 +829,24 @@ gkString gkSteeringObject::getDebugStringState() const
 		str += "AVOIDING";
 		break;
 
-	case EVADING_AND_SEEKING_GOAL:
-		str += "EVADING_AND_SEEKING_GOAL";
+	case EVADING:
+		str += "EVADING";
 		break;
 
 	case IN_GOAL:
 		str += "IN_GOAL";
 		break;
 
-	case SEEKING_GOAL:
-		str += "SEEKING_GOAL";
+	case SEEKING:
+		str += "SEEKING";
 		break;
 
-	case SEEKING_PATH:
-		str += "SEEKING_PATH";
+	case FOLLOWING_PATH:
+		str += "FOLLOWING_PATH";
 		break;
 
-	case WAITTING_PATH_CLEAR:
-		str += "WAITTING_PATH_CLEAR";
+	case STUCK:
+		str += "STUCK";
 		break;
 
 	default:

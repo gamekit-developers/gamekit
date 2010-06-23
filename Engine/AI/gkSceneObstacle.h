@@ -24,47 +24,26 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkFallTestNode_h_
-#define _gkFallTestNode_h_
+#ifndef _gkSceneObstacle_h_
+#define _gkSceneObstacle_h_
 
-#include "LinearMath/btQuickprof.h"
-#include "gkLogicNode.h"
+#include "Obstacle.h"
 
-class gkGameObject;
-
-class gkFallTestNode : public gkLogicNode
+class gkSceneObstacle : public OpenSteer::Obstacle
 {
 public:
+    
+	gkSceneObstacle(gkScalar howFarCanSee) : m_howFarCanSee(howFarCanSee), m_lastDirection(0) {}
 
-	enum 
-	{
-		ENABLE,
-		TARGET,
-		FALLING,
-		NOT_FALLING,
-		COLLIDED_OBJ,
-		CONTACT_POSITION
-	};
+    ~gkSceneObstacle() {}
 
-	DECLARE_SOCKET_TYPE(ENABLE, bool);
-	DECLARE_SOCKET_TYPE(TARGET, gkGameObject*);
-	DECLARE_SOCKET_TYPE(FALLING, bool);
-	DECLARE_SOCKET_TYPE(NOT_FALLING, bool);
-	DECLARE_SOCKET_TYPE(COLLIDED_OBJ, gkGameObject*);
-	DECLARE_SOCKET_TYPE(CONTACT_POSITION, gkVector3);
-
-    gkFallTestNode(gkLogicTree *parent, size_t id);
-
-	virtual ~gkFallTestNode() {}
-
-	bool evaluate(gkScalar tick);
-	void update(gkScalar tick);
+	void findIntersectionWithVehiclePath (const OpenSteer::AbstractVehicle& vehicle, OpenSteer::AbstractObstacle::PathIntersection& pi) const;
 
 private:
 
-	gkGameObject* m_object;
-	btClock m_timer;
+	gkScalar m_howFarCanSee;
 
+	mutable gkScalar m_lastDirection;
 };
 
-#endif//_gkFallTestNode_h_
+#endif//_gkSceneObstacle_h_

@@ -258,12 +258,12 @@ namespace OpenSteer {
         bool isAhead (const Vec3& target, float cosThreshold) const
         {
             const Vec3 targetDirection = (target - position ()).normalize ();
-            return forward().dot(targetDirection) > cosThreshold;
+            return forward().dotProduct(targetDirection) > cosThreshold;
         };
         bool isAside (const Vec3& target, float cosThreshold) const
         {
             const Vec3 targetDirection = (target - position ()).normalize ();
-            const float dp = forward().dot(targetDirection);
+            const float dp = forward().dotProduct(targetDirection);
             return (dp < cosThreshold) && (dp > -cosThreshold);
         };
         bool isBehind (const Vec3& target, float cosThreshold) const

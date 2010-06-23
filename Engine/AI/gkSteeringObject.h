@@ -27,10 +27,11 @@
 #ifndef _gkSteeringObject_h_
 #define _gkSteeringObject_h_
 
+#include "gkGameObject.h"
+#include "gkSteering.h"
 #include "AbstractVehicle.h"
 #include "SteerLibrary.h"
 
-class gkGameObject;
 class gkNavPath;
 
 typedef OpenSteer::SteerLibraryMixin<OpenSteer::AbstractVehicle> SimpleSteering;
@@ -43,61 +44,58 @@ public:
 	{
 		UNKNOWN,
 		AVOIDING,
-		EVADING_AND_SEEKING_GOAL,
+		EVADING,
 		IN_GOAL,
-		SEEKING_GOAL,
-		SEEKING_PATH,
-		WAITTING_PATH_CLEAR
+		SEEKING,
+		FOLLOWING_PATH,
+		STUCK
 	};
 
 	gkSteeringObject(gkGameObject* obj, gkScalar maxSpeed, const gkVector3& forward, const gkVector3& up, const gkVector3& side);
 	virtual ~gkSteeringObject();
 
-    OpenSteer::Vec3 side() const;
-    OpenSteer::Vec3 up() const;
-	OpenSteer::Vec3 forward() const;
-	OpenSteer::Vec3 position() const;
+	GK_INLINE gkVector3 side() const { return m_obj->getOrientation() * m_side; }
+	GK_INLINE gkVector3 up() const { return m_obj->getOrientation() * m_up; }
+	GK_INLINE gkVector3 forward() const { return m_obj->getOrientation() * m_forward; }
+	GK_INLINE gkVector3 position() const { return m_obj->getPosition(); }
+	GK_INLINE gkVector3 velocity() const { 	return forward() * m_speed; }
+	GK_INLINE gkVector3 predictFuturePosition(const float predictionTime) const { return position() + (velocity() * predictionTime); }
 
-    float mass() const {return m_mass;}
-    float setMass(float m) {return m_mass = m;}
+    GK_INLINE float mass() const {return m_mass;}
+    GK_INLINE float setMass(float m) {return m_mass = m;}
 
-	OpenSteer::Vec3 velocity() const;
+    GK_INLINE float speed() const {return m_speed;}
+    GK_INLINE float setSpeed(float s) {return m_speed = s;}
 
-    float speed() const {return m_speed;}
-    float setSpeed(float s) {return m_speed = s;}
+    GK_INLINE float radius() const {return m_radius;}
+    GK_INLINE float setRadius(float m) {return m_radius = m;}
 
-    float radius() const {return m_radius;}
-    float setRadius(float m) {return m_radius = m;}
+    GK_INLINE float maxForce() const {return m_maxForce;}
+    GK_INLINE float setMaxForce(float mf) {return m_maxForce = mf;}
 
-    float maxForce() const {return m_maxForce;}
-    float setMaxForce(float mf) {return m_maxForce = mf;}
+    GK_INLINE float maxSpeed(void) const {return m_maxSpeed;}
+    GK_INLINE float setMaxSpeed(float ms) {return m_maxSpeed = ms;}
 
-    float maxSpeed(void) const {return m_maxSpeed;}
-    float setMaxSpeed(float ms) {return m_maxSpeed = ms;}
-
-	OpenSteer::Vec3 predictFuturePosition(const float predictionTime) const;
-
-    gkScalar curvature () const {return m_curvature;}
+    GK_INLINE gkScalar curvature () const {return m_curvature;}
 	void measurePathCurvature (const float elapsedTime);
 
 	virtual const gkVector3& getGoalPosition() const = 0;
 	virtual gkScalar getGoalRadius() const = 0;
-	virtual gkVector3 steering(STATE& newState, const float elapsedTime) = 0;
-	virtual void notifyInGoal() = 0;
-	virtual void applyForce(const gkVector3& force, const float elapsedTime) = 0;
+	virtual void steering(STATE& newState, const float elapsedTime) = 0;
+	virtual void reset();
+	virtual void notifyInGoal();
 
 	virtual void setGoalPosition(const gkVector3& position){};
 	virtual void setGoalRadius(gkScalar radius){};
 
 	bool update(gkScalar tick);
 
-	int getState() const { return m_state; }
+	GK_INLINE int getState() const { return m_state; }
 
 	gkString getDebugStringState() const;
 
 protected:
-
-	void reset();
+	
 	void applySteeringForce(const OpenSteer::Vec3& force, const float elapsedTime);
 	void applyBrakingForce(const float rate, const float deltaTime);
 	OpenSteer::Vec3 adjustRawSteeringForce(const OpenSteer::Vec3& force);
@@ -149,6 +147,10 @@ private:
 	OpenSteer::Vec3 m_lastPosition;
     gkScalar m_smoothedCurvature;
 
+	gkVector3 m_lastFuturePosition;
+	int m_stuckCounter;
+
+	gkSteering m_steerUtility;
 };
 
 #endif//_gkSteeringObject_h_

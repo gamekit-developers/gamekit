@@ -63,7 +63,9 @@ public:
 		ANIM_TIME_POSITION,
 		POSITION,
 		ROTATION,
-		AI_STATE
+		AI_STATE,
+		FALLING,
+		NOT_FALLING
 	};
 
 	DECLARE_SOCKET_TYPE(ANIM_BLEND_FRAMES, gkScalar);
@@ -76,6 +78,8 @@ public:
 	DECLARE_SOCKET_TYPE(POSITION, gkVector3);
 	DECLARE_SOCKET_TYPE(ROTATION, gkQuaternion);
 	DECLARE_SOCKET_TYPE(AI_STATE, STATE);
+	DECLARE_SOCKET_TYPE(FALLING, bool);
+	DECLARE_SOCKET_TYPE(NOT_FALLING, bool);
 
     gkCharacterNode(gkLogicTree *parent, size_t id);
 	~gkCharacterNode();

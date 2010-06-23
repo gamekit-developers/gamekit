@@ -251,10 +251,6 @@ void MomoLogic::CreateStateMachine()
 	// IDLE_CAPOEIRA TRANSITIONS
 	m_characterNode->addTransition(IDLE_NASTY, IDLE_CAPOEIRA, 70000);
 
-	gkFallTestNode* fallTest = m_tree->createNode<gkFallTestNode>();
-	fallTest->getENABLE()->setValue(true);
-	fallTest->getTARGET()->setValue(m_obj);
-
 	//WALK TRANSITIONS
 	walkConditionNode->getIS_TRUE()->link(m_characterNode->addTransition(IDLE_NASTY, WALK));
 	walkConditionNode->getIS_TRUE()->link(m_characterNode->addTransition(IDLE_CAPOEIRA, WALK));
@@ -283,12 +279,12 @@ void MomoLogic::CreateStateMachine()
 	m_characterNode->getANIM_NOT_HAS_REACHED_END()->link(m_characterNode->addTransition(KICK, KICK));
 
 	// FALL_UP TRANSITIONS
-	fallTest->getFALLING()->link(m_characterNode->addTransition(WALK, FALL_UP));
-	fallTest->getFALLING()->link(m_characterNode->addTransition(RUN, FALL_UP));
-	fallTest->getFALLING()->link(m_characterNode->addTransition(FALL_UP, FALL_UP));
-	fallTest->getFALLING()->link(m_characterNode->addTransition(RUN_FASTER, FALL_UP));
-	fallTest->getFALLING()->link(m_characterNode->addTransition(WALK_BACK, FALL_UP));
-	fallTest->getFALLING()->link(m_characterNode->addTransition(IDLE_NASTY, FALL_UP));
+	m_characterNode->getFALLING()->link(m_characterNode->addTransition(WALK, FALL_UP));
+	m_characterNode->getFALLING()->link(m_characterNode->addTransition(RUN, FALL_UP));
+	m_characterNode->getFALLING()->link(m_characterNode->addTransition(FALL_UP, FALL_UP));
+	m_characterNode->getFALLING()->link(m_characterNode->addTransition(RUN_FASTER, FALL_UP));
+	m_characterNode->getFALLING()->link(m_characterNode->addTransition(WALK_BACK, FALL_UP));
+	m_characterNode->getFALLING()->link(m_characterNode->addTransition(IDLE_NASTY, FALL_UP));
 
 	INT_EQUAL_NODE_TYPE* wantToRun = INT_EQUAL_NODE(m_characterNode->getAI_STATE(), RUN); 
 
@@ -396,14 +392,20 @@ gkCharacterNode::STATE MomoLogic::updateAI(gkCharacterNode* obj, gkScalar tick)
 
 	bool userSelectPos = m_ifSelectNode->getIS_TRUE()->getValue() && m_screenTargetNode->getHIT()->getValue();
 
+	bool userMove = m_scene->m_sKeyNode->getIS_DOWN()->getValue() || m_scene->m_wKeyNode->getIS_DOWN()->getValue();
+
 	if(userSelectPos)
 	{
 		m_steeringObject->setGoalPosition(m_screenTargetNode->getHIT_POSITION()->getValue());
 		m_following = true;
 	}
+	else if(userMove)
+	{
+		m_following = false;
+	}
 
 	if(m_following)
-	{
+	{		
 		if(m_steeringObject->update(tick))
 		{
 			gkScalar speed = m_steeringObject->speed();

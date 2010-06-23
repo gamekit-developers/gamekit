@@ -104,8 +104,6 @@ void gkPickNode::CreatePick()
 {
 	ReleasePick();
 
-	m_pickedBody = 0;
-
 	Ogre::Ray ray = GetRay();
 	
 	gkRayTest rayTest;
@@ -192,9 +190,9 @@ void gkPickNode::ReleasePick()
 
 		GK_ASSERT(m_pickedBody);
 
-		m_pickedBody->getBody()->forceActivationState(m_activationState);
-
 		m_pickedBody->getBody()->setAngularFactor(btVector3(m_angularFactor.x, m_angularFactor.y, m_angularFactor.z));
+
+		m_pickedBody->getBody()->forceActivationState(ACTIVE_TAG);
 
 		SET_SOCKET_VALUE(CAUGHT_TRUE, false);
 		SET_SOCKET_VALUE(CAUGHT_FALSE, true);

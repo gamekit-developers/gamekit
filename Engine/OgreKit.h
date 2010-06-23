@@ -85,7 +85,6 @@
 #include "Loaders/Blender2/gkBlendFile.h"
 #include "Loaders/Blender2/gkBlendLoader.h"
 
-#include "Logic/gkAnimationNode.h"
 #include "Logic/gkButtonNode.h"
 #include "Logic/gkCameraNode.h"
 #include "Logic/gkCharacterNode.h"
@@ -93,7 +92,6 @@
 #include "Logic/gkCursorNode.h"
 #include "Logic/gkExitNode.h"
 #include "Logic/gkExpressionNode.h"
-#include "Logic/gkFallTestNode.h"
 #include "Logic/gkGrabNode.h"
 #include "Logic/gkGroupNode.h"
 #include "Logic/gkIfNode.h"
