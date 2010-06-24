@@ -27,6 +27,7 @@ set(Core_SOURCE
     gkPath.cpp
     gkTextFile.cpp
     gkTextManager.cpp
+    gkTickState.cpp
     gkRenderFactory.cpp
     gkScene.cpp
     gkSceneManager.cpp
@@ -63,6 +64,7 @@ set(Core_HEADER
     gkPath.h
     gkTextFile.h
     gkTextManager.h
+    gkTickState.h
     gkRenderFactory.h
     gkScene.h
     gkSceneManager.h

@@ -747,6 +747,19 @@ void gkScene::endObjects(void)
 }
 
 
+void gkScene::beginFrame(void)
+{
+    if (!isLoaded())
+        return;
+
+    // end any objects up for removal 
+    endObjects();
+
+    GK_ASSERT(m_physicsWorld);
+    m_physicsWorld->resetContacts();
+}
+
+
 void gkScene::update(gkScalar tickRate)
 {
     if (!isLoaded())
@@ -782,7 +795,3 @@ void gkScene::update(gkScalar tickRate)
     }
 }
 
-void gkScene::endUpdate(void)
-{
-    endObjects();
-}

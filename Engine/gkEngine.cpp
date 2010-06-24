@@ -49,27 +49,14 @@
 #include "gkDynamicsWorld.h"
 #include "gkDebugScreen.h"
 #include "gkDebugProperty.h"
-
-#include "LinearMath/btQuickprof.h"
+#include "gkTickState.h"
 
 using namespace Ogre;
 
-struct TickState
-{
-    unsigned long ticks, rate;
-    unsigned long skip, loop;
-    unsigned long cur, next, prev;
-    gkScalar blend, fixed, invt;
-    btClock *T;
-    bool lock, init;
-};
-
 
 // shorthand
-#define gkEnginePrivate gkEngine::Private
+#define gkEnginePrivate             gkEngine::Private
 #define ENGINE_TICKS_PER_SECOND     gkScalar(60)
-#define ENGINE_TIME_SCALE           gkScalar(0.001)
-#define GET_TICK(t)                 ((unsigned long)(t)->getTimeMilliseconds())
 
 // tick states
 gkScalar gkEngine::m_tickRate = ENGINE_TICKS_PER_SECOND;
@@ -77,36 +64,39 @@ gkScalar gkEngine::m_animRate = 25;
 
 
 
-class gkEnginePrivate : public FrameListener
+class gkEnginePrivate : public FrameListener, public gkTickState
 {
 public:
     Private(gkEngine *par)
-    :       engine(par),
+    :       gkTickState(ENGINE_TICKS_PER_SECOND),
+            engine(par),
             windowsystem(0),
             scene(0),
             debug(0),
             debugPage(0)
 
     {
-        memset(&state, 0, sizeof(TickState));
         plugin_factory = new gkRenderFactoryPrivate();
     }
 
-    ~Private()
+    virtual ~Private()
     {
         delete plugin_factory;
     }
 
 
     // one full update
-    void tick(gkScalar delta);
+    void tickImpl(gkScalar delta);
+    void syncImpl(gkScalar fac);
+    void beginTickImpl(void);
+
+
     bool frameRenderingQueued(const FrameEvent& evt);
 
     gkEngine*                   engine;
     gkWindowSystem*             windowsystem;       // current window system
     gkScene*                    scene;              // current scene
     gkRenderFactoryPrivate*     plugin_factory;     // static plugin loading
-    TickState                   state;
     Ogre::Root*                 root;
     gkDebugScreen*              debug;
     gkDebugPropertyPage*        debugPage;
@@ -362,20 +352,8 @@ void gkEngine::run(void)
     m_root->clearEventTimes();
     m_root->getRenderSystem()->_initRenderTargets();
     m_root->addFrameListener(m_private);
-
-    btClock t; t.reset();
-
-    TickState state;
-    state.rate = (unsigned long)ENGINE_TICKS_PER_SECOND;
-    state.ticks = 1000 / state.rate;
-    state.skip  = gkMax<unsigned long>(state.rate / 5, 1);
-    state.invt  = 1.0 / (gkScalar)state.ticks;
-    state.fixed = 1.0 / (gkScalar)ENGINE_TICKS_PER_SECOND;
-    state.T = &t;
-    state.init = false;
-    m_private->state = state;
     m_private->root = m_root;
-
+    m_private->reset();
 
     do
     {
@@ -392,61 +370,32 @@ void gkEngine::run(void)
 
 bool gkEnginePrivate::frameRenderingQueued(const FrameEvent& evt)
 {
-    state.loop = 0;
-    state.lock = false;
-
-	gkDynamicsWorld* world = scene->getDynamicsWorld();
-
-	if(world)
-	{
-		world->resetContacts();
-	}
-
-    scene->endUpdate();
-
-
-    if (!state.init)
-    {
-        // initialize timer states
-        state.init = true;
-        state.cur = GET_TICK(state.T);
-        state.next = state.prev = state.cur;
-    }
-
-    while ((state.cur = GET_TICK(state.T)) > state.next && state.loop < state.skip)
-    {
-        if (!state.lock)
-        {
-            tick(state.fixed);
-            if (((GET_TICK(state.T) - state.cur) * ENGINE_TIME_SCALE) > state.fixed)
-                state.lock = true;
-        }
-        state.next += state.ticks;
-        ++state.loop;
-    }
-
-    // in case the user called unload without 
-    // loading another or reloading... exit 
-    if (!scene) return false;
-
-    state.blend = gkScalar(GET_TICK(state.T) + state.ticks - state.next) * state.invt;
-    if (state.blend >= 0 && state.blend <= 1)
-        scene->synchronizeMotion(state.blend);
-    return true;
+    if (scene)
+        tick();
+    return scene != 0;
 }
 
+void gkEnginePrivate::beginTickImpl(void)
+{
+    GK_ASSERT(scene);
+    scene->beginFrame();
+}
 
-void gkEnginePrivate::tick(gkScalar dt)
+void gkEnginePrivate::tickImpl(gkScalar dt)
 {
     // Proccess one full game tick
     GK_ASSERT(windowsystem && scene && engine);
+
     // dispatch inputs
     windowsystem->dispatch();
+
     // update main scene
     scene->update(dt);
+
     // update callbacks
     if (engine->m_listener) 
         engine->m_listener->tick(dt);
+
 
     // post process 
     if (!engine->m_loadables.empty())
@@ -465,9 +414,18 @@ void gkEnginePrivate::tick(gkScalar dt)
         engine->m_loadables.clear();
     }
 
+
     if (debugPage && debugPage->isShown())
         debugPage->draw();
 }
+
+
+void gkEnginePrivate::syncImpl(gkScalar blend)
+{
+    if (scene)
+        scene->synchronizeMotion(blend);
+}
+
 
 void gkEngine::setActiveScene(gkScene *sc)
 {
