@@ -29,6 +29,7 @@
 
 
 #include "gkLoaderCommon.h"
+#include "gkMathUtils.h"
 
 class gkLogicLoader;
 
@@ -63,6 +64,13 @@ private:
     void convertObjectLamp(gkGameObject *gobj, Blender::Object *bobj);
     void convertObjectMesh(gkGameObject *gobj, Blender::Object *bobj);
     void convertObjectArmature(gkGameObject *gobj, Blender::Object *bobj);
+
+    void convertSpline(Blender::BezTriple *bez, 
+                        gkActionChannel *chan,
+                        int access,
+                        int mode, 
+                        int totvert,
+                        gkVector2 &range);
 
     void convertObjectActions(gkGameObject *gobj, Blender::Object *bobj);
     void convertObjectSkeleton(gkGameObject *gobj, Blender::Object *bobj);

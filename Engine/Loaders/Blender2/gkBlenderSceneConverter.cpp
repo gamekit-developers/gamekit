@@ -806,6 +806,58 @@ void gkBlenderSceneConverter::convertObjectMesh(gkGameObject *gobj, Blender::Obj
     }
 }
 
+
+void gkBlenderSceneConverter::convertSpline(Blender::BezTriple *bez, 
+                                            gkActionChannel *chan,
+                                            int access,
+                                            int mode,
+                                            int totvert,
+                                            gkVector2 &range)
+{
+    gkBezierSpline *spline = new gkBezierSpline(access);
+
+    switch (mode)
+    {
+    case 0://BEZT_IPO_CONST:
+        spline->setInterpolationMethod(gkBezierSpline::BEZ_CONSTANT);
+        break;
+    case 1://BEZT_IPO_LIN:
+        spline->setInterpolationMethod(gkBezierSpline::BEZ_LINEAR);
+        break;
+    case 2://BEZT_IPO_BEZ:
+        spline->setInterpolationMethod(gkBezierSpline::BEZ_CUBIC);
+        break;
+    default:
+        return;
+    }
+
+
+    Blender::BezTriple *bezt = bez;
+    for (int c = 0; c < totvert; c++, bezt++)
+    {
+        gkBezierVertex v;
+
+        v.h1[0] = bezt->vec[0][0];
+        v.h1[1] = bezt->vec[0][1];
+        v.cp[0] = bezt->vec[1][0];
+        v.cp[1] = bezt->vec[1][1];
+        v.h2[0] = bezt->vec[2][0];
+        v.h2[1] = bezt->vec[2][1];
+
+
+        // calculate global time
+        if (range.x > v.cp[0]) range.x = v.cp[0];
+        if (range.y < v.cp[0]) range.y = v.cp[0];
+        spline->addVertex(v);
+    }
+
+    if (spline->getNumVerts())
+        chan->addSpline(spline);
+    else
+        delete spline;
+
+}
+
 // ----------------------------------------------------------------------------
 void gkBlenderSceneConverter::convertObjectActions(gkGameObject *gobj, Blender::Object *bobj)
 {
@@ -869,47 +921,9 @@ void gkBlenderSceneConverter::convertObjectActions(gkGameObject *gobj, Blender::
                                 case AC_SIZE_Z: { code = SC_SCL_Z;  break; }
                                 }
 
-
                                 // ignore any other codes
-                                if (code != -1)
-                                {
-                                    gkBezierSpline *spline = new gkBezierSpline(code);
-
-                                    switch (icu->ipo)
-                                    {
-                                    case 0://BEZT_IPO_CONST:
-                                        spline->setInterpolationMethod(gkBezierSpline::BEZ_CONSTANT);
-                                        break;
-                                    case 1://BEZT_IPO_LIN:
-                                        spline->setInterpolationMethod(gkBezierSpline::BEZ_LINEAR);
-                                        break;
-                                    case 2://BEZT_IPO_BEZ:
-                                        spline->setInterpolationMethod(gkBezierSpline::BEZ_CUBIC);
-                                        break;
-                                    }
-
-                                    Blender::BezTriple *bezt = icu->bezt;
-                                    for (int c = 0; c < icu->totvert; c++, bezt++)
-                                    {
-                                        gkBezierVertex v;
-
-                                        v.h1[0] = bezt->vec[0][0];
-                                        v.h1[1] = bezt->vec[0][1];
-                                        v.cp[0] = bezt->vec[1][0];
-                                        v.cp[1] = bezt->vec[1][1];
-                                        v.h2[0] = bezt->vec[2][0];
-                                        v.h2[1] = bezt->vec[2][1];
-
-
-                                        // calculate global time
-                                        if (range.x > v.cp[0]) range.x = v.cp[0];
-                                        if (range.y < v.cp[0]) range.y = v.cp[0];
-                                        spline->addVertex(v);
-                                    }
-                                    if (spline->getNumVerts())
-                                        achan->addSpline(spline);
-                                    else delete spline;
-                                }
+                                if (code != -1 && icu->totvert > 0)
+                                    convertSpline(icu->bezt, achan, code, icu->ipo, icu->totvert, range);
                             }
                             icu = icu->next;
                         }
@@ -974,45 +988,8 @@ void gkBlenderSceneConverter::convertObjectActions(gkGameObject *gobj, Blender::
                         }
 
                         // ignore any other codes
-                        if (code != -1)
-                        {
-                            gkBezierSpline *spline = new gkBezierSpline(code);
-
-                            switch (bfc->bezt->ipo)
-                            {
-                            case 0://BEZT_IPO_CONST:
-                                spline->setInterpolationMethod(gkBezierSpline::BEZ_CONSTANT);
-                                break;
-                            case 1://BEZT_IPO_LIN:
-                                spline->setInterpolationMethod(gkBezierSpline::BEZ_LINEAR);
-                                break;
-                            case 2://BEZT_IPO_BEZ:
-                                spline->setInterpolationMethod(gkBezierSpline::BEZ_CUBIC);
-                                break;
-                            }
-
-                            Blender::BezTriple *bezt = bfc->bezt;
-                            for (int c = 0; c < bfc->totvert; c++, bezt++)
-                            {
-                                gkBezierVertex v;
-
-                                v.h1[0] = bezt->vec[0][0];
-                                v.h1[1] = bezt->vec[0][1];
-                                v.cp[0] = bezt->vec[1][0];
-                                v.cp[1] = bezt->vec[1][1];
-                                v.h2[0] = bezt->vec[2][0];
-                                v.h2[1] = bezt->vec[2][1];
-
-
-                                // calculate global time
-                                if (range.x > v.cp[0]) range.x = v.cp[0];
-                                if (range.y < v.cp[0]) range.y = v.cp[0];
-                                spline->addVertex(v);
-                            }
-                            if (spline->getNumVerts())
-                                achan->addSpline(spline);
-                            else delete spline;
-                        }
+                        if (code != -1 && bfc->totvert > 0)
+                            convertSpline(bfc->bezt, achan, code, bfc->bezt->ipo, bfc->totvert, range);
                     }
                 }
                 bfc = bfc->next;
