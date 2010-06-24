@@ -220,6 +220,12 @@ void gkLogicLink::notifyLink(gkLogicLink *link)
 
 
 // ----------------------------------------------------------------------------
+bool gkLogicLink::hasLink(gkLogicLink *link)
+{
+    return link == this || m_others.find(link) != UT_NPOS;
+}
+
+// ----------------------------------------------------------------------------
 void gkLogicLink::notifyState(void)
 {
     if (!m_others.empty())

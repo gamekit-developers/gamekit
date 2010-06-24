@@ -68,12 +68,11 @@ gkActionActuator::~gkActionActuator()
 // ----------------------------------------------------------------------------
 gkLogicBrick* gkActionActuator::clone(gkLogicLink *link, gkGameObject *dest)
 {
-    gkActionActuator *act   = new gkActionActuator(*this);
-    act->m_link             = link;
-    act->m_object           = dest;
-    act->m_skeleton         = dest->getSkeleton();
-    act->m_isInit           = false;
-    act->m_action           = 0;
+    gkActionActuator *act = new gkActionActuator(*this);
+    act->cloneImpl(link, dest);
+    act->m_skeleton = dest->getSkeleton();
+    act->m_isInit = false;
+    act->m_action = 0;
     return act;
 }
 

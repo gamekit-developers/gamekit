@@ -78,6 +78,7 @@ public:
 
     void notifyLink(gkLogicLink *link);
     void notifyState(void);
+    bool hasLink(gkLogicLink *link);
     
     BrickList& getSensors(void) {return m_sensors;}
     BrickList& getControllers(void) {return m_controllers;}

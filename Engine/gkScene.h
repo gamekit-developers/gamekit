@@ -57,6 +57,8 @@ public:
 
     // Updates the game state
     void update(gkScalar tickRate);
+    void endUpdate(void);
+
 
     // Interpolates transformed objects,
     // for smoothing motion between game ticks

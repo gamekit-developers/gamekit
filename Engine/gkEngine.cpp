@@ -402,6 +402,9 @@ bool gkEnginePrivate::frameRenderingQueued(const FrameEvent& evt)
 		world->resetContacts();
 	}
 
+    scene->endUpdate();
+
+
     if (!state.init)
     {
         // initialize timer states

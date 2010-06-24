@@ -564,7 +564,6 @@ void gkScene::notifyObjectUpdate(gkGameObject *gobject)
 
 void gkScene::synchronizeMotion(gkScalar blend)
 {
-
     if (!m_transformObjects.empty())
     {
         gkGameObjectArray::Pointer buffer = m_transformObjects.ptr();
@@ -725,7 +724,6 @@ void gkScene::endObjects(void)
                     else
                     {
                         gkGameObjectInstance *inst = obj->getGroupInstance();
-                        //dsPrintf("Del Object %s : Inst ? %p", obj->getName().c_str(), inst);
                         if (inst != 0)
                             inst->unloadObject(obj->getName());
                         else
@@ -736,7 +734,6 @@ void gkScene::endObjects(void)
             else
             {
                 gkGameObjectInstance *inst = obj->getGroupInstance();
-                //dsPrintf("Del Object %s : Inst ? %p", obj->getName(), inst);
                 if (inst != 0)
                     inst->unloadObject(obj->getName());
                 else
@@ -770,7 +767,7 @@ void gkScene::update(gkScalar tickRate)
 
     // tick life span
     tickClones();
-    endObjects();
+
 
     if (m_markDBVT)
     {
@@ -783,4 +780,9 @@ void gkScene::update(gkScalar tickRate)
         m_physicsWorld->DrawDebug();
         m_debugger->flush();
     }
+}
+
+void gkScene::endUpdate(void)
+{
+    endObjects();
 }

@@ -47,8 +47,7 @@ gkPropertyActuator::~gkPropertyActuator()
 gkLogicBrick* gkPropertyActuator::clone(gkLogicLink *link, gkGameObject *dest)
 {
     gkPropertyActuator *act = new gkPropertyActuator(*this);
-    act->m_link = link;
-    act->m_object = dest;
+    act->cloneImpl(link, dest);
     act->m_init = false;
     act->m_cur = 0;
     return act;

@@ -46,8 +46,7 @@ gkGameActuator::~gkGameActuator()
 gkLogicBrick* gkGameActuator::clone(gkLogicLink *link, gkGameObject *dest)
 {
     gkGameActuator *act = new gkGameActuator(*this);
-    act->m_link = link;
-    act->m_object = dest;
+    act->cloneImpl(link, dest);
     return act;
 }
 

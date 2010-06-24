@@ -93,7 +93,6 @@ void gkLogicManager::destroy(gkLogicLink *link)
         {
             m_links.erase(link);
 
-
             utListIterator<gkLogicLink::BrickList> iter(link->getControllers());
             while (iter.hasMoreElements())
             {
@@ -115,8 +114,6 @@ void gkLogicManager::destroy(gkLogicLink *link)
                     m_aout.erase(act);
 
             }
-
-
             delete link;
         }
     }
@@ -173,7 +170,7 @@ void gkLogicManager::push(gkLogicBrick *a, gkLogicBrick *b, Bricks &in, bool sta
 }
 
 // ----------------------------------------------------------------------------
-void gkLogicManager::notifyState(unsigned int state)
+void gkLogicManager::notifyState(unsigned int state, gkLogicLink *link)
 {
     if (!m_ain.empty())
     {
@@ -184,6 +181,12 @@ void gkLogicManager::notifyState(unsigned int state)
         b = m_ain.ptr();
         while (i < s)
         {
+            if (!b[i]->getLink()->hasLink(link))
+            {
+                ++i;
+                continue;
+            }
+
 #ifdef GK_DEBUG_EXEC
             if (f==0 && b[i]->wantsDebug())
             {
@@ -274,10 +277,6 @@ void gkLogicManager::update(gkScalar delta)
         {
             b[i]->execute();
             b[i]->setActive(false);
-//#ifdef GK_DEBUG_EXEC
-//            if (b[i]->wantsDebug())
-//                dsPrintf("Remove: Controller %s\n", b[i]->getName().c_str());
-//#endif
             ++i;
         }
         m_cin.clear(true);

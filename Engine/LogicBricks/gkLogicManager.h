@@ -87,7 +87,7 @@ public:
     void destroy(gkLogicLink *link);
 
 
-    void notifyState(unsigned int state);
+    void notifyState(unsigned int state, gkLogicLink *link);
     void notifySort(void);
 
     // Free links & reset dispatchers

@@ -45,8 +45,7 @@ gkStateActuator::~gkStateActuator()
 gkLogicBrick* gkStateActuator::clone(gkLogicLink *link, gkGameObject *dest)
 {
     gkStateActuator *act = new gkStateActuator(*this);
-    act->m_link = link;
-    act->m_object = dest;
+    act->cloneImpl(link, dest);
     return act;
 }
 
@@ -81,6 +80,7 @@ void gkStateActuator::execute(void)
     {
         m_object->setState(newState);
         m_link->notifyState();
-        gkLogicManager::getSingleton().notifyState(newState);
+
+        gkLogicManager::getSingleton().notifyState(newState, m_link);
     }
 }

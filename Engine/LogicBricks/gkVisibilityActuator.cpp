@@ -45,8 +45,7 @@ gkVisibilityActuator::~gkVisibilityActuator()
 gkLogicBrick* gkVisibilityActuator::clone(gkLogicLink *link, gkGameObject *dest)
 {
     gkVisibilityActuator *act = new gkVisibilityActuator(*this);
-    act->m_link = link;
-    act->m_object = dest;
+    act->cloneImpl(link, dest);
     return act;
 }
 

@@ -71,12 +71,20 @@ void gkLogicController::link(gkLogicSensor *v)
     UT_ASSERT(v && m_sensors.find(v) == UT_NPOS);
     m_sensors.push_back(v);
 
+
+    gkLogicLink *olink = v->getLink();
+
+        
     // append state bits
-    v->getLink()->setState(m_link->getState());
+
     m_object->setState(m_link->getState());
     v->setMask(v->getMask() | getMask());
     v->setDebugMask(getDebugMask());
-    m_link->notifyLink(v->getLink());
+
+    olink->setState(m_link->getState());
+
+    m_link->notifyLink(olink);
+    olink->notifyLink(m_link);
 }
 
 
@@ -88,10 +96,15 @@ void gkLogicController::link(gkLogicActuator *v)
 
     v->setPriority(getPriority());
 
+    gkLogicLink *olink = v->getLink();
+
     // append state bits
-    v->getLink()->setState(m_link->getState());
+
     m_object->setState(m_link->getState());
     v->setMask(v->getMask() | getMask());
     v->setDebugMask(getDebugMask());
-    m_link->notifyLink(v->getLink());
+
+    olink->setState(m_link->getState());
+    m_link->notifyLink(olink);
+    olink->notifyLink(m_link);
 }
