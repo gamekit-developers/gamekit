@@ -32,7 +32,7 @@
 
 
 gkPhysicsDebug::gkPhysicsDebug(gkDynamicsWorld *wo)
-:       m_physics(wo)
+:       m_physics(wo), m_flags(0)
 {
 }
 
@@ -69,9 +69,10 @@ void gkPhysicsDebug::reportErrorWarning(const char* warningString)
 
 void gkPhysicsDebug::setDebugMode(int debugMode)
 {
+    m_flags = debugMode;
 }
 
 int gkPhysicsDebug::getDebugMode() const
 {
-    return 0;
+    return m_flags;
 }

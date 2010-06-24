@@ -51,6 +51,7 @@ public:
     int getDebugMode() const;
 
 protected:
+    int m_flags;
 
     gkDynamicsWorld*    m_physics;
 };
