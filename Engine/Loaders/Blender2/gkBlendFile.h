@@ -48,32 +48,26 @@ public:
     typedef utHashTable<utPointerHashKey, Ogre::Texture*> ImageTextureHashMap;
 
 public:
-
-    gkBlendFile(const gkString& file, const gkString& group = GK_DEF_GROUP);
-    gkBlendFile(bParse::bBlenderFile *file, const gkString& group = GK_DEF_GROUP);
-
+    gkBlendFile(const gkString& group = GK_DEF_GROUP);
     ~gkBlendFile();
-
-    void doVersionTests(void);
-
-    bool _parse(void);
-    bool _parseFile(void);
-
-    void _registerLoader(Ogre::ManualResourceLoader *loader)  {m_loaders.push_back(loader);}
-    void _registerImage(Blender::Image *ima);
-
-    void *_findPtr(void *ptr);
+    bool parse(bParse::bBlenderFile *bfp);
 
 
-    gkScene* findScene(const gkString& name);
+    void    registerLoader(Ogre::ManualResourceLoader *loader)  {m_loaders.push_back(loader);}
+
+    gkScene *findScene(const gkString& name);
 
     GK_INLINE gkSceneIterator getSceneIterator(void) {return gkSceneIterator(m_scenes);}
     GK_INLINE gkImageIterator getImageIterator(void) {return gkImageIterator(m_images); }
 
-    GK_INLINE const gkString& getGroup(void)    {return m_group;}
-    bParse::bBlenderFile *getInternalFile(void) {GK_ASSERT(m_file); return m_file;}
+    GK_INLINE const gkString&   getGroup(void)          {return m_group;}
+    bParse::bBlenderFile        *getInternalFile(void)  {GK_ASSERT(m_file); return m_file;}
+
 
 protected:
+
+    void doVersionTests(void);
+
     void buildTextFiles(void);    
 	void buildAllTextures();
 	void buildAllSounds();
@@ -84,7 +78,6 @@ protected:
     gkSceneList               m_scenes;    // All Scenes
     gkImageList               m_images;    // All Textures
     ImageTextureHashMap       m_imageLookup;
-    bool                      m_owner;
 };
 
 

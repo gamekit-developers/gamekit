@@ -69,9 +69,6 @@ void gkTickState::initialize(int rate)
     if (m_clock)
         delete m_clock;
     m_clock = new btClock();
-    m_clock->reset();
-
-    // timer 
     m_init = false;
 }
 

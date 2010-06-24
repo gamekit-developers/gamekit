@@ -53,8 +53,7 @@
 class gkSkyBoxGradient : public Ogre::ManualResourceLoader
 {
 protected:
-
-	Blender::World *m_world;
+	gkColor m_hor, m_zen;
 
 	void fill(Ogre::Image &ima, int size, const Ogre::ColourValue &v, const Ogre::PixelFormat &fmt);
 	void grad(Ogre::Image &ima, int x1, int y1, int x2, int y2, int size, 
@@ -1109,7 +1108,7 @@ void gkBlenderSceneConverter::loadSkyBox()
 
 
     gkSkyBoxGradient *grad = new gkSkyBoxGradient(wo);
-    m_file->_registerLoader(grad);
+    m_file->registerLoader(grad);
 
     Ogre::TexturePtr txptr =  Ogre::TextureManager::getSingleton().create(GKB_IDNAME(wo), "<gkBuiltin>", true, grad);
     matptr->setLightingEnabled(false);
@@ -2473,9 +2472,10 @@ int gkLogicLoader::getKey(int kc)
 }
 
 
-gkSkyBoxGradient::gkSkyBoxGradient(Blender::World *wo) :
-	m_world(wo)
+gkSkyBoxGradient::gkSkyBoxGradient(Blender::World *wo) 
 {
+	m_zen = gkColor(wo->zenr, wo->zeng, wo->zenb);
+	m_hor = gkColor(wo->horr, wo->horg, wo->horb);
 }
 
 
@@ -2555,9 +2555,6 @@ void gkSkyBoxGradient::loadResource(Ogre::Resource* resource)
 {
 	Ogre::Texture *tex = (Ogre::Texture*)resource;
 
-	Ogre::ColourValue zen(m_world->zenr, m_world->zeng, m_world->zenb);
-	Ogre::ColourValue hor(m_world->horr, m_world->horg, m_world->horb);
-
 	Ogre::PixelFormat fmt = Ogre::PF_R8G8B8A8;
 
 	tex->setFormat(fmt);
@@ -2573,19 +2570,18 @@ void gkSkyBoxGradient::loadResource(Ogre::Resource* resource)
 
 	Ogre::Image zhf, zhb, zhr, zhl;
 
-	fill(zeni, size, zen, fmt);
-	fill(hori, size, hor, fmt);
+	fill(zeni, size, m_zen, fmt);
+	fill(hori, size, m_hor, fmt);
 
 	unsigned int ma = size-sf;
 	unsigned int mi = sf;
 
-	grad(zhf, mi, mi, ma, mi, size, zen, hor, fmt);
-	grad(zhb, mi, mi, ma, mi, size, hor, zen, fmt);
-	grad(zhr, mi, mi, mi, ma, size, hor, zen, fmt);
-	grad(zhl, mi, mi, mi, ma, size, zen, hor, fmt);
+	grad(zhf, mi, mi, ma, mi, size, m_zen, m_hor, fmt);
+	grad(zhb, mi, mi, ma, mi, size, m_hor, m_zen, fmt);
+	grad(zhr, mi, mi, mi, ma, size, m_hor, m_zen, fmt);
+	grad(zhl, mi, mi, mi, ma, size, m_zen, m_hor, fmt);
 
-	Ogre::ConstImagePtrList ptrs;
-
+    Ogre::ConstImagePtrList ptrs;
 	// not the correct order 
 	ptrs.push_back(&zhr);
 	ptrs.push_back(&zhl);

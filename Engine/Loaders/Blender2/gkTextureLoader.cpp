@@ -31,56 +31,51 @@
 #include "gkLogger.h"
 #include "Blender.h"
 
-using namespace Ogre;
 
 
-
-
-gkTextureLoader::gkTextureLoader(gkBlendFile *fp, Blender::Image *ima) :
-        m_file(fp), m_image(ima)
+gkTextureLoader::gkTextureLoader(Blender::Image *ima) 
+    :   m_stream(0)
 {
-    GK_ASSERT(m_file);
-    GK_ASSERT(m_image);
+    GK_ASSERT(ima);
+    Blender::PackedFile *pack = ima->packedfile;
+    if (pack)
+    {
+        m_stream = new utMemoryStream;
+        m_stream->open(pack->data, pack->size, utStream::SM_READ);
+    }
 }
 
 
 gkTextureLoader::~gkTextureLoader()
 {
+    delete m_stream;
 }
 
 
-void gkTextureLoader::loadResource(Resource* resource)
+void gkTextureLoader::loadResource(Ogre::Resource* resource)
 {
-    GK_ASSERT(m_file);
-    GK_ASSERT(m_image);
-    GK_ASSERT(resource);
+    Ogre::Texture *texture = static_cast<Ogre::Texture*>(resource);
 
-    Texture *texture = static_cast<Texture*>(resource);
-
-    // internal packed file data
-    if (m_image->packedfile == 0 || m_image->packedfile->data == 0)
+    if (!m_stream)
     {
         gkPrintf("Warning: Skipping image %s no packed file information is present!", texture->getName().c_str());
         return;
     }
 
-    Blender::PackedFile *pack = m_image->packedfile;
-    unsigned char *rawBuffer = ((unsigned char*)pack->data);
-    size_t rawSize = pack->size;
+    Ogre::DataStreamPtr stream = Ogre::DataStreamPtr(new Ogre::MemoryDataStream(m_stream->ptr(), m_stream->size()));
 
-    DataStreamPtr stream = DataStreamPtr(new MemoryDataStream(rawBuffer, rawSize));
     Ogre::Image ima;
     ima.load(stream);
 
     texture->setUsage(Ogre::TU_DEFAULT);
     texture->setTextureType(Ogre::TEX_TYPE_2D);
-    texture->setNumMipmaps(5);//ima.getNumMipmaps());
+    texture->setNumMipmaps(Ogre::TextureManager::getSingleton().getDefaultNumMipmaps());
     texture->setWidth(ima.getWidth());
     texture->setHeight(ima.getHeight());
     texture->setDepth(ima.getDepth());
     texture->setFormat(ima.getFormat());
 
-    ConstImagePtrList ptrs;
+    Ogre::ConstImagePtrList ptrs;
     ptrs.push_back(&ima);
     texture->_loadImages(ptrs);
 }

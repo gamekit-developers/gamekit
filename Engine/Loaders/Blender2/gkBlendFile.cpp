@@ -48,6 +48,7 @@
 #include "gkUtils.h"
 #include "gkLogger.h"
 
+
 #include "gkTextManager.h"
 #include "gkTextFile.h"
 #include "gkEngine.h"
@@ -58,23 +59,11 @@ using namespace Ogre;
 
 
 
-gkBlendFile::gkBlendFile(const gkString& file, const gkString& group)
-:       m_group(group),
-        m_file(new bParse::bBlenderFile(file.c_str())),
-        m_owner(true)
+gkBlendFile::gkBlendFile(const gkString& group)
+    :       m_group(group),
+            m_file(0)
 {
 }
-
-
-
-gkBlendFile::gkBlendFile(bParse::bBlenderFile* file, const gkString& group)
-:       m_group(group),
-        m_file(file),
-        m_owner(true)
-{
-}
-
-
 
 gkBlendFile::~gkBlendFile()
 {
@@ -84,45 +73,22 @@ gkBlendFile::~gkBlendFile()
         while (it.hasMoreElements()) 
             delete it.getNext();
     }
-
-    if (m_owner)
-    {
-        delete m_file;
-        m_file = 0;
-    }
 }
 
 
-void gkBlendFile::_registerImage(Blender::Image* ima)
+bool gkBlendFile::parse(bParse::bBlenderFile *bfp)
 {
-}
-
-
-void* gkBlendFile::_findPtr(void* ptr)
-{
-    return m_file->findLibPointer(ptr);
-}
-
-
-bool gkBlendFile::_parseFile(void)
-{
-
-    m_file->parse(false);
-    if (!m_file->ok())
+    bfp->parse(false);
+    if (!bfp->ok())
     {
         gkPrintf("Blend file loading failed.");
         return false;
     }
 
-    return true;
-}
-
-bool gkBlendFile::_parse(void)
-{
-    if (!_parseFile())
-        return false;
-
+    // save temporary file
+    m_file = bfp;
     doVersionTests();
+
 
     Blender::FileGlobal *fg = (Blender::FileGlobal *)m_file->getFileGlobal();
     if (fg)
@@ -151,7 +117,8 @@ bool gkBlendFile::_parse(void)
         }
     }
 
-
+    // clear temp file
+    m_file = 0;
     return true;
 }
 
@@ -226,13 +193,19 @@ void gkBlendFile::buildAllTextures()
     for (i=0; i<imaPtr->size(); ++i)
     {
         Blender::Image *ima = (Blender::Image *)imaPtr->at(i);
+
+        // don't try & convert zero users
+        if (ima->id.us <= 0)
+            continue;
+
+
         Ogre::TexturePtr tex = Ogre::TextureManager::getSingleton().getByName(GKB_IDNAME(ima));
         if (!tex.isNull())
             continue;
 
-        gkTextureLoader *loader = new gkTextureLoader(this, ima);
-        tex = Ogre::TextureManager::getSingleton().create(GKB_IDNAME(ima), m_group, true, loader);
 
+        gkTextureLoader *loader = new gkTextureLoader(ima);
+        tex = Ogre::TextureManager::getSingleton().create(GKB_IDNAME(ima), m_group, true, loader);
 
         if (!tex.isNull())
         {
@@ -319,8 +292,5 @@ void gkBlendFile::doVersionTests(void)
                 }
             }
         }
-
-       
     }
-
 }

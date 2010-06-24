@@ -28,6 +28,12 @@
 #include "Utils/utCommon.h"
 #include <memory.h>
 
+template <typename T> UT_INLINE void    utSwap(T &a, T &b)                              { T t(a); a = b; b = t; }
+template <typename T> UT_INLINE T       utMax(const T& a, const T& b)                   { return a < b ? b : a; }
+template <typename T> UT_INLINE T       utMin(const T& a, const T& b)                   { return a < b ? a : b; }
+template <typename T> UT_INLINE T       utClamp(const T& v, const T& a, const T& b)     { return v < a ? a : v > b ? b : v; }
+
+
 // List where each link is T. Not as flexible as utList, but requires less memory
 template <typename T>
 class utListClass

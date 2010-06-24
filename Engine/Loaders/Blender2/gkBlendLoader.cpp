@@ -24,19 +24,19 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+
 #include "gkBlendLoader.h"
 #include "gkBlendFile.h"
 #include "gkUtils.h"
 #include "bBlenderFile.h"
 #include "Blender.h"
-
-using namespace Ogre;
-
+#include "Utils/utStreams.h"
 
 
 gkBlendLoader::gkBlendLoader()
 {
 }
+
 
 gkBlendLoader::~gkBlendLoader()
 {
@@ -52,27 +52,34 @@ gkBlendLoader::~gkBlendLoader()
 
 gkBlendFile* gkBlendLoader::loadFile(const gkString& dblend, const gkString& inResourceGroup)
 {
+    // utFileStream fs;
 
-    gkString buf;
-    gkUtils::inflate(dblend, buf);
-    
-    
+    // read to memory 
+    utMemoryStream fs;
+    fs.open(dblend.c_str(), utStream::SM_READ);
+
+
     gkBlendFile *fp = 0;
-    if (!buf.empty())
-    {
-        bParse::bBlenderFile *bfp = new bParse::bBlenderFile((char*)buf.c_str(), buf.size());
-        fp = new gkBlendFile(bfp, inResourceGroup);
-    }
-    else
-        fp = new gkBlendFile(dblend, inResourceGroup);
-    if (!fp->_parse())
-    {
-        delete fp;
-        return 0;
-    }
 
-    m_openFiles.push_back(fp);
+    if (fs.isOpen())
+    {
+        // inflate or copy to membuf
+        utMemoryStream memBuf;
+        fs.inflate(memBuf);
 
+        // file is only open for the parse,
+        bParse::bBlenderFile bfp = bParse::bBlenderFile((char*)memBuf.ptr(), memBuf.size());
+
+        fp = new gkBlendFile(inResourceGroup);
+        if (!fp->parse(&bfp))
+        {
+            delete fp;
+            return 0;
+        }
+
+
+        m_openFiles.push_back(fp);
+    }
     return fp;
 }
 

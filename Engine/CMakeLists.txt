@@ -36,6 +36,7 @@ set(Core_SOURCE
     gkUtils.cpp
     gkWindowSystem.cpp
     Utils/utString.cpp
+    Utils/utStreams.cpp
 )
 
 set(Core_HEADER
@@ -81,6 +82,7 @@ set(Core_HEADER
     Utils/utString.h
     Utils/utTypes.h
     Utils/utMemoryPool.h
+    Utils/utStreams.h
 )
 
 source_group(Core\\Header FILES ${Core_HEADER})

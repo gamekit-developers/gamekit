@@ -29,23 +29,20 @@
 
 #include "gkLoaderCommon.h"
 #include "OgreResource.h"
-
-
+#include "Utils/utStreams.h"
 
 
 
 class gkTextureLoader : public Ogre::ManualResourceLoader
 {
 public:
-    gkTextureLoader(gkBlendFile *fp, Blender::Image *ima);
+    gkTextureLoader(Blender::Image *ima);
     virtual ~gkTextureLoader();
 
     void loadResource(Ogre::Resource* resource);
 
 protected:
-
-    gkBlendFile *m_file;
-    Blender::Image* m_image;
+    utMemoryStream      *m_stream;
 };
 
 
