@@ -53,7 +53,7 @@ gkActionActuator::gkActionActuator(gkGameObject *object, gkLogicLink *link, cons
         m_skeleton(0)
 {
     if (object->getType() != GK_SKELETON )
-        gkPrintf("Warning: action actuator paren is not a skeleton!");
+        gkPrintf("Warning: action actuator parent not a skeleton!");
     else
         m_skeleton = object->getSkeleton();
 }

@@ -167,6 +167,7 @@ protected:
     gkGroupInstances        m_instances;
     bool                    m_hasLights;
     bool                    m_markDBVT;
+    int                     m_cloneCount;
 
 private:
 

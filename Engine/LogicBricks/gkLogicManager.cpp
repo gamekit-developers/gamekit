@@ -85,6 +85,48 @@ void gkLogicManager::clear(void)
 }
 
 // ----------------------------------------------------------------------------
+void gkLogicManager::clearActive(gkLogicLink *link)
+{
+    // remove from the active/running actuator list 
+
+    if (link)
+    {
+        UTsize fnd;
+
+        utListIterator<gkLogicLink::BrickList> iter(link->getControllers());
+        while (iter.hasMoreElements())
+        {
+            gkLogicController *cont = (gkLogicController*)iter.getNext();
+            
+            // switch off controllers
+            cont->setActive(false);
+            cont->setPulse(BM_OFF);
+
+
+            if ((fnd = m_cin.find(cont)) != UT_NPOS)
+                m_cin.erase(fnd);
+        }
+
+        iter = utListIterator<gkLogicLink::BrickList>(link->getActuators());
+        while (iter.hasMoreElements())
+        {
+            gkLogicActuator *act = (gkLogicActuator*)iter.getNext();
+
+            // switch off actuators
+            act->setActive(false);
+            act->setPulse(BM_OFF);
+
+
+            if ((fnd = m_ain.find(act)) != UT_NPOS)
+                m_ain.erase(fnd);
+            if (( fnd = m_aout.find(act)) != UT_NPOS)
+                m_aout.erase(fnd);
+        }
+    }
+}
+
+
+// ----------------------------------------------------------------------------
 void gkLogicManager::destroy(gkLogicLink *link)
 {
     if (!m_links.empty()) {
@@ -92,28 +134,7 @@ void gkLogicManager::destroy(gkLogicLink *link)
         if (m_links.find(link))
         {
             m_links.erase(link);
-
-            utListIterator<gkLogicLink::BrickList> iter(link->getControllers());
-            while (iter.hasMoreElements())
-            {
-                gkLogicController *cont = (gkLogicController*)iter.getNext();
-
-                if (m_cin.find(cont) != UT_NPOS)
-                    m_cin.erase(cont);
-
-            }
-
-            iter = utListIterator<gkLogicLink::BrickList>(link->getActuators());
-            while (iter.hasMoreElements())
-            {
-                gkLogicActuator *act = (gkLogicActuator*)iter.getNext();
-
-                if (m_ain.find(act) != UT_NPOS)
-                    m_ain.erase(act);
-                if (m_aout.find(act) != UT_NPOS)
-                    m_aout.erase(act);
-
-            }
+            clearActive(link);
             delete link;
         }
     }
@@ -210,6 +231,12 @@ void gkLogicManager::notifyState(unsigned int state, gkLogicLink *link)
 
 
 // ----------------------------------------------------------------------------
+void gkLogicManager::notifyLinkUnloaded(gkLogicLink *link)
+{
+    clearActive(link);
+}
+
+// ----------------------------------------------------------------------------
 void gkLogicManager::notifySort(void)
 {
     m_sort = true;
@@ -247,7 +274,8 @@ void gkLogicManager::sort(void)
     if (m_dispatchers)
     {
         UTsize i = 0;
-        while (i<DIS_MAX) m_dispatchers[i++]->sort();
+        while (i<DIS_MAX) 
+            m_dispatchers[i++]->sort();
     }
 }
 
@@ -266,8 +294,8 @@ void gkLogicManager::update(gkScalar delta)
     }
 
     i = 0;
-    while (i<DIS_MAX) m_dispatchers[i++]->dispatch();
-
+    while (i<DIS_MAX) 
+        m_dispatchers[i++]->dispatch();
 
     if (!m_cin.empty())
     {

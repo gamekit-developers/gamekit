@@ -56,13 +56,14 @@ protected:
     BrickFinder m_cfind, m_afind;
     gkGameObject *m_object;
 
-
 public:
 
     gkLogicLink();
     ~gkLogicLink();
 
-    gkLogicLink *clone(gkGameObject *dest);
+    gkLogicLink     *clone(gkGameObject *dest);
+    void            unload(void);
+
 
 
     gkLogicActuator* findActuator(const gkString& name);

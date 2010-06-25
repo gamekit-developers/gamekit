@@ -60,7 +60,8 @@ gkScene::gkScene(const gkString &name)
             m_physicsWorld(0), 
             m_debugger(0),
             m_hasLights(false),
-            m_markDBVT(false)
+            m_markDBVT(false),
+            m_cloneCount(0)
 {
 }
 
@@ -544,9 +545,6 @@ void gkScene::notifyObjectUnloaded(gkGameObject *gobject)
 {
     m_loadedObjects.erase(gobject);
 
-    if (m_transformObjects.find(gobject))
-        m_transformObjects.erase(gobject);
-
     if(gkNavMeshData::getSingletonPtr())
         gkNavMeshData::getSingletonPtr()->unload(gobject);
 
@@ -567,10 +565,9 @@ void gkScene::synchronizeMotion(gkScalar blend)
     if (!m_transformObjects.empty())
     {
         gkGameObjectArray::Pointer buffer = m_transformObjects.ptr();
-        size_t size = m_transformObjects.size();
-        size_t i = 0;
-        while (i < size)
-            (buffer[i++])->blendTransform(blend);
+        UTsize size = m_transformObjects.size();
+        UTsize i = 0;
+        while (i < size) (buffer[i++])->blendTransform(blend);
 
         m_transformObjects.clear(true);
     }
@@ -582,10 +579,9 @@ void gkScene::applyConstraints(void)
     if (!m_constraintObjects.empty())
     {
         gkGameObjectArray::Pointer buffer = m_constraintObjects.ptr();
-        size_t size = m_constraintObjects.size();
-        size_t i = 0;
-        while (i < size)
-            (buffer[i++])->applyConstraints();
+        UTsize size = m_constraintObjects.size();
+        UTsize i = 0;
+        while (i < size) (buffer[i++])->applyConstraints();
     }
 }
 
@@ -619,6 +615,7 @@ void gkScene::destroyClones(void)
 
         m_tickClones.clear();
     }
+    m_cloneCount = 0;
 }
 
 
@@ -626,51 +623,28 @@ void gkScene::tickClones(void)
 {
     if (!m_tickClones.empty())
     {
-        gkGameObjectArray removed;
-
         gkGameObjectArray::Pointer buffer = m_tickClones.ptr();
         UTsize size = m_tickClones.size();
         UTsize i = 0;
         while (i < size)
         {
             gkGameObject *obj = buffer[i++];
-
             gkGameObject::LifeSpan &life = obj->getLifeSpan();
 
             if ((life.tick++) > life.timeToLive)
-                removed.push_back(obj);
+                endObject(obj);
         }
 
-        if (!removed.empty())
-        {
-            buffer = removed.ptr();
-            size = removed.size();
-            i = 0;
-
-            while (i < size)
-            {
-                gkGameObject *obj = buffer[i++];
-                m_tickClones.erase(obj);
-
-                obj->unload();
-                delete obj;
-            }
-
-            if (m_tickClones.empty())
-                m_tickClones.clear(true);
-        }
-
+        endObjects();
     }
 }
 
 gkGameObject* gkScene::cloneObject(gkGameObject *obj, int lifeSpan)
 {
-    static int cloneNr = 0;
+    std::stringstream stream;
+    stream << obj->getName().c_str() << "/Clone[" << (m_cloneCount++)  << "]";
 
-    char buf[72];
-    sprintf(buf, "%s:Clone #%i", obj->getName().c_str(), cloneNr++);
-
-    gkGameObject *nobj = (gkGameObject *)obj->clone(gkString(buf));
+    gkGameObject *nobj = (gkGameObject *)obj->clone(stream.str());
     nobj->setActiveLayer(true);
 
     gkGameObject::LifeSpan life = {0, lifeSpan};
@@ -688,7 +662,9 @@ gkGameObject* gkScene::cloneObject(gkGameObject *obj, int lifeSpan)
 
 void gkScene::endObject(gkGameObject *obj)
 {
-    m_endObjects.push_back(obj);
+    UTsize pos;
+    if ((pos=m_endObjects.find(obj)) == UT_NPOS)
+        m_endObjects.push_back(obj);
 }
 
 
@@ -701,23 +677,27 @@ void gkScene::endObjects(void)
         UTsize i = 0;
         while (i < size)
         {
+            UTsize it;
             gkGameObject *obj = buffer[i++];
+
+
+            if ((it = m_transformObjects.find(obj)) != UT_NPOS)
+                m_transformObjects.erase(it);
+
 
             if (obj->isClone())
             {
-                UTsize fnd = m_clones.find(obj);
-                if (fnd != UT_NPOS)
+                if ((it = m_clones.find(obj)) != UT_NPOS)
                 {
-                    m_clones.erase(obj);
+                    m_clones.erase(it);
                     obj->unload();
                     delete obj;
                 }
                 else
                 {
-                    fnd = m_tickClones.find(obj);
-                    if (fnd != UT_NPOS)
+                    if ((it = m_tickClones.find(obj)) != UT_NPOS)
                     {
-                        m_tickClones.erase(obj);
+                        m_tickClones.erase(it);
                         obj->unload();
                         delete obj;
                     }
@@ -742,6 +722,9 @@ void gkScene::endObjects(void)
         }
 
         m_endObjects.clear(true);
+
+        if (m_clones.empty() && m_tickClones.empty())
+            m_cloneCount = 0;
     }
 
 }

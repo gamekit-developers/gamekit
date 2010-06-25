@@ -129,6 +129,16 @@ gkLogicLink *gkLogicLink::clone(gkGameObject *dest)
 }
 
 // ----------------------------------------------------------------------------
+void gkLogicLink::unload(void)
+{
+    gkLogicManager &mgr = gkLogicManager::getSingleton();
+    mgr.notifyLinkUnloaded(this);
+
+    for (UTsize i=0; i<m_others.size(); ++i)
+        mgr.notifyLinkUnloaded(m_others[i]);
+}
+
+// ----------------------------------------------------------------------------
 void gkLogicLink::push(gkLogicSensor *v)
 {
     GK_ASSERT(v);

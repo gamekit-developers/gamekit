@@ -234,6 +234,10 @@ void gkGameObject::postUnloadImpl(void)
 {
     destroyPhysics();
 
+    // tell logic
+    if (m_bricks)
+        m_bricks->unload();
+
     // tell scene
     m_scene->notifyObjectUnloaded(this);
 }

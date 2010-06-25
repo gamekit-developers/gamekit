@@ -115,18 +115,16 @@ void gkTickState::tick(void)
         ++m_loop;
     }
 
-    if (m_lock)
+    if (m_lock || m_cur > m_next)
     {
         // sync tick back to a usable state
-        // printf("Unlocking timer!\n");
         m_cur = m_next = gkGetTickCount(m_clock);
     }
 
 
     gkScalar d = gkScalar(gkGetTickCount(m_clock) + m_ticks - m_next) * m_invt;
-    if (d >= 0 && d <= 1)
+    if (d >= 0 && d < 1)
         syncImpl(d);
-
 
     endTickImpl();
 }

@@ -75,6 +75,7 @@ protected:
 
     void push(gkLogicBrick *a, gkLogicBrick *b, Bricks &in, bool stateValue);
     void clearActuators(void);
+    void clearActive(gkLogicLink *link);
 
     void sort(void);
 
@@ -87,6 +88,7 @@ public:
     void destroy(gkLogicLink *link);
 
 
+    void notifyLinkUnloaded(gkLogicLink *link);
     void notifyState(unsigned int state, gkLogicLink *link);
     void notifySort(void);
 

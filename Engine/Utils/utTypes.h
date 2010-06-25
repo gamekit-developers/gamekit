@@ -553,12 +553,16 @@ public:
         m_data[m_size].~T();
     }
 
-    
+
     void erase(const T& v) 
+    {
+        erase(find(v));
+    }
+
+    void erase(UTsize pos) 
     {
         if (m_size > 0)
         {
-            UTsize pos = find(v);
             if (pos != UT_NPOS)
             {
                 swap(pos, m_size-1);
