@@ -122,7 +122,7 @@ int OgreKit::setup(int argc, char **argv)
 // ----------------------------------------------------------------------------
 bool OgreKit::load(void)
 {
-    gkBlendFile *blend = m_engine->loadBlendFile(m_blend);
+    gkBlendFile *blend = m_engine->loadBlendFile(gkUtils::getFile(m_blend));
     if (!blend)
     {
         gkPrintf("File loading failed.\n");
