@@ -53,6 +53,9 @@ public:
     gkCoreApplication();
     virtual ~gkCoreApplication();
 
+    // access to user options ( apply before a call to run )
+    gkUserDefs& getPrefs(void) {return m_prefs;}
+
     void run(void);
 };
 

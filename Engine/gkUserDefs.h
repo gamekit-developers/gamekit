@@ -35,14 +35,11 @@
 // User defined options
 class gkUserDefs
 {
-private:
-
-    void parseString(const gkString &key, const gkString &val);
-
-
 public:
     gkUserDefs();
     void load(const gkString &fname);
+    void parseString(const gkString &key, const gkString &val);
+
 
     OgreRenderSystem        rendersystem;       // Ogre render system to use
     int                     sceneManager;       // TODO scene manager to use

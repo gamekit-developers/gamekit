@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): silveira.nestor.
+    Contributor(s): silveira.nestor, xavier.thomas.1980.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -25,80 +25,150 @@
 -------------------------------------------------------------------------------
 */
 #include "OgreKit.h"
+#include "tclap/CmdLine.h"
+
+const gkString gkDefaultBlend   = "momo_ogre.blend";
+const gkString gkDefaultConfig  = "OgreKitStartup.cfg";
 
 
+
+// ----------------------------------------------------------------------------
 class OgreKit : public gkCoreApplication, public gkWindowSystem::Listener
 {
 public:
     gkString    m_blend;
     gkScene    *m_scene;
 public:
-    OgreKit(const gkString &blend)
-        :   m_blend(blend), m_scene(0)
-    {
-        m_prefs.winsize.x        = 800;
-        m_prefs.winsize.y        = 600;
-        m_prefs.wintitle         = gkString("OgreKit Demo (Press Escape to exit)[") + m_blend + gkString("] - ");
-        m_prefs.verbose          = true;
-        m_prefs.grabInput        = true;
-        m_prefs.debugPhysics     = false;
-        m_prefs.debugPhysicsAabb = false;
+    OgreKit();
+    virtual ~OgreKit() {}
 
-        gkPath path = "OgreKitStartup.cfg";
-        // overide settings if found
-        if (path.isFileInBundle()) 
-            m_prefs.load(path.getPath());
+    int setup(int argc, char **argv);
 
-        m_prefs.wintitle += m_prefs.rendersystem == OGRE_RS_GL ? "OpenGL" : "Direct3D"; 
-    }
-
-    virtual ~OgreKit()
-    {
-    }
-
-    bool load(void)
-    {
-        gkBlendFile *blend = m_engine->loadBlendFile(m_blend);
-        if (!blend)
-        {
-            gkPrintf("File loading failed.\n");
-            return false;
-        }
-
-        gkSceneIterator scit = blend->getSceneIterator();
-        if (!scit.hasMoreElements())
-        {
-            gkPrintf("No usable scenes found in blend.\n");
-            return false;
-        }
-
-        m_scene = scit.peekNext();
-
-        m_scene->load();
-
-        // add input hooks
-        gkWindowSystem::getSingleton().addListener(this);
-        return true;
-    }
-
-    void keyReleased(const gkKeyboard &key, const gkScanCode &sc)
-    {
-        if (sc == KC_ESCKEY) m_engine->requestExit();
-    }
+    bool load(void);
+    void keyReleased(const gkKeyboard &key, const gkScanCode &sc);
 };
 
 
+// ----------------------------------------------------------------------------
+OgreKit::OgreKit()
+    :   m_blend(gkDefaultBlend), m_scene(0)
+{
+}
+
+
+// ----------------------------------------------------------------------------
+int OgreKit::setup(int argc, char **argv)
+{
+    gkString cfgfname;
+
+    // Parse command line
+    try 
+    {
+        TCLAP::CmdLine cmdl("Ogrekit", ' ', "n/a");
+        cmdl.setExceptionHandling(false);
+
+        TCLAP::ValueArg<std::string> cfgfname_arg("c", "config-file", "Startup configuration file (.cfg) to use.", false, gkDefaultConfig, "string");
+        cmdl.add(cfgfname_arg);
+
+        TCLAP::UnlabeledValueArg<std::string> bfname_arg("blender-file", "Blender file to launch as game.", false, gkDefaultBlend, "string");
+        cmdl.add(bfname_arg);
+        
+        cmdl.parse( argc, argv );
+
+        cfgfname = cfgfname_arg.getValue();
+        m_blend = bfname_arg.getValue();
+    }
+    catch (TCLAP::ArgException &e) 
+    {
+        std::cerr <<"error: " <<e.error() <<" for arg " <<e.argId() <<std::endl;
+        return -1;
+    }
+    catch (TCLAP::ExitException &) 
+    {
+        // just return and exit app
+        return -1;
+    }
+    catch (...) 
+    {
+        std::cerr <<"Unknown exception." <<std::endl;
+        return -1;
+    }
+
+
+    m_prefs.winsize.x        = 800;
+    m_prefs.winsize.y        = 600;
+    m_prefs.wintitle         = gkString("OgreKit Demo (Press Escape to exit)[") + m_blend + gkString("]");
+    m_prefs.verbose          = true;
+    m_prefs.grabInput        = true;
+    m_prefs.debugPhysics     = false;
+    m_prefs.debugPhysicsAabb = false;
+
+    gkPath path = cfgfname;
+
+    // overide settings if found
+    if (path.isFileInBundle()) 
+        m_prefs.load(path.getPath());
+
+
+    // explicitlly overide params
+    // m_prefs.parseString(key, val);
+
+
+    return 0;
+}
+
+
+
+// ----------------------------------------------------------------------------
+bool OgreKit::load(void)
+{
+    gkBlendFile *blend = m_engine->loadBlendFile(m_blend);
+    if (!blend)
+    {
+        gkPrintf("File loading failed.\n");
+        return false;
+    }
+
+    gkSceneIterator scit = blend->getSceneIterator();
+    if (!scit.hasMoreElements())
+    {
+        gkPrintf("No usable scenes found in blend.\n");
+        return false;
+    }
+
+    m_scene = scit.peekNext();
+
+    m_scene->load();
+
+    // add input hooks
+    gkWindowSystem::getSingleton().addListener(this);
+    return true;
+}
+
+
+// ----------------------------------------------------------------------------
+void OgreKit::keyReleased(const gkKeyboard &key, const gkScanCode &sc)
+{
+    if (sc == KC_ESCKEY) 
+        m_engine->requestExit();
+}
+
+
+
+// ----------------------------------------------------------------------------
 int main(int argc, char **argv)
 {
-    TestMemory;
-    char *fname = "momo_ogre.blend";
 
-#if GK_PLATFORM != GK_PLATFORM_APPLE
-    if (argc > 1)
-        fname = argv[argc-1];
-#endif
-    
-    OgreKit okit(gkUtils::getFile(fname));
+    TestMemory;
+
+    OgreKit okit;
+    if (okit.setup(argc, argv) != 0)
+    {
+        // error 
+        return -1;
+    }
+
+    // Launch runtime
     okit.run();
     return 0;
 }
