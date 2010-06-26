@@ -68,16 +68,18 @@ gkBlendFile* gkBlendLoader::loadFile(const gkString& dblend, const gkString& inR
         fs.inflate(memBuf);
 
         // file is only open for the parse,
-        bParse::bBlenderFile bfp = bParse::bBlenderFile((char*)memBuf.ptr(), memBuf.size());
+        bParse::bBlenderFile *bfp = new bParse::bBlenderFile((char*)memBuf.ptr(), memBuf.size());
 
         fp = new gkBlendFile(inResourceGroup);
-        if (!fp->parse(&bfp))
+        if (!fp->parse(bfp))
         {
+            delete bfp;
             delete fp;
+
             return 0;
         }
 
-
+        delete bfp;
         m_openFiles.push_back(fp);
     }
     return fp;
