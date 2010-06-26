@@ -170,7 +170,9 @@ gkCharacterNode::STATE RatLogic::updateAI(gkCharacterNode* obj, gkScalar tick)
 		{
 			gkScalar speed = m_steeringObject->speed();
 
-			if(speed < velocity::RUN)
+			if(speed == 0)
+				newState = IDLE;
+			else if(speed < velocity::RUN)
 				newState = WALK;
 			else
 				newState = RUN;
@@ -190,30 +192,32 @@ gkCharacterNode::STATE RatLogic::updateAI(gkCharacterNode* obj, gkScalar tick)
 
 void RatLogic::getBehaviour()
 {
-	if(abs(m_steeringObject->position().z - m_momo->m_obj->getPosition().z) > m_steeringObject->radius()
-		|| m_steeringObject->getState() == gkSteeringObject::STUCK)
+	if(abs(m_steeringObject->position().z - m_momo->m_obj->getPosition().z) > m_steeringObject->radius())
 	{
-		if(m_steeringObject == m_steeringCapture && 
-			m_characterNode->getNOT_FALLING()->getValue() && 
-			m_momo->m_characterNode->getNOT_FALLING()->getValue())
+		if(m_steeringObject == m_steeringFollowing && m_steeringObject->getState() == gkSteeringObject::STUCK)
 		{
-			m_steeringObject = m_steeringFollowing;
-			m_steeringFollowing->reset();
+			m_steeringObject = m_steeringCapture;
+		}
+		else if(m_steeringObject->getState() != gkSteeringObject::STUCK && m_steeringObject == m_steeringCapture && m_characterNode->getNOT_FALLING()->getValue() && m_momo->m_characterNode->getNOT_FALLING()->getValue())
+		{
+			if(gkMath::RangeRandom(0, 10000) < 10)
+			{
+				m_steeringObject = m_steeringFollowing;
+				m_steeringFollowing->reset();
+				m_steeringFollowing->setGoalPosition(m_momo->m_obj->getPosition());
+			}
 		}
 	}
 	else
 	{
 		if(m_steeringObject == m_steeringFollowing)
 		{
-			if(m_steeringFollowing->getState() == gkSteeringObject::IN_GOAL)
+			if(m_steeringFollowing->getState() == gkSteeringObject::IN_GOAL )
 			{
 				m_steeringObject = m_steeringCapture;
 				m_steeringCapture->reset();
 			}
-			else if(m_steeringObject->getState() == gkSteeringObject::STUCK)
-			{
-				m_steeringFollowing->reset();
-			}
 		}
+		
 	}
 }

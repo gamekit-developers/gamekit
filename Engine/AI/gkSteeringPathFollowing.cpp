@@ -51,63 +51,67 @@ gkSteeringPathFollowing::~gkSteeringPathFollowing()
 	delete m_sceneObstable;
 }
 
-void gkSteeringPathFollowing::createPath()
+bool gkSteeringPathFollowing::createPath()
 {
-	m_navPath.create(gkNavMeshData::getSingleton(), m_obj->getPosition(), m_goalPosition, m_polyPickExt, m_maxPathPolys, radius()); 
+	gkSteeringObject::reset();
+	
+	return m_navPath.create(gkNavMeshData::getSingleton(), m_obj->getPosition(), m_goalPosition, m_polyPickExt, m_maxPathPolys, radius()); 
 }
 
-void gkSteeringPathFollowing::steering(STATE& newState, const float elapsedTime)
-{
-	gkVector3 steering(gkVector3::ZERO);
-	
+bool gkSteeringPathFollowing::steering(STATE& newState, const float elapsedTime)
+{	
 	if(m_navPath.empty())
 	{
-		reset();
-
-		createPath();
+		if(!createPath())
+			return false;
 	}
 	else 
 	{
+		gkVector3 steering(gkVector3::ZERO);
+		
 		m_navPath.showPath();
-
-		gkScalar predictionTime = combinedLookAheadTime(0.5f, radius());
-
-		steering = steerToAvoidObstacles(predictionTime, m_allObstacles);
-
-		if (steering != gkVector3::ZERO)
+		
+		newState = FOLLOWING_PATH;
+		
+		gkScalar targetSpeed = maxSpeedForCurvature(&m_navPath, m_minimumTurningRadius, 1);
+		
+		gkScalar predictionTime = elapsedTime;
+		
+		GK_ASSERT(!Ogre::Math::isNaN(targetSpeed));
+		
+		predictionTime = maxSpeed()/targetSpeed;
+		
+		steering = steerForTargetSpeed(targetSpeed);
+		
+		gkVector3 pf = steerToFollowPathLinear(1, predictionTime, m_navPath); 
+		
+		if (pf != gkVector3::ZERO)
 		{
-			newState = AVOIDING;
-		}
-		else
-		{
-			newState = FOLLOWING_PATH;
-			
-			steering = steerForTargetSpeed(maxSpeedForCurvature(&m_navPath, m_minimumTurningRadius, 1));
-			
-			gkVector3 pf = steerToFollowPathLinear(1, predictionTime, m_navPath); 
-			
-			if (pf != gkVector3::ZERO)
+			// steer to remain on path
+			if (pf.dotProduct(forward()) < 0)
 			{
-				// steer to remain on path
-				if (pf.dotProduct(forward()) < 0)
-					steering = pf;
-				else
-					steering = pf + steering;
+				steering = pf;
 			}
 			else
 			{
-				// path aligment: when neither obstacle avoidance nor
-				// path following is required, align with path segment
-				const Vec3 pathHeading = mapPointAndDirectionToTangent(m_navPath, position(), 1);
-			
-				steering += steerTowardHeading(pathHeading) * (isNearWaypoint(m_navPath, position()) ? 0.5f : 0.1f);
+				steering = pf + steering;
 			}
-
-			//steering = adjustSteeringForMinimumTurningRadius(steering, m_minimumTurningRadius);
 		}
+		else
+		{
+			// path aligment: when neither obstacle avoidance nor
+			// path following is required, align with path segment
+			const Vec3 pathHeading = mapPointAndDirectionToTangent(m_navPath, position(), 1);
+			
+			steering += steerTowardHeading(pathHeading) * (isNearWaypoint(m_navPath, position()) ? 0.5f : 0.1f);
+		}
+		
+		steering = adjustSteeringForMinimumTurningRadius(steering, m_minimumTurningRadius);
 
 		applySteeringForce(steering, elapsedTime);
 	}
+	
+	return true;
 }
 
 void gkSteeringPathFollowing::reset()

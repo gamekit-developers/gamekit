@@ -60,7 +60,7 @@ public:
 		return phy.m_radius;
 	}
 
-	void steering(STATE& newState, const float elapsedTime);
+	bool steering(STATE& newState, const float elapsedTime);
 
 private:
 

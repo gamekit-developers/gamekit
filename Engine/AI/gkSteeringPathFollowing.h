@@ -54,12 +54,12 @@ public:
 
 	GK_INLINE const gkVector3& getGoalPosition() const { return m_goalPosition; }
 	GK_INLINE gkScalar getGoalRadius() const { return m_goalRadius; }
-	void steering(STATE& newState, const float elapsedTime);
+	bool steering(STATE& newState, const float elapsedTime);
 	void reset();
 
 private:
 
-	void createPath();
+	bool createPath();
 	
 private:
 

@@ -206,7 +206,7 @@ void MacKeyboard::_keyDownCallback( EventRef theEvent )
 		//status = GetEventParameter( theEvent, 'kuni', typeUnicodeText, NULL, 0, &stringsize, NULL);
 		//status = GetEventParameter( theEvent, 'kuni', typeUnicodeText, NULL, sizeof(UniChar)*10, NULL, &text );
 		status = GetEventParameter( theEvent, 'kuni', typeUnicodeText, NULL, sizeof(UniChar) * 10, &stringsize, &text );
-		std::cout << "String length: " << stringsize << std::endl;
+		//std::cout << "String length: " << stringsize << std::endl;
 		
 		//wstring unitext;
 		//for (int i=0;i<10;i++) unitext += (wchar_t)text[i];

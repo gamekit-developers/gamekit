@@ -48,7 +48,7 @@ gkSteeringCapture::~gkSteeringCapture()
 	delete m_sceneObstable;
 }
 
-void gkSteeringCapture::steering(STATE& newState, const float elapsedTime)
+bool gkSteeringCapture::steering(STATE& newState, const float elapsedTime)
 {
 	bool clearPath = clearPathToGoal(m_target->getPosition(), m_target);
 
@@ -81,4 +81,6 @@ void gkSteeringCapture::steering(STATE& newState, const float elapsedTime)
     }
 
 	applySteeringForce(steer, elapsedTime);
+	
+	return true;
 }

@@ -77,7 +77,7 @@ bool gkNavPath::create(const gkNavMeshData& data, const gkVector3& from, const g
 
 			int npolys = navMesh->data->findPath(startRef, endRef, startPos.ptr(), endPos.ptr(), &filter, polys.ptr(), maxPathPolys);
 
-			if(npolys)
+			if(npolys > 1)
 			{
 				utArray<gkScalar> straightPath;
 				straightPath.resize(maxPathPolys*3);

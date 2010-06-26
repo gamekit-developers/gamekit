@@ -119,13 +119,13 @@ m_following(false)
 {
 	m_steeringObject = new gkSteeringPathFollowing(
 		obj, 
-		velocity::RUN_FASTER, 
+		velocity::RUN_FASTER+1, 
 		gkVector3(0, 1, 0), 
 		gkVector3(0, 0, 1), 
 		gkVector3(1, 0, 0), 
 		gkVector3(2, 4, 2), 
 		256,
-		0.05f
+		0.00005f
 	);
 
 	m_steeringObject->setGoalRadius(m_steeringObject->radius());

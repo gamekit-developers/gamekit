@@ -81,7 +81,7 @@ public:
 
 	virtual const gkVector3& getGoalPosition() const = 0;
 	virtual gkScalar getGoalRadius() const = 0;
-	virtual void steering(STATE& newState, const float elapsedTime) = 0;
+	virtual bool steering(STATE& newState, const float elapsedTime) = 0;
 	virtual void reset();
 	virtual void notifyInGoal();
 
@@ -136,7 +136,7 @@ private:
 
 	STATE m_state;
 
-	OpenSteer::Vec3 m_smoothedAcceleration;
+	gkVector3 m_smoothedAcceleration;
 
 	gkVector3 m_forward;
 	gkVector3 m_up;
@@ -148,7 +148,6 @@ private:
     gkScalar m_smoothedCurvature;
 
 	gkVector3 m_lastFuturePosition;
-	int m_stuckCounter;
 
 	gkSteering m_steerUtility;
 };

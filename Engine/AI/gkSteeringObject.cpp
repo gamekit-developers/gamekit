@@ -289,7 +289,6 @@ namespace OpenSteer
 
 /////////////////////////////////
 
-static int STUCK_RETRIES_COUNTER = 3;
 
 gkSteeringObject::gkSteeringObject(gkGameObject* obj, gkScalar maxSpeed, const gkVector3& forward, const gkVector3& up, const gkVector3& side) 
 : m_obj(obj), 
@@ -308,7 +307,6 @@ m_lastForward(Vec3::zero),
 m_lastPosition(Vec3::zero),
 m_smoothedCurvature(0),
 m_lastFuturePosition(gkVector3::ZERO),
-m_stuckCounter(STUCK_RETRIES_COUNTER),
 m_steerUtility(up)
 {
     const gkGameObjectProperties &props = m_obj->getProperties();
@@ -341,7 +339,6 @@ void gkSteeringObject::reset()
 	m_smoothedCurvature = 0;
 
 	m_lastFuturePosition = position();
-	m_stuckCounter = STUCK_RETRIES_COUNTER;
 	
 	SimpleSteering::reset();
 }
@@ -358,46 +355,47 @@ void gkSteeringObject::measurePathCurvature (const float elapsedTime)
     if (elapsedTime > 0)
     {
         const Vec3 dP = m_lastPosition - position ();
-        const Vec3 dF = (m_lastForward - forward ()) / dP.length ();
-        const Vec3 lateral = dF.perpendicularComponent (forward ());
-        const float sign = (lateral.dot (side ()) < 0) ? 1.0f : -1.0f;
-        m_curvature = lateral.length() * sign;
-        blendIntoAccumulator (elapsedTime * 4.0f,
-                              m_curvature,
-                              m_smoothedCurvature);
-
-		if(Ogre::Math::isNaN(m_smoothedCurvature))
+		
+		gkScalar length = dP.length ();
+		
+		if(length > std::numeric_limits<gkScalar>::epsilon())
 		{
-			m_smoothedCurvature = 0;
+			const Vec3 dF = (m_lastForward - forward ()) / length;
+			const Vec3 lateral = dF.perpendicularComponent (forward ());
+			const float sign = (lateral.dot (side ()) < 0) ? 1.0f : -1.0f;
+			m_curvature = lateral.length() * sign;
+			
+			blendIntoAccumulator (elapsedTime * 4.0f,
+								  m_curvature,
+								  m_smoothedCurvature);
+						
+			GK_ASSERT(!Ogre::Math::isNaN(m_curvature));
+			
+			m_lastForward = forward ();
+			m_lastPosition = position ();
 		}
-
-        m_lastForward = forward ();
-        m_lastPosition = position ();
     }
 }
 
 bool gkSteeringObject::update(gkScalar tick)
 {
-	gkScalar baseDistance = Vec3::distance(position(), getGoalPosition());
+	gkScalar baseDistance = gkVector2(position().x, position().y).distance(gkVector2(getGoalPosition().x, getGoalPosition().y));
 
 	if (baseDistance > (radius() + getGoalRadius())) 
 	{
 		STATE newState = UNKNOWN;
 
-		steering(newState, tick);
+		if(!steering(newState, tick))
+			return false;
 
 		gkVector3 futurePosition = predictFuturePosition(tick);
-
-		if(m_lastFuturePosition.positionEquals(futurePosition) && !m_stuckCounter--)
+		
+		if(speed() > 0 && m_lastFuturePosition.positionEquals(futurePosition, std::numeric_limits<gkScalar>::epsilon()))
 		{
-			m_stuckCounter = 0;
-
 			m_state = STUCK;
 		}
 		else
 		{
-			m_stuckCounter = STUCK_RETRIES_COUNTER;
-
 			m_state = newState;
 		}
 
@@ -425,8 +423,7 @@ void gkSteeringObject::applySteeringForce(const Vec3& force, const float elapsed
     const Vec3 clippedForce = adjustedForce.truncateLength (maxForce ());
 	
     // compute acceleration and velocity
-    Vec3 newAcceleration = (clippedForce / mass());
-    Vec3 newVelocity = velocity();
+    gkVector3 newAcceleration = (clippedForce / mass());
 	
     // damp out abrupt changes and oscillations in steering acceleration
     // (rate is proportional to time step, then clipped into useful range)
@@ -438,14 +435,12 @@ void gkSteeringObject::applySteeringForce(const Vec3& force, const float elapsed
                               newAcceleration,
                               m_smoothedAcceleration);
 		
-		if(gkVector3(m_smoothedAcceleration).isNaN())
-		{
-			m_smoothedAcceleration = Vec3::zero;
-		}
+		GK_ASSERT(!m_smoothedAcceleration.isNaN());
+
     }
-	
+		
     // Euler integrate (per frame) acceleration into velocity
-    newVelocity += m_smoothedAcceleration * elapsedTime;
+    Vec3 newVelocity = velocity() + m_smoothedAcceleration * elapsedTime;
 	
     // enforce speed limit
     newVelocity = newVelocity.truncateLength (maxSpeed ());
@@ -489,62 +484,67 @@ Vec3 gkSteeringObject::adjustRawSteeringForce(const Vec3& force)
 bool gkSteeringObject::clearPathToGoal(const gkVector3& goalPosition, gkGameObject* target)
 {
     bool result = true;
-
-	const float sideThreshold = radius() * 8.0f;
-	const float behindThreshold = radius() * 2.0f;
-
+	
 	const Vec3 goalOffset = goalPosition - position();
 	const float goalDistance = goalOffset.length ();
-	const Vec3 goalDirection = goalOffset / goalDistance;
-
-	const bool goalIsAside = isAside(goalPosition, 0.5);
-
-	OTHERS::iterator it = gkSteeringObject::m_others.begin();
-
-	while(it != gkSteeringObject::m_others.end())
+	
+	if(goalDistance > std::numeric_limits<float>::epsilon())
 	{
-		gkSteeringObject& e = **it;
-
-		if(this != &e && target != e.m_obj)
+		
+		const float sideThreshold = radius() * 8.0f;
+		const float behindThreshold = radius() * 2.0f;
+		
+		const Vec3 goalDirection = goalOffset / goalDistance;
+		
+		const bool goalIsAside = isAside(goalPosition, 0.5);
+		
+		OTHERS::iterator it = gkSteeringObject::m_others.begin();
+		
+		while(it != gkSteeringObject::m_others.end())
 		{
-			const float eDistance = Vec3::distance (position(), e.position());
-			const float timeEstimate = 0.3f * eDistance / e.speed(); //xxx
-			const Vec3 eFuture = e.predictFuturePosition (timeEstimate);
-			const Vec3 eOffset = eFuture - position();
-			const float alongCorridor = goalDirection.dot (eOffset);
-			const bool inCorridor = ((alongCorridor > -behindThreshold) && 
-									 (alongCorridor < goalDistance));
-			const float eForwardDistance = forward().dotProduct(eOffset);
-
-			// consider as potential blocker if within the corridor
-			if (inCorridor)
+			gkSteeringObject& e = **it;
+			
+			if(this->m_obj != e.m_obj && target != e.m_obj && e.speed() > std::numeric_limits<gkScalar>::epsilon())
 			{
-				const Vec3 perp = eOffset - (goalDirection * alongCorridor);
-				const float acrossCorridor = perp.length();
-				if (acrossCorridor < sideThreshold)
+				const float eDistance = Vec3::distance (position(), e.position());
+				const float timeEstimate = 0.3f * eDistance / e.speed(); //xxx
+				const Vec3 eFuture = e.predictFuturePosition (timeEstimate);
+				const Vec3 eOffset = eFuture - position();
+				const float alongCorridor = goalDirection.dot (eOffset);
+				const bool inCorridor = ((alongCorridor > -behindThreshold) && 
+										 (alongCorridor < goalDistance));
+				const float eForwardDistance = forward().dotProduct(eOffset);
+				
+				// consider as potential blocker if within the corridor
+				if (inCorridor)
 				{
-					// not a blocker if behind us and we are perp to corridor
-					const float eFront = eForwardDistance + (e.radius ()*0.9f);
-
-					const bool eIsBehind = eFront < -behindThreshold;
-					const bool eIsWayBehind = eFront < (-2 * behindThreshold);
-					const bool safeToTurnTowardsGoal =
-						((eIsBehind && goalIsAside) || eIsWayBehind);
-
-					if (!safeToTurnTowardsGoal)
+					const Vec3 perp = eOffset - (goalDirection * alongCorridor);
+					const float acrossCorridor = perp.length();
+					if (acrossCorridor < sideThreshold)
 					{
-						// this enemy blocks the path to the goal, so return false
-						result = false;
-
-						break;
+						// not a blocker if behind us and we are perp to corridor
+						const float eFront = eForwardDistance + (e.radius ()*0.9f);
+						
+						const bool eIsBehind = eFront < -behindThreshold;
+						const bool eIsWayBehind = eFront < (-2 * behindThreshold);
+						const bool safeToTurnTowardsGoal =
+						((eIsBehind && goalIsAside) || eIsWayBehind);
+						
+						if (!safeToTurnTowardsGoal)
+						{
+							// this enemy blocks the path to the goal, so return false
+							result = false;
+							
+							break;
+						}
 					}
 				}
 			}
+			
+			++it;
 		}
-
-		++it;
 	}
-
+	
 	return result;
 }
 
@@ -559,7 +559,7 @@ gkScalar gkSteeringObject::adjustObstacleAvoidanceLookAhead(bool clearPath, cons
     {
         const float goalDistance = Vec3::distance(goalPosition, position());
         const bool headingTowardGoal = isAhead(goalPosition, 0.98f);
-        const bool isNear = (goalDistance/speed()) < maxPredictTime;
+        const bool isNear = speed() > std::numeric_limits<gkScalar>::epsilon() ? (goalDistance/speed()) < maxPredictTime : false;
         const bool useMax = headingTowardGoal && !isNear;
         avoidancePredictTime = (useMax ? maxPredictTime : minPredictTime);
     }
@@ -584,10 +584,12 @@ Vec3 gkSteeringObject::steerToEvadeOthers(const gkGameObject* target)
 	{
 		gkSteeringObject& e = **it;
 
-		if(this != &e && target != e.m_obj)
+		if(this->m_obj != e.m_obj && target != e.m_obj && e.speed() > std::numeric_limits<float>::epsilon())
 		{
 			const Vec3 eOffset = e.position() - position();
 			const float eDistance = eOffset.length();
+			
+			GK_ASSERT(eDistance >= std::numeric_limits<float>::epsilon());
 
 			// xxx maybe this should take into account e's heading? xxx
 			const float timeEstimate = 0.5f * eDistance / e.speed(); //xxx
@@ -617,7 +619,7 @@ Vec3 gkSteeringObject::steerToEvadeOthers(const gkGameObject* target)
 // QQQ should be renamed since it is based on more than curvature
 float gkSteeringObject::maxSpeedForCurvature(gkScalar minimumTurningRadius) const
 {
-	GK_ASSERT(minimumTurningRadius > 0);
+	GK_ASSERT(minimumTurningRadius > std::numeric_limits<gkScalar>::epsilon());
 
     // compute an ad hoc "relative curvature"
     const float absC = absXXX (curvature ());
@@ -643,7 +645,7 @@ Vec3 gkSteeringObject::steerTowardHeading (const Vec3& desiredGlobalHeading) con
 // QQQ should be renamed since it is based on more than curvature
 float gkSteeringObject::maxSpeedForCurvature(const gkNavPath* path, gkScalar minimumTurningRadius, int pathFollowDirection) const
 {
-	GK_ASSERT(minimumTurningRadius > 0);
+	GK_ASSERT(minimumTurningRadius > std::numeric_limits<gkScalar>::epsilon());
 
     // compute an ad hoc "relative curvature"
     const float absC = absXXX (curvature ());
@@ -674,7 +676,7 @@ float gkSteeringObject::maxSpeedForCurvature(const gkNavPath* path, gkScalar min
 // arg 1 is "seconds into the future", arg 2 is "meters ahead"
 gkScalar gkSteeringObject::combinedLookAheadTime (float minTime, gkScalar minDistance) const
 {
-    if (speed () == 0) return 0;
+    if (speed () < std::numeric_limits<gkScalar>::epsilon()) return 0;
     return maxXXX (minTime, minDistance / speed ());
 }
 
@@ -707,8 +709,9 @@ gkVector3 gkSteeringObject::steerToFollowPathLinear (const int direction, const 
 
     // no steering is required if our present and future positions are
     // inside the path tube and we are facing in the correct direction
-    const float m = -radius ();
+    const float m = radius ();
     const bool whollyInside = (futureOutside < m) && (nowOutside < m);
+
     if (whollyInside && correctDirection)
     {
         // all is well, return zero steering

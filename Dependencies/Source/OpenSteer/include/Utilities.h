@@ -51,6 +51,8 @@
 #include <cassert>   // for assert
 #include <limits>    // for numeric_limits
 
+#include "gkLogger.h"
+
 // ----------------------------------------------------------------------------
 // For the sake of Windows, apparently this is a "Linux/Unix thing"
 
