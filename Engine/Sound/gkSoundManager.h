@@ -3,7 +3,7 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Charlie C.
+    Copyright (c) 2006-2010 Nestor Silveira & Charlie C.
 
     Contributor(s): none yet.
 -------------------------------------------------------------------------------
@@ -23,5 +23,88 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
-TODO, implemet sound system
 */
+#ifndef _gkSoundManager_h_
+#define _gkSoundManager_h_
+
+
+
+#include "gkStreamer.h"
+#include "gkCommon.h"
+#include "gkHashedString.h"
+#include "OgreSingleton.h"
+#include "gkTransformState.h"
+
+
+class gkSound;
+class gkSource;
+class gkBuffer;
+class gkCamera;
+
+
+
+// Sound system manager
+class gkSoundManager : public Ogre::Singleton<gkSoundManager>
+{
+public:
+    typedef utHashTable<gkHashedString, gkSound *> ObjectMap;
+    typedef utArray<gkSource *> Sources;
+
+
+private:
+    ObjectMap           m_objects;      // all loaded sounds
+    ALCdevice           *m_device;      // OpenAL Device
+    ALCcontext          *m_context;     // OpenAL Context
+    gkStreamer          *m_stream;      // Playback stream
+    Sources             m_sources;      // list of currently active sources
+    Sources             m_gcSources;    // sources to remove when done playing
+    bool                m_valid;
+
+
+    void removePlayback(gkSound *sndToDelete);
+
+public:
+
+    gkSoundManager();
+    virtual ~gkSoundManager();
+
+
+    void stopAllSounds(void);
+
+    // has playing sounds
+    bool        hasSounds(void);
+    void        playSound(gkSource *);
+    void        stopSound(gkSource *);
+
+    void        update(gkScene *scene);
+    void        collectGarbage(void);
+
+
+    void        notifySourceCreated(gkSource *);
+    void        notifySourceDestroyed(gkSource *);
+
+
+    // sound access
+
+    gkSound *getSound(const gkHashedString &name);
+    gkSound *createSound(const gkHashedString &name);
+
+    void destroy(const gkHashedString &name);
+    void destroy(gkSound *ob);
+    void destroyAll(void);
+    bool hasSound(const gkHashedString &name);
+
+
+    static gkSoundManager &getSingleton(void);
+    static gkSoundManager *getSingletonPtr(void);
+
+
+    static ALCcontext *getCurrentContext(void)
+    {
+        return getSingleton().m_context;
+    }
+
+
+};
+
+#endif//_gkSoundManager_h_

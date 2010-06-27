@@ -45,6 +45,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 	set(OGREKIT_OGRE_INCLUDE ${OGREPATH}/OgreMain/include ${OGREPATH}/Settings ${OGREKIT_PLATFORM})
 
 	set(OGREKIT_LUA_INCLUDE ${OGREKIT_DEP_DIR}/Lua/lua)
+	set(OGREKIT_OGGVORBIS_INCLUDE ${OGREKIT_DEP_DIR}/Codecs/include)
 	
 	set(OGREKIT_RECAST_INCLUDE ${OGREKIT_DEP_DIR}/Recast/Include)
 	set(OGREKIT_DETOUR_INCLUDE ${OGREKIT_DEP_DIR}/Detour/Include)
@@ -56,6 +57,14 @@ macro (configure_ogrekit ROOT OGREPATH)
 		set(OGREKIT_MINGW_DIRECT3D FALSE)
 	endif()
 
+    if (OPENAL_FOUND)
+		option(OGREKIT_OPENAL_SOUND "Enable building of the OpenAL subsystem" ON)
+	    set(OGREKIT_OPENAL_INCLUDE ${OPENAL_INCLUDE_DIR})
+	    set(OGREKIT_OPENAL_LIBRARY ${OPENAL_LIBRARY})
+	else()
+		option(OGREKIT_OPENAL_SOUND "Enable building of the OpenAL subsystem" OFF)
+	endif()
+        
 
 	if (WIN32)
 		if (NOT DirectX_FOUND OR NOT OGREKIT_MINGW_DIRECT3D)
@@ -144,6 +153,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 		${OGREKIT_RECAST_TARGET}
 		${OGREKIT_DETOUR_TARGET}
 		${OGREKIT_OPENSTEER_TARGET}
+		${OGREKIT_OPENAL_LIBRARY}
 		)
 
 endmacro(configure_ogrekit)

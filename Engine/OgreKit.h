@@ -141,6 +141,7 @@
 #include "LogicBricks/gkScriptController.h"
 #include "LogicBricks/gkStateActuator.h"
 #include "LogicBricks/gkVisibilityActuator.h"
+#include "LogicBricks/gkSoundActuator.h"
 
 #include "Physics/gkCharacter.h"
 #include "Physics/gkDynamicsWorld.h"
@@ -167,5 +168,16 @@
 #include "Thread/gkSyncObj.h"
 #include "Thread/gkThread.h"
 
+
+#ifdef OGREKIT_OPENAL_SOUND
+#include "Sound/gkBuffer.h"
+#include "Sound/gkSound.h"
+#include "Sound/gkSoundManager.h"
+#include "Sound/gkSoundStream.h"
+#include "Sound/gkSoundUtil.h"
+#include "Sound/gkSource.h"
+#include "Sound/gkStreamer.h"
+#include "Sound/gkWaveform.h"
+#endif
 
 #endif//_OgreKit_h_

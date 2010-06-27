@@ -36,6 +36,9 @@
 #include "gkDebugger.h"
 #include "gkScene.h"
 
+#ifdef OGREKIT_OPENAL_SOUND
+#include "Sound/gkSource.h"
+#endif
 
 
 gkDebugger::gkDebugger(gkScene *parent)
@@ -204,6 +207,73 @@ void gkDebugger::drawLine(const gkVector3& from, const gkVector3& to, const gkVe
     if (m_lineBuf.size() > m_bufSize)
         growBuffer(m_lineBuf.size() * 4);
 }
+
+
+#ifdef OGREKIT_OPENAL_SOUND
+
+void gkDebugger::draw3dSound(const gkSoundProperties& props)
+{
+    // Draw arrow  (sound --> ...)
+    // head is the direction 
+    // tail is the velocity
+    // arrow opening is the cone outer angle
+    // 2nd arrow opening is the cone inner angle
+    // cone height is the objects AABB size 
+
+
+    const gkVector3 RED(1,0,0);
+    const gkVector3 ORANGE(1,0.5,0.0);
+    const gkVector3 WHITE(1,1,1);
+
+    gkScalar ia = gkMaxf(props.m_coneAngle.x, 1.f);
+    gkScalar oa = gkMaxf(props.m_coneAngle.y, 1.f);
+    gkScalar hi  = gkMaxf(props.m_height, 0.125f);
+    gkScalar ve  = props.m_velocity.length();
+
+    gkVector3 he = props.m_position - props.m_direction;
+    gkVector3 ta = props.m_position + (props.m_orientation * gkVector3(0, ve, 0));
+
+    // head to tail
+    drawLine(he, ta, WHITE);
+
+    // outer cone angle
+    gkScalar a  = hi / (oa * gkRPD);
+    gkScalar r = .5f * (a * a - hi * hi);
+
+
+    gkVector3 v0 = props.m_position + (props.m_orientation * gkVector3(r, 0, 0));
+    gkVector3 v1 = props.m_position + (props.m_orientation * gkVector3(0, 0, r));
+    gkVector3 v2 = props.m_position + (props.m_orientation * gkVector3(-r, 0, 0));
+    gkVector3 v3 = props.m_position + (props.m_orientation * gkVector3(0, 0, -r));
+
+    drawLine(v0, v1, RED);
+    drawLine(v1, v2, RED);
+    drawLine(v2, v3, RED);
+    drawLine(v3, v0, RED);
+    drawLine(he, v0, ORANGE);
+    drawLine(he, v1, ORANGE);
+    drawLine(he, v2, ORANGE);
+    drawLine(he, v3, ORANGE);
+
+    if (ia < oa)
+    {
+        // inner cone angle
+        a  = hi / (ia * gkRPD);
+        r = .5f * (a * a - hi * hi);
+
+        v0 = props.m_position + (props.m_orientation * gkVector3(r, 0, 0));
+        v1 = props.m_position + (props.m_orientation * gkVector3(0, 0, r));
+        v2 = props.m_position + (props.m_orientation * gkVector3(-r, 0, 0));
+        v3 = props.m_position + (props.m_orientation * gkVector3(0, 0, -r));
+
+        drawLine(v0, v1, RED);
+        drawLine(v1, v2, RED);
+        drawLine(v2, v3, RED);
+        drawLine(v3, v0, RED);
+    }
+}
+
+#endif
 
 Ogre::Real gkDebugger::getSquaredViewDepth(const Ogre::Camera* cam) const
 {

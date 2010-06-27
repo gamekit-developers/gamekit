@@ -15,3 +15,6 @@ subdirs(Source/Recast)
 subdirs(Source/Detour)
 subdirs(Source/OpenSteer)
 
+if (OGREKIT_OPENAL_SOUND)
+    subdirs(Source/Codecs)
+endif()

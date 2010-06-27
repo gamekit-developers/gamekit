@@ -51,6 +51,10 @@
 #include "gkDebugProperty.h"
 #include "gkTickState.h"
 
+#ifdef OGREKIT_OPENAL_SOUND
+# include "Sound/gkSoundManager.h"
+#endif
+
 using namespace Ogre;
 
 
@@ -174,6 +178,9 @@ void gkEngine::initialize(bool autoCreateWindow)
     new gkLuaManager();
     new gkMeshManager();
 
+#ifdef OGREKIT_OPENAL_SOUND
+    new gkSoundManager();
+#endif
 
     if (autoCreateWindow) initializeWindow();
 
@@ -211,15 +218,23 @@ void gkEngine::finalize()
 {
     if (!m_initialized) return;
 
+#ifdef OGREKIT_OPENAL_SOUND
+    gkSoundManager::getSingleton().stopAllSounds();
+#endif
 
     delete gkNodeManager::getSingletonPtr();
     delete gkSceneManager::getSingletonPtr();
     delete gkTextManager::getSingletonPtr();
-    delete gkBlendLoader::getSingletonPtr();
     delete gkLuaManager::getSingletonPtr();
     delete gkLogicManager::getSingletonPtr();
     delete gkWindowSystem::getSingletonPtr();
     delete gkMeshManager::getSingletonPtr();
+
+#ifdef OGREKIT_OPENAL_SOUND
+    delete gkSoundManager::getSingletonPtr();
+#endif
+
+    delete gkBlendLoader::getSingletonPtr();
 
     delete m_private->debugPage;
     delete m_private->debug;

@@ -40,7 +40,6 @@
 #include "gkBlenderSceneConverter.h"
 #include "OgreKit.h"
 
-
 #define VEC3CPY(a, b) {a.x= b[0]; a.y= b[1]; a.z= b[2];}
 #define VEC2CPY(a, b) {a.x= b[0]; a.y= b[1];}
 
@@ -2099,6 +2098,64 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
                 va->setFlag(fl);
 
             } break;
+        case ACT_SOUND:
+            {
+#if OGREKIT_OPENAL_SOUND
+                gkSoundActuator *sa = new gkSoundActuator(gobj, lnk, bact->name);
+                la = sa;
+
+                Blender::bSoundActuator *bsa = (Blender::bSoundActuator *)bact->data;
+
+                int mode = 0;
+
+                switch (bsa->type)
+                {
+                case ACT_SND_PLAY_STOP_SOUND: 
+                    mode = gkSoundActuator::SA_PLAY_STOP;
+                    break;
+                case ACT_SND_PLAY_END_SOUND:
+                    mode = gkSoundActuator::SA_PLAY_END;
+                    break;
+                case ACT_SND_LOOP_STOP_SOUND:
+                    mode = gkSoundActuator::SA_LOOP_STOP;
+                    break;
+                case ACT_SND_LOOP_END_SOUND:
+                    mode = gkSoundActuator::SA_LOOP_END;
+                    break;
+                case ACT_SND_LOOP_BIDIRECTIONAL_SOUND:
+                    mode = gkSoundActuator::SA_LOOP_PPONG;
+                    break;
+                case ACT_SND_LOOP_BIDIRECTIONAL_STOP_SOUND: 
+                    mode = gkSoundActuator::SA_LOOP_PPONG_STOP;
+                    break;
+                }
+
+
+                gkSoundProperties &props = sa->getProperties();
+
+                props.m_volume  = bsa->volume;
+                props.m_pitch   = bsa->pitch;
+
+
+                if (bsa->flag == 1) // 3d
+                {
+                    props.m_3dSound = true;
+
+                    props.m_gainClamp.x = bsa->sound3D.min_gain;
+                    props.m_gainClamp.y = bsa->sound3D.max_gain;
+                    props.m_refDistance = bsa->sound3D.reference_distance;
+                    props.m_maxDistance = bsa->sound3D.max_distance;
+                    props.m_rolloff     = bsa->sound3D.rolloff_factor;
+                    props.m_coneAngle.x = bsa->sound3D.cone_inner_angle;
+                    props.m_coneAngle.y = bsa->sound3D.cone_outer_angle;
+                    props.m_coneOuterGain= bsa->sound3D.cone_outer_gain;
+                }
+
+                sa->setMode(mode);
+                sa->setSoundFile(GKB_IDNAME(bsa->sound));
+#endif                
+            } break;
+
         }
 
 

@@ -38,7 +38,7 @@
 // ----------------------------------------------------------------------------
 
 
-#define UT_WIN32_FILE 1
+//#define UT_WIN32_FILE 1
 #if UT_PLATFORM == UT_PLATFORM_WIN32 && defined(UT_WIN32_FILE)
 #include <windows.h>
 #endif
@@ -266,12 +266,18 @@ void utFileStream::seek(const UTsize pos, int dir) const
     if (!m_handle)
         return;
 
-    if (pos < m_size)
+    if (dir == SEEK_END)
     {
-        int ret = utFileWrapper::seek(m_handle, pos, dir);
-        if (ret >= 0 && ret <= (int)m_size)
-            m_pos = (UTsize)ret;
+        m_pos = m_size;
+        return;
     }
+
+    int ret = utFileWrapper::seek(m_handle, pos, dir);
+
+    if (dir == SEEK_SET)
+        m_pos = utClamp<UTsize>(ret, 0, m_size);
+    else if (dir == SEEK_CUR)
+        m_pos = utClamp<UTsize>(m_pos + ret, 0, m_size);
 }
 
 
@@ -427,9 +433,9 @@ void utMemoryStream::seek(const UTsize pos, int dir) const
 {
     if (dir == SEEK_SET)
         m_pos = utClamp<UTsize>(pos, 0, m_size);
-    if (dir == SEEK_CUR)
+    else if (dir == SEEK_CUR)
         m_pos = utClamp<UTsize>(m_pos + pos, 0, m_size);
-    if (dir == SEEK_END)
+    else if (dir == SEEK_END)
         m_pos = m_size;
 }
 

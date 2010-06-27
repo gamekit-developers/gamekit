@@ -26,6 +26,7 @@ set(Core_SOURCE
     gkObject.cpp
     gkPath.cpp
     gkTextFile.cpp
+    gkTickState.cpp
     gkTextManager.cpp
     gkTickState.cpp
     gkRenderFactory.cpp
@@ -64,6 +65,7 @@ set(Core_HEADER
     gkObject.h
     gkPath.h
     gkTextFile.h
+    gkTickState.h
     gkTextManager.h
     gkTickState.h
     gkRenderFactory.h
@@ -81,6 +83,7 @@ set(Core_HEADER
     Utils/utCommon.h
     Utils/utString.h
     Utils/utTypes.h
+    Utils/utStreams.h
     Utils/utMemoryPool.h
     Utils/utStreams.h
 )
@@ -284,6 +287,7 @@ set(Logic_SOURCE
     LogicBricks/gkVisibilityActuator.cpp
     LogicBricks/gkPropertySensor.cpp
     LogicBricks/gkPropertyActuator.cpp
+    LogicBricks/gkSoundActuator.cpp
 )
 
 
@@ -310,6 +314,7 @@ set(Logic_HEADER
     LogicBricks/gkVisibilityActuator.h
     LogicBricks/gkPropertySensor.h
     LogicBricks/gkPropertyActuator.h
+    LogicBricks/gkSoundActuator.h
 )
 
 source_group(LogicBricks\\Header                FILES ${Logic_HEADER})
@@ -448,12 +453,28 @@ source_group(Script\\Source FILES ${Script_SOURCE})
 # ---------------------------------------------------------
 set(Sound_SOURCE
     # ----- Source -----
+    Sound/gkBuffer.cpp
+    Sound/gkOgg.cpp
+    Sound/gkSource.cpp
+    Sound/gkSound.cpp
     Sound/gkSoundManager.cpp
+    Sound/gkSoundStream.cpp
+    Sound/gkSoundUtil.cpp
+    Sound/gkStreamer.cpp
+    Sound/gkWaveform.cpp
 )
 
 set(Sound_HEADER
     # ----- Header -----
+    Sound/gkBuffer.h
+    Sound/gkSource.h
+    Sound/gkOgg.h
+    Sound/gkSound.h
     Sound/gkSoundManager.h
+    Sound/gkSoundStream.h
+    Sound/gkSoundUtil.h
+    Sound/gkStreamer.h
+    Sound/gkWaveform.h
 )
 
 source_group(Sound\\Header FILES ${Sound_HEADER})
@@ -485,6 +506,11 @@ if (APPLE)
 include_directories( ${OGRELITE_SOURCE_DIR}/OgreMain/include/OSX )
 endif ()
 
+if (OGREKIT_OPENAL_SOUND AND OPENAL_FOUND)
+    add_definitions(-DOGREKIT_OPENAL_SOUND)
+endif()
+
+
 include_directories(
     ${OGREKIT_OGRE_INCLUDE}
     ${OGRELITE_SOURCE_DIR}/PlugIns/ParticleFX/include
@@ -494,6 +520,7 @@ include_directories(
     ${OGREKIT_OIS_INCLUDE}
     ${OGREKIT_ZLIB_INCLUDE}
     ${OGREKIT_LUA_INCLUDE}
+    ${OGREKIT_OPENAL_INCLUDE}
     ${GAMEKIT_SERIALIZE_BLENDER}
     ${GAMEKIT_SERIALIZE_BULLET}
     ${GAMEKIT_SERIALIZE_BLENDER_HEADERS}
@@ -530,6 +557,19 @@ configure_rendersystem()
 set(HiddenDepenCMakeLists ../Dependencies/CMakeLists.txt)
 source_group(DependenciesCMakeLists FILES ${HiddenDepenCMakeLists})
 
+
+
+if (OGREKIT_OPENAL_SOUND AND OPENAL_FOUND)
+
+    set(Extra_SOURCE
+        ${Sound_SOURCE} ${Sound_HEADER}
+        )
+        
+    include_directories( ${OGREKIT_OGGVORBIS_INCLUDE})
+    link_libraries(OggVorbis)
+endif()
+
+
 add_library(OgreKitCore STATIC
             ${Core_SOURCE}       ${Core_HEADER}
             ${Logic_SOURCE}      ${Logic_HEADER}
@@ -539,9 +579,9 @@ add_library(OgreKitCore STATIC
             ${Constraint_SOURCE} ${Constraint_HEADER}
             ${Physics_SOURCE}    ${Physics_HEADER}
             ${Script_SOURCE}     ${Script_HEADER}
-            ${Sound_SOURCE}      ${Sound_HEADER}
             ${Network_SOURCE}    ${Network_HEADER}
             ${NLogic_SOURCE}     ${NLogic_HEADER}
             ${Thread_SOURCE}     ${Thread_HEADER}
             ${HiddenDepenCMakeLists}
+            ${Extra_SOURCE}
     )

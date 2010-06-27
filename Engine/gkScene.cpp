@@ -48,6 +48,11 @@
 #include "gkDebugger.h"
 #include "gkMeshManager.h"
 
+#ifdef OGREKIT_OPENAL_SOUND
+#include "gkSoundManager.h"
+#endif
+
+
 using namespace Ogre;
 
 
@@ -740,6 +745,14 @@ void gkScene::beginFrame(void)
 
     GK_ASSERT(m_physicsWorld);
     m_physicsWorld->resetContacts();
+
+#ifdef OGREKIT_OPENAL_SOUND
+
+    // process sounds waiting to be finished 
+    gkSoundManager::getSingleton().collectGarbage();
+
+#endif
+
 }
 
 
@@ -764,6 +777,10 @@ void gkScene::update(gkScalar tickRate)
     // tick life span
     tickClones();
 
+#if OGREKIT_OPENAL_SOUND
+    // update sound manager.
+    gkSoundManager::getSingleton().update(this);
+#endif
 
     if (m_markDBVT)
     {

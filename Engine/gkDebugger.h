@@ -33,6 +33,7 @@
 #include "OgreSimpleRenderable.h"
 #include "OgreHardwareVertexBuffer.h"
 
+class gkSoundProperties;
 
 // for debugging / building line lists 
 class gkDebugger : public Ogre::SimpleRenderable
@@ -57,8 +58,9 @@ public:
 
     void clear(void);
 
-    // TODO: shapes
-
+#ifdef OGREKIT_OPENAL_SOUND
+    void draw3dSound(const gkSoundProperties& props);
+#endif
 
     // write contents to buffer
     void flush(void);

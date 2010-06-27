@@ -54,6 +54,7 @@ gkUserDefs::gkUserDefs()
         buildInstances(false),
         useBulletDbvt(true),
         showDebugProps(false),
+        debugSounds(false),
         shadowtechnique("none"),
         colourshadow(0, 0, 0),
         fardistanceshadow(0)
@@ -207,6 +208,11 @@ void gkUserDefs::parseString(const gkString &key, const gkString &val)
     if (KeyEq("showdebugprops"))
     {
         showDebugProps = Ogre::StringConverter::parseBool(val);
+        return;
+    }
+    if (KeyEq("debugsounds"))
+    {
+        debugSounds = Ogre::StringConverter::parseBool(val);
         return;
     }
     if (KeyEq("fullscreen"))

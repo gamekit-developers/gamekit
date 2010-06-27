@@ -55,6 +55,11 @@
 #include "gkUserDefs.h"
 #include "gkLuaManager.h"
 
+#ifdef OGREKIT_OPENAL_SOUND
+# include "Sound/gkSoundManager.h"
+# include "Sound/gkSound.h"
+#endif
+
 using namespace Ogre;
 
 
@@ -219,14 +224,62 @@ void gkBlendFile::buildAllTextures()
 
 void gkBlendFile::buildAllSounds()
 {
+
+#ifdef OGREKIT_OPENAL_SOUND
+
     bParse::bMain *mp = m_file->getMain();
 
 	bParse::bListBasePtr* soundList = mp->getSound();
+    gkSoundManager *mgr = gkSoundManager::getSingletonPtr();
 
     for (int i=0; i<soundList->size(); ++i)
     {
 		Blender::bSound *sound = (Blender::bSound*)soundList->at(i);
+
+        // skip zero users
+        if (sound->id.us <= 0)
+            continue;
+
+        
+        gkPath pth(sound->name);
+        bool isFile = pth.isFile();
+
+        if (sound->packedfile || sound->newpackedfile || isFile)
+        {
+            Blender::PackedFile *pak = sound->packedfile ? sound->packedfile : sound->newpackedfile;
+            if (((pak && pak->data) || isFile) && !mgr->hasSound(GKB_IDNAME(sound)))
+            {
+                gkSound *sndObj = mgr->createSound(GKB_IDNAME(sound));
+
+                if (isFile)
+                {
+                    // Attempt to stream from file
+                    if (!sndObj->load(pth.getPath().c_str()))
+                    {
+                        mgr->destroy(sndObj);
+                        continue;
+                    }
+
+                    gkLogMessage("Sound: Loaded file " << pth.getPath() << " as" << GKB_IDNAME(sound) << ".");
+                }
+                else if (pak && pak->data)
+                {
+                    // load from buffer
+                    if (!sndObj->load(pak->data, pak->size))
+                    {
+                        mgr->destroy(sndObj);
+                        continue;
+                    }
+
+                    gkLogMessage("Sound: Loaded buffer " << GKB_IDNAME(sound) << ".");
+                }
+                else 
+                    GK_ASSERT(0);
+            }
+        }
     }
+
+#endif
 }
 
 

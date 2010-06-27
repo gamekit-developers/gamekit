@@ -58,6 +58,7 @@ public:
     bool                    buildInstances;     // Use instanced geometry
     bool                    useBulletDbvt;      // Use Bullet Dynamic AABB Tree
     bool                    showDebugProps;     // Show variable debugging information.
+    bool                    debugSounds;        // Show 3D sound debug info 
 	bool					enableshadows;
 	gkString				shadowtechnique;
 	gkColor					colourshadow;
