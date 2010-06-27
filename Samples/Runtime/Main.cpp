@@ -24,8 +24,9 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "OgreKit.h"
 #include "tclap/CmdLine.h"
+#include "OgreKit.h"
+
 
 const gkString gkDefaultBlend   = "momo_ogre.blend";
 const gkString gkDefaultConfig  = "OgreKitStartup.cfg";
