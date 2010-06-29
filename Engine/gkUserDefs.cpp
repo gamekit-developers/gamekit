@@ -122,27 +122,21 @@ void gkUserDefs::parseString(const gkString &key, const gkString &val)
 
         return;
     }
-
     if (KeyEq("log"))
     {
         log = val;
         return;
     }
-
-
     if (KeyEq("debugphysics"))
     {
         debugPhysics = Ogre::StringConverter::parseBool(val);
         return;
     }
-    
-    
     if (KeyEq("debugphysicsaabb"))
     {
         debugPhysicsAabb = Ogre::StringConverter::parseBool(val);
         return;
     }
-
     if (KeyEq("grabinput"))
     {
         grabInput = Ogre::StringConverter::parseBool(val);
@@ -153,13 +147,11 @@ void gkUserDefs::parseString(const gkString &key, const gkString &val)
         verbose = Ogre::StringConverter::parseBool(val);
         return;
     }
-
     if (KeyEq("winsize"))
     {
         winsize = Ogre::StringConverter::parseVector2(val);
         return;
     }
-
     if (KeyEq("wintitle"))
     {
         wintitle = val;
@@ -213,11 +205,6 @@ void gkUserDefs::parseString(const gkString &key, const gkString &val)
     if (KeyEq("debugsounds"))
     {
         debugSounds = Ogre::StringConverter::parseBool(val);
-        return;
-    }
-    if (KeyEq("fullscreen"))
-    {
-        fullscreen = Ogre::StringConverter::parseBool(val);
         return;
     }
     if (KeyEq("enableshadows"))
