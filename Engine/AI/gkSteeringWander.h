@@ -24,47 +24,41 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+#ifndef _gkSteeringWander_h_
+#define _gkSteeringWander_h_
 
-#ifndef _RatLogic_h_
-#define _RatLogic_h_
+#include "gkSteeringObject.h"
+#include "gkGameObject.h"
 
-#include "OgreKit.h"
+class gkSceneObstacle;
 
-class SceneLogic;
-class MomoLogic;
-
-class RatLogic : public gkReferences
+class gkSteeringWander : public gkSteeringObject
 {
-	typedef gkPtrRef<MomoLogic> PMOMO;
-
 public:
-	RatLogic(gkGameObject* obj, SceneLogic* scene, PMOMO momo);
-	~RatLogic();
-	gkCharacterNode* getCharacterNode() const {return m_characterNode; }
-	gkCharacterNode::STATE updateAI(gkScalar tick);
 
-	bool AmIAtDiffLevelOfMomo();
-	bool AmIInGoal();
-	bool AmINotInGoal();
-	bool AmIStuck();
-	bool isLogicStuck();
+	gkSteeringWander(
+		gkGameObject* obj, 
+		gkScalar maxSpeed, 
+		const gkVector3& forward, 
+		const gkVector3& up, 
+		const gkVector3& side, 
+		gkScalar minPredictionTime,
+		gkScalar maxPredictionTime
+	);
+
+	~gkSteeringWander();
+
+	bool steering(STATE& newState, const float elapsedTime);
+
 private:
 
-	void defineLogicStates();
-	gkSteeringObject* getSteeringBehaviour() const;
+	gkSceneObstacle* m_sceneObstable;
 
-private:
-	gkGameObject* m_obj;
-	SceneLogic* m_scene;
-	gkLogicTree* m_tree;
-	PMOMO m_momo;
-	gkCharacterNode* m_characterNode;
-	gkSteeringObject* m_steeringObject;
-	gkSteeringCapture* m_steeringCapture;
-	gkSteeringPathFollowing* m_steeringFollowing;
-	gkSteeringWander* m_steeringWander;
+	OpenSteer::ObstacleGroup m_allObstacles;
 
-	gkFSM m_logicalState;
+	gkScalar m_minPredictionTime;
+
+	gkScalar m_maxPredictionTime;
 };
 
-#endif//_RatLogic_h_
+#endif//_gkSteeringWander_h_

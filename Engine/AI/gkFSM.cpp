@@ -24,49 +24,31 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "gkStateMachineNode.h"
-#include "gkLogicTree.h"
+#include "gkFSM.h"
 #include "gkLogger.h"
 
-gkStateMachineNode::gkStateMachineNode(gkLogicTree *parent, size_t id) 
-: gkLogicNode(parent, id),
-m_currentState(-1)
+gkFSM::gkFSM() 
+: m_currentState(-1)
 {
-	ADD_ISOCK(UPDATE, true);
-	ADD_OSOCK(CURRENT_STATE, 0);
 }
 
-gkStateMachineNode::~gkStateMachineNode()
+gkFSM::~gkFSM()
 {
 	size_t n = m_events.size();
 
 	for(size_t i=0; i<n; i++)
 	{
-		gkILogicSocket* pSocket = m_events[i];
+		Event* pEvent = m_events[i];
 
-		delete pSocket;
+		if(pEvent->m_e)
+			delete pEvent->m_e;
+
+		delete pEvent;
 	}
 }
 
-bool gkStateMachineNode::evaluate(gkScalar tick)
+void gkFSM::update()
 {
-	if(m_currentState == -1)
-	{
-		setState(GET_SOCKET_VALUE(CURRENT_STATE));
-	}
-
-	return GET_SOCKET_VALUE(UPDATE);
-}
-
-void gkStateMachineNode::update(gkScalar tick)
-{
-	if(m_currentState != GET_SOCKET_VALUE(CURRENT_STATE))
-	{
-		m_timer.reset();
-		
-		m_currentState = GET_SOCKET_VALUE(CURRENT_STATE);
-	}
-
 	size_t pos = m_transitions.find(m_currentState);
 
 	if (pos != GK_NPOS)
@@ -79,13 +61,13 @@ void gkStateMachineNode::update(gkScalar tick)
 		{
 			const void* p = it.peekNextKey().key();
 
-			const gkILogicSocket* pSocket = static_cast<const gkILogicSocket*>(p);
+			const Event* pEvent = static_cast<const Event*>(p);
 
-			if(!pSocket->isConnected() || static_cast<const gkLogicSocket<bool>*>(pSocket)->getValue())
+			if(!pEvent->m_e || pEvent->m_e->evaluate())
 			{
 				const Data* pTmpData  = &(it.peekNextValue());
 
-				if(pSocket->isConnected())
+				if(pEvent->m_e)
 				{
 					pData = pTmpData;
 
@@ -113,9 +95,9 @@ void gkStateMachineNode::update(gkScalar tick)
 	}
 }
 
-gkLogicSocket<bool>* gkStateMachineNode::addTransition(int from, int to, unsigned long ms, ITrigger* trigger)
+gkFSM::Event* gkFSM::addTransition(int from, int to, unsigned long ms, ITrigger* trigger)
 {
-	gkLogicSocket<bool>* pSocket = new gkLogicSocket<bool>(this, true, false);
+	Event* pEvent = new Event;
 
 	Data data(ms, to, trigger);
 
@@ -125,45 +107,24 @@ gkLogicSocket<bool>* gkStateMachineNode::addTransition(int from, int to, unsigne
 	{
 		REACTION& reaction = m_transitions.at(pos);
 
-		reaction.insert(pSocket, data);
+		reaction.insert(pEvent, data);
 	}
 	else
 	{
 		REACTION reaction;
-		reaction.insert(pSocket, data);
+		reaction.insert(pEvent, data);
 		m_transitions.insert(from, reaction);
 	}
 
-	m_events.push_back(pSocket);
+	m_events.push_back(pEvent);
 
-	return pSocket;
+	return pEvent;
 }
 
-gkIfNode<int, CMP_EQUALS>* gkStateMachineNode::isCurrentStatus(int status)
-{
-	const MAP::iterator it = m_statuses.find(status);
 
-	if(it == m_statuses.end())
-	{
-		std::pair<MAP::iterator, bool> result = 
-			m_statuses.insert(MAP::value_type(status, m_parent->createNode<gkIfNode<int, CMP_EQUALS> >()));
-
-		GK_ASSERT(result.second);
-
-		result.first->second->getA()->setValue(status);
-		result.first->second->getB()->link(GET_SOCKET(CURRENT_STATE));
-
-		return result.first->second;
-	}
-
-	return it->second;
-}
-
-void gkStateMachineNode::setState(int state)
+void gkFSM::setState(int state)
 {
 	m_currentState = state;
-
-	SET_SOCKET_VALUE(CURRENT_STATE, m_currentState);
 
 	m_timer.reset();
 

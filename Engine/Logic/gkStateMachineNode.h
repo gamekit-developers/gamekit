@@ -29,10 +29,13 @@
 
 #include "gkLogicNode.h"
 #include "gkIfNode.h"
+#include "gkFSM.h"
 #include "LinearMath/btQuickprof.h"
 
 class gkStateMachineNode : public gkLogicNode
 {
+	typedef gkFSM::ITrigger ITrigger;
+
 public:
 
 	enum
@@ -57,7 +60,7 @@ public:
 	bool evaluate(gkScalar tick);
 	void update(gkScalar tick);
 
-	gkLogicSocket<bool>* addTransition(int from, int to, unsigned long ms = 0);
+	gkLogicSocket<bool>* addTransition(int from, int to, unsigned long ms = 0, ITrigger* trigger = 0);
 
 	gkIfNode<int, CMP_EQUALS>* isCurrentStatus(int status);
 
@@ -77,11 +80,12 @@ private:
 	{
 		unsigned long m_ms;
 		int m_state;
+		gkPtrRef<ITrigger> m_trigger;
 
-		Data() : m_ms(0), m_state(0) {}
+		Data() : m_ms(0), m_state(0), m_trigger(0) {}
 
-		Data(unsigned long ms, int state) 
-			: m_ms(ms), m_state(state)
+		Data(unsigned long ms, int state, ITrigger* trigger) 
+			: m_ms(ms), m_state(state), m_trigger(trigger)
 		{
 		}
 	};

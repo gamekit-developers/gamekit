@@ -103,7 +103,9 @@ set(AI_SOURCE
     AI/gkSteeringObject.cpp
     AI/gkSteeringCapture.cpp
     AI/gkSteeringPathFollowing.cpp
+    AI/gkSteeringWander.cpp
     AI/gkSceneObstacle.cpp
+    AI/gkFSM.cpp
 )
 
 set(AI_HEADER
@@ -114,7 +116,9 @@ set(AI_HEADER
     AI/gkSteeringObject.h
     AI/gkSteeringCapture.h
     AI/gkSteeringPathFollowing.h
+    AI/gkSteeringWander.h
     AI/gkSceneObstacle.h
+    AI/gkFSM.h
 )
 
 source_group(AI\\Header FILES ${AI_HEADER})
@@ -229,6 +233,7 @@ set(NLogic_HEADER
     Logic/gkCollisionNode.h
     Logic/gkExitNode.h
     Logic/gkExpressionNode.h
+    Logic/gkFunctionNode.h
     Logic/gkGrabNode.h
     Logic/gkGroupNode.h
     Logic/gkIfNode.h

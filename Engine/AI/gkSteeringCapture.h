@@ -49,6 +49,8 @@ public:
 
 	~gkSteeringCapture();
 
+	bool inGoal() const;
+
 	GK_INLINE const gkVector3& getGoalPosition() const { return m_target->getPosition(); }
 	
 	GK_INLINE gkScalar getGoalRadius() const

@@ -49,6 +49,8 @@ public:
 
 	~gkSteeringPathFollowing();
 
+	bool inGoal() const;
+
 	GK_INLINE void setGoalPosition(const gkVector3& position){ m_goalPosition = position; }
 	GK_INLINE void setGoalRadius(gkScalar radius){ m_goalRadius = radius; }
 
@@ -62,10 +64,6 @@ private:
 	bool createPath();
 	
 private:
-
-	OpenSteer::ObstacleGroup m_allObstacles;
-
-	gkSceneObstacle* m_sceneObstable;
 
 	gkVector3 m_goalPosition;
 

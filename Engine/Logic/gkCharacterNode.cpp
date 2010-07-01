@@ -41,29 +41,37 @@
 #include "gkSteeringCapture.h"
 #include "gkSteeringPathFollowing.h"
 #include "gkCharacter.h"
+#include "gkRigidBody.h"
+#include "btBulletDynamicsCommon.h"
 #include "BulletDynamics/Character/btKinematicCharacterController.h"
 
 gkCharacterNode::gkCharacterNode(gkLogicTree *parent, size_t id) 
 : gkStateMachineNode(parent, id),
 m_obj(0),
 m_ent(0),
+m_previousLastStateData(0),
+m_lastStateData(0),
 m_currentStateData(0),
 m_scene(0),
-m_listener(0),
-m_forward(gkVector3::ZERO)
+m_forward(gkVector3::ZERO),
+m_jumpSpeed(10),
+m_falling(false)
 {
 	ADD_ISOCK(ANIM_BLEND_FRAMES, 10);
 	ADD_ISOCK(ENABLE_ROTATION, false);
 	ADD_ISOCK(ROTATION_VALUE, gkQuaternion::IDENTITY);
+	ADD_ISOCK(INPUT_AI_STATE, NULL_STATE);
+	ADD_ISOCK(JUMP, false);
+	ADD_ISOCK(GRAVITY, 9.81f);
 	
 	ADD_OSOCK(ANIM_HAS_REACHED_END, false);
 	ADD_OSOCK(ANIM_NOT_HAS_REACHED_END, true);
 	ADD_OSOCK(ANIM_TIME_POSITION, 0);
 	ADD_OSOCK(POSITION, gkVector3::ZERO);
 	ADD_OSOCK(ROTATION, gkQuaternion::IDENTITY);
-	ADD_OSOCK(AI_STATE, NULL_STATE);
 	ADD_OSOCK(FALLING, false);
 	ADD_OSOCK(NOT_FALLING, true);
+	ADD_OSOCK(OUTPUT_AI_STATE, NULL_STATE);
 }
 
 gkCharacterNode::~gkCharacterNode()
@@ -96,22 +104,49 @@ bool gkCharacterNode::evaluate(gkScalar tick)
 
 void gkCharacterNode::update(gkScalar tick)
 {
-	STATE oldState = m_currentStateData->m_state;
-
+	STATE previousTickState = m_currentStateData->m_state;
+	
 	update_state(tick);
 
-	update_animation(oldState);
+	update_animation(previousTickState);
+}
+
+gkCharacterNode::STATE gkCharacterNode::getPreviousLastState() const
+{
+	if(m_previousLastStateData)
+	{
+		return m_previousLastStateData->m_state;
+	}
+
+	return NULL_STATE;
+}
+
+gkCharacterNode::STATE gkCharacterNode::getLastState() const
+{
+	if(m_lastStateData)
+	{
+		return m_lastStateData->m_state;
+	}
+
+	return NULL_STATE;
+}
+
+gkCharacterNode::STATE gkCharacterNode::getCurrentState() const
+{
+	if(m_currentStateData)
+	{
+		return m_currentStateData->m_state;
+	}
+
+	return NULL_STATE;
 }
 
 void gkCharacterNode::update_state(gkScalar tick)
 {
-	STATE aiState = NULL_STATE;
-
-	if(m_listener)
-		aiState = m_listener->updateAI(this, tick);
-
-	SET_SOCKET_VALUE(AI_STATE, aiState);
+	STATE aiState = GET_SOCKET_VALUE(INPUT_AI_STATE);
 	
+	SET_SOCKET_VALUE(OUTPUT_AI_STATE, aiState);
+
 	gkStateMachineNode::update(tick);
 
 	if(aiState == NULL_STATE)
@@ -121,34 +156,74 @@ void gkCharacterNode::update_state(gkScalar tick)
 			m_obj->setOrientation(GET_SOCKET_VALUE(ROTATION_VALUE));
 		}
 
-		m_obj->setLinearVelocity(m_forward * m_currentStateData->m_velocity, TRANSFORM_LOCAL);
+		if(GET_SOCKET_VALUE(JUMP))
+		{
+			const gkGameObjectProperties &props = m_obj->getProperties();
+			const gkPhysicsProperties &phy = props.m_physics;
+
+			if(m_obj->getAttachedCharacter())
+			{
+				m_obj->getAttachedCharacter()->getCharacterController()->setJumpSpeed(phy.m_mass * m_jumpSpeed);
+				m_obj->getAttachedCharacter()->getCharacterController()->jump();
+			}
+			else
+			{
+				m_obj->applyForce(gkVector3::UNIT_Z * phy.m_mass * m_jumpSpeed);
+			}
+		}
+		if(m_currentStateData->m_velocity == std::numeric_limits<gkScalar>::max() && m_lastStateData)
+		{
+			m_obj->setLinearVelocity(m_forward * m_lastStateData->m_velocity, TRANSFORM_LOCAL);
+		}
+		else
+		{
+			m_obj->setLinearVelocity(m_forward * m_currentStateData->m_velocity, TRANSFORM_LOCAL);
+		}
 	}
 
 	SET_SOCKET_VALUE(POSITION, m_obj->getPosition());
 	SET_SOCKET_VALUE(ROTATION, m_obj->getOrientation());
 
 	{
-		bool falling = false;
+		// FALL TEST
+
+		m_falling = false;
 
 		if(m_obj->getAttachedCharacter())
 		{
-			falling = !m_obj->getAttachedCharacter()->getCharacterController()->onGround();
+			m_falling = !m_obj->getAttachedCharacter()->getCharacterController()->onGround();
 		}
 		else
 		{
 			const gkVector3& velocity = m_obj->getLinearVelocity();
 
-			falling = velocity.z < 0;
+			m_falling = velocity.z < 0;
 		}
 
-		SET_SOCKET_VALUE(FALLING, falling);
-		SET_SOCKET_VALUE(NOT_FALLING, !falling);
+		SET_SOCKET_VALUE(FALLING, m_falling);
+		SET_SOCKET_VALUE(NOT_FALLING, !m_falling);
+	}
+
+	
+	{
+		// GRAVITY
+
+		gkScalar gravity = GET_SOCKET_VALUE(GRAVITY);
+
+		if(m_obj->getAttachedCharacter())
+		{
+			m_obj->getAttachedCharacter()->getCharacterController()->setGravity(gravity);
+		}
+		else
+		{
+			m_obj->getAttachedBody()->getBody()->setGravity(btVector3(0, 0, -gravity));
+		}
 	}
 }
 
-void gkCharacterNode::update_animation(STATE oldState)
+void gkCharacterNode::update_animation(STATE previousTickState)
 {
-	if(m_currentStateData->m_state != oldState)
+	if(m_currentStateData->m_state != previousTickState)
 	{
 		SET_SOCKET_VALUE(ANIM_HAS_REACHED_END, false);
 		SET_SOCKET_VALUE(ANIM_NOT_HAS_REACHED_END, true);
@@ -182,6 +257,10 @@ void gkCharacterNode::update_animation(STATE oldState)
 
 void gkCharacterNode::notifyState(int state)
 {
+	m_previousLastStateData = m_lastStateData;
+
+	m_lastStateData = m_currentStateData;
+
 	m_currentStateData = getStateData(state);
 }
 

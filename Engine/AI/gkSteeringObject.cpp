@@ -379,9 +379,7 @@ void gkSteeringObject::measurePathCurvature (const float elapsedTime)
 
 bool gkSteeringObject::update(gkScalar tick)
 {
-	gkScalar baseDistance = gkVector2(position().x, position().y).distance(gkVector2(getGoalPosition().x, getGoalPosition().y));
-
-	if (baseDistance > (radius() + getGoalRadius())) 
+	if (!inGoal()) 
 	{
 		STATE newState = UNKNOWN;
 
@@ -390,7 +388,7 @@ bool gkSteeringObject::update(gkScalar tick)
 
 		gkVector3 futurePosition = predictFuturePosition(tick);
 		
-		if(speed() > 0 && m_lastFuturePosition.positionEquals(futurePosition, std::numeric_limits<gkScalar>::epsilon()))
+		if(speed() > 0 && m_lastFuturePosition.positionEquals(futurePosition, 0))
 		{
 			m_state = STUCK;
 		}

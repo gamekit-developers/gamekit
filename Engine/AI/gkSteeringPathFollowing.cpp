@@ -28,7 +28,6 @@
 #include "gkSteeringPathFollowing.h"
 #include "OgreRoot.h"
 #include "gkGameObject.h"
-#include "gkSceneObstacle.h"
 #include "gkNavMeshData.h"
 #include "gkLogger.h"
 
@@ -36,19 +35,23 @@ using namespace OpenSteer;
 
 gkSteeringPathFollowing::gkSteeringPathFollowing(gkGameObject* obj, gkScalar maxSpeed, const gkVector3& forward, const gkVector3& up, const gkVector3& side, const gkVector3& polyPickExt, int maxPathPolys, gkScalar minimumTurningRadius) 
 : gkSteeringObject(obj, maxSpeed, forward, up, side),
-m_sceneObstable(new gkSceneObstacle(30)),
 m_goalPosition(gkVector3::ZERO),
 m_goalRadius(0),
 m_polyPickExt(polyPickExt),
 m_maxPathPolys(maxPathPolys),
 m_minimumTurningRadius(minimumTurningRadius)
 {
-	m_allObstacles.push_back(m_sceneObstable);
 }
 
 gkSteeringPathFollowing::~gkSteeringPathFollowing()
 {
-	delete m_sceneObstable;
+}
+
+bool gkSteeringPathFollowing::inGoal() const
+{
+	gkScalar baseDistance = gkVector2(position().x, position().y).distance(gkVector2(getGoalPosition().x, getGoalPosition().y));
+
+	return baseDistance < radius() + getGoalRadius();
 }
 
 bool gkSteeringPathFollowing::createPath()
@@ -75,11 +78,9 @@ bool gkSteeringPathFollowing::steering(STATE& newState, const float elapsedTime)
 		
 		gkScalar targetSpeed = maxSpeedForCurvature(&m_navPath, m_minimumTurningRadius, 1);
 		
-		gkScalar predictionTime = elapsedTime;
-		
 		GK_ASSERT(!Ogre::Math::isNaN(targetSpeed));
 		
-		predictionTime = maxSpeed()/targetSpeed;
+		gkScalar predictionTime = maxSpeed()/targetSpeed;
 		
 		steering = steerForTargetSpeed(targetSpeed);
 		

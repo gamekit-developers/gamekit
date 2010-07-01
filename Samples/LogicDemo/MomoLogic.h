@@ -32,22 +32,28 @@
 
 class SceneLogic;
 
-class MomoLogic : public gkReferences, public gkCharacterNode::Listener
+class MomoLogic : public gkReferences
 {
 public:
 	MomoLogic(gkGameObject* obj, SceneLogic* scene);
 	
 	~MomoLogic();
 
-	gkCharacterNode::STATE updateAI(gkCharacterNode* obj, gkScalar tick);
+	gkCharacterNode::STATE updateAI(gkScalar tick);
+
+	gkScalar getGravity();
+	bool hasImpactGround();
+	
 
 private:
 
 	void CreateKick();
 	void CreateGrab();
 	void CreateDustTrail();
+	void CreateImpactGroundFX();
 	void CreateStateMachine();
 	void CreateCamera();
+	void handleLand2IdleTranstion(int fromState, int toState);
 
 public:
 
@@ -70,6 +76,7 @@ private:
 	gkIfNode<bool, CMP_AND>* m_ifSelectNode;
 	
 	bool m_following;
+	bool m_hasImpactGround;
 
 };
 

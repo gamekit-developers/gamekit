@@ -66,6 +66,8 @@
 #include "AI/gkSteeringObject.h"
 #include "AI/gkSteeringCapture.h"
 #include "AI/gkSteeringPathFollowing.h"
+#include "AI/gkSteeringWander.h"
+#include "AI/gkFSM.h"
 
 #include "Animation/gkAction.h"
 #include "Animation/gkActionBake.h"
@@ -92,6 +94,7 @@
 #include "Logic/gkCursorNode.h"
 #include "Logic/gkExitNode.h"
 #include "Logic/gkExpressionNode.h"
+#include "Logic/gkFunctionNode.h"
 #include "Logic/gkGrabNode.h"
 #include "Logic/gkGroupNode.h"
 #include "Logic/gkIfNode.h"

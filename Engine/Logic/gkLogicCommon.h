@@ -97,14 +97,5 @@ typedef enum gkObjectFunction
     OB_FUNC_ADD,
 }gkObjectFunction;
 
-// Generates a distinct type for each distinct constant integral
-// value. Used to call one of several different functions, depending
-// on a compile-time constant. [Alexandrescu (2000b)]
-template<int v>
-struct Int2Type
-{
-	enum { value = v };
-};
-
 
 #endif//_gkLogicCommon_h_

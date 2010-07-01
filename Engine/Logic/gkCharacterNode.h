@@ -42,13 +42,6 @@ public:
 
 	typedef int STATE;
 
-    class Listener
-    {
-    public:
-        virtual ~Listener() {}
-		virtual STATE updateAI(gkCharacterNode* obj, gkScalar tick) = 0;
-    };
-
 	enum 
 	{
 		//Inputs
@@ -56,6 +49,9 @@ public:
 
 		ENABLE_ROTATION,
 		ROTATION_VALUE,
+		INPUT_AI_STATE,
+		JUMP,
+		GRAVITY,
 
 		//Outputs
 		ANIM_HAS_REACHED_END,
@@ -63,23 +59,26 @@ public:
 		ANIM_TIME_POSITION,
 		POSITION,
 		ROTATION,
-		AI_STATE,
 		FALLING,
-		NOT_FALLING
+		NOT_FALLING,
+		OUTPUT_AI_STATE
 	};
 
 	DECLARE_SOCKET_TYPE(ANIM_BLEND_FRAMES, gkScalar);
 	DECLARE_SOCKET_TYPE(ENABLE_ROTATION, bool);
 	DECLARE_SOCKET_TYPE(ROTATION_VALUE, gkQuaternion);
+	DECLARE_SOCKET_TYPE(INPUT_AI_STATE, STATE);
+	DECLARE_SOCKET_TYPE(JUMP, bool);
+	DECLARE_SOCKET_TYPE(GRAVITY, gkScalar);
 
 	DECLARE_SOCKET_TYPE(ANIM_HAS_REACHED_END, bool);
 	DECLARE_SOCKET_TYPE(ANIM_NOT_HAS_REACHED_END, bool);
 	DECLARE_SOCKET_TYPE(ANIM_TIME_POSITION, gkScalar);
 	DECLARE_SOCKET_TYPE(POSITION, gkVector3);
 	DECLARE_SOCKET_TYPE(ROTATION, gkQuaternion);
-	DECLARE_SOCKET_TYPE(AI_STATE, STATE);
 	DECLARE_SOCKET_TYPE(FALLING, bool);
 	DECLARE_SOCKET_TYPE(NOT_FALLING, bool);
+	DECLARE_SOCKET_TYPE(OUTPUT_AI_STATE, STATE);
 
     gkCharacterNode(gkLogicTree *parent, size_t id);
 	~gkCharacterNode();
@@ -106,12 +105,19 @@ public:
 	void setMapping(const MAP& map);
 	void setObj(gkGameObject* obj) {m_obj = obj;}
 
-	GK_INLINE void setListener(Listener *listener) { m_listener = listener; }
 	GK_INLINE void setForward(const gkVector3& forward) { m_forward = forward; }
+
+	STATE getPreviousLastState() const;
+	STATE getLastState() const;
+	STATE getCurrentState() const;
+
+	void setJumpSpeed(gkScalar jumpSpeed) { m_jumpSpeed = jumpSpeed; }
+
+	bool isFalling() const { return m_falling; }
 	
 private:
 	void update_state(gkScalar tick);
-	void update_animation(STATE oldState);
+	void update_animation(STATE previousTickState);
 	void notifyState(int state);
 	StateData* getStateData(int state);
 	
@@ -122,13 +128,17 @@ private:
 	gkGameObject* m_obj;
 	gkEntity* m_ent;
 
+	StateData* m_previousLastStateData;
+	StateData* m_lastStateData;
 	StateData* m_currentStateData;
 
 	gkScene* m_scene;
 
-	Listener* m_listener;
-
 	gkVector3 m_forward;
+
+	gkScalar m_jumpSpeed;
+
+	bool m_falling;
 };
 
 

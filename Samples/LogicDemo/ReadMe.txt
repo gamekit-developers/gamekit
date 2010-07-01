@@ -91,9 +91,14 @@ Following are the explanations for the keyboard and mouse control of this demo.
 	If an object is carried by Momo then throw it (with velocity).
 	
 <RIGHT MOUSE BUTTON>
-	When pressed then Momo grabs closest object (cubes only).
-	When released then Momo release the grabbed object.
+	When pressed Momo grabs closest object (cubes only).
+	When released Momo release the grabbed object.
 	
+<SPACE>
+	Momo jumps
+	Keep <SPACE> pressed after jump to glide.
+	
+
 	
 ////////////////////////////////////////////////////////////////
 

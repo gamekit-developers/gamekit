@@ -103,5 +103,15 @@ enum gkTransformSpace
     TRANSFORM_WORLD,
 };
 
+// Generates a distinct type for each distinct constant integral
+// value. Used to call one of several different functions, depending
+// on a compile-time constant. [Alexandrescu (2000b)]
+template<int v>
+struct Int2Type
+{
+	enum { value = v };
+};
+
+
 
 #endif//_gkCommon_h_

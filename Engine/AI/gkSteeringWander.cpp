@@ -27,15 +27,14 @@
 
 #include "OgreRoot.h"
 #include "gkMathUtils.h"
-#include "gkSteeringCapture.h"
+#include "gkSteeringWander.h"
 #include "gkSceneObstacle.h"
 #include "gkLogger.h"
 
 using namespace OpenSteer;
 
-gkSteeringCapture::gkSteeringCapture(gkGameObject* obj, gkScalar maxSpeed, const gkVector3& forward, const gkVector3& up, const gkVector3& side, gkGameObject* target, gkScalar minPredictionTime, gkScalar maxPredictionTime) 
+gkSteeringWander::gkSteeringWander(gkGameObject* obj, gkScalar maxSpeed, const gkVector3& forward, const gkVector3& up, const gkVector3& side, gkScalar minPredictionTime, gkScalar maxPredictionTime) 
 : gkSteeringObject(obj, maxSpeed, forward, up, side),
-m_target(target),
 m_sceneObstable(new gkSceneObstacle(30)),
 m_minPredictionTime(minPredictionTime),
 m_maxPredictionTime(maxPredictionTime)
@@ -43,23 +42,16 @@ m_maxPredictionTime(maxPredictionTime)
 	m_allObstacles.push_back(m_sceneObstable);
 }
 
-gkSteeringCapture::~gkSteeringCapture()
+gkSteeringWander::~gkSteeringWander()
 {
 	delete m_sceneObstable;
 }
 
-bool gkSteeringCapture::inGoal() const
+bool gkSteeringWander::steering(STATE& newState, const float elapsedTime)
 {
-	gkScalar baseDistance = gkVector2(position().x, position().y).distance(gkVector2(getGoalPosition().x, getGoalPosition().y));
+	bool clearPath = clearPathToGoal(predictFuturePosition(m_minPredictionTime));
 
-	return baseDistance < radius() + getGoalRadius();
-}
-
-bool gkSteeringCapture::steering(STATE& newState, const float elapsedTime)
-{
-	bool clearPath = clearPathToGoal(m_target->getPosition(), m_target);
-
-	gkScalar avoidancePredictTime = adjustObstacleAvoidanceLookAhead(clearPath, m_target->getPosition(), m_minPredictionTime, m_maxPredictionTime);
+	gkScalar avoidancePredictTime = adjustObstacleAvoidanceLookAhead(clearPath, predictFuturePosition(m_minPredictionTime), m_minPredictionTime, m_maxPredictionTime);
 
 	gkVector3 steer = steerToAvoidObstacles(avoidancePredictTime, m_allObstacles);
 
@@ -69,21 +61,21 @@ bool gkSteeringCapture::steering(STATE& newState, const float elapsedTime)
     }
     else
     {
-        const Vec3 seek = xxxsteerForSeek(m_target->getPosition());
+        const Vec3 wander = steerForWander(elapsedTime);
 
         if (clearPath)
         {
-			newState = SEEKING;
+			newState = WANDER;
 
-            steer = limitMaxDeviationAngle (seek, 0.707f, forward());
+            steer = limitMaxDeviationAngle (wander, 0.707f, forward());
         }
         else
         {
 			newState = EVADING;
 			
-            const Vec3 evade = steerToEvadeOthers(m_target);
+            const Vec3 evade = steerToEvadeOthers();
 
-			steer = limitMaxDeviationAngle (seek + evade, 0.707f, forward());
+			steer = limitMaxDeviationAngle (wander + evade, 0.707f, forward());
         }
     }
 

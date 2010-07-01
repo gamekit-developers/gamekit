@@ -48,7 +48,8 @@ public:
 		IN_GOAL,
 		SEEKING,
 		FOLLOWING_PATH,
-		STUCK
+		STUCK,
+		WANDER
 	};
 
 	gkSteeringObject(gkGameObject* obj, gkScalar maxSpeed, const gkVector3& forward, const gkVector3& up, const gkVector3& side);
@@ -79,8 +80,7 @@ public:
     GK_INLINE gkScalar curvature () const {return m_curvature;}
 	void measurePathCurvature (const float elapsedTime);
 
-	virtual const gkVector3& getGoalPosition() const = 0;
-	virtual gkScalar getGoalRadius() const = 0;
+	virtual bool inGoal() const { return false; }
 	virtual bool steering(STATE& newState, const float elapsedTime) = 0;
 	virtual void reset();
 	virtual void notifyInGoal();

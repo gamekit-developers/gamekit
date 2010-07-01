@@ -31,6 +31,10 @@
 
 namespace
 {
+	const gkVector3 FORWARD(0, 1, 0);
+	const gkVector3 UP(0, 0, 1);
+	const gkVector3 SIDE(1, 0, 0);
+
 	enum STATES
 	{
 		CARRY,
@@ -43,8 +47,12 @@ namespace
 		WALK_BACK,
 		IDLE_NASTY,
 		IDLE_CAPOEIRA,
+		FALL,
 		FALL_UP,
-		KICK
+		KICK,
+		JUMP,
+		GLIDE,
+		LAND
 	};
 
 	namespace velocity
@@ -115,14 +123,15 @@ m_momoGrab(0),
 m_cameraNode(0),
 m_steeringObject(0),
 m_ifSelectNode(0),
-m_following(false)
+m_following(false),
+m_hasImpactGround(false)
 {
 	m_steeringObject = new gkSteeringPathFollowing(
 		obj, 
 		velocity::RUN_FASTER+1, 
-		gkVector3(0, 1, 0), 
-		gkVector3(0, 0, 1), 
-		gkVector3(1, 0, 0), 
+		FORWARD, 
+		UP, 
+		SIDE, 
 		gkVector3(2, 4, 2), 
 		256,
 		0.00005f
@@ -147,6 +156,23 @@ m_following(false)
 	m_screenTargetNode->getSCREEN_Y()->link(m_scene->m_mouseNode->getABS_Y());
 
 	m_characterNode->setForward(m_steeringObject->forward());
+	m_characterNode->setJumpSpeed(15);
+	m_characterNode->getJUMP()->link(m_scene->m_spcKeyNode->getPRESS());
+
+	{
+		gkFunctionNode<MomoLogic, gkCharacterNode::STATE, FUNCTION_NODE_PARAM_ONE>* updateAINode = m_tree->createNode<gkFunctionNode<MomoLogic, gkCharacterNode::STATE, FUNCTION_NODE_PARAM_ONE> >();
+		updateAINode->getOBJECT()->setValue(this);
+		updateAINode->getFUNCTION_1()->setValue(&MomoLogic::updateAI);
+		m_characterNode->getINPUT_AI_STATE()->link(updateAINode->getRESULT());
+	}
+
+	{
+		gkFunctionNode<MomoLogic, gkScalar>* gravityNode = m_tree->createNode<gkFunctionNode<MomoLogic, gkScalar> >();
+		gravityNode->getOBJECT()->setValue(this);
+		gravityNode->getFUNCTION_0()->setValue(&MomoLogic::getGravity);
+
+		m_characterNode->getGRAVITY()->link(gravityNode->getRESULT());
+	}
 
 	CreateStateMachine();
 
@@ -162,8 +188,12 @@ m_following(false)
 	map[WALK_BACK] = StateData(WALK_BACK, animation::WALK_BACK, true, velocity::WALK_BACK);
 	map[IDLE_NASTY] = StateData(IDLE_NASTY, animation::IDLE_NASTY, true, velocity::NONE, false);
 	map[IDLE_CAPOEIRA] = StateData(IDLE_CAPOEIRA, animation::IDLE_CAPOEIRA, true, velocity::NONE, false);
+	map[FALL] = StateData(FALL, animation::FALL, false, velocity::NONE);
 	map[FALL_UP] = StateData(FALL_UP, animation::FALL_UP, true, velocity::NONE);
 	map[KICK] = StateData(KICK, animation::KICK, true, velocity::NONE, false);
+	map[JUMP] = StateData(JUMP, animation::JUMP, false, std::numeric_limits<gkScalar>::max(), true);
+	map[GLIDE] = StateData(GLIDE, animation::GLIDE, true, velocity::NONE, true);
+	map[LAND] = StateData(LAND, animation::LAND, false, velocity::NONE, false);
 
 	m_characterNode->setMapping(map);
 
@@ -173,9 +203,8 @@ m_following(false)
 	CreateKick();
 	CreateGrab();
 	CreateDustTrail();
+	CreateImpactGroundFX();
 	CreateCamera();
-
-	m_characterNode->setListener(this);
 }
 
 MomoLogic::~MomoLogic()
@@ -226,12 +255,21 @@ void MomoLogic::CreateDustTrail()
 	particle->getORIENTATION()->link(m_characterNode->getROTATION());
 }
 
+void MomoLogic::CreateImpactGroundFX()
+{
+	gkParticleNode* particle = m_tree->createNode<gkParticleNode>();
+	particle->getPARTICLE_SYSTEM_NAME()->setValue(particle::DUST_WALK);
+	particle->getPOSITION()->link(m_characterNode->getPOSITION());
+
+	gkFunctionNode<MomoLogic, bool>* hasImpactGroundNode = m_tree->createNode<gkFunctionNode<MomoLogic, bool> >();
+	hasImpactGroundNode->getOBJECT()->setValue(this);
+	hasImpactGroundNode->getFUNCTION_0()->setValue(&MomoLogic::hasImpactGround);
+
+	particle->getCREATE()->link(hasImpactGroundNode->getRESULT());
+}
+
 void MomoLogic::CreateStateMachine()
 {
-	INT_EQUAL_NODE_TYPE* wantToWalk = INT_EQUAL_NODE(m_characterNode->getAI_STATE(), WALK); 
-
-	BOOL_OR_NODE_TYPE* walkConditionNode = BOOL_OR_NODE(m_scene->m_wKeyNode->getIS_DOWN(), IS_TRUE(wantToWalk));
-
 	// Initial state
 	m_characterNode->getCURRENT_STATE()->setValue(IDLE_NASTY); 
 
@@ -247,11 +285,20 @@ void MomoLogic::CreateStateMachine()
 	m_characterNode->addTransition(KICK, IDLE_NASTY);
 	m_characterNode->addTransition(FALL_UP, IDLE_NASTY);
 	m_characterNode->addTransition(IDLE_CAPOEIRA, IDLE_NASTY, 11000);
+	m_characterNode->addTransition(JUMP, IDLE_NASTY);
+
+	gkFSM::LogicTrigger<MomoLogic>* land2idleTrigger = new gkFSM::LogicTrigger<MomoLogic>(this, &MomoLogic::handleLand2IdleTranstion);
+
+	m_characterNode->addTransition(LAND, IDLE_NASTY, 0, land2idleTrigger);
 
 	// IDLE_CAPOEIRA TRANSITIONS
 	m_characterNode->addTransition(IDLE_NASTY, IDLE_CAPOEIRA, 70000);
 
 	//WALK TRANSITIONS
+
+	INT_EQUAL_NODE_TYPE* wantToWalk = INT_EQUAL_NODE(m_characterNode->getOUTPUT_AI_STATE(), WALK); 
+	BOOL_OR_NODE_TYPE* walkConditionNode = BOOL_OR_NODE(m_scene->m_wKeyNode->getIS_DOWN(), IS_TRUE(wantToWalk));
+
 	walkConditionNode->getIS_TRUE()->link(m_characterNode->addTransition(IDLE_NASTY, WALK));
 	walkConditionNode->getIS_TRUE()->link(m_characterNode->addTransition(IDLE_CAPOEIRA, WALK));
 	walkConditionNode->getIS_TRUE()->link(m_characterNode->addTransition(WALK, WALK));
@@ -286,9 +333,16 @@ void MomoLogic::CreateStateMachine()
 	m_characterNode->getFALLING()->link(m_characterNode->addTransition(WALK_BACK, FALL_UP));
 	m_characterNode->getFALLING()->link(m_characterNode->addTransition(IDLE_NASTY, FALL_UP));
 
-	INT_EQUAL_NODE_TYPE* wantToRun = INT_EQUAL_NODE(m_characterNode->getAI_STATE(), RUN); 
+	BOOL_AND_NODE_TYPE* ifFallingAfterJump = BOOL_AND_NODE(
+		m_characterNode->getFALLING(),
+		m_characterNode->getANIM_HAS_REACHED_END());
+
+	IS_TRUE(ifFallingAfterJump)->link(m_characterNode->addTransition(FALL, FALL_UP));
 
 	// RUN TRANSITIONS
+
+	INT_EQUAL_NODE_TYPE* wantToRun = INT_EQUAL_NODE(m_characterNode->getOUTPUT_AI_STATE(), RUN); 
+
 	m_scene->m_wKeyNode->getIS_DOWN()->link(m_characterNode->addTransition(WALK, RUN, 1500));
 	IS_TRUE(wantToRun)->link(m_characterNode->addTransition(WALK, RUN));
 	IS_TRUE(wantToRun)->link(m_characterNode->addTransition(IDLE_NASTY, RUN));
@@ -305,7 +359,7 @@ void MomoLogic::CreateStateMachine()
 		BOOL_AND_NODE_TYPE* ifNode = BOOL_AND_NODE(m_scene->m_shiftKeyNode->getIS_DOWN(), m_scene->m_wKeyNode->getIS_DOWN());
 
 		BOOL_OR_NODE_TYPE* wantToRunFaster = BOOL_OR_NODE(
-			IS_TRUE(INT_EQUAL_NODE(m_characterNode->getAI_STATE(), RUN_FASTER)),
+			IS_TRUE(INT_EQUAL_NODE(m_characterNode->getOUTPUT_AI_STATE(), RUN_FASTER)),
 			IS_TRUE(ifNode));
 
 		IS_TRUE(wantToRunFaster)->link(m_characterNode->addTransition(RUN, RUN_FASTER));
@@ -338,6 +392,48 @@ void MomoLogic::CreateStateMachine()
 			m_characterNode->addTransition(CARRY, THROW_WITH));
 
 	m_characterNode->getANIM_NOT_HAS_REACHED_END()->link(m_characterNode->addTransition(THROW_WITH, THROW_WITH));
+
+	// JUMP TRANSITIONS
+
+	m_scene->m_spcKeyNode->getPRESS()->link(m_characterNode->addTransition(IDLE_NASTY, JUMP));
+	m_scene->m_spcKeyNode->getPRESS()->link(m_characterNode->addTransition(IDLE_CAPOEIRA, JUMP));
+	m_scene->m_spcKeyNode->getPRESS()->link(m_characterNode->addTransition(WALK, JUMP));
+	m_scene->m_spcKeyNode->getPRESS()->link(m_characterNode->addTransition(WALK_BACK, JUMP));
+	m_scene->m_spcKeyNode->getPRESS()->link(m_characterNode->addTransition(KICK, JUMP));
+	m_scene->m_spcKeyNode->getPRESS()->link(m_characterNode->addTransition(RUN, JUMP));
+	m_scene->m_spcKeyNode->getPRESS()->link(m_characterNode->addTransition(RUN_FASTER, JUMP));
+
+	BOOL_AND_NODE_TYPE* ifJumpContinueNode = BOOL_AND_NODE(
+		m_characterNode->getANIM_NOT_HAS_REACHED_END(), 
+		m_characterNode->getFALLING());
+
+	IS_TRUE(ifJumpContinueNode)->link(m_characterNode->addTransition(JUMP, JUMP));
+
+	// FALL TRANSITION
+
+	IS_TRUE(ifFallingAfterJump)->link(m_characterNode->addTransition(JUMP, FALL));
+
+	BOOL_AND_NODE_TYPE* ifFallContinueNode = BOOL_AND_NODE(
+		m_characterNode->getANIM_NOT_HAS_REACHED_END(), 
+		m_characterNode->getFALLING());
+
+	IS_TRUE(ifFallContinueNode)->link(m_characterNode->addTransition(FALL, FALL));
+
+	// GLIDE TRANSITION
+
+	m_scene->m_spcKeyNode->getIS_DOWN()->link(m_characterNode->addTransition(JUMP, GLIDE, 1000));
+
+	BOOL_AND_NODE_TYPE* ifGlideContinueNode = BOOL_AND_NODE(
+		m_scene->m_spcKeyNode->getIS_DOWN(), 
+		m_characterNode->getFALLING());
+
+	IS_TRUE(ifGlideContinueNode)->link(m_characterNode->addTransition(GLIDE, GLIDE));
+
+	// LAND TRANSITION
+
+	IS_FALSE(ifGlideContinueNode)->link(m_characterNode->addTransition(GLIDE, LAND));
+	m_characterNode->getANIM_NOT_HAS_REACHED_END()->link(m_characterNode->addTransition(LAND, LAND));
+
 }
 
 void MomoLogic::CreateCamera()
@@ -386,7 +482,7 @@ void MomoLogic::CreateCamera()
 	m_cameraNode->getMAX_Z()->setValue(50);
 }
 
-gkCharacterNode::STATE MomoLogic::updateAI(gkCharacterNode* obj, gkScalar tick)
+gkCharacterNode::STATE MomoLogic::updateAI(gkScalar tick)
 {
 	gkCharacterNode::STATE newState = gkCharacterNode::NULL_STATE;
 
@@ -396,6 +492,7 @@ gkCharacterNode::STATE MomoLogic::updateAI(gkCharacterNode* obj, gkScalar tick)
 
 	if(userSelectPos)
 	{
+		m_steeringObject->reset();
 		m_steeringObject->setGoalPosition(m_screenTargetNode->getHIT_POSITION()->getValue());
 		m_following = true;
 	}
@@ -410,14 +507,14 @@ gkCharacterNode::STATE MomoLogic::updateAI(gkCharacterNode* obj, gkScalar tick)
 		{
 			gkScalar speed = m_steeringObject->speed();
 			
-			if(speed < velocity::RUN)
+			if(speed == 0)
+				newState = IDLE_CAPOEIRA;
+			else if(speed < velocity::RUN)
 				newState = WALK;
 			else if(speed < velocity::RUN_FASTER)
 				newState = RUN;
 			else
 				newState = RUN_FASTER;
-			
-			//gkLogMessage(m_steeringObject->getDebugStringState());
 		}
 		else
 		{
@@ -426,4 +523,33 @@ gkCharacterNode::STATE MomoLogic::updateAI(gkCharacterNode* obj, gkScalar tick)
 	}
 	
 	return newState;
+}
+
+gkScalar MomoLogic::getGravity()
+{
+	return m_characterNode->getCurrentState() == GLIDE ? 2.5f : 9.81f;
+}
+
+bool MomoLogic::hasImpactGround()
+{
+	if(!m_hasImpactGround) // workaround to fix bullet's bug
+	{
+		if(m_characterNode->getLastState() == FALL_UP && !m_characterNode->isFalling())
+		{
+			m_hasImpactGround = true;
+			
+			return true;
+		}
+	}
+	else if(m_characterNode->getLastState() != FALL_UP)
+	{
+		m_hasImpactGround = false;
+	}
+	
+	return false;
+}
+
+void MomoLogic::handleLand2IdleTranstion(int fromState, int toState)
+{
+	GK_ASSERT(fromState == LAND && toState == IDLE_NASTY);
 }
