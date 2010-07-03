@@ -49,12 +49,9 @@ gkCharacterNode::gkCharacterNode(gkLogicTree *parent, size_t id)
 : gkStateMachineNode(parent, id),
 m_obj(0),
 m_ent(0),
-m_previousLastStateData(0),
-m_lastStateData(0),
 m_currentStateData(0),
 m_scene(0),
 m_forward(gkVector3::ZERO),
-m_jumpSpeed(10),
 m_falling(false)
 {
 	ADD_ISOCK(ANIM_BLEND_FRAMES, 10);
@@ -63,6 +60,7 @@ m_falling(false)
 	ADD_ISOCK(INPUT_AI_STATE, NULL_STATE);
 	ADD_ISOCK(JUMP, false);
 	ADD_ISOCK(GRAVITY, 9.81f);
+	ADD_ISOCK(JUMP_SPEED, 10);
 	
 	ADD_OSOCK(ANIM_HAS_REACHED_END, false);
 	ADD_OSOCK(ANIM_NOT_HAS_REACHED_END, true);
@@ -111,31 +109,16 @@ void gkCharacterNode::update(gkScalar tick)
 	update_animation(previousTickState);
 }
 
-gkCharacterNode::STATE gkCharacterNode::getPreviousLastState() const
+gkCharacterNode::STATE gkCharacterNode::getState(int previousIdx) const
 {
-	if(m_previousLastStateData)
+	const StateData* state = m_currentStateData;
+	
+	while(previousIdx-- && state)
+		state = state->m_previous;
+	
+	if(state)
 	{
-		return m_previousLastStateData->m_state;
-	}
-
-	return NULL_STATE;
-}
-
-gkCharacterNode::STATE gkCharacterNode::getLastState() const
-{
-	if(m_lastStateData)
-	{
-		return m_lastStateData->m_state;
-	}
-
-	return NULL_STATE;
-}
-
-gkCharacterNode::STATE gkCharacterNode::getCurrentState() const
-{
-	if(m_currentStateData)
-	{
-		return m_currentStateData->m_state;
+		return state->m_state;
 	}
 
 	return NULL_STATE;
@@ -158,27 +141,28 @@ void gkCharacterNode::update_state(gkScalar tick)
 
 		if(GET_SOCKET_VALUE(JUMP))
 		{
+			gkScalar jumpSpeed = GET_SOCKET_VALUE(JUMP_SPEED);
+
 			const gkGameObjectProperties &props = m_obj->getProperties();
 			const gkPhysicsProperties &phy = props.m_physics;
 
 			if(m_obj->getAttachedCharacter())
 			{
-				m_obj->getAttachedCharacter()->getCharacterController()->setJumpSpeed(phy.m_mass * m_jumpSpeed);
+				m_obj->getAttachedCharacter()->getCharacterController()->setJumpSpeed(phy.m_mass * jumpSpeed);
 				m_obj->getAttachedCharacter()->getCharacterController()->jump();
 			}
 			else
 			{
-				m_obj->applyForce(gkVector3::UNIT_Z * phy.m_mass * m_jumpSpeed);
+				m_obj->applyForce(gkVector3::UNIT_Z * phy.m_mass * jumpSpeed);
 			}
 		}
-		if(m_currentStateData->m_velocity == std::numeric_limits<gkScalar>::max() && m_lastStateData)
-		{
-			m_obj->setLinearVelocity(m_forward * m_lastStateData->m_velocity, TRANSFORM_LOCAL);
-		}
-		else
-		{
-			m_obj->setLinearVelocity(m_forward * m_currentStateData->m_velocity, TRANSFORM_LOCAL);
-		}
+
+		StateData* state = m_currentStateData;
+
+		while(state->m_usePreviousVelocity && state->m_previous)
+			state = state->m_previous;
+		
+		m_obj->setLinearVelocity(m_forward * state->m_velocity, TRANSFORM_LOCAL);
 	}
 
 	SET_SOCKET_VALUE(POSITION, m_obj->getPosition());
@@ -228,7 +212,7 @@ void gkCharacterNode::update_animation(STATE previousTickState)
 		SET_SOCKET_VALUE(ANIM_HAS_REACHED_END, false);
 		SET_SOCKET_VALUE(ANIM_NOT_HAS_REACHED_END, true);
 		SET_SOCKET_VALUE(ANIM_TIME_POSITION, 0);
-		//gkLogMessage(m_currentStateData->m_animName);
+		//gkLogMessage(m_currentStateData->m_state << ":" << m_currentStateData->m_animName);
 	}
 
 	if(!GET_SOCKET_VALUE(ANIM_HAS_REACHED_END))
@@ -257,11 +241,13 @@ void gkCharacterNode::update_animation(STATE previousTickState)
 
 void gkCharacterNode::notifyState(int state)
 {
-	m_previousLastStateData = m_lastStateData;
-
-	m_lastStateData = m_currentStateData;
+	StateData* previous = m_currentStateData;
 
 	m_currentStateData = getStateData(state);
+
+	m_currentStateData->m_previous = previous;
+
+	GK_ASSERT(m_currentStateData->m_previous != m_currentStateData);
 }
 
 gkCharacterNode::StateData* gkCharacterNode::getStateData(int state)

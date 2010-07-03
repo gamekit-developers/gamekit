@@ -38,6 +38,7 @@ namespace
 
 	namespace velocity
 	{
+		gkScalar NONE = 0;
 		gkScalar WALK = 0.7f;
 		gkScalar RUN = 2.5f;
 	}
@@ -189,11 +190,11 @@ m_steeringWander(0)
 
 	gkCharacterNode::MAP map;
 	typedef gkCharacterNode::StateData StateData;
-	map[animation::IDLE] = StateData(animation::IDLE, animation::IDLE_STR, true, 0);
-	map[animation::WALK] = StateData(animation::WALK, animation::WALK_STR, true, velocity::WALK);
-	map[animation::RUN] = StateData(animation::RUN, animation::RUN_STR, true, velocity::RUN);
-	map[animation::DEATH] = StateData(animation::DEATH, animation::DEATH_STR, false, 0);
-	map[animation::STOP] = StateData(animation::STOP, animation::STOP_STR, false, 0);
+	map[animation::IDLE] = StateData(animation::IDLE, animation::IDLE_STR, true, false, velocity::NONE, true);
+	map[animation::WALK] = StateData(animation::WALK, animation::WALK_STR, true, false, velocity::WALK, true);
+	map[animation::RUN] = StateData(animation::RUN, animation::RUN_STR, true, false, velocity::RUN, true);
+	map[animation::DEATH] = StateData(animation::DEATH, animation::DEATH_STR, false, false, velocity::NONE, true);
+	map[animation::STOP] = StateData(animation::STOP, animation::STOP_STR, false, false, velocity::NONE, true);
 
 	m_characterNode->setMapping(map);
 
@@ -219,6 +220,9 @@ void RatLogic::defineLogicStates()
 		new gkFSM::LogicEvent<RatLogic>(this, &RatLogic::AmIAtDiffLevelOfMomo));
 
 	// CAPTURE TRANSITION
+
+	m_logicalState.addStartTrigger(logic::CAPTURE, new gkFSM::LogicTrigger<RatLogic>(this, &RatLogic::StartCapture));
+	m_logicalState.addEndTrigger(logic::CAPTURE, new gkFSM::LogicTrigger<RatLogic>(this, &RatLogic::EndCapture));
 
 	m_logicalState.addTransition(logic::WANDER, logic::CAPTURE, 10000)->when(
 		new gkFSM::LogicEvent<RatLogic>(this, &RatLogic::AmINotInGoal));
@@ -251,7 +255,7 @@ gkCharacterNode::STATE RatLogic::updateAI(gkScalar tick)
 {
 	gkCharacterNode::STATE newState = gkCharacterNode::NULL_STATE;
 
-	if(m_characterNode->getCurrentState() != animation::DEATH)
+	if(m_characterNode->getState() != animation::DEATH)
 	{
 		int oldLogicalState = m_logicalState.getState();
 		
@@ -341,4 +345,15 @@ bool RatLogic::isLogicStuck()
 {
 	return logic::STUCK == m_logicalState.getState();
 }
+
+void RatLogic::StartCapture(int from, int to)
+{
+	//gkLogMessage(m_obj->getName() << " -> Start Capture");
+}
+
+void RatLogic::EndCapture(int from, int to)
+{
+	//gkLogMessage(m_obj->getName() << " -> End Capture");
+}
+
 

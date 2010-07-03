@@ -54,6 +54,8 @@ private:
 	void CreateStateMachine();
 	void CreateCamera();
 	void handleLand2IdleTranstion(int fromState, int toState);
+	void StartLand(int from, int to);
+	void EndLand(int from, int to);
 
 public:
 

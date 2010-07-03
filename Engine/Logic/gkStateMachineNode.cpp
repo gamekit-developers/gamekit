@@ -30,6 +30,7 @@
 
 gkStateMachineNode::gkStateMachineNode(gkLogicTree *parent, size_t id) 
 : gkLogicNode(parent, id),
+m_started(false),
 m_currentState(-1)
 {
 	ADD_ISOCK(UPDATE, true);
@@ -71,6 +72,13 @@ void gkStateMachineNode::update(gkScalar tick)
 
 	if (pos != GK_NPOS)
 	{
+		if(!m_started)
+		{
+			m_started = true;
+			
+			execute_start_trigger(-1, m_currentState);
+		}
+
 		const Data* pData = 0;
 
 		REACTION_ITERATOR it(m_transitions.at(pos));
@@ -108,7 +116,11 @@ void gkStateMachineNode::update(gkScalar tick)
 			if(pData->m_trigger.get())
 				pData->m_trigger->execute(m_currentState, pData->m_state);
 
+			execute_end_trigger(m_currentState, pData->m_state);
+
 			setState(pData->m_state);
+
+			execute_start_trigger(m_currentState, pData->m_state);
 		}
 	}
 }
@@ -168,4 +180,39 @@ void gkStateMachineNode::setState(int state)
 	m_timer.reset();
 
 	notifyState(state);
+}
+
+void gkStateMachineNode::addStartTrigger(int state, ITrigger* trigger)
+{
+	size_t pos = m_startTriggers.find(state);
+	
+	GK_ASSERT(pos == GK_NPOS);
+
+	m_startTriggers.insert(state, gkPtrRef<ITrigger>(trigger));
+}
+
+void gkStateMachineNode::addEndTrigger(int state, ITrigger* trigger)
+{
+	size_t pos = m_endTriggers.find(state);
+	
+	GK_ASSERT(pos == GK_NPOS);
+
+	m_endTriggers.insert(state, gkPtrRef<ITrigger>(trigger));
+}
+
+
+void gkStateMachineNode::execute_start_trigger(int from, int to)
+{
+	size_t pos = m_startTriggers.find(to);
+	
+	if(pos != GK_NPOS)
+		m_startTriggers.at(pos)->execute(from, to);
+}
+
+void gkStateMachineNode::execute_end_trigger(int from, int to)
+{
+	size_t pos = m_endTriggers.find(from);
+	
+	if(pos != GK_NPOS)
+		m_endTriggers.at(pos)->execute(from, to);
 }

@@ -60,6 +60,10 @@ public:
 	bool evaluate(gkScalar tick);
 	void update(gkScalar tick);
 
+	void addStartTrigger(int state, ITrigger* trigger);
+
+	void addEndTrigger(int state, ITrigger* trigger);
+
 	gkLogicSocket<bool>* addTransition(int from, int to, unsigned long ms = 0, ITrigger* trigger = 0);
 
 	gkIfNode<int, CMP_EQUALS>* isCurrentStatus(int status);
@@ -71,10 +75,19 @@ protected:
 
 private:
 
+	typedef utIntHashKey STATE;
+	typedef utHashTable<STATE, gkPtrRef<ITrigger> > TRIGGERS;
+
+	void execute_start_trigger(int from, int to);
+	void execute_end_trigger(int from, int to);
+
+
+private:
+
+	bool m_started;
 	int m_currentState;
 
 	typedef utPointerHashKey EVENT;
-	typedef utIntHashKey STATE;
 
 	struct Data
 	{
@@ -106,6 +119,9 @@ private:
 	typedef std::map<int, gkIfNode<int, CMP_EQUALS>* > MAP;
 	MAP m_statuses;
 
+	TRIGGERS m_startTriggers;
+
+	TRIGGERS m_endTriggers;
 };
 
 

@@ -97,6 +97,7 @@ Following are the explanations for the keyboard and mouse control of this demo.
 <SPACE>
 	Momo jumps
 	Keep <SPACE> pressed after jump to glide.
+	Keep <SPACE> + <W> to fly.
 	
 
 	

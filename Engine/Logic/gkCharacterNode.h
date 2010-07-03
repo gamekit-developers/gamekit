@@ -51,6 +51,7 @@ public:
 		ROTATION_VALUE,
 		INPUT_AI_STATE,
 		JUMP,
+		JUMP_SPEED,
 		GRAVITY,
 
 		//Outputs
@@ -69,6 +70,7 @@ public:
 	DECLARE_SOCKET_TYPE(ROTATION_VALUE, gkQuaternion);
 	DECLARE_SOCKET_TYPE(INPUT_AI_STATE, STATE);
 	DECLARE_SOCKET_TYPE(JUMP, bool);
+	DECLARE_SOCKET_TYPE(JUMP_SPEED, gkScalar);
 	DECLARE_SOCKET_TYPE(GRAVITY, gkScalar);
 
 	DECLARE_SOCKET_TYPE(ANIM_HAS_REACHED_END, bool);
@@ -92,12 +94,14 @@ public:
 		STATE m_state;
 		bool m_loop;
 		gkString m_animName;
+		bool m_usePreviousVelocity;
 		gkScalar m_velocity;
 		bool m_allow_rotation;
+		StateData* m_previous;
 
-		StateData() : m_state(-1), m_loop(false), m_velocity(0) {}
-		StateData(STATE state, const gkString& animName, bool loop, gkScalar velocity, bool allow_rotation = true)
-			: m_state(state), m_animName(animName), m_loop(loop), m_velocity(velocity), m_allow_rotation(allow_rotation) {}
+		StateData() : m_state(-1), m_loop(false), m_usePreviousVelocity(false), m_velocity(0), m_allow_rotation(false), m_previous(0) {}
+		StateData(STATE state, const gkString& animName, bool loop, bool usePreviousVelocity, gkScalar velocity, bool allow_rotation)
+			: m_state(state), m_animName(animName), m_loop(loop), m_usePreviousVelocity(usePreviousVelocity), m_velocity(velocity), m_allow_rotation(allow_rotation), m_previous(0) {}
 	};
 
 	typedef std::map<STATE, StateData> MAP;
@@ -107,13 +111,9 @@ public:
 
 	GK_INLINE void setForward(const gkVector3& forward) { m_forward = forward; }
 
-	STATE getPreviousLastState() const;
-	STATE getLastState() const;
-	STATE getCurrentState() const;
+	STATE getState(int previousIdx = 0) const;
 
-	void setJumpSpeed(gkScalar jumpSpeed) { m_jumpSpeed = jumpSpeed; }
-
-	bool isFalling() const { return m_falling; }
+	GK_INLINE bool isFalling() const { return m_falling; }
 	
 private:
 	void update_state(gkScalar tick);
@@ -128,15 +128,11 @@ private:
 	gkGameObject* m_obj;
 	gkEntity* m_ent;
 
-	StateData* m_previousLastStateData;
-	StateData* m_lastStateData;
 	StateData* m_currentStateData;
 
 	gkScene* m_scene;
 
 	gkVector3 m_forward;
-
-	gkScalar m_jumpSpeed;
 
 	bool m_falling;
 };

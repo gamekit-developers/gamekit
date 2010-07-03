@@ -52,6 +52,8 @@ private:
 
 	void defineLogicStates();
 	gkSteeringObject* getSteeringBehaviour() const;
+	void StartCapture(int from, int to);
+	void EndCapture(int from, int to);
 
 private:
 	gkGameObject* m_obj;

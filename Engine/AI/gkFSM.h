@@ -112,6 +112,10 @@ public:
 		PARAM m_param;
 	};
 
+	void addStartTrigger(int state, ITrigger* trigger);
+
+	void addEndTrigger(int state, ITrigger* trigger);
+
 	Event* addTransition(int from, int to, unsigned long ms = 0, ITrigger* trigger = 0);
 
 	int getState() const { return m_currentState; }
@@ -122,10 +126,19 @@ public:
 
 private:
 
+	typedef utIntHashKey STATE;
+	typedef utHashTable<STATE, gkPtrRef<ITrigger> > TRIGGERS;
+
+	void execute_start_trigger(int from, int to);
+	void execute_end_trigger(int from, int to);
+
+private:
+
+	bool m_started;
 	int m_currentState;
 
 	typedef utPointerHashKey EVENT;
-	typedef utIntHashKey STATE;
+	
 
 	struct Data
 	{
@@ -153,6 +166,10 @@ private:
 	typedef utArray<Event*> EVENTS;
 
 	EVENTS m_events;
+
+	TRIGGERS m_startTriggers;
+
+	TRIGGERS m_endTriggers;
 };
 
 

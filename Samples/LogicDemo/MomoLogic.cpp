@@ -52,6 +52,7 @@ namespace
 		KICK,
 		JUMP,
 		GLIDE,
+		FLY,
 		LAND
 	};
 
@@ -61,6 +62,7 @@ namespace
 		gkScalar WALK_BACK = -1;
 		gkScalar RUN = 3.5f;
 		gkScalar RUN_FASTER = 5;
+		gkScalar FLY = 6;
 		gkScalar NONE = 0;
 	}
 
@@ -156,7 +158,7 @@ m_hasImpactGround(false)
 	m_screenTargetNode->getSCREEN_Y()->link(m_scene->m_mouseNode->getABS_Y());
 
 	m_characterNode->setForward(m_steeringObject->forward());
-	m_characterNode->setJumpSpeed(15);
+	m_characterNode->getJUMP_SPEED()->setValue(15);
 	m_characterNode->getJUMP()->link(m_scene->m_spcKeyNode->getPRESS());
 
 	{
@@ -178,24 +180,29 @@ m_hasImpactGround(false)
 
 	gkCharacterNode::MAP map;
 	typedef gkCharacterNode::StateData StateData;
-	map[CARRY] = StateData(CARRY, animation::CARRY, true, velocity::NONE);
-	map[CATCH] = StateData(CATCH, animation::CATCH, true, velocity::NONE);
-	map[CATCH_ENDED] = StateData(CATCH, animation::CATCH, true, velocity::NONE);
-	map[THROW_WITH] = StateData(THROW_WITH, animation::THROW_WITH, true, velocity::NONE);
-	map[WALK] = StateData(WALK, animation::WALK, true, velocity::WALK);
-	map[RUN] = StateData(RUN, animation::RUN, true, velocity::RUN);
-	map[RUN_FASTER] = StateData(RUN_FASTER, animation::RUN_FASTER, true, velocity::RUN_FASTER);
-	map[WALK_BACK] = StateData(WALK_BACK, animation::WALK_BACK, true, velocity::WALK_BACK);
-	map[IDLE_NASTY] = StateData(IDLE_NASTY, animation::IDLE_NASTY, true, velocity::NONE, false);
-	map[IDLE_CAPOEIRA] = StateData(IDLE_CAPOEIRA, animation::IDLE_CAPOEIRA, true, velocity::NONE, false);
-	map[FALL] = StateData(FALL, animation::FALL, false, velocity::NONE);
-	map[FALL_UP] = StateData(FALL_UP, animation::FALL_UP, true, velocity::NONE);
-	map[KICK] = StateData(KICK, animation::KICK, true, velocity::NONE, false);
-	map[JUMP] = StateData(JUMP, animation::JUMP, false, std::numeric_limits<gkScalar>::max(), true);
-	map[GLIDE] = StateData(GLIDE, animation::GLIDE, true, velocity::NONE, true);
-	map[LAND] = StateData(LAND, animation::LAND, false, velocity::NONE, false);
+	map[CARRY] = StateData(CARRY, animation::CARRY, true, false, velocity::NONE, true);
+	map[CATCH] = StateData(CATCH, animation::CATCH, true, false, velocity::NONE, true);
+	map[CATCH_ENDED] = StateData(CATCH, animation::CATCH, true, false, velocity::NONE, true);
+	map[THROW_WITH] = StateData(THROW_WITH, animation::THROW_WITH, true, false, velocity::NONE, true);
+	map[WALK] = StateData(WALK, animation::WALK, true, false, velocity::WALK, true);
+	map[RUN] = StateData(RUN, animation::RUN, true, false, velocity::RUN, true);
+	map[RUN_FASTER] = StateData(RUN_FASTER, animation::RUN_FASTER, true, false, velocity::RUN_FASTER, true);
+	map[WALK_BACK] = StateData(WALK_BACK, animation::WALK_BACK, true, false, velocity::WALK_BACK, true);
+	map[IDLE_NASTY] = StateData(IDLE_NASTY, animation::IDLE_NASTY, true, false, velocity::NONE, false);
+	map[IDLE_CAPOEIRA] = StateData(IDLE_CAPOEIRA, animation::IDLE_CAPOEIRA, true, false, velocity::NONE, false);
+	map[FALL] = StateData(FALL, animation::FALL, false, true, velocity::NONE, true);
+	map[FALL_UP] = StateData(FALL_UP, animation::FALL_UP, true, true, velocity::NONE, true);
+	map[KICK] = StateData(KICK, animation::KICK, true, false, velocity::NONE, false);
+	map[JUMP] = StateData(JUMP, animation::JUMP, false, true, velocity::NONE, true);
+	map[GLIDE] = StateData(GLIDE, animation::GLIDE, true, true, velocity::NONE, true);
+	map[FLY] = StateData(FLY, animation::GLIDE, true, false, velocity::FLY, true);
+	map[LAND] = StateData(LAND, animation::LAND, false, false, velocity::NONE, false);
 
 	m_characterNode->setMapping(map);
+
+	m_characterNode->addStartTrigger(LAND, new gkFSM::LogicTrigger<MomoLogic>(this, &MomoLogic::StartLand));
+	m_characterNode->addEndTrigger(LAND, new gkFSM::LogicTrigger<MomoLogic>(this, &MomoLogic::EndLand));
+
 
 	m_characterNode->getENABLE_ROTATION()->setValue(true);
 	m_characterNode->getROTATION_VALUE()->link(m_cameraNode->getCURRENT_ROLL());
@@ -424,14 +431,34 @@ void MomoLogic::CreateStateMachine()
 	m_scene->m_spcKeyNode->getIS_DOWN()->link(m_characterNode->addTransition(JUMP, GLIDE, 1000));
 
 	BOOL_AND_NODE_TYPE* ifGlideContinueNode = BOOL_AND_NODE(
-		m_scene->m_spcKeyNode->getIS_DOWN(), 
+		BOOL_AND_NODE(
+			m_scene->m_wKeyNode->getNOT_IS_DOWN(),
+			m_scene->m_spcKeyNode->getIS_DOWN())->getIS_TRUE(), 
 		m_characterNode->getFALLING());
 
 	IS_TRUE(ifGlideContinueNode)->link(m_characterNode->addTransition(GLIDE, GLIDE));
+	IS_TRUE(ifGlideContinueNode)->link(m_characterNode->addTransition(FLY, GLIDE));
+
+	// FLY TRANSITION
+
+	m_scene->m_wKeyNode->getIS_DOWN()->link(m_characterNode->addTransition(GLIDE, FLY));
+
+	BOOL_AND_NODE_TYPE* ifFlyNode = BOOL_AND_NODE(
+		BOOL_AND_NODE(
+			m_scene->m_spcKeyNode->getIS_DOWN(), 
+			m_characterNode->getFALLING())->getIS_TRUE(), 
+		m_scene->m_wKeyNode->getIS_DOWN());
+
+	
+	IS_TRUE(ifFlyNode)->link(m_characterNode->addTransition(FLY, FLY));
+			
 
 	// LAND TRANSITION
 
 	IS_FALSE(ifGlideContinueNode)->link(m_characterNode->addTransition(GLIDE, LAND));
+	
+	IS_TRUE(BOOL_AND_NODE(IS_FALSE(ifGlideContinueNode), IS_FALSE(ifFlyNode)))->link(m_characterNode->addTransition(FLY, LAND));
+
 	m_characterNode->getANIM_NOT_HAS_REACHED_END()->link(m_characterNode->addTransition(LAND, LAND));
 
 }
@@ -527,21 +554,24 @@ gkCharacterNode::STATE MomoLogic::updateAI(gkScalar tick)
 
 gkScalar MomoLogic::getGravity()
 {
-	return m_characterNode->getCurrentState() == GLIDE ? 2.5f : 9.81f;
+	if(m_characterNode->getState() == GLIDE || m_characterNode->getState() == FLY)
+		return 2.5f;
+	else
+		return 9.81f;
 }
 
 bool MomoLogic::hasImpactGround()
 {
-	if(!m_hasImpactGround) // workaround to fix bullet's bug
+	if(!m_hasImpactGround) 
 	{
-		if(m_characterNode->getLastState() == FALL_UP && !m_characterNode->isFalling())
+		if(m_characterNode->getState(1) == FALL_UP && !m_characterNode->isFalling())
 		{
 			m_hasImpactGround = true;
 			
 			return true;
 		}
 	}
-	else if(m_characterNode->getLastState() != FALL_UP)
+	else if(m_characterNode->getState(1) != FALL_UP)
 	{
 		m_hasImpactGround = false;
 	}
@@ -552,4 +582,14 @@ bool MomoLogic::hasImpactGround()
 void MomoLogic::handleLand2IdleTranstion(int fromState, int toState)
 {
 	GK_ASSERT(fromState == LAND && toState == IDLE_NASTY);
+}
+
+void MomoLogic::StartLand(int from, int to)
+{
+//	gkLogMessage("Momo Start Land");
+}
+
+void MomoLogic::EndLand(int from, int to)
+{
+//	gkLogMessage("Momo End Land");
 }
