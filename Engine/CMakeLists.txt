@@ -97,6 +97,7 @@ source_group(Core\\Source FILES ${Core_SOURCE})
 
 set(AI_SOURCE
     # ----- Source -----
+    AI/gkRecast.cpp
     AI/gkNavMeshData.cpp
     AI/gkNavPath.cpp
     AI/gkSteering.cpp
@@ -110,6 +111,8 @@ set(AI_SOURCE
 
 set(AI_HEADER
     # ----- Headers -----
+    AI/gkMeshData.h
+    AI/gkRecast.h
     AI/gkNavMeshData.h
     AI/gkNavPath.h
     AI/gkSteering.h
@@ -139,6 +142,7 @@ set(Thread_SOURCE
 
 set(Thread_HEADER
     # ----- Headers -----
+    Thread/gkAsyncResult.h
     Thread/gkActiveObject.h
     Thread/gkCriticalSection.h
     Thread/gkNonCopyable.h

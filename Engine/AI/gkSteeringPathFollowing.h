@@ -31,6 +31,7 @@
 #include "gkNavPath.h"
 
 class gkSceneObstacle;
+class dtNavMesh;
 
 class gkSteeringPathFollowing : public gkSteeringObject
 {
@@ -58,12 +59,16 @@ public:
 	GK_INLINE gkScalar getGoalRadius() const { return m_goalRadius; }
 	bool steering(STATE& newState, const float elapsedTime);
 	void reset();
+	void setNavMesh(PDT_NAV_MESH navMesh) { m_navMesh = navMesh; }
+	PDT_NAV_MESH getNavMesh() const { return m_navMesh; }
 
 private:
 
 	bool createPath();
 	
 private:
+
+	PDT_NAV_MESH m_navMesh;
 
 	gkVector3 m_goalPosition;
 

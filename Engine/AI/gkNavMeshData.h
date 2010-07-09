@@ -32,72 +32,18 @@
 
 #include "gkCommon.h"
 #include "gkSerialize.h"
+#include "gkMeshData.h"
 #include "Thread/gkCriticalSection.h"
-#include "Thread/gkActiveObject.h"
 #include "Thread/gkPtrRef.h"
 
-#include "OgreSingleton.h"
-
-#include <iostream>
-#include <fstream>
-
 class gkGameObject;
-class gkPhysicsDebug;
 class gkScene;
-class dtNavMesh;
-struct rcConfig;
-
-struct gkNavMesh : public gkReferences
-{
-	dtNavMesh* data;
-
-	gkNavMesh(dtNavMesh* p) : data(p) {}
-	~gkNavMesh();
-};
-
-typedef gkPtrRef<gkNavMesh> PNAVMESH;
-
-class gkNavMeshData;
-class gkNavCreator : gkActiveObject 
-{
-public:
-
-	gkNavCreator(gkNavMeshData* data);
-	~gkNavCreator();
-
-	void startJob();
-
-	void set(PNAVMESH navMesh);
-	PNAVMESH get() const;
-
-private:
-
-	class Call : public gkCall
-	{
-	public:
-
-		Call(gkNavCreator& creator) : m_creator(creator) {}
-		~Call(){}
-		void run();
-
-	private:
-		gkNavCreator& m_creator;
-	};
-
-	mutable gkCriticalSection m_cs;
-
-	gkNavMeshData* m_data;
-
-	PNAVMESH m_navMesh;
-
-	rcConfig* m_cfg;
-
-	friend class Call;
-};
-
 class btCollisionObject;
+class gkNavMeshData;
 
-class gkNavMeshData : public btTriangleCallback, public Ogre::Singleton<gkNavMeshData>
+typedef gkPtrRef<gkNavMeshData> PNAVMESHDATA;
+
+class gkNavMeshData : public btTriangleCallback, public gkReferences
 {
 public:
 	gkNavMeshData(gkScene* scene);
@@ -105,46 +51,23 @@ public:
 	~gkNavMeshData();
 
 	void unload(gkGameObject* pObj);
-	void updateOrLoad(gkGameObject* pObj, bool createNavMesh = true);
+	void updateOrLoad(gkGameObject* pObj);
 	void unloadAll();
 	void loadAll();
 
-	PNAVMESH getNavigationMesh() const { return m_navCreator->get(); }
-
-	struct Data
-	{
-		typedef std::vector<gkVector3> VERTS;
-		VERTS verts;
-
-		typedef std::vector<int> TRIANGLES;
-		TRIANGLES tris;
-
-		typedef std::vector<gkVector3> NORMALS;
-
-		NORMALS normals;
-
-		inline const float* getVerts() const { return &verts.at(0).x; }
-		inline const float* getNormals() const { return &normals.at(0).x; }
-		inline const int* getTris() const { return &tris.at(0); }
-		inline int getVertCount() const { return verts.size(); }
-		inline int getTriCount() const { return tris.size()/3; }
-	};
-
-	Data* cloneData()
+	gkMeshData* cloneData() const
 	{
 		gkCriticalSection::Lock guard(m_cs);
 
-		Data* p = new Data;
+		gkMeshData* p = new gkMeshData;
 
-		*p = m_data;
+		p->copy(m_data);
 
 		return p;
 	}
 
-	void createNavigationMesh() { m_navCreator->startJob(); }
-
-    static gkNavMeshData& getSingleton(void);
-    static gkNavMeshData* getSingletonPtr(void);
+	GK_INLINE bool hasChanged() const { return m_hasChanged; } 
+	GK_INLINE void resetHasChanged() { m_hasChanged = false; }
 
 private:
 
@@ -158,21 +81,17 @@ private:
 
 private:
 	
-	gkNavCreator* m_navCreator;
-
-	gkCriticalSection m_cs;
+	mutable gkCriticalSection m_cs;
 
 	gkGameObject* m_object;
 
-	Data m_data;
-
-	//gkPhysicsDebug* m_debug;
+	gkMeshData m_data;
 
 	btTransform m;
 
 	gkScene* m_scene;
 
-	//std::ofstream os;
+	bool m_hasChanged;
 };
 
 

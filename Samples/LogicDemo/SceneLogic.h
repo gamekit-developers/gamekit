@@ -32,13 +32,17 @@
 
 class MomoLogic;
 class RatLogic;
-
+class dtNavMesh;
 
 class SceneLogic
 {
 public:
 	SceneLogic(gkScene* pScene);
 	~SceneLogic();
+
+	void refreshNavigationMesh();
+	void tryToUpdateNavMeshForSteeringObjs();
+	void tick(gkScalar rate);
 
 private:
 
@@ -78,7 +82,11 @@ public:
 
 	gkGameObject* m_camera;
 
-	gkNavMeshData* m_navMeshData;
+	PNAVMESHDATA m_navMeshData;
+
+	gkActiveObject m_activeObject;
+
+	gkScene::ASYNC_DT_RESULT m_navMesh;
 
 private:
 

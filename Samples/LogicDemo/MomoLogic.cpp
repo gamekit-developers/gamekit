@@ -29,6 +29,8 @@
 #include "SceneLogic.h"
 #include "Common.h"
 
+using namespace AsyncCalls;
+
 namespace
 {
 	const gkVector3 FORWARD(0, 1, 0);
@@ -522,13 +524,14 @@ gkCharacterNode::STATE MomoLogic::updateAI(gkScalar tick)
 		m_steeringObject->reset();
 		m_steeringObject->setGoalPosition(m_screenTargetNode->getHIT_POSITION()->getValue());
 		m_following = true;
+		m_scene->refreshNavigationMesh();
 	}
 	else if(userMove)
 	{
 		m_following = false;
 	}
 
-	if(m_following)
+	if(m_following && m_steeringObject->getNavMesh().get())
 	{		
 		if(m_steeringObject->update(tick))
 		{

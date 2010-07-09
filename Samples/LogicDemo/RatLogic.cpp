@@ -213,6 +213,10 @@ void RatLogic::defineLogicStates()
 	m_logicalState.setState(logic::CAPTURE);
 
 	// FOLLOWING_PATH TRANSITION
+
+	m_logicalState.addStartTrigger(logic::FOLLOWING_PATH, new gkFSM::LogicTrigger<RatLogic>(this, &RatLogic::StartFollowing));
+	m_logicalState.addEndTrigger(logic::FOLLOWING_PATH, new gkFSM::LogicTrigger<RatLogic>(this, &RatLogic::EndFollowing));
+
 	m_logicalState.addTransition(logic::CAPTURE, logic::FOLLOWING_PATH, 5000)->when(
 		new gkFSM::LogicEvent<RatLogic>(this, &RatLogic::AmIAtDiffLevelOfMomo));
 
@@ -220,9 +224,6 @@ void RatLogic::defineLogicStates()
 		new gkFSM::LogicEvent<RatLogic>(this, &RatLogic::AmIAtDiffLevelOfMomo));
 
 	// CAPTURE TRANSITION
-
-	m_logicalState.addStartTrigger(logic::CAPTURE, new gkFSM::LogicTrigger<RatLogic>(this, &RatLogic::StartCapture));
-	m_logicalState.addEndTrigger(logic::CAPTURE, new gkFSM::LogicTrigger<RatLogic>(this, &RatLogic::EndCapture));
 
 	m_logicalState.addTransition(logic::WANDER, logic::CAPTURE, 10000)->when(
 		new gkFSM::LogicEvent<RatLogic>(this, &RatLogic::AmINotInGoal));
@@ -346,14 +347,13 @@ bool RatLogic::isLogicStuck()
 	return logic::STUCK == m_logicalState.getState();
 }
 
-void RatLogic::StartCapture(int from, int to)
+void RatLogic::StartFollowing(int from, int to)
 {
-	//gkLogMessage(m_obj->getName() << " -> Start Capture");
+	m_scene->refreshNavigationMesh();
 }
 
-void RatLogic::EndCapture(int from, int to)
+void RatLogic::EndFollowing(int from, int to)
 {
-	//gkLogMessage(m_obj->getName() << " -> End Capture");
 }
 
 

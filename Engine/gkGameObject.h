@@ -193,9 +193,11 @@ public:
 	{
 		int triangleBaseIndex;
 		int nIndex;
+		float hmin;
+		float hmax;
 
-		NavMeshData() : triangleBaseIndex(-1), nIndex(0) {}
-		NavMeshData(int i, int n) : triangleBaseIndex(i), nIndex(n) {}
+		NavMeshData() : triangleBaseIndex(-1), nIndex(0), hmin(0), hmax(0) {}
+		NavMeshData(int i, int n, float hMin, float hMax) : triangleBaseIndex(i), nIndex(n), hmin(hMin), hmax(hMax) {}
 		bool isEmpty() const { return !nIndex; }
 	};
 

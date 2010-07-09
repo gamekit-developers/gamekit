@@ -404,7 +404,8 @@ public:
         :   m_transform(),
             m_mode(0),
             m_state(0),
-            m_physics()
+            m_physics(),
+			m_findPathFlag(0xFF)
     {
         m_transform.setIdentity();
     }
@@ -414,6 +415,7 @@ public:
     int                 m_mode;
     int                 m_state;
     gkPhysicsProperties m_physics;
+	unsigned char		m_findPathFlag;
 
 
     bool isContactListener(void)    const { return m_physics.isContactListener(); }

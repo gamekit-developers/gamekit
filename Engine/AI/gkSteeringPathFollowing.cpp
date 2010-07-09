@@ -58,7 +58,7 @@ bool gkSteeringPathFollowing::createPath()
 {
 	gkSteeringObject::reset();
 	
-	return m_navPath.create(gkNavMeshData::getSingleton(), m_obj->getPosition(), m_goalPosition, m_polyPickExt, m_maxPathPolys, radius()); 
+	return m_navPath.create(m_navMesh, m_obj->getPosition(), m_goalPosition, m_polyPickExt, m_maxPathPolys, radius()); 
 }
 
 bool gkSteeringPathFollowing::steering(STATE& newState, const float elapsedTime)

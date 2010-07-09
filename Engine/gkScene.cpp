@@ -47,6 +47,7 @@
 #include "gkUserDefs.h"
 #include "gkDebugger.h"
 #include "gkMeshManager.h"
+#include "Thread/gkActiveObject.h"
 
 #ifdef OGREKIT_OPENAL_SOUND
 #include "gkSoundManager.h"
@@ -395,9 +396,6 @@ void gkScene::loadImpl(void)
 
     // notify main scene
     gkEngine::getSingleton().setActiveScene(this);
-
-    if(gkNavMeshData::getSingletonPtr())
-        gkNavMeshData::getSingletonPtr()->createNavigationMesh();
 }
 
 
@@ -416,8 +414,8 @@ void gkScene::unloadImpl()
     if (m_objects.empty())
         return;
 
-    if(gkNavMeshData::getSingletonPtr())
-        gkNavMeshData::getSingletonPtr()->unloadAll();
+    if(m_navMeshData.get())
+        m_navMeshData->unloadAll();
 
     // free scripts
     gkLuaManager::getSingleton().unload();
@@ -538,8 +536,8 @@ void gkScene::notifyObjectLoaded(gkGameObject *gobject)
 
     GK_ASSERT(result.second);
 
-    if(gkNavMeshData::getSingletonPtr())
-        gkNavMeshData::getSingletonPtr()->updateOrLoad(gobject);
+    if(m_navMeshData.get())
+        m_navMeshData->updateOrLoad(gobject);
 
     // add to constraints
     if (gobject->hasConstraints())
@@ -550,8 +548,8 @@ void gkScene::notifyObjectUnloaded(gkGameObject *gobject)
 {
     m_loadedObjects.erase(gobject);
 
-    if(gkNavMeshData::getSingletonPtr())
-        gkNavMeshData::getSingletonPtr()->unload(gobject);
+    if(m_navMeshData.get())
+        m_navMeshData->unload(gobject);
 
     if (gobject->hasConstraints())
         m_constraintObjects.erase(gobject);
@@ -561,8 +559,8 @@ void gkScene::notifyObjectUpdate(gkGameObject *gobject)
 {
     m_markDBVT = true;
 
-    if(gkNavMeshData::getSingletonPtr())
-        gkNavMeshData::getSingletonPtr()->updateOrLoad(gobject);
+    if(m_navMeshData.get())
+        m_navMeshData->updateOrLoad(gobject);
 }
 
 void gkScene::synchronizeMotion(gkScalar blend)
@@ -795,3 +793,41 @@ void gkScene::update(gkScalar tickRate)
     }
 }
 
+bool gkScene::asyncTryToCreateNavigationMesh(gkActiveObject& activeObj, const gkRecast::Config& config, ASYNC_DT_RESULT result)
+{
+	class CreateNavMeshCall : public gkCall
+	{
+	public:
+
+		CreateNavMeshCall(PMESHDATA meshData, const gkRecast::Config& config, ASYNC_DT_RESULT result)
+			: m_meshData(meshData), m_config(config), m_result(result) {}
+
+		~CreateNavMeshCall() {}
+
+		void run() { m_result = gkRecast::createNavMesh(m_meshData, m_config); }
+
+
+	private:
+
+		PMESHDATA m_meshData;
+
+		gkRecast::Config m_config;
+
+		ASYNC_DT_RESULT m_result;
+	};
+
+	result.reset();
+
+	if(m_navMeshData.get() && m_navMeshData->hasChanged())
+	{
+		gkPtrRef<gkCall> call(new CreateNavMeshCall(PMESHDATA(m_navMeshData->cloneData()), config, result));
+
+		activeObj.enqueue(call);
+
+		m_navMeshData->resetHasChanged();
+
+		return true;
+	}
+	
+	return false;
+}

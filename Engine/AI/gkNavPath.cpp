@@ -31,11 +31,6 @@
 #include "gkEngine.h"
 #include "gkDynamicsWorld.h"
 #include "gkPhysicsDebug.h"
-#include "Recast.h"
-#include "RecastLog.h"
-#include "RecastTimer.h"
-#include "DetourNavMeshBuilder.h"
-#include "DetourNavMesh.h"
 
 using namespace OpenSteer;
 
@@ -50,61 +45,17 @@ gkNavPath::~gkNavPath()
 {
 }
 
-bool gkNavPath::create(const gkNavMeshData& data, const gkVector3& from, const gkVector3& to, const gkVector3& polyPickExt, int maxPathPolys, gkScalar pathRadius)
+bool gkNavPath::create(PDT_NAV_MESH navMesh, const gkVector3& from, const gkVector3& to, const gkVector3& polyPickExt, int maxPathPolys, gkScalar pathRadius)
 {
-	PNAVMESH navMesh = data.getNavigationMesh();
-	
-	if(navMesh.get())
+	if(gkRecast::findPath(navMesh, from, to, polyPickExt, maxPathPolys, m_path))
 	{
-		m_path.clear();
+		m_pathRadius = PATH_RADIUS(m_path.size(), pathRadius);
 
-		gkVector3 startPos(from);
-		gkVector3 endPos(to);
+		GK_ASSERT(sizeof(OpenSteer::Vec3) == sizeof(gkVector3));
 
-		std::swap(startPos.y, startPos.z);
-		std::swap(endPos.y, endPos.z);
+		setPathway(m_path.size(), (OpenSteer::Vec3*)&(m_path[0]), &(m_pathRadius[0]), false);
 
-		dtQueryFilter filter;
-
-		dtPolyRef startRef = navMesh->data->findNearestPoly(startPos.ptr(), polyPickExt.ptr(), &filter, 0);
-
-		dtPolyRef endRef = navMesh->data->findNearestPoly(endPos.ptr(), polyPickExt.ptr(), &filter, 0);
-
-		if(startRef && endRef)
-		{
-			utArray<dtPolyRef> polys;
-			polys.resize(maxPathPolys);
-
-			int npolys = navMesh->data->findPath(startRef, endRef, startPos.ptr(), endPos.ptr(), &filter, polys.ptr(), maxPathPolys);
-
-			if(npolys > 1)
-			{
-				utArray<gkScalar> straightPath;
-				straightPath.resize(maxPathPolys*3);
-
-				int nstraightPath = navMesh->data->findStraightPath(startPos.ptr(), endPos.ptr(), polys.ptr(), npolys, straightPath.ptr(), 0, 0, maxPathPolys);
-
-				std::swap(startPos.y, startPos.z);
-				std::swap(endPos.y, endPos.z);
-				
-				gkVector3 point;
-
-				for(int i=0; i<nstraightPath*3; i+=3)
-				{
-					point.x = straightPath[i];
-					point.y = straightPath[i+2];
-					point.z = straightPath[i+1];
-
-					m_path.push_back(point);
-				}
-
-				m_pathRadius = PATH_RADIUS(m_path.size(), pathRadius);
-
-				setPathway(m_path.size(), &(m_path[0]), &(m_pathRadius[0]), false);
-
-				return true;
-			}
-		}
+		return true;
 	}
 
 	return false;

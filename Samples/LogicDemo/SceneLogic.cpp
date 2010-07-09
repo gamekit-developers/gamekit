@@ -29,6 +29,7 @@
 #include "MomoLogic.h"
 #include "RatLogic.h"
 #include "Common.h"
+#include "DetourNavMesh.h"
 
 namespace object
 {
@@ -46,7 +47,8 @@ SceneLogic::SceneLogic(gkScene* pScene)
 m_tree(gkNodeManager::getSingleton().create()),
 m_momo(0),
 m_camera(pScene->getMainCamera()),
-m_navMeshData(0)
+m_navMeshData(0),
+m_activeObject("SceneLogic")
 {
 	CreateInput();
 
@@ -62,14 +64,16 @@ m_navMeshData(0)
 
 	m_camera->attachLogic(m_tree);
 
-	m_navMeshData = new gkNavMeshData(pScene);
+	m_navMeshData = PNAVMESHDATA(new gkNavMeshData(pScene));
+
+	pScene->setNavMeshData(m_navMeshData);
 		
 	m_navMeshData->loadAll();
 }
 
 SceneLogic::~SceneLogic()
 {
-	delete m_navMeshData;
+	m_activeObject.join();
 }
 
 void SceneLogic::CreateMomo()
@@ -167,6 +171,40 @@ void SceneLogic::CreateDebug()
 	showPhysics->getENABLE()->link(m_cKeyNode->getIS_DOWN());
 }
 
+void SceneLogic::refreshNavigationMesh()
+{
+	tryToUpdateNavMeshForSteeringObjs();
+
+	gkRecast::Config config;
+
+	m_scene->asyncTryToCreateNavigationMesh(m_activeObject, config, m_navMesh);
+}
+
+void SceneLogic::tryToUpdateNavMeshForSteeringObjs()
+{
+	if(m_navMesh.hasResult())
+	{
+		PDT_NAV_MESH navMesh = m_navMesh.getResult();
+
+		m_momo->m_steeringObject->setNavMesh(navMesh);
+
+		RATQUEUE::iterator it = m_rats.begin();
+
+		while(it != m_rats.end())
+		{
+			PRAT rat = *it;
+			
+			rat->m_steeringFollowing->setNavMesh(navMesh);
+
+			++it;
+		}
+	}
+}
+
+void SceneLogic::tick(gkScalar rate)
+{
+	tryToUpdateNavMeshForSteeringObjs();
+}
 
 
 

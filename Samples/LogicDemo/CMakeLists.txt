@@ -28,6 +28,7 @@ set(SRC
 	${DATA} 
 	Main.cpp 
 	Common.h 
+	ACalls.h ACalls.cpp
 	RatLogic.h RatLogic.cpp 
 	MomoLogic.h MomoLogic.cpp 
 	SceneLogic.h SceneLogic.cpp
@@ -37,6 +38,7 @@ include_directories(
     ${OGREKIT_OGRE_INCLUDE}
     ${OGREKIT_BULLET_INCLUDE}
     ${OGREKIT_OPENSTEER_INCLUDE}
+    ${OGREKIT_DETOUR_INCLUDE}
     ../../Engine/
     ../../Engine/Script/
     ../../Engine/Loaders/Blender/

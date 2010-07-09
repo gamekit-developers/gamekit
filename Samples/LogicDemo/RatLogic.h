@@ -52,8 +52,8 @@ private:
 
 	void defineLogicStates();
 	gkSteeringObject* getSteeringBehaviour() const;
-	void StartCapture(int from, int to);
-	void EndCapture(int from, int to);
+	void StartFollowing(int from, int to);
+	void EndFollowing(int from, int to);
 
 private:
 	gkGameObject* m_obj;
@@ -67,6 +67,8 @@ private:
 	gkSteeringWander* m_steeringWander;
 
 	gkFSM m_logicalState;
+
+	friend class SceneLogic;
 };
 
 #endif//_RatLogic_h_

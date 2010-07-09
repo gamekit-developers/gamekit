@@ -77,5 +77,5 @@ namespace
 	typedef gkIfNode<bool, CMP_OR> BOOL_OR_NODE_TYPE;
 	typedef gkIfNode<gkGameObject*, CMP_EQUALS> PGAMEOBJ_EQUAL_NODE_TYPE;
 	typedef gkIfNode<int, CMP_EQUALS> INT_EQUAL_NODE_TYPE;
-	
 }
+

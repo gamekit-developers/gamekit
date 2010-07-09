@@ -33,10 +33,13 @@
 #include "gkGameObjectGroup.h"
 #include "OgreAxisAlignedBox.h"
 #include "AI/gkNavMeshData.h"
+#include "Thread/gkAsyncResult.h"
+#include "gkRecast.h"
 
 class gkDynamicsWorld;
 class gkDebugger;
 class gkScene;
+class gkActiveObject;
 
 // shorthand types
 typedef std::set<gkGameObject*>						gkGameObjectSet;
@@ -44,8 +47,6 @@ typedef utHashTable<gkHashedString, gkGameObject*>  gkGameObjectHashMap;
 typedef utHashTableIterator<gkGameObjectHashMap>    gkGameObjectHashMapIterator;
 typedef utArray<gkGameObject*>                      gkGameObjectArray;
 typedef utArrayIterator<gkGameObjectArray>          gkGameObjectArrayIterator;
-
-class gkNavMeshData;
 
 // Game scene
 class gkScene : public gkObject
@@ -138,6 +139,12 @@ public:
 
     GK_INLINE bool      hasLights(void) {return m_hasLights;}
 
+	GK_INLINE void setNavMeshData(PNAVMESHDATA navMeshData) { m_navMeshData = navMeshData; }
+
+	typedef gkAsyncResult<PDT_NAV_MESH > ASYNC_DT_RESULT;
+
+	bool asyncTryToCreateNavigationMesh(gkActiveObject& activeObj, const gkRecast::Config& config, ASYNC_DT_RESULT result);
+
 protected:
 
     // Ogre scene manager
@@ -182,6 +189,8 @@ private:
 
 
 	Ogre::AxisAlignedBox m_Limits;
+
+	PNAVMESHDATA m_navMeshData;
 };
 
 #endif//_gkSceneObject_h_

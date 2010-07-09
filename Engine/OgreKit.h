@@ -62,6 +62,7 @@
 #include "gkVariable.h"
 #include "gkWindowSystem.h"
 
+#include "AI/gkRecast.h"
 #include "AI/gkNavMeshData.h"
 #include "AI/gkSteeringObject.h"
 #include "AI/gkSteeringCapture.h"
@@ -170,7 +171,6 @@
 #include "Thread/gkQueue.h"
 #include "Thread/gkSyncObj.h"
 #include "Thread/gkThread.h"
-
 
 #ifdef OGREKIT_OPENAL_SOUND
 #include "Sound/gkBuffer.h"

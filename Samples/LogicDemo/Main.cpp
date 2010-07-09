@@ -52,7 +52,10 @@ public:
 		delete m_sceneLogic;
 	}
 
-	void tick(gkScalar rate){}
+	void tick(gkScalar rate)
+	{
+		m_sceneLogic->tick(rate);
+	}
 
     bool load()
     {

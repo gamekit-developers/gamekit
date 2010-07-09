@@ -29,9 +29,9 @@
 
 #include "gkCommon.h"
 #include "gkMathUtils.h"
+#include "gkRecast.h"
 #include "PolylineSegmentedPathwaySegmentRadii.h"
 
-class gkNavMeshData;
 class gkGameObject;
 class gkScene;
 
@@ -43,7 +43,7 @@ public:
 	
 	~gkNavPath();
 
-	bool create(const gkNavMeshData& data, const gkVector3& from, const gkVector3& to, const gkVector3& polyPickExt, int maxPathPolys, gkScalar pathRadius);
+	bool create(PDT_NAV_MESH navMesh, const gkVector3& from, const gkVector3& to, const gkVector3& polyPickExt, int maxPathPolys, gkScalar pathRadius);
 	
 	void showPath();
 
@@ -57,7 +57,6 @@ public:
 	
 private:
 
-	typedef std::vector<OpenSteer::Vec3> PATH_POINTS;
 	PATH_POINTS m_path;
 
 	typedef std::vector<gkScalar> PATH_RADIUS;

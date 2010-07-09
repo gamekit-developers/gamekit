@@ -24,63 +24,33 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+#ifndef _gkMeshData_h_
+#define _gkMeshData_h_
 
-#ifndef _MomoLogic_h_
-#define _MomoLogic_h_
+#include "gkCommon.h"
+#include "gkMathUtils.h"
+#include "Thread/gkPtrRef.h"
 
-#include "OgreKit.h"
-#include "ACalls.h"
-
-class SceneLogic;
-
-class MomoLogic : public gkReferences
+struct gkMeshData : public gkReferences, gkNonCopyable
 {
-public:
-	MomoLogic(gkGameObject* obj, SceneLogic* scene);
-	
-	~MomoLogic();
+	typedef std::vector<gkVector3> VERTS;
+	VERTS verts;
 
-	gkCharacterNode::STATE updateAI(gkScalar tick);
+	typedef std::vector<int> TRIANGLES;
+	TRIANGLES tris;
 
-	gkScalar getGravity();
-	bool hasImpactGround();
-	
+	typedef std::vector<gkVector3> NORMALS;
 
-private:
+	NORMALS normals;
 
-	void CreateKick();
-	void CreateGrab();
-	void CreateDustTrail();
-	void CreateImpactGroundFX();
-	void CreateStateMachine();
-	void CreateCamera();
-	void handleLand2IdleTranstion(int fromState, int toState);
-	void StartLand(int from, int to);
-	void EndLand(int from, int to);
-
-public:
-
-	gkCharacterNode* m_characterNode;
-	gkRayTestNode* m_kickTestNode;
-	gkGameObject* m_obj;
-
-private:
-
-	SceneLogic* m_scene;
-	gkLogicTree* m_tree;
-		
-	gkGrabNode* m_momoGrab;
-	gkCameraNode* m_cameraNode;
-
-	gkSteeringPathFollowing* m_steeringObject;
-	gkScreenRayTestNode* m_screenTargetNode;
-	
-	gkIfNode<bool, CMP_AND>* m_ifSelectNode;
-	
-	bool m_following;
-	bool m_hasImpactGround;
-
-	friend class SceneLogic;
+	GK_INLINE const float* getVerts() const { return &verts.at(0).x; }
+	GK_INLINE const float* getNormals() const { return &normals.at(0).x; }
+	GK_INLINE const int* getTris() const { return &tris.at(0); }
+	GK_INLINE int getVertCount() const { return verts.size(); }
+	GK_INLINE int getTriCount() const { return tris.size()/3; }
+	GK_INLINE void copy(const gkMeshData& obj) {verts = obj.verts; tris = obj.tris; normals = obj.normals; }
 };
 
-#endif//_MomoLogic_h_
+typedef gkPtrRef<gkMeshData> PMESHDATA;
+
+#endif//_gkMeshData_h_
