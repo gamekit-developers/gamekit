@@ -61,6 +61,7 @@ struct gkRecast
 		int VERTS_PER_POLY;
 		gkScalar DETAIL_SAMPLE_DIST;
 		gkScalar DETAIL_SAMPLE_ERROR;
+		int TILE_SIZE;
 
 		Config()
 		{
@@ -77,6 +78,7 @@ struct gkRecast
 			VERTS_PER_POLY = 6;
 			DETAIL_SAMPLE_DIST = 6.0f;
 			DETAIL_SAMPLE_ERROR = 1.0f;
+			TILE_SIZE = 16;
 		}
 	};
 

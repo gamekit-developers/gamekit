@@ -66,6 +66,8 @@ PDT_NAV_MESH gkRecast::createNavMesh(PMESHDATA meshData, const Config& config)
 	cfg.minRegionSize = (int)rcSqr(config.REGION_MIN_SIZE);
 	cfg.mergeRegionSize = (int)rcSqr(config.REGION_MERGE_SIZE);
 	cfg.maxVertsPerPoly = gkMin(config.VERTS_PER_POLY, DT_VERTS_PER_POLYGON);
+	cfg.tileSize = config.TILE_SIZE;
+	cfg.borderSize = cfg.walkableRadius + 4; // Reserve enough padding.
 	cfg.detailSampleDist = config.DETAIL_SAMPLE_DIST < 0.9f ? 0 : cfg.cs * config.DETAIL_SAMPLE_DIST;
 	cfg.detailSampleMaxError = cfg.ch * config.DETAIL_SAMPLE_ERROR;
 
@@ -205,7 +207,8 @@ PDT_NAV_MESH gkRecast::createNavMesh(PMESHDATA meshData, const Config& config)
 		gkPrintf("buildNavigation: Could not build regions.");
 		return PDT_NAV_MESH(0);
 	}
-	
+
+
 	//
 	// Step 5. Trace and simplify region contours.
 	//
@@ -218,7 +221,8 @@ PDT_NAV_MESH gkRecast::createNavMesh(PMESHDATA meshData, const Config& config)
 		gkPrintf("buildNavigation: Could not create contours.");
 		return PDT_NAV_MESH(0);
 	}
-	
+
+
 	//
 	// Step 6. Build polygons mesh from contours.
 	//
@@ -230,6 +234,7 @@ PDT_NAV_MESH gkRecast::createNavMesh(PMESHDATA meshData, const Config& config)
 		gkPrintf("buildNavigation: Could not triangulate contours.");
 		return PDT_NAV_MESH(0);
 	}
+
 	
 	//
 	// Step 7. Create detail mesh which allows to access approximate height on each polygon.
@@ -249,7 +254,7 @@ PDT_NAV_MESH gkRecast::createNavMesh(PMESHDATA meshData, const Config& config)
 	//
 	// Step 8. Create Detour data from Recast poly mesh.
 	//
-	
+
 	PDT_NAV_MESH navMesh;
 
 	// Update poly flags from areas.
@@ -293,7 +298,6 @@ PDT_NAV_MESH gkRecast::createNavMesh(PMESHDATA meshData, const Config& config)
 		gkPrintf("Could not build Detour navmesh.");
 		return PDT_NAV_MESH(0);
 	}
-
 
 	navMesh = PDT_NAV_MESH(new gkDetourNavMesh(new dtNavMesh));
 	
