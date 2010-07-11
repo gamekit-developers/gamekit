@@ -412,50 +412,157 @@ source_group(Physics\\Source FILES ${Physics_SOURCE})
 # Script Files
 # ---------------------------------------------------------
 
-set(Script_SOURCE
-    # ----- Source -----
-    Script/gkLuaManager.cpp
-    Script/gkLuaScript.cpp
-    Script/gkLuaUtils.cpp
-    Script/Api/gkMath.cpp
-    Script/Api/gkGameLogic.cpp
-    Script/Api/gkLuaDebugger.cpp
-    Script/Api/gkLuaGameLogic.cpp
-    Script/Api/gkLuaGameObject.cpp
-    Script/Api/gkLuaObject.cpp
-    Script/Api/gkLuaRayTest.cpp
-    Script/Api/gkLuaScene.cpp
-    Script/Api/gkLuaLogicBrick.cpp
-    Script/Api/gkLuaSensor.cpp
-    Script/Api/gkLuaController.cpp
-    Script/Api/gkLuaActuator.cpp
-    Script/Api/gkLuaProperty.cpp
-)
+if (OGREKIT_COMPLIE_SWIG)
 
-set(Script_HEADER
-    # ----- Header -----
-    Script/gkLuaManager.h
-    Script/gkLuaScript.h
-    Script/gkLuaUtils.h
-    Script/Api/gkLuaDebugger.h
-    Script/Api/gkLuaGameLogic.h
-    Script/Api/gkLuaGameObject.h
-    Script/Api/gkLuaInput.h
-    Script/Api/gkLuaMath.h
-    Script/Api/gkLuaObject.h
-    Script/Api/gkLuaPointer.h
-    Script/Api/gkLuaRayTest.h
-    Script/Api/gkLuaScene.h
-    Script/Api/gkLuaLogicBrick.h
-    Script/Api/gkLuaSensor.h
-    Script/Api/gkLuaController.h
-    Script/Api/gkLuaActuator.h
-    Script/Api/gkLuaProperty.h
-)
+    set(Script_HEADER
+        # ----- Lua Files -----
+        Script/Lua/gkLuaManager.h
+        Script/Lua/gkLuaScript.h
+        Script/Lua/gkLuaUtils.h
 
-source_group(Script\\Header FILES ${Script_HEADER})
-source_group(Script\\Source FILES ${Script_SOURCE})
+        # ----- Common Files -----
+        Script/Common/gksDebugger.h
+        Script/Common/gksGameObject.h
+        Script/Common/gksInput.h
+        Script/Common/gksMath.h
+        Script/Common/gksObject.h
+        Script/Common/gksPointer.h
+        Script/Common/gksRayTest.h
+        Script/Common/gksScene.h
+        Script/Common/gksProperty.h
+     )
+    if (OGREKIT_BUILD_V8)
+        set(Script_V8
+            # ----- V8 Files -----
+            Script/V8/gkV8Manager.h
+            Script/V8/gkV8Script.h
+            Script/V8/gkV8Utils.h
+        )
+        list(APPEND Script_HEADER ${Script_V8})
+    endif()
 
+
+    set(SWIG_INPUT
+        Script/Common/gkGameLogic.i
+        Script/Common/gkMath.i
+        )
+
+    set(SWIG_BUILD_DEPS
+        ${Script_HEADER}
+        Script/Common/gkProperty.i
+    )
+    
+
+    swig_source_lua(SWIG_OUTPUT_LUA SWIG_BUILD_DEPS ${SWIG_INPUT})
+    set(SWIG_OUTPUT ${SWIG_OUTPUT_LUA})
+
+    if (OGREKIT_BUILD_V8)
+        swig_source_v8(SWIG_OUTPUT_V8 SWIG_BUILD_DEPS ${SWIG_INPUT})
+        list(APPEND SWIG_OUTPUT ${SWIG_OUTPUT_V8})
+    endif()
+
+    source_group(Script\\Swig\\Output   FILES   ${SWIG_OUTPUT})
+    source_group(Script\\Swig\\Input    FILES   ${SWIG_INPUT})
+ 
+    set(SCRIPT_ALLGEN
+        ${SWIG_INPUT}
+        ${SWIG_OUTPUT}
+    )
+
+
+
+    if (OGREKIT_BUILD_V8)
+        set(V8_TEMPLATES
+            Script/V8/gkV8Hidden.inc
+            )
+
+        add_templates(V8_TEMPLATE_OUT "Script/V8/gkV8CodeTemplates.h" ${V8_TEMPLATES})
+        source_group(Script\\Templates FILES ${V8_TEMPLATES} ${V8_TEMPLATE_OUT})
+
+        list(APPEND SCRIPT_ALLGEN ${V8_TEMPLATES} ${V8_TEMPLATE_OUT})
+        
+    endif()
+
+
+    set(Script_SOURCE
+        Script/Lua/gkLuaManager.cpp
+        Script/Lua/gkLuaScript.cpp
+        Script/Lua/gkLuaUtils.cpp
+        ${SCRIPT_ALLGEN}
+        Script/Common/gksDebugger.cpp
+        Script/Common/gksGameObject.cpp
+        Script/Common/gksObject.cpp
+        Script/Common/gksRayTest.cpp
+        Script/Common/gksScene.cpp
+        Script/Common/gksProperty.cpp
+    )
+
+    if (OGREKIT_BUILD_V8)
+        set(Script_V8_SRC
+            Script/V8/gkV8Manager.cpp
+            Script/V8/gkV8Script.cpp
+            Script/V8/gkV8Utils.cpp
+        )
+        list(APPEND Script_SOURCE ${Script_V8_SRC})
+    endif()
+
+
+    source_group(Script\\Header FILES ${Script_HEADER})
+    source_group(Script\\Source FILES ${Script_SOURCE})
+
+else()
+    set(Script_SOURCE
+        Script/Lua/gkLuaManager.cpp
+        Script/Lua/gkLuaScript.cpp
+        Script/Lua/gkLuaUtils.cpp
+        Script/Common/Generated/gkGameLogicLua.cpp
+        Script/Common/Generated/gkMathLua.cpp
+        Script/Common/gksDebugger.cpp
+        Script/Common/gksGameObject.cpp
+        Script/Common/gksObject.cpp
+        Script/Common/gksRayTest.cpp
+        Script/Common/gksScene.cpp
+        Script/Common/gksProperty.cpp
+    )
+
+    set(Script_HEADER
+        Script/Lua/gkLuaManager.h
+        Script/Lua/gkLuaScript.h
+        Script/Lua/gkLuaUtils.h
+        # ----- Common Files -----
+        Script/Common/gksDebugger.h
+        Script/Common/gksGameObject.h
+        Script/Common/gksInput.h
+        Script/Common/gksMath.h
+        Script/Common/gksObject.h
+        Script/Common/gksPointer.h
+        Script/Common/gksRayTest.h
+        Script/Common/gksScene.h
+        Script/Common/gksProperty.h
+    )
+
+    if (OGREKIT_BUILD_V8)
+        set(Script_HDR_V8
+            Script/V8/gkV8Manager.h
+            Script/V8/gkV8Script.h
+            Script/V8/gkV8Utils.h
+        )
+        set(Script_SRC_V8
+            Script/V8/gkV8Manager.cpp
+            Script/V8/gkV8Script.cpp
+            Script/V8/gkV8Utils.cpp
+            Script/Common/Generated/gkMathV8.cpp
+            Script/Common/Generated/gkGameLogicV8.cpp
+        )
+       list(APPEND Script_SOURCE ${Script_SRC_V8})
+       list(APPEND Script_HEADER ${Script_HDR_V8})
+    endif()
+
+
+    source_group(Script\\Header FILES ${Script_HEADER})
+    source_group(Script\\Source FILES ${Script_SOURCE})
+
+endif()
 
 # ---------------------------------------------------------
 # Sound Files
@@ -540,6 +647,7 @@ include_directories(
     ./LogicBricks
     ./Logic
     ./Script
+    ./Script/Common
     ./Sound
     ./Loaders/Blender2
     ./Physics
@@ -554,7 +662,6 @@ link_libraries(
     ${GAMEKIT_SERIALIZE_BLENDER_TARGET}
     ${GAMEKIT_SERIALIZE_BULLET_TARGET}
     ${OGREKIT_BULLET_LIBS}
-    Lua
     OIS
     )
 
@@ -567,6 +674,9 @@ set(HiddenDepenCMakeLists ../Dependencies/CMakeLists.txt)
 source_group(DependenciesCMakeLists FILES ${HiddenDepenCMakeLists})
 
 
+# for swig no __declspec(dllexport)
+add_definitions(-DSTATIC_LINKED)
+
 
 if (OGREKIT_OPENAL_SOUND AND OPENAL_FOUND)
 
@@ -576,6 +686,11 @@ if (OGREKIT_OPENAL_SOUND AND OPENAL_FOUND)
         
     include_directories( ${OGREKIT_OGGVORBIS_INCLUDE})
     link_libraries(OggVorbis)
+endif()
+
+if (OGREKIT_BUILD_V8)
+    include_directories( ${OGREKIT_V8_INCLUDE})
+    link_libraries(${OGREKIT_V8_TARGET})
 endif()
 
 

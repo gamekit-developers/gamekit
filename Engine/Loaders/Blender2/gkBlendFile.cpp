@@ -53,7 +53,7 @@
 #include "gkTextFile.h"
 #include "gkEngine.h"
 #include "gkUserDefs.h"
-#include "gkLuaManager.h"
+#include "Script/Lua/gkLuaManager.h"
 
 #ifdef OGREKIT_OPENAL_SOUND
 # include "Sound/gkSoundManager.h"

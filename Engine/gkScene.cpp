@@ -40,7 +40,7 @@
 #include "gkScene.h"
 #include "gkLogicManager.h"
 #include "gkNodeManager.h"
-#include "gkLuaManager.h"
+#include "Script/Lua/gkLuaManager.h"
 #include "gkLogger.h"
 #include "gkDynamicsWorld.h"
 #include "gkRigidBody.h"

@@ -36,7 +36,6 @@
 #include "gkSceneManager.h"
 #include "gkLogger.h"
 #include "gkUtils.h"
-#include "gkLuaManager.h"
 #include "gkSoundManager.h"
 #include "gkLogicManager.h"
 #include "gkBlendFile.h"
@@ -50,6 +49,8 @@
 #include "gkDebugScreen.h"
 #include "gkDebugProperty.h"
 #include "gkTickState.h"
+
+#include "Script/Lua/gkLuaManager.h"
 
 #ifdef OGREKIT_OPENAL_SOUND
 # include "Sound/gkSoundManager.h"

@@ -25,7 +25,6 @@
 -------------------------------------------------------------------------------
 */
 #include "gkExpressionNode.h"
-#include "gkLuaManager.h"
 
 /*
 using namespace Ogre;

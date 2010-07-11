@@ -157,7 +157,7 @@
 #include "Physics/gkRayTest.h"
 #include "Physics/gkSweptTest.h"
 
-#include "Script/gkLuaManager.h"
+#include "Script/Lua/gkLuaManager.h"
 
 #include "Utils/utCommon.h"
 #include "Utils/utString.h"

@@ -1,0 +1,1 @@
+var __gk_v8_locals__ = new Object(); __gk_v8_locals__.__gk_v8_main__ = function() { $MAIN_SCOPE };  __gk_v8_locals__.__gk_v8_main__(); delete __gk_v8_locals__;

@@ -11,6 +11,9 @@ macro (configure_ogrekit ROOT OGREPATH)
 	set(OGREKIT_RECAST_TARGET Recast)
 	set(OGREKIT_DETOUR_TARGET Detour)
 	set(OGREKIT_OPENSTEER_TARGET OpenSteer)
+    set(OGREKIT_V8_TARGET V8)
+    set(OGREKIT_LUA_TARGET Lua)
+    
 
 	set(OGRE_BINARY_DIR ${OGREPATH}/Bin)
 	set(OGRE_TEMPLATES_DIR ${ROOT}/CMake/Templates)
@@ -32,8 +35,32 @@ macro (configure_ogrekit ROOT OGREPATH)
 	    endif (UNIX)
 	endif (APPLE)
 	
-    option(OGREKIT_BUILD_RUNTIME    "Build Samples/Runtime"     ON)
-    option(OGREKIT_BUILD_LOGICDEMO  "Build Samples/LogicDemo"   ON)
+    option(OGREKIT_BUILD_RUNTIME        "Build Samples/Runtime"                 ON)
+    option(OGREKIT_BUILD_LOGICDEMO      "Build Samples/LogicDemo"               ON)
+    option(OGREKIT_COMPLIE_SWIG         "Enable compile time SWIG generation."  OFF)
+    option(OGREKIT_HEADER_GENERATOR     "Build Blender DNA to C++ generator."   OFF)
+
+
+    option(OGREKIT_BUILD_V8 "Build V8 JavaScript bindings." ON)
+    if (OGREKIT_BUILD_V8)
+        option(OGREKIT_BUILD_V8_TEST "Build Samples/V8Test" ON)
+    endif()
+
+
+    # TODO
+    #option(OGREKIT_BUILD_CHROMEPLUGIN   "Build Samples/ChromePlugin"            ON)
+    #if (OGREKIT_BUILD_CHROMEPLUGIN)
+    #    include(FindGeckoSDK)
+    #endif()
+
+    if (OGREKIT_BUILD_V8)
+        include(ConfigureV8)
+    endif()
+
+    if (OGREKIT_COMPLIE_SWIG)
+        include(RunSwig)
+        include(TemplateCompiler)
+    endif()
 
 
 	set(OGREKIT_DEP_DIR ${ROOT}/Dependencies/Source)
@@ -44,6 +71,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 	set(OGREKIT_OIS_INCLUDE ${OGREKIT_DEP_DIR}/OIS/include)
 	set(OGREKIT_OGRE_INCLUDE ${OGREPATH}/OgreMain/include ${OGREPATH}/Settings ${OGREKIT_PLATFORM})
 
+	set(OGREKIT_V8_INCLUDE  ${OGREKIT_DEP_DIR}/V8/include)
 	set(OGREKIT_LUA_INCLUDE ${OGREKIT_DEP_DIR}/Lua/lua)
 	set(OGREKIT_OGGVORBIS_INCLUDE ${OGREKIT_DEP_DIR}/Codecs/include)
 	
@@ -57,6 +85,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 		set(OGREKIT_MINGW_DIRECT3D FALSE)
 	endif()
 
+    include(FindOpenAL)
     if (OPENAL_FOUND)
 		option(OGREKIT_OPENAL_SOUND "Enable building of the OpenAL subsystem" ON)
 	    set(OGREKIT_OPENAL_INCLUDE ${OPENAL_INCLUDE_DIR})
@@ -154,6 +183,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 		${OGREKIT_DETOUR_TARGET}
 		${OGREKIT_OPENSTEER_TARGET}
 		${OGREKIT_OPENAL_LIBRARY}
+		${OGREKIT_LUA_TARGET}
 		)
 
 endmacro(configure_ogrekit)

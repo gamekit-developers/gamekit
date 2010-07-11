@@ -10,10 +10,20 @@ subdirs(Source/FreeImage)
 subdirs(Source/OIS)
 subdirs(Source/ZZipLib)
 subdirs(Source/FreeType)
-subdirs(Source/Lua)
 subdirs(Source/Recast)
 subdirs(Source/Detour)
 subdirs(Source/OpenSteer)
+subdirs(Source/Blender25)
+subdirs(Source/Lua)
+
+
+if (OGREKIT_BUILD_V8)
+    subdirs(Source/V8)
+endif()
+
+if (OGREKIT_COMPLIE_SWIG)
+    subdirs(Source/Swig)
+endif()
 
 if (OGREKIT_OPENAL_SOUND)
     subdirs(Source/Codecs)
