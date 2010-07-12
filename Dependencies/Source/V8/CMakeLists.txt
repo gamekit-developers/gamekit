@@ -315,13 +315,7 @@ endif()
 
 if (MSVC)
     add_definitions(
-        /WX 
-        # V8
-        /wd4355 /wd4800 /IGNORE:4221 
-        # DTOA
-        /wd4018 /wd4244
-        # ARM
-        /wd4146
+        /W0
         /GR-
         )
     add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE)
