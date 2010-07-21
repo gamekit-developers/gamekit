@@ -198,13 +198,14 @@ void bFile::parseInternal(bool verboseDumpAllTypes, char* memDna,int memDnaLengt
 		if (strncmp(tempBuffer, "DNA1", 4)==0)
 		{
 			// read the DNA1 block and extract SDNA
-			getNextBlock(&dna, tempBuffer, mFlags);
-			if (dna.len > 0)
+			if (getNextBlock(&dna, tempBuffer, mFlags) > 0)
 			{
-				if (strncmp((tempBuffer + ChunkUtils::getOffset(mFlags)), "SDNA", 4) ==0) 
+				if (strncmp((tempBuffer + ChunkUtils::getOffset(mFlags)), "SDNANAME", 8) ==0) 
 					dna.oldPtr = (tempBuffer + ChunkUtils::getOffset(mFlags));
+				else dna.oldPtr = 0;
 			}
-			else dna.oldPtr = 0;
+			else 
+				dna.oldPtr = 0;
 		}
 
 		if (mDataStart && dna.oldPtr) break;
