@@ -1,6 +1,6 @@
 #ifndef _Blender_h_
 #define _Blender_h_
-// Generated from a Blender(252) file.
+// Generated from a Blender(253) file.
 
 #ifdef near
 #undef near
@@ -128,6 +128,7 @@ class ShrinkwrapModifierData;
 class SimpleDeformModifierData;
 class ShapeKeyModifierData;
 class SolidifyModifierData;
+class ScrewModifierData;
 class Lattice;
 class bDeformGroup;
 class BoundBox;
@@ -185,6 +186,7 @@ class SpaceNla;
 class SpaceText;
 class Script;
 class SpaceScript;
+class SpaceTimeCache;
 class SpaceTime;
 class SpaceNode;
 class SpaceLogic;
@@ -272,7 +274,6 @@ class bParentActuator;
 class bStateActuator;
 class bArmatureActuator;
 class bActuator;
-class FreeCamera;
 class Sound3D;
 class bSound;
 class SpaceSound;
@@ -302,6 +303,7 @@ class bTrackToConstraint;
 class bRotateLikeConstraint;
 class bLocateLikeConstraint;
 class bSizeLikeConstraint;
+class bSameVolumeConstraint;
 class bTransLikeConstraint;
 class bMinMaxConstraint;
 class bActionConstraint;
@@ -313,6 +315,7 @@ class bRigidBodyJointConstraint;
 class bClampToConstraint;
 class bChildOfConstraint;
 class bTransformConstraint;
+class bPivotConstraint;
 class bLocLimitConstraint;
 class bRotLimitConstraint;
 class bSizeLimitConstraint;
@@ -342,11 +345,13 @@ class NodeGlare;
 class NodeTonemap;
 class NodeLensDist;
 class NodeColorBalance;
+class NodeColorspill;
 class TexNodeOutput;
 class CurveMapPoint;
 class CurveMap;
 class CurveMapping;
 class Histogram;
+class Scopes;
 class BrushClone;
 class Brush;
 class CustomDataLayer;
@@ -359,6 +364,7 @@ class ChildParticle;
 class ParticleTarget;
 class ParticleDupliWeight;
 class ParticleData;
+class SPHFluidSettings;
 class ParticleSettings;
 class ParticleSystem;
 class ClothSimSettings;
@@ -370,6 +376,7 @@ class bGPDlayer;
 class bGPdata;
 class Report;
 class ReportList;
+class ReportTimerInfo;
 class wmWindowManager;
 class wmWindow;
 class wmKeyMapItem;
@@ -385,6 +392,7 @@ class FMod_Cycles;
 class FMod_Python;
 class FMod_Limits;
 class FMod_Noise;
+class FMod_Stepped;
 class DriverTarget;
 class DriverVar;
 class ChannelDriver;
@@ -553,8 +561,7 @@ public:
     int w[2];
     int h[2];
     short changed[2];
-    short pad0;
-    short pad1;
+    short changed_timestamp[2];
     int *rect[2];
 };
 
@@ -804,6 +811,8 @@ public:
     int still_frame;
     char source_path[240];
     float *dataset;
+    int cachedframe;
+    int ok;
 };
 
 class TexMapping
@@ -1161,6 +1170,8 @@ public:
     ModifierData *prev;
     int type;
     int mode;
+    int stackindex;
+    int pad;
     char name[32];
     Scene *scene;
     char *error;
@@ -1361,6 +1372,8 @@ public:
     float gravz;
     float animStart;
     float animEnd;
+    int bakeStart;
+    int bakeEnd;
     float gstar;
     int maxRefine;
     float iniVelx;
@@ -1450,6 +1463,13 @@ public:
     int minTemporalQuality;
     int keyFrameRate;
     int bitRate;
+    int audiocodecType;
+    int audioSampleRate;
+    short audioBitDepth;
+    short audioChannels;
+    int audioCodecFlags;
+    int audioBitRate;
+    int pad1;
 };
 
 class FFMpegCodecData
@@ -1562,11 +1582,11 @@ class ParticleBrushData
 {
 public:
     short size;
-    short strength;
     short step;
     short invert;
+    short count;
     int flag;
-    int pad;
+    float strength;
 };
 
 class TransformOrientation
@@ -1604,6 +1624,8 @@ class PhysicsSettings
 public:
     float gravity[3];
     int flag;
+    int quick_cache_step;
+    int rt;
 };
 
 class RegionView3D
@@ -1666,9 +1688,22 @@ public:
     int active_file;
     int selstate;
     short f_fp;
-    short menu;
+    short pad;
     char fp_str[8];
-    char *pupmenu;
+};
+
+class SpaceTimeCache
+{
+public:
+    SpaceTimeCache *next;
+    SpaceTimeCache *prev;
+    int type;
+    int flag;
+    float *array;
+    int len;
+    int startframe;
+    int endframe;
+    int ok;
 };
 
 class ConsoleLine
@@ -1724,7 +1759,7 @@ public:
     short shaded;
     short shadetop;
     short shadedown;
-    short pad;
+    short alpha_check;
 };
 
 class uiWidgetStateColors
@@ -1781,6 +1816,7 @@ public:
     char edge_seam[4];
     char edge_sharp[4];
     char edge_facesel[4];
+    char edge_crease[4];
     char face[4];
     char face_select[4];
     char face_dot[4];
@@ -1791,6 +1827,20 @@ public:
     char strip[4];
     char strip_select[4];
     char cframe[4];
+    char nurb_uline[4];
+    char nurb_vline[4];
+    char act_spline[4];
+    char nurb_sel_uline[4];
+    char nurb_sel_vline[4];
+    char lastsel_point[4];
+    char handle_free[4];
+    char handle_auto[4];
+    char handle_vect[4];
+    char handle_align[4];
+    char handle_sel_free[4];
+    char handle_sel_auto[4];
+    char handle_sel_vect[4];
+    char handle_sel_align[4];
     char ds_channel[4];
     char ds_subchannel[4];
     char console_output[4];
@@ -1818,7 +1868,7 @@ public:
     char handle_vertex[4];
     char handle_vertex_select[4];
     char handle_vertex_size;
-    char hpad[3];
+    char hpad[7];
     char preview_back[4];
 };
 
@@ -1952,8 +2002,6 @@ public:
     float gain[3];
     int flag;
     int pad;
-    float exposure;
-    float saturation;
 };
 
 class StripProxy
@@ -2632,21 +2680,6 @@ public:
     Object *ob;
 };
 
-class FreeCamera
-{
-public:
-    float mass;
-    float accelleration;
-    float maxspeed;
-    float maxrotspeed;
-    float maxtiltspeed;
-    int flag;
-    float rotdamp;
-    float tiltdamp;
-    float speeddamp;
-    float pad;
-};
-
 class Sound3D
 {
 public:
@@ -2844,6 +2877,13 @@ public:
     char subtarget[32];
 };
 
+class bSameVolumeConstraint
+{
+public:
+    int flag;
+    float volume;
+};
+
 class bTransLikeConstraint
 {
 public:
@@ -2973,6 +3013,16 @@ public:
     float from_max[3];
     float to_min[3];
     float to_max[3];
+};
+
+class bPivotConstraint
+{
+public:
+    Object *tar;
+    char subtarget[32];
+    float offset[3];
+    short rotAxis;
+    short flag;
 };
 
 class bLocLimitConstraint
@@ -3162,6 +3212,8 @@ public:
     float fstrength;
     float falpha;
     float key[4];
+    short algorithm;
+    short channel;
 };
 
 class NodeTwoXYs
@@ -3262,6 +3314,18 @@ public:
     float lift[3];
     float gamma[3];
     float gain[3];
+    float lift_lgg[3];
+};
+
+class NodeColorspill
+{
+public:
+    short limchan;
+    short unspill;
+    float limscale;
+    float uspillr;
+    float uspillg;
+    float uspillb;
 };
 
 class TexNodeOutput
@@ -3302,10 +3366,11 @@ public:
     float data_r[256];
     float data_g[256];
     float data_b[256];
+    float data_luma[256];
     float xmax;
     float ymax;
-    int ok;
-    int flag;
+    int mode;
+    int height;
 };
 
 class BrushClone
@@ -3406,6 +3471,20 @@ public:
     short rt[2];
 };
 
+class SPHFluidSettings
+{
+public:
+    float spring_k;
+    float radius;
+    float rest_length;
+    float viscosity_omega;
+    float viscosity_beta;
+    float stiffness_k;
+    float stiffness_knear;
+    float rest_density;
+    float buoyancy;
+};
+
 class ClothSimSettings
 {
 public:
@@ -3441,8 +3520,10 @@ public:
     short vgroup_bend;
     short vgroup_mass;
     short vgroup_struct;
+    short shapekey_rest;
     short presets;
     short reset;
+    short pad[3];
     EffectorWeights *effector_weights;
 };
 
@@ -3457,6 +3538,7 @@ public:
     int flags;
     short self_loop_count;
     short loop_count;
+    Group *group;
 };
 
 class bGPDspoint
@@ -3489,6 +3571,14 @@ public:
     int len;
     char *typestr;
     char *message;
+};
+
+class ReportTimerInfo
+{
+public:
+    float col[3];
+    float greyscale;
+    float widthfac;
 };
 
 class wmKeyMapItem
@@ -3594,6 +3684,16 @@ public:
     short modification;
 };
 
+class FMod_Stepped
+{
+public:
+    float step_size;
+    float offset;
+    float start_frame;
+    float end_frame;
+    int flag;
+};
+
 class DriverTarget
 {
 public:
@@ -3628,11 +3728,12 @@ public:
     ID *id;
     char group[64];
     int idtype;
-    int templates;
+    short groupmode;
+    short pad;
     char *rna_path;
     int array_index;
     short flag;
-    short groupmode;
+    short keyingflag;
 };
 
 class AnimOverride
@@ -3729,7 +3830,7 @@ public:
     ID *idblock;
     void *filedata;
     char name[240];
-    char filename[240];
+    char filepath[240];
     int tot;
     int pad;
     Library *parent;
@@ -3819,7 +3920,6 @@ public:
     short type;
     short flag;
     float passepartalpha;
-    float angle;
     float clipsta;
     float clipend;
     float lens;
@@ -3828,10 +3928,6 @@ public:
     float shiftx;
     float shifty;
     float YF_dofdist;
-    float YF_aperture;
-    short YF_bkhtype;
-    short YF_bkhbias;
-    float YF_bkhrot;
     Ipo *ipo;
     Object *dof_ob;
 };
@@ -3845,12 +3941,13 @@ public:
     void *gputexture;
     void *anim;
     void *rr;
+    void *renders[8];
+    short render_slot;
+    short last_render_slot;
     short ok;
     short flag;
     short source;
     short type;
-    short pad;
-    short pad1;
     int lastframe;
     short tpageflag;
     short totbind;
@@ -3862,7 +3959,6 @@ public:
     int *repbind;
     PackedFile *packedfile;
     PreviewImage *preview;
-    char *render_text;
     float lastupdate;
     int lastused;
     short animspeed;
@@ -3892,10 +3988,12 @@ public:
     float turbul;
     float bright;
     float contrast;
+    float saturation;
     float rfac;
     float gfac;
     float bfac;
     float filtersize;
+    float pad2;
     float mg_H;
     float mg_lacunarity;
     float mg_octaves;
@@ -4018,23 +4116,11 @@ public:
     float skyblendfac;
     float sky_exposure;
     short sky_colorspace;
-    short pad4;
-    int YF_numphotons;
-    int YF_numsearch;
-    short YF_phdepth;
-    short YF_useqmc;
-    short YF_bufsize;
-    short YF_pad;
-    float YF_causticblur;
-    float YF_ltradius;
-    float YF_glowint;
-    float YF_glowofs;
-    short YF_glowtype;
-    short YF_pad2;
+    char pad4[6];
     Ipo *ipo;
     MTex *mtex[18];
     short pr_texture;
-    short pad[3];
+    char pad6[6];
     PreviewImage *preview;
 };
 
@@ -4234,7 +4320,7 @@ public:
     short twist_mode;
     short pad[2];
     float twist_smooth;
-    float pad2;
+    float smallcaps_scale;
     short pathlen;
     short totcol;
     short flag;
@@ -4247,7 +4333,7 @@ public:
     short resolu_ren;
     short resolv_ren;
     int actnu;
-    BPoint *lastselbp;
+    void *lastsel;
     short len;
     short lines;
     short pos;
@@ -4498,6 +4584,8 @@ public:
     int num_projectors;
     float aspectx;
     float aspecty;
+    float scalex;
+    float scaley;
     char uvlayer_name[32];
     int uvlayer_tmp;
     int pad;
@@ -4654,8 +4742,9 @@ public:
     short flag;
     short mode;
     short pad;
-    float *bindweights;
-    float *bindcos;
+    MDefInfluence *bindinfluences;
+    int *bindoffsets;
+    float *bindcagecos;
     int totvert;
     int totcagevert;
     MDefCell *dyngrid;
@@ -4667,6 +4756,8 @@ public:
     float dyncellmin[3];
     float dyncellwidth;
     float bindmat[4][4];
+    float *bindweights;
+    float *bindcos;
     void (*bindfunc)();
 };
 
@@ -4768,11 +4859,25 @@ public:
     ModifierData modifier;
     char defgrp_name[32];
     float offset;
+    float offset_fac;
     float crease_inner;
     float crease_outer;
     float crease_rim;
     int flag;
-    char pad[4];
+};
+
+class ScrewModifierData
+{
+public:
+    ModifierData modifier;
+    Object *ob_axis;
+    int steps;
+    int render_steps;
+    int iter;
+    float screw_ofs;
+    float angle;
+    short axis;
+    short flag;
 };
 
 class Lattice
@@ -4802,6 +4907,7 @@ public:
     Ipo *ipo;
     Key *key;
     MDeformVert *dvert;
+    char vgroup[32];
     float *latticedata;
     float latmat[4][4];
     Lattice *editlatt;
@@ -5033,15 +5139,13 @@ public:
     float horr;
     float horg;
     float horb;
-    float hork;
     float zenr;
     float zeng;
     float zenb;
-    float zenk;
     float ambr;
     float ambg;
     float ambb;
-    float ambk;
+    float pad2;
     int fastcol;
     float exposure;
     float exp;
@@ -5114,13 +5218,13 @@ public:
     int cfra;
     int sfra;
     int efra;
+    float subframe;
     int psfra;
     int pefra;
     int images;
     int framapto;
     short flag;
     short threads;
-    float ctime;
     float framelen;
     float blurfac;
     float edgeR;
@@ -5187,35 +5291,6 @@ public:
     float bake_maxdist;
     float bake_biasdist;
     float bake_pad;
-    short GIquality;
-    short GIcache;
-    short GImethod;
-    short GIphotons;
-    short GIdirect;
-    short YF_AA;
-    short YFexportxml;
-    short YF_nobump;
-    short YF_clamprgb;
-    short yfpad1;
-    int GIdepth;
-    int GIcausdepth;
-    int GIpixelspersample;
-    int GIphotoncount;
-    int GImixphotons;
-    float GIphotonradius;
-    int YF_raydepth;
-    int YF_AApasses;
-    int YF_AAsamples;
-    int yfpad2;
-    float GIshadowquality;
-    float GIrefinement;
-    float GIpower;
-    float GIindirpower;
-    float YF_gamma;
-    float YF_exposure;
-    float YF_raybias;
-    float YF_AApixelsize;
-    float YF_AAthreshold;
     char backbuf[160];
     char pic[160];
     int stamp;
@@ -5224,6 +5299,10 @@ public:
     char stamp_udata[160];
     float fg_stamp[4];
     float bg_stamp[4];
+    char seq_prev_type;
+    char seq_rend_type;
+    char seq_flag;
+    char pad5[5];
     int simplify_flag;
     short simplify_subsurf;
     short simplify_shadowsamples;
@@ -5286,6 +5365,8 @@ public:
     short pad;
     short seam_bleed;
     short normal_angle;
+    short screen_grab_size[2];
+    int pad1;
     void *paintcursor;
 };
 
@@ -5312,11 +5393,19 @@ class Sculpt
 {
 public:
     Paint paint;
-    float pivot[3];
     int flags;
-    char tablet_size;
-    char tablet_strength;
-    char pad[6];
+    int radial_symm[3];
+    float last_x;
+    float last_y;
+    float last_angle;
+    int draw_anchored;
+    int anchored_size;
+    float anchored_location[3];
+    float anchored_initial_mouse[2];
+    int draw_pressure;
+    float pressure_value;
+    float special_rotation;
+    int pad;
 };
 
 class VPaint
@@ -5427,6 +5516,8 @@ public:
     float twmin[3];
     float twmax[3];
     int lay;
+    int layact;
+    int pad1;
     short flag;
     short use_nodes;
     bNodeTree *nodetree;
@@ -5555,7 +5646,6 @@ public:
     short oldwinx;
     short oldwiny;
     short around;
-    float cursor[2];
     float *tab_offset;
     int tab_num;
     int tab_cur;
@@ -5659,13 +5749,13 @@ public:
     SpaceLink *prev;
     ListBase regionbase;
     int spacetype;
-    int pad;
+    int scroll_offset;
     FileSelectParams *params;
     void *files;
     ListBase *folders_prev;
     ListBase *folders_next;
     wmOperator *op;
-    void *loadimage_timer;
+    void *smoothscroll_timer;
     void *layout;
     short recentnr;
     short bookmarknr;
@@ -5695,6 +5785,29 @@ public:
     short pad;
 };
 
+class Scopes
+{
+public:
+    int ok;
+    int sample_full;
+    int sample_lines;
+    float accuracy;
+    int wavefrm_mode;
+    float wavefrm_alpha;
+    float wavefrm_yfac;
+    int wavefrm_height;
+    float vecscope_alpha;
+    int vecscope_height;
+    float minmax[3][2];
+    Histogram hist;
+    float *waveform_1;
+    float *waveform_2;
+    float *waveform_3;
+    float *vecscope;
+    int waveform_tot;
+    int pad;
+};
+
 class SpaceImage
 {
 public:
@@ -5720,6 +5833,7 @@ public:
     char sticky;
     char dt_uvstretch;
     char around;
+    float cursor[2];
     float xof;
     float yof;
     float zoom;
@@ -5727,7 +5841,8 @@ public:
     float centx;
     float centy;
     bGPdata *gpd;
-    Histogram hist;
+    Scopes scopes;
+    Histogram sample_line_hist;
 };
 
 class SpaceNla
@@ -5817,6 +5932,9 @@ public:
     int spacetype;
     float blockscale;
     View2D v2d;
+    ListBase caches;
+    int cache_display;
+    int pad;
     int flag;
     int redraws;
 };
@@ -5839,6 +5957,8 @@ public:
     void *curfont;
     float xof;
     float yof;
+    float zoom;
+    float padf;
     float mx;
     float my;
     bNodeTree *nodetree;
@@ -5940,6 +6060,7 @@ public:
     ListBase regionbase;
     int spacetype;
     int pad;
+    char filter[64];
 };
 
 class uiStyle
@@ -5982,6 +6103,7 @@ public:
     uiWidgetColors wcol_menu_item;
     uiWidgetColors wcol_box;
     uiWidgetColors wcol_scroll;
+    uiWidgetColors wcol_progress;
     uiWidgetColors wcol_list_item;
     uiWidgetStateColors wcol_state;
     char iconfile[80];
@@ -6031,6 +6153,7 @@ public:
     char plugseqdir[160];
     char pythondir[160];
     char sounddir[160];
+    char image_editor[240];
     char anim_player[240];
     int anim_player_preset;
     short v2d_min_gridsize;
@@ -6069,6 +6192,7 @@ public:
     short tb_leftmouse;
     short tb_rightmouse;
     SolidLight light[3];
+    short sculpt_paint_settings;
     short tw_hotspot;
     short tw_flag;
     short tw_handlesize;
@@ -6076,7 +6200,6 @@ public:
     short textimeout;
     short texcollectrate;
     short wmdrawmethod;
-    short wmpad;
     int memcachelimit;
     int prefetchframes;
     short frameserverport;
@@ -6090,17 +6213,23 @@ public:
     short ndof_pan;
     short ndof_rotate;
     short curssize;
-    short ipo_new;
     short color_picker_type;
-    short pad2;
+    short ipo_new;
+    short keyhandles_new;
     short scrcastfps;
     short scrcastwait;
+    short propwidth;
+    short pad[3];
     char versemaster[160];
     char verseuser[160];
     float glalphaclip;
     short autokey_mode;
     short autokey_flag;
     ColorBand coba_weight;
+    int sculpt_paint_unified_size;
+    float sculpt_paint_unified_unprojected_radius;
+    float sculpt_paint_unified_alpha;
+    float sculpt_paint_overlay_col[3];
 };
 
 class bScreen
@@ -6184,7 +6313,9 @@ public:
     short sizex;
     short sizey;
     short do_draw;
+    short do_draw_overlay;
     short swap;
+    short pad[3];
     void *type;
     ListBase uiblocks;
     ListBase panels;
@@ -6213,6 +6344,8 @@ public:
     int depth;
     int startdisp;
     int enddisp;
+    float sat;
+    float pad;
     float mul;
     float handsize;
     int sfra;
@@ -6220,6 +6353,7 @@ public:
     Strip *strip;
     Ipo *ipo;
     Scene *scene;
+    Object *scene_camera;
     void *anim;
     float effect_fader;
     float speed_fader;
@@ -6231,10 +6365,10 @@ public:
     bSound *sound;
     void *scene_sound;
     float volume;
-    float pad;
     float level;
     float pan;
     int scenenr;
+    int multicam_source;
     float strobe;
     void *effectdata;
     int anim_startofs;
@@ -6252,6 +6386,11 @@ public:
     Sequence *act_seq;
     char act_imagedir[256];
     char act_sounddir[256];
+    int over_ofs;
+    int over_cfra;
+    int over_flag;
+    int pad;
+    rctf over_border;
 };
 
 class bSoundActuator
@@ -6437,6 +6576,7 @@ class bPose
 {
 public:
     ListBase chanbase;
+    void *chanhash;
     short flag;
     short proxy_layer;
     float ctime;
@@ -6448,6 +6588,7 @@ public:
     void *ikdata;
     void *ikparam;
     bAnimVizSettings avs;
+    char proxy_act_bone[32];
 };
 
 class bActionGroup
@@ -6634,11 +6775,11 @@ public:
     ListBase alltypes;
     void *owntype;
     int pad2[2];
-    void (*timecursor)();
+    void (*progress)();
     void (*stats_draw)();
     int (*test_break)();
     void *tbh;
-    void *tch;
+    void *prh;
     void *sdh;
 };
 
@@ -6647,6 +6788,8 @@ class CurveMapping
 public:
     int flag;
     int cur;
+    int preset;
+    int changed_timestamp;
     rctf curr;
     rctf clipr;
     CurveMap cm[4];
@@ -6663,20 +6806,37 @@ public:
     BrushClone clone;
     CurveMapping *curve;
     MTex mtex;
-    short flag;
+    void *icon_imbuf;
+    char icon;
+    char pad2[7];
+    PreviewImage *preview;
+    char icon_filepath[240];
+    float normal_weight;
     short blend;
+    short pad;
     int size;
+    int flag;
     float jitter;
-    float spacing;
+    int spacing;
     int smooth_stroke_radius;
     float smooth_stroke_factor;
     float rate;
     float rgb[3];
     float alpha;
+    int sculpt_plane;
+    float plane_offset;
     char sculpt_tool;
     char vertexpaint_tool;
     char imagepaint_tool;
-    char pad2;
+    char pad3;
+    float autosmooth_factor;
+    float crease_pinch_factor;
+    float plane_trim;
+    float texture_sample_bias;
+    int texture_overlay_alpha;
+    float unprojected_radius;
+    float add_col[3];
+    float sub_col[3];
 };
 
 class BoidParticle
@@ -6717,6 +6877,7 @@ public:
     ID id;
     AnimData *adt;
     BoidSettings *boids;
+    SPHFluidSettings *fluid;
     EffectorWeights *effector_weights;
     int flag;
     short type;
@@ -6731,7 +6892,7 @@ public:
     short draw_size;
     short childtype;
     short ren_as;
-    short rt2;
+    short subframes;
     short draw_step;
     short ren_step;
     short hair_step;
@@ -6918,6 +7079,7 @@ public:
     int storelevel;
     int flag;
     int pad;
+    void *reporttimer;
 };
 
 class wmWindowManager
@@ -7000,7 +7162,6 @@ public:
     wmKeyConfig *prev;
     char idname[64];
     char basename[64];
-    char filter[64];
     ListBase keymaps;
     int actkeymap;
     int flag;
@@ -7133,6 +7294,7 @@ public:
     KeyingSet *prev;
     ListBase paths;
     char name[64];
+    char typeinfo[64];
     short flag;
     short keyingflag;
     int active_path;
