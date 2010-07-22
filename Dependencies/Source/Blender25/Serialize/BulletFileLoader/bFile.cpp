@@ -204,20 +204,19 @@ void bFile::parseInternal(bool verboseDumpAllTypes, char* memDna,int memDnaLengt
 					dna.oldPtr = (tempBuffer + ChunkUtils::getOffset(mFlags));
 				else dna.oldPtr = 0;
 			}
-			else 
-				dna.oldPtr = 0;
+			else dna.oldPtr = 0;
 		} 
-        // Some Bullet files are missing the DNA1 block
-        // In Blender it's DNA1 + ChunkUtils::getOffset() + SDNA + NAME
-        // In Bullet tests its SDNA + NAME
-        else if (strncmp(tempBuffer, "SDNANAME", 8) ==0)
-        {
-            dna.oldPtr = blenderData + i;
-            dna.len = mFileLen-i;
+		// Some Bullet files are missing the DNA1 block
+		// In Blender it's DNA1 + ChunkUtils::getOffset() + SDNA + NAME
+		// In Bullet tests its SDNA + NAME
+		else if (strncmp(tempBuffer, "SDNANAME", 8) ==0)
+		{
+			dna.oldPtr = blenderData + i;
+			dna.len = mFileLen-i;
 
-            // Also no REND block, so exit now.  
-            if (mVersion==276) break;
-        }
+			// Also no REND block, so exit now.  
+			if (mVersion==276) break;
+		}
 
         if (mDataStart && dna.oldPtr) break;
 		tempBuffer++;
