@@ -11,6 +11,7 @@ set(Core_SOURCE
     gkCam2ViewportRay.cpp
     gkConstraint.cpp
     gkCoreApplication.cpp
+    gkDebugFps.cpp
     gkDebugger.cpp
     gkDebugProperty.cpp
     gkDebugScreen.cpp
@@ -33,6 +34,7 @@ set(Core_SOURCE
     gkScene.cpp
     gkSceneManager.cpp
     gkSkeleton.cpp
+    gkStats.cpp
     gkUserDefs.cpp
     gkUtils.cpp
     gkWindowSystem.cpp
@@ -47,6 +49,7 @@ set(Core_HEADER
     gkCommon.h
     gkConstraint.h
     gkCoreApplication.h
+    gkDebugFps.h
     gkDebugger.h
     gkDebugProperty.h
     gkDebugScreen.h
@@ -73,6 +76,7 @@ set(Core_HEADER
     gkSceneManager.h
     gkSerialize.h
     gkSkeleton.h
+    gkStats.h
     gkString.h
     gkTransformState.h
     gkUserDefs.h

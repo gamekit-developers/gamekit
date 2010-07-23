@@ -53,6 +53,7 @@ public:
     gkScalar                startframe;         // animation frame at the start of the game
     bool                    blendermat;         // convert meshes using blender materials
     bool                    grabInput;          // hide & grab the mouse
+    bool                    debugFps;           // show fps and profiling information
     bool                    debugPhysics;       // enable / disable physics debugging
     bool                    debugPhysicsAabb;   // show / hide bounding box
     bool                    buildInstances;     // Use instanced geometry

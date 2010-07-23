@@ -98,13 +98,6 @@ bool gkBlendFile::parse(bParse::bBlenderFile *bfp)
     Blender::FileGlobal *fg = (Blender::FileGlobal *)m_file->getFileGlobal();
     if (fg)
     {
-
-        gkUserDefs &defs = gkEngine::getSingleton().getUserDefs();
-
-        defs.blendermat     = (fg->fileflags & G_FILE_GAME_MAT) != 0;
-        defs.debugPhysics   = (fg->fileflags & G_FILE_SHOW_PHYSICS) !=0;
-        defs.showDebugProps = (fg->fileflags & G_FILE_SHOW_DEBUG_PROPS) != 0;
-
         buildAllTextures();
         buildTextFiles();
         buildAllSounds();

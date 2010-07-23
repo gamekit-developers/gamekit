@@ -48,6 +48,7 @@
 #include "gkDebugger.h"
 #include "gkMeshManager.h"
 #include "Thread/gkActiveObject.h"
+#include "gkStats.h"
 
 #ifdef OGREKIT_OPENAL_SOUND
 #include "gkSoundManager.h"
@@ -762,13 +763,20 @@ void gkScene::update(gkScalar tickRate)
     GK_ASSERT(m_physicsWorld);
 
     // update simulation
+    gkStats::getSingleton().startClock();
     m_physicsWorld->step(tickRate);
+    gkStats::getSingleton().stopPhysicsClock();
+
 
     // update logic bricks
+    gkStats::getSingleton().startClock();
     gkLogicManager::getSingleton().update(tickRate);
+    gkStats::getSingleton().stopLogicBricksClock();
 
     // update node trees
+    gkStats::getSingleton().startClock();
     gkNodeManager::getSingleton().update(tickRate);
+    gkStats::getSingleton().stopLogicNodesClock();
 
     applyConstraints();
 
@@ -777,14 +785,20 @@ void gkScene::update(gkScalar tickRate)
 
 #if OGREKIT_OPENAL_SOUND
     // update sound manager.
+    gkStats::getSingleton().startClock();
     gkSoundManager::getSingleton().update(this);
+    gkStats::getSingleton().stopSoundClock();
 #endif
 
+
+    gkStats::getSingleton().startClock();
     if (m_markDBVT)
     {
         m_markDBVT = false;
         m_physicsWorld->handleDbvt(m_startCam);
     }
+    
+    gkStats::getSingleton().stopDbvtClock();
 
     if (m_debugger)
     {

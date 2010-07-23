@@ -48,6 +48,7 @@ gkUserDefs::gkUserDefs()
         startframe(1),
         blendermat(false),
         grabInput(true),
+        debugFps(false),
         debugPhysics(false),
         debugPhysicsAabb(false),
         enableshadows(false),
@@ -125,6 +126,11 @@ void gkUserDefs::parseString(const gkString &key, const gkString &val)
     if (KeyEq("log"))
     {
         log = val;
+        return;
+    }
+    if (KeyEq("debugfps"))
+    {
+        debugFps = Ogre::StringConverter::parseBool(val);
         return;
     }
     if (KeyEq("debugphysics"))

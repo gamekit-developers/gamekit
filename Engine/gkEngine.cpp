@@ -49,6 +49,8 @@
 #include "gkDebugScreen.h"
 #include "gkDebugProperty.h"
 #include "gkTickState.h"
+#include "gkDebugFps.h"
+#include "gkStats.h"
 
 #include "Script/Lua/gkLuaManager.h"
 
@@ -78,7 +80,8 @@ public:
             windowsystem(0),
             scene(0),
             debug(0),
-            debugPage(0)
+            debugPage(0),
+            debugFps(0)
 
     {
         plugin_factory = new gkRenderFactoryPrivate();
@@ -94,9 +97,12 @@ public:
     void tickImpl(gkScalar delta);
     void syncImpl(gkScalar fac);
     void beginTickImpl(void);
+    void endTickImpl(void);
 
 
+    bool frameStarted(const FrameEvent& evt);
     bool frameRenderingQueued(const FrameEvent& evt);
+    bool frameEnded(const FrameEvent& evt);
 
     gkEngine*                   engine;
     gkWindowSystem*             windowsystem;       // current window system
@@ -105,6 +111,7 @@ public:
     Ogre::Root*                 root;
     gkDebugScreen*              debug;
     gkDebugPropertyPage*        debugPage;
+    gkDebugFps*                 debugFps;
 };
 
 
@@ -195,6 +202,12 @@ void gkEngine::initialize(bool autoCreateWindow)
     m_private->debugPage = new gkDebugPropertyPage();
     m_private->debugPage->initialize();
 
+    m_private->debugFps = new gkDebugFps();
+    m_private->debugFps->initialize();
+    m_private->debugFps->show(defs.debugFps);
+
+    // statistics and profiling
+    new gkStats();
 
     m_animRate = defs.animspeed;
     m_initialized = true;
@@ -383,6 +396,10 @@ void gkEngine::run(void)
     m_root->removeFrameListener(m_private);
 }
 
+bool gkEnginePrivate::frameStarted(const FrameEvent& evt)
+{
+    return true;
+}
 
 bool gkEnginePrivate::frameRenderingQueued(const FrameEvent& evt)
 {
@@ -391,10 +408,26 @@ bool gkEnginePrivate::frameRenderingQueued(const FrameEvent& evt)
     return scene != 0;
 }
 
+bool gkEnginePrivate::frameEnded(const FrameEvent& evt)
+{
+    return true;
+}
+
 void gkEnginePrivate::beginTickImpl(void)
 {
     GK_ASSERT(scene);
     scene->beginFrame();
+}
+
+void gkEnginePrivate::endTickImpl(void)
+{
+    if (debugPage && debugPage->isShown())
+        debugPage->draw();
+
+    if (debugFps && debugFps->isShown())
+        debugFps->draw();
+
+    gkStats::getSingleton().resetClock();
 }
 
 void gkEnginePrivate::tickImpl(gkScalar dt)
@@ -430,9 +463,6 @@ void gkEnginePrivate::tickImpl(gkScalar dt)
         engine->m_loadables.clear();
     }
 
-
-    if (debugPage && debugPage->isShown())
-        debugPage->draw();
 }
 
 
