@@ -36,11 +36,13 @@ class gkStats : public Ogre::Singleton<gkStats>
 private:
     Ogre::Timer* m_clock;
     
+    unsigned long m_render;
     unsigned long m_logicBricks;
     unsigned long m_logicNodes;
     unsigned long m_physics;
     unsigned long m_dbvt;
     unsigned long m_sound;
+    unsigned long m_bufswaplod;
 
 public:
     gkStats();
@@ -49,17 +51,21 @@ public:
 
     void startClock(void);
 
+    void stopRenderClock(void);
     void stopLogicBricksClock(void);
     void stopLogicNodesClock(void);
     void stopPhysicsClock(void);
     void stopDbvtClock(void);
     void stopSoundClock(void);
+    void stopBufSwapLodClock(void);
 
+    unsigned long getRenderMicroSeconds(void) {return m_render; }
     unsigned long getLogicBricksMicroSeconds(void) {return m_logicBricks; }
     unsigned long getLogicNodesMicroSeconds(void)  {return m_logicNodes;}
     unsigned long getPhysicsMicroSeconds(void)     {return m_physics;}
     unsigned long getDbvtMicroSeconds(void)        {return m_dbvt;}
     unsigned long getSoundMicroSeconds(void)       {return m_sound;}
+    unsigned long getBufSwapLodMicroSeconds(void)       {return m_bufswaplod;}
 
     static gkStats& getSingleton(void);
     static gkStats* getSingletonPtr(void);

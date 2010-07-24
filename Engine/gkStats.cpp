@@ -35,18 +35,24 @@ gkStats::gkStats()
 
 void gkStats::resetClock(void)
 {
-    
+    m_render = 0;
     m_logicBricks = 0;
     m_logicNodes = 0;
     m_physics = 0;
     m_dbvt = 0;
     m_sound = 0;
+    m_bufswaplod = 0;
 }
 
 
 void gkStats::startClock(void)
 {
     m_clock->reset();
+}
+
+void gkStats::stopRenderClock(void)
+{
+    m_render += m_clock->getMicroseconds();
 }
 
 void gkStats::stopLogicBricksClock(void)
@@ -74,5 +80,9 @@ void gkStats::stopSoundClock(void)
     m_sound += m_clock->getMicroseconds();
 }
 
+void gkStats::stopBufSwapLodClock(void)
+{
+    m_bufswaplod += m_clock->getMicroseconds();
+}
 
 GK_IMPLEMENT_SINGLETON(gkStats)

@@ -46,20 +46,23 @@ gkDebugFps::gkDebugFps()
     :   m_isInit(false), m_isShown(false),
         m_over(0), m_cont(0), m_key(0), m_val(0)
 {
-    m_keys = "", 
+    m_keys = "";
     m_keys += "FPS:\n";
-    m_keys += "Swap:\n";
+    m_keys += "Average:\n";
+    m_keys += "Best:\n";
+    m_keys += "Worst:\n";
+    m_keys += "\n";
+    m_keys += "Triangles:\n";
+    m_keys += "Batch count:\n";
+    m_keys += "\n";
+    m_keys += "Total:\n";
+    m_keys += "Render:\n";
     m_keys += "Physics:\n";
     m_keys += "LogicBricks:\n";
     m_keys += "LogicNodes:\n";
     m_keys += "Sound:\n";
     m_keys += "DBVT:\n";
-    m_keys += "Rasterizer:\n";
-    m_keys += "Scenegraph:\n";
-    m_keys += "Network:\n";
-    m_keys += "Services:\n";
-    m_keys += "Overhead:\n";
-    m_keys += "Outside:\n";
+    m_keys += "Bufferswap&LOD:\n";
 }
 
 // ----------------------------------------------------------------------------
@@ -87,7 +90,8 @@ void gkDebugFps::initialize(void)
         m_cont->setMetricsMode(Ogre::GMM_PIXELS);
         m_cont->setVerticalAlignment(Ogre::GVA_TOP);
         m_cont->setHorizontalAlignment(Ogre::GHA_RIGHT);
-        m_cont->setLeft(-14*PROP_SIZE);
+        m_cont->setLeft(-16*PROP_SIZE);
+        m_cont->setTop(10);
 
         m_key->setMetricsMode(Ogre::GMM_PIXELS);
         m_key->setVerticalAlignment(Ogre::GVA_TOP);
@@ -96,7 +100,7 @@ void gkDebugFps::initialize(void)
         m_val->setMetricsMode(Ogre::GMM_PIXELS);
         m_val->setVerticalAlignment(Ogre::GVA_TOP);
         m_val->setHorizontalAlignment(Ogre::GHA_LEFT);
-        m_val->setLeft(6*PROP_SIZE);
+        m_val->setLeft(8*PROP_SIZE);
 
         Ogre::TextAreaOverlayElement *textArea;
         
@@ -151,38 +155,48 @@ void gkDebugFps::draw(void)
 
     float fps = ogrestats.lastFPS;
     float swap = 1000/fps;
+    float render = gkStats::getSingleton().getRenderMicroSeconds()/1000.0f;
     float phys = gkStats::getSingleton().getPhysicsMicroSeconds()/1000.0f;
     float logicb = gkStats::getSingleton().getLogicBricksMicroSeconds()/1000.0f;
     float logicn = gkStats::getSingleton().getLogicNodesMicroSeconds()/1000.0f;
     float sound = gkStats::getSingleton().getSoundMicroSeconds()/1000.0f;
     float dbvt = gkStats::getSingleton().getDbvtMicroSeconds()/1000.0f;
+    float bufswaplod = gkStats::getSingleton().getBufSwapLodMicroSeconds()/1000.0f;
 
     gkString vals="";
 
     vals += Ogre::StringConverter::toString(fps) + '\n';
-    vals += Ogre::StringConverter::toString(swap, 6, 6, ' ', std::ios::fixed) + "ms 100%\n";
+    vals += Ogre::StringConverter::toString(ogrestats.avgFPS) + '\n';
+    vals += Ogre::StringConverter::toString(ogrestats.bestFPS) + '\n';
+    vals += Ogre::StringConverter::toString(ogrestats.worstFPS) + '\n';
+    vals += '\n';
     
-    vals += Ogre::StringConverter::toString(phys, 6, 6, ' ', std::ios::fixed) + "ms ";
+    vals += Ogre::StringConverter::toString(ogrestats.triangleCount) + '\n';
+    vals += Ogre::StringConverter::toString(ogrestats.batchCount) + '\n';
+    vals += '\n';
+    
+    vals += Ogre::StringConverter::toString(swap, 3, 7, '0', std::ios::fixed) + "ms 100%\n";
+    
+    vals += Ogre::StringConverter::toString(render, 3, 7, '0', std::ios::fixed) + "ms ";
+    vals += Ogre::StringConverter::toString( int(100*render/swap), 3 ) + "%\n";
+    
+    vals += Ogre::StringConverter::toString(phys, 3, 7, '0', std::ios::fixed) + "ms ";
     vals += Ogre::StringConverter::toString( int(100*phys/swap), 3 ) + "%\n";
     
-    vals += Ogre::StringConverter::toString(logicb, 6, 6, ' ', std::ios::fixed) + "ms ";
+    vals += Ogre::StringConverter::toString(logicb, 3, 7, '0', std::ios::fixed) + "ms ";
     vals += Ogre::StringConverter::toString( int(100*logicb/swap), 3 ) + "%\n";
     
-    vals += Ogre::StringConverter::toString(logicn, 6, 6, ' ', std::ios::fixed) + "ms ";
+    vals += Ogre::StringConverter::toString(logicn, 3, 7, '0', std::ios::fixed) + "ms ";
     vals += Ogre::StringConverter::toString( int(100*logicn/swap), 3 ) + "%\n";
     
-    vals += Ogre::StringConverter::toString(sound, 6, 6, ' ', std::ios::fixed) + "ms ";
+    vals += Ogre::StringConverter::toString(sound, 3, 7, '0', std::ios::fixed) + "ms ";
     vals += Ogre::StringConverter::toString( int(100*sound/swap), 3 ) + "%\n";
     
-    vals += Ogre::StringConverter::toString(dbvt, 6, 6, ' ', std::ios::fixed) + "ms ";
+    vals += Ogre::StringConverter::toString(dbvt, 3, 7, '0', std::ios::fixed) + "ms ";
     vals += Ogre::StringConverter::toString( int(100*dbvt/swap), 3 ) + "%\n";
     
-    vals += "TODO\n";
-    vals += "TODO\n";
-    vals += "TODO\n";
-    vals += "TODO\n";
-    vals += "TODO\n";
-    vals += "TODO\n";
+    vals += Ogre::StringConverter::toString(bufswaplod, 3, 7, '0', std::ios::fixed) + "ms ";
+    vals += Ogre::StringConverter::toString( int(100*bufswaplod/swap), 3 ) + "%\n";
 
     if (!m_keys.empty() && !vals.empty())
     {

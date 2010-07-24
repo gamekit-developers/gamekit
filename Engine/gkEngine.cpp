@@ -398,18 +398,29 @@ void gkEngine::run(void)
 
 bool gkEnginePrivate::frameStarted(const FrameEvent& evt)
 {
+    gkStats::getSingleton().startClock();
+
     return true;
 }
 
 bool gkEnginePrivate::frameRenderingQueued(const FrameEvent& evt)
 {
+    gkStats::getSingleton().stopRenderClock();
+
     if (scene)
         tick();
+
+    gkStats::getSingleton().resetClock();
+    // restart the clock to mesure time for swapping buffer and updatind scenemanager LOD
+    gkStats::getSingleton().startClock();
+
     return scene != 0;
 }
 
 bool gkEnginePrivate::frameEnded(const FrameEvent& evt)
 {
+    gkStats::getSingleton().stopBufSwapLodClock();
+    
     return true;
 }
 
@@ -426,8 +437,6 @@ void gkEnginePrivate::endTickImpl(void)
 
     if (debugFps && debugFps->isShown())
         debugFps->draw();
-
-    gkStats::getSingleton().resetClock();
 }
 
 void gkEnginePrivate::tickImpl(gkScalar dt)
