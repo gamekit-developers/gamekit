@@ -141,6 +141,7 @@
 #include "LogicBricks/gkMouseSensor.h"
 #include "LogicBricks/gkPropertyActuator.h"
 #include "LogicBricks/gkPropertySensor.h"
+#include "LogicBricks/gkRadarSensor.h"
 #include "LogicBricks/gkRaySensor.h"
 #include "LogicBricks/gkScriptController.h"
 #include "LogicBricks/gkStateActuator.h"

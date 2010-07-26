@@ -2370,6 +2370,31 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
                 ks->setMod0(getKey(bks->qual));
                 ks->setMod1(getKey(bks->qual2));
             } break;
+        case SENS_RADAR:
+            {
+                gkRadarSensor *rs = new gkRadarSensor(gobj, lnk, bsen->name);
+                ls = rs;
+                Blender::bRadarSensor *brs = (Blender::bRadarSensor *)bsen->data;
+
+                int axis = 0;
+                switch (brs->axis)
+                {
+                case 1: {axis = gkRadarSensor::RA_XPOS; break;}
+                case 0: {axis = gkRadarSensor::RA_YPOS; break;}
+                case 2: {axis = gkRadarSensor::RA_ZPOS; break;}
+                case 3: {axis = gkRadarSensor::RA_XNEG; break;}
+                case 4: {axis = gkRadarSensor::RA_YNEG; break;}
+                case 5: {axis = gkRadarSensor::RA_ZNEG; break;}
+                }
+
+                rs->setRange(brs->range);
+                rs->setAxis(axis);
+                rs->setAngle(brs->angle*gkRPD);
+
+                if (brs->name[0] != '\0')
+                    rs->setProperty(gkLogicLoader_formatText(brs->name));
+
+            } break;
         }
 
         if (ls)

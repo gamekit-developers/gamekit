@@ -44,7 +44,7 @@ public:
         RA_ZNEG,
     };
 
-private:
+protected:
     gkScalar    m_range;
     int         m_axis;
     gkString    m_material, m_prop;
