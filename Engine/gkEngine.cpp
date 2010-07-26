@@ -250,6 +250,8 @@ void gkEngine::finalize()
 
     delete gkBlendLoader::getSingletonPtr();
 
+    delete gkStats::getSingletonPtr();
+    delete m_private->debugFps;
     delete m_private->debugPage;
     delete m_private->debug;
     delete m_root;

@@ -103,8 +103,8 @@ void gkCamera::setClip(gkScalar start, gkScalar end)
 
     if (m_cameraProps.m_clipend != end)
     {
-        m_cameraProps.m_clipstart = start;
-        if (m_camera) m_camera->setNearClipDistance(start);
+        m_cameraProps.m_clipend = end;
+        if (m_camera) m_camera->setFarClipDistance(end);
     }
 }
 
