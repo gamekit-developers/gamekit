@@ -34,8 +34,21 @@ configure_ogrekit(${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/OgreLite)
 set(OGREKIT_BULLET_LIBS BulletDynamics BulletCollision BulletSoftBody LinearMath)
 set(OGREKIT_BULLET_INCLUDE ${CMAKE_SOURCE_DIR}/bullet/src)
 
+# ---------------------------------------------------------
+# Common base paths
+set(OGREKIT_INCLUDE ${OGREKIT_OGRE_INCLUDE}
+                    ${OGREKIT_SOURCE_DIR}/Engine
+                    ${OGREKIT_SOURCE_DIR}/Engine/AI
+                    ${OGREKIT_BULLET_INCLUDE}
+                    ${OGREKIT_DEP_INCLUDE}
+                    )
+set(OGREKIT_LIB             OgreKitCore ${OGREKIT_LUA_TARGET})
+set(OGREKIT_STD_LUA_LIB     OgreKitCore ${OGREKIT_LUA_STD_TARGET})
+
+
 subdirs(bullet)
 subdirs(Dependencies)
 subdirs(OgreLite)
 subdirs(Engine)
 subdirs(Samples)
+subdirs(Docs/LuaAPI)

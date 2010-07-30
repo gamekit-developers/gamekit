@@ -13,8 +13,128 @@
 */
 #include "gkLuaUtils.h"
 #include "utString.h"
+#include "Generated/OgreKitTemplates.h"
+
+// ----------------------------------------------------------------------------
+void install_Templates(lua_State *L)
+{
+    // Local built-in .lua bindings
+
+    lua_pushvalue(L, LUA_GLOBALSINDEX);
+    luaL_dostring(L, SYSTEM); // printf, dPrintf
+    luaL_dostring(L, CLASS);  // Class, BaseClass
+    lua_pop(L, 1);
+}
+
+extern "C" int luaopen_OgreKit(lua_State *L); 
+
+// ----------------------------------------------------------------------------
+extern "C" int _OgreKitLua_install(lua_State *L)
+{
+    install_Templates(L);
+    return luaopen_OgreKit(L);
+}
 
 
+// ----------------------------------------------------------------------------
+gkLuaEvent::gkLuaEvent(gkLuaCurState fnc) 
+    :   L(fnc.L), m_self(0) 
+{
+    m_callback = new gkLuaObject(L, fnc.m_id);
+}
+
+
+// ----------------------------------------------------------------------------
+gkLuaEvent::gkLuaEvent(gkLuaCurState self, gkLuaCurState fnc) 
+    :   L(fnc.L) 
+{
+    m_self = new gkLuaObject(L, self.m_id);
+    m_callback = new gkLuaObject(L, fnc.m_id);
+}
+
+// ----------------------------------------------------------------------------
+gkLuaEvent::~gkLuaEvent() 
+{
+    delete m_self; 
+    delete m_callback;
+}
+
+// ----------------------------------------------------------------------------
+void gkLuaEvent::beginCall(void)
+{
+
+    if (!L || !m_callback) return;
+
+    m_callArgs = 0;
+
+    // push callback function
+    lua_rawgeti(L, LUA_REGISTRYINDEX, m_callback->get());
+
+    if (m_self)
+    {
+        lua_rawgeti(L, LUA_REGISTRYINDEX, m_self->get());
+        assert(lua_istable(L, -1));
+        m_callArgs++;
+    }
+
+}
+
+// ----------------------------------------------------------------------------
+void gkLuaEvent::addArgument(bool val)
+{
+    lua_pushboolean(L, val ? 1 : 0);
+    ++m_callArgs;
+}
+
+// ----------------------------------------------------------------------------
+void gkLuaEvent::addArgument(int val)
+{
+    lua_pushnumber(L, (lua_Number)val);
+    ++m_callArgs;
+}
+
+// ----------------------------------------------------------------------------
+void gkLuaEvent::addArgument(float val)
+{
+    lua_pushnumber(L, (lua_Number)val);
+    ++m_callArgs;
+}
+
+// ----------------------------------------------------------------------------
+bool gkLuaEvent::call(bool &result)
+{
+    result = false;
+    if (m_callArgs == 0) return false;
+
+
+    if (lua_pcall(L, m_callArgs, 1, 0) != 0)
+    {
+        printf("%s\n", lua_tostring(L, -1));
+        lua_pop(L, 1);
+        return false;
+    }
+
+    result = lua_toboolean(L, -1) != 0;
+    m_callArgs = 0;
+    return true;
+}
+
+// ----------------------------------------------------------------------------
+bool gkLuaEvent::call()
+{
+    if (m_callArgs == 0) return false;
+
+
+    if (lua_pcall(L, m_callArgs, 0, 0) != 0)
+    {
+        printf("%s\n", lua_tostring(L, -1));
+        lua_pop(L, 1);
+        return false;
+    }
+    m_callArgs = 0;
+    return true;
+
+}
 
 // ----------------------------------------------------------------------------
 void lua_popall(lua_State *L)
@@ -53,7 +173,7 @@ void lua_dumpstack(lua_State *L)
         top--;
     }
 }
-#if 0
+
 // ----------------------------------------------------------------------------
 void lua_beginnamespace(lua_State *L, const char *nsp)
 {
@@ -517,4 +637,5 @@ void lua_addmethods(lua_State *L, gkLuaMethodDef *methods)
         lua_settable(L, -3);
     }
 }
-#endif
+
+

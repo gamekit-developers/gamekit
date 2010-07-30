@@ -444,7 +444,7 @@ void gkEnginePrivate::endTickImpl(void)
 void gkEnginePrivate::tickImpl(gkScalar dt)
 {
     // Proccess one full game tick
-    GK_ASSERT(windowsystem && scene && engine);
+     GK_ASSERT(windowsystem && scene && engine);
 
     // dispatch inputs
     windowsystem->dispatch();

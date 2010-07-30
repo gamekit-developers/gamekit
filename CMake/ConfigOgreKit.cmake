@@ -37,10 +37,31 @@ macro (configure_ogrekit ROOT OGREPATH)
 	
     option(OGREKIT_BUILD_RUNTIME        "Build Samples/Runtime"                 ON)
     option(OGREKIT_BUILD_LOGICDEMO      "Build Samples/LogicDemo"               ON)
+    option(OGREKIT_BUILD_LUARUNTIME     "Build Samples/LuaRuntime"              ON)
     option(OGREKIT_COMPLIE_SWIG         "Enable compile time SWIG generation."  OFF)
     option(OGREKIT_HEADER_GENERATOR     "Build Blender DNA to C++ generator."   OFF)
 
-
+    
+    if (OGREKIT_BUILD_LUARUNTIME)
+        include(FindLua51)
+        if (LUA51_FOUND)
+            set(OGREKIT_LUA_STD_TARGET ${LUA_LIBRARIES})
+         else ()
+            message(STATUS "-----------------------------------------------------------------------------")
+            message(STATUS "Linking with built-in Lua. This may cause instability in the compiled module")
+            message(STATUS "Consider installing the Lua5.1 package")
+            if (WIN32)
+                message(STATUS "         http://www.lua.org/ or, http://code.google.com/p/luaforwindows/")
+            else()
+                message(STATUS "         http://www.lua.org/")
+            endif()
+            message(STATUS "-----------------------------------------------------------------------------")
+            message(STATUS " ")
+            
+            set(OGREKIT_LUA_STD_TARGET ${OGREKIT_LUA_TARGET})
+         endif()
+    endif()
+    
     option(OGREKIT_BUILD_V8 "Build V8 JavaScript bindings." ON)
     if (OGREKIT_BUILD_V8)
         option(OGREKIT_BUILD_V8_TEST "Build Samples/V8Test" ON)
@@ -78,7 +99,20 @@ macro (configure_ogrekit ROOT OGREPATH)
 	set(OGREKIT_RECAST_INCLUDE ${OGREKIT_DEP_DIR}/Recast/Include)
 	set(OGREKIT_DETOUR_INCLUDE ${OGREKIT_DEP_DIR}/Detour/Include)
 	set(OGREKIT_OPENSTEER_INCLUDE ${OGREKIT_DEP_DIR}/OpenSteer/include)
+	
 
+    set(OGREKIT_DEP_INCLUDE
+        ${OGREKIT_FREEIMAGE_INCLUDE}
+        ${OGREKIT_FREETYPE_INCLUDE}
+        ${OGREKIT_ZLIB_INCLUDE}
+        ${OGREKIT_ZZIP_INCLUDE}
+        ${OGREKIT_OIS_INCLUDE}
+        ${OGREKIT_LUA_INCLUDE}
+        ${OGREKIT_OGGVORBIS_INCLUDE}
+        ${OGREKIT_RECAST_INCLUDE}
+        ${OGREKIT_DETOUR_INCLUDE}
+        ${OGREKIT_OPENSTEER_INCLUDE}
+    )
 	set(OGREKIT_MINGW_DIRECT3D TRUE)
 	if (CMAKE_COMPILER_IS_GNUCXX)
 		# Some Issues with unresolved symbols
@@ -183,7 +217,6 @@ macro (configure_ogrekit ROOT OGREPATH)
 		${OGREKIT_DETOUR_TARGET}
 		${OGREKIT_OPENSTEER_TARGET}
 		${OGREKIT_OPENAL_LIBRARY}
-		${OGREKIT_LUA_TARGET}
 		)
 
 endmacro(configure_ogrekit)

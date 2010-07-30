@@ -19,6 +19,7 @@ extern "C" {
     #include <lualib.h>
     #include <lauxlib.h>
 }
+#include "Utils/utTypes.h"
 
 #define GK_UPVALUETYPE      1
 #define GK_UPVALUEMETHOD    2
@@ -48,7 +49,6 @@ struct gkLuaTypeDef
     gkLuaMethodDef          *m_methods;
 };
 
-#if 0
 
 enum gkLuaDataTypes
 {
@@ -65,7 +65,87 @@ enum gkLuaDataTypes
     LU_INSTANCE = '.',
 };
 
-#endif
+typedef struct gkLuaCurState
+{
+    lua_State *L;
+    int m_id;
+}gkLuaCurState;
+
+
+class gkLuaObject
+{
+private:
+    lua_State *L;
+    int m_ref;
+public:
+
+    gkLuaObject() : L(0), m_ref(-1) {}
+    gkLuaObject(lua_State *_L, int input) : L(_L), m_ref(-1) {ref(input);}
+    ~gkLuaObject() { unref(); }
+
+    void ref(int input)
+    {
+        if (m_ref != -1)
+            unref();
+
+        if (L)
+        {
+            lua_pushvalue(L, input);
+            m_ref = luaL_ref(L, LUA_REGISTRYINDEX);
+        }
+    }
+
+    void unref(void)
+    {
+        if (m_ref != -1 && L)
+        {
+            luaL_unref(L, LUA_REGISTRYINDEX, m_ref);
+            m_ref = -1;
+        }
+    }
+
+    int         get(void)   {return m_ref;}
+    lua_State*  getL(void)  {return L;}
+};
+
+class gkLuaEvent
+{
+protected:
+
+    lua_State   *L;
+    gkLuaObject *m_self;
+    gkLuaObject *m_callback;
+    int          m_callArgs;
+
+public:
+
+    // global function
+    gkLuaEvent(gkLuaCurState fnc);
+
+    // member function
+    gkLuaEvent(gkLuaCurState self, gkLuaCurState fnc);
+    virtual ~gkLuaEvent();
+
+
+
+
+    // push callback and self if present,
+    void beginCall(void);
+    // add args,
+    void addArgument(bool val);
+    void addArgument(int val);
+    void addArgument(float val);
+    // push extra args, 
+    // do the call 
+    bool call();
+
+
+    // return bool 
+    bool call(bool &result);
+
+};
+
+
 // -----------------------------------------------------------------------------
 class gkLuaState
 {
@@ -84,7 +164,6 @@ public:
 extern void lua_popall(lua_State *L);
 extern void lua_dumpstack(lua_State *L);
 
-#if 0
 extern bool lua_isclass(lua_State *L, int idx);
 
 extern gkLuaTypeDef *lua_getclasstype(lua_State *L);
@@ -102,5 +181,4 @@ extern void lua_addconstant(lua_State *L, const char *name, float v);
 extern void lua_addconstant(lua_State *L, const char *name, int v);
 extern void lua_addconstant(lua_State *L, const char *name, const char *v);
 
-#endif
 #endif//_gkLuaUtils_h_
