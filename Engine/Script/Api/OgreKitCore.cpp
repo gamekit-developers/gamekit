@@ -200,9 +200,9 @@ static void gkVar_fromVar(gkVariable &v, gkString &r) {
         m_defs->var = (cast)c;\
     }
 
-#define PROP_SET_I(name, var) PROP_SET_T(name, var, int)
-#define PROP_SET_N(name, var) PROP_SET_T(name, var, gkScalar)
-#define PROP_SET_B(name, var) PROP_SET_T(name, var, bool)
+#define PROP_SET_I(name, var) PROP_SET_T(name, var, int&)
+#define PROP_SET_N(name, var) PROP_SET_T(name, var, gkScalar&)
+#define PROP_SET_B(name, var) PROP_SET_T(name, var, bool&)
 #define PROP_SET_S(name, var) PROP_SET_T(name, var, gkString&)
 #define PROP_SET_E(name, var, E) PROP_SET_TE(name, var, E)
 
