@@ -32,37 +32,67 @@
 extern "C" int _OgreKitLua_install(lua_State *L);
 
 
-// ----------------------------------------------------------------------------
+/// Interpreter, for a builtin OgreKitLua executable
+/// This is a work around for not having a Lua system package installed.
+
+
 int main(int argc, char **argv)
 {
+	TestMemory;
 
-    /// Interpreter, for a builtin OgreKitLua executable
-    /// 
-    /// \todo neeeds command line arguments and paths to Lua std libraries 
-    ///
-    /// This is also a work around for not having a Lua system package installed.
+	if (argc < 2)
+	{
+		printf("Usage: %s file.lua [file.lua arguments]\n", argv[0]);
+		return 1;
+	}
 
-    TestMemory;
+	lua_State *L = lua_open();
+
+	// standard libraries
+	luaL_openlibs(L);
+
+	// install local code
+	_OgreKitLua_install(L);
 
 
-    if (argc < 2)
-    {
-        printf("Usage: %s file.lua [file.lua arguments]\n", argv[0]);
-        return 1;
-    }
+	// set up cmd line
+	lua_pushvalue(L, LUA_GLOBALSINDEX);
+	lua_pushstring(L, "arg");
+	lua_newtable(L);
 
-    lua_State *L = lua_open();
+	int nr = argc-1;
+	for (int i=nr; i>=0; --i)
+	{
+		lua_pushnumber(L, i-1);
+		lua_pushstring(L, argv[i]);
+		lua_settable(L, -3);
+	}
 
-    // standard libraries
-    luaL_openlibs(L);
-    _OgreKitLua_install(L);
+	lua_settable(L, -3);
 
-    if (luaL_dofile(L, argv[1]) != 0)
-    {
-        printf("%s\n", lua_tostring(L, -1));
-        lua_pop(L, 1);
-    }
+	// pop global
+	lua_pop(L, 1);
 
-    lua_close(L);
-    return 0;
+	UT_ASSERT(lua_gettop(L) == 0);
+
+	lua_pushtraceback(L);
+	int tb = lua_gettop(L);
+
+	int status = luaL_loadfile(L, argv[1]);
+	if (status != 0)
+	{
+		printf("%s\n", lua_tostring(L, -1));
+		lua_pop(L, 1);
+	}
+	else
+	{
+		if (lua_pcall(L, 0, LUA_MULTRET, tb) != 0)
+		{
+			printf("%s\n", lua_tostring(L, -1));
+			lua_pop(L, 1);
+		}
+	}
+
+	lua_close(L);
+	return 0;
 }

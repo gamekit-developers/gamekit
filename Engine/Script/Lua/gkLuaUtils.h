@@ -176,7 +176,7 @@ public:
 // -----------------------------------------------------------------------------
 extern void lua_popall(lua_State *L);
 extern void lua_dumpstack(lua_State *L);
-
+extern int  lua_pushtraceback(lua_State *L);
 extern bool lua_isclass(lua_State *L, int idx);
 
 extern gkLuaTypeDef *lua_getclasstype(lua_State *L);

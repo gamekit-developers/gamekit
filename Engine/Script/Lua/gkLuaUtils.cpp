@@ -50,6 +50,26 @@ extern "C" int _OgreKitLua_install(lua_State *L)
 
 
 // ----------------------------------------------------------------------------
+int lua_pushtraceback(lua_State *L)
+{
+	lua_getfield(L, LUA_GLOBALSINDEX, "debug");
+	if (!lua_istable(L, -1))
+	{
+		lua_pop(L, 1);
+		return 1;
+	}
+
+	lua_getfield(L, -1, "traceback");
+	if (!lua_isfunction(L, -1))
+	{
+		lua_pop(L, 2);
+		return 1;
+	}
+	return 2;
+}
+
+
+// ----------------------------------------------------------------------------
 gkLuaEvent::gkLuaEvent(gkLuaCurState fnc)
 	:   L(fnc.L), m_self(0)
 {
