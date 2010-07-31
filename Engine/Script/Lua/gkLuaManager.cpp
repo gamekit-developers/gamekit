@@ -39,27 +39,27 @@ extern "C" int _OgreKitLua_install(lua_State *L);
 
 // ----------------------------------------------------------------------------
 gkLuaManager::gkLuaManager()
-    :       L(0)
+	:       L(0)
 {
-    L = lua_open();
-    luaL_openlibs(L);
+	L = lua_open();
+	luaL_openlibs(L);
 
-    /// \todo Need to merge the two API's. Almost identical anyway. 
-    ///      For this, need to be sure this works with V8
-    ///             then bind the Swig code in V8Runtime
-    ///             in the same manor as LuaPackage.
-    // if (!gkUtils::IS_LUA_PACKAGE)
-    //     _OgreKitLua_install(L);
+	/// \todo Need to merge the two API's. Almost identical anyway.
+	///      For this, need to be sure this works with V8
+	///             then bind the Swig code in V8Runtime
+	///             in the same manor as LuaPackage.
+	// if (!gkUtils::IS_LUA_PACKAGE)
+	//     _OgreKitLua_install(L);
 
-    luaopen_Math(L);
-    luaopen_GameLogic(L);
+	luaopen_Math(L);
+	luaopen_GameLogic(L);
 }
 
 // ----------------------------------------------------------------------------
 gkLuaManager::~gkLuaManager()
 {
-    destroyAll();
-    if (L) lua_close(L);
+	destroyAll();
+	if (L) lua_close(L);
 }
 
 
@@ -71,91 +71,91 @@ void gkLuaManager::update(gkScalar tick)
 // ----------------------------------------------------------------------------
 void gkLuaManager::unload(void)
 {
-    utHashTableIterator<ScriptMap> iter(m_scripts);
-    while (iter.hasMoreElements())
-        iter.getNext().second->unload();
+	utHashTableIterator<ScriptMap> iter(m_scripts);
+	while (iter.hasMoreElements())
+		iter.getNext().second->unload();
 }
 
 
 // ----------------------------------------------------------------------------
 gkLuaScript *gkLuaManager::getScript(const gkString &name)
 {
-    UTsize pos;
-    if ((pos = m_scripts.find(name)) == GK_NPOS)
-        return 0;
-    return m_scripts.at(pos);
+	UTsize pos;
+	if ((pos = m_scripts.find(name)) == GK_NPOS)
+		return 0;
+	return m_scripts.at(pos);
 }
 
 
 // ----------------------------------------------------------------------------
 gkLuaScript *gkLuaManager::create(const gkString &name, const gkString &text)
 {
-    UTsize pos;
-    if ((pos = m_scripts.find(name)) != GK_NPOS)
-        return 0;
+	UTsize pos;
+	if ((pos = m_scripts.find(name)) != GK_NPOS)
+		return 0;
 
-    gkLuaScript *ob = new gkLuaScript(this, name, text);
-    m_scripts.insert(name, ob);
-    return ob;
+	gkLuaScript *ob = new gkLuaScript(this, name, text);
+	m_scripts.insert(name, ob);
+	return ob;
 }
 
 // ----------------------------------------------------------------------------
 gkLuaScript *gkLuaManager::create(const gkString &name)
 {
-    UTsize pos;
-    if ((pos = m_scripts.find(name)) != GK_NPOS)
-        return 0;
+	UTsize pos;
+	if ((pos = m_scripts.find(name)) != GK_NPOS)
+		return 0;
 
-    gkTextFile *intern = gkTextManager::getSingleton().getFile(name);
+	gkTextFile *intern = gkTextManager::getSingleton().getFile(name);
 
-    if (intern == 0)
-    {
-        printf("Invalid internal text file %s\n", name.c_str());
-        return 0;
-    }
+	if (intern == 0)
+	{
+		printf("Invalid internal text file %s\n", name.c_str());
+		return 0;
+	}
 
-    gkLuaScript *ob = new gkLuaScript(this, name, intern->getText());
-    m_scripts.insert(name, ob);
-    return ob;
+	gkLuaScript *ob = new gkLuaScript(this, name, intern->getText());
+	m_scripts.insert(name, ob);
+	return ob;
 }
 
 // ----------------------------------------------------------------------------
 void gkLuaManager::destroy(const gkString &name)
 {
-    UTsize pos;
-    if ((pos = m_scripts.find(name)) != GK_NPOS)
-    {
-        gkLuaScript *ob = m_scripts.at(pos);
-        m_scripts.remove(name);
-        delete ob;
-    }
+	UTsize pos;
+	if ((pos = m_scripts.find(name)) != GK_NPOS)
+	{
+		gkLuaScript *ob = m_scripts.at(pos);
+		m_scripts.remove(name);
+		delete ob;
+	}
 }
 
 // ----------------------------------------------------------------------------
 void gkLuaManager::destroy(gkLuaScript *ob)
 {
-    GK_ASSERT(ob);
-    destroy(ob->getName());
+	GK_ASSERT(ob);
+	destroy(ob->getName());
 }
 
 // ----------------------------------------------------------------------------
 void gkLuaManager::destroyAll(void)
 {
-    utHashTableIterator<ScriptMap> iter(m_scripts);
-    while (iter.hasMoreElements())
-    {
-        gkLuaScript *ob = iter.peekNextValue();
-        delete ob;
-        iter.next();
-    }
-    m_scripts.clear();
+	utHashTableIterator<ScriptMap> iter(m_scripts);
+	while (iter.hasMoreElements())
+	{
+		gkLuaScript *ob = iter.peekNextValue();
+		delete ob;
+		iter.next();
+	}
+	m_scripts.clear();
 }
 
 
 // ----------------------------------------------------------------------------
 bool gkLuaManager::hasScript(const gkString &name)
 {
-    return m_scripts.find(name) != GK_NPOS;
+	return m_scripts.find(name) != GK_NPOS;
 }
 
 

@@ -42,49 +42,49 @@ class gkLuaManager : public Ogre::Singleton<gkLuaManager>
 public:
 
 
-    typedef utHashTable<gkHashedString, gkLuaScript*> ScriptMap;
-    typedef utList<gkLuaScript*> ScriptList;
+	typedef utHashTable<gkHashedString, gkLuaScript *> ScriptMap;
+	typedef utList<gkLuaScript *> ScriptList;
 
 private:
-    lua_State   *L;
-    ScriptMap   m_scripts;
+	lua_State   *L;
+	ScriptMap   m_scripts;
 
 
 public:
-    gkLuaManager();
-    virtual ~gkLuaManager();
+	gkLuaManager();
+	virtual ~gkLuaManager();
 
-    // access to the lua virtual machine
-    GK_INLINE lua_State *getLua(void) {return L;}
+	// access to the lua virtual machine
+	GK_INLINE lua_State *getLua(void) {return L;}
 
-    void update(gkScalar tick);
+	void update(gkScalar tick);
 
-    void unload(void);
-
-
-    gkLuaScript* getScript(const gkString& name);
-
-    // Create new script from text buffer
-    gkLuaScript* create(const gkString& name, const gkString &text);
-
-    // create from internal text file manager
-    gkLuaScript* create(const gkString& name);
-
-    // Destroys named file
-    void destroy(const gkString& name);
-
-    // Destroys file pointer
-    void destroy(gkLuaScript *ob);
-
-    // Destroys all internal files
-    void destroyAll(void);
-
-    // Test for file existance
-    bool hasScript(const gkString& name);
+	void unload(void);
 
 
-    static gkLuaManager& getSingleton();
-    static gkLuaManager* getSingletonPtr();
+	gkLuaScript *getScript(const gkString &name);
+
+	// Create new script from text buffer
+	gkLuaScript *create(const gkString &name, const gkString &text);
+
+	// create from internal text file manager
+	gkLuaScript *create(const gkString &name);
+
+	// Destroys named file
+	void destroy(const gkString &name);
+
+	// Destroys file pointer
+	void destroy(gkLuaScript *ob);
+
+	// Destroys all internal files
+	void destroyAll(void);
+
+	// Test for file existance
+	bool hasScript(const gkString &name);
+
+
+	static gkLuaManager &getSingleton();
+	static gkLuaManager *getSingletonPtr();
 };
 
 #endif//_gkLuaManager_h_

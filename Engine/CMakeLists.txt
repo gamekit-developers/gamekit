@@ -460,7 +460,7 @@ if (OGREKIT_COMPLIE_SWIG)
         ${Script_HEADER}
         Script/Common/gkProperty.i
     )
-    
+
 
     swig_source_lua(SWIG_OUTPUT_LUA SWIG_BUILD_DEPS ${SWIG_INPUT})
     set(SWIG_OUTPUT ${SWIG_OUTPUT_LUA})
@@ -472,7 +472,7 @@ if (OGREKIT_COMPLIE_SWIG)
 
     source_group(Script\\Swig\\Output   FILES   ${SWIG_OUTPUT})
     source_group(Script\\Swig\\Input    FILES   ${SWIG_INPUT})
- 
+
     set(SCRIPT_ALLGEN
         ${SWIG_INPUT}
         ${SWIG_OUTPUT}
@@ -489,7 +489,7 @@ if (OGREKIT_COMPLIE_SWIG)
         source_group(Script\\Templates FILES ${V8_TEMPLATES} ${V8_TEMPLATE_OUT})
 
         list(APPEND SCRIPT_ALLGEN ${V8_TEMPLATES} ${V8_TEMPLATE_OUT})
-        
+
     endif()
 
 
@@ -595,11 +595,11 @@ if (OGREKIT_COMPLIE_SWIG)
         Script/Api/OgreKitUtils.i
     )
 
-    set(TMPL_SOURCE
+    set(TMPL_API_SOURCE
         Script/Api/System.lua
         Script/Api/Class.lua
     )
-    add_templates(GEN_TEMPLATES_OUT Script/Api/Generated/OgreKitTemplates.h ${TMPL_SOURCE})
+    add_templates(GEN_TEMPLATES_OUT Script/Api/Generated/OgreKitTemplates.h ${TMPL_API_SOURCE})
 
     set(ScriptAPI2_HEADER
         # ----- Common Files -----
@@ -627,9 +627,10 @@ if (OGREKIT_COMPLIE_SWIG)
 
 
     swig_source_lua(SWIG_API2_OUTPUT_LUA ScriptAPI2_HEADER ${SWIG_INPUT})
-    
+
 
     set(ScriptAPI2_SOURCE
+        ${TMPL_API_SOURCE}
         ${SWIG_API2_OUTPUT_LUA}
         Script/Api/OgreKitAI.cpp
         Script/Api/OgreKitAnimation.cpp
@@ -834,7 +835,7 @@ if (OGREKIT_OPENAL_SOUND AND OPENAL_FOUND)
     set(Extra_SOURCE
         ${Sound_SOURCE} ${Sound_HEADER}
         )
-        
+
     include_directories( ${OGREKIT_OGGVORBIS_INCLUDE})
     link_libraries(OggVorbis)
 endif()
