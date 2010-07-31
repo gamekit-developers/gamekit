@@ -32,19 +32,18 @@
 class gkRadarSensor : public gkRaySensor
 {
 private:
-    gkScalar m_angle;
+	gkScalar m_angle;
 
 
 public:
-    gkRadarSensor(gkGameObject *object, gkLogicLink *link, const gkString &name);
-    virtual ~gkRadarSensor() {}
+	gkRadarSensor(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	virtual ~gkRadarSensor() {}
 
-    gkLogicBrick* clone(gkLogicLink *link, gkGameObject *dest);
+	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
 
-    bool query(void);
+	bool query(void);
 
-    GK_INLINE void setAngle(gkScalar v)             {m_angle = v;}
+	GK_INLINE void setAngle(gkScalar v)             {m_angle = v;}
 };
 
 #endif // _gkRadarSensor_h_
-

@@ -35,47 +35,49 @@
 class gkHashedString
 {
 protected:
-    gkString m_key;
-    mutable UThash m_hash;
+	gkString m_key;
+	mutable UThash m_hash;
 
 public:
-    gkHashedString() : m_key(""), m_hash(UT_NPOS) {}
-    ~gkHashedString() {}
+	gkHashedString() : m_key(""), m_hash(UT_NPOS) {}
+	~gkHashedString() {}
 
-    // Key Constructor
-    gkHashedString(char* k) : m_key(k), m_hash(UT_NPOS) {hash();}
-    gkHashedString(const char* k) : m_key(const_cast<char*>(k)), m_hash(UT_NPOS) {}
-    gkHashedString(const gkString& k) : m_key(k), m_hash(UT_NPOS) {}
+	// Key Constructor
+	gkHashedString(char *k) : m_key(k), m_hash(UT_NPOS) {hash();}
+	gkHashedString(const char *k) : m_key(const_cast<char *>(k)), m_hash(UT_NPOS) {}
+	gkHashedString(const gkString &k) : m_key(k), m_hash(UT_NPOS) {}
 
-    // Copy constructor
-    gkHashedString(const gkHashedString& k) : m_key(k.m_key), m_hash(k.m_hash) {}
+	// Copy constructor
+	gkHashedString(const gkHashedString &k) : m_key(k.m_key), m_hash(k.m_hash) {}
 
-    UT_INLINE const gkString& str(void) const {return m_key;}
+	UT_INLINE const gkString &str(void) const {return m_key;}
 
-    UThash hash(void) const {
+	UThash hash(void) const
+	{
 
-        // use cached hash
-        if (m_hash != UT_NPOS) return m_hash;
+		// use cached hash
+		if (m_hash != UT_NPOS) return m_hash;
 
-        const char *str = m_key.c_str();
+		const char *str = m_key.c_str();
 
-        // magic numbers from http://www.isthe.com/chongo/tech/comp/fnv/
-        static const unsigned int  InitialFNV = 2166136261u;
-        static const unsigned int FNVMultiple = 16777619u;
+		// magic numbers from http://www.isthe.com/chongo/tech/comp/fnv/
+		static const unsigned int  InitialFNV = 2166136261u;
+		static const unsigned int FNVMultiple = 16777619u;
 
-        // Fowler / Noll / Vo (FNV) Hash
-        m_hash = (UThash)InitialFNV;
-        for (int i = 0; str[i]; i++) {
-            m_hash = m_hash ^(str[i]);    // xor  the low 8 bits
-            m_hash = m_hash * FNVMultiple;  // multiply by the magic number
-        }
-        return m_hash;
-    }
+		// Fowler / Noll / Vo (FNV) Hash
+		m_hash = (UThash)InitialFNV;
+		for (int i = 0; str[i]; i++)
+		{
+			m_hash = m_hash ^(str[i]);    // xor  the low 8 bits
+			m_hash = m_hash * FNVMultiple;  // multiply by the magic number
+		}
+		return m_hash;
+	}
 
-    UT_INLINE bool operator== (const gkHashedString& v) const    {return hash() == v.hash();}
-    UT_INLINE bool operator!= (const gkHashedString& v) const    {return hash() != v.hash();}
-    UT_INLINE bool operator== (const UThash& v) const            {return hash() == v;}
-    UT_INLINE bool operator!= (const UThash& v) const            {return hash() != v;}
+	UT_INLINE bool operator== (const gkHashedString &v) const    {return hash() == v.hash();}
+	UT_INLINE bool operator!= (const gkHashedString &v) const    {return hash() != v.hash();}
+	UT_INLINE bool operator== (const UThash &v) const            {return hash() == v;}
+	UT_INLINE bool operator!= (const UThash &v) const            {return hash() != v;}
 
 };
 

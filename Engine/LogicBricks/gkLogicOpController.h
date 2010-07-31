@@ -33,29 +33,29 @@
 class gkLogicOpController : public gkLogicController
 {
 public:
-    enum Op
-    {
-        OP_NILL,
-        OP_AND,
-        OP_OR,
-        OP_XOR,
-        OP_NAND,
-        OP_NOR,
-        OP_XNOR,
-    };
+	enum Op
+	{
+		OP_NILL,
+		OP_AND,
+		OP_OR,
+		OP_XOR,
+		OP_NAND,
+		OP_NOR,
+		OP_XNOR,
+	};
 protected:
-    int     m_op;
-    bool    m_isInverter;
+	int     m_op;
+	bool    m_isInverter;
 
 public:
 
-    gkLogicOpController(gkGameObject *object, gkLogicLink *link, const gkString &name);
-    virtual ~gkLogicOpController() {}
+	gkLogicOpController(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	virtual ~gkLogicOpController() {}
 
-    gkLogicBrick* clone(gkLogicLink *link, gkGameObject *dest);
+	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
 
-    void execute(void);
-    GK_INLINE void setOp(int nop) {m_op = nop;}
+	void execute(void);
+	GK_INLINE void setOp(int nop) {m_op = nop;}
 };
 
 

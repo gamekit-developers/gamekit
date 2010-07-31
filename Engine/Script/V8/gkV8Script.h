@@ -36,25 +36,25 @@ class gkV8Manager;
 class gkV8Script
 {
 protected:
-    const gkString      m_name, m_text;
-    v8Script            m_script;
-    bool                m_compiled, m_isInvalid;
-    gkV8Manager         *m_owner;
+	const gkString      m_name, m_text;
+	v8Script            m_script;
+	bool                m_compiled, m_isInvalid;
+	gkV8Manager         *m_owner;
 
-    void compile(void);
+	void compile(void);
 
 public:
-    gkV8Script(gkV8Manager *parent, const gkString& name, const gkString& text);
-    ~gkV8Script();
+	gkV8Script(gkV8Manager *parent, const gkString &name, const gkString &text);
+	~gkV8Script();
 
-    GK_INLINE const gkString& getName(void) {return m_name;}
-    GK_INLINE bool  compiled(void)          {return m_compiled;}
+	GK_INLINE const gkString &getName(void) {return m_name;}
+	GK_INLINE bool  compiled(void)          {return m_compiled;}
 
-    void unload(void);
+	void unload(void);
 
 
-    // compile & run the script 
-    bool execute(void);
+	// compile & run the script
+	bool execute(void);
 };
 
 

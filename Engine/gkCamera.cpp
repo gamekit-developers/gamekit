@@ -33,108 +33,108 @@
 #include "OgreSceneNode.h"
 
 gkCamera::gkCamera(gkScene *scene, const gkString &name)
-    :       gkGameObject(scene, name, GK_CAMERA),
-            m_cameraProps(),
-            m_camera(0)
+	:       gkGameObject(scene, name, GK_CAMERA),
+	        m_cameraProps(),
+	        m_camera(0)
 {
 }
 
 
 void gkCamera::loadImpl(void)
 {
-    gkGameObject::loadImpl();
+	gkGameObject::loadImpl();
 
-    if (m_camera != 0)
-        return;
+	if (m_camera != 0)
+		return;
 
-    Ogre::SceneManager *manager = m_scene->getManager();
-    m_camera = manager->createCamera(m_name);
+	Ogre::SceneManager *manager = m_scene->getManager();
+	m_camera = manager->createCamera(m_name);
 
-    m_camera->setNearClipDistance(m_cameraProps.m_clipstart);
-    m_camera->setFarClipDistance(m_cameraProps.m_clipend);
-    m_camera->setFOVy(gkDegree(m_cameraProps.m_fov));
+	m_camera->setNearClipDistance(m_cameraProps.m_clipstart);
+	m_camera->setFarClipDistance(m_cameraProps.m_clipend);
+	m_camera->setFOVy(gkDegree(m_cameraProps.m_fov));
 
-    m_node->attachObject(m_camera);
+	m_node->attachObject(m_camera);
 
-    if (m_cameraProps.m_start)
-        m_scene->setMainCamera(this);
+	if (m_cameraProps.m_start)
+		m_scene->setMainCamera(this);
 }
 
 
 void gkCamera::unloadImpl(void)
 {
-    if (m_camera != 0)
-    {
-        Ogre::SceneManager *manager = m_scene->getManager();
+	if (m_camera != 0)
+	{
+		Ogre::SceneManager *manager = m_scene->getManager();
 
-        m_node->detachObject(m_camera);
-        manager->destroyCamera(m_camera);
-        m_camera = 0;
-    }
+		m_node->detachObject(m_camera);
+		manager->destroyCamera(m_camera);
+		m_camera = 0;
+	}
 
-    gkGameObject::unloadImpl();
+	gkGameObject::unloadImpl();
 }
 
 
 gkObject *gkCamera::clone(const gkString &name)
 {
-    gkCamera *cl = new gkCamera(m_scene, name);
-    memcpy(&cl->m_cameraProps, &m_cameraProps, sizeof(gkCameraProperties));
+	gkCamera *cl = new gkCamera(m_scene, name);
+	memcpy(&cl->m_cameraProps, &m_cameraProps, sizeof(gkCameraProperties));
 
-    gkGameObject::cloneImpl(cl);
-    return cl;
+	gkGameObject::cloneImpl(cl);
+	return cl;
 }
 
 
 void gkCamera::makeCurrent(void)
 {
-    if (m_camera && m_scene)
-        m_scene->setMainCamera(this);
+	if (m_camera && m_scene)
+		m_scene->setMainCamera(this);
 }
 
 
 void gkCamera::setClip(gkScalar start, gkScalar end)
 {
-    if (m_cameraProps.m_clipstart != start)
-    {
-        m_cameraProps.m_clipstart = start;
-        if (m_camera) m_camera->setNearClipDistance(start);
-    }
+	if (m_cameraProps.m_clipstart != start)
+	{
+		m_cameraProps.m_clipstart = start;
+		if (m_camera) m_camera->setNearClipDistance(start);
+	}
 
-    if (m_cameraProps.m_clipend != end)
-    {
-        m_cameraProps.m_clipend = end;
-        if (m_camera) m_camera->setFarClipDistance(end);
-    }
+	if (m_cameraProps.m_clipend != end)
+	{
+		m_cameraProps.m_clipend = end;
+		if (m_camera) m_camera->setFarClipDistance(end);
+	}
 }
 
 
 void gkCamera::setFov(const gkRadian &fov)
 {
-    gkScalar val = fov.valueRadians();
+	gkScalar val = fov.valueRadians();
 
-    if (m_cameraProps.m_fov != val)
-    {
-        m_cameraProps.m_fov = val;
-        if (m_camera) m_camera->setFOVy(gkRadian(fov));
-    }
+	if (m_cameraProps.m_fov != val)
+	{
+		m_cameraProps.m_fov = val;
+		if (m_camera) m_camera->setFOVy(gkRadian(fov));
+	}
 }
 
 
 void gkCamera::setFov(const gkDegree &fov)
 {
-    gkScalar val = fov.valueRadians();
-    if (m_cameraProps.m_fov != val)
-    {
-        m_cameraProps.m_fov = val;
-        if (m_camera) m_camera->setFOVy(gkRadian(fov));
-    }
+	gkScalar val = fov.valueRadians();
+	if (m_cameraProps.m_fov != val)
+	{
+		m_cameraProps.m_fov = val;
+		if (m_camera) m_camera->setFOVy(gkRadian(fov));
+	}
 }
 
 
 void gkCamera::setMainCamera(bool v)
 {
-    m_cameraProps.m_start = v;
-    if (m_camera)
-        m_scene->setMainCamera(this);
+	m_cameraProps.m_start = v;
+	if (m_camera)
+		m_scene->setMainCamera(this);
 }

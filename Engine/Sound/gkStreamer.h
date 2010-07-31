@@ -40,48 +40,48 @@ class gkSource;
 
 class gkStreamer : public gkCall
 {
-    // Background thread for streaming Waveform/Ogg sounds
+	// Background thread for streaming Waveform/Ogg sounds
 public:
 
-    gkStreamer(const gkString &name);
-    virtual ~gkStreamer();
+	gkStreamer(const gkString &name);
+	virtual ~gkStreamer();
 
 
-    void playSound(gkSource *snd);
-    void stopSound(gkSource *snd);
+	void playSound(gkSource *snd);
+	void stopSound(gkSource *snd);
 
 
-    void stopAllSounds(void);
+	void stopAllSounds(void);
 
 
-    bool isRunning(void);
-    bool isEmpty(void);
+	bool isRunning(void);
+	bool isEmpty(void);
 
-    void stop(void);
-    void start(void);
-    void exit(void);
+	void stop(void);
+	void start(void);
+	void exit(void);
 
 private:
-    friend class gkStreamerTick;
+	friend class gkStreamerTick;
 
-    void run(void);
-    void runProtected(void);
-    void collectGarbage(void);
+	void run(void);
+	void runProtected(void);
+	void collectGarbage(void);
 
-    void remove(gkBuffer *buf);
-    void stopBuffer(gkBuffer *snd);
-    void notify(gkBuffer *buf);
+	void remove(gkBuffer *buf);
+	void stopBuffer(gkBuffer *snd);
+	void notify(gkBuffer *buf);
 
-    typedef utArray<gkBuffer *> Buffers;
+	typedef utArray<gkBuffer *> Buffers;
 
 
-    gkCriticalSection   m_cs;
-    const gkString      m_name;
-    gkThread           *m_thread;
-    bool                m_stop;
+	gkCriticalSection   m_cs;
+	const gkString      m_name;
+	gkThread           *m_thread;
+	bool                m_stop;
 
-    Buffers             m_buffers, m_finished;
-    gkSyncObj           m_syncObj;
+	Buffers             m_buffers, m_finished;
+	gkSyncObj           m_syncObj;
 };
 
 

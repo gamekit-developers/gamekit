@@ -40,8 +40,8 @@
 
 inline int debug_hook(int type, char *msg, int *ret)
 {
-    printf("%s", msg);
-    return 0;
+	printf("%s", msg);
+	return 0;
 }
 
 #  define TestMemory  {                                \

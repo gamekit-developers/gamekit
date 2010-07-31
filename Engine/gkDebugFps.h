@@ -31,31 +31,31 @@
 
 class gkDebugFps
 {
-    // for debugging fps
+	// for debugging fps
 private:
 
-    bool m_isInit, m_isShown;
+	bool m_isInit, m_isShown;
 
-    gkString m_keys;
+	gkString m_keys;
 
-    Ogre::Overlay           *m_over;
-    Ogre::OverlayContainer  *m_cont;
-    Ogre::OverlayElement    *m_key, *m_val;
+	Ogre::Overlay           *m_over;
+	Ogre::OverlayContainer  *m_cont;
+	Ogre::OverlayElement    *m_key, *m_val;
 
 
 public:
 
-    gkDebugFps();
-    ~gkDebugFps();
+	gkDebugFps();
+	~gkDebugFps();
 
 
-    void initialize(void);
-    void show(bool v);
+	void initialize(void);
+	void show(bool v);
 
 
-    bool isShown(void) {return m_isShown;}
+	bool isShown(void) {return m_isShown;}
 
-    void draw(void);
+	void draw(void);
 };
 
 #endif // _gkDebugFps_h_

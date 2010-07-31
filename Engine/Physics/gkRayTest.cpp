@@ -33,9 +33,9 @@
 
 
 gkRayTest::gkRayTest()
-: m_hitPointWorld(gkVector3::ZERO),
-m_hitNormalWorld(gkVector3::ZERO),
-m_collisionObject(0)
+	: m_hitPointWorld(gkVector3::ZERO),
+	  m_hitNormalWorld(gkVector3::ZERO),
+	  m_collisionObject(0)
 {
 }
 
@@ -43,7 +43,7 @@ gkRayTest::~gkRayTest()
 {
 }
 
-bool gkRayTest::collides(const Ogre::Ray& ray)
+bool gkRayTest::collides(const Ogre::Ray &ray)
 {
 	gkVector3 from = ray.getOrigin();
 	gkVector3 to = ray.getOrigin() + ray.getDirection();
@@ -55,11 +55,11 @@ bool gkRayTest::collides(const Ogre::Ray& ray)
 	rayCallback.m_collisionFilterGroup = btBroadphaseProxy::AllFilter;
 	rayCallback.m_collisionFilterMask = btBroadphaseProxy::AllFilter;
 
-	gkScene* pScene = gkEngine::getSingleton().getActiveScene();
+	gkScene *pScene = gkEngine::getSingleton().getActiveScene();
 
 	GK_ASSERT(pScene);
 
-	btDynamicsWorld* pWorld = pScene->getDynamicsWorld()->getBulletWorld();
+	btDynamicsWorld *pWorld = pScene->getDynamicsWorld()->getBulletWorld();
 
 	GK_ASSERT(pWorld);
 
@@ -72,8 +72,8 @@ bool gkRayTest::collides(const Ogre::Ray& ray)
 		m_hitNormalWorld = gkVector3(rayCallback.m_hitNormalWorld);
 
 		m_collisionObject = rayCallback.m_collisionObject;
-        
-        m_hitFraction = rayCallback.m_closestHitFraction;
+
+		m_hitFraction = rayCallback.m_closestHitFraction;
 
 		return true;
 	}
@@ -81,7 +81,7 @@ bool gkRayTest::collides(const Ogre::Ray& ray)
 	return false;
 }
 
-gkGameObject* gkRayTest::getObject() const
+gkGameObject *gkRayTest::getObject() const
 {
-	return static_cast<gkObject*>(m_collisionObject->getUserPointer())->getObject();
+	return static_cast<gkObject *>(m_collisionObject->getUserPointer())->getObject();
 }

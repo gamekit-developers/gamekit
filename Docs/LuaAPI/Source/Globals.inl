@@ -105,7 +105,7 @@ end
 
 
 NewDerrived = BaseClass(NewClass)
-NewDerrived:constructor()
+function NewDerrived:constructor()
     ...
 end
 

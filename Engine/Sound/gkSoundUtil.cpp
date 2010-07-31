@@ -37,47 +37,47 @@
 // ----------------------------------------------------------------------------
 bool alIsPlaying(ALuint src)
 {
-    ALint state;
-    alGetSourcei(src, AL_SOURCE_STATE, &state);
-    return state == AL_PLAYING;
+	ALint state;
+	alGetSourcei(src, AL_SOURCE_STATE, &state);
+	return state == AL_PLAYING;
 }
 
 // ----------------------------------------------------------------------------
 bool alErrorCheck(const char *message)
 {
-    ALenum err;
-    if ((err = alGetError()) != AL_NO_ERROR)
-    {
-        gkPrintf("AL Error: %s occured, in call to ==> %s\n", alGetString(err), message);
-        return true;
-    }
-    return false;
+	ALenum err;
+	if ((err = alGetError()) != AL_NO_ERROR)
+	{
+		gkPrintf("AL Error: %s occured, in call to ==> %s\n", alGetString(err), message);
+		return true;
+	}
+	return false;
 }
 
 // ----------------------------------------------------------------------------
 bool alErrorThrow(const char *message)
 {
-    return alErrorCheck(message);
+	return alErrorCheck(message);
 }
 
 
 // ----------------------------------------------------------------------------
 bool alErrorCheck(void)
 {
-    ALint err;
-    ALCdevice *device = alcGetContextsDevice(alcGetCurrentContext());
-    if((err=alcGetError(device)) != ALC_NO_ERROR)
-    {
-        gkPrintf("ALC Error: %s occured\n", alcGetString(device, err));
-        return true;
-    }
+	ALint err;
+	ALCdevice *device = alcGetContextsDevice(alcGetCurrentContext());
+	if((err=alcGetError(device)) != ALC_NO_ERROR)
+	{
+		gkPrintf("ALC Error: %s occured\n", alcGetString(device, err));
+		return true;
+	}
 
-    if((err=alGetError()) != AL_NO_ERROR)
-    {
-        gkPrintf("AL Error: %s occured\n", alGetString(err));
-        return true;
-    }
-    return false;
+	if((err=alGetError()) != AL_NO_ERROR)
+	{
+		gkPrintf("AL Error: %s occured\n", alGetString(err));
+		return true;
+	}
+	return false;
 
 }
 
@@ -85,24 +85,24 @@ bool alErrorCheck(void)
 // ----------------------------------------------------------------------------
 int alGetBufType(const char *magic)
 {
-    if (!strncmp(magic, "RIFF", 4))
-        return GK_BUF_WAV;
-    if (!strncmp(magic, "OggS", 4))
-        return GK_BUF_OGG;
-    return GK_BUF_NULL;
+	if (!strncmp(magic, "RIFF", 4))
+		return GK_BUF_WAV;
+	if (!strncmp(magic, "OggS", 4))
+		return GK_BUF_OGG;
+	return GK_BUF_NULL;
 }
 
 // ----------------------------------------------------------------------------
 int alReadMagic(const char *file)
 {
-    char buf[5] = {'\0'};
+	char buf[5] = {'\0'};
 
-    FILE *fp = fopen(file, "rb");
-    if (!fp)
-        return GK_BUF_NULL;
+	FILE *fp = fopen(file, "rb");
+	if (!fp)
+		return GK_BUF_NULL;
 
-    fread(buf, 4, 1, fp);
-    int result = alGetBufType(buf);
-    fclose(fp);
-    return result;
+	fread(buf, 4, 1, fp);
+	int result = alGetBufType(buf);
+	fclose(fp);
+	return result;
 }

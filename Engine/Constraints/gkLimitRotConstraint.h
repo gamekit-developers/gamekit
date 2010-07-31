@@ -33,45 +33,45 @@ class gkLimitRotConstraint : public gkConstraint
 {
 public:
 
-    gkLimitRotConstraint();
-    virtual ~gkLimitRotConstraint() {}
+	gkLimitRotConstraint();
+	virtual ~gkLimitRotConstraint() {}
 
-    bool update(gkGameObject *ob);
-    gkConstraint* clone(void);
+	bool update(gkGameObject *ob);
+	gkConstraint *clone(void);
 
 
-    void setLimitX(const gkVector2& v);
-    void setLimitY(const gkVector2& v);
-    void setLimitZ(const gkVector2& v);
+	void setLimitX(const gkVector2 &v);
+	void setLimitY(const gkVector2 &v);
+	void setLimitZ(const gkVector2 &v);
 
 private:
 
-    short m_flag;
+	short m_flag;
 
-    gkVector2 mXBounds;
-    gkVector2 mYBounds;
-    gkVector2 mZBounds;
+	gkVector2 mXBounds;
+	gkVector2 mYBounds;
+	gkVector2 mZBounds;
 };
 
 
-GK_INLINE void gkLimitRotConstraint::setLimitX(const gkVector2& v)
+GK_INLINE void gkLimitRotConstraint::setLimitX(const gkVector2 &v)
 {
-    m_flag |= 1;
-    mXBounds = v;
+	m_flag |= 1;
+	mXBounds = v;
 }
 
 
-GK_INLINE void gkLimitRotConstraint::setLimitY(const gkVector2& v)
+GK_INLINE void gkLimitRotConstraint::setLimitY(const gkVector2 &v)
 {
-    m_flag |= 2;
-    mYBounds = v;
+	m_flag |= 2;
+	mYBounds = v;
 }
 
 
-GK_INLINE void gkLimitRotConstraint::setLimitZ(const gkVector2& v)
+GK_INLINE void gkLimitRotConstraint::setLimitZ(const gkVector2 &v)
 {
-    m_flag |= 4;
-    mZBounds = v;
+	m_flag |= 4;
+	mZBounds = v;
 }
 
 

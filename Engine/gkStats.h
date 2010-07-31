@@ -34,54 +34,54 @@ class gkStats : public Ogre::Singleton<gkStats>
 {
 
 private:
-    Ogre::Timer* m_clock;
+	Ogre::Timer *m_clock;
 
-    unsigned long m_start;
-    unsigned long m_render;
-    unsigned long m_logicBricks;
-    unsigned long m_logicNodes;
-    unsigned long m_physics;
-    unsigned long m_dbvt;
-    unsigned long m_sound;
-    unsigned long m_bufswaplod;
+	unsigned long m_start;
+	unsigned long m_render;
+	unsigned long m_logicBricks;
+	unsigned long m_logicNodes;
+	unsigned long m_physics;
+	unsigned long m_dbvt;
+	unsigned long m_sound;
+	unsigned long m_bufswaplod;
 
-    unsigned long m_lastRender;
-    unsigned long m_lastLogicBricks;
-    unsigned long m_lastLogicNodes;
-    unsigned long m_lastPhysics;
-    unsigned long m_lastDbvt;
-    unsigned long m_lastSound;
-    unsigned long m_lastBufswaplod;
-    unsigned long m_lastTotal;
+	unsigned long m_lastRender;
+	unsigned long m_lastLogicBricks;
+	unsigned long m_lastLogicNodes;
+	unsigned long m_lastPhysics;
+	unsigned long m_lastDbvt;
+	unsigned long m_lastSound;
+	unsigned long m_lastBufswaplod;
+	unsigned long m_lastTotal;
 
 public:
-    gkStats();
+	gkStats();
 
-    void resetClock(void);
+	void resetClock(void);
 
-    void startClock(void);
+	void startClock(void);
 
-    void nextFrame(void);
+	void nextFrame(void);
 
-    void stopRenderClock(void);
-    void stopLogicBricksClock(void);
-    void stopLogicNodesClock(void);
-    void stopPhysicsClock(void);
-    void stopDbvtClock(void);
-    void stopSoundClock(void);
-    void stopBufSwapLodClock(void);
+	void stopRenderClock(void);
+	void stopLogicBricksClock(void);
+	void stopLogicNodesClock(void);
+	void stopPhysicsClock(void);
+	void stopDbvtClock(void);
+	void stopSoundClock(void);
+	void stopBufSwapLodClock(void);
 
-    unsigned long getLastRenderMicroSeconds(void)      {return m_lastRender; }
-    unsigned long getLastLogicBricksMicroSeconds(void) {return m_lastLogicBricks; }
-    unsigned long getLastLogicNodesMicroSeconds(void)  {return m_lastLogicNodes;}
-    unsigned long getLastPhysicsMicroSeconds(void)     {return m_lastPhysics;}
-    unsigned long getLastDbvtMicroSeconds(void)        {return m_lastDbvt;}
-    unsigned long getLastSoundMicroSeconds(void)       {return m_lastSound;}
-    unsigned long getLastBufSwapLodMicroSeconds(void)  {return m_lastBufswaplod;}
-    unsigned long getLastTotalMicroSeconds(void)       {return m_lastTotal;}
+	unsigned long getLastRenderMicroSeconds(void)      {return m_lastRender; }
+	unsigned long getLastLogicBricksMicroSeconds(void) {return m_lastLogicBricks; }
+	unsigned long getLastLogicNodesMicroSeconds(void)  {return m_lastLogicNodes;}
+	unsigned long getLastPhysicsMicroSeconds(void)     {return m_lastPhysics;}
+	unsigned long getLastDbvtMicroSeconds(void)        {return m_lastDbvt;}
+	unsigned long getLastSoundMicroSeconds(void)       {return m_lastSound;}
+	unsigned long getLastBufSwapLodMicroSeconds(void)  {return m_lastBufswaplod;}
+	unsigned long getLastTotalMicroSeconds(void)       {return m_lastTotal;}
 
-    static gkStats& getSingleton(void);
-    static gkStats* getSingletonPtr(void);
+	static gkStats &getSingleton(void);
+	static gkStats *getSingletonPtr(void);
 };
 
 #endif //_gkStats_h_

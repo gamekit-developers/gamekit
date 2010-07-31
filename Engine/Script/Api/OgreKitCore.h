@@ -223,7 +223,7 @@ public:
 
 
 // Class OgreKit.Engine
-class Engine 
+class Engine
 #ifndef SWIG
 	: public gkEngine::Listener
 #endif

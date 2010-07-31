@@ -40,113 +40,117 @@
 // ----------------------------------------------------------------------------
 gkLogicManager::gkLogicManager()
 {
-    m_sort = true;
-    m_dispatchers = new gkAbstractDispatcherPtr[DIS_MAX];
-    m_dispatchers[DIS_CONSTANT]     = new gkConstantDispatch;
-    m_dispatchers[DIS_KEY]          = new gkKeyDispatch;
-    m_dispatchers[DIS_MOUSE]        = new gkMouseDispatch;
-    m_dispatchers[DIS_COLLISION]    = new gkCollisionDispatch;
+	m_sort = true;
+	m_dispatchers = new gkAbstractDispatcherPtr[DIS_MAX];
+	m_dispatchers[DIS_CONSTANT]     = new gkConstantDispatch;
+	m_dispatchers[DIS_KEY]          = new gkKeyDispatch;
+	m_dispatchers[DIS_MOUSE]        = new gkMouseDispatch;
+	m_dispatchers[DIS_COLLISION]    = new gkCollisionDispatch;
 }
 
 // ----------------------------------------------------------------------------
 gkLogicManager::~gkLogicManager()
 {
-    for (int i = 0; i < DIS_MAX; ++ i)
-        delete m_dispatchers[i];
+	for (int i = 0; i < DIS_MAX; ++ i)
+		delete m_dispatchers[i];
 
-    delete []m_dispatchers;
-    m_dispatchers = 0;
+	delete []m_dispatchers;
+	m_dispatchers = 0;
 
-    clear();
+	clear();
 }
 
 
 // ----------------------------------------------------------------------------
 void gkLogicManager::clear(void)
 {
-    m_sort = true;
-    if (m_dispatchers) {
-        for (int i = 0; i < DIS_MAX; ++ i)
-            m_dispatchers[i]->clear();
-    }
+	m_sort = true;
+	if (m_dispatchers)
+	{
+		for (int i = 0; i < DIS_MAX; ++ i)
+			m_dispatchers[i]->clear();
+	}
 
-    if (!m_links.empty()) {
-        gkLogicLink *node = m_links.begin();
-        while (node) {
-            gkLogicLink *tmp = node;
-            node = node->getNext();
-            delete tmp;
-        }
-        m_links.clear();
-    }
-    m_cin.clear();
-    m_ain.clear();
-    m_aout.clear();
+	if (!m_links.empty())
+	{
+		gkLogicLink *node = m_links.begin();
+		while (node)
+		{
+			gkLogicLink *tmp = node;
+			node = node->getNext();
+			delete tmp;
+		}
+		m_links.clear();
+	}
+	m_cin.clear();
+	m_ain.clear();
+	m_aout.clear();
 }
 
 // ----------------------------------------------------------------------------
 void gkLogicManager::clearActive(gkLogicLink *link)
 {
-    // remove from the active/running actuator list 
+	// remove from the active/running actuator list
 
-    if (link)
-    {
-        UTsize fnd;
+	if (link)
+	{
+		UTsize fnd;
 
-        utListIterator<gkLogicLink::BrickList> iter(link->getControllers());
-        while (iter.hasMoreElements())
-        {
-            gkLogicController *cont = (gkLogicController*)iter.getNext();
-            
-            // switch off controllers
-            cont->setActive(false);
-            cont->setPulse(BM_OFF);
+		utListIterator<gkLogicLink::BrickList> iter(link->getControllers());
+		while (iter.hasMoreElements())
+		{
+			gkLogicController *cont = (gkLogicController *)iter.getNext();
 
-
-            if ((fnd = m_cin.find(cont)) != UT_NPOS)
-                m_cin.erase(fnd);
-        }
-
-        iter = utListIterator<gkLogicLink::BrickList>(link->getActuators());
-        while (iter.hasMoreElements())
-        {
-            gkLogicActuator *act = (gkLogicActuator*)iter.getNext();
-
-            // switch off actuators
-            act->setActive(false);
-            act->setPulse(BM_OFF);
+			// switch off controllers
+			cont->setActive(false);
+			cont->setPulse(BM_OFF);
 
 
-            if ((fnd = m_ain.find(act)) != UT_NPOS)
-                m_ain.erase(fnd);
-            if (( fnd = m_aout.find(act)) != UT_NPOS)
-                m_aout.erase(fnd);
-        }
-    }
+			if ((fnd = m_cin.find(cont)) != UT_NPOS)
+				m_cin.erase(fnd);
+		}
+
+		iter = utListIterator<gkLogicLink::BrickList>(link->getActuators());
+		while (iter.hasMoreElements())
+		{
+			gkLogicActuator *act = (gkLogicActuator *)iter.getNext();
+
+			// switch off actuators
+			act->setActive(false);
+			act->setPulse(BM_OFF);
+
+
+			if ((fnd = m_ain.find(act)) != UT_NPOS)
+				m_ain.erase(fnd);
+			if (( fnd = m_aout.find(act)) != UT_NPOS)
+				m_aout.erase(fnd);
+		}
+	}
 }
 
 
 // ----------------------------------------------------------------------------
 void gkLogicManager::destroy(gkLogicLink *link)
 {
-    if (!m_links.empty()) {
-        
-        if (m_links.find(link))
-        {
-            m_links.erase(link);
-            clearActive(link);
-            delete link;
-        }
-    }
+	if (!m_links.empty())
+	{
+
+		if (m_links.find(link))
+		{
+			m_links.erase(link);
+			clearActive(link);
+			delete link;
+		}
+	}
 
 }
 
 // ----------------------------------------------------------------------------
 gkLogicLink *gkLogicManager::createLink(void)
 {
-    gkLogicLink *link = new gkLogicLink();
-    m_links.push_back(link);
-    return link;
+	gkLogicLink *link = new gkLogicLink();
+	m_links.push_back(link);
+	return link;
 }
 
 #define GK_DEBUG_EXEC 1
@@ -154,129 +158,129 @@ gkLogicLink *gkLogicManager::createLink(void)
 // ----------------------------------------------------------------------------
 void gkLogicManager::push(gkLogicSensor *a, gkLogicController *b, bool stateValue)
 {
-    if (b->inActiveState())
-    {
+	if (b->inActiveState())
+	{
 #ifdef GK_DEBUG_EXEC
-        if (b->wantsDebug())
-            dsPrintf("Push: Sensor %s to Controller %s: %s\n", a->getName().c_str(), b->getName().c_str(), (stateValue ? "On" : "Off"));
+		if (b->wantsDebug())
+			dsPrintf("Push: Sensor %s to Controller %s: %s\n", a->getName().c_str(), b->getName().c_str(), (stateValue ? "On" : "Off"));
 #endif
-        push(b, a, m_cin, stateValue);
-    }
+		push(b, a, m_cin, stateValue);
+	}
 }
 
 
 // ----------------------------------------------------------------------------
 void gkLogicManager::push(gkLogicController *a, gkLogicActuator *b, bool stateValue)
 {
-    if (a->inActiveState())
-    {
+	if (a->inActiveState())
+	{
 #ifdef GK_DEBUG_EXEC
-        if (b->wantsDebug())
-            dsPrintf("Push: Controller %s to Actuator %s: %s\n", a->getName().c_str(), b->getName().c_str(), (stateValue ? "On" : "Off"));
+		if (b->wantsDebug())
+			dsPrintf("Push: Controller %s to Actuator %s: %s\n", a->getName().c_str(), b->getName().c_str(), (stateValue ? "On" : "Off"));
 #endif
-        push(b, a, m_ain, stateValue);
-    }
+		push(b, a, m_ain, stateValue);
+	}
 }
 
 // ----------------------------------------------------------------------------
 void gkLogicManager::push(gkLogicBrick *a, gkLogicBrick *b, Bricks &in, bool stateValue)
 {
-    a->setPulse(stateValue ? BM_ON : BM_OFF);
+	a->setPulse(stateValue ? BM_ON : BM_OFF);
 
-    if (!a->isActive())
-    {
-        a->setActive(true);
-        in.push_back(a);
-    }
+	if (!a->isActive())
+	{
+		a->setActive(true);
+		in.push_back(a);
+	}
 }
 
 // ----------------------------------------------------------------------------
 void gkLogicManager::notifyState(unsigned int state, gkLogicLink *link)
 {
-    if (!m_ain.empty())
-    {
-        UTsize i, s, f=0;
-        Bricks::Pointer b;
+	if (!m_ain.empty())
+	{
+		UTsize i, s, f=0;
+		Bricks::Pointer b;
 
-        i = 0; s = m_ain.size();
-        b = m_ain.ptr();
-        while (i < s)
-        {
-            if (!b[i]->getLink()->hasLink(link))
-            {
-                ++i;
-                continue;
-            }
+		i = 0; s = m_ain.size();
+		b = m_ain.ptr();
+		while (i < s)
+		{
+			if (!b[i]->getLink()->hasLink(link))
+			{
+				++i;
+				continue;
+			}
 
 #ifdef GK_DEBUG_EXEC
-            if (f==0 && b[i]->wantsDebug())
-            {
-                dsPrintf("===== State Change %i =====\n", state);
-                f = 1;
-            }
+			if (f==0 && b[i]->wantsDebug())
+			{
+				dsPrintf("===== State Change %i =====\n", state);
+				f = 1;
+			}
 #endif
 
-            if (!(b[i]->getMask() & state))
-            {
-                m_aout.push_back(b[i]);
+			if (!(b[i]->getMask() & state))
+			{
+				m_aout.push_back(b[i]);
 #ifdef GK_DEBUG_EXEC
-                if (b[i]->wantsDebug())
-                    dsPrintf("Pop:  State %s\n", b[i]->getName().c_str());
+				if (b[i]->wantsDebug())
+					dsPrintf("Pop:  State %s\n", b[i]->getName().c_str());
 #endif
-            }
-            ++i;
-        }
-    }
+			}
+			++i;
+		}
+	}
 }
 
 
 // ----------------------------------------------------------------------------
 void gkLogicManager::notifyLinkUnloaded(gkLogicLink *link)
 {
-    clearActive(link);
+	clearActive(link);
 }
 
 // ----------------------------------------------------------------------------
 void gkLogicManager::notifySort(void)
 {
-    m_sort = true;
+	m_sort = true;
 }
 
 
 // ----------------------------------------------------------------------------
 void gkLogicManager::clearActuators(void)
 {
-    if (!m_aout.empty())
-    {
-        UTsize i, s;
-        Bricks::Pointer b;
-        i = 0; s = m_aout.size();
-        b = m_aout.ptr();
-        while (i < s)
-        {
+	if (!m_aout.empty())
+	{
+		UTsize i, s;
+		Bricks::Pointer b;
+		i = 0; s = m_aout.size();
+		b = m_aout.ptr();
+		while (i < s)
+		{
 #ifdef GK_DEBUG_EXEC
-            if (b[i]->wantsDebug())
-                dsPrintf("Pop:  Actuator %s\n", b[i]->getName().c_str());
+			if (b[i]->wantsDebug())
+				dsPrintf("Pop:  Actuator %s\n", b[i]->getName().c_str());
 #endif
-            b[i]->setActive(false);
-            m_ain.erase(b[i]);
-            ++i;
-        }
-        m_aout.clear(true);
+			b[i]->setActive(false);
+			m_ain.erase(b[i]);
+			++i;
+		}
+		m_aout.clear(true);
 
-        if (m_ain.empty())
-            m_ain.clear(true);
-    }
+		if (m_ain.empty())
+			m_ain.clear(true);
+	}
 }
 // ----------------------------------------------------------------------------
 void gkLogicManager::sort(void)
 {
-    if (m_dispatchers)
-    {
-        UTsize i = 0;
-        while (i<DIS_MAX) 
-            m_dispatchers[i++]->sort();
-    }
+	if (m_dispatchers)
+	{
+		UTsize i = 0;
+		while (i<DIS_MAX)
+			m_dispatchers[i++]->sort();
+	}
 }
 
 
@@ -284,46 +288,46 @@ void gkLogicManager::sort(void)
 void gkLogicManager::update(gkScalar delta)
 {
 
-    UTsize i, s;
-    Bricks::Pointer b;
+	UTsize i, s;
+	Bricks::Pointer b;
 
-    if (m_sort)
-    {
-        sort();
-        m_sort = false;
-    }
+	if (m_sort)
+	{
+		sort();
+		m_sort = false;
+	}
 
-    i = 0;
-    while (i<DIS_MAX) 
-        m_dispatchers[i++]->dispatch();
+	i = 0;
+	while (i<DIS_MAX)
+		m_dispatchers[i++]->dispatch();
 
-    if (!m_cin.empty())
-    {
-        i = 0; s = m_cin.size();
-        b = m_cin.ptr();
-        while (i < s)
-        {
-            b[i]->execute();
-            b[i]->setActive(false);
-            ++i;
-        }
-        m_cin.clear(true);
-    }
+	if (!m_cin.empty())
+	{
+		i = 0; s = m_cin.size();
+		b = m_cin.ptr();
+		while (i < s)
+		{
+			b[i]->execute();
+			b[i]->setActive(false);
+			++i;
+		}
+		m_cin.clear(true);
+	}
 
-    if (!m_ain.empty())
-    {
-        i = 0; s = m_ain.size();
-        b = m_ain.ptr();
-        while (i < s)
-        {
-            b[i]->execute();
-            if (b[i]->isPulseOff())
-                m_aout.push_back(b[i]);
-            ++i;
-        }
-    }
+	if (!m_ain.empty())
+	{
+		i = 0; s = m_ain.size();
+		b = m_ain.ptr();
+		while (i < s)
+		{
+			b[i]->execute();
+			if (b[i]->isPulseOff())
+				m_aout.push_back(b[i]);
+			++i;
+		}
+	}
 
-    clearActuators();
+	clearActuators();
 }
 
 

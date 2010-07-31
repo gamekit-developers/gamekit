@@ -37,26 +37,26 @@ class gkCoreApplication : public gkEngine::Listener
 {
 private:
 
-    // Internal startup
-    bool initialize(void);
+	// Internal startup
+	bool initialize(void);
 
 
 protected:
-    gkEngine*   m_engine;
-    gkUserDefs  m_prefs;
+	gkEngine   *m_engine;
+	gkUserDefs  m_prefs;
 
-    virtual bool load(void) {return false;}
-    virtual void tick(gkScalar rate) {};
+	virtual bool load(void) {return false;}
+	virtual void tick(gkScalar rate) {};
 
 
 public:
-    gkCoreApplication();
-    virtual ~gkCoreApplication();
+	gkCoreApplication();
+	virtual ~gkCoreApplication();
 
-    // access to user options ( apply before a call to run )
-    gkUserDefs& getPrefs(void) {return m_prefs;}
+	// access to user options ( apply before a call to run )
+	gkUserDefs &getPrefs(void) {return m_prefs;}
 
-    void run(void);
+	void run(void);
 };
 
 #endif//_gkCoreApplication_h_

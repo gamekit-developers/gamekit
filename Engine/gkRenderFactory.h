@@ -37,13 +37,13 @@ class Plugin;
 
 typedef enum OgreRenderSystem
 {
-    OGRE_RS_GL,
-    OGRE_RS_GLES,
-    OGRE_RS_D3D9,
-    OGRE_RS_D3D10,
-    OGRE_RS_D3D11,
-    OGRE_RS_UNKNOWN,
-}OgreRenderSystem;
+	OGRE_RS_GL,
+	OGRE_RS_GLES,
+	OGRE_RS_D3D9,
+	OGRE_RS_D3D10,
+	OGRE_RS_D3D11,
+	OGRE_RS_UNKNOWN,
+} OgreRenderSystem;
 
 extern OgreRenderSystem gkFindRenderSystem(OgreRenderSystem wanted);
 
@@ -52,13 +52,13 @@ extern OgreRenderSystem gkFindRenderSystem(OgreRenderSystem wanted);
 class gkRenderFactoryPrivate
 {
 public:
-    gkRenderFactoryPrivate();
-    ~gkRenderFactoryPrivate();
+	gkRenderFactoryPrivate();
+	~gkRenderFactoryPrivate();
 
-    void createRenderSystem(Ogre::Root *, OgreRenderSystem);
-	void createParticleSystem(Ogre::Root*);
+	void createRenderSystem(Ogre::Root *, OgreRenderSystem);
+	void createParticleSystem(Ogre::Root *);
 private:
-    Ogre::Plugin *m_renderSystem;
+	Ogre::Plugin *m_renderSystem;
 	Ogre::Plugin *m_particleSystem;
 };
 

@@ -38,44 +38,44 @@ class gkBone
 {
 public:
 
-    typedef utArray<gkBone *> BoneList;
+	typedef utArray<gkBone *> BoneList;
 
 
 public:
 
-    gkBone(const gkString &name);
-    ~gkBone();
+	gkBone(const gkString &name);
+	~gkBone();
 
-    void        setParent(gkBone *bone);
-    void        setOgreBone(Ogre::Bone *bone);
-    void        setRestPosition(const gkTransformState &st);
+	void        setParent(gkBone *bone);
+	void        setOgreBone(Ogre::Bone *bone);
+	void        setRestPosition(const gkTransformState &st);
 
 
 
-    const gkTransformState  &getRest(void)      {return m_bind;}
-    gkTransformState        &getPose(void)      {return m_pose;}
-    gkBone                  *getParent(void)    {return m_parent;}
-    const gkString          &getName(void)      {return m_name;}
-    Ogre::Bone              *getOgreBone(void)  {return m_bone;} 
-    BoneList                &getChildren(void)  {return m_children;}
+	const gkTransformState  &getRest(void)      {return m_bind;}
+	gkTransformState        &getPose(void)      {return m_pose;}
+	gkBone                  *getParent(void)    {return m_parent;}
+	const gkString          &getName(void)      {return m_name;}
+	Ogre::Bone              *getOgreBone(void)  {return m_bone;}
+	BoneList                &getChildren(void)  {return m_children;}
 
 
 private:
 
-    const gkString m_name;
+	const gkString m_name;
 
-    // The main Ogre bone.
-    Ogre::Bone *m_bone;
+	// The main Ogre bone.
+	Ogre::Bone *m_bone;
 
-    // Parent manual bone
-    gkBone      *m_parent;
-    BoneList    m_children;
+	// Parent manual bone
+	gkBone      *m_parent;
+	BoneList    m_children;
 
-    // Ogre calculations are reltave to the rest position.
-    gkTransformState m_bind;
+	// Ogre calculations are reltave to the rest position.
+	gkTransformState m_bind;
 
-    // The current pose matrix, calculated in gkActionChannel::evaluate
-    gkTransformState m_pose;
+	// The current pose matrix, calculated in gkActionChannel::evaluate
+	gkTransformState m_pose;
 
 
 };
@@ -85,59 +85,59 @@ private:
 class gkSkeleton : public gkGameObject
 {
 public:
-    typedef utHashTable<gkHashedString, gkAction *>  Actions;
-    typedef utHashTable<gkHashedString, gkBone *>    Bones;
+	typedef utHashTable<gkHashedString, gkAction *>  Actions;
+	typedef utHashTable<gkHashedString, gkBone *>    Bones;
 
 public:
-    gkSkeleton(gkScene *scene, const gkString &name);
-    virtual ~gkSkeleton();
+	gkSkeleton(gkScene *scene, const gkString &name);
+	virtual ~gkSkeleton();
 
-    void            setEntity(Ogre::Entity *ent);
-
-
-    // Create a manual bone from an ogre bone
-    gkBone         *createBone(const gkString &name);
-
-    // Gets a manually controlled bone
-    gkBone         *getBone(const gkHashedString &name);
-
-    // Creates a new blank action
-    gkAction       *createAction(const gkHashedString &name);
-
-    // Gets a previously created action
-    gkAction       *getAction(const gkHashedString &name);
-
-    gkBone::BoneList &getRootBoneList(void);
-    gkBone::BoneList &getBoneList(void) {return m_boneList;}
+	void            setEntity(Ogre::Entity *ent);
 
 
-    // TODO attach gkGameObject to gkBone
+	// Create a manual bone from an ogre bone
+	gkBone         *createBone(const gkString &name);
+
+	// Gets a manually controlled bone
+	gkBone         *getBone(const gkHashedString &name);
+
+	// Creates a new blank action
+	gkAction       *createAction(const gkHashedString &name);
+
+	// Gets a previously created action
+	gkAction       *getAction(const gkHashedString &name);
+
+	gkBone::BoneList &getRootBoneList(void);
+	gkBone::BoneList &getBoneList(void) {return m_boneList;}
 
 
-    // existence testing
-    GK_INLINE bool hasBone(const gkHashedString &name)        { return m_bones.find(name) != GK_NPOS; }
-    GK_INLINE bool hasAction(const gkHashedString &name)      { return m_actions.find(name) != GK_NPOS; }
+	// TODO attach gkGameObject to gkBone
 
-    gkEntity        *getController(void)        {return m_controller;}
-    void             setController(gkEntity *v) {m_controller = v;}
+
+	// existence testing
+	GK_INLINE bool hasBone(const gkHashedString &name)        { return m_bones.find(name) != GK_NPOS; }
+	GK_INLINE bool hasAction(const gkHashedString &name)      { return m_actions.find(name) != GK_NPOS; }
+
+	gkEntity        *getController(void)        {return m_controller;}
+	void             setController(gkEntity *v) {m_controller = v;}
 
 
 protected:
 
-    gkObject *clone(const gkString &name);
-    void createSkeleton(void);
+	gkObject *clone(const gkString &name);
+	void createSkeleton(void);
 
-    Actions             m_actions;
-    Bones               m_bones;
-    gkBone::BoneList    m_boneList, m_rootBoneList;
-    gkEntity            *m_controller;
+	Actions             m_actions;
+	Bones               m_bones;
+	gkBone::BoneList    m_boneList, m_rootBoneList;
+	gkEntity            *m_controller;
 
 
-    // internal skeleton loader
-    Ogre::ManualResourceLoader *m_skelLoader;
+	// internal skeleton loader
+	Ogre::ManualResourceLoader *m_skelLoader;
 
-    virtual void loadImpl(void);
-    virtual void unloadImpl(void);
+	virtual void loadImpl(void);
+	virtual void unloadImpl(void);
 };
 
 

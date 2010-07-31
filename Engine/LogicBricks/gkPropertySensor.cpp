@@ -32,56 +32,56 @@
 
 // ----------------------------------------------------------------------------
 gkPropertySensor::gkPropertySensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
-    :   gkLogicSensor(object, link, name), m_old(), m_cur(0), m_type(-1), m_propName(""), m_propVal(""), 
-        m_init(false)
+	:   gkLogicSensor(object, link, name), m_old(), m_cur(0), m_type(-1), m_propName(""), m_propVal(""),
+	    m_init(false)
 
 {
-    m_dispatchType = DIS_CONSTANT;
-    connect();
+	m_dispatchType = DIS_CONSTANT;
+	connect();
 }
 
 // ----------------------------------------------------------------------------
-gkLogicBrick* gkPropertySensor::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick *gkPropertySensor::clone(gkLogicLink *link, gkGameObject *dest)
 {
-    gkPropertySensor *sens = new gkPropertySensor(*this);
-    sens->m_cur      = 0;
-    sens->m_init     = false;
-    sens->cloneImpl(link, dest);
-    return sens;
+	gkPropertySensor *sens = new gkPropertySensor(*this);
+	sens->m_cur      = 0;
+	sens->m_init     = false;
+	sens->cloneImpl(link, dest);
+	return sens;
 }
 
 
 // ----------------------------------------------------------------------------
 bool gkPropertySensor::query(void)
 {
-    if (!m_init)
-    {
-        if (m_object->hasVariable(m_propName))
-        {
+	if (!m_init)
+	{
+		if (m_object->hasVariable(m_propName))
+		{
 
-            m_cur = m_object->getVariable(m_propName);
-            m_old = *m_cur;
-            m_old.setValue(m_propVal);
-            m_init = true;
-        }
-        else
-        {
-            m_suspend = true;
-            return false;
-        }
-    }
+			m_cur = m_object->getVariable(m_propName);
+			m_old = *m_cur;
+			m_old.setValue(m_propVal);
+			m_init = true;
+		}
+		else
+		{
+			m_suspend = true;
+			return false;
+		}
+	}
 
-    if (m_cur)
-    {
+	if (m_cur)
+	{
 
-        switch (m_type)
-        {
-        case PS_EQUAL:
-            return m_cur->equal(m_old);
-        case PS_NEQUAL:
-            return m_cur->notequal(m_old);
-        }
-    }
+		switch (m_type)
+		{
+		case PS_EQUAL:
+			return m_cur->equal(m_old);
+		case PS_NEQUAL:
+			return m_cur->notequal(m_old);
+		}
+	}
 
-    return false;
+	return false;
 }

@@ -29,8 +29,8 @@
 #include "OgreException.h"
 #include "btBulletDynamicsCommon.h"
 
-gkObject::gkObject(const gkString& name)
-:       m_name(name), m_loaded(false), m_flags(0), m_sensorMaterial("")
+gkObject::gkObject(const gkString &name)
+	:       m_name(name), m_loaded(false), m_flags(0), m_sensorMaterial("")
 {
 }
 
@@ -44,20 +44,20 @@ gkObject::~gkObject()
 // Simple load mechanizm
 void gkObject::load(void)
 {
-    if (m_loaded)
-        return;
+	if (m_loaded)
+		return;
 
-    try
-    {
-        preLoadImpl();
-        loadImpl();
-        m_loaded = true;
-        postLoadImpl();
-    }
-    catch (Ogre::Exception &e)
-    {
-        gkLogMessage(e.getDescription());
-    }
+	try
+	{
+		preLoadImpl();
+		loadImpl();
+		m_loaded = true;
+		postLoadImpl();
+	}
+	catch (Ogre::Exception &e)
+	{
+		gkLogMessage(e.getDescription());
+	}
 
 }
 
@@ -65,37 +65,37 @@ void gkObject::load(void)
 // Simple unload mechanizm
 void gkObject::unload(void)
 {
-    if (!m_loaded)
-        return;
+	if (!m_loaded)
+		return;
 
-    try
-    {
-        preUnloadImpl();
-        unloadImpl();
-        m_loaded = false;
-        postUnloadImpl();
-    }
+	try
+	{
+		preUnloadImpl();
+		unloadImpl();
+		m_loaded = false;
+		postUnloadImpl();
+	}
 
-    catch (Ogre::Exception &e)
-    {
-        gkLogMessage(e.getDescription());
-    }
+	catch (Ogre::Exception &e)
+	{
+		gkLogMessage(e.getDescription());
+	}
 }
 
 void gkObject::reload(void)
 {
-    unload();
-    load();
+	unload();
+	load();
 }
 
-void gkObject::handleManifold(btPersistentManifold* manifold)
+void gkObject::handleManifold(btPersistentManifold *manifold)
 {
 	if(!wantsContactInfo()) return;
 
-	gkObject* colA = static_cast<gkObject*>(static_cast<btCollisionObject*>(manifold->getBody0())->getUserPointer());
-	gkObject* colB = static_cast<gkObject*>(static_cast<btCollisionObject*>(manifold->getBody1())->getUserPointer());
+	gkObject *colA = static_cast<gkObject *>(static_cast<btCollisionObject *>(manifold->getBody0())->getUserPointer());
+	gkObject *colB = static_cast<gkObject *>(static_cast<btCollisionObject *>(manifold->getBody1())->getUserPointer());
 
-	gkObject* collider = colB;
+	gkObject *collider = colB;
 
 	if(collider == this)
 	{
@@ -113,9 +113,9 @@ void gkObject::handleManifold(btPersistentManifold* manifold)
 
 			if (pt.getDistance() < 0.f)
 			{
-				cinf.collider = collider; 
+				cinf.collider = collider;
 				cinf.point = pt;
-				getContacts().push_back(cinf); 
+				getContacts().push_back(cinf);
 			}
 		}
 	}

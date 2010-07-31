@@ -34,41 +34,41 @@
 // ----------------------------------------------------------------------------
 class gkDebugPropertyPage
 {
-    // for debugging gkGameObject variables
+	// for debugging gkGameObject variables
 private:
 
 
-    bool m_isInit, m_isShown;
+	bool m_isInit, m_isShown;
 
 
-    Ogre::Overlay           *m_over;
-    Ogre::OverlayContainer  *m_cont;
-    Ogre::OverlayElement    *m_key, *m_val;
+	Ogre::Overlay           *m_over;
+	Ogre::OverlayContainer  *m_cont;
+	Ogre::OverlayElement    *m_key, *m_val;
 
-    typedef utList<gkVariable*> VariableList;
-    VariableList m_props;
+	typedef utList<gkVariable *> VariableList;
+	VariableList m_props;
 
 
 public:
 
-    gkDebugPropertyPage();
-    ~gkDebugPropertyPage();
+	gkDebugPropertyPage();
+	~gkDebugPropertyPage();
 
 
-    void initialize(void);
-    void show(bool v);
+	void initialize(void);
+	void show(bool v);
 
 
-    bool isShown(void) {return m_isShown;}
+	bool isShown(void) {return m_isShown;}
 
 
-    void addVariable(gkVariable *prop);
-    void removeVariable(gkVariable *prop);
-    bool hasVariable(gkVariable *prop);
+	void addVariable(gkVariable *prop);
+	void removeVariable(gkVariable *prop);
+	bool hasVariable(gkVariable *prop);
 
 
-    void clearProps(void);
-    void draw(void);
+	void clearProps(void);
+	void draw(void);
 };
 
 #endif//_gkDebugProperty_h_

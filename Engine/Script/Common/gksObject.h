@@ -24,36 +24,36 @@
 class gksObject
 {
 #ifndef SWIG
-    // ------------------------------------
+	// ------------------------------------
 protected:
-    class gkObject *m_object;
+	class gkObject *m_object;
 
 
 public:
-    gksObject(gkObject *oth) : m_object(oth) {}
+	gksObject(gkObject *oth) : m_object(oth) {}
 
 
-    template<typename T> T *cast(void)
-    {return static_cast<T *>(m_object);}
+	template<typename T> T *cast(void)
+	{return static_cast<T *>(m_object);}
 
 #endif
 
 public:
-    gksObject() : m_object(0) {}
-    virtual ~gksObject() {}
+	gksObject() : m_object(0) {}
+	virtual ~gksObject() {}
 
 
-    // nil gksObject:load()
-    void            load(void);
+	// nil gksObject:load()
+	void            load(void);
 
-    // nil gksObject:unload()
-    void            unload(void);
+	// nil gksObject:unload()
+	void            unload(void);
 
-    // nil gksObject:reload()
-    void            reload(void);
+	// nil gksObject:reload()
+	void            reload(void);
 
-    // String gksObject:getName()
-    const char     *getName(void);
+	// String gksObject:getName()
+	const char     *getName(void);
 };
 
 #endif//_gksObject_h_

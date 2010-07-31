@@ -35,23 +35,23 @@
 class gkLight : public gkGameObject
 {
 public:
-    gkLight(gkScene *scene, const gkString& name);
-    virtual ~gkLight() {}
+	gkLight(gkScene *scene, const gkString &name);
+	virtual ~gkLight() {}
 
-    // Property access
-    GK_INLINE gkLightProperties& getLightProperties(void)           {return m_lightProps;}
-    GK_INLINE Ogre::Light* getLight(void)                           {return m_light;}
+	// Property access
+	GK_INLINE gkLightProperties &getLightProperties(void)           {return m_lightProps;}
+	GK_INLINE Ogre::Light *getLight(void)                           {return m_light;}
 
-    void updateProperties(void);
+	void updateProperties(void);
 
 private:
-    gkObject    *clone(const gkString &name);
+	gkObject    *clone(const gkString &name);
 
-    gkLightProperties       m_lightProps;
-    Ogre::Light             *m_light;
+	gkLightProperties       m_lightProps;
+	Ogre::Light             *m_light;
 
-    virtual void loadImpl(void);
-    virtual void unloadImpl(void);
+	virtual void loadImpl(void);
+	virtual void unloadImpl(void);
 };
 
 #endif//_gkLightObject_h_

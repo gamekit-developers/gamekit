@@ -44,11 +44,11 @@ class gkAbstractDispatcher;
 
 enum gkDispatchedTypes
 {
-    DIS_CONSTANT=0,
-    DIS_KEY,
-    DIS_MOUSE,
-    DIS_COLLISION,
-    DIS_MAX,
+	DIS_CONSTANT=0,
+	DIS_KEY,
+	DIS_MOUSE,
+	DIS_COLLISION,
+	DIS_MAX,
 };
 
 
@@ -58,56 +58,56 @@ class gkLogicManager : public Ogre::Singleton<gkLogicManager>
 {
 public:
 
-    typedef utListClass<gkLogicLink> Links;
-    typedef gkAbstractDispatcher* gkAbstractDispatcherPtr;
+	typedef utListClass<gkLogicLink> Links;
+	typedef gkAbstractDispatcher *gkAbstractDispatcherPtr;
 
-    typedef utArray<gkLogicBrick*>  Bricks;
+	typedef utArray<gkLogicBrick *>  Bricks;
 
 
 protected:
 
-    Links m_links;
+	Links m_links;
 
-    gkAbstractDispatcherPtr*    m_dispatchers;
-    Bricks                      m_cin,  m_ain, m_aout;
-    bool                        m_sort;
+	gkAbstractDispatcherPtr    *m_dispatchers;
+	Bricks                      m_cin,  m_ain, m_aout;
+	bool                        m_sort;
 
 
-    void push(gkLogicBrick *a, gkLogicBrick *b, Bricks &in, bool stateValue);
-    void clearActuators(void);
-    void clearActive(gkLogicLink *link);
+	void push(gkLogicBrick *a, gkLogicBrick *b, Bricks &in, bool stateValue);
+	void clearActuators(void);
+	void clearActive(gkLogicLink *link);
 
-    void sort(void);
+	void sort(void);
 
 public:
 
-    gkLogicManager();
-    ~gkLogicManager();
+	gkLogicManager();
+	~gkLogicManager();
 
-    gkLogicLink *createLink(void);
-    void destroy(gkLogicLink *link);
-
-
-    void notifyLinkUnloaded(gkLogicLink *link);
-    void notifyState(unsigned int state, gkLogicLink *link);
-    void notifySort(void);
-
-    // Free links & reset dispatchers
-    void clear(void);
-
-    // Process updates 
-    void update(gkScalar delta);
-
-    // Get enumerated dispatcher  
-    GK_INLINE gkAbstractDispatcher& getDispatcher(int dt) 
-    { GK_ASSERT(m_dispatchers && dt >= 0 && dt <= DIS_MAX); return *m_dispatchers[dt]; }
-
-    void push(gkLogicSensor *s,     gkLogicController *v, bool stateValue);
-    void push(gkLogicController *c, gkLogicActuator *v,   bool stateValue);
+	gkLogicLink *createLink(void);
+	void destroy(gkLogicLink *link);
 
 
-    static gkLogicManager& getSingleton(void);
-    static gkLogicManager* getSingletonPtr(void);
+	void notifyLinkUnloaded(gkLogicLink *link);
+	void notifyState(unsigned int state, gkLogicLink *link);
+	void notifySort(void);
+
+	// Free links & reset dispatchers
+	void clear(void);
+
+	// Process updates
+	void update(gkScalar delta);
+
+	// Get enumerated dispatcher
+	GK_INLINE gkAbstractDispatcher &getDispatcher(int dt)
+	{ GK_ASSERT(m_dispatchers && dt >= 0 && dt <= DIS_MAX); return *m_dispatchers[dt]; }
+
+	void push(gkLogicSensor *s,     gkLogicController *v, bool stateValue);
+	void push(gkLogicController *c, gkLogicActuator *v,   bool stateValue);
+
+
+	static gkLogicManager &getSingleton(void);
+	static gkLogicManager *getSingletonPtr(void);
 };
 
 

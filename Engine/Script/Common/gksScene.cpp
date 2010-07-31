@@ -22,21 +22,21 @@
 // ----------------------------------------------------------------------------
 bool gksScene::hasObject(const char *name)
 {
-    if (m_object)
-        return cast<gkScene>()->hasObject(name);
-    return false;
+	if (m_object)
+		return cast<gkScene>()->hasObject(name);
+	return false;
 }
 
 // ----------------------------------------------------------------------------
 gksPointer<gksGameObject> gksScene::getObject(const char *name)
 {
-    if (m_object)
-    {
-        gkGameObject *gobj = cast<gkScene>()->getObject(name);
-        if (gobj)
-            return gksPointer<gksGameObject>(new gksGameObject(gobj));
-    }
-    return gksPointer<gksGameObject>();
+	if (m_object)
+	{
+		gkGameObject *gobj = cast<gkScene>()->getObject(name);
+		if (gobj)
+			return gksPointer<gksGameObject>(new gksGameObject(gobj));
+	}
+	return gksPointer<gksGameObject>();
 }
 
 
@@ -44,5 +44,5 @@ gksPointer<gksGameObject> gksScene::getObject(const char *name)
 // ----------------------------------------------------------------------------
 gksPointer<gksScene> getCurrentScene(void)
 {
-    return gksPointer<gksScene>(new gksScene(gkEngine::getSingleton().getActiveScene()));
+	return gksPointer<gksScene>(new gksScene(gkEngine::getSingleton().getActiveScene()));
 }

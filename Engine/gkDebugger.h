@@ -35,57 +35,57 @@
 
 class gkSoundProperties;
 
-// for debugging / building line lists 
+// for debugging / building line lists
 class gkDebugger : public Ogre::SimpleRenderable
 {
 public:
 
-    struct DebugVertex 
-    {
-        gkVector3 v;
-        unsigned int color;
-    };
+	struct DebugVertex
+	{
+		gkVector3 v;
+		unsigned int color;
+	};
 
 
-    typedef utArray<DebugVertex> Buffer;
+	typedef utArray<DebugVertex> Buffer;
 
 
 public:
-    gkDebugger(gkScene *parent);
-    virtual ~gkDebugger();
+	gkDebugger(gkScene *parent);
+	virtual ~gkDebugger();
 
-    void drawLine(const gkVector3& from, const gkVector3& to, const gkVector3& color);
+	void drawLine(const gkVector3 &from, const gkVector3 &to, const gkVector3 &color);
 
-    void clear(void);
+	void clear(void);
 
 #ifdef OGREKIT_OPENAL_SOUND
-    void draw3dSound(const gkSoundProperties& props);
+	void draw3dSound(const gkSoundProperties &props);
 #endif
 
-    // write contents to buffer
-    void flush(void);
+	// write contents to buffer
+	void flush(void);
 
 protected:
 
 
-    Ogre::Real getSquaredViewDepth(const Ogre::Camera* cam) const;
-    Ogre::Real getBoundingRadius(void) const;
+	Ogre::Real getSquaredViewDepth(const Ogre::Camera *cam) const;
+	Ogre::Real getBoundingRadius(void) const;
 
 
-    void verifyNode(void);
-    void growBuffer(UTsize newSize);
+	void verifyNode(void);
+	void growBuffer(UTsize newSize);
 
-    Ogre::SceneNode*    m_node;
-    gkScene*            m_parent;
-    Ogre::Real          m_radius;
-    Buffer              m_lineBuf;
-    Ogre::Vector3       m_bbmin, m_bbmax;
-    UTsize              m_bufSize;
-    int                 m_flags;
+	Ogre::SceneNode    *m_node;
+	gkScene            *m_parent;
+	Ogre::Real          m_radius;
+	Buffer              m_lineBuf;
+	Ogre::Vector3       m_bbmin, m_bbmax;
+	UTsize              m_bufSize;
+	int                 m_flags;
 
-    // main buffer
-    Ogre::HardwareVertexBufferSharedPtr m_buffer;
-    
+	// main buffer
+	Ogre::HardwareVertexBufferSharedPtr m_buffer;
+
 };
 
 

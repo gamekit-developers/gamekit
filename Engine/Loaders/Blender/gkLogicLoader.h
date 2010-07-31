@@ -46,26 +46,26 @@ class gkLogicLoader
 {
 protected:
 
-    struct ResolveObject
-    {
-        gkLogicSensor* lsens;
-        gkLogicController* lcont;
-        Blender::bController *cont;
-        Blender::bActuator* act;
-    };
+	struct ResolveObject
+	{
+		gkLogicSensor *lsens;
+		gkLogicController *lcont;
+		Blender::bController *cont;
+		Blender::bActuator *act;
+	};
 
-    typedef utList<ResolveObject>   ResolveObjectList;
-    typedef utList<gkLogicLink*>    CreatedList;
+	typedef utList<ResolveObject>   ResolveObjectList;
+	typedef utList<gkLogicLink *>    CreatedList;
 
-    ResolveObjectList               m_missing;
-    CreatedList                     m_createdLinks;
+	ResolveObjectList               m_missing;
+	CreatedList                     m_createdLinks;
 
 public:
-    gkLogicLoader();
-    ~gkLogicLoader();
+	gkLogicLoader();
+	~gkLogicLoader();
 
-    void convertObject(Blender::Object *bobj, gkGameObject *gobj);
-    void resolveLinks(void);
+	void convertObject(Blender::Object *bobj, gkGameObject *gobj);
+	void resolveLinks(void);
 };
 
 

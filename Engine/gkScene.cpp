@@ -59,696 +59,696 @@ using namespace Ogre;
 
 
 gkScene::gkScene(const gkString &name)
-    :       gkObject(name), 
-            m_manager(0), 
-            m_startCam(0),
-            m_viewport(0), 
-            m_baseProps(), 
-            m_physicsWorld(0), 
-            m_debugger(0),
-            m_hasLights(false),
-            m_markDBVT(false),
-            m_cloneCount(0)
+	:       gkObject(name),
+	        m_manager(0),
+	        m_startCam(0),
+	        m_viewport(0),
+	        m_baseProps(),
+	        m_physicsWorld(0),
+	        m_debugger(0),
+	        m_hasLights(false),
+	        m_markDBVT(false),
+	        m_cloneCount(0)
 {
 }
 
 gkScene::~gkScene()
 {
-    gkGameObjectHashMapIterator it(m_objects);
-    while (it.hasMoreElements())
-        delete it.getNext().second;
-    destroyGroups();
+	gkGameObjectHashMapIterator it(m_objects);
+	while (it.hasMoreElements())
+		delete it.getNext().second;
+	destroyGroups();
 
-    gkMeshManager::getSingleton().destroyAll();
+	gkMeshManager::getSingleton().destroyAll();
 }
 
 
 bool gkScene::hasObject(const gkHashedString &ob)
 {
-    return m_objects.find(ob) != GK_NPOS;
+	return m_objects.find(ob) != GK_NPOS;
 }
 
 bool gkScene::hasObject(gkGameObject *ob)
 {
-    GK_ASSERT(ob);
-    return m_objects.find(ob->getName()) != GK_NPOS;
+	GK_ASSERT(ob);
+	return m_objects.find(ob->getName()) != GK_NPOS;
 }
 
 
 gkGameObject *gkScene::getObject(const gkHashedString &name)
 {
-    UTsize pos = m_objects.find(name);
-    if (pos != GK_NPOS)
-        return m_objects.at(pos);
-    return 0;
+	UTsize pos = m_objects.find(name);
+	if (pos != GK_NPOS)
+		return m_objects.at(pos);
+	return 0;
 }
 
-bool gkScene::hasMesh(const gkHashedString& ob)
+bool gkScene::hasMesh(const gkHashedString &ob)
 {
-    return gkMeshManager::getSingleton().hasMesh(ob);
+	return gkMeshManager::getSingleton().hasMesh(ob);
 }
 
-gkMesh* gkScene::getMesh(const gkHashedString& name)
+gkMesh *gkScene::getMesh(const gkHashedString &name)
 {
-    return gkMeshManager::getSingleton().getMesh(name);
+	return gkMeshManager::getSingleton().getMesh(name);
 }
 
-gkMesh* gkScene::createMesh(const gkHashedString &name)
+gkMesh *gkScene::createMesh(const gkHashedString &name)
 {
-    return gkMeshManager::getSingleton().create(name);
+	return gkMeshManager::getSingleton().create(name);
 }
 
 
 gkGameObjectGroup *gkScene::createGroup(const gkHashedString &name)
 {
-    // empty group
+	// empty group
 
-    if (m_groups.find(name) != UT_NPOS)
-    {
-        gkPrintf("duplicate group '%s' found\n", name.str().c_str());
-        return 0;
-    }
+	if (m_groups.find(name) != UT_NPOS)
+	{
+		gkPrintf("duplicate group '%s' found\n", name.str().c_str());
+		return 0;
+	}
 
-    gkGameObjectGroup *group = new gkGameObjectGroup(name);
-    m_groups.insert(name, group);
-    return group;
+	gkGameObjectGroup *group = new gkGameObjectGroup(name);
+	m_groups.insert(name, group);
+	return group;
 }
 
 gkGameObjectGroup *gkScene::getGroup(const gkHashedString &name)
 {
-    UTsize pos;
-    if ( (pos = m_groups.find(name)) == UT_NPOS)
-    {
-        gkPrintf("mossing group '%s'\n", name.str().c_str());
-        return 0;
-    }
-    return m_groups.at(pos);
+	UTsize pos;
+	if ( (pos = m_groups.find(name)) == UT_NPOS)
+	{
+		gkPrintf("mossing group '%s'\n", name.str().c_str());
+		return 0;
+	}
+	return m_groups.at(pos);
 
 }
 
 void gkScene::destroyGroup(const gkHashedString &name)
 {
-    destroyGroup(getGroup(name));
+	destroyGroup(getGroup(name));
 }
 
 
 void gkScene::destroyGroup(gkGameObjectGroup *group)
 {
-    if (group && hasGroup(group->getName()))
-    {
-        m_groups.remove(group->getName());
-        delete group;
+	if (group && hasGroup(group->getName()))
+	{
+		m_groups.remove(group->getName());
+		delete group;
 
-        if (m_groups.empty())
-            m_groups.clear();
-    }
+		if (m_groups.empty())
+			m_groups.clear();
+	}
 }
 
 void gkScene::destroyGroups(void)
 {
-    gkGroupTableIterator it(m_groups);
-    while (it.hasMoreElements())
-        delete it.getNext().second;
+	gkGroupTableIterator it(m_groups);
+	while (it.hasMoreElements())
+		delete it.getNext().second;
 
-    m_groups.clear();
+	m_groups.clear();
 }
 
 
 gkGameObject *gkScene::createObject(const gkHashedString &name)
 {
-    if (m_objects.find(name) != GK_NPOS)
-    {
-        gkPrintf("duplicate object '%s' found\n", name.str().c_str());
-        return 0;
-    }
+	if (m_objects.find(name) != GK_NPOS)
+	{
+		gkPrintf("duplicate object '%s' found\n", name.str().c_str());
+		return 0;
+	}
 
-    gkGameObject *ob = new gkGameObject(this, name.str(), GK_OBJECT);
-    m_objects.insert(name, ob);
-    return ob;
+	gkGameObject *ob = new gkGameObject(this, name.str(), GK_OBJECT);
+	m_objects.insert(name, ob);
+	return ob;
 }
 
 
 gkLight *gkScene::createLight(const gkHashedString &name)
 {
-    if (m_objects.find(name) != GK_NPOS)
-    {
-        gkPrintf("duplicate object '%s' found\n", name.str().c_str());
-        return 0;
-    }
+	if (m_objects.find(name) != GK_NPOS)
+	{
+		gkPrintf("duplicate object '%s' found\n", name.str().c_str());
+		return 0;
+	}
 
-    gkLight *ob = new gkLight(this, name.str());
-    m_objects.insert(name, ob);
-    m_hasLights = true;
-    return ob;
+	gkLight *ob = new gkLight(this, name.str());
+	m_objects.insert(name, ob);
+	m_hasLights = true;
+	return ob;
 }
 
 
 gkCamera *gkScene::createCamera(const gkHashedString &name)
 {
-    if (m_objects.find(name) != GK_NPOS)
-    {
-        gkPrintf("duplicate object '%s' found\n", name.str().c_str());
-        return 0;
-    }
+	if (m_objects.find(name) != GK_NPOS)
+	{
+		gkPrintf("duplicate object '%s' found\n", name.str().c_str());
+		return 0;
+	}
 
-    gkHashedString nameHash = name;
-    gkCamera *ob = new gkCamera(this, name.str());
+	gkHashedString nameHash = name;
+	gkCamera *ob = new gkCamera(this, name.str());
 
-    m_objects.insert(nameHash, ob);
-    return ob;
+	m_objects.insert(nameHash, ob);
+	return ob;
 }
 
 gkEntity *gkScene::createEntity(const gkHashedString &name)
 {
-    if (m_objects.find(name) != GK_NPOS)
-    {
-        gkPrintf("duplicate object '%s' found\n", name.str().c_str());
-        return 0;
-    }
+	if (m_objects.find(name) != GK_NPOS)
+	{
+		gkPrintf("duplicate object '%s' found\n", name.str().c_str());
+		return 0;
+	}
 
-    gkEntity *ob = new gkEntity(this, name.str());
-    m_objects.insert(name, ob);
-    return ob;
+	gkEntity *ob = new gkEntity(this, name.str());
+	m_objects.insert(name, ob);
+	return ob;
 }
 
 gkSkeleton *gkScene::createSkeleton(const gkHashedString &name)
 {
-    if (m_objects.find(name) != GK_NPOS)
-    {
-        gkPrintf("duplicate object '%s' found\n", name.str().c_str());
-        return 0;
-    }
+	if (m_objects.find(name) != GK_NPOS)
+	{
+		gkPrintf("duplicate object '%s' found\n", name.str().c_str());
+		return 0;
+	}
 
-    gkSkeleton *ob = new gkSkeleton(this, name.str());
-    m_objects.insert(name, ob);
-    return ob;
+	gkSkeleton *ob = new gkSkeleton(this, name.str());
+	m_objects.insert(name, ob);
+	return ob;
 }
 
 
 gkDebugger *gkScene::getDebugger(void)
 {
-    if (isLoaded() && !m_debugger)
-        m_debugger = new gkDebugger(this);
-    return m_debugger;
+	if (isLoaded() && !m_debugger)
+		m_debugger = new gkDebugger(this);
+	return m_debugger;
 }
 
 
 gkGameObjectInstance *gkScene::createInstance(gkGameObject *owner, gkGameObjectGroup *group)
 {
-    gkGameObjectInstance *inst = group->createInstance(owner);
-    m_instances.push_back(inst);
-    return inst;
+	gkGameObjectInstance *inst = group->createInstance(owner);
+	m_instances.push_back(inst);
+	return inst;
 }
 
 
 void gkScene::applyViewport(Viewport *vp)
 {
-    const gkVector2 &size = gkWindowSystem::getSingleton().getMouse()->winsize;
-    vp->setDimensions(0, 0, 1, 1);
+	const gkVector2 &size = gkWindowSystem::getSingleton().getMouse()->winsize;
+	vp->setDimensions(0, 0, 1, 1);
 
-    Camera *c = vp->getCamera();
-    if (c != 0) c->setAspectRatio(size.x / size.y);
+	Camera *c = vp->getCamera();
+	if (c != 0) c->setAspectRatio(size.x / size.y);
 }
 
 void gkScene::setMainCamera(gkCamera *cam)
 {
-    if (!m_startCam)
-        return;
+	if (!m_startCam)
+		return;
 
-    m_startCam = cam;
-    Camera *main = m_startCam->getCamera();
+	m_startCam = cam;
+	Camera *main = m_startCam->getCamera();
 
-    GK_ASSERT(main);
+	GK_ASSERT(main);
 
-    if (!m_viewport)
-    {
-        // create a new viewport
-        RenderWindow *window = gkWindowSystem::getSingleton().getMainWindow();
-        if (window)
-            m_viewport = window->addViewport(main);
-    }
-    else
-        m_viewport->setCamera(main);
+	if (!m_viewport)
+	{
+		// create a new viewport
+		RenderWindow *window = gkWindowSystem::getSingleton().getMainWindow();
+		if (window)
+			m_viewport = window->addViewport(main);
+	}
+	else
+		m_viewport->setCamera(main);
 
-    GK_ASSERT(m_viewport);
-    applyViewport(m_viewport);
+	GK_ASSERT(m_viewport);
+	applyViewport(m_viewport);
 }
 
 
 void gkScene::loadImpl(void)
 {
- 
-    if (m_objects.empty())
-    {
-        gkPrintf("no objects in scene '%s' to load\n", m_name.c_str());
-        return;
-    }
+
+	if (m_objects.empty())
+	{
+		gkPrintf("no objects in scene '%s' to load\n", m_name.c_str());
+		return;
+	}
 
 
-    // generic for now, but later scene properties will be used
-    // to extract more detailed management information
+	// generic for now, but later scene properties will be used
+	// to extract more detailed management information
 
-    m_manager = Root::getSingleton().createSceneManager(ST_GENERIC, m_name);
-    if (!m_baseProps.m_skyMat.empty())
-        m_manager->setSkyBox(true, m_baseProps.m_skyMat, m_baseProps.m_skyDist, true, m_baseProps.m_skyOri);
-
-
-    // create the world
-    m_physicsWorld = new gkDynamicsWorld(m_name, this);
+	m_manager = Root::getSingleton().createSceneManager(ST_GENERIC, m_name);
+	if (!m_baseProps.m_skyMat.empty())
+		m_manager->setSkyBox(true, m_baseProps.m_skyMat, m_baseProps.m_skyDist, true, m_baseProps.m_skyOri);
 
 
-    gkGameObjectHashMapIterator it(m_objects);
-    while (it.hasMoreElements())
-    {
-        gkGameObject *obptr = it.getNext().second;
-
-        // Skip load of inactive layers
-        if (!obptr->isLoaded() && obptr->isInActiveLayer() && !obptr->isGroupOwner())
-        {
-            // If there is one camera in the scene use it.
-            // The start camera may not have been specified.
-            if (!m_startCam && obptr->getType() == GK_CAMERA)
-                m_startCam = (gkCamera *)obptr;
-
-            // call builder
-            obptr->load();
-
-            if(obptr->getProperties().isStatic())
-            {
-                if (obptr->getAttachedObject())
-                    m_Limits.merge(obptr->getAttachedObject()->getAabb());
-            }
-
-        }
-    }
-
-    if (!m_instances.empty())
-    {
-        gkGroupInstanceIterator instit(m_instances);
-        while (instit.hasMoreElements())
-            instit.getNext()->load();
-
-        if (0)//gkEngine::getSingleton().getUserDefs().buildInstances)
-        {
-            gkGroupTableIterator instGeom(m_groups);
-            while (instGeom.hasMoreElements())
-                instGeom.getNext().second->build(m_manager);
-        }
-    }
-
-    if (!m_viewport)
-    {
-        // setMainCamera has not been called, try to call
-        if (m_startCam)
-            setMainCamera(m_startCam);
-        else
-        {
-            m_startCam = createCamera(" -- No Camera -- ");
-
-            m_startCam->getProperties().m_transform.set(
-                gkVector3(0, -5, 0),
-                gkEuler(90.f, 0.f, 0.f).toQuaternion(),
-                gkVector3(1.f, 1.f, 1.f)
-            );
-            m_startCam->load();
-            setMainCamera(m_startCam);
-        }
-    }
+	// create the world
+	m_physicsWorld = new gkDynamicsWorld(m_name, this);
 
 
-    GK_ASSERT(m_viewport);
+	gkGameObjectHashMapIterator it(m_objects);
+	while (it.hasMoreElements())
+	{
+		gkGameObject *obptr = it.getNext().second;
 
-    m_viewport->setBackgroundColour(m_baseProps.m_world);
-    m_manager->setAmbientLight(m_baseProps.m_ambient);
+		// Skip load of inactive layers
+		if (!obptr->isLoaded() && obptr->isInActiveLayer() && !obptr->isGroupOwner())
+		{
+			// If there is one camera in the scene use it.
+			// The start camera may not have been specified.
+			if (!m_startCam && obptr->getType() == GK_CAMERA)
+				m_startCam = (gkCamera *)obptr;
 
-    if (m_baseProps.m_fog.m_mode != gkFogParams::FM_NONE)
-    {
-        m_manager->setFog(  m_baseProps.m_fog.m_mode == gkFogParams::FM_QUAD ?  Ogre::FOG_EXP2 :
-                            m_baseProps.m_fog.m_mode == gkFogParams::FM_LIN  ?  Ogre::FOG_LINEAR :
-                            Ogre::FOG_EXP,
-                            m_baseProps.m_fog.m_color,
-                            m_baseProps.m_fog.m_intensity, 
-                            m_baseProps.m_fog.m_start,
-                            m_baseProps.m_fog.m_end);
-    }
+			// call builder
+			obptr->load();
 
-    //Enable Shadows
-    setShadows();
+			if(obptr->getProperties().isStatic())
+			{
+				if (obptr->getAttachedObject())
+					m_Limits.merge(obptr->getAttachedObject()->getAabb());
+			}
 
-    // notify main scene
-    gkEngine::getSingleton().setActiveScene(this);
+		}
+	}
+
+	if (!m_instances.empty())
+	{
+		gkGroupInstanceIterator instit(m_instances);
+		while (instit.hasMoreElements())
+			instit.getNext()->load();
+
+		if (0)//gkEngine::getSingleton().getUserDefs().buildInstances)
+		{
+			gkGroupTableIterator instGeom(m_groups);
+			while (instGeom.hasMoreElements())
+				instGeom.getNext().second->build(m_manager);
+		}
+	}
+
+	if (!m_viewport)
+	{
+		// setMainCamera has not been called, try to call
+		if (m_startCam)
+			setMainCamera(m_startCam);
+		else
+		{
+			m_startCam = createCamera(" -- No Camera -- ");
+
+			m_startCam->getProperties().m_transform.set(
+			    gkVector3(0, -5, 0),
+			    gkEuler(90.f, 0.f, 0.f).toQuaternion(),
+			    gkVector3(1.f, 1.f, 1.f)
+			);
+			m_startCam->load();
+			setMainCamera(m_startCam);
+		}
+	}
+
+
+	GK_ASSERT(m_viewport);
+
+	m_viewport->setBackgroundColour(m_baseProps.m_world);
+	m_manager->setAmbientLight(m_baseProps.m_ambient);
+
+	if (m_baseProps.m_fog.m_mode != gkFogParams::FM_NONE)
+	{
+		m_manager->setFog(  m_baseProps.m_fog.m_mode == gkFogParams::FM_QUAD ?  Ogre::FOG_EXP2 :
+		                    m_baseProps.m_fog.m_mode == gkFogParams::FM_LIN  ?  Ogre::FOG_LINEAR :
+		                    Ogre::FOG_EXP,
+		                    m_baseProps.m_fog.m_color,
+		                    m_baseProps.m_fog.m_intensity,
+		                    m_baseProps.m_fog.m_start,
+		                    m_baseProps.m_fog.m_end);
+	}
+
+	//Enable Shadows
+	setShadows();
+
+	// notify main scene
+	gkEngine::getSingleton().setActiveScene(this);
 }
 
 
 void gkScene::postLoadImpl(void)
 {
-    gkLuaScript *script = gkLuaManager::getSingleton().getScript("OnLoad.lua");
+	gkLuaScript *script = gkLuaManager::getSingleton().getScript("OnLoad.lua");
 
-    // load user application
-    if (script)
-        script->execute();
+	// load user application
+	if (script)
+		script->execute();
 }
 
 
 void gkScene::unloadImpl()
 {
-    if (m_objects.empty())
-        return;
+	if (m_objects.empty())
+		return;
 
-    if(m_navMeshData.get())
-        m_navMeshData->unloadAll();
+	if(m_navMeshData.get())
+		m_navMeshData->unloadAll();
 
-    // free scripts
-    gkLuaManager::getSingleton().unload();
+	// free scripts
+	gkLuaManager::getSingleton().unload();
 
-    // unload instances
-    if (!m_instances.empty())
-    {
-        gkGroupInstanceIterator instit(m_instances);
-        while (instit.hasMoreElements())
-            instit.getNext()->unload();
-    }
+	// unload instances
+	if (!m_instances.empty())
+	{
+		gkGroupInstanceIterator instit(m_instances);
+		while (instit.hasMoreElements())
+			instit.getNext()->unload();
+	}
 
-    // free cloned
-    destroyClones();
-    endObjects();
+	// free cloned
+	destroyClones();
+	endObjects();
 
-    gkGameObjectHashMapIterator it(m_objects);
-    while (it.hasMoreElements())
-    {
-        gkGameObject *obptr = it.getNext().second;
+	gkGameObjectHashMapIterator it(m_objects);
+	while (it.hasMoreElements())
+	{
+		gkGameObject *obptr = it.getNext().second;
 
-        if (obptr->isLoaded())
-            obptr->unload();
-    }
+		if (obptr->isLoaded())
+			obptr->unload();
+	}
 
-    if (m_physicsWorld)
-    {
-        delete m_physicsWorld;
-        m_physicsWorld = 0;
-    }
+	if (m_physicsWorld)
+	{
+		delete m_physicsWorld;
+		m_physicsWorld = 0;
+	}
 
-    if (m_debugger)
-    {
-        delete m_debugger;
-        m_debugger = 0;
-    }
+	if (m_debugger)
+	{
+		delete m_debugger;
+		m_debugger = 0;
+	}
 
-    m_startCam = 0;
+	m_startCam = 0;
 
-    m_Limits = AxisAlignedBox::BOX_NULL;
+	m_Limits = AxisAlignedBox::BOX_NULL;
 
-    // clear ogre scene manager
-    if (m_manager)
-    {
-        m_manager->destroyAllStaticGeometry();
-        Root::getSingleton().destroySceneManager(m_manager);
-    }
+	// clear ogre scene manager
+	if (m_manager)
+	{
+		m_manager->destroyAllStaticGeometry();
+		Root::getSingleton().destroySceneManager(m_manager);
+	}
 
-    m_manager = 0;
+	m_manager = 0;
 
-    // finalize vp
-    if (m_viewport)
-    {
+	// finalize vp
+	if (m_viewport)
+	{
 
-        RenderWindow *window = gkWindowSystem::getSingleton().getMainWindow();
-        if (window)
-        {
-            window->removeViewport(0);
-            m_viewport = 0;
-        }
-    }
+		RenderWindow *window = gkWindowSystem::getSingleton().getMainWindow();
+		if (window)
+		{
+			window->removeViewport(0);
+			m_viewport = 0;
+		}
+	}
 
-    gkEngine::getSingleton().setActiveScene(0);
+	gkEngine::getSingleton().setActiveScene(0);
 }
 
 
 static Ogre::ShadowTechnique ParseShadowTechnique(const gkString &technique)
 {
-    gkString techniqueLower = technique;
-    Ogre::StringUtil::toLowerCase(techniqueLower);
+	gkString techniqueLower = technique;
+	Ogre::StringUtil::toLowerCase(techniqueLower);
 
-    if (techniqueLower == "none")
-        return Ogre::SHADOWTYPE_NONE;
-    else if (techniqueLower == "stencilmodulative")
-        return Ogre::SHADOWTYPE_STENCIL_MODULATIVE;
-    else if (techniqueLower == "stenciladditive")
-        return Ogre::SHADOWTYPE_STENCIL_ADDITIVE;
-    else if (techniqueLower == "texturemodulative")
-        return Ogre::SHADOWTYPE_TEXTURE_MODULATIVE;
-    else if (techniqueLower == "textureadditive")
-        return Ogre::SHADOWTYPE_TEXTURE_ADDITIVE;
-    else if (techniqueLower == "texturemodulativeintegrated")
-        return Ogre::SHADOWTYPE_TEXTURE_MODULATIVE_INTEGRATED;
-    else if (techniqueLower == "textureadditiveintegrated")
-        return Ogre::SHADOWTYPE_TEXTURE_ADDITIVE_INTEGRATED;
+	if (techniqueLower == "none")
+		return Ogre::SHADOWTYPE_NONE;
+	else if (techniqueLower == "stencilmodulative")
+		return Ogre::SHADOWTYPE_STENCIL_MODULATIVE;
+	else if (techniqueLower == "stenciladditive")
+		return Ogre::SHADOWTYPE_STENCIL_ADDITIVE;
+	else if (techniqueLower == "texturemodulative")
+		return Ogre::SHADOWTYPE_TEXTURE_MODULATIVE;
+	else if (techniqueLower == "textureadditive")
+		return Ogre::SHADOWTYPE_TEXTURE_ADDITIVE;
+	else if (techniqueLower == "texturemodulativeintegrated")
+		return Ogre::SHADOWTYPE_TEXTURE_MODULATIVE_INTEGRATED;
+	else if (techniqueLower == "textureadditiveintegrated")
+		return Ogre::SHADOWTYPE_TEXTURE_ADDITIVE_INTEGRATED;
 
-    Ogre::StringUtil::StrStreamType errorMessage;
-    errorMessage << "Invalid shadow technique specified: " << technique;
+	Ogre::StringUtil::StrStreamType errorMessage;
+	errorMessage << "Invalid shadow technique specified: " << technique;
 
-    OGRE_EXCEPT
-    (
-        Ogre::Exception::ERR_INVALIDPARAMS,
-        errorMessage.str(),
-        "ParseShadowTechnique"
-    );
+	OGRE_EXCEPT
+	(
+	    Ogre::Exception::ERR_INVALIDPARAMS,
+	    errorMessage.str(),
+	    "ParseShadowTechnique"
+	);
 }
 
 
 void gkScene::setShadows()
 {
-    gkUserDefs &defs = gkEngine::getSingleton().getUserDefs();
+	gkUserDefs &defs = gkEngine::getSingleton().getUserDefs();
 
-    if(defs.enableshadows)
-    {
-        Ogre::ShadowTechnique shadowTechnique = ::ParseShadowTechnique(defs.shadowtechnique);
+	if(defs.enableshadows)
+	{
+		Ogre::ShadowTechnique shadowTechnique = ::ParseShadowTechnique(defs.shadowtechnique);
 
-        m_manager->setShadowTechnique(shadowTechnique);
+		m_manager->setShadowTechnique(shadowTechnique);
 
-        m_manager->setShadowColour(defs.colourshadow);
+		m_manager->setShadowColour(defs.colourshadow);
 
-        m_manager->setShadowFarDistance(defs.fardistanceshadow);
-    }
+		m_manager->setShadowFarDistance(defs.fardistanceshadow);
+	}
 }
 
 void gkScene::notifyObjectLoaded(gkGameObject *gobject)
 {
-    std::pair<gkGameObjectSet::iterator, bool> result = m_loadedObjects.insert(gobject);
+	std::pair<gkGameObjectSet::iterator, bool> result = m_loadedObjects.insert(gobject);
 
-    GK_ASSERT(result.second);
+	GK_ASSERT(result.second);
 
-    if(m_navMeshData.get())
-        m_navMeshData->updateOrLoad(gobject);
+	if(m_navMeshData.get())
+		m_navMeshData->updateOrLoad(gobject);
 
-    // add to constraints
-    if (gobject->hasConstraints())
-        m_constraintObjects.push_back(gobject);
+	// add to constraints
+	if (gobject->hasConstraints())
+		m_constraintObjects.push_back(gobject);
 }
 
 void gkScene::notifyObjectUnloaded(gkGameObject *gobject)
 {
-    m_loadedObjects.erase(gobject);
+	m_loadedObjects.erase(gobject);
 
-    if(m_navMeshData.get())
-        m_navMeshData->unload(gobject);
+	if(m_navMeshData.get())
+		m_navMeshData->unload(gobject);
 
-    if (gobject->hasConstraints())
-        m_constraintObjects.erase(gobject);
+	if (gobject->hasConstraints())
+		m_constraintObjects.erase(gobject);
 }
 
 void gkScene::notifyObjectUpdate(gkGameObject *gobject)
 {
-    m_markDBVT = true;
+	m_markDBVT = true;
 
-    if(m_navMeshData.get())
-        m_navMeshData->updateOrLoad(gobject);
+	if(m_navMeshData.get())
+		m_navMeshData->updateOrLoad(gobject);
 }
 
 void gkScene::synchronizeMotion(gkScalar blend)
 {
-    if (!m_transformObjects.empty())
-    {
-        gkGameObjectArray::Pointer buffer = m_transformObjects.ptr();
-        UTsize size = m_transformObjects.size();
-        UTsize i = 0;
-        while (i < size) (buffer[i++])->blendTransform(blend);
+	if (!m_transformObjects.empty())
+	{
+		gkGameObjectArray::Pointer buffer = m_transformObjects.ptr();
+		UTsize size = m_transformObjects.size();
+		UTsize i = 0;
+		while (i < size) (buffer[i++])->blendTransform(blend);
 
-        m_transformObjects.clear(true);
-    }
+		m_transformObjects.clear(true);
+	}
 
 }
 
 void gkScene::applyConstraints(void)
 {
-    if (!m_constraintObjects.empty())
-    {
-        gkGameObjectArray::Pointer buffer = m_constraintObjects.ptr();
-        UTsize size = m_constraintObjects.size();
-        UTsize i = 0;
-        while (i < size) (buffer[i++])->applyConstraints();
-    }
+	if (!m_constraintObjects.empty())
+	{
+		gkGameObjectArray::Pointer buffer = m_constraintObjects.ptr();
+		UTsize size = m_constraintObjects.size();
+		UTsize i = 0;
+		while (i < size) (buffer[i++])->applyConstraints();
+	}
 }
 
 void gkScene::destroyClones(void)
 {
-    if (!m_clones.empty())
-    {
-        gkGameObjectArray::Pointer buffer = m_clones.ptr();
-        size_t size = m_clones.size();
-        size_t i = 0;
-        while (i < size)
-        {
-            gkGameObject *obj = buffer[i++];
-            obj->unload();
-            delete obj;
-        }
+	if (!m_clones.empty())
+	{
+		gkGameObjectArray::Pointer buffer = m_clones.ptr();
+		size_t size = m_clones.size();
+		size_t i = 0;
+		while (i < size)
+		{
+			gkGameObject *obj = buffer[i++];
+			obj->unload();
+			delete obj;
+		}
 
-        m_clones.clear();
-    }
-    if (!m_tickClones.empty())
-    {
-        gkGameObjectArray::Pointer buffer = m_tickClones.ptr();
-        size_t size = m_tickClones.size();
-        size_t i = 0;
-        while (i < size)
-        {
-            gkGameObject *obj = buffer[i++];
-            obj->unload();
-            delete obj;
-        }
+		m_clones.clear();
+	}
+	if (!m_tickClones.empty())
+	{
+		gkGameObjectArray::Pointer buffer = m_tickClones.ptr();
+		size_t size = m_tickClones.size();
+		size_t i = 0;
+		while (i < size)
+		{
+			gkGameObject *obj = buffer[i++];
+			obj->unload();
+			delete obj;
+		}
 
-        m_tickClones.clear();
-    }
-    m_cloneCount = 0;
+		m_tickClones.clear();
+	}
+	m_cloneCount = 0;
 }
 
 
 void gkScene::tickClones(void)
 {
-    if (!m_tickClones.empty())
-    {
-        gkGameObjectArray::Pointer buffer = m_tickClones.ptr();
-        UTsize size = m_tickClones.size();
-        UTsize i = 0;
-        while (i < size)
-        {
-            gkGameObject *obj = buffer[i++];
-            gkGameObject::LifeSpan &life = obj->getLifeSpan();
+	if (!m_tickClones.empty())
+	{
+		gkGameObjectArray::Pointer buffer = m_tickClones.ptr();
+		UTsize size = m_tickClones.size();
+		UTsize i = 0;
+		while (i < size)
+		{
+			gkGameObject *obj = buffer[i++];
+			gkGameObject::LifeSpan &life = obj->getLifeSpan();
 
-            if ((life.tick++) > life.timeToLive)
-                endObject(obj);
-        }
+			if ((life.tick++) > life.timeToLive)
+				endObject(obj);
+		}
 
-        endObjects();
-    }
+		endObjects();
+	}
 }
 
-gkGameObject* gkScene::cloneObject(gkGameObject *obj, int lifeSpan)
+gkGameObject *gkScene::cloneObject(gkGameObject *obj, int lifeSpan)
 {
-    std::stringstream stream;
-    stream << obj->getName().c_str() << "/Clone[" << (m_cloneCount++)  << "]";
+	std::stringstream stream;
+	stream << obj->getName().c_str() << "/Clone[" << (m_cloneCount++)  << "]";
 
-    gkGameObject *nobj = (gkGameObject *)obj->clone(stream.str());
-    nobj->setActiveLayer(true);
+	gkGameObject *nobj = (gkGameObject *)obj->clone(stream.str());
+	nobj->setActiveLayer(true);
 
-    gkGameObject::LifeSpan life = {0, lifeSpan};
-    nobj->setLifeSpan(life);
+	gkGameObject::LifeSpan life = {0, lifeSpan};
+	nobj->setLifeSpan(life);
 
-    if (lifeSpan > 0)
-        m_tickClones.push_back(nobj);
-    else
-        m_clones.push_back(nobj);
+	if (lifeSpan > 0)
+		m_tickClones.push_back(nobj);
+	else
+		m_clones.push_back(nobj);
 
-    return nobj;
+	return nobj;
 
 }
 
 
 void gkScene::endObject(gkGameObject *obj)
 {
-    UTsize pos;
-    if ((pos=m_endObjects.find(obj)) == UT_NPOS)
-        m_endObjects.push_back(obj);
+	UTsize pos;
+	if ((pos=m_endObjects.find(obj)) == UT_NPOS)
+		m_endObjects.push_back(obj);
 }
 
 
 void gkScene::endObjects(void)
 {
-    if (!m_endObjects.empty())
-    {
-        gkGameObjectArray::Pointer buffer = m_endObjects.ptr();
-        UTsize size = m_endObjects.size();
-        UTsize i = 0;
-        while (i < size)
-        {
-            UTsize it;
-            gkGameObject *obj = buffer[i++];
+	if (!m_endObjects.empty())
+	{
+		gkGameObjectArray::Pointer buffer = m_endObjects.ptr();
+		UTsize size = m_endObjects.size();
+		UTsize i = 0;
+		while (i < size)
+		{
+			UTsize it;
+			gkGameObject *obj = buffer[i++];
 
 
-            if ((it = m_transformObjects.find(obj)) != UT_NPOS)
-                m_transformObjects.erase(it);
+			if ((it = m_transformObjects.find(obj)) != UT_NPOS)
+				m_transformObjects.erase(it);
 
 
-            if (obj->isClone())
-            {
-                if ((it = m_clones.find(obj)) != UT_NPOS)
-                {
-                    m_clones.erase(it);
-                    obj->unload();
-                    delete obj;
-                }
-                else
-                {
-                    if ((it = m_tickClones.find(obj)) != UT_NPOS)
-                    {
-                        m_tickClones.erase(it);
-                        obj->unload();
-                        delete obj;
-                    }
-                    else
-                    {
-                        gkGameObjectInstance *inst = obj->getGroupInstance();
-                        if (inst != 0)
-                            inst->unloadObject(obj->getName());
-                        else
-                            obj->unload();
-                    }
-                }
-            }
-            else
-            {
-                gkGameObjectInstance *inst = obj->getGroupInstance();
-                if (inst != 0)
-                    inst->unloadObject(obj->getName());
-                else
-                    obj->unload();
-            }
-        }
+			if (obj->isClone())
+			{
+				if ((it = m_clones.find(obj)) != UT_NPOS)
+				{
+					m_clones.erase(it);
+					obj->unload();
+					delete obj;
+				}
+				else
+				{
+					if ((it = m_tickClones.find(obj)) != UT_NPOS)
+					{
+						m_tickClones.erase(it);
+						obj->unload();
+						delete obj;
+					}
+					else
+					{
+						gkGameObjectInstance *inst = obj->getGroupInstance();
+						if (inst != 0)
+							inst->unloadObject(obj->getName());
+						else
+							obj->unload();
+					}
+				}
+			}
+			else
+			{
+				gkGameObjectInstance *inst = obj->getGroupInstance();
+				if (inst != 0)
+					inst->unloadObject(obj->getName());
+				else
+					obj->unload();
+			}
+		}
 
-        m_endObjects.clear(true);
+		m_endObjects.clear(true);
 
-        if (m_clones.empty() && m_tickClones.empty())
-            m_cloneCount = 0;
-    }
+		if (m_clones.empty() && m_tickClones.empty())
+			m_cloneCount = 0;
+	}
 
 }
 
 
 void gkScene::beginFrame(void)
 {
-    if (!isLoaded())
-        return;
+	if (!isLoaded())
+		return;
 
-    // end any objects up for removal 
-    endObjects();
+	// end any objects up for removal
+	endObjects();
 
-    GK_ASSERT(m_physicsWorld);
-    m_physicsWorld->resetContacts();
+	GK_ASSERT(m_physicsWorld);
+	m_physicsWorld->resetContacts();
 
 #ifdef OGREKIT_OPENAL_SOUND
 
-    // process sounds waiting to be finished 
-    gkSoundManager::getSingleton().collectGarbage();
+	// process sounds waiting to be finished
+	gkSoundManager::getSingleton().collectGarbage();
 
 #endif
 
@@ -757,63 +757,63 @@ void gkScene::beginFrame(void)
 
 void gkScene::update(gkScalar tickRate)
 {
-    if (!isLoaded())
-        return;
+	if (!isLoaded())
+		return;
 
-    GK_ASSERT(m_physicsWorld);
+	GK_ASSERT(m_physicsWorld);
 
-    // update simulation
-    gkStats::getSingleton().startClock();
-    m_physicsWorld->step(tickRate);
-    gkStats::getSingleton().stopPhysicsClock();
+	// update simulation
+	gkStats::getSingleton().startClock();
+	m_physicsWorld->step(tickRate);
+	gkStats::getSingleton().stopPhysicsClock();
 
 
-    // update logic bricks
-    gkStats::getSingleton().startClock();
-    gkLogicManager::getSingleton().update(tickRate);
-    gkStats::getSingleton().stopLogicBricksClock();
+	// update logic bricks
+	gkStats::getSingleton().startClock();
+	gkLogicManager::getSingleton().update(tickRate);
+	gkStats::getSingleton().stopLogicBricksClock();
 
-    // update node trees
-    gkStats::getSingleton().startClock();
-    gkNodeManager::getSingleton().update(tickRate);
-    gkStats::getSingleton().stopLogicNodesClock();
+	// update node trees
+	gkStats::getSingleton().startClock();
+	gkNodeManager::getSingleton().update(tickRate);
+	gkStats::getSingleton().stopLogicNodesClock();
 
-    applyConstraints();
+	applyConstraints();
 
-    // tick life span
-    tickClones();
+	// tick life span
+	tickClones();
 
 #if OGREKIT_OPENAL_SOUND
-    // update sound manager.
-    gkStats::getSingleton().startClock();
-    gkSoundManager::getSingleton().update(this);
-    gkStats::getSingleton().stopSoundClock();
+	// update sound manager.
+	gkStats::getSingleton().startClock();
+	gkSoundManager::getSingleton().update(this);
+	gkStats::getSingleton().stopSoundClock();
 #endif
 
 
-    gkStats::getSingleton().startClock();
-    if (m_markDBVT)
-    {
-        m_markDBVT = false;
-        m_physicsWorld->handleDbvt(m_startCam);
-    }
-    
-    gkStats::getSingleton().stopDbvtClock();
+	gkStats::getSingleton().startClock();
+	if (m_markDBVT)
+	{
+		m_markDBVT = false;
+		m_physicsWorld->handleDbvt(m_startCam);
+	}
 
-    if (m_debugger)
-    {
-        m_physicsWorld->DrawDebug();
-        m_debugger->flush();
-    }
+	gkStats::getSingleton().stopDbvtClock();
+
+	if (m_debugger)
+	{
+		m_physicsWorld->DrawDebug();
+		m_debugger->flush();
+	}
 }
 
-bool gkScene::asyncTryToCreateNavigationMesh(gkActiveObject& activeObj, const gkRecast::Config& config, ASYNC_DT_RESULT result)
+bool gkScene::asyncTryToCreateNavigationMesh(gkActiveObject &activeObj, const gkRecast::Config &config, ASYNC_DT_RESULT result)
 {
 	class CreateNavMeshCall : public gkCall
 	{
 	public:
 
-		CreateNavMeshCall(PMESHDATA meshData, const gkRecast::Config& config, ASYNC_DT_RESULT result)
+		CreateNavMeshCall(PMESHDATA meshData, const gkRecast::Config &config, ASYNC_DT_RESULT result)
 			: m_meshData(meshData), m_config(config), m_result(result) {}
 
 		~CreateNavMeshCall() {}
@@ -842,6 +842,6 @@ bool gkScene::asyncTryToCreateNavigationMesh(gkActiveObject& activeObj, const gk
 
 		return true;
 	}
-	
+
 	return false;
 }

@@ -34,79 +34,78 @@ template <typename T, UTsize maxAlloc>
 class utMemoryPool
 {
 public:
-    typedef utArray<T*> BlockAlloc;
+	typedef utArray<T *> BlockAlloc;
 
 public:
 
 
-    utMemoryPool(UTsize nrAlloc)
-    {
-        initializePool(nrAlloc);
-    }
+	utMemoryPool(UTsize nrAlloc)
+	{
+		initializePool(nrAlloc);
+	}
 
-    ~utMemoryPool()
-    {
-        for (UTsize i=0; i<m_usedBlocks.capacity(); i++)
-            delete m_usedBlocks.at(i);
-    }
+	~utMemoryPool()
+	{
+		for (UTsize i=0; i<m_usedBlocks.capacity(); i++)
+			delete m_usedBlocks.at(i);
+	}
 
-    T* alloc(void)
-    {
-        if (m_usedBlocks.empty())
-        {
-            if (maxAlloc ==0 || m_total < maxAlloc)
-            {
-                m_total += 1;
-                T* ptr = new T();
-                return ptr;
-            }
-        }
-        else
-        {
-            T *r = m_usedBlocks.back();
-            m_usedBlocks.pop_back();
-            return r;
-        }
+	T *alloc(void)
+	{
+		if (m_usedBlocks.empty())
+		{
+			if (maxAlloc ==0 || m_total < maxAlloc)
+			{
+				m_total += 1;
+				T *ptr = new T();
+				return ptr;
+			}
+		}
+		else
+		{
+			T *r = m_usedBlocks.back();
+			m_usedBlocks.pop_back();
+			return r;
+		}
 
-        printf("Maximum nr of allocs exceeded");
-        return 0;
-    }
+		printf("Maximum nr of allocs exceeded");
+		return 0;
+	}
 
-    void dealloc(T *p)
-    {
-        if (p != 0)
-            m_usedBlocks.push_back(p);
-    }
+	void dealloc(T *p)
+	{
+		if (p != 0)
+			m_usedBlocks.push_back(p);
+	}
 
-    
-    UT_INLINE UTsize        getAllocatedCount(void)     { return m_total; }
-    UT_INLINE const UTsize  getMaxAlloc(void)           { return maxAlloc; }
-    UT_INLINE UTsize        getBlockSize(void)          { return sizeof (T); }
-    UT_INLINE UTsize        getPoolSize(void)           { return sizeof (T) * m_total; }
+
+	UT_INLINE UTsize        getAllocatedCount(void)     { return m_total; }
+	UT_INLINE const UTsize  getMaxAlloc(void)           { return maxAlloc; }
+	UT_INLINE UTsize        getBlockSize(void)          { return sizeof (T); }
+	UT_INLINE UTsize        getPoolSize(void)           { return sizeof (T) * m_total; }
 
 
 protected:
 
-    void initializePool(UTsize nr)
-    {
-        if (nr == 0 || nr == UT_NPOS)
-            return;
+	void initializePool(UTsize nr)
+	{
+		if (nr == 0 || nr == UT_NPOS)
+			return;
 
-        m_total = nr;
+		m_total = nr;
 
-        /// must have default constructor
-        m_usedBlocks.reserve(m_total);
-        for (UTsize i=0; i<nr; i++)
-        {
-            T *ptr = new T();
-            m_usedBlocks.push_back(ptr);
-        }
-    }
+		/// must have default constructor
+		m_usedBlocks.reserve(m_total);
+		for (UTsize i=0; i<nr; i++)
+		{
+			T *ptr = new T();
+			m_usedBlocks.push_back(ptr);
+		}
+	}
 
-    BlockAlloc  m_usedBlocks;   /// current blocks
-    UTsize      m_total;
+	BlockAlloc  m_usedBlocks;   /// current blocks
+	UTsize      m_total;
 
 };
 
 #endif//_utMemoryPool_h_
-

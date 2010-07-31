@@ -30,16 +30,16 @@
 
 // ----------------------------------------------------------------------------
 gkAlwaysSensor::gkAlwaysSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
-:       gkLogicSensor(object, link, name)
+	:       gkLogicSensor(object, link, name)
 {
-    m_dispatchType = DIS_CONSTANT;
-    connect();
+	m_dispatchType = DIS_CONSTANT;
+	connect();
 }
 
 // ----------------------------------------------------------------------------
-gkLogicBrick* gkAlwaysSensor::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick *gkAlwaysSensor::clone(gkLogicLink *link, gkGameObject *dest)
 {
-    gkAlwaysSensor *sens = new gkAlwaysSensor(*this);
-    sens->cloneImpl(link, dest);
-    return sens;
+	gkAlwaysSensor *sens = new gkAlwaysSensor(*this);
+	sens->cloneImpl(link, dest);
+	return sens;
 }

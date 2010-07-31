@@ -35,8 +35,8 @@ class gkLogicActuator : public gkLogicBrick
 {
 public:
 
-    gkLogicActuator(gkGameObject *object, gkLogicLink *link, const gkString &name);
-    virtual ~gkLogicActuator() {}
+	gkLogicActuator(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	virtual ~gkLogicActuator() {}
 };
 
 

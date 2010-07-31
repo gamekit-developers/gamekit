@@ -33,30 +33,30 @@
 class gkStateActuator : public gkLogicActuator
 {
 public:
-    enum Op
-    {
-        OP_NILL,
-        OP_ADD,
-        OP_SUB,
-        OP_CPY,
-        OP_INV,
-    };
+	enum Op
+	{
+		OP_NILL,
+		OP_ADD,
+		OP_SUB,
+		OP_CPY,
+		OP_INV,
+	};
 protected:
 
-    int m_stateMask, m_op;
+	int m_stateMask, m_op;
 
 public:
 
-    gkStateActuator(gkGameObject *object, gkLogicLink *link, const gkString &name);
-    virtual ~gkStateActuator();
+	gkStateActuator(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	virtual ~gkStateActuator();
 
-    gkLogicBrick* clone(gkLogicLink *link, gkGameObject *dest);
+	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
 
-    // Handle incoming logic.
-    void execute(void);
+	// Handle incoming logic.
+	void execute(void);
 
-    GK_INLINE void setMask(int v)       {m_stateMask = v;}
-    GK_INLINE void setOp(int op)        {m_op = op;}
+	GK_INLINE void setMask(int v)       {m_stateMask = v;}
+	GK_INLINE void setOp(int op)        {m_op = op;}
 };
 
 

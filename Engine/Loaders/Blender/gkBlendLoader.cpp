@@ -37,29 +37,29 @@ gkBlendLoader::gkBlendLoader()
 
 gkBlendLoader::~gkBlendLoader()
 {
-    if (!m_openFiles.empty())
-    {
-        gkBlendFileIterator fit(m_openFiles);
-        while (fit.hasMoreElements())
-            delete fit.getNext();
-        m_openFiles.clear();
+	if (!m_openFiles.empty())
+	{
+		gkBlendFileIterator fit(m_openFiles);
+		while (fit.hasMoreElements())
+			delete fit.getNext();
+		m_openFiles.clear();
 
-    }
+	}
 }
 
-gkBlendFile* gkBlendLoader::loadFile(const gkString& dblend, const gkString& inResourceGroup)
+gkBlendFile *gkBlendLoader::loadFile(const gkString &dblend, const gkString &inResourceGroup)
 {
 
-    gkBlendFile *fp = new gkBlendFile(dblend, inResourceGroup);
-    if (!fp->_parse())
-    {
-        delete fp;
-        return 0;
-    }
+	gkBlendFile *fp = new gkBlendFile(dblend, inResourceGroup);
+	if (!fp->_parse())
+	{
+		delete fp;
+		return 0;
+	}
 
-    // store for later (fp)->getScene(x)->load()
-    m_openFiles.push_back(fp);
-    return fp;
+	// store for later (fp)->getScene(x)->load()
+	m_openFiles.push_back(fp);
+	return fp;
 }
 
 GK_IMPLEMENT_SINGLETON(gkBlendLoader);

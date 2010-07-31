@@ -43,40 +43,40 @@ class gkRigidBody : public gkObject, public btMotionState
 
 protected:
 
-    // Parent world
-    gkDynamicsWorld*    m_owner;
+	// Parent world
+	gkDynamicsWorld    *m_owner;
 
-    // modifier object
-    gkGameObject*       m_object;
+	// modifier object
+	gkGameObject       *m_object;
 
-    // Bullet body
-    btRigidBody*        m_body;
-    btCollisionShape*   m_shape;
+	// Bullet body
+	btRigidBody        *m_body;
+	btCollisionShape   *m_shape;
 
-    // transform callbacks
+	// transform callbacks
 
-    void getWorldTransform(btTransform& worldTrans) const;
-    void setWorldTransform(const btTransform& worldTrans);
+	void getWorldTransform(btTransform &worldTrans) const;
+	void setWorldTransform(const btTransform &worldTrans);
 
-    void loadImpl(void);
-    void unloadImpl(void);
+	void loadImpl(void);
+	void unloadImpl(void);
 
 public:
 
-    gkRigidBody(const gkString& name, gkGameObject *object, gkDynamicsWorld *owner);
-    virtual ~gkRigidBody();
+	gkRigidBody(const gkString &name, gkGameObject *object, gkDynamicsWorld *owner);
+	virtual ~gkRigidBody();
 
-    void setTransformState(const gkTransformState& state);
+	void setTransformState(const gkTransformState &state);
 
-    // update state based on the objects transform 
-    void        updateTransform(void);
+	// update state based on the objects transform
+	void        updateTransform(void);
 
-    void        applyTorque(const gkVector3 &t, int tspace = TRANSFORM_PARENT);
-    void        applyForce(const gkVector3 &f, int tspace = TRANSFORM_PARENT);
-    void        setLinearVelocity(const gkVector3 &linv, int tspace = TRANSFORM_PARENT);
-    void        setAngularVelocity(const gkVector3 &angv, int tspace = TRANSFORM_PARENT);
-    gkVector3   getLinearVelocity(void);
-    gkVector3   getAngularVelocity(void);
+	void        applyTorque(const gkVector3 &t, int tspace = TRANSFORM_PARENT);
+	void        applyForce(const gkVector3 &f, int tspace = TRANSFORM_PARENT);
+	void        setLinearVelocity(const gkVector3 &linv, int tspace = TRANSFORM_PARENT);
+	void        setAngularVelocity(const gkVector3 &angv, int tspace = TRANSFORM_PARENT);
+	gkVector3   getLinearVelocity(void);
+	gkVector3   getAngularVelocity(void);
 
 	GK_INLINE int setActivationState(int newActivationState)
 	{
@@ -87,14 +87,14 @@ public:
 		return oldState;
 	}
 
-    // Gain access to the bullet body
-    btRigidBody* getBody(void)      {return m_body;}
-    // Gain access to the world
-    gkDynamicsWorld* getWorld(void) {GK_ASSERT(m_owner); return m_owner;}
-    // Gain access to the game object
-    gkGameObject* getObject(void)   {GK_ASSERT(m_object); return m_object;}
+	// Gain access to the bullet body
+	btRigidBody *getBody(void)      {return m_body;}
+	// Gain access to the world
+	gkDynamicsWorld *getWorld(void) {GK_ASSERT(m_owner); return m_owner;}
+	// Gain access to the game object
+	gkGameObject *getObject(void)   {GK_ASSERT(m_object); return m_object;}
 
-	btCollisionObject* getCollisionObject();
+	btCollisionObject *getCollisionObject();
 
 	Ogre::AxisAlignedBox getAabb() const;
 

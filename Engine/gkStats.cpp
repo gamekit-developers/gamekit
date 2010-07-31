@@ -29,76 +29,76 @@
 
 gkStats::gkStats()
 {
-    m_clock = new Ogre::Timer();
-    resetClock();
+	m_clock = new Ogre::Timer();
+	resetClock();
 }
 
 void gkStats::resetClock(void)
 {
 	m_start = 0;
-    m_render = 0;
-    m_logicBricks = 0;
-    m_logicNodes = 0;
-    m_physics = 0;
-    m_dbvt = 0;
-    m_sound = 0;
-    m_bufswaplod = 0;
+	m_render = 0;
+	m_logicBricks = 0;
+	m_logicNodes = 0;
+	m_physics = 0;
+	m_dbvt = 0;
+	m_sound = 0;
+	m_bufswaplod = 0;
 }
 
 void gkStats::startClock(void)
 {
-    m_start = m_clock->getMicroseconds();
+	m_start = m_clock->getMicroseconds();
 }
 
 void gkStats::nextFrame(void)
 {
-    m_lastRender = m_render;
-    m_lastLogicBricks = m_logicBricks;
-    m_lastLogicNodes = m_logicNodes;
-    m_lastPhysics = m_physics;
-    m_lastDbvt = m_dbvt;
-    m_lastSound = m_sound;
-    m_lastBufswaplod = m_bufswaplod;
+	m_lastRender = m_render;
+	m_lastLogicBricks = m_logicBricks;
+	m_lastLogicNodes = m_logicNodes;
+	m_lastPhysics = m_physics;
+	m_lastDbvt = m_dbvt;
+	m_lastSound = m_sound;
+	m_lastBufswaplod = m_bufswaplod;
 
-    resetClock();
+	resetClock();
 
-    m_lastTotal = m_clock->getMicroseconds();
-    m_clock->reset();
+	m_lastTotal = m_clock->getMicroseconds();
+	m_clock->reset();
 }
 
 void gkStats::stopRenderClock(void)
 {
-    m_render += m_clock->getMicroseconds() - m_start;
+	m_render += m_clock->getMicroseconds() - m_start;
 }
 
 void gkStats::stopLogicBricksClock(void)
 {
-    m_logicBricks += m_clock->getMicroseconds() - m_start;
+	m_logicBricks += m_clock->getMicroseconds() - m_start;
 }
 
 void gkStats::stopLogicNodesClock(void)
 {
-    m_logicNodes += m_clock->getMicroseconds() - m_start;
+	m_logicNodes += m_clock->getMicroseconds() - m_start;
 }
 
 void gkStats::stopPhysicsClock(void)
 {
-    m_physics += m_clock->getMicroseconds() - m_start;
+	m_physics += m_clock->getMicroseconds() - m_start;
 }
 
 void gkStats::stopDbvtClock(void)
 {
-    m_dbvt += m_clock->getMicroseconds() - m_start;
+	m_dbvt += m_clock->getMicroseconds() - m_start;
 }
 
 void gkStats::stopSoundClock(void)
 {
-    m_sound += m_clock->getMicroseconds() - m_start;
+	m_sound += m_clock->getMicroseconds() - m_start;
 }
 
 void gkStats::stopBufSwapLodClock(void)
 {
-    m_bufswaplod += m_clock->getMicroseconds() - m_start;
+	m_bufswaplod += m_clock->getMicroseconds() - m_start;
 }
 
 GK_IMPLEMENT_SINGLETON(gkStats)

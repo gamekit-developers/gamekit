@@ -41,9 +41,9 @@ extern bool alErrorCheck(void);
 
 enum gkBufType
 {
-    GK_BUF_NULL,
-    GK_BUF_WAV,
-    GK_BUF_OGG,
+	GK_BUF_NULL,
+	GK_BUF_WAV,
+	GK_BUF_OGG,
 };
 
 

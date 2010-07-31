@@ -39,15 +39,15 @@
 class gkMeshLoader : public Ogre::ManualResourceLoader
 {
 public:
-    gkMeshLoader(gkBlendFile *fp, Blender::Object *blender);
-    virtual ~gkMeshLoader();
+	gkMeshLoader(gkBlendFile *fp, Blender::Object *blender);
+	virtual ~gkMeshLoader();
 
-    void loadResource(Ogre::Resource* resource);
+	void loadResource(Ogre::Resource *resource);
 
 private:
 
-    gkBlendFile *m_file;
-    Blender::Object *m_object;
+	gkBlendFile *m_file;
+	Blender::Object *m_object;
 
 };
 

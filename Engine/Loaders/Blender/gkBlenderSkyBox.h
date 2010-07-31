@@ -32,10 +32,10 @@
 
 namespace Blender
 {
-	class World;
+class World;
 };
 
-// simple skybox creator 
+// simple skybox creator
 class gkSkyBoxGradient : public Ogre::ManualResourceLoader
 {
 protected:
@@ -43,14 +43,14 @@ protected:
 	Blender::World *m_world;
 
 	void fill(Ogre::Image &ima, int size, const Ogre::ColourValue &v, const Ogre::PixelFormat &fmt);
-	void grad(Ogre::Image &ima, int x1, int y1, int x2, int y2, int size, 
-		const Ogre::ColourValue &s, const Ogre::ColourValue &e, const Ogre::PixelFormat &fmt);
+	void grad(Ogre::Image &ima, int x1, int y1, int x2, int y2, int size,
+	          const Ogre::ColourValue &s, const Ogre::ColourValue &e, const Ogre::PixelFormat &fmt);
 
 public:
 	gkSkyBoxGradient(Blender::World *wo);
 	virtual ~gkSkyBoxGradient();
 
-	void loadResource(Ogre::Resource* resource);
+	void loadResource(Ogre::Resource *resource);
 };
 
 #endif//_gkBlenderSkyBox_h_

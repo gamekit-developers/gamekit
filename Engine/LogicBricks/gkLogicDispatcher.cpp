@@ -34,33 +34,34 @@
 // ----------------------------------------------------------------------------
 void gkAbstractDispatcher::doDispatch(SensorList &sens)
 {
-    if (!sens.empty()) 
-    {
-        SensorIterator it = SensorIterator(sens);
+	if (!sens.empty())
+	{
+		SensorIterator it = SensorIterator(sens);
 
-        while (it.hasMoreElements())
-        {
-            gkLogicSensor   *sens = it.getNext();
-            gkGameObject    *obj = sens->getObject();
+		while (it.hasMoreElements())
+		{
+			gkLogicSensor   *sens = it.getNext();
+			gkGameObject    *obj = sens->getObject();
 
-            if (obj && obj->isLoaded())
-                sens->execute();
-        }
-    }
+			if (obj && obj->isLoaded())
+				sens->execute();
+		}
+	}
 }
 
 // ----------------------------------------------------------------------------
 void gkAbstractDispatcher::sort(void)
 {
-    if (!m_sensors.empty()) {
-        gkAbstractDispatcher::SensorIterator it = getIterator();
-        while (it.hasMoreElements())
-            it.getNext()->sort();
-    }
+	if (!m_sensors.empty())
+	{
+		gkAbstractDispatcher::SensorIterator it = getIterator();
+		while (it.hasMoreElements())
+			it.getNext()->sort();
+	}
 }
 
 // ----------------------------------------------------------------------------
 void gkConstantDispatch::dispatch(void)
 {
-    doDispatch(m_sensors);
+	doDispatch(m_sensors);
 }

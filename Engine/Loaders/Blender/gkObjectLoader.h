@@ -38,58 +38,58 @@ class btTriangleMesh;
 class gkGameObjectLoader : public gkObject::Loader
 {
 public:
-    gkGameObjectLoader(gkBlendFile *fp, Blender::Scene* sc, Blender::Object *ob);
-    virtual ~gkGameObjectLoader();
+	gkGameObjectLoader(gkBlendFile *fp, Blender::Scene *sc, Blender::Object *ob);
+	virtual ~gkGameObjectLoader();
 
-    void load(gkObject *ob);
-    Loader* clone(void) {return new gkGameObjectLoader(*this);}
+	void load(gkObject *ob);
+	Loader *clone(void) {return new gkGameObjectLoader(*this);}
 
 
 protected:
-    void setLight(gkGameObject *ob);
-    void setCamera(gkGameObject *ob);
-    void setEntity(gkGameObject *ob);
-    void setSkeleton(gkGameObject *ob);
+	void setLight(gkGameObject *ob);
+	void setCamera(gkGameObject *ob);
+	void setEntity(gkGameObject *ob);
+	void setSkeleton(gkGameObject *ob);
 
-    void setConstraints(gkGameObject *ob);
-    void setProperties(gkGameObject *ob);
+	void setConstraints(gkGameObject *ob);
+	void setProperties(gkGameObject *ob);
 
-    gkBlendFile *m_file;
-    Blender::Object*    m_object;
-    Blender::Scene*     m_scene;
+	gkBlendFile *m_file;
+	Blender::Object    *m_object;
+	Blender::Scene     *m_scene;
 };
 
 
-// Rigid body loader to support dynamic loading 
+// Rigid body loader to support dynamic loading
 // and unloading at runtime of physics bodies
 class gkRigidBodyLoader : public gkObject::Loader
 {
 public:
 
-    typedef utArray<btCollisionShape *> ShapeArray;
+	typedef utArray<btCollisionShape *> ShapeArray;
 
 public:
 
-    gkRigidBodyLoader(  gkBlendFile *fp, 
-                        Blender::Scene* sc, 
-                        Blender::Object *ob,
-                        gkGameObject *obj
-                        );
-    virtual ~gkRigidBodyLoader();
+	gkRigidBodyLoader(  gkBlendFile *fp,
+	                    Blender::Scene *sc,
+	                    Blender::Object *ob,
+	                    gkGameObject *obj
+	                 );
+	virtual ~gkRigidBodyLoader();
 
-    void load(gkObject *ob);
+	void load(gkObject *ob);
 
 protected:
 
-    void freeResources(void);
+	void freeResources(void);
 
-    gkBlendFile*        m_file;
-    Blender::Object*    m_object;
-    Blender::Scene*     m_scene;
-    gkGameObject*       m_gameObj;
+	gkBlendFile        *m_file;
+	Blender::Object    *m_object;
+	Blender::Scene     *m_scene;
+	gkGameObject       *m_gameObj;
 
-    ShapeArray          m_shapes;
-    btTriangleMesh*     m_triMesh;
+	ShapeArray          m_shapes;
+	btTriangleMesh     *m_triMesh;
 
 };
 
@@ -98,30 +98,30 @@ class gkCharacterLoader : public gkObject::Loader
 {
 public:
 
-    typedef utArray<btCollisionShape *> ShapeArray;
+	typedef utArray<btCollisionShape *> ShapeArray;
 
 public:
 
-    gkCharacterLoader(  gkBlendFile *fp, 
-                        Blender::Scene* sc, 
-                        Blender::Object *ob,
-                        gkGameObject *obj
-                        );
-    virtual ~gkCharacterLoader();
+	gkCharacterLoader(  gkBlendFile *fp,
+	                    Blender::Scene *sc,
+	                    Blender::Object *ob,
+	                    gkGameObject *obj
+	                 );
+	virtual ~gkCharacterLoader();
 
-    void load(gkObject *ob);
+	void load(gkObject *ob);
 
 protected:
 
-    void freeResources(void);
+	void freeResources(void);
 
-    gkBlendFile*        m_file;
-    Blender::Object*    m_object;
-    Blender::Scene*     m_scene;
-    gkGameObject*       m_gameObj;
+	gkBlendFile        *m_file;
+	Blender::Object    *m_object;
+	Blender::Scene     *m_scene;
+	gkGameObject       *m_gameObj;
 
-    ShapeArray          m_shapes;
-    btTriangleMesh*     m_triMesh;
+	ShapeArray          m_shapes;
+	btTriangleMesh     *m_triMesh;
 
 };
 

@@ -27,13 +27,11 @@
 #include "gkTextFile.h"
 
 
-gkTextFile::gkTextFile(gkTextManager *owner, const gkString& name, const TextType& type)
-:       m_name(name), m_owner(owner), m_buffer(""), m_type(type)
+gkTextFile::gkTextFile(gkTextManager *owner, const gkString &name, const TextType &type)
+	:       m_name(name), m_owner(owner), m_buffer(""), m_type(type)
 {
 }
 
 gkTextFile::~gkTextFile()
 {
 }
-
-

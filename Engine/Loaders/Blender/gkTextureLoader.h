@@ -37,15 +37,15 @@
 class gkTextureLoader : public Ogre::ManualResourceLoader
 {
 public:
-    gkTextureLoader(gkBlendFile *fp, Blender::Image *ima);
-    virtual ~gkTextureLoader();
+	gkTextureLoader(gkBlendFile *fp, Blender::Image *ima);
+	virtual ~gkTextureLoader();
 
-    void loadResource(Ogre::Resource* resource);
+	void loadResource(Ogre::Resource *resource);
 
 protected:
 
-    gkBlendFile *m_file;
-    Blender::Image* m_image;
+	gkBlendFile *m_file;
+	Blender::Image *m_image;
 };
 
 

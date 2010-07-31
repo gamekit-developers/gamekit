@@ -40,49 +40,49 @@ gkBlendLoader::gkBlendLoader()
 
 gkBlendLoader::~gkBlendLoader()
 {
-    if (!m_openFiles.empty())
-    {
-        gkBlendFileIterator fit(m_openFiles);
-        while (fit.hasMoreElements())
-            delete fit.getNext();
-        m_openFiles.clear();
+	if (!m_openFiles.empty())
+	{
+		gkBlendFileIterator fit(m_openFiles);
+		while (fit.hasMoreElements())
+			delete fit.getNext();
+		m_openFiles.clear();
 
-    }
+	}
 }
 
-gkBlendFile* gkBlendLoader::loadFile(const gkString& dblend, const gkString& inResourceGroup)
+gkBlendFile *gkBlendLoader::loadFile(const gkString &dblend, const gkString &inResourceGroup)
 {
-    // utFileStream fs;
+	// utFileStream fs;
 
-    // read to memory 
-    utMemoryStream fs;
-    fs.open(dblend.c_str(), utStream::SM_READ);
+	// read to memory
+	utMemoryStream fs;
+	fs.open(dblend.c_str(), utStream::SM_READ);
 
 
-    gkBlendFile *fp = 0;
+	gkBlendFile *fp = 0;
 
-    if (fs.isOpen())
-    {
-        // inflate or copy to membuf
-        utMemoryStream memBuf;
-        fs.inflate(memBuf);
+	if (fs.isOpen())
+	{
+		// inflate or copy to membuf
+		utMemoryStream memBuf;
+		fs.inflate(memBuf);
 
-        // file is only open for the parse,
-        bParse::bBlenderFile *bfp = new bParse::bBlenderFile((char*)memBuf.ptr(), memBuf.size());
+		// file is only open for the parse,
+		bParse::bBlenderFile *bfp = new bParse::bBlenderFile((char *)memBuf.ptr(), memBuf.size());
 
-        fp = new gkBlendFile(inResourceGroup);
-        if (!fp->parse(bfp))
-        {
-            delete bfp;
-            delete fp;
+		fp = new gkBlendFile(inResourceGroup);
+		if (!fp->parse(bfp))
+		{
+			delete bfp;
+			delete fp;
 
-            return 0;
-        }
+			return 0;
+		}
 
-        delete bfp;
-        m_openFiles.push_back(fp);
-    }
-    return fp;
+		delete bfp;
+		m_openFiles.push_back(fp);
+	}
+	return fp;
 }
 
 GK_IMPLEMENT_SINGLETON(gkBlendLoader);

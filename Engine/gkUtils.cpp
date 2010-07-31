@@ -43,61 +43,62 @@ bool gkUtils::IS_LUA_PACKAGE = false;
 
 #ifdef __APPLE__
 #define MAXPATHLEN 512
-char* AppleGetBundleDirectory(void)
+char *AppleGetBundleDirectory(void)
 {
-    CFURLRef bundleURL;
-    CFStringRef pathStr;
-    static char path[MAXPATHLEN];
-    memset(path, MAXPATHLEN, 0);
-    CFBundleRef mainBundle = CFBundleGetMainBundle();
+	CFURLRef bundleURL;
+	CFStringRef pathStr;
+	static char path[MAXPATHLEN];
+	memset(path, MAXPATHLEN, 0);
+	CFBundleRef mainBundle = CFBundleGetMainBundle();
 
-    bundleURL = CFBundleCopyBundleURL(mainBundle);
-    pathStr = CFURLCopyFileSystemPath(bundleURL, kCFURLPOSIXPathStyle);
-    CFStringGetCString(pathStr, path, MAXPATHLEN, kCFStringEncodingASCII);
-    CFRelease(pathStr);
-    CFRelease(bundleURL);
-    return path;
+	bundleURL = CFBundleCopyBundleURL(mainBundle);
+	pathStr = CFURLCopyFileSystemPath(bundleURL, kCFURLPOSIXPathStyle);
+	CFStringGetCString(pathStr, path, MAXPATHLEN, kCFStringEncodingASCII);
+	CFRelease(pathStr);
+	CFRelease(bundleURL);
+	return path;
 }
 #endif
 
 
-gkString gkUtils::getFile(const gkString& in)
+gkString gkUtils::getFile(const gkString &in)
 {
-    char newName[1024];
+	char newName[1024];
 
 #ifdef __APPLE__
 
-    char* bundlePath = AppleGetBundleDirectory();
+	char *bundlePath = AppleGetBundleDirectory();
 
-    //cut off the .app filename
-    char* lastSlash = 0;
-    if (lastSlash = strrchr(bundlePath, '/'))
-        * lastSlash = '\0';
+	//cut off the .app filename
+	char *lastSlash = 0;
+	if (lastSlash = strrchr(bundlePath, '/'))
+		* lastSlash = '\0';
 
-    sprintf(newName, "%s/%s", bundlePath, "game.blend");
-	FILE* f = fopen(newName,"rb");
-	
+	sprintf(newName, "%s/%s", bundlePath, "game.blend");
+	FILE *f = fopen(newName,"rb");
+
 	if (f)
-    {
+	{
 		fclose(f);
-    } else 
+	}
+	else
 	{
 		sprintf(newName,"%s/%s/%s",AppleGetBundleDirectory(),"Contents/Resources",in.c_str());
 	}
 
 #else
 
-    sprintf(newName, "%s", in.c_str());
+	sprintf(newName, "%s", in.c_str());
 
 #endif
 
-    return newName;
+	return newName;
 }
 
 
 bool gkUtils::isResource(const gkString &name, const gkString &group)
 {
-    if (group.empty())
-        return Ogre::ResourceGroupManager::getSingleton().resourceExistsInAnyGroup(name);
-    return Ogre::ResourceGroupManager::getSingleton().resourceExists(group, name);
+	if (group.empty())
+		return Ogre::ResourceGroupManager::getSingleton().resourceExistsInAnyGroup(name);
+	return Ogre::ResourceGroupManager::getSingleton().resourceExists(group, name);
 }

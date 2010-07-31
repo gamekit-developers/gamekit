@@ -36,82 +36,82 @@ class gkTransformState
 {
 public:
 
-    gkTransformState() {}
+	gkTransformState() {}
 
-    gkTransformState(const gkMatrix4 &mat)
-    {
-        gkMathUtils::extractTransform(mat, loc, rot, scl);
-    }
+	gkTransformState(const gkMatrix4 &mat)
+	{
+		gkMathUtils::extractTransform(mat, loc, rot, scl);
+	}
 
-    gkTransformState(const gkVector3 &oloc, const gkQuaternion &orot, const gkVector3 &oscl)
-    {
-        rot.w = orot.w;
-        rot.x = orot.x; rot.y = orot.y; rot.z = orot.z;
-        loc.x = oloc.x; loc.y = oloc.y; loc.z = oloc.z;
-        scl.x = oscl.x; scl.y = oscl.y; scl.z = oscl.z;
-    }
+	gkTransformState(const gkVector3 &oloc, const gkQuaternion &orot, const gkVector3 &oscl)
+	{
+		rot.w = orot.w;
+		rot.x = orot.x; rot.y = orot.y; rot.z = orot.z;
+		loc.x = oloc.x; loc.y = oloc.y; loc.z = oloc.z;
+		scl.x = oscl.x; scl.y = oscl.y; scl.z = oscl.z;
+	}
 
-    GK_INLINE const gkTransformState &operator= (const gkTransformState &o)
-    {
-        rot.w = o.rot.w;
-        rot.x = o.rot.x; rot.y = o.rot.y; rot.z = o.rot.z;
-        loc.x = o.loc.x; loc.y = o.loc.y; loc.z = o.loc.z;
-        scl.x = o.scl.x; scl.y = o.scl.y; scl.z = o.scl.z;
-        return *this;
-    }
-
-
-    GK_INLINE bool operator != (const gkTransformState &o) const
-    {
-        return ((rot.w != o.rot.w) ||
-                (rot.x != o.rot.x) ||
-                (rot.y != o.rot.y) ||
-                (rot.z != o.rot.z) ||
-                (loc.x != o.loc.x) ||
-                (loc.y != o.loc.y) ||
-                (loc.z != o.loc.z) ||
-                (scl.x != o.scl.x) ||
-                (scl.y != o.scl.y) ||
-                (scl.z != o.scl.z)
-               );
-    }
-
-    void set(const gkVector3 &oloc, const gkQuaternion &orot, const gkVector3 &oscl)
-    {
-        rot.w = orot.w;
-        rot.x = orot.x; rot.y = orot.y; rot.z = orot.z;
-        loc.x = oloc.x; loc.y = oloc.y; loc.z = oloc.z;
-        scl.x = oscl.x; scl.y = oscl.y; scl.z = oscl.z;
-    }
-
-    GK_INLINE void setIdentity(void)
-    {
-        rot.w = gkScalar(1.0);
-        rot.x = gkScalar(0.0); rot.y = gkScalar(0.0); rot.z = gkScalar(0.0);
-        loc.x = gkScalar(0.0); loc.y = gkScalar(0.0); loc.z = gkScalar(0.0);
-        scl.x = gkScalar(1.0); scl.y = gkScalar(1.0); scl.z = gkScalar(1.0);
-    }
-
-    GK_INLINE void      toMatrix(gkMatrix4 &m) const    { m.makeTransform(loc, scl, rot); }
-    GK_INLINE gkMatrix4 toMatrix(void) const            { gkMatrix4 m; m.makeTransform(loc, scl, rot); return m;}
+	GK_INLINE const gkTransformState &operator= (const gkTransformState &o)
+	{
+		rot.w = o.rot.w;
+		rot.x = o.rot.x; rot.y = o.rot.y; rot.z = o.rot.z;
+		loc.x = o.loc.x; loc.y = o.loc.y; loc.z = o.loc.z;
+		scl.x = o.scl.x; scl.y = o.scl.y; scl.z = o.scl.z;
+		return *this;
+	}
 
 
-    GK_INLINE btQuaternion  toRotation(void)        const { return btQuaternion(rot.x, rot.y, rot.z, rot.w);}
-    GK_INLINE btVector3     toOrigin(void)          const { return btVector3(loc.x, loc.y, loc.z); }
-    GK_INLINE btVector3     toLocalScaling(void)    const { return btVector3(scl.x, scl.y, scl.z); }
-    GK_INLINE btTransform   toTransform(void)       const { btTransform t; toTransform(t); return t; }
+	GK_INLINE bool operator != (const gkTransformState &o) const
+	{
+		return ((rot.w != o.rot.w) ||
+		        (rot.x != o.rot.x) ||
+		        (rot.y != o.rot.y) ||
+		        (rot.z != o.rot.z) ||
+		        (loc.x != o.loc.x) ||
+		        (loc.y != o.loc.y) ||
+		        (loc.z != o.loc.z) ||
+		        (scl.x != o.scl.x) ||
+		        (scl.y != o.scl.y) ||
+		        (scl.z != o.scl.z)
+		       );
+	}
 
-    GK_INLINE void toTransform(btTransform &trans)  const
-    {
-        trans.setIdentity();
-        trans.setOrigin(toOrigin());
-        trans.setRotation(toRotation());
-    }
+	void set(const gkVector3 &oloc, const gkQuaternion &orot, const gkVector3 &oscl)
+	{
+		rot.w = orot.w;
+		rot.x = orot.x; rot.y = orot.y; rot.z = orot.z;
+		loc.x = oloc.x; loc.y = oloc.y; loc.z = oloc.z;
+		scl.x = oscl.x; scl.y = oscl.y; scl.z = oscl.z;
+	}
+
+	GK_INLINE void setIdentity(void)
+	{
+		rot.w = gkScalar(1.0);
+		rot.x = gkScalar(0.0); rot.y = gkScalar(0.0); rot.z = gkScalar(0.0);
+		loc.x = gkScalar(0.0); loc.y = gkScalar(0.0); loc.z = gkScalar(0.0);
+		scl.x = gkScalar(1.0); scl.y = gkScalar(1.0); scl.z = gkScalar(1.0);
+	}
+
+	GK_INLINE void      toMatrix(gkMatrix4 &m) const    { m.makeTransform(loc, scl, rot); }
+	GK_INLINE gkMatrix4 toMatrix(void) const            { gkMatrix4 m; m.makeTransform(loc, scl, rot); return m;}
 
 
-    gkQuaternion        rot;
-    gkVector3           loc;
-    gkVector3           scl;
+	GK_INLINE btQuaternion  toRotation(void)        const { return btQuaternion(rot.x, rot.y, rot.z, rot.w);}
+	GK_INLINE btVector3     toOrigin(void)          const { return btVector3(loc.x, loc.y, loc.z); }
+	GK_INLINE btVector3     toLocalScaling(void)    const { return btVector3(scl.x, scl.y, scl.z); }
+	GK_INLINE btTransform   toTransform(void)       const { btTransform t; toTransform(t); return t; }
+
+	GK_INLINE void toTransform(btTransform &trans)  const
+	{
+		trans.setIdentity();
+		trans.setOrigin(toOrigin());
+		trans.setRotation(toRotation());
+	}
+
+
+	gkQuaternion        rot;
+	gkVector3           loc;
+	gkVector3           scl;
 };
 
 

@@ -28,47 +28,47 @@
 
 
 gkCoreApplication::gkCoreApplication()
-:       m_engine(0), m_prefs()
+	:       m_engine(0), m_prefs()
 {
 }
 
 
 gkCoreApplication::~gkCoreApplication()
 {
-    delete m_engine;
-    m_engine = 0;
+	delete m_engine;
+	m_engine = 0;
 }
 
 
 void gkCoreApplication::run(void)
 {
-    if (!initialize())
-        return;
+	if (!initialize())
+		return;
 
-    if (m_engine)
-        m_engine->run();
+	if (m_engine)
+		m_engine->run();
 }
 
 
 // Internal startup
 bool gkCoreApplication::initialize(void)
 {
-    m_engine = new gkEngine(&m_prefs);
-    m_engine->initialize(true);
+	m_engine = new gkEngine(&m_prefs);
+	m_engine->initialize(true);
 
-    if (!m_engine->isInitialized())
-        return false;
+	if (!m_engine->isInitialized())
+		return false;
 
-    // load scene information
-    if (!load())
-    {
-        m_engine->finalize();
-        delete m_engine;
-        m_engine = 0;
-        return false;
-    }
+	// load scene information
+	if (!load())
+	{
+		m_engine->finalize();
+		delete m_engine;
+		m_engine = 0;
+		return false;
+	}
 
-    // add update
-    m_engine->setListener(this);
-    return true;
+	// add update
+	m_engine->setListener(this);
+	return true;
 }

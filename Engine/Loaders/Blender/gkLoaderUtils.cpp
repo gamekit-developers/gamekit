@@ -44,136 +44,136 @@ gkScalar gkLoaderUtils::blender_anim_rate = 25;
 
 
 gkLoaderUtils::gkLoaderUtils(bParse::bBlenderFile *file) :
-        m_file(file)
+	m_file(file)
 {
-    GK_ASSERT(m_file); // Required
+	GK_ASSERT(m_file); // Required
 }
 
 
 void gkLoaderUtils::getLayers(Blender::Mesh *mesh, Blender::MTFace **eightLayerArray, Blender::MCol **oneMCol, int &validLayers)
 {
-    GK_ASSERT(mesh);
+	GK_ASSERT(mesh);
 
-    bParse::bMain *mp = m_file->getMain();
-    GK_ASSERT(mp);
+	bParse::bMain *mp = m_file->getMain();
+	GK_ASSERT(mp);
 
-    validLayers = 0;
+	validLayers = 0;
 
-    Blender::CustomDataLayer *layers = (Blender::CustomDataLayer*)mesh->fdata.layers;
-    if (layers)
-    {
-        // push valid layers
-        for (int i = 0; i < mesh->fdata.totlayer && validLayers < 8; i++)
-        {
-            if (layers[i].type == CD_MTFACE && eightLayerArray)
-            {
-                Blender::MTFace *mtf = (Blender::MTFace *)layers[i].data;
-                if (mtf)
-                    eightLayerArray[validLayers++] = mtf;
-            }
-            else if (layers[i].type == CD_MCOL)
-            {
-                if (oneMCol && !(*oneMCol))
-                    *oneMCol = static_cast<Blender::MCol*>(layers[i].data);
-            }
-        }
-    }
-    else
-    {
-        if (eightLayerArray && mesh->mtface)
-            eightLayerArray[validLayers++] = mesh->mtface;
-        if (oneMCol && mesh->mcol)
-            *oneMCol = mesh->mcol;
+	Blender::CustomDataLayer *layers = (Blender::CustomDataLayer *)mesh->fdata.layers;
+	if (layers)
+	{
+		// push valid layers
+		for (int i = 0; i < mesh->fdata.totlayer && validLayers < 8; i++)
+		{
+			if (layers[i].type == CD_MTFACE && eightLayerArray)
+			{
+				Blender::MTFace *mtf = (Blender::MTFace *)layers[i].data;
+				if (mtf)
+					eightLayerArray[validLayers++] = mtf;
+			}
+			else if (layers[i].type == CD_MCOL)
+			{
+				if (oneMCol && !(*oneMCol))
+					*oneMCol = static_cast<Blender::MCol *>(layers[i].data);
+			}
+		}
+	}
+	else
+	{
+		if (eightLayerArray && mesh->mtface)
+			eightLayerArray[validLayers++] = mesh->mtface;
+		if (oneMCol && mesh->mcol)
+			*oneMCol = mesh->mcol;
 
 
-    }
+	}
 }
 
 
 int gkLoaderUtils::getDeformGroupIndex(Blender::Object *ob, const char *group)
 {
-    Blender::bDeformGroup *dg, *fg;
+	Blender::bDeformGroup *dg, *fg;
 
-    // named group
-    for (dg = (Blender::bDeformGroup*)ob->defbase.first; dg; dg = dg->next)
-        if (!strcmp(dg->name, group)) break;
+	// named group
+	for (dg = (Blender::bDeformGroup *)ob->defbase.first; dg; dg = dg->next)
+		if (!strcmp(dg->name, group)) break;
 
-    if (!dg)
-        return -1;
+	if (!dg)
+		return -1;
 
 
-    int fidx = 0;
-    for (fg = (Blender::bDeformGroup*)ob->defbase.first; fg; fg = fg->next, fidx++)
-        if (fg == dg) break;
+	int fidx = 0;
+	for (fg = (Blender::bDeformGroup *)ob->defbase.first; fg; fg = fg->next, fidx++)
+		if (fg == dg) break;
 
-    return fidx;
+	return fidx;
 }
 
 
-Blender::Material* gkLoaderUtils::getMaterial(Blender::Object *ob, int index)
+Blender::Material *gkLoaderUtils::getMaterial(Blender::Object *ob, int index)
 {
-    if (!ob || ob->totcol == 0) return 0;
+	if (!ob || ob->totcol == 0) return 0;
 
-    index = gkClamp<int>(index, 1, ob->totcol);
-    Blender::Material* ma;
+	index = gkClamp<int>(index, 1, ob->totcol);
+	Blender::Material *ma;
 
-    bParse::bMain *mp = m_file->getMain();
+	bParse::bMain *mp = m_file->getMain();
 
 #if BPARSE_VER == 249
-    // older files
-    if (ob->colbits & (1 << (index - 1)))
+	// older files
+	if (ob->colbits & (1 << (index - 1)))
 #elif BPARSE_VER >= 250
-    // access changed to matbits
-    if (ob->matbits[index-1])
+	// access changed to matbits
+	if (ob->matbits[index-1])
 #endif
-    {
-        ma = (Blender::Material*)ob->mat[index-1];
-    }
-    else
-    {
-        Blender::Mesh *me = (Blender::Mesh*)ob->data;
-        ma = (Blender::Material*)me->mat[index-1];
-    }
-    return ma;
+	{
+		ma = (Blender::Material *)ob->mat[index-1];
+	}
+	else
+	{
+		Blender::Mesh *me = (Blender::Mesh *)ob->data;
+		ma = (Blender::Material *)me->mat[index-1];
+	}
+	return ma;
 }
 
 void gkLoaderUtils::extractInstanceTransform(gkGameObject *inst,Blender::Object *ob, gkVector3 &loc, gkQuaternion &quat, gkVector3 &scale)
 {
-    gkGameObject *own = inst->getGroupInstance()->getOwner();
+	gkGameObject *own = inst->getGroupInstance()->getOwner();
 
-    bParse::bListBasePtr *objs = m_file->getMain()->getObject();
-    Blender::Object *orig=0;
+	bParse::bListBasePtr *objs = m_file->getMain()->getObject();
+	Blender::Object *orig=0;
 
-    for (int i=0; i<objs->size(); ++i)
-    {
-        orig = (Blender::Object*)objs->at(i);
-        if (GKB_IDNAME(orig)==own->getName())
-            break;
-        else orig = 0;
-    }
+	for (int i=0; i<objs->size(); ++i)
+	{
+		orig = (Blender::Object *)objs->at(i);
+		if (GKB_IDNAME(orig)==own->getName())
+			break;
+		else orig = 0;
+	}
 
-    gkMatrix4 p,c;
-    c = gkMathUtils::getFromFloat(ob->obmat);
+	gkMatrix4 p,c;
+	c = gkMathUtils::getFromFloat(ob->obmat);
 
-    if (orig != 0)
-    {
-        p = gkMathUtils::getFromFloat(orig->obmat);
+	if (orig != 0)
+	{
+		p = gkMathUtils::getFromFloat(orig->obmat);
 
-        if (!ob->parent)
-        {
-            c = p * c;
-            gkMathUtils::extractTransform(c, loc, quat, scale);
-        }
-        else
-        {
-            gkMatrix4 parent = gkMathUtils::getFromFloat(ob->parent->obmat);
-            c = parent.inverse() * c;
-            gkMathUtils::extractTransform(c, loc, quat, scale);
-        }
+		if (!ob->parent)
+		{
+			c = p * c;
+			gkMathUtils::extractTransform(c, loc, quat, scale);
+		}
+		else
+		{
+			gkMatrix4 parent = gkMathUtils::getFromFloat(ob->parent->obmat);
+			c = parent.inverse() * c;
+			gkMathUtils::extractTransform(c, loc, quat, scale);
+		}
 
-    }
-    else
-    {
-        gkMathUtils::extractTransform(c, loc, quat, scale);
-    }
+	}
+	else
+	{
+		gkMathUtils::extractTransform(c, loc, quat, scale);
+	}
 }

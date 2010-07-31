@@ -28,91 +28,91 @@
 #include "gkLimitLocConstraint.h"
 #include "gkGameObject.h"
 
-gkLimitLocConstraint::gkLimitLocConstraint() 
-    :   gkConstraint()
+gkLimitLocConstraint::gkLimitLocConstraint()
+	:   gkConstraint()
 {
-    m_flag[0] = m_flag[1] = 0;
-    x[0] = x[1] = 0.0;
-    y[0] = y[1] = 0.0;
-    z[0] = z[1] = 0.0;
+	m_flag[0] = m_flag[1] = 0;
+	x[0] = x[1] = 0.0;
+	y[0] = y[1] = 0.0;
+	z[0] = z[1] = 0.0;
 }
 
-gkConstraint* gkLimitLocConstraint::clone(void)
+gkConstraint *gkLimitLocConstraint::clone(void)
 {
-    gkLimitLocConstraint *cl = new gkLimitLocConstraint(*this);
-    cl->m_next = 0;
-    cl->m_prev = 0;
-    return cl;
+	gkLimitLocConstraint *cl = new gkLimitLocConstraint(*this);
+	cl->m_next = 0;
+	cl->m_prev = 0;
+	return cl;
 }
 
 
 bool gkLimitLocConstraint::update(gkGameObject *ob)
 {
-    gkVector3& position = m_matrix.loc;
+	gkVector3 &position = m_matrix.loc;
 
-    bool doupd = false;
+	bool doupd = false;
 
-    // min x
-    if (m_flag[0] &1)
-    {
-        if (position.x < x[0])
-        {
-            position.x = x[0];
-            doupd = true;
-        }
-    }
+	// min x
+	if (m_flag[0] &1)
+	{
+		if (position.x < x[0])
+		{
+			position.x = x[0];
+			doupd = true;
+		}
+	}
 
-    // max x
-    if (m_flag[1] &1)
-    {
-        if (position.x > x[1])
-        {
-            position.x = x[1];
-            doupd = true;
-        }
-    }
+	// max x
+	if (m_flag[1] &1)
+	{
+		if (position.x > x[1])
+		{
+			position.x = x[1];
+			doupd = true;
+		}
+	}
 
-    // min y
-    if (m_flag[0] &2)
-    {
-        if (position.y < y[0])
-        {
-            position.y = y[0];
-            doupd = true;
-        }
-    }
+	// min y
+	if (m_flag[0] &2)
+	{
+		if (position.y < y[0])
+		{
+			position.y = y[0];
+			doupd = true;
+		}
+	}
 
-    // max y
-    if (m_flag[1] &2)
-    {
-        if (position.y > y[1])
-        {
-            position.y = y[1];
-            doupd = true;
-        }
-    }
+	// max y
+	if (m_flag[1] &2)
+	{
+		if (position.y > y[1])
+		{
+			position.y = y[1];
+			doupd = true;
+		}
+	}
 
-    // min z
-    if (m_flag[0] &4)
-    {
-        if (position.z < z[0])
-        {
-            position.z = z[0];
-            doupd = true;
-        }
-    }
+	// min z
+	if (m_flag[0] &4)
+	{
+		if (position.z < z[0])
+		{
+			position.z = z[0];
+			doupd = true;
+		}
+	}
 
-    // max z
-    if (m_flag[1] &4)
-    {
-        if (position.z > z[1])
-        {
-            position.z = z[1];
-            doupd = true;
-        }
-    }
+	// max z
+	if (m_flag[1] &4)
+	{
+		if (position.z > z[1])
+		{
+			position.z = z[1];
+			doupd = true;
+		}
+	}
 
 
-    // TODO: blend with m_influence
-    return doupd;
+	// TODO: blend with m_influence
+	return doupd;
 }

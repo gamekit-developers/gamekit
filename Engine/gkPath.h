@@ -35,46 +35,46 @@
 class gkPath
 {
 public:
-    static const gkString SEPERATOR;
+	static const gkString SEPERATOR;
 
 public:
 
-    gkPath();
-    gkPath(const gkString& file);
-    gkPath(const char* file);
-    ~gkPath();
+	gkPath();
+	gkPath(const gkString &file);
+	gkPath(const char *file);
+	~gkPath();
 
-    const gkString& getPath(void) const;
-    gkString        getAbsPath(void) const;
+	const gkString &getPath(void) const;
+	gkString        getAbsPath(void) const;
 
-    // file access
-    void            getAsString(gkString &dest) const;
-    gkString        getAsString(void) const;
-    gkString        directory(void) const;
-    gkString        base(void) const;
-    gkString        extension(void) const;
+	// file access
+	void            getAsString(gkString &dest) const;
+	gkString        getAsString(void) const;
+	gkString        directory(void) const;
+	gkString        base(void) const;
+	gkString        extension(void) const;
 
-    // seperator '/'
-    void    normalize(void) const;
-    // normalize based on platform seperator
-    void    normalizePlatform(void) const;
+	// seperator '/'
+	void    normalize(void) const;
+	// normalize based on platform seperator
+	void    normalizePlatform(void) const;
 
-    int     getFileSize(void) const;
-    void    append(const gkString &v);
+	int     getFileSize(void) const;
+	void    append(const gkString &v);
 
-    bool    isAbs(void) const;
-    bool    isRel(void) const;
+	bool    isAbs(void) const;
+	bool    isRel(void) const;
 
-    bool    exists(void) const;
-    bool    isFile(void) const;
-    bool    isDir(void) const;
-    void    split(gkStringVector &arr) const;
+	bool    exists(void) const;
+	bool    isFile(void) const;
+	bool    isDir(void) const;
+	void    split(gkStringVector &arr) const;
 
-    gkString    getBundlePath(void) const;
-    bool        isFileInBundle(void) const;
+	gkString    getBundlePath(void) const;
+	bool        isFileInBundle(void) const;
 
 protected:
-    mutable gkString m_path;
+	mutable gkString m_path;
 };
 
 

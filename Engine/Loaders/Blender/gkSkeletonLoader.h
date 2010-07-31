@@ -44,15 +44,15 @@ class gkSkeletonLoaderPrivate;
 class gkSkeletonLoader : public Ogre::ManualResourceLoader
 {
 public:
-    gkSkeletonLoader(gkBlendFile *fp, Blender::Object *arma);
-    virtual ~gkSkeletonLoader();
+	gkSkeletonLoader(gkBlendFile *fp, Blender::Object *arma);
+	virtual ~gkSkeletonLoader();
 
-    void loadResource(Ogre::Resource* resource);
+	void loadResource(Ogre::Resource *resource);
 private:
-    friend class gkSkeletonLoaderPrivate;
+	friend class gkSkeletonLoaderPrivate;
 
-    gkBlendFile *m_file;
-    Blender::Object* m_object;
+	gkBlendFile *m_file;
+	Blender::Object *m_object;
 };
 
 

@@ -30,8 +30,8 @@
 
 // ----------------------------------------------------------------------------
 gkVisibilityActuator::gkVisibilityActuator(gkGameObject *object, gkLogicLink *link, const gkString &name)
-    :   gkLogicActuator(object, link, name),
-        m_flag(0)
+	:   gkLogicActuator(object, link, name),
+	    m_flag(0)
 {
 }
 
@@ -42,22 +42,22 @@ gkVisibilityActuator::~gkVisibilityActuator()
 
 
 // ----------------------------------------------------------------------------
-gkLogicBrick* gkVisibilityActuator::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick *gkVisibilityActuator::clone(gkLogicLink *link, gkGameObject *dest)
 {
-    gkVisibilityActuator *act = new gkVisibilityActuator(*this);
-    act->cloneImpl(link, dest);
-    return act;
+	gkVisibilityActuator *act = new gkVisibilityActuator(*this);
+	act->cloneImpl(link, dest);
+	return act;
 }
 
 
 // ----------------------------------------------------------------------------
 void gkVisibilityActuator::execute(void)
 {
-    if (isPulseOff())
-        return;
+	if (isPulseOff())
+		return;
 
-    if (!m_object->isLoaded())
-        return;
+	if (!m_object->isLoaded())
+		return;
 
-    m_object->getNode()->setVisible((m_flag & VA_VIS_FLAG) != 0, (m_flag & VA_CHILDREN) != 0);
+	m_object->getNode()->setVisible((m_flag & VA_VIS_FLAG) != 0, (m_flag & VA_CHILDREN) != 0);
 }

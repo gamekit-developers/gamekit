@@ -37,10 +37,10 @@ using namespace Ogre;
 
 
 gkTextureLoader::gkTextureLoader(gkBlendFile *fp, Blender::Image *ima) :
-        m_file(fp), m_image(ima)
+	m_file(fp), m_image(ima)
 {
-    GK_ASSERT(m_file);
-    GK_ASSERT(m_image);
+	GK_ASSERT(m_file);
+	GK_ASSERT(m_image);
 }
 
 
@@ -49,38 +49,38 @@ gkTextureLoader::~gkTextureLoader()
 }
 
 
-void gkTextureLoader::loadResource(Resource* resource)
+void gkTextureLoader::loadResource(Resource *resource)
 {
-    GK_ASSERT(m_file);
-    GK_ASSERT(m_image);
-    GK_ASSERT(resource);
+	GK_ASSERT(m_file);
+	GK_ASSERT(m_image);
+	GK_ASSERT(resource);
 
-    Texture *texture = static_cast<Texture*>(resource);
+	Texture *texture = static_cast<Texture *>(resource);
 
-    // internal packed file data
-    if (m_image->packedfile == 0 || m_image->packedfile->data == 0)
-    {
-        gkPrintf("Warning: Skipping image %s no packed file information is present!", texture->getName().c_str());
-        return;
-    }
+	// internal packed file data
+	if (m_image->packedfile == 0 || m_image->packedfile->data == 0)
+	{
+		gkPrintf("Warning: Skipping image %s no packed file information is present!", texture->getName().c_str());
+		return;
+	}
 
-    Blender::PackedFile *pack = m_image->packedfile;
-    unsigned char *rawBuffer = ((unsigned char*)pack->data);
-    size_t rawSize = pack->size;
+	Blender::PackedFile *pack = m_image->packedfile;
+	unsigned char *rawBuffer = ((unsigned char *)pack->data);
+	size_t rawSize = pack->size;
 
-    DataStreamPtr stream = DataStreamPtr(new MemoryDataStream(rawBuffer, rawSize));
-    Ogre::Image ima;
-    ima.load(stream);
+	DataStreamPtr stream = DataStreamPtr(new MemoryDataStream(rawBuffer, rawSize));
+	Ogre::Image ima;
+	ima.load(stream);
 
-    texture->setUsage(Ogre::TU_DEFAULT);
-    texture->setTextureType(Ogre::TEX_TYPE_2D);
-    texture->setNumMipmaps(5);//ima.getNumMipmaps());
-    texture->setWidth(ima.getWidth());
-    texture->setHeight(ima.getHeight());
-    texture->setDepth(ima.getDepth());
-    texture->setFormat(ima.getFormat());
+	texture->setUsage(Ogre::TU_DEFAULT);
+	texture->setTextureType(Ogre::TEX_TYPE_2D);
+	texture->setNumMipmaps(5);//ima.getNumMipmaps());
+	texture->setWidth(ima.getWidth());
+	texture->setHeight(ima.getHeight());
+	texture->setDepth(ima.getDepth());
+	texture->setFormat(ima.getFormat());
 
-    ConstImagePtrList ptrs;
-    ptrs.push_back(&ima);
-    texture->_loadImages(ptrs);
+	ConstImagePtrList ptrs;
+	ptrs.push_back(&ima);
+	texture->_loadImages(ptrs);
 }

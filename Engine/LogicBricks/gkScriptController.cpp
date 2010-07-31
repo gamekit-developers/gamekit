@@ -30,29 +30,29 @@
 
 // ----------------------------------------------------------------------------
 gkScriptController::gkScriptController(gkGameObject *object, gkLogicLink *link, const gkString &name)
-:       gkLogicController(object, link, name), m_script(0), m_error(false), m_isModule(false)
+	:       gkLogicController(object, link, name), m_script(0), m_error(false), m_isModule(false)
 {
 }
 
 
 // ----------------------------------------------------------------------------
-gkLogicBrick* gkScriptController::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick *gkScriptController::clone(gkLogicLink *link, gkGameObject *dest)
 {
-    gkScriptController *cont = new gkScriptController(*this);
-    cont->cloneImpl(link, dest);
+	gkScriptController *cont = new gkScriptController(*this);
+	cont->cloneImpl(link, dest);
 
-    return cont;
+	return cont;
 }
 
 
 // ----------------------------------------------------------------------------
 void gkScriptController::execute(void)
 {
-    if (m_error || m_sensors.empty()) 
-        return;
+	if (m_error || m_sensors.empty())
+		return;
 
-    // TODO if m_isModule
+	// TODO if m_isModule
 
-    if (m_script !=0)
-        m_error = !m_script->execute();
+	if (m_script !=0)
+		m_error = !m_script->execute();
 }

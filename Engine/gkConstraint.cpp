@@ -27,7 +27,7 @@
 #include "gkConstraint.h"
 
 gkConstraint::gkConstraint()
-:   m_isLocal(false), m_influence(1.0)
+	:   m_isLocal(false), m_influence(1.0)
 {
-    m_matrix.setIdentity();
+	m_matrix.setIdentity();
 }

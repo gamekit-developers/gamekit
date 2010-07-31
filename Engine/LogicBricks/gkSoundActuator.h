@@ -38,41 +38,41 @@ class gkSoundActuator : public gkLogicActuator
 {
 public:
 
-    enum Mode
-    {
-        SA_PLAY_STOP,
-        SA_PLAY_END,
-        SA_LOOP_STOP,
-        SA_LOOP_END,
-        SA_LOOP_PPONG,
-        SA_LOOP_PPONG_STOP,
-    };
+	enum Mode
+	{
+		SA_PLAY_STOP,
+		SA_PLAY_END,
+		SA_LOOP_STOP,
+		SA_LOOP_END,
+		SA_LOOP_PPONG,
+		SA_LOOP_PPONG_STOP,
+	};
 
 
 private:
-    int                 m_mode;         // playback mode
-    bool                m_sndInit;      // state chech 
-    gkString            m_sndRef;       // reference to the sould block name
-    gkSound             *m_sound;       // the sound to play
-    gkSource            *m_player;      // running sound
-    gkSoundProperties    m_props;       // properties to attach to the sound stream
+	int                 m_mode;         // playback mode
+	bool                m_sndInit;      // state chech
+	gkString            m_sndRef;       // reference to the sould block name
+	gkSound             *m_sound;       // the sound to play
+	gkSource            *m_player;      // running sound
+	gkSoundProperties    m_props;       // properties to attach to the sound stream
 
 
-    void notifyActivate(void);
+	void notifyActivate(void);
 
 public:
 
-    gkSoundActuator(gkGameObject *object, gkLogicLink *link, const gkString &name);
-    virtual ~gkSoundActuator();
+	gkSoundActuator(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	virtual ~gkSoundActuator();
 
-    gkLogicBrick* clone(gkLogicLink *link, gkGameObject *dest);
+	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
 
-    GK_INLINE void                  setMode(int v)                      {m_mode = v;}
-    GK_INLINE void                  setSoundFile(const gkString& v)     {m_sndRef = v;}
-    GK_INLINE gkSoundProperties     &getProperties(void)                {return m_props;}
+	GK_INLINE void                  setMode(int v)                      {m_mode = v;}
+	GK_INLINE void                  setSoundFile(const gkString &v)     {m_sndRef = v;}
+	GK_INLINE gkSoundProperties     &getProperties(void)                {return m_props;}
 
-    // Handle incoming logic.
-    void execute(void);
+	// Handle incoming logic.
+	void execute(void);
 };
 
 #endif //OGREKIT_OPENAL_SOUND

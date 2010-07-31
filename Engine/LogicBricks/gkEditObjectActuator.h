@@ -35,54 +35,54 @@ class gkEditObjectActuator : public gkLogicActuator
 {
 public:
 
-    enum Mode
-    {
-        EO_ADDOBJ,
-        EO_ENDOBJ,
-        EO_REPLACEMESH,
-        EO_TRACKTO,
-        EO_DYNAMICS,
-    };
+	enum Mode
+	{
+		EO_ADDOBJ,
+		EO_ENDOBJ,
+		EO_REPLACEMESH,
+		EO_TRACKTO,
+		EO_DYNAMICS,
+	};
 
-    enum Dyn
-    {
-        EOD_RESTORE,
-        EOD_SUSPEND,
-        EOD_ENABLE_BODY,
-        EOD_DISABLE_BODY,
-        EOD_SETMASS,
-    };
+	enum Dyn
+	{
+		EOD_RESTORE,
+		EOD_SUSPEND,
+		EOD_ENABLE_BODY,
+		EOD_DISABLE_BODY,
+		EOD_SETMASS,
+	};
 
 
 private:
 
-    gkVector3   m_linv, m_angv;
-    bool        m_lvlocal, m_avlocal;
-    int         m_life, m_mode, m_dynMode;
-    gkString    m_obj;
+	gkVector3   m_linv, m_angv;
+	bool        m_lvlocal, m_avlocal;
+	int         m_life, m_mode, m_dynMode;
+	gkString    m_obj;
 
-    void addObject(void);
-    void endObject(void);
+	void addObject(void);
+	void endObject(void);
 
 public:
 
-    gkEditObjectActuator(gkGameObject *object, gkLogicLink *link, const gkString &name);
-    virtual ~gkEditObjectActuator();
+	gkEditObjectActuator(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	virtual ~gkEditObjectActuator();
 
-    gkLogicBrick* clone(gkLogicLink *link, gkGameObject *dest);
+	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
 
-    GK_INLINE void  setMode(int v)                  {m_mode = v;}
-    GK_INLINE void  setDynMode(int v)               {m_dynMode = v;}
-    GK_INLINE void  setObject(const gkString& v)    {m_obj = v;}
-    GK_INLINE void  setLinV(const gkVector3& v)     {m_linv = v;}
-    GK_INLINE void  setLinVL(bool v)                {m_lvlocal = v;}
-    GK_INLINE void  setAngV(const gkVector3& v)     {m_angv = v;}
-    GK_INLINE void  setAngVL(bool v)                {m_avlocal = v;}
-    GK_INLINE void  setLifeSpan(int v)              {m_life = v;}
+	GK_INLINE void  setMode(int v)                  {m_mode = v;}
+	GK_INLINE void  setDynMode(int v)               {m_dynMode = v;}
+	GK_INLINE void  setObject(const gkString &v)    {m_obj = v;}
+	GK_INLINE void  setLinV(const gkVector3 &v)     {m_linv = v;}
+	GK_INLINE void  setLinVL(bool v)                {m_lvlocal = v;}
+	GK_INLINE void  setAngV(const gkVector3 &v)     {m_angv = v;}
+	GK_INLINE void  setAngVL(bool v)                {m_avlocal = v;}
+	GK_INLINE void  setLifeSpan(int v)              {m_life = v;}
 
 
-    // Handle incoming logic.
-    void execute(void);
+	// Handle incoming logic.
+	void execute(void);
 };
 
 #endif//_gkEditObjectActuator_h_

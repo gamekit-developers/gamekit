@@ -33,49 +33,49 @@
 
 
 
-gkTextureLoader::gkTextureLoader(Blender::Image *ima) 
-    :   m_stream(0)
+gkTextureLoader::gkTextureLoader(Blender::Image *ima)
+	:   m_stream(0)
 {
-    GK_ASSERT(ima);
-    Blender::PackedFile *pack = ima->packedfile;
-    if (pack)
-    {
-        m_stream = new utMemoryStream;
-        m_stream->open(pack->data, pack->size, utStream::SM_READ);
-    }
+	GK_ASSERT(ima);
+	Blender::PackedFile *pack = ima->packedfile;
+	if (pack)
+	{
+		m_stream = new utMemoryStream;
+		m_stream->open(pack->data, pack->size, utStream::SM_READ);
+	}
 }
 
 
 gkTextureLoader::~gkTextureLoader()
 {
-    delete m_stream;
+	delete m_stream;
 }
 
 
-void gkTextureLoader::loadResource(Ogre::Resource* resource)
+void gkTextureLoader::loadResource(Ogre::Resource *resource)
 {
-    Ogre::Texture *texture = static_cast<Ogre::Texture*>(resource);
+	Ogre::Texture *texture = static_cast<Ogre::Texture *>(resource);
 
-    if (!m_stream)
-    {
-        gkPrintf("Warning: Skipping image %s no packed file information is present!", texture->getName().c_str());
-        return;
-    }
+	if (!m_stream)
+	{
+		gkPrintf("Warning: Skipping image %s no packed file information is present!", texture->getName().c_str());
+		return;
+	}
 
-    Ogre::DataStreamPtr stream = Ogre::DataStreamPtr(new Ogre::MemoryDataStream(m_stream->ptr(), m_stream->size()));
+	Ogre::DataStreamPtr stream = Ogre::DataStreamPtr(new Ogre::MemoryDataStream(m_stream->ptr(), m_stream->size()));
 
-    Ogre::Image ima;
-    ima.load(stream);
+	Ogre::Image ima;
+	ima.load(stream);
 
-    texture->setUsage(Ogre::TU_DEFAULT);
-    texture->setTextureType(Ogre::TEX_TYPE_2D);
-    texture->setNumMipmaps(Ogre::TextureManager::getSingleton().getDefaultNumMipmaps());
-    texture->setWidth(ima.getWidth());
-    texture->setHeight(ima.getHeight());
-    texture->setDepth(ima.getDepth());
-    texture->setFormat(ima.getFormat());
+	texture->setUsage(Ogre::TU_DEFAULT);
+	texture->setTextureType(Ogre::TEX_TYPE_2D);
+	texture->setNumMipmaps(Ogre::TextureManager::getSingleton().getDefaultNumMipmaps());
+	texture->setWidth(ima.getWidth());
+	texture->setHeight(ima.getHeight());
+	texture->setDepth(ima.getDepth());
+	texture->setFormat(ima.getFormat());
 
-    Ogre::ConstImagePtrList ptrs;
-    ptrs.push_back(&ima);
-    texture->_loadImages(ptrs);
+	Ogre::ConstImagePtrList ptrs;
+	ptrs.push_back(&ima);
+	texture->_loadImages(ptrs);
 }

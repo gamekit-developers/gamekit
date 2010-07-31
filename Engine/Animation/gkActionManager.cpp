@@ -44,57 +44,57 @@ gkActionManager::~gkActionManager()
 
 void gkActionManager::setAction(gkAction *act)
 {
-    if (act)
-    {
-        if (!m_active)
-            m_active = act;
-        else
-        {
-            m_blend = act;
-            m_blend->setWeight(0.0);
-            m_blend->setTimePosition(0.0);
-        }
-    }
+	if (act)
+	{
+		if (!m_active)
+			m_active = act;
+		else
+		{
+			m_blend = act;
+			m_blend->setWeight(0.0);
+			m_blend->setTimePosition(0.0);
+		}
+	}
 }
 
 
 void gkActionManager::update(gkScalar delta, gkScalar blendDelta)
 {
-    if (m_blend && m_active)
-    {
+	if (m_blend && m_active)
+	{
 
-        gkScalar blendFrames = m_blend->getBlendFrames();
-        if (gkFuzzy(blendFrames))
-            blendFrames = 1;
+		gkScalar blendFrames = m_blend->getBlendFrames();
+		if (gkFuzzy(blendFrames))
+			blendFrames = 1;
 
-        blendFrames = 1.f / blendFrames;
+		blendFrames = 1.f / blendFrames;
 
-        m_blendTime += blendFrames;
+		m_blendTime += blendFrames;
 
-        if (m_blendTime < 1.0)
-        {
-            m_blend->setWeight(m_blendTime);
-            m_active->setWeight(1.f - m_blendTime);
-            m_blend->evaluate(blendDelta);
-        }
-        else
-        {
-            m_blendTime = 0.f;
-            m_active->setWeight(0.f);
-            m_active->setTimePosition(0);
+		if (m_blendTime < 1.0)
+		{
+			m_blend->setWeight(m_blendTime);
+			m_active->setWeight(1.f - m_blendTime);
+			m_blend->evaluate(blendDelta);
+		}
+		else
+		{
+			m_blendTime = 0.f;
+			m_active->setWeight(0.f);
+			m_active->setTimePosition(0);
 
-            m_blend->setWeight(1.f);
-            m_active = m_blend;
-            m_blend = 0;
-        }
-    }
+			m_blend->setWeight(1.f);
+			m_active = m_blend;
+			m_blend = 0;
+		}
+	}
 
-    if (m_active)
-        m_active->evaluate(delta);
+	if (m_active)
+		m_active->evaluate(delta);
 }
 
 
 void gkActionManager::update(gkScalar delta)
 {
-    update(delta, delta);
+	update(delta, delta);
 }

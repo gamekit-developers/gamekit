@@ -36,107 +36,107 @@
 #include "BulletCollision/CollisionDispatch/btGhostObject.h"
 #include "BulletDynamics/Character/btKinematicCharacterController.h"
 
-gkCharacter::gkCharacter(const gkString& name, gkGameObject *object, gkDynamicsWorld *owner) 
-: gkObject(name), m_owner(owner), m_object(object), m_ghostObject(0), m_character(0), m_shape(0)
+gkCharacter::gkCharacter(const gkString &name, gkGameObject *object, gkDynamicsWorld *owner)
+	: gkObject(name), m_owner(owner), m_object(object), m_ghostObject(0), m_character(0), m_shape(0)
 {
 }
 
 gkCharacter::~gkCharacter()
 {
-    if (m_ghostObject)
-        delete m_ghostObject;
-    if (m_shape)
-        delete m_shape;
+	if (m_ghostObject)
+		delete m_ghostObject;
+	if (m_shape)
+		delete m_shape;
 }
 
 void gkCharacter::loadImpl(void)
 {
-    GK_ASSERT(m_object);
+	GK_ASSERT(m_object);
 
-    gkGameObjectProperties  &props  = m_object->getProperties();
-    gkPhysicsProperties     &phy    = props.m_physics;
+	gkGameObjectProperties  &props  = m_object->getProperties();
+	gkPhysicsProperties     &phy    = props.m_physics;
 
-    gkMesh *me = 0;
-    gkEntity *ent = m_object->getEntity();
-    if (ent != 0)
-        me = ent->getEntityProperties().m_mesh;
+	gkMesh *me = 0;
+	gkEntity *ent = m_object->getEntity();
+	if (ent != 0)
+		me = ent->getEntityProperties().m_mesh;
 
-    // extract the shape's size
-    gkVector3 size(1.f, 1.f, 1.f);
-    if (me != 0)
-        size = me->getBoundingBox().getHalfSize();
-    else
-        size *= phy.m_radius;
+	// extract the shape's size
+	gkVector3 size(1.f, 1.f, 1.f);
+	if (me != 0)
+		size = me->getBoundingBox().getHalfSize();
+	else
+		size *= phy.m_radius;
 
-    switch (phy.m_shape)
-    {
-    case SH_BOX: 
-        m_shape = new btBoxShape(btVector3(size.x, size.y, size.z));
-        break;
-    case SH_CONE: 
-        m_shape = new btConeShapeZ(gkMax(size.x, size.y), 2.f * size.z);
-        break;
-    case SH_CYLINDER: 
-        m_shape = new btCylinderShapeZ(btVector3(size.x, size.y, size.z));
-        break;
-    case SH_CONVEX_TRIMESH:
-    case SH_GIMPACT_MESH:
-    case SH_BVH_MESH:
-        {
-            if (me != 0)
-            {
-                btTriangleMesh *triMesh = me->getTriMesh();
-                if (triMesh->getNumTriangles() > 0)
-                {
-                    if (phy.m_shape == SH_CONVEX_TRIMESH)
-                        m_shape = new btConvexTriangleMeshShape(triMesh);
-                    else if (phy.m_shape == SH_GIMPACT_MESH)
-                        m_shape = new btConvexTriangleMeshShape(triMesh);
-                    else
-                        m_shape = new btBvhTriangleMeshShape(triMesh, true);
-                    break;
-                }
-                else 
-                    return;
-            }
-        }
-    case SH_SPHERE: 
-        m_shape = new btSphereShape(gkMax(size.x, gkMax(size.y, size.z)));
-        break;
-    }
+	switch (phy.m_shape)
+	{
+	case SH_BOX:
+		m_shape = new btBoxShape(btVector3(size.x, size.y, size.z));
+		break;
+	case SH_CONE:
+		m_shape = new btConeShapeZ(gkMax(size.x, size.y), 2.f * size.z);
+		break;
+	case SH_CYLINDER:
+		m_shape = new btCylinderShapeZ(btVector3(size.x, size.y, size.z));
+		break;
+	case SH_CONVEX_TRIMESH:
+	case SH_GIMPACT_MESH:
+	case SH_BVH_MESH:
+		{
+			if (me != 0)
+			{
+				btTriangleMesh *triMesh = me->getTriMesh();
+				if (triMesh->getNumTriangles() > 0)
+				{
+					if (phy.m_shape == SH_CONVEX_TRIMESH)
+						m_shape = new btConvexTriangleMeshShape(triMesh);
+					else if (phy.m_shape == SH_GIMPACT_MESH)
+						m_shape = new btConvexTriangleMeshShape(triMesh);
+					else
+						m_shape = new btBvhTriangleMeshShape(triMesh, true);
+					break;
+				}
+				else
+					return;
+			}
+		}
+	case SH_SPHERE:
+		m_shape = new btSphereShape(gkMax(size.x, gkMax(size.y, size.z)));
+		break;
+	}
 
-    if (!m_shape) 
-        return;
+	if (!m_shape)
+		return;
 
-    m_shape->setMargin(phy.m_margin);
-    m_shape->setLocalScaling(props.m_transform.toLocalScaling());
+	m_shape->setMargin(phy.m_margin);
+	m_shape->setLocalScaling(props.m_transform.toLocalScaling());
 
 	m_ghostObject = new btPairCachingGhostObject();
 	m_ghostObject->setCollisionShape(m_shape);
 
 
-    // basic material properties
-    m_ghostObject->setFriction(phy.m_friction);
-    m_ghostObject->setRestitution(phy.m_restitution);
+	// basic material properties
+	m_ghostObject->setFriction(phy.m_friction);
+	m_ghostObject->setRestitution(phy.m_restitution);
 
-    m_ghostObject->setWorldTransform(props.m_transform.toTransform());
+	m_ghostObject->setWorldTransform(props.m_transform.toTransform());
 
 
-    // intertwine
-    m_ghostObject->setUserPointer(this);
+	// intertwine
+	m_ghostObject->setUserPointer(this);
 
-    btDynamicsWorld *dyn = m_owner->getBulletWorld();
+	btDynamicsWorld *dyn = m_owner->getBulletWorld();
 
 	//m_ghostObject->setCollisionFlags(btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
 
 	m_ghostObject->setCollisionFlags(btCollisionObject::CF_CHARACTER_OBJECT);
 
-	btCollisionShape* pShape = m_ghostObject->getCollisionShape();
+	btCollisionShape *pShape = m_ghostObject->getCollisionShape();
 
 	gkScalar stepHeight = getAabb().getSize().z/1.5f;
 
 	m_character = new btKinematicCharacterController(
-		m_ghostObject, static_cast<btConvexShape*>(m_ghostObject->getCollisionShape()), stepHeight);
+	    m_ghostObject, static_cast<btConvexShape *>(m_ghostObject->getCollisionShape()), stepHeight);
 
 	m_character->setUpAxis(2);
 
@@ -144,88 +144,88 @@ void gkCharacter::loadImpl(void)
 
 	dyn->addAction(this);
 
-    /*		m_owner->getBulletWorld()->getPairCache()->cleanProxyFromPairs(
+	/*		m_owner->getBulletWorld()->getPairCache()->cleanProxyFromPairs(
 			m_ghostObject->getBroadphaseHandle(), m_owner->getBulletWorld()->getDispatcher());*/
 }
 
 void gkCharacter::unloadImpl(void)
 {
-    GK_ASSERT(m_object);
+	GK_ASSERT(m_object);
 
-    if (m_ghostObject)
-    {
-        // intertwine
-        m_ghostObject->setUserPointer(0);
+	if (m_ghostObject)
+	{
+		// intertwine
+		m_ghostObject->setUserPointer(0);
 
-        // add character to bullet world
-        if (m_object->isInActiveLayer())
+		// add character to bullet world
+		if (m_object->isInActiveLayer())
 		{
 			m_owner->getBulletWorld()->removeAction(m_character);
-            m_owner->getBulletWorld()->removeCollisionObject(m_ghostObject);
+			m_owner->getBulletWorld()->removeCollisionObject(m_ghostObject);
 		}
-        delete m_shape;
+		delete m_shape;
 
-        m_shape = 0;
+		m_shape = 0;
 
 		delete m_character;
 
 		m_character = 0;
 
-        delete m_ghostObject;
+		delete m_ghostObject;
 
-        m_ghostObject = 0;
-    }
+		m_ghostObject = 0;
+	}
 }
 
-void gkCharacter::setTransformState(const gkTransformState& state)
+void gkCharacter::setTransformState(const gkTransformState &state)
 {
-    if (!isLoaded())
-        return;
+	if (!isLoaded())
+		return;
 
-    btTransform worldTrans;
-    worldTrans.setIdentity();
+	btTransform worldTrans;
+	worldTrans.setIdentity();
 
-    worldTrans.setRotation(btQuaternion(state.rot.x, state.rot.y, state.rot.z, state.rot.w));
-    worldTrans.setOrigin(btVector3(state.loc.x, state.loc.y, state.loc.z));
+	worldTrans.setRotation(btQuaternion(state.rot.x, state.rot.y, state.rot.z, state.rot.w));
+	worldTrans.setOrigin(btVector3(state.loc.x, state.loc.y, state.loc.z));
 
-    m_ghostObject->setWorldTransform(worldTrans);
+	m_ghostObject->setWorldTransform(worldTrans);
 }
 
 void gkCharacter::updateTransform()
 {
-    if (!isLoaded())
-        return;
+	if (!isLoaded())
+		return;
 
-    btTransform worldTrans;
-    worldTrans.setIdentity();
+	btTransform worldTrans;
+	worldTrans.setIdentity();
 
-    gkQuaternion rot;
-    gkVector3 loc;
+	gkQuaternion rot;
+	gkVector3 loc;
 
-    // see if we can benefit from cached transforms
-    if (!m_object->getParent())
-    {
-        rot = m_object->getOrientation();
-        loc = m_object->getPosition();
-    }
-    else
-    {
-        // must derrive
-        rot = m_object->getWorldOrientation();
-        loc = m_object->getWorldPosition();
-    }
+	// see if we can benefit from cached transforms
+	if (!m_object->getParent())
+	{
+		rot = m_object->getOrientation();
+		loc = m_object->getPosition();
+	}
+	else
+	{
+		// must derrive
+		rot = m_object->getWorldOrientation();
+		loc = m_object->getWorldPosition();
+	}
 
 
-    worldTrans.setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w));
-    worldTrans.setOrigin(btVector3(loc.x, loc.y, loc.z));
+	worldTrans.setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w));
+	worldTrans.setOrigin(btVector3(loc.x, loc.y, loc.z));
 
-    m_ghostObject->setWorldTransform(worldTrans);
+	m_ghostObject->setWorldTransform(worldTrans);
 }
 
-void gkCharacter::setVelocity(const gkVector3& v, gkScalar timeInterval)
+void gkCharacter::setVelocity(const gkVector3 &v, gkScalar timeInterval)
 {
-    if (!isLoaded())
-        return;
+	if (!isLoaded())
+		return;
 
 	btVector3 velocity = btVector3(v.x, v.y, v.z);
 
@@ -234,33 +234,33 @@ void gkCharacter::setVelocity(const gkVector3& v, gkScalar timeInterval)
 	//m_object->notifyUpdate();
 }
 
-void gkCharacter::setWorldTransform(const btTransform& worldTrans)
+void gkCharacter::setWorldTransform(const btTransform &worldTrans)
 {
-    if (!m_object->isLoaded() || !isLoaded())
-        return;
+	if (!m_object->isLoaded() || !isLoaded())
+		return;
 
-    const btQuaternion &rot = worldTrans.getRotation();
-    const btVector3 &loc = worldTrans.getOrigin();
+	const btQuaternion &rot = worldTrans.getRotation();
+	const btVector3 &loc = worldTrans.getOrigin();
 
-    // apply to the node and sync state next update
-    Ogre::SceneNode *node = m_object->getNode();
-    node->setOrientation(gkQuaternion(rot.w(), rot.x(), rot.y(), rot.z()));
-    node->setPosition(gkVector3(loc.x(), loc.y(), loc.z()));
-    m_object->notifyUpdate();
+	// apply to the node and sync state next update
+	Ogre::SceneNode *node = m_object->getNode();
+	node->setOrientation(gkQuaternion(rot.w(), rot.x(), rot.y(), rot.z()));
+	node->setPosition(gkVector3(loc.x(), loc.y(), loc.z()));
+	m_object->notifyUpdate();
 }
 
-void gkCharacter::updateAction( btCollisionWorld* collisionWorld, btScalar deltaTime)
+void gkCharacter::updateAction( btCollisionWorld *collisionWorld, btScalar deltaTime)
 {
-    if (!m_object->isLoaded() || !isLoaded())
-        return;
+	if (!m_object->isLoaded() || !isLoaded())
+		return;
 
 	m_character->updateAction(collisionWorld, deltaTime);
 
 	setWorldTransform(m_ghostObject->getWorldTransform());
 }
 
-btCollisionObject* gkCharacter::getCollisionObject() 
-{ 
+btCollisionObject *gkCharacter::getCollisionObject()
+{
 	return m_ghostObject;
 }
 

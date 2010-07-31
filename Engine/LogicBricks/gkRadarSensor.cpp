@@ -35,60 +35,60 @@
 
 // ----------------------------------------------------------------------------
 gkRadarSensor::gkRadarSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
-:        gkRaySensor(object, link, name), m_angle(0.1)
+	:        gkRaySensor(object, link, name), m_angle(0.1)
 {
 }
 
 // ----------------------------------------------------------------------------
-gkLogicBrick* gkRadarSensor::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick *gkRadarSensor::clone(gkLogicLink *link, gkGameObject *dest)
 {
-    gkRadarSensor *sens = new gkRadarSensor(*this);
-    sens->cloneImpl(link, dest);
-    return sens;
+	gkRadarSensor *sens = new gkRadarSensor(*this);
+	sens->cloneImpl(link, dest);
+	return sens;
 }
 
 // ----------------------------------------------------------------------------
 bool gkRadarSensor::query(void)
 {
-    gkScene *scene = m_object->getOwner();
-    gkDynamicsWorld *dyn = scene->getDynamicsWorld();
+	gkScene *scene = m_object->getOwner();
+	gkDynamicsWorld *dyn = scene->getDynamicsWorld();
 
-    btDynamicsWorld *btw = dyn->getBulletWorld();
+	btDynamicsWorld *btw = dyn->getBulletWorld();
 
-    const gkScalar offs = m_range / 2.f;
-    gkEuler ori;
-    gkVector3 dir;
-    switch (m_axis)
-    {
-    case RA_XPOS: {dir = gkVector3(offs,0,0);  break;}
-    case RA_YPOS: {dir = gkVector3(0,offs,0);  break;}
-    case RA_ZPOS: {dir = gkVector3(0,0,offs);  break;}
-    case RA_XNEG: {dir = gkVector3(-offs,0,0); break;}
-    case RA_YNEG: {dir = gkVector3(0,-offs,0); break;}
-    case RA_ZNEG: {dir = gkVector3(0,0,-offs); break;}
-    }
+	const gkScalar offs = m_range / 2.f;
+	gkEuler ori;
+	gkVector3 dir;
+	switch (m_axis)
+	{
+	case RA_XPOS: {dir = gkVector3(offs,0,0);  break;}
+	case RA_YPOS: {dir = gkVector3(0,offs,0);  break;}
+	case RA_ZPOS: {dir = gkVector3(0,0,offs);  break;}
+	case RA_XNEG: {dir = gkVector3(-offs,0,0); break;}
+	case RA_YNEG: {dir = gkVector3(0,-offs,0); break;}
+	case RA_ZNEG: {dir = gkVector3(0,0,-offs); break;}
+	}
 
-    switch (m_axis)
-    {
-    case RA_XPOS: {ori = gkEuler(0,  -90,   0);     break;}
-    case RA_YPOS: {ori = gkEuler(90,  0,    0);     break;}
-    case RA_ZPOS: {ori = gkEuler(0,   180,  0);     break;}
-    case RA_XNEG: {ori = gkEuler(0,  -90, -180);    break;}
-    case RA_YNEG: {ori = gkEuler(90,  0,  -180);    break;}
-    case RA_ZNEG: {ori = gkEuler(0,   0,    0);     break;}
-    }
+	switch (m_axis)
+	{
+	case RA_XPOS: {ori = gkEuler(0,  -90,   0);     break;}
+	case RA_YPOS: {ori = gkEuler(90,  0,    0);     break;}
+	case RA_ZPOS: {ori = gkEuler(0,   180,  0);     break;}
+	case RA_XNEG: {ori = gkEuler(0,  -90, -180);    break;}
+	case RA_YNEG: {ori = gkEuler(90,  0,  -180);    break;}
+	case RA_ZNEG: {ori = gkEuler(0,   0,    0);     break;}
+	}
 
 
-    gkVector3 vec = m_object->getWorldPosition();
+	gkVector3 vec = m_object->getWorldPosition();
 
-    dir = m_object->getWorldOrientation() * dir;
-    btQuaternion btr = gkMathUtils::get(m_object->getWorldOrientation() * ori.toQuaternion());
+	dir = m_object->getWorldOrientation() * dir;
+	btQuaternion btr = gkMathUtils::get(m_object->getWorldOrientation() * ori.toQuaternion());
 
-    gkAllContactResultCallback exec;
+	gkAllContactResultCallback exec;
 
-    btTransform  btt;
-    btt.setIdentity();
-    btt.setOrigin(btVector3(vec.x + dir.x, vec.y + dir.y, vec.z + dir.z));
+	btTransform  btt;
+	btt.setIdentity();
+	btt.setOrigin(btVector3(vec.x + dir.x, vec.y + dir.y, vec.z + dir.z));
 	btt.setRotation(btr);
 
 	btConeShapeZ btcs(m_range*tan(m_angle/2), m_range);
@@ -97,7 +97,7 @@ bool gkRadarSensor::query(void)
 	btco.setCollisionShape(&btcs);
 	btco.setWorldTransform(btt);
 
-    btw->contactTest( &btco, exec);
+	btw->contactTest( &btco, exec);
 
 	if (btw->getDebugDrawer())
 		btw->debugDrawObject(btt, &btcs, btVector3(0,1,0));
@@ -107,17 +107,17 @@ bool gkRadarSensor::query(void)
 		return false;
 	if (exec.m_contactObjects.empty())
 		return false;
-	
+
 	if (m_material.empty() && m_prop.empty())
 		return true;
-	
-	utArray<const btCollisionObject*> contacts = exec.m_contactObjects;
-	utArrayIterator< utArray<const btCollisionObject*> > iter(contacts);
-	
+
+	utArray<const btCollisionObject *> contacts = exec.m_contactObjects;
+	utArrayIterator< utArray<const btCollisionObject *> > iter(contacts);
+
 	while(iter.hasMoreElements())
 	{
-		gkGameObject *object = ((gkGameObject*)iter.peekNext()->getUserPointer())->getObject();
-		
+		gkGameObject *object = ((gkGameObject *)iter.peekNext()->getUserPointer())->getObject();
+
 		if (!m_prop.empty())
 		{
 			if (object->hasVariable(m_prop))
@@ -128,10 +128,10 @@ bool gkRadarSensor::query(void)
 			if (object->getSensorMaterial() == m_material)
 				return true;
 		}
-		
+
 		iter.getNext();
 	}
-	
+
 	return false;
 
 }

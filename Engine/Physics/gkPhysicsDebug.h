@@ -35,25 +35,25 @@
 class gkDynamicsWorld;
 
 
-// for debugging / building line lists 
+// for debugging / building line lists
 class gkPhysicsDebug : public btIDebugDraw
 {
 public:
-    gkPhysicsDebug(gkDynamicsWorld *wo);
-    virtual ~gkPhysicsDebug();
+	gkPhysicsDebug(gkDynamicsWorld *wo);
+	virtual ~gkPhysicsDebug();
 
-    void drawLine(const btVector3& from, const btVector3& to, const btVector3& color);
-    void drawContactPoint(const btVector3& PointOnB, const btVector3& normalOnB, btScalar distance, int lifeTime, const btVector3& color);
-    void draw3dText(const btVector3& location,const char* textString);
+	void drawLine(const btVector3 &from, const btVector3 &to, const btVector3 &color);
+	void drawContactPoint(const btVector3 &PointOnB, const btVector3 &normalOnB, btScalar distance, int lifeTime, const btVector3 &color);
+	void draw3dText(const btVector3 &location,const char *textString);
 
-    void reportErrorWarning(const char* warningString);
-    void setDebugMode(int debugMode);
-    int getDebugMode() const;
+	void reportErrorWarning(const char *warningString);
+	void setDebugMode(int debugMode);
+	int getDebugMode() const;
 
 protected:
-    int m_flags;
+	int m_flags;
 
-    gkDynamicsWorld*    m_physics;
+	gkDynamicsWorld    *m_physics;
 };
 
 

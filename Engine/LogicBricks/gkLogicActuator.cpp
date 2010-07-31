@@ -28,6 +28,6 @@
 
 
 gkLogicActuator::gkLogicActuator(gkGameObject *object, gkLogicLink *link, const gkString &name)
-:       gkLogicBrick(object, link, name)
+	:       gkLogicBrick(object, link, name)
 {
 }

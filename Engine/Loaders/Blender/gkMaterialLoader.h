@@ -37,16 +37,16 @@
 
 enum gkTextureLayers
 {
-    // six layers by default in ogre, see OGRE_MAX_TEXTURE_COORD_SETS
-    // blender has eight
-    TL_UV0 = 0,
-    TL_UV1,
-    TL_UV2,
-    TL_UV3,
-    TL_UV4,
-    TL_UV5,
-    TL_UV6,
-    TL_UV7,
+	// six layers by default in ogre, see OGRE_MAX_TEXTURE_COORD_SETS
+	// blender has eight
+	TL_UV0 = 0,
+	TL_UV1,
+	TL_UV2,
+	TL_UV3,
+	TL_UV4,
+	TL_UV5,
+	TL_UV6,
+	TL_UV7,
 };
 
 
@@ -55,46 +55,46 @@ enum gkTextureLayers
 class gkMaterialUtils
 {
 public:
-    typedef utArray<Blender::MTex*> MTexList;
+	typedef utArray<Blender::MTex *> MTexList;
 
 public:
 
-    gkMaterialUtils(gkBlendFile *fp);
-    void getOgreMaterialFromMaterial(Ogre::MaterialPtr ptr, Blender::Material *matr, Blender::Mesh *me, int flags);
-    void setOgreMaterialDefault(Ogre::MaterialPtr ptr, bool lighting, int flags, int alpha);
+	gkMaterialUtils(gkBlendFile *fp);
+	void getOgreMaterialFromMaterial(Ogre::MaterialPtr ptr, Blender::Material *matr, Blender::Mesh *me, int flags);
+	void setOgreMaterialDefault(Ogre::MaterialPtr ptr, bool lighting, int flags, int alpha);
 
 
-    void addTextureUnit(Ogre::MaterialPtr ptr, Blender::Image *ima, int layer_nr);
+	void addTextureUnit(Ogre::MaterialPtr ptr, Blender::Image *ima, int layer_nr);
 
 
 private:
 
-    void handleStd(void);
-    bool applyTexFace(int flags, int alpha);
+	void handleStd(void);
+	bool applyTexFace(int flags, int alpha);
 
-    bool lampTest(void);
+	bool lampTest(void);
 
-    Ogre::Pass *getOrCreatePass(size_t idx);
+	Ogre::Pass *getOrCreatePass(size_t idx);
 
-    size_t getNumTextures(void);
-    Blender::MTex* getTexture(size_t i);
-    Blender::MTex* getTexture(int mapto, int fallback);
-    MTexList getTextures(int mapto);
+	size_t getNumTextures(void);
+	Blender::MTex *getTexture(size_t i);
+	Blender::MTex *getTexture(int mapto, int fallback);
+	MTexList getTextures(int mapto);
 
-    int getUVLayer(Blender::MTex *te);
-    Ogre::TextureUnitState* addTextureUnit(Ogre::Pass* ptr, Blender::MTex *tex);
-    Ogre::TextureUnitState* addTextureUnit(Ogre::Pass* ptr, Blender::Image *ima, int layer_nr);
+	int getUVLayer(Blender::MTex *te);
+	Ogre::TextureUnitState *addTextureUnit(Ogre::Pass *ptr, Blender::MTex *tex);
+	Ogre::TextureUnitState *addTextureUnit(Ogre::Pass *ptr, Blender::Image *ima, int layer_nr);
 
-    gkBlendFile*            m_file;         // current file
-    Ogre::Technique*        m_tech;         // current technique
-    Ogre::Pass*             m_pass;         // current pass
-    Blender::Material*      m_blendMat;     // blender ptr
-    Blender::Mesh*          m_blendMesh;    // owner mesh
-    Ogre::Material*         m_ogreMat;      // destination material
-    MTexList                m_textures;     // converted textures
-    bool                    m_multiPass;    // use multi pass shaders (WIP)
-    bool                    m_modern;       // multi pass supported ?
-    int                     m_flags;
+	gkBlendFile            *m_file;         // current file
+	Ogre::Technique        *m_tech;         // current technique
+	Ogre::Pass             *m_pass;         // current pass
+	Blender::Material      *m_blendMat;     // blender ptr
+	Blender::Mesh          *m_blendMesh;    // owner mesh
+	Ogre::Material         *m_ogreMat;      // destination material
+	MTexList                m_textures;     // converted textures
+	bool                    m_multiPass;    // use multi pass shaders (WIP)
+	bool                    m_modern;       // multi pass supported ?
+	int                     m_flags;
 
 };
 

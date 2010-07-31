@@ -32,78 +32,78 @@ using namespace Ogre;
 
 
 
-gkLimitRotConstraint::gkLimitRotConstraint() 
-    :   gkConstraint(),
-        m_flag(0),
-        mXBounds(0.0, 0.0),
-        mYBounds(0.0, 0.0),
-        mZBounds(0.0, 0.0)
+gkLimitRotConstraint::gkLimitRotConstraint()
+	:   gkConstraint(),
+	    m_flag(0),
+	    mXBounds(0.0, 0.0),
+	    mYBounds(0.0, 0.0),
+	    mZBounds(0.0, 0.0)
 {
 }
-gkConstraint* gkLimitRotConstraint::clone(void)
+gkConstraint *gkLimitRotConstraint::clone(void)
 {
-    gkLimitRotConstraint *cl = new gkLimitRotConstraint(*this);
-    cl->m_next = 0;
-    cl->m_prev = 0;
-    return cl;
+	gkLimitRotConstraint *cl = new gkLimitRotConstraint(*this);
+	cl->m_next = 0;
+	cl->m_prev = 0;
+	return cl;
 }
 
 
 
 bool gkLimitRotConstraint::update(gkGameObject *ob)
 {
-    gkVector3 rotation = gkEuler(m_matrix.rot).toVector3();
+	gkVector3 rotation = gkEuler(m_matrix.rot).toVector3();
 
-    bool doupd = false;
-    // x
-    if (m_flag & 1)
-    {
-        if (rotation.x < mXBounds.x)
-        {
-            doupd = true;
-            rotation.x = mXBounds.x;
-        }
+	bool doupd = false;
+	// x
+	if (m_flag & 1)
+	{
+		if (rotation.x < mXBounds.x)
+		{
+			doupd = true;
+			rotation.x = mXBounds.x;
+		}
 
-        if (rotation.x > mXBounds.y)
-        {
-            doupd = true;
-            rotation.x = mXBounds.y;
-        }
-    }
-    // y
-    if (m_flag & 2)
-    {
-        if (rotation.y < mYBounds.x)
-        {
-            doupd = true;
-            rotation.y = mYBounds.x;
-        }
+		if (rotation.x > mXBounds.y)
+		{
+			doupd = true;
+			rotation.x = mXBounds.y;
+		}
+	}
+	// y
+	if (m_flag & 2)
+	{
+		if (rotation.y < mYBounds.x)
+		{
+			doupd = true;
+			rotation.y = mYBounds.x;
+		}
 
-        if (rotation.y > mYBounds.y)
-        {
-            doupd = true;
-            rotation.y = mYBounds.y;
-        }
-    }
+		if (rotation.y > mYBounds.y)
+		{
+			doupd = true;
+			rotation.y = mYBounds.y;
+		}
+	}
 
-    // z
-    if (m_flag & 4)
-    {
-        if (rotation.z < mZBounds.x)
-        {
-            doupd = true;
-            rotation.z = mZBounds.x;
-        }
+	// z
+	if (m_flag & 4)
+	{
+		if (rotation.z < mZBounds.x)
+		{
+			doupd = true;
+			rotation.z = mZBounds.x;
+		}
 
-        if (rotation.z > mZBounds.y)
-        {
-            doupd = true;
-            rotation.z = mZBounds.y;
-        }
-    }
+		if (rotation.z > mZBounds.y)
+		{
+			doupd = true;
+			rotation.z = mZBounds.y;
+		}
+	}
 
-    // TODO: blend with m_influence
-    if (doupd)
-        m_matrix.rot = gkEuler(rotation).toQuaternion();
-    return doupd;
+	// TODO: blend with m_influence
+	if (doupd)
+		m_matrix.rot = gkEuler(rotation).toQuaternion();
+	return doupd;
 }

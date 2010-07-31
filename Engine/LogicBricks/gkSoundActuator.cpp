@@ -33,13 +33,13 @@
 
 
 // ----------------------------------------------------------------------------
-gkSoundActuator::gkSoundActuator(gkGameObject *object, gkLogicLink *link, const gkString &name) 
-    :   gkLogicActuator(object, link, name),
-        m_mode(SA_PLAY_STOP),
-        m_sndInit(false),
-        m_sndRef(""),
-        m_sound(0),
-        m_player(0)
+gkSoundActuator::gkSoundActuator(gkGameObject *object, gkLogicLink *link, const gkString &name)
+	:   gkLogicActuator(object, link, name),
+	    m_mode(SA_PLAY_STOP),
+	    m_sndInit(false),
+	    m_sndRef(""),
+	    m_sound(0),
+	    m_player(0)
 {
 }
 
@@ -47,110 +47,110 @@ gkSoundActuator::gkSoundActuator(gkGameObject *object, gkLogicLink *link, const 
 // ----------------------------------------------------------------------------
 gkSoundActuator::~gkSoundActuator()
 {
-    if (m_player && m_sound)
-        m_sound->destroySource(m_player);
+	if (m_player && m_sound)
+		m_sound->destroySource(m_player);
 }
 
 
 // ----------------------------------------------------------------------------
-gkLogicBrick* gkSoundActuator::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick *gkSoundActuator::clone(gkLogicLink *link, gkGameObject *dest)
 {
-    gkSoundActuator *act = new gkSoundActuator(*this);
-    act->cloneImpl(link, dest);
-    act->m_player = 0;
-    act->m_sound = 0;
-    act->m_sndInit = false;
-    return act;
+	gkSoundActuator *act = new gkSoundActuator(*this);
+	act->cloneImpl(link, dest);
+	act->m_player = 0;
+	act->m_sound = 0;
+	act->m_sndInit = false;
+	return act;
 }
 
 
 // ----------------------------------------------------------------------------
 void gkSoundActuator::notifyActivate(void)
 {
-    // give it a chance to shut off
-    if (!m_isActive && m_player)
-    {
-        m_player->loop(false);
+	// give it a chance to shut off
+	if (!m_isActive && m_player)
+	{
+		m_player->loop(false);
 
-        if (m_mode == SA_PLAY_STOP || m_mode == SA_LOOP_STOP)
-            m_player->stop();
-    }
+		if (m_mode == SA_PLAY_STOP || m_mode == SA_LOOP_STOP)
+			m_player->stop();
+	}
 }
 
 // ----------------------------------------------------------------------------
 void gkSoundActuator::execute(void)
 {
-    if (!m_sndInit)
-    {
-        m_sndInit = true;
-        m_sound = gkSoundManager::getSingleton().getSound(m_sndRef);
-    
-        if (m_sound)
-        {
-            m_player = m_sound->createSource();
-            if (m_player)
-                m_player->setProperties(m_props);
-        }
-    }
+	if (!m_sndInit)
+	{
+		m_sndInit = true;
+		m_sound = gkSoundManager::getSingleton().getSound(m_sndRef);
+
+		if (m_sound)
+		{
+			m_player = m_sound->createSource();
+			if (m_player)
+				m_player->setProperties(m_props);
+		}
+	}
 
 
-    if (m_player != 0)
-    {
-        int tmode = m_mode;
+	if (m_player != 0)
+	{
+		int tmode = m_mode;
 
-        if (m_mode == SA_LOOP_END)
-        {
-            if (!m_player->isLooped())
-                m_player->loop(true);
+		if (m_mode == SA_LOOP_END)
+		{
+			if (!m_player->isLooped())
+				m_player->loop(true);
 
-            tmode = SA_PLAY_END;
-        }
-        else if (m_mode == SA_LOOP_STOP)
-        {
-            if (!m_player->isLooped())
-                m_player->loop(true);
+			tmode = SA_PLAY_END;
+		}
+		else if (m_mode == SA_LOOP_STOP)
+		{
+			if (!m_player->isLooped())
+				m_player->loop(true);
 
-            tmode = SA_PLAY_STOP;
-        }
-        else if (m_player->isLooped())
-            m_player->loop(false);
-
-
-        if (tmode == SA_PLAY_STOP)
-        {
-            // play while there is a positive pulse
-            if (isPulseOff())
-            {
-                if (m_player->isPlaying())
-                    m_player->stop();
-            }
-            else
-            {
-                if (!m_player->isPlaying())
-                    m_player->play();
-            }
-        }
-        else if (tmode == SA_PLAY_END)
-        {
-            // play untill finished
-            if (isPulseOff())
-                return;
-            else
-            {
-                if (!m_player->isPlaying())
-                {
-                    m_player->stop();
-                    m_player->play();
-                }
-            }
-        }
+			tmode = SA_PLAY_STOP;
+		}
+		else if (m_player->isLooped())
+			m_player->loop(false);
 
 
-        if (m_props.m_3dSound)
-            m_player->updatePropsForObject(m_object);
+		if (tmode == SA_PLAY_STOP)
+		{
+			// play while there is a positive pulse
+			if (isPulseOff())
+			{
+				if (m_player->isPlaying())
+					m_player->stop();
+			}
+			else
+			{
+				if (!m_player->isPlaying())
+					m_player->play();
+			}
+		}
+		else if (tmode == SA_PLAY_END)
+		{
+			// play untill finished
+			if (isPulseOff())
+				return;
+			else
+			{
+				if (!m_player->isPlaying())
+				{
+					m_player->stop();
+					m_player->play();
+				}
+			}
+		}
 
 
-    }
+		if (m_props.m_3dSound)
+			m_player->updatePropsForObject(m_object);
+
+
+	}
 }
 
 #endif//OGREKIT_OPENAL_SOUND

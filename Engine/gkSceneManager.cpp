@@ -36,81 +36,81 @@ gkSceneManager::gkSceneManager()
 
 gkSceneManager::~gkSceneManager()
 {
-    destroyAll();
+	destroyAll();
 }
 
 
-gkScene* gkSceneManager::getScene(const gkString& name)
+gkScene *gkSceneManager::getScene(const gkString &name)
 {
-    size_t pos;
-    if ((pos = m_objects.find(name)) == GK_NPOS)
-        return 0;
-    return m_objects.at(pos);
+	size_t pos;
+	if ((pos = m_objects.find(name)) == GK_NPOS)
+		return 0;
+	return m_objects.at(pos);
 }
 
 
 
-gkScene* gkSceneManager::create(const gkString& name)
+gkScene *gkSceneManager::create(const gkString &name)
 {
-    size_t pos;
-    if ((pos = m_objects.find(name)) != GK_NPOS)
-        return 0;
+	size_t pos;
+	if ((pos = m_objects.find(name)) != GK_NPOS)
+		return 0;
 
-    gkScene *ob = new gkScene(name);
-    m_objects.insert(name, ob);
-    return ob;
+	gkScene *ob = new gkScene(name);
+	m_objects.insert(name, ob);
+	return ob;
 }
 
 
-void gkSceneManager::destroy(const gkString& name)
+void gkSceneManager::destroy(const gkString &name)
 {
-    size_t pos;
-    if ((pos = m_objects.find(name)) != GK_NPOS)
-    {
-        gkScene *ob = m_objects.at(pos);
-        m_objects.remove(name);
-        ob->unload();
-        delete ob;
-    }
+	size_t pos;
+	if ((pos = m_objects.find(name)) != GK_NPOS)
+	{
+		gkScene *ob = m_objects.at(pos);
+		m_objects.remove(name);
+		ob->unload();
+		delete ob;
+	}
 }
 
 
 void gkSceneManager::destroy(gkScene *ob)
 {
-    GK_ASSERT(ob);
+	GK_ASSERT(ob);
 
-    gkString name = ob->getName();
-    size_t pos;
-    if ((pos = m_objects.find(name)) != GK_NPOS)
-    {
-        gkScene *ob = m_objects.at(pos);
-        m_objects.remove(name);
-        ob->unload();
-        delete ob;
-    }
+	gkString name = ob->getName();
+	size_t pos;
+	if ((pos = m_objects.find(name)) != GK_NPOS)
+	{
+		gkScene *ob = m_objects.at(pos);
+		m_objects.remove(name);
+		ob->unload();
+		delete ob;
+	}
 }
 
 
 
 void gkSceneManager::destroyAll(void)
 {
-    utHashTableIterator<SceneObjectMap> iter(m_objects);
-    while (iter.hasMoreElements())
-    {
-        gkScene *ob = iter.peekNextValue();
-        ob->unload();
-        delete ob;
-        iter.next();
-    }
+	utHashTableIterator<SceneObjectMap> iter(m_objects);
+	while (iter.hasMoreElements())
+	{
+		gkScene *ob = iter.peekNextValue();
+		ob->unload();
+		delete ob;
+		iter.next();
+	}
 
-    m_objects.clear();
+	m_objects.clear();
 }
 
 
 
-bool gkSceneManager::hasScene(const gkString& name)
+bool gkSceneManager::hasScene(const gkString &name)
 {
-    return m_objects.find(name) != GK_NPOS;
+	return m_objects.find(name) != GK_NPOS;
 }
 
 

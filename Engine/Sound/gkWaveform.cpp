@@ -33,45 +33,45 @@
 // ----------------------------------------------------------------------------
 static void gkWaveform_SwapInt(int &v)
 {
-    char *p = (char *)&v;
-    utSwap(p[0], p[3]);
-    utSwap(p[1], p[2]);
+	char *p = (char *)&v;
+	utSwap(p[0], p[3]);
+	utSwap(p[1], p[2]);
 }
 
 
 // ----------------------------------------------------------------------------
 static void gkWaveform_SwapShort(short &v)
 {
-    char *p = (char *)&v;
-    utSwap(p[0], p[1]);
+	char *p = (char *)&v;
+	utSwap(p[0], p[1]);
 }
 
 // ----------------------------------------------------------------------------
 static bool gkWaveform_SwapEndian(void)
 {
-    int littleEndian= 1;
-    littleEndian= ((char *)&littleEndian)[0];
-    return littleEndian == 0;
+	int littleEndian= 1;
+	littleEndian= ((char *)&littleEndian)[0];
+	return littleEndian == 0;
 }
 
 // ----------------------------------------------------------------------------
 static void gkWaveform_SwapHeader(gkWaveform::Header &v)
 {
-    gkWaveform_SwapShort(v.m_tag);
-    gkWaveform_SwapShort(v.m_channels);
-    gkWaveform_SwapInt(v.m_samplesPerSec);
-    gkWaveform_SwapInt(v.m_bytesPerSec);
-    gkWaveform_SwapShort(v.m_bklAlign);
-    gkWaveform_SwapShort(v.m_bits);
+	gkWaveform_SwapShort(v.m_tag);
+	gkWaveform_SwapShort(v.m_channels);
+	gkWaveform_SwapInt(v.m_samplesPerSec);
+	gkWaveform_SwapInt(v.m_bytesPerSec);
+	gkWaveform_SwapShort(v.m_bklAlign);
+	gkWaveform_SwapShort(v.m_bits);
 }
 
 
 // ----------------------------------------------------------------------------
 gkWaveform::gkWaveform()
-    :   m_reader(0),
-        m_sampleStart(0),
-        m_totalLen(0),
-        m_data(0)
+	:   m_reader(0),
+	    m_sampleStart(0),
+	    m_totalLen(0),
+	    m_data(0)
 {
 }
 
@@ -79,233 +79,233 @@ gkWaveform::gkWaveform()
 // ----------------------------------------------------------------------------
 gkWaveform::~gkWaveform()
 {
-    if (m_reader)
-    {
-        delete m_reader;
-        m_reader = 0;
-    }
+	if (m_reader)
+	{
+		delete m_reader;
+		m_reader = 0;
+	}
 
-    if (m_data)
-    {
-        delete []m_data;
-        m_data = 0;
-    }
+	if (m_data)
+	{
+		delete []m_data;
+		m_data = 0;
+	}
 }
 
 // ----------------------------------------------------------------------------
 bool gkWaveform::loadStreamImpl(void)
 {
-    // Specs derrived from.
-    // http://www-mmsp.ece.mcgill.ca/Documents/AudioFormats/WAVE/WAVE.html
+	// Specs derrived from.
+	// http://www-mmsp.ece.mcgill.ca/Documents/AudioFormats/WAVE/WAVE.html
 
-    if (!m_reader)
-        return false;
-
-
-    m_reader->seek(0, SEEK_SET);
-
-    bool swap = gkWaveform_SwapEndian();
-    m_sampleStart = 0;
+	if (!m_reader)
+		return false;
 
 
-    char blk[5];
-    m_reader->read(blk, 4);
-    if (strncmp(blk, "RIFF", 4))
-    {
-        gkPrintf("Waveform: Invalid RIFF Block\n");
-        return false;
-    }
-    int ti;
-    m_reader->read(&ti, sizeof(int));
+	m_reader->seek(0, SEEK_SET);
 
-    m_reader->read(blk, 4);
-    if (strncmp(blk, "WAVE", 4))
-    {
-        gkPrintf("Waveform: Invalid WAVE Block\n");
-        return false;
-    }
+	bool swap = gkWaveform_SwapEndian();
+	m_sampleStart = 0;
 
 
-    // wave chunks
-    m_sampleStart = m_reader->position();
+	char blk[5];
+	m_reader->read(blk, 4);
+	if (strncmp(blk, "RIFF", 4))
+	{
+		gkPrintf("Waveform: Invalid RIFF Block\n");
+		return false;
+	}
+	int ti;
+	m_reader->read(&ti, sizeof(int));
+
+	m_reader->read(blk, 4);
+	if (strncmp(blk, "WAVE", 4))
+	{
+		gkPrintf("Waveform: Invalid WAVE Block\n");
+		return false;
+	}
 
 
-    for (UTsize i=m_sampleStart; i<m_reader->size(); ++i)
-    {
-        m_reader->read(blk, 4);
-
-        if (!strncmp(blk, "fmt ", 4))
-        {
-            // parse format
-
-            int chunkSize;
-            m_reader->read(&chunkSize, sizeof(int));
-
-            if (swap)
-                gkWaveform_SwapInt(chunkSize);
-
-            assert(chunkSize == 16 || chunkSize == 18 || chunkSize == 40);
-            assert(sizeof(Header) == 16);
-
-            // 16 block size
-            m_reader->read(&m_header, sizeof(Header));
-            if (swap)
-                gkWaveform_SwapHeader(m_header);
+	// wave chunks
+	m_sampleStart = m_reader->position();
 
 
-            // TODO: handle extensions
-            m_reader->seek(chunkSize - sizeof(Header), SEEK_CUR);
+	for (UTsize i=m_sampleStart; i<m_reader->size(); ++i)
+	{
+		m_reader->read(blk, 4);
 
-        }
-        else if (!strncmp(blk, "data", 4))
-        {
-            m_reader->read(&m_totalLen, sizeof(int));
-            if (swap)
-                gkWaveform_SwapInt(m_totalLen);
+		if (!strncmp(blk, "fmt ", 4))
+		{
+			// parse format
 
-            m_sampleStart = m_reader->position();
-            return true;
-        }
-        else
-            break;
-    }
-    return false;
+			int chunkSize;
+			m_reader->read(&chunkSize, sizeof(int));
+
+			if (swap)
+				gkWaveform_SwapInt(chunkSize);
+
+			assert(chunkSize == 16 || chunkSize == 18 || chunkSize == 40);
+			assert(sizeof(Header) == 16);
+
+			// 16 block size
+			m_reader->read(&m_header, sizeof(Header));
+			if (swap)
+				gkWaveform_SwapHeader(m_header);
+
+
+			// TODO: handle extensions
+			m_reader->seek(chunkSize - sizeof(Header), SEEK_CUR);
+
+		}
+		else if (!strncmp(blk, "data", 4))
+		{
+			m_reader->read(&m_totalLen, sizeof(int));
+			if (swap)
+				gkWaveform_SwapInt(m_totalLen);
+
+			m_sampleStart = m_reader->position();
+			return true;
+		}
+		else
+			break;
+	}
+	return false;
 }
 
 
 // ----------------------------------------------------------------------------
 bool gkWaveform::load(const char *fname)
 {
-    m_reader = new utFileStream();
-    static_cast<utFileStream *>(m_reader)->open(fname, utStream::SM_READ);
+	m_reader = new utFileStream();
+	static_cast<utFileStream *>(m_reader)->open(fname, utStream::SM_READ);
 
 
-    if (!m_reader->isOpen())
-    {
-        gkPrintf("Waveform: File %s loading failed.\n", fname);
-        return false;
-    }
+	if (!m_reader->isOpen())
+	{
+		gkPrintf("Waveform: File %s loading failed.\n", fname);
+		return false;
+	}
 
-    if (!loadStreamImpl())
-    {
-        gkPrintf("Waveform: File %s loading failed.\n", fname);
-        return false;
-    }
+	if (!loadStreamImpl())
+	{
+		gkPrintf("Waveform: File %s loading failed.\n", fname);
+		return false;
+	}
 
-    // make sure a valid format & block size is present
-    if (getFormat() <= 0)
-    {
-        gkPrintf("Waveform: File %s loading failed. (invalid format read)\n", fname);
-        return false;
-    }
-
-
-    if (getBitsPerSecond() <= 0)
-    {
-        gkPrintf("Waveform: File %s loading failed. (invalid block size (%i))\n", fname, getBitsPerSecond());
-        return false;
-    }
+	// make sure a valid format & block size is present
+	if (getFormat() <= 0)
+	{
+		gkPrintf("Waveform: File %s loading failed. (invalid format read)\n", fname);
+		return false;
+	}
 
 
+	if (getBitsPerSecond() <= 0)
+	{
+		gkPrintf("Waveform: File %s loading failed. (invalid block size (%i))\n", fname, getBitsPerSecond());
+		return false;
+	}
 
-    m_data = new char[getBitsPerSecond() + 1];
-    return true;
+
+
+	m_data = new char[getBitsPerSecond() + 1];
+	return true;
 }
 
 
 // ----------------------------------------------------------------------------
 bool gkWaveform::load(const char *buf, int len)
 {
-    m_reader = new utMemoryStream();
-    static_cast<utMemoryStream *>(m_reader)->open(buf, len, utStream::SM_READ);
+	m_reader = new utMemoryStream();
+	static_cast<utMemoryStream *>(m_reader)->open(buf, len, utStream::SM_READ);
 
-    if (!m_reader->isOpen())
-    {
-        gkPrintf("Waveform: Buffer loading failed.\n");
-        return false;
-    }
+	if (!m_reader->isOpen())
+	{
+		gkPrintf("Waveform: Buffer loading failed.\n");
+		return false;
+	}
 
-    if (!loadStreamImpl())
-    {
-        gkPrintf("Waveform: Buffer loading failed.\n");
-        return false;
-    }
+	if (!loadStreamImpl())
+	{
+		gkPrintf("Waveform: Buffer loading failed.\n");
+		return false;
+	}
 
-    // make sure a valid format & block size is present
-    if (getFormat() <= 0)
-    {
-        gkPrintf("Waveform: Buffer loading failed. (invalid format read)\n");
-        return false;
-    }
-
-
-    if (getBitsPerSecond() <= 0)
-    {
-        gkPrintf("Waveform: Buffer loading failed. (invalid block size (%i))\n", getBitsPerSecond());
-        return false;
-    }
+	// make sure a valid format & block size is present
+	if (getFormat() <= 0)
+	{
+		gkPrintf("Waveform: Buffer loading failed. (invalid format read)\n");
+		return false;
+	}
 
 
-    m_data = new char[getBitsPerSecond() + 1];
-    return true;
+	if (getBitsPerSecond() <= 0)
+	{
+		gkPrintf("Waveform: Buffer loading failed. (invalid block size (%i))\n", getBitsPerSecond());
+		return false;
+	}
+
+
+	m_data = new char[getBitsPerSecond() + 1];
+	return true;
 }
 
 
 // ----------------------------------------------------------------------------
 int gkWaveform::getFormat(void) const
 {
-    if (m_header.m_channels <= 2)
-    {
-        if (m_header.m_bits <= 16)
-        {
-            return m_header.m_channels == 1 ?
-                   (m_header.m_bits == 16 ? AL_FORMAT_MONO16 : AL_FORMAT_MONO8) :
-                       (m_header.m_bits == 16 ? AL_FORMAT_STEREO16 : AL_FORMAT_STEREO8);
-        }
-    }
-    return -1;
+	if (m_header.m_channels <= 2)
+	{
+		if (m_header.m_bits <= 16)
+		{
+			return m_header.m_channels == 1 ?
+			       (m_header.m_bits == 16 ? AL_FORMAT_MONO16 : AL_FORMAT_MONO8) :
+				       (m_header.m_bits == 16 ? AL_FORMAT_STEREO16 : AL_FORMAT_STEREO8);
+		}
+	}
+	return -1;
 }
 
 
 // ----------------------------------------------------------------------------
 int gkWaveform::getBitsPerSecond(void)  const
 {
-    return (m_header.m_samplesPerSec * m_header.m_bklAlign )<< 1;
+	return (m_header.m_samplesPerSec * m_header.m_bklAlign )<< 1;
 }
 
 
 // ----------------------------------------------------------------------------
 const char *gkWaveform::read(UTsize pos, UTsize len, UTsize &br)
 {
-    if (pos != UT_NPOS)
-        seek(pos, SEEK_SET);
-    return read(len, br);
+	if (pos != UT_NPOS)
+		seek(pos, SEEK_SET);
+	return read(len, br);
 }
 
 
 // ----------------------------------------------------------------------------
 const char *gkWaveform::read(UTsize len, UTsize &br)
 {
-    br = 0;
-    if (m_reader)
-    {
-        br = m_reader->read(m_data, len);
-        return m_data;
-    }
-    return 0;
+	br = 0;
+	if (m_reader)
+	{
+		br = m_reader->read(m_data, len);
+		return m_data;
+	}
+	return 0;
 }
 
 
 // ----------------------------------------------------------------------------
 bool gkWaveform::eos(void)
 {
-    return m_reader ? m_reader->eof() : true;
+	return m_reader ? m_reader->eof() : true;
 }
 
 
 // ----------------------------------------------------------------------------
 void gkWaveform::seek(UTsize pos, int dir)
 {
-    if (m_reader)
-        m_reader->seek(m_sampleStart + pos, dir);
+	if (m_reader)
+		m_reader->seek(m_sampleStart + pos, dir);
 }

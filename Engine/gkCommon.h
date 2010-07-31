@@ -98,9 +98,9 @@ class gkGameObjectInstance;
 
 enum gkTransformSpace
 {
-    TRANSFORM_LOCAL,
-    TRANSFORM_PARENT,
-    TRANSFORM_WORLD,
+	TRANSFORM_LOCAL,
+	TRANSFORM_PARENT,
+	TRANSFORM_WORLD,
 };
 
 // Generates a distinct type for each distinct constant integral

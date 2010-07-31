@@ -33,53 +33,53 @@
 
 class gkWaveform : public gkSoundStream
 {
-    // .wav File & memory decoder
+	// .wav File & memory decoder
 public:
 
-    typedef struct Header
-    {
-        // 'fmt ' chunk
-        short           m_tag;              // WaveFmtCode in WAVE_FORMAT_PCM
-        short           m_channels;         // Number of channels
-        int             m_samplesPerSec;    // Samples per second
-        int             m_bytesPerSec;      // Data rate
-        short           m_bklAlign;         // data block size
-        short           m_bits;             // Bits per sample
-    } Header;
+	typedef struct Header
+	{
+		// 'fmt ' chunk
+		short           m_tag;              // WaveFmtCode in WAVE_FORMAT_PCM
+		short           m_channels;         // Number of channels
+		int             m_samplesPerSec;    // Samples per second
+		int             m_bytesPerSec;      // Data rate
+		short           m_bklAlign;         // data block size
+		short           m_bits;             // Bits per sample
+	} Header;
 
 private:
 
-    Header      m_header;       // Format header
-    int         m_sampleStart;  // start of 'data' chunk
-    int         m_totalLen;     // length of 'data' chunk
-    utStream    *m_reader;
-    char        *m_data;
+	Header      m_header;       // Format header
+	int         m_sampleStart;  // start of 'data' chunk
+	int         m_totalLen;     // length of 'data' chunk
+	utStream    *m_reader;
+	char        *m_data;
 
-    bool        loadStreamImpl(void);
+	bool        loadStreamImpl(void);
 
 
 public:
 
-    gkWaveform();
-    virtual ~gkWaveform();
+	gkWaveform();
+	virtual ~gkWaveform();
 
-    bool load(const char *fname);
-    bool load(const char *buf, int len);
-
-
-    const Header    &getHeader(void)    const   { return m_header; }
+	bool load(const char *fname);
+	bool load(const char *buf, int len);
 
 
+	const Header    &getHeader(void)    const   { return m_header; }
 
-    // stream impl
-    const char      *read(UTsize len, UTsize &br);
-    const char      *read(UTsize pos, UTsize len, UTsize &br);
-    bool            eos(void);
-    void            seek(UTsize pos, int way);
 
-    int             getFormat(void)         const;
-    int             getSampleRate(void)     const { return m_header.m_samplesPerSec; }
-    int             getBitsPerSecond(void)  const;
+
+	// stream impl
+	const char      *read(UTsize len, UTsize &br);
+	const char      *read(UTsize pos, UTsize len, UTsize &br);
+	bool            eos(void);
+	void            seek(UTsize pos, int way);
+
+	int             getFormat(void)         const;
+	int             getSampleRate(void)     const { return m_header.m_samplesPerSec; }
+	int             getBitsPerSecond(void)  const;
 };
 
 #endif//_gkWaveform_h_

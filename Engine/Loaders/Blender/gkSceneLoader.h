@@ -37,21 +37,21 @@ class gkLogicLoader;
 class gkSceneObjectLoader : public gkObject::Loader
 {
 public:
-    gkSceneObjectLoader(gkBlendFile *fp, Blender::Scene *scene);
-    virtual ~gkSceneObjectLoader();
+	gkSceneObjectLoader(gkBlendFile *fp, Blender::Scene *scene);
+	virtual ~gkSceneObjectLoader();
 
-    void load(gkObject* ob);
+	void load(gkObject *ob);
 
 protected:
-    void loadObject(gkLogicLoader &ll, gkScene *current, Blender::Object *ob);
-    void createRigidBody(gkDynamicsWorld *dyn, gkGameObject *obj, Blender::Object *ob);
-    void loadSkyBox(void);
+	void loadObject(gkLogicLoader &ll, gkScene *current, Blender::Object *ob);
+	void createRigidBody(gkDynamicsWorld *dyn, gkGameObject *obj, Blender::Object *ob);
+	void loadSkyBox(void);
 
-    void applyParent(gkScene *scene, Blender::Object *ob);
+	void applyParent(gkScene *scene, Blender::Object *ob);
 
-    gkSkyBoxGradient *m_grad;
-    gkBlendFile *m_file;
-    Blender::Scene* m_scene;
+	gkSkyBoxGradient *m_grad;
+	gkBlendFile *m_file;
+	Blender::Scene *m_scene;
 };
 
 

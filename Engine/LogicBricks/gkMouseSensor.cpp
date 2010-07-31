@@ -44,118 +44,127 @@ gkMouseDispatch::~gkMouseDispatch()
 
 void gkMouseDispatch::dispatch(void)
 {
-    // TODO need to sort. 
-    doDispatch(m_sensors);
+	// TODO need to sort.
+	doDispatch(m_sensors);
 }
 
 
 // ----------------------------------------------------------------------------
 gkMouseSensor::gkMouseSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
-:       gkLogicSensor(object, link, name), m_type(MOUSE_NILL), m_rayQuery(0), m_last(false)
+	:       gkLogicSensor(object, link, name), m_type(MOUSE_NILL), m_rayQuery(0), m_last(false)
 {
-    m_dispatchType = DIS_MOUSE;
-    connect();
+	m_dispatchType = DIS_MOUSE;
+	connect();
 }
 
 // ----------------------------------------------------------------------------
 gkMouseSensor::~gkMouseSensor()
 {
-    if (m_rayQuery && m_scene->isLoaded())
-        m_scene->getManager()->destroyQuery(m_rayQuery);
+	if (m_rayQuery && m_scene->isLoaded())
+		m_scene->getManager()->destroyQuery(m_rayQuery);
 }
 
 
 // ----------------------------------------------------------------------------
-gkLogicBrick* gkMouseSensor::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick *gkMouseSensor::clone(gkLogicLink *link, gkGameObject *dest)
 {
-    gkMouseSensor *sens = new gkMouseSensor(*this);
-    sens->m_rayQuery = 0;
-    sens->cloneImpl(link, dest);
-    return sens;
+	gkMouseSensor *sens = new gkMouseSensor(*this);
+	sens->m_rayQuery = 0;
+	sens->cloneImpl(link, dest);
+	return sens;
 }
 
 // ----------------------------------------------------------------------------
 bool gkMouseSensor::query(void)
 {
-    if (m_type == MOUSE_NILL)
-        return false;
+	if (m_type == MOUSE_NILL)
+		return false;
 
 
-    gkMouse *mse = gkWindowSystem::getSingleton().getMouse();
-    switch (m_type) {
-    case MOUSE_LEFT:
-        return mse->isButtonDown(gkMouse::Left);
-    case MOUSE_MIDDLE:
-        return mse->isButtonDown(gkMouse::Middle);
-    case MOUSE_RIGHT:
-        return mse->isButtonDown(gkMouse::Right);
-    case MOUSE_MOTION:
-        return mse->moved;
-    case MOUSE_WHEEL_UP:
-        return mse->wheelDelta > 0;
-    case MOUSE_WHEEL_DOWN:
-        return mse->wheelDelta < 0;
-    case MOUSE_MOUSE_OVER:
-    case MOUSE_MOUSE_OVER_ANY:
-        // use Ogre viewport to ray query
-        if (m_last && !mse->moved) 
-            return m_last;
-        m_last = rayTest();
-        return m_last;
-    }
-    return false;
+	gkMouse *mse = gkWindowSystem::getSingleton().getMouse();
+	switch (m_type)
+	{
+	case MOUSE_LEFT:
+		return mse->isButtonDown(gkMouse::Left);
+	case MOUSE_MIDDLE:
+		return mse->isButtonDown(gkMouse::Middle);
+	case MOUSE_RIGHT:
+		return mse->isButtonDown(gkMouse::Right);
+	case MOUSE_MOTION:
+		return mse->moved;
+	case MOUSE_WHEEL_UP:
+		return mse->wheelDelta > 0;
+	case MOUSE_WHEEL_DOWN:
+		return mse->wheelDelta < 0;
+	case MOUSE_MOUSE_OVER:
+	case MOUSE_MOUSE_OVER_ANY:
+		// use Ogre viewport to ray query
+		if (m_last && !mse->moved)
+			return m_last;
+		m_last = rayTest();
+		return m_last;
+	}
+	return false;
 }
 
 // ----------------------------------------------------------------------------
 bool gkMouseSensor::rayTest(void)
 {
-    // cannot test no movable data,
-    if (m_type == MOUSE_MOUSE_OVER && (m_object->getType() == GK_OBJECT || m_object->getType() == GK_SKELETON))
-        return false;
+	// cannot test no movable data,
+	if (m_type == MOUSE_MOUSE_OVER && (m_object->getType() == GK_OBJECT || m_object->getType() == GK_SKELETON))
+		return false;
 
 
-    GK_ASSERT(m_object);
-    gkCamera *cam = m_object->getOwner()->getMainCamera();
-    Ogre::Camera *oc = cam->getCamera();
+	GK_ASSERT(m_object);
+	gkCamera *cam = m_object->getOwner()->getMainCamera();
+	Ogre::Camera *oc = cam->getCamera();
 
 
-    gkMouse *mse = gkWindowSystem::getSingleton().getMouse();
+	gkMouse *mse = gkWindowSystem::getSingleton().getMouse();
 
-    gkScalar ncx = mse->position.x / mse->winsize.x;
-    gkScalar ncy = mse->position.y / mse->winsize.y;
-
-
-    Ogre::Ray dest;
-    oc->getCameraToViewportRay(ncx, ncy, &dest);
-
-    if (m_rayQuery == 0) {
-        Ogre::SceneManager *mgr = m_object->getOwner()->getManager();
-        m_rayQuery = mgr->createRayQuery(dest);
-    } else m_rayQuery->setRay(dest);
+	gkScalar ncx = mse->position.x / mse->winsize.x;
+	gkScalar ncy = mse->position.y / mse->winsize.y;
 
 
-    // do the test
-    Ogre::RaySceneQueryResult &res = m_rayQuery->execute();
+	Ogre::Ray dest;
+	oc->getCameraToViewportRay(ncx, ncy, &dest);
 
-    bool result = false;
-    for (Ogre::RaySceneQueryResult::iterator it = res.begin(); it != res.end(); ++it) {
-        Ogre::RaySceneQueryResultEntry ent = (*it);
+	if (m_rayQuery == 0)
+	{
+		Ogre::SceneManager *mgr = m_object->getOwner()->getManager();
+		m_rayQuery = mgr->createRayQuery(dest);
+	}
+	else m_rayQuery->setRay(dest);
 
-        if (ent.movable == oc)
-            continue;
+
+	// do the test
+	Ogre::RaySceneQueryResult &res = m_rayQuery->execute();
+
+	bool result = false;
+	for (Ogre::RaySceneQueryResult::iterator it = res.begin(); it != res.end(); ++it)
+	{
+		Ogre::RaySceneQueryResultEntry ent = (*it);
+
+		if (ent.movable == oc)
+			continue;
 
 
-        if (ent.movable) {
-            if (m_type == MOUSE_MOUSE_OVER) {
-                if (ent.movable == m_object->getMovable()) {
-                    result = true;
-                    break;
-                }
-            } else {
-                result = true;
-                break;
-            }
-        }
-    }
-    return result;
+		if (ent.movable)
+		{
+			if (m_type == MOUSE_MOUSE_OVER)
+			{
+				if (ent.movable == m_object->getMovable())
+				{
+					result = true;
+					break;
+				}
+			}
+			else
+			{
+				result = true;
+				break;
+			}
+		}
+	}
+	return result;
 }

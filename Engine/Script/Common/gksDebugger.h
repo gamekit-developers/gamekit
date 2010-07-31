@@ -24,18 +24,18 @@ class gksGameObject;
 class gksDebugger
 {
 protected:
-    class gkDebugger *m_debugger;
+	class gkDebugger *m_debugger;
 
 public:
 
-    gksDebugger(const gksPointer<gksScene>& sc);
-    ~gksDebugger() {}
+	gksDebugger(const gksPointer<gksScene>& sc);
+	~gksDebugger() {}
 
-    void drawLine(const gksVector3& from, const gksVector3& to, const gksVector3& color);
-    void drawObjectAxis(const gksPointer<gksGameObject> &ptr, float size);
+	void drawLine(const gksVector3 &from, const gksVector3 &to, const gksVector3 &color);
+	void drawObjectAxis(const gksPointer<gksGameObject> &ptr, float size);
 
-    void print(const char *str);
-    void clear(void);
+	void print(const char *str);
+	void clear(void);
 };
 
 #endif//_gksDebugger_h_

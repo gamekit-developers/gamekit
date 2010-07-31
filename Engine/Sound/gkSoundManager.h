@@ -47,62 +47,62 @@ class gkCamera;
 class gkSoundManager : public Ogre::Singleton<gkSoundManager>
 {
 public:
-    typedef utHashTable<gkHashedString, gkSound *> ObjectMap;
-    typedef utArray<gkSource *> Sources;
+	typedef utHashTable<gkHashedString, gkSound *> ObjectMap;
+	typedef utArray<gkSource *> Sources;
 
 
 private:
-    ObjectMap           m_objects;      // all loaded sounds
-    ALCdevice           *m_device;      // OpenAL Device
-    ALCcontext          *m_context;     // OpenAL Context
-    gkStreamer          *m_stream;      // Playback stream
-    Sources             m_sources;      // list of currently active sources
-    Sources             m_gcSources;    // sources to remove when done playing
-    bool                m_valid;
+	ObjectMap           m_objects;      // all loaded sounds
+	ALCdevice           *m_device;      // OpenAL Device
+	ALCcontext          *m_context;     // OpenAL Context
+	gkStreamer          *m_stream;      // Playback stream
+	Sources             m_sources;      // list of currently active sources
+	Sources             m_gcSources;    // sources to remove when done playing
+	bool                m_valid;
 
 
-    void removePlayback(gkSound *sndToDelete);
+	void removePlayback(gkSound *sndToDelete);
 
 public:
 
-    gkSoundManager();
-    virtual ~gkSoundManager();
+	gkSoundManager();
+	virtual ~gkSoundManager();
 
 
-    void stopAllSounds(void);
+	void stopAllSounds(void);
 
-    // has playing sounds
-    bool        hasSounds(void);
-    void        playSound(gkSource *);
-    void        stopSound(gkSource *);
+	// has playing sounds
+	bool        hasSounds(void);
+	void        playSound(gkSource *);
+	void        stopSound(gkSource *);
 
-    void        update(gkScene *scene);
-    void        collectGarbage(void);
-
-
-    void        notifySourceCreated(gkSource *);
-    void        notifySourceDestroyed(gkSource *);
+	void        update(gkScene *scene);
+	void        collectGarbage(void);
 
 
-    // sound access
-
-    gkSound *getSound(const gkHashedString &name);
-    gkSound *createSound(const gkHashedString &name);
-
-    void destroy(const gkHashedString &name);
-    void destroy(gkSound *ob);
-    void destroyAll(void);
-    bool hasSound(const gkHashedString &name);
+	void        notifySourceCreated(gkSource *);
+	void        notifySourceDestroyed(gkSource *);
 
 
-    static gkSoundManager &getSingleton(void);
-    static gkSoundManager *getSingletonPtr(void);
+	// sound access
+
+	gkSound *getSound(const gkHashedString &name);
+	gkSound *createSound(const gkHashedString &name);
+
+	void destroy(const gkHashedString &name);
+	void destroy(gkSound *ob);
+	void destroyAll(void);
+	bool hasSound(const gkHashedString &name);
 
 
-    static ALCcontext *getCurrentContext(void)
-    {
-        return getSingleton().m_context;
-    }
+	static gkSoundManager &getSingleton(void);
+	static gkSoundManager *getSingletonPtr(void);
+
+
+	static ALCcontext *getCurrentContext(void)
+	{
+		return getSingleton().m_context;
+	}
 
 
 };

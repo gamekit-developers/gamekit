@@ -36,30 +36,30 @@
 class gkUserDefs
 {
 public:
-    gkUserDefs();
-    void load(const gkString &fname);
-    void parseString(const gkString &key, const gkString &val);
+	gkUserDefs();
+	void load(const gkString &fname);
+	void parseString(const gkString &key, const gkString &val);
 
 
-    OgreRenderSystem        rendersystem;       // Ogre render system to use
-    int                     sceneManager;       // TODO scene manager to use
-    gkString                log;                // Main log file name
-    bool                    verbose;            // Enable/Disable Ogre print-out
-    gkVector2               winsize;            // Window width & height
-    gkString                wintitle;           // Window title
-    bool                    fullscreen;         // Fullscreen mode
-    gkString                resources;          // resources to load
-    gkScalar                animspeed;          // animation speed, depreciated
-    gkScalar                startframe;         // animation frame at the start of the game
-    bool                    blendermat;         // convert meshes using blender materials
-    bool                    grabInput;          // hide & grab the mouse
-    bool                    debugFps;           // show fps and profiling information
-    bool                    debugPhysics;       // enable / disable physics debugging
-    bool                    debugPhysicsAabb;   // show / hide bounding box
-    bool                    buildInstances;     // Use instanced geometry
-    bool                    useBulletDbvt;      // Use Bullet Dynamic AABB Tree
-    bool                    showDebugProps;     // Show variable debugging information.
-    bool                    debugSounds;        // Show 3D sound debug info 
+	OgreRenderSystem        rendersystem;       // Ogre render system to use
+	int                     sceneManager;       // TODO scene manager to use
+	gkString                log;                // Main log file name
+	bool                    verbose;            // Enable/Disable Ogre print-out
+	gkVector2               winsize;            // Window width & height
+	gkString                wintitle;           // Window title
+	bool                    fullscreen;         // Fullscreen mode
+	gkString                resources;          // resources to load
+	gkScalar                animspeed;          // animation speed, depreciated
+	gkScalar                startframe;         // animation frame at the start of the game
+	bool                    blendermat;         // convert meshes using blender materials
+	bool                    grabInput;          // hide & grab the mouse
+	bool                    debugFps;           // show fps and profiling information
+	bool                    debugPhysics;       // enable / disable physics debugging
+	bool                    debugPhysicsAabb;   // show / hide bounding box
+	bool                    buildInstances;     // Use instanced geometry
+	bool                    useBulletDbvt;      // Use Bullet Dynamic AABB Tree
+	bool                    showDebugProps;     // Show variable debugging information.
+	bool                    debugSounds;        // Show 3D sound debug info
 	bool					enableshadows;
 	gkString				shadowtechnique;
 	gkColor					colourshadow;

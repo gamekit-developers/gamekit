@@ -31,100 +31,100 @@
 
 
 // ----------------------------------------------------------------------------
-gkTickState::gkTickState() 
-    :   m_clock(0)
+gkTickState::gkTickState()
+	:   m_clock(0)
 {
-    initialize(60);
+	initialize(60);
 }
 
 
 // ----------------------------------------------------------------------------
 gkTickState::gkTickState(int rate)
-    :   m_clock(0)
+	:   m_clock(0)
 {
-    initialize(rate);
+	initialize(rate);
 }
 
 
 // ----------------------------------------------------------------------------
 gkTickState::~gkTickState()
 {
-    delete m_clock;
-    m_clock = 0;
+	delete m_clock;
+	m_clock = 0;
 }
 
 // ----------------------------------------------------------------------------
 void gkTickState::initialize(int rate)
 {
-    m_rate = gkMax<unsigned long>(1, rate);
+	m_rate = gkMax<unsigned long>(1, rate);
 
-    m_ticks = 1000 / m_rate;
+	m_ticks = 1000 / m_rate;
 
-    // time out at 1/5 rate
-    m_skip  = gkMax<unsigned long>(m_rate / 5, 1);
+	// time out at 1/5 rate
+	m_skip  = gkMax<unsigned long>(m_rate / 5, 1);
 
-    m_invt  = gkScalar(1.0) / (gkScalar)m_ticks;
-    m_fixed = gkScalar(1.0) / (gkScalar)m_rate;
+	m_invt  = gkScalar(1.0) / (gkScalar)m_ticks;
+	m_fixed = gkScalar(1.0) / (gkScalar)m_rate;
 
-    if (m_clock)
-        delete m_clock;
-    m_clock = new btClock();
-    m_init = false;
+	if (m_clock)
+		delete m_clock;
+	m_clock = new btClock();
+	m_init = false;
 }
 
 // ----------------------------------------------------------------------------
 void gkTickState::reset(void)
 {
-    m_init = false;
+	m_init = false;
 }
 
 
 // ----------------------------------------------------------------------------
 void gkTickState::tick(void)
 {
-    GK_ASSERT(m_clock);
+	GK_ASSERT(m_clock);
 
-    beginTickImpl();
-
-
-    m_loop = 0;
-    m_lock = false;
-
-    if (!m_init)
-    {
-        // initialize timer states
-        m_init = true;
-        m_clock->reset();
-        m_cur = m_next = gkGetTickCount(m_clock);
-    }
+	beginTickImpl();
 
 
+	m_loop = 0;
+	m_lock = false;
 
-    while ((m_cur = gkGetTickCount(m_clock)) > m_next && m_loop < m_skip)
-    {
-        tickImpl(m_fixed);
-
-        // test for a long tick, and stop if were over
-        if ( (( gkGetTickCount(m_clock) - m_cur) * gkMSScale) > m_fixed)
-        {
-            m_lock = true;
-            break;
-        }
-
-        m_next += m_ticks;
-        ++m_loop;
-    }
-
-    if (m_lock || m_cur > m_next)
-    {
-        // sync tick back to a usable state
-        m_cur = m_next = gkGetTickCount(m_clock);
-    }
+	if (!m_init)
+	{
+		// initialize timer states
+		m_init = true;
+		m_clock->reset();
+		m_cur = m_next = gkGetTickCount(m_clock);
+	}
 
 
-    gkScalar d = gkScalar(gkGetTickCount(m_clock) + m_ticks - m_next) * m_invt;
-    if (d >= 0 && d < 1)
-        syncImpl(d);
 
-    endTickImpl();
+	while ((m_cur = gkGetTickCount(m_clock)) > m_next && m_loop < m_skip)
+	{
+		tickImpl(m_fixed);
+
+		// test for a long tick, and stop if were over
+		if ( (( gkGetTickCount(m_clock) - m_cur) * gkMSScale) > m_fixed)
+		{
+			m_lock = true;
+			break;
+		}
+
+		m_next += m_ticks;
+		++m_loop;
+	}
+
+	if (m_lock || m_cur > m_next)
+	{
+		// sync tick back to a usable state
+		m_cur = m_next = gkGetTickCount(m_clock);
+	}
+
+
+	gkScalar d = gkScalar(gkGetTickCount(m_clock) + m_ticks - m_next) * m_invt;
+	if (d >= 0 && d < 1)
+		syncImpl(d);
+
+	endTickImpl();
 }

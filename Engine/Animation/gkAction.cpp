@@ -31,55 +31,55 @@
 
 
 
-gkAction::gkAction(const gkString& name) :
-        m_name(name), m_start(1), m_end(1), m_evalTime(1), m_weight(1.0),
-        m_blendFrames(1.0)
+gkAction::gkAction(const gkString &name) :
+	m_name(name), m_start(1), m_end(1), m_evalTime(1), m_weight(1.0),
+	m_blendFrames(1.0)
 {
 }
 
 
 gkAction::~gkAction()
 {
-    gkActionChannel **ptr = m_channels.ptr();
-    int len = getNumChannels(), i;
-    for (i = 0; i < len; ++i)
-        delete ptr[i];
+	gkActionChannel **ptr = m_channels.ptr();
+	int len = getNumChannels(), i;
+	for (i = 0; i < len; ++i)
+		delete ptr[i];
 }
 
 
 void gkAction::addChannel(gkActionChannel *chan)
 {
-    GK_ASSERT(chan);
-    m_channels.push_back(chan);
+	GK_ASSERT(chan);
+	m_channels.push_back(chan);
 }
 
-gkActionChannel* gkAction::getChannel(gkBone *bone)
+gkActionChannel *gkAction::getChannel(gkBone *bone)
 {
-    for (UTsize i=0; i<m_channels.size(); i++)
-    {
-        gkActionChannel *chan = m_channels[i];
-        if (chan->getBone()==bone)
-        {
-            return chan;
-        }
-    }
-    return NULL;
+	for (UTsize i=0; i<m_channels.size(); i++)
+	{
+		gkActionChannel *chan = m_channels[i];
+		if (chan->getBone()==bone)
+		{
+			return chan;
+		}
+	}
+	return NULL;
 }
 
 void gkAction::evaluate(gkScalar time)
 {
-    // loop for now
-    if (m_evalTime <= m_start)
-        m_evalTime = m_start;
-    if (m_evalTime >= m_end)
-        m_evalTime = m_start;
+	// loop for now
+	if (m_evalTime <= m_start)
+		m_evalTime = m_start;
+	if (m_evalTime >= m_end)
+		m_evalTime = m_start;
 
-    m_evalTime += time;
+	m_evalTime += time;
 
-    gkScalar delta = (m_evalTime - m_start) / (m_end - m_start);
+	gkScalar delta = (m_evalTime - m_start) / (m_end - m_start);
 
-    gkActionChannel **ptr = m_channels.ptr();
-    int len = getNumChannels(), i = 0;
-    while (i < len)
-        ptr[i++]->evaluate(m_evalTime, delta, m_weight);
+	gkActionChannel **ptr = m_channels.ptr();
+	int len = getNumChannels(), i = 0;
+	while (i < len)
+		ptr[i++]->evaluate(m_evalTime, delta, m_weight);
 }

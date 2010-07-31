@@ -33,82 +33,82 @@
 
 enum LoadQuery
 {
-    LQ_RELOAD,
-    LQ_LOAD,
-    LQ_UNLOAD
+	LQ_RELOAD,
+	LQ_LOAD,
+	LQ_UNLOAD
 };
 
 
 class gkEngine : public Ogre::Singleton<gkEngine>
 {
 public:
-    typedef utHashTable<utPointerHashKey, LoadQuery> LoadQueryMap;
+	typedef utHashTable<utPointerHashKey, LoadQuery> LoadQueryMap;
 
 
 public:
 
-    class Listener
-    {
-    public:
-        virtual ~Listener() {}
-        virtual void tick(gkScalar rate) = 0;
-    };
+	class Listener
+	{
+	public:
+		virtual ~Listener() {}
+		virtual void tick(gkScalar rate) = 0;
+	};
 
 
 public:
-    gkEngine(gkUserDefs *otherDefs = 0);
-    ~gkEngine();
+	gkEngine(gkUserDefs *otherDefs = 0);
+	~gkEngine();
 
-    static gkEngine& getSingleton();
-    static gkEngine* getSingletonPtr();
+	static gkEngine &getSingleton();
+	static gkEngine *getSingletonPtr();
 
-    void initialize(bool autoCreateWindow = true);
-    void finalize(void);
-    bool isInitialized(void) {return m_initialized;}
-    void run(void);
-    void initializeWindow(void);
+	void initialize(bool autoCreateWindow = true);
+	void finalize(void);
+	bool isInitialized(void) {return m_initialized;}
+	void run(void);
+	void initializeWindow(void);
 
 
-    void setActiveScene(gkScene *sc);
+	void setActiveScene(gkScene *sc);
 
-    // access to user defined parameters
-    gkUserDefs& getUserDefs(void);
-    void requestExit(void);
+	// access to user defined parameters
+	gkUserDefs &getUserDefs(void);
+	void requestExit(void);
 
-    gkBlendFile* loadBlendFile(const gkString& blend, const gkString& inResource = GK_DEF_GROUP);
-    void loadResources(const gkString &name);
+	gkBlendFile *loadBlendFile(const gkString &blend, const gkString &inResource = GK_DEF_GROUP);
+	void loadResources(const gkString &name);
 
-    void addDebugProperty(gkVariable *prop);
-    void removeDebugProperty(gkVariable *prop);
+	void addDebugProperty(gkVariable *prop);
+	void removeDebugProperty(gkVariable *prop);
 
-    static gkScalar getStepRate();
-    static gkScalar getTickRate();
-    static gkScalar getAnimRate();
+	static gkScalar getStepRate();
+	static gkScalar getTickRate();
+	static gkScalar getAnimRate();
 
-    gkScene* getActiveScene(void);
+	gkScene *getActiveScene(void);
 
-    // tick update hook
-    GK_INLINE void setListener(Listener *listener) { m_listener = listener; }
-    GK_INLINE void addLoadable(class gkObject *ob, LoadQuery type) {m_loadables.insert(ob, type);}
+	// tick update hook
+	GK_INLINE void setListener(Listener *listener) { m_listener = listener; }
+	GK_INLINE void addLoadable(class gkObject *ob, LoadQuery type) {m_loadables.insert(ob, type);}
 
 private:
 
 
-    // private interface
-    class Private;
-    Private*                m_private;
-    friend class Private;
+	// private interface
+	class Private;
+	Private                *m_private;
+	friend class Private;
 
 
-    Ogre::Root*             m_root;
-    Ogre::RenderWindow*     m_window;
-    bool                    m_initialized, m_ownsDefs;
-    gkUserDefs*             m_defs;
-    Listener*               m_listener;
-    LoadQueryMap            m_loadables;
+	Ogre::Root             *m_root;
+	Ogre::RenderWindow     *m_window;
+	bool                    m_initialized, m_ownsDefs;
+	gkUserDefs             *m_defs;
+	Listener               *m_listener;
+	LoadQueryMap            m_loadables;
 
-    static gkScalar         m_tickRate;
-    static gkScalar         m_animRate;
+	static gkScalar         m_tickRate;
+	static gkScalar         m_animRate;
 };
 
 

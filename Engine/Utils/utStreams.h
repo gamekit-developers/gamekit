@@ -33,93 +33,93 @@ class utStream
 {
 public:
 
-    
-    enum StreamMode
-    {
-        SM_READ =1,
-        SM_WRITE=2,
-    };
+
+	enum StreamMode
+	{
+		SM_READ =1,
+		SM_WRITE=2,
+	};
 
 
 
 public:
 
-    utStream(){}
-    virtual ~utStream() {}
+	utStream() {}
+	virtual ~utStream() {}
 
-    // clear data
-    virtual void clear(void) {};
-    virtual void flush(void) {}
-
-
-    virtual bool isOpen(void) const = 0;
-    virtual bool eof(void) const = 0;
-
-    // block io
-    virtual UTsize  read(void *dest, UTsize nr) const = 0;
-    virtual UTsize  write(const void *src, UTsize nr) = 0;
-    UTsize          write(const utStream& cpy);
+	// clear data
+	virtual void clear(void) {};
+	virtual void flush(void) {}
 
 
+	virtual bool isOpen(void) const = 0;
+	virtual bool eof(void) const = 0;
 
-    // current position
-    virtual UTsize  position(void) const =0;
-    virtual void    seek(const UTsize pos, int dir) const = 0;
-    virtual UTsize  size(void) const = 0;
+	// block io
+	virtual UTsize  read(void *dest, UTsize nr) const = 0;
+	virtual UTsize  write(const void *src, UTsize nr) = 0;
+	UTsize          write(const utStream &cpy);
 
 
-    // use gz inflate
-    void inflate(utStream &dest);
+
+	// current position
+	virtual UTsize  position(void) const =0;
+	virtual void    seek(const UTsize pos, int dir) const = 0;
+	virtual UTsize  size(void) const = 0;
+
+
+	// use gz inflate
+	void inflate(utStream &dest);
 
 
 protected:
 
-    virtual void reserve(UTsize nr) {}
+	virtual void reserve(UTsize nr) {}
 
-    int tryInflate(utStream &dest);
+	int tryInflate(utStream &dest);
 
 };
 
 
 
 class           utMemoryStream;
-typedef void*   utFileHandle;
+typedef void   *utFileHandle;
 
 
 class utFileStream : public utStream
 {
-    // Simple file stream.
+	// Simple file stream.
 
 public:
-    utFileStream();
-    ~utFileStream();
+	utFileStream();
+	~utFileStream();
 
-    void flush(void);
-    void open(const char *path, utStream::StreamMode mode);
-    void close(void);
+	void flush(void);
+	void open(const char *path, utStream::StreamMode mode);
+	void close(void);
 
-    bool isOpen(void)   const {return m_handle != 0;}
-    bool eof(void)      const {return !m_handle || m_pos >= m_size;}
+	bool isOpen(void)   const {return m_handle != 0;}
+	bool eof(void)      const {return !m_handle || m_pos >= m_size;}
 
-    // block io
-    UTsize  read(void *dest, UTsize nr) const;
-    UTsize  write(const void *src, UTsize nr);
+	// block io
+	UTsize  read(void *dest, UTsize nr) const;
+	UTsize  write(const void *src, UTsize nr);
 
 
-    /// current position
-    UTsize  position(void)          const {return m_pos;}
-    void    seek(const UTsize pos, int dir)  const;
+	/// current position
+	UTsize  position(void)          const {return m_pos;}
+	void    seek(const UTsize pos, int dir)  const;
 
-    UTsize size(void) const {return m_size;}
+	UTsize size(void) const {return m_size;}
 
 protected:
 
 
-    utString        m_file;
-    utFileHandle    m_handle;
-    mutable UTsize  m_pos;
-    UTsize          m_size;
-    int             m_mode;
+	utString        m_file;
+	utFileHandle    m_handle;
+	mutable UTsize  m_pos;
+	UTsize          m_size;
+	int             m_mode;
 };
 
 
@@ -128,44 +128,43 @@ protected:
 class utMemoryStream : public utStream
 {
 public:
-    utMemoryStream();
-    ~utMemoryStream();
+	utMemoryStream();
+	~utMemoryStream();
 
 
-    /// clear data
-    void clear(void);
+	/// clear data
+	void clear(void);
 
-    void open(const char *path, utStream::StreamMode mode);
-    void open(const utFileStream &fs, utStream::StreamMode mode);
-    void open(const void *buffer, UTsize size, utStream::StreamMode mode);
-
-
-    bool    isOpen(void)    const   {return m_buffer != 0;}
-    bool    eof(void)       const   {return !m_buffer || m_pos >= m_size;}
-    UTsize  position(void)  const   {return m_pos;}
-    UTsize  size(void)      const   {return m_size;}
+	void open(const char *path, utStream::StreamMode mode);
+	void open(const utFileStream &fs, utStream::StreamMode mode);
+	void open(const void *buffer, UTsize size, utStream::StreamMode mode);
 
 
-    // block io
-    UTsize read(void *dest, UTsize nr) const;
-    UTsize write(const void *src, UTsize nr);
+	bool    isOpen(void)    const   {return m_buffer != 0;}
+	bool    eof(void)       const   {return !m_buffer || m_pos >= m_size;}
+	UTsize  position(void)  const   {return m_pos;}
+	UTsize  size(void)      const   {return m_size;}
 
 
-    void    seek(const UTsize pos, int dir) const;
+	// block io
+	UTsize read(void *dest, UTsize nr) const;
+	UTsize write(const void *src, UTsize nr);
 
-    void            *ptr(void)          {return m_buffer;}
-    const void      *ptr(void) const    {return m_buffer;}
+
+	void    seek(const UTsize pos, int dir) const;
+
+	void            *ptr(void)          {return m_buffer;}
+	const void      *ptr(void) const    {return m_buffer;}
 
 protected:
 
-    void reserve(UTsize nr);
+	void reserve(UTsize nr);
 
-    char            *m_buffer;
-    mutable UTsize  m_pos;
-    UTsize          m_size, m_capacity;
-    int             m_mode;
+	char            *m_buffer;
+	mutable UTsize  m_pos;
+	UTsize          m_size, m_capacity;
+	int             m_mode;
 };
 
 
 #endif//_utStreams_h_
-

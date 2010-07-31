@@ -34,77 +34,75 @@
 using namespace Ogre;
 
 
-gkLight::gkLight(gkScene *scene, const gkString& name)
-:       gkGameObject(scene, name, GK_LIGHT),
-        m_lightProps(), m_light(0)
+gkLight::gkLight(gkScene *scene, const gkString &name)
+	:       gkGameObject(scene, name, GK_LIGHT),
+	        m_lightProps(), m_light(0)
 {
 }
 
 
 void gkLight::updateProperties(void)
 {
-    if (!m_light)
-        return;
+	if (!m_light)
+		return;
 
-    m_light->setCastShadows(m_lightProps.m_casts);
-    m_light->setSpecularColour(m_lightProps.m_specular);
-    m_light->setSpecularColour(m_lightProps.m_specular);
-    m_light->setDiffuseColour(m_lightProps.m_diffuse * m_lightProps.m_power);
-    m_light->setAttenuation(m_lightProps.m_range, m_lightProps.m_constant, m_lightProps.m_linear, m_lightProps.m_quadratic);
+	m_light->setCastShadows(m_lightProps.m_casts);
+	m_light->setSpecularColour(m_lightProps.m_specular);
+	m_light->setSpecularColour(m_lightProps.m_specular);
+	m_light->setDiffuseColour(m_lightProps.m_diffuse * m_lightProps.m_power);
+	m_light->setAttenuation(m_lightProps.m_range, m_lightProps.m_constant, m_lightProps.m_linear, m_lightProps.m_quadratic);
 
-    m_light->setPowerScale(m_lightProps.m_power);
-    if (m_lightProps.m_type == gkLightProperties::LI_SPOT || m_lightProps.m_type == gkLightProperties::LI_DIR)
-    {
-        m_light->setType(Ogre::Light::LT_DIRECTIONAL);
-        m_light->setDirection(m_lightProps.m_direction);
+	m_light->setPowerScale(m_lightProps.m_power);
+	if (m_lightProps.m_type == gkLightProperties::LI_SPOT || m_lightProps.m_type == gkLightProperties::LI_DIR)
+	{
+		m_light->setType(Ogre::Light::LT_DIRECTIONAL);
+		m_light->setDirection(m_lightProps.m_direction);
 
-        if (m_lightProps.m_type == gkLightProperties::LI_SPOT)
-        {
-            m_light->setType(Ogre::Light::LT_SPOTLIGHT);
-            m_light->setSpotlightRange(gkDegree(m_lightProps.m_spot.x), gkDegree(m_lightProps.m_spot.y), m_lightProps.m_falloff);
-        }
-    }
-    else
-        m_light->setType(Ogre::Light::LT_POINT);
+		if (m_lightProps.m_type == gkLightProperties::LI_SPOT)
+		{
+			m_light->setType(Ogre::Light::LT_SPOTLIGHT);
+			m_light->setSpotlightRange(gkDegree(m_lightProps.m_spot.x), gkDegree(m_lightProps.m_spot.y), m_lightProps.m_falloff);
+		}
+	}
+	else
+		m_light->setType(Ogre::Light::LT_POINT);
 }
 
 
 
 void gkLight::loadImpl(void)
 {
-    gkGameObject::loadImpl();
+	gkGameObject::loadImpl();
 
-    if (m_light != 0)
-        return;
+	if (m_light != 0)
+		return;
 
-    SceneManager *manager = m_scene->getManager();
-    m_light = manager->createLight(m_name);
-    m_node->attachObject(m_light);
+	SceneManager *manager = m_scene->getManager();
+	m_light = manager->createLight(m_name);
+	m_node->attachObject(m_light);
 
-    updateProperties();
+	updateProperties();
 }
 
 
 void gkLight::unloadImpl(void)
 {
-    if (m_light != 0)
-    {
-        SceneManager *manager = m_scene->getManager();
-        m_node->detachObject(m_light);
-        manager->destroyLight(m_light);
-        m_light = 0;
-    }
+	if (m_light != 0)
+	{
+		SceneManager *manager = m_scene->getManager();
+		m_node->detachObject(m_light);
+		manager->destroyLight(m_light);
+		m_light = 0;
+	}
 
-    gkGameObject::unloadImpl();
+	gkGameObject::unloadImpl();
 }
 
 gkObject *gkLight::clone(const gkString &name)
 {
-    gkLight* cl = new gkLight(m_scene, name);
-    memcpy(&cl->m_lightProps, &m_lightProps, sizeof(gkLightProperties));
+	gkLight *cl = new gkLight(m_scene, name);
+	memcpy(&cl->m_lightProps, &m_lightProps, sizeof(gkLightProperties));
 
-    gkGameObject::cloneImpl(cl);
-    return cl;
+	gkGameObject::cloneImpl(cl);
+	return cl;
 }
-
-

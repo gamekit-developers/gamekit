@@ -35,33 +35,33 @@
 class gkCamera : public gkGameObject
 {
 public:
-    gkCamera(gkScene *scene, const gkString &name);
-    virtual ~gkCamera() {}
+	gkCamera(gkScene *scene, const gkString &name);
+	virtual ~gkCamera() {}
 
-    // Property access
-    GK_INLINE gkCameraProperties &getCameraProperties(void)         {return m_cameraProps;}
+	// Property access
+	GK_INLINE gkCameraProperties &getCameraProperties(void)         {return m_cameraProps;}
 
 
-    void setClip(gkScalar start, gkScalar end);
-    void setFov(const gkRadian &fov);
-    void setFov(const gkDegree &fov);
-    void setMainCamera(bool v);
-    void makeCurrent(void);
+	void setClip(gkScalar start, gkScalar end);
+	void setFov(const gkRadian &fov);
+	void setFov(const gkDegree &fov);
+	void setMainCamera(bool v);
+	void makeCurrent(void);
 
-    GK_INLINE Ogre::Camera *getCamera(void)         {return m_camera;}
-    GK_INLINE const gkScalar &getClipStart(void)    {return m_cameraProps.m_clipstart;}
-    GK_INLINE const gkScalar &getClipEnd(void)      {return m_cameraProps.m_clipend;}
-    GK_INLINE const gkScalar &getFov(void)          {return m_cameraProps.m_fov;}
-    GK_INLINE bool isMainCamera(void)               {return m_cameraProps.m_start;}
+	GK_INLINE Ogre::Camera *getCamera(void)         {return m_camera;}
+	GK_INLINE const gkScalar &getClipStart(void)    {return m_cameraProps.m_clipstart;}
+	GK_INLINE const gkScalar &getClipEnd(void)      {return m_cameraProps.m_clipend;}
+	GK_INLINE const gkScalar &getFov(void)          {return m_cameraProps.m_fov;}
+	GK_INLINE bool isMainCamera(void)               {return m_cameraProps.m_start;}
 
 private:
-    gkObject    *clone(const gkString &name);
+	gkObject    *clone(const gkString &name);
 
-    gkCameraProperties  m_cameraProps;
-    Ogre::Camera        *m_camera;
+	gkCameraProperties  m_cameraProps;
+	Ogre::Camera        *m_camera;
 
-    virtual void loadImpl(void);
-    virtual void unloadImpl(void);
+	virtual void loadImpl(void);
+	virtual void unloadImpl(void);
 };
 
 #endif//_gkCameraObject_h_

@@ -35,37 +35,37 @@ class gkPropertySensor : public gkLogicSensor
 {
 public:
 
-    enum Type
-    {
-        PS_EQUAL,
-        PS_NEQUAL,
-        PS_INTERVAL,
-        PS_CHANGED,
-    };
+	enum Type
+	{
+		PS_EQUAL,
+		PS_NEQUAL,
+		PS_INTERVAL,
+		PS_CHANGED,
+	};
 
 protected:
 
-    gkVariable  m_old;
-    gkVariable  *m_cur;
-    int         m_type;
-    gkString    m_propName, m_propVal;
-    bool        m_init;
+	gkVariable  m_old;
+	gkVariable  *m_cur;
+	int         m_type;
+	gkString    m_propName, m_propVal;
+	bool        m_init;
 
 public:
 
-    gkPropertySensor(gkGameObject *object, gkLogicLink *link, const gkString &name);
-    virtual ~gkPropertySensor() {}
+	gkPropertySensor(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	virtual ~gkPropertySensor() {}
 
-    gkLogicBrick* clone(gkLogicLink *link, gkGameObject *dest);
+	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
 
-    bool query(void);
+	bool query(void);
 
 
-    GK_INLINE void  setType(int type)               {m_type = type;}
-    GK_INLINE int   getType(void)                   {return m_type;}
+	GK_INLINE void  setType(int type)               {m_type = type;}
+	GK_INLINE int   getType(void)                   {return m_type;}
 
-    GK_INLINE void  setProperty(const gkString& v)  {m_propName = v;}
-    GK_INLINE void  setValue(const gkString& v)     {m_propVal = v;}
+	GK_INLINE void  setProperty(const gkString &v)  {m_propName = v;}
+	GK_INLINE void  setValue(const gkString &v)     {m_propVal = v;}
 };
 
 

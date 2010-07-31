@@ -88,10 +88,10 @@
     defined(__ia64__)       || defined(__s390__)    || \
     defined(__s390x__)
 # define UT_ARCH UT_ARCH_64
-UT_ASSERTCOMP(sizeof(void*) == 8, VOID_IS_8);
+UT_ASSERTCOMP(sizeof(void *) == 8, VOID_IS_8);
 #else
 #define UT_ARCH UT_ARCH_32
-UT_ASSERTCOMP(sizeof(void*) == 4, VOID_IS_4);
+UT_ASSERTCOMP(sizeof(void *) == 4, VOID_IS_4);
 #endif
 
 #if UT_PLATFORM == UT_PLATFORM_WIN32

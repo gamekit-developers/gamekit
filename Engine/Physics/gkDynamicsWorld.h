@@ -49,64 +49,64 @@ class gkPhysicsDebug;
 class gkDynamicsWorld
 {
 public:
-    typedef utListClass<gkObject> ObjectList;
+	typedef utListClass<gkObject> ObjectList;
 
 protected:
 
-    // Parent scene
-    gkScene*                    m_scene;
+	// Parent scene
+	gkScene                    *m_scene;
 
-    btDynamicsWorld*            m_dynamicsWorld;
-    btCollisionConfiguration*   m_collisionConfiguration;;
-    btBroadphaseInterface*      m_pairCache;
-	btGhostPairCallback*		m_ghostPairCallback;
-    btDispatcher*               m_dispatcher;
-    btConstraintSolver*         m_constraintSolver;
-    ObjectList	                m_objects;
-    gkPhysicsDebug*             m_debug;
-	
-    bool                        m_handleContacts;
+	btDynamicsWorld            *m_dynamicsWorld;
+	btCollisionConfiguration   *m_collisionConfiguration;;
+	btBroadphaseInterface      *m_pairCache;
+	btGhostPairCallback		*m_ghostPairCallback;
+	btDispatcher               *m_dispatcher;
+	btConstraintSolver         *m_constraintSolver;
+	ObjectList	                m_objects;
+	gkPhysicsDebug             *m_debug;
 
-    class gkDbvt*               m_dbvt;
+	bool                        m_handleContacts;
+
+	class gkDbvt               *m_dbvt;
 
 
-    // drawing all but static wireframes 
-    void localDrawObject(btCollisionObject *rb);
+	// drawing all but static wireframes
+	void localDrawObject(btCollisionObject *rb);
 
-    void loadImpl(void);
-    void unloadImpl(void);
+	void loadImpl(void);
+	void unloadImpl(void);
 
-    static void substepCallback(btDynamicsWorld *dyn, btScalar tick);
+	static void substepCallback(btDynamicsWorld *dyn, btScalar tick);
 
 public:
-    gkDynamicsWorld(const gkString& name, gkScene *scene);
-    virtual ~gkDynamicsWorld();
+	gkDynamicsWorld(const gkString &name, gkScene *scene);
+	virtual ~gkDynamicsWorld();
 
-    // Do one full physics step
-    void step(gkScalar tick);
-    void substep(gkScalar tick);
+	// Do one full physics step
+	void step(gkScalar tick);
+	void substep(gkScalar tick);
 
-    void createParentChildHierarchy(void);
+	void createParentChildHierarchy(void);
 
 	void EnableContacts(bool enable) { m_handleContacts = enable; }
 
 
-    gkRigidBody *createRigidBody(gkGameObject *state);
+	gkRigidBody *createRigidBody(gkGameObject *state);
 
-    gkCharacter *createCharacter(gkGameObject *state);
+	gkCharacter *createCharacter(gkGameObject *state);
 
-    void destroyObject(gkObject *state);
+	void destroyObject(gkObject *state);
 
-    // Gain raw access to the bullet world
-    GK_INLINE btDynamicsWorld* getBulletWorld(void) {GK_ASSERT(m_dynamicsWorld); return m_dynamicsWorld;}
-    // Access to parent scene
-    GK_INLINE gkScene *getScene(void)               {GK_ASSERT(m_scene); return m_scene;}
+	// Gain raw access to the bullet world
+	GK_INLINE btDynamicsWorld *getBulletWorld(void) {GK_ASSERT(m_dynamicsWorld); return m_dynamicsWorld;}
+	// Access to parent scene
+	GK_INLINE gkScene *getScene(void)               {GK_ASSERT(m_scene); return m_scene;}
 
 	void enableDebugPhysics(bool enable, bool debugAabb);
 
 	void resetContacts();
 
-    void handleDbvt(gkCamera *cam);
+	void handleDbvt(gkCamera *cam);
 
 	gkPhysicsDebug *getDebug() const { return m_debug; }
 

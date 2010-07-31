@@ -33,116 +33,116 @@
 
 // ----------------------------------------------------------------------------
 gkLogicOpController::gkLogicOpController(gkGameObject *object, gkLogicLink *link, const gkString &name)
-    :       gkLogicController(object, link, name), m_op(OP_NILL), m_isInverter(false)
+	:       gkLogicController(object, link, name), m_op(OP_NILL), m_isInverter(false)
 {
 }
 
 
 
 // ----------------------------------------------------------------------------
-gkLogicBrick* gkLogicOpController::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick *gkLogicOpController::clone(gkLogicLink *link, gkGameObject *dest)
 {
-    gkLogicOpController *cont = new gkLogicOpController(*this);
-    cont->cloneImpl(link, dest);
-    return cont;
+	gkLogicOpController *cont = new gkLogicOpController(*this);
+	cont->cloneImpl(link, dest);
+	return cont;
 }
 
 
 // ----------------------------------------------------------------------------
 void gkLogicOpController::execute(void)
 {
-    if (m_actuators.empty() || m_sensors.empty())
-    {
-        // undefined
-        return;
-    }
+	if (m_actuators.empty() || m_sensors.empty())
+	{
+		// undefined
+		return;
+	}
 
-    bool doUpdate = false;
-    bool seed = true, last = false, pos=false;
+	bool doUpdate = false;
+	bool seed = true, last = false, pos=false;
 
-    switch (m_op)
-    {
-    case OP_NOR:
-    case OP_OR:
-        {
-            gkSensorIterator it(m_sensors);
-            while (it.hasMoreElements())
-            {
-                gkLogicSensor *sens = it.getNext();
+	switch (m_op)
+	{
+	case OP_NOR:
+	case OP_OR:
+		{
+			gkSensorIterator it(m_sensors);
+			while (it.hasMoreElements())
+			{
+				gkLogicSensor *sens = it.getNext();
 
-                pos = sens->isPositive();
-                if (pos)
-                    doUpdate = true;
-                if (m_op == OP_NOR && pos)
-                    m_isInverter = true;
+				pos = sens->isPositive();
+				if (pos)
+					doUpdate = true;
+				if (m_op == OP_NOR && pos)
+					m_isInverter = true;
 
-                if (doUpdate)
-                    break;
-            }
+				if (doUpdate)
+					break;
+			}
 
-            if (m_isInverter)
-                doUpdate = !doUpdate;
-        }
-        break;
-    case OP_XNOR:
-    case OP_XOR:
-        {
-            gkSensorIterator it(m_sensors);
-            while (it.hasMoreElements())
-            {
+			if (m_isInverter)
+				doUpdate = !doUpdate;
+		}
+		break;
+	case OP_XNOR:
+	case OP_XOR:
+		{
+			gkSensorIterator it(m_sensors);
+			while (it.hasMoreElements())
+			{
 
-                gkLogicSensor *sens = it.getNext();
-                seed = sens->isPositive();
+				gkLogicSensor *sens = it.getNext();
+				seed = sens->isPositive();
 
-                if (seed && last)
-                {
-                    doUpdate = false;
-                    break;
-                }
-                else if (seed) doUpdate = true;
+				if (seed && last)
+				{
+					doUpdate = false;
+					break;
+				}
+				else if (seed) doUpdate = true;
 
-                if (!last && seed)
-                    last = true;
+				if (!last && seed)
+					last = true;
 
-                if (m_op == OP_XNOR && seed)
-                    m_isInverter = true;
-            }
-            if (m_isInverter)
-                doUpdate = !doUpdate;
-        }
-        break;
-    case OP_NAND:
-    case OP_AND:
-        {
-            gkSensorIterator it(m_sensors);
-            while (it.hasMoreElements())
-            {
-                gkLogicSensor *sens = it.getNext();
+				if (m_op == OP_XNOR && seed)
+					m_isInverter = true;
+			}
+			if (m_isInverter)
+				doUpdate = !doUpdate;
+		}
+		break;
+	case OP_NAND:
+	case OP_AND:
+		{
+			gkSensorIterator it(m_sensors);
+			while (it.hasMoreElements())
+			{
+				gkLogicSensor *sens = it.getNext();
 
-                pos = sens->isPositive();
-                if (seed)
-                {
-                    seed = false;
-                    doUpdate = pos;
-                }
-                else
-                    doUpdate = doUpdate && pos;
+				pos = sens->isPositive();
+				if (seed)
+				{
+					seed = false;
+					doUpdate = pos;
+				}
+				else
+					doUpdate = doUpdate && pos;
 
-                if (m_op == OP_NAND && pos)
-                    m_isInverter = true;
+				if (m_op == OP_NAND && pos)
+					m_isInverter = true;
 
-            }
-            if (m_isInverter)
-                doUpdate = !doUpdate;
-        }
-        break;
-    }
+			}
+			if (m_isInverter)
+				doUpdate = !doUpdate;
+		}
+		break;
+	}
 
-    gkLogicManager &mgr = gkLogicManager::getSingleton();
-    gkActuatorIterator it(m_actuators);
-    while (it.hasMoreElements())
-    {
-        gkLogicActuator *act = it.getNext();
-        mgr.push(this, act, doUpdate);
-    }
+	gkLogicManager &mgr = gkLogicManager::getSingleton();
+	gkActuatorIterator it(m_actuators);
+	while (it.hasMoreElements())
+	{
+		gkLogicActuator *act = it.getNext();
+		mgr.push(this, act, doUpdate);
+	}
 }

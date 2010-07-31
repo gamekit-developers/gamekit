@@ -35,9 +35,9 @@
 class gkLogger
 {
 public:
-    static void enable(const gkString &name, bool verbose);
-    static void disable();
-    static void write(const gkString &msg);
+	static void enable(const gkString &name, bool verbose);
+	static void disable();
+	static void write(const gkString &msg);
 };
 
 // printf style logging

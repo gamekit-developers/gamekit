@@ -31,8 +31,8 @@
 
 // ----------------------------------------------------------------------------
 gkMotionActuator::gkMotionActuator(gkGameObject *object, gkLogicLink *link, const gkString &name)
-:       gkLogicActuator(object, link, name),
-        m_type(0), m_linvInc(false), m_damping(1.f)
+	:       gkLogicActuator(object, link, name),
+	        m_type(0), m_linvInc(false), m_damping(1.f)
 {
 }
 
@@ -43,31 +43,32 @@ gkMotionActuator::~gkMotionActuator()
 
 
 // ----------------------------------------------------------------------------
-gkLogicBrick* gkMotionActuator::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick *gkMotionActuator::clone(gkLogicLink *link, gkGameObject *dest)
 {
-    gkMotionActuator *act = new gkMotionActuator(*this);
-    act->cloneImpl(link, dest);
-    return act;
+	gkMotionActuator *act = new gkMotionActuator(*this);
+	act->cloneImpl(link, dest);
+	return act;
 }
 
 // ----------------------------------------------------------------------------
 void gkMotionActuator::execute(void)
 {
-    if (isPulseOff())
-        return;
+	if (isPulseOff())
+		return;
 
 
-    if (m_type == MT_SIMPLE) {
-        if (m_loc.evaluate)
-            m_object->translate(m_loc.vec , m_loc.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
-        if (m_rot.evaluate)
-            m_object->rotate(m_quat, m_rot.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
+	if (m_type == MT_SIMPLE)
+	{
+		if (m_loc.evaluate)
+			m_object->translate(m_loc.vec , m_loc.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
+		if (m_rot.evaluate)
+			m_object->rotate(m_quat, m_rot.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
 
-	    gkObject *object = m_object->getAttachedObject();
+		gkObject *object = m_object->getAttachedObject();
 
-        if (object)
-        {
-			gkRigidBody* body = dynamic_cast<gkRigidBody*>(object);
+		if (object)
+		{
+			gkRigidBody *body = dynamic_cast<gkRigidBody *>(object);
 
 			if(body)
 			{
@@ -76,7 +77,7 @@ void gkMotionActuator::execute(void)
 				if (m_torque.evaluate)
 					body->applyTorque(m_torque.vec * m_damping, m_torque.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
 
-                if (m_linv.evaluate)
+				if (m_linv.evaluate)
 				{
 					gkVector3 extra = m_linv.vec;
 					if (m_linvInc)
@@ -86,6 +87,6 @@ void gkMotionActuator::execute(void)
 				if (m_angv.evaluate)
 					body->setAngularVelocity(m_angv.vec *m_damping , m_angv.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
 			}
-        }
-    }
+		}
+	}
 }

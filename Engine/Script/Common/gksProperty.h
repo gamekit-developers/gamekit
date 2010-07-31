@@ -23,37 +23,37 @@ class gksProperty
 {
 #ifndef SWIG
 public:
-    gksProperty(gkVariable *oth);
-    gkVariable *getVar() const {return m_var;}
+	gksProperty(gkVariable *oth);
+	gkVariable *getVar() const {return m_var;}
 #endif
 
 
 private:
-    class gkVariable *m_var;
+	class gkVariable *m_var;
 
 public:
 
-    enum Types
-    {
-        BOOL, 
-        INT,
-        FLOAT,
-        STRING
-    };
+	enum Types
+	{
+		BOOL,
+		INT,
+		FLOAT,
+		STRING
+	};
 
-    gksProperty() : m_var(0) {}
+	gksProperty() : m_var(0) {}
 
 
 
-    int         getType(void);
-    bool        getValueBool(void);
-    int         getValueInt(void);
-    float       getValueReal(void);
-    const char  *getValueString(void);
-    void        setBool(bool v);
-    void        setInt(int v);
-    void        setFloat(float v);
-    void        setString(const char* v);
+	int         getType(void);
+	bool        getValueBool(void);
+	int         getValueInt(void);
+	float       getValueReal(void);
+	const char  *getValueString(void);
+	void        setBool(bool v);
+	void        setInt(int v);
+	void        setFloat(float v);
+	void        setString(const char *v);
 
 };
 

@@ -36,36 +36,36 @@
 
 // ----------------------------------------------------------------------------
 gkNearSensor::gkNearSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
-:        gkLogicSensor(object, link, name), m_range(0.01), m_resetrange(0.01), m_previous(false), m_material(""), m_prop("")
+	:        gkLogicSensor(object, link, name), m_range(0.01), m_resetrange(0.01), m_previous(false), m_material(""), m_prop("")
 {
-    m_dispatchType = DIS_CONSTANT;
-    connect();
+	m_dispatchType = DIS_CONSTANT;
+	connect();
 }
 
 // ----------------------------------------------------------------------------
-gkLogicBrick* gkNearSensor::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick *gkNearSensor::clone(gkLogicLink *link, gkGameObject *dest)
 {
-    gkNearSensor *sens = new gkNearSensor(*this);
-    sens->cloneImpl(link, dest);
-    return sens;
+	gkNearSensor *sens = new gkNearSensor(*this);
+	sens->cloneImpl(link, dest);
+	return sens;
 }
 
 
 // ----------------------------------------------------------------------------
 bool gkNearSensor::query(void)
 {
-    gkScene *scene = m_object->getOwner();
-    gkDynamicsWorld *dyn = scene->getDynamicsWorld();
+	gkScene *scene = m_object->getOwner();
+	gkDynamicsWorld *dyn = scene->getDynamicsWorld();
 
-    btDynamicsWorld *btw = dyn->getBulletWorld();
+	btDynamicsWorld *btw = dyn->getBulletWorld();
 
-    gkVector3 vec = m_object->getWorldPosition();
+	gkVector3 vec = m_object->getWorldPosition();
 
-    gkAllContactResultCallback exec;
+	gkAllContactResultCallback exec;
 
-    btTransform btt;
-    btt.setIdentity();
-    btt.setOrigin(btVector3(vec.x, vec.y, vec.z));
+	btTransform btt;
+	btt.setIdentity();
+	btt.setOrigin(btVector3(vec.x, vec.y, vec.z));
 
 	btSphereShape btss(m_range);
 	if (m_previous)
@@ -75,25 +75,25 @@ bool gkNearSensor::query(void)
 	btco.setCollisionShape(&btss);
 	btco.setWorldTransform(btt);
 
-    btw->contactTest( &btco, exec);
+	btw->contactTest( &btco, exec);
 
 	if (btw->getDebugDrawer())
 		btw->debugDrawObject(btt, &btss, btVector3(0,1,0));
 
-    if (!exec.hasHit())
+	if (!exec.hasHit())
 		return m_previous = false;
-    if (exec.m_contactObjects.empty())
+	if (exec.m_contactObjects.empty())
 		return m_previous = false;
 
-    if (m_material.empty() && m_prop.empty())
+	if (m_material.empty() && m_prop.empty())
 		return m_previous = true;
 
-	utArray<const btCollisionObject*> contacts = exec.m_contactObjects;
-	utArrayIterator< utArray<const btCollisionObject*> > iter(contacts);
+	utArray<const btCollisionObject *> contacts = exec.m_contactObjects;
+	utArrayIterator< utArray<const btCollisionObject *> > iter(contacts);
 
 	while(iter.hasMoreElements())
 	{
-		gkGameObject *object = ((gkGameObject*)iter.peekNext()->getUserPointer())->getObject();
+		gkGameObject *object = ((gkGameObject *)iter.peekNext()->getUserPointer())->getObject();
 
 		if (!m_prop.empty())
 		{
@@ -109,5 +109,5 @@ bool gkNearSensor::query(void)
 		iter.getNext();
 	}
 
-    return m_previous = false;
+	return m_previous = false;
 }

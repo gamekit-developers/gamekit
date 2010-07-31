@@ -36,78 +36,78 @@ gkMeshManager::gkMeshManager()
 
 gkMeshManager::~gkMeshManager()
 {
-    destroyAll();
+	destroyAll();
 }
 
 
-gkMesh* gkMeshManager::getMesh(const gkHashedString& name)
+gkMesh *gkMeshManager::getMesh(const gkHashedString &name)
 {
-    size_t pos;
-    if ((pos = m_objects.find(name)) == GK_NPOS)
-        return 0;
-    return m_objects.at(pos);
+	size_t pos;
+	if ((pos = m_objects.find(name)) == GK_NPOS)
+		return 0;
+	return m_objects.at(pos);
 }
 
 
 
-gkMesh* gkMeshManager::create(const gkHashedString& name)
+gkMesh *gkMeshManager::create(const gkHashedString &name)
 {
-    size_t pos;
-    if ((pos = m_objects.find(name)) != GK_NPOS)
-        return 0;
+	size_t pos;
+	if ((pos = m_objects.find(name)) != GK_NPOS)
+		return 0;
 
-    gkMesh *ob = new gkMesh(name.str());
-    m_objects.insert(name, ob);
-    return ob;
+	gkMesh *ob = new gkMesh(name.str());
+	m_objects.insert(name, ob);
+	return ob;
 }
 
 
-void gkMeshManager::destroy(const gkHashedString& name)
+void gkMeshManager::destroy(const gkHashedString &name)
 {
-    size_t pos;
-    if ((pos = m_objects.find(name)) != GK_NPOS)
-    {
-        gkMesh *ob = m_objects.at(pos);
-        m_objects.remove(name);
-        delete ob;
-    }
+	size_t pos;
+	if ((pos = m_objects.find(name)) != GK_NPOS)
+	{
+		gkMesh *ob = m_objects.at(pos);
+		m_objects.remove(name);
+		delete ob;
+	}
 }
 
 
 void gkMeshManager::destroy(gkMesh *ob)
 {
-    GK_ASSERT(ob);
+	GK_ASSERT(ob);
 
-    gkString name = ob->getName();
-    size_t pos;
-    if ((pos = m_objects.find(name)) != GK_NPOS)
-    {
-        gkMesh *ob = m_objects.at(pos);
-        m_objects.remove(name);
-        delete ob;
-    }
+	gkString name = ob->getName();
+	size_t pos;
+	if ((pos = m_objects.find(name)) != GK_NPOS)
+	{
+		gkMesh *ob = m_objects.at(pos);
+		m_objects.remove(name);
+		delete ob;
+	}
 }
 
 
 
 void gkMeshManager::destroyAll(void)
 {
-    utHashTableIterator<ObjectMap> iter(m_objects);
-    while (iter.hasMoreElements())
-    {
-        gkMesh *ob = iter.peekNextValue();
-        delete ob;
-        iter.next();
-    }
+	utHashTableIterator<ObjectMap> iter(m_objects);
+	while (iter.hasMoreElements())
+	{
+		gkMesh *ob = iter.peekNextValue();
+		delete ob;
+		iter.next();
+	}
 
-    m_objects.clear();
+	m_objects.clear();
 }
 
 
 
-bool gkMeshManager::hasMesh(const gkHashedString& name)
+bool gkMeshManager::hasMesh(const gkHashedString &name)
 {
-    return m_objects.find(name) != GK_NPOS;
+	return m_objects.find(name) != GK_NPOS;
 }
 
 

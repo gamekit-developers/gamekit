@@ -33,37 +33,37 @@
 class gkTextManager;
 
 // Internal text buffer storage
-class gkTextFile 
+class gkTextFile
 {
 public:
 
-    typedef enum TextType
-    {
-        TT_UNKNOWN      = 0, // any
-    }TextType;
+	typedef enum TextType
+	{
+		TT_UNKNOWN      = 0, // any
+	} TextType;
 
 
 protected:
-    const gkString      m_name;
-    gkTextManager*      m_owner;
-    gkString            m_buffer;
-    TextType            m_type;
+	const gkString      m_name;
+	gkTextManager      *m_owner;
+	gkString            m_buffer;
+	TextType            m_type;
 
 
 public:
-    gkTextFile(gkTextManager *owner, const gkString& name, const TextType& type);
-    ~gkTextFile();
+	gkTextFile(gkTextManager *owner, const gkString &name, const TextType &type);
+	~gkTextFile();
 
-    void setText(const gkString &text) {m_buffer = text;}
+	void setText(const gkString &text) {m_buffer = text;}
 
 
-    // access
+	// access
 
-    GK_INLINE const gkString&       getName(void)   {return m_name;}
-    GK_INLINE gkTextManager*        getOwner(void)  {return m_owner;}
-    GK_INLINE gkString&             getText(void)   {return m_buffer;}
-    GK_INLINE UTsize                getSize(void)   {return (UTsize)m_buffer.size();}
-    GK_INLINE const TextType&       getType(void)   {return m_type;}
+	GK_INLINE const gkString       &getName(void)   {return m_name;}
+	GK_INLINE gkTextManager        *getOwner(void)  {return m_owner;}
+	GK_INLINE gkString             &getText(void)   {return m_buffer;}
+	GK_INLINE UTsize                getSize(void)   {return (UTsize)m_buffer.size();}
+	GK_INLINE const TextType       &getType(void)   {return m_type;}
 
 
 };

@@ -33,25 +33,25 @@
 class gkScriptController : public gkLogicController
 {
 protected:
-    class gkLuaScript* m_script;
-    bool m_error, m_isModule;
+	class gkLuaScript *m_script;
+	bool m_error, m_isModule;
 
 public:
 
-    gkScriptController(gkGameObject *object, gkLogicLink *link, const gkString &name);
-    virtual ~gkScriptController() {}
+	gkScriptController(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	virtual ~gkScriptController() {}
 
-    gkLogicBrick* clone(gkLogicLink *link, gkGameObject *dest);
+	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
 
-    void execute(void);
+	void execute(void);
 
-    GK_INLINE void setModule(bool v)            {m_isModule = v;}
-    GK_INLINE bool isModule(void)               {return m_isModule;}
-    GK_INLINE void setScript(gkLuaScript *sc)   {m_script = sc;}
-    GK_INLINE gkLuaScript* getScript(void)      {return m_script;}
+	GK_INLINE void setModule(bool v)            {m_isModule = v;}
+	GK_INLINE bool isModule(void)               {return m_isModule;}
+	GK_INLINE void setScript(gkLuaScript *sc)   {m_script = sc;}
+	GK_INLINE gkLuaScript *getScript(void)      {return m_script;}
 
 
-    static void Open(struct lua_State *L);
+	static void Open(struct lua_State *L);
 };
 
 

@@ -35,53 +35,53 @@
 
 class gkBuffer
 {
-    // Main playback buffer.
+	// Main playback buffer.
 
 public:
 
-    gkBuffer(gkSource *obj);
-    virtual ~gkBuffer();
+	gkBuffer(gkSource *obj);
+	virtual ~gkBuffer();
 
-    bool stream(void);
+	bool stream(void);
 
-    void suspend(bool v);
-    void setLoop(bool v);
+	void suspend(bool v);
+	void setLoop(bool v);
 
-    bool isSuspended(void)  {return m_suspend;}
-    bool isDone(void)       {return m_exit;}
-    bool isValid(void)      {return m_ok;}
-    bool isLooped(void)     {return m_loop;}
-    void exit(void)         {m_exit = true;}
+	bool isSuspended(void)  {return m_suspend;}
+	bool isDone(void)       {return m_exit;}
+	bool isValid(void)      {return m_ok;}
+	bool isLooped(void)     {return m_loop;}
+	void exit(void)         {m_exit = true;}
 
-    void setPosition(const gkVector3 &v);
-    void setDirection(const gkVector3 &v);
-    void setVelocity(const gkVector3 &v);
+	void setPosition(const gkVector3 &v);
+	void setDirection(const gkVector3 &v);
+	void setVelocity(const gkVector3 &v);
 
-    void setProperties(const gkSoundProperties &props);
+	void setProperties(const gkSoundProperties &props);
 
-    void queue(bool play=false);
+	void queue(bool play=false);
 
 private:
-    bool initialize(void);
-    void finalize(void);
-    void reset(void);
+	bool initialize(void);
+	void finalize(void);
+	void reset(void);
 
 
-    // stream reading
-    const char *read(UTsize len, UTsize &br);
-    void seek(void);
+	// stream reading
+	const char *read(UTsize len, UTsize &br);
+	void seek(void);
 
-    gkCriticalSection   m_cs;
-    gkSource            *m_sound;
-    gkSoundStream       *m_stream;
-    ALuint              m_buffer[GK_SND_SAMPLES];
-    ALuint              m_source;
-    bool                m_loop, m_ok, m_exit, m_initial;
-    bool                m_suspend;
-    gkSoundProperties   m_props;
-    UTsize              m_pos;
-    bool                m_eos;
-    int                 m_fmt, m_smp, m_bps;
+	gkCriticalSection   m_cs;
+	gkSource            *m_sound;
+	gkSoundStream       *m_stream;
+	ALuint              m_buffer[GK_SND_SAMPLES];
+	ALuint              m_source;
+	bool                m_loop, m_ok, m_exit, m_initial;
+	bool                m_suspend;
+	gkSoundProperties   m_props;
+	UTsize              m_pos;
+	bool                m_eos;
+	int                 m_fmt, m_smp, m_bps;
 };
 
 

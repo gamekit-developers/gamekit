@@ -31,14 +31,14 @@
 #include "gkLogicDispatcher.h"
 #include "gkWindowSystem.h"
 
-// Mouse event handler 
+// Mouse event handler
 class gkMouseDispatch : public gkAbstractDispatcher
 {
 public:
-    gkMouseDispatch();
-    virtual ~gkMouseDispatch();
+	gkMouseDispatch();
+	virtual ~gkMouseDispatch();
 
-    void dispatch(void);
+	void dispatch(void);
 };
 
 
@@ -46,36 +46,36 @@ class gkMouseSensor : public gkLogicSensor
 {
 public:
 
-    enum Type
-    {
-        MOUSE_NILL = 0,
-        MOUSE_LEFT,
-        MOUSE_RIGHT,
-        MOUSE_MIDDLE,
-        MOUSE_MOTION,
-        MOUSE_WHEEL_UP,
-        MOUSE_WHEEL_DOWN,
-        MOUSE_MOUSE_OVER,
-        MOUSE_MOUSE_OVER_ANY,
-    };
+	enum Type
+	{
+		MOUSE_NILL = 0,
+		MOUSE_LEFT,
+		MOUSE_RIGHT,
+		MOUSE_MIDDLE,
+		MOUSE_MOTION,
+		MOUSE_WHEEL_UP,
+		MOUSE_WHEEL_DOWN,
+		MOUSE_MOUSE_OVER,
+		MOUSE_MOUSE_OVER_ANY,
+	};
 
 protected:
 
-    int m_type;
-    bool m_last;
+	int m_type;
+	bool m_last;
 
-    Ogre::RaySceneQuery* m_rayQuery;
-    bool rayTest(void);
+	Ogre::RaySceneQuery *m_rayQuery;
+	bool rayTest(void);
 
 public:
-    gkMouseSensor(gkGameObject *object, gkLogicLink *link, const gkString &name);
-    virtual ~gkMouseSensor();
+	gkMouseSensor(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	virtual ~gkMouseSensor();
 
-    gkLogicBrick* clone(gkLogicLink *link, gkGameObject *dest);
+	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
 
-    bool query(void);
+	bool query(void);
 
-    GK_INLINE void setType(int type) {m_type = type;}
+	GK_INLINE void setType(int type) {m_type = type;}
 };
 
 

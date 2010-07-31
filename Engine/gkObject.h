@@ -41,82 +41,82 @@ class btPersistentManifold;
 class gkObject : public utListClass<gkObject>::Link
 {
 protected:
-    const gkString      m_name;
-    bool                m_loaded;
+	const gkString      m_name;
+	bool                m_loaded;
 
-    virtual void preLoadImpl(void) {}
-    virtual void preUnloadImpl(void) {}
-    virtual void loadImpl(void) {}
-    virtual void unloadImpl(void) {}
-    virtual void postLoadImpl(void) {}
-    virtual void postUnloadImpl(void) {}
+	virtual void preLoadImpl(void) {}
+	virtual void preUnloadImpl(void) {}
+	virtual void loadImpl(void) {}
+	virtual void unloadImpl(void) {}
+	virtual void postLoadImpl(void) {}
+	virtual void postUnloadImpl(void) {}
 
 public:
 
-    enum Flags
-    {
-        RBF_LIMIT_LVEL_X = 1,
-        RBF_LIMIT_LVEL_Y = 2,
-        RBF_LIMIT_LVEL_Z = 4,
-        RBF_LIMIT_AVEL_X = 8,
-        RBF_LIMIT_AVEL_Y = 16,
-        RBF_LIMIT_AVEL_Z = 32,
-        RBF_CONTACT_INFO = 64,
-    };
+	enum Flags
+	{
+		RBF_LIMIT_LVEL_X = 1,
+		RBF_LIMIT_LVEL_Y = 2,
+		RBF_LIMIT_LVEL_Z = 4,
+		RBF_LIMIT_AVEL_X = 8,
+		RBF_LIMIT_AVEL_Y = 16,
+		RBF_LIMIT_AVEL_Z = 32,
+		RBF_CONTACT_INFO = 64,
+	};
 
-    struct ContactInfo
-    {
-        gkObject        *collider;
-        btManifoldPoint     point;
-    };
+	struct ContactInfo
+	{
+		gkObject        *collider;
+		btManifoldPoint     point;
+	};
 
-    typedef utArray<ContactInfo> ContactArray;
+	typedef utArray<ContactInfo> ContactArray;
 
-    gkObject(const gkString &name);
-    virtual ~gkObject();
+	gkObject(const gkString &name);
+	virtual ~gkObject();
 
-    // duplication 
-    virtual gkObject                *clone(const gkString &name)    {return 0;}
-    virtual gkGameObject            *getObject(void)                {return 0;}
-    virtual Ogre::AxisAlignedBox     getAabb() const                {return Ogre::AxisAlignedBox::BOX_NULL;}
-    virtual btCollisionObject       *getCollisionObject()           {return 0;}
-
-
-    void load(void);
-    void unload(void);
-    void reload(void);
+	// duplication
+	virtual gkObject                *clone(const gkString &name)    {return 0;}
+	virtual gkGameObject            *getObject(void)                {return 0;}
+	virtual Ogre::AxisAlignedBox     getAabb() const                {return Ogre::AxisAlignedBox::BOX_NULL;}
+	virtual btCollisionObject       *getCollisionObject()           {return 0;}
 
 
-    GK_INLINE const gkString    &getName(void)                          {return m_name;}
-    GK_INLINE bool              isLoaded(void) const                    {return m_loaded;}
-
-    // collision contact information
-    GK_INLINE ContactArray      &getContacts(void)                      {return m_contacts;}
-    GK_INLINE bool              wantsContactInfo(void)                  {return (m_flags & RBF_CONTACT_INFO) != 0;}
-
-    // misc flags
-    GK_INLINE void              setFlags(int flags)                     {m_flags = flags;}
-    GK_INLINE int               getFlags(void)                          {return m_flags;}
+	void load(void);
+	void unload(void);
+	void reload(void);
 
 
-    // attached material for physics
-    GK_INLINE void              setSensorMaterial(const gkString &v)    {m_sensorMaterial = v;}
-    GK_INLINE const gkString    &getSensorMaterial(void)                {return m_sensorMaterial;}
+	GK_INLINE const gkString    &getName(void)                          {return m_name;}
+	GK_INLINE bool              isLoaded(void) const                    {return m_loaded;}
 
-    void handleManifold(btPersistentManifold *manifold);
+	// collision contact information
+	GK_INLINE ContactArray      &getContacts(void)                      {return m_contacts;}
+	GK_INLINE bool              wantsContactInfo(void)                  {return (m_flags & RBF_CONTACT_INFO) != 0;}
 
-    void resetContactInfo();
+	// misc flags
+	GK_INLINE void              setFlags(int flags)                     {m_flags = flags;}
+	GK_INLINE int               getFlags(void)                          {return m_flags;}
+
+
+	// attached material for physics
+	GK_INLINE void              setSensorMaterial(const gkString &v)    {m_sensorMaterial = v;}
+	GK_INLINE const gkString    &getSensorMaterial(void)                {return m_sensorMaterial;}
+
+	void handleManifold(btPersistentManifold *manifold);
+
+	void resetContactInfo();
 
 protected:
 
-    // information about collisions
-    ContactArray m_contacts;
+	// information about collisions
+	ContactArray m_contacts;
 
-    // misc flags
-    int m_flags;
+	// misc flags
+	int m_flags;
 
-    // material info for sensors
-    gkString m_sensorMaterial;
+	// material info for sensors
+	gkString m_sensorMaterial;
 };
 
 

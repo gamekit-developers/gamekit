@@ -33,35 +33,35 @@
 
 
 
-// Timer for running loops at a fixed rate 
+// Timer for running loops at a fixed rate
 class gkTickState
 {
 private:
 
-    unsigned long   m_ticks, m_rate;
-    unsigned long   m_skip, m_loop;
-    unsigned long   m_cur, m_next;
-    gkScalar        m_fixed, m_invt;
-    btClock         *m_clock;
-    bool            m_lock, m_init;
+	unsigned long   m_ticks, m_rate;
+	unsigned long   m_skip, m_loop;
+	unsigned long   m_cur, m_next;
+	gkScalar        m_fixed, m_invt;
+	btClock         *m_clock;
+	bool            m_lock, m_init;
 
 protected:
 
-    virtual void tickImpl(gkScalar delta) = 0;
-    virtual void syncImpl(gkScalar fac) {};
+	virtual void tickImpl(gkScalar delta) = 0;
+	virtual void syncImpl(gkScalar fac) {};
 
-    virtual void beginTickImpl(void) {}
-    virtual void endTickImpl(void) {}
+	virtual void beginTickImpl(void) {}
+	virtual void endTickImpl(void) {}
 
 public:
 
-    gkTickState();
-    gkTickState(int rate);
-    ~gkTickState();
+	gkTickState();
+	gkTickState(int rate);
+	~gkTickState();
 
-    void reset(void);
-    void initialize(int rate);
-    void tick(void);
+	void reset(void);
+	void initialize(int rate);
+	void tick(void);
 };
 
 

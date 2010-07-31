@@ -32,7 +32,7 @@
 
 // ----------------------------------------------------------------------------
 gkGameActuator::gkGameActuator(gkGameObject *object, gkLogicLink *link, const gkString &name)
-    :   gkLogicActuator(object, link, name), m_mode(-1), m_otherGame("")
+	:   gkLogicActuator(object, link, name), m_mode(-1), m_otherGame("")
 
 {
 }
@@ -43,30 +43,30 @@ gkGameActuator::~gkGameActuator()
 }
 
 // ----------------------------------------------------------------------------
-gkLogicBrick* gkGameActuator::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick *gkGameActuator::clone(gkLogicLink *link, gkGameObject *dest)
 {
-    gkGameActuator *act = new gkGameActuator(*this);
-    act->cloneImpl(link, dest);
-    return act;
+	gkGameActuator *act = new gkGameActuator(*this);
+	act->cloneImpl(link, dest);
+	return act;
 }
 
 // ----------------------------------------------------------------------------
 void gkGameActuator::execute(void)
 {
-    switch (m_mode)
-    {
-    case GM_QUIT:
-        {
-            gkEngine::getSingleton().requestExit();
-            break;
-        }break;
-    case GM_RESTART:
-        {
-            gkEngine::getSingleton().addLoadable(m_object->getOwner(), LQ_RELOAD);
-            break;
-        }break;
-    default:
-        printf("todo!\n");
-        break;
-    }
+	switch (m_mode)
+	{
+	case GM_QUIT:
+		{
+			gkEngine::getSingleton().requestExit();
+			break;
+		} break;
+	case GM_RESTART:
+		{
+			gkEngine::getSingleton().addLoadable(m_object->getOwner(), LQ_RELOAD);
+			break;
+		} break;
+	default:
+		printf("todo!\n");
+		break;
+	}
 }

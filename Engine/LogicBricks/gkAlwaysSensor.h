@@ -34,12 +34,12 @@ class gkAlwaysSensor : public gkLogicSensor
 {
 public:
 
-    gkAlwaysSensor(gkGameObject *object, gkLogicLink *link, const gkString &name);
-    virtual ~gkAlwaysSensor() {}
+	gkAlwaysSensor(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	virtual ~gkAlwaysSensor() {}
 
-    gkLogicBrick* clone(gkLogicLink *link, gkGameObject *dest);
+	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
 
-    GK_INLINE bool query(void) {return true;}
+	GK_INLINE bool query(void) {return true;}
 };
 
 

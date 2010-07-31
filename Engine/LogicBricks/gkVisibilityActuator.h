@@ -36,28 +36,28 @@ class gkVisibilityActuator : public gkLogicActuator
 {
 public:
 
-    enum VisFlag
-    {
-        VA_VIS_FLAG = (1 << 0),
-        VA_OCCLUDER = (1 << 1),
-        VA_CHILDREN = (1 << 2),
-    };
+	enum VisFlag
+	{
+		VA_VIS_FLAG = (1 << 0),
+		VA_OCCLUDER = (1 << 1),
+		VA_CHILDREN = (1 << 2),
+	};
 
 private:
-    int m_flag;
+	int m_flag;
 
 public:
 
-    gkVisibilityActuator(gkGameObject *object, gkLogicLink *link, const gkString &name);
-    virtual ~gkVisibilityActuator();
+	gkVisibilityActuator(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	virtual ~gkVisibilityActuator();
 
-    gkLogicBrick* clone(gkLogicLink *link, gkGameObject *dest);
+	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
 
-    GK_INLINE void  setFlag(int v)          {m_flag = v;}
-    GK_INLINE int   getFlag(void)           {return m_flag;}
+	GK_INLINE void  setFlag(int v)          {m_flag = v;}
+	GK_INLINE int   getFlag(void)           {return m_flag;}
 
-    // Handle incoming logic.
-    void execute(void);
+	// Handle incoming logic.
+	void execute(void);
 };
 
 

@@ -21,44 +21,43 @@
 // ----------------------------------------------------------------------------
 gksRayTest::gksRayTest()
 {
-    m_ray = new gkRayTest();
+	m_ray = new gkRayTest();
 }
 
 // ----------------------------------------------------------------------------
 gksRayTest::~gksRayTest()
 {
-    delete m_ray;
-    m_ray = 0;
+	delete m_ray;
+	m_ray = 0;
 }
 
 // ----------------------------------------------------------------------------
 bool gksRayTest::cast(const gksVector3 &from, const gksVector3 &to)
 {
-    return m_ray->collides(Ogre::Ray(from, to));
+	return m_ray->collides(Ogre::Ray(from, to));
 }
 
 
 // ----------------------------------------------------------------------------
 gksVector3 gksRayTest::getHitPoint(void)
 {
-    return m_ray->getHitPoint();
+	return m_ray->getHitPoint();
 }
 
 // ----------------------------------------------------------------------------
 gksPointer<gksGameObject> gksRayTest::getObject(void)
 {
-    return gksPointer<gksGameObject>(new gksGameObject(m_ray->getObject()));
+	return gksPointer<gksGameObject>(new gksGameObject(m_ray->getObject()));
 }
 
 // ----------------------------------------------------------------------------
 float gksRayTest::getHitFraction(void)
 {
-    return m_ray->getHitFraction();
+	return m_ray->getHitFraction();
 }
 
 // ----------------------------------------------------------------------------
 gksPointer<gksRayTest> newRayTest(void)
 {
-    return gksPointer<gksRayTest>(new gksRayTest());
+	return gksPointer<gksRayTest>(new gksRayTest());
 }
-

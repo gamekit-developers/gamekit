@@ -41,33 +41,33 @@
 
 class gkOgg : public gkSoundStream
 {
-    // Ogg File & memory decoder
+	// Ogg File & memory decoder
 private:
-    utStream        *m_reader;
-    OggVorbis_File  m_stream;
-    vorbis_info    *m_inf;
+	utStream        *m_reader;
+	OggVorbis_File  m_stream;
+	vorbis_info    *m_inf;
 
-    bool            m_eos;
-    ov_callbacks    m_callbacks;
+	bool            m_eos;
+	ov_callbacks    m_callbacks;
 
 public:
 
-    gkOgg();
-    virtual ~gkOgg();
+	gkOgg();
+	virtual ~gkOgg();
 
-    bool load(const char *fname);
-    bool load(const char *buf, int len);
+	bool load(const char *fname);
+	bool load(const char *buf, int len);
 
 
-    // stream impl
-    const char      *read(UTsize len, UTsize &br);
-    const char      *read(UTsize pos, UTsize len, UTsize &br);
-    bool            eos(void);
-    void            seek(UTsize pos, int way);
+	// stream impl
+	const char      *read(UTsize len, UTsize &br);
+	const char      *read(UTsize pos, UTsize len, UTsize &br);
+	bool            eos(void);
+	void            seek(UTsize pos, int way);
 
-    int             getFormat(void)     const;
-    int             getSampleRate(void) const;
-    int             getBitsPerSecond(void)  const;
+	int             getFormat(void)     const;
+	int             getSampleRate(void) const;
+	int             getBitsPerSecond(void)  const;
 };
 
 #endif//_gkOgg_h_

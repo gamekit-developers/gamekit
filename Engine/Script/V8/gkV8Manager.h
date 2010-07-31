@@ -38,31 +38,31 @@ class gkV8Manager : public Ogre::Singleton<gkV8Manager>
 {
 public:
 
-    typedef utList<gkV8Script*> ScriptList;
-    typedef utList<v8Module> Modules;
+	typedef utList<gkV8Script *> ScriptList;
+	typedef utList<v8Module> Modules;
 
 private:
-    v8::HandleScope __scope__;
-    v8Globals       m_globals;
-    v8Context       m_context;
-    ScriptList      m_scripts;
-    Modules         m_modules;
+	v8::HandleScope __scope__;
+	v8Globals       m_globals;
+	v8Context       m_context;
+	ScriptList      m_scripts;
+	Modules         m_modules;
 
 public:
 
-    gkV8Manager();
-    ~gkV8Manager();
+	gkV8Manager();
+	~gkV8Manager();
 
-    void initializeBindings(v8BindModule *extras);
+	void initializeBindings(v8BindModule *extras);
 
-    v8Context& getContext(void) {return m_context;}
-    // Create new script from text buffer
-    gkV8Script* create(const gkString& name, const gkString &text);
-    gkV8Script* create(const gkString& file);
+	v8Context &getContext(void) {return m_context;}
+	// Create new script from text buffer
+	gkV8Script *create(const gkString &name, const gkString &text);
+	gkV8Script *create(const gkString &file);
 
 
-    static gkV8Manager& getSingleton();
-    static gkV8Manager* getSingletonPtr();
+	static gkV8Manager &getSingleton();
+	static gkV8Manager *getSingletonPtr();
 
 };
 

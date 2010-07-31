@@ -40,17 +40,17 @@ public:
 
 	~gkRayTest();
 
-	bool collides(const Ogre::Ray& ray);
+	bool collides(const Ogre::Ray &ray);
 
-	const gkVector3& getHitPoint() const { return m_hitPointWorld; }
+	const gkVector3 &getHitPoint() const { return m_hitPointWorld; }
 
-	const gkVector3& getHitNormal() const { return m_hitNormalWorld; }
+	const gkVector3 &getHitNormal() const { return m_hitNormalWorld; }
 
-	btCollisionObject* getCollisionObject() const { return m_collisionObject; }
+	btCollisionObject *getCollisionObject() const { return m_collisionObject; }
 
-	gkGameObject* getObject() const;
+	gkGameObject *getObject() const;
 
-    gkScalar getHitFraction() const {return m_hitFraction;}
+	gkScalar getHitFraction() const {return m_hitFraction;}
 
 private:
 
@@ -58,9 +58,9 @@ private:
 
 	gkVector3 m_hitNormalWorld;
 
-	btCollisionObject* m_collisionObject;
-    
-    gkScalar m_hitFraction;
+	btCollisionObject *m_collisionObject;
+
+	gkScalar m_hitFraction;
 };
 
 

@@ -27,16 +27,16 @@ class gksScene : public gksObject
 #ifndef SWIG
 
 public:
-    gksScene(gkObject *oth) : gksObject(oth) {}
+	gksScene(gkObject *oth) : gksObject(oth) {}
 #endif
 
 public:
-    gksScene() : gksObject() {}
+	gksScene() : gksObject() {}
 
-    virtual ~gksScene() {}
+	virtual ~gksScene() {}
 
-    bool hasObject(const char *name);
-    gksPointer<gksGameObject>   getObject(const char *name);
+	bool hasObject(const char *name);
+	gksPointer<gksGameObject>   getObject(const char *name);
 };
 
 extern gksPointer<gksScene> getCurrentScene(void);

@@ -39,52 +39,52 @@
 
 // ----------------------------------------------------------------------------
 gkSource::gkSource(gkSound *sound)
-    :   m_playback(0),
-        m_props(),
-        m_reference(sound)
+	:   m_playback(0),
+	    m_props(),
+	    m_reference(sound)
 {
 }
 
 // ----------------------------------------------------------------------------
 gkSource::~gkSource()
 {
-    GK_ASSERT(!m_playback && "Playback not unbound");
+	GK_ASSERT(!m_playback && "Playback not unbound");
 }
 
 
 // ----------------------------------------------------------------------------
 void gkSource::_bind(gkBuffer *buf)
 {
-    m_playback = buf;
-    if (m_playback)
-        m_playback->setProperties(m_props);
+	m_playback = buf;
+	if (m_playback)
+		m_playback->setProperties(m_props);
 }
 
 
 // ----------------------------------------------------------------------------
 void gkSource::updatePropsForObject(gkGameObject *obj)
 {
-    if (obj)
-    {
+	if (obj)
+	{
 
-        gkVector3 pos = obj->getWorldPosition();
-        gkVector3 vel = obj->getLinearVelocity();
-        gkQuaternion ori = obj->getWorldOrientation();
-        gkVector3 dir = (ori * gkVector3(0, 1, 0)).normalisedCopy();
+		gkVector3 pos = obj->getWorldPosition();
+		gkVector3 vel = obj->getLinearVelocity();
+		gkQuaternion ori = obj->getWorldOrientation();
+		gkVector3 dir = (ori * gkVector3(0, 1, 0)).normalisedCopy();
 
-        m_props.m_height = 2.f * obj->getAabb().getHalfSize().z;
-        m_props.m_orientation = ori;
-        m_props.m_position = pos;
-        m_props.m_direction = dir;
-        m_props.m_velocity = vel;
+		m_props.m_height = 2.f * obj->getAabb().getHalfSize().z;
+		m_props.m_orientation = ori;
+		m_props.m_position = pos;
+		m_props.m_direction = dir;
+		m_props.m_velocity = vel;
 
-        if (m_playback)
-        {
-            m_playback->setPosition(m_props.m_position);
-            m_playback->setDirection(m_props.m_direction);
-            m_playback->setVelocity(m_props.m_velocity);
-        }
-    }
+		if (m_playback)
+		{
+			m_playback->setPosition(m_props.m_position);
+			m_playback->setDirection(m_props.m_direction);
+			m_playback->setVelocity(m_props.m_velocity);
+		}
+	}
 
 }
 
@@ -92,46 +92,46 @@ void gkSource::updatePropsForObject(gkGameObject *obj)
 // ----------------------------------------------------------------------------
 bool gkSource::isPaused(void)
 {
-    return m_playback ? m_playback->isSuspended() : false;
+	return m_playback ? m_playback->isSuspended() : false;
 }
 
 
 // ----------------------------------------------------------------------------
 gkSoundStream *gkSource::_getStream(void)
 {
-    return m_reference ? m_reference->getStream() : 0;
+	return m_reference ? m_reference->getStream() : 0;
 }
 
 
 // ----------------------------------------------------------------------------
 void gkSource::play(void)
 {
-    if (m_reference && !m_playback)
-    {
-        gkSoundStream *stream = m_reference->getStream();
-        if (stream)
-            gkSoundManager::getSingleton().playSound(this);
-    }
+	if (m_reference && !m_playback)
+	{
+		gkSoundStream *stream = m_reference->getStream();
+		if (stream)
+			gkSoundManager::getSingleton().playSound(this);
+	}
 }
 
 // ----------------------------------------------------------------------------
 void gkSource::pause(void)
 {
-    if (isPlaying())
-        m_playback->suspend(!isPaused());
+	if (isPlaying())
+		m_playback->suspend(!isPaused());
 }
 
 // ----------------------------------------------------------------------------
 void gkSource::stop(void)
 {
-    if (isPlaying())
-        gkSoundManager::getSingleton().stopSound(this);
+	if (isPlaying())
+		gkSoundManager::getSingleton().stopSound(this);
 }
 
 // ----------------------------------------------------------------------------
 void gkSource::loop(bool v)
 {
-    m_props.m_loop = v;
-    if (m_playback)
-        m_playback->setLoop(m_props.m_loop);
+	m_props.m_loop = v;
+	if (m_playback)
+		m_playback->setLoop(m_props.m_loop);
 }

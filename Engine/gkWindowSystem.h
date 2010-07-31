@@ -38,67 +38,67 @@
 class gkWindowSystem : public Ogre::Singleton<gkWindowSystem>
 {
 public:
-    // event listener
-    class Listener : public utListClass<Listener>::Link
-    {
-    public:
-        virtual ~Listener() {}
+	// event listener
+	class Listener : public utListClass<Listener>::Link
+	{
+	public:
+		virtual ~Listener() {}
 
-        virtual void mouseMoved(const gkMouse& mouse) {}
-        virtual void mousePressed(const gkMouse& mouse) {}
-        virtual void mouseReleased(const gkMouse& mouse) {}
-        virtual void keyPressed(const gkKeyboard& key, const gkScanCode& sc) {}
-        virtual void keyReleased(const gkKeyboard& key, const gkScanCode& sc) {}
-    };
+		virtual void mouseMoved(const gkMouse &mouse) {}
+		virtual void mousePressed(const gkMouse &mouse) {}
+		virtual void mouseReleased(const gkMouse &mouse) {}
+		virtual void keyPressed(const gkKeyboard &key, const gkScanCode &sc) {}
+		virtual void keyReleased(const gkKeyboard &key, const gkScanCode &sc) {}
+	};
 
-    typedef utListClass<Listener> ListenerList;
+	typedef utListClass<Listener> ListenerList;
 
 protected:
-    friend class Private;
+	friend class Private;
 
-    // TODO joystick(s) state access
+	// TODO joystick(s) state access
 
-    // Keyboard state access
-    gkKeyboard          m_keyboard;
+	// Keyboard state access
+	gkKeyboard          m_keyboard;
 
-    // Mouse state access
-    gkMouse             m_mouse;
+	// Mouse state access
+	gkMouse             m_mouse;
 
-    // Internal interface implementation
-    class Private;
-    Private*            m_internal;
+	// Internal interface implementation
+	class Private;
+	Private            *m_internal;
 
-    // Ogre render window
-    Ogre::RenderWindow* m_window;
+	// Ogre render window
+	Ogre::RenderWindow *m_window;
 
-    // Exit requested
-    bool                m_exit;
+	// Exit requested
+	bool                m_exit;
 
-    // callbacks
-    ListenerList        m_listeners;
+	// callbacks
+	ListenerList        m_listeners;
 
 public:
-    gkWindowSystem();
-    virtual ~gkWindowSystem();
+	gkWindowSystem();
+	virtual ~gkWindowSystem();
 
 
 
-    Ogre::RenderWindow *createMainWindow(const gkUserDefs &prefs);
-    Ogre::RenderWindow *getMainWindow(void);
+	Ogre::RenderWindow *createMainWindow(const gkUserDefs &prefs);
+	Ogre::RenderWindow *getMainWindow(void);
 
-    void addListener(Listener *l);
-    void removeListener(Listener *l);
+	void addListener(Listener *l);
+	void removeListener(Listener *l);
 
-    void process(void);
-    void dispatch(void);
+	void process(void);
+	void dispatch(void);
 
-    GK_INLINE void exit(bool v)             {m_exit = v;}
-    GK_INLINE bool exitRequest(void)        {return m_exit;}
-    GK_INLINE gkKeyboard* getKeyboard(void) {return &m_keyboard;}
-    GK_INLINE gkMouse* getMouse(void)       {return &m_mouse;}
+	GK_INLINE void exit(bool v)             {m_exit = v;}
+	GK_INLINE bool exitRequest(void)        {return m_exit;}
+	GK_INLINE gkKeyboard *getKeyboard(void) {return &m_keyboard;}
+	GK_INLINE gkMouse *getMouse(void)       {return &m_mouse;}
 
-    static gkWindowSystem& getSingleton(void);
-    static gkWindowSystem* getSingletonPtr(void);
+	static gkWindowSystem &getSingleton(void);
+	static gkWindowSystem *getSingletonPtr(void);
 };
 
 #endif//_gkWindowSystem_h_

@@ -47,10 +47,10 @@ void gkSkyBoxGradient::fill(Ogre::Image &ima, int size, const Ogre::ColourValue 
 	unsigned int *ptr, r;
 
 	sqs = size * size;
-	unsigned char* tbuf = new unsigned char[sqs*4];
+	unsigned char *tbuf = new unsigned char[sqs*4];
 
 	Ogre::PixelUtil::packColour(v, fmt, &r);
-	ptr = (unsigned int*)tbuf;
+	ptr = (unsigned int *)tbuf;
 	x = 0;
 	do
 		ptr[x++] = r;
@@ -63,9 +63,9 @@ void gkSkyBoxGradient::fill(Ogre::Image &ima, int size, const Ogre::ColourValue 
 }
 
 
-void gkSkyBoxGradient::grad(Ogre::Image &ima, int x1, int y1, int x2, int y2, int size, 
-						  const Ogre::ColourValue &s, const Ogre::ColourValue &e, 
-						  const Ogre::PixelFormat &fmt)
+void gkSkyBoxGradient::grad(Ogre::Image &ima, int x1, int y1, int x2, int y2, int size,
+                            const Ogre::ColourValue &s, const Ogre::ColourValue &e,
+                            const Ogre::PixelFormat &fmt)
 {
 	int x, y, sqs;
 	float A, B, C, C1, C2;
@@ -74,7 +74,7 @@ void gkSkyBoxGradient::grad(Ogre::Image &ima, int x1, int y1, int x2, int y2, in
 	x1 = gkClamp<int>(x1, 0, size); x2 = gkClamp<int>(x2, 0, size);
 	y1 = gkClamp<int>(y1, 0, size); y2 = gkClamp<int>(y2, 0, size);
 
-	A = float(x2 - x1); 
+	A = float(x2 - x1);
 	B = float(y2 - y1);
 	C1 = A * x1 + B * y1;
 	C2 = A * x2 + B * y2;
@@ -82,8 +82,8 @@ void gkSkyBoxGradient::grad(Ogre::Image &ima, int x1, int y1, int x2, int y2, in
 
 
 	float scale = 1.f / float(sqs);
-	unsigned char* tbuf = new unsigned char[sqs*4];
-	ptr = (unsigned int*)tbuf;
+	unsigned char *tbuf = new unsigned char[sqs*4];
+	ptr = (unsigned int *)tbuf;
 	Ogre::ColourValue c;
 
 	for (x = 0; x<size; ++x)
@@ -108,9 +108,9 @@ void gkSkyBoxGradient::grad(Ogre::Image &ima, int x1, int y1, int x2, int y2, in
 }
 
 
-void gkSkyBoxGradient::loadResource(Ogre::Resource* resource)
+void gkSkyBoxGradient::loadResource(Ogre::Resource *resource)
 {
-	Ogre::Texture *tex = (Ogre::Texture*)resource;
+	Ogre::Texture *tex = (Ogre::Texture *)resource;
 
 	Ogre::ColourValue zen(m_world->zenr, m_world->zeng, m_world->zenb);
 	Ogre::ColourValue hor(m_world->horr, m_world->horg, m_world->horb);
@@ -123,7 +123,7 @@ void gkSkyBoxGradient::loadResource(Ogre::Resource* resource)
 	tex->setNumMipmaps(0);
 
 	unsigned int size = 64;
-	unsigned int sf = 16; // offset 
+	unsigned int sf = 16; // offset
 
 
 	Ogre::Image zeni, hori;
@@ -143,14 +143,14 @@ void gkSkyBoxGradient::loadResource(Ogre::Resource* resource)
 
 	Ogre::ConstImagePtrList ptrs;
 
-	// not the correct order 
+	// not the correct order
 	ptrs.push_back(&zhr);
 	ptrs.push_back(&zhl);
 	ptrs.push_back(&zhf);
 	ptrs.push_back(&zhb);
 	ptrs.push_back(&hori);
 	ptrs.push_back(&zeni);
-	
+
 	tex->_loadImages(ptrs);
 
 }

@@ -34,79 +34,79 @@ gkTextManager::gkTextManager()
 
 gkTextManager::~gkTextManager()
 {
-    destroyAll();
+	destroyAll();
 }
 
 
 
-gkTextFile* gkTextManager::getFile(const gkString& name)
+gkTextFile *gkTextManager::getFile(const gkString &name)
 {
-    size_t pos;
-    if ((pos = m_files.find(name)) == GK_NPOS)
-        return 0;
-    return m_files.at(pos);
+	size_t pos;
+	if ((pos = m_files.find(name)) == GK_NPOS)
+		return 0;
+	return m_files.at(pos);
 }
 
 
 
-gkTextFile* gkTextManager::create(const gkString& name, const gkTextFile::TextType &type)
+gkTextFile *gkTextManager::create(const gkString &name, const gkTextFile::TextType &type)
 {
-    size_t pos;
-    if ((pos = m_files.find(name)) != GK_NPOS)
-        return 0;
+	size_t pos;
+	if ((pos = m_files.find(name)) != GK_NPOS)
+		return 0;
 
-    gkTextFile *ob = new gkTextFile(this, name, type);
-    m_files.insert(name, ob);
-    return ob;
+	gkTextFile *ob = new gkTextFile(this, name, type);
+	m_files.insert(name, ob);
+	return ob;
 }
 
 
-void gkTextManager::destroy(const gkString& name)
+void gkTextManager::destroy(const gkString &name)
 {
-    size_t pos;
-    if ((pos = m_files.find(name)) != GK_NPOS)
-    {
-        gkTextFile *ob = m_files.at(pos);
-        m_files.remove(name);
-        delete ob;
-    }
+	size_t pos;
+	if ((pos = m_files.find(name)) != GK_NPOS)
+	{
+		gkTextFile *ob = m_files.at(pos);
+		m_files.remove(name);
+		delete ob;
+	}
 }
 
 
 void gkTextManager::destroy(gkTextFile *ob)
 {
-    GK_ASSERT(ob);
+	GK_ASSERT(ob);
 
-    gkString name = ob->getName();
-    size_t pos;
-    if ((pos = m_files.find(name)) != GK_NPOS)
-    {
-        gkTextFile *ob = m_files.at(pos);
-        m_files.remove(name);
-        delete ob;
-    }
+	gkString name = ob->getName();
+	size_t pos;
+	if ((pos = m_files.find(name)) != GK_NPOS)
+	{
+		gkTextFile *ob = m_files.at(pos);
+		m_files.remove(name);
+		delete ob;
+	}
 }
 
 
 
 void gkTextManager::destroyAll(void)
 {
-    utHashTableIterator<TextFiles> iter(m_files);
-    while (iter.hasMoreElements())
-    {
-        gkTextFile *ob = iter.peekNextValue();
-        delete ob;
-        iter.next();
-    }
+	utHashTableIterator<TextFiles> iter(m_files);
+	while (iter.hasMoreElements())
+	{
+		gkTextFile *ob = iter.peekNextValue();
+		delete ob;
+		iter.next();
+	}
 
-    m_files.clear();
+	m_files.clear();
 }
 
 
 
-bool gkTextManager::hasFile(const gkString& name)
+bool gkTextManager::hasFile(const gkString &name)
 {
-    return m_files.find(name) != GK_NPOS;
+	return m_files.find(name) != GK_NPOS;
 }
 
 

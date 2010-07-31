@@ -39,47 +39,47 @@ class gkSoundStream;
 
 class gkSoundProperties
 {
-    // Properties that can be added to a playback buffer
+	// Properties that can be added to a playback buffer
 
 public:
-    gkSoundProperties()
-        :   m_volume(1.f),
-            m_pitch(0.f),
-            m_loop(false),
-            m_3dSound(false),
-            m_refDistance(1.f),
-            m_maxDistance(GK_INFINITY),
-            m_gainClamp(0.f, 1.f),
-            m_rolloff(1.f),
-            m_coneOuterGain(0.f),
-            m_coneAngle(360.f, 360.f),
-            m_position(0.f, 0.f, 0.f),
-            m_velocity(0.f, 0.f, 0.f),
-            m_direction(0.f, 0.f, 0.f),
-            m_height(1.f)
-    {
-    }
+	gkSoundProperties()
+		:   m_volume(1.f),
+		    m_pitch(0.f),
+		    m_loop(false),
+		    m_3dSound(false),
+		    m_refDistance(1.f),
+		    m_maxDistance(GK_INFINITY),
+		    m_gainClamp(0.f, 1.f),
+		    m_rolloff(1.f),
+		    m_coneOuterGain(0.f),
+		    m_coneAngle(360.f, 360.f),
+		    m_position(0.f, 0.f, 0.f),
+		    m_velocity(0.f, 0.f, 0.f),
+		    m_direction(0.f, 0.f, 0.f),
+		    m_height(1.f)
+	{
+	}
 
-    gkScalar    m_volume;
-    gkScalar    m_pitch;
-    bool        m_loop;
+	gkScalar    m_volume;
+	gkScalar    m_pitch;
+	bool        m_loop;
 
 
-    bool        m_3dSound;
+	bool        m_3dSound;
 
-    gkScalar    m_refDistance;
-    gkScalar    m_maxDistance;
-    gkVector2   m_gainClamp;
-    gkScalar    m_rolloff;
-    gkScalar    m_coneOuterGain;
-    gkVector2   m_coneAngle;
+	gkScalar    m_refDistance;
+	gkScalar    m_maxDistance;
+	gkVector2   m_gainClamp;
+	gkScalar    m_rolloff;
+	gkScalar    m_coneOuterGain;
+	gkVector2   m_coneAngle;
 
-    // position params
-    gkVector3       m_position;
-    gkVector3       m_velocity;
-    gkVector3       m_direction;
-    gkQuaternion    m_orientation;
-    gkScalar        m_height;
+	// position params
+	gkVector3       m_position;
+	gkVector3       m_velocity;
+	gkVector3       m_direction;
+	gkQuaternion    m_orientation;
+	gkScalar        m_height;
 
 };
 
@@ -87,52 +87,52 @@ public:
 class gkSource
 {
 private:
-    gkBuffer            *m_playback;    // active playback buffer
-    gkSoundProperties    m_props;       // properties to attach to the sound stream
-    gkSound             *m_reference;   // reference sound object
+	gkBuffer            *m_playback;    // active playback buffer
+	gkSoundProperties    m_props;       // properties to attach to the sound stream
+	gkSound             *m_reference;   // reference sound object
 
 
 public:
 
-    gkSource(gkSound *sound);
-    virtual ~gkSource();
+	gkSource(gkSound *sound);
+	virtual ~gkSource();
 
 
-    // bind / unbind a buffer to this object.
-    // This object is only playable when a buffer is attached.
-    // (internal use only)
-    void            _bind(gkBuffer *buf);
+	// bind / unbind a buffer to this object.
+	// This object is only playable when a buffer is attached.
+	// (internal use only)
+	void            _bind(gkBuffer *buf);
 
-    // playback buffer  (internal use only)
-    gkBuffer        *_getBuffer(void) {return m_playback;}
+	// playback buffer  (internal use only)
+	gkBuffer        *_getBuffer(void) {return m_playback;}
 
-    // playback stream (internal use only)
-    gkSoundStream   *_getStream(void);
-
-
-
-    GK_INLINE bool                  isStopped(void)         {return !isPlaying() || isPaused(); }
-    GK_INLINE bool                  isPlaying(void)         {return isBound();}
-    GK_INLINE bool                  isBound(void)           {return m_playback != 0;}
-    GK_INLINE bool                  isLooped(void)          {return m_props.m_loop;}
-    GK_INLINE gkSoundProperties     &getProperties(void)    {return m_props;}
-    GK_INLINE gkSound               *getCreator(void)       {return m_reference;}
-
-    GK_INLINE void setProperties(gkSoundProperties &props)  {m_props = props;}
-
-    // Object state for 3D sounds
-    void updatePropsForObject(gkGameObject *obj);
+	// playback stream (internal use only)
+	gkSoundStream   *_getStream(void);
 
 
-    bool isPaused(void);
 
-    // playing states
-    void play(void);
-    void pause(void);
-    void stop(void);
-    void loop(bool v);
+	GK_INLINE bool                  isStopped(void)         {return !isPlaying() || isPaused(); }
+	GK_INLINE bool                  isPlaying(void)         {return isBound();}
+	GK_INLINE bool                  isBound(void)           {return m_playback != 0;}
+	GK_INLINE bool                  isLooped(void)          {return m_props.m_loop;}
+	GK_INLINE gkSoundProperties     &getProperties(void)    {return m_props;}
+	GK_INLINE gkSound               *getCreator(void)       {return m_reference;}
 
-    void resetPlayable(void);
+	GK_INLINE void setProperties(gkSoundProperties &props)  {m_props = props;}
+
+	// Object state for 3D sounds
+	void updatePropsForObject(gkGameObject *obj);
+
+
+	bool isPaused(void);
+
+	// playing states
+	void play(void);
+	void pause(void);
+	void stop(void);
+	void loop(bool v);
+
+	void resetPlayable(void);
 };
 
 

@@ -37,27 +37,27 @@
 class gkMeshManager : public Ogre::Singleton<gkMeshManager>
 {
 public:
-    typedef utHashTable<gkHashedString, gkMesh*> ObjectMap;
+	typedef utHashTable<gkHashedString, gkMesh *> ObjectMap;
 
 protected:
-    ObjectMap m_objects;
+	ObjectMap m_objects;
 
 public:
 
-    gkMeshManager();
-    virtual ~gkMeshManager();
+	gkMeshManager();
+	virtual ~gkMeshManager();
 
 
-    gkMesh* getMesh(const gkHashedString& name);
-    gkMesh* create(const gkHashedString& name);
+	gkMesh *getMesh(const gkHashedString &name);
+	gkMesh *create(const gkHashedString &name);
 
-    void destroy(const gkHashedString& name);
-    void destroy(gkMesh *ob);
-    void destroyAll(void);
-    bool hasMesh(const gkHashedString& name);
+	void destroy(const gkHashedString &name);
+	void destroy(gkMesh *ob);
+	void destroyAll(void);
+	bool hasMesh(const gkHashedString &name);
 
-    static gkMeshManager& getSingleton(void);
-    static gkMeshManager* getSingletonPtr(void);
+	static gkMeshManager &getSingleton(void);
+	static gkMeshManager *getSingletonPtr(void);
 
 };
 

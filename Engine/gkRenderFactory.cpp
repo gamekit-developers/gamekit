@@ -49,27 +49,27 @@ OgreRenderSystem gkFindRenderSystem(OgreRenderSystem wanted)
 {
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
 # ifdef OGREKIT_D3D9RS
-    if (wanted == OGRE_RS_D3D9) return OGRE_RS_D3D9;
+	if (wanted == OGRE_RS_D3D9) return OGRE_RS_D3D9;
 # endif
 # ifdef OGREKIT_D3D10RS
-    if (wanted == OGRE_RS_D3D10) return OGRE_RS_D3D10;
+	if (wanted == OGRE_RS_D3D10) return OGRE_RS_D3D10;
 # endif
 # ifdef OGREKIT_D3D11RS
-    if (wanted == OGRE_RS_D3D11) return OGRE_RS_D3D11;
+	if (wanted == OGRE_RS_D3D11) return OGRE_RS_D3D11;
 # endif
 #endif
-    // TODO setup OpenGL ES
+	// TODO setup OpenGL ES
 #ifdef OGREKIT_GLRS
-    // OpenGL is the default
-    return OGRE_RS_GL;
+	// OpenGL is the default
+	return OGRE_RS_GL;
 #endif
-    return OGRE_RS_UNKNOWN;
+	return OGRE_RS_UNKNOWN;
 }
 
 
 
 gkRenderFactoryPrivate::gkRenderFactoryPrivate() :
-        m_renderSystem(0), m_particleSystem(0)
+	m_renderSystem(0), m_particleSystem(0)
 {
 }
 
@@ -82,55 +82,55 @@ gkRenderFactoryPrivate::~gkRenderFactoryPrivate()
 		m_particleSystem = 0;
 	}
 
-    if (m_renderSystem)
-    {
-        delete m_renderSystem;
-        m_renderSystem = 0;
-    }
+	if (m_renderSystem)
+	{
+		delete m_renderSystem;
+		m_renderSystem = 0;
+	}
 }
 
 
-void gkRenderFactoryPrivate::createRenderSystem(Ogre::Root* r, OgreRenderSystem backend)
+void gkRenderFactoryPrivate::createRenderSystem(Ogre::Root *r, OgreRenderSystem backend)
 {
-    if (m_renderSystem != 0)
-        return;
+	if (m_renderSystem != 0)
+		return;
 
-    switch (gkFindRenderSystem(backend))
-    {
-    case OGRE_RS_D3D10:
+	switch (gkFindRenderSystem(backend))
+	{
+	case OGRE_RS_D3D10:
 #if OGREKIT_D3D10RS
-        m_renderSystem = new Ogre::D3D10Plugin();
-        r->installPlugin(m_renderSystem);
+		m_renderSystem = new Ogre::D3D10Plugin();
+		r->installPlugin(m_renderSystem);
 #endif
-        break;
-    case OGRE_RS_D3D9:
+		break;
+	case OGRE_RS_D3D9:
 #ifdef OGREKIT_D3D9RS
-        m_renderSystem = new Ogre::D3D9Plugin();
-        r->installPlugin(m_renderSystem);
+		m_renderSystem = new Ogre::D3D9Plugin();
+		r->installPlugin(m_renderSystem);
 #endif
-        break;
-    case OGRE_RS_D3D11:
+		break;
+	case OGRE_RS_D3D11:
 #ifdef OGREKIT_D3D11RS
-        m_renderSystem = new Ogre::D3D11Plugin();
-        r->installPlugin(m_renderSystem);
+		m_renderSystem = new Ogre::D3D11Plugin();
+		r->installPlugin(m_renderSystem);
 #endif
-        break;
-    case OGRE_RS_GLES:
-    case OGRE_RS_GL:
+		break;
+	case OGRE_RS_GLES:
+	case OGRE_RS_GL:
 #ifdef OGREKIT_GLRS
-        m_renderSystem = new Ogre::GLPlugin();
-        r->installPlugin(m_renderSystem);
+		m_renderSystem = new Ogre::GLPlugin();
+		r->installPlugin(m_renderSystem);
 #endif
-        break;
-    case OGRE_RS_UNKNOWN:
-    default:
-        break;
-    }
+		break;
+	case OGRE_RS_UNKNOWN:
+	default:
+		break;
+	}
 
-    GK_ASSERT(m_renderSystem);
+	GK_ASSERT(m_renderSystem);
 }
 
-void gkRenderFactoryPrivate::createParticleSystem(Ogre::Root* r)
+void gkRenderFactoryPrivate::createParticleSystem(Ogre::Root *r)
 {
 	m_particleSystem = new Ogre::ParticleFXPlugin();
 	r->installPlugin(m_particleSystem);

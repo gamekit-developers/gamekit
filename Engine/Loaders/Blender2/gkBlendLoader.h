@@ -34,21 +34,21 @@
 class gkBlendLoader : public Ogre::Singleton<gkBlendLoader>
 {
 public:
-    typedef utListClass<gkBlendFile>        gkBlendFileList;
-    typedef utListIterator<gkBlendFileList> gkBlendFileIterator;
+	typedef utListClass<gkBlendFile>        gkBlendFileList;
+	typedef utListIterator<gkBlendFileList> gkBlendFileIterator;
 
 public:
-    gkBlendLoader();
-    ~gkBlendLoader();
+	gkBlendLoader();
+	~gkBlendLoader();
 
-    static gkBlendLoader& getSingleton(void);
-    static gkBlendLoader* getSingletonPtr(void);
+	static gkBlendLoader &getSingleton(void);
+	static gkBlendLoader *getSingletonPtr(void);
 
-    gkBlendFile* loadFile(const gkString& dblend, const gkString& inResourceGroup = GK_DEF_GROUP);
+	gkBlendFile *loadFile(const gkString &dblend, const gkString &inResourceGroup = GK_DEF_GROUP);
 
 private:
 
-    gkBlendFileList m_openFiles;
+	gkBlendFileList m_openFiles;
 };
 
 

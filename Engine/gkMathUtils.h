@@ -95,12 +95,12 @@ GK_INLINE gkScalar  gkRadians(const gkScalar &v)                            { re
 
 // Min / Max utils
 
-template <typename T> GK_INLINE T gkMax(const T& a, const T& b)                         {return a < b ? b : a; }
-template <typename T> GK_INLINE T gkMin(const T& a, const T& b)                         {return a < b ? a : b; }
-template <typename T> GK_INLINE T gkClamp(const T& v, const T& a, const T& b)           {return v < a ? a : v > b ? b : v; }
-GK_INLINE gkScalar gkMaxf(const gkScalar& a, const gkScalar& b)                         {return gkMax<gkScalar>(a, b); }
-GK_INLINE gkScalar gkMinf(const gkScalar& a, const gkScalar& b)                         {return gkMin<gkScalar>(a, b); }
-GK_INLINE gkScalar gkClampf(const gkScalar& v, const gkScalar& a, const gkScalar& b)    {return gkClamp<gkScalar>(v, a, b); }
+template <typename T> GK_INLINE T gkMax(const T &a, const T &b)                         {return a < b ? b : a; }
+template <typename T> GK_INLINE T gkMin(const T &a, const T &b)                         {return a < b ? a : b; }
+template <typename T> GK_INLINE T gkClamp(const T &v, const T &a, const T &b)           {return v < a ? a : v > b ? b : v; }
+GK_INLINE gkScalar gkMaxf(const gkScalar &a, const gkScalar &b)                         {return gkMax<gkScalar>(a, b); }
+GK_INLINE gkScalar gkMinf(const gkScalar &a, const gkScalar &b)                         {return gkMin<gkScalar>(a, b); }
+GK_INLINE gkScalar gkClampf(const gkScalar &v, const gkScalar &a, const gkScalar &b)    {return gkClamp<gkScalar>(v, a, b); }
 
 
 // Simple euler wrapper class to ease converting
@@ -108,75 +108,75 @@ GK_INLINE gkScalar gkClampf(const gkScalar& v, const gkScalar& a, const gkScalar
 class gkEuler
 {
 public:
-    GK_INLINE gkEuler() {}
+	GK_INLINE gkEuler() {}
 
-    GK_INLINE gkEuler(const gkDegree &dx, const gkDegree &dy, const gkDegree &dz)
-    :       x(dx.valueDegrees()), y(dy.valueDegrees()), z(dz.valueDegrees())
-    {
-    }
+	GK_INLINE gkEuler(const gkDegree &dx, const gkDegree &dy, const gkDegree &dz)
+		:       x(dx.valueDegrees()), y(dy.valueDegrees()), z(dz.valueDegrees())
+	{
+	}
 
-    GK_INLINE gkEuler(gkScalar dx, gkScalar dy, gkScalar dz)
-    :       x(gkDegree(dx)), y(gkDegree(dy)), z(gkDegree(dz))
-    {
-    }
+	GK_INLINE gkEuler(gkScalar dx, gkScalar dy, gkScalar dz)
+		:       x(gkDegree(dx)), y(gkDegree(dy)), z(gkDegree(dz))
+	{
+	}
 
-    GK_INLINE gkEuler(const gkVector3 &v)
-    :       x(gkDegree(v.x)), y(gkDegree(v.y)), z(gkDegree(v.z))
-    {
-    }
+	GK_INLINE gkEuler(const gkVector3 &v)
+		:       x(gkDegree(v.x)), y(gkDegree(v.y)), z(gkDegree(v.z))
+	{
+	}
 
-    GK_INLINE gkEuler(const gkRadian &rx, const gkRadian &ry, const gkRadian &rz)
-    :       x(rx.valueDegrees()), y(ry.valueDegrees()), z(rz.valueDegrees())
-    {
-    }
+	GK_INLINE gkEuler(const gkRadian &rx, const gkRadian &ry, const gkRadian &rz)
+		:       x(rx.valueDegrees()), y(ry.valueDegrees()), z(rz.valueDegrees())
+	{
+	}
 
-    GK_INLINE gkEuler(const gkQuaternion& q)
-    {
-        gkMatrix3 matr;
-        q.ToRotationMatrix(matr);
-        matr.ToEulerAnglesZYX(z, y, x);
-    }
+	GK_INLINE gkEuler(const gkQuaternion &q)
+	{
+		gkMatrix3 matr;
+		q.ToRotationMatrix(matr);
+		matr.ToEulerAnglesZYX(z, y, x);
+	}
 
-    GK_INLINE gkEuler(const gkMatrix3& v)           { v.ToEulerAnglesZYX(z, y, x); }
-    GK_INLINE gkVector3 toVector3(void) const       { return gkVector3(x.valueDegrees(), y.valueDegrees(), z.valueDegrees()); }
-    GK_INLINE gkQuaternion toQuaternion(void) const { return gkQuaternion(toMatrix3());}
+	GK_INLINE gkEuler(const gkMatrix3 &v)           { v.ToEulerAnglesZYX(z, y, x); }
+	GK_INLINE gkVector3 toVector3(void) const       { return gkVector3(x.valueDegrees(), y.valueDegrees(), z.valueDegrees()); }
+	GK_INLINE gkQuaternion toQuaternion(void) const { return gkQuaternion(toMatrix3());}
 
-    GK_INLINE gkMatrix3 toMatrix3(void) const
-    {
-        gkMatrix3 rx, ry, rz;
-        rx.FromAxisAngle(gkVector3::UNIT_X, x);
-        ry.FromAxisAngle(gkVector3::UNIT_Y, y);
-        rz.FromAxisAngle(gkVector3::UNIT_Z, z);
-        return gkMatrix3(rz*ry*rx);
-    }
+	GK_INLINE gkMatrix3 toMatrix3(void) const
+	{
+		gkMatrix3 rx, ry, rz;
+		rx.FromAxisAngle(gkVector3::UNIT_X, x);
+		ry.FromAxisAngle(gkVector3::UNIT_Y, y);
+		rz.FromAxisAngle(gkVector3::UNIT_Z, z);
+		return gkMatrix3(rz*ry*rx);
+	}
 
-    gkRadian x, y, z;
+	gkRadian x, y, z;
 };
 
 
 class gkRectangle
 {
 public:
-    gkRectangle() {}
-    gkRectangle(gkScalar xv, gkScalar yv, gkScalar wv, gkScalar hv)
-    {
-        x = xv;
-        y = yv;
-        width = wv;
-        height = hv;
-    }
-    gkRectangle(const gkRectangle& o) { *this = o; }
+	gkRectangle() {}
+	gkRectangle(gkScalar xv, gkScalar yv, gkScalar wv, gkScalar hv)
+	{
+		x = xv;
+		y = yv;
+		width = wv;
+		height = hv;
+	}
+	gkRectangle(const gkRectangle &o) { *this = o; }
 
-    gkRectangle& operator= (const gkRectangle &o)
-    {
-        x = o.x;
-        y = o.y;
-        width = o.width;
-        height = o.height;
-        return *this;
-    }
-    gkScalar x, y;
-    gkScalar width, height;
+	gkRectangle &operator= (const gkRectangle &o)
+	{
+		x = o.x;
+		y = o.y;
+		width = o.width;
+		height = o.height;
+		return *this;
+	}
+	gkScalar x, y;
+	gkScalar width, height;
 };
 
 
@@ -186,36 +186,36 @@ class gkMathUtils
 {
 public:
 
-    static gkMatrix3 getMat3FromEuler(const gkVector3& eul, bool isDegree = GK_ROTUNIT);
-    static gkQuaternion getQuatFromEuler(const gkVector3 &eul, bool isDegree = GK_ROTUNIT);
-    static gkVector3 getEulerFromQuat(const gkQuaternion& q, bool toDegree = GK_ROTUNIT);
+	static gkMatrix3 getMat3FromEuler(const gkVector3 &eul, bool isDegree = GK_ROTUNIT);
+	static gkQuaternion getQuatFromEuler(const gkVector3 &eul, bool isDegree = GK_ROTUNIT);
+	static gkVector3 getEulerFromQuat(const gkQuaternion &q, bool toDegree = GK_ROTUNIT);
 
-    static gkMatrix4 getFromFloat(const float m[][4]);
-    static gkMatrix4 getFromFloat3(const float m[][3]);
-    static gkMatrix4 getFromFloatNorm(const float m[][4]);
+	static gkMatrix4 getFromFloat(const float m[][4]);
+	static gkMatrix4 getFromFloat3(const float m[][3]);
+	static gkMatrix4 getFromFloatNorm(const float m[][4]);
 
-    static void extractLocEulScale(const gkMatrix4 &m, gkVector3 &loc, gkVector3 &eul, gkVector3 &scale, bool inDegrees = true);
-    static void makeLocEulScale(gkMatrix4 &dest, const gkVector3& loc, const gkVector3& eul, const gkVector3 &scale, bool inDegrees = true);
-    static void makeLocQuatScale(gkMatrix4 &dest, const gkVector3& loc, const gkQuaternion& q, const gkVector3 &scale);
+	static void extractLocEulScale(const gkMatrix4 &m, gkVector3 &loc, gkVector3 &eul, gkVector3 &scale, bool inDegrees = true);
+	static void makeLocEulScale(gkMatrix4 &dest, const gkVector3 &loc, const gkVector3 &eul, const gkVector3 &scale, bool inDegrees = true);
+	static void makeLocQuatScale(gkMatrix4 &dest, const gkVector3 &loc, const gkQuaternion &q, const gkVector3 &scale);
 
-    static gkQuaternion interp(const gkQuaternion &a, const gkQuaternion &b, gkScalar t, bool fast = true);
-    static gkVector2 interp(const gkVector2 &a, const gkVector2 &b, gkScalar t);
-    static gkVector3 interp(const gkVector3 &a, const gkVector3 &b, gkScalar t);
-    static gkScalar interp(const gkScalar &a, const gkScalar &b, gkScalar t);
+	static gkQuaternion interp(const gkQuaternion &a, const gkQuaternion &b, gkScalar t, bool fast = true);
+	static gkVector2 interp(const gkVector2 &a, const gkVector2 &b, gkScalar t);
+	static gkVector3 interp(const gkVector3 &a, const gkVector3 &b, gkScalar t);
+	static gkScalar interp(const gkScalar &a, const gkScalar &b, gkScalar t);
 
-    static void extractTransform(const gkMatrix4& m, gkVector3 &loc, gkQuaternion &quat, gkVector3 &scale);
-    static void extractTransformFast(const gkMatrix4& m, gkVector3 &loc, gkQuaternion &quat, gkVector3 &scale, bool getScale = true);
-    static void blendMatrixFast(gkMatrix4& dest, const gkMatrix4 &A, const gkMatrix4 &B, gkScalar fact, bool fastRot = true, bool getScale = true);
+	static void extractTransform(const gkMatrix4 &m, gkVector3 &loc, gkQuaternion &quat, gkVector3 &scale);
+	static void extractTransformFast(const gkMatrix4 &m, gkVector3 &loc, gkQuaternion &quat, gkVector3 &scale, bool getScale = true);
+	static void blendMatrixFast(gkMatrix4 &dest, const gkMatrix4 &A, const gkMatrix4 &B, gkScalar fact, bool fastRot = true, bool getScale = true);
 
-    static void extractMatrix(const float m[][4], gkVector3 &loc, gkQuaternion &quat, gkVector3 &scale);
+	static void extractMatrix(const float m[][4], gkVector3 &loc, gkQuaternion &quat, gkVector3 &scale);
 
 
 
-    // Bullet converters
-    static GK_INLINE gkVector3      get(const btVector3 &v)     { return gkVector3(v.x(), v.y(), v.z()); }
-    static GK_INLINE btVector3      get(const gkVector3 &v)     { return btVector3(v.x, v.y, v.z); }
-    static GK_INLINE gkQuaternion   get(const btQuaternion &v)  { return gkQuaternion(v.w(), v.x(), v.y(), v.z()); }
-    static GK_INLINE btQuaternion   get(const gkQuaternion &v)  { return btQuaternion(v.x, v.y, v.z, v.w); }
+	// Bullet converters
+	static GK_INLINE gkVector3      get(const btVector3 &v)     { return gkVector3(v.x(), v.y(), v.z()); }
+	static GK_INLINE btVector3      get(const gkVector3 &v)     { return btVector3(v.x, v.y, v.z); }
+	static GK_INLINE gkQuaternion   get(const btQuaternion &v)  { return gkQuaternion(v.w(), v.x(), v.y(), v.z()); }
+	static GK_INLINE btQuaternion   get(const gkQuaternion &v)  { return btQuaternion(v.x, v.y, v.z, v.w); }
 
 };
 

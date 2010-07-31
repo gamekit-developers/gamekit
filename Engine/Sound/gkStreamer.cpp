@@ -38,27 +38,27 @@
 
 class gkStreamerTick : public gkTickState
 {
-    // Frame tick state for sound playback
+	// Frame tick state for sound playback
 private:
 
-    gkStreamer &m_stream;
+	gkStreamer &m_stream;
 public:
 
-    gkStreamerTick(gkStreamer &streamer);
-    virtual ~gkStreamerTick() {}
+	gkStreamerTick(gkStreamer &streamer);
+	virtual ~gkStreamerTick() {}
 
-    void tickImpl(gkScalar delta);
-    void beginTickImpl(void);
-    void endTickImpl(void);
-    void syncImpl(gkScalar fac);
+	void tickImpl(gkScalar delta);
+	void beginTickImpl(void);
+	void endTickImpl(void);
+	void syncImpl(gkScalar fac);
 };
 
 
 // ----------------------------------------------------------------------------
 gkStreamer::gkStreamer(const gkString &name)
-    :   m_name(name),
-        m_thread(0),
-        m_stop(true)
+	:   m_name(name),
+	    m_thread(0),
+	    m_stop(true)
 {
 }
 
@@ -66,29 +66,29 @@ gkStreamer::gkStreamer(const gkString &name)
 // ----------------------------------------------------------------------------
 gkStreamer::~gkStreamer()
 {
-    exit();
+	exit();
 }
 
 
 // ----------------------------------------------------------------------------
 void gkStreamer::exit(void)
 {
-    // exit thread
-    if (m_thread)
-    {
-        stop();
-        m_thread->join();
+	// exit thread
+	if (m_thread)
+	{
+		stop();
+		m_thread->join();
 
-        delete m_thread;
-        m_thread = 0;
-    }
+		delete m_thread;
+		m_thread = 0;
+	}
 }
 
 // ----------------------------------------------------------------------------
 void gkStreamer::stopAllSounds(void)
 {
-    while (!m_buffers.empty())
-        stopBuffer(m_buffers.back());
+	while (!m_buffers.empty())
+		stopBuffer(m_buffers.back());
 }
 
 
@@ -96,94 +96,94 @@ void gkStreamer::stopAllSounds(void)
 // ----------------------------------------------------------------------------
 void gkStreamer::stop(void)
 {
-    GK_SOUND_AUTO_LOCK_MUTEX(m_cs);
-    m_stop = true;
-    m_syncObj.signal();
-    m_syncObj.wait();
+	GK_SOUND_AUTO_LOCK_MUTEX(m_cs);
+	m_stop = true;
+	m_syncObj.signal();
+	m_syncObj.wait();
 }
 
 // ----------------------------------------------------------------------------
 void gkStreamer::start(void)
 {
-    GK_SOUND_AUTO_LOCK_MUTEX(m_cs);
+	GK_SOUND_AUTO_LOCK_MUTEX(m_cs);
 
-    if (!m_thread)
-    {
-        m_stop = false;
-        m_thread = new gkThread(this);
-        m_syncObj.signal();
-    }
+	if (!m_thread)
+	{
+		m_stop = false;
+		m_thread = new gkThread(this);
+		m_syncObj.signal();
+	}
 }
 
 
 // ----------------------------------------------------------------------------
 bool gkStreamer::isRunning(void)
 {
-    return !m_stop;
+	return !m_stop;
 }
 
 // ----------------------------------------------------------------------------
 bool gkStreamer::isEmpty(void)
 {
-    GK_SOUND_AUTO_LOCK_MUTEX(m_cs);
+	GK_SOUND_AUTO_LOCK_MUTEX(m_cs);
 
-    return m_buffers.empty();
+	return m_buffers.empty();
 }
 
 // ----------------------------------------------------------------------------
 void gkStreamer::playSound(gkSource *snd)
 {
-    GK_SOUND_AUTO_LOCK_MUTEX(m_cs);
+	GK_SOUND_AUTO_LOCK_MUTEX(m_cs);
 
-    // add to queue
-    m_buffers.push_back(new gkBuffer(snd));
-    m_syncObj.signal();
+	// add to queue
+	m_buffers.push_back(new gkBuffer(snd));
+	m_syncObj.signal();
 }
 
 
 // ----------------------------------------------------------------------------
 void gkStreamer::stopSound(gkSource *snd)
 {
-    if (snd && snd->isBound())
-        stopBuffer(snd->_getBuffer());
+	if (snd && snd->isBound())
+		stopBuffer(snd->_getBuffer());
 }
 
 // ----------------------------------------------------------------------------
 void gkStreamer::stopBuffer(gkBuffer *buf)
 {
-    if (buf)
-        notify(buf);
+	if (buf)
+		notify(buf);
 }
 
 
 // ----------------------------------------------------------------------------
 void gkStreamer::notify(gkBuffer *buf)
 {
-    // wait for a signal saying this
-    // buffer has exited
+	// wait for a signal saying this
+	// buffer has exited
 
-    GK_SOUND_AUTO_LOCK_MUTEX(m_cs);
+	GK_SOUND_AUTO_LOCK_MUTEX(m_cs);
 
-    buf->exit();
-    m_syncObj.wait();
+	buf->exit();
+	m_syncObj.wait();
 
 }
 
 // ----------------------------------------------------------------------------
 void gkStreamer::remove(gkBuffer *buf)
 {
-    UTsize pos;
-    if ((pos = m_finished.find(buf)) != UT_NPOS)
-        m_finished.erase(pos);
+	UTsize pos;
+	if ((pos = m_finished.find(buf)) != UT_NPOS)
+		m_finished.erase(pos);
 
-    if ((pos = m_buffers.find(buf)) != UT_NPOS)
-    {
-        m_buffers.erase(pos);
-        delete buf;
-    }
+	if ((pos = m_buffers.find(buf)) != UT_NPOS)
+	{
+		m_buffers.erase(pos);
+		delete buf;
+	}
 
-    if (m_buffers.empty())
-        m_buffers.clear(true);
+	if (m_buffers.empty())
+		m_buffers.clear(true);
 }
 
 
@@ -191,75 +191,75 @@ void gkStreamer::remove(gkBuffer *buf)
 // ----------------------------------------------------------------------------
 void gkStreamer::runProtected(void)
 {
-    // main sound workload
-    UTsize i, s;
-    Buffers::Pointer b;
+	// main sound workload
+	UTsize i, s;
+	Buffers::Pointer b;
 
-    i = 0;
-    s = m_buffers.size();
-    b = m_buffers.ptr();
+	i = 0;
+	s = m_buffers.size();
+	b = m_buffers.ptr();
 
-    while (i < s)
-    {
-        gkBuffer *buf = b[i++];
-        // stream contents to OpenAL
-        buf->stream();
+	while (i < s)
+	{
+		gkBuffer *buf = b[i++];
+		// stream contents to OpenAL
+		buf->stream();
 
-        // notify were done
-        if (buf->isDone() || !buf->isValid())
-            m_finished.push_back(buf);
+		// notify were done
+		if (buf->isDone() || !buf->isValid())
+			m_finished.push_back(buf);
 
-    }
+	}
 }
 
 
 // ----------------------------------------------------------------------------
 void gkStreamer::collectGarbage(void)
 {
-    // remove finished buffers
-    if (!m_finished.empty())
-    {
-        while (!m_finished.empty())
-        {
-            gkBuffer *buf = m_finished.back();
-            remove(buf);
-        }
+	// remove finished buffers
+	if (!m_finished.empty())
+	{
+		while (!m_finished.empty())
+		{
+			gkBuffer *buf = m_finished.back();
+			remove(buf);
+		}
 
-        m_finished.clear(true);
+		m_finished.clear(true);
 
-        // wake up wating sync
-        m_syncObj.signal();
-    }
+		// wake up wating sync
+		m_syncObj.signal();
+	}
 }
 
 
 // ----------------------------------------------------------------------------
 void gkStreamer::run(void)
 {
-    gkStreamerTick stream(*this);
+	gkStreamerTick stream(*this);
 
-    while (isRunning())
-    {
-        // catch any exceptions
-        try
-        {
-            stream.tick();
-        }
-        catch (...)
-        {
-            printf("%s: unknown error!\n", m_name.c_str());
-        }
-    }
+	while (isRunning())
+	{
+		// catch any exceptions
+		try
+		{
+			stream.tick();
+		}
+		catch (...)
+		{
+			printf("%s: unknown error!\n", m_name.c_str());
+		}
+	}
 
-    m_syncObj.signal();
+	m_syncObj.signal();
 }
 
 
 
 // ----------------------------------------------------------------------------
 gkStreamerTick::gkStreamerTick(gkStreamer &streamer)
-    :   gkTickState(GK_STREAM_PLAYBACK_RATE),
-        m_stream(streamer)
+	:   gkTickState(GK_STREAM_PLAYBACK_RATE),
+	    m_stream(streamer)
 {
 }
 
@@ -267,26 +267,26 @@ gkStreamerTick::gkStreamerTick(gkStreamer &streamer)
 // ----------------------------------------------------------------------------
 void gkStreamerTick::beginTickImpl(void)
 {
-    m_stream.collectGarbage();
+	m_stream.collectGarbage();
 }
 
 
 // ----------------------------------------------------------------------------
 void gkStreamerTick::tickImpl(gkScalar delta)
 {
-    //printf("Tick %f\n", delta);
-    m_stream.runProtected();
+	//printf("Tick %f\n", delta);
+	m_stream.runProtected();
 }
 
 // ----------------------------------------------------------------------------
 void gkStreamerTick::syncImpl(gkScalar fac)
 {
-    //printf("Sync %f\n", fac);
+	//printf("Sync %f\n", fac);
 }
 
 
 // ----------------------------------------------------------------------------
 void gkStreamerTick::endTickImpl(void)
 {
-    m_stream.collectGarbage();
+	m_stream.collectGarbage();
 }

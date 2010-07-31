@@ -35,20 +35,20 @@
 class gkLoaderUtils
 {
 public:
-    gkLoaderUtils(bParse::bBlenderFile *file);
-    Blender::Material* getMaterial(Blender::Object *ob, int index);
-    void getLayers(Blender::Mesh *mesh, Blender::MTFace **eightLayerArray, Blender::MCol **oneMCol, int &validLayers);
+	gkLoaderUtils(bParse::bBlenderFile *file);
+	Blender::Material *getMaterial(Blender::Object *ob, int index);
+	void getLayers(Blender::Mesh *mesh, Blender::MTFace **eightLayerArray, Blender::MCol **oneMCol, int &validLayers);
 
-    // animation / skeleton utils
-    int getDeformGroupIndex(Blender::Object *ob, const char *group);
-    // defined in scene->r.frs_sec
-    static gkScalar blender_anim_rate;
+	// animation / skeleton utils
+	int getDeformGroupIndex(Blender::Object *ob, const char *group);
+	// defined in scene->r.frs_sec
+	static gkScalar blender_anim_rate;
 
-    void extractInstanceTransform(gkGameObject *inst,Blender::Object *ob, gkVector3 &loc, gkQuaternion &quat, gkVector3 &scale);
+	void extractInstanceTransform(gkGameObject *inst,Blender::Object *ob, gkVector3 &loc, gkQuaternion &quat, gkVector3 &scale);
 
 
 private:
-    bParse::bBlenderFile *m_file; // incase any file info is needed (try not to use for finding ptrs)
+	bParse::bBlenderFile *m_file; // incase any file info is needed (try not to use for finding ptrs)
 };
 
 

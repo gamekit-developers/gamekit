@@ -40,77 +40,77 @@ class gkActionChannel;
 class gkAction
 {
 public:
-    typedef utArray<gkActionChannel*> Channels;
+	typedef utArray<gkActionChannel *> Channels;
 
 
 protected:
 
-    const gkString      m_name;
-    Channels            m_channels;
-    gkScalar            m_start, m_end;
-    gkScalar            m_evalTime, m_weight, m_blendFrames;
+	const gkString      m_name;
+	Channels            m_channels;
+	gkScalar            m_start, m_end;
+	gkScalar            m_evalTime, m_weight, m_blendFrames;
 
 public:
-    gkAction(const gkString& name);
-    ~gkAction();
+	gkAction(const gkString &name);
+	~gkAction();
 
-    GK_INLINE gkScalar getLength(void)
-    { return m_end - m_start; }
+	GK_INLINE gkScalar getLength(void)
+	{ return m_end - m_start; }
 
-    // Sets the start frame of this action.
-    GK_INLINE void setStart(gkScalar v)
-    { m_start = v;}
+	// Sets the start frame of this action.
+	GK_INLINE void setStart(gkScalar v)
+	{ m_start = v;}
 
-    // Sets the end frame of this action.
-    GK_INLINE void setEnd(gkScalar v)
-    { m_end = v;}
+	// Sets the end frame of this action.
+	GK_INLINE void setEnd(gkScalar v)
+	{ m_end = v;}
 
-    // Gets the start frame of this action.
-    GK_INLINE gkScalar getStart(void)
-    { return m_start;}
+	// Gets the start frame of this action.
+	GK_INLINE gkScalar getStart(void)
+	{ return m_start;}
 
-    // Gets the end frame of this action.
-    GK_INLINE gkScalar getEnd(void)
-    { return m_end;}
+	// Gets the end frame of this action.
+	GK_INLINE gkScalar getEnd(void)
+	{ return m_end;}
 
-    // Gets the action/animation name.
-    GK_INLINE const gkString& getName(void)
-    { return m_name;}
+	// Gets the action/animation name.
+	GK_INLINE const gkString &getName(void)
+	{ return m_name;}
 
-    // Appends a new channel for this action.
-    void addChannel(gkActionChannel *chan);
+	// Appends a new channel for this action.
+	void addChannel(gkActionChannel *chan);
 
-    // Raw const access to channels
-    GK_INLINE gkAction::Channels::ConstPointer getChannels(void)
-    {return m_channels.ptr();}
+	// Raw const access to channels
+	GK_INLINE gkAction::Channels::ConstPointer getChannels(void)
+	{return m_channels.ptr();}
 
-    // Gets the current channel count.
-    GK_INLINE int getNumChannels(void)
-    {return(int)m_channels.size();}
-    
-    //Gets the channel corresponding to a bone
-    gkActionChannel* getChannel(gkBone *bone);
+	// Gets the current channel count.
+	GK_INLINE int getNumChannels(void)
+	{return(int)m_channels.size();}
 
-    // Updates matrices for the specified time
-    void evaluate(gkScalar time);
+	//Gets the channel corresponding to a bone
+	gkActionChannel *getChannel(gkBone *bone);
 
-    GK_INLINE void setBlendFrames(gkScalar v)
-    {m_blendFrames = gkClampf(v, 1, m_end);}
+	// Updates matrices for the specified time
+	void evaluate(gkScalar time);
 
-    GK_INLINE gkScalar getBlendFrames(void)
-    {return m_blendFrames;}
+	GK_INLINE void setBlendFrames(gkScalar v)
+	{m_blendFrames = gkClampf(v, 1, m_end);}
 
-    GK_INLINE void setTimePosition(gkScalar v)
-    {m_evalTime = gkClampf(v, m_start, m_end);}
+	GK_INLINE gkScalar getBlendFrames(void)
+	{return m_blendFrames;}
 
-    GK_INLINE gkScalar getTimePosition(void)
-    {return m_evalTime;}
+	GK_INLINE void setTimePosition(gkScalar v)
+	{m_evalTime = gkClampf(v, m_start, m_end);}
 
-    GK_INLINE void setWeight(gkScalar w)
-    {m_weight = gkClampf(w, 0, 1); }
+	GK_INLINE gkScalar getTimePosition(void)
+	{return m_evalTime;}
 
-    GK_INLINE gkScalar getWeight(void)
-    { return m_weight; }
+	GK_INLINE void setWeight(gkScalar w)
+	{m_weight = gkClampf(w, 0, 1); }
+
+	GK_INLINE gkScalar getWeight(void)
+	{ return m_weight; }
 };
 
 

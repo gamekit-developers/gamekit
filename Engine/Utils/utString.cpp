@@ -33,99 +33,98 @@
 
 void utStringUtils::trim( utString &in, const utString &expr )
 {
-    in.erase( in.find_last_not_of( expr ) + 1 );
-    in.erase( 0, in.find_first_not_of( expr ) );
+	in.erase( in.find_last_not_of( expr ) + 1 );
+	in.erase( 0, in.find_first_not_of( expr ) );
 }
 
 
 void utStringUtils::split(utStringArray &rval,  const utString &spl, const utString &expr )
 {
-    utString string= spl;
-    rval.reserve( 32 );
+	utString string= spl;
+	rval.reserve( 32 );
 
-    for ( ;; )
-    {
-        size_t pos= string.find_first_of( expr );
-        if ( pos != utString::npos )
-        {
-            // chop first
-            if ( pos == 0 )
-                pos= pos + 1;
+	for ( ;; )
+	{
+		size_t pos= string.find_first_of( expr );
+		if ( pos != utString::npos )
+		{
+			// chop first
+			if ( pos == 0 )
+				pos= pos + 1;
 
-            utString sub= string.substr( 0, pos );
-            if ( !sub.empty() && expr.find( sub ) == utString::npos )
-                rval.push_back( sub );
+			utString sub= string.substr( 0, pos );
+			if ( !sub.empty() && expr.find( sub ) == utString::npos )
+				rval.push_back( sub );
 
-            string.erase( 0, pos );
-        }
-        else
-        {
-            if ( !string.empty() )
-                rval.push_back( string );
+			string.erase( 0, pos );
+		}
+		else
+		{
+			if ( !string.empty() )
+				rval.push_back( string );
 
-            break;
-        }
-    }
+			break;
+		}
+	}
 }
 
 
-void utStringUtils::lower( utString& str )
+void utStringUtils::lower( utString &str )
 {
-    std::transform( str.begin(), str.end(), str.begin(), tolower );
+	std::transform( str.begin(), str.end(), str.begin(), tolower );
 }
 
 
-utString utStringUtils::lower( const utString& str )
+utString utStringUtils::lower( const utString &str )
 {
-    utString ret= str;
-    std::transform( ret.begin(), ret.end(), ret.begin(), tolower );
-    return ret;
+	utString ret= str;
+	std::transform( ret.begin(), ret.end(), ret.begin(), tolower );
+	return ret;
 }
 
 
-void utStringUtils::upper( utString& str )
+void utStringUtils::upper( utString &str )
 {
-    std::transform( str.begin(), str.end(), str.begin(), toupper );
+	std::transform( str.begin(), str.end(), str.begin(), toupper );
 }
 
 
-utString utStringUtils::upper( const utString& str )
+utString utStringUtils::upper( const utString &str )
 {
-    utString ret= str;
-    std::transform( ret.begin(), ret.end(), ret.begin(), toupper );
-    return ret;
+	utString ret= str;
+	std::transform( ret.begin(), ret.end(), ret.begin(), toupper );
+	return ret;
 }
 
 
-void utStringUtils::replace( utString &in, const utString& from, const utString &to )
+void utStringUtils::replace( utString &in, const utString &from, const utString &to )
 {
 
-    if ( !from.empty() && from != to )
-    {
-        // erase
-        if ( to.empty() )
-        {
-            size_t pos= 0;
-            while ( pos != utString::npos )
-            {
-                pos= in.find( from );
-                if ( pos != utString::npos )
-                    in.erase( pos, from.size() );
-            }
-        }
-        else
-        {
-            size_t pos= 0;
-            while ( pos != utString::npos )
-            {
-                pos= in.find( from );
-                if ( pos != utString::npos )
-                {
-                    in.erase( pos, from.size() );
-                    in.insert( pos, to );
-                }
-            }
-        }
-    }
+	if ( !from.empty() && from != to )
+	{
+		// erase
+		if ( to.empty() )
+		{
+			size_t pos= 0;
+			while ( pos != utString::npos )
+			{
+				pos= in.find( from );
+				if ( pos != utString::npos )
+					in.erase( pos, from.size() );
+			}
+		}
+		else
+		{
+			size_t pos= 0;
+			while ( pos != utString::npos )
+			{
+				pos= in.find( from );
+				if ( pos != utString::npos )
+				{
+					in.erase( pos, from.size() );
+					in.insert( pos, to );
+				}
+			}
+		}
+	}
 }
-

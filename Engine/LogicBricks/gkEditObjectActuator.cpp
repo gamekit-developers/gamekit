@@ -31,8 +31,8 @@
 
 // ----------------------------------------------------------------------------
 gkEditObjectActuator::gkEditObjectActuator(gkGameObject *object, gkLogicLink *link, const gkString &name)
-    :   gkLogicActuator(object, link, name), m_linv(0,0,0), m_angv(0,0,0), 
-        m_lvlocal(false), m_avlocal(false), m_mode(0), m_dynMode(0), m_life(0), m_obj("")
+	:   gkLogicActuator(object, link, name), m_linv(0,0,0), m_angv(0,0,0),
+	    m_lvlocal(false), m_avlocal(false), m_mode(0), m_dynMode(0), m_life(0), m_obj("")
 {
 }
 
@@ -43,99 +43,99 @@ gkEditObjectActuator::~gkEditObjectActuator()
 }
 
 // ----------------------------------------------------------------------------
-gkLogicBrick* gkEditObjectActuator::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick *gkEditObjectActuator::clone(gkLogicLink *link, gkGameObject *dest)
 {
-    gkEditObjectActuator *act = new gkEditObjectActuator(*this);
-    act->cloneImpl(link, dest);
-    return act;
+	gkEditObjectActuator *act = new gkEditObjectActuator(*this);
+	act->cloneImpl(link, dest);
+	return act;
 }
 
 // ----------------------------------------------------------------------------
 void gkEditObjectActuator::addObject(void)
 {
-    if (!m_obj.empty())
-    {
-        gkScene *scene = m_object->getOwner();
-        if (scene->hasObject(m_obj))
-        {
-            gkGameObject *obj = scene->getObject(m_obj);
+	if (!m_obj.empty())
+	{
+		gkScene *scene = m_object->getOwner();
+		if (scene->hasObject(m_obj))
+		{
+			gkGameObject *obj = scene->getObject(m_obj);
 
-            gkGameObjectGroup *grp = obj->getGroup();
+			gkGameObjectGroup *grp = obj->getGroup();
 
-            if (grp !=0 )
-            {
+			if (grp !=0 )
+			{
 
-                // spawn entire group (destructible objects)
-                gkTransformState parSt( m_object->getWorldPosition(), 
-                                        m_object->getWorldOrientation(), 
-                                        m_object->getWorldScale()
-                                        );
-
-
-                gkMatrix4 p = parSt.toMatrix(), c;
+				// spawn entire group (destructible objects)
+				gkTransformState parSt( m_object->getWorldPosition(),
+				                        m_object->getWorldOrientation(),
+				                        m_object->getWorldScale()
+				                      );
 
 
-                gkGameObjectGroup::ObjectIterator objs = grp->getObjects();
+				gkMatrix4 p = parSt.toMatrix(), c;
 
-                while (objs.hasMoreElements())
-                {
-                    obj = objs.getNext().second;
-                    gkGameObject *nobj = scene->cloneObject(obj, m_life);
 
-                    c = obj->getProperties().m_transform.toMatrix();
-                    c = p * c;
-                    nobj->getProperties().m_transform = gkTransformState(c);
+				gkGameObjectGroup::ObjectIterator objs = grp->getObjects();
 
-                    nobj->load();
+				while (objs.hasMoreElements())
+				{
+					obj = objs.getNext().second;
+					gkGameObject *nobj = scene->cloneObject(obj, m_life);
 
-                    // apply velocities
-                    nobj->setLinearVelocity(m_linv, m_lvlocal ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
-                    nobj->setAngularVelocity(m_angv,  m_avlocal ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
-                }
-            }
-            else
-            {
-                gkGameObject *nobj = scene->cloneObject(obj, m_life);
+					c = obj->getProperties().m_transform.toMatrix();
+					c = p * c;
+					nobj->getProperties().m_transform = gkTransformState(c);
 
-                nobj->getProperties().m_transform.loc = m_object->getWorldPosition();
-                nobj->getProperties().m_transform.rot = m_object->getWorldOrientation();
-                nobj->load();
+					nobj->load();
 
-                // apply velocities
-                nobj->setLinearVelocity(m_linv, m_lvlocal ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
-                nobj->setAngularVelocity(m_angv,  m_avlocal ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
-            }
+					// apply velocities
+					nobj->setLinearVelocity(m_linv, m_lvlocal ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
+					nobj->setAngularVelocity(m_angv,  m_avlocal ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
+				}
+			}
+			else
+			{
+				gkGameObject *nobj = scene->cloneObject(obj, m_life);
 
-        }
+				nobj->getProperties().m_transform.loc = m_object->getWorldPosition();
+				nobj->getProperties().m_transform.rot = m_object->getWorldOrientation();
+				nobj->load();
 
-    }
+				// apply velocities
+				nobj->setLinearVelocity(m_linv, m_lvlocal ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
+				nobj->setAngularVelocity(m_angv,  m_avlocal ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
+			}
+
+		}
+
+	}
 }
 
 
 // ----------------------------------------------------------------------------
 void gkEditObjectActuator::endObject(void)
 {
-    if (m_object)
-        m_object->getOwner()->endObject(m_object);
+	if (m_object)
+		m_object->getOwner()->endObject(m_object);
 }
 
 
 // ----------------------------------------------------------------------------
 void gkEditObjectActuator::execute(void)
 {
-    if (isPulseOff())
-        return;
+	if (isPulseOff())
+		return;
 
 
-    switch (m_mode)
-    {
-    case EO_ADDOBJ:
-        addObject();
-        break;
-    case EO_ENDOBJ:
-        endObject();
-        break;
-    }
+	switch (m_mode)
+	{
+	case EO_ADDOBJ:
+		addObject();
+		break;
+	case EO_ENDOBJ:
+		endObject();
+		break;
+	}
 
-    setPulse(BM_OFF);
+	setPulse(BM_OFF);
 }

@@ -36,10 +36,10 @@
 class gkKeyDispatch : public gkAbstractDispatcher
 {
 public:
-    gkKeyDispatch();
-    virtual ~gkKeyDispatch();
+	gkKeyDispatch();
+	virtual ~gkKeyDispatch();
 
-    void dispatch(void);
+	void dispatch(void);
 };
 
 
@@ -47,19 +47,19 @@ public:
 class gkKeyboardSensor : public gkLogicSensor
 {
 protected:
-    int     m_key, m_mod0, m_mod1;
+	int     m_key, m_mod0, m_mod1;
 
 public:
-    gkKeyboardSensor(gkGameObject *object, gkLogicLink *link, const gkString &name);
-    virtual ~gkKeyboardSensor() {}
+	gkKeyboardSensor(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	virtual ~gkKeyboardSensor() {}
 
-    gkLogicBrick* clone(gkLogicLink *link, gkGameObject *dest);
+	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
 
-    bool query(void);
+	bool query(void);
 
-    GK_INLINE void setKey(int v)    {m_key  = v;}
-    GK_INLINE void setMod0(int v)   {m_mod0 = v;}
-    GK_INLINE void setMod1(int v)   {m_mod1 = v;}
+	GK_INLINE void setKey(int v)    {m_key  = v;}
+	GK_INLINE void setMod0(int v)   {m_mod0 = v;}
+	GK_INLINE void setMod1(int v)   {m_mod1 = v;}
 };
 
 

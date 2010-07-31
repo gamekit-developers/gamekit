@@ -23,23 +23,23 @@ class gksRayTest
 {
 private:
 
-    class gkRayTest *m_ray;
-    
+	class gkRayTest *m_ray;
+
 public:
-    gksRayTest();
-    ~gksRayTest();
+	gksRayTest();
+	~gksRayTest();
 
 
-    bool cast(const gksVector3 &from, const gksVector3 &dir);
+	bool cast(const gksVector3 &from, const gksVector3 &dir);
 
-    bool cast(float fx, float fy, float fz, float tx, float ty, float tz)
-    {
-        return cast(gksVector3(fx, fy, fz), gksVector3(tx, ty, tz));
-    }
+	bool cast(float fx, float fy, float fz, float tx, float ty, float tz)
+	{
+		return cast(gksVector3(fx, fy, fz), gksVector3(tx, ty, tz));
+	}
 
-    gksVector3                  getHitPoint(void);
+	gksVector3                  getHitPoint(void);
 	gksPointer<gksGameObject>   getObject(void);
-    float                       getHitFraction(void);
+	float                       getHitFraction(void);
 };
 
 

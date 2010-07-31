@@ -20,20 +20,20 @@
 // ----------------------------------------------------------------------------
 enum gksTransformSpace
 {
-    TS_LOCAL,
-    TS_PARENT,
-    TS_WORLD,
+	TS_LOCAL,
+	TS_PARENT,
+	TS_WORLD,
 };
 
 // ----------------------------------------------------------------------------
 enum gksGameObjectTypes
 {
-    OB_UNKNOWN=0,
-    OB_CAMERA,
-    OB_LIGHT,
-    OB_ENTITY,
-    OB_EMPTY,
-    OB_SKELETON,
+	OB_UNKNOWN=0,
+	OB_CAMERA,
+	OB_LIGHT,
+	OB_ENTITY,
+	OB_EMPTY,
+	OB_SKELETON,
 };
 
 #endif//_gksConstants_h_

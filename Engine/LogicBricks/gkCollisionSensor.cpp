@@ -43,69 +43,69 @@ gkCollisionDispatch::gkCollisionDispatch()
 // ----------------------------------------------------------------------------
 void gkCollisionDispatch::dispatch(void)
 {
-    // TODO need to sort. 
-    doDispatch(m_sensors);
+	// TODO need to sort.
+	doDispatch(m_sensors);
 }
 
 
 // ----------------------------------------------------------------------------
 gkCollisionSensor::gkCollisionSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
-:       gkLogicSensor(object, link, name), m_material(""), m_prop("")
+	:       gkLogicSensor(object, link, name), m_material(""), m_prop("")
 {
-    m_dispatchType = DIS_COLLISION;
-    connect();
+	m_dispatchType = DIS_COLLISION;
+	connect();
 }
 
 
 // ----------------------------------------------------------------------------
-gkLogicBrick* gkCollisionSensor::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick *gkCollisionSensor::clone(gkLogicLink *link, gkGameObject *dest)
 {
-    gkCollisionSensor *sens = new gkCollisionSensor(*this);
-    sens->cloneImpl(link, dest);
-    return sens;
+	gkCollisionSensor *sens = new gkCollisionSensor(*this);
+	sens->cloneImpl(link, dest);
+	return sens;
 }
 
 // ----------------------------------------------------------------------------
 bool gkCollisionSensor::query(void)
 {
-    gkObject *object = m_object->getAttachedObject();
-    if (!object) 
-        return false;
+	gkObject *object = m_object->getAttachedObject();
+	if (!object)
+		return false;
 
-    if (object->getContacts().empty())
-        return false;
-
-
-
-    gkObject::ContactArray &arr = object->getContacts();
+	if (object->getContacts().empty())
+		return false;
 
 
-    UTsize nr=arr.size(), i;
 
-    // Global. test only for actors 
+	gkObject::ContactArray &arr = object->getContacts();
 
-    for (i=0; i<nr; ++i)
-    {
-        gkObject::ContactInfo &inf = arr[i];
 
-        gkGameObject *obj = inf.collider->getObject();
-        //if (obj->getProperties().objectStateFlags & GK_OB_ACTOR)
-        {
-            // any GK_OB_ACTOR will do 
-            if (m_prop.empty() && m_material.empty())
-                return true;
-        }
+	UTsize nr=arr.size(), i;
 
-        if (!m_prop.empty())
-        {
-            if (obj->hasVariable(m_prop) /*&& obj->getProperties().objectStateFlags & GK_OB_ACTOR*/)
-                return true;
-        }
-        else if (!m_material.empty())
-        {
-            if (inf.collider->getSensorMaterial() == m_material)
-                return true;
-        }
-    }
-    return false;
+	// Global. test only for actors
+
+	for (i=0; i<nr; ++i)
+	{
+		gkObject::ContactInfo &inf = arr[i];
+
+		gkGameObject *obj = inf.collider->getObject();
+		//if (obj->getProperties().objectStateFlags & GK_OB_ACTOR)
+		{
+			// any GK_OB_ACTOR will do
+			if (m_prop.empty() && m_material.empty())
+				return true;
+		}
+
+		if (!m_prop.empty())
+		{
+			if (obj->hasVariable(m_prop) /*&& obj->getProperties().objectStateFlags & GK_OB_ACTOR*/)
+				return true;
+		}
+		else if (!m_material.empty())
+		{
+			if (inf.collider->getSensorMaterial() == m_material)
+				return true;
+		}
+	}
+	return false;
 }

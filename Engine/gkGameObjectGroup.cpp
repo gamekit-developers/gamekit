@@ -33,159 +33,159 @@
 
 
 gkGameObjectInstance::gkGameObjectInstance(gkGameObject *owner, gkGameObjectGroup *group, UTsize uid)
-    :   gkObject(group->getName().str()), m_owner(owner), m_parent(group), m_handle(uid)
+	:   gkObject(group->getName().str()), m_owner(owner), m_parent(group), m_handle(uid)
 {
 }
 
 
 gkGameObjectInstance::~gkGameObjectInstance()
 {
-    // free all objects
+	// free all objects
 
-    utHashTableIterator<InstanceObjects> iter(m_objects);
-    while (iter.hasMoreElements())
-    {
-        gkGameObject *ob = iter.getNext().second;
-        ob->unload();
-        delete ob;
-    }
+	utHashTableIterator<InstanceObjects> iter(m_objects);
+	while (iter.hasMoreElements())
+	{
+		gkGameObject *ob = iter.getNext().second;
+		ob->unload();
+		delete ob;
+	}
 
-    m_objects.clear();
+	m_objects.clear();
 }
 
 
 gkGameObject *gkGameObjectInstance::getObject(const gkHashedString &name)
 {
-    UTsize pos;
-    if ((pos = m_objects.find(name)) == UT_NPOS)
-    {
-        // ignore
-        return 0;
-    }
+	UTsize pos;
+	if ((pos = m_objects.find(name)) == UT_NPOS)
+	{
+		// ignore
+		return 0;
+	}
 
-    return m_objects.at(pos);
+	return m_objects.at(pos);
 }
 
 
 void gkGameObjectInstance::unloadObject(const gkHashedString &name)
 {
-    UTsize pos;
-    if ((pos = m_objects.find(name)) == UT_NPOS)
-    {
-        // ignore
-        return;
-    }
-    gkGameObject* ob= m_objects.at(pos);
-    ob->unload();
+	UTsize pos;
+	if ((pos = m_objects.find(name)) == UT_NPOS)
+	{
+		// ignore
+		return;
+	}
+	gkGameObject *ob= m_objects.at(pos);
+	ob->unload();
 }
 
 
 void gkGameObjectInstance::removeObject(const gkHashedString &name)
 {
-    UTsize pos;
-    if ((pos = m_objects.find(name)) == UT_NPOS)
-    {
-        // ignore
-        return;
-    }
+	UTsize pos;
+	if ((pos = m_objects.find(name)) == UT_NPOS)
+	{
+		// ignore
+		return;
+	}
 
 
-    // we own this object, so destroy 
-    gkGameObject* ob= m_objects.at(pos);
-    ob->unload();
-    m_objects.remove(name);
-    delete ob;
+	// we own this object, so destroy
+	gkGameObject *ob= m_objects.at(pos);
+	ob->unload();
+	m_objects.remove(name);
+	delete ob;
 
-    if (m_objects.empty())
-        m_objects.clear();
+	if (m_objects.empty())
+		m_objects.clear();
 }
 
 
 void gkGameObjectInstance::addObject(gkGameObject *v)
 {
-    gkHashedString name = m_parent->getName().str() + "/" + v->getName() + "/Handle_" +  Ogre::StringConverter::toString(m_handle);
+	gkHashedString name = m_parent->getName().str() + "/" + v->getName() + "/Handle_" +  Ogre::StringConverter::toString(m_handle);
 
-    // ignore
-    if (m_objects.find(name) != UT_NPOS)
-        return;
+	// ignore
+	if (m_objects.find(name) != UT_NPOS)
+		return;
 
-    gkGameObject *ob = static_cast<gkGameObject*>(v->clone(name.str()));
-    ob->attachToGroupInstance(this);
-    ob->setActiveLayer(m_owner->isInActiveLayer());
+	gkGameObject *ob = static_cast<gkGameObject *>(v->clone(name.str()));
+	ob->attachToGroupInstance(this);
+	ob->setActiveLayer(m_owner->isInActiveLayer());
 
-    gkGameObjectProperties &props = ob->getProperties();
-
-
-    gkMatrix4 c = props.m_transform.toMatrix();
-    gkMatrix4 p = m_owner->getProperties().m_transform.toMatrix();
-
-    
-    if (ob->getParent() == 0)
-    {
-        c = p * c;
-        gkMathUtils::extractTransform(c, props.m_transform.loc, props.m_transform.rot, props.m_transform.scl);
-    }
-    else
-    {
-        c = ob->getParent()->getProperties().m_transform.toMatrix().inverse() * c;
-        gkMathUtils::extractTransform(c, props.m_transform.loc, props.m_transform.rot, props.m_transform.scl);
-    }
+	gkGameObjectProperties &props = ob->getProperties();
 
 
-    m_objects.insert(name, ob);
+	gkMatrix4 c = props.m_transform.toMatrix();
+	gkMatrix4 p = m_owner->getProperties().m_transform.toMatrix();
+
+
+	if (ob->getParent() == 0)
+	{
+		c = p * c;
+		gkMathUtils::extractTransform(c, props.m_transform.loc, props.m_transform.rot, props.m_transform.scl);
+	}
+	else
+	{
+		c = ob->getParent()->getProperties().m_transform.toMatrix().inverse() * c;
+		gkMathUtils::extractTransform(c, props.m_transform.loc, props.m_transform.rot, props.m_transform.scl);
+	}
+
+
+	m_objects.insert(name, ob);
 }
 
 
 void gkGameObjectInstance::loadImpl(void)
 {
-    // call load on all objects
+	// call load on all objects
 
-    if (!m_owner->isInActiveLayer())
-        return;
+	if (!m_owner->isInActiveLayer())
+		return;
 
 
-    utHashTableIterator<InstanceObjects> iter(m_objects);
-    while (iter.hasMoreElements())
-        iter.getNext().second->load();
+	utHashTableIterator<InstanceObjects> iter(m_objects);
+	while (iter.hasMoreElements())
+		iter.getNext().second->load();
 }
 
 void gkGameObjectInstance::unloadImpl(void)
 {
-    // call unload on all objects
-    utHashTableIterator<InstanceObjects> iter(m_objects);
-    while (iter.hasMoreElements())
-        iter.getNext().second->unload();
+	// call unload on all objects
+	utHashTableIterator<InstanceObjects> iter(m_objects);
+	while (iter.hasMoreElements())
+		iter.getNext().second->unload();
 }
 
 
 
-gkGameObjectGroup::gkGameObjectGroup(const gkHashedString &name) 
-    :   m_name(name), m_handle(0), m_geom(0)
+gkGameObjectGroup::gkGameObjectGroup(const gkHashedString &name)
+	:   m_name(name), m_handle(0), m_geom(0)
 {
 }
 
 gkGameObjectGroup::~gkGameObjectGroup()
 {
-    clear();
+	clear();
 }
 
 
 
 void gkGameObjectGroup::addObject(gkGameObject *v)
 {
-     if (!v) return;
+	if (!v) return;
 
-    gkHashedString name = v->getName();
+	gkHashedString name = v->getName();
 
-    if (m_internal.find(name) != UT_NPOS)
-    {
-        // ignore duplicates
-        return;
-    }
+	if (m_internal.find(name) != UT_NPOS)
+	{
+		// ignore duplicates
+		return;
+	}
 
 
-    v->attachToGroup(this);
-    m_internal.insert(name, v);
+	v->attachToGroup(this);
+	m_internal.insert(name, v);
 }
 
 
@@ -193,11 +193,11 @@ void gkGameObjectGroup::addObject(gkGameObject *v)
 // destroy all instances
 void gkGameObjectGroup::clear(void)
 {
-    gkGroupInstanceIterator iter = gkGroupInstanceIterator(m_instances);
-    while (iter.hasMoreElements())
-        delete iter.getNext();
+	gkGroupInstanceIterator iter = gkGroupInstanceIterator(m_instances);
+	while (iter.hasMoreElements())
+		delete iter.getNext();
 
-    m_instances.clear();
+	m_instances.clear();
 }
 
 
@@ -205,94 +205,92 @@ void gkGameObjectGroup::clear(void)
 // this group has been unloaded / destroyed
 void gkGameObjectGroup::notifyObject(gkGameObject *ob)
 {
-    gkHashedString name = ob->getName();
-    if (m_internal.find(name) != UT_NPOS)
-    {
-        m_internal.remove(name);
-        if (m_internal.empty()) 
-            m_internal.clear();
+	gkHashedString name = ob->getName();
+	if (m_internal.find(name) != UT_NPOS)
+	{
+		m_internal.remove(name);
+		if (m_internal.empty())
+			m_internal.clear();
 
 
-        // find object in instance
-        gkGroupInstanceIterator iter = gkGroupInstanceIterator(m_instances);
-        while (iter.hasMoreElements())
-        {
-            gkGameObjectInstance *inst = iter.getNext();
+		// find object in instance
+		gkGroupInstanceIterator iter = gkGroupInstanceIterator(m_instances);
+		while (iter.hasMoreElements())
+		{
+			gkGameObjectInstance *inst = iter.getNext();
 
-            if (inst->hasObject(name))
-            {
-                inst->removeObject(name);
-                break;
-            }
-        }
-    }
+			if (inst->hasObject(name))
+			{
+				inst->removeObject(name);
+				break;
+			}
+		}
+	}
 }
 
 
-gkGameObjectInstance* gkGameObjectGroup::createInstance(gkGameObject *instPar)
+gkGameObjectInstance *gkGameObjectGroup::createInstance(gkGameObject *instPar)
 {
-    gkGameObjectInstance *newInst = new gkGameObjectInstance(instPar, this, m_handle++);
-    m_instances.push_back(newInst);
+	gkGameObjectInstance *newInst = new gkGameObjectInstance(instPar, this, m_handle++);
+	m_instances.push_back(newInst);
 
 
-    // push new objects
-    utHashTableIterator<Objects> iter(m_internal);
-    while (iter.hasMoreElements())
-        newInst->addObject(iter.getNext().second);
+	// push new objects
+	utHashTableIterator<Objects> iter(m_internal);
+	while (iter.hasMoreElements())
+		newInst->addObject(iter.getNext().second);
 
-    return newInst;
+	return newInst;
 }
 
 
 // build instanced geometry.
 void gkGameObjectGroup::build(Ogre::SceneManager *mgr)
 {
-    if (m_geom)
-    {
-        mgr->destroyStaticGeometry(m_geom);
-    }
-    m_geom = 0;
+	if (m_geom)
+	{
+		mgr->destroyStaticGeometry(m_geom);
+	}
+	m_geom = 0;
 
-    gkGroupInstanceIterator iter = gkGroupInstanceIterator(m_instances);
-    while (iter.hasMoreElements())
-    {
-        gkGameObjectInstance *inst = iter.getNext();
+	gkGroupInstanceIterator iter = gkGroupInstanceIterator(m_instances);
+	while (iter.hasMoreElements())
+	{
+		gkGameObjectInstance *inst = iter.getNext();
 
-        gkGameObjectInstance::InstanceObjectIterator instIt = inst->getObjectIterator();
+		gkGameObjectInstance::InstanceObjectIterator instIt = inst->getObjectIterator();
 
-        while (instIt.hasMoreElements())
-        {
-            gkGameObject *obj = instIt.getNext().second;
-            obj->load();
+		while (instIt.hasMoreElements())
+		{
+			gkGameObject *obj = instIt.getNext().second;
+			obj->load();
 
 
-            if (obj->getType()==GK_ENTITY)
-            {
-                const gkGameObjectProperties& props = obj->getProperties();
+			if (obj->getType()==GK_ENTITY)
+			{
+				const gkGameObjectProperties &props = obj->getProperties();
 
-                if (!props.isPhysicsObject())
-                {
-                    gkEntity *ent = obj->getEntity();
+				if (!props.isPhysicsObject())
+				{
+					gkEntity *ent = obj->getEntity();
 
-                    if (!m_geom)
-                        m_geom = mgr->createStaticGeometry(m_name.str());
+					if (!m_geom)
+						m_geom = mgr->createStaticGeometry(m_name.str());
 
-                    m_geom->addEntity(ent->getEntity(), obj->getWorldPosition(), 
-                                                        obj->getWorldOrientation(), 
-                                                        obj->getWorldScale());
-                    // no longer needed
-                    ent->unload();
-                }
-            }
-        }
-    }
+					m_geom->addEntity(ent->getEntity(), obj->getWorldPosition(),
+					                  obj->getWorldOrientation(),
+					                  obj->getWorldScale());
+					// no longer needed
+					ent->unload();
+				}
+			}
+		}
+	}
 
-    if (m_geom)
-    {
-        m_geom->build();
-        m_geom->setCastShadows(false);
-    }
+	if (m_geom)
+	{
+		m_geom->build();
+		m_geom->setCastShadows(false);
+	}
 
 }
-
-

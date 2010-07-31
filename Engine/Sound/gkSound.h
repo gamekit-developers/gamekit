@@ -42,39 +42,39 @@ class gkStreamer;
 class gkSound
 {
 private:
-    typedef utArray<gkSource *> Sources;
+	typedef utArray<gkSource *> Sources;
 
 
-    const gkString      m_name;
-    gkSoundStream       *m_stream;
-    Sources             m_sources;
+	const gkString      m_name;
+	gkSoundStream       *m_stream;
+	Sources             m_sources;
 
 public:
 
-    gkSound(const gkString &name);
-    virtual ~gkSound();
+	gkSound(const gkString &name);
+	virtual ~gkSound();
 
 
-    GK_INLINE const gkString    &getName(void)          {return m_name;}
-    GK_INLINE gkSoundStream     *getStream(void)        {return m_stream;}
+	GK_INLINE const gkString    &getName(void)          {return m_name;}
+	GK_INLINE gkSoundStream     *getStream(void)        {return m_stream;}
 
-    gkSource    *createSource(void);
-    void        destroySource(gkSource *);
+	gkSource    *createSource(void);
+	void        destroySource(gkSource *);
 
-    void        stopPlayback(void);
-
-
-    // Load sound block from file, then dumps it into memory
-    bool loadToMemory(const char *file);
-
-    // Load sound from file, then streams
-    // file data to a playback buffer.
-    bool load(const char *file);
+	void        stopPlayback(void);
 
 
-    // Load sound from memory, then streams
-    // memory data to a playback buffer.
-    bool load(void *handle, UTsize len);
+	// Load sound block from file, then dumps it into memory
+	bool loadToMemory(const char *file);
+
+	// Load sound from file, then streams
+	// file data to a playback buffer.
+	bool load(const char *file);
+
+
+	// Load sound from memory, then streams
+	// memory data to a playback buffer.
+	bool load(void *handle, UTsize len);
 };
 
 #endif//_gkSound_h_

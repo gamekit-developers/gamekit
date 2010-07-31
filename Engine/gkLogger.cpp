@@ -43,62 +43,62 @@ using namespace Ogre;
 #define GK_BUFSIZE (0xFFFF)
 
 static char GK_ConsoleBuffer[GK_BUFSIZE+1];
-static Log* gLog = 0;
+static Log *gLog = 0;
 
 
 void gkPrintf(const char *fmt, ...)
 {
-    va_list lst;
-    va_start(lst, fmt);
-    int size = gkvsnprintf(GK_ConsoleBuffer, GK_BUFSIZE, fmt, lst);
-    va_end(lst);
+	va_list lst;
+	va_start(lst, fmt);
+	int size = gkvsnprintf(GK_ConsoleBuffer, GK_BUFSIZE, fmt, lst);
+	va_end(lst);
 
-    if (size < 0)
-    {
-        GK_ConsoleBuffer[GK_BUFSIZE] = 0;
-        size = GK_BUFSIZE;
-    }
+	if (size < 0)
+	{
+		GK_ConsoleBuffer[GK_BUFSIZE] = 0;
+		size = GK_BUFSIZE;
+	}
 
-    if (size > 0)
-    {
-        // out to log stream so user def flags work
-        GK_ConsoleBuffer[size] = 0;
-        if (gLog != 0 && gLog->getLogDetail() != Ogre::LL_LOW)
-            gLog->logMessage(GK_ConsoleBuffer);
-        else printf("%s", GK_ConsoleBuffer);
-    }
+	if (size > 0)
+	{
+		// out to log stream so user def flags work
+		GK_ConsoleBuffer[size] = 0;
+		if (gLog != 0 && gLog->getLogDetail() != Ogre::LL_LOW)
+			gLog->logMessage(GK_ConsoleBuffer);
+		else printf("%s", GK_ConsoleBuffer);
+	}
 }
 
 
 void gkLogger::enable(const gkString &name, bool verbose)
 {
-    if (!gLog)
-    {
-        LogManager *mgr = LogManager::getSingletonPtr();
-        if (!mgr)
-            mgr = new LogManager();
-        gLog = mgr->createLog(name);
+	if (!gLog)
+	{
+		LogManager *mgr = LogManager::getSingletonPtr();
+		if (!mgr)
+			mgr = new LogManager();
+		gLog = mgr->createLog(name);
 
-        if (!verbose) gLog->setLogDetail(Ogre::LL_LOW);
-    }
+		if (!verbose) gLog->setLogDetail(Ogre::LL_LOW);
+	}
 }
 
 
 
 void gkLogger::disable()
 {
-    if (gLog)
-    {
-        LogManager::getSingleton().destroyLog(gLog);
-        gLog = 0;
-        delete LogManager::getSingletonPtr();
-    }
+	if (gLog)
+	{
+		LogManager::getSingleton().destroyLog(gLog);
+		gLog = 0;
+		delete LogManager::getSingletonPtr();
+	}
 }
 
 
 
 void gkLogger::write(const gkString &msg)
 {
-    if (gLog != 0)
-        gLog->logMessage(msg);
+	if (gLog != 0)
+		gLog->logMessage(msg);
 }

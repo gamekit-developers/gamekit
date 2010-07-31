@@ -36,62 +36,62 @@
 class gkDebugScreen
 {
 public:
-    gkDebugScreen();
-    ~gkDebugScreen();
+	gkDebugScreen();
+	~gkDebugScreen();
 
-    void initialize();
-    void finalize();
+	void initialize();
+	void finalize();
 
-    static void printTo(const gkString &buf);
- 
-    GK_INLINE void lock(bool doit)      { m_isLocked = doit; }
-    GK_INLINE bool isInitialized()      { return m_isInit; }
-    GK_INLINE bool isLocked()           { return m_isLocked; }
-    GK_INLINE bool isShown()            { return m_isShown; }
-    GK_INLINE const gkString& getText() { return m_txtBuffer;  }
-    
-    GK_INLINE void setText(const gkString &txt)
-    {
-        m_txtBuffer = txt;
-        _getClipped();
-    }
+	static void printTo(const gkString &buf);
+
+	GK_INLINE void lock(bool doit)      { m_isLocked = doit; }
+	GK_INLINE bool isInitialized()      { return m_isInit; }
+	GK_INLINE bool isLocked()           { return m_isLocked; }
+	GK_INLINE bool isShown()            { return m_isShown; }
+	GK_INLINE const gkString &getText() { return m_txtBuffer;  }
+
+	GK_INLINE void setText(const gkString &txt)
+	{
+		m_txtBuffer = txt;
+		_getClipped();
+	}
 
 
-    void show(bool doit);
-    void pushText(const gkString &text);
-    void clear();
-    void _getClipped();
+	void show(bool doit);
+	void pushText(const gkString &text);
+	void clear();
+	void _getClipped();
 
 
 private:
-    bool m_isInit, m_isLocked, m_isShown;
-    utString m_txtBuffer;
-    
-    Ogre::Overlay               *m_over;
-    Ogre::OverlayElement        *m_ele;
-    Ogre::ManualResourceLoader  *m_font;
+	bool m_isInit, m_isLocked, m_isShown;
+	utString m_txtBuffer;
+
+	Ogre::Overlay               *m_over;
+	Ogre::OverlayElement        *m_ele;
+	Ogre::ManualResourceLoader  *m_font;
 
 
-    class ScreenBufferItem : public utListClass<ScreenBufferItem>::Link
-    {
-    public:
-        ScreenBufferItem() 
-        {
-        }
+	class ScreenBufferItem : public utListClass<ScreenBufferItem>::Link
+	{
+	public:
+		ScreenBufferItem()
+		{
+		}
 
-        void clear()
-        {
-            m_next = m_prev = 0;
-        }
+		void clear()
+		{
+			m_next = m_prev = 0;
+		}
 
-        utString m_buf;
-    };
+		utString m_buf;
+	};
 
-    typedef     utMemoryPool<ScreenBufferItem, 0> ScreenBufferPool;
-    typedef     utListClass<ScreenBufferItem> ScreenBufferList;
-    ScreenBufferList    m_lines;
-    ScreenBufferPool    m_lineBuffer;
-    utStringArray       m_splitBuf;
+	typedef     utMemoryPool<ScreenBufferItem, 0> ScreenBufferPool;
+	typedef     utListClass<ScreenBufferItem> ScreenBufferList;
+	ScreenBufferList    m_lines;
+	ScreenBufferPool    m_lineBuffer;
+	utStringArray       m_splitBuf;
 };
 
 extern void dsPrintf(const char *fmt, ...);

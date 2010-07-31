@@ -37,26 +37,26 @@
 class gkSceneManager : public Ogre::Singleton<gkSceneManager>
 {
 public:
-    typedef utHashTable<gkHashedString, gkScene*> SceneObjectMap;
+	typedef utHashTable<gkHashedString, gkScene *> SceneObjectMap;
 
 protected:
-    SceneObjectMap m_objects;
+	SceneObjectMap m_objects;
 
 public:
 
-    gkSceneManager();
-    virtual ~gkSceneManager();
+	gkSceneManager();
+	virtual ~gkSceneManager();
 
 
-    gkScene* getScene(const gkString& name);
-    gkScene* create(const gkString& name);
-    void destroy(const gkString& name);
-    void destroy(gkScene *ob);
-    void destroyAll(void);
-    bool hasScene(const gkString& name);
+	gkScene *getScene(const gkString &name);
+	gkScene *create(const gkString &name);
+	void destroy(const gkString &name);
+	void destroy(gkScene *ob);
+	void destroyAll(void);
+	bool hasScene(const gkString &name);
 
-    static gkSceneManager& getSingleton(void);
-    static gkSceneManager* getSingletonPtr(void);
+	static gkSceneManager &getSingleton(void);
+	static gkSceneManager *getSingletonPtr(void);
 
 };
 

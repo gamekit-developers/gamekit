@@ -27,74 +27,74 @@ class gksPointer
 
 public:
 #ifndef SWIG
-    // internal 
+	// internal
 
-    explicit gksPointer(T *p = 0)
-        :   m_obj(p), m_ref(0) 
-    {
-        addRef();
-    }
+	explicit gksPointer(T *p = 0)
+		:   m_obj(p), m_ref(0)
+	{
+		addRef();
+	}
 
-    ~gksPointer()
-    {
-        release();
-    }
+	~gksPointer()
+	{
+		release();
+	}
 
-    gksPointer(const gksPointer &obj)
-        :   m_obj(obj.m_obj), m_ref(0)
-    {
-        addRef();
-    }
+	gksPointer(const gksPointer &obj)
+		:   m_obj(obj.m_obj), m_ref(0)
+	{
+		addRef();
+	}
 
-    gksPointer &operator = (const gksPointer &obj)
-    {
-        if(this != &obj)
-        {
-            obj.addRef();
-            release();
-            m_obj = obj.m_obj;
-            m_ref = obj.m_ref;
-        }
-        return *this;
-    }
+	gksPointer &operator = (const gksPointer &obj)
+	{
+		if(this != &obj)
+		{
+			obj.addRef();
+			release();
+			m_obj = obj.m_obj;
+			m_ref = obj.m_ref;
+		}
+		return *this;
+	}
 
 #endif
 
 
-    bool isNull(void) const                         { return m_obj == 0; }
+	bool isNull(void) const                         { return m_obj == 0; }
 
-    bool operator ==(const gksPointer &rhs) const      { return m_obj == rhs.m_obj; }
-    bool operator !=(const gksPointer &rhs) const      { return m_obj != rhs.m_obj; }
+	bool operator ==(const gksPointer &rhs) const      { return m_obj == rhs.m_obj; }
+	bool operator !=(const gksPointer &rhs) const      { return m_obj != rhs.m_obj; }
 
-    T *operator->() const
-    {
-        GK_ASSERT(m_obj);
-        return m_obj;
-    }
+	T *operator->() const
+	{
+		GK_ASSERT(m_obj);
+		return m_obj;
+	}
 
 
 private:
 
-    void addRef(void) const
-    {
-        if (m_obj)
-            ++m_ref;
-    }
+	void addRef(void) const
+	{
+		if (m_obj)
+			++m_ref;
+	}
 
-    void release(void) const
-    {
-        if(m_obj)
-        {
-            if (--m_ref == 0)
-            {
-                delete m_obj;
-                m_obj = 0;
-            }
-        }
-    }
+	void release(void) const
+	{
+		if(m_obj)
+		{
+			if (--m_ref == 0)
+			{
+				delete m_obj;
+				m_obj = 0;
+			}
+		}
+	}
 
-    mutable T   *m_obj;
-    mutable int  m_ref;
+	mutable T   *m_obj;
+	mutable int  m_ref;
 };
 
 

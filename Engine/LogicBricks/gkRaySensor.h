@@ -34,34 +34,34 @@ class gkRaySensor : public gkLogicSensor
 {
 public:
 
-    enum RayAxis
-    {
-        RA_XPOS,
-        RA_YPOS,
-        RA_ZPOS,
-        RA_XNEG,
-        RA_YNEG,
-        RA_ZNEG,
-    };
+	enum RayAxis
+	{
+		RA_XPOS,
+		RA_YPOS,
+		RA_ZPOS,
+		RA_XNEG,
+		RA_YNEG,
+		RA_ZNEG,
+	};
 
 protected:
-    gkScalar    m_range;
-    int         m_axis;
-    gkString    m_material, m_prop;
+	gkScalar    m_range;
+	int         m_axis;
+	gkString    m_material, m_prop;
 
 public:
 
-    gkRaySensor(gkGameObject *object, gkLogicLink *link, const gkString &name);
-    virtual ~gkRaySensor() {}
+	gkRaySensor(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	virtual ~gkRaySensor() {}
 
-    gkLogicBrick* clone(gkLogicLink *link, gkGameObject *dest);
+	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
 
-    bool query(void);
+	bool query(void);
 
-    GK_INLINE void setRange(gkScalar v)             {m_range = v;}
-    GK_INLINE void setAxis(int v)                   {m_axis = v;}
-    GK_INLINE void setMaterial(const gkString& v)   {m_material = v; m_prop = "";}
-    GK_INLINE void setProperty(const gkString& v)   {m_prop = v; m_material = "";}
+	GK_INLINE void setRange(gkScalar v)             {m_range = v;}
+	GK_INLINE void setAxis(int v)                   {m_axis = v;}
+	GK_INLINE void setMaterial(const gkString &v)   {m_material = v; m_prop = "";}
+	GK_INLINE void setProperty(const gkString &v)   {m_prop = v; m_material = "";}
 };
 
 

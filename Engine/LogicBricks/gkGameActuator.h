@@ -34,34 +34,34 @@ class gkGameActuator : public gkLogicActuator
 {
 public:
 
-    enum Mode
-    {
-        GM_QUIT,
-        GM_RESTART,
-        GM_START_NEW,
-        GM_SAVE,
-        GM_LOAD,
-    };
+	enum Mode
+	{
+		GM_QUIT,
+		GM_RESTART,
+		GM_START_NEW,
+		GM_SAVE,
+		GM_LOAD,
+	};
 
 
 private:
 
-    int m_mode;
-    gkString m_otherGame;
+	int m_mode;
+	gkString m_otherGame;
 
 public:
 
-    gkGameActuator(gkGameObject *object, gkLogicLink *link, const gkString &name);
-    virtual ~gkGameActuator();
+	gkGameActuator(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	virtual ~gkGameActuator();
 
-    gkLogicBrick* clone(gkLogicLink *link, gkGameObject *dest);
+	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
 
-    GK_INLINE void  setMode(int v)                  {m_mode = v;}
-    GK_INLINE void  setGameFile(const gkString& v)  {m_otherGame = v;}
-    
-    
-    // Handle incoming logic.
-    void execute(void);
+	GK_INLINE void  setMode(int v)                  {m_mode = v;}
+	GK_INLINE void  setGameFile(const gkString &v)  {m_otherGame = v;}
+
+
+	// Handle incoming logic.
+	void execute(void);
 };
 
 #endif//_gkGameActuator_h_

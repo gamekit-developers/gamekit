@@ -31,9 +31,9 @@
 
 // ----------------------------------------------------------------------------
 gkPropertyActuator::gkPropertyActuator(gkGameObject *object, gkLogicLink *link, const gkString &name)
-    :   gkLogicActuator(object, link, name),
-        m_type(0), m_prop(""), m_value(""), m_othOb(""), m_init(false),
-        m_cur(0), m_oth(0)
+	:   gkLogicActuator(object, link, name),
+	    m_type(0), m_prop(""), m_value(""), m_othOb(""), m_init(false),
+	    m_cur(0), m_oth(0)
 {
 }
 
@@ -44,65 +44,65 @@ gkPropertyActuator::~gkPropertyActuator()
 
 
 // ----------------------------------------------------------------------------
-gkLogicBrick* gkPropertyActuator::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick *gkPropertyActuator::clone(gkLogicLink *link, gkGameObject *dest)
 {
-    gkPropertyActuator *act = new gkPropertyActuator(*this);
-    act->cloneImpl(link, dest);
-    act->m_init = false;
-    act->m_cur = 0;
-    return act;
+	gkPropertyActuator *act = new gkPropertyActuator(*this);
+	act->cloneImpl(link, dest);
+	act->m_init = false;
+	act->m_cur = 0;
+	return act;
 }
 
 // ----------------------------------------------------------------------------
 void gkPropertyActuator::execute(void)
 {
-    if (isPulseOff())
-        return;
+	if (isPulseOff())
+		return;
 
-    if (!m_object->isLoaded())
-        return;
+	if (!m_object->isLoaded())
+		return;
 
-    if (!m_init)
-    {
-        if (m_object->hasVariable(m_prop))
-        {
+	if (!m_init)
+	{
+		if (m_object->hasVariable(m_prop))
+		{
 
-            m_cur = m_object->getVariable(m_prop);
-            m_init = true;
+			m_cur = m_object->getVariable(m_prop);
+			m_init = true;
 
-            if (!m_othOb.empty())
-            {
-                gkGameObject *ob = m_object->getOwner()->getObject(m_othOb);
-                if (ob->hasVariable(m_value))
-                    m_oth = ob->getVariable(m_value);
-            }
-        }
-        else
-        {
-            //m_suspend = true;
-            return;
-        }
-    }
+			if (!m_othOb.empty())
+			{
+				gkGameObject *ob = m_object->getOwner()->getObject(m_othOb);
+				if (ob->hasVariable(m_value))
+					m_oth = ob->getVariable(m_value);
+			}
+		}
+		else
+		{
+			//m_suspend = true;
+			return;
+		}
+	}
 
-    if (m_cur)
-    {
+	if (m_cur)
+	{
 
-        switch (m_type)
-        {
-        case PA_ASSIGN:
-            m_cur->assign(m_value);
-            break;
-        case PA_ADD:
-            m_cur->add(m_value);
-            break;
-        case PA_TOGGLE:
-            m_cur->toggle(m_value);
-            m_value = m_cur->getValueString();
-            break;
-        case PA_COPY:
-            if (m_oth)
-                m_cur->assign(m_oth->getValueString());
-            break;
-        }
-    }
+		switch (m_type)
+		{
+		case PA_ASSIGN:
+			m_cur->assign(m_value);
+			break;
+		case PA_ADD:
+			m_cur->add(m_value);
+			break;
+		case PA_TOGGLE:
+			m_cur->toggle(m_value);
+			m_value = m_cur->getValueString();
+			break;
+		case PA_COPY:
+			if (m_oth)
+				m_cur->assign(m_oth->getValueString());
+			break;
+		}
+	}
 }

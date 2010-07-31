@@ -32,7 +32,7 @@
 
 // ----------------------------------------------------------------------------
 gkStateActuator::gkStateActuator(gkGameObject *object, gkLogicLink *link, const gkString &name)
-:       gkLogicActuator(object, link, name), m_stateMask(0), m_op(OP_NILL)
+	:       gkLogicActuator(object, link, name), m_stateMask(0), m_op(OP_NILL)
 {
 }
 
@@ -42,45 +42,46 @@ gkStateActuator::~gkStateActuator()
 }
 
 // ----------------------------------------------------------------------------
-gkLogicBrick* gkStateActuator::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick *gkStateActuator::clone(gkLogicLink *link, gkGameObject *dest)
 {
-    gkStateActuator *act = new gkStateActuator(*this);
-    act->cloneImpl(link, dest);
-    return act;
+	gkStateActuator *act = new gkStateActuator(*this);
+	act->cloneImpl(link, dest);
+	return act;
 }
 
 // ----------------------------------------------------------------------------
 void gkStateActuator::execute(void)
 {
-    if (isPulseOff())
-        return;
+	if (isPulseOff())
+		return;
 
-    unsigned int oldState = m_link->getState();
+	unsigned int oldState = m_link->getState();
 
-    switch (m_op) {
-    case OP_ADD:
-        m_link->setState(m_link->getState() | m_stateMask);
-        break;
-    case OP_SUB:
-        m_link->setState(m_link->getState() & ~m_stateMask);
-        break;
-    case OP_CPY:
-        m_link->setState(m_stateMask);
-        break;
-    case OP_INV:
-        m_link->setState(m_link->getState() ^ m_stateMask);
-        break;
-    case OP_NILL:
-    default:
-        break;
-    }
+	switch (m_op)
+	{
+	case OP_ADD:
+		m_link->setState(m_link->getState() | m_stateMask);
+		break;
+	case OP_SUB:
+		m_link->setState(m_link->getState() & ~m_stateMask);
+		break;
+	case OP_CPY:
+		m_link->setState(m_stateMask);
+		break;
+	case OP_INV:
+		m_link->setState(m_link->getState() ^ m_stateMask);
+		break;
+	case OP_NILL:
+	default:
+		break;
+	}
 
-    unsigned int newState = m_link->getState();
-    if (oldState != newState)
-    {
-        m_object->setState(newState);
-        m_link->notifyState();
+	unsigned int newState = m_link->getState();
+	if (oldState != newState)
+	{
+		m_object->setState(newState);
+		m_link->notifyState();
 
-        gkLogicManager::getSingleton().notifyState(newState, m_link);
-    }
+		gkLogicManager::getSingleton().notifyState(newState, m_link);
+	}
 }

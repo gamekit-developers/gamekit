@@ -44,39 +44,38 @@ gkKeyDispatch::~gkKeyDispatch()
 // ----------------------------------------------------------------------------
 void gkKeyDispatch::dispatch(void)
 {
-    // TODO need to sort. 
-    doDispatch(m_sensors);
+	// TODO need to sort.
+	doDispatch(m_sensors);
 }
 
 // ----------------------------------------------------------------------------
 gkKeyboardSensor::gkKeyboardSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
-:       gkLogicSensor(object, link, name), m_key(KC_NONE), m_mod0(KC_NONE), m_mod1(KC_NONE)
+	:       gkLogicSensor(object, link, name), m_key(KC_NONE), m_mod0(KC_NONE), m_mod1(KC_NONE)
 {
-    m_dispatchType = DIS_KEY;
-    connect();
+	m_dispatchType = DIS_KEY;
+	connect();
 }
 
 // ----------------------------------------------------------------------------
-gkLogicBrick* gkKeyboardSensor::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick *gkKeyboardSensor::clone(gkLogicLink *link, gkGameObject *dest)
 {
-    gkKeyboardSensor *sens = new gkKeyboardSensor(*this);
-    sens->cloneImpl(link, dest);
-    return sens;
+	gkKeyboardSensor *sens = new gkKeyboardSensor(*this);
+	sens->cloneImpl(link, dest);
+	return sens;
 }
 
 // ----------------------------------------------------------------------------
 bool gkKeyboardSensor::query(void)
 {
-    gkKeyboard *key = gkWindowSystem::getSingleton().getKeyboard();
+	gkKeyboard *key = gkWindowSystem::getSingleton().getKeyboard();
 
-    bool qres = key->isKeyDown((gkScanCode)m_key);
+	bool qres = key->isKeyDown((gkScanCode)m_key);
 
 
-    if (m_mod0 != KC_NONE)
-        qres = qres && key->isKeyDown((gkScanCode)m_mod0);
-    if (m_mod1 != KC_NONE)
-        qres = qres && key->isKeyDown((gkScanCode)m_mod1);
+	if (m_mod0 != KC_NONE)
+		qres = qres && key->isKeyDown((gkScanCode)m_mod0);
+	if (m_mod1 != KC_NONE)
+		qres = qres && key->isKeyDown((gkScanCode)m_mod1);
 
-    return qres;
+	return qres;
 }
-

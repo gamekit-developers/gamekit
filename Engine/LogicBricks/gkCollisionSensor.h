@@ -35,28 +35,28 @@
 class gkCollisionDispatch : public gkAbstractDispatcher
 {
 public:
-    gkCollisionDispatch();
-    virtual ~gkCollisionDispatch() {}
+	gkCollisionDispatch();
+	virtual ~gkCollisionDispatch() {}
 
-    void dispatch(void);
+	void dispatch(void);
 };
 
 
 class gkCollisionSensor : public gkLogicSensor
 {
 protected:
-    gkString m_material, m_prop;
+	gkString m_material, m_prop;
 
 public:
 
-    gkCollisionSensor(gkGameObject *object, gkLogicLink *link, const gkString &name);
-    virtual ~gkCollisionSensor() {}
+	gkCollisionSensor(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	virtual ~gkCollisionSensor() {}
 
-    gkLogicBrick* clone(gkLogicLink *link, gkGameObject *dest);
+	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
 
-    bool query(void);
-    GK_INLINE void setMaterial(const gkString& material)    {m_material = material;}
-    GK_INLINE void setProperty(const gkString& prop)        {m_prop = prop;}
+	bool query(void);
+	GK_INLINE void setMaterial(const gkString &material)    {m_material = material;}
+	GK_INLINE void setProperty(const gkString &prop)        {m_prop = prop;}
 };
 
 

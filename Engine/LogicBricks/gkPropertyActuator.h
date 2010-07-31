@@ -36,40 +36,40 @@ class gkPropertyActuator : public gkLogicActuator
 {
 public:
 
-    enum Type
-    {
-        PA_ASSIGN,
-        PA_ADD,
-        PA_COPY,
-        PA_TOGGLE,
-    };
+	enum Type
+	{
+		PA_ASSIGN,
+		PA_ADD,
+		PA_COPY,
+		PA_TOGGLE,
+	};
 
 private:
-    int         m_type;
-    gkString    m_prop, m_value, m_othOb;
-    bool        m_init;
-    gkVariable  *m_cur, *m_oth;
+	int         m_type;
+	gkString    m_prop, m_value, m_othOb;
+	bool        m_init;
+	gkVariable  *m_cur, *m_oth;
 
 
 public:
 
-    gkPropertyActuator(gkGameObject *object, gkLogicLink *link, const gkString &name);
-    virtual ~gkPropertyActuator();
+	gkPropertyActuator(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	virtual ~gkPropertyActuator();
 
-    gkLogicBrick* clone(gkLogicLink *link, gkGameObject *dest);
+	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
 
-    GK_INLINE void      setType(int v)                  {m_type = v;}
-    GK_INLINE int       getType(void)                   {return m_type;}
-    GK_INLINE void      setProperty(const gkString& v)  {m_prop = v;}
-    GK_INLINE gkString  getProperty(void)               {return m_prop;}
-    GK_INLINE void      setValue(const gkString& v)     {m_value = v;}
-    GK_INLINE gkString  getValue(void)                  {return m_value;}
-    GK_INLINE void      setObject(const gkString& v)    {m_othOb = v;}
-    GK_INLINE gkString  getObject(void)                 {return m_othOb;}
+	GK_INLINE void      setType(int v)                  {m_type = v;}
+	GK_INLINE int       getType(void)                   {return m_type;}
+	GK_INLINE void      setProperty(const gkString &v)  {m_prop = v;}
+	GK_INLINE gkString  getProperty(void)               {return m_prop;}
+	GK_INLINE void      setValue(const gkString &v)     {m_value = v;}
+	GK_INLINE gkString  getValue(void)                  {return m_value;}
+	GK_INLINE void      setObject(const gkString &v)    {m_othOb = v;}
+	GK_INLINE gkString  getObject(void)                 {return m_othOb;}
 
 
-    // Handle incoming logic.
-    void execute(void);
+	// Handle incoming logic.
+	void execute(void);
 };
 
 

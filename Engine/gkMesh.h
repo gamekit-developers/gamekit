@@ -40,9 +40,9 @@ class btTriangleMesh;
 class gkDeformVertex
 {
 public:
-    int         group;
-    gkScalar    weight;
-    int         vertexId;
+	int         group;
+	gkScalar    weight;
+	int         vertexId;
 };
 
 
@@ -50,29 +50,29 @@ public:
 class gkVertex
 {
 public:
-    gkVertex();
-    gkVertex(const gkVertex& o);
-    gkVertex& operator = (const gkVertex& o);
+	gkVertex();
+	gkVertex(const gkVertex &o);
+	gkVertex &operator = (const gkVertex &o);
 
-    gkVector3       co;                 // vertex coordinates 
-    gkVector3       no;                 // normals 
-    unsigned int    vcol;               // vertex color 
-    gkVector2       uv[GK_UV_MAX];      // texture coordinates < GK_UV_MAX
-    int             vba;
+	gkVector3       co;                 // vertex coordinates
+	gkVector3       no;                 // normals
+	unsigned int    vcol;               // vertex color
+	gkVector2       uv[GK_UV_MAX];      // texture coordinates < GK_UV_MAX
+	int             vba;
 };
 
 
 // ----------------------------------------------------------------------------
 struct gkTriangle
 {
-    enum TriFlag 
-    {
-        TRI_INVISIBLE    = (1 << 0),
-        TRI_COLLIDER     = (1 << 1),
-    };
+	enum TriFlag
+	{
+		TRI_INVISIBLE    = (1 << 0),
+		TRI_COLLIDER     = (1 << 1),
+	};
 
-    unsigned int i0, i1, i2;
-    int flag;
+	unsigned int i0, i1, i2;
+	int flag;
 };
 
 
@@ -84,56 +84,56 @@ class gkSubMeshIndexer;
 class gkSubMesh
 {
 public:
-    typedef utArray<gkTriangle>         Triangles;
-    typedef utArray<gkVertex>           Verticies;
-    typedef utArray<gkDeformVertex>     DeformVerts;
+	typedef utArray<gkTriangle>         Triangles;
+	typedef utArray<gkVertex>           Verticies;
+	typedef utArray<gkDeformVertex>     DeformVerts;
 
 private:
 
-    Triangles           m_tris;
-    Verticies           m_verts;
-    int                 m_uvlayers;
-    gkBoundingBox       m_bounds;
-    bool                m_boundsInit;
+	Triangles           m_tris;
+	Verticies           m_verts;
+	int                 m_uvlayers;
+	gkBoundingBox       m_bounds;
+	bool                m_boundsInit;
 
-    DeformVerts         m_defverts;
-    bool                m_hasVertexColors;
+	DeformVerts         m_defverts;
+	bool                m_hasVertexColors;
 
-    friend class gkSubMeshIndexer;
-    gkSubMeshIndexer* m_sort;
+	friend class gkSubMeshIndexer;
+	gkSubMeshIndexer *m_sort;
 
-    gkMaterialProperties*    m_material;
+	gkMaterialProperties    *m_material;
 
 public:
 
-    gkSubMesh();
-    ~gkSubMesh();
+	gkSubMesh();
+	~gkSubMesh();
 
-    Verticies&          getVertexBuffer(void)               {return m_verts;}
-    Triangles&          getIndexBuffer(void)                {return m_tris;}
-    DeformVerts&        getDeformVertexBuffer(void)         {return m_defverts;}
-    gkString            getMaterialName(void)               {return m_material->m_name.c_str();}
-    void                setMaterialName(const gkString& v)  {m_material->m_name = v.c_str();}
-    void                setTotalLayers(int v)               {m_uvlayers = v;}
-    int                 getUvLayerCount(void)               {return m_uvlayers;}
-    void                setVertexColors(bool v)             {m_hasVertexColors = v;}
-    bool                hasVertexColors(void)               {return m_hasVertexColors; }
-
-
-    gkBoundingBox       &getBoundingBox(void);
-
-    gkMaterialProperties& getMaterial(void)                 {return *m_material;}
+	Verticies          &getVertexBuffer(void)               {return m_verts;}
+	Triangles          &getIndexBuffer(void)                {return m_tris;}
+	DeformVerts        &getDeformVertexBuffer(void)         {return m_defverts;}
+	gkString            getMaterialName(void)               {return m_material->m_name.c_str();}
+	void                setMaterialName(const gkString &v)  {m_material->m_name = v.c_str();}
+	void                setTotalLayers(int v)               {m_uvlayers = v;}
+	int                 getUvLayerCount(void)               {return m_uvlayers;}
+	void                setVertexColors(bool v)             {m_hasVertexColors = v;}
+	bool                hasVertexColors(void)               {return m_hasVertexColors; }
 
 
-    gkSubMesh *clone(void);
-    void       addTriangle(const gkVertex &v0, 
-                           unsigned int i0, 
-                           const gkVertex &v1, 
-                           unsigned int i1, 
-                           const gkVertex &v2, 
-                           unsigned int i2, int flag);
+	gkBoundingBox       &getBoundingBox(void);
 
-    void        addDeformVert(const gkDeformVertex& dv);
+	gkMaterialProperties &getMaterial(void)                 {return *m_material;}
+
+
+	gkSubMesh *clone(void);
+	void       addTriangle(const gkVertex &v0,
+	                       unsigned int i0,
+	                       const gkVertex &v1,
+	                       unsigned int i1,
+	                       const gkVertex &v2,
+	                       unsigned int i2, int flag);
+
+	void        addDeformVert(const gkDeformVertex &dv);
 };
 
 
@@ -144,14 +144,14 @@ class gkVertexGroup
 {
 public:
 
-    gkVertexGroup(const gkString &name, int index) : m_name(name), m_index(index) {}
+	gkVertexGroup(const gkString &name, int index) : m_name(name), m_index(index) {}
 
-    const int       getIndex(void)              { return m_index; }
-    const gkString& getName(void)               { return m_name; }
+	const int       getIndex(void)              { return m_index; }
+	const gkString &getName(void)               { return m_name; }
 
 private:
-    gkString    m_name;
-    int         m_index;
+	gkString    m_name;
+	int         m_index;
 };
 
 // ----------------------------------------------------------------------------
@@ -159,42 +159,42 @@ class gkMesh
 {
 public:
 
-    typedef utArray<gkSubMesh*>             SubMeshArray;
-    typedef utArrayIterator<SubMeshArray>   SubMeshIterator;
-    typedef utArray<gkVertexGroup*>         VertexGroups;
+	typedef utArray<gkSubMesh *>             SubMeshArray;
+	typedef utArrayIterator<SubMeshArray>   SubMeshIterator;
+	typedef utArray<gkVertexGroup *>         VertexGroups;
 
 private:
 
-    SubMeshArray        m_submeshes;
-    gkBoundingBox       m_bounds;
-    bool                m_boundsInit;
-    VertexGroups        m_groups;
-    btTriangleMesh      *m_triMesh;
-    const gkString      m_name;
+	SubMeshArray        m_submeshes;
+	gkBoundingBox       m_bounds;
+	bool                m_boundsInit;
+	VertexGroups        m_groups;
+	btTriangleMesh      *m_triMesh;
+	const gkString      m_name;
 
 public:
 
-    gkMesh(const gkString &name);
-    ~gkMesh();
+	gkMesh(const gkString &name);
+	~gkMesh();
 
-    void addSubMesh(gkSubMesh *me);
+	void addSubMesh(gkSubMesh *me);
 
-    gkBoundingBox &getBoundingBox(void);
+	gkBoundingBox &getBoundingBox(void);
 
-    btTriangleMesh          *getTriMesh(void);
-    gkMaterialProperties    &getFirstMaterial(void);
+	btTriangleMesh          *getTriMesh(void);
+	gkMaterialProperties    &getFirstMaterial(void);
 
-    const gkString& getName(void) {return m_name;}
-
-
-    gkVertexGroup   *createVertexGroup(const gkString &name);
-    VertexGroups    &getGroups(void) {return m_groups;}
-    gkVertexGroup   *findVertexGroup(const gkString &name);
-    gkVertexGroup   *findVertexGroup(int i);
+	const gkString &getName(void) {return m_name;}
 
 
-    gkMesh *clone(void);
-    SubMeshIterator getSubMeshIterator(void) {return SubMeshIterator(m_submeshes);}
+	gkVertexGroup   *createVertexGroup(const gkString &name);
+	VertexGroups    &getGroups(void) {return m_groups;}
+	gkVertexGroup   *findVertexGroup(const gkString &name);
+	gkVertexGroup   *findVertexGroup(int i);
+
+
+	gkMesh *clone(void);
+	SubMeshIterator getSubMeshIterator(void) {return SubMeshIterator(m_submeshes);}
 
 
 };
