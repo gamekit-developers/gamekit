@@ -3,7 +3,7 @@
 #  Application Utils
 #
 # -----------------------------------------------------------------------------
-macro(ADD_OGREKIT_EXECUTABLE TARGET SRC)
+macro(ADD_OGREKIT_EXECUTABLE TARGET SRC CONTENT)
 
     # Engine application deps
     include_directories(
@@ -12,7 +12,8 @@ macro(ADD_OGREKIT_EXECUTABLE TARGET SRC)
 
     link_libraries(${OGREKIT_LIB})
 
-    set(EX ${ARGN})
+	set(EX ${${CONTENT}})    
+
     if (APPLE)
         set(EXETYPE MACOSX_BUNDLE)
         set_source_files_properties( MainMenu.nib  PROPERTIES MACOSX_PACKAGE_LOCATION Resources )

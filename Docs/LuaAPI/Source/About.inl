@@ -1,8 +1,5 @@
 /*! \page About About
 
-This document is setup to be a reference to the OgreKit Lua scripting programming interface. \n
-
-
 This work is Released under the zlib license.\n
 http://www.gzip.org/zlib/zlib_license.html    
 \n\n

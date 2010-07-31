@@ -14,9 +14,8 @@ endif()
 
 if (OGREKIT_BUILD_LUARUNTIME)
     subdirs(LuaRuntime)
-    subdirs(LuaPackage)
+    #subdirs(LuaPackage)
 endif()
-
 
 #if (OGREKIT_BUILD_CHROMEPLUGIN)
 #    subdirs(ChromePlugin)
