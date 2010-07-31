@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): xat.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -412,7 +412,6 @@ bool gkEnginePrivate::frameRenderingQueued(const FrameEvent& evt)
     if (scene)
         tick();
 
-    gkStats::getSingleton().resetClock();
     // restart the clock to mesure time for swapping buffer and updatind scenemanager LOD
     gkStats::getSingleton().startClock();
 
@@ -422,7 +421,8 @@ bool gkEnginePrivate::frameRenderingQueued(const FrameEvent& evt)
 bool gkEnginePrivate::frameEnded(const FrameEvent& evt)
 {
     gkStats::getSingleton().stopBufSwapLodClock();
-    
+    gkStats::getSingleton().nextFrame();
+
     return true;
 }
 

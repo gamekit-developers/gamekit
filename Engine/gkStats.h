@@ -3,9 +3,9 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Charlie C.
+    Copyright (c) 2006-2010 Xavier T.
 
-    Contributor(s): xat
+    Contributor(s): none yet.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -35,7 +35,8 @@ class gkStats : public Ogre::Singleton<gkStats>
 
 private:
     Ogre::Timer* m_clock;
-    
+
+    unsigned long m_start;
     unsigned long m_render;
     unsigned long m_logicBricks;
     unsigned long m_logicNodes;
@@ -44,12 +45,23 @@ private:
     unsigned long m_sound;
     unsigned long m_bufswaplod;
 
+    unsigned long m_lastRender;
+    unsigned long m_lastLogicBricks;
+    unsigned long m_lastLogicNodes;
+    unsigned long m_lastPhysics;
+    unsigned long m_lastDbvt;
+    unsigned long m_lastSound;
+    unsigned long m_lastBufswaplod;
+    unsigned long m_lastTotal;
+
 public:
     gkStats();
 
     void resetClock(void);
 
     void startClock(void);
+
+    void nextFrame(void);
 
     void stopRenderClock(void);
     void stopLogicBricksClock(void);
@@ -59,13 +71,14 @@ public:
     void stopSoundClock(void);
     void stopBufSwapLodClock(void);
 
-    unsigned long getRenderMicroSeconds(void) {return m_render; }
-    unsigned long getLogicBricksMicroSeconds(void) {return m_logicBricks; }
-    unsigned long getLogicNodesMicroSeconds(void)  {return m_logicNodes;}
-    unsigned long getPhysicsMicroSeconds(void)     {return m_physics;}
-    unsigned long getDbvtMicroSeconds(void)        {return m_dbvt;}
-    unsigned long getSoundMicroSeconds(void)       {return m_sound;}
-    unsigned long getBufSwapLodMicroSeconds(void)       {return m_bufswaplod;}
+    unsigned long getLastRenderMicroSeconds(void)      {return m_lastRender; }
+    unsigned long getLastLogicBricksMicroSeconds(void) {return m_lastLogicBricks; }
+    unsigned long getLastLogicNodesMicroSeconds(void)  {return m_lastLogicNodes;}
+    unsigned long getLastPhysicsMicroSeconds(void)     {return m_lastPhysics;}
+    unsigned long getLastDbvtMicroSeconds(void)        {return m_lastDbvt;}
+    unsigned long getLastSoundMicroSeconds(void)       {return m_lastSound;}
+    unsigned long getLastBufSwapLodMicroSeconds(void)  {return m_lastBufswaplod;}
+    unsigned long getLastTotalMicroSeconds(void)       {return m_lastTotal;}
 
     static gkStats& getSingleton(void);
     static gkStats* getSingletonPtr(void);

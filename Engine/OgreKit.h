@@ -139,6 +139,7 @@
 #include "LogicBricks/gkLogicSensor.h"
 #include "LogicBricks/gkMotionActuator.h"
 #include "LogicBricks/gkMouseSensor.h"
+#include "LogicBricks/gkNearSensor.h"
 #include "LogicBricks/gkPropertyActuator.h"
 #include "LogicBricks/gkPropertySensor.h"
 #include "LogicBricks/gkRadarSensor.h"
@@ -149,6 +150,7 @@
 #include "LogicBricks/gkSoundActuator.h"
 
 #include "Physics/gkCharacter.h"
+#include "Physics/gkContactTest.h"
 #include "Physics/gkDynamicsWorld.h"
 #include "Physics/gkPhysicsDebug.h"
 #include "Physics/gkRagDoll.h"

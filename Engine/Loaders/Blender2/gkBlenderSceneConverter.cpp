@@ -2395,6 +2395,20 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
                     rs->setProperty(gkLogicLoader_formatText(brs->name));
 
             } break;
+
+        case SENS_NEAR:
+            {
+                gkNearSensor *rs = new gkNearSensor(gobj, lnk, bsen->name);
+                ls = rs;
+                Blender::bNearSensor *brs = (Blender::bNearSensor *)bsen->data;
+
+                rs->setRange(brs->dist);
+                rs->setResetRange(brs->resetdist);
+
+                if (brs->name[0] != '\0')
+                    rs->setProperty(gkLogicLoader_formatText(brs->name));
+
+            } break;
         }
 
         if (ls)

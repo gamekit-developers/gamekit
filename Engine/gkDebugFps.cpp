@@ -3,9 +3,9 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Charlie C.
+    Copyright (c) 2006-2010 Xavier T.
 
-    Contributor(s): xat
+    Contributor(s): none yet.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -153,19 +153,18 @@ void gkDebugFps::draw(void)
     Ogre::RenderWindow *window= gkWindowSystem::getSingleton().getMainWindow();
     const Ogre::RenderTarget::FrameStats& ogrestats = window->getStatistics();
 
-    float fps = ogrestats.lastFPS;
-    float swap = 1000/fps;
-    float render = gkStats::getSingleton().getRenderMicroSeconds()/1000.0f;
-    float phys = gkStats::getSingleton().getPhysicsMicroSeconds()/1000.0f;
-    float logicb = gkStats::getSingleton().getLogicBricksMicroSeconds()/1000.0f;
-    float logicn = gkStats::getSingleton().getLogicNodesMicroSeconds()/1000.0f;
-    float sound = gkStats::getSingleton().getSoundMicroSeconds()/1000.0f;
-    float dbvt = gkStats::getSingleton().getDbvtMicroSeconds()/1000.0f;
-    float bufswaplod = gkStats::getSingleton().getBufSwapLodMicroSeconds()/1000.0f;
+    float swap = gkStats::getSingleton().getLastTotalMicroSeconds()/1000.0f;
+    float render = gkStats::getSingleton().getLastRenderMicroSeconds()/1000.0f;
+    float phys = gkStats::getSingleton().getLastPhysicsMicroSeconds()/1000.0f;
+    float logicb = gkStats::getSingleton().getLastLogicBricksMicroSeconds()/1000.0f;
+    float logicn = gkStats::getSingleton().getLastLogicNodesMicroSeconds()/1000.0f;
+    float sound = gkStats::getSingleton().getLastSoundMicroSeconds()/1000.0f;
+    float dbvt = gkStats::getSingleton().getLastDbvtMicroSeconds()/1000.0f;
+    float bufswaplod = gkStats::getSingleton().getLastBufSwapLodMicroSeconds()/1000.0f;
 
     gkString vals="";
 
-    vals += Ogre::StringConverter::toString(fps) + '\n';
+    vals += Ogre::StringConverter::toString(ogrestats.lastFPS) + '\n';
     vals += Ogre::StringConverter::toString(ogrestats.avgFPS) + '\n';
     vals += Ogre::StringConverter::toString(ogrestats.bestFPS) + '\n';
     vals += Ogre::StringConverter::toString(ogrestats.worstFPS) + '\n';

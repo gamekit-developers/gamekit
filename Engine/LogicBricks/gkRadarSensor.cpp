@@ -3,9 +3,9 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Charlie C.
+    Copyright (c) 2006-2010 Xavier T.
 
-    Contributor(s): xat
+    Contributor(s): none yet.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -30,6 +30,7 @@
 #include "gkDynamicsWorld.h"
 #include "gkGameObject.h"
 #include "gkScene.h"
+#include "gkContactTest.h"
 #include "btBulletDynamicsCommon.h"
 
 // ----------------------------------------------------------------------------
@@ -45,7 +46,6 @@ gkLogicBrick* gkRadarSensor::clone(gkLogicLink *link, gkGameObject *dest)
     sens->cloneImpl(link, dest);
     return sens;
 }
-
 
 // ----------------------------------------------------------------------------
 bool gkRadarSensor::query(void)
@@ -80,53 +80,58 @@ bool gkRadarSensor::query(void)
 
 
     gkVector3 vec = m_object->getWorldPosition();
-	dir = m_object->getWorldOrientation() * dir;
-	btQuaternion btr = gkMathUtils::get(m_object->getWorldOrientation() * ori.toQuaternion());
-    
-    btCollisionWorld::ClosestConvexResultCallback exec(btVector3(vec.x, vec.y, vec.z), 
-                                                    btVector3(vec.x + dir.x, vec.y + dir.y, vec.z + dir.z));
 
-    btTransform start, end;
-    start.setIdentity();
-    end.setIdentity();
-    start.setOrigin(exec.m_convexFromWorld);
-    end.setOrigin(exec.m_convexToWorld);
-	start.setRotation(btr);
-	end.setRotation(btr);
+    dir = m_object->getWorldOrientation() * dir;
+    btQuaternion btr = gkMathUtils::get(m_object->getWorldOrientation() * ori.toQuaternion());
 
-	
+    gkAllContactResultCallback exec;
+
+    btTransform  btt;
+    btt.setIdentity();
+    btt.setOrigin(btVector3(vec.x + dir.x, vec.y + dir.y, vec.z + dir.z));
+	btt.setRotation(btr);
+
 	btConeShapeZ btcs(m_range*tan(m_angle/2), m_range);
-    btw->convexSweepTest( &btcs, start, end, exec);
+
+	btCollisionObject btco = btCollisionObject();
+	btco.setCollisionShape(&btcs);
+	btco.setWorldTransform(btt);
+
+    btw->contactTest( &btco, exec);
 
 	if (btw->getDebugDrawer())
-		btw->debugDrawObject(end, &btcs, btVector3(0,1,0));
+		btw->debugDrawObject(btt, &btcs, btVector3(0,1,0));
+
+
+	if (!exec.hasHit())
+		return false;
+	if (exec.m_contactObjects.empty())
+		return false;
 	
+	if (m_material.empty() && m_prop.empty())
+		return true;
+	
+	utArray<const btCollisionObject*> contacts = exec.m_contactObjects;
+	utArrayIterator< utArray<const btCollisionObject*> > iter(contacts);
+	
+	while(iter.hasMoreElements())
+	{
+		gkGameObject *object = ((gkGameObject*)iter.peekNext()->getUserPointer())->getObject();
+		
+		if (!m_prop.empty())
+		{
+			if (object->hasVariable(m_prop))
+				return true;
+		}
+		else if (!m_material.empty())
+		{
+			if (object->getSensorMaterial() == m_material)
+				return true;
+		}
+		
+		iter.getNext();
+	}
+	
+	return false;
 
-    if (!exec.hasHit())
-        return false;
-
-
-    if (!exec.m_hitCollisionObject)
-        return false;
-
-    gkGameObject *object = ((gkGameObject*)exec.m_hitCollisionObject->getUserPointer())->getObject();
-
-
-    if (!m_material.empty() || !m_prop.empty())
-    {
-        if (!m_prop.empty())
-        {
-            if (object->hasVariable(m_prop))
-                return true;
-        }
-        else if (!m_material.empty())
-        {
-            if (object->getSensorMaterial() == m_material)
-                return true;
-        }
-
-        return false;
-    }
-
-    return true;
 }

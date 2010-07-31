@@ -294,6 +294,7 @@ set(Logic_SOURCE
     LogicBricks/gkLogicSensor.cpp
     LogicBricks/gkMotionActuator.cpp
     LogicBricks/gkMouseSensor.cpp
+    LogicBricks/gkNearSensor.cpp
     LogicBricks/gkRadarSensor.cpp
     LogicBricks/gkRaySensor.cpp
     LogicBricks/gkScriptController.cpp
@@ -322,6 +323,7 @@ set(Logic_HEADER
     LogicBricks/gkLogicSensor.h
     LogicBricks/gkMotionActuator.h
     LogicBricks/gkMouseSensor.h
+    LogicBricks/gkNearSensor.h
     LogicBricks/gkRadarSensor.h
     LogicBricks/gkRaySensor.h
     LogicBricks/gkScriptController.h
@@ -390,6 +392,7 @@ set(Physics_SOURCE
     Physics/gkDynamicsWorld.cpp
     Physics/gkRagDoll.cpp
     Physics/gkCharacter.cpp
+    Physics/gkContactTest.h
     Physics/gkVehicle.cpp
     Physics/gkSoftBody.cpp
     Physics/gkPhysicsDebug.cpp
