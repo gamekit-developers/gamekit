@@ -1,8 +1,7 @@
 /*! \page Examples Examples and tutorials.
 
 
-
-\beginmenu{LuaPackage,For use in the standalone Lua package}
+\beginmenu{LuaRuntime,For use in the LuaRuntime package}
 \LuaGlobalMenu{Setup}
 \endmenu
 

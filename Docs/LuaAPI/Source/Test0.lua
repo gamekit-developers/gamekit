@@ -1,5 +1,3 @@
-require "OgreKitLua"
-
 -- Extend the engine.
 OgreKitApp = BaseClass(OgreKit.Engine)
 
