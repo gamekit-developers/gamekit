@@ -38,6 +38,7 @@ gkBuffer::gkBuffer(gkSource *obj)
 	    m_ok(false),
 	    m_exit(false),
 	    m_initial(true),
+		m_isInit(false),
 	    m_suspend(false),
 	    m_pos(0),
 	    m_eos(false)
@@ -51,7 +52,7 @@ gkBuffer::gkBuffer(gkSource *obj)
 			m_smp = m_stream->getSampleRate();
 			m_bps = m_stream->getBitsPerSecond();
 			obj->_bind(this);
-			m_ok = initialize();
+			m_ok = false;
 		}
 	}
 }
@@ -129,13 +130,23 @@ void gkBuffer::setVelocity(const gkVector3 &v)
 // ----------------------------------------------------------------------------
 bool gkBuffer::initialize(void)
 {
+	GK_SOUND_AUTO_LOCK_MUTEX(m_cs);
+
 	alGenBuffers(GK_SND_SAMPLES, m_buffer);
 	if (alErrorThrow("opening buffers"))
+	{
+		m_ok = false;
 		return false;
+	}
 
 	alGenSources(1, &m_source);
 	if (alErrorThrow("opening source"))
+	{
+		m_ok = false;
 		return false;
+	}
+	m_ok = true;
+	m_isInit = true;
 	return true;
 }
 
@@ -143,6 +154,8 @@ bool gkBuffer::initialize(void)
 // ----------------------------------------------------------------------------
 void gkBuffer::queue(bool play)
 {
+	GK_SOUND_AUTO_LOCK_MUTEX(m_cs);
+
 	if (!m_ok)
 		return;
 
@@ -239,6 +252,8 @@ void gkBuffer::setProperties(const gkSoundProperties &props)
 // ----------------------------------------------------------------------------
 void gkBuffer::reset(void)
 {
+	GK_SOUND_AUTO_LOCK_MUTEX(m_cs);
+
 	if (!m_ok)
 		return;
 
@@ -259,28 +274,19 @@ void gkBuffer::reset(void)
 	while (nr--)
 	{
 		alSourceUnqueueBuffers(m_source, 1, &buf);
-		m_ok = !alErrorThrow("unqueue buffer");
+		m_ok = !alErrorThrow("reset:unqueue buffer");
 	}
-
-	seek();
-	m_initial = true;
-}
-
-// ----------------------------------------------------------------------------
-void gkBuffer::seek(void)
-{
-	if (!m_stream)
-		return;
 
 	m_pos = 0;
 	m_eos = false;
+	m_initial = true;
 }
-
 
 // ----------------------------------------------------------------------------
 const char *gkBuffer::read(UTsize len, UTsize &br)
 {
 	GK_SOUND_AUTO_LOCK_MUTEX(m_cs);
+
 	if (!m_stream || m_eos)
 	{
 		m_eos = true;
@@ -318,11 +324,8 @@ bool gkBuffer::stream(void)
 
 	alGetSourcei(m_source, AL_BUFFERS_PROCESSED, &nr);
 	if (nr <= 0)
-	{
-		if (!alIsPlaying(m_source))
-			alSourcePlay(m_source);
 		return false;
-	}
+
 
 	if (!m_eos)
 	{
@@ -333,7 +336,7 @@ bool gkBuffer::stream(void)
 		{
 			// read another block
 			alSourceUnqueueBuffers(m_source, 1, &buf);
-			m_ok = !alErrorThrow("unqueue buffer");
+			m_ok = !alErrorThrow("stream:unqueue buffer");
 
 			if (br != 0)
 			{
@@ -344,7 +347,7 @@ bool gkBuffer::stream(void)
 
 					alBufferData(buf, m_fmt, db, br, m_smp);
 					alSourceQueueBuffers(m_source, 1, &buf);
-					m_ok = !alErrorThrow("requeue buffer");
+					m_ok = !alErrorThrow("stream:requeue buffer");
 					totQue++;
 				}
 			}
@@ -355,7 +358,7 @@ bool gkBuffer::stream(void)
 			if (!alIsPlaying(m_source))
 			{
 				alSourcePlay(m_source);
-				m_ok = !alErrorThrow("source playback");
+				m_ok = !alErrorThrow("stream:source playback");
 			}
 
 			return true;
@@ -366,7 +369,6 @@ bool gkBuffer::stream(void)
 	{
 		if (m_loop)
 		{
-			//printf("Reset Loop!\n");
 			reset();
 			return false;
 		}

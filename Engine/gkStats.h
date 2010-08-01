@@ -53,7 +53,7 @@ private:
 	unsigned long m_lastSound;
 	unsigned long m_lastBufswaplod;
 	unsigned long m_lastTotal;
-
+	float         m_currentSync;
 public:
 	gkStats();
 
@@ -79,6 +79,11 @@ public:
 	unsigned long getLastSoundMicroSeconds(void)       {return m_lastSound;}
 	unsigned long getLastBufSwapLodMicroSeconds(void)  {return m_lastBufswaplod;}
 	unsigned long getLastTotalMicroSeconds(void)       {return m_lastTotal;}
+
+	// Notify debug statistics about frame motion blending.
+	// (Interpolate motion states. (prev, cur, csync))
+	void notifySyncFrame(float csync);
+	float getSync(void) {return m_currentSync;}
 
 	static gkStats &getSingleton(void);
 	static gkStats *getSingletonPtr(void);

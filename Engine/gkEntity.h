@@ -53,6 +53,10 @@ public:
 
 	void _resetPose(void);
 
+
+	// remove the entity only keep the rest.
+	void _unloadAsInstance(void);
+
 protected:
 	virtual gkBoundingBox getAabb() const;
 

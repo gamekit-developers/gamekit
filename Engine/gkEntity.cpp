@@ -139,6 +139,32 @@ void gkEntity::unloadImpl(void)
 
 
 
+void gkEntity::_unloadAsInstance(void)
+{
+	if (m_entity != 0)
+	{
+		// sanity check
+		GK_ASSERT(m_scene);
+		Ogre::SceneManager *manager = m_scene->getManager();
+		GK_ASSERT(manager);
+
+		if (m_skeleton)
+			m_skeleton->setController(0);
+
+		if (!m_entityProps->m_startPose.empty())
+			_resetPose();
+
+		if (m_node)
+			m_node->detachObject(m_entity);
+
+		manager->destroyEntity(m_entity);
+		m_entity = 0;
+		m_skeleton = 0;
+
+	}
+}
+
+
 void gkEntity::evalAction(gkAction *act, gkScalar animTime)
 {
 	if (m_skeleton)

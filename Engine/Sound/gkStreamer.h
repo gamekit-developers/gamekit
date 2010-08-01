@@ -74,7 +74,6 @@ private:
 
 	typedef utArray<gkBuffer *> Buffers;
 
-
 	gkCriticalSection   m_cs;
 	const gkString      m_name;
 	gkThread           *m_thread;

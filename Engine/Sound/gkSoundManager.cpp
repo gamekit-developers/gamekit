@@ -40,24 +40,34 @@
 #endif
 
 
+#define gkSndCtxValid() (m_device != 0 && m_context != 0)
+
 
 // ----------------------------------------------------------------------------
 gkSoundManager::gkSoundManager()
 	:   m_stream(0), m_valid(false)
 {
-	m_stream = new gkStreamer("Sound Manager Stream");
-
 	m_device = alcOpenDevice(NULL);
-	m_context = alcCreateContext(m_device, 0);
+	if (m_device != 0)
+	{
+		m_context = alcCreateContext(m_device, 0);
+		if (m_context)
+		{
+			alcMakeContextCurrent(m_context);
+			m_valid = !alErrorCheck();
 
-	alcMakeContextCurrent(m_context);
-	m_valid = !alErrorCheck();
+			if (m_valid)
+			{
+				alDistanceModel(AL_NONE);
+				alSpeedOfSound(343.3f);
+				alDopplerFactor(1.f);
 
-	alDistanceModel(AL_EXPONENT_DISTANCE);
-	alSpeedOfSound(343.3f);
-	alDopplerFactor(1.f);
+				m_stream = new gkStreamer("Sound Manager Stream");
+			}
+
+		}
+	}
 }
-
 
 
 
@@ -67,11 +77,20 @@ gkSoundManager::~gkSoundManager()
 	destroyAll();
 
 	delete m_stream;
-	alcMakeContextCurrent(0);
-	alcDestroyContext(m_context);
-	alcCloseDevice(m_device);
+
+	if (gkSndCtxValid())
+	{
+		alcMakeContextCurrent(0);
+		alcDestroyContext(m_context);
+		alcCloseDevice(m_device);
+	}
 }
 
+// ----------------------------------------------------------------------------
+bool gkSoundManager::isValidContext(void)
+{
+	return m_valid && gkSndCtxValid();
+}
 
 
 // ----------------------------------------------------------------------------
@@ -87,7 +106,6 @@ void gkSoundManager::notifySourceDestroyed(gkSource *src)
 {
 	if (src)
 	{
-
 		if (src->isPlaying())
 		{
 			src->loop(false);
@@ -111,14 +129,43 @@ void gkSoundManager::notifySourceDestroyed(gkSource *src)
 // ----------------------------------------------------------------------------
 void gkSoundManager::stopAllSounds(void)
 {
+	if (!gkSndCtxValid())
+		return;
+
 	m_stream->stopAllSounds();
 	collectGarbage();
 }
 
 
 // ----------------------------------------------------------------------------
+void gkSoundManager::updateSoundProperties(void)
+{
+	if (!gkSndCtxValid())
+		return;
+
+	switch (m_props.m_distModel)
+	{
+	case gkSoundSceneProperties::DM_NONE:            {alDistanceModel(AL_NONE);                      break;}
+	case gkSoundSceneProperties::DM_INVERSE:         {alDistanceModel(AL_INVERSE_DISTANCE);          break;}
+	case gkSoundSceneProperties::DM_LINEAR:          {alDistanceModel(AL_LINEAR_DISTANCE);           break;}
+	case gkSoundSceneProperties::DM_EXPONENT:        {alDistanceModel(AL_EXPONENT_DISTANCE);         break;}
+	case gkSoundSceneProperties::DM_INVERSE_CLAMP:   {alDistanceModel(AL_INVERSE_DISTANCE_CLAMPED);  break;}
+	case gkSoundSceneProperties::DM_LINEAR_CLAMP:    {alDistanceModel(AL_LINEAR_DISTANCE_CLAMPED);   break;}
+	case gkSoundSceneProperties::DM_EXPONENT_CLAMP:  {alDistanceModel(AL_EXPONENT_DISTANCE_CLAMPED); break;}
+	}
+
+	alSpeedOfSound(m_props.m_sndSpeed);
+	alDopplerFactor(m_props.m_dopplerFactor);
+}
+
+
+
+// ----------------------------------------------------------------------------
 void gkSoundManager::update(gkScene *scene)
 {
+	if (!gkSndCtxValid())
+		return;
+
 	collectGarbage();
 
 
@@ -164,6 +211,9 @@ void gkSoundManager::update(gkScene *scene)
 // ----------------------------------------------------------------------------
 void gkSoundManager::collectGarbage(void)
 {
+	if (!gkSndCtxValid())
+		return;
+
 	UTsize i, s;
 	Sources::Pointer p;
 	Sources del;
@@ -241,6 +291,9 @@ bool gkSoundManager::hasSounds(void)
 // ----------------------------------------------------------------------------
 void gkSoundManager::playSound(gkSource *snd)
 {
+	if (!gkSndCtxValid())
+		return;
+
 	if (m_valid)
 	{
 		if (!m_stream->isRunning())
@@ -272,6 +325,10 @@ gkSound *gkSoundManager::getSound(const gkHashedString &name)
 // ----------------------------------------------------------------------------
 gkSound *gkSoundManager::createSound(const gkHashedString &name)
 {
+	if (!gkSndCtxValid())
+		return 0;
+
+		
 	UTsize pos;
 	if ((pos = m_objects.find(name)) != GK_NPOS)
 		return 0;

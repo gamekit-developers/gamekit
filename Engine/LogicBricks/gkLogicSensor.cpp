@@ -56,17 +56,23 @@ gkLogicSensor::~gkLogicSensor()
 	disconnect();
 }
 
+
 // ----------------------------------------------------------------------------
 void gkLogicSensor::cloneImpl(gkLogicLink *link, gkGameObject *dest)
 {
 	gkLogicBrick::cloneImpl(link, dest);
 	m_controllers.clear();
+	reset();
+	connect();
+}
 
+// ----------------------------------------------------------------------------
+void gkLogicSensor::reset(void)
+{
 	m_oldState = -1;
 	m_firstTap = TAP_IN;
 	m_firstExec = true;
 	m_positive  = false;
-	connect();
 }
 
 // ----------------------------------------------------------------------------

@@ -83,6 +83,7 @@ public:
 
 	virtual void execute(void)=0;
 	virtual gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest)=0;
+	virtual void  notifyUnload(void) {}
 
 
 	GK_INLINE void              setPulse(int v)     { m_pulseState = v;}

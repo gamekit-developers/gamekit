@@ -244,13 +244,15 @@ gkGameObjectInstance *gkGameObjectGroup::createInstance(gkGameObject *instPar)
 }
 
 
-// build instanced geometry.
 void gkGameObjectGroup::build(Ogre::SceneManager *mgr)
 {
+	/// this only works for truly static objects.
+	/// Things like grass, tree leaves, or basically 
+	/// any entity that does not respond to collisions (GK_NO_COLLISION). 
+
 	if (m_geom)
-	{
 		mgr->destroyStaticGeometry(m_geom);
-	}
+
 	m_geom = 0;
 
 	gkGroupInstanceIterator iter = gkGroupInstanceIterator(m_instances);
@@ -280,8 +282,9 @@ void gkGameObjectGroup::build(Ogre::SceneManager *mgr)
 					m_geom->addEntity(ent->getEntity(), obj->getWorldPosition(),
 					                  obj->getWorldOrientation(),
 					                  obj->getWorldScale());
+
 					// no longer needed
-					ent->unload();
+					ent->_unloadAsInstance();
 				}
 			}
 		}

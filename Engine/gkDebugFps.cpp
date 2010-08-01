@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Xavier T.
 
-    Contributor(s): none yet.
+    Contributor(s): Charlie C.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -28,6 +28,8 @@
 #include "gkLogger.h"
 #include "gkWindowSystem.h"
 #include "gkEngine.h"
+#include "gkScene.h"
+#include "gkDynamicsWorld.h"
 #include "gkStats.h"
 
 #include "OgreOverlayManager.h"
@@ -51,9 +53,12 @@ gkDebugFps::gkDebugFps()
 	m_keys += "Average:\n";
 	m_keys += "Best:\n";
 	m_keys += "Worst:\n";
+	m_keys += "FrameSync:\n";
 	m_keys += "\n";
 	m_keys += "Triangles:\n";
 	m_keys += "Batch count:\n";
+	m_keys += "\n";
+	m_keys += "DBVT:\n";
 	m_keys += "\n";
 	m_keys += "Total:\n";
 	m_keys += "Render:\n";
@@ -154,6 +159,11 @@ void gkDebugFps::draw(void)
 	Ogre::RenderWindow *window= gkWindowSystem::getSingleton().getMainWindow();
 	const Ogre::RenderTarget::FrameStats &ogrestats = window->getStatistics();
 
+	gkVariable* dbvtVal = 0;
+	gkDynamicsWorld *wo = gkEngine::getSingleton().getActiveScene()->getDynamicsWorld();
+	if (wo) dbvtVal = wo->getDBVTInfo();
+
+
 	float swap = gkStats::getSingleton().getLastTotalMicroSeconds()/1000.0f;
 	float render = gkStats::getSingleton().getLastRenderMicroSeconds()/1000.0f;
 	float phys = gkStats::getSingleton().getLastPhysicsMicroSeconds()/1000.0f;
@@ -169,10 +179,15 @@ void gkDebugFps::draw(void)
 	vals += Ogre::StringConverter::toString(ogrestats.avgFPS) + '\n';
 	vals += Ogre::StringConverter::toString(ogrestats.bestFPS) + '\n';
 	vals += Ogre::StringConverter::toString(ogrestats.worstFPS) + '\n';
+	vals += Ogre::StringConverter::toString((int)(100 * gkStats::getSingleton().getSync())) + "%\n";
 	vals += '\n';
 
 	vals += Ogre::StringConverter::toString(ogrestats.triangleCount) + '\n';
 	vals += Ogre::StringConverter::toString(ogrestats.batchCount) + '\n';
+	vals += '\n';
+
+	if (dbvtVal) vals += dbvtVal->getValueString();
+	else  vals += ' ';
 	vals += '\n';
 
 	vals += Ogre::StringConverter::toString(swap, 3, 7, '0', std::ios::fixed) + "ms 100%\n";

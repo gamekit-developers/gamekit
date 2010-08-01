@@ -71,6 +71,7 @@ protected:
 	void buildTextFiles(void);
 	void buildAllTextures();
 	void buildAllSounds();
+	void setSoundScene(Blender::Scene *sc);
 
 	ManualResourceLoaderList  m_loaders;   // Ogre Loaders
 	const gkString            m_group;     // Ogre Ogre::Resource Group

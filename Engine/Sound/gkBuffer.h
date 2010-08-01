@@ -32,7 +32,6 @@
 #include "gkSound.h"
 #include "Thread/gkCriticalSection.h"
 
-
 class gkBuffer
 {
 	// Main playback buffer.
@@ -52,6 +51,7 @@ public:
 	bool isValid(void)      {return m_ok;}
 	bool isLooped(void)     {return m_loop;}
 	void exit(void)         {m_exit = true;}
+	bool isInitialized(void){return m_isInit;}
 
 	void setPosition(const gkVector3 &v);
 	void setDirection(const gkVector3 &v);
@@ -60,23 +60,22 @@ public:
 	void setProperties(const gkSoundProperties &props);
 
 	void queue(bool play=false);
+	bool initialize(void);
 
 private:
-	bool initialize(void);
 	void finalize(void);
 	void reset(void);
 
 
 	// stream reading
 	const char *read(UTsize len, UTsize &br);
-	void seek(void);
 
 	gkCriticalSection   m_cs;
 	gkSource            *m_sound;
 	gkSoundStream       *m_stream;
 	ALuint              m_buffer[GK_SND_SAMPLES];
 	ALuint              m_source;
-	bool                m_loop, m_ok, m_exit, m_initial;
+	bool                m_loop, m_ok, m_exit, m_initial, m_isInit;
 	bool                m_suspend;
 	gkSoundProperties   m_props;
 	UTsize              m_pos;

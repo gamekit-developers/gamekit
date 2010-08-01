@@ -109,6 +109,8 @@ bool gkBlendFile::parse(bParse::bBlenderFile *bfp)
 			gkBlenderSceneConverter conv(this, sc);
 			conv.convert();
 
+			setSoundScene(sc);
+
 			gkScene *convSc = gkSceneManager::getSingleton().getScene(GKB_IDNAME(sc));
 			if (convSc)
 				m_scenes.push_back(convSc);
@@ -217,13 +219,15 @@ void gkBlendFile::buildAllTextures()
 
 void gkBlendFile::buildAllSounds()
 {
-
 #ifdef OGREKIT_OPENAL_SOUND
 
 	bParse::bMain *mp = m_file->getMain();
 
 	bParse::bListBasePtr *soundList = mp->getSound();
 	gkSoundManager *mgr = gkSoundManager::getSingletonPtr();
+
+	if (!mgr->isValidContext())
+		return;
 
 	for (int i=0; i<soundList->size(); ++i)
 	{
@@ -243,6 +247,8 @@ void gkBlendFile::buildAllSounds()
 			if (((pak && pak->data) || isFile) && !mgr->hasSound(GKB_IDNAME(sound)))
 			{
 				gkSound *sndObj = mgr->createSound(GKB_IDNAME(sound));
+				if (!sndObj)
+					continue;
 
 				if (isFile)
 				{
@@ -272,6 +278,38 @@ void gkBlendFile::buildAllSounds()
 		}
 	}
 
+#endif
+}
+
+
+void gkBlendFile::setSoundScene(Blender::Scene *sc)
+{
+#ifdef OGREKIT_OPENAL_SOUND
+	gkSoundManager *mgr = gkSoundManager::getSingletonPtr();
+	if (!mgr->isValidContext())
+		return;
+
+	gkSoundSceneProperties& props = mgr->getProperties();
+
+	if (sc->audio.distance_model == 0)
+		props.m_distModel = gkSoundSceneProperties::DM_NONE;
+	else if (sc->audio.distance_model == 1)
+		props.m_distModel = gkSoundSceneProperties::DM_INVERSE;
+	else if (sc->audio.distance_model == 2)
+		props.m_distModel = gkSoundSceneProperties::DM_INVERSE_CLAMP;
+	else if (sc->audio.distance_model == 3)
+		props.m_distModel = gkSoundSceneProperties::DM_LINEAR;
+	else if (sc->audio.distance_model == 4)
+		props.m_distModel = gkSoundSceneProperties::DM_LINEAR_CLAMP;
+	else if (sc->audio.distance_model == 5)
+		props.m_distModel = gkSoundSceneProperties::DM_EXPONENT;
+	else if (sc->audio.distance_model == 6)
+		props.m_distModel = gkSoundSceneProperties::DM_EXPONENT_CLAMP;
+
+	props.m_sndSpeed = sc->audio.speed_of_sound;
+	props.m_dopplerFactor = sc->audio.doppler_factor;
+
+	mgr->updateSoundProperties();
 #endif
 }
 

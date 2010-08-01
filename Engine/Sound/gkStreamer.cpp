@@ -33,8 +33,7 @@
 #include "gkTickState.h"
 
 // play at fixed ticks per second
-#define GK_STREAM_PLAYBACK_RATE 90
-
+#define GK_STREAM_PLAYBACK_RATE 45
 
 class gkStreamerTick : public gkTickState
 {
@@ -48,11 +47,7 @@ public:
 	virtual ~gkStreamerTick() {}
 
 	void tickImpl(gkScalar delta);
-	void beginTickImpl(void);
-	void endTickImpl(void);
-	void syncImpl(gkScalar fac);
 };
-
 
 // ----------------------------------------------------------------------------
 gkStreamer::gkStreamer(const gkString &name)
@@ -187,7 +182,6 @@ void gkStreamer::remove(gkBuffer *buf)
 }
 
 
-
 // ----------------------------------------------------------------------------
 void gkStreamer::runProtected(void)
 {
@@ -202,13 +196,16 @@ void gkStreamer::runProtected(void)
 	while (i < s)
 	{
 		gkBuffer *buf = b[i++];
+		if (!buf->isInitialized())
+			buf->initialize();
+
 		// stream contents to OpenAL
-		buf->stream();
+		if (buf->isValid())
+			buf->stream();
 
 		// notify were done
 		if (buf->isDone() || !buf->isValid())
 			m_finished.push_back(buf);
-
 	}
 }
 
@@ -220,10 +217,7 @@ void gkStreamer::collectGarbage(void)
 	if (!m_finished.empty())
 	{
 		while (!m_finished.empty())
-		{
-			gkBuffer *buf = m_finished.back();
-			remove(buf);
-		}
+			remove(m_finished.back());
 
 		m_finished.clear(true);
 
@@ -236,14 +230,15 @@ void gkStreamer::collectGarbage(void)
 // ----------------------------------------------------------------------------
 void gkStreamer::run(void)
 {
-	gkStreamerTick stream(*this);
+	gkStreamerTick st(*this);
 
 	while (isRunning())
 	{
 		// catch any exceptions
 		try
 		{
-			stream.tick();
+			st.tick();
+			collectGarbage();
 		}
 		catch (...)
 		{
@@ -254,8 +249,6 @@ void gkStreamer::run(void)
 	m_syncObj.signal();
 }
 
-
-
 // ----------------------------------------------------------------------------
 gkStreamerTick::gkStreamerTick(gkStreamer &streamer)
 	:   gkTickState(GK_STREAM_PLAYBACK_RATE),
@@ -263,30 +256,9 @@ gkStreamerTick::gkStreamerTick(gkStreamer &streamer)
 {
 }
 
-
-// ----------------------------------------------------------------------------
-void gkStreamerTick::beginTickImpl(void)
-{
-	m_stream.collectGarbage();
-}
-
-
 // ----------------------------------------------------------------------------
 void gkStreamerTick::tickImpl(gkScalar delta)
 {
-	//printf("Tick %f\n", delta);
 	m_stream.runProtected();
 }
 
-// ----------------------------------------------------------------------------
-void gkStreamerTick::syncImpl(gkScalar fac)
-{
-	//printf("Sync %f\n", fac);
-}
-
-
-// ----------------------------------------------------------------------------
-void gkStreamerTick::endTickImpl(void)
-{
-	m_stream.collectGarbage();
-}

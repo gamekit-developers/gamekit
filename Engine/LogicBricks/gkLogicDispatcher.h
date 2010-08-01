@@ -52,6 +52,7 @@ public:
 
 	virtual void dispatch(void) = 0;
 	void sort(void);
+	void reset(void);
 
 
 	GK_INLINE void connect(gkLogicSensor *sens)     {GK_ASSERT(sens); m_sensors.push_back(sens); }

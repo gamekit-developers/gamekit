@@ -481,6 +481,8 @@ void gkEnginePrivate::syncImpl(gkScalar blend)
 {
 	if (scene)
 		scene->synchronizeMotion(blend);
+
+	gkStats::getSingleton().notifySyncFrame(blend);
 }
 
 

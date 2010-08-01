@@ -104,6 +104,7 @@ void gkLogicManager::clearActive(gkLogicLink *link)
 			// switch off controllers
 			cont->setActive(false);
 			cont->setPulse(BM_OFF);
+			cont->notifyUnload();
 
 
 			if ((fnd = m_cin.find(cont)) != UT_NPOS)
@@ -118,7 +119,7 @@ void gkLogicManager::clearActive(gkLogicLink *link)
 			// switch off actuators
 			act->setActive(false);
 			act->setPulse(BM_OFF);
-
+			act->notifyUnload();
 
 			if ((fnd = m_ain.find(act)) != UT_NPOS)
 				m_ain.erase(fnd);
@@ -233,6 +234,28 @@ void gkLogicManager::notifyState(unsigned int state, gkLogicLink *link)
 	}
 }
 
+
+// ----------------------------------------------------------------------------
+void gkLogicManager::notifySceneUnloaded(void)
+{
+	// Shutoff links & reset dispatchers
+
+	if (m_dispatchers)
+	{
+		for (int i = 0; i < DIS_MAX; ++ i)
+			m_dispatchers[i]->reset();
+	}
+
+	if (!m_links.empty())
+	{
+		gkLogicLink *node = m_links.begin();
+		while (node)
+		{
+			clearActive(node);
+			node = node->getNext();
+		}
+	}
+}
 
 // ----------------------------------------------------------------------------
 void gkLogicManager::notifyLinkUnloaded(gkLogicLink *link)

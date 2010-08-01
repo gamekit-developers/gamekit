@@ -101,13 +101,13 @@ public:
 	// bind / unbind a buffer to this object.
 	// This object is only playable when a buffer is attached.
 	// (internal use only)
-	void            _bind(gkBuffer *buf);
+	void _bind(gkBuffer *buf);
 
 	// playback buffer  (internal use only)
-	gkBuffer        *_getBuffer(void) {return m_playback;}
+	gkBuffer *_getBuffer(void) {return m_playback;}
 
 	// playback stream (internal use only)
-	gkSoundStream   *_getStream(void);
+	gkSoundStream *_getStream(void);
 
 
 

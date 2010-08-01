@@ -291,6 +291,12 @@ bool gkPath::exists(void) const
 
 bool gkPath::isFile(void) const
 {
+	// skip blender relative paths.
+    // stat can sometimes be extremely slow!
+    // (not sure if fopen() == NULL would be any better.)
+	if (m_path[0] == '/' && m_path[1] == '/')
+		return false;
+
 	struct stat st;
 	return stat(m_path.c_str(), &st) == 0 && S_ISREG(st.st_mode);
 }
@@ -298,6 +304,10 @@ bool gkPath::isFile(void) const
 
 bool gkPath::isDir(void) const
 {
+	// skip blender relative paths.
+	if (m_path[0] == '/' && m_path[1] == '/')
+		return false;
+
 	struct stat st;
 	return stat(m_path.c_str(), &st) == 0 && S_ISDIR(st.st_mode);
 }

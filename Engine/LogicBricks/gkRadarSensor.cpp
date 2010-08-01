@@ -105,6 +105,17 @@ bool gkRadarSensor::query(void)
 
 	if (!exec.hasHit())
 		return false;
+
+
+	if (m_object->getCollisionObject())
+	{
+		// don't collide with self ? 
+		// See: momo_ogre.blend sensor(Not Ray.Down) state 2
+		if (!exec.m_contactObjects.empty())
+			exec.m_contactObjects.erase(m_object->getCollisionObject());
+	}
+
+
 	if (exec.m_contactObjects.empty())
 		return false;
 
@@ -112,6 +123,7 @@ bool gkRadarSensor::query(void)
 		return true;
 
 	utArray<const btCollisionObject *> contacts = exec.m_contactObjects;
+	
 	utArrayIterator< utArray<const btCollisionObject *> > iter(contacts);
 
 	while(iter.hasMoreElements())

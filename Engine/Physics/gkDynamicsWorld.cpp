@@ -52,6 +52,9 @@ public:
 
 	void update(gkDynamicsWorld::ObjectList &oblist);
 	void drawDebug(void);
+
+	gkVariable *getInfo(void) {return m_debug;}
+
 };
 
 
@@ -355,20 +358,21 @@ void gkDynamicsWorld::substepCallback(btDynamicsWorld *dyn, btScalar tick)
 }
 
 
+gkVariable *gkDynamicsWorld::getDBVTInfo(void)
+{
+	return m_dbvt ? m_dbvt->getInfo() : 0;
+}
+
+
 gkDbvt::gkDbvt() : m_tvs(0), m_tot(0), m_debug(0)
 {
-	if (gkEngine::getSingleton().getUserDefs().showDebugProps)
-	{
-		m_debug = new gkVariable("btDbvt", true);
-		gkEngine::getSingleton().addDebugProperty(m_debug);
-	}
+	m_debug = new gkVariable("btDbvt", false);
 }
 
 gkDbvt::~gkDbvt()
 {
 	if (m_debug)
 	{
-		gkEngine::getSingleton().removeDebugProperty(m_debug);
 		delete m_debug;
 		m_debug = 0;
 	}
@@ -428,12 +432,10 @@ void gkDbvt::drawDebug(void)
 	if (m_debug)
 	{
 		char buf[72];
-		sprintf(buf, "Tot Visible %i, of %i Bodies\n", m_tvs, m_tot);
+		sprintf(buf, "%i, %i\n", m_tvs, m_tot);
 		m_debug->setValue(gkString(buf));
 	}
 }
-
-
 
 
 void gkDynamicsWorld::handleDbvt(gkCamera *cam)

@@ -348,7 +348,7 @@ void gkScene::loadImpl(void)
 		while (instit.hasMoreElements())
 			instit.getNext()->load();
 
-		if (0)//gkEngine::getSingleton().getUserDefs().buildInstances)
+		if (gkEngine::getSingleton().getUserDefs().buildInstances)
 		{
 			gkGroupTableIterator instGeom(m_groups);
 			while (instGeom.hasMoreElements())
@@ -478,6 +478,14 @@ void gkScene::unloadImpl()
 			m_viewport = 0;
 		}
 	}
+#ifdef OGREKIT_OPENAL_SOUND
+
+	// process sounds waiting to be finished
+	gkSoundManager::getSingleton().collectGarbage();
+	gkSoundManager::getSingleton().stopAllSounds();
+
+#endif
+	gkLogicManager::getSingleton().notifySceneUnloaded();
 
 	gkEngine::getSingleton().setActiveScene(0);
 }

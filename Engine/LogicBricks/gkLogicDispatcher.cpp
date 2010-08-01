@@ -49,6 +49,18 @@ void gkAbstractDispatcher::doDispatch(SensorList &sens)
 	}
 }
 
+
+// ----------------------------------------------------------------------------
+void gkAbstractDispatcher::reset(void)
+{
+	if (!m_sensors.empty())
+	{
+		gkAbstractDispatcher::SensorIterator it = getIterator();
+		while (it.hasMoreElements())
+			it.getNext()->reset();
+	}
+}
+
 // ----------------------------------------------------------------------------
 void gkAbstractDispatcher::sort(void)
 {

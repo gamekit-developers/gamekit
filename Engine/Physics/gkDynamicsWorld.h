@@ -111,6 +111,8 @@ public:
 	gkPhysicsDebug *getDebug() const { return m_debug; }
 
 	void DrawDebug();
+
+	gkVariable *getDBVTInfo(void); 
 };
 
 #endif//_gkDynamicsWorld_h_

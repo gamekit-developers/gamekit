@@ -59,6 +59,7 @@ private:
 
 
 	void notifyActivate(void);
+	void notifyUnload(void);
 
 public:
 

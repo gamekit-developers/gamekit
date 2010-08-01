@@ -472,6 +472,41 @@ public:
 
 };
 
+// ----------------------------------------------------------------------------
+//
+//                              Sound Scene Types
+//
+// ----------------------------------------------------------------------------
+class gkSoundSceneProperties
+{
+public:
+	enum DistanceModel
+	{
+		DM_NONE =0,
+		DM_INVERSE,
+		DM_LINEAR,
+		DM_EXPONENT,
+		DM_INVERSE_CLAMP,
+		DM_LINEAR_CLAMP,
+		DM_EXPONENT_CLAMP,
+	};
+
+public:
+
+	gkSoundSceneProperties()
+		:    m_distModel(DM_INVERSE_CLAMP),
+		     m_dopplerFactor(1.f),
+		     m_sndSpeed(343.3f)
+	{
+	}
+
+	int			m_distModel;
+	gkScalar	m_dopplerFactor;
+	gkScalar	m_sndSpeed;
+
+};
+
+
 
 // ----------------------------------------------------------------------------
 //

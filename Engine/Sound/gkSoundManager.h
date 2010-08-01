@@ -32,6 +32,7 @@
 #include "gkStreamer.h"
 #include "gkCommon.h"
 #include "gkHashedString.h"
+#include "gkSerialize.h"
 #include "OgreSingleton.h"
 #include "gkTransformState.h"
 
@@ -59,6 +60,9 @@ private:
 	Sources             m_sources;      // list of currently active sources
 	Sources             m_gcSources;    // sources to remove when done playing
 	bool                m_valid;
+
+
+	gkSoundSceneProperties m_props; // conversion properties
 
 
 	void removePlayback(gkSound *sndToDelete);
@@ -93,6 +97,11 @@ public:
 	void destroy(gkSound *ob);
 	void destroyAll(void);
 	bool hasSound(const gkHashedString &name);
+
+	bool isValidContext(void);
+
+	gkSoundSceneProperties& getProperties(void) {return m_props;}
+	void updateSoundProperties(void);
 
 
 	static gkSoundManager &getSingleton(void);

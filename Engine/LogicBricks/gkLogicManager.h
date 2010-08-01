@@ -88,6 +88,7 @@ public:
 	void destroy(gkLogicLink *link);
 
 
+	void notifySceneUnloaded(void);
 	void notifyLinkUnloaded(gkLogicLink *link);
 	void notifyState(unsigned int state, gkLogicLink *link);
 	void notifySort(void);

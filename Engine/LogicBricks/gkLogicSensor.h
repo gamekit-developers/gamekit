@@ -78,6 +78,9 @@ public:
 
 	void sort(void);
 
+	// Reset to initial state.
+	void reset(void);
+
 	// Events have been queried, now pass to
 	// connected controllers for further processing.
 	void dispatch(void);
