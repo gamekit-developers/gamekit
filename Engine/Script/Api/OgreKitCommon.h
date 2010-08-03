@@ -32,13 +32,12 @@
 #include "OgreKit.h"
 #include "Script/Lua/gkLuaUtils.h"
 
-
 // ----------------------------------------------------------------------------
-//
 //  Conversion Macros
-//
-// ----------------------------------------------------------------------------
+
+
 #ifndef SWIG
+
 #define OGRE_KIT_WRAP_CLASS(cls, membername)\
     public:\
         cls *membername;\
@@ -61,23 +60,43 @@
         OGRE_KIT_WRAP_BASE_DEF_CTOR(wrap, cls)
 
 
+
+#define OGRE_KIT_TEMPLATE_CAST(T, membername)\
+    template<typename T> T *get(void) {return static_cast<T *>(membername);}
+
+
 #define OGRE_KIT_INTERNAL_CAST(membername)\
     template<typename T> T *cast(void) {return static_cast<T *>(membername);}
 
-#define OGRE_KIT_PUBLIC (cls) : public cls
+
+#define OGRE_KIT_OBJECT(T, val) val ? val->get<T>() : 0
 
 
 #endif
 
 
-namespace OgreKit
-{
-typedef gkString String;
-
 // Object to pass as callbacks and self pointers
-typedef gkLuaCurState Function;
-typedef gkLuaCurState Self;
+typedef gkLuaCurState gsFunction;
+typedef gkLuaCurState gsSelf;
 
-}
+
+// Class decls
+class gsProperty;
+class gsUserDefs;
+class gsEngine;
+class gsEntity;
+class gsCamera;
+class gsLight;
+class gsScene;
+class gsGameObject;
+class gsEngineEventObject;
+class gsMouse;
+class gsKeyboard;
+class gsSkeleton;
+class gsFSM;
+class gsRayTest;
+class gsSweptTest;
+class gsConstraint;
+
 
 #endif//_OgreKitCommon_h_

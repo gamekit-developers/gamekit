@@ -155,7 +155,7 @@ DOCSET_FEEDNAME        = "Doxygen generated docs"
 DOCSET_BUNDLE_ID       = org.doxygen.Project
 DOCSET_PUBLISHER_ID    = org.doxygen.Publisher
 DOCSET_PUBLISHER_NAME  = Publisher
-GENERATE_HTMLHELP      = YES
+GENERATE_HTMLHELP      = NO
 CHM_FILE               = 
 HHC_LOCATION           = 
 GENERATE_CHI           = NO
@@ -312,6 +312,8 @@ ALIASES += LuaClassRef{1}="\ref OgreKit_\1"
 ALIASES += LuaMethodReturn{2}="\returns \ref OgreKit_\1 \2"
 ALIASES += LuaGlobal{1}="\page \1  \1 "
 ALIASES += LuaGlobal{2}="\page \1  \2 "
+ALIASES += LuaGlobalRef{1}="\see \ref \1"
+
 
 ALIASES += contents{1}="<hr>\n<table class=\"nav\"><tr>\
                                 <td><b>Section:</b></td><td>\ref \1</td></tr></table><hr>\n\n\n\n"

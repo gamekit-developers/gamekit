@@ -28,5 +28,10 @@
 #include "OgreKitAI.h"
 %}
 
+
+%newobject gsFSM::addTransition;
+%rename(WhenEvent)	gsWhenEvent;
+%rename(FSM)		gsFSM;
+
+
 %include "OgreKitAI.h"
-%template(WhenEventPtr)    OgreKit::Pointer<OgreKit::WhenEvent>;

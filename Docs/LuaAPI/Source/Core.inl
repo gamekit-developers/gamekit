@@ -19,22 +19,21 @@
 
 
 \beginmenu{Classes}
-\LuaClassMenu{Property}
-\LuaClassMenu{UserDefs}
-\LuaClassMenu{Mouse}
-\LuaClassMenu{Keyboard}
-\LuaClassMenu{Engine}
-\LuaClassMenu{Loadable}
-\LuaClassMenu{Scene}
-\LuaClassMenu{GameObject}
 \LuaClassMenu{Camera}
-\LuaClassMenu{Entity}
-\LuaClassMenu{Light}
-\LuaClassMenu{Skeleton}
 \LuaClassMenu{Debugger}
+\LuaClassMenu{Engine}
+\LuaClassMenu{Entity}
+\LuaClassMenu{GameObject}
+\LuaClassMenu{Keyboard}
+\LuaClassMenu{Loadable}
+\LuaClassMenu{Mouse}
+\LuaClassMenu{ObjectList}
+\LuaClassMenu{Light}
+\LuaClassMenu{Property}
+\LuaClassMenu{Scene}
+\LuaClassMenu{Skeleton}
+\LuaClassMenu{UserDefs}
 \endmenu
-
-
 
 
 <!-- ============================================ Property ============================================ -->
@@ -277,6 +276,10 @@ function Property:fromString(string)
 \LuaClass{UserDefs}
 \LuaSectionUp{Engine}
 
+
+\LuaGlobalRef{CDefs}
+
+
 \beginmenu{Methods}
 \LuaMethodMenu{UserDefs,getProperty}
 \LuaMethodMenu{UserDefs,addProperty}
@@ -303,6 +306,12 @@ function Property:fromString(string)
 \LuaMethodMenu{UserDefs,colourShadowG}
 \LuaMethodMenu{UserDefs,colourShadowB}
 \LuaMethodMenu{UserDefs,farDistanceShadow}
+\endmenu
+
+
+\beginmenu{Operators}
+\LuaMethodMenu{UserDefs,__index}
+\LuaMethodMenu{UserDefs,__newindex}
 \endmenu
 
 
@@ -618,6 +627,95 @@ number UserDefs.farDistanceShadow
 
 \endpage
 
+
+
+
+
+<!-- ======================================== -->
+\LuaMethod{UserDefs,__index}
+\LuaClassUp{UserDefs}
+
+
+Index meta method.
+
+\code
+function UserDefs:__index(name)
+\endcode
+
+\param name lookup.
+\returns string, bool, or number. Depending on the type of name.
+
+
+\code
+-- Is equal to
+local val = UserDefs.someValue
+\endcode
+
+\endpage
+
+
+
+
+<!-- ======================================== -->
+\LuaMethod{UserDefs,__newindex}
+\LuaClassUp{UserDefs}
+
+
+New index meta method.
+
+\code
+function UserDefs:__newindex(name, bool)
+\endcode
+
+\param name lookup.
+\param bool The boolean value to set.
+
+
+\code
+-- Is equal to
+UserDefs.someValue = true
+\endcode
+
+
+<!-- ================= -->
+\sectionseperator{Overload 1:}
+
+
+\code
+function UserDefs:__newindex(name, number)
+\endcode
+
+\param name lookup.
+\param number The numerical value to set.
+
+
+\code
+-- Is equal to
+UserDefs.someValue = 123
+\endcode
+
+
+<!-- ================= -->
+\sectionseperator{Overload 2:}
+
+
+\code
+function UserDefs:__newindex(name, string)
+\endcode
+
+\param name lookup.
+\param string The string value to set.
+
+
+\code
+-- Is equal to
+UserDefs.someValue = "abc"
+\endcode
+
+
+\endpage
+
+
 <!-- ============================================ Mouse ============================================ -->
 \LuaClass{Mouse}
 \LuaSectionUp{Engine}
@@ -799,6 +897,18 @@ bool Mouse.moved
 
 \endpage
 
+
+
+
+<!-- ============================================ ObjectList ============================================ -->
+\LuaClass{ObjectList}
+\LuaSectionUp{Engine}
+ObjectList is an \LuaClassRef{Array} template implementation where T is equal to \LuaClassRef{GameObject}
+
+
+\LuaGlobalRef{CArrayIter}
+
+\endpage
 
 <!-- ============================================ Keyboard ============================================ -->
 \LuaClass{Keyboard}
@@ -1109,13 +1219,15 @@ digraph Parent_Child_Scene
 
 
 \beginmenu{Methods}
-\LuaMethodMenu{Scene,hasObject}
-\LuaMethodMenu{Scene,getObject}
-\LuaMethodMenu{Scene,getEntity}
-\LuaMethodMenu{Scene,getCamera}
-\LuaMethodMenu{Scene,getLight}
-\LuaMethodMenu{Scene,getSkeleton}
 \LuaMethodMenu{Scene,createEmpty}
+\LuaMethodMenu{Scene,getCamera}
+\LuaMethodMenu{Scene,getEntity}
+\LuaMethodMenu{Scene,getLight}
+\LuaMethodMenu{Scene,getObject}
+\LuaMethodMenu{Scene,getObjectList}
+\LuaMethodMenu{Scene,getSkeleton}
+\LuaMethodMenu{Scene,hasObject}
+
 \endmenu
 
 
@@ -1155,6 +1267,22 @@ function Scene:getObject(name)
 \returns \LuaClassRef{GameObject} or nil if the object is not found.
 
 \endpage
+
+
+<!-- ======================================== -->
+\LuaMethod{Scene,getObjectList}
+\LuaClassUp{Scene}
+
+Returns a list of all loaded objects in the scene.
+
+\code
+function Scene:getObjectList()
+\endcode
+
+\returns \LuaClassRef{ObjectList}
+
+\endpage
+
 
 <!-- ======================================== -->
 \LuaMethod{Scene,getEntity}
@@ -1292,6 +1420,7 @@ digraph Parent_Child_GameObject
 \LuaMethodMenu{GameObject,getState}
 \LuaMethodMenu{GameObject,getEntity}
 \LuaMethodMenu{GameObject,getCamera}
+\LuaMethodMenu{GameObject,getSkeleton}
 \LuaMethodMenu{GameObject,getLight}
 \LuaMethodMenu{GameObject,hasParent}
 \LuaMethodMenu{GameObject,setParent}
@@ -1819,6 +1948,22 @@ function GameObject:getCamera()
 
 \endpage
 
+
+
+<!-- ======================================== -->
+\LuaMethod{GameObject,getSkeleton}
+\LuaClassUp{GameObject}
+
+
+Returns the skeleton data associated with this object.
+
+\code
+function GameObject:getSkeleton()
+\endcode
+
+\returns \LuaClassRef{Skeleton} or nil if this object is not a skeleton.
+
+\endpage
 
 
 <!-- ======================================== -->

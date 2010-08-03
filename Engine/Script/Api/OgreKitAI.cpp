@@ -26,12 +26,9 @@
 */
 #include "OgreKitAI.h"
 
-namespace OgreKit
-{
 
-
-// FSM_Trigger base
-class FSM_Trigger : public gkFSM::ITrigger
+// ----------------------------------------------------------------------------
+class gsTrigger : public gkFSM::ITrigger
 {
 private:
 	gkLuaEvent *m_event;
@@ -40,17 +37,16 @@ private:
 
 public:
 
-	FSM_Trigger(Self lself, Function lexecute);
-	virtual ~FSM_Trigger();
+	gsTrigger(gsSelf lself, gsFunction lexecute);
+	virtual ~gsTrigger();
 };
 
 
-
-// FSM_Event base
-class FSM_Event : public gkFSM::IEvent
+// ----------------------------------------------------------------------------
+class gsEvent : public gkFSM::IEvent
 {
 private:
-	friend class FSM;
+	friend class gsFSM;
 	gkLuaEvent *m_event;
 
 	// call
@@ -59,41 +55,35 @@ private:
 public:
 
 	// setup for the lua callback
-	FSM_Event(Self lself, Function lexecute);
-	virtual ~FSM_Event();
+	gsEvent(gsSelf lself, gsFunction lexecute);
+	virtual ~gsEvent();
 };
 
 
-// FSM_UpdateEvent base
-class FSM_UpdateEvent
+
+// ----------------------------------------------------------------------------
+class gsUpdateEvent
 {
 private:
-	friend class FSM;
+	friend class gsFSM;
 	gkLuaEvent *m_event;
 
-
-	// internal __gc lua is not the owner
-	virtual ~FSM_UpdateEvent();
+	virtual ~gsUpdateEvent();
 
 	// call
 	void update();
 
-
 public:
 
 	// setup for the lua callback
-	FSM_UpdateEvent(Self lself, Function lexecute);
+	gsUpdateEvent(gsSelf lself, gsFunction lexecute);
 
 };
 
 
-///////////////////////////////////////////////////////////////////////////////
-//
-// OgreKit.FSM_Trigger
-//
-///////////////////////////////////////////////////////////////////////////////
 
-void FSM_Trigger::execute(int fromState, int toState)
+// ----------------------------------------------------------------------------
+void gsTrigger::execute(int fromState, int toState)
 {
 	if (m_event)
 	{
@@ -105,27 +95,27 @@ void FSM_Trigger::execute(int fromState, int toState)
 }
 
 
-FSM_Trigger::~FSM_Trigger()
+// ----------------------------------------------------------------------------
+gsTrigger::~gsTrigger()
 {
 	delete m_event;
 }
 
 
 
-FSM_Trigger::FSM_Trigger(Self lself, Function lexecute)
+// ----------------------------------------------------------------------------
+gsTrigger::gsTrigger(gsSelf lself, gsFunction lexecute)
 	:   m_event(new gkLuaEvent(lself, lexecute))
 {
 }
 
 
-///////////////////////////////////////////////////////////////////////////////
-//
-// OgreKit.FSM_Event
-//
-///////////////////////////////////////////////////////////////////////////////
 
 
-bool FSM_Event::evaluate()
+
+
+// ----------------------------------------------------------------------------
+bool gsEvent::evaluate()
 {
 	bool result = false;
 
@@ -139,29 +129,25 @@ bool FSM_Event::evaluate()
 }
 
 
-FSM_Event::~FSM_Event()
+
+// ----------------------------------------------------------------------------
+gsEvent::~gsEvent()
 {
 	delete m_event;
 }
 
 
 
-FSM_Event::FSM_Event(Self lself, Function lexecute)
+// ----------------------------------------------------------------------------
+gsEvent::gsEvent(gsSelf lself, gsFunction lexecute)
 	:   m_event(new gkLuaEvent(lself, lexecute))
 {
 }
 
 
 
-
-///////////////////////////////////////////////////////////////////////////////
-//
-// OgreKit.FSM_UpdateEvent
-//
-///////////////////////////////////////////////////////////////////////////////
-
-
-void FSM_UpdateEvent::update()
+// ----------------------------------------------------------------------------
+void gsUpdateEvent::update()
 {
 
 	if (m_event)
@@ -172,51 +158,51 @@ void FSM_UpdateEvent::update()
 }
 
 
-FSM_UpdateEvent::~FSM_UpdateEvent()
+// ----------------------------------------------------------------------------
+gsUpdateEvent::~gsUpdateEvent()
 {
 	delete m_event;
 }
 
 
 
-FSM_UpdateEvent::FSM_UpdateEvent(Self lself, Function lexecute)
+// ----------------------------------------------------------------------------
+gsUpdateEvent::gsUpdateEvent(gsSelf lself, gsFunction lexecute)
 	:   m_event(new gkLuaEvent(lself, lexecute))
 {
 }
 
 
-///////////////////////////////////////////////////////////////////////////////
-//
-// OgreKit.WhenEvent
-//
-///////////////////////////////////////////////////////////////////////////////
-WhenEvent::WhenEvent(gkFSM::Event *evt) : m_event(evt)
+
+// ----------------------------------------------------------------------------
+gsWhenEvent::gsWhenEvent(gkFSM::Event *evt) : m_event(evt)
 {
 }
 
-WhenEvent::~WhenEvent()
+
+// ----------------------------------------------------------------------------
+gsWhenEvent::~gsWhenEvent()
 {
 }
 
-void WhenEvent::when(Self self, Function trigger)
+
+// ----------------------------------------------------------------------------
+void gsWhenEvent::when(gsSelf self, gsFunction trigger)
 {
 	if (m_event)
-		m_event->when(new FSM_Event(self, trigger));
+		m_event->when(new gsEvent(self, trigger));
 }
 
 
-
-///////////////////////////////////////////////////////////////////////////////
-//
-// OgreKit.FSM
-//
-///////////////////////////////////////////////////////////////////////////////
-FSM::FSM()
+// ----------------------------------------------------------------------------
+gsFSM::gsFSM()
 {
 	m_fsm = new gkFSM();
 }
 
-FSM::~FSM()
+
+// ----------------------------------------------------------------------------
+gsFSM::~gsFSM()
 {
 	delete m_fsm;
 
@@ -225,7 +211,9 @@ FSM::~FSM()
 		delete iter.getNext().second;
 }
 
-void FSM::update()
+
+// ----------------------------------------------------------------------------
+void gsFSM::update()
 {
 	if (m_fsm)
 		m_fsm->update();
@@ -236,58 +224,69 @@ void FSM::update()
 }
 
 
-void FSM::setState(int state)
+// ----------------------------------------------------------------------------
+void gsFSM::setState(int state)
 {
 	if (m_fsm)
 		m_fsm->setState(state);
 }
 
-int FSM::getState()
+
+// ----------------------------------------------------------------------------
+int gsFSM::getState()
 {
 	if (m_fsm)
 		return m_fsm->getState();
 	return -1;
 }
 
-void FSM::addStartTrigger(int state, Self self, Function trigger)
+// ----------------------------------------------------------------------------
+void gsFSM::addStartTrigger(int state, gsSelf self, gsFunction trigger)
 {
 	if (m_fsm)
-		m_fsm->addStartTrigger(state, new FSM_Trigger(self, trigger));
-}
-
-void FSM::addEndTrigger(int state, Self self, Function trigger)
-{
-	if (m_fsm)
-		m_fsm->addEndTrigger(state, new FSM_Trigger(self, trigger));
+		m_fsm->addStartTrigger(state, new gsTrigger(self, trigger));
 }
 
 
-void FSM::addEvent(int state, Self self, Function update)
+// ----------------------------------------------------------------------------
+void gsFSM::addEndTrigger(int state, gsSelf self, gsFunction trigger)
+{
+	if (m_fsm)
+		m_fsm->addEndTrigger(state, new gsTrigger(self, trigger));
+}
+
+
+// ----------------------------------------------------------------------------
+void gsFSM::addEvent(int state, gsSelf self, gsFunction update)
 {
 	UTsize pos = m_events.find(state);
 	if (pos == UT_NPOS)
-		m_events.insert(state, new FSM_UpdateEvent(self, update));
+		m_events.insert(state, new gsUpdateEvent(self, update));
 }
 
-Pointer<WhenEvent> FSM::addTransition(int from, int to)
+
+// ----------------------------------------------------------------------------
+gsWhenEvent* gsFSM::addTransition(int from, int to)
 {
 	if (m_fsm)
-		return Pointer<WhenEvent>(new WhenEvent(m_fsm->addTransition(from, to)));
-	return Pointer<WhenEvent>();
+		return (new gsWhenEvent(m_fsm->addTransition(from, to)));
+	return 0;
 }
 
-Pointer<WhenEvent> FSM::addTransition(int from, int to, unsigned long ms)
+// ----------------------------------------------------------------------------
+gsWhenEvent* gsFSM::addTransition(int from, int to, unsigned long ms)
 {
 	if (m_fsm)
-		return Pointer<WhenEvent>(new WhenEvent(m_fsm->addTransition(from, to, ms)));
-	return Pointer<WhenEvent>();
+		return (new gsWhenEvent(m_fsm->addTransition(from, to, ms)));
+	return 0;
 }
 
-Pointer<WhenEvent> FSM::addTransition(int from, int to, unsigned long ms, Self self, Function trigger)
+
+
+// ----------------------------------------------------------------------------
+gsWhenEvent* gsFSM::addTransition(int from, int to, unsigned long ms, gsSelf self, gsFunction trigger)
 {
 	if (m_fsm)
-		return Pointer<WhenEvent>(new WhenEvent(m_fsm->addTransition(from, to, ms, new FSM_Trigger(self, trigger))));
-	return Pointer<WhenEvent>();
-}
-
+		return (new gsWhenEvent(m_fsm->addTransition(from, to, ms, new gsTrigger(self, trigger))));
+	return 0;
 }

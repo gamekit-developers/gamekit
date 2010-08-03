@@ -89,11 +89,13 @@ class gkLuaObject
 {
 private:
 	lua_State *L;
-	int m_ref;
+	int m_ref, m_own;
 public:
 
 	gkLuaObject() : L(0), m_ref(-1) {}
-	gkLuaObject(lua_State *_L, int input) : L(_L), m_ref(-1) {ref(input);}
+	gkLuaObject(lua_State *_L, int input) : L(_L), m_ref(-1), m_own(1) {ref(input);}
+	gkLuaObject(const gkLuaObject& ob) : L(ob.L), m_ref(ob.m_ref), m_own(0) {}
+
 	~gkLuaObject() { unref(); }
 
 	void ref(int input)
@@ -110,7 +112,7 @@ public:
 
 	void unref(void)
 	{
-		if (m_ref != -1 && L)
+		if (m_ref != -1 && L && m_own)
 		{
 			luaL_unref(L, LUA_REGISTRYINDEX, m_ref);
 			m_ref = -1;
@@ -128,7 +130,7 @@ protected:
 	lua_State   *L;
 	gkLuaObject *m_self;
 	gkLuaObject *m_callback;
-	int          m_callArgs;
+	int          m_callArgs, m_trace;
 
 public:
 
@@ -140,6 +142,7 @@ public:
 	virtual ~gkLuaEvent();
 
 
+	gkLuaEvent* clone(void);
 
 
 	// push callback and self if present,

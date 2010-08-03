@@ -27,4 +27,12 @@
 %{
 #include "OgreKitPhysics.h"
 %}
+
+// Enable ownership
+%newobject gsRayTest::getObject;
+%newobject gsSweptTest::getObject;
+
+%rename(RayTest)      gsRayTest;
+%rename(SweptTest)    gsSweptTest;
+
 %include "OgreKitPhysics.h"

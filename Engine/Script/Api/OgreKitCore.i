@@ -27,14 +27,61 @@
 %{
 #include "OgreKitCore.h"
 %}
-%rename (ScenePtr)      Pointer<Scene>;
-%rename (GameObjectPtr) Pointer<GameObject>;
-%rename (EntityPtr)     Pointer<Entity>;
-%rename (CameraPtr)     Pointer<Camera>;
-%rename (LightPtr)      Pointer<Light>;
+
+// Enable ownership
+%newobject gsEngine::loadBlendFile;
+%newobject gsGameObject::getEntity;
+%newobject gsGameObject::getLight;
+%newobject gsGameObject::getCamera;
+%newobject gsGameObject::getParent;
+%newobject gsGameObject::getSkeleton;
+
+%newobject gsScene::getObject;
+%newobject gsScene::getEntity;
+%newobject gsScene::getLight;
+%newobject gsScene::getCamera;
+%newobject gsScene::getSkeleton;
+%newobject gsScene::createEmpty;
+
+%rename(Camera)          gsCamera;
+%rename(Debugger)        gsDebugger;
+%rename(Engine)          gsEngine;
+%rename(Entity)          gsEntity;
+%rename(GameObject)      gsGameObject;
+%rename(Keyboard)        gsKeyboard;
+%rename(Light)           gsLight;
+%rename(Loadable)        gsLoadable;
+%rename(Mouse)           gsMouse;
+%rename(Property)        gsProperty;
+%rename(Scene)           gsScene;
+%rename(Skeleton)        gsSkeleton;
+%rename(UserDefs)        gsUserDefs;
+%rename(RenderSystem)    gsRenderSystem;
+%rename(PropertyType)    gsPropertyType;
+%rename(TransformSpace)  gsTransformSpace;
+%rename(GameObjectTypes) gsGameObjectTypes;
+%rename(EngineEvents)    gsEngineEvents;
+%rename(MouseButton)     gsMouseButton;
+%rename(DebugPrint)      gsDebugPrint;
+
+
+%rename(OGRE_RS_GL)       GS_RS_GL;
+%rename(OGRE_RS_GLES)     GS_RS_GLES;
+%rename(OGRE_RS_D3D9)     GS_RS_D3D9;
+%rename(OGRE_RS_D3D10)    GS_RS_D3D10;
+%rename(OGRE_RS_D3D11)    GS_RS_D3D11;
+
+%newobject gsArray<gsGameObject, gkGameObject>::at;
+%newobject gsArray<gsGameObject, gkGameObject>::__getitem__;
+%template(ObjectList)	  gsArray<gsGameObject, gkGameObject>;
+
+
+%newobject gsArrayIterator<gsGameObject, gkGameObject>::peekNext;
+%newobject gsArrayIterator<gsGameObject, gkGameObject>::getNext;
+%template(ObjectIterator) gsArrayIterator<gsGameObject, gkGameObject>;
+
 
 %include "OgreKitCore.h"
-
 
 
 

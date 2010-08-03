@@ -1,6 +1,8 @@
 /*! \page AllClass OgreKit
 
 \beginmenu{Classes:,List of classes currently supported by the OgreKit API.}
+\LuaClassMenu{Array}
+\LuaClassMenu{ArrayIterator}
 \LuaClassMenu{Camera}
 \LuaClassMenu{Debugger}
 \LuaClassMenu{Engine}
@@ -11,6 +13,7 @@
 \LuaClassMenu{Light}
 \LuaClassMenu{Loadable}
 \LuaClassMenu{Mouse}
+\LuaClassMenu{ObjectList}
 \LuaClassMenu{Property}
 \LuaClassMenu{Quaternion}
 \LuaClassMenu{Ray}

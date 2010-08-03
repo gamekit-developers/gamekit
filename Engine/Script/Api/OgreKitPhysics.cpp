@@ -28,108 +28,116 @@
 #include "OgreKitCore.h"
 
 
-namespace OgreKit
-{
+
+
 // ----------------------------------------------------------------------------
-RayTest::RayTest()
+gsRayTest::gsRayTest()
 {
 	m_ray = new gkRayTest();
 }
 
 // ----------------------------------------------------------------------------
-RayTest::~RayTest()
+gsRayTest::~gsRayTest()
 {
 	delete m_ray;
 	m_ray = 0;
 }
 
 // ----------------------------------------------------------------------------
-bool RayTest::cast(const Vector3 &from, const Vector3 &to)
+bool gsRayTest::cast(const gsRay &ray)
 {
-	return m_ray->collides(Ogre::Ray(from, to));
+	return m_ray->collides(ray);
 }
 
 
 // ----------------------------------------------------------------------------
-Vector3 RayTest::getHitPoint(void)
+gsVector3 gsRayTest::getHitPoint(void)
 {
 	return m_ray->getHitPoint();
 }
 // ----------------------------------------------------------------------------
-Vector3 RayTest::getHitNormal(void)
+gsVector3 gsRayTest::getHitNormal(void)
 {
 	return m_ray->getHitNormal();
 }
 
 // ----------------------------------------------------------------------------
-Pointer<GameObject> RayTest::getObject(void)
+gsGameObject* gsRayTest::getObject(void)
 {
-	return Pointer<GameObject>(new GameObject(m_ray->getObject()));
+	return (new gsGameObject(m_ray->getObject()));
 }
 
 // ----------------------------------------------------------------------------
-float RayTest::getHitFraction(void)
+float gsRayTest::getHitFraction(void)
 {
 	return m_ray->getHitFraction();
 }
 
 
 // ----------------------------------------------------------------------------
-SweptTest::SweptTest(const Pointer<GameObject> &avoid)
+gsSweptTest::gsSweptTest()
 {
-	if (!avoid.isNull())
-	{
-		btCollisionObject *obj = avoid->cast<gkGameObject>()->getCollisionObject();
-		if (obj)
-			empty_fixme.insert(obj);
-	}
-
-	m_test = new gkSweptTest(empty_fixme);
+	m_test = new gkSweptTest(m_avoid);
 }
 
 
 // ----------------------------------------------------------------------------
-SweptTest::~SweptTest()
+gsSweptTest::gsSweptTest(gsArray<gsGameObject, gkGameObject> &avoid)
+{
+	if (!avoid.empty())
+	{
+		int size = avoid.size(), i;
+		for (i=0; i<size; ++i)
+		{
+			gkGameObject *ob = avoid.iat(i);
+			btCollisionObject *col=0;
+			if ((col = ob->getCollisionObject()) != 0)
+				m_avoid.insert(col);
+		}
+	}
+
+	m_test = new gkSweptTest(m_avoid);
+}
+
+// ----------------------------------------------------------------------------
+gsSweptTest::~gsSweptTest()
 {
 	delete m_test;
 }
 
 // ----------------------------------------------------------------------------
-bool SweptTest::collides(const Ray &ray, float rayRadius)
+bool gsSweptTest::collides(const gsRay &ray, float rayRadius)
 {
 	return m_test->collides(ray, rayRadius);
 }
 
 // ----------------------------------------------------------------------------
-Vector3 SweptTest::getHitPoint(void)
+gsVector3 gsSweptTest::getHitPoint(void)
 {
 	return m_test->getHitPoint();
 }
 
 // ----------------------------------------------------------------------------
-Vector3 SweptTest::getHitNormal(void)
+gsVector3 gsSweptTest::getHitNormal(void)
 {
 	return m_test->getHitNormal();
 }
 
 
 // ----------------------------------------------------------------------------
-Vector3 SweptTest::getReflection(void)
+gsVector3 gsSweptTest::getReflection(void)
 {
 	return m_test->getReflection();
 }
 
 // ----------------------------------------------------------------------------
-Vector3 SweptTest::getSliding(void)
+gsVector3 gsSweptTest::getSliding(void)
 {
 	return m_test->getSliding();
 }
 
 // ----------------------------------------------------------------------------
-Pointer<GameObject> SweptTest::getObject(void)
+gsGameObject *gsSweptTest::getObject(void)
 {
-	return Pointer<GameObject>(new GameObject(m_test->getObject()));
-}
-
-
+	return (new gsGameObject(m_test->getObject()));
 }

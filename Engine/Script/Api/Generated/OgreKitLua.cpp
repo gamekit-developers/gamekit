@@ -1509,35 +1509,34 @@ SWIG_Lua_dostring(lua_State *L, const char* str) {
 
 /* -------- TYPES TABLE (BEGIN) -------- */
 
-#define SWIGTYPE_p_OgreKit__Camera swig_types[0]
-#define SWIGTYPE_p_OgreKit__Debugger swig_types[1]
-#define SWIGTYPE_p_OgreKit__Engine swig_types[2]
-#define SWIGTYPE_p_OgreKit__Entity swig_types[3]
-#define SWIGTYPE_p_OgreKit__FSM swig_types[4]
-#define SWIGTYPE_p_OgreKit__GameObject swig_types[5]
-#define SWIGTYPE_p_OgreKit__Keyboard swig_types[6]
-#define SWIGTYPE_p_OgreKit__Light swig_types[7]
-#define SWIGTYPE_p_OgreKit__Loadable swig_types[8]
-#define SWIGTYPE_p_OgreKit__Mouse swig_types[9]
-#define SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t swig_types[10]
-#define SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t swig_types[11]
-#define SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t swig_types[12]
-#define SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t swig_types[13]
-#define SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t swig_types[14]
-#define SWIGTYPE_p_OgreKit__PointerT_OgreKit__WhenEvent_t swig_types[15]
-#define SWIGTYPE_p_OgreKit__Property swig_types[16]
-#define SWIGTYPE_p_OgreKit__Quaternion swig_types[17]
-#define SWIGTYPE_p_OgreKit__Ray swig_types[18]
-#define SWIGTYPE_p_OgreKit__RayTest swig_types[19]
-#define SWIGTYPE_p_OgreKit__Scene swig_types[20]
-#define SWIGTYPE_p_OgreKit__SweptTest swig_types[21]
-#define SWIGTYPE_p_OgreKit__UserDefs swig_types[22]
-#define SWIGTYPE_p_OgreKit__Vector3 swig_types[23]
-#define SWIGTYPE_p_OgreKit__WhenEvent swig_types[24]
-#define SWIGTYPE_p_gkLuaCurState swig_types[25]
-#define SWIGTYPE_p_gkString swig_types[26]
-static swig_type_info *swig_types[28];
-static swig_module_info swig_module = {swig_types, 27, 0, 0, 0, 0};
+#define SWIGTYPE_p_Array swig_types[0]
+#define SWIGTYPE_p_Iterator swig_types[1]
+#define SWIGTYPE_p_gkLuaCurState swig_types[2]
+#define SWIGTYPE_p_gsArrayIteratorT_gsGameObject_gkGameObject_t swig_types[3]
+#define SWIGTYPE_p_gsArrayT_gsGameObject_gkGameObject_t swig_types[4]
+#define SWIGTYPE_p_gsCamera swig_types[5]
+#define SWIGTYPE_p_gsDebugger swig_types[6]
+#define SWIGTYPE_p_gsEngine swig_types[7]
+#define SWIGTYPE_p_gsEntity swig_types[8]
+#define SWIGTYPE_p_gsFSM swig_types[9]
+#define SWIGTYPE_p_gsGameObject swig_types[10]
+#define SWIGTYPE_p_gsKeyboard swig_types[11]
+#define SWIGTYPE_p_gsLight swig_types[12]
+#define SWIGTYPE_p_gsLoadable swig_types[13]
+#define SWIGTYPE_p_gsMouse swig_types[14]
+#define SWIGTYPE_p_gsProperty swig_types[15]
+#define SWIGTYPE_p_gsQuaternion swig_types[16]
+#define SWIGTYPE_p_gsRay swig_types[17]
+#define SWIGTYPE_p_gsRayTest swig_types[18]
+#define SWIGTYPE_p_gsScene swig_types[19]
+#define SWIGTYPE_p_gsSkeleton swig_types[20]
+#define SWIGTYPE_p_gsSweptTest swig_types[21]
+#define SWIGTYPE_p_gsUserDefs swig_types[22]
+#define SWIGTYPE_p_gsVector3 swig_types[23]
+#define SWIGTYPE_p_gsWhenEvent swig_types[24]
+#define SWIGTYPE_p_utArrayT_gkGameObject_p_t swig_types[25]
+static swig_type_info *swig_types[27];
+static swig_module_info swig_module = {swig_types, 26, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -1572,20 +1571,45 @@ typedef struct{} LANGUAGE_OBJ;
 
 #include "OgreKitPhysics.h"
 
+
+static int gsGetProperty(lua_State *L, const gsProperty& prop)
+{
+	int SWIG_arg= 0;
+	switch (prop.getType())
+	{
+	case PROP_BOOL:
+		lua_pushboolean(L, prop.toBool()); 
+		SWIG_arg++;
+		break;
+	case PROP_NUMBER:
+		lua_pushnumber(L, prop.toNumber()); 
+		SWIG_arg++;
+		break;
+	case PROP_STRING:
+		{
+			gkString str = prop.toString();
+			lua_pushlstring(L, str.c_str(), str.size());
+			SWIG_arg++;
+			break;
+		}
+	}
+	return SWIG_arg;
+}
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 static int _wrap_Vector3_x_set(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Vector3 *arg1 = (OgreKit::Vector3 *) 0 ;
+  gsVector3 *arg1 = (gsVector3 *) 0 ;
   float arg2 ;
   
   SWIG_check_num_args("x",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("x",1,"OgreKit::Vector3 *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("x",1,"gsVector3 *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("x",2,"float");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vector3_x_set",1,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vector3_x_set",1,SWIGTYPE_p_gsVector3);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
@@ -1603,14 +1627,14 @@ fail:
 
 static int _wrap_Vector3_x_get(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Vector3 *arg1 = (OgreKit::Vector3 *) 0 ;
+  gsVector3 *arg1 = (gsVector3 *) 0 ;
   float result;
   
   SWIG_check_num_args("x",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("x",1,"OgreKit::Vector3 *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("x",1,"gsVector3 *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vector3_x_get",1,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vector3_x_get",1,SWIGTYPE_p_gsVector3);
   }
   
   result = (float) ((arg1)->x);
@@ -1627,15 +1651,15 @@ fail:
 
 static int _wrap_Vector3_y_set(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Vector3 *arg1 = (OgreKit::Vector3 *) 0 ;
+  gsVector3 *arg1 = (gsVector3 *) 0 ;
   float arg2 ;
   
   SWIG_check_num_args("y",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("y",1,"OgreKit::Vector3 *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("y",1,"gsVector3 *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("y",2,"float");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vector3_y_set",1,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vector3_y_set",1,SWIGTYPE_p_gsVector3);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
@@ -1653,14 +1677,14 @@ fail:
 
 static int _wrap_Vector3_y_get(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Vector3 *arg1 = (OgreKit::Vector3 *) 0 ;
+  gsVector3 *arg1 = (gsVector3 *) 0 ;
   float result;
   
   SWIG_check_num_args("y",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("y",1,"OgreKit::Vector3 *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("y",1,"gsVector3 *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vector3_y_get",1,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vector3_y_get",1,SWIGTYPE_p_gsVector3);
   }
   
   result = (float) ((arg1)->y);
@@ -1677,15 +1701,15 @@ fail:
 
 static int _wrap_Vector3_z_set(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Vector3 *arg1 = (OgreKit::Vector3 *) 0 ;
+  gsVector3 *arg1 = (gsVector3 *) 0 ;
   float arg2 ;
   
   SWIG_check_num_args("z",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("z",1,"OgreKit::Vector3 *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("z",1,"gsVector3 *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("z",2,"float");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vector3_z_set",1,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vector3_z_set",1,SWIGTYPE_p_gsVector3);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
@@ -1703,14 +1727,14 @@ fail:
 
 static int _wrap_Vector3_z_get(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Vector3 *arg1 = (OgreKit::Vector3 *) 0 ;
+  gsVector3 *arg1 = (gsVector3 *) 0 ;
   float result;
   
   SWIG_check_num_args("z",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("z",1,"OgreKit::Vector3 *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("z",1,"gsVector3 *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vector3_z_get",1,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vector3_z_get",1,SWIGTYPE_p_gsVector3);
   }
   
   result = (float) ((arg1)->z);
@@ -1727,11 +1751,11 @@ fail:
 
 static int _wrap_new_Vector3__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Vector3 *result = 0 ;
+  gsVector3 *result = 0 ;
   
-  SWIG_check_num_args("OgreKit::Vector3",0,0)
-  result = (OgreKit::Vector3 *)new OgreKit::Vector3();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++; 
+  SWIG_check_num_args("gsVector3",0,0)
+  result = (gsVector3 *)new gsVector3();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsVector3,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -1747,17 +1771,17 @@ static int _wrap_new_Vector3__SWIG_1(lua_State* L) {
   float arg1 ;
   float arg2 ;
   float arg3 ;
-  OgreKit::Vector3 *result = 0 ;
+  gsVector3 *result = 0 ;
   
-  SWIG_check_num_args("OgreKit::Vector3",3,3)
-  if(!lua_isnumber(L,1)) SWIG_fail_arg("OgreKit::Vector3",1,"float");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("OgreKit::Vector3",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("OgreKit::Vector3",3,"float");
+  SWIG_check_num_args("gsVector3",3,3)
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("gsVector3",1,"float");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("gsVector3",2,"float");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("gsVector3",3,"float");
   arg1 = (float)lua_tonumber(L, 1);
   arg2 = (float)lua_tonumber(L, 2);
   arg3 = (float)lua_tonumber(L, 3);
-  result = (OgreKit::Vector3 *)new OgreKit::Vector3(arg1,arg2,arg3);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++; 
+  result = (gsVector3 *)new gsVector3(arg1,arg2,arg3);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsVector3,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -1770,18 +1794,18 @@ fail:
 
 static int _wrap_new_Vector3__SWIG_2(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Vector3 *arg1 = 0 ;
-  OgreKit::Vector3 *result = 0 ;
+  gsVector3 *arg1 = 0 ;
+  gsVector3 *result = 0 ;
   
-  SWIG_check_num_args("OgreKit::Vector3",1,1)
-  if(!lua_isuserdata(L,1)) SWIG_fail_arg("OgreKit::Vector3",1,"OgreKit::Vector3 const &");
+  SWIG_check_num_args("gsVector3",1,1)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("gsVector3",1,"gsVector3 const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("new_Vector3",1,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("new_Vector3",1,SWIGTYPE_p_gsVector3);
   }
   
-  result = (OgreKit::Vector3 *)new OgreKit::Vector3((OgreKit::Vector3 const &)*arg1);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++; 
+  result = (gsVector3 *)new gsVector3((gsVector3 const &)*arg1);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsVector3,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -1806,7 +1830,7 @@ static int _wrap_new_Vector3(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (lua_isuserdata(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
+      if (lua_isuserdata(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -1838,23 +1862,23 @@ static int _wrap_new_Vector3(lua_State* L) {
   
   lua_pushstring(L,"Wrong arguments for overloaded function 'new_Vector3'\n"
     "  Possible C/C++ prototypes are:\n"
-    "    OgreKit::Vector3()\n"
-    "    OgreKit::Vector3(float,float,float)\n"
-    "    OgreKit::Vector3(OgreKit::Vector3 const &)\n");
+    "    gsVector3()\n"
+    "    gsVector3(float,float,float)\n"
+    "    gsVector3(gsVector3 const &)\n");
   lua_error(L);return 0;
 }
 
 
 static int _wrap_Vector3___tostring(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Vector3 *arg1 = (OgreKit::Vector3 *) 0 ;
+  gsVector3 *arg1 = (gsVector3 *) 0 ;
   char *result = 0 ;
   
   SWIG_check_num_args("__str__",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__str__",1,"OgreKit::Vector3 *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__str__",1,"gsVector3 *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vector3___tostring",1,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vector3___tostring",1,SWIGTYPE_p_gsVector3);
   }
   
   result = (char *)(arg1)->__str__();
@@ -1871,14 +1895,14 @@ fail:
 
 static int _wrap_Vector3_normalize(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Vector3 *arg1 = (OgreKit::Vector3 *) 0 ;
+  gsVector3 *arg1 = (gsVector3 *) 0 ;
   float result;
   
   SWIG_check_num_args("normalize",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("normalize",1,"OgreKit::Vector3 *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("normalize",1,"gsVector3 *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vector3_normalize",1,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vector3_normalize",1,SWIGTYPE_p_gsVector3);
   }
   
   result = (float)(arg1)->normalize();
@@ -1895,24 +1919,24 @@ fail:
 
 static int _wrap_Vector3_dot(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Vector3 *arg1 = (OgreKit::Vector3 *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
+  gsVector3 *arg1 = (gsVector3 *) 0 ;
+  gsVector3 *arg2 = 0 ;
   float result;
   
   SWIG_check_num_args("dot",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("dot",1,"OgreKit::Vector3 *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("dot",2,"OgreKit::Vector3 const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("dot",1,"gsVector3 *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("dot",2,"gsVector3 const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vector3_dot",1,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vector3_dot",1,SWIGTYPE_p_gsVector3);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vector3_dot",2,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vector3_dot",2,SWIGTYPE_p_gsVector3);
   }
   
-  result = (float)(arg1)->dot((OgreKit::Vector3 const &)*arg2);
+  result = (float)(arg1)->dot((gsVector3 const &)*arg2);
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -1926,27 +1950,27 @@ fail:
 
 static int _wrap_Vector3_cross(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Vector3 *arg1 = (OgreKit::Vector3 *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  OgreKit::Vector3 result;
+  gsVector3 *arg1 = (gsVector3 *) 0 ;
+  gsVector3 *arg2 = 0 ;
+  gsVector3 result;
   
   SWIG_check_num_args("cross",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("cross",1,"OgreKit::Vector3 *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("cross",2,"OgreKit::Vector3 const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("cross",1,"gsVector3 *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("cross",2,"gsVector3 const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vector3_cross",1,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vector3_cross",1,SWIGTYPE_p_gsVector3);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vector3_cross",2,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vector3_cross",2,SWIGTYPE_p_gsVector3);
   }
   
-  result = (arg1)->cross((OgreKit::Vector3 const &)*arg2);
+  result = (arg1)->cross((gsVector3 const &)*arg2);
   {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
+    gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -1960,14 +1984,14 @@ fail:
 
 static int _wrap_Vector3_length(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Vector3 *arg1 = (OgreKit::Vector3 *) 0 ;
+  gsVector3 *arg1 = (gsVector3 *) 0 ;
   float result;
   
   SWIG_check_num_args("length",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("length",1,"OgreKit::Vector3 *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("length",1,"gsVector3 *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vector3_length",1,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vector3_length",1,SWIGTYPE_p_gsVector3);
   }
   
   result = (float)(arg1)->length();
@@ -1984,14 +2008,14 @@ fail:
 
 static int _wrap_Vector3_length2(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Vector3 *arg1 = (OgreKit::Vector3 *) 0 ;
+  gsVector3 *arg1 = (gsVector3 *) 0 ;
   float result;
   
   SWIG_check_num_args("length2",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("length2",1,"OgreKit::Vector3 *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("length2",1,"gsVector3 *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vector3_length2",1,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vector3_length2",1,SWIGTYPE_p_gsVector3);
   }
   
   result = (float)(arg1)->length2();
@@ -2008,24 +2032,24 @@ fail:
 
 static int _wrap_Vector3_distance(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Vector3 *arg1 = (OgreKit::Vector3 *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
+  gsVector3 *arg1 = (gsVector3 *) 0 ;
+  gsVector3 *arg2 = 0 ;
   float result;
   
   SWIG_check_num_args("distance",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("distance",1,"OgreKit::Vector3 *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("distance",2,"OgreKit::Vector3 const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("distance",1,"gsVector3 *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("distance",2,"gsVector3 const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vector3_distance",1,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vector3_distance",1,SWIGTYPE_p_gsVector3);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vector3_distance",2,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vector3_distance",2,SWIGTYPE_p_gsVector3);
   }
   
-  result = (float)(arg1)->distance((OgreKit::Vector3 const &)*arg2);
+  result = (float)(arg1)->distance((gsVector3 const &)*arg2);
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -2039,24 +2063,24 @@ fail:
 
 static int _wrap_Vector3_distance2(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Vector3 *arg1 = (OgreKit::Vector3 *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
+  gsVector3 *arg1 = (gsVector3 *) 0 ;
+  gsVector3 *arg2 = 0 ;
   float result;
   
   SWIG_check_num_args("distance2",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("distance2",1,"OgreKit::Vector3 *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("distance2",2,"OgreKit::Vector3 const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("distance2",1,"gsVector3 *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("distance2",2,"gsVector3 const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vector3_distance2",1,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vector3_distance2",1,SWIGTYPE_p_gsVector3);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vector3_distance2",2,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vector3_distance2",2,SWIGTYPE_p_gsVector3);
   }
   
-  result = (float)(arg1)->distance2((OgreKit::Vector3 const &)*arg2);
+  result = (float)(arg1)->distance2((gsVector3 const &)*arg2);
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -2070,20 +2094,20 @@ fail:
 
 static int _wrap_Vector3___unm(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Vector3 *arg1 = (OgreKit::Vector3 *) 0 ;
-  OgreKit::Vector3 result;
+  gsVector3 *arg1 = (gsVector3 *) 0 ;
+  gsVector3 result;
   
   SWIG_check_num_args("operator -",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator -",1,"OgreKit::Vector3 *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator -",1,"gsVector3 *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vector3___unm",1,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vector3___unm",1,SWIGTYPE_p_gsVector3);
   }
   
   result = (arg1)->operator -();
   {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
+    gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -2097,27 +2121,27 @@ fail:
 
 static int _wrap_Vector3___add(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Vector3 *arg1 = (OgreKit::Vector3 *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  OgreKit::Vector3 result;
+  gsVector3 *arg1 = (gsVector3 *) 0 ;
+  gsVector3 *arg2 = 0 ;
+  gsVector3 result;
   
   SWIG_check_num_args("operator +",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator +",1,"OgreKit::Vector3 *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("operator +",2,"OgreKit::Vector3 const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator +",1,"gsVector3 *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("operator +",2,"gsVector3 const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vector3___add",1,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vector3___add",1,SWIGTYPE_p_gsVector3);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vector3___add",2,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vector3___add",2,SWIGTYPE_p_gsVector3);
   }
   
-  result = (arg1)->operator +((OgreKit::Vector3 const &)*arg2);
+  result = (arg1)->operator +((gsVector3 const &)*arg2);
   {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
+    gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -2131,27 +2155,27 @@ fail:
 
 static int _wrap_Vector3___sub(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Vector3 *arg1 = (OgreKit::Vector3 *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  OgreKit::Vector3 result;
+  gsVector3 *arg1 = (gsVector3 *) 0 ;
+  gsVector3 *arg2 = 0 ;
+  gsVector3 result;
   
   SWIG_check_num_args("operator -",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator -",1,"OgreKit::Vector3 *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("operator -",2,"OgreKit::Vector3 const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator -",1,"gsVector3 *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("operator -",2,"gsVector3 const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vector3___sub",1,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vector3___sub",1,SWIGTYPE_p_gsVector3);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vector3___sub",2,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vector3___sub",2,SWIGTYPE_p_gsVector3);
   }
   
-  result = (arg1)->operator -((OgreKit::Vector3 const &)*arg2);
+  result = (arg1)->operator -((gsVector3 const &)*arg2);
   {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
+    gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -2165,27 +2189,27 @@ fail:
 
 static int _wrap_Vector3___mul__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Vector3 *arg1 = (OgreKit::Vector3 *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  OgreKit::Vector3 result;
+  gsVector3 *arg1 = (gsVector3 *) 0 ;
+  gsVector3 *arg2 = 0 ;
+  gsVector3 result;
   
   SWIG_check_num_args("operator *",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator *",1,"OgreKit::Vector3 *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("operator *",2,"OgreKit::Vector3 const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator *",1,"gsVector3 *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("operator *",2,"gsVector3 const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vector3___mul",1,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vector3___mul",1,SWIGTYPE_p_gsVector3);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vector3___mul",2,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vector3___mul",2,SWIGTYPE_p_gsVector3);
   }
   
-  result = (arg1)->operator *((OgreKit::Vector3 const &)*arg2);
+  result = (arg1)->operator *((gsVector3 const &)*arg2);
   {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
+    gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -2199,23 +2223,23 @@ fail:
 
 static int _wrap_Vector3___mul__SWIG_1(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Vector3 *arg1 = (OgreKit::Vector3 *) 0 ;
+  gsVector3 *arg1 = (gsVector3 *) 0 ;
   float arg2 ;
-  OgreKit::Vector3 result;
+  gsVector3 result;
   
   SWIG_check_num_args("operator *",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator *",1,"OgreKit::Vector3 *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator *",1,"gsVector3 *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("operator *",2,"float");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vector3___mul",1,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vector3___mul",1,SWIGTYPE_p_gsVector3);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
   result = (arg1)->operator *(arg2);
   {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
+    gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -2238,7 +2262,7 @@ static int _wrap_Vector3___mul(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -2247,7 +2271,7 @@ static int _wrap_Vector3___mul(lua_State* L) {
     if (_v) {
       {
         void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
           _v = 0;
         } else {
           _v = 1;
@@ -2262,7 +2286,7 @@ static int _wrap_Vector3___mul(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -2280,35 +2304,35 @@ static int _wrap_Vector3___mul(lua_State* L) {
   
   lua_pushstring(L,"Wrong arguments for overloaded function 'Vector3___mul'\n"
     "  Possible C/C++ prototypes are:\n"
-    "    operator *(OgreKit::Vector3 *,OgreKit::Vector3 const &)\n"
-    "    operator *(OgreKit::Vector3 *,float)\n");
+    "    operator *(gsVector3 *,gsVector3 const &)\n"
+    "    operator *(gsVector3 *,float)\n");
   lua_error(L);return 0;
 }
 
 
 static int _wrap_Vector3___div__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Vector3 *arg1 = (OgreKit::Vector3 *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  OgreKit::Vector3 result;
+  gsVector3 *arg1 = (gsVector3 *) 0 ;
+  gsVector3 *arg2 = 0 ;
+  gsVector3 result;
   
   SWIG_check_num_args("operator /",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator /",1,"OgreKit::Vector3 *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("operator /",2,"OgreKit::Vector3 const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator /",1,"gsVector3 *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("operator /",2,"gsVector3 const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vector3___div",1,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vector3___div",1,SWIGTYPE_p_gsVector3);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vector3___div",2,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vector3___div",2,SWIGTYPE_p_gsVector3);
   }
   
-  result = (arg1)->operator /((OgreKit::Vector3 const &)*arg2);
+  result = (arg1)->operator /((gsVector3 const &)*arg2);
   {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
+    gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -2322,23 +2346,23 @@ fail:
 
 static int _wrap_Vector3___div__SWIG_1(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Vector3 *arg1 = (OgreKit::Vector3 *) 0 ;
+  gsVector3 *arg1 = (gsVector3 *) 0 ;
   float arg2 ;
-  OgreKit::Vector3 result;
+  gsVector3 result;
   
   SWIG_check_num_args("operator /",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator /",1,"OgreKit::Vector3 *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator /",1,"gsVector3 *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("operator /",2,"float");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vector3___div",1,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vector3___div",1,SWIGTYPE_p_gsVector3);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
   result = (arg1)->operator /(arg2);
   {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
+    gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -2361,7 +2385,7 @@ static int _wrap_Vector3___div(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -2370,7 +2394,7 @@ static int _wrap_Vector3___div(lua_State* L) {
     if (_v) {
       {
         void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
           _v = 0;
         } else {
           _v = 1;
@@ -2385,7 +2409,7 @@ static int _wrap_Vector3___div(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -2403,17 +2427,17 @@ static int _wrap_Vector3___div(lua_State* L) {
   
   lua_pushstring(L,"Wrong arguments for overloaded function 'Vector3___div'\n"
     "  Possible C/C++ prototypes are:\n"
-    "    operator /(OgreKit::Vector3 *,OgreKit::Vector3 const &)\n"
-    "    operator /(OgreKit::Vector3 *,float)\n");
+    "    operator /(gsVector3 *,gsVector3 const &)\n"
+    "    operator /(gsVector3 *,float)\n");
   lua_error(L);return 0;
 }
 
 
 static void swig_delete_Vector3(void *obj) {
-OgreKit::Vector3 *arg1 = (OgreKit::Vector3 *) obj;
+gsVector3 *arg1 = (gsVector3 *) obj;
 delete arg1;
 }
-static swig_lua_method swig_OgreKit_Vector3_methods[] = {
+static swig_lua_method swig_gsVector3_methods[] = {
     {"__tostring", _wrap_Vector3___tostring}, 
     {"normalize", _wrap_Vector3_normalize}, 
     {"dot", _wrap_Vector3_dot}, 
@@ -2429,27 +2453,27 @@ static swig_lua_method swig_OgreKit_Vector3_methods[] = {
     {"__div", _wrap_Vector3___div}, 
     {0,0}
 };
-static swig_lua_attribute swig_OgreKit_Vector3_attributes[] = {
+static swig_lua_attribute swig_gsVector3_attributes[] = {
     { "x", _wrap_Vector3_x_get, _wrap_Vector3_x_set},
     { "y", _wrap_Vector3_y_get, _wrap_Vector3_y_set},
     { "z", _wrap_Vector3_z_get, _wrap_Vector3_z_set},
     {0,0,0}
 };
-static swig_lua_class *swig_OgreKit_Vector3_bases[] = {0};
-static const char *swig_OgreKit_Vector3_base_names[] = {0};
-static swig_lua_class _wrap_class_OgreKit_Vector3 = { "Vector3", &SWIGTYPE_p_OgreKit__Vector3,_wrap_new_Vector3, swig_delete_Vector3, swig_OgreKit_Vector3_methods, swig_OgreKit_Vector3_attributes, swig_OgreKit_Vector3_bases, swig_OgreKit_Vector3_base_names };
+static swig_lua_class *swig_gsVector3_bases[] = {0};
+static const char *swig_gsVector3_base_names[] = {0};
+static swig_lua_class _wrap_class_gsVector3 = { "Vector3", &SWIGTYPE_p_gsVector3,_wrap_new_Vector3, swig_delete_Vector3, swig_gsVector3_methods, swig_gsVector3_attributes, swig_gsVector3_bases, swig_gsVector3_base_names };
 
 static int _wrap_Quaternion_w_set(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Quaternion *arg1 = (OgreKit::Quaternion *) 0 ;
+  gsQuaternion *arg1 = (gsQuaternion *) 0 ;
   float arg2 ;
   
   SWIG_check_num_args("w",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("w",1,"OgreKit::Quaternion *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("w",1,"gsQuaternion *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("w",2,"float");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("Quaternion_w_set",1,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("Quaternion_w_set",1,SWIGTYPE_p_gsQuaternion);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
@@ -2467,14 +2491,14 @@ fail:
 
 static int _wrap_Quaternion_w_get(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Quaternion *arg1 = (OgreKit::Quaternion *) 0 ;
+  gsQuaternion *arg1 = (gsQuaternion *) 0 ;
   float result;
   
   SWIG_check_num_args("w",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("w",1,"OgreKit::Quaternion *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("w",1,"gsQuaternion *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("Quaternion_w_get",1,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("Quaternion_w_get",1,SWIGTYPE_p_gsQuaternion);
   }
   
   result = (float) ((arg1)->w);
@@ -2491,15 +2515,15 @@ fail:
 
 static int _wrap_Quaternion_x_set(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Quaternion *arg1 = (OgreKit::Quaternion *) 0 ;
+  gsQuaternion *arg1 = (gsQuaternion *) 0 ;
   float arg2 ;
   
   SWIG_check_num_args("x",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("x",1,"OgreKit::Quaternion *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("x",1,"gsQuaternion *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("x",2,"float");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("Quaternion_x_set",1,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("Quaternion_x_set",1,SWIGTYPE_p_gsQuaternion);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
@@ -2517,14 +2541,14 @@ fail:
 
 static int _wrap_Quaternion_x_get(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Quaternion *arg1 = (OgreKit::Quaternion *) 0 ;
+  gsQuaternion *arg1 = (gsQuaternion *) 0 ;
   float result;
   
   SWIG_check_num_args("x",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("x",1,"OgreKit::Quaternion *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("x",1,"gsQuaternion *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("Quaternion_x_get",1,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("Quaternion_x_get",1,SWIGTYPE_p_gsQuaternion);
   }
   
   result = (float) ((arg1)->x);
@@ -2541,15 +2565,15 @@ fail:
 
 static int _wrap_Quaternion_y_set(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Quaternion *arg1 = (OgreKit::Quaternion *) 0 ;
+  gsQuaternion *arg1 = (gsQuaternion *) 0 ;
   float arg2 ;
   
   SWIG_check_num_args("y",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("y",1,"OgreKit::Quaternion *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("y",1,"gsQuaternion *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("y",2,"float");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("Quaternion_y_set",1,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("Quaternion_y_set",1,SWIGTYPE_p_gsQuaternion);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
@@ -2567,14 +2591,14 @@ fail:
 
 static int _wrap_Quaternion_y_get(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Quaternion *arg1 = (OgreKit::Quaternion *) 0 ;
+  gsQuaternion *arg1 = (gsQuaternion *) 0 ;
   float result;
   
   SWIG_check_num_args("y",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("y",1,"OgreKit::Quaternion *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("y",1,"gsQuaternion *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("Quaternion_y_get",1,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("Quaternion_y_get",1,SWIGTYPE_p_gsQuaternion);
   }
   
   result = (float) ((arg1)->y);
@@ -2591,15 +2615,15 @@ fail:
 
 static int _wrap_Quaternion_z_set(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Quaternion *arg1 = (OgreKit::Quaternion *) 0 ;
+  gsQuaternion *arg1 = (gsQuaternion *) 0 ;
   float arg2 ;
   
   SWIG_check_num_args("z",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("z",1,"OgreKit::Quaternion *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("z",1,"gsQuaternion *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("z",2,"float");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("Quaternion_z_set",1,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("Quaternion_z_set",1,SWIGTYPE_p_gsQuaternion);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
@@ -2617,14 +2641,14 @@ fail:
 
 static int _wrap_Quaternion_z_get(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Quaternion *arg1 = (OgreKit::Quaternion *) 0 ;
+  gsQuaternion *arg1 = (gsQuaternion *) 0 ;
   float result;
   
   SWIG_check_num_args("z",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("z",1,"OgreKit::Quaternion *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("z",1,"gsQuaternion *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("Quaternion_z_get",1,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("Quaternion_z_get",1,SWIGTYPE_p_gsQuaternion);
   }
   
   result = (float) ((arg1)->z);
@@ -2641,11 +2665,11 @@ fail:
 
 static int _wrap_new_Quaternion__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Quaternion *result = 0 ;
+  gsQuaternion *result = 0 ;
   
-  SWIG_check_num_args("OgreKit::Quaternion",0,0)
-  result = (OgreKit::Quaternion *)new OgreKit::Quaternion();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__Quaternion,1); SWIG_arg++; 
+  SWIG_check_num_args("gsQuaternion",0,0)
+  result = (gsQuaternion *)new gsQuaternion();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsQuaternion,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -2662,19 +2686,19 @@ static int _wrap_new_Quaternion__SWIG_1(lua_State* L) {
   float arg2 ;
   float arg3 ;
   float arg4 ;
-  OgreKit::Quaternion *result = 0 ;
+  gsQuaternion *result = 0 ;
   
-  SWIG_check_num_args("OgreKit::Quaternion",4,4)
-  if(!lua_isnumber(L,1)) SWIG_fail_arg("OgreKit::Quaternion",1,"float");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("OgreKit::Quaternion",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("OgreKit::Quaternion",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("OgreKit::Quaternion",4,"float");
+  SWIG_check_num_args("gsQuaternion",4,4)
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("gsQuaternion",1,"float");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("gsQuaternion",2,"float");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("gsQuaternion",3,"float");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("gsQuaternion",4,"float");
   arg1 = (float)lua_tonumber(L, 1);
   arg2 = (float)lua_tonumber(L, 2);
   arg3 = (float)lua_tonumber(L, 3);
   arg4 = (float)lua_tonumber(L, 4);
-  result = (OgreKit::Quaternion *)new OgreKit::Quaternion(arg1,arg2,arg3,arg4);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__Quaternion,1); SWIG_arg++; 
+  result = (gsQuaternion *)new gsQuaternion(arg1,arg2,arg3,arg4);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsQuaternion,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -2687,18 +2711,18 @@ fail:
 
 static int _wrap_new_Quaternion__SWIG_2(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Quaternion *arg1 = 0 ;
-  OgreKit::Quaternion *result = 0 ;
+  gsQuaternion *arg1 = 0 ;
+  gsQuaternion *result = 0 ;
   
-  SWIG_check_num_args("OgreKit::Quaternion",1,1)
-  if(!lua_isuserdata(L,1)) SWIG_fail_arg("OgreKit::Quaternion",1,"OgreKit::Quaternion const &");
+  SWIG_check_num_args("gsQuaternion",1,1)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("gsQuaternion",1,"gsQuaternion const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("new_Quaternion",1,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("new_Quaternion",1,SWIGTYPE_p_gsQuaternion);
   }
   
-  result = (OgreKit::Quaternion *)new OgreKit::Quaternion((OgreKit::Quaternion const &)*arg1);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__Quaternion,1); SWIG_arg++; 
+  result = (gsQuaternion *)new gsQuaternion((gsQuaternion const &)*arg1);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsQuaternion,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -2723,7 +2747,7 @@ static int _wrap_new_Quaternion(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (lua_isuserdata(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__Quaternion, 0)) {
+      if (lua_isuserdata(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsQuaternion, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -2760,23 +2784,23 @@ static int _wrap_new_Quaternion(lua_State* L) {
   
   lua_pushstring(L,"Wrong arguments for overloaded function 'new_Quaternion'\n"
     "  Possible C/C++ prototypes are:\n"
-    "    OgreKit::Quaternion()\n"
-    "    OgreKit::Quaternion(float,float,float,float)\n"
-    "    OgreKit::Quaternion(OgreKit::Quaternion const &)\n");
+    "    gsQuaternion()\n"
+    "    gsQuaternion(float,float,float,float)\n"
+    "    gsQuaternion(gsQuaternion const &)\n");
   lua_error(L);return 0;
 }
 
 
 static int _wrap_Quaternion___tostring(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Quaternion *arg1 = (OgreKit::Quaternion *) 0 ;
+  gsQuaternion *arg1 = (gsQuaternion *) 0 ;
   char *result = 0 ;
   
   SWIG_check_num_args("__str__",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__str__",1,"OgreKit::Quaternion *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__str__",1,"gsQuaternion *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("Quaternion___tostring",1,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("Quaternion___tostring",1,SWIGTYPE_p_gsQuaternion);
   }
   
   result = (char *)(arg1)->__str__();
@@ -2793,14 +2817,14 @@ fail:
 
 static int _wrap_Quaternion_normalize(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Quaternion *arg1 = (OgreKit::Quaternion *) 0 ;
+  gsQuaternion *arg1 = (gsQuaternion *) 0 ;
   float result;
   
   SWIG_check_num_args("normalize",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("normalize",1,"OgreKit::Quaternion *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("normalize",1,"gsQuaternion *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("Quaternion_normalize",1,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("Quaternion_normalize",1,SWIGTYPE_p_gsQuaternion);
   }
   
   result = (float)(arg1)->normalize();
@@ -2817,14 +2841,14 @@ fail:
 
 static int _wrap_Quaternion_length2(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Quaternion *arg1 = (OgreKit::Quaternion *) 0 ;
+  gsQuaternion *arg1 = (gsQuaternion *) 0 ;
   float result;
   
   SWIG_check_num_args("length2",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("length2",1,"OgreKit::Quaternion *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("length2",1,"gsQuaternion *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("Quaternion_length2",1,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("Quaternion_length2",1,SWIGTYPE_p_gsQuaternion);
   }
   
   result = (float)(arg1)->length2();
@@ -2841,24 +2865,24 @@ fail:
 
 static int _wrap_Quaternion_dot(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Quaternion *arg1 = (OgreKit::Quaternion *) 0 ;
-  OgreKit::Quaternion *arg2 = 0 ;
+  gsQuaternion *arg1 = (gsQuaternion *) 0 ;
+  gsQuaternion *arg2 = 0 ;
   float result;
   
   SWIG_check_num_args("dot",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("dot",1,"OgreKit::Quaternion *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("dot",2,"OgreKit::Quaternion const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("dot",1,"gsQuaternion *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("dot",2,"gsQuaternion const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("Quaternion_dot",1,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("Quaternion_dot",1,SWIGTYPE_p_gsQuaternion);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("Quaternion_dot",2,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("Quaternion_dot",2,SWIGTYPE_p_gsQuaternion);
   }
   
-  result = (float)(arg1)->dot((OgreKit::Quaternion const &)*arg2);
+  result = (float)(arg1)->dot((gsQuaternion const &)*arg2);
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -2872,20 +2896,20 @@ fail:
 
 static int _wrap_Quaternion_inverse(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Quaternion *arg1 = (OgreKit::Quaternion *) 0 ;
-  OgreKit::Quaternion result;
+  gsQuaternion *arg1 = (gsQuaternion *) 0 ;
+  gsQuaternion result;
   
   SWIG_check_num_args("inverse",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("inverse",1,"OgreKit::Quaternion *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("inverse",1,"gsQuaternion *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("Quaternion_inverse",1,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("Quaternion_inverse",1,SWIGTYPE_p_gsQuaternion);
   }
   
   result = (arg1)->inverse();
   {
-    OgreKit::Quaternion * resultptr = new OgreKit::Quaternion((const OgreKit::Quaternion &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Quaternion,1); SWIG_arg++;
+    gsQuaternion * resultptr = new gsQuaternion((const gsQuaternion &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsQuaternion,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -2899,20 +2923,20 @@ fail:
 
 static int _wrap_Quaternion___unm(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Quaternion *arg1 = (OgreKit::Quaternion *) 0 ;
-  OgreKit::Quaternion result;
+  gsQuaternion *arg1 = (gsQuaternion *) 0 ;
+  gsQuaternion result;
   
   SWIG_check_num_args("operator -",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator -",1,"OgreKit::Quaternion *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator -",1,"gsQuaternion *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("Quaternion___unm",1,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("Quaternion___unm",1,SWIGTYPE_p_gsQuaternion);
   }
   
   result = (arg1)->operator -();
   {
-    OgreKit::Quaternion * resultptr = new OgreKit::Quaternion((const OgreKit::Quaternion &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Quaternion,1); SWIG_arg++;
+    gsQuaternion * resultptr = new gsQuaternion((const gsQuaternion &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsQuaternion,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -2926,27 +2950,27 @@ fail:
 
 static int _wrap_Quaternion___add(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Quaternion *arg1 = (OgreKit::Quaternion *) 0 ;
-  OgreKit::Quaternion *arg2 = 0 ;
-  OgreKit::Quaternion result;
+  gsQuaternion *arg1 = (gsQuaternion *) 0 ;
+  gsQuaternion *arg2 = 0 ;
+  gsQuaternion result;
   
   SWIG_check_num_args("operator +",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator +",1,"OgreKit::Quaternion *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("operator +",2,"OgreKit::Quaternion const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator +",1,"gsQuaternion *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("operator +",2,"gsQuaternion const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("Quaternion___add",1,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("Quaternion___add",1,SWIGTYPE_p_gsQuaternion);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("Quaternion___add",2,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("Quaternion___add",2,SWIGTYPE_p_gsQuaternion);
   }
   
-  result = (arg1)->operator +((OgreKit::Quaternion const &)*arg2);
+  result = (arg1)->operator +((gsQuaternion const &)*arg2);
   {
-    OgreKit::Quaternion * resultptr = new OgreKit::Quaternion((const OgreKit::Quaternion &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Quaternion,1); SWIG_arg++;
+    gsQuaternion * resultptr = new gsQuaternion((const gsQuaternion &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsQuaternion,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -2960,27 +2984,27 @@ fail:
 
 static int _wrap_Quaternion___sub(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Quaternion *arg1 = (OgreKit::Quaternion *) 0 ;
-  OgreKit::Quaternion *arg2 = 0 ;
-  OgreKit::Quaternion result;
+  gsQuaternion *arg1 = (gsQuaternion *) 0 ;
+  gsQuaternion *arg2 = 0 ;
+  gsQuaternion result;
   
   SWIG_check_num_args("operator -",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator -",1,"OgreKit::Quaternion *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("operator -",2,"OgreKit::Quaternion const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator -",1,"gsQuaternion *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("operator -",2,"gsQuaternion const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("Quaternion___sub",1,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("Quaternion___sub",1,SWIGTYPE_p_gsQuaternion);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("Quaternion___sub",2,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("Quaternion___sub",2,SWIGTYPE_p_gsQuaternion);
   }
   
-  result = (arg1)->operator -((OgreKit::Quaternion const &)*arg2);
+  result = (arg1)->operator -((gsQuaternion const &)*arg2);
   {
-    OgreKit::Quaternion * resultptr = new OgreKit::Quaternion((const OgreKit::Quaternion &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Quaternion,1); SWIG_arg++;
+    gsQuaternion * resultptr = new gsQuaternion((const gsQuaternion &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsQuaternion,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -2994,27 +3018,27 @@ fail:
 
 static int _wrap_Quaternion___mul__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Quaternion *arg1 = (OgreKit::Quaternion *) 0 ;
-  OgreKit::Quaternion *arg2 = 0 ;
-  OgreKit::Quaternion result;
+  gsQuaternion *arg1 = (gsQuaternion *) 0 ;
+  gsQuaternion *arg2 = 0 ;
+  gsQuaternion result;
   
   SWIG_check_num_args("operator *",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator *",1,"OgreKit::Quaternion *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("operator *",2,"OgreKit::Quaternion const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator *",1,"gsQuaternion *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("operator *",2,"gsQuaternion const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("Quaternion___mul",1,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("Quaternion___mul",1,SWIGTYPE_p_gsQuaternion);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("Quaternion___mul",2,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("Quaternion___mul",2,SWIGTYPE_p_gsQuaternion);
   }
   
-  result = (arg1)->operator *((OgreKit::Quaternion const &)*arg2);
+  result = (arg1)->operator *((gsQuaternion const &)*arg2);
   {
-    OgreKit::Quaternion * resultptr = new OgreKit::Quaternion((const OgreKit::Quaternion &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Quaternion,1); SWIG_arg++;
+    gsQuaternion * resultptr = new gsQuaternion((const gsQuaternion &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsQuaternion,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -3028,23 +3052,23 @@ fail:
 
 static int _wrap_Quaternion___mul__SWIG_1(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Quaternion *arg1 = (OgreKit::Quaternion *) 0 ;
+  gsQuaternion *arg1 = (gsQuaternion *) 0 ;
   float arg2 ;
-  OgreKit::Quaternion result;
+  gsQuaternion result;
   
   SWIG_check_num_args("operator *",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator *",1,"OgreKit::Quaternion *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator *",1,"gsQuaternion *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("operator *",2,"float");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("Quaternion___mul",1,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("Quaternion___mul",1,SWIGTYPE_p_gsQuaternion);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
   result = (arg1)->operator *(arg2);
   {
-    OgreKit::Quaternion * resultptr = new OgreKit::Quaternion((const OgreKit::Quaternion &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Quaternion,1); SWIG_arg++;
+    gsQuaternion * resultptr = new gsQuaternion((const gsQuaternion &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsQuaternion,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -3058,27 +3082,27 @@ fail:
 
 static int _wrap_Quaternion___mul__SWIG_2(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Quaternion *arg1 = (OgreKit::Quaternion *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  OgreKit::Vector3 result;
+  gsQuaternion *arg1 = (gsQuaternion *) 0 ;
+  gsVector3 *arg2 = 0 ;
+  gsVector3 result;
   
   SWIG_check_num_args("operator *",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator *",1,"OgreKit::Quaternion *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("operator *",2,"OgreKit::Vector3 const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator *",1,"gsQuaternion *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("operator *",2,"gsVector3 const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("Quaternion___mul",1,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("Quaternion___mul",1,SWIGTYPE_p_gsQuaternion);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Quaternion___mul",2,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Quaternion___mul",2,SWIGTYPE_p_gsVector3);
   }
   
-  result = (arg1)->operator *((OgreKit::Vector3 const &)*arg2);
+  result = (arg1)->operator *((gsVector3 const &)*arg2);
   {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
+    gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -3101,7 +3125,7 @@ static int _wrap_Quaternion___mul(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__Quaternion, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsQuaternion, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -3110,7 +3134,7 @@ static int _wrap_Quaternion___mul(lua_State* L) {
     if (_v) {
       {
         void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Quaternion, 0)) {
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsQuaternion, 0)) {
           _v = 0;
         } else {
           _v = 1;
@@ -3125,7 +3149,7 @@ static int _wrap_Quaternion___mul(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__Quaternion, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsQuaternion, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -3134,7 +3158,7 @@ static int _wrap_Quaternion___mul(lua_State* L) {
     if (_v) {
       {
         void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
           _v = 0;
         } else {
           _v = 1;
@@ -3149,7 +3173,7 @@ static int _wrap_Quaternion___mul(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__Quaternion, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsQuaternion, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -3167,18 +3191,18 @@ static int _wrap_Quaternion___mul(lua_State* L) {
   
   lua_pushstring(L,"Wrong arguments for overloaded function 'Quaternion___mul'\n"
     "  Possible C/C++ prototypes are:\n"
-    "    operator *(OgreKit::Quaternion *,OgreKit::Quaternion const &)\n"
-    "    operator *(OgreKit::Quaternion *,float)\n"
-    "    operator *(OgreKit::Quaternion *,OgreKit::Vector3 const &)\n");
+    "    operator *(gsQuaternion *,gsQuaternion const &)\n"
+    "    operator *(gsQuaternion *,float)\n"
+    "    operator *(gsQuaternion *,gsVector3 const &)\n");
   lua_error(L);return 0;
 }
 
 
 static void swig_delete_Quaternion(void *obj) {
-OgreKit::Quaternion *arg1 = (OgreKit::Quaternion *) obj;
+gsQuaternion *arg1 = (gsQuaternion *) obj;
 delete arg1;
 }
-static swig_lua_method swig_OgreKit_Quaternion_methods[] = {
+static swig_lua_method swig_gsQuaternion_methods[] = {
     {"__tostring", _wrap_Quaternion___tostring}, 
     {"normalize", _wrap_Quaternion_normalize}, 
     {"length2", _wrap_Quaternion_length2}, 
@@ -3190,24 +3214,24 @@ static swig_lua_method swig_OgreKit_Quaternion_methods[] = {
     {"__mul", _wrap_Quaternion___mul}, 
     {0,0}
 };
-static swig_lua_attribute swig_OgreKit_Quaternion_attributes[] = {
+static swig_lua_attribute swig_gsQuaternion_attributes[] = {
     { "w", _wrap_Quaternion_w_get, _wrap_Quaternion_w_set},
     { "x", _wrap_Quaternion_x_get, _wrap_Quaternion_x_set},
     { "y", _wrap_Quaternion_y_get, _wrap_Quaternion_y_set},
     { "z", _wrap_Quaternion_z_get, _wrap_Quaternion_z_set},
     {0,0,0}
 };
-static swig_lua_class *swig_OgreKit_Quaternion_bases[] = {0};
-static const char *swig_OgreKit_Quaternion_base_names[] = {0};
-static swig_lua_class _wrap_class_OgreKit_Quaternion = { "Quaternion", &SWIGTYPE_p_OgreKit__Quaternion,_wrap_new_Quaternion, swig_delete_Quaternion, swig_OgreKit_Quaternion_methods, swig_OgreKit_Quaternion_attributes, swig_OgreKit_Quaternion_bases, swig_OgreKit_Quaternion_base_names };
+static swig_lua_class *swig_gsQuaternion_bases[] = {0};
+static const char *swig_gsQuaternion_base_names[] = {0};
+static swig_lua_class _wrap_class_gsQuaternion = { "Quaternion", &SWIGTYPE_p_gsQuaternion,_wrap_new_Quaternion, swig_delete_Quaternion, swig_gsQuaternion_methods, swig_gsQuaternion_attributes, swig_gsQuaternion_bases, swig_gsQuaternion_base_names };
 
 static int _wrap_new_Ray__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Ray *result = 0 ;
+  gsRay *result = 0 ;
   
-  SWIG_check_num_args("OgreKit::Ray",0,0)
-  result = (OgreKit::Ray *)new OgreKit::Ray();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__Ray,1); SWIG_arg++; 
+  SWIG_check_num_args("gsRay",0,0)
+  result = (gsRay *)new gsRay();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsRay,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -3220,25 +3244,25 @@ fail:
 
 static int _wrap_new_Ray__SWIG_1(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Vector3 *arg1 = 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  OgreKit::Ray *result = 0 ;
+  gsVector3 *arg1 = 0 ;
+  gsVector3 *arg2 = 0 ;
+  gsRay *result = 0 ;
   
-  SWIG_check_num_args("OgreKit::Ray",2,2)
-  if(!lua_isuserdata(L,1)) SWIG_fail_arg("OgreKit::Ray",1,"OgreKit::Vector3 const &");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("OgreKit::Ray",2,"OgreKit::Vector3 const &");
+  SWIG_check_num_args("gsRay",2,2)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("gsRay",1,"gsVector3 const &");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("gsRay",2,"gsVector3 const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("new_Ray",1,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("new_Ray",1,SWIGTYPE_p_gsVector3);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("new_Ray",2,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("new_Ray",2,SWIGTYPE_p_gsVector3);
   }
   
-  result = (OgreKit::Ray *)new OgreKit::Ray((OgreKit::Vector3 const &)*arg1,(OgreKit::Vector3 const &)*arg2);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__Ray,1); SWIG_arg++; 
+  result = (gsRay *)new gsRay((gsVector3 const &)*arg1,(gsVector3 const &)*arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsRay,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -3263,7 +3287,7 @@ static int _wrap_new_Ray(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (lua_isuserdata(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
+      if (lua_isuserdata(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -3272,7 +3296,7 @@ static int _wrap_new_Ray(lua_State* L) {
     if (_v) {
       {
         void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
           _v = 0;
         } else {
           _v = 1;
@@ -3286,31 +3310,31 @@ static int _wrap_new_Ray(lua_State* L) {
   
   lua_pushstring(L,"Wrong arguments for overloaded function 'new_Ray'\n"
     "  Possible C/C++ prototypes are:\n"
-    "    OgreKit::Ray()\n"
-    "    OgreKit::Ray(OgreKit::Vector3 const &,OgreKit::Vector3 const &)\n");
+    "    gsRay()\n"
+    "    gsRay(gsVector3 const &,gsVector3 const &)\n");
   lua_error(L);return 0;
 }
 
 
 static int _wrap_Ray_setOrigin(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Ray *arg1 = (OgreKit::Ray *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
+  gsRay *arg1 = (gsRay *) 0 ;
+  gsVector3 *arg2 = 0 ;
   
   SWIG_check_num_args("setOrigin",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setOrigin",1,"OgreKit::Ray *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setOrigin",2,"OgreKit::Vector3 const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setOrigin",1,"gsRay *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setOrigin",2,"gsVector3 const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Ray,0))){
-    SWIG_fail_ptr("Ray_setOrigin",1,SWIGTYPE_p_OgreKit__Ray);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsRay,0))){
+    SWIG_fail_ptr("Ray_setOrigin",1,SWIGTYPE_p_gsRay);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Ray_setOrigin",2,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Ray_setOrigin",2,SWIGTYPE_p_gsVector3);
   }
   
-  (arg1)->setOrigin((OgreKit::Vector3 const &)*arg2);
+  (arg1)->setOrigin((gsVector3 const &)*arg2);
   
   return SWIG_arg;
   
@@ -3324,23 +3348,23 @@ fail:
 
 static int _wrap_Ray_setDirection(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Ray *arg1 = (OgreKit::Ray *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
+  gsRay *arg1 = (gsRay *) 0 ;
+  gsVector3 *arg2 = 0 ;
   
   SWIG_check_num_args("setDirection",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setDirection",1,"OgreKit::Ray *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setDirection",2,"OgreKit::Vector3 const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setDirection",1,"gsRay *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setDirection",2,"gsVector3 const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Ray,0))){
-    SWIG_fail_ptr("Ray_setDirection",1,SWIGTYPE_p_OgreKit__Ray);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsRay,0))){
+    SWIG_fail_ptr("Ray_setDirection",1,SWIGTYPE_p_gsRay);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Ray_setDirection",2,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Ray_setDirection",2,SWIGTYPE_p_gsVector3);
   }
   
-  (arg1)->setDirection((OgreKit::Vector3 const &)*arg2);
+  (arg1)->setDirection((gsVector3 const &)*arg2);
   
   return SWIG_arg;
   
@@ -3354,20 +3378,20 @@ fail:
 
 static int _wrap_Ray_getOrigin(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Ray *arg1 = (OgreKit::Ray *) 0 ;
-  OgreKit::Vector3 result;
+  gsRay *arg1 = (gsRay *) 0 ;
+  gsVector3 result;
   
   SWIG_check_num_args("getOrigin",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getOrigin",1,"OgreKit::Ray *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getOrigin",1,"gsRay *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Ray,0))){
-    SWIG_fail_ptr("Ray_getOrigin",1,SWIGTYPE_p_OgreKit__Ray);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsRay,0))){
+    SWIG_fail_ptr("Ray_getOrigin",1,SWIGTYPE_p_gsRay);
   }
   
   result = (arg1)->getOrigin();
   {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
+    gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -3381,20 +3405,20 @@ fail:
 
 static int _wrap_Ray_getDirection(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Ray *arg1 = (OgreKit::Ray *) 0 ;
-  OgreKit::Vector3 result;
+  gsRay *arg1 = (gsRay *) 0 ;
+  gsVector3 result;
   
   SWIG_check_num_args("getDirection",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getDirection",1,"OgreKit::Ray *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getDirection",1,"gsRay *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Ray,0))){
-    SWIG_fail_ptr("Ray_getDirection",1,SWIGTYPE_p_OgreKit__Ray);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsRay,0))){
+    SWIG_fail_ptr("Ray_getDirection",1,SWIGTYPE_p_gsRay);
   }
   
   result = (arg1)->getDirection();
   {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
+    gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -3407,39 +3431,39 @@ fail:
 
 
 static void swig_delete_Ray(void *obj) {
-OgreKit::Ray *arg1 = (OgreKit::Ray *) obj;
+gsRay *arg1 = (gsRay *) obj;
 delete arg1;
 }
-static swig_lua_method swig_OgreKit_Ray_methods[] = {
+static swig_lua_method swig_gsRay_methods[] = {
     {"setOrigin", _wrap_Ray_setOrigin}, 
     {"setDirection", _wrap_Ray_setDirection}, 
     {"getOrigin", _wrap_Ray_getOrigin}, 
     {"getDirection", _wrap_Ray_getDirection}, 
     {0,0}
 };
-static swig_lua_attribute swig_OgreKit_Ray_attributes[] = {
+static swig_lua_attribute swig_gsRay_attributes[] = {
     {0,0,0}
 };
-static swig_lua_class *swig_OgreKit_Ray_bases[] = {0};
-static const char *swig_OgreKit_Ray_base_names[] = {0};
-static swig_lua_class _wrap_class_OgreKit_Ray = { "Ray", &SWIGTYPE_p_OgreKit__Ray,_wrap_new_Ray, swig_delete_Ray, swig_OgreKit_Ray_methods, swig_OgreKit_Ray_attributes, swig_OgreKit_Ray_bases, swig_OgreKit_Ray_base_names };
+static swig_lua_class *swig_gsRay_bases[] = {0};
+static const char *swig_gsRay_base_names[] = {0};
+static swig_lua_class _wrap_class_gsRay = { "Ray", &SWIGTYPE_p_gsRay,_wrap_new_Ray, swig_delete_Ray, swig_gsRay_methods, swig_gsRay_attributes, swig_gsRay_bases, swig_gsRay_base_names };
 
 static int _wrap_Vec3Negate(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Vector3 *arg1 = 0 ;
-  OgreKit::Vector3 result;
+  gsVector3 *arg1 = 0 ;
+  gsVector3 result;
   
-  SWIG_check_num_args("OgreKit::Vec3Negate",1,1)
-  if(!lua_isuserdata(L,1)) SWIG_fail_arg("OgreKit::Vec3Negate",1,"OgreKit::Vector3 const &");
+  SWIG_check_num_args("gsVec3Negate",1,1)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("gsVec3Negate",1,"gsVector3 const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vec3Negate",1,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vec3Negate",1,SWIGTYPE_p_gsVector3);
   }
   
-  result = OgreKit::Vec3Negate((OgreKit::Vector3 const &)*arg1);
+  result = gsVec3Negate((gsVector3 const &)*arg1);
   {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
+    gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -3453,27 +3477,27 @@ fail:
 
 static int _wrap_Vec3AddVec3(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Vector3 *arg1 = 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  OgreKit::Vector3 result;
+  gsVector3 *arg1 = 0 ;
+  gsVector3 *arg2 = 0 ;
+  gsVector3 result;
   
-  SWIG_check_num_args("OgreKit::Vec3AddVec3",2,2)
-  if(!lua_isuserdata(L,1)) SWIG_fail_arg("OgreKit::Vec3AddVec3",1,"OgreKit::Vector3 const &");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("OgreKit::Vec3AddVec3",2,"OgreKit::Vector3 const &");
+  SWIG_check_num_args("gsVec3AddVec3",2,2)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("gsVec3AddVec3",1,"gsVector3 const &");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("gsVec3AddVec3",2,"gsVector3 const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vec3AddVec3",1,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vec3AddVec3",1,SWIGTYPE_p_gsVector3);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vec3AddVec3",2,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vec3AddVec3",2,SWIGTYPE_p_gsVector3);
   }
   
-  result = OgreKit::Vec3AddVec3((OgreKit::Vector3 const &)*arg1,(OgreKit::Vector3 const &)*arg2);
+  result = gsVec3AddVec3((gsVector3 const &)*arg1,(gsVector3 const &)*arg2);
   {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
+    gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -3487,27 +3511,27 @@ fail:
 
 static int _wrap_Vec3SubVec3(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Vector3 *arg1 = 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  OgreKit::Vector3 result;
+  gsVector3 *arg1 = 0 ;
+  gsVector3 *arg2 = 0 ;
+  gsVector3 result;
   
-  SWIG_check_num_args("OgreKit::Vec3SubVec3",2,2)
-  if(!lua_isuserdata(L,1)) SWIG_fail_arg("OgreKit::Vec3SubVec3",1,"OgreKit::Vector3 const &");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("OgreKit::Vec3SubVec3",2,"OgreKit::Vector3 const &");
+  SWIG_check_num_args("gsVec3SubVec3",2,2)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("gsVec3SubVec3",1,"gsVector3 const &");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("gsVec3SubVec3",2,"gsVector3 const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vec3SubVec3",1,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vec3SubVec3",1,SWIGTYPE_p_gsVector3);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vec3SubVec3",2,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vec3SubVec3",2,SWIGTYPE_p_gsVector3);
   }
   
-  result = OgreKit::Vec3SubVec3((OgreKit::Vector3 const &)*arg1,(OgreKit::Vector3 const &)*arg2);
+  result = gsVec3SubVec3((gsVector3 const &)*arg1,(gsVector3 const &)*arg2);
   {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
+    gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -3521,27 +3545,27 @@ fail:
 
 static int _wrap_Vec3MulVec3(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Vector3 *arg1 = 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  OgreKit::Vector3 result;
+  gsVector3 *arg1 = 0 ;
+  gsVector3 *arg2 = 0 ;
+  gsVector3 result;
   
-  SWIG_check_num_args("OgreKit::Vec3MulVec3",2,2)
-  if(!lua_isuserdata(L,1)) SWIG_fail_arg("OgreKit::Vec3MulVec3",1,"OgreKit::Vector3 const &");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("OgreKit::Vec3MulVec3",2,"OgreKit::Vector3 const &");
+  SWIG_check_num_args("gsVec3MulVec3",2,2)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("gsVec3MulVec3",1,"gsVector3 const &");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("gsVec3MulVec3",2,"gsVector3 const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vec3MulVec3",1,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vec3MulVec3",1,SWIGTYPE_p_gsVector3);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vec3MulVec3",2,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vec3MulVec3",2,SWIGTYPE_p_gsVector3);
   }
   
-  result = OgreKit::Vec3MulVec3((OgreKit::Vector3 const &)*arg1,(OgreKit::Vector3 const &)*arg2);
+  result = gsVec3MulVec3((gsVector3 const &)*arg1,(gsVector3 const &)*arg2);
   {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
+    gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -3555,27 +3579,27 @@ fail:
 
 static int _wrap_Vec3DivVec3(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Vector3 *arg1 = 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  OgreKit::Vector3 result;
+  gsVector3 *arg1 = 0 ;
+  gsVector3 *arg2 = 0 ;
+  gsVector3 result;
   
-  SWIG_check_num_args("OgreKit::Vec3DivVec3",2,2)
-  if(!lua_isuserdata(L,1)) SWIG_fail_arg("OgreKit::Vec3DivVec3",1,"OgreKit::Vector3 const &");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("OgreKit::Vec3DivVec3",2,"OgreKit::Vector3 const &");
+  SWIG_check_num_args("gsVec3DivVec3",2,2)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("gsVec3DivVec3",1,"gsVector3 const &");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("gsVec3DivVec3",2,"gsVector3 const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vec3DivVec3",1,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vec3DivVec3",1,SWIGTYPE_p_gsVector3);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vec3DivVec3",2,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vec3DivVec3",2,SWIGTYPE_p_gsVector3);
   }
   
-  result = OgreKit::Vec3DivVec3((OgreKit::Vector3 const &)*arg1,(OgreKit::Vector3 const &)*arg2);
+  result = gsVec3DivVec3((gsVector3 const &)*arg1,(gsVector3 const &)*arg2);
   {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
+    gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -3589,24 +3613,24 @@ fail:
 
 static int _wrap_Vec3Mulf(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Vector3 *arg1 = 0 ;
+  gsVector3 *arg1 = 0 ;
   float *arg2 = 0 ;
   float temp2 ;
-  OgreKit::Vector3 result;
+  gsVector3 result;
   
-  SWIG_check_num_args("OgreKit::Vec3Mulf",2,2)
-  if(!lua_isuserdata(L,1)) SWIG_fail_arg("OgreKit::Vec3Mulf",1,"OgreKit::Vector3 const &");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("OgreKit::Vec3Mulf",2,"float const &");
+  SWIG_check_num_args("gsVec3Mulf",2,2)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("gsVec3Mulf",1,"gsVector3 const &");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("gsVec3Mulf",2,"float const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vec3Mulf",1,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vec3Mulf",1,SWIGTYPE_p_gsVector3);
   }
   
   temp2=(float)lua_tonumber(L,2); arg2=&temp2;
-  result = OgreKit::Vec3Mulf((OgreKit::Vector3 const &)*arg1,(float const &)*arg2);
+  result = gsVec3Mulf((gsVector3 const &)*arg1,(float const &)*arg2);
   {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
+    gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -3620,24 +3644,24 @@ fail:
 
 static int _wrap_Vec3Divf(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Vector3 *arg1 = 0 ;
+  gsVector3 *arg1 = 0 ;
   float *arg2 = 0 ;
   float temp2 ;
-  OgreKit::Vector3 result;
+  gsVector3 result;
   
-  SWIG_check_num_args("OgreKit::Vec3Divf",2,2)
-  if(!lua_isuserdata(L,1)) SWIG_fail_arg("OgreKit::Vec3Divf",1,"OgreKit::Vector3 const &");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("OgreKit::Vec3Divf",2,"float const &");
+  SWIG_check_num_args("gsVec3Divf",2,2)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("gsVec3Divf",1,"gsVector3 const &");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("gsVec3Divf",2,"float const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Vec3Divf",1,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vec3Divf",1,SWIGTYPE_p_gsVector3);
   }
   
   temp2=(float)lua_tonumber(L,2); arg2=&temp2;
-  result = OgreKit::Vec3Divf((OgreKit::Vector3 const &)*arg1,(float const &)*arg2);
+  result = gsVec3Divf((gsVector3 const &)*arg1,(float const &)*arg2);
   {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
+    gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -3651,20 +3675,20 @@ fail:
 
 static int _wrap_QuatNegate(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Quaternion *arg1 = 0 ;
-  OgreKit::Quaternion result;
+  gsQuaternion *arg1 = 0 ;
+  gsQuaternion result;
   
-  SWIG_check_num_args("OgreKit::QuatNegate",1,1)
-  if(!lua_isuserdata(L,1)) SWIG_fail_arg("OgreKit::QuatNegate",1,"OgreKit::Quaternion const &");
+  SWIG_check_num_args("gsQuatNegate",1,1)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("gsQuatNegate",1,"gsQuaternion const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("QuatNegate",1,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("QuatNegate",1,SWIGTYPE_p_gsQuaternion);
   }
   
-  result = OgreKit::QuatNegate((OgreKit::Quaternion const &)*arg1);
+  result = gsQuatNegate((gsQuaternion const &)*arg1);
   {
-    OgreKit::Quaternion * resultptr = new OgreKit::Quaternion((const OgreKit::Quaternion &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Quaternion,1); SWIG_arg++;
+    gsQuaternion * resultptr = new gsQuaternion((const gsQuaternion &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsQuaternion,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -3678,27 +3702,27 @@ fail:
 
 static int _wrap_QuatAddQuat(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Quaternion *arg1 = 0 ;
-  OgreKit::Quaternion *arg2 = 0 ;
-  OgreKit::Quaternion result;
+  gsQuaternion *arg1 = 0 ;
+  gsQuaternion *arg2 = 0 ;
+  gsQuaternion result;
   
-  SWIG_check_num_args("OgreKit::QuatAddQuat",2,2)
-  if(!lua_isuserdata(L,1)) SWIG_fail_arg("OgreKit::QuatAddQuat",1,"OgreKit::Quaternion const &");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("OgreKit::QuatAddQuat",2,"OgreKit::Quaternion const &");
+  SWIG_check_num_args("gsQuatAddQuat",2,2)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("gsQuatAddQuat",1,"gsQuaternion const &");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("gsQuatAddQuat",2,"gsQuaternion const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("QuatAddQuat",1,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("QuatAddQuat",1,SWIGTYPE_p_gsQuaternion);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("QuatAddQuat",2,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("QuatAddQuat",2,SWIGTYPE_p_gsQuaternion);
   }
   
-  result = OgreKit::QuatAddQuat((OgreKit::Quaternion const &)*arg1,(OgreKit::Quaternion const &)*arg2);
+  result = gsQuatAddQuat((gsQuaternion const &)*arg1,(gsQuaternion const &)*arg2);
   {
-    OgreKit::Quaternion * resultptr = new OgreKit::Quaternion((const OgreKit::Quaternion &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Quaternion,1); SWIG_arg++;
+    gsQuaternion * resultptr = new gsQuaternion((const gsQuaternion &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsQuaternion,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -3712,27 +3736,27 @@ fail:
 
 static int _wrap_QuatSubQuat(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Quaternion *arg1 = 0 ;
-  OgreKit::Quaternion *arg2 = 0 ;
-  OgreKit::Quaternion result;
+  gsQuaternion *arg1 = 0 ;
+  gsQuaternion *arg2 = 0 ;
+  gsQuaternion result;
   
-  SWIG_check_num_args("OgreKit::QuatSubQuat",2,2)
-  if(!lua_isuserdata(L,1)) SWIG_fail_arg("OgreKit::QuatSubQuat",1,"OgreKit::Quaternion const &");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("OgreKit::QuatSubQuat",2,"OgreKit::Quaternion const &");
+  SWIG_check_num_args("gsQuatSubQuat",2,2)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("gsQuatSubQuat",1,"gsQuaternion const &");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("gsQuatSubQuat",2,"gsQuaternion const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("QuatSubQuat",1,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("QuatSubQuat",1,SWIGTYPE_p_gsQuaternion);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("QuatSubQuat",2,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("QuatSubQuat",2,SWIGTYPE_p_gsQuaternion);
   }
   
-  result = OgreKit::QuatSubQuat((OgreKit::Quaternion const &)*arg1,(OgreKit::Quaternion const &)*arg2);
+  result = gsQuatSubQuat((gsQuaternion const &)*arg1,(gsQuaternion const &)*arg2);
   {
-    OgreKit::Quaternion * resultptr = new OgreKit::Quaternion((const OgreKit::Quaternion &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Quaternion,1); SWIG_arg++;
+    gsQuaternion * resultptr = new gsQuaternion((const gsQuaternion &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsQuaternion,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -3746,27 +3770,27 @@ fail:
 
 static int _wrap_QuatMulQuat(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Quaternion *arg1 = 0 ;
-  OgreKit::Quaternion *arg2 = 0 ;
-  OgreKit::Quaternion result;
+  gsQuaternion *arg1 = 0 ;
+  gsQuaternion *arg2 = 0 ;
+  gsQuaternion result;
   
-  SWIG_check_num_args("OgreKit::QuatMulQuat",2,2)
-  if(!lua_isuserdata(L,1)) SWIG_fail_arg("OgreKit::QuatMulQuat",1,"OgreKit::Quaternion const &");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("OgreKit::QuatMulQuat",2,"OgreKit::Quaternion const &");
+  SWIG_check_num_args("gsQuatMulQuat",2,2)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("gsQuatMulQuat",1,"gsQuaternion const &");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("gsQuatMulQuat",2,"gsQuaternion const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("QuatMulQuat",1,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("QuatMulQuat",1,SWIGTYPE_p_gsQuaternion);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("QuatMulQuat",2,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("QuatMulQuat",2,SWIGTYPE_p_gsQuaternion);
   }
   
-  result = OgreKit::QuatMulQuat((OgreKit::Quaternion const &)*arg1,(OgreKit::Quaternion const &)*arg2);
+  result = gsQuatMulQuat((gsQuaternion const &)*arg1,(gsQuaternion const &)*arg2);
   {
-    OgreKit::Quaternion * resultptr = new OgreKit::Quaternion((const OgreKit::Quaternion &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Quaternion,1); SWIG_arg++;
+    gsQuaternion * resultptr = new gsQuaternion((const gsQuaternion &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsQuaternion,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -3780,24 +3804,24 @@ fail:
 
 static int _wrap_QuatMulf(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Quaternion *arg1 = 0 ;
+  gsQuaternion *arg1 = 0 ;
   float *arg2 = 0 ;
   float temp2 ;
-  OgreKit::Quaternion result;
+  gsQuaternion result;
   
-  SWIG_check_num_args("OgreKit::QuatMulf",2,2)
-  if(!lua_isuserdata(L,1)) SWIG_fail_arg("OgreKit::QuatMulf",1,"OgreKit::Quaternion const &");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("OgreKit::QuatMulf",2,"float const &");
+  SWIG_check_num_args("gsQuatMulf",2,2)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("gsQuatMulf",1,"gsQuaternion const &");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("gsQuatMulf",2,"float const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("QuatMulf",1,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("QuatMulf",1,SWIGTYPE_p_gsQuaternion);
   }
   
   temp2=(float)lua_tonumber(L,2); arg2=&temp2;
-  result = OgreKit::QuatMulf((OgreKit::Quaternion const &)*arg1,(float const &)*arg2);
+  result = gsQuatMulf((gsQuaternion const &)*arg1,(float const &)*arg2);
   {
-    OgreKit::Quaternion * resultptr = new OgreKit::Quaternion((const OgreKit::Quaternion &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Quaternion,1); SWIG_arg++;
+    gsQuaternion * resultptr = new gsQuaternion((const gsQuaternion &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsQuaternion,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -3811,27 +3835,27 @@ fail:
 
 static int _wrap_QuatMulVec3(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Quaternion *arg1 = 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  OgreKit::Vector3 result;
+  gsQuaternion *arg1 = 0 ;
+  gsVector3 *arg2 = 0 ;
+  gsVector3 result;
   
-  SWIG_check_num_args("OgreKit::QuatMulVec3",2,2)
-  if(!lua_isuserdata(L,1)) SWIG_fail_arg("OgreKit::QuatMulVec3",1,"OgreKit::Quaternion const &");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("OgreKit::QuatMulVec3",2,"OgreKit::Vector3 const &");
+  SWIG_check_num_args("gsQuatMulVec3",2,2)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("gsQuatMulVec3",1,"gsQuaternion const &");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("gsQuatMulVec3",2,"gsVector3 const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("QuatMulVec3",1,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("QuatMulVec3",1,SWIGTYPE_p_gsQuaternion);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("QuatMulVec3",2,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("QuatMulVec3",2,SWIGTYPE_p_gsVector3);
   }
   
-  result = OgreKit::QuatMulVec3((OgreKit::Quaternion const &)*arg1,(OgreKit::Vector3 const &)*arg2);
+  result = gsQuatMulVec3((gsQuaternion const &)*arg1,(gsVector3 const &)*arg2);
   {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
+    gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -3843,13 +3867,452 @@ fail:
 }
 
 
+static int _wrap_new_ObjectList__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  gsArray< gsGameObject,gkGameObject > *result = 0 ;
+  
+  SWIG_check_num_args("gsArray<(gsGameObject,gkGameObject)>",0,0)
+  result = (gsArray< gsGameObject,gkGameObject > *)new gsArray< gsGameObject,gkGameObject >();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsArrayT_gsGameObject_gkGameObject_t,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_ObjectList__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  gsArray< gsGameObject,gkGameObject >::Array *arg1 = 0 ;
+  gsArray< gsGameObject,gkGameObject > *result = 0 ;
+  
+  SWIG_check_num_args("gsArray<(gsGameObject,gkGameObject)>",1,1)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("gsArray<(gsGameObject,gkGameObject)>",1,"gsArray< gsGameObject,gkGameObject >::Array const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_utArrayT_gkGameObject_p_t,0))){
+    SWIG_fail_ptr("new_ObjectList",1,SWIGTYPE_p_utArrayT_gkGameObject_p_t);
+  }
+  
+  result = (gsArray< gsGameObject,gkGameObject > *)new gsArray< gsGameObject,gkGameObject >((gsArray< gsGameObject,gkGameObject >::Array const &)*arg1);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsArrayT_gsGameObject_gkGameObject_t,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_ObjectList(lua_State* L) {
+  int argc;
+  int argv[2]={
+    1,2
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 0) {
+    return _wrap_new_ObjectList__SWIG_0(L);
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      void *ptr;
+      if (lua_isuserdata(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_utArrayT_gkGameObject_p_t, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      return _wrap_new_ObjectList__SWIG_1(L);
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'new_ObjectList'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    gsArray< gsGameObject,gkGameObject >()\n"
+    "    gsArray< gsGameObject,gkGameObject >(gsArray< gsGameObject,gkGameObject >::Array const &)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_ObjectList_clear(lua_State* L) {
+  int SWIG_arg = 0;
+  gsArray< gsGameObject,gkGameObject > *arg1 = (gsArray< gsGameObject,gkGameObject > *) 0 ;
+  
+  SWIG_check_num_args("clear",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("clear",1,"gsArray< gsGameObject,gkGameObject > *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayT_gsGameObject_gkGameObject_t,0))){
+    SWIG_fail_ptr("ObjectList_clear",1,SWIGTYPE_p_gsArrayT_gsGameObject_gkGameObject_t);
+  }
+  
+  (arg1)->clear();
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ObjectList_size(lua_State* L) {
+  int SWIG_arg = 0;
+  gsArray< gsGameObject,gkGameObject > *arg1 = (gsArray< gsGameObject,gkGameObject > *) 0 ;
+  int result;
+  
+  SWIG_check_num_args("size",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("size",1,"gsArray< gsGameObject,gkGameObject > const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayT_gsGameObject_gkGameObject_t,0))){
+    SWIG_fail_ptr("ObjectList_size",1,SWIGTYPE_p_gsArrayT_gsGameObject_gkGameObject_t);
+  }
+  
+  result = (int)((gsArray< gsGameObject,gkGameObject > const *)arg1)->size();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ObjectList_empty(lua_State* L) {
+  int SWIG_arg = 0;
+  gsArray< gsGameObject,gkGameObject > *arg1 = (gsArray< gsGameObject,gkGameObject > *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("empty",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("empty",1,"gsArray< gsGameObject,gkGameObject > const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayT_gsGameObject_gkGameObject_t,0))){
+    SWIG_fail_ptr("ObjectList_empty",1,SWIGTYPE_p_gsArrayT_gsGameObject_gkGameObject_t);
+  }
+  
+  result = (bool)((gsArray< gsGameObject,gkGameObject > const *)arg1)->empty();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ObjectList___getitem(lua_State* L) {
+  int SWIG_arg = 0;
+  gsArray< gsGameObject,gkGameObject > *arg1 = (gsArray< gsGameObject,gkGameObject > *) 0 ;
+  int arg2 ;
+  gsGameObject *result = 0 ;
+  
+  SWIG_check_num_args("__getitem__",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__getitem__",1,"gsArray< gsGameObject,gkGameObject > *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("__getitem__",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayT_gsGameObject_gkGameObject_t,0))){
+    SWIG_fail_ptr("ObjectList___getitem",1,SWIGTYPE_p_gsArrayT_gsGameObject_gkGameObject_t);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  result = (gsGameObject *)(arg1)->__getitem__(arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGameObject,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ObjectList_at(lua_State* L) {
+  int SWIG_arg = 0;
+  gsArray< gsGameObject,gkGameObject > *arg1 = (gsArray< gsGameObject,gkGameObject > *) 0 ;
+  int arg2 ;
+  gsGameObject *result = 0 ;
+  
+  SWIG_check_num_args("at",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("at",1,"gsArray< gsGameObject,gkGameObject > *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("at",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayT_gsGameObject_gkGameObject_t,0))){
+    SWIG_fail_ptr("ObjectList_at",1,SWIGTYPE_p_gsArrayT_gsGameObject_gkGameObject_t);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  result = (gsGameObject *)(arg1)->at(arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGameObject,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ObjectList_push(lua_State* L) {
+  int SWIG_arg = 0;
+  gsArray< gsGameObject,gkGameObject > *arg1 = (gsArray< gsGameObject,gkGameObject > *) 0 ;
+  gsGameObject *arg2 = (gsGameObject *) 0 ;
+  
+  SWIG_check_num_args("push",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("push",1,"gsArray< gsGameObject,gkGameObject > *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("push",2,"gsGameObject *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayT_gsGameObject_gkGameObject_t,0))){
+    SWIG_fail_ptr("ObjectList_push",1,SWIGTYPE_p_gsArrayT_gsGameObject_gkGameObject_t);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("ObjectList_push",2,SWIGTYPE_p_gsGameObject);
+  }
+  
+  (arg1)->push(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ObjectList_erase(lua_State* L) {
+  int SWIG_arg = 0;
+  gsArray< gsGameObject,gkGameObject > *arg1 = (gsArray< gsGameObject,gkGameObject > *) 0 ;
+  gsGameObject *arg2 = (gsGameObject *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("erase",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("erase",1,"gsArray< gsGameObject,gkGameObject > *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("erase",2,"gsGameObject *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayT_gsGameObject_gkGameObject_t,0))){
+    SWIG_fail_ptr("ObjectList_erase",1,SWIGTYPE_p_gsArrayT_gsGameObject_gkGameObject_t);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("ObjectList_erase",2,SWIGTYPE_p_gsGameObject);
+  }
+  
+  result = (bool)(arg1)->erase(arg2);
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ObjectList_iterator(lua_State* L) {
+  int SWIG_arg = 0;
+  gsArray< gsGameObject,gkGameObject > *arg1 = (gsArray< gsGameObject,gkGameObject > *) 0 ;
+  gsArrayIterator< gsGameObject,gkGameObject > result;
+  
+  SWIG_check_num_args("iterator",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("iterator",1,"gsArray< gsGameObject,gkGameObject > *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayT_gsGameObject_gkGameObject_t,0))){
+    SWIG_fail_ptr("ObjectList_iterator",1,SWIGTYPE_p_gsArrayT_gsGameObject_gkGameObject_t);
+  }
+  
+  result = (arg1)->iterator();
+  {
+    gsArrayIterator< gsGameObject,gkGameObject > * resultptr = new gsArrayIterator< gsGameObject,gkGameObject >((const gsArrayIterator< gsGameObject,gkGameObject > &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsArrayIteratorT_gsGameObject_gkGameObject_t,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_ObjectList(void *obj) {
+gsArray< gsGameObject,gkGameObject > *arg1 = (gsArray< gsGameObject,gkGameObject > *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gsArray_Sl_gsGameObject_Sc_gkGameObject_Sg__methods[] = {
+    {"clear", _wrap_ObjectList_clear}, 
+    {"size", _wrap_ObjectList_size}, 
+    {"empty", _wrap_ObjectList_empty}, 
+    {"__getitem", _wrap_ObjectList___getitem}, 
+    {"at", _wrap_ObjectList_at}, 
+    {"push", _wrap_ObjectList_push}, 
+    {"erase", _wrap_ObjectList_erase}, 
+    {"iterator", _wrap_ObjectList_iterator}, 
+    {0,0}
+};
+static swig_lua_attribute swig_gsArray_Sl_gsGameObject_Sc_gkGameObject_Sg__attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_gsArray_Sl_gsGameObject_Sc_gkGameObject_Sg__bases[] = {0};
+static const char *swig_gsArray_Sl_gsGameObject_Sc_gkGameObject_Sg__base_names[] = {0};
+static swig_lua_class _wrap_class_gsArray_Sl_gsGameObject_Sc_gkGameObject_Sg_ = { "ObjectList", &SWIGTYPE_p_gsArrayT_gsGameObject_gkGameObject_t,_wrap_new_ObjectList, swig_delete_ObjectList, swig_gsArray_Sl_gsGameObject_Sc_gkGameObject_Sg__methods, swig_gsArray_Sl_gsGameObject_Sc_gkGameObject_Sg__attributes, swig_gsArray_Sl_gsGameObject_Sc_gkGameObject_Sg__bases, swig_gsArray_Sl_gsGameObject_Sc_gkGameObject_Sg__base_names };
+
+static int _wrap_new_ObjectIterator(lua_State* L) {
+  int SWIG_arg = 0;
+  gsArrayIterator< gsGameObject,gkGameObject > *result = 0 ;
+  
+  SWIG_check_num_args("gsArrayIterator<(gsGameObject,gkGameObject)>",0,0)
+  result = (gsArrayIterator< gsGameObject,gkGameObject > *)new gsArrayIterator< gsGameObject,gkGameObject >();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsArrayIteratorT_gsGameObject_gkGameObject_t,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ObjectIterator_hasMoreElements(lua_State* L) {
+  int SWIG_arg = 0;
+  gsArrayIterator< gsGameObject,gkGameObject > *arg1 = (gsArrayIterator< gsGameObject,gkGameObject > *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("hasMoreElements",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("hasMoreElements",1,"gsArrayIterator< gsGameObject,gkGameObject > *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gsGameObject_gkGameObject_t,0))){
+    SWIG_fail_ptr("ObjectIterator_hasMoreElements",1,SWIGTYPE_p_gsArrayIteratorT_gsGameObject_gkGameObject_t);
+  }
+  
+  result = (bool)(arg1)->hasMoreElements();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ObjectIterator_moveNext(lua_State* L) {
+  int SWIG_arg = 0;
+  gsArrayIterator< gsGameObject,gkGameObject > *arg1 = (gsArrayIterator< gsGameObject,gkGameObject > *) 0 ;
+  
+  SWIG_check_num_args("moveNext",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("moveNext",1,"gsArrayIterator< gsGameObject,gkGameObject > *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gsGameObject_gkGameObject_t,0))){
+    SWIG_fail_ptr("ObjectIterator_moveNext",1,SWIGTYPE_p_gsArrayIteratorT_gsGameObject_gkGameObject_t);
+  }
+  
+  (arg1)->moveNext();
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ObjectIterator_peekNext(lua_State* L) {
+  int SWIG_arg = 0;
+  gsArrayIterator< gsGameObject,gkGameObject > *arg1 = (gsArrayIterator< gsGameObject,gkGameObject > *) 0 ;
+  gsGameObject *result = 0 ;
+  
+  SWIG_check_num_args("peekNext",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("peekNext",1,"gsArrayIterator< gsGameObject,gkGameObject > *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gsGameObject_gkGameObject_t,0))){
+    SWIG_fail_ptr("ObjectIterator_peekNext",1,SWIGTYPE_p_gsArrayIteratorT_gsGameObject_gkGameObject_t);
+  }
+  
+  result = (gsGameObject *)(arg1)->peekNext();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGameObject,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ObjectIterator_getNext(lua_State* L) {
+  int SWIG_arg = 0;
+  gsArrayIterator< gsGameObject,gkGameObject > *arg1 = (gsArrayIterator< gsGameObject,gkGameObject > *) 0 ;
+  gsGameObject *result = 0 ;
+  
+  SWIG_check_num_args("getNext",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getNext",1,"gsArrayIterator< gsGameObject,gkGameObject > *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayIteratorT_gsGameObject_gkGameObject_t,0))){
+    SWIG_fail_ptr("ObjectIterator_getNext",1,SWIGTYPE_p_gsArrayIteratorT_gsGameObject_gkGameObject_t);
+  }
+  
+  result = (gsGameObject *)(arg1)->getNext();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGameObject,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_ObjectIterator(void *obj) {
+gsArrayIterator< gsGameObject,gkGameObject > *arg1 = (gsArrayIterator< gsGameObject,gkGameObject > *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gsArrayIterator_Sl_gsGameObject_Sc_gkGameObject_Sg__methods[] = {
+    {"hasMoreElements", _wrap_ObjectIterator_hasMoreElements}, 
+    {"moveNext", _wrap_ObjectIterator_moveNext}, 
+    {"peekNext", _wrap_ObjectIterator_peekNext}, 
+    {"getNext", _wrap_ObjectIterator_getNext}, 
+    {0,0}
+};
+static swig_lua_attribute swig_gsArrayIterator_Sl_gsGameObject_Sc_gkGameObject_Sg__attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_gsArrayIterator_Sl_gsGameObject_Sc_gkGameObject_Sg__bases[] = {0};
+static const char *swig_gsArrayIterator_Sl_gsGameObject_Sc_gkGameObject_Sg__base_names[] = {0};
+static swig_lua_class _wrap_class_gsArrayIterator_Sl_gsGameObject_Sc_gkGameObject_Sg_ = { "ObjectIterator", &SWIGTYPE_p_gsArrayIteratorT_gsGameObject_gkGameObject_t,_wrap_new_ObjectIterator, swig_delete_ObjectIterator, swig_gsArrayIterator_Sl_gsGameObject_Sc_gkGameObject_Sg__methods, swig_gsArrayIterator_Sl_gsGameObject_Sc_gkGameObject_Sg__attributes, swig_gsArrayIterator_Sl_gsGameObject_Sc_gkGameObject_Sg__bases, swig_gsArrayIterator_Sl_gsGameObject_Sc_gkGameObject_Sg__base_names };
+
 static int _wrap_new_Property__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Property *result = 0 ;
+  gsProperty *result = 0 ;
   
-  SWIG_check_num_args("OgreKit::Property",0,0)
-  result = (OgreKit::Property *)new OgreKit::Property();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__Property,1); SWIG_arg++; 
+  SWIG_check_num_args("gsProperty",0,0)
+  result = (gsProperty *)new gsProperty();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsProperty,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -3862,21 +4325,21 @@ fail:
 
 static int _wrap_new_Property__SWIG_1(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::String *arg1 = 0 ;
+  gkString *arg1 = 0 ;
   bool arg2 ;
   gkString temp1 ;
-  OgreKit::Property *result = 0 ;
+  gsProperty *result = 0 ;
   
-  SWIG_check_num_args("OgreKit::Property",2,2)
-  if(!lua_isstring(L,1)) SWIG_fail_arg("OgreKit::Property",1,"OgreKit::String const &");
-  if(!lua_isboolean(L,2)) SWIG_fail_arg("OgreKit::Property",2,"bool");
+  SWIG_check_num_args("gsProperty",2,2)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("gsProperty",1,"gkString const &");
+  if(!lua_isboolean(L,2)) SWIG_fail_arg("gsProperty",2,"bool");
   
   temp1 = gkString((const char*)lua_tostring(L, 1));
   arg1 = &temp1;
   
   arg2 = (lua_toboolean(L, 2)!=0);
-  result = (OgreKit::Property *)new OgreKit::Property((OgreKit::String const &)*arg1,arg2);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__Property,1); SWIG_arg++; 
+  result = (gsProperty *)new gsProperty((gkString const &)*arg1,arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsProperty,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -3889,21 +4352,21 @@ fail:
 
 static int _wrap_new_Property__SWIG_2(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::String *arg1 = 0 ;
+  gkString *arg1 = 0 ;
   double arg2 ;
   gkString temp1 ;
-  OgreKit::Property *result = 0 ;
+  gsProperty *result = 0 ;
   
-  SWIG_check_num_args("OgreKit::Property",2,2)
-  if(!lua_isstring(L,1)) SWIG_fail_arg("OgreKit::Property",1,"OgreKit::String const &");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("OgreKit::Property",2,"double");
+  SWIG_check_num_args("gsProperty",2,2)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("gsProperty",1,"gkString const &");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("gsProperty",2,"double");
   
   temp1 = gkString((const char*)lua_tostring(L, 1));
   arg1 = &temp1;
   
   arg2 = (double)lua_tonumber(L, 2);
-  result = (OgreKit::Property *)new OgreKit::Property((OgreKit::String const &)*arg1,arg2);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__Property,1); SWIG_arg++; 
+  result = (gsProperty *)new gsProperty((gkString const &)*arg1,arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsProperty,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -3916,15 +4379,15 @@ fail:
 
 static int _wrap_new_Property__SWIG_3(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::String *arg1 = 0 ;
-  OgreKit::String *arg2 = 0 ;
+  gkString *arg1 = 0 ;
+  gkString *arg2 = 0 ;
   gkString temp1 ;
   gkString temp2 ;
-  OgreKit::Property *result = 0 ;
+  gsProperty *result = 0 ;
   
-  SWIG_check_num_args("OgreKit::Property",2,2)
-  if(!lua_isstring(L,1)) SWIG_fail_arg("OgreKit::Property",1,"OgreKit::String const &");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("OgreKit::Property",2,"OgreKit::String const &");
+  SWIG_check_num_args("gsProperty",2,2)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("gsProperty",1,"gkString const &");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("gsProperty",2,"gkString const &");
   
   temp1 = gkString((const char*)lua_tostring(L, 1));
   arg1 = &temp1;
@@ -3933,8 +4396,8 @@ static int _wrap_new_Property__SWIG_3(lua_State* L) {
   temp2 = gkString((const char*)lua_tostring(L, 2));
   arg2 = &temp2;
   
-  result = (OgreKit::Property *)new OgreKit::Property((OgreKit::String const &)*arg1,(OgreKit::String const &)*arg2);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__Property,1); SWIG_arg++; 
+  result = (gsProperty *)new gsProperty((gkString const &)*arg1,(gkString const &)*arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsProperty,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -3947,18 +4410,18 @@ fail:
 
 static int _wrap_new_Property__SWIG_4(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Property *arg1 = 0 ;
-  OgreKit::Property *result = 0 ;
+  gsProperty *arg1 = 0 ;
+  gsProperty *result = 0 ;
   
-  SWIG_check_num_args("OgreKit::Property",1,1)
-  if(!lua_isuserdata(L,1)) SWIG_fail_arg("OgreKit::Property",1,"OgreKit::Property const &");
+  SWIG_check_num_args("gsProperty",1,1)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("gsProperty",1,"gsProperty const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Property,0))){
-    SWIG_fail_ptr("new_Property",1,SWIGTYPE_p_OgreKit__Property);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProperty,0))){
+    SWIG_fail_ptr("new_Property",1,SWIGTYPE_p_gsProperty);
   }
   
-  result = (OgreKit::Property *)new OgreKit::Property((OgreKit::Property const &)*arg1);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__Property,1); SWIG_arg++; 
+  result = (gsProperty *)new gsProperty((gsProperty const &)*arg1);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsProperty,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -3983,7 +4446,7 @@ static int _wrap_new_Property(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (lua_isuserdata(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__Property, 0)) {
+      if (lua_isuserdata(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsProperty, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -4038,28 +4501,28 @@ static int _wrap_new_Property(lua_State* L) {
   
   lua_pushstring(L,"Wrong arguments for overloaded function 'new_Property'\n"
     "  Possible C/C++ prototypes are:\n"
-    "    OgreKit::Property()\n"
-    "    OgreKit::Property(OgreKit::String const &,bool)\n"
-    "    OgreKit::Property(OgreKit::String const &,double)\n"
-    "    OgreKit::Property(OgreKit::String const &,OgreKit::String const &)\n"
-    "    OgreKit::Property(OgreKit::Property const &)\n");
+    "    gsProperty()\n"
+    "    gsProperty(gkString const &,bool)\n"
+    "    gsProperty(gkString const &,double)\n"
+    "    gsProperty(gkString const &,gkString const &)\n"
+    "    gsProperty(gsProperty const &)\n");
   lua_error(L);return 0;
 }
 
 
 static int _wrap_Property_getName(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Property *arg1 = (OgreKit::Property *) 0 ;
-  OgreKit::String *result = 0 ;
+  gsProperty *arg1 = (gsProperty *) 0 ;
+  gkString *result = 0 ;
   
   SWIG_check_num_args("getName",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getName",1,"OgreKit::Property const *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getName",1,"gsProperty const *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Property,0))){
-    SWIG_fail_ptr("Property_getName",1,SWIGTYPE_p_OgreKit__Property);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProperty,0))){
+    SWIG_fail_ptr("Property_getName",1,SWIGTYPE_p_gsProperty);
   }
   
-  result = (OgreKit::String *) &((OgreKit::Property const *)arg1)->getName();
+  result = (gkString *) &((gsProperty const *)arg1)->getName();
   
   lua_pushstring(L, result->c_str()); SWIG_arg++;
   
@@ -4075,17 +4538,17 @@ fail:
 
 static int _wrap_Property_getValue(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Property *arg1 = (OgreKit::Property *) 0 ;
-  OgreKit::String *result = 0 ;
+  gsProperty *arg1 = (gsProperty *) 0 ;
+  gkString *result = 0 ;
   
   SWIG_check_num_args("getValue",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getValue",1,"OgreKit::Property const *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getValue",1,"gsProperty const *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Property,0))){
-    SWIG_fail_ptr("Property_getValue",1,SWIGTYPE_p_OgreKit__Property);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProperty,0))){
+    SWIG_fail_ptr("Property_getValue",1,SWIGTYPE_p_gsProperty);
   }
   
-  result = (OgreKit::String *) &((OgreKit::Property const *)arg1)->getValue();
+  result = (gkString *) &((gsProperty const *)arg1)->getValue();
   
   lua_pushstring(L, result->c_str()); SWIG_arg++;
   
@@ -4101,15 +4564,15 @@ fail:
 
 static int _wrap_Property_makeDebug(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Property *arg1 = (OgreKit::Property *) 0 ;
+  gsProperty *arg1 = (gsProperty *) 0 ;
   bool arg2 ;
   
   SWIG_check_num_args("makeDebug",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("makeDebug",1,"OgreKit::Property *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("makeDebug",1,"gsProperty *");
   if(!lua_isboolean(L,2)) SWIG_fail_arg("makeDebug",2,"bool");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Property,0))){
-    SWIG_fail_ptr("Property_makeDebug",1,SWIGTYPE_p_OgreKit__Property);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProperty,0))){
+    SWIG_fail_ptr("Property_makeDebug",1,SWIGTYPE_p_gsProperty);
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
@@ -4127,17 +4590,17 @@ fail:
 
 static int _wrap_Property_getType(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Property *arg1 = (OgreKit::Property *) 0 ;
-  OgreKit::PropertyType result;
+  gsProperty *arg1 = (gsProperty *) 0 ;
+  gsPropertyType result;
   
   SWIG_check_num_args("getType",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getType",1,"OgreKit::Property const *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getType",1,"gsProperty const *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Property,0))){
-    SWIG_fail_ptr("Property_getType",1,SWIGTYPE_p_OgreKit__Property);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProperty,0))){
+    SWIG_fail_ptr("Property_getType",1,SWIGTYPE_p_gsProperty);
   }
   
-  result = (OgreKit::PropertyType)((OgreKit::Property const *)arg1)->getType();
+  result = (gsPropertyType)((gsProperty const *)arg1)->getType();
   lua_pushnumber(L, (lua_Number)(int)(result)); SWIG_arg++;
   return SWIG_arg;
   
@@ -4151,17 +4614,17 @@ fail:
 
 static int _wrap_Property_toBool(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Property *arg1 = (OgreKit::Property *) 0 ;
+  gsProperty *arg1 = (gsProperty *) 0 ;
   bool result;
   
   SWIG_check_num_args("toBool",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("toBool",1,"OgreKit::Property const *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("toBool",1,"gsProperty const *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Property,0))){
-    SWIG_fail_ptr("Property_toBool",1,SWIGTYPE_p_OgreKit__Property);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProperty,0))){
+    SWIG_fail_ptr("Property_toBool",1,SWIGTYPE_p_gsProperty);
   }
   
-  result = (bool)((OgreKit::Property const *)arg1)->toBool();
+  result = (bool)((gsProperty const *)arg1)->toBool();
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -4175,17 +4638,17 @@ fail:
 
 static int _wrap_Property_toNumber(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Property *arg1 = (OgreKit::Property *) 0 ;
+  gsProperty *arg1 = (gsProperty *) 0 ;
   double result;
   
   SWIG_check_num_args("toNumber",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("toNumber",1,"OgreKit::Property const *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("toNumber",1,"gsProperty const *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Property,0))){
-    SWIG_fail_ptr("Property_toNumber",1,SWIGTYPE_p_OgreKit__Property);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProperty,0))){
+    SWIG_fail_ptr("Property_toNumber",1,SWIGTYPE_p_gsProperty);
   }
   
-  result = (double)((OgreKit::Property const *)arg1)->toNumber();
+  result = (double)((gsProperty const *)arg1)->toNumber();
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -4199,17 +4662,17 @@ fail:
 
 static int _wrap_Property_toString(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Property *arg1 = (OgreKit::Property *) 0 ;
-  OgreKit::String result;
+  gsProperty *arg1 = (gsProperty *) 0 ;
+  gkString result;
   
   SWIG_check_num_args("toString",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("toString",1,"OgreKit::Property const *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("toString",1,"gsProperty const *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Property,0))){
-    SWIG_fail_ptr("Property_toString",1,SWIGTYPE_p_OgreKit__Property);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProperty,0))){
+    SWIG_fail_ptr("Property_toString",1,SWIGTYPE_p_gsProperty);
   }
   
-  result = ((OgreKit::Property const *)arg1)->toString();
+  result = ((gsProperty const *)arg1)->toString();
   
   lua_pushstring(L, (&result)->c_str()); SWIG_arg++;
   
@@ -4225,15 +4688,15 @@ fail:
 
 static int _wrap_Property_fromBool(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Property *arg1 = (OgreKit::Property *) 0 ;
+  gsProperty *arg1 = (gsProperty *) 0 ;
   bool arg2 ;
   
   SWIG_check_num_args("fromBool",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("fromBool",1,"OgreKit::Property *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("fromBool",1,"gsProperty *");
   if(!lua_isboolean(L,2)) SWIG_fail_arg("fromBool",2,"bool");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Property,0))){
-    SWIG_fail_ptr("Property_fromBool",1,SWIGTYPE_p_OgreKit__Property);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProperty,0))){
+    SWIG_fail_ptr("Property_fromBool",1,SWIGTYPE_p_gsProperty);
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
@@ -4251,15 +4714,15 @@ fail:
 
 static int _wrap_Property_fromNumber(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Property *arg1 = (OgreKit::Property *) 0 ;
+  gsProperty *arg1 = (gsProperty *) 0 ;
   double arg2 ;
   
   SWIG_check_num_args("fromNumber",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("fromNumber",1,"OgreKit::Property *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("fromNumber",1,"gsProperty *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("fromNumber",2,"double");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Property,0))){
-    SWIG_fail_ptr("Property_fromNumber",1,SWIGTYPE_p_OgreKit__Property);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProperty,0))){
+    SWIG_fail_ptr("Property_fromNumber",1,SWIGTYPE_p_gsProperty);
   }
   
   arg2 = (double)lua_tonumber(L, 2);
@@ -4277,23 +4740,23 @@ fail:
 
 static int _wrap_Property_fromString(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Property *arg1 = (OgreKit::Property *) 0 ;
-  OgreKit::String *arg2 = 0 ;
+  gsProperty *arg1 = (gsProperty *) 0 ;
+  gkString *arg2 = 0 ;
   gkString temp2 ;
   
   SWIG_check_num_args("fromString",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("fromString",1,"OgreKit::Property *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("fromString",2,"OgreKit::String const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("fromString",1,"gsProperty *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("fromString",2,"gkString const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Property,0))){
-    SWIG_fail_ptr("Property_fromString",1,SWIGTYPE_p_OgreKit__Property);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsProperty,0))){
+    SWIG_fail_ptr("Property_fromString",1,SWIGTYPE_p_gsProperty);
   }
   
   
   temp2 = gkString((const char*)lua_tostring(L, 2));
   arg2 = &temp2;
   
-  (arg1)->fromString((OgreKit::String const &)*arg2);
+  (arg1)->fromString((gkString const &)*arg2);
   
   return SWIG_arg;
   
@@ -4306,10 +4769,10 @@ fail:
 
 
 static void swig_delete_Property(void *obj) {
-OgreKit::Property *arg1 = (OgreKit::Property *) obj;
+gsProperty *arg1 = (gsProperty *) obj;
 delete arg1;
 }
-static swig_lua_method swig_OgreKit_Property_methods[] = {
+static swig_lua_method swig_gsProperty_methods[] = {
     {"getName", _wrap_Property_getName}, 
     {"getValue", _wrap_Property_getValue}, 
     {"makeDebug", _wrap_Property_makeDebug}, 
@@ -4322,52 +4785,34 @@ static swig_lua_method swig_OgreKit_Property_methods[] = {
     {"fromString", _wrap_Property_fromString}, 
     {0,0}
 };
-static swig_lua_attribute swig_OgreKit_Property_attributes[] = {
+static swig_lua_attribute swig_gsProperty_attributes[] = {
     {0,0,0}
 };
-static swig_lua_class *swig_OgreKit_Property_bases[] = {0};
-static const char *swig_OgreKit_Property_base_names[] = {0};
-static swig_lua_class _wrap_class_OgreKit_Property = { "Property", &SWIGTYPE_p_OgreKit__Property,_wrap_new_Property, swig_delete_Property, swig_OgreKit_Property_methods, swig_OgreKit_Property_attributes, swig_OgreKit_Property_bases, swig_OgreKit_Property_base_names };
+static swig_lua_class *swig_gsProperty_bases[] = {0};
+static const char *swig_gsProperty_base_names[] = {0};
+static swig_lua_class _wrap_class_gsProperty = { "Property", &SWIGTYPE_p_gsProperty,_wrap_new_Property, swig_delete_Property, swig_gsProperty_methods, swig_gsProperty_attributes, swig_gsProperty_bases, swig_gsProperty_base_names };
 
 static int _wrap_UserDefs_getProperty(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::UserDefs *arg1 = (OgreKit::UserDefs *) 0 ;
-  OgreKit::String *arg2 = 0 ;
+  gsUserDefs *arg1 = (gsUserDefs *) 0 ;
+  gkString *arg2 = 0 ;
   gkString temp2 ;
-  OgreKit::Property *result = 0 ;
+  gsProperty *result = 0 ;
   
   SWIG_check_num_args("getProperty",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getProperty",1,"OgreKit::UserDefs *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("getProperty",2,"OgreKit::String const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getProperty",1,"gsUserDefs *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("getProperty",2,"gkString const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__UserDefs,0))){
-    SWIG_fail_ptr("UserDefs_getProperty",1,SWIGTYPE_p_OgreKit__UserDefs);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsUserDefs,0))){
+    SWIG_fail_ptr("UserDefs_getProperty",1,SWIGTYPE_p_gsUserDefs);
   }
   
   
   temp2 = gkString((const char*)lua_tostring(L, 2));
   arg2 = &temp2;
   
-  result = (OgreKit::Property *) &(arg1)->getProperty((OgreKit::String const &)*arg2);
-  
-  
-  switch ((result)->getType())
-  {
-  case OgreKit::PROP_BOOL:
-    lua_pushboolean(L, (result)->toBool()); SWIG_arg++;
-    break;
-  case OgreKit::PROP_NUMBER:
-    lua_pushnumber(L, (result)->toNumber()); SWIG_arg++;
-    break;
-  case OgreKit::PROP_STRING:
-    {
-      OgreKit::String str = (result)->toString();
-      lua_pushlstring(L, str.c_str(), str.size());
-      SWIG_arg++;
-      break;
-    }
-  }
-  
+  result = (gsProperty *) &(arg1)->getProperty((gkString const &)*arg2);
+  SWIG_arg += gsGetProperty(L, (*result)); 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -4380,23 +4825,23 @@ fail:
 
 static int _wrap_UserDefs_addProperty(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::UserDefs *arg1 = (OgreKit::UserDefs *) 0 ;
-  OgreKit::Property *arg2 = 0 ;
+  gsUserDefs *arg1 = (gsUserDefs *) 0 ;
+  gsProperty *arg2 = 0 ;
   
   SWIG_check_num_args("addProperty",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("addProperty",1,"OgreKit::UserDefs *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("addProperty",2,"OgreKit::Property const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("addProperty",1,"gsUserDefs *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("addProperty",2,"gsProperty const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__UserDefs,0))){
-    SWIG_fail_ptr("UserDefs_addProperty",1,SWIGTYPE_p_OgreKit__UserDefs);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsUserDefs,0))){
+    SWIG_fail_ptr("UserDefs_addProperty",1,SWIGTYPE_p_gsUserDefs);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Property,0))){
-    SWIG_fail_ptr("UserDefs_addProperty",2,SWIGTYPE_p_OgreKit__Property);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsProperty,0))){
+    SWIG_fail_ptr("UserDefs_addProperty",2,SWIGTYPE_p_gsProperty);
   }
   
-  (arg1)->addProperty((OgreKit::Property const &)*arg2);
+  (arg1)->addProperty((gsProperty const &)*arg2);
   
   return SWIG_arg;
   
@@ -4410,24 +4855,24 @@ fail:
 
 static int _wrap_UserDefs_hasProperty(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::UserDefs *arg1 = (OgreKit::UserDefs *) 0 ;
-  OgreKit::String *arg2 = 0 ;
+  gsUserDefs *arg1 = (gsUserDefs *) 0 ;
+  gkString *arg2 = 0 ;
   gkString temp2 ;
   bool result;
   
   SWIG_check_num_args("hasProperty",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("hasProperty",1,"OgreKit::UserDefs *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("hasProperty",2,"OgreKit::String const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("hasProperty",1,"gsUserDefs *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("hasProperty",2,"gkString const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__UserDefs,0))){
-    SWIG_fail_ptr("UserDefs_hasProperty",1,SWIGTYPE_p_OgreKit__UserDefs);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsUserDefs,0))){
+    SWIG_fail_ptr("UserDefs_hasProperty",1,SWIGTYPE_p_gsUserDefs);
   }
   
   
   temp2 = gkString((const char*)lua_tostring(L, 2));
   arg2 = &temp2;
   
-  result = (bool)(arg1)->hasProperty((OgreKit::String const &)*arg2);
+  result = (bool)(arg1)->hasProperty((gkString const &)*arg2);
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -4441,39 +4886,21 @@ fail:
 
 static int _wrap_UserDefs___getitem(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::UserDefs *arg1 = (OgreKit::UserDefs *) 0 ;
+  gsUserDefs *arg1 = (gsUserDefs *) 0 ;
   char *arg2 = (char *) 0 ;
-  OgreKit::Property *result = 0 ;
+  gsProperty *result = 0 ;
   
   SWIG_check_num_args("__getitem__",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__getitem__",1,"OgreKit::UserDefs *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__getitem__",1,"gsUserDefs *");
   if(!lua_isstring(L,2)) SWIG_fail_arg("__getitem__",2,"char const *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__UserDefs,0))){
-    SWIG_fail_ptr("UserDefs___getitem",1,SWIGTYPE_p_OgreKit__UserDefs);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsUserDefs,0))){
+    SWIG_fail_ptr("UserDefs___getitem",1,SWIGTYPE_p_gsUserDefs);
   }
   
   arg2 = (char *)lua_tostring(L, 2);
-  result = (OgreKit::Property *) &(arg1)->__getitem__((char const *)arg2);
-  
-  
-  switch ((result)->getType())
-  {
-  case OgreKit::PROP_BOOL:
-    lua_pushboolean(L, (result)->toBool()); SWIG_arg++;
-    break;
-  case OgreKit::PROP_NUMBER:
-    lua_pushnumber(L, (result)->toNumber()); SWIG_arg++;
-    break;
-  case OgreKit::PROP_STRING:
-    {
-      OgreKit::String str = (result)->toString();
-      lua_pushlstring(L, str.c_str(), str.size());
-      SWIG_arg++;
-      break;
-    }
-  }
-  
+  result = (gsProperty *) &(arg1)->__getitem__((char const *)arg2);
+  SWIG_arg += gsGetProperty(L, (*result)); 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -4486,17 +4913,17 @@ fail:
 
 static int _wrap_UserDefs___setitem__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::UserDefs *arg1 = (OgreKit::UserDefs *) 0 ;
+  gsUserDefs *arg1 = (gsUserDefs *) 0 ;
   char *arg2 = (char *) 0 ;
   bool arg3 ;
   
   SWIG_check_num_args("__setitem__",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__setitem__",1,"OgreKit::UserDefs *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__setitem__",1,"gsUserDefs *");
   if(!lua_isstring(L,2)) SWIG_fail_arg("__setitem__",2,"char const *");
   if(!lua_isboolean(L,3)) SWIG_fail_arg("__setitem__",3,"bool");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__UserDefs,0))){
-    SWIG_fail_ptr("UserDefs___setitem",1,SWIGTYPE_p_OgreKit__UserDefs);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsUserDefs,0))){
+    SWIG_fail_ptr("UserDefs___setitem",1,SWIGTYPE_p_gsUserDefs);
   }
   
   arg2 = (char *)lua_tostring(L, 2);
@@ -4515,17 +4942,17 @@ fail:
 
 static int _wrap_UserDefs___setitem__SWIG_1(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::UserDefs *arg1 = (OgreKit::UserDefs *) 0 ;
+  gsUserDefs *arg1 = (gsUserDefs *) 0 ;
   char *arg2 = (char *) 0 ;
   double arg3 ;
   
   SWIG_check_num_args("__setitem__",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__setitem__",1,"OgreKit::UserDefs *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__setitem__",1,"gsUserDefs *");
   if(!lua_isstring(L,2)) SWIG_fail_arg("__setitem__",2,"char const *");
   if(!lua_isnumber(L,3)) SWIG_fail_arg("__setitem__",3,"double");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__UserDefs,0))){
-    SWIG_fail_ptr("UserDefs___setitem",1,SWIGTYPE_p_OgreKit__UserDefs);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsUserDefs,0))){
+    SWIG_fail_ptr("UserDefs___setitem",1,SWIGTYPE_p_gsUserDefs);
   }
   
   arg2 = (char *)lua_tostring(L, 2);
@@ -4544,18 +4971,18 @@ fail:
 
 static int _wrap_UserDefs___setitem__SWIG_2(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::UserDefs *arg1 = (OgreKit::UserDefs *) 0 ;
+  gsUserDefs *arg1 = (gsUserDefs *) 0 ;
   char *arg2 = (char *) 0 ;
-  OgreKit::String *arg3 = 0 ;
+  gkString *arg3 = 0 ;
   gkString temp3 ;
   
   SWIG_check_num_args("__setitem__",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__setitem__",1,"OgreKit::UserDefs *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__setitem__",1,"gsUserDefs *");
   if(!lua_isstring(L,2)) SWIG_fail_arg("__setitem__",2,"char const *");
-  if(!lua_isstring(L,3)) SWIG_fail_arg("__setitem__",3,"OgreKit::String const &");
+  if(!lua_isstring(L,3)) SWIG_fail_arg("__setitem__",3,"gkString const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__UserDefs,0))){
-    SWIG_fail_ptr("UserDefs___setitem",1,SWIGTYPE_p_OgreKit__UserDefs);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsUserDefs,0))){
+    SWIG_fail_ptr("UserDefs___setitem",1,SWIGTYPE_p_gsUserDefs);
   }
   
   arg2 = (char *)lua_tostring(L, 2);
@@ -4563,7 +4990,7 @@ static int _wrap_UserDefs___setitem__SWIG_2(lua_State* L) {
   temp3 = gkString((const char*)lua_tostring(L, 3));
   arg3 = &temp3;
   
-  (arg1)->__setitem__((char const *)arg2,(OgreKit::String const &)*arg3);
+  (arg1)->__setitem__((char const *)arg2,(gkString const &)*arg3);
   
   return SWIG_arg;
   
@@ -4586,7 +5013,7 @@ static int _wrap_UserDefs___setitem(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__UserDefs, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsUserDefs, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -4610,7 +5037,7 @@ static int _wrap_UserDefs___setitem(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__UserDefs, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsUserDefs, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -4634,7 +5061,7 @@ static int _wrap_UserDefs___setitem(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__UserDefs, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsUserDefs, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -4657,18 +5084,18 @@ static int _wrap_UserDefs___setitem(lua_State* L) {
   
   lua_pushstring(L,"Wrong arguments for overloaded function 'UserDefs___setitem'\n"
     "  Possible C/C++ prototypes are:\n"
-    "    __setitem__(OgreKit::UserDefs *,char const *,bool)\n"
-    "    __setitem__(OgreKit::UserDefs *,char const *,double)\n"
-    "    __setitem__(OgreKit::UserDefs *,char const *,OgreKit::String const &)\n");
+    "    __setitem__(gsUserDefs *,char const *,bool)\n"
+    "    __setitem__(gsUserDefs *,char const *,double)\n"
+    "    __setitem__(gsUserDefs *,char const *,gkString const &)\n");
   lua_error(L);return 0;
 }
 
 
 static void swig_delete_UserDefs(void *obj) {
-OgreKit::UserDefs *arg1 = (OgreKit::UserDefs *) obj;
+gsUserDefs *arg1 = (gsUserDefs *) obj;
 delete arg1;
 }
-static swig_lua_method swig_OgreKit_UserDefs_methods[] = {
+static swig_lua_method swig_gsUserDefs_methods[] = {
     {"getProperty", _wrap_UserDefs_getProperty}, 
     {"addProperty", _wrap_UserDefs_addProperty}, 
     {"hasProperty", _wrap_UserDefs_hasProperty}, 
@@ -4676,20 +5103,20 @@ static swig_lua_method swig_OgreKit_UserDefs_methods[] = {
     {"__setitem", _wrap_UserDefs___setitem}, 
     {0,0}
 };
-static swig_lua_attribute swig_OgreKit_UserDefs_attributes[] = {
+static swig_lua_attribute swig_gsUserDefs_attributes[] = {
     {0,0,0}
 };
-static swig_lua_class *swig_OgreKit_UserDefs_bases[] = {0};
-static const char *swig_OgreKit_UserDefs_base_names[] = {0};
-static swig_lua_class _wrap_class_OgreKit_UserDefs = { "UserDefs", &SWIGTYPE_p_OgreKit__UserDefs,0, swig_delete_UserDefs, swig_OgreKit_UserDefs_methods, swig_OgreKit_UserDefs_attributes, swig_OgreKit_UserDefs_bases, swig_OgreKit_UserDefs_base_names };
+static swig_lua_class *swig_gsUserDefs_bases[] = {0};
+static const char *swig_gsUserDefs_base_names[] = {0};
+static swig_lua_class _wrap_class_gsUserDefs = { "UserDefs", &SWIGTYPE_p_gsUserDefs,0, swig_delete_UserDefs, swig_gsUserDefs_methods, swig_gsUserDefs_attributes, swig_gsUserDefs_bases, swig_gsUserDefs_base_names };
 
 static int _wrap_new_Mouse(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Mouse *result = 0 ;
+  gsMouse *result = 0 ;
   
-  SWIG_check_num_args("OgreKit::Mouse",0,0)
-  result = (OgreKit::Mouse *)new OgreKit::Mouse();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__Mouse,1); SWIG_arg++; 
+  SWIG_check_num_args("gsMouse",0,0)
+  result = (gsMouse *)new gsMouse();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsMouse,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -4702,15 +5129,15 @@ fail:
 
 static int _wrap_Mouse_xpos_set(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Mouse *arg1 = (OgreKit::Mouse *) 0 ;
+  gsMouse *arg1 = (gsMouse *) 0 ;
   float arg2 ;
   
   SWIG_check_num_args("xpos",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("xpos",1,"OgreKit::Mouse *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("xpos",1,"gsMouse *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("xpos",2,"float");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Mouse,0))){
-    SWIG_fail_ptr("Mouse_xpos_set",1,SWIGTYPE_p_OgreKit__Mouse);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsMouse,0))){
+    SWIG_fail_ptr("Mouse_xpos_set",1,SWIGTYPE_p_gsMouse);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
@@ -4728,14 +5155,14 @@ fail:
 
 static int _wrap_Mouse_xpos_get(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Mouse *arg1 = (OgreKit::Mouse *) 0 ;
+  gsMouse *arg1 = (gsMouse *) 0 ;
   float result;
   
   SWIG_check_num_args("xpos",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("xpos",1,"OgreKit::Mouse *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("xpos",1,"gsMouse *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Mouse,0))){
-    SWIG_fail_ptr("Mouse_xpos_get",1,SWIGTYPE_p_OgreKit__Mouse);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsMouse,0))){
+    SWIG_fail_ptr("Mouse_xpos_get",1,SWIGTYPE_p_gsMouse);
   }
   
   result = (float) ((arg1)->xpos);
@@ -4752,15 +5179,15 @@ fail:
 
 static int _wrap_Mouse_ypos_set(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Mouse *arg1 = (OgreKit::Mouse *) 0 ;
+  gsMouse *arg1 = (gsMouse *) 0 ;
   float arg2 ;
   
   SWIG_check_num_args("ypos",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("ypos",1,"OgreKit::Mouse *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("ypos",1,"gsMouse *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("ypos",2,"float");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Mouse,0))){
-    SWIG_fail_ptr("Mouse_ypos_set",1,SWIGTYPE_p_OgreKit__Mouse);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsMouse,0))){
+    SWIG_fail_ptr("Mouse_ypos_set",1,SWIGTYPE_p_gsMouse);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
@@ -4778,14 +5205,14 @@ fail:
 
 static int _wrap_Mouse_ypos_get(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Mouse *arg1 = (OgreKit::Mouse *) 0 ;
+  gsMouse *arg1 = (gsMouse *) 0 ;
   float result;
   
   SWIG_check_num_args("ypos",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("ypos",1,"OgreKit::Mouse *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("ypos",1,"gsMouse *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Mouse,0))){
-    SWIG_fail_ptr("Mouse_ypos_get",1,SWIGTYPE_p_OgreKit__Mouse);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsMouse,0))){
+    SWIG_fail_ptr("Mouse_ypos_get",1,SWIGTYPE_p_gsMouse);
   }
   
   result = (float) ((arg1)->ypos);
@@ -4802,15 +5229,15 @@ fail:
 
 static int _wrap_Mouse_xrel_set(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Mouse *arg1 = (OgreKit::Mouse *) 0 ;
+  gsMouse *arg1 = (gsMouse *) 0 ;
   float arg2 ;
   
   SWIG_check_num_args("xrel",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("xrel",1,"OgreKit::Mouse *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("xrel",1,"gsMouse *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("xrel",2,"float");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Mouse,0))){
-    SWIG_fail_ptr("Mouse_xrel_set",1,SWIGTYPE_p_OgreKit__Mouse);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsMouse,0))){
+    SWIG_fail_ptr("Mouse_xrel_set",1,SWIGTYPE_p_gsMouse);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
@@ -4828,14 +5255,14 @@ fail:
 
 static int _wrap_Mouse_xrel_get(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Mouse *arg1 = (OgreKit::Mouse *) 0 ;
+  gsMouse *arg1 = (gsMouse *) 0 ;
   float result;
   
   SWIG_check_num_args("xrel",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("xrel",1,"OgreKit::Mouse *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("xrel",1,"gsMouse *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Mouse,0))){
-    SWIG_fail_ptr("Mouse_xrel_get",1,SWIGTYPE_p_OgreKit__Mouse);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsMouse,0))){
+    SWIG_fail_ptr("Mouse_xrel_get",1,SWIGTYPE_p_gsMouse);
   }
   
   result = (float) ((arg1)->xrel);
@@ -4852,15 +5279,15 @@ fail:
 
 static int _wrap_Mouse_yrel_set(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Mouse *arg1 = (OgreKit::Mouse *) 0 ;
+  gsMouse *arg1 = (gsMouse *) 0 ;
   float arg2 ;
   
   SWIG_check_num_args("yrel",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("yrel",1,"OgreKit::Mouse *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("yrel",1,"gsMouse *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("yrel",2,"float");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Mouse,0))){
-    SWIG_fail_ptr("Mouse_yrel_set",1,SWIGTYPE_p_OgreKit__Mouse);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsMouse,0))){
+    SWIG_fail_ptr("Mouse_yrel_set",1,SWIGTYPE_p_gsMouse);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
@@ -4878,14 +5305,14 @@ fail:
 
 static int _wrap_Mouse_yrel_get(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Mouse *arg1 = (OgreKit::Mouse *) 0 ;
+  gsMouse *arg1 = (gsMouse *) 0 ;
   float result;
   
   SWIG_check_num_args("yrel",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("yrel",1,"OgreKit::Mouse *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("yrel",1,"gsMouse *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Mouse,0))){
-    SWIG_fail_ptr("Mouse_yrel_get",1,SWIGTYPE_p_OgreKit__Mouse);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsMouse,0))){
+    SWIG_fail_ptr("Mouse_yrel_get",1,SWIGTYPE_p_gsMouse);
   }
   
   result = (float) ((arg1)->yrel);
@@ -4902,15 +5329,15 @@ fail:
 
 static int _wrap_Mouse_winx_set(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Mouse *arg1 = (OgreKit::Mouse *) 0 ;
+  gsMouse *arg1 = (gsMouse *) 0 ;
   float arg2 ;
   
   SWIG_check_num_args("winx",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("winx",1,"OgreKit::Mouse *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("winx",1,"gsMouse *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("winx",2,"float");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Mouse,0))){
-    SWIG_fail_ptr("Mouse_winx_set",1,SWIGTYPE_p_OgreKit__Mouse);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsMouse,0))){
+    SWIG_fail_ptr("Mouse_winx_set",1,SWIGTYPE_p_gsMouse);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
@@ -4928,14 +5355,14 @@ fail:
 
 static int _wrap_Mouse_winx_get(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Mouse *arg1 = (OgreKit::Mouse *) 0 ;
+  gsMouse *arg1 = (gsMouse *) 0 ;
   float result;
   
   SWIG_check_num_args("winx",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("winx",1,"OgreKit::Mouse *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("winx",1,"gsMouse *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Mouse,0))){
-    SWIG_fail_ptr("Mouse_winx_get",1,SWIGTYPE_p_OgreKit__Mouse);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsMouse,0))){
+    SWIG_fail_ptr("Mouse_winx_get",1,SWIGTYPE_p_gsMouse);
   }
   
   result = (float) ((arg1)->winx);
@@ -4952,15 +5379,15 @@ fail:
 
 static int _wrap_Mouse_winy_set(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Mouse *arg1 = (OgreKit::Mouse *) 0 ;
+  gsMouse *arg1 = (gsMouse *) 0 ;
   float arg2 ;
   
   SWIG_check_num_args("winy",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("winy",1,"OgreKit::Mouse *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("winy",1,"gsMouse *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("winy",2,"float");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Mouse,0))){
-    SWIG_fail_ptr("Mouse_winy_set",1,SWIGTYPE_p_OgreKit__Mouse);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsMouse,0))){
+    SWIG_fail_ptr("Mouse_winy_set",1,SWIGTYPE_p_gsMouse);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
@@ -4978,14 +5405,14 @@ fail:
 
 static int _wrap_Mouse_winy_get(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Mouse *arg1 = (OgreKit::Mouse *) 0 ;
+  gsMouse *arg1 = (gsMouse *) 0 ;
   float result;
   
   SWIG_check_num_args("winy",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("winy",1,"OgreKit::Mouse *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("winy",1,"gsMouse *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Mouse,0))){
-    SWIG_fail_ptr("Mouse_winy_get",1,SWIGTYPE_p_OgreKit__Mouse);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsMouse,0))){
+    SWIG_fail_ptr("Mouse_winy_get",1,SWIGTYPE_p_gsMouse);
   }
   
   result = (float) ((arg1)->winy);
@@ -5002,15 +5429,15 @@ fail:
 
 static int _wrap_Mouse_wheel_set(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Mouse *arg1 = (OgreKit::Mouse *) 0 ;
+  gsMouse *arg1 = (gsMouse *) 0 ;
   float arg2 ;
   
   SWIG_check_num_args("wheel",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("wheel",1,"OgreKit::Mouse *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("wheel",1,"gsMouse *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("wheel",2,"float");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Mouse,0))){
-    SWIG_fail_ptr("Mouse_wheel_set",1,SWIGTYPE_p_OgreKit__Mouse);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsMouse,0))){
+    SWIG_fail_ptr("Mouse_wheel_set",1,SWIGTYPE_p_gsMouse);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
@@ -5028,14 +5455,14 @@ fail:
 
 static int _wrap_Mouse_wheel_get(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Mouse *arg1 = (OgreKit::Mouse *) 0 ;
+  gsMouse *arg1 = (gsMouse *) 0 ;
   float result;
   
   SWIG_check_num_args("wheel",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("wheel",1,"OgreKit::Mouse *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("wheel",1,"gsMouse *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Mouse,0))){
-    SWIG_fail_ptr("Mouse_wheel_get",1,SWIGTYPE_p_OgreKit__Mouse);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsMouse,0))){
+    SWIG_fail_ptr("Mouse_wheel_get",1,SWIGTYPE_p_gsMouse);
   }
   
   result = (float) ((arg1)->wheel);
@@ -5052,15 +5479,15 @@ fail:
 
 static int _wrap_Mouse_moved_set(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Mouse *arg1 = (OgreKit::Mouse *) 0 ;
+  gsMouse *arg1 = (gsMouse *) 0 ;
   bool arg2 ;
   
   SWIG_check_num_args("moved",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("moved",1,"OgreKit::Mouse *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("moved",1,"gsMouse *");
   if(!lua_isboolean(L,2)) SWIG_fail_arg("moved",2,"bool");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Mouse,0))){
-    SWIG_fail_ptr("Mouse_moved_set",1,SWIGTYPE_p_OgreKit__Mouse);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsMouse,0))){
+    SWIG_fail_ptr("Mouse_moved_set",1,SWIGTYPE_p_gsMouse);
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
@@ -5078,14 +5505,14 @@ fail:
 
 static int _wrap_Mouse_moved_get(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Mouse *arg1 = (OgreKit::Mouse *) 0 ;
+  gsMouse *arg1 = (gsMouse *) 0 ;
   bool result;
   
   SWIG_check_num_args("moved",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("moved",1,"OgreKit::Mouse *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("moved",1,"gsMouse *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Mouse,0))){
-    SWIG_fail_ptr("Mouse_moved_get",1,SWIGTYPE_p_OgreKit__Mouse);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsMouse,0))){
+    SWIG_fail_ptr("Mouse_moved_get",1,SWIGTYPE_p_gsMouse);
   }
   
   result = (bool) ((arg1)->moved);
@@ -5102,13 +5529,13 @@ fail:
 
 static int _wrap_Mouse_capture(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Mouse *arg1 = (OgreKit::Mouse *) 0 ;
+  gsMouse *arg1 = (gsMouse *) 0 ;
   
   SWIG_check_num_args("capture",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("capture",1,"OgreKit::Mouse *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("capture",1,"gsMouse *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Mouse,0))){
-    SWIG_fail_ptr("Mouse_capture",1,SWIGTYPE_p_OgreKit__Mouse);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsMouse,0))){
+    SWIG_fail_ptr("Mouse_capture",1,SWIGTYPE_p_gsMouse);
   }
   
   (arg1)->capture();
@@ -5125,19 +5552,19 @@ fail:
 
 static int _wrap_Mouse_isButtonDown(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Mouse *arg1 = (OgreKit::Mouse *) 0 ;
-  OgreKit::MouseButton arg2 ;
+  gsMouse *arg1 = (gsMouse *) 0 ;
+  gsMouseButton arg2 ;
   bool result;
   
   SWIG_check_num_args("isButtonDown",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isButtonDown",1,"OgreKit::Mouse *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("isButtonDown",2,"OgreKit::MouseButton");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isButtonDown",1,"gsMouse *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("isButtonDown",2,"gsMouseButton");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Mouse,0))){
-    SWIG_fail_ptr("Mouse_isButtonDown",1,SWIGTYPE_p_OgreKit__Mouse);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsMouse,0))){
+    SWIG_fail_ptr("Mouse_isButtonDown",1,SWIGTYPE_p_gsMouse);
   }
   
-  arg2 = (OgreKit::MouseButton)(int)lua_tonumber(L, 2);
+  arg2 = (gsMouseButton)(int)lua_tonumber(L, 2);
   result = (bool)(arg1)->isButtonDown(arg2);
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
@@ -5151,15 +5578,15 @@ fail:
 
 
 static void swig_delete_Mouse(void *obj) {
-OgreKit::Mouse *arg1 = (OgreKit::Mouse *) obj;
+gsMouse *arg1 = (gsMouse *) obj;
 delete arg1;
 }
-static swig_lua_method swig_OgreKit_Mouse_methods[] = {
+static swig_lua_method swig_gsMouse_methods[] = {
     {"capture", _wrap_Mouse_capture}, 
     {"isButtonDown", _wrap_Mouse_isButtonDown}, 
     {0,0}
 };
-static swig_lua_attribute swig_OgreKit_Mouse_attributes[] = {
+static swig_lua_attribute swig_gsMouse_attributes[] = {
     { "xpos", _wrap_Mouse_xpos_get, _wrap_Mouse_xpos_set},
     { "ypos", _wrap_Mouse_ypos_get, _wrap_Mouse_ypos_set},
     { "xrel", _wrap_Mouse_xrel_get, _wrap_Mouse_xrel_set},
@@ -5170,17 +5597,17 @@ static swig_lua_attribute swig_OgreKit_Mouse_attributes[] = {
     { "moved", _wrap_Mouse_moved_get, _wrap_Mouse_moved_set},
     {0,0,0}
 };
-static swig_lua_class *swig_OgreKit_Mouse_bases[] = {0};
-static const char *swig_OgreKit_Mouse_base_names[] = {0};
-static swig_lua_class _wrap_class_OgreKit_Mouse = { "Mouse", &SWIGTYPE_p_OgreKit__Mouse,_wrap_new_Mouse, swig_delete_Mouse, swig_OgreKit_Mouse_methods, swig_OgreKit_Mouse_attributes, swig_OgreKit_Mouse_bases, swig_OgreKit_Mouse_base_names };
+static swig_lua_class *swig_gsMouse_bases[] = {0};
+static const char *swig_gsMouse_base_names[] = {0};
+static swig_lua_class _wrap_class_gsMouse = { "Mouse", &SWIGTYPE_p_gsMouse,_wrap_new_Mouse, swig_delete_Mouse, swig_gsMouse_methods, swig_gsMouse_attributes, swig_gsMouse_bases, swig_gsMouse_base_names };
 
 static int _wrap_new_Keyboard(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Keyboard *result = 0 ;
+  gsKeyboard *result = 0 ;
   
-  SWIG_check_num_args("OgreKit::Keyboard",0,0)
-  result = (OgreKit::Keyboard *)new OgreKit::Keyboard();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__Keyboard,1); SWIG_arg++; 
+  SWIG_check_num_args("gsKeyboard",0,0)
+  result = (gsKeyboard *)new gsKeyboard();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsKeyboard,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -5193,13 +5620,13 @@ fail:
 
 static int _wrap_Keyboard_capture(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Keyboard *arg1 = (OgreKit::Keyboard *) 0 ;
+  gsKeyboard *arg1 = (gsKeyboard *) 0 ;
   
   SWIG_check_num_args("capture",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("capture",1,"OgreKit::Keyboard *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("capture",1,"gsKeyboard *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Keyboard,0))){
-    SWIG_fail_ptr("Keyboard_capture",1,SWIGTYPE_p_OgreKit__Keyboard);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsKeyboard,0))){
+    SWIG_fail_ptr("Keyboard_capture",1,SWIGTYPE_p_gsKeyboard);
   }
   
   (arg1)->capture();
@@ -5216,16 +5643,16 @@ fail:
 
 static int _wrap_Keyboard_isKeyDown(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Keyboard *arg1 = (OgreKit::Keyboard *) 0 ;
+  gsKeyboard *arg1 = (gsKeyboard *) 0 ;
   int arg2 ;
   bool result;
   
   SWIG_check_num_args("isKeyDown",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isKeyDown",1,"OgreKit::Keyboard *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isKeyDown",1,"gsKeyboard *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("isKeyDown",2,"int");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Keyboard,0))){
-    SWIG_fail_ptr("Keyboard_isKeyDown",1,SWIGTYPE_p_OgreKit__Keyboard);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsKeyboard,0))){
+    SWIG_fail_ptr("Keyboard_isKeyDown",1,SWIGTYPE_p_gsKeyboard);
   }
   
   arg2 = (int)lua_tonumber(L, 2);
@@ -5242,28 +5669,28 @@ fail:
 
 
 static void swig_delete_Keyboard(void *obj) {
-OgreKit::Keyboard *arg1 = (OgreKit::Keyboard *) obj;
+gsKeyboard *arg1 = (gsKeyboard *) obj;
 delete arg1;
 }
-static swig_lua_method swig_OgreKit_Keyboard_methods[] = {
+static swig_lua_method swig_gsKeyboard_methods[] = {
     {"capture", _wrap_Keyboard_capture}, 
     {"isKeyDown", _wrap_Keyboard_isKeyDown}, 
     {0,0}
 };
-static swig_lua_attribute swig_OgreKit_Keyboard_attributes[] = {
+static swig_lua_attribute swig_gsKeyboard_attributes[] = {
     {0,0,0}
 };
-static swig_lua_class *swig_OgreKit_Keyboard_bases[] = {0};
-static const char *swig_OgreKit_Keyboard_base_names[] = {0};
-static swig_lua_class _wrap_class_OgreKit_Keyboard = { "Keyboard", &SWIGTYPE_p_OgreKit__Keyboard,_wrap_new_Keyboard, swig_delete_Keyboard, swig_OgreKit_Keyboard_methods, swig_OgreKit_Keyboard_attributes, swig_OgreKit_Keyboard_bases, swig_OgreKit_Keyboard_base_names };
+static swig_lua_class *swig_gsKeyboard_bases[] = {0};
+static const char *swig_gsKeyboard_base_names[] = {0};
+static swig_lua_class _wrap_class_gsKeyboard = { "Keyboard", &SWIGTYPE_p_gsKeyboard,_wrap_new_Keyboard, swig_delete_Keyboard, swig_gsKeyboard_methods, swig_gsKeyboard_attributes, swig_gsKeyboard_bases, swig_gsKeyboard_base_names };
 
 static int _wrap_new_Engine(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Engine *result = 0 ;
+  gsEngine *result = 0 ;
   
-  SWIG_check_num_args("OgreKit::Engine",0,0)
-  result = (OgreKit::Engine *)new OgreKit::Engine();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__Engine,1); SWIG_arg++; 
+  SWIG_check_num_args("gsEngine",0,0)
+  result = (gsEngine *)new gsEngine();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsEngine,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -5276,13 +5703,13 @@ fail:
 
 static int _wrap_Engine_initialize(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Engine *arg1 = (OgreKit::Engine *) 0 ;
+  gsEngine *arg1 = (gsEngine *) 0 ;
   
   SWIG_check_num_args("initialize",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("initialize",1,"OgreKit::Engine *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("initialize",1,"gsEngine *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Engine,0))){
-    SWIG_fail_ptr("Engine_initialize",1,SWIGTYPE_p_OgreKit__Engine);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsEngine,0))){
+    SWIG_fail_ptr("Engine_initialize",1,SWIGTYPE_p_gsEngine);
   }
   
   (arg1)->initialize();
@@ -5299,13 +5726,13 @@ fail:
 
 static int _wrap_Engine_run(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Engine *arg1 = (OgreKit::Engine *) 0 ;
+  gsEngine *arg1 = (gsEngine *) 0 ;
   
   SWIG_check_num_args("run",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("run",1,"OgreKit::Engine *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("run",1,"gsEngine *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Engine,0))){
-    SWIG_fail_ptr("Engine_run",1,SWIGTYPE_p_OgreKit__Engine);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsEngine,0))){
+    SWIG_fail_ptr("Engine_run",1,SWIGTYPE_p_gsEngine);
   }
   
   (arg1)->run();
@@ -5322,13 +5749,13 @@ fail:
 
 static int _wrap_Engine_requestExit(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Engine *arg1 = (OgreKit::Engine *) 0 ;
+  gsEngine *arg1 = (gsEngine *) 0 ;
   
   SWIG_check_num_args("requestExit",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("requestExit",1,"OgreKit::Engine *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("requestExit",1,"gsEngine *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Engine,0))){
-    SWIG_fail_ptr("Engine_requestExit",1,SWIGTYPE_p_OgreKit__Engine);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsEngine,0))){
+    SWIG_fail_ptr("Engine_requestExit",1,SWIGTYPE_p_gsEngine);
   }
   
   (arg1)->requestExit();
@@ -5345,17 +5772,17 @@ fail:
 
 static int _wrap_Engine_connect__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Engine *arg1 = (OgreKit::Engine *) 0 ;
+  gsEngine *arg1 = (gsEngine *) 0 ;
   int arg2 ;
-  OgreKit::Function arg3 ;
+  gsFunction arg3 ;
   
   SWIG_check_num_args("connect",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("connect",1,"OgreKit::Engine *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("connect",1,"gsEngine *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("connect",2,"int");
-  if(!lua_isfunction(L,3)) SWIG_fail_arg("connect",3,"OgreKit::Function");
+  if(!lua_isfunction(L,3)) SWIG_fail_arg("connect",3,"gsFunction");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Engine,0))){
-    SWIG_fail_ptr("Engine_connect",1,SWIGTYPE_p_OgreKit__Engine);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsEngine,0))){
+    SWIG_fail_ptr("Engine_connect",1,SWIGTYPE_p_gsEngine);
   }
   
   arg2 = (int)lua_tonumber(L, 2);
@@ -5374,19 +5801,19 @@ fail:
 
 static int _wrap_Engine_connect__SWIG_1(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Engine *arg1 = (OgreKit::Engine *) 0 ;
+  gsEngine *arg1 = (gsEngine *) 0 ;
   int arg2 ;
-  OgreKit::Self arg3 ;
-  OgreKit::Function arg4 ;
+  gsSelf arg3 ;
+  gsFunction arg4 ;
   
   SWIG_check_num_args("connect",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("connect",1,"OgreKit::Engine *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("connect",1,"gsEngine *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("connect",2,"int");
-  if(!lua_istable(L,3)) SWIG_fail_arg("connect",3,"OgreKit::Self");
-  if(!lua_isfunction(L,4)) SWIG_fail_arg("connect",4,"OgreKit::Function");
+  if(!lua_istable(L,3)) SWIG_fail_arg("connect",3,"gsSelf");
+  if(!lua_isfunction(L,4)) SWIG_fail_arg("connect",4,"gsFunction");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Engine,0))){
-    SWIG_fail_ptr("Engine_connect",1,SWIGTYPE_p_OgreKit__Engine);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsEngine,0))){
+    SWIG_fail_ptr("Engine_connect",1,SWIGTYPE_p_gsEngine);
   }
   
   arg2 = (int)lua_tonumber(L, 2);
@@ -5415,7 +5842,7 @@ static int _wrap_Engine_connect(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__Engine, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsEngine, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -5437,7 +5864,7 @@ static int _wrap_Engine_connect(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__Engine, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsEngine, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -5461,36 +5888,33 @@ static int _wrap_Engine_connect(lua_State* L) {
   
   lua_pushstring(L,"Wrong arguments for overloaded function 'Engine_connect'\n"
     "  Possible C/C++ prototypes are:\n"
-    "    connect(OgreKit::Engine *,int,OgreKit::Function)\n"
-    "    connect(OgreKit::Engine *,int,OgreKit::Self,OgreKit::Function)\n");
+    "    connect(gsEngine *,int,gsFunction)\n"
+    "    connect(gsEngine *,int,gsSelf,gsFunction)\n");
   lua_error(L);return 0;
 }
 
 
 static int _wrap_Engine_loadBlendFile(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Engine *arg1 = (OgreKit::Engine *) 0 ;
-  OgreKit::String *arg2 = 0 ;
+  gsEngine *arg1 = (gsEngine *) 0 ;
+  gkString *arg2 = 0 ;
   gkString temp2 ;
-  OgreKit::Pointer< OgreKit::Scene > result;
+  gsScene *result = 0 ;
   
   SWIG_check_num_args("loadBlendFile",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("loadBlendFile",1,"OgreKit::Engine *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("loadBlendFile",2,"OgreKit::String const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("loadBlendFile",1,"gsEngine *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("loadBlendFile",2,"gkString const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Engine,0))){
-    SWIG_fail_ptr("Engine_loadBlendFile",1,SWIGTYPE_p_OgreKit__Engine);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsEngine,0))){
+    SWIG_fail_ptr("Engine_loadBlendFile",1,SWIGTYPE_p_gsEngine);
   }
   
   
   temp2 = gkString((const char*)lua_tostring(L, 2));
   arg2 = &temp2;
   
-  result = (arg1)->loadBlendFile((OgreKit::String const &)*arg2);
-  {
-    OgreKit::Pointer< OgreKit::Scene > * resultptr = new OgreKit::Pointer< OgreKit::Scene >((const OgreKit::Pointer< OgreKit::Scene > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t,1); SWIG_arg++;
-  }
+  result = (gsScene *)(arg1)->loadBlendFile((gkString const &)*arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsScene,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -5503,18 +5927,18 @@ fail:
 
 static int _wrap_Engine_getUserDefs(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Engine *arg1 = (OgreKit::Engine *) 0 ;
-  OgreKit::UserDefs *result = 0 ;
+  gsEngine *arg1 = (gsEngine *) 0 ;
+  gsUserDefs *result = 0 ;
   
   SWIG_check_num_args("getUserDefs",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getUserDefs",1,"OgreKit::Engine *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getUserDefs",1,"gsEngine *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Engine,0))){
-    SWIG_fail_ptr("Engine_getUserDefs",1,SWIGTYPE_p_OgreKit__Engine);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsEngine,0))){
+    SWIG_fail_ptr("Engine_getUserDefs",1,SWIGTYPE_p_gsEngine);
   }
   
-  result = (OgreKit::UserDefs *) &(arg1)->getUserDefs();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__UserDefs,0); SWIG_arg++; 
+  result = (gsUserDefs *) &(arg1)->getUserDefs();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsUserDefs,0); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -5526,10 +5950,10 @@ fail:
 
 
 static void swig_delete_Engine(void *obj) {
-OgreKit::Engine *arg1 = (OgreKit::Engine *) obj;
+gsEngine *arg1 = (gsEngine *) obj;
 delete arg1;
 }
-static swig_lua_method swig_OgreKit_Engine_methods[] = {
+static swig_lua_method swig_gsEngine_methods[] = {
     {"initialize", _wrap_Engine_initialize}, 
     {"run", _wrap_Engine_run}, 
     {"requestExit", _wrap_Engine_requestExit}, 
@@ -5538,20 +5962,20 @@ static swig_lua_method swig_OgreKit_Engine_methods[] = {
     {"getUserDefs", _wrap_Engine_getUserDefs}, 
     {0,0}
 };
-static swig_lua_attribute swig_OgreKit_Engine_attributes[] = {
+static swig_lua_attribute swig_gsEngine_attributes[] = {
     {0,0,0}
 };
-static swig_lua_class *swig_OgreKit_Engine_bases[] = {0};
-static const char *swig_OgreKit_Engine_base_names[] = {0};
-static swig_lua_class _wrap_class_OgreKit_Engine = { "Engine", &SWIGTYPE_p_OgreKit__Engine,_wrap_new_Engine, swig_delete_Engine, swig_OgreKit_Engine_methods, swig_OgreKit_Engine_attributes, swig_OgreKit_Engine_bases, swig_OgreKit_Engine_base_names };
+static swig_lua_class *swig_gsEngine_bases[] = {0};
+static const char *swig_gsEngine_base_names[] = {0};
+static swig_lua_class _wrap_class_gsEngine = { "Engine", &SWIGTYPE_p_gsEngine,_wrap_new_Engine, swig_delete_Engine, swig_gsEngine_methods, swig_gsEngine_attributes, swig_gsEngine_bases, swig_gsEngine_base_names };
 
 static int _wrap_new_Loadable(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Loadable *result = 0 ;
+  gsLoadable *result = 0 ;
   
-  SWIG_check_num_args("OgreKit::Loadable",0,0)
-  result = (OgreKit::Loadable *)new OgreKit::Loadable();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__Loadable,1); SWIG_arg++; 
+  SWIG_check_num_args("gsLoadable",0,0)
+  result = (gsLoadable *)new gsLoadable();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsLoadable,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -5564,13 +5988,13 @@ fail:
 
 static int _wrap_Loadable_load(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Loadable *arg1 = (OgreKit::Loadable *) 0 ;
+  gsLoadable *arg1 = (gsLoadable *) 0 ;
   
   SWIG_check_num_args("load",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("load",1,"OgreKit::Loadable *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("load",1,"gsLoadable *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Loadable,0))){
-    SWIG_fail_ptr("Loadable_load",1,SWIGTYPE_p_OgreKit__Loadable);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsLoadable,0))){
+    SWIG_fail_ptr("Loadable_load",1,SWIGTYPE_p_gsLoadable);
   }
   
   (arg1)->load();
@@ -5587,13 +6011,13 @@ fail:
 
 static int _wrap_Loadable_unload(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Loadable *arg1 = (OgreKit::Loadable *) 0 ;
+  gsLoadable *arg1 = (gsLoadable *) 0 ;
   
   SWIG_check_num_args("unload",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("unload",1,"OgreKit::Loadable *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("unload",1,"gsLoadable *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Loadable,0))){
-    SWIG_fail_ptr("Loadable_unload",1,SWIGTYPE_p_OgreKit__Loadable);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsLoadable,0))){
+    SWIG_fail_ptr("Loadable_unload",1,SWIGTYPE_p_gsLoadable);
   }
   
   (arg1)->unload();
@@ -5610,13 +6034,13 @@ fail:
 
 static int _wrap_Loadable_reload(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Loadable *arg1 = (OgreKit::Loadable *) 0 ;
+  gsLoadable *arg1 = (gsLoadable *) 0 ;
   
   SWIG_check_num_args("reload",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("reload",1,"OgreKit::Loadable *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("reload",1,"gsLoadable *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Loadable,0))){
-    SWIG_fail_ptr("Loadable_reload",1,SWIGTYPE_p_OgreKit__Loadable);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsLoadable,0))){
+    SWIG_fail_ptr("Loadable_reload",1,SWIGTYPE_p_gsLoadable);
   }
   
   (arg1)->reload();
@@ -5633,14 +6057,14 @@ fail:
 
 static int _wrap_Loadable_getName(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Loadable *arg1 = (OgreKit::Loadable *) 0 ;
-  OgreKit::String result;
+  gsLoadable *arg1 = (gsLoadable *) 0 ;
+  gkString result;
   
   SWIG_check_num_args("getName",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getName",1,"OgreKit::Loadable *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getName",1,"gsLoadable *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Loadable,0))){
-    SWIG_fail_ptr("Loadable_getName",1,SWIGTYPE_p_OgreKit__Loadable);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsLoadable,0))){
+    SWIG_fail_ptr("Loadable_getName",1,SWIGTYPE_p_gsLoadable);
   }
   
   result = (arg1)->getName();
@@ -5658,30 +6082,30 @@ fail:
 
 
 static void swig_delete_Loadable(void *obj) {
-OgreKit::Loadable *arg1 = (OgreKit::Loadable *) obj;
+gsLoadable *arg1 = (gsLoadable *) obj;
 delete arg1;
 }
-static swig_lua_method swig_OgreKit_Loadable_methods[] = {
+static swig_lua_method swig_gsLoadable_methods[] = {
     {"load", _wrap_Loadable_load}, 
     {"unload", _wrap_Loadable_unload}, 
     {"reload", _wrap_Loadable_reload}, 
     {"getName", _wrap_Loadable_getName}, 
     {0,0}
 };
-static swig_lua_attribute swig_OgreKit_Loadable_attributes[] = {
+static swig_lua_attribute swig_gsLoadable_attributes[] = {
     {0,0,0}
 };
-static swig_lua_class *swig_OgreKit_Loadable_bases[] = {0};
-static const char *swig_OgreKit_Loadable_base_names[] = {0};
-static swig_lua_class _wrap_class_OgreKit_Loadable = { "Loadable", &SWIGTYPE_p_OgreKit__Loadable,_wrap_new_Loadable, swig_delete_Loadable, swig_OgreKit_Loadable_methods, swig_OgreKit_Loadable_attributes, swig_OgreKit_Loadable_bases, swig_OgreKit_Loadable_base_names };
+static swig_lua_class *swig_gsLoadable_bases[] = {0};
+static const char *swig_gsLoadable_base_names[] = {0};
+static swig_lua_class _wrap_class_gsLoadable = { "Loadable", &SWIGTYPE_p_gsLoadable,_wrap_new_Loadable, swig_delete_Loadable, swig_gsLoadable_methods, swig_gsLoadable_attributes, swig_gsLoadable_bases, swig_gsLoadable_base_names };
 
 static int _wrap_new_Scene(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Scene *result = 0 ;
+  gsScene *result = 0 ;
   
-  SWIG_check_num_args("OgreKit::Scene",0,0)
-  result = (OgreKit::Scene *)new OgreKit::Scene();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__Scene,1); SWIG_arg++; 
+  SWIG_check_num_args("gsScene",0,0)
+  result = (gsScene *)new gsScene();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsScene,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -5694,24 +6118,24 @@ fail:
 
 static int _wrap_Scene_hasObject(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Scene *arg1 = (OgreKit::Scene *) 0 ;
-  OgreKit::String *arg2 = 0 ;
+  gsScene *arg1 = (gsScene *) 0 ;
+  gkString *arg2 = 0 ;
   gkString temp2 ;
   bool result;
   
   SWIG_check_num_args("hasObject",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("hasObject",1,"OgreKit::Scene *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("hasObject",2,"OgreKit::String const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("hasObject",1,"gsScene *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("hasObject",2,"gkString const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Scene,0))){
-    SWIG_fail_ptr("Scene_hasObject",1,SWIGTYPE_p_OgreKit__Scene);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsScene,0))){
+    SWIG_fail_ptr("Scene_hasObject",1,SWIGTYPE_p_gsScene);
   }
   
   
   temp2 = gkString((const char*)lua_tostring(L, 2));
   arg2 = &temp2;
   
-  result = (bool)(arg1)->hasObject((OgreKit::String const &)*arg2);
+  result = (bool)(arg1)->hasObject((gkString const &)*arg2);
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -5725,28 +6149,25 @@ fail:
 
 static int _wrap_Scene_getObject(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Scene *arg1 = (OgreKit::Scene *) 0 ;
-  OgreKit::String *arg2 = 0 ;
+  gsScene *arg1 = (gsScene *) 0 ;
+  gkString *arg2 = 0 ;
   gkString temp2 ;
-  OgreKit::Pointer< OgreKit::GameObject > result;
+  gsGameObject *result = 0 ;
   
   SWIG_check_num_args("getObject",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getObject",1,"OgreKit::Scene *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("getObject",2,"OgreKit::String const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getObject",1,"gsScene *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("getObject",2,"gkString const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Scene,0))){
-    SWIG_fail_ptr("Scene_getObject",1,SWIGTYPE_p_OgreKit__Scene);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsScene,0))){
+    SWIG_fail_ptr("Scene_getObject",1,SWIGTYPE_p_gsScene);
   }
   
   
   temp2 = gkString((const char*)lua_tostring(L, 2));
   arg2 = &temp2;
   
-  result = (arg1)->getObject((OgreKit::String const &)*arg2);
-  {
-    OgreKit::Pointer< OgreKit::GameObject > * resultptr = new OgreKit::Pointer< OgreKit::GameObject >((const OgreKit::Pointer< OgreKit::GameObject > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,1); SWIG_arg++;
-  }
+  result = (gsGameObject *)(arg1)->getObject((gkString const &)*arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGameObject,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -5759,28 +6180,25 @@ fail:
 
 static int _wrap_Scene_getEntity(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Scene *arg1 = (OgreKit::Scene *) 0 ;
-  OgreKit::String *arg2 = 0 ;
+  gsScene *arg1 = (gsScene *) 0 ;
+  gkString *arg2 = 0 ;
   gkString temp2 ;
-  OgreKit::Pointer< OgreKit::Entity > result;
+  gsEntity *result = 0 ;
   
   SWIG_check_num_args("getEntity",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getEntity",1,"OgreKit::Scene *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("getEntity",2,"OgreKit::String const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getEntity",1,"gsScene *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("getEntity",2,"gkString const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Scene,0))){
-    SWIG_fail_ptr("Scene_getEntity",1,SWIGTYPE_p_OgreKit__Scene);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsScene,0))){
+    SWIG_fail_ptr("Scene_getEntity",1,SWIGTYPE_p_gsScene);
   }
   
   
   temp2 = gkString((const char*)lua_tostring(L, 2));
   arg2 = &temp2;
   
-  result = (arg1)->getEntity((OgreKit::String const &)*arg2);
-  {
-    OgreKit::Pointer< OgreKit::Entity > * resultptr = new OgreKit::Pointer< OgreKit::Entity >((const OgreKit::Pointer< OgreKit::Entity > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,1); SWIG_arg++;
-  }
+  result = (gsEntity *)(arg1)->getEntity((gkString const &)*arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsEntity,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -5793,28 +6211,25 @@ fail:
 
 static int _wrap_Scene_getCamera(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Scene *arg1 = (OgreKit::Scene *) 0 ;
-  OgreKit::String *arg2 = 0 ;
+  gsScene *arg1 = (gsScene *) 0 ;
+  gkString *arg2 = 0 ;
   gkString temp2 ;
-  OgreKit::Pointer< OgreKit::Camera > result;
+  gsCamera *result = 0 ;
   
   SWIG_check_num_args("getCamera",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getCamera",1,"OgreKit::Scene *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("getCamera",2,"OgreKit::String const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getCamera",1,"gsScene *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("getCamera",2,"gkString const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Scene,0))){
-    SWIG_fail_ptr("Scene_getCamera",1,SWIGTYPE_p_OgreKit__Scene);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsScene,0))){
+    SWIG_fail_ptr("Scene_getCamera",1,SWIGTYPE_p_gsScene);
   }
   
   
   temp2 = gkString((const char*)lua_tostring(L, 2));
   arg2 = &temp2;
   
-  result = (arg1)->getCamera((OgreKit::String const &)*arg2);
-  {
-    OgreKit::Pointer< OgreKit::Camera > * resultptr = new OgreKit::Pointer< OgreKit::Camera >((const OgreKit::Pointer< OgreKit::Camera > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,1); SWIG_arg++;
-  }
+  result = (gsCamera *)(arg1)->getCamera((gkString const &)*arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsCamera,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -5827,28 +6242,56 @@ fail:
 
 static int _wrap_Scene_getLight(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Scene *arg1 = (OgreKit::Scene *) 0 ;
-  OgreKit::String *arg2 = 0 ;
+  gsScene *arg1 = (gsScene *) 0 ;
+  gkString *arg2 = 0 ;
   gkString temp2 ;
-  OgreKit::Pointer< OgreKit::Light > result;
+  gsLight *result = 0 ;
   
   SWIG_check_num_args("getLight",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getLight",1,"OgreKit::Scene *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("getLight",2,"OgreKit::String const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getLight",1,"gsScene *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("getLight",2,"gkString const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Scene,0))){
-    SWIG_fail_ptr("Scene_getLight",1,SWIGTYPE_p_OgreKit__Scene);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsScene,0))){
+    SWIG_fail_ptr("Scene_getLight",1,SWIGTYPE_p_gsScene);
   }
   
   
   temp2 = gkString((const char*)lua_tostring(L, 2));
   arg2 = &temp2;
   
-  result = (arg1)->getLight((OgreKit::String const &)*arg2);
-  {
-    OgreKit::Pointer< OgreKit::Light > * resultptr = new OgreKit::Pointer< OgreKit::Light >((const OgreKit::Pointer< OgreKit::Light > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,1); SWIG_arg++;
+  result = (gsLight *)(arg1)->getLight((gkString const &)*arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsLight,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Scene_getSkeleton(lua_State* L) {
+  int SWIG_arg = 0;
+  gsScene *arg1 = (gsScene *) 0 ;
+  gkString *arg2 = 0 ;
+  gkString temp2 ;
+  gsSkeleton *result = 0 ;
+  
+  SWIG_check_num_args("getSkeleton",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getSkeleton",1,"gsScene *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("getSkeleton",2,"gkString const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsScene,0))){
+    SWIG_fail_ptr("Scene_getSkeleton",1,SWIGTYPE_p_gsScene);
   }
+  
+  
+  temp2 = gkString((const char*)lua_tostring(L, 2));
+  arg2 = &temp2;
+  
+  result = (gsSkeleton *)(arg1)->getSkeleton((gkString const &)*arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsSkeleton,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -5861,28 +6304,49 @@ fail:
 
 static int _wrap_Scene_createEmpty(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Scene *arg1 = (OgreKit::Scene *) 0 ;
-  OgreKit::String *arg2 = 0 ;
+  gsScene *arg1 = (gsScene *) 0 ;
+  gkString *arg2 = 0 ;
   gkString temp2 ;
-  OgreKit::Pointer< OgreKit::GameObject > result;
+  gsGameObject *result = 0 ;
   
   SWIG_check_num_args("createEmpty",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("createEmpty",1,"OgreKit::Scene *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("createEmpty",2,"OgreKit::String const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("createEmpty",1,"gsScene *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("createEmpty",2,"gkString const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Scene,0))){
-    SWIG_fail_ptr("Scene_createEmpty",1,SWIGTYPE_p_OgreKit__Scene);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsScene,0))){
+    SWIG_fail_ptr("Scene_createEmpty",1,SWIGTYPE_p_gsScene);
   }
   
   
   temp2 = gkString((const char*)lua_tostring(L, 2));
   arg2 = &temp2;
   
-  result = (arg1)->createEmpty((OgreKit::String const &)*arg2);
-  {
-    OgreKit::Pointer< OgreKit::GameObject > * resultptr = new OgreKit::Pointer< OgreKit::GameObject >((const OgreKit::Pointer< OgreKit::GameObject > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,1); SWIG_arg++;
+  result = (gsGameObject *)(arg1)->createEmpty((gkString const &)*arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGameObject,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Scene_getObjectList(lua_State* L) {
+  int SWIG_arg = 0;
+  gsScene *arg1 = (gsScene *) 0 ;
+  gsArray< gsGameObject,gkGameObject > *result = 0 ;
+  
+  SWIG_check_num_args("getObjectList",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getObjectList",1,"gsScene *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsScene,0))){
+    SWIG_fail_ptr("Scene_getObjectList",1,SWIGTYPE_p_gsScene);
   }
+  
+  result = (gsArray< gsGameObject,gkGameObject > *) &(arg1)->getObjectList();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsArrayT_gsGameObject_gkGameObject_t,0); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -5894,32 +6358,34 @@ fail:
 
 
 static void swig_delete_Scene(void *obj) {
-OgreKit::Scene *arg1 = (OgreKit::Scene *) obj;
+gsScene *arg1 = (gsScene *) obj;
 delete arg1;
 }
-static swig_lua_method swig_OgreKit_Scene_methods[] = {
+static swig_lua_method swig_gsScene_methods[] = {
     {"hasObject", _wrap_Scene_hasObject}, 
     {"getObject", _wrap_Scene_getObject}, 
     {"getEntity", _wrap_Scene_getEntity}, 
     {"getCamera", _wrap_Scene_getCamera}, 
     {"getLight", _wrap_Scene_getLight}, 
+    {"getSkeleton", _wrap_Scene_getSkeleton}, 
     {"createEmpty", _wrap_Scene_createEmpty}, 
+    {"getObjectList", _wrap_Scene_getObjectList}, 
     {0,0}
 };
-static swig_lua_attribute swig_OgreKit_Scene_attributes[] = {
+static swig_lua_attribute swig_gsScene_attributes[] = {
     {0,0,0}
 };
-static swig_lua_class *swig_OgreKit_Scene_bases[] = {0,0};
-static const char *swig_OgreKit_Scene_base_names[] = {"OgreKit::Loadable *",0};
-static swig_lua_class _wrap_class_OgreKit_Scene = { "Scene", &SWIGTYPE_p_OgreKit__Scene,_wrap_new_Scene, swig_delete_Scene, swig_OgreKit_Scene_methods, swig_OgreKit_Scene_attributes, swig_OgreKit_Scene_bases, swig_OgreKit_Scene_base_names };
+static swig_lua_class *swig_gsScene_bases[] = {0,0};
+static const char *swig_gsScene_base_names[] = {"gsLoadable *",0};
+static swig_lua_class _wrap_class_gsScene = { "Scene", &SWIGTYPE_p_gsScene,_wrap_new_Scene, swig_delete_Scene, swig_gsScene_methods, swig_gsScene_attributes, swig_gsScene_bases, swig_gsScene_base_names };
 
 static int _wrap_new_GameObject(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *result = 0 ;
+  gsGameObject *result = 0 ;
   
-  SWIG_check_num_args("OgreKit::GameObject",0,0)
-  result = (OgreKit::GameObject *)new OgreKit::GameObject();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__GameObject,1); SWIG_arg++; 
+  SWIG_check_num_args("gsGameObject",0,0)
+  result = (gsGameObject *)new gsGameObject();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGameObject,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -5932,20 +6398,20 @@ fail:
 
 static int _wrap_GameObject_getPosition(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
-  OgreKit::Vector3 result;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsVector3 result;
   
   SWIG_check_num_args("getPosition",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getPosition",1,"OgreKit::GameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getPosition",1,"gsGameObject *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_getPosition",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_getPosition",1,SWIGTYPE_p_gsGameObject);
   }
   
   result = (arg1)->getPosition();
   {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
+    gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -5959,20 +6425,20 @@ fail:
 
 static int _wrap_GameObject_getRotation(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
-  OgreKit::Vector3 result;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsVector3 result;
   
   SWIG_check_num_args("getRotation",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getRotation",1,"OgreKit::GameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getRotation",1,"gsGameObject *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_getRotation",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_getRotation",1,SWIGTYPE_p_gsGameObject);
   }
   
   result = (arg1)->getRotation();
   {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
+    gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -5986,20 +6452,20 @@ fail:
 
 static int _wrap_GameObject_getOrientation(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
-  OgreKit::Quaternion result;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsQuaternion result;
   
   SWIG_check_num_args("getOrientation",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getOrientation",1,"OgreKit::GameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getOrientation",1,"gsGameObject *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_getOrientation",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_getOrientation",1,SWIGTYPE_p_gsGameObject);
   }
   
   result = (arg1)->getOrientation();
   {
-    OgreKit::Quaternion * resultptr = new OgreKit::Quaternion((const OgreKit::Quaternion &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Quaternion,1); SWIG_arg++;
+    gsQuaternion * resultptr = new gsQuaternion((const gsQuaternion &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsQuaternion,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -6013,20 +6479,20 @@ fail:
 
 static int _wrap_GameObject_getScale(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
-  OgreKit::Vector3 result;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsVector3 result;
   
   SWIG_check_num_args("getScale",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getScale",1,"OgreKit::GameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getScale",1,"gsGameObject *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_getScale",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_getScale",1,SWIGTYPE_p_gsGameObject);
   }
   
   result = (arg1)->getScale();
   {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
+    gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -6040,20 +6506,20 @@ fail:
 
 static int _wrap_GameObject_getWorldPosition(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
-  OgreKit::Vector3 result;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsVector3 result;
   
   SWIG_check_num_args("getWorldPosition",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getWorldPosition",1,"OgreKit::GameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getWorldPosition",1,"gsGameObject *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_getWorldPosition",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_getWorldPosition",1,SWIGTYPE_p_gsGameObject);
   }
   
   result = (arg1)->getWorldPosition();
   {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
+    gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -6067,20 +6533,20 @@ fail:
 
 static int _wrap_GameObject_getWorldRotation(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
-  OgreKit::Vector3 result;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsVector3 result;
   
   SWIG_check_num_args("getWorldRotation",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getWorldRotation",1,"OgreKit::GameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getWorldRotation",1,"gsGameObject *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_getWorldRotation",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_getWorldRotation",1,SWIGTYPE_p_gsGameObject);
   }
   
   result = (arg1)->getWorldRotation();
   {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
+    gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -6094,20 +6560,20 @@ fail:
 
 static int _wrap_GameObject_getWorldOrientation(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
-  OgreKit::Quaternion result;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsQuaternion result;
   
   SWIG_check_num_args("getWorldOrientation",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getWorldOrientation",1,"OgreKit::GameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getWorldOrientation",1,"gsGameObject *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_getWorldOrientation",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_getWorldOrientation",1,SWIGTYPE_p_gsGameObject);
   }
   
   result = (arg1)->getWorldOrientation();
   {
-    OgreKit::Quaternion * resultptr = new OgreKit::Quaternion((const OgreKit::Quaternion &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Quaternion,1); SWIG_arg++;
+    gsQuaternion * resultptr = new gsQuaternion((const gsQuaternion &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsQuaternion,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -6121,20 +6587,20 @@ fail:
 
 static int _wrap_GameObject_getLinearVelocity(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
-  OgreKit::Vector3 result;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsVector3 result;
   
   SWIG_check_num_args("getLinearVelocity",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getLinearVelocity",1,"OgreKit::GameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getLinearVelocity",1,"gsGameObject *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_getLinearVelocity",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_getLinearVelocity",1,SWIGTYPE_p_gsGameObject);
   }
   
   result = (arg1)->getLinearVelocity();
   {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
+    gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -6148,20 +6614,20 @@ fail:
 
 static int _wrap_GameObject_getAngularVelocity(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
-  OgreKit::Vector3 result;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsVector3 result;
   
   SWIG_check_num_args("getAngularVelocity",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getAngularVelocity",1,"OgreKit::GameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getAngularVelocity",1,"gsGameObject *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_getAngularVelocity",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_getAngularVelocity",1,SWIGTYPE_p_gsGameObject);
   }
   
   result = (arg1)->getAngularVelocity();
   {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
+    gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -6175,23 +6641,23 @@ fail:
 
 static int _wrap_GameObject_setLinearVelocity__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsVector3 *arg2 = 0 ;
   
   SWIG_check_num_args("setLinearVelocity",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setLinearVelocity",1,"OgreKit::GameObject *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setLinearVelocity",2,"OgreKit::Vector3 const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setLinearVelocity",1,"gsGameObject *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setLinearVelocity",2,"gsVector3 const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_setLinearVelocity",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_setLinearVelocity",1,SWIGTYPE_p_gsGameObject);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("GameObject_setLinearVelocity",2,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("GameObject_setLinearVelocity",2,SWIGTYPE_p_gsVector3);
   }
   
-  (arg1)->setLinearVelocity((OgreKit::Vector3 const &)*arg2);
+  (arg1)->setLinearVelocity((gsVector3 const &)*arg2);
   
   return SWIG_arg;
   
@@ -6205,19 +6671,19 @@ fail:
 
 static int _wrap_GameObject_setLinearVelocity__SWIG_1(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
   float arg2 ;
   float arg3 ;
   float arg4 ;
   
   SWIG_check_num_args("setLinearVelocity",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setLinearVelocity",1,"OgreKit::GameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setLinearVelocity",1,"gsGameObject *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("setLinearVelocity",2,"float");
   if(!lua_isnumber(L,3)) SWIG_fail_arg("setLinearVelocity",3,"float");
   if(!lua_isnumber(L,4)) SWIG_fail_arg("setLinearVelocity",4,"float");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_setLinearVelocity",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_setLinearVelocity",1,SWIGTYPE_p_gsGameObject);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
@@ -6246,7 +6712,7 @@ static int _wrap_GameObject_setLinearVelocity(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__GameObject, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -6255,7 +6721,7 @@ static int _wrap_GameObject_setLinearVelocity(lua_State* L) {
     if (_v) {
       {
         void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
           _v = 0;
         } else {
           _v = 1;
@@ -6270,7 +6736,7 @@ static int _wrap_GameObject_setLinearVelocity(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__GameObject, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -6298,31 +6764,31 @@ static int _wrap_GameObject_setLinearVelocity(lua_State* L) {
   
   lua_pushstring(L,"Wrong arguments for overloaded function 'GameObject_setLinearVelocity'\n"
     "  Possible C/C++ prototypes are:\n"
-    "    setLinearVelocity(OgreKit::GameObject *,OgreKit::Vector3 const &)\n"
-    "    setLinearVelocity(OgreKit::GameObject *,float,float,float)\n");
+    "    setLinearVelocity(gsGameObject *,gsVector3 const &)\n"
+    "    setLinearVelocity(gsGameObject *,float,float,float)\n");
   lua_error(L);return 0;
 }
 
 
 static int _wrap_GameObject_setAngularVelocity__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsVector3 *arg2 = 0 ;
   
   SWIG_check_num_args("setAngularVelocity",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setAngularVelocity",1,"OgreKit::GameObject *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setAngularVelocity",2,"OgreKit::Vector3 const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setAngularVelocity",1,"gsGameObject *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setAngularVelocity",2,"gsVector3 const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_setAngularVelocity",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_setAngularVelocity",1,SWIGTYPE_p_gsGameObject);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("GameObject_setAngularVelocity",2,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("GameObject_setAngularVelocity",2,SWIGTYPE_p_gsVector3);
   }
   
-  (arg1)->setAngularVelocity((OgreKit::Vector3 const &)*arg2);
+  (arg1)->setAngularVelocity((gsVector3 const &)*arg2);
   
   return SWIG_arg;
   
@@ -6336,19 +6802,19 @@ fail:
 
 static int _wrap_GameObject_setAngularVelocity__SWIG_1(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
   float arg2 ;
   float arg3 ;
   float arg4 ;
   
   SWIG_check_num_args("setAngularVelocity",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setAngularVelocity",1,"OgreKit::GameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setAngularVelocity",1,"gsGameObject *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("setAngularVelocity",2,"float");
   if(!lua_isnumber(L,3)) SWIG_fail_arg("setAngularVelocity",3,"float");
   if(!lua_isnumber(L,4)) SWIG_fail_arg("setAngularVelocity",4,"float");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_setAngularVelocity",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_setAngularVelocity",1,SWIGTYPE_p_gsGameObject);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
@@ -6377,7 +6843,7 @@ static int _wrap_GameObject_setAngularVelocity(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__GameObject, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -6386,7 +6852,7 @@ static int _wrap_GameObject_setAngularVelocity(lua_State* L) {
     if (_v) {
       {
         void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
           _v = 0;
         } else {
           _v = 1;
@@ -6401,7 +6867,7 @@ static int _wrap_GameObject_setAngularVelocity(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__GameObject, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -6429,31 +6895,31 @@ static int _wrap_GameObject_setAngularVelocity(lua_State* L) {
   
   lua_pushstring(L,"Wrong arguments for overloaded function 'GameObject_setAngularVelocity'\n"
     "  Possible C/C++ prototypes are:\n"
-    "    setAngularVelocity(OgreKit::GameObject *,OgreKit::Vector3 const &)\n"
-    "    setAngularVelocity(OgreKit::GameObject *,float,float,float)\n");
+    "    setAngularVelocity(gsGameObject *,gsVector3 const &)\n"
+    "    setAngularVelocity(gsGameObject *,float,float,float)\n");
   lua_error(L);return 0;
 }
 
 
 static int _wrap_GameObject_setPosition__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsVector3 *arg2 = 0 ;
   
   SWIG_check_num_args("setPosition",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setPosition",1,"OgreKit::GameObject *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setPosition",2,"OgreKit::Vector3 const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setPosition",1,"gsGameObject *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setPosition",2,"gsVector3 const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_setPosition",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_setPosition",1,SWIGTYPE_p_gsGameObject);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("GameObject_setPosition",2,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("GameObject_setPosition",2,SWIGTYPE_p_gsVector3);
   }
   
-  (arg1)->setPosition((OgreKit::Vector3 const &)*arg2);
+  (arg1)->setPosition((gsVector3 const &)*arg2);
   
   return SWIG_arg;
   
@@ -6467,19 +6933,19 @@ fail:
 
 static int _wrap_GameObject_setPosition__SWIG_1(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
   float arg2 ;
   float arg3 ;
   float arg4 ;
   
   SWIG_check_num_args("setPosition",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setPosition",1,"OgreKit::GameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setPosition",1,"gsGameObject *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("setPosition",2,"float");
   if(!lua_isnumber(L,3)) SWIG_fail_arg("setPosition",3,"float");
   if(!lua_isnumber(L,4)) SWIG_fail_arg("setPosition",4,"float");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_setPosition",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_setPosition",1,SWIGTYPE_p_gsGameObject);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
@@ -6508,7 +6974,7 @@ static int _wrap_GameObject_setPosition(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__GameObject, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -6517,7 +6983,7 @@ static int _wrap_GameObject_setPosition(lua_State* L) {
     if (_v) {
       {
         void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
           _v = 0;
         } else {
           _v = 1;
@@ -6532,7 +6998,7 @@ static int _wrap_GameObject_setPosition(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__GameObject, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -6560,31 +7026,31 @@ static int _wrap_GameObject_setPosition(lua_State* L) {
   
   lua_pushstring(L,"Wrong arguments for overloaded function 'GameObject_setPosition'\n"
     "  Possible C/C++ prototypes are:\n"
-    "    setPosition(OgreKit::GameObject *,OgreKit::Vector3 const &)\n"
-    "    setPosition(OgreKit::GameObject *,float,float,float)\n");
+    "    setPosition(gsGameObject *,gsVector3 const &)\n"
+    "    setPosition(gsGameObject *,float,float,float)\n");
   lua_error(L);return 0;
 }
 
 
 static int _wrap_GameObject_setRotation__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsVector3 *arg2 = 0 ;
   
   SWIG_check_num_args("setRotation",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setRotation",1,"OgreKit::GameObject *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setRotation",2,"OgreKit::Vector3 const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setRotation",1,"gsGameObject *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setRotation",2,"gsVector3 const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_setRotation",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_setRotation",1,SWIGTYPE_p_gsGameObject);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("GameObject_setRotation",2,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("GameObject_setRotation",2,SWIGTYPE_p_gsVector3);
   }
   
-  (arg1)->setRotation((OgreKit::Vector3 const &)*arg2);
+  (arg1)->setRotation((gsVector3 const &)*arg2);
   
   return SWIG_arg;
   
@@ -6598,19 +7064,19 @@ fail:
 
 static int _wrap_GameObject_setRotation__SWIG_1(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
   float arg2 ;
   float arg3 ;
   float arg4 ;
   
   SWIG_check_num_args("setRotation",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setRotation",1,"OgreKit::GameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setRotation",1,"gsGameObject *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("setRotation",2,"float");
   if(!lua_isnumber(L,3)) SWIG_fail_arg("setRotation",3,"float");
   if(!lua_isnumber(L,4)) SWIG_fail_arg("setRotation",4,"float");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_setRotation",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_setRotation",1,SWIGTYPE_p_gsGameObject);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
@@ -6639,7 +7105,7 @@ static int _wrap_GameObject_setRotation(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__GameObject, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -6648,7 +7114,7 @@ static int _wrap_GameObject_setRotation(lua_State* L) {
     if (_v) {
       {
         void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
           _v = 0;
         } else {
           _v = 1;
@@ -6663,7 +7129,7 @@ static int _wrap_GameObject_setRotation(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__GameObject, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -6691,31 +7157,31 @@ static int _wrap_GameObject_setRotation(lua_State* L) {
   
   lua_pushstring(L,"Wrong arguments for overloaded function 'GameObject_setRotation'\n"
     "  Possible C/C++ prototypes are:\n"
-    "    setRotation(OgreKit::GameObject *,OgreKit::Vector3 const &)\n"
-    "    setRotation(OgreKit::GameObject *,float,float,float)\n");
+    "    setRotation(gsGameObject *,gsVector3 const &)\n"
+    "    setRotation(gsGameObject *,float,float,float)\n");
   lua_error(L);return 0;
 }
 
 
 static int _wrap_GameObject_setOrientation__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
-  OgreKit::Quaternion *arg2 = 0 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsQuaternion *arg2 = 0 ;
   
   SWIG_check_num_args("setOrientation",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setOrientation",1,"OgreKit::GameObject *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setOrientation",2,"OgreKit::Quaternion const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setOrientation",1,"gsGameObject *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setOrientation",2,"gsQuaternion const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_setOrientation",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_setOrientation",1,SWIGTYPE_p_gsGameObject);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("GameObject_setOrientation",2,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("GameObject_setOrientation",2,SWIGTYPE_p_gsQuaternion);
   }
   
-  (arg1)->setOrientation((OgreKit::Quaternion const &)*arg2);
+  (arg1)->setOrientation((gsQuaternion const &)*arg2);
   
   return SWIG_arg;
   
@@ -6729,21 +7195,21 @@ fail:
 
 static int _wrap_GameObject_setOrientation__SWIG_1(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
   float arg2 ;
   float arg3 ;
   float arg4 ;
   float arg5 ;
   
   SWIG_check_num_args("setOrientation",5,5)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setOrientation",1,"OgreKit::GameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setOrientation",1,"gsGameObject *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("setOrientation",2,"float");
   if(!lua_isnumber(L,3)) SWIG_fail_arg("setOrientation",3,"float");
   if(!lua_isnumber(L,4)) SWIG_fail_arg("setOrientation",4,"float");
   if(!lua_isnumber(L,5)) SWIG_fail_arg("setOrientation",5,"float");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_setOrientation",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_setOrientation",1,SWIGTYPE_p_gsGameObject);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
@@ -6773,7 +7239,7 @@ static int _wrap_GameObject_setOrientation(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__GameObject, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -6782,7 +7248,7 @@ static int _wrap_GameObject_setOrientation(lua_State* L) {
     if (_v) {
       {
         void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Quaternion, 0)) {
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsQuaternion, 0)) {
           _v = 0;
         } else {
           _v = 1;
@@ -6797,7 +7263,7 @@ static int _wrap_GameObject_setOrientation(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__GameObject, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -6830,25 +7296,25 @@ static int _wrap_GameObject_setOrientation(lua_State* L) {
   
   lua_pushstring(L,"Wrong arguments for overloaded function 'GameObject_setOrientation'\n"
     "  Possible C/C++ prototypes are:\n"
-    "    setOrientation(OgreKit::GameObject *,OgreKit::Quaternion const &)\n"
-    "    setOrientation(OgreKit::GameObject *,float,float,float,float)\n");
+    "    setOrientation(gsGameObject *,gsQuaternion const &)\n"
+    "    setOrientation(gsGameObject *,float,float,float,float)\n");
   lua_error(L);return 0;
 }
 
 
 static int _wrap_GameObject_getType(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
-  OgreKit::GameObjectTypes result;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsGameObjectTypes result;
   
   SWIG_check_num_args("getType",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getType",1,"OgreKit::GameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getType",1,"gsGameObject *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_getType",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_getType",1,SWIGTYPE_p_gsGameObject);
   }
   
-  result = (OgreKit::GameObjectTypes)(arg1)->getType();
+  result = (gsGameObjectTypes)(arg1)->getType();
   lua_pushnumber(L, (lua_Number)(int)(result)); SWIG_arg++;
   return SWIG_arg;
   
@@ -6862,19 +7328,19 @@ fail:
 
 static int _wrap_GameObject_rotate__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
   float arg2 ;
   float arg3 ;
   float arg4 ;
   
   SWIG_check_num_args("rotate",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"OgreKit::GameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"gsGameObject *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("rotate",2,"float");
   if(!lua_isnumber(L,3)) SWIG_fail_arg("rotate",3,"float");
   if(!lua_isnumber(L,4)) SWIG_fail_arg("rotate",4,"float");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_rotate",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_rotate",1,SWIGTYPE_p_gsGameObject);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
@@ -6894,23 +7360,23 @@ fail:
 
 static int _wrap_GameObject_rotate__SWIG_1(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsVector3 *arg2 = 0 ;
   
   SWIG_check_num_args("rotate",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"OgreKit::GameObject *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("rotate",2,"OgreKit::Vector3 const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"gsGameObject *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("rotate",2,"gsVector3 const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_rotate",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_rotate",1,SWIGTYPE_p_gsGameObject);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("GameObject_rotate",2,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("GameObject_rotate",2,SWIGTYPE_p_gsVector3);
   }
   
-  (arg1)->rotate((OgreKit::Vector3 const &)*arg2);
+  (arg1)->rotate((gsVector3 const &)*arg2);
   
   return SWIG_arg;
   
@@ -6924,23 +7390,23 @@ fail:
 
 static int _wrap_GameObject_rotate__SWIG_2(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
-  OgreKit::Quaternion *arg2 = 0 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsQuaternion *arg2 = 0 ;
   
   SWIG_check_num_args("rotate",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"OgreKit::GameObject *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("rotate",2,"OgreKit::Quaternion const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"gsGameObject *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("rotate",2,"gsQuaternion const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_rotate",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_rotate",1,SWIGTYPE_p_gsGameObject);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("GameObject_rotate",2,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("GameObject_rotate",2,SWIGTYPE_p_gsQuaternion);
   }
   
-  (arg1)->rotate((OgreKit::Quaternion const &)*arg2);
+  (arg1)->rotate((gsQuaternion const &)*arg2);
   
   return SWIG_arg;
   
@@ -6954,27 +7420,27 @@ fail:
 
 static int _wrap_GameObject_rotate__SWIG_3(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
   float arg2 ;
   float arg3 ;
   float arg4 ;
-  OgreKit::TransformSpace arg5 ;
+  gsTransformSpace arg5 ;
   
   SWIG_check_num_args("rotate",5,5)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"OgreKit::GameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"gsGameObject *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("rotate",2,"float");
   if(!lua_isnumber(L,3)) SWIG_fail_arg("rotate",3,"float");
   if(!lua_isnumber(L,4)) SWIG_fail_arg("rotate",4,"float");
-  if(!lua_isnumber(L,5)) SWIG_fail_arg("rotate",5,"OgreKit::TransformSpace");
+  if(!lua_isnumber(L,5)) SWIG_fail_arg("rotate",5,"gsTransformSpace");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_rotate",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_rotate",1,SWIGTYPE_p_gsGameObject);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
   arg3 = (float)lua_tonumber(L, 3);
   arg4 = (float)lua_tonumber(L, 4);
-  arg5 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 5);
+  arg5 = (gsTransformSpace)(int)lua_tonumber(L, 5);
   (arg1)->rotate(arg2,arg3,arg4,arg5);
   
   return SWIG_arg;
@@ -6989,26 +7455,26 @@ fail:
 
 static int _wrap_GameObject_rotate__SWIG_4(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  OgreKit::TransformSpace arg3 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsVector3 *arg2 = 0 ;
+  gsTransformSpace arg3 ;
   
   SWIG_check_num_args("rotate",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"OgreKit::GameObject *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("rotate",2,"OgreKit::Vector3 const &");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("rotate",3,"OgreKit::TransformSpace");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"gsGameObject *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("rotate",2,"gsVector3 const &");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("rotate",3,"gsTransformSpace");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_rotate",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_rotate",1,SWIGTYPE_p_gsGameObject);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("GameObject_rotate",2,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("GameObject_rotate",2,SWIGTYPE_p_gsVector3);
   }
   
-  arg3 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 3);
-  (arg1)->rotate((OgreKit::Vector3 const &)*arg2,arg3);
+  arg3 = (gsTransformSpace)(int)lua_tonumber(L, 3);
+  (arg1)->rotate((gsVector3 const &)*arg2,arg3);
   
   return SWIG_arg;
   
@@ -7022,26 +7488,26 @@ fail:
 
 static int _wrap_GameObject_rotate__SWIG_5(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
-  OgreKit::Quaternion *arg2 = 0 ;
-  OgreKit::TransformSpace arg3 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsQuaternion *arg2 = 0 ;
+  gsTransformSpace arg3 ;
   
   SWIG_check_num_args("rotate",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"OgreKit::GameObject *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("rotate",2,"OgreKit::Quaternion const &");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("rotate",3,"OgreKit::TransformSpace");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"gsGameObject *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("rotate",2,"gsQuaternion const &");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("rotate",3,"gsTransformSpace");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_rotate",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_rotate",1,SWIGTYPE_p_gsGameObject);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("GameObject_rotate",2,SWIGTYPE_p_OgreKit__Quaternion);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsQuaternion,0))){
+    SWIG_fail_ptr("GameObject_rotate",2,SWIGTYPE_p_gsQuaternion);
   }
   
-  arg3 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 3);
-  (arg1)->rotate((OgreKit::Quaternion const &)*arg2,arg3);
+  arg3 = (gsTransformSpace)(int)lua_tonumber(L, 3);
+  (arg1)->rotate((gsQuaternion const &)*arg2,arg3);
   
   return SWIG_arg;
   
@@ -7064,7 +7530,7 @@ static int _wrap_GameObject_rotate(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__GameObject, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -7073,7 +7539,7 @@ static int _wrap_GameObject_rotate(lua_State* L) {
     if (_v) {
       {
         void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
           _v = 0;
         } else {
           _v = 1;
@@ -7088,7 +7554,7 @@ static int _wrap_GameObject_rotate(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__GameObject, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -7097,7 +7563,7 @@ static int _wrap_GameObject_rotate(lua_State* L) {
     if (_v) {
       {
         void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Quaternion, 0)) {
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsQuaternion, 0)) {
           _v = 0;
         } else {
           _v = 1;
@@ -7112,7 +7578,7 @@ static int _wrap_GameObject_rotate(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__GameObject, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -7121,7 +7587,7 @@ static int _wrap_GameObject_rotate(lua_State* L) {
     if (_v) {
       {
         void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
           _v = 0;
         } else {
           _v = 1;
@@ -7141,7 +7607,7 @@ static int _wrap_GameObject_rotate(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__GameObject, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -7150,7 +7616,7 @@ static int _wrap_GameObject_rotate(lua_State* L) {
     if (_v) {
       {
         void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Quaternion, 0)) {
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsQuaternion, 0)) {
           _v = 0;
         } else {
           _v = 1;
@@ -7170,7 +7636,7 @@ static int _wrap_GameObject_rotate(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__GameObject, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -7199,7 +7665,7 @@ static int _wrap_GameObject_rotate(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__GameObject, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -7232,31 +7698,31 @@ static int _wrap_GameObject_rotate(lua_State* L) {
   
   lua_pushstring(L,"Wrong arguments for overloaded function 'GameObject_rotate'\n"
     "  Possible C/C++ prototypes are:\n"
-    "    rotate(OgreKit::GameObject *,float,float,float)\n"
-    "    rotate(OgreKit::GameObject *,OgreKit::Vector3 const &)\n"
-    "    rotate(OgreKit::GameObject *,OgreKit::Quaternion const &)\n"
-    "    rotate(OgreKit::GameObject *,float,float,float,OgreKit::TransformSpace)\n"
-    "    rotate(OgreKit::GameObject *,OgreKit::Vector3 const &,OgreKit::TransformSpace)\n"
-    "    rotate(OgreKit::GameObject *,OgreKit::Quaternion const &,OgreKit::TransformSpace)\n");
+    "    rotate(gsGameObject *,float,float,float)\n"
+    "    rotate(gsGameObject *,gsVector3 const &)\n"
+    "    rotate(gsGameObject *,gsQuaternion const &)\n"
+    "    rotate(gsGameObject *,float,float,float,gsTransformSpace)\n"
+    "    rotate(gsGameObject *,gsVector3 const &,gsTransformSpace)\n"
+    "    rotate(gsGameObject *,gsQuaternion const &,gsTransformSpace)\n");
   lua_error(L);return 0;
 }
 
 
 static int _wrap_GameObject_translate__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
   float arg2 ;
   float arg3 ;
   float arg4 ;
   
   SWIG_check_num_args("translate",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("translate",1,"OgreKit::GameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("translate",1,"gsGameObject *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("translate",2,"float");
   if(!lua_isnumber(L,3)) SWIG_fail_arg("translate",3,"float");
   if(!lua_isnumber(L,4)) SWIG_fail_arg("translate",4,"float");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_translate",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_translate",1,SWIGTYPE_p_gsGameObject);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
@@ -7276,23 +7742,23 @@ fail:
 
 static int _wrap_GameObject_translate__SWIG_1(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsVector3 *arg2 = 0 ;
   
   SWIG_check_num_args("translate",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("translate",1,"OgreKit::GameObject *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("translate",2,"OgreKit::Vector3 const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("translate",1,"gsGameObject *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("translate",2,"gsVector3 const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_translate",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_translate",1,SWIGTYPE_p_gsGameObject);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("GameObject_translate",2,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("GameObject_translate",2,SWIGTYPE_p_gsVector3);
   }
   
-  (arg1)->translate((OgreKit::Vector3 const &)*arg2);
+  (arg1)->translate((gsVector3 const &)*arg2);
   
   return SWIG_arg;
   
@@ -7306,27 +7772,27 @@ fail:
 
 static int _wrap_GameObject_translate__SWIG_2(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
   float arg2 ;
   float arg3 ;
   float arg4 ;
-  OgreKit::TransformSpace arg5 ;
+  gsTransformSpace arg5 ;
   
   SWIG_check_num_args("translate",5,5)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("translate",1,"OgreKit::GameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("translate",1,"gsGameObject *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("translate",2,"float");
   if(!lua_isnumber(L,3)) SWIG_fail_arg("translate",3,"float");
   if(!lua_isnumber(L,4)) SWIG_fail_arg("translate",4,"float");
-  if(!lua_isnumber(L,5)) SWIG_fail_arg("translate",5,"OgreKit::TransformSpace");
+  if(!lua_isnumber(L,5)) SWIG_fail_arg("translate",5,"gsTransformSpace");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_translate",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_translate",1,SWIGTYPE_p_gsGameObject);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
   arg3 = (float)lua_tonumber(L, 3);
   arg4 = (float)lua_tonumber(L, 4);
-  arg5 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 5);
+  arg5 = (gsTransformSpace)(int)lua_tonumber(L, 5);
   (arg1)->translate(arg2,arg3,arg4,arg5);
   
   return SWIG_arg;
@@ -7341,26 +7807,26 @@ fail:
 
 static int _wrap_GameObject_translate__SWIG_3(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  OgreKit::TransformSpace arg3 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsVector3 *arg2 = 0 ;
+  gsTransformSpace arg3 ;
   
   SWIG_check_num_args("translate",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("translate",1,"OgreKit::GameObject *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("translate",2,"OgreKit::Vector3 const &");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("translate",3,"OgreKit::TransformSpace");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("translate",1,"gsGameObject *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("translate",2,"gsVector3 const &");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("translate",3,"gsTransformSpace");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_translate",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_translate",1,SWIGTYPE_p_gsGameObject);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("GameObject_translate",2,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("GameObject_translate",2,SWIGTYPE_p_gsVector3);
   }
   
-  arg3 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 3);
-  (arg1)->translate((OgreKit::Vector3 const &)*arg2,arg3);
+  arg3 = (gsTransformSpace)(int)lua_tonumber(L, 3);
+  (arg1)->translate((gsVector3 const &)*arg2,arg3);
   
   return SWIG_arg;
   
@@ -7383,7 +7849,7 @@ static int _wrap_GameObject_translate(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__GameObject, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -7392,7 +7858,7 @@ static int _wrap_GameObject_translate(lua_State* L) {
     if (_v) {
       {
         void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
           _v = 0;
         } else {
           _v = 1;
@@ -7407,7 +7873,7 @@ static int _wrap_GameObject_translate(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__GameObject, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -7416,7 +7882,7 @@ static int _wrap_GameObject_translate(lua_State* L) {
     if (_v) {
       {
         void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
           _v = 0;
         } else {
           _v = 1;
@@ -7436,7 +7902,7 @@ static int _wrap_GameObject_translate(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__GameObject, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -7465,7 +7931,7 @@ static int _wrap_GameObject_translate(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__GameObject, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -7498,33 +7964,33 @@ static int _wrap_GameObject_translate(lua_State* L) {
   
   lua_pushstring(L,"Wrong arguments for overloaded function 'GameObject_translate'\n"
     "  Possible C/C++ prototypes are:\n"
-    "    translate(OgreKit::GameObject *,float,float,float)\n"
-    "    translate(OgreKit::GameObject *,OgreKit::Vector3 const &)\n"
-    "    translate(OgreKit::GameObject *,float,float,float,OgreKit::TransformSpace)\n"
-    "    translate(OgreKit::GameObject *,OgreKit::Vector3 const &,OgreKit::TransformSpace)\n");
+    "    translate(gsGameObject *,float,float,float)\n"
+    "    translate(gsGameObject *,gsVector3 const &)\n"
+    "    translate(gsGameObject *,float,float,float,gsTransformSpace)\n"
+    "    translate(gsGameObject *,gsVector3 const &,gsTransformSpace)\n");
   lua_error(L);return 0;
 }
 
 
 static int _wrap_GameObject_scale__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsVector3 *arg2 = 0 ;
   
   SWIG_check_num_args("scale",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("scale",1,"OgreKit::GameObject *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("scale",2,"OgreKit::Vector3 const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("scale",1,"gsGameObject *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("scale",2,"gsVector3 const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_scale",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_scale",1,SWIGTYPE_p_gsGameObject);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("GameObject_scale",2,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("GameObject_scale",2,SWIGTYPE_p_gsVector3);
   }
   
-  (arg1)->scale((OgreKit::Vector3 const &)*arg2);
+  (arg1)->scale((gsVector3 const &)*arg2);
   
   return SWIG_arg;
   
@@ -7538,19 +8004,19 @@ fail:
 
 static int _wrap_GameObject_scale__SWIG_1(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
   float arg2 ;
   float arg3 ;
   float arg4 ;
   
   SWIG_check_num_args("scale",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("scale",1,"OgreKit::GameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("scale",1,"gsGameObject *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("scale",2,"float");
   if(!lua_isnumber(L,3)) SWIG_fail_arg("scale",3,"float");
   if(!lua_isnumber(L,4)) SWIG_fail_arg("scale",4,"float");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_scale",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_scale",1,SWIGTYPE_p_gsGameObject);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
@@ -7579,7 +8045,7 @@ static int _wrap_GameObject_scale(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__GameObject, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -7588,7 +8054,7 @@ static int _wrap_GameObject_scale(lua_State* L) {
     if (_v) {
       {
         void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
+        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_gsVector3, 0)) {
           _v = 0;
         } else {
           _v = 1;
@@ -7603,7 +8069,7 @@ static int _wrap_GameObject_scale(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__GameObject, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -7631,23 +8097,23 @@ static int _wrap_GameObject_scale(lua_State* L) {
   
   lua_pushstring(L,"Wrong arguments for overloaded function 'GameObject_scale'\n"
     "  Possible C/C++ prototypes are:\n"
-    "    scale(OgreKit::GameObject *,OgreKit::Vector3 const &)\n"
-    "    scale(OgreKit::GameObject *,float,float,float)\n");
+    "    scale(gsGameObject *,gsVector3 const &)\n"
+    "    scale(gsGameObject *,float,float,float)\n");
   lua_error(L);return 0;
 }
 
 
 static int _wrap_GameObject_yaw__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
   float arg2 ;
   
   SWIG_check_num_args("yaw",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("yaw",1,"OgreKit::GameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("yaw",1,"gsGameObject *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("yaw",2,"float");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_yaw",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_yaw",1,SWIGTYPE_p_gsGameObject);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
@@ -7665,21 +8131,21 @@ fail:
 
 static int _wrap_GameObject_yaw__SWIG_1(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
   float arg2 ;
-  OgreKit::TransformSpace arg3 ;
+  gsTransformSpace arg3 ;
   
   SWIG_check_num_args("yaw",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("yaw",1,"OgreKit::GameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("yaw",1,"gsGameObject *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("yaw",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("yaw",3,"OgreKit::TransformSpace");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("yaw",3,"gsTransformSpace");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_yaw",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_yaw",1,SWIGTYPE_p_gsGameObject);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 3);
+  arg3 = (gsTransformSpace)(int)lua_tonumber(L, 3);
   (arg1)->yaw(arg2,arg3);
   
   return SWIG_arg;
@@ -7703,7 +8169,7 @@ static int _wrap_GameObject_yaw(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__GameObject, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -7722,7 +8188,7 @@ static int _wrap_GameObject_yaw(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__GameObject, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -7745,23 +8211,23 @@ static int _wrap_GameObject_yaw(lua_State* L) {
   
   lua_pushstring(L,"Wrong arguments for overloaded function 'GameObject_yaw'\n"
     "  Possible C/C++ prototypes are:\n"
-    "    yaw(OgreKit::GameObject *,float)\n"
-    "    yaw(OgreKit::GameObject *,float,OgreKit::TransformSpace)\n");
+    "    yaw(gsGameObject *,float)\n"
+    "    yaw(gsGameObject *,float,gsTransformSpace)\n");
   lua_error(L);return 0;
 }
 
 
 static int _wrap_GameObject_pitch__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
   float arg2 ;
   
   SWIG_check_num_args("pitch",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("pitch",1,"OgreKit::GameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("pitch",1,"gsGameObject *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("pitch",2,"float");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_pitch",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_pitch",1,SWIGTYPE_p_gsGameObject);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
@@ -7779,21 +8245,21 @@ fail:
 
 static int _wrap_GameObject_pitch__SWIG_1(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
   float arg2 ;
-  OgreKit::TransformSpace arg3 ;
+  gsTransformSpace arg3 ;
   
   SWIG_check_num_args("pitch",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("pitch",1,"OgreKit::GameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("pitch",1,"gsGameObject *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("pitch",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("pitch",3,"OgreKit::TransformSpace");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("pitch",3,"gsTransformSpace");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_pitch",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_pitch",1,SWIGTYPE_p_gsGameObject);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 3);
+  arg3 = (gsTransformSpace)(int)lua_tonumber(L, 3);
   (arg1)->pitch(arg2,arg3);
   
   return SWIG_arg;
@@ -7817,7 +8283,7 @@ static int _wrap_GameObject_pitch(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__GameObject, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -7836,7 +8302,7 @@ static int _wrap_GameObject_pitch(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__GameObject, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -7859,23 +8325,23 @@ static int _wrap_GameObject_pitch(lua_State* L) {
   
   lua_pushstring(L,"Wrong arguments for overloaded function 'GameObject_pitch'\n"
     "  Possible C/C++ prototypes are:\n"
-    "    pitch(OgreKit::GameObject *,float)\n"
-    "    pitch(OgreKit::GameObject *,float,OgreKit::TransformSpace)\n");
+    "    pitch(gsGameObject *,float)\n"
+    "    pitch(gsGameObject *,float,gsTransformSpace)\n");
   lua_error(L);return 0;
 }
 
 
 static int _wrap_GameObject_roll__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
   float arg2 ;
   
   SWIG_check_num_args("roll",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("roll",1,"OgreKit::GameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("roll",1,"gsGameObject *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("roll",2,"float");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_roll",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_roll",1,SWIGTYPE_p_gsGameObject);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
@@ -7893,21 +8359,21 @@ fail:
 
 static int _wrap_GameObject_roll__SWIG_1(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
   float arg2 ;
-  OgreKit::TransformSpace arg3 ;
+  gsTransformSpace arg3 ;
   
   SWIG_check_num_args("roll",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("roll",1,"OgreKit::GameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("roll",1,"gsGameObject *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("roll",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("roll",3,"OgreKit::TransformSpace");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("roll",3,"gsTransformSpace");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_roll",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_roll",1,SWIGTYPE_p_gsGameObject);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 3);
+  arg3 = (gsTransformSpace)(int)lua_tonumber(L, 3);
   (arg1)->roll(arg2,arg3);
   
   return SWIG_arg;
@@ -7931,7 +8397,7 @@ static int _wrap_GameObject_roll(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__GameObject, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -7950,7 +8416,7 @@ static int _wrap_GameObject_roll(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__GameObject, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -7973,22 +8439,22 @@ static int _wrap_GameObject_roll(lua_State* L) {
   
   lua_pushstring(L,"Wrong arguments for overloaded function 'GameObject_roll'\n"
     "  Possible C/C++ prototypes are:\n"
-    "    roll(OgreKit::GameObject *,float)\n"
-    "    roll(OgreKit::GameObject *,float,OgreKit::TransformSpace)\n");
+    "    roll(gsGameObject *,float)\n"
+    "    roll(gsGameObject *,float,gsTransformSpace)\n");
   lua_error(L);return 0;
 }
 
 
 static int _wrap_GameObject_getState(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
   int result;
   
   SWIG_check_num_args("getState",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getState",1,"OgreKit::GameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getState",1,"gsGameObject *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_getState",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_getState",1,SWIGTYPE_p_gsGameObject);
   }
   
   result = (int)(arg1)->getState();
@@ -8005,21 +8471,18 @@ fail:
 
 static int _wrap_GameObject_getEntity(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
-  OgreKit::Pointer< OgreKit::Entity > result;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsEntity *result = 0 ;
   
   SWIG_check_num_args("getEntity",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getEntity",1,"OgreKit::GameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getEntity",1,"gsGameObject *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_getEntity",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_getEntity",1,SWIGTYPE_p_gsGameObject);
   }
   
-  result = (arg1)->getEntity();
-  {
-    OgreKit::Pointer< OgreKit::Entity > * resultptr = new OgreKit::Pointer< OgreKit::Entity >((const OgreKit::Pointer< OgreKit::Entity > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,1); SWIG_arg++;
-  }
+  result = (gsEntity *)(arg1)->getEntity();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsEntity,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -8032,21 +8495,18 @@ fail:
 
 static int _wrap_GameObject_getCamera(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
-  OgreKit::Pointer< OgreKit::Camera > result;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsCamera *result = 0 ;
   
   SWIG_check_num_args("getCamera",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getCamera",1,"OgreKit::GameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getCamera",1,"gsGameObject *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_getCamera",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_getCamera",1,SWIGTYPE_p_gsGameObject);
   }
   
-  result = (arg1)->getCamera();
-  {
-    OgreKit::Pointer< OgreKit::Camera > * resultptr = new OgreKit::Pointer< OgreKit::Camera >((const OgreKit::Pointer< OgreKit::Camera > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,1); SWIG_arg++;
-  }
+  result = (gsCamera *)(arg1)->getCamera();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsCamera,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -8059,21 +8519,42 @@ fail:
 
 static int _wrap_GameObject_getLight(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
-  OgreKit::Pointer< OgreKit::Light > result;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsLight *result = 0 ;
   
   SWIG_check_num_args("getLight",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getLight",1,"OgreKit::GameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getLight",1,"gsGameObject *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_getLight",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_getLight",1,SWIGTYPE_p_gsGameObject);
   }
   
-  result = (arg1)->getLight();
-  {
-    OgreKit::Pointer< OgreKit::Light > * resultptr = new OgreKit::Pointer< OgreKit::Light >((const OgreKit::Pointer< OgreKit::Light > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,1); SWIG_arg++;
+  result = (gsLight *)(arg1)->getLight();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsLight,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_GameObject_getSkeleton(lua_State* L) {
+  int SWIG_arg = 0;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsSkeleton *result = 0 ;
+  
+  SWIG_check_num_args("getSkeleton",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getSkeleton",1,"gsGameObject *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_getSkeleton",1,SWIGTYPE_p_gsGameObject);
   }
+  
+  result = (gsSkeleton *)(arg1)->getSkeleton();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsSkeleton,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -8086,14 +8567,14 @@ fail:
 
 static int _wrap_GameObject_hasParent(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
   bool result;
   
   SWIG_check_num_args("hasParent",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("hasParent",1,"OgreKit::GameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("hasParent",1,"gsGameObject *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_hasParent",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_hasParent",1,SWIGTYPE_p_gsGameObject);
   }
   
   result = (bool)(arg1)->hasParent();
@@ -8110,23 +8591,23 @@ fail:
 
 static int _wrap_GameObject_setParent(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
-  OgreKit::Pointer< OgreKit::GameObject > *arg2 = 0 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsGameObject *arg2 = (gsGameObject *) 0 ;
   
   SWIG_check_num_args("setParent",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setParent",1,"OgreKit::GameObject *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setParent",2,"OgreKit::Pointer< OgreKit::GameObject > const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setParent",1,"gsGameObject *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("setParent",2,"gsGameObject *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_setParent",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_setParent",1,SWIGTYPE_p_gsGameObject);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObject_setParent",2,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_setParent",2,SWIGTYPE_p_gsGameObject);
   }
   
-  (arg1)->setParent((OgreKit::Pointer< OgreKit::GameObject > const &)*arg2);
+  (arg1)->setParent(arg2);
   
   return SWIG_arg;
   
@@ -8140,21 +8621,18 @@ fail:
 
 static int _wrap_GameObject_getParent(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
-  OgreKit::Pointer< OgreKit::GameObject > result;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsGameObject *result = 0 ;
   
   SWIG_check_num_args("getParent",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getParent",1,"OgreKit::GameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getParent",1,"gsGameObject *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_getParent",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_getParent",1,SWIGTYPE_p_gsGameObject);
   }
   
-  result = (arg1)->getParent();
-  {
-    OgreKit::Pointer< OgreKit::GameObject > * resultptr = new OgreKit::Pointer< OgreKit::GameObject >((const OgreKit::Pointer< OgreKit::GameObject > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,1); SWIG_arg++;
-  }
+  result = (gsGameObject *)(arg1)->getParent();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGameObject,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -8167,15 +8645,15 @@ fail:
 
 static int _wrap_GameObject_enableContacts(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
   bool arg2 ;
   
   SWIG_check_num_args("enableContacts",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("enableContacts",1,"OgreKit::GameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("enableContacts",1,"gsGameObject *");
   if(!lua_isboolean(L,2)) SWIG_fail_arg("enableContacts",2,"bool");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_enableContacts",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_enableContacts",1,SWIGTYPE_p_gsGameObject);
   }
   
   arg2 = (lua_toboolean(L, 2)!=0);
@@ -8193,14 +8671,14 @@ fail:
 
 static int _wrap_GameObject_hasContacts(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
   bool result;
   
   SWIG_check_num_args("hasContacts",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("hasContacts",1,"OgreKit::GameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("hasContacts",1,"gsGameObject *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_hasContacts",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_hasContacts",1,SWIGTYPE_p_gsGameObject);
   }
   
   result = (bool)(arg1)->hasContacts();
@@ -8217,24 +8695,24 @@ fail:
 
 static int _wrap_GameObject_hasContact(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
-  OgreKit::String *arg2 = 0 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gkString *arg2 = 0 ;
   gkString temp2 ;
   bool result;
   
   SWIG_check_num_args("hasContact",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("hasContact",1,"OgreKit::GameObject *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("hasContact",2,"OgreKit::String const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("hasContact",1,"gsGameObject *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("hasContact",2,"gkString const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_hasContact",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_hasContact",1,SWIGTYPE_p_gsGameObject);
   }
   
   
   temp2 = gkString((const char*)lua_tostring(L, 2));
   arg2 = &temp2;
   
-  result = (bool)(arg1)->hasContact((OgreKit::String const &)*arg2);
+  result = (bool)(arg1)->hasContact((gkString const &)*arg2);
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -8248,21 +8726,18 @@ fail:
 
 static int _wrap_GameObject_getScene(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
-  OgreKit::Pointer< OgreKit::Scene > result;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsScene *result = 0 ;
   
   SWIG_check_num_args("getScene",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getScene",1,"OgreKit::GameObject *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getScene",1,"gsGameObject *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject_getScene",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_getScene",1,SWIGTYPE_p_gsGameObject);
   }
   
-  result = (arg1)->getScene();
-  {
-    OgreKit::Pointer< OgreKit::Scene > * resultptr = new OgreKit::Pointer< OgreKit::Scene >((const OgreKit::Pointer< OgreKit::Scene > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t,1); SWIG_arg++;
-  }
+  result = (gsScene *)(arg1)->getScene();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsScene,0); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -8275,43 +8750,25 @@ fail:
 
 static int _wrap_GameObject___getitem(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
-  OgreKit::String *arg2 = 0 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gkString *arg2 = 0 ;
   gkString temp2 ;
-  OgreKit::Property result;
+  gsProperty result;
   
   SWIG_check_num_args("__getitem__",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__getitem__",1,"OgreKit::GameObject *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("__getitem__",2,"OgreKit::String const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__getitem__",1,"gsGameObject *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("__getitem__",2,"gkString const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject___getitem",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject___getitem",1,SWIGTYPE_p_gsGameObject);
   }
   
   
   temp2 = gkString((const char*)lua_tostring(L, 2));
   arg2 = &temp2;
   
-  result = (arg1)->__getitem__((OgreKit::String const &)*arg2);
-  
-  
-  switch ((result).getType())
-  {
-  case OgreKit::PROP_BOOL:
-    lua_pushboolean(L, (result).toBool()); SWIG_arg++;
-    break;
-  case OgreKit::PROP_NUMBER:
-    lua_pushnumber(L, (result).toNumber()); SWIG_arg++;
-    break;
-  case OgreKit::PROP_STRING:
-    {
-      OgreKit::String str = (result).toString();
-      lua_pushlstring(L, str.c_str(), str.size());
-      SWIG_arg++;
-      break;
-    }
-  }
-  
+  result = (arg1)->__getitem__((gkString const &)*arg2);
+  SWIG_arg += gsGetProperty(L, result); 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -8324,18 +8781,18 @@ fail:
 
 static int _wrap_GameObject___setitem__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
-  OgreKit::String *arg2 = 0 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gkString *arg2 = 0 ;
   bool arg3 ;
   gkString temp2 ;
   
   SWIG_check_num_args("__setitem__",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__setitem__",1,"OgreKit::GameObject *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("__setitem__",2,"OgreKit::String const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__setitem__",1,"gsGameObject *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("__setitem__",2,"gkString const &");
   if(!lua_isboolean(L,3)) SWIG_fail_arg("__setitem__",3,"bool");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject___setitem",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject___setitem",1,SWIGTYPE_p_gsGameObject);
   }
   
   
@@ -8343,7 +8800,7 @@ static int _wrap_GameObject___setitem__SWIG_0(lua_State* L) {
   arg2 = &temp2;
   
   arg3 = (lua_toboolean(L, 3)!=0);
-  (arg1)->__setitem__((OgreKit::String const &)*arg2,arg3);
+  (arg1)->__setitem__((gkString const &)*arg2,arg3);
   
   return SWIG_arg;
   
@@ -8357,18 +8814,18 @@ fail:
 
 static int _wrap_GameObject___setitem__SWIG_1(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
-  OgreKit::String *arg2 = 0 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gkString *arg2 = 0 ;
   float arg3 ;
   gkString temp2 ;
   
   SWIG_check_num_args("__setitem__",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__setitem__",1,"OgreKit::GameObject *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("__setitem__",2,"OgreKit::String const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__setitem__",1,"gsGameObject *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("__setitem__",2,"gkString const &");
   if(!lua_isnumber(L,3)) SWIG_fail_arg("__setitem__",3,"float");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject___setitem",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject___setitem",1,SWIGTYPE_p_gsGameObject);
   }
   
   
@@ -8376,7 +8833,7 @@ static int _wrap_GameObject___setitem__SWIG_1(lua_State* L) {
   arg2 = &temp2;
   
   arg3 = (float)lua_tonumber(L, 3);
-  (arg1)->__setitem__((OgreKit::String const &)*arg2,arg3);
+  (arg1)->__setitem__((gkString const &)*arg2,arg3);
   
   return SWIG_arg;
   
@@ -8390,18 +8847,18 @@ fail:
 
 static int _wrap_GameObject___setitem__SWIG_2(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::GameObject *arg1 = (OgreKit::GameObject *) 0 ;
-  OgreKit::String *arg2 = 0 ;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gkString *arg2 = 0 ;
   char *arg3 = (char *) 0 ;
   gkString temp2 ;
   
   SWIG_check_num_args("__setitem__",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__setitem__",1,"OgreKit::GameObject *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("__setitem__",2,"OgreKit::String const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__setitem__",1,"gsGameObject *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("__setitem__",2,"gkString const &");
   if(!lua_isstring(L,3)) SWIG_fail_arg("__setitem__",3,"char const *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__GameObject,0))){
-    SWIG_fail_ptr("GameObject___setitem",1,SWIGTYPE_p_OgreKit__GameObject);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject___setitem",1,SWIGTYPE_p_gsGameObject);
   }
   
   
@@ -8409,7 +8866,7 @@ static int _wrap_GameObject___setitem__SWIG_2(lua_State* L) {
   arg2 = &temp2;
   
   arg3 = (char *)lua_tostring(L, 3);
-  (arg1)->__setitem__((OgreKit::String const &)*arg2,(char const *)arg3);
+  (arg1)->__setitem__((gkString const &)*arg2,(char const *)arg3);
   
   return SWIG_arg;
   
@@ -8432,7 +8889,7 @@ static int _wrap_GameObject___setitem(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__GameObject, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -8456,7 +8913,7 @@ static int _wrap_GameObject___setitem(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__GameObject, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -8480,7 +8937,7 @@ static int _wrap_GameObject___setitem(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__GameObject, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsGameObject, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -8503,18 +8960,18 @@ static int _wrap_GameObject___setitem(lua_State* L) {
   
   lua_pushstring(L,"Wrong arguments for overloaded function 'GameObject___setitem'\n"
     "  Possible C/C++ prototypes are:\n"
-    "    __setitem__(OgreKit::GameObject *,OgreKit::String const &,bool)\n"
-    "    __setitem__(OgreKit::GameObject *,OgreKit::String const &,float)\n"
-    "    __setitem__(OgreKit::GameObject *,OgreKit::String const &,char const *)\n");
+    "    __setitem__(gsGameObject *,gkString const &,bool)\n"
+    "    __setitem__(gsGameObject *,gkString const &,float)\n"
+    "    __setitem__(gsGameObject *,gkString const &,char const *)\n");
   lua_error(L);return 0;
 }
 
 
 static void swig_delete_GameObject(void *obj) {
-OgreKit::GameObject *arg1 = (OgreKit::GameObject *) obj;
+gsGameObject *arg1 = (gsGameObject *) obj;
 delete arg1;
 }
-static swig_lua_method swig_OgreKit_GameObject_methods[] = {
+static swig_lua_method swig_gsGameObject_methods[] = {
     {"getPosition", _wrap_GameObject_getPosition}, 
     {"getRotation", _wrap_GameObject_getRotation}, 
     {"getOrientation", _wrap_GameObject_getOrientation}, 
@@ -8540,6 +8997,7 @@ static swig_lua_method swig_OgreKit_GameObject_methods[] = {
     {"getEntity", _wrap_GameObject_getEntity}, 
     {"getCamera", _wrap_GameObject_getCamera}, 
     {"getLight", _wrap_GameObject_getLight}, 
+    {"getSkeleton", _wrap_GameObject_getSkeleton}, 
     {"hasParent", _wrap_GameObject_hasParent}, 
     {"setParent", _wrap_GameObject_setParent}, 
     {"getParent", _wrap_GameObject_getParent}, 
@@ -8551,20 +9009,20 @@ static swig_lua_method swig_OgreKit_GameObject_methods[] = {
     {"__setitem", _wrap_GameObject___setitem}, 
     {0,0}
 };
-static swig_lua_attribute swig_OgreKit_GameObject_attributes[] = {
+static swig_lua_attribute swig_gsGameObject_attributes[] = {
     {0,0,0}
 };
-static swig_lua_class *swig_OgreKit_GameObject_bases[] = {0,0};
-static const char *swig_OgreKit_GameObject_base_names[] = {"OgreKit::Loadable *",0};
-static swig_lua_class _wrap_class_OgreKit_GameObject = { "GameObject", &SWIGTYPE_p_OgreKit__GameObject,_wrap_new_GameObject, swig_delete_GameObject, swig_OgreKit_GameObject_methods, swig_OgreKit_GameObject_attributes, swig_OgreKit_GameObject_bases, swig_OgreKit_GameObject_base_names };
+static swig_lua_class *swig_gsGameObject_bases[] = {0,0};
+static const char *swig_gsGameObject_base_names[] = {"gsLoadable *",0};
+static swig_lua_class _wrap_class_gsGameObject = { "GameObject", &SWIGTYPE_p_gsGameObject,_wrap_new_GameObject, swig_delete_GameObject, swig_gsGameObject_methods, swig_gsGameObject_attributes, swig_gsGameObject_bases, swig_gsGameObject_base_names };
 
 static int _wrap_new_Light(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Light *result = 0 ;
+  gsLight *result = 0 ;
   
-  SWIG_check_num_args("OgreKit::Light",0,0)
-  result = (OgreKit::Light *)new OgreKit::Light();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__Light,1); SWIG_arg++; 
+  SWIG_check_num_args("gsLight",0,0)
+  result = (gsLight *)new gsLight();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsLight,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -8576,26 +9034,26 @@ fail:
 
 
 static void swig_delete_Light(void *obj) {
-OgreKit::Light *arg1 = (OgreKit::Light *) obj;
+gsLight *arg1 = (gsLight *) obj;
 delete arg1;
 }
-static swig_lua_method swig_OgreKit_Light_methods[] = {
+static swig_lua_method swig_gsLight_methods[] = {
     {0,0}
 };
-static swig_lua_attribute swig_OgreKit_Light_attributes[] = {
+static swig_lua_attribute swig_gsLight_attributes[] = {
     {0,0,0}
 };
-static swig_lua_class *swig_OgreKit_Light_bases[] = {0,0};
-static const char *swig_OgreKit_Light_base_names[] = {"OgreKit::GameObject *",0};
-static swig_lua_class _wrap_class_OgreKit_Light = { "Light", &SWIGTYPE_p_OgreKit__Light,_wrap_new_Light, swig_delete_Light, swig_OgreKit_Light_methods, swig_OgreKit_Light_attributes, swig_OgreKit_Light_bases, swig_OgreKit_Light_base_names };
+static swig_lua_class *swig_gsLight_bases[] = {0,0};
+static const char *swig_gsLight_base_names[] = {"gsGameObject *",0};
+static swig_lua_class _wrap_class_gsLight = { "Light", &SWIGTYPE_p_gsLight,_wrap_new_Light, swig_delete_Light, swig_gsLight_methods, swig_gsLight_attributes, swig_gsLight_bases, swig_gsLight_base_names };
 
 static int _wrap_new_Camera(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Camera *result = 0 ;
+  gsCamera *result = 0 ;
   
-  SWIG_check_num_args("OgreKit::Camera",0,0)
-  result = (OgreKit::Camera *)new OgreKit::Camera();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__Camera,1); SWIG_arg++; 
+  SWIG_check_num_args("gsCamera",0,0)
+  result = (gsCamera *)new gsCamera();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsCamera,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -8608,17 +9066,17 @@ fail:
 
 static int _wrap_Camera_setClipping(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Camera *arg1 = (OgreKit::Camera *) 0 ;
+  gsCamera *arg1 = (gsCamera *) 0 ;
   float arg2 ;
   float arg3 ;
   
   SWIG_check_num_args("setClipping",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setClipping",1,"OgreKit::Camera *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setClipping",1,"gsCamera *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("setClipping",2,"float");
   if(!lua_isnumber(L,3)) SWIG_fail_arg("setClipping",3,"float");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Camera,0))){
-    SWIG_fail_ptr("Camera_setClipping",1,SWIGTYPE_p_OgreKit__Camera);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsCamera,0))){
+    SWIG_fail_ptr("Camera_setClipping",1,SWIGTYPE_p_gsCamera);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
@@ -8637,14 +9095,14 @@ fail:
 
 static int _wrap_Camera_getClipStart(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Camera *arg1 = (OgreKit::Camera *) 0 ;
+  gsCamera *arg1 = (gsCamera *) 0 ;
   float result;
   
   SWIG_check_num_args("getClipStart",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getClipStart",1,"OgreKit::Camera *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getClipStart",1,"gsCamera *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Camera,0))){
-    SWIG_fail_ptr("Camera_getClipStart",1,SWIGTYPE_p_OgreKit__Camera);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsCamera,0))){
+    SWIG_fail_ptr("Camera_getClipStart",1,SWIGTYPE_p_gsCamera);
   }
   
   result = (float)(arg1)->getClipStart();
@@ -8661,14 +9119,14 @@ fail:
 
 static int _wrap_Camera_getClipEnd(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Camera *arg1 = (OgreKit::Camera *) 0 ;
+  gsCamera *arg1 = (gsCamera *) 0 ;
   float result;
   
   SWIG_check_num_args("getClipEnd",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getClipEnd",1,"OgreKit::Camera *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getClipEnd",1,"gsCamera *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Camera,0))){
-    SWIG_fail_ptr("Camera_getClipEnd",1,SWIGTYPE_p_OgreKit__Camera);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsCamera,0))){
+    SWIG_fail_ptr("Camera_getClipEnd",1,SWIGTYPE_p_gsCamera);
   }
   
   result = (float)(arg1)->getClipEnd();
@@ -8685,15 +9143,15 @@ fail:
 
 static int _wrap_Camera_setFov(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Camera *arg1 = (OgreKit::Camera *) 0 ;
+  gsCamera *arg1 = (gsCamera *) 0 ;
   float arg2 ;
   
   SWIG_check_num_args("setFov",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setFov",1,"OgreKit::Camera *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setFov",1,"gsCamera *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("setFov",2,"float");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Camera,0))){
-    SWIG_fail_ptr("Camera_setFov",1,SWIGTYPE_p_OgreKit__Camera);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsCamera,0))){
+    SWIG_fail_ptr("Camera_setFov",1,SWIGTYPE_p_gsCamera);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
@@ -8711,14 +9169,14 @@ fail:
 
 static int _wrap_Camera_getFov(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Camera *arg1 = (OgreKit::Camera *) 0 ;
+  gsCamera *arg1 = (gsCamera *) 0 ;
   float result;
   
   SWIG_check_num_args("getFov",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getFov",1,"OgreKit::Camera *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getFov",1,"gsCamera *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Camera,0))){
-    SWIG_fail_ptr("Camera_getFov",1,SWIGTYPE_p_OgreKit__Camera);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsCamera,0))){
+    SWIG_fail_ptr("Camera_getFov",1,SWIGTYPE_p_gsCamera);
   }
   
   result = (float)(arg1)->getFov();
@@ -8735,13 +9193,13 @@ fail:
 
 static int _wrap_Camera_makeCurrent(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Camera *arg1 = (OgreKit::Camera *) 0 ;
+  gsCamera *arg1 = (gsCamera *) 0 ;
   
   SWIG_check_num_args("makeCurrent",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("makeCurrent",1,"OgreKit::Camera *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("makeCurrent",1,"gsCamera *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Camera,0))){
-    SWIG_fail_ptr("Camera_makeCurrent",1,SWIGTYPE_p_OgreKit__Camera);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsCamera,0))){
+    SWIG_fail_ptr("Camera_makeCurrent",1,SWIGTYPE_p_gsCamera);
   }
   
   (arg1)->makeCurrent();
@@ -8757,10 +9215,10 @@ fail:
 
 
 static void swig_delete_Camera(void *obj) {
-OgreKit::Camera *arg1 = (OgreKit::Camera *) obj;
+gsCamera *arg1 = (gsCamera *) obj;
 delete arg1;
 }
-static swig_lua_method swig_OgreKit_Camera_methods[] = {
+static swig_lua_method swig_gsCamera_methods[] = {
     {"setClipping", _wrap_Camera_setClipping}, 
     {"getClipStart", _wrap_Camera_getClipStart}, 
     {"getClipEnd", _wrap_Camera_getClipEnd}, 
@@ -8769,20 +9227,20 @@ static swig_lua_method swig_OgreKit_Camera_methods[] = {
     {"makeCurrent", _wrap_Camera_makeCurrent}, 
     {0,0}
 };
-static swig_lua_attribute swig_OgreKit_Camera_attributes[] = {
+static swig_lua_attribute swig_gsCamera_attributes[] = {
     {0,0,0}
 };
-static swig_lua_class *swig_OgreKit_Camera_bases[] = {0,0};
-static const char *swig_OgreKit_Camera_base_names[] = {"OgreKit::GameObject *",0};
-static swig_lua_class _wrap_class_OgreKit_Camera = { "Camera", &SWIGTYPE_p_OgreKit__Camera,_wrap_new_Camera, swig_delete_Camera, swig_OgreKit_Camera_methods, swig_OgreKit_Camera_attributes, swig_OgreKit_Camera_bases, swig_OgreKit_Camera_base_names };
+static swig_lua_class *swig_gsCamera_bases[] = {0,0};
+static const char *swig_gsCamera_base_names[] = {"gsGameObject *",0};
+static swig_lua_class _wrap_class_gsCamera = { "Camera", &SWIGTYPE_p_gsCamera,_wrap_new_Camera, swig_delete_Camera, swig_gsCamera_methods, swig_gsCamera_attributes, swig_gsCamera_bases, swig_gsCamera_base_names };
 
 static int _wrap_new_Entity(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Entity *result = 0 ;
+  gsEntity *result = 0 ;
   
-  SWIG_check_num_args("OgreKit::Entity",0,0)
-  result = (OgreKit::Entity *)new OgreKit::Entity();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__Entity,1); SWIG_arg++; 
+  SWIG_check_num_args("gsEntity",0,0)
+  result = (gsEntity *)new gsEntity();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsEntity,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -8795,18 +9253,18 @@ fail:
 
 static int _wrap_Entity_playAction(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Entity *arg1 = (OgreKit::Entity *) 0 ;
-  OgreKit::String *arg2 = 0 ;
+  gsEntity *arg1 = (gsEntity *) 0 ;
+  gkString *arg2 = 0 ;
   float arg3 ;
   gkString temp2 ;
   
   SWIG_check_num_args("playAction",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("playAction",1,"OgreKit::Entity *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("playAction",2,"OgreKit::String const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("playAction",1,"gsEntity *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("playAction",2,"gkString const &");
   if(!lua_isnumber(L,3)) SWIG_fail_arg("playAction",3,"float");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Entity,0))){
-    SWIG_fail_ptr("Entity_playAction",1,SWIGTYPE_p_OgreKit__Entity);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsEntity,0))){
+    SWIG_fail_ptr("Entity_playAction",1,SWIGTYPE_p_gsEntity);
   }
   
   
@@ -8814,7 +9272,7 @@ static int _wrap_Entity_playAction(lua_State* L) {
   arg2 = &temp2;
   
   arg3 = (float)lua_tonumber(L, 3);
-  (arg1)->playAction((OgreKit::String const &)*arg2,arg3);
+  (arg1)->playAction((gkString const &)*arg2,arg3);
   
   return SWIG_arg;
   
@@ -8827,34 +9285,65 @@ fail:
 
 
 static void swig_delete_Entity(void *obj) {
-OgreKit::Entity *arg1 = (OgreKit::Entity *) obj;
+gsEntity *arg1 = (gsEntity *) obj;
 delete arg1;
 }
-static swig_lua_method swig_OgreKit_Entity_methods[] = {
+static swig_lua_method swig_gsEntity_methods[] = {
     {"playAction", _wrap_Entity_playAction}, 
     {0,0}
 };
-static swig_lua_attribute swig_OgreKit_Entity_attributes[] = {
+static swig_lua_attribute swig_gsEntity_attributes[] = {
     {0,0,0}
 };
-static swig_lua_class *swig_OgreKit_Entity_bases[] = {0,0};
-static const char *swig_OgreKit_Entity_base_names[] = {"OgreKit::GameObject *",0};
-static swig_lua_class _wrap_class_OgreKit_Entity = { "Entity", &SWIGTYPE_p_OgreKit__Entity,_wrap_new_Entity, swig_delete_Entity, swig_OgreKit_Entity_methods, swig_OgreKit_Entity_attributes, swig_OgreKit_Entity_bases, swig_OgreKit_Entity_base_names };
+static swig_lua_class *swig_gsEntity_bases[] = {0,0};
+static const char *swig_gsEntity_base_names[] = {"gsGameObject *",0};
+static swig_lua_class _wrap_class_gsEntity = { "Entity", &SWIGTYPE_p_gsEntity,_wrap_new_Entity, swig_delete_Entity, swig_gsEntity_methods, swig_gsEntity_attributes, swig_gsEntity_bases, swig_gsEntity_base_names };
+
+static int _wrap_new_Skeleton(lua_State* L) {
+  int SWIG_arg = 0;
+  gsSkeleton *result = 0 ;
+  
+  SWIG_check_num_args("gsSkeleton",0,0)
+  result = (gsSkeleton *)new gsSkeleton();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsSkeleton,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_Skeleton(void *obj) {
+gsSkeleton *arg1 = (gsSkeleton *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gsSkeleton_methods[] = {
+    {0,0}
+};
+static swig_lua_attribute swig_gsSkeleton_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_gsSkeleton_bases[] = {0,0};
+static const char *swig_gsSkeleton_base_names[] = {"gsGameObject *",0};
+static swig_lua_class _wrap_class_gsSkeleton = { "Skeleton", &SWIGTYPE_p_gsSkeleton,_wrap_new_Skeleton, swig_delete_Skeleton, swig_gsSkeleton_methods, swig_gsSkeleton_attributes, swig_gsSkeleton_bases, swig_gsSkeleton_base_names };
 
 static int _wrap_new_Debugger(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Scene > *arg1 = 0 ;
-  OgreKit::Debugger *result = 0 ;
+  gsScene *arg1 = (gsScene *) 0 ;
+  gsDebugger *result = 0 ;
   
-  SWIG_check_num_args("OgreKit::Debugger",1,1)
-  if(!lua_isuserdata(L,1)) SWIG_fail_arg("OgreKit::Debugger",1,"OgreKit::Pointer< OgreKit::Scene > const &");
+  SWIG_check_num_args("gsDebugger",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsDebugger",1,"gsScene *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t,0))){
-    SWIG_fail_ptr("new_Debugger",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsScene,0))){
+    SWIG_fail_ptr("new_Debugger",1,SWIGTYPE_p_gsScene);
   }
   
-  result = (OgreKit::Debugger *)new OgreKit::Debugger((OgreKit::Pointer< OgreKit::Scene > const &)*arg1);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__Debugger,1); SWIG_arg++; 
+  result = (gsDebugger *)new gsDebugger(arg1);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsDebugger,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -8867,37 +9356,37 @@ fail:
 
 static int _wrap_Debugger_drawLine(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Debugger *arg1 = (OgreKit::Debugger *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  OgreKit::Vector3 *arg3 = 0 ;
-  OgreKit::Vector3 *arg4 = 0 ;
+  gsDebugger *arg1 = (gsDebugger *) 0 ;
+  gsVector3 *arg2 = 0 ;
+  gsVector3 *arg3 = 0 ;
+  gsVector3 *arg4 = 0 ;
   
   SWIG_check_num_args("drawLine",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("drawLine",1,"OgreKit::Debugger *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("drawLine",2,"OgreKit::Vector3 const &");
-  if(!lua_isuserdata(L,3)) SWIG_fail_arg("drawLine",3,"OgreKit::Vector3 const &");
-  if(!lua_isuserdata(L,4)) SWIG_fail_arg("drawLine",4,"OgreKit::Vector3 const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("drawLine",1,"gsDebugger *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("drawLine",2,"gsVector3 const &");
+  if(!lua_isuserdata(L,3)) SWIG_fail_arg("drawLine",3,"gsVector3 const &");
+  if(!lua_isuserdata(L,4)) SWIG_fail_arg("drawLine",4,"gsVector3 const &");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Debugger,0))){
-    SWIG_fail_ptr("Debugger_drawLine",1,SWIGTYPE_p_OgreKit__Debugger);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsDebugger,0))){
+    SWIG_fail_ptr("Debugger_drawLine",1,SWIGTYPE_p_gsDebugger);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Debugger_drawLine",2,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Debugger_drawLine",2,SWIGTYPE_p_gsVector3);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Debugger_drawLine",3,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Debugger_drawLine",3,SWIGTYPE_p_gsVector3);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,4,(void**)&arg4,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("Debugger_drawLine",4,SWIGTYPE_p_OgreKit__Vector3);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,4,(void**)&arg4,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Debugger_drawLine",4,SWIGTYPE_p_gsVector3);
   }
   
-  (arg1)->drawLine((OgreKit::Vector3 const &)*arg2,(OgreKit::Vector3 const &)*arg3,(OgreKit::Vector3 const &)*arg4);
+  (arg1)->drawLine((gsVector3 const &)*arg2,(gsVector3 const &)*arg3,(gsVector3 const &)*arg4);
   
   return SWIG_arg;
   
@@ -8911,26 +9400,26 @@ fail:
 
 static int _wrap_Debugger_drawObjectAxis(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Debugger *arg1 = (OgreKit::Debugger *) 0 ;
-  OgreKit::Pointer< OgreKit::GameObject > *arg2 = 0 ;
+  gsDebugger *arg1 = (gsDebugger *) 0 ;
+  gsGameObject *arg2 = (gsGameObject *) 0 ;
   float arg3 ;
   
   SWIG_check_num_args("drawObjectAxis",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("drawObjectAxis",1,"OgreKit::Debugger *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("drawObjectAxis",2,"OgreKit::Pointer< OgreKit::GameObject > const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("drawObjectAxis",1,"gsDebugger *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("drawObjectAxis",2,"gsGameObject *");
   if(!lua_isnumber(L,3)) SWIG_fail_arg("drawObjectAxis",3,"float");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Debugger,0))){
-    SWIG_fail_ptr("Debugger_drawObjectAxis",1,SWIGTYPE_p_OgreKit__Debugger);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsDebugger,0))){
+    SWIG_fail_ptr("Debugger_drawObjectAxis",1,SWIGTYPE_p_gsDebugger);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("Debugger_drawObjectAxis",2,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("Debugger_drawObjectAxis",2,SWIGTYPE_p_gsGameObject);
   }
   
   arg3 = (float)lua_tonumber(L, 3);
-  (arg1)->drawObjectAxis((OgreKit::Pointer< OgreKit::GameObject > const &)*arg2,arg3);
+  (arg1)->drawObjectAxis(arg2,arg3);
   
   return SWIG_arg;
   
@@ -8944,13 +9433,13 @@ fail:
 
 static int _wrap_Debugger_clear(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Debugger *arg1 = (OgreKit::Debugger *) 0 ;
+  gsDebugger *arg1 = (gsDebugger *) 0 ;
   
   SWIG_check_num_args("clear",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("clear",1,"OgreKit::Debugger *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("clear",1,"gsDebugger *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__Debugger,0))){
-    SWIG_fail_ptr("Debugger_clear",1,SWIGTYPE_p_OgreKit__Debugger);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsDebugger,0))){
+    SWIG_fail_ptr("Debugger_clear",1,SWIGTYPE_p_gsDebugger);
   }
   
   (arg1)->clear();
@@ -8966,30 +9455,30 @@ fail:
 
 
 static void swig_delete_Debugger(void *obj) {
-OgreKit::Debugger *arg1 = (OgreKit::Debugger *) obj;
+gsDebugger *arg1 = (gsDebugger *) obj;
 delete arg1;
 }
-static swig_lua_method swig_OgreKit_Debugger_methods[] = {
+static swig_lua_method swig_gsDebugger_methods[] = {
     {"drawLine", _wrap_Debugger_drawLine}, 
     {"drawObjectAxis", _wrap_Debugger_drawObjectAxis}, 
     {"clear", _wrap_Debugger_clear}, 
     {0,0}
 };
-static swig_lua_attribute swig_OgreKit_Debugger_attributes[] = {
+static swig_lua_attribute swig_gsDebugger_attributes[] = {
     {0,0,0}
 };
-static swig_lua_class *swig_OgreKit_Debugger_bases[] = {0};
-static const char *swig_OgreKit_Debugger_base_names[] = {0};
-static swig_lua_class _wrap_class_OgreKit_Debugger = { "Debugger", &SWIGTYPE_p_OgreKit__Debugger,_wrap_new_Debugger, swig_delete_Debugger, swig_OgreKit_Debugger_methods, swig_OgreKit_Debugger_attributes, swig_OgreKit_Debugger_bases, swig_OgreKit_Debugger_base_names };
+static swig_lua_class *swig_gsDebugger_bases[] = {0};
+static const char *swig_gsDebugger_base_names[] = {0};
+static swig_lua_class _wrap_class_gsDebugger = { "Debugger", &SWIGTYPE_p_gsDebugger,_wrap_new_Debugger, swig_delete_Debugger, swig_gsDebugger_methods, swig_gsDebugger_attributes, swig_gsDebugger_bases, swig_gsDebugger_base_names };
 
 static int _wrap_DebugPrint(lua_State* L) {
   int SWIG_arg = 0;
   char *arg1 = (char *) 0 ;
   
-  SWIG_check_num_args("OgreKit::DebugPrint",1,1)
-  if(!lua_isstring(L,1)) SWIG_fail_arg("OgreKit::DebugPrint",1,"char const *");
+  SWIG_check_num_args("gsDebugPrint",1,1)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("gsDebugPrint",1,"char const *");
   arg1 = (char *)lua_tostring(L, 1);
-  OgreKit::DebugPrint((char const *)arg1);
+  gsDebugPrint((char const *)arg1);
   
   return SWIG_arg;
   
@@ -9003,17 +9492,17 @@ fail:
 
 static int _wrap_WhenEvent_when(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::WhenEvent *arg1 = (OgreKit::WhenEvent *) 0 ;
-  OgreKit::Self arg2 ;
-  OgreKit::Function arg3 ;
+  gsWhenEvent *arg1 = (gsWhenEvent *) 0 ;
+  gsSelf arg2 ;
+  gsFunction arg3 ;
   
   SWIG_check_num_args("when",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("when",1,"OgreKit::WhenEvent *");
-  if(!lua_istable(L,2)) SWIG_fail_arg("when",2,"OgreKit::Self");
-  if(!lua_isfunction(L,3)) SWIG_fail_arg("when",3,"OgreKit::Function");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("when",1,"gsWhenEvent *");
+  if(!lua_istable(L,2)) SWIG_fail_arg("when",2,"gsSelf");
+  if(!lua_isfunction(L,3)) SWIG_fail_arg("when",3,"gsFunction");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__WhenEvent,0))){
-    SWIG_fail_ptr("WhenEvent_when",1,SWIGTYPE_p_OgreKit__WhenEvent);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsWhenEvent,0))){
+    SWIG_fail_ptr("WhenEvent_when",1,SWIGTYPE_p_gsWhenEvent);
   }
   
   (&arg2)->m_id = 2; (&arg2)->L = L; 
@@ -9031,27 +9520,27 @@ fail:
 
 
 static void swig_delete_WhenEvent(void *obj) {
-OgreKit::WhenEvent *arg1 = (OgreKit::WhenEvent *) obj;
+gsWhenEvent *arg1 = (gsWhenEvent *) obj;
 delete arg1;
 }
-static swig_lua_method swig_OgreKit_WhenEvent_methods[] = {
+static swig_lua_method swig_gsWhenEvent_methods[] = {
     {"when", _wrap_WhenEvent_when}, 
     {0,0}
 };
-static swig_lua_attribute swig_OgreKit_WhenEvent_attributes[] = {
+static swig_lua_attribute swig_gsWhenEvent_attributes[] = {
     {0,0,0}
 };
-static swig_lua_class *swig_OgreKit_WhenEvent_bases[] = {0};
-static const char *swig_OgreKit_WhenEvent_base_names[] = {0};
-static swig_lua_class _wrap_class_OgreKit_WhenEvent = { "WhenEvent", &SWIGTYPE_p_OgreKit__WhenEvent,0, swig_delete_WhenEvent, swig_OgreKit_WhenEvent_methods, swig_OgreKit_WhenEvent_attributes, swig_OgreKit_WhenEvent_bases, swig_OgreKit_WhenEvent_base_names };
+static swig_lua_class *swig_gsWhenEvent_bases[] = {0};
+static const char *swig_gsWhenEvent_base_names[] = {0};
+static swig_lua_class _wrap_class_gsWhenEvent = { "WhenEvent", &SWIGTYPE_p_gsWhenEvent,0, swig_delete_WhenEvent, swig_gsWhenEvent_methods, swig_gsWhenEvent_attributes, swig_gsWhenEvent_bases, swig_gsWhenEvent_base_names };
 
 static int _wrap_new_FSM(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::FSM *result = 0 ;
+  gsFSM *result = 0 ;
   
-  SWIG_check_num_args("OgreKit::FSM",0,0)
-  result = (OgreKit::FSM *)new OgreKit::FSM();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__FSM,1); SWIG_arg++; 
+  SWIG_check_num_args("gsFSM",0,0)
+  result = (gsFSM *)new gsFSM();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsFSM,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -9064,13 +9553,13 @@ fail:
 
 static int _wrap_FSM_update(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::FSM *arg1 = (OgreKit::FSM *) 0 ;
+  gsFSM *arg1 = (gsFSM *) 0 ;
   
   SWIG_check_num_args("update",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("update",1,"OgreKit::FSM *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("update",1,"gsFSM *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__FSM,0))){
-    SWIG_fail_ptr("FSM_update",1,SWIGTYPE_p_OgreKit__FSM);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsFSM,0))){
+    SWIG_fail_ptr("FSM_update",1,SWIGTYPE_p_gsFSM);
   }
   
   (arg1)->update();
@@ -9087,15 +9576,15 @@ fail:
 
 static int _wrap_FSM_setState(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::FSM *arg1 = (OgreKit::FSM *) 0 ;
+  gsFSM *arg1 = (gsFSM *) 0 ;
   int arg2 ;
   
   SWIG_check_num_args("setState",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setState",1,"OgreKit::FSM *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setState",1,"gsFSM *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("setState",2,"int");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__FSM,0))){
-    SWIG_fail_ptr("FSM_setState",1,SWIGTYPE_p_OgreKit__FSM);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsFSM,0))){
+    SWIG_fail_ptr("FSM_setState",1,SWIGTYPE_p_gsFSM);
   }
   
   arg2 = (int)lua_tonumber(L, 2);
@@ -9113,14 +9602,14 @@ fail:
 
 static int _wrap_FSM_getState(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::FSM *arg1 = (OgreKit::FSM *) 0 ;
+  gsFSM *arg1 = (gsFSM *) 0 ;
   int result;
   
   SWIG_check_num_args("getState",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getState",1,"OgreKit::FSM *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getState",1,"gsFSM *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__FSM,0))){
-    SWIG_fail_ptr("FSM_getState",1,SWIGTYPE_p_OgreKit__FSM);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsFSM,0))){
+    SWIG_fail_ptr("FSM_getState",1,SWIGTYPE_p_gsFSM);
   }
   
   result = (int)(arg1)->getState();
@@ -9137,19 +9626,19 @@ fail:
 
 static int _wrap_FSM_addStartTrigger(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::FSM *arg1 = (OgreKit::FSM *) 0 ;
+  gsFSM *arg1 = (gsFSM *) 0 ;
   int arg2 ;
-  OgreKit::Self arg3 ;
-  OgreKit::Function arg4 ;
+  gsSelf arg3 ;
+  gsFunction arg4 ;
   
   SWIG_check_num_args("addStartTrigger",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("addStartTrigger",1,"OgreKit::FSM *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("addStartTrigger",1,"gsFSM *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("addStartTrigger",2,"int");
-  if(!lua_istable(L,3)) SWIG_fail_arg("addStartTrigger",3,"OgreKit::Self");
-  if(!lua_isfunction(L,4)) SWIG_fail_arg("addStartTrigger",4,"OgreKit::Function");
+  if(!lua_istable(L,3)) SWIG_fail_arg("addStartTrigger",3,"gsSelf");
+  if(!lua_isfunction(L,4)) SWIG_fail_arg("addStartTrigger",4,"gsFunction");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__FSM,0))){
-    SWIG_fail_ptr("FSM_addStartTrigger",1,SWIGTYPE_p_OgreKit__FSM);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsFSM,0))){
+    SWIG_fail_ptr("FSM_addStartTrigger",1,SWIGTYPE_p_gsFSM);
   }
   
   arg2 = (int)lua_tonumber(L, 2);
@@ -9169,19 +9658,19 @@ fail:
 
 static int _wrap_FSM_addEndTrigger(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::FSM *arg1 = (OgreKit::FSM *) 0 ;
+  gsFSM *arg1 = (gsFSM *) 0 ;
   int arg2 ;
-  OgreKit::Self arg3 ;
-  OgreKit::Function arg4 ;
+  gsSelf arg3 ;
+  gsFunction arg4 ;
   
   SWIG_check_num_args("addEndTrigger",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("addEndTrigger",1,"OgreKit::FSM *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("addEndTrigger",1,"gsFSM *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("addEndTrigger",2,"int");
-  if(!lua_istable(L,3)) SWIG_fail_arg("addEndTrigger",3,"OgreKit::Self");
-  if(!lua_isfunction(L,4)) SWIG_fail_arg("addEndTrigger",4,"OgreKit::Function");
+  if(!lua_istable(L,3)) SWIG_fail_arg("addEndTrigger",3,"gsSelf");
+  if(!lua_isfunction(L,4)) SWIG_fail_arg("addEndTrigger",4,"gsFunction");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__FSM,0))){
-    SWIG_fail_ptr("FSM_addEndTrigger",1,SWIGTYPE_p_OgreKit__FSM);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsFSM,0))){
+    SWIG_fail_ptr("FSM_addEndTrigger",1,SWIGTYPE_p_gsFSM);
   }
   
   arg2 = (int)lua_tonumber(L, 2);
@@ -9201,19 +9690,19 @@ fail:
 
 static int _wrap_FSM_addEvent(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::FSM *arg1 = (OgreKit::FSM *) 0 ;
+  gsFSM *arg1 = (gsFSM *) 0 ;
   int arg2 ;
-  OgreKit::Self arg3 ;
-  OgreKit::Function arg4 ;
+  gsSelf arg3 ;
+  gsFunction arg4 ;
   
   SWIG_check_num_args("addEvent",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("addEvent",1,"OgreKit::FSM *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("addEvent",1,"gsFSM *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("addEvent",2,"int");
-  if(!lua_istable(L,3)) SWIG_fail_arg("addEvent",3,"OgreKit::Self");
-  if(!lua_isfunction(L,4)) SWIG_fail_arg("addEvent",4,"OgreKit::Function");
+  if(!lua_istable(L,3)) SWIG_fail_arg("addEvent",3,"gsSelf");
+  if(!lua_isfunction(L,4)) SWIG_fail_arg("addEvent",4,"gsFunction");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__FSM,0))){
-    SWIG_fail_ptr("FSM_addEvent",1,SWIGTYPE_p_OgreKit__FSM);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsFSM,0))){
+    SWIG_fail_ptr("FSM_addEvent",1,SWIGTYPE_p_gsFSM);
   }
   
   arg2 = (int)lua_tonumber(L, 2);
@@ -9233,27 +9722,24 @@ fail:
 
 static int _wrap_FSM_addTransition__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::FSM *arg1 = (OgreKit::FSM *) 0 ;
+  gsFSM *arg1 = (gsFSM *) 0 ;
   int arg2 ;
   int arg3 ;
-  OgreKit::Pointer< OgreKit::WhenEvent > result;
+  gsWhenEvent *result = 0 ;
   
   SWIG_check_num_args("addTransition",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("addTransition",1,"OgreKit::FSM *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("addTransition",1,"gsFSM *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("addTransition",2,"int");
   if(!lua_isnumber(L,3)) SWIG_fail_arg("addTransition",3,"int");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__FSM,0))){
-    SWIG_fail_ptr("FSM_addTransition",1,SWIGTYPE_p_OgreKit__FSM);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsFSM,0))){
+    SWIG_fail_ptr("FSM_addTransition",1,SWIGTYPE_p_gsFSM);
   }
   
   arg2 = (int)lua_tonumber(L, 2);
   arg3 = (int)lua_tonumber(L, 3);
-  result = (arg1)->addTransition(arg2,arg3);
-  {
-    OgreKit::Pointer< OgreKit::WhenEvent > * resultptr = new OgreKit::Pointer< OgreKit::WhenEvent >((const OgreKit::Pointer< OgreKit::WhenEvent > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__WhenEvent_t,1); SWIG_arg++;
-  }
+  result = (gsWhenEvent *)(arg1)->addTransition(arg2,arg3);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsWhenEvent,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -9266,31 +9752,28 @@ fail:
 
 static int _wrap_FSM_addTransition__SWIG_1(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::FSM *arg1 = (OgreKit::FSM *) 0 ;
+  gsFSM *arg1 = (gsFSM *) 0 ;
   int arg2 ;
   int arg3 ;
   unsigned long arg4 ;
-  OgreKit::Pointer< OgreKit::WhenEvent > result;
+  gsWhenEvent *result = 0 ;
   
   SWIG_check_num_args("addTransition",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("addTransition",1,"OgreKit::FSM *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("addTransition",1,"gsFSM *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("addTransition",2,"int");
   if(!lua_isnumber(L,3)) SWIG_fail_arg("addTransition",3,"int");
   if(!lua_isnumber(L,4)) SWIG_fail_arg("addTransition",4,"unsigned long");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__FSM,0))){
-    SWIG_fail_ptr("FSM_addTransition",1,SWIGTYPE_p_OgreKit__FSM);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsFSM,0))){
+    SWIG_fail_ptr("FSM_addTransition",1,SWIGTYPE_p_gsFSM);
   }
   
   arg2 = (int)lua_tonumber(L, 2);
   arg3 = (int)lua_tonumber(L, 3);
   SWIG_contract_assert((lua_tonumber(L,4)>=0),"number must not be negative")
   arg4 = (unsigned long)lua_tonumber(L, 4);
-  result = (arg1)->addTransition(arg2,arg3,arg4);
-  {
-    OgreKit::Pointer< OgreKit::WhenEvent > * resultptr = new OgreKit::Pointer< OgreKit::WhenEvent >((const OgreKit::Pointer< OgreKit::WhenEvent > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__WhenEvent_t,1); SWIG_arg++;
-  }
+  result = (gsWhenEvent *)(arg1)->addTransition(arg2,arg3,arg4);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsWhenEvent,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -9303,24 +9786,24 @@ fail:
 
 static int _wrap_FSM_addTransition__SWIG_2(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::FSM *arg1 = (OgreKit::FSM *) 0 ;
+  gsFSM *arg1 = (gsFSM *) 0 ;
   int arg2 ;
   int arg3 ;
   unsigned long arg4 ;
-  OgreKit::Self arg5 ;
-  OgreKit::Function arg6 ;
-  OgreKit::Pointer< OgreKit::WhenEvent > result;
+  gsSelf arg5 ;
+  gsFunction arg6 ;
+  gsWhenEvent *result = 0 ;
   
   SWIG_check_num_args("addTransition",6,6)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("addTransition",1,"OgreKit::FSM *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("addTransition",1,"gsFSM *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("addTransition",2,"int");
   if(!lua_isnumber(L,3)) SWIG_fail_arg("addTransition",3,"int");
   if(!lua_isnumber(L,4)) SWIG_fail_arg("addTransition",4,"unsigned long");
-  if(!lua_istable(L,5)) SWIG_fail_arg("addTransition",5,"OgreKit::Self");
-  if(!lua_isfunction(L,6)) SWIG_fail_arg("addTransition",6,"OgreKit::Function");
+  if(!lua_istable(L,5)) SWIG_fail_arg("addTransition",5,"gsSelf");
+  if(!lua_isfunction(L,6)) SWIG_fail_arg("addTransition",6,"gsFunction");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__FSM,0))){
-    SWIG_fail_ptr("FSM_addTransition",1,SWIGTYPE_p_OgreKit__FSM);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsFSM,0))){
+    SWIG_fail_ptr("FSM_addTransition",1,SWIGTYPE_p_gsFSM);
   }
   
   arg2 = (int)lua_tonumber(L, 2);
@@ -9329,11 +9812,8 @@ static int _wrap_FSM_addTransition__SWIG_2(lua_State* L) {
   arg4 = (unsigned long)lua_tonumber(L, 4);
   (&arg5)->m_id = 5; (&arg5)->L = L; 
   (&arg6)->m_id = 6; (&arg6)->L = L; 
-  result = (arg1)->addTransition(arg2,arg3,arg4,arg5,arg6);
-  {
-    OgreKit::Pointer< OgreKit::WhenEvent > * resultptr = new OgreKit::Pointer< OgreKit::WhenEvent >((const OgreKit::Pointer< OgreKit::WhenEvent > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__WhenEvent_t,1); SWIG_arg++;
-  }
+  result = (gsWhenEvent *)(arg1)->addTransition(arg2,arg3,arg4,arg5,arg6);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsWhenEvent,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -9355,7 +9835,7 @@ static int _wrap_FSM_addTransition(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__FSM, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsFSM, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -9379,7 +9859,7 @@ static int _wrap_FSM_addTransition(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__FSM, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsFSM, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -9408,7 +9888,7 @@ static int _wrap_FSM_addTransition(lua_State* L) {
     int _v;
     {
       void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__FSM, 0)) {
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsFSM, 0)) {
         _v = 0;
       } else {
         _v = 1;
@@ -9442,18 +9922,18 @@ static int _wrap_FSM_addTransition(lua_State* L) {
   
   lua_pushstring(L,"Wrong arguments for overloaded function 'FSM_addTransition'\n"
     "  Possible C/C++ prototypes are:\n"
-    "    addTransition(OgreKit::FSM *,int,int)\n"
-    "    addTransition(OgreKit::FSM *,int,int,unsigned long)\n"
-    "    addTransition(OgreKit::FSM *,int,int,unsigned long,OgreKit::Self,OgreKit::Function)\n");
+    "    addTransition(gsFSM *,int,int)\n"
+    "    addTransition(gsFSM *,int,int,unsigned long)\n"
+    "    addTransition(gsFSM *,int,int,unsigned long,gsSelf,gsFunction)\n");
   lua_error(L);return 0;
 }
 
 
 static void swig_delete_FSM(void *obj) {
-OgreKit::FSM *arg1 = (OgreKit::FSM *) obj;
+gsFSM *arg1 = (gsFSM *) obj;
 delete arg1;
 }
-static swig_lua_method swig_OgreKit_FSM_methods[] = {
+static swig_lua_method swig_gsFSM_methods[] = {
     {"update", _wrap_FSM_update}, 
     {"setState", _wrap_FSM_setState}, 
     {"getState", _wrap_FSM_getState}, 
@@ -9463,243 +9943,20 @@ static swig_lua_method swig_OgreKit_FSM_methods[] = {
     {"addTransition", _wrap_FSM_addTransition}, 
     {0,0}
 };
-static swig_lua_attribute swig_OgreKit_FSM_attributes[] = {
+static swig_lua_attribute swig_gsFSM_attributes[] = {
     {0,0,0}
 };
-static swig_lua_class *swig_OgreKit_FSM_bases[] = {0};
-static const char *swig_OgreKit_FSM_base_names[] = {0};
-static swig_lua_class _wrap_class_OgreKit_FSM = { "FSM", &SWIGTYPE_p_OgreKit__FSM,_wrap_new_FSM, swig_delete_FSM, swig_OgreKit_FSM_methods, swig_OgreKit_FSM_attributes, swig_OgreKit_FSM_bases, swig_OgreKit_FSM_base_names };
-
-static int _wrap_WhenEventPtr_isNull(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::WhenEvent > *arg1 = (OgreKit::Pointer< OgreKit::WhenEvent > *) 0 ;
-  bool result;
-  
-  SWIG_check_num_args("isNull",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isNull",1,"OgreKit::Pointer< OgreKit::WhenEvent > const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__WhenEvent_t,0))){
-    SWIG_fail_ptr("WhenEventPtr_isNull",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__WhenEvent_t);
-  }
-  
-  result = (bool)((OgreKit::Pointer< OgreKit::WhenEvent > const *)arg1)->isNull();
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_WhenEventPtr___eq(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::WhenEvent > *arg1 = (OgreKit::Pointer< OgreKit::WhenEvent > *) 0 ;
-  OgreKit::Pointer< OgreKit::WhenEvent > *arg2 = 0 ;
-  bool result;
-  
-  SWIG_check_num_args("operator ==",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator ==",1,"OgreKit::Pointer< OgreKit::WhenEvent > const *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("operator ==",2,"OgreKit::Pointer< OgreKit::WhenEvent > const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__WhenEvent_t,0))){
-    SWIG_fail_ptr("WhenEventPtr___eq",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__WhenEvent_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__PointerT_OgreKit__WhenEvent_t,0))){
-    SWIG_fail_ptr("WhenEventPtr___eq",2,SWIGTYPE_p_OgreKit__PointerT_OgreKit__WhenEvent_t);
-  }
-  
-  result = (bool)((OgreKit::Pointer< OgreKit::WhenEvent > const *)arg1)->operator ==((OgreKit::Pointer< OgreKit::WhenEvent > const &)*arg2);
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_WhenEventPtr___deref__(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::WhenEvent > *arg1 = (OgreKit::Pointer< OgreKit::WhenEvent > *) 0 ;
-  OgreKit::WhenEvent *result = 0 ;
-  
-  SWIG_check_num_args("operator ->",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator ->",1,"OgreKit::Pointer< OgreKit::WhenEvent > const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__WhenEvent_t,0))){
-    SWIG_fail_ptr("WhenEventPtr___deref__",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__WhenEvent_t);
-  }
-  
-  result = (OgreKit::WhenEvent *)((OgreKit::Pointer< OgreKit::WhenEvent > const *)arg1)->operator ->();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__WhenEvent,0); SWIG_arg++; 
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_new_WhenEventPtr(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::WhenEvent > *result = 0 ;
-  
-  SWIG_check_num_args("OgreKit::Pointer<(OgreKit::WhenEvent)>::Pointer<(OgreKit::WhenEvent)>",0,0)
-  result = (OgreKit::Pointer< OgreKit::WhenEvent > *)new OgreKit::Pointer< OgreKit::WhenEvent >();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__PointerT_OgreKit__WhenEvent_t,1); SWIG_arg++; 
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_WhenEventPtr_when(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::WhenEvent > *arg1 = (OgreKit::Pointer< OgreKit::WhenEvent > *) 0 ;
-  OgreKit::Self arg2 ;
-  OgreKit::Function arg3 ;
-  
-  SWIG_check_num_args("when",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("when",1,"OgreKit::Pointer< OgreKit::WhenEvent > *");
-  if(!lua_istable(L,2)) SWIG_fail_arg("when",2,"OgreKit::Self");
-  if(!lua_isfunction(L,3)) SWIG_fail_arg("when",3,"OgreKit::Function");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__WhenEvent_t,0))){
-    SWIG_fail_ptr("WhenEventPtr_when",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__WhenEvent_t);
-  }
-  
-  (&arg2)->m_id = 2; (&arg2)->L = L; 
-  (&arg3)->m_id = 3; (&arg3)->L = L; 
-  (*arg1)->when(arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static void swig_delete_WhenEventPtr(void *obj) {
-OgreKit::Pointer< OgreKit::WhenEvent > *arg1 = (OgreKit::Pointer< OgreKit::WhenEvent > *) obj;
-delete arg1;
-}
-static swig_lua_method swig_OgreKit_Pointer_Sl_OgreKit_WhenEvent_Sg__methods[] = {
-    {"isNull", _wrap_WhenEventPtr_isNull}, 
-    {"__eq", _wrap_WhenEventPtr___eq}, 
-    {"__deref__", _wrap_WhenEventPtr___deref__}, 
-    {"when", _wrap_WhenEventPtr_when}, 
-    {0,0}
-};
-static swig_lua_attribute swig_OgreKit_Pointer_Sl_OgreKit_WhenEvent_Sg__attributes[] = {
-    {0,0,0}
-};
-static swig_lua_class *swig_OgreKit_Pointer_Sl_OgreKit_WhenEvent_Sg__bases[] = {0};
-static const char *swig_OgreKit_Pointer_Sl_OgreKit_WhenEvent_Sg__base_names[] = {0};
-static swig_lua_class _wrap_class_OgreKit_Pointer_Sl_OgreKit_WhenEvent_Sg_ = { "WhenEventPtr", &SWIGTYPE_p_OgreKit__PointerT_OgreKit__WhenEvent_t,_wrap_new_WhenEventPtr, swig_delete_WhenEventPtr, swig_OgreKit_Pointer_Sl_OgreKit_WhenEvent_Sg__methods, swig_OgreKit_Pointer_Sl_OgreKit_WhenEvent_Sg__attributes, swig_OgreKit_Pointer_Sl_OgreKit_WhenEvent_Sg__bases, swig_OgreKit_Pointer_Sl_OgreKit_WhenEvent_Sg__base_names };
+static swig_lua_class *swig_gsFSM_bases[] = {0};
+static const char *swig_gsFSM_base_names[] = {0};
+static swig_lua_class _wrap_class_gsFSM = { "FSM", &SWIGTYPE_p_gsFSM,_wrap_new_FSM, swig_delete_FSM, swig_gsFSM_methods, swig_gsFSM_attributes, swig_gsFSM_bases, swig_gsFSM_base_names };
 
 static int _wrap_new_RayTest(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::RayTest *result = 0 ;
+  gsRayTest *result = 0 ;
   
-  SWIG_check_num_args("OgreKit::RayTest",0,0)
-  result = (OgreKit::RayTest *)new OgreKit::RayTest();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__RayTest,1); SWIG_arg++; 
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_RayTest_cast__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::RayTest *arg1 = (OgreKit::RayTest *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  OgreKit::Vector3 *arg3 = 0 ;
-  bool result;
-  
-  SWIG_check_num_args("cast",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("cast",1,"OgreKit::RayTest *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("cast",2,"OgreKit::Vector3 const &");
-  if(!lua_isuserdata(L,3)) SWIG_fail_arg("cast",3,"OgreKit::Vector3 const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__RayTest,0))){
-    SWIG_fail_ptr("RayTest_cast",1,SWIGTYPE_p_OgreKit__RayTest);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("RayTest_cast",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("RayTest_cast",3,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  result = (bool)(arg1)->cast((OgreKit::Vector3 const &)*arg2,(OgreKit::Vector3 const &)*arg3);
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_RayTest_cast__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::RayTest *arg1 = (OgreKit::RayTest *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  float arg5 ;
-  float arg6 ;
-  float arg7 ;
-  bool result;
-  
-  SWIG_check_num_args("cast",7,7)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("cast",1,"OgreKit::RayTest *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("cast",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("cast",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("cast",4,"float");
-  if(!lua_isnumber(L,5)) SWIG_fail_arg("cast",5,"float");
-  if(!lua_isnumber(L,6)) SWIG_fail_arg("cast",6,"float");
-  if(!lua_isnumber(L,7)) SWIG_fail_arg("cast",7,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__RayTest,0))){
-    SWIG_fail_ptr("RayTest_cast",1,SWIGTYPE_p_OgreKit__RayTest);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  arg5 = (float)lua_tonumber(L, 5);
-  arg6 = (float)lua_tonumber(L, 6);
-  arg7 = (float)lua_tonumber(L, 7);
-  result = (bool)(arg1)->cast(arg2,arg3,arg4,arg5,arg6,arg7);
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  SWIG_check_num_args("gsRayTest",0,0)
+  result = (gsRayTest *)new gsRayTest();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsRayTest,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -9711,115 +9968,52 @@ fail:
 
 
 static int _wrap_RayTest_cast(lua_State* L) {
-  int argc;
-  int argv[8]={
-    1,2,3,4,5,6,7,8
-  };
+  int SWIG_arg = 0;
+  gsRayTest *arg1 = (gsRayTest *) 0 ;
+  gsRay *arg2 = 0 ;
+  bool result;
   
-  argc = lua_gettop(L);
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__RayTest, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        {
-          void *ptr;
-          if (lua_isuserdata(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-            _v = 0;
-          } else {
-            _v = 1;
-          }
-        }
-        if (_v) {
-          return _wrap_RayTest_cast__SWIG_0(L);
-        }
-      }
-    }
-  }
-  if (argc == 7) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__RayTest, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            {
-              _v = lua_isnumber(L,argv[4]);
-            }
-            if (_v) {
-              {
-                _v = lua_isnumber(L,argv[5]);
-              }
-              if (_v) {
-                {
-                  _v = lua_isnumber(L,argv[6]);
-                }
-                if (_v) {
-                  return _wrap_RayTest_cast__SWIG_1(L);
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+  SWIG_check_num_args("cast",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("cast",1,"gsRayTest *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("cast",2,"gsRay const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsRayTest,0))){
+    SWIG_fail_ptr("RayTest_cast",1,SWIGTYPE_p_gsRayTest);
   }
   
-  lua_pushstring(L,"Wrong arguments for overloaded function 'RayTest_cast'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    cast(OgreKit::RayTest *,OgreKit::Vector3 const &,OgreKit::Vector3 const &)\n"
-    "    cast(OgreKit::RayTest *,float,float,float,float,float,float)\n");
-  lua_error(L);return 0;
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsRay,0))){
+    SWIG_fail_ptr("RayTest_cast",2,SWIGTYPE_p_gsRay);
+  }
+  
+  result = (bool)(arg1)->cast((gsRay const &)*arg2);
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
 }
 
 
 static int _wrap_RayTest_getHitPoint(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::RayTest *arg1 = (OgreKit::RayTest *) 0 ;
-  OgreKit::Vector3 result;
+  gsRayTest *arg1 = (gsRayTest *) 0 ;
+  gsVector3 result;
   
   SWIG_check_num_args("getHitPoint",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getHitPoint",1,"OgreKit::RayTest *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getHitPoint",1,"gsRayTest *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__RayTest,0))){
-    SWIG_fail_ptr("RayTest_getHitPoint",1,SWIGTYPE_p_OgreKit__RayTest);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsRayTest,0))){
+    SWIG_fail_ptr("RayTest_getHitPoint",1,SWIGTYPE_p_gsRayTest);
   }
   
   result = (arg1)->getHitPoint();
   {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
+    gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -9833,20 +10027,20 @@ fail:
 
 static int _wrap_RayTest_getHitNormal(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::RayTest *arg1 = (OgreKit::RayTest *) 0 ;
-  OgreKit::Vector3 result;
+  gsRayTest *arg1 = (gsRayTest *) 0 ;
+  gsVector3 result;
   
   SWIG_check_num_args("getHitNormal",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getHitNormal",1,"OgreKit::RayTest *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getHitNormal",1,"gsRayTest *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__RayTest,0))){
-    SWIG_fail_ptr("RayTest_getHitNormal",1,SWIGTYPE_p_OgreKit__RayTest);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsRayTest,0))){
+    SWIG_fail_ptr("RayTest_getHitNormal",1,SWIGTYPE_p_gsRayTest);
   }
   
   result = (arg1)->getHitNormal();
   {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
+    gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -9860,21 +10054,18 @@ fail:
 
 static int _wrap_RayTest_getObject(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::RayTest *arg1 = (OgreKit::RayTest *) 0 ;
-  OgreKit::Pointer< OgreKit::GameObject > result;
+  gsRayTest *arg1 = (gsRayTest *) 0 ;
+  gsGameObject *result = 0 ;
   
   SWIG_check_num_args("getObject",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getObject",1,"OgreKit::RayTest *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getObject",1,"gsRayTest *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__RayTest,0))){
-    SWIG_fail_ptr("RayTest_getObject",1,SWIGTYPE_p_OgreKit__RayTest);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsRayTest,0))){
+    SWIG_fail_ptr("RayTest_getObject",1,SWIGTYPE_p_gsRayTest);
   }
   
-  result = (arg1)->getObject();
-  {
-    OgreKit::Pointer< OgreKit::GameObject > * resultptr = new OgreKit::Pointer< OgreKit::GameObject >((const OgreKit::Pointer< OgreKit::GameObject > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,1); SWIG_arg++;
-  }
+  result = (gsGameObject *)(arg1)->getObject();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGameObject,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -9887,14 +10078,14 @@ fail:
 
 static int _wrap_RayTest_getHitFraction(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::RayTest *arg1 = (OgreKit::RayTest *) 0 ;
+  gsRayTest *arg1 = (gsRayTest *) 0 ;
   float result;
   
   SWIG_check_num_args("getHitFraction",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getHitFraction",1,"OgreKit::RayTest *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getHitFraction",1,"gsRayTest *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__RayTest,0))){
-    SWIG_fail_ptr("RayTest_getHitFraction",1,SWIGTYPE_p_OgreKit__RayTest);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsRayTest,0))){
+    SWIG_fail_ptr("RayTest_getHitFraction",1,SWIGTYPE_p_gsRayTest);
   }
   
   result = (float)(arg1)->getHitFraction();
@@ -9910,10 +10101,10 @@ fail:
 
 
 static void swig_delete_RayTest(void *obj) {
-OgreKit::RayTest *arg1 = (OgreKit::RayTest *) obj;
+gsRayTest *arg1 = (gsRayTest *) obj;
 delete arg1;
 }
-static swig_lua_method swig_OgreKit_RayTest_methods[] = {
+static swig_lua_method swig_gsRayTest_methods[] = {
     {"cast", _wrap_RayTest_cast}, 
     {"getHitPoint", _wrap_RayTest_getHitPoint}, 
     {"getHitNormal", _wrap_RayTest_getHitNormal}, 
@@ -9921,27 +10112,20 @@ static swig_lua_method swig_OgreKit_RayTest_methods[] = {
     {"getHitFraction", _wrap_RayTest_getHitFraction}, 
     {0,0}
 };
-static swig_lua_attribute swig_OgreKit_RayTest_attributes[] = {
+static swig_lua_attribute swig_gsRayTest_attributes[] = {
     {0,0,0}
 };
-static swig_lua_class *swig_OgreKit_RayTest_bases[] = {0};
-static const char *swig_OgreKit_RayTest_base_names[] = {0};
-static swig_lua_class _wrap_class_OgreKit_RayTest = { "RayTest", &SWIGTYPE_p_OgreKit__RayTest,_wrap_new_RayTest, swig_delete_RayTest, swig_OgreKit_RayTest_methods, swig_OgreKit_RayTest_attributes, swig_OgreKit_RayTest_bases, swig_OgreKit_RayTest_base_names };
+static swig_lua_class *swig_gsRayTest_bases[] = {0};
+static const char *swig_gsRayTest_base_names[] = {0};
+static swig_lua_class _wrap_class_gsRayTest = { "RayTest", &SWIGTYPE_p_gsRayTest,_wrap_new_RayTest, swig_delete_RayTest, swig_gsRayTest_methods, swig_gsRayTest_attributes, swig_gsRayTest_bases, swig_gsRayTest_base_names };
 
-static int _wrap_new_SweptTest(lua_State* L) {
+static int _wrap_new_SweptTest__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = 0 ;
-  OgreKit::SweptTest *result = 0 ;
+  gsSweptTest *result = 0 ;
   
-  SWIG_check_num_args("OgreKit::SweptTest",1,1)
-  if(!lua_isuserdata(L,1)) SWIG_fail_arg("OgreKit::SweptTest",1,"OgreKit::Pointer< OgreKit::GameObject > const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("new_SweptTest",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  result = (OgreKit::SweptTest *)new OgreKit::SweptTest((OgreKit::Pointer< OgreKit::GameObject > const &)*arg1);
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__SweptTest,1); SWIG_arg++; 
+  SWIG_check_num_args("gsSweptTest",0,0)
+  result = (gsSweptTest *)new gsSweptTest();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsSweptTest,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -9952,29 +10136,86 @@ fail:
 }
 
 
+static int _wrap_new_SweptTest__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  gsArray< gsGameObject,gkGameObject > *arg1 = 0 ;
+  gsSweptTest *result = 0 ;
+  
+  SWIG_check_num_args("gsSweptTest",1,1)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("gsSweptTest",1,"gsArray< gsGameObject,gkGameObject > &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsArrayT_gsGameObject_gkGameObject_t,0))){
+    SWIG_fail_ptr("new_SweptTest",1,SWIGTYPE_p_gsArrayT_gsGameObject_gkGameObject_t);
+  }
+  
+  result = (gsSweptTest *)new gsSweptTest(*arg1);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsSweptTest,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_SweptTest(lua_State* L) {
+  int argc;
+  int argv[2]={
+    1,2
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 0) {
+    return _wrap_new_SweptTest__SWIG_0(L);
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      void *ptr;
+      if (lua_isuserdata(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsArrayT_gsGameObject_gkGameObject_t, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      return _wrap_new_SweptTest__SWIG_1(L);
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'new_SweptTest'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    gsSweptTest()\n"
+    "    gsSweptTest(gsArray< gsGameObject,gkGameObject > &)\n");
+  lua_error(L);return 0;
+}
+
+
 static int _wrap_SweptTest_collides(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::SweptTest *arg1 = (OgreKit::SweptTest *) 0 ;
-  OgreKit::Ray *arg2 = 0 ;
+  gsSweptTest *arg1 = (gsSweptTest *) 0 ;
+  gsRay *arg2 = 0 ;
   float arg3 ;
   bool result;
   
   SWIG_check_num_args("collides",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("collides",1,"OgreKit::SweptTest *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("collides",2,"OgreKit::Ray const &");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("collides",1,"gsSweptTest *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("collides",2,"gsRay const &");
   if(!lua_isnumber(L,3)) SWIG_fail_arg("collides",3,"float");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__SweptTest,0))){
-    SWIG_fail_ptr("SweptTest_collides",1,SWIGTYPE_p_OgreKit__SweptTest);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSweptTest,0))){
+    SWIG_fail_ptr("SweptTest_collides",1,SWIGTYPE_p_gsSweptTest);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Ray,0))){
-    SWIG_fail_ptr("SweptTest_collides",2,SWIGTYPE_p_OgreKit__Ray);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsRay,0))){
+    SWIG_fail_ptr("SweptTest_collides",2,SWIGTYPE_p_gsRay);
   }
   
   arg3 = (float)lua_tonumber(L, 3);
-  result = (bool)(arg1)->collides((OgreKit::Ray const &)*arg2,arg3);
+  result = (bool)(arg1)->collides((gsRay const &)*arg2,arg3);
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
@@ -9988,20 +10229,20 @@ fail:
 
 static int _wrap_SweptTest_getHitPoint(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::SweptTest *arg1 = (OgreKit::SweptTest *) 0 ;
-  OgreKit::Vector3 result;
+  gsSweptTest *arg1 = (gsSweptTest *) 0 ;
+  gsVector3 result;
   
   SWIG_check_num_args("getHitPoint",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getHitPoint",1,"OgreKit::SweptTest *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getHitPoint",1,"gsSweptTest *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__SweptTest,0))){
-    SWIG_fail_ptr("SweptTest_getHitPoint",1,SWIGTYPE_p_OgreKit__SweptTest);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSweptTest,0))){
+    SWIG_fail_ptr("SweptTest_getHitPoint",1,SWIGTYPE_p_gsSweptTest);
   }
   
   result = (arg1)->getHitPoint();
   {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
+    gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -10015,20 +10256,20 @@ fail:
 
 static int _wrap_SweptTest_getHitNormal(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::SweptTest *arg1 = (OgreKit::SweptTest *) 0 ;
-  OgreKit::Vector3 result;
+  gsSweptTest *arg1 = (gsSweptTest *) 0 ;
+  gsVector3 result;
   
   SWIG_check_num_args("getHitNormal",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getHitNormal",1,"OgreKit::SweptTest *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getHitNormal",1,"gsSweptTest *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__SweptTest,0))){
-    SWIG_fail_ptr("SweptTest_getHitNormal",1,SWIGTYPE_p_OgreKit__SweptTest);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSweptTest,0))){
+    SWIG_fail_ptr("SweptTest_getHitNormal",1,SWIGTYPE_p_gsSweptTest);
   }
   
   result = (arg1)->getHitNormal();
   {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
+    gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -10042,20 +10283,20 @@ fail:
 
 static int _wrap_SweptTest_getReflection(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::SweptTest *arg1 = (OgreKit::SweptTest *) 0 ;
-  OgreKit::Vector3 result;
+  gsSweptTest *arg1 = (gsSweptTest *) 0 ;
+  gsVector3 result;
   
   SWIG_check_num_args("getReflection",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getReflection",1,"OgreKit::SweptTest *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getReflection",1,"gsSweptTest *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__SweptTest,0))){
-    SWIG_fail_ptr("SweptTest_getReflection",1,SWIGTYPE_p_OgreKit__SweptTest);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSweptTest,0))){
+    SWIG_fail_ptr("SweptTest_getReflection",1,SWIGTYPE_p_gsSweptTest);
   }
   
   result = (arg1)->getReflection();
   {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
+    gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -10069,20 +10310,20 @@ fail:
 
 static int _wrap_SweptTest_getSliding(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::SweptTest *arg1 = (OgreKit::SweptTest *) 0 ;
-  OgreKit::Vector3 result;
+  gsSweptTest *arg1 = (gsSweptTest *) 0 ;
+  gsVector3 result;
   
   SWIG_check_num_args("getSliding",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getSliding",1,"OgreKit::SweptTest *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getSliding",1,"gsSweptTest *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__SweptTest,0))){
-    SWIG_fail_ptr("SweptTest_getSliding",1,SWIGTYPE_p_OgreKit__SweptTest);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSweptTest,0))){
+    SWIG_fail_ptr("SweptTest_getSliding",1,SWIGTYPE_p_gsSweptTest);
   }
   
   result = (arg1)->getSliding();
   {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
+    gsVector3 * resultptr = new gsVector3((const gsVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsVector3,1); SWIG_arg++;
   }
   return SWIG_arg;
   
@@ -10096,21 +10337,18 @@ fail:
 
 static int _wrap_SweptTest_getObject(lua_State* L) {
   int SWIG_arg = 0;
-  OgreKit::SweptTest *arg1 = (OgreKit::SweptTest *) 0 ;
-  OgreKit::Pointer< OgreKit::GameObject > result;
+  gsSweptTest *arg1 = (gsSweptTest *) 0 ;
+  gsGameObject *result = 0 ;
   
   SWIG_check_num_args("getObject",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getObject",1,"OgreKit::SweptTest *");
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getObject",1,"gsSweptTest *");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__SweptTest,0))){
-    SWIG_fail_ptr("SweptTest_getObject",1,SWIGTYPE_p_OgreKit__SweptTest);
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsSweptTest,0))){
+    SWIG_fail_ptr("SweptTest_getObject",1,SWIGTYPE_p_gsSweptTest);
   }
   
-  result = (arg1)->getObject();
-  {
-    OgreKit::Pointer< OgreKit::GameObject > * resultptr = new OgreKit::Pointer< OgreKit::GameObject >((const OgreKit::Pointer< OgreKit::GameObject > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,1); SWIG_arg++;
-  }
+  result = (gsGameObject *)(arg1)->getObject();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsGameObject,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -10122,10 +10360,10 @@ fail:
 
 
 static void swig_delete_SweptTest(void *obj) {
-OgreKit::SweptTest *arg1 = (OgreKit::SweptTest *) obj;
+gsSweptTest *arg1 = (gsSweptTest *) obj;
 delete arg1;
 }
-static swig_lua_method swig_OgreKit_SweptTest_methods[] = {
+static swig_lua_method swig_gsSweptTest_methods[] = {
     {"collides", _wrap_SweptTest_collides}, 
     {"getHitPoint", _wrap_SweptTest_getHitPoint}, 
     {"getHitNormal", _wrap_SweptTest_getHitNormal}, 
@@ -10134,11925 +10372,12 @@ static swig_lua_method swig_OgreKit_SweptTest_methods[] = {
     {"getObject", _wrap_SweptTest_getObject}, 
     {0,0}
 };
-static swig_lua_attribute swig_OgreKit_SweptTest_attributes[] = {
+static swig_lua_attribute swig_gsSweptTest_attributes[] = {
     {0,0,0}
 };
-static swig_lua_class *swig_OgreKit_SweptTest_bases[] = {0};
-static const char *swig_OgreKit_SweptTest_base_names[] = {0};
-static swig_lua_class _wrap_class_OgreKit_SweptTest = { "SweptTest", &SWIGTYPE_p_OgreKit__SweptTest,_wrap_new_SweptTest, swig_delete_SweptTest, swig_OgreKit_SweptTest_methods, swig_OgreKit_SweptTest_attributes, swig_OgreKit_SweptTest_bases, swig_OgreKit_SweptTest_base_names };
-
-static int _wrap_GameObjectPtr_isNull(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  bool result;
-  
-  SWIG_check_num_args("isNull",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isNull",1,"OgreKit::Pointer< OgreKit::GameObject > const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_isNull",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  result = (bool)((OgreKit::Pointer< OgreKit::GameObject > const *)arg1)->isNull();
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr___eq(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::Pointer< OgreKit::GameObject > *arg2 = 0 ;
-  bool result;
-  
-  SWIG_check_num_args("operator ==",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator ==",1,"OgreKit::Pointer< OgreKit::GameObject > const *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("operator ==",2,"OgreKit::Pointer< OgreKit::GameObject > const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr___eq",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr___eq",2,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  result = (bool)((OgreKit::Pointer< OgreKit::GameObject > const *)arg1)->operator ==((OgreKit::Pointer< OgreKit::GameObject > const &)*arg2);
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr___deref__(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::GameObject *result = 0 ;
-  
-  SWIG_check_num_args("operator ->",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator ->",1,"OgreKit::Pointer< OgreKit::GameObject > const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr___deref__",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  result = (OgreKit::GameObject *)((OgreKit::Pointer< OgreKit::GameObject > const *)arg1)->operator ->();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__GameObject,0); SWIG_arg++; 
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_new_GameObjectPtr(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *result = 0 ;
-  
-  SWIG_check_num_args("OgreKit::Pointer<(OgreKit::GameObject)>::Pointer<(OgreKit::GameObject)>",0,0)
-  result = (OgreKit::Pointer< OgreKit::GameObject > *)new OgreKit::Pointer< OgreKit::GameObject >();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,1); SWIG_arg++; 
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_getPosition(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::Vector3 result;
-  
-  SWIG_check_num_args("getPosition",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getPosition",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_getPosition",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  result = (*arg1)->getPosition();
-  {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_getRotation(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::Vector3 result;
-  
-  SWIG_check_num_args("getRotation",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getRotation",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_getRotation",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  result = (*arg1)->getRotation();
-  {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_getOrientation(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::Quaternion result;
-  
-  SWIG_check_num_args("getOrientation",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getOrientation",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_getOrientation",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  result = (*arg1)->getOrientation();
-  {
-    OgreKit::Quaternion * resultptr = new OgreKit::Quaternion((const OgreKit::Quaternion &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Quaternion,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_getScale(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::Vector3 result;
-  
-  SWIG_check_num_args("getScale",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getScale",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_getScale",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  result = (*arg1)->getScale();
-  {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_getWorldPosition(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::Vector3 result;
-  
-  SWIG_check_num_args("getWorldPosition",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getWorldPosition",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_getWorldPosition",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  result = (*arg1)->getWorldPosition();
-  {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_getWorldRotation(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::Vector3 result;
-  
-  SWIG_check_num_args("getWorldRotation",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getWorldRotation",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_getWorldRotation",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  result = (*arg1)->getWorldRotation();
-  {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_getWorldOrientation(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::Quaternion result;
-  
-  SWIG_check_num_args("getWorldOrientation",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getWorldOrientation",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_getWorldOrientation",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  result = (*arg1)->getWorldOrientation();
-  {
-    OgreKit::Quaternion * resultptr = new OgreKit::Quaternion((const OgreKit::Quaternion &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Quaternion,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_getLinearVelocity(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::Vector3 result;
-  
-  SWIG_check_num_args("getLinearVelocity",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getLinearVelocity",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_getLinearVelocity",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  result = (*arg1)->getLinearVelocity();
-  {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_getAngularVelocity(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::Vector3 result;
-  
-  SWIG_check_num_args("getAngularVelocity",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getAngularVelocity",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_getAngularVelocity",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  result = (*arg1)->getAngularVelocity();
-  {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_setLinearVelocity__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  
-  SWIG_check_num_args("setLinearVelocity",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setLinearVelocity",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setLinearVelocity",2,"OgreKit::Vector3 const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_setLinearVelocity",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("GameObjectPtr_setLinearVelocity",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  (*arg1)->setLinearVelocity((OgreKit::Vector3 const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_setLinearVelocity__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  
-  SWIG_check_num_args("setLinearVelocity",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setLinearVelocity",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("setLinearVelocity",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("setLinearVelocity",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("setLinearVelocity",4,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_setLinearVelocity",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  (*arg1)->setLinearVelocity(arg2,arg3,arg4);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_setLinearVelocity(lua_State* L) {
-  int argc;
-  int argv[5]={
-    1,2,3,4,5
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_GameObjectPtr_setLinearVelocity__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            return _wrap_GameObjectPtr_setLinearVelocity__SWIG_1(L);
-          }
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'GameObjectPtr_setLinearVelocity'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    setLinearVelocity(OgreKit::Pointer< OgreKit::GameObject > *,OgreKit::Vector3 const &)\n"
-    "    setLinearVelocity(OgreKit::Pointer< OgreKit::GameObject > *,float,float,float)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_GameObjectPtr_setAngularVelocity__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  
-  SWIG_check_num_args("setAngularVelocity",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setAngularVelocity",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setAngularVelocity",2,"OgreKit::Vector3 const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_setAngularVelocity",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("GameObjectPtr_setAngularVelocity",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  (*arg1)->setAngularVelocity((OgreKit::Vector3 const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_setAngularVelocity__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  
-  SWIG_check_num_args("setAngularVelocity",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setAngularVelocity",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("setAngularVelocity",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("setAngularVelocity",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("setAngularVelocity",4,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_setAngularVelocity",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  (*arg1)->setAngularVelocity(arg2,arg3,arg4);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_setAngularVelocity(lua_State* L) {
-  int argc;
-  int argv[5]={
-    1,2,3,4,5
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_GameObjectPtr_setAngularVelocity__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            return _wrap_GameObjectPtr_setAngularVelocity__SWIG_1(L);
-          }
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'GameObjectPtr_setAngularVelocity'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    setAngularVelocity(OgreKit::Pointer< OgreKit::GameObject > *,OgreKit::Vector3 const &)\n"
-    "    setAngularVelocity(OgreKit::Pointer< OgreKit::GameObject > *,float,float,float)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_GameObjectPtr_setPosition__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  
-  SWIG_check_num_args("setPosition",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setPosition",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setPosition",2,"OgreKit::Vector3 const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_setPosition",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("GameObjectPtr_setPosition",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  (*arg1)->setPosition((OgreKit::Vector3 const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_setPosition__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  
-  SWIG_check_num_args("setPosition",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setPosition",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("setPosition",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("setPosition",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("setPosition",4,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_setPosition",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  (*arg1)->setPosition(arg2,arg3,arg4);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_setPosition(lua_State* L) {
-  int argc;
-  int argv[5]={
-    1,2,3,4,5
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_GameObjectPtr_setPosition__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            return _wrap_GameObjectPtr_setPosition__SWIG_1(L);
-          }
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'GameObjectPtr_setPosition'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    setPosition(OgreKit::Pointer< OgreKit::GameObject > *,OgreKit::Vector3 const &)\n"
-    "    setPosition(OgreKit::Pointer< OgreKit::GameObject > *,float,float,float)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_GameObjectPtr_setRotation__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  
-  SWIG_check_num_args("setRotation",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setRotation",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setRotation",2,"OgreKit::Vector3 const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_setRotation",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("GameObjectPtr_setRotation",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  (*arg1)->setRotation((OgreKit::Vector3 const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_setRotation__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  
-  SWIG_check_num_args("setRotation",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setRotation",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("setRotation",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("setRotation",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("setRotation",4,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_setRotation",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  (*arg1)->setRotation(arg2,arg3,arg4);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_setRotation(lua_State* L) {
-  int argc;
-  int argv[5]={
-    1,2,3,4,5
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_GameObjectPtr_setRotation__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            return _wrap_GameObjectPtr_setRotation__SWIG_1(L);
-          }
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'GameObjectPtr_setRotation'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    setRotation(OgreKit::Pointer< OgreKit::GameObject > *,OgreKit::Vector3 const &)\n"
-    "    setRotation(OgreKit::Pointer< OgreKit::GameObject > *,float,float,float)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_GameObjectPtr_setOrientation__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::Quaternion *arg2 = 0 ;
-  
-  SWIG_check_num_args("setOrientation",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setOrientation",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setOrientation",2,"OgreKit::Quaternion const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_setOrientation",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("GameObjectPtr_setOrientation",2,SWIGTYPE_p_OgreKit__Quaternion);
-  }
-  
-  (*arg1)->setOrientation((OgreKit::Quaternion const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_setOrientation__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  float arg5 ;
-  
-  SWIG_check_num_args("setOrientation",5,5)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setOrientation",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("setOrientation",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("setOrientation",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("setOrientation",4,"float");
-  if(!lua_isnumber(L,5)) SWIG_fail_arg("setOrientation",5,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_setOrientation",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  arg5 = (float)lua_tonumber(L, 5);
-  (*arg1)->setOrientation(arg2,arg3,arg4,arg5);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_setOrientation(lua_State* L) {
-  int argc;
-  int argv[6]={
-    1,2,3,4,5,6
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Quaternion, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_GameObjectPtr_setOrientation__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 5) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            {
-              _v = lua_isnumber(L,argv[4]);
-            }
-            if (_v) {
-              return _wrap_GameObjectPtr_setOrientation__SWIG_1(L);
-            }
-          }
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'GameObjectPtr_setOrientation'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    setOrientation(OgreKit::Pointer< OgreKit::GameObject > *,OgreKit::Quaternion const &)\n"
-    "    setOrientation(OgreKit::Pointer< OgreKit::GameObject > *,float,float,float,float)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_GameObjectPtr_getType(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::GameObjectTypes result;
-  
-  SWIG_check_num_args("getType",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getType",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_getType",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  result = (OgreKit::GameObjectTypes)(*arg1)->getType();
-  lua_pushnumber(L, (lua_Number)(int)(result)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_rotate__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  
-  SWIG_check_num_args("rotate",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("rotate",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("rotate",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("rotate",4,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_rotate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  (*arg1)->rotate(arg2,arg3,arg4);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_rotate__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  
-  SWIG_check_num_args("rotate",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("rotate",2,"OgreKit::Vector3 const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_rotate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("GameObjectPtr_rotate",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  (*arg1)->rotate((OgreKit::Vector3 const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_rotate__SWIG_2(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::Quaternion *arg2 = 0 ;
-  
-  SWIG_check_num_args("rotate",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("rotate",2,"OgreKit::Quaternion const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_rotate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("GameObjectPtr_rotate",2,SWIGTYPE_p_OgreKit__Quaternion);
-  }
-  
-  (*arg1)->rotate((OgreKit::Quaternion const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_rotate__SWIG_3(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  OgreKit::TransformSpace arg5 ;
-  
-  SWIG_check_num_args("rotate",5,5)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("rotate",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("rotate",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("rotate",4,"float");
-  if(!lua_isnumber(L,5)) SWIG_fail_arg("rotate",5,"OgreKit::TransformSpace");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_rotate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  arg5 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 5);
-  (*arg1)->rotate(arg2,arg3,arg4,arg5);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_rotate__SWIG_4(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  OgreKit::TransformSpace arg3 ;
-  
-  SWIG_check_num_args("rotate",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("rotate",2,"OgreKit::Vector3 const &");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("rotate",3,"OgreKit::TransformSpace");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_rotate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("GameObjectPtr_rotate",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  arg3 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 3);
-  (*arg1)->rotate((OgreKit::Vector3 const &)*arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_rotate__SWIG_5(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::Quaternion *arg2 = 0 ;
-  OgreKit::TransformSpace arg3 ;
-  
-  SWIG_check_num_args("rotate",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("rotate",2,"OgreKit::Quaternion const &");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("rotate",3,"OgreKit::TransformSpace");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_rotate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("GameObjectPtr_rotate",2,SWIGTYPE_p_OgreKit__Quaternion);
-  }
-  
-  arg3 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 3);
-  (*arg1)->rotate((OgreKit::Quaternion const &)*arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_rotate(lua_State* L) {
-  int argc;
-  int argv[6]={
-    1,2,3,4,5,6
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_GameObjectPtr_rotate__SWIG_1(L);
-      }
-    }
-  }
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Quaternion, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_GameObjectPtr_rotate__SWIG_2(L);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_GameObjectPtr_rotate__SWIG_4(L);
-        }
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Quaternion, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_GameObjectPtr_rotate__SWIG_5(L);
-        }
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            return _wrap_GameObjectPtr_rotate__SWIG_0(L);
-          }
-        }
-      }
-    }
-  }
-  if (argc == 5) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            {
-              _v = lua_isnumber(L,argv[4]);
-            }
-            if (_v) {
-              return _wrap_GameObjectPtr_rotate__SWIG_3(L);
-            }
-          }
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'GameObjectPtr_rotate'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    rotate(OgreKit::Pointer< OgreKit::GameObject > *,float,float,float)\n"
-    "    rotate(OgreKit::Pointer< OgreKit::GameObject > *,OgreKit::Vector3 const &)\n"
-    "    rotate(OgreKit::Pointer< OgreKit::GameObject > *,OgreKit::Quaternion const &)\n"
-    "    rotate(OgreKit::Pointer< OgreKit::GameObject > *,float,float,float,OgreKit::TransformSpace)\n"
-    "    rotate(OgreKit::Pointer< OgreKit::GameObject > *,OgreKit::Vector3 const &,OgreKit::TransformSpace)\n"
-    "    rotate(OgreKit::Pointer< OgreKit::GameObject > *,OgreKit::Quaternion const &,OgreKit::TransformSpace)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_GameObjectPtr_translate__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  
-  SWIG_check_num_args("translate",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("translate",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("translate",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("translate",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("translate",4,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_translate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  (*arg1)->translate(arg2,arg3,arg4);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_translate__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  
-  SWIG_check_num_args("translate",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("translate",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("translate",2,"OgreKit::Vector3 const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_translate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("GameObjectPtr_translate",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  (*arg1)->translate((OgreKit::Vector3 const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_translate__SWIG_2(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  OgreKit::TransformSpace arg5 ;
-  
-  SWIG_check_num_args("translate",5,5)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("translate",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("translate",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("translate",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("translate",4,"float");
-  if(!lua_isnumber(L,5)) SWIG_fail_arg("translate",5,"OgreKit::TransformSpace");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_translate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  arg5 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 5);
-  (*arg1)->translate(arg2,arg3,arg4,arg5);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_translate__SWIG_3(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  OgreKit::TransformSpace arg3 ;
-  
-  SWIG_check_num_args("translate",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("translate",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("translate",2,"OgreKit::Vector3 const &");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("translate",3,"OgreKit::TransformSpace");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_translate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("GameObjectPtr_translate",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  arg3 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 3);
-  (*arg1)->translate((OgreKit::Vector3 const &)*arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_translate(lua_State* L) {
-  int argc;
-  int argv[6]={
-    1,2,3,4,5,6
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_GameObjectPtr_translate__SWIG_1(L);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_GameObjectPtr_translate__SWIG_3(L);
-        }
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            return _wrap_GameObjectPtr_translate__SWIG_0(L);
-          }
-        }
-      }
-    }
-  }
-  if (argc == 5) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            {
-              _v = lua_isnumber(L,argv[4]);
-            }
-            if (_v) {
-              return _wrap_GameObjectPtr_translate__SWIG_2(L);
-            }
-          }
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'GameObjectPtr_translate'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    translate(OgreKit::Pointer< OgreKit::GameObject > *,float,float,float)\n"
-    "    translate(OgreKit::Pointer< OgreKit::GameObject > *,OgreKit::Vector3 const &)\n"
-    "    translate(OgreKit::Pointer< OgreKit::GameObject > *,float,float,float,OgreKit::TransformSpace)\n"
-    "    translate(OgreKit::Pointer< OgreKit::GameObject > *,OgreKit::Vector3 const &,OgreKit::TransformSpace)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_GameObjectPtr_scale__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  
-  SWIG_check_num_args("scale",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("scale",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("scale",2,"OgreKit::Vector3 const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_scale",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("GameObjectPtr_scale",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  (*arg1)->scale((OgreKit::Vector3 const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_scale__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  
-  SWIG_check_num_args("scale",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("scale",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("scale",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("scale",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("scale",4,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_scale",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  (*arg1)->scale(arg2,arg3,arg4);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_scale(lua_State* L) {
-  int argc;
-  int argv[5]={
-    1,2,3,4,5
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_GameObjectPtr_scale__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            return _wrap_GameObjectPtr_scale__SWIG_1(L);
-          }
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'GameObjectPtr_scale'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    scale(OgreKit::Pointer< OgreKit::GameObject > *,OgreKit::Vector3 const &)\n"
-    "    scale(OgreKit::Pointer< OgreKit::GameObject > *,float,float,float)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_GameObjectPtr_yaw__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  float arg2 ;
-  
-  SWIG_check_num_args("yaw",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("yaw",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("yaw",2,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_yaw",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  (*arg1)->yaw(arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_yaw__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  float arg2 ;
-  OgreKit::TransformSpace arg3 ;
-  
-  SWIG_check_num_args("yaw",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("yaw",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("yaw",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("yaw",3,"OgreKit::TransformSpace");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_yaw",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 3);
-  (*arg1)->yaw(arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_yaw(lua_State* L) {
-  int argc;
-  int argv[4]={
-    1,2,3,4
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        return _wrap_GameObjectPtr_yaw__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_GameObjectPtr_yaw__SWIG_1(L);
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'GameObjectPtr_yaw'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    yaw(OgreKit::Pointer< OgreKit::GameObject > *,float)\n"
-    "    yaw(OgreKit::Pointer< OgreKit::GameObject > *,float,OgreKit::TransformSpace)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_GameObjectPtr_pitch__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  float arg2 ;
-  
-  SWIG_check_num_args("pitch",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("pitch",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("pitch",2,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_pitch",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  (*arg1)->pitch(arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_pitch__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  float arg2 ;
-  OgreKit::TransformSpace arg3 ;
-  
-  SWIG_check_num_args("pitch",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("pitch",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("pitch",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("pitch",3,"OgreKit::TransformSpace");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_pitch",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 3);
-  (*arg1)->pitch(arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_pitch(lua_State* L) {
-  int argc;
-  int argv[4]={
-    1,2,3,4
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        return _wrap_GameObjectPtr_pitch__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_GameObjectPtr_pitch__SWIG_1(L);
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'GameObjectPtr_pitch'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    pitch(OgreKit::Pointer< OgreKit::GameObject > *,float)\n"
-    "    pitch(OgreKit::Pointer< OgreKit::GameObject > *,float,OgreKit::TransformSpace)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_GameObjectPtr_roll__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  float arg2 ;
-  
-  SWIG_check_num_args("roll",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("roll",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("roll",2,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_roll",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  (*arg1)->roll(arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_roll__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  float arg2 ;
-  OgreKit::TransformSpace arg3 ;
-  
-  SWIG_check_num_args("roll",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("roll",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("roll",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("roll",3,"OgreKit::TransformSpace");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_roll",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 3);
-  (*arg1)->roll(arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_roll(lua_State* L) {
-  int argc;
-  int argv[4]={
-    1,2,3,4
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        return _wrap_GameObjectPtr_roll__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_GameObjectPtr_roll__SWIG_1(L);
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'GameObjectPtr_roll'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    roll(OgreKit::Pointer< OgreKit::GameObject > *,float)\n"
-    "    roll(OgreKit::Pointer< OgreKit::GameObject > *,float,OgreKit::TransformSpace)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_GameObjectPtr_getState(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  int result;
-  
-  SWIG_check_num_args("getState",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getState",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_getState",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  result = (int)(*arg1)->getState();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_getEntity(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::Pointer< OgreKit::Entity > result;
-  
-  SWIG_check_num_args("getEntity",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getEntity",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_getEntity",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  result = (*arg1)->getEntity();
-  {
-    OgreKit::Pointer< OgreKit::Entity > * resultptr = new OgreKit::Pointer< OgreKit::Entity >((const OgreKit::Pointer< OgreKit::Entity > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_getCamera(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::Pointer< OgreKit::Camera > result;
-  
-  SWIG_check_num_args("getCamera",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getCamera",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_getCamera",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  result = (*arg1)->getCamera();
-  {
-    OgreKit::Pointer< OgreKit::Camera > * resultptr = new OgreKit::Pointer< OgreKit::Camera >((const OgreKit::Pointer< OgreKit::Camera > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_getLight(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::Pointer< OgreKit::Light > result;
-  
-  SWIG_check_num_args("getLight",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getLight",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_getLight",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  result = (*arg1)->getLight();
-  {
-    OgreKit::Pointer< OgreKit::Light > * resultptr = new OgreKit::Pointer< OgreKit::Light >((const OgreKit::Pointer< OgreKit::Light > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_hasParent(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  bool result;
-  
-  SWIG_check_num_args("hasParent",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("hasParent",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_hasParent",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  result = (bool)(*arg1)->hasParent();
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_setParent(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::Pointer< OgreKit::GameObject > *arg2 = 0 ;
-  
-  SWIG_check_num_args("setParent",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setParent",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setParent",2,"OgreKit::Pointer< OgreKit::GameObject > const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_setParent",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_setParent",2,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  (*arg1)->setParent((OgreKit::Pointer< OgreKit::GameObject > const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_getParent(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::Pointer< OgreKit::GameObject > result;
-  
-  SWIG_check_num_args("getParent",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getParent",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_getParent",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  result = (*arg1)->getParent();
-  {
-    OgreKit::Pointer< OgreKit::GameObject > * resultptr = new OgreKit::Pointer< OgreKit::GameObject >((const OgreKit::Pointer< OgreKit::GameObject > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_enableContacts(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  bool arg2 ;
-  
-  SWIG_check_num_args("enableContacts",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("enableContacts",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  if(!lua_isboolean(L,2)) SWIG_fail_arg("enableContacts",2,"bool");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_enableContacts",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  arg2 = (lua_toboolean(L, 2)!=0);
-  (*arg1)->enableContacts(arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_hasContacts(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  bool result;
-  
-  SWIG_check_num_args("hasContacts",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("hasContacts",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_hasContacts",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  result = (bool)(*arg1)->hasContacts();
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_hasContact(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::String *arg2 = 0 ;
-  gkString temp2 ;
-  bool result;
-  
-  SWIG_check_num_args("hasContact",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("hasContact",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("hasContact",2,"OgreKit::String const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_hasContact",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  
-  temp2 = gkString((const char*)lua_tostring(L, 2));
-  arg2 = &temp2;
-  
-  result = (bool)(*arg1)->hasContact((OgreKit::String const &)*arg2);
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_getScene(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::Pointer< OgreKit::Scene > result;
-  
-  SWIG_check_num_args("getScene",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getScene",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_getScene",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  result = (*arg1)->getScene();
-  {
-    OgreKit::Pointer< OgreKit::Scene > * resultptr = new OgreKit::Pointer< OgreKit::Scene >((const OgreKit::Pointer< OgreKit::Scene > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr___getitem(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::String *arg2 = 0 ;
-  gkString temp2 ;
-  OgreKit::Property result;
-  
-  SWIG_check_num_args("__getitem__",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__getitem__",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("__getitem__",2,"OgreKit::String const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr___getitem",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  
-  temp2 = gkString((const char*)lua_tostring(L, 2));
-  arg2 = &temp2;
-  
-  result = (*arg1)->__getitem__((OgreKit::String const &)*arg2);
-  
-  
-  switch ((result).getType())
-  {
-  case OgreKit::PROP_BOOL:
-    lua_pushboolean(L, (result).toBool()); SWIG_arg++;
-    break;
-  case OgreKit::PROP_NUMBER:
-    lua_pushnumber(L, (result).toNumber()); SWIG_arg++;
-    break;
-  case OgreKit::PROP_STRING:
-    {
-      OgreKit::String str = (result).toString();
-      lua_pushlstring(L, str.c_str(), str.size());
-      SWIG_arg++;
-      break;
-    }
-  }
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr___setitem__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::String *arg2 = 0 ;
-  bool arg3 ;
-  gkString temp2 ;
-  
-  SWIG_check_num_args("__setitem__",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__setitem__",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("__setitem__",2,"OgreKit::String const &");
-  if(!lua_isboolean(L,3)) SWIG_fail_arg("__setitem__",3,"bool");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr___setitem",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  
-  temp2 = gkString((const char*)lua_tostring(L, 2));
-  arg2 = &temp2;
-  
-  arg3 = (lua_toboolean(L, 3)!=0);
-  (*arg1)->__setitem__((OgreKit::String const &)*arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr___setitem__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::String *arg2 = 0 ;
-  float arg3 ;
-  gkString temp2 ;
-  
-  SWIG_check_num_args("__setitem__",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__setitem__",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("__setitem__",2,"OgreKit::String const &");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("__setitem__",3,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr___setitem",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  
-  temp2 = gkString((const char*)lua_tostring(L, 2));
-  arg2 = &temp2;
-  
-  arg3 = (float)lua_tonumber(L, 3);
-  (*arg1)->__setitem__((OgreKit::String const &)*arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr___setitem__SWIG_2(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::String *arg2 = 0 ;
-  char *arg3 = (char *) 0 ;
-  gkString temp2 ;
-  
-  SWIG_check_num_args("__setitem__",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__setitem__",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("__setitem__",2,"OgreKit::String const &");
-  if(!lua_isstring(L,3)) SWIG_fail_arg("__setitem__",3,"char const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr___setitem",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  
-  temp2 = gkString((const char*)lua_tostring(L, 2));
-  arg2 = &temp2;
-  
-  arg3 = (char *)lua_tostring(L, 3);
-  (*arg1)->__setitem__((OgreKit::String const &)*arg2,(char const *)arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr___setitem(lua_State* L) {
-  int argc;
-  int argv[4]={
-    1,2,3,4
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isstring(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isboolean(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_GameObjectPtr___setitem__SWIG_0(L);
-        }
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isstring(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_GameObjectPtr___setitem__SWIG_1(L);
-        }
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isstring(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isstring(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_GameObjectPtr___setitem__SWIG_2(L);
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'GameObjectPtr___setitem'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    __setitem__(OgreKit::Pointer< OgreKit::GameObject > *,OgreKit::String const &,bool)\n"
-    "    __setitem__(OgreKit::Pointer< OgreKit::GameObject > *,OgreKit::String const &,float)\n"
-    "    __setitem__(OgreKit::Pointer< OgreKit::GameObject > *,OgreKit::String const &,char const *)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_GameObjectPtr_load(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  
-  SWIG_check_num_args("load",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("load",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_load",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  (*arg1)->load();
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_unload(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  
-  SWIG_check_num_args("unload",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("unload",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_unload",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  (*arg1)->unload();
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_reload(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  
-  SWIG_check_num_args("reload",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("reload",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_reload",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  (*arg1)->reload();
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_GameObjectPtr_getName(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) 0 ;
-  OgreKit::String result;
-  
-  SWIG_check_num_args("getName",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getName",1,"OgreKit::Pointer< OgreKit::GameObject > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("GameObjectPtr_getName",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  result = (*arg1)->getName();
-  
-  lua_pushstring(L, (&result)->c_str()); SWIG_arg++;
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static void swig_delete_GameObjectPtr(void *obj) {
-OgreKit::Pointer< OgreKit::GameObject > *arg1 = (OgreKit::Pointer< OgreKit::GameObject > *) obj;
-delete arg1;
-}
-static swig_lua_method swig_OgreKit_Pointer_Sl_OgreKit_GameObject_Sg__methods[] = {
-    {"isNull", _wrap_GameObjectPtr_isNull}, 
-    {"__eq", _wrap_GameObjectPtr___eq}, 
-    {"__deref__", _wrap_GameObjectPtr___deref__}, 
-    {"getPosition", _wrap_GameObjectPtr_getPosition}, 
-    {"getRotation", _wrap_GameObjectPtr_getRotation}, 
-    {"getOrientation", _wrap_GameObjectPtr_getOrientation}, 
-    {"getScale", _wrap_GameObjectPtr_getScale}, 
-    {"getWorldPosition", _wrap_GameObjectPtr_getWorldPosition}, 
-    {"getWorldRotation", _wrap_GameObjectPtr_getWorldRotation}, 
-    {"getWorldOrientation", _wrap_GameObjectPtr_getWorldOrientation}, 
-    {"getLinearVelocity", _wrap_GameObjectPtr_getLinearVelocity}, 
-    {"getAngularVelocity", _wrap_GameObjectPtr_getAngularVelocity}, 
-    {"setLinearVelocity", _wrap_GameObjectPtr_setLinearVelocity}, 
-    {"setAngularVelocity", _wrap_GameObjectPtr_setAngularVelocity}, 
-    {"setPosition", _wrap_GameObjectPtr_setPosition}, 
-    {"setRotation", _wrap_GameObjectPtr_setRotation}, 
-    {"setOrientation", _wrap_GameObjectPtr_setOrientation}, 
-    {"getType", _wrap_GameObjectPtr_getType}, 
-    {"rotate", _wrap_GameObjectPtr_rotate}, 
-    {"translate", _wrap_GameObjectPtr_translate}, 
-    {"scale", _wrap_GameObjectPtr_scale}, 
-    {"yaw", _wrap_GameObjectPtr_yaw}, 
-    {"pitch", _wrap_GameObjectPtr_pitch}, 
-    {"roll", _wrap_GameObjectPtr_roll}, 
-    {"getState", _wrap_GameObjectPtr_getState}, 
-    {"getEntity", _wrap_GameObjectPtr_getEntity}, 
-    {"getCamera", _wrap_GameObjectPtr_getCamera}, 
-    {"getLight", _wrap_GameObjectPtr_getLight}, 
-    {"hasParent", _wrap_GameObjectPtr_hasParent}, 
-    {"setParent", _wrap_GameObjectPtr_setParent}, 
-    {"getParent", _wrap_GameObjectPtr_getParent}, 
-    {"enableContacts", _wrap_GameObjectPtr_enableContacts}, 
-    {"hasContacts", _wrap_GameObjectPtr_hasContacts}, 
-    {"hasContact", _wrap_GameObjectPtr_hasContact}, 
-    {"getScene", _wrap_GameObjectPtr_getScene}, 
-    {"__getitem", _wrap_GameObjectPtr___getitem}, 
-    {"__setitem", _wrap_GameObjectPtr___setitem}, 
-    {"load", _wrap_GameObjectPtr_load}, 
-    {"unload", _wrap_GameObjectPtr_unload}, 
-    {"reload", _wrap_GameObjectPtr_reload}, 
-    {"getName", _wrap_GameObjectPtr_getName}, 
-    {0,0}
-};
-static swig_lua_attribute swig_OgreKit_Pointer_Sl_OgreKit_GameObject_Sg__attributes[] = {
-    {0,0,0}
-};
-static swig_lua_class *swig_OgreKit_Pointer_Sl_OgreKit_GameObject_Sg__bases[] = {0};
-static const char *swig_OgreKit_Pointer_Sl_OgreKit_GameObject_Sg__base_names[] = {0};
-static swig_lua_class _wrap_class_OgreKit_Pointer_Sl_OgreKit_GameObject_Sg_ = { "GameObjectPtr", &SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,_wrap_new_GameObjectPtr, swig_delete_GameObjectPtr, swig_OgreKit_Pointer_Sl_OgreKit_GameObject_Sg__methods, swig_OgreKit_Pointer_Sl_OgreKit_GameObject_Sg__attributes, swig_OgreKit_Pointer_Sl_OgreKit_GameObject_Sg__bases, swig_OgreKit_Pointer_Sl_OgreKit_GameObject_Sg__base_names };
-
-static int _wrap_ScenePtr_isNull(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Scene > *arg1 = (OgreKit::Pointer< OgreKit::Scene > *) 0 ;
-  bool result;
-  
-  SWIG_check_num_args("isNull",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isNull",1,"OgreKit::Pointer< OgreKit::Scene > const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t,0))){
-    SWIG_fail_ptr("ScenePtr_isNull",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t);
-  }
-  
-  result = (bool)((OgreKit::Pointer< OgreKit::Scene > const *)arg1)->isNull();
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_ScenePtr___eq(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Scene > *arg1 = (OgreKit::Pointer< OgreKit::Scene > *) 0 ;
-  OgreKit::Pointer< OgreKit::Scene > *arg2 = 0 ;
-  bool result;
-  
-  SWIG_check_num_args("operator ==",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator ==",1,"OgreKit::Pointer< OgreKit::Scene > const *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("operator ==",2,"OgreKit::Pointer< OgreKit::Scene > const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t,0))){
-    SWIG_fail_ptr("ScenePtr___eq",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t,0))){
-    SWIG_fail_ptr("ScenePtr___eq",2,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t);
-  }
-  
-  result = (bool)((OgreKit::Pointer< OgreKit::Scene > const *)arg1)->operator ==((OgreKit::Pointer< OgreKit::Scene > const &)*arg2);
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_ScenePtr___deref__(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Scene > *arg1 = (OgreKit::Pointer< OgreKit::Scene > *) 0 ;
-  OgreKit::Scene *result = 0 ;
-  
-  SWIG_check_num_args("operator ->",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator ->",1,"OgreKit::Pointer< OgreKit::Scene > const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t,0))){
-    SWIG_fail_ptr("ScenePtr___deref__",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t);
-  }
-  
-  result = (OgreKit::Scene *)((OgreKit::Pointer< OgreKit::Scene > const *)arg1)->operator ->();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__Scene,0); SWIG_arg++; 
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_new_ScenePtr(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Scene > *result = 0 ;
-  
-  SWIG_check_num_args("OgreKit::Pointer<(OgreKit::Scene)>::Pointer<(OgreKit::Scene)>",0,0)
-  result = (OgreKit::Pointer< OgreKit::Scene > *)new OgreKit::Pointer< OgreKit::Scene >();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t,1); SWIG_arg++; 
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_ScenePtr_hasObject(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Scene > *arg1 = (OgreKit::Pointer< OgreKit::Scene > *) 0 ;
-  OgreKit::String *arg2 = 0 ;
-  gkString temp2 ;
-  bool result;
-  
-  SWIG_check_num_args("hasObject",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("hasObject",1,"OgreKit::Pointer< OgreKit::Scene > *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("hasObject",2,"OgreKit::String const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t,0))){
-    SWIG_fail_ptr("ScenePtr_hasObject",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t);
-  }
-  
-  
-  temp2 = gkString((const char*)lua_tostring(L, 2));
-  arg2 = &temp2;
-  
-  result = (bool)(*arg1)->hasObject((OgreKit::String const &)*arg2);
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_ScenePtr_getObject(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Scene > *arg1 = (OgreKit::Pointer< OgreKit::Scene > *) 0 ;
-  OgreKit::String *arg2 = 0 ;
-  gkString temp2 ;
-  OgreKit::Pointer< OgreKit::GameObject > result;
-  
-  SWIG_check_num_args("getObject",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getObject",1,"OgreKit::Pointer< OgreKit::Scene > *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("getObject",2,"OgreKit::String const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t,0))){
-    SWIG_fail_ptr("ScenePtr_getObject",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t);
-  }
-  
-  
-  temp2 = gkString((const char*)lua_tostring(L, 2));
-  arg2 = &temp2;
-  
-  result = (*arg1)->getObject((OgreKit::String const &)*arg2);
-  {
-    OgreKit::Pointer< OgreKit::GameObject > * resultptr = new OgreKit::Pointer< OgreKit::GameObject >((const OgreKit::Pointer< OgreKit::GameObject > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_ScenePtr_getEntity(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Scene > *arg1 = (OgreKit::Pointer< OgreKit::Scene > *) 0 ;
-  OgreKit::String *arg2 = 0 ;
-  gkString temp2 ;
-  OgreKit::Pointer< OgreKit::Entity > result;
-  
-  SWIG_check_num_args("getEntity",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getEntity",1,"OgreKit::Pointer< OgreKit::Scene > *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("getEntity",2,"OgreKit::String const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t,0))){
-    SWIG_fail_ptr("ScenePtr_getEntity",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t);
-  }
-  
-  
-  temp2 = gkString((const char*)lua_tostring(L, 2));
-  arg2 = &temp2;
-  
-  result = (*arg1)->getEntity((OgreKit::String const &)*arg2);
-  {
-    OgreKit::Pointer< OgreKit::Entity > * resultptr = new OgreKit::Pointer< OgreKit::Entity >((const OgreKit::Pointer< OgreKit::Entity > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_ScenePtr_getCamera(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Scene > *arg1 = (OgreKit::Pointer< OgreKit::Scene > *) 0 ;
-  OgreKit::String *arg2 = 0 ;
-  gkString temp2 ;
-  OgreKit::Pointer< OgreKit::Camera > result;
-  
-  SWIG_check_num_args("getCamera",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getCamera",1,"OgreKit::Pointer< OgreKit::Scene > *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("getCamera",2,"OgreKit::String const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t,0))){
-    SWIG_fail_ptr("ScenePtr_getCamera",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t);
-  }
-  
-  
-  temp2 = gkString((const char*)lua_tostring(L, 2));
-  arg2 = &temp2;
-  
-  result = (*arg1)->getCamera((OgreKit::String const &)*arg2);
-  {
-    OgreKit::Pointer< OgreKit::Camera > * resultptr = new OgreKit::Pointer< OgreKit::Camera >((const OgreKit::Pointer< OgreKit::Camera > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_ScenePtr_getLight(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Scene > *arg1 = (OgreKit::Pointer< OgreKit::Scene > *) 0 ;
-  OgreKit::String *arg2 = 0 ;
-  gkString temp2 ;
-  OgreKit::Pointer< OgreKit::Light > result;
-  
-  SWIG_check_num_args("getLight",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getLight",1,"OgreKit::Pointer< OgreKit::Scene > *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("getLight",2,"OgreKit::String const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t,0))){
-    SWIG_fail_ptr("ScenePtr_getLight",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t);
-  }
-  
-  
-  temp2 = gkString((const char*)lua_tostring(L, 2));
-  arg2 = &temp2;
-  
-  result = (*arg1)->getLight((OgreKit::String const &)*arg2);
-  {
-    OgreKit::Pointer< OgreKit::Light > * resultptr = new OgreKit::Pointer< OgreKit::Light >((const OgreKit::Pointer< OgreKit::Light > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_ScenePtr_createEmpty(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Scene > *arg1 = (OgreKit::Pointer< OgreKit::Scene > *) 0 ;
-  OgreKit::String *arg2 = 0 ;
-  gkString temp2 ;
-  OgreKit::Pointer< OgreKit::GameObject > result;
-  
-  SWIG_check_num_args("createEmpty",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("createEmpty",1,"OgreKit::Pointer< OgreKit::Scene > *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("createEmpty",2,"OgreKit::String const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t,0))){
-    SWIG_fail_ptr("ScenePtr_createEmpty",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t);
-  }
-  
-  
-  temp2 = gkString((const char*)lua_tostring(L, 2));
-  arg2 = &temp2;
-  
-  result = (*arg1)->createEmpty((OgreKit::String const &)*arg2);
-  {
-    OgreKit::Pointer< OgreKit::GameObject > * resultptr = new OgreKit::Pointer< OgreKit::GameObject >((const OgreKit::Pointer< OgreKit::GameObject > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_ScenePtr_load(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Scene > *arg1 = (OgreKit::Pointer< OgreKit::Scene > *) 0 ;
-  
-  SWIG_check_num_args("load",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("load",1,"OgreKit::Pointer< OgreKit::Scene > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t,0))){
-    SWIG_fail_ptr("ScenePtr_load",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t);
-  }
-  
-  (*arg1)->load();
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_ScenePtr_unload(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Scene > *arg1 = (OgreKit::Pointer< OgreKit::Scene > *) 0 ;
-  
-  SWIG_check_num_args("unload",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("unload",1,"OgreKit::Pointer< OgreKit::Scene > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t,0))){
-    SWIG_fail_ptr("ScenePtr_unload",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t);
-  }
-  
-  (*arg1)->unload();
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_ScenePtr_reload(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Scene > *arg1 = (OgreKit::Pointer< OgreKit::Scene > *) 0 ;
-  
-  SWIG_check_num_args("reload",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("reload",1,"OgreKit::Pointer< OgreKit::Scene > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t,0))){
-    SWIG_fail_ptr("ScenePtr_reload",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t);
-  }
-  
-  (*arg1)->reload();
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_ScenePtr_getName(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Scene > *arg1 = (OgreKit::Pointer< OgreKit::Scene > *) 0 ;
-  OgreKit::String result;
-  
-  SWIG_check_num_args("getName",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getName",1,"OgreKit::Pointer< OgreKit::Scene > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t,0))){
-    SWIG_fail_ptr("ScenePtr_getName",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t);
-  }
-  
-  result = (*arg1)->getName();
-  
-  lua_pushstring(L, (&result)->c_str()); SWIG_arg++;
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static void swig_delete_ScenePtr(void *obj) {
-OgreKit::Pointer< OgreKit::Scene > *arg1 = (OgreKit::Pointer< OgreKit::Scene > *) obj;
-delete arg1;
-}
-static swig_lua_method swig_OgreKit_Pointer_Sl_OgreKit_Scene_Sg__methods[] = {
-    {"isNull", _wrap_ScenePtr_isNull}, 
-    {"__eq", _wrap_ScenePtr___eq}, 
-    {"__deref__", _wrap_ScenePtr___deref__}, 
-    {"hasObject", _wrap_ScenePtr_hasObject}, 
-    {"getObject", _wrap_ScenePtr_getObject}, 
-    {"getEntity", _wrap_ScenePtr_getEntity}, 
-    {"getCamera", _wrap_ScenePtr_getCamera}, 
-    {"getLight", _wrap_ScenePtr_getLight}, 
-    {"createEmpty", _wrap_ScenePtr_createEmpty}, 
-    {"load", _wrap_ScenePtr_load}, 
-    {"unload", _wrap_ScenePtr_unload}, 
-    {"reload", _wrap_ScenePtr_reload}, 
-    {"getName", _wrap_ScenePtr_getName}, 
-    {0,0}
-};
-static swig_lua_attribute swig_OgreKit_Pointer_Sl_OgreKit_Scene_Sg__attributes[] = {
-    {0,0,0}
-};
-static swig_lua_class *swig_OgreKit_Pointer_Sl_OgreKit_Scene_Sg__bases[] = {0};
-static const char *swig_OgreKit_Pointer_Sl_OgreKit_Scene_Sg__base_names[] = {0};
-static swig_lua_class _wrap_class_OgreKit_Pointer_Sl_OgreKit_Scene_Sg_ = { "ScenePtr", &SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t,_wrap_new_ScenePtr, swig_delete_ScenePtr, swig_OgreKit_Pointer_Sl_OgreKit_Scene_Sg__methods, swig_OgreKit_Pointer_Sl_OgreKit_Scene_Sg__attributes, swig_OgreKit_Pointer_Sl_OgreKit_Scene_Sg__bases, swig_OgreKit_Pointer_Sl_OgreKit_Scene_Sg__base_names };
-
-static int _wrap_EntityPtr_isNull(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  bool result;
-  
-  SWIG_check_num_args("isNull",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isNull",1,"OgreKit::Pointer< OgreKit::Entity > const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_isNull",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  result = (bool)((OgreKit::Pointer< OgreKit::Entity > const *)arg1)->isNull();
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr___eq(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::Pointer< OgreKit::Entity > *arg2 = 0 ;
-  bool result;
-  
-  SWIG_check_num_args("operator ==",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator ==",1,"OgreKit::Pointer< OgreKit::Entity > const *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("operator ==",2,"OgreKit::Pointer< OgreKit::Entity > const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr___eq",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr___eq",2,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  result = (bool)((OgreKit::Pointer< OgreKit::Entity > const *)arg1)->operator ==((OgreKit::Pointer< OgreKit::Entity > const &)*arg2);
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr___deref__(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::Entity *result = 0 ;
-  
-  SWIG_check_num_args("operator ->",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator ->",1,"OgreKit::Pointer< OgreKit::Entity > const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr___deref__",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  result = (OgreKit::Entity *)((OgreKit::Pointer< OgreKit::Entity > const *)arg1)->operator ->();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__Entity,0); SWIG_arg++; 
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_new_EntityPtr(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *result = 0 ;
-  
-  SWIG_check_num_args("OgreKit::Pointer<(OgreKit::Entity)>::Pointer<(OgreKit::Entity)>",0,0)
-  result = (OgreKit::Pointer< OgreKit::Entity > *)new OgreKit::Pointer< OgreKit::Entity >();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,1); SWIG_arg++; 
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_playAction(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::String *arg2 = 0 ;
-  float arg3 ;
-  gkString temp2 ;
-  
-  SWIG_check_num_args("playAction",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("playAction",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("playAction",2,"OgreKit::String const &");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("playAction",3,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_playAction",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  
-  temp2 = gkString((const char*)lua_tostring(L, 2));
-  arg2 = &temp2;
-  
-  arg3 = (float)lua_tonumber(L, 3);
-  (*arg1)->playAction((OgreKit::String const &)*arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_getPosition(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::Vector3 result;
-  
-  SWIG_check_num_args("getPosition",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getPosition",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_getPosition",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  result = (*arg1)->getPosition();
-  {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_getRotation(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::Vector3 result;
-  
-  SWIG_check_num_args("getRotation",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getRotation",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_getRotation",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  result = (*arg1)->getRotation();
-  {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_getOrientation(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::Quaternion result;
-  
-  SWIG_check_num_args("getOrientation",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getOrientation",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_getOrientation",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  result = (*arg1)->getOrientation();
-  {
-    OgreKit::Quaternion * resultptr = new OgreKit::Quaternion((const OgreKit::Quaternion &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Quaternion,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_getScale(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::Vector3 result;
-  
-  SWIG_check_num_args("getScale",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getScale",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_getScale",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  result = (*arg1)->getScale();
-  {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_getWorldPosition(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::Vector3 result;
-  
-  SWIG_check_num_args("getWorldPosition",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getWorldPosition",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_getWorldPosition",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  result = (*arg1)->getWorldPosition();
-  {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_getWorldRotation(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::Vector3 result;
-  
-  SWIG_check_num_args("getWorldRotation",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getWorldRotation",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_getWorldRotation",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  result = (*arg1)->getWorldRotation();
-  {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_getWorldOrientation(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::Quaternion result;
-  
-  SWIG_check_num_args("getWorldOrientation",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getWorldOrientation",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_getWorldOrientation",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  result = (*arg1)->getWorldOrientation();
-  {
-    OgreKit::Quaternion * resultptr = new OgreKit::Quaternion((const OgreKit::Quaternion &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Quaternion,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_getLinearVelocity(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::Vector3 result;
-  
-  SWIG_check_num_args("getLinearVelocity",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getLinearVelocity",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_getLinearVelocity",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  result = (*arg1)->getLinearVelocity();
-  {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_getAngularVelocity(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::Vector3 result;
-  
-  SWIG_check_num_args("getAngularVelocity",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getAngularVelocity",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_getAngularVelocity",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  result = (*arg1)->getAngularVelocity();
-  {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_setLinearVelocity__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  
-  SWIG_check_num_args("setLinearVelocity",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setLinearVelocity",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setLinearVelocity",2,"OgreKit::Vector3 const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_setLinearVelocity",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("EntityPtr_setLinearVelocity",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  (*arg1)->setLinearVelocity((OgreKit::Vector3 const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_setLinearVelocity__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  
-  SWIG_check_num_args("setLinearVelocity",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setLinearVelocity",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("setLinearVelocity",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("setLinearVelocity",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("setLinearVelocity",4,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_setLinearVelocity",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  (*arg1)->setLinearVelocity(arg2,arg3,arg4);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_setLinearVelocity(lua_State* L) {
-  int argc;
-  int argv[5]={
-    1,2,3,4,5
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_EntityPtr_setLinearVelocity__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            return _wrap_EntityPtr_setLinearVelocity__SWIG_1(L);
-          }
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'EntityPtr_setLinearVelocity'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    setLinearVelocity(OgreKit::Pointer< OgreKit::Entity > *,OgreKit::Vector3 const &)\n"
-    "    setLinearVelocity(OgreKit::Pointer< OgreKit::Entity > *,float,float,float)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_EntityPtr_setAngularVelocity__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  
-  SWIG_check_num_args("setAngularVelocity",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setAngularVelocity",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setAngularVelocity",2,"OgreKit::Vector3 const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_setAngularVelocity",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("EntityPtr_setAngularVelocity",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  (*arg1)->setAngularVelocity((OgreKit::Vector3 const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_setAngularVelocity__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  
-  SWIG_check_num_args("setAngularVelocity",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setAngularVelocity",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("setAngularVelocity",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("setAngularVelocity",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("setAngularVelocity",4,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_setAngularVelocity",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  (*arg1)->setAngularVelocity(arg2,arg3,arg4);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_setAngularVelocity(lua_State* L) {
-  int argc;
-  int argv[5]={
-    1,2,3,4,5
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_EntityPtr_setAngularVelocity__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            return _wrap_EntityPtr_setAngularVelocity__SWIG_1(L);
-          }
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'EntityPtr_setAngularVelocity'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    setAngularVelocity(OgreKit::Pointer< OgreKit::Entity > *,OgreKit::Vector3 const &)\n"
-    "    setAngularVelocity(OgreKit::Pointer< OgreKit::Entity > *,float,float,float)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_EntityPtr_setPosition__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  
-  SWIG_check_num_args("setPosition",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setPosition",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setPosition",2,"OgreKit::Vector3 const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_setPosition",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("EntityPtr_setPosition",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  (*arg1)->setPosition((OgreKit::Vector3 const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_setPosition__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  
-  SWIG_check_num_args("setPosition",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setPosition",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("setPosition",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("setPosition",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("setPosition",4,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_setPosition",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  (*arg1)->setPosition(arg2,arg3,arg4);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_setPosition(lua_State* L) {
-  int argc;
-  int argv[5]={
-    1,2,3,4,5
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_EntityPtr_setPosition__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            return _wrap_EntityPtr_setPosition__SWIG_1(L);
-          }
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'EntityPtr_setPosition'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    setPosition(OgreKit::Pointer< OgreKit::Entity > *,OgreKit::Vector3 const &)\n"
-    "    setPosition(OgreKit::Pointer< OgreKit::Entity > *,float,float,float)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_EntityPtr_setRotation__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  
-  SWIG_check_num_args("setRotation",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setRotation",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setRotation",2,"OgreKit::Vector3 const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_setRotation",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("EntityPtr_setRotation",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  (*arg1)->setRotation((OgreKit::Vector3 const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_setRotation__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  
-  SWIG_check_num_args("setRotation",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setRotation",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("setRotation",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("setRotation",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("setRotation",4,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_setRotation",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  (*arg1)->setRotation(arg2,arg3,arg4);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_setRotation(lua_State* L) {
-  int argc;
-  int argv[5]={
-    1,2,3,4,5
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_EntityPtr_setRotation__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            return _wrap_EntityPtr_setRotation__SWIG_1(L);
-          }
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'EntityPtr_setRotation'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    setRotation(OgreKit::Pointer< OgreKit::Entity > *,OgreKit::Vector3 const &)\n"
-    "    setRotation(OgreKit::Pointer< OgreKit::Entity > *,float,float,float)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_EntityPtr_setOrientation__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::Quaternion *arg2 = 0 ;
-  
-  SWIG_check_num_args("setOrientation",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setOrientation",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setOrientation",2,"OgreKit::Quaternion const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_setOrientation",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("EntityPtr_setOrientation",2,SWIGTYPE_p_OgreKit__Quaternion);
-  }
-  
-  (*arg1)->setOrientation((OgreKit::Quaternion const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_setOrientation__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  float arg5 ;
-  
-  SWIG_check_num_args("setOrientation",5,5)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setOrientation",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("setOrientation",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("setOrientation",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("setOrientation",4,"float");
-  if(!lua_isnumber(L,5)) SWIG_fail_arg("setOrientation",5,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_setOrientation",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  arg5 = (float)lua_tonumber(L, 5);
-  (*arg1)->setOrientation(arg2,arg3,arg4,arg5);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_setOrientation(lua_State* L) {
-  int argc;
-  int argv[6]={
-    1,2,3,4,5,6
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Quaternion, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_EntityPtr_setOrientation__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 5) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            {
-              _v = lua_isnumber(L,argv[4]);
-            }
-            if (_v) {
-              return _wrap_EntityPtr_setOrientation__SWIG_1(L);
-            }
-          }
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'EntityPtr_setOrientation'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    setOrientation(OgreKit::Pointer< OgreKit::Entity > *,OgreKit::Quaternion const &)\n"
-    "    setOrientation(OgreKit::Pointer< OgreKit::Entity > *,float,float,float,float)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_EntityPtr_getType(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::GameObjectTypes result;
-  
-  SWIG_check_num_args("getType",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getType",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_getType",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  result = (OgreKit::GameObjectTypes)(*arg1)->getType();
-  lua_pushnumber(L, (lua_Number)(int)(result)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_rotate__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  
-  SWIG_check_num_args("rotate",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("rotate",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("rotate",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("rotate",4,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_rotate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  (*arg1)->rotate(arg2,arg3,arg4);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_rotate__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  
-  SWIG_check_num_args("rotate",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("rotate",2,"OgreKit::Vector3 const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_rotate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("EntityPtr_rotate",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  (*arg1)->rotate((OgreKit::Vector3 const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_rotate__SWIG_2(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::Quaternion *arg2 = 0 ;
-  
-  SWIG_check_num_args("rotate",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("rotate",2,"OgreKit::Quaternion const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_rotate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("EntityPtr_rotate",2,SWIGTYPE_p_OgreKit__Quaternion);
-  }
-  
-  (*arg1)->rotate((OgreKit::Quaternion const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_rotate__SWIG_3(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  OgreKit::TransformSpace arg5 ;
-  
-  SWIG_check_num_args("rotate",5,5)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("rotate",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("rotate",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("rotate",4,"float");
-  if(!lua_isnumber(L,5)) SWIG_fail_arg("rotate",5,"OgreKit::TransformSpace");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_rotate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  arg5 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 5);
-  (*arg1)->rotate(arg2,arg3,arg4,arg5);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_rotate__SWIG_4(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  OgreKit::TransformSpace arg3 ;
-  
-  SWIG_check_num_args("rotate",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("rotate",2,"OgreKit::Vector3 const &");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("rotate",3,"OgreKit::TransformSpace");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_rotate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("EntityPtr_rotate",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  arg3 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 3);
-  (*arg1)->rotate((OgreKit::Vector3 const &)*arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_rotate__SWIG_5(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::Quaternion *arg2 = 0 ;
-  OgreKit::TransformSpace arg3 ;
-  
-  SWIG_check_num_args("rotate",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("rotate",2,"OgreKit::Quaternion const &");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("rotate",3,"OgreKit::TransformSpace");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_rotate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("EntityPtr_rotate",2,SWIGTYPE_p_OgreKit__Quaternion);
-  }
-  
-  arg3 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 3);
-  (*arg1)->rotate((OgreKit::Quaternion const &)*arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_rotate(lua_State* L) {
-  int argc;
-  int argv[6]={
-    1,2,3,4,5,6
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_EntityPtr_rotate__SWIG_1(L);
-      }
-    }
-  }
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Quaternion, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_EntityPtr_rotate__SWIG_2(L);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_EntityPtr_rotate__SWIG_4(L);
-        }
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Quaternion, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_EntityPtr_rotate__SWIG_5(L);
-        }
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            return _wrap_EntityPtr_rotate__SWIG_0(L);
-          }
-        }
-      }
-    }
-  }
-  if (argc == 5) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            {
-              _v = lua_isnumber(L,argv[4]);
-            }
-            if (_v) {
-              return _wrap_EntityPtr_rotate__SWIG_3(L);
-            }
-          }
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'EntityPtr_rotate'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    rotate(OgreKit::Pointer< OgreKit::Entity > *,float,float,float)\n"
-    "    rotate(OgreKit::Pointer< OgreKit::Entity > *,OgreKit::Vector3 const &)\n"
-    "    rotate(OgreKit::Pointer< OgreKit::Entity > *,OgreKit::Quaternion const &)\n"
-    "    rotate(OgreKit::Pointer< OgreKit::Entity > *,float,float,float,OgreKit::TransformSpace)\n"
-    "    rotate(OgreKit::Pointer< OgreKit::Entity > *,OgreKit::Vector3 const &,OgreKit::TransformSpace)\n"
-    "    rotate(OgreKit::Pointer< OgreKit::Entity > *,OgreKit::Quaternion const &,OgreKit::TransformSpace)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_EntityPtr_translate__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  
-  SWIG_check_num_args("translate",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("translate",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("translate",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("translate",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("translate",4,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_translate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  (*arg1)->translate(arg2,arg3,arg4);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_translate__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  
-  SWIG_check_num_args("translate",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("translate",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("translate",2,"OgreKit::Vector3 const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_translate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("EntityPtr_translate",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  (*arg1)->translate((OgreKit::Vector3 const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_translate__SWIG_2(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  OgreKit::TransformSpace arg5 ;
-  
-  SWIG_check_num_args("translate",5,5)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("translate",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("translate",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("translate",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("translate",4,"float");
-  if(!lua_isnumber(L,5)) SWIG_fail_arg("translate",5,"OgreKit::TransformSpace");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_translate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  arg5 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 5);
-  (*arg1)->translate(arg2,arg3,arg4,arg5);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_translate__SWIG_3(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  OgreKit::TransformSpace arg3 ;
-  
-  SWIG_check_num_args("translate",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("translate",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("translate",2,"OgreKit::Vector3 const &");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("translate",3,"OgreKit::TransformSpace");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_translate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("EntityPtr_translate",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  arg3 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 3);
-  (*arg1)->translate((OgreKit::Vector3 const &)*arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_translate(lua_State* L) {
-  int argc;
-  int argv[6]={
-    1,2,3,4,5,6
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_EntityPtr_translate__SWIG_1(L);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_EntityPtr_translate__SWIG_3(L);
-        }
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            return _wrap_EntityPtr_translate__SWIG_0(L);
-          }
-        }
-      }
-    }
-  }
-  if (argc == 5) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            {
-              _v = lua_isnumber(L,argv[4]);
-            }
-            if (_v) {
-              return _wrap_EntityPtr_translate__SWIG_2(L);
-            }
-          }
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'EntityPtr_translate'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    translate(OgreKit::Pointer< OgreKit::Entity > *,float,float,float)\n"
-    "    translate(OgreKit::Pointer< OgreKit::Entity > *,OgreKit::Vector3 const &)\n"
-    "    translate(OgreKit::Pointer< OgreKit::Entity > *,float,float,float,OgreKit::TransformSpace)\n"
-    "    translate(OgreKit::Pointer< OgreKit::Entity > *,OgreKit::Vector3 const &,OgreKit::TransformSpace)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_EntityPtr_scale__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  
-  SWIG_check_num_args("scale",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("scale",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("scale",2,"OgreKit::Vector3 const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_scale",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("EntityPtr_scale",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  (*arg1)->scale((OgreKit::Vector3 const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_scale__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  
-  SWIG_check_num_args("scale",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("scale",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("scale",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("scale",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("scale",4,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_scale",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  (*arg1)->scale(arg2,arg3,arg4);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_scale(lua_State* L) {
-  int argc;
-  int argv[5]={
-    1,2,3,4,5
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_EntityPtr_scale__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            return _wrap_EntityPtr_scale__SWIG_1(L);
-          }
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'EntityPtr_scale'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    scale(OgreKit::Pointer< OgreKit::Entity > *,OgreKit::Vector3 const &)\n"
-    "    scale(OgreKit::Pointer< OgreKit::Entity > *,float,float,float)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_EntityPtr_yaw__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  float arg2 ;
-  
-  SWIG_check_num_args("yaw",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("yaw",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("yaw",2,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_yaw",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  (*arg1)->yaw(arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_yaw__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  float arg2 ;
-  OgreKit::TransformSpace arg3 ;
-  
-  SWIG_check_num_args("yaw",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("yaw",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("yaw",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("yaw",3,"OgreKit::TransformSpace");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_yaw",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 3);
-  (*arg1)->yaw(arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_yaw(lua_State* L) {
-  int argc;
-  int argv[4]={
-    1,2,3,4
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        return _wrap_EntityPtr_yaw__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_EntityPtr_yaw__SWIG_1(L);
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'EntityPtr_yaw'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    yaw(OgreKit::Pointer< OgreKit::Entity > *,float)\n"
-    "    yaw(OgreKit::Pointer< OgreKit::Entity > *,float,OgreKit::TransformSpace)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_EntityPtr_pitch__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  float arg2 ;
-  
-  SWIG_check_num_args("pitch",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("pitch",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("pitch",2,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_pitch",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  (*arg1)->pitch(arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_pitch__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  float arg2 ;
-  OgreKit::TransformSpace arg3 ;
-  
-  SWIG_check_num_args("pitch",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("pitch",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("pitch",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("pitch",3,"OgreKit::TransformSpace");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_pitch",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 3);
-  (*arg1)->pitch(arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_pitch(lua_State* L) {
-  int argc;
-  int argv[4]={
-    1,2,3,4
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        return _wrap_EntityPtr_pitch__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_EntityPtr_pitch__SWIG_1(L);
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'EntityPtr_pitch'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    pitch(OgreKit::Pointer< OgreKit::Entity > *,float)\n"
-    "    pitch(OgreKit::Pointer< OgreKit::Entity > *,float,OgreKit::TransformSpace)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_EntityPtr_roll__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  float arg2 ;
-  
-  SWIG_check_num_args("roll",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("roll",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("roll",2,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_roll",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  (*arg1)->roll(arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_roll__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  float arg2 ;
-  OgreKit::TransformSpace arg3 ;
-  
-  SWIG_check_num_args("roll",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("roll",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("roll",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("roll",3,"OgreKit::TransformSpace");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_roll",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 3);
-  (*arg1)->roll(arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_roll(lua_State* L) {
-  int argc;
-  int argv[4]={
-    1,2,3,4
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        return _wrap_EntityPtr_roll__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_EntityPtr_roll__SWIG_1(L);
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'EntityPtr_roll'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    roll(OgreKit::Pointer< OgreKit::Entity > *,float)\n"
-    "    roll(OgreKit::Pointer< OgreKit::Entity > *,float,OgreKit::TransformSpace)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_EntityPtr_getState(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  int result;
-  
-  SWIG_check_num_args("getState",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getState",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_getState",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  result = (int)(*arg1)->getState();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_getEntity(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::Pointer< OgreKit::Entity > result;
-  
-  SWIG_check_num_args("getEntity",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getEntity",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_getEntity",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  result = (*arg1)->getEntity();
-  {
-    OgreKit::Pointer< OgreKit::Entity > * resultptr = new OgreKit::Pointer< OgreKit::Entity >((const OgreKit::Pointer< OgreKit::Entity > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_getCamera(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::Pointer< OgreKit::Camera > result;
-  
-  SWIG_check_num_args("getCamera",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getCamera",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_getCamera",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  result = (*arg1)->getCamera();
-  {
-    OgreKit::Pointer< OgreKit::Camera > * resultptr = new OgreKit::Pointer< OgreKit::Camera >((const OgreKit::Pointer< OgreKit::Camera > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_getLight(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::Pointer< OgreKit::Light > result;
-  
-  SWIG_check_num_args("getLight",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getLight",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_getLight",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  result = (*arg1)->getLight();
-  {
-    OgreKit::Pointer< OgreKit::Light > * resultptr = new OgreKit::Pointer< OgreKit::Light >((const OgreKit::Pointer< OgreKit::Light > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_hasParent(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  bool result;
-  
-  SWIG_check_num_args("hasParent",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("hasParent",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_hasParent",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  result = (bool)(*arg1)->hasParent();
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_setParent(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::Pointer< OgreKit::GameObject > *arg2 = 0 ;
-  
-  SWIG_check_num_args("setParent",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setParent",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setParent",2,"OgreKit::Pointer< OgreKit::GameObject > const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_setParent",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("EntityPtr_setParent",2,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  (*arg1)->setParent((OgreKit::Pointer< OgreKit::GameObject > const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_getParent(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::Pointer< OgreKit::GameObject > result;
-  
-  SWIG_check_num_args("getParent",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getParent",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_getParent",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  result = (*arg1)->getParent();
-  {
-    OgreKit::Pointer< OgreKit::GameObject > * resultptr = new OgreKit::Pointer< OgreKit::GameObject >((const OgreKit::Pointer< OgreKit::GameObject > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_enableContacts(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  bool arg2 ;
-  
-  SWIG_check_num_args("enableContacts",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("enableContacts",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isboolean(L,2)) SWIG_fail_arg("enableContacts",2,"bool");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_enableContacts",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  arg2 = (lua_toboolean(L, 2)!=0);
-  (*arg1)->enableContacts(arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_hasContacts(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  bool result;
-  
-  SWIG_check_num_args("hasContacts",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("hasContacts",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_hasContacts",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  result = (bool)(*arg1)->hasContacts();
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_hasContact(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::String *arg2 = 0 ;
-  gkString temp2 ;
-  bool result;
-  
-  SWIG_check_num_args("hasContact",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("hasContact",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("hasContact",2,"OgreKit::String const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_hasContact",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  
-  temp2 = gkString((const char*)lua_tostring(L, 2));
-  arg2 = &temp2;
-  
-  result = (bool)(*arg1)->hasContact((OgreKit::String const &)*arg2);
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_getScene(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::Pointer< OgreKit::Scene > result;
-  
-  SWIG_check_num_args("getScene",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getScene",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_getScene",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  result = (*arg1)->getScene();
-  {
-    OgreKit::Pointer< OgreKit::Scene > * resultptr = new OgreKit::Pointer< OgreKit::Scene >((const OgreKit::Pointer< OgreKit::Scene > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr___getitem(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::String *arg2 = 0 ;
-  gkString temp2 ;
-  OgreKit::Property result;
-  
-  SWIG_check_num_args("__getitem__",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__getitem__",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("__getitem__",2,"OgreKit::String const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr___getitem",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  
-  temp2 = gkString((const char*)lua_tostring(L, 2));
-  arg2 = &temp2;
-  
-  result = (*arg1)->__getitem__((OgreKit::String const &)*arg2);
-  
-  
-  switch ((result).getType())
-  {
-  case OgreKit::PROP_BOOL:
-    lua_pushboolean(L, (result).toBool()); SWIG_arg++;
-    break;
-  case OgreKit::PROP_NUMBER:
-    lua_pushnumber(L, (result).toNumber()); SWIG_arg++;
-    break;
-  case OgreKit::PROP_STRING:
-    {
-      OgreKit::String str = (result).toString();
-      lua_pushlstring(L, str.c_str(), str.size());
-      SWIG_arg++;
-      break;
-    }
-  }
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr___setitem__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::String *arg2 = 0 ;
-  bool arg3 ;
-  gkString temp2 ;
-  
-  SWIG_check_num_args("__setitem__",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__setitem__",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("__setitem__",2,"OgreKit::String const &");
-  if(!lua_isboolean(L,3)) SWIG_fail_arg("__setitem__",3,"bool");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr___setitem",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  
-  temp2 = gkString((const char*)lua_tostring(L, 2));
-  arg2 = &temp2;
-  
-  arg3 = (lua_toboolean(L, 3)!=0);
-  (*arg1)->__setitem__((OgreKit::String const &)*arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr___setitem__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::String *arg2 = 0 ;
-  float arg3 ;
-  gkString temp2 ;
-  
-  SWIG_check_num_args("__setitem__",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__setitem__",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("__setitem__",2,"OgreKit::String const &");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("__setitem__",3,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr___setitem",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  
-  temp2 = gkString((const char*)lua_tostring(L, 2));
-  arg2 = &temp2;
-  
-  arg3 = (float)lua_tonumber(L, 3);
-  (*arg1)->__setitem__((OgreKit::String const &)*arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr___setitem__SWIG_2(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::String *arg2 = 0 ;
-  char *arg3 = (char *) 0 ;
-  gkString temp2 ;
-  
-  SWIG_check_num_args("__setitem__",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__setitem__",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("__setitem__",2,"OgreKit::String const &");
-  if(!lua_isstring(L,3)) SWIG_fail_arg("__setitem__",3,"char const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr___setitem",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  
-  temp2 = gkString((const char*)lua_tostring(L, 2));
-  arg2 = &temp2;
-  
-  arg3 = (char *)lua_tostring(L, 3);
-  (*arg1)->__setitem__((OgreKit::String const &)*arg2,(char const *)arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr___setitem(lua_State* L) {
-  int argc;
-  int argv[4]={
-    1,2,3,4
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isstring(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isboolean(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_EntityPtr___setitem__SWIG_0(L);
-        }
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isstring(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_EntityPtr___setitem__SWIG_1(L);
-        }
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isstring(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isstring(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_EntityPtr___setitem__SWIG_2(L);
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'EntityPtr___setitem'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    __setitem__(OgreKit::Pointer< OgreKit::Entity > *,OgreKit::String const &,bool)\n"
-    "    __setitem__(OgreKit::Pointer< OgreKit::Entity > *,OgreKit::String const &,float)\n"
-    "    __setitem__(OgreKit::Pointer< OgreKit::Entity > *,OgreKit::String const &,char const *)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_EntityPtr_load(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  
-  SWIG_check_num_args("load",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("load",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_load",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  (*arg1)->load();
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_unload(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  
-  SWIG_check_num_args("unload",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("unload",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_unload",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  (*arg1)->unload();
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_reload(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  
-  SWIG_check_num_args("reload",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("reload",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_reload",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  (*arg1)->reload();
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_EntityPtr_getName(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) 0 ;
-  OgreKit::String result;
-  
-  SWIG_check_num_args("getName",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getName",1,"OgreKit::Pointer< OgreKit::Entity > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,0))){
-    SWIG_fail_ptr("EntityPtr_getName",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t);
-  }
-  
-  result = (*arg1)->getName();
-  
-  lua_pushstring(L, (&result)->c_str()); SWIG_arg++;
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static void swig_delete_EntityPtr(void *obj) {
-OgreKit::Pointer< OgreKit::Entity > *arg1 = (OgreKit::Pointer< OgreKit::Entity > *) obj;
-delete arg1;
-}
-static swig_lua_method swig_OgreKit_Pointer_Sl_OgreKit_Entity_Sg__methods[] = {
-    {"isNull", _wrap_EntityPtr_isNull}, 
-    {"__eq", _wrap_EntityPtr___eq}, 
-    {"__deref__", _wrap_EntityPtr___deref__}, 
-    {"playAction", _wrap_EntityPtr_playAction}, 
-    {"getPosition", _wrap_EntityPtr_getPosition}, 
-    {"getRotation", _wrap_EntityPtr_getRotation}, 
-    {"getOrientation", _wrap_EntityPtr_getOrientation}, 
-    {"getScale", _wrap_EntityPtr_getScale}, 
-    {"getWorldPosition", _wrap_EntityPtr_getWorldPosition}, 
-    {"getWorldRotation", _wrap_EntityPtr_getWorldRotation}, 
-    {"getWorldOrientation", _wrap_EntityPtr_getWorldOrientation}, 
-    {"getLinearVelocity", _wrap_EntityPtr_getLinearVelocity}, 
-    {"getAngularVelocity", _wrap_EntityPtr_getAngularVelocity}, 
-    {"setLinearVelocity", _wrap_EntityPtr_setLinearVelocity}, 
-    {"setAngularVelocity", _wrap_EntityPtr_setAngularVelocity}, 
-    {"setPosition", _wrap_EntityPtr_setPosition}, 
-    {"setRotation", _wrap_EntityPtr_setRotation}, 
-    {"setOrientation", _wrap_EntityPtr_setOrientation}, 
-    {"getType", _wrap_EntityPtr_getType}, 
-    {"rotate", _wrap_EntityPtr_rotate}, 
-    {"translate", _wrap_EntityPtr_translate}, 
-    {"scale", _wrap_EntityPtr_scale}, 
-    {"yaw", _wrap_EntityPtr_yaw}, 
-    {"pitch", _wrap_EntityPtr_pitch}, 
-    {"roll", _wrap_EntityPtr_roll}, 
-    {"getState", _wrap_EntityPtr_getState}, 
-    {"getEntity", _wrap_EntityPtr_getEntity}, 
-    {"getCamera", _wrap_EntityPtr_getCamera}, 
-    {"getLight", _wrap_EntityPtr_getLight}, 
-    {"hasParent", _wrap_EntityPtr_hasParent}, 
-    {"setParent", _wrap_EntityPtr_setParent}, 
-    {"getParent", _wrap_EntityPtr_getParent}, 
-    {"enableContacts", _wrap_EntityPtr_enableContacts}, 
-    {"hasContacts", _wrap_EntityPtr_hasContacts}, 
-    {"hasContact", _wrap_EntityPtr_hasContact}, 
-    {"getScene", _wrap_EntityPtr_getScene}, 
-    {"__getitem", _wrap_EntityPtr___getitem}, 
-    {"__setitem", _wrap_EntityPtr___setitem}, 
-    {"load", _wrap_EntityPtr_load}, 
-    {"unload", _wrap_EntityPtr_unload}, 
-    {"reload", _wrap_EntityPtr_reload}, 
-    {"getName", _wrap_EntityPtr_getName}, 
-    {0,0}
-};
-static swig_lua_attribute swig_OgreKit_Pointer_Sl_OgreKit_Entity_Sg__attributes[] = {
-    {0,0,0}
-};
-static swig_lua_class *swig_OgreKit_Pointer_Sl_OgreKit_Entity_Sg__bases[] = {0};
-static const char *swig_OgreKit_Pointer_Sl_OgreKit_Entity_Sg__base_names[] = {0};
-static swig_lua_class _wrap_class_OgreKit_Pointer_Sl_OgreKit_Entity_Sg_ = { "EntityPtr", &SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,_wrap_new_EntityPtr, swig_delete_EntityPtr, swig_OgreKit_Pointer_Sl_OgreKit_Entity_Sg__methods, swig_OgreKit_Pointer_Sl_OgreKit_Entity_Sg__attributes, swig_OgreKit_Pointer_Sl_OgreKit_Entity_Sg__bases, swig_OgreKit_Pointer_Sl_OgreKit_Entity_Sg__base_names };
-
-static int _wrap_CameraPtr_isNull(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  bool result;
-  
-  SWIG_check_num_args("isNull",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isNull",1,"OgreKit::Pointer< OgreKit::Camera > const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_isNull",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  result = (bool)((OgreKit::Pointer< OgreKit::Camera > const *)arg1)->isNull();
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr___eq(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::Pointer< OgreKit::Camera > *arg2 = 0 ;
-  bool result;
-  
-  SWIG_check_num_args("operator ==",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator ==",1,"OgreKit::Pointer< OgreKit::Camera > const *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("operator ==",2,"OgreKit::Pointer< OgreKit::Camera > const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr___eq",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr___eq",2,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  result = (bool)((OgreKit::Pointer< OgreKit::Camera > const *)arg1)->operator ==((OgreKit::Pointer< OgreKit::Camera > const &)*arg2);
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr___deref__(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::Camera *result = 0 ;
-  
-  SWIG_check_num_args("operator ->",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator ->",1,"OgreKit::Pointer< OgreKit::Camera > const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr___deref__",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  result = (OgreKit::Camera *)((OgreKit::Pointer< OgreKit::Camera > const *)arg1)->operator ->();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__Camera,0); SWIG_arg++; 
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_new_CameraPtr(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *result = 0 ;
-  
-  SWIG_check_num_args("OgreKit::Pointer<(OgreKit::Camera)>::Pointer<(OgreKit::Camera)>",0,0)
-  result = (OgreKit::Pointer< OgreKit::Camera > *)new OgreKit::Pointer< OgreKit::Camera >();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,1); SWIG_arg++; 
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_setClipping(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  
-  SWIG_check_num_args("setClipping",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setClipping",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("setClipping",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("setClipping",3,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_setClipping",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  (*arg1)->setClipping(arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_getClipStart(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  float result;
-  
-  SWIG_check_num_args("getClipStart",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getClipStart",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_getClipStart",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  result = (float)(*arg1)->getClipStart();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_getClipEnd(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  float result;
-  
-  SWIG_check_num_args("getClipEnd",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getClipEnd",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_getClipEnd",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  result = (float)(*arg1)->getClipEnd();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_setFov(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  float arg2 ;
-  
-  SWIG_check_num_args("setFov",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setFov",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("setFov",2,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_setFov",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  (*arg1)->setFov(arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_getFov(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  float result;
-  
-  SWIG_check_num_args("getFov",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getFov",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_getFov",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  result = (float)(*arg1)->getFov();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_makeCurrent(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  
-  SWIG_check_num_args("makeCurrent",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("makeCurrent",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_makeCurrent",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  (*arg1)->makeCurrent();
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_getPosition(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::Vector3 result;
-  
-  SWIG_check_num_args("getPosition",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getPosition",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_getPosition",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  result = (*arg1)->getPosition();
-  {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_getRotation(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::Vector3 result;
-  
-  SWIG_check_num_args("getRotation",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getRotation",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_getRotation",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  result = (*arg1)->getRotation();
-  {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_getOrientation(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::Quaternion result;
-  
-  SWIG_check_num_args("getOrientation",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getOrientation",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_getOrientation",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  result = (*arg1)->getOrientation();
-  {
-    OgreKit::Quaternion * resultptr = new OgreKit::Quaternion((const OgreKit::Quaternion &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Quaternion,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_getScale(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::Vector3 result;
-  
-  SWIG_check_num_args("getScale",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getScale",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_getScale",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  result = (*arg1)->getScale();
-  {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_getWorldPosition(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::Vector3 result;
-  
-  SWIG_check_num_args("getWorldPosition",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getWorldPosition",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_getWorldPosition",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  result = (*arg1)->getWorldPosition();
-  {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_getWorldRotation(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::Vector3 result;
-  
-  SWIG_check_num_args("getWorldRotation",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getWorldRotation",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_getWorldRotation",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  result = (*arg1)->getWorldRotation();
-  {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_getWorldOrientation(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::Quaternion result;
-  
-  SWIG_check_num_args("getWorldOrientation",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getWorldOrientation",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_getWorldOrientation",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  result = (*arg1)->getWorldOrientation();
-  {
-    OgreKit::Quaternion * resultptr = new OgreKit::Quaternion((const OgreKit::Quaternion &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Quaternion,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_getLinearVelocity(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::Vector3 result;
-  
-  SWIG_check_num_args("getLinearVelocity",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getLinearVelocity",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_getLinearVelocity",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  result = (*arg1)->getLinearVelocity();
-  {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_getAngularVelocity(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::Vector3 result;
-  
-  SWIG_check_num_args("getAngularVelocity",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getAngularVelocity",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_getAngularVelocity",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  result = (*arg1)->getAngularVelocity();
-  {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_setLinearVelocity__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  
-  SWIG_check_num_args("setLinearVelocity",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setLinearVelocity",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setLinearVelocity",2,"OgreKit::Vector3 const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_setLinearVelocity",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("CameraPtr_setLinearVelocity",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  (*arg1)->setLinearVelocity((OgreKit::Vector3 const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_setLinearVelocity__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  
-  SWIG_check_num_args("setLinearVelocity",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setLinearVelocity",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("setLinearVelocity",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("setLinearVelocity",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("setLinearVelocity",4,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_setLinearVelocity",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  (*arg1)->setLinearVelocity(arg2,arg3,arg4);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_setLinearVelocity(lua_State* L) {
-  int argc;
-  int argv[5]={
-    1,2,3,4,5
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_CameraPtr_setLinearVelocity__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            return _wrap_CameraPtr_setLinearVelocity__SWIG_1(L);
-          }
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'CameraPtr_setLinearVelocity'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    setLinearVelocity(OgreKit::Pointer< OgreKit::Camera > *,OgreKit::Vector3 const &)\n"
-    "    setLinearVelocity(OgreKit::Pointer< OgreKit::Camera > *,float,float,float)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_CameraPtr_setAngularVelocity__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  
-  SWIG_check_num_args("setAngularVelocity",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setAngularVelocity",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setAngularVelocity",2,"OgreKit::Vector3 const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_setAngularVelocity",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("CameraPtr_setAngularVelocity",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  (*arg1)->setAngularVelocity((OgreKit::Vector3 const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_setAngularVelocity__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  
-  SWIG_check_num_args("setAngularVelocity",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setAngularVelocity",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("setAngularVelocity",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("setAngularVelocity",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("setAngularVelocity",4,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_setAngularVelocity",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  (*arg1)->setAngularVelocity(arg2,arg3,arg4);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_setAngularVelocity(lua_State* L) {
-  int argc;
-  int argv[5]={
-    1,2,3,4,5
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_CameraPtr_setAngularVelocity__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            return _wrap_CameraPtr_setAngularVelocity__SWIG_1(L);
-          }
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'CameraPtr_setAngularVelocity'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    setAngularVelocity(OgreKit::Pointer< OgreKit::Camera > *,OgreKit::Vector3 const &)\n"
-    "    setAngularVelocity(OgreKit::Pointer< OgreKit::Camera > *,float,float,float)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_CameraPtr_setPosition__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  
-  SWIG_check_num_args("setPosition",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setPosition",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setPosition",2,"OgreKit::Vector3 const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_setPosition",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("CameraPtr_setPosition",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  (*arg1)->setPosition((OgreKit::Vector3 const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_setPosition__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  
-  SWIG_check_num_args("setPosition",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setPosition",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("setPosition",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("setPosition",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("setPosition",4,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_setPosition",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  (*arg1)->setPosition(arg2,arg3,arg4);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_setPosition(lua_State* L) {
-  int argc;
-  int argv[5]={
-    1,2,3,4,5
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_CameraPtr_setPosition__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            return _wrap_CameraPtr_setPosition__SWIG_1(L);
-          }
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'CameraPtr_setPosition'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    setPosition(OgreKit::Pointer< OgreKit::Camera > *,OgreKit::Vector3 const &)\n"
-    "    setPosition(OgreKit::Pointer< OgreKit::Camera > *,float,float,float)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_CameraPtr_setRotation__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  
-  SWIG_check_num_args("setRotation",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setRotation",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setRotation",2,"OgreKit::Vector3 const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_setRotation",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("CameraPtr_setRotation",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  (*arg1)->setRotation((OgreKit::Vector3 const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_setRotation__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  
-  SWIG_check_num_args("setRotation",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setRotation",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("setRotation",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("setRotation",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("setRotation",4,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_setRotation",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  (*arg1)->setRotation(arg2,arg3,arg4);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_setRotation(lua_State* L) {
-  int argc;
-  int argv[5]={
-    1,2,3,4,5
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_CameraPtr_setRotation__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            return _wrap_CameraPtr_setRotation__SWIG_1(L);
-          }
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'CameraPtr_setRotation'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    setRotation(OgreKit::Pointer< OgreKit::Camera > *,OgreKit::Vector3 const &)\n"
-    "    setRotation(OgreKit::Pointer< OgreKit::Camera > *,float,float,float)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_CameraPtr_setOrientation__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::Quaternion *arg2 = 0 ;
-  
-  SWIG_check_num_args("setOrientation",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setOrientation",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setOrientation",2,"OgreKit::Quaternion const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_setOrientation",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("CameraPtr_setOrientation",2,SWIGTYPE_p_OgreKit__Quaternion);
-  }
-  
-  (*arg1)->setOrientation((OgreKit::Quaternion const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_setOrientation__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  float arg5 ;
-  
-  SWIG_check_num_args("setOrientation",5,5)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setOrientation",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("setOrientation",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("setOrientation",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("setOrientation",4,"float");
-  if(!lua_isnumber(L,5)) SWIG_fail_arg("setOrientation",5,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_setOrientation",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  arg5 = (float)lua_tonumber(L, 5);
-  (*arg1)->setOrientation(arg2,arg3,arg4,arg5);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_setOrientation(lua_State* L) {
-  int argc;
-  int argv[6]={
-    1,2,3,4,5,6
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Quaternion, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_CameraPtr_setOrientation__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 5) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            {
-              _v = lua_isnumber(L,argv[4]);
-            }
-            if (_v) {
-              return _wrap_CameraPtr_setOrientation__SWIG_1(L);
-            }
-          }
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'CameraPtr_setOrientation'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    setOrientation(OgreKit::Pointer< OgreKit::Camera > *,OgreKit::Quaternion const &)\n"
-    "    setOrientation(OgreKit::Pointer< OgreKit::Camera > *,float,float,float,float)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_CameraPtr_getType(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::GameObjectTypes result;
-  
-  SWIG_check_num_args("getType",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getType",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_getType",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  result = (OgreKit::GameObjectTypes)(*arg1)->getType();
-  lua_pushnumber(L, (lua_Number)(int)(result)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_rotate__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  
-  SWIG_check_num_args("rotate",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("rotate",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("rotate",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("rotate",4,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_rotate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  (*arg1)->rotate(arg2,arg3,arg4);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_rotate__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  
-  SWIG_check_num_args("rotate",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("rotate",2,"OgreKit::Vector3 const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_rotate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("CameraPtr_rotate",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  (*arg1)->rotate((OgreKit::Vector3 const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_rotate__SWIG_2(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::Quaternion *arg2 = 0 ;
-  
-  SWIG_check_num_args("rotate",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("rotate",2,"OgreKit::Quaternion const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_rotate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("CameraPtr_rotate",2,SWIGTYPE_p_OgreKit__Quaternion);
-  }
-  
-  (*arg1)->rotate((OgreKit::Quaternion const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_rotate__SWIG_3(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  OgreKit::TransformSpace arg5 ;
-  
-  SWIG_check_num_args("rotate",5,5)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("rotate",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("rotate",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("rotate",4,"float");
-  if(!lua_isnumber(L,5)) SWIG_fail_arg("rotate",5,"OgreKit::TransformSpace");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_rotate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  arg5 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 5);
-  (*arg1)->rotate(arg2,arg3,arg4,arg5);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_rotate__SWIG_4(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  OgreKit::TransformSpace arg3 ;
-  
-  SWIG_check_num_args("rotate",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("rotate",2,"OgreKit::Vector3 const &");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("rotate",3,"OgreKit::TransformSpace");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_rotate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("CameraPtr_rotate",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  arg3 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 3);
-  (*arg1)->rotate((OgreKit::Vector3 const &)*arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_rotate__SWIG_5(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::Quaternion *arg2 = 0 ;
-  OgreKit::TransformSpace arg3 ;
-  
-  SWIG_check_num_args("rotate",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("rotate",2,"OgreKit::Quaternion const &");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("rotate",3,"OgreKit::TransformSpace");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_rotate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("CameraPtr_rotate",2,SWIGTYPE_p_OgreKit__Quaternion);
-  }
-  
-  arg3 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 3);
-  (*arg1)->rotate((OgreKit::Quaternion const &)*arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_rotate(lua_State* L) {
-  int argc;
-  int argv[6]={
-    1,2,3,4,5,6
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_CameraPtr_rotate__SWIG_1(L);
-      }
-    }
-  }
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Quaternion, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_CameraPtr_rotate__SWIG_2(L);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_CameraPtr_rotate__SWIG_4(L);
-        }
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Quaternion, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_CameraPtr_rotate__SWIG_5(L);
-        }
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            return _wrap_CameraPtr_rotate__SWIG_0(L);
-          }
-        }
-      }
-    }
-  }
-  if (argc == 5) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            {
-              _v = lua_isnumber(L,argv[4]);
-            }
-            if (_v) {
-              return _wrap_CameraPtr_rotate__SWIG_3(L);
-            }
-          }
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'CameraPtr_rotate'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    rotate(OgreKit::Pointer< OgreKit::Camera > *,float,float,float)\n"
-    "    rotate(OgreKit::Pointer< OgreKit::Camera > *,OgreKit::Vector3 const &)\n"
-    "    rotate(OgreKit::Pointer< OgreKit::Camera > *,OgreKit::Quaternion const &)\n"
-    "    rotate(OgreKit::Pointer< OgreKit::Camera > *,float,float,float,OgreKit::TransformSpace)\n"
-    "    rotate(OgreKit::Pointer< OgreKit::Camera > *,OgreKit::Vector3 const &,OgreKit::TransformSpace)\n"
-    "    rotate(OgreKit::Pointer< OgreKit::Camera > *,OgreKit::Quaternion const &,OgreKit::TransformSpace)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_CameraPtr_translate__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  
-  SWIG_check_num_args("translate",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("translate",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("translate",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("translate",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("translate",4,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_translate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  (*arg1)->translate(arg2,arg3,arg4);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_translate__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  
-  SWIG_check_num_args("translate",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("translate",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("translate",2,"OgreKit::Vector3 const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_translate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("CameraPtr_translate",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  (*arg1)->translate((OgreKit::Vector3 const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_translate__SWIG_2(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  OgreKit::TransformSpace arg5 ;
-  
-  SWIG_check_num_args("translate",5,5)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("translate",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("translate",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("translate",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("translate",4,"float");
-  if(!lua_isnumber(L,5)) SWIG_fail_arg("translate",5,"OgreKit::TransformSpace");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_translate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  arg5 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 5);
-  (*arg1)->translate(arg2,arg3,arg4,arg5);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_translate__SWIG_3(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  OgreKit::TransformSpace arg3 ;
-  
-  SWIG_check_num_args("translate",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("translate",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("translate",2,"OgreKit::Vector3 const &");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("translate",3,"OgreKit::TransformSpace");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_translate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("CameraPtr_translate",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  arg3 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 3);
-  (*arg1)->translate((OgreKit::Vector3 const &)*arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_translate(lua_State* L) {
-  int argc;
-  int argv[6]={
-    1,2,3,4,5,6
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_CameraPtr_translate__SWIG_1(L);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_CameraPtr_translate__SWIG_3(L);
-        }
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            return _wrap_CameraPtr_translate__SWIG_0(L);
-          }
-        }
-      }
-    }
-  }
-  if (argc == 5) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            {
-              _v = lua_isnumber(L,argv[4]);
-            }
-            if (_v) {
-              return _wrap_CameraPtr_translate__SWIG_2(L);
-            }
-          }
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'CameraPtr_translate'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    translate(OgreKit::Pointer< OgreKit::Camera > *,float,float,float)\n"
-    "    translate(OgreKit::Pointer< OgreKit::Camera > *,OgreKit::Vector3 const &)\n"
-    "    translate(OgreKit::Pointer< OgreKit::Camera > *,float,float,float,OgreKit::TransformSpace)\n"
-    "    translate(OgreKit::Pointer< OgreKit::Camera > *,OgreKit::Vector3 const &,OgreKit::TransformSpace)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_CameraPtr_scale__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  
-  SWIG_check_num_args("scale",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("scale",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("scale",2,"OgreKit::Vector3 const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_scale",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("CameraPtr_scale",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  (*arg1)->scale((OgreKit::Vector3 const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_scale__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  
-  SWIG_check_num_args("scale",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("scale",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("scale",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("scale",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("scale",4,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_scale",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  (*arg1)->scale(arg2,arg3,arg4);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_scale(lua_State* L) {
-  int argc;
-  int argv[5]={
-    1,2,3,4,5
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_CameraPtr_scale__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            return _wrap_CameraPtr_scale__SWIG_1(L);
-          }
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'CameraPtr_scale'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    scale(OgreKit::Pointer< OgreKit::Camera > *,OgreKit::Vector3 const &)\n"
-    "    scale(OgreKit::Pointer< OgreKit::Camera > *,float,float,float)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_CameraPtr_yaw__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  float arg2 ;
-  
-  SWIG_check_num_args("yaw",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("yaw",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("yaw",2,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_yaw",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  (*arg1)->yaw(arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_yaw__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  float arg2 ;
-  OgreKit::TransformSpace arg3 ;
-  
-  SWIG_check_num_args("yaw",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("yaw",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("yaw",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("yaw",3,"OgreKit::TransformSpace");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_yaw",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 3);
-  (*arg1)->yaw(arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_yaw(lua_State* L) {
-  int argc;
-  int argv[4]={
-    1,2,3,4
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        return _wrap_CameraPtr_yaw__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_CameraPtr_yaw__SWIG_1(L);
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'CameraPtr_yaw'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    yaw(OgreKit::Pointer< OgreKit::Camera > *,float)\n"
-    "    yaw(OgreKit::Pointer< OgreKit::Camera > *,float,OgreKit::TransformSpace)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_CameraPtr_pitch__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  float arg2 ;
-  
-  SWIG_check_num_args("pitch",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("pitch",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("pitch",2,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_pitch",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  (*arg1)->pitch(arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_pitch__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  float arg2 ;
-  OgreKit::TransformSpace arg3 ;
-  
-  SWIG_check_num_args("pitch",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("pitch",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("pitch",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("pitch",3,"OgreKit::TransformSpace");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_pitch",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 3);
-  (*arg1)->pitch(arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_pitch(lua_State* L) {
-  int argc;
-  int argv[4]={
-    1,2,3,4
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        return _wrap_CameraPtr_pitch__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_CameraPtr_pitch__SWIG_1(L);
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'CameraPtr_pitch'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    pitch(OgreKit::Pointer< OgreKit::Camera > *,float)\n"
-    "    pitch(OgreKit::Pointer< OgreKit::Camera > *,float,OgreKit::TransformSpace)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_CameraPtr_roll__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  float arg2 ;
-  
-  SWIG_check_num_args("roll",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("roll",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("roll",2,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_roll",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  (*arg1)->roll(arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_roll__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  float arg2 ;
-  OgreKit::TransformSpace arg3 ;
-  
-  SWIG_check_num_args("roll",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("roll",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("roll",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("roll",3,"OgreKit::TransformSpace");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_roll",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 3);
-  (*arg1)->roll(arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_roll(lua_State* L) {
-  int argc;
-  int argv[4]={
-    1,2,3,4
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        return _wrap_CameraPtr_roll__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_CameraPtr_roll__SWIG_1(L);
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'CameraPtr_roll'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    roll(OgreKit::Pointer< OgreKit::Camera > *,float)\n"
-    "    roll(OgreKit::Pointer< OgreKit::Camera > *,float,OgreKit::TransformSpace)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_CameraPtr_getState(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  int result;
-  
-  SWIG_check_num_args("getState",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getState",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_getState",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  result = (int)(*arg1)->getState();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_getEntity(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::Pointer< OgreKit::Entity > result;
-  
-  SWIG_check_num_args("getEntity",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getEntity",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_getEntity",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  result = (*arg1)->getEntity();
-  {
-    OgreKit::Pointer< OgreKit::Entity > * resultptr = new OgreKit::Pointer< OgreKit::Entity >((const OgreKit::Pointer< OgreKit::Entity > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_getCamera(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::Pointer< OgreKit::Camera > result;
-  
-  SWIG_check_num_args("getCamera",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getCamera",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_getCamera",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  result = (*arg1)->getCamera();
-  {
-    OgreKit::Pointer< OgreKit::Camera > * resultptr = new OgreKit::Pointer< OgreKit::Camera >((const OgreKit::Pointer< OgreKit::Camera > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_getLight(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::Pointer< OgreKit::Light > result;
-  
-  SWIG_check_num_args("getLight",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getLight",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_getLight",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  result = (*arg1)->getLight();
-  {
-    OgreKit::Pointer< OgreKit::Light > * resultptr = new OgreKit::Pointer< OgreKit::Light >((const OgreKit::Pointer< OgreKit::Light > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_hasParent(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  bool result;
-  
-  SWIG_check_num_args("hasParent",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("hasParent",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_hasParent",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  result = (bool)(*arg1)->hasParent();
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_setParent(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::Pointer< OgreKit::GameObject > *arg2 = 0 ;
-  
-  SWIG_check_num_args("setParent",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setParent",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setParent",2,"OgreKit::Pointer< OgreKit::GameObject > const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_setParent",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("CameraPtr_setParent",2,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  (*arg1)->setParent((OgreKit::Pointer< OgreKit::GameObject > const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_getParent(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::Pointer< OgreKit::GameObject > result;
-  
-  SWIG_check_num_args("getParent",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getParent",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_getParent",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  result = (*arg1)->getParent();
-  {
-    OgreKit::Pointer< OgreKit::GameObject > * resultptr = new OgreKit::Pointer< OgreKit::GameObject >((const OgreKit::Pointer< OgreKit::GameObject > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_enableContacts(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  bool arg2 ;
-  
-  SWIG_check_num_args("enableContacts",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("enableContacts",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isboolean(L,2)) SWIG_fail_arg("enableContacts",2,"bool");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_enableContacts",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  arg2 = (lua_toboolean(L, 2)!=0);
-  (*arg1)->enableContacts(arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_hasContacts(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  bool result;
-  
-  SWIG_check_num_args("hasContacts",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("hasContacts",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_hasContacts",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  result = (bool)(*arg1)->hasContacts();
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_hasContact(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::String *arg2 = 0 ;
-  gkString temp2 ;
-  bool result;
-  
-  SWIG_check_num_args("hasContact",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("hasContact",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("hasContact",2,"OgreKit::String const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_hasContact",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  
-  temp2 = gkString((const char*)lua_tostring(L, 2));
-  arg2 = &temp2;
-  
-  result = (bool)(*arg1)->hasContact((OgreKit::String const &)*arg2);
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_getScene(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::Pointer< OgreKit::Scene > result;
-  
-  SWIG_check_num_args("getScene",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getScene",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_getScene",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  result = (*arg1)->getScene();
-  {
-    OgreKit::Pointer< OgreKit::Scene > * resultptr = new OgreKit::Pointer< OgreKit::Scene >((const OgreKit::Pointer< OgreKit::Scene > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr___getitem(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::String *arg2 = 0 ;
-  gkString temp2 ;
-  OgreKit::Property result;
-  
-  SWIG_check_num_args("__getitem__",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__getitem__",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("__getitem__",2,"OgreKit::String const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr___getitem",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  
-  temp2 = gkString((const char*)lua_tostring(L, 2));
-  arg2 = &temp2;
-  
-  result = (*arg1)->__getitem__((OgreKit::String const &)*arg2);
-  
-  
-  switch ((result).getType())
-  {
-  case OgreKit::PROP_BOOL:
-    lua_pushboolean(L, (result).toBool()); SWIG_arg++;
-    break;
-  case OgreKit::PROP_NUMBER:
-    lua_pushnumber(L, (result).toNumber()); SWIG_arg++;
-    break;
-  case OgreKit::PROP_STRING:
-    {
-      OgreKit::String str = (result).toString();
-      lua_pushlstring(L, str.c_str(), str.size());
-      SWIG_arg++;
-      break;
-    }
-  }
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr___setitem__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::String *arg2 = 0 ;
-  bool arg3 ;
-  gkString temp2 ;
-  
-  SWIG_check_num_args("__setitem__",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__setitem__",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("__setitem__",2,"OgreKit::String const &");
-  if(!lua_isboolean(L,3)) SWIG_fail_arg("__setitem__",3,"bool");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr___setitem",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  
-  temp2 = gkString((const char*)lua_tostring(L, 2));
-  arg2 = &temp2;
-  
-  arg3 = (lua_toboolean(L, 3)!=0);
-  (*arg1)->__setitem__((OgreKit::String const &)*arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr___setitem__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::String *arg2 = 0 ;
-  float arg3 ;
-  gkString temp2 ;
-  
-  SWIG_check_num_args("__setitem__",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__setitem__",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("__setitem__",2,"OgreKit::String const &");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("__setitem__",3,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr___setitem",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  
-  temp2 = gkString((const char*)lua_tostring(L, 2));
-  arg2 = &temp2;
-  
-  arg3 = (float)lua_tonumber(L, 3);
-  (*arg1)->__setitem__((OgreKit::String const &)*arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr___setitem__SWIG_2(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::String *arg2 = 0 ;
-  char *arg3 = (char *) 0 ;
-  gkString temp2 ;
-  
-  SWIG_check_num_args("__setitem__",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__setitem__",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("__setitem__",2,"OgreKit::String const &");
-  if(!lua_isstring(L,3)) SWIG_fail_arg("__setitem__",3,"char const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr___setitem",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  
-  temp2 = gkString((const char*)lua_tostring(L, 2));
-  arg2 = &temp2;
-  
-  arg3 = (char *)lua_tostring(L, 3);
-  (*arg1)->__setitem__((OgreKit::String const &)*arg2,(char const *)arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr___setitem(lua_State* L) {
-  int argc;
-  int argv[4]={
-    1,2,3,4
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isstring(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isboolean(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_CameraPtr___setitem__SWIG_0(L);
-        }
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isstring(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_CameraPtr___setitem__SWIG_1(L);
-        }
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isstring(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isstring(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_CameraPtr___setitem__SWIG_2(L);
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'CameraPtr___setitem'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    __setitem__(OgreKit::Pointer< OgreKit::Camera > *,OgreKit::String const &,bool)\n"
-    "    __setitem__(OgreKit::Pointer< OgreKit::Camera > *,OgreKit::String const &,float)\n"
-    "    __setitem__(OgreKit::Pointer< OgreKit::Camera > *,OgreKit::String const &,char const *)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_CameraPtr_load(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  
-  SWIG_check_num_args("load",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("load",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_load",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  (*arg1)->load();
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_unload(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  
-  SWIG_check_num_args("unload",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("unload",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_unload",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  (*arg1)->unload();
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_reload(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  
-  SWIG_check_num_args("reload",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("reload",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_reload",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  (*arg1)->reload();
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_CameraPtr_getName(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) 0 ;
-  OgreKit::String result;
-  
-  SWIG_check_num_args("getName",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getName",1,"OgreKit::Pointer< OgreKit::Camera > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,0))){
-    SWIG_fail_ptr("CameraPtr_getName",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t);
-  }
-  
-  result = (*arg1)->getName();
-  
-  lua_pushstring(L, (&result)->c_str()); SWIG_arg++;
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static void swig_delete_CameraPtr(void *obj) {
-OgreKit::Pointer< OgreKit::Camera > *arg1 = (OgreKit::Pointer< OgreKit::Camera > *) obj;
-delete arg1;
-}
-static swig_lua_method swig_OgreKit_Pointer_Sl_OgreKit_Camera_Sg__methods[] = {
-    {"isNull", _wrap_CameraPtr_isNull}, 
-    {"__eq", _wrap_CameraPtr___eq}, 
-    {"__deref__", _wrap_CameraPtr___deref__}, 
-    {"setClipping", _wrap_CameraPtr_setClipping}, 
-    {"getClipStart", _wrap_CameraPtr_getClipStart}, 
-    {"getClipEnd", _wrap_CameraPtr_getClipEnd}, 
-    {"setFov", _wrap_CameraPtr_setFov}, 
-    {"getFov", _wrap_CameraPtr_getFov}, 
-    {"makeCurrent", _wrap_CameraPtr_makeCurrent}, 
-    {"getPosition", _wrap_CameraPtr_getPosition}, 
-    {"getRotation", _wrap_CameraPtr_getRotation}, 
-    {"getOrientation", _wrap_CameraPtr_getOrientation}, 
-    {"getScale", _wrap_CameraPtr_getScale}, 
-    {"getWorldPosition", _wrap_CameraPtr_getWorldPosition}, 
-    {"getWorldRotation", _wrap_CameraPtr_getWorldRotation}, 
-    {"getWorldOrientation", _wrap_CameraPtr_getWorldOrientation}, 
-    {"getLinearVelocity", _wrap_CameraPtr_getLinearVelocity}, 
-    {"getAngularVelocity", _wrap_CameraPtr_getAngularVelocity}, 
-    {"setLinearVelocity", _wrap_CameraPtr_setLinearVelocity}, 
-    {"setAngularVelocity", _wrap_CameraPtr_setAngularVelocity}, 
-    {"setPosition", _wrap_CameraPtr_setPosition}, 
-    {"setRotation", _wrap_CameraPtr_setRotation}, 
-    {"setOrientation", _wrap_CameraPtr_setOrientation}, 
-    {"getType", _wrap_CameraPtr_getType}, 
-    {"rotate", _wrap_CameraPtr_rotate}, 
-    {"translate", _wrap_CameraPtr_translate}, 
-    {"scale", _wrap_CameraPtr_scale}, 
-    {"yaw", _wrap_CameraPtr_yaw}, 
-    {"pitch", _wrap_CameraPtr_pitch}, 
-    {"roll", _wrap_CameraPtr_roll}, 
-    {"getState", _wrap_CameraPtr_getState}, 
-    {"getEntity", _wrap_CameraPtr_getEntity}, 
-    {"getCamera", _wrap_CameraPtr_getCamera}, 
-    {"getLight", _wrap_CameraPtr_getLight}, 
-    {"hasParent", _wrap_CameraPtr_hasParent}, 
-    {"setParent", _wrap_CameraPtr_setParent}, 
-    {"getParent", _wrap_CameraPtr_getParent}, 
-    {"enableContacts", _wrap_CameraPtr_enableContacts}, 
-    {"hasContacts", _wrap_CameraPtr_hasContacts}, 
-    {"hasContact", _wrap_CameraPtr_hasContact}, 
-    {"getScene", _wrap_CameraPtr_getScene}, 
-    {"__getitem", _wrap_CameraPtr___getitem}, 
-    {"__setitem", _wrap_CameraPtr___setitem}, 
-    {"load", _wrap_CameraPtr_load}, 
-    {"unload", _wrap_CameraPtr_unload}, 
-    {"reload", _wrap_CameraPtr_reload}, 
-    {"getName", _wrap_CameraPtr_getName}, 
-    {0,0}
-};
-static swig_lua_attribute swig_OgreKit_Pointer_Sl_OgreKit_Camera_Sg__attributes[] = {
-    {0,0,0}
-};
-static swig_lua_class *swig_OgreKit_Pointer_Sl_OgreKit_Camera_Sg__bases[] = {0};
-static const char *swig_OgreKit_Pointer_Sl_OgreKit_Camera_Sg__base_names[] = {0};
-static swig_lua_class _wrap_class_OgreKit_Pointer_Sl_OgreKit_Camera_Sg_ = { "CameraPtr", &SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,_wrap_new_CameraPtr, swig_delete_CameraPtr, swig_OgreKit_Pointer_Sl_OgreKit_Camera_Sg__methods, swig_OgreKit_Pointer_Sl_OgreKit_Camera_Sg__attributes, swig_OgreKit_Pointer_Sl_OgreKit_Camera_Sg__bases, swig_OgreKit_Pointer_Sl_OgreKit_Camera_Sg__base_names };
-
-static int _wrap_LightPtr_isNull(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  bool result;
-  
-  SWIG_check_num_args("isNull",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isNull",1,"OgreKit::Pointer< OgreKit::Light > const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_isNull",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  result = (bool)((OgreKit::Pointer< OgreKit::Light > const *)arg1)->isNull();
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr___eq(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::Pointer< OgreKit::Light > *arg2 = 0 ;
-  bool result;
-  
-  SWIG_check_num_args("operator ==",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator ==",1,"OgreKit::Pointer< OgreKit::Light > const *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("operator ==",2,"OgreKit::Pointer< OgreKit::Light > const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr___eq",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr___eq",2,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  result = (bool)((OgreKit::Pointer< OgreKit::Light > const *)arg1)->operator ==((OgreKit::Pointer< OgreKit::Light > const &)*arg2);
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr___deref__(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::Light *result = 0 ;
-  
-  SWIG_check_num_args("operator ->",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("operator ->",1,"OgreKit::Pointer< OgreKit::Light > const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr___deref__",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  result = (OgreKit::Light *)((OgreKit::Pointer< OgreKit::Light > const *)arg1)->operator ->();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__Light,0); SWIG_arg++; 
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_new_LightPtr(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *result = 0 ;
-  
-  SWIG_check_num_args("OgreKit::Pointer<(OgreKit::Light)>::Pointer<(OgreKit::Light)>",0,0)
-  result = (OgreKit::Pointer< OgreKit::Light > *)new OgreKit::Pointer< OgreKit::Light >();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,1); SWIG_arg++; 
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_getPosition(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::Vector3 result;
-  
-  SWIG_check_num_args("getPosition",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getPosition",1,"OgreKit::Pointer< OgreKit::Light > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_getPosition",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  result = (*arg1)->getPosition();
-  {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_getRotation(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::Vector3 result;
-  
-  SWIG_check_num_args("getRotation",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getRotation",1,"OgreKit::Pointer< OgreKit::Light > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_getRotation",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  result = (*arg1)->getRotation();
-  {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_getOrientation(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::Quaternion result;
-  
-  SWIG_check_num_args("getOrientation",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getOrientation",1,"OgreKit::Pointer< OgreKit::Light > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_getOrientation",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  result = (*arg1)->getOrientation();
-  {
-    OgreKit::Quaternion * resultptr = new OgreKit::Quaternion((const OgreKit::Quaternion &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Quaternion,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_getScale(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::Vector3 result;
-  
-  SWIG_check_num_args("getScale",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getScale",1,"OgreKit::Pointer< OgreKit::Light > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_getScale",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  result = (*arg1)->getScale();
-  {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_getWorldPosition(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::Vector3 result;
-  
-  SWIG_check_num_args("getWorldPosition",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getWorldPosition",1,"OgreKit::Pointer< OgreKit::Light > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_getWorldPosition",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  result = (*arg1)->getWorldPosition();
-  {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_getWorldRotation(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::Vector3 result;
-  
-  SWIG_check_num_args("getWorldRotation",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getWorldRotation",1,"OgreKit::Pointer< OgreKit::Light > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_getWorldRotation",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  result = (*arg1)->getWorldRotation();
-  {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_getWorldOrientation(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::Quaternion result;
-  
-  SWIG_check_num_args("getWorldOrientation",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getWorldOrientation",1,"OgreKit::Pointer< OgreKit::Light > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_getWorldOrientation",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  result = (*arg1)->getWorldOrientation();
-  {
-    OgreKit::Quaternion * resultptr = new OgreKit::Quaternion((const OgreKit::Quaternion &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Quaternion,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_getLinearVelocity(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::Vector3 result;
-  
-  SWIG_check_num_args("getLinearVelocity",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getLinearVelocity",1,"OgreKit::Pointer< OgreKit::Light > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_getLinearVelocity",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  result = (*arg1)->getLinearVelocity();
-  {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_getAngularVelocity(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::Vector3 result;
-  
-  SWIG_check_num_args("getAngularVelocity",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getAngularVelocity",1,"OgreKit::Pointer< OgreKit::Light > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_getAngularVelocity",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  result = (*arg1)->getAngularVelocity();
-  {
-    OgreKit::Vector3 * resultptr = new OgreKit::Vector3((const OgreKit::Vector3 &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__Vector3,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_setLinearVelocity__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  
-  SWIG_check_num_args("setLinearVelocity",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setLinearVelocity",1,"OgreKit::Pointer< OgreKit::Light > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setLinearVelocity",2,"OgreKit::Vector3 const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_setLinearVelocity",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("LightPtr_setLinearVelocity",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  (*arg1)->setLinearVelocity((OgreKit::Vector3 const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_setLinearVelocity__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  
-  SWIG_check_num_args("setLinearVelocity",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setLinearVelocity",1,"OgreKit::Pointer< OgreKit::Light > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("setLinearVelocity",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("setLinearVelocity",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("setLinearVelocity",4,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_setLinearVelocity",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  (*arg1)->setLinearVelocity(arg2,arg3,arg4);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_setLinearVelocity(lua_State* L) {
-  int argc;
-  int argv[5]={
-    1,2,3,4,5
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_LightPtr_setLinearVelocity__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            return _wrap_LightPtr_setLinearVelocity__SWIG_1(L);
-          }
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'LightPtr_setLinearVelocity'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    setLinearVelocity(OgreKit::Pointer< OgreKit::Light > *,OgreKit::Vector3 const &)\n"
-    "    setLinearVelocity(OgreKit::Pointer< OgreKit::Light > *,float,float,float)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_LightPtr_setAngularVelocity__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  
-  SWIG_check_num_args("setAngularVelocity",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setAngularVelocity",1,"OgreKit::Pointer< OgreKit::Light > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setAngularVelocity",2,"OgreKit::Vector3 const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_setAngularVelocity",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("LightPtr_setAngularVelocity",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  (*arg1)->setAngularVelocity((OgreKit::Vector3 const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_setAngularVelocity__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  
-  SWIG_check_num_args("setAngularVelocity",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setAngularVelocity",1,"OgreKit::Pointer< OgreKit::Light > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("setAngularVelocity",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("setAngularVelocity",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("setAngularVelocity",4,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_setAngularVelocity",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  (*arg1)->setAngularVelocity(arg2,arg3,arg4);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_setAngularVelocity(lua_State* L) {
-  int argc;
-  int argv[5]={
-    1,2,3,4,5
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_LightPtr_setAngularVelocity__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            return _wrap_LightPtr_setAngularVelocity__SWIG_1(L);
-          }
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'LightPtr_setAngularVelocity'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    setAngularVelocity(OgreKit::Pointer< OgreKit::Light > *,OgreKit::Vector3 const &)\n"
-    "    setAngularVelocity(OgreKit::Pointer< OgreKit::Light > *,float,float,float)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_LightPtr_setPosition__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  
-  SWIG_check_num_args("setPosition",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setPosition",1,"OgreKit::Pointer< OgreKit::Light > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setPosition",2,"OgreKit::Vector3 const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_setPosition",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("LightPtr_setPosition",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  (*arg1)->setPosition((OgreKit::Vector3 const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_setPosition__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  
-  SWIG_check_num_args("setPosition",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setPosition",1,"OgreKit::Pointer< OgreKit::Light > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("setPosition",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("setPosition",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("setPosition",4,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_setPosition",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  (*arg1)->setPosition(arg2,arg3,arg4);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_setPosition(lua_State* L) {
-  int argc;
-  int argv[5]={
-    1,2,3,4,5
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_LightPtr_setPosition__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            return _wrap_LightPtr_setPosition__SWIG_1(L);
-          }
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'LightPtr_setPosition'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    setPosition(OgreKit::Pointer< OgreKit::Light > *,OgreKit::Vector3 const &)\n"
-    "    setPosition(OgreKit::Pointer< OgreKit::Light > *,float,float,float)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_LightPtr_setRotation__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  
-  SWIG_check_num_args("setRotation",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setRotation",1,"OgreKit::Pointer< OgreKit::Light > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setRotation",2,"OgreKit::Vector3 const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_setRotation",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("LightPtr_setRotation",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  (*arg1)->setRotation((OgreKit::Vector3 const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_setRotation__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  
-  SWIG_check_num_args("setRotation",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setRotation",1,"OgreKit::Pointer< OgreKit::Light > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("setRotation",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("setRotation",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("setRotation",4,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_setRotation",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  (*arg1)->setRotation(arg2,arg3,arg4);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_setRotation(lua_State* L) {
-  int argc;
-  int argv[5]={
-    1,2,3,4,5
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_LightPtr_setRotation__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            return _wrap_LightPtr_setRotation__SWIG_1(L);
-          }
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'LightPtr_setRotation'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    setRotation(OgreKit::Pointer< OgreKit::Light > *,OgreKit::Vector3 const &)\n"
-    "    setRotation(OgreKit::Pointer< OgreKit::Light > *,float,float,float)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_LightPtr_setOrientation__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::Quaternion *arg2 = 0 ;
-  
-  SWIG_check_num_args("setOrientation",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setOrientation",1,"OgreKit::Pointer< OgreKit::Light > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setOrientation",2,"OgreKit::Quaternion const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_setOrientation",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("LightPtr_setOrientation",2,SWIGTYPE_p_OgreKit__Quaternion);
-  }
-  
-  (*arg1)->setOrientation((OgreKit::Quaternion const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_setOrientation__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  float arg5 ;
-  
-  SWIG_check_num_args("setOrientation",5,5)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setOrientation",1,"OgreKit::Pointer< OgreKit::Light > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("setOrientation",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("setOrientation",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("setOrientation",4,"float");
-  if(!lua_isnumber(L,5)) SWIG_fail_arg("setOrientation",5,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_setOrientation",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  arg5 = (float)lua_tonumber(L, 5);
-  (*arg1)->setOrientation(arg2,arg3,arg4,arg5);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_setOrientation(lua_State* L) {
-  int argc;
-  int argv[6]={
-    1,2,3,4,5,6
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Quaternion, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_LightPtr_setOrientation__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 5) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            {
-              _v = lua_isnumber(L,argv[4]);
-            }
-            if (_v) {
-              return _wrap_LightPtr_setOrientation__SWIG_1(L);
-            }
-          }
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'LightPtr_setOrientation'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    setOrientation(OgreKit::Pointer< OgreKit::Light > *,OgreKit::Quaternion const &)\n"
-    "    setOrientation(OgreKit::Pointer< OgreKit::Light > *,float,float,float,float)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_LightPtr_getType(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::GameObjectTypes result;
-  
-  SWIG_check_num_args("getType",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getType",1,"OgreKit::Pointer< OgreKit::Light > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_getType",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  result = (OgreKit::GameObjectTypes)(*arg1)->getType();
-  lua_pushnumber(L, (lua_Number)(int)(result)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_rotate__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  
-  SWIG_check_num_args("rotate",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"OgreKit::Pointer< OgreKit::Light > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("rotate",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("rotate",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("rotate",4,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_rotate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  (*arg1)->rotate(arg2,arg3,arg4);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_rotate__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  
-  SWIG_check_num_args("rotate",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"OgreKit::Pointer< OgreKit::Light > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("rotate",2,"OgreKit::Vector3 const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_rotate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("LightPtr_rotate",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  (*arg1)->rotate((OgreKit::Vector3 const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_rotate__SWIG_2(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::Quaternion *arg2 = 0 ;
-  
-  SWIG_check_num_args("rotate",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"OgreKit::Pointer< OgreKit::Light > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("rotate",2,"OgreKit::Quaternion const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_rotate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("LightPtr_rotate",2,SWIGTYPE_p_OgreKit__Quaternion);
-  }
-  
-  (*arg1)->rotate((OgreKit::Quaternion const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_rotate__SWIG_3(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  OgreKit::TransformSpace arg5 ;
-  
-  SWIG_check_num_args("rotate",5,5)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"OgreKit::Pointer< OgreKit::Light > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("rotate",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("rotate",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("rotate",4,"float");
-  if(!lua_isnumber(L,5)) SWIG_fail_arg("rotate",5,"OgreKit::TransformSpace");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_rotate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  arg5 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 5);
-  (*arg1)->rotate(arg2,arg3,arg4,arg5);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_rotate__SWIG_4(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  OgreKit::TransformSpace arg3 ;
-  
-  SWIG_check_num_args("rotate",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"OgreKit::Pointer< OgreKit::Light > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("rotate",2,"OgreKit::Vector3 const &");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("rotate",3,"OgreKit::TransformSpace");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_rotate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("LightPtr_rotate",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  arg3 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 3);
-  (*arg1)->rotate((OgreKit::Vector3 const &)*arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_rotate__SWIG_5(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::Quaternion *arg2 = 0 ;
-  OgreKit::TransformSpace arg3 ;
-  
-  SWIG_check_num_args("rotate",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("rotate",1,"OgreKit::Pointer< OgreKit::Light > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("rotate",2,"OgreKit::Quaternion const &");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("rotate",3,"OgreKit::TransformSpace");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_rotate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Quaternion,0))){
-    SWIG_fail_ptr("LightPtr_rotate",2,SWIGTYPE_p_OgreKit__Quaternion);
-  }
-  
-  arg3 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 3);
-  (*arg1)->rotate((OgreKit::Quaternion const &)*arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_rotate(lua_State* L) {
-  int argc;
-  int argv[6]={
-    1,2,3,4,5,6
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_LightPtr_rotate__SWIG_1(L);
-      }
-    }
-  }
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Quaternion, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_LightPtr_rotate__SWIG_2(L);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_LightPtr_rotate__SWIG_4(L);
-        }
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Quaternion, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_LightPtr_rotate__SWIG_5(L);
-        }
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            return _wrap_LightPtr_rotate__SWIG_0(L);
-          }
-        }
-      }
-    }
-  }
-  if (argc == 5) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            {
-              _v = lua_isnumber(L,argv[4]);
-            }
-            if (_v) {
-              return _wrap_LightPtr_rotate__SWIG_3(L);
-            }
-          }
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'LightPtr_rotate'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    rotate(OgreKit::Pointer< OgreKit::Light > *,float,float,float)\n"
-    "    rotate(OgreKit::Pointer< OgreKit::Light > *,OgreKit::Vector3 const &)\n"
-    "    rotate(OgreKit::Pointer< OgreKit::Light > *,OgreKit::Quaternion const &)\n"
-    "    rotate(OgreKit::Pointer< OgreKit::Light > *,float,float,float,OgreKit::TransformSpace)\n"
-    "    rotate(OgreKit::Pointer< OgreKit::Light > *,OgreKit::Vector3 const &,OgreKit::TransformSpace)\n"
-    "    rotate(OgreKit::Pointer< OgreKit::Light > *,OgreKit::Quaternion const &,OgreKit::TransformSpace)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_LightPtr_translate__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  
-  SWIG_check_num_args("translate",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("translate",1,"OgreKit::Pointer< OgreKit::Light > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("translate",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("translate",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("translate",4,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_translate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  (*arg1)->translate(arg2,arg3,arg4);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_translate__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  
-  SWIG_check_num_args("translate",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("translate",1,"OgreKit::Pointer< OgreKit::Light > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("translate",2,"OgreKit::Vector3 const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_translate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("LightPtr_translate",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  (*arg1)->translate((OgreKit::Vector3 const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_translate__SWIG_2(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  OgreKit::TransformSpace arg5 ;
-  
-  SWIG_check_num_args("translate",5,5)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("translate",1,"OgreKit::Pointer< OgreKit::Light > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("translate",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("translate",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("translate",4,"float");
-  if(!lua_isnumber(L,5)) SWIG_fail_arg("translate",5,"OgreKit::TransformSpace");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_translate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  arg5 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 5);
-  (*arg1)->translate(arg2,arg3,arg4,arg5);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_translate__SWIG_3(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  OgreKit::TransformSpace arg3 ;
-  
-  SWIG_check_num_args("translate",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("translate",1,"OgreKit::Pointer< OgreKit::Light > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("translate",2,"OgreKit::Vector3 const &");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("translate",3,"OgreKit::TransformSpace");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_translate",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("LightPtr_translate",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  arg3 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 3);
-  (*arg1)->translate((OgreKit::Vector3 const &)*arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_translate(lua_State* L) {
-  int argc;
-  int argv[6]={
-    1,2,3,4,5,6
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_LightPtr_translate__SWIG_1(L);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_LightPtr_translate__SWIG_3(L);
-        }
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            return _wrap_LightPtr_translate__SWIG_0(L);
-          }
-        }
-      }
-    }
-  }
-  if (argc == 5) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            {
-              _v = lua_isnumber(L,argv[4]);
-            }
-            if (_v) {
-              return _wrap_LightPtr_translate__SWIG_2(L);
-            }
-          }
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'LightPtr_translate'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    translate(OgreKit::Pointer< OgreKit::Light > *,float,float,float)\n"
-    "    translate(OgreKit::Pointer< OgreKit::Light > *,OgreKit::Vector3 const &)\n"
-    "    translate(OgreKit::Pointer< OgreKit::Light > *,float,float,float,OgreKit::TransformSpace)\n"
-    "    translate(OgreKit::Pointer< OgreKit::Light > *,OgreKit::Vector3 const &,OgreKit::TransformSpace)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_LightPtr_scale__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::Vector3 *arg2 = 0 ;
-  
-  SWIG_check_num_args("scale",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("scale",1,"OgreKit::Pointer< OgreKit::Light > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("scale",2,"OgreKit::Vector3 const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_scale",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__Vector3,0))){
-    SWIG_fail_ptr("LightPtr_scale",2,SWIGTYPE_p_OgreKit__Vector3);
-  }
-  
-  (*arg1)->scale((OgreKit::Vector3 const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_scale__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  float arg2 ;
-  float arg3 ;
-  float arg4 ;
-  
-  SWIG_check_num_args("scale",4,4)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("scale",1,"OgreKit::Pointer< OgreKit::Light > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("scale",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("scale",3,"float");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("scale",4,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_scale",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (float)lua_tonumber(L, 3);
-  arg4 = (float)lua_tonumber(L, 4);
-  (*arg1)->scale(arg2,arg3,arg4);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_scale(lua_State* L) {
-  int argc;
-  int argv[5]={
-    1,2,3,4,5
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        void *ptr;
-        if (lua_isuserdata(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_OgreKit__Vector3, 0)) {
-          _v = 0;
-        } else {
-          _v = 1;
-        }
-      }
-      if (_v) {
-        return _wrap_LightPtr_scale__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isnumber(L,argv[3]);
-          }
-          if (_v) {
-            return _wrap_LightPtr_scale__SWIG_1(L);
-          }
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'LightPtr_scale'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    scale(OgreKit::Pointer< OgreKit::Light > *,OgreKit::Vector3 const &)\n"
-    "    scale(OgreKit::Pointer< OgreKit::Light > *,float,float,float)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_LightPtr_yaw__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  float arg2 ;
-  
-  SWIG_check_num_args("yaw",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("yaw",1,"OgreKit::Pointer< OgreKit::Light > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("yaw",2,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_yaw",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  (*arg1)->yaw(arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_yaw__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  float arg2 ;
-  OgreKit::TransformSpace arg3 ;
-  
-  SWIG_check_num_args("yaw",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("yaw",1,"OgreKit::Pointer< OgreKit::Light > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("yaw",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("yaw",3,"OgreKit::TransformSpace");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_yaw",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 3);
-  (*arg1)->yaw(arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_yaw(lua_State* L) {
-  int argc;
-  int argv[4]={
-    1,2,3,4
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        return _wrap_LightPtr_yaw__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_LightPtr_yaw__SWIG_1(L);
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'LightPtr_yaw'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    yaw(OgreKit::Pointer< OgreKit::Light > *,float)\n"
-    "    yaw(OgreKit::Pointer< OgreKit::Light > *,float,OgreKit::TransformSpace)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_LightPtr_pitch__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  float arg2 ;
-  
-  SWIG_check_num_args("pitch",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("pitch",1,"OgreKit::Pointer< OgreKit::Light > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("pitch",2,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_pitch",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  (*arg1)->pitch(arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_pitch__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  float arg2 ;
-  OgreKit::TransformSpace arg3 ;
-  
-  SWIG_check_num_args("pitch",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("pitch",1,"OgreKit::Pointer< OgreKit::Light > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("pitch",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("pitch",3,"OgreKit::TransformSpace");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_pitch",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 3);
-  (*arg1)->pitch(arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_pitch(lua_State* L) {
-  int argc;
-  int argv[4]={
-    1,2,3,4
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        return _wrap_LightPtr_pitch__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_LightPtr_pitch__SWIG_1(L);
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'LightPtr_pitch'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    pitch(OgreKit::Pointer< OgreKit::Light > *,float)\n"
-    "    pitch(OgreKit::Pointer< OgreKit::Light > *,float,OgreKit::TransformSpace)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_LightPtr_roll__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  float arg2 ;
-  
-  SWIG_check_num_args("roll",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("roll",1,"OgreKit::Pointer< OgreKit::Light > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("roll",2,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_roll",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  (*arg1)->roll(arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_roll__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  float arg2 ;
-  OgreKit::TransformSpace arg3 ;
-  
-  SWIG_check_num_args("roll",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("roll",1,"OgreKit::Pointer< OgreKit::Light > *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("roll",2,"float");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("roll",3,"OgreKit::TransformSpace");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_roll",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  arg2 = (float)lua_tonumber(L, 2);
-  arg3 = (OgreKit::TransformSpace)(int)lua_tonumber(L, 3);
-  (*arg1)->roll(arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_roll(lua_State* L) {
-  int argc;
-  int argv[4]={
-    1,2,3,4
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 2) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        return _wrap_LightPtr_roll__SWIG_0(L);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isnumber(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_LightPtr_roll__SWIG_1(L);
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'LightPtr_roll'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    roll(OgreKit::Pointer< OgreKit::Light > *,float)\n"
-    "    roll(OgreKit::Pointer< OgreKit::Light > *,float,OgreKit::TransformSpace)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_LightPtr_getState(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  int result;
-  
-  SWIG_check_num_args("getState",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getState",1,"OgreKit::Pointer< OgreKit::Light > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_getState",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  result = (int)(*arg1)->getState();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_getEntity(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::Pointer< OgreKit::Entity > result;
-  
-  SWIG_check_num_args("getEntity",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getEntity",1,"OgreKit::Pointer< OgreKit::Light > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_getEntity",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  result = (*arg1)->getEntity();
-  {
-    OgreKit::Pointer< OgreKit::Entity > * resultptr = new OgreKit::Pointer< OgreKit::Entity >((const OgreKit::Pointer< OgreKit::Entity > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Entity_t,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_getCamera(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::Pointer< OgreKit::Camera > result;
-  
-  SWIG_check_num_args("getCamera",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getCamera",1,"OgreKit::Pointer< OgreKit::Light > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_getCamera",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  result = (*arg1)->getCamera();
-  {
-    OgreKit::Pointer< OgreKit::Camera > * resultptr = new OgreKit::Pointer< OgreKit::Camera >((const OgreKit::Pointer< OgreKit::Camera > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Camera_t,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_getLight(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::Pointer< OgreKit::Light > result;
-  
-  SWIG_check_num_args("getLight",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getLight",1,"OgreKit::Pointer< OgreKit::Light > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_getLight",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  result = (*arg1)->getLight();
-  {
-    OgreKit::Pointer< OgreKit::Light > * resultptr = new OgreKit::Pointer< OgreKit::Light >((const OgreKit::Pointer< OgreKit::Light > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_hasParent(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  bool result;
-  
-  SWIG_check_num_args("hasParent",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("hasParent",1,"OgreKit::Pointer< OgreKit::Light > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_hasParent",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  result = (bool)(*arg1)->hasParent();
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_setParent(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::Pointer< OgreKit::GameObject > *arg2 = 0 ;
-  
-  SWIG_check_num_args("setParent",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setParent",1,"OgreKit::Pointer< OgreKit::Light > *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setParent",2,"OgreKit::Pointer< OgreKit::GameObject > const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_setParent",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,0))){
-    SWIG_fail_ptr("LightPtr_setParent",2,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t);
-  }
-  
-  (*arg1)->setParent((OgreKit::Pointer< OgreKit::GameObject > const &)*arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_getParent(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::Pointer< OgreKit::GameObject > result;
-  
-  SWIG_check_num_args("getParent",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getParent",1,"OgreKit::Pointer< OgreKit::Light > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_getParent",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  result = (*arg1)->getParent();
-  {
-    OgreKit::Pointer< OgreKit::GameObject > * resultptr = new OgreKit::Pointer< OgreKit::GameObject >((const OgreKit::Pointer< OgreKit::GameObject > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__GameObject_t,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_enableContacts(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  bool arg2 ;
-  
-  SWIG_check_num_args("enableContacts",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("enableContacts",1,"OgreKit::Pointer< OgreKit::Light > *");
-  if(!lua_isboolean(L,2)) SWIG_fail_arg("enableContacts",2,"bool");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_enableContacts",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  arg2 = (lua_toboolean(L, 2)!=0);
-  (*arg1)->enableContacts(arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_hasContacts(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  bool result;
-  
-  SWIG_check_num_args("hasContacts",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("hasContacts",1,"OgreKit::Pointer< OgreKit::Light > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_hasContacts",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  result = (bool)(*arg1)->hasContacts();
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_hasContact(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::String *arg2 = 0 ;
-  gkString temp2 ;
-  bool result;
-  
-  SWIG_check_num_args("hasContact",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("hasContact",1,"OgreKit::Pointer< OgreKit::Light > *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("hasContact",2,"OgreKit::String const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_hasContact",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  
-  temp2 = gkString((const char*)lua_tostring(L, 2));
-  arg2 = &temp2;
-  
-  result = (bool)(*arg1)->hasContact((OgreKit::String const &)*arg2);
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_getScene(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::Pointer< OgreKit::Scene > result;
-  
-  SWIG_check_num_args("getScene",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getScene",1,"OgreKit::Pointer< OgreKit::Light > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_getScene",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  result = (*arg1)->getScene();
-  {
-    OgreKit::Pointer< OgreKit::Scene > * resultptr = new OgreKit::Pointer< OgreKit::Scene >((const OgreKit::Pointer< OgreKit::Scene > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Scene_t,1); SWIG_arg++;
-  }
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr___getitem(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::String *arg2 = 0 ;
-  gkString temp2 ;
-  OgreKit::Property result;
-  
-  SWIG_check_num_args("__getitem__",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__getitem__",1,"OgreKit::Pointer< OgreKit::Light > *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("__getitem__",2,"OgreKit::String const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr___getitem",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  
-  temp2 = gkString((const char*)lua_tostring(L, 2));
-  arg2 = &temp2;
-  
-  result = (*arg1)->__getitem__((OgreKit::String const &)*arg2);
-  
-  
-  switch ((result).getType())
-  {
-  case OgreKit::PROP_BOOL:
-    lua_pushboolean(L, (result).toBool()); SWIG_arg++;
-    break;
-  case OgreKit::PROP_NUMBER:
-    lua_pushnumber(L, (result).toNumber()); SWIG_arg++;
-    break;
-  case OgreKit::PROP_STRING:
-    {
-      OgreKit::String str = (result).toString();
-      lua_pushlstring(L, str.c_str(), str.size());
-      SWIG_arg++;
-      break;
-    }
-  }
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr___setitem__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::String *arg2 = 0 ;
-  bool arg3 ;
-  gkString temp2 ;
-  
-  SWIG_check_num_args("__setitem__",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__setitem__",1,"OgreKit::Pointer< OgreKit::Light > *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("__setitem__",2,"OgreKit::String const &");
-  if(!lua_isboolean(L,3)) SWIG_fail_arg("__setitem__",3,"bool");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr___setitem",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  
-  temp2 = gkString((const char*)lua_tostring(L, 2));
-  arg2 = &temp2;
-  
-  arg3 = (lua_toboolean(L, 3)!=0);
-  (*arg1)->__setitem__((OgreKit::String const &)*arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr___setitem__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::String *arg2 = 0 ;
-  float arg3 ;
-  gkString temp2 ;
-  
-  SWIG_check_num_args("__setitem__",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__setitem__",1,"OgreKit::Pointer< OgreKit::Light > *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("__setitem__",2,"OgreKit::String const &");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("__setitem__",3,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr___setitem",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  
-  temp2 = gkString((const char*)lua_tostring(L, 2));
-  arg2 = &temp2;
-  
-  arg3 = (float)lua_tonumber(L, 3);
-  (*arg1)->__setitem__((OgreKit::String const &)*arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr___setitem__SWIG_2(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::String *arg2 = 0 ;
-  char *arg3 = (char *) 0 ;
-  gkString temp2 ;
-  
-  SWIG_check_num_args("__setitem__",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__setitem__",1,"OgreKit::Pointer< OgreKit::Light > *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("__setitem__",2,"OgreKit::String const &");
-  if(!lua_isstring(L,3)) SWIG_fail_arg("__setitem__",3,"char const *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr___setitem",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  
-  temp2 = gkString((const char*)lua_tostring(L, 2));
-  arg2 = &temp2;
-  
-  arg3 = (char *)lua_tostring(L, 3);
-  (*arg1)->__setitem__((OgreKit::String const &)*arg2,(char const *)arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr___setitem(lua_State* L) {
-  int argc;
-  int argv[4]={
-    1,2,3,4
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isstring(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isboolean(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_LightPtr___setitem__SWIG_0(L);
-        }
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isstring(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isnumber(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_LightPtr___setitem__SWIG_1(L);
-        }
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      void *ptr;
-      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t, 0)) {
-        _v = 0;
-      } else {
-        _v = 1;
-      }
-    }
-    if (_v) {
-      {
-        _v = lua_isstring(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isstring(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_LightPtr___setitem__SWIG_2(L);
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'LightPtr___setitem'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    __setitem__(OgreKit::Pointer< OgreKit::Light > *,OgreKit::String const &,bool)\n"
-    "    __setitem__(OgreKit::Pointer< OgreKit::Light > *,OgreKit::String const &,float)\n"
-    "    __setitem__(OgreKit::Pointer< OgreKit::Light > *,OgreKit::String const &,char const *)\n");
-  lua_error(L);return 0;
-}
-
-
-static int _wrap_LightPtr_load(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  
-  SWIG_check_num_args("load",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("load",1,"OgreKit::Pointer< OgreKit::Light > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_load",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  (*arg1)->load();
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_unload(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  
-  SWIG_check_num_args("unload",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("unload",1,"OgreKit::Pointer< OgreKit::Light > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_unload",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  (*arg1)->unload();
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_reload(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  
-  SWIG_check_num_args("reload",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("reload",1,"OgreKit::Pointer< OgreKit::Light > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_reload",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  (*arg1)->reload();
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LightPtr_getName(lua_State* L) {
-  int SWIG_arg = 0;
-  OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) 0 ;
-  OgreKit::String result;
-  
-  SWIG_check_num_args("getName",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getName",1,"OgreKit::Pointer< OgreKit::Light > *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,0))){
-    SWIG_fail_ptr("LightPtr_getName",1,SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t);
-  }
-  
-  result = (*arg1)->getName();
-  
-  lua_pushstring(L, (&result)->c_str()); SWIG_arg++;
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static void swig_delete_LightPtr(void *obj) {
-OgreKit::Pointer< OgreKit::Light > *arg1 = (OgreKit::Pointer< OgreKit::Light > *) obj;
-delete arg1;
-}
-static swig_lua_method swig_OgreKit_Pointer_Sl_OgreKit_Light_Sg__methods[] = {
-    {"isNull", _wrap_LightPtr_isNull}, 
-    {"__eq", _wrap_LightPtr___eq}, 
-    {"__deref__", _wrap_LightPtr___deref__}, 
-    {"getPosition", _wrap_LightPtr_getPosition}, 
-    {"getRotation", _wrap_LightPtr_getRotation}, 
-    {"getOrientation", _wrap_LightPtr_getOrientation}, 
-    {"getScale", _wrap_LightPtr_getScale}, 
-    {"getWorldPosition", _wrap_LightPtr_getWorldPosition}, 
-    {"getWorldRotation", _wrap_LightPtr_getWorldRotation}, 
-    {"getWorldOrientation", _wrap_LightPtr_getWorldOrientation}, 
-    {"getLinearVelocity", _wrap_LightPtr_getLinearVelocity}, 
-    {"getAngularVelocity", _wrap_LightPtr_getAngularVelocity}, 
-    {"setLinearVelocity", _wrap_LightPtr_setLinearVelocity}, 
-    {"setAngularVelocity", _wrap_LightPtr_setAngularVelocity}, 
-    {"setPosition", _wrap_LightPtr_setPosition}, 
-    {"setRotation", _wrap_LightPtr_setRotation}, 
-    {"setOrientation", _wrap_LightPtr_setOrientation}, 
-    {"getType", _wrap_LightPtr_getType}, 
-    {"rotate", _wrap_LightPtr_rotate}, 
-    {"translate", _wrap_LightPtr_translate}, 
-    {"scale", _wrap_LightPtr_scale}, 
-    {"yaw", _wrap_LightPtr_yaw}, 
-    {"pitch", _wrap_LightPtr_pitch}, 
-    {"roll", _wrap_LightPtr_roll}, 
-    {"getState", _wrap_LightPtr_getState}, 
-    {"getEntity", _wrap_LightPtr_getEntity}, 
-    {"getCamera", _wrap_LightPtr_getCamera}, 
-    {"getLight", _wrap_LightPtr_getLight}, 
-    {"hasParent", _wrap_LightPtr_hasParent}, 
-    {"setParent", _wrap_LightPtr_setParent}, 
-    {"getParent", _wrap_LightPtr_getParent}, 
-    {"enableContacts", _wrap_LightPtr_enableContacts}, 
-    {"hasContacts", _wrap_LightPtr_hasContacts}, 
-    {"hasContact", _wrap_LightPtr_hasContact}, 
-    {"getScene", _wrap_LightPtr_getScene}, 
-    {"__getitem", _wrap_LightPtr___getitem}, 
-    {"__setitem", _wrap_LightPtr___setitem}, 
-    {"load", _wrap_LightPtr_load}, 
-    {"unload", _wrap_LightPtr_unload}, 
-    {"reload", _wrap_LightPtr_reload}, 
-    {"getName", _wrap_LightPtr_getName}, 
-    {0,0}
-};
-static swig_lua_attribute swig_OgreKit_Pointer_Sl_OgreKit_Light_Sg__attributes[] = {
-    {0,0,0}
-};
-static swig_lua_class *swig_OgreKit_Pointer_Sl_OgreKit_Light_Sg__bases[] = {0};
-static const char *swig_OgreKit_Pointer_Sl_OgreKit_Light_Sg__base_names[] = {0};
-static swig_lua_class _wrap_class_OgreKit_Pointer_Sl_OgreKit_Light_Sg_ = { "LightPtr", &SWIGTYPE_p_OgreKit__PointerT_OgreKit__Light_t,_wrap_new_LightPtr, swig_delete_LightPtr, swig_OgreKit_Pointer_Sl_OgreKit_Light_Sg__methods, swig_OgreKit_Pointer_Sl_OgreKit_Light_Sg__attributes, swig_OgreKit_Pointer_Sl_OgreKit_Light_Sg__bases, swig_OgreKit_Pointer_Sl_OgreKit_Light_Sg__base_names };
+static swig_lua_class *swig_gsSweptTest_bases[] = {0};
+static const char *swig_gsSweptTest_base_names[] = {0};
+static swig_lua_class _wrap_class_gsSweptTest = { "SweptTest", &SWIGTYPE_p_gsSweptTest,_wrap_new_SweptTest, swig_delete_SweptTest, swig_gsSweptTest_methods, swig_gsSweptTest_attributes, swig_gsSweptTest_bases, swig_gsSweptTest_base_names };
 
 #ifdef __cplusplus
 }
@@ -22081,28 +10406,28 @@ static swig_lua_var_info swig_variables[] = {
 };
 
 static swig_lua_const_info swig_constants[] = {
-{ SWIG_LUA_INT,     (char *)"OGRE_RS_GL", (long) OgreKit::OGRE_RS_GL, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"OGRE_RS_GLES", (long) OgreKit::OGRE_RS_GLES, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"OGRE_RS_D3D9", (long) OgreKit::OGRE_RS_D3D9, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"OGRE_RS_D3D10", (long) OgreKit::OGRE_RS_D3D10, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"OGRE_RS_D3D11", (long) OgreKit::OGRE_RS_D3D11, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"PROP_NULL", (long) OgreKit::PROP_NULL, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"PROP_BOOL", (long) OgreKit::PROP_BOOL, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"PROP_NUMBER", (long) OgreKit::PROP_NUMBER, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"PROP_STRING", (long) OgreKit::PROP_STRING, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"TS_LOCAL", (long) OgreKit::TS_LOCAL, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"TS_PARENT", (long) OgreKit::TS_PARENT, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"TS_WORLD", (long) OgreKit::TS_WORLD, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"OB_UNKNOWN", (long) OgreKit::OB_UNKNOWN, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"OB_CAMERA", (long) OgreKit::OB_CAMERA, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"OB_LIGHT", (long) OgreKit::OB_LIGHT, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"OB_ENTITY", (long) OgreKit::OB_ENTITY, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"OB_EMPTY", (long) OgreKit::OB_EMPTY, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"OB_SKELETON", (long) OgreKit::OB_SKELETON, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"EVT_TICK", (long) OgreKit::EVT_TICK, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"LEFT", (long) OgreKit::LEFT, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"RIGHT", (long) OgreKit::RIGHT, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"MIDDLE", (long) OgreKit::MIDDLE, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"OGRE_RS_GL", (long) GS_RS_GL, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"OGRE_RS_GLES", (long) GS_RS_GLES, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"OGRE_RS_D3D9", (long) GS_RS_D3D9, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"OGRE_RS_D3D10", (long) GS_RS_D3D10, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"OGRE_RS_D3D11", (long) GS_RS_D3D11, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"PROP_NULL", (long) PROP_NULL, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"PROP_BOOL", (long) PROP_BOOL, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"PROP_NUMBER", (long) PROP_NUMBER, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"PROP_STRING", (long) PROP_STRING, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"TS_LOCAL", (long) TS_LOCAL, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"TS_PARENT", (long) TS_PARENT, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"TS_WORLD", (long) TS_WORLD, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"OB_UNKNOWN", (long) OB_UNKNOWN, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"OB_CAMERA", (long) OB_CAMERA, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"OB_LIGHT", (long) OB_LIGHT, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"OB_ENTITY", (long) OB_ENTITY, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"OB_EMPTY", (long) OB_EMPTY, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"OB_SKELETON", (long) OB_SKELETON, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"EVT_TICK", (long) EVT_TICK, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"LEFT", (long) LEFT, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"RIGHT", (long) RIGHT, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"MIDDLE", (long) MIDDLE, 0, 0, 0},
 { SWIG_LUA_INT,     (char *)"KC_NONE", (long) KC_NONE, 0, 0, 0},
 { SWIG_LUA_INT,     (char *)"KC_AKEY", (long) KC_AKEY, 0, 0, 0},
 { SWIG_LUA_INT,     (char *)"KC_BKEY", (long) KC_BKEY, 0, 0, 0},
@@ -22213,144 +10538,146 @@ static swig_lua_const_info swig_constants[] = {
 
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
-static void *_p_OgreKit__SceneTo_p_OgreKit__Loadable(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((OgreKit::Loadable *)  ((OgreKit::Scene *) x));
+static void *_p_gsLightTo_p_gsGameObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((gsGameObject *)  ((gsLight *) x));
 }
-static void *_p_OgreKit__LightTo_p_OgreKit__Loadable(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((OgreKit::Loadable *) (OgreKit::GameObject *) ((OgreKit::Light *) x));
+static void *_p_gsEntityTo_p_gsGameObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((gsGameObject *)  ((gsEntity *) x));
 }
-static void *_p_OgreKit__EntityTo_p_OgreKit__Loadable(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((OgreKit::Loadable *) (OgreKit::GameObject *) ((OgreKit::Entity *) x));
+static void *_p_gsCameraTo_p_gsGameObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((gsGameObject *)  ((gsCamera *) x));
 }
-static void *_p_OgreKit__GameObjectTo_p_OgreKit__Loadable(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((OgreKit::Loadable *)  ((OgreKit::GameObject *) x));
+static void *_p_gsSkeletonTo_p_gsGameObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((gsGameObject *)  ((gsSkeleton *) x));
 }
-static void *_p_OgreKit__CameraTo_p_OgreKit__Loadable(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((OgreKit::Loadable *) (OgreKit::GameObject *) ((OgreKit::Camera *) x));
+static void *_p_gsSceneTo_p_gsLoadable(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((gsLoadable *)  ((gsScene *) x));
 }
-static void *_p_OgreKit__LightTo_p_OgreKit__GameObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((OgreKit::GameObject *)  ((OgreKit::Light *) x));
+static void *_p_gsLightTo_p_gsLoadable(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((gsLoadable *) (gsGameObject *) ((gsLight *) x));
 }
-static void *_p_OgreKit__EntityTo_p_OgreKit__GameObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((OgreKit::GameObject *)  ((OgreKit::Entity *) x));
+static void *_p_gsGameObjectTo_p_gsLoadable(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((gsLoadable *)  ((gsGameObject *) x));
 }
-static void *_p_OgreKit__CameraTo_p_OgreKit__GameObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((OgreKit::GameObject *)  ((OgreKit::Camera *) x));
+static void *_p_gsEntityTo_p_gsLoadable(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((gsLoadable *) (gsGameObject *) ((gsEntity *) x));
 }
-static swig_type_info _swigt__p_OgreKit__Camera = {"_p_OgreKit__Camera", "OgreKit::Camera *", 0, 0, (void*)&_wrap_class_OgreKit_Camera, 0};
-static swig_type_info _swigt__p_OgreKit__Debugger = {"_p_OgreKit__Debugger", "OgreKit::Debugger *", 0, 0, (void*)&_wrap_class_OgreKit_Debugger, 0};
-static swig_type_info _swigt__p_OgreKit__Engine = {"_p_OgreKit__Engine", "OgreKit::Engine *", 0, 0, (void*)&_wrap_class_OgreKit_Engine, 0};
-static swig_type_info _swigt__p_OgreKit__Entity = {"_p_OgreKit__Entity", "OgreKit::Entity *", 0, 0, (void*)&_wrap_class_OgreKit_Entity, 0};
-static swig_type_info _swigt__p_OgreKit__FSM = {"_p_OgreKit__FSM", "OgreKit::FSM *", 0, 0, (void*)&_wrap_class_OgreKit_FSM, 0};
-static swig_type_info _swigt__p_OgreKit__GameObject = {"_p_OgreKit__GameObject", "OgreKit::GameObject *", 0, 0, (void*)&_wrap_class_OgreKit_GameObject, 0};
-static swig_type_info _swigt__p_OgreKit__Keyboard = {"_p_OgreKit__Keyboard", "OgreKit::Keyboard *", 0, 0, (void*)&_wrap_class_OgreKit_Keyboard, 0};
-static swig_type_info _swigt__p_OgreKit__Light = {"_p_OgreKit__Light", "OgreKit::Light *", 0, 0, (void*)&_wrap_class_OgreKit_Light, 0};
-static swig_type_info _swigt__p_OgreKit__Loadable = {"_p_OgreKit__Loadable", "OgreKit::Loadable *", 0, 0, (void*)&_wrap_class_OgreKit_Loadable, 0};
-static swig_type_info _swigt__p_OgreKit__Mouse = {"_p_OgreKit__Mouse", "OgreKit::Mouse *", 0, 0, (void*)&_wrap_class_OgreKit_Mouse, 0};
-static swig_type_info _swigt__p_OgreKit__PointerT_OgreKit__Camera_t = {"_p_OgreKit__PointerT_OgreKit__Camera_t", "OgreKit::Pointer< OgreKit::Camera > *", 0, 0, (void*)&_wrap_class_OgreKit_Pointer_Sl_OgreKit_Camera_Sg_, 0};
-static swig_type_info _swigt__p_OgreKit__PointerT_OgreKit__Entity_t = {"_p_OgreKit__PointerT_OgreKit__Entity_t", "OgreKit::Pointer< OgreKit::Entity > *", 0, 0, (void*)&_wrap_class_OgreKit_Pointer_Sl_OgreKit_Entity_Sg_, 0};
-static swig_type_info _swigt__p_OgreKit__PointerT_OgreKit__GameObject_t = {"_p_OgreKit__PointerT_OgreKit__GameObject_t", "OgreKit::Pointer< OgreKit::GameObject > *", 0, 0, (void*)&_wrap_class_OgreKit_Pointer_Sl_OgreKit_GameObject_Sg_, 0};
-static swig_type_info _swigt__p_OgreKit__PointerT_OgreKit__Light_t = {"_p_OgreKit__PointerT_OgreKit__Light_t", "OgreKit::Pointer< OgreKit::Light > *", 0, 0, (void*)&_wrap_class_OgreKit_Pointer_Sl_OgreKit_Light_Sg_, 0};
-static swig_type_info _swigt__p_OgreKit__PointerT_OgreKit__Scene_t = {"_p_OgreKit__PointerT_OgreKit__Scene_t", "OgreKit::Pointer< OgreKit::Scene > *", 0, 0, (void*)&_wrap_class_OgreKit_Pointer_Sl_OgreKit_Scene_Sg_, 0};
-static swig_type_info _swigt__p_OgreKit__PointerT_OgreKit__WhenEvent_t = {"_p_OgreKit__PointerT_OgreKit__WhenEvent_t", "OgreKit::Pointer< OgreKit::WhenEvent > *", 0, 0, (void*)&_wrap_class_OgreKit_Pointer_Sl_OgreKit_WhenEvent_Sg_, 0};
-static swig_type_info _swigt__p_OgreKit__Property = {"_p_OgreKit__Property", "OgreKit::Property *", 0, 0, (void*)&_wrap_class_OgreKit_Property, 0};
-static swig_type_info _swigt__p_OgreKit__Quaternion = {"_p_OgreKit__Quaternion", "OgreKit::Quaternion *", 0, 0, (void*)&_wrap_class_OgreKit_Quaternion, 0};
-static swig_type_info _swigt__p_OgreKit__Ray = {"_p_OgreKit__Ray", "OgreKit::Ray *", 0, 0, (void*)&_wrap_class_OgreKit_Ray, 0};
-static swig_type_info _swigt__p_OgreKit__RayTest = {"_p_OgreKit__RayTest", "OgreKit::RayTest *", 0, 0, (void*)&_wrap_class_OgreKit_RayTest, 0};
-static swig_type_info _swigt__p_OgreKit__Scene = {"_p_OgreKit__Scene", "OgreKit::Scene *", 0, 0, (void*)&_wrap_class_OgreKit_Scene, 0};
-static swig_type_info _swigt__p_OgreKit__SweptTest = {"_p_OgreKit__SweptTest", "OgreKit::SweptTest *", 0, 0, (void*)&_wrap_class_OgreKit_SweptTest, 0};
-static swig_type_info _swigt__p_OgreKit__UserDefs = {"_p_OgreKit__UserDefs", "OgreKit::UserDefs *", 0, 0, (void*)&_wrap_class_OgreKit_UserDefs, 0};
-static swig_type_info _swigt__p_OgreKit__Vector3 = {"_p_OgreKit__Vector3", "OgreKit::Vector3 *", 0, 0, (void*)&_wrap_class_OgreKit_Vector3, 0};
-static swig_type_info _swigt__p_OgreKit__WhenEvent = {"_p_OgreKit__WhenEvent", "OgreKit::WhenEvent *", 0, 0, (void*)&_wrap_class_OgreKit_WhenEvent, 0};
-static swig_type_info _swigt__p_gkLuaCurState = {"_p_gkLuaCurState", "OgreKit::Self *|OgreKit::Function *|gkLuaCurState *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_gkString = {"_p_gkString", "gkString *|OgreKit::String *", 0, 0, (void*)0, 0};
+static void *_p_gsCameraTo_p_gsLoadable(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((gsLoadable *) (gsGameObject *) ((gsCamera *) x));
+}
+static void *_p_gsSkeletonTo_p_gsLoadable(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((gsLoadable *) (gsGameObject *) ((gsSkeleton *) x));
+}
+static swig_type_info _swigt__p_Array = {"_p_Array", "Array *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Iterator = {"_p_Iterator", "Iterator *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_gkLuaCurState = {"_p_gkLuaCurState", "gsSelf *|gsFunction *|gkLuaCurState *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_gsArrayIteratorT_gsGameObject_gkGameObject_t = {"_p_gsArrayIteratorT_gsGameObject_gkGameObject_t", "gsArrayIterator< gsGameObject,gkGameObject > *", 0, 0, (void*)&_wrap_class_gsArrayIterator_Sl_gsGameObject_Sc_gkGameObject_Sg_, 0};
+static swig_type_info _swigt__p_gsArrayT_gsGameObject_gkGameObject_t = {"_p_gsArrayT_gsGameObject_gkGameObject_t", "gsArray< gsGameObject,gkGameObject > *", 0, 0, (void*)&_wrap_class_gsArray_Sl_gsGameObject_Sc_gkGameObject_Sg_, 0};
+static swig_type_info _swigt__p_gsCamera = {"_p_gsCamera", "gsCamera *", 0, 0, (void*)&_wrap_class_gsCamera, 0};
+static swig_type_info _swigt__p_gsDebugger = {"_p_gsDebugger", "gsDebugger *", 0, 0, (void*)&_wrap_class_gsDebugger, 0};
+static swig_type_info _swigt__p_gsEngine = {"_p_gsEngine", "gsEngine *", 0, 0, (void*)&_wrap_class_gsEngine, 0};
+static swig_type_info _swigt__p_gsEntity = {"_p_gsEntity", "gsEntity *", 0, 0, (void*)&_wrap_class_gsEntity, 0};
+static swig_type_info _swigt__p_gsFSM = {"_p_gsFSM", "gsFSM *", 0, 0, (void*)&_wrap_class_gsFSM, 0};
+static swig_type_info _swigt__p_gsGameObject = {"_p_gsGameObject", "gsGameObject *", 0, 0, (void*)&_wrap_class_gsGameObject, 0};
+static swig_type_info _swigt__p_gsKeyboard = {"_p_gsKeyboard", "gsKeyboard *", 0, 0, (void*)&_wrap_class_gsKeyboard, 0};
+static swig_type_info _swigt__p_gsLight = {"_p_gsLight", "gsLight *", 0, 0, (void*)&_wrap_class_gsLight, 0};
+static swig_type_info _swigt__p_gsLoadable = {"_p_gsLoadable", "gsLoadable *", 0, 0, (void*)&_wrap_class_gsLoadable, 0};
+static swig_type_info _swigt__p_gsMouse = {"_p_gsMouse", "gsMouse *", 0, 0, (void*)&_wrap_class_gsMouse, 0};
+static swig_type_info _swigt__p_gsProperty = {"_p_gsProperty", "gsProperty *", 0, 0, (void*)&_wrap_class_gsProperty, 0};
+static swig_type_info _swigt__p_gsQuaternion = {"_p_gsQuaternion", "gsQuaternion *", 0, 0, (void*)&_wrap_class_gsQuaternion, 0};
+static swig_type_info _swigt__p_gsRay = {"_p_gsRay", "gsRay *", 0, 0, (void*)&_wrap_class_gsRay, 0};
+static swig_type_info _swigt__p_gsRayTest = {"_p_gsRayTest", "gsRayTest *", 0, 0, (void*)&_wrap_class_gsRayTest, 0};
+static swig_type_info _swigt__p_gsScene = {"_p_gsScene", "gsScene *", 0, 0, (void*)&_wrap_class_gsScene, 0};
+static swig_type_info _swigt__p_gsSkeleton = {"_p_gsSkeleton", "gsSkeleton *", 0, 0, (void*)&_wrap_class_gsSkeleton, 0};
+static swig_type_info _swigt__p_gsSweptTest = {"_p_gsSweptTest", "gsSweptTest *", 0, 0, (void*)&_wrap_class_gsSweptTest, 0};
+static swig_type_info _swigt__p_gsUserDefs = {"_p_gsUserDefs", "gsUserDefs *", 0, 0, (void*)&_wrap_class_gsUserDefs, 0};
+static swig_type_info _swigt__p_gsVector3 = {"_p_gsVector3", "gsVector3 *", 0, 0, (void*)&_wrap_class_gsVector3, 0};
+static swig_type_info _swigt__p_gsWhenEvent = {"_p_gsWhenEvent", "gsWhenEvent *", 0, 0, (void*)&_wrap_class_gsWhenEvent, 0};
+static swig_type_info _swigt__p_utArrayT_gkGameObject_p_t = {"_p_utArrayT_gkGameObject_p_t", "gsArray< gsGameObject,gkGameObject >::Array *|utArray< gkGameObject * > *", 0, 0, (void*)0, 0};
 
 static swig_type_info *swig_type_initial[] = {
-  &_swigt__p_OgreKit__Camera,
-  &_swigt__p_OgreKit__Debugger,
-  &_swigt__p_OgreKit__Engine,
-  &_swigt__p_OgreKit__Entity,
-  &_swigt__p_OgreKit__FSM,
-  &_swigt__p_OgreKit__GameObject,
-  &_swigt__p_OgreKit__Keyboard,
-  &_swigt__p_OgreKit__Light,
-  &_swigt__p_OgreKit__Loadable,
-  &_swigt__p_OgreKit__Mouse,
-  &_swigt__p_OgreKit__PointerT_OgreKit__Camera_t,
-  &_swigt__p_OgreKit__PointerT_OgreKit__Entity_t,
-  &_swigt__p_OgreKit__PointerT_OgreKit__GameObject_t,
-  &_swigt__p_OgreKit__PointerT_OgreKit__Light_t,
-  &_swigt__p_OgreKit__PointerT_OgreKit__Scene_t,
-  &_swigt__p_OgreKit__PointerT_OgreKit__WhenEvent_t,
-  &_swigt__p_OgreKit__Property,
-  &_swigt__p_OgreKit__Quaternion,
-  &_swigt__p_OgreKit__Ray,
-  &_swigt__p_OgreKit__RayTest,
-  &_swigt__p_OgreKit__Scene,
-  &_swigt__p_OgreKit__SweptTest,
-  &_swigt__p_OgreKit__UserDefs,
-  &_swigt__p_OgreKit__Vector3,
-  &_swigt__p_OgreKit__WhenEvent,
+  &_swigt__p_Array,
+  &_swigt__p_Iterator,
   &_swigt__p_gkLuaCurState,
-  &_swigt__p_gkString,
+  &_swigt__p_gsArrayIteratorT_gsGameObject_gkGameObject_t,
+  &_swigt__p_gsArrayT_gsGameObject_gkGameObject_t,
+  &_swigt__p_gsCamera,
+  &_swigt__p_gsDebugger,
+  &_swigt__p_gsEngine,
+  &_swigt__p_gsEntity,
+  &_swigt__p_gsFSM,
+  &_swigt__p_gsGameObject,
+  &_swigt__p_gsKeyboard,
+  &_swigt__p_gsLight,
+  &_swigt__p_gsLoadable,
+  &_swigt__p_gsMouse,
+  &_swigt__p_gsProperty,
+  &_swigt__p_gsQuaternion,
+  &_swigt__p_gsRay,
+  &_swigt__p_gsRayTest,
+  &_swigt__p_gsScene,
+  &_swigt__p_gsSkeleton,
+  &_swigt__p_gsSweptTest,
+  &_swigt__p_gsUserDefs,
+  &_swigt__p_gsVector3,
+  &_swigt__p_gsWhenEvent,
+  &_swigt__p_utArrayT_gkGameObject_p_t,
 };
 
-static swig_cast_info _swigc__p_OgreKit__Camera[] = {  {&_swigt__p_OgreKit__Camera, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_OgreKit__Debugger[] = {  {&_swigt__p_OgreKit__Debugger, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_OgreKit__Engine[] = {  {&_swigt__p_OgreKit__Engine, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_OgreKit__Entity[] = {  {&_swigt__p_OgreKit__Entity, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_OgreKit__FSM[] = {  {&_swigt__p_OgreKit__FSM, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_OgreKit__GameObject[] = {  {&_swigt__p_OgreKit__GameObject, 0, 0, 0},  {&_swigt__p_OgreKit__Light, _p_OgreKit__LightTo_p_OgreKit__GameObject, 0, 0},  {&_swigt__p_OgreKit__Entity, _p_OgreKit__EntityTo_p_OgreKit__GameObject, 0, 0},  {&_swigt__p_OgreKit__Camera, _p_OgreKit__CameraTo_p_OgreKit__GameObject, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_OgreKit__Keyboard[] = {  {&_swigt__p_OgreKit__Keyboard, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_OgreKit__Light[] = {  {&_swigt__p_OgreKit__Light, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_OgreKit__Loadable[] = {  {&_swigt__p_OgreKit__Loadable, 0, 0, 0},  {&_swigt__p_OgreKit__Scene, _p_OgreKit__SceneTo_p_OgreKit__Loadable, 0, 0},  {&_swigt__p_OgreKit__Light, _p_OgreKit__LightTo_p_OgreKit__Loadable, 0, 0},  {&_swigt__p_OgreKit__Entity, _p_OgreKit__EntityTo_p_OgreKit__Loadable, 0, 0},  {&_swigt__p_OgreKit__GameObject, _p_OgreKit__GameObjectTo_p_OgreKit__Loadable, 0, 0},  {&_swigt__p_OgreKit__Camera, _p_OgreKit__CameraTo_p_OgreKit__Loadable, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_OgreKit__Mouse[] = {  {&_swigt__p_OgreKit__Mouse, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_OgreKit__PointerT_OgreKit__Camera_t[] = {  {&_swigt__p_OgreKit__PointerT_OgreKit__Camera_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_OgreKit__PointerT_OgreKit__Entity_t[] = {  {&_swigt__p_OgreKit__PointerT_OgreKit__Entity_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_OgreKit__PointerT_OgreKit__GameObject_t[] = {  {&_swigt__p_OgreKit__PointerT_OgreKit__GameObject_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_OgreKit__PointerT_OgreKit__Light_t[] = {  {&_swigt__p_OgreKit__PointerT_OgreKit__Light_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_OgreKit__PointerT_OgreKit__Scene_t[] = {  {&_swigt__p_OgreKit__PointerT_OgreKit__Scene_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_OgreKit__PointerT_OgreKit__WhenEvent_t[] = {  {&_swigt__p_OgreKit__PointerT_OgreKit__WhenEvent_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_OgreKit__Property[] = {  {&_swigt__p_OgreKit__Property, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_OgreKit__Quaternion[] = {  {&_swigt__p_OgreKit__Quaternion, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_OgreKit__Ray[] = {  {&_swigt__p_OgreKit__Ray, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_OgreKit__RayTest[] = {  {&_swigt__p_OgreKit__RayTest, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_OgreKit__Scene[] = {  {&_swigt__p_OgreKit__Scene, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_OgreKit__SweptTest[] = {  {&_swigt__p_OgreKit__SweptTest, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_OgreKit__UserDefs[] = {  {&_swigt__p_OgreKit__UserDefs, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_OgreKit__Vector3[] = {  {&_swigt__p_OgreKit__Vector3, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_OgreKit__WhenEvent[] = {  {&_swigt__p_OgreKit__WhenEvent, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Array[] = {  {&_swigt__p_Array, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Iterator[] = {  {&_swigt__p_Iterator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gkLuaCurState[] = {  {&_swigt__p_gkLuaCurState, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_gkString[] = {  {&_swigt__p_gkString, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsArrayIteratorT_gsGameObject_gkGameObject_t[] = {  {&_swigt__p_gsArrayIteratorT_gsGameObject_gkGameObject_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsArrayT_gsGameObject_gkGameObject_t[] = {  {&_swigt__p_gsArrayT_gsGameObject_gkGameObject_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsCamera[] = {  {&_swigt__p_gsCamera, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsDebugger[] = {  {&_swigt__p_gsDebugger, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsEngine[] = {  {&_swigt__p_gsEngine, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsEntity[] = {  {&_swigt__p_gsEntity, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsFSM[] = {  {&_swigt__p_gsFSM, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsGameObject[] = {  {&_swigt__p_gsLight, _p_gsLightTo_p_gsGameObject, 0, 0},  {&_swigt__p_gsGameObject, 0, 0, 0},  {&_swigt__p_gsEntity, _p_gsEntityTo_p_gsGameObject, 0, 0},  {&_swigt__p_gsCamera, _p_gsCameraTo_p_gsGameObject, 0, 0},  {&_swigt__p_gsSkeleton, _p_gsSkeletonTo_p_gsGameObject, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsKeyboard[] = {  {&_swigt__p_gsKeyboard, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsLight[] = {  {&_swigt__p_gsLight, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsLoadable[] = {  {&_swigt__p_gsScene, _p_gsSceneTo_p_gsLoadable, 0, 0},  {&_swigt__p_gsLight, _p_gsLightTo_p_gsLoadable, 0, 0},  {&_swigt__p_gsLoadable, 0, 0, 0},  {&_swigt__p_gsGameObject, _p_gsGameObjectTo_p_gsLoadable, 0, 0},  {&_swigt__p_gsEntity, _p_gsEntityTo_p_gsLoadable, 0, 0},  {&_swigt__p_gsCamera, _p_gsCameraTo_p_gsLoadable, 0, 0},  {&_swigt__p_gsSkeleton, _p_gsSkeletonTo_p_gsLoadable, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsMouse[] = {  {&_swigt__p_gsMouse, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsProperty[] = {  {&_swigt__p_gsProperty, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsQuaternion[] = {  {&_swigt__p_gsQuaternion, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsRay[] = {  {&_swigt__p_gsRay, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsRayTest[] = {  {&_swigt__p_gsRayTest, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsScene[] = {  {&_swigt__p_gsScene, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsSkeleton[] = {  {&_swigt__p_gsSkeleton, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsSweptTest[] = {  {&_swigt__p_gsSweptTest, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsUserDefs[] = {  {&_swigt__p_gsUserDefs, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsVector3[] = {  {&_swigt__p_gsVector3, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsWhenEvent[] = {  {&_swigt__p_gsWhenEvent, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_utArrayT_gkGameObject_p_t[] = {  {&_swigt__p_utArrayT_gkGameObject_p_t, 0, 0, 0},{0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
-  _swigc__p_OgreKit__Camera,
-  _swigc__p_OgreKit__Debugger,
-  _swigc__p_OgreKit__Engine,
-  _swigc__p_OgreKit__Entity,
-  _swigc__p_OgreKit__FSM,
-  _swigc__p_OgreKit__GameObject,
-  _swigc__p_OgreKit__Keyboard,
-  _swigc__p_OgreKit__Light,
-  _swigc__p_OgreKit__Loadable,
-  _swigc__p_OgreKit__Mouse,
-  _swigc__p_OgreKit__PointerT_OgreKit__Camera_t,
-  _swigc__p_OgreKit__PointerT_OgreKit__Entity_t,
-  _swigc__p_OgreKit__PointerT_OgreKit__GameObject_t,
-  _swigc__p_OgreKit__PointerT_OgreKit__Light_t,
-  _swigc__p_OgreKit__PointerT_OgreKit__Scene_t,
-  _swigc__p_OgreKit__PointerT_OgreKit__WhenEvent_t,
-  _swigc__p_OgreKit__Property,
-  _swigc__p_OgreKit__Quaternion,
-  _swigc__p_OgreKit__Ray,
-  _swigc__p_OgreKit__RayTest,
-  _swigc__p_OgreKit__Scene,
-  _swigc__p_OgreKit__SweptTest,
-  _swigc__p_OgreKit__UserDefs,
-  _swigc__p_OgreKit__Vector3,
-  _swigc__p_OgreKit__WhenEvent,
+  _swigc__p_Array,
+  _swigc__p_Iterator,
   _swigc__p_gkLuaCurState,
-  _swigc__p_gkString,
+  _swigc__p_gsArrayIteratorT_gsGameObject_gkGameObject_t,
+  _swigc__p_gsArrayT_gsGameObject_gkGameObject_t,
+  _swigc__p_gsCamera,
+  _swigc__p_gsDebugger,
+  _swigc__p_gsEngine,
+  _swigc__p_gsEntity,
+  _swigc__p_gsFSM,
+  _swigc__p_gsGameObject,
+  _swigc__p_gsKeyboard,
+  _swigc__p_gsLight,
+  _swigc__p_gsLoadable,
+  _swigc__p_gsMouse,
+  _swigc__p_gsProperty,
+  _swigc__p_gsQuaternion,
+  _swigc__p_gsRay,
+  _swigc__p_gsRayTest,
+  _swigc__p_gsScene,
+  _swigc__p_gsSkeleton,
+  _swigc__p_gsSweptTest,
+  _swigc__p_gsUserDefs,
+  _swigc__p_gsVector3,
+  _swigc__p_gsWhenEvent,
+  _swigc__p_utArrayT_gkGameObject_p_t,
 };
 
 

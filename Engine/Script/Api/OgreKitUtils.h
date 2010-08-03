@@ -29,92 +29,141 @@
 
 #include "OgreKitCommon.h"
 
-namespace OgreKit
-{
 
-// Referenced counted ptr for freeing script objects with lua's gc
-// adapted from gkPtrRef.h
-// Rule of thumb is to have a Pointer<T> On classes that return * from members
-// this allows the returned object to be deleted without specal user code.
-template<class T>
-class Pointer
-{
 
+
+
+// ----------------------------------------------------------------------------
+template <typename W, typename B>
+class gsArrayIterator
+{
 public:
-#ifndef SWIG
-	// internal
+	typedef utArray<B*> Array;
 
-	explicit Pointer(T *p = 0)
-		:   m_obj(p), m_ref(0)
-	{
-		addRef();
-	}
-
-	~Pointer()
-	{
-		release();
-	}
-
-	Pointer(const Pointer &obj)
-		:   m_obj(obj.m_obj), m_ref(0)
-	{
-		addRef();
-	}
-
-	Pointer &operator = (const Pointer &obj)
-	{
-		if(this != &obj)
-		{
-			obj.addRef();
-			release();
-			m_obj = obj.m_obj;
-			m_ref = obj.m_ref;
-		}
-		return *this;
-	}
-
-#endif
-
-
-	bool isNull(void) const                         { return m_obj == 0; }
-
-	bool operator ==(const Pointer &rhs) const      { return m_obj == rhs.m_obj; }
-	bool operator !=(const Pointer &rhs) const      { return m_obj != rhs.m_obj; }
-
-	T *operator->() const
-	{
-		GK_ASSERT(m_obj);
-		return m_obj;
-	}
+	// FIXME: ut*Iterator needs const as well.
+	typedef utArrayIterator<Array> Iterator;
 
 
 private:
 
-	void addRef(void) const
-	{
-		if (m_obj)
-			++m_ref;
+	Iterator m_iter;
+
+public:
+
+#ifndef SWIG
+	gsArrayIterator(Array& a) : m_iter(a) {}
+#endif
+
+	gsArrayIterator()	{}
+	~gsArrayIterator()	{}
+
+
+	inline bool hasMoreElements(void) {return m_iter.hasMoreElements();}
+	inline void moveNext(void) { m_iter.next();}
+
+	inline W* peekNext(void)
+	{ 
+		if (m_iter.hasMoreElements())
+			return new W(m_iter.peekNext());
+		return 0;
 	}
 
-	void release(void) const
-	{
-		if(m_obj)
-		{
-			if (--m_ref == 0)
-			{
-				delete m_obj;
-				m_obj = 0;
-			}
-		}
+	inline W* getNext(void)
+	{ 
+		if (m_iter.hasMoreElements())
+			return new W(m_iter.getNext());
+		return 0;
 	}
-
-	mutable T   *m_obj;
-	mutable int  m_ref;
 };
 
 
 
+// ----------------------------------------------------------------------------
+template <typename W, typename B>
+class gsArray 
+{
+public:
+	typedef utArray<B*>            Array;
 
-}
+private:
+
+	Array m_array;
+
+public:
+
+
+	gsArray() {}
+	gsArray(const Array& a) : m_array(a) {}
+	~gsArray() { clear(); }
+
+
+	inline void clear(void) { m_array.clear(); }
+
+	inline int	size(void)  const { return (int)m_array.size(); }
+	inline bool empty(void) const { return size() == 0; }
+
+	inline W *__getitem__(int i) {return at(i);}
+
+	inline W* at(int i) 
+	{ 
+		if (i >= 0 && i < size())
+			return new W(m_array.at(i));
+		return 0;
+	}
+
+
+	inline void push(W *val)
+	{
+		if (val)
+		{
+			B *intern = OGRE_KIT_OBJECT(B, val);
+			if (intern)
+				m_array.push_back(intern);
+		}
+	}
+
+	bool erase(W *val)
+	{
+		if (val)
+		{
+			B *intern = OGRE_KIT_OBJECT(B, val);
+			if (intern)
+			{
+				UTsize pos = m_array.find(intern);
+				if (pos != UT_NPOS)
+				{
+					m_array.erase(pos);
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	gsArrayIterator<W, B> iterator()
+	{
+		return gsArrayIterator<W, B>(m_array);
+	}
+
+
+#ifndef SWIG
+	inline void push(B *val)
+	{
+		m_array.push_back(val);
+	}
+
+	inline B* iat(int i)
+	{
+		if (i >= 0 && i < size())
+			return m_array.at(i);
+		return 0;
+	}
+
+	Array& getIterAccess(void) {return m_array;}
+#endif
+};
+
+
+
 
 #endif//_OgreKitUtils_h_

@@ -32,33 +32,19 @@
 #include "OgreKitUtils.h"
 
 
-namespace OgreKit
+// ----------------------------------------------------------------------------
+enum gsRenderSystem
 {
-
-// Class decls
-class Property;
-class UserDefs;
-class Engine;
-class Entity;
-class Camera;
-class Light;
-class Scene;
-class GameObject;
-class EngineEventObject;
-class Mouse;
-class Keyboard;
-
-
-enum RenderSystem
-{
-	OGRE_RS_GL,
-	OGRE_RS_GLES,
-	OGRE_RS_D3D9,
-	OGRE_RS_D3D10,
-	OGRE_RS_D3D11,
+	GS_RS_GL,
+	GS_RS_GLES,
+	GS_RS_D3D9,
+	GS_RS_D3D10,
+	GS_RS_D3D11,
 };
 
-enum PropertyType
+
+// ----------------------------------------------------------------------------
+enum gsPropertyType
 {
 	PROP_NULL,
 	PROP_BOOL,
@@ -66,14 +52,18 @@ enum PropertyType
 	PROP_STRING
 };
 
-enum TransformSpace
+
+// ----------------------------------------------------------------------------
+enum gsTransformSpace
 {
 	TS_LOCAL,
 	TS_PARENT,
 	TS_WORLD,
 };
 
-enum GameObjectTypes
+
+// ----------------------------------------------------------------------------
+enum gsGameObjectTypes
 {
 	OB_UNKNOWN=0,
 	OB_CAMERA,
@@ -83,12 +73,16 @@ enum GameObjectTypes
 	OB_SKELETON,
 };
 
-enum EngineEvents
+
+// ----------------------------------------------------------------------------
+enum gsEngineEvents
 {
 	EVT_TICK,
 };
 
-enum MouseButton
+
+// ----------------------------------------------------------------------------
+enum gsMouseButton
 {
 	LEFT = 0,
 	RIGHT,
@@ -96,109 +90,65 @@ enum MouseButton
 };
 
 
-// Class OgreKit.Property
-class Property
+
+// ----------------------------------------------------------------------------
+class gsProperty
 {
 public:
-	Property();
+	gsProperty();
+	gsProperty(const gkString &name, bool value);
+	gsProperty(const gkString &name, double value);
+	gsProperty(const gkString &name, const gkString &value);
+	gsProperty(const gsProperty &oth);
+	~gsProperty();
 
-	// Class OgreKit.Property.__constructor(string, bool)
-	Property(const String &name, bool value);
-
-	// Class OgreKit.Property.__constructor(string, number)
-	Property(const String &name, double value);
-
-	// Class OgreKit.Property.__constructor(string, string)
-	Property(const String &name, const String &value);
-
-	// Class OgreKit.Property.__constructor(OgreKit.Property)
-	Property(const Property &oth);
-
-	// OgreKit.Property.__gc()
-	~Property();
-
-	// string OgreKit.Property:getName()
-	const String &getName(void) const;
-
-	// string OgreKit.Property:getValue()
-	const String &getValue(void) const;
-
-	// nil OgreKit.Property:makeDebug()
+	const gkString &getName(void) const;
+	const gkString &getValue(void) const;
 	void makeDebug(bool v);
-
-
-	// OgreKit.PropertyType OgreKit.Property:getType()
-	PropertyType getType(void) const;
-
-	// bool OgreKit.Property:toBool()
+	gsPropertyType getType(void) const;
 	bool toBool(void) const;
-
-	// number OgreKit.Property:toNumber()
 	double  toNumber(void) const;
-
-	// string OgreKit.Property:toString()
-	String toString(void) const;
-
-	// nil OgreKit.Property:fromNumber(bool)
+	gkString toString(void) const;
 	void fromBool(bool v);
-
-	// nil OgreKit.Property:fromNumber(number)
 	void  fromNumber(double v);
-
-	// nil OgreKit.Property:fromString(string)
-	void fromString(const String &v);
+	void fromString(const gkString &v);
 
 
 	// internal wrap
-	OGRE_KIT_WRAP_CLASS_COPY_CTOR(Property, gkVariable, m_prop);
+	OGRE_KIT_WRAP_CLASS_COPY_CTOR(gsProperty, gkVariable, m_prop);
 };
 
-
-// Class OgreKit.UserDefs
-class UserDefs
+// ----------------------------------------------------------------------------
+class gsUserDefs
 {
 private:
-	typedef utHashTable<gkHashedString, Property *> PropertyMap;
+	typedef utHashTable<gkHashedString, gsProperty *> PropertyMap;
 	PropertyMap m_properties;
 
-
 	void setValueEvent(gkVariable &v);
-
-
 public:
+	~gsUserDefs();
 
-	// OgreKit.UserDefs.__gc()
-	~UserDefs();
+	const gsProperty &getProperty(const gkString &name);
+	void addProperty(const gsProperty &prop);
+	bool hasProperty(const gkString &name);
 
-	// OgreKit.Property OgreKit.UserDefs:getProperty(string)
-	const Property &getProperty(const String &name);
-
-	// nil OgreKit.UserDefs:addProperty(OgreKit.Property)
-	void addProperty(const Property &prop);
-
-	// bool OgreKit.UserDefs:hasProperty(string)
-	bool hasProperty(const String &name);
-
-	// operators []
-	// local v = OgreKit.UserDefs._Prop
-	// OgreKit.UserDefs._Prop = v
-
-	const Property     &__getitem__(const char *name);
+	const gsProperty    &__getitem__(const char *name);
 	void                __setitem__(const char *name, bool  v);
 	void                __setitem__(const char *name, double v);
-	void                __setitem__(const char *name, const String &v);
+	void                __setitem__(const char *name, const gkString &v);
 
 	// internal wrap
-	OGRE_KIT_WRAP_CLASS_COPY_CTOR(UserDefs, gkUserDefs, m_defs);
+	OGRE_KIT_WRAP_CLASS_COPY_CTOR(gsUserDefs, gkUserDefs, m_defs);
 };
 
 
-
-class Mouse
+// ----------------------------------------------------------------------------
+class gsMouse
 {
 public:
-	Mouse();
-	~Mouse();
+	gsMouse();
+	~gsMouse();
 
 	float   xpos, ypos;
 	float   xrel, yrel;
@@ -207,14 +157,16 @@ public:
 	bool    moved;
 
 	void capture(void);
-	bool isButtonDown(MouseButton btn);
+	bool isButtonDown(gsMouseButton btn);
 };
 
-class Keyboard
+
+// ----------------------------------------------------------------------------
+class gsKeyboard
 {
 public:
-	Keyboard();
-	~Keyboard();
+	gsKeyboard();
+	~gsKeyboard();
 	void capture(void) {}
 
 	bool isKeyDown(int sc);
@@ -222,8 +174,8 @@ public:
 
 
 
-// Class OgreKit.Engine
-class Engine
+// ----------------------------------------------------------------------------
+class gsEngine
 #ifndef SWIG
 	: public gkEngine::Listener
 #endif
@@ -231,8 +183,8 @@ class Engine
 private:
 
 	bool m_ctxOwner, m_running;
-	UserDefs *m_defs;
-	typedef utArray<EngineEventObject *> Connectors;
+	gsUserDefs *m_defs;
+	typedef utArray<gkLuaEvent *> Connectors;
 
 	Connectors m_ticks;
 
@@ -240,24 +192,24 @@ private:
 
 public:
 
-	Engine();
-	~Engine();
+	gsEngine();
+	~gsEngine();
 
 	void initialize(void);
 	void run(void);
 	void requestExit(void);
 
 	// connect global function
-	void connect(int evt, Function func);
+	void connect(int evt, gsFunction func);
 
 	// connect self:function
-	void connect(int evt, Self self, Function method);
+	void connect(int evt, gsSelf self, gsFunction method);
 
 
-	Pointer<Scene> loadBlendFile(const String &name);
+	gsScene *loadBlendFile(const gkString &name);
 
 
-	UserDefs &getUserDefs(void);
+	gsUserDefs &getUserDefs(void);
 
 
 	// internal wrap
@@ -265,186 +217,162 @@ public:
 };
 
 
-class Loadable
+
+// ----------------------------------------------------------------------------
+class gsLoadable
 {
 public:
-	Loadable();
+	gsLoadable();
 
-
-	// nil Loadable:load()
 	void load(void);
-
-	// nil Loadable:unload()
 	void unload(void);
-
-	// nil Loadable:reload()
 	void reload(void);
 
-	// String Loadable:getName()
-	String getName(void);
+	gkString getName(void);
 
 	// internal wrap
-	OGRE_KIT_WRAP_CLASS_COPY_CTOR(Loadable, gkObject, m_object);
+	OGRE_KIT_WRAP_CLASS_COPY_CTOR(gsLoadable, gkObject, m_object);
 	OGRE_KIT_INTERNAL_CAST(m_object);
 };
 
 
-
-class Scene : public Loadable
+// ----------------------------------------------------------------------------
+class gsScene : public gsLoadable
 {
+private:
+	gsArray<gsGameObject, gkGameObject> m_objectCache;
+
 public:
-	Scene();
-
-	bool hasObject(const String &name);
-
-	Pointer<GameObject> getObject(const String &name);
-	Pointer<Entity>     getEntity(const String &name);
-	Pointer<Camera>     getCamera(const String &name);
-	Pointer<Light>      getLight(const String &name);
+	gsScene();
+	~gsScene();
 
 
+	bool hasObject(const gkString &name);
 
-	Pointer<GameObject> createEmpty(const String &name);
-	// \todo all the rest
+	gsGameObject *getObject(const gkString &name);
+	gsEntity     *getEntity(const gkString &name);
+	gsCamera     *getCamera(const gkString &name);
+	gsLight      *getLight(const gkString &name);
+	gsSkeleton	 *getSkeleton(const gkString &name);
+	gsGameObject *createEmpty(const gkString &name);
 
+
+	gsArray<gsGameObject, gkGameObject> &getObjectList(void);
 
 
 	// internal
-	OGRE_KIT_WRAP_BASE_COPY_CTOR(Scene, gkObject);
-
+	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsScene, gkObject);
 };
 
-
-class GameObject : public Loadable
+// ----------------------------------------------------------------------------
+class gsGameObject : public gsLoadable
 {
 public:
-	GameObject();
+	gsGameObject();
+	~gsGameObject() {}
 
-	Vector3 getPosition(void);
+	gsVector3 getPosition(void);
+	gsVector3 getRotation(void);
+	gsQuaternion getOrientation(void);
+	gsVector3 getScale(void);
+	gsVector3 getWorldPosition(void);
+	gsVector3 getWorldRotation(void);
+	gsQuaternion getWorldOrientation(void);
+	gsVector3 getLinearVelocity(void);
+	gsVector3 getAngularVelocity(void);
 
-	// Math.Vector3 GameObject:getRotation()
-	Vector3 getRotation(void);
-
-	// Math.Quaternion GameObject:getOrientation()
-	Quaternion getOrientation(void);
-
-	// Math.Vector3 GameObject:getScale()
-	Vector3 getScale(void);
-
-	// Math.Vector3 GameObject:getWorldPosition()
-	Vector3 getWorldPosition(void);
-
-	// Math.Vector3 GameObject:getWorldRotation()
-	Vector3 getWorldRotation(void);
-
-	// Math.Quaternion GameObject:getWorldOrientation()
-	Quaternion getWorldOrientation(void);
-
-	// Math.Vector3 GameObject:getLinearVelocity()
-	Vector3 getLinearVelocity(void);
-
-	// Math.Vector3 GameObject:getAngularVelocity()
-	Vector3 getAngularVelocity(void);
-
-	// nil GameObject:setLinearVelocity(Math.Vector3)
-	void setLinearVelocity(const Vector3 &v);
+	void setLinearVelocity(const gsVector3 &v);
 	void setLinearVelocity(float x, float y, float z);
 
-	// nil GameObject:setAngularVelocity(Math.Vector3)
-	void setAngularVelocity(const Vector3 &v);
+	void setAngularVelocity(const gsVector3 &v);
 	void setAngularVelocity(float x, float y, float z);
 
-	// nil GameObject:setPosition(Math.Vector3)
-	void setPosition(const Vector3 &v);
+	void setPosition(const gsVector3 &v);
 	void setPosition(float x, float y, float z);
 
-	// nil GameObject:setRotation(Math.Vector3)
-	void setRotation(const Vector3 &v);
+	void setRotation(const gsVector3 &v);
 	void setRotation(float yaw, float pitch, float roll);
 
-	// nil GameObject:setOrientation(Math.Quaternion)
-	void setOrientation(const Quaternion &quat);
+	void setOrientation(const gsQuaternion &quat);
 	void setOrientation(float w, float x, float y, float z);
 
-	// GameObjectTypes GameObject:getType()
-	GameObjectTypes getType(void);
+	gsGameObjectTypes getType(void);
 
 	void rotate(float dx, float dy, float dz);
-	void rotate(const Vector3 &v);
-	void rotate(const Quaternion &v);
-	void rotate(float dx, float dy, float dz, TransformSpace ts);
-	void rotate(const Vector3 &v, TransformSpace ts);
-	void rotate(const Quaternion &v, TransformSpace ts);
+	void rotate(const gsVector3 &v);
+	void rotate(const gsQuaternion &v);
+	void rotate(float dx, float dy, float dz, gsTransformSpace ts);
+	void rotate(const gsVector3 &v, gsTransformSpace ts);
+	void rotate(const gsQuaternion &v, gsTransformSpace ts);
 
 
 	void translate(float x, float y, float z);
-	void translate(const Vector3 &v);
-	void translate(float x, float y, float z, TransformSpace ts);
-	void translate(const Vector3 &v, TransformSpace ts);
+	void translate(const gsVector3 &v);
+	void translate(float x, float y, float z, gsTransformSpace ts);
+	void translate(const gsVector3 &v, gsTransformSpace ts);
 
-
-	// nil GameObject:scale(Math.Vector3)
-	void scale(const Vector3 &v);
+	void scale(const gsVector3 &v);
 	void scale(float x, float y, float z);
 
-	// nil GameObject:yaw(Number, bool=false)
+
 	void yaw(float deg);
-	void yaw(float deg, TransformSpace ts);
+	void yaw(float deg, gsTransformSpace ts);
 
-	// nil GameObject:pitch(Number, bool=false)
+
 	void pitch(float deg);
-	void pitch(float deg, TransformSpace ts);
+	void pitch(float deg, gsTransformSpace ts);
 
-	// nil GameObject:roll(Number, bool=false)
+
 	void roll(float deg);
-	void roll(float deg, TransformSpace ts);
+	void roll(float deg, gsTransformSpace ts);
 
 	int getState(void);
 
 
-	/// entity data
-	Pointer<Entity> getEntity(void);
-	/// camera data
-	Pointer<Camera> getCamera(void);
-	/// camera data
-	Pointer<Light> getLight(void);
+	gsEntity *getEntity(void);
+	gsCamera *getCamera(void);
+	gsLight *getLight(void);
+	gsSkeleton *getSkeleton(void);
 
 	bool hasParent();
-	void setParent(const Pointer<GameObject>& par);
-	Pointer<GameObject> getParent(void);
+	void setParent(gsGameObject *par);
+	gsGameObject *getParent(void);
 
 	void enableContacts(bool v);
 	bool hasContacts();
-	bool hasContact(const String &object);
+	bool hasContact(const gkString &object);
 
+	gsScene *getScene(void);
 
-	// Scene GameObject:getScene()
-	Pointer<Scene> getScene(void);
+	gsProperty    __getitem__(const gkString &prop);
+	void        __setitem__(const gkString &prop, bool  v);
+	void        __setitem__(const gkString &prop, float v);
+	void        __setitem__(const gkString &prop, const char *v);
 
-	// property access
-	Property    __getitem__(const String &prop);
-	void        __setitem__(const String &prop, bool  v);
-	void        __setitem__(const String &prop, float v);
-	void        __setitem__(const String &prop, const char *v);
 
 	// internal
-	OGRE_KIT_WRAP_BASE_COPY_CTOR(GameObject, gkObject);
+	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsGameObject, gkObject);
+	OGRE_KIT_TEMPLATE_CAST(gsGameObject, m_object);
 };
 
 
-class Light : public GameObject
+// ----------------------------------------------------------------------------
+class gsLight : public gsGameObject
 {
 public:
-	Light();
+	gsLight();
+	~gsLight() {}
 	// internal
-	OGRE_KIT_WRAP_BASE_COPY_CTOR(Light, gkObject);
+	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsLight, gkObject);
 };
 
 
-class Camera : public GameObject
+// ----------------------------------------------------------------------------
+class gsCamera : public gsGameObject
 {
 public:
-	Camera();
+	gsCamera();
+	~gsCamera() {}
 
 	void setClipping(float start, float end);
 	float getClipStart();
@@ -453,50 +381,62 @@ public:
 	void setFov(float fov);
 	float getFov();
 
-
 	void makeCurrent();
 
 	// internal
-	OGRE_KIT_WRAP_BASE_COPY_CTOR(Camera, gkObject);
+	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsCamera, gkObject);
 };
 
 
-
-class Entity : public GameObject
+// ----------------------------------------------------------------------------
+class gsEntity : public gsGameObject
 {
 public:
 
-	Entity();
+	gsEntity();
+	~gsEntity() {}
 
-	void playAction(const String &name, float blend);
+	void playAction(const gkString &name, float blend);
 
 	// internal
-	OGRE_KIT_WRAP_BASE_COPY_CTOR(Entity, gkObject);
+	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsEntity, gkObject);
+};
+
+
+// ----------------------------------------------------------------------------
+class gsSkeleton : public gsGameObject
+{
+public:
+	gsSkeleton();
+	~gsSkeleton() {}
+
+
+	// internal
+	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsSkeleton, gkObject);
 };
 
 
 
-// Debug utilities
-class Debugger
+// ----------------------------------------------------------------------------
+class gsDebugger
 {
 protected:
 	class gkDebugger *m_debugger;
 
 public:
 
-	Debugger(const Pointer<Scene>& sc);
-	~Debugger() {}
+	gsDebugger(gsScene *sc);
+	~gsDebugger() {}
 
-	void drawLine(const Vector3 &from, const Vector3 &to, const Vector3 &color);
-	void drawObjectAxis(const Pointer<GameObject> &ptr, float size);
+	void drawLine(const gsVector3 &from, const gsVector3 &to, const gsVector3 &color);
+	void drawObjectAxis(gsGameObject *ptr, float size);
 
 	void clear(void);
 };
 
 
-extern void DebugPrint(const char *str);
+// ----------------------------------------------------------------------------
+extern void gsDebugPrint(const char *str);
 
 
-
-}
 #endif//_OgreKitApi_h_

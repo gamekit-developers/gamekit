@@ -144,7 +144,7 @@ function MainCamera:GetRay(len)
 	local rayFrom   = self.camera:getWorldPosition()  - offsVec2
 	local rayDir    = (playloc - rayFrom) / len
 	local dist      = (rayDir:length2() * len)
-	return rayFrom, rayDir, dist
+	return OgreKit.Ray(rayFrom, rayDir), dist
 end
 
 -------------------------------------------------------------------------------
@@ -157,7 +157,7 @@ function MainCamera:OnUpdate(delta)
 	self.mouse:capture()
 
 	if self.mouse.moved then
-
+		
 		if self.mouse.xrel ~= 0 then
 			self.zrot:roll( -(self.mouse.xrel * delta) * 0.5)
 
@@ -186,16 +186,15 @@ function MainCamera:OnUpdate(delta)
 	
 
 	local rayLen = 1.5
-	local rayFrom, rayDir, dist = self:GetRay(rayLen)
+	local ray, dist = self:GetRay(rayLen)
 
 	-- do ray cast
-	if self.cray:cast(rayFrom, rayDir) then
+	if self.cray:cast(ray) then
 
 		if self.cray:getObject():getName() ~= "Physics" then
 
 			-- move forward
 			self.camera:translate(0, dist * self.cray:getHitFraction(), 0)
-			rayFrom, rayDir, dist = self:GetRay(rayLen)
 
 		end
 	end
@@ -258,9 +257,13 @@ function Player:constructor(scene)
 	self.jumpTog  = 0
 	self.iFly     = 0.0
 	self.iFlyMax  = 25.0;
-	self.gTest    = OgreKit.SweptTest(self.physics)
-	self.debugger = OgreKit.Debugger(scene)
 
+	local avoid = OgreKit.ObjectList()
+	avoid:push(self.physics)
+
+
+	self.gTest    = OgreKit.SweptTest(avoid)
+	self.debugger = OgreKit.Debugger(scene)
 
 	-- INITIAL
 	self:setState(self.states.IDLE)

@@ -33,24 +33,22 @@
 #include "Script/Lua/gkLuaUtils.h"
 
 
-namespace OgreKit
-{
-
-// WhenEvent
-class WhenEvent
+// ----------------------------------------------------------------------------
+class gsWhenEvent
 {
 public:
-	~WhenEvent();
-	void when(Self self, Function when);
+	~gsWhenEvent();
+	void when(gsSelf self, gsFunction when);
 
-	OGRE_KIT_WRAP_CLASS_COPY_CTOR(WhenEvent, gkFSM::Event, m_event);
+	OGRE_KIT_WRAP_CLASS_COPY_CTOR(gsWhenEvent, gkFSM::Event, m_event);
 };
 
 
-class FSM
+// ----------------------------------------------------------------------------
+class gsFSM
 {
 private:
-	typedef utHashTable<utIntHashKey, class FSM_UpdateEvent *> EVENT;
+	typedef utHashTable<utIntHashKey, class gsUpdateEvent *> EVENT;
 
 	gkFSM	*m_fsm;
 	int		m_curState;
@@ -58,8 +56,8 @@ private:
 
 public:
 
-	FSM();
-	~FSM();
+	gsFSM();
+	~gsFSM();
 
 
 	void  update();
@@ -68,20 +66,16 @@ public:
 
 
 
-	void  addStartTrigger(int state, Self self, Function trigger);
-	void  addEndTrigger(int state, Self self, Function trigger);
+	void  addStartTrigger(int state, gsSelf self, gsFunction trigger);
+	void  addEndTrigger(int state, gsSelf self, gsFunction trigger);
 
 
-	void  addEvent(int state, Self self, Function update);
+	void  addEvent(int state, gsSelf self, gsFunction update);
 
-	Pointer<WhenEvent> addTransition(int from, int to);
-	Pointer<WhenEvent> addTransition(int from, int to, unsigned long ms);
-	Pointer<WhenEvent> addTransition(int from, int to, unsigned long ms, Self self, Function trigger);
+	gsWhenEvent* addTransition(int from, int to);
+	gsWhenEvent* addTransition(int from, int to, unsigned long ms);
+	gsWhenEvent* addTransition(int from, int to, unsigned long ms, gsSelf self, gsFunction trigger);
 
 };
-
-
-}
-
 
 #endif//_OgreKitAI_h_

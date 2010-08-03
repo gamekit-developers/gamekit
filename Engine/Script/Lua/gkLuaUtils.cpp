@@ -71,7 +71,7 @@ int lua_pushtraceback(lua_State *L)
 
 // ----------------------------------------------------------------------------
 gkLuaEvent::gkLuaEvent(gkLuaCurState fnc)
-	:   L(fnc.L), m_self(0)
+	:   L(fnc.L), m_self(0), m_trace(-1)
 {
 	m_callback = new gkLuaObject(L, fnc.m_id);
 }
@@ -79,7 +79,7 @@ gkLuaEvent::gkLuaEvent(gkLuaCurState fnc)
 
 // ----------------------------------------------------------------------------
 gkLuaEvent::gkLuaEvent(gkLuaCurState self, gkLuaCurState fnc)
-	:   L(fnc.L)
+	:   L(fnc.L), m_trace(-1)
 {
 	m_self = new gkLuaObject(L, self.m_id);
 	m_callback = new gkLuaObject(L, fnc.m_id);
@@ -92,6 +92,17 @@ gkLuaEvent::~gkLuaEvent()
 	delete m_callback;
 }
 
+
+// ----------------------------------------------------------------------------
+gkLuaEvent* gkLuaEvent::clone(void)
+{
+	gkLuaEvent *evt = new gkLuaEvent(*this);
+	evt->m_self = m_self ? new gkLuaObject(*m_self) : 0;
+	evt->m_callback = m_callback ? new gkLuaObject(*m_callback) : 0;
+	return evt;
+}
+
+
 // ----------------------------------------------------------------------------
 void gkLuaEvent::beginCall(void)
 {
@@ -99,6 +110,10 @@ void gkLuaEvent::beginCall(void)
 	if (!L || !m_callback) return;
 
 	m_callArgs = 0;
+
+	lua_pushtraceback(L);
+	m_trace = lua_gettop(L);
+
 
 	// push callback function
 	lua_rawgeti(L, LUA_REGISTRYINDEX, m_callback->get());
@@ -139,11 +154,11 @@ bool gkLuaEvent::call(bool &result)
 	result = false;
 	if (m_callArgs == 0) return false;
 
-
-	if (lua_pcall(L, m_callArgs, 1, 0) != 0)
+	if (lua_pcall(L, m_callArgs, 1, m_trace) != 0)
 	{
 		printf("%s\n", lua_tostring(L, -1));
-		lua_pop(L, 1);
+		// re throw
+		lua_error(L);
 		return false;
 	}
 
@@ -157,16 +172,15 @@ bool gkLuaEvent::call()
 {
 	if (m_callArgs == 0) return false;
 
-
-	if (lua_pcall(L, m_callArgs, 0, 0) != 0)
+	if (lua_pcall(L, m_callArgs, 0, m_trace) != 0)
 	{
 		printf("%s\n", lua_tostring(L, -1));
-		lua_pop(L, 1);
+		// re throw
+		lua_error(L);
 		return false;
 	}
 	m_callArgs = 0;
 	return true;
-
 }
 
 // ----------------------------------------------------------------------------

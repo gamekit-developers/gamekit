@@ -46,23 +46,12 @@ function RayTest:constructor()
 Do the test.
 
 \code
-function RayTest:cast(origin, direction)
+function RayTest:cast(ray)
 \endcode
 
-\param origin \LuaClassRef{Vector3} as the starting position.
-\param direction \LuaClassRef{Vector3} as the heading.
-
+\param ray \LuaClassRef{Ray} as the starting position and heading.
 \returns bool True if the ray has hit.
 
-
-<!-- ================= -->
-\sectionseperator{Overload:}
-
-\code
-function RayTest:cast(ox, oy, oz, dx, dy, dz)
-\endcode
-
-\returns bool True if the ray has hit.
 
 \endpage
 
@@ -150,10 +139,22 @@ function RayTest:getObject()
 Construct a new test.
 
 \code
-function SweptTest:constructor(object)
+function SweptTest:constructor()
 \endcode
 
-\param object \LuaClassRef{GameObject} to avoid.
+
+\n\n
+
+<!-- ================= -->
+\sectionseperator{Overload:}
+
+Construct a new test with a list of objects to avoid.
+
+\code
+function SweptTest:constructor(avoid)
+\endcode
+
+\param avoid \LuaClassRef{ObjectList}
 
 
 \endpage

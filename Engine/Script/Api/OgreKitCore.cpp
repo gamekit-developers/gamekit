@@ -25,81 +25,79 @@
 -------------------------------------------------------------------------------
 */
 #include "OgreKitCore.h"
-namespace OgreKit
-{
 
 
-///////////////////////////////////////////////////////////////////////////////
-//
-// OgreKit.Property
-//
-///////////////////////////////////////////////////////////////////////////////
 
-Property::Property(gkVariable *var) : m_prop(var)
+// ----------------------------------------------------------------------------
+gsProperty::gsProperty(gkVariable *var) : m_prop(var)
 {
 }
 
-
-Property::Property() : m_prop(0)
+// ----------------------------------------------------------------------------
+gsProperty::gsProperty() : m_prop(0)
 {
 }
 
-
-
-Property::Property(const String &name, bool value)
+// ----------------------------------------------------------------------------
+gsProperty::gsProperty(const gkString &name, bool value)
 {
 	m_prop = new gkVariable(name, false);
 	m_prop->setValue(value);
 }
 
-
-
-Property::Property(const String &name, double value)
+// ----------------------------------------------------------------------------
+gsProperty::gsProperty(const gkString &name, double value)
 {
 	m_prop = new gkVariable(name, false);
 	m_prop->setValue((float)value);
 }
 
-Property::Property(const String &name, const String &value)
+
+// ----------------------------------------------------------------------------
+gsProperty::gsProperty(const gkString &name, const gkString &value)
 {
 	m_prop = new gkVariable(name, false);
 	m_prop->setValue(value);
 }
 
 
-Property::Property(const Property &oth)
+// ----------------------------------------------------------------------------
+gsProperty::gsProperty(const gsProperty &oth)
 {
 	m_prop = new gkVariable(oth.getName(), false);
 	m_prop->setValue(oth.getValue());
 }
 
-
-Property::~Property()
+// ----------------------------------------------------------------------------
+gsProperty::~gsProperty()
 {
 	makeDebug(false);
 	delete m_prop;
 }
 
 
-const String &Property::getName(void) const
+// ----------------------------------------------------------------------------
+const gkString &gsProperty::getName(void) const
 {
-	static String localStr = "";
+	static gkString localStr = "";
 	if (m_prop)
 		return m_prop->getName();
 	return localStr;
 }
 
 
-const String &Property::getValue(void) const
+// ----------------------------------------------------------------------------
+const gkString &gsProperty::getValue(void) const
 {
-	static String localStr;
+	static gkString localStr;
 	if (m_prop)
 		localStr = m_prop->getValueString();
 	return localStr;
 }
 
 
-void Property::makeDebug(bool v)
+// ----------------------------------------------------------------------------
+void gsProperty::makeDebug(bool v)
 {
 	if (m_prop && gkEngine::getSingletonPtr())
 	{
@@ -112,7 +110,8 @@ void Property::makeDebug(bool v)
 }
 
 
-PropertyType Property::getType(void)  const
+// ----------------------------------------------------------------------------
+gsPropertyType gsProperty::getType(void)  const
 {
 
 	if (m_prop)
@@ -134,7 +133,8 @@ PropertyType Property::getType(void)  const
 }
 
 
-bool Property::toBool(void)  const
+// ----------------------------------------------------------------------------
+bool gsProperty::toBool(void)  const
 {
 	if (m_prop)
 		return m_prop->getValueBool();
@@ -142,7 +142,8 @@ bool Property::toBool(void)  const
 }
 
 
-double Property::toNumber(void)  const
+// ----------------------------------------------------------------------------
+double gsProperty::toNumber(void)  const
 {
 	if (m_prop)
 		return (double)m_prop->getValueReal();
@@ -151,7 +152,8 @@ double Property::toNumber(void)  const
 }
 
 
-String Property::toString(void)  const
+// ----------------------------------------------------------------------------
+gkString gsProperty::toString(void)  const
 {
 	if (m_prop)
 		return m_prop->getValueString();
@@ -159,20 +161,24 @@ String Property::toString(void)  const
 }
 
 
-void Property::fromBool(bool v)
+// ----------------------------------------------------------------------------
+void gsProperty::fromBool(bool v)
 {
 	if (m_prop)
 		m_prop->setValue(v);
 }
 
-void Property::fromNumber(double v)
+
+// ----------------------------------------------------------------------------
+void gsProperty::fromNumber(double v)
 {
 	if (m_prop)
 		m_prop->setValue(v);
 }
 
 
-void Property::fromString(const String &v)
+// ----------------------------------------------------------------------------
+void gsProperty::fromString(const gkString &v)
 {
 	if (m_prop)
 		m_prop->setValue(v);
@@ -180,7 +186,7 @@ void Property::fromString(const String &v)
 
 
 #define PROP_INSERT_T(name, var, cast)\
-    m_properties.insert(name, new Property(name, (cast)m_defs->var));
+    m_properties.insert(name, new gsProperty(name, (cast)m_defs->var));
 
 #define PROP_INSERT_N(name, var) PROP_INSERT_T(name, var, double)
 #define PROP_INSERT_B(name, var) PROP_INSERT_T(name, var, bool)
@@ -226,15 +232,9 @@ static void gkVar_fromVar(gkVariable &v, gkString &r)
 
 
 
-///////////////////////////////////////////////////////////////////////////////
-//
-// OgreKit.UserDefs
-//
-///////////////////////////////////////////////////////////////////////////////
 
-
-
-UserDefs::UserDefs(gkUserDefs *defs)
+// ----------------------------------------------------------------------------
+gsUserDefs::gsUserDefs(gkUserDefs *defs)
 {
 	m_defs = defs;
 
@@ -263,7 +263,8 @@ UserDefs::UserDefs(gkUserDefs *defs)
 
 
 
-UserDefs::~UserDefs()
+// ----------------------------------------------------------------------------
+gsUserDefs::~gsUserDefs()
 {
 	UTsize p=0;
 	for (; p< m_properties.size(); ++p)
@@ -273,7 +274,8 @@ UserDefs::~UserDefs()
 }
 
 
-void UserDefs::setValueEvent(gkVariable &v)
+// ----------------------------------------------------------------------------
+void gsUserDefs::setValueEvent(gkVariable &v)
 {
 	if (m_properties.find(gkHashedString(v.getName())) != UT_NPOS)
 	{
@@ -303,51 +305,54 @@ void UserDefs::setValueEvent(gkVariable &v)
 
 
 
-const Property &UserDefs::getProperty(const String &name)
+// ----------------------------------------------------------------------------
+const gsProperty &gsUserDefs::getProperty(const gkString &name)
 {
 	return __getitem__(name.c_str());
 }
 
 
 
-void UserDefs::addProperty(const Property &prop)
+// ----------------------------------------------------------------------------
+void gsUserDefs::addProperty(const gsProperty &prop)
 {
 	if (!prop.getName().empty())
 	{
 		if (m_properties.find(prop.getName()) == UT_NPOS)
-			m_properties.insert(prop.getName(), new Property(prop));
+			m_properties.insert(prop.getName(), new gsProperty(prop));
 	}
 }
 
 
-
-
-bool UserDefs::hasProperty(const String &name)
+// ----------------------------------------------------------------------------
+bool gsUserDefs::hasProperty(const gkString &name)
 {
 	return m_properties.find(name) != UT_NPOS;
 }
 
 
-
-const Property &UserDefs::__getitem__(const char *name)
+// ----------------------------------------------------------------------------
+const gsProperty &gsUserDefs::__getitem__(const char *name)
 {
-	static Property *prop=0;
+	static gsProperty *prop=0;
 	UTsize pos = 0;
 	if ((pos = m_properties.find(gkHashedString(name))) != UT_NPOS)
 	{
 		delete prop;
-		prop = new Property((const Property &)(*(m_properties.at(pos))));
+		prop = new gsProperty((const gsProperty &)(*(m_properties.at(pos))));
 	}
 	else
 	{
 		if (prop)
 			delete prop;
-		prop = new Property();
+		prop = new gsProperty();
 	}
 	return *prop;
 }
 
-void UserDefs::__setitem__(const char *name, bool  v)
+
+// ----------------------------------------------------------------------------
+void gsUserDefs::__setitem__(const char *name, bool  v)
 {
 	UTsize pos = 0;
 	if ((pos = m_properties.find(gkHashedString(name))) != UT_NPOS)
@@ -357,7 +362,9 @@ void UserDefs::__setitem__(const char *name, bool  v)
 	}
 }
 
-void UserDefs::__setitem__(const char *name, double v)
+
+// ----------------------------------------------------------------------------
+void gsUserDefs::__setitem__(const char *name, double v)
 {
 	UTsize pos = 0;
 	if ((pos = m_properties.find(gkHashedString(name))) != UT_NPOS)
@@ -367,7 +374,9 @@ void UserDefs::__setitem__(const char *name, double v)
 	}
 }
 
-void UserDefs::__setitem__(const char *name, const String &v)
+
+// ----------------------------------------------------------------------------
+void gsUserDefs::__setitem__(const char *name, const gkString &v)
 {
 	UTsize pos = 0;
 	if ((pos = m_properties.find(gkHashedString(name))) != UT_NPOS)
@@ -378,15 +387,8 @@ void UserDefs::__setitem__(const char *name, const String &v)
 }
 
 
-
-
-///////////////////////////////////////////////////////////////////////////////
-//
-// OgreKit.Mouse
-//
-///////////////////////////////////////////////////////////////////////////////
-
-Mouse::Mouse()
+// ----------------------------------------------------------------------------
+gsMouse::gsMouse()
 	:	xpos(0), ypos(0),
 	    xrel(0), yrel(0),
 	    winx(0), winy(0),
@@ -395,11 +397,15 @@ Mouse::Mouse()
 }
 
 
-Mouse::~Mouse()
+
+// ----------------------------------------------------------------------------
+gsMouse::~gsMouse()
 {
 }
 
-void Mouse::capture(void)
+
+// ----------------------------------------------------------------------------
+void gsMouse::capture(void)
 {
 	if (!gkWindowSystem::getSingletonPtr()) return;
 
@@ -414,55 +420,38 @@ void Mouse::capture(void)
 	moved   = mse->moved;
 }
 
-bool Mouse::isButtonDown(MouseButton btn)
+// ----------------------------------------------------------------------------
+bool gsMouse::isButtonDown(gsMouseButton btn)
 {
 	if (!gkWindowSystem::getSingletonPtr()) return false;
 	return gkWindowSystem::getSingleton().getMouse()->isButtonDown(btn);
 }
 
-///////////////////////////////////////////////////////////////////////////////
-//
-// OgreKit.Keyboard
-//
-///////////////////////////////////////////////////////////////////////////////
-Keyboard::Keyboard()
+
+
+
+
+// ----------------------------------------------------------------------------
+gsKeyboard::gsKeyboard()
 {
 }
 
-Keyboard::~Keyboard()
+// ----------------------------------------------------------------------------
+gsKeyboard::~gsKeyboard()
 {
 }
 
-bool Keyboard::isKeyDown(int sc)
+
+// ----------------------------------------------------------------------------
+bool gsKeyboard::isKeyDown(int sc)
 {
 	if (!gkWindowSystem::getSingletonPtr()) return false;
 	return gkWindowSystem::getSingleton().getKeyboard()->isKeyDown((gkScanCode)sc);
 }
 
 
-///////////////////////////////////////////////////////////////////////////////
-//
-// OgreKit.Engine
-//
-///////////////////////////////////////////////////////////////////////////////
-
-
-// local Events
-class EngineEventObject : public gkLuaEvent
-{
-public:
-
-	EngineEventObject(Function fnc) : gkLuaEvent(fnc) {}
-	EngineEventObject(Self self, Function fnc) : gkLuaEvent(self, fnc) {}
-
-	~EngineEventObject()
-	{
-	}
-};
-
-
-
-Engine::Engine()
+// ----------------------------------------------------------------------------
+gsEngine::gsEngine()
 {
 	m_defs = 0;
 	m_running = false;
@@ -474,8 +463,8 @@ Engine::Engine()
 }
 
 
-
-Engine::~Engine()
+// ----------------------------------------------------------------------------
+gsEngine::~gsEngine()
 {
 	if (m_defs)
 		delete m_defs;
@@ -493,42 +482,46 @@ Engine::~Engine()
 }
 
 
-void Engine::connect(int evt, Function func)
+
+// ----------------------------------------------------------------------------
+void gsEngine::connect(int evt, gsFunction func)
 {
 	if (evt == EVT_TICK)
-	{
-		EngineEventObject *ob = new EngineEventObject(func);
-		m_ticks.push_back(ob);
-	}
+		m_ticks.push_back(new gkLuaEvent(func));
 }
 
-void Engine::connect(int evt, Self self, Function method)
+
+
+// ----------------------------------------------------------------------------
+void gsEngine::connect(int evt, gsSelf self, gsFunction method)
 {
 	if (evt == EVT_TICK)
-	{
-		EngineEventObject *ob = new EngineEventObject(self, method);
-		m_ticks.push_back(ob);
-	}
+		m_ticks.push_back(new gkLuaEvent(self, method));
 }
 
-void Engine::tick(gkScalar delta)
+
+// ----------------------------------------------------------------------------
+void gsEngine::tick(gkScalar delta)
 {
 	UTsize i;
 	for (i=0; i<m_ticks.size(); ++i)
 	{
-		EngineEventObject *ob = m_ticks.at(i);
+		gkLuaEvent *ob = m_ticks.at(i);
 
 		ob->beginCall();
 		ob->addArgument(delta);
+
 		if (!ob->call())
 		{
 			m_ticks.erase(i);
 			delete ob;
+
 			if (i > 0)
 			{
 				i -= 1;
 			}
-			else break;
+			else 
+				break;
 			continue;
 		}
 	}
@@ -536,47 +529,61 @@ void Engine::tick(gkScalar delta)
 
 
 
-void Engine::initialize(void)
+// ----------------------------------------------------------------------------
+void gsEngine::initialize(void)
 {
 	if (m_ctxOwner && m_engine && !m_engine->isInitialized())
 		m_engine->initialize();
 }
 
-void Engine::requestExit(void)
+
+
+// ----------------------------------------------------------------------------
+void gsEngine::requestExit(void)
 {
 	if (m_engine)
 		m_engine->requestExit();
 }
 
-UserDefs &Engine::getUserDefs(void)
+
+
+// ----------------------------------------------------------------------------
+gsUserDefs &gsEngine::getUserDefs(void)
 {
 	if (m_defs == 0)
-		m_defs = new UserDefs(&m_engine->getUserDefs());
+		m_defs = new gsUserDefs(&m_engine->getUserDefs());
 	return *m_defs;
 }
 
 
 
-Pointer<Scene> Engine::loadBlendFile(const String &name)
+// ----------------------------------------------------------------------------
+gsScene* gsEngine::loadBlendFile(const gkString &name)
 {
 	if (m_engine && !m_running)
 	{
 		if (!m_engine->isInitialized())
-			gkLogMessage("Engine: loadBlendFile on uninitialized engine.");
+			gkLogMessage("gsEngine: loadBlendFile on uninitialized engine.");
 
 		gkBlendFile *gkb = m_engine->loadBlendFile(name, "<gkBuiltin>");
+		if (!gkb)
+		{
+			printf("File Loading failed!\n");
+			return 0;
+		}
+
 		if (gkb->getSceneIterator().hasMoreElements())
-			return Pointer<Scene>(new Scene(gkb->getSceneIterator().getNext()));
+			return new gsScene(gkb->getSceneIterator().getNext());
 		else
-			gkLogMessage("Engine: no usable scenes found in blend.");
+			gkLogMessage("gsEngine: no usable scenes found in blend.");
 	}
 
-
-	return Pointer<Scene>();
+	return 0;
 }
 
 
-void Engine::run(void)
+// ----------------------------------------------------------------------------
+void gsEngine::run(void)
 {
 	if (!m_running && m_engine)
 	{
@@ -587,68 +594,74 @@ void Engine::run(void)
 
 
 
-///////////////////////////////////////////////////////////////////////////////
-//
-// OgreKit.Loadable
-//
-///////////////////////////////////////////////////////////////////////////////
 
 
-Loadable::Loadable() : m_object(0)
-{
-}
-
-Loadable::Loadable(gkObject *ob) : m_object(ob)
+// ----------------------------------------------------------------------------
+gsLoadable::gsLoadable() : m_object(0)
 {
 }
 
 
-void Loadable::load(void)
+// ----------------------------------------------------------------------------
+gsLoadable::gsLoadable(gkObject *ob) : m_object(ob)
+{
+}
+
+
+// ----------------------------------------------------------------------------
+void gsLoadable::load(void)
 {
 	if (m_object)
 		m_object->load();
 }
 
 
-void Loadable::unload(void)
+// ----------------------------------------------------------------------------
+void gsLoadable::unload(void)
 {
 	if (m_object)
 		m_object->unload();
 }
 
 
-
-void Loadable::reload(void)
+// ----------------------------------------------------------------------------
+void gsLoadable::reload(void)
 {
 	if (m_object)
 		m_object->reload();
 }
 
 
-String Loadable::getName(void)
+// ----------------------------------------------------------------------------
+gkString gsLoadable::getName(void)
 {
 	if (m_object)
 		return m_object->getName();
 	return "";
 }
 
-///////////////////////////////////////////////////////////////////////////////
-//
-// OgreKit.Scene
-//
-///////////////////////////////////////////////////////////////////////////////
 
 
-Scene::Scene()
+
+// ----------------------------------------------------------------------------
+gsScene::gsScene()
 {
 }
 
-Scene::Scene(gkObject *ob) : Loadable(ob)
+// ----------------------------------------------------------------------------
+gsScene::gsScene(gkObject *ob) : gsLoadable(ob)
 {
 }
 
 
-bool Scene::hasObject(const String &name)
+// ----------------------------------------------------------------------------
+gsScene::~gsScene()
+{
+}
+
+
+// ----------------------------------------------------------------------------
+bool gsScene::hasObject(const gkString &name)
 {
 	if (m_object)
 		return cast<gkScene>()->hasObject(name);
@@ -657,53 +670,75 @@ bool Scene::hasObject(const String &name)
 
 
 
-Pointer<GameObject> Scene::getObject(const String &name)
+// ----------------------------------------------------------------------------
+gsGameObject* gsScene::getObject(const gkString &name)
 {
 	if (m_object)
 	{
 		gkGameObject *gobj = cast<gkScene>()->getObject(name);
 		if (gobj)
-			return Pointer<GameObject>(new GameObject(gobj));
+			return new gsGameObject(gobj);
 	}
-	return Pointer<GameObject>();
+	return 0;
 }
 
-Pointer<Entity> Scene::getEntity(const String &name)
+
+// ----------------------------------------------------------------------------
+gsEntity* gsScene::getEntity(const gkString &name)
 {
 	if (m_object)
 	{
 		gkGameObject *gobj = cast<gkScene>()->getObject(name);
 		if (gobj && gobj->getType() == GK_ENTITY)
-			return Pointer<Entity>(new Entity(gobj));
+			return (new gsEntity(gobj));
 	}
-	return Pointer<Entity>();
+	return 0;
 }
 
-Pointer<Camera> Scene::getCamera(const String &name)
+
+// ----------------------------------------------------------------------------
+gsCamera* gsScene::getCamera(const gkString &name)
 {
 	if (m_object)
 	{
 		gkGameObject *gobj = cast<gkScene>()->getObject(name);
 		if (gobj && gobj->getType() == GK_CAMERA)
-			return Pointer<Camera>(new Camera(gobj));
+			return (new gsCamera(gobj));
 	}
-	return Pointer<Camera>();
+	return 0;
 }
 
 
-Pointer<Light> Scene::getLight(const String &name)
+// ----------------------------------------------------------------------------
+gsLight* gsScene::getLight(const gkString &name)
 {
 	if (m_object)
 	{
 		gkGameObject *gobj = cast<gkScene>()->getObject(name);
 		if (gobj && gobj->getType() == GK_LIGHT)
-			return Pointer<Light>(new Light(gobj));
+			return (new gsLight(gobj));
 	}
-	return Pointer<Light>();
+	return 0;
 }
 
 
-Pointer<GameObject> Scene::createEmpty(const String &name)
+
+// ----------------------------------------------------------------------------
+gsSkeleton* gsScene::getSkeleton(const gkString &name)
+{
+	if (m_object)
+	{
+		gkGameObject *gobj = cast<gkScene>()->getObject(name);
+		if (gobj && gobj->getType() == GK_SKELETON)
+			return new gsSkeleton(gobj);
+	}
+	return 0;
+}
+
+
+
+// ----------------------------------------------------------------------------
+gsGameObject* gsScene::createEmpty(const gkString &name)
 {
 	if (m_object)
 	{
@@ -711,141 +746,174 @@ Pointer<GameObject> Scene::createEmpty(const String &name)
 		if (!scene->hasObject(name))
 		{
 			gkGameObject *obj = scene->createObject(name);
-			return Pointer<GameObject>(new GameObject(obj));
+			return (new gsGameObject(obj));
 		}
 	}
 
-	return Pointer<GameObject>();
+	return 0;
 }
 
 
-//////////////////////////////////////////////////////////////////////////////
-//
-// OgreKit.GameObject
-//
-///////////////////////////////////////////////////////////////////////////////
+// ----------------------------------------------------------------------------
+gsArray<gsGameObject, gkGameObject> &gsScene::getObjectList(void)
+{
+	m_objectCache.clear();
 
 
-GameObject::GameObject()
+	if (m_object)
+	{
+		gkScene *scene = cast<gkScene>();
+		gkGameObjectSet &objs = scene->getLoadedObjects();
+
+		for (gkGameObjectSet::iterator it = objs.begin(); it != objs.end(); ++it)
+		{
+			gkGameObject *obj = (*it);
+			m_objectCache.push(obj);
+		}
+	}
+	return m_objectCache;
+}
+
+
+
+// ----------------------------------------------------------------------------
+gsGameObject::gsGameObject()
 {
 }
 
-GameObject::GameObject(gkObject *ob) : Loadable(ob)
+
+// ----------------------------------------------------------------------------
+gsGameObject::gsGameObject(gkObject *ob) : gsLoadable(ob)
 {
 }
 
 
 
-Vector3 GameObject::getPosition(void)
+// ----------------------------------------------------------------------------
+gsVector3 gsGameObject::getPosition(void)
 {
 	if (m_object)
-		return Vector3(cast<gkGameObject>()->getPosition());
-	return Vector3();
+		return gsVector3(cast<gkGameObject>()->getPosition());
+	return gsVector3();
 }
 
 
-Vector3 GameObject::getRotation(void)
+// ----------------------------------------------------------------------------
+gsVector3 gsGameObject::getRotation(void)
 {
 	if (m_object)
-		return Vector3(cast<gkGameObject>()->getRotation().toVector3());
-	return Vector3();
+		return gsVector3(cast<gkGameObject>()->getRotation().toVector3());
+	return gsVector3();
 }
 
 
-Quaternion GameObject::getOrientation(void)
+// ----------------------------------------------------------------------------
+gsQuaternion gsGameObject::getOrientation(void)
 {
 	if (m_object)
-		return Quaternion(cast<gkGameObject>()->getOrientation());
-	return Quaternion();
+		return gsQuaternion(cast<gkGameObject>()->getOrientation());
+	return gsQuaternion();
 }
 
 
-Vector3 GameObject::getScale(void)
+// ----------------------------------------------------------------------------
+gsVector3 gsGameObject::getScale(void)
 {
 	if (m_object)
-		return Vector3(cast<gkGameObject>()->getScale());
-	return Vector3();
+		return gsVector3(cast<gkGameObject>()->getScale());
+	return gsVector3();
 }
 
-Vector3 GameObject::getWorldPosition(void)
+
+// ----------------------------------------------------------------------------
+gsVector3 gsGameObject::getWorldPosition(void)
 {
 	if (m_object)
-		return Vector3(cast<gkGameObject>()->getWorldPosition());
-	return Vector3();
+		return gsVector3(cast<gkGameObject>()->getWorldPosition());
+	return gsVector3();
 }
 
 
-Vector3 GameObject::getWorldRotation(void)
+// ----------------------------------------------------------------------------
+gsVector3 gsGameObject::getWorldRotation(void)
 {
 	if (m_object)
-		return Vector3(cast<gkGameObject>()->getWorldRotation().toVector3());
-	return Vector3();
+		return gsVector3(cast<gkGameObject>()->getWorldRotation().toVector3());
+	return gsVector3();
 }
 
 
-Quaternion GameObject::getWorldOrientation(void)
+// ----------------------------------------------------------------------------
+gsQuaternion gsGameObject::getWorldOrientation(void)
 {
 	if (m_object)
-		return Quaternion(cast<gkGameObject>()->getWorldOrientation());
-	return Quaternion();
+		return gsQuaternion(cast<gkGameObject>()->getWorldOrientation());
+	return gsQuaternion();
 }
 
 
-Vector3 GameObject::getLinearVelocity(void)
+// ----------------------------------------------------------------------------
+gsVector3 gsGameObject::getLinearVelocity(void)
 {
 	if (m_object)
-		return Vector3(cast<gkGameObject>()->getLinearVelocity());
-	return Vector3();
+		return gsVector3(cast<gkGameObject>()->getLinearVelocity());
+	return gsVector3();
 }
 
 
 
-Vector3 GameObject::getAngularVelocity(void)
+// ----------------------------------------------------------------------------
+gsVector3 gsGameObject::getAngularVelocity(void)
 {
 	if (m_object)
-		return Vector3(cast<gkGameObject>()->getAngularVelocity());
-	return Vector3();
+		return gsVector3(cast<gkGameObject>()->getAngularVelocity());
+	return gsVector3();
 }
 
 
 
-void GameObject::setLinearVelocity(const Vector3 &v)
+// ----------------------------------------------------------------------------
+void gsGameObject::setLinearVelocity(const gsVector3 &v)
 {
 	if (m_object)
 		cast<gkGameObject>()->setLinearVelocity(v);
 }
 
 
-void GameObject::setLinearVelocity(float x, float y, float z)
+// ----------------------------------------------------------------------------
+void gsGameObject::setLinearVelocity(float x, float y, float z)
 {
 	if (m_object)
 		cast<gkGameObject>()->setLinearVelocity(gkVector3(x,y,z));
 }
 
 
-
-void GameObject::setAngularVelocity(const Vector3 &v)
+// ----------------------------------------------------------------------------
+void gsGameObject::setAngularVelocity(const gsVector3 &v)
 {
 	if (m_object)
 		cast<gkGameObject>()->setAngularVelocity(v);
 }
 
 
-void GameObject::setAngularVelocity(float x, float y, float z)
+// ----------------------------------------------------------------------------
+void gsGameObject::setAngularVelocity(float x, float y, float z)
 {
 	if (m_object)
 		cast<gkGameObject>()->setAngularVelocity(gkVector3(x,y,z));
 }
 
 
-
-void GameObject::setPosition(const Vector3 &v)
+// ----------------------------------------------------------------------------
+void gsGameObject::setPosition(const gsVector3 &v)
 {
 	if (m_object)
 		cast<gkGameObject>()->setPosition(v);
 }
 
-void GameObject::setPosition(float x, float y, float z)
+
+// ----------------------------------------------------------------------------
+void gsGameObject::setPosition(float x, float y, float z)
 {
 	if (m_object)
 		cast<gkGameObject>()->setPosition(gkVector3(x,y,z));
@@ -853,27 +921,32 @@ void GameObject::setPosition(float x, float y, float z)
 
 
 
-void GameObject::setRotation(const Vector3 &v)
+// ----------------------------------------------------------------------------
+void gsGameObject::setRotation(const gsVector3 &v)
 {
 	if (m_object)
 		cast<gkGameObject>()->setOrientation(gkEuler(v));
 }
 
-void GameObject::setRotation(float yaw, float pitch, float roll)
+
+// ----------------------------------------------------------------------------
+void gsGameObject::setRotation(float yaw, float pitch, float roll)
 {
 	if (m_object)
 		cast<gkGameObject>()->setOrientation(gkEuler(yaw, pitch, roll));
 }
 
 
-
-void GameObject::setOrientation(const Quaternion &quat)
+// ----------------------------------------------------------------------------
+void gsGameObject::setOrientation(const gsQuaternion &quat)
 {
 	if (m_object)
 		cast<gkGameObject>()->setOrientation(quat);
 }
 
-void GameObject::setOrientation(float w, float x, float y, float z)
+
+// ----------------------------------------------------------------------------
+void gsGameObject::setOrientation(float w, float x, float y, float z)
 {
 	if (m_object)
 		cast<gkGameObject>()->setOrientation(gkQuaternion(w, x, y, z));
@@ -881,98 +954,112 @@ void GameObject::setOrientation(float w, float x, float y, float z)
 
 
 
-GameObjectTypes GameObject::getType(void)
+// ----------------------------------------------------------------------------
+gsGameObjectTypes gsGameObject::getType(void)
 {
 	if (m_object)
-		return (GameObjectTypes)cast<gkGameObject>()->getType();
+		return (gsGameObjectTypes)cast<gkGameObject>()->getType();
 	return OB_UNKNOWN;
 }
 
 
 
-void GameObject::rotate(float dx, float dy, float dz)
+// ----------------------------------------------------------------------------
+void gsGameObject::rotate(float dx, float dy, float dz)
 {
 	if (m_object)
 		cast<gkGameObject>()->rotate(gkEuler(dx, dy, dz), TRANSFORM_PARENT);
 }
 
 
-void GameObject::rotate(const Vector3 &v)
+
+// ----------------------------------------------------------------------------
+void gsGameObject::rotate(const gsVector3 &v)
 {
 	if (m_object)
 		cast<gkGameObject>()->rotate(gkEuler(v), TRANSFORM_PARENT);
 }
 
 
-void GameObject::rotate(const Quaternion &v)
+// ----------------------------------------------------------------------------
+void gsGameObject::rotate(const gsQuaternion &v)
 {
 	if (m_object)
 		cast<gkGameObject>()->rotate(v, TRANSFORM_PARENT);
 }
 
 
-void GameObject::rotate(float dx, float dy, float dz, TransformSpace ts)
+// ----------------------------------------------------------------------------
+void gsGameObject::rotate(float dx, float dy, float dz, gsTransformSpace ts)
 {
 	if (m_object)
 		cast<gkGameObject>()->rotate(gkEuler(dx, dy, dz), ts);
 }
 
-void GameObject::rotate(const Vector3 &v, TransformSpace ts)
+
+// ----------------------------------------------------------------------------
+void gsGameObject::rotate(const gsVector3 &v, gsTransformSpace ts)
 {
 	if (m_object)
 		cast<gkGameObject>()->rotate(gkEuler(v), ts);
 }
 
-void GameObject::rotate(const Quaternion &v, TransformSpace ts)
+
+// ----------------------------------------------------------------------------
+void gsGameObject::rotate(const gsQuaternion &v, gsTransformSpace ts)
 {
 	if (m_object)
 		cast<gkGameObject>()->rotate(v, ts);
 }
 
 
-void GameObject::translate(const Vector3 &v)
+// ----------------------------------------------------------------------------
+void gsGameObject::translate(const gsVector3 &v)
 {
 	if (m_object)
 		cast<gkGameObject>()->translate(v, TRANSFORM_PARENT);
 }
 
-void GameObject::translate(float x, float y, float z)
+
+// ----------------------------------------------------------------------------
+void gsGameObject::translate(float x, float y, float z)
 {
 	if (m_object)
 		cast<gkGameObject>()->translate(gkVector3(x,y,z), TRANSFORM_PARENT);
 }
 
-void GameObject::translate(const Vector3 &v, TransformSpace ts)
+// ----------------------------------------------------------------------------
+void gsGameObject::translate(const gsVector3 &v, gsTransformSpace ts)
 {
 	if (m_object)
 		cast<gkGameObject>()->translate(v, ts);
 }
 
-void GameObject::translate(float x, float y, float z, TransformSpace ts)
+// ----------------------------------------------------------------------------
+void gsGameObject::translate(float x, float y, float z, gsTransformSpace ts)
 {
 	if (m_object)
 		cast<gkGameObject>()->translate(gkVector3(x,y,z), ts);
 }
 
-
-
-
-void GameObject::scale(const Vector3 &v)
+// ----------------------------------------------------------------------------
+void gsGameObject::scale(const gsVector3 &v)
 {
 	if (m_object)
 		cast<gkGameObject>()->scale(v);
 }
 
 
-void GameObject::scale(float x, float y, float z)
+// ----------------------------------------------------------------------------
+void gsGameObject::scale(float x, float y, float z)
 {
 	if (m_object)
 		cast<gkGameObject>()->scale(gkVector3(x,y,z));
 }
 
 
-
-void GameObject::yaw(float deg)
+// ----------------------------------------------------------------------------
+void gsGameObject::yaw(float deg)
 {
 	if (m_object)
 		cast<gkGameObject>()->yaw(gkDegree(deg), TRANSFORM_PARENT);
@@ -980,63 +1067,61 @@ void GameObject::yaw(float deg)
 
 
 
-void GameObject::yaw(float deg, TransformSpace ts)
+// ----------------------------------------------------------------------------
+void gsGameObject::yaw(float deg, gsTransformSpace ts)
 {
 	if (m_object)
 		cast<gkGameObject>()->yaw(gkRadian(deg), ts);
 }
 
 
-
-
-void GameObject::pitch(float deg)
+// ----------------------------------------------------------------------------
+void gsGameObject::pitch(float deg)
 {
 	if (m_object)
 		cast<gkGameObject>()->pitch(gkRadian(deg), TRANSFORM_PARENT);
 }
 
-void GameObject::pitch(float deg, TransformSpace ts)
+
+// ----------------------------------------------------------------------------
+void gsGameObject::pitch(float deg, gsTransformSpace ts)
 {
 	if (m_object)
 		cast<gkGameObject>()->pitch(gkRadian(deg), ts);
 }
 
-void GameObject::roll(float deg)
+
+// ----------------------------------------------------------------------------
+void gsGameObject::roll(float deg)
 {
 	if (m_object)
 		cast<gkGameObject>()->roll(gkRadian(deg), TRANSFORM_PARENT);
 }
 
-void GameObject::roll(float deg, TransformSpace ts)
+
+// ----------------------------------------------------------------------------
+void gsGameObject::roll(float deg, gsTransformSpace ts)
 {
 	if (m_object)
 		cast<gkGameObject>()->roll(gkRadian(deg), ts);
 }
 
 
-Property GameObject::__getitem__(const String &prop)
+// ----------------------------------------------------------------------------
+gsProperty gsGameObject::__getitem__(const gkString &prop)
 {
 	if (m_object)
 	{
 		gkVariable *var = cast<gkGameObject>()->getVariable(prop);
 		if (var)
-			return Property(var);
+			return gsProperty(var);
 	}
-	return Property();
+	return gsProperty();
 }
 
 
-void GameObject::__setitem__(const String &prop, bool  v)
-{
-	if (m_object)
-	{
-		gkVariable *var = cast<gkGameObject>()->getVariable(prop);
-		if (var)
-			(*var).setValue(v);
-	}
-}
-
-void GameObject::__setitem__(const String &prop, float v)
+// ----------------------------------------------------------------------------
+void gsGameObject::__setitem__(const gkString &prop, bool  v)
 {
 	if (m_object)
 	{
@@ -1047,7 +1132,20 @@ void GameObject::__setitem__(const String &prop, float v)
 }
 
 
-void GameObject::__setitem__(const String &prop, const char *v)
+// ----------------------------------------------------------------------------
+void gsGameObject::__setitem__(const gkString &prop, float v)
+{
+	if (m_object)
+	{
+		gkVariable *var = cast<gkGameObject>()->getVariable(prop);
+		if (var)
+			(*var).setValue(v);
+	}
+}
+
+
+// ----------------------------------------------------------------------------
+void gsGameObject::__setitem__(const gkString &prop, const char *v)
 {
 	if (m_object)
 	{
@@ -1057,15 +1155,18 @@ void GameObject::__setitem__(const String &prop, const char *v)
 	}
 }
 
-Pointer<Scene> GameObject::getScene(void)
+
+// ----------------------------------------------------------------------------
+gsScene* gsGameObject::getScene(void)
 {
 	if (m_object)
-		return Pointer<Scene>(new Scene(cast<gkGameObject>()->getOwner()));
-	return Pointer<Scene>();
+		return new gsScene(cast<gkGameObject>()->getOwner());
+	return 0;
 }
 
 
-int GameObject::getState(void)
+// ----------------------------------------------------------------------------
+int gsGameObject::getState(void)
 {
 	if (m_object)
 		return cast<gkGameObject>()->getState();
@@ -1074,40 +1175,54 @@ int GameObject::getState(void)
 
 
 
-
-Pointer<Entity> GameObject::getEntity(void)
+// ----------------------------------------------------------------------------
+gsEntity* gsGameObject::getEntity(void)
 {
 	if (m_object && cast<gkGameObject>()->getType() == GK_ENTITY)
-		return Pointer<Entity>(new Entity(m_object));
-	return Pointer<Entity>();
+		return (new gsEntity(m_object));
+	return 0;
 }
 
 
-
-Pointer<Camera> GameObject::getCamera(void)
+// ----------------------------------------------------------------------------
+gsCamera* gsGameObject::getCamera(void)
 {
 	if (m_object && cast<gkGameObject>()->getType() == GK_CAMERA)
-		return Pointer<Camera>(new Camera(m_object));
-	return Pointer<Camera>();
+		return (new gsCamera(m_object));
+	return 0;
 }
 
-Pointer<Light> GameObject::getLight(void)
+
+// ----------------------------------------------------------------------------
+gsLight* gsGameObject::getLight(void)
 {
 	if (m_object && cast<gkGameObject>()->getType() == GK_LIGHT)
-		return Pointer<Light>(new Light(m_object));
-	return Pointer<Light>();
+		return (new gsLight(m_object));
+	return 0;
 }
 
 
-bool GameObject::hasParent()
+// ----------------------------------------------------------------------------
+gsSkeleton* gsGameObject::getSkeleton(void)
+{
+	if (m_object && cast<gkGameObject>()->getType() == GK_SKELETON)
+		return (new gsSkeleton(m_object));
+	return 0;
+}
+
+
+
+// ----------------------------------------------------------------------------
+bool gsGameObject::hasParent()
 {
 	return m_object && cast<gkGameObject>()->getParent() != 0;
 }
 
 
-void GameObject::setParent(const Pointer<GameObject>& par)
+// ----------------------------------------------------------------------------
+void gsGameObject::setParent(gsGameObject *par)
 {
-	if (m_object && !par.isNull())
+	if (m_object && par)
 	{
 		gkGameObject *gobj = cast<gkGameObject>();
 
@@ -1117,16 +1232,16 @@ void GameObject::setParent(const Pointer<GameObject>& par)
 }
 
 
-Pointer<GameObject> GameObject::getParent(void)
+// ----------------------------------------------------------------------------
+gsGameObject* gsGameObject::getParent(void)
 {
 	return m_object && hasParent() ?
-	       Pointer<GameObject>(new GameObject(cast<gkGameObject>()->getParent())) :
-	       Pointer<GameObject>();
+	       (new gsGameObject(cast<gkGameObject>()->getParent())) : 0;
 }
 
 
-
-void GameObject::enableContacts(bool v)
+// ----------------------------------------------------------------------------
+void gsGameObject::enableContacts(bool v)
 {
 	if (m_object)
 	{
@@ -1137,14 +1252,18 @@ void GameObject::enableContacts(bool v)
 	}
 }
 
-bool GameObject::hasContacts()
+
+// ----------------------------------------------------------------------------
+bool gsGameObject::hasContacts()
 {
 	if (m_object)
 		return !m_object->getContacts().empty();
 	return false;
 }
 
-bool GameObject::hasContact(const String &object)
+
+// ----------------------------------------------------------------------------
+bool gsGameObject::hasContact(const gkString &object)
 {
 	if (m_object)
 	{
@@ -1159,24 +1278,21 @@ bool GameObject::hasContact(const String &object)
 	return false;
 }
 
-
-///////////////////////////////////////////////////////////////////////////////
-//
-// OgreKit.Entity
-//
-///////////////////////////////////////////////////////////////////////////////
-
-
-Entity::Entity()
-{
-}
-
-Entity::Entity(gkObject *ob) : GameObject(ob)
+// ----------------------------------------------------------------------------
+gsEntity::gsEntity()
 {
 }
 
 
-void Entity::playAction(const String &name, float blend)
+// ----------------------------------------------------------------------------
+gsEntity::gsEntity(gkObject *ob) : gsGameObject(ob)
+{
+}
+
+
+
+// ----------------------------------------------------------------------------
+void gsEntity::playAction(const gkString &name, float blend)
 {
 	if (m_object)
 		cast<gkEntity>()->playAction(name, blend);
@@ -1184,49 +1300,41 @@ void Entity::playAction(const String &name, float blend)
 
 
 
-///////////////////////////////////////////////////////////////////////////////
-//
-// OgreKit.Light
-//
-///////////////////////////////////////////////////////////////////////////////
-
-
-
-Light::Light()
+// ----------------------------------------------------------------------------
+gsLight::gsLight()
 {
 }
 
-Light::Light(gkObject *ob) : GameObject(ob)
+
+// ----------------------------------------------------------------------------
+gsLight::gsLight(gkObject *ob) : gsGameObject(ob)
 {
 }
 
 
 
-
-///////////////////////////////////////////////////////////////////////////////
-//
-// OgreKit.Camera
-//
-///////////////////////////////////////////////////////////////////////////////
-
-
-
-Camera::Camera()
-{
-}
-
-Camera::Camera(gkObject *ob) : GameObject(ob)
+// ----------------------------------------------------------------------------
+gsCamera::gsCamera()
 {
 }
 
 
-void  Camera::setClipping(float start, float end)
+// ----------------------------------------------------------------------------
+gsCamera::gsCamera(gkObject *ob) : gsGameObject(ob)
+{
+}
+
+
+// ----------------------------------------------------------------------------
+void  gsCamera::setClipping(float start, float end)
 {
 	if (m_object)
 		cast<gkCamera>()->setClip(gkMax(start, 0.0001f), end);
 }
 
-float Camera::getClipStart()
+
+// ----------------------------------------------------------------------------
+float gsCamera::getClipStart()
 {
 	if (m_object)
 		return cast<gkCamera>()->getCameraProperties().m_clipstart;
@@ -1234,27 +1342,34 @@ float Camera::getClipStart()
 }
 
 
-float Camera::getClipEnd()
+// ----------------------------------------------------------------------------
+float gsCamera::getClipEnd()
 {
 	if (m_object)
 		return cast<gkCamera>()->getCameraProperties().m_clipend;
 	return 0;
 }
 
-void  Camera::setFov(float fov)
+
+// ----------------------------------------------------------------------------
+void  gsCamera::setFov(float fov)
 {
 	if (m_object)
 		cast<gkCamera>()->setFov(gkDegree(fov));
 }
 
-float Camera::getFov()
+
+// ----------------------------------------------------------------------------
+float gsCamera::getFov()
 {
 	if (m_object)
 		return cast<gkCamera>()->getCameraProperties().m_fov;
 	return 0;
 }
 
-void Camera::makeCurrent()
+
+// ----------------------------------------------------------------------------
+void gsCamera::makeCurrent()
 {
 	if (m_object)
 		cast<gkCamera>()->makeCurrent();
@@ -1263,19 +1378,24 @@ void Camera::makeCurrent()
 
 
 
-
-///////////////////////////////////////////////////////////////////////////////
-//
-// OgreKit.Debugger
-//
-///////////////////////////////////////////////////////////////////////////////
+// ----------------------------------------------------------------------------
+gsSkeleton::gsSkeleton()
+{
+}
 
 
+// ----------------------------------------------------------------------------
+gsSkeleton::gsSkeleton(gkObject *ob) : gsGameObject(ob)
+{
+}
 
-Debugger::Debugger(const Pointer<Scene> &sc)
+
+
+// ----------------------------------------------------------------------------
+gsDebugger::gsDebugger(gsScene* sc)
 	:   m_debugger(0)
 {
-	if (!sc.isNull())
+	if (sc)
 	{
 		gkScene *scene = sc->cast<gkScene>();
 		if (scene)
@@ -1285,16 +1405,20 @@ Debugger::Debugger(const Pointer<Scene> &sc)
 }
 
 
-void Debugger::drawLine(const Vector3 &from, const Vector3 &to, const Vector3 &color)
+
+// ----------------------------------------------------------------------------
+void gsDebugger::drawLine(const gsVector3 &from, const gsVector3 &to, const gsVector3 &color)
 {
 	if (m_debugger)
 		m_debugger->drawLine(from, to, color);
 }
 
 
-void Debugger::drawObjectAxis(const Pointer<GameObject> &ptr, float size)
+
+// ----------------------------------------------------------------------------
+void gsDebugger::drawObjectAxis(gsGameObject* ptr, float size)
 {
-	if (m_debugger && !ptr.isNull())
+	if (m_debugger && ptr)
 	{
 		gkGameObject *ob = ptr->cast<gkGameObject>();
 		if (ob)
@@ -1314,18 +1438,19 @@ void Debugger::drawObjectAxis(const Pointer<GameObject> &ptr, float size)
 	}
 }
 
-void Debugger::clear(void)
+
+// ----------------------------------------------------------------------------
+void gsDebugger::clear(void)
 {
 	if (m_debugger)
 		m_debugger->clear();
 }
 
 
-void DebugPrint(const char *str)
+
+// ----------------------------------------------------------------------------
+void gsDebugPrint(const char *str)
 {
 	gkDebugScreen::printTo(str);
 }
 
-
-
-}

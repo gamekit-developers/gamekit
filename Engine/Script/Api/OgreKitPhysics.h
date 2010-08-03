@@ -30,52 +30,46 @@
 #include "Script/Lua/gkLuaUtils.h"
 
 
-namespace OgreKit
-{
-class GameObject;
 
-
-class RayTest
+// ----------------------------------------------------------------------------
+class gsRayTest
 {
 private:
 	gkRayTest *m_ray;
 
 public:
-	RayTest();
-	~RayTest();
+	gsRayTest();
+	~gsRayTest();
 
-	bool cast(const Vector3 &origin, const Vector3 &dir);
 
-	bool cast(float ox, float oy, float oz, float dx, float dy, float dz)
-	{ return cast(Vector3(ox, oy, oz), Vector3(dx, dy, dz)); }
+	bool cast(const gsRay &ray);
 
-	Vector3                 getHitPoint(void);
-	Vector3                 getHitNormal(void);
-	Pointer<GameObject>     getObject(void);
-	float                   getHitFraction(void);
+	gsVector3 getHitPoint(void);
+	gsVector3 getHitNormal(void);
+	gsGameObject *getObject(void);
+	float getHitFraction(void);
 };
 
 
 
-class SweptTest
+// ----------------------------------------------------------------------------
+class gsSweptTest
 {
 private:
 	gkSweptTest *m_test;
-	gkSweptTest::AVOID_LIST empty_fixme;
+	gkSweptTest::AVOID_LIST m_avoid;
 
 public:
-	SweptTest(const Pointer<GameObject> &avoid);
-	~SweptTest();
+	gsSweptTest();
+	gsSweptTest(gsArray<gsGameObject, gkGameObject> &avoid);
+	~gsSweptTest();
 
-	bool collides(const Ray &ray, float rayRadius);
+	bool collides(const gsRay &ray, float rayRadius);
 
-	Vector3 getHitPoint(void);
-	Vector3 getHitNormal(void);
-	Vector3 getReflection(void);
-	Vector3 getSliding(void);
+	gsVector3 getHitPoint(void);
+	gsVector3 getHitNormal(void);
+	gsVector3 getReflection(void);
+	gsVector3 getSliding(void);
 
-	Pointer<GameObject> getObject(void);
-
+	gsGameObject *getObject(void);
 };
-
-}
