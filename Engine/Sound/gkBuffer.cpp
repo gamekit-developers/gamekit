@@ -130,8 +130,6 @@ void gkBuffer::setVelocity(const gkVector3 &v)
 // ----------------------------------------------------------------------------
 bool gkBuffer::initialize(void)
 {
-	GK_SOUND_AUTO_LOCK_MUTEX(m_cs);
-
 	alGenBuffers(GK_SND_SAMPLES, m_buffer);
 	if (alErrorThrow("opening buffers"))
 	{
@@ -154,8 +152,6 @@ bool gkBuffer::initialize(void)
 // ----------------------------------------------------------------------------
 void gkBuffer::queue(bool play)
 {
-	GK_SOUND_AUTO_LOCK_MUTEX(m_cs);
-
 	if (!m_ok)
 		return;
 
@@ -222,8 +218,6 @@ void gkBuffer::queue(bool play)
 // ----------------------------------------------------------------------------
 void gkBuffer::finalize(void)
 {
-	GK_SOUND_AUTO_LOCK_MUTEX(m_cs);
-
 	m_exit = true;
 
 	if (m_sound)
@@ -252,8 +246,6 @@ void gkBuffer::setProperties(const gkSoundProperties &props)
 // ----------------------------------------------------------------------------
 void gkBuffer::reset(void)
 {
-	GK_SOUND_AUTO_LOCK_MUTEX(m_cs);
-
 	if (!m_ok)
 		return;
 
@@ -285,8 +277,6 @@ void gkBuffer::reset(void)
 // ----------------------------------------------------------------------------
 const char *gkBuffer::read(UTsize len, UTsize &br)
 {
-	GK_SOUND_AUTO_LOCK_MUTEX(m_cs);
-
 	if (!m_stream || m_eos)
 	{
 		m_eos = true;
