@@ -39,6 +39,10 @@ endif()
 find_package(Cg)
 macro_log_feature(Cg_FOUND "cg" "C for graphics shader language" "http://developer.nvidia.com/object/cg_toolkit.html" FALSE "" "")
 
+# Find OpenAL
+include(FindOpenAL)
+macro_log_feature(OPENAL_FOUND "OpenAL" "Support for the OpenAL sound system" "http://connect.creativelabs.com/openal/default.aspx" FALSE "" "")
+
 #######################################################################
 # Apple-specific
 #######################################################################

@@ -119,7 +119,6 @@ macro (configure_ogrekit ROOT OGREPATH)
 		set(OGREKIT_MINGW_DIRECT3D FALSE)
 	endif()
 
-    include(FindOpenAL)
     if (OPENAL_FOUND)
 		option(OGREKIT_OPENAL_SOUND "Enable building of the OpenAL subsystem" ON)
 	    set(OGREKIT_OPENAL_INCLUDE ${OPENAL_INCLUDE_DIR})
