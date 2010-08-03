@@ -352,7 +352,7 @@ public:
 
 	// internal
 	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsGameObject, gkObject);
-	OGRE_KIT_TEMPLATE_CAST(gsGameObject, m_object);
+	OGRE_KIT_TEMPLATE_CAST(gkGameObject, m_object);
 };
 
 

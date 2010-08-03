@@ -62,14 +62,14 @@
 
 
 #define OGRE_KIT_TEMPLATE_CAST(T, membername)\
-    template<typename T> T *get(void) {return static_cast<T *>(membername);}
+    T *get(void) {return static_cast<T *>(membername);}
 
 
 #define OGRE_KIT_INTERNAL_CAST(membername)\
     template<typename T> T *cast(void) {return static_cast<T *>(membername);}
 
 
-#define OGRE_KIT_OBJECT(T, val) val ? val->get<T>() : 0
+#define OGRE_KIT_OBJECT(T, val) val ? val->get() : 0
 
 
 #endif

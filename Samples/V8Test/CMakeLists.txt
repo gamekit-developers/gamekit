@@ -13,7 +13,7 @@ set(SRC MomoAnimation.blend OgreKit.js Main.cpp)
 if (OGREKIT_COMPLIE_SWIG)
     set(Script_HEADER
         Module/OgreKitApplication.h
-        Module/OgreKitTypemaps.i
+        Module/OgreKitTypeMaps.i
      )
 
     set(Swig_INPUT
