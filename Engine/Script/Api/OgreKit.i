@@ -26,7 +26,7 @@
 */
 %module OgreKit
 %{
-#include "OgreKitCommon.h"
+#include "gsCommon.h"
 %}
 
 // internal binding utils don't bother 
@@ -38,23 +38,22 @@
 %ignore OGRE_KIT_TEMPLATE_CAST;
 
 // dependent types
-%include "OgreKitTypes.i"
+%include "gsTypes.i"
 
-%include "OgreKitCommon.h"
-%include "OgreKitUtils.i"
-%include "OgreKitMath.i"
-%include "OgreKitCore.i"
-
+%include "gsCommon.h"
+%include "gsUtils.i"
+%include "gsMath.i"
+%include "gsCore.i"
 // sub modules
-%include "OgreKitAI.i"
-%include "OgreKitAnimation.i"
-%include "OgreKitBricks.i"
-%include "OgreKitConstraints.i"
-%include "OgreKitNetwork.i"
-%include "OgreKitNodes.i"
-%include "OgreKitParticles.i"
-%include "OgreKitPhysics.i"
-%include "OgreKitSound.i"
-%include "OgreKitThread.i"
-%include "OgreKitTypeConverters.i"
+%include "gsAI.i"
+%include "gsAnimation.i"
+%include "gsBricks.i"
+%include "gsConstraints.i"
+%include "gsNetwork.i"
+%include "gsNodes.i"
+%include "gsParticles.i"
+%include "gsPhysics.i"
+%include "gsSound.i"
+%include "gsThread.i"
+%include "gsTypeConverters.i"
 

@@ -37,7 +37,7 @@ static size_t gkOggRead(void *ptr, size_t bl, size_t nr, void *blk)
 {
 	utStream *block = (utStream *)blk;
 	if (!block)
-		return -1;
+		return ((size_t)-1);
 
 	size_t nl = bl * nr;
 	return block->read(ptr, nl);

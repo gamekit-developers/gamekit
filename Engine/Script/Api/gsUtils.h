@@ -24,10 +24,10 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _OgreKitUtils_h_
-#define _OgreKitUtils_h_
+#ifndef _gsUtils_h_
+#define _gsUtils_h_
 
-#include "OgreKitCommon.h"
+#include "gsCommon.h"
 
 
 
@@ -166,4 +166,4 @@ public:
 
 
 
-#endif//_OgreKitUtils_h_
+#endif//_gsUtils_h_

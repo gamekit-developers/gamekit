@@ -26,7 +26,7 @@
 */
 #include "gkLuaUtils.h"
 #include "utString.h"
-#include "Generated/OgreKitTemplates.h"
+#include "Generated/gsTemplates.h"
 
 // ----------------------------------------------------------------------------
 void install_Templates(lua_State *L)

@@ -24,28 +24,58 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-%{
-#include "OgreKitMath.h"
-%}
+#ifndef _gsAI_h_
+#define _gsAI_h_
 
-%rename(Quaternion)   gsQuaternion;
-%rename(Ray)          gsRay;
-%rename(Vector3)      gsVector3;
-
-%rename(Vec3Negate)   gsVec3Negate;
-%rename(Vec3AddVec3)  gsVec3AddVec3;
-%rename(Vec3SubVec3)  gsVec3SubVec3;
-%rename(Vec3MulVec3)  gsVec3MulVec3;
-%rename(Vec3Mulf)     gsVec3Mulf;
-%rename(Vec3DivVec3)  gsVec3DivVec3;
-%rename(Vec3Divf)     gsVec3Divf;
-%rename(QuatNegate)   gsQuatNegate;
-%rename(QuatAddQuat)  gsQuatAddQuat;
-%rename(QuatSubQuat)  gsQuatSubQuat;
-%rename(QuatMulQuat)  gsQuatMulQuat;
-%rename(QuatMulf)     gsQuatMulf;
-%rename(QuatMulVec3)  gsQuatMulVec3;
+#include "gsCommon.h"
+#include "gsMath.h"
+#include "gsUtils.h"
+#include "Script/Lua/gkLuaUtils.h"
 
 
-%include "OgreKitMath.h"
+// ----------------------------------------------------------------------------
+class gsWhenEvent
+{
+public:
+	~gsWhenEvent();
+	void when(gsSelf self, gsFunction when);
 
+	OGRE_KIT_WRAP_CLASS_COPY_CTOR(gsWhenEvent, gkFSM::Event, m_event);
+};
+
+
+// ----------------------------------------------------------------------------
+class gsFSM
+{
+private:
+	typedef utHashTable<utIntHashKey, class gsUpdateEvent *> EVENT;
+
+	gkFSM	*m_fsm;
+	int		m_curState;
+	EVENT	m_events;
+
+public:
+
+	gsFSM();
+	~gsFSM();
+
+
+	void  update();
+	void  setState(int state);
+	int   getState();
+
+
+
+	void  addStartTrigger(int state, gsSelf self, gsFunction trigger);
+	void  addEndTrigger(int state, gsSelf self, gsFunction trigger);
+
+
+	void  addEvent(int state, gsSelf self, gsFunction update);
+
+	gsWhenEvent* addTransition(int from, int to);
+	gsWhenEvent* addTransition(int from, int to, unsigned long ms);
+	gsWhenEvent* addTransition(int from, int to, unsigned long ms, gsSelf self, gsFunction trigger);
+
+};
+
+#endif//_gsAI_h_

@@ -24,58 +24,14 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _OgreKitAI_h_
-#define _OgreKitAI_h_
-
-#include "OgreKitCommon.h"
-#include "OgreKitMath.h"
-#include "OgreKitUtils.h"
-#include "Script/Lua/gkLuaUtils.h"
+%{
+#include "gsAI.h"
+%}
 
 
-// ----------------------------------------------------------------------------
-class gsWhenEvent
-{
-public:
-	~gsWhenEvent();
-	void when(gsSelf self, gsFunction when);
-
-	OGRE_KIT_WRAP_CLASS_COPY_CTOR(gsWhenEvent, gkFSM::Event, m_event);
-};
+%newobject gsFSM::addTransition;
+%rename(WhenEvent)	gsWhenEvent;
+%rename(FSM)		gsFSM;
 
 
-// ----------------------------------------------------------------------------
-class gsFSM
-{
-private:
-	typedef utHashTable<utIntHashKey, class gsUpdateEvent *> EVENT;
-
-	gkFSM	*m_fsm;
-	int		m_curState;
-	EVENT	m_events;
-
-public:
-
-	gsFSM();
-	~gsFSM();
-
-
-	void  update();
-	void  setState(int state);
-	int   getState();
-
-
-
-	void  addStartTrigger(int state, gsSelf self, gsFunction trigger);
-	void  addEndTrigger(int state, gsSelf self, gsFunction trigger);
-
-
-	void  addEvent(int state, gsSelf self, gsFunction update);
-
-	gsWhenEvent* addTransition(int from, int to);
-	gsWhenEvent* addTransition(int from, int to, unsigned long ms);
-	gsWhenEvent* addTransition(int from, int to, unsigned long ms, gsSelf self, gsFunction trigger);
-
-};
-
-#endif//_OgreKitAI_h_
+%include "gsAI.h"

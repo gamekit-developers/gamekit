@@ -24,52 +24,15 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "OgreKitCommon.h"
-#include "OgreKitMath.h"
-#include "OgreKitUtils.h"
-#include "Script/Lua/gkLuaUtils.h"
+%{
+#include "gsPhysics.h"
+%}
 
+// Enable ownership
+%newobject gsRayTest::getObject;
+%newobject gsSweptTest::getObject;
 
+%rename(RayTest)      gsRayTest;
+%rename(SweptTest)    gsSweptTest;
 
-// ----------------------------------------------------------------------------
-class gsRayTest
-{
-private:
-	gkRayTest *m_ray;
-
-public:
-	gsRayTest();
-	~gsRayTest();
-
-
-	bool cast(const gsRay &ray);
-
-	gsVector3 getHitPoint(void);
-	gsVector3 getHitNormal(void);
-	gsGameObject *getObject(void);
-	float getHitFraction(void);
-};
-
-
-
-// ----------------------------------------------------------------------------
-class gsSweptTest
-{
-private:
-	gkSweptTest *m_test;
-	gkSweptTest::AVOID_LIST m_avoid;
-
-public:
-	gsSweptTest();
-	gsSweptTest(gsArray<gsGameObject, gkGameObject> &avoid);
-	~gsSweptTest();
-
-	bool collides(const gsRay &ray, float rayRadius);
-
-	gsVector3 getHitPoint(void);
-	gsVector3 getHitNormal(void);
-	gsVector3 getReflection(void);
-	gsVector3 getSliding(void);
-
-	gsGameObject *getObject(void);
-};
+%include "gsPhysics.h"

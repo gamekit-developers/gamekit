@@ -24,8 +24,8 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _OgreKitCommon_h_
-#define _OgreKitCommon_h_
+#ifndef _gsCommon_h_
+#define _gsCommon_h_
 
 
 // All include
@@ -99,4 +99,4 @@ class gsSweptTest;
 class gsConstraint;
 
 
-#endif//_OgreKitCommon_h_
+#endif//_gsCommon_h_

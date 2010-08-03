@@ -24,8 +24,8 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "OgreKitPhysics.h"
-#include "OgreKitCore.h"
+#include "gsPhysics.h"
+#include "gsCore.h"
 
 
 

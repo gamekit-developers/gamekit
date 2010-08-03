@@ -25,7 +25,7 @@
 -------------------------------------------------------------------------------
 */
 %{
-#include "OgreKitCore.h"
+#include "gsCore.h"
 %}
 
 // Enable ownership
@@ -81,7 +81,7 @@
 %template(ObjectIterator) gsArrayIterator<gsGameObject, gkGameObject>;
 
 
-%include "OgreKitCore.h"
+%include "gsCore.h"
 
 
 

@@ -24,10 +24,10 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _OgreKitMath_h_
-#define _OgreKitMath_h_
+#ifndef _gsMath_h_
+#define _gsMath_h_
 
-#include "OgreKitCommon.h"
+#include "gsCommon.h"
 
 
 // ----------------------------------------------------------------------------
@@ -219,4 +219,4 @@ inline gsVector3 gsQuatMulVec3(const gsQuaternion &a, const gsVector3 &b)
 }
 
 
-#endif//_OgreKitMath_h_
+#endif//_gsMath_h_

@@ -25,10 +25,10 @@
 -------------------------------------------------------------------------------
 */
 %{
-#include "OgreKitUtils.h"
+#include "gsUtils.h"
 %}
 
 
-%include "OgreKitUtils.h"
+%include "gsUtils.h"
 
 // ... specific bindings

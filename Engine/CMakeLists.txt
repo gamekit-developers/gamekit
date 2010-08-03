@@ -579,44 +579,47 @@ if (OGREKIT_COMPLIE_SWIG)
 
     set(ScriptAPI2_INCLUDES
         # ----- Include Files -----
-        Script/Api/OgreKitAI.i
-        Script/Api/OgreKitAnimation.i
-        Script/Api/OgreKitBricks.i
-        Script/Api/OgreKitConstraints.i
-        Script/Api/OgreKitCore.i
-        Script/Api/OgreKitMath.i
-        Script/Api/OgreKitNetwork.i
-        Script/Api/OgreKitNodes.i
-        Script/Api/OgreKitParticles.i
-        Script/Api/OgreKitPhysics.i
-        Script/Api/OgreKitSound.i
-        Script/Api/OgreKitThread.i
-        Script/Api/OgreKitTypes.i
-        Script/Api/OgreKitUtils.i
+        Script/Api/OgreKit.i
+        Script/Api/gsTypes.i
+        Script/Api/gsTypeConverters.i
+        Script/Api/gsAI.i
+        Script/Api/gsAnimation.i
+        Script/Api/gsBricks.i
+        Script/Api/gsConstraints.i
+        Script/Api/gsCore.i
+        Script/Api/gsMath.i
+        Script/Api/gsNetwork.i
+        Script/Api/gsNodes.i
+        Script/Api/gsParticles.i
+        Script/Api/gsPhysics.i
+        Script/Api/gsSound.i
+        Script/Api/gsThread.i
+        Script/Api/gsTypes.i
+        Script/Api/gsUtils.i
     )
 
     set(TMPL_API_SOURCE
         Script/Api/System.lua
         Script/Api/Class.lua
     )
-    add_templates(GEN_TEMPLATES_OUT Script/Api/Generated/OgreKitTemplates.h ${TMPL_API_SOURCE})
+    add_templates(GEN_TEMPLATES_OUT Script/Api/Generated/gsTemplates.h ${TMPL_API_SOURCE})
 
     set(ScriptAPI2_HEADER
         # ----- Common Files -----
-        Script/Api/OgreKitAI.h
-        Script/Api/OgreKitAnimation.h
-        Script/Api/OgreKitBricks.h
-        Script/Api/OgreKitCommon.h
-        Script/Api/OgreKitConstraints.h
-        Script/Api/OgreKitCore.h
-        Script/Api/OgreKitMath.h
-        Script/Api/OgreKitNetwork.h
-        Script/Api/OgreKitNodes.h
-        Script/Api/OgreKitParticles.h
-        Script/Api/OgreKitPhysics.h
-        Script/Api/OgreKitSound.h
-        Script/Api/OgreKitThread.h
-        Script/Api/OgreKitUtils.h
+        Script/Api/gsAI.h
+        Script/Api/gsAnimation.h
+        Script/Api/gsBricks.h
+        Script/Api/gsCommon.h
+        Script/Api/gsConstraints.h
+        Script/Api/gsCore.h
+        Script/Api/gsMath.h
+        Script/Api/gsNetwork.h
+        Script/Api/gsNodes.h
+        Script/Api/gsParticles.h
+        Script/Api/gsPhysics.h
+        Script/Api/gsSound.h
+        Script/Api/gsThread.h
+        Script/Api/gsUtils.h
         ${ScriptAPI2_INCLUDES}
         ${GEN_TEMPLATES_OUT}
     )
@@ -632,85 +635,72 @@ if (OGREKIT_COMPLIE_SWIG)
     set(ScriptAPI2_SOURCE
         ${TMPL_API_SOURCE}
         ${SWIG_API2_OUTPUT_LUA}
-        Script/Api/OgreKitAI.cpp
-        Script/Api/OgreKitAnimation.cpp
-        Script/Api/OgreKitBricks.cpp
-        Script/Api/OgreKitConstraints.cpp
-        Script/Api/OgreKitCore.cpp
-        Script/Api/OgreKitMath.cpp
-        Script/Api/OgreKitNetwork.cpp
-        Script/Api/OgreKitNodes.cpp
-        Script/Api/OgreKitParticles.cpp
-        Script/Api/OgreKitPhysics.cpp
-        Script/Api/OgreKitSound.cpp
-        Script/Api/OgreKitThread.cpp
-        Script/Api/OgreKitUtils.cpp
+        Script/Api/gsAI.cpp
+        Script/Api/gsAnimation.cpp
+        Script/Api/gsBricks.cpp
+        Script/Api/gsConstraints.cpp
+        Script/Api/gsCore.cpp
+        Script/Api/gsMath.cpp
+        Script/Api/gsNetwork.cpp
+        Script/Api/gsNodes.cpp
+        Script/Api/gsParticles.cpp
+        Script/Api/gsPhysics.cpp
+        Script/Api/gsSound.cpp
+        Script/Api/gsThread.cpp
+        Script/Api/gsUtils.cpp
     )
 
+    source_group(Script\\API\\Builtin	FILES ${TMPL_API_SOURCE})
     source_group(Script\\API\\Includes  FILES ${SWIG_INPUT} ${ScriptAPI2_INCLUDES})
     source_group(Script\\API\\Header    FILES ${ScriptAPI2_HEADER})
     source_group(Script\\API\\Source    FILES ${ScriptAPI2_SOURCE})
 
 
 else()
-    set(ScriptAPI2_INCLUDES
-        # ----- Include Files -----
-        Script/Api/OgreKit.i
-        Script/Api/OgreKitAI.i
-        Script/Api/OgreKitAnimation.i
-        Script/Api/OgreKitBricks.i
-        Script/Api/OgreKitConstraints.i
-        Script/Api/OgreKitCore.i
-        Script/Api/OgreKitMath.i
-        Script/Api/OgreKitNetwork.i
-        Script/Api/OgreKitNodes.i
-        Script/Api/OgreKitParticles.i
-        Script/Api/OgreKitPhysics.i
-        Script/Api/OgreKitSound.i
-        Script/Api/OgreKitThread.i
-        Script/Api/OgreKitTypes.i
-        Script/Api/OgreKitUtils.i
-    )
-
     set(ScriptAPI2_HEADER
         # ----- Common Files -----
-        Script/Api/Generated/OgreKitTemplates.h
-        Script/Api/OgreKitAI.h
-        Script/Api/OgreKitAnimation.h
-        Script/Api/OgreKitBricks.h
-        Script/Api/OgreKitCommon.h
-        Script/Api/OgreKitConstraints.h
-        Script/Api/OgreKitCore.h
-        Script/Api/OgreKitMath.h
-        Script/Api/OgreKitNetwork.h
-        Script/Api/OgreKitNodes.h
-        Script/Api/OgreKitParticles.h
-        Script/Api/OgreKitPhysics.h
-        Script/Api/OgreKitSound.h
-        Script/Api/OgreKitThread.h
-        Script/Api/OgreKitUtils.h
+        Script/Api/Generated/gsTemplates.h
+        Script/Api/gsAI.h
+        Script/Api/gsAnimation.h
+        Script/Api/gsBricks.h
+        Script/Api/gsCommon.h
+        Script/Api/gsConstraints.h
+        Script/Api/gsCore.h
+        Script/Api/gsMath.h
+        Script/Api/gsNetwork.h
+        Script/Api/gsNodes.h
+        Script/Api/gsParticles.h
+        Script/Api/gsPhysics.h
+        Script/Api/gsSound.h
+        Script/Api/gsThread.h
+        Script/Api/gsUtils.h
         ${ScriptAPI2_INCLUDES}
     )
 
 
     set(ScriptAPI2_SOURCE
         Script/Api/Generated/OgreKitLua.cpp
-        Script/Api/OgreKitAI.cpp
-        Script/Api/OgreKitAnimation.cpp
-        Script/Api/OgreKitBricks.cpp
-        Script/Api/OgreKitConstraints.cpp
-        Script/Api/OgreKitCore.cpp
-        Script/Api/OgreKitMath.cpp
-        Script/Api/OgreKitNetwork.cpp
-        Script/Api/OgreKitNodes.cpp
-        Script/Api/OgreKitParticles.cpp
-        Script/Api/OgreKitPhysics.cpp
-        Script/Api/OgreKitSound.cpp
-        Script/Api/OgreKitThread.cpp
-        Script/Api/OgreKitUtils.cpp
+        Script/Api/gsAI.cpp
+        Script/Api/gsAnimation.cpp
+        Script/Api/gsBricks.cpp
+        Script/Api/gsConstraints.cpp
+        Script/Api/gsCore.cpp
+        Script/Api/gsMath.cpp
+        Script/Api/gsNetwork.cpp
+        Script/Api/gsNodes.cpp
+        Script/Api/gsParticles.cpp
+        Script/Api/gsPhysics.cpp
+        Script/Api/gsSound.cpp
+        Script/Api/gsThread.cpp
+        Script/Api/gsUtils.cpp
     )
 
-    source_group(Script\\API\\Includes  FILES ${SWIG_INPUT} ${ScriptAPI2_INCLUDES})
+    set(TMPL_API_SOURCE
+        Script/Api/System.lua
+        Script/Api/Class.lua
+    )
+    
+    source_group(Script\\API\\Builtin	FILES ${TMPL_API_SOURCE})
     source_group(Script\\API\\Header    FILES ${ScriptAPI2_HEADER})
     source_group(Script\\API\\Source    FILES ${ScriptAPI2_SOURCE})
 

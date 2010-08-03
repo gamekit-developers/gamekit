@@ -25,14 +25,27 @@
 -------------------------------------------------------------------------------
 */
 %{
-#include "OgreKitPhysics.h"
+#include "gsMath.h"
 %}
 
-// Enable ownership
-%newobject gsRayTest::getObject;
-%newobject gsSweptTest::getObject;
+%rename(Quaternion)   gsQuaternion;
+%rename(Ray)          gsRay;
+%rename(Vector3)      gsVector3;
 
-%rename(RayTest)      gsRayTest;
-%rename(SweptTest)    gsSweptTest;
+%rename(Vec3Negate)   gsVec3Negate;
+%rename(Vec3AddVec3)  gsVec3AddVec3;
+%rename(Vec3SubVec3)  gsVec3SubVec3;
+%rename(Vec3MulVec3)  gsVec3MulVec3;
+%rename(Vec3Mulf)     gsVec3Mulf;
+%rename(Vec3DivVec3)  gsVec3DivVec3;
+%rename(Vec3Divf)     gsVec3Divf;
+%rename(QuatNegate)   gsQuatNegate;
+%rename(QuatAddQuat)  gsQuatAddQuat;
+%rename(QuatSubQuat)  gsQuatSubQuat;
+%rename(QuatMulQuat)  gsQuatMulQuat;
+%rename(QuatMulf)     gsQuatMulf;
+%rename(QuatMulVec3)  gsQuatMulVec3;
 
-%include "OgreKitPhysics.h"
+
+%include "gsMath.h"
+

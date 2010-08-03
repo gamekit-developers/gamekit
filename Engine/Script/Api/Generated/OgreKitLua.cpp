@@ -1554,22 +1554,22 @@ typedef struct{} LANGUAGE_OBJ;
 }
 
 
-#include "OgreKitCommon.h"
+#include "gsCommon.h"
 
 
-#include "OgreKitUtils.h"
+#include "gsUtils.h"
 
 
-#include "OgreKitMath.h"
+#include "gsMath.h"
 
 
-#include "OgreKitCore.h"
+#include "gsCore.h"
 
 
-#include "OgreKitAI.h"
+#include "gsAI.h"
 
 
-#include "OgreKitPhysics.h"
+#include "gsPhysics.h"
 
 
 static int gsGetProperty(lua_State *L, const gsProperty& prop)

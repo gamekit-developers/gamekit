@@ -24,12 +24,12 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _OgreKitCore_h_
-#define _OgreKitCore_h_
+#ifndef _gsCore_h_
+#define _gsCore_h_
 
-#include "OgreKitCommon.h"
-#include "OgreKitMath.h"
-#include "OgreKitUtils.h"
+#include "gsCommon.h"
+#include "gsMath.h"
+#include "gsUtils.h"
 
 
 // ----------------------------------------------------------------------------
