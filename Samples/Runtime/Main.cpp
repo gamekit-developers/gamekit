@@ -78,7 +78,14 @@ int OgreKit::setup(int argc, char **argv)
 
         cfgfname = cfgfname_arg.getValue();
         m_blend = bfname_arg.getValue();
-    }
+
+
+#ifdef __APPLE__
+		if (m_blend.find("-psn") != gkString::npos)
+			m_blend = gkDefaultBlend;
+#endif
+
+	}
     catch (TCLAP::ArgException &e) 
     {
         std::cerr <<"error: " <<e.error() <<" for arg " <<e.argId() <<std::endl;
@@ -106,16 +113,11 @@ int OgreKit::setup(int argc, char **argv)
 
     gkPath path = cfgfname;
 
-    // overide settings if found
+	// overide settings if found
     if (path.isFileInBundle()) 
         m_prefs.load(path.getPath());
 
-
-    // explicitlly overide params
-    // m_prefs.parseString(key, val);
-
-
-    return 0;
+	return 0;
 }
 
 
