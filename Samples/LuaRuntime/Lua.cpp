@@ -26,7 +26,6 @@
 */
 #include "gkMemoryTest.h"
 #include "Script/Lua/gkLuaUtils.h"
-#include "Script/Api/Generated/OgreKitTemplates.h"
 
 
 extern "C" int _OgreKitLua_install(lua_State *L);
