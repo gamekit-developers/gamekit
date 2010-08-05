@@ -238,14 +238,14 @@ public:
 
 	GK_INLINE bool isButtonDown(int button) const
 	{
-		if (button >= 0 && button < buttons.size())
+		if (button >= 0 && button < (int)buttons.size())
 			return (buttons[button] == GK_Pressed);
 		return false;
 	}
 	
 	GK_INLINE int getAxisValue(int axis) const
 	{
-		if (axis >= 0 && axis < axes.size())
+		if (axis >= 0 && axis < (int)axes.size())
 			return axes[axis];
 		return 0;
 	}

@@ -39,32 +39,41 @@
 #include "gkDebugger.h"
 #endif
 
-
-#define gkSndCtxValid() (m_device != 0 && m_context != 0)
+#if UT_PLATFORM == UT_PLATFORM_WIN32
+extern "C" int OpenAL_LoadLibrary( void );
+extern "C" void OpenAL_UnloadLibrary( void );
+#endif
+#define gkSndCtxValid() ((m_device != 0 && m_context != 0) || gkEngine::getSingleton().getUserDefs().disableSound)
 
 
 // ----------------------------------------------------------------------------
 gkSoundManager::gkSoundManager()
-	:   m_stream(0), m_valid(false)
+	:   m_stream(0), m_valid(false), m_device(0), m_context(0)
 {
-	m_device = alcOpenDevice(NULL);
-	if (m_device != 0)
+
+#if UT_PLATFORM == UT_PLATFORM_WIN32
+	if (OpenAL_LoadLibrary())
+#endif
 	{
-		m_context = alcCreateContext(m_device, 0);
-		if (m_context)
+        m_device = alcOpenDevice(NULL);
+		if (m_device != 0)
 		{
-			alcMakeContextCurrent(m_context);
-			m_valid = !alErrorCheck();
-
-			if (m_valid)
+			m_context = alcCreateContext(m_device, 0);
+			if (m_context)
 			{
-				alDistanceModel(AL_NONE);
-				alSpeedOfSound(343.3f);
-				alDopplerFactor(1.f);
+				alcMakeContextCurrent(m_context);
+				m_valid = !alErrorCheck();
 
-				m_stream = new gkStreamer("Sound Manager Stream");
+				if (m_valid)
+				{
+					alDistanceModel(AL_NONE);
+					alSpeedOfSound(343.3f);
+					alDopplerFactor(1.f);
+
+					m_stream = new gkStreamer("Sound Manager Stream");
+				}
+
 			}
-
 		}
 	}
 }
@@ -84,6 +93,10 @@ gkSoundManager::~gkSoundManager()
 		alcDestroyContext(m_context);
 		alcCloseDevice(m_device);
 	}
+#if UT_PLATFORM == UT_PLATFORM_WIN32
+    OpenAL_UnloadLibrary();
+#endif
+
 }
 
 // ----------------------------------------------------------------------------
@@ -96,6 +109,9 @@ bool gkSoundManager::isValidContext(void)
 // ----------------------------------------------------------------------------
 void gkSoundManager::notifySourceCreated(gkSource *src)
 {
+	if (!gkSndCtxValid())
+		return;
+
 	GK_ASSERT(m_sources.find(src) == UT_NPOS);
 	m_sources.push_back(src);
 }
@@ -104,6 +120,9 @@ void gkSoundManager::notifySourceCreated(gkSource *src)
 // ----------------------------------------------------------------------------
 void gkSoundManager::notifySourceDestroyed(gkSource *src)
 {
+	if (!gkSndCtxValid())
+		return;
+
 	if (src)
 	{
 		if (src->isPlaying())
@@ -257,7 +276,10 @@ void gkSoundManager::collectGarbage(void)
 // ----------------------------------------------------------------------------
 void gkSoundManager::removePlayback(gkSound *sndToDelete)
 {
-	if (!m_sources.empty())
+	if (!gkSndCtxValid())
+		return;
+
+    if (!m_sources.empty())
 	{
 		UTsize i, s;
 		Sources::Pointer p;
@@ -305,7 +327,10 @@ void gkSoundManager::playSound(gkSource *snd)
 // ----------------------------------------------------------------------------
 void gkSoundManager::stopSound(gkSource *snd)
 {
-	if (m_valid)
+	if (!gkSndCtxValid())
+		return;
+
+    if (m_valid)
 	{
 		m_stream->stopSound(snd);
 	}
@@ -315,7 +340,10 @@ void gkSoundManager::stopSound(gkSource *snd)
 // ----------------------------------------------------------------------------
 gkSound *gkSoundManager::getSound(const gkHashedString &name)
 {
-	UTsize pos;
+	if (!gkSndCtxValid())
+		return 0;
+
+    UTsize pos;
 	if ((pos = m_objects.find(name)) == GK_NPOS)
 		return 0;
 	return m_objects.at(pos);
@@ -342,7 +370,10 @@ gkSound *gkSoundManager::createSound(const gkHashedString &name)
 // ----------------------------------------------------------------------------
 void gkSoundManager::destroy(const gkHashedString &name)
 {
-	UTsize pos;
+	if (!gkSndCtxValid())
+		return;
+
+    UTsize pos;
 	if ((pos = m_objects.find(name)) != GK_NPOS)
 	{
 		gkSound *ob = m_objects.at(pos);
@@ -357,7 +388,10 @@ void gkSoundManager::destroy(const gkHashedString &name)
 // ----------------------------------------------------------------------------
 void gkSoundManager::destroy(gkSound *ob)
 {
-	GK_ASSERT(ob);
+	if (!gkSndCtxValid())
+		return;
+
+    GK_ASSERT(ob);
 	destroy(ob->getName());
 }
 
@@ -365,11 +399,15 @@ void gkSoundManager::destroy(gkSound *ob)
 // ----------------------------------------------------------------------------
 void gkSoundManager::destroyAll(void)
 {
-	stopAllSounds();
-	m_stream->exit();
+	if (!gkSndCtxValid())
+		return;
 
+    stopAllSounds();
 
-	utHashTableIterator<ObjectMap> iter(m_objects);
+    if (m_stream)
+	    m_stream->exit();
+
+    utHashTableIterator<ObjectMap> iter(m_objects);
 	while (iter.hasMoreElements())
 	{
 		gkSound *ob = iter.peekNextValue();
@@ -387,6 +425,9 @@ void gkSoundManager::destroyAll(void)
 // ----------------------------------------------------------------------------
 bool gkSoundManager::hasSound(const gkHashedString &name)
 {
+	if (!gkSndCtxValid())
+		return false;
+
 	return m_objects.find(name) != GK_NPOS;
 }
 

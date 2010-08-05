@@ -27,4 +27,8 @@ endif()
 
 if (OGREKIT_OPENAL_SOUND)
     subdirs(Source/Codecs)
+    
+    if (WIN32)
+		subdirs(Source/OpenAL)
+    endif()
 endif()

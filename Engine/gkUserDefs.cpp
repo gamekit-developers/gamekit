@@ -56,6 +56,7 @@ gkUserDefs::gkUserDefs()
 	    useBulletDbvt(true),
 	    showDebugProps(false),
 	    debugSounds(false),
+		disableSound(false),
 	    shadowtechnique("none"),
 	    colourshadow(0, 0, 0),
 	    fardistanceshadow(0)
@@ -211,6 +212,11 @@ void gkUserDefs::parseString(const gkString &key, const gkString &val)
 	if (KeyEq("debugsounds"))
 	{
 		debugSounds = Ogre::StringConverter::parseBool(val);
+		return;
+	}
+	if (KeyEq("disablesound"))
+	{
+		disableSound = Ogre::StringConverter::parseBool(val);
 		return;
 	}
 	if (KeyEq("enableshadows"))

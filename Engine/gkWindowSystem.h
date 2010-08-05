@@ -101,7 +101,7 @@ public:
 	GK_INLINE gkKeyboard *getKeyboard(void)      {return &m_keyboard;}
 	GK_INLINE gkMouse *getMouse(void)            {return &m_mouse;}
 	GK_INLINE unsigned int getNumJoysticks(void) {return m_joysticks.size();}
-	GK_INLINE gkJoystick *getJoystick(int index) {return (index>=m_joysticks.size() ||index<0) ? 0:m_joysticks[index];}
+	GK_INLINE gkJoystick *getJoystick(int index) {return (index>=(int)m_joysticks.size() ||index<0) ? 0:m_joysticks[index];}
 
 	static gkWindowSystem &getSingleton(void);
 	static gkWindowSystem *getSingletonPtr(void);
