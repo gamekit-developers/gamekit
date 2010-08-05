@@ -1,7 +1,3 @@
-# ---------------------------------------------------------
-cmake_minimum_required(VERSION 2.6)
-
-
 set(OIS_SRC 
     src/OISEffect.cpp
     src/OISException.cpp
@@ -13,24 +9,24 @@ set(OIS_SRC
 )
 
 set(OIS_HDR
-    include/OIS.h
-    #include/OISConfig.h
-    include/OISEffect.h
-    include/OISEvents.h
-    include/OISException.h
-    include/OISFactoryCreator.h
-    include/OISForceFeedback.h
-    include/OISInputManager.h
-    include/OISInterface.h
-    include/OISJoyStick.h
-    include/OISKeyboard.h
-    include/OISMouse.h
-    include/OISObject.h
-    #include/OISPrereqs.h
+	include/OIS.h
+	include/OISConfig.h
+	include/OISEffect.h
+	include/OISEvents.h
+	include/OISException.h
+	include/OISFactoryCreator.h
+	include/OISForceFeedback.h
+	include/OISInputManager.h
+	include/OISInterface.h
+	include/OISJoyStick.h
+	include/OISKeyboard.h
+	include/OISMouse.h
+	include/OISMultiTouch.h
+	include/OISObject.h
+	include/OISPrereqs.h
 )
 
 if (WIN32)
-
 	set(OIS_BUILD_WIN32 FALSE)
 	if (OGREKIT_OIS_WIN32_NATIVE)
 		set(OIS_BUILD_WIN32 TRUE)
@@ -39,7 +35,7 @@ if (WIN32)
 			set(OIS_BUILD_WIN32 TRUE)
 		endif()
 	endif()
-
+	
 	if (NOT OIS_BUILD_WIN32)
 		set(OIS_PLAT 
 			src/win32/Win32ForceFeedback.cpp
@@ -47,11 +43,22 @@ if (WIN32)
 			src/win32/Win32JoyStick.cpp
 			src/win32/Win32KeyBoard.cpp
 			src/win32/Win32Mouse.cpp
+			include/win32/Win32ForceFeedback.h
+			include/win32/Win32InputManager.h
+			include/win32/Win32JoyStick.h
+			include/win32/Win32KeyBoard.h
+			include/win32/Win32Mouse.h
+			include/win32/Win32Prereqs.h
 			)
-		link_libraries(${DirectX_DXGUID_LIBRARY} ${DirectX_DINPUT8_LIBRARY})
+		link_libraries(${DirectX_DXGUID_LIBRARY} ${DirectX_DINPUT8_LIBRARY} ${DirectX_XINPUT_LIBRARY})
 	else ()
 		add_definitions(-DOIS_WIN32_NATIVE)
 		set(OIS_PLAT 
+			include/win32native/Win32NativeInputManager.h
+			include/win32native/Win32NativeJoystick.h
+			include/win32native/Win32NativeKeyboard.h
+			include/win32native/Win32NativeMouse.h
+			include/win32native/Win32NativePrereqs.h
 			src/win32native/Win32NativeInputManager.cpp
 			src/win32native/Win32NativeKeyboard.cpp
 			src/win32native/Win32NativeJoystick.cpp
@@ -64,11 +71,20 @@ endif()
 
 if (APPLE) 
     set(OIS_PLAT 
-        src/mac/MacHIDManager.cpp
-        src/mac/MacHelpers.cpp
-        src/mac/MacInputManager.cpp
-        src/mac/MacKeyboard.cpp
-        src/mac/MacMouse.cpp
+		include/mac/MacHIDManager.h
+		include/mac/MacHelpers.h
+		include/mac/MacInputManager.h
+		include/mac/MacJoyStick.h
+		include/mac/MacKeyboard.h
+		include/mac/MacMouse.h
+		include/mac/MacPrereqs.h
+
+		src/mac/MacHIDManager.cpp
+		src/mac/MacHelpers.cpp
+		src/mac/MacInputManager.cpp
+		src/mac/MacJoyStick.cpp
+		src/mac/MacKeyboard.cpp
+		src/mac/MacMouse.cpp
     )
     
     if (IOKit_FOUND)
@@ -76,17 +92,25 @@ if (APPLE)
 	endif()
 else ()
 
-if (UNIX) 
-    set(OIS_PLAT 
-        src/linux/EventHelpers.cpp
-        src/linux/LinuxForceFeedback.cpp
-        src/linux/LinuxInputManager.cpp
-        src/linux/LinuxJoyStickEvents.cpp
-        src/linux/LinuxKeyboard.cpp
-        src/linux/LinuxMouse.cpp
-    )
-endif()
+	if (UNIX) 
+		set(OIS_PLAT 
+			include/linux/EventHelpers.h
+			include/linux/LinuxForceFeedback.h
+			include/linux/LinuxInputManager.h
+			include/linux/LinuxJoyStickEvents.h
+			include/linux/LinuxKeyboard.h
+			include/linux/LinuxMouse.h
+			include/linux/LinuxPrereqs.h
+
+			src/linux/EventHelpers.cpp
+			src/linux/LinuxForceFeedback.cpp
+			src/linux/LinuxInputManager.cpp
+			src/linux/LinuxJoyStickEvents.cpp
+			src/linux/LinuxKeyboard.cpp
+			src/linux/LinuxMouse.cpp
+		)
+	endif()
 endif()
 
 include_directories(${OGREKIT_OIS_INCLUDE} )
-add_library(OIS ${OGREKIT_LIB_TYPE} ${OIS_SRC} ${OIS_HDR} ${OIS_PLAT})
+add_library(OIS ${OIS_SRC} ${OIS_HDR} ${OIS_PLAT})

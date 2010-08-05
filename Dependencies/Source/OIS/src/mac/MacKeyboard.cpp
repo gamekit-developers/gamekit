@@ -129,7 +129,7 @@ void MacKeyboard::_initialize()
 }
 
 //-------------------------------------------------------------------//
-bool MacKeyboard::isKeyDown( KeyCode key )
+bool MacKeyboard::isKeyDown( KeyCode key ) const
 {
 	return (bool)KeyBuffer[key];
 }
@@ -206,7 +206,7 @@ void MacKeyboard::_keyDownCallback( EventRef theEvent )
 		//status = GetEventParameter( theEvent, 'kuni', typeUnicodeText, NULL, 0, &stringsize, NULL);
 		//status = GetEventParameter( theEvent, 'kuni', typeUnicodeText, NULL, sizeof(UniChar)*10, NULL, &text );
 		status = GetEventParameter( theEvent, 'kuni', typeUnicodeText, NULL, sizeof(UniChar) * 10, &stringsize, &text );
-		//std::cout << "String length: " << stringsize << std::endl;
+		std::cout << "String length: " << stringsize << std::endl;
 		
 		//wstring unitext;
 		//for (int i=0;i<10;i++) unitext += (wchar_t)text[i];
@@ -320,7 +320,7 @@ void MacKeyboard::injectEvent( KeyCode kc, unsigned int time, MacEventType type,
 
 
 //-------------------------------------------------------------------//
-void MacKeyboard::copyKeyStates( char keys[256] )
+void MacKeyboard::copyKeyStates( char keys[256] ) const
 {
 	memcpy( keys, KeyBuffer, 256 );
 }

@@ -59,8 +59,11 @@ namespace OIS
 			RampForce,
 			PeriodicForce,
 			ConditionalForce,
-			CustomForce
+			CustomForce,
+			_ForcesNumber // Always keep in last position.
 		};
+
+		static const char* getForceTypeName(EForce eValue);
 
 		//! Type of effect
 		enum EType
@@ -78,8 +81,11 @@ namespace OIS
 			Damper,      //ConditionalForce
 			Inertia,     //ConditionalForce
 			Spring,      //ConditionalForce
-			Custom       //CustomForce
+			Custom,      //CustomForce
+			_TypesNumber // Always keep in last position.
 		};
+
+		static const char* getEffectTypeName(EType eValue);
 
 		//! Direction of the Force
 		enum EDirection
@@ -91,8 +97,11 @@ namespace OIS
 			SouthEast,
 			South,
 			SouthWest,
-			West
+			West,
+			_DirectionsNumber // Always keep in last position.
 		};
+
+		static const char* getDirectionName(EDirection eValue);
 
 		/**
 			This constructor allows you to set the force type and effect.
@@ -167,7 +176,7 @@ namespace OIS
 	/**
 		An optional envelope to be applied to the start/end of an effect. If any of
 		these values are nonzero, then the envelope will be used in setting up the
-		effect. Not currently utilised.. But, will be soon.
+		effect.
 	*/
 	class _OISExport Envelope : public ForceEffect
 	{
@@ -177,14 +186,23 @@ namespace OIS
   #pragma warning (push)
   #pragma warning (disable : 4800)
 #endif
-		bool isUsed() { return attackLength | attackLevel | fadeLength | fadeLevel; }
+		bool isUsed() const { return attackLength | attackLevel | fadeLength | fadeLevel; }
 #if defined(OIS_MSVC_COMPILER)
   #pragma warning (pop)
 #endif
 
-		unsigned short attackLength;
+		// Duration of the attack (microseconds)
+		unsigned int attackLength;
+
+		// Absolute level at the beginning of the attack (0 to 10K)
+		// (automatically signed when necessary by FF core according to effect level sign)
 		unsigned short attackLevel;
-		unsigned short fadeLength;
+
+		// Duration of fade (microseconds)
+		unsigned int fadeLength;
+
+		// Absolute level at the end of fade (0 to 10K)
+		// (automatically signed when necessary by FF core according to effect level sign)
 		unsigned short fadeLevel;
 	};
 
@@ -210,7 +228,7 @@ namespace OIS
 	public:
 		RampEffect() : startLevel(0), endLevel(0) {}
 
-        class Envelope envelope; //Optional envolope
+        class Envelope envelope; //Optional envelope
 		signed short startLevel;  //-10K to +10k
 		signed short endLevel;    //-10K to +10k
 	};

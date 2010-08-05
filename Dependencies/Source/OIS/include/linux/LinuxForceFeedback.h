@@ -25,13 +25,14 @@ restrictions:
 
 #include "linux/LinuxPrereqs.h"
 #include "OISForceFeedback.h"
+#include <linux/input.h>
 
 namespace OIS
 {
 	class LinuxForceFeedback : public ForceFeedback
 	{
 	public:
-		LinuxForceFeedback();
+		LinuxForceFeedback(int deviceID);
 		~LinuxForceFeedback();
 
 		/** @copydoc ForceFeedback::setMasterGain */
@@ -49,8 +50,36 @@ namespace OIS
 		/** @copydoc ForceFeedback::remove */
 		void remove( const Effect* effect );
 
-		/** FF is not yet implemented fully on Linux.. just retun 0 for now. todo, xxx */
-		short int getFFAxesNumber() { return 0; }
+		/** FF is not yet implemented fully on Linux.. just return -1 for now. todo, xxx */
+		short int getFFAxesNumber() { return -1; }
+
+		/** @copydoc ForceFeedback::getFFMemoryLoad */
+		unsigned short getFFMemoryLoad();
+
+	protected:
+
+		//Sets the common properties to all effects
+		void _setCommonProperties(struct ff_effect *event, struct ff_envelope *ffenvelope, 
+								  const Effect* effect, const Envelope *envelope );
+
+		//Specific Effect Settings
+		void _updateConstantEffect( const Effect* effect );
+		void _updateRampEffect( const Effect* effect );
+		void _updatePeriodicEffect( const Effect* effect );
+		void _updateConditionalEffect( const Effect* effect );
+		//void _updateCustomEffect( const Effect* effect );
+
+		void _upload( struct ff_effect* ffeffect, const Effect* effect);
+		void _stop( int handle);
+		void _start( int handle);
+		void _unload( int handle);
+
+		// Map of currently uploaded effects (handle => effect)
+		typedef std::map<int, struct ff_effect *> EffectList;
+		EffectList mEffectList;
+
+		// Joystick device (file) descriptor.
+		int mJoyStick;
 	};
 }
 #endif //OIS_LinuxForceFeedBack_H

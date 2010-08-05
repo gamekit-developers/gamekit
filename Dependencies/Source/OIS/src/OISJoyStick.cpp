@@ -35,7 +35,7 @@ JoyStick::JoyStick(const std::string &vendor, bool buffered, int devID, InputMan
 }
 
 //----------------------------------------------------------------------------//
-int JoyStick::getNumberOfComponents(ComponentType cType)
+int JoyStick::getNumberOfComponents(ComponentType cType) const
 {
 	switch( cType )
 	{
@@ -55,7 +55,7 @@ void JoyStick::setVector3Sensitivity(float degrees)
 }
 
 //----------------------------------------------------------------------------//
-float JoyStick::getVector3Sensitivity()
+float JoyStick::getVector3Sensitivity() const
 {
 	return mVector3Sensitivity;
 }
@@ -67,7 +67,7 @@ void JoyStick::setEventCallback( JoyStickListener *joyListener )
 }
 
 //----------------------------------------------------------------------------//
-JoyStickListener* JoyStick::getEventCallback()
+JoyStickListener* JoyStick::getEventCallback() const
 {
 	return mListener;
 }

@@ -28,6 +28,7 @@ restrictions:
 #include "OISMouse.h"
 #include "OISKeyboard.h"
 #include "OISJoyStick.h"
+#include "OISMultiTouch.h"
 #include "OISInputManager.h"
 #include "OISFactoryCreator.h"
 #include "OISException.h"

@@ -37,13 +37,13 @@ namespace OIS
 		virtual ~LinuxKeyboard();
 
 		/** @copydoc Keyboard::isKeyDown */
-		virtual bool isKeyDown( KeyCode key );
+		virtual bool isKeyDown( KeyCode key ) const;
 
 		/** @copydoc Keyboard::getAsString */
 		virtual const std::string& getAsString( KeyCode kc );
 
 		/** @copydoc Keyboard::copyKeyStates */
-		virtual void copyKeyStates( char keys[256] );
+		virtual void copyKeyStates( char keys[256] ) const;
 
 		/** @copydoc Object::setBuffered */
 		virtual void setBuffered(bool buffered);

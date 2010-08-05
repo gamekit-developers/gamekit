@@ -187,7 +187,10 @@ Object* MacInputManager::createObject(InputManager* creator, Type iType, bool bu
 		break;
 	}
 	default:
+	{
+		obj = mHIDManager->createObject(creator, iType, bufferMode, vendor);
 		break;
+	}
 	}
 
 	if( obj == 0 )

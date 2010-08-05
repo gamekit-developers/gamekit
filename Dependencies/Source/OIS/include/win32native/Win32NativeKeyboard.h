@@ -41,13 +41,13 @@ namespace OIS
 		virtual ~Win32NativeKeyboard();
 
 		/** @copydoc Keyboard::isKeyDown */
-		bool isKeyDown( KeyCode key );
+		bool isKeyDown( KeyCode key ) const;
 
 		/** @copydoc Keyboard::getAsString */
 		const std::string& getAsString( KeyCode kc );
 
 		/** @copydoc Keyboard::copyKeyStates */
-		void copyKeyStates( char keys[256] );
+		void copyKeyStates( char keys[256] ) const;
 
 		/** @copydoc Object::setBuffered */
 		void setBuffered(bool buffered);

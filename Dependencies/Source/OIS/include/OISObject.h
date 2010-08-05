@@ -44,7 +44,7 @@ namespace OIS
 		virtual bool buffered() const { return mBuffered; }
 
 		/** @remarks Returns this input object's creator */
-		InputManager* getCreator() { return mCreator; }
+		InputManager* getCreator() const { return mCreator; }
 
 		/** @remarks Sets buffered mode	*/
 		virtual void setBuffered(bool buffered) = 0;

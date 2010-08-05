@@ -30,6 +30,41 @@ using namespace OIS;
 //const unsigned int Effect::OIS_INFINITE = 0xFFFFFFFF;
 
 //------------------------------------------------------------------------------//
+static const char* pszEForceString[] = 
+  { "UnknownForce",
+    "ConstantForce", 
+    "RampForce", 
+    "PeriodicForce", 
+    "ConditionalForce", 
+    "CustomForce" };
+
+const char* Effect::getForceTypeName(Effect::EForce eValue)
+{
+  return (eValue >= 0 && eValue < _ForcesNumber) ? pszEForceString[eValue] : "<Bad force type>";
+}
+
+static const char* pszETypeString[] = 
+  { "Unknown",
+    "Constant",
+    "Ramp",
+    "Square", "Triangle", "Sine", "SawToothUp", "SawToothDown",
+    "Friction", "Damper", "Inertia", "Spring",
+    "Custom" };
+
+const char* Effect::getEffectTypeName(Effect::EType eValue)
+{
+  return (eValue >= 0 && eValue < _TypesNumber) ? pszETypeString[eValue] : "<Bad effect type>";
+}
+
+static const char* pszEDirectionString[] = 
+  { "NorthWest", "North", "NorthEast", "East", "SouthEast", "South", "SouthWest", "West"};
+
+const char* Effect::getDirectionName(Effect::EDirection eValue)
+{
+  return (eValue >= 0 && eValue < _DirectionsNumber) ? pszEDirectionString[eValue] : "<Bad direction>";
+}
+
+//------------------------------------------------------------------------------//
 Effect::Effect() : 
 	force(UnknownForce), 
 	type(Unknown),

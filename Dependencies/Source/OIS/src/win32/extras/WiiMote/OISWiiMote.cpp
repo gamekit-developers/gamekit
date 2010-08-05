@@ -347,14 +347,14 @@ void WiiMote::capture()
 			unsigned bit_flag = 1 << b;
 			if( (events[i].pushedButtons & bit_flag) != 0 )
 			{	//send event
-				mState.mButtons[i] = true;
+				mState.mButtons[b] = true;
 				if( mBuffered && mListener )
 					if( !mListener->buttonPressed( JoyStickEvent( this, mState ), b ) ) return;
 			}
 
 			if( (events[i].releasedButtons & bit_flag) != 0 )
 			{	//send event
-				mState.mButtons[i] = false;
+				mState.mButtons[b] = false;
 				if( mBuffered && mListener )
 					if( !mListener->buttonReleased( JoyStickEvent( this, mState ), b ) ) return;
 			}

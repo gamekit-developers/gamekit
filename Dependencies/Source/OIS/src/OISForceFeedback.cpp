@@ -26,17 +26,49 @@ restrictions:
 using namespace OIS;
 
 //-------------------------------------------------------------//
-void ForceFeedback::_addEffectTypes( Effect::EForce force, Effect::EType type )
+ForceFeedback::ForceFeedback() : mSetGainSupport(false), mSetAutoCenterSupport(false)
 {
-	if( force == Effect::UnknownForce || type == Effect::Unknown )
-		OIS_EXCEPT( E_General, "Unknown Force||Type was added too effect list..." );
-
-	mSupportedEffects[force] = type;
 }
 
 //-------------------------------------------------------------//
-const ForceFeedback::SupportedEffectList& 
-						ForceFeedback::getSupportedEffects() const
+void ForceFeedback::_addEffectTypes( Effect::EForce force, Effect::EType type )
+{
+	if( force <= Effect::UnknownForce || force >= Effect::_ForcesNumber
+		|| type <= Effect::Unknown || type >= Effect::_TypesNumber )
+		OIS_EXCEPT( E_General, "Can't add unknown effect Force/Type to the supported list" );
+
+	mSupportedEffects.insert(std::pair<Effect::EForce, Effect::EType>(force, type));
+}
+
+//-------------------------------------------------------------//
+void ForceFeedback::_setGainSupport( bool on )
+{
+	mSetGainSupport = on;
+}
+
+//-------------------------------------------------------------//
+void ForceFeedback::_setAutoCenterSupport( bool on )
+{
+	mSetAutoCenterSupport = on;
+}
+
+//-------------------------------------------------------------//
+const ForceFeedback::SupportedEffectList& ForceFeedback::getSupportedEffects() const
 {
 	return mSupportedEffects;
+}
+
+//-------------------------------------------------------------//
+bool ForceFeedback::supportsEffect(Effect::EForce force, Effect::EType type) const
+{
+    const std::pair<SupportedEffectList::const_iterator, SupportedEffectList::const_iterator> 
+	    iterRange = mSupportedEffects.equal_range(force);
+	SupportedEffectList::const_iterator iter;
+	for (iter = iterRange.first; iter != iterRange.second; iter++)
+	{
+	  if ((*iter).second == type)
+		return true;
+	}
+
+	return false;
 }

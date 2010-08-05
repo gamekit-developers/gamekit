@@ -42,7 +42,7 @@ namespace OIS
         virtual void setBuffered( bool buffered );
         
         // unbuffered keydown check
-        virtual bool isKeyDown( KeyCode key );
+        virtual bool isKeyDown( KeyCode key ) const;
         
         // This will send listener events if buffered is on.
         // Note that in the mac implementation, unbuffered input is
@@ -50,7 +50,7 @@ namespace OIS
         virtual void capture();
         
         // Copies the current key buffer
-        virtual void copyKeyStates( char keys[256] );
+        virtual void copyKeyStates( char keys[256] ) const;
         
         // Returns a description of the given key
         virtual std::string& getAsString( KeyCode key );

@@ -20,10 +20,10 @@ restrictions:
 
     3. This notice may not be removed or altered from any source distribution.
 */
-#include "Win32/Win32InputManager.h"
-#include "Win32/Win32Keyboard.h"
-#include "Win32/Win32Mouse.h"
-#include "Win32/Win32JoyStick.h"
+#include "win32/Win32InputManager.h"
+#include "win32/Win32KeyBoard.h"
+#include "win32/Win32Mouse.h"
+#include "win32/Win32JoyStick.h"
 #include "OISException.h"
 
 using namespace OIS;
@@ -81,6 +81,8 @@ void Win32InputManager::_initialize( ParamList &paramList )
 
 	//Ok, now we have DirectInput, parse whatever extra settings were sent to us
 	_parseConfigSettings( paramList );
+
+	// Enumerate devices ...
 	_enumerateDevices();
 }
 
@@ -115,13 +117,27 @@ void Win32InputManager::_parseConfigSettings( ParamList &paramList )
 void Win32InputManager::_enumerateDevices()
 {
 	//Enumerate all attached devices
-	mDirectInput->EnumDevices(NULL, _DIEnumKbdCallback, this, DIEDFL_ATTACHEDONLY); 
+	mDirectInput->EnumDevices(NULL, _DIEnumDevCallback, this, DIEDFL_ATTACHEDONLY);
+
+	int xinputControllers = 0;
+	//let's check how many possible XInput devices we may have (max 4)... 
+	for(int i = 0; i < 3; ++i)
+	{
+		XINPUT_STATE state;
+		if(XInputGetState(i, &state) != ERROR_DEVICE_NOT_CONNECTED)
+		{	//Once we found 1, just check our whole list against devices
+			Win32JoyStick::CheckXInputDevices(unusedJoyStickList);
+			break;
+		}
+	}
 }
 
 //--------------------------------------------------------------------------------//
-BOOL CALLBACK Win32InputManager::_DIEnumKbdCallback(LPCDIDEVICEINSTANCE lpddi, LPVOID pvRef)
+BOOL CALLBACK Win32InputManager::_DIEnumDevCallback(LPCDIDEVICEINSTANCE lpddi, LPVOID pvRef)
 {
 	Win32InputManager *_this_ = static_cast<Win32InputManager*>(pvRef);
+
+	// Register only game devices (keyboard and mouse are managed differently).
 	if( GET_DIDEVICE_TYPE(lpddi->dwDevType) == DI8DEVTYPE_JOYSTICK ||
 		GET_DIDEVICE_TYPE(lpddi->dwDevType) == DI8DEVTYPE_GAMEPAD ||
 		GET_DIDEVICE_TYPE(lpddi->dwDevType) == DI8DEVTYPE_1STPERSON ||
@@ -129,6 +145,8 @@ BOOL CALLBACK Win32InputManager::_DIEnumKbdCallback(LPCDIDEVICEINSTANCE lpddi, L
 		GET_DIDEVICE_TYPE(lpddi->dwDevType) == DI8DEVTYPE_FLIGHT)
 	{
 		JoyStickInfo jsInfo;
+		jsInfo.isXInput = false;
+		jsInfo.productGuid = lpddi->guidProduct;
 		jsInfo.deviceID = lpddi->guidInstance;
 		jsInfo.vendor = lpddi->tszInstanceName;
 		jsInfo.devId = _this_->joySticks;

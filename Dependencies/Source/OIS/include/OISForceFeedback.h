@@ -35,7 +35,7 @@ namespace OIS
 	class _OISExport ForceFeedback : public Interface
 	{
 	public:
-		ForceFeedback() {}
+		ForceFeedback();
 		virtual ~ForceFeedback() {}
 
 		/**
@@ -43,6 +43,7 @@ namespace OIS
 			This is like setting the master volume of an audio device.
 			Individual effects have gain levels; however, this affects all
 			effects at once.
+			Note: If the device does not support master gain setting, nothing is done
 		@param level
 			A value between 0.0 and 1.0 represent the percentage of gain. 1.0
 			being the highest possible force level (means no scaling).
@@ -55,6 +56,7 @@ namespace OIS
 			before uploading any effects. Auto centering is the motor moving
 			the joystick back to center. DirectInput only has an on/off setting,
 			whereas linux has levels.. Though, we go with DI's on/off mode only
+			Note: If the device does not support auto-centering, nothing is done
 		@param auto_on
 			true to turn auto centering on, false to turn off.
 		*/
@@ -86,17 +88,33 @@ namespace OIS
 		*/
         virtual short getFFAxesNumber() = 0;
 
-		typedef std::map<Effect::EForce, Effect::EType> SupportedEffectList;
+		/**
+		@remarks
+			Get the current load (%, in [0, 100] of the FF device memory 
+		*/
+		virtual unsigned short getFFMemoryLoad() = 0;
+
+		typedef std::multimap<Effect::EForce, Effect::EType> SupportedEffectList;
 		/**
 		@remarks
 			Get a list of all supported effects
 		*/
 		const SupportedEffectList& getSupportedEffects() const;
 
+		/**
+		@remarks
+			Tell if a given force / effect type pair is supported
+		*/
+		bool supportsEffect(Effect::EForce force, Effect::EType type) const;
+
 		void _addEffectTypes( Effect::EForce force, Effect::EType type );
+		void _setGainSupport( bool on );
+		void _setAutoCenterSupport( bool on );
 
 	protected:
 		SupportedEffectList mSupportedEffects;
+		bool mSetGainSupport;
+		bool mSetAutoCenterSupport;
 	};
 }
 #endif //OIS_ForceFeedBack_H

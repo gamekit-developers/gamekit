@@ -69,6 +69,9 @@ namespace OIS
 		~MacHIDManager();
 
 		void initialize();
+		
+		void iterateAndOpenDevices(io_iterator_t iterator);
+		io_iterator_t lookUpDevices(int usage, int page);
 
 		//FactoryCreator Overrides
 		/** @copydoc FactoryCreator::deviceList */

@@ -43,7 +43,7 @@ Win32NativeKeyboard::~Win32NativeKeyboard()
 }
 
 //-------------------------------------------------------------//
-bool Win32NativeKeyboard::isKeyDown( KeyCode key )
+bool Win32NativeKeyboard::isKeyDown( KeyCode key ) const
 {
 	return KeyBuffer[key] == 1 ? true : false;
 }
@@ -56,7 +56,7 @@ const std::string& Win32NativeKeyboard::getAsString( KeyCode kc )
 }
 
 //-------------------------------------------------------------//
-void Win32NativeKeyboard::copyKeyStates( char keys[256] )
+void Win32NativeKeyboard::copyKeyStates( char keys[256] ) const
 {
 	memcpy(keys, KeyBuffer, 256);
 }

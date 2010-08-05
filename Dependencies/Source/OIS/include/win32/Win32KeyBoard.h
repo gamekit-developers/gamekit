@@ -24,7 +24,7 @@ restrictions:
 #define _WIN32_KEYBOARD_H_EADER_
 
 #include "OISKeyboard.h"
-#include "Win32/Win32Prereqs.h"
+#include "win32/Win32Prereqs.h"
 
 namespace OIS
 {
@@ -41,17 +41,17 @@ namespace OIS
 		@param coopSettings
 			A combination of DI Flags (see DX Help for info on input device settings)
 		*/
-		Win32Keyboard( InputManager* creator, IDirectInput8* pDI, bool buffered, DWORD coopSettings );
+		Win32Keyboard(InputManager* creator, IDirectInput8* pDI, bool buffered, DWORD coopSettings);
 		virtual ~Win32Keyboard();
 
 		/** @copydoc Keyboard::isKeyDown */
-		virtual bool isKeyDown( KeyCode key );
+		virtual bool isKeyDown(KeyCode key) const;
 		
 		/** @copydoc Keyboard::getAsString */
-		virtual const std::string& getAsString( KeyCode kc );
+		virtual const std::string& getAsString(KeyCode kc);
 
 		/** @copydoc Keyboard::copyKeyStates */
-		virtual void copyKeyStates( char keys[256] );
+		virtual void copyKeyStates(char keys[256]) const;
 
 		/** @copydoc Object::setBuffered */
 		virtual void setBuffered(bool buffered);

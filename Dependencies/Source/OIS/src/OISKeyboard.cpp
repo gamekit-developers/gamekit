@@ -32,7 +32,7 @@ void Keyboard::setTextTranslation( TextTranslationMode mode )
 }
 
 //----------------------------------------------------------------------//
-bool Keyboard::isModifierDown( Modifier mod )
+bool Keyboard::isModifierDown( Modifier mod ) const
 {
 #if defined(OIS_MSVC_COMPILER)
   #pragma warning (push)

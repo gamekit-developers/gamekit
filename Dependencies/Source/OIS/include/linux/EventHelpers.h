@@ -42,6 +42,8 @@ namespace OIS
 		static void removeForceFeedback( LinuxForceFeedback** ff );
 
 		static std::string getName( int deviceID );
+		static std::string getUniqueId( int deviceID );
+		static std::string getPhysicalLocation( int deviceID );
 	};
 }
 #endif

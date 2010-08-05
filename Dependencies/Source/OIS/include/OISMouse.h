@@ -119,7 +119,7 @@ namespace OIS
 		virtual void setEventCallback( MouseListener *mouseListener ) {mListener = mouseListener;}
 
 		/** @remarks Returns currently set callback.. or 0 */
-		MouseListener* getEventCallback() {return mListener;}
+		MouseListener* getEventCallback() const {return mListener;}
 
 		/** @remarks Returns the state of the mouse - is valid for both buffered and non buffered mode */
 		const MouseState& getMouseState() const { return mState; }

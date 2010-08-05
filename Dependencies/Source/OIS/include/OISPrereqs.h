@@ -78,9 +78,15 @@ restrictions:
 #		endif
 #	endif
 #elif defined( __APPLE_CC__ ) // Apple OS X
-#	define OIS_APPLE_PLATFORM
-#	undef _OISExport
-#	define _OISExport __attribute__((visibility("default")))
+    // Device                                       Simulator
+#   if __IPHONE_OS_VERSION_MIN_REQUIRED >= 20201 || __IPHONE_OS_VERSION_MIN_REQUIRED >= 20000
+//#   if __IPHONE_OS_VERSION_MIN_REQUIRED >= 30000 || __IPHONE_OS_VERSION_MIN_REQUIRED >= 30000
+#       define OIS_IPHONE_PLATFORM
+#   else
+#       define OIS_APPLE_PLATFORM
+#   endif
+#   undef _OISExport
+#   define _OISExport __attribute__((visibility("default")))
 #else //Probably Linux
 #	define OIS_LINUX_PLATFORM
 #endif
@@ -94,9 +100,9 @@ restrictions:
 
 //-------------- Common Classes, Enums, and Typdef's -------------------------//
 #define OIS_VERSION_MAJOR 1
-#define OIS_VERSION_MINOR 2 
+#define OIS_VERSION_MINOR 4
 #define OIS_VERSION_PATCH 0
-#define OIS_VERSION_NAME "Smash"
+#define OIS_VERSION_NAME "1.4.0"
 
 #define OIS_VERSION ((OIS_VERSION_MAJOR << 16) | (OIS_VERSION_MINOR << 8) | OIS_VERSION_PATCH)
 
@@ -109,8 +115,10 @@ namespace OIS
 	class Keyboard;
 	class Mouse;
 	class JoyStick;
+    class MultiTouch;
 	class KeyListener;
 	class MouseListener;
+    class MultiTouchListener;
 	class JoyStickListener;
 	class Interface;
 	class ForceFeedback;
@@ -129,11 +137,12 @@ namespace OIS
 	//! Each Input class has a General Type variable, a form of RTTI
     enum Type
 	{
-		OISUnknown   = 0,
-		OISKeyboard  = 1,
-		OISMouse     = 2,
-		OISJoyStick  = 3,
-		OISTablet    = 4
+		OISUnknown       = 0,
+		OISKeyboard      = 1,
+		OISMouse         = 2,
+		OISJoyStick      = 3,
+		OISTablet        = 4,
+		OISMultiTouch    = 5
 	};
 
 	//! Map of device objects connected and their respective vendors
@@ -166,8 +175,8 @@ namespace OIS
 	class _OISExport Button : public Component
 	{
 	public:
-		Button() {}
-		Button(bool bPushed) : Component(OIS_Button), pushed(bPushed) {};
+		Button() : Component(OIS_Button), pushed(false) {}
+		Button(bool bPushed) : Component(OIS_Button), pushed(bPushed) {}
 		//! true if pushed, false otherwise
 		bool pushed;
 	};

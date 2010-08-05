@@ -25,7 +25,7 @@ restrictions:
 
 #include "OISInputManager.h"
 #include "OISFactoryCreator.h"
-#include "Win32/Win32Prereqs.h"
+#include "win32/Win32Prereqs.h"
 
 namespace OIS
 {
@@ -80,7 +80,7 @@ namespace OIS
 		void _enumerateDevices();
 
 		//! Used during device enumeration
-		static BOOL CALLBACK _DIEnumKbdCallback(LPCDIDEVICEINSTANCE lpddi, LPVOID pvRef);
+		static BOOL CALLBACK _DIEnumDevCallback(LPCDIDEVICEINSTANCE lpddi, LPVOID pvRef);
 
 		//! Keep a list of all joysticks enumerated, but not in use
 		JoyStickInfoList unusedJoyStickList;

@@ -33,43 +33,59 @@ restrictions:
 
 #ifdef OIS_LINUX_JOY_DEBUG
 # include <iostream>
-  using namespace std;
 #endif
 
+using namespace std;
 using namespace OIS;
 
 class DeviceComponentInfo
 {
 public:
-	std::vector<int> buttons, relAxes, absAxes, hats;
+	vector<int> buttons, relAxes, absAxes, hats;
 };
 
-bool inline isBitSet(unsigned long bits[], unsigned int bit)
+bool inline isBitSet(unsigned char bits[], unsigned int bit)
 {
-	return (bits[bit/(sizeof(long)*8)] >> ((bit)%(sizeof(long)*8))) & 1;
+  return (bits[(bit)/(sizeof(unsigned char)*8)] >> ((bit)%(sizeof(unsigned char)*8))) & 1;
 }
+
 //-----------------------------------------------------------------------------//
 DeviceComponentInfo getComponentInfo( int deviceID )
 {
-	unsigned long info[2][((KEY_MAX-1)/(sizeof(long)*8)) +1];
-	memset( info, 0, sizeof(info) );
+	unsigned char ev_bits[1 + EV_MAX/8/sizeof(unsigned char)];
+	memset( ev_bits, 0, sizeof(ev_bits) );
+
+	//Read "all" (hence 0) components of the device
+#ifdef OIS_LINUX_JOY_DEBUG
+	cout << "EventUtils::getComponentInfo(" << deviceID 
+		 << ") : Reading device events features" << endl;
+#endif
+	if (ioctl(deviceID, EVIOCGBIT(0, sizeof(ev_bits)), ev_bits) == -1)
+		OIS_EXCEPT( E_General, "Could not read device events features");
 
 	DeviceComponentInfo components;
 
-	//Read "all" (hence 0) components of the device - read into first entry
-	ioctl(deviceID, EVIOCGBIT(0, EV_MAX), info[0]);
-
 	for (int i = 0; i < EV_MAX; i++)
 	{
-		if( isBitSet(info[0], i) )
+		if( isBitSet(ev_bits, i) )
 		{
-			memset( info[1], 0, sizeof(info) / 2 );
-			ioctl(deviceID, EVIOCGBIT(i, KEY_MAX), info[1]);
-			for (int j = 0; j < KEY_MAX; j++)
+		    // Absolute axis.
+		    if(i == EV_ABS)
 			{
-				if( isBitSet(info[1], j) )
+			    unsigned char abs_bits[1 + ABS_MAX/8/sizeof(unsigned char)];
+			    memset( abs_bits, 0, sizeof(abs_bits) );
+
+#ifdef OIS_LINUX_JOY_DEBUG
+				cout << "EventUtils::getComponentInfo(" << deviceID 
+					 << ") : Reading device absolute axis features" << endl;
+#endif
+
+				if (ioctl(deviceID, EVIOCGBIT(i, sizeof(abs_bits)), abs_bits) == -1)
+				    OIS_EXCEPT( E_General, "Could not read device absolute axis features");
+
+				for (int j = 0; j < ABS_MAX; j++)
 				{
-					if(i == EV_ABS)
+				    if( isBitSet(abs_bits, j) )
 					{
 						//input_absinfo abInfo;
 						//ioctl( fd, EVIOCGABS(j), abInfo );
@@ -88,13 +104,47 @@ DeviceComponentInfo getComponentInfo( int deviceID )
 							//ioctl(deviceID, EVIOCSABS(j), &absinfo);
 						}
 					}
-					else if(i == EV_REL)
+				}
+			}
+			else if(i == EV_REL)
+			{
+			    unsigned char rel_bits[1 + REL_MAX/8/sizeof(unsigned char)];
+				memset( rel_bits, 0, sizeof(rel_bits) );
+				
+#ifdef OIS_LINUX_JOY_DEBUG
+				cout << "EventUtils::getComponentInfo(" << deviceID 
+					 << ") : Reading device relative axis features" << endl;
+#endif
+
+				if (ioctl(deviceID, EVIOCGBIT(i, sizeof(rel_bits)), rel_bits) == -1)
+				    OIS_EXCEPT( E_General, "Could not read device relative axis features");
+				
+				for (int j = 0; j < REL_MAX; j++)
+				{
+				    if( isBitSet(rel_bits, j) )
 					{
-						components.relAxes.push_back(j);
+					    components.relAxes.push_back(j);
 					}
-					else if(i == EV_KEY)
+				}
+			}
+			else if(i == EV_KEY)
+			{
+			    unsigned char key_bits[1 + KEY_MAX/8/sizeof(unsigned char)];
+				memset( key_bits, 0, sizeof(key_bits) );
+				
+#ifdef OIS_LINUX_JOY_DEBUG
+				cout << "EventUtils::getComponentInfo(" << deviceID 
+					 << ") : Reading device buttons features" << endl;
+#endif
+
+				if (ioctl(deviceID, EVIOCGBIT(i, sizeof(key_bits)), key_bits) == -1)
+				    OIS_EXCEPT( E_General, "Could not read device buttons features");
+				
+				for (int j = 0; j < KEY_MAX; j++)
+				{
+				    if( isBitSet(key_bits, j) )
 					{
-						components.buttons.push_back(j);
+					    components.buttons.push_back(j);
 					}
 				}
 			}
@@ -107,7 +157,8 @@ DeviceComponentInfo getComponentInfo( int deviceID )
 //-----------------------------------------------------------------------------//
 bool EventUtils::isJoyStick( int deviceID, JoyStickInfo &js )
 {
-	if( deviceID == -1 ) OIS_EXCEPT( E_General, "Error with File Descriptor" );
+	if( deviceID == -1 ) 
+		OIS_EXCEPT( E_General, "Error with File Descriptor" );
 
 	DeviceComponentInfo info = getComponentInfo( deviceID );
 
@@ -116,20 +167,26 @@ bool EventUtils::isJoyStick( int deviceID, JoyStickInfo &js )
 	js.button_map.clear();
 
 	#ifdef OIS_LINUX_JOY_DEBUG
-	  cout << "\n\nDisplaying ButtonMapping Status:";
+	cout << endl << "Displaying ButtonMapping Status:" << endl;
 	#endif
-	for(std::vector<int>::iterator i = info.buttons.begin(), e = info.buttons.end(); i != e; ++i )
+	for(vector<int>::iterator i = info.buttons.begin(), e = info.buttons.end(); i != e; ++i )
 	{
 		//Check to ensure we find at least one joy only button
-		if( (*i >= BTN_JOYSTICK && *i <= BTN_THUMBR) || (*i >= BTN_WHEEL && *i <= BTN_GEAR_UP ) )
+		if( (*i >= BTN_JOYSTICK && *i < BTN_GAMEPAD)  
+			|| (*i >= BTN_GAMEPAD && *i < BTN_DIGI)
+			|| (*i >= BTN_WHEEL && *i < KEY_OK) )
 			joyButtonFound = true;
 
 		js.button_map[*i] = buttons++;
 
 		#ifdef OIS_LINUX_JOY_DEBUG
-		  cout << "\nButton Mapping ID (hex): " << hex << *i << " OIS Button Num: " << dec << (buttons-1);
+		  cout << "Button Mapping ID (hex): " << hex << *i 
+			   << " OIS Button Num: " << dec << buttons-1 << endl;
 		#endif
 	}
+	#ifdef OIS_LINUX_JOY_DEBUG
+	cout << endl;
+	#endif
 
 	//Joy Buttons found, so it must be a joystick or pad
 	if( joyButtonFound )
@@ -139,22 +196,34 @@ bool EventUtils::isJoyStick( int deviceID, JoyStickInfo &js )
 		js.buttons = buttons;
 		js.axes = info.relAxes.size() + info.absAxes.size();
 		js.hats = info.hats.size();
+		#ifdef OIS_LINUX_JOY_DEBUG
+		  cout << endl << "Device name:" << js.vendor << endl;
+		  cout << "Device unique Id:" << getUniqueId(deviceID) << endl;
+		  cout << "Device physical location:" << getPhysicalLocation(deviceID) << endl;
+		#endif
 
 		//Map the Axes
 		#ifdef OIS_LINUX_JOY_DEBUG
-		  cout << "\n\nDisplaying AxisMapping Status:";
+		  cout << endl << "Displaying AxisMapping Status:" << endl;
 		#endif
 		int axes = 0;
-		for(std::vector<int>::iterator i = info.absAxes.begin(), e = info.absAxes.end(); i != e; ++i )
+		for(vector<int>::iterator i = info.absAxes.begin(), e = info.absAxes.end(); i != e; ++i )
 		{
 			js.axis_map[*i] = axes;
 
+#ifdef OIS_LINUX_JOY_DEBUG
+			cout << "EventUtils::isJoyStick(" << deviceID 
+					  << ") : Reading device absolute axis #" << *i << " features" << endl;
+#endif
+
 			input_absinfo absinfo;
-			ioctl(deviceID, EVIOCGABS(*i), &absinfo);
+			if (ioctl(deviceID, EVIOCGABS(*i), &absinfo) == -1)
+				OIS_EXCEPT( E_General, "Could not read device absolute axis features");
 			js.axis_range[axes] = Range(absinfo.minimum, absinfo.maximum);
 
 			#ifdef OIS_LINUX_JOY_DEBUG
-			  cout << "\nAxis Mapping ID (hex): " << hex << *i << " OIS Axis Num: " << dec << axes;
+			  cout << "Axis Mapping ID (hex): " << hex << *i 
+				   << " OIS Axis Num: " << dec << axes << endl;
 			#endif
 
 			++axes;
@@ -165,18 +234,54 @@ bool EventUtils::isJoyStick( int deviceID, JoyStickInfo &js )
 }
 
 //-----------------------------------------------------------------------------//
-std::string EventUtils::getName( int deviceID )
+string EventUtils::getName( int deviceID )
 {
+#ifdef OIS_LINUX_JOY_DEBUG
+	cout << "EventUtils::getName(" << deviceID 
+		 << ") : Reading device name" << endl;
+#endif
+
 	char name[OIS_DEVICE_NAME];
-	ioctl(deviceID, EVIOCGNAME(OIS_DEVICE_NAME), name);
-	return std::string(name);
+	if (ioctl(deviceID, EVIOCGNAME(OIS_DEVICE_NAME), name) == -1)
+		OIS_EXCEPT( E_General, "Could not read device name");
+	return string(name);
+}
+
+//-----------------------------------------------------------------------------//
+string EventUtils::getUniqueId( int deviceID )
+{
+#ifdef OIS_LINUX_JOY_DEBUG
+	cout << "EventUtils::getUniqueId(" << deviceID 
+		 << ") : Reading device unique Id" << endl;
+#endif
+
+#define OIS_DEVICE_UNIQUE_ID 128
+	char uId[OIS_DEVICE_UNIQUE_ID];
+	if (ioctl(deviceID, EVIOCGUNIQ(OIS_DEVICE_UNIQUE_ID), uId) == -1)
+		OIS_EXCEPT( E_General, "Could not read device unique Id");
+	return string(uId);
+}
+
+//-----------------------------------------------------------------------------//
+string EventUtils::getPhysicalLocation( int deviceID )
+{
+#ifdef OIS_LINUX_JOY_DEBUG
+	cout << "EventUtils::getPhysicalLocation(" << deviceID 
+		 << ") : Reading device physical location" << endl;
+#endif
+
+#define OIS_DEVICE_PHYSICAL_LOCATION 128
+	char physLoc[OIS_DEVICE_PHYSICAL_LOCATION];
+	if (ioctl(deviceID, EVIOCGPHYS(OIS_DEVICE_PHYSICAL_LOCATION), physLoc) == -1)
+		OIS_EXCEPT( E_General, "Could not read device physical location");
+	return string(physLoc);
 }
 
 //-----------------------------------------------------------------------------//
 void EventUtils::enumerateForceFeedback( int deviceID, LinuxForceFeedback** ff )
 {
 	//Linux Event to OIS Event Mappings
-	std::map<int, Effect::EType> typeMap;
+	map<int, Effect::EType> typeMap;
 	typeMap[FF_CONSTANT] = Effect::Constant;
 	typeMap[FF_RAMP]     = Effect::Ramp;
 	typeMap[FF_SPRING]   = Effect::Spring;
@@ -190,43 +295,73 @@ void EventUtils::enumerateForceFeedback( int deviceID, LinuxForceFeedback** ff )
 	typeMap[FF_INERTIA]  = Effect::Inertia;
 	typeMap[FF_CUSTOM]   = Effect::Custom;
 
-	std::map<int, Effect::EForce> forceMap;
+	map<int, Effect::EForce> forceMap;
 	forceMap[FF_CONSTANT] = Effect::ConstantForce;
-	forceMap[FF_RAMP] = Effect::RampForce;
-	forceMap[FF_PERIODIC] = Effect::PeriodicForce;
-	forceMap[FF_CUSTOM] = Effect::CustomForce;
+	forceMap[FF_RAMP]     = Effect::RampForce;
+	forceMap[FF_SPRING]   = Effect::ConditionalForce;
+	forceMap[FF_FRICTION] = Effect::ConditionalForce;
+	forceMap[FF_SQUARE]   = Effect::PeriodicForce;
+	forceMap[FF_TRIANGLE] = Effect::PeriodicForce;
+	forceMap[FF_SINE]     = Effect::PeriodicForce;
+	forceMap[FF_SAW_UP]   = Effect::PeriodicForce;
+	forceMap[FF_SAW_DOWN] = Effect::PeriodicForce;
+	forceMap[FF_DAMPER]   = Effect::ConditionalForce;
+	forceMap[FF_INERTIA]  = Effect::ConditionalForce;
+	forceMap[FF_CUSTOM]   = Effect::CustomForce;
 
 	//Remove any previously existing memory and create fresh
 	removeForceFeedback( ff );
-	*ff = new LinuxForceFeedback();
+	*ff = new LinuxForceFeedback(deviceID);
 
-	unsigned long info[4] = {0,0,0,0};
-	unsigned long subinfo[4]= {0,0,0,0};
+	//Read overall force feedback features
+	unsigned char ff_bits[1 + FF_MAX/8/sizeof(unsigned char)];
+	memset(ff_bits, 0, sizeof(ff_bits));
 
-	//Read overall force feedback components of the device
-	ioctl(deviceID, EVIOCGBIT(EV_FF, sizeof(long)*4), info);
+#ifdef OIS_LINUX_JOY_DEBUG
+	cout << "EventUtils::enumerateForceFeedback(" << deviceID 
+		 << ") : Reading device force feedback features" << endl;
+#endif
+
+	if (ioctl(deviceID, EVIOCGBIT(EV_FF, sizeof(ff_bits)), ff_bits) == -1)
+		OIS_EXCEPT( E_General, "Could not read device force feedback features");
+
+
+    #ifdef OIS_LINUX_JOY_DEBUG
+	cout << "FF bits: " << hex;
+	for (int i = 0; i < sizeof(ff_bits); i++)
+		cout << (int)ff_bits[i];
+	cout << endl << dec;
+    #endif
 
 	//FF Axes
-	//if( isBitSet(info, ABS_X) ) //X Axis
-	//if( isBitSet(info, ABS_Y) ) //Y Axis
-	//if( isBitSet(info, ABS_WHEEL) ) //Wheel
+	//if( isBitSet(ff_bits, ABS_X) ) //X Axis
+	//if( isBitSet(ff_bits, ABS_Y) ) //Y Axis
+	//if( isBitSet(ff_bits, ABS_WHEEL) ) //Wheel
 
 	//FF Effects
-	for( int effect = ABS_WHEEL+1; effect < FF_MAX; effect++ )
+	for( int effect = FF_EFFECT_MIN; effect <= FF_WAVEFORM_MAX; effect++ )
 	{
-		if(isBitSet(info, effect))
+		// The RUMBLE force type is ignored, as periodic force one is more powerfull.
+		// The PERIODIC force type is processed later, for each associated periodic effect type.
+		if (effect == FF_RUMBLE || effect == FF_PERIODIC)
+			continue;
+
+		if(isBitSet(ff_bits, effect))
 		{
-			//std::cout << "\tEffect Type: " << effect << std::endl;
-			memset(subinfo, 0, sizeof(subinfo));
-			//Read any info about this supported effect
-			ioctl(deviceID, EVIOCGBIT(effect, sizeof(long)*4), subinfo);
-			for( int force = 0; force < FF_MAX; force++ )
-			{
-				if(isBitSet(subinfo, force))
-					(*ff)->_addEffectTypes( forceMap[force], typeMap[effect] );
-			}
+			#ifdef OIS_LINUX_JOY_DEBUG
+		    cout << "  Effect Type: " << Effect::getEffectTypeName(typeMap[effect]) << endl;
+			#endif
+
+			(*ff)->_addEffectTypes( forceMap[effect], typeMap[effect] );
 		}
 	}
+
+	//FF device properties
+	if (isBitSet(ff_bits, FF_GAIN))
+		(*ff)->_setGainSupport(true);
+		
+	if (isBitSet(ff_bits, FF_AUTOCENTER))
+		(*ff)->_setAutoCenterSupport(true);
 
 	//Check to see if any effects were added, else destroy the pointer
 	const ForceFeedback::SupportedEffectList &list = (*ff)->getSupportedEffects();
