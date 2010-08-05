@@ -41,8 +41,6 @@ public:
 	gkBuffer(gkSource *obj);
 	virtual ~gkBuffer();
 
-	bool stream(void);
-
 	void suspend(bool v);
 	void setLoop(bool v);
 
@@ -50,7 +48,6 @@ public:
 	bool isDone(void)       {return m_exit;}
 	bool isValid(void)      {return m_ok;}
 	bool isLooped(void)     {return m_loop;}
-	void exit(void)         {m_exit = true;}
 	bool isInitialized(void){return m_isInit;}
 
 	void setPosition(const gkVector3 &v);
@@ -59,18 +56,20 @@ public:
 
 	void setProperties(const gkSoundProperties &props);
 
-	void queue(bool play=false);
-	bool initialize(void);
-
+	void exit(void);
+	bool _stream(void);
 private:
+
 	void finalize(void);
 	void reset(void);
+
+	void queue(bool play=false);
+	bool initialize(void);
 
 
 	// stream reading
 	const char *read(UTsize len, UTsize &br);
 
-	gkCriticalSection   m_cs;
 	gkSource            *m_sound;
 	gkSoundStream       *m_stream;
 	ALuint              m_buffer[GK_SND_SAMPLES];
@@ -81,6 +80,8 @@ private:
 	UTsize              m_pos;
 	bool                m_eos;
 	int                 m_fmt, m_smp, m_bps;
+
+	gkCriticalSection   m_cs;
 };
 
 

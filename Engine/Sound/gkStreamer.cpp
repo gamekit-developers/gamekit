@@ -32,8 +32,6 @@
 #include "gkBuffer.h"
 #include "gkTickState.h"
 
-// play at fixed ticks per second
-#define GK_STREAM_PLAYBACK_RATE 45
 
 class gkStreamerTick : public gkTickState
 {
@@ -47,6 +45,9 @@ public:
 	virtual ~gkStreamerTick() {}
 
 	void tickImpl(gkScalar delta);
+	void beginTickImpl(void);
+	void endTickImpl(void);
+
 };
 
 // ----------------------------------------------------------------------------
@@ -91,7 +92,7 @@ void gkStreamer::stopAllSounds(void)
 // ----------------------------------------------------------------------------
 void gkStreamer::stop(void)
 {
-	GK_SOUND_AUTO_LOCK_MUTEX(m_cs);
+	gkCriticalSection::Lock lock(m_cs);
 	m_stop = true;
 	m_syncObj.signal();
 	m_syncObj.wait();
@@ -100,7 +101,7 @@ void gkStreamer::stop(void)
 // ----------------------------------------------------------------------------
 void gkStreamer::start(void)
 {
-	GK_SOUND_AUTO_LOCK_MUTEX(m_cs);
+	gkCriticalSection::Lock lock(m_cs);
 
 	if (!m_thread)
 	{
@@ -120,7 +121,7 @@ bool gkStreamer::isRunning(void)
 // ----------------------------------------------------------------------------
 bool gkStreamer::isEmpty(void)
 {
-	GK_SOUND_AUTO_LOCK_MUTEX(m_cs);
+	gkCriticalSection::Lock lock(m_cs);
 
 	return m_buffers.empty();
 }
@@ -128,7 +129,7 @@ bool gkStreamer::isEmpty(void)
 // ----------------------------------------------------------------------------
 void gkStreamer::playSound(gkSource *snd)
 {
-	GK_SOUND_AUTO_LOCK_MUTEX(m_cs);
+	gkCriticalSection::Lock lock(m_cs);
 
 	// add to queue
 	m_buffers.push_back(new gkBuffer(snd));
@@ -157,7 +158,7 @@ void gkStreamer::notify(gkBuffer *buf)
 	// wait for a signal saying this
 	// buffer has exited
 
-	GK_SOUND_AUTO_LOCK_MUTEX(m_cs);
+	gkCriticalSection::Lock lock(m_cs);
 
 	buf->exit();
 	m_syncObj.wait();
@@ -181,6 +182,28 @@ void gkStreamer::remove(gkBuffer *buf)
 		m_buffers.clear(true);
 }
 
+// ----------------------------------------------------------------------------
+void gkStreamer::run(void)
+{
+	gkStreamerTick stream(*this);
+
+
+	while (isRunning())
+	{
+		// catch any exceptions
+		try
+		{
+			stream.tick();
+		}
+		catch (...)
+		{
+			printf("%s: unknown error!\n", m_name.c_str());
+		}
+	}
+
+	m_syncObj.signal();
+}
+
 
 // ----------------------------------------------------------------------------
 void gkStreamer::runProtected(void)
@@ -196,24 +219,16 @@ void gkStreamer::runProtected(void)
 	while (i < s)
 	{
 		gkBuffer *buf = b[i++];
-		if (!buf->isInitialized())
-			buf->initialize();
 
 		// stream contents to OpenAL
 		if (buf->isValid())
-			buf->stream();
+			buf->_stream();
 
 		// notify were done
 		if (buf->isDone() || !buf->isValid())
 			m_finished.push_back(buf);
 	}
-}
 
-
-// ----------------------------------------------------------------------------
-void gkStreamer::collectGarbage(void)
-{
-	// remove finished buffers
 	if (!m_finished.empty())
 	{
 		while (!m_finished.empty())
@@ -228,30 +243,23 @@ void gkStreamer::collectGarbage(void)
 
 
 // ----------------------------------------------------------------------------
-void gkStreamer::run(void)
+void gkStreamer::collect(void)
 {
-	gkStreamerTick st(*this);
-
-	while (isRunning())
+	if (!m_finished.empty())
 	{
-		// catch any exceptions
-		try
-		{
-			st.tick();
-			collectGarbage();
-		}
-		catch (...)
-		{
-			printf("%s: unknown error!\n", m_name.c_str());
-		}
-	}
+		while (!m_finished.empty())
+			remove(m_finished.back());
 
-	m_syncObj.signal();
+		m_finished.clear(true);
+
+		// wake up wating sync
+		m_syncObj.signal();
+	}
 }
 
 // ----------------------------------------------------------------------------
 gkStreamerTick::gkStreamerTick(gkStreamer &streamer)
-	:   gkTickState(GK_STREAM_PLAYBACK_RATE),
+	:   gkTickState(gkEngine::getTickRate()),
 	    m_stream(streamer)
 {
 }
@@ -260,5 +268,18 @@ gkStreamerTick::gkStreamerTick(gkStreamer &streamer)
 void gkStreamerTick::tickImpl(gkScalar delta)
 {
 	m_stream.runProtected();
+}
+
+
+// ----------------------------------------------------------------------------
+void gkStreamerTick::beginTickImpl(void)
+{
+	m_stream.collect();
+}
+
+// ----------------------------------------------------------------------------
+void gkStreamerTick::endTickImpl(void)
+{
+	m_stream.collect();
 }
 

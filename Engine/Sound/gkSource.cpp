@@ -56,6 +56,7 @@ gkSource::~gkSource()
 void gkSource::_bind(gkBuffer *buf)
 {
 	m_playback = buf;
+
 	if (m_playback)
 		m_playback->setProperties(m_props);
 }
@@ -66,7 +67,6 @@ void gkSource::updatePropsForObject(gkGameObject *obj)
 {
 	if (obj)
 	{
-
 		gkVector3 pos = obj->getWorldPosition();
 		gkVector3 vel = obj->getLinearVelocity();
 		gkQuaternion ori = obj->getWorldOrientation();
@@ -78,11 +78,14 @@ void gkSource::updatePropsForObject(gkGameObject *obj)
 		m_props.m_direction = dir;
 		m_props.m_velocity = vel;
 
-		if (m_playback)
 		{
-			m_playback->setPosition(m_props.m_position);
-			m_playback->setDirection(m_props.m_direction);
-			m_playback->setVelocity(m_props.m_velocity);
+			gkCriticalSection::Lock lock(m_cs);
+			if (m_playback)
+			{
+				m_playback->setPosition(m_props.m_position);
+				m_playback->setDirection(m_props.m_direction);
+				m_playback->setVelocity(m_props.m_velocity);
+			}
 		}
 	}
 
@@ -106,6 +109,8 @@ gkSoundStream *gkSource::_getStream(void)
 // ----------------------------------------------------------------------------
 void gkSource::play(void)
 {
+	gkCriticalSection::Lock lock(m_cs);
+
 	if (m_reference && !m_playback)
 	{
 		gkSoundStream *stream = m_reference->getStream();
@@ -117,6 +122,8 @@ void gkSource::play(void)
 // ----------------------------------------------------------------------------
 void gkSource::pause(void)
 {
+	gkCriticalSection::Lock lock(m_cs);
+
 	if (isPlaying())
 		m_playback->suspend(!isPaused());
 }
@@ -131,6 +138,8 @@ void gkSource::stop(void)
 // ----------------------------------------------------------------------------
 void gkSource::loop(bool v)
 {
+	gkCriticalSection::Lock lock(m_cs);
+
 	m_props.m_loop = v;
 	if (m_playback)
 		m_playback->setLoop(m_props.m_loop);

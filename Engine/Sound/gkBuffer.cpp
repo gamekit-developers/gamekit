@@ -52,7 +52,7 @@ gkBuffer::gkBuffer(gkSource *obj)
 			m_smp = m_stream->getSampleRate();
 			m_bps = m_stream->getBitsPerSecond();
 			obj->_bind(this);
-			m_ok = false;
+			m_ok = initialize();
 		}
 	}
 }
@@ -65,11 +65,10 @@ gkBuffer::~gkBuffer()
 }
 
 
-
 // ----------------------------------------------------------------------------
 void gkBuffer::suspend(bool v)
 {
-	GK_SOUND_AUTO_LOCK_MUTEX(m_cs);
+	gkCriticalSection::Lock lock(m_cs);
 	if (!m_ok)
 		return;
 
@@ -86,14 +85,14 @@ void gkBuffer::suspend(bool v)
 // ----------------------------------------------------------------------------
 void gkBuffer::setLoop(bool v)
 {
-	GK_SOUND_AUTO_LOCK_MUTEX(m_cs);
+	gkCriticalSection::Lock lock(m_cs);
 	m_loop = v;
 }
 
 // ----------------------------------------------------------------------------
 void gkBuffer::setPosition(const gkVector3 &v)
 {
-	GK_SOUND_AUTO_LOCK_MUTEX(m_cs);
+	gkCriticalSection::Lock lock(m_cs);
 
 	if (m_ok)
 	{
@@ -105,7 +104,7 @@ void gkBuffer::setPosition(const gkVector3 &v)
 // ----------------------------------------------------------------------------
 void gkBuffer::setDirection(const gkVector3 &v)
 {
-	GK_SOUND_AUTO_LOCK_MUTEX(m_cs);
+	gkCriticalSection::Lock lock(m_cs);
 
 	if (m_ok)
 	{
@@ -114,16 +113,24 @@ void gkBuffer::setDirection(const gkVector3 &v)
 	}
 }
 
+
 // ----------------------------------------------------------------------------
 void gkBuffer::setVelocity(const gkVector3 &v)
 {
-	GK_SOUND_AUTO_LOCK_MUTEX(m_cs);
-
+	gkCriticalSection::Lock lock(m_cs);
 	if (m_ok)
 	{
 		m_props.m_velocity = v;
 		alSourcefv(m_source, AL_VELOCITY, m_props.m_velocity.ptr());
 	}
+}
+
+
+// ----------------------------------------------------------------------------
+void gkBuffer::exit(void)
+{
+	gkCriticalSection::Lock lock(m_cs);
+	m_exit = true;
 }
 
 
@@ -238,7 +245,7 @@ void gkBuffer::finalize(void)
 // ----------------------------------------------------------------------------
 void gkBuffer::setProperties(const gkSoundProperties &props)
 {
-	GK_SOUND_AUTO_LOCK_MUTEX(m_cs);
+	gkCriticalSection::Lock lock(m_cs);
 	m_props = props;
 }
 
@@ -293,7 +300,7 @@ const char *gkBuffer::read(UTsize len, UTsize &br)
 
 
 // ----------------------------------------------------------------------------
-bool gkBuffer::stream(void)
+bool gkBuffer::_stream(void)
 {
 	// stream contents to OpenAL buffers
 	ALuint buf;

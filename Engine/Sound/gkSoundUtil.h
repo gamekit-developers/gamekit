@@ -50,10 +50,7 @@ enum gkBufType
 extern int alGetBufType(const char *magic);
 extern int alReadMagic(const char *file);
 
-
-
 #define GK_SND_SAMPLES 3
-#define GK_SOUND_AUTO_LOCK_MUTEX(cs) gkCriticalSection::Lock ___sndLock__(cs);
 
 
 #endif//_gkSoundUtil_h_

@@ -227,7 +227,7 @@ void gkDebugger::draw3dSound(const gkSoundProperties &props)
 
 	gkScalar ia = gkMaxf(props.m_coneAngle.x, 1.f);
 	gkScalar oa = gkMaxf(props.m_coneAngle.y, 1.f);
-	gkScalar hi  = gkMaxf(props.m_height, 0.125f);
+	gkScalar hi  = gkMaxf(props.m_height, 0.5f);
 	gkScalar ve  = props.m_velocity.length();
 
 	gkVector3 he = props.m_position - props.m_direction;

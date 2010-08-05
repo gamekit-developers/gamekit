@@ -66,7 +66,7 @@ private:
 
 	void run(void);
 	void runProtected(void);
-	void collectGarbage(void);
+	void collect(void);
 
 	void remove(gkBuffer *buf);
 	void stopBuffer(gkBuffer *snd);

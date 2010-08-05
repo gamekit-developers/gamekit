@@ -28,6 +28,7 @@
 #define _gkSource_h_
 
 
+#include "Thread/gkCriticalSection.h"
 #include "gkCommon.h"
 #include "gkSoundUtil.h"
 #include "gkMathUtils.h"
@@ -92,6 +93,7 @@ private:
 	gkSound             *m_reference;   // reference sound object
 
 
+	gkCriticalSection   m_cs;
 public:
 
 	gkSource(gkSound *sound);

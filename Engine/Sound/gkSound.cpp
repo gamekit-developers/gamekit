@@ -42,7 +42,6 @@ gkSound::gkSound(const gkString &name)
 gkSound::~gkSound()
 {
 	stopPlayback();
-
 	if (m_stream)
 	{
 		delete m_stream;
