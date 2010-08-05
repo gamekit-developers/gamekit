@@ -128,6 +128,7 @@
 #include "LogicBricks/gkCollisionSensor.h"
 #include "LogicBricks/gkEditObjectActuator.h"
 #include "LogicBricks/gkGameActuator.h"
+#include "LogicBricks/gkJoystickSensor.h"
 #include "LogicBricks/gkKeyboardSensor.h"
 #include "LogicBricks/gkLogicActuator.h"
 #include "LogicBricks/gkLogicBrick.h"

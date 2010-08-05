@@ -49,6 +49,9 @@ public:
 		virtual void mouseReleased(const gkMouse &mouse) {}
 		virtual void keyPressed(const gkKeyboard &key, const gkScanCode &sc) {}
 		virtual void keyReleased(const gkKeyboard &key, const gkScanCode &sc) {}
+		virtual void joystickMoved(const gkJoystick &joystick, int axis) {}
+		virtual void joystickPressed(const gkJoystick &joystick, int button) {}
+		virtual void joystickReleased(const gkJoystick &joystick, int button) {}
 	};
 
 	typedef utListClass<Listener> ListenerList;
@@ -56,13 +59,14 @@ public:
 protected:
 	friend class Private;
 
-	// TODO joystick(s) state access
-
 	// Keyboard state access
 	gkKeyboard          m_keyboard;
 
 	// Mouse state access
 	gkMouse             m_mouse;
+
+	// Joysticks state access
+	utArray<gkJoystick*> m_joysticks;
 
 	// Internal interface implementation
 	class Private;
@@ -92,10 +96,12 @@ public:
 	void process(void);
 	void dispatch(void);
 
-	GK_INLINE void exit(bool v)             {m_exit = v;}
-	GK_INLINE bool exitRequest(void)        {return m_exit;}
-	GK_INLINE gkKeyboard *getKeyboard(void) {return &m_keyboard;}
-	GK_INLINE gkMouse *getMouse(void)       {return &m_mouse;}
+	GK_INLINE void exit(bool v)                  {m_exit = v;}
+	GK_INLINE bool exitRequest(void)             {return m_exit;}
+	GK_INLINE gkKeyboard *getKeyboard(void)      {return &m_keyboard;}
+	GK_INLINE gkMouse *getMouse(void)            {return &m_mouse;}
+	GK_INLINE unsigned int getNumJoysticks(void) {return m_joysticks.size();}
+	GK_INLINE gkJoystick *getJoystick(int index) {return (index>=m_joysticks.size() ||index<0) ? 0:m_joysticks[index];}
 
 	static gkWindowSystem &getSingleton(void);
 	static gkWindowSystem *getSingletonPtr(void);

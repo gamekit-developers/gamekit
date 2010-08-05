@@ -32,6 +32,7 @@
 #include "gkMouseSensor.h"
 #include "gkKeyboardSensor.h"
 #include "gkCollisionSensor.h"
+#include "gkJoystickSensor.h"
 #include "gkLogger.h"
 #include "gkDebugScreen.h"
 
@@ -46,6 +47,7 @@ gkLogicManager::gkLogicManager()
 	m_dispatchers[DIS_KEY]          = new gkKeyDispatch;
 	m_dispatchers[DIS_MOUSE]        = new gkMouseDispatch;
 	m_dispatchers[DIS_COLLISION]    = new gkCollisionDispatch;
+	m_dispatchers[DIS_JOY]          = new gkJoyDispatch;
 }
 
 // ----------------------------------------------------------------------------

@@ -48,6 +48,7 @@ enum gkDispatchedTypes
 	DIS_KEY,
 	DIS_MOUSE,
 	DIS_COLLISION,
+	DIS_JOY,
 	DIS_MAX,
 };
 

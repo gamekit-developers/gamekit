@@ -40,6 +40,7 @@ using namespace Ogre;
 class gkWindowSystemPrivate :
 	public OIS::MouseListener,
 	public OIS::KeyListener,
+	public OIS::JoyStickListener,
 	public WindowEventListener
 
 {
@@ -54,6 +55,9 @@ public:
 	bool keyReleased(const OIS::KeyEvent &arg);
 	void windowResized(RenderWindow *rw);
 	void windowClosed(RenderWindow *rw);
+	bool buttonPressed(const OIS::JoyStickEvent &arg, int i);
+	bool buttonReleased(const OIS::JoyStickEvent &arg, int i);
+	bool axisMoved(const OIS::JoyStickEvent &arg, int i);
 
 	int getCode(int kc);
 
@@ -61,6 +65,7 @@ public:
 	OIS::InputManager      *m_input;
 	OIS::Keyboard          *m_keyboard;
 	OIS::Mouse             *m_mouse;
+	utArray<OIS::JoyStick*> m_joysticks;
 };
 
 
@@ -76,6 +81,9 @@ gkWindowSystem::~gkWindowSystem()
 {
 	if (m_window)
 		WindowEventUtilities::removeWindowEventListener(m_window, m_internal);
+		
+	m_joysticks.clear();
+
 	delete m_internal;
 }
 
@@ -126,7 +134,7 @@ RenderWindow *gkWindowSystem::createMainWindow(const gkUserDefs &prefs)
 
 		params.insert(std::make_pair("WINDOW", StringConverter::toString(handle)));
 		m_internal->m_input = OIS::InputManager::createInputSystem(params);
-
+		m_internal->m_input->enableAddOnFactory(OIS::InputManager::AddOn_All);
 
 		m_internal->m_keyboard = (OIS::Keyboard *) m_internal->m_input->createInputObject(OIS::OISKeyboard, true);
 		m_internal->m_keyboard->setEventCallback(m_internal);
@@ -134,6 +142,16 @@ RenderWindow *gkWindowSystem::createMainWindow(const gkUserDefs &prefs)
 		m_internal->m_mouse = (OIS::Mouse *)m_internal->m_input->createInputObject(OIS::OISMouse, true);
 		m_internal->m_mouse->setEventCallback(m_internal);
 
+		for(int i=0; i< m_internal->m_input->getNumberOfDevices(OIS::OISJoyStick); i++)
+		{
+			OIS::JoyStick *oisjs = (OIS::JoyStick *)m_internal->m_input->createInputObject(OIS::OISJoyStick, true);
+			oisjs->setEventCallback(m_internal);
+			
+			gkJoystick *gkjs = new gkJoystick(oisjs->getNumberOfComponents(OIS::OIS_Button), oisjs->getNumberOfComponents(OIS::OIS_Axis));
+			
+			m_internal->m_joysticks.push_back(oisjs);
+			m_joysticks.push_back(gkjs);
+		}
 
 		const OIS::MouseState &st = m_internal->m_mouse->getMouseState();
 		st.width = (int)prefs.winsize.x;
@@ -183,6 +201,13 @@ void gkWindowSystem::dispatch(void)
 
 	m_internal->m_mouse->capture();
 	m_internal->m_keyboard->capture();
+	
+	utArrayIterator<utArray<OIS::JoyStick*> > iter(m_internal->m_joysticks);
+	while(iter.hasMoreElements())
+	{
+		iter.peekNext()->capture();
+		iter.getNext();
+	}
 }
 
 
@@ -205,6 +230,8 @@ gkWindowSystemPrivate::~Private()
 
 		if (m_mouse)
 			m_input->destroyInputObject(m_mouse);
+		
+		m_joysticks.clear();
 
 		OIS::InputManager::destroyInputSystem(m_input);
 
@@ -344,6 +371,66 @@ bool gkWindowSystemPrivate::keyReleased(const OIS::KeyEvent &arg)
 	return false;
 }
 
+bool gkWindowSystemPrivate::buttonPressed(const OIS::JoyStickEvent &arg, int button)
+{
+	// Hum we assume coresponding gk and OIs joystick have the same place in their array
+	gkJoystick &js = *m_sys->m_joysticks[m_joysticks.find((OIS::JoyStick*)arg.device)];
+
+	js.buttons[button] = GK_Pressed;
+	//js.buttonCount +=1;
+
+	if (!m_sys->m_listeners.empty())
+	{
+		gkWindowSystem::Listener *node = m_sys->m_listeners.begin();
+		while (node)
+		{
+			node->joystickPressed(js, button);
+			node = node->getNext();
+		}
+	}
+
+	return false;
+}
+
+bool gkWindowSystemPrivate::buttonReleased(const OIS::JoyStickEvent &arg, int button)
+{
+	// Hum we assume coresponding gk and OIs joystick have the same place in their array
+	gkJoystick &js = *m_sys->m_joysticks[m_joysticks.find((OIS::JoyStick*)arg.device)];
+
+	js.buttons[button] = GK_Released;
+	//js.buttonCount -=1;
+
+	if (!m_sys->m_listeners.empty())
+	{
+		gkWindowSystem::Listener *node = m_sys->m_listeners.begin();
+		while (node)
+		{
+			node->joystickReleased(js, button);
+			node = node->getNext();
+		}
+	}
+
+	return false;
+}
+
+bool gkWindowSystemPrivate::axisMoved(const OIS::JoyStickEvent &arg, int axis)
+{
+	// Hum we assume coresponding gk and OIs joystick have the same place in their array
+	gkJoystick &js = *m_sys->m_joysticks[m_joysticks.find((OIS::JoyStick*)arg.device)];
+	
+	js.axes[axis] = arg.state.mAxes[axis].abs;
+	
+	if (!m_sys->m_listeners.empty())
+	{
+		gkWindowSystem::Listener *node = m_sys->m_listeners.begin();
+		while (node)
+		{
+			node->joystickMoved(js, axis);
+			node = node->getNext();
+		}
+	}
+	return false;
+}
 
 void gkWindowSystemPrivate::windowResized(RenderWindow *rw)
 {

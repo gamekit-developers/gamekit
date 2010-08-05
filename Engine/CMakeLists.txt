@@ -283,6 +283,7 @@ set(Logic_SOURCE
     LogicBricks/gkCollisionSensor.cpp
     LogicBricks/gkEditObjectActuator.cpp
     LogicBricks/gkGameActuator.cpp
+    LogicBricks/gkJoystickSensor.cpp
     LogicBricks/gkKeyboardSensor.cpp
     LogicBricks/gkLogicActuator.cpp
     LogicBricks/gkLogicBrick.cpp
@@ -312,6 +313,7 @@ set(Logic_HEADER
     LogicBricks/gkCollisionSensor.h
     LogicBricks/gkEditObjectActuator.h
     LogicBricks/gkGameActuator.h
+    LogicBricks/gkJoystickSensor.h
     LogicBricks/gkKeyboardSensor.h
     LogicBricks/gkLogicActuator.h
     LogicBricks/gkLogicBrick.h

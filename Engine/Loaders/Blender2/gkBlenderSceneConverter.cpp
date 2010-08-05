@@ -2409,6 +2409,55 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
 					rs->setProperty(gkLogicLoader_formatText(brs->name));
 
 			} break;
+		 case SENS_JOYSTICK:
+			{
+				gkJoystickSensor *jss = new gkJoystickSensor(gobj, lnk, bsen->name);
+				ls = jss;
+				Blender::bJoystickSensor *bjss = (Blender::bJoystickSensor *)bsen->data;
+				
+				jss->setJoystickIndex(bjss->joyindex);
+				jss->setAllElementEvents(bjss->flag & SENS_JOY_ANY_EVENT);
+				jss->setAxisThreshold(bjss->precision);
+				switch(bjss->type)
+				{
+					case SENS_JOY_AXIS_SINGLE:
+						jss->setEventType(gkJoystickSensor::JT_AXIS);
+						jss->setElementIndex(bjss->axis_single-1);
+						break;
+					case SENS_JOY_AXIS:
+						jss->setEventType(gkJoystickSensor::JT_AXIS_PAIR);
+						jss->setElementIndex(bjss->axis-1);
+						switch(bjss->axisf)
+						{
+							case 2:
+								jss->setAxisDirection(gkJoystickSensor::AD_LEFT);
+								break;
+							case 0:
+								jss->setAxisDirection(gkJoystickSensor::AD_RIGHT);
+								break;
+							case 3:
+								jss->setAxisDirection(gkJoystickSensor::AD_BOTTOM);
+								break;
+							case 1:
+								jss->setAxisDirection(gkJoystickSensor::AD_TOP);
+								break;
+						}
+						break;
+					case SENS_JOY_BUTTON:
+						jss->setEventType(gkJoystickSensor::JT_BUTTON);
+						jss->setElementIndex(bjss->button);
+						break;
+					case SENS_JOY_HAT:
+						jss->setEventType(gkJoystickSensor::JT_HAT);
+						jss->setElementIndex(bjss->hat-1);
+						break;
+					default:
+						printf("JoystickSensor converter bad case test\n");
+						break;
+				}
+
+				//
+			} break;
 		}
 
 		if (ls)

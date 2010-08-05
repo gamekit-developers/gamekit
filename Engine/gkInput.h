@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): xat.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -225,8 +225,43 @@ public:
 	gkScalar        wheelDelta; // current wheel
 };
 
-// TODO Joystics
+// Joystick state access
+class gkJoystick
+{
+public:
 
+	typedef utArray<int> ButtonStates;
+	typedef utArray<int> AxisStates;
 
+	GK_INLINE UTsize getButtonsNumber() {return buttons.size();}
+	GK_INLINE UTsize getAxesNumber()    {return axes.size();}
+
+	GK_INLINE bool isButtonDown(int button) const
+	{
+		if (button >= 0 && button < buttons.size())
+			return (buttons[button] == GK_Pressed);
+		return false;
+	}
+	
+	GK_INLINE int getAxisValue(int axis) const
+	{
+		if (axis >= 0 && axis < axes.size())
+			return axes[axis];
+		return 0;
+	}
+
+public:
+
+	gkJoystick(unsigned int nbuttons, unsigned int naxis)
+//		:        buttonCount(0)
+	{
+		buttons.resize(nbuttons, GK_NullState);
+		axes.resize(naxis, 0);
+	}
+
+	//int             buttonCount; // currently pressed count Commented because OIS looses events
+	ButtonStates    buttons;     // button pressed state
+	AxisStates      axes;
+};
 
 #endif//_gkInput_h_
