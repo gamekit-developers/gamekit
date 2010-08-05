@@ -93,6 +93,7 @@ void gkStreamer::stopAllSounds(void)
 void gkStreamer::stop(void)
 {
 	gkCriticalSection::Lock lock(m_cs);
+
 	m_stop = true;
 	m_syncObj.signal();
 	m_syncObj.wait();

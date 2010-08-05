@@ -68,7 +68,6 @@ gkBuffer::~gkBuffer()
 // ----------------------------------------------------------------------------
 void gkBuffer::suspend(bool v)
 {
-	gkCriticalSection::Lock lock(m_cs);
 	if (!m_ok)
 		return;
 
@@ -85,15 +84,12 @@ void gkBuffer::suspend(bool v)
 // ----------------------------------------------------------------------------
 void gkBuffer::setLoop(bool v)
 {
-	gkCriticalSection::Lock lock(m_cs);
 	m_loop = v;
 }
 
 // ----------------------------------------------------------------------------
 void gkBuffer::setPosition(const gkVector3 &v)
 {
-	gkCriticalSection::Lock lock(m_cs);
-
 	if (m_ok)
 	{
 		m_props.m_position = v;
@@ -104,8 +100,6 @@ void gkBuffer::setPosition(const gkVector3 &v)
 // ----------------------------------------------------------------------------
 void gkBuffer::setDirection(const gkVector3 &v)
 {
-	gkCriticalSection::Lock lock(m_cs);
-
 	if (m_ok)
 	{
 		m_props.m_direction = v;
@@ -117,7 +111,6 @@ void gkBuffer::setDirection(const gkVector3 &v)
 // ----------------------------------------------------------------------------
 void gkBuffer::setVelocity(const gkVector3 &v)
 {
-	gkCriticalSection::Lock lock(m_cs);
 	if (m_ok)
 	{
 		m_props.m_velocity = v;
@@ -129,7 +122,6 @@ void gkBuffer::setVelocity(const gkVector3 &v)
 // ----------------------------------------------------------------------------
 void gkBuffer::exit(void)
 {
-	gkCriticalSection::Lock lock(m_cs);
 	m_exit = true;
 }
 
@@ -245,7 +237,6 @@ void gkBuffer::finalize(void)
 // ----------------------------------------------------------------------------
 void gkBuffer::setProperties(const gkSoundProperties &props)
 {
-	gkCriticalSection::Lock lock(m_cs);
 	m_props = props;
 }
 

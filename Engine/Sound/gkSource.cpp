@@ -55,6 +55,8 @@ gkSource::~gkSource()
 // ----------------------------------------------------------------------------
 void gkSource::_bind(gkBuffer *buf)
 {
+	gkCriticalSection::Lock lock(m_cs);
+
 	m_playback = buf;
 
 	if (m_playback)
@@ -131,6 +133,8 @@ void gkSource::pause(void)
 // ----------------------------------------------------------------------------
 void gkSource::stop(void)
 {
+	gkCriticalSection::Lock lock(m_cs);
+
 	if (isPlaying())
 		gkSoundManager::getSingleton().stopSound(this);
 }
