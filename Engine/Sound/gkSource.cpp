@@ -55,8 +55,6 @@ gkSource::~gkSource()
 // ----------------------------------------------------------------------------
 void gkSource::_bind(gkBuffer *buf)
 {
-	gkCriticalSection::Lock lock(m_cs);
-
 	m_playback = buf;
 
 	if (m_playback)
