@@ -33,17 +33,18 @@
 // ----------------------------------------------------------------------------
 gkBuffer::gkBuffer(gkSource *obj)
 	:   m_sound(obj),
-	    m_stream(0),
+	    m_stream(obj->getStream()),
 	    m_loop(false),
 	    m_ok(false),
 	    m_exit(false),
 	    m_initial(true),
 		m_isInit(false),
 	    m_suspend(false),
+		m_doSuspend(false),
+		m_do3D(false),
 	    m_pos(0),
 	    m_eos(false)
 {
-	m_stream = obj->_getStream();
 	if (m_stream != 0)
 	{
 		m_fmt = m_stream->getFormat();
@@ -51,8 +52,7 @@ gkBuffer::gkBuffer(gkSource *obj)
 		{
 			m_smp = m_stream->getSampleRate();
 			m_bps = m_stream->getBitsPerSecond();
-			obj->_bind(this);
-			m_ok = initialize();
+			obj->bind(this);
 		}
 	}
 }
@@ -65,70 +65,124 @@ gkBuffer::~gkBuffer()
 }
 
 
-// ----------------------------------------------------------------------------
-void gkBuffer::suspend(bool v)
-{
-	if (!m_ok)
-		return;
-
-	m_suspend = v;
-
-	if (alIsPlaying(m_source) && m_suspend)
-		alSourceStop(m_source);
-	else if (!m_suspend)
-		alSourcePlay(m_source);
-
-	m_ok = !alErrorThrow("suspend buffers");
-}
 
 // ----------------------------------------------------------------------------
-void gkBuffer::setLoop(bool v)
+void gkBuffer::doSuspend(void)
 {
-	m_loop = v;
-}
-
-// ----------------------------------------------------------------------------
-void gkBuffer::setPosition(const gkVector3 &v)
-{
-	if (m_ok)
+	if (m_doSuspend)
 	{
-		m_props.m_position = v;
-		alSourcefv(m_source, AL_POSITION, m_props.m_position.ptr());
+		m_doSuspend = false;
+
+		if (alIsPlaying(m_source) && m_suspend)
+			alSourceStop(m_source);
+		else if (!m_suspend)
+			alSourcePlay(m_source);
+
+		m_suspend = !m_suspend;
+		m_ok = !alErrorThrow("suspend buffers");
 	}
 }
 
+
 // ----------------------------------------------------------------------------
-void gkBuffer::setDirection(const gkVector3 &v)
+void gkBuffer::do3D(void)
 {
-	if (m_ok)
+	if (m_do3D)
 	{
-		m_props.m_direction = v;
+		m_do3D = false;
+
+		alSourcefv(m_source, AL_VELOCITY, m_props.m_velocity.ptr());
+		alSourcefv(m_source, AL_POSITION, m_props.m_position.ptr());
 		alSourcefv(m_source, AL_DIRECTION, m_props.m_direction.ptr());
 	}
 }
 
 
 // ----------------------------------------------------------------------------
-void gkBuffer::setVelocity(const gkVector3 &v)
+void gkBuffer::doProperties(void)
 {
-	if (m_ok)
+	alSourcei(m_source,  AL_LOOPING, AL_FALSE);
+	if (m_props.m_3dSound)
 	{
-		m_props.m_velocity = v;
-		alSourcefv(m_source, AL_VELOCITY, m_props.m_velocity.ptr());
+		alSourcei(m_source,     AL_SOURCE_RELATIVE,     AL_FALSE);
+		alSourcef(m_source,     AL_MIN_GAIN,            gkClampf(m_props.m_gainClamp.x, 0.f, 1.f));
+		alSourcef(m_source,     AL_MAX_GAIN,            gkClampf(m_props.m_gainClamp.y, 0.f, 1.f));
+		alSourcef(m_source,     AL_REFERENCE_DISTANCE,  m_props.m_refDistance);
+		alSourcef(m_source,     AL_MAX_DISTANCE,        m_props.m_maxDistance);
+		alSourcef(m_source,     AL_ROLLOFF_FACTOR,      m_props.m_rolloff);
+		alSourcef(m_source,     AL_CONE_INNER_ANGLE,    m_props.m_coneAngle.x);
+		alSourcef(m_source,     AL_CONE_OUTER_ANGLE,    m_props.m_coneAngle.y);
+		alSourcef(m_source,     AL_CONE_OUTER_GAIN,     m_props.m_coneOuterGain);
+
+		alSourcefv(m_source,    AL_POSITION,            m_props.m_position.ptr());
+		alSourcefv(m_source,    AL_DIRECTION,           m_props.m_direction.ptr());
+		alSourcefv(m_source,    AL_VELOCITY,            m_props.m_velocity.ptr());
 	}
+	else
+		alSourcei(m_source,  AL_SOURCE_RELATIVE, AL_TRUE);
+
+	if (m_props.m_pitch > 0)
+		alSourcef(m_source, AL_PITCH, m_props.m_pitch);
+
+	alSourcef(m_source, AL_GAIN, m_props.m_volume);
+
+	m_ok = !alErrorThrow("Sound properties");
+
+}
+
+// ----------------------------------------------------------------------------
+void gkBuffer::suspend(bool v)
+{
+	if (!m_ok) return;
+
+	m_doSuspend = m_suspend != v;
+}
+
+// ----------------------------------------------------------------------------
+void gkBuffer::setLoop(bool v)
+{
+	if (!m_ok) return;
+
+	m_loop = v;
 }
 
 
 // ----------------------------------------------------------------------------
-void gkBuffer::exit(void)
+void gkBuffer::setPosition(const gkVector3 &v)
 {
-	m_exit = true;
+	if (!m_ok) return;
+
+	m_props.m_position = v;
+	m_do3D = true;
 }
+
+// ----------------------------------------------------------------------------
+void gkBuffer::setDirection(const gkVector3 &v)
+{
+	if (!m_ok) return;
+
+	m_props.m_direction = v;
+	m_do3D = true;
+}
+
+
+// ----------------------------------------------------------------------------
+void gkBuffer::setVelocity(const gkVector3 &v)
+{
+	if (!m_ok) return;
+
+	m_props.m_velocity = v;
+	m_do3D = true;
+}
+
 
 
 // ----------------------------------------------------------------------------
 bool gkBuffer::initialize(void)
 {
+	if (m_isInit)
+		return false;
+
 	alGenBuffers(GK_SND_SAMPLES, m_buffer);
 	if (alErrorThrow("opening buffers"))
 	{
@@ -171,8 +225,6 @@ void gkBuffer::queue(bool play)
 			break;
 	}
 
-
-
 	if (blk > 0)
 	{
 		alSourceQueueBuffers(m_source, blk, m_buffer);
@@ -180,35 +232,8 @@ void gkBuffer::queue(bool play)
 		{
 			alSourcePlay(m_source);
 			m_ok = !alErrorThrow("source playback");
-
-			alSourcei(m_source,  AL_LOOPING, AL_FALSE);
-			if (m_props.m_3dSound)
-			{
-				alSourcei(m_source,     AL_SOURCE_RELATIVE,     AL_FALSE);
-				alSourcef(m_source,     AL_MIN_GAIN,            gkClampf(m_props.m_gainClamp.x, 0.f, 1.f));
-				alSourcef(m_source,     AL_MAX_GAIN,            gkClampf(m_props.m_gainClamp.y, 0.f, 1.f));
-				alSourcef(m_source,     AL_REFERENCE_DISTANCE,  m_props.m_refDistance);
-				alSourcef(m_source,     AL_MAX_DISTANCE,        m_props.m_maxDistance);
-				alSourcef(m_source,     AL_ROLLOFF_FACTOR,      m_props.m_rolloff);
-				alSourcef(m_source,     AL_CONE_INNER_ANGLE,    m_props.m_coneAngle.x);
-				alSourcef(m_source,     AL_CONE_OUTER_ANGLE,    m_props.m_coneAngle.y);
-				alSourcef(m_source,     AL_CONE_OUTER_GAIN,     m_props.m_coneOuterGain);
-
-				alSourcefv(m_source,    AL_POSITION,            m_props.m_position.ptr());
-				alSourcefv(m_source,    AL_DIRECTION,           m_props.m_direction.ptr());
-				alSourcefv(m_source,    AL_VELOCITY,            m_props.m_velocity.ptr());
-			}
-			else
-				alSourcei(m_source,  AL_SOURCE_RELATIVE, AL_TRUE);
-
-			if (m_props.m_pitch > 0)
-				alSourcef(m_source, AL_PITCH, m_props.m_pitch);
-
-			alSourcef(m_source, AL_GAIN, m_props.m_volume);
-
-			m_ok = !alErrorThrow("Sound properties");
+			doProperties();
 		}
-
 	}
 	m_initial = false;
 }
@@ -218,13 +243,15 @@ void gkBuffer::queue(bool play)
 void gkBuffer::finalize(void)
 {
 	m_exit = true;
-
 	if (m_sound)
 	{
 		m_stream = 0;
-		m_sound->_bind(0);
+		m_sound->bind(0);
 		m_sound = 0;
 	}
+
+	if (!m_ok || !m_isInit)
+		return;
 
 	reset();
 	alDeleteBuffers(GK_SND_SAMPLES, m_buffer);
@@ -291,21 +318,40 @@ const char *gkBuffer::read(UTsize len, UTsize &br)
 
 
 // ----------------------------------------------------------------------------
-bool gkBuffer::_stream(void)
+bool gkBuffer::stream(void)
 {
 	// stream contents to OpenAL buffers
 	ALuint buf;
 	ALint nr;
 
+	if (!m_isInit)
+		initialize();
 
-	if (!m_ok)
-		return false;
-	if (m_suspend)
-		return false;
+	if (!m_initial)
+	{
+		if (!m_ok)
+			return false;
 
-	// setup initial buffers
-	if (m_initial)
+		// update pause
+		if (m_doSuspend)
+			doSuspend();
+
+
+		if (m_suspend)
+			return false;
+
+
+		// update 3D properties
+		if (m_do3D) do3D();
+	}
+	else
+	{
 		queue(true);
+
+		if (!m_ok)
+			return false;
+	}
+
 
 	if (m_exit)
 		return false;

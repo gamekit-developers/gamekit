@@ -30,14 +30,12 @@
 #include <al.h>
 #include <alc.h>
 
-
 extern bool alIsPlaying(ALuint src);
 extern bool alErrorCheck(const char *message);
 extern bool alErrorThrow(const char *message);
 extern bool alErrorCheck(void);
-
-
-
+extern bool alOpenLibrary(void);
+extern void alCloseLibrary(void);
 
 enum gkBufType
 {
@@ -51,6 +49,5 @@ extern int alGetBufType(const char *magic);
 extern int alReadMagic(const char *file);
 
 #define GK_SND_SAMPLES 3
-
 
 #endif//_gkSoundUtil_h_

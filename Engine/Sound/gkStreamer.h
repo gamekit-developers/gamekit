@@ -63,24 +63,31 @@ public:
 
 private:
 	friend class gkStreamerTick;
-
 	void run(void);
-	void runProtected(void);
-	void collect(void);
-
-	void remove(gkBuffer *buf);
-	void stopBuffer(gkBuffer *snd);
-	void notify(gkBuffer *buf);
+	void runTick(void);
+	void beginTick(void);
+	void endTick(void);
 
 	typedef utArray<gkBuffer *> Buffers;
+	typedef utArray<gkSource *> Sources;
+
 
 	gkCriticalSection   m_cs;
 	const gkString      m_name;
 	gkThread           *m_thread;
 	bool                m_stop;
+	bool                m_finish;
 
-	Buffers             m_buffers, m_finished;
-	gkSyncObj           m_syncObj;
+	void freeBuffers(Buffers &bufs);
+	void finishBuffers(void);
+	void processBuffers(void);
+
+	Buffers m_queueBuffers;
+	Buffers m_updateBuffers, m_finishedBuffers;
+	Sources m_queueSources;
+
+	bool m_wantsQSync, m_wantsSQSync;
+	gkSyncObj m_fsync, m_sqsync, m_qsync;
 };
 
 

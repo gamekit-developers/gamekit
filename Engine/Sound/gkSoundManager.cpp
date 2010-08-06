@@ -24,8 +24,6 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#define GK_SND_DEBUG 1
-
 #include "gkCommon.h"
 #include "gkCamera.h"
 #include "gkScene.h"
@@ -33,48 +31,30 @@
 #include "gkSound.h"
 #include "gkEngine.h"
 #include "gkUserDefs.h"
-
-
-#ifdef GK_SND_DEBUG
 #include "gkDebugger.h"
-#endif
+#include "gkLogger.h"
 
-#if UT_PLATFORM == UT_PLATFORM_WIN32
-extern "C" int OpenAL_LoadLibrary( void );
-extern "C" void OpenAL_UnloadLibrary( void );
-#endif
-#define gkSndCtxValid() ((m_device != 0 && m_context != 0) || gkEngine::getSingleton().getUserDefs().disableSound)
+
+#define gkSndCtxValid() (m_device != 0 && m_context != 0 && !m_disabled)
+
 
 
 // ----------------------------------------------------------------------------
 gkSoundManager::gkSoundManager()
-	:   m_stream(0), m_valid(false), m_device(0), m_context(0)
+	:   m_stream(0), 
+		m_valid(false), 
+		m_device(0), 
+		m_context(0), 
+		m_disabled(false)
 {
+	m_disabled = gkEngine::getSingleton().getUserDefs().disableSound;
 
-#if UT_PLATFORM == UT_PLATFORM_WIN32
-	if (OpenAL_LoadLibrary())
-#endif
+	if (!m_disabled)
 	{
-        m_device = alcOpenDevice(NULL);
-		if (m_device != 0)
-		{
-			m_context = alcCreateContext(m_device, 0);
-			if (m_context)
-			{
-				alcMakeContextCurrent(m_context);
-				m_valid = !alErrorCheck();
+		m_disabled = !alOpenLibrary();
 
-				if (m_valid)
-				{
-					alDistanceModel(AL_NONE);
-					alSpeedOfSound(343.3f);
-					alDopplerFactor(1.f);
-
-					m_stream = new gkStreamer("Sound Manager Stream");
-				}
-
-			}
-		}
+		if (!m_disabled) 
+			initialize();
 	}
 }
 
@@ -84,7 +64,6 @@ gkSoundManager::gkSoundManager()
 gkSoundManager::~gkSoundManager()
 {
 	destroyAll();
-
 	delete m_stream;
 
 	if (gkSndCtxValid())
@@ -93,11 +72,71 @@ gkSoundManager::~gkSoundManager()
 		alcDestroyContext(m_context);
 		alcCloseDevice(m_device);
 	}
-#if UT_PLATFORM == UT_PLATFORM_WIN32
-    OpenAL_UnloadLibrary();
-#endif
 
+	alCloseLibrary();
 }
+
+
+
+// ----------------------------------------------------------------------------
+void gkSoundManager::initialize(void)
+{
+	// Load start up params
+
+
+	UT_ASSERT(!m_disabled && "Sound system disabled!");
+
+
+	ALCcontext *ctx = alcGetCurrentContext();
+	if (ctx)
+		gkLogMessage("Warning: ALC context already present!");
+
+	// Clear error.
+	alGetError();
+
+	/// \todo, need to be able to specify a device  
+	m_device = alcOpenDevice(NULL);
+	if (!m_device)
+	{
+		alErrorThrow("gkSoundManager::initialize alcOpenDevice");
+		return;
+	}
+
+
+	m_context = alcCreateContext(m_device, 0);
+	if (!m_context)
+	{
+		alcCloseDevice(m_device);
+
+		m_device = 0;
+		m_context = 0;
+		return;
+	}
+
+	alcMakeContextCurrent(m_context);
+	m_valid = !alErrorThrow("gkSoundManager::initialize alcMakeContextCurrent");
+	if (!m_valid)
+	{
+		alcDestroyContext(m_context);
+		alcCloseDevice(m_device);
+
+		m_context = 0;
+		m_device = 0;
+
+		return;
+	}
+
+
+	// Apply initial parameters. 
+	alDistanceModel(AL_NONE);
+	alSpeedOfSound(343.3f);
+	alDopplerFactor(1.f);
+
+
+	// Create the playback stream. 
+	m_stream = new gkStreamer("Sound Manager Stream");
+}
+
 
 // ----------------------------------------------------------------------------
 bool gkSoundManager::isValidContext(void)
@@ -112,8 +151,11 @@ void gkSoundManager::notifySourceCreated(gkSource *src)
 	if (!gkSndCtxValid())
 		return;
 
-	GK_ASSERT(m_sources.find(src) == UT_NPOS);
-	m_sources.push_back(src);
+
+	// Add this source to the play list. 
+	GK_ASSERT(m_playingSources.find(src) == UT_NPOS);
+
+	m_playingSources.push_back(src);
 }
 
 
@@ -123,23 +165,46 @@ void gkSoundManager::notifySourceDestroyed(gkSource *src)
 	if (!gkSndCtxValid())
 		return;
 
+
+	// This orphans the source from gkSound, 
+	// The manager is now the owner. This source will be deleted 
+	// when the sound has stopped playing.
+
+
 	if (src)
 	{
 		if (src->isPlaying())
 		{
+			// Clear any loop state.
 			src->loop(false);
+
 
 			if (m_gcSources.find(src) == UT_NPOS)
 				m_gcSources.push_back(src);
 			else
-				GK_ASSERT(0);
+			{
+				GK_ASSERT(0 && "Duplicate orphaned source");
+			}
+
 		}
 		else
 		{
-			if (m_gcSources.find(src) == UT_NPOS)
-				m_gcSources.push_back(src);
+			// Just destroy
+			UTsize fnd = m_playingSources.find(src);
 
-			collectGarbage();
+			GK_ASSERT(!src->isBound() && "Attempting to delete a bound source!");
+			if (fnd != UT_NPOS)
+			{
+
+				// paranoia
+				UTsize gcFnd = m_gcSources.find(src);
+				if (gcFnd != UT_NPOS)
+					m_gcSources.erase(gcFnd);
+
+				m_playingSources.erase(fnd);
+			}
+
+			delete src;
 		}
 	}
 }
@@ -151,8 +216,24 @@ void gkSoundManager::stopAllSounds(void)
 	if (!gkSndCtxValid())
 		return;
 
-	m_stream->stopAllSounds();
+	if (!m_stream->isEmpty())
+		m_stream->stopAllSounds();
+
 	collectGarbage();
+
+
+	if (!m_playingSources.empty())
+	{
+		// Free any other sources.
+		m_playingSources.clear(true);
+	}
+
+
+	if (!m_gcSources.empty())
+	{
+		// stop any pending gc
+		m_gcSources.clear(true);
+	}
 }
 
 
@@ -161,6 +242,8 @@ void gkSoundManager::updateSoundProperties(void)
 {
 	if (!gkSndCtxValid())
 		return;
+
+	// Apply global properties.
 
 	switch (m_props.m_distModel)
 	{
@@ -203,27 +286,29 @@ void gkSoundManager::update(gkScene *scene)
 	alListenerfv(AL_ORIENTATION,    ori);
 	alListenerfv(AL_VELOCITY,       vel.ptr());
 
-#ifdef GK_SND_DEBUG
 
-	if (gkEngine::getSingleton().getUserDefs().debugSounds && !m_sources.empty())
+	// Apply debug information. 
+	if (gkEngine::getSingleton().getUserDefs().debugSounds && !m_playingSources.empty())
 	{
 		UTsize i, s;
 		Sources::Pointer p;
 
 		i = 0;
-		s = m_sources.size();
-		p = m_sources.ptr();
+		s = m_playingSources.size();
+		p = m_playingSources.ptr();
 
 		gkDebugger *debug = scene->getDebugger();
 
 		while (i < s)
 		{
 			gkSource *src = p[i++];
+
+			// Draw 3D only.
+
 			if (src->isBound() && src->getProperties().m_3dSound)
 				debug->draw3dSound(src->getProperties());
 		}
 	}
-#endif
 }
 
 
@@ -232,6 +317,10 @@ void gkSoundManager::collectGarbage(void)
 {
 	if (!gkSndCtxValid())
 		return;
+
+	// Test for finished sounds, 
+	// and delete when it has stopped playing.
+
 
 	UTsize i, s;
 	Sources::Pointer p;
@@ -245,13 +334,18 @@ void gkSoundManager::collectGarbage(void)
 		while (i < s)
 		{
 			gkSource *src = p[i++];
+
 			if (!src->isPlaying())
 			{
 				del.push_back(src);
-				m_sources.erase(src);
+
+				// erase from playing
+				m_playingSources.erase(src);
 			}
 		}
+
 	}
+
 
 	if (!del.empty())
 	{
@@ -259,17 +353,30 @@ void gkSoundManager::collectGarbage(void)
 		s = del.size();
 		p = del.ptr();
 
+
 		while (i < s)
 		{
 			gkSource *src = p[i++];
 			GK_ASSERT(!src->isBound());
+
+			// Free 
+
 			m_gcSources.erase(src);
-			m_sources.erase(src);
+			m_playingSources.erase(src);
+
+
 			delete src;
 		}
 
 		del.clear();
 	}
+
+	if (m_gcSources.empty())
+		m_gcSources.clear(true);
+
+
+	if (m_playingSources.empty())
+		m_playingSources.clear(true);
 }
 
 
@@ -279,14 +386,21 @@ void gkSoundManager::removePlayback(gkSound *sndToDelete)
 	if (!gkSndCtxValid())
 		return;
 
-    if (!m_sources.empty())
+	// Force the playback to stop (the parent sound is about to become invalid)
+	
+	
+	if (!m_playingSources.empty())
 	{
-		UTsize i, s;
+		UTsize i, s, f;
 		Sources::Pointer p;
 
 		i = 0;
-		s = m_sources.size();
-		p = m_sources.ptr();
+		s = m_playingSources.size();
+		p = m_playingSources.ptr();
+
+		Sources freeNow;
+		freeNow.reserve(s);
+
 
 		while (i < s)
 		{
@@ -295,11 +409,42 @@ void gkSoundManager::removePlayback(gkSound *sndToDelete)
 			if (src->getCreator() == sndToDelete)
 			{
 				src->stop();
-				m_gcSources.push_back(src);
+
+				GK_ASSERT(!src->isBound());
+
+				// Remove from collection.
+
+				f = m_gcSources.find(src);
+				if (f != UT_NPOS)
+					m_gcSources.erase(f);
+
+
+				freeNow.push_back(src);
 			}
 		}
 
-		collectGarbage();
+		// Now destroy them all 
+
+		i = 0;
+		s = freeNow.size();
+		p = freeNow.ptr();
+
+		while (i < s)
+		{
+			gkSource *src = p[i++];
+
+			f = m_playingSources.find(src);
+
+
+			UT_ASSERT(f != UT_NPOS);
+
+			m_playingSources.erase(f);
+			delete src;
+		}
+
+
+		if (m_playingSources.empty())
+			m_playingSources.clear(true);
 	}
 }
 
@@ -319,7 +464,13 @@ void gkSoundManager::playSound(gkSource *snd)
 	if (m_valid)
 	{
 		if (!m_stream->isRunning())
+		{
+			// Start on demand. 
 			m_stream->start();
+		}
+
+
+		// Add it to the playlist.
 		m_stream->playSound(snd);
 	}
 }
@@ -332,6 +483,7 @@ void gkSoundManager::stopSound(gkSource *snd)
 
     if (m_valid)
 	{
+		// Remove it from the playlist.
 		m_stream->stopSound(snd);
 	}
 }
@@ -340,12 +492,15 @@ void gkSoundManager::stopSound(gkSource *snd)
 // ----------------------------------------------------------------------------
 gkSound *gkSoundManager::getSound(const gkHashedString &name)
 {
+	// Always test the return value, no guarantee that this manager can create playback.
 	if (!gkSndCtxValid())
 		return 0;
 
     UTsize pos;
 	if ((pos = m_objects.find(name)) == GK_NPOS)
 		return 0;
+
+
 	return m_objects.at(pos);
 }
 
@@ -353,10 +508,12 @@ gkSound *gkSoundManager::getSound(const gkHashedString &name)
 // ----------------------------------------------------------------------------
 gkSound *gkSoundManager::createSound(const gkHashedString &name)
 {
+
+	// Always test the return value, no guarantee that this manager can create playback.
 	if (!gkSndCtxValid())
 		return 0;
 
-		
+
 	UTsize pos;
 	if ((pos = m_objects.find(name)) != GK_NPOS)
 		return 0;
@@ -373,11 +530,15 @@ void gkSoundManager::destroy(const gkHashedString &name)
 	if (!gkSndCtxValid())
 		return;
 
-    UTsize pos;
+
+	UTsize pos;
 	if ((pos = m_objects.find(name)) != GK_NPOS)
 	{
 		gkSound *ob = m_objects.at(pos);
+
+		// Force stop.
 		removePlayback(ob);
+
 
 		m_objects.remove(name);
 		delete ob;
@@ -404,10 +565,12 @@ void gkSoundManager::destroyAll(void)
 
     stopAllSounds();
 
-    if (m_stream)
-	    m_stream->exit();
+	// Destroy thread.
+	if (m_stream) m_stream->exit();
 
-    utHashTableIterator<ObjectMap> iter(m_objects);
+
+
+	utHashTableIterator<ObjectMap> iter(m_objects);
 	while (iter.hasMoreElements())
 	{
 		gkSound *ob = iter.peekNextValue();
@@ -427,6 +590,8 @@ bool gkSoundManager::hasSound(const gkHashedString &name)
 {
 	if (!gkSndCtxValid())
 		return false;
+
+
 
 	return m_objects.find(name) != GK_NPOS;
 }

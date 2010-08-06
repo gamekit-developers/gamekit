@@ -96,6 +96,8 @@ public:
 	void process(void);
 	void dispatch(void);
 
+	void clearStates(void);
+
 	GK_INLINE void exit(bool v)                  {m_exit = v;}
 	GK_INLINE bool exitRequest(void)             {return m_exit;}
 	GK_INLINE gkKeyboard *getKeyboard(void)      {return &m_keyboard;}

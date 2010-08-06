@@ -79,13 +79,13 @@ void Win32NativeKeyboard::capture()
 			if (evt.type == 0)
 			{
 				KeyEvent e(this, (KeyCode)evt.scancode, evt.charcode);
-				if (mListener->keyPressed(e))
+				if (mListener->keyPressed(e) == false)
 					break;
 			}
 			else
 			{
 				KeyEvent e(this, (KeyCode)evt.scancode, evt.charcode);
-				if (mListener->keyReleased(e))
+				if (mListener->keyReleased(e) == false)
 					break;
 			}
 		}

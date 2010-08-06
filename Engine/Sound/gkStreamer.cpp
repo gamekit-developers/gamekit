@@ -24,37 +24,20 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "gkEngine.h"
-#include "gkScene.h"
-#include "gkCamera.h"
 #include "gkStreamer.h"
 #include "gkSound.h"
 #include "gkBuffer.h"
-#include "gkTickState.h"
 
 
-class gkStreamerTick : public gkTickState
-{
-	// Frame tick state for sound playback
-private:
-
-	gkStreamer &m_stream;
-public:
-
-	gkStreamerTick(gkStreamer &streamer);
-	virtual ~gkStreamerTick() {}
-
-	void tickImpl(gkScalar delta);
-	void beginTickImpl(void);
-	void endTickImpl(void);
-
-};
 
 // ----------------------------------------------------------------------------
 gkStreamer::gkStreamer(const gkString &name)
 	:   m_name(name),
 	    m_thread(0),
-	    m_stop(true)
+	    m_stop(true),
+	    m_finish(false),
+	    m_wantsQSync(false),
+	    m_wantsSQSync(false)
 {
 }
 
@@ -83,32 +66,53 @@ void gkStreamer::exit(void)
 // ----------------------------------------------------------------------------
 void gkStreamer::stopAllSounds(void)
 {
-	while (!m_buffers.empty())
-		stopBuffer(m_buffers.back());
-}
+	gkCriticalSection::Lock lock(m_cs);
+	if (!m_updateBuffers.empty())
+	{
+		m_finish = true;
 
+		// Block until loop is finished.
+		m_fsync.wait();
+
+		// Paranoia checks.
+		UT_ASSERT(m_updateBuffers.empty());
+		UT_ASSERT(m_queueBuffers.empty());
+		UT_ASSERT(m_finishedBuffers.empty());
+		UT_ASSERT(m_queueSources.empty());
+	}
+}
 
 
 // ----------------------------------------------------------------------------
 void gkStreamer::stop(void)
 {
 	gkCriticalSection::Lock lock(m_cs);
+	if (isRunning())
+	{
+		m_finish = m_stop = true;
 
-	m_stop = true;
-	m_syncObj.signal();
-	m_syncObj.wait();
+		// Block until loop is finished.
+		m_fsync.wait();
+
+		// Paranoia checks.
+		UT_ASSERT(m_updateBuffers.empty());
+		UT_ASSERT(m_queueBuffers.empty());
+		UT_ASSERT(m_finishedBuffers.empty());
+		UT_ASSERT(m_queueSources.empty());
+	}
 }
 
 // ----------------------------------------------------------------------------
 void gkStreamer::start(void)
 {
 	gkCriticalSection::Lock lock(m_cs);
-
-	if (!m_thread)
+	if (!isRunning())
 	{
-		m_stop = false;
-		m_thread = new gkThread(this);
-		m_syncObj.signal();
+		if (!m_thread)
+		{
+			m_finish = m_stop = false;
+			m_thread = new gkThread(this);
+		}
 	}
 }
 
@@ -123,164 +127,265 @@ bool gkStreamer::isRunning(void)
 bool gkStreamer::isEmpty(void)
 {
 	gkCriticalSection::Lock lock(m_cs);
-
-	return m_buffers.empty();
+	return m_updateBuffers.empty();
 }
+
 
 // ----------------------------------------------------------------------------
 void gkStreamer::playSound(gkSource *snd)
 {
 	gkCriticalSection::Lock lock(m_cs);
+	if (snd && !snd->isBound())
+	{
+		m_wantsQSync = true;
 
-	// add to queue
-	m_buffers.push_back(new gkBuffer(snd));
-	m_syncObj.signal();
+		// Assert a queue update is not in progress.
+		// Stop all traffic.
+		m_qsync.wait();
+
+		// Add to queue.
+		m_queueBuffers.push_back(new gkBuffer(snd));
+	}
 }
-
 
 // ----------------------------------------------------------------------------
 void gkStreamer::stopSound(gkSource *snd)
 {
-	if (snd && snd->isBound())
-		stopBuffer(snd->_getBuffer());
-}
-
-// ----------------------------------------------------------------------------
-void gkStreamer::stopBuffer(gkBuffer *buf)
-{
-	if (buf)
-		notify(buf);
-}
-
-
-// ----------------------------------------------------------------------------
-void gkStreamer::notify(gkBuffer *buf)
-{
-	// wait for a signal saying this
-	// buffer has exited
-
 	gkCriticalSection::Lock lock(m_cs);
-
-	buf->exit();
-	m_syncObj.wait();
-
-}
-
-// ----------------------------------------------------------------------------
-void gkStreamer::remove(gkBuffer *buf)
-{
-	UTsize pos;
-	if ((pos = m_finished.find(buf)) != UT_NPOS)
-		m_finished.erase(pos);
-
-	if ((pos = m_buffers.find(buf)) != UT_NPOS)
+	if (snd && snd->isBound())
 	{
-		m_buffers.erase(pos);
-		delete buf;
+		m_wantsSQSync = true;
+
+		// Assert a queue update is not in progress.
+		// Stop all traffic.
+		m_sqsync.wait();
+
+		// Add to queue.
+		m_queueSources.push_back(snd);
 	}
 
-	if (m_buffers.empty())
-		m_buffers.clear(true);
+}
+
+
+// ----------------------------------------------------------------------------
+void gkStreamer::freeBuffers(gkStreamer::Buffers &buffers)
+{
+	// Remove temporary buffers, from the update list
+
+	UT_ASSERT(!buffers.empty());
+
+	UTsize i, s, p;
+	Buffers::Pointer b;
+	gkBuffer *tmp;
+
+	i = 0;
+	s = buffers.size();
+	b = buffers.ptr();
+
+	while (i < s)
+	{
+		tmp = b[i++];
+		p = m_updateBuffers.find(tmp);
+
+		if (p != UT_NPOS)
+		{
+			m_updateBuffers.erase(p);
+			delete tmp;
+		}
+	}
+
+	buffers.clear(true);
+	if (m_updateBuffers.empty())
+		m_updateBuffers.clear(true);
+}
+
+
+// ----------------------------------------------------------------------------
+void gkStreamer::processBuffers(void)
+{
+	UTsize i, s;
+	Buffers::Pointer qb;
+	Sources::Pointer qs;
+	gkBuffer *tmp;
+
+
+	if (!m_queueBuffers.empty())
+	{
+		// Copy buffers
+
+		i  = 0;
+		s  = m_queueBuffers.size();
+		qb = m_queueBuffers.ptr();
+
+		m_updateBuffers.reserve(s);
+
+		while (i < s)
+			m_updateBuffers.push_back(qb[i++]);
+
+
+		m_queueBuffers.clear(true);
+	}
+
+	if (m_wantsQSync)
+	{
+		m_wantsQSync = false;
+
+		// Notify waiting traffic.
+		m_qsync.signal();
+	}
+
+	if (!m_queueSources.empty())
+	{
+		// Free stopped sources.
+
+		i  = 0;
+		s  = m_queueSources.size();
+		qs = m_queueSources.ptr();
+
+		while (i < s)
+		{
+			tmp = qs[i++]->getBuffer();
+
+			if (tmp)
+			{
+				UTsize pos = m_updateBuffers.find(tmp);
+				UT_ASSERT(pos != UT_NPOS);
+
+				if (pos != UT_NPOS)
+				{
+					delete tmp;
+					m_updateBuffers.erase(pos);
+				}
+			}
+		}
+
+
+		// Free buffer cache.
+		if (m_updateBuffers.empty())
+			m_updateBuffers.clear(true);
+
+		m_queueSources.clear(true);
+	}
+
+	if (m_wantsSQSync)
+	{
+		m_wantsSQSync = false;
+
+		// Notify waiting traffic.
+		m_sqsync.signal();
+	}
+}
+
+
+
+// ----------------------------------------------------------------------------
+void gkStreamer::finishBuffers(void)
+{
+	// Remove all buffers from the system.
+
+	if (!m_updateBuffers.empty())
+	{
+		UTsize i, s;
+		Buffers::Pointer b;
+		gkBuffer *tmp;
+
+
+		i = 0;
+		s = m_updateBuffers.size();
+		b = m_updateBuffers.ptr();
+
+		while (i < s)
+		{
+			tmp = b[i++];
+
+			// Make sure queue buffers, do not contain this.
+			UT_ASSERT(m_queueBuffers.find(tmp) == UT_NPOS);
+
+			delete tmp;
+		}
+
+		m_updateBuffers.clear(true);
+	}
+
+	// Free buffer cache.
+
+	if (!m_finishedBuffers.empty())
+		m_finishedBuffers.clear(true);
+
+	if (!m_queueSources.empty())
+		m_queueSources.clear(true);
+
+	if (!m_queueBuffers.empty())
+		m_queueBuffers.clear(true);
 }
 
 // ----------------------------------------------------------------------------
 void gkStreamer::run(void)
 {
-	gkStreamerTick stream(*this);
-
+	/// Main sound workload.
+	/// \note This is designed to be a long running background thread.
 
 	while (isRunning())
 	{
 		// catch any exceptions
 		try
 		{
-			stream.tick();
+			processBuffers();
+
+			if (!m_updateBuffers.empty())
+			{
+				// Process update buffers.
+				UTsize i, s;
+				Buffers::Pointer b;
+
+
+				i = 0;
+				s = m_updateBuffers.size();
+				b = m_updateBuffers.ptr();
+
+				while (i < s)
+				{
+					gkBuffer *buf = b[i++];
+
+					buf->stream();
+
+					// Local remove
+					if (!buf->isValid() || buf->isDone())
+						m_finishedBuffers.push_back(buf);
+				}
+
+
+				if (!m_finishedBuffers.empty())
+					freeBuffers(m_finishedBuffers);
+			}
+
+			if (m_finish || m_stop)
+			{
+				m_finish = false;
+
+				// Clear all buffers.
+				finishBuffers();
+
+				if (m_stop)
+				{
+					// exit hook
+					break;
+				}
+				else
+				{
+					// continue
+					m_fsync.signal();
+				}
+			}
 		}
+
 		catch (...)
 		{
 			printf("%s: unknown error!\n", m_name.c_str());
 		}
 	}
 
-	m_syncObj.signal();
+
+	// notify we have stopped.
+	m_fsync.signal();
 }
-
-
-// ----------------------------------------------------------------------------
-void gkStreamer::runProtected(void)
-{
-	// main sound workload
-	UTsize i, s;
-	Buffers::Pointer b;
-
-	i = 0;
-	s = m_buffers.size();
-	b = m_buffers.ptr();
-
-	while (i < s)
-	{
-		gkBuffer *buf = b[i++];
-
-		// stream contents to OpenAL
-		if (buf->isValid())
-			buf->_stream();
-
-		// notify were done
-		if (buf->isDone() || !buf->isValid())
-			m_finished.push_back(buf);
-	}
-
-	if (!m_finished.empty())
-	{
-		while (!m_finished.empty())
-			remove(m_finished.back());
-
-		m_finished.clear(true);
-
-		// wake up wating sync
-		m_syncObj.signal();
-	}
-}
-
-
-// ----------------------------------------------------------------------------
-void gkStreamer::collect(void)
-{
-	if (!m_finished.empty())
-	{
-		while (!m_finished.empty())
-			remove(m_finished.back());
-
-		m_finished.clear(true);
-
-		// wake up wating sync
-		m_syncObj.signal();
-	}
-}
-
-// ----------------------------------------------------------------------------
-gkStreamerTick::gkStreamerTick(gkStreamer &streamer)
-	:   gkTickState(gkEngine::getTickRate()),
-	    m_stream(streamer)
-{
-}
-
-// ----------------------------------------------------------------------------
-void gkStreamerTick::tickImpl(gkScalar delta)
-{
-	m_stream.runProtected();
-}
-
-
-// ----------------------------------------------------------------------------
-void gkStreamerTick::beginTickImpl(void)
-{
-	m_stream.collect();
-}
-
-// ----------------------------------------------------------------------------
-void gkStreamerTick::endTickImpl(void)
-{
-	m_stream.collect();
-}
-

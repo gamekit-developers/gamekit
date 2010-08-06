@@ -173,6 +173,12 @@ public:
 		return false;
 	}
 
+	void clear(void)
+	{
+		key_count = 0;
+		memset(keys, GK_NullState, sizeof(KeyState));
+	}
+
 	int         key_count;  // currently pressed count
 	KeyState    keys;       // key buffer state
 };
@@ -202,6 +208,19 @@ public:
 	}
 
 	GK_INLINE bool mouseMoved(void) const { return moved; }
+
+	void clear(void)
+	{
+		moved = false;
+		wheelDelta = 0.f;
+		relitave.x = 0.f;
+		relitave.y = 0.f;
+		position.x = 0.f;
+		position.y = 0.f;
+		buttons[0] = GK_NullState;
+		buttons[1] = GK_NullState;
+		buttons[2] = GK_NullState;
+	}
 
 public:
 
@@ -250,16 +269,27 @@ public:
 		return 0;
 	}
 
+	void clear(void)
+	{
+		buttonCount = 0;
+		UTsize i;
+		for (i=0; i<buttons.size(); ++i)
+			buttons[i] =GK_NullState; 
+
+		for (i=0; i<axes.size(); ++i)
+			axes[i] =0; 
+	}
+
 public:
 
 	gkJoystick(unsigned int nbuttons, unsigned int naxis)
-//		:        buttonCount(0)
+		:        buttonCount(0)
 	{
 		buttons.resize(nbuttons, GK_NullState);
 		axes.resize(naxis, 0);
 	}
 
-	//int             buttonCount; // currently pressed count Commented because OIS looses events
+	int             buttonCount; // currently pressed count
 	ButtonStates    buttons;     // button pressed state
 	AxisStates      axes;
 };

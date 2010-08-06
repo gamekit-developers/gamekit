@@ -30,16 +30,20 @@
 #include "gkCommon.h"
 #include "gkSoundUtil.h"
 #include "gkSound.h"
-#include "Thread/gkCriticalSection.h"
 
+// This class is 100% internal, not for use outside of
+// gkSource & gkStreamer
 class gkBuffer
 {
-	// Main playback buffer.
+private:
+	// Force internal usage. 
+	friend class gkSource;
+	friend class gkStreamer;
 
-public:
 
 	gkBuffer(gkSource *obj);
-	virtual ~gkBuffer();
+	~gkBuffer();
+
 
 	void suspend(bool v);
 	void setLoop(bool v);
@@ -56,15 +60,17 @@ public:
 
 	void setProperties(const gkSoundProperties &props);
 
-	void exit(void);
-	bool _stream(void);
-private:
 
+	bool stream(void);
 	void finalize(void);
 	void reset(void);
 
 	void queue(bool play=false);
 	bool initialize(void);
+
+	void doSuspend(void);
+	void do3D(void);
+	void doProperties(void);
 
 
 	// stream reading
@@ -76,12 +82,14 @@ private:
 	ALuint              m_source;
 	bool                m_loop, m_ok, m_exit, m_initial, m_isInit;
 	bool                m_suspend;
+
+	// Queue states
+	bool m_doSuspend, m_do3D;
+
 	gkSoundProperties   m_props;
 	UTsize              m_pos;
 	bool                m_eos;
 	int                 m_fmt, m_smp, m_bps;
-
-	gkCriticalSection   m_cs;
 };
 
 

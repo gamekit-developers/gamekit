@@ -92,25 +92,28 @@ private:
 	gkSoundProperties    m_props;       // properties to attach to the sound stream
 	gkSound             *m_reference;   // reference sound object
 
+	// Force internal usage. 
+
+	friend class gkBuffer;
+	friend class gkStreamer;
+
+	// Bind / unbind a buffer to this object.
+	// This object is only playable when a buffer is attached.
+	void bind(gkBuffer *buf);
+
+	// Playback buffer.
+	gkBuffer *getBuffer(void) {return m_playback;}
+
+	// Playback stream.
+	gkSoundStream *getStream(void);
+
+
 
 	gkCriticalSection   m_cs;
 public:
 
 	gkSource(gkSound *sound);
 	virtual ~gkSource();
-
-
-	// bind / unbind a buffer to this object.
-	// This object is only playable when a buffer is attached.
-	// (internal use only)
-	void _bind(gkBuffer *buf);
-
-	// playback buffer  (internal use only)
-	gkBuffer *_getBuffer(void) {return m_playback;}
-
-	// playback stream (internal use only)
-	gkSoundStream *_getStream(void);
-
 
 
 	GK_INLINE bool                  isStopped(void)         {return !isPlaying() || isPaused(); }

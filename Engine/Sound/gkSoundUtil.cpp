@@ -30,8 +30,38 @@
 
 #if UT_PLATFORM == UT_PLATFORM_WIN32
 #include <windows.h>
+
+extern "C" int OpenAL_LoadLibrary( void );
+extern "C" void OpenAL_UnloadLibrary( void );
 #endif
 
+
+// ----------------------------------------------------------------------------
+bool alOpenLibrary(void)
+{
+#if UT_PLATFORM == UT_PLATFORM_WIN32
+	int status = OpenAL_LoadLibrary();
+
+	if (!status)
+	{
+		gkLogMessage("OpenAL: Failed to load shared library!");
+		return false;
+	}
+
+	return true;
+
+#else
+	return true;
+#endif
+}
+
+// ----------------------------------------------------------------------------
+void alCloseLibrary(void)
+{
+#if UT_PLATFORM == UT_PLATFORM_WIN32
+	OpenAL_UnloadLibrary();
+#endif
+}
 
 
 // ----------------------------------------------------------------------------

@@ -211,6 +211,16 @@ void gkWindowSystem::dispatch(void)
 }
 
 
+void gkWindowSystem::clearStates(void)
+{
+	m_mouse.clear();
+	m_keyboard.clear();
+
+	UTsize i;
+	for (i=0; i<m_joysticks.size(); ++i)
+		m_joysticks[i]->clear();
+}
+
 
 
 // Internal interface
@@ -264,7 +274,7 @@ bool gkWindowSystemPrivate::mouseMoved(const OIS::MouseEvent &arg)
 		}
 	}
 
-	return false;
+	return true;
 }
 
 bool gkWindowSystemPrivate::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
@@ -294,7 +304,7 @@ bool gkWindowSystemPrivate::mousePressed(const OIS::MouseEvent &arg, OIS::MouseB
 		}
 	}
 
-	return false;
+	return true;
 }
 
 bool gkWindowSystemPrivate::mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
@@ -324,7 +334,7 @@ bool gkWindowSystemPrivate::mouseReleased(const OIS::MouseEvent &arg, OIS::Mouse
 		}
 	}
 
-	return false;
+	return true;
 }
 
 bool gkWindowSystemPrivate::keyPressed(const OIS::KeyEvent &arg)
@@ -346,7 +356,7 @@ bool gkWindowSystemPrivate::keyPressed(const OIS::KeyEvent &arg)
 		}
 	}
 
-	return false;
+	return true;
 }
 
 bool gkWindowSystemPrivate::keyReleased(const OIS::KeyEvent &arg)
@@ -368,7 +378,7 @@ bool gkWindowSystemPrivate::keyReleased(const OIS::KeyEvent &arg)
 	}
 
 
-	return false;
+	return true;
 }
 
 bool gkWindowSystemPrivate::buttonPressed(const OIS::JoyStickEvent &arg, int button)
@@ -377,7 +387,7 @@ bool gkWindowSystemPrivate::buttonPressed(const OIS::JoyStickEvent &arg, int but
 	gkJoystick &js = *m_sys->m_joysticks[m_joysticks.find((OIS::JoyStick*)arg.device)];
 
 	js.buttons[button] = GK_Pressed;
-	//js.buttonCount +=1;
+	js.buttonCount +=1;
 
 	if (!m_sys->m_listeners.empty())
 	{
@@ -389,7 +399,7 @@ bool gkWindowSystemPrivate::buttonPressed(const OIS::JoyStickEvent &arg, int but
 		}
 	}
 
-	return false;
+	return true;
 }
 
 bool gkWindowSystemPrivate::buttonReleased(const OIS::JoyStickEvent &arg, int button)
@@ -398,7 +408,7 @@ bool gkWindowSystemPrivate::buttonReleased(const OIS::JoyStickEvent &arg, int bu
 	gkJoystick &js = *m_sys->m_joysticks[m_joysticks.find((OIS::JoyStick*)arg.device)];
 
 	js.buttons[button] = GK_Released;
-	//js.buttonCount -=1;
+	js.buttonCount -=1;
 
 	if (!m_sys->m_listeners.empty())
 	{
@@ -410,7 +420,7 @@ bool gkWindowSystemPrivate::buttonReleased(const OIS::JoyStickEvent &arg, int bu
 		}
 	}
 
-	return false;
+	return true;
 }
 
 bool gkWindowSystemPrivate::axisMoved(const OIS::JoyStickEvent &arg, int axis)
@@ -429,7 +439,7 @@ bool gkWindowSystemPrivate::axisMoved(const OIS::JoyStickEvent &arg, int axis)
 			node = node->getNext();
 		}
 	}
-	return false;
+	return true;
 }
 
 void gkWindowSystemPrivate::windowResized(RenderWindow *rw)

@@ -151,7 +151,7 @@ void Win32NativeMouse::capture()
 				if (mListener && mBuffered )
 				{
 					MouseEvent arg(this, mState);
-					if (mListener->mouseMoved(arg))
+					if (mListener->mouseMoved(arg) == false)
 						break;
 				}
 			}
@@ -163,7 +163,7 @@ void Win32NativeMouse::capture()
 				if (mListener && mBuffered )
 				{
 					MouseEvent arg(this, mState);
-					if (mListener->mouseMoved(arg))
+					if (mListener->mouseMoved(arg) == false)
 						break;
 				}
 			}
@@ -174,7 +174,7 @@ void Win32NativeMouse::capture()
 				if (mListener && mBuffered )
 				{
 					MouseEvent arg(this, mState);
-					if (mListener->mouseReleased(arg, (MouseButtonID)evt.button))
+					if (mListener->mouseReleased(arg, (MouseButtonID)evt.button) == false)
 						break;
 				}
 			}
@@ -185,7 +185,7 @@ void Win32NativeMouse::capture()
 				if (mListener && mBuffered )
 				{
 					MouseEvent arg(this, mState);
-					if (mListener->mousePressed(arg, (MouseButtonID)evt.button))
+					if (mListener->mousePressed(arg, (MouseButtonID)evt.button) == false)
 						break;
 				}
 			}

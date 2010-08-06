@@ -53,18 +53,17 @@ public:
 
 
 private:
-	ObjectMap           m_objects;      // all loaded sounds
-	ALCdevice           *m_device;      // OpenAL Device
-	ALCcontext          *m_context;     // OpenAL Context
-	gkStreamer          *m_stream;      // Playback stream
-	Sources             m_sources;      // list of currently active sources
-	Sources             m_gcSources;    // sources to remove when done playing
-	bool                m_valid;
+	ObjectMap           m_objects;         // all loaded sounds
+	ALCdevice           *m_device;         // OpenAL Device
+	ALCcontext          *m_context;        // OpenAL Context
+	gkStreamer          *m_stream;         // Playback stream
+	Sources             m_playingSources;  // list of currently active sources
+	Sources             m_gcSources;       // sources to remove when done playing
+	bool                m_valid, m_disabled;
 
 
+	void initialize(void);
 	gkSoundSceneProperties m_props; // conversion properties
-
-
 	void removePlayback(gkSound *sndToDelete);
 
 public:

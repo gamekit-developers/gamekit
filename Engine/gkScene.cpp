@@ -479,13 +479,12 @@ void gkScene::unloadImpl()
 		}
 	}
 #ifdef OGREKIT_OPENAL_SOUND
-
-	// process sounds waiting to be finished
-	gkSoundManager::getSingleton().collectGarbage();
 	gkSoundManager::getSingleton().stopAllSounds();
-
 #endif
+
 	gkLogicManager::getSingleton().notifySceneUnloaded();
+
+	gkWindowSystem::getSingleton().clearStates();
 
 	gkEngine::getSingleton().setActiveScene(0);
 }

@@ -53,10 +53,11 @@ gkSource::~gkSource()
 
 
 // ----------------------------------------------------------------------------
-void gkSource::_bind(gkBuffer *buf)
+void gkSource::bind(gkBuffer *buf)
 {
-	m_playback = buf;
+	gkCriticalSection::Lock lock(m_cs);
 
+	m_playback = buf;
 	if (m_playback)
 		m_playback->setProperties(m_props);
 }
@@ -65,6 +66,8 @@ void gkSource::_bind(gkBuffer *buf)
 // ----------------------------------------------------------------------------
 void gkSource::updatePropsForObject(gkGameObject *obj)
 {
+	gkCriticalSection::Lock lock(m_cs);
+
 	if (obj)
 	{
 		gkVector3 pos = obj->getWorldPosition();
@@ -78,14 +81,11 @@ void gkSource::updatePropsForObject(gkGameObject *obj)
 		m_props.m_direction = dir;
 		m_props.m_velocity = vel;
 
+		if (m_playback)
 		{
-			gkCriticalSection::Lock lock(m_cs);
-			if (m_playback)
-			{
-				m_playback->setPosition(m_props.m_position);
-				m_playback->setDirection(m_props.m_direction);
-				m_playback->setVelocity(m_props.m_velocity);
-			}
+			m_playback->setPosition(m_props.m_position);
+			m_playback->setDirection(m_props.m_direction);
+			m_playback->setVelocity(m_props.m_velocity);
 		}
 	}
 
@@ -95,12 +95,13 @@ void gkSource::updatePropsForObject(gkGameObject *obj)
 // ----------------------------------------------------------------------------
 bool gkSource::isPaused(void)
 {
+	gkCriticalSection::Lock lock(m_cs);
 	return m_playback ? m_playback->isSuspended() : false;
 }
 
 
 // ----------------------------------------------------------------------------
-gkSoundStream *gkSource::_getStream(void)
+gkSoundStream *gkSource::getStream(void)
 {
 	return m_reference ? m_reference->getStream() : 0;
 }
@@ -109,14 +110,21 @@ gkSoundStream *gkSource::_getStream(void)
 // ----------------------------------------------------------------------------
 void gkSource::play(void)
 {
-	gkCriticalSection::Lock lock(m_cs);
-
-	if (m_reference && !m_playback)
+	bool addPlay = false;
 	{
-		gkSoundStream *stream = m_reference->getStream();
-		if (stream)
-			gkSoundManager::getSingleton().playSound(this);
-	}
+		gkCriticalSection::Lock lock(m_cs);
+
+		if (m_reference && !m_playback)
+		{
+			gkSoundStream *stream = m_reference->getStream();
+			if (stream) addPlay = true;
+		}
+   }
+
+
+	if (addPlay)
+		gkSoundManager::getSingleton().playSound(this);
+
 }
 
 // ----------------------------------------------------------------------------
@@ -124,23 +132,37 @@ void gkSource::pause(void)
 {
 	gkCriticalSection::Lock lock(m_cs);
 
-	if (isPlaying())
-		m_playback->suspend(!isPaused());
+	// Suspend active buffer
+
+
+	if (isPlaying()) m_playback->suspend(!isPaused());
 }
 
 // ----------------------------------------------------------------------------
 void gkSource::stop(void)
 {
-	gkCriticalSection::Lock lock(m_cs);
+	bool stopPlay = false;
+	{
+		gkCriticalSection::Lock lock(m_cs);
 
-	if (isPlaying())
+		if (m_reference && m_playback)
+		{
+			gkSoundStream *stream = m_reference->getStream();
+			if (stream) stopPlay = true;
+		}
+	}
+
+	if (stopPlay)
 		gkSoundManager::getSingleton().stopSound(this);
 }
+
 
 // ----------------------------------------------------------------------------
 void gkSource::loop(bool v)
 {
 	gkCriticalSection::Lock lock(m_cs);
+
+	// Loop active buffer
 
 	m_props.m_loop = v;
 	if (m_playback)
