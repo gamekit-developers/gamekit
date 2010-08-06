@@ -2455,8 +2455,22 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
 						printf("JoystickSensor converter bad case test\n");
 						break;
 				}
-
-				//
+			} break;
+		case SENS_RANDOM:
+			{
+				gkRandomSensor *rs = new gkRandomSensor(gobj, lnk, bsen->name);
+				ls = rs;
+				Blender::bRandomSensor *brs = (Blender::bRandomSensor *)bsen->data;
+				rs->setSeed(brs->seed);
+			} break;
+		case SENS_DELAY:
+			{
+				gkDelaySensor *ds = new gkDelaySensor(gobj, lnk, bsen->name);
+				ls = ds;
+				Blender::bDelaySensor *bds = (Blender::bDelaySensor *)bsen->data;
+				ds->setDuration(bds->duration);
+				ds->setDelay(bds->delay);
+				ds->setRepeat(bds->flag & SENS_DELAY_REPEAT);
 			} break;
 		}
 

@@ -40,6 +40,7 @@ set(Core_SOURCE
     gkWindowSystem.cpp
     Utils/utString.cpp
     Utils/utStreams.cpp
+    Utils/utRandom.cpp
 )
 
 set(Core_HEADER
@@ -90,6 +91,7 @@ set(Core_HEADER
     Utils/utStreams.h
     Utils/utMemoryPool.h
     Utils/utStreams.h
+    Utils/utRandom.h
 )
 
 source_group(Core\\Header FILES ${Core_HEADER})
@@ -281,6 +283,7 @@ set(Logic_SOURCE
     LogicBricks/gkActionActuator.cpp
     LogicBricks/gkAlwaysSensor.cpp
     LogicBricks/gkCollisionSensor.cpp
+    LogicBricks/gkDelaySensor.cpp
     LogicBricks/gkEditObjectActuator.cpp
     LogicBricks/gkGameActuator.cpp
     LogicBricks/gkJoystickSensor.cpp
@@ -297,6 +300,7 @@ set(Logic_SOURCE
     LogicBricks/gkMouseSensor.cpp
     LogicBricks/gkNearSensor.cpp
     LogicBricks/gkRadarSensor.cpp
+    LogicBricks/gkRandomSensor.cpp
     LogicBricks/gkRaySensor.cpp
     LogicBricks/gkScriptController.cpp
     LogicBricks/gkStateActuator.cpp
@@ -311,6 +315,7 @@ set(Logic_HEADER
     LogicBricks/gkActionActuator.h
     LogicBricks/gkAlwaysSensor.h
     LogicBricks/gkCollisionSensor.h
+    LogicBricks/gkDelaySensor.h
     LogicBricks/gkEditObjectActuator.h
     LogicBricks/gkGameActuator.h
     LogicBricks/gkJoystickSensor.h
@@ -327,6 +332,7 @@ set(Logic_HEADER
     LogicBricks/gkMouseSensor.h
     LogicBricks/gkNearSensor.h
     LogicBricks/gkRadarSensor.h
+    LogicBricks/gkRandomSensor.h
     LogicBricks/gkRaySensor.h
     LogicBricks/gkScriptController.h
     LogicBricks/gkStateActuator.h
