@@ -74,7 +74,7 @@ bool gkJoystickSensor::query(void)
 	switch (m_eventType)
 	{
 	case JT_AXIS:
-		return (std::abs(js->getAxisValue(m_elementIndex)) > m_axisThreshold) ? true : false;
+		return (gkAbs(js->getAxisValue(m_elementIndex)) > m_axisThreshold) ? true : false;
 	case JT_AXIS_PAIR:
 		{
 			int axis1 = js->getAxisValue(m_elementIndex * 2);
@@ -82,8 +82,8 @@ bool gkJoystickSensor::query(void)
 			bool ret=false;
 			if (m_allEvents)
 			{
-				ret = (std::abs(axis1) > m_axisThreshold) ? true : false;
-				ret |= (std::abs(axis2) > m_axisThreshold) ? true : false;
+				ret = (gkAbs(axis1) > m_axisThreshold) ? true : false;
+				ret |= (gkAbs(axis2) > m_axisThreshold) ? true : false;
 			}
 			else
 			{
