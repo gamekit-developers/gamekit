@@ -183,6 +183,7 @@ public:
 
 	void attachLogic(gkLogicTree *tree);
 	void attachLogic(gkLogicLink *bricks);
+	GK_INLINE gkLogicLink *getLogicBricks() {return m_bricks;}
 
 	// Ogre base class for movables
 	Ogre::MovableObject *getMovable(void);

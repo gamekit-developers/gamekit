@@ -124,6 +124,7 @@
 #include "Logic/gkVariableNode.h"
 
 #include "LogicBricks/gkActionActuator.h"
+#include "LogicBricks/gkActuatorSensor.h"
 #include "LogicBricks/gkAlwaysSensor.h"
 #include "LogicBricks/gkCollisionSensor.h"
 #include "LogicBricks/gkDelaySensor.h"

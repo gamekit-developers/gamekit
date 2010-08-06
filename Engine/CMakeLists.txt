@@ -281,6 +281,7 @@ source_group(LogicNodes\\Source FILES ${NLogic_SOURCE})
 # ---------------------------------------------------------
 set(Logic_SOURCE
     LogicBricks/gkActionActuator.cpp
+    LogicBricks/gkActuatorSensor.cpp
     LogicBricks/gkAlwaysSensor.cpp
     LogicBricks/gkCollisionSensor.cpp
     LogicBricks/gkDelaySensor.cpp
@@ -313,6 +314,7 @@ set(Logic_SOURCE
 
 set(Logic_HEADER
     LogicBricks/gkActionActuator.h
+    LogicBricks/gkActuatorSensor.h
     LogicBricks/gkAlwaysSensor.h
     LogicBricks/gkCollisionSensor.h
     LogicBricks/gkDelaySensor.h

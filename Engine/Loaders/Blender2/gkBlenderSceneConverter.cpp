@@ -2472,6 +2472,13 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
 				ds->setDelay(bds->delay);
 				ds->setRepeat(bds->flag & SENS_DELAY_REPEAT);
 			} break;
+		case SENS_ACTUATOR:
+			{
+				gkActuatorSensor *as = new gkActuatorSensor(gobj, lnk, bsen->name);
+				ls = as;
+				Blender::bActuatorSensor *bas = (Blender::bActuatorSensor *)bsen->data;
+				as->setActuatorName(bas->name);
+			} break;
 		}
 
 		if (ls)
