@@ -51,6 +51,7 @@
 #include "gkTickState.h"
 #include "gkDebugFps.h"
 #include "gkStats.h"
+#include "gkMessageManager.h"
 
 #include "Script/Lua/gkLuaManager.h"
 
@@ -185,6 +186,7 @@ void gkEngine::initialize(bool autoCreateWindow)
 	new gkTextManager();
 	new gkLuaManager();
 	new gkMeshManager();
+	new gkMessageManager();
 
 #ifdef OGREKIT_OPENAL_SOUND
 	new gkSoundManager();
@@ -243,6 +245,7 @@ void gkEngine::finalize()
 	delete gkLogicManager::getSingletonPtr();
 	delete gkWindowSystem::getSingletonPtr();
 	delete gkMeshManager::getSingletonPtr();
+	delete gkMessageManager::getSingletonPtr();
 
 #ifdef OGREKIT_OPENAL_SOUND
 	delete gkSoundManager::getSingletonPtr();

@@ -2098,6 +2098,30 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
 				va->setFlag(fl);
 
 			} break;
+		case ACT_MESSAGE:
+			{
+				gkMessageActuator *ma = new gkMessageActuator(gobj, lnk, bact->name);
+				la = ma;
+				Blender::bMessageActuator *bma = (Blender::bMessageActuator *)bact->data;
+
+				ma->setTo(bma->toPropName ? bma->toPropName : "");
+				ma->setSubject(bma->subject ? bma->subject : "");
+				
+				switch(bma->bodyType)
+				{
+					case ACT_MESG_MESG:
+						ma->setBodyType(gkMessageActuator::BT_TEXT);
+						ma->setBodyText(bma->body ? bma->body : "");
+						break;
+					case ACT_MESG_PROP:
+						ma->setBodyType(gkMessageActuator::BT_TEXT);
+						ma->setBodyProperty(bma->body ? bma->body : "");
+						break;
+					default:
+						break;
+				}
+				
+			} break;
 		case ACT_SOUND:
 			{
 #if OGREKIT_OPENAL_SOUND
@@ -2478,6 +2502,13 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
 				ls = as;
 				Blender::bActuatorSensor *bas = (Blender::bActuatorSensor *)bsen->data;
 				as->setActuatorName(bas->name);
+			} break;
+		case SENS_MESSAGE:
+			{
+				gkMessageSensor *ms = new gkMessageSensor(gobj, lnk, bsen->name);
+				ls = ms;
+				Blender::bMessageSensor *bms = (Blender::bMessageSensor *)bsen->data;
+				ms->setSubject(bms->subject);
 			} break;
 		}
 

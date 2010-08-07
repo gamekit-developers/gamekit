@@ -23,6 +23,7 @@ set(Core_SOURCE
     gkLogger.cpp
     gkMesh.cpp
     gkMeshManager.cpp
+    gkMessageManager.cpp
     gkMathUtils.cpp
     gkObject.cpp
     gkPath.cpp
@@ -64,6 +65,7 @@ set(Core_HEADER
     gkLogger.h
     gkMesh.h
     gkMeshManager.h
+    gkMessageManager.h
     gkMathUtils.h
     gkMemoryTest.h
     gkObject.h
@@ -299,6 +301,8 @@ set(Logic_SOURCE
     LogicBricks/gkLogicSensor.cpp
     LogicBricks/gkMotionActuator.cpp
     LogicBricks/gkMouseSensor.cpp
+    LogicBricks/gkMessageActuator.cpp
+    LogicBricks/gkMessageSensor.cpp
     LogicBricks/gkNearSensor.cpp
     LogicBricks/gkRadarSensor.cpp
     LogicBricks/gkRandomSensor.cpp
@@ -332,6 +336,8 @@ set(Logic_HEADER
     LogicBricks/gkLogicSensor.h
     LogicBricks/gkMotionActuator.h
     LogicBricks/gkMouseSensor.h
+    LogicBricks/gkMessageActuator.h
+    LogicBricks/gkMessageSensor.h
     LogicBricks/gkNearSensor.h
     LogicBricks/gkRadarSensor.h
     LogicBricks/gkRandomSensor.h
