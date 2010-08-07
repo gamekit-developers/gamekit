@@ -73,14 +73,14 @@ bool gkMessageSensor::query(void)
 		utArrayIterator<utArray<gkMessageManager::Message> > iter(m_messages);
 		while(iter.hasMoreElements())
 		{
-			gkMessageManager::Message *m = new gkMessageManager::Message();
+			gkMessageManager::Message m = gkMessageManager::Message();
 			
-			m->m_from = iter.peekNext().m_from;
-			m->m_to = iter.peekNext().m_to;
-			m->m_subject = iter.peekNext().m_subject;
-			m->m_body = iter.peekNext().m_body;
+			m.m_from = iter.peekNext().m_from;
+			m.m_to = iter.peekNext().m_to;
+			m.m_subject = iter.peekNext().m_subject;
+			m.m_body = iter.peekNext().m_body;
 			
-			m_messages.push_back(*m);
+			m_messages.push_back(m);
 			iter.getNext();
 		}
 	}

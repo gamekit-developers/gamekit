@@ -34,14 +34,14 @@ void gkMessageManager::GenericMessageListener::handleMessage(gkMessageManager::M
 	if(!m_toFilter.empty() && m_toFilter.compare(message->m_to) != 0) return;
 	if(!m_subjectFilter.empty() && m_subjectFilter.compare(message->m_subject) != 0) return;
 	
-	Message *m= new Message();
+	Message m= Message();
 	
-	m->m_from = message->m_from;
-	m->m_to = message->m_to;
-	m->m_subject = message->m_subject;
-	m->m_body = message->m_body;
-	
-	m_messages.push_back(*m);
+	m.m_from = message->m_from;
+	m.m_to = message->m_to;
+	m.m_subject = message->m_subject;
+	m.m_body = message->m_body;
+
+	m_messages.push_back(m);
 }
 
 // ----------------------------------------------------------------------------
