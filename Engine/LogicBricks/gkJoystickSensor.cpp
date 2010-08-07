@@ -99,7 +99,7 @@ bool gkJoystickSensor::query(void)
 	case JT_BUTTON:
 		if (m_allEvents)
 		{
-			for(int i=0; i<js->buttons.size(); i++)
+			for(int i=0; i<(int)js->buttons.size(); i++)
 				if(js->isButtonDown(i)) return true;
 			return false;
 		}
