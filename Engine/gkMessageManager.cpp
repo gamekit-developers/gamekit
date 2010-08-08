@@ -28,18 +28,22 @@
 #include "gkMessageManager.h"
 
 // ----------------------------------------------------------------------------
+gkMessageManager::Message & gkMessageManager::Message::operator = (const Message & m)
+{	m_from = m.m_from;
+	m_to = m.m_to;
+	m_subject = m.m_subject;
+	m_body = m.m_body;
+	return *this;
+}
+
+// ----------------------------------------------------------------------------
 void gkMessageManager::GenericMessageListener::handleMessage(gkMessageManager::Message *message)
 {
 	if(!m_fromFilter.empty() && m_fromFilter.compare(message->m_from) != 0) return;
 	if(!m_toFilter.empty() && m_toFilter.compare(message->m_to) != 0) return;
 	if(!m_subjectFilter.empty() && m_subjectFilter.compare(message->m_subject) != 0) return;
 	
-	Message m= Message();
-	
-	m.m_from = message->m_from;
-	m.m_to = message->m_to;
-	m.m_subject = message->m_subject;
-	m.m_body = message->m_body;
+	Message m= *message;
 
 	m_messages.push_back(m);
 }

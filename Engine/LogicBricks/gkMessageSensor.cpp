@@ -70,16 +70,11 @@ bool gkMessageSensor::query(void)
 		ret = true;
 		
 		// We copy the massages so that Logic scripts can retrieve messages recieved between each logic step
-		utArrayIterator<utArray<gkMessageManager::Message> > iter(m_messages);
+		utArrayIterator<utArray<gkMessageManager::Message> > iter(m_listener->m_messages);
 		while(iter.hasMoreElements())
 		{
-			gkMessageManager::Message m = gkMessageManager::Message();
-			
-			m.m_from = iter.peekNext().m_from;
-			m.m_to = iter.peekNext().m_to;
-			m.m_subject = iter.peekNext().m_subject;
-			m.m_body = iter.peekNext().m_body;
-			
+			gkMessageManager::Message m = iter.peekNext();
+			printf("%s\n", m.m_subject.c_str());
 			m_messages.push_back(m);
 			iter.getNext();
 		}

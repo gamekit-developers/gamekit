@@ -41,6 +41,8 @@ public:
 		gkString m_to;
 		gkString m_subject;
 		gkString m_body;
+		
+		Message & operator = (const Message & m);
 	};
 
 	struct	MessageListener

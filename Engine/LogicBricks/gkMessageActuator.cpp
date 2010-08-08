@@ -48,9 +48,6 @@ void gkMessageActuator::execute(void)
 {
 	gkString from, body;
 	
-	if (isPulseOff())
-		return;
-	
 	from = m_object->getName();
 	
 	if(m_bodyType == BT_TEXT)
