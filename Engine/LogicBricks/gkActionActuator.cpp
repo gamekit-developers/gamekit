@@ -148,7 +148,8 @@ void gkActionActuator::execute(void)
 
 		if (m_curTick < m_end && (m_mode == AA_PLAY || m_mode == AA_LOOP_END))
 			setPulse(BM_ON);
-		return;
+		else
+			return;
 	}
 
 	if (!m_skeleton)

@@ -53,10 +53,6 @@ gkLogicBrick *gkMotionActuator::clone(gkLogicLink *link, gkGameObject *dest)
 // ----------------------------------------------------------------------------
 void gkMotionActuator::execute(void)
 {
-	if (isPulseOff())
-		return;
-
-
 	if (m_type == MT_SIMPLE)
 	{
 		if (m_loc.evaluate)
