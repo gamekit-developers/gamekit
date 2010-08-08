@@ -74,7 +74,7 @@ bool gkMessageSensor::query(void)
 		while(iter.hasMoreElements())
 		{
 			gkMessageManager::Message m = iter.peekNext();
-			printf("%s\n", m.m_subject.c_str());
+			
 			m_messages.push_back(m);
 			iter.getNext();
 		}
