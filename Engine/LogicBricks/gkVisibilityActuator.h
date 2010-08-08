@@ -38,9 +38,9 @@ public:
 
 	enum VisFlag
 	{
-		VA_VIS_FLAG = (1 << 0),
-		VA_OCCLUDER = (1 << 1),
-		VA_CHILDREN = (1 << 2),
+		VA_INVIS_FLAG  = (1 << 0),
+		VA_OCCLUDER    = (1 << 1),
+		VA_CHILDREN    = (1 << 2),
 	};
 
 private:

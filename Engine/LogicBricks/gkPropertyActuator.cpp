@@ -56,6 +56,9 @@ gkLogicBrick *gkPropertyActuator::clone(gkLogicLink *link, gkGameObject *dest)
 // ----------------------------------------------------------------------------
 void gkPropertyActuator::execute(void)
 {
+	if (isPulseOff())
+		return;
+
 	if (!m_object->isLoaded())
 		return;
 
@@ -73,6 +76,8 @@ void gkPropertyActuator::execute(void)
 				if (ob->hasVariable(m_value))
 					m_oth = ob->getVariable(m_value);
 			}
+			if (m_type == PA_TOGGLE)
+				m_value = m_cur->getValueString();
 		}
 		else
 		{

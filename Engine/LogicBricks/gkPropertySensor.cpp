@@ -33,7 +33,7 @@
 // ----------------------------------------------------------------------------
 gkPropertySensor::gkPropertySensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
 	:   gkLogicSensor(object, link, name), m_old(), m_cur(0), m_type(-1), m_propName(""), m_propVal(""),
-	    m_init(false)
+	    m_init(false), m_change(false)
 
 {
 	m_dispatchType = DIS_CONSTANT;
@@ -80,6 +80,17 @@ bool gkPropertySensor::query(void)
 			return m_cur->equal(m_old);
 		case PS_NEQUAL:
 			return m_cur->notequal(m_old);
+		case PS_CHANGED:
+				if (m_change != m_cur->notequal(m_old))
+				{
+					m_change = !m_change;
+					return true;
+				}
+			break;
+		case PS_INTERVAL:
+			{
+				// todo;
+			};
 		}
 	}
 

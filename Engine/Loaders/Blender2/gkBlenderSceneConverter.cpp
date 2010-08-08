@@ -2089,7 +2089,7 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
 
 				int fl = 0;
 				if (bva->flag & ACT_VISIBILITY_INVISIBLE)
-					fl |= gkVisibilityActuator::VA_VIS_FLAG;
+					fl |= gkVisibilityActuator::VA_INVIS_FLAG;
 				if (bva->flag &ACT_VISIBILITY_OCCLUSION)
 					fl |= gkVisibilityActuator::VA_OCCLUDER;
 				if (bva->flag &ACT_VISIBILITY_RECURSIVE)

@@ -53,8 +53,11 @@ gkLogicBrick *gkVisibilityActuator::clone(gkLogicLink *link, gkGameObject *dest)
 // ----------------------------------------------------------------------------
 void gkVisibilityActuator::execute(void)
 {
+	if (isPulseOff())
+		return;
+
 	if (!m_object->isLoaded())
 		return;
 
-	m_object->getNode()->setVisible((m_flag & VA_VIS_FLAG) != 0, (m_flag & VA_CHILDREN) != 0);
+	m_object->getNode()->setVisible((m_flag & VA_INVIS_FLAG) == 0, (m_flag & VA_CHILDREN) != 0);
 }

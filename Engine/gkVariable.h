@@ -315,10 +315,12 @@ public:
 			setValue(!nv.getValueBool());
 			break;
 		case VAR_REAL:
-			setValue(!nv.getValueReal());
+			setValue(gkAbs(nv.getValueReal()) ? 0.0 : 1.0);
 			break;
 		case VAR_INT:
-			setValue(!nv.getValueInt());
+			setValue(gkAbs(nv.getValueInt()) ? 0 : 1);
+			break;
+		case VAR_STRING:
 			break;
 		default:
 			break;

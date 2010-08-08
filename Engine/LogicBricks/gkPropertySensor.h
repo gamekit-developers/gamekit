@@ -49,7 +49,7 @@ protected:
 	gkVariable  *m_cur;
 	int         m_type;
 	gkString    m_propName, m_propVal;
-	bool        m_init;
+	bool        m_init, m_change;
 
 public:
 
