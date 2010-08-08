@@ -123,10 +123,6 @@ void gkEditObjectActuator::endObject(void)
 // ----------------------------------------------------------------------------
 void gkEditObjectActuator::execute(void)
 {
-	if (isPulseOff())
-		return;
-
-
 	switch (m_mode)
 	{
 	case EO_ADDOBJ:

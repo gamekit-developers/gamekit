@@ -52,9 +52,6 @@ gkLogicBrick *gkStateActuator::clone(gkLogicLink *link, gkGameObject *dest)
 // ----------------------------------------------------------------------------
 void gkStateActuator::execute(void)
 {
-	if (isPulseOff())
-		return;
-
 	unsigned int oldState = m_link->getState();
 
 	switch (m_op)

@@ -56,9 +56,6 @@ gkLogicBrick *gkPropertyActuator::clone(gkLogicLink *link, gkGameObject *dest)
 // ----------------------------------------------------------------------------
 void gkPropertyActuator::execute(void)
 {
-	if (isPulseOff())
-		return;
-
 	if (!m_object->isLoaded())
 		return;
 

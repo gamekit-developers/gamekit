@@ -53,9 +53,6 @@ gkLogicBrick *gkVisibilityActuator::clone(gkLogicLink *link, gkGameObject *dest)
 // ----------------------------------------------------------------------------
 void gkVisibilityActuator::execute(void)
 {
-	if (isPulseOff())
-		return;
-
 	if (!m_object->isLoaded())
 		return;
 
