@@ -305,6 +305,7 @@ set(Logic_SOURCE
     LogicBricks/gkMessageSensor.cpp
     LogicBricks/gkNearSensor.cpp
     LogicBricks/gkRadarSensor.cpp
+    LogicBricks/gkRandomActuator.cpp
     LogicBricks/gkRandomSensor.cpp
     LogicBricks/gkRaySensor.cpp
     LogicBricks/gkScriptController.cpp
@@ -340,6 +341,7 @@ set(Logic_HEADER
     LogicBricks/gkMessageSensor.h
     LogicBricks/gkNearSensor.h
     LogicBricks/gkRadarSensor.h
+    LogicBricks/gkRandomActuator.h
     LogicBricks/gkRandomSensor.h
     LogicBricks/gkRaySensor.h
     LogicBricks/gkScriptController.h

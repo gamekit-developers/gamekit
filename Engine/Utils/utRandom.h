@@ -45,6 +45,12 @@ public:
 	UT_INLINE UTuint32 getSeed(void)      {return m_seed;}
 	
 	UTuint32 rand32();
+	float randUnit();
+	float randRange(float min, float max);
+	float randNormal(float mean, float deviation);
+	float randNegativeExponential(float halflife);
+	int randRangeInt(int min, int max);
+	int randPoisson(float mean);
 };
 
 #endif // UTRANDOM_H

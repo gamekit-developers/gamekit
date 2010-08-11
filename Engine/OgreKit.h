@@ -149,6 +149,7 @@
 #include "LogicBricks/gkPropertyActuator.h"
 #include "LogicBricks/gkPropertySensor.h"
 #include "LogicBricks/gkRadarSensor.h"
+#include "LogicBricks/gkRandomActuator.h"
 #include "LogicBricks/gkRandomSensor.h"
 #include "LogicBricks/gkRaySensor.h"
 #include "LogicBricks/gkScriptController.h"

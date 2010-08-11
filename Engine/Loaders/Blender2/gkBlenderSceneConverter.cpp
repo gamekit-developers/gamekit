@@ -2122,6 +2122,64 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
 				}
 				
 			} break;
+		case ACT_RANDOM:
+			{
+				gkRandomActuator *ra = new gkRandomActuator(gobj, lnk, bact->name);
+				la = ra;
+				Blender::bRandomActuator *bra = (Blender::bRandomActuator *)bact->data;
+
+				ra->setProperty(bra->propname ? bra->propname : "");
+				ra->setSeed(bra->seed);
+				
+				switch(bra->distribution)
+				{
+					case ACT_RANDOM_BOOL_CONST:
+						ra->setDistribution(gkRandomActuator::RA_BOOL_CONSTANT);
+						ra->setConstant(bra->int_arg_1);
+						break;
+					case ACT_RANDOM_BOOL_UNIFORM:
+						ra->setDistribution(gkRandomActuator::RA_BOOL_UNIFORM);
+						break;
+					case ACT_RANDOM_BOOL_BERNOUILLI:
+						ra->setDistribution(gkRandomActuator::RA_BOOL_BERNOUILLI);
+						ra->setMean(bra->float_arg_1);
+						break;
+					case ACT_RANDOM_INT_CONST:
+						ra->setDistribution(gkRandomActuator::RA_INT_CONSTANT);
+						ra->setConstant(bra->int_arg_1);
+						break;
+					case ACT_RANDOM_INT_UNIFORM:
+						ra->setDistribution(gkRandomActuator::RA_INT_UNIFORM);
+						ra->setMin(bra->int_arg_1);
+						ra->setMax(bra->int_arg_2);
+						break;
+					case ACT_RANDOM_INT_POISSON:
+						ra->setDistribution(gkRandomActuator::RA_INT_POISSON);
+						ra->setMean(bra->float_arg_1);
+						break;
+					case ACT_RANDOM_FLOAT_CONST:
+						ra->setDistribution(gkRandomActuator::RA_FLOAT_CONSTANT);
+						ra->setConstant(bra->float_arg_1);
+						break;
+					case ACT_RANDOM_FLOAT_UNIFORM:
+						ra->setDistribution(gkRandomActuator::RA_FLOAT_UNIFORM);
+						ra->setMin(bra->float_arg_1);
+						ra->setMax(bra->float_arg_2);
+						break;
+					case ACT_RANDOM_FLOAT_NORMAL:
+						ra->setDistribution(gkRandomActuator::RA_FLOAT_NORMAL);
+						ra->setMean(bra->float_arg_1);
+						ra->setDeviation(bra->float_arg_2);
+						break;
+					case ACT_RANDOM_FLOAT_NEGATIVE_EXPONENTIAL:
+						ra->setDistribution(gkRandomActuator::RA_FLOAT_NEGEXP);
+						ra->setHalfLife(bra->float_arg_1);
+						break;
+					default:
+						break;
+				}
+				
+			} break;
 		case ACT_SOUND:
 			{
 #if OGREKIT_OPENAL_SOUND

@@ -45,6 +45,9 @@
 
 #include "utRandom.h"
 
+#include <float.h>
+#include <math.h>
+
 /* Period parameters */
 #define N 624
 #define M 397
@@ -111,4 +114,63 @@ UTuint32 utRandomNumberGenerator::rand32()
 	
 	return (UTuint32)y;
 	
+}
+
+//----------------------------------------------------------------------------------
+float utRandomNumberGenerator::randUnit()
+{
+	return (float)(rand32())/(float)((UTuint32) 0xffffffff);
+}
+
+//----------------------------------------------------------------------------------
+float utRandomNumberGenerator::randRange(float min, float max)
+{
+	return (max-min)*randUnit() + min;
+}
+
+//----------------------------------------------------------------------------------
+float utRandomNumberGenerator::randNormal(float mean, float deviation)
+{
+	float a, b, s=0;
+	float dev= (deviation<0) ? 0:deviation;
+	
+	while(s<=0 ||s>=1)
+	{
+		a = randRange(-1.0f, 1.0f);
+		b = randRange(-1.0f, 1.0f);
+		s= a*a+b*b;
+	}
+	b = a * sqrt((-2.0*log(s)) / s);
+	return mean+ b*dev;
+}
+
+//----------------------------------------------------------------------------------
+float utRandomNumberGenerator::randNegativeExponential(float halflife)
+{
+	float hl= (halflife<0) ? 0:halflife;
+	return hl * (-log(1.0f-randUnit() ));
+}
+
+//----------------------------------------------------------------------------------
+int utRandomNumberGenerator::randPoisson(float mean)
+{
+	float l, p;
+	int k = 0;
+	float m= (mean<0) ? 0:mean;
+	
+	p = 1.0f;
+	l = exp(-m);
+	l = (l<FLT_MIN) ? FLT_MIN:l;
+	while(p > l)
+	{
+		p = p*randUnit();
+		k++;
+	} 
+	return k;
+}
+
+//----------------------------------------------------------------------------------
+int utRandomNumberGenerator::randRangeInt(int min, int max)
+{
+	return min + (rand32() % (1+max-min));
 }

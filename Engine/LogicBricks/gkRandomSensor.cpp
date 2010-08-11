@@ -67,6 +67,9 @@ bool gkRandomSensor::query(void)
 {
 	m_count = m_count+1;
 	if (m_count > 32)
+	{
 		m_current = m_randGen->rand32();
+		m_count = 1;
+	}
 	return (m_current >> (m_count-1)) & 0x1;
 }
