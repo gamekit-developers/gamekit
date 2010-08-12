@@ -175,7 +175,7 @@ void gkLogicSensor::execute(void)
 
 		if (m_listener)
 		{
-			if (m_listener->m_mode == gkLogicSensor::Listener::OVERIDE)
+			if (m_listener->m_mode == gkLogicBrick::Listener::OVERIDE)
 				m_positive = m_listener->executeEvent(this);
 			else
 				m_positive = m_listener->executeEvent(this) && query();
