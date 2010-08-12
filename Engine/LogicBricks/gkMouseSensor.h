@@ -76,6 +76,7 @@ public:
 	bool query(void);
 
 	GK_INLINE void setType(int type) {m_type = type;}
+	GK_INLINE int  getType(void)     {return m_type;}
 };
 
 

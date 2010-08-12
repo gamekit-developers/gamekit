@@ -108,9 +108,11 @@ bool gkLuaScript::execute(void)
 
 	lua_State *L = m_owner->getLua();
 	//lua_dumpstack(L);
+	lua_pushtraceback(L);
+	int trace = lua_gettop(L);
 
 	lua_rawgeti(L, LUA_REGISTRYINDEX, m_script);
-	if (lua_pcall(L, 0, 0, 0) != 0)
+	if (lua_pcall(L, 0, LUA_MULTRET, trace) != 0)
 	{
 		printf("%s\n", lua_tostring(L, -1));
 		dsPrintf("%s\n", lua_tostring(L, -1));

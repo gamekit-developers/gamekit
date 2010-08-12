@@ -36,6 +36,8 @@
 %ignore OGRE_KIT_WRAP_BASE_COPY_CTOR;
 %ignore OGRE_KIT_WRAP_CLASS_DEF_CTOR;
 %ignore OGRE_KIT_TEMPLATE_CAST;
+%ignore OGRE_KIT_TEMPLATE_NEW;
+%ignore OGRE_KIT_TEMPLATE_NEW_INLINE;
 
 // dependent types
 %include "gsTypes.i"

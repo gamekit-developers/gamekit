@@ -94,6 +94,9 @@ enum gsMouseButton
 // ----------------------------------------------------------------------------
 class gsProperty
 {
+private:
+	bool m_creator;
+
 public:
 	gsProperty();
 	gsProperty(const gkString &name, bool value);
@@ -207,6 +210,7 @@ public:
 
 
 	gsScene *loadBlendFile(const gkString &name);
+	gsScene *getActiveScene(void);
 
 
 	gsUserDefs &getUserDefs(void);
@@ -250,10 +254,6 @@ public:
 	bool hasObject(const gkString &name);
 
 	gsGameObject *getObject(const gkString &name);
-	gsEntity     *getEntity(const gkString &name);
-	gsCamera     *getCamera(const gkString &name);
-	gsLight      *getLight(const gkString &name);
-	gsSkeleton	 *getSkeleton(const gkString &name);
 	gsGameObject *createEmpty(const gkString &name);
 
 
@@ -263,6 +263,8 @@ public:
 	// internal
 	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsScene, gkObject);
 };
+
+extern gsScene* getActiveScene(void);
 
 // ----------------------------------------------------------------------------
 class gsGameObject : public gsLoadable
@@ -328,12 +330,6 @@ public:
 
 	int getState(void);
 
-
-	gsEntity *getEntity(void);
-	gsCamera *getCamera(void);
-	gsLight *getLight(void);
-	gsSkeleton *getSkeleton(void);
-
 	bool hasParent();
 	void setParent(gsGameObject *par);
 	gsGameObject *getParent(void);
@@ -344,7 +340,7 @@ public:
 
 	gsScene *getScene(void);
 
-	gsProperty    __getitem__(const gkString &prop);
+	gsProperty  __getitem__(const gkString &prop);
 	void        __setitem__(const gkString &prop, bool  v);
 	void        __setitem__(const gkString &prop, float v);
 	void        __setitem__(const gkString &prop, const char *v);
@@ -353,6 +349,7 @@ public:
 	// internal
 	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsGameObject, gkObject);
 	OGRE_KIT_TEMPLATE_CAST(gkGameObject, m_object);
+	OGRE_KIT_TEMPLATE_NEW(gsGameObject, gkGameObject);
 };
 
 

@@ -37,6 +37,8 @@ public:
 
 	gkLogicActuator(gkGameObject *object, gkLogicLink *link, const gkString &name);
 	virtual ~gkLogicActuator() {}
+
+	void _execute(void);
 };
 
 

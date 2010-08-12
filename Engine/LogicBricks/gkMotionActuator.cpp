@@ -32,7 +32,7 @@
 // ----------------------------------------------------------------------------
 gkMotionActuator::gkMotionActuator(gkGameObject *object, gkLogicLink *link, const gkString &name)
 	:       gkLogicActuator(object, link, name),
-	        m_type(0), m_linvInc(false), m_damping(1.f)
+	        m_type(0), m_linvInc(false), m_damping(1.f), m_dampIncr(0.f)
 {
 }
 
@@ -53,6 +53,13 @@ gkLogicBrick *gkMotionActuator::clone(gkLogicLink *link, gkGameObject *dest)
 // ----------------------------------------------------------------------------
 void gkMotionActuator::execute(void)
 {
+	if (isPulseOff())
+	{
+		// reset damping
+		m_dampIncr = 0.f;
+		return;
+	}
+
 	if (m_type == MT_SIMPLE)
 	{
 		if (m_loc.evaluate)
@@ -68,20 +75,31 @@ void gkMotionActuator::execute(void)
 
 			if(body)
 			{
+				// Tooltip, states it's the number of frames to reach the target. 
+				gkScalar val = 1.f;
+				if (m_damping > 0.f)
+				{
+					m_dampIncr += 1.f;
+					if (m_dampIncr > m_damping)
+						m_dampIncr = m_damping;
+
+					val = m_dampIncr / m_damping;
+				}
+
 				if (m_force.evaluate)
-					body->applyForce(m_force.vec * m_damping, m_force.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
+					body->applyForce(m_force.vec * val, m_force.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
 				if (m_torque.evaluate)
-					body->applyTorque(m_torque.vec * m_damping, m_torque.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
+					body->applyTorque(m_torque.vec * val, m_torque.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
 
 				if (m_linv.evaluate)
 				{
 					gkVector3 extra = m_linv.vec;
 					if (m_linvInc)
 						extra += body->getLinearVelocity();
-					body->setLinearVelocity(extra * m_damping, m_linv.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
+					body->setLinearVelocity(extra * val, m_linv.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
 				}
 				if (m_angv.evaluate)
-					body->setAngularVelocity(m_angv.vec *m_damping , m_angv.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
+					body->setAngularVelocity(m_angv.vec *val , m_angv.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
 			}
 		}
 	}

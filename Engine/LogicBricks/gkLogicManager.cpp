@@ -53,13 +53,13 @@ gkLogicManager::gkLogicManager()
 // ----------------------------------------------------------------------------
 gkLogicManager::~gkLogicManager()
 {
+	clear();
+
 	for (int i = 0; i < DIS_MAX; ++ i)
 		delete m_dispatchers[i];
 
 	delete []m_dispatchers;
 	m_dispatchers = 0;
-
-	clear();
 }
 
 
@@ -332,7 +332,7 @@ void gkLogicManager::update(gkScalar delta)
 		b = m_cin.ptr();
 		while (i < s)
 		{
-			b[i]->execute();
+			static_cast<gkLogicController*>(b[i])->_execute();
 			b[i]->setActive(false);
 			++i;
 		}
@@ -345,7 +345,7 @@ void gkLogicManager::update(gkScalar delta)
 		b = m_ain.ptr();
 		while (i < s)
 		{
-			b[i]->execute();
+			static_cast<gkLogicActuator*>(b[i])->_execute();
 			if (b[i]->isPulseOff())
 				m_aout.push_back(b[i]);
 			++i;

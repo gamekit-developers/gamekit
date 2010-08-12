@@ -158,7 +158,8 @@ bool gkLuaEvent::call(bool &result)
 	{
 		printf("%s\n", lua_tostring(L, -1));
 		// re throw
-		lua_error(L);
+		// lua_error(L);
+		lua_pop(L, 1);
 		return false;
 	}
 
@@ -176,7 +177,8 @@ bool gkLuaEvent::call()
 	{
 		printf("%s\n", lua_tostring(L, -1));
 		// re throw
-		lua_error(L);
+		// lua_error(L);
+		lua_pop(L, 1);
 		return false;
 	}
 	m_callArgs = 0;

@@ -47,6 +47,24 @@ void gkLogicController::cloneImpl(gkLogicLink *link, gkGameObject *dest)
 
 
 // ----------------------------------------------------------------------------
+void gkLogicController::_execute(void)
+{
+	if (m_listener)
+	{
+		if (m_listener->m_mode = gkLogicBrick::Listener::OVERIDE)
+			m_listener->executeEvent(this);
+		else
+		{
+			if (m_listener->executeEvent(this))
+				execute();
+		}
+	}
+	else
+		execute();
+}
+
+
+// ----------------------------------------------------------------------------
 bool gkLogicController_sSort(gkLogicSensor *const &a, gkLogicSensor *const &b)
 {
 	return a->getPriority() < b->getPriority();

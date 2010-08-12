@@ -71,6 +71,8 @@ public:
 	GK_INLINE void                  setMode(int v)                      {m_mode = v;}
 	GK_INLINE void                  setSoundFile(const gkString &v)     {m_sndRef = v;}
 	GK_INLINE gkSoundProperties     &getProperties(void)                {return m_props;}
+	GK_INLINE int                   getMode(void)                       {return m_mode;}
+	GK_INLINE const gkString        &getSoundFile(void)                 {return m_sndRef;}
 
 	// Handle incoming logic.
 	void execute(void);

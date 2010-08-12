@@ -50,7 +50,7 @@ void gkKeyDispatch::dispatch(void)
 
 // ----------------------------------------------------------------------------
 gkKeyboardSensor::gkKeyboardSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
-	:       gkLogicSensor(object, link, name), m_key(KC_NONE), m_mod0(KC_NONE), m_mod1(KC_NONE)
+	:       gkLogicSensor(object, link, name), m_key(KC_NONE), m_mod0(KC_NONE), m_mod1(KC_NONE), m_allKeys(false)
 {
 	m_dispatchType = DIS_KEY;
 	connect();
@@ -68,10 +68,10 @@ gkLogicBrick *gkKeyboardSensor::clone(gkLogicLink *link, gkGameObject *dest)
 bool gkKeyboardSensor::query(void)
 {
 	gkKeyboard *key = gkWindowSystem::getSingleton().getKeyboard();
+	if (m_allKeys)
+		return key->key_count > 0;
 
 	bool qres = key->isKeyDown((gkScanCode)m_key);
-
-
 	if (m_mod0 != KC_NONE)
 		qres = qres && key->isKeyDown((gkScanCode)m_mod0);
 	if (m_mod1 != KC_NONE)

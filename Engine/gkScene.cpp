@@ -420,6 +420,11 @@ void gkScene::unloadImpl()
 
 	// free scripts
 	gkLuaManager::getSingleton().unload();
+	gkLuaScript *script = gkLuaManager::getSingleton().getScript("OnLoad.lua");
+
+	// load user application
+	if (script)
+		script->unload();
 
 	// unload instances
 	if (!m_instances.empty())
@@ -581,6 +586,8 @@ void gkScene::synchronizeMotion(gkScalar blend)
 		while (i < size) (buffer[i++])->blendTransform(blend);
 
 		m_transformObjects.clear(true);
+
+		applyConstraints();
 	}
 
 }
@@ -784,8 +791,6 @@ void gkScene::update(gkScalar tickRate)
 	gkStats::getSingleton().startClock();
 	gkNodeManager::getSingleton().update(tickRate);
 	gkStats::getSingleton().stopLogicNodesClock();
-
-	applyConstraints();
 
 	// tick life span
 	tickClones();

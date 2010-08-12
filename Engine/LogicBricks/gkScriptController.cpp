@@ -25,7 +25,15 @@
 -------------------------------------------------------------------------------
 */
 #include "gkScriptController.h"
+#include "gkTextManager.h"
 #include "Script/Lua/gkLuaManager.h"
+#include "Script/Lua/gkLuaUtils.h"
+
+// Context in the current blender script.
+// For fuzzy compatibility with BGE methods
+// OgreKit.getCurrentController()
+static gkScriptController* scriptContext = 0;
+
 
 
 // ----------------------------------------------------------------------------
@@ -44,6 +52,31 @@ gkLogicBrick *gkScriptController::clone(gkLogicLink *link, gkGameObject *dest)
 	return cont;
 }
 
+// ----------------------------------------------------------------------------
+void gkScriptController::setScript(const gkString& str)
+{
+	gkLuaScript *scrpt = gkLuaManager::getSingleton().getScript(str);
+	if (scrpt) 
+		m_script = scrpt;
+	else
+	{
+		// Create on demand.
+		gkTextFile *tf = gkTextManager::getSingleton().getFile(str);
+		if (tf)
+		{
+			gkLuaScript *scrpt = gkLuaManager::getSingleton().create(tf->getName(), tf->getText());
+			if (scrpt) 
+				m_script = scrpt;
+		}
+	}
+}
+
+
+// ----------------------------------------------------------------------------
+gkScriptController* gkScriptController::getCurrent(void)
+{
+	return scriptContext;
+}
 
 // ----------------------------------------------------------------------------
 void gkScriptController::execute(void)
@@ -51,8 +84,11 @@ void gkScriptController::execute(void)
 	if (m_error || m_sensors.empty())
 		return;
 
-	// TODO if m_isModule
+	scriptContext = this;
 
+	// Main script, can be null.
 	if (m_script !=0)
 		m_error = !m_script->execute();
+
+	scriptContext = 0;
 }

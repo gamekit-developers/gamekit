@@ -26,8 +26,26 @@
 */
 #include "gkLogicActuator.h"
 
-
+// ----------------------------------------------------------------------------
 gkLogicActuator::gkLogicActuator(gkGameObject *object, gkLogicLink *link, const gkString &name)
 	:       gkLogicBrick(object, link, name)
 {
+}
+
+
+// ----------------------------------------------------------------------------
+void gkLogicActuator::_execute(void)
+{
+	if (m_listener)
+	{
+		if (m_listener->m_mode = gkLogicBrick::Listener::OVERIDE)
+			m_listener->executeEvent(this);
+		else
+		{
+			if (m_listener->executeEvent(this))
+				execute();
+		}
+	}
+	else
+		execute();
 }

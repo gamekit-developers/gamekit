@@ -59,6 +59,8 @@ public:
 	GK_INLINE void  setMode(int v)                  {m_mode = v;}
 	GK_INLINE void  setGameFile(const gkString &v)  {m_otherGame = v;}
 
+	GK_INLINE int             getMode(void)         {return m_mode;}
+	GK_INLINE const gkString &getGameFile(void)     {return m_otherGame;}
 
 	// Handle incoming logic.
 	void execute(void);

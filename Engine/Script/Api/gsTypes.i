@@ -75,8 +75,24 @@
 %typemap(typecheck) gsSelf
 %{ $1 = lua_istable(L, $input); %}
 
+
+
+
+// ----------------------------------------------------------------------------
+// Brick -> derrived conversion.
+
+
+%typemap(out) gsController* 
+%{ if ($1) { SWIG_arg += gsCreateController(L, $1); } %}
+%typemap(out) gsActuator* 
+%{ if ($1) { SWIG_arg += gsCreateActuator(L, $1); } %}
+%typemap(out) gsSensor* 
+%{ if ($1) { SWIG_arg += gsCreateSensor(L, $1); } %}
+%typemap(out) gsGameObject* 
+%{ if ($1) { SWIG_arg += gsCreateObject(L, $1); } %}
+
+
 #else
 
-// TODO
 
 #endif

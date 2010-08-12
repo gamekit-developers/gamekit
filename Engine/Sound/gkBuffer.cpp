@@ -38,10 +38,10 @@ gkBuffer::gkBuffer(gkSource *obj)
 	    m_ok(false),
 	    m_exit(false),
 	    m_initial(true),
-		m_isInit(false),
+	    m_isInit(false),
 	    m_suspend(false),
-		m_doSuspend(false),
-		m_do3D(false),
+	    m_doSuspend(false),
+	    m_do3D(false),
 	    m_pos(0),
 	    m_eos(false)
 {

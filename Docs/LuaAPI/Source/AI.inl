@@ -1,17 +1,4 @@
-/*! \page AI AI
-\LuaSectionUp{index}
-
-
-\beginmenu{Classes}
-\LuaClassMenu{WhenEvent}
-\LuaClassMenu{FSM}
-\endmenu
-
-
-\endpage
-
-
-
+/*!
 <!-- ============================================ WhenEvent ============================================ -->
 \LuaClass{WhenEvent}
 \LuaSectionUp{AI}

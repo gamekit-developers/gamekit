@@ -50,6 +50,7 @@ gkLogicBrick *gkPropertyActuator::clone(gkLogicLink *link, gkGameObject *dest)
 	act->cloneImpl(link, dest);
 	act->m_init = false;
 	act->m_cur = 0;
+	act->m_oth = 0;
 	return act;
 }
 
@@ -70,40 +71,50 @@ void gkPropertyActuator::execute(void)
 			m_cur = m_object->getVariable(m_prop);
 			m_init = true;
 
-			if (!m_othOb.empty())
-			{
-				gkGameObject *ob = m_object->getOwner()->getObject(m_othOb);
-				if (ob->hasVariable(m_value))
-					m_oth = ob->getVariable(m_value);
-			}
+			if (m_value.find("\"") != m_value.npos)
+				utStringUtils::trim(m_value, "\"");
+
 			if (m_type == PA_TOGGLE)
-				m_value = m_cur->getValueString();
+				m_propVal.assign(*m_cur);
+			else
+				m_propVal.setValue(m_cur->getType(), m_value);
+
+			if (m_type == PA_COPY)
+			{
+				if (!m_othOb.empty())
+				{
+					gkGameObject *ob = m_object->getOwner()->getObject(m_othOb);
+					if (ob->hasVariable(m_value))
+						m_oth = ob->getVariable(m_value);
+				}
+			}
 		}
 		else
 		{
-			//m_suspend = true;
+			setPulse(BM_OFF);
 			return;
 		}
 	}
 
-	if (m_cur)
+	if (m_cur && !m_cur->isReadOnly())
 	{
-
 		switch (m_type)
 		{
 		case PA_ASSIGN:
-			m_cur->assign(m_value);
+			m_cur->assign(m_propVal);
 			break;
 		case PA_ADD:
-			m_cur->add(m_value);
+			m_cur->add(m_propVal);
 			break;
 		case PA_TOGGLE:
-			m_cur->toggle(m_value);
-			m_value = m_cur->getValueString();
+			if (m_cur->hasInverse())
+			{
+				m_cur->toggle(m_propVal);
+				m_propVal.assign(*m_cur);
+			}
 			break;
 		case PA_COPY:
-			if (m_oth)
-				m_cur->assign(m_oth->getValueString());
+			if (m_oth) m_cur->assign(*m_oth);
 			break;
 		}
 	}

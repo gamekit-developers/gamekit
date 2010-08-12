@@ -39,6 +39,7 @@ set(Core_SOURCE
     gkUserDefs.cpp
     gkUtils.cpp
     gkWindowSystem.cpp
+    gkVariable.cpp
     Utils/utString.cpp
     Utils/utStreams.cpp
     Utils/utRandom.cpp
@@ -84,6 +85,7 @@ set(Core_HEADER
     gkTransformState.h
     gkUserDefs.h
     gkUtils.h
+    gkValue.h
     gkVariable.h
     gkWindowSystem.h
     OgreKit.h
@@ -439,161 +441,8 @@ source_group(Physics\\Source FILES ${Physics_SOURCE})
 # Script Files
 # ---------------------------------------------------------
 
-if (OGREKIT_COMPLIE_SWIG)
+if (OGREKIT_COMPLIE_SWIG AND SWIG_FOUND)
 
-    set(Script_HEADER
-        # ----- Lua Files -----
-        Script/Lua/gkLuaManager.h
-        Script/Lua/gkLuaScript.h
-        Script/Lua/gkLuaUtils.h
-
-        # ----- Common Files -----
-        Script/Common/gksDebugger.h
-        Script/Common/gksGameObject.h
-        Script/Common/gksInput.h
-        Script/Common/gksMath.h
-        Script/Common/gksObject.h
-        Script/Common/gksPointer.h
-        Script/Common/gksRayTest.h
-        Script/Common/gksScene.h
-        Script/Common/gksProperty.h
-     )
-    if (OGREKIT_BUILD_V8)
-        set(Script_V8
-            # ----- V8 Files -----
-            Script/V8/gkV8Manager.h
-            Script/V8/gkV8Script.h
-            Script/V8/gkV8Utils.h
-        )
-        list(APPEND Script_HEADER ${Script_V8})
-    endif()
-
-
-    set(SWIG_INPUT
-        Script/Common/gkGameLogic.i
-        Script/Common/gkMath.i
-        )
-
-    set(SWIG_BUILD_DEPS
-        ${Script_HEADER}
-        Script/Common/gkProperty.i
-    )
-
-
-    swig_source_lua(SWIG_OUTPUT_LUA SWIG_BUILD_DEPS ${SWIG_INPUT})
-    set(SWIG_OUTPUT ${SWIG_OUTPUT_LUA})
-
-    if (OGREKIT_BUILD_V8)
-        swig_source_v8(SWIG_OUTPUT_V8 SWIG_BUILD_DEPS ${SWIG_INPUT})
-        list(APPEND SWIG_OUTPUT ${SWIG_OUTPUT_V8})
-    endif()
-
-    source_group(Script\\Swig\\Output   FILES   ${SWIG_OUTPUT})
-    source_group(Script\\Swig\\Input    FILES   ${SWIG_INPUT})
-
-    set(SCRIPT_ALLGEN
-        ${SWIG_INPUT}
-        ${SWIG_OUTPUT}
-    )
-
-
-
-    if (OGREKIT_BUILD_V8)
-        set(V8_TEMPLATES
-            Script/V8/gkV8Hidden.inc
-            )
-
-        add_templates(V8_TEMPLATE_OUT "Script/V8/gkV8CodeTemplates.h" ${V8_TEMPLATES})
-        source_group(Script\\Templates FILES ${V8_TEMPLATES} ${V8_TEMPLATE_OUT})
-
-        list(APPEND SCRIPT_ALLGEN ${V8_TEMPLATES} ${V8_TEMPLATE_OUT})
-
-    endif()
-
-
-    set(Script_SOURCE
-        Script/Lua/gkLuaManager.cpp
-        Script/Lua/gkLuaScript.cpp
-        Script/Lua/gkLuaUtils.cpp
-        ${SCRIPT_ALLGEN}
-        Script/Common/gksDebugger.cpp
-        Script/Common/gksGameObject.cpp
-        Script/Common/gksObject.cpp
-        Script/Common/gksRayTest.cpp
-        Script/Common/gksScene.cpp
-        Script/Common/gksProperty.cpp
-    )
-
-    if (OGREKIT_BUILD_V8)
-        set(Script_V8_SRC
-            Script/V8/gkV8Manager.cpp
-            Script/V8/gkV8Script.cpp
-            Script/V8/gkV8Utils.cpp
-        )
-        list(APPEND Script_SOURCE ${Script_V8_SRC})
-    endif()
-
-
-    source_group(Script\\Header FILES ${Script_HEADER})
-    source_group(Script\\Source FILES ${Script_SOURCE})
-
-
-else()
-    set(Script_SOURCE
-        Script/Lua/gkLuaManager.cpp
-        Script/Lua/gkLuaScript.cpp
-        Script/Lua/gkLuaUtils.cpp
-        Script/Common/Generated/gkGameLogicLua.cpp
-        Script/Common/Generated/gkMathLua.cpp
-        Script/Common/gksDebugger.cpp
-        Script/Common/gksGameObject.cpp
-        Script/Common/gksObject.cpp
-        Script/Common/gksRayTest.cpp
-        Script/Common/gksScene.cpp
-        Script/Common/gksProperty.cpp
-    )
-
-    set(Script_HEADER
-        Script/Lua/gkLuaManager.h
-        Script/Lua/gkLuaScript.h
-        Script/Lua/gkLuaUtils.h
-        # ----- Common Files -----
-        Script/Common/gksDebugger.h
-        Script/Common/gksGameObject.h
-        Script/Common/gksInput.h
-        Script/Common/gksMath.h
-        Script/Common/gksObject.h
-        Script/Common/gksPointer.h
-        Script/Common/gksRayTest.h
-        Script/Common/gksScene.h
-        Script/Common/gksProperty.h
-    )
-
-    if (OGREKIT_BUILD_V8)
-        set(Script_HDR_V8
-            Script/V8/gkV8Manager.h
-            Script/V8/gkV8Script.h
-            Script/V8/gkV8Utils.h
-        )
-        set(Script_SRC_V8
-            Script/V8/gkV8Manager.cpp
-            Script/V8/gkV8Script.cpp
-            Script/V8/gkV8Utils.cpp
-            Script/Common/Generated/gkMathV8.cpp
-            Script/Common/Generated/gkGameLogicV8.cpp
-        )
-       list(APPEND Script_SOURCE ${Script_SRC_V8})
-       list(APPEND Script_HEADER ${Script_HDR_V8})
-    endif()
-
-
-    source_group(Script\\Header FILES ${Script_HEADER})
-    source_group(Script\\Source FILES ${Script_SOURCE})
-
-endif()
-
-
-if (OGREKIT_COMPLIE_SWIG)
 
     set(ScriptAPI2_INCLUDES
         # ----- Include Files -----
@@ -605,6 +454,7 @@ if (OGREKIT_COMPLIE_SWIG)
         Script/Api/gsBricks.i
         Script/Api/gsConstraints.i
         Script/Api/gsCore.i
+        Script/Api/gsMacros.i
         Script/Api/gsMath.i
         Script/Api/gsNetwork.i
         Script/Api/gsNodes.i
@@ -624,6 +474,9 @@ if (OGREKIT_COMPLIE_SWIG)
 
     set(ScriptAPI2_HEADER
         # ----- Common Files -----
+        Script/Lua/gkLuaManager.h
+        Script/Lua/gkLuaScript.h
+        Script/Lua/gkLuaUtils.h
         Script/Api/gsAI.h
         Script/Api/gsAnimation.h
         Script/Api/gsBricks.h
@@ -653,6 +506,9 @@ if (OGREKIT_COMPLIE_SWIG)
     set(ScriptAPI2_SOURCE
         ${TMPL_API_SOURCE}
         ${SWIG_API2_OUTPUT_LUA}
+        Script/Lua/gkLuaManager.cpp
+        Script/Lua/gkLuaScript.cpp
+        Script/Lua/gkLuaUtils.cpp
         Script/Api/gsAI.cpp
         Script/Api/gsAnimation.cpp
         Script/Api/gsBricks.cpp
@@ -668,16 +524,19 @@ if (OGREKIT_COMPLIE_SWIG)
         Script/Api/gsUtils.cpp
     )
 
-    source_group(Script\\API\\Builtin	FILES ${TMPL_API_SOURCE})
-    source_group(Script\\API\\Includes  FILES ${SWIG_INPUT} ${ScriptAPI2_INCLUDES})
-    source_group(Script\\API\\Header    FILES ${ScriptAPI2_HEADER})
-    source_group(Script\\API\\Source    FILES ${ScriptAPI2_SOURCE})
+    source_group(Script\\Builtin   FILES ${TMPL_API_SOURCE})
+    source_group(Script\\Includes  FILES ${SWIG_INPUT} ${ScriptAPI2_INCLUDES})
+    source_group(Script\\Header    FILES ${ScriptAPI2_HEADER})
+    source_group(Script\\Source    FILES ${ScriptAPI2_SOURCE})
 
 
 else()
     set(ScriptAPI2_HEADER
         # ----- Common Files -----
         Script/Api/Generated/gsTemplates.h
+        Script/Lua/gkLuaManager.h
+        Script/Lua/gkLuaScript.h
+        Script/Lua/gkLuaUtils.h
         Script/Api/gsAI.h
         Script/Api/gsAnimation.h
         Script/Api/gsBricks.h
@@ -698,6 +557,9 @@ else()
 
     set(ScriptAPI2_SOURCE
         Script/Api/Generated/OgreKitLua.cpp
+        Script/Lua/gkLuaManager.cpp
+        Script/Lua/gkLuaScript.cpp
+        Script/Lua/gkLuaUtils.cpp
         Script/Api/gsAI.cpp
         Script/Api/gsAnimation.cpp
         Script/Api/gsBricks.cpp
@@ -846,11 +708,6 @@ if (OGREKIT_OPENAL_SOUND AND OPENAL_FOUND)
 
     include_directories( ${OGREKIT_OGGVORBIS_INCLUDE})
     link_libraries(OggVorbis)
-endif()
-
-if (OGREKIT_BUILD_V8)
-    include_directories( ${OGREKIT_V8_INCLUDE})
-    link_libraries(${OGREKIT_V8_TARGET})
 endif()
 
 

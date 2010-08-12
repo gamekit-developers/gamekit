@@ -64,14 +64,20 @@ public:
 	inline W* peekNext(void)
 	{ 
 		if (m_iter.hasMoreElements())
-			return new W(m_iter.peekNext());
+		{
+			B *base = m_iter.peekNext();
+			return W::createNew(base);
+		}
 		return 0;
 	}
 
 	inline W* getNext(void)
 	{ 
 		if (m_iter.hasMoreElements())
-			return new W(m_iter.getNext());
+		{
+			B *base = m_iter.getNext();
+			return W::createNew(base);
+		}
 		return 0;
 	}
 };
@@ -102,12 +108,15 @@ public:
 	inline int	size(void)  const { return (int)m_array.size(); }
 	inline bool empty(void) const { return size() == 0; }
 
-	inline W *__getitem__(int i) {return at(i);}
+	inline W* __getitem__(int i) {return at(i);}
 
 	inline W* at(int i) 
 	{ 
 		if (i >= 0 && i < size())
-			return new W(m_array.at(i));
+		{
+			B *base = m_array.at(i);
+			return W::createNew(base);
+		}
 		return 0;
 	}
 

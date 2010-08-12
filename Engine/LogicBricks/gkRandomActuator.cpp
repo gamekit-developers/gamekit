@@ -130,7 +130,7 @@ void gkRandomActuator::execute(void)
 			
 		case RA_FLOAT_NEGEXP:
 			variable->setValue(m_randGen->randNegativeExponential(m_halflife));
-			std::exp(0);
+			gkMath::Exp(0.f);
 			return;
 	}
 }

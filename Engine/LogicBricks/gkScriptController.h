@@ -44,14 +44,14 @@ public:
 	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
 
 	void execute(void);
+	void setScript(const gkString& str);
 
 	GK_INLINE void setModule(bool v)            {m_isModule = v;}
 	GK_INLINE bool isModule(void)               {return m_isModule;}
 	GK_INLINE void setScript(gkLuaScript *sc)   {m_script = sc;}
 	GK_INLINE gkLuaScript *getScript(void)      {return m_script;}
 
-
-	static void Open(struct lua_State *L);
+	static gkScriptController* getCurrent(void);
 };
 
 

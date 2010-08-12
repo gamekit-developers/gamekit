@@ -59,18 +59,31 @@
         OGRE_KIT_WRAP_CLASS(cls, membername);\
         OGRE_KIT_WRAP_BASE_DEF_CTOR(wrap, cls)
 
-
-
 #define OGRE_KIT_TEMPLATE_CAST(T, membername)\
     T *get(void) {return static_cast<T *>(membername);}
+
+#define OGRE_KIT_TEMPLATE_NEW(W, T)\
+	static W* createNew(T *ob);\
+
+#define OGRE_KIT_TEMPLATE_NEW_INLINE(W, T)\
+	static W* createNew(T *ob) {return new W(ob); }
+
 
 
 #define OGRE_KIT_INTERNAL_CAST(membername)\
     template<typename T> T *cast(void) {return static_cast<T *>(membername);}
 
-
 #define OGRE_KIT_OBJECT(T, val) val ? val->get() : 0
+#define OGRE_KIT_NEW(B)  B::createNew(val)
 
+
+#define OGRE_KIT_LOGIC_BRICK(base)							\
+	OGRE_KIT_WRAP_BASE_COPY_CTOR(gs##base, gkLogicBrick);	\
+	OGRE_KIT_TEMPLATE_CAST(gk##base, m_brick)
+
+#define OGRE_KIT_LOGIC_BRICK_BASE(base)							\
+	OGRE_KIT_WRAP_BASE_COPY_CTOR(gs##base, gkLogicBrick);	\
+	OGRE_KIT_TEMPLATE_CAST(gk##Logic##base, m_brick)
 
 #endif
 
@@ -97,6 +110,13 @@ class gsFSM;
 class gsRayTest;
 class gsSweptTest;
 class gsConstraint;
+
+class gsLogicManager;
+class gsLogicObject;
+class gsBrick;
+class gsSensor;
+class gsController;
+class gsActuator;
 
 
 #endif//_gsCommon_h_

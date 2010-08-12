@@ -41,11 +41,11 @@
 
 // ----------------------------------------------------------------------------
 gkSoundManager::gkSoundManager()
-	:   m_stream(0), 
-		m_valid(false), 
-		m_device(0), 
-		m_context(0), 
-		m_disabled(false)
+	:   m_stream(0),
+	    m_valid(false),
+	    m_device(0),
+	    m_context(0),
+	    m_disabled(false)
 {
 	m_disabled = gkEngine::getSingleton().getUserDefs().disableSound;
 
@@ -53,7 +53,7 @@ gkSoundManager::gkSoundManager()
 	{
 		m_disabled = !alOpenLibrary();
 
-		if (!m_disabled) 
+		if (!m_disabled)
 			initialize();
 	}
 }
@@ -94,7 +94,7 @@ void gkSoundManager::initialize(void)
 	// Clear error.
 	alGetError();
 
-	/// \todo, need to be able to specify a device  
+	/// \todo, need to be able to specify a device
 	m_device = alcOpenDevice(NULL);
 	if (!m_device)
 	{
@@ -127,13 +127,13 @@ void gkSoundManager::initialize(void)
 	}
 
 
-	// Apply initial parameters. 
+	// Apply initial parameters.
 	alDistanceModel(AL_NONE);
 	alSpeedOfSound(343.3f);
 	alDopplerFactor(1.f);
 
 
-	// Create the playback stream. 
+	// Create the playback stream.
 	m_stream = new gkStreamer("Sound Manager Stream");
 }
 
@@ -152,7 +152,7 @@ void gkSoundManager::notifySourceCreated(gkSource *src)
 		return;
 
 
-	// Add this source to the play list. 
+	// Add this source to the play list.
 	GK_ASSERT(m_playingSources.find(src) == UT_NPOS);
 
 	m_playingSources.push_back(src);
@@ -166,8 +166,8 @@ void gkSoundManager::notifySourceDestroyed(gkSource *src)
 		return;
 
 
-	// This orphans the source from gkSound, 
-	// The manager is now the owner. This source will be deleted 
+	// This orphans the source from gkSound,
+	// The manager is now the owner. This source will be deleted
 	// when the sound has stopped playing.
 
 
@@ -287,7 +287,7 @@ void gkSoundManager::update(gkScene *scene)
 	alListenerfv(AL_VELOCITY,       vel.ptr());
 
 
-	// Apply debug information. 
+	// Apply debug information.
 	if (gkEngine::getSingleton().getUserDefs().debugSounds && !m_playingSources.empty())
 	{
 		UTsize i, s;
@@ -318,7 +318,7 @@ void gkSoundManager::collectGarbage(void)
 	if (!gkSndCtxValid())
 		return;
 
-	// Test for finished sounds, 
+	// Test for finished sounds,
 	// and delete when it has stopped playing.
 
 
@@ -359,7 +359,7 @@ void gkSoundManager::collectGarbage(void)
 			gkSource *src = p[i++];
 			GK_ASSERT(!src->isBound());
 
-			// Free 
+			// Free
 
 			m_gcSources.erase(src);
 			m_playingSources.erase(src);
@@ -387,8 +387,8 @@ void gkSoundManager::removePlayback(gkSound *sndToDelete)
 		return;
 
 	// Force the playback to stop (the parent sound is about to become invalid)
-	
-	
+
+
 	if (!m_playingSources.empty())
 	{
 		UTsize i, s, f;
@@ -423,7 +423,7 @@ void gkSoundManager::removePlayback(gkSound *sndToDelete)
 			}
 		}
 
-		// Now destroy them all 
+		// Now destroy them all
 
 		i = 0;
 		s = freeNow.size();
@@ -465,7 +465,7 @@ void gkSoundManager::playSound(gkSource *snd)
 	{
 		if (!m_stream->isRunning())
 		{
-			// Start on demand. 
+			// Start on demand.
 			m_stream->start();
 		}
 
@@ -481,7 +481,7 @@ void gkSoundManager::stopSound(gkSource *snd)
 	if (!gkSndCtxValid())
 		return;
 
-    if (m_valid)
+	if (m_valid)
 	{
 		// Remove it from the playlist.
 		m_stream->stopSound(snd);
@@ -496,7 +496,7 @@ gkSound *gkSoundManager::getSound(const gkHashedString &name)
 	if (!gkSndCtxValid())
 		return 0;
 
-    UTsize pos;
+	UTsize pos;
 	if ((pos = m_objects.find(name)) == GK_NPOS)
 		return 0;
 
@@ -552,7 +552,7 @@ void gkSoundManager::destroy(gkSound *ob)
 	if (!gkSndCtxValid())
 		return;
 
-    GK_ASSERT(ob);
+	GK_ASSERT(ob);
 	destroy(ob->getName());
 }
 
@@ -563,7 +563,7 @@ void gkSoundManager::destroyAll(void)
 	if (!gkSndCtxValid())
 		return;
 
-    stopAllSounds();
+	stopAllSounds();
 
 	// Destroy thread.
 	if (m_stream) m_stream->exit();

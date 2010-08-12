@@ -44,7 +44,8 @@ public:
 	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
 
 	bool query(void);
-	GK_INLINE void setSubject(gkString v) {m_listener->m_subjectFilter = v;}
+	GK_INLINE void            setSubject(const gkString& v) {m_listener->m_subjectFilter = v;}
+	GK_INLINE const gkString& getSubject(void)              {return m_listener->m_subjectFilter;}
 };
 
 #endif // GKMESSAGESENSOR_H

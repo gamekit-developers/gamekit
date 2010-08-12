@@ -49,11 +49,11 @@ protected:
 	BrickList   m_sensors;
 	BrickList   m_controllers;
 	BrickList   m_actuators;
-	int         m_state;
+	int         m_state, m_debug;
 
 	OtherLinks  m_others;
 
-	BrickFinder m_cfind, m_afind;
+	BrickFinder m_sfind, m_cfind, m_afind;
 	gkGameObject *m_object;
 
 public:
@@ -66,14 +66,16 @@ public:
 
 
 
+	gkLogicSensor *findSensor(const gkString &name);
 	gkLogicActuator *findActuator(const gkString &name);
 	gkLogicController *findController(const gkString &name);
 
+	gkLogicSensor *findSensor(void *user);
 	gkLogicActuator *findActuator(void *user);
 	gkLogicController *findController(void *user);
 
 	// object storage
-	void push(gkLogicSensor *v);
+	void push(gkLogicSensor *v, void *user=0);
 	void push(gkLogicController *v, void *user=0);
 	void push(gkLogicActuator *v, void *user=0);
 
@@ -85,6 +87,8 @@ public:
 	BrickList &getControllers(void) {return m_controllers;}
 	BrickList &getActuators(void) {return m_actuators;}
 
+	GK_INLINE void          setDebug(int v)                 {m_debug = v;}
+	GK_INLINE int           getDebug(void)                  {return m_debug;}
 	GK_INLINE void          setState(int v)                 {m_state = v;}
 	GK_INLINE int           getState(void)                  {return m_state;}
 	GK_INLINE void          setObject(gkGameObject *v)      {m_object = v;}

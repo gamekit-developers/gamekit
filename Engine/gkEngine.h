@@ -47,13 +47,14 @@ public:
 
 public:
 
-	class Listener
+	class Listener : public utListClass<Listener>::Link
 	{
 	public:
 		virtual ~Listener() {}
 		virtual void tick(gkScalar rate) = 0;
 	};
 
+	typedef utListClass<Listener> Listeners;
 
 public:
 	gkEngine(gkUserDefs *otherDefs = 0);
@@ -88,7 +89,8 @@ public:
 	gkScene *getActiveScene(void);
 
 	// tick update hook
-	GK_INLINE void setListener(Listener *listener) { m_listener = listener; }
+	void setListener(Listener *listener);
+	void removeListener(Listener *listener);
 	GK_INLINE void addLoadable(class gkObject *ob, LoadQuery type) {m_loadables.insert(ob, type);}
 
 private:
@@ -104,7 +106,7 @@ private:
 	Ogre::RenderWindow     *m_window;
 	bool                    m_initialized, m_ownsDefs;
 	gkUserDefs             *m_defs;
-	Listener               *m_listener;
+	Listeners               m_listeners;
 	LoadQueryMap            m_loadables;
 
 	static gkScalar         m_tickRate;

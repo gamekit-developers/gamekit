@@ -82,14 +82,13 @@ function MainCamera:constructor(scene)
 
 	self.xrot = scene:createEmpty("xRot")
 	self.zrot = scene:createEmpty("zRot")
+	self.zrot:load();
+	self.xrot:load();
+
+
 
 	self.xrot:setParent(self.zrot)
 	self.camera:setParent(self.xrot)
-
-
-	-- FIXME: parent / unparent on loaded object
-	self.zrot:load();
-	self.xrot:load();
 
 
 	self.zrot:setPosition(old)
@@ -251,7 +250,7 @@ function Player:constructor(scene)
 	self.keyboard = OgreKit.Keyboard()
 	self.scene    = scene
 	self.physics  = scene:getObject("Physics")
-	self.mesh     = scene:getEntity("MeshMomo")
+	self.mesh     = scene:getObject("MeshMomo")
 	self.camera   = MainCamera(self.scene);
 	self.hangtime = 0
 	self.jumpTog  = 0

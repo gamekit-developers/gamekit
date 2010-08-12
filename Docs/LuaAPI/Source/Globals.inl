@@ -1,19 +1,7 @@
-/*! \page Globals Globals
-
-
-\beginmenu{Globals}
-\LuaGlobalMenu{Class}
-\LuaGlobalMenu{BaseClass}
-\LuaGlobalMenu{printf}
-\LuaGlobalMenu{dPrintf}
-\endmenu
-
-
-\endpage
-
+/*!
 
 <!-- ============================================ printf ============================================ -->
-\LuaGlobal{printf}
+\LuaClass{printf}
 
 Prints a formatted message to the console.
 
@@ -26,7 +14,7 @@ function printf(...)
 \endpage
 
 <!-- ============================================ dPrintf ============================================ -->
-\LuaGlobal{dPrintf}
+\LuaClass{dPrintf}
 
 Prints a formatted message to the render window.
 
@@ -40,7 +28,7 @@ function dPrintf(...)
 
 
 <!-- ============================================ Class ============================================ -->
-\LuaGlobal{Class}
+\LuaClass{Class}
 
 Constructs a new class object definition. 
 
@@ -52,32 +40,12 @@ function Class()
 \returns table
 
 
-\sectionseperator{Usage:}
-\code
-
-NewClass = Class()
-
-function NewClass:constructor()
-    
-    ...
-end
-
-function NewClass:method(param)
-    ...
-end
-
-local inst = NewClass()
-inst:method("Hello World")
-
-\endcode
-
-
 \endpage
 
 
 
 <!-- ============================================ BaseClass ============================================ -->
-\LuaGlobal{BaseClass}
+\LuaClass{BaseClass}
 
 
 Constructs a new class object definition that inherits methods  from a parent class definition.
@@ -87,34 +55,8 @@ Constructs a new class object definition that inherits methods  from a parent cl
 function BaseClass(extends)
 \endcode
 
+\param extends \LuaClassRef{Class}
 \returns table
-
-
-\sectionseperator{Usage:}
-
-\code
-
-NewClass = Class()
-function NewClass:constructor()
-    ...
-end
-
-function NewClass:method(param)
-    ...
-end
-
-
-NewDerrived = BaseClass(NewClass)
-function NewDerrived:constructor()
-    ...
-end
-
-
-local inst = NewDerrived()
-inst:method("Hello World")
-
-
-\endcode
 
 \endpage
 

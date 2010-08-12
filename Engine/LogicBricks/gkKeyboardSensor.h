@@ -47,7 +47,8 @@ public:
 class gkKeyboardSensor : public gkLogicSensor
 {
 protected:
-	int     m_key, m_mod0, m_mod1;
+	int m_key, m_mod0, m_mod1;
+	bool m_allKeys;
 
 public:
 	gkKeyboardSensor(gkGameObject *object, gkLogicLink *link, const gkString &name);
@@ -57,9 +58,15 @@ public:
 
 	bool query(void);
 
-	GK_INLINE void setKey(int v)    {m_key  = v;}
-	GK_INLINE void setMod0(int v)   {m_mod0 = v;}
-	GK_INLINE void setMod1(int v)   {m_mod1 = v;}
+
+	GK_INLINE void setKey(int v)      {m_key  = v;}
+	GK_INLINE void setMod0(int v)     {m_mod0 = v;}
+	GK_INLINE void setMod1(int v)     {m_mod1 = v;}
+	GK_INLINE int  getKey(void)       {return m_key;}
+	GK_INLINE int  getMod0(void)      {return m_mod0;}
+	GK_INLINE int  getMod1(void)      {return m_mod1;}
+	GK_INLINE void setAllKeys(bool v) {m_allKeys  = v;}
+	GK_INLINE bool getAllKeys(void)   {return m_allKeys;}
 };
 
 

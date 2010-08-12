@@ -28,14 +28,17 @@
 #include "gsCore.h"
 %}
 
-// Enable ownership
+%include "gsMacros.i"
+
+// ----------------------------------------------------------------------------
+// New Objects
+%newobject getActiveScene;
 %newobject gsEngine::loadBlendFile;
 %newobject gsGameObject::getEntity;
 %newobject gsGameObject::getLight;
 %newobject gsGameObject::getCamera;
 %newobject gsGameObject::getParent;
 %newobject gsGameObject::getSkeleton;
-
 %newobject gsScene::getObject;
 %newobject gsScene::getEntity;
 %newobject gsScene::getLight;
@@ -43,26 +46,37 @@
 %newobject gsScene::getSkeleton;
 %newobject gsScene::createEmpty;
 
-%rename(Camera)          gsCamera;
-%rename(Debugger)        gsDebugger;
-%rename(Engine)          gsEngine;
-%rename(Entity)          gsEntity;
-%rename(GameObject)      gsGameObject;
-%rename(Keyboard)        gsKeyboard;
-%rename(Light)           gsLight;
-%rename(Loadable)        gsLoadable;
-%rename(Mouse)           gsMouse;
-%rename(Property)        gsProperty;
-%rename(Scene)           gsScene;
-%rename(Skeleton)        gsSkeleton;
-%rename(UserDefs)        gsUserDefs;
-%rename(RenderSystem)    gsRenderSystem;
-%rename(PropertyType)    gsPropertyType;
-%rename(TransformSpace)  gsTransformSpace;
-%rename(GameObjectTypes) gsGameObjectTypes;
-%rename(EngineEvents)    gsEngineEvents;
-%rename(MouseButton)     gsMouseButton;
-%rename(DebugPrint)      gsDebugPrint;
+
+// ----------------------------------------------------------------------------
+// Classes
+GS_SCRIPT_NAME(Camera)
+GS_SCRIPT_NAME(Debugger)
+GS_SCRIPT_NAME(Engine)
+GS_SCRIPT_NAME(Entity)
+GS_SCRIPT_NAME(GameObject)
+GS_SCRIPT_NAME(Keyboard)
+GS_SCRIPT_NAME(Light)
+GS_SCRIPT_NAME(Loadable)
+GS_SCRIPT_NAME(Mouse)
+GS_SCRIPT_NAME(Property)
+GS_SCRIPT_NAME(Scene)
+GS_SCRIPT_NAME(Skeleton)
+GS_SCRIPT_NAME(UserDefs)
+
+
+// ----------------------------------------------------------------------------
+// Enums
+GS_SCRIPT_NAME(RenderSystem)
+GS_SCRIPT_NAME(PropertyType)
+GS_SCRIPT_NAME(TransformSpace)
+GS_SCRIPT_NAME(GameObjectTypes)
+GS_SCRIPT_NAME(EngineEvents)
+GS_SCRIPT_NAME(MouseButton)
+
+
+// ----------------------------------------------------------------------------
+// Globals
+GS_SCRIPT_NAME(DebugPrint)
 
 
 %rename(OGRE_RS_GL)       GS_RS_GL;
@@ -71,18 +85,13 @@
 %rename(OGRE_RS_D3D10)    GS_RS_D3D10;
 %rename(OGRE_RS_D3D11)    GS_RS_D3D11;
 
-%newobject gsArray<gsGameObject, gkGameObject>::at;
-%newobject gsArray<gsGameObject, gkGameObject>::__getitem__;
-%template(ObjectList)	  gsArray<gsGameObject, gkGameObject>;
 
-
-%newobject gsArrayIterator<gsGameObject, gkGameObject>::peekNext;
-%newobject gsArrayIterator<gsGameObject, gkGameObject>::getNext;
-%template(ObjectIterator) gsArrayIterator<gsGameObject, gkGameObject>;
+// ----------------------------------------------------------------------------
+// Arrays
+GS_ARRAY_WRAP(gsGameObject,  gkGameObject, ObjectList, ObjectIterator)
 
 
 %include "gsCore.h"
-
 
 
 typedef enum ScanCode

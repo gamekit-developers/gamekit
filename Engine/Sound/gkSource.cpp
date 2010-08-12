@@ -119,7 +119,7 @@ void gkSource::play(void)
 			gkSoundStream *stream = m_reference->getStream();
 			if (stream) addPlay = true;
 		}
-   }
+	}
 
 
 	if (addPlay)

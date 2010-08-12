@@ -62,6 +62,12 @@ public:
 	GK_INLINE void setAxis(int v)                   {m_axis = v;}
 	GK_INLINE void setMaterial(const gkString &v)   {m_material = v; m_prop = "";}
 	GK_INLINE void setProperty(const gkString &v)   {m_prop = v; m_material = "";}
+
+
+	GK_INLINE gkScalar        getRange(void)       {return m_range;}
+	GK_INLINE int             getAxis(void)        {return m_axis;}
+	GK_INLINE const gkString &getMaterial(void)    {return m_material;}
+	GK_INLINE const gkString &getProperty(void)    {return m_prop;}
 };
 
 

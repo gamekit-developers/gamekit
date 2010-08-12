@@ -57,6 +57,8 @@ public:
 
 	GK_INLINE void setMask(int v)       {m_stateMask = v;}
 	GK_INLINE void setOp(int op)        {m_op = op;}
+	GK_INLINE int  getMask(void)        {return m_stateMask;}
+	GK_INLINE int  getOp(void)          {return m_op;}
 };
 
 

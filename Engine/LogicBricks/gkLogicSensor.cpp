@@ -172,7 +172,16 @@ void gkLogicSensor::execute(void)
 	{
 		// Sensor detection.
 		bool lp = m_positive;
-		m_positive = query();
+
+		if (m_listener)
+		{
+			if (m_listener->m_mode == gkLogicSensor::Listener::OVERIDE)
+				m_positive = m_listener->executeEvent(this);
+			else
+				m_positive = m_listener->executeEvent(this) && query();
+		}
+		else
+			m_positive = query();
 
 		// Sensor Pulse.
 		if (m_pulse == PM_IDLE)

@@ -81,6 +81,17 @@ public:
 	GK_INLINE void  setLifeSpan(int v)              {m_life = v;}
 
 
+	GK_INLINE int   getMode(void)                  {return m_mode;}
+	GK_INLINE int   getDynMode(void)               {return m_dynMode;}
+	GK_INLINE const gkString& getObject(void)      {return m_obj;}
+	GK_INLINE const gkVector3& getLinV(void)       {return m_linv;}
+	GK_INLINE bool  getLinVL(void)                 {return m_lvlocal;}
+	GK_INLINE const gkVector3& getAngV(void)       {return m_angv;}
+	GK_INLINE bool  getAngVL(void)                 {return m_avlocal;}
+	GK_INLINE int   getLifeSpan(void)              {return m_life;}
+
+
+
 	// Handle incoming logic.
 	void execute(void);
 };

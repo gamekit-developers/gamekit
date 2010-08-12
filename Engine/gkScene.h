@@ -145,6 +145,8 @@ public:
 
 	bool asyncTryToCreateNavigationMesh(gkActiveObject &activeObj, const gkRecast::Config &config, ASYNC_DT_RESULT result);
 
+	void applyConstraints(void);
+
 protected:
 
 	// Ogre scene manager
@@ -182,7 +184,6 @@ private:
 	void loadImpl(void);
 	void unloadImpl(void);
 	void setShadows(void);
-	void applyConstraints(void);
 	void tickClones(void);
 	void destroyClones(void);
 	void endObjects(void);

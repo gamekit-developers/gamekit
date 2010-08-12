@@ -1,13 +1,4 @@
-/*! \page Physics Physics
-\LuaSectionUp{index}
-
-\beginmenu{Classes}
-\LuaClassMenu{RayTest}
-\LuaClassMenu{SweptTest}
-\endmenu
-
-\endpage
-
+/*! 
 
 <!-- ============================================ RayTest ============================================ -->
 \LuaClass{RayTest}

@@ -531,6 +531,8 @@ void gkBlenderSceneConverter::convertObjectProperties(gkGameObject *gobj, Blende
 			gop = gobj->createVariable(prop->name, prop->flag != 0);
 			gop->setValue(*((gkScalar *)&prop->data));
 		}
+
+		if (gop) gop->makeDefault();
 	}
 }
 
@@ -1117,6 +1119,7 @@ void gkBlenderSceneConverter::loadSkyBox()
 	Ogre::TextureUnitState *tus = matptr->getTechnique(0)->getPass(0)->createTextureUnitState();
 	tus->setTextureName(GKB_IDNAME(wo), Ogre::TEX_TYPE_CUBE_MAP);
 	tus->setTextureAddressingMode(Ogre::TextureUnitState::TAM_CLAMP);
+	tus->setTextureFiltering(Ogre::TFO_BILINEAR);
 }
 
 
@@ -2404,6 +2407,7 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
 
 				psn->setProperty(gkLogicLoader_formatText(bps->name));
 				psn->setValue(bps->value);
+				psn->setMaxValue(bps->maxvalue);
 
 				switch(bps->type)
 				{

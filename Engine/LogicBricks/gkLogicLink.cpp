@@ -33,7 +33,7 @@
 
 
 // ----------------------------------------------------------------------------
-gkLogicLink::gkLogicLink() : m_state(0), m_object(0)
+gkLogicLink::gkLogicLink() : m_state(0), m_debug(0), m_object(0)
 {
 }
 
@@ -139,10 +139,13 @@ void gkLogicLink::unload(void)
 }
 
 // ----------------------------------------------------------------------------
-void gkLogicLink::push(gkLogicSensor *v)
+void gkLogicLink::push(gkLogicSensor *v,void *user)
 {
 	GK_ASSERT(v);
 	m_sensors.push_back(v);
+
+	if (user)
+		m_sfind.insert(user, v);
 }
 
 // ----------------------------------------------------------------------------
@@ -164,6 +167,22 @@ void gkLogicLink::push(gkLogicActuator *v, void *user)
 		m_afind.insert(user, v);
 }
 
+
+// ----------------------------------------------------------------------------
+gkLogicSensor *gkLogicLink::findSensor(const gkString &name)
+{
+	if (!m_sensors.empty())
+	{
+		utListIterator<BrickList> it(m_sensors);
+		while (it.hasMoreElements())
+		{
+			gkLogicBrick *sc = it.getNext();
+			if (sc->getName() == name)
+				return static_cast<gkLogicSensor *>(sc);
+		}
+	}
+	return 0;
+}
 
 // ----------------------------------------------------------------------------
 gkLogicActuator *gkLogicLink::findActuator(const gkString &name)
@@ -198,6 +217,17 @@ gkLogicController *gkLogicLink::findController(const gkString &name)
 	}
 	return 0;
 }
+
+
+// ----------------------------------------------------------------------------
+gkLogicSensor *gkLogicLink::findSensor(void *user)
+{
+	UTsize pos = m_sfind.find(user);
+	if (pos != UT_NPOS)
+		return static_cast<gkLogicSensor *>(m_sfind.at(pos));
+	return 0;
+}
+
 
 
 // ----------------------------------------------------------------------------

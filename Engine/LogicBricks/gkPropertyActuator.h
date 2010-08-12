@@ -49,6 +49,7 @@ private:
 	gkString    m_prop, m_value, m_othOb;
 	bool        m_init;
 	gkVariable  *m_cur, *m_oth;
+	gkVariable  m_propVal;
 
 
 public:
@@ -66,7 +67,6 @@ public:
 	GK_INLINE gkString  getValue(void)                  {return m_value;}
 	GK_INLINE void      setObject(const gkString &v)    {m_othOb = v;}
 	GK_INLINE gkString  getObject(void)                 {return m_othOb;}
-
 
 	// Handle incoming logic.
 	void execute(void);

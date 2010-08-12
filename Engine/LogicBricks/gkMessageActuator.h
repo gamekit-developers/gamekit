@@ -56,6 +56,12 @@ public:
 	GK_INLINE void setBodyType(int v)          {m_bodyType = v;}
 	GK_INLINE void setBodyText(gkString v)     {m_bodyText = v;}
 	GK_INLINE void setBodyProperty(gkString v) {m_bodyProp = v;}
+
+	GK_INLINE const gkString& getTo(void)           {return m_to;}
+	GK_INLINE const gkString& getSubject(void)      {return m_subject;}
+	GK_INLINE int             getBodyType(void)     {return m_bodyType;}
+	GK_INLINE const gkString& getBodyText(void)     {return m_bodyText;}
+	GK_INLINE const gkString& getBodyProperty(void) {return m_bodyProp;}
 };
 
 #endif // GKMESSAGEACTUATOR_H

@@ -1,29 +1,4 @@
-/*! \page Math Math
-\LuaSectionUp{index}
-
-\beginmenu{Globals}
-\LuaClassMenu{Vec3Negate}
-\LuaClassMenu{Vec3AddVec3}
-\LuaClassMenu{Vec3SubVec3}
-\LuaClassMenu{Vec3MulVec3}
-\LuaClassMenu{Vec3Mulf}
-\LuaClassMenu{Vec3DivVec3}
-\LuaClassMenu{Vec3Divf}
-\LuaClassMenu{QuatNegate}
-\LuaClassMenu{QuatAddQuat}
-\LuaClassMenu{QuatSubQuat}
-\LuaClassMenu{QuatMulQuat}
-\LuaClassMenu{QuatMulf}
-\LuaClassMenu{QuatMulVec3}
-\endmenu
-
-
-\beginmenu{Classes}
-\LuaClassMenu{Vector3}
-\LuaClassMenu{Quaternion}
-\LuaClassMenu{Ray}
-\endmenu
-
+/*!
 
 <!-- ============================================ Vector3 ============================================ -->
 \LuaClass{Vector3}

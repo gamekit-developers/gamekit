@@ -32,7 +32,7 @@
 // ----------------------------------------------------------------------------
 gkLogicBrick::gkLogicBrick(gkGameObject *object, gkLogicLink *link, const gkString &name)
 	:       m_object(object), m_name(name), m_link(link), m_stateMask(0), m_pulseState(BM_IDLE),
-	        m_debugMask(0), m_isActive(false), m_priority(0)
+	        m_debugMask(0), m_isActive(false), m_priority(0), m_listener(0)
 {
 	GK_ASSERT(m_object);
 	m_scene = m_object->getOwner();

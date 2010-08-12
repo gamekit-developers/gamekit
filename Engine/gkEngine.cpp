@@ -121,8 +121,7 @@ gkEngine::gkEngine(gkUserDefs *oth)
 	:       m_root(0),
 	        m_window(0),
 	        m_initialized(false),
-	        m_ownsDefs(oth != 0),
-	        m_listener(0)
+	        m_ownsDefs(oth != 0)
 {
 	m_private = new gkEnginePrivate(this);
 	if (oth != 0)
@@ -364,6 +363,17 @@ gkScene *gkEngine::getActiveScene(void)
 	return m_private->scene;
 }
 
+void gkEngine::setListener(Listener *listener)
+{
+	m_listeners.push_back(listener);
+}
+
+void gkEngine::removeListener(Listener *listener)
+{
+	if (m_listeners.find(listener))
+		m_listeners.erase(listener);
+}
+
 void gkEngine::run(void)
 {
 	// Start main game loop
@@ -456,9 +466,11 @@ void gkEnginePrivate::tickImpl(gkScalar dt)
 	scene->update(dt);
 
 	// update callbacks
-	if (engine->m_listener)
-		engine->m_listener->tick(dt);
+	utListIterator<gkEngine::Listeners> iter(engine->m_listeners);
+	while(iter.hasMoreElements())
+		iter.getNext()->tick(dt);
 
+	scene->applyConstraints();
 
 	// post process
 	if (!engine->m_loadables.empty())

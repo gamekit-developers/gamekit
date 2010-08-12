@@ -32,7 +32,7 @@
 
 // ----------------------------------------------------------------------------
 gkPropertySensor::gkPropertySensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
-	:   gkLogicSensor(object, link, name), m_old(), m_cur(0), m_type(-1), m_propName(""), m_propVal(""),
+	:   gkLogicSensor(object, link, name), m_old(), m_cur(0), m_type(-1), m_propName(""), m_propVal(), m_propMax(), 
 	    m_init(false), m_change(false)
 
 {
@@ -56,13 +56,17 @@ bool gkPropertySensor::query(void)
 {
 	if (!m_init)
 	{
+		m_init = true;
+
+
 		if (m_object->hasVariable(m_propName))
 		{
-
 			m_cur = m_object->getVariable(m_propName);
-			m_old = *m_cur;
-			m_old.setValue(m_propVal);
-			m_init = true;
+			m_old.setValue(m_cur->getType(), m_propVal);
+			m_change = m_change != ((*m_cur) != (m_old));
+
+			if (m_type == PS_INTERVAL)
+				m_test.setValue(m_cur->getType(), m_propMax);
 		}
 		else
 		{
@@ -73,26 +77,23 @@ bool gkPropertySensor::query(void)
 
 	if (m_cur)
 	{
-
 		switch (m_type)
 		{
 		case PS_EQUAL:
-			return m_cur->equal(m_old);
+			return (*m_cur) == (m_old);
 		case PS_NEQUAL:
-			return m_cur->notequal(m_old);
+			return (*m_cur) != (m_old);
 		case PS_CHANGED:
-				if (m_change != m_cur->notequal(m_old))
-				{
-					m_change = !m_change;
-					return true;
-				}
+			if (m_change != ((*m_cur) != (m_old)))
+			{
+				m_old.assign(*m_cur);
+				m_change = !m_change;
+				return true;
+			}
 			break;
 		case PS_INTERVAL:
-			{
-				// todo;
-			};
+			return (*m_cur) >= (m_old) && (*m_cur) <= (m_test);
 		}
 	}
-
 	return false;
 }

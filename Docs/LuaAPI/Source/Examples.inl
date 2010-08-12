@@ -1,31 +1,46 @@
 /*! \page Examples Examples and tutorials.
 
 
-\beginmenu{LuaRuntime,For use in the LuaRuntime package}
+\beginmenu
 \LuaGlobalMenu{Setup}
+\LuaGlobalMenu{OnLoad}
 \LuaGlobalMenu{CDefs}
 \LuaGlobalMenu{CArrayIter}
+\LuaGlobalMenu{CustomLogicBricks}
 \endmenu
 
 
-\endpage
-
-
 <!-- ============================================ Setup ============================================ -->
-\LuaGlobal{Setup,Engine Setup}
+\LuaExample{Setup,Setup for a stand alone application}
 
 
-\LuaExtern{Blend:,Test0.blend}
 
-An example showing how to set up the OgreKit Engine, and load a .blend. 
+An example showing how to set up the OgreKit Engine, and load a .blend.
 \include Test0.lua
 
 \endpage
 
 
+<!-- ============================================ OnLoad ============================================ -->
+\LuaExample{OnLoad,Setup for an embedded application}
+
+
+Setup from inside blender takes place in a predefined text block named \b OnLoad.lua \n
+This script will execute every time the scene is loaded.\n
+
+Scripts may still span multiple text files using the standard Blender Game Engine method.
+By attaching to a Python controller.<i> \LuaClassRef{ScriptController} </i>
+
+\include OnLoad.lua
+
+
+\endpage
+
+
+
 
 <!-- ============================================ CDefs ============================================ -->
-\LuaGlobal{CDefs,Custom User defined variables.}
+\LuaExample{CDefs,Custom User defined variables.}
 
 
 This shows a simple way to add custom properties to \LuaClassRef{UserDefs}.
@@ -45,14 +60,14 @@ print(prefs.Custom)
 
 
 <!-- ============================================ CArrayIter ============================================ -->
-\LuaGlobal{CArrayIter,Using arrays and iterators.}
+\LuaExample{CArrayIter,Using arrays and iterators.}
 
 Example array and iterator usage
 
 \code
 
 local objects = OgreKit.ObjectList()
-objects:push(scene:getObject("Cube"))  
+objects:push(scene:getObject("Cube"))
 
 
 local iter = objects:iterator()
@@ -66,5 +81,90 @@ end
 
 \endpage
 
+
+
+
+<!-- ============================================ CustomLogicBricks ============================================ -->
+\LuaExample{CustomLogicBricks,Adding custom logic brick callbacks.}
+
+This shows one way to add custom callbacks on logic bricks.
+The example here shows usage for sensors, but the method applies to controllers and actuators.
+
+\code
+
+--- Get logic manager
+logicManager = OgreKit.LogicManager()
+
+player = scene:getObject("Cube")
+
+logicPlayer = logicManager:newObject(player)
+
+
+
+--- Sensor
+
+delay = OgreKit.DelaySensor(logicPlayer)
+delay:setDelay(20)
+
+
+--- Controller
+
+operator = OgreKit.LogicOpController(logicPlayer)
+operator:setOp(OgreKit.LOP_AND)
+
+
+--- Actuator
+
+motion = OgreKit.MotionActuator(logicPlayer)
+motion:setRotation(0.0, 0.0, 0.15, true)
+
+
+--- Connect links
+
+operator:link(delay)
+operator:link(motion)
+
+
+
+-- Add callbacks
+
+DelayCallback = Class()
+function DelayCallback:constructor(sensor)
+
+
+    sensor:connect(OgreKit.LM_EVT_OVERIDE, self, DelayCallback.OnQuery)
+
+    self.maxDelay = sensor:getDelay()
+    self.incrment = 0
+    self.len = self.maxDelay
+
+end
+
+
+function DelayCallback:OnQuery()
+
+    -- do tests
+
+
+    if (self.incrment > self.maxDelay) then
+        if (self.incrment > self.len * 2) then
+            self.incrment = 0
+        else
+            self.incrment = self.incrment + 1
+        end
+
+        return true
+    end
+
+    self.incrment = self.incrment + 1
+    return false
+end
+
+callback = DelayCallback(delay)
+
+
+\endcode
+
+\endpage
 
 */

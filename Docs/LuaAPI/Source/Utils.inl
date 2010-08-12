@@ -1,19 +1,8 @@
-/*! \page Utils Utils
-\LuaSectionUp{index}
-
-
-\beginmenu{Classes}
-\LuaClassMenu{Array}
-\LuaClassMenu{ArrayIterator}
-\endmenu
-
-\endpage
-
-
+/*!
 
 <!-- ============================================ Array ============================================ -->
 \LuaClass{Array}
-\LuaSectionUp{Utils}
+
 
 \beginmenu{Methods}
 \LuaMethodMenu{Array,constructor}
@@ -36,7 +25,7 @@
 
 <!-- ======================================== -->
 \LuaMethod{Array,constructor}
-\LuaClassUp{Array}
+
 
 
 Creates an empty array.
@@ -52,7 +41,7 @@ function Array:constructor()
 
 <!-- ======================================== -->
 \LuaMethod{Array,clear}
-\LuaClassUp{Array}
+
 
 Removes all elements from the array.
 
@@ -66,7 +55,7 @@ function Array:clear()
 
 <!-- ======================================== -->
 \LuaMethod{Array,at}
-\LuaClassUp{Array}
+
 
 Returns the element at the array index specified.
 
@@ -74,7 +63,7 @@ Returns the element at the array index specified.
 function Array:at(number)
 \endcode
 
-\param number Array index equal or greater than zero. 
+\param number array index equal or greater than zero. 
 \returns T or nil if the array index is greater than it's size
 
 \endpage
@@ -82,7 +71,7 @@ function Array:at(number)
 
 <!-- ======================================== -->
 \LuaMethod{Array,empty}
-\LuaClassUp{Array}
+
 
 True if the array has no elements.
 
@@ -98,7 +87,7 @@ function Array:empty()
 
 <!-- ======================================== -->
 \LuaMethod{Array,size}
-\LuaClassUp{Array}
+
 
 Returns the number of elements in this array.
 
@@ -114,7 +103,7 @@ function Array:size()
 
 <!-- ======================================== -->
 \LuaMethod{Array,push}
-\LuaClassUp{Array}
+
 
 Adds an element to the back of the array.
 
@@ -132,7 +121,7 @@ function Array:push(T)
 
 <!-- ======================================== -->
 \LuaMethod{Array,erase}
-\LuaClassUp{Array}
+
 
 Removes an element from the array.
 
@@ -151,7 +140,7 @@ function Array:erase(T)
 
 <!-- ======================================== -->
 \LuaMethod{Array,iterator}
-\LuaClassUp{Array}
+
 
 Returns an iterator for all elements in this array.
 
@@ -169,7 +158,7 @@ function Array:iterator()
 
 <!-- ======================================== -->
 \LuaMethod{Array,__index}
-\LuaClassUp{Array}
+
 
 Index meta method.
 
@@ -177,7 +166,7 @@ Index meta method.
 function Array:__index(number)
 \endcode
 
-\param number Array index equal or greater than zero. 
+\param number array index equal or greater than zero. 
 \returns T or nil if the array index is greater than it's size
 
 \endpage
@@ -186,7 +175,7 @@ function Array:__index(number)
 
 <!-- ============================================ ArrayIterator ============================================ -->
 \LuaClass{ArrayIterator}
-\LuaSectionUp{Utils}
+
 
 \beginmenu{Methods}
 \LuaMethodMenu{ArrayIterator,constructor}
@@ -201,7 +190,7 @@ function Array:__index(number)
 
 <!-- ======================================== -->
 \LuaMethod{ArrayIterator,constructor}
-\LuaClassUp{ArrayIterator}
+
 
 
 Creates an empty iterator.
@@ -216,7 +205,7 @@ function ArrayIterator:constructor()
 
 <!-- ======================================== -->
 \LuaMethod{ArrayIterator,hasMoreElements}
-\LuaClassUp{ArrayIterator}
+
 
 Returns true if more iterations are present.
 
@@ -231,7 +220,7 @@ function ArrayIterator:hasMoreElements()
 
 <!-- ======================================== -->
 \LuaMethod{ArrayIterator,moveNext}
-\LuaClassUp{ArrayIterator}
+
 
 Advances to the next iteration.
 
@@ -244,7 +233,7 @@ function ArrayIterator:moveNext()
 
 <!-- ======================================== -->
 \LuaMethod{ArrayIterator,peekNext}
-\LuaClassUp{ArrayIterator}
+
 
 Returns the next iteration, without advancing.
 
@@ -259,7 +248,7 @@ function ArrayIterator:peekNext()
 
 <!-- ======================================== -->
 \LuaMethod{ArrayIterator,getNext}
-\LuaClassUp{ArrayIterator}
+
 
 Returns the current iteration, and advances to the next.
 

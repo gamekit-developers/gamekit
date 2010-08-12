@@ -59,6 +59,27 @@ enum gkBrickMode
 // are derrived from this class
 class gkLogicBrick
 {
+public:
+
+	class Listener
+	{
+	public:
+
+		enum Mode 
+		{
+			OVERIDE,
+			AND,
+		};
+
+		int m_mode;
+
+	public:
+		Listener() : m_mode(OVERIDE) {}
+		virtual ~Listener() {}
+
+		virtual bool executeEvent(gkLogicBrick *brick) = 0;
+	};
+
 
 protected:
 
@@ -69,6 +90,7 @@ protected:
 	int                 m_stateMask, m_pulseState, m_debugMask;
 	bool                m_isActive;
 	int                 m_priority;
+	Listener           *m_listener;
 
 	virtual void        cloneImpl(gkLogicLink *link, gkGameObject *dest);
 	virtual void        notifyActivate(void) {}
@@ -81,9 +103,11 @@ public:
 	bool inActiveState(void);
 	bool wantsDebug(void);
 
-	virtual void execute(void)=0;
 	virtual gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest)=0;
 	virtual void  notifyUnload(void) {}
+	virtual void execute(void)=0;
+
+	GK_INLINE void setListener(gkLogicBrick::Listener *listener) {m_listener = listener;}
 
 
 	GK_INLINE void              setPulse(int v)     { m_pulseState = v;}
@@ -101,8 +125,7 @@ public:
 	GK_INLINE void              setDebugMask(int v) { m_debugMask = v;}
 	GK_INLINE int               getDebugMask(void)  { return m_debugMask;}
 	GK_INLINE gkLogicLink       *getLink(void)      { return m_link; }
-
-	GK_INLINE int               getPriority(void)   {return m_priority;}
+	GK_INLINE int               getPriority(void)   { return m_priority;}
 
 	void setPriority(bool v);
 	void setPriority(int v);

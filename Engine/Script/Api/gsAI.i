@@ -28,7 +28,6 @@
 #include "gsAI.h"
 %}
 
-
 %newobject gsFSM::addTransition;
 %rename(WhenEvent)	gsWhenEvent;
 %rename(FSM)		gsFSM;

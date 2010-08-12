@@ -264,6 +264,14 @@ void gkGameObject::unloadImpl(void)
 		manager->destroySceneNode(m_node);
 		m_node = 0;
 	}
+
+	// Reset variables
+	utHashTableIterator<VariableMap> iter(m_variables);
+	while (iter.hasMoreElements())
+	{
+		gkVariable *cvar = iter.getNext().second;
+		cvar->reset();
+	}
 }
 
 
@@ -734,10 +742,21 @@ void gkGameObject::setParent(gkGameObject *par)
 		if(!m_parent->m_children.find(this))
 		{
 			m_parent->m_children.push_back(this);
-		}
 
+			if (isLoaded())
+			{
+				if (!m_parent->isLoaded())
+					m_parent->load();
+
+				if (m_node->getParentSceneNode())
+					m_node->getParentSceneNode()->removeChild(m_node);
+
+				m_parent->getNode()->addChild(m_node);
+			}
+		}
 	}
 }
+
 
 gkObject *gkGameObject::getAttachedObject()
 {

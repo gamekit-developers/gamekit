@@ -29,18 +29,19 @@
 
 
 // ----------------------------------------------------------------------------
-gsProperty::gsProperty(gkVariable *var) : m_prop(var)
+gsProperty::gsProperty(gkVariable *var) : m_prop(var), m_creator(false)
 {
 }
 
 // ----------------------------------------------------------------------------
-gsProperty::gsProperty() : m_prop(0)
+gsProperty::gsProperty() : m_prop(0), m_creator(false)
 {
 }
 
 // ----------------------------------------------------------------------------
 gsProperty::gsProperty(const gkString &name, bool value)
 {
+	m_creator = true;
 	m_prop = new gkVariable(name, false);
 	m_prop->setValue(value);
 }
@@ -48,6 +49,7 @@ gsProperty::gsProperty(const gkString &name, bool value)
 // ----------------------------------------------------------------------------
 gsProperty::gsProperty(const gkString &name, double value)
 {
+	m_creator = true;
 	m_prop = new gkVariable(name, false);
 	m_prop->setValue((float)value);
 }
@@ -56,6 +58,7 @@ gsProperty::gsProperty(const gkString &name, double value)
 // ----------------------------------------------------------------------------
 gsProperty::gsProperty(const gkString &name, const gkString &value)
 {
+	m_creator = true;
 	m_prop = new gkVariable(name, false);
 	m_prop->setValue(value);
 }
@@ -64,6 +67,7 @@ gsProperty::gsProperty(const gkString &name, const gkString &value)
 // ----------------------------------------------------------------------------
 gsProperty::gsProperty(const gsProperty &oth)
 {
+	m_creator = true;
 	m_prop = new gkVariable(oth.getName(), false);
 	m_prop->setValue(oth.getValue());
 }
@@ -72,7 +76,8 @@ gsProperty::gsProperty(const gsProperty &oth)
 gsProperty::~gsProperty()
 {
 	makeDebug(false);
-	delete m_prop;
+	if (m_creator)
+		delete m_prop;
 }
 
 
@@ -99,7 +104,7 @@ const gkString &gsProperty::getValue(void) const
 // ----------------------------------------------------------------------------
 void gsProperty::makeDebug(bool v)
 {
-	if (m_prop && gkEngine::getSingletonPtr())
+	if (m_prop && m_prop->isDebug() != v && gkEngine::getSingletonPtr())
 	{
 		m_prop->setDebug(v);
 		if (v)
@@ -173,7 +178,7 @@ void gsProperty::fromBool(bool v)
 void gsProperty::fromNumber(double v)
 {
 	if (m_prop)
-		m_prop->setValue(v);
+		m_prop->setValue((gkScalar)v);
 }
 
 
@@ -456,10 +461,15 @@ gsEngine::gsEngine()
 	m_defs = 0;
 	m_running = false;
 	if (m_ctxOwner = ((m_engine = gkEngine::getSingletonPtr()) == 0))
-	{
 		m_engine = new gkEngine();
-		m_engine->setListener(this);
+	else
+	{
+		m_engine = gkEngine::getSingletonPtr();
+		m_running = m_engine->isInitialized();
 	}
+
+	if (m_engine)
+		m_engine->setListener(this);
 }
 
 
@@ -473,6 +483,8 @@ gsEngine::~gsEngine()
 	for (UTsize i=0; i<m_ticks.size(); ++i)
 		delete m_ticks.at(i);
 
+	if (m_engine)
+		m_engine->removeListener(this);
 
 	if (m_ctxOwner)
 	{
@@ -560,7 +572,7 @@ gsUserDefs &gsEngine::getUserDefs(void)
 // ----------------------------------------------------------------------------
 gsScene* gsEngine::loadBlendFile(const gkString &name)
 {
-	if (m_engine && !m_running)
+	if (m_engine && !m_running && m_ctxOwner)
 	{
 		if (!m_engine->isInitialized())
 			gkLogMessage("gsEngine: loadBlendFile on uninitialized engine.");
@@ -581,6 +593,14 @@ gsScene* gsEngine::loadBlendFile(const gkString &name)
 	return 0;
 }
 
+// ----------------------------------------------------------------------------
+gsScene *gsEngine::getActiveScene(void)
+{
+	if (m_engine && m_engine->isInitialized())
+		return new gsScene(m_engine->getActiveScene());
+	return 0;
+}
+
 
 // ----------------------------------------------------------------------------
 void gsEngine::run(void)
@@ -594,6 +614,28 @@ void gsEngine::run(void)
 
 
 
+// ----------------------------------------------------------------------------
+gsGameObject *gsGameObject::createNew(gkGameObject *ob)
+{
+	if (!ob) return 0;
+
+	switch (ob->getType())
+	{
+	case GK_CAMERA:
+		return new gsCamera(ob);
+	case GK_LIGHT:
+		return new gsLight(ob);
+	case GK_ENTITY:
+		return new gsEntity(ob);
+	case GK_OBJECT:
+		return new gsGameObject(ob);
+	case GK_SKELETON:
+		return new gsSkeleton(ob);
+	default:
+		break;
+	}
+	return 0;
+}
 
 
 // ----------------------------------------------------------------------------
@@ -677,65 +719,10 @@ gsGameObject* gsScene::getObject(const gkString &name)
 	{
 		gkGameObject *gobj = cast<gkScene>()->getObject(name);
 		if (gobj)
-			return new gsGameObject(gobj);
+			return gsGameObject::createNew(gobj);
 	}
 	return 0;
 }
-
-
-// ----------------------------------------------------------------------------
-gsEntity* gsScene::getEntity(const gkString &name)
-{
-	if (m_object)
-	{
-		gkGameObject *gobj = cast<gkScene>()->getObject(name);
-		if (gobj && gobj->getType() == GK_ENTITY)
-			return (new gsEntity(gobj));
-	}
-	return 0;
-}
-
-
-// ----------------------------------------------------------------------------
-gsCamera* gsScene::getCamera(const gkString &name)
-{
-	if (m_object)
-	{
-		gkGameObject *gobj = cast<gkScene>()->getObject(name);
-		if (gobj && gobj->getType() == GK_CAMERA)
-			return (new gsCamera(gobj));
-	}
-	return 0;
-}
-
-
-// ----------------------------------------------------------------------------
-gsLight* gsScene::getLight(const gkString &name)
-{
-	if (m_object)
-	{
-		gkGameObject *gobj = cast<gkScene>()->getObject(name);
-		if (gobj && gobj->getType() == GK_LIGHT)
-			return (new gsLight(gobj));
-	}
-	return 0;
-}
-
-
-
-// ----------------------------------------------------------------------------
-gsSkeleton* gsScene::getSkeleton(const gkString &name)
-{
-	if (m_object)
-	{
-		gkGameObject *gobj = cast<gkScene>()->getObject(name);
-		if (gobj && gobj->getType() == GK_SKELETON)
-			return new gsSkeleton(gobj);
-	}
-	return 0;
-}
-
-
 
 // ----------------------------------------------------------------------------
 gsGameObject* gsScene::createEmpty(const gkString &name)
@@ -746,10 +733,19 @@ gsGameObject* gsScene::createEmpty(const gkString &name)
 		if (!scene->hasObject(name))
 		{
 			gkGameObject *obj = scene->createObject(name);
-			return (new gsGameObject(obj));
+			return new gsGameObject(obj);
 		}
 	}
 
+	return 0;
+}
+
+// ----------------------------------------------------------------------------
+gsScene* getActiveScene(void)
+{
+	gkEngine *eng = gkEngine::getSingletonPtr();
+	if (eng && eng->isInitialized())
+		return new gsScene(eng->getActiveScene());
 	return 0;
 }
 
@@ -1176,43 +1172,6 @@ int gsGameObject::getState(void)
 
 
 // ----------------------------------------------------------------------------
-gsEntity* gsGameObject::getEntity(void)
-{
-	if (m_object && cast<gkGameObject>()->getType() == GK_ENTITY)
-		return (new gsEntity(m_object));
-	return 0;
-}
-
-
-// ----------------------------------------------------------------------------
-gsCamera* gsGameObject::getCamera(void)
-{
-	if (m_object && cast<gkGameObject>()->getType() == GK_CAMERA)
-		return (new gsCamera(m_object));
-	return 0;
-}
-
-
-// ----------------------------------------------------------------------------
-gsLight* gsGameObject::getLight(void)
-{
-	if (m_object && cast<gkGameObject>()->getType() == GK_LIGHT)
-		return (new gsLight(m_object));
-	return 0;
-}
-
-
-// ----------------------------------------------------------------------------
-gsSkeleton* gsGameObject::getSkeleton(void)
-{
-	if (m_object && cast<gkGameObject>()->getType() == GK_SKELETON)
-		return (new gsSkeleton(m_object));
-	return 0;
-}
-
-
-
-// ----------------------------------------------------------------------------
 bool gsGameObject::hasParent()
 {
 	return m_object && cast<gkGameObject>()->getParent() != 0;
@@ -1236,7 +1195,7 @@ void gsGameObject::setParent(gsGameObject *par)
 gsGameObject* gsGameObject::getParent(void)
 {
 	return m_object && hasParent() ?
-	       (new gsGameObject(cast<gkGameObject>()->getParent())) : 0;
+	       gsGameObject::createNew(cast<gkGameObject>()->getParent()) : 0;
 }
 
 

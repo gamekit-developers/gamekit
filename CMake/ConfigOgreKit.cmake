@@ -62,25 +62,12 @@ macro (configure_ogrekit ROOT OGREPATH)
          endif()
     endif()
     
-    option(OGREKIT_BUILD_V8 "Build V8 JavaScript bindings." ON)
-    if (OGREKIT_BUILD_V8)
-        option(OGREKIT_BUILD_V8_TEST "Build Samples/V8Test" ON)
-    endif()
-
-
-    # TODO
-    #option(OGREKIT_BUILD_CHROMEPLUGIN   "Build Samples/ChromePlugin"            ON)
-    #if (OGREKIT_BUILD_CHROMEPLUGIN)
-    #    include(FindGeckoSDK)
-    #endif()
-
-    if (OGREKIT_BUILD_V8)
-        include(ConfigureV8)
-    endif()
 
     if (OGREKIT_COMPLIE_SWIG)
-        include(RunSwig)
-        include(TemplateCompiler)
+		
+		include(RunSwig)
+		include(TemplateCompiler)
+
     endif()
 
 

@@ -81,6 +81,15 @@ public:
 	GK_INLINE void  setProperty(const gkString &v)  {m_startProp = v;}
 	GK_INLINE void  setReset(bool v)                {m_reset = v;}
 
+	GK_INLINE int   getStart(void)                 {return m_start;}
+	GK_INLINE int   getEnd(void)                   {return m_end;}
+	GK_INLINE int   getBlend(void)                 {return m_blend;}
+	GK_INLINE int   getMode(void)                  {return m_mode;}
+	GK_INLINE int   getPriority(void)              {return m_prio;}
+	GK_INLINE const gkString&  getAction(void)     {return m_startAct;}
+	GK_INLINE const gkString&  getProperty(void)   {return m_startProp;}
+	GK_INLINE bool  getReset(void)                 {return m_reset;}
+
 
 	// Handle incoming logic.
 	void execute(void);

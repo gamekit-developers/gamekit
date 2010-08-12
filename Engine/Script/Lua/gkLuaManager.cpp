@@ -31,9 +31,6 @@
 #include "gkTextManager.h"
 
 
-
-extern "C" int luaopen_Math(lua_State *L);
-extern "C" int luaopen_GameLogic(lua_State *L);
 extern "C" int _OgreKitLua_install(lua_State *L);
 
 
@@ -44,15 +41,7 @@ gkLuaManager::gkLuaManager()
 	L = lua_open();
 	luaL_openlibs(L);
 
-	/// \todo Need to merge the two API's. Almost identical anyway.
-	///      For this, need to be sure this works with V8
-	///             then bind the Swig code in V8Runtime
-	///             in the same manor as LuaPackage.
-	// if (!gkUtils::IS_LUA_PACKAGE)
-	//     _OgreKitLua_install(L);
-
-	luaopen_Math(L);
-	luaopen_GameLogic(L);
+	_OgreKitLua_install(L);
 }
 
 // ----------------------------------------------------------------------------

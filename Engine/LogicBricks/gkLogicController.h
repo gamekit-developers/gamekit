@@ -44,6 +44,8 @@ public:
 	gkLogicController(gkGameObject *object, gkLogicLink *link, const gkString &name);
 	virtual ~gkLogicController() {}
 
+	void _execute(void);
+
 	void sort(void);
 	void link(gkLogicSensor *v);
 	void link(gkLogicActuator *v);

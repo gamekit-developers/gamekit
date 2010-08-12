@@ -60,6 +60,7 @@ class gkLogicManager : public Ogre::Singleton<gkLogicManager>
 public:
 
 	typedef utListClass<gkLogicLink> Links;
+	typedef utListIterator<Links>    LinkIterator;
 	typedef gkAbstractDispatcher *gkAbstractDispatcherPtr;
 
 	typedef utArray<gkLogicBrick *>  Bricks;
@@ -87,7 +88,8 @@ public:
 
 	gkLogicLink *createLink(void);
 	void destroy(gkLogicLink *link);
-
+	
+	GK_INLINE Links& getLinks(void) {return m_links;}
 
 	void notifySceneUnloaded(void);
 	void notifyLinkUnloaded(gkLogicLink *link);

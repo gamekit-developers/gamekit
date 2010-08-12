@@ -1,44 +1,8 @@
-/*! \page Engine Core
-\LuaSectionUp{index}
-
-
-\beginmenu{Globals}
-\LuaClassMenu{DebugPrint}
-\endmenu
-
-\beginmenu{Constants}
-\LuaClassMenu{RenderSystem}
-\LuaClassMenu{PropertyType}
-\LuaClassMenu{TransformSpace}
-\LuaClassMenu{GameObjectTypes}
-\LuaClassMenu{EngineEvents}
-\LuaClassMenu{MouseButton}
-\LuaClassMenu{ScanCode}
-\LuaClassMenu{ShadowType}
-\endmenu
-
-
-\beginmenu{Classes}
-\LuaClassMenu{Camera}
-\LuaClassMenu{Debugger}
-\LuaClassMenu{Engine}
-\LuaClassMenu{Entity}
-\LuaClassMenu{GameObject}
-\LuaClassMenu{Keyboard}
-\LuaClassMenu{Loadable}
-\LuaClassMenu{Mouse}
-\LuaClassMenu{ObjectList}
-\LuaClassMenu{Light}
-\LuaClassMenu{Property}
-\LuaClassMenu{Scene}
-\LuaClassMenu{Skeleton}
-\LuaClassMenu{UserDefs}
-\endmenu
-
+/*!
 
 <!-- ============================================ Property ============================================ -->
 \LuaClass{Property}
-\LuaSectionUp{Engine}
+
 
 \beginmenu{Methods}
 \LuaMethodMenu{Property,constructor}
@@ -274,7 +238,7 @@ function Property:fromString(string)
 
 <!-- ============================================ UserDefs ============================================ -->
 \LuaClass{UserDefs}
-\LuaSectionUp{Engine}
+
 
 
 \LuaGlobalRef{CDefs}
@@ -718,7 +682,7 @@ UserDefs.someValue = "abc"
 
 <!-- ============================================ Mouse ============================================ -->
 \LuaClass{Mouse}
-\LuaSectionUp{Engine}
+
 
 \beginmenu{Methods}
 \LuaMethodMenu{Mouse,constructor}
@@ -747,7 +711,7 @@ UserDefs.someValue = "abc"
 
 <!-- ======================================== -->
 \LuaMethod{Mouse,constructor}
-\LuaClassUp{Mouse}
+
 
 Creates a mouse to test mouse events.
 
@@ -761,7 +725,7 @@ function Mouse:constructor()
 
 <!-- ======================================== -->
 \LuaMethod{Mouse,capture}
-\LuaClassUp{Mouse}
+
 
 Updates the current state of the device.
 
@@ -775,7 +739,7 @@ function Mouse:capture()
 
 <!-- ======================================== -->
 \LuaMethod{Mouse,isButtonDown}
-\LuaClassUp{Mouse}
+
 
 Returns true if the specified code is active.
 
@@ -793,7 +757,7 @@ function Mouse:isButtonDown(code)
 
 <!-- ======================================== -->
 \LuaMethod{Mouse,xpos}
-\LuaClassUp{Mouse}
+
 
 Absolute X position of the mouse within the window.
 
@@ -805,7 +769,7 @@ number Mouse.xpos
 
 <!-- ======================================== -->
 \LuaMethod{Mouse,ypos}
-\LuaClassUp{Mouse}
+
 
 Absolute Y position of the mouse within the window.
 
@@ -818,7 +782,7 @@ number Mouse.ypos
 
 <!-- ======================================== -->
 \LuaMethod{Mouse,xrel}
-\LuaClassUp{Mouse}
+
 
 Relitve X direction of the mouse within the window.
 
@@ -832,7 +796,7 @@ number Mouse.xrel
 
 <!-- ======================================== -->
 \LuaMethod{Mouse,yrel}
-\LuaClassUp{Mouse}
+
 
 Relitve Y direction of the mouse within the window.
 
@@ -846,7 +810,7 @@ number Mouse.yrel
 
 <!-- ======================================== -->
 \LuaMethod{Mouse,winx}
-\LuaClassUp{Mouse}
+
 
 Window width.
 
@@ -860,7 +824,7 @@ number Mouse.winx
 
 <!-- ======================================== -->
 \LuaMethod{Mouse,winy}
-\LuaClassUp{Mouse}
+
 
 Window height.
 
@@ -872,7 +836,7 @@ number Mouse.winy
 
 <!-- ======================================== -->
 \LuaMethod{Mouse,wheel}
-\LuaClassUp{Mouse}
+
 
 Mouse wheel delta 
 
@@ -886,7 +850,7 @@ number Mouse.wheel
 
 <!-- ======================================== -->
 \LuaMethod{Mouse,moved}
-\LuaClassUp{Mouse}
+
 
 
 True if the mouse has changed position.
@@ -902,8 +866,9 @@ bool Mouse.moved
 
 <!-- ============================================ ObjectList ============================================ -->
 \LuaClass{ObjectList}
-\LuaSectionUp{Engine}
-ObjectList is an \LuaClassRef{Array} template implementation where T is equal to \LuaClassRef{GameObject}
+\LuaClassExtend{Array}
+
+This is an array template implementation where T is equal to \LuaClassRef{GameObject}
 
 
 \LuaGlobalRef{CArrayIter}
@@ -912,7 +877,7 @@ ObjectList is an \LuaClassRef{Array} template implementation where T is equal to
 
 <!-- ============================================ Keyboard ============================================ -->
 \LuaClass{Keyboard}
-\LuaSectionUp{Engine}
+
 
 \beginmenu{Methods}
 \LuaMethodMenu{Keyboard,constructor}
@@ -925,7 +890,7 @@ ObjectList is an \LuaClassRef{Array} template implementation where T is equal to
 
 <!-- ======================================== -->
 \LuaMethod{Keyboard,constructor}
-\LuaClassUp{Keyboard}
+
 
 Creates a keyboard to test key press events.
 
@@ -941,7 +906,7 @@ function Keyboard:constructor()
 
 <!-- ======================================== -->
 \LuaMethod{Keyboard,isKeyDown}
-\LuaClassUp{Keyboard}
+
 
 Returns true if the specified scan code is active.
 
@@ -958,7 +923,7 @@ function Keyboard:isKeyDown(code)
 
 <!-- ============================================ Engine ============================================ -->
 \LuaClass{Engine}
-\LuaSectionUp{Engine}
+
 
 \beginmenu{Methods}
 \LuaMethodMenu{Engine,constructor}
@@ -967,6 +932,7 @@ function Keyboard:isKeyDown(code)
 \LuaMethodMenu{Engine,requestExit}
 \LuaMethodMenu{Engine,connect}
 \LuaMethodMenu{Engine,loadBlendFile}
+\LuaMethodMenu{Engine,getActiveScene}
 \LuaMethodMenu{Engine,getUserDefs}
 \endmenu
 
@@ -976,7 +942,7 @@ function Keyboard:isKeyDown(code)
 
 <!-- ======================================== -->
 \LuaMethod{Engine,constructor}
-\LuaClassUp{Engine}
+
 
 Create or get an instance of the engine. 
 
@@ -989,7 +955,7 @@ function Engine:constructor()
 
 <!-- ======================================== -->
 \LuaMethod{Engine,initialize}
-\LuaClassUp{Engine}
+
 
 Initialize the engine.
 
@@ -1004,7 +970,7 @@ function Engine:initialize()
 
 <!-- ======================================== -->
 \LuaMethod{Engine,run}
-\LuaClassUp{Engine}
+
 
 Run the engine loop.
 
@@ -1018,7 +984,7 @@ function Engine:run()
 
 <!-- ======================================== -->
 \LuaMethod{Engine,requestExit}
-\LuaClassUp{Engine}
+
 
 Sends an exit signal.
 
@@ -1033,7 +999,7 @@ function Engine:requestExit()
 
 <!-- ======================================== -->
 \LuaMethod{Engine,connect}
-\LuaClassUp{Engine}
+
 
 Connects an event listener.
 
@@ -1068,7 +1034,7 @@ function Engine:connect(type, table, func)
 
 <!-- ======================================== -->
 \LuaMethod{Engine,loadBlendFile}
-\LuaClassUp{Engine}
+
 
 Returns the active scene in the .blend
 
@@ -1085,9 +1051,25 @@ function Engine:loadBlendFile(name)
 \endpage
 
 
+
+
+<!-- ======================================== -->
+\LuaMethod{Engine,getActiveScene}
+
+
+Returns the currently loaded scene.
+
+\code
+function Engine:getActiveScene()
+\endcode
+
+\returns \LuaClassRef{Scene}
+
+\endpage
+
 <!-- ======================================== -->
 \LuaMethod{Engine,getUserDefs}
-\LuaClassUp{Engine}
+
 
 Returns the user defined options class. 
 
@@ -1102,35 +1084,8 @@ function Engine:getUserDefs()
 
 <!-- ============================================ Loadable ============================================ -->
 \LuaClass{Loadable}
-\LuaSectionUp{Engine}
 
 
-
-\sectionseperator{Loadable Inheritance:}
-
-\dot
-digraph Parent_Child_Loadable
-{
-    node [shape="box", fontname="Verdana",fontsize="10",labelfontname="Verdana",labelfontsize="10" height=".13"];
-
-
-    Loadable        [style="filled", fillcolor="#ECEBE8", color="#93B300" fontcolor="#000000"];
-    Scene           [URL="\ref OgreKit_Scene", color="#C0C0C0", fontcolor="#444A26"];
-    GameObject      [URL="\ref OgreKit_GameObject", color="#C0C0C0", fontcolor="#444A26"];
-    Camera          [URL="\ref OgreKit_Camera", color="#C0C0C0", fontcolor="#444A26"];
-    Entity          [URL="\ref OgreKit_Entity", color="#C0C0C0" fontcolor="#444A26"];
-    Light           [URL="\ref OgreKit_Light", color="#C0C0C0" fontcolor="#444A26"];
-    Skeleton        [URL="\ref OgreKit_Skeleton", color="#C0C0C0" fontcolor="#444A26"];
-
-
-    Loadable -> GameObject;
-    Loadable -> Scene;
-    GameObject -> Camera;
-	GameObject -> Entity;
-	GameObject -> Light;
-	GameObject -> Skeleton;
-} 
-\enddot
 
 \beginmenu{Methods}
 \LuaMethodMenu{Loadable,load}
@@ -1147,7 +1102,7 @@ digraph Parent_Child_Loadable
 
 <!-- ======================================== -->
 \LuaMethod{Loadable,load}
-\LuaClassUp{Loadable}
+
 
 Adds this object.
 
@@ -1160,7 +1115,7 @@ function Loadable:load()
 
 <!-- ======================================== -->
 \LuaMethod{Loadable,unload}
-\LuaClassUp{Loadable}
+
 
 Removes this object.
 
@@ -1173,7 +1128,7 @@ function Loadable:unload()
 
 <!-- ======================================== -->
 \LuaMethod{Loadable,reload}
-\LuaClassUp{Loadable}
+
 
 Removes this object, then adds it back.
 
@@ -1186,7 +1141,7 @@ function Loadable:reload()
 
 <!-- ======================================== -->
 \LuaMethod{Loadable,getName}
-\LuaClassUp{Loadable}
+
 
 Returns the string identifier of this object.
 
@@ -1200,32 +1155,12 @@ function Loadable:getName()
 
 <!-- ============================================ Scene ============================================ -->
 \LuaClass{Scene}
-\LuaSectionUp{Engine}
-
-
-\sectionseperator{Scene Inheritance:}
-
-\dot
-digraph Parent_Child_Scene
-{
-    node [shape="box", fontname="Verdana",fontsize="10",labelfontname="Verdana",labelfontsize="10" height=".13"];
-
-    Loadable        [URL="\ref OgreKit_Loadable", color="#C0C0C0", fontcolor="#444A26"];
-    Scene           [style="filled", fillcolor="#ECEBE8", color="#93B300" fontcolor="#000000"];
-
-    Loadable -> Scene;
-} 
-\enddot
-
+\LuaClassExtend{Loadable}
 
 \beginmenu{Methods}
 \LuaMethodMenu{Scene,createEmpty}
-\LuaMethodMenu{Scene,getCamera}
-\LuaMethodMenu{Scene,getEntity}
-\LuaMethodMenu{Scene,getLight}
 \LuaMethodMenu{Scene,getObject}
 \LuaMethodMenu{Scene,getObjectList}
-\LuaMethodMenu{Scene,getSkeleton}
 \LuaMethodMenu{Scene,hasObject}
 
 \endmenu
@@ -1238,7 +1173,7 @@ digraph Parent_Child_Scene
 
 <!-- ======================================== -->
 \LuaMethod{Scene,hasObject}
-\LuaClassUp{Scene}
+
 
 
 Returns true if the scene contains the specified object.
@@ -1253,7 +1188,7 @@ function Scene:hasObject(name)
 
 <!-- ======================================== -->
 \LuaMethod{Scene,getObject}
-\LuaClassUp{Scene}
+
 
 
 
@@ -1264,14 +1199,14 @@ function Scene:getObject(name)
 \endcode
 
 \param name Find by the object's identifier.
-\returns \LuaClassRef{GameObject} or nil if the object is not found.
+\returns nil if not found or, GameObject, Entity, Camera, Light, or Skeleton depending on the GameObjectTypes. 
 
 \endpage
 
 
 <!-- ======================================== -->
 \LuaMethod{Scene,getObjectList}
-\LuaClassUp{Scene}
+
 
 Returns a list of all loaded objects in the scene.
 
@@ -1285,76 +1220,8 @@ function Scene:getObjectList()
 
 
 <!-- ======================================== -->
-\LuaMethod{Scene,getEntity}
-\LuaClassUp{Scene}
-
-
-
-Looks for an entity object in the scene.
-
-\code
-function Scene:getEntity(name)
-\endcode
-
-\param name Find by the object's identifier.
-\returns \LuaClassRef{Entity} or nil if the object is not found.
-
-\endpage
-
-<!-- ======================================== -->
-\LuaMethod{Scene,getCamera}
-\LuaClassUp{Scene}
-
-
-
-Looks for a camera object in the scene.
-
-\code
-function Scene:getCamera(name)
-\endcode
-
-\param name Find by the object's identifier.
-\returns \LuaClassRef{Camera} or nil if the object is not found.
-
-\endpage
-
-<!-- ======================================== -->
-\LuaMethod{Scene,getLight}
-\LuaClassUp{Scene}
-
-
-
-Looks for a light object in the scene.
-
-\code
-function Scene:getLight(name)
-\endcode
-
-\param name Find by the object's identifier.
-\returns \LuaClassRef{Light} or nil if the object is not found.
-
-\endpage
-
-
-<!-- ======================================== -->
-\LuaMethod{Scene,getSkeleton}
-\LuaClassUp{Scene}
-
-Looks for a skeleton/armature object in the scene.
-
-\code
-function Scene:getSkeleton(name)
-\endcode
-
-\param name Find by the object's identifier.
-\returns \LuaClassRef{Skeleton} or nil if the object is not found.
-
-\endpage
-
-
-<!-- ======================================== -->
 \LuaMethod{Scene,createEmpty}
-\LuaClassUp{Scene}
+
 
 Creates an empty node.
 
@@ -1370,30 +1237,9 @@ function Scene:createEmpty(name)
 
 <!-- ============================================ GameObject ============================================ -->
 \LuaClass{GameObject}
-\LuaSectionUp{Engine}
+\LuaClassExtend{Loadable}
 
 
-\sectionseperator{GameObject Inheritance:}
-
-
-\dot
-digraph Parent_Child_GameObject
-{
-    node [shape="box", fontname="Verdana",fontsize="10",labelfontname="Verdana",labelfontsize="10" height=".13"];
-    Loadable        [URL="\ref OgreKit_Loadable", color="#C0C0C0", fontcolor="#444A26"];
-    GameObject      [style="filled", fillcolor="#ECEBE8", color="#93B300" fontcolor="#000000"];
-    Camera          [URL="\ref OgreKit_Camera", color="#C0C0C0", fontcolor="#444A26"];
-    Entity          [URL="\ref OgreKit_Entity", color="#C0C0C0" fontcolor="#444A26"];
-    Light           [URL="\ref OgreKit_Light", color="#C0C0C0" fontcolor="#444A26"];
-    Skeleton        [URL="\ref OgreKit_Skeleton", color="#C0C0C0" fontcolor="#444A26"];
-
-    Loadable -> GameObject;
-    GameObject -> Camera;
-	GameObject -> Entity;
-	GameObject -> Light;
-	GameObject -> Skeleton;
-} 
-\enddot
 
 \beginmenu{Methods}
 \LuaMethodMenu{GameObject,getPosition}
@@ -1418,10 +1264,6 @@ digraph Parent_Child_GameObject
 \LuaMethodMenu{GameObject,pitch}
 \LuaMethodMenu{GameObject,roll}
 \LuaMethodMenu{GameObject,getState}
-\LuaMethodMenu{GameObject,getEntity}
-\LuaMethodMenu{GameObject,getCamera}
-\LuaMethodMenu{GameObject,getSkeleton}
-\LuaMethodMenu{GameObject,getLight}
 \LuaMethodMenu{GameObject,hasParent}
 \LuaMethodMenu{GameObject,setParent}
 \LuaMethodMenu{GameObject,getParent}
@@ -1917,72 +1759,6 @@ function GameObject:getState()
 
 
 <!-- ======================================== -->
-\LuaMethod{GameObject,getEntity}
-\LuaClassUp{GameObject}
-
-
-Returns the entity data associated with this object.
-
-\code
-function GameObject:getEntity()
-\endcode
-
-\returns \LuaClassRef{Entity} or nil if this object is not an entity.
-
-\endpage
-
-
-
-<!-- ======================================== -->
-\LuaMethod{GameObject,getCamera}
-\LuaClassUp{GameObject}
-
-
-Returns the camera data associated with this object.
-
-\code
-function GameObject:getCamera()
-\endcode
-
-\returns \LuaClassRef{Camera} or nil if this object is not a camera.
-
-\endpage
-
-
-
-<!-- ======================================== -->
-\LuaMethod{GameObject,getSkeleton}
-\LuaClassUp{GameObject}
-
-
-Returns the skeleton data associated with this object.
-
-\code
-function GameObject:getSkeleton()
-\endcode
-
-\returns \LuaClassRef{Skeleton} or nil if this object is not a skeleton.
-
-\endpage
-
-
-<!-- ======================================== -->
-\LuaMethod{GameObject,getLight}
-\LuaClassUp{GameObject}
-
-
-Returns the light data associated with this object.
-
-\code
-function GameObject:getLight()
-\endcode
-
-\returns \LuaClassRef{Light} or nil if this object is not a light.
-
-\endpage
-
-
-<!-- ======================================== -->
 \LuaMethod{GameObject,hasParent}
 \LuaClassUp{GameObject}
 
@@ -2025,7 +1801,7 @@ function GameObject:getParent()
 \endcode
 
 
-\returns \LuaClassRef{GameObject} or nil if no parent.
+\returns nil if not found or, GameObject, Entity, Camera, Light, or Skeleton depending on the GameObjectTypes. 
 
 
 \endpage
@@ -2069,23 +1845,7 @@ function GameObject:getType()
 
 <!-- ============================================ Camera ============================================ -->
 \LuaClass{Camera}
-\LuaSectionUp{Engine}
-
-
-\sectionseperator{Camera Inheritance:}
-
-
-\dot
-digraph Parent_Child_Camera
-{
-    node [shape="box", fontname="Verdana",fontsize="10",labelfontname="Verdana",labelfontsize="10" height=".13"];
-    Loadable        [URL="\ref OgreKit_Loadable", color="#C0C0C0", fontcolor="#444A26"];
-    GameObject      [URL="\ref OgreKit_GameObject", color="#C0C0C0", fontcolor="#444A26"];
-    Camera          [style="filled", fillcolor="#ECEBE8", color="#93B300" fontcolor="#000000"];
-
-    Loadable -> GameObject -> Camera;
-} 
-\enddot
+\LuaClassExtend{GameObject}
 
 
 \beginmenu{Methods}
@@ -2195,23 +1955,7 @@ function Camera:makeCurrent()
 
 <!-- ============================================ Entity ============================================ -->
 \LuaClass{Entity}
-\LuaSectionUp{Engine}
-
-\sectionseperator{Entity Inheritance:}
-
-
-\dot
-digraph Parent_Child_Entity
-{
-    node [shape="box", fontname="Verdana",fontsize="10",labelfontname="Verdana",labelfontsize="10" height=".13"];
-    Loadable        [URL="\ref OgreKit_Loadable", color="#C0C0C0", fontcolor="#444A26"];
-    GameObject      [URL="\ref OgreKit_GameObject",color="#C0C0C0", fontcolor="#444A26"];
-    Entity          [style="filled", fillcolor="#ECEBE8", color="#93B300" fontcolor="#000000"];
-
-    Loadable -> GameObject -> Entity;
-} 
-\enddot
-
+\LuaClassExtend{GameObject}
 
 \beginmenu{Methods}
 \LuaMethodMenu{Entity,playAction}
@@ -2241,24 +1985,7 @@ function Entity:playAction(name, blend)
 
 <!-- ============================================ Light ============================================ -->
 \LuaClass{Light}
-\LuaSectionUp{Engine}
-
-\sectionseperator{Light Inheritance:}
-
-
-\dot
-digraph Parent_Child_Light
-{
-    node [shape="box", fontname="Verdana",fontsize="10",labelfontname="Verdana",labelfontsize="10" height=".13"];
-
-    Loadable        [URL="\ref OgreKit_Loadable", color="#C0C0C0", fontcolor="#444A26"];
-    GameObject      [URL="\ref OgreKit_GameObject", color="#C0C0C0", fontcolor="#444A26"];
-    Light           [style="filled", fillcolor="#ECEBE8", color="#93B300" fontcolor="#000000"];
-
-    Loadable -> GameObject -> Light;
-} 
-\enddot
-
+\LuaClassExtend{GameObject}
 
 <b>Placeholder:</b> \n\n
 Implement access.
@@ -2267,25 +1994,7 @@ Implement access.
 
 <!-- ============================================ Skeleton ============================================ -->
 \LuaClass{Skeleton}
-\LuaSectionUp{Engine}
-
-
-\sectionseperator{Skeleton Inheritance:}
-
-
-\dot
-digraph Parent_Child_Skeleton
-{
-    node [shape="box", fontname="Verdana",fontsize="10",labelfontname="Verdana",labelfontsize="10" height=".13"];
-
-    Loadable        [URL="\ref OgreKit_Loadable", color="#C0C0C0", fontcolor="#444A26"];
-    GameObject      [URL="\ref OgreKit_GameObject", color="#C0C0C0", fontcolor="#444A26"];
-    Skeleton        [style="filled", fillcolor="#ECEBE8", color="#93B300" fontcolor="#000000"];
-
-    Loadable -> GameObject -> Skeleton;
-} 
-\enddot
-
+\LuaClassExtend{GameObject}
 
 <b>Placeholder:</b> \n\n
 Implement access.
@@ -2294,7 +2003,7 @@ Implement access.
 
 <!-- ============================================ Debugger ============================================ -->
 \LuaClass{Debugger}
-\LuaSectionUp{Engine}
+
 
 
 
@@ -2375,7 +2084,7 @@ function Debugger:clear()
 
 <!-- ============================================ DebugPrint ============================================ -->
 \LuaClass{DebugPrint}
-\LuaSectionUp{Engine}
+
 
 Prints message to the render window.
 
@@ -2393,7 +2102,7 @@ function OgreKit.DebugPrint(string)
 
 <!-- ============================================ RenderSystem ============================================ -->
 \LuaClass{RenderSystem}
-\LuaSectionUp{Engine}
+
 
 RenderSystem Options
 \code
@@ -2407,7 +2116,7 @@ OgreKit.OGRE_RS_D3D11,  Direct3D 11 RenderSystem
 
 <!-- ============================================ ShadowType ============================================ -->
 \LuaClass{ShadowType}
-\LuaSectionUp{Engine}
+
 
 
 Shadow technique identifiers.
@@ -2424,7 +2133,7 @@ textureadditiveintegrated
 
 <!-- ============================================ PropertyType ============================================ -->
 \LuaClass{PropertyType}
-\LuaSectionUp{Engine}
+
 
 Property identifiers.
 
@@ -2437,7 +2146,7 @@ OgreKit.PROP_STRING
 
 <!-- ============================================ TransformSpace ============================================ -->
 \LuaClass{TransformSpace}
-\LuaSectionUp{Engine}
+
 
 GameObject transform space.
 
@@ -2451,7 +2160,7 @@ OgreKit.TS_WORLD
 
 <!-- ============================================ GameObjectTypes ============================================ -->
 \LuaClass{GameObjectTypes}
-\LuaSectionUp{Engine}
+
 
 GameObject sub class enumerations.
 
@@ -2467,7 +2176,7 @@ OgreKit.OB_SKELETON
 
 <!-- ============================================ EngineEvents ============================================ -->
 \LuaClass{EngineEvents}
-\LuaSectionUp{Engine}
+
 
 Engine callback codes.
 
@@ -2481,7 +2190,7 @@ OgreKit.EVT_TICK
 
 <!-- ============================================ MouseButton ============================================ -->
 \LuaClass{MouseButton}
-\LuaSectionUp{Engine}
+
 Mouse button codes.
 
 \code
@@ -2492,7 +2201,7 @@ OgreKit.MIDDLE
 
 <!-- ============================================ ScanCode ============================================ -->
 \LuaClass{ScanCode}
-\LuaSectionUp{Engine}
+
 
 Keyboard scan codes.
 
