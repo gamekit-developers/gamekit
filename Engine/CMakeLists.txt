@@ -531,6 +531,29 @@ if (OGREKIT_COMPLIE_SWIG AND SWIG_FOUND)
 
 
 else()
+
+    set(ScriptAPI2_INCLUDES
+        # ----- Include Files -----
+        Script/Api/OgreKit.i
+        Script/Api/gsTypes.i
+        Script/Api/gsTypeConverters.i
+        Script/Api/gsAI.i
+        Script/Api/gsAnimation.i
+        Script/Api/gsBricks.i
+        Script/Api/gsConstraints.i
+        Script/Api/gsCore.i
+        Script/Api/gsMacros.i
+        Script/Api/gsMath.i
+        Script/Api/gsNetwork.i
+        Script/Api/gsNodes.i
+        Script/Api/gsParticles.i
+        Script/Api/gsPhysics.i
+        Script/Api/gsSound.i
+        Script/Api/gsThread.i
+        Script/Api/gsTypes.i
+        Script/Api/gsUtils.i
+    )
+
     set(ScriptAPI2_HEADER
         # ----- Common Files -----
         Script/Api/Generated/gsTemplates.h
@@ -580,9 +603,9 @@ else()
         Script/Api/Class.lua
     )
     
-    source_group(Script\\API\\Builtin	FILES ${TMPL_API_SOURCE})
-    source_group(Script\\API\\Header    FILES ${ScriptAPI2_HEADER})
-    source_group(Script\\API\\Source    FILES ${ScriptAPI2_SOURCE})
+    source_group(Script\\Builtin	FILES ${TMPL_API_SOURCE})
+    source_group(Script\\Header    FILES ${ScriptAPI2_HEADER})
+    source_group(Script\\Source    FILES ${ScriptAPI2_SOURCE})
 
 endif()
 
