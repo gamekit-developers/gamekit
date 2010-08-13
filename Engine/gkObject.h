@@ -98,11 +98,6 @@ public:
 	GK_INLINE void              setFlags(int flags)                     {m_flags = flags;}
 	GK_INLINE int               getFlags(void)                          {return m_flags;}
 
-
-	// attached material for physics
-	GK_INLINE void              setSensorMaterial(const gkString &v)    {m_sensorMaterial = v;}
-	GK_INLINE const gkString    &getSensorMaterial(void)                {return m_sensorMaterial;}
-
 	void handleManifold(btPersistentManifold *manifold);
 
 	void resetContactInfo();
@@ -114,9 +109,6 @@ protected:
 
 	// misc flags
 	int m_flags;
-
-	// material info for sensors
-	gkString m_sensorMaterial;
 };
 
 

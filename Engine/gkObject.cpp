@@ -30,7 +30,7 @@
 #include "btBulletDynamicsCommon.h"
 
 gkObject::gkObject(const gkString &name)
-	:       m_name(name), m_loaded(false), m_flags(0), m_sensorMaterial("")
+	:       m_name(name), m_loaded(false), m_flags(0)
 {
 }
 

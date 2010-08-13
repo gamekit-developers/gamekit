@@ -103,7 +103,7 @@ bool gkCollisionSensor::query(void)
 		}
 		else if (!m_material.empty())
 		{
-			if (inf.collider->getSensorMaterial() == m_material)
+			if (obj->hasSensorMaterial(m_material))
 				return true;
 		}
 	}

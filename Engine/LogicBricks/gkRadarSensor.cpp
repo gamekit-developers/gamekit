@@ -137,7 +137,7 @@ bool gkRadarSensor::query(void)
 		}
 		else if (!m_material.empty())
 		{
-			if (object->getSensorMaterial() == m_material)
+			if (object->hasSensorMaterial(m_material))
 				return true;
 		}
 

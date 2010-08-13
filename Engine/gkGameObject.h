@@ -68,6 +68,9 @@ public:
 	GK_INLINE gkGameObjectProperties    &getProperties(void)                {return m_baseProps;}
 	GK_INLINE bool                      isClone(void)                       {return m_isClone;}
 
+
+	bool hasSensorMaterial(const gkString& name, bool onlyFirst=true);
+
 	// subtype access
 	GK_INLINE gkEntity      *getEntity(void)    {return m_type == GK_ENTITY ?   (gkEntity *)this : 0; }
 	GK_INLINE gkCamera      *getCamera(void)    {return m_type == GK_CAMERA ?   (gkCamera *)this : 0; }

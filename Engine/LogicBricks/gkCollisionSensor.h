@@ -62,5 +62,7 @@ public:
 
 };
 
+typedef gkCollisionSensor gkTouchSensor;
+
 
 #endif//_gkCollisionSensor_h_

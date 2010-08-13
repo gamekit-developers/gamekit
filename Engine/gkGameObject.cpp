@@ -276,6 +276,32 @@ void gkGameObject::unloadImpl(void)
 
 
 
+bool gkGameObject::hasSensorMaterial(const gkString& name, bool onlyFirst)
+{
+	gkEntity *ent = getEntity();
+	if (ent)
+	{
+		gkMesh *me = ent->getEntityProperties().m_mesh;
+		if (me)
+		{
+			if (onlyFirst)
+				return me->getFirstMaterial().m_name == name;
+			else
+			{
+				gkMesh::SubMeshIterator iter = me->getSubMeshIterator();
+				while (iter.hasMoreElements())
+				{
+					gkSubMesh *sme = iter.getNext();
+					if (sme->getMaterialName() == name)
+						return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
+
 Ogre::MovableObject *gkGameObject::getMovable(void)
 {
 	if (!isLoaded())

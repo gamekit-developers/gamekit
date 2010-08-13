@@ -450,6 +450,7 @@ GS_IMPLEMENT_USER_BRICK_GENERIC(gsSensor, PropertySensor);
 GS_IMPLEMENT_USER_BRICK_GENERIC(gsSensor, RaySensor);
 GS_IMPLEMENT_USER_BRICK_GENERIC(gsSensor, RadarSensor);
 GS_IMPLEMENT_USER_BRICK_GENERIC(gsSensor, RandomSensor);
+GS_IMPLEMENT_USER_BRICK_GENERIC(gsSensor, TouchSensor);
 
 
 // ----------------------------------------------------------------------------

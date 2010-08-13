@@ -404,7 +404,24 @@ public:
 	OGRE_KIT_LOGIC_BRICK(CollisionSensor);
 };
 
-typedef gsCollisionSensor gsTouchSensor;
+
+// ----------------------------------------------------------------------------
+class gsTouchSensor : public gsSensor
+{
+public:
+	gsTouchSensor();
+	gsTouchSensor(gsLogicObject *parent, const gkString &name="");
+	~gsTouchSensor();
+
+
+	void      setMaterialName(const gkString &str)  { BRICK_SET(setMaterial(str));  }
+	gkString  getMaterialName(void)                 { BRICK_GET(getMaterial(), ""); }
+
+	void      setPropertyName(const gkString &str)  { BRICK_SET(setProperty(str));  }
+	gkString  getPropertyName(void)                 { BRICK_GET(getProperty(), ""); }
+
+	OGRE_KIT_LOGIC_BRICK(TouchSensor);
+};
 
 
 // ----------------------------------------------------------------------------

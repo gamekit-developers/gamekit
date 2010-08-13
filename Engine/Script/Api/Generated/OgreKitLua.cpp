@@ -1564,17 +1564,18 @@ SWIG_Lua_dostring(lua_State *L, const char* str) {
 #define SWIGTYPE_p_gsSoundActuator swig_types[55]
 #define SWIGTYPE_p_gsStateActuator swig_types[56]
 #define SWIGTYPE_p_gsSweptTest swig_types[57]
-#define SWIGTYPE_p_gsUserDefs swig_types[58]
-#define SWIGTYPE_p_gsVector3 swig_types[59]
-#define SWIGTYPE_p_gsVisibilityActuator swig_types[60]
-#define SWIGTYPE_p_gsWhenEvent swig_types[61]
-#define SWIGTYPE_p_utArrayT_gkGameObject_p_t swig_types[62]
-#define SWIGTYPE_p_utArrayT_gkLogicActuator_p_t swig_types[63]
-#define SWIGTYPE_p_utArrayT_gkLogicController_p_t swig_types[64]
-#define SWIGTYPE_p_utArrayT_gkLogicLink_p_t swig_types[65]
-#define SWIGTYPE_p_utArrayT_gkLogicSensor_p_t swig_types[66]
-static swig_type_info *swig_types[68];
-static swig_module_info swig_module = {swig_types, 67, 0, 0, 0, 0};
+#define SWIGTYPE_p_gsTouchSensor swig_types[58]
+#define SWIGTYPE_p_gsUserDefs swig_types[59]
+#define SWIGTYPE_p_gsVector3 swig_types[60]
+#define SWIGTYPE_p_gsVisibilityActuator swig_types[61]
+#define SWIGTYPE_p_gsWhenEvent swig_types[62]
+#define SWIGTYPE_p_utArrayT_gkGameObject_p_t swig_types[63]
+#define SWIGTYPE_p_utArrayT_gkLogicActuator_p_t swig_types[64]
+#define SWIGTYPE_p_utArrayT_gkLogicController_p_t swig_types[65]
+#define SWIGTYPE_p_utArrayT_gkLogicLink_p_t swig_types[66]
+#define SWIGTYPE_p_utArrayT_gkLogicSensor_p_t swig_types[67]
+static swig_type_info *swig_types[69];
+static swig_module_info swig_module = {swig_types, 68, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -13147,6 +13148,261 @@ static swig_lua_class *swig_gsCollisionSensor_bases[] = {0,0};
 static const char *swig_gsCollisionSensor_base_names[] = {"gsSensor *",0};
 static swig_lua_class _wrap_class_gsCollisionSensor = { "CollisionSensor", &SWIGTYPE_p_gsCollisionSensor,_wrap_new_CollisionSensor, swig_delete_CollisionSensor, swig_gsCollisionSensor_methods, swig_gsCollisionSensor_attributes, swig_gsCollisionSensor_bases, swig_gsCollisionSensor_base_names };
 
+static int _wrap_new_gsTouchSensor__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  gsTouchSensor *result = 0 ;
+  
+  SWIG_check_num_args("gsTouchSensor",0,0)
+  result = (gsTouchSensor *)new gsTouchSensor();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsTouchSensor,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_gsTouchSensor__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  gsLogicObject *arg1 = (gsLogicObject *) 0 ;
+  gkString *arg2 = 0 ;
+  gkString temp2 ;
+  gsTouchSensor *result = 0 ;
+  
+  SWIG_check_num_args("gsTouchSensor",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsTouchSensor",1,"gsLogicObject *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("gsTouchSensor",2,"gkString const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsLogicObject,0))){
+    SWIG_fail_ptr("new_gsTouchSensor",1,SWIGTYPE_p_gsLogicObject);
+  }
+  
+  
+  temp2 = gkString((const char*)lua_tostring(L, 2));
+  arg2 = &temp2;
+  
+  result = (gsTouchSensor *)new gsTouchSensor(arg1,(gkString const &)*arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsTouchSensor,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_gsTouchSensor__SWIG_2(lua_State* L) {
+  int SWIG_arg = 0;
+  gsLogicObject *arg1 = (gsLogicObject *) 0 ;
+  gsTouchSensor *result = 0 ;
+  
+  SWIG_check_num_args("gsTouchSensor",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsTouchSensor",1,"gsLogicObject *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsLogicObject,0))){
+    SWIG_fail_ptr("new_gsTouchSensor",1,SWIGTYPE_p_gsLogicObject);
+  }
+  
+  result = (gsTouchSensor *)new gsTouchSensor(arg1);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsTouchSensor,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_gsTouchSensor(lua_State* L) {
+  int argc;
+  int argv[3]={
+    1,2,3
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 0) {
+    return _wrap_new_gsTouchSensor__SWIG_0(L);
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsLogicObject, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      return _wrap_new_gsTouchSensor__SWIG_2(L);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsLogicObject, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        return _wrap_new_gsTouchSensor__SWIG_1(L);
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'new_gsTouchSensor'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    gsTouchSensor()\n"
+    "    gsTouchSensor(gsLogicObject *,gkString const &)\n"
+    "    gsTouchSensor(gsLogicObject *)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_gsTouchSensor_setMaterialName(lua_State* L) {
+  int SWIG_arg = 0;
+  gsTouchSensor *arg1 = (gsTouchSensor *) 0 ;
+  gkString *arg2 = 0 ;
+  gkString temp2 ;
+  
+  SWIG_check_num_args("setMaterialName",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setMaterialName",1,"gsTouchSensor *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("setMaterialName",2,"gkString const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsTouchSensor,0))){
+    SWIG_fail_ptr("gsTouchSensor_setMaterialName",1,SWIGTYPE_p_gsTouchSensor);
+  }
+  
+  
+  temp2 = gkString((const char*)lua_tostring(L, 2));
+  arg2 = &temp2;
+  
+  (arg1)->setMaterialName((gkString const &)*arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gsTouchSensor_getMaterialName(lua_State* L) {
+  int SWIG_arg = 0;
+  gsTouchSensor *arg1 = (gsTouchSensor *) 0 ;
+  gkString result;
+  
+  SWIG_check_num_args("getMaterialName",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getMaterialName",1,"gsTouchSensor *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsTouchSensor,0))){
+    SWIG_fail_ptr("gsTouchSensor_getMaterialName",1,SWIGTYPE_p_gsTouchSensor);
+  }
+  
+  result = (arg1)->getMaterialName();
+  
+  lua_pushstring(L, (&result)->c_str()); SWIG_arg++;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gsTouchSensor_setPropertyName(lua_State* L) {
+  int SWIG_arg = 0;
+  gsTouchSensor *arg1 = (gsTouchSensor *) 0 ;
+  gkString *arg2 = 0 ;
+  gkString temp2 ;
+  
+  SWIG_check_num_args("setPropertyName",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setPropertyName",1,"gsTouchSensor *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("setPropertyName",2,"gkString const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsTouchSensor,0))){
+    SWIG_fail_ptr("gsTouchSensor_setPropertyName",1,SWIGTYPE_p_gsTouchSensor);
+  }
+  
+  
+  temp2 = gkString((const char*)lua_tostring(L, 2));
+  arg2 = &temp2;
+  
+  (arg1)->setPropertyName((gkString const &)*arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gsTouchSensor_getPropertyName(lua_State* L) {
+  int SWIG_arg = 0;
+  gsTouchSensor *arg1 = (gsTouchSensor *) 0 ;
+  gkString result;
+  
+  SWIG_check_num_args("getPropertyName",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getPropertyName",1,"gsTouchSensor *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsTouchSensor,0))){
+    SWIG_fail_ptr("gsTouchSensor_getPropertyName",1,SWIGTYPE_p_gsTouchSensor);
+  }
+  
+  result = (arg1)->getPropertyName();
+  
+  lua_pushstring(L, (&result)->c_str()); SWIG_arg++;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_gsTouchSensor(void *obj) {
+gsTouchSensor *arg1 = (gsTouchSensor *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gsTouchSensor_methods[] = {
+    {"setMaterialName", _wrap_gsTouchSensor_setMaterialName}, 
+    {"getMaterialName", _wrap_gsTouchSensor_getMaterialName}, 
+    {"setPropertyName", _wrap_gsTouchSensor_setPropertyName}, 
+    {"getPropertyName", _wrap_gsTouchSensor_getPropertyName}, 
+    {0,0}
+};
+static swig_lua_attribute swig_gsTouchSensor_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_gsTouchSensor_bases[] = {0,0};
+static const char *swig_gsTouchSensor_base_names[] = {"gsSensor *",0};
+static swig_lua_class _wrap_class_gsTouchSensor = { "gsTouchSensor", &SWIGTYPE_p_gsTouchSensor,_wrap_new_gsTouchSensor, swig_delete_gsTouchSensor, swig_gsTouchSensor_methods, swig_gsTouchSensor_attributes, swig_gsTouchSensor_bases, swig_gsTouchSensor_base_names };
+
 static int _wrap_new_DelaySensor__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
   gsDelaySensor *result = 0 ;
@@ -21838,6 +22094,9 @@ static void *_p_gsNearSensorTo_p_gsBrick(void *x, int *SWIGUNUSEDPARM(newmemory)
 static void *_p_gsKeyboardSensorTo_p_gsBrick(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((gsBrick *) (gsSensor *) ((gsKeyboardSensor *) x));
 }
+static void *_p_gsTouchSensorTo_p_gsBrick(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((gsBrick *) (gsSensor *) ((gsTouchSensor *) x));
+}
 static void *_p_gsCollisionSensorTo_p_gsBrick(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((gsBrick *) (gsSensor *) ((gsCollisionSensor *) x));
 }
@@ -21888,6 +22147,9 @@ static void *_p_gsActuatorSensorTo_p_gsSensor(void *x, int *SWIGUNUSEDPARM(newme
 }
 static void *_p_gsCollisionSensorTo_p_gsSensor(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((gsSensor *)  ((gsCollisionSensor *) x));
+}
+static void *_p_gsTouchSensorTo_p_gsSensor(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((gsSensor *)  ((gsTouchSensor *) x));
 }
 static void *_p_gsKeyboardSensorTo_p_gsSensor(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((gsSensor *)  ((gsKeyboardSensor *) x));
@@ -21944,7 +22206,7 @@ static swig_type_info _swigt__p_gsArrayT_gsLogicObject_gkLogicLink_t = {"_p_gsAr
 static swig_type_info _swigt__p_gsArrayT_gsSensor_gkLogicSensor_t = {"_p_gsArrayT_gsSensor_gkLogicSensor_t", "gsArray< gsSensor,gkLogicSensor > *", 0, 0, (void*)&_wrap_class_gsArray_Sl_gsSensor_Sc_gkLogicSensor_Sg_, 0};
 static swig_type_info _swigt__p_gsBrick = {"_p_gsBrick", "gsBrick *", 0, 0, (void*)&_wrap_class_gsBrick, 0};
 static swig_type_info _swigt__p_gsCamera = {"_p_gsCamera", "gsCamera *", 0, 0, (void*)&_wrap_class_gsCamera, 0};
-static swig_type_info _swigt__p_gsCollisionSensor = {"_p_gsCollisionSensor", "gsCollisionSensor *|gsTouchSensor *", 0, 0, (void*)&_wrap_class_gsCollisionSensor, 0};
+static swig_type_info _swigt__p_gsCollisionSensor = {"_p_gsCollisionSensor", "gsCollisionSensor *", 0, 0, (void*)&_wrap_class_gsCollisionSensor, 0};
 static swig_type_info _swigt__p_gsController = {"_p_gsController", "gsController *", 0, 0, (void*)&_wrap_class_gsController, 0};
 static swig_type_info _swigt__p_gsDebugger = {"_p_gsDebugger", "gsDebugger *", 0, 0, (void*)&_wrap_class_gsDebugger, 0};
 static swig_type_info _swigt__p_gsDelaySensor = {"_p_gsDelaySensor", "gsDelaySensor *", 0, 0, (void*)&_wrap_class_gsDelaySensor, 0};
@@ -21983,6 +22245,7 @@ static swig_type_info _swigt__p_gsSkeleton = {"_p_gsSkeleton", "gsSkeleton *", 0
 static swig_type_info _swigt__p_gsSoundActuator = {"_p_gsSoundActuator", "gsSoundActuator *", 0, 0, (void*)&_wrap_class_gsSoundActuator, 0};
 static swig_type_info _swigt__p_gsStateActuator = {"_p_gsStateActuator", "gsStateActuator *", 0, 0, (void*)&_wrap_class_gsStateActuator, 0};
 static swig_type_info _swigt__p_gsSweptTest = {"_p_gsSweptTest", "gsSweptTest *", 0, 0, (void*)&_wrap_class_gsSweptTest, 0};
+static swig_type_info _swigt__p_gsTouchSensor = {"_p_gsTouchSensor", "gsTouchSensor *", 0, 0, (void*)&_wrap_class_gsTouchSensor, 0};
 static swig_type_info _swigt__p_gsUserDefs = {"_p_gsUserDefs", "gsUserDefs *", 0, 0, (void*)&_wrap_class_gsUserDefs, 0};
 static swig_type_info _swigt__p_gsVector3 = {"_p_gsVector3", "gsVector3 *", 0, 0, (void*)&_wrap_class_gsVector3, 0};
 static swig_type_info _swigt__p_gsVisibilityActuator = {"_p_gsVisibilityActuator", "gsVisibilityActuator *", 0, 0, (void*)&_wrap_class_gsVisibilityActuator, 0};
@@ -22052,6 +22315,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_gsSoundActuator,
   &_swigt__p_gsStateActuator,
   &_swigt__p_gsSweptTest,
+  &_swigt__p_gsTouchSensor,
   &_swigt__p_gsUserDefs,
   &_swigt__p_gsVector3,
   &_swigt__p_gsVisibilityActuator,
@@ -22080,7 +22344,7 @@ static swig_cast_info _swigc__p_gsArrayT_gsController_gkLogicController_t[] = { 
 static swig_cast_info _swigc__p_gsArrayT_gsGameObject_gkGameObject_t[] = {  {&_swigt__p_gsArrayT_gsGameObject_gkGameObject_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsArrayT_gsLogicObject_gkLogicLink_t[] = {  {&_swigt__p_gsArrayT_gsLogicObject_gkLogicLink_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsArrayT_gsSensor_gkLogicSensor_t[] = {  {&_swigt__p_gsArrayT_gsSensor_gkLogicSensor_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_gsBrick[] = {  {&_swigt__p_gsRandomSensor, _p_gsRandomSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsRaySensor, _p_gsRaySensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsPropertySensor, _p_gsPropertySensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsMouseSensor, _p_gsMouseSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsMessageSensor, _p_gsMessageSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsDelaySensor, _p_gsDelaySensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsAlwaysSensor, _p_gsAlwaysSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsSensor, _p_gsSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsBrick, 0, 0, 0},  {&_swigt__p_gsRadarSensor, _p_gsRadarSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsNearSensor, _p_gsNearSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsKeyboardSensor, _p_gsKeyboardSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsCollisionSensor, _p_gsCollisionSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsActuatorSensor, _p_gsActuatorSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsController, _p_gsControllerTo_p_gsBrick, 0, 0},  {&_swigt__p_gsLogicOpController, _p_gsLogicOpControllerTo_p_gsBrick, 0, 0},  {&_swigt__p_gsScriptController, _p_gsScriptControllerTo_p_gsBrick, 0, 0},  {&_swigt__p_gsActuator, _p_gsActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsActionActuator, _p_gsActionActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsEditObjectActuator, _p_gsEditObjectActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsGameActuator, _p_gsGameActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsMessageActuator, _p_gsMessageActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsMotionActuator, _p_gsMotionActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsPropertyActuator, _p_gsPropertyActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsSoundActuator, _p_gsSoundActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsStateActuator, _p_gsStateActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsVisibilityActuator, _p_gsVisibilityActuatorTo_p_gsBrick, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsBrick[] = {  {&_swigt__p_gsAlwaysSensor, _p_gsAlwaysSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsDelaySensor, _p_gsDelaySensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsMessageSensor, _p_gsMessageSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsMouseSensor, _p_gsMouseSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsPropertySensor, _p_gsPropertySensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsRaySensor, _p_gsRaySensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsRandomSensor, _p_gsRandomSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsSensor, _p_gsSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsBrick, 0, 0, 0},  {&_swigt__p_gsCollisionSensor, _p_gsCollisionSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsTouchSensor, _p_gsTouchSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsKeyboardSensor, _p_gsKeyboardSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsNearSensor, _p_gsNearSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsRadarSensor, _p_gsRadarSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsActuatorSensor, _p_gsActuatorSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsController, _p_gsControllerTo_p_gsBrick, 0, 0},  {&_swigt__p_gsLogicOpController, _p_gsLogicOpControllerTo_p_gsBrick, 0, 0},  {&_swigt__p_gsScriptController, _p_gsScriptControllerTo_p_gsBrick, 0, 0},  {&_swigt__p_gsActuator, _p_gsActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsActionActuator, _p_gsActionActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsEditObjectActuator, _p_gsEditObjectActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsGameActuator, _p_gsGameActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsMessageActuator, _p_gsMessageActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsMotionActuator, _p_gsMotionActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsPropertyActuator, _p_gsPropertyActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsSoundActuator, _p_gsSoundActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsStateActuator, _p_gsStateActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsVisibilityActuator, _p_gsVisibilityActuatorTo_p_gsBrick, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsCamera[] = {  {&_swigt__p_gsCamera, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsCollisionSensor[] = {  {&_swigt__p_gsCollisionSensor, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsController[] = {  {&_swigt__p_gsController, 0, 0, 0},  {&_swigt__p_gsLogicOpController, _p_gsLogicOpControllerTo_p_gsController, 0, 0},  {&_swigt__p_gsScriptController, _p_gsScriptControllerTo_p_gsController, 0, 0},{0, 0, 0, 0}};
@@ -22116,11 +22380,12 @@ static swig_cast_info _swigc__p_gsRaySensor[] = {  {&_swigt__p_gsRaySensor, 0, 0
 static swig_cast_info _swigc__p_gsRayTest[] = {  {&_swigt__p_gsRayTest, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsScene[] = {  {&_swigt__p_gsScene, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsScriptController[] = {  {&_swigt__p_gsScriptController, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_gsSensor[] = {  {&_swigt__p_gsActuatorSensor, _p_gsActuatorSensorTo_p_gsSensor, 0, 0},  {&_swigt__p_gsCollisionSensor, _p_gsCollisionSensorTo_p_gsSensor, 0, 0},  {&_swigt__p_gsKeyboardSensor, _p_gsKeyboardSensorTo_p_gsSensor, 0, 0},  {&_swigt__p_gsNearSensor, _p_gsNearSensorTo_p_gsSensor, 0, 0},  {&_swigt__p_gsRadarSensor, _p_gsRadarSensorTo_p_gsSensor, 0, 0},  {&_swigt__p_gsSensor, 0, 0, 0},  {&_swigt__p_gsAlwaysSensor, _p_gsAlwaysSensorTo_p_gsSensor, 0, 0},  {&_swigt__p_gsDelaySensor, _p_gsDelaySensorTo_p_gsSensor, 0, 0},  {&_swigt__p_gsMessageSensor, _p_gsMessageSensorTo_p_gsSensor, 0, 0},  {&_swigt__p_gsMouseSensor, _p_gsMouseSensorTo_p_gsSensor, 0, 0},  {&_swigt__p_gsPropertySensor, _p_gsPropertySensorTo_p_gsSensor, 0, 0},  {&_swigt__p_gsRaySensor, _p_gsRaySensorTo_p_gsSensor, 0, 0},  {&_swigt__p_gsRandomSensor, _p_gsRandomSensorTo_p_gsSensor, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsSensor[] = {  {&_swigt__p_gsAlwaysSensor, _p_gsAlwaysSensorTo_p_gsSensor, 0, 0},  {&_swigt__p_gsDelaySensor, _p_gsDelaySensorTo_p_gsSensor, 0, 0},  {&_swigt__p_gsMessageSensor, _p_gsMessageSensorTo_p_gsSensor, 0, 0},  {&_swigt__p_gsMouseSensor, _p_gsMouseSensorTo_p_gsSensor, 0, 0},  {&_swigt__p_gsPropertySensor, _p_gsPropertySensorTo_p_gsSensor, 0, 0},  {&_swigt__p_gsRaySensor, _p_gsRaySensorTo_p_gsSensor, 0, 0},  {&_swigt__p_gsRandomSensor, _p_gsRandomSensorTo_p_gsSensor, 0, 0},  {&_swigt__p_gsSensor, 0, 0, 0},  {&_swigt__p_gsActuatorSensor, _p_gsActuatorSensorTo_p_gsSensor, 0, 0},  {&_swigt__p_gsCollisionSensor, _p_gsCollisionSensorTo_p_gsSensor, 0, 0},  {&_swigt__p_gsTouchSensor, _p_gsTouchSensorTo_p_gsSensor, 0, 0},  {&_swigt__p_gsKeyboardSensor, _p_gsKeyboardSensorTo_p_gsSensor, 0, 0},  {&_swigt__p_gsNearSensor, _p_gsNearSensorTo_p_gsSensor, 0, 0},  {&_swigt__p_gsRadarSensor, _p_gsRadarSensorTo_p_gsSensor, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsSkeleton[] = {  {&_swigt__p_gsSkeleton, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsSoundActuator[] = {  {&_swigt__p_gsSoundActuator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsStateActuator[] = {  {&_swigt__p_gsStateActuator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsSweptTest[] = {  {&_swigt__p_gsSweptTest, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsTouchSensor[] = {  {&_swigt__p_gsTouchSensor, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsUserDefs[] = {  {&_swigt__p_gsUserDefs, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsVector3[] = {  {&_swigt__p_gsVector3, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsVisibilityActuator[] = {  {&_swigt__p_gsVisibilityActuator, 0, 0, 0},{0, 0, 0, 0}};
@@ -22190,6 +22455,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_gsSoundActuator,
   _swigc__p_gsStateActuator,
   _swigc__p_gsSweptTest,
+  _swigc__p_gsTouchSensor,
   _swigc__p_gsUserDefs,
   _swigc__p_gsVector3,
   _swigc__p_gsVisibilityActuator,
