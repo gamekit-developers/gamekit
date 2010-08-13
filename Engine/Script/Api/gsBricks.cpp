@@ -90,7 +90,7 @@ gsLogicObject *gsLogicManager::newObject(gsGameObject *obj)
 {
 	gkLogicManager *lptr = gkLogicManager::getSingletonPtr();
 
-	if (lptr)
+	if (lptr && obj)
 	{
 		gkLogicLink *lnk = lptr->createLink();
 
