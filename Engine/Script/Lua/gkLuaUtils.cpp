@@ -71,7 +71,7 @@ int lua_pushtraceback(lua_State *L)
 
 // ----------------------------------------------------------------------------
 gkLuaEvent::gkLuaEvent(gkLuaCurState fnc)
-	:   L(fnc.L), m_self(0), m_trace(-1)
+	:   L(fnc.L), m_self(0), m_trace(-1), m_error(false)
 {
 	m_callback = new gkLuaObject(L, fnc.m_id);
 }
@@ -79,7 +79,7 @@ gkLuaEvent::gkLuaEvent(gkLuaCurState fnc)
 
 // ----------------------------------------------------------------------------
 gkLuaEvent::gkLuaEvent(gkLuaCurState self, gkLuaCurState fnc)
-	:   L(fnc.L), m_trace(-1)
+	:   L(fnc.L), m_trace(-1), m_error(false)
 {
 	m_self = new gkLuaObject(L, self.m_id);
 	m_callback = new gkLuaObject(L, fnc.m_id);
@@ -107,7 +107,7 @@ gkLuaEvent* gkLuaEvent::clone(void)
 void gkLuaEvent::beginCall(void)
 {
 
-	if (!L || !m_callback) return;
+	if (m_error || !L || !m_callback) return;
 
 	m_callArgs = 0;
 
@@ -130,6 +130,8 @@ void gkLuaEvent::beginCall(void)
 // ----------------------------------------------------------------------------
 void gkLuaEvent::addArgument(bool val)
 {
+	if (m_error) return;
+
 	lua_pushboolean(L, val ? 1 : 0);
 	++m_callArgs;
 }
@@ -137,6 +139,8 @@ void gkLuaEvent::addArgument(bool val)
 // ----------------------------------------------------------------------------
 void gkLuaEvent::addArgument(int val)
 {
+	if (m_error) return;
+
 	lua_pushnumber(L, (lua_Number)val);
 	++m_callArgs;
 }
@@ -144,6 +148,8 @@ void gkLuaEvent::addArgument(int val)
 // ----------------------------------------------------------------------------
 void gkLuaEvent::addArgument(float val)
 {
+	if (m_error) return;
+
 	lua_pushnumber(L, (lua_Number)val);
 	++m_callArgs;
 }
@@ -151,7 +157,9 @@ void gkLuaEvent::addArgument(float val)
 // ----------------------------------------------------------------------------
 bool gkLuaEvent::call(bool &result)
 {
+
 	result = false;
+	if (m_error) return false;
 	if (m_callArgs == 0) return false;
 
 	if (lua_pcall(L, m_callArgs, 1, m_trace) != 0)
@@ -160,6 +168,8 @@ bool gkLuaEvent::call(bool &result)
 		// re throw
 		// lua_error(L);
 		lua_pop(L, 1);
+		m_error = true;
+		
 		return false;
 	}
 
@@ -171,6 +181,7 @@ bool gkLuaEvent::call(bool &result)
 // ----------------------------------------------------------------------------
 bool gkLuaEvent::call()
 {
+	if (m_error) return false;
 	if (m_callArgs == 0) return false;
 
 	if (lua_pcall(L, m_callArgs, 0, m_trace) != 0)
@@ -179,6 +190,7 @@ bool gkLuaEvent::call()
 		// re throw
 		// lua_error(L);
 		lua_pop(L, 1);
+		m_error = true;
 		return false;
 	}
 	m_callArgs = 0;

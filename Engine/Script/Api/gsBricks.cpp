@@ -398,6 +398,8 @@ bool gsBrick::EventListener::executeEvent(gkLogicBrick *brick)
 	{
 		delete m_evt;
 		m_evt = 0;
+		if (m_parent)
+			m_parent->setListener(0); 
 	}
 	return result;
 }

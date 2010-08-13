@@ -44,11 +44,7 @@ class gkGameObject : public gkObject
 public:
 	typedef utListClass<gkConstraint>                   ConstraintList;
 	typedef utListIterator<ConstraintList>              ConstraintIterator;
-	typedef utHashTable<gkHashedString, gkVariable *>    VariableMap;
-
-	typedef utList<gkGameObject *> GameObjects;
-	typedef utListIterator<GameObjects> GameObjectIterator;
-
+	typedef utHashTable<gkHashedString, gkVariable *>   VariableMap;
 
 	// life of a temporary object
 	struct LifeSpan
@@ -76,9 +72,19 @@ public:
 	GK_INLINE gkCamera      *getCamera(void)    {return m_type == GK_CAMERA ?   (gkCamera *)this : 0; }
 	GK_INLINE gkLight       *getLight(void)     {return m_type == GK_LIGHT ?    (gkLight *)this : 0; }
 	GK_INLINE gkSkeleton    *getSkeleton(void)  {return m_type == GK_SKELETON ? (gkSkeleton *)this : 0; }
-	GK_INLINE gkGameObject  *getParent(void)    {return m_parent;}
+
+
+	// Parent / Child access.
+	GK_INLINE bool                      hasParent(void)          {return m_parent != 0;}
+	GK_INLINE gkGameObject              *getParent(void)         {return m_parent;}
+	GK_INLINE gkGameObjectArray         &getChildren(void)       {return m_children;}
+	GK_INLINE gkGameObjectArrayIterator  getChildIterator(void)  {return gkGameObjectArrayIterator(m_children);}
 
 	void setParent(gkGameObject *par);
+	void addChild(gkGameObject *ob);
+	void removeChild(gkGameObject *ob);
+	bool hasChild(gkGameObject *ob);
+
 
 	void notifyUpdate(void);
 
@@ -236,8 +242,8 @@ protected:
 
 	// Parent object
 	gkGameObject               *m_parent;
+	gkGameObjectArray           m_children;
 
-	GameObjects					m_children;
 
 	// Parent scene
 	gkScene                    *m_scene;

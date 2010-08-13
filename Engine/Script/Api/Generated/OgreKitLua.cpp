@@ -8570,6 +8570,66 @@ fail:
 }
 
 
+static int _wrap_GameObject_addChild(lua_State* L) {
+  int SWIG_arg = 0;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsGameObject *arg2 = (gsGameObject *) 0 ;
+  
+  SWIG_check_num_args("addChild",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("addChild",1,"gsGameObject *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("addChild",2,"gsGameObject *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_addChild",1,SWIGTYPE_p_gsGameObject);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_addChild",2,SWIGTYPE_p_gsGameObject);
+  }
+  
+  (arg1)->addChild(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_GameObject_removeChild(lua_State* L) {
+  int SWIG_arg = 0;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsGameObject *arg2 = (gsGameObject *) 0 ;
+  
+  SWIG_check_num_args("removeChild",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("removeChild",1,"gsGameObject *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("removeChild",2,"gsGameObject *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_removeChild",1,SWIGTYPE_p_gsGameObject);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_removeChild",2,SWIGTYPE_p_gsGameObject);
+  }
+  
+  (arg1)->removeChild(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_GameObject_getParent(lua_State* L) {
   int SWIG_arg = 0;
   gsGameObject *arg1 = (gsGameObject *) 0 ;
@@ -8949,6 +9009,8 @@ static swig_lua_method swig_gsGameObject_methods[] = {
     {"getState", _wrap_GameObject_getState}, 
     {"hasParent", _wrap_GameObject_hasParent}, 
     {"setParent", _wrap_GameObject_setParent}, 
+    {"addChild", _wrap_GameObject_addChild}, 
+    {"removeChild", _wrap_GameObject_removeChild}, 
     {"getParent", _wrap_GameObject_getParent}, 
     {"enableContacts", _wrap_GameObject_enableContacts}, 
     {"hasContacts", _wrap_GameObject_hasContacts}, 

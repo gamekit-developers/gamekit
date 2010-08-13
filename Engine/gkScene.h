@@ -41,12 +41,6 @@ class gkDebugger;
 class gkScene;
 class gkActiveObject;
 
-// shorthand types
-typedef std::set<gkGameObject *>						gkGameObjectSet;
-typedef utHashTable<gkHashedString, gkGameObject *>  gkGameObjectHashMap;
-typedef utHashTableIterator<gkGameObjectHashMap>    gkGameObjectHashMapIterator;
-typedef utArray<gkGameObject *>                      gkGameObjectArray;
-typedef utArrayIterator<gkGameObjectArray>          gkGameObjectArrayIterator;
 
 // Game scene
 class gkScene : public gkObject
@@ -165,11 +159,12 @@ protected:
 
 	gkGameObjectHashMap     m_objects;
 	gkGameObjectArray       m_transformObjects;
-	gkGameObjectSet			m_loadedObjects;
+	gkGameObjectSet         m_loadedObjects;
 	gkGameObjectArray       m_constraintObjects;
 	gkGameObjectArray       m_clones;
 	gkGameObjectArray       m_tickClones;
 	gkGameObjectArray       m_endObjects;
+
 
 	gkDynamicsWorld        *m_physicsWorld;
 	gkGroupTable            m_groups;

@@ -1183,10 +1183,51 @@ void gsGameObject::setParent(gsGameObject *par)
 {
 	if (m_object && par)
 	{
-		gkGameObject *gobj = cast<gkGameObject>();
+		gkGameObject *gobj = get();
+		gkGameObject *pobj = par->get();
 
-		if (gobj->getParent() == 0)
-			gobj->setParent(par->cast<gkGameObject>());
+		if (gobj == pobj) return;
+
+		if (!gobj->hasParent())
+			gobj->setParent(pobj);
+		else
+		{
+			if (gobj->getParent() != pobj)
+			{
+				gobj->getParent()->removeChild(gobj);
+				gobj->setParent(pobj);
+			}
+		}
+	}
+}
+
+
+// ----------------------------------------------------------------------------
+void gsGameObject::addChild(gsGameObject *chi)
+{
+	if (m_object && chi)
+	{
+		gkGameObject *gobj = get();
+		gkGameObject *cobj = chi->get();
+		if (gobj == cobj) return;
+
+		if (!gobj->hasChild(cobj))
+			gobj->addChild(cobj);
+	}
+}
+
+// ----------------------------------------------------------------------------
+void gsGameObject::removeChild(gsGameObject *chi)
+{
+	if (m_object && chi)
+	{
+		gkGameObject *gobj = get();
+		gkGameObject *cobj = chi->get();
+		if (gobj == cobj) return;
+
+
+		if (gobj->hasChild(cobj))
+			gobj->removeChild(cobj);
 	}
 }
 

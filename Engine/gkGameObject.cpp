@@ -195,7 +195,7 @@ void gkGameObject::loadImpl(void)
 
 	//////////////////////////////////
 	// Reattach children (ogre) nodes
-	GameObjectIterator iter(m_children);
+	gkGameObjectArrayIterator iter(m_children);
 	while (iter.hasMoreElements())
 	{
 		gkGameObject *pChild = iter.getNext();
@@ -759,28 +759,94 @@ bool gkGameObject::hasVariable(const gkString &name)
 
 void gkGameObject::setParent(gkGameObject *par)
 {
+	GK_ASSERT(par != this);
+
 	if(par)
 	{
 		GK_ASSERT(!m_parent && "Already has a parent");
+		par->addChild(this);
+	}
+}
 
-		m_parent = par;
 
-		if(!m_parent->m_children.find(this))
+void gkGameObject::addChild(gkGameObject *gobj)
+{
+	GK_ASSERT(gobj != this);
+
+	if (gobj)
+	{
+		GK_ASSERT(!gobj->m_parent && "Already has a parent");
+		GK_ASSERT(!hasChild(gobj)  && "Already has this child");
+
+		m_children.push_back(gobj);
+		gobj->m_parent = this;
+
+
+		if (isLoaded())
 		{
-			m_parent->m_children.push_back(this);
+			GK_ASSERT(m_node);
 
-			if (isLoaded())
+			if (!gobj->isLoaded())
+				gobj->load();
+
+			GK_ASSERT(gobj->getNode());
+
+			if (gobj->getProperties().isPhysicsObject())
 			{
-				if (!m_parent->isLoaded())
-					m_parent->load();
-
-				if (m_node->getParentSceneNode())
-					m_node->getParentSceneNode()->removeChild(m_node);
-
-				m_parent->getNode()->addChild(m_node);
+				// Only root objects at the moment, anything else is undefined.
+				gobj->destroyPhysics();
 			}
+
+
+			Ogre::SceneNode *node = gobj->getNode();
+
+			if (node->getParentSceneNode())
+				node->getParentSceneNode()->removeChild(node);
+
+
+			m_node->addChild(gobj->getNode());
 		}
 	}
+}
+
+
+void gkGameObject::removeChild(gkGameObject *gobj)
+{
+	GK_ASSERT(gobj != this);
+
+	if (gobj && hasChild(gobj))
+	{
+		GK_ASSERT(gobj->m_parent         && "Missing parent");
+		GK_ASSERT(gobj->m_parent == this && "Parent mismatch");
+
+		gobj->m_parent = 0;
+		m_children.erase(gobj);
+
+
+
+		// place in parent ogre node
+
+		if (gobj->isLoaded())
+		{
+			Ogre::SceneNode *node = gobj->getNode();
+
+			
+			GK_ASSERT(node->getParentSceneNode() == m_node && "Parent mismatch");
+
+			m_node->removeChild(node);
+			m_scene->getManager()->getRootSceneNode()->addChild(node);
+
+			// Re-enable physics
+			if (gobj->getProperties().isPhysicsObject())
+				gobj->loadPhysics();
+		}
+	}
+}
+
+
+bool gkGameObject::hasChild(gkGameObject *gobj)
+{
+	return m_children.find(gobj) != UT_NPOS;
 }
 
 
@@ -812,7 +878,7 @@ Ogre::AxisAlignedBox gkGameObject::getAabb() const
 
 gkGameObject *gkGameObject::getChildEntity()
 {
-	GameObjectIterator iter(m_children);
+	gkGameObjectArrayIterator iter(m_children);
 
 	while (iter.hasMoreElements())
 	{

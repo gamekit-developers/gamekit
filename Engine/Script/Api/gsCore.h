@@ -332,6 +332,10 @@ public:
 
 	bool hasParent();
 	void setParent(gsGameObject *par);
+	void addChild(gsGameObject *chi);
+	void removeChild(gsGameObject *chi);
+
+
 	gsGameObject *getParent(void);
 
 	void enableContacts(bool v);

@@ -131,6 +131,7 @@ protected:
 	gkLuaObject *m_self;
 	gkLuaObject *m_callback;
 	int          m_callArgs, m_trace;
+	bool         m_error;
 
 public:
 

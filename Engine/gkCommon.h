@@ -91,10 +91,18 @@ class gkAction;
 class gkActionChannel;
 class gkActionManager;
 class gkBezierSpline;
-
-
 class gkGameObjectGroup;
 class gkGameObjectInstance;
+
+
+// Common types
+typedef std::set<gkGameObject *>                     gkGameObjectSet;
+typedef utHashTable<gkHashedString, gkGameObject *>  gkGameObjectHashMap;
+typedef utHashTableIterator<gkGameObjectHashMap>     gkGameObjectHashMapIterator;
+typedef utArray<gkGameObject *>                      gkGameObjectArray;
+typedef utArrayIterator<gkGameObjectArray>           gkGameObjectArrayIterator;
+
+
 
 enum gkTransformSpace
 {
