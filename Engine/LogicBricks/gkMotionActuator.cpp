@@ -67,7 +67,7 @@ void gkMotionActuator::execute(void)
 		if (m_rot.evaluate)
 			m_object->rotate(m_quat, m_rot.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
 
-		gkObject *object = m_object->getAttachedObject();
+		gkPhysicsController *object = m_object->getPhysicsController();
 
 		if (object)
 		{

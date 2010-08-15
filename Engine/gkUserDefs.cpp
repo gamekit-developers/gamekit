@@ -56,6 +56,8 @@ gkUserDefs::gkUserDefs()
 	    useBulletDbvt(true),
 	    showDebugProps(false),
 	    debugSounds(false),
+		fsaa(false),
+		fsaaSamples(4),
 		disableSound(false),
 	    shadowtechnique("none"),
 	    colourshadow(0, 0, 0),
@@ -237,6 +239,16 @@ void gkUserDefs::parseString(const gkString &key, const gkString &val)
 	if (KeyEq("fardistanceshadow"))
 	{
 		fardistanceshadow = Ogre::StringConverter::parseReal(val);
+		return;
+	}
+	if (KeyEq("fsaa"))
+	{
+		fsaa = Ogre::StringConverter::parseBool(val);
+		return;
+	}
+	if (KeyEq("fsaasamples"))
+	{
+		fsaaSamples = gkClamp<int>(Ogre::StringConverter::parseInt(val), 0, 16);
 		return;
 	}
 }

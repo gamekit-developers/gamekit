@@ -28,7 +28,7 @@
 #define _gkDynamicsWorld_h_
 
 
-#include "gkObject.h"
+#include "gkCommon.h"
 #include "gkMathUtils.h"
 #include "LinearMath/btScalar.h"
 
@@ -44,34 +44,28 @@ class btTriangleMesh;
 class btCollisionShape;
 class btGhostPairCallback;
 class gkPhysicsDebug;
-
+class gkDbvt;
 
 class gkDynamicsWorld
 {
-public:
-	typedef utListClass<gkObject> ObjectList;
-
 protected:
 
 	// Parent scene
 	gkScene                    *m_scene;
-
 	btDynamicsWorld            *m_dynamicsWorld;
 	btCollisionConfiguration   *m_collisionConfiguration;;
 	btBroadphaseInterface      *m_pairCache;
-	btGhostPairCallback		*m_ghostPairCallback;
+	btGhostPairCallback        *m_ghostPairCallback;
 	btDispatcher               *m_dispatcher;
 	btConstraintSolver         *m_constraintSolver;
-	ObjectList	                m_objects;
+	gkPhysicsControllers       m_objects;
 	gkPhysicsDebug             *m_debug;
-
-	bool                        m_handleContacts;
-
-	class gkDbvt               *m_dbvt;
+	bool                       m_handleContacts;
+	gkDbvt                     *m_dbvt;
 
 
 	// drawing all but static wireframes
-	void localDrawObject(btCollisionObject *rb);
+	void localDrawObject(gkPhysicsController *phyCon);
 
 	void loadImpl(void);
 	void unloadImpl(void);
@@ -86,8 +80,6 @@ public:
 	void step(gkScalar tick);
 	void substep(gkScalar tick);
 
-	void createParentChildHierarchy(void);
-
 	void EnableContacts(bool enable) { m_handleContacts = enable; }
 
 
@@ -95,7 +87,7 @@ public:
 
 	gkCharacter *createCharacter(gkGameObject *state);
 
-	void destroyObject(gkObject *state);
+	void destroyObject(gkPhysicsController *cont);
 
 	// Gain raw access to the bullet world
 	GK_INLINE btDynamicsWorld *getBulletWorld(void) {GK_ASSERT(m_dynamicsWorld); return m_dynamicsWorld;}
@@ -112,7 +104,7 @@ public:
 
 	void DrawDebug();
 
-	gkVariable *getDBVTInfo(void); 
+	gkVariable *getDBVTInfo(void);
 };
 
 #endif//_gkDynamicsWorld_h_

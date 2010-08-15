@@ -62,7 +62,7 @@ void gkGameActuator::execute(void)
 		} break;
 	case GM_RESTART:
 		{
-			gkEngine::getSingleton().addLoadable(m_object->getOwner(), LQ_RELOAD);
+			gkEngine::getSingleton().addLoadableCommand(m_object->getOwner(), gkReloadableCmd::RELOAD);
 			break;
 		} break;
 	default:

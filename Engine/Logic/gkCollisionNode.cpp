@@ -68,7 +68,7 @@ bool gkCollisionNode::evaluate(gkScalar tick)
 
 	if(pObj && pObj->isLoaded())
 	{
-		m_object = pObj->getAttachedObject();
+		m_object = pObj->getPhysicsController();
 	}
 
 	return m_object != 0;
@@ -87,28 +87,22 @@ void gkCollisionNode::update(gkScalar tick)
 
 	if(GET_SOCKET_VALUE(ENABLE))
 	{
-		m_object->setFlags(m_object->getFlags() | gkObject::RBF_CONTACT_INFO);
+		m_object->enableContactProcessing(true);
 
-		const gkObject::ContactArray& contacts = m_object->getContacts();
+		gkContactInfo c;
 
-		for (size_t i = 0; i < contacts.size(); i++)
+		if (m_object->collidesWith(GET_SOCKET_VALUE(COLLIDES_WITH), &c))
 		{
-			const gkObject::ContactInfo& c = contacts[i];
-
-			if(GET_SOCKET_VALUE(COLLIDES_WITH).empty() || c.collider->getObject()->getName().find(GET_SOCKET_VALUE(COLLIDES_WITH)) != -1)
-			{
-				SET_SOCKET_VALUE(CONTACT_POSITION, gkVector3(c.point.getPositionWorldOnA()));
-				SET_SOCKET_VALUE(COLLIDED_OBJ, c.collider->getObject());
-				SET_SOCKET_VALUE(HAS_COLLIDED, true);
-				SET_SOCKET_VALUE(NOT_HAS_COLLIDED, false);
-				m_timer.reset();
-				break;
-			}
+			SET_SOCKET_VALUE(CONTACT_POSITION, gkVector3(c.point.getPositionWorldOnA()));
+			SET_SOCKET_VALUE(COLLIDED_OBJ, c.collider->getObject());
+			SET_SOCKET_VALUE(HAS_COLLIDED, true);
+			SET_SOCKET_VALUE(NOT_HAS_COLLIDED, false);
+			m_timer.reset();
 		}
 	}
 	else
 	{
-		m_object->setFlags(m_object->getFlags() ^ gkObject::RBF_CONTACT_INFO);
+		m_object->enableContactProcessing(false);
 	}
 }
 

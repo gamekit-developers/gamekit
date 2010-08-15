@@ -31,16 +31,9 @@
 #include "gkMathUtils.h"
 #include "gkSerialize.h"
 #include "gkGameObjectGroup.h"
-#include "OgreAxisAlignedBox.h"
 #include "AI/gkNavMeshData.h"
 #include "Thread/gkAsyncResult.h"
 #include "gkRecast.h"
-
-class gkDynamicsWorld;
-class gkDebugger;
-class gkScene;
-class gkActiveObject;
-
 
 // Game scene
 class gkScene : public gkObject

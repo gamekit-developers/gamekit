@@ -29,6 +29,7 @@
 #include "gkLogicDispatcher.h"
 #include "gkDynamicsWorld.h"
 #include "gkGameObject.h"
+#include "gkPhysicsController.h"
 #include "gkScene.h"
 #include "gkContactTest.h"
 #include "btBulletDynamicsCommon.h"
@@ -93,18 +94,10 @@ bool gkNearSensor::query(void)
 
 	while(iter.hasMoreElements())
 	{
-		gkGameObject *object = ((gkGameObject *)iter.peekNext()->getUserPointer())->getObject();
+		gkGameObject *ob = gkPhysicsController::castObject(iter.peekNext());
 
-		if (!m_prop.empty())
-		{
-			if (object->hasVariable(m_prop))
-				return m_previous = true;
-		}
-		else if (!m_material.empty())
-		{
-			if (object->hasSensorMaterial(m_material))
-				return m_previous = true;
-		}
+		if (gkPhysicsController::sensorTest(ob, m_prop, m_material))
+			return m_previous = true;
 
 		iter.getNext();
 	}

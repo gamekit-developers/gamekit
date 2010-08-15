@@ -28,6 +28,7 @@
 #include "gkEngine.h"
 #include "gkScene.h"
 #include "gkDynamicsWorld.h"
+#include "gkPhysicsController.h"
 #include "OgreRoot.h"
 #include "btBulletDynamicsCommon.h"
 
@@ -149,5 +150,5 @@ bool gkSweptTest::collides(const Ogre::Ray &ray, gkScalar rayRadius)
 
 gkGameObject *gkSweptTest::getObject() const
 {
-	return static_cast<gkObject *>(m_collisionObject->getUserPointer())->getObject();
+	return static_cast<gkPhysicsController *>(m_collisionObject->getUserPointer())->getObject();
 }

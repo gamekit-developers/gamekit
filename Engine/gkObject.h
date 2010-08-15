@@ -29,16 +29,11 @@
 
 #include "gkCommon.h"
 #include "gkHashedString.h"
-#include "BulletCollision/NarrowPhaseCollision/btManifoldPoint.h"
-#include "OgreAxisAlignedBox.h"
-
 
 class gkGameObject;
-class btCollisionObject;
-class btPersistentManifold;
 
 // Base class representing a loadable object
-class gkObject : public utListClass<gkObject>::Link
+class gkObject
 {
 protected:
 	const gkString      m_name;
@@ -53,63 +48,18 @@ protected:
 
 public:
 
-	enum Flags
-	{
-		RBF_LIMIT_LVEL_X = 1,
-		RBF_LIMIT_LVEL_Y = 2,
-		RBF_LIMIT_LVEL_Z = 4,
-		RBF_LIMIT_AVEL_X = 8,
-		RBF_LIMIT_AVEL_Y = 16,
-		RBF_LIMIT_AVEL_Z = 32,
-		RBF_CONTACT_INFO = 64,
-	};
-
-	struct ContactInfo
-	{
-		gkObject        *collider;
-		btManifoldPoint     point;
-	};
-
-	typedef utArray<ContactInfo> ContactArray;
-
 	gkObject(const gkString &name);
 	virtual ~gkObject();
-
-	// duplication
-	virtual gkObject                *clone(const gkString &name)    {return 0;}
-	virtual gkGameObject            *getObject(void)                {return 0;}
-	virtual Ogre::AxisAlignedBox     getAabb() const                {return Ogre::AxisAlignedBox::BOX_NULL;}
-	virtual btCollisionObject       *getCollisionObject()           {return 0;}
-
 
 	void load(void);
 	void unload(void);
 	void reload(void);
 
 
-	GK_INLINE const gkString    &getName(void)                          {return m_name;}
-	GK_INLINE bool              isLoaded(void) const                    {return m_loaded;}
-
-	// collision contact information
-	GK_INLINE ContactArray      &getContacts(void)                      {return m_contacts;}
-	GK_INLINE bool              wantsContactInfo(void)                  {return (m_flags & RBF_CONTACT_INFO) != 0;}
-
-	// misc flags
-	GK_INLINE void              setFlags(int flags)                     {m_flags = flags;}
-	GK_INLINE int               getFlags(void)                          {return m_flags;}
-
-	void handleManifold(btPersistentManifold *manifold);
-
-	void resetContactInfo();
-
-protected:
-
-	// information about collisions
-	ContactArray m_contacts;
-
-	// misc flags
-	int m_flags;
+	GK_INLINE const gkString &getName(void)        {return m_name;}
+	GK_INLINE bool           isLoaded(void) const  {return m_loaded;}
 };
+
 
 
 #endif//_gkObject_h_

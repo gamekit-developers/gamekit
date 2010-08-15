@@ -68,44 +68,10 @@ gkLogicBrick *gkCollisionSensor::clone(gkLogicLink *link, gkGameObject *dest)
 // ----------------------------------------------------------------------------
 bool gkCollisionSensor::query(void)
 {
-	gkObject *object = m_object->getAttachedObject();
+	gkPhysicsController *object = m_object->getPhysicsController();
 	if (!object)
 		return false;
 
-	if (object->getContacts().empty())
-		return false;
-
-
-
-	gkObject::ContactArray &arr = object->getContacts();
-
-
-	UTsize nr=arr.size(), i;
-
-	// Global. test only for actors
-
-	for (i=0; i<nr; ++i)
-	{
-		gkObject::ContactInfo &inf = arr[i];
-
-		gkGameObject *obj = inf.collider->getObject();
-		//if (obj->getProperties().objectStateFlags & GK_OB_ACTOR)
-		{
-			// any GK_OB_ACTOR will do
-			if (m_prop.empty() && m_material.empty())
-				return true;
-		}
-
-		if (!m_prop.empty())
-		{
-			if (obj->hasVariable(m_prop) /*&& obj->getProperties().objectStateFlags & GK_OB_ACTOR*/)
-				return true;
-		}
-		else if (!m_material.empty())
-		{
-			if (obj->hasSensorMaterial(m_material))
-				return true;
-		}
-	}
-	return false;
+	bool isTouchSensorTODO = false;
+	return object->sensorCollides(m_prop, m_material, isTouchSensorTODO, isTouchSensorTODO);
 }

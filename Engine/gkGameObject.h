@@ -34,9 +34,7 @@
 #include "gkTransformState.h"
 #include "gkSerialize.h"
 
-class gkRigidBody;
-class gkCharacter;
-class gkLogicLink;
+
 
 // Base class for all game objects
 class gkGameObject : public gkObject
@@ -129,12 +127,12 @@ public:
 
 
 	// physics
-	GK_INLINE void attachRigidBody(gkRigidBody *body) {m_rigidBody = body;}
-	GK_INLINE gkRigidBody *getAttachedBody() {return m_rigidBody;}
-	GK_INLINE void attachCharacter(gkCharacter *character) {m_character = character;}
-	GK_INLINE gkCharacter *getAttachedCharacter() {return m_character;}
-	gkObject *getAttachedObject();
-	btCollisionObject *getCollisionObject();
+	GK_INLINE void          attachRigidBody(gkRigidBody *body)          {m_rigidBody = body;}
+	GK_INLINE gkRigidBody   *getAttachedBody(void)                      {return m_rigidBody;}
+	GK_INLINE void          attachCharacter(gkCharacter *character)     {m_character = character;}
+	GK_INLINE gkCharacter   *getAttachedCharacter(void)                 {return m_character;}
+	gkPhysicsController     *getPhysicsController(void);
+	btCollisionObject       *getCollisionObject(void);
 
 
 	// variables

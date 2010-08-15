@@ -30,7 +30,6 @@
 #include "gkMathUtils.h"
 #include "gkTransformState.h"
 #include "gkString.h"
-#include "Utils/utString.h"
 
 
 #define GK_MAX_TEXTURE 18

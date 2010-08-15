@@ -31,6 +31,7 @@
 #include "gkGameObject.h"
 #include "gkUtils.h"
 #include "gkSweptTest.h"
+#include "gkPhysicsController.h"
 #include "gkLogger.h"
 #include "gkCamera.h"
 #include "btBulletDynamicsCommon.h"
@@ -212,7 +213,7 @@ void gkCameraNode::calculateNewPosition(const gkVector3& currentPosition, gkScal
 		Ogre::Ray ray(m_center, direction);
 
 		gkSweptTest::AVOID_LIST avoidList;
-		avoidList.insert(m_centerObj->getAttachedObject()->getCollisionObject());
+		avoidList.insert(m_centerObj->getPhysicsController()->getCollisionObject());
 
 		gkSweptTest sweptTest(avoidList);
 

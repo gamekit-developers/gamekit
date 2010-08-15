@@ -29,6 +29,7 @@
 #include "gkUtils.h"
 #include "gkRayTest.h"
 #include "gkGameObject.h"
+#include "gkPhysicsController.h"
 #include "gkCam2ViewportRay.h"
 #include "Ogre.h"
 #include "btBulletDynamicsCommon.h"
@@ -81,12 +82,12 @@ void gkRayTestNode::update(gkScalar tick)
 		{
 			btCollisionObject* pCol = rayTest.getCollisionObject();
 
-			gkObject* pObj = static_cast<gkObject*>(pCol->getUserPointer());
+			gkGameObject* pObj = gkPhysicsController::castObject(pCol);
 
 			if(pObj != m_object)
 			{
 				SET_SOCKET_VALUE(HIT_POSITION, rayTest.getHitPoint());
-				SET_SOCKET_VALUE(HIT_OBJ, pObj->getObject());
+				SET_SOCKET_VALUE(HIT_OBJ, pObj);
 				SET_SOCKET_VALUE(HIT_NAME, pObj->getName());
 				SET_SOCKET_VALUE(HIT, true);
 				SET_SOCKET_VALUE(NOT_HIT, false);
@@ -123,10 +124,10 @@ bool gkScreenRayTestNode::evaluate(gkScalar tick)
 		{
 			btCollisionObject* pCol = rayTest.getCollisionObject();
 
-			gkObject* pObj = static_cast<gkObject*>(pCol->getUserPointer());
+			gkGameObject* pObj = gkPhysicsController::castObject(pCol);
 
 			SET_SOCKET_VALUE(HIT_POSITION, rayTest.getHitPoint());
-			SET_SOCKET_VALUE(HIT_OBJ, pObj->getObject());
+			SET_SOCKET_VALUE(HIT_OBJ, pObj);
 			SET_SOCKET_VALUE(HIT_NAME, pObj->getName());
 			SET_SOCKET_VALUE(HIT, true);
 			SET_SOCKET_VALUE(NOT_HIT, false);

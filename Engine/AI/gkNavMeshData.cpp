@@ -249,7 +249,7 @@ void gkNavMeshData::AddCollisionObj()
 	aabbMin-=btVector3(BT_LARGE_FLOAT,BT_LARGE_FLOAT,BT_LARGE_FLOAT);
 	aabbMax+=btVector3(BT_LARGE_FLOAT,BT_LARGE_FLOAT,BT_LARGE_FLOAT);
 
-	btCollisionObject* colObj = m_object->getAttachedObject()->getCollisionObject();
+	btCollisionObject* colObj = m_object->getPhysicsController()->getCollisionObject();
 
 	const btCollisionShape* shape = colObj->getCollisionShape();
 

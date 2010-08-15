@@ -1245,10 +1245,9 @@ void gsGameObject::enableContacts(bool v)
 {
 	if (m_object)
 	{
-		if (v)
-			m_object->setFlags(m_object->getFlags() | gkObject::RBF_CONTACT_INFO);
-		else
-			m_object->setFlags(m_object->getFlags() & ~gkObject::RBF_CONTACT_INFO);
+		gkPhysicsController *ob = get()->getPhysicsController();
+		if (ob)
+			ob->enableContactProcessing(v);
 	}
 }
 
@@ -1257,7 +1256,11 @@ void gsGameObject::enableContacts(bool v)
 bool gsGameObject::hasContacts()
 {
 	if (m_object)
-		return !m_object->getContacts().empty();
+	{
+		gkPhysicsController *ob = get()->getPhysicsController();
+		if (ob)
+			return !ob->getContacts().empty();
+	}
 	return false;
 }
 
@@ -1267,13 +1270,9 @@ bool gsGameObject::hasContact(const gkString &object)
 {
 	if (m_object)
 	{
-		gkObject::ContactArray &arr = m_object->getContacts();
-		utArrayIterator<gkObject::ContactArray> iter(arr);
-		while (iter.hasMoreElements())
-		{
-			if (iter.getNext().collider->getName() == object)
-				return true;
-		}
+		gkPhysicsController *ob = get()->getPhysicsController();
+		if (ob)
+			return ob->collidesWith(object);
 	}
 	return false;
 }

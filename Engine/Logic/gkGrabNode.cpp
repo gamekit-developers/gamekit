@@ -25,6 +25,7 @@
 -------------------------------------------------------------------------------
 */
 
+#include "btBulletDynamicsCommon.h"
 #include "gkGrabNode.h"
 #include "gkRigidBody.h"
 #include "gkEngine.h"
@@ -33,7 +34,6 @@
 #include "gkGameObject.h"
 #include "gkUtils.h"
 #include "OgreRoot.h"
-#include "btBulletDynamicsCommon.h"
 
 gkGrabNode::gkGrabNode(gkLogicTree *parent, size_t id)
 : gkPickNode(parent, id),

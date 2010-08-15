@@ -27,9 +27,9 @@
 #ifndef _gkRigidBody_h_
 #define _gkRigidBody_h_
 
-#include "gkObject.h"
-#include "gkTransformState.h"
+#include "gkPhysicsController.h"
 #include "LinearMath/btMotionState.h"
+
 
 class btDynamicsWorld;
 class btRigidBody;
@@ -37,42 +37,21 @@ class btTriangleMesh;
 class btCollisionShape;
 class gkDynamicsWorld;
 
-// needs renamed to gkPhysicsController
-class gkRigidBody : public gkObject, public btMotionState
+
+
+// gkRigidBody handles:
+// dynamic (no angular velocity), rigid, and static bodies
+
+class gkRigidBody : public gkPhysicsController, public btMotionState
 {
-
-protected:
-
-	// Parent world
-	gkDynamicsWorld    *m_owner;
-
-	// modifier object
-	gkGameObject       *m_object;
-
-	// Bullet body
-	btRigidBody        *m_body;
-	btCollisionShape   *m_shape;
-
-	// transform callbacks
-
-	void getWorldTransform(btTransform &worldTrans) const;
-	void setWorldTransform(const btTransform &worldTrans);
-
-	void loadImpl(void);
-	void unloadImpl(void);
-
 public:
-
-	gkRigidBody(const gkString &name, gkGameObject *object, gkDynamicsWorld *owner);
+	gkRigidBody(gkGameObject *object, gkDynamicsWorld *owner);
 	virtual ~gkRigidBody();
-
-	void setTransformState(const gkTransformState &state);
-
-	// update state based on the objects transform
-	void        updateTransform(void);
 
 	void        applyTorque(const gkVector3 &t, int tspace = TRANSFORM_PARENT);
 	void        applyForce(const gkVector3 &f, int tspace = TRANSFORM_PARENT);
+
+
 	void        setLinearVelocity(const gkVector3 &linv, int tspace = TRANSFORM_PARENT);
 	void        setAngularVelocity(const gkVector3 &angv, int tspace = TRANSFORM_PARENT);
 	gkVector3   getLinearVelocity(void);
@@ -88,17 +67,18 @@ public:
 	}
 
 	// Gain access to the bullet body
-	btRigidBody *getBody(void)      {return m_body;}
-	// Gain access to the world
-	gkDynamicsWorld *getWorld(void) {GK_ASSERT(m_owner); return m_owner;}
-	// Gain access to the game object
-	gkGameObject *getObject(void)   {GK_ASSERT(m_object); return m_object;}
+	btRigidBody *getBody(void);
+	
 
-	btCollisionObject *getCollisionObject();
-
-	Ogre::AxisAlignedBox getAabb() const;
+	void create(void);
+	void destroy(void);
 
 private:
+
+	void getWorldTransform(btTransform &worldTrans) const;
+	void setWorldTransform(const btTransform &worldTrans);
+
+	btRigidBody *m_body;
 
 	int m_oldActivationState;
 };

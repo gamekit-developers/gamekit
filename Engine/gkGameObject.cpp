@@ -793,16 +793,15 @@ void gkGameObject::addChild(gkGameObject *gobj)
 
 			if (gobj->getProperties().isPhysicsObject())
 			{
-				// Only root objects at the moment, anything else is undefined.
-				gobj->destroyPhysics();
+				// Suspend child updates.
+				gkPhysicsController *cont = gobj->getPhysicsController();
+				if (cont)
+					cont->suspend(true);
 			}
 
-
 			Ogre::SceneNode *node = gobj->getNode();
-
 			if (node->getParentSceneNode())
 				node->getParentSceneNode()->removeChild(node);
-
 
 			m_node->addChild(gobj->getNode());
 		}
@@ -834,11 +833,28 @@ void gkGameObject::removeChild(gkGameObject *gobj)
 			GK_ASSERT(node->getParentSceneNode() == m_node && "Parent mismatch");
 
 			m_node->removeChild(node);
-			m_scene->getManager()->getRootSceneNode()->addChild(node);
 
+
+			Ogre::SceneNode *pNode = m_node->getParentSceneNode();
+
+			if (pNode)
+				pNode->addChild(node);
+			else
+				m_scene->getManager()->getRootSceneNode()->addChild(node);
+	
 			// Re-enable physics
 			if (gobj->getProperties().isPhysicsObject())
-				gobj->loadPhysics();
+			{
+				notifyUpdate();
+
+				// Resume child updates.
+				gkPhysicsController *cont = gobj->getPhysicsController();
+				if (cont)
+				{
+					cont->suspend(false);
+					cont->updateTransform();
+				}
+			}
 		}
 	}
 }
@@ -850,7 +866,7 @@ bool gkGameObject::hasChild(gkGameObject *gobj)
 }
 
 
-gkObject *gkGameObject::getAttachedObject()
+gkPhysicsController *gkGameObject::getPhysicsController()
 {
 	if(m_rigidBody)
 		return m_rigidBody;
@@ -923,13 +939,13 @@ void gkGameObject::loadPhysics(void)
 	if (props.isGhost())
 	{
 		m_character = m_scene->getDynamicsWorld()->createCharacter(this);
-		m_character->load();
+		m_character->create();
 	}
 	else
 	{
 
 		m_rigidBody = m_scene->getDynamicsWorld()->createRigidBody(this);
-		m_rigidBody->load();
+		m_rigidBody->create();
 	}
 }
 

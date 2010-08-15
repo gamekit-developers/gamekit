@@ -408,29 +408,33 @@ source_group(Constraints\\Source FILES ${Constraint_SOURCE})
 # ---------------------------------------------------------
 set(Physics_SOURCE
     # ----- Source -----
-    Physics/gkRigidBody.cpp
-    Physics/gkDynamicsWorld.cpp
-    Physics/gkRagDoll.cpp
     Physics/gkCharacter.cpp
-    Physics/gkContactTest.h
-    Physics/gkVehicle.cpp
-    Physics/gkSoftBody.cpp
+    Physics/gkDbvt.cpp
+    Physics/gkDynamicsWorld.cpp
+    Physics/gkPhysicsController.cpp
     Physics/gkPhysicsDebug.cpp
+    Physics/gkRagDoll.cpp
     Physics/gkRayTest.cpp
+    Physics/gkRigidBody.cpp
+    Physics/gkSoftBody.cpp
     Physics/gkSweptTest.cpp
+    Physics/gkVehicle.cpp
 )
 
 set(Physics_HEADER
     # ----- Header -----
-    Physics/gkRigidBody.h
-    Physics/gkDynamicsWorld.h
-    Physics/gkRagDoll.h
     Physics/gkCharacter.h
-    Physics/gkVehicle.h
-    Physics/gkSoftBody.h
+    Physics/gkContactTest.h
+    Physics/gkDbvt.h
+    Physics/gkDynamicsWorld.h
+    Physics/gkPhysicsController.h
     Physics/gkPhysicsDebug.h
+    Physics/gkRagDoll.h
     Physics/gkRayTest.h
+    Physics/gkRigidBody.h
+    Physics/gkSoftBody.h
     Physics/gkSweptTest.h
+    Physics/gkVehicle.h
 )
 
 

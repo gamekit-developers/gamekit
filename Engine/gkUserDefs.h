@@ -60,11 +60,14 @@ public:
 	bool                    useBulletDbvt;      // Use Bullet Dynamic AABB Tree
 	bool                    showDebugProps;     // Show variable debugging information.
 	bool                    debugSounds;        // Show 3D sound debug info
-    bool                    disableSound;       // Disable OpenAL sound.
-	bool					enableshadows;
-	gkString				shadowtechnique;
-	gkColor					colourshadow;
-	gkScalar				fardistanceshadow;
+	bool                    disableSound;       // Disable OpenAL sound.
+	bool                    fsaa;               // Enable Full scene anti aliasing.
+	int                     fsaaSamples;        // Anti aliasing samples.
+	bool                    enableshadows;
+
+	gkString                shadowtechnique;
+	gkColor                 colourshadow;
+	gkScalar                fardistanceshadow;
 };
 
 

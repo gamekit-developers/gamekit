@@ -139,7 +139,7 @@ gkGameObjectGroup *gkScene::getGroup(const gkHashedString &name)
 	UTsize pos;
 	if ( (pos = m_groups.find(name)) == UT_NPOS)
 	{
-		gkPrintf("mossing group '%s'\n", name.str().c_str());
+		gkPrintf("Missing group '%s'\n", name.str().c_str());
 		return 0;
 	}
 	return m_groups.at(pos);
@@ -178,7 +178,7 @@ gkGameObject *gkScene::createObject(const gkHashedString &name)
 {
 	if (m_objects.find(name) != GK_NPOS)
 	{
-		gkPrintf("duplicate object '%s' found\n", name.str().c_str());
+		gkPrintf("Duplicate object '%s' found\n", name.str().c_str());
 		return 0;
 	}
 
@@ -192,7 +192,7 @@ gkLight *gkScene::createLight(const gkHashedString &name)
 {
 	if (m_objects.find(name) != GK_NPOS)
 	{
-		gkPrintf("duplicate object '%s' found\n", name.str().c_str());
+		gkPrintf("Duplicate object '%s' found\n", name.str().c_str());
 		return 0;
 	}
 
@@ -207,7 +207,7 @@ gkCamera *gkScene::createCamera(const gkHashedString &name)
 {
 	if (m_objects.find(name) != GK_NPOS)
 	{
-		gkPrintf("duplicate object '%s' found\n", name.str().c_str());
+		gkPrintf("Duplicate object '%s' found\n", name.str().c_str());
 		return 0;
 	}
 
@@ -222,7 +222,7 @@ gkEntity *gkScene::createEntity(const gkHashedString &name)
 {
 	if (m_objects.find(name) != GK_NPOS)
 	{
-		gkPrintf("duplicate object '%s' found\n", name.str().c_str());
+		gkPrintf("Duplicate object '%s' found\n", name.str().c_str());
 		return 0;
 	}
 
@@ -235,7 +235,7 @@ gkSkeleton *gkScene::createSkeleton(const gkHashedString &name)
 {
 	if (m_objects.find(name) != GK_NPOS)
 	{
-		gkPrintf("duplicate object '%s' found\n", name.str().c_str());
+		gkPrintf("Duplicate object '%s' found\n", name.str().c_str());
 		return 0;
 	}
 
@@ -304,7 +304,6 @@ void gkScene::loadImpl(void)
 		return;
 	}
 
-
 	// generic for now, but later scene properties will be used
 	// to extract more detailed management information
 
@@ -325,20 +324,8 @@ void gkScene::loadImpl(void)
 		// Skip load of inactive layers
 		if (!obptr->isLoaded() && obptr->isInActiveLayer() && !obptr->isGroupOwner())
 		{
-			// If there is one camera in the scene use it.
-			// The start camera may not have been specified.
-			if (!m_startCam && obptr->getType() == GK_CAMERA)
-				m_startCam = (gkCamera *)obptr;
-
 			// call builder
 			obptr->load();
-
-			if(obptr->getProperties().isStatic())
-			{
-				if (obptr->getAttachedObject())
-					m_Limits.merge(obptr->getAttachedObject()->getAabb());
-			}
-
 		}
 	}
 
@@ -543,19 +530,37 @@ void gkScene::setShadows()
 	}
 }
 
+
 void gkScene::notifyObjectLoaded(gkGameObject *gobject)
 {
 	std::pair<gkGameObjectSet::iterator, bool> result = m_loadedObjects.insert(gobject);
 
 	GK_ASSERT(result.second);
 
+
+	// If there is one camera in the scene use it.
+	// The start camera may not have been specified.
+	if (!m_startCam && gobject->getType() == GK_CAMERA)
+		m_startCam = (gkCamera *)gobject;
+
+	if(gobject->getProperties().isStatic())
+	{
+		gkPhysicsController *phy = gobject->getPhysicsController();
+	
+		if (phy)
+			m_Limits.merge(phy->getAabb());
+	}
+
 	if(m_navMeshData.get())
 		m_navMeshData->updateOrLoad(gobject);
+
+
 
 	// add to constraints
 	if (gobject->hasConstraints())
 		m_constraintObjects.push_back(gobject);
 }
+
 
 void gkScene::notifyObjectUnloaded(gkGameObject *gobject)
 {

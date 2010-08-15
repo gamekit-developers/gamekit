@@ -374,6 +374,16 @@ void gkEngine::removeListener(Listener *listener)
 		m_listeners.erase(listener);
 }
 
+
+void gkEngine::addLoadableCommand(gkObject *ob, const gkReloadableCmd::LoadCmd &type)
+{
+	gkReloadableCmd cmd = {ob, type};
+
+	if (m_loadables.find(cmd) == UT_NPOS)
+		m_loadables.push_back(cmd);
+}
+
+
 void gkEngine::run(void)
 {
 	// Start main game loop
@@ -472,23 +482,29 @@ void gkEnginePrivate::tickImpl(gkScalar dt)
 
 	scene->applyConstraints();
 
+
 	// post process
 	if (!engine->m_loadables.empty())
 	{
-		utHashTableIterator<LoadQueryMap> it(engine->m_loadables);
-		while (it.hasMoreElements())
+		utArrayIterator<gkReloadables> iter(engine->m_loadables);
+
+		while (iter.hasMoreElements())
 		{
-			utHashTableIterator<LoadQueryMap>::Pair obpair = it.getNext();
-			if (obpair.second == LQ_RELOAD)
-				static_cast<gkObject *>(obpair.first.key())->reload();
-			else if (obpair.second == LQ_LOAD)
-				static_cast<gkObject *>(obpair.first.key())->load();
-			else if (obpair.second == LQ_UNLOAD)
-				static_cast<gkObject *>(obpair.first.key())->unload();
+			gkReloadableCmd &cmd = iter.getNext();
+
+			if (cmd.first != 0)
+			{
+				if (cmd.second == gkReloadableCmd::RELOAD)
+					cmd.first->reload();
+				else if (cmd.second == gkReloadableCmd::LOAD)
+					cmd.first->load();
+				else if (cmd.second == gkReloadableCmd::UNLOAD)
+					cmd.first->unload();
+			}
 		}
+
 		engine->m_loadables.clear();
 	}
-
 }
 
 

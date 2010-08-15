@@ -34,54 +34,38 @@
 #include "gkScene.h"
 #include "gkCamera.h"
 #include "gkVariable.h"
+#include "gkDbvt.h"
 #include "btBulletDynamicsCommon.h"
 #include "BulletCollision/CollisionDispatch/btGhostObject.h"
 
-class gkDbvt : public btDbvt::ICollide
-{
-private:
-
-	int         m_tvs, m_tot;
-	gkVariable *m_debug;
-
-public:
-	gkDbvt();
-	~gkDbvt();
-
-	void Process(const btDbvtNode *nd);
-
-	void update(gkDynamicsWorld::ObjectList &oblist);
-	void drawDebug(void);
-
-	gkVariable *getInfo(void) {return m_debug;}
-
-};
 
 
-static bool CustomMaterialCombinerCallback(btManifoldPoint &cp,	const btCollisionObject *pObj0, int partId0, int index0, const btCollisionObject *pObj1, int partId1, int index1)
-{
-	return true;
-}
 
-
+// ----------------------------------------------------------------------------
 gkDynamicsWorld::gkDynamicsWorld(const gkString &name, gkScene *scene)
 	:       m_scene(scene),
-	        m_dynamicsWorld(0), m_collisionConfiguration(0),
-	        m_pairCache(0), m_ghostPairCallback(0), m_dispatcher(0), m_constraintSolver(0),
-	        m_debug(0), m_handleContacts(true), m_dbvt(0)
-
+	        m_dynamicsWorld(0), 
+			m_collisionConfiguration(0),
+	        m_pairCache(0), 
+			m_ghostPairCallback(0), 
+			m_dispatcher(0), 
+			m_constraintSolver(0),
+	        m_debug(0), 
+			m_handleContacts(true), 
+			m_dbvt(0)
 {
-//	gContactAddedCallback = CustomMaterialCombinerCallback;
 	loadImpl();
-
 }
 
+
+// ----------------------------------------------------------------------------
 gkDynamicsWorld::~gkDynamicsWorld()
 {
 	unloadImpl();
 }
 
 
+// ----------------------------------------------------------------------------
 void gkDynamicsWorld::loadImpl(void)
 {
 	// prepare world
@@ -111,6 +95,8 @@ void gkDynamicsWorld::loadImpl(void)
 		m_dbvt = new gkDbvt();
 }
 
+
+// ----------------------------------------------------------------------------
 void gkDynamicsWorld::unloadImpl(void)
 {
 	delete m_dynamicsWorld;
@@ -139,20 +125,17 @@ void gkDynamicsWorld::unloadImpl(void)
 
 	if (!m_objects.empty())
 	{
-		gkObject *rb = m_objects.begin();
+		gkPhysicsControllerIterator iter(m_objects);
+		while (iter.hasMoreElements())
+			delete iter.getNext();
 
-		while (rb)
-		{
-			// remove bullet body
-			gkObject *tmp = rb;
-			rb = rb->getNext();
-			delete tmp;
-		}
 		m_objects.clear();
 	}
 
 }
 
+
+// ----------------------------------------------------------------------------
 void gkDynamicsWorld::enableDebugPhysics(bool enable, bool debugAabb)
 {
 	if(enable)
@@ -179,72 +162,51 @@ void gkDynamicsWorld::enableDebugPhysics(bool enable, bool debugAabb)
 	}
 }
 
-
-void gkDynamicsWorld::createParentChildHierarchy(void)
-{
-
-	int i;
-	btAlignedObjectArray<btCollisionObject *> children;
-
-	for (i = 0; i < m_dynamicsWorld->getNumCollisionObjects(); i++)
-	{
-		btCollisionObject *childColObj = m_dynamicsWorld->getCollisionObjectArray()[i];
-		gkObject *childNode = static_cast<gkObject *>(childColObj->getUserPointer());
-		if (!childNode)
-			continue;
-
-		gkGameObject *obj = childNode->getObject();
-		if (obj->getParent())
-			children.push_back(childColObj);
-	}
-
-	for (i = 0; i < children.size(); i++)
-	{
-		btCollisionObject *childColObj = children[i];
-		gkObject *childNode = static_cast<gkObject *>(childColObj->getUserPointer());
-
-		m_objects.erase(childNode);
-
-		gkGameObject *ob = childNode->getObject();
-		if (ob->isInActiveLayer())
-			childNode->unload();
-		delete childNode;
-	}
-
-}
-
+// ----------------------------------------------------------------------------
 gkRigidBody *gkDynamicsWorld::createRigidBody(gkGameObject *state)
 {
 	GK_ASSERT(state);
-	gkRigidBody *rb = new gkRigidBody(state->getName(), state, this);
+	gkRigidBody *rb = new gkRigidBody(state, this);
 	m_objects.push_back(rb);
 	return rb;
 }
 
+
+// ----------------------------------------------------------------------------
 gkCharacter *gkDynamicsWorld::createCharacter(gkGameObject *state)
 {
 	GK_ASSERT(state);
-	gkCharacter *character = new gkCharacter(state->getName(), state, this);
+	gkCharacter *character = new gkCharacter(state, this);
 	m_objects.push_back(character);
 	return character;
 }
 
 
-void gkDynamicsWorld::destroyObject(gkObject *state)
+// ----------------------------------------------------------------------------
+void gkDynamicsWorld::destroyObject(gkPhysicsController *cont)
 {
-	if (m_objects.find(state))
+	UTsize pos;
+	if ((pos = m_objects.find(cont)) != UT_NPOS)
 	{
-		m_objects.erase(state);
-		state->unload();
-		delete state;
+		m_objects.erase(pos);
+
+		cont->destroy();
+		delete cont;
 	}
 }
 
-void gkDynamicsWorld::localDrawObject(btCollisionObject *colObj)
+
+
+// ----------------------------------------------------------------------------
+void gkDynamicsWorld::localDrawObject(gkPhysicsController *phyCon)
 {
-	if(colObj->isStaticObject()) return;
+	btCollisionObject *colObj = phyCon->getCollisionObject();
 
 	GK_ASSERT(m_debug && m_dynamicsWorld && colObj);
+
+	if(colObj->isStaticObject()) 
+		return;
+
 
 	btVector3 color(btScalar(1.), btScalar(1.), btScalar(1.));
 	switch (colObj->getActivationState())
@@ -263,43 +225,56 @@ void gkDynamicsWorld::localDrawObject(btCollisionObject *colObj)
 		color = btVector3(btScalar(1), btScalar(0.), btScalar(0.));
 	};
 
+	if (phyCon->isSuspended())
+	{
+		// Draw ORANGE
+		color = btVector3(btScalar(1), btScalar(0.5), btScalar(0.));
+	}
+
+
 	m_dynamicsWorld->debugDrawObject(colObj->getWorldTransform(),
 	                                 colObj->getCollisionShape(),
 	                                 color);
+
+
 
 	if (m_debug->getDebugMode() & btIDebugDraw::DBG_DrawAabb)
 	{
 		color[0] = btScalar(1.);
 		color[1] = color[2] = btScalar(0.);
 		btVector3 minAabb, maxAabb;
+
 		colObj->getCollisionShape()->getAabb(colObj->getWorldTransform(), minAabb, maxAabb);
 		m_debug->drawAabb(minAabb, maxAabb, color);
 	}
 }
 
-// Do one full physics step
+
+// ----------------------------------------------------------------------------
 void gkDynamicsWorld::step(gkScalar tick)
 {
+	// Do one full physics step
+
 	GK_ASSERT(m_dynamicsWorld);
 	m_dynamicsWorld->stepSimulation(tick);
 }
 
+
+// ----------------------------------------------------------------------------
 void gkDynamicsWorld::resetContacts()
 {
 	if (m_handleContacts && !m_objects.empty())
 	{
-		gkObject *rb = m_objects.begin();
-
-		while(rb)
+		gkPhysicsControllerIterator iter(m_objects);
+		while (iter.hasMoreElements())
 		{
-			if(rb->isLoaded())
-				rb->resetContactInfo();
-
-			rb = rb->getNext();
+			iter.getNext()->_resetContactInfo();
 		}
 	}
 }
 
+
+// ----------------------------------------------------------------------------
 void gkDynamicsWorld::substep(gkScalar tick)
 {
 	if (m_handleContacts)
@@ -310,46 +285,51 @@ void gkDynamicsWorld::substep(gkScalar tick)
 		{
 			btPersistentManifold *manifold = m_dispatcher->getManifoldByIndexInternal(i);
 
-			gkObject *colA = static_cast<gkObject *>(static_cast<btCollisionObject *>(manifold->getBody0())->getUserPointer());
-			gkObject *colB = static_cast<gkObject *>(static_cast<btCollisionObject *>(manifold->getBody1())->getUserPointer());
+			gkPhysicsController *colA = gkPhysicsController::castController(manifold->getBody0());
+			gkPhysicsController *colB = gkPhysicsController::castController(manifold->getBody1());
 
-			colA->resetContactInfo();
-			colB->resetContactInfo();
+
+			colA->_resetContactInfo();
+			colB->_resetContactInfo();
 		}
 
 		for (int i = 0; i < nr; ++i)
 		{
 			btPersistentManifold *manifold = m_dispatcher->getManifoldByIndexInternal(i);
 
-			gkObject *colA = static_cast<gkObject *>(static_cast<btCollisionObject *>(manifold->getBody0())->getUserPointer());
-			gkObject *colB = static_cast<gkObject *>(static_cast<btCollisionObject *>(manifold->getBody1())->getUserPointer());
+			gkPhysicsController *colA = gkPhysicsController::castController(manifold->getBody0());
+			gkPhysicsController *colB = gkPhysicsController::castController(manifold->getBody1());
 
-			colA->handleManifold(manifold);
-			colB->handleManifold(manifold);
+			colA->_handleManifold(manifold);
+			colB->_handleManifold(manifold);
 		}
 	}
 }
 
+
+// ----------------------------------------------------------------------------
 void gkDynamicsWorld::DrawDebug()
 {
 	if (m_debug)
 	{
 		if (!m_objects.empty())
 		{
-			gkObject *rb = m_objects.begin();
-
-			while (rb)
+			gkPhysicsControllerIterator iter(m_objects);
+			while (iter.hasMoreElements())
 			{
-				if (rb->isLoaded())
-				{
-					localDrawObject(rb->getCollisionObject());
-				}
-				rb = rb->getNext();
+				gkPhysicsController *cont = iter.getNext();
+
+
+				gkGameObject *ob = cont->getObject();
+				if (ob->isLoaded())
+					localDrawObject(cont);
 			}
 		}
 	}
 }
 
+
+// ----------------------------------------------------------------------------
 void gkDynamicsWorld::substepCallback(btDynamicsWorld *dyn, btScalar tick)
 {
 	gkDynamicsWorld *world = static_cast<gkDynamicsWorld *>(dyn->getWorldUserInfo());
@@ -358,105 +338,20 @@ void gkDynamicsWorld::substepCallback(btDynamicsWorld *dyn, btScalar tick)
 }
 
 
+
+// ----------------------------------------------------------------------------
 gkVariable *gkDynamicsWorld::getDBVTInfo(void)
 {
 	return m_dbvt ? m_dbvt->getInfo() : 0;
 }
 
 
-gkDbvt::gkDbvt() : m_tvs(0), m_tot(0), m_debug(0)
-{
-	m_debug = new gkVariable("btDbvt", false);
-}
 
-gkDbvt::~gkDbvt()
-{
-	if (m_debug)
-	{
-		delete m_debug;
-		m_debug = 0;
-	}
-}
-
-void gkDbvt::Process(const btDbvtNode *nd)
-{
-	btBroadphaseProxy *proxy = (btBroadphaseProxy *)nd->data;
-	btCollisionObject *colob = (btCollisionObject *)proxy->m_clientObject;
-	gkGameObject *object = ((gkGameObject *)colob->getUserPointer())->getObject();
-
-	if (object->getType() == GK_ENTITY)
-	{
-		Ogre::MovableObject *mov = object->getMovable();
-		if (mov)
-		{
-			if (!mov->isVisible() && !object->getProperties().isInvisible())
-			{
-				mov->setVisible(true);
-				m_tvs++;
-			}
-		}
-	}
-
-}
-
-void gkDbvt::update(gkDynamicsWorld::ObjectList &oblist)
-{
-	m_tot = 0;
-	m_tvs = 0;
-	if (!oblist.empty())
-	{
-		gkObject *rb = oblist.begin();
-
-		while (rb)
-		{
-			if (rb->isLoaded())
-			{
-				gkGameObject *ob = rb->getObject();
-				if (ob->getType() == GK_ENTITY && !ob->getProperties().isInvisible())
-				{
-					Ogre::MovableObject *mov = ob->getMovable();
-					if (mov)
-					{
-						m_tot++;
-						mov->setVisible(false);
-					}
-				}
-			}
-			rb = rb->getNext();
-		}
-	}
-}
-
-void gkDbvt::drawDebug(void)
-{
-	if (m_debug)
-	{
-		char buf[72];
-		sprintf(buf, "%i, %i\n", m_tvs, m_tot);
-		m_debug->setValue(gkString(buf));
-	}
-}
-
-
+// ----------------------------------------------------------------------------
 void gkDynamicsWorld::handleDbvt(gkCamera *cam)
 {
 	if (!m_dbvt)
 		return;
 
-	btDbvtBroadphase *cullTree = (btDbvtBroadphase *)m_pairCache;
-
-	const Ogre::Plane *planes = cam->getCamera()->getFrustumPlanes();
-	btVector3 normals[6];
-	btScalar offsets[6];
-
-	for (int i=0; i<6; ++i)
-	{
-		normals[i].setValue(planes[i].normal.x, planes[i].normal.y, planes[i].normal.z);
-		offsets[i] = planes[i].d;
-	}
-
-	m_dbvt->update(m_objects);
-	btDbvt::collideKDOP(cullTree->m_sets[1].m_root, normals, offsets, 6, *m_dbvt);
-	btDbvt::collideKDOP(cullTree->m_sets[0].m_root, normals, offsets, 6, *m_dbvt);
-	m_dbvt->drawDebug();
+	m_dbvt->mark(cam, (btDbvtBroadphase *)m_pairCache, m_objects);
 }

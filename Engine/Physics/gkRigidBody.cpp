@@ -24,95 +24,59 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "gkRigidBody.h"
 #include "gkDynamicsWorld.h"
 #include "gkGameObject.h"
-#include "gkScene.h"
 #include "gkRigidBody.h"
-#include "gkEntity.h"
-#include "gkMesh.h"
-#include "btBulletDynamicsCommon.h"
-#include "OgreSceneNode.h"
 
-gkRigidBody::gkRigidBody(const gkString &name, gkGameObject *object, gkDynamicsWorld *owner)
-	:       gkObject(name), m_owner(owner), m_object(object), m_body(0), m_shape(0), m_oldActivationState(-1)
+#include "btBulletDynamicsCommon.h"
+
+
+
+// ----------------------------------------------------------------------------
+gkRigidBody::gkRigidBody(gkGameObject *object, gkDynamicsWorld *owner)
+	:    gkPhysicsController(object, owner),
+	     m_body(0),
+	     m_oldActivationState(-1)
 {
 }
 
 
+// ----------------------------------------------------------------------------
 gkRigidBody::~gkRigidBody()
 {
-	if (m_body)
-		delete m_body;
-	if (m_shape)
-		delete m_shape;
+	delete m_shape;
+	m_shape = 0;
+
+	delete m_body;
+	m_body = 0;
+
+	m_collisionObject = 0;
 }
 
 
-void gkRigidBody::loadImpl(void)
+// ----------------------------------------------------------------------------
+btRigidBody *gkRigidBody::getBody(void)
 {
-	GK_ASSERT(m_object);
+	return m_body;
+}
 
-	gkGameObjectProperties  &props  = m_object->getProperties();
-	gkPhysicsProperties     &phy    = props.m_physics;
 
-	if (phy.isContactListener())
-		setFlags(getFlags() | gkObject::RBF_CONTACT_INFO);
+// ----------------------------------------------------------------------------
+void gkRigidBody::create(void)
+{
+	GK_ASSERT(m_object && m_object->isLoaded() && m_object->isInActiveLayer());
 
-	gkMesh *me = 0;
-	gkEntity *ent = m_object->getEntity();
-	if (ent != 0)
-		me = ent->getEntityProperties().m_mesh;
-
-	// extract the shape's size
-	gkVector3 size(1.f, 1.f, 1.f);
-	if (me != 0)
-		size = me->getBoundingBox().getHalfSize();
-	else
-		size *= phy.m_radius;
-
-	switch (phy.m_shape)
-	{
-	case SH_BOX:
-		m_shape = new btBoxShape(btVector3(size.x, size.y, size.z));
-		break;
-	case SH_CONE:
-		m_shape = new btConeShapeZ(gkMax(size.x, size.y), 2.f * size.z);
-		break;
-	case SH_CYLINDER:
-		m_shape = new btCylinderShapeZ(btVector3(size.x, size.y, size.z));
-		break;
-	case SH_CONVEX_TRIMESH:
-	case SH_GIMPACT_MESH:
-	case SH_BVH_MESH:
-		{
-			if (me != 0)
-			{
-				btTriangleMesh *triMesh = me->getTriMesh();
-				if (triMesh->getNumTriangles() > 0)
-				{
-					if (phy.m_shape == SH_CONVEX_TRIMESH)
-						m_shape = new btConvexTriangleMeshShape(triMesh);
-					else if (phy.m_shape == SH_GIMPACT_MESH)
-						m_shape = new btConvexTriangleMeshShape(triMesh);
-					else
-						m_shape = new btBvhTriangleMeshShape(triMesh, true);
-					break;
-				}
-				else
-					return;
-			}
-		}
-	case SH_SPHERE:
-		m_shape = new btSphereShape(gkMax(size.x, gkMax(size.y, size.z)));
-		break;
-	}
-
-	if (!m_shape)
+	createShape();
+	if (!m_shape) 
 		return;
 
-	m_shape->setMargin(phy.m_margin);
-	m_shape->setLocalScaling(props.m_transform.toLocalScaling());
+
+	const gkGameObjectProperties &props = m_object->getProperties();
+	const gkPhysicsProperties &phy = props.m_physics;
+
+	// use the most up to date transform. 
+	const gkTransformState &tstate = m_object->getLocalTransform();
+
 
 	if (phy.isRigidOrDynamic())
 	{
@@ -121,123 +85,87 @@ void gkRigidBody::loadImpl(void)
 
 		m_body = new btRigidBody(phy.m_mass, this, m_shape, inertia);
 
+		m_body->setLinearFactor(
+			btVector3( 
+			    (phy.m_mode & GK_LOCK_LINV_X) ? 0.f : 1.f, 
+				(phy.m_mode & GK_LOCK_LINV_Y) ? 0.f : 1.f, 
+				(phy.m_mode & GK_LOCK_LINV_Z) ? 0.f : 1.f
+				));
+
 		if (phy.isDynamic())
 			m_body->setAngularFactor(0.f);
+		else
+		{
+			m_body->setAngularFactor(
+				btVector3( 
+					(phy.m_mode & GK_LOCK_ANGV_X) ? 0.f : 1.f, 
+					(phy.m_mode & GK_LOCK_ANGV_Y) ? 0.f : 1.f, 
+					(phy.m_mode & GK_LOCK_ANGV_Z) ? 0.f : 1.f
+					));
+		}
 
 		m_body->setDamping(phy.m_linearDamp, phy.m_angularDamp);
-
 	}
 	else
 	{
 		m_body = new btRigidBody(0.f, 0, m_shape, btVector3(0,0,0));
 		m_body->setDamping(0.f, 0.f);
 		m_body->setAngularFactor(0.f);
-		m_body->setLinearFactor(btVector3(0.f, 0.f, 0.f));
 	}
 
+	btDynamicsWorld *dyn = getOwner();
+	m_body->setUserPointer(this);
 
-	if (m_body != 0)
-	{
-		btDynamicsWorld *dyn = m_owner->getBulletWorld();
-		m_body->setUserPointer(this);
+	m_body->setFriction(phy.m_friction);
+	m_body->setRestitution(phy.m_restitution);
+	m_body->setWorldTransform(tstate.toTransform());
 
-		m_body->setFriction(phy.m_friction);
-		m_body->setRestitution(phy.m_restitution);
+	if (!phy.isDosser())
+		m_body->setActivationState(m_body->getActivationState() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
 
-
-		m_body->setWorldTransform(props.m_transform.toTransform());
-
-		if (!phy.isDosser())
-			m_body->setActivationState(m_body->getActivationState() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
-
-		dyn->addRigidBody(m_body);
-	}
+	m_collisionObject = m_body;
+	dyn->addRigidBody(m_body);
 }
 
 
-
-void gkRigidBody::unloadImpl(void)
+// ----------------------------------------------------------------------------
+void gkRigidBody::destroy(void)
 {
 	if (m_body)
 	{
 		// intertwine
 		m_body->setUserPointer(0);
+		m_body->setMotionState(0);
 
-		if (!m_body->isStaticOrKinematicObject())
-			m_body->setMotionState(0);
-
-		m_owner->getBulletWorld()->removeRigidBody(m_body);
+		if (!m_suspend)
+			getOwner()->removeRigidBody(m_body);
 
 		delete m_shape;
 		m_shape = 0;
 
 		delete m_body;
 		m_body = 0;
+
+		m_collisionObject = 0;
 	}
 }
 
-void gkRigidBody::setTransformState(const gkTransformState &state)
-{
-	if (m_body)
-	{
-		m_body->activate();
-		m_body->setCenterOfMassTransform(state.toTransform());
-	}
 
-
-}
-
-
-void gkRigidBody::updateTransform(void)
-{
-	if (!isLoaded())
-		return;
-
-	if (m_body->isStaticOrKinematicObject())
-		return;
-
-	btTransform worldTrans;
-	worldTrans.setIdentity();
-
-
-	gkQuaternion rot;
-	gkVector3 loc;
-
-	// see if we can benefit from cached transforms
-	if (!m_object->getParent())
-	{
-		rot = m_object->getOrientation();
-		loc = m_object->getPosition();
-	}
-	else
-	{
-		// must derrive
-		rot = m_object->getWorldOrientation();
-		loc = m_object->getWorldPosition();
-	}
-
-
-	worldTrans.setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w));
-	worldTrans.setOrigin(btVector3(loc.x, loc.y, loc.z));
-
-	m_body->setCenterOfMassTransform(worldTrans);
-}
-
-
-
+// ----------------------------------------------------------------------------
 void gkRigidBody::setLinearVelocity(const gkVector3 &v, int tspace)
 {
-	if (!isLoaded())
+	if (m_suspend) // block
+		return;
+
+	if (!m_body)
 		return;
 
 	// only dynamic bodies
 	if (m_body->isStaticOrKinematicObject())
 		return;
 
-	if (v.squaredLength() > GK_EPSILON*GK_EPSILON) m_body->activate();
-
-
-
+	if (v.squaredLength() > GK_EPSILON*GK_EPSILON) 
+		m_body->activate();
 
 	gkVector3 vel;
 	switch (tspace)
@@ -259,25 +187,32 @@ void gkRigidBody::setLinearVelocity(const gkVector3 &v, int tspace)
 	btVector3 lf = m_body->getLinearFactor();
 	if (gkFuzzy(lf.length2()))
 		return;
+
 	btVector3 nvel = btVector3(vel.x, vel.y, vel.z) * lf;
 	if (gkFuzzy(nvel.length2()))
 		return;
 
 	m_body->setLinearVelocity(nvel);
-	//m_object->notifyUpdate();
 }
 
 
+// ----------------------------------------------------------------------------
 void gkRigidBody::setAngularVelocity(const gkVector3 &v, int tspace)
 {
-	if (!isLoaded())
+	if (m_suspend) // block
 		return;
 
-	// only dynamic bodies
-	if (m_body->isStaticOrKinematicObject())
+	if (!m_body)
 		return;
 
-	if (v.squaredLength() > GK_EPSILON*GK_EPSILON) m_body->activate();
+
+	// only rigid bodies
+	if (!getProperties().isRigid())
+		return;
+
+	if (v.squaredLength() > GK_EPSILON*GK_EPSILON) 
+		m_body->activate();
+
 
 
 	gkVector3 vel;
@@ -297,23 +232,29 @@ void gkRigidBody::setAngularVelocity(const gkVector3 &v, int tspace)
 		break;
 	}
 
+
 	btVector3 af = m_body->getAngularFactor();
 	if (gkFuzzy(af.length2()))
 		return;
+
+
 	btVector3 nvel = btVector3(vel.x, vel.y, vel.z) * af;
 	if (gkFuzzy(nvel.length2()))
 		return;
 
 	m_body->setAngularVelocity(nvel);
-	//m_object->notifyUpdate();
 }
 
 
+// ----------------------------------------------------------------------------
 void gkRigidBody::applyTorque(const gkVector3 &v, int tspace)
 {
-	if (!isLoaded())
+	if (m_suspend) // block
 		return;
-	// only dynamic bodies
+
+	if (!m_body)
+		return;
+
 	if (m_body->isStaticOrKinematicObject())
 		return;
 
@@ -338,23 +279,28 @@ void gkRigidBody::applyTorque(const gkVector3 &v, int tspace)
 	}
 
 	m_body->applyTorque(btVector3(vel.x, vel.y, vel.z));
-	//m_object->notifyUpdate();
 }
 
 
+// ----------------------------------------------------------------------------
 void gkRigidBody::applyForce(const gkVector3 &v, int tspace)
 {
-	if (!isLoaded())
+	if (m_suspend) // block
+		return;
+
+	if (!m_body)
 		return;
 
 	// only dynamic bodies
 	if (m_body->isStaticOrKinematicObject())
 		return;
 
-	if (v.squaredLength() > GK_EPSILON*GK_EPSILON) m_body->activate();
+	if (v.squaredLength() > GK_EPSILON * GK_EPSILON)
+		m_body->activate();
 
 
 	gkVector3 vel;
+
 	switch (tspace)
 	{
 	case TRANSFORM_LOCAL:
@@ -373,34 +319,34 @@ void gkRigidBody::applyForce(const gkVector3 &v, int tspace)
 	}
 
 	m_body->applyCentralForce(btVector3(vel.x, vel.y, vel.z));
-
-	//m_object->notifyUpdate();
 }
 
 
+// ----------------------------------------------------------------------------
 gkVector3 gkRigidBody::getLinearVelocity(void)
 {
-	if (m_body->isStaticOrKinematicObject() || !isLoaded())
+	if (m_suspend || m_body->isStaticOrKinematicObject() || !m_body)
 		return gkVector3(0, 0, 0);
 
-	btVector3 vel = m_body->getLinearVelocity();
-	return gkVector3(vel.x(), vel.y(), vel.z());
+	return gkMathUtils::get(m_body->getLinearVelocity());
 }
 
+// ----------------------------------------------------------------------------
 gkVector3 gkRigidBody::getAngularVelocity()
 {
-	if (m_body->isStaticOrKinematicObject() || !isLoaded())
+	// only rigid bodies
+	if (m_suspend || !getProperties().isRigid() || !m_body)
 		return gkVector3(0, 0, 0);
 
-	btVector3 vel = m_body->getAngularVelocity();
-	return gkVector3(vel.x(), vel.y(), vel.z());
+	return gkMathUtils::get(m_body->getAngularVelocity());
 }
 
 
-// transform access
+
+// ----------------------------------------------------------------------------
 void gkRigidBody::getWorldTransform(btTransform &worldTrans) const
 {
-	if (!m_object->isLoaded() || !isLoaded())
+	if (m_suspend || !m_object->isLoaded() || !m_body)
 		return;
 
 	worldTrans.setIdentity();
@@ -410,7 +356,8 @@ void gkRigidBody::getWorldTransform(btTransform &worldTrans) const
 	gkVector3 loc;
 
 	// see if we can benefit from cached transforms
-	if (!m_object->getParent())
+
+	if (!m_object->hasParent())
 	{
 		rot = m_object->getOrientation();
 		loc = m_object->getPosition();
@@ -422,45 +369,17 @@ void gkRigidBody::getWorldTransform(btTransform &worldTrans) const
 		loc = m_object->getWorldPosition();
 	}
 
+
 	worldTrans.setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w));
 	worldTrans.setOrigin(btVector3(loc.x, loc.y, loc.z));
 }
 
 
+// ----------------------------------------------------------------------------
 void gkRigidBody::setWorldTransform(const btTransform &worldTrans)
 {
-	if (!m_object->isLoaded() || !isLoaded())
+	if (m_suspend || !m_object->isLoaded() || !m_body)
 		return;
 
-	const btQuaternion &rot = worldTrans.getRotation();
-	const btVector3 &loc = worldTrans.getOrigin();
-
-	// apply to the node and sync state next update
-	Ogre::SceneNode *node = m_object->getNode();
-	node->setOrientation(gkQuaternion(rot.w(), rot.x(), rot.y(), rot.z()));
-	node->setPosition(gkVector3(loc.x(), loc.y(), loc.z()));
-	m_object->notifyUpdate();
-}
-
-btCollisionObject *gkRigidBody::getCollisionObject()
-{
-	return m_body;
-}
-
-Ogre::AxisAlignedBox gkRigidBody::getAabb() const
-{
-	if(m_body)
-	{
-		btVector3 aabbMin;
-		btVector3 aabbMax;
-
-		m_body->getAabb(aabbMin, aabbMax);
-
-		gkVector3 min_aabb(aabbMin.x(), aabbMin.y(), aabbMin.z());
-		gkVector3 max_aabb(aabbMax.x(), aabbMax.y(), aabbMax.z());
-
-		return Ogre::AxisAlignedBox(min_aabb, max_aabb);
-	}
-
-	return Ogre::AxisAlignedBox();
+	gkPhysicsController::setTransform(worldTrans);
 }

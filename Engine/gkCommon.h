@@ -27,17 +27,9 @@
 #ifndef _gkCommon_h_
 #define _gkCommon_h_
 
-#include "Utils/utCommon.h"
 #include "gkHashedString.h"
-
-
 #include "OgreBuildSettings.h"
-#include "OgreConfig.h"
-#include "OgrePlatform.h"
 #include "OgrePrerequisites.h"
-
-#include "Utils/utTypes.h"
-
 
 #define GK_NPOS             UT_NPOS
 #define GK_PLATFORM_WIN32   UT_PLATFORM_WIN32
@@ -57,16 +49,9 @@
         return ms_Singleton;\
     }
 
-#define gkMakeHandle(name) typedef struct name##__ { int unused; } *name
 #define GK_DEF_GROUP "General"
 
-
-
-#define gkIS_PROGRAM(name)      (!Ogre::HighLevelGpuProgramManager::getSingleton().getByName(name).isNull())
-#define gkIS_OPENGL()           (Ogre::Root::getSingleton().getRenderSystem()->getName().find("GL") != gkString::npos)
-#define gkHAS_CAPABILITY(x)     (Ogre::Root::getSingleton().getRenderSystem()->getCapabilities()->hasCapability(x))
-
-
+class gkObject;
 class gkCamera;
 class gkEntity;
 class gkLight;
@@ -94,6 +79,20 @@ class gkBezierSpline;
 class gkGameObjectGroup;
 class gkGameObjectInstance;
 
+class gkPhysicsController;
+class gkCharacter;
+class gkRigidBody;
+
+
+class gkLogicLink;
+class btCollisionObject;
+class btCollisionShape;
+
+class gkDynamicsWorld;
+class gkDebugger;
+class gkScene;
+class gkActiveObject;
+
 
 // Common types
 typedef std::set<gkGameObject *>                     gkGameObjectSet;
@@ -101,7 +100,8 @@ typedef utHashTable<gkHashedString, gkGameObject *>  gkGameObjectHashMap;
 typedef utHashTableIterator<gkGameObjectHashMap>     gkGameObjectHashMapIterator;
 typedef utArray<gkGameObject *>                      gkGameObjectArray;
 typedef utArrayIterator<gkGameObjectArray>           gkGameObjectArrayIterator;
-
+typedef utArray<gkPhysicsController *>               gkPhysicsControllers;
+typedef utArrayIterator<gkPhysicsControllers>        gkPhysicsControllerIterator;
 
 
 enum gkTransformSpace
@@ -120,6 +120,27 @@ struct Int2Type
 	enum { value = v };
 };
 
+
+
+
+// Do user load commands outside, logic / physics systems
+struct gkReloadableCmd
+{
+	enum LoadCmd
+	{
+		RELOAD,
+		LOAD,
+		UNLOAD
+	};
+
+	gkObject *first;
+	LoadCmd   second;
+
+	GK_INLINE bool operator == (const gkReloadableCmd& cmd) const 
+	{ return first == cmd.first && second == cmd.second; }
+};
+
+typedef utArray<gkReloadableCmd> gkReloadables;
 
 
 #endif//_gkCommon_h_

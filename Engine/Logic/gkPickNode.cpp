@@ -112,7 +112,7 @@ void gkPickNode::CreatePick()
 	{
 		btCollisionObject* pCol = rayTest.getCollisionObject();
 
-		gkObject* pObj = static_cast<gkObject*>(pCol->getUserPointer());
+		gkPhysicsController* pObj = static_cast<gkPhysicsController*>(pCol->getUserPointer());
 
 		m_pickedBody = dynamic_cast<gkRigidBody*>(pObj);
 

@@ -28,10 +28,7 @@
 #define _gkCharacter_h_
 
 
-#include "btBulletDynamicsCommon.h"
-#include "gkObject.h"
-#include "gkTransformState.h"
-#include "LinearMath/btMotionState.h"
+#include "gkPhysicsController.h"
 
 
 class btDynamicsWorld;
@@ -41,33 +38,18 @@ class btTriangleMesh;
 class gkDynamicsWorld;
 
 
-class gkCharacter : public gkObject, public btActionInterface
+class gkCharacter : public gkPhysicsController, public btActionInterface
 {
 public:
 
-	gkCharacter(const gkString &name, gkGameObject *object, gkDynamicsWorld *owner);
-
+	gkCharacter(gkGameObject *object, gkDynamicsWorld *owner);
 	virtual ~gkCharacter();
 
-	void setTransformState(const gkTransformState &state);
-
-	// update state based on the objects transform
-	void updateTransform(void);
 
 	void setVelocity(const gkVector3 &v, gkScalar timeInterval);
 
-	// Gain access to the bullet body
-	//btKinematicCharacterController* getCharacter()      {return m_character;}
-	// Gain access to the world
-	gkDynamicsWorld *getWorld(void) {GK_ASSERT(m_owner); return m_owner;}
-	// Gain access to the game object
-	gkGameObject *getObject(void)   {GK_ASSERT(m_object); return m_object;}
 
-	btCollisionObject *getCollisionObject();
-
-	Ogre::AxisAlignedBox getAabb() const;
-
-	btPairCachingGhostObject *getGhostObject() const { return m_ghostObject; }
+	btPairCachingGhostObject *getGhostObject() const;
 	btKinematicCharacterController *getCharacterController() const { return m_character; }
 
 	void updateAction( btCollisionWorld *collisionWorld, btScalar deltaTime);
@@ -75,25 +57,14 @@ public:
 	void debugDraw(btIDebugDraw *debugDrawer) {}
 
 
+	void create(void);
+	void destroy(void);
+
 protected:
 
 	void setWorldTransform(const btTransform &worldTrans);
 
-	void loadImpl(void);
-	void unloadImpl(void);
-
-protected:
-
-	// Parent world
-	gkDynamicsWorld *m_owner;
-
-	// modifier object
-	gkGameObject *m_object;
-
-	btPairCachingGhostObject *m_ghostObject;
 	btKinematicCharacterController *m_character;
-	btCollisionShape *m_shape;
-
 };
 
 #endif//_gkCharacter_h_

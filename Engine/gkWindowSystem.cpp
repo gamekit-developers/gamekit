@@ -95,8 +95,15 @@ RenderWindow *gkWindowSystem::createMainWindow(const gkUserDefs &prefs)
 	if (m_window)
 		return 0;
 
+	Ogre::NameValuePairList params;
 
-	m_window = Root::getSingleton().createRenderWindow(prefs.wintitle, (int)prefs.winsize.x, (int)prefs.winsize.y, prefs.fullscreen);
+	if (prefs.fsaa)
+	{
+		params["FSAA"] = Ogre::StringConverter::toString(prefs.fsaaSamples);
+	}
+
+	m_window = Root::getSingleton().createRenderWindow(prefs.wintitle, 
+		(int)prefs.winsize.x, (int)prefs.winsize.y, prefs.fullscreen, &params);
 	m_window->setActive(true);
 
 	// copy window size (used later for hit testing)

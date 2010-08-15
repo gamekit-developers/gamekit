@@ -27,10 +27,11 @@
 #include "gkRaySensor.h"
 #include "gkLogicManager.h"
 #include "gkLogicDispatcher.h"
-#include "gkDynamicsWorld.h"
 #include "gkGameObject.h"
+#include "gkPhysicsController.h"
 #include "gkScene.h"
-#include "btBulletDynamicsCommon.h"
+#include "gkRayTest.h"
+
 
 
 // ----------------------------------------------------------------------------
@@ -54,10 +55,6 @@ gkLogicBrick *gkRaySensor::clone(gkLogicLink *link, gkGameObject *dest)
 // ----------------------------------------------------------------------------
 bool gkRaySensor::query(void)
 {
-	gkScene *scene = m_object->getOwner();
-	gkDynamicsWorld *dyn = scene->getDynamicsWorld();
-
-	btDynamicsWorld *btw = dyn->getBulletWorld();
 
 	gkVector3 dir;
 	switch (m_axis)
@@ -70,36 +67,15 @@ bool gkRaySensor::query(void)
 	case RA_ZNEG: {dir = gkVector3(0,0,-m_range); break;}
 	}
 
-	gkVector3 vec = m_object->getWorldPosition();
-	btCollisionWorld::ClosestRayResultCallback exec(btVector3(vec.x, vec.y, vec.z),
-	        btVector3(vec.x + dir.x, vec.y + dir.y, vec.z + dir.z));
-	btw->rayTest(exec.m_rayFromWorld, exec.m_rayToWorld, exec);
-
-	if (!exec.hasHit())
-		return false;
-
-
-	if (!exec.m_collisionObject)
-		return false;
-
-	gkGameObject *object = ((gkGameObject *)exec.m_collisionObject->getUserPointer())->getObject();
-
-
-	if (!m_material.empty() || !m_prop.empty())
+	gkRayTest test;
+	if (test.collides(gkRay(m_object->getWorldPosition(), dir)))
 	{
-		if (!m_prop.empty())
+		gkGameObject *hit = gkPhysicsController::castObject(test.getCollisionObject());
+		if (hit && hit != m_object)
 		{
-			if (object->hasVariable(m_prop))
-				return true;
+			bool onlyActorTODO = false;
+			return gkPhysicsController::sensorTest(hit, m_prop, m_material, onlyActorTODO);
 		}
-		else if (!m_material.empty())
-		{
-			if (object->hasSensorMaterial(m_material))
-				return true;
-		}
-
-		return false;
 	}
-
-	return true;
+	return false;
 }

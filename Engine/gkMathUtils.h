@@ -32,6 +32,7 @@
 #include "OgreVector2.h"
 #include "OgreMatrix3.h"
 #include "OgreMatrix4.h"
+#include "OgreRay.h"
 #include "OgreMath.h"
 #include "OgreQuaternion.h"
 #include "OgreColourValue.h"
@@ -68,6 +69,7 @@ typedef Ogre::Matrix3           gkMatrix3;
 typedef Ogre::Matrix4           gkMatrix4;
 typedef Ogre::ColourValue       gkColor;
 typedef Ogre::AxisAlignedBox    gkBoundingBox;
+typedef Ogre::Ray               gkRay;
 
 
 #define gkPi        gkScalar(3.141592653589793238)
