@@ -26,8 +26,8 @@
 bl_addon_info = {
     'name': 'Gamekit Engine',
     'author': 'Xavier Thomas (xat)',
-    'version': '0.1 2010/07/21',
-    'blender': (2, 5, 3),
+    'version': '0.1 2010/08/18',
+    'blender': (2, 5, 4),
     'location': 'Info Window > Render Engine > Gamekit',
     'description': 'Launch game using the fine gamekit engine',
     'wiki_url': 'http://wiki.blender.org/index.php/Extensions:2.5/Py/Scripts/Gamekit_Engine',
@@ -150,125 +150,8 @@ del properties_data_lamp
 
 # Setting for this addon
 class GamekitSettings(bpy.types.IDPropertyGroup):
-    pass    
-default_path = os.environ.get("TEMP")
-
-if not default_path:
-    if os.name == 'nt':
-        default_path = "c:/tmp/"
-    else:
-        default_path = "/tmp/"
-    
-GamekitSettings.StringProperty( attr="gk_runtime_exec_path",
-                name="Runtime",
-                description="Path of the gamekit executable",
-                maxlen = 512,
-                default = "/usr/local/bin/OgreKit",
-                subtype='FILE_PATH')
-                
-                
-GamekitSettings.StringProperty( attr="gk_runtime_working_dir",
-                name="Working Directory",
-                description="Directory in which to launch the game",
-                maxlen = 512,
-                default = default_path,
-                subtype='FILE_PATH')
-
-GamekitSettings.StringProperty( attr="gk_export_tmp_dir",
-                name="Temporary files",
-                description="Directory in which to store temporary files",
-                maxlen = 512,
-                default = default_path,
-                subtype='FILE_PATH')
-
-GamekitSettings.EnumProperty( attr="gk_render_system",
-                name="Render system",
-                items=(('GL', 'OpenGL', 'gl'),
-                ('D3D9', 'Direct 3D 9', 'd3d9'),
-                ('D3D10', 'Direct 3D 10', 'd3d10'),
-                ('D3D11', 'Direct 3D 11', 'd3d11')),
-                default = 'GL')
-
-GamekitSettings.StringProperty( attr="gk_log_file",
-                name="Log",
-                description="Name of the log file that will be created in the working directory.",
-                maxlen=512,
-                default="OgreKit.log")
-
-GamekitSettings.StringProperty( attr="gk_window_title",
-                name="Window title",
-                description="Name of the log file that will be created in the working directory.",
-                maxlen=512,
-                default="OgreKit")
-
-GamekitSettings.BoolProperty( attr="gk_grab_input",
-                name="Grab input",
-                description="Grab mouse and keyboard event (cause other app to be unusable while game is runing).",
-                default=True)
-
-GamekitSettings.BoolProperty( attr="gk_verbose",
-                name="Verbose",
-                description="Verbose output on the console.",
-                default=False)
-
-GamekitSettings.IntProperty( attr="gk_start_frame",
-                name="Start frame",
-                min=1,
-                soft_min=1,
-                default =1)
-
-GamekitSettings.BoolProperty( attr="gk_frustrum_culling",
-                name="Frustrum culling",
-                default=True)
-
-GamekitSettings.BoolProperty( attr="gk_debug_sound",
-                name="Debug sound",
-                default=False)
-
-GamekitSettings.BoolProperty( attr="gk_debug_physicsaabb",
-                name="Physics AABB",
-                description="Show physics axis aligned bounding boxes",
-                default=False)
-
-GamekitSettings.BoolProperty( attr="gk_build_instances",
-                name="Build instances",
-                default=False)
-
-GamekitSettings.BoolProperty( attr="gk_use_shadows",
-                name="Enable shadows",
-                default=True)
-
-GamekitSettings.EnumProperty( attr="gk_shadow_type",
-                name="Shadow type",
-                items=(('NONE', 'None', 'n'),
-                ('STENCIL_MODULATIVE', 'Stencil modulative', 'sm'),
-                ('STENCIL_ADDITIVE', 'Stencil additive', 'sa'),
-                ('TEXTURE_MODULATIVE', 'Texture modulative', 'tm'),
-                ('TEXTURE_ADDITIVE', 'Texture additive', 'ta'),
-                ('TEXTURE_MODULATIVE_INTEGRATED', 'Texture modulative integrated', 'tmi'),
-                ('TEXTURE_ADDITIVE_INTEGRATED', 'Texture additive integrated', 'tai')),
-                description = "Ogre shadow technique.",
-                default = 'STENCIL_ADDITIVE')
-
-GamekitSettings.FloatVectorProperty( attr="gk_shadow_color",
-                name="Sadow color",
-                subtype='COLOR',
-                min=0.0,
-                max=1.0,
-                soft_min=0.0,
-                soft_max=1.0,
-                default = (0.0, 0.0, 0.0))
-
-GamekitSettings.FloatProperty( attr="gk_far_dist_shadow",
-                name="Far distance shadow",
-                min=0.0,
-                max=1.0,
-                soft_min=0.0,
-                soft_max=1.0,
-                default =0.0)
-
-bpy.types.Scene.PointerProperty(attr="gamekit", type=GamekitSettings, name="Gamekit", description="Gamekit Settings")
-
+    pass  
+      
 
 # Declare gamekit as a render engine
 class GamekitRender(bpy.types.RenderEngine):
@@ -349,7 +232,7 @@ class GamekitExportStartupFileOperator(bpy.types.Operator):
         return context.scene.render.engine == 'GAMEKIT_RENDER'
 
     def execute(self, context):
-        gdata = context.scene.game_data
+        gdata = context.scene.game_settings
         gks = context.scene.gamekit
         scene = context.scene
 
@@ -397,7 +280,7 @@ class GamekitExportStartupFileOperator(bpy.types.Operator):
         file.write("\n")
         
         file.write("fullscreen          = ")
-        file.write( str(gdata.fullscreen))  
+        file.write( str(gdata.show_fullscreen))  
         file.write("\n")      
         
 #        file.write("resources           = ")
@@ -522,11 +405,126 @@ class GamekitStartGameOperator(bpy.types.Operator):
         return self.execute(context)
 
 def register():
-    pass
+    bpy.types.Scene.PointerProperty(attr="gamekit", type=GamekitSettings, name="Gamekit", description="Gamekit Settings")
+    
+    default_path = os.environ.get("TEMP")
+    if not default_path:
+        if os.name == 'nt':
+            default_path = "c:/tmp/"
+        else:
+            default_path = "/tmp/"
+        
+    GamekitSettings.StringProperty( attr="gk_runtime_exec_path",
+                    name="Runtime",
+                    description="Path of the gamekit executable",
+                    maxlen = 512,
+                    default = "/usr/local/bin/OgreKit",
+                    subtype='FILE_PATH')
+                    
+                    
+    GamekitSettings.StringProperty( attr="gk_runtime_working_dir",
+                    name="Working Directory",
+                    description="Directory in which to launch the game",
+                    maxlen = 512,
+                    default = default_path,
+                    subtype='FILE_PATH')
+
+    GamekitSettings.StringProperty( attr="gk_export_tmp_dir",
+                    name="Temporary files",
+                    description="Directory in which to store temporary files",
+                    maxlen = 512,
+                    default = default_path,
+                    subtype='FILE_PATH')
+
+    GamekitSettings.EnumProperty( attr="gk_render_system",
+                    name="Render system",
+                    items=(('GL', 'OpenGL', 'gl'),
+                    ('D3D9', 'Direct 3D 9', 'd3d9'),
+                    ('D3D10', 'Direct 3D 10', 'd3d10'),
+                    ('D3D11', 'Direct 3D 11', 'd3d11')),
+                    default = 'GL')
+
+    GamekitSettings.StringProperty( attr="gk_log_file",
+                    name="Log",
+                    description="Name of the log file that will be created in the working directory.",
+                    maxlen=512,
+                    default="OgreKit.log")
+
+    GamekitSettings.StringProperty( attr="gk_window_title",
+                    name="Window title",
+                    description="Name of the log file that will be created in the working directory.",
+                    maxlen=512,
+                    default="OgreKit")
+
+    GamekitSettings.BoolProperty( attr="gk_grab_input",
+                    name="Grab input",
+                    description="Grab mouse and keyboard event (cause other app to be unusable while game is runing).",
+                    default=True)
+
+    GamekitSettings.BoolProperty( attr="gk_verbose",
+                    name="Verbose",
+                    description="Verbose output on the console.",
+                    default=False)
+
+    GamekitSettings.IntProperty( attr="gk_start_frame",
+                    name="Start frame",
+                    min=1,
+                    soft_min=1,
+                    default =1)
+
+    GamekitSettings.BoolProperty( attr="gk_frustrum_culling",
+                    name="Frustrum culling",
+                    default=True)
+
+    GamekitSettings.BoolProperty( attr="gk_debug_sound",
+                    name="Debug sound",
+                    default=False)
+
+    GamekitSettings.BoolProperty( attr="gk_debug_physicsaabb",
+                    name="Physics AABB",
+                    description="Show physics axis aligned bounding boxes",
+                    default=False)
+
+    GamekitSettings.BoolProperty( attr="gk_build_instances",
+                    name="Build instances",
+                    default=False)
+
+    GamekitSettings.BoolProperty( attr="gk_use_shadows",
+                    name="Enable shadows",
+                    default=True)
+
+    GamekitSettings.EnumProperty( attr="gk_shadow_type",
+                    name="Shadow type",
+                    items=(('NONE', 'None', 'n'),
+                    ('STENCIL_MODULATIVE', 'Stencil modulative', 'sm'),
+                    ('STENCIL_ADDITIVE', 'Stencil additive', 'sa'),
+                    ('TEXTURE_MODULATIVE', 'Texture modulative', 'tm'),
+                    ('TEXTURE_ADDITIVE', 'Texture additive', 'ta'),
+                    ('TEXTURE_MODULATIVE_INTEGRATED', 'Texture modulative integrated', 'tmi'),
+                    ('TEXTURE_ADDITIVE_INTEGRATED', 'Texture additive integrated', 'tai')),
+                    description = "Ogre shadow technique.",
+                    default = 'STENCIL_ADDITIVE')
+
+    GamekitSettings.FloatVectorProperty( attr="gk_shadow_color",
+                    name="Sadow color",
+                    subtype='COLOR',
+                    min=0.0,
+                    max=1.0,
+                    soft_min=0.0,
+                    soft_max=1.0,
+                    default = (0.0, 0.0, 0.0))
+
+    GamekitSettings.FloatProperty( attr="gk_far_dist_shadow",
+                    name="Far distance shadow",
+                    min=0.0,
+                    max=1.0,
+                    soft_min=0.0,
+                    soft_max=1.0,
+                    default =0.0)
 
 
 def unregister():
-    pass
+    bpy.types.Scene.RemoveProperty("gamekit")
 
 if __name__ == "__main__":
     register()
