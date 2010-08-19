@@ -27,9 +27,8 @@
 #ifndef _gkHashedString_h_
 #define _gkHashedString_h_
 
-#include "Utils/utTypes.h"
-#include "gkString.h"
 
+#include "gkString.h"
 
 // String hash
 class gkHashedString

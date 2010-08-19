@@ -26,23 +26,29 @@
 */
 #include "gkMeshManager.h"
 #include "gkMesh.h"
+#include "gkLogger.h"
 
 
 
+// ----------------------------------------------------------------------------
 gkMeshManager::gkMeshManager()
 {
 }
 
 
+
+// ----------------------------------------------------------------------------
 gkMeshManager::~gkMeshManager()
 {
 	destroyAll();
 }
 
 
+
+// ----------------------------------------------------------------------------
 gkMesh *gkMeshManager::getMesh(const gkHashedString &name)
 {
-	size_t pos;
+	UTsize pos;
 	if ((pos = m_objects.find(name)) == GK_NPOS)
 		return 0;
 	return m_objects.at(pos);
@@ -50,11 +56,16 @@ gkMesh *gkMeshManager::getMesh(const gkHashedString &name)
 
 
 
+
+// ----------------------------------------------------------------------------
 gkMesh *gkMeshManager::create(const gkHashedString &name)
 {
-	size_t pos;
+	UTsize pos;
 	if ((pos = m_objects.find(name)) != GK_NPOS)
+	{
+		gkLogMessage("Mesh: Duplicate mesh found " << name.str());
 		return 0;
+	}
 
 	gkMesh *ob = new gkMesh(name.str());
 	m_objects.insert(name, ob);
@@ -62,9 +73,12 @@ gkMesh *gkMeshManager::create(const gkHashedString &name)
 }
 
 
+
+
+// ----------------------------------------------------------------------------
 void gkMeshManager::destroy(const gkHashedString &name)
 {
-	size_t pos;
+	UTsize pos;
 	if ((pos = m_objects.find(name)) != GK_NPOS)
 	{
 		gkMesh *ob = m_objects.at(pos);
@@ -74,12 +88,13 @@ void gkMeshManager::destroy(const gkHashedString &name)
 }
 
 
+// ----------------------------------------------------------------------------
 void gkMeshManager::destroy(gkMesh *ob)
 {
 	GK_ASSERT(ob);
 
 	gkString name = ob->getName();
-	size_t pos;
+	UTsize pos;
 	if ((pos = m_objects.find(name)) != GK_NPOS)
 	{
 		gkMesh *ob = m_objects.at(pos);
@@ -89,7 +104,7 @@ void gkMeshManager::destroy(gkMesh *ob)
 }
 
 
-
+// ----------------------------------------------------------------------------
 void gkMeshManager::destroyAll(void)
 {
 	utHashTableIterator<ObjectMap> iter(m_objects);
@@ -104,12 +119,8 @@ void gkMeshManager::destroyAll(void)
 }
 
 
-
+// ----------------------------------------------------------------------------
 bool gkMeshManager::hasMesh(const gkHashedString &name)
 {
 	return m_objects.find(name) != GK_NPOS;
 }
-
-
-
-GK_IMPLEMENT_SINGLETON(gkMeshManager);

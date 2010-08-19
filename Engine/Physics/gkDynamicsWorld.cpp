@@ -125,7 +125,7 @@ void gkDynamicsWorld::unloadImpl(void)
 
 	if (!m_objects.empty())
 	{
-		gkPhysicsControllerIterator iter(m_objects);
+		gkPhysicsControllers::Iterator iter = m_objects.iterator();
 		while (iter.hasMoreElements())
 			delete iter.getNext();
 
@@ -167,6 +167,7 @@ gkRigidBody *gkDynamicsWorld::createRigidBody(gkGameObject *state)
 {
 	GK_ASSERT(state);
 	gkRigidBody *rb = new gkRigidBody(state, this);
+	rb->create();
 	m_objects.push_back(rb);
 	return rb;
 }
@@ -177,6 +178,7 @@ gkCharacter *gkDynamicsWorld::createCharacter(gkGameObject *state)
 {
 	GK_ASSERT(state);
 	gkCharacter *character = new gkCharacter(state, this);
+	character->create();
 	m_objects.push_back(character);
 	return character;
 }
@@ -265,7 +267,7 @@ void gkDynamicsWorld::resetContacts()
 {
 	if (m_handleContacts && !m_objects.empty())
 	{
-		gkPhysicsControllerIterator iter(m_objects);
+		gkPhysicsControllers::Iterator iter = m_objects.iterator();
 		while (iter.hasMoreElements())
 		{
 			iter.getNext()->_resetContactInfo();
@@ -314,7 +316,7 @@ void gkDynamicsWorld::DrawDebug()
 	{
 		if (!m_objects.empty())
 		{
-			gkPhysicsControllerIterator iter(m_objects);
+			gkPhysicsControllers::Iterator iter = m_objects.iterator();
 			while (iter.hasMoreElements())
 			{
 				gkPhysicsController *cont = iter.getNext();

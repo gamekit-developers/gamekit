@@ -26,7 +26,7 @@
 */
 #include "gkObjectNode.h"
 #include "gkEngine.h"
-#include "gkGameObjectGroup.h"
+#include "gkGameObject.h"
 #include "gkScene.h"
 
 
@@ -60,15 +60,6 @@ void gkObjectNode::initialize()
 {
     if (!m_otherName.empty())
     {
-        // look in this instance
-        if (m_object && m_object->isInstance())
-        {
-            //gkGameObjectGroupInstance *inst = m_object->getGroupInstance();
-
-            //if (inst->hasObject(m_otherName))
-            //    m_other = inst->getObject(m_otherName);
-        }
-
         // look at global scope
         if (!m_other)
         {

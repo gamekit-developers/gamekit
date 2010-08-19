@@ -36,13 +36,15 @@ public:
 	gkLimitRotConstraint();
 	virtual ~gkLimitRotConstraint() {}
 
-	bool update(gkGameObject *ob);
-	gkConstraint *clone(void);
+
+	bool update(gkScalar delta);
+	gkConstraint *clone(gkGameObject *clob);
 
 
-	void setLimitX(const gkVector2 &v);
-	void setLimitY(const gkVector2 &v);
-	void setLimitZ(const gkVector2 &v);
+	GK_INLINE void setLimitX(const gkVector2 &v) {m_flag |= 1; mXBounds = v;}
+	GK_INLINE void setLimitY(const gkVector2 &v) {m_flag |= 2; mYBounds = v;}
+	GK_INLINE void setLimitZ(const gkVector2 &v) {m_flag |= 4; mZBounds = v;}
+	GK_INLINE void clearAxis(void) {m_flag = 0;}
 
 private:
 
@@ -52,31 +54,5 @@ private:
 	gkVector2 mYBounds;
 	gkVector2 mZBounds;
 };
-
-
-GK_INLINE void gkLimitRotConstraint::setLimitX(const gkVector2 &v)
-{
-	m_flag |= 1;
-	mXBounds = v;
-}
-
-
-GK_INLINE void gkLimitRotConstraint::setLimitY(const gkVector2 &v)
-{
-	m_flag |= 2;
-	mYBounds = v;
-}
-
-
-GK_INLINE void gkLimitRotConstraint::setLimitZ(const gkVector2 &v)
-{
-	m_flag |= 4;
-	mZBounds = v;
-}
-
-
-
-
-
 
 #endif//_gkLimitRotConstraint_h_

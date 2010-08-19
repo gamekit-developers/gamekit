@@ -37,14 +37,15 @@ class gkEngine : public Ogre::Singleton<gkEngine>
 {
 public:
 
-	class Listener : public utListClass<Listener>::Link
+
+	class Listener
 	{
 	public:
 		virtual ~Listener() {}
 		virtual void tick(gkScalar rate) = 0;
 	};
 
-	typedef utListClass<Listener> Listeners;
+	typedef utArray<Listener*> Listeners;
 
 public:
 	gkEngine(gkUserDefs *otherDefs = 0);
@@ -53,13 +54,18 @@ public:
 	static gkEngine &getSingleton();
 	static gkEngine *getSingletonPtr();
 
+
 	void initialize(bool autoCreateWindow = true);
 	void finalize(void);
-	bool isInitialized(void) {return m_initialized;}
 	void run(void);
+
+	bool isInitialized(void)  {return m_initialized;}
+	bool isRunning(void)      {return m_running;}
+
 	void initializeWindow(void);
 
 
+	bool hasActiveScene(void);
 	void setActiveScene(gkScene *sc);
 
 	// access to user defined parameters
@@ -79,7 +85,7 @@ public:
 	gkScene *getActiveScene(void);
 
 	// tick update hook
-	void setListener(Listener *listener);
+	void addListener(Listener *listener);
 	void removeListener(Listener *listener);
 
 
@@ -97,7 +103,9 @@ private:
 
 	Ogre::Root             *m_root;
 	Ogre::RenderWindow     *m_window;
-	bool                    m_initialized, m_ownsDefs;
+	bool                    m_initialized;
+	bool                    m_ownsDefs;
+	bool                    m_running;
 	gkUserDefs             *m_defs;
 	Listeners               m_listeners;
 	gkReloadables           m_loadables;

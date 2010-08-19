@@ -65,6 +65,7 @@ public:
 	// Set the world transform from the parent gkGameObject
 	virtual void updateTransform(void);
 
+	bool isStaticObject(void);
 
 
 	// Enable or disable physics 

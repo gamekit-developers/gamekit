@@ -27,12 +27,14 @@
 #ifndef _gkString_h_
 #define _gkString_h_
 
-#include "OgreStringConverter.h"
 #include "Utils/utString.h"
 
-// Reusing Ogre string classes for simplicity
 typedef utString            gkString;
 typedef utStringArray       gkStringVector;
+
+#include "OgreString.h"
+#include "OgreStringConverter.h"
+
 
 
 #endif//_gkString_h_

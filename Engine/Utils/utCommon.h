@@ -25,15 +25,14 @@
 #ifndef _utCommon_h_
 #define _utCommon_h_
 
-#define DEBUG 1
+#include <assert.h>
 
 #if defined(DEBUG) || defined(_DEBUG)
-# include <assert.h>
 # define UT_DEBUG 1
 # define UT_ASSERT(x) assert(x)
 #else
 # define UT_DEBUG 0
-# define UT_ASSERT(x)
+# define UT_ASSERT(x) ((void)0)
 #endif
 #define UT_ASSERTSAFE(x)    ( ((x) == 0) ? true : false )
 #define UT_ASSERTCOMP(x, n) typedef bool n[(x) ? 1 : 0];

@@ -49,13 +49,12 @@ private:
 
 
 	void convertWorld(void);
-	void convertGroups(utArray<Blender::Object *> &groups, utArray<Blender::Object *> &children);
-	void convertObject(Blender::Object *ob);
+	void convertGroups(utArray<Blender::Object *> &groups);
+	void convertObject(Blender::Object *ob, gkGameObject *gobj = 0);
 
 	void convertObjectGroup(gkGameObjectGroup *gobj, Blender::Object *bobj);
-
-
 	void convertObjectGeneral(gkGameObject *gobj, Blender::Object *bobj);
+
 	void convertObjectLogic(gkGameObject *gobj, Blender::Object *bobj);
 	void convertObjectProperties(gkGameObject *gobj, Blender::Object *bobj);
 	void convertObjectConstraints(gkGameObject *gobj, Blender::Object *bobj);

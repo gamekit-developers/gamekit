@@ -37,7 +37,9 @@
 #include "gkEngine.h"
 #include "gkEntity.h"
 #include "gkGameObject.h"
+#include "gkGroupManager.h"
 #include "gkGameObjectGroup.h"
+#include "gkGameObjectInstance.h"
 #include "gkHashedString.h"
 #include "gkInput.h"
 #include "gkLight.h"
@@ -82,6 +84,8 @@
 #include "Animation/gkWorldAction.h"
 
 
+#include "Constraints/gkConstraint.h"
+#include "Constraints/gkConstraintManager.h"
 #include "Constraints/gkLimitLocConstraint.h"
 #include "Constraints/gkLimitRotConstraint.h"
 #include "Constraints/gkLimitVelocityConstraint.h"

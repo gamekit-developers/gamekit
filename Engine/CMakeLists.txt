@@ -9,7 +9,6 @@ set(Core_SOURCE
     # ----- Source -----
     gkCamera.cpp
     gkCam2ViewportRay.cpp
-    gkConstraint.cpp
     gkCoreApplication.cpp
     gkDebugFps.cpp
     gkDebugger.cpp
@@ -19,6 +18,8 @@ set(Core_SOURCE
     gkEntity.cpp
     gkGameObject.cpp
     gkGameObjectGroup.cpp
+    gkGameObjectInstance.cpp
+    gkGroupManager.cpp
     gkLight.cpp
     gkLogger.cpp
     gkMesh.cpp
@@ -50,7 +51,6 @@ set(Core_HEADER
     gkCamera.h
     gkCam2ViewportRay.h
     gkCommon.h
-    gkConstraint.h
     gkCoreApplication.h
     gkDebugFps.h
     gkDebugger.h
@@ -60,6 +60,8 @@ set(Core_HEADER
     gkEntity.h
     gkGameObject.h
     gkGameObjectGroup.h
+    gkGameObjectInstance.h
+    gkGroupManager.h
     gkHashedString.h
     gkInput.h
     gkLight.h
@@ -387,6 +389,8 @@ source_group(Blender\\Header FILES ${Blend_HEADER})
 # ---------------------------------------------------------
 set(Constraint_SOURCE
     # ----- Source -----
+    Constraints/gkConstraint.cpp
+    Constraints/gkConstraintManager.cpp
     Constraints/gkLimitLocConstraint.cpp
     Constraints/gkLimitRotConstraint.cpp
     Constraints/gkLimitVelocityConstraint.cpp
@@ -394,6 +398,8 @@ set(Constraint_SOURCE
 
 set(Constraint_HEADER
     # ----- Header -----
+    Constraints/gkConstraint.h
+    Constraints/gkConstraintManager.h
     Constraints/gkLimitLocConstraint.h
     Constraints/gkLimitRotConstraint.h
     Constraints/gkLimitVelocityConstraint.h

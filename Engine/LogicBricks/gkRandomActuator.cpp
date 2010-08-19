@@ -24,9 +24,10 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-
 #include "gkRandomActuator.h"
 #include "gkGameObject.h"
+#include "gkVariable.h"
+
 
 // ----------------------------------------------------------------------------
 gkRandomActuator::gkRandomActuator(gkGameObject *object, gkLogicLink *link, const gkString &name)

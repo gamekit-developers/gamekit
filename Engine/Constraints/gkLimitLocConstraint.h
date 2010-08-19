@@ -29,6 +29,9 @@
 
 #include "gkConstraint.h"
 
+
+
+
 class gkLimitLocConstraint : public gkConstraint
 {
 public:
@@ -36,17 +39,23 @@ public:
 	gkLimitLocConstraint();
 	virtual ~gkLimitLocConstraint() {}
 
-	bool update(gkGameObject *ob);
-	gkConstraint *clone(void);
 
-	void setMinX(gkScalar v);
-	void setMaxX(gkScalar v);
 
-	void setMinY(gkScalar v);
-	void setMaxY(gkScalar v);
+	bool update(gkScalar delta);
+	gkConstraint *clone(gkGameObject *clob);
 
-	void setMinZ(gkScalar v);
-	void setMaxZ(gkScalar v);
+
+	GK_INLINE void setMinX(gkScalar v)  {m_flag[0] |= 1; x[0] = v;}
+	GK_INLINE void setMaxX(gkScalar v)  {m_flag[1] |= 1; x[1] = v;}
+
+	GK_INLINE void setMinY(gkScalar v)  {m_flag[0] |= 2; y[0] = v;}
+	GK_INLINE void setMaxY(gkScalar v)  {m_flag[1] |= 2; y[1] = v;}
+
+	GK_INLINE void setMinZ(gkScalar v)  {m_flag[0] |= 4; z[0] = v;}
+	GK_INLINE void setMaxZ(gkScalar v)  {m_flag[1] |= 4; z[1] = v;}
+
+
+	GK_INLINE void clearAxis(void) {m_flag[0] = m_flag[1] = 0;}
 
 private:
 	short m_flag[2];
@@ -55,52 +64,6 @@ private:
 	gkScalar y[2];
 	gkScalar z[2];
 };
-
-
-
-GK_INLINE void gkLimitLocConstraint::setMinX(gkScalar v)
-{
-	m_flag[0] |= 1;
-	x[0] = v;
-}
-
-
-GK_INLINE void gkLimitLocConstraint::setMaxX(gkScalar v)
-{
-	m_flag[1] |= 1;
-	x[1] = v;
-}
-
-
-GK_INLINE void gkLimitLocConstraint::setMinY(gkScalar v)
-{
-	m_flag[0] |= 2;
-	y[0] = v;
-}
-
-
-GK_INLINE void gkLimitLocConstraint::setMaxY(gkScalar v)
-{
-	m_flag[1] |= 2;
-	y[1] = v;
-}
-
-
-GK_INLINE void gkLimitLocConstraint::setMinZ(gkScalar v)
-{
-	m_flag[0] |= 4;
-	z[0] = v;
-}
-
-
-GK_INLINE void gkLimitLocConstraint::setMaxZ(gkScalar v)
-{
-	m_flag[1] |= 4;
-	z[1] = v;
-}
-
-
-
 
 
 

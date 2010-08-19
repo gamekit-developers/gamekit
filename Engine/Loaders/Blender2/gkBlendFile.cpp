@@ -109,6 +109,7 @@ bool gkBlendFile::parse(bParse::bBlenderFile *bfp)
 			gkBlenderSceneConverter conv(this, sc);
 			conv.convert();
 
+
 			setSoundScene(sc);
 
 			gkScene *convSc = gkSceneManager::getSingleton().getScene(GKB_IDNAME(sc));

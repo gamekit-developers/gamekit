@@ -31,7 +31,6 @@ gkStats::gkStats()
 {
 	m_clock = new Ogre::Timer();
 	resetClock();
-	m_currentSync = 0.f;
 }
 
 void gkStats::resetClock(void)
@@ -102,9 +101,4 @@ void gkStats::stopBufSwapLodClock(void)
 	m_bufswaplod += m_clock->getMicroseconds() - m_start;
 }
 
-void gkStats::notifySyncFrame(float csync)
-{
-	m_currentSync = csync;
-}
-	
 GK_IMPLEMENT_SINGLETON(gkStats)

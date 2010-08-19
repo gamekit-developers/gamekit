@@ -53,7 +53,6 @@ gkDebugFps::gkDebugFps()
 	m_keys += "Average:\n";
 	m_keys += "Best:\n";
 	m_keys += "Worst:\n";
-	m_keys += "FrameSync:\n";
 	m_keys += "\n";
 	m_keys += "Triangles:\n";
 	m_keys += "Batch count:\n";
@@ -179,7 +178,6 @@ void gkDebugFps::draw(void)
 	vals += Ogre::StringConverter::toString(ogrestats.avgFPS) + '\n';
 	vals += Ogre::StringConverter::toString(ogrestats.bestFPS) + '\n';
 	vals += Ogre::StringConverter::toString(ogrestats.worstFPS) + '\n';
-	vals += Ogre::StringConverter::toString((int)(100 * gkStats::getSingleton().getSync())) + "%\n";
 	vals += '\n';
 
 	vals += Ogre::StringConverter::toString(ogrestats.triangleCount) + '\n';
@@ -187,7 +185,7 @@ void gkDebugFps::draw(void)
 	vals += '\n';
 
 	if (dbvtVal) vals += dbvtVal->getValueString();
-	else  vals += ' ';
+	else  vals += "Not Enabled\n";
 	vals += '\n';
 
 	vals += Ogre::StringConverter::toString(swap, 3, 7, '0', std::ios::fixed) + "ms 100%\n";

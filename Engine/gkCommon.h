@@ -28,8 +28,13 @@
 #define _gkCommon_h_
 
 #include "gkHashedString.h"
-#include "OgreBuildSettings.h"
-#include "OgrePrerequisites.h"
+
+#if defined(WIN32)
+// std min / max fix
+#ifndef NOMINMAX
+#define NOMINMAX 1 
+#endif
+#endif
 
 #define GK_NPOS             UT_NPOS
 #define GK_PLATFORM_WIN32   UT_PLATFORM_WIN32
@@ -71,13 +76,21 @@ class gkVariable;
 class gkWindowSystem;
 class gkBlendFile;
 class gkUserDefs;
+class gkMeshManager;
+class gkMesh;
+
 
 class gkAction;
 class gkActionChannel;
 class gkActionManager;
 class gkBezierSpline;
+
 class gkGameObjectGroup;
 class gkGameObjectInstance;
+class gkGroupManager;
+
+class gkConstraintManager;
+class gkConstraint;
 
 class gkPhysicsController;
 class gkCharacter;
@@ -95,13 +108,16 @@ class gkActiveObject;
 
 
 // Common types
-typedef std::set<gkGameObject *>                     gkGameObjectSet;
 typedef utHashTable<gkHashedString, gkGameObject *>  gkGameObjectHashMap;
-typedef utHashTableIterator<gkGameObjectHashMap>     gkGameObjectHashMapIterator;
 typedef utArray<gkGameObject *>                      gkGameObjectArray;
-typedef utArrayIterator<gkGameObjectArray>           gkGameObjectArrayIterator;
+
+typedef utHashSet<gkGameObject *>                    gkGameObjectSet;
+typedef utHashSet<gkCamera *>                        gkCameraSet;
+typedef utHashSet<gkLight *>                         gkLightSet;
+typedef utHashSet<gkEntity *>                        gkEntitySet;
+typedef utHashSet<gkSkeleton *>                      gkSkeletonSet;
+typedef utHashSet<gkPhysicsController *>             gkPhysicsControllerSet;
 typedef utArray<gkPhysicsController *>               gkPhysicsControllers;
-typedef utArrayIterator<gkPhysicsControllers>        gkPhysicsControllerIterator;
 
 
 enum gkTransformSpace

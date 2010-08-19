@@ -85,11 +85,11 @@ void SceneLogic::CreateRats()
 {
 	const gkGameObjectSet& objs = m_scene->getLoadedObjects();
 
-	gkGameObjectSet::const_iterator it = objs.begin();
+	gkGameObjectSet::ConstIterator it = objs.iterator();
 
-	while(it != objs.end())
+	while(it.hasMoreElements())
 	{
-		gkGameObject* ob = *it;
+		gkGameObject* ob = it.getNext();
 
 		if(ob->getProperties().isDynamic())
 		{
@@ -99,7 +99,6 @@ void SceneLogic::CreateRats()
 			}
 		}
 
-		++it;
 	}
 }
 

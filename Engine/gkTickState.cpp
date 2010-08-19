@@ -121,10 +121,5 @@ void gkTickState::tick(void)
 		m_cur = m_next = gkGetTickCount(m_clock);
 	}
 
-
-	gkScalar d = gkScalar(gkGetTickCount(m_clock) + m_ticks - m_next) * m_invt;
-	if (d >= 0 && d < 1)
-		syncImpl(d);
-
 	endTickImpl();
 }

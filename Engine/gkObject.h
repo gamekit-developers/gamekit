@@ -30,14 +30,24 @@
 #include "gkCommon.h"
 #include "gkHashedString.h"
 
-class gkGameObject;
 
 // Base class representing a loadable object
 class gkObject
 {
+public:
+	enum LoadingState
+	{
+		ST_LOADING   = (1 << 0),
+		ST_LOADED    = (1 << 1),
+		ST_UNLOADING = (1 << 2),
+		ST_UNLOADED  = (1 << 3),
+		ST_LOADFAILED= (1 << 4),
+	};
+
+
 protected:
 	const gkString      m_name;
-	bool                m_loaded;
+	int                 m_loadingState;
 
 	virtual void preLoadImpl(void) {}
 	virtual void preUnloadImpl(void) {}
@@ -56,8 +66,14 @@ public:
 	void reload(void);
 
 
-	GK_INLINE const gkString &getName(void)        {return m_name;}
-	GK_INLINE bool           isLoaded(void) const  {return m_loaded;}
+	GK_INLINE const gkString &getName(void)               {return m_name;}
+
+	GK_INLINE bool           isLoaded(void) const         {return (m_loadingState & ST_LOADED) != 0;}
+	GK_INLINE bool           isLoading(void) const        {return (m_loadingState & ST_LOADING) != 0;}
+	GK_INLINE bool           isUnloading(void) const      {return (m_loadingState & ST_UNLOADING) != 0;}
+	GK_INLINE int            getLoadingState(void) const  {return m_loadingState;}
+
+
 };
 
 

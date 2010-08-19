@@ -28,6 +28,7 @@
 #include "gkMessageActuator.h"
 #include "gkMessageManager.h"
 #include "gkGameObject.h"
+#include "gkVariable.h"
 
 gkMessageActuator::gkMessageActuator(gkGameObject *object, gkLogicLink *link, const gkString &name)
 		:	gkLogicActuator(object, link, name), m_to(""), m_subject(""), m_bodyType(BT_TEXT), m_bodyText(""), m_bodyProp("")

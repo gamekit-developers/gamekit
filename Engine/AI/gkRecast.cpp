@@ -31,6 +31,7 @@
 #include "gkScene.h"
 #include "gkLogger.h"
 #include "gkActiveObject.h"
+#include "gkGameObject.h"
 
 #include "Recast.h"
 #include "RecastLog.h"
@@ -173,10 +174,10 @@ PDT_NAV_MESH gkRecast::createNavMesh(PMESHDATA meshData, const Config& config)
 
 	gkScene* scene = gkEngine::getSingleton().getActiveScene();
 	gkGameObjectSet& objects = scene->getLoadedObjects();
-	gkGameObjectSet::iterator it = objects.begin();
-	while(it != objects.end())
+	gkGameObjectSet::Iterator it = objects.iterator();
+	while(it.hasMoreElements())
 	{
-		gkGameObject* obj = *it;
+		gkGameObject* obj = it.getNext();
 
 		if(!obj->getNavData().isEmpty())
 		{
@@ -190,8 +191,6 @@ PDT_NAV_MESH gkRecast::createNavMesh(PMESHDATA meshData, const Config& config)
 
 			rcMarkConvexPolyArea(v, nVerts, obj->getNavData().hmin, obj->getNavData().hmax, prop.m_findPathFlag, chf);
 		}
-
-		++it;
 	}
 
 	// Prepare for region partitioning, by calculating distance field along the walkable surface.

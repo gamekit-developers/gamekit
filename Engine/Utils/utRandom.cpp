@@ -140,7 +140,7 @@ float utRandomNumberGenerator::randNormal(float mean, float deviation)
 		b = randRange(-1.0f, 1.0f);
 		s= a*a+b*b;
 	}
-	b = a * sqrt((-2.0*log(s)) / s);
+	b = a * (float)sqrt((-2.0*log(s)) / s);
 	return mean+ b*dev;
 }
 

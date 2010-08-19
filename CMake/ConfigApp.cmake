@@ -11,8 +11,8 @@ macro(ADD_OGREKIT_EXECUTABLE TARGET SRC CONTENT)
     )
 
     link_libraries(${OGREKIT_LIB})
-
-	set(EX ${${CONTENT}})    
+    
+ 
 
     if (APPLE)
         set(EXETYPE MACOSX_BUNDLE)
@@ -20,11 +20,11 @@ macro(ADD_OGREKIT_EXECUTABLE TARGET SRC CONTENT)
         set_source_files_properties(${EX} PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
         set (NibFile MainMenu.nib)
     endif()
-    source_group(Resources FILES ${EX})
+    source_group(Resources FILES ${${CONTENT}})
 
     set(NEW_SOURCE
         ${SRC}
-        ${EX} 
+        ${${CONTENT}}
     )
 
     if (APPLE)

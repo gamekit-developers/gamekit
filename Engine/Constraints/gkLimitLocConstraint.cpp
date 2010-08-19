@@ -24,10 +24,12 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "OgreSceneNode.h"
 #include "gkLimitLocConstraint.h"
 #include "gkGameObject.h"
 
+
+
+// ----------------------------------------------------------------------------
 gkLimitLocConstraint::gkLimitLocConstraint()
 	:   gkConstraint()
 {
@@ -37,17 +39,23 @@ gkLimitLocConstraint::gkLimitLocConstraint()
 	z[0] = z[1] = 0.0;
 }
 
-gkConstraint *gkLimitLocConstraint::clone(void)
+// ----------------------------------------------------------------------------
+gkConstraint *gkLimitLocConstraint::clone(gkGameObject *clob)
 {
 	gkLimitLocConstraint *cl = new gkLimitLocConstraint(*this);
-	cl->m_next = 0;
-	cl->m_prev = 0;
+	cl->setObject(clob);
 	return cl;
 }
 
 
-bool gkLimitLocConstraint::update(gkGameObject *ob)
+// ----------------------------------------------------------------------------
+bool gkLimitLocConstraint::update(gkScalar delta)
 {
+	if (!m_object) return false;
+
+	m_matrix = m_object->getTransformState();
+
+
 	gkVector3 &position = m_matrix.loc;
 
 	bool doupd = false;
@@ -113,6 +121,5 @@ bool gkLimitLocConstraint::update(gkGameObject *ob)
 	}
 
 
-	// TODO: blend with m_influence
 	return doupd;
 }

@@ -124,7 +124,7 @@ public:
 
 protected:
 
-	gkObject *clone(const gkString &name);
+	gkGameObject *clone(const gkString &name);
 	void createSkeleton(void);
 
 	Actions             m_actions;

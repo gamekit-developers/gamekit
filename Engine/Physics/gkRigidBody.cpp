@@ -64,6 +64,9 @@ btRigidBody *gkRigidBody::getBody(void)
 // ----------------------------------------------------------------------------
 void gkRigidBody::create(void)
 {
+	if (m_body || m_collisionObject)
+		return;
+
 	GK_ASSERT(m_object && m_object->isLoaded() && m_object->isInActiveLayer());
 
 	createShape();
@@ -75,7 +78,7 @@ void gkRigidBody::create(void)
 	const gkPhysicsProperties &phy = props.m_physics;
 
 	// use the most up to date transform. 
-	const gkTransformState &tstate = m_object->getLocalTransform();
+	const gkTransformState &tstate = m_object->getTransformState();
 
 
 	if (phy.isRigidOrDynamic())

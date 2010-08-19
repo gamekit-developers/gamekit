@@ -38,25 +38,29 @@ gkLimitVelocityConstraint::gkLimitVelocityConstraint()
 {
 }
 
-gkConstraint *gkLimitVelocityConstraint::clone(void)
+// ----------------------------------------------------------------------------
+gkConstraint *gkLimitVelocityConstraint::clone(gkGameObject *clob)
 {
 	gkLimitVelocityConstraint *cl = new gkLimitVelocityConstraint(*this);
-	cl->m_next = 0;
-	cl->m_prev = 0;
+	cl->setObject(clob);
 	return cl;
 }
 
 
 // ----------------------------------------------------------------------------
-bool gkLimitVelocityConstraint::update(gkGameObject *ob)
+bool gkLimitVelocityConstraint::update(gkScalar delta)
 {
-	const gkVector3 &vel = ob->getLinearVelocity();
+	if (!m_object) return false;
+
+
+	const gkVector3 &vel = m_object->getLinearVelocity();
 	const gkScalar len = vel.length();
 
+
 	if (m_lim.y > 0.f && len > m_lim.y)
-		ob->setLinearVelocity(vel * (m_lim.y / len), TRANSFORM_LOCAL);
+		m_object->setLinearVelocity((vel * (m_lim.y / len)) *m_influence, TRANSFORM_LOCAL);
 	else if (m_lim.x > 0.f && !gkFuzzy(len) && len < m_lim.x)
-		ob->setLinearVelocity(vel * (m_lim.x / len), TRANSFORM_LOCAL);
+		m_object->setLinearVelocity((vel * (m_lim.x / len)) * m_influence, TRANSFORM_LOCAL);
 
 	return false;
 }

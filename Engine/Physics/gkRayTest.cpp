@@ -29,7 +29,6 @@
 #include "gkScene.h"
 #include "gkDynamicsWorld.h"
 #include "gkPhysicsController.h"
-#include "OgreRoot.h"
 #include "btBulletDynamicsCommon.h"
 
 

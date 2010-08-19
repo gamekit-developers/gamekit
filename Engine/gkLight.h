@@ -45,7 +45,7 @@ public:
 	void updateProperties(void);
 
 private:
-	gkObject    *clone(const gkString &name);
+	gkGameObject *clone(const gkString &name);
 
 	gkLightProperties       m_lightProps;
 	Ogre::Light             *m_light;

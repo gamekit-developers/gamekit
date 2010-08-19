@@ -36,9 +36,13 @@
 #include "gkUtils.h"
 #include "gkPath.h"
 
+#include "LinearMath/btQuickprof.h"
+
 using namespace Ogre;
 
 bool gkUtils::IS_LUA_PACKAGE = false;
+
+#define UID_USE_TIME_STAMP 0
 
 
 #ifdef __APPLE__
@@ -101,4 +105,26 @@ bool gkUtils::isResource(const gkString &name, const gkString &group)
 	if (group.empty())
 		return Ogre::ResourceGroupManager::getSingleton().resourceExistsInAnyGroup(name);
 	return Ogre::ResourceGroupManager::getSingleton().resourceExists(group, name);
+}
+
+gkString gkUtils::getUniqueName(const gkString &in)
+{
+#if UID_USE_TIME_STAMP == 1
+	static btClock generator;
+	static unsigned long prev = -1;
+	if (prev = -1)
+		generator.reset();
+
+	unsigned long cur = generator.getTimeMicroseconds();
+	while (prev == cur)
+		prev = generator.getTimeMicroseconds();
+	prev = cur = generator.getTimeMicroseconds();
+	return in + "/TS{" + Ogre::StringConverter::toString(cur) + "}";
+#else
+
+	static unsigned long uidgen = 0;
+	return in + "/UID{" + Ogre::StringConverter::toString(uidgen++) + "}";
+
+#endif
+
 }

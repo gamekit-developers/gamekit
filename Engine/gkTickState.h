@@ -48,7 +48,6 @@ private:
 protected:
 
 	virtual void tickImpl(gkScalar delta) = 0;
-	virtual void syncImpl(gkScalar fac) {};
 
 	virtual void beginTickImpl(void) {}
 	virtual void endTickImpl(void) {}

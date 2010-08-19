@@ -24,14 +24,12 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "OgreSceneNode.h"
 #include "gkLimitRotConstraint.h"
 #include "gkGameObject.h"
 
-using namespace Ogre;
 
 
-
+// ----------------------------------------------------------------------------
 gkLimitRotConstraint::gkLimitRotConstraint()
 	:   gkConstraint(),
 	    m_flag(0),
@@ -40,18 +38,25 @@ gkLimitRotConstraint::gkLimitRotConstraint()
 	    mZBounds(0.0, 0.0)
 {
 }
-gkConstraint *gkLimitRotConstraint::clone(void)
+
+
+// ----------------------------------------------------------------------------
+gkConstraint *gkLimitRotConstraint::clone(gkGameObject *clob)
 {
 	gkLimitRotConstraint *cl = new gkLimitRotConstraint(*this);
-	cl->m_next = 0;
-	cl->m_prev = 0;
+	cl->setObject(clob);
 	return cl;
 }
 
 
-
-bool gkLimitRotConstraint::update(gkGameObject *ob)
+// ----------------------------------------------------------------------------
+bool gkLimitRotConstraint::update(gkScalar delta)
 {
+	if (!m_object) return false;
+
+	m_matrix = m_object->getTransformState();
+
+
 	gkVector3 rotation = gkEuler(m_matrix.rot).toVector3();
 
 	bool doupd = false;
@@ -102,8 +107,9 @@ bool gkLimitRotConstraint::update(gkGameObject *ob)
 		}
 	}
 
-	// TODO: blend with m_influence
+
 	if (doupd)
 		m_matrix.rot = gkEuler(rotation).toQuaternion();
+
 	return doupd;
 }

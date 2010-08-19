@@ -32,9 +32,10 @@
 
 // ----------------------------------------------------------------------------
 gkObject::gkObject(const gkString &name)
-	:       m_name(name), m_loaded(false)
+	:       m_name(name), m_loadingState(ST_UNLOADED)
 {
 }
+
 
 // ----------------------------------------------------------------------------
 gkObject::~gkObject()
@@ -42,24 +43,35 @@ gkObject::~gkObject()
 }
 
 
+
 // ----------------------------------------------------------------------------
 void gkObject::load(void)
 {
 	// Simple load mechanizm
 
-	if (m_loaded)
+	if (m_loadingState != ST_UNLOADED)
 		return;
+
+	m_loadingState = ST_LOADING;
+
 
 	try
 	{
 		preLoadImpl();
 		loadImpl();
-		m_loaded = true;
-		postLoadImpl();
+		if (m_loadingState != ST_LOADFAILED)
+		{
+			m_loadingState |= ST_LOADED;
+
+			postLoadImpl();
+			m_loadingState = ST_LOADED;
+		}
 	}
+
 	catch (Ogre::Exception &e)
 	{
-		gkLogMessage(e.getDescription());
+		m_loadingState = ST_LOADFAILED;
+		gkLogMessage("Object: Loading failed. \n\t" << e.getDescription());
 	}
 
 }
@@ -69,20 +81,24 @@ void gkObject::load(void)
 void gkObject::unload(void)
 {
 	// Simple unload mechanizm
-	if (!m_loaded)
+	if (m_loadingState != ST_LOADED)
 		return;
+
+	m_loadingState = ST_UNLOADING;
 
 	try
 	{
 		preUnloadImpl();
 		unloadImpl();
-		m_loaded = false;
+		m_loadingState |= ST_UNLOADED;
 		postUnloadImpl();
+		m_loadingState = ST_UNLOADED;
 	}
 
 	catch (Ogre::Exception &e)
 	{
-		gkLogMessage(e.getDescription());
+		m_loadingState = ST_LOADFAILED;
+		gkLogMessage("Object: Loading failed. \n\t" << e.getDescription());
 	}
 }
 

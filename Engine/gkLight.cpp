@@ -31,16 +31,17 @@
 #include "gkScene.h"
 
 
-using namespace Ogre;
 
-
+// ----------------------------------------------------------------------------
 gkLight::gkLight(gkScene *scene, const gkString &name)
-	:       gkGameObject(scene, name, GK_LIGHT),
-	        m_lightProps(), m_light(0)
+	:    gkGameObject(scene, name, GK_LIGHT),
+	     m_lightProps(), m_light(0)
 {
 }
 
 
+
+// ----------------------------------------------------------------------------
 void gkLight::updateProperties(void)
 {
 	if (!m_light)
@@ -70,14 +71,15 @@ void gkLight::updateProperties(void)
 
 
 
+// ----------------------------------------------------------------------------
 void gkLight::loadImpl(void)
 {
 	gkGameObject::loadImpl();
 
-	if (m_light != 0)
-		return;
+	GK_ASSERT(!m_light);
 
-	SceneManager *manager = m_scene->getManager();
+	Ogre::SceneManager *manager = m_scene->getManager();
+
 	m_light = manager->createLight(m_name);
 	m_node->attachObject(m_light);
 
@@ -85,20 +87,28 @@ void gkLight::loadImpl(void)
 }
 
 
+// ----------------------------------------------------------------------------
 void gkLight::unloadImpl(void)
 {
-	if (m_light != 0)
+	GK_ASSERT(m_light);
+
+
+	if (!m_scene->isUnloading())
 	{
-		SceneManager *manager = m_scene->getManager();
+		Ogre::SceneManager *manager = m_scene->getManager();
+
 		m_node->detachObject(m_light);
 		manager->destroyLight(m_light);
-		m_light = 0;
 	}
+
+	m_light = 0;
 
 	gkGameObject::unloadImpl();
 }
 
-gkObject *gkLight::clone(const gkString &name)
+
+// ----------------------------------------------------------------------------
+gkGameObject *gkLight::clone(const gkString &name)
 {
 	gkLight *cl = new gkLight(m_scene, name);
 	memcpy(&cl->m_lightProps, &m_lightProps, sizeof(gkLightProperties));

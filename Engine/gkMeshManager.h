@@ -30,11 +30,11 @@
 #include "gkCommon.h"
 #include "gkHashedString.h"
 #include "gkMesh.h"
-#include "OgreSingleton.h"
+
 
 
 // Manager for loaded scenes
-class gkMeshManager : public Ogre::Singleton<gkMeshManager>
+class gkMeshManager
 {
 public:
 	typedef utHashTable<gkHashedString, gkMesh *> ObjectMap;
@@ -45,7 +45,7 @@ protected:
 public:
 
 	gkMeshManager();
-	virtual ~gkMeshManager();
+	~gkMeshManager();
 
 
 	gkMesh *getMesh(const gkHashedString &name);
@@ -55,10 +55,6 @@ public:
 	void destroy(gkMesh *ob);
 	void destroyAll(void);
 	bool hasMesh(const gkHashedString &name);
-
-	static gkMeshManager &getSingleton(void);
-	static gkMeshManager *getSingletonPtr(void);
-
 };
 
 

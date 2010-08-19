@@ -387,13 +387,14 @@ typedef enum gkGameObjectTypes
 
 enum gkGameObjectMode
 {
-	GK_GHOST        = (1 << 0),
-	GK_ACTOR        = (1 << 1),
-	GK_INVISIBLE    = (1 << 2),
-	GK_OCCLUDER     = (1 << 3),
-	GK_SHOWBB       = (1 << 4),
+	GK_GHOST        = (1 << 0),  // gkCharacter controller
+	GK_ACTOR        = (1 << 1),  // Sensor listener 
+	GK_INVISIBLE    = (1 << 2),  // Marked invisible
+	GK_OCCLUDER     = (1 << 3),  // Occluder
+	GK_HAS_LOGIC    = (1 << 4),  // Has game logic
+	GK_IMMOVABLE    = (1 << 5),  // Marked as an immovable object
+	GK_STATIC_GEOM  = (1 << 6),  // Is part of static batch geometry.
 };
-
 
 
 class gkGameObjectProperties
@@ -404,7 +405,8 @@ public:
 		    m_mode(0),
 		    m_state(0),
 		    m_physics(),
-		    m_findPathFlag(0xFF)
+		    m_findPathFlag(0xFF),
+			m_parent("")
 	{
 		m_transform.setIdentity();
 	}
@@ -415,6 +417,8 @@ public:
 	int                 m_state;
 	gkPhysicsProperties m_physics;
 	unsigned char		m_findPathFlag;
+	gkString            m_parent;
+
 
 
 	bool isContactListener(void)    const { return m_physics.isContactListener(); }

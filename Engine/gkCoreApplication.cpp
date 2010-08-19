@@ -69,6 +69,6 @@ bool gkCoreApplication::initialize(void)
 	}
 
 	// add update
-	m_engine->setListener(this);
+	m_engine->addListener(this);
 	return true;
 }

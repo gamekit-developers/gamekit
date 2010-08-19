@@ -28,20 +28,15 @@
 #define _gkGameObject_h_
 
 #include "gkObject.h"
-#include "OgreSceneNode.h"
 #include "gkMathUtils.h"
-#include "gkVariable.h"
 #include "gkTransformState.h"
 #include "gkSerialize.h"
-
 
 
 // Base class for all game objects
 class gkGameObject : public gkObject
 {
 public:
-	typedef utListClass<gkConstraint>                   ConstraintList;
-	typedef utListIterator<ConstraintList>              ConstraintIterator;
 	typedef utHashTable<gkHashedString, gkVariable *>   VariableMap;
 
 	// life of a temporary object
@@ -63,7 +58,7 @@ public:
 	GK_INLINE bool                      isClone(void)                       {return m_isClone;}
 
 
-	bool hasSensorMaterial(const gkString& name, bool onlyFirst=true);
+	bool hasSensorMaterial(const gkString &name, bool onlyFirst=true);
 
 	// subtype access
 	GK_INLINE gkEntity      *getEntity(void)    {return m_type == GK_ENTITY ?   (gkEntity *)this : 0; }
@@ -76,7 +71,6 @@ public:
 	GK_INLINE bool                      hasParent(void)          {return m_parent != 0;}
 	GK_INLINE gkGameObject              *getParent(void)         {return m_parent;}
 	GK_INLINE gkGameObjectArray         &getChildren(void)       {return m_children;}
-	GK_INLINE gkGameObjectArrayIterator  getChildIterator(void)  {return gkGameObjectArrayIterator(m_children);}
 
 	void setParent(gkGameObject *par);
 	void addChild(gkGameObject *ob);
@@ -86,44 +80,20 @@ public:
 
 	void notifyUpdate(void);
 
-	// constriants
-	GK_INLINE ConstraintIterator    getConstraintIterator(void)  { return ConstraintIterator(m_constraints); }
-	GK_INLINE bool                  hasConstraints(void)         { return !m_constraints.empty(); }
-	void                            addConstraint(gkConstraint *c);
-	void                            destroyConstraints(void);
-	void                            applyConstraints(void);
-
 
 	GK_INLINE LifeSpan &getLifeSpan(void)               {return m_life;}
 	GK_INLINE void      setLifeSpan(const LifeSpan &v)  {m_life = v;}
 
-	// Object level blending
-	void blendTransform(gkScalar blend);
-
-	GK_INLINE bool hasMoved(void) {return m_outOfDate;}
-
-	// applies transformation to node & rigid body
-	void applyTransformState(const gkTransformState &newstate);
 
 	// layers
-	GK_INLINE void setActiveLayer(bool truth)   {m_activeLayer = truth; }
-	GK_INLINE bool isInActiveLayer(void)        {return m_activeLayer; }
-
-	virtual gkObject *clone(const gkString &name);
-
-	// grouping
-
-	GK_INLINE bool isInstance(void)                             {return m_instance != 0;}
-	GK_INLINE bool isGroupOwner(void)                           {return m_groupOwn != 0;}
-	GK_INLINE void setGroupOwner(bool v)                        {m_groupOwn = v;}
-	GK_INLINE gkGameObjectInstance *getGroupInstance(void)      {return m_instance;}
-	GK_INLINE gkGameObjectGroup    *getGroup(void)              {return m_groupRef;}
+	GK_INLINE void setActiveLayer(bool v)   {m_activeLayer = v; }
+	GK_INLINE bool isInActiveLayer(void)    {return m_activeLayer; }
+	GK_INLINE void     setLayer(UTuint32 v) {m_layer = v; }
+	GK_INLINE UTuint32 getLayer(void)       {return m_layer;}
 
 
-	gkGameObject    *getGroupParent(void);
-	void            attachToGroup(gkGameObjectGroup *g);
-	void            detachFromGroup(void);
-	void            attachToGroupInstance(gkGameObjectInstance *g);
+	virtual gkGameObject *clone(const gkString &name);
+
 
 
 	// physics
@@ -141,26 +111,24 @@ public:
 	bool        hasVariable(const gkString &name);
 	void        clearVariables(void);
 
-	// Gets cached local transform
-	GK_INLINE const gkTransformState   &getLocalTransform(void)     {return m_cur;}
-	// Gets cached local orientation as euler angles
-	GK_INLINE gkEuler                   getRotation(void)           {return m_cur.rot;}
-	// Gets cached local orientation
-	GK_INLINE const gkQuaternion       &getOrientation(void)        {return m_cur.rot;}
-	// Gets cached local position
-	GK_INLINE const gkVector3          &getPosition(void)           {return m_cur.loc;}
-	// Gets cached local scale
-	GK_INLINE const gkVector3          &getScale(void)              {return m_cur.scl;}
-
-	// world, with parent
-	gkMatrix4       getWorldTransform(void);
-	gkVector3       getWorldPosition(void);
-	gkVector3       getWorldScale(void);
-	gkQuaternion    getWorldOrientation(void);
-	gkEuler         getWorldRotation(void);
 
 
-	// set local transforms
+	const gkTransformState  &getTransformState(void);
+	const gkMatrix4         &getTransform(void);
+	const gkVector3         &getPosition(void);
+	const gkQuaternion      &getOrientation(void);
+	const gkVector3         &getScale(void);
+	gkEuler                 getRotation(void);
+
+	const gkTransformState  &getWorldTransformState(void);
+	const gkMatrix4         &getWorldTransform(void);
+	const gkVector3         &getWorldPosition(void);
+	const gkVector3         &getWorldScale(void);
+	const gkQuaternion      &getWorldOrientation(void);
+	gkEuler                 getWorldRotation(void);
+
+
+	void applyTransformState(const gkTransformState &newstate);
 	void setTransform(const gkMatrix4 &v);
 	void setTransform(const gkTransformState &v);
 	void setPosition(const gkVector3 &v);
@@ -228,8 +196,35 @@ public:
 	GK_INLINE void  setState(int v)     {m_state = v;}
 	GK_INLINE int   getState(void)      {return m_state;}
 
+
+	// See gkGameObjectMode
+	GK_INLINE void setFlags(int flag)   {m_flags = flag;}
+	GK_INLINE int  getFlags(void)       {return m_flags;}
+
+
+
+	GK_INLINE bool   isStaticGeometry(void)   {return (m_flags & GK_STATIC_GEOM) != 0;}
+	GK_INLINE bool   isImmovable(void)        {return (m_flags & GK_IMMOVABLE) != 0;}
+
+
+	// Grouping
+
+	GK_INLINE gkGameObjectGroup    *getGroup(void)      { return m_group;}
+	GK_INLINE gkGameObjectInstance *getInstance(void)   { return m_groupID; }
+	GK_INLINE bool                  isInstance(void)    { return m_groupID != 0;}
+	GK_INLINE bool                  isInGroup(void)     { return m_group != 0;}
+
+	GK_INLINE void                  _makeInstance(gkGameObjectInstance *id)  { m_groupID = id; }
+	GK_INLINE void                  _makeGroup(gkGameObjectGroup *id)        { m_group = id; }
+
 protected:
+
 	void cloneImpl(gkGameObject *clob);
+
+
+	void applyChildren(void);
+	void unloadChildren(void);
+
 
 	// Base class type
 	gkGameObjectTypes           m_type;
@@ -255,27 +250,21 @@ protected:
 	// Attached logic bricks
 	gkLogicLink                *m_bricks;
 
-
-	// Current state of object transforms
-	gkTransformState            m_prev, m_cur;
-
 	// Physics body instance
 	gkRigidBody                *m_rigidBody;
 	gkCharacter                *m_character;
 
 	VariableMap                 m_variables;
-	ConstraintList              m_constraints;
 
 
-	gkGameObjectGroup          *m_groupRef;     //is owner
-	gkGameObjectInstance       *m_instance;     //is instance
-	bool                        m_groupOwn;
+	gkGameObjectInstance       *m_groupID;
+	gkGameObjectGroup          *m_group;
 
 	int                         m_state;
-	bool                        m_activeLayer, m_outOfDate;
+	bool                        m_activeLayer;
+	int                         m_layer;
 	bool                        m_isClone;
-
-	// time to live 0 = forever
+	int                         m_flags;
 	LifeSpan                    m_life;
 
 
@@ -285,8 +274,6 @@ protected:
 	virtual void postUnloadImpl(void);
 
 private:
-	void loadPhysics(void);
-	void destroyPhysics(void);
 
 	NavMeshData m_navMeshData;
 };

@@ -41,60 +41,69 @@
 #include "gkMesh.h"
 
 
+
+
+// ----------------------------------------------------------------------------
 gkEntity::gkEntity(gkScene *scene, const gkString &name)
-	:       gkGameObject(scene, name, GK_ENTITY),
-	        m_entityProps(new gkEntityProperties()),
-	        m_entity(0),
-	        m_active(0),
-	        m_skeleton(0),
-	        m_meshLoader(0)
+	:	gkGameObject(scene, name, GK_ENTITY),
+	    m_entityProps(new gkEntityProperties()),
+	    m_entity(0),
+	    m_active(0),
+	    m_skeleton(0),
+	    m_meshLoader(0)
 {
 }
 
 
 
+// ----------------------------------------------------------------------------
 gkEntity::~gkEntity()
 {
 	if (m_meshLoader)
-	{
 		delete m_meshLoader;
-	}
 
 	delete m_entityProps;
-
 }
 
 
-
+// ----------------------------------------------------------------------------
 void gkEntity::loadImpl(void)
 {
 	gkGameObject::loadImpl();
 
-	if (m_entity != 0 || !m_entityProps->m_mesh)
+	GK_ASSERT(!m_entity);
+
+
+	if (!m_entityProps->m_mesh)
 		return;
 
 	Ogre::SceneManager *manager = m_scene->getManager();
+
 
 	// update mesh state
 	createMesh();
 
 
-	if (m_parent && m_parent->getType() == GK_SKELETON)
+
+	gkGameObject *parent = 0;
+	if (!m_baseProps.m_parent.empty())
+		parent = m_scene->getObject(m_baseProps.m_parent);
+
+
+	if (parent && parent->getType() == GK_SKELETON)
 	{
 		// just in case
-		m_parent->load();
-	}
+		parent->load();
 
+		// attach entity to skeleton
+		m_skeleton = static_cast<gkSkeleton *>(parent);
+		m_skeleton->setController(this);
+	}
 
 	m_entity = manager->createEntity(m_name, m_entityProps->m_mesh->getName());
 
-	if (m_parent && m_parent->getType() == GK_SKELETON)
-	{
-		// attach entity to skeleton
-		m_skeleton = static_cast<gkSkeleton *>(m_parent);
-		m_skeleton->setController(this);
+	if (parent && parent->getType() == GK_SKELETON)
 		m_skeleton->setEntity(m_entity);
-	}
 
 	if (!m_entityProps->m_startPose.empty())
 		_resetPose();
@@ -109,14 +118,14 @@ void gkEntity::loadImpl(void)
 }
 
 
+
+// ----------------------------------------------------------------------------
 void gkEntity::unloadImpl(void)
 {
-	if (m_entity != 0)
+	if (m_entity)
 	{
-		// sanity check
-		GK_ASSERT(m_scene);
+
 		Ogre::SceneManager *manager = m_scene->getManager();
-		GK_ASSERT(manager);
 
 		if (m_skeleton)
 			m_skeleton->setController(0);
@@ -124,30 +133,29 @@ void gkEntity::unloadImpl(void)
 		if (!m_entityProps->m_startPose.empty())
 			_resetPose();
 
-		if (m_node)
-			m_node->detachObject(m_entity);
-
-		manager->destroyEntity(m_entity);
-		m_entity = 0;
-
-
-		m_skeleton = 0;
-
+		if (!m_scene->isUnloading())
+		{
+			if (m_node)
+				m_node->detachObject(m_entity);
+		
+			manager->destroyEntity(m_entity);
+		}
 	}
+
+	m_entity = 0;
+	m_skeleton = 0;
+
+
 	gkGameObject::unloadImpl();
 }
 
 
-
+// ----------------------------------------------------------------------------
 void gkEntity::_unloadAsInstance(void)
 {
 	if (m_entity != 0)
 	{
-		// sanity check
-		GK_ASSERT(m_scene);
 		Ogre::SceneManager *manager = m_scene->getManager();
-		GK_ASSERT(manager);
-
 		if (m_skeleton)
 			m_skeleton->setController(0);
 
@@ -158,13 +166,15 @@ void gkEntity::_unloadAsInstance(void)
 			m_node->detachObject(m_entity);
 
 		manager->destroyEntity(m_entity);
+
 		m_entity = 0;
 		m_skeleton = 0;
-
 	}
 }
 
 
+
+// ----------------------------------------------------------------------------
 void gkEntity::evalAction(gkAction *act, gkScalar animTime)
 {
 	if (m_skeleton)
@@ -186,6 +196,8 @@ void gkEntity::evalAction(gkAction *act, gkScalar animTime)
 }
 
 
+
+// ----------------------------------------------------------------------------
 void gkEntity::playAction(const gkString &act, gkScalar blend)
 {
 	if (m_skeleton)
@@ -210,7 +222,9 @@ void gkEntity::playAction(const gkString &act, gkScalar blend)
 }
 
 
-gkObject *gkEntity::clone(const gkString &name)
+
+// ----------------------------------------------------------------------------
+gkGameObject *gkEntity::clone(const gkString &name)
 {
 	gkEntity *cl= new gkEntity(m_scene, name);
 
@@ -222,6 +236,8 @@ gkObject *gkEntity::clone(const gkString &name)
 }
 
 
+
+// ----------------------------------------------------------------------------
 void gkEntity::_resetPose(void)
 {
 	if (m_skeleton)
@@ -240,7 +256,7 @@ void gkEntity::_resetPose(void)
 }
 
 
-
+// ----------------------------------------------------------------------------
 gkBoundingBox gkEntity::getAabb() const
 {
 	return m_entityProps->m_mesh ? m_entityProps->m_mesh->getBoundingBox() : gkGameObject::getAabb();
@@ -248,6 +264,8 @@ gkBoundingBox gkEntity::getAabb() const
 
 
 
+
+// ----------------------------------------------------------------------------
 class gkEntityMeshLoader : public Ogre::ManualResourceLoader
 {
 public:
@@ -264,6 +282,9 @@ private:
 
 
 
+
+
+// ----------------------------------------------------------------------------
 void gkEntity::createMesh(void)
 {
 	if (m_meshLoader != 0)
@@ -282,11 +303,8 @@ void gkEntity::createMesh(void)
 
 
 
-//
-// Mesh Loader
-//
 
-
+// ----------------------------------------------------------------------------
 gkEntityMeshLoader::gkEntityMeshLoader(gkEntity *ent)
 	:   m_entity(ent)
 {
@@ -294,6 +312,7 @@ gkEntityMeshLoader::gkEntityMeshLoader(gkEntity *ent)
 
 
 
+// ----------------------------------------------------------------------------
 void gkEntityMeshLoader::loadMaterial(gkSubMesh *mesh)
 {
 	gkMaterialProperties &gma = mesh->getMaterial();
@@ -366,6 +385,8 @@ void gkEntityMeshLoader::loadMaterial(gkSubMesh *mesh)
 
 
 
+
+// ----------------------------------------------------------------------------
 void gkEntityMeshLoader::loadResource(Ogre::Resource *resource)
 {
 	using namespace Ogre;
@@ -380,11 +401,11 @@ void gkEntityMeshLoader::loadResource(Ogre::Resource *resource)
 	gkSkeleton *skel = 0;
 
 
-	if (m_entity->getParent())
+	if (m_entity->getSkeleton())
 	{
-		skel = m_entity->getParent()->getSkeleton();
+		skel = m_entity->getSkeleton();
 		if (skel)
-			omesh->setSkeletonName(m_entity->getParent()->getName());
+			omesh->setSkeletonName(skel->getName());
 	}
 
 

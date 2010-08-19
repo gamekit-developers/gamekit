@@ -355,90 +355,114 @@ void gkBlenderSceneConverter::convertObjectGroup(gkGameObjectGroup *gobj, Blende
 }
 
 // ----------------------------------------------------------------------------
-void gkBlenderSceneConverter::convertGroups(utArray<Blender::Object *> &groups, utArray<Blender::Object *> &children)
+void gkBlenderSceneConverter::convertGroups(utArray<Blender::Object *> &groups)
 {
+	gkGroupManager *mgr = m_gscene->getGroupManager();
+
+
+
+	// This is a complete list of groups & containing objects.
+	// The gkGameObjectGroup is a containter, the gkGameObjectGroupInstance
+	// is where the object should be added / removed from the scene.
+
 	bParse::bListBasePtr *lbp = m_file->getInternalFile()->getMain()->getGroup();
 	for (int i=0; i<lbp->size(); ++i)
 	{
 		Blender::Group *bgrp = (Blender::Group *)lbp->at(i);
 
-		if (!m_gscene->hasGroup(GKB_IDNAME(bgrp)))
+		const gkHashedString &groupName = GKB_IDNAME(bgrp);
+	
+		if (mgr->hasGroup(groupName))
 		{
-			gkGameObjectGroup *ggrp= 0;
+			// Can most likely assert here
+			continue;
+		}
 
-			for (Blender::GroupObject *bgobj = (Blender::GroupObject *)bgrp->gobject.first;
-			        bgobj; bgobj = bgobj->next)
+
+		gkGameObjectGroup *group = mgr->createGroup(groupName);
+
+		for (Blender::GroupObject *bgobj = (Blender::GroupObject *)bgrp->gobject.first; bgobj; bgobj = bgobj->next)
+		{
+			if (bgobj->ob)
 			{
-				if (bgobj->ob)
-				{
-					if (m_gscene->hasObject(GKB_IDNAME(bgobj->ob)))
-					{
-						if (ggrp == 0)
-							ggrp = m_gscene->createGroup(GKB_IDNAME(bgrp));
+				Blender::Object *bobj = bgobj->ob;
 
-						gkGameObject *gobj = m_gscene->getObject(GKB_IDNAME(bgobj->ob));
-						ggrp->addObject(gobj);
+				if (!validObject(bobj)) 
+					continue;
+				
 
-					}
-				}
+
+				gkGameObject *gobj = m_gscene->getObject(GKB_IDNAME(bobj));
+
+
+				// add it to the list
+				if (gobj)
+					group->addObject(gobj);
 			}
 		}
+
+
+		// Destroy if empty
+		if (group->isEmpty())
+			mgr->destroyGroup(group);
+
 	}
 
-
-
-	for (UTsize i=0; i<groups.size(); ++i)
+	// Process user created groups.
+	utArray<Blender::Object *>::Iterator it = groups.iterator();
+	while (it.hasMoreElements())
 	{
-		Blender::Object *ob = groups.at(i);
+		Blender::Object *bobj = it.getNext();
 
-		if (ob->transflag &OB_DUPLIGROUP && ob->dup_group != 0)
+
+		// Should not fail
+		GK_ASSERT((bobj->transflag &OB_DUPLIGROUP && bobj->dup_group != 0));
+
+
+		// Owning group
+		Blender::Group *bgobj = bobj->dup_group;
+		const gkHashedString &groupName = GKB_IDNAME(bgobj);
+
+
+		if (mgr->hasGroup(groupName))
 		{
-			gkGameObjectGroup *grp = 0;
-
-			if (!m_gscene->hasGroup(GKB_IDNAME(ob->dup_group)))
-			{
-				// create initial group objects
-				grp = m_gscene->createGroup(GKB_IDNAME(ob->dup_group));
-				convertObjectGroup(grp, ob);
-			}
-			else
-				grp = m_gscene->getGroup(GKB_IDNAME(ob->dup_group));
-
-			if (grp != 0)
-			{
-				convertObject(ob);
+			gkGameObjectGroup *ggobj   = mgr->getGroup(groupName);
 
 
-				gkGameObject *obp = m_gscene->getObject(GKB_IDNAME(ob));
-				obp->setGroupOwner(true);
-				m_gscene->createInstance(obp, grp);
-			}
+			gkGameObjectInstance *inst = ggobj->createInstance(m_gscene);
+
+			// bobj is the empty owner. inst->getOwner() is 
+			// local to the gkGameObjectInstance class. 
+			// We still want position / logic on the owner 
+			// so do that per instance. 
+			convertObject(bobj, inst->getOwner());
 		}
-
 	}
 }
 
 
 
 // ----------------------------------------------------------------------------
-void gkBlenderSceneConverter::convertObject(Blender::Object *bobj)
+void gkBlenderSceneConverter::convertObject(Blender::Object *bobj, gkGameObject *gobj)
 {
 	if (!m_gscene)
 		return;
 
 	GK_ASSERT(validObject(bobj));
 
-	gkGameObject *gobj = 0;
-
-	switch (bobj->type)
+	if (gobj == 0)
 	{
-	case OB_EMPTY:      gobj = m_gscene->createObject(GKB_IDNAME(bobj));    break;
-	case OB_LAMP:       gobj = m_gscene->createLight(GKB_IDNAME(bobj));     break;
-	case OB_CAMERA:     gobj = m_gscene->createCamera(GKB_IDNAME(bobj));    break;
-	case OB_MESH:       gobj = m_gscene->createEntity(GKB_IDNAME(bobj));    break;
-	case OB_ARMATURE:   gobj = m_gscene->createSkeleton(GKB_IDNAME(bobj));  break;
-	}
 
+		switch (bobj->type)
+		{
+		case OB_EMPTY:      gobj = m_gscene->createObject(GKB_IDNAME(bobj));    break;
+		case OB_LAMP:       gobj = m_gscene->createLight(GKB_IDNAME(bobj));     break;
+		case OB_CAMERA:     gobj = m_gscene->createCamera(GKB_IDNAME(bobj));    break;
+		case OB_MESH:       gobj = m_gscene->createEntity(GKB_IDNAME(bobj));    break;
+		case OB_ARMATURE:   gobj = m_gscene->createSkeleton(GKB_IDNAME(bobj));  break;
+		}
+
+	}
 
 
 	// all game object property types
@@ -463,6 +487,7 @@ void gkBlenderSceneConverter::convertObject(Blender::Object *bobj)
 }
 
 
+
 // ----------------------------------------------------------------------------
 void gkBlenderSceneConverter::convertObjectGeneral(gkGameObject *gobj, Blender::Object *bobj)
 {
@@ -470,34 +495,30 @@ void gkBlenderSceneConverter::convertObjectGeneral(gkGameObject *gobj, Blender::
 	gkVector3 loc, scale;
 	gkMatrix4 obmat = gkMathUtils::getFromFloat(bobj->obmat);
 
-	if (!bobj->parent)
-		gkMathUtils::extractTransform(obmat, loc, quat, scale);
-	else
-	{
-		gkMatrix4 parent = gkMathUtils::getFromFloat(bobj->parent->obmat);
 
-		obmat = parent.inverse() * obmat;
-		gkMathUtils::extractTransform(obmat, loc, quat, scale);
-	}
+	gkMathUtils::extractTransform(obmat, loc, quat, scale);
 
 	// prevent zero scale
 	gkVector3 scaleTest = gkVector3(bobj->size[0], bobj->size[1], bobj->size[2]);
 	if (scaleTest.isZeroLength())
 		scale = gkVector3(1.f, 1.f, 1.f);
 
-
 	gkGameObjectProperties &props = gobj->getProperties();
 
+	if (bobj->parent && validObject(bobj->parent))
+		props.m_parent = GKB_IDNAME(bobj->parent);
+
+
 	props.m_transform = gkTransformState(loc, quat, scale);
-	if (bobj->dtx & OB_BOUNDBOX)
-		props.m_mode |= GK_SHOWBB;
 
 	if (bobj->restrictflag & OB_RESTRICT_RENDER)
 		props.m_mode |= GK_INVISIBLE;
 
 	gobj->setActiveLayer((m_bscene->lay & bobj->lay)!=0);
-
+	gobj->setLayer((UTuint32)bobj->lay);
 }
+
+
 
 // ----------------------------------------------------------------------------
 void gkBlenderSceneConverter::convertObjectProperties(gkGameObject *gobj, Blender::Object *bobj)
@@ -542,10 +563,17 @@ void gkBlenderSceneConverter::convertObjectConstraints(gkGameObject *gobj, Blend
 {
 	// TODO: setup physics constraints & add more
 
+
+	gkConstraintManager *mgr = m_gscene->getConstraintManager();
+
+
 	for (Blender::bConstraint *bc = (Blender::bConstraint *)bobj->constraints.first; bc; bc = bc->next)
 	{
 		if (bc->enforce == 0.0)
 			continue;
+
+		gkConstraint *co = 0; 
+
 
 		if (bc->type == CONSTRAINT_TYPE_ROTLIMIT)
 		{
@@ -555,6 +583,7 @@ void gkBlenderSceneConverter::convertObjectConstraints(gkGameObject *gobj, Blend
 				continue;
 
 			gkLimitRotConstraint *c = new gkLimitRotConstraint();
+			co = c;
 
 			if (lr->flag & LIMIT_XROT)
 				c->setLimitX(gkVector2(lr->xmin * gkDPR, lr->xmax * gkDPR));
@@ -562,10 +591,6 @@ void gkBlenderSceneConverter::convertObjectConstraints(gkGameObject *gobj, Blend
 				c->setLimitY(gkVector2(lr->ymin* gkDPR, lr->ymax* gkDPR));
 			if (lr->flag & LIMIT_ZROT)
 				c->setLimitZ(gkVector2(lr->zmin* gkDPR, lr->zmax* gkDPR));
-
-			c->setLocal(bc->ownspace == CONSTRAINT_SPACE_LOCAL);
-			c->setInfluence(bc->enforce);
-			gobj->addConstraint(c);
 		}
 		else if (bc->type == CONSTRAINT_TYPE_LOCLIMIT)
 		{
@@ -574,6 +599,8 @@ void gkBlenderSceneConverter::convertObjectConstraints(gkGameObject *gobj, Blend
 				continue;
 
 			gkLimitLocConstraint *c = new gkLimitLocConstraint();
+			co = c;
+
 
 			if (ll->flag & LIMIT_XMIN) c->setMinX(ll->xmin);
 			if (ll->flag & LIMIT_XMAX) c->setMaxX(ll->xmax);
@@ -581,10 +608,16 @@ void gkBlenderSceneConverter::convertObjectConstraints(gkGameObject *gobj, Blend
 			if (ll->flag & LIMIT_YMAX) c->setMaxY(ll->ymax);
 			if (ll->flag & LIMIT_ZMIN) c->setMinZ(ll->zmin);
 			if (ll->flag & LIMIT_ZMAX) c->setMaxZ(ll->zmax);
+		}
 
-			c->setLocal(bc->ownspace == CONSTRAINT_SPACE_LOCAL);
-			c->setInfluence(bc->enforce);
-			gobj->addConstraint(c);
+
+		if (co)
+		{
+			co->setSpace(bc->ownspace == CONSTRAINT_SPACE_LOCAL ? TRANSFORM_LOCAL : TRANSFORM_WORLD);
+			co->setInfluence(bc->enforce);
+
+
+			mgr->addConstraint(gobj, co);
 		}
 	}
 }
@@ -609,6 +642,10 @@ void gkBlenderSceneConverter::convertObjectPhysics(gkGameObject *gobj, Blender::
 		if (!(bobj->gameflag & OB_ACTOR))
 			phy.m_type = GK_NO_COLLISION;
 	}
+
+	// Fixme: Compound shapes.
+	if (bobj->parent)
+		phy.m_type = GK_NO_COLLISION;
 
 	if (!props.isPhysicsObject())
 		return;
@@ -697,7 +734,8 @@ void gkBlenderSceneConverter::convertObjectPhysics(gkGameObject *gobj, Blender::
 		{
 			gkLimitVelocityConstraint *vc = new gkLimitVelocityConstraint();
 			vc->setLimit(gkVector2(phy.m_minVel, phy.m_maxVel));
-			gobj->addConstraint(vc);
+
+			m_gscene->getConstraintManager()->addConstraint(gobj, vc);
 		}
 	}
 }
@@ -1135,9 +1173,10 @@ void gkBlenderSceneConverter::convert(void)
 	if (m_bscene->world)
 		convertWorld();
 
+	m_gscene->setLayer((UTuint32)m_bscene->lay);
 
 
-	utArray<Blender::Object *> groups, children;
+	utArray<Blender::Object *> groups;
 	for (Blender::Base *base = (Blender::Base *)m_bscene->base.first; base; base = base->next)
 	{
 		if (!base->object)
@@ -1149,22 +1188,15 @@ void gkBlenderSceneConverter::convert(void)
 		if (!validObject(bobj))
 			continue;
 
-
 		if (bobj->transflag &OB_DUPLIGROUP && bobj->dup_group != 0)
 			groups.push_back(bobj);
 		else
 			convertObject(bobj);
-
-		// save parent / child hierarchy
-		if (bobj->parent)
-			children.push_back(bobj);
 	}
 
 	// build group instances
-	convertGroups(groups, children);
+	convertGroups(groups);
 
-
-	applyParents(children);
 
 	m_logic->resolveLinks();
 }
@@ -2012,7 +2044,7 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
 				                       (objact->flag & ACT_ANG_VEL_LOCAL) != 0);
 
 				ma->setIncrementalVelocity((objact->flag & ACT_ADD_LIN_VEL) != 0);
-				ma->setDamping(gkScalar(objact->damping) / 1000.f);
+				ma->setDamping(gkScalar(objact->damping));
 			}
 			break;
 		case ACT_ACTION:

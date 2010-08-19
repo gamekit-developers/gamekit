@@ -91,12 +91,11 @@ void gkNavMeshData::unload(gkGameObject* pObj)
 	pObj->resetNavData();
 
 	gkGameObjectSet& objs = m_scene->getLoadedObjects();
-	gkGameObjectSet::iterator it = objs.begin();
-    while(it != objs.end())
+	gkGameObjectSet::Iterator it = objs.iterator();
+	while(it.hasMoreElements())
 	{
-		gkGameObject* p = *it;
+		gkGameObject* p = it.getNext();
         p->recalcNavData(indexBase, nIndex);
-		++it;
 	}
 
 	m_hasChanged = true;
@@ -119,12 +118,11 @@ void gkNavMeshData::updateOrLoad(gkGameObject* pObj)
 void gkNavMeshData::unloadAll()
 {
 	gkGameObjectSet& objs = m_scene->getLoadedObjects();
-	gkGameObjectSet::iterator it = objs.begin();
-    while(it != objs.end())
+	gkGameObjectSet::Iterator it = objs.iterator();
+	while(it.hasMoreElements())
 	{
-		gkGameObject* pObj = *it;
+		gkGameObject* pObj = it.getNext();
         pObj->resetNavData();
-		++it;
 	}
 	
 	gkCriticalSection::Lock guard(m_cs);
@@ -139,12 +137,11 @@ void gkNavMeshData::unloadAll()
 void gkNavMeshData::loadAll()
 {
 	gkGameObjectSet& objs = m_scene->getLoadedObjects();
-	gkGameObjectSet::iterator it = objs.begin();
-    while(it != objs.end())
+	gkGameObjectSet::Iterator it = objs.iterator();
+	while(it.hasMoreElements())
 	{
-		gkGameObject* pObj = *it;
+		gkGameObject* pObj = it.getNext();
 		updateOrLoad(pObj);
-		++it;
 	}
 
 	m_hasChanged = true;
@@ -342,8 +339,10 @@ bool gkNavMeshData::isValid(gkGameObject* pObj)
 	
 	btCollisionObject* pColObj = pObj->getCollisionObject();
 	
-	if(physicsState.isRigid() && pColObj)
+	if(physicsState.isRigid())
 	{
+		GK_ASSERT(pColObj); 
+
 		int current_state = pColObj->getActivationState();
 		
 		int old_state = pObj->getAttachedBody()->setActivationState(current_state);
@@ -352,6 +351,9 @@ bool gkNavMeshData::isValid(gkGameObject* pObj)
 	}
 	else if(physicsState.isStatic())
 	{
+		// Sanity checks with parent / child physics controllers. 
+		GK_ASSERT(pColObj); 
+
 		active = true;
 	}
 	

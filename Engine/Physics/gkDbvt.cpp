@@ -32,6 +32,8 @@
 #include "gkEngine.h"
 #include "gkUserDefs.h"
 
+#include "OgreCamera.h"
+
 
 // ----------------------------------------------------------------------------
 gkDbvt::gkDbvt() 
@@ -81,7 +83,7 @@ void gkDbvt::mark(gkCamera *cam, btDbvtBroadphase *cullTree, gkPhysicsController
 	{
 		// Mark all invisible
 
-		gkPhysicsControllerIterator iter(controllers);
+		gkPhysicsControllers::Iterator iter= controllers.iterator();
 		while (iter.hasMoreElements())
 			iter.getNext()->_markDbvt(false);
 	}

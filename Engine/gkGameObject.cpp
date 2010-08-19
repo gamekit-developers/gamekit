@@ -44,34 +44,62 @@
 #include "gkLogicLink.h"
 #include "gkNodeManager.h"
 #include "gkLogicTree.h"
-#include "gkConstraint.h"
+#include "gkConstraintManager.h"
 #include "gkGameObjectGroup.h"
 #include "gkRigidBody.h"
 #include "gkCharacter.h"
 #include "gkDynamicsWorld.h"
 #include "gkMesh.h"
+#include "gkVariable.h"
+
 
 using namespace Ogre;
 
 
+
+// ----------------------------------------------------------------------------
 gkGameObject::gkGameObject(gkScene *scene, const gkString &name, gkGameObjectTypes type)
-	:       gkObject(name),  m_type(type),  m_baseProps(),
-	        m_parent(0), m_scene(scene),  m_node(0),
-	        m_logic(0),  m_bricks(0),
-	        m_rigidBody(0),  m_character(0),  m_groupRef(0),  m_instance(0),
-	        m_groupOwn(false), m_state(0),
-	        m_activeLayer(true),  m_outOfDate(false), m_isClone(false)
+	:	gkObject(name),
+	    m_type(type),
+	    m_baseProps(),
+	    m_parent(0),
+	    m_scene(scene),
+	    m_node(0),
+	    m_logic(0), // FIXME: Detach
+ 	    m_bricks(0), // FIXME: Detach
+	    m_rigidBody(0),
+	    m_character(0),
+	    m_groupID(0),
+		m_group(0),
+	    m_state(0),
+	    m_activeLayer(true),
+	    m_layer(0xFFFFFFFF),
+	    m_isClone(false),
+	    m_flags(0)
 {
 	GK_ASSERT(m_scene);
+
+
 	m_life.tick = 0;
 	m_life.timeToLive = 0;
 }
 
 
+
+// ----------------------------------------------------------------------------
 gkGameObject::~gkGameObject()
 {
 	clearVariables();
-	destroyConstraints();
+
+
+	if (m_scene)
+	{
+		// TODO, should be the same for bricks and nodes.
+		// (No game object internal dependencies)!
+
+		gkConstraintManager *mgr = m_scene->getConstraintManager();
+		mgr->notifyObjectDestroyed(this);
+	}
 
 
 	if (m_bricks)
@@ -81,6 +109,9 @@ gkGameObject::~gkGameObject()
 	}
 }
 
+
+
+// ----------------------------------------------------------------------------
 void gkGameObject::attachLogic(gkLogicTree *tree)
 {
 	if (!m_logic)
@@ -91,49 +122,26 @@ void gkGameObject::attachLogic(gkLogicTree *tree)
 }
 
 
+
+// ----------------------------------------------------------------------------
 void gkGameObject::attachLogic(gkLogicLink *bricks)
 {
 	UT_ASSERT(!m_bricks);
 	m_bricks = bricks;
 }
 
-void gkGameObject::attachToGroup(gkGameObjectGroup *g)
+
+// ----------------------------------------------------------------------------
+gkGameObject *gkGameObject::clone(const gkString &name)
 {
-	// ignore
-	if (m_groupRef)
-		return;
-	m_groupRef = g;
-}
-
-
-void gkGameObject::attachToGroupInstance(gkGameObjectInstance *g)
-{
-	// ignore
-	if (m_instance)
-		return;
-	m_instance = g;
-}
-
-
-void gkGameObject::detachFromGroup(void)
-{
-}
-
-
-gkGameObject *gkGameObject::getGroupParent(void)
-{
-	return m_instance ? m_instance->getOwner() : 0;
-}
-
-
-gkObject *gkGameObject::clone(const gkString &name)
-{
-	gkGameObject *ob = new gkGameObject(m_scene, m_name, m_type);
+	gkGameObject *ob = new gkGameObject(m_scene, name, m_type);
 	cloneImpl(ob);
 	return ob;
 }
 
 
+
+// ----------------------------------------------------------------------------
 void gkGameObject::cloneImpl(gkGameObject *clob)
 {
 	clob->m_activeLayer = clob->m_activeLayer;
@@ -153,15 +161,17 @@ void gkGameObject::cloneImpl(gkGameObject *clob)
 	}
 
 
-	if (!m_constraints.empty())
+
+	if (m_scene)
 	{
-		// clone constraints
-		ConstraintIterator  cit = getConstraintIterator();
-		while (cit.hasMoreElements())
-			clob->m_constraints.push_back(cit.getNext()->clone());
+		gkConstraintManager *mgr = m_scene->getConstraintManager();
+		mgr->notifyObjectCloned(this, clob);
 	}
 
+
 	// clone logic nodes
+
+
 
 	// clone logic bricks
 	if (m_bricks != 0)
@@ -169,101 +179,119 @@ void gkGameObject::cloneImpl(gkGameObject *clob)
 }
 
 
-void gkGameObject::addConstraint(gkConstraint *c)
-{
-	GK_ASSERT(c);
-	m_constraints.push_back(c);
-}
 
-
-
+// ----------------------------------------------------------------------------
 void gkGameObject::loadImpl(void)
 {
 	SceneManager *manager = m_scene->getManager();
 	SceneNode *parentNode = 0;
 
-	if (m_parent)
-	{
-		if (!m_parent->isLoaded()) m_parent->load();
 
-		parentNode = m_parent->m_node;
+	if (!m_scene->isLoading())
+	{
+		// Scene is not currently loading, meaning
+		// a specific object is being loaded. (maintain previous parent)
+
+		if (m_parent)
+		{
+			if (!m_parent->isLoaded())
+				m_parent->load();
+
+			parentNode = m_parent->m_node;
+			GK_ASSERT(parentNode);
+		}
 	}
-	// Create from parent or root node
+
 	m_node = parentNode ? parentNode->createChildSceneNode(m_name) : manager->getRootSceneNode()->createChildSceneNode(m_name);
+
 
 	applyTransformState(m_baseProps.m_transform);
 
-	//////////////////////////////////
-	// Reattach children (ogre) nodes
-	gkGameObjectArrayIterator iter(m_children);
-	while (iter.hasMoreElements())
-	{
-		gkGameObject *pChild = iter.getNext();
 
-		if(pChild->m_node)
+	if (!m_scene->isLoading())
+	{
+		// Reattach children (ogre) nodes
+		gkGameObjectArray::Iterator iter = m_children.iterator();
+		while (iter.hasMoreElements())
 		{
-			Ogre::SceneNode *pParentNode = pChild->m_node->getParentSceneNode();
-			if (pParentNode)
+			gkGameObject *pChild = iter.getNext();
+
+			if(pChild->m_node)
 			{
-				Ogre::Node *pChildNode = pParentNode->removeChild(pChild->m_node);
-				m_node->addChild(pChildNode);
+				Ogre::SceneNode *pParentNode = pChild->m_node->getParentSceneNode();
+				if (pParentNode)
+				{
+					Ogre::Node *pChildNode = pParentNode->removeChild(pChild->m_node);
+					m_node->addChild(pChildNode);
+				}
+				else
+					m_node->addChild(pChild->m_node);
 			}
-			else
-				m_node->addChild(pChild->m_node);
 		}
 	}
-	//////////////////////////////////
-
-
-	// save transform states
-	m_cur   = m_baseProps.m_transform;
-	m_prev  = m_cur;
 
 	m_node->setInitialState();
 }
 
+
+
+// ----------------------------------------------------------------------------
 void gkGameObject::postLoadImpl(void)
 {
-	loadPhysics();
-
 	// tell scene
 	m_scene->notifyObjectLoaded(this);
 }
 
+
+// ----------------------------------------------------------------------------
 void gkGameObject::postUnloadImpl(void)
 {
-	destroyPhysics();
-
 	// tell logic
 	if (m_bricks)
 		m_bricks->unload();
 
+
 	// tell scene
 	m_scene->notifyObjectUnloaded(this);
+
+	if (m_scene->isUnloading())
+	{
+		m_parent = 0;
+		m_children.clear();
+	}
 }
 
 
+
+// ----------------------------------------------------------------------------
 void gkGameObject::unloadImpl(void)
 {
 	SceneManager *manager = m_scene->getManager();
 
-	if (m_node)
+
+	if (!m_scene->isUnloading())
 	{
-		// Destroy and detach from scene graph
-		Ogre::SceneNode *pParentNode = m_node->getParentSceneNode();
-
-		unsigned short n = m_node->numChildren();
-
-		for(unsigned short i=0; i<n; i++)
+		if (m_node)
 		{
-			Ogre::Node *pChildNode = m_node->removeChild(i);
+			// Destroy and detach from scene graph
+			Ogre::SceneNode *pParentNode = m_node->getParentSceneNode();
 
-			pParentNode->addChild(pChildNode);
+			unsigned short n = m_node->numChildren();
 
+			for(unsigned short i=0; i<n; i++)
+			{
+				Ogre::Node *pChildNode = m_node->removeChild(i);
+
+				pParentNode->addChild(pChildNode);
+
+			}
+
+			manager->destroySceneNode(m_node);
 		}
-		manager->destroySceneNode(m_node);
-		m_node = 0;
 	}
+
+	m_node = 0;
+
 
 	// Reset variables
 	utHashTableIterator<VariableMap> iter(m_variables);
@@ -276,7 +304,8 @@ void gkGameObject::unloadImpl(void)
 
 
 
-bool gkGameObject::hasSensorMaterial(const gkString& name, bool onlyFirst)
+// ----------------------------------------------------------------------------
+bool gkGameObject::hasSensorMaterial(const gkString &name, bool onlyFirst)
 {
 	gkEntity *ent = getEntity();
 	if (ent)
@@ -302,6 +331,7 @@ bool gkGameObject::hasSensorMaterial(const gkString& name, bool onlyFirst)
 }
 
 
+// ----------------------------------------------------------------------------
 Ogre::MovableObject *gkGameObject::getMovable(void)
 {
 	if (!isLoaded())
@@ -320,23 +350,91 @@ Ogre::MovableObject *gkGameObject::getMovable(void)
 }
 
 
-gkMatrix4 gkGameObject::getWorldTransform(void)
+// ----------------------------------------------------------------------------
+const gkTransformState &gkGameObject::getTransformState(void)
 {
-	if (m_node != 0)
-		return m_node->_getFullTransform();
-	return getLocalTransform().toMatrix();
+	static gkTransformState m_state;
+	m_state.loc = getPosition();
+	m_state.rot = getOrientation();
+	m_state.scl = getScale();
+	return m_state;
 }
 
 
-gkVector3 gkGameObject::getWorldPosition(void)
+// ----------------------------------------------------------------------------
+const gkMatrix4 &gkGameObject::getTransform(void)
+{
+	static gkMatrix4 temp;
+	if (m_node != 0)
+	{
+		getTransformState().toMatrix(temp);
+		return temp;
+	}
+	return gkMatrix4::IDENTITY;
+}
+
+
+// ----------------------------------------------------------------------------
+const gkVector3 &gkGameObject::getPosition(void)
+{
+	if (m_node != 0)
+		return m_node->getPosition();
+	return m_baseProps.m_transform.loc;
+}
+
+// ----------------------------------------------------------------------------
+const gkVector3 &gkGameObject::getScale(void)
+{
+	if (m_node != 0)
+		return m_node->getScale();
+	return m_baseProps.m_transform.scl;
+}
+
+
+// ----------------------------------------------------------------------------
+const gkQuaternion &gkGameObject::getOrientation(void)
+{
+	if (m_node != 0)
+		return m_node->getOrientation();
+	return m_baseProps.m_transform.rot;
+}
+
+
+// ----------------------------------------------------------------------------
+gkEuler gkGameObject::getRotation(void)
+{
+	return gkEuler(getOrientation());
+}
+
+// ----------------------------------------------------------------------------
+const gkTransformState &gkGameObject::getWorldTransformState(void)
+{
+	static gkTransformState m_state;
+	m_state.loc = getWorldPosition();
+	m_state.rot = getWorldOrientation();
+	m_state.scl = getWorldScale();
+	return m_state;
+}
+
+// ----------------------------------------------------------------------------
+const gkMatrix4 &gkGameObject::getWorldTransform(void)
+{
+	if (m_node != 0)
+		return m_node->_getFullTransform();
+	return gkMatrix4::IDENTITY;
+}
+
+
+// ----------------------------------------------------------------------------
+const gkVector3 &gkGameObject::getWorldPosition(void)
 {
 	if (m_node != 0)
 		return m_node->_getDerivedPosition();
 	return m_baseProps.m_transform.loc;
 }
 
-
-gkVector3 gkGameObject::getWorldScale(void)
+// ----------------------------------------------------------------------------
+const gkVector3 &gkGameObject::getWorldScale(void)
 {
 	if (m_node != 0)
 		return m_node->_getDerivedScale();
@@ -344,7 +442,8 @@ gkVector3 gkGameObject::getWorldScale(void)
 }
 
 
-gkQuaternion gkGameObject::getWorldOrientation(void)
+// ----------------------------------------------------------------------------
+const gkQuaternion &gkGameObject::getWorldOrientation(void)
 {
 	if (m_node != 0)
 		return m_node->_getDerivedOrientation();
@@ -352,36 +451,28 @@ gkQuaternion gkGameObject::getWorldOrientation(void)
 }
 
 
+// ----------------------------------------------------------------------------
 gkEuler gkGameObject::getWorldRotation(void)
 {
-	if (m_node != 0)
-		return m_node->_getDerivedOrientation();
-	return m_baseProps.m_transform.rot;
+	return gkEuler(getWorldOrientation());
 }
 
 
+// ----------------------------------------------------------------------------
 void gkGameObject::notifyUpdate(void)
 {
-	// tell scene about this transform
-	if (m_scene && m_node != 0)
-	{
-		if (!m_outOfDate)
-		{
-			m_scene->notifyObjectMoved(this);
-			m_outOfDate = true;
-		}
-
-		m_prev = m_cur;
-		m_cur.loc = m_node->getPosition();
-		m_cur.rot = m_node->getOrientation();
-		m_cur.scl = m_node->getScale();
-
+	if (m_scene)
 		m_scene->notifyObjectUpdate(this);
-	}
 }
 
+
+
+// ----------------------------------------------------------------------------
 void gkGameObject::applyTransformState(const gkTransformState &newstate)
 {
+	if (isImmovable())
+		return;
+
 	if (m_node)
 	{
 		m_node->setPosition(newstate.loc);
@@ -399,61 +490,13 @@ void gkGameObject::applyTransformState(const gkTransformState &newstate)
 	}
 }
 
-void gkGameObject::blendTransform(gkScalar blend)
-{
-	if (m_scene && m_node && m_outOfDate)
-	{
-		gkVector3 dloc      = gkMathUtils::interp(m_prev.loc, m_cur.loc, blend);
-		gkVector3 dscl      = gkMathUtils::interp(m_prev.scl, m_cur.scl, blend);
-		gkQuaternion drot   = gkMathUtils::interp(m_prev.rot, m_cur.rot, blend);
 
-		gkTransformState bstate(dloc, drot, dscl);
-		// rework this
-		if (blend >= 0.9)
-			m_outOfDate = false;
-
-		applyTransformState(bstate);
-	}
-}
-
-
-void gkGameObject::applyConstraints(void)
-{
-	if (!m_constraints.empty())
-	{
-		gkConstraint *cnst = m_constraints.begin();
-
-		while (cnst)
-		{
-			cnst->setMatrix(m_cur);
-
-			// apply if we've constrained
-			if (cnst->update(this))
-				setTransform(cnst->getMatrix());
-			cnst = cnst->getNext();
-		}
-	}
-}
-
-void gkGameObject::destroyConstraints(void)
-{
-	if (!m_constraints.empty())
-	{
-		gkConstraint *cnst = m_constraints.begin(), *tmp;
-		while (cnst)
-		{
-			tmp = cnst;
-			cnst = cnst->getNext();
-			delete tmp;
-		}
-
-		m_constraints.clear();
-	}
-}
-
-
+// ----------------------------------------------------------------------------
 void gkGameObject::setTransform(const gkMatrix4 &v)
 {
+	if (isImmovable())
+		return;
+
 	if (m_node != 0)
 	{
 		gkTransformState st;
@@ -463,15 +506,25 @@ void gkGameObject::setTransform(const gkMatrix4 &v)
 	}
 }
 
+
+// ----------------------------------------------------------------------------
 void gkGameObject::setTransform(const gkTransformState &v)
 {
+	if (isImmovable())
+		return;
+
 	applyTransformState(v);
 	notifyUpdate();
 }
 
 
+
+// ----------------------------------------------------------------------------
 void gkGameObject::setPosition(const gkVector3 &v)
 {
+	if (isImmovable())
+		return;
+
 	if (m_node != 0)
 	{
 		m_node->setPosition(v);
@@ -490,8 +543,12 @@ void gkGameObject::setPosition(const gkVector3 &v)
 }
 
 
+// ----------------------------------------------------------------------------
 void gkGameObject::setScale(const gkVector3 &v)
 {
+	if (isImmovable())
+		return;
+
 	if (m_node != 0)
 	{
 		m_node->setScale(v);
@@ -500,8 +557,13 @@ void gkGameObject::setScale(const gkVector3 &v)
 }
 
 
+
+// ----------------------------------------------------------------------------
 void gkGameObject::setOrientation(const gkQuaternion &q)
 {
+	if (isImmovable())
+		return;
+
 	if (m_node != 0)
 	{
 		m_node->setOrientation(q);
@@ -520,8 +582,12 @@ void gkGameObject::setOrientation(const gkQuaternion &q)
 }
 
 
+// ----------------------------------------------------------------------------
 void gkGameObject::setOrientation(const gkEuler &v)
 {
+	if (isImmovable())
+		return;
+
 	if (m_node != 0)
 	{
 		gkQuaternion q = v.toQuaternion();
@@ -541,14 +607,22 @@ void gkGameObject::setOrientation(const gkEuler &v)
 }
 
 
+// ----------------------------------------------------------------------------
 void gkGameObject::rotate(const gkEuler &drot, int tspace)
 {
+	if (isImmovable())
+		return;
+
 	// convert to quaternion and rotate normally
 	rotate(drot.toQuaternion(), tspace);
 }
 
+
+// ----------------------------------------------------------------------------
 void gkGameObject::rotate(const gkQuaternion &dq, int tspace)
 {
+	if (isImmovable())
+		return;
 
 	if (m_node != 0)
 	{
@@ -567,8 +641,13 @@ void gkGameObject::rotate(const gkQuaternion &dq, int tspace)
 	}
 }
 
+
+// ----------------------------------------------------------------------------
 void gkGameObject::yaw(const gkRadian &v, int tspace)
 {
+	if (isImmovable())
+		return;
+
 	if (m_node != 0)
 	{
 		m_node->yaw(v, (Node::TransformSpace)tspace);
@@ -586,8 +665,13 @@ void gkGameObject::yaw(const gkRadian &v, int tspace)
 	}
 }
 
+
+// ----------------------------------------------------------------------------
 void gkGameObject::pitch(const gkRadian &v, int tspace )
 {
+	if (isImmovable())
+		return;
+
 	if (m_node != 0)
 	{
 		m_node->pitch(v, (Node::TransformSpace)tspace);
@@ -605,8 +689,13 @@ void gkGameObject::pitch(const gkRadian &v, int tspace )
 	}
 }
 
+
+// ----------------------------------------------------------------------------
 void gkGameObject::roll(const gkRadian &v, int tspace)
 {
+	if (isImmovable())
+		return;
+
 	if (m_node != 0)
 	{
 		m_node->roll(v, (Node::TransformSpace)tspace);
@@ -624,8 +713,13 @@ void gkGameObject::roll(const gkRadian &v, int tspace)
 	}
 }
 
+
+// ----------------------------------------------------------------------------
 void gkGameObject::translate(const gkVector3 &dloc, int tspace)
 {
+	if (isImmovable())
+		return;
+
 	if (m_node != 0)
 	{
 		m_node->translate(dloc, (Node::TransformSpace)tspace);
@@ -644,8 +738,12 @@ void gkGameObject::translate(const gkVector3 &dloc, int tspace)
 }
 
 
+// ----------------------------------------------------------------------------
 void gkGameObject::scale(const gkVector3 &dscale)
 {
+	if (isImmovable())
+		return;
+
 	if (m_node != 0)
 	{
 		m_node->scale(dscale);
@@ -653,8 +751,13 @@ void gkGameObject::scale(const gkVector3 &dscale)
 	}
 }
 
+
+// ----------------------------------------------------------------------------
 void gkGameObject::setLinearVelocity(const gkVector3 &v, int tspace)
 {
+	if (isImmovable())
+		return;
+
 	if (m_rigidBody != 0)
 	{
 		m_rigidBody->setLinearVelocity(v, tspace);
@@ -665,76 +768,110 @@ void gkGameObject::setLinearVelocity(const gkVector3 &v, int tspace)
 	}
 }
 
+
+// ----------------------------------------------------------------------------
 void gkGameObject::setAngularVelocity(const gkVector3 &v, int tspace)
 {
+	if (isImmovable())
+		return;
+
 	if (m_rigidBody != 0)
 		m_rigidBody->setAngularVelocity(v, tspace);
 }
 
 
+// ----------------------------------------------------------------------------
 void gkGameObject::applyTorque(const gkVector3 &v, int tspace)
 {
+	if (isImmovable())
+		return;
+
 	if (m_rigidBody != 0)
 		m_rigidBody->applyTorque(v, tspace);
 }
 
 
+// ----------------------------------------------------------------------------
 void gkGameObject::applyForce(const gkVector3 &v, int tspace)
 {
+	if (isImmovable())
+		return;
+
 	if (m_rigidBody != 0)
 		m_rigidBody->applyForce(v, tspace);
 }
 
+
+// ----------------------------------------------------------------------------
 gkVector3 gkGameObject::getLinearVelocity(void)
 {
+	if (isImmovable())
+		return gkVector3::ZERO;
+
 	if (m_rigidBody != 0)
 		return m_rigidBody->getLinearVelocity();
 	return gkVector3::ZERO;
 }
 
 
+
+// ----------------------------------------------------------------------------
 gkVector3 gkGameObject::getAngularVelocity()
 {
+	if (isImmovable())
+		return gkVector3::ZERO;
+
 	if (m_rigidBody != 0)
 		return m_rigidBody->getAngularVelocity();
 	return gkVector3::ZERO;
 }
 
+
+
+// ----------------------------------------------------------------------------
 void gkGameObject::clearVariables(void)
 {
-	// destroy all variables ( blender game object properties )
+
+	// Destroy all variables.
 	gkEngine &eng = gkEngine::getSingleton();
 	utHashTableIterator<VariableMap> iter(m_variables);
 
+
 	while (iter.hasMoreElements())
 	{
-		gkVariable *var = iter.getNext().second;
+		gkVariable *v = iter.getNext().second;
+
 
 		// remove from debug list
-		if (var->isDebug())
-			eng.removeDebugProperty(var);
+		if (v->isDebug())
+			eng.removeDebugProperty(v);
 
-		delete var;
+		delete v;
 	}
 
 	m_variables.clear();
 }
 
 
+
+// ----------------------------------------------------------------------------
 gkVariable *gkGameObject::createVariable(const gkString &name, bool debug)
 {
 	gkHashedString findName(name);
 
+
 	UTsize pos = m_variables.find(findName);
 	if (pos != UT_NPOS)
 	{
-		gkPrintf("duplicate property found while trying to create.\n");
+		gkPrintf("Duplicate property found");
 		return 0;
 	}
 
 
 	gkVariable *prop = new gkVariable(name, debug);
 	m_variables.insert(findName, prop);
+
+
 	// add to the debugging interface
 	if (debug)
 		gkEngine::getSingleton().addDebugProperty(prop);
@@ -742,26 +879,34 @@ gkVariable *gkGameObject::createVariable(const gkString &name, bool debug)
 	return prop;
 }
 
+
+// ----------------------------------------------------------------------------
 gkVariable *gkGameObject::getVariable(const gkString &name)
 {
-	gkHashedString findName(name);
-	UTsize pos = m_variables.find(findName);
+
+	UTsize pos = m_variables.find(name);
 	if (pos != UT_NPOS)
 		return m_variables.at(pos);
+
 	return 0;
 }
 
 
+// ----------------------------------------------------------------------------
 bool gkGameObject::hasVariable(const gkString &name)
 {
 	return m_variables.find(name) != UT_NPOS;
 }
 
+
+
+// ----------------------------------------------------------------------------
 void gkGameObject::setParent(gkGameObject *par)
 {
-	GK_ASSERT(par != this);
+	if (!isLoaded() || isLoading() || (par && (!par->isLoaded() || par->isLoading())))
+		return;
 
-	if(par)
+	if(par && par != this)
 	{
 		GK_ASSERT(!m_parent && "Already has a parent");
 		par->addChild(this);
@@ -769,11 +914,14 @@ void gkGameObject::setParent(gkGameObject *par)
 }
 
 
+
+// ----------------------------------------------------------------------------
 void gkGameObject::addChild(gkGameObject *gobj)
 {
-	GK_ASSERT(gobj != this);
+	if (!isLoaded() || isLoading() || (gobj && (!gobj->isLoaded() || gobj->isLoading())))
+		return;
 
-	if (gobj)
+	if (gobj && gobj != this)
 	{
 		GK_ASSERT(!gobj->m_parent && "Already has a parent");
 		GK_ASSERT(!hasChild(gobj)  && "Already has this child");
@@ -781,39 +929,31 @@ void gkGameObject::addChild(gkGameObject *gobj)
 		m_children.push_back(gobj);
 		gobj->m_parent = this;
 
+		if (!gobj->isLoaded())
+			gobj->load();
 
-		if (isLoaded())
-		{
-			GK_ASSERT(m_node);
+		// Suspend child updates.
+		gkPhysicsController *cont = gobj->getPhysicsController();
+		if (cont)
+			cont->suspend(true);
 
-			if (!gobj->isLoaded())
-				gobj->load();
+		Ogre::SceneNode *node = gobj->getNode();
+		if (node->getParentSceneNode())
+			node->getParentSceneNode()->removeChild(node);
 
-			GK_ASSERT(gobj->getNode());
-
-			if (gobj->getProperties().isPhysicsObject())
-			{
-				// Suspend child updates.
-				gkPhysicsController *cont = gobj->getPhysicsController();
-				if (cont)
-					cont->suspend(true);
-			}
-
-			Ogre::SceneNode *node = gobj->getNode();
-			if (node->getParentSceneNode())
-				node->getParentSceneNode()->removeChild(node);
-
-			m_node->addChild(gobj->getNode());
-		}
+		m_node->addChild(gobj->getNode());
 	}
 }
 
 
+
+// ----------------------------------------------------------------------------
 void gkGameObject::removeChild(gkGameObject *gobj)
 {
-	GK_ASSERT(gobj != this);
+	if (!isLoaded() || isLoading() || (gobj && (!gobj->isLoaded() || gobj->isLoading())))
+		return;
 
-	if (gobj && hasChild(gobj))
+	if (gobj &&  gobj != this && hasChild(gobj))
 	{
 		GK_ASSERT(gobj->m_parent         && "Missing parent");
 		GK_ASSERT(gobj->m_parent == this && "Parent mismatch");
@@ -822,50 +962,41 @@ void gkGameObject::removeChild(gkGameObject *gobj)
 		m_children.erase(gobj);
 
 
-
 		// place in parent ogre node
+		Ogre::SceneNode *node = gobj->getNode();
+		GK_ASSERT(node->getParentSceneNode() == m_node && "Parent mismatch");
 
-		if (gobj->isLoaded())
+		m_node->removeChild(node);
+
+
+
+		Ogre::SceneNode *pNode = m_node->getParentSceneNode();
+		if (pNode)
+			pNode->addChild(node);
+		else
+			m_scene->getManager()->getRootSceneNode()->addChild(node);
+
+		// Re-enable physics
+
+		gkPhysicsController *cont = gobj->getPhysicsController();
+		if (cont)
 		{
-			Ogre::SceneNode *node = gobj->getNode();
-
-			
-			GK_ASSERT(node->getParentSceneNode() == m_node && "Parent mismatch");
-
-			m_node->removeChild(node);
-
-
-			Ogre::SceneNode *pNode = m_node->getParentSceneNode();
-
-			if (pNode)
-				pNode->addChild(node);
-			else
-				m_scene->getManager()->getRootSceneNode()->addChild(node);
-	
-			// Re-enable physics
-			if (gobj->getProperties().isPhysicsObject())
-			{
-				notifyUpdate();
-
-				// Resume child updates.
-				gkPhysicsController *cont = gobj->getPhysicsController();
-				if (cont)
-				{
-					cont->suspend(false);
-					cont->updateTransform();
-				}
-			}
+			cont->suspend(false);
+			cont->updateTransform();
 		}
 	}
 }
 
 
+// ----------------------------------------------------------------------------
 bool gkGameObject::hasChild(gkGameObject *gobj)
 {
 	return m_children.find(gobj) != UT_NPOS;
 }
 
 
+
+// ----------------------------------------------------------------------------
 gkPhysicsController *gkGameObject::getPhysicsController()
 {
 	if(m_rigidBody)
@@ -876,6 +1007,8 @@ gkPhysicsController *gkGameObject::getPhysicsController()
 		return 0;
 }
 
+
+// ----------------------------------------------------------------------------
 btCollisionObject *gkGameObject::getCollisionObject()
 {
 	if(m_rigidBody)
@@ -886,16 +1019,19 @@ btCollisionObject *gkGameObject::getCollisionObject()
 		return 0;
 }
 
+
+// ----------------------------------------------------------------------------
 Ogre::AxisAlignedBox gkGameObject::getAabb() const
 {
 	return m_node->_getWorldAABB();
 }
 
 
+
+// ----------------------------------------------------------------------------
 gkGameObject *gkGameObject::getChildEntity()
 {
-	gkGameObjectArrayIterator iter(m_children);
-
+	gkGameObjectArray::Iterator iter = m_children.iterator();
 	while (iter.hasMoreElements())
 	{
 		gkGameObject *pChild = iter.getNext();
@@ -911,55 +1047,4 @@ gkGameObject *gkGameObject::getChildEntity()
 	}
 
 	return 0;
-}
-
-
-void gkGameObject::loadPhysics(void)
-{
-	gkGameObjectProperties  &props  = getProperties();
-
-	gkEntity *ent = getEntity();
-	if (ent && props.m_physics.isMeshShape())
-	{
-		// can happen with the newer mesh objects
-		// which test for the collision face flag on each triangle
-
-		gkMesh *me = ent->getEntityProperties().m_mesh;
-		btTriangleMesh *trimesh = me->getTriMesh();
-
-		if (trimesh->getNumTriangles() == 0)
-			props.m_physics.m_type = GK_NO_COLLISION;
-	}
-
-
-	if (!props.isPhysicsObject() || m_parent)
-		return;
-
-
-	if (props.isGhost())
-	{
-		m_character = m_scene->getDynamicsWorld()->createCharacter(this);
-		m_character->create();
-	}
-	else
-	{
-
-		m_rigidBody = m_scene->getDynamicsWorld()->createRigidBody(this);
-		m_rigidBody->create();
-	}
-}
-
-
-void gkGameObject::destroyPhysics(void)
-{
-	if (m_character)
-	{
-		m_scene->getDynamicsWorld()->destroyObject(m_character);
-		m_character = 0;
-	}
-	if (m_rigidBody)
-	{
-		m_scene->getDynamicsWorld()->destroyObject(m_rigidBody);
-		m_rigidBody = 0;
-	}
 }

@@ -29,9 +29,8 @@
 
 #include "gkGameObject.h"
 #include "gkSerialize.h"
-#include "OgreCamera.h"
 
-// Game camera
+
 class gkCamera : public gkGameObject
 {
 public:
@@ -39,7 +38,7 @@ public:
 	virtual ~gkCamera() {}
 
 	// Property access
-	GK_INLINE gkCameraProperties &getCameraProperties(void)         {return m_cameraProps;}
+	GK_INLINE gkCameraProperties &getCameraProperties(void) {return m_cameraProps;}
 
 
 	void setClip(gkScalar start, gkScalar end);
@@ -55,7 +54,7 @@ public:
 	GK_INLINE bool isMainCamera(void)               {return m_cameraProps.m_start;}
 
 private:
-	gkObject    *clone(const gkString &name);
+	gkGameObject *clone(const gkString &name);
 
 	gkCameraProperties  m_cameraProps;
 	Ogre::Camera        *m_camera;

@@ -24,28 +24,34 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "gkCamera.h"
-#include "gkScene.h"
-#include "gkDynamicsWorld.h"
-#include "gkEngine.h"
-#include "gkUserDefs.h"
 #include "OgreSceneManager.h"
 #include "OgreSceneNode.h"
 
+
+#include "gkCamera.h"
+#include "gkScene.h"
+
+
+// TODO: Should never overide properties created from blender.
+
+
+// ----------------------------------------------------------------------------
 gkCamera::gkCamera(gkScene *scene, const gkString &name)
-	:       gkGameObject(scene, name, GK_CAMERA),
-	        m_cameraProps(),
-	        m_camera(0)
+	:	gkGameObject(scene, name, GK_CAMERA),
+	    m_cameraProps(),
+	    m_camera(0)
 {
 }
 
 
+// ----------------------------------------------------------------------------
 void gkCamera::loadImpl(void)
 {
 	gkGameObject::loadImpl();
 
-	if (m_camera != 0)
-		return;
+	GK_ASSERT(!m_camera);
+
+
 
 	Ogre::SceneManager *manager = m_scene->getManager();
 	m_camera = manager->createCamera(m_name);
@@ -56,36 +62,32 @@ void gkCamera::loadImpl(void)
 
 	m_node->attachObject(m_camera);
 
+
 	if (m_cameraProps.m_start)
 		m_scene->setMainCamera(this);
 }
 
 
+// ----------------------------------------------------------------------------
 void gkCamera::unloadImpl(void)
 {
-	if (m_camera != 0)
+	GK_ASSERT(m_camera);
+
+
+	if (!m_scene->isUnloading())
 	{
 		Ogre::SceneManager *manager = m_scene->getManager();
 
+
 		m_node->detachObject(m_camera);
 		manager->destroyCamera(m_camera);
-		m_camera = 0;
 	}
 
+	m_camera = 0;
 	gkGameObject::unloadImpl();
 }
 
-
-gkObject *gkCamera::clone(const gkString &name)
-{
-	gkCamera *cl = new gkCamera(m_scene, name);
-	memcpy(&cl->m_cameraProps, &m_cameraProps, sizeof(gkCameraProperties));
-
-	gkGameObject::cloneImpl(cl);
-	return cl;
-}
-
-
+// ----------------------------------------------------------------------------
 void gkCamera::makeCurrent(void)
 {
 	if (m_camera && m_scene)
@@ -93,8 +95,10 @@ void gkCamera::makeCurrent(void)
 }
 
 
+// ----------------------------------------------------------------------------
 void gkCamera::setClip(gkScalar start, gkScalar end)
 {
+
 	if (m_cameraProps.m_clipstart != start)
 	{
 		m_cameraProps.m_clipstart = start;
@@ -109,8 +113,10 @@ void gkCamera::setClip(gkScalar start, gkScalar end)
 }
 
 
+// ----------------------------------------------------------------------------
 void gkCamera::setFov(const gkRadian &fov)
 {
+
 	gkScalar val = fov.valueRadians();
 
 	if (m_cameraProps.m_fov != val)
@@ -121,20 +127,35 @@ void gkCamera::setFov(const gkRadian &fov)
 }
 
 
+// ----------------------------------------------------------------------------
 void gkCamera::setFov(const gkDegree &fov)
 {
 	gkScalar val = fov.valueRadians();
 	if (m_cameraProps.m_fov != val)
 	{
 		m_cameraProps.m_fov = val;
-		if (m_camera) m_camera->setFOVy(gkRadian(fov));
+		if (m_camera)
+			m_camera->setFOVy(gkRadian(fov));
 	}
 }
 
 
+// ----------------------------------------------------------------------------
 void gkCamera::setMainCamera(bool v)
 {
 	m_cameraProps.m_start = v;
 	if (m_camera)
 		m_scene->setMainCamera(this);
+}
+
+
+
+// ----------------------------------------------------------------------------
+gkGameObject *gkCamera::clone(const gkString &name)
+{
+	gkCamera *cl = new gkCamera(m_scene, name);
+	memcpy(&cl->m_cameraProps, &m_cameraProps, sizeof(gkCameraProperties));
+
+	gkGameObject::cloneImpl(cl);
+	return cl;
 }

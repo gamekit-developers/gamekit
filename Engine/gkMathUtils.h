@@ -28,6 +28,7 @@
 #define _gkMathUtils_h_
 
 #include "gkCommon.h"
+#include "LinearMath/btTransform.h"
 #include "OgreVector3.h"
 #include "OgreVector2.h"
 #include "OgreMatrix3.h"
@@ -38,7 +39,6 @@
 #include "OgreColourValue.h"
 #include "OgreRectangle.h"
 #include "OgreAxisAlignedBox.h"
-#include "LinearMath/btTransform.h"
 
 #include <float.h>
 

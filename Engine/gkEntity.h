@@ -29,7 +29,6 @@
 
 #include "gkGameObject.h"
 #include "gkSerialize.h"
-#include "OgreEntity.h"
 #include "Animation/gkActionManager.h"
 
 
@@ -50,6 +49,7 @@ public:
 	void        playAction(const gkString &act, gkScalar blend);
 	gkAction    *getActiveAction(void) const {return m_active;}
 
+	gkSkeleton  *getSkeleton(void) {return m_skeleton;}
 
 	void _resetPose(void);
 
@@ -58,10 +58,12 @@ public:
 	void _unloadAsInstance(void);
 
 protected:
+
+
 	virtual gkBoundingBox getAabb() const;
 
-	void        createMesh(void);
-	gkObject    *clone(const gkString &name);
+	void         createMesh(void);
+	gkGameObject *clone(const gkString &name);
 
 	gkEntityProperties     *m_entityProps;
 	Ogre::Entity           *m_entity;

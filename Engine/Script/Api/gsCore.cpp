@@ -465,11 +465,11 @@ gsEngine::gsEngine()
 	else
 	{
 		m_engine = gkEngine::getSingletonPtr();
-		m_running = m_engine->isInitialized();
+		m_running = m_engine->isRunning();
 	}
 
 	if (m_engine)
-		m_engine->setListener(this);
+		m_engine->addListener(this);
 }
 
 
@@ -654,7 +654,14 @@ gsLoadable::gsLoadable(gkObject *ob) : m_object(ob)
 void gsLoadable::load(void)
 {
 	if (m_object)
-		m_object->load();
+	{
+		gkEngine *eng= gkEngine::getSingletonPtr();
+
+		if (eng->isRunning())
+			eng->addLoadableCommand(m_object, gkReloadableCmd::LOAD);
+		else
+			m_object->load();
+	}
 }
 
 
@@ -662,7 +669,14 @@ void gsLoadable::load(void)
 void gsLoadable::unload(void)
 {
 	if (m_object)
-		m_object->unload();
+	{
+		gkEngine *eng= gkEngine::getSingletonPtr();
+
+		if (eng->isRunning())
+			eng->addLoadableCommand(m_object, gkReloadableCmd::UNLOAD);
+		else
+			m_object->unload();
+	}
 }
 
 
@@ -670,7 +684,14 @@ void gsLoadable::unload(void)
 void gsLoadable::reload(void)
 {
 	if (m_object)
-		m_object->reload();
+	{
+		gkEngine *eng= gkEngine::getSingletonPtr();
+
+		if (eng->isRunning())
+			eng->addLoadableCommand(m_object, gkReloadableCmd::RELOAD);
+		else
+			m_object->reload();
+	}
 }
 
 
@@ -760,10 +781,11 @@ gsArray<gsGameObject, gkGameObject> &gsScene::getObjectList(void)
 	{
 		gkScene *scene = cast<gkScene>();
 		gkGameObjectSet &objs = scene->getLoadedObjects();
+		gkGameObjectSet::Iterator it = objs.iterator();
 
-		for (gkGameObjectSet::iterator it = objs.begin(); it != objs.end(); ++it)
+		while (it.hasMoreElements())
 		{
-			gkGameObject *obj = (*it);
+			gkGameObject *obj = it.getNext();
 			m_objectCache.push(obj);
 		}
 	}

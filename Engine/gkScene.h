@@ -47,11 +47,6 @@ public:
 	void update(gkScalar tickRate);
 	void beginFrame(void);
 
-
-	// Interpolates transformed objects,
-	// for smoothing motion between game ticks
-	void synchronizeMotion(gkScalar blend);
-
 	// property access
 	GK_INLINE gkSceneProperties &getProperties(void)    { return m_baseProps; }
 
@@ -61,28 +56,19 @@ public:
 	void applyViewport(Ogre::Viewport *vp);
 
 	// Returns aabb for all static objects in the scene
-	const Ogre::AxisAlignedBox &getLimits() const { return m_Limits; }
+	const gkBoundingBox &getLimits() const { return m_limits; }
 
 	// The Ogre scene manager is only available
-	// when this scene is loaded. Each scene has
-	// it's own manager
-	GK_INLINE Ogre::SceneManager *getManager(void)
-	{ GK_ASSERT(m_manager); return m_manager; }
+	// when this scene is loaded.
+	GK_INLINE Ogre::SceneManager *getManager(void) { GK_ASSERT(m_manager); return m_manager; }
 
-
-	// The active camera
-	GK_INLINE gkCamera *getMainCamera(void) { return m_startCam; }
-	void setMainCamera(gkCamera *cam);
 
 	GK_INLINE gkGameObjectSet &getLoadedObjects(void)      { return m_loadedObjects; }
 
 	// physics
 	GK_INLINE gkDynamicsWorld *getDynamicsWorld(void)       { return m_physicsWorld; }
 
-
 	// notifications
-	GK_INLINE void notifyObjectMoved(gkGameObject *gobject) { m_transformObjects.push_back(gobject); }
-
 	void notifyObjectLoaded(gkGameObject *gobject);
 	void notifyObjectUnloaded(gkGameObject *gobject);
 	void notifyObjectUpdate(gkGameObject *gobject);
@@ -107,24 +93,13 @@ public:
 	gkGameObject   *cloneObject(gkGameObject *obj, int life);
 	void            endObject(gkGameObject *obj);
 
-
 	// group access
+	GK_INLINE gkGroupManager *getGroupManager(void) {return m_groupManager;}
 
-	gkGameObjectGroup   *createGroup(const gkHashedString &name);
-	gkGameObjectGroup   *getGroup(const gkHashedString &name);
-	void                destroyGroup(const gkHashedString &name);
-	void                destroyGroup(gkGameObjectGroup *group);
-	void                destroyGroups(void);
 
-	// instance creation
-	gkGameObjectInstance *createInstance(gkGameObject *owner, gkGameObjectGroup *group);
-
-	GK_INLINE bool      hasGroup(const gkHashedString &name) {return m_groups.find(name) != UT_NPOS;}
 
 	// global debugging
 	gkDebugger          *getDebugger(void);
-
-	GK_INLINE bool      hasLights(void) {return m_hasLights;}
 
 	GK_INLINE void setNavMeshData(PNAVMESHDATA navMeshData) { m_navMeshData = navMeshData; }
 
@@ -132,9 +107,63 @@ public:
 
 	bool asyncTryToCreateNavigationMesh(gkActiveObject &activeObj, const gkRecast::Config &config, ASYNC_DT_RESULT result);
 
+
+	// Update scene constraints.
 	void applyConstraints(void);
 
-protected:
+	// Access to the constraint manager.
+	gkConstraintManager *getConstraintManager(void);
+
+	// Access to static physics information.
+	gkPhysicsControllerSet &getStaticControllers(void) {return m_staticControllers;}
+
+	// Force update of scene limits.
+	void calculateLimits(void);
+
+
+	// Camera access.
+
+	GK_INLINE gkCamera       *getMainCamera(void)   { return m_startCam; }
+	GK_INLINE bool           hasDefaultCamera(void) { return m_startCam != 0; }
+	GK_INLINE bool           hasCameras(void)       { return !m_cameras.empty(); }
+	GK_INLINE gkCameraSet    &getCameras(void)      { return m_cameras; }
+	void setMainCamera(gkCamera *cam);
+
+
+	// Light access.
+
+	GK_INLINE gkLightSet    &getLights(void) {return m_lights;}
+	GK_INLINE bool          hasLights(void)  {return isLoaded() ? !m_lights.empty() : m_hasLights;}
+
+
+	GK_INLINE void      setLayer(UTuint32 v)     {m_layers = v; }
+	GK_INLINE UTuint32  getLayer(void)           {return m_layers;}
+
+
+
+	// Linear search.
+	gkGameObject *findLoadedObject(const gkString &name);
+
+private:
+
+	void applyBuiltinParents(void);
+	void applyBuiltinPhysics(void);
+	void applyNavigationMeshes(void);
+
+
+	void createPhysicsObject(gkGameObject *obj);
+	void destroyPhysicsObject(gkGameObject *obj);
+
+	void unloadAndDestroy(gkGameObject *obj);
+
+
+	void postLoadImpl(void);
+	void loadImpl(void);
+	void unloadImpl(void);
+	void setShadows(void);
+	void tickClones(void);
+	void destroyClones(void);
+	void endObjects(void);
 
 	// Ogre scene manager
 	Ogre::SceneManager     *m_manager;
@@ -151,35 +180,27 @@ protected:
 	gkDebugger              *m_debugger;
 
 	gkGameObjectHashMap     m_objects;
-	gkGameObjectArray       m_transformObjects;
 	gkGameObjectSet         m_loadedObjects;
-	gkGameObjectArray       m_constraintObjects;
+
+
 	gkGameObjectArray       m_clones;
 	gkGameObjectArray       m_tickClones;
-	gkGameObjectArray       m_endObjects;
+	gkGameObjectSet         m_endObjects;
+	gkPhysicsControllerSet  m_staticControllers;
+	gkCameraSet             m_cameras;
+	gkLightSet              m_lights;
 
-
+	gkConstraintManager    *m_constraintManager;
 	gkDynamicsWorld        *m_physicsWorld;
-	gkGroupTable            m_groups;
-	gkGroupInstances        m_instances;
+	gkMeshManager          *m_meshManager;
+	gkGroupManager         *m_groupManager;
+
 	bool                    m_hasLights;
 	bool                    m_markDBVT;
 	int                     m_cloneCount;
-
-private:
-
-	void postLoadImpl(void);
-	void loadImpl(void);
-	void unloadImpl(void);
-	void setShadows(void);
-	void tickClones(void);
-	void destroyClones(void);
-	void endObjects(void);
-
-
-	Ogre::AxisAlignedBox m_Limits;
-
-	PNAVMESHDATA m_navMeshData;
+	UTuint32                m_layers;
+	gkBoundingBox           m_limits;
+	PNAVMESHDATA            m_navMeshData;
 };
 
 #endif//_gkSceneObject_h_

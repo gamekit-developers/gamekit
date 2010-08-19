@@ -62,10 +62,14 @@ gkCharacter::~gkCharacter()
 // ----------------------------------------------------------------------------
 void gkCharacter::create(void)
 {
+	if (m_character || m_collisionObject)
+		return;
+
+
 	GK_ASSERT(m_object && m_object->isLoaded() && m_object->isInActiveLayer());
 
 	// use the most up to date transform. 
-	const gkTransformState& trans = m_object->getLocalTransform();
+	const gkTransformState& trans = m_object->getTransformState();
 
 
 	createShape();

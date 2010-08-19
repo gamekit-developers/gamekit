@@ -170,11 +170,9 @@ void gkMathUtils::makeLocQuatScale(gkMatrix4 &dest, const gkVector3 &loc, const 
 	dest.makeTransform(loc, scale, q);
 }
 
-
 gkQuaternion gkMathUtils::interp(const gkQuaternion &a, const gkQuaternion &b, gkScalar t, bool fast)
 {
-	return fast ?    gkQuaternion::nlerp(t, a, b, a.Dot(b) < 0.0) :
-	       gkQuaternion::Slerp(t, a, b, a.Dot(b) < 0.0);
+	return fast ? gkQuaternion::nlerp(t, a, b, a.Dot(b) < 0.0) : gkQuaternion::Slerp(t, a, b, a.Dot(b) < 0.0);
 }
 
 

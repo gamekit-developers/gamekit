@@ -44,7 +44,6 @@
 #include "gkUserDefs.h"
 #include "gkTextManager.h"
 #include "gkNodeManager.h"
-#include "gkMeshManager.h"
 #include "gkDynamicsWorld.h"
 #include "gkDebugScreen.h"
 #include "gkDebugProperty.h"
@@ -72,11 +71,15 @@ gkScalar gkEngine::m_animRate = 25;
 
 
 
+
+
+
+// ----------------------------------------------------------------------------
 class gkEnginePrivate : public FrameListener, public gkTickState
 {
 public:
 	Private(gkEngine *par)
-		:       gkTickState(ENGINE_TICKS_PER_SECOND),
+		:       gkTickState((int)ENGINE_TICKS_PER_SECOND),
 		        engine(par),
 		        windowsystem(0),
 		        scene(0),
@@ -96,7 +99,6 @@ public:
 
 	// one full update
 	void tickImpl(gkScalar delta);
-	void syncImpl(gkScalar fac);
 	void beginTickImpl(void);
 	void endTickImpl(void);
 
@@ -117,11 +119,15 @@ public:
 
 
 
+
+
+// ----------------------------------------------------------------------------
 gkEngine::gkEngine(gkUserDefs *oth)
 	:       m_root(0),
 	        m_window(0),
 	        m_initialized(false),
-	        m_ownsDefs(oth != 0)
+	        m_ownsDefs(oth != 0),
+			m_running(false)
 {
 	m_private = new gkEnginePrivate(this);
 	if (oth != 0)
@@ -130,9 +136,14 @@ gkEngine::gkEngine(gkUserDefs *oth)
 		m_defs = new gkUserDefs();
 }
 
+
+
+// ----------------------------------------------------------------------------
 gkEngine::~gkEngine()
 {
-	if (m_initialized) finalize();
+
+	if (m_initialized) 
+		finalize();
 
 
 	// persistent throughout
@@ -146,6 +157,7 @@ gkEngine::~gkEngine()
 }
 
 
+// ----------------------------------------------------------------------------
 void gkEngine::initialize(bool autoCreateWindow)
 {
 	if (m_initialized) return;
@@ -184,7 +196,6 @@ void gkEngine::initialize(bool autoCreateWindow)
 	new gkBlendLoader();
 	new gkTextManager();
 	new gkLuaManager();
-	new gkMeshManager();
 	new gkMessageManager();
 
 #ifdef OGREKIT_OPENAL_SOUND
@@ -215,6 +226,8 @@ void gkEngine::initialize(bool autoCreateWindow)
 }
 
 
+
+// ----------------------------------------------------------------------------
 void gkEngine::initializeWindow(void)
 {
 	if (m_private->windowsystem && !m_window)
@@ -229,6 +242,9 @@ void gkEngine::initializeWindow(void)
 }
 
 
+
+
+// ----------------------------------------------------------------------------
 void gkEngine::finalize()
 {
 	if (!m_initialized) return;
@@ -243,7 +259,6 @@ void gkEngine::finalize()
 	delete gkLuaManager::getSingletonPtr();
 	delete gkLogicManager::getSingletonPtr();
 	delete gkWindowSystem::getSingletonPtr();
-	delete gkMeshManager::getSingletonPtr();
 	delete gkMessageManager::getSingletonPtr();
 
 #ifdef OGREKIT_OPENAL_SOUND
@@ -263,18 +278,24 @@ void gkEngine::finalize()
 	m_initialized = false;
 }
 
+
+
+// ----------------------------------------------------------------------------
 gkUserDefs &gkEngine::getUserDefs(void)
 {
 	GK_ASSERT(m_defs);
 	return *m_defs;
 }
 
+
+// ----------------------------------------------------------------------------
 void gkEngine::requestExit(void)
 {
 	gkWindowSystem::getSingleton().exit(true);
 }
 
 
+// ----------------------------------------------------------------------------
 gkBlendFile *gkEngine::loadBlendFile(const gkString &blend, const gkString &inResource)
 {
 	gkBlendFile *file = 0;
@@ -285,12 +306,14 @@ gkBlendFile *gkEngine::loadBlendFile(const gkString &blend, const gkString &inRe
 	catch (Ogre::Exception &e)
 	{
 		// log any ogre exceptions
-		gkPrintf("%s\n", e.getDescription().c_str());
+		gkPrintf("Engine: %s\n", e.getDescription().c_str());
 	}
 	return file;
 }
 
 
+
+// ----------------------------------------------------------------------------
 void gkEngine::loadResources(const gkString &name)
 {
 	if (name.empty()) return;
@@ -314,11 +337,12 @@ void gkEngine::loadResources(const gkString &name)
 	}
 	catch (Exception &e)
 	{
-		gkLogMessage("Failed to load resource file!\n" << e.getDescription());
+		gkLogMessage("Engine: Failed to load resource file!\n" << e.getDescription());
 	}
 }
 
 
+// ----------------------------------------------------------------------------
 void gkEngine::addDebugProperty(gkVariable *prop)
 {
 	if (m_defs->showDebugProps)
@@ -332,6 +356,8 @@ void gkEngine::addDebugProperty(gkVariable *prop)
 }
 
 
+
+// ----------------------------------------------------------------------------
 void gkEngine::removeDebugProperty(gkVariable *prop)
 {
 	if (m_defs->showDebugProps)
@@ -342,39 +368,64 @@ void gkEngine::removeDebugProperty(gkVariable *prop)
 }
 
 
+// ----------------------------------------------------------------------------
 gkScalar gkEngine::getStepRate(void)
 {
 	return gkScalar(1.0) / ENGINE_TICKS_PER_SECOND;
 }
 
+
+// ----------------------------------------------------------------------------
 gkScalar gkEngine::getTickRate(void)
 {
 	return ENGINE_TICKS_PER_SECOND;
 }
 
+
+// ----------------------------------------------------------------------------
 gkScalar gkEngine::getAnimRate(void)
 {
 	return m_animRate;
 }
 
+
+// ----------------------------------------------------------------------------
+bool gkEngine::hasActiveScene(void)
+{
+	GK_ASSERT(m_private);
+	return m_private->scene != 0;
+}
+
+
+
+// ----------------------------------------------------------------------------
 gkScene *gkEngine::getActiveScene(void)
 {
 	GK_ASSERT(m_private);
 	return m_private->scene;
 }
 
-void gkEngine::setListener(Listener *listener)
+
+
+// ----------------------------------------------------------------------------
+void gkEngine::addListener(gkEngine::Listener *listener)
 {
 	m_listeners.push_back(listener);
 }
 
-void gkEngine::removeListener(Listener *listener)
+
+
+
+// ----------------------------------------------------------------------------
+void gkEngine::removeListener(gkEngine::Listener *listener)
 {
 	if (m_listeners.find(listener))
 		m_listeners.erase(listener);
 }
 
 
+
+// ----------------------------------------------------------------------------
 void gkEngine::addLoadableCommand(gkObject *ob, const gkReloadableCmd::LoadCmd &type)
 {
 	gkReloadableCmd cmd = {ob, type};
@@ -384,6 +435,9 @@ void gkEngine::addLoadableCommand(gkObject *ob, const gkReloadableCmd::LoadCmd &
 }
 
 
+
+
+// ----------------------------------------------------------------------------
 void gkEngine::run(void)
 {
 	// Start main game loop
@@ -391,16 +445,17 @@ void gkEngine::run(void)
 	GK_ASSERT(m_private);
 	if (!m_private->scene)
 	{
-		gkLogMessage("Can't run with out a registered scene. exiting\n");
+		gkLogMessage("Engine: Can't run with out a registered scene. exiting\n");
 		return;
 	}
 
 	gkWindowSystem *sys = m_private->windowsystem;
 	if (!sys)
 	{
-		gkLogMessage("Can't run with out a window system. exiting\n");
+		gkLogMessage("Engine: Can't run with out a window system. exiting\n");
 		return;
 	}
+
 
 	// setup timer
 	m_root->clearEventTimes();
@@ -409,6 +464,7 @@ void gkEngine::run(void)
 	m_private->root = m_root;
 	m_private->reset();
 
+	m_running = true;
 	do
 	{
 		sys->process();
@@ -419,8 +475,12 @@ void gkEngine::run(void)
 	while (!sys->exitRequest());
 
 	m_root->removeFrameListener(m_private);
+	m_running = false;
 }
 
+
+
+// ----------------------------------------------------------------------------
 bool gkEnginePrivate::frameStarted(const FrameEvent &evt)
 {
 	gkStats::getSingleton().startClock();
@@ -428,6 +488,8 @@ bool gkEnginePrivate::frameStarted(const FrameEvent &evt)
 	return true;
 }
 
+
+// ----------------------------------------------------------------------------
 bool gkEnginePrivate::frameRenderingQueued(const FrameEvent &evt)
 {
 	gkStats::getSingleton().stopRenderClock();
@@ -441,6 +503,9 @@ bool gkEnginePrivate::frameRenderingQueued(const FrameEvent &evt)
 	return scene != 0;
 }
 
+
+
+// ----------------------------------------------------------------------------
 bool gkEnginePrivate::frameEnded(const FrameEvent &evt)
 {
 	gkStats::getSingleton().stopBufSwapLodClock();
@@ -449,12 +514,18 @@ bool gkEnginePrivate::frameEnded(const FrameEvent &evt)
 	return true;
 }
 
+
+
+// ----------------------------------------------------------------------------
 void gkEnginePrivate::beginTickImpl(void)
 {
 	GK_ASSERT(scene);
 	scene->beginFrame();
 }
 
+
+
+// ----------------------------------------------------------------------------
 void gkEnginePrivate::endTickImpl(void)
 {
 	if (debugPage && debugPage->isShown())
@@ -464,10 +535,14 @@ void gkEnginePrivate::endTickImpl(void)
 		debugFps->draw();
 }
 
+
+
+// ----------------------------------------------------------------------------
 void gkEnginePrivate::tickImpl(gkScalar dt)
 {
 	// Proccess one full game tick
 	GK_ASSERT(windowsystem && scene && engine);
+
 
 	// dispatch inputs
 	windowsystem->dispatch();
@@ -476,7 +551,7 @@ void gkEnginePrivate::tickImpl(gkScalar dt)
 	scene->update(dt);
 
 	// update callbacks
-	utListIterator<gkEngine::Listeners> iter(engine->m_listeners);
+	utArrayIterator<gkEngine::Listeners> iter(engine->m_listeners);
 	while(iter.hasMoreElements())
 		iter.getNext()->tick(dt);
 
@@ -507,19 +582,11 @@ void gkEnginePrivate::tickImpl(gkScalar dt)
 	}
 }
 
-
-void gkEnginePrivate::syncImpl(gkScalar blend)
-{
-	if (scene)
-		scene->synchronizeMotion(blend);
-
-	gkStats::getSingleton().notifySyncFrame(blend);
-}
-
-
+// ----------------------------------------------------------------------------
 void gkEngine::setActiveScene(gkScene *sc)
 {
-	GK_ASSERT(m_private); m_private->scene = sc;
+	GK_ASSERT(m_private); 
+	m_private->scene = sc;
 }
 
 

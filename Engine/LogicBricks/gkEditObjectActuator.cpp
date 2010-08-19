@@ -24,9 +24,10 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "gkEditObjectActuator.h"
 #include "gkScene.h"
 #include "gkGameObject.h"
+#include "gkGameObjectInstance.h"
+#include "gkEditObjectActuator.h"
 
 
 // ----------------------------------------------------------------------------
@@ -60,38 +61,19 @@ void gkEditObjectActuator::addObject(void)
 		{
 			gkGameObject *obj = scene->getObject(m_obj);
 
-			gkGameObjectGroup *grp = obj->getGroup();
 
-			if (grp !=0 )
+			if ( obj->isInGroup() || obj->isInstance() )
 			{
+				// Spawn entire group.
+				gkTransformState thisTransform( m_object->getWorldPosition(),
+				                                m_object->getWorldOrientation(),
+				                                m_object->getWorldScale()
+				                               );
 
-				// spawn entire group (destructible objects)
-				gkTransformState parSt( m_object->getWorldPosition(),
-				                        m_object->getWorldOrientation(),
-				                        m_object->getWorldScale()
-				                      );
-
-
-				gkMatrix4 p = parSt.toMatrix(), c;
-
-
-				gkGameObjectGroup::ObjectIterator objs = grp->getObjects();
-
-				while (objs.hasMoreElements())
-				{
-					obj = objs.getNext().second;
-					gkGameObject *nobj = scene->cloneObject(obj, m_life);
-
-					c = obj->getProperties().m_transform.toMatrix();
-					c = p * c;
-					nobj->getProperties().m_transform = gkTransformState(c);
-
-					nobj->load();
-
-					// apply velocities
-					nobj->setLinearVelocity(m_linv, m_lvlocal ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
-					nobj->setAngularVelocity(m_angv,  m_avlocal ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
-				}
+				if (obj->isInGroup())
+					obj->getGroup()->cloneObjects(m_scene, thisTransform, m_life, m_linv, m_lvlocal, m_angv, m_avlocal);
+				else
+					obj->getInstance()->cloneObjects(thisTransform, m_life, m_linv, m_lvlocal, m_angv, m_avlocal);
 			}
 			else
 			{

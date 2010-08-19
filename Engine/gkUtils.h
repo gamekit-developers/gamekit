@@ -39,6 +39,9 @@ public:
 
 	// utility for command-line arguments
 	static gkString getFile(const gkString &in);
+
+
+	static gkString getUniqueName(const gkString &in);
 };
 
 

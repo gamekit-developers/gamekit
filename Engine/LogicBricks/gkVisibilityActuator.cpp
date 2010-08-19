@@ -26,6 +26,7 @@
 */
 #include "gkVisibilityActuator.h"
 #include "gkGameObject.h"
+#include "OgreSceneNode.h"
 
 
 // ----------------------------------------------------------------------------

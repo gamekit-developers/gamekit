@@ -31,6 +31,7 @@
 #include "gkEntity.h"
 #include "gkMesh.h"
 #include "OgreSceneNode.h"
+#include "OgreMovableObject.h"
 
 
 
@@ -74,6 +75,11 @@ void gkPhysicsController::setShape(btCollisionShape *shape)
 }
 
 
+// ----------------------------------------------------------------------------
+bool gkPhysicsController::isStaticObject(void)
+{
+	return m_props.isStatic();
+}
 
 // ----------------------------------------------------------------------------
 gkPhysicsProperties& gkPhysicsController::getProperties(void)
@@ -415,12 +421,18 @@ void gkPhysicsController::suspend(bool v)
 		m_suspend = v;
 
 
+		// Save / Restore state 
+		if (m_suspend)
+			m_object->getProperties().m_physics.m_type = GK_NO_COLLISION;
+		else
+			m_object->getProperties().m_physics.m_type = getProperties().m_type;
+
+
 		GK_ASSERT(m_owner);
 		btDynamicsWorld *dyn = getOwner();
 
 
 		btRigidBody *body = btRigidBody::upcast(m_collisionObject);
-
 		if (m_suspend)
 		{
 			if (body)
@@ -553,7 +565,7 @@ void gkPhysicsController::createShape(void)
 	m_shape->setMargin(m_props.m_margin);
 
 	// use the most up to date transform. 
-	m_shape->setLocalScaling(m_object->getLocalTransform().toLocalScaling());
+	m_shape->setLocalScaling(gkMathUtils::get(m_object->getScale()));
 }
 
 
