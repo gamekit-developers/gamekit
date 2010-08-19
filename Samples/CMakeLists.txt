@@ -12,7 +12,3 @@ if (OGREKIT_BUILD_LUARUNTIME)
     subdirs(LuaRuntime)
     #subdirs(LuaPackage)
 endif()
-
-
-# Code cleanup tests.
-subdirs(PlayPen)
