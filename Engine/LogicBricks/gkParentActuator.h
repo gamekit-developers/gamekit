@@ -25,43 +25,37 @@
 -------------------------------------------------------------------------------
 */
 
-#ifndef GKMESSAGEACTUATOR_H
-#define GKMESSAGEACTUATOR_H
+#ifndef GKPARENTACTUATOR_H
+#define GKPARENTACTUATOR_H
 
 #include "gkLogicActuator.h"
 
-class gkMessageActuator : public gkLogicActuator
+class gkParentActuator : public gkLogicActuator
 {
 public:
-	enum BodyType
+	enum Mode
 	{
-		BT_TEXT,
-		BT_PROP,
+		PA_SET,
+		PA_CLEAR,
 	};
-	
+
 private:
-	gkString m_to, m_subject, m_bodyText, m_bodyProp;
-	int m_bodyType;
+	int m_mode;
+	gkString m_obj;
+	bool m_compound, m_ghost;
 
 public:
-	gkMessageActuator(gkGameObject *object, gkLogicLink *link, const gkString &name);
-	virtual ~gkMessageActuator() {}
+	gkParentActuator(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	virtual ~gkParentActuator() {}
 	
 	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
-
+	
 	void execute(void);
 	
-	GK_INLINE void setTo(gkString v)           {m_to = v;}
-	GK_INLINE void setSubject(const gkString &v)      {m_subject = v;}
-	GK_INLINE void setBodyType(int v)          {m_bodyType = v;}
-	GK_INLINE void setBodyText(const gkString &v)     {m_bodyText = v;}
-	GK_INLINE void setBodyProperty(const gkString &v) {m_bodyProp = v;}
-
-	GK_INLINE const gkString& getTo(void)           {return m_to;}
-	GK_INLINE const gkString& getSubject(void)      {return m_subject;}
-	GK_INLINE int             getBodyType(void)     {return m_bodyType;}
-	GK_INLINE const gkString& getBodyText(void)     {return m_bodyText;}
-	GK_INLINE const gkString& getBodyProperty(void) {return m_bodyProp;}
+	GK_INLINE void setMode(int v)        {m_mode = v;}
+	GK_INLINE void setParent(const gkString &v) {m_obj = v;}
+	GK_INLINE void setCompound(bool v)   {m_compound = v;}
+	GK_INLINE void setGhost(bool v)      {m_ghost = v;}
 };
 
-#endif // GKMESSAGEACTUATOR_H
+#endif // GKPARENTACTUATOR_H

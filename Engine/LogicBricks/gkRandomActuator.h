@@ -71,7 +71,7 @@ public:
 	
 	void setSeed(int v);
 	GK_INLINE void setDistribution(int v)  {m_distribution = v;}
-	GK_INLINE void setProperty(gkString v) {m_prop = v;}
+	GK_INLINE void setProperty(const gkString &v) {m_prop = v;}
 	GK_INLINE void setMin(float v)         {m_min = v;}
 	GK_INLINE void setMax(float v)         {m_max = v;}
 	GK_INLINE void setConstant(float v)    {m_constant = v;}

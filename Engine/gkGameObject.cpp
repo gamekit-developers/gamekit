@@ -913,7 +913,44 @@ void gkGameObject::setParent(gkGameObject *par)
 	}
 }
 
+// ----------------------------------------------------------------------------
+void gkGameObject::setParentInPlace(gkGameObject *par)
+{
+	if(par && par != this)
+	{
+		GK_ASSERT(!m_parent && "Already has a parent");
+		
+		gkMatrix4 trans =  par->getWorldTransform().inverse() * getWorldTransform();
+		
+		setParent(par);
+		setTransform(trans);
+	}
+}
 
+
+// ----------------------------------------------------------------------------
+void gkGameObject::clearParent()
+{
+	if (!isLoaded() || isLoading())
+		return;
+
+	if(m_parent)
+	{
+		m_parent->removeChild(this);
+	}
+}
+
+// ----------------------------------------------------------------------------
+void gkGameObject::clearParentInPlace()
+{
+	if(m_parent)
+	{
+		gkMatrix4 trans =  m_parent->getWorldTransform()*getTransform();
+		
+		clearParent();
+		setTransform(trans);
+	}
+}
 
 // ----------------------------------------------------------------------------
 void gkGameObject::addChild(gkGameObject *gobj)
@@ -944,7 +981,6 @@ void gkGameObject::addChild(gkGameObject *gobj)
 		m_node->addChild(gobj->getNode());
 	}
 }
-
 
 
 // ----------------------------------------------------------------------------

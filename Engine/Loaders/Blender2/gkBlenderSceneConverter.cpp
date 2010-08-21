@@ -2215,6 +2215,69 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
 				}
 				
 			} break;
+		case ACT_PARENT:
+			{
+				gkParentActuator *pa = new gkParentActuator(gobj, lnk, bact->name);
+				la = pa;
+				Blender::bParentActuator *bpa = (Blender::bParentActuator *)bact->data;
+
+				pa->setParent(GKB_IDNAME(bpa->ob));
+				pa->setCompound(bpa->flag & ACT_PARENT_COMPOUND);
+				pa->setGhost(bpa->flag & ACT_PARENT_GHOST);
+				
+				switch(bpa->type)
+				{
+					case ACT_PARENT_REMOVE:
+						pa->setMode(gkParentActuator::PA_CLEAR);
+						break;
+					case ACT_PARENT_SET:
+						pa->setMode(gkParentActuator::PA_SET);
+						break;
+					default:
+						break;
+				}
+				
+			} break;
+		case ACT_SCENE:
+			{
+				gkSceneActuator *sa = new gkSceneActuator(gobj, lnk, bact->name);
+				la = sa;
+				Blender::bSceneActuator *bsa = (Blender::bSceneActuator *)bact->data;
+
+				sa->setCamera(GKB_IDNAME(bsa->camera));
+				sa->setScene(GKB_IDNAME(bsa->scene));
+				
+				switch(bsa->type)
+				{
+					case ACT_SCENE_RESTART:
+						sa->setMode(gkSceneActuator::SC_RESTART);
+						break;
+					case ACT_SCENE_SET:
+						sa->setMode(gkSceneActuator::SC_SET_SCENE);
+						break;
+					case ACT_SCENE_CAMERA:
+						sa->setMode(gkSceneActuator::SC_SET_CAMERA);
+						break;
+					case ACT_SCENE_ADD_FRONT:
+						sa->setMode(gkSceneActuator::SC_ADD_FRONT);
+						break;
+					case ACT_SCENE_ADD_BACK:
+						sa->setMode(gkSceneActuator::SC_ADD_BACK);
+						break;
+					case ACT_SCENE_REMOVE:
+						sa->setMode(gkSceneActuator::SC_REMOVE);
+						break;
+					case ACT_SCENE_SUSPEND:
+						sa->setMode(gkSceneActuator::SC_SUSPEND);
+						break;
+					case ACT_SCENE_RESUME:
+						sa->setMode(gkSceneActuator::SC_RESUME);
+						break;
+					default:
+						break;
+				}
+				
+			} break;
 		case ACT_SOUND:
 			{
 #if OGREKIT_OPENAL_SOUND

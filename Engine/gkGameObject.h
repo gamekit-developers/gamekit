@@ -73,6 +73,9 @@ public:
 	GK_INLINE gkGameObjectArray         &getChildren(void)       {return m_children;}
 
 	void setParent(gkGameObject *par);
+	void setParentInPlace(gkGameObject *par);
+	void clearParent(void);
+	void clearParentInPlace(void);
 	void addChild(gkGameObject *ob);
 	void removeChild(gkGameObject *ob);
 	bool hasChild(gkGameObject *ob);
