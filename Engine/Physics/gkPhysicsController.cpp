@@ -251,6 +251,8 @@ bool gkPhysicsController::sensorCollides(const gkString& prop, const gkString& m
 // ----------------------------------------------------------------------------
 bool gkPhysicsController::_markDbvt(bool v)
 {
+	if (m_suspend)
+		return false;
 
 	bool result = false;
 	if (m_dbvtMark != v)

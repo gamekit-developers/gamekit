@@ -500,7 +500,7 @@ void gkGameObject::setTransform(const gkMatrix4 &v)
 	if (m_node != 0)
 	{
 		gkTransformState st;
-		gkMathUtils::extractTransformFast(v, st.loc, st.rot, st.scl);
+		gkMathUtils::extractTransform(v, st.loc, st.rot, st.scl);
 		applyTransformState(st);
 		notifyUpdate();
 	}
