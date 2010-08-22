@@ -35,7 +35,7 @@ class gkRandomActuator : public gkLogicActuator
 {
 public:
 
-	enum Type
+	enum Distribution
 	{
 		RA_BOOL_CONSTANT,
 		RA_BOOL_UNIFORM,
@@ -69,15 +69,24 @@ public:
 	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
 	void execute(void);
 	
-	void setSeed(int v);
-	GK_INLINE void setDistribution(int v)  {m_distribution = v;}
-	GK_INLINE void setProperty(const gkString &v) {m_prop = v;}
-	GK_INLINE void setMin(float v)         {m_min = v;}
-	GK_INLINE void setMax(float v)         {m_max = v;}
-	GK_INLINE void setConstant(float v)    {m_constant = v;}
-	GK_INLINE void setMean(float v)        {m_mean = v;}
-	GK_INLINE void setDeviation(float v)   {m_deviation = v;}
-	GK_INLINE void setHalfLife(float v)    {m_halflife = v;}
+	void                      setSeed(int v);
+	GK_INLINE int             getSeed(void)                  {return m_seed;}
+	GK_INLINE void            setDistribution(int v)         {m_distribution = v;}
+	GK_INLINE int             getDistribution(void)          {return m_distribution;}
+	GK_INLINE void            setProperty(const gkString &v) {m_prop = v;}
+	GK_INLINE const gkString &getProperty(void)              {return m_prop;}
+	GK_INLINE void            setMin(float v)                {m_min = v;}
+	GK_INLINE float           getMin(void)                   {return m_min;}
+	GK_INLINE void            setMax(float v)                {m_max = v;}
+	GK_INLINE float           getMax(void)                   {return m_max;}
+	GK_INLINE void            setConstant(float v)           {m_constant = v;}
+	GK_INLINE float           getConstant(void)              {return m_constant;}
+	GK_INLINE void            setMean(float v)               {m_mean = v;}
+	GK_INLINE float           getMean(void)                  {return m_mean;}
+	GK_INLINE void            setDeviation(float v)          {m_deviation = v;}
+	GK_INLINE float           getDeviation(void)             {return m_deviation;}
+	GK_INLINE void            setHalfLife(float v)           {m_halflife = v;}
+	GK_INLINE float           getHalfLife(void)              {return m_halflife;}
 };
 
 #endif // GKRANDOMACTUATOR_H

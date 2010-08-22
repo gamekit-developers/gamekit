@@ -166,12 +166,51 @@ enum gsMessageActuatorBodyType
 
 
 // ----------------------------------------------------------------------------
+enum gsParentActuatorMode
+{
+	PA_SET   = gkParentActuator::PA_SET,
+	PA_CLEAR = gkParentActuator::PA_CLEAR,
+};
+
+
+// ----------------------------------------------------------------------------
 enum gsPropertyActuatorType
 {
 	PA_ASSIGN = gkPropertyActuator::PA_ASSIGN,
 	PA_ADD    = gkPropertyActuator::PA_ADD,
 	PA_COPY   = gkPropertyActuator::PA_COPY,
 	PA_TOGGLE = gkPropertyActuator::PA_TOGGLE,
+};
+
+
+// ----------------------------------------------------------------------------
+enum gsRandomActuatorDistribution
+{
+	RA_BOOL_CONSTANT   = gkRandomActuator::RA_BOOL_CONSTANT,
+	RA_BOOL_UNIFORM    = gkRandomActuator::RA_BOOL_UNIFORM,
+	RA_BOOL_BERNOUILLI = gkRandomActuator::RA_BOOL_BERNOUILLI,
+	RA_INT_CONSTANT    = gkRandomActuator::RA_INT_CONSTANT,
+	RA_INT_UNIFORM     = gkRandomActuator::RA_INT_UNIFORM,
+	RA_INT_POISSON     = gkRandomActuator::RA_INT_POISSON,
+	RA_FLOAT_CONSTANT  = gkRandomActuator::RA_FLOAT_CONSTANT,
+	RA_FLOAT_UNIFORM   = gkRandomActuator::RA_FLOAT_UNIFORM,
+	RA_FLOAT_NORMAL    = gkRandomActuator::RA_FLOAT_NORMAL,
+	RA_FLOAT_NEGEXP    = gkRandomActuator::RA_FLOAT_NEGEXP,
+	
+};
+
+
+// ----------------------------------------------------------------------------
+enum gsSceneActuatorMode
+{
+	SC_RESTART    = gkSceneActuator::SC_RESTART,
+	SC_SET_SCENE  = gkSceneActuator::SC_SET_SCENE,
+	SC_SET_CAMERA = gkSceneActuator::SC_SET_CAMERA,
+	SC_ADD_BACK   = gkSceneActuator::SC_ADD_BACK,
+	SC_ADD_FRONT  = gkSceneActuator::SC_ADD_FRONT,
+	SC_REMOVE     = gkSceneActuator::SC_REMOVE,
+	SC_SUSPEND    = gkSceneActuator::SC_SUSPEND,
+	SC_RESUME     = gkSceneActuator::SC_RESUME,
 };
 
 
@@ -814,6 +853,27 @@ public:
 	OGRE_KIT_LOGIC_BRICK(MotionActuator);
 };
 
+// ----------------------------------------------------------------------------
+class gsParentActuator : public gsActuator
+{
+public:
+	gsParentActuator(gsLogicObject *parent, const gkString &name="");
+	gsParentActuator();
+	~gsParentActuator();
+
+	void      setMode(int v)               {BRICK_SET( setMode(v) );}
+	int       getMode(void)                {BRICK_GET( getMode(), PA_SET );}
+	void      setParent(const gkString &v) {BRICK_SET( setParent(v) );}
+	gkString  getParent(void)              {BRICK_GET( getParent(), "" );}
+	void      setCompound(bool v)          {BRICK_SET( setCompound(v) );}
+    bool      getCompound(void)            {BRICK_GET( getCompound(), false );}
+	void      setGhost(bool v)             {BRICK_SET( setGhost(v) );}
+	bool      getGhost(void)               {BRICK_GET( getGhost(), false );}
+
+
+	OGRE_KIT_LOGIC_BRICK(ParentActuator);
+};
+
 
 // ----------------------------------------------------------------------------
 class gsPropertyActuator : public gsActuator
@@ -835,6 +895,57 @@ public:
 
 	OGRE_KIT_LOGIC_BRICK(PropertyActuator);
 };
+
+// ----------------------------------------------------------------------------
+class gsRandomActuator : public gsActuator
+{
+public:
+	gsRandomActuator(gsLogicObject *parent, const gkString &name="");
+	gsRandomActuator();
+	~gsRandomActuator();
+	
+	void     setSeed(int v)                 {BRICK_SET( setSeed(v) );}
+	int      getSeed(void)                  {BRICK_GET( getSeed(), 0 );}
+	void     setDistribution(int v)         {BRICK_SET( setDistribution(v) );}
+	int      getDistribution(void)          {BRICK_GET( getDistribution(), RA_BOOL_CONSTANT );}
+	void     setProperty(const gkString &v) {BRICK_SET( setProperty(v) );}
+	gkString getProperty(void)              {BRICK_GET( getProperty(), "" );}
+	void     setMin(float v)                {BRICK_SET( setMin(v) );}
+	float    getMin(void)                   {BRICK_GET( getMin(), 0 );}
+	void     setMax(float v)                {BRICK_SET( setMax(v) );}
+	float    getMax(void)                   {BRICK_GET( getMax(), 0 );}
+	void     setConstant(float v)           {BRICK_SET( setConstant(v) );}
+	float    getConstant(void)              {BRICK_GET( getConstant(), 0 );}
+	void     setMean(float v)               {BRICK_SET( setMean(v) );}
+	float    getMean(void)                  {BRICK_GET( getMean(), 0 );}
+	void     setDeviation(float v)          {BRICK_SET( setDeviation(v) );}
+	float    getDeviation(void)             {BRICK_GET( getDeviation(), 0 );}
+	void     setHalfLife(float v)           {BRICK_SET( setHalfLife(v) );}
+	float    getHalfLife(void)              {BRICK_GET( getHalfLife(), 0 );}
+
+
+	OGRE_KIT_LOGIC_BRICK(RandomActuator);
+};
+
+// ----------------------------------------------------------------------------
+class gsSceneActuator : public gsActuator
+{
+public:
+	gsSceneActuator(gsLogicObject *parent, const gkString &name="");
+	gsSceneActuator();
+	~gsSceneActuator();
+
+    void     setMode(int v)                  {BRICK_SET( setMode(v) );}
+	int      getMode(void)                   {BRICK_GET( getMode(), SC_RESTART );}
+	void     setScene(const gkString &v)     {BRICK_SET( setScene(v) );}
+	gkString getScene(void)                  {BRICK_GET( getScene(), "" );}
+	void     setCamera(const gkString &v)    {BRICK_SET( setCamera(v) );}
+	gkString getCamera(void)                 {BRICK_GET( getCamera(), "" );}
+
+
+	OGRE_KIT_LOGIC_BRICK(SceneActuator);
+};
+
 // ----------------------------------------------------------------------------
 class gsSoundActuator : public gsActuator
 {

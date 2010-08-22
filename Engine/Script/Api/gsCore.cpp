@@ -1225,6 +1225,56 @@ void gsGameObject::setParent(gsGameObject *par)
 
 
 // ----------------------------------------------------------------------------
+void gsGameObject::setParentInPlace(gsGameObject *par)
+{
+	if (m_object && par)
+	{
+		gkGameObject *gobj = get();
+		gkGameObject *pobj = par->get();
+
+		if (gobj == pobj) return;
+
+		if (!gobj->hasParent())
+			gobj->setParentInPlace(pobj);
+		else
+		{
+			if (gobj->getParent() != pobj)
+			{
+				gobj->clearParentInPlace();
+				gobj->setParentInPlace(pobj);
+			}
+		}
+	}
+}
+
+
+// ----------------------------------------------------------------------------
+void gsGameObject::clearParent(void)
+{
+	if (m_object)
+	{
+		gkGameObject *gobj = get();
+
+		if (gobj->hasParent())
+			gobj->clearParent();
+	}
+}
+
+
+// ----------------------------------------------------------------------------
+void gsGameObject::clearParentInPlace(void)
+{
+	if (m_object)
+	{
+		gkGameObject *gobj = get();
+
+		if (gobj->hasParent())
+			gobj->clearParentInPlace();
+	}
+}
+
+
+// ----------------------------------------------------------------------------
 void gsGameObject::addChild(gsGameObject *chi)
 {
 	if (m_object && chi)

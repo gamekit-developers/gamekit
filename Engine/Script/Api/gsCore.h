@@ -332,6 +332,9 @@ public:
 
 	bool hasParent();
 	void setParent(gsGameObject *par);
+	void setParentInPlace(gsGameObject *par);
+	void clearParent(void);
+	void clearParentInPlace(void);
 	void addChild(gsGameObject *chi);
 	void removeChild(gsGameObject *chi);
 

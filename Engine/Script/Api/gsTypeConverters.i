@@ -96,7 +96,10 @@ static int gsCreateActuator(lua_State *L, gsActuator *obj)
 	GS_TYPE_RET(ob, obj,  GameActuator);
 	GS_TYPE_RET(ob, obj,  MessageActuator);
 	GS_TYPE_RET(ob, obj,  MotionActuator);
+	GS_TYPE_RET(ob, obj,  ParentActuator);
 	GS_TYPE_RET(ob, obj,  PropertyActuator);
+	GS_TYPE_RET(ob, obj,  RandomActuator);
+	GS_TYPE_RET(ob, obj,  SceneActuator);
 	GS_TYPE_RET(ob, obj,  SoundActuator);
 	GS_TYPE_RET(ob, obj,  StateActuator);
 	GS_TYPE_RET(ob, obj,  VisibilityActuator);

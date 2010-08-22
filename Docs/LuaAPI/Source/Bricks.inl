@@ -2523,8 +2523,29 @@ function ScriptController:setScript(name)
 
 \endpage
 
+<!-- ============================================ ParentActuator ============================================ -->
+\LuaClass{ParentActuator}
+\LuaClassExtend{Actuator}
+
+
+\endpage
+
 <!-- ============================================ PropertyActuator ============================================ -->
 \LuaClass{PropertyActuator}
+\LuaClassExtend{Actuator}
+
+
+\endpage
+
+<!-- ============================================ RandomActuator ============================================ -->
+\LuaClass{RandomActuator}
+\LuaClassExtend{Actuator}
+
+
+\endpage
+
+<!-- ============================================ SceneActuator ============================================ -->
+\LuaClass{SceneActuator}
 \LuaClassExtend{Actuator}
 
 

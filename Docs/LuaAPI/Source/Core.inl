@@ -1267,6 +1267,9 @@ function Scene:createEmpty(name)
 \LuaMethodMenu{GameObject,hasParent}
 \LuaMethodMenu{GameObject,setParent}
 \LuaMethodMenu{GameObject,getParent}
+\LuaMethodMenu{GameObject,setParentInPlace}
+\LuaMethodMenu{GameObject,clearParent}
+\LuaMethodMenu{GameObject,clearParentInPlace}
 \LuaMethodMenu{GameObject,getScene}
 \endmenu
 
@@ -1803,6 +1806,47 @@ function GameObject:getParent()
 
 \returns nil if not found or, GameObject, Entity, Camera, Light, or Skeleton depending on the GameObjectTypes. 
 
+
+\endpage
+
+
+<!-- ======================================== -->
+\LuaMethod{GameObject,setParentInPlace}
+\LuaClassUp{GameObject}
+
+Sets the parent game object, maintaining the object at the same global world transform.
+
+\code
+function GameObject:setParentInPlace(object)
+\endcode
+
+\param object \LuaClassRef{GameObject} as the new parent.
+
+\endpage
+
+
+<!-- ======================================== -->
+\LuaMethod{GameObject,clearParent}
+\LuaClassUp{GameObject}
+
+Clear the parent game object.
+
+\code
+function GameObject:clearParent()
+\endcode
+
+\endpage
+
+
+<!-- ======================================== -->
+\LuaMethod{GameObject,clearParentInPlace}
+\LuaClassUp{GameObject}
+
+Clear the parent game object, maintaining the object at the same global world transform.
+
+\code
+function GameObject:clearParentInPlae()
+\endcode
 
 \endpage
 
