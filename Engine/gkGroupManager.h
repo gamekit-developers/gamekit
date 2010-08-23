@@ -53,6 +53,8 @@ public:
 	void                loadAll(void);
 	void                unloadAll(void);
 
+	void                createStaticBatches(gkScene *scene);
+	void                destroyStaticBatches(gkScene *scene);
 
 
 	gkGameObjectInstance* findInstanceBy(UTsize id); 

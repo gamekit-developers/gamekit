@@ -2222,8 +2222,8 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
 				Blender::bParentActuator *bpa = (Blender::bParentActuator *)bact->data;
 
 				pa->setParent(GKB_IDNAME(bpa->ob));
-				pa->setCompound(bpa->flag & ACT_PARENT_COMPOUND);
-				pa->setGhost(bpa->flag & ACT_PARENT_GHOST);
+				pa->setCompound((bpa->flag & ACT_PARENT_COMPOUND) != 0);
+				pa->setGhost((bpa->flag & ACT_PARENT_GHOST) != 0);
 				
 				switch(bpa->type)
 				{

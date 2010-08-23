@@ -127,6 +127,8 @@ void gkGroupManager::unloadAll(void)
 		it.getNext().second->unloadInstances();
 }
 
+
+
 // ----------------------------------------------------------------------------
 gkGameObjectInstance* gkGroupManager::findInstanceBy(UTsize id)
 {
@@ -142,3 +144,20 @@ gkGameObjectInstance* gkGroupManager::findInstanceBy(UTsize id)
 	return ret;
 }
 
+
+// ----------------------------------------------------------------------------
+void gkGroupManager::createStaticBatches(gkScene *scene)
+{
+	Groups::Iterator it = m_groups.iterator();
+	while (it.hasMoreElements())
+		it.getNext().second->createStaticBatches(scene);
+}
+
+
+// ----------------------------------------------------------------------------
+void gkGroupManager::destroyStaticBatches(gkScene *scene)
+{
+	Groups::Iterator it = m_groups.iterator();
+	while (it.hasMoreElements())
+		it.getNext().second->destroyStaticBatches(scene);
+}

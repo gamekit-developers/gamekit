@@ -86,8 +86,6 @@ gkScene::gkScene(const gkString &name)
 // ----------------------------------------------------------------------------
 gkScene::~gkScene()
 {
-
-
 	gkGameObjectHashMap::Iterator it = m_objects.iterator();
 	while (it.hasMoreElements())
 		delete it.getNext().second;
@@ -462,6 +460,7 @@ void gkScene::applyBuiltinPhysics(void)
 		createPhysicsObject(it.getNext());
 }
 
+
 // ----------------------------------------------------------------------------
 void gkScene::calculateLimits(void)
 {
@@ -521,6 +520,10 @@ void gkScene::loadImpl(void)
 
 	// Build groups.
 	m_groupManager->loadAll();
+
+	if (gkEngine::getSingleton().getUserDefs().buildInstances)
+		m_groupManager->createStaticBatches(this);
+
 
 	// Build parent / child hierarchy.
 	applyBuiltinParents();
@@ -610,6 +613,15 @@ void gkScene::unloadImpl(void)
 
 	m_groupManager->unloadAll();
 
+
+
+	// Destroy all batched geometry 
+	if (gkEngine::getSingleton().getUserDefs().buildInstances)
+		m_groupManager->destroyStaticBatches(this);
+
+
+
+
 	gkGameObjectSet::Iterator it = m_loadedObjects.iterator();
 	while (it.hasMoreElements())
 	{
@@ -619,8 +631,8 @@ void gkScene::unloadImpl(void)
 
 		gobj->unload();
 	}
-
 	m_loadedObjects.clear(true);
+
 
 	// Free cloned.
 	destroyClones();
@@ -645,16 +657,12 @@ void gkScene::unloadImpl(void)
 	m_startCam = 0;
 	m_limits = gkBoundingBox::BOX_NULL;
 
-
-
 	// Clear ogre scene manager.
 	if (m_manager)
 	{
 		Ogre::Root::getSingleton().destroySceneManager(m_manager);
 		m_manager = 0;
 	}
-
-
 
 	// Finalize vp
 	if (m_viewport)
