@@ -42,4 +42,4 @@ endif (CMAKE_COMPILER_IS_GNUCXX)
 
 include_directories(${OGRELITE_SOURCE_DIR}/OgreMain/include)
 include_directories(${OGRELITE_SOURCE_DIR}/Settings)
-subdirs(OgreMain RenderSystems Plugins)
+subdirs(OgreMain RenderSystems PlugIns)
