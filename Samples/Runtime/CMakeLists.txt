@@ -48,4 +48,12 @@ else ()
 	add_executable(OgreKit ${SRC}  ${HiddenCMakeLists})
 	install(TARGETS OgreKit RUNTIME DESTINATION ${OGREKIT_INSTALL_PREFIX})
 
+IF (NOT INTERNAL_CREATE_DISTRIBUTABLE_MSVC_PROJECTFILES)
+	ADD_CUSTOM_COMMAND(
+		TARGET OgreKit 
+		POST_BUILD
+		COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/momo_ogre.blend ${CMAKE_CURRENT_BINARY_DIR}/momo_ogre.blend
+	)
+ENDIF ()
+
 endif()
