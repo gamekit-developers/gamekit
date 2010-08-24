@@ -35,13 +35,19 @@ if(WIN32)
 	macro_log_feature(DirectX_FOUND "DirectX" "Support for the DirectX render system" "http://msdn.microsoft.com/en-us/directx/" FALSE "" "")
 endif()
 
-# Find Cg
-find_package(Cg)
-macro_log_feature(Cg_FOUND "cg" "C for graphics shader language" "http://developer.nvidia.com/object/cg_toolkit.html" FALSE "" "")
 
-# Find OpenAL
-include(FindOpenAL)
-macro_log_feature(OPENAL_FOUND "OpenAL" "Support for the OpenAL sound system" "http://connect.creativelabs.com/openal/default.aspx" FALSE "" "")
+# Find Cg (Disabled Not used right now!)
+# find_package(Cg)
+# macro_log_feature(Cg_FOUND "cg" "C for graphics shader language" "http://developer.nvidia.com/object/cg_toolkit.html" FALSE "" "")
+
+if(NOT WIN32)
+	# Use static loader On win32 platforms 
+
+	# Find OpenAL
+	include(FindOpenAL)
+	macro_log_feature(OPENAL_FOUND "OpenAL" "Support for the OpenAL sound system" "http://connect.creativelabs.com/openal/default.aspx" FALSE "" "")
+
+endif()
 
 #######################################################################
 # Apple-specific

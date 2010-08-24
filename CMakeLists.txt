@@ -43,7 +43,7 @@ set(OGREKIT_INCLUDE ${OGREKIT_OGRE_INCLUDE}
                     ${OGREKIT_DEP_INCLUDE}
                     )
 set(OGREKIT_LIB             OgreKitCore ${OGREKIT_LUA_TARGET})
-set(OGREKIT_STD_LUA_LIB     OgreKitCore ${OGREKIT_LUA_STD_TARGET})
+set(OGREKIT_STD_LUA_LIB     OgreKitCore ${OGREKIT_LUA_TARGET})
 
 
 subdirs(bullet)
@@ -51,4 +51,7 @@ subdirs(Dependencies)
 subdirs(OgreLite)
 subdirs(Engine)
 subdirs(Samples)
-subdirs(Docs/LuaAPI)
+
+if (OGREKIT_UPDATE_DOCS)
+	subdirs(Docs/LuaAPI)
+endif()

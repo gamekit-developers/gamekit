@@ -10,5 +10,4 @@ endif()
 
 if (OGREKIT_BUILD_LUARUNTIME)
     subdirs(LuaRuntime)
-    #subdirs(LuaPackage)
 endif()

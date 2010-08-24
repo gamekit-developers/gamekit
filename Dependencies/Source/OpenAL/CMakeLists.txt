@@ -1,1 +1,1 @@
-add_library(OpenALWrap OpenALWrap.c)
+add_library(OpenAL OpenALWrap.c)

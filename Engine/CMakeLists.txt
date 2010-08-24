@@ -458,7 +458,7 @@ source_group(Physics\\Source FILES ${Physics_SOURCE})
 if (OGREKIT_COMPLIE_SWIG AND SWIG_FOUND)
 
 
-    set(ScriptAPI2_INCLUDES
+    set(Script_INC
         # ----- Include Files -----
         Script/Api/OgreKit.i
         Script/Api/gsTypes.i
@@ -480,13 +480,13 @@ if (OGREKIT_COMPLIE_SWIG AND SWIG_FOUND)
         Script/Api/gsUtils.i
     )
 
-    set(TMPL_API_SOURCE
+    set(Script_TMPL
         Script/Api/System.lua
         Script/Api/Class.lua
     )
-    add_templates(GEN_TEMPLATES_OUT Script/Api/Generated/gsTemplates.h ${TMPL_API_SOURCE})
+    add_templates(GEN_TEMPLATES_OUT Script/Api/Generated/gsTemplates.h ${Script_TMPL})
 
-    set(ScriptAPI2_HEADER
+    set(Script_HEADER
         # ----- Common Files -----
         Script/Lua/gkLuaManager.h
         Script/Lua/gkLuaScript.h
@@ -505,7 +505,7 @@ if (OGREKIT_COMPLIE_SWIG AND SWIG_FOUND)
         Script/Api/gsSound.h
         Script/Api/gsThread.h
         Script/Api/gsUtils.h
-        ${ScriptAPI2_INCLUDES}
+        ${Script_INC}
         ${GEN_TEMPLATES_OUT}
     )
 
@@ -514,11 +514,11 @@ if (OGREKIT_COMPLIE_SWIG AND SWIG_FOUND)
     )
 
 
-    swig_source_lua(SWIG_API2_OUTPUT_LUA ScriptAPI2_HEADER ${SWIG_INPUT})
+    swig_source_lua(SWIG_API2_OUTPUT_LUA Script_HEADER ${SWIG_INPUT})
 
 
-    set(ScriptAPI2_SOURCE
-        ${TMPL_API_SOURCE}
+    set(Script_SOURCE
+        ${Script_TMPL}
         ${SWIG_API2_OUTPUT_LUA}
         Script/Lua/gkLuaManager.cpp
         Script/Lua/gkLuaScript.cpp
@@ -538,15 +538,15 @@ if (OGREKIT_COMPLIE_SWIG AND SWIG_FOUND)
         Script/Api/gsUtils.cpp
     )
 
-    source_group(Script\\Builtin   FILES ${TMPL_API_SOURCE})
-    source_group(Script\\Includes  FILES ${SWIG_INPUT} ${ScriptAPI2_INCLUDES})
-    source_group(Script\\Header    FILES ${ScriptAPI2_HEADER})
-    source_group(Script\\Source    FILES ${ScriptAPI2_SOURCE})
+    source_group(Script\\Builtin   FILES ${Script_TMPL})
+    source_group(Script\\Includes  FILES ${SWIG_INPUT} ${Script_INC})
+    source_group(Script\\Header    FILES ${Script_HEADER})
+    source_group(Script\\Source    FILES ${Script_SOURCE})
 
 
 else()
 
-    set(ScriptAPI2_INCLUDES
+    set(Script_INC
         # ----- Include Files -----
         Script/Api/OgreKit.i
         Script/Api/gsTypes.i
@@ -568,7 +568,7 @@ else()
         Script/Api/gsUtils.i
     )
 
-    set(ScriptAPI2_HEADER
+    set(Script_HEADER
         # ----- Common Files -----
         Script/Api/Generated/gsTemplates.h
         Script/Lua/gkLuaManager.h
@@ -588,11 +588,17 @@ else()
         Script/Api/gsSound.h
         Script/Api/gsThread.h
         Script/Api/gsUtils.h
-        ${ScriptAPI2_INCLUDES}
+        ${Script_INC}
     )
 
 
-    set(ScriptAPI2_SOURCE
+    set(Script_TMPL
+        Script/Api/System.lua
+        Script/Api/Class.lua
+    )
+
+    set(Script_SOURCE
+		${Script_TMPL}
         Script/Api/Generated/OgreKitLua.cpp
         Script/Lua/gkLuaManager.cpp
         Script/Lua/gkLuaScript.cpp
@@ -611,15 +617,11 @@ else()
         Script/Api/gsThread.cpp
         Script/Api/gsUtils.cpp
     )
-
-    set(TMPL_API_SOURCE
-        Script/Api/System.lua
-        Script/Api/Class.lua
-    )
     
-    source_group(Script\\Builtin	FILES ${TMPL_API_SOURCE})
-    source_group(Script\\Header    FILES ${ScriptAPI2_HEADER})
-    source_group(Script\\Source    FILES ${ScriptAPI2_SOURCE})
+    source_group(Script\\Builtin   FILES ${Script_TMPL})
+    source_group(Script\\Include   FILES ${Script_INC})
+    source_group(Script\\Header    FILES ${Script_HEADER})
+    source_group(Script\\Source    FILES ${Script_SOURCE})
 
 endif()
 
@@ -677,9 +679,12 @@ source_group(Network\\Source FILES ${Network_SOURCE})
 # ---------------------------------------------------------
 # Build setup
 # ---------------------------------------------------------
+
 if (APPLE)
-include_directories( ${OGRELITE_SOURCE_DIR}/OgreMain/include/OSX )
+  include_directories( ${OGRELITE_SOURCE_DIR}/OgreMain/include/OSX )
 endif ()
+
+
 
 if (OGREKIT_OPENAL_SOUND AND OPENAL_FOUND)
     add_definitions(-DOGREKIT_OPENAL_SOUND)
@@ -706,7 +711,6 @@ include_directories(
     ./LogicBricks
     ./Logic
     ./Script
-    ./Script/Common # Depreciated Use OgreKitLua Api
     ./Script/Api
     ./Sound
     ./Loaders/Blender2
@@ -737,12 +741,9 @@ source_group(DependenciesCMakeLists FILES ${HiddenDepenCMakeLists})
 add_definitions(-DSTATIC_LINKED)
 
 
+
 if (OGREKIT_OPENAL_SOUND AND OPENAL_FOUND)
-
-    set(Extra_SOURCE
-        ${Sound_SOURCE} ${Sound_HEADER}
-        )
-
+    set(Extra_SOURCE ${Sound_SOURCE} ${Sound_HEADER} )
     include_directories( ${OGREKIT_OGGVORBIS_INCLUDE})
     link_libraries(OggVorbis)
 endif()
@@ -756,7 +757,7 @@ add_library(OgreKitCore STATIC
             ${Animation_SOURCE}  ${Animation_HEADER}
             ${Constraint_SOURCE} ${Constraint_HEADER}
             ${Physics_SOURCE}    ${Physics_HEADER}
-            ${Script_SOURCE}     ${Script_HEADER} ${ScriptAPI2_SOURCE} ${ScriptAPI2_HEADER}
+            ${Script_SOURCE}     ${Script_HEADER}
             ${Network_SOURCE}    ${Network_HEADER}
             ${NLogic_SOURCE}     ${NLogic_HEADER}
             ${Thread_SOURCE}     ${Thread_HEADER}

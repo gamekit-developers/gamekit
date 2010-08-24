@@ -40,28 +40,9 @@ macro (configure_ogrekit ROOT OGREPATH)
     option(OGREKIT_BUILD_LUARUNTIME     "Build Samples/LuaRuntime"              ON)
     option(OGREKIT_COMPLIE_SWIG         "Enable compile time SWIG generation."  OFF)
     option(OGREKIT_HEADER_GENERATOR     "Build Blender DNA to C++ generator."   OFF)
+    
+    option(OGREKIT_UPDATE_DOCS          "Update Lua API documentation(Requires doxygen)." OFF)
 
-    
-    if (OGREKIT_BUILD_LUARUNTIME)
-        include(FindLua51)
-        if (LUA51_FOUND)
-            set(OGREKIT_LUA_STD_TARGET ${LUA_LIBRARIES})
-         else ()
-            message(STATUS "-----------------------------------------------------------------------------")
-            message(STATUS "Linking with built-in Lua. This may cause instability in the compiled module")
-            message(STATUS "Consider installing the Lua5.1 package")
-            if (WIN32)
-                message(STATUS "         http://www.lua.org/ or, http://code.google.com/p/luaforwindows/")
-            else()
-                message(STATUS "         http://www.lua.org/")
-            endif()
-            message(STATUS "-----------------------------------------------------------------------------")
-            message(STATUS " ")
-            
-            set(OGREKIT_LUA_STD_TARGET ${OGREKIT_LUA_TARGET})
-         endif()
-    endif()
-    
 
     if (OGREKIT_COMPLIE_SWIG)
 		
@@ -78,8 +59,6 @@ macro (configure_ogrekit ROOT OGREPATH)
 	set(OGREKIT_ZZIP_INCLUDE ${OGREKIT_DEP_DIR}/ZZipLib)
 	set(OGREKIT_OIS_INCLUDE ${OGREKIT_DEP_DIR}/OIS/include)
 	set(OGREKIT_OGRE_INCLUDE ${OGREPATH}/OgreMain/include ${OGREPATH}/Settings ${OGREKIT_PLATFORM})
-
-	set(OGREKIT_V8_INCLUDE  ${OGREKIT_DEP_DIR}/V8/include)
 	set(OGREKIT_LUA_INCLUDE ${OGREKIT_DEP_DIR}/Lua/lua)
 	set(OGREKIT_OGGVORBIS_INCLUDE ${OGREKIT_DEP_DIR}/Codecs/include)
 	
@@ -100,11 +79,17 @@ macro (configure_ogrekit ROOT OGREPATH)
         ${OGREKIT_DETOUR_INCLUDE}
         ${OGREKIT_OPENSTEER_INCLUDE}
     )
-	set(OGREKIT_MINGW_DIRECT3D TRUE)
-	if (CMAKE_COMPILER_IS_GNUCXX)
-		# Some Issues with unresolved symbols
-		set(OGREKIT_MINGW_DIRECT3D FALSE)
+
+
+
+
+	if (WIN32)
+		# Use static library. No SDK needed at build time.
+		# Must have OpenAL32.dll installed on the system 
+		# In order to use OpenAL sound.
+		set(OPENAL_FOUND TRUE)
 	endif()
+
 
     if (OPENAL_FOUND)
 		option(OGREKIT_OPENAL_SOUND "Enable building of the OpenAL subsystem" ON)
@@ -112,7 +97,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 		if (WIN32)
 			add_definitions(-DAL_STATIC_LIB -DALC_STATIC_LIB)
 			set(OGREKIT_OPENAL_INCLUDE ${OGREKIT_DEP_DIR}/OpenAL/)
-			set(OGREKIT_OPENAL_LIBRARY OpenALWrap)
+			set(OGREKIT_OPENAL_LIBRARY OpenAL)
 		else()
 			set(OGREKIT_OPENAL_INCLUDE ${OPENAL_INCLUDE_DIR})
 			set(OGREKIT_OPENAL_LIBRARY ${OPENAL_LIBRARY})
@@ -120,30 +105,45 @@ macro (configure_ogrekit ROOT OGREPATH)
 	else()
 		option(OGREKIT_OPENAL_SOUND "Enable building of the OpenAL subsystem" OFF)
 	endif()
-        
+
+
+	set(OGREKIT_MINGW_DIRECT3D TRUE)
+	if (CMAKE_COMPILER_IS_GNUCXX)
+		# Some Issues with unresolved symbols
+		set(OGREKIT_MINGW_DIRECT3D FALSE)
+	endif()
+
+
 
 	if (WIN32)
 		if (NOT DirectX_FOUND OR NOT OGREKIT_MINGW_DIRECT3D)
+			# Default use OIS without dinput 
+
 			option(OGREKIT_OIS_WIN32_NATIVE "Enable building of the OIS Win32 backend" ON)
 		else ()
+			# Use standard OIS build.
+
 			option(OGREKIT_OIS_WIN32_NATIVE "Enable building of the OIS Win32 backend" OFF)
 		endif()
-		
 	endif()
+
+
 
 
 	if (OPENGL_FOUND)
 		option(OGREKIT_BUILD_GLRS "Enable the OpenGL render system" ON)
 	endif()
 	
+
 	if (OPENGL_FOUND AND OGREKIT_BUILD_GLRS)
-		message(STATUS "Configuring OpenGL")
-		set(OGRE_BUILD_RENDERSYSTEM_GL TRUE)
-		set(OGREKIT_GLRS_LIBS RenderSystem_GL)
-		set(OGREKIT_GLRS_ROOT ${OGREPATH}/RenderSystems/GL)
-		set(OGREKIT_GLESRS_INCLUDE ${OGREPATH}/RenderSystems/GLES/include)
-		set(OGREKIT_GLRS_INCLUDE ${OGREPATH}/RenderSystems/GL/include)
+
+		set(OGRE_BUILD_RENDERSYSTEM_GL  TRUE)
+		set(OGREKIT_GLRS_LIBS           RenderSystem_GL)
+		set(OGREKIT_GLRS_ROOT           ${OGREPATH}/RenderSystems/GL)
+		set(OGREKIT_GLESRS_INCLUDE      ${OGREPATH}/RenderSystems/GLES/include)
+		set(OGREKIT_GLRS_INCLUDE        ${OGREPATH}/RenderSystems/GL/include)
 	endif()
+
 
 	if (WIN32 AND OGREKIT_MINGW_DIRECT3D)
 
@@ -154,43 +154,41 @@ macro (configure_ogrekit ROOT OGREPATH)
 		endif()
 
 		if (DirectX_FOUND AND OGREKIT_BUILD_D3D9RS)
-		
-			message(STATUS "Configuring Direct3D 9")
-
-			set(OGRE_BUILD_RENDERSYSTEM_D3D9 TRUE)
-			set(OGREKIT_D3D9_LIBS RenderSystem_Direct3D9)
-			set(OGREKIT_D3D9_ROOT ${OGREPATH}/RenderSystems/Direct3D9)
-			set(OGREKIT_DX9RS_INCLUDE ${OGREPATH}/RenderSystems/Direct3D9/include)
+			set(OGRE_BUILD_RENDERSYSTEM_D3D9   TRUE)
+			set(OGREKIT_D3D9_LIBS              RenderSystem_Direct3D9)
+			set(OGREKIT_D3D9_ROOT              ${OGREPATH}/RenderSystems/Direct3D9)
+			set(OGREKIT_DX9RS_INCLUDE          ${OGREPATH}/RenderSystems/Direct3D9/include)
 		endif()
 
 		if (DirectX_FOUND AND OGREKIT_BUILD_D3D10RS)
-			message(STATUS "Configuring Direct3D 10")
+
 			set(OGRE_BUILD_RENDERSYSTEM_D3D10 TRUE)
-			set(OGREKIT_D3D10_LIBS RenderSystem_Direct3D10)
-			set(OGREKIT_D3D10_ROOT ${OGREPATH}/RenderSystems/Direct3D10)
-			set(OGREKIT_DX10RS_INCLUDE ${OGREPATH}/RenderSystems/Direct3D10/include)
+			set(OGREKIT_D3D10_LIBS            RenderSystem_Direct3D10)
+			set(OGREKIT_D3D10_ROOT            ${OGREPATH}/RenderSystems/Direct3D10)
+			set(OGREKIT_DX10RS_INCLUDE        ${OGREPATH}/RenderSystems/Direct3D10/include)
 		endif()
 
+
 		if (DirectX_FOUND AND OGREKIT_BUILD_D3D11RS)
-			message(STATUS "Configuring Direct3D 11")
-			set(OGRE_BUILD_RENDERSYSTEM_D3D11 TRUE)
-			set(OGREKIT_D3D11_LIBS RenderSystem_Direct3D11)
-			set(OGREKIT_D3D11_ROOT ${OGREPATH}/RenderSystems/Direct3D11)
-			set(OGREKIT_DX11RS_INCLUDE ${OGREPATH}/RenderSystems/Direct3D11/include)
+
+			set(OGRE_BUILD_RENDERSYSTEM_D3D11  TRUE)
+			set(OGREKIT_D3D11_LIBS             RenderSystem_Direct3D11)
+			set(OGREKIT_D3D11_ROOT             ${OGREPATH}/RenderSystems/Direct3D11)
+			set(OGREKIT_DX11RS_INCLUDE         ${OGREPATH}/RenderSystems/Direct3D11/include)
 		endif()
 
 
 	endif()
 	
-	if (Cg_FOUND)
+	if (0)
+		# disable until support is added  
 		option(OGREKIT_BUILD_CG	 "Enable the CG plugin" ON)
-		
+
 		if (OGREKIT_BUILD_CG)
-			message(STATUS "Configuring CG")
-			set(OGRE_BUILD_PLUGIN_CG TRUE)
-			set(OGREKIT_CG_LIBS Plugin_CgProgramManager)
-			set(OGREKIT_CG_ROOT ${OGREPATH}/PlugIns/CgProgramManager)
-			set(OGREKIT_CG_INCLUDE ${OGREPATH}/PlugIns/CgProgramManager/include)
+			set(OGRE_BUILD_PLUGIN_CG       TRUE)
+			set(OGREKIT_CG_LIBS            Plugin_CgProgramManager)
+			set(OGREKIT_CG_ROOT            ${OGREPATH}/PlugIns/CgProgramManager)
+			set(OGREKIT_CG_INCLUDE         ${OGREPATH}/PlugIns/CgProgramManager/include)
 		endif()
 
 	endif()
@@ -205,7 +203,6 @@ macro (configure_ogrekit ROOT OGREPATH)
 		${OGREKIT_D3D9_LIBS}
 		${OGREKIT_D3D10_LIBS}
 		${OGREKIT_D3D11_LIBS}
-		${OGREKIT_CG_LIBS}
 		${OGREKIT_RECAST_TARGET}
 		${OGREKIT_DETOUR_TARGET}
 		${OGREKIT_OPENSTEER_TARGET}
@@ -278,7 +275,7 @@ macro(configure_rendersystem)
 
 	endif()
 	
-	if (OGREKIT_BUILD_CG)
+	if (0)
 		add_definitions(-DOGREKIT_CG)
 	    
 		include_directories(
