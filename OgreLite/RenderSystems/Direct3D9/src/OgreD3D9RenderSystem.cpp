@@ -295,9 +295,12 @@ namespace Ogre
 		{
 			for( unsigned j=0; j < getDirect3DDrivers()->count(); j++ )
 			{
-				driver = getDirect3DDrivers()->item(j);
-				if( driver->DriverDescription() == opt->second.currentValue )
+				D3D9Driver* curDriver = getDirect3DDrivers()->item(j);
+				if( curDriver->DriverDescription() == opt->second.currentValue )
+				{
+					driver = curDriver;
 					break;
+				}
 			}
 
 			if (driver)
@@ -775,6 +778,7 @@ namespace Ogre
 		rsc->setCapability(RSC_PERSTAGECONSTANT);
 		rsc->setCapability(RSC_HWSTENCIL);
 		rsc->setStencilBufferBitDepth(8);
+		rsc->setCapability(RSC_ADVANCED_BLEND_OPERATIONS);
 
 		for (uint i=0; i < mDeviceManager->getDeviceCount(); ++i)
 		{
@@ -905,6 +909,10 @@ namespace Ogre
 			// TODO: move this to RSC
 			if((rkCurCaps.PrimitiveMiscCaps & D3DPMISCCAPS_PERSTAGECONSTANT) == 0)
 				rsc->unsetCapability(RSC_PERSTAGECONSTANT);
+
+			// Advanced blend operations? min max subtract rev 
+			if((rkCurCaps.PrimitiveMiscCaps & D3DPMISCCAPS_BLENDOP) == 0)
+				rsc->unsetCapability(RSC_ADVANCED_BLEND_OPERATIONS);
 		}				
 									
 		// Blending between stages supported

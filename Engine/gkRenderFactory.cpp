@@ -40,7 +40,7 @@
 #endif
 
 #ifdef OGREKIT_D3D11RS
-#include "OgreD3D10Plugin.h"
+#include "OgreD3D11Plugin.h"
 #endif
 
 #include "OgreParticleFXPlugin.h"
@@ -97,15 +97,15 @@ void gkRenderFactoryPrivate::createRenderSystem(Ogre::Root *r, OgreRenderSystem 
 
 	switch (gkFindRenderSystem(backend))
 	{
-	case OGRE_RS_D3D10:
-#if OGREKIT_D3D10RS
-		m_renderSystem = new Ogre::D3D10Plugin();
-		r->installPlugin(m_renderSystem);
-#endif
-		break;
 	case OGRE_RS_D3D9:
 #ifdef OGREKIT_D3D9RS
 		m_renderSystem = new Ogre::D3D9Plugin();
+		r->installPlugin(m_renderSystem);
+#endif
+		break;
+	case OGRE_RS_D3D10:
+#if OGREKIT_D3D10RS
+		m_renderSystem = new Ogre::D3D10Plugin();
 		r->installPlugin(m_renderSystem);
 #endif
 		break;

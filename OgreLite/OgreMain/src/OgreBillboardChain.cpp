@@ -404,8 +404,15 @@ namespace Ogre {
 				"BillboardChain::getNumChainElements");
 		}
 		const ChainSegment& seg = mChainSegmentList[chainIndex];
-
-		return seg.tail - seg.head + 1;
+		
+		if( seg.tail < seg.head )
+		{
+			return seg.tail - seg.head + mMaxElementsPerChain + 1;
+		}
+		else
+		{
+			return seg.tail - seg.head + 1;
+		}
 	}
 	//-----------------------------------------------------------------------
 	void BillboardChain::updateBoundingBox(void) const
@@ -729,7 +736,9 @@ namespace Ogre {
 
 		if (mIndexData->indexCount > 0)
 		{
-            if (mRenderQueueIDSet)
+			if (mRenderQueuePrioritySet)
+				queue->addRenderable(this, mRenderQueueID, mRenderQueuePriority);
+			else if (mRenderQueueIDSet)
                 queue->addRenderable(this, mRenderQueueID);
             else
                 queue->addRenderable(this);

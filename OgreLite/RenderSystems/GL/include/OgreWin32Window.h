@@ -33,7 +33,7 @@ THE SOFTWARE.
 #include "OgreRenderWindow.h"
 
 namespace Ogre {
-    class _OgrePrivate Win32Window : public RenderWindow
+    class _OgreGLExport Win32Window : public RenderWindow
     {
     public:
         Win32Window(Win32GLSupport &glsupport);
@@ -66,6 +66,9 @@ namespace Ogre {
         /** Used to set the active state of the render target.
         */
         virtual void setActive( bool state );
+
+		void adjustWindow(unsigned int clientWidth, unsigned int clientHeight, 
+			unsigned int* winWidth, unsigned int* winHeight);
 
 	protected:
 		Win32GLSupport &mGLSupport;

@@ -81,16 +81,8 @@ set (SOURCE_FILES
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 add_library(OgreRTShaderSystem ${OGRE_COMP_LIB_TYPE} ${HEADER_FILES} ${SOURCE_FILES})
-set_target_properties(OgreRTShaderSystem PROPERTIES VERSION ${OGRE_VERSION} SOVERSION ${OGRE_VERSION_MAJOR})
+set_target_properties(OgreRTShaderSystem PROPERTIES VERSION ${OGRE_SOVERSION})
 target_link_libraries(OgreRTShaderSystem OgreMain)
-
-if (OGRE_BUILD_RTSHADERSYSTEM_CORE_SHADERS)
-	add_definitions(-DRTSHADER_SYSTEM_BUILD_CORE_SHADERS)
-endif ()
-
-if (OGRE_BUILD_RTSHADERSYSTEM_EXT_SHADERS)
-	add_definitions(-DRTSHADER_SYSTEM_BUILD_EXT_SHADERS)
-endif ()
 
 ogre_config_component(OgreRTShaderSystem)
 
@@ -100,6 +92,11 @@ if (APPLE AND NOT OGRE_BUILD_PLATFORM_IPHONE)
        PROPERTIES BUILD_WITH_INSTALL_RPATH 1
        INSTALL_NAME_DIR "@executable_path/../Components"
     )
+
+	# Copy headers into the main Ogre framework
+	add_custom_command(TARGET OgreRTShaderSystem POST_BUILD
+	  COMMAND /Developer/Library/PrivateFrameworks/DevToolsCore.framework/Resources/pbxcp ARGS -exclude .DS_Store -exclude CVS -exclude .svn -exclude 'CMakeLists.txt' -resolve-src-symlinks ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h ${OGRE_BINARY_DIR}/lib/$(CONFIGURATION)/Ogre.framework/Headers/
+	)
 endif()
 
 

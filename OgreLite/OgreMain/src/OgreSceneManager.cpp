@@ -118,6 +118,8 @@ mShadowCasterPlainBlackPass(0),
 mShadowReceiverPass(0),
 mDisplayNodes(false),
 mShowBoundingBoxes(false),
+mActiveCompositorChain(0),
+mLateMaterialResolving(false),
 mShadowTechnique(SHADOWTYPE_NONE),
 mDebugShadows(false),
 mShadowColour(ColourValue(0.25, 0.25, 0.25)),
@@ -152,9 +154,7 @@ mCameraRelativeRendering(false),
 mLastLightHash(0),
 mLastLightLimit(0),
 mLastLightHashGpuProgram(0),
-mGpuParamsDirty((uint16)GPV_ALL),
-mActiveCompositorChain(0),
-mLateMaterialResolving(false)
+mGpuParamsDirty((uint16)GPV_ALL)
 {
 
     // init sky
@@ -1154,7 +1154,7 @@ const Pass* SceneManager::_setPass(const Pass* pass, bool evenIfSuppressed,
 				if (!currentChain)
 				{
 					OGRE_EXCEPT(Exception::ERR_INVALID_STATE,
-						"An pass that wishes to reference a compositor texutre "
+						"A pass that wishes to reference a compositor texutre "
 						"attempted to render in a pipeline without a compositor",
 						"SceneManager::_setPass");
 				}
@@ -1344,23 +1344,6 @@ void SceneManager::_renderScene(Camera* camera, Viewport* vp, bool includeOverla
 		// Lock scene graph mutex, no more changes until we're ready to render
 		OGRE_LOCK_MUTEX(sceneGraphMutex)
 
-		// Update scene graph for this camera (can happen multiple times per frame)
-		{
-			OgreProfileGroup("_updateSceneGraph", OGREPROF_GENERAL);
-			_updateSceneGraph(camera);
-
-			// Auto-track nodes
-			AutoTrackingSceneNodes::iterator atsni, atsniend;
-			atsniend = mAutoTrackingSceneNodes.end();
-			for (atsni = mAutoTrackingSceneNodes.begin(); atsni != atsniend; ++atsni)
-			{
-				(*atsni)->_autoTrack();
-			}
-			// Auto-track camera if required
-			camera->_autoTrack();
-		}
-
-
 		if (mIlluminationStage != IRS_RENDER_TO_TEXTURE && mFindVisibleObjects)
 		{
 			// Locate any lights which could be affecting the frustum
@@ -1389,6 +1372,22 @@ void SceneManager::_renderScene(Camera* camera, Viewport* vp, bool includeOverla
 					mCurrentViewport = vp;
 				}
 			}
+		}
+
+		// Update scene graph for this camera (can happen multiple times per frame)
+		{
+			OgreProfileGroup("_updateSceneGraph", OGREPROF_GENERAL);
+			_updateSceneGraph(camera);
+
+			// Auto-track nodes
+			AutoTrackingSceneNodes::iterator atsni, atsniend;
+			atsniend = mAutoTrackingSceneNodes.end();
+			for (atsni = mAutoTrackingSceneNodes.begin(); atsni != atsniend; ++atsni)
+			{
+				(*atsni)->_autoTrack();
+			}
+			// Auto-track camera if required
+			camera->_autoTrack();
 		}
 
 		// Invert vertex winding?
@@ -6880,8 +6879,10 @@ void SceneManager::useLightsGpuProgram(const Pass* pass, const LightList* lights
 //---------------------------------------------------------------------
 void SceneManager::bindGpuProgram(GpuProgram* prog)
 {
-	// need to reset the light hash, and paarams that need resetting, since program params will have been invalidated
-	mLastLightHashGpuProgram = 0;
+	// need to dirty the light hash, and paarams that need resetting, since program params will have been invalidated
+	// Use 1 to guarantee changing it (using 0 could result in no change if list is empty)
+	// Hash == 1 is almost impossible to achieve otherwise
+	mLastLightHashGpuProgram = 1;
 	mGpuParamsDirty = (uint16)GPV_ALL;
 	mDestRenderSystem->bindGpuProgram(prog);
 }

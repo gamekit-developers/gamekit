@@ -85,7 +85,10 @@ namespace Ogre {
 			, useFreeMethod(freeMethod)
 		{
             OGRE_SET_AUTO_SHARED_MUTEX_NULL
-			OGRE_NEW_AUTO_SHARED_MUTEX
+			if (rep)
+			{
+				OGRE_NEW_AUTO_SHARED_MUTEX
+			}
 		}
 		SharedPtr(const SharedPtr& r)
             : pRep(0), pUseCount(0), useFreeMethod(SPFM_DELETE)
@@ -140,7 +143,7 @@ namespace Ogre {
 		}
 		template< class Y>
 		SharedPtr& operator=(const SharedPtr<Y>& r) {
-			if (pRep == r.pRep)
+			if (pRep == r.getPointer())
 				return *this;
 			// Swap current data into a local copy
 			// this ensures we deal with rhs and this being dependent

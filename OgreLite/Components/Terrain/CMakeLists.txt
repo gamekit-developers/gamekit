@@ -8,7 +8,7 @@
 #-------------------------------------------------------------------
 
 ############################################################
-# Paging optional component
+# Terrain optional component
 ############################################################
 
 PROJECT(OgreTerrain)
@@ -55,7 +55,7 @@ include_directories(${OGRE_SOURCE_DIR}/OgreMain/include)
 
 # setup target
 add_library(OgreTerrain ${OGRE_COMP_LIB_TYPE} ${HEADER_FILES} ${SOURCE_FILES} ${PLATFORM_HEADER_FILES} ${PLATFORM_SOURCE_FILES})
-set_target_properties(OgreTerrain PROPERTIES VERSION ${OGRE_VERSION} SOVERSION ${OGRE_VERSION_MAJOR})
+set_target_properties(OgreTerrain PROPERTIES VERSION ${OGRE_SOVERSION})
 target_link_libraries(OgreTerrain OgreMain)
 if (OGRE_BUILD_COMPONENT_PAGING)
 	target_link_libraries(OgreTerrain OgrePaging)
@@ -74,6 +74,11 @@ if (APPLE AND NOT OGRE_BUILD_PLATFORM_IPHONE)
        PROPERTIES BUILD_WITH_INSTALL_RPATH 1
        INSTALL_NAME_DIR "@executable_path/../Components"
     )
+
+	# Copy headers into the main Ogre framework
+	add_custom_command(TARGET OgreTerrain POST_BUILD
+	  COMMAND /Developer/Library/PrivateFrameworks/DevToolsCore.framework/Resources/pbxcp ARGS -exclude .DS_Store -exclude CVS -exclude .svn -exclude 'CMakeLists.txt' -resolve-src-symlinks ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h ${OGRE_BINARY_DIR}/lib/$(CONFIGURATION)/Ogre.framework/Headers/
+	)
 endif()
 
 install(FILES ${HEADER_FILES}

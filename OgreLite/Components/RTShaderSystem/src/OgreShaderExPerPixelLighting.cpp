@@ -24,8 +24,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
-#ifdef RTSHADER_SYSTEM_BUILD_EXT_SHADERS
 #include "OgreShaderExPerPixelLighting.h"
+#ifdef RTSHADER_SYSTEM_BUILD_EXT_SHADERS
 #include "OgreShaderFFPRenderState.h"
 #include "OgreShaderProgram.h"
 #include "OgreShaderParameter.h"
@@ -81,42 +81,14 @@ int	PerPixelLighting::getExecutionOrder() const
 }
 
 //-----------------------------------------------------------------------
-uint32 PerPixelLighting::getHashCode()
-{
-	uint32 hashCode = 0;
-
-	sh_hash_combine(hashCode, SubRenderState::getHashCode());
-
-	LightParamsIterator it = mLightParamsList.begin();
-
-
-	sh_hash_combine(hashCode, mSpecularEnable);	
-
-	while(it != mLightParamsList.end())
-	{
-		sh_hash_combine(hashCode, it->mType);		
-		++it;
-	}
-
-	sh_hash_combine(hashCode, mTrackVertexColourType);
-
-
-	return hashCode;
-}
-
-//-----------------------------------------------------------------------
 void PerPixelLighting::updateGpuProgramsParams(Renderable* rend, Pass* pass, const AutoParamDataSource* source, 
 	const LightList* pLightList)
 {
 	if (mLightParamsList.size() == 0)
 		return;
 
-	GpuProgramParametersSharedPtr psGpuParams = pass->getFragmentProgramParameters();
 	SceneManager* sceneMgr = ShaderGenerator::getSingleton().getActiveSceneManager();
-
-	Viewport* curViewport = sceneMgr->getCurrentViewport();
-	Camera* curCamera     = curViewport->getCamera();
-	const Matrix4& matView = curCamera->getViewMatrix(true);
+	const Matrix4& matView = source->getViewMatrix();
 	Light::LightTypes curLightType = Light::LT_DIRECTIONAL; 
 	unsigned int curSearchLightIndex = 0;
 
@@ -159,21 +131,21 @@ void PerPixelLighting::updateGpuProgramsParams(Renderable* rend, Pass* pass, con
 
 			// Update light direction.
 			vParameter = matView.transformAffine(srcLight->getAs4DVector(true));
-			psGpuParams->setNamedConstant(curParams.mDirection->getName(), vParameter);
+			curParams.mDirection->setGpuParameter(vParameter);
 			break;
 
 		case Light::LT_POINT:
 
 			// Update light position.
 			vParameter = matView.transformAffine(srcLight->getAs4DVector(true));
-			psGpuParams->setNamedConstant(curParams.mPosition->getName(), vParameter);
+			curParams.mPosition->setGpuParameter(vParameter);
 
 			// Update light attenuation parameters.
 			vParameter.x = srcLight->getAttenuationRange();
 			vParameter.y = srcLight->getAttenuationConstant();
 			vParameter.z = srcLight->getAttenuationLinear();
 			vParameter.w = srcLight->getAttenuationQuadric();
-			psGpuParams->setNamedConstant(curParams.mAttenuatParams->getName(), vParameter);
+			curParams.mAttenuatParams->setGpuParameter(vParameter);
 			break;
 
 		case Light::LT_SPOTLIGHT:
@@ -184,7 +156,7 @@ void PerPixelLighting::updateGpuProgramsParams(Renderable* rend, Pass* pass, con
 				
 				// Update light position.
 				vParameter = matView.transformAffine(srcLight->getAs4DVector(true));
-				psGpuParams->setNamedConstant(curParams.mPosition->getName(), vParameter);
+				curParams.mPosition->setGpuParameter(vParameter);
 
 
 				// Update light direction.
@@ -196,14 +168,14 @@ void PerPixelLighting::updateGpuProgramsParams(Renderable* rend, Pass* pass, con
 				vParameter.y = -vec3.y;
 				vParameter.z = -vec3.z;
 				vParameter.w = 0.0;
-				psGpuParams->setNamedConstant(curParams.mDirection->getName(), vParameter);
+				curParams.mDirection->setGpuParameter(vParameter);
 
 				// Update light attenuation parameters.
 				vParameter.x = srcLight->getAttenuationRange();
 				vParameter.y = srcLight->getAttenuationConstant();
 				vParameter.z = srcLight->getAttenuationLinear();
 				vParameter.w = srcLight->getAttenuationQuadric();
-				psGpuParams->setNamedConstant(curParams.mAttenuatParams->getName(), vParameter);
+				curParams.mAttenuatParams->setGpuParameter(vParameter);
 
 				// Update spotlight parameters.
 				Real phi   = Math::Cos(srcLight->getSpotlightOuterAngle().valueRadians() * 0.5f);
@@ -213,7 +185,7 @@ void PerPixelLighting::updateGpuProgramsParams(Renderable* rend, Pass* pass, con
 				vec3.y = phi;
 				vec3.z = srcLight->getSpotlightFalloff();
 
-				psGpuParams->setNamedConstant(curParams.mSpotParams->getName(), vec3);
+				curParams.mSpotParams->setGpuParameter(vec3);
 			}
 			break;
 		}
@@ -223,12 +195,12 @@ void PerPixelLighting::updateGpuProgramsParams(Renderable* rend, Pass* pass, con
 		if ((mTrackVertexColourType & TVC_DIFFUSE) == 0)
 		{
 			colour = srcLight->getDiffuseColour() * pass->getDiffuse();
-			psGpuParams->setNamedConstant(curParams.mDiffuseColour->getName(), colour);					
+			curParams.mDiffuseColour->setGpuParameter(colour);					
 		}
 		else
 		{					
 			colour = srcLight->getDiffuseColour();
-			psGpuParams->setNamedConstant(curParams.mDiffuseColour->getName(), colour);	
+			curParams.mDiffuseColour->setGpuParameter(colour);	
 		}
 
 		// Update specular colour if need to.
@@ -238,12 +210,12 @@ void PerPixelLighting::updateGpuProgramsParams(Renderable* rend, Pass* pass, con
 			if ((mTrackVertexColourType & TVC_SPECULAR) == 0)
 			{
 				colour = srcLight->getSpecularColour() * pass->getSpecular();
-				psGpuParams->setNamedConstant(curParams.mSpecularColour->getName(), colour);					
+				curParams.mSpecularColour->setGpuParameter(colour);					
 			}
 			else
 			{					
 				colour = srcLight->getSpecularColour();
-				psGpuParams->setNamedConstant(curParams.mSpecularColour->getName(), colour);	
+				curParams.mSpecularColour->setGpuParameter(colour);	
 			}
 		}																			
 	}

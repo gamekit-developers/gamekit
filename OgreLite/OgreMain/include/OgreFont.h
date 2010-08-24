@@ -390,7 +390,6 @@ namespace Ogre
 			when the Texture that this font creates needs to (re)load.
 		*/
 		void loadResource(Resource* resource);
-
         void loadManualResource(DataStreamPtr &stream);
     };
 	/** Specialisation of SharedPtr to allow SharedPtr to be assigned to FontPtr 

@@ -24,8 +24,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
-#ifdef RTSHADER_SYSTEM_BUILD_CORE_SHADERS
 #include "OgreShaderFFPTexturing.h"
+#ifdef RTSHADER_SYSTEM_BUILD_CORE_SHADERS
 #include "OgreShaderFFPRenderState.h"
 #include "OgreShaderProgram.h"
 #include "OgreShaderParameter.h"
@@ -468,7 +468,11 @@ bool FFPTexturing::addPSFunctionInvocations(TextureUnitParams* textureUnitParams
 	bool needDifferentAlphaBlend = false;
 	if (alphaBlend.operation != colourBlend.operation ||
 		alphaBlend.source1 != colourBlend.source1 ||
-		alphaBlend.source2 != colourBlend.source2)
+		alphaBlend.source2 != colourBlend.source2 ||
+		colourBlend.source1 == LBS_MANUAL ||
+		colourBlend.source2 == LBS_MANUAL ||
+		alphaBlend.source1 == LBS_MANUAL ||
+		alphaBlend.source2 == LBS_MANUAL)
 		needDifferentAlphaBlend = true;
 
 	// Build colours blend
@@ -551,7 +555,7 @@ void FFPTexturing::addPSArgumentInvocations(Function* psMain,
 	case LBS_MANUAL:
 		curFuncInvocation = OGRE_NEW FunctionInvocation(FFP_FUNC_CONSTRUCT, groupOrder, internalCounter++);
 
-		if (isAlphaArgument == false)
+		if (isAlphaArgument)
 		{
 			curFuncInvocation->pushOperand(ParameterFactory::createConstParamFloat(alphaValue), Operand::OPS_IN);						
 		}
@@ -632,7 +636,7 @@ void FFPTexturing::addPSBlendInvocations(Function* psMain,
 		psMain->addAtomInstace(curFuncInvocation);				
 		break;
 	case LBX_ADD_SMOOTH:
-		curFuncInvocation = OGRE_NEW FunctionInvocation(FFP_FUNC_ADDMOOTH, groupOrder, internalCounter++);
+		curFuncInvocation = OGRE_NEW FunctionInvocation(FFP_FUNC_ADDSMOOTH, groupOrder, internalCounter++);
 		curFuncInvocation->pushOperand(arg1, Operand::OPS_IN, targetChannels);
 		curFuncInvocation->pushOperand(arg2, Operand::OPS_IN, targetChannels);
 		curFuncInvocation->pushOperand(mPSOutDiffuse, Operand::OPS_OUT, targetChannels);		
@@ -746,7 +750,6 @@ TexCoordCalcMethod FFPTexturing::getTexCalcMethod(TextureUnitState* textureUnitS
 //-----------------------------------------------------------------------
 bool FFPTexturing::needsTextureMatrix(TextureUnitState* textureUnitState)
 {
-	TexCoordCalcMethod						texCoordCalcMethod = TEXCALC_NONE;	
 	const TextureUnitState::EffectMap&		effectMap = textureUnitState->getEffects();	
 	TextureUnitState::EffectMap::const_iterator	effi;
 
@@ -760,6 +763,8 @@ bool FFPTexturing::needsTextureMatrix(TextureUnitState* textureUnitState)
 		case TextureUnitState::ET_VSCROLL:
 		case TextureUnitState::ET_ROTATE:
 		case TextureUnitState::ET_TRANSFORM:
+		case TextureUnitState::ET_ENVIRONMENT_MAP:
+		case TextureUnitState::ET_PROJECTIVE_TEXTURE:
 			return true;		
 		}
 	}
@@ -804,118 +809,6 @@ bool FFPTexturing::preAddToRenderState(RenderState* renderState, Pass* srcPass, 
 }
 
 //-----------------------------------------------------------------------
-uint32 FFPTexturing::getHashCode()
-{
-	uint32 hashCode = 0;
-	
-	sh_hash_combine(hashCode, SubRenderState::getHashCode());
-
-	for (unsigned int i=0; i < mTextureUnitParamsList.size(); ++i)
-	{
-		TextureUnitParams* curParams = &mTextureUnitParamsList[i];
-
-		sh_hash_combine(hashCode, curParams->mTextureSamplerIndex);
-		sh_hash_combine(hashCode, curParams->mTextureUnitState->getTextureType());
-
-		if (needsTextureMatrix(curParams->mTextureUnitState))
-			sh_hash_combine(hashCode, curParams->mTextureSamplerIndex);	
-
-		const LayerBlendModeEx& colourBlend = curParams->mTextureUnitState->getColourBlendMode();
-		const LayerBlendModeEx& alphaBlend  = curParams->mTextureUnitState->getAlphaBlendMode();
-
-		sh_hash_combine(hashCode, colourBlend.operation);	
-		sh_hash_combine(hashCode, colourBlend.source1);	
-		sh_hash_combine(hashCode, colourBlend.source2);	
-
-		if (colourBlend.source1 == LBS_MANUAL)
-		{	
-			sh_hash_combine(hashCode, _INT_VALUE(colourBlend.colourArg1.r));	
-			sh_hash_combine(hashCode, _INT_VALUE(colourBlend.colourArg1.g));	
-			sh_hash_combine(hashCode, _INT_VALUE(colourBlend.colourArg1.b));	
-			sh_hash_combine(hashCode, _INT_VALUE(colourBlend.colourArg1.a));	
-		}
-
-		if (colourBlend.source2 == LBS_MANUAL)
-		{	
-			sh_hash_combine(hashCode, _INT_VALUE(colourBlend.colourArg2.r));	
-			sh_hash_combine(hashCode, _INT_VALUE(colourBlend.colourArg2.g));	
-			sh_hash_combine(hashCode, _INT_VALUE(colourBlend.colourArg2.b));	
-			sh_hash_combine(hashCode, _INT_VALUE(colourBlend.colourArg2.a));		
-		}
-
-		if (colourBlend.operation == LBX_BLEND_MANUAL)
-		{		
-			sh_hash_combine(hashCode, _INT_VALUE(colourBlend.factor));				
-		}
-
-		sh_hash_combine(hashCode, alphaBlend.operation);	
-		sh_hash_combine(hashCode, alphaBlend.source1);	
-		sh_hash_combine(hashCode, alphaBlend.source2);	
-
-
-		if (alphaBlend.source1 == LBS_MANUAL)
-		{		
-			sh_hash_combine(hashCode, _INT_VALUE(alphaBlend.alphaArg1));				
-		}
-
-		if (alphaBlend.source2 == LBS_MANUAL)
-		{		
-			sh_hash_combine(hashCode, _INT_VALUE(alphaBlend.alphaArg2));	
-		}
-
-		if (alphaBlend.operation == LBX_BLEND_MANUAL)
-		{		
-			sh_hash_combine(hashCode, _INT_VALUE(alphaBlend.factor));			
-		}
-
-		const TextureUnitState::EffectMap&		effectMap = curParams->mTextureUnitState->getEffects();	
-		TextureUnitState::EffectMap::const_iterator	effi;
-		bool hasEnvEffect = false;
-		bool hasProjEffect = false;
-		bool hasTransformEffect = false;
-
-		// Check which effects applied on the current texture unit.
-		for (effi = effectMap.begin(); effi != effectMap.end(); ++effi)
-		{
-			if (effi->second.type == TextureUnitState::ET_ENVIRONMENT_MAP)
-			{
-				hasEnvEffect = true;
-			}
-			else if (effi->second.type == TextureUnitState::ET_PROJECTIVE_TEXTURE)
-			{
-				hasProjEffect = true;
-			}
-			else if (effi->second.type == TextureUnitState::ET_UVSCROLL ||
-				effi->second.type == TextureUnitState::ET_USCROLL ||
-				effi->second.type == TextureUnitState::ET_VSCROLL ||
-				effi->second.type == TextureUnitState::ET_ROTATE ||
-				effi->second.type == TextureUnitState::ET_TRANSFORM)
-			{
-				hasTransformEffect = true;
-			}			
-		}
-
-		if (hasEnvEffect)
-		{
-			sh_hash_combine(hashCode, TextureUnitState::ET_ENVIRONMENT_MAP);		
-		}
-
-		if (hasProjEffect)
-		{
-			sh_hash_combine(hashCode, TextureUnitState::ET_PROJECTIVE_TEXTURE);		
-		}
-
-		if (hasTransformEffect)
-		{
-			sh_hash_combine(hashCode, TextureUnitState::ET_TRANSFORM);		
-		}
-	}
-			
-	
-	return hashCode;
-}
-
-//-----------------------------------------------------------------------
 void FFPTexturing::updateGpuProgramsParams(Renderable* rend, Pass* pass, const AutoParamDataSource* source, 
 											  const LightList* pLightList)
 {
@@ -924,8 +817,7 @@ void FFPTexturing::updateGpuProgramsParams(Renderable* rend, Pass* pass, const A
 		TextureUnitParams* curParams = &mTextureUnitParamsList[i];
 
 		if (curParams->mTextureProjector != NULL && curParams->mTextureViewProjImageMatrix.get() != NULL)
-		{		
-			GpuProgramParametersSharedPtr vsGpuParams = pass->getVertexProgramParameters();
+		{					
 			Matrix4 matTexViewProjImage;
 
 			matTexViewProjImage = 
@@ -933,7 +825,7 @@ void FFPTexturing::updateGpuProgramsParams(Renderable* rend, Pass* pass, const A
 				curParams->mTextureProjector->getProjectionMatrixWithRSDepth() * 
 				curParams->mTextureProjector->getViewMatrix();
 
-			vsGpuParams->setNamedConstant(curParams->mTextureViewProjImageMatrix->getName(), matTexViewProjImage);
+			curParams->mTextureViewProjImageMatrix->setGpuParameter(matTexViewProjImage);
 		}
 	}
 }
@@ -949,7 +841,7 @@ void FFPTexturing::setTextureUnitCount(size_t count)
 
 		curParams.mTextureUnitState				= NULL;			
 		curParams.mTextureProjector				= NULL;				  
-		curParams.mTextureSamplerIndex			= NULL;			  
+		curParams.mTextureSamplerIndex			= 0;			  
 		curParams.mTextureSamplerType			= GCT_SAMPLER2D;		
 		curParams.mVSInTextureCoordinateType	= GCT_FLOAT2;	
 		curParams.mVSOutTextureCoordinateType	= GCT_FLOAT2;		

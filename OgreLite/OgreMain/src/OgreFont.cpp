@@ -353,7 +353,7 @@ namespace Ogre
 					continue;
 				}
 
-				FT_Int advance = (face->glyph->advance.x >> 6 ) + ( face->glyph->metrics.horiBearingX >> 6 );
+				FT_Int advance = face->glyph->advance.x >> 6;
 
 				unsigned char* buffer = face->glyph->bitmap.buffer;
 
@@ -366,11 +366,12 @@ namespace Ogre
 				}
 
 				int y_bearnig = ( mTtfMaxBearingY >> 6 ) - ( face->glyph->metrics.horiBearingY >> 6 );
+				int x_bearing = face->glyph->metrics.horiBearingX >> 6;
 
 				for(int j = 0; j < face->glyph->bitmap.rows; j++ )
 				{
 					size_t row = j + m + y_bearnig;
-					uchar* pDest = &imageData[(row * data_width) + l * pixel_bytes];
+					uchar* pDest = &imageData[(row * data_width) + (l + x_bearing) * pixel_bytes];
 					for(int k = 0; k < face->glyph->bitmap.width; k++ )
 					{
 						if (mAntialiasColour)
@@ -425,9 +426,10 @@ namespace Ogre
 
 		FT_Done_FreeType(ftLibrary);
     }
+
 	//-----------------------------------------------------------------------
-    void Font::loadManualResource(DataStreamPtr &dataStreamPtr)
-    {
+	void Font::loadManualResource(DataStreamPtr &dataStreamPtr)
+	{
 		// ManualResourceLoader implementation - load the texture
 		FT_Library ftLibrary;
 		// Init freetype
@@ -440,6 +442,8 @@ namespace Ogre
         // prevents nasty artefacts when letters are too close together
         uint char_spacer = 5;
 
+        // Locate ttf file, load it pre-buffered into memory by wrapping the
+		// original DataStream in a MemoryDataStream
         MemoryDataStream ttfchunk(dataStreamPtr);
 
         // Load font
@@ -543,7 +547,7 @@ namespace Ogre
 					continue;
 				}
 
-				FT_Int advance = (face->glyph->advance.x >> 6 ) + ( face->glyph->metrics.horiBearingX >> 6 );
+				FT_Int advance = face->glyph->advance.x >> 6;
 
 				unsigned char* buffer = face->glyph->bitmap.buffer;
 
@@ -556,11 +560,12 @@ namespace Ogre
 				}
 
 				int y_bearnig = ( mTtfMaxBearingY >> 6 ) - ( face->glyph->metrics.horiBearingY >> 6 );
+				int x_bearing = face->glyph->metrics.horiBearingX >> 6;
 
 				for(int j = 0; j < face->glyph->bitmap.rows; j++ )
 				{
 					size_t row = j + m + y_bearnig;
-					uchar* pDest = &imageData[(row * data_width) + l * pixel_bytes];
+					uchar* pDest = &imageData[(row * data_width) + (l + x_bearing) * pixel_bytes];
 					for(int k = 0; k < face->glyph->bitmap.width; k++ )
 					{
 						if (mAntialiasColour)
@@ -647,9 +652,9 @@ namespace Ogre
             mpMaterial->setSceneBlending( SBT_TRANSPARENT_ALPHA );
         }
 
-
 		FT_Done_FreeType(ftLibrary);
-    }
+	}
+
 	//-----------------------------------------------------------------------
 	//-----------------------------------------------------------------------
 	String Font::CmdType::doGet(const void* target) const

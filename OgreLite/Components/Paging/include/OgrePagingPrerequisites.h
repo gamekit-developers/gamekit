@@ -59,7 +59,7 @@ namespace Ogre
 }
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
-#	if defined( OGRE_COMPONENT_STATIC )
+#	if defined( OGRE_STATIC_LIB )
 #   	define _OgrePagingExport
 #   else
 #   	if defined( OGRE_PAGING_EXPORTS )
@@ -72,6 +72,8 @@ namespace Ogre
 #           endif
 #   	endif
 #	endif
+#elif defined ( OGRE_GCC_VISIBILITY )
+#   define _OgrePagingExport __attribute__ ((visibility("default")))
 #else
 #	define _OgrePagingExport
 #endif 

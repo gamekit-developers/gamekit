@@ -202,7 +202,15 @@ namespace Ogre
 		// colourmap
 		if (terrain->getGlobalColourMapEnabled())
 			--freeTextureUnits;
-		// TODO shadowmaps
+		if (isShadowingEnabled(HIGH_LOD, terrain))
+		{
+			uint numShadowTextures = 1;
+			if (getReceiveDynamicShadowsPSSM())
+			{
+				numShadowTextures = getReceiveDynamicShadowsPSSM()->getSplitCount();
+			}
+			freeTextureUnits -= numShadowTextures;
+		}
 
 		// each layer needs 2.25 units (1xdiffusespec, 1xnormalheight, 0.25xblend)
 		return static_cast<uint8>(freeTextureUnits / 2.25f);
@@ -229,6 +237,16 @@ namespace Ogre
 		}
 		// clear everything
 		mat->removeAllTechniques();
+		
+		// Automatically disable normal & parallax mapping if card cannot handle it
+		// We do this rather than having a specific technique for it since it's simpler
+		GpuProgramManager& gmgr = GpuProgramManager::getSingleton();
+		if (!gmgr.isSyntaxSupported("ps_3_0") && !gmgr.isSyntaxSupported("ps_2_x")
+			&& !gmgr.isSyntaxSupported("fp40") && !gmgr.isSyntaxSupported("arbfp1"))
+		{
+			setLayerNormalMappingEnabled(false);
+			setLayerParallaxMappingEnabled(false);
+		}
 
 		addTechnique(mat, terrain, HIGH_LOD);
 
@@ -237,7 +255,7 @@ namespace Ogre
 		{
 			addTechnique(mat, terrain, LOW_LOD);
 			Material::LodValueList lodValues;
-			lodValues.push_back(TerrainGlobalOptions::getCompositeMapDistance());
+			lodValues.push_back(TerrainGlobalOptions::getSingleton().getCompositeMapDistance());
 			mat->setLodLevels(lodValues);
 			Technique* lowLodTechnique = mat->getTechnique(1);
 			lowLodTechnique->setLodIndex(1);
@@ -291,11 +309,11 @@ namespace Ogre
 		if (!mShaderGen)
 		{
 			bool check2x = mLayerNormalMappingEnabled || mLayerParallaxMappingEnabled;
-			if (hmgr.isLanguageSupported("cg") && 
-				(check2x && (gmgr.isSyntaxSupported("fp40") || gmgr.isSyntaxSupported("ps_2_x"))) ||
-				(gmgr.isSyntaxSupported("ps_2_0")))
+			if (hmgr.isLanguageSupported("cg"))
 				mShaderGen = OGRE_NEW ShaderHelperCg();
-			else if (hmgr.isLanguageSupported("hlsl"))
+			else if (hmgr.isLanguageSupported("hlsl") &&
+				((check2x && gmgr.isSyntaxSupported("ps_2_x")) ||
+				(!check2x && gmgr.isSyntaxSupported("ps_2_0"))))
 				mShaderGen = OGRE_NEW ShaderHelperHLSL();
 			else if (hmgr.isLanguageSupported("glsl"))
 				mShaderGen = OGRE_NEW ShaderHelperGLSL();
@@ -720,9 +738,9 @@ namespace Ogre
 		}
 		
 		if(prof->isLayerNormalMappingEnabled() || prof->isLayerParallaxMappingEnabled())
-			ret->setParameter("profiles", "ps_3_0 ps_2_x fp40");
+			ret->setParameter("profiles", "ps_3_0 ps_2_x fp40 arbfp1");
 		else
-			ret->setParameter("profiles", "ps_3_0 ps_2_0 fp30");
+			ret->setParameter("profiles", "ps_3_0 ps_2_0 fp30 arbfp1");
 		ret->setParameter("entry_point", "main_fp");
 
 		return ret;
@@ -732,8 +750,6 @@ namespace Ogre
 	void TerrainMaterialGeneratorA::SM2Profile::ShaderHelperCg::generateVpHeader(
 		const SM2Profile* prof, const Terrain* terrain, TechniqueType tt, StringUtil::StrStreamType& outStream)
 	{
-		bool texShadowsOn = terrain->getSceneManager()->isShadowTechniqueTextureBased();
-
 		outStream << 
 			"void main_vp(\n"
 			"float4 pos : POSITION,\n"
@@ -834,11 +850,13 @@ namespace Ogre
 			switch (terrain->getAlignment())
 			{
 			case Terrain::ALIGN_X_Y:
+				outStream << "	worldPos.z += delta.x * toMorph * lodMorph.x;\n";
 				break;
 			case Terrain::ALIGN_X_Z:
 				outStream << "	worldPos.y += delta.x * toMorph * lodMorph.x;\n";
 				break;
 			case Terrain::ALIGN_Y_Z:
+				outStream << "	worldPos.x += delta.x * toMorph * lodMorph.x;\n";
 				break;
 			};
 		}

@@ -25,8 +25,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
-#ifdef RTSHADER_SYSTEM_BUILD_EXT_SHADERS
 #include "OgreShaderExIntegratedPSSM3.h"
+#ifdef RTSHADER_SYSTEM_BUILD_EXT_SHADERS
 #include "OgreShaderFFPRenderState.h"
 #include "OgreShaderProgram.h"
 #include "OgreShaderParameter.h"
@@ -75,38 +75,17 @@ int	IntegratedPSSM3::getExecutionOrder() const
 }
 
 //-----------------------------------------------------------------------
-uint32 IntegratedPSSM3::getHashCode()
-{
-	uint32 hashCode = 0;
-
-	sh_hash_combine(hashCode, SubRenderState::getHashCode());
-
-	ShadowTextureParamsIterator it = mShadowTextureParamsList.begin();
-
-	while(it != mShadowTextureParamsList.end())
-	{
-		sh_hash_combine(hashCode, it->mTextureSamplerIndex);			
-		++it;
-	}
-
-	return hashCode;
-}
-
-//-----------------------------------------------------------------------
 void IntegratedPSSM3::updateGpuProgramsParams(Renderable* rend, Pass* pass, 
 											 const AutoParamDataSource* source, 
 											 const LightList* pLightList)
 {
-	GpuProgramParametersSharedPtr vsGpuParams = pass->getVertexProgramParameters();
-	GpuProgramParametersSharedPtr psGpuParams = pass->getFragmentProgramParameters();
-	
 	ShadowTextureParamsIterator it = mShadowTextureParamsList.begin();
 	size_t shadowIndex = 0;
 
 	while(it != mShadowTextureParamsList.end())
 	{						
-		vsGpuParams->setNamedConstant(it->mWorldViewProjMatrix->getName(), source->getTextureWorldViewProjMatrix(shadowIndex));		
-		psGpuParams->setNamedConstant(it->mInvTextureSize->getName(), source->getInverseTextureSize(shadowIndex));
+		it->mWorldViewProjMatrix->setGpuParameter(source->getTextureWorldViewProjMatrix(shadowIndex));				
+		it->mInvTextureSize->setGpuParameter(source->getInverseTextureSize(shadowIndex));
 		
 		++it;
 		++shadowIndex;
@@ -119,7 +98,7 @@ void IntegratedPSSM3::updateGpuProgramsParams(Renderable* rend, Pass* pass,
 	vSplitPoints.z = 0.0;
 	vSplitPoints.w = 0.0;
 
-	psGpuParams->setNamedConstant(mPSSplitPoints->getName(), vSplitPoints);
+	mPSSplitPoints->setGpuParameter(vSplitPoints);
 
 }
 
@@ -173,7 +152,7 @@ void IntegratedPSSM3::setSplitPoints(const SplitPointList& newSplitPoints)
 	if (newSplitPoints.size() != 4)
 	{
 		OGRE_EXCEPT(Exception::ERR_DUPLICATE_ITEM,
-			"IntegratedPSSM3 sub redner state supports only 4 split points",
+			"IntegratedPSSM3 sub render state supports only 4 split points",
 			"IntegratedPSSM3::setSplitPoints");
 	}
 
@@ -248,7 +227,7 @@ bool IntegratedPSSM3::resolveParameters(ProgramSet* programSet)
 		return false;
 
 	// Resolve computed local shadow colour parameter.
-	mPSSplitPoints = psProgram->resolveParameter(GCT_FLOAT4, -1, (uint16)GPV_GLOBAL, "lShadowColour");
+	mPSSplitPoints = psProgram->resolveParameter(GCT_FLOAT4, -1, (uint16)GPV_GLOBAL, "pssm_split_points");
 	if (mPSSplitPoints.get() == NULL)	
 		return false;
 
@@ -262,7 +241,7 @@ bool IntegratedPSSM3::resolveParameters(ProgramSet* programSet)
 
 	while(it != mShadowTextureParamsList.end())
 	{
-		it->mWorldViewProjMatrix = vsProgram->resolveParameter(GCT_MATRIX_4X4, -1, (uint16)GPV_GLOBAL, "world_texture_view_proj");		
+		it->mWorldViewProjMatrix = vsProgram->resolveParameter(GCT_MATRIX_4X4, -1, (uint16)GPV_PER_OBJECT, "world_texture_view_proj");		
 		if (it->mWorldViewProjMatrix.get() == NULL)
 			return false;
 
@@ -315,9 +294,7 @@ bool IntegratedPSSM3::addFunctionInvocations(ProgramSet* programSet)
 	Program* vsProgram = programSet->getCpuVertexProgram();	
 	Function* vsMain = vsProgram->getEntryPointFunction();	
 	Program* psProgram = programSet->getCpuFragmentProgram();
-	Function* psMain = psProgram->getEntryPointFunction();	
 	int internalCounter;
-
 
 	// Add vertex shader invocations.
 	internalCounter = 0;

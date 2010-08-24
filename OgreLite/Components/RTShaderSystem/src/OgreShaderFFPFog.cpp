@@ -24,8 +24,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
-#ifdef RTSHADER_SYSTEM_BUILD_CORE_SHADERS
 #include "OgreShaderFFPFog.h"
+#ifdef RTSHADER_SYSTEM_BUILD_CORE_SHADERS
 #include "OgreShaderFFPRenderState.h"
 #include "OgreShaderProgram.h"
 #include "OgreShaderParameter.h"
@@ -62,31 +62,12 @@ int	FFPFog::getExecutionOrder() const
 {
 	return FFP_FOG;
 }
-
-//-----------------------------------------------------------------------
-uint32 FFPFog::getHashCode()
-{
-	uint32 hashCode = 0;
-	
-	sh_hash_combine(hashCode, SubRenderState::getHashCode());
-	sh_hash_combine(hashCode, mFogMode);	
-	sh_hash_combine(hashCode, mPassOverrideParams);
-
-	if (mFogMode != FOG_NONE)	
-		sh_hash_combine(hashCode, mCalcMode);	
-
-	
-	return hashCode;
-}
-
 //-----------------------------------------------------------------------
 void FFPFog::updateGpuProgramsParams(Renderable* rend, Pass* pass, const AutoParamDataSource* source, 
 									 const LightList* pLightList)
 {	
 	if (mFogMode == FOG_NONE)
 		return;
-
-	GpuProgramParametersSharedPtr psGpuParams = pass->getFragmentProgramParameters();
 
 	FogMode fogMode;
 	ColourValue newFogColour;
@@ -117,18 +98,16 @@ void FFPFog::updateGpuProgramsParams(Renderable* rend, Pass* pass, const AutoPar
 	// Per pixel fog.
 	if (mCalcMode == CM_PER_PIXEL)
 	{
-		psGpuParams->setNamedConstant(mFogParams->getName(), mFogParamsValue);
+		mFogParams->setGpuParameter(mFogParamsValue);
 	}
 
 	// Per vertex fog.
 	else
-	{
-		GpuProgramParametersSharedPtr vsGpuParams = pass->getVertexProgramParameters();
-				
-		vsGpuParams->setNamedConstant(mFogParams->getName(), mFogParamsValue);	
+	{				
+		mFogParams->setGpuParameter(mFogParamsValue);	
 	}
 
-	psGpuParams->setNamedConstant(mFogColour->getName(), mFogColourValue);
+	mFogColour->setGpuParameter(mFogColourValue);
 
 }
 
@@ -279,6 +258,9 @@ bool FFPFog::addFunctionInvocations(ProgramSet* programSet)
 		case FOG_EXP2:
 			curFuncInvocation = OGRE_NEW FunctionInvocation(FFP_FUNC_PIXELFOG_EXP2, FFP_PS_FOG, internalCounter++);
 			break;
+        case FOG_NONE:
+        default:
+            break;
 		}
 
 		curFuncInvocation->pushOperand(mPSInDepth, Operand::OPS_IN);
@@ -306,6 +288,9 @@ bool FFPFog::addFunctionInvocations(ProgramSet* programSet)
 		case FOG_EXP2:
 			curFuncInvocation = OGRE_NEW FunctionInvocation(FFP_FUNC_VERTEXFOG_EXP2, FFP_VS_FOG, internalCounter++);
 			break;
+        case FOG_NONE:
+        default:
+            break;
 		}
 			
 		curFuncInvocation->pushOperand(mWorldViewProjMatrix, Operand::OPS_IN);

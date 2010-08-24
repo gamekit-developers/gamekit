@@ -29,6 +29,7 @@ THE SOFTWARE.
 #define __D3D10PREREQUISITES_H__
 
 #include "OgrePrerequisites.h"
+#include "WIN32/OgreMinGWSupport.h" // extra defines for MinGW to deal with DX SDK
 
 // Define versions for if DirectX is in use (Win32 only)
 #define DIRECT3D_VERSION 0x0900
@@ -42,6 +43,8 @@ THE SOFTWARE.
 #if !defined(NOMINMAX) && defined(_MSC_VER)
 #	define NOMINMAX // required to stop windows.h messing up std::min
 #endif
+
+#include <d3d10_1.h>
 #include <d3d10.h>
 #include <d3dx10.h>
 #include <d3d10_1shader.h>

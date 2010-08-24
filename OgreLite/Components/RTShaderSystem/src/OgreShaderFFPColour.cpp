@@ -24,8 +24,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
-#ifdef RTSHADER_SYSTEM_BUILD_CORE_SHADERS
 #include "OgreShaderFFPColour.h"
+#ifdef RTSHADER_SYSTEM_BUILD_CORE_SHADERS
 #include "OgreShaderFFPRenderState.h"
 #include "OgreShaderProgram.h"
 #include "OgreShaderParameter.h"
@@ -65,9 +65,6 @@ bool FFPColour::resolveParameters(ProgramSet* programSet)
 	Program* psProgram = programSet->getCpuFragmentProgram();
 	Function* vsMain   = vsProgram->getEntryPointFunction();
 	Function* psMain   = psProgram->getEntryPointFunction();	
-
-	const ShaderParameterList& vsInputParams = vsMain->getInputParameters();
-	const ShaderParameterList& psInputParams = psMain->getInputParameters();
 
 	if (mResolveStageFlags & SF_VS_INPUT_DIFFUSE)
 		mVSInputDiffuse  = vsMain->resolveInputParameter(Parameter::SPS_COLOR, 0, Parameter::SPC_COLOR_DIFFUSE, GCT_FLOAT4);
@@ -268,17 +265,6 @@ void FFPColour::copyFrom(const SubRenderState& rhs)
 	const FFPColour& rhsColour = static_cast<const FFPColour&>(rhs);
 
 	setResolveStageFlags(rhsColour.mResolveStageFlags);
-}
-
-//-----------------------------------------------------------------------
-uint32 FFPColour::getHashCode()
-{	
-	uint32 hashCode   = 0;
-				
-	sh_hash_combine(hashCode, SubRenderState::getHashCode());
-	sh_hash_combine(hashCode, mResolveStageFlags);
-	
-	return hashCode;
 }
 
 //-----------------------------------------------------------------------

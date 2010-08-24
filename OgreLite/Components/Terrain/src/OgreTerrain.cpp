@@ -77,43 +77,52 @@ namespace Ogre
 	const uint8 Terrain::DERIVED_DATA_LIGHTMAP = 4;
 	// This MUST match the bitwise OR of all the types above with no extra bits!
 	const uint8 Terrain::DERIVED_DATA_ALL = 7;
-
-
+	//-----------------------------------------------------------------------
+	template<> TerrainGlobalOptions* Singleton<TerrainGlobalOptions>::ms_Singleton = 0;
+	TerrainGlobalOptions* TerrainGlobalOptions::getSingletonPtr(void)
+	{
+		return ms_Singleton;
+	}
+	TerrainGlobalOptions& TerrainGlobalOptions::getSingleton(void)
+	{  
+		assert( ms_Singleton );  return ( *ms_Singleton );  
+	}
 	//---------------------------------------------------------------------
-	//---------------------------------------------------------------------
-	Real TerrainGlobalOptions::msSkirtSize = 30;
-	Vector3 TerrainGlobalOptions::msLightMapDir = Vector3(1, -1, 0).normalisedCopy();
-	bool TerrainGlobalOptions::msCastsShadows = false;
-	Real TerrainGlobalOptions::msMaxPixelError = 3.0;
-	uint8 TerrainGlobalOptions::msRenderQueueGroup = RENDER_QUEUE_MAIN;
-	uint32 TerrainGlobalOptions::msVisibilityFlags = 0xFFFFFFFF;
-	uint32 TerrainGlobalOptions::msQueryFlags = 0xFFFFFFFF;
-	bool TerrainGlobalOptions::msUseRayBoxDistanceCalculation = false;
-	TerrainMaterialGeneratorPtr TerrainGlobalOptions::msDefaultMaterialGenerator;
-	uint16 TerrainGlobalOptions::msLayerBlendMapSize = 1024;
-	Real TerrainGlobalOptions::msDefaultLayerTextureWorldSize = 10;
-	uint16 TerrainGlobalOptions::msDefaultGlobalColourMapSize = 1024;
-	uint16 TerrainGlobalOptions::msLightmapSize = 1024;
-	uint16 TerrainGlobalOptions::msCompositeMapSize = 1024;
-	ColourValue TerrainGlobalOptions::msCompositeMapAmbient = ColourValue::White;
-	ColourValue TerrainGlobalOptions::msCompositeMapDiffuse = ColourValue::White;
-	Real TerrainGlobalOptions::msCompositeMapDistance = 4000;
-	String TerrainGlobalOptions::msResourceGroup = ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME;
+	TerrainGlobalOptions::TerrainGlobalOptions()
+		: mSkirtSize(30)
+		, mLightMapDir(Vector3(1, -1, 0).normalisedCopy())
+		, mCastsShadows(false)
+		, mMaxPixelError(3.0)
+		, mRenderQueueGroup(RENDER_QUEUE_MAIN)
+		, mVisibilityFlags(0xFFFFFFFF)
+		, mQueryFlags(0xFFFFFFFF)
+		, mUseRayBoxDistanceCalculation(false)
+		, mLayerBlendMapSize(1024)
+		, mDefaultLayerTextureWorldSize(10)
+		, mDefaultGlobalColourMapSize(1024)
+		, mLightmapSize(1024)
+		, mCompositeMapSize(1024)
+		, mCompositeMapAmbient(ColourValue::White)
+		, mCompositeMapDiffuse(ColourValue::White)
+		, mCompositeMapDistance(4000)
+		, mResourceGroup(ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME)
+	{
+	}
 	//---------------------------------------------------------------------
 	void TerrainGlobalOptions::setDefaultMaterialGenerator(TerrainMaterialGeneratorPtr gen)
 	{
-		msDefaultMaterialGenerator = gen;
+		mDefaultMaterialGenerator = gen;
 	}
 	//---------------------------------------------------------------------
 	TerrainMaterialGeneratorPtr TerrainGlobalOptions::getDefaultMaterialGenerator()
 	{
-		if (msDefaultMaterialGenerator.isNull())
+		if (mDefaultMaterialGenerator.isNull())
 		{
 			// default
-			msDefaultMaterialGenerator.bind(OGRE_NEW TerrainMaterialGeneratorA());
+			mDefaultMaterialGenerator.bind(OGRE_NEW TerrainMaterialGeneratorA());
 		}
 
-		return msDefaultMaterialGenerator;
+		return mDefaultMaterialGenerator;
 	}
 	//---------------------------------------------------------------------
 	//---------------------------------------------------------------------
@@ -124,6 +133,7 @@ namespace Ogre
 		, mResourceGroup(StringUtil::BLANK)
 		, mIsLoaded(false)
 		, mModified(false)
+		, mHeightDataModified(false)
 		, mHeightData(0)
 		, mDeltaData(0)
 		, mPos(Vector3::ZERO)
@@ -251,7 +261,7 @@ namespace Ogre
 		// wait for any queued processes to finish
 		waitForDerivedProcesses();
 
-		if (mModified)
+		if (mHeightDataModified)
 		{
 			// When modifying, for efficiency we only increase the max deltas at each LOD,
 			// we never reduce them (since that would require re-examining more samples)
@@ -425,6 +435,7 @@ namespace Ogre
 		stream.writeChunkEnd(TERRAIN_CHUNK_ID);
 
 		mModified = false;
+		mHeightDataModified = false;
 
 	}
 	//---------------------------------------------------------------------
@@ -547,7 +558,7 @@ namespace Ogre
 	const String& Terrain::_getDerivedResourceGroup() const
 	{
 		if (mResourceGroup.empty())
-			return TerrainGlobalOptions::getDefaultResourceGroup();
+			return TerrainGlobalOptions::getSingleton().getDefaultResourceGroup();
 		else
 			return mResourceGroup;
 	}
@@ -579,6 +590,7 @@ namespace Ogre
 		stream.read(&mMaxBatchSize);
 		stream.read(&mMinBatchSize);
 		stream.read(&mPos);
+		mRootNode->setPosition(mPos);
 		updateBaseScale();
 		determineLodLevels();
 
@@ -673,6 +685,7 @@ namespace Ogre
 		distributeVertexData();
 
 		mModified = false;
+		mHeightDataModified = false;
 
 		return true;
 	}
@@ -718,7 +731,8 @@ namespace Ogre
 		deriveUVMultipliers();
 		mMaxBatchSize = importData.maxBatchSize;
 		mMinBatchSize = importData.minBatchSize;
-		mPos = importData.pos;
+		setPosition(importData.pos);
+
 		updateBaseScale();
 		determineLodLevels();
 
@@ -804,6 +818,7 @@ namespace Ogre
 
 		// Imported data is treated as modified because it's not saved
 		mModified = true;
+		mHeightDataModified = true;
 
 
 		return true;
@@ -812,15 +827,16 @@ namespace Ogre
 	//---------------------------------------------------------------------
 	void Terrain::copyGlobalOptions()
 	{
-		mSkirtSize = TerrainGlobalOptions::getSkirtSize();
-		mRenderQueueGroup = TerrainGlobalOptions::getRenderQueueGroup();
-		mVisibilityFlags = TerrainGlobalOptions::getVisibilityFlags();
-		mQueryFlags = TerrainGlobalOptions::getQueryFlags();
-		mLayerBlendMapSize = TerrainGlobalOptions::getLayerBlendMapSize();
+		TerrainGlobalOptions& opts = TerrainGlobalOptions::getSingleton();
+		mSkirtSize = opts.getSkirtSize();
+		mRenderQueueGroup = opts.getRenderQueueGroup();
+		mVisibilityFlags = opts.getVisibilityFlags();
+		mQueryFlags = opts.getQueryFlags();
+		mLayerBlendMapSize = opts.getLayerBlendMapSize();
 		mLayerBlendMapSizeActual = mLayerBlendMapSize; // for now, until we check
-		mLightmapSize = TerrainGlobalOptions::getLightMapSize();
+		mLightmapSize = opts.getLightMapSize();
 		mLightmapSizeActual = mLightmapSize; // for now, until we check
-		mCompositeMapSize = TerrainGlobalOptions::getCompositeMapSize();
+		mCompositeMapSize = opts.getCompositeMapSize();
 		mCompositeMapSizeActual = mCompositeMapSize; // for now, until we check
 
 	}
@@ -857,8 +873,8 @@ namespace Ogre
 			17 vertices (per side) or 33. This makes buffer re-use much easier while
 			still giving the full range of LODs.
 		*/
-		mNumLodLevelsPerLeafNode = Math::Log2(mMaxBatchSize - 1.0f) - Math::Log2(mMinBatchSize - 1.0f) + 1.0f;
-		mNumLodLevels = Math::Log2(mSize - 1.0f) - Math::Log2(mMinBatchSize - 1.0f) + 1.0f;
+		mNumLodLevelsPerLeafNode = (uint16) (Math::Log2(mMaxBatchSize - 1.0f) - Math::Log2(mMinBatchSize - 1.0f) + 1.0f);
+		mNumLodLevels = (uint16) (Math::Log2(mSize - 1.0f) - Math::Log2(mMinBatchSize - 1.0f) + 1.0f);
 		//mTreeDepth = Math::Log2(mMaxBatchSize - 1) - Math::Log2(mMinBatchSize - 1) + 2;
 		mTreeDepth = mNumLodLevels - mNumLodLevelsPerLeafNode + 1;
 
@@ -1039,6 +1055,7 @@ namespace Ogre
 
 		mIsLoaded = false;
 		mModified = false;
+		mHeightDataModified = false;
 
 	}
 	//---------------------------------------------------------------------
@@ -1235,6 +1252,9 @@ namespace Ogre
 					}
 					currSpace = TERRAIN_SPACE;
 					break;
+                case LOCAL_SPACE:
+                default:
+                    break;
 				};
 				break;
 			case TERRAIN_SPACE:
@@ -1262,6 +1282,9 @@ namespace Ogre
 					}
 					currSpace = POINT_SPACE;
 					break;
+                case TERRAIN_SPACE:
+                default:
+                    break;
 				};
 				break;
 			case POINT_SPACE:
@@ -1563,7 +1586,7 @@ namespace Ogre
 		}
 		else
 		{
-			return TerrainGlobalOptions::getDefaultLayerTextureWorldSize();
+			return TerrainGlobalOptions::getSingleton().getDefaultLayerTextureWorldSize();
 		}
 	}
 	//---------------------------------------------------------------------
@@ -1578,6 +1601,7 @@ namespace Ogre
 			mLayers[index].worldSize = size;
 			mLayerUVMultiplier[index] = mWorldSize / size;
 			mMaterialParamsDirty = true;
+			mModified = true;
 		}
 	}
 	//---------------------------------------------------------------------
@@ -1632,15 +1656,20 @@ namespace Ogre
 				mLayers[layerIndex].textureNames[samplerIndex] = textureName;
 				mMaterialDirty = true;
 				mMaterialParamsDirty = true;
+				mModified = true;
 			}
 		}
 	}
 	//---------------------------------------------------------------------
 	void Terrain::setPosition(const Vector3& pos)
 	{
-		mPos = pos;
-		mRootNode->setPosition(pos);
-		updateBaseScale();
+		if (pos != mPos)
+		{
+			mPos = pos;
+			mRootNode->setPosition(pos);
+			updateBaseScale();
+			mModified = true;
+		}
 	}
 	//---------------------------------------------------------------------
 	SceneNode* Terrain::_getRootSceneNode() const
@@ -1672,6 +1701,7 @@ namespace Ogre
 		mCompositeMapDirtyRect.merge(rect);
 
 		mModified = true;
+		mHeightDataModified = true;
 
 	}
 	//---------------------------------------------------------------------
@@ -1679,6 +1709,22 @@ namespace Ogre
 	{
 		mCompositeMapDirtyRect.merge(rect);
 		mModified = true;
+	}
+	//---------------------------------------------------------------------
+	void Terrain::dirtyLightmapRect(const Rect& rect)
+	{
+		mDirtyDerivedDataRect.merge(rect);
+
+		mModified = true;
+
+	}
+	//---------------------------------------------------------------------
+	void Terrain::dirtyLightmap()
+	{
+		Rect rect;
+		rect.top = 0; rect.bottom = mSize;
+		rect.left = 0; rect.right = mSize;
+		dirtyLightmapRect(rect);
 	}
 	//---------------------------------------------------------------------
 	void Terrain::update(bool synchronous)
@@ -1768,7 +1814,7 @@ namespace Ogre
 		mHeightData = 0;
 
 		OGRE_FREE(mDeltaData, MEMCATEGORY_GEOMETRY);
-		mHeightData = 0;
+		mDeltaData = 0;
 
 		OGRE_DELETE mQuadTree;
 		mQuadTree = 0;
@@ -2076,7 +2122,7 @@ namespace Ogre
 			// A = 1 / tan(fovy*0.5)    (== 1 for fovy=45*2)
 			Real A = 1.0f / Math::Tan(cam->getFOVy() * 0.5f);
 			// T = 2 * maxPixelError / vertRes
-			Real maxPixelError = TerrainGlobalOptions::getMaxPixelError() * cam->_getLodBiasInverse();
+			Real maxPixelError = TerrainGlobalOptions::getSingleton().getMaxPixelError() * cam->_getLodBiasInverse();
 			Real T = 2.0f * maxPixelError / (Real)vp->getActualHeight();
 
 			// CFactor = A / T
@@ -2347,8 +2393,7 @@ namespace Ogre
 	{
 		if (mMaterialGenerator.isNull())
 		{
-			mMaterialGenerator = TerrainGlobalOptions::getDefaultMaterialGenerator();
-
+			mMaterialGenerator = TerrainGlobalOptions::getSingleton().getDefaultMaterialGenerator();
 		}
 
 		if (mLayerDecl.elements.empty())
@@ -2359,22 +2404,96 @@ namespace Ogre
 
 	}
 	//---------------------------------------------------------------------
+    void Terrain::replaceLayer(uint8 index, bool keepBlends, Real worldSize, const StringVector* textureNames)
+    {
+        if (getLayerCount() > 0)
+        {
+            if (index >= getLayerCount())
+                index = getLayerCount() - 1;
+
+		    LayerInstanceList::iterator i = mLayers.begin();
+		    std::advance(i, index);
+            
+		    if (textureNames)
+		    {
+			    (*i).textureNames = *textureNames;
+		    }
+
+		    // use utility method to update UV scaling
+		    setLayerWorldSize(index, worldSize);
+
+            // Delete the blend map if its not the base
+            if ( !keepBlends && index > 0 )
+            {
+                if (mLayerBlendMapList[index-1])
+                {
+                    delete mLayerBlendMapList[index-1];
+                    mLayerBlendMapList[index-1] = 0;
+                }
+
+                // Reset the layer to black
+                std::pair<uint8,uint8> layerPair = getLayerBlendTextureIndex(index);
+                clearGPUBlendChannel( layerPair.first, layerPair.second );
+            }
+
+		    mMaterialDirty = true;
+		    mMaterialParamsDirty = true;
+			mModified = true;
+        }
+    }
+	//---------------------------------------------------------------------
 	void Terrain::addLayer(Real worldSize, const StringVector* textureNames)
 	{
+		addLayer(getLayerCount(), worldSize, textureNames);
+	}
+	//---------------------------------------------------------------------
+	void Terrain::addLayer(uint8 index, Real worldSize, const StringVector* textureNames)
+	{
 		if (!worldSize)
-			worldSize = TerrainGlobalOptions::getDefaultLayerTextureWorldSize();
+			worldSize = TerrainGlobalOptions::getSingleton().getDefaultLayerTextureWorldSize();
 
-		mLayers.push_back(LayerInstance());
+        uint8 blendIndex = std::max(index-1,0); 
+		if (index >= getLayerCount())
+		{
+			mLayers.push_back(LayerInstance());
+			index = getLayerCount() - 1;
+		}
+		else
+		{
+			LayerInstanceList::iterator i = mLayers.begin();
+			std::advance(i, index);
+			mLayers.insert(i, LayerInstance());
+
+			RealVector::iterator uvi = mLayerUVMultiplier.begin();
+			std::advance(uvi, index);
+			mLayerUVMultiplier.insert(uvi, 0.0f);
+
+            TerrainLayerBlendMapList::iterator bi = mLayerBlendMapList.begin();
+            std::advance(bi, blendIndex);
+            mLayerBlendMapList.insert(bi, static_cast<TerrainLayerBlendMap*>(0));
+		}
 		if (textureNames)
 		{
-			LayerInstance& inst = mLayers[mLayers.size()-1];
+			LayerInstance& inst = mLayers[index];
 			inst.textureNames = *textureNames;
 		}
 		// use utility method to update UV scaling
-		setLayerWorldSize(mLayers.size()-1, worldSize);
+		setLayerWorldSize(index, worldSize);
 		checkLayers(true);
+
+        // Is this an insert into the middle of the layer list?
+        if (index < getLayerCount() - 1)
+        {
+            // Shift all GPU texture channels up one
+            shiftUpGPUBlendChannels(blendIndex);
+
+            // All blend maps above this layer index will need to be recreated since their buffers/channels have changed
+            deleteBlendMaps(index);
+        }
+
 		mMaterialDirty = true;
 		mMaterialParamsDirty = true;
+		mModified = true;
 
 	}
 	//---------------------------------------------------------------------
@@ -2382,11 +2501,37 @@ namespace Ogre
 	{
 		if (index < mLayers.size())
 		{
+            uint8 blendIndex = std::max(index-1,0); 
+
+            // Shift all GPU texture channels down one
+            shiftDownGPUBlendChannels(blendIndex);
+
 			LayerInstanceList::iterator i = mLayers.begin();
 			std::advance(i, index);
 			mLayers.erase(i);
+
+			RealVector::iterator uvi = mLayerUVMultiplier.begin();
+			std::advance(uvi, index);
+			mLayerUVMultiplier.erase(uvi);
+
+            if (mLayerBlendMapList.size() > 0)
+            {
+                // If they removed the base OR the first layer, we need to erase the first blend map
+                TerrainLayerBlendMapList::iterator bi = mLayerBlendMapList.begin();
+                std::advance(bi, blendIndex);
+                OGRE_DELETE *bi;
+                mLayerBlendMapList.erase(bi);
+
+				// Check to see if a GPU textures can be released
+				checkLayers(true);
+
+                // All blend maps for layers above the erased will need to be recreated since their buffers/channels have changed
+                deleteBlendMaps(blendIndex);
+            }
+			
 			mMaterialDirty = true;
 			mMaterialParamsDirty = true;
+			mModified = true;
 		}
 	}
 	//---------------------------------------------------------------------
@@ -2437,6 +2582,124 @@ namespace Ogre
 		// and it makes it harder to expand layer count dynamically if format has to change
 		return PF_BYTE_RGBA;
 	}
+	//---------------------------------------------------------------------
+    void Terrain::shiftUpGPUBlendChannels(uint8 index)
+    {
+        // checkLayers() has been called to make sure the blend textures have been created
+        assert( mBlendTextureList.size() == getBlendTextureCount(getLayerCount()) );
+
+        // Shift all blend channels > index UP one slot, possibly into the next texture
+        // Example:  index = 2
+        //      Before: [1 2 3 4] [5]
+        //      After:  [1 2 0 3] [4 5]
+
+        uint8 layerIndex = index + 1;
+        for (uint8 i=getLayerCount()-1; i > layerIndex; --i )
+        {   
+            std::pair<uint8,uint8> destPair = getLayerBlendTextureIndex(i);
+            std::pair<uint8,uint8> srcPair = getLayerBlendTextureIndex(i - 1);
+            
+            copyBlendTextureChannel( srcPair.first, srcPair.second, destPair.first, destPair.second );
+        }
+
+        // Reset the layer to black
+        std::pair<uint8,uint8> layerPair = getLayerBlendTextureIndex(layerIndex);
+        clearGPUBlendChannel( layerPair.first, layerPair.second );
+    }
+	//---------------------------------------------------------------------
+    void Terrain::shiftDownGPUBlendChannels(uint8 index)
+    {
+        // checkLayers() has been called to make sure the blend textures have been created
+        assert( mBlendTextureList.size() == getBlendTextureCount(getLayerCount()) );
+
+        // Shift all blend channels above layerIndex DOWN one slot, possibly into the previous texture
+        // Example:  index = 2
+        //      Before: [1 2 3 4] [5]
+        //      After:  [1 2 4 5] [0]
+
+        uint8 layerIndex = index + 1;
+        for (uint8 i=layerIndex; i < getLayerCount() - 1; ++i )
+        {   
+            std::pair<uint8,uint8> destPair = getLayerBlendTextureIndex(i);
+            std::pair<uint8,uint8> srcPair = getLayerBlendTextureIndex(i + 1);
+            
+            copyBlendTextureChannel( srcPair.first, srcPair.second, destPair.first, destPair.second );
+        }
+
+        // Reset the layer to black
+        if ( getLayerCount() > 1 )
+        {
+            std::pair<uint8,uint8> layerPair = getLayerBlendTextureIndex(getLayerCount() - 1);
+            clearGPUBlendChannel( layerPair.first, layerPair.second );
+        }
+    }
+	//---------------------------------------------------------------------
+    void Terrain::copyBlendTextureChannel(uint8 srcIndex, uint8 srcChannel, uint8 destIndex, uint8 destChannel )
+    {
+        HardwarePixelBufferSharedPtr srcBuffer = getLayerBlendTexture(srcIndex)->getBuffer();
+        HardwarePixelBufferSharedPtr destBuffer = getLayerBlendTexture(destIndex)->getBuffer();
+
+        unsigned char rgbaShift[4];
+		Image::Box box(0, 0, destBuffer->getWidth(), destBuffer->getHeight());
+
+        uint8* pDestBase = static_cast<uint8*>(destBuffer->lock(box, HardwareBuffer::HBL_NORMAL).data);
+		PixelUtil::getBitShifts(destBuffer->getFormat(), rgbaShift);
+        uint8* pDest = pDestBase + rgbaShift[destChannel] / 8;
+		size_t destInc = PixelUtil::getNumElemBytes(destBuffer->getFormat());
+
+        size_t srcInc;
+        uint8* pSrc;
+
+        if ( destBuffer == srcBuffer )
+        {
+            pSrc = pDestBase + rgbaShift[srcChannel] / 8;
+            srcInc = destInc;
+        }
+        else
+        {
+            pSrc = static_cast<uint8*>(srcBuffer->lock(box, HardwareBuffer::HBL_READ_ONLY).data);
+		    PixelUtil::getBitShifts(srcBuffer->getFormat(), rgbaShift);
+            pSrc += rgbaShift[srcChannel] / 8;
+		    srcInc = PixelUtil::getNumElemBytes(srcBuffer->getFormat());
+        }
+
+		for (size_t y = box.top; y < box.bottom; ++y)
+		{
+			for (size_t x = box.left; x < box.right; ++x)
+			{
+                *pDest = *pSrc;
+				pSrc += srcInc;
+                pDest += destInc;
+			}
+		}
+		
+        destBuffer->unlock();
+        if ( destBuffer != srcBuffer )
+            srcBuffer->unlock();
+    }
+    //---------------------------------------------------------------------
+	void Terrain::clearGPUBlendChannel(uint8 index, uint channel)
+    {
+        HardwarePixelBufferSharedPtr buffer = getLayerBlendTexture(index)->getBuffer();
+
+        unsigned char rgbaShift[4];
+		Image::Box box(0, 0, buffer->getWidth(), buffer->getHeight());
+
+        uint8* pData = static_cast<uint8*>(buffer->lock(box, HardwareBuffer::HBL_NORMAL).data);
+		PixelUtil::getBitShifts(buffer->getFormat(), rgbaShift);
+        pData += rgbaShift[channel] / 8;
+		size_t inc = PixelUtil::getNumElemBytes(buffer->getFormat());
+
+		for (size_t y = box.top; y < box.bottom; ++y)
+		{
+			for (size_t x = box.left; x < box.right; ++x)
+			{
+                *pData = 0;
+                pData += inc;
+			}
+		}
+        buffer->unlock();
+    }
 	//---------------------------------------------------------------------
 	void Terrain::createGPUBlendTextures()
 	{
@@ -2500,8 +2763,9 @@ namespace Ogre
 			mLayerBlendMapList.pop_back();
 		}
 
-		// resize up or down (up initialises to 0, populate as necessary)
-		mLayerBlendMapList.resize(mLayers.size() - 1, 0);
+		// resize up (initialises to 0, populate as necessary)
+		if ( mLayers.size() > 1 )
+		    mLayerBlendMapList.resize(mLayers.size() - 1, 0);
 
 	}
 	//---------------------------------------------------------------------
@@ -2544,13 +2808,18 @@ namespace Ogre
 		mCpuBlendMapStorage.clear();
 
 		// Editable structures for blend layers (not needed at runtime,  only blend textures are)
-		for (TerrainLayerBlendMapList::iterator i = mLayerBlendMapList.begin(); 
-			i != mLayerBlendMapList.end(); ++i)
+        deleteBlendMaps(0); 
+	}
+	//---------------------------------------------------------------------
+    void Terrain::deleteBlendMaps(uint8 lowIndex)
+    {
+        TerrainLayerBlendMapList::iterator i = mLayerBlendMapList.begin();
+		std::advance(i, lowIndex);
+        for (; i != mLayerBlendMapList.end(); ++i )
 		{
 			OGRE_DELETE *i;
 			*i = 0;
 		}
-
 	}
 	//---------------------------------------------------------------------
 	const TexturePtr& Terrain::getLayerBlendTexture(uint8 index)
@@ -2627,7 +2896,7 @@ namespace Ogre
 
 			createOrDestroyGPUCompositeMap();
 			
-			// if we enabled, generate normal maps
+			// if we enabled, generate composite maps
 			if (mCompositeMapRequired)
 			{
 				mCompositeMapDirtyRect.left = mCompositeMapDirtyRect.top = 0;
@@ -2647,7 +2916,7 @@ namespace Ogre
 		if (ddr.terrain != this)
 			return false;
 		else
-			return true;
+			return RequestHandler::canHandleRequest(req, srcQ);
 
 	}
 	//---------------------------------------------------------------------
@@ -2961,8 +3230,8 @@ namespace Ogre
 		// onto the minimum height
 
 
-		const Vector3& lightVec = TerrainGlobalOptions::getLightMapDirection();
-		Rect widenedRect;
+		const Vector3& lightVec = TerrainGlobalOptions::getSingleton().getLightMapDirection();
+        Ogre::Rect widenedRect;
 		widenRectByVector(lightVec, rect, widenedRect);
 
 		// merge in the extra area (e.g. from neighbours)
@@ -2971,10 +3240,10 @@ namespace Ogre
 		// widenedRect now contains terrain point space version of the area we
 		// need to calculate. However, we need to calculate in lightmap image space
 		float terrainToLightmapScale = (float)mLightmapSizeActual / (float)mSize;
-		widenedRect.left *= terrainToLightmapScale;
-		widenedRect.right *= terrainToLightmapScale;
-		widenedRect.top *= terrainToLightmapScale;
-		widenedRect.bottom *= terrainToLightmapScale;
+		widenedRect.left = (long)(widenedRect.left * terrainToLightmapScale);
+		widenedRect.right = (long)(widenedRect.right * terrainToLightmapScale);
+		widenedRect.top = (long)(widenedRect.top * terrainToLightmapScale);
+		widenedRect.bottom = (long)(widenedRect.bottom * terrainToLightmapScale);
 
 		// clamp 
 		widenedRect.left = std::max(0L, widenedRect.left);
@@ -3023,14 +3292,12 @@ namespace Ogre
 				long storeY = widenedRect.bottom - y - 1;
 
 				uint8* pStore = pData + ((storeY * widenedRect.width()) + storeX);
-				*pStore = litVal * 255.0;
+				*pStore = (unsigned char)(litVal * 255.0);
 
 			}
 		}
 
-
 		return pixbox;
-
 
 
 	}
@@ -3059,6 +3326,11 @@ namespace Ogre
 			}
 		}
 
+		// delete memory
+		OGRE_FREE(lightmapBox->data, MEMCATEGORY_GENERAL);
+		OGRE_DELETE(lightmapBox);
+
+
 	}
 	//---------------------------------------------------------------------
 	void Terrain::updateCompositeMap()
@@ -3073,7 +3345,7 @@ namespace Ogre
 			{
 				// widen the dirty rectangle since lighting makes it wider
 				Rect widenedRect;
-				widenRectByVector(TerrainGlobalOptions::getLightMapDirection(), mCompositeMapDirtyRect, widenedRect);
+				widenRectByVector(TerrainGlobalOptions::getSingleton().getLightMapDirection(), mCompositeMapDirtyRect, widenedRect);
 				// clamp
 				widenedRect.left = std::max(widenedRect.left, 0L);
 				widenedRect.top = std::max(widenedRect.top, 0L);
@@ -3093,7 +3365,7 @@ namespace Ogre
 	//---------------------------------------------------------------------
 	void Terrain::updateCompositeMapWithDelay(Real delay)
 	{
-		mCompositeMapUpdateCountdown = delay * 1000;
+		mCompositeMapUpdateCountdown = (long)(delay * 1000);
 	}
 	//---------------------------------------------------------------------
 	uint8 Terrain::getBlendTextureIndex(uint8 layerIndex) const
@@ -3118,7 +3390,7 @@ namespace Ogre
 	void Terrain::setGlobalColourMapEnabled(bool enabled, uint16 sz)
 	{
 		if (!sz)
-			sz = TerrainGlobalOptions::getDefaultGlobalColourMapSize();
+			sz = TerrainGlobalOptions::getSingleton().getDefaultGlobalColourMapSize();
 
 		if (enabled != mGlobalColourMapEnabled ||
 			(enabled && mGlobalColourMapSize != sz))
@@ -3130,6 +3402,7 @@ namespace Ogre
 
 			mMaterialDirty = true;
 			mMaterialParamsDirty = true;
+			mModified = true;
 		}
 
 	}
@@ -3337,7 +3610,7 @@ namespace Ogre
 			Rect dirtyRect(mDirtyGeometryRectForNeighbours);
 			mDirtyGeometryRectForNeighbours.setNull();
 			// calculate light update rectangle
-			const Vector3& lightVec = TerrainGlobalOptions::getLightMapDirection();
+			const Vector3& lightVec = TerrainGlobalOptions::getSingleton().getLightMapDirection();
 			Rect lightmapRect;
 			widenRectByVector(lightVec, dirtyRect, getMinHeight(), getMaxHeight(), lightmapRect);
 
@@ -3429,7 +3702,7 @@ namespace Ogre
 			// update shadows
 			// here we need to widen the rect passed in based on the min/max height 
 			// of the *neighbour*
-			const Vector3& lightVec = TerrainGlobalOptions::getLightMapDirection();
+			const Vector3& lightVec = TerrainGlobalOptions::getSingleton().getLightMapDirection();
 			Rect widenedRect;
 			widenRectByVector(lightVec, shadowrect, neighbour->getMinHeight(), neighbour->getMaxHeight(), widenedRect);
 
@@ -3475,6 +3748,9 @@ namespace Ogre
 			outRect->left = 0;
 			outRect->right = mSize;
 			break;
+		case NEIGHBOUR_COUNT:
+        default:
+            break;
 		};
 
 		// set top / bottom
@@ -3497,6 +3773,9 @@ namespace Ogre
 			outRect->top = 0;
 			outRect->bottom = mSize;
 			break;
+		case NEIGHBOUR_COUNT:
+        default:
+            break;
 		};
 	}
 	//---------------------------------------------------------------------
@@ -3592,12 +3871,12 @@ namespace Ogre
 		else
 		{
 			long nx, ny;
-			NeighbourIndex ni;
+			NeighbourIndex ni = NEIGHBOUR_EAST;
 			getNeighbourPointOverflow(x, y, &ni, &nx, &ny);
 			Terrain* neighbour = getNeighbour(ni);
 			if (neighbour)
 			{
-				Vector3 neighbourPos;
+				Vector3 neighbourPos = Vector3::ZERO;
 				neighbour->getPoint(nx, ny, &neighbourPos);
 				// adjust to make it relative to our position
 				*outpos = neighbourPos + neighbour->getPosition() - getPosition();

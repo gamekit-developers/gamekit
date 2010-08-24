@@ -146,27 +146,38 @@ namespace Ogre {
 #   	define _OgrePrivate
 #	endif
 // Win32 compilers use _DEBUG for specifying debug builds.
-#   ifdef _DEBUG
+// for MinGW, we set DEBUG
+#   if defined(_DEBUG) || defined(DEBUG)
 #       define OGRE_DEBUG_MODE 1
 #   else
 #       define OGRE_DEBUG_MODE 0
 #   endif
 
-// Disable unicode support on MingW at the moment, poorly supported in stdlibc++
+// Disable unicode support on MingW for GCC 3, poorly supported in stdlibc++
 // STLPORT fixes this though so allow if found
-// MinGW C++ Toolkit supports unicode and sets the define __MINGW32_TOOLKIT_UNICODE__ in _mingw.h
-#if defined( __MINGW32__ ) && !defined(_STLPORT_VERSION)
+// MinGW C++ Toolkit supports unicode and sets the define __MINGW32_TOOLBOX_UNICODE__ in _mingw.h
+// GCC 4 is also fine
+#if defined(__MINGW32__)
+# if OGRE_COMP_VER < 400
+#  if !defined(_STLPORT_VERSION)
 #   include<_mingw.h>
-#   if defined(__MINGW32_TOOLBOX_UNICODE__)
-#	    define OGRE_UNICODE_SUPPORT 1
+#   if defined(__MINGW32_TOOLBOX_UNICODE__) || OGRE_COMP_VER > 345
+#    define OGRE_UNICODE_SUPPORT 1
 #   else
-#       define OGRE_UNICODE_SUPPORT 0
+#    define OGRE_UNICODE_SUPPORT 0
 #   endif
+#  else
+#   define OGRE_UNICODE_SUPPORT 1
+#  endif
+# else
+#  define OGRE_UNICODE_SUPPORT 1
+# endif
 #else
-#	define OGRE_UNICODE_SUPPORT 1
+#  define OGRE_UNICODE_SUPPORT 1
 #endif
 
-#endif
+#endif // OGRE_PLATFORM == OGRE_PLATFORM_WIN32
+
 //----------------------------------------------------------------------------
 // Symbian Settings
 #if OGRE_PLATFORM == OGRE_PLATFORM_SYMBIAN
@@ -181,8 +192,8 @@ namespace Ogre {
 #	pragma warn_possunwant off
 #endif
 //----------------------------------------------------------------------------
-// Linux/Apple Settings
-#if OGRE_PLATFORM == OGRE_PLATFORM_LINUX || OGRE_PLATFORM == OGRE_PLATFORM_APPLE || OGRE_PLATFORM == OGRE_PLATFORM_IPHONE
+// Linux/Apple/Symbian Settings
+#if OGRE_PLATFORM == OGRE_PLATFORM_LINUX || OGRE_PLATFORM == OGRE_PLATFORM_APPLE || OGRE_PLATFORM == OGRE_PLATFORM_IPHONE || OGRE_PLATFORM == OGRE_PLATFORM_SYMBIAN
 
 // Enable GCC symbol visibility
 #   if defined( OGRE_GCC_VISIBILITY )
@@ -218,11 +229,6 @@ namespace Ogre {
 // Perhaps disable in old versions of gcc if necessary
 #define OGRE_UNICODE_SUPPORT 1
 
-#endif
-
-//For apple, we always have a custom config.h file
-#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE
-#    include "config.h"
 #endif
 
 //----------------------------------------------------------------------------

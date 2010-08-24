@@ -1,0 +1,3 @@
+- Added Ogre::Font::loadManualResource
+  To load .ttf font files from a memory stream.
+

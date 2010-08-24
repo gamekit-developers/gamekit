@@ -81,12 +81,7 @@ add_definitions(-D_USRDLL)
 add_library(RenderSystem_Direct3D11 ${OGRE_LIB_TYPE} ${HEADER_FILES} ${SOURCE_FILES})
 target_link_libraries(RenderSystem_Direct3D11
   OgreMain
-  d3d11
-  d3dx11
-  dxgi
-  dxerr
-  dxguid
-  d3dcompiler
+  ${DirectX_D3D11_LIBRARIES}
 )
 
 if (NOT OGRE_STATIC)
@@ -99,6 +94,4 @@ if (OGRE_CONFIG_THREADS)
 endif ()
 
 ogre_config_plugin(RenderSystem_Direct3D11)
-if (OGRE_INSTALL_PLUGINS_HEADERS)
-  install(FILES ${HEADER_FILES} DESTINATION include/OGRE/RenderSystems/Direct3D11)
-endif ()
+install(FILES ${HEADER_FILES} DESTINATION include/OGRE/RenderSystems/Direct3D11)

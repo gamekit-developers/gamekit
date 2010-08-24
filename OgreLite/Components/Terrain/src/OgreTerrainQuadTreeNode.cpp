@@ -67,11 +67,12 @@ namespace Ogre
 		, mNodeWithVertexData(0)
 		, mVertexDataRecord(0)
 		, mMovable(0)
+		, mLocalNode(0)
         , mRend(0)
 	{
 		if (terrain->getMaxBatchSize() < size)
 		{
-			uint16 childSize = ((size - 1) * 0.5f) + 1;
+			uint16 childSize = (uint16)(((size - 1) * 0.5f) + 1);
 			uint16 childOff = childSize - 1;
 			uint16 childLod = lod - 1; // LOD levels decrease down the tree (higher detail)
 			uint16 childDepth = depth + 1;
@@ -112,7 +113,7 @@ namespace Ogre
 				ll->calcMaxHeightDelta = 0;
 				mLodLevels.push_back(ll);
 				if (ownLod)
-					sz = ((sz - 1) * 0.5) + 1;
+					sz = (uint16)(((sz - 1) * 0.5) + 1);
 			}
 			
 			assert(sz == terrain->getMinBatchSize());
@@ -132,8 +133,7 @@ namespace Ogre
 		mMovable = OGRE_NEW Movable(this);
 		mRend = OGRE_NEW Rend(this);
 
-		mLocalNode = mTerrain->_getRootSceneNode()->createChildSceneNode(mLocalCentre);
-		
+	
 	}
 	//---------------------------------------------------------------------
 	TerrainQuadTreeNode::~TerrainQuadTreeNode()
@@ -143,8 +143,11 @@ namespace Ogre
 		OGRE_DELETE mRend;
 		mRend = 0;
 
-		mTerrain->_getRootSceneNode()->removeAndDestroyChild(mLocalNode->getName());
-		mLocalNode = 0;
+		if (mLocalNode)
+		{
+			mTerrain->_getRootSceneNode()->removeAndDestroyChild(mLocalNode->getName());
+			mLocalNode = 0;
+		}
 
 		for (int i = 0; i < 4; ++i)
 			OGRE_DELETE mChildren[i];
@@ -246,6 +249,9 @@ namespace Ogre
 		if (!isLeaf())
 			for (int i = 0; i < 4; ++i)
 				mChildren[i]->load();
+
+		if (!mLocalNode)
+			mLocalNode = mTerrain->_getRootSceneNode()->createChildSceneNode(mLocalCentre);
 
 		mLocalNode->attachObject(mMovable);
 	}
@@ -563,7 +569,7 @@ namespace Ogre
 
 			// Calculate number of vertices
 			// Base geometry size * size
-			size_t baseNumVerts = Math::Sqr(mVertexDataRecord->size);
+			size_t baseNumVerts = (size_t)Math::Sqr(mVertexDataRecord->size);
 			size_t numVerts = baseNumVerts;
 			// Now add space for skirts
 			// Skirts will be rendered as copies of the edge vertices translated downwards
@@ -573,7 +579,7 @@ namespace Ogre
 			// You need 2^levels + 1 rows of full resolution (max 129) vertex copies, plus
 			// the same number of columns. There are common vertices at intersections
 			uint16 levels = mVertexDataRecord->treeLevels;
-			mVertexDataRecord->numSkirtRowsCols = (Math::Pow(2, levels) + 1);
+			mVertexDataRecord->numSkirtRowsCols = (uint16)(Math::Pow(2, levels) + 1);
 			mVertexDataRecord->skirtRowColSkip = (mVertexDataRecord->size - 1) / (mVertexDataRecord->numSkirtRowsCols - 1);
 			numVerts += mVertexDataRecord->size * mVertexDataRecord->numSkirtRowsCols;
 			numVerts += mVertexDataRecord->size * mVertexDataRecord->numSkirtRowsCols;
@@ -1152,7 +1158,7 @@ namespace Ogre
 			// no children were within their LOD ranges, so we should consider our own
 			Vector3 localPos = cam->getDerivedPosition() - mLocalCentre - mTerrain->getPosition();
 			Real dist;
-			if (TerrainGlobalOptions::getUseRayBoxDistanceCalculation())
+			if (TerrainGlobalOptions::getSingleton().getUseRayBoxDistanceCalculation())
 			{
 				// Get distance to this terrain node (to closest point of the box)
 				// head towards centre of the box (note, box may not cover mLocalCentre because of height)
@@ -1373,7 +1379,7 @@ namespace Ogre
 	//---------------------------------------------------------------------
 	bool TerrainQuadTreeNode::getCastsShadows(void) const
 	{
-		return TerrainGlobalOptions::getCastsDynamicShadows();
+		return TerrainGlobalOptions::getSingleton().getCastsDynamicShadows();
 	}
 	//---------------------------------------------------------------------
 	//---------------------------------------------------------------------

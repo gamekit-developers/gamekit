@@ -53,7 +53,9 @@ namespace RTShader
 
 /// Forward declarations from RTShader namespace.
 class RenderState;
+class TargetRenderState;
 class SubRenderState;
+class SubRenderStateAccessor;
 class SubRenderStateFactory;
 class ProgramManager;
 class Program;
@@ -87,7 +89,7 @@ enum VSOutputCompactPolicy
 }
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
-#	if defined( OGRE_COMPONENT_STATIC )
+#	if defined( OGRE_STATIC_LIB )
 #   	define _OgreRTSSExport
 #   else
 #   	if defined( OgreRTShaderSystem_EXPORTS )
@@ -100,6 +102,8 @@ enum VSOutputCompactPolicy
 #           endif
 #   	endif
 #	endif
+#elif defined ( OGRE_GCC_VISIBILITY )
+#   define _OgreRTSSExport __attribute__ ((visibility("default")))
 #else
 #	define _OgreRTSSExport
 #endif 

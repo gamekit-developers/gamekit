@@ -1196,12 +1196,28 @@ namespace Ogre
 					if (i->second.physicalIndex > physicalIndex)
 						i->second.physicalIndex += insertCount;
 				}
+				mFloatLogicalToPhysical->bufferSize += insertCount;
 				for (AutoConstantList::iterator i = mAutoConstants.begin();
 					i != mAutoConstants.end(); ++i)
 				{
-					if (i->physicalIndex > physicalIndex)
+					if (i->physicalIndex > physicalIndex &&
+						getAutoConstantDefinition(i->paramType)->elementType == ET_REAL)
+					{
 						i->physicalIndex += insertCount;
+					}
 				}
+				if (!mNamedConstants.isNull())
+				{
+					for (GpuConstantDefinitionMap::iterator i = mNamedConstants->map.begin();
+						i != mNamedConstants->map.end(); ++i)
+					{
+						if (i->second.isFloat() && i->second.physicalIndex > physicalIndex)
+							i->second.physicalIndex += insertCount;
+					}
+					mNamedConstants->floatBufferSize += insertCount;
+				}
+
+				logi->second.currentSize += insertCount;
 			}
 		}
 
@@ -1286,12 +1302,28 @@ namespace Ogre
 					if (i->second.physicalIndex > physicalIndex)
 						i->second.physicalIndex += insertCount;
 				}
+				mIntLogicalToPhysical->bufferSize += insertCount;
 				for (AutoConstantList::iterator i = mAutoConstants.begin();
 					i != mAutoConstants.end(); ++i)
 				{
-					if (i->physicalIndex > physicalIndex)
+					if (i->physicalIndex > physicalIndex &&
+						getAutoConstantDefinition(i->paramType)->elementType == ET_INT)
+					{
 						i->physicalIndex += insertCount;
+					}
 				}
+				if (!mNamedConstants.isNull())
+				{
+					for (GpuConstantDefinitionMap::iterator i = mNamedConstants->map.begin();
+						i != mNamedConstants->map.end(); ++i)
+					{
+						if (!i->second.isFloat() && i->second.physicalIndex > physicalIndex)
+							i->second.physicalIndex += insertCount;
+					}
+					mNamedConstants->intBufferSize += insertCount;
+				}
+
+				logi->second.currentSize += insertCount;
 			}
 		}
 
@@ -1829,9 +1861,22 @@ namespace Ogre
 					_writeRawConstant(i->physicalIndex, source->getSpotlightWorldViewProjMatrix(i->data),i->elementCount);
 					break;
 				case ACT_LIGHT_POSITION_OBJECT_SPACE:
+					vec4 = source->getLightAs4DVector(i->data);
+					vec3 = Vector3(vec4.x, vec4.y, vec4.z);
+					if( vec4.w > 0.0f )
+					{
+						// point light
+						vec3 = source->getInverseWorldMatrix().transformAffine(vec3);
+					}
+					else
+					{
+						// directional light
+						// We need the inverse of the inverse transpose 
+						source->getInverseTransposeWorldMatrix().inverse().extract3x3Matrix(m3);
+						vec3 = (m3 * vec3).normalisedCopy();
+					}
 					_writeRawConstant(i->physicalIndex, 
-						source->getInverseWorldMatrix().transformAffine(
-						source->getLightAs4DVector(i->data)), 
+						Vector4(vec3.x, vec3.y, vec3.z, vec4.w),
 						i->elementCount);
 					break;
 				case ACT_LIGHT_DIRECTION_OBJECT_SPACE:
@@ -1847,11 +1892,26 @@ namespace Ogre
 					_writeRawConstant(i->physicalIndex, vec3.length());
 					break;
 				case ACT_LIGHT_POSITION_OBJECT_SPACE_ARRAY:
+					// We need the inverse of the inverse transpose 
+					source->getInverseTransposeWorldMatrix().inverse().extract3x3Matrix(m3);
 					for (size_t l = 0; l < i->data; ++l)
+					{
+						vec4 = source->getLightAs4DVector(l);
+						vec3 = Vector3(vec4.x, vec4.y, vec4.z);
+						if( vec4.w > 0.0f )
+						{
+							// point light
+							vec3 = source->getInverseWorldMatrix().transformAffine(vec3);
+						}
+						else
+						{
+							// directional light
+							vec3 = (m3 * vec3).normalisedCopy();
+						}
 						_writeRawConstant(i->physicalIndex + l*i->elementCount, 
-						source->getInverseWorldMatrix().transformAffine(
-						source->getLightAs4DVector(l)), 
-						i->elementCount);
+							Vector4(vec3.x, vec3.y, vec3.z, vec4.w),
+							i->elementCount);
+					}
 					break;
 
 				case ACT_LIGHT_DIRECTION_OBJECT_SPACE_ARRAY:

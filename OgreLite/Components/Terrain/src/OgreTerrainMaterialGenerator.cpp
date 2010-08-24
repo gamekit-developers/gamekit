@@ -128,9 +128,10 @@ namespace Ogre
 
 		// update
 		mCompositeMapPlane->setMaterialName(0, mat->getName());
-		mCompositeMapLight->setDirection(TerrainGlobalOptions::getLightMapDirection());
-		mCompositeMapLight->setDiffuseColour(TerrainGlobalOptions::getCompositeMapDiffuse());
-		mCompositeMapSM->setAmbientLight(TerrainGlobalOptions::getCompositeMapAmbient());
+		TerrainGlobalOptions& globalopts = TerrainGlobalOptions::getSingleton();
+		mCompositeMapLight->setDirection(globalopts.getLightMapDirection());
+		mCompositeMapLight->setDiffuseColour(globalopts.getCompositeMapDiffuse());
+		mCompositeMapSM->setAmbientLight(globalopts.getCompositeMapAmbient());
 
 
 		// check for size change (allow smaller to be reused)
@@ -160,11 +161,8 @@ namespace Ogre
 		Real vptop = (Real)rect.top / (Real)size;
 		Real vpright = (Real)rect.right / (Real)size;
 		Real vpbottom = (Real)rect.bottom / (Real)size;
-		Real vpwidth = (Real)rect.width()/ (Real)size;
-		Real vpheight = (Real)rect.height() / (Real)size;
 
 		RenderTarget* rtt = mCompositeMapRTT->getBuffer()->getRenderTarget();
-		Viewport* vp = rtt->getViewport(0);
 		mCompositeMapCam->setWindow(vpleft, vptop, vpright, vpbottom);
 
 		rtt->update();

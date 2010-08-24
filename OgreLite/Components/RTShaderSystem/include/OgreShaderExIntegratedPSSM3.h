@@ -25,14 +25,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
-#ifdef RTSHADER_SYSTEM_BUILD_EXT_SHADERS
 #ifndef _ShaderExIntegratedPSSM3_
 #define _ShaderExIntegratedPSSM3_
 
-#include "OgreRTShaderSystem.h"
+#include "OgreShaderPrerequisites.h"
+#ifdef RTSHADER_SYSTEM_BUILD_EXT_SHADERS
 #include "OgreVector4.h"
 #include "OgreLight.h"
 #include "OgreCommon.h"
+#include "OgreShaderSubRenderState.h"
+#include "OgreShaderParameter.h"
 
 namespace Ogre {
 namespace RTShader {
@@ -66,11 +68,6 @@ public:
 	@see SubRenderState::getType.
 	*/
 	virtual int				getExecutionOrder		() const;
-
-	/** 
-	@see SubRenderState::getHashCode.
-	*/
-	virtual uint32			getHashCode				();
 
 	/** 
 	@see SubRenderState::updateGpuProgramsParams.
@@ -108,9 +105,9 @@ protected:
 	{					
 		Real				mMaxRange;				// The max range of this shadow texture in terms of PSSM (far plane of viewing camera).
 		unsigned int		mTextureSamplerIndex;	// The shadow map sampler index.
-		ParameterPtr		mTextureSampler;		// The shadow map sampler.			
-		ParameterPtr		mInvTextureSize;		// The inverse texture 
-		ParameterPtr		mWorldViewProjMatrix;	// The source light view projection matrix combined with world matrix.		
+		UniformParameterPtr	mTextureSampler;		// The shadow map sampler.			
+		UniformParameterPtr	mInvTextureSize;		// The inverse texture 
+		UniformParameterPtr	mWorldViewProjMatrix;	// The source light view projection matrix combined with world matrix.		
 		ParameterPtr		mVSOutLightPosition;	// The vertex shader output position in light space.
 		ParameterPtr		mPSInLightPosition;		// The pixel shader input position in light space.
 
@@ -157,7 +154,7 @@ protected:
 	// Attributes.
 protected:		
 	ShadowTextureParamsList		mShadowTextureParamsList;		// Shadow texture parameter list.	
-	ParameterPtr				mPSSplitPoints;					// Split points parameter.
+	UniformParameterPtr			mPSSplitPoints;					// Split points parameter.
 	ParameterPtr				mVSInPos;						// Vertex shader input position parameter.	
 	ParameterPtr				mVSOutPos;						// Vertex shader output position (clip space) parameter.
 	ParameterPtr				mVSOutDepth;					// Vertex shader output depth (clip space) parameter.
@@ -166,7 +163,7 @@ protected:
 	ParameterPtr				mPSDiffuse;						// Pixel shader in/local diffuse colour parameter.
 	ParameterPtr				mPSOutDiffuse;					// Pixel shader output diffuse colour parameter.
 	ParameterPtr				mPSSpecualr;					// Pixel shader in/local specular colour parameter.
-	ParameterPtr				mPSDerivedSceneColour;			// Derived scene colour (ambient term).
+	UniformParameterPtr			mPSDerivedSceneColour;			// Derived scene colour (ambient term).
 
 };
 

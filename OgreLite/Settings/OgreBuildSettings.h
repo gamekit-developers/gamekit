@@ -2,8 +2,6 @@
 #define __Custom_Config_H_
 
 #define OGRE_STATIC_LIB
-
-/// XXX FIX-THIS -> Charlie C
 #define OGRE_CONFIG_LITTLE_ENDIAN
 
 /// OgreKit default settings

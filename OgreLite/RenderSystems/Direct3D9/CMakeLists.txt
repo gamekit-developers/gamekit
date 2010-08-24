@@ -67,6 +67,11 @@ set (SOURCE_FILES
   src/OgreD3D9VideoModeList.cpp
 )
 
+if (MINGW)
+  list(APPEND HEADER_FILES ${OGRE_SOURCE_DIR}/OgreMain/include/WIN32/OgreMinGWSupport.h)
+  list(APPEND SOURCE_FILES ${OGRE_SOURCE_DIR}/OgreMain/src/WIN32/OgreMinGWSupport.cpp)
+endif ()
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include ${DirectX_INCLUDE_DIR})
 link_directories(${DirectX_LIBRARY_DIR})
 add_definitions(-D_USRDLL)
@@ -87,6 +92,4 @@ if (OGRE_CONFIG_THREADS)
 endif ()
 
 ogre_config_plugin(RenderSystem_Direct3D9)
-if (OGRE_INSTALL_PLUGINS_HEADERS)
-  install(FILES ${HEADER_FILES} DESTINATION include/OGRE/RenderSystems/Direct3D9)
-endif ()
+install(FILES ${HEADER_FILES} DESTINATION include/OGRE/RenderSystems/Direct3D9)

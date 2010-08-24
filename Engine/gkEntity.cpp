@@ -377,9 +377,9 @@ void gkEntityMeshLoader::loadMaterial(gkSubMesh *mesh)
 
 	if (gma.m_mode & gkMaterialProperties::MA_ALPHABLEND)
 	{
-		pass->setAlphaRejectSettings(Ogre::CMPF_GREATER, 150);
 		pass->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
-		pass->setDepthWriteEnabled((gma.m_mode & gkMaterialProperties::MA_DEPTHWRITE) != 0);
+		pass->setAlphaRejectSettings(Ogre::CMPF_GREATER_EQUAL, 150);
+		pass->setDepthWriteEnabled(false);
 	}
 }
 

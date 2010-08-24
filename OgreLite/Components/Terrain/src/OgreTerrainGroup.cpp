@@ -42,6 +42,7 @@ namespace Ogre
 		, mAlignment(align)
 		, mTerrainSize(terrainSize)
 		, mTerrainWorldSize(terrainWorldSize)
+		, mOrigin(Vector3::ZERO)
 		, mFilenamePrefix("terrain")
 		, mFilenameExtension("dat")
 		, mResourceGroup(ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME)
@@ -321,7 +322,7 @@ namespace Ogre
 	{
 		for (TerrainSlotMap::iterator i = mTerrainSlots.begin(); i != mTerrainSlots.end(); ++i)
 		{
-			delete i->second;
+			OGRE_DELETE i->second;
 		}
 		mTerrainSlots.clear();
 		// Also clear buffer pools, if we're clearing completely may not be representative
@@ -377,7 +378,6 @@ namespace Ogre
 		long curr_x, curr_z;
 		convertWorldPositionToTerrainSlot(ray.getOrigin(), &curr_x, &curr_z);
 		TerrainSlot* slot = getTerrainSlot(curr_x, curr_z);
-		Real dist = 0;
 		RayResult result(false, 0, Vector3::ZERO);
 
 		Vector3 tmp, localRayDir, centreOrigin, offset;
@@ -430,7 +430,7 @@ namespace Ogre
 			if (Math::RealEqual(inc.x, 0.0f) && Math::RealEqual(inc.z, 0.0f))
 				keepSearching = false;
 
-			while (!slot && keepSearching)
+            while ( (!slot || !slot->instance) && keepSearching)
 			{
 				++numGaps;
 				/// if we don't find any filled slot in 6 traversals, give up
@@ -579,7 +579,7 @@ namespace Ogre
 		if (lreq.origin != this)
 			return false;
 		else
-			return true;
+			return RequestHandler::canHandleRequest(req, srcQ);
 
 	}
 	//---------------------------------------------------------------------

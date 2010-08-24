@@ -48,7 +48,6 @@ namespace Ogre {
     }
 	String ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME = "General";
 	String ResourceGroupManager::INTERNAL_RESOURCE_GROUP_NAME = "Internal";
-	String ResourceGroupManager::BOOTSTRAP_RESOURCE_GROUP_NAME = "Bootstrap";
 	String ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME = "Autodetect";
 	// A reference count of 3 means that only RGM and RM have references
 	// RGM has one (this one) and RM has 2 (by name and by handle)
@@ -221,6 +220,8 @@ namespace Ogre {
 
 					fireResourcePrepareEnded();
 
+					++n;
+
 					// Did the resource change group? if so, our iterator will have
 					// been invalidated
 					if (res->getGroup() != name)
@@ -231,7 +232,6 @@ namespace Ogre {
 					else
 					{
 						++l;
-						++n;
 					}
 				}
 			}
@@ -317,6 +317,8 @@ namespace Ogre {
 
 					fireResourceLoadEnded();
 
+					++n;
+
 					// Did the resource change group? if so, our iterator will have
 					// been invalidated
 					if (res->getGroup() != name)
@@ -327,7 +329,6 @@ namespace Ogre {
 					else
 					{
 						++l;
-						++n;
 					}
 				}
 			}
@@ -1176,31 +1177,39 @@ namespace Ogre {
 	void ResourceGroupManager::_notifyResourceGroupChanged(const String& oldGroup, 
 		Resource* res)
 	{
-		OGRE_LOCK_AUTO_MUTEX
+		ResourcePtr resPtr;
 	
-		// New group
-		ResourceGroup* newGrp = getResourceGroup(res->getGroup());
 		// find old entry
-		ResourceGroupMap::iterator grpi = mResourceGroupMap.find(oldGroup);
+		ResourceGroup* grp = getResourceGroup(oldGroup);
 
-		assert(grpi != mResourceGroupMap.end());
-		ResourceGroup* grp = grpi->second;
-		Real order = res->getCreator()->getLoadingOrder();
-		ResourceGroup::LoadResourceOrderMap::iterator i = 
-			grp->loadResourceOrderMap.find(order);
-		assert(i != grp->loadResourceOrderMap.end());
-		LoadUnloadResourceList* loadList = i->second;
-		for (LoadUnloadResourceList::iterator l = loadList->begin(); 
-			l != loadList->end(); ++l)
+		if (grp)
 		{
-			if ((*l).getPointer() == res)
+			OGRE_LOCK_MUTEX(grp->OGRE_AUTO_MUTEX_NAME) // lock group mutex
+
+			Real order = res->getCreator()->getLoadingOrder();
+			ResourceGroup::LoadResourceOrderMap::iterator i = 
+				grp->loadResourceOrderMap.find(order);
+			assert(i != grp->loadResourceOrderMap.end());
+			LoadUnloadResourceList* loadList = i->second;
+			for (LoadUnloadResourceList::iterator l = loadList->begin(); 
+				l != loadList->end(); ++l)
 			{
-				addCreatedResource(*l, *newGrp);
-				loadList->erase(l);
-				break;
+				if ((*l).getPointer() == res)
+				{
+					resPtr = *l;
+					loadList->erase(l);
+					break;
+				}
 			}
 		}
 
+		if (!resPtr.isNull())
+		{
+			// New group
+			ResourceGroup* newGrp = getResourceGroup(res->getGroup());
+
+			addCreatedResource(resPtr, *newGrp);
+		}
 	}
 	//-----------------------------------------------------------------------
 	void ResourceGroupManager::_notifyAllResourcesRemoved(ResourceManager* manager)

@@ -34,7 +34,7 @@ THE SOFTWARE.
 
 namespace Ogre 
 {
-	class D3D9RenderWindow : public RenderWindow
+	class _OgreD3D9Export D3D9RenderWindow : public RenderWindow
 	{
 	public:
 		/** Constructor.
@@ -104,6 +104,9 @@ namespace Ogre
 		/** Validate the device for this window. */
 		bool _validateDevice();
 
+		void adjustWindow(unsigned int clientWidth, unsigned int clientHeight, 
+			unsigned int* winWidth, unsigned int* winHeight);
+
 	protected:
 		HINSTANCE					mInstance;				// Process instance
 		D3D9Device* 				mDevice;				// D3D9 device wrapper class.
@@ -118,6 +121,11 @@ namespace Ogre
 		bool						mVSync;					// Use vertical sync or not.
 		unsigned int				mVSyncInterval;		
 		bool						mUseNVPerfHUD;			// Use NV Perf HUD.
+
+		// Desired width / height after resizing
+		unsigned int mDesiredWidth;
+		unsigned int mDesiredHeight;
+
 
 		void updateWindowRect();
 	};

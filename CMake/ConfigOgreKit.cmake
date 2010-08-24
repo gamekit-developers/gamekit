@@ -247,7 +247,7 @@ macro(configure_rendersystem)
 	        
 	endif()
 	
-	if (OGREKIT_BUILD_D3D10RS)
+	if (OGREKIT_BUILD_D3D10RS AND DirectX_D3D10_FOUND)
 		add_definitions(-DOGREKIT_D3D10RS)
 	    
 		include_directories(
@@ -256,12 +256,12 @@ macro(configure_rendersystem)
 	    
 		link_libraries(
 			${OGREKIT_D3D10_LIBS} 
-			${DirectX_D3D10_LIBRARY}
+			${DirectX_D3D10_LIBRARIES}
 		)
 	        
 	endif()
 
-	if (OGREKIT_BUILD_D3D11RS)
+	if (OGREKIT_BUILD_D3D11RS AND DirectX_D3D11_FOUND)
 		add_definitions(-DOGREKIT_D3D11RS)
 	    
 		include_directories(
@@ -270,7 +270,7 @@ macro(configure_rendersystem)
 	    
 		link_libraries(
 			${OGREKIT_D3D11_LIBS} 
-			${DirectX_D3D11_LIBRARY}
+			${DirectX_D3D10_LIBRARIES}
 		)
 
 	endif()

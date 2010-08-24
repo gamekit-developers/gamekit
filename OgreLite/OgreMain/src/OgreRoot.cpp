@@ -227,6 +227,10 @@ namespace Ogre {
         mZipArchiveFactory = OGRE_NEW ZipArchiveFactory();
         ArchiveManager::getSingleton().addArchiveFactory( mZipArchiveFactory );
 #endif
+#if OGRE_NO_DDS_CODEC == 0
+		// Register image codecs
+		DDSCodec::startup();
+#endif
 #if OGRE_NO_FREEIMAGE == 0
 		// Register image codecs
 		FreeImageCodec::startup();
@@ -234,10 +238,6 @@ namespace Ogre {
 #if OGRE_NO_DEVIL == 0
 	    // Register image codecs
 	    ILCodecs::registerCodecs();
-#endif
-#if OGRE_NO_DDS_CODEC == 0
-		// Register image codecs
-		DDSCodec::startup();
 #endif
 #if OGRE_NO_PVRTC_CODEC == 0
         PVRTCCodec::startup();
@@ -425,15 +425,28 @@ namespace Ogre {
         }
         else
         {
+            std::ifstream configFp;
+
             // This might be the first run because there is no config file in the
             // Documents directory.  It could also mean that a config file isn't being used at all
-            // Check to see if one was included in the app bundle
-            std::ifstream configFp;
+            
+            // Try the path passed into initialise
             configFp.open(mConfigFileName.c_str(), std::ios::in);
 
-            // If we can't open this file then we have no config file at all to work with
+            // If we can't open this file then we have no default config file to work with
+            // Use the documents dir then. 
             if(!configFp.is_open())
-                mConfigFileName.clear();
+            {
+                // Check to see if one was included in the app bundle
+                mConfigFileName = macBundlePath() + "/ogre.cfg";
+
+                configFp.open(mConfigFileName.c_str(), std::ios::in);
+
+                // If we can't open this file then we have no default config file to work with
+                // Use the Documents dir then. 
+                if(!configFp.is_open())
+                    mConfigFileName = configFileName;
+            }
 
             configFp.close();
         }
@@ -492,6 +505,10 @@ namespace Ogre {
             // Unrecognised render system
             return false;
         }
+
+		String err = rs->validateConfigOptions();
+		if (err.length() > 0)
+			return false;
 
         setRenderSystem(rs);
 

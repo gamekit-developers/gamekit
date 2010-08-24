@@ -28,17 +28,11 @@ THE SOFTWARE.
 #include "OgreStableHeaders.h"
 // NOTE THAT THIS FILE IS BASED ON MATERIAL FROM:
 
-// Magic Software, Inc.
-// http://www.geometrictools.com
-// Copyright (c) 2000, All Rights Reserved
-//
-// Source code from Magic Software is supplied under the terms of a license
-// agreement and may not be copied or disclosed except in accordance with the
-// terms of that agreement.  The various license agreements may be found at
-// the Magic Software web site.  This file is subject to the license
-//
-// FREE SOURCE CODE
-// http://www.geometrictools.com/License/WildMagic3License.pdf
+// Geometric Tools, LLC
+// Copyright (c) 1998-2010
+// Distributed under the Boost Software License, Version 1.0.
+// http://www.boost.org/LICENSE_1_0.txt
+// http://www.geometrictools.com/License/Boost/LICENSE_1_0.txt
 
 #include "OgreQuaternion.h"
 
@@ -95,9 +89,9 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     void Quaternion::ToRotationMatrix (Matrix3& kRot) const
     {
-        Real fTx  = 2.0f*x;
-        Real fTy  = 2.0f*y;
-        Real fTz  = 2.0f*z;
+        Real fTx  = x+x;
+        Real fTy  = y+y;
+        Real fTz  = z+z;
         Real fTwx = fTx*w;
         Real fTwy = fTy*w;
         Real fTwz = fTz*w;

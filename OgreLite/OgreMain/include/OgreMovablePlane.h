@@ -25,11 +25,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
-// Original free version by:
-// Magic Software, Inc.
-// http://www.geometrictools.com/
-// Copyright (c) 2000, All Rights Reserved
-
 #ifndef __MovablePlane_H__
 #define __MovablePlane_H__
 
@@ -79,7 +74,7 @@ namespace Ogre {
         /// Overridden from MovableObject
         const AxisAlignedBox& getBoundingBox(void) const { return mNullBB; }
         /// Overridden from MovableObject
-        Real getBoundingRadius(void) const { return Math::POS_INFINITY; }
+        Real getBoundingRadius(void) const { return 0.0f; }
         /// Overridden from MovableObject
         void _updateRenderQueue(RenderQueue*) { /* do nothing */}
         /// Overridden from MovableObject

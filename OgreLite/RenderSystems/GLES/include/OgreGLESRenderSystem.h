@@ -111,8 +111,19 @@ namespace Ogre {
               */
             GLESRTTManager *mRTTManager;
 
+            /** These variables are used for caching RenderSystem state.
+                They are cached because OpenGL state changes can be quite expensive,
+                which is especially important on mobile or embedded systems.
+             */
+            ushort mActiveTextureUnit;
+
             /// Check if the GL system has already been initialised
             bool mGLInitialised;
+        
+            /** OpenGL ES doesn't support setting the PolygonMode like desktop GL
+                So we will cache the value and set it manually
+             */
+            GLenum mPolygonMode;
 
             GLuint getCombinedMinMipFilter(void) const;
 
@@ -124,6 +135,8 @@ namespace Ogre {
             /// Internal method to set pos / direction of a light
             void setGLLightPositionDirection(Light* lt, GLenum lightindex);
             void setLights();
+
+            bool activateGLTextureUnit(size_t unit);
 
         public:
             // Default constructor / destructor
@@ -413,7 +426,7 @@ namespace Ogre {
             void setClipPlanesImpl(const Ogre::PlaneList& planeList);
 
             // ----------------------------------
-            // GLRenderSystem specific members
+            // GLESRenderSystem specific members
             // ----------------------------------
             /** Returns the main context */
             GLESContext* _getMainContext() { return mMainContext; }
@@ -454,6 +467,8 @@ namespace Ogre {
 			void _setAlphaRejectSettings( CompareFunction func, unsigned char value, bool alphaToCoverage );
 			/// @copydoc RenderSystem::getDisplayMonitorCount
 			unsigned int getDisplayMonitorCount() const;
+
+            GLenum _getPolygonMode(void) { return mPolygonMode; }
 
             /// Internal method for anisotropy validation
             GLfloat _getCurrentAnisotropy(size_t unit);

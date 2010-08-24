@@ -55,52 +55,37 @@ ProgramProcessor::~ProgramProcessor()
 void ProgramProcessor::bindAutoParameters(Program* pCpuProgram, GpuProgramPtr pGpuProgram)
 {
 	GpuProgramParametersSharedPtr pGpuParams = pGpuProgram->getDefaultParameters();
-	const ShaderParameterList& progParams = pCpuProgram->getParameters();
-	ShaderParameterConstIterator itParams;
+	const UniformParameterList& progParams = pCpuProgram->getParameters();
+	UniformParameterConstIterator itParams;
 
-	// Bind auto parameters.
 	for (itParams=progParams.begin(); itParams != progParams.end(); ++itParams)
 	{
-		const ParameterPtr pCurParam = *itParams;
+		const UniformParameterPtr pCurParam = *itParams;
 		const GpuConstantDefinition* gpuConstDef = pGpuParams->_findNamedConstantDefinition(pCurParam->getName());
-
-
-		if (pCurParam->isAutoConstantParameter())
+	
+		if (gpuConstDef != NULL)
 		{
-			if (pCurParam->isAutoConstantRealParameter())
+			// Handle auto parameters.
+			if (pCurParam->isAutoConstantParameter())
 			{
-				if (gpuConstDef != NULL)
-				{
+				if (pCurParam->isAutoConstantRealParameter())
+				{					
 					pGpuParams->setNamedAutoConstantReal(pCurParam->getName(), 
 						pCurParam->getAutoConstantType(), 
 						pCurParam->getAutoConstantRealData());
-				}	
-				else
-				{
-					LogManager::getSingleton().stream() << "ProgramProcessor::bindAutoParameters: Can not bind auto param named " << 
-						pCurParam->getName() << " to program named " << pGpuProgram->getName();
+										
 				}
-			}
-			else if (pCurParam->isAutoConstantIntParameter())
-			{
-				if (gpuConstDef != NULL)
-				{
+				else if (pCurParam->isAutoConstantIntParameter())
+				{					
 					pGpuParams->setNamedAutoConstant(pCurParam->getName(), 
 						pCurParam->getAutoConstantType(), 
-						pCurParam->getAutoConstantIntData());
-				}
-				else
-				{
-					LogManager::getSingleton().stream() << "ProgramProcessor::bindAutoParameters: Can not bind auto param named " << 
-						pCurParam->getName() << " to program named " << pGpuProgram->getName();
-				}
-			}						
-		}
-		else
-		{
-			// No auto constant - we have to update its variability ourself.
-			if (gpuConstDef != NULL)
-			{
+						pCurParam->getAutoConstantIntData());									
+				}						
+			}
+
+			// Case this is not auto constant - we have to update its variability ourself.
+			else
+			{							
 				gpuConstDef->variability |= pCurParam->getVariability();
 
 				// Update variability in the float map.
@@ -118,9 +103,9 @@ void ProgramProcessor::bindAutoParameters(Program* pCpuProgram, GpuProgramPtr pG
 							}
 						}
 					}
-				}							
-			}
-		}
+				}											
+			}		
+		}			
 	}
 }
 
@@ -256,13 +241,35 @@ void ProgramProcessor::buildTexcoordTable(const ShaderParameterList& paramList, 
 			case GCT_FLOAT4:
 				outParamsTable[3].push_back(curParam);
 				break;
+            case GCT_SAMPLER1D:
+            case GCT_SAMPLER2D:
+            case GCT_SAMPLER3D:
+            case GCT_SAMPLERCUBE:
+            case GCT_SAMPLER1DSHADOW:
+            case GCT_SAMPLER2DSHADOW:
+            case GCT_MATRIX_2X2:
+            case GCT_MATRIX_2X3:
+            case GCT_MATRIX_2X4:
+            case GCT_MATRIX_3X2:
+            case GCT_MATRIX_3X3:
+            case GCT_MATRIX_3X4:
+            case GCT_MATRIX_4X2:
+            case GCT_MATRIX_4X3:
+            case GCT_MATRIX_4X4:
+            case GCT_INT1:
+            case GCT_INT2:
+            case GCT_INT3:
+            case GCT_INT4:
+            case GCT_UNKNOWN:
+            default:
+                break;
 			}
 		}
 	}
 }
 
 //-----------------------------------------------------------------------------
-void ProgramProcessor:: mergeParameters(ShaderParameterList paramsTable[4], MergeParameterList& mergedParams, 
+void ProgramProcessor::mergeParameters(ShaderParameterList paramsTable[4], MergeParameterList& mergedParams, 
 									  ShaderParameterList& splitParams)
 {
 	// Merge using the predefined combinations.
@@ -994,7 +1001,7 @@ int ProgramProcessor::MergeParameter::getUsedFloatCount()
 //-----------------------------------------------------------------------------
 void ProgramProcessor::MergeParameter::createDestinationParameter(int usage, int index)
 {
-	GpuConstantType dstParamType;
+	GpuConstantType dstParamType = GCT_UNKNOWN;
 
 	switch (getUsedFloatCount())
 	{

@@ -44,7 +44,7 @@ set (HEADER_FILES
   include/OgreBlendMode.h
   include/OgreBone.h
   include/OgreBorderPanelOverlayElement.h
-  ${OGRELITE_SOURCE_DIR}/Settings/OgreBuildSettings.h
+  ${OGRE_SOURCE_DIR}/Settings/OgreBuildSettings.h
   include/OgreCamera.h
   include/OgreCodec.h
   include/OgreColourValue.h
@@ -66,7 +66,6 @@ set (HEADER_FILES
   include/OgreConvexBody.h
   include/OgreCustomCompositionPass.h
   include/OgreDataStream.h
-  include/OgreDDSCodec.h
   include/OgreDefaultHardwareBufferManager.h
   include/OgreDistanceLodStrategy.h
   include/OgreDynLib.h
@@ -82,7 +81,6 @@ set (HEADER_FILES
   include/OgreFont.h
   include/OgreFontManager.h
   include/OgreFrameListener.h
-  include/OgreFreeImageCodec.h
   include/OgreFrustum.h
   include/OgreGpuProgram.h
   include/OgreGpuProgramManager.h
@@ -170,7 +168,6 @@ set (HEADER_FILES
   include/OgrePrerequisites.h
   include/OgreProfiler.h
   include/OgreProgressiveMesh.h
-  include/OgrePVRTCCodec.h
   include/OgreQuaternion.h
   include/OgreRadixSort.h
   include/OgreRay.h
@@ -260,7 +257,6 @@ set (HEADER_FILES
   include/OgreWindowEventUtilities.h
   include/OgreWireBoundingBox.h
   include/OgreWorkQueue.h
-  include/OgreZip.h
 )
 
 set (SOURCE_FILES
@@ -293,7 +289,6 @@ set (SOURCE_FILES
   src/OgreControllerManager.cpp
   src/OgreConvexBody.cpp
   src/OgreDataStream.cpp
-  src/OgreDDSCodec.cpp
   src/OgreDefaultHardwareBufferManager.cpp
   src/OgreDefaultSceneQueries.cpp
   src/OgreDistanceLodStrategy.cpp
@@ -307,7 +302,6 @@ set (SOURCE_FILES
   src/OgreFileSystem.cpp
   src/OgreFont.cpp
   src/OgreFontManager.cpp
-  src/OgreFreeImageCodec.cpp
   src/OgreFrustum.cpp
   src/OgreGpuProgram.cpp
   src/OgreGpuProgramManager.cpp
@@ -369,8 +363,8 @@ set (SOURCE_FILES
   src/OgrePass.cpp
   src/OgrePatchMesh.cpp
   src/OgrePatchSurface.cpp
-  src/OgrePixelCountLodStrategy.cpp
   src/OgrePixelConversions.h
+  src/OgrePixelCountLodStrategy.cpp
   src/OgrePixelFormat.cpp
   src/OgrePlane.cpp
   src/OgrePlatformInformation.cpp
@@ -381,7 +375,6 @@ set (SOURCE_FILES
   src/OgrePrefabFactory.cpp
   src/OgreProfiler.cpp
   src/OgreProgressiveMesh.cpp
-  src/OgrePVRTCCodec.cpp
   src/OgreQuaternion.cpp
   src/OgreRectangle2D.cpp
   src/OgreRenderQueue.cpp
@@ -442,6 +435,7 @@ set (SOURCE_FILES
   src/OgreTextureUnitState.cpp
   src/OgreUnifiedHighLevelGpuProgram.cpp
   src/OgreUserObjectBindings.cpp
+  src/OgreUTFString.cpp
   src/OgreVector2.cpp
   src/OgreVector3.cpp
   src/OgreVector4.cpp
@@ -450,7 +444,6 @@ set (SOURCE_FILES
   src/OgreWindowEventUtilities.cpp
   src/OgreWireBoundingBox.cpp
   src/OgreWorkQueue.cpp
-  src/OgreZip.cpp
 )
 
 # Add platform specific files
@@ -460,12 +453,13 @@ if (WIN32)
     include/WIN32/OgreConfigDialogImp.h
     include/WIN32/OgreErrorDialogImp.h
     include/WIN32/OgreTimerImp.h
+    include/WIN32/OgreMinGWSupport.h
   )
   set(PLATFORM_SOURCE_FILES
-    src/WIN32/resource.h
     src/WIN32/OgreConfigDialog.cpp
     src/WIN32/OgreErrorDialog.cpp
     src/WIN32/OgreTimer.cpp
+    src/WIN32/resource.h
     src/WIN32/OgreWin32Resources.rc
     src/WIN32/winres.h
   )  
@@ -475,7 +469,26 @@ if (WIN32)
     src/WIN32/winres.h
   )
   source_group(Resources FILES ${RESOURCE_FILES})
-  set(PLATFORM_HEADER_INSTALL "win32")
+  set(PLATFORM_HEADER_INSTALL "WIN32")
+ 
+  if (MINGW) 
+    # There's a bug in CMake which makes it ignore resource files with Mingw
+    # This is a manual fix for the moment.
+    get_filename_component(OGRE_MINGW_PATH ${CMAKE_CXX_COMPILER} PATH)
+    #set(OGRE_MINGW_RC ${OGRE_MINGW_PATH}/windres.exe)
+	file(GLOB OGRE_MINGW_RC_NAMES "${OGRE_MINGW_PATH}/*windres*")
+	find_program(OGRE_MINGW_RC NAMES ${OGRE_MINGW_RC_NAMES} HINTS ${OGRE_MINGW_PATH} DOC "Path to MinGW resource compiler")
+	if (NOT OGRE_MINGW_RC)
+	  message(SEND_ERROR "Could not find MinGW resource compiler. Please specify path in OGRE_MINGW_RC.")
+	endif ()
+	mark_as_advanced(OGRE_MINGW_RC)
+	add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/OgreWin32Resources.rc.obj
+	  COMMAND ${OGRE_MINGW_RC} -I${CMAKE_CURRENT_SOURCE_DIR}/src/WIN32 
+	                           -i${CMAKE_CURRENT_SOURCE_DIR}/src/WIN32/OgreWin32Resources.rc
+							   -o${CMAKE_CURRENT_BINARY_DIR}/OgreWin32Resources.rc.obj
+      DEPENDS ${RESOURCE_FILES})
+	list(APPEND PLATFORM_SOURCE_FILES ${CMAKE_CURRENT_BINARY_DIR}/OgreWin32Resources.rc.obj)		
+  endif ()
 
 elseif (APPLE)
   if (OGRE_BUILD_PLATFORM_IPHONE)
@@ -501,8 +514,7 @@ elseif (APPLE)
       # Hack around a CMake bug.  The first item has its role set to Project instead of public.
       # including it twice works around the issue
       # In addition, include OgreZip.h because of a similar issue
-	  include/OSX/config.h
-	  include/OSX/config.h
+      include/OSX/macUtils.h
       include/OSX/macUtils.h
       include/OSX/OgreConfigDialogImp.h
       include/OSX/OgreErrorDialogImp.h
@@ -543,6 +555,12 @@ elseif (UNIX)
     src/OgreSearchOps.cpp
   )
   set(PLATFORM_LIBS ${X11_LIBRARIES} ${X11_Xt_LIB} ${XAW_LIBRARY} pthread)
+  # some platforms require explicit linking to libdl, see if it's available
+  find_library(DL_LIBRARY NAMES dl dlsym)
+  mark_as_advanced(DL_LIBRARY)
+  if (DL_LIBRARY)
+    list(APPEND PLATFORM_LIBS dl)
+  endif ()
   set(PLATFORM_HEADER_INSTALL "GLX")
 
 endif(WIN32)
@@ -597,9 +615,6 @@ add_definitions(-DOGRE_NONCLIENT_BUILD -DFREEIMAGE_LIB -D_MT -D_USRDLL)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/nedmalloc)
 
 set(LIBRARIES
-  ${OGREKIT_ZLIB_TARGET}
-  ${OGREKIT_ZZIP_TARGET}
-  ${OGREKIT_FREEIMAGE_TARGET}
   ${OGREKIT_FREETYPE_TARGET}
   ${PLATFORM_LIBS}
 )
@@ -608,35 +623,33 @@ if (OGRE_CONFIG_THREADS)
   list(APPEND LIBRARIES ${OGRE_THREAD_LIBRARIES})
 endif ()
 
-if (OGRE_CONFIG_DISABLE_FREEIMAGE)
-  list(REMOVE_ITEM HEADER_FILES include/OgreFreeImageCodec.h)
-  list(REMOVE_ITEM SOURCE_FILES src/OgreFreeImageCodec.cpp)
-  list(REMOVE_ITEM LIBRARIES    "${FreeImage_LIBRARIES}")
+if (OGRE_CONFIG_ENABLE_FREEIMAGE)
+  list(APPEND HEADER_FILES include/OgreFreeImageCodec.h)
+  list(APPEND SOURCE_FILES src/OgreFreeImageCodec.cpp)
+  list(APPEND LIBRARIES    "${OGREKIT_FREEIMAGE_TARGET}")
 endif()
 
-if (OGRE_CONFIG_DISABLE_DDS)
-  list(REMOVE_ITEM HEADER_FILES include/OgreDDSCodec.h)
-  list(REMOVE_ITEM SOURCE_FILES src/OgreDDSCodec.cpp)
+if (OGRE_CONFIG_ENABLE_DDS)
+  list(APPEND HEADER_FILES include/OgreDDSCodec.h)
+  list(APPEND SOURCE_FILES src/OgreDDSCodec.cpp)
 endif ()
 
-if (OGRE_CONFIG_DISABLE_PVRTC)
-  list(REMOVE_ITEM HEADER_FILES include/OgrePVRTCCodec.h)
-  list(REMOVE_ITEM SOURCE_FILES src/OgrePVRTCCodec.cpp)
+if (OGRE_CONFIG_ENABLE_PVRTC)
+  list(APPEND HEADER_FILES include/OgrePVRTCCodec.h)
+  list(APPEND SOURCE_FILES src/OgrePVRTCCodec.cpp)
 endif ()
 
-if (OGRE_CONFIG_DISABLE_ZIP)
-  list(REMOVE_ITEM HEADER_FILES include/OgreZip.h)
-  list(REMOVE_ITEM SOURCE_FILES src/OgreZip.cpp)
-  list(REMOVE_ITEM LIBRARIES "${ZZip_LIBRARIES}")
-  list(REMOVE_ITEM LIBRARIES "${ZLIB_LIBRARIES}")
+if (OGRE_CONFIG_ENABLE_ZIP)
+  list(APPEND HEADER_FILES include/OgreZip.h)
+  list(APPEND SOURCE_FILES src/OgreZip.cpp)
+  list(APPEND LIBRARIES "${OGREKIT_ZZIP_TARGET}")
+  list(APPEND LIBRARIES "${OGREKIT_ZLIB_TARGET}")
 endif ()
 
-set(HiddenCMakeLists ../CMakeLists.txt)
-source_group(ParentCMakeLists FILES ${HiddenCMakeLists})
 
 # setup OgreMain target
-add_library(OgreMain ${OGRE_LIB_TYPE} ${PREC_HEADER} ${HEADER_FILES} ${SOURCE_FILES} ${PLATFORM_HEADER_FILES} ${PLATFORM_SOURCE_FILES} ${THREAD_HEADER_FILES} ${THREAD_SOURCE_FILES} ${HiddenCMakeLists})
-set_target_properties(OgreMain PROPERTIES VERSION ${OGRE_VERSION} SOVERSION ${OGRE_VERSION_MAJOR})
+add_library(OgreMain ${OGRE_LIB_TYPE} ${PREC_HEADER} ${HEADER_FILES} ${SOURCE_FILES} ${PLATFORM_HEADER_FILES} ${PLATFORM_SOURCE_FILES} ${THREAD_HEADER_FILES} ${THREAD_SOURCE_FILES})
+
 if (APPLE)
   if (NOT OGRE_BUILD_PLATFORM_IPHONE)
     set_target_properties(OgreMain PROPERTIES FRAMEWORK TRUE)
@@ -645,22 +658,36 @@ if (APPLE)
        PROPERTIES BUILD_WITH_INSTALL_RPATH 1
        INSTALL_NAME_DIR "@executable_path/../Frameworks"
     )
-    set_target_properties(OgreMain PROPERTIES PUBLIC_HEADER "${HEADER_FILES} ${PLATFORM_HEADER_FILES} ${THREAD_HEADER_FILES}")
+    set_target_properties(OgreMain PROPERTIES PUBLIC_HEADER "${HEADER_FILES}")
 	set_target_properties(OgreMain PROPERTIES RESOURCE "${RESOURCE_FILES}")
 	set_source_files_properties("${RESOURCE_FILES}" PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+    set_target_properties(OgreMain PROPERTIES XCODE_ATTRIBUTE_GCC_PRECOMPILE_PREFIX_HEADER "YES")
+    set_target_properties(OgreMain PROPERTIES XCODE_ATTRIBUTE_GCC_PREFIX_HEADER "${OGRE_SOURCE_DIR}/OgreMain/include/OgreStableHeaders.h")
+    set_target_properties(OgreMain PROPERTIES XCODE_ATTRIBUTE_GCC_UNROLL_LOOPS "YES")
+    add_custom_command(TARGET OgreMain POST_BUILD
+      COMMAND mkdir ARGS -p ${OGRE_BINARY_DIR}/lib/$(CONFIGURATION)/Ogre.framework/Headers/Threading
+	  COMMAND /Developer/Library/PrivateFrameworks/DevToolsCore.framework/Resources/pbxcp ARGS -exclude .DS_Store -exclude CVS -exclude .svn -exclude 'CMakeLists.txt' -resolve-src-symlinks ${OGRE_SOURCE_DIR}/OgreMain/include/Threading/* ${OGRE_BINARY_DIR}/lib/$(CONFIGURATION)/Ogre.framework/Headers/Threading/
+      COMMAND mkdir ARGS -p ${OGRE_BINARY_DIR}/lib/$(CONFIGURATION)/Ogre.framework/Headers/OSX
+      COMMAND /Developer/Library/PrivateFrameworks/DevToolsCore.framework/Resources/pbxcp ARGS -exclude .DS_Store -exclude CVS -exclude .svn -exclude 'CMakeLists.txt' -resolve-src-symlinks ${OGRE_SOURCE_DIR}/OgreMain/include/OSX/*.h ${OGRE_BINARY_DIR}/lib/$(CONFIGURATION)/Ogre.framework/Headers/OSX/	
+	)
   else ()
     set_target_properties(OgreMain PROPERTIES INSTALL_NAME_DIR "OGRE")
     set_target_properties(OgreMain PROPERTIES XCODE_ATTRIBUTE_GCC_THUMB_SUPPORT "NO")
     set_target_properties(OgreMain PROPERTIES XCODE_ATTRIBUTE_GCC_UNROLL_LOOPS "YES")
     set_target_properties(OgreMain PROPERTIES XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "iPhone Developer")
     set_target_properties(OgreMain PROPERTIES XCODE_ATTRIBUTE_GCC_PRECOMPILE_PREFIX_HEADER "YES")
-    set_target_properties(OgreMain PROPERTIES XCODE_ATTRIBUTE_GCC_PREFIX_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/include/OgreStableHeaders.h")
   endif ()
 
   # Framework is called 'Ogre'
   set_target_properties(OgreMain PROPERTIES	OUTPUT_NAME Ogre)
 endif ()
+
 target_link_libraries(OgreMain ${LIBRARIES})
+
+if (MINGW)
+  # may need winsock htons functions for FreeImage
+  target_link_libraries(OgreMain ws2_32)
+endif ()
 
 # specify a precompiled header to use
 use_precompiled_header(OgreMain 
@@ -668,14 +695,3 @@ use_precompiled_header(OgreMain
   "${CMAKE_CURRENT_SOURCE_DIR}/src/OgrePrecompiledHeaders.cpp"
 )
 
-# install OgreMain
-ogre_config_lib(OgreMain)
-install(FILES ${HEADER_FILES}
-  DESTINATION include/OGRE
-)
-install(FILES ${PLATFORM_HEADER_FILES}
-  DESTINATION include/OGRE/${PLATFORM_HEADER_INSTALL}
-)
-install(FILES ${THREAD_HEADER_FILES}
-	DESTINATION include/OGRE/Threading
-)
