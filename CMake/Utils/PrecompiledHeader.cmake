@@ -11,19 +11,16 @@
 # Support macro to use a precompiled header
 # Usage:
 #   use_precompiled_header(TARGET HEADER_FILE SRC_FILE)
-#
-# PREC will contain the dependency that needs to be linked
-# to the project.
 ##################################################################
 
 macro(use_precompiled_header TARGET HEADER_FILE SRC_FILE)
   get_filename_component(HEADER ${HEADER_FILE} NAME)
 
   if (MSVC)
-    add_definitions(/Yu"${HEADER}")
+	add_definitions(/Yu"${HEADER}")
     set_source_files_properties(${SRC_FILE}
-      PROPERTIES COMPILE_FLAGS /Yc"${HEADER}"
-    )
+      PPROPERTIES COMPILE_FLAGS /Yc"${HEADER}"
+	)
     
   elseif (CMAKE_COMPILER_IS_GNUCXX)
     # disabled because it seems to increase compile time

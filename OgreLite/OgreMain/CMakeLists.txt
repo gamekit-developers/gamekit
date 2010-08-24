@@ -689,9 +689,21 @@ if (MINGW)
   target_link_libraries(OgreMain ws2_32)
 endif ()
 
+
 # specify a precompiled header to use
 use_precompiled_header(OgreMain 
   "${CMAKE_CURRENT_SOURCE_DIR}/include/OgreStableHeaders.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/OgrePrecompiledHeaders.cpp"
 )
 
+# install OgreMain
+ogre_config_lib(OgreMain TRUE)
+install(FILES ${HEADER_FILES}
+  DESTINATION include/OGRE
+)
+install(FILES ${PLATFORM_HEADER_FILES}
+  DESTINATION include/OGRE/${PLATFORM_HEADER_INSTALL}
+)
+install(FILES ${THREAD_HEADER_FILES}
+	DESTINATION include/OGRE/Threading
+)
