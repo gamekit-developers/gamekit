@@ -63,12 +63,19 @@ void gkSceneActuator::execute(void)
 			m_object->getOwner()->reload();
 			break;
 		case SC_SET_SCENE:
-//			Need to recover BlendFile and load scene if not loaded
-//			gkBlendLoader::getSingleton()
-//			//hum
-//			scene= gkSceneManager::getSingleton().getScene(m_sceneName);
-//			if(scene)
-//				gkEngine::getSingleton().setActiveScene(scene);
+			scene= gkSceneManager::getSingleton().getScene(m_sceneName);
+			if(scene && scene != m_object->getOwner())
+			{
+				// ensure its unloaded
+				scene->unload();
+				gkEngine &eng = gkEngine::getSingleton();
+
+				// Issue command to finish current 
+				eng.addLoadableCommand(m_object->getOwner(),  gkReloadableCmd::UNLOAD);
+
+				// Issue command to load this 
+				eng.addLoadableCommand(scene,                 gkReloadableCmd::LOAD);
+			}
 			break;
 		case SC_SET_CAMERA:
 			obj = m_object->getOwner()->getObject(m_camera);

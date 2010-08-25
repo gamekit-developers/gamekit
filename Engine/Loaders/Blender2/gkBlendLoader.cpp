@@ -27,62 +27,100 @@
 
 #include "gkBlendLoader.h"
 #include "gkBlendFile.h"
+#include "gkLogger.h"
 #include "gkUtils.h"
 #include "bBlenderFile.h"
 #include "Blender.h"
-#include "Utils/utStreams.h"
 
 
+// ----------------------------------------------------------------------------
 gkBlendLoader::gkBlendLoader()
+	:	m_activeFile(0)
 {
 }
 
 
+// ----------------------------------------------------------------------------
 gkBlendLoader::~gkBlendLoader()
 {
-	if (!m_openFiles.empty())
+	FileList::Iterator it = m_files.iterator();
+	while (it.hasMoreElements())
 	{
-		gkBlendFileIterator fit(m_openFiles);
-		while (fit.hasMoreElements())
-			delete fit.getNext();
-		m_openFiles.clear();
-
+		delete it.getNext();
 	}
 }
 
-gkBlendFile *gkBlendLoader::loadFile(const gkString &dblend, const gkString &inResourceGroup)
+
+// ----------------------------------------------------------------------------
+gkBlendFile *gkBlendLoader::getFileByName(const gkString &fname)
 {
-	// utFileStream fs;
-
-	// read to memory
-	utMemoryStream fs;
-	fs.open(dblend.c_str(), utStream::SM_READ);
-
-
-	gkBlendFile *fp = 0;
-
-	if (fs.isOpen())
+	FileList::Iterator it = m_files.iterator();
+	while (it.hasMoreElements())
 	{
-		// inflate or copy to membuf
-		utMemoryStream memBuf;
-		fs.inflate(memBuf);
+		gkBlendFile *fp = it.getNext();
 
-		// file is only open for the parse,
-		bParse::bBlenderFile *bfp = new bParse::bBlenderFile((char *)memBuf.ptr(), memBuf.size());
-
-		fp = new gkBlendFile(inResourceGroup);
-		if (!fp->parse(bfp))
-		{
-			delete bfp;
-			delete fp;
-
-			return 0;
-		}
-
-		delete bfp;
-		m_openFiles.push_back(fp);
+		if (fp->getName() == fname)
+			return fp;
 	}
-	return fp;
+
+	return 0;
 }
 
-GK_IMPLEMENT_SINGLETON(gkBlendLoader);
+
+// ----------------------------------------------------------------------------
+gkBlendFile *gkBlendLoader::loadAndCatch(const gkString &fname, int options, const gkString &inResourceGroup)
+{
+	m_activeFile = getFileByName(fname);
+	if (m_activeFile != 0)
+		return m_activeFile;
+
+
+	m_activeFile = new gkBlendFile(fname, inResourceGroup);
+
+	if (m_activeFile->parse(options))
+	{
+		m_files.push_back(m_activeFile);
+		return m_activeFile;
+	}
+	else
+	{
+		delete m_activeFile;
+		m_activeFile = m_files.empty() ? 0 : m_files.back();
+	}
+
+	return 0;
+}
+
+
+// ----------------------------------------------------------------------------
+gkBlendFile *gkBlendLoader::loadFile(const gkString &fname, int options, const gkString &inResourceGroup)
+{
+	bool resetLoad = false;
+	try {
+
+		return loadAndCatch(fname, options, inResourceGroup);
+	}
+	catch (Ogre::Exception &e)
+	{
+		gkLogMessage("BlendLoader: Ogre exception: " << e.getDescription());
+		resetLoad = true;
+	}
+	catch (...)
+	{
+		gkLogMessage("BlendLoader: Unknown exception");
+		resetLoad = true;
+	}
+
+	if (resetLoad)
+	{
+		if (m_activeFile)
+		{
+			delete m_activeFile;
+			m_activeFile = m_files.empty() ? 0 : m_files.back();
+		}
+	}
+
+	return 0;
+}
+
+UT_IMPLEMENT_SINGLETON(gkBlendLoader);

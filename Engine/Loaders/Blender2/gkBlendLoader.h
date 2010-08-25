@@ -28,27 +28,54 @@
 #define _gkBlendLoader_h_
 
 #include "gkLoaderCommon.h"
-#include "OgreSingleton.h"
+#include "Utils/utSingleton.h"
 
 
-class gkBlendLoader : public Ogre::Singleton<gkBlendLoader>
+class gkBlendLoader : public utSingleton<gkBlendLoader>
 {
 public:
-	typedef utListClass<gkBlendFile>        gkBlendFileList;
-	typedef utListIterator<gkBlendFileList> gkBlendFileIterator;
+	typedef utArray<gkBlendFile *> FileList;
+
+
+	enum LoadOptions
+	{
+		LO_ONLY_ACTIVE_SCENE,      // Load only the active scene found.
+		LO_ALL_SCENES,             // Load all scenes.
+	};
+
 
 public:
 	gkBlendLoader();
 	~gkBlendLoader();
 
-	static gkBlendLoader &getSingleton(void);
-	static gkBlendLoader *getSingletonPtr(void);
+	gkBlendFile *loadFile(  const gkString &fname,
+	                        int options = LO_ONLY_ACTIVE_SCENE,
+	                        const gkString &inResourceGroup = GK_DEF_GROUP
+	                     );
 
-	gkBlendFile *loadFile(const gkString &dblend, const gkString &inResourceGroup = GK_DEF_GROUP);
+
+
+
+	// File access.
+	gkBlendFile *getFileByName(const gkString &fname);
+
+
+	GK_INLINE FileList      &getFiles(void)          {return m_files;}
+	GK_INLINE gkBlendFile   *getActiveBlend(void)    {return m_activeFile;}
+
+
+
+	UT_DECLARE_SINGLETON(gkBlendLoader);
 
 private:
 
-	gkBlendFileList m_openFiles;
+	gkBlendFile *loadAndCatch(const gkString &fname,
+	                          int options = LO_ONLY_ACTIVE_SCENE,
+	                          const gkString &inResourceGroup = GK_DEF_GROUP
+	                         );
+
+	gkBlendFile    *m_activeFile;
+	FileList        m_files;
 };
 
 

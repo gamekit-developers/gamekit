@@ -64,11 +64,9 @@ public:
 
 		if(pBlendFile)
 		{
-			gkSceneIterator scit = pBlendFile->getSceneIterator();
+			gkScene* pScene = pBlendFile->getMainScene();
 
-			GK_ASSERT(scit.hasMoreElements());
-
-			gkScene* pScene = scit.peekNext();
+			GK_ASSERT(pScene);
 
 			pScene->load();
 

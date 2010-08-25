@@ -31,53 +31,78 @@
 #include "gkObject.h"
 #include "OgreResourceGroupManager.h"
 
-typedef utList<gkScene *>                gkSceneList;
-typedef utListIterator<gkSceneList>     gkSceneIterator;
-typedef utList<Ogre::Texture *>          gkImageList;
-typedef utListIterator<gkImageList>     gkImageIterator;
-
 
 // Loaded blend file
-class gkBlendFile : public utListClass<gkBlendFile>::Link
+class gkBlendFile
 {
 public:
-	typedef utList<Ogre::ManualResourceLoader *> ManualResourceLoaderList;
 
+	// Manual loaders.
+	typedef utArray<Ogre::ManualResourceLoader *> ManualResourceLoaderList;
 
 	// Image lookup for sharing textures
 	typedef utHashTable<utPointerHashKey, Ogre::Texture *> ImageTextureHashMap;
 
+
+	// Complete list of all scenes contained in the file.
+	typedef utArray<gkScene *> Scenes;
+
 public:
-	gkBlendFile(const gkString &group = GK_DEF_GROUP);
+
+
+	gkBlendFile(const gkString &blendToLoad, const gkString &group = GK_DEF_GROUP);
 	~gkBlendFile();
-	bool parse(bParse::bBlenderFile *bfp);
 
 
-	void    registerLoader(Ogre::ManualResourceLoader *loader)  {m_loaders.push_back(loader);}
 
-	gkScene *findScene(const gkString &name);
 
-	GK_INLINE gkSceneIterator getSceneIterator(void) {return gkSceneIterator(m_scenes);}
-	GK_INLINE gkImageIterator getImageIterator(void) {return gkImageIterator(m_images); }
+	bool parse(int opts);
 
-	GK_INLINE const gkString   &getGroup(void)          {return m_group;}
-	bParse::bBlenderFile        *getInternalFile(void)  {GK_ASSERT(m_file); return m_file;}
+
+	// Scene access 
+
+	gkScene *getSceneByName(const gkString &name);
+
+	GK_INLINE gkScene *getMainScene(void) {return m_activeScene;}
+	GK_INLINE Scenes  &getScenes(void)    {return m_scenes;}
+
+
+
+	// Internal registration.
+	void _registerLoader(Ogre::ManualResourceLoader *loader)  {m_loaders.push_back(loader);}
+
+
+	// Internal bParse access.
+	bParse::bBlenderFile *_getInternalFile(void) {GK_ASSERT(m_file); return m_file;}
+
+
+
+
+    // Access to the original group name for placing created resources in the same group.
+	GK_INLINE const gkString &getGroup(void) {return m_group;}
+
+
+	// File path name.
+	GK_INLINE const gkString &getName(void) {return m_name;}
 
 
 protected:
 
 	void doVersionTests(void);
-
 	void buildTextFiles(void);
 	void buildAllTextures();
 	void buildAllSounds();
-	void setSoundScene(Blender::Scene *sc);
 
-	ManualResourceLoaderList  m_loaders;   // Ogre Loaders
-	const gkString            m_group;     // Ogre Ogre::Resource Group
-	bParse::bBlenderFile     *m_file;      // bParse File Pointer
-	gkSceneList               m_scenes;    // All Scenes
-	gkImageList               m_images;    // All Textures
+
+	void loadActive(void);
+	void loadAll(void);
+
+	ManualResourceLoaderList  m_loaders;     // Ogre Loaders
+	const gkString            m_group;       // Ogre Ogre::Resource Group
+	const gkString            m_name;        // Current file path.
+ 	bParse::bBlenderFile     *m_file;        // bParse File Pointer
+	Scenes                    m_scenes;      // All Scenes
+	gkScene                  *m_activeScene; // Main scene found during parse.
 	ImageTextureHashMap       m_imageLookup;
 };
 

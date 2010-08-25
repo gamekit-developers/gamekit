@@ -577,15 +577,15 @@ gsScene* gsEngine::loadBlendFile(const gkString &name)
 		if (!m_engine->isInitialized())
 			gkLogMessage("gsEngine: loadBlendFile on uninitialized engine.");
 
-		gkBlendFile *gkb = m_engine->loadBlendFile(name, "<gkBuiltin>");
+		gkBlendFile *gkb = m_engine->loadBlendFile(name, gkBlendLoader::LO_ONLY_ACTIVE_SCENE, "<gkBuiltin>");
 		if (!gkb)
 		{
 			printf("File Loading failed!\n");
 			return 0;
 		}
 
-		if (gkb->getSceneIterator().hasMoreElements())
-			return new gsScene(gkb->getSceneIterator().getNext());
+		if (gkb->getMainScene())
+			return new gsScene(gkb->getMainScene());
 		else
 			gkLogMessage("gsEngine: no usable scenes found in blend.");
 	}

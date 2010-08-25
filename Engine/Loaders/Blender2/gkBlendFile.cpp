@@ -63,37 +63,75 @@
 using namespace Ogre;
 
 
-
-gkBlendFile::gkBlendFile(const gkString &group)
-	:       m_group(group),
-	        m_file(0)
+// ----------------------------------------------------------------------------
+gkBlendFile::gkBlendFile(const gkString &blendToLoad, const gkString &group)
+	:	m_name(blendToLoad),
+	    m_group(group),
+		m_activeScene(0)
 {
 }
 
+
+// ----------------------------------------------------------------------------
 gkBlendFile::~gkBlendFile()
 {
 	if (!m_loaders.empty())
 	{
-		utListIterator<ManualResourceLoaderList> it(m_loaders);
+		ManualResourceLoaderList::Iterator it = m_loaders.iterator();
 		while (it.hasMoreElements())
 			delete it.getNext();
 	}
 }
 
 
-bool gkBlendFile::parse(bParse::bBlenderFile *bfp)
+
+
+// ----------------------------------------------------------------------------
+bool gkBlendFile::parse(int opts)
 {
-	bfp->parse(false);
-	if (!bfp->ok())
+
+	utMemoryStream fs;
+	fs.open(m_name.c_str(), utStream::SM_READ);
+
+	if (!fs.isOpen())
 	{
-		gkPrintf("Blend file loading failed.");
+		gkLogMessage("BlendFile: File " << m_name << " loading failed. No such file.");
 		return false;
 	}
 
-	// save temporary file
-	m_file = bfp;
+	// Write contents and inflate.
+	utMemoryStream buffer;
+	fs.inflate(buffer);
+
+	m_file = new bParse::bBlenderFile((char*)buffer.ptr(), buffer.size());
+	m_file->parse(false);
+
+	if (!m_file->ok())
+	{
+		gkLogMessage("BlendFile: File " << m_name << " loading failed. Data error.");
+		return false;
+	}
+
+
 	doVersionTests();
 
+
+	if (opts == gkBlendLoader::LO_ONLY_ACTIVE_SCENE)
+		loadActive();
+	else 
+		loadAll();
+
+	delete m_file;
+	m_file = 0;
+	return true;
+}
+
+
+
+// ----------------------------------------------------------------------------
+void gkBlendFile::loadActive(void)
+{
+	// Load / convert only the active scene.
 
 	Blender::FileGlobal *fg = (Blender::FileGlobal *)m_file->getFileGlobal();
 	if (fg)
@@ -109,23 +147,63 @@ bool gkBlendFile::parse(bParse::bBlenderFile *bfp)
 			gkBlenderSceneConverter conv(this, sc);
 			conv.convert();
 
-
-			setSoundScene(sc);
-
-			gkScene *convSc = gkSceneManager::getSingleton().getScene(GKB_IDNAME(sc));
-			if (convSc)
-				m_scenes.push_back(convSc);
+			m_activeScene = gkSceneManager::getSingleton().getScene(GKB_IDNAME(sc));
+			if (m_activeScene)
+				m_scenes.push_back(m_activeScene);
 		}
 	}
 
-	// clear temp file
-	m_file = 0;
-	return true;
 }
 
-gkScene *gkBlendFile::findScene(const gkString &name)
+
+// ----------------------------------------------------------------------------
+void gkBlendFile::loadAll(void)
 {
-	gkSceneIterator it(m_scenes);
+	// Load / convert all 
+	buildAllTextures();
+	buildTextFiles();
+	buildAllSounds();
+
+	
+	bParse::bListBasePtr *scenes = m_file->getMain()->getScene();
+	int i;
+	for (i =0; i<scenes->size(); ++i)
+	{
+		Blender::Scene *sc = (Blender::Scene *)scenes->at(i);
+
+		if (sc != 0)
+		{
+			gkBlenderSceneConverter conv(this, sc);
+			conv.convert();
+
+			gkScene *gks = gkSceneManager::getSingleton().getScene(GKB_IDNAME(sc));
+			if (gks)
+				m_scenes.push_back(gks);
+		}
+	}
+
+
+	Blender::FileGlobal *fg = (Blender::FileGlobal *)m_file->getFileGlobal();
+	if (fg)
+	{
+		// Grab the main scene
+		Blender::Scene *sc = (Blender::Scene *)fg->curscene;
+		if (sc != 0)
+			m_activeScene = gkSceneManager::getSingleton().getScene(GKB_IDNAME(sc));
+	}
+
+	if (m_activeScene == 0 && !m_scenes.empty())
+		m_activeScene = m_scenes.front();
+}
+
+
+
+
+// ----------------------------------------------------------------------------
+gkScene *gkBlendFile::getSceneByName(const gkString &name)
+{
+
+	Scenes::Iterator it = m_scenes.iterator();
 	while (it.hasMoreElements())
 	{
 		gkScene *ob = it.getNext();
@@ -136,9 +214,12 @@ gkScene *gkBlendFile::findScene(const gkString &name)
 }
 
 
-// Create a list of all internal text blocks
+
+// ----------------------------------------------------------------------------
 void gkBlendFile::buildTextFiles(void)
 {
+	// Create a list of all internal text blocks
+
 	bParse::bMain *mp = m_file->getMain();
 	bParse::bListBasePtr *text = mp->getText();
 
@@ -186,7 +267,9 @@ void gkBlendFile::buildTextFiles(void)
 	}
 }
 
-void gkBlendFile::buildAllTextures()
+
+// ----------------------------------------------------------------------------
+void gkBlendFile::buildAllTextures(void)
 {
 	bParse::bListBasePtr *imaPtr = m_file->getMain()->getImage();
 
@@ -209,15 +292,14 @@ void gkBlendFile::buildAllTextures()
 		tex = Ogre::TextureManager::getSingleton().create(GKB_IDNAME(ima), m_group, true, loader);
 
 		if (!tex.isNull())
-		{
-			m_images.push_back(tex.getPointer());
 			m_loaders.push_back(loader);
-		}
 		else
 			delete loader;
 	}
 }
 
+
+// ----------------------------------------------------------------------------
 void gkBlendFile::buildAllSounds()
 {
 #ifdef OGREKIT_OPENAL_SOUND
@@ -283,38 +365,7 @@ void gkBlendFile::buildAllSounds()
 }
 
 
-void gkBlendFile::setSoundScene(Blender::Scene *sc)
-{
-#ifdef OGREKIT_OPENAL_SOUND
-	gkSoundManager *mgr = gkSoundManager::getSingletonPtr();
-	if (!mgr->isValidContext())
-		return;
-
-	gkSoundSceneProperties& props = mgr->getProperties();
-
-	if (sc->audio.distance_model == 0)
-		props.m_distModel = gkSoundSceneProperties::DM_NONE;
-	else if (sc->audio.distance_model == 1)
-		props.m_distModel = gkSoundSceneProperties::DM_INVERSE;
-	else if (sc->audio.distance_model == 2)
-		props.m_distModel = gkSoundSceneProperties::DM_INVERSE_CLAMP;
-	else if (sc->audio.distance_model == 3)
-		props.m_distModel = gkSoundSceneProperties::DM_LINEAR;
-	else if (sc->audio.distance_model == 4)
-		props.m_distModel = gkSoundSceneProperties::DM_LINEAR_CLAMP;
-	else if (sc->audio.distance_model == 5)
-		props.m_distModel = gkSoundSceneProperties::DM_EXPONENT;
-	else if (sc->audio.distance_model == 6)
-		props.m_distModel = gkSoundSceneProperties::DM_EXPONENT_CLAMP;
-
-	props.m_sndSpeed = sc->audio.speed_of_sound;
-	props.m_dopplerFactor = sc->audio.doppler_factor;
-
-	mgr->updateSoundProperties();
-#endif
-}
-
-
+// ----------------------------------------------------------------------------
 void gkBlendFile::doVersionTests(void)
 {
 	bParse::bMain *main = m_file->getMain();

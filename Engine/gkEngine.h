@@ -72,7 +72,7 @@ public:
 	gkUserDefs &getUserDefs(void);
 	void requestExit(void);
 
-	gkBlendFile *loadBlendFile(const gkString &blend, const gkString &inResource = GK_DEF_GROUP);
+	gkBlendFile *loadBlendFile(const gkString &blend, int options=0, const gkString &inResource = GK_DEF_GROUP);
 	void loadResources(const gkString &name);
 
 	void addDebugProperty(gkVariable *prop);

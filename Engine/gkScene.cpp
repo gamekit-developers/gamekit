@@ -575,6 +575,18 @@ void gkScene::loadImpl(void)
 	//Enable Shadows
 	setShadows();
 
+
+#ifdef OGREKIT_OPENAL_SOUND
+	// Set sound scene.
+
+	gkSoundManager &sndMgr = gkSoundManager::getSingleton();
+	memcpy(&sndMgr.getProperties(), &m_soundScene, sizeof(gkSoundSceneProperties));
+
+	sndMgr.updateSoundProperties();
+
+#endif
+
+
 	// notify main scene
 	gkEngine::getSingleton().setActiveScene(this);
 }

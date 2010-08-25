@@ -296,21 +296,12 @@ void gkEngine::requestExit(void)
 
 
 // ----------------------------------------------------------------------------
-gkBlendFile *gkEngine::loadBlendFile(const gkString &blend, const gkString &inResource)
+gkBlendFile *gkEngine::loadBlendFile(const gkString &blend, int options, const gkString &inResource)
 {
-	gkBlendFile *file = 0;
-	try
-	{
-		file = gkBlendLoader::getSingleton().loadFile(blend, inResource);
-	}
-	catch (Ogre::Exception &e)
-	{
-		// log any ogre exceptions
-		gkPrintf("Engine: %s\n", e.getDescription().c_str());
-	}
-	return file;
+	// This function is not really needed any more.
+	// just use gkBlendLoader::getSingleton()
+	return gkBlendLoader::getSingleton().loadFile(blend, options, inResource);
 }
-
 
 
 // ----------------------------------------------------------------------------

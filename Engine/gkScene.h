@@ -48,7 +48,8 @@ public:
 	void beginFrame(void);
 
 	// property access
-	GK_INLINE gkSceneProperties &getProperties(void)    { return m_baseProps; }
+	GK_INLINE gkSceneProperties        &getProperties(void)    { return m_baseProps;  }
+	GK_INLINE gkSoundSceneProperties   &getSoundScene(void)    { return m_soundScene; }
 
 
 	// The main viewport. Only support for one at the moment.
@@ -176,6 +177,7 @@ private:
 
 	// Properties for this scene
 	gkSceneProperties       m_baseProps;
+	gkSoundSceneProperties  m_soundScene;
 
 	gkDebugger              *m_debugger;
 

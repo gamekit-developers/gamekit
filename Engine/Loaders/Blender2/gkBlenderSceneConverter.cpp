@@ -274,6 +274,38 @@ void gkBlenderSceneConverter::applyParents(utArray<Blender::Object *> &children)
 
 
 // ----------------------------------------------------------------------------
+void gkBlenderSceneConverter::convertSoundScene(void)
+{
+#ifdef OGREKIT_OPENAL_SOUND
+
+	if (!m_gscene)
+		return;
+
+	gkSoundSceneProperties &props = m_gscene->getSoundScene();
+
+	if (m_bscene->audio.distance_model == 0)
+		props.m_distModel = gkSoundSceneProperties::DM_NONE;
+	else if (m_bscene->audio.distance_model == 1)
+		props.m_distModel = gkSoundSceneProperties::DM_INVERSE;
+	else if (m_bscene->audio.distance_model == 2)
+		props.m_distModel = gkSoundSceneProperties::DM_INVERSE_CLAMP;
+	else if (m_bscene->audio.distance_model == 3)
+		props.m_distModel = gkSoundSceneProperties::DM_LINEAR;
+	else if (m_bscene->audio.distance_model == 4)
+		props.m_distModel = gkSoundSceneProperties::DM_LINEAR_CLAMP;
+	else if (m_bscene->audio.distance_model == 5)
+		props.m_distModel = gkSoundSceneProperties::DM_EXPONENT;
+	else if (m_bscene->audio.distance_model == 6)
+		props.m_distModel = gkSoundSceneProperties::DM_EXPONENT_CLAMP;
+
+	props.m_sndSpeed = m_bscene->audio.speed_of_sound;
+	props.m_dopplerFactor = m_bscene->audio.doppler_factor;
+
+#endif
+}
+
+
+// ----------------------------------------------------------------------------
 void gkBlenderSceneConverter::convertWorld(void)
 {
 	if (!m_gscene)
@@ -365,7 +397,7 @@ void gkBlenderSceneConverter::convertGroups(utArray<Blender::Object *> &groups)
 	// The gkGameObjectGroup is a containter, the gkGameObjectGroupInstance
 	// is where the object should be added / removed from the scene.
 
-	bParse::bListBasePtr *lbp = m_file->getInternalFile()->getMain()->getGroup();
+	bParse::bListBasePtr *lbp = m_file->_getInternalFile()->getMain()->getGroup();
 	for (int i=0; i<lbp->size(); ++i)
 	{
 		Blender::Group *bgrp = (Blender::Group *)lbp->at(i);
@@ -845,6 +877,8 @@ void gkBlenderSceneConverter::convertObjectMesh(gkGameObject *gobj, Blender::Obj
 }
 
 
+
+// ----------------------------------------------------------------------------
 void gkBlenderSceneConverter::convertSpline(Blender::BezTriple *bez,
         gkActionChannel *chan,
         int access,
@@ -904,7 +938,7 @@ void gkBlenderSceneConverter::convertObjectActions(gkGameObject *gobj, Blender::
 
 
 	// create actions if needed
-	bParse::bMain *mp = m_file->getInternalFile()->getMain();
+	bParse::bMain *mp = m_file->_getInternalFile()->getMain();
 
 	// for all actions convert
 	bParse::bListBasePtr *lbp = mp->getAction();
@@ -1147,7 +1181,7 @@ void gkBlenderSceneConverter::loadSkyBox()
 
 
 	gkSkyBoxGradient *grad = new gkSkyBoxGradient(wo);
-	m_file->registerLoader(grad);
+	m_file->_registerLoader(grad);
 
 	Ogre::TexturePtr txptr =  Ogre::TextureManager::getSingleton().create(GKB_IDNAME(wo), "<gkBuiltin>", true, grad);
 	matptr->setLightingEnabled(false);
@@ -1172,6 +1206,10 @@ void gkBlenderSceneConverter::convert(void)
 
 	if (m_bscene->world)
 		convertWorld();
+
+
+	convertSoundScene();
+
 
 	m_gscene->setLayer((UTuint32)m_bscene->lay);
 
@@ -1621,7 +1659,7 @@ void gkBlenderMeshConverter::convert(void)
 	gkSubMesh *curSubMesh = 0;
 	utArray<gkMeshPair> meshtable;
 
-	gkLoaderUtils_getLayers(m_file->getInternalFile(), m_bmesh, mtface, &mcol, totlayer);
+	gkLoaderUtils_getLayers(m_file->_getInternalFile(), m_bmesh, mtface, &mcol, totlayer);
 
 	bool sortByMat          = gkEngine::getSingleton().getUserDefs().blendermat;
 	bool openglVertexColor  = gkEngine::getSingleton().getUserDefs().rendersystem == OGRE_RS_GL;

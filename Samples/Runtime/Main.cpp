@@ -121,21 +121,19 @@ int OgreKit::setup(int argc, char **argv)
 // ----------------------------------------------------------------------------
 bool OgreKit::load(void)
 {
-	gkBlendFile *blend = m_engine->loadBlendFile(gkUtils::getFile(m_blend));
+	gkBlendFile *blend = gkBlendLoader::getSingleton().loadFile(gkUtils::getFile(m_blend), gkBlendLoader::LO_ALL_SCENES);
 	if (!blend)
 	{
 		gkPrintf("File loading failed.\n");
 		return false;
 	}
 
-	gkSceneIterator scit = blend->getSceneIterator();
-	if (!scit.hasMoreElements())
+	m_scene = blend->getMainScene();
+	if (!m_scene)
 	{
 		gkPrintf("No usable scenes found in blend.\n");
 		return false;
 	}
-
-	m_scene = scit.peekNext();
 
 	m_scene->load();
 

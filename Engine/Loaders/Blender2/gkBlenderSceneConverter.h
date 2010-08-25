@@ -48,6 +48,7 @@ private:
 	void loadSkyBox(void);
 
 
+	void convertSoundScene(void);
 	void convertWorld(void);
 	void convertGroups(utArray<Blender::Object *> &groups);
 	void convertObject(Blender::Object *ob, gkGameObject *gobj = 0);
