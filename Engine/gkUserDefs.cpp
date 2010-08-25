@@ -46,12 +46,12 @@ gkUserDefs::gkUserDefs()
 	    resources(""),
 	    animspeed(25),
 	    startframe(1),
-	    blendermat(false),
+	    blendermat(true),
 	    grabInput(true),
 	    debugFps(false),
 	    debugPhysics(false),
 	    debugPhysicsAabb(false),
-	    enableshadows(false),
+	    enableshadows(true),
 	    buildInstances(false),
 	    useBulletDbvt(true),
 	    showDebugProps(false),
@@ -59,8 +59,8 @@ gkUserDefs::gkUserDefs()
 		fsaa(false),
 		fsaaSamples(4),
 		disableSound(false),
-	    shadowtechnique("none"),
-	    colourshadow(0, 0, 0),
+	    shadowtechnique("stencilmodulative"),
+	    colourshadow(0.8f, 0.8f, 0.8f),
 	    fardistanceshadow(0)
 {
 }
