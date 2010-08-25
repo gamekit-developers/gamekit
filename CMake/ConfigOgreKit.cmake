@@ -37,6 +37,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 	
     option(OGREKIT_BUILD_RUNTIME        "Build Samples/Runtime"                 ON)
     option(OGREKIT_BUILD_LOGICDEMO      "Build Samples/LogicDemo"               ON)
+    option(OGREKIT_BUILD_VEHICLEDEMO    "Build Samples/VehicleDemo"             ON)
     option(OGREKIT_BUILD_LUARUNTIME     "Build Samples/LuaRuntime"              ON)
     option(OGREKIT_COMPLIE_SWIG         "Enable compile time SWIG generation."  OFF)
     option(OGREKIT_HEADER_GENERATOR     "Build Blender DNA to C++ generator."   OFF)

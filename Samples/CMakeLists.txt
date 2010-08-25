@@ -7,6 +7,10 @@ if (OGREKIT_BUILD_LOGICDEMO)
     subdirs(LogicDemo)
 endif()
 
+if (OGREKIT_BUILD_VEHICLEDEMO)
+    subdirs(VehicleDemo)
+endif()
+
 
 if (OGREKIT_BUILD_LUARUNTIME)
     subdirs(LuaRuntime)
