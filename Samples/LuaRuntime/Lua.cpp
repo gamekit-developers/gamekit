@@ -38,8 +38,11 @@ extern "C" int _OgreKitLua_install(lua_State *L);
 int main(int argc, char **argv)
 {
 	TestMemory;
+	char *defname = "Test1.lua";
 
-	if (argc < 2)
+
+
+	if (argc < 1)
 	{
 		printf("Usage: %s file.lua [file.lua arguments]\n", argv[0]);
 		return 1;
@@ -66,6 +69,9 @@ int main(int argc, char **argv)
 		lua_pushstring(L, argv[i]);
 		lua_settable(L, -3);
 	}
+	if (nr > 0)
+		defname = argv[1];
+
 
 	lua_settable(L, -3);
 
@@ -77,7 +83,7 @@ int main(int argc, char **argv)
 	lua_pushtraceback(L);
 	int tb = lua_gettop(L);
 
-	int status = luaL_loadfile(L, argv[1]);
+	int status = luaL_loadfile(L, defname);
 	if (status != 0)
 	{
 		printf("%s\n", lua_tostring(L, -1));

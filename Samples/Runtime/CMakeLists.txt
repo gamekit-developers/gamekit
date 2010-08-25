@@ -16,11 +16,7 @@ set(SRC momo_ogre.blend Main.cpp)
 
 
 include_directories(
-    ${OGREKIT_OGRE_INCLUDE}
-    ${OGREKIT_BULLET_INCLUDE}
-    ${OGREKIT_OPENSTEER_INCLUDE}
-    ../../Engine/
-    ../../Engine/AI
+	${OGREKIT_INCLUDE}
     ../../Dependencies/Source/tclap/include
 )
 
@@ -36,7 +32,7 @@ source_group(ParentCMakeLists FILES ${HiddenCMakeLists})
 if (APPLE)
 
 	add_executable(
-	    OgreKit 
+	    AppOgreKit 
 	    MACOSX_BUNDLE
 	    MainMenu.nib
 	    ${SRC} 
@@ -45,15 +41,15 @@ if (APPLE)
 
 else ()
 
-	add_executable(OgreKit ${SRC}  ${HiddenCMakeLists})
-	install(TARGETS OgreKit RUNTIME DESTINATION ${OGREKIT_INSTALL_PREFIX})
-
-IF (NOT INTERNAL_CREATE_DISTRIBUTABLE_MSVC_PROJECTFILES)
-	ADD_CUSTOM_COMMAND(
-		TARGET OgreKit 
-		POST_BUILD
-		COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/momo_ogre.blend ${CMAKE_CURRENT_BINARY_DIR}/momo_ogre.blend
-	)
-ENDIF ()
+	add_executable(AppOgreKit ${SRC} ${HiddenCMakeLists})
+	
+	
+	IF (NOT INTERNAL_CREATE_DISTRIBUTABLE_MSVC_PROJECTFILES)
+		ADD_CUSTOM_COMMAND(
+			TARGET AppOgreKit 
+			POST_BUILD
+			COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/momo_ogre.blend ${CMAKE_CURRENT_BINARY_DIR}/momo_ogre.blend
+		)
+	ENDIF ()
 
 endif()
