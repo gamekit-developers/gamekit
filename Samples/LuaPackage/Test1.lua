@@ -75,8 +75,8 @@ function MainCamera:constructor(scene)
 
 
     -- FIXME: parent / unparent on loaded object
-    self.zrot:load();
-    self.xrot:load();
+    self.zrot:createInstance();
+    self.xrot:createInstance();
 
 
     self.zrot:setPosition(old)
@@ -584,7 +584,7 @@ function OgreKitApp:constructor()
     self.scene      = self:loadBlendFile("Test1.blend");
 
 
-    self.scene:load();
+    self.scene:createInstance();
     self.player = Player(self.scene)
 
 

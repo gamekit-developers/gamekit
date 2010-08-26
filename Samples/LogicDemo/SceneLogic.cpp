@@ -68,7 +68,7 @@ m_activeObject("SceneLogic")
 
 	pScene->setNavMeshData(m_navMeshData);
 		
-	m_navMeshData->initializeAll();
+	m_navMeshData->createInstances();
 }
 
 SceneLogic::~SceneLogic()
@@ -83,7 +83,7 @@ void SceneLogic::CreateMomo()
 
 void SceneLogic::CreateRats()
 {
-	const gkGameObjectSet& objs = m_scene->getInitializedObjects();
+	const gkGameObjectSet& objs = m_scene->getInstancedObjects();
 
 	gkGameObjectSet::ConstIterator it = objs.iterator();
 

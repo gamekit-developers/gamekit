@@ -90,7 +90,7 @@ public:
 
 
 	// id lookup
-	gkGameObjectInstance* findInstanceBy(UTsize id);
+	gkGameObjectInstance *findGroupInstanceById(UTsize id);
 
 	// Create static batch geometry.
 	void createStaticBatches(gkScene *scene);
@@ -100,15 +100,15 @@ public:
 	// Delete all instances.
 	void clearInstances(void);
 
-	void initializeInstances(void);
-	void finalizeInstances(void);
+	void createInstancedObjects(void);
+	void destroyInstancedObjects(void);
 
 
 	// Clones all objects in this group.
-	void cloneObjects(gkScene *scene, 
-		const gkTransformState &from, int time, 
-		const gkVector3& linearVelocity=gkVector3::ZERO, bool tsLinLocal = true,
-		const gkVector3& angularVelocity=gkVector3::ZERO, bool tsAngLocal = true);
+	void cloneObjects(gkScene *scene,
+	                  const gkTransformState &from, int time,
+	                  const gkVector3 &linearVelocity=gkVector3::ZERO, bool tsLinLocal = true,
+	                  const gkVector3 &angularVelocity=gkVector3::ZERO, bool tsAngLocal = true);
 
 
 	GK_INLINE Instances                 &getInstances(void)      {return m_instances;}

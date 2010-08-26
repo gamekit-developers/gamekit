@@ -1088,9 +1088,9 @@ function Engine:getUserDefs()
 
 
 \beginmenu{Methods}
-\LuaMethodMenu{Object,initialize}
-\LuaMethodMenu{Object,finalize}
-\LuaMethodMenu{Object,reinitialize}
+\LuaMethodMenu{Object,createInstance}
+\LuaMethodMenu{Object,destroyInstance}
+\LuaMethodMenu{Object,reinstance}
 \LuaMethodMenu{Object,getName}
 \endmenu
 
@@ -1101,39 +1101,39 @@ function Engine:getUserDefs()
 
 
 <!-- ======================================== -->
-\LuaMethod{Object,initialize}
+\LuaMethod{Object,createInstance}
 
 
 Adds this object.
 
 \code
-function Object:initialize()
+function Object:createInstance()
 \endcode
 
 \endpage
 
 
 <!-- ======================================== -->
-\LuaMethod{Object,finalize}
+\LuaMethod{Object,destroyInstance}
 
 
 Removes this object.
 
 \code
-function Object:finalize()
+function Object:destroyInstance()
 \endcode
 
 \endpage
 
 
 <!-- ======================================== -->
-\LuaMethod{Object,reinitialize}
+\LuaMethod{Object,reinstance}
 
 
 Removes this object, then adds it back.
 
 \code
-function Object:reinitialize()
+function Object:reinstance()
 \endcode
 
 \endpage

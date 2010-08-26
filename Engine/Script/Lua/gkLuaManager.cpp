@@ -51,18 +51,12 @@ gkLuaManager::~gkLuaManager()
 	if (L) lua_close(L);
 }
 
-
 // ----------------------------------------------------------------------------
-void gkLuaManager::update(gkScalar tick)
-{
-}
-
-// ----------------------------------------------------------------------------
-void gkLuaManager::finalize(void)
+void gkLuaManager::decompile(void)
 {
 	utHashTableIterator<ScriptMap> iter(m_scripts);
 	while (iter.hasMoreElements())
-		iter.getNext().second->finalize();
+		iter.getNext().second->decompile();
 }
 
 

@@ -62,7 +62,7 @@ public:
 	~gkLogicLink();
 
 	gkLogicLink     *clone(gkGameObject *dest);
-	void            finalize(void);
+	void            destroyInstance(void);
 
 
 

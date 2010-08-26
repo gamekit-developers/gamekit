@@ -68,7 +68,7 @@ public:
 
 			GK_ASSERT(pScene);
 
-			pScene->initialize();
+			pScene->createInstance();
 
 			m_logic = new vdLogic(pScene);
 			

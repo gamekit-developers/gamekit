@@ -69,7 +69,7 @@ void gkSceneManager::destroy(const gkString &name)
 	{
 		gkScene *ob = m_objects.at(pos);
 		m_objects.remove(name);
-		ob->finalize();
+		ob->destroyInstance();
 		delete ob;
 	}
 }
@@ -85,7 +85,7 @@ void gkSceneManager::destroy(gkScene *ob)
 	{
 		gkScene *ob = m_objects.at(pos);
 		m_objects.remove(name);
-		ob->finalize();
+		ob->destroyInstance();
 		delete ob;
 	}
 }
@@ -98,7 +98,7 @@ void gkSceneManager::destroyAll(void)
 	while (iter.hasMoreElements())
 	{
 		gkScene *ob = iter.peekNextValue();
-		ob->finalize();
+		ob->destroyInstance();
 		delete ob;
 		iter.next();
 	}

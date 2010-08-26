@@ -48,7 +48,7 @@ public:
 	gkVector2               winsize;            // Window width & height
 	gkString                wintitle;           // Window title
 	bool                    fullscreen;         // Fullscreen mode
-	gkString                resources;          // resources to initialize
+	gkString                resources;          // resources to load
 	gkScalar                animspeed;          // animation speed, depreciated
 	gkScalar                startframe;         // animation frame at the start of the game
 	bool                    blendermat;         // convert meshes using blender materials
@@ -56,7 +56,7 @@ public:
 	bool                    debugFps;           // show fps and profiling information
 	bool                    debugPhysics;       // enable / disable physics debugging
 	bool                    debugPhysicsAabb;   // show / hide bounding box
-	bool                    buildInstances;     // Use instanced geometry
+	bool                    buildStaticGeometry;// Use Static geometry
 	bool                    useBulletDbvt;      // Use Bullet Dynamic AABB Tree
 	bool                    showDebugProps;     // Show variable debugging information.
 	bool                    debugSounds;        // Show 3D sound debug info

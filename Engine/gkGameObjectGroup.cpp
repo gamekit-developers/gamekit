@@ -179,25 +179,25 @@ void gkGameObjectGroup::destroyInstance(gkGameObjectInstance *inst)
 
 
 // ----------------------------------------------------------------------------
-void gkGameObjectGroup::initializeInstances(void)
+void gkGameObjectGroup::createInstancedObjects(void)
 {
 	Instances::Iterator it = m_instances.iterator();
 	while (it.hasMoreElements())
-		it.getNext()->initialize();
+		it.getNext()->createInstance();
 }
 
 
 // ----------------------------------------------------------------------------
-void gkGameObjectGroup::finalizeInstances(void)
+void gkGameObjectGroup::destroyInstancedObjects(void)
 {
 	Instances::Iterator it = m_instances.iterator();
 	while (it.hasMoreElements())
-		it.getNext()->finalize();
+		it.getNext()->destroyInstance();
 }
 
 
 // ----------------------------------------------------------------------------
-gkGameObjectInstance *gkGameObjectGroup::findInstanceBy(UTsize id)
+gkGameObjectInstance *gkGameObjectGroup::findGroupInstanceById(UTsize id)
 {
 	gkGameObjectInstance *ret = 0;
 
@@ -236,7 +236,7 @@ void gkGameObjectGroup::cloneObjects(gkScene *scene,
 
 
 		// be sure this info was not cloned!
-		GK_ASSERT(!nobj->isInstance() && !nobj->isInGroup() && !oobj->isClone());
+		GK_ASSERT(!nobj->isGroupInstance() && !nobj->isInGroup() && !oobj->isClone());
 
 		// Update transform relitave to owner
 		gkGameObjectProperties &props = nobj->getProperties();
@@ -248,7 +248,7 @@ void gkGameObjectGroup::cloneObjects(gkScene *scene,
 		props.m_transform = gkTransformState(plocal * clocal);
 
 
-		nobj->initialize();
+		nobj->createInstance();
 
 
 		if (props.isRigidOrDynamic() || props.isGhost())
@@ -296,7 +296,7 @@ void gkGameObjectGroup::createStaticBatches(gkScene *scene)
 		while (instIt.hasMoreElements())
 		{
 			gkGameObject *obj = instIt.getNext().second;
-			obj->initialize();
+			obj->createInstance();
 
 
 			if (obj->getType()==GK_ENTITY)
@@ -317,7 +317,7 @@ void gkGameObjectGroup::createStaticBatches(gkScene *scene)
 					                      obj->getWorldScale());
 
 					// no longer needed
-					ent->_finalizeAsInstance();
+					ent->_destroyAsStaticGeometry();
 				}
 			}
 		}
@@ -335,9 +335,9 @@ void gkGameObjectGroup::createStaticBatches(gkScene *scene)
 // ----------------------------------------------------------------------------
 void gkGameObjectGroup::destroyStaticBatches(gkScene *scene)
 {
-	bool isSceneFinalizing = scene->isFinalizing();
+	bool isSceneUnloading = scene->isBeingDestroyed();
 
-	if (!isSceneFinalizing)
+	if (!isSceneUnloading)
 	{
 		if (m_geometry)
 		{
@@ -347,7 +347,7 @@ void gkGameObjectGroup::destroyStaticBatches(gkScene *scene)
 	}
 	else
 	{
-		// TODO: reinitialize entities.
+		// TODO: reinstance entities.
 		m_geometry = 0;
 	}
 }

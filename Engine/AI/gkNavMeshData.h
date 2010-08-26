@@ -50,10 +50,10 @@ public:
 
 	~gkNavMeshData();
 
-	void finalize(gkGameObject* pObj);
-	void updateOrInitialize(gkGameObject* pObj);
-	void finalizeAll();
-	void initializeAll();
+	void destroyInstance(gkGameObject* pObj);
+	void updateOrCreate(gkGameObject* pObj);
+	void destroyInstances();
+	void createInstances();
 
 	gkMeshData* cloneData() const
 	{

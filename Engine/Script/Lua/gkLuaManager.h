@@ -57,9 +57,7 @@ public:
 	// access to the lua virtual machine
 	GK_INLINE lua_State *getLua(void) {return L;}
 
-	void update(gkScalar tick);
-
-	void finalize(void);
+	void decompile(void);
 
 
 	gkLuaScript *getScript(const gkString &name);

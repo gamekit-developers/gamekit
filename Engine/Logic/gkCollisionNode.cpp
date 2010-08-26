@@ -66,7 +66,7 @@ bool gkCollisionNode::evaluate(gkScalar tick)
 
 	m_object = 0;
 
-	if(pObj && pObj->isInitialized())
+	if(pObj && pObj->isInstanced())
 	{
 		m_object = pObj->getPhysicsController();
 	}

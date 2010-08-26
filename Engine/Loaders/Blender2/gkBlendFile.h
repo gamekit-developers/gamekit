@@ -95,7 +95,7 @@ protected:
 
 
 	void loadActive(void);
-	void initializeAll(void);
+	void createInstances(void);
 
 	ManualResourceLoaderList  m_loaders;     // Ogre Loaders
 	const gkString            m_group;       // Ogre Ogre::Resource Group

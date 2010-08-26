@@ -97,7 +97,7 @@ void gkCharacterNode::initialize()
 
 bool gkCharacterNode::evaluate(gkScalar tick)
 {
-	return m_ent->isInitialized() && gkStateMachineNode::evaluate(tick);
+	return m_ent->isInstanced() && gkStateMachineNode::evaluate(tick);
 }
 
 void gkCharacterNode::update(gkScalar tick)

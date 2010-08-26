@@ -91,8 +91,8 @@ public:
 	
 	GK_INLINE Links& getLinks(void) {return m_links;}
 
-	void notifySceneFinalized(void);
-	void notifyLinkFinalized(gkLogicLink *link);
+	void notifySceneUnloaded(void);
+	void notifyLinkUnloaded(gkLogicLink *link);
 	void notifyState(unsigned int state, gkLogicLink *link);
 	void notifySort(void);
 

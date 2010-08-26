@@ -52,7 +52,7 @@ bool gkRayTestNode::evaluate(gkScalar tick)
 {
 	m_object = GET_SOCKET_VALUE(TARGET);
 
-	if(m_object && !m_object->isInitialized())
+	if(m_object && !m_object->isInstanced())
 	{
 		m_object = 0;
 	}

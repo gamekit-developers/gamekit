@@ -104,7 +104,7 @@ public:
 	bool wantsDebug(void);
 
 	virtual gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest)=0;
-	virtual void  notifyFinalize(void) {}
+	virtual void  notifyUnload(void) {}
 	virtual void execute(void)=0;
 
 	GK_INLINE void setListener(gkLogicBrick::Listener *listener) {m_listener = listener;}

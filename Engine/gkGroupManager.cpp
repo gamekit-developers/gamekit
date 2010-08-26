@@ -31,7 +31,7 @@
 
 // ----------------------------------------------------------------------------
 gkGroupManager::gkGroupManager()
-	:	m_handles(0)
+	:    m_handles(0)
 {
 }
 
@@ -44,7 +44,7 @@ gkGroupManager::~gkGroupManager()
 
 
 // ----------------------------------------------------------------------------
-gkGameObjectGroup *gkGroupManager::createGroup(const gkHashedString& name)
+gkGameObjectGroup *gkGroupManager::createGroup(const gkHashedString &name)
 {
 	if (m_groups.find(name) != UT_NPOS)
 	{
@@ -61,7 +61,7 @@ gkGameObjectGroup *gkGroupManager::createGroup(const gkHashedString& name)
 
 
 // ----------------------------------------------------------------------------
-gkGameObjectGroup *gkGroupManager::getGroup(const gkHashedString& name)
+gkGameObjectGroup *gkGroupManager::getGroup(const gkHashedString &name)
 {
 	UTsize pos;
 	if ( (pos = m_groups.find(name)) == UT_NPOS)
@@ -73,7 +73,7 @@ gkGameObjectGroup *gkGroupManager::getGroup(const gkHashedString& name)
 }
 
 // ----------------------------------------------------------------------------
-void gkGroupManager::destroyGroup(const gkHashedString& name)
+void gkGroupManager::destroyGroup(const gkHashedString &name)
 {
 	destroyGroup(getGroup(name));
 }
@@ -110,34 +110,34 @@ bool gkGroupManager::hasGroup(const gkHashedString &name)
 
 
 // ----------------------------------------------------------------------------
-void gkGroupManager::initializeAll(void)
+void gkGroupManager::createInstances(void)
 {
 	// Pass command
 	Groups::Iterator it = m_groups.iterator();
 	while (it.hasMoreElements())
-		it.getNext().second->initializeInstances();
+		it.getNext().second->createInstancedObjects();
 }
 
 
 // ----------------------------------------------------------------------------
-void gkGroupManager::finalizeAll(void)
+void gkGroupManager::destroyInstances(void)
 {
 	Groups::Iterator it = m_groups.iterator();
 	while (it.hasMoreElements())
-		it.getNext().second->finalizeInstances();
+		it.getNext().second->destroyInstancedObjects();
 }
 
 
 
 // ----------------------------------------------------------------------------
-gkGameObjectInstance* gkGroupManager::findInstanceBy(UTsize id)
+gkGameObjectInstance *gkGroupManager::findGroupInstanceById(UTsize id)
 {
 	gkGameObjectInstance *ret = 0;
 
 	Groups::Iterator it = m_groups.iterator();
 	while (it.hasMoreElements())
 	{
-		ret = it.getNext().second->findInstanceBy(id);
+		ret = it.getNext().second->findGroupInstanceById(id);
 		if (ret) break;
 	}
 

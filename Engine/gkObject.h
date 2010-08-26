@@ -35,42 +35,42 @@
 class gkObject
 {
 public:
-	enum InitState
+	enum LoadingState
 	{
-		ST_INITIALIZING  = (1 << 0),
-		ST_INITIALIZED   = (1 << 1),
-		ST_FINALIZING    = (1 << 2),
-		ST_FINALIZED     = (1 << 3),
-		ST_INITFAILED    = (1 << 4),
+		ST_CREATING   = (1 << 0),
+		ST_CREATED    = (1 << 1),
+		ST_DESTROYING = (1 << 2),
+		ST_DESTROYED  = (1 << 3),
+		ST_ERROR      = (1 << 4),
 	};
 
 
 protected:
 	const gkString      m_name;
-	int                 m_initState;
+	int                 m_instanceState;
 
-	virtual void preInitializeImpl(void) {}
-	virtual void preFinalizeImpl(void) {}
-	virtual void initializeImpl(void) {}
-	virtual void finalizeImpl(void) {}
-	virtual void postInitializeImpl(void) {}
-	virtual void postFinalizeImpl(void) {}
+	virtual void preCreateInstanceImpl(void) {}
+	virtual void preDstroyInstanceImpl(void) {}
+	virtual void createInstanceImpl(void) {}
+	virtual void destroyInstanceImpl(void) {}
+	virtual void postCreateInstanceImpl(void) {}
+	virtual void postDestroyInstanceImpl(void) {}
 
 public:
 
 	gkObject(const gkString &name);
 	virtual ~gkObject();
 
-	void initialize(void);
-	void finalize(void);
-	void reinitialize(void);
+	void createInstance(void);
+	void destroyInstance(void);
+	void reinstance(void);
 
 
-	GK_INLINE const gkString &getName(void)               {return m_name;}
-	GK_INLINE bool           isInitialized(void)  const   {return (m_initState & ST_INITIALIZED) != 0;}
-	GK_INLINE bool           isInitializing(void) const   {return (m_initState & ST_INITIALIZING) != 0;}
-	GK_INLINE bool           isFinalizing(void)   const   {return (m_initState & ST_FINALIZING) != 0;}
-	GK_INLINE int            getInitState(void)   const   {return m_initState;}
+	GK_INLINE const gkString &getName(void)                    { return m_name;}
+	GK_INLINE bool           isInstanced(void) const           { return (m_instanceState & ST_CREATED) != 0;}
+	GK_INLINE bool           isBeingCreated(void) const        { return (m_instanceState & ST_CREATING) != 0;}
+	GK_INLINE bool           isBeingDestroyed(void) const      { return (m_instanceState & ST_DESTROYING) != 0;}
+	GK_INLINE int            getInstanceState(void) const      { return m_instanceState;}
 
 
 };

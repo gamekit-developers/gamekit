@@ -64,14 +64,14 @@ public:
 	GK_INLINE Ogre::SceneManager *getManager(void) { GK_ASSERT(m_manager); return m_manager; }
 
 
-	GK_INLINE gkGameObjectSet &getInitializedObjects(void) { return m_initObjects; }
+	GK_INLINE gkGameObjectSet &getInstancedObjects(void)    { return m_instanceObjects; }
 
 	// physics
 	GK_INLINE gkDynamicsWorld *getDynamicsWorld(void)       { return m_physicsWorld; }
 
 	// notifications
-	void notifyObjectInitialized(gkGameObject *gobject);
-	void notifyObjectFinalized(gkGameObject *gobject);
+	void notifyInstanceCreated(gkGameObject *gobject);
+	void notifyInstanceDestroyed(gkGameObject *gobject);
 	void notifyObjectUpdate(gkGameObject *gobject);
 
 	bool            hasObject(const gkHashedString &ob);
@@ -134,7 +134,7 @@ public:
 	// Light access.
 
 	GK_INLINE gkLightSet    &getLights(void) {return m_lights;}
-	GK_INLINE bool          hasLights(void)  {return isInitialized() ? !m_lights.empty() : m_hasLights;}
+	GK_INLINE bool          hasLights(void)  {return isInstanced() ? !m_lights.empty() : m_hasLights;}
 
 
 	GK_INLINE void      setLayer(UTuint32 v)     {m_layers = v; }
@@ -143,7 +143,7 @@ public:
 
 
 	// Linear search.
-	gkGameObject *findInitializedObject(const gkString &name);
+	gkGameObject *findInstancedObject(const gkString &name);
 
 private:
 
@@ -155,12 +155,12 @@ private:
 	void createPhysicsObject(gkGameObject *obj);
 	void destroyPhysicsObject(gkGameObject *obj);
 
-	void finalizeAndDestroy(gkGameObject *obj);
+	void unloadAndDestroy(gkGameObject *obj);
 
 
-	void postInitializeImpl(void);
-	void initializeImpl(void);
-	void finalizeImpl(void);
+	void postCreateInstanceImpl(void);
+	void createInstanceImpl(void);
+	void destroyInstanceImpl(void);
 	void setShadows(void);
 	void tickClones(void);
 	void destroyClones(void);
@@ -182,7 +182,7 @@ private:
 	gkDebugger              *m_debugger;
 
 	gkGameObjectHashMap     m_objects;
-	gkGameObjectSet         m_initObjects;
+	gkGameObjectSet         m_instanceObjects;
 
 
 	gkGameObjectArray       m_clones;

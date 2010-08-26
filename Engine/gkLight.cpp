@@ -72,9 +72,9 @@ void gkLight::updateProperties(void)
 
 
 // ----------------------------------------------------------------------------
-void gkLight::initializeImpl(void)
+void gkLight::createInstanceImpl(void)
 {
-	gkGameObject::initializeImpl();
+	gkGameObject::createInstanceImpl();
 
 	GK_ASSERT(!m_light);
 
@@ -88,12 +88,12 @@ void gkLight::initializeImpl(void)
 
 
 // ----------------------------------------------------------------------------
-void gkLight::finalizeImpl(void)
+void gkLight::destroyInstanceImpl(void)
 {
 	GK_ASSERT(m_light);
 
 
-	if (!m_scene->isFinalizing())
+	if (!m_scene->isBeingDestroyed())
 	{
 		Ogre::SceneManager *manager = m_scene->getManager();
 
@@ -103,7 +103,7 @@ void gkLight::finalizeImpl(void)
 
 	m_light = 0;
 
-	gkGameObject::finalizeImpl();
+	gkGameObject::destroyInstanceImpl();
 }
 
 

@@ -45,10 +45,10 @@ gkNavMeshData::gkNavMeshData(gkScene* scene)
 
 gkNavMeshData::~gkNavMeshData()
 {
-	finalizeAll();
+	destroyInstances();
 }
 
-void gkNavMeshData::finalize(gkGameObject* pObj)
+void gkNavMeshData::destroyInstance(gkGameObject* pObj)
 {
 	if(!isValid(pObj)) return;
 
@@ -90,7 +90,7 @@ void gkNavMeshData::finalize(gkGameObject* pObj)
 
 	pObj->resetNavData();
 
-	gkGameObjectSet& objs = m_scene->getInitializedObjects();
+	gkGameObjectSet& objs = m_scene->getInstancedObjects();
 	gkGameObjectSet::Iterator it = objs.iterator();
 	while(it.hasMoreElements())
 	{
@@ -101,13 +101,13 @@ void gkNavMeshData::finalize(gkGameObject* pObj)
 	m_hasChanged = true;
 }
 
-void gkNavMeshData::updateOrInitialize(gkGameObject* pObj)
+void gkNavMeshData::updateOrCreate(gkGameObject* pObj)
 {
 	if(!isValid(pObj)) return;
 
 	m_object = pObj;
 
-	if(m_object && m_object->isInitialized())
+	if(m_object && m_object->isInstanced())
 	{
 		AddCollisionObj();
 	}
@@ -115,9 +115,9 @@ void gkNavMeshData::updateOrInitialize(gkGameObject* pObj)
 	m_hasChanged = true;
 }
 
-void gkNavMeshData::finalizeAll()
+void gkNavMeshData::destroyInstances()
 {
-	gkGameObjectSet& objs = m_scene->getInitializedObjects();
+	gkGameObjectSet& objs = m_scene->getInstancedObjects();
 	gkGameObjectSet::Iterator it = objs.iterator();
 	while(it.hasMoreElements())
 	{
@@ -134,14 +134,14 @@ void gkNavMeshData::finalizeAll()
 	m_hasChanged = true;
 }
 
-void gkNavMeshData::initializeAll()
+void gkNavMeshData::createInstances()
 {
-	gkGameObjectSet& objs = m_scene->getInitializedObjects();
+	gkGameObjectSet& objs = m_scene->getInstancedObjects();
 	gkGameObjectSet::Iterator it = objs.iterator();
 	while(it.hasMoreElements())
 	{
 		gkGameObject* pObj = it.getNext();
-		updateOrInitialize(pObj);
+		updateOrCreate(pObj);
 	}
 
 	m_hasChanged = true;

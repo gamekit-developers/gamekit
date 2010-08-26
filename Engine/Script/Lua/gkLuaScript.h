@@ -50,7 +50,7 @@ public:
 	GK_INLINE const gkString &getName(void) {return m_name;}
 	GK_INLINE bool  compiled(void)          {return m_compiled;}
 
-	void finalize(void);
+	void decompile(void);
 	// compile & run the script
 	bool execute(void);
 };

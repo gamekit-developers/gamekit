@@ -212,22 +212,18 @@ public:
 
 	// Grouping
 
-	GK_INLINE gkGameObjectGroup    *getGroup(void)      { return m_group;}
-	GK_INLINE gkGameObjectInstance *getInstance(void)   { return m_groupID; }
-	GK_INLINE bool                  isInstance(void)    { return m_groupID != 0;}
-	GK_INLINE bool                  isInGroup(void)     { return m_group != 0;}
+	GK_INLINE gkGameObjectGroup    *getGroup(void)           { return m_group;}
+	GK_INLINE gkGameObjectInstance *getGroupInstance(void)   { return m_groupID; }
+	GK_INLINE bool                  isGroupInstance(void)    { return m_groupID != 0;}
+	GK_INLINE bool                  isInGroup(void)          { return m_group != 0;}
 
-	GK_INLINE void                  _makeInstance(gkGameObjectInstance *id)  { m_groupID = id; }
-	GK_INLINE void                  _makeGroup(gkGameObjectGroup *id)        { m_group = id; }
+	GK_INLINE void                  _makeGroupInstance(gkGameObjectInstance *id)  { m_groupID = id; }
+	GK_INLINE void                  _makeGroup(gkGameObjectGroup *id)             { m_group = id; }
+
 
 protected:
 
 	void cloneImpl(gkGameObject *clob);
-
-
-	void applyChildren(void);
-	void finializeChildren(void);
-
 
 	// Base class type
 	gkGameObjectTypes           m_type;
@@ -271,10 +267,10 @@ protected:
 	LifeSpan                    m_life;
 
 
-	virtual void initializeImpl(void);
-	virtual void finalizeImpl(void);
-	virtual void postInitializeImpl(void);
-	virtual void postFinalizeImpl(void);
+	virtual void createInstanceImpl(void);
+	virtual void destroyInstanceImpl(void);
+	virtual void postCreateInstanceImpl(void);
+	virtual void postDestroyInstanceImpl(void);
 
 private:
 

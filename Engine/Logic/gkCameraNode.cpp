@@ -99,7 +99,7 @@ bool gkCameraNode::evaluate(gkScalar tick)
 
 	bool update = GET_SOCKET_VALUE(UPDATE);
 
-	return update && m_centerObj && m_target && m_centerObj->isInitialized() && m_target->isInitialized();
+	return update && m_centerObj && m_target && m_centerObj->isInstanced() && m_target->isInstanced();
 }
 
 void gkCameraNode::update(gkScalar tick)

@@ -62,7 +62,7 @@ void gkEditObjectActuator::addObject(void)
 			gkGameObject *obj = scene->getObject(m_obj);
 
 
-			if ( obj->isInGroup() || obj->isInstance() )
+			if ( obj->isInGroup() || obj->isGroupInstance() )
 			{
 				// Spawn entire group.
 				gkTransformState thisTransform( m_object->getWorldPosition(),
@@ -73,7 +73,7 @@ void gkEditObjectActuator::addObject(void)
 				if (obj->isInGroup())
 					obj->getGroup()->cloneObjects(m_scene, thisTransform, m_life, m_linv, m_lvlocal, m_angv, m_avlocal);
 				else
-					obj->getInstance()->cloneObjects(thisTransform, m_life, m_linv, m_lvlocal, m_angv, m_avlocal);
+					obj->getGroupInstance()->cloneObjects(thisTransform, m_life, m_linv, m_lvlocal, m_angv, m_avlocal);
 			}
 			else
 			{
@@ -81,7 +81,7 @@ void gkEditObjectActuator::addObject(void)
 
 				nobj->getProperties().m_transform.loc = m_object->getWorldPosition();
 				nobj->getProperties().m_transform.rot = m_object->getWorldOrientation();
-				nobj->initialize();
+				nobj->createInstance();
 
 				// apply velocities
 				nobj->setLinearVelocity(m_linv, m_lvlocal ? TRANSFORM_LOCAL : TRANSFORM_PARENT);

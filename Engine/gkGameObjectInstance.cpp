@@ -40,7 +40,7 @@ gkGameObjectInstance::gkGameObjectInstance(gkGameObjectGroup *group, gkScene *sc
 	    m_owner(0),
 	    m_parent(group),
 	    m_scene(scene),
-	    m_firstInit(true)
+	    m_firstLoad(true)
 {
 	GK_ASSERT(m_scene && m_parent);
 
@@ -59,7 +59,7 @@ gkGameObjectInstance::~gkGameObjectInstance()
 	while (iter.hasMoreElements())
 	{
 		gkGameObject *gobj = iter.getNext().second;
-		gobj->finalize();
+		gobj->destroyInstance();
 		delete gobj;
 	}
 
@@ -91,7 +91,7 @@ void gkGameObjectInstance::addObject(gkGameObject *gobj)
 	m_objects.insert(name, ngobj);
 
 	// Lightly attach
-	ngobj->_makeInstance(this);
+	ngobj->_makeGroupInstance(this);
 
 
 	ngobj->setActiveLayer(m_owner->isInActiveLayer());
@@ -120,7 +120,7 @@ void gkGameObjectInstance::destroyObject(gkGameObject *gobj)
 	if (!gobj)
 		return;
 
-	if (gobj->getInstance() != this)
+	if (gobj->getGroupInstance() != this)
 	{
 		gkLogMessage("GameObjectInstance: Attempting to remove an object that does not belong to this instance!");
 		return;
@@ -156,7 +156,7 @@ void gkGameObjectInstance::destroyObject(const gkHashedString &name)
 
 
 	gkGameObject *gobj = m_objects.at(pos);
-	gobj->finalize();
+	gobj->destroyInstance();
 
 
 	m_objects.remove(name);
@@ -207,7 +207,7 @@ void gkGameObjectInstance::applyTransform(const gkTransformState &trans)
 // ----------------------------------------------------------------------------
 bool gkGameObjectInstance::hasObject(gkGameObject *gobj)
 {
-	return gobj && m_objects.find(gobj->getName()) && gobj->getInstance() == this;
+	return gobj && m_objects.find(gobj->getName()) && gobj->getGroupInstance() == this;
 }
 
 
@@ -231,7 +231,7 @@ void gkGameObjectInstance::cloneObjects(const gkTransformState &from,
 
 
 		// be sure this info was not cloned!
-		GK_ASSERT(!nobj->isInstance());
+		GK_ASSERT(!nobj->isGroupInstance());
 
 
 		// Update transform relitave to owner
@@ -244,7 +244,7 @@ void gkGameObjectInstance::cloneObjects(const gkTransformState &from,
 		props.m_transform = gkTransformState(plocal * clocal);
 		
 		
-		nobj->initialize();
+		nobj->createInstance();
 
 
 		if (props.isRigidOrDynamic() || props.isGhost())
@@ -264,37 +264,30 @@ void gkGameObjectInstance::cloneObjects(const gkTransformState &from,
 
 
 // ----------------------------------------------------------------------------
-void gkGameObjectInstance::initializeImpl(void)
+void gkGameObjectInstance::createInstanceImpl(void)
 {
-	// call initialize on all objects
-
-
 	if (!m_owner->isInActiveLayer())
 		return;
 
-	if (m_firstInit)
+	if (m_firstLoad)
 	{
 		makeTransform();
-		m_firstInit = false;
+		m_firstLoad = false;
 	}
 
 	Objects::Iterator iter = m_objects.iterator();
 	while (iter.hasMoreElements())
-		iter.getNext().second->initialize();
+		iter.getNext().second->createInstance();
 }
 
 
 
-void gkGameObjectInstance::finalizeImpl(void)
+void gkGameObjectInstance::destroyInstanceImpl(void)
 {
-
-	// call finalize on all objects
-
-
 	Objects::Iterator iter = m_objects.iterator();
 	while (iter.hasMoreElements())
 	{
-		iter.getNext().second->finalize();
+		iter.getNext().second->destroyInstance();
 	}
 
 }

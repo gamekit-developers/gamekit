@@ -46,7 +46,6 @@ public:
 	int setup(int argc, char **argv);
 
 	void keyReleased(const gkKeyboard &key, const gkScanCode &sc);
-
 private:
 
 	bool setup(void);
@@ -138,7 +137,7 @@ bool OgreKit::setup(void)
 		return false;
 	}
 
-	m_scene->initialize();
+	m_scene->createInstance();
 
 	// add input hooks
 	gkWindowSystem::getSingleton().addListener(this);

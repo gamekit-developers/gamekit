@@ -48,8 +48,8 @@ public:
 
 	void notifyObjectDestroyed(gkGameObject *gobj);
 	void notifyObjectCloned(gkGameObject *oobj, gkGameObject *nobj);
-	void notifyObjectInitialized(gkGameObject *gobj);
-	void notifyObjectFinalized(gkGameObject *gobj);
+	void notifyInstanceCreated(gkGameObject *gobj);
+	void notifyInstanceDestroyed(gkGameObject *gobj);
 
 
 	void addConstraint(gkGameObject *obj, gkConstraint *cons);

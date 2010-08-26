@@ -55,7 +55,7 @@ bool gkGrabNode::evaluate(gkScalar tick)
 {
 	m_target = GET_SOCKET_VALUE(TARGET);
 
-	if(m_target && !m_target->isInitialized())
+	if(m_target && !m_target->isInstanced())
 	{
 		ReleasePick();
 	}
@@ -67,7 +67,7 @@ bool gkGrabNode::evaluate(gkScalar tick)
 
 	bool enable = gkPickNode::evaluate(tick);
 
-	return enable && m_target && m_target->isInitialized();
+	return enable && m_target && m_target->isInstanced();
 }
 
 void gkGrabNode::update(gkScalar tick)

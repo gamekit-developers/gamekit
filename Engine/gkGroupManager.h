@@ -44,20 +44,20 @@ public:
 
 	gkGameObjectGroup   *createGroup(const gkHashedString& id);
 	gkGameObjectGroup   *getGroup(const gkHashedString& id);
-	bool				hasGroup(const gkHashedString &name);
+	bool				 hasGroup(const gkHashedString &name);
 
 	void                destroyGroup(const gkHashedString& id);
 	void                destroyGroup(gkGameObjectGroup *group);
 	void                destroyAll(void);
 
-	void                initializeAll(void);
-	void                finalizeAll(void);
+	void                createInstances(void);
+	void                destroyInstances(void);
 
 	void                createStaticBatches(gkScene *scene);
 	void                destroyStaticBatches(gkScene *scene);
 
 
-	gkGameObjectInstance* findInstanceBy(UTsize id); 
+	gkGameObjectInstance* findGroupInstanceById(UTsize id); 
 
 private:
 

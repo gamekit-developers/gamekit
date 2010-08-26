@@ -25,7 +25,7 @@ function OgreKitApp:constructor()
 
 
     -- Converts blender data to Ogre. 
-    self.scene:load()
+    self.scene:createInstance()
 
 
     -- We now have access to all the objects within the OgreKit scene. 

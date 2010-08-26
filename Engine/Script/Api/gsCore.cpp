@@ -651,46 +651,46 @@ gsObject::gsObject(gkObject *ob) : m_object(ob)
 
 
 // ----------------------------------------------------------------------------
-void gsObject::initialize(void)
+void gsObject::createInstance(void)
 {
 	if (m_object)
 	{
 		gkEngine *eng= gkEngine::getSingletonPtr();
 
 		if (eng->isRunning())
-			eng->addInitCommand(m_object, gkInitCmd::INITIALIZE);
+			eng->addCommand(m_object, gkCreateParam::CREATEINSTANCE);
 		else
-			m_object->initialize();
+			m_object->createInstance();
 	}
 }
 
 
 // ----------------------------------------------------------------------------
-void gsObject::finalize(void)
+void gsObject::destroyInstance(void)
 {
 	if (m_object)
 	{
 		gkEngine *eng= gkEngine::getSingletonPtr();
 
 		if (eng->isRunning())
-			eng->addInitCommand(m_object, gkInitCmd::FINALIZE);
+			eng->addCommand(m_object, gkCreateParam::DESTROYINSTANCE);
 		else
-			m_object->finalize();
+			m_object->destroyInstance();
 	}
 }
 
 
 // ----------------------------------------------------------------------------
-void gsObject::reinitialize(void)
+void gsObject::reinstance(void)
 {
 	if (m_object)
 	{
 		gkEngine *eng= gkEngine::getSingletonPtr();
 
 		if (eng->isRunning())
-			eng->addInitCommand(m_object, gkInitCmd::REINITIALIZE);
+			eng->addCommand(m_object, gkCreateParam::REINSTANCE);
 		else
-			m_object->reinitialize();
+			m_object->reinstance();
 	}
 }
 
@@ -780,7 +780,7 @@ gsArray<gsGameObject, gkGameObject> &gsScene::getObjectList(void)
 	if (m_object)
 	{
 		gkScene *scene = cast<gkScene>();
-		gkGameObjectSet &objs = scene->getInitializedObjects();
+		gkGameObjectSet &objs = scene->getInstancedObjects();
 		gkGameObjectSet::Iterator it = objs.iterator();
 
 		while (it.hasMoreElements())

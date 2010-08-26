@@ -15,7 +15,7 @@
 
 
 
-An example showing how to set up the OgreKit Engine, and initialize a .blend.
+An example showing how to set up the OgreKit Engine, and load a .blend.
 \include Test0.lua
 
 \endpage
@@ -28,7 +28,7 @@ An example showing how to set up the OgreKit Engine, and initialize a .blend.
 Setup from inside blender takes place in a predefined text block named \b OnInit.lua \n
 This script will execute every time the scene is loaded.\n
 
-Scripts may still span multiple text files using the standard Blender Game Engine method.
+Scripts may still span multiple text files using the standard Blender game engine method.
 By attaching to a Python controller.<i> \LuaClassRef{ScriptController} </i>
 
 \include OnInit.lua

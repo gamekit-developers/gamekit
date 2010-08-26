@@ -6144,18 +6144,18 @@ fail:
 }
 
 
-static int _wrap_Object_initialize(lua_State* L) {
+static int _wrap_Object_createInstance(lua_State* L) {
   int SWIG_arg = 0;
   gsObject *arg1 = (gsObject *) 0 ;
   
-  SWIG_check_num_args("initialize",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("initialize",1,"gsObject *");
+  SWIG_check_num_args("createInstance",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("createInstance",1,"gsObject *");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsObject,0))){
-    SWIG_fail_ptr("Object_initialize",1,SWIGTYPE_p_gsObject);
+    SWIG_fail_ptr("Object_createInstance",1,SWIGTYPE_p_gsObject);
   }
   
-  (arg1)->initialize();
+  (arg1)->createInstance();
   
   return SWIG_arg;
   
@@ -6167,18 +6167,18 @@ fail:
 }
 
 
-static int _wrap_Object_finalize(lua_State* L) {
+static int _wrap_Object_destroyInstance(lua_State* L) {
   int SWIG_arg = 0;
   gsObject *arg1 = (gsObject *) 0 ;
   
-  SWIG_check_num_args("finalize",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("finalize",1,"gsObject *");
+  SWIG_check_num_args("destroyInstance",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("destroyInstance",1,"gsObject *");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsObject,0))){
-    SWIG_fail_ptr("Object_finalize",1,SWIGTYPE_p_gsObject);
+    SWIG_fail_ptr("Object_destroyInstance",1,SWIGTYPE_p_gsObject);
   }
   
-  (arg1)->finalize();
+  (arg1)->destroyInstance();
   
   return SWIG_arg;
   
@@ -6190,18 +6190,18 @@ fail:
 }
 
 
-static int _wrap_Object_reinitialize(lua_State* L) {
+static int _wrap_Object_reinstance(lua_State* L) {
   int SWIG_arg = 0;
   gsObject *arg1 = (gsObject *) 0 ;
   
-  SWIG_check_num_args("reinitialize",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("reinitialize",1,"gsObject *");
+  SWIG_check_num_args("reinstance",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("reinstance",1,"gsObject *");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsObject,0))){
-    SWIG_fail_ptr("Object_reinitialize",1,SWIGTYPE_p_gsObject);
+    SWIG_fail_ptr("Object_reinstance",1,SWIGTYPE_p_gsObject);
   }
   
-  (arg1)->reinitialize();
+  (arg1)->reinstance();
   
   return SWIG_arg;
   
@@ -6244,9 +6244,9 @@ gsObject *arg1 = (gsObject *) obj;
 delete arg1;
 }
 static swig_lua_method swig_gsObject_methods[] = {
-    {"initialize", _wrap_Object_initialize}, 
-    {"finalize", _wrap_Object_finalize}, 
-    {"reinitialize", _wrap_Object_reinitialize}, 
+    {"createInstance", _wrap_Object_createInstance}, 
+    {"destroyInstance", _wrap_Object_destroyInstance}, 
+    {"reinstance", _wrap_Object_reinstance}, 
     {"getName", _wrap_Object_getName}, 
     {0,0}
 };

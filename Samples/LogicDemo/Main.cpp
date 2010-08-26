@@ -67,7 +67,7 @@ public:
 
 			GK_ASSERT(pScene);
 
-			pScene->initialize();
+			pScene->createInstance();
 
 			GK_ASSERT(!m_sceneLogic);
 

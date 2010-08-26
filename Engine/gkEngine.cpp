@@ -328,7 +328,7 @@ void gkEngine::loadResources(const gkString &name)
 	}
 	catch (Exception &e)
 	{
-		gkLogMessage("Engine: Failed to initialize resource file!\n" << e.getDescription());
+		gkLogMessage("Engine: Failed to load resource file!\n" << e.getDescription());
 	}
 }
 
@@ -417,9 +417,9 @@ void gkEngine::removeListener(gkEngine::Listener *listener)
 
 
 // ----------------------------------------------------------------------------
-void gkEngine::addInitCommand(gkObject *ob, const gkInitCmd::Cmd &type)
+void gkEngine::addCommand(gkObject *ob, const gkCreateParam::Type &type)
 {
-	gkInitCmd cmd = {ob, type};
+	gkCreateParam cmd = {ob, type};
 
 	if (m_cmds.find(cmd) == UT_NPOS)
 		m_cmds.push_back(cmd);
@@ -552,20 +552,20 @@ void gkEnginePrivate::tickImpl(gkScalar dt)
 	// post process
 	if (!engine->m_cmds.empty())
 	{
-		utArrayIterator<gkInitializers> iter(engine->m_cmds);
+		utArrayIterator<gkCreateParams> iter(engine->m_cmds);
 
 		while (iter.hasMoreElements())
 		{
-			gkInitCmd &cmd = iter.getNext();
+			gkCreateParam &cmd = iter.getNext();
 
 			if (cmd.first != 0)
 			{
-				if (cmd.second == gkInitCmd::REINITIALIZE)
-					cmd.first->reinitialize();
-				else if (cmd.second == gkInitCmd::INITIALIZE)
-					cmd.first->initialize();
-				else if (cmd.second == gkInitCmd::FINALIZE)
-					cmd.first->finalize();
+				if (cmd.second == gkCreateParam::REINSTANCE)
+					cmd.first->reinstance();
+				else if (cmd.second == gkCreateParam::CREATEINSTANCE)
+					cmd.first->createInstance();
+				else if (cmd.second == gkCreateParam::DESTROYINSTANCE)
+					cmd.first->destroyInstance();
 			}
 		}
 

@@ -89,7 +89,7 @@ public:
 	void removeListener(Listener *listener);
 
 
-	void addInitCommand(class gkObject *ob, const gkInitCmd::Cmd &type);
+	void addCommand(class gkObject *ob, const gkCreateParam::Type &type);
 
 
 private:
@@ -108,7 +108,7 @@ private:
 	bool                    m_running;
 	gkUserDefs             *m_defs;
 	Listeners               m_listeners;
-	gkInitializers           m_cmds;
+	gkCreateParams              m_cmds;
 
 	static gkScalar         m_tickRate;
 	static gkScalar         m_animRate;

@@ -62,7 +62,7 @@ void gkGameActuator::execute(void)
 		} break;
 	case GM_RESTART:
 		{
-			gkEngine::getSingleton().addInitCommand(m_object->getOwner(), gkInitCmd::REINITIALIZE);
+			gkEngine::getSingleton().addCommand(m_object->getOwner(), gkCreateParam::REINSTANCE);
 			break;
 		} break;
 	default:

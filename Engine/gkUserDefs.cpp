@@ -52,7 +52,7 @@ gkUserDefs::gkUserDefs()
 	    debugPhysics(false),
 	    debugPhysicsAabb(false),
 	    enableshadows(true),
-	    buildInstances(false),
+	    buildStaticGeometry(false),
 	    useBulletDbvt(true),
 	    showDebugProps(false),
 	    debugSounds(false),
@@ -64,6 +64,7 @@ gkUserDefs::gkUserDefs()
 	    fardistanceshadow(0)
 {
 }
+
 
 // ----------------------------------------------------------------------------
 void gkUserDefs::load(const gkString &fname)
@@ -198,7 +199,7 @@ void gkUserDefs::parseString(const gkString &key, const gkString &val)
 	}
 	if (KeyEq("buildinstances"))
 	{
-		buildInstances = Ogre::StringConverter::parseBool(val);
+		buildStaticGeometry = Ogre::StringConverter::parseBool(val);
 		return;
 	}
 	if (KeyEq("frustumculling"))

@@ -66,7 +66,7 @@ void gkCharacter::create(void)
 		return;
 
 
-	GK_ASSERT(m_object && m_object->isInitialized() && m_object->isInActiveLayer());
+	GK_ASSERT(m_object && m_object->isInstanced() && m_object->isInActiveLayer());
 
 	// use the most up to date transform. 
 	const gkTransformState& trans = m_object->getTransformState();

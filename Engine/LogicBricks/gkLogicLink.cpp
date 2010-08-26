@@ -129,13 +129,13 @@ gkLogicLink *gkLogicLink::clone(gkGameObject *dest)
 }
 
 // ----------------------------------------------------------------------------
-void gkLogicLink::finalize(void)
+void gkLogicLink::destroyInstance(void)
 {
 	gkLogicManager &mgr = gkLogicManager::getSingleton();
-	mgr.notifyLinkFinalized(this);
+	mgr.notifyLinkUnloaded(this);
 
 	for (UTsize i=0; i<m_others.size(); ++i)
-		mgr.notifyLinkFinalized(m_others[i]);
+		mgr.notifyLinkUnloaded(m_others[i]);
 }
 
 // ----------------------------------------------------------------------------

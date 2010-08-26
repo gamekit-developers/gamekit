@@ -32,7 +32,7 @@
 
 // ----------------------------------------------------------------------------
 gkObject::gkObject(const gkString &name)
-	:       m_name(name), m_initState(ST_FINALIZED)
+	:       m_name(name), m_instanceState(ST_DESTROYED)
 {
 }
 
@@ -45,67 +45,66 @@ gkObject::~gkObject()
 
 
 // ----------------------------------------------------------------------------
-void gkObject::initialize(void)
+void gkObject::createInstance(void)
 {
-	// Simple initialize mechanizm
 
-	if (m_initState != ST_FINALIZED)
+	if (m_instanceState != ST_DESTROYED)
 		return;
 
-	m_initState = ST_INITIALIZING;
+	m_instanceState = ST_CREATING;
 
 
 	try
 	{
-		preInitializeImpl();
-		initializeImpl();
-		if (m_initState != ST_INITFAILED)
+		preCreateInstanceImpl();
+		createInstanceImpl();
+		if (m_instanceState != ST_ERROR)
 		{
-			m_initState |= ST_INITIALIZED;
+			m_instanceState |= ST_CREATED;
 
-			postInitializeImpl();
-			m_initState = ST_INITIALIZED;
+			postCreateInstanceImpl();
+			m_instanceState = ST_CREATED;
 		}
 	}
 
 	catch (Ogre::Exception &e)
 	{
-		m_initState = ST_INITFAILED;
-		gkLogMessage("Object: Initialize failed. \n\t" << e.getDescription());
+		m_instanceState = ST_ERROR;
+		gkLogMessage("Object: Loading failed. \n\t" << e.getDescription());
 	}
 
 }
 
 
 // ----------------------------------------------------------------------------
-void gkObject::finalize(void)
+void gkObject::destroyInstance(void)
 {
-	// Simple finalize mechanizm
-	if (m_initState != ST_INITIALIZED)
+
+	if (m_instanceState != ST_CREATED)
 		return;
 
-	m_initState = ST_FINALIZING;
+	m_instanceState = ST_DESTROYING;
 
 	try
 	{
-		preFinalizeImpl();
-		finalizeImpl();
-		m_initState |= ST_FINALIZED;
-		postFinalizeImpl();
-		m_initState = ST_FINALIZED;
+		preDstroyInstanceImpl();
+		destroyInstanceImpl();
+		m_instanceState |= ST_DESTROYED;
+		postDestroyInstanceImpl();
+		m_instanceState = ST_DESTROYED;
 	}
 
 	catch (Ogre::Exception &e)
 	{
-		m_initState = ST_INITFAILED;
-		gkLogMessage("Object: Finalize failed. \n\t" << e.getDescription());
+		m_instanceState = ST_ERROR;
+		gkLogMessage("Object: Loading failed. \n\t" << e.getDescription());
 	}
 }
 
 
 // ----------------------------------------------------------------------------
-void gkObject::reinitialize(void)
+void gkObject::reinstance(void)
 {
-	finalize();
-	initialize();
+	destroyInstance();
+	createInstance();
 }

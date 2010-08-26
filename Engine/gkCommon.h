@@ -138,25 +138,24 @@ struct Int2Type
 
 
 
-
-// Do user initialize commands outside, logic / physics systems
-struct gkInitCmd
+// Do user create commands outside, logic / physics systems
+struct gkCreateParam
 {
-	enum Cmd
+	enum Type
 	{
-		REINITIALIZE,
-		INITIALIZE,
-		FINALIZE
+		REINSTANCE,
+		CREATEINSTANCE,
+		DESTROYINSTANCE
 	};
 
 	gkObject *first;
-	Cmd       second;
+	Type   second;
 
-	GK_INLINE bool operator == (const gkInitCmd& cmd) const 
+	GK_INLINE bool operator == (const gkCreateParam& cmd) const 
 	{ return first == cmd.first && second == cmd.second; }
 };
 
-typedef utArray<gkInitCmd> gkInitializers;
+typedef utArray<gkCreateParam> gkCreateParams;
 
 
 #endif//_gkCommon_h_

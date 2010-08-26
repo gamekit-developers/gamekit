@@ -59,14 +59,10 @@ protected:
 	// Reference to the scene.
 	gkScene                 *m_scene;
 
-	bool                    m_firstInit;
+	bool                    m_firstLoad;
 
-	virtual void initializeImpl(void);
-	virtual void finalizeImpl(void);
-
-
-	void initializeParents(void);
-	void initializePhysics(void);
+	virtual void createInstanceImpl(void);
+	virtual void destroyInstanceImpl(void);
 
 	void makeTransform(void);
 
@@ -74,7 +70,7 @@ protected:
 public:
 
 
-	gkGameObjectInstance(gkGameObjectGroup *group, gkScene* scene, UTsize id);
+	gkGameObjectInstance(gkGameObjectGroup *group, gkScene *scene, UTsize id);
 	~gkGameObjectInstance();
 
 
@@ -89,7 +85,7 @@ public:
 	void          addObject(gkGameObject *gobj);
 
 
-    // Existence testing.
+	// Existence testing.
 	bool          hasObject(const gkHashedString &name);
 	bool          hasObject(gkGameObject *gobj);
 
@@ -98,9 +94,9 @@ public:
 
 
 	// Clones all objects in this instance.
-	void cloneObjects(const gkTransformState &from, int time, 
-		const gkVector3& linearVelocity=gkVector3::ZERO, bool tsLinLocal = true,
-		const gkVector3& angularVelocity=gkVector3::ZERO, bool tsAngLocal = true);
+	void cloneObjects(const gkTransformState &from, int time,
+	                  const gkVector3 &linearVelocity=gkVector3::ZERO, bool tsLinLocal = true,
+	                  const gkVector3 &angularVelocity=gkVector3::ZERO, bool tsAngLocal = true);
 
 
 	GK_INLINE gkGameObject          *getOwner(void)     {return m_owner;}

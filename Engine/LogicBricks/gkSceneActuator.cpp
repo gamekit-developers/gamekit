@@ -54,27 +54,26 @@ void gkSceneActuator::execute(void)
 	if (isPulseOff())
 		return;
 
-	if (!m_object->isInitialized())
+	if (!m_object->isInstanced())
 		return;
 		
 	switch(m_mode)
 	{
 		case SC_RESTART:
-			m_object->getOwner()->reinitialize();
+			m_object->getOwner()->reinstance();
 			break;
 		case SC_SET_SCENE:
 			scene= gkSceneManager::getSingleton().getScene(m_sceneName);
 			if(scene && scene != m_object->getOwner())
 			{
-				// ensure its unloaded
-				scene->finalize();
+				scene->destroyInstance();
 				gkEngine &eng = gkEngine::getSingleton();
 
 				// Issue command to finish current 
-				eng.addInitCommand(m_object->getOwner(),  gkInitCmd::FINALIZE);
+				eng.addCommand(m_object->getOwner(), gkCreateParam::DESTROYINSTANCE);
 
-				// Issue command to initialize this 
-				eng.addInitCommand(scene,                 gkInitCmd::INITIALIZE);
+				// Issue command to create this 
+				eng.addCommand(scene, gkCreateParam::CREATEINSTANCE);
 			}
 			break;
 		case SC_SET_CAMERA:

@@ -228,9 +228,9 @@ class gsObject
 public:
 	gsObject();
 
-	void initialize(void);
-	void finalize(void);
-	void reinitialize(void);
+	void createInstance(void);
+	void destroyInstance(void);
+	void reinstance(void);
 
 	gkString getName(void);
 

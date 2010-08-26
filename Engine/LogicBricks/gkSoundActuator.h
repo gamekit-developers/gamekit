@@ -59,7 +59,7 @@ private:
 
 
 	void notifyActivate(void);
-	void notifyFinalize(void);
+	void notifyUnload(void);
 
 public:
 
