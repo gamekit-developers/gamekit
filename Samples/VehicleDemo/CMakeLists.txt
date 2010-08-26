@@ -25,6 +25,10 @@ set(SRC
 	Main.cpp 
 	vdVehicle.cpp
 	vdVehicle.h
+	vdLogic.cpp
+	vdLogic.h
+	vdVehicleNode.cpp
+	vdVehicleNode.h
 )
 
 include_directories(

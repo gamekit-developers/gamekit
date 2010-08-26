@@ -32,20 +32,20 @@ vdVehicle::vdVehicle(gkScene *scene)
 {
 	btVector3 wheelDirectionCS0(0,0,-1);
 	btVector3 wheelAxleCS(1,0,0); 
-	float connectionHeight = 0.1;
+	float connectionHeight = 0.4;
 	float sideOffset = 0.73;
 	float frontOffest = 1.211;
 	float rearOffset = 1.282;
 	float wheelRadius = 0.357;
 	float wheelWidth = 0.2;
 	
-	float suspensionRestLength = 0.5;
-	float suspensionTravelCm = 1;
-	float suspensionStiffness= 500.0;
-	float suspensionDamping = 2.0;
-	float suspensionCompression = 5.0;
-	float wheelFriction = 500;
-	float rollInfluence = 1;
+	float suspensionRestLength = 0.58;
+	float suspensionTravelCm = 12; //centimeters
+	float suspensionStiffness= 80.0;
+	float suspensionDamping = 0.3;
+	float suspensionCompression = 0.5;
+	float wheelFriction = 10;
+	float rollInfluence = 0.1;
 	
 	
 	m_object = scene->getObject("MiniG");
@@ -100,9 +100,9 @@ vdVehicle::~vdVehicle()
 
 void vdVehicle::tick(gkScalar rate)
 {
-	float power=1000.0f;
-	float brake=2000.0f;
-	float steer=0.5f;
+	float power=2000.0f;
+	float brake=300.0f;
+	float steer=0.2f;
 	
 	m_vehicle->applyEngineForce(m_gaz*power, 2);
 	m_vehicle->setBrake(m_brake*brake, 2);
@@ -120,7 +120,9 @@ void vdVehicle::tick(gkScalar rate)
 		m_vehicle->updateWheelTransform(i,true);
 		//draw wheels (cylinders)
 		trans = m_vehicle->getWheelInfo(i).m_worldTransform;
-		m_dynamicWorld->debugDrawObject(trans, m_wheelShape, btVector3(0,1,0));
+		
+		if (m_dynamicWorld->getDebugDrawer())
+			m_dynamicWorld->debugDrawObject(trans, m_wheelShape, btVector3(0,1,0));
 	}
 }
 
@@ -133,11 +135,16 @@ void vdVehicle::setGaz(gkScalar ratio)
 {
 	m_gaz = ratio;
 }
-void vdVehicle::setBreak(gkScalar ratio)
+void vdVehicle::setBrake(gkScalar ratio)
 {
 	m_brake = ratio;
 }
 void vdVehicle::setSteer(gkScalar ratio)
 {
 	m_steer = ratio;
+}
+
+gkScalar vdVehicle::getCurrentSpeedKmHour()
+{
+	return m_vehicle->getCurrentSpeedKmHour();
 }

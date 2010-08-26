@@ -25,41 +25,50 @@
 -------------------------------------------------------------------------------
 */
 
-#ifndef VDVEHICLE_H
-#define VDVEHICLE_H
+#include "vdVehicleNode.h"
+//#include "OgreKit.h"
 
-#include "OgreKit.h"
-#include "btBulletDynamicsCommon.h"
-
-class vdVehicle
+vdVehicleNode::vdVehicleNode(gkLogicTree *parent, size_t id)
+		:	gkLogicNode(parent, id), m_vehicle(0)
 {
-private:
-	btDynamicsWorld                   *m_dynamicWorld;
-	btDefaultVehicleRaycaster         *m_raycaster;
-	btRaycastVehicle                  *m_vehicle;
-	btRaycastVehicle::btVehicleTuning  m_tuning;
-	gkGameObject                      *m_object;
-	btRigidBody                       *m_chassis;
-	btCollisionShape                  *m_wheelShape;
-	
-	float m_gaz;
-	float m_brake;
-	float m_steer;
-	
-public:
-	vdVehicle(gkScene *scene);
-	~vdVehicle();
-	
-	void tick(gkScalar rate);
-	
-	void setTransfrom(const gkTransformState &v);
-	
-	void setGaz(gkScalar ratio);
-	void setBrake(gkScalar ratio);
-	void setSteer(gkScalar ratio);
-	
-	gkScalar getCurrentSpeedKmHour(void);
-	
-};
+	ADD_ISOCK(FRONT, false);
+	ADD_ISOCK(REAR, false);
+	ADD_ISOCK(LEFT, false);
+	ADD_ISOCK(RIGHT, false);
+}
 
-#endif // VDVEHICLE_H
+bool vdVehicleNode::evaluate(gkScalar tick)
+{
+	bool front = GET_SOCKET_VALUE(FRONT);
+	bool rear = GET_SOCKET_VALUE(REAR);
+	bool left = GET_SOCKET_VALUE(LEFT);
+	bool right = GET_SOCKET_VALUE(RIGHT);
+	bool brake = false;
+	
+	if(m_vehicle)
+	{
+		m_vehicle->setGaz(0.0);
+		m_vehicle->setSteer(0.0);
+		
+		if(front)
+			if(m_vehicle->getCurrentSpeedKmHour() > -FLT_MIN)
+				m_vehicle->setGaz(1.0);
+			else
+				brake = true;
+		if(rear)
+			if(m_vehicle->getCurrentSpeedKmHour() < FLT_MIN)
+				m_vehicle->setGaz(-0.5);
+			else
+				brake = true;
+		if(brake)
+			m_vehicle->setBrake(1.0);
+		else
+			m_vehicle->setBrake(0.0);
+		if(left)
+			m_vehicle->setSteer(1.0);
+		else if(right)
+			m_vehicle->setSteer(-1.0);
+	}
+	
+	return false;
+}

@@ -26,14 +26,14 @@
 */
 
 #include "OgreKit.h"
-#include "vdVehicle.h"
+#include "vdLogic.h"
 
 class OgreKit : public gkCoreApplication, public gkWindowSystem::Listener
 {
 public:
 
     OgreKit(const gkString &blend, const gkString& startCfg) 
-		: m_blend(gkUtils::getFile(blend))
+		: m_blend(gkUtils::getFile(blend)), m_logic(0)
 	{
 		gkPath path = gkUtils::getFile(startCfg);
 
@@ -49,13 +49,13 @@ public:
 
 	~OgreKit()
 	{
-		delete m_vehicle;
+		delete m_logic;
 	}
 
 	
 	void tick(gkScalar rate)
 	{
-		m_vehicle->tick(rate);
+		m_logic->tick(rate);
 	}
 
 	bool load()
@@ -70,12 +70,8 @@ public:
 
 			pScene->load();
 
-			m_vehicle = new vdVehicle(pScene);
+			m_logic = new vdLogic(pScene);
 			
-			gkTransformState startline;
-			startline.setIdentity();
-			startline.loc = gkVector3(-67.0, 289.0,-8.0);
-			m_vehicle->setTransfrom(startline);
 			
 			// add input hooks
 			gkWindowSystem::getSingleton().addListener(this);
@@ -90,35 +86,18 @@ public:
 	
 	void keyPressed(const gkKeyboard &key, const gkScanCode &sc)
 	{
-		if (sc == KC_UPARROWKEY)
-			m_vehicle->setGaz(1.0f);
-		if (sc == KC_DOWNARROWKEY)
-			m_vehicle->setBreak(1.0f);
-		if (sc == KC_LEFTARROWKEY)
-			m_vehicle->setSteer(1.0f);
-		if (sc == KC_RIGHTARROWKEY)
-			m_vehicle->setSteer(-1.0f);
 	}
+
 	void keyReleased(const gkKeyboard &key, const gkScanCode &sc)
 	{
 		if (sc == KC_ESCKEY)
 			m_engine->requestExit();
-			
-			
-		if (sc == KC_UPARROWKEY)
-			m_vehicle->setGaz(0.0f);
-		if (sc == KC_DOWNARROWKEY)
-			m_vehicle->setBreak(0.0f);
-		if (sc == KC_LEFTARROWKEY)
-			m_vehicle->setSteer(0.0f);
-		if (sc == KC_RIGHTARROWKEY)
-			m_vehicle->setSteer(0.0f);
 	}
 
 private:
 
 	gkString  m_blend;
-	vdVehicle *m_vehicle;
+	vdLogic   *m_logic;
 };
 
 

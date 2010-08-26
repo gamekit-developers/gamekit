@@ -25,41 +25,45 @@
 -------------------------------------------------------------------------------
 */
 
-#ifndef VDVEHICLE_H
-#define VDVEHICLE_H
+#ifndef VDLOGIC_H
+#define VDLOGIC_H
 
 #include "OgreKit.h"
-#include "btBulletDynamicsCommon.h"
+#include "vdVehicle.h"
+#include "vdVehicleNode.h"
 
-class vdVehicle
+class vdLogic
 {
-private:
-	btDynamicsWorld                   *m_dynamicWorld;
-	btDefaultVehicleRaycaster         *m_raycaster;
-	btRaycastVehicle                  *m_vehicle;
-	btRaycastVehicle::btVehicleTuning  m_tuning;
-	gkGameObject                      *m_object;
-	btRigidBody                       *m_chassis;
-	btCollisionShape                  *m_wheelShape;
-	
-	float m_gaz;
-	float m_brake;
-	float m_steer;
-	
 public:
-	vdVehicle(gkScene *scene);
-	~vdVehicle();
+	vdLogic(gkScene *scene);
+	~vdLogic();
 	
 	void tick(gkScalar rate);
+
+private:
+
+	void createInput();
+	void createVehicle();
+
+public:
+
+	gkScene* m_scene;
+
+	gkGameObject* m_camera;
 	
-	void setTransfrom(const gkTransformState &v);
+	gkLogicTree* m_tree;
+
+	gkKeyNode* m_upKeyNode;
+	gkKeyNode* m_downKeyNode;
+	gkKeyNode* m_leftKeyNode; 
+	gkKeyNode* m_rightKeyNode;
+	gkKeyNode* m_spaceKeyNode;
+	gkKeyNode* m_rKeyNode;
+
+	vdVehicleNode *m_vehicleNode;
 	
-	void setGaz(gkScalar ratio);
-	void setBrake(gkScalar ratio);
-	void setSteer(gkScalar ratio);
-	
-	gkScalar getCurrentSpeedKmHour(void);
-	
+private:
+	vdVehicle *m_vehicle;
 };
 
-#endif // VDVEHICLE_H
+#endif // VDLOGIC_H

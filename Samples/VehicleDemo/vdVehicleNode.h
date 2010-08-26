@@ -25,41 +25,37 @@
 -------------------------------------------------------------------------------
 */
 
-#ifndef VDVEHICLE_H
-#define VDVEHICLE_H
+#ifndef VDVEHICLENODE_H
+#define VDVEHICLENODE_H
 
 #include "OgreKit.h"
-#include "btBulletDynamicsCommon.h"
+#include "vdVehicle.h"
 
-class vdVehicle
+class vdVehicleNode : public gkLogicNode
 {
-private:
-	btDynamicsWorld                   *m_dynamicWorld;
-	btDefaultVehicleRaycaster         *m_raycaster;
-	btRaycastVehicle                  *m_vehicle;
-	btRaycastVehicle::btVehicleTuning  m_tuning;
-	gkGameObject                      *m_object;
-	btRigidBody                       *m_chassis;
-	btCollisionShape                  *m_wheelShape;
-	
-	float m_gaz;
-	float m_brake;
-	float m_steer;
-	
 public:
-	vdVehicle(gkScene *scene);
-	~vdVehicle();
-	
-	void tick(gkScalar rate);
-	
-	void setTransfrom(const gkTransformState &v);
-	
-	void setGaz(gkScalar ratio);
-	void setBrake(gkScalar ratio);
-	void setSteer(gkScalar ratio);
-	
-	gkScalar getCurrentSpeedKmHour(void);
-	
+	enum
+	{
+		FRONT,
+		REAR,
+		LEFT,
+		RIGHT
+	};
+
+	DECLARE_SOCKET_TYPE(FRONT, bool);
+	DECLARE_SOCKET_TYPE(REAR, bool);
+	DECLARE_SOCKET_TYPE(LEFT, bool);
+	DECLARE_SOCKET_TYPE(RIGHT, bool);
+
+	vdVehicleNode(gkLogicTree *parent, size_t id);
+	virtual ~vdVehicleNode() {}
+
+	bool evaluate(gkScalar tick);
+
+	void setVehicle(vdVehicle *v)   {m_vehicle = v;}
+
+private:
+	vdVehicle *m_vehicle;
 };
 
-#endif // VDVEHICLE_H
+#endif // VDVEHICLENODE_H
