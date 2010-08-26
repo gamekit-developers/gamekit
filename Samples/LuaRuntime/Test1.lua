@@ -82,8 +82,8 @@ function MainCamera:constructor(scene)
 
 	self.xrot = scene:createEmpty("xRot")
 	self.zrot = scene:createEmpty("zRot")
-	self.zrot:load();
-	self.xrot:load();
+	self.zrot:initialize();
+	self.xrot:initialize();
 
 
 
@@ -600,7 +600,7 @@ function OgreKitApp:constructor()
 	self.scene      = self:loadBlendFile("Test1.blend");
 
 
-	self.scene:load();
+	self.scene:initialize();
 	self.player = Player(self.scene)
 
 end

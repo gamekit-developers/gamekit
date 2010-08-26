@@ -32,7 +32,7 @@
 
 // ----------------------------------------------------------------------------
 gkObject::gkObject(const gkString &name)
-	:       m_name(name), m_loadingState(ST_UNLOADED)
+	:       m_name(name), m_initState(ST_FINALIZED)
 {
 }
 
@@ -45,67 +45,67 @@ gkObject::~gkObject()
 
 
 // ----------------------------------------------------------------------------
-void gkObject::load(void)
+void gkObject::initialize(void)
 {
-	// Simple load mechanizm
+	// Simple initialize mechanizm
 
-	if (m_loadingState != ST_UNLOADED)
+	if (m_initState != ST_FINALIZED)
 		return;
 
-	m_loadingState = ST_LOADING;
+	m_initState = ST_INITIALIZING;
 
 
 	try
 	{
-		preLoadImpl();
-		loadImpl();
-		if (m_loadingState != ST_LOADFAILED)
+		preInitializeImpl();
+		initializeImpl();
+		if (m_initState != ST_INITFAILED)
 		{
-			m_loadingState |= ST_LOADED;
+			m_initState |= ST_INITIALIZED;
 
-			postLoadImpl();
-			m_loadingState = ST_LOADED;
+			postInitializeImpl();
+			m_initState = ST_INITIALIZED;
 		}
 	}
 
 	catch (Ogre::Exception &e)
 	{
-		m_loadingState = ST_LOADFAILED;
-		gkLogMessage("Object: Loading failed. \n\t" << e.getDescription());
+		m_initState = ST_INITFAILED;
+		gkLogMessage("Object: Initialize failed. \n\t" << e.getDescription());
 	}
 
 }
 
 
 // ----------------------------------------------------------------------------
-void gkObject::unload(void)
+void gkObject::finalize(void)
 {
-	// Simple unload mechanizm
-	if (m_loadingState != ST_LOADED)
+	// Simple finalize mechanizm
+	if (m_initState != ST_INITIALIZED)
 		return;
 
-	m_loadingState = ST_UNLOADING;
+	m_initState = ST_FINALIZING;
 
 	try
 	{
-		preUnloadImpl();
-		unloadImpl();
-		m_loadingState |= ST_UNLOADED;
-		postUnloadImpl();
-		m_loadingState = ST_UNLOADED;
+		preFinalizeImpl();
+		finalizeImpl();
+		m_initState |= ST_FINALIZED;
+		postFinalizeImpl();
+		m_initState = ST_FINALIZED;
 	}
 
 	catch (Ogre::Exception &e)
 	{
-		m_loadingState = ST_LOADFAILED;
-		gkLogMessage("Object: Loading failed. \n\t" << e.getDescription());
+		m_initState = ST_INITFAILED;
+		gkLogMessage("Object: Finalize failed. \n\t" << e.getDescription());
 	}
 }
 
 
 // ----------------------------------------------------------------------------
-void gkObject::reload(void)
+void gkObject::reinitialize(void)
 {
-	unload();
-	load();
+	finalize();
+	initialize();
 }

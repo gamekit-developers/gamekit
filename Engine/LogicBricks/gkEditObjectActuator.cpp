@@ -81,7 +81,7 @@ void gkEditObjectActuator::addObject(void)
 
 				nobj->getProperties().m_transform.loc = m_object->getWorldPosition();
 				nobj->getProperties().m_transform.rot = m_object->getWorldOrientation();
-				nobj->load();
+				nobj->initialize();
 
 				// apply velocities
 				nobj->setLinearVelocity(m_linv, m_lvlocal ? TRANSFORM_LOCAL : TRANSFORM_PARENT);

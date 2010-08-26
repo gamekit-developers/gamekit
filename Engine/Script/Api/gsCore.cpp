@@ -639,64 +639,64 @@ gsGameObject *gsGameObject::createNew(gkGameObject *ob)
 
 
 // ----------------------------------------------------------------------------
-gsLoadable::gsLoadable() : m_object(0)
+gsObject::gsObject() : m_object(0)
 {
 }
 
 
 // ----------------------------------------------------------------------------
-gsLoadable::gsLoadable(gkObject *ob) : m_object(ob)
+gsObject::gsObject(gkObject *ob) : m_object(ob)
 {
 }
 
 
 // ----------------------------------------------------------------------------
-void gsLoadable::load(void)
-{
-	if (m_object)
-	{
-		gkEngine *eng= gkEngine::getSingletonPtr();
-
-		if (eng->isRunning())
-			eng->addLoadableCommand(m_object, gkReloadableCmd::LOAD);
-		else
-			m_object->load();
-	}
-}
-
-
-// ----------------------------------------------------------------------------
-void gsLoadable::unload(void)
+void gsObject::initialize(void)
 {
 	if (m_object)
 	{
 		gkEngine *eng= gkEngine::getSingletonPtr();
 
 		if (eng->isRunning())
-			eng->addLoadableCommand(m_object, gkReloadableCmd::UNLOAD);
+			eng->addInitCommand(m_object, gkInitCmd::INITIALIZE);
 		else
-			m_object->unload();
+			m_object->initialize();
 	}
 }
 
 
 // ----------------------------------------------------------------------------
-void gsLoadable::reload(void)
+void gsObject::finalize(void)
 {
 	if (m_object)
 	{
 		gkEngine *eng= gkEngine::getSingletonPtr();
 
 		if (eng->isRunning())
-			eng->addLoadableCommand(m_object, gkReloadableCmd::RELOAD);
+			eng->addInitCommand(m_object, gkInitCmd::FINALIZE);
 		else
-			m_object->reload();
+			m_object->finalize();
 	}
 }
 
 
 // ----------------------------------------------------------------------------
-gkString gsLoadable::getName(void)
+void gsObject::reinitialize(void)
+{
+	if (m_object)
+	{
+		gkEngine *eng= gkEngine::getSingletonPtr();
+
+		if (eng->isRunning())
+			eng->addInitCommand(m_object, gkInitCmd::REINITIALIZE);
+		else
+			m_object->reinitialize();
+	}
+}
+
+
+// ----------------------------------------------------------------------------
+gkString gsObject::getName(void)
 {
 	if (m_object)
 		return m_object->getName();
@@ -712,7 +712,7 @@ gsScene::gsScene()
 }
 
 // ----------------------------------------------------------------------------
-gsScene::gsScene(gkObject *ob) : gsLoadable(ob)
+gsScene::gsScene(gkObject *ob) : gsObject(ob)
 {
 }
 
@@ -780,7 +780,7 @@ gsArray<gsGameObject, gkGameObject> &gsScene::getObjectList(void)
 	if (m_object)
 	{
 		gkScene *scene = cast<gkScene>();
-		gkGameObjectSet &objs = scene->getLoadedObjects();
+		gkGameObjectSet &objs = scene->getInitializedObjects();
 		gkGameObjectSet::Iterator it = objs.iterator();
 
 		while (it.hasMoreElements())
@@ -801,7 +801,7 @@ gsGameObject::gsGameObject()
 
 
 // ----------------------------------------------------------------------------
-gsGameObject::gsGameObject(gkObject *ob) : gsLoadable(ob)
+gsGameObject::gsGameObject(gkObject *ob) : gsObject(ob)
 {
 }
 

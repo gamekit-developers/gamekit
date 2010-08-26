@@ -223,25 +223,25 @@ public:
 
 
 // ----------------------------------------------------------------------------
-class gsLoadable
+class gsObject
 {
 public:
-	gsLoadable();
+	gsObject();
 
-	void load(void);
-	void unload(void);
-	void reload(void);
+	void initialize(void);
+	void finalize(void);
+	void reinitialize(void);
 
 	gkString getName(void);
 
 	// internal wrap
-	OGRE_KIT_WRAP_CLASS_COPY_CTOR(gsLoadable, gkObject, m_object);
+	OGRE_KIT_WRAP_CLASS_COPY_CTOR(gsObject, gkObject, m_object);
 	OGRE_KIT_INTERNAL_CAST(m_object);
 };
 
 
 // ----------------------------------------------------------------------------
-class gsScene : public gsLoadable
+class gsScene : public gsObject
 {
 private:
 	gsArray<gsGameObject, gkGameObject> m_objectCache;
@@ -267,7 +267,7 @@ public:
 extern gsScene* getActiveScene(void);
 
 // ----------------------------------------------------------------------------
-class gsGameObject : public gsLoadable
+class gsGameObject : public gsObject
 {
 public:
 	gsGameObject();

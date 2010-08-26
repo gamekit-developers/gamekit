@@ -226,7 +226,7 @@ protected:
 
 
 	void applyChildren(void);
-	void unloadChildren(void);
+	void finializeChildren(void);
 
 
 	// Base class type
@@ -271,10 +271,10 @@ protected:
 	LifeSpan                    m_life;
 
 
-	virtual void loadImpl(void);
-	virtual void unloadImpl(void);
-	virtual void postLoadImpl(void);
-	virtual void postUnloadImpl(void);
+	virtual void initializeImpl(void);
+	virtual void finalizeImpl(void);
+	virtual void postInitializeImpl(void);
+	virtual void postFinalizeImpl(void);
 
 private:
 

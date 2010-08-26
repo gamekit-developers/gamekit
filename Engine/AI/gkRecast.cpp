@@ -173,7 +173,7 @@ PDT_NAV_MESH gkRecast::createNavMesh(PMESHDATA meshData, const Config& config)
 	//
 
 	gkScene* scene = gkEngine::getSingleton().getActiveScene();
-	gkGameObjectSet& objects = scene->getLoadedObjects();
+	gkGameObjectSet& objects = scene->getInitializedObjects();
 	gkGameObjectSet::Iterator it = objects.iterator();
 	while(it.hasMoreElements())
 	{

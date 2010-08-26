@@ -47,7 +47,7 @@ gkSoundActuator::gkSoundActuator(gkGameObject *object, gkLogicLink *link, const 
 // ----------------------------------------------------------------------------
 gkSoundActuator::~gkSoundActuator()
 {
-	notifyUnload();
+	notifyFinalize();
 }
 
 
@@ -64,7 +64,7 @@ gkLogicBrick *gkSoundActuator::clone(gkLogicLink *link, gkGameObject *dest)
 
 
 // ----------------------------------------------------------------------------
-void gkSoundActuator::notifyUnload(void)
+void gkSoundActuator::notifyFinalize(void)
 {
 	if (m_player && m_sound)
 		m_sound->destroySource(m_player);

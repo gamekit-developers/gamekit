@@ -35,43 +35,42 @@
 class gkObject
 {
 public:
-	enum LoadingState
+	enum InitState
 	{
-		ST_LOADING   = (1 << 0),
-		ST_LOADED    = (1 << 1),
-		ST_UNLOADING = (1 << 2),
-		ST_UNLOADED  = (1 << 3),
-		ST_LOADFAILED= (1 << 4),
+		ST_INITIALIZING  = (1 << 0),
+		ST_INITIALIZED   = (1 << 1),
+		ST_FINALIZING    = (1 << 2),
+		ST_FINALIZED     = (1 << 3),
+		ST_INITFAILED    = (1 << 4),
 	};
 
 
 protected:
 	const gkString      m_name;
-	int                 m_loadingState;
+	int                 m_initState;
 
-	virtual void preLoadImpl(void) {}
-	virtual void preUnloadImpl(void) {}
-	virtual void loadImpl(void) {}
-	virtual void unloadImpl(void) {}
-	virtual void postLoadImpl(void) {}
-	virtual void postUnloadImpl(void) {}
+	virtual void preInitializeImpl(void) {}
+	virtual void preFinalizeImpl(void) {}
+	virtual void initializeImpl(void) {}
+	virtual void finalizeImpl(void) {}
+	virtual void postInitializeImpl(void) {}
+	virtual void postFinalizeImpl(void) {}
 
 public:
 
 	gkObject(const gkString &name);
 	virtual ~gkObject();
 
-	void load(void);
-	void unload(void);
-	void reload(void);
+	void initialize(void);
+	void finalize(void);
+	void reinitialize(void);
 
 
 	GK_INLINE const gkString &getName(void)               {return m_name;}
-
-	GK_INLINE bool           isLoaded(void) const         {return (m_loadingState & ST_LOADED) != 0;}
-	GK_INLINE bool           isLoading(void) const        {return (m_loadingState & ST_LOADING) != 0;}
-	GK_INLINE bool           isUnloading(void) const      {return (m_loadingState & ST_UNLOADING) != 0;}
-	GK_INLINE int            getLoadingState(void) const  {return m_loadingState;}
+	GK_INLINE bool           isInitialized(void)  const   {return (m_initState & ST_INITIALIZED) != 0;}
+	GK_INLINE bool           isInitializing(void) const   {return (m_initState & ST_INITIALIZING) != 0;}
+	GK_INLINE bool           isFinalizing(void)   const   {return (m_initState & ST_FINALIZING) != 0;}
+	GK_INLINE int            getInitState(void)   const   {return m_initState;}
 
 
 };

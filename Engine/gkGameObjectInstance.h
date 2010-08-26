@@ -59,14 +59,14 @@ protected:
 	// Reference to the scene.
 	gkScene                 *m_scene;
 
-	bool                    m_firstLoad;
+	bool                    m_firstInit;
 
-	virtual void loadImpl(void);
-	virtual void unloadImpl(void);
+	virtual void initializeImpl(void);
+	virtual void finalizeImpl(void);
 
 
-	void loadParents(void);
-	void loadPhysics(void);
+	void initializeParents(void);
+	void initializePhysics(void);
 
 	void makeTransform(void);
 

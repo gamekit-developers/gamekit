@@ -67,8 +67,8 @@ protected:
 	// drawing all but static wireframes
 	void localDrawObject(gkPhysicsController *phyCon);
 
-	void loadImpl(void);
-	void unloadImpl(void);
+	void initializeImpl(void);
+	void finalizeImpl(void);
 
 	static void substepCallback(btDynamicsWorld *dyn, btScalar tick);
 

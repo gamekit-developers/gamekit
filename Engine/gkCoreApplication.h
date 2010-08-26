@@ -45,7 +45,7 @@ protected:
 	gkEngine   *m_engine;
 	gkUserDefs  m_prefs;
 
-	virtual bool load(void) {return false;}
+	virtual bool setup(void) {return false;}
 	virtual void tick(gkScalar rate) {};
 
 

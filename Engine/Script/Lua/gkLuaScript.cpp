@@ -47,7 +47,7 @@ gkLuaScript::~gkLuaScript()
 
 
 // ----------------------------------------------------------------------------
-void gkLuaScript::unload(void)
+void gkLuaScript::finalize(void)
 {
 	lua_State *L = m_owner->getLua();
 	if (m_script != -1)

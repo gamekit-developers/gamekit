@@ -60,7 +60,7 @@ void gkPropertyActuator::execute(void)
 	if (isPulseOff())
 		return;
 
-	if (!m_object->isLoaded())
+	if (!m_object->isInitialized())
 		return;
 
 	if (!m_init)

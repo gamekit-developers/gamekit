@@ -60,7 +60,7 @@ gkMouseSensor::gkMouseSensor(gkGameObject *object, gkLogicLink *link, const gkSt
 // ----------------------------------------------------------------------------
 gkMouseSensor::~gkMouseSensor()
 {
-	if (m_rayQuery && m_scene->isLoaded())
+	if (m_rayQuery && m_scene->isInitialized())
 		m_scene->getManager()->destroyQuery(m_rayQuery);
 }
 

@@ -100,8 +100,8 @@ public:
 	// Delete all instances.
 	void clearInstances(void);
 
-	void loadInstances(void);
-	void unloadInstances(void);
+	void initializeInstances(void);
+	void finalizeInstances(void);
 
 
 	// Clones all objects in this group.

@@ -115,7 +115,7 @@ void gkConstraintManager::notifyObjectCloned(gkGameObject *oobj, gkGameObject *n
 
 
 // ----------------------------------------------------------------------------
-void gkConstraintManager::notifyObjectLoaded(gkGameObject *gobj)
+void gkConstraintManager::notifyObjectInitialized(gkGameObject *gobj)
 {
 	Constraints& cons = getConstraints(gobj);
 
@@ -128,7 +128,7 @@ void gkConstraintManager::notifyObjectLoaded(gkGameObject *gobj)
 }
 
 // ----------------------------------------------------------------------------
-void gkConstraintManager::notifyObjectUnloaded(gkGameObject *gobj)
+void gkConstraintManager::notifyObjectFinalized(gkGameObject *gobj)
 {
 	Constraints& cons = getConstraints(gobj);
 
@@ -237,7 +237,7 @@ void gkConstraintManager::update(gkScalar delta)
 			gkConstraint *co = p[i++];
 			gkGameObject *ob = co->getObject();
 
-			if (ob && ob->isLoaded())
+			if (ob && ob->isInitialized())
 			{
 				if (co->update(delta))
 					co->_applyMatrix();

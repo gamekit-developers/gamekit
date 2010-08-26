@@ -89,7 +89,7 @@ public:
 	void removeListener(Listener *listener);
 
 
-	void addLoadableCommand(class gkObject *ob, const gkReloadableCmd::LoadCmd &type);
+	void addInitCommand(class gkObject *ob, const gkInitCmd::Cmd &type);
 
 
 private:
@@ -108,7 +108,7 @@ private:
 	bool                    m_running;
 	gkUserDefs             *m_defs;
 	Listeners               m_listeners;
-	gkReloadables           m_loadables;
+	gkInitializers           m_cmds;
 
 	static gkScalar         m_tickRate;
 	static gkScalar         m_animRate;

@@ -80,7 +80,7 @@ void gkUserDefs::load(const gkString &fname)
 
 	try
 	{
-		// try and load prefs
+		// try and initialize prefs
 
 		Ogre::ConfigFile fp;
 		fp.load(startup);
@@ -102,7 +102,7 @@ void gkUserDefs::load(const gkString &fname)
 	}
 	catch (Ogre::Exception &e)
 	{
-		gkLogMessage("Failed to load resource file!\n" << e.getDescription());
+		gkLogMessage("Failed to initialize resource file!\n" << e.getDescription());
 	}
 }
 

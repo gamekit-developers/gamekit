@@ -7,7 +7,7 @@ function Demo:constructor()
 end
 
 
-function Demo:update(delta)
+function Demo:OnUpdate(delta)
 
 	OgreKit.DebugPrint("Demo main loop running ==> " .. self.scene:getName())
 

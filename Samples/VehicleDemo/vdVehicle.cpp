@@ -50,8 +50,8 @@ vdVehicle::vdVehicle(gkScene *scene)
 	
 	m_object = scene->getObject("MiniG");
 	
-	if(!m_object->isLoaded())
-		m_object->load();
+	if(!m_object->isInitialized())
+		m_object->initialize();
 	
 	m_chassis = ((gkRigidBody*)m_object->getPhysicsController())->getBody();
 	m_chassis->setActivationState(DISABLE_DEACTIVATION);

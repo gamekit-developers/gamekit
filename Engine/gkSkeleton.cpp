@@ -111,9 +111,9 @@ gkSkeleton::~gkSkeleton()
 
 
 // ----------------------------------------------------------------------------
-void gkSkeleton::loadImpl(void)
+void gkSkeleton::initializeImpl(void)
 {
-	gkGameObject::loadImpl();
+	gkGameObject::initializeImpl();
 
 	createSkeleton();
 	if (m_baseProps.isInvisible())
@@ -121,9 +121,9 @@ void gkSkeleton::loadImpl(void)
 }
 
 // ----------------------------------------------------------------------------
-void gkSkeleton::unloadImpl(void)
+void gkSkeleton::finalizeImpl(void)
 {
-	gkGameObject::unloadImpl();
+	gkGameObject::finalizeImpl();
 }
 
 

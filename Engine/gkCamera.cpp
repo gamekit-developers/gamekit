@@ -45,9 +45,9 @@ gkCamera::gkCamera(gkScene *scene, const gkString &name)
 
 
 // ----------------------------------------------------------------------------
-void gkCamera::loadImpl(void)
+void gkCamera::initializeImpl(void)
 {
-	gkGameObject::loadImpl();
+	gkGameObject::initializeImpl();
 
 	GK_ASSERT(!m_camera);
 
@@ -69,12 +69,12 @@ void gkCamera::loadImpl(void)
 
 
 // ----------------------------------------------------------------------------
-void gkCamera::unloadImpl(void)
+void gkCamera::finalizeImpl(void)
 {
 	GK_ASSERT(m_camera);
 
 
-	if (!m_scene->isUnloading())
+	if (!m_scene->isFinalizing())
 	{
 		Ogre::SceneManager *manager = m_scene->getManager();
 
@@ -84,7 +84,7 @@ void gkCamera::unloadImpl(void)
 	}
 
 	m_camera = 0;
-	gkGameObject::unloadImpl();
+	gkGameObject::finalizeImpl();
 }
 
 // ----------------------------------------------------------------------------

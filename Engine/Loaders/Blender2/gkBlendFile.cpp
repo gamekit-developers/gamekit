@@ -119,7 +119,7 @@ bool gkBlendFile::parse(int opts)
 	if (opts == gkBlendLoader::LO_ONLY_ACTIVE_SCENE)
 		loadActive();
 	else 
-		loadAll();
+		initializeAll();
 
 	delete m_file;
 	m_file = 0;
@@ -157,7 +157,7 @@ void gkBlendFile::loadActive(void)
 
 
 // ----------------------------------------------------------------------------
-void gkBlendFile::loadAll(void)
+void gkBlendFile::initializeAll(void)
 {
 	// Load / convert all 
 	buildAllTextures();
@@ -346,7 +346,7 @@ void gkBlendFile::buildAllSounds()
 				}
 				else if (pak && pak->data)
 				{
-					// load from buffer
+					// initialize from buffer
 					if (!sndObj->load(pak->data, pak->size))
 					{
 						mgr->destroy(sndObj);

@@ -45,8 +45,11 @@ public:
 
 	int setup(int argc, char **argv);
 
-	bool load(void);
 	void keyReleased(const gkKeyboard &key, const gkScanCode &sc);
+
+private:
+
+	bool setup(void);
 };
 
 
@@ -119,7 +122,7 @@ int OgreKit::setup(int argc, char **argv)
 
 
 // ----------------------------------------------------------------------------
-bool OgreKit::load(void)
+bool OgreKit::setup(void)
 {
 	gkBlendFile *blend = gkBlendLoader::getSingleton().loadFile(gkUtils::getFile(m_blend), gkBlendLoader::LO_ALL_SCENES);
 	if (!blend)
@@ -135,7 +138,7 @@ bool OgreKit::load(void)
 		return false;
 	}
 
-	m_scene->load();
+	m_scene->initialize();
 
 	// add input hooks
 	gkWindowSystem::getSingleton().addListener(this);

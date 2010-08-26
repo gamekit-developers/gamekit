@@ -50,8 +50,8 @@ private:
 	gkLightProperties       m_lightProps;
 	Ogre::Light             *m_light;
 
-	virtual void loadImpl(void);
-	virtual void unloadImpl(void);
+	virtual void initializeImpl(void);
+	virtual void finalizeImpl(void);
 };
 
 #endif//_gkLightObject_h_

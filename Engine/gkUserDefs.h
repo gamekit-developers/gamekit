@@ -48,7 +48,7 @@ public:
 	gkVector2               winsize;            // Window width & height
 	gkString                wintitle;           // Window title
 	bool                    fullscreen;         // Fullscreen mode
-	gkString                resources;          // resources to load
+	gkString                resources;          // resources to initialize
 	gkScalar                animspeed;          // animation speed, depreciated
 	gkScalar                startframe;         // animation frame at the start of the game
 	bool                    blendermat;         // convert meshes using blender materials

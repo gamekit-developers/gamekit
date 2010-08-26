@@ -57,7 +57,7 @@ public:
 		m_sceneLogic->tick(rate);
 	}
 
-    bool load()
+    bool setup()
     {
         gkBlendFile* pBlendFile = m_engine->loadBlendFile(m_blend);
 
@@ -67,7 +67,7 @@ public:
 
 			GK_ASSERT(pScene);
 
-			pScene->load();
+			pScene->initialize();
 
 			GK_ASSERT(!m_sceneLogic);
 

@@ -59,7 +59,7 @@ public:
 
 	void update(gkScalar tick);
 
-	void unload(void);
+	void finalize(void);
 
 
 	gkLuaScript *getScript(const gkString &name);

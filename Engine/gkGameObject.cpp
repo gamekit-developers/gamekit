@@ -181,21 +181,21 @@ void gkGameObject::cloneImpl(gkGameObject *clob)
 
 
 // ----------------------------------------------------------------------------
-void gkGameObject::loadImpl(void)
+void gkGameObject::initializeImpl(void)
 {
 	SceneManager *manager = m_scene->getManager();
 	SceneNode *parentNode = 0;
 
 
-	if (!m_scene->isLoading())
+	if (!m_scene->isInitializing())
 	{
-		// Scene is not currently loading, meaning
+		// Scene is not currently intializing, meaning
 		// a specific object is being loaded. (maintain previous parent)
 
 		if (m_parent)
 		{
-			if (!m_parent->isLoaded())
-				m_parent->load();
+			if (!m_parent->isInitialized())
+				m_parent->initialize();
 
 			parentNode = m_parent->m_node;
 			GK_ASSERT(parentNode);
@@ -208,7 +208,7 @@ void gkGameObject::loadImpl(void)
 	applyTransformState(m_baseProps.m_transform);
 
 
-	if (!m_scene->isLoading())
+	if (!m_scene->isInitializing())
 	{
 		// Reattach children (ogre) nodes
 		gkGameObjectArray::Iterator iter = m_children.iterator();
@@ -236,25 +236,25 @@ void gkGameObject::loadImpl(void)
 
 
 // ----------------------------------------------------------------------------
-void gkGameObject::postLoadImpl(void)
+void gkGameObject::postInitializeImpl(void)
 {
 	// tell scene
-	m_scene->notifyObjectLoaded(this);
+	m_scene->notifyObjectInitialized(this);
 }
 
 
 // ----------------------------------------------------------------------------
-void gkGameObject::postUnloadImpl(void)
+void gkGameObject::postFinalizeImpl(void)
 {
 	// tell logic
 	if (m_bricks)
-		m_bricks->unload();
+		m_bricks->finalize();
 
 
 	// tell scene
-	m_scene->notifyObjectUnloaded(this);
+	m_scene->notifyObjectFinalized(this);
 
-	if (m_scene->isUnloading())
+	if (m_scene->isFinalizing())
 	{
 		m_parent = 0;
 		m_children.clear();
@@ -264,12 +264,12 @@ void gkGameObject::postUnloadImpl(void)
 
 
 // ----------------------------------------------------------------------------
-void gkGameObject::unloadImpl(void)
+void gkGameObject::finalizeImpl(void)
 {
 	SceneManager *manager = m_scene->getManager();
 
 
-	if (!m_scene->isUnloading())
+	if (!m_scene->isFinalizing())
 	{
 		if (m_node)
 		{
@@ -334,7 +334,7 @@ bool gkGameObject::hasSensorMaterial(const gkString &name, bool onlyFirst)
 // ----------------------------------------------------------------------------
 Ogre::MovableObject *gkGameObject::getMovable(void)
 {
-	if (!isLoaded())
+	if (!isInitialized())
 		return 0;
 
 	switch (m_type)
@@ -903,7 +903,7 @@ bool gkGameObject::hasVariable(const gkString &name)
 // ----------------------------------------------------------------------------
 void gkGameObject::setParent(gkGameObject *par)
 {
-	if (!isLoaded() || isLoading() || (par && (!par->isLoaded() || par->isLoading())))
+	if (!isInitialized() || isInitializing() || (par && (!par->isInitialized() || par->isInitializing())))
 		return;
 
 	if(par && par != this)
@@ -931,7 +931,7 @@ void gkGameObject::setParentInPlace(gkGameObject *par)
 // ----------------------------------------------------------------------------
 void gkGameObject::clearParent()
 {
-	if (!isLoaded() || isLoading())
+	if (!isInitialized() || isInitializing())
 		return;
 
 	if(m_parent)
@@ -955,7 +955,7 @@ void gkGameObject::clearParentInPlace()
 // ----------------------------------------------------------------------------
 void gkGameObject::addChild(gkGameObject *gobj)
 {
-	if (!isLoaded() || isLoading() || (gobj && (!gobj->isLoaded() || gobj->isLoading())))
+	if (!isInitialized() || isInitializing() || (gobj && (!gobj->isInitialized() || gobj->isInitializing())))
 		return;
 
 	if (gobj && gobj != this)
@@ -966,8 +966,8 @@ void gkGameObject::addChild(gkGameObject *gobj)
 		m_children.push_back(gobj);
 		gobj->m_parent = this;
 
-		if (!gobj->isLoaded())
-			gobj->load();
+		if (!gobj->isInitialized())
+			gobj->initialize();
 
 		// Suspend child updates.
 		gkPhysicsController *cont = gobj->getPhysicsController();
@@ -986,7 +986,7 @@ void gkGameObject::addChild(gkGameObject *gobj)
 // ----------------------------------------------------------------------------
 void gkGameObject::removeChild(gkGameObject *gobj)
 {
-	if (!isLoaded() || isLoading() || (gobj && (!gobj->isLoaded() || gobj->isLoading())))
+	if (!isInitialized() || isInitializing() || (gobj && (!gobj->isInitialized() || gobj->isInitializing())))
 		return;
 
 	if (gobj &&  gobj != this && hasChild(gobj))

@@ -139,24 +139,24 @@ struct Int2Type
 
 
 
-// Do user load commands outside, logic / physics systems
-struct gkReloadableCmd
+// Do user initialize commands outside, logic / physics systems
+struct gkInitCmd
 {
-	enum LoadCmd
+	enum Cmd
 	{
-		RELOAD,
-		LOAD,
-		UNLOAD
+		REINITIALIZE,
+		INITIALIZE,
+		FINALIZE
 	};
 
 	gkObject *first;
-	LoadCmd   second;
+	Cmd       second;
 
-	GK_INLINE bool operator == (const gkReloadableCmd& cmd) const 
+	GK_INLINE bool operator == (const gkInitCmd& cmd) const 
 	{ return first == cmd.first && second == cmd.second; }
 };
 
-typedef utArray<gkReloadableCmd> gkReloadables;
+typedef utArray<gkInitCmd> gkInitializers;
 
 
 #endif//_gkCommon_h_

@@ -59,8 +59,8 @@ private:
 	gkCameraProperties  m_cameraProps;
 	Ogre::Camera        *m_camera;
 
-	virtual void loadImpl(void);
-	virtual void unloadImpl(void);
+	virtual void initializeImpl(void);
+	virtual void finalizeImpl(void);
 };
 
 #endif//_gkCameraObject_h_

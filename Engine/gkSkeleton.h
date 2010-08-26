@@ -136,8 +136,8 @@ protected:
 	// internal skeleton loader
 	Ogre::ManualResourceLoader *m_skelLoader;
 
-	virtual void loadImpl(void);
-	virtual void unloadImpl(void);
+	virtual void initializeImpl(void);
+	virtual void finalizeImpl(void);
 };
 
 

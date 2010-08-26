@@ -59,8 +59,9 @@ bool gkCoreApplication::initialize(void)
 	if (!m_engine->isInitialized())
 		return false;
 
-	// load scene information
-	if (!load())
+
+	// Setup scene information,
+	if (!setup())
 	{
 		m_engine->finalize();
 		delete m_engine;

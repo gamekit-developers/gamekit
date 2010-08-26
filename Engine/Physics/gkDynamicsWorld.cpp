@@ -54,19 +54,19 @@ gkDynamicsWorld::gkDynamicsWorld(const gkString &name, gkScene *scene)
 			m_handleContacts(true), 
 			m_dbvt(0)
 {
-	loadImpl();
+	initializeImpl();
 }
 
 
 // ----------------------------------------------------------------------------
 gkDynamicsWorld::~gkDynamicsWorld()
 {
-	unloadImpl();
+	finalizeImpl();
 }
 
 
 // ----------------------------------------------------------------------------
-void gkDynamicsWorld::loadImpl(void)
+void gkDynamicsWorld::initializeImpl(void)
 {
 	// prepare world
 
@@ -97,7 +97,7 @@ void gkDynamicsWorld::loadImpl(void)
 
 
 // ----------------------------------------------------------------------------
-void gkDynamicsWorld::unloadImpl(void)
+void gkDynamicsWorld::finalizeImpl(void)
 {
 	delete m_dynamicsWorld;
 	m_dynamicsWorld = 0;
@@ -323,7 +323,7 @@ void gkDynamicsWorld::DrawDebug()
 
 
 				gkGameObject *ob = cont->getObject();
-				if (ob->isLoaded())
+				if (ob->isInitialized())
 					localDrawObject(cont);
 			}
 		}

@@ -50,8 +50,8 @@ public:
 	void                destroyGroup(gkGameObjectGroup *group);
 	void                destroyAll(void);
 
-	void                loadAll(void);
-	void                unloadAll(void);
+	void                initializeAll(void);
+	void                finalizeAll(void);
 
 	void                createStaticBatches(gkScene *scene);
 	void                destroyStaticBatches(gkScene *scene);

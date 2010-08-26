@@ -43,7 +43,7 @@ void gkAbstractDispatcher::doDispatch(SensorList &sens)
 			gkLogicSensor   *sens = it.getNext();
 			gkGameObject    *obj = sens->getObject();
 
-			if (obj && obj->isLoaded())
+			if (obj && obj->isInitialized())
 				sens->execute();
 		}
 	}

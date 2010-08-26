@@ -58,11 +58,11 @@ void gkLuaManager::update(gkScalar tick)
 }
 
 // ----------------------------------------------------------------------------
-void gkLuaManager::unload(void)
+void gkLuaManager::finalize(void)
 {
 	utHashTableIterator<ScriptMap> iter(m_scripts);
 	while (iter.hasMoreElements())
-		iter.getNext().second->unload();
+		iter.getNext().second->finalize();
 }
 
 

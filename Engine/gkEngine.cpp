@@ -328,7 +328,7 @@ void gkEngine::loadResources(const gkString &name)
 	}
 	catch (Exception &e)
 	{
-		gkLogMessage("Engine: Failed to load resource file!\n" << e.getDescription());
+		gkLogMessage("Engine: Failed to initialize resource file!\n" << e.getDescription());
 	}
 }
 
@@ -417,12 +417,12 @@ void gkEngine::removeListener(gkEngine::Listener *listener)
 
 
 // ----------------------------------------------------------------------------
-void gkEngine::addLoadableCommand(gkObject *ob, const gkReloadableCmd::LoadCmd &type)
+void gkEngine::addInitCommand(gkObject *ob, const gkInitCmd::Cmd &type)
 {
-	gkReloadableCmd cmd = {ob, type};
+	gkInitCmd cmd = {ob, type};
 
-	if (m_loadables.find(cmd) == UT_NPOS)
-		m_loadables.push_back(cmd);
+	if (m_cmds.find(cmd) == UT_NPOS)
+		m_cmds.push_back(cmd);
 }
 
 
@@ -550,26 +550,26 @@ void gkEnginePrivate::tickImpl(gkScalar dt)
 
 
 	// post process
-	if (!engine->m_loadables.empty())
+	if (!engine->m_cmds.empty())
 	{
-		utArrayIterator<gkReloadables> iter(engine->m_loadables);
+		utArrayIterator<gkInitializers> iter(engine->m_cmds);
 
 		while (iter.hasMoreElements())
 		{
-			gkReloadableCmd &cmd = iter.getNext();
+			gkInitCmd &cmd = iter.getNext();
 
 			if (cmd.first != 0)
 			{
-				if (cmd.second == gkReloadableCmd::RELOAD)
-					cmd.first->reload();
-				else if (cmd.second == gkReloadableCmd::LOAD)
-					cmd.first->load();
-				else if (cmd.second == gkReloadableCmd::UNLOAD)
-					cmd.first->unload();
+				if (cmd.second == gkInitCmd::REINITIALIZE)
+					cmd.first->reinitialize();
+				else if (cmd.second == gkInitCmd::INITIALIZE)
+					cmd.first->initialize();
+				else if (cmd.second == gkInitCmd::FINALIZE)
+					cmd.first->finalize();
 			}
 		}
 
-		engine->m_loadables.clear();
+		engine->m_cmds.clear();
 	}
 }
 

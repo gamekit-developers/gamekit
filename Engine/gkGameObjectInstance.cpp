@@ -40,7 +40,7 @@ gkGameObjectInstance::gkGameObjectInstance(gkGameObjectGroup *group, gkScene *sc
 	    m_owner(0),
 	    m_parent(group),
 	    m_scene(scene),
-	    m_firstLoad(true)
+	    m_firstInit(true)
 {
 	GK_ASSERT(m_scene && m_parent);
 
@@ -59,7 +59,7 @@ gkGameObjectInstance::~gkGameObjectInstance()
 	while (iter.hasMoreElements())
 	{
 		gkGameObject *gobj = iter.getNext().second;
-		gobj->unload();
+		gobj->finalize();
 		delete gobj;
 	}
 
@@ -156,7 +156,7 @@ void gkGameObjectInstance::destroyObject(const gkHashedString &name)
 
 
 	gkGameObject *gobj = m_objects.at(pos);
-	gobj->unload();
+	gobj->finalize();
 
 
 	m_objects.remove(name);
@@ -244,7 +244,7 @@ void gkGameObjectInstance::cloneObjects(const gkTransformState &from,
 		props.m_transform = gkTransformState(plocal * clocal);
 		
 		
-		nobj->load();
+		nobj->initialize();
 
 
 		if (props.isRigidOrDynamic() || props.isGhost())
@@ -264,37 +264,37 @@ void gkGameObjectInstance::cloneObjects(const gkTransformState &from,
 
 
 // ----------------------------------------------------------------------------
-void gkGameObjectInstance::loadImpl(void)
+void gkGameObjectInstance::initializeImpl(void)
 {
-	// call load on all objects
+	// call initialize on all objects
 
 
 	if (!m_owner->isInActiveLayer())
 		return;
 
-	if (m_firstLoad)
+	if (m_firstInit)
 	{
 		makeTransform();
-		m_firstLoad = false;
+		m_firstInit = false;
 	}
 
 	Objects::Iterator iter = m_objects.iterator();
 	while (iter.hasMoreElements())
-		iter.getNext().second->load();
+		iter.getNext().second->initialize();
 }
 
 
 
-void gkGameObjectInstance::unloadImpl(void)
+void gkGameObjectInstance::finalizeImpl(void)
 {
 
-	// call unload on all objects
+	// call finalize on all objects
 
 
 	Objects::Iterator iter = m_objects.iterator();
 	while (iter.hasMoreElements())
 	{
-		iter.getNext().second->unload();
+		iter.getNext().second->finalize();
 	}
 
 }

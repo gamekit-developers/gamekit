@@ -67,7 +67,7 @@ void gkRigidBody::create(void)
 	if (m_body || m_collisionObject)
 		return;
 
-	GK_ASSERT(m_object && m_object->isLoaded() && m_object->isInActiveLayer());
+	GK_ASSERT(m_object && m_object->isInitialized() && m_object->isInActiveLayer());
 
 	createShape();
 	if (!m_shape) 
@@ -349,7 +349,7 @@ gkVector3 gkRigidBody::getAngularVelocity()
 // ----------------------------------------------------------------------------
 void gkRigidBody::getWorldTransform(btTransform &worldTrans) const
 {
-	if (m_suspend || !m_object->isLoaded() || !m_body)
+	if (m_suspend || !m_object->isInitialized() || !m_body)
 		return;
 
 	worldTrans.setIdentity();
@@ -381,7 +381,7 @@ void gkRigidBody::getWorldTransform(btTransform &worldTrans) const
 // ----------------------------------------------------------------------------
 void gkRigidBody::setWorldTransform(const btTransform &worldTrans)
 {
-	if (m_suspend || !m_object->isLoaded() || !m_body)
+	if (m_suspend || !m_object->isInitialized() || !m_body)
 		return;
 
 	gkPhysicsController::setTransform(worldTrans);

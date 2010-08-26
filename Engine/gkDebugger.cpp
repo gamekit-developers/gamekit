@@ -57,7 +57,7 @@ gkDebugger::gkDebugger(gkScene *parent)
 
 gkDebugger::~gkDebugger()
 {
-	if (m_node && m_parent->isLoaded())
+	if (m_node && m_parent->isInitialized())
 	{
 		Ogre::SceneManager *mgr = m_parent->getManager();
 		mgr->destroySceneNode(m_node);
@@ -79,7 +79,7 @@ void gkDebugger::verifyNode(void)
 		return;
 
 
-	if (m_parent->isLoaded())
+	if (m_parent->isInitialized())
 	{
 		Ogre::SceneManager *mgr = m_parent->getManager();
 		m_node = mgr->getRootSceneNode()->createChildSceneNode();

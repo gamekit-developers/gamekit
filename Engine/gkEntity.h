@@ -55,7 +55,7 @@ public:
 
 
 	// remove the entity only keep the rest.
-	void _unloadAsInstance(void);
+	void _finalizeAsInstance(void);
 
 protected:
 
@@ -76,8 +76,8 @@ protected:
 	Ogre::ManualResourceLoader *m_meshLoader;
 
 
-	virtual void loadImpl();
-	virtual void unloadImpl();
+	virtual void initializeImpl();
+	virtual void finalizeImpl();
 };
 
 

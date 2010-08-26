@@ -179,20 +179,20 @@ void gkGameObjectGroup::destroyInstance(gkGameObjectInstance *inst)
 
 
 // ----------------------------------------------------------------------------
-void gkGameObjectGroup::loadInstances(void)
+void gkGameObjectGroup::initializeInstances(void)
 {
 	Instances::Iterator it = m_instances.iterator();
 	while (it.hasMoreElements())
-		it.getNext()->load();
+		it.getNext()->initialize();
 }
 
 
 // ----------------------------------------------------------------------------
-void gkGameObjectGroup::unloadInstances(void)
+void gkGameObjectGroup::finalizeInstances(void)
 {
 	Instances::Iterator it = m_instances.iterator();
 	while (it.hasMoreElements())
-		it.getNext()->unload();
+		it.getNext()->finalize();
 }
 
 
@@ -248,7 +248,7 @@ void gkGameObjectGroup::cloneObjects(gkScene *scene,
 		props.m_transform = gkTransformState(plocal * clocal);
 
 
-		nobj->load();
+		nobj->initialize();
 
 
 		if (props.isRigidOrDynamic() || props.isGhost())
@@ -296,7 +296,7 @@ void gkGameObjectGroup::createStaticBatches(gkScene *scene)
 		while (instIt.hasMoreElements())
 		{
 			gkGameObject *obj = instIt.getNext().second;
-			obj->load();
+			obj->initialize();
 
 
 			if (obj->getType()==GK_ENTITY)
@@ -317,7 +317,7 @@ void gkGameObjectGroup::createStaticBatches(gkScene *scene)
 					                      obj->getWorldScale());
 
 					// no longer needed
-					ent->_unloadAsInstance();
+					ent->_finalizeAsInstance();
 				}
 			}
 		}
@@ -335,9 +335,9 @@ void gkGameObjectGroup::createStaticBatches(gkScene *scene)
 // ----------------------------------------------------------------------------
 void gkGameObjectGroup::destroyStaticBatches(gkScene *scene)
 {
-	bool isSceneUnloading = scene->isUnloading();
+	bool isSceneFinalizing = scene->isFinalizing();
 
-	if (!isSceneUnloading)
+	if (!isSceneFinalizing)
 	{
 		if (m_geometry)
 		{
@@ -347,7 +347,7 @@ void gkGameObjectGroup::destroyStaticBatches(gkScene *scene)
 	}
 	else
 	{
-		// TODO: reload entities.
+		// TODO: reinitialize entities.
 		m_geometry = 0;
 	}
 }

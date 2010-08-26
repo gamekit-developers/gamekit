@@ -575,7 +575,7 @@ void gkPhysicsController::createShape(void)
 // ----------------------------------------------------------------------------
 void gkPhysicsController::setTransform(const btTransform &worldTrans)
 {
-	GK_ASSERT(m_object && m_object->isLoaded());
+	GK_ASSERT(m_object && m_object->isInitialized());
 
 
 	const gkQuaternion &rot = gkMathUtils::get(worldTrans.getRotation());
@@ -595,7 +595,7 @@ void gkPhysicsController::setTransform(const btTransform &worldTrans)
 // ----------------------------------------------------------------------------
 void gkPhysicsController::_handleManifold(btPersistentManifold *manifold)
 {
-	if(m_suspend || !m_props.isContactListener() || !m_object->isLoaded()) 
+	if(m_suspend || !m_props.isContactListener() || !m_object->isInitialized()) 
 		return;
 
 

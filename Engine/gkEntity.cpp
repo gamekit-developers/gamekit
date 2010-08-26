@@ -67,9 +67,9 @@ gkEntity::~gkEntity()
 
 
 // ----------------------------------------------------------------------------
-void gkEntity::loadImpl(void)
+void gkEntity::initializeImpl(void)
 {
-	gkGameObject::loadImpl();
+	gkGameObject::initializeImpl();
 
 	GK_ASSERT(!m_entity);
 
@@ -93,7 +93,7 @@ void gkEntity::loadImpl(void)
 	if (parent && parent->getType() == GK_SKELETON)
 	{
 		// just in case
-		parent->load();
+		parent->initialize();
 
 		// attach entity to skeleton
 		m_skeleton = static_cast<gkSkeleton *>(parent);
@@ -120,7 +120,7 @@ void gkEntity::loadImpl(void)
 
 
 // ----------------------------------------------------------------------------
-void gkEntity::unloadImpl(void)
+void gkEntity::finalizeImpl(void)
 {
 	if (m_entity)
 	{
@@ -133,7 +133,7 @@ void gkEntity::unloadImpl(void)
 		if (!m_entityProps->m_startPose.empty())
 			_resetPose();
 
-		if (!m_scene->isUnloading())
+		if (!m_scene->isFinalizing())
 		{
 			if (m_node)
 				m_node->detachObject(m_entity);
@@ -146,12 +146,12 @@ void gkEntity::unloadImpl(void)
 	m_skeleton = 0;
 
 
-	gkGameObject::unloadImpl();
+	gkGameObject::finalizeImpl();
 }
 
 
 // ----------------------------------------------------------------------------
-void gkEntity::_unloadAsInstance(void)
+void gkEntity::_finalizeAsInstance(void)
 {
 	if (m_entity != 0)
 	{

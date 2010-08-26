@@ -1082,16 +1082,16 @@ function Engine:getUserDefs()
 
 \endpage
 
-<!-- ============================================ Loadable ============================================ -->
-\LuaClass{Loadable}
+<!-- ============================================ Object ============================================ -->
+\LuaClass{Object}
 
 
 
 \beginmenu{Methods}
-\LuaMethodMenu{Loadable,load}
-\LuaMethodMenu{Loadable,unload}
-\LuaMethodMenu{Loadable,reload}
-\LuaMethodMenu{Loadable,getName}
+\LuaMethodMenu{Object,initialize}
+\LuaMethodMenu{Object,finalize}
+\LuaMethodMenu{Object,reinitialize}
+\LuaMethodMenu{Object,getName}
 \endmenu
 
 
@@ -1101,52 +1101,52 @@ function Engine:getUserDefs()
 
 
 <!-- ======================================== -->
-\LuaMethod{Loadable,load}
+\LuaMethod{Object,initialize}
 
 
 Adds this object.
 
 \code
-function Loadable:load()
+function Object:initialize()
 \endcode
 
 \endpage
 
 
 <!-- ======================================== -->
-\LuaMethod{Loadable,unload}
+\LuaMethod{Object,finalize}
 
 
 Removes this object.
 
 \code
-function Loadable:unload()
+function Object:finalize()
 \endcode
 
 \endpage
 
 
 <!-- ======================================== -->
-\LuaMethod{Loadable,reload}
+\LuaMethod{Object,reinitialize}
 
 
 Removes this object, then adds it back.
 
 \code
-function Loadable:reload()
+function Object:reinitialize()
 \endcode
 
 \endpage
 
 
 <!-- ======================================== -->
-\LuaMethod{Loadable,getName}
+\LuaMethod{Object,getName}
 
 
 Returns the string identifier of this object.
 
 \code
-function Loadable:getName()
+function Object:getName()
 \endcode
 
 \returns string
@@ -1155,7 +1155,7 @@ function Loadable:getName()
 
 <!-- ============================================ Scene ============================================ -->
 \LuaClass{Scene}
-\LuaClassExtend{Loadable}
+\LuaClassExtend{Object}
 
 \beginmenu{Methods}
 \LuaMethodMenu{Scene,createEmpty}
@@ -1237,7 +1237,7 @@ function Scene:createEmpty(name)
 
 <!-- ============================================ GameObject ============================================ -->
 \LuaClass{GameObject}
-\LuaClassExtend{Loadable}
+\LuaClassExtend{Object}
 
 
 

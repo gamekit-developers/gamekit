@@ -110,21 +110,21 @@ bool gkGroupManager::hasGroup(const gkHashedString &name)
 
 
 // ----------------------------------------------------------------------------
-void gkGroupManager::loadAll(void)
+void gkGroupManager::initializeAll(void)
 {
 	// Pass command
 	Groups::Iterator it = m_groups.iterator();
 	while (it.hasMoreElements())
-		it.getNext().second->loadInstances();
+		it.getNext().second->initializeInstances();
 }
 
 
 // ----------------------------------------------------------------------------
-void gkGroupManager::unloadAll(void)
+void gkGroupManager::finalizeAll(void)
 {
 	Groups::Iterator it = m_groups.iterator();
 	while (it.hasMoreElements())
-		it.getNext().second->unloadInstances();
+		it.getNext().second->finalizeInstances();
 }
 
 

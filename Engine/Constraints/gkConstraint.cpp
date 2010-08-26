@@ -44,6 +44,6 @@ void gkConstraint::_applyMatrix(void)
 {
 	// do space conversion / blending here.
 
-	if (m_object && m_object->isLoaded())
+	if (m_object && m_object->isInitialized())
 		m_object->setTransform(m_matrix);
 }

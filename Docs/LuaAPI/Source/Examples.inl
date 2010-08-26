@@ -3,7 +3,7 @@
 
 \beginmenu
 \LuaGlobalMenu{Setup}
-\LuaGlobalMenu{OnLoad}
+\LuaGlobalMenu{OnInit}
 \LuaGlobalMenu{CDefs}
 \LuaGlobalMenu{CArrayIter}
 \LuaGlobalMenu{CustomLogicBricks}
@@ -15,23 +15,23 @@
 
 
 
-An example showing how to set up the OgreKit Engine, and load a .blend.
+An example showing how to set up the OgreKit Engine, and initialize a .blend.
 \include Test0.lua
 
 \endpage
 
 
-<!-- ============================================ OnLoad ============================================ -->
-\LuaExample{OnLoad,Setup for an embedded application}
+<!-- ============================================ OnInit ============================================ -->
+\LuaExample{OnInit,Setup for an embedded application}
 
 
-Setup from inside blender takes place in a predefined text block named \b OnLoad.lua \n
+Setup from inside blender takes place in a predefined text block named \b OnInit.lua \n
 This script will execute every time the scene is loaded.\n
 
 Scripts may still span multiple text files using the standard Blender Game Engine method.
 By attaching to a Python controller.<i> \LuaClassRef{ScriptController} </i>
 
-\include OnLoad.lua
+\include OnInit.lua
 
 
 \endpage
