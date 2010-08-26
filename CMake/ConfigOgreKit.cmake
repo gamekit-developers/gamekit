@@ -35,14 +35,16 @@ macro (configure_ogrekit ROOT OGREPATH)
 	    endif (UNIX)
 	endif (APPLE)
 	
-    option(OGREKIT_BUILD_RUNTIME        "Build Samples/Runtime"                 ON)
-    option(OGREKIT_BUILD_LOGICDEMO      "Build Samples/LogicDemo"               ON)
-    option(OGREKIT_BUILD_VEHICLEDEMO    "Build Samples/VehicleDemo"             ON)
-    option(OGREKIT_BUILD_LUARUNTIME     "Build Samples/LuaRuntime"              ON)
-    option(OGREKIT_COMPLIE_SWIG         "Enable compile time SWIG generation."  OFF)
-    option(OGREKIT_HEADER_GENERATOR     "Build Blender DNA to C++ generator."   OFF)
+    option(SAMPLES_RUNTIME        "Build Samples/Runtime"                 ON)
+    option(SAMPLES_LOGICDEMO      "Build Samples/LogicDemo"               ON)
+    option(SAMPLES_VEHICLEDEMO    "Build Samples/VehicleDemo"             ON)
+    option(SAMPLES_LUARUNTIME     "Build Samples/LuaRuntime"              ON)
+
+
+    option(OGREKIT_COMPLIE_SWIG "Enable compile time SWIG generation."  OFF)
+    option(OGREKIT_HEADER_GENERATOR "Build Blender DNA to C++ generator."   OFF)
     
-    option(OGREKIT_UPDATE_DOCS          "Update Lua API documentation(Requires doxygen)." OFF)
+    option(OGREKIT_UPDATE_DOCS "Update Lua API documentation(Requires doxygen)." OFF)
 
 
     if (OGREKIT_COMPLIE_SWIG)

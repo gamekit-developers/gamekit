@@ -1,17 +1,17 @@
 # Adding options only to speed up build/dev time
-if (OGREKIT_BUILD_RUNTIME)
+if (SAMPLES_RUNTIME)
     subdirs(Runtime)
 endif()
 
-if (OGREKIT_BUILD_LOGICDEMO)
+if (SAMPLES_LOGICDEMO)
     subdirs(LogicDemo)
 endif()
 
-if (OGREKIT_BUILD_VEHICLEDEMO)
+if (SAMPLES_VEHICLEDEMO)
     subdirs(VehicleDemo)
 endif()
 
 
-if (OGREKIT_BUILD_LUARUNTIME)
+if (SAMPLES_LUARUNTIME)
     subdirs(LuaRuntime)
 endif()
