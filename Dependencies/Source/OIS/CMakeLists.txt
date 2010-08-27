@@ -8,6 +8,10 @@ set(OIS_SRC
     src/OISObject.cpp
 )
 
+if (OGREKIT_BUILD_IPHONE)
+	set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/OISInputManager.cpp PROPERTIES COMPILE_FLAGS "-x objective-c++")
+endif()
+
 set(OIS_HDR
 	include/OIS.h
 	include/OISConfig.h
@@ -70,22 +74,37 @@ endif()
 
 
 if (APPLE) 
-    set(OIS_PLAT 
-		include/mac/MacHIDManager.h
-		include/mac/MacHelpers.h
-		include/mac/MacInputManager.h
-		include/mac/MacJoyStick.h
-		include/mac/MacKeyboard.h
-		include/mac/MacMouse.h
-		include/mac/MacPrereqs.h
+	if (OGREKIT_BUILD_IPHONE)
+		#add_definitions(-DOIS_IPHONE_PLATFORM)
+		set(OIS_PLAT
+			include/iphone/iPhoneAccelerometer.h
+			include/iphone/iPhoneHelpers.h
+			include/iphone/iPhoneInputManager.h
+			include/iphone/iPhoneMultiTouch.h
+			include/iphone/iPhonePrereqs.h
 
-		src/mac/MacHIDManager.cpp
-		src/mac/MacHelpers.cpp
-		src/mac/MacInputManager.cpp
-		src/mac/MacJoyStick.cpp
-		src/mac/MacKeyboard.cpp
-		src/mac/MacMouse.cpp
-    )
+			src/iphone/iPhoneAccelerometer.mm
+			src/iphone/iPhoneInputManager.mm
+			src/iphone/iPhoneMultiTouch.mm
+		)
+	else()
+		set(OIS_PLAT 
+			include/mac/MacHIDManager.h
+			include/mac/MacHelpers.h
+			include/mac/MacInputManager.h
+			include/mac/MacJoyStick.h
+			include/mac/MacKeyboard.h
+			include/mac/MacMouse.h
+			include/mac/MacPrereqs.h
+
+			src/mac/MacHIDManager.cpp
+			src/mac/MacHelpers.cpp
+			src/mac/MacInputManager.cpp
+			src/mac/MacJoyStick.cpp
+			src/mac/MacKeyboard.cpp
+			src/mac/MacMouse.cpp
+		)
+	endif()
     
     if (IOKit_FOUND)
 		link_libraries(${IOKit_LIBRARIES})

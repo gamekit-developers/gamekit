@@ -29,6 +29,13 @@ endif ()
 find_package(OpenGL)
 macro_log_feature(OPENGL_FOUND "OpenGL" "Support for the OpenGL render system" "http://www.opengl.org/" FALSE "" "")
 
+if (APPLE)
+	# Find OpenGLES
+	find_package(OpenGLES)
+	macro_log_feature(OPENGLES_FOUND "OpenGLES" "Support for the OpenGLES render system" "" FALSE "" "")
+endif()
+# else Disabled, untill further testing
+
 # Find DirectX
 if(WIN32)
 	find_package(DirectX)
@@ -52,7 +59,7 @@ endif()
 #######################################################################
 # Apple-specific
 #######################################################################
-if (APPLE)
+if (APPLE AND NOT OGREKIT_BUILD_IPHONE)
     find_package(Carbon)
     macro_log_feature(Carbon_FOUND "Carbon" "Carbon" "http://developer.apple.com/mac" TRUE "" "")
 
@@ -61,24 +68,27 @@ if (APPLE)
 
     find_package(IOKit)
     macro_log_feature(IOKit_FOUND "IOKit" "IOKit HID framework needed by the samples" "http://developer.apple.com/mac" FALSE "" "")
-endif(APPLE)
+endif()
 
 # Display results, terminate if anything required is missing
 MACRO_DISPLAY_FEATURE_LOG()
 
-# Add library and include paths from the dependencies
-include_directories(
-  ${OPENGL_INCLUDE_DIRS}
-  ${Cg_INCLUDE_DIRS}
-  ${X11_INCLUDE_DIR}
-  ${DirectX_INCLUDE_DIRS}
-  ${Carbon_INCLUDE_DIRS}
-  ${Cocoa_INCLUDE_DIRS}
-)
+if (NOT OGREKIT_BUILD_IPHONE)
+	# Add library and include paths from the dependencies
+	include_directories(
+	  ${OPENGL_INCLUDE_DIRS}
+	  ${Cg_INCLUDE_DIRS}
+	  ${X11_INCLUDE_DIR}
+	  ${DirectX_INCLUDE_DIRS}
+	  ${Carbon_INCLUDE_DIRS}
+	  ${Cocoa_INCLUDE_DIRS}
+	)
+	
+	link_directories(
+	  ${OPENGL_LIBRARY_DIRS}
+	  ${Cg_LIBRARY_DIRS}
+	  ${X11_LIBRARY_DIRS}
+	  ${DirectX_LIBRARY_DIRS}
+	)
 
-link_directories(
-  ${OPENGL_LIBRARY_DIRS}
-  ${Cg_LIBRARY_DIRS}
-  ${X11_LIBRARY_DIRS}
-  ${DirectX_LIBRARY_DIRS}
-)
+endif()

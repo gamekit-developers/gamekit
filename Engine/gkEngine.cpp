@@ -431,20 +431,30 @@ void gkEngine::addCommand(gkObject *ob, const gkCreateParam::Type &type)
 // ----------------------------------------------------------------------------
 void gkEngine::run(void)
 {
-	// Start main game loop
+	if (!initializeStepLoop()) return;
+	
+	while (stepOneFrame());
+	
+	finalizeStepLoop();
+	
+}
+
+bool gkEngine::initializeStepLoop(void)
+{
+	// init main game loop
 
 	GK_ASSERT(m_private);
 	if (!m_private->scene)
 	{
 		gkLogMessage("Engine: Can't run with out a registered scene. exiting\n");
-		return;
+		return false;
 	}
 
 	gkWindowSystem *sys = m_private->windowsystem;
 	if (!sys)
 	{
 		gkLogMessage("Engine: Can't run with out a window system. exiting\n");
-		return;
+		return false;
 	}
 
 
@@ -456,20 +466,28 @@ void gkEngine::run(void)
 	m_private->reset();
 
 	m_running = true;
-	do
-	{
-		sys->process();
+	
+	return true;
+}
 
-		if (!m_root->renderOneFrame())
-			break;
-	}
-	while (!sys->exitRequest());
+// ----------------------------------------------------------------------------
+bool gkEngine::stepOneFrame(void)
+{
+	gkWindowSystem *sys = m_private->windowsystem;
+	sys->process();
+	
+	if (!m_root->renderOneFrame())
+		return false;
+	
+	return !sys->exitRequest();
+}
 
+// ----------------------------------------------------------------------------
+void gkEngine::finalizeStepLoop(void)
+{
 	m_root->removeFrameListener(m_private);
 	m_running = false;
 }
-
-
 
 // ----------------------------------------------------------------------------
 bool gkEnginePrivate::frameStarted(const FrameEvent &evt)

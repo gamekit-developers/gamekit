@@ -24,9 +24,9 @@ if (CMAKE_COMPILER_IS_GNUCXX)
 
 	check_cxx_compiler_flag(-msse OGRE_GCC_HAS_SSE)
 
-	if (OGRE_GCC_HAS_SSE)
+	if (OGRE_GCC_HAS_SSE AND NOT OGRE_BUILD_PLATFORM_IPHONE)
 		add_definitions(-msse)
-	endif(OGRE_GCC_HAS_SSE)
+	endif()
 
 	if (WIN32)
 
@@ -42,4 +42,13 @@ endif (CMAKE_COMPILER_IS_GNUCXX)
 
 include_directories(${OGRELITE_SOURCE_DIR}/OgreMain/include)
 include_directories(${OGRELITE_SOURCE_DIR}/Settings)
+
+if (APPLE)
+  if (OGRE_BUILD_PLATFORM_IPHONE)
+	include_directories(${OGRELITE_SOURCE_DIR}/OgreMain/include/iPhone)
+  else ()
+	include_directories(${OGRELITE_SOURCE_DIR}/OgreMain/include/OSX)
+  endif()
+endif()
+
 subdirs(OgreMain RenderSystems PlugIns)

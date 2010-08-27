@@ -87,7 +87,11 @@ gkString gkUtils::getFile(const gkString &in)
 	}
 	else
 	{
+#ifdef OGREKIT_BUILD_IPHONE
+		sprintf(newName,"%s/%s",AppleGetBundleDirectory(),in.c_str());
+#else
 		sprintf(newName,"%s/%s/%s",AppleGetBundleDirectory(),"Contents/Resources",in.c_str());
+#endif
 	}
 
 #else

@@ -59,6 +59,10 @@ public:
 	void finalize(void);
 	void run(void);
 
+	bool initializeStepLoop(void);
+	bool stepOneFrame(void);
+	void finalizeStepLoop(void);
+
 	bool isInitialized(void)  {return m_initialized;}
 	bool isRunning(void)      {return m_running;}
 

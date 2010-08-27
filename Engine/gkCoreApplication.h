@@ -35,7 +35,7 @@
 // Main application interface
 class gkCoreApplication : public gkEngine::Listener
 {
-private:
+protected:
 
 	// Internal startup
 	bool initialize(void);

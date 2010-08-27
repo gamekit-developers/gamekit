@@ -63,6 +63,9 @@ gkUserDefs::gkUserDefs()
 	    colourshadow(0.8f, 0.8f, 0.8f),
 	    fardistanceshadow(0)
 {
+#ifdef OGREKIT_BUILD_IPHONE
+	rendersystem = OGRE_RS_GLES;
+#endif
 }
 
 

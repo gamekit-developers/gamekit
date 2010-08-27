@@ -31,6 +31,10 @@
 #include "OgreGLPlugin.h"
 #endif
 
+#ifdef OGREKIT_GLESRS
+#include "OgreGLESPlugin.h"
+#endif
+
 #ifdef OGREKIT_D3D9RS
 #include "OgreD3D9Plugin.h"
 #endif
@@ -58,10 +62,13 @@ OgreRenderSystem gkFindRenderSystem(OgreRenderSystem wanted)
 	if (wanted == OGRE_RS_D3D11) return OGRE_RS_D3D11;
 # endif
 #endif
-	// TODO setup OpenGL ES
+
 #ifdef OGREKIT_GLRS
 	// OpenGL is the default
 	return OGRE_RS_GL;
+#endif
+#ifdef OGREKIT_GLESRS
+	return OGRE_RS_GLES;
 #endif
 	return OGRE_RS_UNKNOWN;
 }
@@ -116,6 +123,11 @@ void gkRenderFactoryPrivate::createRenderSystem(Ogre::Root *r, OgreRenderSystem 
 #endif
 		break;
 	case OGRE_RS_GLES:
+#ifdef OGREKIT_GLESRS
+		m_renderSystem = new Ogre::GLESPlugin();
+		r->installPlugin(m_renderSystem);
+#endif
+		break;
 	case OGRE_RS_GL:
 #ifdef OGREKIT_GLRS
 		m_renderSystem = new Ogre::GLPlugin();

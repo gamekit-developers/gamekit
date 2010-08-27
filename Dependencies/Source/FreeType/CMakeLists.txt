@@ -49,6 +49,10 @@ endif (WIN32)
 
 ## TODO TEST OTHER PLATFORMS
 
+if (APPLE AND OGREKIT_BUILD_IPHONE)
+	add_definitions(-DDARWIN_NO_CARBON)
+endif()
+
 
 include_directories(include)
 add_definitions(-DFT2_BUILD_LIBRARY)

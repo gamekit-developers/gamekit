@@ -36,11 +36,32 @@ using namespace Ogre;
 
 #define gkWindowSystemPrivate gkWindowSystem::Private
 
+#ifdef OGREKIT_BUILD_IPHONE
+#import <UIKit/UIKit.h>
+
+
+@interface gkGestureView : UIView
+{
+}
+
+@end
+
+@implementation gkGestureView
+
+
+
+@end
+
+
+#endif
 // Internal interface
 class gkWindowSystemPrivate :
 	public OIS::MouseListener,
 	public OIS::KeyListener,
 	public OIS::JoyStickListener,
+#ifdef OGREKIT_BUILD_IPHONE
+	public OIS::MultiTouchListener,
+#endif
 	public WindowEventListener
 
 {
@@ -53,6 +74,14 @@ public:
 	bool mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
 	bool keyPressed(const OIS::KeyEvent &arg);
 	bool keyReleased(const OIS::KeyEvent &arg);
+
+#ifdef OGREKIT_BUILD_IPHONE
+	bool touchPressed(const OIS::MultiTouchEvent &arg);
+	bool touchReleased(const OIS::MultiTouchEvent &arg);
+	bool touchMoved(const OIS::MultiTouchEvent &arg);
+	bool touchCancelled(const OIS::MultiTouchEvent &arg);
+#endif
+	
 	void windowResized(RenderWindow *rw);
 	void windowClosed(RenderWindow *rw);
 	bool buttonPressed(const OIS::JoyStickEvent &arg, int i);
@@ -66,6 +95,11 @@ public:
 	OIS::Keyboard          *m_keyboard;
 	OIS::Mouse             *m_mouse;
 	utArray<OIS::JoyStick*> m_joysticks;
+	
+#ifdef OGREKIT_BUILD_IPHONE
+	OIS::MultiTouch        *m_touch;
+	gkGestureView          *m_gestureView;
+#endif
 };
 
 
@@ -122,6 +156,7 @@ RenderWindow *gkWindowSystem::createMainWindow(const gkUserDefs &prefs)
 		if (!prefs.grabInput)
 		{
 
+#ifndef OGREKIT_BUILD_IPHONE
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
 			params.insert(std::make_pair(std::string("w32_mouse"),   std::string("DISCL_FOREGROUND")));
 			params.insert(std::make_pair(std::string("w32_mouse"),   std::string("DISCL_NONEXCLUSIVE")));
@@ -137,18 +172,34 @@ RenderWindow *gkWindowSystem::createMainWindow(const gkUserDefs &prefs)
 			params.insert(std::make_pair(std::string("x11_keyboard_grab"),  std::string("false")));
 			params.insert(std::make_pair(std::string("XAutoRepeatOn"), std::string("true")));
 #endif
+#endif
 		}
 
 		params.insert(std::make_pair("WINDOW", StringConverter::toString(handle)));
 		m_internal->m_input = OIS::InputManager::createInputSystem(params);
 		m_internal->m_input->enableAddOnFactory(OIS::InputManager::AddOn_All);
 
+#ifndef OGREKIT_BUILD_IPHONE
+		
 		m_internal->m_keyboard = (OIS::Keyboard *) m_internal->m_input->createInputObject(OIS::OISKeyboard, true);
 		m_internal->m_keyboard->setEventCallback(m_internal);
 
 		m_internal->m_mouse = (OIS::Mouse *)m_internal->m_input->createInputObject(OIS::OISMouse, true);
 		m_internal->m_mouse->setEventCallback(m_internal);
 
+#else 		
+		
+		m_internal->m_gestureView = [[gkGestureView alloc] init];
+		
+		[[[UIApplication sharedApplication] keyWindow] addSubview:m_internal->m_gestureView];
+		
+		[m_internal->m_gestureView becomeFirstResponder];
+		
+		m_internal->m_touch = (OIS::MultiTouch *) m_internal->m_input->createInputObject(OIS::OISMultiTouch, true);
+		GK_ASSERT(m_internal->m_touch);
+		m_internal->m_touch->setEventCallback(m_internal);
+#endif
+		
 		for(int i=0; i< m_internal->m_input->getNumberOfDevices(OIS::OISJoyStick); i++)
 		{
 			OIS::JoyStick *oisjs = (OIS::JoyStick *)m_internal->m_input->createInputObject(OIS::OISJoyStick, true);
@@ -159,10 +210,15 @@ RenderWindow *gkWindowSystem::createMainWindow(const gkUserDefs &prefs)
 			m_internal->m_joysticks.push_back(oisjs);
 			m_joysticks.push_back(gkjs);
 		}
-
+		
+#ifndef OGREKIT_BUILD_IPHONE
 		const OIS::MouseState &st = m_internal->m_mouse->getMouseState();
 		st.width = (int)prefs.winsize.x;
 		st.height = (int)prefs.winsize.y;
+#else
+		std::vector<OIS::MultiTouchState> st = m_internal->m_touch->getMultiTouchStates();
+#endif
+		
 	}
 	catch (OIS::Exception &e)
 	{
@@ -193,6 +249,9 @@ void gkWindowSystem::removeListener(Listener *l)
 // Call platform event loop
 void gkWindowSystem::process(void)
 {
+#ifdef OGREKIT_BUILD_IPHONE
+	[m_internal->m_gestureView becomeFirstResponder];
+#endif
 	WindowEventUtilities::messagePump();
 }
 
@@ -205,6 +264,9 @@ void gkWindowSystem::dispatch(void)
 	m_mouse.wheelDelta = 0.f;
 	m_mouse.relitave.x = 0.f;
 	m_mouse.relitave.y = 0.f;
+	
+#ifndef OGREKIT_BUILD_IPHONE
+	GK_ASSERT(m_internal && m_internal->m_mouse && m_internal->m_keyboard);
 
 	m_internal->m_mouse->capture();
 	m_internal->m_keyboard->capture();
@@ -215,6 +277,14 @@ void gkWindowSystem::dispatch(void)
 		iter.peekNext()->capture();
 		iter.getNext();
 	}
+	
+#else
+	GK_ASSERT(m_internal && m_internal->m_touch);
+	
+	m_internal->m_touch->capture();	
+#endif	
+
+
 }
 
 
@@ -234,10 +304,18 @@ void gkWindowSystem::clearStates(void)
 gkWindowSystemPrivate::Private() :
 	m_input(0), m_keyboard(0), m_mouse(0)
 {
+#ifdef OGREKIT_BUILD_IPHONE
+	m_touch = NULL;
+	m_gestureView = NULL;
+#endif
 }
 
 gkWindowSystemPrivate::~Private()
 {
+#ifdef OGREKIT_BUILD_IPHONE
+	[m_gestureView release];
+#endif
+	
 	if (m_input)
 	{
 		// free input
@@ -255,6 +333,80 @@ gkWindowSystemPrivate::~Private()
 		m_input = 0; m_keyboard = 0; m_mouse = 0;
 	}
 }
+
+
+
+
+#ifdef OGREKIT_BUILD_IPHONE
+bool gkWindowSystemPrivate::touchPressed(const OIS::MultiTouchEvent& arg)
+{
+	gkMouse &data = m_sys->m_mouse;
+	
+	data.buttons[gkMouse::Left] = GK_Pressed;
+
+	if (!m_sys->m_listeners.empty())
+	{
+		gkWindowSystem::Listener *node = m_sys->m_listeners.begin();
+		while (node)
+		{
+			node->mousePressed(data);
+			node = node->getNext();
+		}
+	}
+	
+	return true;
+}
+
+bool gkWindowSystemPrivate::touchReleased(const OIS::MultiTouchEvent& arg)
+{
+	gkMouse &data = m_sys->m_mouse;
+	
+	data.buttons[gkMouse::Left] = GK_Released;
+	
+	if (!m_sys->m_listeners.empty())
+	{
+		gkWindowSystem::Listener *node = m_sys->m_listeners.begin();
+		while (node)
+		{
+			node->mousePressed(data);
+			node = node->getNext();
+		}
+	}
+	
+	return true;
+}
+
+bool gkWindowSystemPrivate::touchMoved(const OIS::MultiTouchEvent& arg)
+{
+	gkMouse &data = m_sys->m_mouse;
+	
+	data.position.x = (Real)arg.state.X.abs;
+	data.position.y = (Real)arg.state.Y.abs;
+	data.relitave.x = (Real)arg.state.X.rel;
+	data.relitave.y = (Real)arg.state.Y.rel;
+	data.moved = true;
+	
+
+	data.wheelDelta = 0;
+
+	if (!m_sys->m_listeners.empty())
+	{
+		gkWindowSystem::Listener *node = m_sys->m_listeners.begin();
+		while (node)
+		{
+			node->mouseMoved(data);
+			node = node->getNext();
+		}
+	}
+	
+	return true;
+}
+
+bool gkWindowSystemPrivate::touchCancelled(const OIS::MultiTouchEvent &arg)
+{
+	return true;
+}
+#endif //OGREKIT_BUILD_IPHONE
 
 
 bool gkWindowSystemPrivate::mouseMoved(const OIS::MouseEvent &arg)

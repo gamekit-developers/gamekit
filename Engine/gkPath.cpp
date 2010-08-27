@@ -316,7 +316,13 @@ bool gkPath::isFileInBundle(void) const
 {
 #ifdef __APPLE__
 	char newName[1024];
+	
+#ifdef OGREKIT_BUILD_IPHONE
+	sprintf(newName, "%s/%s", getBundlePath().c_str(), m_path.c_str());
+#else
 	sprintf(newName, "%s/%s/%s", getBundlePath().c_str(), "Contents/Resources", m_path.c_str());
+#endif
+	
 	struct stat st;
 	return stat(newName, &st) == 0 && S_ISREG(st.st_mode);
 #else
