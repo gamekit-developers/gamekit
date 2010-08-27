@@ -24,6 +24,7 @@ restrictions:
 	http://gamekit.googlecode.com/
 */
 #include <assert.h>
+#include <stdlib.h>
 #include "win32native/Win32NativeInputManager.h"
 #include "win32native/Win32NativeKeyboard.h"
 #include "win32native/Win32NativeMouse.h"

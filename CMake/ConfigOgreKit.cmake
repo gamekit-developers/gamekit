@@ -2,6 +2,22 @@
 
 macro (configure_ogrekit ROOT OGREPATH)
 
+	set(GNUSTEP_SYSTEM_ROOT $ENV{GNUSTEP_SYSTEM_ROOT})
+	
+	if(APPLE OR GNUSTEP_SYSTEM_ROOT)
+		option(OGREKIT_USE_COCOA	"Use Cocoa"	OFF)
+	endif()
+	
+	if(OGREKIT_USE_COCOA)
+		add_definitions(-DOGREKIT_USE_COCOA)
+		if(GNUSTEP_SYSTEM_ROOT)
+			include_directories(${GNUSTEP_SYSTEM_ROOT}/Library/Headers)
+			link_directories(${GNUSTEP_SYSTEM_ROOT}/Library/Libraries)
+			link_libraries("gnustep-base")
+			link_libraries("objc")
+		endif()
+	endif()
+
 	set(OGREKIT_INSTALL_PREFIX ${ROOT}/Bin)
 
 	set(OGREKIT_ZLIB_TARGET	ZLib)

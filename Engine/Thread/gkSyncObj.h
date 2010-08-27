@@ -29,7 +29,11 @@
 
 #include "gkNonCopyable.h"
 
-#ifdef WIN32
+#ifdef OGREKIT_USE_COCOA
+#include <pthread.h>
+#include <semaphore.h>
+class gkSyncObjPrivate;
+#elif WIN32
 #include <windows.h>
 #elif __APPLE__
 #include <pthread.h>
@@ -54,7 +58,9 @@ public:
 
 private:
 
-#ifdef WIN32
+#ifdef OGREKIT_USE_COCOA
+	gkSyncObjPrivate* m_syncObj;
+#elif WIN32
 	HANDLE m_syncObj;
 #elif __APPLE__
 	MPSemaphoreID m_syncObj;

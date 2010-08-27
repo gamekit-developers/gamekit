@@ -31,17 +31,54 @@
 #include <process.h>
 #endif
 
+#ifdef OGREKIT_USE_COCOA
+
+#include <Foundation/NSLock.h>
+
+enum {GK_HAS_DATA, GK_NO_DATA};
+
+class gkSyncObjPrivate {
+public:
+	gkSyncObjPrivate(){
+		m_syncObj = [[NSConditionLock alloc] initWithCondition: GK_NO_DATA];
+	}
+	~gkSyncObjPrivate()
+	{
+		[m_syncObj release];
+	}
+	void wait() 
+	{
+		[m_syncObj lockWhenCondition: GK_HAS_DATA]; 
+		[m_syncObj unlockWithCondition: GK_NO_DATA];
+	} 
+	void signal() 
+	{
+		[m_syncObj lockWhenCondition: GK_NO_DATA]; 
+		[m_syncObj unlockWithCondition: GK_HAS_DATA];
+	}
+
+private:
+	NSConditionLock *m_syncObj;
+};
+
+#endif
+
 gkSyncObj::gkSyncObj()
 {
-#ifdef WIN32
+#ifdef OGREKIT_USE_COCOA
+
+	m_syncObj = new gkSyncObjPrivate;
+	
+#elif WIN32
 	m_syncObj = CreateSemaphore(
 			0,	// Security attributes
 			0,	// Initial count zero (everybody will wait)
-			INT_MAX, // the mamimum number of resources
+			std::numeric_limits<int>::max(), // the mamimum number of resources
 			0	// No name for this semaphore
 		);
 #elif __APPLE__
-	OSStatus result = MPCreateSemaphore(INT_MAX, 0, &m_syncObj);
+
+	OSStatus result = MPCreateSemaphore(std::numeric_limits<int>::max(), 0, &m_syncObj);
 	
 	GK_ASSERT(result == 0);
 
@@ -54,7 +91,9 @@ gkSyncObj::gkSyncObj()
 	
 gkSyncObj::~gkSyncObj()
 {
-#ifdef WIN32
+#ifdef OGREKIT_USE_COCOA
+	delete m_syncObj;
+#elif WIN32
 	CloseHandle(m_syncObj);
 #elif __APPLE__
 	OSStatus result = MPDeleteSemaphore(m_syncObj);
@@ -70,7 +109,11 @@ bool gkSyncObj::wait()
 {
 	bool ok = true;
 
-#ifdef WIN32
+#ifdef OGREKIT_USE_COCOA
+
+	m_syncObj->wait();
+
+#elif WIN32
 	switch(WaitForSingleObject(m_syncObj, INFINITE))
 	{
 		case WAIT_TIMEOUT:
@@ -93,7 +136,11 @@ bool gkSyncObj::wait()
 
 bool gkSyncObj::signal()
 {
-#ifdef WIN32
+#ifdef OGREKIT_USE_COCOA
+	
+	m_syncObj->signal();
+
+#elif WIN32
 	if(!ReleaseSemaphore(m_syncObj, 1, 0))
 		return false;
 #elif __APPLE__
