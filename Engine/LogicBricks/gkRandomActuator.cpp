@@ -52,7 +52,7 @@ gkLogicBrick *gkRandomActuator::clone(gkLogicLink *link, gkGameObject *dest)
 	return act;
 }
 
---
+
 void gkRandomActuator::setSeed(int v)
 {
 	m_seed = v;

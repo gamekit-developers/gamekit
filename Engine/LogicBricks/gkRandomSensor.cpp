@@ -44,7 +44,7 @@ gkRandomSensor::~gkRandomSensor()
 	delete m_randGen;
 }
 
-------
+
 gkLogicBrick *gkRandomSensor::clone(gkLogicLink *link, gkGameObject *dest)
 {
 	gkRandomSensor *sens = new gkRandomSensor(*this);
@@ -53,7 +53,7 @@ gkLogicBrick *gkRandomSensor::clone(gkLogicLink *link, gkGameObject *dest)
 	return sens;
 }
 
---
+
 void gkRandomSensor::setSeed(UTuint32 v)
 {
 	m_seed = v;
