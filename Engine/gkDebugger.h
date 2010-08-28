@@ -62,7 +62,6 @@ public:
 	void draw3dSound(const gkSoundProperties &props);
 #endif
 
-	// write contents to buffer
 	void flush(void);
 
 protected:
@@ -83,7 +82,6 @@ protected:
 	UTsize              m_bufSize;
 	int                 m_flags;
 
-	// main buffer
 	Ogre::HardwareVertexBufferSharedPtr m_buffer;
 
 };

@@ -29,7 +29,6 @@
 
 #include "gkCamera.h"
 #include "gkCommon.h"
-#include "gkConstraint.h"
 #include "gkCoreApplication.h"
 #include "gkDebugProperty.h"
 #include "gkDebugScreen.h"

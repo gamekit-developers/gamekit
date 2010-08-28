@@ -52,7 +52,7 @@ public:
 
 	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
 
-	// Handle incoming logic.
+	
 	void execute(void);
 
 	GK_INLINE void setMask(int v)       {m_stateMask = v;}

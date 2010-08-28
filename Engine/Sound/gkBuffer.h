@@ -31,8 +31,6 @@
 #include "gkSoundUtil.h"
 #include "gkSound.h"
 
-// This class is 100% internal, not for use outside of
-// gkSource & gkStreamer
 class gkBuffer
 {
 private:
@@ -72,8 +70,6 @@ private:
 	void do3D(void);
 	void doProperties(void);
 
-
-	// stream reading
 	const char *read(UTsize len, UTsize &br);
 
 	gkSource            *m_sound;
@@ -83,7 +79,6 @@ private:
 	bool                m_loop, m_ok, m_exit, m_initial, m_isInit;
 	bool                m_suspend;
 
-	// Queue states
 	bool m_doSuspend, m_do3D;
 
 	gkSoundProperties   m_props;

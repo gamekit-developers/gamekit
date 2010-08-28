@@ -79,9 +79,6 @@ typedef Ogre::Ray               gkRay;
 #define gkDPR       gkScalar(57.295779513082320876)
 
 
-// Helpfull utilities
-
-
 GK_INLINE gkScalar  gkAbs(const gkScalar &v)                                { return v < gkScalar(0.0) ? -v : v;}
 GK_INLINE bool      gkNan(const gkScalar &v)                                { return v != v;}
 GK_INLINE bool      gkFinite(const gkScalar &v)                             { return gkAbs(v) < GK_INFINITY;}
@@ -105,8 +102,6 @@ GK_INLINE gkScalar gkMinf(const gkScalar &a, const gkScalar &b)                 
 GK_INLINE gkScalar gkClampf(const gkScalar &v, const gkScalar &a, const gkScalar &b)    {return gkClamp<gkScalar>(v, a, b); }
 
 
-// Simple euler wrapper class to ease converting
-// to and from quaternions and matrix3 classes
 class gkEuler
 {
 public:

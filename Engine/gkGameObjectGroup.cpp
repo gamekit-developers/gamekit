@@ -49,7 +49,7 @@ gkGameObjectGroup::gkGameObjectGroup(gkGroupManager *manager, const gkHashedStri
 
 gkGameObjectGroup::~gkGameObjectGroup()
 {
-	clearInstances();
+	destroyAllInstances();
 }
 
 
@@ -121,9 +121,8 @@ gkGameObject *gkGameObjectGroup::getObject(const gkHashedString &name)
 
 
 
-void gkGameObjectGroup::clearInstances(void)
+void gkGameObjectGroup::destroyAllInstances(void)
 {
-	// Free all instances
 
 	Instances::Iterator iter = m_instances.iterator();
 	while (iter.hasMoreElements())
@@ -140,7 +139,6 @@ gkGameObjectInstance *gkGameObjectGroup::createInstance(gkScene *scene)
 	gkGameObjectInstance *newInst = new gkGameObjectInstance(this, scene, m_manager->_getHandle());
 
 
-	// Owner is local only to the instance
 	GK_ASSERT(newInst->getOwner());
 
 	m_instances.insert(newInst);
@@ -179,7 +177,7 @@ void gkGameObjectGroup::destroyInstance(gkGameObjectInstance *inst)
 
 
 
-void gkGameObjectGroup::createInstancedObjects(void)
+void gkGameObjectGroup::createGameObjectInstances(void)
 {
 	Instances::Iterator it = m_instances.iterator();
 	while (it.hasMoreElements())
@@ -188,33 +186,12 @@ void gkGameObjectGroup::createInstancedObjects(void)
 
 
 
-void gkGameObjectGroup::destroyInstancedObjects(void)
+void gkGameObjectGroup::destroyGameObjectInstances(void)
 {
 	Instances::Iterator it = m_instances.iterator();
 	while (it.hasMoreElements())
 		it.getNext()->destroyInstance();
 }
-
-
-
-gkGameObjectInstance *gkGameObjectGroup::findGroupInstanceById(UTsize id)
-{
-	gkGameObjectInstance *ret = 0;
-
-	Instances::Iterator it = m_instances.iterator();
-	while (it.hasMoreElements())
-	{
-		ret = it.getNext();
-		if (ret->getId() == id)
-			break;
-		else ret = 0;
-	}
-
-	return ret;
-}
-
-
-
 
 
 void gkGameObjectGroup::cloneObjects(gkScene *scene,
@@ -238,7 +215,8 @@ void gkGameObjectGroup::cloneObjects(gkScene *scene,
 		// be sure this info was not cloned!
 		GK_ASSERT(!nobj->isGroupInstance() && !nobj->isInGroup() && !oobj->isClone());
 
-		// Update transform relitave to owner
+
+
 		gkGameObjectProperties &props = nobj->getProperties();
 
 		gkMatrix4 clocal;
@@ -270,12 +248,6 @@ void gkGameObjectGroup::cloneObjects(gkScene *scene,
 
 void gkGameObjectGroup::createStaticBatches(gkScene *scene)
 {
-	/// this only works for truly static objects.
-	/// Things like grass, tree leaves, or basically
-	/// any entity that does not respond to collisions (GK_NO_COLLISION).
-
-
-
 	Ogre::SceneManager *mgr = scene->getManager();
 	if (m_geometry)
 		mgr->destroyStaticGeometry(m_geometry);

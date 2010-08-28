@@ -34,7 +34,6 @@
 
 class gkDebugPropertyPage
 {
-	// for debugging gkGameObject variables
 private:
 
 

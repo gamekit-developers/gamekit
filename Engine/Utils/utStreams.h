@@ -47,7 +47,6 @@ public:
 	utStream() {}
 	virtual ~utStream() {}
 
-	// clear data
 	virtual void clear(void) {};
 	virtual void flush(void) {}
 
@@ -55,20 +54,14 @@ public:
 	virtual bool isOpen(void) const = 0;
 	virtual bool eof(void) const = 0;
 
-	// block io
 	virtual UTsize  read(void *dest, UTsize nr) const = 0;
 	virtual UTsize  write(const void *src, UTsize nr) = 0;
 	UTsize          write(const utStream &cpy);
 
-
-
-	// current position
 	virtual UTsize  position(void) const =0;
 	virtual void    seek(const UTsize pos, int dir) const = 0;
 	virtual UTsize  size(void) const = 0;
 
-
-	// use gz inflate
 	void inflate(utStream &dest);
 
 
@@ -88,8 +81,6 @@ typedef void   *utFileHandle;
 
 class utFileStream : public utStream
 {
-	// Simple file stream.
-
 public:
 	utFileStream();
 	~utFileStream();
@@ -101,12 +92,9 @@ public:
 	bool isOpen(void)   const {return m_handle != 0;}
 	bool eof(void)      const {return !m_handle || m_pos >= m_size;}
 
-	// block io
 	UTsize  read(void *dest, UTsize nr) const;
 	UTsize  write(const void *src, UTsize nr);
 
-
-	/// current position
 	UTsize  position(void)          const {return m_pos;}
 	void    seek(const UTsize pos, int dir)  const;
 
@@ -131,8 +119,6 @@ public:
 	utMemoryStream();
 	~utMemoryStream();
 
-
-	/// clear data
 	void clear(void);
 
 	void open(const char *path, utStream::StreamMode mode);
@@ -145,8 +131,6 @@ public:
 	UTsize  position(void)  const   {return m_pos;}
 	UTsize  size(void)      const   {return m_size;}
 
-
-	// block io
 	UTsize read(void *dest, UTsize nr) const;
 	UTsize write(const void *src, UTsize nr);
 

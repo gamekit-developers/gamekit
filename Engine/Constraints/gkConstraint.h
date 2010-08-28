@@ -31,8 +31,6 @@
 #include "gkMathUtils.h"
 #include "gkTransformState.h"
 
-
-// Constraint base class
 class gkConstraint
 {
 public:
@@ -40,31 +38,21 @@ public:
 	gkConstraint();
 	virtual ~gkConstraint() {}
 
-	// Blending.
 	GK_INLINE void              setInfluence(gkScalar v)                {m_influence = gkClampf(v, 0.0, 1.0);}
 	GK_INLINE gkScalar          getInfluence(void)                      {return m_influence;}
 
-	// Transform space.
 	GK_INLINE void              setSpace(const gkTransformSpace &v)     {m_space = v;}
 	GK_INLINE gkTransformSpace  getSpace(void)                          {return m_space;}
 
-
-	// Matrix access.
 	GK_INLINE void             setMatrix(const gkTransformState &m)     {m_matrix = m;}
 	GK_INLINE gkTransformState &getMatrix(void)                         {return m_matrix;}
 
 
-	// Object attachments.
 	GK_INLINE void             setObject(gkGameObject *obj)             {m_object = obj;}
 	GK_INLINE gkGameObject*    getObject(void)                          {return m_object;}
 
-
-	// Main logic update.
 	virtual bool            update(gkScalar delta) = 0;
-
-	// Clone access.
 	virtual gkConstraint   *clone(gkGameObject *clob) = 0;
-
 
 	void _applyMatrix(void);
 

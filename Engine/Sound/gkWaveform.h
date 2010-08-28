@@ -33,7 +33,6 @@
 
 class gkWaveform : public gkSoundStream
 {
-	// .wav File & memory decoder
 public:
 
 	typedef struct Header
@@ -69,9 +68,6 @@ public:
 
 	const Header    &getHeader(void)    const   { return m_header; }
 
-
-
-	// stream impl
 	const char      *read(UTsize len, UTsize &br);
 	const char      *read(UTsize pos, UTsize len, UTsize &br);
 	bool            eos(void);

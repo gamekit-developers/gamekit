@@ -64,16 +64,14 @@ public:
 	void        stopPlayback(void);
 
 
-	// Load sound block from file, then dumps it into memory
+	///Loads sound block from file, then dumps it into memory
 	bool loadToMemory(const char *file);
 
-	// Load sound from file, then streams
-	// file data to a playback buffer.
+
+	///Loads sound from file, then streams file data to a playback buffer.
 	bool load(const char *file);
 
-
-	// Load sound from memory, then streams
-	// memory data to a playback buffer.
+	///Loads sound from memory, then streams memory data to a playback buffer.
 	bool load(void *handle, UTsize len);
 };
 

@@ -68,7 +68,7 @@ public:
 	GK_INLINE void      setObject(const gkString &v)    {m_othOb = v;}
 	GK_INLINE gkString  getObject(void)                 {return m_othOb;}
 
-	// Handle incoming logic.
+	
 	void execute(void);
 };
 

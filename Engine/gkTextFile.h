@@ -32,7 +32,6 @@
 
 class gkTextManager;
 
-// Internal text buffer storage
 class gkTextFile
 {
 public:
@@ -55,9 +54,6 @@ public:
 	~gkTextFile();
 
 	void setText(const gkString &text) {m_buffer = text;}
-
-
-	// access
 
 	GK_INLINE const gkString       &getName(void)   {return m_name;}
 	GK_INLINE gkTextManager        *getOwner(void)  {return m_owner;}

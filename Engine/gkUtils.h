@@ -34,12 +34,9 @@ class gkUtils
 public:
 	static bool IS_LUA_PACKAGE;
 
-	// resource existance test
 	static bool isResource(const gkString &name, const gkString &group = Ogre::StringUtil::BLANK);
 
-	// utility for command-line arguments
 	static gkString getFile(const gkString &in);
-
 
 	static gkString getUniqueName(const gkString &in);
 };

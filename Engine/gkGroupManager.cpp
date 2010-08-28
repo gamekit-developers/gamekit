@@ -110,40 +110,22 @@ bool gkGroupManager::hasGroup(const gkHashedString &name)
 
 
 
-void gkGroupManager::createInstances(void)
+void gkGroupManager::createGameObjectInstances(void)
 {
 	// Pass command
 	Groups::Iterator it = m_groups.iterator();
 	while (it.hasMoreElements())
-		it.getNext().second->createInstancedObjects();
+		it.getNext().second->createGameObjectInstances();
 }
 
 
 
-void gkGroupManager::destroyInstances(void)
+void gkGroupManager::destroyGameObjectInstances(void)
 {
 	Groups::Iterator it = m_groups.iterator();
 	while (it.hasMoreElements())
-		it.getNext().second->destroyInstancedObjects();
+		it.getNext().second->destroyGameObjectInstances();
 }
-
-
-
-
-gkGameObjectInstance *gkGroupManager::findGroupInstanceById(UTsize id)
-{
-	gkGameObjectInstance *ret = 0;
-
-	Groups::Iterator it = m_groups.iterator();
-	while (it.hasMoreElements())
-	{
-		ret = it.getNext().second->findGroupInstanceById(id);
-		if (ret) break;
-	}
-
-	return ret;
-}
-
 
 
 void gkGroupManager::createStaticBatches(gkScene *scene)

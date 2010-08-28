@@ -64,7 +64,7 @@ public:
 
 	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
 
-	// Handle incoming logic.
+	
 	void execute(void);
 
 

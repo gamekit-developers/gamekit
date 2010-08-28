@@ -72,7 +72,6 @@ public:
 	bool hasActiveScene(void);
 	void setActiveScene(gkScene *sc);
 
-	// access to user defined parameters
 	gkUserDefs &getUserDefs(void);
 	void requestExit(void);
 
@@ -88,7 +87,6 @@ public:
 
 	gkScene *getActiveScene(void);
 
-	// tick update hook
 	void addListener(Listener *listener);
 	void removeListener(Listener *listener);
 
@@ -98,8 +96,6 @@ public:
 
 private:
 
-
-	// private interface
 	class Private;
 	Private                *m_private;
 	friend class Private;

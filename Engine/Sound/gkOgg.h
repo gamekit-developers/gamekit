@@ -39,9 +39,9 @@
 
 
 
+/// Ogg File & memory decoder
 class gkOgg : public gkSoundStream
 {
-	// Ogg File & memory decoder
 private:
 	utStream        *m_reader;
 	OggVorbis_File  m_stream;

@@ -32,7 +32,6 @@
 #include "gkMathUtils.h"
 
 
-// This is where the object should be added / removed from the scene.
 class gkGameObjectInstance : public gkObject
 {
 public:
@@ -43,16 +42,12 @@ protected:
 
 	const UTsize            m_id;
 
-	// Local object not part of the scene.
+	///This is local only to this instance, we use gkGameObject as the owner 
+    ///in order to add logic bricks to the whole collection.
 	gkGameObject            *m_owner;
 
-
-	// Parent group.
 	gkGameObjectGroup       *m_parent;
 
-
-
-	// List of cloned objects.
 	Objects                 m_objects;
 
 
@@ -74,29 +69,31 @@ public:
 	~gkGameObjectInstance();
 
 
-	// object access
 	gkGameObject *getObject(const gkHashedString &name);
 
-	// Removes cloned object.
 	void          destroyObject(const gkHashedString &name);
 	void          destroyObject(gkGameObject *gobj);
 
-	// Creates a carbon copy.
-	void          addObject(gkGameObject *gobj);
+
+	///addObject will create a clone of this object, then add it the main list.
+	void addObject(gkGameObject *gobj);
 
 
-	// Existence testing.
+
 	bool          hasObject(const gkHashedString &name);
 	bool          hasObject(gkGameObject *gobj);
 
 
+    ///Applies a transform to all objects in this instance.
 	void          applyTransform(const gkTransformState &trans);
 
 
-	// Clones all objects in this instance.
+
 	void cloneObjects(const gkTransformState &from, int time,
-	                  const gkVector3 &linearVelocity=gkVector3::ZERO, bool tsLinLocal = true,
-	                  const gkVector3 &angularVelocity=gkVector3::ZERO, bool tsAngLocal = true);
+	                  const gkVector3 &linearVelocity=gkVector3::ZERO, 
+					  bool tsLinLocal = true,
+	                  const gkVector3 &angularVelocity=gkVector3::ZERO, 
+					  bool tsAngLocal = true);
 
 
 	GK_INLINE gkGameObject          *getOwner(void)     {return m_owner;}

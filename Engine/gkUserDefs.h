@@ -32,7 +32,7 @@
 #include "gkString.h"
 #include "gkRenderFactory.h"
 
-// User defined options
+
 class gkUserDefs
 {
 public:

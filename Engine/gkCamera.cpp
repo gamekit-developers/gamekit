@@ -35,7 +35,6 @@
 // TODO: Should never overide properties created from blender.
 
 
-
 gkCamera::gkCamera(gkScene *scene, const gkString &name)
 	:	gkGameObject(scene, name, GK_CAMERA),
 	    m_cameraProps(),

@@ -31,11 +31,13 @@
 #include "gkHashedString.h"
 
 
-// Base class representing a loadable object
+///Base class for objects that are repetitively removed or added to Ogre
 class gkObject
 {
 public:
-	enum LoadingState
+
+
+	enum CreationState
 	{
 		ST_CREATING   = (1 << 0),
 		ST_CREATED    = (1 << 1),
@@ -49,6 +51,9 @@ protected:
 	const gkString      m_name;
 	int                 m_instanceState;
 
+
+	// Create and destroy events
+
 	virtual void preCreateInstanceImpl(void) {}
 	virtual void preDstroyInstanceImpl(void) {}
 	virtual void createInstanceImpl(void) {}
@@ -60,6 +65,8 @@ public:
 
 	gkObject(const gkString &name);
 	virtual ~gkObject();
+
+
 
 	void createInstance(void);
 	void destroyInstance(void);

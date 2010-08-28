@@ -33,7 +33,6 @@
 #include "OgreSingleton.h"
 
 
-// Manager for loaded scenes
 class gkSceneManager : public Ogre::Singleton<gkSceneManager>
 {
 public:
@@ -57,7 +56,6 @@ public:
 
 	static gkSceneManager &getSingleton(void);
 	static gkSceneManager *getSingletonPtr(void);
-
 };
 
 

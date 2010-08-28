@@ -32,7 +32,9 @@
 #include "gkMathUtils.h"
 
 
-// Collection of game objects that can be batch created.
+///Groups are a list of game objects that are grouped together by a common name. 
+///They manage gkGameObjectInstance objects which are created by cloning the group as a whole.
+///This allows multiple objects from the same group to be placed anywhere in the scene together.
 class gkGameObjectGroup
 {
 public:
@@ -46,20 +48,13 @@ protected:
 
 	const gkHashedString    m_name;
 
-	// List of object instances
 	Instances               m_instances;
 
-
-
-	// for generating unique handles on instance objects
+	// for generating unique handles on created instances
 	UTsize                  m_handle;
 
-
-	// local lookup of game objects
 	Objects                 m_objects;
 
-
-	// Parent manager.
 	gkGroupManager          *m_manager;
 
 
@@ -69,46 +64,46 @@ public:
 	~gkGameObjectGroup();
 
 
-	// Object insertion.
 	void addObject(gkGameObject *v);
-
-	// Object removal
 	void removeObject(gkGameObject *v);
 
-	// Object queries.
+	///Destroys all gkGameObjectInstance objects managed by this group.
+	void destroyAllInstances(void);
+
+
 
 	bool           hasObject(const gkHashedString &name);
 	gkGameObject  *getObject(const gkHashedString &name);
 
 
-
-
-	// destroy all instances
 	gkGameObjectInstance *createInstance(gkScene *scene);
 	void                  destroyInstance(gkGameObjectInstance *inst);
 
 
-
-	// id lookup
-	gkGameObjectInstance *findGroupInstanceById(UTsize id);
-
-	// Create static batch geometry.
+    ///This will group all meshes based on their material to be
+    ///rendered by Ogre with one call to the underlying graphics API
+    ///In OgreKit, this only works for truly static objects.
+    ///Things like grass, tree leaves, or basically
+    ///any gkEntity that does not respond to collisions (GK_NO_COLLISION).
+	///\todo This needs a better static object check.
 	void createStaticBatches(gkScene *scene);
 	void destroyStaticBatches(gkScene *scene);
 
 
-	// Delete all instances.
-	void clearInstances(void);
+	///Places all gkGameObjectInstance objects in the Ogre scene 
+	void createGameObjectInstances(void);
 
-	void createInstancedObjects(void);
-	void destroyInstancedObjects(void);
+	///Removes all gkGameObjectInstance objects from the Ogre scene 
+	void destroyGameObjectInstances(void);
 
 
-	// Clones all objects in this group.
+
 	void cloneObjects(gkScene *scene,
 	                  const gkTransformState &from, int time,
-	                  const gkVector3 &linearVelocity=gkVector3::ZERO, bool tsLinLocal = true,
-	                  const gkVector3 &angularVelocity=gkVector3::ZERO, bool tsAngLocal = true);
+	                  const gkVector3 &linearVelocity=gkVector3::ZERO, 
+					  bool tsLinLocal = true,
+	                  const gkVector3 &angularVelocity=gkVector3::ZERO, 
+					  bool tsAngLocal = true);
 
 
 	GK_INLINE Instances                 &getInstances(void)      {return m_instances;}

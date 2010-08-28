@@ -56,7 +56,7 @@ public:
 	GK_INLINE void  setFlag(int v)          {m_flag = v;}
 	GK_INLINE int   getFlag(void)           {return m_flag;}
 
-	// Handle incoming logic.
+	
 	void execute(void);
 };
 

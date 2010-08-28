@@ -32,7 +32,6 @@
 #include "Animation/gkActionManager.h"
 
 
-// Game entity
 class gkEntity : public gkGameObject
 {
 public:
@@ -41,10 +40,8 @@ public:
 
 	GK_INLINE Ogre::Entity *getEntity(void) { return m_entity; }
 
-	// Property access
 	GK_INLINE gkEntityProperties  &getEntityProperties(void) {return *m_entityProps;}
 
-	// actions
 	void        evalAction(gkAction *act, gkScalar animTime);
 	void        playAction(const gkString &act, gkScalar blend);
 	gkAction    *getActiveAction(void) const {return m_active;}
@@ -54,8 +51,9 @@ public:
 	void _resetPose(void);
 
 
-	// remove the entity only keep the rest.
+	// Remove only the entity but keep the rest.
 	void _destroyAsStaticGeometry(void);
+
 
 protected:
 
@@ -71,8 +69,6 @@ protected:
 	gkAction               *m_active;
 	gkSkeleton             *m_skeleton;
 
-
-	// internal mesh loader
 	Ogre::ManualResourceLoader *m_meshLoader;
 
 

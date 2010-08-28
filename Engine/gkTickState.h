@@ -33,7 +33,7 @@
 
 
 
-// Timer for running loops at a fixed rate
+///Timer for running loops at a fixed rate
 class gkTickState
 {
 private:

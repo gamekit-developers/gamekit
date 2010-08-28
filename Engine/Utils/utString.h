@@ -38,11 +38,10 @@
 #define utCharEqL(a, b, l)  ((a && b) && (*a == *b) && !strncmp(a, b, l))
 
 
-// Some day I will write a reusable string class
 typedef std::string utString;
 typedef utArray<utString> utStringArray;
 
-// utString utility functions
+
 class utStringUtils
 {
 public:
@@ -67,10 +66,10 @@ public:
 
 
 public:
-	// Empty constructor
+
 	utFixedString() : m_size(0) { m_buffer[m_size] = 0;}
 
-	// Copy constructor
+
 	utFixedString(const utFixedString &o) : m_size(0)
 	{
 		if (o.size())
@@ -84,7 +83,7 @@ public:
 		m_buffer[m_size] = 0;
 	}
 
-	// Copy character pointer
+
 	utFixedString(const char *o) : m_size(0)
 	{
 		if (o)
@@ -98,7 +97,7 @@ public:
 	}
 
 
-	// Appends charcters upto max (L)
+
 	UT_INLINE void push_back(char ch)
 	{
 		if (m_size >= L) return;
@@ -107,7 +106,7 @@ public:
 	}
 
 
-	// Nulify size
+
 	void resize(UTuint16 ns)
 	{
 		if (ns < L)
@@ -165,7 +164,8 @@ public:
 	UT_INLINE bool operator == (const utFixedString &str) const { return utCharEqL(m_buffer, str.m_buffer, bufMin(L, str.m_size + 1)); }
 	UT_INLINE bool operator != (const utFixedString &str) const { return !utCharEqL(m_buffer, str.m_buffer, bufMin(L, str.m_size + 1)); }
 
-	// hashing
+
+
 	UT_INLINE UThash hash(void) const
 	{
 		utCharHashKey ch(m_buffer);

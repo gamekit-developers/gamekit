@@ -90,8 +90,6 @@ public:
 	GK_INLINE const gkString&  getProperty(void)   {return m_startProp;}
 	GK_INLINE bool  getReset(void)                 {return m_reset;}
 
-
-	// Handle incoming logic.
 	void execute(void);
 };
 

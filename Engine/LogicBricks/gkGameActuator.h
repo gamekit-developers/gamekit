@@ -62,7 +62,7 @@ public:
 	GK_INLINE int             getMode(void)         {return m_mode;}
 	GK_INLINE const gkString &getGameFile(void)     {return m_otherGame;}
 
-	// Handle incoming logic.
+	
 	void execute(void);
 };
 

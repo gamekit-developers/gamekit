@@ -27,10 +27,9 @@
 #ifndef _gkHashedString_h_
 #define _gkHashedString_h_
 
-
 #include "gkString.h"
 
-// String hash
+
 class gkHashedString
 {
 protected:
@@ -41,12 +40,9 @@ public:
 	gkHashedString() : m_key(""), m_hash(UT_NPOS) {}
 	~gkHashedString() {}
 
-	// Key Constructor
 	gkHashedString(char *k) : m_key(k), m_hash(UT_NPOS) {hash();}
 	gkHashedString(const char *k) : m_key(const_cast<char *>(k)), m_hash(UT_NPOS) {}
 	gkHashedString(const gkString &k) : m_key(k), m_hash(UT_NPOS) {}
-
-	// Copy constructor
 	gkHashedString(const gkHashedString &k) : m_key(k.m_key), m_hash(k.m_hash) {}
 
 	UT_INLINE const gkString &str(void) const {return m_key;}

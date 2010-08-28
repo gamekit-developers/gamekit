@@ -33,12 +33,11 @@
 #include "gkInput.h"
 
 
-// Eventually this should be a native window system.
-// For the time being it will remain the Ogre/OIS pair
 class gkWindowSystem : public Ogre::Singleton<gkWindowSystem>
 {
 public:
-	// event listener
+
+
 	class Listener : public utListClass<Listener>::Link
 	{
 	public:
@@ -59,26 +58,20 @@ public:
 protected:
 	friend class Private;
 
-	// Keyboard state access
 	gkKeyboard          m_keyboard;
 
-	// Mouse state access
 	gkMouse             m_mouse;
 
-	// Joysticks state access
 	utArray<gkJoystick*> m_joysticks;
+
 
 	// Internal interface implementation
 	class Private;
 	Private            *m_internal;
 
-	// Ogre render window
 	Ogre::RenderWindow *m_window;
-
-	// Exit requested
 	bool                m_exit;
 
-	// callbacks
 	ListenerList        m_listeners;
 
 public:

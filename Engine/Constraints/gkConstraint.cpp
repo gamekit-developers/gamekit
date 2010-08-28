@@ -42,7 +42,7 @@ gkConstraint::gkConstraint()
 
 void gkConstraint::_applyMatrix(void)
 {
-	// do space conversion / blending here.
+	///\todo do space conversion / blending here.
 
 	if (m_object && m_object->isInstanced())
 		m_object->setTransform(m_matrix);

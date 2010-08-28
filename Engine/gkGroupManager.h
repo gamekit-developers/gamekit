@@ -30,17 +30,15 @@
 #include "gkCommon.h"
 
 
-// Group access.
+
 class gkGroupManager
 {
 public:
 	typedef utHashTable<gkHashedString, gkGameObjectGroup *> Groups;
 
-
 public:
 	gkGroupManager();
 	~gkGroupManager();
-
 
 	gkGameObjectGroup   *createGroup(const gkHashedString& id);
 	gkGameObjectGroup   *getGroup(const gkHashedString& id);
@@ -50,14 +48,16 @@ public:
 	void                destroyGroup(gkGameObjectGroup *group);
 	void                destroyAll(void);
 
-	void                createInstances(void);
-	void                destroyInstances(void);
+	///Place all of gkGameObjectGroup's instances in the Ogre scene
+	void createGameObjectInstances(void);
 
-	void                createStaticBatches(gkScene *scene);
-	void                destroyStaticBatches(gkScene *scene);
+	///Remove all of gkGameObjectGroup's instances in the Ogre scene
+	void destroyGameObjectInstances(void);
 
 
-	gkGameObjectInstance* findGroupInstanceById(UTsize id); 
+
+	void createStaticBatches(gkScene *scene);
+	void destroyStaticBatches(gkScene *scene);
 
 private:
 

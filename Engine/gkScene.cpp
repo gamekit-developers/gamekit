@@ -266,20 +266,6 @@ gkConstraintManager *gkScene::getConstraintManager(void)
 }
 
 
-
-void gkScene::applyViewport(Viewport *vp)
-{
-	const gkVector2 &size = gkWindowSystem::getSingleton().getMouse()->winsize;
-	vp->setDimensions(0, 0, 1, 1);
-
-	Camera *c = vp->getCamera();
-	if (c != 0)
-		c->setAspectRatio(size.x / size.y);
-}
-
-
-
-
 gkGameObject *gkScene::findInstancedObject(const gkString &name)
 {
 	gkGameObjectSet::Iterator it = m_instanceObjects.iterator();
@@ -304,10 +290,12 @@ void gkScene::setMainCamera(gkCamera *cam)
 	Camera *main = m_startCam->getCamera();
 	GK_ASSERT(main);
 
+	gkWindowSystem &sys = gkWindowSystem::getSingleton();
+
 	if (!m_viewport)
 	{
 		// create a new viewport
-		RenderWindow *window = gkWindowSystem::getSingleton().getMainWindow();
+		RenderWindow *window = sys.getMainWindow();
 		if (window)
 			m_viewport = window->addViewport(main);
 	}
@@ -315,7 +303,11 @@ void gkScene::setMainCamera(gkCamera *cam)
 		m_viewport->setCamera(main);
 
 	GK_ASSERT(m_viewport);
-	applyViewport(m_viewport);
+
+	const gkVector2 &size = sys.getMouse()->winsize;
+	m_viewport->setDimensions(0, 0, 1, 1);
+
+	main->setAspectRatio(size.x / size.y);
 }
 
 
@@ -517,7 +509,7 @@ void gkScene::createInstanceImpl(void)
 	}
 
 	// Build groups.
-	m_groupManager->createInstances();
+	m_groupManager->createGameObjectInstances();
 
 	if (gkEngine::getSingleton().getUserDefs().buildStaticGeometry)
 		m_groupManager->createStaticBatches(this);
@@ -635,7 +627,7 @@ void gkScene::destroyInstanceImpl(void)
 	m_lights.clear(true);
 	m_staticControllers.clear(true);
 
-	m_groupManager->destroyInstances();
+	m_groupManager->destroyGameObjectInstances();
 
 
 

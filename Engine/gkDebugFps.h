@@ -31,7 +31,6 @@
 
 class gkDebugFps
 {
-	// for debugging fps
 private:
 
 	bool m_isInit, m_isShown;

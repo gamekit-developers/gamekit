@@ -170,8 +170,6 @@ void gkConstraintManager::removeConstraint(gkGameObject *obj, gkConstraint *cons
 
 	removeUpdate(cons);
 
-
-	// Remove from constraint table.
 	pos = m_objectMapConstraints.find(obj);
 	if (pos != UT_NPOS)
 	{
@@ -251,8 +249,6 @@ void gkConstraintManager::update(gkScalar delta)
 void gkConstraintManager::removeUpdate(gkConstraint *cons)
 {
 	UTsize pos;
-
-	// Remove from active updates.
 	pos = m_updateConstraints.find(cons);
 	if (pos != UT_NPOS)
 		m_updateConstraints.erase(cons);

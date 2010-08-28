@@ -74,7 +74,6 @@ public:
 
 	void stopAllSounds(void);
 
-	// has playing sounds
 	bool        hasSounds(void);
 	void        playSound(gkSource *);
 	void        stopSound(gkSource *);
@@ -85,9 +84,6 @@ public:
 
 	void        notifySourceCreated(gkSource *);
 	void        notifySourceDestroyed(gkSource *);
-
-
-	// sound access
 
 	gkSound *getSound(const gkHashedString &name);
 	gkSound *createSound(const gkHashedString &name);

@@ -58,7 +58,7 @@ public:
 	gkVector3       no;                 // normals
 	unsigned int    vcol;               // vertex color
 	gkVector2       uv[GK_UV_MAX];      // texture coordinates < GK_UV_MAX
-	int             vba;
+	int             vba;                // Vertex bone assignment
 };
 
 

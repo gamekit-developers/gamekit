@@ -33,13 +33,12 @@
 #include "gkSerialize.h"
 
 
-// Base class for all game objects
 class gkGameObject : public gkObject
 {
 public:
 	typedef utHashTable<gkHashedString, gkVariable *>   VariableMap;
 
-	// life of a temporary object
+	// Life counter of a cloned object
 	struct LifeSpan
 	{
 		int tick;
@@ -81,6 +80,8 @@ public:
 	bool hasChild(gkGameObject *ob);
 
 
+    // Tells the parent scene this object has been updated
+    // This allows extra update event processing per game object.  
 	void notifyUpdate(void);
 
 
@@ -100,6 +101,7 @@ public:
 
 
 	// physics
+
 	GK_INLINE void          attachRigidBody(gkRigidBody *body)          {m_rigidBody = body;}
 	GK_INLINE gkRigidBody   *getAttachedBody(void)                      {return m_rigidBody;}
 	GK_INLINE void          attachCharacter(gkCharacter *character)     {m_character = character;}
@@ -109,6 +111,7 @@ public:
 
 
 	// variables
+
 	gkVariable *createVariable(const gkString &name, bool debug);
 	gkVariable *getVariable(const gkString &name);
 	bool        hasVariable(const gkString &name);
@@ -201,6 +204,7 @@ public:
 
 
 	// See gkGameObjectMode
+
 	GK_INLINE void setFlags(int flag)   {m_flags = flag;}
 	GK_INLINE int  getFlags(void)       {return m_flags;}
 
@@ -225,7 +229,6 @@ protected:
 
 	void cloneImpl(gkGameObject *clob);
 
-	// Base class type
 	gkGameObjectTypes           m_type;
 
 
@@ -237,7 +240,7 @@ protected:
 	gkGameObjectArray           m_children;
 
 
-	// Parent scene
+	// Access to the owing scene
 	gkScene                    *m_scene;
 
 	// Ogre scenegraph node
@@ -249,13 +252,13 @@ protected:
 	// Attached logic bricks
 	gkLogicLink                *m_bricks;
 
-	// Physics body instance
+	// Physics body instances
 	gkRigidBody                *m_rigidBody;
 	gkCharacter                *m_character;
 
+
+
 	VariableMap                 m_variables;
-
-
 	gkGameObjectInstance       *m_groupID;
 	gkGameObjectGroup          *m_group;
 

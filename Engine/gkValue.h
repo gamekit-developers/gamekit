@@ -59,7 +59,6 @@ GK_INLINE gkString gkToString(const gkMatrix3 &v)    { return Ogre::StringConver
 GK_INLINE gkString gkToString(const gkMatrix4 &v)    { return Ogre::StringConverter::toString(v); }
 
 
-// Any data type wrapper
 class gkValue
 {
 public:
@@ -68,7 +67,6 @@ public:
 
 protected:
 
-    // abstract holder
     class Value
     {
     public:
@@ -81,8 +79,6 @@ protected:
         virtual Value         *clone(void) const = 0; 
     };
 
-
-    // type holder
     template <typename T>
     class ValueType : public Value
     {

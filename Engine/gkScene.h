@@ -35,7 +35,8 @@
 #include "Thread/gkAsyncResult.h"
 #include "gkRecast.h"
 
-// Game scene
+
+
 class gkScene : public gkObject
 {
 public:
@@ -43,36 +44,35 @@ public:
 	gkScene(const gkString &name);
 	virtual ~gkScene();
 
-	// Updates the game state
+
 	void update(gkScalar tickRate);
 	void beginFrame(void);
 
-	// property access
+
+
 	GK_INLINE gkSceneProperties        &getProperties(void)    { return m_baseProps;  }
+
 	GK_INLINE gkSoundSceneProperties   &getSoundScene(void)    { return m_soundScene; }
 
-
-	// The main viewport. Only support for one at the moment.
-	GK_INLINE Ogre::Viewport *getViewport(void) { return m_viewport; }
-	void applyViewport(Ogre::Viewport *vp);
-
-	// Returns aabb for all static objects in the scene
+	///Returns aabb for all static objects in the scene
 	const gkBoundingBox &getLimits() const { return m_limits; }
 
-	// The Ogre scene manager is only available
-	// when this scene is loaded.
+
+	///The Ogre scene manager is only available when this scene is instanced.
 	GK_INLINE Ogre::SceneManager *getManager(void) { GK_ASSERT(m_manager); return m_manager; }
 
 
 	GK_INLINE gkGameObjectSet &getInstancedObjects(void)    { return m_instanceObjects; }
 
-	// physics
 	GK_INLINE gkDynamicsWorld *getDynamicsWorld(void)       { return m_physicsWorld; }
 
-	// notifications
+	// Callback events
+
 	void notifyInstanceCreated(gkGameObject *gobject);
 	void notifyInstanceDestroyed(gkGameObject *gobject);
 	void notifyObjectUpdate(gkGameObject *gobject);
+
+
 
 	bool            hasObject(const gkHashedString &ob);
 	bool            hasObject(gkGameObject *ob);
@@ -82,7 +82,6 @@ public:
 	gkMesh         *getMesh(const gkHashedString &name);
 
 
-	// Translates to a blank scene node or empty object.
 	gkGameObject   *createObject(const gkHashedString &name);
 	gkLight        *createLight(const gkHashedString &name);
 	gkCamera       *createCamera(const gkHashedString &name);
@@ -94,13 +93,9 @@ public:
 	gkGameObject   *cloneObject(gkGameObject *obj, int life);
 	void            endObject(gkGameObject *obj);
 
-	// group access
 	GK_INLINE gkGroupManager *getGroupManager(void) {return m_groupManager;}
 
-
-
-	// global debugging
-	gkDebugger          *getDebugger(void);
+	gkDebugger *getDebugger(void);
 
 	GK_INLINE void setNavMeshData(PNAVMESHDATA navMeshData) { m_navMeshData = navMeshData; }
 
@@ -109,20 +104,14 @@ public:
 	bool asyncTryToCreateNavigationMesh(gkActiveObject &activeObj, const gkRecast::Config &config, ASYNC_DT_RESULT result);
 
 
-	// Update scene constraints.
-	void applyConstraints(void);
 
-	// Access to the constraint manager.
+	void applyConstraints(void);
 	gkConstraintManager *getConstraintManager(void);
 
-	// Access to static physics information.
-	gkPhysicsControllerSet &getStaticControllers(void) {return m_staticControllers;}
 
-	// Force update of scene limits.
+	gkPhysicsControllerSet &getStaticControllers(void) {return m_staticControllers;}
 	void calculateLimits(void);
 
-
-	// Camera access.
 
 	GK_INLINE gkCamera       *getMainCamera(void)   { return m_startCam; }
 	GK_INLINE bool           hasDefaultCamera(void) { return m_startCam != 0; }
@@ -131,7 +120,6 @@ public:
 	void setMainCamera(gkCamera *cam);
 
 
-	// Light access.
 
 	GK_INLINE gkLightSet    &getLights(void) {return m_lights;}
 	GK_INLINE bool          hasLights(void)  {return isInstanced() ? !m_lights.empty() : m_hasLights;}
@@ -140,9 +128,6 @@ public:
 	GK_INLINE void      setLayer(UTuint32 v)     {m_layers = v; }
 	GK_INLINE UTuint32  getLayer(void)           {return m_layers;}
 
-
-
-	// Linear search.
 	gkGameObject *findInstancedObject(const gkString &name);
 
 private:
@@ -166,16 +151,11 @@ private:
 	void destroyClones(void);
 	void endObjects(void);
 
-	// Ogre scene manager
 	Ogre::SceneManager     *m_manager;
-
-	// Main camera
 	gkCamera               *m_startCam;
-
-	// Main viewport
 	Ogre::Viewport         *m_viewport;
 
-	// Properties for this scene
+
 	gkSceneProperties       m_baseProps;
 	gkSoundSceneProperties  m_soundScene;
 

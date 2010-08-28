@@ -121,7 +121,7 @@ public:
 
 
 private:
-	// data types
+
 	gkValue	     m_value;
 	gkValue	     m_default;
 	int          m_type;

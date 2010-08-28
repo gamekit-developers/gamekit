@@ -33,7 +33,6 @@
 #include "OgreSingleton.h"
 
 
-// Internal text buffer manager
 class gkTextManager : public Ogre::Singleton<gkTextManager>
 {
 public:
@@ -48,28 +47,17 @@ public:
 	virtual ~gkTextManager();
 
 
-	// Get internal file
 	gkTextFile *getFile(const gkString &name);
 
-
-	// Create new text file
 	gkTextFile *create(const gkString &name, const gkTextFile::TextType &type = gkTextFile::TT_UNKNOWN);
 
 
-	// Destroys named file
 	void destroy(const gkString &name);
-
-	// Destroys file pointer
 	void destroy(gkTextFile *ob);
 
-	// Destroys all internal files
 	void destroyAll(void);
-
-	// Test for file existance
 	bool hasFile(const gkString &name);
 
-
-	// Singleton access
 	static gkTextManager &getSingleton(void);
 	static gkTextManager *getSingletonPtr(void);
 };

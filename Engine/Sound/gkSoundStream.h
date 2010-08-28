@@ -30,34 +30,20 @@
 #include "Utils/utCommon.h"
 
 
-
 class gkSoundStream
 {
-	// Sound playback stream (read only).
 
 public:
 	virtual ~gkSoundStream() {}
 
-	// read a temporary block, should equal getBitsPerSecond!
 	virtual const char *read(UTsize len, UTsize &br) = 0;
-
-	// read a temporary block, should equal getBitsPerSecond!
 	virtual const char *read(UTsize pos, UTsize len, UTsize &br) = 0;
 
-	// end of stream test
 	virtual bool        eos(void) = 0;
-
-
-	// seek to new position
 	virtual void        seek(UTsize pos, int way) = 0;
 
-	// OpenAL fromat code
 	virtual int         getFormat(void)         const = 0;
-
-	// Samples per second
 	virtual int         getSampleRate(void)     const = 0;
-
-	// Read block size
 	virtual int         getBitsPerSecond(void)  const = 0;
 };
 

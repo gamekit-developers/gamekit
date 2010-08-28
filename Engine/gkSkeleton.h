@@ -31,7 +31,6 @@
 #include "gkSerialize.h"
 
 
-// Keyframe controlled bone.
 class gkBone
 {
 public:
@@ -44,19 +43,14 @@ public:
 
 	void setParent(gkBone *bone);
 
-	// Sets the inital rest / binding position of this bone.
 	void setRestPosition(const gkTransformState &st);
 
-	// Apply keyframe channel transform
 	void applyChannelTransform(const gkTransformState &channel, gkScalar weight);
-
-	// Apply keyframe transform
 	void applyPoseTransform(const gkTransformState &pose);
 
-	// Gets the rest / binding position of this bone.
 	const gkTransformState  &getRest(void)      {return m_bind;}
 
-	// Current keyframe transform
+
 	gkTransformState        &getPose(void)      {return m_pose;}
 
 	gkBone                  *getParent(void)    {return m_parent;}
@@ -74,24 +68,20 @@ private:
 
 	const gkString m_name;
 
-	// The main Ogre bone.
 	Ogre::Bone *m_bone;
 
-	// Parent manual bone
 	gkBone      *m_parent;
 	BoneList    m_children;
 
-	// The rest position.
 	gkTransformState m_bind;
 
-	// The current pose matrix, calculated in gkActionChannel::evaluate
+	// The current pose matrix, calculated in applyChannelTransform
 	gkTransformState m_pose;
 
 
 };
 
 
-// Game skeleton
 class gkSkeleton : public gkGameObject
 {
 public:
@@ -105,26 +95,17 @@ public:
 	void            setEntity(Ogre::Entity *ent);
 
 
-	// Create a manual bone from an ogre bone
 	gkBone         *createBone(const gkString &name);
-
-	// Gets a manually controlled bone
 	gkBone         *getBone(const gkHashedString &name);
 
-	// Creates a new blank action
-	gkAction       *createAction(const gkHashedString &name);
 
-	// Gets a previously created action
+	gkAction       *createAction(const gkHashedString &name);
 	gkAction       *getAction(const gkHashedString &name);
 
 	gkBone::BoneList &getRootBoneList(void);
 	gkBone::BoneList &getBoneList(void) {return m_boneList;}
 
 
-	// TODO attach gkGameObject to gkBone
-
-
-	// existence testing
 	GK_INLINE bool hasBone(const gkHashedString &name)        { return m_bones.find(name) != GK_NPOS; }
 	GK_INLINE bool hasAction(const gkHashedString &name)      { return m_actions.find(name) != GK_NPOS; }
 
@@ -142,8 +123,6 @@ protected:
 	gkBone::BoneList    m_boneList, m_rootBoneList;
 	gkEntity            *m_controller;
 
-
-	// internal skeleton loader
 	Ogre::ManualResourceLoader *m_skelLoader;
 
 	virtual void createInstanceImpl(void);

@@ -31,7 +31,8 @@
 #include "gkCommon.h"
 #include "gkDebugScreen.h"
 
-// Simple log enabler
+
+
 class gkLogger
 {
 public:
@@ -44,15 +45,19 @@ public:
 extern void gkPrintf(const char *fmt, ...);
 
 
+
 // std::cout style logging
 #define gkLogMessage(msg) {                 \
     std::stringstream stream;               \
     stream << msg;                          \
     gkLogger::write(stream.str());          \
 }
-// std::cout style logging
-#define gkPrint(x) gkLogMessage(x)
+
+
+#define gkPrint(x)    gkLogMessage(x)
 #define gkPrintSTD(x) std::cout << x << std::endl
+
 #define gkPrintSLM(src, line, msg)  gkPrint(src << '(' << line << "): " << msg)
+
 
 #endif//_gkLogger_h_

@@ -47,15 +47,15 @@ public:
 	const gkString &getPath(void) const;
 	gkString        getAbsPath(void) const;
 
-	// file access
 	void            getAsString(gkString &dest) const;
 	gkString        getAsString(void) const;
 	gkString        directory(void) const;
 	gkString        base(void) const;
 	gkString        extension(void) const;
 
-	// seperator '/'
+	// Uses the generic seperator '/'
 	void    normalize(void) const;
+
 	// normalize based on platform seperator
 	void    normalizePlatform(void) const;
 

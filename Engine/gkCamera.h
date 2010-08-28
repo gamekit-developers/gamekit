@@ -37,7 +37,6 @@ public:
 	gkCamera(gkScene *scene, const gkString &name);
 	virtual ~gkCamera() {}
 
-	// Property access
 	GK_INLINE gkCameraProperties &getCameraProperties(void) {return m_cameraProps;}
 
 

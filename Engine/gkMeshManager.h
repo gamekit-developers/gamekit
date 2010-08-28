@@ -32,14 +32,12 @@
 #include "gkMesh.h"
 
 
-
-// Manager for loaded scenes
 class gkMeshManager
 {
 public:
 	typedef utHashTable<gkHashedString, gkMesh *> ObjectMap;
-
 protected:
+
 	ObjectMap m_objects;
 
 public:
@@ -56,9 +54,5 @@ public:
 	void destroyAll(void);
 	bool hasMesh(const gkHashedString &name);
 };
-
-
-
-
 
 #endif//_gkMeshManager_h_

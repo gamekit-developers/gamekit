@@ -31,7 +31,6 @@
 #include "gkMathUtils.h"
 
 
-// Keycode enumerations, not ordered
 typedef enum gkScanCode
 {
 	KC_NONE = 0,
@@ -143,7 +142,7 @@ typedef enum gkScanCode
 
 
 
-// Current state of an input device
+///Current state of an input device
 enum gkInputState
 {
 	GK_NullState = 0,
@@ -153,7 +152,6 @@ enum gkInputState
 
 
 
-// Keyboard state access
 class gkKeyboard
 {
 public:
@@ -183,7 +181,8 @@ public:
 	KeyState    keys;       // key buffer state
 };
 
-// Mouse state access
+
+
 class gkMouse
 {
 public:
@@ -244,7 +243,8 @@ public:
 	gkScalar        wheelDelta; // current wheel
 };
 
-// Joystick state access
+
+
 class gkJoystick
 {
 public:

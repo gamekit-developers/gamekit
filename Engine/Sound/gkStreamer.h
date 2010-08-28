@@ -38,9 +38,9 @@ class gkSound;
 class gkSource;
 
 
+///Background thread for streaming Waveform/Ogg sounds
 class gkStreamer : public gkCall
 {
-	// Background thread for streaming Waveform/Ogg sounds
 public:
 
 	gkStreamer(const gkString &name);

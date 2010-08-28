@@ -94,7 +94,6 @@ protected:
 
 		m_total = nr;
 
-		/// must have default constructor
 		m_usedBlocks.reserve(m_total);
 		for (UTsize i=0; i<nr; i++)
 		{
@@ -103,7 +102,7 @@ protected:
 		}
 	}
 
-	BlockAlloc  m_usedBlocks;   /// current blocks
+	BlockAlloc  m_usedBlocks;
 	UTsize      m_total;
 
 };

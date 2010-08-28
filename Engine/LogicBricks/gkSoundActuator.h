@@ -74,7 +74,7 @@ public:
 	GK_INLINE int                   getMode(void)                       {return m_mode;}
 	GK_INLINE const gkString        &getSoundFile(void)                 {return m_sndRef;}
 
-	// Handle incoming logic.
+	
 	void execute(void);
 };
 
