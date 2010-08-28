@@ -37,7 +37,14 @@
 
 // ----------------------------------------------------------------------------
 gkUserDefs::gkUserDefs()
-	:   rendersystem(OGRE_RS_GL),
+	:   
+#ifdef OGREKIT_BUILD_IPHONE
+		rendersystem(OGRE_RS_GLES),
+		viewportOrientation("landscaperight"),
+#else
+		rendersystem(OGRE_RS_GL),
+		viewportOrientation(""),
+#endif
 	    log("OgreKit.log"),
 	    verbose(true),
 	    winsize(800, 600),
@@ -63,9 +70,6 @@ gkUserDefs::gkUserDefs()
 	    colourshadow(0.8f, 0.8f, 0.8f),
 	    fardistanceshadow(0)
 {
-#ifdef OGREKIT_BUILD_IPHONE
-	rendersystem = OGRE_RS_GLES;
-#endif
 }
 
 
@@ -130,6 +134,12 @@ void gkUserDefs::parseString(const gkString &key, const gkString &val)
 
 		return;
 	}
+	if (KeyEq("viewportorientation"))
+	{
+		viewportOrientation = val;
+		return;
+	}
+
 	if (KeyEq("log"))
 	{
 		log = val;

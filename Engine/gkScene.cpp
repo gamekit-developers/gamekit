@@ -559,6 +559,22 @@ void gkScene::createInstanceImpl(void)
 	m_viewport->setBackgroundColour(m_baseProps.m_world);
 	m_manager->setAmbientLight(m_baseProps.m_ambient);
 
+	
+
+	const gkString &iparam = gkEngine::getSingleton().getUserDefs().viewportOrientation;
+
+	if (!iparam.empty())
+	{
+		int oparam = Ogre::OR_PORTRAIT;
+		if (iparam == "landscaperight")
+			oparam = Ogre::OR_LANDSCAPERIGHT;
+		else if (iparam == "landscapeleft")
+			oparam = Ogre::OR_LANDSCAPELEFT;
+
+		m_viewport->setOrientationMode((Ogre::OrientationMode)oparam);
+	}
+
+
 	if (m_baseProps.m_fog.m_mode != gkFogParams::FM_NONE)
 	{
 		m_manager->setFog(  m_baseProps.m_fog.m_mode == gkFogParams::FM_QUAD ?  Ogre::FOG_EXP2 :
