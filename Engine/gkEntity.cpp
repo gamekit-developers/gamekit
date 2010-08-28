@@ -601,7 +601,7 @@ void gkEntityMeshLoader::loadResource(Ogre::Resource *resource)
 						gkBone *bone = skel->getBone(vg->getName());
 						if (bone)
 						{
-							vba.boneIndex   = bone->getOgreBone()->getHandle();
+							vba.boneIndex   = bone->_getBoneIndex();
 							vba.vertexIndex = dvtx.vertexId;
 							vba.weight      = dvtx.weight;
 							osubmesh->addBoneAssignment(vba);

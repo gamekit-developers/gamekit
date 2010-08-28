@@ -31,13 +31,15 @@
 
 
 
-gkAction::gkAction(const gkString &name) :
-	m_name(name), m_start(1), m_end(1), m_evalTime(1), m_weight(1.0),
-	m_blendFrames(1.0)
+// ----------------------------------------------------------------------------
+gkAction::gkAction(const gkString &name) 
+	:	m_name(name), m_start(1), m_end(1), m_evalTime(1), m_weight(1.0),
+		m_blendFrames(1.0)
 {
 }
 
 
+// ----------------------------------------------------------------------------
 gkAction::~gkAction()
 {
 	gkActionChannel **ptr = m_channels.ptr();
@@ -47,12 +49,14 @@ gkAction::~gkAction()
 }
 
 
+// ----------------------------------------------------------------------------
 void gkAction::addChannel(gkActionChannel *chan)
 {
 	GK_ASSERT(chan);
 	m_channels.push_back(chan);
 }
 
+// ----------------------------------------------------------------------------
 gkActionChannel *gkAction::getChannel(gkBone *bone)
 {
 	for (UTsize i=0; i<m_channels.size(); i++)
@@ -66,6 +70,8 @@ gkActionChannel *gkAction::getChannel(gkBone *bone)
 	return NULL;
 }
 
+
+// ----------------------------------------------------------------------------
 void gkAction::evaluate(gkScalar time)
 {
 	// loop for now

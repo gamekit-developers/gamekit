@@ -177,28 +177,30 @@ source_group(Thread\\Source FILES ${Thread_SOURCE})
 set(Animation_SOURCE
     # ----- Source -----
     Animation/gkAction.cpp
-    Animation/gkActionBake.cpp
     Animation/gkActionChannel.cpp
     Animation/gkActionManager.cpp
     Animation/gkBezierSpline.cpp
-    Animation/gkLightAction.cpp
-    Animation/gkMaterialAction.cpp
-    Animation/gkObjectAction.cpp
-    Animation/gkWorldAction.cpp
+    
+    #TODO
+    #Animation/gkLightAction.cpp
+    #Animation/gkMaterialAction.cpp
+    #Animation/gkObjectAction.cpp
+    #Animation/gkWorldAction.cpp
 )
 
 
 set(Animation_HEADER
     # ----- Headers -----
     Animation/gkAction.h
-    Animation/gkActionBake.h
     Animation/gkActionChannel.h
     Animation/gkActionManager.h
     Animation/gkBezierSpline.h
-    Animation/gkLightAction.h
-    Animation/gkMaterialAction.h
-    Animation/gkObjectAction.h
-    Animation/gkWorldAction.h
+
+    #TODO
+    #Animation/gkLightAction.h
+    #Animation/gkMaterialAction.h
+    #Animation/gkObjectAction.h
+    #Animation/gkWorldAction.h
 )
 
 

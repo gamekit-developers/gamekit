@@ -59,6 +59,43 @@ void gkBone::setRestPosition(const gkTransformState &st)
 }
 
 
+// ----------------------------------------------------------------------------
+void gkBone::applyChannelTransform(const gkTransformState &channel, gkScalar weight)
+{
+	// save previous pose
+	gkTransformState blendmat = m_pose;
+
+	// combine relitave to binding position
+	m_pose.loc = m_bind.loc + m_bind.rot * channel.loc;
+	m_pose.rot = m_bind.rot * channel.rot;
+	m_pose.scl = m_bind.scl * channel.scl;
+
+	if (weight < 1.0)
+	{
+		// blend poses
+		m_pose.loc = gkMathUtils::interp(blendmat.loc, m_pose.loc, weight);
+		m_pose.rot = gkMathUtils::interp(blendmat.rot, m_pose.rot, weight);
+		m_pose.rot.normalise();
+		m_pose.scl = gkMathUtils::interp(blendmat.scl, m_pose.scl, weight);
+	}
+
+	m_bone->setPosition(m_pose.loc);
+	m_bone->setOrientation(m_pose.rot);
+	m_bone->setScale(m_pose.scl);
+}
+
+// ----------------------------------------------------------------------------
+void gkBone::applyPoseTransform(const gkTransformState &pose)
+{
+	if (!m_bone)
+		return;
+
+
+	m_bone->setPosition(pose.loc);
+	m_bone->setOrientation(pose.rot);
+	m_bone->setScale(pose.scl);
+}
+
 
 // ----------------------------------------------------------------------------
 void gkBone::setParent(gkBone *bone)
@@ -76,9 +113,19 @@ void gkBone::setParent(gkBone *bone)
 
 
 // ----------------------------------------------------------------------------
-void gkBone::setOgreBone(Ogre::Bone *bone)
+void gkBone::_setOgreBone(Ogre::Bone *bone)
 {
 	m_bone = bone;
+}
+
+
+// ----------------------------------------------------------------------------
+UTsize gkBone::_getBoneIndex(void)
+{
+	if (!m_bone)
+		return UT_NPOS;
+
+	return m_bone->getHandle();
 }
 
 
@@ -141,8 +188,9 @@ void gkSkeleton::setEntity(Ogre::Entity *ent)
 				gkBone *bone = m_boneList.at(i);
 				if (inst->hasBone(bone->getName()))
 				{
-					bone->setOgreBone(inst->getBone(bone->getName()));
-					bone->getOgreBone()->setManuallyControlled(true);
+					Ogre::Bone *obone = inst->getBone(bone->getName());
+					bone->_setOgreBone(obone);
+					obone->setManuallyControlled(true);
 				}
 			}
 		}
@@ -242,7 +290,7 @@ public:
 	void loadResource(Ogre::Resource *resource);
 
 private:
-	void recurseBone(Ogre::Skeleton *skel, gkBone *cur, gkBone *par);
+	void recurseBone(Ogre::Skeleton *skel, gkBone *cur, Ogre::Bone *par);
 
 	gkSkeleton *m_skeleton;
 
@@ -274,15 +322,16 @@ gkSkeletonLoader::gkSkeletonLoader(gkSkeleton *skel)
 
 
 // ----------------------------------------------------------------------------
-void gkSkeletonLoader::recurseBone(Ogre::Skeleton *skel, gkBone *cur, gkBone *par)
+void gkSkeletonLoader::recurseBone(Ogre::Skeleton *skel, gkBone *cur, Ogre::Bone *par)
 {
+	GK_ASSERT(cur);
 
 	Ogre::Bone *obone = skel->createBone(cur->getName());
-	cur->setOgreBone(obone);
+	cur->_setOgreBone(obone);
 
 
 	if (par != 0)
-		par->getOgreBone()->addChild(obone);
+		par->addChild(obone);
 
 	const gkTransformState &rest = cur->getRest();
 	obone->setPosition(rest.loc);
@@ -294,7 +343,7 @@ void gkSkeletonLoader::recurseBone(Ogre::Skeleton *skel, gkBone *cur, gkBone *pa
 
 	gkBone::BoneList &bl = cur->getChildren();
 	for (UTsize i=0; i<bl.size(); ++i)
-		recurseBone(skel, bl[i], cur);
+		recurseBone(skel, bl[i], obone);
 }
 
 

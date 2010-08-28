@@ -26,9 +26,6 @@
 */
 #include "gkBezierSpline.h"
 
-using namespace Ogre;
-
-
 #define SplineTOL                DBL_EPSILON
 #define SplineAbs(x)            fabs(x)
 #define SplineFuzzy( x )        (SplineAbs( x ) <= SplineTOL)

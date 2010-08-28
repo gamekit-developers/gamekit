@@ -26,20 +26,20 @@
 */
 #include "gkAction.h"
 #include "gkActionChannel.h"
-#include "OgreBone.h"
-
-
-using namespace Ogre;
 
 
 
-gkActionChannel::gkActionChannel(gkAction *parent, gkBone *bone) :
-	m_bone(bone), m_action(parent)
+
+// ----------------------------------------------------------------------------
+gkActionChannel::gkActionChannel(gkAction *parent, gkBone *bone) 
+	:	m_bone(bone), m_action(parent)
 {
 	GK_ASSERT(bone);
 }
 
 
+
+// ----------------------------------------------------------------------------
 gkActionChannel::~gkActionChannel()
 {
 	gkBezierSpline **splines = m_splines.ptr();
@@ -50,6 +50,7 @@ gkActionChannel::~gkActionChannel()
 }
 
 
+// ----------------------------------------------------------------------------
 void gkActionChannel::addSpline(gkBezierSpline *spline)
 {
 	if (m_splines.empty())
@@ -58,18 +59,23 @@ void gkActionChannel::addSpline(gkBezierSpline *spline)
 }
 
 
+
+// ----------------------------------------------------------------------------
 const gkBezierSpline **gkActionChannel::getSplines(void)
 {
 	return (const gkBezierSpline **)m_splines.ptr();
 }
 
 
+// ----------------------------------------------------------------------------
 int gkActionChannel::getNumSplines(void)
 {
 	return (int)m_splines.size();
 }
 
 
+
+// ----------------------------------------------------------------------------
 void gkActionChannel::evaluate(float time, float delta, float weight)
 {
 	const gkBezierSpline **splines = getSplines();
@@ -116,29 +122,7 @@ void gkActionChannel::evaluate(float time, float delta, float weight)
 	GK_ASSERT(!channel.rot.isNaN());
 	GK_ASSERT(!channel.scl.isNaN());
 
-	const gkTransformState &bind = m_bone->getRest();
-	gkTransformState &pose = m_bone->getPose();
+	// Apply specifics 
+	m_bone->applyChannelTransform(channel, weight);
 
-	// save previous pose
-	gkTransformState blendmat = pose;
-
-	// combine relitave to binding position
-	pose.loc = bind.loc + bind.rot * channel.loc;
-	pose.rot = bind.rot * channel.rot;
-	pose.scl = bind.scl * channel.scl;
-
-	if (weight < 1.0)
-	{
-		// blend poses
-		pose.loc = gkMathUtils::interp(blendmat.loc, pose.loc, weight);
-		pose.rot = gkMathUtils::interp(blendmat.rot, pose.rot, weight);
-		pose.rot.normalise();
-		pose.scl = gkMathUtils::interp(blendmat.scl, pose.scl, weight);
-	}
-
-
-	Ogre::Bone *bone = m_bone->getOgreBone();
-	bone->setPosition(pose.loc);
-	bone->setOrientation(pose.rot);
-	bone->setScale(pose.scl);
 }

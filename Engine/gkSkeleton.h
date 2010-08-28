@@ -31,34 +31,44 @@
 #include "gkSerialize.h"
 
 
-
-
-// Manually controlled bone.
+// Keyframe controlled bone.
 class gkBone
 {
 public:
-
 	typedef utArray<gkBone *> BoneList;
-
 
 public:
 
 	gkBone(const gkString &name);
 	~gkBone();
 
-	void        setParent(gkBone *bone);
-	void        setOgreBone(Ogre::Bone *bone);
-	void        setRestPosition(const gkTransformState &st);
+	void setParent(gkBone *bone);
 
+	// Sets the inital rest / binding position of this bone.
+	void setRestPosition(const gkTransformState &st);
 
+	// Apply keyframe channel transform
+	void applyChannelTransform(const gkTransformState &channel, gkScalar weight);
 
+	// Apply keyframe transform
+	void applyPoseTransform(const gkTransformState &pose);
+
+	// Gets the rest / binding position of this bone.
 	const gkTransformState  &getRest(void)      {return m_bind;}
+
+	// Current keyframe transform
 	gkTransformState        &getPose(void)      {return m_pose;}
+
 	gkBone                  *getParent(void)    {return m_parent;}
-	const gkString          &getName(void)      {return m_name;}
-	Ogre::Bone              *getOgreBone(void)  {return m_bone;}
 	BoneList                &getChildren(void)  {return m_children;}
 
+
+	const gkString          &getName(void)      {return m_name;}
+
+
+	// Internal use
+	UTsize                  _getBoneIndex(void);
+	void                    _setOgreBone(Ogre::Bone *bone);
 
 private:
 
@@ -71,7 +81,7 @@ private:
 	gkBone      *m_parent;
 	BoneList    m_children;
 
-	// Ogre calculations are reltave to the rest position.
+	// The rest position.
 	gkTransformState m_bind;
 
 	// The current pose matrix, calculated in gkActionChannel::evaluate

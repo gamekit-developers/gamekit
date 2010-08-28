@@ -74,15 +74,9 @@
 #include "AI/gkFSM.h"
 
 #include "Animation/gkAction.h"
-#include "Animation/gkActionBake.h"
 #include "Animation/gkActionChannel.h"
 #include "Animation/gkActionManager.h"
 #include "Animation/gkBezierSpline.h"
-#include "Animation/gkLightAction.h"
-#include "Animation/gkMaterialAction.h"
-#include "Animation/gkObjectAction.h"
-#include "Animation/gkWorldAction.h"
-
 
 #include "Constraints/gkConstraint.h"
 #include "Constraints/gkConstraintManager.h"

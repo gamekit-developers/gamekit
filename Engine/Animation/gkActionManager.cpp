@@ -28,20 +28,21 @@
 #include "gkAction.h"
 #include "gkActionChannel.h"
 
-using namespace Ogre;
 
-
-
-gkActionManager::gkActionManager() : m_active(0), m_blend(0), m_blendTime(0.0)
+// ----------------------------------------------------------------------------
+gkActionManager::gkActionManager() 
+	:	m_active(0), m_blend(0), m_blendTime(0.0)
 {
 }
 
 
+// ----------------------------------------------------------------------------
 gkActionManager::~gkActionManager()
 {
 }
 
 
+// ----------------------------------------------------------------------------
 void gkActionManager::setAction(gkAction *act)
 {
 	if (act)
@@ -58,6 +59,7 @@ void gkActionManager::setAction(gkAction *act)
 }
 
 
+// ----------------------------------------------------------------------------
 void gkActionManager::update(gkScalar delta, gkScalar blendDelta)
 {
 	if (m_blend && m_active)
@@ -94,6 +96,7 @@ void gkActionManager::update(gkScalar delta, gkScalar blendDelta)
 }
 
 
+// ----------------------------------------------------------------------------
 void gkActionManager::update(gkScalar delta)
 {
 	update(delta, delta);
