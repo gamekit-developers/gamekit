@@ -30,19 +30,19 @@
 #include "gkScene.h"
 
 
-// ----------------------------------------------------------------------------
+
 gkGameActuator::gkGameActuator(gkGameObject *object, gkLogicLink *link, const gkString &name)
 	:   gkLogicActuator(object, link, name), m_mode(-1), m_otherGame("")
 
 {
 }
 
-// ----------------------------------------------------------------------------
+
 gkGameActuator::~gkGameActuator()
 {
 }
 
-// ----------------------------------------------------------------------------
+
 gkLogicBrick *gkGameActuator::clone(gkLogicLink *link, gkGameObject *dest)
 {
 	gkGameActuator *act = new gkGameActuator(*this);
@@ -50,7 +50,7 @@ gkLogicBrick *gkGameActuator::clone(gkLogicLink *link, gkGameObject *dest)
 	return act;
 }
 
-// ----------------------------------------------------------------------------
+
 void gkGameActuator::execute(void)
 {
 	switch (m_mode)

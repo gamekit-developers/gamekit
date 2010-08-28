@@ -29,7 +29,7 @@
 
 #include "gkLogicActuator.h"
 
-// ----------------------------------------------------------------------------
+
 class gkGameActuator : public gkLogicActuator
 {
 public:

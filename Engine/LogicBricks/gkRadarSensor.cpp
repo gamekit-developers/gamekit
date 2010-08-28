@@ -34,13 +34,13 @@
 #include "gkContactTest.h"
 #include "btBulletDynamicsCommon.h"
 
-// ----------------------------------------------------------------------------
+
 gkRadarSensor::gkRadarSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
 	:        gkRaySensor(object, link, name), m_angle(0.1)
 {
 }
 
-// ----------------------------------------------------------------------------
+
 gkLogicBrick *gkRadarSensor::clone(gkLogicLink *link, gkGameObject *dest)
 {
 	gkRadarSensor *sens = new gkRadarSensor(*this);
@@ -48,7 +48,7 @@ gkLogicBrick *gkRadarSensor::clone(gkLogicLink *link, gkGameObject *dest)
 	return sens;
 }
 
-// ----------------------------------------------------------------------------
+
 bool gkRadarSensor::query(void)
 {
 	gkScene *scene = m_object->getOwner();

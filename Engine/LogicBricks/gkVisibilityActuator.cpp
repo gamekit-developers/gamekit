@@ -29,20 +29,20 @@
 #include "OgreSceneNode.h"
 
 
-// ----------------------------------------------------------------------------
+
 gkVisibilityActuator::gkVisibilityActuator(gkGameObject *object, gkLogicLink *link, const gkString &name)
 	:   gkLogicActuator(object, link, name),
 	    m_flag(0)
 {
 }
 
-// ----------------------------------------------------------------------------
+
 gkVisibilityActuator::~gkVisibilityActuator()
 {
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkLogicBrick *gkVisibilityActuator::clone(gkLogicLink *link, gkGameObject *dest)
 {
 	gkVisibilityActuator *act = new gkVisibilityActuator(*this);
@@ -51,7 +51,7 @@ gkLogicBrick *gkVisibilityActuator::clone(gkLogicLink *link, gkGameObject *dest)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkVisibilityActuator::execute(void)
 {
 	if (isPulseOff())

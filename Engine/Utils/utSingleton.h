@@ -59,7 +59,7 @@ public:
 };
 
 
-// ----------------------------------------------------------------------------
+
 #define UT_DECLARE_SINGLETON(cls)                       \
     public:                                             \
     static cls& getSingleton(void);                     \

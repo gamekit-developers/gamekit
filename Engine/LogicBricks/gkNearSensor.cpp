@@ -35,7 +35,7 @@
 #include "btBulletDynamicsCommon.h"
 #include "btBulletCollisionCommon.h"
 
-// ----------------------------------------------------------------------------
+
 gkNearSensor::gkNearSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
 	:        gkLogicSensor(object, link, name), m_range(0.01), m_resetrange(0.01), m_previous(false), m_material(""), m_prop("")
 {
@@ -43,7 +43,7 @@ gkNearSensor::gkNearSensor(gkGameObject *object, gkLogicLink *link, const gkStri
 	connect();
 }
 
-// ----------------------------------------------------------------------------
+
 gkLogicBrick *gkNearSensor::clone(gkLogicLink *link, gkGameObject *dest)
 {
 	gkNearSensor *sens = new gkNearSensor(*this);
@@ -52,7 +52,7 @@ gkLogicBrick *gkNearSensor::clone(gkLogicLink *link, gkGameObject *dest)
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkNearSensor::query(void)
 {
 	gkScene *scene = m_object->getOwner();

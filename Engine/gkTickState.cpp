@@ -30,7 +30,7 @@
 #define gkMSScale                gkScalar(0.001)
 
 
-// ----------------------------------------------------------------------------
+
 gkTickState::gkTickState()
 	:   m_clock(0)
 {
@@ -38,7 +38,7 @@ gkTickState::gkTickState()
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkTickState::gkTickState(int rate)
 	:   m_clock(0)
 {
@@ -46,14 +46,14 @@ gkTickState::gkTickState(int rate)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkTickState::~gkTickState()
 {
 	delete m_clock;
 	m_clock = 0;
 }
 
-// ----------------------------------------------------------------------------
+
 void gkTickState::initialize(int rate)
 {
 	m_rate = gkMax<unsigned long>(1, rate);
@@ -72,14 +72,14 @@ void gkTickState::initialize(int rate)
 	m_init = false;
 }
 
-// ----------------------------------------------------------------------------
+
 void gkTickState::reset(void)
 {
 	m_init = false;
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkTickState::tick(void)
 {
 	GK_ASSERT(m_clock);

@@ -32,7 +32,7 @@ struct lua_State;
 class gkLuaManager;
 
 
-// ----------------------------------------------------------------------------
+
 class gkLuaScript
 {
 protected:

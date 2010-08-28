@@ -30,7 +30,7 @@
 #include "gkEditObjectActuator.h"
 
 
-// ----------------------------------------------------------------------------
+
 gkEditObjectActuator::gkEditObjectActuator(gkGameObject *object, gkLogicLink *link, const gkString &name)
 	:   gkLogicActuator(object, link, name), m_linv(0,0,0), m_angv(0,0,0),
 	    m_lvlocal(false), m_avlocal(false), m_mode(0), m_dynMode(0), m_life(0), m_obj("")
@@ -38,12 +38,12 @@ gkEditObjectActuator::gkEditObjectActuator(gkGameObject *object, gkLogicLink *li
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkEditObjectActuator::~gkEditObjectActuator()
 {
 }
 
-// ----------------------------------------------------------------------------
+
 gkLogicBrick *gkEditObjectActuator::clone(gkLogicLink *link, gkGameObject *dest)
 {
 	gkEditObjectActuator *act = new gkEditObjectActuator(*this);
@@ -51,7 +51,7 @@ gkLogicBrick *gkEditObjectActuator::clone(gkLogicLink *link, gkGameObject *dest)
 	return act;
 }
 
-// ----------------------------------------------------------------------------
+
 void gkEditObjectActuator::addObject(void)
 {
 	if (!m_obj.empty())
@@ -94,7 +94,7 @@ void gkEditObjectActuator::addObject(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkEditObjectActuator::endObject(void)
 {
 	if (m_object)
@@ -102,7 +102,7 @@ void gkEditObjectActuator::endObject(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkEditObjectActuator::execute(void)
 {
 	if (isPulseOff())

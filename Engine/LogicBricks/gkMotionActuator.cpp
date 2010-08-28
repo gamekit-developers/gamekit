@@ -29,20 +29,20 @@
 #include "gkRigidBody.h"
 
 
-// ----------------------------------------------------------------------------
+
 gkMotionActuator::gkMotionActuator(gkGameObject *object, gkLogicLink *link, const gkString &name)
 	:       gkLogicActuator(object, link, name),
 	        m_type(0), m_linvInc(false), m_damping(1.f), m_dampIncr(0.f)
 {
 }
 
-// ----------------------------------------------------------------------------
+
 gkMotionActuator::~gkMotionActuator()
 {
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkLogicBrick *gkMotionActuator::clone(gkLogicLink *link, gkGameObject *dest)
 {
 	gkMotionActuator *act = new gkMotionActuator(*this);
@@ -50,7 +50,7 @@ gkLogicBrick *gkMotionActuator::clone(gkLogicLink *link, gkGameObject *dest)
 	return act;
 }
 
-// ----------------------------------------------------------------------------
+
 void gkMotionActuator::execute(void)
 {
 	if (isPulseOff())

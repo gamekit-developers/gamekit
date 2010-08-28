@@ -29,7 +29,7 @@
 #include "gkLogicManager.h"
 #include "gkLogicDispatcher.h"
 
-//----------------------------------------------------------------------------------
+
 gkRandomSensor::gkRandomSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
 	:       gkLogicSensor(object, link, name)
 {
@@ -38,13 +38,13 @@ gkRandomSensor::gkRandomSensor(gkGameObject *object, gkLogicLink *link, const gk
 	connect();
 }
 
-//----------------------------------------------------------------------------------
+
 gkRandomSensor::~gkRandomSensor()
 {
 	delete m_randGen;
 }
 
-// ----------------------------------------------------------------------------------
+------
 gkLogicBrick *gkRandomSensor::clone(gkLogicLink *link, gkGameObject *dest)
 {
 	gkRandomSensor *sens = new gkRandomSensor(*this);
@@ -53,7 +53,7 @@ gkLogicBrick *gkRandomSensor::clone(gkLogicLink *link, gkGameObject *dest)
 	return sens;
 }
 
-//------------------------------------------------------------------------------------
+--
 void gkRandomSensor::setSeed(UTuint32 v)
 {
 	m_seed = v;
@@ -62,7 +62,7 @@ void gkRandomSensor::setSeed(UTuint32 v)
 	m_count = 0;
 }
 
-// ----------------------------------------------------------------------------
+
 bool gkRandomSensor::query(void)
 {
 	m_count = m_count+1;

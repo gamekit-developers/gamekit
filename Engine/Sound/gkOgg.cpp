@@ -32,7 +32,7 @@
 #define OV_FIXED_BUF 32768
 
 
-// ----------------------------------------------------------------------------
+
 static size_t gkOggRead(void *ptr, size_t bl, size_t nr, void *blk)
 {
 	utStream *block = (utStream *)blk;
@@ -44,7 +44,7 @@ static size_t gkOggRead(void *ptr, size_t bl, size_t nr, void *blk)
 }
 
 
-// ----------------------------------------------------------------------------
+
 static int gkOggSeek(void *blk, ogg_int64_t off, int way)
 {
 	utStream *block = (utStream *)blk;
@@ -56,7 +56,7 @@ static int gkOggSeek(void *blk, ogg_int64_t off, int way)
 }
 
 
-// ----------------------------------------------------------------------------
+
 static long gkOggTell(void *blk)
 {
 	utStream *block = (utStream *)blk;
@@ -67,7 +67,7 @@ static long gkOggTell(void *blk)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkOgg::gkOgg()
 	:   m_reader(0),
 	    m_stream(),
@@ -77,7 +77,7 @@ gkOgg::gkOgg()
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkOgg::~gkOgg()
 {
 	ov_clear(&m_stream);
@@ -91,7 +91,7 @@ gkOgg::~gkOgg()
 
 }
 
-// ----------------------------------------------------------------------------
+
 bool gkOgg::load(const char *fname)
 {
 
@@ -121,7 +121,7 @@ bool gkOgg::load(const char *fname)
 
 
 
-// ----------------------------------------------------------------------------
+
 bool gkOgg::load(const char *buf, int len)
 {
 	m_reader = new utMemoryStream();
@@ -149,7 +149,7 @@ bool gkOgg::load(const char *buf, int len)
 }
 
 
-// ----------------------------------------------------------------------------
+
 const char *gkOgg::read(UTsize pos, UTsize len, UTsize &br)
 {
 	if (pos != UT_NPOS)
@@ -158,7 +158,7 @@ const char *gkOgg::read(UTsize pos, UTsize len, UTsize &br)
 }
 
 
-// ----------------------------------------------------------------------------
+
 const char *gkOgg::read(UTsize len, UTsize &br)
 {
 	static char blk[OV_FIXED_BUF];
@@ -187,13 +187,13 @@ const char *gkOgg::read(UTsize len, UTsize &br)
 	return blk;
 }
 
-// ----------------------------------------------------------------------------
+
 bool gkOgg::eos(void)
 {
 	return m_eos;
 }
 
-// ----------------------------------------------------------------------------
+
 void gkOgg::seek(UTsize pos, int way)
 {
 	m_eos = false;
@@ -201,7 +201,7 @@ void gkOgg::seek(UTsize pos, int way)
 }
 
 
-// ----------------------------------------------------------------------------
+
 int gkOgg::getFormat(void) const
 {
 	if (m_inf != 0)
@@ -209,7 +209,7 @@ int gkOgg::getFormat(void) const
 	return -1;
 }
 
-// ----------------------------------------------------------------------------
+
 int gkOgg::getSampleRate(void) const
 {
 	if (m_inf)
@@ -218,7 +218,7 @@ int gkOgg::getSampleRate(void) const
 }
 
 
-// ----------------------------------------------------------------------------
+
 int gkOgg::getBitsPerSecond(void)  const
 {
 	return OV_FIXED_BUF;

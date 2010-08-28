@@ -38,7 +38,7 @@
 #include "OgreStaticGeometry.h"
 
 
-// ----------------------------------------------------------------------------
+
 gkGameObjectGroup::gkGameObjectGroup(gkGroupManager *manager, const gkHashedString &name)
 	:   m_name(name), m_manager(manager), m_geometry(0)
 {
@@ -46,7 +46,7 @@ gkGameObjectGroup::gkGameObjectGroup(gkGroupManager *manager, const gkHashedStri
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkGameObjectGroup::~gkGameObjectGroup()
 {
 	clearInstances();
@@ -54,7 +54,7 @@ gkGameObjectGroup::~gkGameObjectGroup()
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObjectGroup::addObject(gkGameObject *gobj)
 {
 	if (!gobj) return;
@@ -77,7 +77,7 @@ void gkGameObjectGroup::addObject(gkGameObject *gobj)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObjectGroup::removeObject(gkGameObject *gobj)
 {
 	if (!gobj) return;
@@ -98,14 +98,14 @@ void gkGameObjectGroup::removeObject(gkGameObject *gobj)
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkGameObjectGroup::hasObject(const gkHashedString &name)
 {
 	return m_objects.find(name) != UT_NPOS;
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkGameObject *gkGameObjectGroup::getObject(const gkHashedString &name)
 {
 	UTsize pos = 0;
@@ -120,7 +120,7 @@ gkGameObject *gkGameObjectGroup::getObject(const gkHashedString &name)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObjectGroup::clearInstances(void)
 {
 	// Free all instances
@@ -134,7 +134,7 @@ void gkGameObjectGroup::clearInstances(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkGameObjectInstance *gkGameObjectGroup::createInstance(gkScene *scene)
 {
 	gkGameObjectInstance *newInst = new gkGameObjectInstance(this, scene, m_manager->_getHandle());
@@ -160,7 +160,7 @@ gkGameObjectInstance *gkGameObjectGroup::createInstance(gkScene *scene)
 	return newInst;
 }
 
-// ----------------------------------------------------------------------------
+
 void gkGameObjectGroup::destroyInstance(gkGameObjectInstance *inst)
 {
 
@@ -178,7 +178,7 @@ void gkGameObjectGroup::destroyInstance(gkGameObjectInstance *inst)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObjectGroup::createInstancedObjects(void)
 {
 	Instances::Iterator it = m_instances.iterator();
@@ -187,7 +187,7 @@ void gkGameObjectGroup::createInstancedObjects(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObjectGroup::destroyInstancedObjects(void)
 {
 	Instances::Iterator it = m_instances.iterator();
@@ -196,7 +196,7 @@ void gkGameObjectGroup::destroyInstancedObjects(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkGameObjectInstance *gkGameObjectGroup::findGroupInstanceById(UTsize id)
 {
 	gkGameObjectInstance *ret = 0;
@@ -216,7 +216,7 @@ gkGameObjectInstance *gkGameObjectGroup::findGroupInstanceById(UTsize id)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObjectGroup::cloneObjects(gkScene *scene,
 									 const gkTransformState &from,
                                      int time,
@@ -267,7 +267,7 @@ void gkGameObjectGroup::cloneObjects(gkScene *scene,
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObjectGroup::createStaticBatches(gkScene *scene)
 {
 	/// this only works for truly static objects.
@@ -332,7 +332,7 @@ void gkGameObjectGroup::createStaticBatches(gkScene *scene)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObjectGroup::destroyStaticBatches(gkScene *scene)
 {
 	bool isSceneUnloading = scene->isBeingDestroyed();

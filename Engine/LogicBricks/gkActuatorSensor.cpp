@@ -32,7 +32,7 @@
 #include "gkLogicLink.h"
 #include "gkLogicActuator.h"
 
-// ----------------------------------------------------------------------------
+
 gkActuatorSensor::gkActuatorSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
 		:	gkLogicSensor(object, link, name), m_actuatorName("")
 {
@@ -40,7 +40,7 @@ gkActuatorSensor::gkActuatorSensor(gkGameObject *object, gkLogicLink *link, cons
 	connect();
 }
 
-// ----------------------------------------------------------------------------
+
 gkLogicBrick *gkActuatorSensor::clone(gkLogicLink *link, gkGameObject *dest)
 {
 	gkActuatorSensor *sens = new gkActuatorSensor(*this);
@@ -48,7 +48,7 @@ gkLogicBrick *gkActuatorSensor::clone(gkLogicLink *link, gkGameObject *dest)
 	return sens;
 }
 
-// ----------------------------------------------------------------------------
+
 bool gkActuatorSensor::query(void)
 {
 	gkLogicActuator * act = m_object->getLogicBricks()->findActuator(m_actuatorName);

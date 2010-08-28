@@ -31,7 +31,7 @@
 #include "Animation/gkActionManager.h"
 
 
-// ----------------------------------------------------------------------------
+
 class gkActionActuator : public gkLogicActuator
 {
 public:

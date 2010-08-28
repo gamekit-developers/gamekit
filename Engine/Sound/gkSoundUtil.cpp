@@ -36,7 +36,7 @@ extern "C" void OpenAL_UnloadLibrary( void );
 #endif
 
 
-// ----------------------------------------------------------------------------
+
 bool alOpenLibrary(void)
 {
 #if UT_PLATFORM == UT_PLATFORM_WIN32
@@ -55,7 +55,7 @@ bool alOpenLibrary(void)
 #endif
 }
 
-// ----------------------------------------------------------------------------
+
 void alCloseLibrary(void)
 {
 #if UT_PLATFORM == UT_PLATFORM_WIN32
@@ -64,7 +64,7 @@ void alCloseLibrary(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool alIsPlaying(ALuint src)
 {
 	ALint state;
@@ -72,7 +72,7 @@ bool alIsPlaying(ALuint src)
 	return state == AL_PLAYING;
 }
 
-// ----------------------------------------------------------------------------
+
 bool alErrorCheck(const char *message)
 {
 	ALenum err;
@@ -84,14 +84,14 @@ bool alErrorCheck(const char *message)
 	return false;
 }
 
-// ----------------------------------------------------------------------------
+
 bool alErrorThrow(const char *message)
 {
 	return alErrorCheck(message);
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool alErrorCheck(void)
 {
 	ALint err;
@@ -112,7 +112,7 @@ bool alErrorCheck(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 int alGetBufType(const char *magic)
 {
 	if (!strncmp(magic, "RIFF", 4))
@@ -122,7 +122,7 @@ int alGetBufType(const char *magic)
 	return GK_BUF_NULL;
 }
 
-// ----------------------------------------------------------------------------
+
 int alReadMagic(const char *file)
 {
 	char buf[5] = {'\0'};

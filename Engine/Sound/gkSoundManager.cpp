@@ -39,7 +39,7 @@
 
 
 
-// ----------------------------------------------------------------------------
+
 gkSoundManager::gkSoundManager()
 	:   m_stream(0),
 	    m_valid(false),
@@ -60,7 +60,7 @@ gkSoundManager::gkSoundManager()
 
 
 
-// ----------------------------------------------------------------------------
+
 gkSoundManager::~gkSoundManager()
 {
 	destroyAll();
@@ -78,7 +78,7 @@ gkSoundManager::~gkSoundManager()
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkSoundManager::initialize(void)
 {
 	// Load start up params
@@ -138,14 +138,14 @@ void gkSoundManager::initialize(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkSoundManager::isValidContext(void)
 {
 	return m_valid && gkSndCtxValid();
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkSoundManager::notifySourceCreated(gkSource *src)
 {
 	if (!gkSndCtxValid())
@@ -159,7 +159,7 @@ void gkSoundManager::notifySourceCreated(gkSource *src)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkSoundManager::notifySourceDestroyed(gkSource *src)
 {
 	if (!gkSndCtxValid())
@@ -210,7 +210,7 @@ void gkSoundManager::notifySourceDestroyed(gkSource *src)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkSoundManager::stopAllSounds(void)
 {
 	if (!gkSndCtxValid())
@@ -237,7 +237,7 @@ void gkSoundManager::stopAllSounds(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkSoundManager::updateSoundProperties(void)
 {
 	if (!gkSndCtxValid())
@@ -262,7 +262,7 @@ void gkSoundManager::updateSoundProperties(void)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkSoundManager::update(gkScene *scene)
 {
 	if (!gkSndCtxValid())
@@ -312,7 +312,7 @@ void gkSoundManager::update(gkScene *scene)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkSoundManager::collectGarbage(void)
 {
 	if (!gkSndCtxValid())
@@ -380,7 +380,7 @@ void gkSoundManager::collectGarbage(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkSoundManager::removePlayback(gkSound *sndToDelete)
 {
 	if (!gkSndCtxValid())
@@ -449,13 +449,13 @@ void gkSoundManager::removePlayback(gkSound *sndToDelete)
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkSoundManager::hasSounds(void)
 {
 	return !m_stream->isEmpty();
 }
 
-// ----------------------------------------------------------------------------
+
 void gkSoundManager::playSound(gkSource *snd)
 {
 	if (!gkSndCtxValid())
@@ -475,7 +475,7 @@ void gkSoundManager::playSound(gkSource *snd)
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void gkSoundManager::stopSound(gkSource *snd)
 {
 	if (!gkSndCtxValid())
@@ -489,7 +489,7 @@ void gkSoundManager::stopSound(gkSource *snd)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkSound *gkSoundManager::getSound(const gkHashedString &name)
 {
 	// Always test the return value, no guarantee that this manager can create playback.
@@ -505,7 +505,7 @@ gkSound *gkSoundManager::getSound(const gkHashedString &name)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkSound *gkSoundManager::createSound(const gkHashedString &name)
 {
 
@@ -524,7 +524,7 @@ gkSound *gkSoundManager::createSound(const gkHashedString &name)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkSoundManager::destroy(const gkHashedString &name)
 {
 	if (!gkSndCtxValid())
@@ -546,7 +546,7 @@ void gkSoundManager::destroy(const gkHashedString &name)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkSoundManager::destroy(gkSound *ob)
 {
 	if (!gkSndCtxValid())
@@ -557,7 +557,7 @@ void gkSoundManager::destroy(gkSound *ob)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkSoundManager::destroyAll(void)
 {
 	if (!gkSndCtxValid())
@@ -585,7 +585,7 @@ void gkSoundManager::destroyAll(void)
 
 
 
-// ----------------------------------------------------------------------------
+
 bool gkSoundManager::hasSound(const gkHashedString &name)
 {
 	if (!gkSndCtxValid())

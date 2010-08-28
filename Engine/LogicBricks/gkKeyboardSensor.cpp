@@ -29,26 +29,26 @@
 #include "gkScene.h"
 
 
-// ----------------------------------------------------------------------------
+
 gkKeyDispatch::gkKeyDispatch()
 {
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkKeyDispatch::~gkKeyDispatch()
 {
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkKeyDispatch::dispatch(void)
 {
 	// TODO need to sort.
 	doDispatch(m_sensors);
 }
 
-// ----------------------------------------------------------------------------
+
 gkKeyboardSensor::gkKeyboardSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
 	:       gkLogicSensor(object, link, name), m_key(KC_NONE), m_mod0(KC_NONE), m_mod1(KC_NONE), m_allKeys(false)
 {
@@ -56,7 +56,7 @@ gkKeyboardSensor::gkKeyboardSensor(gkGameObject *object, gkLogicLink *link, cons
 	connect();
 }
 
-// ----------------------------------------------------------------------------
+
 gkLogicBrick *gkKeyboardSensor::clone(gkLogicLink *link, gkGameObject *dest)
 {
 	gkKeyboardSensor *sens = new gkKeyboardSensor(*this);
@@ -64,7 +64,7 @@ gkLogicBrick *gkKeyboardSensor::clone(gkLogicLink *link, gkGameObject *dest)
 	return sens;
 }
 
-// ----------------------------------------------------------------------------
+
 bool gkKeyboardSensor::query(void)
 {
 	gkKeyboard *key = gkWindowSystem::getSingleton().getKeyboard();

@@ -30,7 +30,7 @@
 #include "gkSoundManager.h"
 
 
-// ----------------------------------------------------------------------------
+
 gkBuffer::gkBuffer(gkSource *obj)
 	:   m_sound(obj),
 	    m_stream(obj->getStream()),
@@ -58,7 +58,7 @@ gkBuffer::gkBuffer(gkSource *obj)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkBuffer::~gkBuffer()
 {
 	finalize();
@@ -66,7 +66,7 @@ gkBuffer::~gkBuffer()
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkBuffer::doSuspend(void)
 {
 	if (m_doSuspend)
@@ -84,7 +84,7 @@ void gkBuffer::doSuspend(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkBuffer::do3D(void)
 {
 	if (m_do3D)
@@ -98,7 +98,7 @@ void gkBuffer::do3D(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkBuffer::doProperties(void)
 {
 	alSourcei(m_source,  AL_LOOPING, AL_FALSE);
@@ -130,7 +130,7 @@ void gkBuffer::doProperties(void)
 
 }
 
-// ----------------------------------------------------------------------------
+
 void gkBuffer::suspend(bool v)
 {
 	if (!m_ok) return;
@@ -138,7 +138,7 @@ void gkBuffer::suspend(bool v)
 	m_doSuspend = m_suspend != v;
 }
 
-// ----------------------------------------------------------------------------
+
 void gkBuffer::setLoop(bool v)
 {
 	if (!m_ok) return;
@@ -147,7 +147,7 @@ void gkBuffer::setLoop(bool v)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkBuffer::setPosition(const gkVector3 &v)
 {
 	if (!m_ok) return;
@@ -156,7 +156,7 @@ void gkBuffer::setPosition(const gkVector3 &v)
 	m_do3D = true;
 }
 
-// ----------------------------------------------------------------------------
+
 void gkBuffer::setDirection(const gkVector3 &v)
 {
 	if (!m_ok) return;
@@ -166,7 +166,7 @@ void gkBuffer::setDirection(const gkVector3 &v)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkBuffer::setVelocity(const gkVector3 &v)
 {
 	if (!m_ok) return;
@@ -177,7 +177,7 @@ void gkBuffer::setVelocity(const gkVector3 &v)
 
 
 
-// ----------------------------------------------------------------------------
+
 bool gkBuffer::initialize(void)
 {
 	if (m_isInit)
@@ -202,7 +202,7 @@ bool gkBuffer::initialize(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkBuffer::queue(bool play)
 {
 	if (!m_ok)
@@ -239,7 +239,7 @@ void gkBuffer::queue(bool play)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkBuffer::finalize(void)
 {
 	m_exit = true;
@@ -261,14 +261,14 @@ void gkBuffer::finalize(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkBuffer::setProperties(const gkSoundProperties &props)
 {
 	m_props = props;
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkBuffer::reset(void)
 {
 	if (!m_ok)
@@ -299,7 +299,7 @@ void gkBuffer::reset(void)
 	m_initial = true;
 }
 
-// ----------------------------------------------------------------------------
+
 const char *gkBuffer::read(UTsize len, UTsize &br)
 {
 	if (!m_stream || m_eos)
@@ -317,7 +317,7 @@ const char *gkBuffer::read(UTsize len, UTsize &br)
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkBuffer::stream(void)
 {
 	// stream contents to OpenAL buffers

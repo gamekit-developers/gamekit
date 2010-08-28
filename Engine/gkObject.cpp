@@ -30,21 +30,21 @@
 
 
 
-// ----------------------------------------------------------------------------
+
 gkObject::gkObject(const gkString &name)
 	:       m_name(name), m_instanceState(ST_DESTROYED)
 {
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkObject::~gkObject()
 {
 }
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkObject::createInstance(void)
 {
 
@@ -76,7 +76,7 @@ void gkObject::createInstance(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkObject::destroyInstance(void)
 {
 
@@ -102,7 +102,7 @@ void gkObject::destroyInstance(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkObject::reinstance(void)
 {
 	destroyInstance();

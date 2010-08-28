@@ -35,7 +35,7 @@
 #include "gkPath.h"
 
 
-// ----------------------------------------------------------------------------
+
 gkUserDefs::gkUserDefs()
 	:   
 #ifdef OGREKIT_BUILD_IPHONE
@@ -73,7 +73,7 @@ gkUserDefs::gkUserDefs()
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkUserDefs::load(const gkString &fname)
 {
 	gkString startup;
@@ -115,7 +115,7 @@ void gkUserDefs::load(const gkString &fname)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkUserDefs::parseString(const gkString &key, const gkString &val)
 {
 #define KeyEq(b) (key == b)

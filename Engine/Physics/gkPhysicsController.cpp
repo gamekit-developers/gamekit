@@ -36,7 +36,7 @@
 
 
 
-// ----------------------------------------------------------------------------
+
 gkPhysicsController::gkPhysicsController(gkGameObject *object, gkDynamicsWorld *owner)
 	:	m_owner(owner),
 	    m_object(object),
@@ -50,7 +50,7 @@ gkPhysicsController::gkPhysicsController(gkGameObject *object, gkDynamicsWorld *
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkPhysicsController::~gkPhysicsController()
 {
 	if (m_shape)
@@ -61,7 +61,7 @@ gkPhysicsController::~gkPhysicsController()
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkPhysicsController::setShape(btCollisionShape *shape)
 {
 	if (m_collisionObject)
@@ -75,33 +75,33 @@ void gkPhysicsController::setShape(btCollisionShape *shape)
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkPhysicsController::isStaticObject(void)
 {
 	return m_props.isStatic();
 }
 
-// ----------------------------------------------------------------------------
+
 gkPhysicsProperties& gkPhysicsController::getProperties(void)
 {
 	GK_ASSERT(m_object);
 	return m_props;
 }
 
-// ----------------------------------------------------------------------------
+
 gkContactInfo::Array& gkPhysicsController::getContacts(void)
 {
 	return m_localContacts;
 }
 
-// ----------------------------------------------------------------------------
+
 gkContactInfo::Iterator gkPhysicsController::getContactIterator(void)
 {
 	return gkContactInfo::Iterator(m_localContacts);
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkPhysicsController::collidesWith(gkGameObject *ob, gkContactInfo* cpy)
 {
 	if (!m_localContacts.empty())
@@ -129,7 +129,7 @@ bool gkPhysicsController::collidesWith(gkGameObject *ob, gkContactInfo* cpy)
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkPhysicsController::collidesWith(const gkString& name, gkContactInfo* cpy, bool emptyFilter)
 {
 
@@ -168,7 +168,7 @@ bool gkPhysicsController::collidesWith(const gkString& name, gkContactInfo* cpy,
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkPhysicsController::sensorCollides(const gkString& prop, const gkString& material, bool onlyActor, bool testAllMaterials)
 {
 
@@ -248,7 +248,7 @@ bool gkPhysicsController::sensorCollides(const gkString& prop, const gkString& m
 
 
 
-// ----------------------------------------------------------------------------
+
 bool gkPhysicsController::_markDbvt(bool v)
 {
 	if (m_suspend)
@@ -273,7 +273,7 @@ bool gkPhysicsController::_markDbvt(bool v)
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkPhysicsController::sensorTest(gkGameObject *ob, const gkString& prop, const gkString& material, bool onlyActor, bool testAllMaterials)
 {
 	GK_ASSERT(ob);
@@ -322,7 +322,7 @@ bool gkPhysicsController::sensorTest(gkGameObject *ob, const gkString& prop, con
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkPhysicsController::setTransformState(const gkTransformState &state)
 {
 	if (m_suspend || !m_collisionObject)
@@ -332,7 +332,7 @@ void gkPhysicsController::setTransformState(const gkTransformState &state)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkPhysicsController::updateTransform(void)
 {
 	if (m_suspend || !m_collisionObject)
@@ -366,7 +366,7 @@ void gkPhysicsController::updateTransform(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkPhysicsController::enableContactProcessing(bool v)
 {
 	if (m_object)
@@ -384,14 +384,14 @@ void gkPhysicsController::enableContactProcessing(bool v)
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 gkPhysicsController* gkPhysicsController::castController(void *colObj)
 {
 	GK_ASSERT(colObj);
 	return castController(static_cast<btCollisionObject*>(colObj));
 }
 
-// ----------------------------------------------------------------------------
+
 gkPhysicsController* gkPhysicsController::castController(btCollisionObject *colObj)
 {
 	GK_ASSERT(colObj);
@@ -399,7 +399,7 @@ gkPhysicsController* gkPhysicsController::castController(btCollisionObject *colO
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkGameObject* gkPhysicsController::castObject(btCollisionObject *colObj)
 {
 	GK_ASSERT(colObj);
@@ -408,14 +408,14 @@ gkGameObject* gkPhysicsController::castObject(btCollisionObject *colObj)
 	return cont->getObject();
 }
 
-// ----------------------------------------------------------------------------
+
 gkGameObject* gkPhysicsController::castObject(const btCollisionObject *colObj)
 {
 	return castObject(const_cast<btCollisionObject*>(colObj));
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkPhysicsController::suspend(bool v)
 {
 	if (m_suspend != v && m_collisionObject)
@@ -452,14 +452,14 @@ void gkPhysicsController::suspend(bool v)
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 btCollisionObject *gkPhysicsController::getCollisionObject(void)
 {
 	return m_collisionObject;
 }
 
 
-// ----------------------------------------------------------------------------
+
 btCollisionShape *gkPhysicsController::getShape(void)
 {
 	return m_shape;
@@ -467,7 +467,7 @@ btCollisionShape *gkPhysicsController::getShape(void)
 
 
 
-// ----------------------------------------------------------------------------
+
 btDynamicsWorld *gkPhysicsController::getOwner(void)
 {
 	if (m_owner)
@@ -476,13 +476,13 @@ btDynamicsWorld *gkPhysicsController::getOwner(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkGameObject *gkPhysicsController::getObject(void)
 {
 	return m_object;
 }
 
-// ----------------------------------------------------------------------------
+
 gkBoundingBox gkPhysicsController::getAabb(void) const
 {
 	if(m_collisionObject)
@@ -503,7 +503,7 @@ gkBoundingBox gkPhysicsController::getAabb(void) const
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkPhysicsController::createShape(void)
 {
 
@@ -572,7 +572,7 @@ void gkPhysicsController::createShape(void)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkPhysicsController::setTransform(const btTransform &worldTrans)
 {
 	GK_ASSERT(m_object && m_object->isInstanced());
@@ -592,7 +592,7 @@ void gkPhysicsController::setTransform(const btTransform &worldTrans)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkPhysicsController::_handleManifold(btPersistentManifold *manifold)
 {
 	if(m_suspend || !m_props.isContactListener() || !m_object->isInstanced()) 
@@ -632,7 +632,7 @@ void gkPhysicsController::_handleManifold(btPersistentManifold *manifold)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkPhysicsController::_resetContactInfo(void)
 {
 	if(m_props.isContactListener())

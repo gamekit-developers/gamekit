@@ -32,7 +32,7 @@
 #include "gkWindowSystem.h"
 
 
-// ----------------------------------------------------------------------------
+
 class gkKeyDispatch : public gkAbstractDispatcher
 {
 public:
@@ -43,7 +43,7 @@ public:
 };
 
 
-// ----------------------------------------------------------------------------
+
 class gkKeyboardSensor : public gkLogicSensor
 {
 protected:

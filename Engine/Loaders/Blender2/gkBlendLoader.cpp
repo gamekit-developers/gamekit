@@ -33,14 +33,14 @@
 #include "Blender.h"
 
 
-// ----------------------------------------------------------------------------
+
 gkBlendLoader::gkBlendLoader()
 	:	m_activeFile(0)
 {
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkBlendLoader::~gkBlendLoader()
 {
 	FileList::Iterator it = m_files.iterator();
@@ -51,7 +51,7 @@ gkBlendLoader::~gkBlendLoader()
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkBlendFile *gkBlendLoader::getFileByName(const gkString &fname)
 {
 	FileList::Iterator it = m_files.iterator();
@@ -67,7 +67,7 @@ gkBlendFile *gkBlendLoader::getFileByName(const gkString &fname)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkBlendFile *gkBlendLoader::loadAndCatch(const gkString &fname, int options, const gkString &inResourceGroup)
 {
 	m_activeFile = getFileByName(fname);
@@ -92,7 +92,7 @@ gkBlendFile *gkBlendLoader::loadAndCatch(const gkString &fname, int options, con
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkBlendFile *gkBlendLoader::loadFile(const gkString &fname, int options, const gkString &inResourceGroup)
 {
 	bool resetLoad = false;

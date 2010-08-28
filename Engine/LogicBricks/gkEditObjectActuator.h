@@ -30,7 +30,7 @@
 #include "gkLogicActuator.h"
 
 
-// ----------------------------------------------------------------------------
+
 class gkEditObjectActuator : public gkLogicActuator
 {
 public:

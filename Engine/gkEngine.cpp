@@ -74,7 +74,7 @@ gkScalar gkEngine::m_animRate = 25;
 
 
 
-// ----------------------------------------------------------------------------
+
 class gkEnginePrivate : public FrameListener, public gkTickState
 {
 public:
@@ -121,7 +121,7 @@ public:
 
 
 
-// ----------------------------------------------------------------------------
+
 gkEngine::gkEngine(gkUserDefs *oth)
 	:       m_root(0),
 	        m_window(0),
@@ -138,7 +138,7 @@ gkEngine::gkEngine(gkUserDefs *oth)
 
 
 
-// ----------------------------------------------------------------------------
+
 gkEngine::~gkEngine()
 {
 
@@ -157,7 +157,7 @@ gkEngine::~gkEngine()
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkEngine::initialize(bool autoCreateWindow)
 {
 	if (m_initialized) return;
@@ -227,7 +227,7 @@ void gkEngine::initialize(bool autoCreateWindow)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkEngine::initializeWindow(void)
 {
 	if (m_private->windowsystem && !m_window)
@@ -244,7 +244,7 @@ void gkEngine::initializeWindow(void)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkEngine::finalize()
 {
 	if (!m_initialized) return;
@@ -280,7 +280,7 @@ void gkEngine::finalize()
 
 
 
-// ----------------------------------------------------------------------------
+
 gkUserDefs &gkEngine::getUserDefs(void)
 {
 	GK_ASSERT(m_defs);
@@ -288,14 +288,14 @@ gkUserDefs &gkEngine::getUserDefs(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkEngine::requestExit(void)
 {
 	gkWindowSystem::getSingleton().exit(true);
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkBlendFile *gkEngine::loadBlendFile(const gkString &blend, int options, const gkString &inResource)
 {
 	// This function is not really needed any more.
@@ -304,7 +304,7 @@ gkBlendFile *gkEngine::loadBlendFile(const gkString &blend, int options, const g
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkEngine::loadResources(const gkString &name)
 {
 	if (name.empty()) return;
@@ -333,7 +333,7 @@ void gkEngine::loadResources(const gkString &name)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkEngine::addDebugProperty(gkVariable *prop)
 {
 	if (m_defs->showDebugProps)
@@ -348,7 +348,7 @@ void gkEngine::addDebugProperty(gkVariable *prop)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkEngine::removeDebugProperty(gkVariable *prop)
 {
 	if (m_defs->showDebugProps)
@@ -359,28 +359,28 @@ void gkEngine::removeDebugProperty(gkVariable *prop)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkScalar gkEngine::getStepRate(void)
 {
 	return gkScalar(1.0) / ENGINE_TICKS_PER_SECOND;
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkScalar gkEngine::getTickRate(void)
 {
 	return ENGINE_TICKS_PER_SECOND;
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkScalar gkEngine::getAnimRate(void)
 {
 	return m_animRate;
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkEngine::hasActiveScene(void)
 {
 	GK_ASSERT(m_private);
@@ -389,7 +389,7 @@ bool gkEngine::hasActiveScene(void)
 
 
 
-// ----------------------------------------------------------------------------
+
 gkScene *gkEngine::getActiveScene(void)
 {
 	GK_ASSERT(m_private);
@@ -398,7 +398,7 @@ gkScene *gkEngine::getActiveScene(void)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkEngine::addListener(gkEngine::Listener *listener)
 {
 	m_listeners.push_back(listener);
@@ -407,7 +407,7 @@ void gkEngine::addListener(gkEngine::Listener *listener)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkEngine::removeListener(gkEngine::Listener *listener)
 {
 	if (m_listeners.find(listener))
@@ -416,7 +416,7 @@ void gkEngine::removeListener(gkEngine::Listener *listener)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkEngine::addCommand(gkObject *ob, const gkCreateParam::Type &type)
 {
 	gkCreateParam cmd = {ob, type};
@@ -428,7 +428,7 @@ void gkEngine::addCommand(gkObject *ob, const gkCreateParam::Type &type)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkEngine::run(void)
 {
 	if (!initializeStepLoop()) return;
@@ -470,7 +470,7 @@ bool gkEngine::initializeStepLoop(void)
 	return true;
 }
 
-// ----------------------------------------------------------------------------
+
 bool gkEngine::stepOneFrame(void)
 {
 	gkWindowSystem *sys = m_private->windowsystem;
@@ -482,14 +482,14 @@ bool gkEngine::stepOneFrame(void)
 	return !sys->exitRequest();
 }
 
-// ----------------------------------------------------------------------------
+
 void gkEngine::finalizeStepLoop(void)
 {
 	m_root->removeFrameListener(m_private);
 	m_running = false;
 }
 
-// ----------------------------------------------------------------------------
+
 bool gkEnginePrivate::frameStarted(const FrameEvent &evt)
 {
 	gkStats::getSingleton().startClock();
@@ -498,7 +498,7 @@ bool gkEnginePrivate::frameStarted(const FrameEvent &evt)
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkEnginePrivate::frameRenderingQueued(const FrameEvent &evt)
 {
 	gkStats::getSingleton().stopRenderClock();
@@ -514,7 +514,7 @@ bool gkEnginePrivate::frameRenderingQueued(const FrameEvent &evt)
 
 
 
-// ----------------------------------------------------------------------------
+
 bool gkEnginePrivate::frameEnded(const FrameEvent &evt)
 {
 	gkStats::getSingleton().stopBufSwapLodClock();
@@ -525,7 +525,7 @@ bool gkEnginePrivate::frameEnded(const FrameEvent &evt)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkEnginePrivate::beginTickImpl(void)
 {
 	GK_ASSERT(scene);
@@ -534,7 +534,7 @@ void gkEnginePrivate::beginTickImpl(void)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkEnginePrivate::endTickImpl(void)
 {
 	if (debugPage && debugPage->isShown())
@@ -546,7 +546,7 @@ void gkEnginePrivate::endTickImpl(void)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkEnginePrivate::tickImpl(gkScalar dt)
 {
 	// Proccess one full game tick
@@ -591,7 +591,7 @@ void gkEnginePrivate::tickImpl(gkScalar dt)
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void gkEngine::setActiveScene(gkScene *sc)
 {
 	GK_ASSERT(m_private); 

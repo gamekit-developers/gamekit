@@ -34,7 +34,7 @@
 
 
 
-// ----------------------------------------------------------------------------
+
 gkRaySensor::gkRaySensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
 	:       gkLogicSensor(object, link, name), m_range(0.01), m_axis(-1), m_material(""), m_prop("")
 {
@@ -43,7 +43,7 @@ gkRaySensor::gkRaySensor(gkGameObject *object, gkLogicLink *link, const gkString
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkLogicBrick *gkRaySensor::clone(gkLogicLink *link, gkGameObject *dest)
 {
 	gkRaySensor *sens = new gkRaySensor(*this);
@@ -52,7 +52,7 @@ gkLogicBrick *gkRaySensor::clone(gkLogicLink *link, gkGameObject *dest)
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkRaySensor::query(void)
 {
 

@@ -33,7 +33,7 @@
 
 
 
-// ----------------------------------------------------------------------------
+
 template <typename W, typename B>
 class gsArrayIterator
 {
@@ -84,7 +84,7 @@ public:
 
 
 
-// ----------------------------------------------------------------------------
+
 template <typename W, typename B>
 class gsArray 
 {

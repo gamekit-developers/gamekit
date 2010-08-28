@@ -28,7 +28,7 @@
 #include "BulletCollision/CollisionShapes/btTriangleMesh.h"
 
 
-// ----------------------------------------------------------------------------
+
 gkVertex::gkVertex()
 {
 	co = no = (0,0,0);
@@ -39,14 +39,14 @@ gkVertex::gkVertex()
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkVertex::gkVertex(const gkVertex &o)
 {
 	*this = o;
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkVertex &gkVertex::operator = (const gkVertex &o)
 {
 	co      = o.co;
@@ -59,7 +59,7 @@ gkVertex &gkVertex::operator = (const gkVertex &o)
 }
 
 
-// ----------------------------------------------------------------------------
+
 class gkSubMeshIndexer
 {
 
@@ -120,7 +120,7 @@ public:
 	}
 };
 
-// ----------------------------------------------------------------------------
+
 gkSubMesh::gkSubMesh()
 	:   m_uvlayers(0),
 	    m_sort(new gkSubMeshIndexer()),
@@ -131,14 +131,14 @@ gkSubMesh::gkSubMesh()
 	m_material = new gkMaterialProperties();
 }
 
-// ----------------------------------------------------------------------------
+
 gkSubMesh::~gkSubMesh()
 {
 	delete m_material;
 	delete m_sort;
 }
 
-// ----------------------------------------------------------------------------
+
 gkSubMesh *gkSubMesh::clone(void)
 {
 	gkSubMesh *nme = new gkSubMesh();
@@ -155,7 +155,7 @@ gkSubMesh *gkSubMesh::clone(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkSubMesh::addTriangle(const gkVertex &v0,
                             unsigned int i0,
                             const gkVertex &v1,
@@ -174,13 +174,13 @@ void gkSubMesh::addTriangle(const gkVertex &v0,
 	m_tris.push_back(tri);
 }
 
-// ----------------------------------------------------------------------------
+
 void gkSubMesh::addDeformVert(const gkDeformVertex &dv)
 {
 	m_defverts.push_back(dv);
 }
 
-// ----------------------------------------------------------------------------
+
 gkBoundingBox &gkSubMesh::getBoundingBox(void)
 {
 	if (!m_boundsInit)
@@ -201,7 +201,7 @@ gkBoundingBox &gkSubMesh::getBoundingBox(void)
 
 
 
-// ----------------------------------------------------------------------------
+
 gkMesh::gkMesh(const gkString &name)
 	:   m_bounds(gkBoundingBox::BOX_NULL),
 	    m_boundsInit(false),
@@ -210,7 +210,7 @@ gkMesh::gkMesh(const gkString &name)
 {
 }
 
-// ----------------------------------------------------------------------------
+
 gkMesh::~gkMesh()
 {
 	if (m_triMesh)
@@ -226,13 +226,13 @@ gkMesh::~gkMesh()
 	m_groups.clear();
 }
 
-// ----------------------------------------------------------------------------
+
 void gkMesh::addSubMesh(gkSubMesh *me)
 {
 	m_submeshes.push_back(me);
 }
 
-// ----------------------------------------------------------------------------
+
 gkBoundingBox &gkMesh::getBoundingBox(void)
 {
 	if (!m_boundsInit)
@@ -246,7 +246,7 @@ gkBoundingBox &gkMesh::getBoundingBox(void)
 	return m_bounds;
 }
 
-// ----------------------------------------------------------------------------
+
 gkMaterialProperties &gkMesh::getFirstMaterial(void)
 {
 	if (!m_submeshes.empty())
@@ -256,7 +256,7 @@ gkMaterialProperties &gkMesh::getFirstMaterial(void)
 	return props;
 }
 
-// ----------------------------------------------------------------------------
+
 btTriangleMesh *gkMesh::getTriMesh(void)
 {
 	if (m_triMesh)
@@ -295,7 +295,7 @@ btTriangleMesh *gkMesh::getTriMesh(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkMesh *gkMesh::clone(void)
 {
 	gkMesh *nme = new gkMesh(m_name);
@@ -310,7 +310,7 @@ gkMesh *gkMesh::clone(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkVertexGroup *gkMesh::createVertexGroup(const gkString &name)
 {
 	gkVertexGroup *group = new gkVertexGroup(name, m_groups.size());
@@ -319,7 +319,7 @@ gkVertexGroup *gkMesh::createVertexGroup(const gkString &name)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkVertexGroup *gkMesh::findVertexGroup(int i)
 {
 	if (i < (int)m_groups.size() && i >=0 )
@@ -327,7 +327,7 @@ gkVertexGroup *gkMesh::findVertexGroup(int i)
 	return 0;
 }
 
-// ----------------------------------------------------------------------------
+
 gkVertexGroup *gkMesh::findVertexGroup(const gkString &name)
 {
 	UTsize i=0, s = m_groups.size();

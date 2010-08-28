@@ -32,7 +32,7 @@
 #include "OgreKit.h"
 #include "Script/Lua/gkLuaUtils.h"
 
-// ----------------------------------------------------------------------------
+
 //  Conversion Macros
 
 

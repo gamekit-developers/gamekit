@@ -36,7 +36,7 @@ gkMessageActuator::gkMessageActuator(gkGameObject *object, gkLogicLink *link, co
 
 }
 
-// ----------------------------------------------------------------------------
+
 gkLogicBrick *gkMessageActuator::clone(gkLogicLink *link, gkGameObject *dest)
 {
 	gkMessageActuator *act = new gkMessageActuator(*this);
@@ -44,7 +44,7 @@ gkLogicBrick *gkMessageActuator::clone(gkLogicLink *link, gkGameObject *dest)
 	return act;
 }
 
-// ----------------------------------------------------------------------------
+
 void gkMessageActuator::execute(void)
 {
 	gkString from, body;

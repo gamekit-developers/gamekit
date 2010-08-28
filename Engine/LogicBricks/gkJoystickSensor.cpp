@@ -29,19 +29,19 @@
 #include "gkLogicManager.h"
 #include "gkScene.h"
 
-// ----------------------------------------------------------------------------
+
 gkJoyDispatch::gkJoyDispatch()
 {
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkJoyDispatch::~gkJoyDispatch()
 {
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkJoyDispatch::dispatch(void)
 {
 	// TODO need to sort.
@@ -56,7 +56,7 @@ gkJoystickSensor::gkJoystickSensor(gkGameObject *object, gkLogicLink *link, cons
 	connect();
 }
 
-// ----------------------------------------------------------------------------
+
 gkLogicBrick *gkJoystickSensor::clone(gkLogicLink *link, gkGameObject *dest)
 {
 	gkJoystickSensor *sens = new gkJoystickSensor(*this);
@@ -64,7 +64,7 @@ gkLogicBrick *gkJoystickSensor::clone(gkLogicLink *link, gkGameObject *dest)
 	return sens;
 }
 
-// ----------------------------------------------------------------------------
+
 bool gkJoystickSensor::query(void)
 {
 	gkJoystick *js = gkWindowSystem::getSingleton().getJoystick(m_joystickIndex);

@@ -43,7 +43,7 @@
 
 #define PROP_SIZE 14
 
-// ----------------------------------------------------------------------------
+
 gkDebugFps::gkDebugFps()
 	:   m_isInit(false), m_isShown(false),
 	    m_over(0), m_cont(0), m_key(0), m_val(0)
@@ -69,12 +69,12 @@ gkDebugFps::gkDebugFps()
 	m_keys += "Bufferswap&LOD:\n";
 }
 
-// ----------------------------------------------------------------------------
+
 gkDebugFps::~gkDebugFps()
 {
 }
 
-// ----------------------------------------------------------------------------
+
 void gkDebugFps::initialize(void)
 {
 	if (m_isInit)
@@ -136,7 +136,7 @@ void gkDebugFps::initialize(void)
 
 }
 
-// ----------------------------------------------------------------------------
+
 void gkDebugFps::show(bool v)
 {
 	if (m_over != 0 && m_isShown != v)
@@ -149,7 +149,7 @@ void gkDebugFps::show(bool v)
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void gkDebugFps::draw(void)
 {
 	if (!m_over || !m_key || !m_val)

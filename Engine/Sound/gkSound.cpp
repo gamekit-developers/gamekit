@@ -31,14 +31,14 @@
 #include "gkOgg.h"
 
 
-// ----------------------------------------------------------------------------
+
 gkSound::gkSound(const gkString &name)
 	:   m_name(name),
 	    m_stream(0)
 {
 }
 
-// ----------------------------------------------------------------------------
+
 gkSound::~gkSound()
 {
 	stopPlayback();
@@ -49,7 +49,7 @@ gkSound::~gkSound()
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 bool gkSound::load(const char *fname)
 {
 
@@ -84,7 +84,7 @@ bool gkSound::load(const char *fname)
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkSound::loadToMemory(const char *file)
 {
 	bool result = false;
@@ -111,7 +111,7 @@ bool gkSound::loadToMemory(const char *file)
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkSound::load(void *handle, UTsize len)
 {
 	if (handle && len > 0 && len != UT_NPOS)
@@ -154,7 +154,7 @@ bool gkSound::load(void *handle, UTsize len)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkSound::stopPlayback(void)
 {
 	gkSoundManager &mgr = gkSoundManager::getSingleton();
@@ -168,7 +168,7 @@ void gkSound::stopPlayback(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkSource *gkSound::createSource(void)
 {
 	// add it to the manager
@@ -179,7 +179,7 @@ gkSource *gkSound::createSource(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkSound::destroySource(gkSource *src)
 {
 	UTsize pos;

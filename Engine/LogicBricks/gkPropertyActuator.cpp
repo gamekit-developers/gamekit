@@ -29,7 +29,7 @@
 #include "gkScene.h"
 
 
-// ----------------------------------------------------------------------------
+
 gkPropertyActuator::gkPropertyActuator(gkGameObject *object, gkLogicLink *link, const gkString &name)
 	:   gkLogicActuator(object, link, name),
 	    m_type(0), m_prop(""), m_value(""), m_othOb(""), m_init(false),
@@ -37,13 +37,13 @@ gkPropertyActuator::gkPropertyActuator(gkGameObject *object, gkLogicLink *link, 
 {
 }
 
-// ----------------------------------------------------------------------------
+
 gkPropertyActuator::~gkPropertyActuator()
 {
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkLogicBrick *gkPropertyActuator::clone(gkLogicLink *link, gkGameObject *dest)
 {
 	gkPropertyActuator *act = new gkPropertyActuator(*this);
@@ -54,7 +54,7 @@ gkLogicBrick *gkPropertyActuator::clone(gkLogicLink *link, gkGameObject *dest)
 	return act;
 }
 
-// ----------------------------------------------------------------------------
+
 void gkPropertyActuator::execute(void)
 {
 	if (isPulseOff())

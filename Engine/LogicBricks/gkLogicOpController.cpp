@@ -31,7 +31,7 @@
 #include "gkLogicLink.h"
 
 
-// ----------------------------------------------------------------------------
+
 gkLogicOpController::gkLogicOpController(gkGameObject *object, gkLogicLink *link, const gkString &name)
 	:       gkLogicController(object, link, name), m_op(OP_NILL), m_isInverter(false)
 {
@@ -39,7 +39,7 @@ gkLogicOpController::gkLogicOpController(gkGameObject *object, gkLogicLink *link
 
 
 
-// ----------------------------------------------------------------------------
+
 gkLogicBrick *gkLogicOpController::clone(gkLogicLink *link, gkGameObject *dest)
 {
 	gkLogicOpController *cont = new gkLogicOpController(*this);
@@ -48,7 +48,7 @@ gkLogicBrick *gkLogicOpController::clone(gkLogicLink *link, gkGameObject *dest)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkLogicOpController::execute(void)
 {
 	if (m_actuators.empty() || m_sensors.empty())

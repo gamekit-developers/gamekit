@@ -28,7 +28,7 @@
 #include "gkDelaySensor.h"
 #include "gkLogicManager.h"
 
-// ----------------------------------------------------------------------------
+
 gkDelaySensor::gkDelaySensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
 		:	gkLogicSensor(object, link, name), m_count(0)
 {
@@ -36,7 +36,7 @@ gkDelaySensor::gkDelaySensor(gkGameObject *object, gkLogicLink *link, const gkSt
 	connect();
 }
 
-// ----------------------------------------------------------------------------
+
 gkLogicBrick *gkDelaySensor::clone(gkLogicLink *link, gkGameObject *dest)
 {
 	gkDelaySensor *sens = new gkDelaySensor(*this);
@@ -44,7 +44,7 @@ gkLogicBrick *gkDelaySensor::clone(gkLogicLink *link, gkGameObject *dest)
 	return sens;
 }
 
-// ----------------------------------------------------------------------------
+
 bool gkDelaySensor::query(void)
 {
 	m_count += 1;

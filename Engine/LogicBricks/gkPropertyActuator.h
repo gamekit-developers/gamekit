@@ -31,7 +31,7 @@
 #include "gkVariable.h"
 
 
-// ----------------------------------------------------------------------------
+
 class gkPropertyActuator : public gkLogicActuator
 {
 public:

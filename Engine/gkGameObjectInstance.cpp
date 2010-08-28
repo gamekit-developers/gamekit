@@ -33,7 +33,7 @@
 
 
 
-// ----------------------------------------------------------------------------
+
 gkGameObjectInstance::gkGameObjectInstance(gkGameObjectGroup *group, gkScene *scene, UTsize uid)
 	:   gkObject(group->getName().str()),
 	    m_id(uid),
@@ -50,7 +50,7 @@ gkGameObjectInstance::gkGameObjectInstance(gkGameObjectGroup *group, gkScene *sc
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkGameObjectInstance::~gkGameObjectInstance()
 {
 	// free all objects
@@ -71,7 +71,7 @@ gkGameObjectInstance::~gkGameObjectInstance()
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObjectInstance::addObject(gkGameObject *gobj)
 {
 	if (!gobj)
@@ -100,7 +100,7 @@ void gkGameObjectInstance::addObject(gkGameObject *gobj)
 
 
 
-// ----------------------------------------------------------------------------
+
 gkGameObject *gkGameObjectInstance::getObject(const gkHashedString &name)
 {
 	UTsize pos;
@@ -114,7 +114,7 @@ gkGameObject *gkGameObjectInstance::getObject(const gkHashedString &name)
 	return m_objects.at(pos);
 }
 
-// ----------------------------------------------------------------------------
+
 void gkGameObjectInstance::destroyObject(gkGameObject *gobj)
 {
 	if (!gobj)
@@ -142,7 +142,7 @@ void gkGameObjectInstance::destroyObject(gkGameObject *gobj)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObjectInstance::destroyObject(const gkHashedString &name)
 {
 
@@ -165,21 +165,21 @@ void gkGameObjectInstance::destroyObject(const gkHashedString &name)
 
 
 
-// ----------------------------------------------------------------------------
+
 bool gkGameObjectInstance::hasObject(const gkHashedString &name)
 {
 	return m_objects.find(name) != UT_NPOS;
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObjectInstance::makeTransform(void)
 {
 	applyTransform(m_owner->getProperties().m_transform);
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObjectInstance::applyTransform(const gkTransformState &trans)
 {
 	const gkMatrix4 plocal = trans.toMatrix();
@@ -204,7 +204,7 @@ void gkGameObjectInstance::applyTransform(const gkTransformState &trans)
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkGameObjectInstance::hasObject(gkGameObject *gobj)
 {
 	return gobj && m_objects.find(gobj->getName()) && gobj->getGroupInstance() == this;
@@ -212,7 +212,7 @@ bool gkGameObjectInstance::hasObject(gkGameObject *gobj)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObjectInstance::cloneObjects(const gkTransformState &from,
                                         int time,
                                         const gkVector3 &linearVelocity, bool tsLinLocal,
@@ -263,7 +263,7 @@ void gkGameObjectInstance::cloneObjects(const gkTransformState &from,
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObjectInstance::createInstanceImpl(void)
 {
 	if (!m_owner->isInActiveLayer())

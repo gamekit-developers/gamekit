@@ -43,7 +43,7 @@
 
 
 
-// ----------------------------------------------------------------------------
+
 gkEntity::gkEntity(gkScene *scene, const gkString &name)
 	:	gkGameObject(scene, name, GK_ENTITY),
 	    m_entityProps(new gkEntityProperties()),
@@ -56,7 +56,7 @@ gkEntity::gkEntity(gkScene *scene, const gkString &name)
 
 
 
-// ----------------------------------------------------------------------------
+
 gkEntity::~gkEntity()
 {
 	if (m_meshLoader)
@@ -66,7 +66,7 @@ gkEntity::~gkEntity()
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkEntity::createInstanceImpl(void)
 {
 	gkGameObject::createInstanceImpl();
@@ -119,7 +119,7 @@ void gkEntity::createInstanceImpl(void)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkEntity::destroyInstanceImpl(void)
 {
 	if (m_entity)
@@ -150,7 +150,7 @@ void gkEntity::destroyInstanceImpl(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkEntity::_destroyAsStaticGeometry(void)
 {
 	if (m_entity != 0)
@@ -174,7 +174,7 @@ void gkEntity::_destroyAsStaticGeometry(void)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkEntity::evalAction(gkAction *act, gkScalar animTime)
 {
 	if (m_skeleton)
@@ -197,7 +197,7 @@ void gkEntity::evalAction(gkAction *act, gkScalar animTime)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkEntity::playAction(const gkString &act, gkScalar blend)
 {
 	if (m_skeleton)
@@ -223,7 +223,7 @@ void gkEntity::playAction(const gkString &act, gkScalar blend)
 
 
 
-// ----------------------------------------------------------------------------
+
 gkGameObject *gkEntity::clone(const gkString &name)
 {
 	gkEntity *cl= new gkEntity(m_scene, name);
@@ -237,7 +237,7 @@ gkGameObject *gkEntity::clone(const gkString &name)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkEntity::_resetPose(void)
 {
 	if (m_skeleton)
@@ -256,7 +256,7 @@ void gkEntity::_resetPose(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkBoundingBox gkEntity::getAabb() const
 {
 	return m_entityProps->m_mesh ? m_entityProps->m_mesh->getBoundingBox() : gkGameObject::getAabb();
@@ -265,7 +265,7 @@ gkBoundingBox gkEntity::getAabb() const
 
 
 
-// ----------------------------------------------------------------------------
+
 class gkEntityMeshLoader : public Ogre::ManualResourceLoader
 {
 public:
@@ -284,7 +284,7 @@ private:
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkEntity::createMesh(void)
 {
 	if (m_meshLoader != 0)
@@ -304,7 +304,7 @@ void gkEntity::createMesh(void)
 
 
 
-// ----------------------------------------------------------------------------
+
 gkEntityMeshLoader::gkEntityMeshLoader(gkEntity *ent)
 	:   m_entity(ent)
 {
@@ -312,7 +312,7 @@ gkEntityMeshLoader::gkEntityMeshLoader(gkEntity *ent)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkEntityMeshLoader::loadMaterial(gkSubMesh *mesh)
 {
 	gkMaterialProperties &gma = mesh->getMaterial();
@@ -386,7 +386,7 @@ void gkEntityMeshLoader::loadMaterial(gkSubMesh *mesh)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkEntityMeshLoader::loadResource(Ogre::Resource *resource)
 {
 	using namespace Ogre;

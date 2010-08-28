@@ -27,7 +27,7 @@
 #include "gsAI.h"
 
 
-// ----------------------------------------------------------------------------
+
 class gsTrigger : public gkFSM::ITrigger
 {
 private:
@@ -42,7 +42,7 @@ public:
 };
 
 
-// ----------------------------------------------------------------------------
+
 class gsEvent : public gkFSM::IEvent
 {
 private:
@@ -61,7 +61,7 @@ public:
 
 
 
-// ----------------------------------------------------------------------------
+
 class gsUpdateEvent
 {
 private:
@@ -82,7 +82,7 @@ public:
 
 
 
-// ----------------------------------------------------------------------------
+
 void gsTrigger::execute(int fromState, int toState)
 {
 	if (m_event)
@@ -95,7 +95,7 @@ void gsTrigger::execute(int fromState, int toState)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gsTrigger::~gsTrigger()
 {
 	delete m_event;
@@ -103,7 +103,7 @@ gsTrigger::~gsTrigger()
 
 
 
-// ----------------------------------------------------------------------------
+
 gsTrigger::gsTrigger(gsSelf lself, gsFunction lexecute)
 	:   m_event(new gkLuaEvent(lself, lexecute))
 {
@@ -114,7 +114,7 @@ gsTrigger::gsTrigger(gsSelf lself, gsFunction lexecute)
 
 
 
-// ----------------------------------------------------------------------------
+
 bool gsEvent::evaluate()
 {
 	bool result = false;
@@ -130,7 +130,7 @@ bool gsEvent::evaluate()
 
 
 
-// ----------------------------------------------------------------------------
+
 gsEvent::~gsEvent()
 {
 	delete m_event;
@@ -138,7 +138,7 @@ gsEvent::~gsEvent()
 
 
 
-// ----------------------------------------------------------------------------
+
 gsEvent::gsEvent(gsSelf lself, gsFunction lexecute)
 	:   m_event(new gkLuaEvent(lself, lexecute))
 {
@@ -146,7 +146,7 @@ gsEvent::gsEvent(gsSelf lself, gsFunction lexecute)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gsUpdateEvent::update()
 {
 
@@ -158,7 +158,7 @@ void gsUpdateEvent::update()
 }
 
 
-// ----------------------------------------------------------------------------
+
 gsUpdateEvent::~gsUpdateEvent()
 {
 	delete m_event;
@@ -166,7 +166,7 @@ gsUpdateEvent::~gsUpdateEvent()
 
 
 
-// ----------------------------------------------------------------------------
+
 gsUpdateEvent::gsUpdateEvent(gsSelf lself, gsFunction lexecute)
 	:   m_event(new gkLuaEvent(lself, lexecute))
 {
@@ -174,19 +174,19 @@ gsUpdateEvent::gsUpdateEvent(gsSelf lself, gsFunction lexecute)
 
 
 
-// ----------------------------------------------------------------------------
+
 gsWhenEvent::gsWhenEvent(gkFSM::Event *evt) : m_event(evt)
 {
 }
 
 
-// ----------------------------------------------------------------------------
+
 gsWhenEvent::~gsWhenEvent()
 {
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gsWhenEvent::when(gsSelf self, gsFunction trigger)
 {
 	if (m_event)
@@ -194,14 +194,14 @@ void gsWhenEvent::when(gsSelf self, gsFunction trigger)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gsFSM::gsFSM()
 {
 	m_fsm = new gkFSM();
 }
 
 
-// ----------------------------------------------------------------------------
+
 gsFSM::~gsFSM()
 {
 	delete m_fsm;
@@ -212,7 +212,7 @@ gsFSM::~gsFSM()
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gsFSM::update()
 {
 	if (m_fsm)
@@ -224,7 +224,7 @@ void gsFSM::update()
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gsFSM::setState(int state)
 {
 	if (m_fsm)
@@ -232,7 +232,7 @@ void gsFSM::setState(int state)
 }
 
 
-// ----------------------------------------------------------------------------
+
 int gsFSM::getState()
 {
 	if (m_fsm)
@@ -240,7 +240,7 @@ int gsFSM::getState()
 	return -1;
 }
 
-// ----------------------------------------------------------------------------
+
 void gsFSM::addStartTrigger(int state, gsSelf self, gsFunction trigger)
 {
 	if (m_fsm)
@@ -248,7 +248,7 @@ void gsFSM::addStartTrigger(int state, gsSelf self, gsFunction trigger)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gsFSM::addEndTrigger(int state, gsSelf self, gsFunction trigger)
 {
 	if (m_fsm)
@@ -256,7 +256,7 @@ void gsFSM::addEndTrigger(int state, gsSelf self, gsFunction trigger)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gsFSM::addEvent(int state, gsSelf self, gsFunction update)
 {
 	UTsize pos = m_events.find(state);
@@ -265,7 +265,7 @@ void gsFSM::addEvent(int state, gsSelf self, gsFunction update)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gsWhenEvent* gsFSM::addTransition(int from, int to)
 {
 	if (m_fsm)
@@ -273,7 +273,7 @@ gsWhenEvent* gsFSM::addTransition(int from, int to)
 	return 0;
 }
 
-// ----------------------------------------------------------------------------
+
 gsWhenEvent* gsFSM::addTransition(int from, int to, unsigned long ms)
 {
 	if (m_fsm)
@@ -283,7 +283,7 @@ gsWhenEvent* gsFSM::addTransition(int from, int to, unsigned long ms)
 
 
 
-// ----------------------------------------------------------------------------
+
 gsWhenEvent* gsFSM::addTransition(int from, int to, unsigned long ms, gsSelf self, gsFunction trigger)
 {
 	if (m_fsm)

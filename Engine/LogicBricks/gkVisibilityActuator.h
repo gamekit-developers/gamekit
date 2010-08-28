@@ -31,7 +31,7 @@
 
 
 
-// ----------------------------------------------------------------------------
+
 class gkVisibilityActuator : public gkLogicActuator
 {
 public:

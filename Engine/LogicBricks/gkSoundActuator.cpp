@@ -32,7 +32,7 @@
 #include "gkSound.h"
 
 
-// ----------------------------------------------------------------------------
+
 gkSoundActuator::gkSoundActuator(gkGameObject *object, gkLogicLink *link, const gkString &name)
 	:   gkLogicActuator(object, link, name),
 	    m_mode(SA_PLAY_STOP),
@@ -44,14 +44,14 @@ gkSoundActuator::gkSoundActuator(gkGameObject *object, gkLogicLink *link, const 
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkSoundActuator::~gkSoundActuator()
 {
 	notifyUnload();
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkLogicBrick *gkSoundActuator::clone(gkLogicLink *link, gkGameObject *dest)
 {
 	gkSoundActuator *act = new gkSoundActuator(*this);
@@ -63,7 +63,7 @@ gkLogicBrick *gkSoundActuator::clone(gkLogicLink *link, gkGameObject *dest)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkSoundActuator::notifyUnload(void)
 {
 	if (m_player && m_sound)
@@ -75,7 +75,7 @@ void gkSoundActuator::notifyUnload(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkSoundActuator::notifyActivate(void)
 {
 	// give it a chance to shut off
@@ -88,7 +88,7 @@ void gkSoundActuator::notifyActivate(void)
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void gkSoundActuator::execute(void)
 {
 	if (!m_sndInit)

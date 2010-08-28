@@ -37,7 +37,7 @@
 
 
 
-// ----------------------------------------------------------------------------
+
 gkSource::gkSource(gkSound *sound)
 	:   m_playback(0),
 	    m_props(),
@@ -45,14 +45,14 @@ gkSource::gkSource(gkSound *sound)
 {
 }
 
-// ----------------------------------------------------------------------------
+
 gkSource::~gkSource()
 {
 	GK_ASSERT(!m_playback && "Playback not unbound");
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkSource::bind(gkBuffer *buf)
 {
 	gkCriticalSection::Lock lock(m_cs);
@@ -63,7 +63,7 @@ void gkSource::bind(gkBuffer *buf)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkSource::updatePropsForObject(gkGameObject *obj)
 {
 	gkCriticalSection::Lock lock(m_cs);
@@ -92,7 +92,7 @@ void gkSource::updatePropsForObject(gkGameObject *obj)
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkSource::isPaused(void)
 {
 	gkCriticalSection::Lock lock(m_cs);
@@ -100,14 +100,14 @@ bool gkSource::isPaused(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkSoundStream *gkSource::getStream(void)
 {
 	return m_reference ? m_reference->getStream() : 0;
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkSource::play(void)
 {
 	bool addPlay = false;
@@ -127,7 +127,7 @@ void gkSource::play(void)
 
 }
 
-// ----------------------------------------------------------------------------
+
 void gkSource::pause(void)
 {
 	gkCriticalSection::Lock lock(m_cs);
@@ -138,7 +138,7 @@ void gkSource::pause(void)
 	if (isPlaying()) m_playback->suspend(!isPaused());
 }
 
-// ----------------------------------------------------------------------------
+
 void gkSource::stop(void)
 {
 	bool stopPlay = false;
@@ -157,7 +157,7 @@ void gkSource::stop(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkSource::loop(bool v)
 {
 	gkCriticalSection::Lock lock(m_cs);

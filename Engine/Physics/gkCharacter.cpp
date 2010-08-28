@@ -36,7 +36,7 @@
 #include "BulletDynamics/Character/btKinematicCharacterController.h"
 
 
-// ----------------------------------------------------------------------------
+
 gkCharacter::gkCharacter(gkGameObject *object, gkDynamicsWorld *owner)
 	: gkPhysicsController(object, owner), m_character(0)
 {
@@ -44,7 +44,7 @@ gkCharacter::gkCharacter(gkGameObject *object, gkDynamicsWorld *owner)
 
 
 
-// ----------------------------------------------------------------------------
+
 gkCharacter::~gkCharacter()
 {
 	delete m_shape;
@@ -59,7 +59,7 @@ gkCharacter::~gkCharacter()
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkCharacter::create(void)
 {
 	if (m_character || m_collisionObject)
@@ -112,7 +112,7 @@ void gkCharacter::create(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 btPairCachingGhostObject *gkCharacter::getGhostObject() const
 {
 	GK_ASSERT(m_collisionObject);
@@ -120,7 +120,7 @@ btPairCachingGhostObject *gkCharacter::getGhostObject() const
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkCharacter::destroy(void)
 {
 	GK_ASSERT(m_object);
@@ -150,7 +150,7 @@ void gkCharacter::destroy(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkCharacter::setVelocity(const gkVector3 &v, gkScalar timeInterval)
 {
 	if (!m_character || !m_collisionObject)
@@ -163,7 +163,7 @@ void gkCharacter::setVelocity(const gkVector3 &v, gkScalar timeInterval)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkCharacter::setWorldTransform(const btTransform &worldTrans)
 {
 	if (!m_character || !m_collisionObject)
@@ -175,7 +175,7 @@ void gkCharacter::setWorldTransform(const btTransform &worldTrans)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkCharacter::updateAction( btCollisionWorld *collisionWorld, btScalar deltaTime)
 {
 	if (!m_character || !m_collisionObject)

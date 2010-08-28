@@ -30,7 +30,7 @@
 #include "gsCommon.h"
 
 
-// ----------------------------------------------------------------------------
+
 class gsVector3
 #ifndef SWIG
 	: public gkVector3
@@ -72,7 +72,7 @@ public:
 	gsVector3 operator/ (float v)             { return ((const gkVector3 &)*this).operator/(v); }
 };
 
-// ----------------------------------------------------------------------------
+
 class gsQuaternion
 #ifndef SWIG
 	: public gkQuaternion
@@ -128,91 +128,91 @@ public:
 
 
 
-// ----------------------------------------------------------------------------
+
 inline gsVector3 gsVec3Negate(const gsVector3 &in)
 {
 	return -(gkVector3)in;
 }
 
 
-// ----------------------------------------------------------------------------
+
 inline gsVector3 gsVec3AddVec3(const gsVector3 &a, const gsVector3 &b)
 {
 	return (gkVector3)a + (gkVector3)b;
 }
 
 
-// ----------------------------------------------------------------------------
+
 inline gsVector3 gsVec3SubVec3(const gsVector3 &a, const gsVector3 &b)
 {
 	return (gkVector3)a - (gkVector3)b;
 }
 
 
-// ----------------------------------------------------------------------------
+
 inline gsVector3 gsVec3MulVec3(const gsVector3 &a, const gsVector3 &b)
 {
 	return (gkVector3)a / (gkVector3)b;
 }
 
 
-// ----------------------------------------------------------------------------
+
 inline gsVector3 gsVec3DivVec3(const gsVector3 &a, const gsVector3 &b)
 {
 	return (gkVector3)a / (gkVector3)b;
 }
 
 
-// ----------------------------------------------------------------------------
+
 inline gsVector3 gsVec3Mulf(const gsVector3 &a, const float &b)
 {
 	return (gkVector3)a / b;
 }
 
 
-// ----------------------------------------------------------------------------
+
 inline gsVector3 gsVec3Divf(const gsVector3 &a, const float &b)
 {
 	return (gkVector3)a / b;
 }
 
 
-// ----------------------------------------------------------------------------
+
 inline gsQuaternion gsQuatNegate(const gsQuaternion &in)
 {
 	return -(gkQuaternion)in;
 }
 
 
-// ----------------------------------------------------------------------------
+
 inline gsQuaternion gsQuatAddQuat(const gsQuaternion &a, const gsQuaternion &b)
 {
 	return (gkQuaternion)a + (gkQuaternion)b;
 }
 
 
-// ----------------------------------------------------------------------------
+
 inline gsQuaternion gsQuatSubQuat(const gsQuaternion &a, const gsQuaternion &b)
 {
 	return (gkQuaternion)a - (gkQuaternion)b;
 }
 
 
-// ----------------------------------------------------------------------------
+
 inline gsQuaternion gsQuatMulQuat(const gsQuaternion &a, const gsQuaternion &b)
 {
 	return (gkQuaternion)a * (gkQuaternion)b;
 }
 
 
-// ----------------------------------------------------------------------------
+
 inline gsQuaternion gsQuatMulf(const gsQuaternion &a, const float &b)
 {
 	return (gkQuaternion)a * b;
 }
 
 
-// ----------------------------------------------------------------------------
+
 inline gsVector3 gsQuatMulVec3(const gsQuaternion &a, const gsVector3 &b)
 {
 	return (gkQuaternion)a * (gkVector3)b;

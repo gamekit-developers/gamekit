@@ -31,13 +31,13 @@
 #include "gkGameObject.h"
 
 
-// ----------------------------------------------------------------------------
+
 gkLogicController::gkLogicController(gkGameObject *object, gkLogicLink *link, const gkString &name)
 	:       gkLogicBrick(object, link, name), m_activeState(false)
 {
 }
 
-// ----------------------------------------------------------------------------
+
 void gkLogicController::cloneImpl(gkLogicLink *link, gkGameObject *dest)
 {
 	gkLogicBrick::cloneImpl(link, dest);
@@ -46,7 +46,7 @@ void gkLogicController::cloneImpl(gkLogicLink *link, gkGameObject *dest)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkLogicController::_execute(void)
 {
 	if (m_listener)
@@ -64,26 +64,26 @@ void gkLogicController::_execute(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkLogicController_sSort(gkLogicSensor *const &a, gkLogicSensor *const &b)
 {
 	return a->getPriority() < b->getPriority();
 }
 
-// ----------------------------------------------------------------------------
+
 bool gkLogicController_aSort(gkLogicActuator *const &a, gkLogicActuator *const &b)
 {
 	return a->getPriority() < b->getPriority();
 }
 
-// ----------------------------------------------------------------------------
+
 void gkLogicController::sort(void)
 {
 	m_sensors.sort(gkLogicController_sSort);
 	m_actuators.sort(gkLogicController_aSort);
 }
 
-// ----------------------------------------------------------------------------
+
 void gkLogicController::link(gkLogicSensor *v)
 {
 	UT_ASSERT(v && m_sensors.find(v) == UT_NPOS);
@@ -106,7 +106,7 @@ void gkLogicController::link(gkLogicSensor *v)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkLogicController::link(gkLogicActuator *v)
 {
 	UT_ASSERT(v && m_actuators.find(v) == UT_NPOS);

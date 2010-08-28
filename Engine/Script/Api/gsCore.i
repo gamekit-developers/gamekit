@@ -30,7 +30,7 @@
 
 %include "gsMacros.i"
 
-// ----------------------------------------------------------------------------
+
 // New Objects
 %newobject getActiveScene;
 %newobject gsEngine::loadBlendFile;
@@ -47,7 +47,7 @@
 %newobject gsScene::createEmpty;
 
 
-// ----------------------------------------------------------------------------
+
 // Classes
 GS_SCRIPT_NAME(Camera)
 GS_SCRIPT_NAME(Debugger)
@@ -64,7 +64,7 @@ GS_SCRIPT_NAME(Skeleton)
 GS_SCRIPT_NAME(UserDefs)
 
 
-// ----------------------------------------------------------------------------
+
 // Enums
 GS_SCRIPT_NAME(RenderSystem)
 GS_SCRIPT_NAME(PropertyType)
@@ -74,7 +74,7 @@ GS_SCRIPT_NAME(EngineEvents)
 GS_SCRIPT_NAME(MouseButton)
 
 
-// ----------------------------------------------------------------------------
+
 // Globals
 GS_SCRIPT_NAME(DebugPrint)
 
@@ -86,7 +86,7 @@ GS_SCRIPT_NAME(DebugPrint)
 %rename(OGRE_RS_D3D11)    GS_RS_D3D11;
 
 
-// ----------------------------------------------------------------------------
+
 // Arrays
 GS_ARRAY_WRAP(gsGameObject,  gkGameObject, ObjectList, ObjectIterator)
 

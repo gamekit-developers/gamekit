@@ -31,14 +31,14 @@
 
 
 
-// ----------------------------------------------------------------------------
+
 gkLimitVelocityConstraint::gkLimitVelocityConstraint()
 	:   gkConstraint(),
 	    m_lim(0.f, 0.f)
 {
 }
 
-// ----------------------------------------------------------------------------
+
 gkConstraint *gkLimitVelocityConstraint::clone(gkGameObject *clob)
 {
 	gkLimitVelocityConstraint *cl = new gkLimitVelocityConstraint(*this);
@@ -47,7 +47,7 @@ gkConstraint *gkLimitVelocityConstraint::clone(gkGameObject *clob)
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkLimitVelocityConstraint::update(gkScalar delta)
 {
 	if (!m_object) return false;

@@ -31,7 +31,7 @@
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkAbstractDispatcher::doDispatch(SensorList &sens)
 {
 	if (!sens.empty())
@@ -50,7 +50,7 @@ void gkAbstractDispatcher::doDispatch(SensorList &sens)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkAbstractDispatcher::reset(void)
 {
 	if (!m_sensors.empty())
@@ -61,7 +61,7 @@ void gkAbstractDispatcher::reset(void)
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void gkAbstractDispatcher::sort(void)
 {
 	if (!m_sensors.empty())
@@ -72,7 +72,7 @@ void gkAbstractDispatcher::sort(void)
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void gkConstantDispatch::dispatch(void)
 {
 	doDispatch(m_sensors);

@@ -31,14 +31,14 @@
 #include "gkLogicDispatcher.h"
 
 
-// ----------------------------------------------------------------------------
+
 enum TapMode
 {
 	TAP_OUT = -2,
 	TAP_IN,
 };
 
-// ----------------------------------------------------------------------------
+
 gkLogicSensor::gkLogicSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
 	:       gkLogicBrick(object, link, name),
 	        m_freq(0), m_tick(0), m_pulse(PM_IDLE),
@@ -50,14 +50,14 @@ gkLogicSensor::gkLogicSensor(gkGameObject *object, gkLogicLink *link, const gkSt
 {
 }
 
-// ----------------------------------------------------------------------------
+
 gkLogicSensor::~gkLogicSensor()
 {
 	disconnect();
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkLogicSensor::cloneImpl(gkLogicLink *link, gkGameObject *dest)
 {
 	gkLogicBrick::cloneImpl(link, dest);
@@ -66,7 +66,7 @@ void gkLogicSensor::cloneImpl(gkLogicLink *link, gkGameObject *dest)
 	connect();
 }
 
-// ----------------------------------------------------------------------------
+
 void gkLogicSensor::reset(void)
 {
 	m_oldState = -1;
@@ -75,21 +75,21 @@ void gkLogicSensor::reset(void)
 	m_positive  = false;
 }
 
-// ----------------------------------------------------------------------------
+
 void gkLogicSensor::connect(void)
 {
 	if (m_dispatchType != -1)
 		gkLogicManager::getSingleton().getDispatcher(m_dispatchType).connect(this);
 }
 
-// ----------------------------------------------------------------------------
+
 void gkLogicSensor::disconnect(void)
 {
 	if (m_dispatchType != -1)
 		gkLogicManager::getSingleton().getDispatcher(m_dispatchType).disconnect(this);
 }
 
-// ----------------------------------------------------------------------------
+
 void gkLogicSensor::link(gkLogicController *cont)
 {
 	UT_ASSERT(cont && m_controllers.find(cont) == UT_NPOS);
@@ -98,14 +98,14 @@ void gkLogicSensor::link(gkLogicController *cont)
 	cont->link(this);
 }
 
-// ----------------------------------------------------------------------------
+
 bool gkLogicController_cSort(gkLogicController *const &a, gkLogicController *const &b)
 {
 	return a->getPriority() < b->getPriority();
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkLogicSensor::sort(void)
 {
 	m_controllers.sort(gkLogicController_cSort);
@@ -115,7 +115,7 @@ void gkLogicSensor::sort(void)
 		it.getNext()->sort();
 }
 
-// ----------------------------------------------------------------------------
+
 bool gkLogicSensor::isPositive(void)
 {
 	bool result = m_positive;
@@ -130,7 +130,7 @@ bool gkLogicSensor::isPositive(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkLogicSensor::execute(void)
 {
 	if (!inActiveState())

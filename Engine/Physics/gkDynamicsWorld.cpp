@@ -41,7 +41,7 @@
 
 
 
-// ----------------------------------------------------------------------------
+
 gkDynamicsWorld::gkDynamicsWorld(const gkString &name, gkScene *scene)
 	:       m_scene(scene),
 	        m_dynamicsWorld(0), 
@@ -58,14 +58,14 @@ gkDynamicsWorld::gkDynamicsWorld(const gkString &name, gkScene *scene)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkDynamicsWorld::~gkDynamicsWorld()
 {
 	destroyInstanceImpl();
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkDynamicsWorld::createInstanceImpl(void)
 {
 	// prepare world
@@ -96,7 +96,7 @@ void gkDynamicsWorld::createInstanceImpl(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkDynamicsWorld::destroyInstanceImpl(void)
 {
 	delete m_dynamicsWorld;
@@ -135,7 +135,7 @@ void gkDynamicsWorld::destroyInstanceImpl(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkDynamicsWorld::enableDebugPhysics(bool enable, bool debugAabb)
 {
 	if(enable)
@@ -162,7 +162,7 @@ void gkDynamicsWorld::enableDebugPhysics(bool enable, bool debugAabb)
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 gkRigidBody *gkDynamicsWorld::createRigidBody(gkGameObject *state)
 {
 	GK_ASSERT(state);
@@ -173,7 +173,7 @@ gkRigidBody *gkDynamicsWorld::createRigidBody(gkGameObject *state)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkCharacter *gkDynamicsWorld::createCharacter(gkGameObject *state)
 {
 	GK_ASSERT(state);
@@ -184,7 +184,7 @@ gkCharacter *gkDynamicsWorld::createCharacter(gkGameObject *state)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkDynamicsWorld::destroyObject(gkPhysicsController *cont)
 {
 	UTsize pos;
@@ -199,7 +199,7 @@ void gkDynamicsWorld::destroyObject(gkPhysicsController *cont)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkDynamicsWorld::localDrawObject(gkPhysicsController *phyCon)
 {
 	btCollisionObject *colObj = phyCon->getCollisionObject();
@@ -252,7 +252,7 @@ void gkDynamicsWorld::localDrawObject(gkPhysicsController *phyCon)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkDynamicsWorld::step(gkScalar tick)
 {
 	// Do one full physics step
@@ -262,7 +262,7 @@ void gkDynamicsWorld::step(gkScalar tick)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkDynamicsWorld::resetContacts()
 {
 	if (m_handleContacts && !m_objects.empty())
@@ -276,7 +276,7 @@ void gkDynamicsWorld::resetContacts()
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkDynamicsWorld::substep(gkScalar tick)
 {
 	if (m_handleContacts)
@@ -309,7 +309,7 @@ void gkDynamicsWorld::substep(gkScalar tick)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkDynamicsWorld::DrawDebug()
 {
 	if (m_debug)
@@ -331,7 +331,7 @@ void gkDynamicsWorld::DrawDebug()
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkDynamicsWorld::substepCallback(btDynamicsWorld *dyn, btScalar tick)
 {
 	gkDynamicsWorld *world = static_cast<gkDynamicsWorld *>(dyn->getWorldUserInfo());
@@ -341,7 +341,7 @@ void gkDynamicsWorld::substepCallback(btDynamicsWorld *dyn, btScalar tick)
 
 
 
-// ----------------------------------------------------------------------------
+
 gkVariable *gkDynamicsWorld::getDBVTInfo(void)
 {
 	return m_dbvt ? m_dbvt->getInfo() : 0;
@@ -349,7 +349,7 @@ gkVariable *gkDynamicsWorld::getDBVTInfo(void)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkDynamicsWorld::handleDbvt(gkCamera *cam)
 {
 	if (!m_dbvt)

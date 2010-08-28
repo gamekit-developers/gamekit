@@ -30,7 +30,7 @@
 #include "gkLogicBrick.h"
 
 
-// ----------------------------------------------------------------------------
+
 class gkLogicActuator : public gkLogicBrick
 {
 public:

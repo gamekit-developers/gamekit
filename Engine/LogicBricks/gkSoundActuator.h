@@ -33,7 +33,7 @@
 #include "gkSound.h"
 
 
-// ----------------------------------------------------------------------------
+
 class gkSoundActuator : public gkLogicActuator
 {
 public:

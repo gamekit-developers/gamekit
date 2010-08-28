@@ -30,14 +30,14 @@
 
 
 
-// ----------------------------------------------------------------------------
+
 gkMeshManager::gkMeshManager()
 {
 }
 
 
 
-// ----------------------------------------------------------------------------
+
 gkMeshManager::~gkMeshManager()
 {
 	destroyAll();
@@ -45,7 +45,7 @@ gkMeshManager::~gkMeshManager()
 
 
 
-// ----------------------------------------------------------------------------
+
 gkMesh *gkMeshManager::getMesh(const gkHashedString &name)
 {
 	UTsize pos;
@@ -57,7 +57,7 @@ gkMesh *gkMeshManager::getMesh(const gkHashedString &name)
 
 
 
-// ----------------------------------------------------------------------------
+
 gkMesh *gkMeshManager::create(const gkHashedString &name)
 {
 	UTsize pos;
@@ -75,7 +75,7 @@ gkMesh *gkMeshManager::create(const gkHashedString &name)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkMeshManager::destroy(const gkHashedString &name)
 {
 	UTsize pos;
@@ -88,7 +88,7 @@ void gkMeshManager::destroy(const gkHashedString &name)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkMeshManager::destroy(gkMesh *ob)
 {
 	GK_ASSERT(ob);
@@ -104,7 +104,7 @@ void gkMeshManager::destroy(gkMesh *ob)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkMeshManager::destroyAll(void)
 {
 	utHashTableIterator<ObjectMap> iter(m_objects);
@@ -119,7 +119,7 @@ void gkMeshManager::destroyAll(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkMeshManager::hasMesh(const gkHashedString &name)
 {
 	return m_objects.find(name) != GK_NPOS;

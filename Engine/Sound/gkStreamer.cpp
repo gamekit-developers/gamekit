@@ -30,7 +30,7 @@
 
 
 
-// ----------------------------------------------------------------------------
+
 gkStreamer::gkStreamer(const gkString &name)
 	:   m_name(name),
 	    m_thread(0),
@@ -42,14 +42,14 @@ gkStreamer::gkStreamer(const gkString &name)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkStreamer::~gkStreamer()
 {
 	exit();
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkStreamer::exit(void)
 {
 	// exit thread
@@ -63,7 +63,7 @@ void gkStreamer::exit(void)
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void gkStreamer::stopAllSounds(void)
 {
 	gkCriticalSection::Lock lock(m_cs);
@@ -83,7 +83,7 @@ void gkStreamer::stopAllSounds(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkStreamer::stop(void)
 {
 	gkCriticalSection::Lock lock(m_cs);
@@ -102,7 +102,7 @@ void gkStreamer::stop(void)
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void gkStreamer::start(void)
 {
 	gkCriticalSection::Lock lock(m_cs);
@@ -117,13 +117,13 @@ void gkStreamer::start(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkStreamer::isRunning(void)
 {
 	return !m_stop;
 }
 
-// ----------------------------------------------------------------------------
+
 bool gkStreamer::isEmpty(void)
 {
 	gkCriticalSection::Lock lock(m_cs);
@@ -131,7 +131,7 @@ bool gkStreamer::isEmpty(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkStreamer::playSound(gkSource *snd)
 {
 	gkCriticalSection::Lock lock(m_cs);
@@ -148,7 +148,7 @@ void gkStreamer::playSound(gkSource *snd)
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void gkStreamer::stopSound(gkSource *snd)
 {
 	gkCriticalSection::Lock lock(m_cs);
@@ -167,7 +167,7 @@ void gkStreamer::stopSound(gkSource *snd)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkStreamer::freeBuffers(gkStreamer::Buffers &buffers)
 {
 	// Remove temporary buffers, from the update list
@@ -200,7 +200,7 @@ void gkStreamer::freeBuffers(gkStreamer::Buffers &buffers)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkStreamer::processBuffers(void)
 {
 	UTsize i, s;
@@ -278,7 +278,7 @@ void gkStreamer::processBuffers(void)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkStreamer::finishBuffers(void)
 {
 	// Remove all buffers from the system.
@@ -319,7 +319,7 @@ void gkStreamer::finishBuffers(void)
 		m_queueBuffers.clear(true);
 }
 
-// ----------------------------------------------------------------------------
+
 void gkStreamer::run(void)
 {
 	/// Main sound workload.

@@ -26,18 +26,18 @@
 */
 
 
-// ----------------------------------------------------------------------------
+
 %define GS_SCRIPT_NAME(name)
     %rename(name) gs##name;
 %enddef
 
-// ----------------------------------------------------------------------------
+
 %define GS_ENUM_NAME(name)
     %rename(name) GS_##name;
 %enddef
 
 
-// ----------------------------------------------------------------------------
+
 %define GS_ARRAY_WRAP(wrapper,base,name, iterName)
 	%newobject gsArray<wrapper, base>::at;
 	%newobject gsArray<wrapper, base>::__getitem__;

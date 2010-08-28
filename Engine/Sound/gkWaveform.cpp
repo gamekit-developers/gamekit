@@ -30,7 +30,7 @@
 #include "Utils/utTypes.h"
 
 
-// ----------------------------------------------------------------------------
+
 static void gkWaveform_SwapInt(int &v)
 {
 	char *p = (char *)&v;
@@ -39,14 +39,14 @@ static void gkWaveform_SwapInt(int &v)
 }
 
 
-// ----------------------------------------------------------------------------
+
 static void gkWaveform_SwapShort(short &v)
 {
 	char *p = (char *)&v;
 	utSwap(p[0], p[1]);
 }
 
-// ----------------------------------------------------------------------------
+
 static bool gkWaveform_SwapEndian(void)
 {
 	int littleEndian= 1;
@@ -54,7 +54,7 @@ static bool gkWaveform_SwapEndian(void)
 	return littleEndian == 0;
 }
 
-// ----------------------------------------------------------------------------
+
 static void gkWaveform_SwapHeader(gkWaveform::Header &v)
 {
 	gkWaveform_SwapShort(v.m_tag);
@@ -66,7 +66,7 @@ static void gkWaveform_SwapHeader(gkWaveform::Header &v)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkWaveform::gkWaveform()
 	:   m_reader(0),
 	    m_sampleStart(0),
@@ -76,7 +76,7 @@ gkWaveform::gkWaveform()
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkWaveform::~gkWaveform()
 {
 	if (m_reader)
@@ -92,7 +92,7 @@ gkWaveform::~gkWaveform()
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 bool gkWaveform::loadStreamImpl(void)
 {
 	// Specs derrived from.
@@ -173,7 +173,7 @@ bool gkWaveform::loadStreamImpl(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkWaveform::load(const char *fname)
 {
 	m_reader = new utFileStream();
@@ -213,7 +213,7 @@ bool gkWaveform::load(const char *fname)
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkWaveform::load(const char *buf, int len)
 {
 	m_reader = new utMemoryStream();
@@ -251,7 +251,7 @@ bool gkWaveform::load(const char *buf, int len)
 }
 
 
-// ----------------------------------------------------------------------------
+
 int gkWaveform::getFormat(void) const
 {
 	if (m_header.m_channels <= 2)
@@ -267,14 +267,14 @@ int gkWaveform::getFormat(void) const
 }
 
 
-// ----------------------------------------------------------------------------
+
 int gkWaveform::getBitsPerSecond(void)  const
 {
 	return (m_header.m_samplesPerSec * m_header.m_bklAlign )<< 1;
 }
 
 
-// ----------------------------------------------------------------------------
+
 const char *gkWaveform::read(UTsize pos, UTsize len, UTsize &br)
 {
 	if (pos != UT_NPOS)
@@ -283,7 +283,7 @@ const char *gkWaveform::read(UTsize pos, UTsize len, UTsize &br)
 }
 
 
-// ----------------------------------------------------------------------------
+
 const char *gkWaveform::read(UTsize len, UTsize &br)
 {
 	br = 0;
@@ -296,14 +296,14 @@ const char *gkWaveform::read(UTsize len, UTsize &br)
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkWaveform::eos(void)
 {
 	return m_reader ? m_reader->eof() : true;
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkWaveform::seek(UTsize pos, int dir)
 {
 	if (m_reader)

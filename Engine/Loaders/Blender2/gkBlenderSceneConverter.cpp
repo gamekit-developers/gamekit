@@ -223,21 +223,21 @@ static void gkLoaderUtils_getLayers(
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkBlenderSceneConverter::gkBlenderSceneConverter(gkBlendFile *fp, Blender::Scene *sc)
 	:   m_bscene(sc), m_gscene(0), m_file(fp)
 {
 	m_logic = new gkLogicLoader();
 }
 
-// ----------------------------------------------------------------------------
+
 gkBlenderSceneConverter::~gkBlenderSceneConverter()
 {
 	delete m_logic;
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkBlenderSceneConverter::validObject(Blender::Object *bobj)
 {
 	// test for usable object type
@@ -254,7 +254,7 @@ bool gkBlenderSceneConverter::validObject(Blender::Object *bobj)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkBlenderSceneConverter::applyParents(utArray<Blender::Object *> &children)
 {
 	UTsize i;
@@ -273,7 +273,7 @@ void gkBlenderSceneConverter::applyParents(utArray<Blender::Object *> &children)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkBlenderSceneConverter::convertSoundScene(void)
 {
 #ifdef OGREKIT_OPENAL_SOUND
@@ -305,7 +305,7 @@ void gkBlenderSceneConverter::convertSoundScene(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkBlenderSceneConverter::convertWorld(void)
 {
 	if (!m_gscene)
@@ -364,7 +364,7 @@ void gkBlenderSceneConverter::convertWorld(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkBlenderSceneConverter::convertObjectGroup(gkGameObjectGroup *gobj, Blender::Object *bobj)
 {
 	if (!bobj)
@@ -386,7 +386,7 @@ void gkBlenderSceneConverter::convertObjectGroup(gkGameObjectGroup *gobj, Blende
 
 }
 
-// ----------------------------------------------------------------------------
+
 void gkBlenderSceneConverter::convertGroups(utArray<Blender::Object *> &groups)
 {
 	gkGroupManager *mgr = m_gscene->getGroupManager();
@@ -474,7 +474,7 @@ void gkBlenderSceneConverter::convertGroups(utArray<Blender::Object *> &groups)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkBlenderSceneConverter::convertObject(Blender::Object *bobj, gkGameObject *gobj)
 {
 	if (!m_gscene)
@@ -520,7 +520,7 @@ void gkBlenderSceneConverter::convertObject(Blender::Object *bobj, gkGameObject 
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkBlenderSceneConverter::convertObjectGeneral(gkGameObject *gobj, Blender::Object *bobj)
 {
 	gkQuaternion quat;
@@ -552,7 +552,7 @@ void gkBlenderSceneConverter::convertObjectGeneral(gkGameObject *gobj, Blender::
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkBlenderSceneConverter::convertObjectProperties(gkGameObject *gobj, Blender::Object *bobj)
 {
 	// Attach variables to object ( used in game logic )
@@ -590,7 +590,7 @@ void gkBlenderSceneConverter::convertObjectProperties(gkGameObject *gobj, Blende
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkBlenderSceneConverter::convertObjectConstraints(gkGameObject *gobj, Blender::Object *bobj)
 {
 	// TODO: setup physics constraints & add more
@@ -655,7 +655,7 @@ void gkBlenderSceneConverter::convertObjectConstraints(gkGameObject *gobj, Blend
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkBlenderSceneConverter::convertObjectPhysics(gkGameObject *gobj, Blender::Object *bobj)
 {
 	gkGameObjectProperties  &props  = gobj->getProperties();
@@ -772,14 +772,14 @@ void gkBlenderSceneConverter::convertObjectPhysics(gkGameObject *gobj, Blender::
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void gkBlenderSceneConverter::convertObjectLogic(gkGameObject *gobj, Blender::Object *bobj)
 {
 	m_logic->convertObject(bobj, gobj);
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkBlenderSceneConverter::convertObjectCamera(gkGameObject *gobj, Blender::Object *bobj)
 {
 	GK_ASSERT(gobj->getType() == GK_CAMERA && bobj->data);
@@ -796,7 +796,7 @@ void gkBlenderSceneConverter::convertObjectCamera(gkGameObject *gobj, Blender::O
 	props.m_start       = m_bscene->camera == bobj;
 }
 
-// ----------------------------------------------------------------------------
+
 void gkBlenderSceneConverter::convertObjectLamp(gkGameObject *gobj, Blender::Object *bobj)
 {
 	GK_ASSERT(gobj->getType() == GK_LIGHT && bobj->data);
@@ -833,7 +833,7 @@ void gkBlenderSceneConverter::convertObjectLamp(gkGameObject *gobj, Blender::Obj
 	props.m_falloff = 128.f * la->spotblend;
 }
 
-// ----------------------------------------------------------------------------
+
 void gkBlenderSceneConverter::convertObjectMesh(gkGameObject *gobj, Blender::Object *bobj)
 {
 	GK_ASSERT(gobj->getType() == GK_ENTITY && bobj->data);
@@ -878,7 +878,7 @@ void gkBlenderSceneConverter::convertObjectMesh(gkGameObject *gobj, Blender::Obj
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkBlenderSceneConverter::convertSpline(Blender::BezTriple *bez,
         gkActionChannel *chan,
         int access,
@@ -930,7 +930,7 @@ void gkBlenderSceneConverter::convertSpline(Blender::BezTriple *bez,
 
 }
 
-// ----------------------------------------------------------------------------
+
 void gkBlenderSceneConverter::convertObjectActions(gkGameObject *gobj, Blender::Object *bobj)
 {
 	GK_ASSERT(gobj->getType() == GK_SKELETON && bobj->data);
@@ -1075,7 +1075,7 @@ void gkBlenderSceneConverter::convertObjectActions(gkGameObject *gobj, Blender::
 }
 
 
-// ----------------------------------------------------------------------------
+
 class gkSkeletonLoader
 {
 public:
@@ -1090,7 +1090,7 @@ public:
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkSkeletonLoader::buildBoneTree(Blender::Bone *cur, Blender::Bone *prev, gkBone *parent)
 {
 	// This is the normal resposition
@@ -1131,7 +1131,7 @@ void gkSkeletonLoader::buildBoneTree(Blender::Bone *cur, Blender::Bone *prev, gk
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkBlenderSceneConverter::convertObjectSkeleton(gkGameObject *gobj, Blender::Object *bobj)
 {
 	GK_ASSERT(gobj->getType() == GK_SKELETON && bobj->data);
@@ -1154,14 +1154,14 @@ void gkBlenderSceneConverter::convertObjectSkeleton(gkGameObject *gobj, Blender:
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkBlenderSceneConverter::convertObjectArmature(gkGameObject *gobj, Blender::Object *bobj)
 {
 	convertObjectSkeleton(gobj, bobj);
 	convertObjectActions(gobj, bobj);
 }
 
-// ----------------------------------------------------------------------------
+
 void gkBlenderSceneConverter::loadSkyBox()
 {
 	Blender::World *wo = m_bscene->world;
@@ -1195,7 +1195,7 @@ void gkBlenderSceneConverter::loadSkyBox()
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkBlenderSceneConverter::convert(void)
 {
 	if (m_gscene)
@@ -1240,15 +1240,15 @@ void gkBlenderSceneConverter::convert(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 //
 //                          Mesh Loader
 //
-// ----------------------------------------------------------------------------
 
 
 
-// ----------------------------------------------------------------------------
+
+
 class gkMeshHashKey
 {
 protected:
@@ -1351,19 +1351,19 @@ public:
 
 };
 
-// ----------------------------------------------------------------------------
+
 gkBlenderMeshConverter::gkBlenderMeshConverter(gkBlendFile *fp, gkMesh *gmesh, Blender::Object *bobject, Blender::Mesh *bmesh)
 	:   m_gmesh(gmesh), m_bmesh(bmesh), m_file(fp), m_bobj(bobject)
 {
 }
 
-// ----------------------------------------------------------------------------
+
 gkBlenderMeshConverter::~gkBlenderMeshConverter()
 {
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkBlenderMeshConverter::convertIndexedTriangle(
     TempFace *dest,
     unsigned int i0,
@@ -1402,7 +1402,7 @@ void gkBlenderMeshConverter::convertIndexedTriangle(
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void gkBlenderMeshConverter::calcNormal(TempFace *tri)
 {
 	gkVector3 n = (tri->v1.co - tri->v2.co).crossProduct(tri->v2.co - tri->v0.co).normalisedCopy();
@@ -1410,7 +1410,7 @@ void gkBlenderMeshConverter::calcNormal(TempFace *tri)
 }
 
 
-// ----------------------------------------------------------------------------
+
 unsigned int gkBlenderMeshConverter::packColour(Blender::MCol col, bool opengl)
 {
 	union
@@ -1444,7 +1444,7 @@ unsigned int gkBlenderMeshConverter::packColour(Blender::MCol col, bool opengl)
 }
 
 
-// ----------------------------------------------------------------------------
+
 int gkBlenderMeshConverter::findTextureLayer(Blender::MTex *te)
 {
 	if (!(te->texco & TEXCO_UV) || te->uvname[0]=='\0')
@@ -1471,7 +1471,7 @@ int gkBlenderMeshConverter::findTextureLayer(Blender::MTex *te)
 
 }
 
-// ----------------------------------------------------------------------------
+
 void gkBlenderMeshConverter::convertTextureFace(gkMaterialProperties &gma, gkMeshHashKey &hk, Blender::Image **imas)
 {
 	gma.m_mode = hk.m_mode;
@@ -1500,7 +1500,7 @@ void gkBlenderMeshConverter::convertTextureFace(gkMaterialProperties &gma, gkMes
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void gkBlenderMeshConverter::convertMaterial(Blender::Material *bma, gkMaterialProperties &gma, gkMeshHashKey &hk)
 {
 	convertTextureFace(gma, hk, 0);
@@ -1567,7 +1567,7 @@ void gkBlenderMeshConverter::convertMaterial(Blender::Material *bma, gkMaterialP
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkBlenderMeshConverter::convertBoneAssignments(int dgi, AssignmentListMap &dest)
 {
 
@@ -1598,7 +1598,7 @@ void gkBlenderMeshConverter::convertBoneAssignments(int dgi, AssignmentListMap &
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void gkBlenderMeshConverter::findWeight(int index, gkSubMesh *me, AssignmentListMap &assign)
 {
 	gkVertex *vbuf = me->getVertexBuffer().ptr();
@@ -1621,7 +1621,7 @@ void gkBlenderMeshConverter::findWeight(int index, gkSubMesh *me, AssignmentList
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkBlenderMeshConverter::assignBoneAssignments(gkSubMesh *me, AssignmentListMap &dest)
 {
 	UTsize totface = me->getIndexBuffer().size();
@@ -1638,7 +1638,7 @@ void gkBlenderMeshConverter::assignBoneAssignments(gkSubMesh *me, AssignmentList
 
 }
 
-// ----------------------------------------------------------------------------
+
 void gkBlenderMeshConverter::convert(void)
 {
 	Blender::MFace  *mface = m_bmesh->mface;
@@ -1897,11 +1897,11 @@ void gkBlenderMeshConverter::convert(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 //
 //                          GameLogic Loader
 //
-// ----------------------------------------------------------------------------
+
 
 
 gkLogicLoader::gkLogicLoader()

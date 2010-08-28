@@ -63,7 +63,7 @@
 using namespace Ogre;
 
 
-// ----------------------------------------------------------------------------
+
 gkBlendFile::gkBlendFile(const gkString &blendToLoad, const gkString &group)
 	:	m_name(blendToLoad),
 	    m_group(group),
@@ -72,7 +72,7 @@ gkBlendFile::gkBlendFile(const gkString &blendToLoad, const gkString &group)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkBlendFile::~gkBlendFile()
 {
 	if (!m_loaders.empty())
@@ -86,7 +86,7 @@ gkBlendFile::~gkBlendFile()
 
 
 
-// ----------------------------------------------------------------------------
+
 bool gkBlendFile::parse(int opts)
 {
 
@@ -128,7 +128,7 @@ bool gkBlendFile::parse(int opts)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkBlendFile::loadActive(void)
 {
 	// Load / convert only the active scene.
@@ -156,7 +156,7 @@ void gkBlendFile::loadActive(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkBlendFile::createInstances(void)
 {
 	// Load / convert all 
@@ -199,7 +199,7 @@ void gkBlendFile::createInstances(void)
 
 
 
-// ----------------------------------------------------------------------------
+
 gkScene *gkBlendFile::getSceneByName(const gkString &name)
 {
 
@@ -215,7 +215,7 @@ gkScene *gkBlendFile::getSceneByName(const gkString &name)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkBlendFile::buildTextFiles(void)
 {
 	// Create a list of all internal text blocks
@@ -268,7 +268,7 @@ void gkBlendFile::buildTextFiles(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkBlendFile::buildAllTextures(void)
 {
 	bParse::bListBasePtr *imaPtr = m_file->getMain()->getImage();
@@ -299,7 +299,7 @@ void gkBlendFile::buildAllTextures(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkBlendFile::buildAllSounds()
 {
 #ifdef OGREKIT_OPENAL_SOUND
@@ -365,7 +365,7 @@ void gkBlendFile::buildAllSounds()
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkBlendFile::doVersionTests(void)
 {
 	bParse::bMain *main = m_file->getMain();

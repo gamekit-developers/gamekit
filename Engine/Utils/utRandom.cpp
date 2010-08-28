@@ -55,13 +55,13 @@
 #define UPPER_MASK 0x80000000UL /* most significant w-r bits */
 #define LOWER_MASK 0x7fffffffUL /* least significant r bits */
 
-//----------------------------------------------------------------------------------
+
 utRandomNumberGenerator::utRandomNumberGenerator(UTuint32 seed)
 {
 	this->setSeed(seed);
 }
 
-//----------------------------------------------------------------------------------
+
 void utRandomNumberGenerator::setSeed(UTuint32 seed)
 {
 	m_seed = seed;
@@ -80,7 +80,7 @@ void utRandomNumberGenerator::setSeed(UTuint32 seed)
 	}
 }
 
-//----------------------------------------------------------------------------------
+
 UTuint32 utRandomNumberGenerator::rand32()
 {
 	unsigned long y;
@@ -116,19 +116,19 @@ UTuint32 utRandomNumberGenerator::rand32()
 	
 }
 
-//----------------------------------------------------------------------------------
+
 float utRandomNumberGenerator::randUnit()
 {
 	return (float)(rand32())/(float)((UTuint32) 0xffffffff);
 }
 
-//----------------------------------------------------------------------------------
+
 float utRandomNumberGenerator::randRange(float min, float max)
 {
 	return (max-min)*randUnit() + min;
 }
 
-//----------------------------------------------------------------------------------
+
 float utRandomNumberGenerator::randNormal(float mean, float deviation)
 {
 	float a, b, s=0;
@@ -144,14 +144,14 @@ float utRandomNumberGenerator::randNormal(float mean, float deviation)
 	return mean+ b*dev;
 }
 
-//----------------------------------------------------------------------------------
+
 float utRandomNumberGenerator::randNegativeExponential(float halflife)
 {
 	float hl= (halflife<0) ? 0:halflife;
 	return hl * (-log(1.0f-randUnit() ));
 }
 
-//----------------------------------------------------------------------------------
+
 int utRandomNumberGenerator::randPoisson(float mean)
 {
 	float l, p;
@@ -169,7 +169,7 @@ int utRandomNumberGenerator::randPoisson(float mean)
 	return k;
 }
 
-//----------------------------------------------------------------------------------
+
 int utRandomNumberGenerator::randRangeInt(int min, int max)
 {
 	return min + (rand32() % (1+max-min));

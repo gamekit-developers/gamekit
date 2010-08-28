@@ -33,7 +33,7 @@
 class gkLogicSensor;
 
 
-// ----------------------------------------------------------------------------
+
 class gkAbstractDispatcher
 {
 public:
@@ -63,7 +63,7 @@ public:
 
 
 
-// ----------------------------------------------------------------------------
+
 class gkConstantDispatch : public gkAbstractDispatcher
 {
 public:

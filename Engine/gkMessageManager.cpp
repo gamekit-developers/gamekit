@@ -27,7 +27,7 @@
 
 #include "gkMessageManager.h"
 
-// ----------------------------------------------------------------------------
+
 gkMessageManager::Message & gkMessageManager::Message::operator = (const Message & m)
 {	m_from = m.m_from;
 	m_to = m.m_to;
@@ -36,7 +36,7 @@ gkMessageManager::Message & gkMessageManager::Message::operator = (const Message
 	return *this;
 }
 
-// ----------------------------------------------------------------------------
+
 void gkMessageManager::GenericMessageListener::handleMessage(gkMessageManager::Message *message)
 {
 	if(!m_fromFilter.empty() && m_fromFilter.compare(message->m_from) != 0) return;
@@ -48,26 +48,26 @@ void gkMessageManager::GenericMessageListener::handleMessage(gkMessageManager::M
 	m_messages.push_back(m);
 }
 
-// ----------------------------------------------------------------------------
+
 gkMessageManager::gkMessageManager()
 {
 	
 }
 
-// ----------------------------------------------------------------------------
+
 void gkMessageManager::addListener(MessageListener *listener)
 {
 	if( m_listeners.find(listener) == UT_NPOS)
 		m_listeners.push_back(listener);
 }
 
-// ----------------------------------------------------------------------------
+
 void gkMessageManager::removeListener(MessageListener *listener)
 {
 	m_listeners.erase(listener);
 }
 
-// ----------------------------------------------------------------------------
+
 void gkMessageManager::sendMessage(gkString from, gkString to, gkString subject, gkString body)
 {
 	Message *m = new Message();

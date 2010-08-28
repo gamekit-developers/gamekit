@@ -31,11 +31,7 @@
 #include "zlib.h"
 
 
-// ----------------------------------------------------------------------------
-//
-//                          File Stream Impl
-//
-// ----------------------------------------------------------------------------
+
 
 
 //#define UT_WIN32_FILE 1
@@ -44,7 +40,7 @@
 #endif
 
 
-// ----------------------------------------------------------------------------
+
 class utFileWrapper
 {
 public:
@@ -60,7 +56,7 @@ public:
 
 
 
-// ----------------------------------------------------------------------------
+
 void utStream::inflate(utStream &dest)
 {
 	if (!isOpen() || eof())
@@ -77,7 +73,7 @@ void utStream::inflate(utStream &dest)
 
 }
 
-// ----------------------------------------------------------------------------
+
 UTsize utStream::write(const utStream &cpy)
 {
 	// copy from stream
@@ -101,7 +97,7 @@ UTsize utStream::write(const utStream &cpy)
 }
 
 
-// ----------------------------------------------------------------------------
+
 int utStream::tryInflate(utStream &dest)
 {
 	int ret;
@@ -162,13 +158,13 @@ int utStream::tryInflate(utStream &dest)
 
 
 
-// ----------------------------------------------------------------------------
+
 utFileStream::utFileStream() :
 	m_file(), m_handle(0), m_pos(0), m_size(0), m_mode(0)
 {
 }
 
-// ----------------------------------------------------------------------------
+
 void utFileStream::open(const char *p, utStream::StreamMode mode)
 {
 	if (m_handle != 0 && m_file != p)
@@ -184,7 +180,7 @@ void utFileStream::open(const char *p, utStream::StreamMode mode)
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void utFileStream::close(void)
 {
 	if (m_handle != 0)
@@ -197,21 +193,21 @@ void utFileStream::close(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 utFileStream::~utFileStream()
 {
 	close();
 }
 
 
-// ----------------------------------------------------------------------------
+
 void utFileStream::flush(void)
 {
 	if (m_handle != 0)
 		utFileWrapper::flush(m_handle);
 }
 
-// ----------------------------------------------------------------------------
+
 UTsize utFileStream::read(void *dest, UTsize nr) const
 {
 	// write only
@@ -240,7 +236,7 @@ UTsize utFileStream::read(void *dest, UTsize nr) const
 }
 
 
-// ----------------------------------------------------------------------------
+
 UTsize utFileStream::write(const void *src, UTsize nr)
 {
 	// read only
@@ -260,7 +256,7 @@ UTsize utFileStream::write(const void *src, UTsize nr)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void utFileStream::seek(const UTsize pos, int dir) const
 {
 	if (!m_handle)
@@ -281,21 +277,14 @@ void utFileStream::seek(const UTsize pos, int dir) const
 }
 
 
-// ----------------------------------------------------------------------------
-//
-//                          Memory Stream Impl
-//
-// ----------------------------------------------------------------------------
 
-
-// ----------------------------------------------------------------------------
 utMemoryStream::utMemoryStream()
 	:   m_buffer(0), m_pos(0), m_size(0), m_capacity(0)
 {
 }
 
 
-// ----------------------------------------------------------------------------
+
 void utMemoryStream::open(const char *path, utStream::StreamMode mode)
 {
 	utFileStream fs;
@@ -306,7 +295,7 @@ void utMemoryStream::open(const char *path, utStream::StreamMode mode)
 
 
 
-// ----------------------------------------------------------------------------
+
 void utMemoryStream::open(const utFileStream &fs, utStream::StreamMode mode)
 {
 	if (fs.isOpen())
@@ -324,7 +313,7 @@ void utMemoryStream::open(const utFileStream &fs, utStream::StreamMode mode)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void utMemoryStream::open(const void *buffer, UTsize size, utStream::StreamMode mode)
 {
 	if (buffer && size > 0 && size != UT_NPOS)
@@ -338,7 +327,7 @@ void utMemoryStream::open(const void *buffer, UTsize size, utStream::StreamMode 
 }
 
 
-// ----------------------------------------------------------------------------
+
 utMemoryStream::~utMemoryStream()
 {
 	if (m_buffer != 0)
@@ -351,7 +340,7 @@ utMemoryStream::~utMemoryStream()
 }
 
 
-// ----------------------------------------------------------------------------
+
 void utMemoryStream::clear(void)
 {
 	m_size= m_pos= 0;
@@ -359,7 +348,7 @@ void utMemoryStream::clear(void)
 		m_buffer[0]= 0;
 }
 
-// ----------------------------------------------------------------------------
+
 UTsize utMemoryStream::read(void *dest, UTsize nr) const
 {
 	// write only
@@ -386,7 +375,7 @@ UTsize utMemoryStream::read(void *dest, UTsize nr) const
 }
 
 
-// ----------------------------------------------------------------------------
+
 UTsize utMemoryStream::write(const void *src, UTsize nr)
 {
 	// read only
@@ -410,7 +399,7 @@ UTsize utMemoryStream::write(const void *src, UTsize nr)
 	m_size += nr;
 	return nr;
 }
-// ----------------------------------------------------------------------------
+
 void utMemoryStream::reserve(UTsize nr)
 {
 	if (m_capacity < nr)
@@ -428,7 +417,7 @@ void utMemoryStream::reserve(UTsize nr)
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void utMemoryStream::seek(const UTsize pos, int dir) const
 {
 	if (dir == SEEK_SET)
@@ -440,15 +429,7 @@ void utMemoryStream::seek(const UTsize pos, int dir) const
 }
 
 
-// ----------------------------------------------------------------------------
-//
-//                          File Wrapper Impl
-//
-// ----------------------------------------------------------------------------
 
-
-
-// ----------------------------------------------------------------------------
 utFileHandle utFileWrapper::open(const char *filename, int mode)
 {
 #if UT_PLATFORM == UT_PLATFORM_WIN32 && defined(UT_WIN32_FILE)
@@ -491,7 +472,7 @@ utFileHandle utFileWrapper::open(const char *filename, int mode)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void utFileWrapper::close(utFileHandle &fh)
 {
 #if UT_PLATFORM == UT_PLATFORM_WIN32 && defined(UT_WIN32_FILE)
@@ -506,7 +487,7 @@ void utFileWrapper::close(utFileHandle &fh)
 }
 
 
-// ----------------------------------------------------------------------------
+
 UTsize utFileWrapper::read(utFileHandle fh, void *dest, UTsize nr)
 {
 #if UT_PLATFORM == UT_PLATFORM_WIN32 && defined(UT_WIN32_FILE)
@@ -518,7 +499,7 @@ UTsize utFileWrapper::read(utFileHandle fh, void *dest, UTsize nr)
 #endif
 }
 
-// ----------------------------------------------------------------------------
+
 UTsize utFileWrapper::write(utFileHandle fh, const void *src, UTsize nr)
 {
 #if UT_PLATFORM == UT_PLATFORM_WIN32 && defined(UT_WIN32_FILE)
@@ -530,7 +511,7 @@ UTsize utFileWrapper::write(utFileHandle fh, const void *src, UTsize nr)
 #endif
 }
 
-// ----------------------------------------------------------------------------
+
 UTsize utFileWrapper::size(utFileHandle fh)
 {
 #if UT_PLATFORM == UT_PLATFORM_WIN32 && defined(UT_WIN32_FILE)
@@ -561,7 +542,7 @@ UTsize utFileWrapper::size(utFileHandle fh)
 #endif
 }
 
-// ----------------------------------------------------------------------------
+
 int utFileWrapper::seek(utFileHandle fh, UTsize pos, int way)
 {
 #if UT_PLATFORM == UT_PLATFORM_WIN32 && defined(UT_WIN32_FILE)
@@ -585,7 +566,7 @@ int utFileWrapper::seek(utFileHandle fh, UTsize pos, int way)
 	return -1;
 }
 
-// ----------------------------------------------------------------------------
+
 void utFileWrapper::flush(utFileHandle fh)
 {
 #if UT_PLATFORM == UT_PLATFORM_WIN32 && defined(UT_WIN32_FILE)

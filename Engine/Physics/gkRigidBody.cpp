@@ -32,7 +32,7 @@
 
 
 
-// ----------------------------------------------------------------------------
+
 gkRigidBody::gkRigidBody(gkGameObject *object, gkDynamicsWorld *owner)
 	:    gkPhysicsController(object, owner),
 	     m_body(0),
@@ -41,7 +41,7 @@ gkRigidBody::gkRigidBody(gkGameObject *object, gkDynamicsWorld *owner)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkRigidBody::~gkRigidBody()
 {
 	delete m_shape;
@@ -54,14 +54,14 @@ gkRigidBody::~gkRigidBody()
 }
 
 
-// ----------------------------------------------------------------------------
+
 btRigidBody *gkRigidBody::getBody(void)
 {
 	return m_body;
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkRigidBody::create(void)
 {
 	if (m_body || m_collisionObject)
@@ -131,7 +131,7 @@ void gkRigidBody::create(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkRigidBody::destroy(void)
 {
 	if (m_body)
@@ -154,7 +154,7 @@ void gkRigidBody::destroy(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkRigidBody::setLinearVelocity(const gkVector3 &v, int tspace)
 {
 	if (m_suspend) // block
@@ -199,7 +199,7 @@ void gkRigidBody::setLinearVelocity(const gkVector3 &v, int tspace)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkRigidBody::setAngularVelocity(const gkVector3 &v, int tspace)
 {
 	if (m_suspend) // block
@@ -249,7 +249,7 @@ void gkRigidBody::setAngularVelocity(const gkVector3 &v, int tspace)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkRigidBody::applyTorque(const gkVector3 &v, int tspace)
 {
 	if (m_suspend) // block
@@ -285,7 +285,7 @@ void gkRigidBody::applyTorque(const gkVector3 &v, int tspace)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkRigidBody::applyForce(const gkVector3 &v, int tspace)
 {
 	if (m_suspend) // block
@@ -325,7 +325,7 @@ void gkRigidBody::applyForce(const gkVector3 &v, int tspace)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkVector3 gkRigidBody::getLinearVelocity(void)
 {
 	if (m_suspend || m_body->isStaticOrKinematicObject() || !m_body)
@@ -334,7 +334,7 @@ gkVector3 gkRigidBody::getLinearVelocity(void)
 	return gkMathUtils::get(m_body->getLinearVelocity());
 }
 
-// ----------------------------------------------------------------------------
+
 gkVector3 gkRigidBody::getAngularVelocity()
 {
 	// only rigid bodies
@@ -346,7 +346,7 @@ gkVector3 gkRigidBody::getAngularVelocity()
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkRigidBody::getWorldTransform(btTransform &worldTrans) const
 {
 	if (m_suspend || !m_object->isInstanced() || !m_body)
@@ -378,7 +378,7 @@ void gkRigidBody::getWorldTransform(btTransform &worldTrans) const
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkRigidBody::setWorldTransform(const btTransform &worldTrans)
 {
 	if (m_suspend || !m_object->isInstanced() || !m_body)

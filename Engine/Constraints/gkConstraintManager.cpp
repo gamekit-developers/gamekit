@@ -29,20 +29,20 @@
 #include "gkGameObject.h"
 
 
-// ----------------------------------------------------------------------------
+
 gkConstraintManager::gkConstraintManager()
 {
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkConstraintManager::~gkConstraintManager()
 {
 	clear();
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkConstraintManager::clear(void)
 {
 	m_updateConstraints.clear();
@@ -67,7 +67,7 @@ void gkConstraintManager::clear(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkConstraintManager::notifyObjectDestroyed(gkGameObject *gobj)
 {
 	UTsize pos, i;
@@ -92,7 +92,7 @@ void gkConstraintManager::notifyObjectDestroyed(gkGameObject *gobj)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkConstraintManager::notifyObjectCloned(gkGameObject *oobj, gkGameObject *nobj)
 {
 	UTsize pos, i;
@@ -114,7 +114,7 @@ void gkConstraintManager::notifyObjectCloned(gkGameObject *oobj, gkGameObject *n
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkConstraintManager::notifyInstanceCreated(gkGameObject *gobj)
 {
 	Constraints& cons = getConstraints(gobj);
@@ -127,7 +127,7 @@ void gkConstraintManager::notifyInstanceCreated(gkGameObject *gobj)
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void gkConstraintManager::notifyInstanceDestroyed(gkGameObject *gobj)
 {
 	Constraints& cons = getConstraints(gobj);
@@ -141,7 +141,7 @@ void gkConstraintManager::notifyInstanceDestroyed(gkGameObject *gobj)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkConstraintManager::addConstraint(gkGameObject *obj, gkConstraint *cons)
 {
 	UTsize pos;
@@ -163,7 +163,7 @@ void gkConstraintManager::addConstraint(gkGameObject *obj, gkConstraint *cons)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkConstraintManager::removeConstraint(gkGameObject *obj, gkConstraint *cons)
 {
 	UTsize pos;
@@ -195,7 +195,7 @@ void gkConstraintManager::removeConstraint(gkGameObject *obj, gkConstraint *cons
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkConstraintManager::Constraints& gkConstraintManager::getConstraints(gkGameObject *obj)
 {
 	static Constraints nill;
@@ -212,14 +212,14 @@ gkConstraintManager::Constraints& gkConstraintManager::getConstraints(gkGameObje
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkConstraintManager::hasConstraints(gkGameObject *obj)
 {
 	return m_objectMapConstraints.find(obj) != UT_NPOS;
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkConstraintManager::update(gkScalar delta)
 {
 	if (!m_updateConstraints.empty())
@@ -247,7 +247,7 @@ void gkConstraintManager::update(gkScalar delta)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkConstraintManager::removeUpdate(gkConstraint *cons)
 {
 	UTsize pos;

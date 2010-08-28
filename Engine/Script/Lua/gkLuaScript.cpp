@@ -31,13 +31,13 @@
 
 
 
-// ----------------------------------------------------------------------------
+
 gkLuaScript::gkLuaScript(gkLuaManager *parent, const utString &name, const utString &buffer)
 	:       m_script(0), m_name(name), m_text(buffer), m_compiled(false),m_isInvalid(false), m_owner(parent)
 {
 }
 
-// ----------------------------------------------------------------------------
+
 gkLuaScript::~gkLuaScript()
 {
 	lua_State *L = m_owner->getLua();
@@ -46,7 +46,7 @@ gkLuaScript::~gkLuaScript()
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkLuaScript::decompile(void)
 {
 	lua_State *L = m_owner->getLua();
@@ -59,7 +59,7 @@ void gkLuaScript::decompile(void)
 
 }
 
-// ----------------------------------------------------------------------------
+
 void gkLuaScript::compile(void)
 {
 	if (m_isInvalid)
@@ -97,7 +97,7 @@ void gkLuaScript::compile(void)
 
 
 
-// ----------------------------------------------------------------------------
+
 bool gkLuaScript::execute(void)
 {
 	if (!m_compiled)

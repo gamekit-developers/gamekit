@@ -30,7 +30,7 @@
 #include "gkGameObject.h"
 
 
-// ----------------------------------------------------------------------------
+
 gkPropertySensor::gkPropertySensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
 	:   gkLogicSensor(object, link, name), m_old(), m_cur(0), m_type(-1), m_propName(""), m_propVal(), m_propMax(), 
 	    m_init(false), m_change(false)
@@ -40,7 +40,7 @@ gkPropertySensor::gkPropertySensor(gkGameObject *object, gkLogicLink *link, cons
 	connect();
 }
 
-// ----------------------------------------------------------------------------
+
 gkLogicBrick *gkPropertySensor::clone(gkLogicLink *link, gkGameObject *dest)
 {
 	gkPropertySensor *sens = new gkPropertySensor(*this);
@@ -51,7 +51,7 @@ gkLogicBrick *gkPropertySensor::clone(gkLogicLink *link, gkGameObject *dest)
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkPropertySensor::query(void)
 {
 	if (!m_init)

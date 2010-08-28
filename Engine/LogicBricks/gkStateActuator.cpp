@@ -30,18 +30,18 @@
 #include "gkGameObject.h"
 
 
-// ----------------------------------------------------------------------------
+
 gkStateActuator::gkStateActuator(gkGameObject *object, gkLogicLink *link, const gkString &name)
 	:       gkLogicActuator(object, link, name), m_stateMask(0), m_op(OP_NILL)
 {
 }
 
-// ----------------------------------------------------------------------------
+
 gkStateActuator::~gkStateActuator()
 {
 }
 
-// ----------------------------------------------------------------------------
+
 gkLogicBrick *gkStateActuator::clone(gkLogicLink *link, gkGameObject *dest)
 {
 	gkStateActuator *act = new gkStateActuator(*this);
@@ -49,7 +49,7 @@ gkLogicBrick *gkStateActuator::clone(gkLogicLink *link, gkGameObject *dest)
 	return act;
 }
 
-// ----------------------------------------------------------------------------
+
 void gkStateActuator::execute(void)
 {
 	if (isPulseOff())

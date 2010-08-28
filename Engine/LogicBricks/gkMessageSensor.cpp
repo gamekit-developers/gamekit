@@ -29,7 +29,7 @@
 #include "gkLogicManager.h"
 #include "gkLogicDispatcher.h"
 
-//----------------------------------------------------------------------------------
+
 gkMessageSensor::gkMessageSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
 	:       gkLogicSensor(object, link, name)
 {
@@ -41,7 +41,7 @@ gkMessageSensor::gkMessageSensor(gkGameObject *object, gkLogicLink *link, const 
 }
 
 
-//----------------------------------------------------------------------------------
+
 gkMessageSensor::~gkMessageSensor()
 {
 	gkMessageManager::getSingleton().removeListener(m_listener);
@@ -49,7 +49,7 @@ gkMessageSensor::~gkMessageSensor()
 	m_messages.clear();
 }
 
-//----------------------------------------------------------------------------------
+
 gkLogicBrick * gkMessageSensor::clone(gkLogicLink *link, gkGameObject *dest)
 {
 	gkMessageSensor *sens = new gkMessageSensor(*this);
@@ -58,7 +58,7 @@ gkLogicBrick * gkMessageSensor::clone(gkLogicLink *link, gkGameObject *dest)
 	return sens;
 }
 
-//----------------------------------------------------------------------------------
+
 bool gkMessageSensor::query(void)
 {
 	bool ret = false;

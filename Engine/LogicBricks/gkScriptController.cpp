@@ -36,14 +36,14 @@ static gkScriptController* scriptContext = 0;
 
 
 
-// ----------------------------------------------------------------------------
+
 gkScriptController::gkScriptController(gkGameObject *object, gkLogicLink *link, const gkString &name)
 	:       gkLogicController(object, link, name), m_script(0), m_error(false), m_isModule(false)
 {
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkLogicBrick *gkScriptController::clone(gkLogicLink *link, gkGameObject *dest)
 {
 	gkScriptController *cont = new gkScriptController(*this);
@@ -52,7 +52,7 @@ gkLogicBrick *gkScriptController::clone(gkLogicLink *link, gkGameObject *dest)
 	return cont;
 }
 
-// ----------------------------------------------------------------------------
+
 void gkScriptController::setScript(const gkString& str)
 {
 	gkLuaScript *scrpt = gkLuaManager::getSingleton().getScript(str);
@@ -72,13 +72,13 @@ void gkScriptController::setScript(const gkString& str)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkScriptController* gkScriptController::getCurrent(void)
 {
 	return scriptContext;
 }
 
-// ----------------------------------------------------------------------------
+
 void gkScriptController::execute(void)
 {
 	if (m_error || m_sensors.empty())

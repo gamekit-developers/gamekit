@@ -40,10 +40,10 @@ extern "C" {
 #define GK_PARAM            1
 
 
-// -----------------------------------------------------------------------------
+-
 typedef int (*gkLuaMethod)(lua_State *L);
 
-// -----------------------------------------------------------------------------
+-
 struct gkLuaMethodDef
 {
 	const char      *m_name;
@@ -54,7 +54,7 @@ struct gkLuaMethodDef
 	unsigned int     m_hash;
 };
 
-// -----------------------------------------------------------------------------
+-
 struct gkLuaTypeDef
 {
 	const char              *m_name;
@@ -163,7 +163,7 @@ public:
 };
 
 
-// -----------------------------------------------------------------------------
+-
 class gkLuaState
 {
 private:
@@ -177,7 +177,7 @@ public:
 
 #define lua_savestate(L) gkLuaState ___lock___(L);
 
-// -----------------------------------------------------------------------------
+-
 extern void lua_popall(lua_State *L);
 extern void lua_dumpstack(lua_State *L);
 extern int  lua_pushtraceback(lua_State *L);

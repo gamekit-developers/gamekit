@@ -38,7 +38,7 @@
 
 
 
-// ----------------------------------------------------------------------------
+
 gkLogicManager::gkLogicManager()
 {
 	m_sort = true;
@@ -50,7 +50,7 @@ gkLogicManager::gkLogicManager()
 	m_dispatchers[DIS_JOY]          = new gkJoyDispatch;
 }
 
-// ----------------------------------------------------------------------------
+
 gkLogicManager::~gkLogicManager()
 {
 	clear();
@@ -63,7 +63,7 @@ gkLogicManager::~gkLogicManager()
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkLogicManager::clear(void)
 {
 	m_sort = true;
@@ -89,7 +89,7 @@ void gkLogicManager::clear(void)
 	m_aout.clear();
 }
 
-// ----------------------------------------------------------------------------
+
 void gkLogicManager::clearActive(gkLogicLink *link)
 {
 	// remove from the active/running actuator list
@@ -132,7 +132,7 @@ void gkLogicManager::clearActive(gkLogicLink *link)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkLogicManager::destroy(gkLogicLink *link)
 {
 	if (!m_links.empty())
@@ -148,7 +148,7 @@ void gkLogicManager::destroy(gkLogicLink *link)
 
 }
 
-// ----------------------------------------------------------------------------
+
 gkLogicLink *gkLogicManager::createLink(void)
 {
 	gkLogicLink *link = new gkLogicLink();
@@ -158,7 +158,7 @@ gkLogicLink *gkLogicManager::createLink(void)
 
 #define GK_DEBUG_EXEC 1
 
-// ----------------------------------------------------------------------------
+
 void gkLogicManager::push(gkLogicSensor *a, gkLogicController *b, bool stateValue)
 {
 	if (b->inActiveState())
@@ -172,7 +172,7 @@ void gkLogicManager::push(gkLogicSensor *a, gkLogicController *b, bool stateValu
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkLogicManager::push(gkLogicController *a, gkLogicActuator *b, bool stateValue)
 {
 	if (a->inActiveState())
@@ -185,7 +185,7 @@ void gkLogicManager::push(gkLogicController *a, gkLogicActuator *b, bool stateVa
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void gkLogicManager::push(gkLogicBrick *a, gkLogicBrick *b, Bricks &in, bool stateValue)
 {
 	a->setPulse(stateValue ? BM_ON : BM_OFF);
@@ -197,7 +197,7 @@ void gkLogicManager::push(gkLogicBrick *a, gkLogicBrick *b, Bricks &in, bool sta
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void gkLogicManager::notifyState(unsigned int state, gkLogicLink *link)
 {
 	if (!m_ain.empty())
@@ -237,7 +237,7 @@ void gkLogicManager::notifyState(unsigned int state, gkLogicLink *link)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkLogicManager::notifySceneUnloaded(void)
 {
 	// Shutoff links & reset dispatchers
@@ -259,20 +259,20 @@ void gkLogicManager::notifySceneUnloaded(void)
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void gkLogicManager::notifyLinkUnloaded(gkLogicLink *link)
 {
 	clearActive(link);
 }
 
-// ----------------------------------------------------------------------------
+
 void gkLogicManager::notifySort(void)
 {
 	m_sort = true;
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkLogicManager::clearActuators(void)
 {
 	if (!m_aout.empty())
@@ -297,7 +297,7 @@ void gkLogicManager::clearActuators(void)
 			m_ain.clear(true);
 	}
 }
-// ----------------------------------------------------------------------------
+
 void gkLogicManager::sort(void)
 {
 	if (m_dispatchers)
@@ -309,7 +309,7 @@ void gkLogicManager::sort(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkLogicManager::update(gkScalar delta)
 {
 

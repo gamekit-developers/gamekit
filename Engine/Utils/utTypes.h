@@ -1767,14 +1767,14 @@ private:
 
 
 
-// ----------------------------------------------------------------------------
+
 UT_INLINE UThash gkHash(int v)
 {
 	utIntHashKey hk(v);
 	return hk.hash();
 }
 
-// ----------------------------------------------------------------------------
+
 UT_INLINE UThash gkHash(const char *v)
 {
 	utCharHashKey hk(v);
@@ -1782,7 +1782,7 @@ UT_INLINE UThash gkHash(const char *v)
 }
 
 
-// ----------------------------------------------------------------------------
+
 UT_INLINE UThash gkHash(void *v)
 {
 	utPointerHashKey hk(v);
@@ -1790,7 +1790,7 @@ UT_INLINE UThash gkHash(void *v)
 }
 
 
-// ----------------------------------------------------------------------------
+
 // Set iterator access.
 template <typename T>
 class utHashSetIterator
@@ -1829,7 +1829,7 @@ public:
 
 
 
-// ----------------------------------------------------------------------------
+
 // This is just a simpler form of utHashTable.
 template<typename T>
 class utHashSet

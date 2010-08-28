@@ -35,7 +35,7 @@
 
 
 
-// ----------------------------------------------------------------------------
+
 gkActionActuator::gkActionActuator(gkGameObject *object, gkLogicLink *link, const gkString &name)
 	:   gkLogicActuator(object, link, name),
 	    m_start(1),
@@ -59,13 +59,13 @@ gkActionActuator::gkActionActuator(gkGameObject *object, gkLogicLink *link, cons
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkActionActuator::~gkActionActuator()
 {
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkLogicBrick *gkActionActuator::clone(gkLogicLink *link, gkGameObject *dest)
 {
 	gkActionActuator *act = new gkActionActuator(*this);
@@ -77,7 +77,7 @@ gkLogicBrick *gkActionActuator::clone(gkLogicLink *link, gkGameObject *dest)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkActionActuator::doInit(void)
 {
 	if (m_skeleton != 0)
@@ -102,7 +102,7 @@ void gkActionActuator::doInit(void)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkActionActuator::play(void)
 {
 
@@ -116,7 +116,7 @@ void gkActionActuator::play(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkActionActuator::playStop(void)
 {
 	if (m_curTick >= m_end)
@@ -127,7 +127,7 @@ void gkActionActuator::playStop(void)
 	m_curTick += m_fps;
 }
 
-// ----------------------------------------------------------------------------
+
 void gkActionActuator::notifyActivate(void)
 {
 	if (!m_isActive)
@@ -137,7 +137,7 @@ void gkActionActuator::notifyActivate(void)
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void gkActionActuator::execute(void)
 {
 

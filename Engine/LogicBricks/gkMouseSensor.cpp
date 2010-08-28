@@ -49,7 +49,7 @@ void gkMouseDispatch::dispatch(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkMouseSensor::gkMouseSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
 	:       gkLogicSensor(object, link, name), m_type(MOUSE_NILL), m_rayQuery(0), m_last(false)
 {
@@ -57,7 +57,7 @@ gkMouseSensor::gkMouseSensor(gkGameObject *object, gkLogicLink *link, const gkSt
 	connect();
 }
 
-// ----------------------------------------------------------------------------
+
 gkMouseSensor::~gkMouseSensor()
 {
 	if (m_rayQuery && m_scene->isInstanced())
@@ -65,7 +65,7 @@ gkMouseSensor::~gkMouseSensor()
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkLogicBrick *gkMouseSensor::clone(gkLogicLink *link, gkGameObject *dest)
 {
 	gkMouseSensor *sens = new gkMouseSensor(*this);
@@ -74,7 +74,7 @@ gkLogicBrick *gkMouseSensor::clone(gkLogicLink *link, gkGameObject *dest)
 	return sens;
 }
 
-// ----------------------------------------------------------------------------
+
 bool gkMouseSensor::query(void)
 {
 	if (m_type == MOUSE_NILL)
@@ -107,7 +107,7 @@ bool gkMouseSensor::query(void)
 	return false;
 }
 
-// ----------------------------------------------------------------------------
+
 bool gkMouseSensor::rayTest(void)
 {
 	// cannot test no movable data,

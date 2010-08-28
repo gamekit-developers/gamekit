@@ -28,7 +28,7 @@
 
 
 
-// ----------------------------------------------------------------------------
+
 gkVariable::gkVariable()
 	:    m_value((int)0),
 	     m_type(VAR_NULL),
@@ -38,7 +38,7 @@ gkVariable::gkVariable()
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkVariable::gkVariable(const gkString &n, bool dbg)
 	:    m_value((int)0),
 	     m_type(VAR_NULL),
@@ -47,24 +47,24 @@ gkVariable::gkVariable(const gkString &n, bool dbg)
 {
 }
 
-// ----------------------------------------------------------------------------
+
 gkVariable::~gkVariable()
 {
 }
 
-// ----------------------------------------------------------------------------
+
 void gkVariable::makeDefault(void)
 {
 	m_default = m_value;
 }
 
-// ----------------------------------------------------------------------------
+
 void gkVariable::reset(void)
 {
 	m_value = m_default;
 }
 
-// ----------------------------------------------------------------------------
+
 gkVariable *gkVariable::clone(void)
 {
 	gkVariable *v = new gkVariable(*this);
@@ -72,7 +72,7 @@ gkVariable *gkVariable::clone(void)
 	return v;
 }
 
-// ----------------------------------------------------------------------------
+
 void gkVariable::setValue(int type, const gkString &v)
 {
 	if (!m_lock)
@@ -82,7 +82,7 @@ void gkVariable::setValue(int type, const gkString &v)
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void gkVariable::setValue(gkScalar v)
 {
 	if (!m_lock)
@@ -93,7 +93,7 @@ void gkVariable::setValue(gkScalar v)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkVariable::setValue(bool v)
 {
 	if (!m_lock)
@@ -104,7 +104,7 @@ void gkVariable::setValue(bool v)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkVariable::setValue(int v)
 {
 	if (!m_lock)
@@ -114,7 +114,7 @@ void gkVariable::setValue(int v)
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void gkVariable::setValue(const gkString &v)
 {
 	if (!m_lock)
@@ -124,7 +124,7 @@ void gkVariable::setValue(const gkString &v)
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void gkVariable::setValue(const gkVector2 &v)
 {
 	if (!m_lock)
@@ -134,7 +134,7 @@ void gkVariable::setValue(const gkVector2 &v)
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void gkVariable::setValue(const gkVector3 &v)
 {
 	if (!m_lock)
@@ -144,7 +144,7 @@ void gkVariable::setValue(const gkVector3 &v)
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void gkVariable::setValue(const gkVector4 &v)
 {
 	if (!m_lock)
@@ -154,7 +154,7 @@ void gkVariable::setValue(const gkVector4 &v)
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void gkVariable::setValue(const gkQuaternion &v)
 {
 	if (!m_lock)
@@ -164,7 +164,7 @@ void gkVariable::setValue(const gkQuaternion &v)
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void gkVariable::setValue(const gkMatrix3 &v)
 {
 	if (!m_lock)
@@ -174,7 +174,7 @@ void gkVariable::setValue(const gkMatrix3 &v)
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void gkVariable::setValue(const gkMatrix4 &v)
 {
 	if (!m_lock)
@@ -184,7 +184,7 @@ void gkVariable::setValue(const gkMatrix4 &v)
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void gkVariable::setValue(const gkVariable &v)
 {
 	if (!m_lock)
@@ -196,7 +196,7 @@ void gkVariable::setValue(const gkVariable &v)
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 bool gkVariable::getValueBool(void) const
 {
 	switch (m_type)
@@ -217,7 +217,7 @@ bool gkVariable::getValueBool(void) const
 	return false;
 }
 
-// ----------------------------------------------------------------------------
+
 gkScalar gkVariable::getValueReal(void) const
 {
 	switch (m_type)
@@ -239,7 +239,7 @@ gkScalar gkVariable::getValueReal(void) const
 }
 
 
-// ----------------------------------------------------------------------------
+
 int gkVariable::getValueInt(void) const
 {
 	switch (m_type)
@@ -260,51 +260,51 @@ int gkVariable::getValueInt(void) const
 	return 0;
 }
 
-// ----------------------------------------------------------------------------
+
 gkString gkVariable::getValueString(void) const
 {
 	return m_value.toString();
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkVector2 gkVariable::getValueVector2(void) const
 {
 	return m_value.get<gkVector2>(gkVector2(0,0));
 }
 
-// ----------------------------------------------------------------------------
+
 gkVector3 gkVariable::getValueVector3(void) const
 {
 	return m_value.get<gkVector3>(gkVector3(0,0,0));
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkVector4 gkVariable::getValueVector4(void) const
 {
 	return m_value.get<gkVector4>(gkVector4(0,0,0,1));
 }
 
-// ----------------------------------------------------------------------------
+
 gkQuaternion gkVariable::getValueQuaternion(void) const
 {
 	return m_value.get<gkQuaternion>(gkQuaternion::IDENTITY);
 }
 
-// ----------------------------------------------------------------------------
+
 gkMatrix3 gkVariable::getValueMatrix3(void) const
 {
 	return m_value.get<gkMatrix3>(gkMatrix3::IDENTITY);
 }
 
-// ----------------------------------------------------------------------------
+
 gkMatrix4 gkVariable::getValueMatrix4(void) const
 {
 	return m_value.get<gkMatrix4>(gkMatrix4::IDENTITY);
 }
 
-// ----------------------------------------------------------------------------
+
 bool gkVariable::operator < (const gkVariable &o) const
 {
 	switch (m_type)
@@ -320,7 +320,7 @@ bool gkVariable::operator < (const gkVariable &o) const
 	return false;
 }
 
-// ----------------------------------------------------------------------------
+
 bool gkVariable::operator > (const gkVariable &o) const
 {
 	switch (m_type)
@@ -336,20 +336,20 @@ bool gkVariable::operator > (const gkVariable &o) const
 	return false;
 }
 
-// ----------------------------------------------------------------------------
+
 bool gkVariable::operator <= (const gkVariable &o) const
 {
 	return (*this).operator < (o) || (*this).operator == (o);
 }
 
-// ----------------------------------------------------------------------------
+
 bool gkVariable::operator >= (const gkVariable &o) const
 {
 	return (*this).operator > (o) || (*this).operator == (o);
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkVariable::operator == (const gkVariable &o) const
 {
 	switch (m_type)
@@ -369,14 +369,14 @@ bool gkVariable::operator == (const gkVariable &o) const
 	return false;
 }
 
-// ----------------------------------------------------------------------------
+
 bool gkVariable::operator != (const gkVariable &o) const
 {
 	return !(*this).operator == (o);
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkVariable::assign(const gkString &o)
 {
 	if (!m_lock)
@@ -387,7 +387,7 @@ void gkVariable::assign(const gkString &o)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkVariable::add(const gkString &o)
 {
 	if (!m_lock)
@@ -399,7 +399,7 @@ void gkVariable::add(const gkString &o)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkVariable::inverse(const gkString &o)
 {
 	if (!m_lock)
@@ -412,7 +412,7 @@ void gkVariable::inverse(const gkString &o)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkVariable::toggle(const gkString &o)
 {
 	if (!m_lock)
@@ -421,7 +421,7 @@ void gkVariable::toggle(const gkString &o)
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void gkVariable::assign(const gkVariable &nv)
 {
 	if (!m_lock)
@@ -431,7 +431,7 @@ void gkVariable::assign(const gkVariable &nv)
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void gkVariable::add(const gkVariable &nv)
 {
 	if (!m_lock)
@@ -455,7 +455,7 @@ void gkVariable::add(const gkVariable &nv)
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkVariable::hasInverse(void)
 {
 	switch (m_type)
@@ -476,7 +476,7 @@ bool gkVariable::hasInverse(void)
 	return false;
 }
 
-// ----------------------------------------------------------------------------
+
 void gkVariable::inverse(const gkVariable &nv)
 {
 	if (!m_lock)
@@ -499,7 +499,7 @@ void gkVariable::inverse(const gkVariable &nv)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkVariable::toggle(const gkVariable &o)
 {
 	if (!m_lock)

@@ -33,13 +33,13 @@
 %ignore OGRE_KIT_LOGIC_BRICK;
 %ignore OGRE_KIT_LOGIC_BRICK_BASE;
 
-// ----------------------------------------------------------------------------
+
 %newobject getCurrentController;
 %newobject gsLogicManager::getObject;
 %newobject gsLogicManager::newObject;
 
 
-// ----------------------------------------------------------------------------
+
 GS_SCRIPT_NAME(LogicManager)
 GS_SCRIPT_NAME(LogicObject)
 GS_SCRIPT_NAME(Brick)
@@ -93,13 +93,13 @@ GS_SCRIPT_NAME(StateActuatorType)
 GS_SCRIPT_NAME(VisibilityActuatorType)
 
 
-// ----------------------------------------------------------------------------
+
 GS_ENUM_NAME(BM_NONE)
 GS_ENUM_NAME(BM_OFF)
 GS_ENUM_NAME(BM_ON)
 
 
-// ----------------------------------------------------------------------------
+
 // Arrays
 GS_ARRAY_WRAP(gsLogicObject,  gkLogicLink,        LogicList,    LogicIterator)
 GS_ARRAY_WRAP(gsSensor,       gkLogicSensor,      Sensors,      SensorIterator)

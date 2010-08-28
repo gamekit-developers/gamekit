@@ -29,7 +29,7 @@
 
 
 
-// ----------------------------------------------------------------------------
+
 gkLimitLocConstraint::gkLimitLocConstraint()
 	:   gkConstraint()
 {
@@ -39,7 +39,7 @@ gkLimitLocConstraint::gkLimitLocConstraint()
 	z[0] = z[1] = 0.0;
 }
 
-// ----------------------------------------------------------------------------
+
 gkConstraint *gkLimitLocConstraint::clone(gkGameObject *clob)
 {
 	gkLimitLocConstraint *cl = new gkLimitLocConstraint(*this);
@@ -48,7 +48,7 @@ gkConstraint *gkLimitLocConstraint::clone(gkGameObject *clob)
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkLimitLocConstraint::update(gkScalar delta)
 {
 	if (!m_object) return false;

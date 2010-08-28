@@ -29,13 +29,13 @@
 #include "gkGameObject.h"
 #include "gkScene.h"
 
-// ----------------------------------------------------------------------------
+
 gkParentActuator::gkParentActuator(gkGameObject *object, gkLogicLink *link, const gkString &name)
 		:	gkLogicActuator(object, link, name), m_mode(0), m_obj(""), m_compound(false), m_ghost(false)
 {
 }
 
-// ----------------------------------------------------------------------------
+
 gkLogicBrick *gkParentActuator::clone(gkLogicLink *link, gkGameObject *dest)
 {
 	gkParentActuator *act = new gkParentActuator(*this);
@@ -43,7 +43,7 @@ gkLogicBrick *gkParentActuator::clone(gkLogicLink *link, gkGameObject *dest)
 	return act;
 }
 
-// ----------------------------------------------------------------------------
+
 void gkParentActuator::execute(void)
 {
 

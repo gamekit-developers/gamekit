@@ -34,13 +34,13 @@
 #include "btBulletDynamicsCommon.h"
 
 
-// ----------------------------------------------------------------------------
+
 gkCollisionDispatch::gkCollisionDispatch()
 {
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkCollisionDispatch::dispatch(void)
 {
 	// TODO need to sort.
@@ -48,7 +48,7 @@ void gkCollisionDispatch::dispatch(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkCollisionSensor::gkCollisionSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
 	:       gkLogicSensor(object, link, name), m_material(""), m_prop("")
 {
@@ -57,7 +57,7 @@ gkCollisionSensor::gkCollisionSensor(gkGameObject *object, gkLogicLink *link, co
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkLogicBrick *gkCollisionSensor::clone(gkLogicLink *link, gkGameObject *dest)
 {
 	gkCollisionSensor *sens = new gkCollisionSensor(*this);
@@ -65,7 +65,7 @@ gkLogicBrick *gkCollisionSensor::clone(gkLogicLink *link, gkGameObject *dest)
 	return sens;
 }
 
-// ----------------------------------------------------------------------------
+
 bool gkCollisionSensor::query(void)
 {
 	gkPhysicsController *object = m_object->getPhysicsController();

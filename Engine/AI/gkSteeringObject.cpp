@@ -348,7 +348,7 @@ void gkSteeringObject::notifyInGoal()
 	reset();
 }
 
-// ----------------------------------------------------------------------------
+
 // measure path curvature (1/turning-radius), maintain smoothed version
 void gkSteeringObject::measurePathCurvature (const float elapsedTime)
 {
@@ -546,7 +546,7 @@ bool gkSteeringObject::clearPathToGoal(const gkVector3& goalPosition, gkGameObje
 	return result;
 }
 
-// ----------------------------------------------------------------------------
+
 // adjust obstacle avoidance look ahead time: make it large when we are far
 // from the goal and heading directly towards it, make it small otherwise.
 gkScalar gkSteeringObject::adjustObstacleAvoidanceLookAhead(bool clearPath, const gkVector3& goalPosition, gkScalar minPredictTime, gkScalar maxPredictTime)

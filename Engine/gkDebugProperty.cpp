@@ -38,19 +38,19 @@
 
 #define PROP_SIZE 14
 
-// ----------------------------------------------------------------------------
+
 gkDebugPropertyPage::gkDebugPropertyPage()
 	:   m_isInit(false), m_isShown(false),
 	    m_over(0), m_cont(0), m_key(0), m_val(0), m_props()
 {
 }
 
-// ----------------------------------------------------------------------------
+
 gkDebugPropertyPage::~gkDebugPropertyPage()
 {
 }
 
-// ----------------------------------------------------------------------------
+
 void gkDebugPropertyPage::initialize(void)
 {
 	if (m_isInit)
@@ -109,7 +109,7 @@ void gkDebugPropertyPage::initialize(void)
 
 }
 
-// ----------------------------------------------------------------------------
+
 void gkDebugPropertyPage::show(bool v)
 {
 	if (m_over != 0 && m_isShown != v)
@@ -123,7 +123,7 @@ void gkDebugPropertyPage::show(bool v)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkDebugPropertyPage::addVariable(gkVariable *prop)
 {
 	if (hasVariable(prop))
@@ -149,7 +149,7 @@ void gkDebugPropertyPage::addVariable(gkVariable *prop)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkDebugPropertyPage::removeVariable(gkVariable *prop)
 {
 	VariableList::Pointer p = m_props.find(prop);
@@ -158,13 +158,13 @@ void gkDebugPropertyPage::removeVariable(gkVariable *prop)
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkDebugPropertyPage::hasVariable(gkVariable *prop)
 {
 	return m_props.find(prop) != 0;
 }
 
-// ----------------------------------------------------------------------------
+
 void gkDebugPropertyPage::clearProps(void)
 {
 	m_props.clear();
@@ -172,7 +172,7 @@ void gkDebugPropertyPage::clearProps(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkDebugPropertyPage::draw(void)
 {
 	if (!m_over || !m_key || m_props.empty())

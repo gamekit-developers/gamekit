@@ -32,7 +32,7 @@
 
 
 
-// ----------------------------------------------------------------------------
+
 gkLight::gkLight(gkScene *scene, const gkString &name)
 	:    gkGameObject(scene, name, GK_LIGHT),
 	     m_lightProps(), m_light(0)
@@ -41,7 +41,7 @@ gkLight::gkLight(gkScene *scene, const gkString &name)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkLight::updateProperties(void)
 {
 	if (!m_light)
@@ -71,7 +71,7 @@ void gkLight::updateProperties(void)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkLight::createInstanceImpl(void)
 {
 	gkGameObject::createInstanceImpl();
@@ -87,7 +87,7 @@ void gkLight::createInstanceImpl(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkLight::destroyInstanceImpl(void)
 {
 	GK_ASSERT(m_light);
@@ -107,7 +107,7 @@ void gkLight::destroyInstanceImpl(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkGameObject *gkLight::clone(const gkString &name)
 {
 	gkLight *cl = new gkLight(m_scene, name);

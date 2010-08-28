@@ -29,7 +29,7 @@
 
 
 
-// ----------------------------------------------------------------------------
+
 gkConstraint::gkConstraint()
     :   m_object(0),
         m_space(TRANSFORM_LOCAL),
@@ -39,7 +39,7 @@ gkConstraint::gkConstraint()
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkConstraint::_applyMatrix(void)
 {
 	// do space conversion / blending here.

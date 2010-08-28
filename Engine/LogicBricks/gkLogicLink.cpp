@@ -32,13 +32,13 @@
 #include "gkLogicManager.h"
 
 
-// ----------------------------------------------------------------------------
+
 gkLogicLink::gkLogicLink() : m_state(0), m_debug(0), m_object(0)
 {
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkLogicLink::~gkLogicLink()
 {
 	if (!m_sensors.empty())
@@ -62,7 +62,7 @@ gkLogicLink::~gkLogicLink()
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkLogicLink *gkLogicLink::clone(gkGameObject *dest)
 {
 	gkLogicLink *link = gkLogicManager::getSingleton().createLink();
@@ -128,7 +128,7 @@ gkLogicLink *gkLogicLink::clone(gkGameObject *dest)
 	return link;
 }
 
-// ----------------------------------------------------------------------------
+
 void gkLogicLink::destroyInstance(void)
 {
 	gkLogicManager &mgr = gkLogicManager::getSingleton();
@@ -138,7 +138,7 @@ void gkLogicLink::destroyInstance(void)
 		mgr.notifyLinkUnloaded(m_others[i]);
 }
 
-// ----------------------------------------------------------------------------
+
 void gkLogicLink::push(gkLogicSensor *v,void *user)
 {
 	GK_ASSERT(v);
@@ -148,7 +148,7 @@ void gkLogicLink::push(gkLogicSensor *v,void *user)
 		m_sfind.insert(user, v);
 }
 
-// ----------------------------------------------------------------------------
+
 void gkLogicLink::push(gkLogicController *v, void *user)
 {
 	GK_ASSERT(v);
@@ -158,7 +158,7 @@ void gkLogicLink::push(gkLogicController *v, void *user)
 		m_cfind.insert(user, v);
 }
 
-// ----------------------------------------------------------------------------
+
 void gkLogicLink::push(gkLogicActuator *v, void *user)
 {
 	GK_ASSERT(v);
@@ -168,7 +168,7 @@ void gkLogicLink::push(gkLogicActuator *v, void *user)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkLogicSensor *gkLogicLink::findSensor(const gkString &name)
 {
 	if (!m_sensors.empty())
@@ -184,7 +184,7 @@ gkLogicSensor *gkLogicLink::findSensor(const gkString &name)
 	return 0;
 }
 
-// ----------------------------------------------------------------------------
+
 gkLogicActuator *gkLogicLink::findActuator(const gkString &name)
 {
 	if (!m_actuators.empty())
@@ -202,7 +202,7 @@ gkLogicActuator *gkLogicLink::findActuator(const gkString &name)
 	return 0;
 }
 
-// ----------------------------------------------------------------------------
+
 gkLogicController *gkLogicLink::findController(const gkString &name)
 {
 	if (!m_controllers.empty())
@@ -219,7 +219,7 @@ gkLogicController *gkLogicLink::findController(const gkString &name)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkLogicSensor *gkLogicLink::findSensor(void *user)
 {
 	UTsize pos = m_sfind.find(user);
@@ -230,7 +230,7 @@ gkLogicSensor *gkLogicLink::findSensor(void *user)
 
 
 
-// ----------------------------------------------------------------------------
+
 gkLogicActuator *gkLogicLink::findActuator(void *user)
 {
 	UTsize pos = m_afind.find(user);
@@ -240,7 +240,7 @@ gkLogicActuator *gkLogicLink::findActuator(void *user)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkLogicController  *gkLogicLink::findController(void *user)
 {
 	UTsize pos = m_cfind.find(user);
@@ -251,7 +251,7 @@ gkLogicController  *gkLogicLink::findController(void *user)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkLogicLink::notifyLink(gkLogicLink *link)
 {
 	if (this != link && m_others.find(link) == UT_NPOS)
@@ -259,13 +259,13 @@ void gkLogicLink::notifyLink(gkLogicLink *link)
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkLogicLink::hasLink(gkLogicLink *link)
 {
 	return link == this || m_others.find(link) != UT_NPOS;
 }
 
-// ----------------------------------------------------------------------------
+
 void gkLogicLink::notifyState(void)
 {
 	if (!m_others.empty())

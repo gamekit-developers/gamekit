@@ -38,7 +38,7 @@
 #define BRICK_SET(METH) if (m_brick) get()->METH;
 #endif
 
-// ----------------------------------------------------------------------------
+
 enum gsBrickMode
 {
 	GS_BM_NONE = BM_IDLE,
@@ -47,7 +47,7 @@ enum gsBrickMode
 };
 
 
-// ----------------------------------------------------------------------------
+
 enum gsPulseMode
 {
 	PM_NONE = gkLogicSensor::PM_IDLE,
@@ -55,7 +55,7 @@ enum gsPulseMode
 	PM_ON   = gkLogicSensor::PM_TRUE,
 };
 
-// ----------------------------------------------------------------------------
+
 enum gsMouseSensorType
 {
 	MST_LEFT        = gkMouseSensor::MOUSE_LEFT,
@@ -68,7 +68,7 @@ enum gsMouseSensorType
 	MST_OVER_ANY    = gkMouseSensor::MOUSE_MOUSE_OVER_ANY,
 };
 
-// ----------------------------------------------------------------------------
+
 enum gsListenerMode
 {
 	LM_EVT_OVERIDE,
@@ -76,7 +76,7 @@ enum gsListenerMode
 };
 
 
-// ----------------------------------------------------------------------------
+
 enum gsPropertySensorType
 {
 	PST_EQUAL    = gkPropertySensor::PS_EQUAL,
@@ -86,7 +86,7 @@ enum gsPropertySensorType
 };
 
 
-// ----------------------------------------------------------------------------
+
 enum gsRaySensorAxis
 {
 	RSA_XPOS = gkRaySensor::RA_XPOS,
@@ -98,7 +98,7 @@ enum gsRaySensorAxis
 };
 
 
-// ----------------------------------------------------------------------------
+
 enum gsLogicOp
 {
 	LOP_NONE = gkLogicOpController::OP_NILL,
@@ -112,7 +112,7 @@ enum gsLogicOp
 
 
 
-// ----------------------------------------------------------------------------
+
 enum gsActionActuatorType
 {
 	AAT_PLAY       = gkActionActuator::AA_PLAY,
@@ -124,7 +124,7 @@ enum gsActionActuatorType
 };
 
 
-// ----------------------------------------------------------------------------
+
 enum gsGameActuatorType
 {
 	GAT_QUIT        = gkGameActuator::GM_QUIT,
@@ -135,7 +135,7 @@ enum gsGameActuatorType
 };
 
 
-// ----------------------------------------------------------------------------
+
 enum gsEditObjectActuatorType
 {
 	EOT_ADDOBJ        = gkEditObjectActuator::EO_ADDOBJ,
@@ -146,7 +146,7 @@ enum gsEditObjectActuatorType
 };
 
 
-// ----------------------------------------------------------------------------
+
 enum gsEditObjectActuatorDynamics
 {
 	EOD_RESTORE        = gkEditObjectActuator::EOD_RESTORE,
@@ -157,7 +157,7 @@ enum gsEditObjectActuatorDynamics
 };
 
 
-// ----------------------------------------------------------------------------
+
 enum gsMessageActuatorBodyType
 {
 	MBT_TEXT  = gkMessageActuator::BT_TEXT,
@@ -165,7 +165,7 @@ enum gsMessageActuatorBodyType
 };
 
 
-// ----------------------------------------------------------------------------
+
 enum gsParentActuatorMode
 {
 	PA_SET   = gkParentActuator::PA_SET,
@@ -173,7 +173,7 @@ enum gsParentActuatorMode
 };
 
 
-// ----------------------------------------------------------------------------
+
 enum gsPropertyActuatorType
 {
 	PA_ASSIGN = gkPropertyActuator::PA_ASSIGN,
@@ -183,7 +183,7 @@ enum gsPropertyActuatorType
 };
 
 
-// ----------------------------------------------------------------------------
+
 enum gsRandomActuatorDistribution
 {
 	RA_BOOL_CONSTANT   = gkRandomActuator::RA_BOOL_CONSTANT,
@@ -200,7 +200,7 @@ enum gsRandomActuatorDistribution
 };
 
 
-// ----------------------------------------------------------------------------
+
 enum gsSceneActuatorMode
 {
 	SC_RESTART    = gkSceneActuator::SC_RESTART,
@@ -214,7 +214,7 @@ enum gsSceneActuatorMode
 };
 
 
-// ----------------------------------------------------------------------------
+
 enum gsSoundActuatorType
 {
 	SA_PLAY_STOP   = gkSoundActuator::SA_PLAY_STOP,
@@ -223,7 +223,7 @@ enum gsSoundActuatorType
 	SA_LOOP_END    = gkSoundActuator::SA_LOOP_END,
 };
 
-// ----------------------------------------------------------------------------
+
 enum gsStateActuatorType
 {
 	SOP_ADD = gkStateActuator::OP_ADD,
@@ -233,7 +233,7 @@ enum gsStateActuatorType
 };
 
 
-// ----------------------------------------------------------------------------
+
 enum gsVisibilityActuatorType
 {
 	VA_INVIS_FLAG  = gkVisibilityActuator::VA_INVIS_FLAG,
@@ -244,7 +244,7 @@ enum gsVisibilityActuatorType
 
 
 
-// ----------------------------------------------------------------------------
+
 class gsLogicManager
 {
 public:
@@ -258,7 +258,7 @@ public:
 };
 
 
-// ----------------------------------------------------------------------------
+
 class gsLogicObject
 {
 private:
@@ -299,7 +299,7 @@ public:
 };
 
 
-// ----------------------------------------------------------------------------
+
 class gsBrick
 {
 protected:
@@ -371,7 +371,7 @@ public:
 };
 
 
-// ----------------------------------------------------------------------------
+
 class gsSensor : public gsBrick
 {
 
@@ -397,7 +397,7 @@ public:
 
 
 
-// ----------------------------------------------------------------------------
+
 class gsActuatorSensor : public gsSensor
 {
 public:
@@ -412,7 +412,7 @@ public:
 };
 
 
-// ----------------------------------------------------------------------------
+
 class gsAlwaysSensor : public gsSensor
 {
 public:
@@ -425,7 +425,7 @@ public:
 };
 
 
-// ----------------------------------------------------------------------------
+
 class gsCollisionSensor : public gsSensor
 {
 public:
@@ -444,7 +444,7 @@ public:
 };
 
 
-// ----------------------------------------------------------------------------
+
 class gsTouchSensor : public gsSensor
 {
 public:
@@ -463,7 +463,7 @@ public:
 };
 
 
-// ----------------------------------------------------------------------------
+
 class gsDelaySensor : public gsSensor
 {
 public:
@@ -484,7 +484,7 @@ public:
 };
 
 
-// ----------------------------------------------------------------------------
+
 class gsKeyboardSensor : public gsSensor
 {
 public:
@@ -507,7 +507,7 @@ public:
 
 
 
-// ----------------------------------------------------------------------------
+
 class gsMessageSensor : public gsSensor
 {
 public:
@@ -524,7 +524,7 @@ public:
 
 
 
-// ----------------------------------------------------------------------------
+
 class gsMouseSensor : public gsSensor
 {
 public:
@@ -539,7 +539,7 @@ public:
 };
 
 
-// ----------------------------------------------------------------------------
+
 class gsNearSensor : public gsSensor
 {
 public:
@@ -561,7 +561,7 @@ public:
 };
 
 
-// ----------------------------------------------------------------------------
+
 class gsPropertySensor : public gsSensor
 {
 public:
@@ -584,7 +584,7 @@ public:
 
 
 
-// ----------------------------------------------------------------------------
+
 class gsRaySensor : public gsSensor
 {
 public:
@@ -607,7 +607,7 @@ public:
 };
 
 
-// ----------------------------------------------------------------------------
+
 class gsRadarSensor : public gsSensor
 {
 public:
@@ -634,7 +634,7 @@ public:
 
 
 
-// ----------------------------------------------------------------------------
+
 class gsRandomSensor : public gsSensor
 {
 public:
@@ -649,7 +649,7 @@ public:
 };
 
 
-// ----------------------------------------------------------------------------
+
 class gsController : public gsBrick
 {
 public:
@@ -667,7 +667,7 @@ public:
 };
 
 
-// ----------------------------------------------------------------------------
+
 class gsLogicOpController : public gsController
 {
 public:
@@ -684,7 +684,7 @@ public:
 	OGRE_KIT_LOGIC_BRICK(LogicOpController);
 };
 
-// ----------------------------------------------------------------------------
+
 class gsScriptController : public gsController
 {
 public:
@@ -703,7 +703,7 @@ extern gsScriptController *getCurrentController(void);
 
 
 
-// ----------------------------------------------------------------------------
+
 class gsActuator : public gsBrick
 {
 public:
@@ -715,7 +715,7 @@ public:
 };
 
 
-// ----------------------------------------------------------------------------
+
 class gsActionActuator : public gsActuator
 {
 public:
@@ -745,7 +745,7 @@ public:
 };
 
 
-// ----------------------------------------------------------------------------
+
 class gsEditObjectActuator : public gsActuator
 {
 public:
@@ -773,7 +773,7 @@ public:
 
 
 
-// ----------------------------------------------------------------------------
+
 class gsGameActuator : public gsActuator
 {
 public:
@@ -789,7 +789,7 @@ public:
 };
 
 
-// ----------------------------------------------------------------------------
+
 class gsMessageActuator : public gsActuator
 {
 public:
@@ -811,7 +811,7 @@ public:
 	OGRE_KIT_LOGIC_BRICK(MessageActuator);
 };
 
-// ----------------------------------------------------------------------------
+
 class gsMotionActuator : public gsActuator
 {
 public:
@@ -853,7 +853,7 @@ public:
 	OGRE_KIT_LOGIC_BRICK(MotionActuator);
 };
 
-// ----------------------------------------------------------------------------
+
 class gsParentActuator : public gsActuator
 {
 public:
@@ -875,7 +875,7 @@ public:
 };
 
 
-// ----------------------------------------------------------------------------
+
 class gsPropertyActuator : public gsActuator
 {
 public:
@@ -896,7 +896,7 @@ public:
 	OGRE_KIT_LOGIC_BRICK(PropertyActuator);
 };
 
-// ----------------------------------------------------------------------------
+
 class gsRandomActuator : public gsActuator
 {
 public:
@@ -927,7 +927,7 @@ public:
 	OGRE_KIT_LOGIC_BRICK(RandomActuator);
 };
 
-// ----------------------------------------------------------------------------
+
 class gsSceneActuator : public gsActuator
 {
 public:
@@ -946,7 +946,7 @@ public:
 	OGRE_KIT_LOGIC_BRICK(SceneActuator);
 };
 
-// ----------------------------------------------------------------------------
+
 class gsSoundActuator : public gsActuator
 {
 public:
@@ -964,7 +964,7 @@ public:
 };
 
 
-// ----------------------------------------------------------------------------
+
 class gsStateActuator : public gsActuator
 {
 public:
@@ -981,7 +981,7 @@ public:
 };
 
 
-// ----------------------------------------------------------------------------
+
 class gsVisibilityActuator : public gsActuator
 {
 public:

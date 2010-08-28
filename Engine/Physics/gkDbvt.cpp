@@ -35,7 +35,7 @@
 #include "OgreCamera.h"
 
 
-// ----------------------------------------------------------------------------
+
 gkDbvt::gkDbvt() 
 	:	m_tvs(0), 
 		m_tot(0),
@@ -44,13 +44,13 @@ gkDbvt::gkDbvt()
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkDbvt::~gkDbvt()
 {
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkDbvt::Process(const btDbvtNode *nd)
 {
 	btBroadphaseProxy *proxy = (btBroadphaseProxy *)nd->data;
@@ -59,7 +59,7 @@ void gkDbvt::Process(const btDbvtNode *nd)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkDbvt::mark(gkCamera *cam, btDbvtBroadphase *cullTree, gkPhysicsControllers &controllers)
 {
 	GK_ASSERT(cam && cullTree);

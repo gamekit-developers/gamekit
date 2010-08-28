@@ -30,58 +30,58 @@
 
 
 
-// ----------------------------------------------------------------------------
+
 gsRayTest::gsRayTest()
 {
 	m_ray = new gkRayTest();
 }
 
-// ----------------------------------------------------------------------------
+
 gsRayTest::~gsRayTest()
 {
 	delete m_ray;
 	m_ray = 0;
 }
 
-// ----------------------------------------------------------------------------
+
 bool gsRayTest::cast(const gsRay &ray)
 {
 	return m_ray->collides(ray);
 }
 
 
-// ----------------------------------------------------------------------------
+
 gsVector3 gsRayTest::getHitPoint(void)
 {
 	return m_ray->getHitPoint();
 }
-// ----------------------------------------------------------------------------
+
 gsVector3 gsRayTest::getHitNormal(void)
 {
 	return m_ray->getHitNormal();
 }
 
-// ----------------------------------------------------------------------------
+
 gsGameObject* gsRayTest::getObject(void)
 {
 	return (new gsGameObject(m_ray->getObject()));
 }
 
-// ----------------------------------------------------------------------------
+
 float gsRayTest::getHitFraction(void)
 {
 	return m_ray->getHitFraction();
 }
 
 
-// ----------------------------------------------------------------------------
+
 gsSweptTest::gsSweptTest()
 {
 	m_test = new gkSweptTest(m_avoid);
 }
 
 
-// ----------------------------------------------------------------------------
+
 gsSweptTest::gsSweptTest(gsArray<gsGameObject, gkGameObject> &avoid)
 {
 	if (!avoid.empty())
@@ -99,44 +99,44 @@ gsSweptTest::gsSweptTest(gsArray<gsGameObject, gkGameObject> &avoid)
 	m_test = new gkSweptTest(m_avoid);
 }
 
-// ----------------------------------------------------------------------------
+
 gsSweptTest::~gsSweptTest()
 {
 	delete m_test;
 }
 
-// ----------------------------------------------------------------------------
+
 bool gsSweptTest::collides(const gsRay &ray, float rayRadius)
 {
 	return m_test->collides(ray, rayRadius);
 }
 
-// ----------------------------------------------------------------------------
+
 gsVector3 gsSweptTest::getHitPoint(void)
 {
 	return m_test->getHitPoint();
 }
 
-// ----------------------------------------------------------------------------
+
 gsVector3 gsSweptTest::getHitNormal(void)
 {
 	return m_test->getHitNormal();
 }
 
 
-// ----------------------------------------------------------------------------
+
 gsVector3 gsSweptTest::getReflection(void)
 {
 	return m_test->getReflection();
 }
 
-// ----------------------------------------------------------------------------
+
 gsVector3 gsSweptTest::getSliding(void)
 {
 	return m_test->getSliding();
 }
 
-// ----------------------------------------------------------------------------
+
 gsGameObject *gsSweptTest::getObject(void)
 {
 	return (new gsGameObject(m_test->getObject()));

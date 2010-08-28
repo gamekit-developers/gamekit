@@ -57,7 +57,7 @@ using namespace Ogre;
 
 
 
-// ----------------------------------------------------------------------------
+
 gkGameObject::gkGameObject(gkScene *scene, const gkString &name, gkGameObjectTypes type)
 	:	gkObject(name),
 	    m_type(type),
@@ -86,7 +86,7 @@ gkGameObject::gkGameObject(gkScene *scene, const gkString &name, gkGameObjectTyp
 
 
 
-// ----------------------------------------------------------------------------
+
 gkGameObject::~gkGameObject()
 {
 	clearVariables();
@@ -111,7 +111,7 @@ gkGameObject::~gkGameObject()
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObject::attachLogic(gkLogicTree *tree)
 {
 	if (!m_logic)
@@ -123,7 +123,7 @@ void gkGameObject::attachLogic(gkLogicTree *tree)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObject::attachLogic(gkLogicLink *bricks)
 {
 	UT_ASSERT(!m_bricks);
@@ -131,7 +131,7 @@ void gkGameObject::attachLogic(gkLogicLink *bricks)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkGameObject *gkGameObject::clone(const gkString &name)
 {
 	gkGameObject *ob = new gkGameObject(m_scene, name, m_type);
@@ -141,7 +141,7 @@ gkGameObject *gkGameObject::clone(const gkString &name)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObject::cloneImpl(gkGameObject *clob)
 {
 	clob->m_activeLayer = clob->m_activeLayer;
@@ -180,7 +180,7 @@ void gkGameObject::cloneImpl(gkGameObject *clob)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObject::createInstanceImpl(void)
 {
 	SceneManager *manager = m_scene->getManager();
@@ -235,7 +235,7 @@ void gkGameObject::createInstanceImpl(void)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObject::postCreateInstanceImpl(void)
 {
 	// tell scene
@@ -243,7 +243,7 @@ void gkGameObject::postCreateInstanceImpl(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObject::postDestroyInstanceImpl(void)
 {
 	// tell logic
@@ -263,7 +263,7 @@ void gkGameObject::postDestroyInstanceImpl(void)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObject::destroyInstanceImpl(void)
 {
 	SceneManager *manager = m_scene->getManager();
@@ -304,7 +304,7 @@ void gkGameObject::destroyInstanceImpl(void)
 
 
 
-// ----------------------------------------------------------------------------
+
 bool gkGameObject::hasSensorMaterial(const gkString &name, bool onlyFirst)
 {
 	gkEntity *ent = getEntity();
@@ -331,7 +331,7 @@ bool gkGameObject::hasSensorMaterial(const gkString &name, bool onlyFirst)
 }
 
 
-// ----------------------------------------------------------------------------
+
 Ogre::MovableObject *gkGameObject::getMovable(void)
 {
 	if (!isInstanced())
@@ -350,7 +350,7 @@ Ogre::MovableObject *gkGameObject::getMovable(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 const gkTransformState &gkGameObject::getTransformState(void)
 {
 	static gkTransformState m_state;
@@ -361,7 +361,7 @@ const gkTransformState &gkGameObject::getTransformState(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 const gkMatrix4 &gkGameObject::getTransform(void)
 {
 	static gkMatrix4 temp;
@@ -374,7 +374,7 @@ const gkMatrix4 &gkGameObject::getTransform(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 const gkVector3 &gkGameObject::getPosition(void)
 {
 	if (m_node != 0)
@@ -382,7 +382,7 @@ const gkVector3 &gkGameObject::getPosition(void)
 	return m_baseProps.m_transform.loc;
 }
 
-// ----------------------------------------------------------------------------
+
 const gkVector3 &gkGameObject::getScale(void)
 {
 	if (m_node != 0)
@@ -391,7 +391,7 @@ const gkVector3 &gkGameObject::getScale(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 const gkQuaternion &gkGameObject::getOrientation(void)
 {
 	if (m_node != 0)
@@ -400,13 +400,13 @@ const gkQuaternion &gkGameObject::getOrientation(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkEuler gkGameObject::getRotation(void)
 {
 	return gkEuler(getOrientation());
 }
 
-// ----------------------------------------------------------------------------
+
 const gkTransformState &gkGameObject::getWorldTransformState(void)
 {
 	static gkTransformState m_state;
@@ -416,7 +416,7 @@ const gkTransformState &gkGameObject::getWorldTransformState(void)
 	return m_state;
 }
 
-// ----------------------------------------------------------------------------
+
 const gkMatrix4 &gkGameObject::getWorldTransform(void)
 {
 	if (m_node != 0)
@@ -425,7 +425,7 @@ const gkMatrix4 &gkGameObject::getWorldTransform(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 const gkVector3 &gkGameObject::getWorldPosition(void)
 {
 	if (m_node != 0)
@@ -433,7 +433,7 @@ const gkVector3 &gkGameObject::getWorldPosition(void)
 	return m_baseProps.m_transform.loc;
 }
 
-// ----------------------------------------------------------------------------
+
 const gkVector3 &gkGameObject::getWorldScale(void)
 {
 	if (m_node != 0)
@@ -442,7 +442,7 @@ const gkVector3 &gkGameObject::getWorldScale(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 const gkQuaternion &gkGameObject::getWorldOrientation(void)
 {
 	if (m_node != 0)
@@ -451,14 +451,14 @@ const gkQuaternion &gkGameObject::getWorldOrientation(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkEuler gkGameObject::getWorldRotation(void)
 {
 	return gkEuler(getWorldOrientation());
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObject::notifyUpdate(void)
 {
 	if (m_scene)
@@ -467,7 +467,7 @@ void gkGameObject::notifyUpdate(void)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObject::applyTransformState(const gkTransformState &newstate)
 {
 	if (isImmovable())
@@ -491,7 +491,7 @@ void gkGameObject::applyTransformState(const gkTransformState &newstate)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObject::setTransform(const gkMatrix4 &v)
 {
 	if (isImmovable())
@@ -507,7 +507,7 @@ void gkGameObject::setTransform(const gkMatrix4 &v)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObject::setTransform(const gkTransformState &v)
 {
 	if (isImmovable())
@@ -519,7 +519,7 @@ void gkGameObject::setTransform(const gkTransformState &v)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObject::setPosition(const gkVector3 &v)
 {
 	if (isImmovable())
@@ -543,7 +543,7 @@ void gkGameObject::setPosition(const gkVector3 &v)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObject::setScale(const gkVector3 &v)
 {
 	if (isImmovable())
@@ -558,7 +558,7 @@ void gkGameObject::setScale(const gkVector3 &v)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObject::setOrientation(const gkQuaternion &q)
 {
 	if (isImmovable())
@@ -582,7 +582,7 @@ void gkGameObject::setOrientation(const gkQuaternion &q)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObject::setOrientation(const gkEuler &v)
 {
 	if (isImmovable())
@@ -607,7 +607,7 @@ void gkGameObject::setOrientation(const gkEuler &v)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObject::rotate(const gkEuler &drot, int tspace)
 {
 	if (isImmovable())
@@ -618,7 +618,7 @@ void gkGameObject::rotate(const gkEuler &drot, int tspace)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObject::rotate(const gkQuaternion &dq, int tspace)
 {
 	if (isImmovable())
@@ -642,7 +642,7 @@ void gkGameObject::rotate(const gkQuaternion &dq, int tspace)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObject::yaw(const gkRadian &v, int tspace)
 {
 	if (isImmovable())
@@ -666,7 +666,7 @@ void gkGameObject::yaw(const gkRadian &v, int tspace)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObject::pitch(const gkRadian &v, int tspace )
 {
 	if (isImmovable())
@@ -690,7 +690,7 @@ void gkGameObject::pitch(const gkRadian &v, int tspace )
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObject::roll(const gkRadian &v, int tspace)
 {
 	if (isImmovable())
@@ -714,7 +714,7 @@ void gkGameObject::roll(const gkRadian &v, int tspace)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObject::translate(const gkVector3 &dloc, int tspace)
 {
 	if (isImmovable())
@@ -738,7 +738,7 @@ void gkGameObject::translate(const gkVector3 &dloc, int tspace)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObject::scale(const gkVector3 &dscale)
 {
 	if (isImmovable())
@@ -752,7 +752,7 @@ void gkGameObject::scale(const gkVector3 &dscale)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObject::setLinearVelocity(const gkVector3 &v, int tspace)
 {
 	if (isImmovable())
@@ -769,7 +769,7 @@ void gkGameObject::setLinearVelocity(const gkVector3 &v, int tspace)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObject::setAngularVelocity(const gkVector3 &v, int tspace)
 {
 	if (isImmovable())
@@ -780,7 +780,7 @@ void gkGameObject::setAngularVelocity(const gkVector3 &v, int tspace)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObject::applyTorque(const gkVector3 &v, int tspace)
 {
 	if (isImmovable())
@@ -791,7 +791,7 @@ void gkGameObject::applyTorque(const gkVector3 &v, int tspace)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObject::applyForce(const gkVector3 &v, int tspace)
 {
 	if (isImmovable())
@@ -802,7 +802,7 @@ void gkGameObject::applyForce(const gkVector3 &v, int tspace)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkVector3 gkGameObject::getLinearVelocity(void)
 {
 	if (isImmovable())
@@ -815,7 +815,7 @@ gkVector3 gkGameObject::getLinearVelocity(void)
 
 
 
-// ----------------------------------------------------------------------------
+
 gkVector3 gkGameObject::getAngularVelocity()
 {
 	if (isImmovable())
@@ -828,7 +828,7 @@ gkVector3 gkGameObject::getAngularVelocity()
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObject::clearVariables(void)
 {
 
@@ -854,7 +854,7 @@ void gkGameObject::clearVariables(void)
 
 
 
-// ----------------------------------------------------------------------------
+
 gkVariable *gkGameObject::createVariable(const gkString &name, bool debug)
 {
 	gkHashedString findName(name);
@@ -880,7 +880,7 @@ gkVariable *gkGameObject::createVariable(const gkString &name, bool debug)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkVariable *gkGameObject::getVariable(const gkString &name)
 {
 
@@ -892,7 +892,7 @@ gkVariable *gkGameObject::getVariable(const gkString &name)
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkGameObject::hasVariable(const gkString &name)
 {
 	return m_variables.find(name) != UT_NPOS;
@@ -900,7 +900,7 @@ bool gkGameObject::hasVariable(const gkString &name)
 
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObject::setParent(gkGameObject *par)
 {
 	if (!isInstanced() || isBeingCreated() || (par && (!par->isInstanced() || par->isBeingCreated())))
@@ -913,7 +913,7 @@ void gkGameObject::setParent(gkGameObject *par)
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void gkGameObject::setParentInPlace(gkGameObject *par)
 {
 	if(par && par != this)
@@ -928,7 +928,7 @@ void gkGameObject::setParentInPlace(gkGameObject *par)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObject::clearParent()
 {
 	if (!isInstanced() || isBeingCreated())
@@ -940,7 +940,7 @@ void gkGameObject::clearParent()
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void gkGameObject::clearParentInPlace()
 {
 	if(m_parent)
@@ -952,7 +952,7 @@ void gkGameObject::clearParentInPlace()
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void gkGameObject::addChild(gkGameObject *gobj)
 {
 	if (!isInstanced() || isBeingCreated() || (gobj && (!gobj->isInstanced() || gobj->isBeingCreated())))
@@ -983,7 +983,7 @@ void gkGameObject::addChild(gkGameObject *gobj)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkGameObject::removeChild(gkGameObject *gobj)
 {
 	if (!isInstanced() || isBeingCreated() || (gobj && (!gobj->isInstanced() || gobj->isBeingCreated())))
@@ -1024,7 +1024,7 @@ void gkGameObject::removeChild(gkGameObject *gobj)
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkGameObject::hasChild(gkGameObject *gobj)
 {
 	return m_children.find(gobj) != UT_NPOS;
@@ -1032,7 +1032,7 @@ bool gkGameObject::hasChild(gkGameObject *gobj)
 
 
 
-// ----------------------------------------------------------------------------
+
 gkPhysicsController *gkGameObject::getPhysicsController()
 {
 	if(m_rigidBody)
@@ -1044,7 +1044,7 @@ gkPhysicsController *gkGameObject::getPhysicsController()
 }
 
 
-// ----------------------------------------------------------------------------
+
 btCollisionObject *gkGameObject::getCollisionObject()
 {
 	if(m_rigidBody)
@@ -1056,7 +1056,7 @@ btCollisionObject *gkGameObject::getCollisionObject()
 }
 
 
-// ----------------------------------------------------------------------------
+
 Ogre::AxisAlignedBox gkGameObject::getAabb() const
 {
 	return m_node->_getWorldAABB();
@@ -1064,7 +1064,7 @@ Ogre::AxisAlignedBox gkGameObject::getAabb() const
 
 
 
-// ----------------------------------------------------------------------------
+
 gkGameObject *gkGameObject::getChildEntity()
 {
 	gkGameObjectArray::Iterator iter = m_children.iterator();

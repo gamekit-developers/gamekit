@@ -29,7 +29,7 @@
 
 
 
-// ----------------------------------------------------------------------------
+
 gkLimitRotConstraint::gkLimitRotConstraint()
 	:   gkConstraint(),
 	    m_flag(0),
@@ -40,7 +40,7 @@ gkLimitRotConstraint::gkLimitRotConstraint()
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkConstraint *gkLimitRotConstraint::clone(gkGameObject *clob)
 {
 	gkLimitRotConstraint *cl = new gkLimitRotConstraint(*this);
@@ -49,7 +49,7 @@ gkConstraint *gkLimitRotConstraint::clone(gkGameObject *clob)
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkLimitRotConstraint::update(gkScalar delta)
 {
 	if (!m_object) return false;

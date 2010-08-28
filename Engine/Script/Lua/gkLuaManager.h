@@ -36,7 +36,7 @@
 
 struct lua_State;
 
-// ----------------------------------------------------------------------------
+
 class gkLuaManager : public Ogre::Singleton<gkLuaManager>
 {
 public:

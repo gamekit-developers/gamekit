@@ -32,7 +32,7 @@
 #include "gkLogicDispatcher.h"
 #include "gkWindowSystem.h"
 
-// ----------------------------------------------------------------------------
+
 class gkJoyDispatch : public gkAbstractDispatcher
 {
 public:
@@ -43,7 +43,7 @@ public:
 };
 
 
-// ----------------------------------------------------------------------------
+
 class gkJoystickSensor : public gkLogicSensor
 {
 public:

@@ -28,7 +28,7 @@
 #include "gkLogicManager.h"
 #include "gkLogicDispatcher.h"
 
-// ----------------------------------------------------------------------------
+
 gkAlwaysSensor::gkAlwaysSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
 	:       gkLogicSensor(object, link, name)
 {
@@ -36,7 +36,7 @@ gkAlwaysSensor::gkAlwaysSensor(gkGameObject *object, gkLogicLink *link, const gk
 	connect();
 }
 
-// ----------------------------------------------------------------------------
+
 gkLogicBrick *gkAlwaysSensor::clone(gkLogicLink *link, gkGameObject *dest)
 {
 	gkAlwaysSensor *sens = new gkAlwaysSensor(*this);

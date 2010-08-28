@@ -31,7 +31,7 @@
 #include "gkVariable.h"
 
 
-// ----------------------------------------------------------------------------
+
 class gkDebugPropertyPage
 {
 	// for debugging gkGameObject variables

@@ -29,21 +29,21 @@
 #include "gkLogger.h"
 
 
-// ----------------------------------------------------------------------------
+
 gkGroupManager::gkGroupManager()
 	:    m_handles(0)
 {
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkGroupManager::~gkGroupManager()
 {
 	destroyAll();
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkGameObjectGroup *gkGroupManager::createGroup(const gkHashedString &name)
 {
 	if (m_groups.find(name) != UT_NPOS)
@@ -60,7 +60,7 @@ gkGameObjectGroup *gkGroupManager::createGroup(const gkHashedString &name)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkGameObjectGroup *gkGroupManager::getGroup(const gkHashedString &name)
 {
 	UTsize pos;
@@ -72,13 +72,13 @@ gkGameObjectGroup *gkGroupManager::getGroup(const gkHashedString &name)
 	return m_groups.at(pos);
 }
 
-// ----------------------------------------------------------------------------
+
 void gkGroupManager::destroyGroup(const gkHashedString &name)
 {
 	destroyGroup(getGroup(name));
 }
 
-// ----------------------------------------------------------------------------
+
 void gkGroupManager::destroyGroup(gkGameObjectGroup *group)
 {
 	if (group && hasGroup(group->getName()))
@@ -91,7 +91,7 @@ void gkGroupManager::destroyGroup(gkGameObjectGroup *group)
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void gkGroupManager::destroyAll(void)
 {
 	Groups::Iterator it = m_groups.iterator();
@@ -102,14 +102,14 @@ void gkGroupManager::destroyAll(void)
 	m_handles = 0;
 }
 
-// ----------------------------------------------------------------------------
+
 bool gkGroupManager::hasGroup(const gkHashedString &name)
 {
 	return m_groups.find(name) != UT_NPOS;
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkGroupManager::createInstances(void)
 {
 	// Pass command
@@ -119,7 +119,7 @@ void gkGroupManager::createInstances(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkGroupManager::destroyInstances(void)
 {
 	Groups::Iterator it = m_groups.iterator();
@@ -129,7 +129,7 @@ void gkGroupManager::destroyInstances(void)
 
 
 
-// ----------------------------------------------------------------------------
+
 gkGameObjectInstance *gkGroupManager::findGroupInstanceById(UTsize id)
 {
 	gkGameObjectInstance *ret = 0;
@@ -145,7 +145,7 @@ gkGameObjectInstance *gkGroupManager::findGroupInstanceById(UTsize id)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkGroupManager::createStaticBatches(gkScene *scene)
 {
 	Groups::Iterator it = m_groups.iterator();
@@ -154,7 +154,7 @@ void gkGroupManager::createStaticBatches(gkScene *scene)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkGroupManager::destroyStaticBatches(gkScene *scene)
 {
 	Groups::Iterator it = m_groups.iterator();

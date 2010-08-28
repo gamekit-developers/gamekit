@@ -34,7 +34,7 @@
 #include <typeinfo>
 
 
-// ----------------------------------------------------------------------------
+
 GK_INLINE void gkFromString(const gkString& s, bool &v)         { v = Ogre::StringConverter::parseBool(s); }
 GK_INLINE void gkFromString(const gkString& s, int &v)          { v = Ogre::StringConverter::parseInt(s); } 
 GK_INLINE void gkFromString(const gkString& s, gkScalar &v)     { v = Ogre::StringConverter::parseReal(s); }
@@ -46,7 +46,7 @@ GK_INLINE void gkFromString(const gkString& s, gkQuaternion &v) { v = Ogre::Stri
 GK_INLINE void gkFromString(const gkString& s, gkMatrix3 &v)    { v = Ogre::StringConverter::parseMatrix3(s); }
 GK_INLINE void gkFromString(const gkString& s, gkMatrix4 &v)    { v = Ogre::StringConverter::parseMatrix4(s); }
 
-// ----------------------------------------------------------------------------
+
 GK_INLINE gkString gkToString(bool v)                { return v ? "true" : "false"; }
 GK_INLINE gkString gkToString(int v)                 { return Ogre::StringConverter::toString(v); }
 GK_INLINE gkString gkToString(gkScalar v)            { return Ogre::StringConverter::toString(v); }

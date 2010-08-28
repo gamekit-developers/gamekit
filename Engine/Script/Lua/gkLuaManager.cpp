@@ -34,7 +34,7 @@
 extern "C" int _OgreKitLua_install(lua_State *L);
 
 
-// ----------------------------------------------------------------------------
+
 gkLuaManager::gkLuaManager()
 	:       L(0)
 {
@@ -44,14 +44,14 @@ gkLuaManager::gkLuaManager()
 	_OgreKitLua_install(L);
 }
 
-// ----------------------------------------------------------------------------
+
 gkLuaManager::~gkLuaManager()
 {
 	destroyAll();
 	if (L) lua_close(L);
 }
 
-// ----------------------------------------------------------------------------
+
 void gkLuaManager::decompile(void)
 {
 	utHashTableIterator<ScriptMap> iter(m_scripts);
@@ -60,7 +60,7 @@ void gkLuaManager::decompile(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkLuaScript *gkLuaManager::getScript(const gkString &name)
 {
 	UTsize pos;
@@ -70,7 +70,7 @@ gkLuaScript *gkLuaManager::getScript(const gkString &name)
 }
 
 
-// ----------------------------------------------------------------------------
+
 gkLuaScript *gkLuaManager::create(const gkString &name, const gkString &text)
 {
 	UTsize pos;
@@ -82,7 +82,7 @@ gkLuaScript *gkLuaManager::create(const gkString &name, const gkString &text)
 	return ob;
 }
 
-// ----------------------------------------------------------------------------
+
 gkLuaScript *gkLuaManager::create(const gkString &name)
 {
 	UTsize pos;
@@ -102,7 +102,7 @@ gkLuaScript *gkLuaManager::create(const gkString &name)
 	return ob;
 }
 
-// ----------------------------------------------------------------------------
+
 void gkLuaManager::destroy(const gkString &name)
 {
 	UTsize pos;
@@ -114,14 +114,14 @@ void gkLuaManager::destroy(const gkString &name)
 	}
 }
 
-// ----------------------------------------------------------------------------
+
 void gkLuaManager::destroy(gkLuaScript *ob)
 {
 	GK_ASSERT(ob);
 	destroy(ob->getName());
 }
 
-// ----------------------------------------------------------------------------
+
 void gkLuaManager::destroyAll(void)
 {
 	utHashTableIterator<ScriptMap> iter(m_scripts);
@@ -135,12 +135,12 @@ void gkLuaManager::destroyAll(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 bool gkLuaManager::hasScript(const gkString &name)
 {
 	return m_scripts.find(name) != GK_NPOS;
 }
 
 
-// ----------------------------------------------------------------------------
+
 GK_IMPLEMENT_SINGLETON(gkLuaManager);

@@ -35,7 +35,7 @@
 // TODO: Should never overide properties created from blender.
 
 
-// ----------------------------------------------------------------------------
+
 gkCamera::gkCamera(gkScene *scene, const gkString &name)
 	:	gkGameObject(scene, name, GK_CAMERA),
 	    m_cameraProps(),
@@ -44,7 +44,7 @@ gkCamera::gkCamera(gkScene *scene, const gkString &name)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkCamera::createInstanceImpl(void)
 {
 	gkGameObject::createInstanceImpl();
@@ -68,7 +68,7 @@ void gkCamera::createInstanceImpl(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkCamera::destroyInstanceImpl(void)
 {
 	GK_ASSERT(m_camera);
@@ -87,7 +87,7 @@ void gkCamera::destroyInstanceImpl(void)
 	gkGameObject::destroyInstanceImpl();
 }
 
-// ----------------------------------------------------------------------------
+
 void gkCamera::makeCurrent(void)
 {
 	if (m_camera && m_scene)
@@ -95,7 +95,7 @@ void gkCamera::makeCurrent(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkCamera::setClip(gkScalar start, gkScalar end)
 {
 
@@ -113,7 +113,7 @@ void gkCamera::setClip(gkScalar start, gkScalar end)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkCamera::setFov(const gkRadian &fov)
 {
 
@@ -127,7 +127,7 @@ void gkCamera::setFov(const gkRadian &fov)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkCamera::setFov(const gkDegree &fov)
 {
 	gkScalar val = fov.valueRadians();
@@ -140,7 +140,7 @@ void gkCamera::setFov(const gkDegree &fov)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void gkCamera::setMainCamera(bool v)
 {
 	m_cameraProps.m_start = v;
@@ -150,7 +150,7 @@ void gkCamera::setMainCamera(bool v)
 
 
 
-// ----------------------------------------------------------------------------
+
 gkGameObject *gkCamera::clone(const gkString &name)
 {
 	gkCamera *cl = new gkCamera(m_scene, name);

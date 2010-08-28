@@ -31,13 +31,13 @@
 #include "gkSceneManager.h"
 #include "gkEngine.h"
 
-// ----------------------------------------------------------------------------
+
 gkSceneActuator::gkSceneActuator(gkGameObject *object, gkLogicLink *link, const gkString &name)
 		:	gkLogicActuator(object, link, name)
 {
 }
 
-// ----------------------------------------------------------------------------
+
 gkLogicBrick *gkSceneActuator::clone(gkLogicLink *link, gkGameObject *dest)
 {
 	gkSceneActuator *act = new gkSceneActuator(*this);
@@ -45,7 +45,7 @@ gkLogicBrick *gkSceneActuator::clone(gkLogicLink *link, gkGameObject *dest)
 	return act;
 }
 
-// ----------------------------------------------------------------------------
+
 void gkSceneActuator::execute(void)
 {
 	gkScene *scene = 0;

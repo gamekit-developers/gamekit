@@ -26,7 +26,7 @@
 */
 #ifdef SWIGLUA
 
-// ----------------------------------------------------------------------------
+
 // gkString conversion.
 
 %typemap(in,checkfn="lua_isstring") gkString %{
@@ -49,7 +49,7 @@
     lua_pushstring(L, $1->c_str()); SWIG_arg++;
 %}
 
-// ----------------------------------------------------------------------------
+
 // gsProperty conversion.
 
 %typemap(out) gsProperty  
@@ -59,7 +59,7 @@
 %{ SWIG_arg += gsGetProperty(L, (*$result)); %}
 
 
-// ----------------------------------------------------------------------------
+
 // Callback conversion.
 
 
@@ -78,7 +78,7 @@
 
 
 
-// ----------------------------------------------------------------------------
+
 // Brick -> derrived conversion.
 
 

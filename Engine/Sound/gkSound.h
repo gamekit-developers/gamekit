@@ -38,7 +38,7 @@ class gkBuffer;
 class gkStreamer;
 
 
-// ----------------------------------------------------------------------------
+
 class gkSound
 {
 private:
