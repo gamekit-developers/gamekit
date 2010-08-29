@@ -29,8 +29,9 @@
 #include "OgreKit.h"
 
 
+#define USE_CADISPLAYLINK      1   //iOS version of 3.1 or greater is required
 
-#define USE_CADISPLAYLINK 1 //iOS version of 3.1 or greater is required
+#define USE_VIEWPORT_LANDSCAPE 1   //0: viewport_portrait, 1: viewport_landscape
 
 const gkString gkDefaultBlend   = "momo_ogre_i.blend";
 const gkString gkDefaultConfig  = "OgreKitStartup.cfg";
@@ -51,8 +52,7 @@ public:
     bool init();
 
     bool setup(void);
-    void keyReleased(const gkKeyboard &key, const gkScanCode &sc);
-	
+
 	
 	bool initializeStepLoop(void)
 	{
@@ -88,11 +88,17 @@ bool OgreKit::init()
 {
     gkString cfgfname;
 
-	m_blend = gkDefaultBlend;
+	m_blend  = gkDefaultBlend;
 	cfgfname = gkDefaultConfig;
+	
+	m_prefs.winsize.x        = 320;
+    m_prefs.winsize.y        = 480;
 
-	m_prefs.winsize.x        = 480;
-    m_prefs.winsize.y        = 320;
+#if USE_VIEWPORT_LANDSCAPE
+	m_prefs.viewportOrientation = "landscaperight";
+#else	
+	m_prefs.viewportOrientation = "portrait";
+#endif
 	
     m_prefs.wintitle         = gkString("OgreKit Demo (Press Escape to exit)[") + m_blend + gkString("]");
 
@@ -110,7 +116,6 @@ bool OgreKit::init()
 // ----------------------------------------------------------------------------
 bool OgreKit::setup(void)
 {
-    //gkBlendFile *blend = m_engine->loadBlendFile(gkUtils::getFile(m_blend));
 	gkBlendFile *blend = gkBlendLoader::getSingleton().loadFile(gkUtils::getFile(m_blend), gkBlendLoader::LO_ALL_SCENES);
 
     if (!blend)
@@ -132,14 +137,6 @@ bool OgreKit::setup(void)
     // add input hooks
     gkWindowSystem::getSingleton().addListener(this);
     return true;
-}
-
-
-// ----------------------------------------------------------------------------
-void OgreKit::keyReleased(const gkKeyboard &key, const gkScanCode &sc)
-{
-    if (sc == KC_ESCKEY) 
-        m_engine->requestExit();
 }
 
 

@@ -80,6 +80,8 @@ public:
 	bool touchReleased(const OIS::MultiTouchEvent &arg);
 	bool touchMoved(const OIS::MultiTouchEvent &arg);
 	bool touchCancelled(const OIS::MultiTouchEvent &arg);
+	
+	void transformInputState(OIS::MultiTouchState &state);
 #endif
 	
 	void windowResized(RenderWindow *rw);
@@ -213,10 +215,8 @@ RenderWindow *gkWindowSystem::createMainWindow(const gkUserDefs &prefs)
 		
 #ifndef OGREKIT_BUILD_IPHONE
 		const OIS::MouseState &st = m_internal->m_mouse->getMouseState();
-		st.width = (int)prefs.winsize.x;
+		st.width  = (int)prefs.winsize.x;
 		st.height = (int)prefs.winsize.y;
-#else
-		std::vector<OIS::MultiTouchState> st = m_internal->m_touch->getMultiTouchStates();
 #endif
 		
 	}
@@ -257,16 +257,15 @@ void gkWindowSystem::process(void)
 
 // Handle platform messages
 void gkWindowSystem::dispatch(void)
-{
+{	
+#ifndef OGREKIT_BUILD_IPHONE
 	GK_ASSERT(m_internal && m_internal->m_mouse && m_internal->m_keyboard);
-
+	
 	m_mouse.moved = false;
 	m_mouse.wheelDelta = 0.f;
 	m_mouse.relitave.x = 0.f;
 	m_mouse.relitave.y = 0.f;
 	
-#ifndef OGREKIT_BUILD_IPHONE
-	GK_ASSERT(m_internal && m_internal->m_mouse && m_internal->m_keyboard);
 
 	m_internal->m_mouse->capture();
 	m_internal->m_keyboard->capture();
@@ -281,7 +280,10 @@ void gkWindowSystem::dispatch(void)
 #else
 	GK_ASSERT(m_internal && m_internal->m_touch);
 	
-	m_internal->m_touch->capture();	
+	m_internal->m_touch->capture();	//OIS don't thing, currently. so instead use a previous saved touch event
+	
+	if (m_mouse.buttons[gkMouse::Left] != GK_Pressed)
+		m_mouse.moved = false;
 #endif	
 
 
@@ -320,11 +322,17 @@ gkWindowSystemPrivate::~Private()
 	{
 		// free input
 
+#ifndef OGREKIT_BUILD_IPHONE
 		if (m_keyboard)
 			m_input->destroyInputObject(m_keyboard);
 
 		if (m_mouse)
 			m_input->destroyInputObject(m_mouse);
+		
+#else
+		if (m_touch)
+			m_input->destroyInputObject(m_touch);
+#endif
 		
 		m_joysticks.clear();
 
@@ -338,11 +346,52 @@ gkWindowSystemPrivate::~Private()
 
 
 #ifdef OGREKIT_BUILD_IPHONE
+
+//copy from ogre3d samplebrowser
+void gkWindowSystemPrivate::transformInputState(OIS::MultiTouchState &state)
+{
+	GK_ASSERT(m_sys->m_window && m_sys->m_window->getViewport(0));
+	
+	Ogre::Viewport *viewport = m_sys->m_window->getViewport(0);
+	
+	int w = viewport->getActualWidth();
+	int h = viewport->getActualHeight();
+	int absX = state.X.abs;
+	int absY = state.Y.abs;
+	int relX = state.X.rel;
+	int relY = state.Y.rel;
+	
+	switch (viewport->getOrientationMode())
+	{
+		case Ogre::OR_DEGREE_0:   //OR_PORTRAIT
+			break;
+		case Ogre::OR_DEGREE_90:  //OR_LANDSCAPERIGHT
+			state.X.abs = w - absY;
+			state.Y.abs = absX;
+			state.X.rel = -relY;
+			state.Y.rel = relX;
+			break;
+		case Ogre::OR_DEGREE_180:
+			state.X.abs = w - absX;
+			state.Y.abs = h - absY;
+			state.X.rel = -relX;
+			state.Y.rel = -relY;
+			break;
+		case Ogre::OR_DEGREE_270: //OR_LANDSCAPELEFT
+			state.X.abs = absY;
+			state.Y.abs = h - absX;
+			state.X.rel = relY;
+			state.Y.rel = -relX;
+			break;
+	}
+}
+
 bool gkWindowSystemPrivate::touchPressed(const OIS::MultiTouchEvent& arg)
 {
 	gkMouse &data = m_sys->m_mouse;
 	
 	data.buttons[gkMouse::Left] = GK_Pressed;
+	
 
 	if (!m_sys->m_listeners.empty())
 	{
@@ -379,14 +428,16 @@ bool gkWindowSystemPrivate::touchReleased(const OIS::MultiTouchEvent& arg)
 bool gkWindowSystemPrivate::touchMoved(const OIS::MultiTouchEvent& arg)
 {
 	gkMouse &data = m_sys->m_mouse;
+	OIS::MultiTouchState state = arg.state;;
 	
-	data.position.x = (Real)arg.state.X.abs;
-	data.position.y = (Real)arg.state.Y.abs;
-	data.relitave.x = (Real)arg.state.X.rel;
-	data.relitave.y = (Real)arg.state.Y.rel;
+	transformInputState(state);
+	
+	data.position.x = (Real)state.X.abs;
+	data.position.y = (Real)state.Y.abs;
+	data.relitave.x = (Real)state.X.rel;
+	data.relitave.y = (Real)state.Y.rel;
 	data.moved = true;
 	
-
 	data.wheelDelta = 0;
 
 	if (!m_sys->m_listeners.empty())

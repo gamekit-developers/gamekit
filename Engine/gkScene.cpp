@@ -558,10 +558,10 @@ void gkScene::createInstanceImpl(void)
 	if (!iparam.empty())
 	{
 		int oparam = Ogre::OR_PORTRAIT;
-		if (iparam == "landscaperight")
-			oparam = Ogre::OR_LANDSCAPERIGHT;
-		else if (iparam == "landscapeleft")
+		if (iparam == "landscaperight") //viewport orientation is reversed.
 			oparam = Ogre::OR_LANDSCAPELEFT;
+		else if (iparam == "landscapeleft")
+			oparam = Ogre::OR_LANDSCAPERIGHT;
 
 		m_viewport->setOrientationMode((Ogre::OrientationMode)oparam);
 	}
