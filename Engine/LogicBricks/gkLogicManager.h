@@ -29,17 +29,14 @@
 
 #include "gkCommon.h"
 #include "gkMathUtils.h"
-#include "OgreSingleton.h"
+#include "Utils/utSingleton.h"
 
-
-// base types
 class gkLogicBrick;
 class gkLogicSensor;
 class gkLogicController;
 class gkLogicActuator;
 class gkLogicLink;
 class gkAbstractDispatcher;
-
 
 
 enum gkDispatchedTypes
@@ -54,28 +51,27 @@ enum gkDispatchedTypes
 
 
 
-// Manager for all logic brick related items.
-class gkLogicManager : public Ogre::Singleton<gkLogicManager>
+
+class gkLogicManager : public utSingleton<gkLogicManager>
 {
 public:
 
 	typedef utListClass<gkLogicLink> Links;
 	typedef utListIterator<Links>    LinkIterator;
-	typedef gkAbstractDispatcher *gkAbstractDispatcherPtr;
-
+	typedef gkAbstractDispatcher     *gkAbstractDispatcherPtr;
 	typedef utArray<gkLogicBrick *>  Bricks;
-
 
 protected:
 
 	Links m_links;
 
 	gkAbstractDispatcherPtr    *m_dispatchers;
-	Bricks                      m_cin,  m_ain, m_aout;
+	Bricks                      m_cin,  m_ain, m_aout; // Temporary open or closed links
 	bool                        m_sort;
 
 
 	void push(gkLogicBrick *a, gkLogicBrick *b, Bricks &in, bool stateValue);
+
 	void clearActuators(void);
 	void clearActive(gkLogicLink *link);
 
@@ -87,31 +83,40 @@ public:
 	~gkLogicManager();
 
 	gkLogicLink *createLink(void);
+
 	void destroy(gkLogicLink *link);
 	
 	GK_INLINE Links& getLinks(void) {return m_links;}
 
-	void notifySceneUnloaded(void);
-	void notifyLinkUnloaded(gkLogicLink *link);
+	void notifySceneInstanceDestroyed(void);
+	void notifyLinkInstanceDestroyed(gkLogicLink *link);
+
+
+	///Notifies the manager that a state change has taken place.
 	void notifyState(unsigned int state, gkLogicLink *link);
+
+
+	///Notifies the manager to sort logic bricks based on their priority.
 	void notifySort(void);
 
-	// Free links & reset dispatchers
+
+	///Frees all created links and resets dispatchers
 	void clear(void);
 
-	// Process updates
 	void update(gkScalar delta);
 
-	// Get enumerated dispatcher
-	GK_INLINE gkAbstractDispatcher &getDispatcher(int dt)
-	{ GK_ASSERT(m_dispatchers && dt >= 0 && dt <= DIS_MAX); return *m_dispatchers[dt]; }
 
-	void push(gkLogicSensor *s,     gkLogicController *v, bool stateValue);
-	void push(gkLogicController *c, gkLogicActuator *v,   bool stateValue);
+	GK_INLINE gkAbstractDispatcher &getDispatcher(int dt) { GK_ASSERT(m_dispatchers && dt >= 0 && dt <= DIS_MAX); return *m_dispatchers[dt]; }
 
 
-	static gkLogicManager &getSingleton(void);
-	static gkLogicManager *getSingletonPtr(void);
+	///Tells the manager a link from a sensor to controller has been opened or closed.
+	void push(gkLogicSensor *s, gkLogicController *v, bool stateValue);
+
+	///Tells the manager a link from a controller to an actuator has been opened or closed.
+	void push(gkLogicController *c, gkLogicActuator *v, bool stateValue);
+
+
+	UT_DECLARE_SINGLETON(gkLogicManager);
 };
 
 

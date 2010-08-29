@@ -33,13 +33,14 @@
 class gkLogicSensor : public gkLogicBrick
 {
 public:
+
+	/// Open/Close mode as part of the sensor's header.
 	enum Pulse
 	{
 		PM_IDLE     = (1 << 0),
 		PM_TRUE     = (1 << 1),
 		PM_FALSE    = (1 << 2),
 	};
-
 
 protected:
 
@@ -72,19 +73,17 @@ public:
 
 	void link(gkLogicController *cont);
 
-	// Process pending events.
 	void execute(void);
 
-	// Do test on subclass to see if a pulse is wanted.
 	virtual bool query(void) = 0;
 
 	void sort(void);
 
-	// Reset to initial state.
+	///Reset the sensor's header to initial state.
 	void reset(void);
 
-	// Events have been queried, now pass to
-	// connected controllers for further processing.
+
+	///Tells the logic manager events have happened and a link should be opened or closed. 
 	void dispatch(void);
 
 

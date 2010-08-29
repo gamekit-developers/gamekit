@@ -36,7 +36,6 @@
 class gkActionChannel;
 
 
-// Holds gkActionChannel objects, one for each Bone.
 class gkAction
 {
 public:
@@ -57,41 +56,32 @@ public:
 	GK_INLINE gkScalar getLength(void)
 	{ return m_end - m_start; }
 
-	// Sets the start frame of this action.
 	GK_INLINE void setStart(gkScalar v)
 	{ m_start = v;}
 
-	// Sets the end frame of this action.
 	GK_INLINE void setEnd(gkScalar v)
 	{ m_end = v;}
 
-	// Gets the start frame of this action.
 	GK_INLINE gkScalar getStart(void)
 	{ return m_start;}
 
-	// Gets the end frame of this action.
 	GK_INLINE gkScalar getEnd(void)
 	{ return m_end;}
 
-	// Gets the action/animation name.
 	GK_INLINE const gkString &getName(void)
 	{ return m_name;}
 
-	// Appends a new channel for this action.
 	void addChannel(gkActionChannel *chan);
 
-	// Raw const access to channels
 	GK_INLINE gkAction::Channels::ConstPointer getChannels(void)
 	{return m_channels.ptr();}
 
-	// Gets the current channel count.
 	GK_INLINE int getNumChannels(void)
 	{return(int)m_channels.size();}
 
-	//Gets the channel corresponding to a bone
+
 	gkActionChannel *getChannel(gkBone *bone);
 
-	// Updates matrices for the specified time
 	void evaluate(gkScalar time);
 
 	GK_INLINE void setBlendFrames(gkScalar v)

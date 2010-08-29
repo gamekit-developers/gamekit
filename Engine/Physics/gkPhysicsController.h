@@ -50,7 +50,7 @@ struct gkContactInfo
 };
 
 
-// Base class for a physics object that gets updated along side a gkGameObject.
+///Base class for a physics object that gets updated along side a gkGameObject.
 class gkPhysicsController
 {
 public:
@@ -58,34 +58,27 @@ public:
 	virtual ~gkPhysicsController();
 
 
-    // Explicitly set the world transform.
 	virtual void setTransformState(const gkTransformState &state);
 
 	
-	// Set the world transform from the parent gkGameObject
 	virtual void updateTransform(void);
 
 	bool isStaticObject(void);
 
-
-	// Enable or disable physics 
 	void suspend(bool v);
 	bool isSuspended(void) {return m_suspend;}
 
 
-	// Access to the gkGameObject physics properties.
 	gkPhysicsProperties& getProperties(void);
 
-
-	// Enable/Disable contact listeners.
 	void enableContactProcessing(bool v);
 
-	// Contact access.
 	gkContactInfo::Array&    getContacts(void);
 	gkContactInfo::Iterator  getContactIterator(void);
 
 
 	// Collision tests.
+
 	bool collidesWith(gkGameObject *ob, gkContactInfo* cpy=0);
 	bool collidesWith(const gkString& name, gkContactInfo* cpy=0, bool emptyFilter=true);
 
@@ -96,8 +89,6 @@ public:
 	bool sensorCollides(const gkString& prop, const gkString& material="", bool onlyActor=false, bool testAllMaterials=false);
 	static bool sensorTest(gkGameObject *ob, const gkString& prop, const gkString& material="", bool onlyActor=false, bool testAllMaterials=false);
 
-
-	// Userdata casts
 	static gkPhysicsController* castController(btCollisionObject *colObj);
 	static gkPhysicsController* castController(void *colObj);
 	static gkGameObject* castObject(btCollisionObject *colObj);
@@ -115,8 +106,6 @@ public:
 
 	gkBoundingBox getAabb(void) const;
 
-
-	// Note: passes ownership
 	void setShape(btCollisionShape *shape);
 
 
@@ -124,13 +113,8 @@ public:
 	virtual void destroy(void) = 0;
 
 
-	// Internal contact processing
 	void _handleManifold(btPersistentManifold *manifold);
-
-	// Internal contact processing
 	void _resetContactInfo(void);
-
-
 	bool _markDbvt(bool v);
 
 protected:
@@ -143,21 +127,13 @@ protected:
 
 	gkContactInfo::Array m_localContacts;
 
-
-	// Parent world
 	gkDynamicsWorld *m_owner;
-
-
-	// modifier object
 	gkGameObject *m_object;
 
 	btCollisionObject *m_collisionObject;
 
 	btCollisionShape *m_shape;
-
-	// Suspend all dynamics.
 	bool m_suspend;
-
 	bool m_dbvtMark;
 
 	gkPhysicsProperties m_props;

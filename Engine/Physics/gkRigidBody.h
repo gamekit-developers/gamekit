@@ -41,7 +41,6 @@ class gkDynamicsWorld;
 
 // gkRigidBody handles:
 // dynamic (no angular velocity), rigid, and static bodies
-
 class gkRigidBody : public gkPhysicsController, public btMotionState
 {
 public:
@@ -66,7 +65,6 @@ public:
 		return oldState;
 	}
 
-	// Gain access to the bullet body
 	btRigidBody *getBody(void);
 	
 

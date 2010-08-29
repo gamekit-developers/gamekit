@@ -692,7 +692,7 @@ void gkScene::destroyInstanceImpl(void)
 		}
 	}
 
-	gkLogicManager::getSingleton().notifySceneUnloaded();
+	gkLogicManager::getSingleton().notifySceneInstanceDestroyed();
 	gkWindowSystem::getSingleton().clearStates();
 	gkEngine::getSingleton().setActiveScene(0);
 

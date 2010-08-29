@@ -32,8 +32,8 @@
 #include "gkCommon.h"
 #include "gkMathUtils.h"
 
-// Updates a collection of weight blended gkAction objects
-// Could be expanded to an entire NLA system
+
+///Updates a collection of weight blended gkAction objects
 class gkActionManager
 {
 protected:
@@ -46,7 +46,6 @@ public:
 	GK_INLINE gkAction *getActive(void) {return m_active;}
 	void setAction(gkAction *act);
 
-	// update all
 	void update(gkScalar delta);
 	void update(gkScalar delta, gkScalar blendDelta);
 };

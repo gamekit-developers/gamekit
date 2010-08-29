@@ -55,8 +55,7 @@ enum gkBrickMode
 };
 
 
-// Root of the brick tree. Sensors, Controllers, and Actuators
-// are derrived from this class
+
 class gkLogicBrick
 {
 public:
@@ -93,7 +92,7 @@ protected:
 	Listener           *m_listener;
 
 	virtual void        cloneImpl(gkLogicLink *link, gkGameObject *dest);
-	virtual void        notifyActivate(void) {}
+	virtual void        notifyActiveStatus(void) {}
 
 
 public:
@@ -101,10 +100,13 @@ public:
 	virtual ~gkLogicBrick() {}
 
 	bool inActiveState(void);
+
 	bool wantsDebug(void);
 
 	virtual gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest)=0;
-	virtual void  notifyUnload(void) {}
+
+	virtual void notifyLinkDestroyed(void) {}
+
 	virtual void execute(void)=0;
 
 	GK_INLINE void setListener(gkLogicBrick::Listener *listener) {m_listener = listener;}
@@ -115,7 +117,7 @@ public:
 	GK_INLINE bool              isPulseOn(void)     { return m_pulseState == BM_ON; }
 	GK_INLINE bool              isPulseOff(void)    { return m_pulseState == BM_OFF; }
 	GK_INLINE bool              isIdle(void)        { return m_pulseState == BM_IDLE; }
-	GK_INLINE void              setActive(bool v)   { m_isActive = v; notifyActivate(); }
+	GK_INLINE void              setActive(bool v)   { m_isActive = v; notifyActiveStatus(); }
 	GK_INLINE bool              isActive(void)      { return m_isActive;}
 
 	GK_INLINE const gkString   &getName(void)       { return m_name; }

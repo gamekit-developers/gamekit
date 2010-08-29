@@ -59,7 +59,7 @@ gkBlendFile *gkBlendLoader::getFileByName(const gkString &fname)
 	{
 		gkBlendFile *fp = it.getNext();
 
-		if (fp->getName() == fname)
+		if (fp->getFilePath() == fname)
 			return fp;
 	}
 

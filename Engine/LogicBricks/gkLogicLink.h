@@ -74,7 +74,6 @@ public:
 	gkLogicActuator *findActuator(void *user);
 	gkLogicController *findController(void *user);
 
-	// object storage
 	void push(gkLogicSensor *v, void *user=0);
 	void push(gkLogicController *v, void *user=0);
 	void push(gkLogicActuator *v, void *user=0);

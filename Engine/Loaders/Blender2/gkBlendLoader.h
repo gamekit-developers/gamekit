@@ -54,9 +54,6 @@ public:
 	                     );
 
 
-
-
-	// File access.
 	gkBlendFile *getFileByName(const gkString &fname);
 
 

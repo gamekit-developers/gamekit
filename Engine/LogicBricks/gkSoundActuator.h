@@ -58,8 +58,8 @@ private:
 	gkSoundProperties    m_props;       // properties to attach to the sound stream
 
 
-	void notifyActivate(void);
-	void notifyUnload(void);
+	void notifyActiveStatus(void);
+	void notifyLinkDestroyed(void);
 
 public:
 

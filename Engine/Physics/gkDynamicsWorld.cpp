@@ -228,10 +228,7 @@ void gkDynamicsWorld::localDrawObject(gkPhysicsController *phyCon)
 	};
 
 	if (phyCon->isSuspended())
-	{
-		// Draw ORANGE
 		color = btVector3(btScalar(1), btScalar(0.5), btScalar(0.));
-	}
 
 
 	m_dynamicsWorld->debugDrawObject(colObj->getWorldTransform(),
@@ -255,8 +252,6 @@ void gkDynamicsWorld::localDrawObject(gkPhysicsController *phyCon)
 
 void gkDynamicsWorld::step(gkScalar tick)
 {
-	// Do one full physics step
-
 	GK_ASSERT(m_dynamicsWorld);
 	m_dynamicsWorld->stepSimulation(tick);
 }

@@ -173,10 +173,7 @@ bool gkPhysicsController::sensorCollides(const gkString& prop, const gkString& m
 {
 
 	if (onlyActor && !m_object->getProperties().isActor())
-	{
-		// Skip all tests.
 		return false;
-	}
 
 
 	if (!m_localContacts.empty())
@@ -202,7 +199,6 @@ bool gkPhysicsController::sensorCollides(const gkString& prop, const gkString& m
 
 			if (onlyActor)
 			{
-				// Test actors
 
 				if (prop.empty() && material.empty())
 					return true;
@@ -223,7 +219,6 @@ bool gkPhysicsController::sensorCollides(const gkString& prop, const gkString& m
 			}
 			else
 			{
-				// Test any
 				if (prop.empty() && material.empty())
 					return true;
 
@@ -280,8 +275,6 @@ bool gkPhysicsController::sensorTest(gkGameObject *ob, const gkString& prop, con
 
 	if (onlyActor)
 	{
-		// Test actors
-
 		if (ob->getProperties().isActor())
 		{
 			if (prop.empty() && material.empty())
@@ -301,8 +294,6 @@ bool gkPhysicsController::sensorTest(gkGameObject *ob, const gkString& prop, con
 	}
 	else
 	{
-		// Test any
-
 		if (prop.empty() && material.empty())
 			return true;
 
@@ -345,7 +336,6 @@ void gkPhysicsController::updateTransform(void)
 	gkQuaternion rot;
 	gkVector3 loc;
 
-	// see if we can benefit from cached transforms
 	if (!m_object->getParent())
 	{
 		rot = m_object->getOrientation();
@@ -353,7 +343,6 @@ void gkPhysicsController::updateTransform(void)
 	}
 	else
 	{
-		// must derrive
 		rot = m_object->getWorldOrientation();
 		loc = m_object->getWorldPosition();
 	}
@@ -422,8 +411,6 @@ void gkPhysicsController::suspend(bool v)
 	{
 		m_suspend = v;
 
-
-		// Save / Restore state 
 		if (m_suspend)
 			m_object->getProperties().m_physics.m_type = GK_NO_COLLISION;
 		else
@@ -514,10 +501,7 @@ void gkPhysicsController::createShape(void)
 	if (ent != 0)
 		me = ent->getEntityProperties().m_mesh;
 
-	// extract the shape's size
 	gkVector3 size(1.f, 1.f, 1.f);
-
-
 	if (me != 0)
 		size = me->getBoundingBox().getHalfSize();
 	else
@@ -565,8 +549,6 @@ void gkPhysicsController::createShape(void)
 		return;
 
 	m_shape->setMargin(m_props.m_margin);
-
-	// use the most up to date transform. 
 	m_shape->setLocalScaling(gkMathUtils::get(m_object->getScale()));
 }
 

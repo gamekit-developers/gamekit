@@ -62,7 +62,7 @@ private:
 
 	void play(void);
 	void playStop(void);
-	void notifyActivate(void);
+	void notifyActiveStatus(void);
 
 public:
 

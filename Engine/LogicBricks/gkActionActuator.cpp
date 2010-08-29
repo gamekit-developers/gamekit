@@ -128,7 +128,7 @@ void gkActionActuator::playStop(void)
 }
 
 
-void gkActionActuator::notifyActivate(void)
+void gkActionActuator::notifyActiveStatus(void)
 {
 	if (!m_isActive)
 	{

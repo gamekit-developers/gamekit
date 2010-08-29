@@ -32,19 +32,14 @@
 #include "OgreResourceGroupManager.h"
 
 
-// Loaded blend file
 class gkBlendFile
 {
 public:
-
-	// Manual loaders.
 	typedef utArray<Ogre::ManualResourceLoader *> ManualResourceLoaderList;
 
 	// Image lookup for sharing textures
 	typedef utHashTable<utPointerHashKey, Ogre::Texture *> ImageTextureHashMap;
 
-
-	// Complete list of all scenes contained in the file.
 	typedef utArray<gkScene *> Scenes;
 
 public:
@@ -59,31 +54,24 @@ public:
 	bool parse(int opts);
 
 
-	// Scene access 
-
 	gkScene *getSceneByName(const gkString &name);
 
 	GK_INLINE gkScene *getMainScene(void) {return m_activeScene;}
 	GK_INLINE Scenes  &getScenes(void)    {return m_scenes;}
 
 
-
-	// Internal registration.
+	///Internal manual loader registration (used mainly for Blender image to Ogre Texture ). 
 	void _registerLoader(Ogre::ManualResourceLoader *loader)  {m_loaders.push_back(loader);}
 
-
-	// Internal bParse access.
 	bParse::bBlenderFile *_getInternalFile(void) {GK_ASSERT(m_file); return m_file;}
 
 
 
-
-    // Access to the original group name for placing created resources in the same group.
+	///Access to the original group name. Used for placing created resources in the same group.
 	GK_INLINE const gkString &getGroup(void) {return m_group;}
 
 
-	// File path name.
-	GK_INLINE const gkString &getName(void) {return m_name;}
+ 	GK_INLINE const gkString &getFilePath(void) {return m_name;}
 
 
 protected:

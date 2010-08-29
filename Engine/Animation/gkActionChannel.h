@@ -50,7 +50,8 @@ enum gkActionChannelCode
 };
 
 
-// Channel holding splines for each manually controlled bone.
+///An action channel holds splines for each manually controlled bone.
+///Each spline may consist of one spline per gkActionChannelCode
 class gkActionChannel
 {
 public:
@@ -67,29 +68,27 @@ public:
 	gkActionChannel(gkAction *parent, gkBone *bone);
 	~gkActionChannel();
 
-	// Gain access to the pose transform
 	GK_INLINE gkTransformState &getPoseTransfom(void)
 	{ GK_ASSERT(m_bone); return m_bone->getPose(); }
 
-	// Gain access to the pose matrix
 	GK_INLINE gkMatrix4 getPoseMatrix(void)
 	{ GK_ASSERT(m_bone); return m_bone->getPose().toMatrix(); }
 
-	// Gain access to the bone
 	GK_INLINE gkBone *getBone(void)
 	{ GK_ASSERT(m_bone); return m_bone; }
 
-	// add spline for this channel
 	void addSpline(gkBezierSpline *spline);
 
-	// Gain access to all splines
 	const gkBezierSpline **getSplines(void);
 
-	// Total number of splines
 	int getNumSplines(void);
 
-	// evaluate curve for the given time.
-	// Sets the transform matrix
+
+	///Evaluates the curve for the given time. 
+	///time is the actual frame, eg; [1-25]
+	///delta is the time expressed in [0-1]
+	///weight is the abount of blending from a previous evaluation 
+	///to the next evaluation. expressed in [0-1]
 	void evaluate(gkScalar time, gkScalar delta, gkScalar weight);
 };
 

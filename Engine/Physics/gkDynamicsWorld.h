@@ -50,7 +50,6 @@ class gkDynamicsWorld
 {
 protected:
 
-	// Parent scene
 	gkScene                    *m_scene;
 	btDynamicsWorld            *m_dynamicsWorld;
 	btCollisionConfiguration   *m_collisionConfiguration;;
@@ -89,9 +88,7 @@ public:
 
 	void destroyObject(gkPhysicsController *cont);
 
-	// Gain raw access to the bullet world
 	GK_INLINE btDynamicsWorld *getBulletWorld(void) {GK_ASSERT(m_dynamicsWorld); return m_dynamicsWorld;}
-	// Access to parent scene
 	GK_INLINE gkScene *getScene(void)               {GK_ASSERT(m_scene); return m_scene;}
 
 	void enableDebugPhysics(bool enable, bool debugAabb);

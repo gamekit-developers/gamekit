@@ -38,7 +38,6 @@ struct gkBezierVertex
 };
 
 
-// Simple Bezier spline for IPO/Actions
 class gkBezierSpline
 {
 public:
@@ -91,12 +90,12 @@ public:
 	GK_INLINE int getNumVerts(void) const
 	{return(int)m_verts.size();}
 
-	// Gets the code for this spline
-	// ie; where to apply results, loc, rot...
+	///Gets the code bound to this spline.
+	///ie; where to apply results, loc, rot, ...
 	GK_INLINE int getCode(void) const
 	{ return m_code ;}
 
-	// Set how this spline is handled
+
 	GK_INLINE void setInterpolationMethod(const BezierInterpolation &meth)
 	{ m_interpMethod = meth; }
 

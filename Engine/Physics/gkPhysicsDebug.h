@@ -35,7 +35,6 @@
 class gkDynamicsWorld;
 
 
-// for debugging / building line lists
 class gkPhysicsDebug : public btIDebugDraw
 {
 public:
