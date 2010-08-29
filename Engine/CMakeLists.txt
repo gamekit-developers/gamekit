@@ -100,8 +100,12 @@ set(Core_HEADER
     Utils/utRandom.h
 )
 
-source_group(Core\\Header FILES ${Core_HEADER})
-source_group(Core\\Source FILES ${Core_SOURCE})
+if(APPLE)
+	source_group(Core FILES ${Core_HEADER} ${Core_SOURCE})
+else()
+	source_group(Core\\Header FILES ${Core_HEADER})
+	source_group(Core\\Source FILES ${Core_SOURCE})
+endif()
 
 # ---------------------------------------------------------
 # AI Files
@@ -136,8 +140,14 @@ set(AI_HEADER
     AI/gkFSM.h
 )
 
-source_group(AI\\Header FILES ${AI_HEADER})
-source_group(AI\\Source FILES ${AI_SOURCE})
+if(APPLE)
+	source_group(AI FILES ${AI_HEADER} ${AI_SOURCE})
+
+else()
+	source_group(AI\\Header FILES ${AI_HEADER})
+	source_group(AI\\Source FILES ${AI_SOURCE})
+endif()
+
 
 # ---------------------------------------------------------
 # Thread Files
@@ -164,8 +174,13 @@ set(Thread_HEADER
     Thread/gkThread.h
 )
 
-source_group(Thread\\Header FILES ${Thread_HEADER})
-source_group(Thread\\Source FILES ${Thread_SOURCE})
+if(APPLE)
+	source_group(Thread FILES ${Thread_HEADER} ${Thread_SOURCE})
+
+else()
+	source_group(Thread\\Header FILES ${Thread_HEADER})
+	source_group(Thread\\Source FILES ${Thread_SOURCE})
+endif()
 
 
 # ---------------------------------------------------------
@@ -203,10 +218,13 @@ set(Animation_HEADER
     #Animation/gkWorldAction.h
 )
 
+if(APPLE)
+	source_group(Animation FILES ${Animation_HEADER}  ${Animation_SOURCE})
 
-source_group(Animation\\Header FILES ${Animation_HEADER})
-source_group(Animation\\Source FILES ${Animation_SOURCE})
-
+else()
+	source_group(Animation\\Header FILES ${Animation_HEADER})
+	source_group(Animation\\Source FILES ${Animation_SOURCE})
+endif()
 
 # ---------------------------------------------------------
 # Logic Nodes
@@ -281,8 +299,13 @@ set(NLogic_HEADER
     Logic/gkStateMachineNode.h
 )
 
-source_group(LogicNodes\\Header FILES ${NLogic_HEADER})
-source_group(LogicNodes\\Source FILES ${NLogic_SOURCE})
+if(APPLE)
+	source_group(LogicNodes FILES ${NLogic_HEADER} ${NLogic_SOURCE})
+
+else()
+	source_group(LogicNodes\\Header FILES ${NLogic_HEADER})
+	source_group(LogicNodes\\Source FILES ${NLogic_SOURCE})
+endif()
 
 # ---------------------------------------------------------
 # Logic Bricks
@@ -362,8 +385,12 @@ set(Logic_HEADER
     LogicBricks/gkSoundActuator.h
 )
 
-source_group(LogicBricks\\Header                FILES ${Logic_HEADER})
-source_group(LogicBricks\\Source                FILES ${Logic_SOURCE})
+if(APPLE)
+	source_group(LogicBricks FILES ${Logic_HEADER} ${Logic_SOURCE})
+else()
+	source_group(LogicBricks\\Header FILES ${Logic_HEADER})
+	source_group(LogicBricks\\Source FILES ${Logic_SOURCE})
+endif()
 
 # ---------------------------------------------------------
 # BlendFile Loaders
@@ -386,9 +413,13 @@ set(Blend_HEADER
     Loaders/Blender2/gkBlenderSceneConverter.h
 )
 
-source_group(Blender\\Source FILES ${Blend_SOURCE})
-source_group(Blender\\Header FILES ${Blend_HEADER})
+if(APPLE)
+	source_group(Blender FILES  ${Blend_HEADER} ${Blend_SOURCE})
 
+else()
+	source_group(Blender\\Source FILES ${Blend_SOURCE})
+	source_group(Blender\\Header FILES ${Blend_HEADER})
+endif()
 
 # ---------------------------------------------------------
 # Constraints
@@ -411,8 +442,13 @@ set(Constraint_HEADER
     Constraints/gkLimitVelocityConstraint.h
 )
 
-source_group(Constraints\\Header FILES ${Constraint_HEADER})
-source_group(Constraints\\Source FILES ${Constraint_SOURCE})
+if(APPLE)
+	source_group(Constraints FILES ${Constraint_HEADER} ${Constraint_SOURCE})
+
+else()
+	source_group(Constraints\\Header FILES ${Constraint_HEADER})
+	source_group(Constraints\\Source FILES ${Constraint_SOURCE})
+endif()
 
 
 # ---------------------------------------------------------
@@ -449,9 +485,12 @@ set(Physics_HEADER
     Physics/gkVehicle.h
 )
 
-
-source_group(Physics\\Header FILES ${Physics_HEADER})
-source_group(Physics\\Source FILES ${Physics_SOURCE})
+if(APPLE)
+	source_group(Physics FILES ${Physics_HEADER} ${Physics_SOURCE})
+else()
+	source_group(Physics\\Header FILES ${Physics_HEADER})
+	source_group(Physics\\Source FILES ${Physics_SOURCE})
+endif()
 
 # ---------------------------------------------------------
 # Script Files
@@ -540,10 +579,17 @@ if (OGREKIT_COMPLIE_SWIG AND SWIG_FOUND)
         Script/Api/gsUtils.cpp
     )
 
-    source_group(Script\\Builtin   FILES ${Script_TMPL})
-    source_group(Script\\Includes  FILES ${SWIG_INPUT} ${Script_INC})
-    source_group(Script\\Header    FILES ${Script_HEADER})
-    source_group(Script\\Source    FILES ${Script_SOURCE})
+	if(APPLE)
+		source_group(Script/uiltin   FILES ${Script_TMPL})
+		source_group(Script/Includes  FILES ${SWIG_INPUT} ${Script_INC})
+	    	source_group(Script/Header    FILES ${Script_HEADER})
+	    	source_group(Script/Source    FILES ${Script_SOURCE})
+	else()
+    		source_group(Script\\Builtin   FILES ${Script_TMPL})
+    		source_group(Script\\Includes  FILES ${SWIG_INPUT} ${Script_INC})
+    		source_group(Script\\Header    FILES ${Script_HEADER})
+    		source_group(Script\\Source    FILES ${Script_SOURCE})
+	endif()
 
 
 else()
@@ -620,10 +666,17 @@ else()
         Script/Api/gsUtils.cpp
     )
     
-    source_group(Script\\Builtin   FILES ${Script_TMPL})
-    source_group(Script\\Include   FILES ${Script_INC})
-    source_group(Script\\Header    FILES ${Script_HEADER})
-    source_group(Script\\Source    FILES ${Script_SOURCE})
+	if(APPLE)
+		source_group(Script/Builtin   FILES ${Script_TMPL})
+		source_group(Script/Include   FILES ${Script_INC})
+		source_group(Script/Header    FILES ${Script_HEADER})
+		source_group(Script/Source    FILES ${Script_SOURCE})
+	else()
+		source_group(Script\\Builtin   FILES ${Script_TMPL})
+		source_group(Script\\Include   FILES ${Script_INC})
+		source_group(Script\\Header    FILES ${Script_HEADER})
+		source_group(Script\\Source    FILES ${Script_SOURCE})
+	endif()
 
 endif()
 
@@ -656,10 +709,12 @@ set(Sound_HEADER
     Sound/gkWaveform.h
 )
 
-source_group(Sound\\Header FILES ${Sound_HEADER})
-source_group(Sound\\Source FILES ${Sound_SOURCE})
-
-
+if(APPLE)
+	source_group(Sound FILES ${Sound_HEADER} ${Sound_SOURCE})
+else()
+	source_group(Sound\\Header FILES ${Sound_HEADER})
+	source_group(Sound\\Source FILES ${Sound_SOURCE})
+endif()
 
 
 # ---------------------------------------------------------
@@ -675,8 +730,13 @@ set(Network_HEADER
     Network/gkNetworkManager.h
 )
 
-source_group(Network\\Header FILES ${Network_HEADER})
-source_group(Network\\Source FILES ${Network_SOURCE})
+if(APPLE)
+	source_group(Network FILES ${Network_HEADER} ${Network_SOURCE})
+
+else()
+	source_group(Network\\Header FILES ${Network_HEADER})
+	source_group(Network\\Source FILES ${Network_SOURCE})
+endif()
 
 # ---------------------------------------------------------
 # Build setup
