@@ -35,9 +35,10 @@
 
 #include <Foundation/NSLock.h>
 
-enum {GK_HAS_DATA, GK_NO_DATA};
+class gkSyncObjPrivate 
+{
+	enum {GK_HAS_DATA, GK_NO_DATA};
 
-class gkSyncObjPrivate {
 public:
 	gkSyncObjPrivate(){
 		m_syncObj = [[NSConditionLock alloc] initWithCondition: GK_NO_DATA];
@@ -53,12 +54,13 @@ public:
 	} 
 	void signal() 
 	{
-		[m_syncObj lockWhenCondition: GK_NO_DATA]; 
+		[m_syncObj lock]; 
 		[m_syncObj unlockWithCondition: GK_HAS_DATA];
 	}
 
 private:
 	NSConditionLock *m_syncObj;
+
 };
 
 #endif
