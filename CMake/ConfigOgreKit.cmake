@@ -79,10 +79,10 @@ macro (configure_ogrekit ROOT OGREPATH)
 	  include_directories("${OGREPATH}/OgreMain/include/iPhone")
 	
 	  # Set build variables
-	  set(CMAKE_OSX_SYSROOT iphoneos4.0)
+	  set(CMAKE_OSX_SYSROOT iphoneos3.2)
 	  set(CMAKE_OSX_DEPLOYMENT_TARGET "")
 	  set(CMAKE_EXE_LINKER_FLAGS "-framework Foundation -framework CoreGraphics -framework QuartzCore -framework UIKit")
-	  set(XCODE_ATTRIBUTE_SDKROOT iphoneos4.0)
+	  set(XCODE_ATTRIBUTE_SDKROOT iphoneos3.2)
 	  set(OGRE_BUILD_RENDERSYSTEM_GLES TRUE CACHE BOOL "Forcing OpenGL ES RenderSystem for iPhone" FORCE)
 	  set(OGRE_STATIC TRUE CACHE BOOL "Forcing static build for iPhone" FORCE)
 	  set(MACOSX_BUNDLE_GUI_IDENTIFIER "com.yourcompany.\${PRODUCT_NAME:rfc1034identifier}")
