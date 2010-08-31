@@ -297,6 +297,10 @@ set(NLogic_HEADER
     Logic/gkPulseNode.h
     Logic/gkShowPhysicsNode.h
     Logic/gkStateMachineNode.h
+    Logic/gkQuaternionToEulerNode.h
+    Logic/gkEulerToQuaternionNode.h
+    Logic/gkVectorComposeNode.h
+    Logic/gkVectorDecomposeNode.h
 )
 
 if(APPLE)
