@@ -70,8 +70,8 @@ m_oldRadiusIsSet(false)
 	ADD_ISOCK(BLOCKING_RADIUS, 0.3f);
 	ADD_ISOCK(STIFNESS, 0.8f);
 	ADD_ISOCK(DAMPING, 0.3f);
-	ADD_OSOCK(CURRENT_ROLL, gkQuaternion::IDENTITY);
-	ADD_OSOCK(CURRENT_PITCH, gkQuaternion::IDENTITY)
+	ADD_OSOCK(CURRENT_ROLL, 0);
+	ADD_OSOCK(CURRENT_PITCH, 0)
 }
 
 gkCameraNode::~gkCameraNode()
@@ -194,8 +194,8 @@ void gkCameraNode::update(gkScalar tick)
 
 	calculateNewPosition(currentPosition, radius, tick);
 
-	SET_SOCKET_VALUE(CURRENT_ROLL, m_rollNode);
-	SET_SOCKET_VALUE(CURRENT_PITCH, m_pitchNode);
+	SET_SOCKET_VALUE(CURRENT_ROLL, m_rollNode.getRoll().valueDegrees());
+	SET_SOCKET_VALUE(CURRENT_PITCH, m_pitchNode.getPitch().valueDegrees());
 }
 
 void gkCameraNode::calculateNewPosition(const gkVector3& currentPosition, gkScalar rayLength, gkScalar tick)

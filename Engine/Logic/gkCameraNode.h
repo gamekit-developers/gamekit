@@ -82,8 +82,8 @@ public:
 	DECLARE_SOCKET_TYPE(BLOCKING_RADIUS, gkScalar);
 	DECLARE_SOCKET_TYPE(STIFNESS, gkScalar);
 	DECLARE_SOCKET_TYPE(DAMPING, gkScalar);
-	DECLARE_SOCKET_TYPE(CURRENT_ROLL, gkQuaternion);
-	DECLARE_SOCKET_TYPE(CURRENT_PITCH, gkQuaternion);
+	DECLARE_SOCKET_TYPE(CURRENT_ROLL, gkScalar);
+	DECLARE_SOCKET_TYPE(CURRENT_PITCH, gkScalar);
 
 	gkCameraNode(gkLogicTree *parent, size_t id);
 	~gkCameraNode();
