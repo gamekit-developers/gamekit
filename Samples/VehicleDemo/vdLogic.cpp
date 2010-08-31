@@ -137,11 +137,18 @@ void vdLogic::createCamera()
 	gkMathNode<gkScalar, MTH_MULTIPLY> *mathNode1 = m_tree->createNode<gkMathNode<gkScalar, MTH_MULTIPLY> >();
 	gkMathNode<gkScalar, MTH_SUBTRACT> *mathNode2 = m_tree->createNode<gkMathNode<gkScalar, MTH_SUBTRACT> >();
 	gkMathNode<gkScalar, MTH_DIVIDE> *mathNode3 = m_tree->createNode<gkMathNode<gkScalar, MTH_DIVIDE> >();
+	
+	gkQuaternionToEulerNode *quatNode = m_tree->createNode<gkQuaternionToEulerNode>();
+	gkVectorDecomposeNode *vecNode = m_tree->createNode<gkVectorDecomposeNode>();
+	
+	quatNode->getIN()->link(m_cameraNode->getCURRENT_ROLL());
+	
+	vecNode->getIN()->link(quatNode->getOUT());
 
 	mathNode1->getA()->link(m_vehicleNode->getZROT());
 	mathNode1->getB()->setValue(-1);
 	
-	mathNode2->getA()->link(m_cameraNode->getCURRENT_ROLL());
+	mathNode2->getA()->link(vecNode->getZ());
 	mathNode2->getB()->link(mathNode1->getRESULT());
 	
 	// I would like to damp here for smoother camera movement
