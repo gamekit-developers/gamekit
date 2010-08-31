@@ -36,16 +36,20 @@ class vdVehicleNode : public gkLogicNode
 public:
 	enum
 	{
+		UPDATE,
 		FRONT,
 		REAR,
 		LEFT,
-		RIGHT
+		RIGHT,
+		ZROT,
 	};
 
+	DECLARE_SOCKET_TYPE(UPDATE, bool);
 	DECLARE_SOCKET_TYPE(FRONT, bool);
 	DECLARE_SOCKET_TYPE(REAR, bool);
 	DECLARE_SOCKET_TYPE(LEFT, bool);
 	DECLARE_SOCKET_TYPE(RIGHT, bool);
+	DECLARE_SOCKET_TYPE(ZROT, gkScalar);
 
 	vdVehicleNode(gkLogicTree *parent, size_t id);
 	virtual ~vdVehicleNode() {}

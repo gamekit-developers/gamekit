@@ -27,103 +27,100 @@
 
 #include "vdVehicle.h"
 
-vdVehicle::vdVehicle(gkScene *scene)
-		: m_dynamicWorld(0), m_raycaster(0), m_vehicle(0), m_object(0), m_chassis(0), m_wheelShape(0), m_gaz(0), m_brake(0), m_steer(0)
+vdVehicle::vdVehicle(gkScene *scene, const gkString &chassis, const gkScalar &power, const gkScalar &brakes, const gkScalar &rearBrakeRatio, const gkScalar & maxSteering)
+		: m_scene(scene), m_dynamicWorld(0), m_raycaster(0), m_vehicle(0), m_object(0), m_chassis(0), 
+		m_gaz(0), m_brake(0), m_steer(0), m_enginePower(power), m_brakePower(brakes), m_rearBrakeRatio(rearBrakeRatio), m_maxSteering(maxSteering)
 {
-	btVector3 wheelDirectionCS0(0,0,-1);
-	btVector3 wheelAxleCS(1,0,0); 
-	float connectionHeight = 0.4;
-	float sideOffset = 0.73;
-	float frontOffest = 1.211;
-	float rearOffset = 1.282;
-	float wheelRadius = 0.357;
-	float wheelWidth = 0.2;
-	
-	float suspensionRestLength = 0.58;
-	float suspensionTravelCm = 12; //centimeters
-	float suspensionStiffness= 80.0;
-	float suspensionDamping = 0.3;
-	float suspensionCompression = 0.5;
-	float wheelFriction = 10;
-	float rollInfluence = 0.1;
-	
-	
-	m_object = scene->getObject("MiniG");
-	
-	if(!m_object->isInstanced())
-		m_object->createInstance();
-	
-	m_chassis = ((gkRigidBody*)m_object->getPhysicsController())->getBody();
-	m_chassis->setActivationState(DISABLE_DEACTIVATION);
-	
+
+	m_object = scene->getObject(chassis);
 	m_dynamicWorld = scene->getDynamicsWorld()->getBulletWorld();
 	
-	m_raycaster = new btDefaultVehicleRaycaster(m_dynamicWorld);
-	m_vehicle = new btRaycastVehicle(m_tuning,m_chassis,m_raycaster);
-	m_vehicle->setCoordinateSystem(0,2,1); //right,up,front
-	
-	m_dynamicWorld->addVehicle(m_vehicle);
-	
-	m_wheelShape = new btCylinderShapeX(btVector3(wheelWidth,wheelRadius,wheelRadius));
-	bool isFront = true;
-	btVector3 connectionPointCS0(sideOffset,frontOffest, connectionHeight);
-	m_vehicle->addWheel(connectionPointCS0,wheelDirectionCS0,wheelAxleCS,suspensionRestLength,wheelRadius,m_tuning,isFront);
-	
-	connectionPointCS0 = btVector3(-sideOffset,frontOffest, connectionHeight);
-	m_vehicle->addWheel(connectionPointCS0,wheelDirectionCS0,wheelAxleCS,suspensionRestLength,wheelRadius,m_tuning,isFront);
-	
-	isFront = false;
-	connectionPointCS0 = btVector3(sideOffset,-rearOffset, connectionHeight);
-	m_vehicle->addWheel(connectionPointCS0,wheelDirectionCS0,wheelAxleCS,suspensionRestLength,wheelRadius,m_tuning,isFront);
-	
-	connectionPointCS0 = btVector3(-sideOffset,-rearOffset, connectionHeight);
-	m_vehicle->addWheel(connectionPointCS0,wheelDirectionCS0,wheelAxleCS,suspensionRestLength,wheelRadius,m_tuning,isFront);
-	
-	for (int i=0;i<m_vehicle->getNumWheels();i++)
-	{
-		btWheelInfo& wheel = m_vehicle->getWheelInfo(i);
-		wheel.m_suspensionStiffness = suspensionStiffness;
-		wheel.m_wheelsDampingRelaxation = suspensionDamping;
-		wheel.m_wheelsDampingCompression = suspensionCompression;
-		wheel.m_frictionSlip = wheelFriction;
-		wheel.m_rollInfluence = rollInfluence;
-		wheel.m_maxSuspensionTravelCm = suspensionTravelCm;
-	}
+	createVehicle();
 }
 
 vdVehicle::~vdVehicle()
 {
 	delete m_vehicle;
 	delete m_raycaster;
-	delete m_wheelShape;
 }
 
 void vdVehicle::tick(gkScalar rate)
 {
-	float power=2000.0f;
-	float brake=300.0f;
-	float steer=0.2f;
+	updateVehicle();
+}
+
+void vdVehicle::createVehicle()
+{
+	if(!m_object->isInstanced())
+		m_object->createInstance();
 	
-	m_vehicle->applyEngineForce(m_gaz*power, 2);
-	m_vehicle->setBrake(m_brake*brake, 2);
-	m_vehicle->applyEngineForce(m_gaz*power, 3);
-	m_vehicle->setBrake(m_brake*brake, 3);
+	m_chassis = ((gkRigidBody*)m_object->getPhysicsController())->getBody();
+	m_chassis->setActivationState(DISABLE_DEACTIVATION);
 	
-	m_vehicle->setSteeringValue(m_steer*steer, 0);
-	m_vehicle->setSteeringValue(m_steer*steer, 1);
+	m_raycaster = new btDefaultVehicleRaycaster(m_dynamicWorld);
 	
+	m_vehicle = new btRaycastVehicle(m_tuning,m_chassis,m_raycaster);
+	m_vehicle->setCoordinateSystem(0,2,1);
+	
+	m_dynamicWorld->addVehicle(m_vehicle);
+}
+
+void vdVehicle::updateVehicle()
+{
 	btTransform trans;
+	gkTransformState gtrans;
+	
 	int i;
 	for (i=0;i<m_vehicle->getNumWheels();i++)
 	{
+		btWheelInfo &btwheel = m_vehicle->getWheelInfo(i);
+		
+		if (btwheel.m_bIsFrontWheel)
+		{
+			m_vehicle->applyEngineForce(m_gaz * m_enginePower, i);
+			m_vehicle->setSteeringValue(m_steer * m_maxSteering, i);
+			m_vehicle->setBrake(m_brake * m_brakePower, i);
+		}
+		else
+		{
+			m_vehicle->setBrake(m_brake * m_rearBrakeRatio * m_brakePower, i);
+		}
+	
 		//synchronize the wheels with the (interpolated) chassis worldtransform
 		m_vehicle->updateWheelTransform(i,true);
-		//draw wheels (cylinders)
-		trans = m_vehicle->getWheelInfo(i).m_worldTransform;
 		
-		if (m_dynamicWorld->getDebugDrawer())
-			m_dynamicWorld->debugDrawObject(trans, m_wheelShape, btVector3(0,1,0));
+		//update wheels position
+		trans = m_vehicle->getWheelInfo(i).m_worldTransform;
+		gtrans.setIdentity();
+		gtrans.loc = gkVector3(trans.getOrigin());
+		gtrans.rot = gkQuaternion(trans.getRotation().w(), trans.getRotation().x(), trans.getRotation().y(), trans.getRotation().z());
+		m_wheelObjects[i]->setTransform(gtrans);
 	}
+}
+
+void vdVehicle::addWheel(const gkString &name, gkScalar radius, gkVector3 connectionPoint, gkVector3 wheelDirection, 
+						 gkVector3 wheelAxle, bool isFront, gkScalar restLength, gkScalar stiffness, gkScalar dampingRelax,
+						 gkScalar dampingComp, gkScalar friction, gkScalar roll, gkScalar travelDist)
+{
+	gkGameObject *wheel = m_scene->getObject(name);
+	
+	if(!wheel->isInstanced())
+		wheel->createInstance();
+		
+	m_wheelObjects.push_back(wheel);
+	
+	btVector3 cp(connectionPoint.x, connectionPoint.y, connectionPoint.z);
+	btVector3 wd(wheelDirection.x, wheelDirection.y, wheelDirection.z);
+	btVector3 wa(wheelAxle.x, wheelAxle.y, wheelAxle.z);
+	
+	btWheelInfo & btwheel = m_vehicle->addWheel(cp ,wd, wa, restLength, radius, m_tuning, isFront);
+	
+	btwheel.m_suspensionStiffness = stiffness;
+	btwheel.m_wheelsDampingRelaxation = dampingRelax;
+	btwheel.m_wheelsDampingCompression = dampingComp;
+	btwheel.m_frictionSlip = friction;
+	btwheel.m_rollInfluence = roll;
+	btwheel.m_maxSuspensionTravelCm = travelDist;
 }
 
 void vdVehicle::setTransfrom(const gkTransformState &v)
@@ -135,16 +132,41 @@ void vdVehicle::setGaz(gkScalar ratio)
 {
 	m_gaz = ratio;
 }
+
 void vdVehicle::setBrake(gkScalar ratio)
 {
 	m_brake = ratio;
 }
+
 void vdVehicle::setSteer(gkScalar ratio)
 {
 	m_steer = ratio;
 }
 
-gkScalar vdVehicle::getCurrentSpeedKmHour()
+gkScalar vdVehicle::getCurrentSpeedKmHour(void)
 {
 	return m_vehicle->getCurrentSpeedKmHour();
 }
+
+gkScalar vdVehicle::getVelocityEulerZ(void)
+{
+	gkVector3 forward = gkVector3::UNIT_Y;
+	gkVector3 dir = gkVector3(m_vehicle->getRigidBody()->getLinearVelocity());
+	gkQuaternion rot;
+	dir.z = 0;
+	
+	if( gkAbs(dir.x)<0.1 && gkAbs(dir.y)<0.1)
+	{
+		rot = gkQuaternion(m_vehicle->getChassisWorldTransform().getRotation());
+	}
+	else
+	{
+		dir.normalise();
+		rot = dir.getRotationTo(forward);
+	}
+
+	gkVector3 eul = gkMathUtils::getEulerFromQuat(rot, true);
+	
+	return eul.z;
+}
+

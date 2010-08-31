@@ -31,10 +31,12 @@
 vdVehicleNode::vdVehicleNode(gkLogicTree *parent, size_t id)
 		:	gkLogicNode(parent, id), m_vehicle(0)
 {
+	ADD_ISOCK(UPDATE, true);
 	ADD_ISOCK(FRONT, false);
 	ADD_ISOCK(REAR, false);
 	ADD_ISOCK(LEFT, false);
 	ADD_ISOCK(RIGHT, false);
+	ADD_OSOCK(ZROT, 0);
 }
 
 bool vdVehicleNode::evaluate(gkScalar tick)
@@ -70,5 +72,9 @@ bool vdVehicleNode::evaluate(gkScalar tick)
 			m_vehicle->setSteer(-1.0);
 	}
 	
-	return false;
+	SET_SOCKET_VALUE(ZROT, m_vehicle->getVelocityEulerZ());
+	
+	bool update = GET_SOCKET_VALUE(UPDATE);
+	
+	return update && m_vehicle;
 }

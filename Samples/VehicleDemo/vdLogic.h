@@ -44,21 +44,24 @@ private:
 
 	void createInput();
 	void createVehicle();
+	void createCamera();
 
 public:
 
-	gkScene* m_scene;
+	gkScene *m_scene;
 
-	gkGameObject* m_camera;
+	gkGameObject *m_camera;
 	
-	gkLogicTree* m_tree;
+	gkLogicTree *m_tree;
 
-	gkKeyNode* m_upKeyNode;
-	gkKeyNode* m_downKeyNode;
-	gkKeyNode* m_leftKeyNode; 
-	gkKeyNode* m_rightKeyNode;
-	gkKeyNode* m_spaceKeyNode;
-	gkKeyNode* m_rKeyNode;
+	gkKeyNode *m_upKeyNode;
+	gkKeyNode *m_downKeyNode;
+	gkKeyNode *m_leftKeyNode; 
+	gkKeyNode *m_rightKeyNode;
+	gkKeyNode *m_spaceKeyNode;
+	gkKeyNode *m_rKeyNode;
+	
+	gkCameraNode *m_cameraNode;
 
 	vdVehicleNode *m_vehicleNode;
 	

@@ -34,22 +34,35 @@
 class vdVehicle
 {
 private:
+	gkScene                           *m_scene;
 	btDynamicsWorld                   *m_dynamicWorld;
 	btDefaultVehicleRaycaster         *m_raycaster;
 	btRaycastVehicle                  *m_vehicle;
 	btRaycastVehicle::btVehicleTuning  m_tuning;
 	gkGameObject                      *m_object;
+	utArray<gkGameObject*>             m_wheelObjects;
 	btRigidBody                       *m_chassis;
-	btCollisionShape                  *m_wheelShape;
 	
-	float m_gaz;
-	float m_brake;
-	float m_steer;
+	gkScalar m_enginePower;
+	gkScalar m_brakePower;
+	gkScalar m_rearBrakeRatio;
+	gkScalar m_maxSteering;
+	
+	gkScalar m_gaz;
+	gkScalar m_brake;
+	gkScalar m_steer;
+	
+	void createVehicle(void);
+	void updateVehicle(void);
 	
 public:
-	vdVehicle(gkScene *scene);
+	vdVehicle(gkScene *scene, const gkString &chassis, const gkScalar &power, const gkScalar &brakes, const gkScalar &rearBrakeRatio, const gkScalar & maxSteering);
 	~vdVehicle();
 	
+	void addWheel(const gkString &name, gkScalar radius, gkVector3 connectionPoint, gkVector3 wheelDirection, 
+						 gkVector3 wheelAxle, bool isFront, gkScalar restLength, gkScalar stiffness, gkScalar dampingRelax,
+						 gkScalar dampingComp, gkScalar friction, gkScalar roll, gkScalar travelDist);
+
 	void tick(gkScalar rate);
 	
 	void setTransfrom(const gkTransformState &v);
@@ -59,6 +72,7 @@ public:
 	void setSteer(gkScalar ratio);
 	
 	gkScalar getCurrentSpeedKmHour(void);
+	gkScalar getVelocityEulerZ(void);
 	
 };
 
