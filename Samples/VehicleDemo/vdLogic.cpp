@@ -94,7 +94,7 @@ void vdLogic::createVehicle()
 	
 	bool isFront = true;
 	
-	m_vehicle = new vdVehicle(m_scene, "MiniG", power, brake, brakeRatio, steer);
+	m_vehicle = new vdVehicle(m_scene, "MiniCollision", power, brake, brakeRatio, steer);
 	
 	connectionPoint = gkVector3(-sideOffset,frontOffest, connectionHeight);
 	m_vehicle->addWheel("wheel_MiniG_FT.L", radius, connectionPoint, wheelDirection, wheelAxle, isFront,
@@ -130,7 +130,7 @@ void vdLogic::createVehicle()
 void vdLogic::createCamera()
 {
 	gkObjectNode* centerObj = m_tree->createNode<gkObjectNode>();
-	centerObj->setOtherObject("MiniG");
+	centerObj->setOtherObject("MiniCollision");
 	
 	m_cameraNode = m_tree->createNode<gkCameraNode>();
 	
@@ -156,7 +156,7 @@ void vdLogic::createCamera()
 	mathNode3->getA()->link(mathNode2->getRESULT());
 	mathNode3->getB()->setValue(1);
 
-	m_cameraNode->getCENTER_OBJ()->setValue(m_scene->getObject("MiniG"));
+	m_cameraNode->getCENTER_OBJ()->setValue(m_scene->getObject("MiniCollision"));
 	m_cameraNode->getCENTER_POSITION()->link(centerObj->getOUT_POSITION());
 	m_cameraNode->getREL_X()->link(mathNode3->getRESULT());
 	m_cameraNode->getAVOID_BLOCKING()->setValue(true);
