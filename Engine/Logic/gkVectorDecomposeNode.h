@@ -36,13 +36,13 @@ public:
 
 	enum
 	{
-		IN,
+		VEC,
 		X,
 		Y,
 		Z
 	};
 
-	DECLARE_SOCKET_TYPE(IN, gkVector3);
+	DECLARE_SOCKET_TYPE(VEC, gkVector3);
 	DECLARE_SOCKET_TYPE(X, gkScalar);
 	DECLARE_SOCKET_TYPE(Y, gkScalar);
 	DECLARE_SOCKET_TYPE(Z, gkScalar);
@@ -50,7 +50,7 @@ public:
 	gkVectorDecomposeNode(gkLogicTree *parent, size_t id) 
 		: gkLogicNode(parent, id) 
 	{
-		ADD_ISOCK(IN, gkVector3::ZERO);
+		ADD_ISOCK(VEC, gkVector3::ZERO);
 		ADD_OSOCK(X, 0);
 		ADD_OSOCK(Y, 0);
 		ADD_OSOCK(Z, 0);
@@ -60,7 +60,7 @@ public:
 
 	void update(gkScalar tick)
 	{
-		gkVector3 vec = GET_SOCKET_VALUE(IN);
+		gkVector3 vec = GET_SOCKET_VALUE(VEC);
 		
 		SET_SOCKET_VALUE(X, vec.x);
 		SET_SOCKET_VALUE(Y, vec.y);

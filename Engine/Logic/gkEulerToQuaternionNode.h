@@ -36,27 +36,27 @@ public:
 
 	enum
 	{
-		IN,
-		OUT
+		EUL,
+		QUAT
 	};
 
-	DECLARE_SOCKET_TYPE(IN, gkVector3);
-	DECLARE_SOCKET_TYPE(OUT, gkQuaternion);
+	DECLARE_SOCKET_TYPE(EUL, gkVector3);
+	DECLARE_SOCKET_TYPE(QUAT, gkQuaternion);
 
 	gkEulerToQuaternionNode(gkLogicTree *parent, size_t id) 
 		: gkLogicNode(parent, id) 
 	{
-		ADD_ISOCK(IN, gkVector3::ZERO);
-		ADD_OSOCK(OUT, gkQuaternion::IDENTITY);
+		ADD_ISOCK(EUL, gkVector3::ZERO);
+		ADD_OSOCK(QUAT, gkQuaternion::IDENTITY);
 	}
 
 	virtual ~gkEulerToQuaternionNode() {}
 
 	void update(gkScalar tick)
 	{
-		gkQuaternion out = gkEuler(GET_SOCKET_VALUE(IN)).toQuaternion();
+		gkQuaternion out = gkEuler(GET_SOCKET_VALUE(EUL)).toQuaternion();
 		
-		SET_SOCKET_VALUE(OUT, out);
+		SET_SOCKET_VALUE(QUAT, out);
 	}
 
 };

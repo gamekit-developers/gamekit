@@ -39,13 +39,13 @@ public:
 		X,
 		Y,
 		Z,
-		OUT
+		VEC
 	};
 
 	DECLARE_SOCKET_TYPE(X, gkScalar);
 	DECLARE_SOCKET_TYPE(Y, gkScalar);
 	DECLARE_SOCKET_TYPE(Z, gkScalar);
-	DECLARE_SOCKET_TYPE(OUT, gkVector3);
+	DECLARE_SOCKET_TYPE(VEC, gkVector3);
 
 	gkVectorComposeNode(gkLogicTree *parent, size_t id) 
 		: gkLogicNode(parent, id) 
@@ -53,7 +53,7 @@ public:
 		ADD_ISOCK(X, 0);
 		ADD_ISOCK(Y, 0);
 		ADD_ISOCK(Z, 0);
-		ADD_OSOCK(OUT, gkVector3::ZERO);
+		ADD_OSOCK(VEC, gkVector3::ZERO);
 	}
 
 	virtual ~gkVectorComposeNode() {}
@@ -62,7 +62,7 @@ public:
 	{
 		gkVector3 out = gkVector3(GET_SOCKET_VALUE(X), GET_SOCKET_VALUE(Y), GET_SOCKET_VALUE(Z));
 		
-		SET_SOCKET_VALUE(OUT, out);
+		SET_SOCKET_VALUE(VEC, out);
 	}
 
 };
