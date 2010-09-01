@@ -141,9 +141,9 @@ void vdLogic::createCamera()
 	gkQuaternionToEulerNode *quatNode = m_tree->createNode<gkQuaternionToEulerNode>();
 	gkVectorDecomposeNode *vecNode = m_tree->createNode<gkVectorDecomposeNode>();
 	
-	quatNode->getIN()->link(m_cameraNode->getCURRENT_ROLL());
+	quatNode->getQUAT()->link(m_cameraNode->getCURRENT_ROLL());
 	
-	vecNode->getIN()->link(quatNode->getOUT());
+	vecNode->getVEC()->link(quatNode->getEUL());
 
 	mathNode1->getA()->link(m_vehicleNode->getZROT());
 	mathNode1->getB()->setValue(-1);
