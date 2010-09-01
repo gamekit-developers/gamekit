@@ -27,6 +27,7 @@
 #include "Nodes/nsMouseMotionNode.h"
 #include "Editors/nsSocketEditors.h"
 #include "nsNodeProperties.h"
+#if 0
 #include "Logic/gkMouseNode.h"
 
 
@@ -64,3 +65,5 @@ nsNodePropertyPage *nsMouseMotionNode::getEditor(nsPropertyManager *parent)
 { 
     return new nsNodePropertyPage(parent, this); 
 }
+
+#endif

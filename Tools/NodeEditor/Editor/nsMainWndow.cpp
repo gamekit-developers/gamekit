@@ -42,7 +42,7 @@
 #include "nsNodeManager.h"
 #include "nsNodeWriter.h"
 #include "nsNodeReader.h"
-#include "nsOgreKitPreview.h"
+//#include "nsOgreKitPreview.h"
 
 #include "Resource/Icon.xpm"
 
@@ -133,9 +133,9 @@ nsMainWindow::nsMainWindow()
 // ----------------------------------------------------------------------------
 nsMainWindow::~nsMainWindow()
 {
-    if (m_previewApp)
-        delete m_previewApp;
-    m_previewApp = 0;
+    //if (m_previewApp)
+    //    delete m_previewApp;
+    //m_previewApp = 0;
 
     if (IsShown())
         nsWorkspace::getSingleton().finalizeContext();
@@ -417,9 +417,9 @@ void nsMainWindow::quitEvent(wxCommandEvent &evt)
 // ----------------------------------------------------------------------------
 void nsMainWindow::playEvent(wxCommandEvent &evt)
 {
-    if (!m_previewApp)
-        m_previewApp = new nsOgreKitPreview();
-    m_previewApp->start();
+    //if (!m_previewApp)
+    //    m_previewApp = new nsOgreKitPreview();
+    //m_previewApp->start();
 }
 
 

@@ -124,7 +124,7 @@ void nsNodeTypeInfo::addType(nsNodeDef *ndef)
 // ----------------------------------------------------------------------------
 void nsNodeTypeInfo::registerTypes(void)
 {
-    addType(new nsSkeletalAnimNode());
-    addType(new nsMouseMotionNode());
-    addType(new nsObjectMotionNode());
+    //addType(new nsSkeletalAnimNode());
+    //addType(new nsMouseMotionNode());
+    //addType(new nsObjectMotionNode());
 }

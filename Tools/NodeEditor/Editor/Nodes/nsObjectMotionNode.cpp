@@ -28,6 +28,7 @@
 #include "nsSocketEditors.h"
 #include "Editors/nsSocketEditors.h"
 #include "nsNodeProperties.h"
+#if 0
 #include "Logic/gkMotionNode.h"
 
 
@@ -238,3 +239,4 @@ nsNodePropertyPage *nsObjectMotionNode::getEditor(nsPropertyManager *parent)
 { 
     return new nsObjectMotionNodePropertyPage(parent, this); 
 }
+#endif

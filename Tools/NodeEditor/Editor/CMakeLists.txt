@@ -92,7 +92,6 @@ set(ALL
 
 include_directories(. ${OGREKIT_INCLUDE})
 setup_wx()
-link_libraries(OgreKitCore)
 
 if (WIN32)
     add_executable(NodeEditor WIN32 ${ALL})

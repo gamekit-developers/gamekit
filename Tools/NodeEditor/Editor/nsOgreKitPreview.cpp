@@ -28,6 +28,7 @@
 #include "nsMainWindow.h"
 #include "nsNodeManager.h"
 #include "nsOgreKitPreview.h"
+#if 0
 #include "OgreKit.h"
 
 
@@ -346,3 +347,5 @@ void nsOgreKitPreview::start(void)
         }
     }
 }
+
+#endif

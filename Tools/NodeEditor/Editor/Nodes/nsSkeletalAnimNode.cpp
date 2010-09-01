@@ -27,6 +27,7 @@
 #include "Nodes/nsSkeletalAnimNode.h"
 #include "Editors/nsSocketEditors.h"
 #include "nsNodeProperties.h"
+#if 0
 #include "Logic/gkAnimationNode.h"
 
 
@@ -59,3 +60,4 @@ nsNodePropertyPage *nsSkeletalAnimNode::getEditor(nsPropertyManager *parent)
 { 
     return new nsNodePropertyPage(parent, this); 
 }
+#endif

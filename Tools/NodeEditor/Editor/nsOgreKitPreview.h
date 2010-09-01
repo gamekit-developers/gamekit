@@ -29,7 +29,7 @@
 
 #include <wx/thread.h>
 
-
+#if 0
 class nsThreadApp;
 
 // ----------------------------------------------------------------------------
@@ -52,5 +52,6 @@ public:
     void stop(void);
 };
 
+#endif
 
 #endif//_nsOgreKitPreview_h_
