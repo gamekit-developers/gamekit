@@ -167,7 +167,16 @@ bool gkWaveform::loadStreamImpl(void)
 			return true;
 		}
 		else
-			break;
+		{
+			// skip over unused chunks
+			int chunkSize;
+			m_reader->read(&chunkSize, sizeof(int));
+
+			if (swap)
+				gkWaveform_SwapInt(chunkSize);
+
+			m_reader->seek(chunkSize, SEEK_CUR);
+		}
 	}
 	return false;
 }
