@@ -183,6 +183,8 @@ bool gkBuffer::initialize(void)
 	if (m_isInit)
 		return false;
 
+	alGetError();
+
 	alGenBuffers(GK_SND_SAMPLES, m_buffer);
 	if (alErrorThrow("opening buffers"))
 	{
