@@ -1,6 +1,12 @@
 #----------------------------------------------------------
 cmake_minimum_required(VERSION 2.4)
 
+
+#SET(CMAKE_SUPPRESS_REGENERATION  1)
+#SET(CMAKE_USE_RELATIVE_PATHS 1)
+#SET(INTERNAL_CREATE_DISTRIBUTABLE_MSVC_PROJECTFILES 1)
+
+
 #----------------------------------------------------------
 if(COMMAND cmake_policy)
    cmake_policy(SET CMP0003 NEW)

@@ -35,7 +35,8 @@ Win32NativeMouse::Win32NativeMouse(InputManager *creator, bool buffered, bool gr
 	mLastX(0), mLastY(0), 
 	mMouseInit(false), mMouseMoved(false),
 	mGrab(grab), mDoGrab(grab),
-	mHide(hide), mDoHide(hide)
+	mHide(hide), mDoHide(hide),
+	mHandle(0)
 {
 }
 
@@ -100,6 +101,15 @@ void Win32NativeMouse::capture()
 	// clear previous states
 	mState.X.rel = mState.Y.rel = mState.Z.rel = 0;
 
+	if (!mMouseInit && mHandle)
+	{
+		RECT rect; POINT pos;
+		::GetWindowRect(mHandle, &rect);
+        pos.x = rect.left;
+        pos.y = rect.top;
+
+		::SetCursorPos(pos.x + (rect.right / 2), pos.y + (rect.bottom / 2));
+	}
 
 	if (!mEvents.empty())
 	{

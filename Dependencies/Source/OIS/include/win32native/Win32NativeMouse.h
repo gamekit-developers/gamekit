@@ -58,12 +58,16 @@ namespace OIS
 		 /** Process mouse events from the window system */
 		 void handleMouse( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
 
+		 void _setHandle(HWND hWnd) {mHandle = hWnd;}
+
+
 	private:
 		int mLastX, mLastY;
 		bool mMouseInit, mMouseMoved;
 		bool mGrab, mDoGrab;
 		bool mHide, mDoHide;
 
+		HWND mHandle;
 		typedef std::vector<WNMouseEvent> WNMouseEventVector;
 		WNMouseEventVector mEvents;
 	};

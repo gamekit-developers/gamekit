@@ -75,6 +75,7 @@ namespace OIS
 			procedure (old) to the new one defined here 
 		 */
 		WNDPROC mOldProc;
+		HWND mHandle;
 
 
 		/** Keyboard wrapper*/

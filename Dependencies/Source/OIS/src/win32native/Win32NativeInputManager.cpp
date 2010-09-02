@@ -50,7 +50,7 @@ static LRESULT WINAPI OIS_SystemProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
 //-------------------------------------------------------------//
 Win32NativeInputManager::Win32NativeInputManager() :
 		OIS::InputManager("Win32NativeInputManager"),
-		mKeyboard(0), mMouse(0), mOldProc(0), mGrab(true), mHide(true)
+		mKeyboard(0), mMouse(0), mOldProc(0), mGrab(true), mHide(true), mHandle(0)
 {
 	if (gMgr)
 		OIS_EXCEPT(E_InvalidParam, "Win32NativeInputManager::Win32NativeInputManager >> Only one InputManager supported by this implementation");
@@ -73,12 +73,12 @@ void Win32NativeInputManager::_initialize(ParamList &paramList)
 	if (it == paramList.end())
 		OIS_EXCEPT(E_InvalidParam, "Win32NativeInputManager::Win32NativeInputManager >> No HWND found!");
 
-	HWND hWnd= (HWND)strtoul(it->second.c_str(), 0, 10);
-	if (IsWindow(hWnd) == 0)
+	mHandle = (HWND)strtoul(it->second.c_str(), 0, 10);
+	if (IsWindow(mHandle) == 0)
 		OIS_EXCEPT(E_General, "Win32NativeInputManager::Win32NativeInputManager >> The sent HWND is not valid!");
 
 	// save old
-	mOldProc= (WNDPROC)::GetWindowLongPtr(hWnd, GWL_WNDPROC);
+	mOldProc= (WNDPROC)::GetWindowLongPtr(mHandle, GWL_WNDPROC);
 	if (!mOldProc)
 		OIS_EXCEPT(E_General, "Win32NativeInputManager::Win32NativeInputManager >> Window has no existing procedure");
 
@@ -97,7 +97,7 @@ void Win32NativeInputManager::_initialize(ParamList &paramList)
 	if (mOldProc != 0)
 	{
 		// add subclass
-		::SetWindowLongPtr(hWnd, GWL_WNDPROC, (LONG_PTR)OIS_SystemProc);
+		::SetWindowLongPtr(mHandle, GWL_WNDPROC, (LONG_PTR)OIS_SystemProc);
 	}
 }
 
@@ -184,7 +184,10 @@ Object* Win32NativeInputManager::createObject(InputManager* creator, Type iType,
 		break;
 	case OISMouse:
 		if (!mMouse)
+		{
 			ret= mMouse= new Win32NativeMouse(this, bufferMode, mGrab, mHide);
+			mMouse->_setHandle(mHandle);
+		}
 		break;
 	}
 	return ret;
