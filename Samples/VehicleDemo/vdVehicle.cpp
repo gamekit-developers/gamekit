@@ -150,23 +150,23 @@ gkScalar vdVehicle::getCurrentSpeedKmHour(void)
 
 gkScalar vdVehicle::getVelocityEulerZ(void)
 {
-	gkVector3 forward = gkVector3::UNIT_Y;
-	gkVector3 dir = gkVector3(m_vehicle->getRigidBody()->getLinearVelocity());
 	gkQuaternion rot;
-	dir.z = 0;
+	gkVector3 eul;
 	
-	if( gkAbs(dir.x)<0.1 && gkAbs(dir.y)<0.1)
-	{
-		rot = gkQuaternion(m_vehicle->getChassisWorldTransform().getRotation());
-	}
-	else
-	{
-		dir.normalise();
-		rot = dir.getRotationTo(forward);
-	}
-
-	gkVector3 eul = gkMathUtils::getEulerFromQuat(rot, true);
+	gkVector3 dir = gkVector3(m_vehicle->getRigidBody()->getLinearVelocity());
 	
-	return eul.z;
+	if( gkAbs(dir.x)<0.7 && gkAbs(dir.y)<0.7)
+	{
+		rot = m_object->getWorldOrientation();
+		eul = gkMathUtils::getEulerFromQuat(rot, true);
+	
+		return eul.z;
+	}
+	
+	dir.z=0;
+	rot = dir.getRotationTo(gkVector3::UNIT_Y);
+	eul = gkMathUtils::getEulerFromQuat(rot, true);
+	
+	return -eul.z;
 }
 

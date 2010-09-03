@@ -134,39 +134,67 @@ void vdLogic::createCamera()
 	
 	m_cameraNode = m_tree->createNode<gkCameraNode>();
 	
-	gkMathNode<gkScalar, MTH_MULTIPLY> *mathNode1 = m_tree->createNode<gkMathNode<gkScalar, MTH_MULTIPLY> >();
-	gkMathNode<gkScalar, MTH_SUBTRACT> *mathNode2 = m_tree->createNode<gkMathNode<gkScalar, MTH_SUBTRACT> >();
-	gkMathNode<gkScalar, MTH_DIVIDE> *mathNode3 = m_tree->createNode<gkMathNode<gkScalar, MTH_DIVIDE> >();
-	
 	gkQuaternionToEulerNode *quatNode = m_tree->createNode<gkQuaternionToEulerNode>();
 	gkVectorDecomposeNode *vecNode = m_tree->createNode<gkVectorDecomposeNode>();
+	
+	gkMathNode<gkScalar, MTH_SUBTRACT> *mathNode1 = m_tree->createNode<gkMathNode<gkScalar, MTH_SUBTRACT> >();
+	gkMathNode<gkScalar, MTH_DIVIDE> *mathNode2 = m_tree->createNode<gkMathNode<gkScalar, MTH_DIVIDE> >();
+	
+	gkIfNode<gkScalar, CMP_GREATER> *ifNode1 = m_tree->createNode<gkIfNode<gkScalar, CMP_GREATER> >();
+	gkIfNode<gkScalar, CMP_LESS> *ifNode2 = m_tree->createNode<gkIfNode<gkScalar, CMP_LESS> >();
+	
+	gkMathNode<gkScalar, MTH_ADD> *mathNode3 = m_tree->createNode<gkMathNode<gkScalar, MTH_ADD> >();
+	gkMathNode<gkScalar, MTH_ADD> *mathNode4 = m_tree->createNode<gkMathNode<gkScalar, MTH_ADD> >();
+	
+	gkMultiplexerNode<gkScalar> *mpxNode1 = m_tree->createNode<gkMultiplexerNode<gkScalar> >();
+	gkMultiplexerNode<gkScalar> *mpxNode2 = m_tree->createNode<gkMultiplexerNode<gkScalar> >();
 	
 	quatNode->getQUAT()->link(m_cameraNode->getCURRENT_ROLL());
 	
 	vecNode->getVEC()->link(quatNode->getEUL());
-
-	mathNode1->getA()->link(m_vehicleNode->getZROT());
-	mathNode1->getB()->setValue(-1);
 	
-	mathNode2->getA()->link(vecNode->getZ());
-	mathNode2->getB()->link(mathNode1->getRESULT());
+	// Diff between the actual roll and the one we want
+	mathNode1->getA()->link(vecNode->getZ());
+	mathNode1->getB()->link(m_vehicleNode->getZROT());
 	
-	// I would like to damp here for smoother camera movement
-	// but it does not work properly with the camera node
-	mathNode3->getA()->link(mathNode2->getRESULT());
-	mathNode3->getB()->setValue(1);
+	// Always go the shortest way
+	
+	ifNode1->getA()->link(mathNode1->getRESULT());
+	ifNode1->getB()->setValue(180);
+	
+	mathNode3->getA()->link(mathNode1->getRESULT());
+	mathNode3->getB()->setValue(-360);
+	
+	mpxNode1->getSEL()->link(ifNode1->getIS_TRUE());
+	mpxNode1->getINPUT_TRUE()->link(mathNode3->getRESULT());
+	mpxNode1->getINPUT_FALSE()->link(mathNode1->getRESULT());
+	
+	ifNode2->getA()->link(mathNode1->getRESULT());
+	ifNode2->getB()->setValue(-180);
+	
+	mathNode4->getA()->link(mathNode1->getRESULT());
+	mathNode4->getB()->setValue(360);
+	
+	mpxNode2->getSEL()->link(ifNode2->getIS_TRUE());
+	mpxNode2->getINPUT_TRUE()->link(mathNode4->getRESULT());
+	mpxNode2->getINPUT_FALSE()->link(mpxNode1->getOUTPUT());
+	
+	// Damping
+	// Ideally this should be proportional to time step
+	mathNode2->getA()->link(mpxNode2->getOUTPUT());
+	mathNode2->getB()->setValue(50);
 
 	m_cameraNode->getCENTER_OBJ()->setValue(m_scene->getObject("MiniCollision"));
 	m_cameraNode->getCENTER_POSITION()->link(centerObj->getOUT_POSITION());
-	m_cameraNode->getREL_X()->link(mathNode3->getRESULT());
+	m_cameraNode->getREL_X()->link(mathNode2->getRESULT());
 	m_cameraNode->getAVOID_BLOCKING()->setValue(true);
 	m_cameraNode->getTARGET()->setValue(m_camera);
-	m_cameraNode->getMIN_Z()->setValue(2.0f);
+	m_cameraNode->getMIN_Z()->setValue(4.5f);
 	m_cameraNode->getMAX_Z()->setValue(8);
 	m_cameraNode->getINITIAL_ROLL()->setValue(0);
 	m_cameraNode->getMAX_ROLL()->setValue(360);
 	m_cameraNode->getMIN_ROLL()->setValue(-360);
-	m_cameraNode->getINITIAL_PITCH()->setValue(75);
+	m_cameraNode->getINITIAL_PITCH()->setValue(76);
 	m_cameraNode->getKEEP_DISTANCE()->setValue(true);
 }
 
