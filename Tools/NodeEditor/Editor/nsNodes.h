@@ -24,20 +24,32 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _nsObjectMotionNode_h_
-#define _nsObjectMotionNode_h_
+#ifndef _nsNodes_h_
+#define _nsNodes_h_
 
 #include "nsNode.h"
 
-// ----------------------------------------------------------------------------
-class nsObjectMotionNode : public nsNodeDef
-{
-public:
-    nsObjectMotionNode();
-    virtual ~nsObjectMotionNode() {}
+// Inputs
 
-    nsNodePropertyPage *getEditor(nsPropertyManager *parent);
-    nsNodeData* getData(void);
-};
+NS_DECLARE_NODE(nsMouseMotionNode);
+NS_DECLARE_NODE(nsMouseButtonNode);
 
-#endif//_nsObjectMotionNode_h_
+
+// Outputs
+
+NS_DECLARE_NODE(nsObjectMotionNode)
+NS_DECLARE_NODE(nsAnimationNode)
+
+
+
+// SocketConverters
+
+NS_DECLARE_NODE(nsBoolToIntNode);
+NS_DECLARE_NODE(nsBoolToFloatNode);
+NS_DECLARE_NODE(nsIntToBoolNode);
+NS_DECLARE_NODE(nsIntToFloatNode);
+NS_DECLARE_NODE(nsFloatToBoolNode);
+NS_DECLARE_NODE(nsFloatToIntNode);
+
+
+#endif//_nsNodes_h_

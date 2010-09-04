@@ -102,32 +102,10 @@ void nsPropertyPage::initialize(void)
     m_tree->createProperties();
 
 
-    // create node types
+	m_nodeTypes = new nsNodePropertyPage(m_manager);
+    m_manager->AddPage(wxEmptyString, wxNullBitmap, m_nodeTypes);
+	m_nodeTypes->createProperties();
 
-    nsNodeListClass &types = nsNodeTypeInfo::getSingleton().getTypes();
-
-    m_nodeTypes.resize(types.size(), 0);
-
-
-    nsNodeDefIterator iter = nsNodeDefIterator(types);
-    while (iter.hasMoreElements())
-    {
-        nsNodeDef *type = iter.getNext();
-
-        int typeId = type->getId();
-        if (typeId >=0 && typeId < (int)types.size())
-        {
-            // editor for node types
-            nsNodePropertyPage *props = type->getEditor(m_manager);
-            if (props != 0)
-            {
-                // push the page
-                m_manager->AddPage(wxEmptyString, wxNullBitmap, props);
-                props->createProperties();
-            }
-            m_nodeTypes[typeId] = props;
-        }
-    }
 
     m_manager->SelectPage(m_default);
     Refresh();
@@ -164,24 +142,14 @@ void nsPropertyPage::treeEvent(nsTreeEvent &evt)
 // ----------------------------------------------------------------------------
 void nsPropertyPage::nodeEvent(nsNodeEvent &evt)
 {
-    if (evt.getId() == NS_NODE_ADD || evt.getId() == NS_NODE_SELECT)
+   if (evt.getId() == NS_NODE_ADD || evt.getId() == NS_NODE_SELECT)
     {
         nsNode *node = evt.ptr();
         if (node)
         {
-            nsNodeDef *type = node->getType();
-
-            int typeId = type->getId();
-            if (typeId >=0 && typeId < (int)m_nodeTypes.size())
-            {
-                nsNodePropertyPage *page = m_nodeTypes[typeId];
-                if (page)
-                {
-                    page->setNode(node);
-                    page->selectRoot();
-                    m_manager->SelectPage(page);
-                }
-            }
+            m_nodeTypes->setNode(node);
+            m_nodeTypes->selectRoot();
+            m_manager->SelectPage(m_nodeTypes);
         }
     }
     else if (evt.getId() == NS_NODE_REMOVE || evt.getId() == NS_NODE_DESELECT)
@@ -189,52 +157,11 @@ void nsPropertyPage::nodeEvent(nsNodeEvent &evt)
         nsNode *node = evt.ptr();
         if (node)
         {
-            nsNodeDef *type = node->getType();
-
-            int typeId = type->getId();
-            if (typeId >=0 && typeId < (int)m_nodeTypes.size())
-            {
-                nsNodePropertyPage *page = m_nodeTypes[typeId];
-                if (page)
-                    page->setNode(0);
-            }
-
+            m_nodeTypes->setNode(0);
             m_tree->setTree(node->getParent());
             m_manager->SelectPage(m_tree);
         }
         else
             m_manager->SelectPage(m_default);
     }
-
-}
-
-
-
-// ----------------------------------------------------------------------------
-void nsPropertyPage::socketEvent(nsSocketEvent &evt)
-{
-    nsSocket *sock = evt.ptr();
-    if (sock)
-    {
-        // find page from socket
-        nsNode *node = sock->getParent();
-
-        nsNodeDef *type = node->getType();
-        if (type->getId() >=0 && type->getId() < (int)m_nodeTypes.size())
-        {
-            nsNodePropertyPage *page = m_nodeTypes[type->getId()];
-            if (page)
-            {
-                if (page->GetIndex() != m_manager->GetSelectedPage())
-                {
-                    page->setNode(node);
-                    m_manager->SelectPage(page);
-                }
-
-                page->socketEvent(evt);
-            }
-        }
-    }
-    else
-        m_manager->SelectPage(m_default);
 }

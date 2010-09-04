@@ -61,7 +61,7 @@ NScolor ColorFromWxColor(const wxColour &v)
                1.f);
 }
 
-static const NScolor GREY[NS_PAL_MAX] = {0x292929FF, 0x808080FF, 0x0000004B, 0xFFFFFFFF, 0xFFFFFFC0, 0x000000FF};
+static const NScolor GREY[NS_PAL_MAX] = {0x292929FF, 0x808080FF, 0x808080FF, 0x0000004B, 0xFFFFFFFF, 0xFFFFFFC0, 0x000000FF};
 static NScolor  nsSysHighlight;
 static NScolor  nsSysHighlightGrad;
 
@@ -975,13 +975,10 @@ void nsRenderSystem::paintSocket(nsNode *parent, nsSocket *sock)
 
         pth.clear();
         pth.rect(base);
-        pth.makeUV();
-        m_context->setImage(pal.getImage());
-        m_context->fill(pth.buf(),      nsWHITE);
+		m_context->fill(pth.buf(),      pal.getDark());
         m_context->stroke(pth.buf(),    parent->getState() == NDST_INACTIVE ? pal.getShadow() : pal.getLight());
-        m_context->setImage(0);
 
-        if (sock->isConnected() || sock->isConnectedOut())
+		if (sock->isConnected() || sock->isConnectedOut())
         {
             trect = base;
             trect.setSize(trect.getSize() * .5f);
@@ -1027,11 +1024,11 @@ void nsRenderSystem::paintSocket(nsNode *parent, nsSocket *sock)
 // ----------------------------------------------------------------------------
 void nsRenderSystem::drawNode(nsNode *nd)
 {
+
     NSrect trect = nd->getRect();
     trect.expand(20, 20);
 
     nsPath &pth = *m_context->m_workPath;
-
     nsNodeDef *type = nd->getType();
 
     // see if rect is clipped
@@ -1045,7 +1042,9 @@ void nsRenderSystem::drawNode(nsNode *nd)
 
         // drop shadow
         m_context->setImage(0);
-        pth.clear();
+
+
+		pth.clear();
         trect = base;
         trect.x += 5; trect.y += 5;
         pth.rect(trect);
@@ -1053,27 +1052,25 @@ void nsRenderSystem::drawNode(nsNode *nd)
         if ( nd->getState() != NDST_INACTIVE )
             m_context->stroke(pth.buf(), GREY[NS_PAL_DARK]);
 
-        nsPath &pth = *m_context->m_workPath;
+        
+		
+		
+		nsPath &pth = *m_context->m_workPath;
         pth.clear();
         pth.rect(base);
-        pth.makeUV();
-        m_context->setImage(m_context->m_nodeBack);
-        m_context->fill(pth.buf(),      nsWHITE);
-        m_context->stroke(pth.buf(),    nd->getState() == NDST_INACTIVE ? pal.getShadow() : pal.getLight());
-        m_context->setImage(0);
+		m_context->fill(pth.buf(),   pal.getMiddle());
+        m_context->stroke(pth.buf(), nd->getState() == NDST_INACTIVE ? pal.getShadow() : pal.getLight());
 
         // header
         trect = base;
-        trect.height    = 24;
+        trect.height = 24;
         pth.clear();
         pth.rect(trect);
-        pth.makeUV();
-        m_context->setImage(pal.getImage());
-        m_context->fill(pth.buf(), nsWHITE);
-        m_context->setImage(0);
+		m_context->fill(pth.buf(), pal.getDark());
         m_context->stroke(pth.buf(), nd->getState() == NDST_INACTIVE ? pal.getShadow() : pal.getLight());
 
-        m_context->displayString(   m_context->m_font,
+
+		m_context->displayString(   m_context->m_font,
                                     nsHeaderTextSize,
                                     name.c_str(),
                                     name.size(),
@@ -1081,13 +1078,22 @@ void nsRenderSystem::drawNode(nsNode *nd)
                                     trect.x + 3.5f,
                                     trect.y + 3.5f);
         // header outline
-        m_context->stroke(pth.buf(), pal.getLight());
+       // m_context->stroke(pth.buf(), pal.getLight());
 
         pth.clear();
-        pth.moveTo(trect.x,             trect.getBottom());
-        pth.lineTo(trect.getRight(),    trect.getBottom());
+        pth.moveTo(trect.x, trect.getBottom());
+        pth.lineTo(trect.getRight(), trect.getBottom());
         m_context->stroke(pth.buf(), nsBLACK, false);
-    }
+
+        pth.clear();
+
+
+		//NSrect rct = nd->getEditRect();
+  //      pth.rect(rct);
+		//m_context->fill(pth.buf(), pal.getLight());
+		//m_context->stroke(pth.buf(), pal.getShadow());
+	
+	}
 
     nsSocket *sock;
     sock = nd->getFirstInput();

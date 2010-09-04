@@ -71,7 +71,7 @@ BEGIN_EVENT_TABLE( nsMainWindow, wxFrame )
     EVT_MENU(NS_ID_SELECT_ALL,  nsMainWindow::selectAllEvent)
 
     // view menu
-    EVT_MENU(NS_ID_SOLNSION,    nsMainWindow::solutionCheckEvent )
+    EVT_MENU(NS_ID_SOLUTION,    nsMainWindow::solutionCheckEvent )
     EVT_MENU(NS_ID_PROPERTIES,  nsMainWindow::propertiesCheckEvent )
     EVT_MENU(NS_ID_FULLSCREEN,  nsMainWindow::showFullscreenEvent )
 
@@ -246,7 +246,7 @@ void nsMainWindow::loadMenus(void)
 {
     wxMenuBar *menubar = new wxMenuBar();
     wxMenuItem *item;
-    wxMenu *file, *edit, *view, *game;
+    wxMenu *file, *edit, *view;
 
     // --- File Menu ---
 
@@ -288,7 +288,7 @@ void nsMainWindow::loadMenus(void)
     // --- View Menu ---
 
     view = new wxMenu();
-    item = view->Append(NS_ID_SOLNSION, wxT("Solution Explorer\tF2"));
+    item = view->Append(NS_ID_SOLUTION, wxT("Solution Explorer\tF2"));
     item->SetCheckable(true); item->Check(m_auiManager->GetPane(nsSolutionBrowser::getSingletonPtr()).IsShown());
     item->SetHelp(wxT("Show Solution Explorer."));
     m_viewSolution = item;
@@ -308,6 +308,7 @@ void nsMainWindow::loadMenus(void)
     menubar->Append(view, wxT("View"));
 
     // --- Game Menu ---
+#if 0
 
     game = new wxMenu();
 
@@ -317,6 +318,7 @@ void nsMainWindow::loadMenus(void)
     item = game->Append(NS_ID_PLAY, "Play\tF5");
     item->SetHelp("Play blend file");
     menubar->Append(game, wxT("Game"));
+#endif
 
     SetMenuBar(menubar);
 
@@ -525,10 +527,10 @@ void nsMainWindow::propertiesCheckEvent( wxCommandEvent &evt )
 void nsMainWindow::paneCloseEvent(wxAuiManagerEvent &evt)
 {
     int id = evt.GetPane()->window->GetId();
-    if (id == NS_WID_SOLNSION)
-        m_viewProperties->Check(false);
-    else if (id == NS_WID_PROPERTY)
+    if (id == NS_WID_SOLUTION)
         m_viewSolution->Check(false);
+    else if (id == NS_WID_PROPERTY)
+        m_viewProperties->Check(false);
 }
 
 
@@ -557,7 +559,7 @@ void nsMainWindow::nodeAddEvent(wxCommandEvent &evt)
     nsNodeTree *tree = 0;
     if (m_addMenuCaller && m_addMenuCaller->GetId() == NS_WID_CANVAS)
         tree = static_cast<nsNodeCanvas *>(m_addMenuCaller)->getTree();
-    else if (m_addMenuCaller && m_addMenuCaller->GetId() == NS_WID_SOLNSION)
+    else if (m_addMenuCaller && m_addMenuCaller->GetId() == NS_WID_SOLUTION)
         tree = static_cast<nsSolutionBrowser *>(m_addMenuCaller)->getSelectedTree();
 
 
@@ -592,7 +594,7 @@ void nsMainWindow::treeAddEvent(wxCommandEvent &evt)
     // send events
     nsSolutionBrowser::getSingleton().treeEvent(treeEvent);
     nsWorkspace::getSingleton().treeEvent(treeEvent);
-    nsPropertyPage::getSingleton().treeEvent(treeEvent);
+    //nsPropertyPage::getSingleton().treeEvent(treeEvent);
 }
 
 

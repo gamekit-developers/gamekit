@@ -28,16 +28,10 @@
 #define _nsNode_h_
 
 #include "nsCommon.h"
-
-
-// type definitions
 #include "nsNodeTypeInfo.h"
-
-// instance types
 #include "nsSocket.h"
 #include "nsNodeTree.h"
 
-// ----------------------------------------------------------------------------
 
 class nsNodeDef : public nsNodeListClass::Link
 {
@@ -93,12 +87,9 @@ public:
     void alignOutputs(nsSocketAlignment align);
 
 
-    // custom editor
-    virtual class nsNodePropertyPage *getEditor(class nsPropertyManager *parent) = 0;
-
-
     // custom node data
     virtual nsNodeData* getData(void) = 0;
+	virtual void edit(nsNode *nd) {}
 };
 
 
@@ -144,17 +135,43 @@ public:
 
     NS_INLINE nsNodeData        *getData(void)                          {return m_data;}
 
+    NS_INLINE NSrect            getEditRect(void)
+	{
+		return NSrect((m_rect.getRight() - (nsNodeEditSize + nsNodeEditOffset)), m_rect.y + nsNodeEditOffset, nsNodeEditSize, nsNodeEditSize);
+	}
+
         
     void            unlink(void);
     nsNode          *clone(nsNodeTree *newTree = 0);
 
-    // position updates
     void            translate(NSfloat x, NSfloat y);
     void            setPosition(NSfloat x, NSfloat y);
 
     NS_INLINE void  translate(const NSvec2 &v)      { translate(v.x, v.y); }
     NS_INLINE void  setPosition(const NSvec2 &v)    { setPosition(v.x, v.y); }
 };
+
+
+#define NS_DECLARE_NODE(cls)\
+class cls  : public nsNodeDef { \
+public: \
+    cls();\
+    virtual ~cls(); \
+	nsNodeData* getData(void); \
+	void edit(nsNode *node);\
+};
+
+
+#define NS_IMPLEMENT_NODE(cls, editor, data)\
+	cls::~cls() {}\
+	nsNodeData* cls::getData(void) {return new data(this); }\
+	void cls::edit(nsNode *node)\
+	{\
+		editor dia(nsMainWindow::getSingletonPtr(), node);\
+		if (dia.ShowModal() == wxID_OK)\
+			dia.Flush();\
+	}\
+	cls::cls()
 
 
 

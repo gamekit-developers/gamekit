@@ -31,6 +31,7 @@
 enum nsColorPaletteEnum
 {
     NS_PAL_DARK=0,
+    NS_PAL_MIDDLE,
     NS_PAL_LIGHT,
     NS_PAL_SHADOW,
     NS_PAL_HIGHLIGHT,
@@ -54,10 +55,20 @@ enum nsNodeTypes
     NT_SKELETON,
 
     NT_MOUSE_MOTION,
+    NT_MOUSE_BUTTON,
 
-    NT_OBJECT_MOTION,
+	NT_OBJECT_MOTION,
 
-    NT_MAX
+	NT_BTI,
+	NT_BTF,
+
+	NT_ITB,
+	NT_ITF,
+
+	NT_FTB,
+	NT_FTI,
+
+	NT_MAX
 };
 
 
@@ -72,10 +83,13 @@ enum nsGroupTypes
     NT_GROUP_ANIMATION,
     NT_GROUP_USER_INPUT,
     NT_GROUP_OUTPUT,
+    NT_GROUP_CONVERTER,
     NT_GROUP_MAX,
 };
 
 static const float nsNodeHeaderSize       = 24.f;
+static const float nsNodeEditSize         = 20.f;
+static const float nsNodeEditOffset       = 2.f;
 static const float nsDefaultSocketSize    = 14.f;
 static const float nsDefaultSocketOffset  = (nsDefaultSocketSize + 5.f);
 

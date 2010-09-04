@@ -72,10 +72,10 @@ public:
 // ----------------------------------------------------------------------------
 // Event tables
 BEGIN_EVENT_TABLE( nsSolutionBrowser, wxPanel )
-    EVT_TREE_SEL_CHANGED(NS_WID_SOLNSION_DATA,      nsSolutionBrowser::itemChangeEvent)
-    EVT_TREE_ITEM_ACTIVATED(NS_WID_SOLNSION_DATA,   nsSolutionBrowser::itemActivatedEvent)
-    EVT_TREE_ITEM_MENU(NS_WID_SOLNSION_DATA,        nsSolutionBrowser::treeOpenMenu)
-    EVT_TREE_END_LABEL_EDIT(NS_WID_SOLNSION_DATA,   nsSolutionBrowser::labelEditEvent)
+    EVT_TREE_SEL_CHANGED(NS_WID_SOLUTION_DATA,      nsSolutionBrowser::itemChangeEvent)
+    EVT_TREE_ITEM_ACTIVATED(NS_WID_SOLUTION_DATA,   nsSolutionBrowser::itemActivatedEvent)
+    EVT_TREE_ITEM_MENU(NS_WID_SOLUTION_DATA,        nsSolutionBrowser::treeOpenMenu)
+    EVT_TREE_END_LABEL_EDIT(NS_WID_SOLUTION_DATA,   nsSolutionBrowser::labelEditEvent)
 
     // menus
     EVT_MENU(SBE_ADD,       nsSolutionBrowser::addTreeEvent)
@@ -88,11 +88,11 @@ END_EVENT_TABLE()
 
 // ----------------------------------------------------------------------------
 nsSolutionBrowser::nsSolutionBrowser(wxWindow *parent)
-    :   wxPanel(parent, NS_WID_SOLNSION, wxDefaultPosition, wxSize(200, 200), nsBorderNone)
+    :   wxPanel(parent, NS_WID_SOLUTION, wxDefaultPosition, wxSize(200, 200), nsBorderNone)
 
 {
     wxSizer *size = new wxBoxSizer(wxVERTICAL);
-    m_tree = new wxTreeCtrl(this, NS_WID_SOLNSION_DATA, wxDefaultPosition, wxDefaultSize,
+    m_tree = new wxTreeCtrl(this, NS_WID_SOLUTION_DATA, wxDefaultPosition, wxDefaultSize,
                             wxTR_DEFAULT_STYLE | wxTR_EDIT_LABELS | nsBorderDefault);
     m_tree->AddRoot("Project");
 

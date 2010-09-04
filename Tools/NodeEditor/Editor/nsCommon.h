@@ -73,8 +73,8 @@ typedef nsListIterator<nsSocketListClass>   nsSocketDefIterator;
 enum nsWindowId
 {
     NS_WID_MAINWINDOW,
-    NS_WID_SOLNSION,
-    NS_WID_SOLNSION_DATA,
+    NS_WID_SOLUTION,
+    NS_WID_SOLUTION_DATA,
     NS_WID_WORKSPACE,
     NS_WID_WORKSPACE_DATA,
     NS_WID_PROPERTY,
@@ -109,7 +109,7 @@ enum nsEventID
     NS_ID_SELECT_ALL,
 
     // View
-    NS_ID_SOLNSION,
+    NS_ID_SOLUTION,
     NS_ID_PROPERTIES,
     NS_ID_VARIABLES,
     NS_ID_FULLSCREEN,

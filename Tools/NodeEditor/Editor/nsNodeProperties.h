@@ -42,27 +42,18 @@ class nsNodePropertyPage : public wxPropertyGridPage
 protected:
     nsPropertyManager   *m_manager;
     nsNode              *m_node;
-    nsNodeDef           *m_nodeType;
 
 
-    wxPropertyCategory  *m_type, *m_inputs, *m_data;
+    wxPropertyCategory  *m_type, *m_data;
     wxStringProperty    *m_typename;
     wxStringProperty    *m_groupname;
     wxStringProperty    *m_id;
     wxStringProperty    *m_object;
-
-
-    // input sockets
-    void createInputs(void);
-
-    virtual bool wantsCustomData(void)  {return false;}
-    virtual void initCustomData(void)   {}
-    virtual void doSetCustomData(void)  {}
     virtual bool propertyChanged(wxPGProperty *prop)    {return false;}
 
 public:
 
-    nsNodePropertyPage(nsPropertyManager *manager, nsNodeDef *type);
+    nsNodePropertyPage(nsPropertyManager *manager);
     virtual ~nsNodePropertyPage() {}
 
 
@@ -71,7 +62,6 @@ public:
 
     // events
     void propertyChangeEvent(wxPropertyGridEvent &evt);
-    void socketEvent(nsSocketEvent &evt);
 
     // current node this page will operate on
     void setNode(nsNode *node);

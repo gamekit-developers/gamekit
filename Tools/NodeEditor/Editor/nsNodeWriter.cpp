@@ -42,16 +42,18 @@ nsNodeWriter::~nsNodeWriter()
 }
 
 // ----------------------------------------------------------------------------
-static void nsWriteSocket(wxXmlNode *xsock, nsSocket *sock)
+static void nsWriteSocket(FILE *fp, nsSocket *sock)
 {
-    if (sock->isConnectedOut())
-        xsock->AddAttribute("id", wxString::Format("SK_%p", sock));
-    if (sock->isConnected())
-        xsock->AddAttribute("from", wxString::Format("SK_%p", sock->getSocketLink()));
+	fprintf(fp, "\t\t\tSocket %s {  ", sock->getType()->getName().c_str());
 
-    xsock->AddAttribute("value",        sock->getValue().toString());
-    xsock->AddAttribute("direction",    nsToString((int)sock->getType()->getDirection()));
-    xsock->AddAttribute("ioid",         nsToString((int)sock->getType()->getUid()));
+	if (sock->isInput())
+	{
+		if (sock->isConnected())
+			fprintf(fp, "value = ND_%p.%s;", sock->getSocketLink()->getParent(), sock->getSocketLink()->getType()->getName().c_str());
+		else
+			fprintf(fp, "value = %s;", sock->getValue().toString().c_str());
+	}
+	fprintf(fp, "  }\n");
 }
 
 
@@ -60,74 +62,85 @@ static void nsWriteVariable(wxXmlNode *xnode, nsNode *node)
 {
 }
 
+
+// ----------------------------------------------------------------------------
+static nsString nsGetNodeTypeString(nsNode *node)
+{
+	switch (node->getType()->getType())
+	{
+	case NT_SKELETON:
+		return "NT_SKELETON";
+	case NT_MOUSE_MOTION:
+		return "NT_MOUSE_MOTION";
+	case NT_MOUSE_BUTTON:
+		return "NT_MOUSE_BUTTON";
+	case NT_OBJECT_MOTION:
+		return "NT_OBJECT_MOTION";
+	case NT_BTI:
+		return "NT_BTI";
+	case NT_BTF:
+		return "NT_BTF";
+	case NT_ITB:
+		return "NT_ITB";
+	case NT_ITF:
+		return "NT_ITF";
+	case NT_FTB:
+		return "NT_FTB";
+	case NT_FTI:
+		return "NT_FTI";
+	}
+	return "NT_UNKNOWN";
+}
+
 // ----------------------------------------------------------------------------
 void nsNodeWriter::writeToFile(const char *path)
 {
-    wxXmlDocument doc;
-    wxXmlNode *root = new wxXmlNode(wxXML_ELEMENT_NODE, "NodeTree");
-    root->AddAttribute("xmlns", "http://tempuri.org/NodeResource.xsd");
-    doc.SetRoot(root);
-
     nsNodeManager &mgr = nsNodeManager::getSingleton();
 
-    const wxString &preview = nsMainWindow::getSingleton().getPreviewFile();
-    if (!preview.empty())
-    {
-        wxXmlNode *xprev = new wxXmlNode(root, wxXML_ELEMENT_NODE, "BlendPreview");
-
-        wxFileName pathFile(path);
-        wxFileName file(preview);
-        file.MakeRelativeTo(pathFile.GetPath());
-        xprev->AddAttribute("blend", file.GetFullPath());
-    }
+	FILE *fp = fopen(path, "wb");
+	if (!fp)
+		return;
 
 
-    nsTreeIterator trees = mgr.getTreeIterator();
+	nsTreeIterator trees = mgr.getTreeIterator();
     while (trees.hasMoreElements())
     {
         nsNodeTree *tree = trees.getNext();
 
 
-        wxXmlNode *tnode = new wxXmlNode(root, wxXML_ELEMENT_NODE, "Tree");
-        tnode->AddAttribute("name",         tree->getName());
-        tnode->AddAttribute("group",        tree->getGroupName());
-        tnode->AddAttribute("isgroup",      nsToString(tree->isGroup()));
-        tnode->AddAttribute("projection",   nsToString(tree->getProjection()));
-        tnode->AddAttribute("size",         nsToString(tree->getSize()));
-        tnode->AddAttribute("open",         nsToString(tree->isOpen()));
-        tnode->AddAttribute("object",       tree->getAttachedName());
+		fprintf(fp, "\nNodeTree {\n");
+		//fprintf(fp, "\tname = %s;\n",		tree->getName().c_str());
+		fprintf(fp, "\tobject = \"%s\";\n\n",		tree->getAttachedName().c_str());
 
-        nsNodeIterator it = tree->getNodeIterator();
+
+		nsNodeIterator it = tree->getNodeIterator();
         while (it.hasMoreElements())
         {
             nsNode *node = it.getNext();
-            wxXmlNode *xnode = new wxXmlNode(tnode, wxXML_ELEMENT_NODE, "Node");
 
-            xnode->AddAttribute("id",           wxString::Format("ND_%p", node));
-            xnode->AddAttribute("type",         node->getType()->getName());
-            xnode->AddAttribute("location",     nsToString(node->getRect().getPosition()));
-            xnode->AddAttribute("selected",     nsToString(node->getState() == NDST_ACTIVE));
-            xnode->AddAttribute("object",       node->getAttachedName());
+			fprintf(fp, "\tNode ND_%p {\n", node);
+			fprintf(fp, "\t\ttype = %s;\n",       nsGetNodeTypeString(node).c_str());
+			fprintf(fp, "\t\tobject = \"%s\";\n\n", node->getAttachedName().c_str());
 
-            nsSocket *sock = node->getFirstInput();
-            while (sock)
-            {
-                wxXmlNode *xsock = new wxXmlNode(xnode, wxXML_ELEMENT_NODE, "Socket");
-                nsWriteSocket(xsock, sock);
-                sock = sock->getNext();
-            }
 
-            sock = node->getFirstOutput();
-            while (sock)
-            {
-                wxXmlNode *xsock = new wxXmlNode(xnode, wxXML_ELEMENT_NODE, "Socket");
-                nsWriteSocket(xsock, sock);
-                sock = sock->getNext();
-            }
+			nsSocket *sock = node->getFirstInput();
+			if (sock)
+			{
+				fprintf(fp, "\n\t\tInputs {\n");
+				while (sock)
+				{
+					nsWriteSocket(fp, sock);
+					sock = sock->getNext();
+				}
+				fprintf(fp, "\t\t}\n");
+			}
+
+			fprintf(fp, "\t}\n\n");
 
         }
+
+		fprintf(fp, "}\n");
     }
 
-
-    doc.Save(path, 2);
+	fclose(fp);
 }

@@ -42,6 +42,7 @@ public:
     nsColorPalette() : m_image(0)
     {
         m_color[NS_PAL_DARK]           = 0x2b2b2bFF;
+        m_color[NS_PAL_MIDDLE]         = 0x808080FF;
         m_color[NS_PAL_LIGHT]          = 0x808080FF;
         m_color[NS_PAL_SHADOW]         = 0x0000004B;
         m_color[NS_PAL_HIGHLIGHT]      = 0xFFFFFFFF;
@@ -80,6 +81,7 @@ public:
     NS_INLINE unsigned int  &getImage(void)         const   {return m_image;}
     NS_INLINE bool          isImageValid(void)      const   {return m_image != 0;}
     NS_INLINE const NScolor &getDark(void)          const   {return m_color[NS_PAL_DARK];}
+    NS_INLINE const NScolor &getMiddle(void)        const   {return m_color[NS_PAL_MIDDLE];}
     NS_INLINE const NScolor &getLight(void)         const   {return m_color[NS_PAL_LIGHT];}
     NS_INLINE const NScolor &getShadow(void)        const   {return m_color[NS_PAL_SHADOW];}
     NS_INLINE const NScolor &getHighlight(void)     const   {return m_color[NS_PAL_HIGHLIGHT];}
@@ -96,6 +98,7 @@ enum nsSystemPaletteEnum
     NS_SPE_ANIMATION,
     NS_SPE_INPUT,
     NS_SPE_OUTPUT,
+    NS_SPE_CONVERTER,
 
 
     // sockets

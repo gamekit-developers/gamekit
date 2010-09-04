@@ -28,8 +28,6 @@
 #include "nsTreeProperties.h"
 #include "nsNodeProperties.h"
 #include "nsNodeManager.h"
-#include "Editors/nsSocketEditors.h"
-
 
 // ----------------------------------------------------------------------------
 BEGIN_EVENT_TABLE( nsNodePropertyPage, wxPropertyGridPage )
@@ -38,12 +36,10 @@ END_EVENT_TABLE()
 
 
 // ----------------------------------------------------------------------------
-nsNodePropertyPage::nsNodePropertyPage(nsPropertyManager *manager, nsNodeDef *type)
+nsNodePropertyPage::nsNodePropertyPage(nsPropertyManager *manager)
     :   m_manager(manager),
         m_node(0),
-        m_nodeType(type),
         m_type(0),
-        m_inputs(0),
         m_data(0),
         m_typename(0),
         m_groupname(0),
@@ -55,22 +51,18 @@ nsNodePropertyPage::nsNodePropertyPage(nsPropertyManager *manager, nsNodeDef *ty
 // ----------------------------------------------------------------------------
 void nsNodePropertyPage::createProperties(void)
 {
-    if (!m_nodeType)
-        return;
-
     // type info
 
     m_type = new wxPropertyCategory("Information");
-    m_type->SetHelpString(m_nodeType->getDocStr());
     Append(m_type);
 
 
-    m_typename = new wxStringProperty("Type", wxPG_LABEL, m_nodeType->getName());
+    m_typename = new wxStringProperty("Type", wxPG_LABEL, "");
     m_typename->SetHelpString("The type of data this node will operate on.");
     m_type->AppendChild(m_typename);
 
 
-    m_groupname = new wxStringProperty("Group", wxPG_LABEL, nsNodeTypeInfo::getSingleton().getGroupName(m_nodeType->getGroup()));
+    m_groupname = new wxStringProperty("Group", wxPG_LABEL, "");
     m_groupname->SetHelpString("The containing group for menus.");
     m_type->AppendChild(m_groupname);
 
@@ -84,25 +76,7 @@ void nsNodePropertyPage::createProperties(void)
     m_object->SetHelpString("Attach a game object to this node. Blank to inherent from owning tree.");
     m_type->AppendChild(m_object);
 
-    if (wantsCustomData())
-    {
-        m_data = new wxPropertyCategory("Node Data");
-        Append(m_data);
-        initCustomData();
-    }
-
-
-    if (m_nodeType->getInputIterator().hasMoreElements())
-    {
-        // input category
-        m_inputs = new wxPropertyCategory("Inputs");
-        m_inputs->SetHelpString("Input sockets that can be connected. Each socket may contain only one input.");
-        Append(m_inputs);
-        createInputs();
-    }
-
-
-    DisableProperty(m_type);
+	DisableProperty(m_type);
     EnableProperty(m_object);
 }
 
@@ -125,39 +99,6 @@ void nsNodePropertyPage::propertyChangeEvent(wxPropertyGridEvent &evt)
 }
 
 
-// ----------------------------------------------------------------------------
-void nsNodePropertyPage::socketEvent(nsSocketEvent &evt)
-{
-    nsSocket *sock = evt.ptr();
-
-    if (sock->isInput() && m_inputs)
-    {
-        unsigned int  nr = m_inputs->GetChildCount();
-        for (unsigned int i=0; i<nr; i++)
-        {
-
-            wxPGProperty *prop = m_inputs->Item(i);
-            if (prop && prop->GetClientData() == sock)
-            {
-                // Disable if it's linked to another
-                EnableProperty(prop, evt.getId() == NS_SOCKET_UNLINK);
-            }
-        }
-    }
-}
-
-
-// ----------------------------------------------------------------------------
-void nsNodePropertyPage::createInputs(void)
-{
-    nsSocketDefIterator iter = m_nodeType->getInputIterator();
-    while (iter.hasMoreElements())
-    {
-        wxPGProperty *edt = iter.getNext()->getEditor();
-        if (edt)
-            m_inputs->AppendChild(edt);
-    }
-}
 
 // ----------------------------------------------------------------------------
 void nsNodePropertyPage::selectRoot(void)
@@ -179,37 +120,13 @@ void nsNodePropertyPage::setNode(nsNode *node)
         // setup the ID
         m_id->SetValue(wxString::Format("%p", m_node));
 
+
+		m_typename->SetValue(wxString::Format("%s", m_node->getType()->getName().c_str()));
+		m_groupname->SetValue(wxString::Format("%s",
+			nsNodeTypeInfo::getSingleton().getGroupName(m_node->getType()->getGroup()).c_str() 
+			));
+
         // apply object name
         m_object->SetValue(wxString(m_node->getAttachedName()));
-        if (m_inputs)
-        {
-            EnableProperty(m_inputs, node != 0);
-
-            nsSocket *sock = m_node->getFirstInput();
-            while (sock)
-            {
-                nsSocketDef *type = sock->getType();
-
-                wxPGProperty *prop = type->getEditor();
-                if (prop)
-                {
-                    type->attachClientObject(sock);
-
-                    if (!sock->isConnected())
-                    {
-                        if (!IsPropertyEnabled(prop))
-                            EnableProperty(prop);
-                    }
-                    else
-                    {
-                        if (IsPropertyEnabled(prop))
-                            DisableProperty(prop);
-                    }
-                }
-                sock = sock->getNext();
-            }
-        }
-
-        if (m_data) doSetCustomData();
     }
 }

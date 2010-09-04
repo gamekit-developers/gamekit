@@ -98,13 +98,8 @@ public:
     NS_INLINE bool isOutput(void)   const { return m_dir == NS_SOCK_OUT;  }
     NS_INLINE bool isInput(void)    const { return m_dir == NS_SOCK_IN;   }
 
-
-
-    virtual void                attachClientObject(nsSocket *sock) = 0;
-    virtual wxPGProperty        *getEditor(void) = 0;
-
-
-    nsSocket                    *create(nsNode *parent);
+	
+	nsSocket                    *create(nsNode *parent);
 
     NS_INLINE const nsValue &getValue(void) const {return m_default;}
 };
@@ -187,76 +182,40 @@ public:
 };
 
 
-
-// ----------------------------------------------------------------------------
-#define NS_DECLARE_SOCKET_DEF(T)\
-class T : public nsSocketDef    \
-{   \
-private:    \
-    wxPGProperty *m_editor; \
-public: \
-    T(nsDirection dir, const nsString &name, int id, double min, double max, const nsValue &val)    \
-        :   nsSocketDef(dir, name, id, min, max, val), m_editor(0) {}   \
-    virtual ~T() {} \
-    virtual wxPGProperty *getEditor(void);  \
-    virtual void attachClientObject(nsSocket *sock);\
-};
-
-
-// ----------------------------------------------------------------------------
-#define NS_IMPLEMENT_SOCKET_DEF(T, E)\
-    wxPGProperty *T::getEditor(void) {if (!m_editor) {m_editor = new E(m_name, wxPG_LABEL, this);} return m_editor;}\
-    void T::attachClientObject(nsSocket *sock) {if (m_editor) static_cast<E*>(m_editor)->attachClientObject(sock);}
-
-
-#define NS_CREATE_SOCKET_T(T, pal, dir, name, id, min, max, val) {  \
-    nsSocketDef *def = new T(dir, name,  id, min, max, val);        \
+#define NS_CREATE_SOCKET_T(pal, dir, name, id, min, max, val) {  \
+    nsSocketDef *def = new nsSocketDef(dir, name,  id, min, max, val);        \
     def->setPalette(nsSystemPalette::getPalette(pal));              \
     dir == NS_SOCK_IN ? addInput(def) : addOutput(def);             \
 }
-
-// ----------------------------------------------------------------------------
-// Common types
-NS_DECLARE_SOCKET_DEF(nsBoolSocketDef);
-NS_DECLARE_SOCKET_DEF(nsIntSocketDef);
-NS_DECLARE_SOCKET_DEF(nsFloatSocketDef);
-NS_DECLARE_SOCKET_DEF(nsStringSocketDef);
-NS_DECLARE_SOCKET_DEF(nsVec2SocketDef);
-NS_DECLARE_SOCKET_DEF(nsVec3SocketDef);
-NS_DECLARE_SOCKET_DEF(nsVec4SocketDef);
-NS_DECLARE_SOCKET_DEF(nsQuatSocketDef);
-NS_DECLARE_SOCKET_DEF(nsObjectSocketDef);
-
-
 
 
 // ----------------------------------------------------------------------------
 // short hand
 #define NS_CREATE_BOOL_SOCKET(dir, name, id, min, max, val)\
-    NS_CREATE_SOCKET_T(nsBoolSocketDef, NS_SPE_BOOL, dir, name, id, min, max, ((bool)val))
+    NS_CREATE_SOCKET_T(NS_SPE_BOOL, dir, name, id, min, max, ((bool)val))
 
 #define NS_CREATE_INT_SOCKET(dir, name, id, min, max, val)\
-    NS_CREATE_SOCKET_T(nsIntSocketDef, NS_SPE_INT, dir, name, id, min, max, ((int)val))
+    NS_CREATE_SOCKET_T(NS_SPE_INT, dir, name, id, min, max, ((int)val))
 
 #define NS_CREATE_FLOAT_SOCKET(dir, name, id, min, max, val)\
-    NS_CREATE_SOCKET_T(nsFloatSocketDef, NS_SPE_FLOAT, dir, name, id,  min, max, ((NSfloat)val))
+    NS_CREATE_SOCKET_T(NS_SPE_FLOAT, dir, name, id,  min, max, ((NSfloat)val))
 
 #define NS_CREATE_STRING_SOCKET(dir, name, id, min, max, val)\
-    NS_CREATE_SOCKET_T(nsStringSocketDef, NS_SPE_STRING, dir, name, id, min, max, (nsString(val)))
+    NS_CREATE_SOCKET_T(NS_SPE_STRING, dir, name, id, min, max, (nsString(val)))
 
 #define NS_CREATE_VEC2_SOCKET(dir, name, id, min, max, val)\
-    NS_CREATE_SOCKET_T(nsVec2SocketDef, NS_SPE_VEC2, dir, name, id,  min, max, val)
+    NS_CREATE_SOCKET_T(NS_SPE_VEC2, dir, name, id,  min, max, val)
 
 #define NS_CREATE_VEC3_SOCKET(dir, name, id, min, max, val)\
-    NS_CREATE_SOCKET_T(nsVec3SocketDef, NS_SPE_VEC3, dir, name, id,  min, max, val)
+    NS_CREATE_SOCKET_T(NS_SPE_VEC3, dir, name, id,  min, max, val)
 
 #define NS_CREATE_VEC4_SOCKET(dir, name, id, min, max, val)\
-    NS_CREATE_SOCKET_T(nsVec4SocketDef, NS_SPE_VEC4, dir, name, id,  min, max, val)
+    NS_CREATE_SOCKET_T(NS_SPE_VEC4, dir, name, id,  min, max, val)
 
 #define NS_CREATE_QUAT_SOCKET(dir, name, id, min, max, val)\
-    NS_CREATE_SOCKET_T(nsQuatSocketDef, NS_SPE_QUAT, dir, name, id,  min, max, val)
+    NS_CREATE_SOCKET_T(NS_SPE_QUAT, dir, name, id,  min, max, val)
 
 #define NS_CREATE_OBJECT_SOCKET(dir, name, id, min, max, val)\
-    NS_CREATE_SOCKET_T(nsObjectSocketDef, NS_SPE_OBJECT, dir, name, id, min, max, (nsObjectSocketData(val)))
+    NS_CREATE_SOCKET_T(NS_SPE_OBJECT, dir, name, id, min, max, (nsObjectSocketData(val)))
 
 #endif//_nsSocket_h_

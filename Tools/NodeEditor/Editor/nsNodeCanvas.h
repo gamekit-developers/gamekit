@@ -66,6 +66,8 @@ protected:
     void            leftClickEvent(wxMouseEvent &evt);
     void            middleClickEvent(wxMouseEvent &evt);
     void            rightClickEvent(wxMouseEvent &evt);
+    void            leftDblClickEvent(wxMouseEvent &evt);
+
 
     // movements
     void            motionEvent(wxMouseEvent &evt);

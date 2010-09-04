@@ -1,11 +1,13 @@
 set(NS_SRC
     nsClipboard.cpp
     nsColorPalette.cpp
+	nsDialogBase.cpp
     nsEventHandler.cpp
     nsFont.cpp
     nsMain.cpp
     nsMainWndow.cpp
     nsNode.cpp
+    nsNodes.cpp
     nsNodeCanvas.cpp
     nsNodeManager.cpp
     nsNodeProperties.cpp
@@ -24,11 +26,10 @@ set(NS_SRC
     nsVariable.cpp
     nsWorkspace.cpp
     nsXmlUtils.cpp
-    Editors/nsSocketEditors.cpp
-    Nodes/nsMouseMotionNode.cpp
-    Nodes/nsObjectMotionNode.cpp
-    Nodes/nsSkeletalAnimNode.cpp
+
     NodeUtils/nsString.cpp
+
+
 )
 
 
@@ -37,10 +38,12 @@ set(NS_HDR
     nsColorPalette.h
     nsCommon.h
     nsData.h
+	nsDialogBase.h
     nsFont.h
     nsEventHandler.h
     nsMainWindow.h
     nsNode.h
+    nsNodes.cpp
     nsNodeCanvas.h
     nsNodeEnums.h
     nsNodeManager.h
@@ -61,10 +64,7 @@ set(NS_HDR
     nsVariable.h
     nsWorkspace.h
     nsXmlUtils.h
-    Editors/nsSocketEditors.h
-    Nodes/nsMouseMotionNode.h
-    Nodes/nsObjectMotionNode.h
-    Nodes/nsSkeletalAnimNode.h
+
     NodeUtils/nsCommon.h
     NodeUtils/nsTypes.h
     NodeUtils/nsString.h

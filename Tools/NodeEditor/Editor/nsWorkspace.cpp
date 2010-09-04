@@ -138,7 +138,7 @@ void nsWorkspace::pageChangedEvent(wxAuiNotebookEvent &evt)
         nsSolutionBrowser::getSingleton().treeEvent(select);
         nsPropertyPage::getSingleton().treeEvent(select);
 
-        evt.Skip();
+		evt.Skip();
     }
 }
 

@@ -25,7 +25,8 @@
 -------------------------------------------------------------------------------
 */
 #include "nsNodeTypeInfo.h"
-#include "Nodes/nsNodeTypes.h"
+#include "nsNodes.h"
+
 
 
 // ----------------------------------------------------------------------------
@@ -100,11 +101,13 @@ nsString nsNodeTypeInfo::getGroupName(int in)
         return "Input";
     case NS_SPE_OUTPUT:
         return "Output";
+    case NT_GROUP_CONVERTER:
+        return "Converter";
     default:
         break;
     }
 
-    return "General";
+	return "General";
 }
 
 
@@ -121,10 +124,25 @@ void nsNodeTypeInfo::addType(nsNodeDef *ndef)
         m_groups.get(type).second.push_back(ndef);
 }
 
+
+
 // ----------------------------------------------------------------------------
 void nsNodeTypeInfo::registerTypes(void)
 {
-    //addType(new nsSkeletalAnimNode());
-    //addType(new nsMouseMotionNode());
-    //addType(new nsObjectMotionNode());
+	// Inputs
+	addType(new nsMouseButtonNode());
+	addType(new nsMouseMotionNode());
+
+	// Outputs
+
+	addType(new nsObjectMotionNode());
+
+	// Socket Converters
+
+	//addType(new nsBoolToIntNode());
+	//addType(new nsBoolToFloatNode());
+	//addType(new nsIntToBoolNode());
+	//addType(new nsIntToFloatNode());
+	//addType(new nsFloatToBoolNode());
+	//addType(new nsFloatToIntNode());
 }

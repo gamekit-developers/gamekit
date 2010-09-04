@@ -219,7 +219,9 @@ nsNodeDef::nsNodeDef(nsNodeTypes type, nsGroupTypes group, const nsString &name,
         m_outputs(),
         m_size(nsNodeHeaderSize, nsNodeHeaderSize)
 {
+    m_size.x = NS_MAKE_NODE_DEF_WIDTH(name.size());
 }
+
 
 // ----------------------------------------------------------------------------
 nsNodeDef::~nsNodeDef()

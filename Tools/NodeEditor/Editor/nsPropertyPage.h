@@ -47,14 +47,13 @@ class nsPropertyPage :  public wxPanel,
 
 {
 protected:
-    typedef nsArray<nsNodePropertyPage*> NodePages;
 
     nsToolBar               *m_tool;
     nsPropertyManager       *m_manager;
 
     wxPropertyGridPage      *m_default;
     nsTreePropertyPage      *m_tree; 
-    NodePages               m_nodeTypes;
+    nsNodePropertyPage      *m_nodeTypes;
 
 
 public:
@@ -69,9 +68,6 @@ public:
 
     // node notifications
     void nodeEvent(nsNodeEvent &evt);
-
-    // socket notifications
-    void socketEvent(nsSocketEvent &evt);
 
     NS_DECLARE_SINGLETON(nsPropertyPage)
 

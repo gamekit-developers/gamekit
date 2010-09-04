@@ -44,6 +44,7 @@ BEGIN_EVENT_TABLE( nsNodeCanvas, wxGLCanvas )
     EVT_ERASE_BACKGROUND(nsNodeCanvas::eraseEvent)
     EVT_LEFT_DOWN(nsNodeCanvas::leftClickEvent)
     EVT_LEFT_UP(nsNodeCanvas::leftClickEvent)
+	EVT_LEFT_DCLICK(nsNodeCanvas::leftDblClickEvent)
     EVT_MIDDLE_DOWN(nsNodeCanvas::middleClickEvent)
     EVT_MIDDLE_UP(nsNodeCanvas::middleClickEvent)
     EVT_RIGHT_UP(nsNodeCanvas::rightClickEvent)
@@ -597,7 +598,7 @@ void nsNodeCanvas::sendEvent(int id, nsSocket *sock)
     nsSocketEvent evt((nsNodifierID)id, this, sock);
 
     // push to property window
-    nsPropertyPage::getSingleton().socketEvent(evt);
+    //nsPropertyPage::getSingleton().socketEvent(evt);
 }
 
 // ----------------------------------------------------------------------------
@@ -897,6 +898,25 @@ void nsNodeCanvas::keyPressEvent(wxKeyEvent &evt)
         evt.Skip();
     }
     else evt.Skip();
+}
+
+
+// ----------------------------------------------------------------------------
+void nsNodeCanvas::leftDblClickEvent(wxMouseEvent &evt)
+{
+
+	NSvec2 dbl(evt.m_x, evt.m_y);
+
+	if (!m_captured.empty())
+	{
+		nsNode *top = m_captured.front();
+
+		if (top->getRect().contains(projectPoint(dbl)))
+		{
+			top->getType()->edit(top);
+	        redraw();
+		}
+	}
 }
 
 

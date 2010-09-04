@@ -50,13 +50,41 @@ public:
 };
 
 
-// ----------------------------------------------------------------------------
+
+///Common button press data for MouseButton & Key Nodes
+class nsButtonData : public nsNodeData
+{
+private:
+
+	int m_enum; 
+	int m_delay;
+
+public:
+
+	nsButtonData(nsNodeDef *parent)
+		:   nsNodeData(parent), m_enum(-1), m_delay(-1)
+    {
+    }
+
+
+    virtual ~nsButtonData() {}
+    virtual nsNodeData *clone(void) {return new nsButtonData(*this); }
+
+	NS_INLINE int getValue(void) {return m_enum;}
+	NS_INLINE int getDelay(void) {return m_delay;}
+
+	NS_INLINE void setValue(int v) {m_enum = v;}
+	NS_INLINE void setDelay(int v) {m_delay = v;}
+
+};
+
 class nsMotionData : public nsNodeData
 {
 protected:
     int         m_enum;
     int         m_flag;
     int         m_transform;
+	int         m_cf; // 1 | 2 | 4
     NSvec2      m_cx, m_cy, m_cz;
     nsString    m_relObj;
     bool        m_keep;
@@ -65,22 +93,17 @@ protected:
 public:
 
     nsMotionData(nsNodeDef *parent) 
-        :   nsNodeData(parent), m_enum(-1), m_flag(-1), m_transform(-1), m_cx(0,0), m_cy(0,0), m_cz(0,0), m_relObj(""), m_keep(false)
+        :   nsNodeData(parent), m_enum(0), m_flag(-1), m_transform(1), 
+			m_cf(0), 
+			m_cx(0,0), 
+			m_cy(0,0), 
+			m_cz(0,0), 
+			m_relObj(""), 
+			m_keep(false)
     {
     }
 
-
-    nsMotionData(const nsMotionData& rhs) 
-        :   nsNodeData(rhs.getParent()), 
-            m_enum(rhs.m_enum), 
-            m_flag(rhs.m_flag), 
-            m_cx(rhs.m_cx), 
-            m_cy(rhs.m_cy), 
-            m_cz(rhs.m_cz), m_relObj(rhs.m_relObj)
-    {
-    }
-
-    virtual ~nsMotionData() {}
+	virtual ~nsMotionData() {}
 
     virtual nsNodeData *clone(void) {return new nsMotionData(*this); }
 
@@ -93,6 +116,7 @@ public:
     NS_INLINE NSvec2                getClampZ(void)                         {return m_cz;}
     NS_INLINE const nsString        &getRelitaveObject(void)                {return m_relObj;}
     NS_INLINE bool                  getKeep(void)                           {return m_keep;}
+	NS_INLINE int                   getClampFlag(void)                      {return m_cf;}
 
     NS_INLINE void                  setEnum(int v)                          {m_enum = v;}
     NS_INLINE void                  setFlag(int v)                          {m_flag = v;}
@@ -102,6 +126,7 @@ public:
     NS_INLINE void                  setClampZ(const NSvec2& v)              {m_cz = v;}
     NS_INLINE void                  setRelitaveObject(const nsString &v)    {m_relObj = v;}
     NS_INLINE void                  setKeep(bool v)                         {m_keep = v;}
+	NS_INLINE void                  setClampFlag(int v)                     {m_cf = v;}
 };
 
 
