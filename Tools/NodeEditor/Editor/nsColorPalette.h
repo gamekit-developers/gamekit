@@ -31,7 +31,7 @@
 #include "nsNodeEnums.h"
 
 
-// ----------------------------------------------------------------------------
+
 class nsColorPalette
 {
 private:
@@ -90,7 +90,7 @@ public:
 };
 
 
-// ----------------------------------------------------------------------------
+
 // Color coding is done by group / socket type
 enum nsSystemPaletteEnum
 {
@@ -113,7 +113,7 @@ enum nsSystemPaletteEnum
     NS_SPE_OBJECT,
 };
 
-// ----------------------------------------------------------------------------
+
 class nsSystemPalette
 {
 public:

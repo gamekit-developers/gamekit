@@ -65,7 +65,7 @@ static nsColorPalette NS_SPE_DEF_PAL(GREY);
 static nsColorPalette NS_SPE_OBJECT_PAL(GREY2);
 
 
-// ----------------------------------------------------------------------------
+
 const nsColorPalette& nsSystemPalette::getPalette(int in)
 {
 #define PAL_CASE(x) case x: return x##_PAL;

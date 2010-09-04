@@ -39,7 +39,7 @@
 #include <wx/glcanvas.h>
 
 
-// ----------------------------------------------------------------------------
+
 NS_IMPLEMENT_SINGLETON(nsWorkspace);
 
 #define nsWorkspaceStyle    wxAUI_NB_TOP                | wxAUI_NB_TAB_MOVE     |\
@@ -49,7 +49,7 @@ NS_IMPLEMENT_SINGLETON(nsWorkspace);
 
 
 
-// ----------------------------------------------------------------------------
+
 // Private Context window in order to share GL context across multiple windows
 class nsGlHiddenContext : public wxGLCanvas
 {
@@ -74,7 +74,7 @@ public:
 };
 
 
-// ----------------------------------------------------------------------------
+
 // Event tables
 BEGIN_EVENT_TABLE( nsWorkspace, wxPanel )
     EVT_AUINOTEBOOK_PAGE_CLOSE(NS_WID_WORKSPACE_DATA,       nsWorkspace::pageClosedEvent)
@@ -83,7 +83,7 @@ BEGIN_EVENT_TABLE( nsWorkspace, wxPanel )
 END_EVENT_TABLE()
 
 
-// ----------------------------------------------------------------------------
+
 nsWorkspace::nsWorkspace(wxWindow *parent)
     :   wxPanel(parent, NS_WID_WORKSPACE, wxDefaultPosition, wxSize(200, 200), wxTAB_TRAVERSAL | nsBorderDefault)
 
@@ -109,13 +109,13 @@ nsWorkspace::nsWorkspace(wxWindow *parent)
 }
 
 
-// ----------------------------------------------------------------------------
+
 nsWorkspace::~nsWorkspace()
 {
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsWorkspace::pageChangedEvent(wxAuiNotebookEvent &evt)
 {
     if (m_book)
@@ -142,7 +142,7 @@ void nsWorkspace::pageChangedEvent(wxAuiNotebookEvent &evt)
     }
 }
 
-// ----------------------------------------------------------------------------
+
 void nsWorkspace::pageClosedEvent(wxAuiNotebookEvent &evt)
 {
     // only notify tree deslect here
@@ -161,7 +161,7 @@ void nsWorkspace::pageClosedEvent(wxAuiNotebookEvent &evt)
 
 
 
-// ----------------------------------------------------------------------------
+
 void nsWorkspace::treeEvent(nsTreeEvent &evt)
 {
     if (evt.getId() == NS_TREE_CHANGED)
@@ -244,7 +244,7 @@ void nsWorkspace::treeEvent(nsTreeEvent &evt)
 
 }
 
-// ----------------------------------------------------------------------------
+
 void nsWorkspace::grabCapturedEvent(wxCommandEvent &evt)
 {
     // pass to active canvas
@@ -254,7 +254,7 @@ void nsWorkspace::grabCapturedEvent(wxCommandEvent &evt)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsWorkspace::deleteCapturedEvent(wxCommandEvent &evt)
 {
     // pass to active canvas
@@ -262,7 +262,7 @@ void nsWorkspace::deleteCapturedEvent(wxCommandEvent &evt)
         m_activeCanvas->deleteCapturedEvent(evt);
 }
 
-// ----------------------------------------------------------------------------
+
 void nsWorkspace::selectAllEvent(wxCommandEvent &evt)
 {
     // pass to active canvas
@@ -270,7 +270,7 @@ void nsWorkspace::selectAllEvent(wxCommandEvent &evt)
         m_activeCanvas->selectAllEvent(evt);
 }
 
-// ----------------------------------------------------------------------------
+
 void nsWorkspace::cutEvent(wxCommandEvent &evt)
 {
     // pass to active canvas
@@ -278,7 +278,7 @@ void nsWorkspace::cutEvent(wxCommandEvent &evt)
         m_activeCanvas->cutEvent(evt);
 }
 
-// ----------------------------------------------------------------------------
+
 void nsWorkspace::copyEvent(wxCommandEvent &evt)
 {
     // pass to active canvas
@@ -286,7 +286,7 @@ void nsWorkspace::copyEvent(wxCommandEvent &evt)
         m_activeCanvas->copyEvent(evt);
 }
 
-// ----------------------------------------------------------------------------
+
 void nsWorkspace::pasteEvent(wxCommandEvent &evt)
 {
     // pass to active canvas
@@ -294,7 +294,7 @@ void nsWorkspace::pasteEvent(wxCommandEvent &evt)
         m_activeCanvas->pasteEvent(evt);
 }
 
-// ----------------------------------------------------------------------------
+
 void nsWorkspace::duplicateEvent(wxCommandEvent &evt)
 {
     // pass to active canvas
@@ -302,7 +302,7 @@ void nsWorkspace::duplicateEvent(wxCommandEvent &evt)
         m_activeCanvas->duplicateEvent(evt);
 }
 
-// ----------------------------------------------------------------------------
+
 // remove shared context
 void nsWorkspace::finalizeContext(void)
 {
@@ -331,7 +331,7 @@ void nsWorkspace::finalizeContext(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 // setup shared context
 void nsWorkspace::initializeContext(void)
 {
@@ -348,7 +348,7 @@ void nsWorkspace::initializeContext(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 wxGLContext *nsWorkspace::getGLContext(void)
 {
     // access to the main context

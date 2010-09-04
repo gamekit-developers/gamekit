@@ -44,7 +44,7 @@ typedef float           NSfloat;
 #define NS_EPSILON      FLT_EPSILON
 #define NS_INFINITY     FLT_MAX
 
-// ----------------------------------------------------------------------------
+
 static const NSfloat NSPi           = NSfloat(3.141592653589793238);
 static const NSfloat NSPi2          = NSfloat(6.283185307179586476);
 static const NSfloat NSPih          = NSfloat(1.570796326794896619);
@@ -52,7 +52,7 @@ static const NSfloat NSRPD          = NSfloat(0.017453292519943295);
 static const NSfloat NSDPR          = NSfloat(57.295779513082320876);
 
 
-// ----------------------------------------------------------------------------
+
 NS_INLINE NSfloat   NSMax(NSfloat lhs, NSfloat rhs)                 { return (lhs) < (rhs) ? (rhs) : (lhs); }
 NS_INLINE NSfloat   NSMin(NSfloat lhs, NSfloat rhs)                 { return (rhs) < (lhs) ? (rhs) : (lhs); }
 NS_INLINE NSfloat   NSClamp(NSfloat x, NSfloat mi, NSfloat ma)      { return (x) <  (mi) ?  (mi)  : (x) > (ma) ? (ma) : (x); }
@@ -81,7 +81,7 @@ NS_INLINE void      NSSinCos(NSfloat a,  NSfloat &s, NSfloat &c)    { s= NSSin(a
 NS_INLINE int       NSPow2(int n)                                   { --n; n |= n >> 16; n |= n >> 8; n |= n >> 4; n |= n >> 2; n |= n >> 1; ++n; return n; }
 
 
-// ----------------------------------------------------------------------------
+
 NS_INLINE size_t NSFloatCopy(NSfloat *dest, const NSfloat *src, size_t nr)
 {
     size_t i= 0;
@@ -90,7 +90,7 @@ NS_INLINE size_t NSFloatCopy(NSfloat *dest, const NSfloat *src, size_t nr)
 }
 
 
-// ----------------------------------------------------------------------------
+
 class NSvec2
 {
 public:
@@ -864,7 +864,7 @@ public:
 };
 
 
-// ----------------------------------------------------------------------------
+
 class NSaabb
 {
 public:

@@ -33,11 +33,11 @@
 #include <wx/sizer.h>
 #include <wx/menu.h>
 
-// ----------------------------------------------------------------------------
+
 NS_IMPLEMENT_SINGLETON(nsSolutionBrowser);
 
 
-// ----------------------------------------------------------------------------
+
 // local events
 enum nsSolutionBrowserEvents
 {
@@ -54,7 +54,7 @@ enum nsSolutionBrowserEvents
 
 
 
-// ----------------------------------------------------------------------------
+
 // local tree items
 class nsTreeItem : public wxTreeItemData
 {
@@ -69,7 +69,7 @@ public:
 };
 
 
-// ----------------------------------------------------------------------------
+
 // Event tables
 BEGIN_EVENT_TABLE( nsSolutionBrowser, wxPanel )
     EVT_TREE_SEL_CHANGED(NS_WID_SOLUTION_DATA,      nsSolutionBrowser::itemChangeEvent)
@@ -86,7 +86,7 @@ BEGIN_EVENT_TABLE( nsSolutionBrowser, wxPanel )
 END_EVENT_TABLE()
 
 
-// ----------------------------------------------------------------------------
+
 nsSolutionBrowser::nsSolutionBrowser(wxWindow *parent)
     :   wxPanel(parent, NS_WID_SOLUTION, wxDefaultPosition, wxSize(200, 200), nsBorderNone)
 
@@ -106,12 +106,12 @@ nsSolutionBrowser::nsSolutionBrowser(wxWindow *parent)
     Layout();
 }
 
-// ----------------------------------------------------------------------------
+
 nsSolutionBrowser::~nsSolutionBrowser()
 {
 }
 
-// ----------------------------------------------------------------------------
+
 // access to the current tree
 nsNodeTree *nsSolutionBrowser::getSelectedTree(void)
 {
@@ -122,7 +122,7 @@ nsNodeTree *nsSolutionBrowser::getSelectedTree(void)
 
 }
 
-// ----------------------------------------------------------------------------
+
 void nsSolutionBrowser::treeEvent(nsTreeEvent &evt)
 {
     if (evt.getId() == NS_TREE_ADD)
@@ -160,7 +160,7 @@ void nsSolutionBrowser::treeEvent(nsTreeEvent &evt)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsSolutionBrowser::labelEditEvent(wxTreeEvent &evt)
 {
     nsTreeItem *item = (nsTreeItem *)m_tree->GetItemData(m_tree->GetSelection());
@@ -176,7 +176,7 @@ void nsSolutionBrowser::labelEditEvent(wxTreeEvent &evt)
     }
 }
 
-// ----------------------------------------------------------------------------
+
 void nsSolutionBrowser::labelMenuEditEvent(wxCommandEvent &evt)
 {
     nsTreeItem *item = (nsTreeItem *)m_tree->GetItemData(m_tree->GetSelection());
@@ -184,7 +184,7 @@ void nsSolutionBrowser::labelMenuEditEvent(wxCommandEvent &evt)
         m_tree->EditLabel(item->GetId());
 }
 
-// ----------------------------------------------------------------------------
+
 void nsSolutionBrowser::addTreeEvent(wxCommandEvent &evt)
 {
     // new tree
@@ -200,7 +200,7 @@ void nsSolutionBrowser::addTreeEvent(wxCommandEvent &evt)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsSolutionBrowser::removeTreeEvent(wxCommandEvent &evt)
 {
     nsTreeItem *item = (nsTreeItem *)m_tree->GetItemData(m_tree->GetSelection());
@@ -222,7 +222,7 @@ void nsSolutionBrowser::removeTreeEvent(wxCommandEvent &evt)
     }
 }
 
-// ----------------------------------------------------------------------------
+
 void nsSolutionBrowser::openTreeEvent(wxCommandEvent &evt)
 {
     nsTreeItem *item = (nsTreeItem *)m_tree->GetItemData(m_tree->GetSelection());
@@ -238,7 +238,7 @@ void nsSolutionBrowser::openTreeEvent(wxCommandEvent &evt)
     }
 }
 
-// ----------------------------------------------------------------------------
+
 void nsSolutionBrowser::treeOpenMenu(wxTreeEvent &evt)
 {
     // tree context menu
@@ -272,7 +272,7 @@ void nsSolutionBrowser::treeOpenMenu(wxTreeEvent &evt)
     }
 }
 
-// ----------------------------------------------------------------------------
+
 void nsSolutionBrowser::itemChangeEvent(wxTreeEvent &evt)
 {
     // called whe the selection changes
@@ -289,7 +289,7 @@ void nsSolutionBrowser::itemChangeEvent(wxTreeEvent &evt)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsSolutionBrowser::itemActivatedEvent(wxTreeEvent &evt)
 {
     // called whe the selection is double clicked

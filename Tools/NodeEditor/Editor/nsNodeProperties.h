@@ -36,7 +36,7 @@
 #include <wx/propgrid/manager.h>
 
 
-// ----------------------------------------------------------------------------
+
 class nsNodePropertyPage : public wxPropertyGridPage
 {
 protected:

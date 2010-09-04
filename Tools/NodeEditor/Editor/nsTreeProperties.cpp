@@ -28,20 +28,20 @@
 #include "nsTreeProperties.h"
 #include "nsNodeManager.h"
 
-// ----------------------------------------------------------------------------
+
 BEGIN_EVENT_TABLE( nsTreePropertyPage, wxPropertyGridPage )
     EVT_PG_CHANGED(NS_WID_PROPERTY_DATA, nsTreePropertyPage::propertyChangeEvent)
 END_EVENT_TABLE()
 
 
-// ----------------------------------------------------------------------------
+
 nsTreePropertyPage::nsTreePropertyPage(nsPropertyManager *manager)
     :   m_manager(manager), m_tree(0),
         m_name(0),m_groupname(0), m_id(0), m_isGroup(0), m_info(0), m_group(0), m_object(0)
 {
 }
 
-// ----------------------------------------------------------------------------
+
 void nsTreePropertyPage::setTree(nsNodeTree *tree)
 {
     m_tree = tree;
@@ -76,7 +76,7 @@ void nsTreePropertyPage::setTree(nsNodeTree *tree)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsTreePropertyPage::createProperties(void)
 {
     // create default / initial properties
@@ -116,7 +116,7 @@ void nsTreePropertyPage::createProperties(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsTreePropertyPage::propertyChangeEvent(wxPropertyGridEvent &evt)
 {
     // data change notification

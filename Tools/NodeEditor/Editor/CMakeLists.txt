@@ -16,7 +16,6 @@ set(NS_SRC
     nsNodeTypeInfo.cpp
     nsNodeWriter.cpp
     nsMath.cpp
-    nsOgreKitPreview.cpp
     nsPropertyPage.cpp
     nsRenderSystem.cpp
     nsSocket.cpp
@@ -26,10 +25,7 @@ set(NS_SRC
     nsVariable.cpp
     nsWorkspace.cpp
     nsXmlUtils.cpp
-
     NodeUtils/nsString.cpp
-
-
 )
 
 
@@ -53,7 +49,6 @@ set(NS_HDR
     nsNodeTypeInfo.h
     nsNodeWriter.h
     nsMath.h
-    nsOgreKitPreview.h
     nsPropertyPage.h
     nsRenderSystem.h
     nsSingleton.h
@@ -64,7 +59,6 @@ set(NS_HDR
     nsVariable.h
     nsWorkspace.h
     nsXmlUtils.h
-
     NodeUtils/nsCommon.h
     NodeUtils/nsTypes.h
     NodeUtils/nsString.h

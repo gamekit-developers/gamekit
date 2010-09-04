@@ -37,7 +37,7 @@
 #include <wx/menu.h>
 
 
-// ----------------------------------------------------------------------------
+
 BEGIN_EVENT_TABLE( nsNodeCanvas, wxGLCanvas )
     EVT_MOUSE_CAPTURE_LOST(nsNodeCanvas::focusLostEvent)
     EVT_PAINT(nsNodeCanvas::paintEvent)
@@ -56,7 +56,7 @@ BEGIN_EVENT_TABLE( nsNodeCanvas, wxGLCanvas )
 END_EVENT_TABLE()
 
 
-// ----------------------------------------------------------------------------
+
 nsNodeCanvas::nsNodeCanvas(wxWindow *parent, nsNodeTree *tree)
     :   wxGLCanvas(parent, NS_WID_CANVAS, NULL, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE | nsBorderNone)
 {
@@ -104,7 +104,7 @@ nsNodeCanvas::nsNodeCanvas(wxWindow *parent, nsNodeTree *tree)
     }
 }
 
-// ----------------------------------------------------------------------------
+
 nsNodeCanvas::~nsNodeCanvas()
 {
     if (m_tree)
@@ -115,7 +115,7 @@ nsNodeCanvas::~nsNodeCanvas()
     }
 }
 
-// ----------------------------------------------------------------------------
+
 void nsNodeCanvas::updateMouseCo(void)
 {
     wxPoint pos = wxGetMousePosition();
@@ -123,7 +123,7 @@ void nsNodeCanvas::updateMouseCo(void)
     m_lastPos = m_mousePos = m_clickedPos = NSvec2(pos.x, pos.y);
 }
 
-// ----------------------------------------------------------------------------
+
 void nsNodeCanvas::redraw(void)
 {
     m_tree->setSize(m_size);
@@ -131,7 +131,7 @@ void nsNodeCanvas::redraw(void)
     Refresh();
 }
 
-// ----------------------------------------------------------------------------
+
 NSvec2 nsNodeCanvas::projectPoint(const NSvec2 &v)
 {
     // For hit testing with a cartesian coordinate system
@@ -147,7 +147,7 @@ NSvec2 nsNodeCanvas::projectPoint(const NSvec2 &v)
            );
 }
 
-// ----------------------------------------------------------------------------
+
 void nsNodeCanvas::addNode(nsNode *nd)
 {
     if (nd)
@@ -166,7 +166,7 @@ void nsNodeCanvas::addNode(nsNode *nd)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsNodeCanvas::grabCanvas(bool doit, bool releaseSelection)
 {
     // release temporary states
@@ -197,7 +197,7 @@ void nsNodeCanvas::grabCanvas(bool doit, bool releaseSelection)
     }
 }
 
-// ----------------------------------------------------------------------------
+
 nsNode *nsNodeCanvas::hitTestNode(const NSvec2 &projClick)
 {
     // do a front to back search, nodes on
@@ -222,7 +222,7 @@ nsNode *nsNodeCanvas::hitTestNode(const NSvec2 &projClick)
 }
 
 
-// ----------------------------------------------------------------------------
+
 nsSocket *nsNodeCanvas::hitTestSocket(const NSvec2 &projClick)
 {
     nsReverseNodeIterator it(m_renderList);
@@ -274,7 +274,7 @@ nsSocket *nsNodeCanvas::hitTestSocket(const NSvec2 &projClick)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsNodeCanvas::bringToFront(nsNode *node)
 {
     // sync render list and tree list
@@ -285,7 +285,7 @@ void nsNodeCanvas::bringToFront(nsNode *node)
     }
 }
 
-// ----------------------------------------------------------------------------
+
 void nsNodeCanvas::captureNode(nsNode *node)
 {
 
@@ -306,7 +306,7 @@ void nsNodeCanvas::captureNode(nsNode *node)
     }
 }
 
-// ----------------------------------------------------------------------------
+
 void nsNodeCanvas::captureNodes(const NSrect &rect)
 {
     // hit test all
@@ -349,7 +349,7 @@ void nsNodeCanvas::captureNodes(const NSrect &rect)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsNodeCanvas::releaseCapture(void)
 {
     if (!m_captured.empty())
@@ -372,7 +372,7 @@ void nsNodeCanvas::releaseCapture(void)
     m_grabCapture = false;
 }
 
-// ----------------------------------------------------------------------------
+
 void nsNodeCanvas::grabCapturedEvent(wxCommandEvent &evt)
 {
     if (!m_captured.empty())
@@ -390,7 +390,7 @@ void nsNodeCanvas::grabCapturedEvent(wxCommandEvent &evt)
     }
 }
 
-// ----------------------------------------------------------------------------
+
 void nsNodeCanvas::deleteCapturedEvent(wxCommandEvent &evt)
 {
     if (!m_captured.empty())
@@ -430,7 +430,7 @@ void nsNodeCanvas::deleteCapturedEvent(wxCommandEvent &evt)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsNodeCanvas::selectAllEvent(wxCommandEvent &evt)
 {
     // release all
@@ -469,7 +469,7 @@ void nsNodeCanvas::selectAllEvent(wxCommandEvent &evt)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsNodeCanvas::cutEvent(wxCommandEvent &evt)
 {
     if (!m_captured.empty() && !m_renderList.empty())
@@ -500,7 +500,7 @@ void nsNodeCanvas::cutEvent(wxCommandEvent &evt)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsNodeCanvas::copyEvent(wxCommandEvent &evt)
 {
     if (!m_captured.empty())
@@ -513,7 +513,7 @@ void nsNodeCanvas::copyEvent(wxCommandEvent &evt)
     }
 }
 
-// ----------------------------------------------------------------------------
+
 void nsNodeCanvas::pasteEvent(wxCommandEvent &evt)
 {
     nsClipboard &clp = nsWorkspace::getSingleton().getClipboard();
@@ -535,7 +535,7 @@ void nsNodeCanvas::pasteEvent(wxCommandEvent &evt)
     }
 }
 
-// ----------------------------------------------------------------------------
+
 void nsNodeCanvas::duplicateEvent(wxCommandEvent &evt)
 {
     if (!m_captured.empty())
@@ -582,7 +582,7 @@ void nsNodeCanvas::duplicateEvent(wxCommandEvent &evt)
         redraw();
     }
 }
-// ----------------------------------------------------------------------------
+
 void nsNodeCanvas::sendEvent(int id, nsNode *node)
 {
     nsNodeEvent evt((nsNodifierID)id, this, node);
@@ -592,7 +592,7 @@ void nsNodeCanvas::sendEvent(int id, nsNode *node)
     // TODO: maybe add solution
 }
 
-// ----------------------------------------------------------------------------
+
 void nsNodeCanvas::sendEvent(int id, nsSocket *sock)
 {
     nsSocketEvent evt((nsNodifierID)id, this, sock);
@@ -601,7 +601,7 @@ void nsNodeCanvas::sendEvent(int id, nsSocket *sock)
     //nsPropertyPage::getSingleton().socketEvent(evt);
 }
 
-// ----------------------------------------------------------------------------
+
 void nsNodeCanvas::sendEvent(int id)
 {
     nsTreeEvent evt((nsNodifierID)id, this, m_tree);
@@ -611,13 +611,13 @@ void nsNodeCanvas::sendEvent(int id)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsNodeCanvas::focusLostEvent(wxMouseCaptureLostEvent &)
 {
     grabCanvas(false);
 }
 
-// ----------------------------------------------------------------------------
+
 void nsNodeCanvas::leftClickEvent(wxMouseEvent &evt)
 {
     m_lastPos = m_mousePos = m_clickedPos = NSvec2(evt.m_x, evt.m_y);
@@ -733,7 +733,7 @@ void nsNodeCanvas::leftClickEvent(wxMouseEvent &evt)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsNodeCanvas::middleClickEvent(wxMouseEvent &evt)
 {
     m_lastPos = m_mousePos = m_clickedPos = NSvec2(evt.m_x, evt.m_y);
@@ -741,7 +741,7 @@ void nsNodeCanvas::middleClickEvent(wxMouseEvent &evt)
     grabCanvas(m_hasCapture);
 }
 
-// ----------------------------------------------------------------------------
+
 void nsNodeCanvas::rightClickEvent(wxMouseEvent &evt)
 {
     m_lastPos = m_mousePos = m_clickedPos = NSvec2(evt.m_x, evt.m_y);
@@ -786,7 +786,7 @@ void nsNodeCanvas::rightClickEvent(wxMouseEvent &evt)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsNodeCanvas::motionEvent(wxMouseEvent &evt)
 {
     if (!m_hasCapture)
@@ -875,7 +875,7 @@ void nsNodeCanvas::motionEvent(wxMouseEvent &evt)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsNodeCanvas::wheelEvent(wxMouseEvent &evt)
 {
     setZoom(evt.m_wheelRotation > 0 ? 16.f : -16.f);
@@ -883,7 +883,7 @@ void nsNodeCanvas::wheelEvent(wxMouseEvent &evt)
     evt.Skip();
 }
 
-// ----------------------------------------------------------------------------
+
 void nsNodeCanvas::keyPressEvent(wxKeyEvent &evt)
 {
     int code = evt.GetKeyCode();
@@ -901,7 +901,7 @@ void nsNodeCanvas::keyPressEvent(wxKeyEvent &evt)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsNodeCanvas::leftDblClickEvent(wxMouseEvent &evt)
 {
 
@@ -920,7 +920,7 @@ void nsNodeCanvas::leftDblClickEvent(wxMouseEvent &evt)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsNodeCanvas::sizeEvent(wxSizeEvent &evt)
 {
     NSvec2 newSize(evt.m_size.x, evt.m_size.y);
@@ -949,7 +949,7 @@ void nsNodeCanvas::sizeEvent(wxSizeEvent &evt)
 }
 
 
-// ----------------------------------------------------------------------------
+
 NSvec2 nsNodeCanvas::getZoom(void)
 {
     NS_ASSERT(m_size.valid() && !m_size.isZero());
@@ -957,7 +957,7 @@ NSvec2 nsNodeCanvas::getZoom(void)
     return NSvec2(m_projection.width / m_size.x, m_projection.height / m_size.y);
 }
 
-// ----------------------------------------------------------------------------
+
 void nsNodeCanvas::setZoom(NSfloat zd)
 {
     if (NSFuzzy(zd))
@@ -980,7 +980,7 @@ void nsNodeCanvas::setZoom(NSfloat zd)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsNodeCanvas::paintEvent(wxPaintEvent &evt)
 {
     wxPaintDC dc(this);
@@ -1046,7 +1046,7 @@ void nsNodeCanvas::paintEvent(wxPaintEvent &evt)
     SwapBuffers();
 }
 
-// ----------------------------------------------------------------------------
+
 void nsNodeCanvas::eraseEvent(wxEraseEvent &evt)
 {
 }

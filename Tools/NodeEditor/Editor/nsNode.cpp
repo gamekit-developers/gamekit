@@ -29,7 +29,7 @@
 
 
 
-// ----------------------------------------------------------------------------
+
 nsNode::nsNode(nsNodeTree *tree, nsNodeDef *def)
     :   m_type(def),
         m_tree(tree),
@@ -56,7 +56,7 @@ nsNode::nsNode(nsNodeTree *tree, nsNodeDef *def)
 }
 
 
-// ----------------------------------------------------------------------------
+
 nsNode::nsNode(nsNode *cpy, nsNodeTree *tree)
     :   m_type(0), m_tree(tree), m_state(NDST_INACTIVE)
 {
@@ -91,7 +91,7 @@ nsNode::nsNode(nsNode *cpy, nsNodeTree *tree)
 }
 
 
-// ----------------------------------------------------------------------------
+
 nsNode::~nsNode()
 {
     nsSocket *sock, *tsock;
@@ -126,7 +126,7 @@ nsNode::~nsNode()
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsNode::unlink(void)
 {
     // remove all refs to this
@@ -153,19 +153,19 @@ void nsNode::unlink(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 nsNode *nsNode::clone(nsNodeTree *newTree)
 {
     return new nsNode(this, newTree);
 }
 
-// ----------------------------------------------------------------------------
+
 void nsNode::translate(NSfloat x, NSfloat y)
 {
     setPosition(m_rect.x + x, m_rect.y + y);
 }
 
-// ----------------------------------------------------------------------------
+
 void nsNode::setPosition(NSfloat x, NSfloat y)
 {
     m_rect.x = x;
@@ -196,7 +196,7 @@ void nsNode::setPosition(NSfloat x, NSfloat y)
 
 
 
-// ----------------------------------------------------------------------------
+
 nsNodeDef::nsNodeDef() 
     :   m_type(NT_NULL),
         m_group(NT_GROUP_MAX),
@@ -208,7 +208,7 @@ nsNodeDef::nsNodeDef()
 {
 }
 
-// ----------------------------------------------------------------------------
+
 nsNodeDef::nsNodeDef(nsNodeTypes type, nsGroupTypes group, const nsString &name, const nsString& docs)
     :   m_type(type),
         m_group(group),
@@ -223,7 +223,7 @@ nsNodeDef::nsNodeDef(nsNodeTypes type, nsGroupTypes group, const nsString &name,
 }
 
 
-// ----------------------------------------------------------------------------
+
 nsNodeDef::~nsNodeDef()
 {
     if (!m_inputs.empty())
@@ -248,7 +248,7 @@ nsNodeDef::~nsNodeDef()
     }
 }
 
-// ----------------------------------------------------------------------------
+
 void nsNodeDef::addInput(nsSocketDef *def)
 {
     def->setUid(m_inputs.size());
@@ -257,7 +257,7 @@ void nsNodeDef::addInput(nsSocketDef *def)
     m_size.y += nsDefaultSocketOffset;
 }
 
-// ----------------------------------------------------------------------------
+
 void nsNodeDef::addOutput(nsSocketDef *def)
 {
     def->setUid(m_outputs.size());
@@ -267,7 +267,7 @@ void nsNodeDef::addOutput(nsSocketDef *def)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsNodeDef::alignInputs(nsSocketAlignment align)
 {
     if (align == NS_SAL_BOTTOM)
@@ -300,7 +300,7 @@ void nsNodeDef::alignInputs(nsSocketAlignment align)
     }
 }
 
-// ----------------------------------------------------------------------------
+
 void nsNodeDef::alignOutputs(nsSocketAlignment align)
 {
     if (align == NS_SAL_TOP)

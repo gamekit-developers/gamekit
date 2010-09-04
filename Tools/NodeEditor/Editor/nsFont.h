@@ -31,7 +31,7 @@
 #include "nsMath.h"
 #include <wx/font.h>
 
-// ----------------------------------------------------------------------------
+
 typedef struct nsTextExtents
 {
     NSfloat width, height;
@@ -51,7 +51,7 @@ typedef struct nsChar
 
 
 
-// ----------------------------------------------------------------------------
+
 // WX -> GL font converter
 class nsFont
 {

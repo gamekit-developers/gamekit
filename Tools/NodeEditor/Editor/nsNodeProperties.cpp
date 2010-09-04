@@ -29,13 +29,13 @@
 #include "nsNodeProperties.h"
 #include "nsNodeManager.h"
 
-// ----------------------------------------------------------------------------
+
 BEGIN_EVENT_TABLE( nsNodePropertyPage, wxPropertyGridPage )
     EVT_PG_CHANGED(wxID_ANY, nsNodePropertyPage::propertyChangeEvent)
 END_EVENT_TABLE()
 
 
-// ----------------------------------------------------------------------------
+
 nsNodePropertyPage::nsNodePropertyPage(nsPropertyManager *manager)
     :   m_manager(manager),
         m_node(0),
@@ -48,7 +48,7 @@ nsNodePropertyPage::nsNodePropertyPage(nsPropertyManager *manager)
 {
 }
 
-// ----------------------------------------------------------------------------
+
 void nsNodePropertyPage::createProperties(void)
 {
     // type info
@@ -80,7 +80,7 @@ void nsNodePropertyPage::createProperties(void)
     EnableProperty(m_object);
 }
 
-// ----------------------------------------------------------------------------
+
 void nsNodePropertyPage::propertyChangeEvent(wxPropertyGridEvent &evt)
 {
     if (!m_node)
@@ -100,14 +100,14 @@ void nsNodePropertyPage::propertyChangeEvent(wxPropertyGridEvent &evt)
 
 
 
-// ----------------------------------------------------------------------------
+
 void nsNodePropertyPage::selectRoot(void)
 {
     // select the information property
     SetSelection(m_type);
 }
 
-// ----------------------------------------------------------------------------
+
 void nsNodePropertyPage::setNode(nsNode *node)
 {
     if (m_node && m_node == node)

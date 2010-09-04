@@ -30,7 +30,7 @@
 #include "nsCommon.h"
 #include "nsNodeManager.h"
 
-// ----------------------------------------------------------------------------
+
 // Simple clipboard for copy / paste node editing
 class nsClipboard
 {

@@ -29,18 +29,18 @@
 
 
 
-// ----------------------------------------------------------------------------
+
 NS_IMPLEMENT_SINGLETON(nsNodeTypeInfo);
 
 
 
-// ----------------------------------------------------------------------------
+
 nsNodeTypeInfo::nsNodeTypeInfo()
 {
 
 }
 
-// ----------------------------------------------------------------------------
+
 nsNodeTypeInfo::~nsNodeTypeInfo()
 {
     if (!m_types.empty())
@@ -56,7 +56,7 @@ nsNodeTypeInfo::~nsNodeTypeInfo()
 }
 
 
-// ----------------------------------------------------------------------------
+
 nsNodeDef *nsNodeTypeInfo::findTypeInfo(int i)
 {
     if (!m_types.empty())
@@ -73,7 +73,7 @@ nsNodeDef *nsNodeTypeInfo::findTypeInfo(int i)
     return 0;
 }
 
-// ----------------------------------------------------------------------------
+
 nsNodeDef *nsNodeTypeInfo::findTypeInfo(const nsString &name)
 {
     if (!m_types.empty())
@@ -90,7 +90,7 @@ nsNodeDef *nsNodeTypeInfo::findTypeInfo(const nsString &name)
     return 0;
 }
 
-// ----------------------------------------------------------------------------
+
 nsString nsNodeTypeInfo::getGroupName(int in)
 {
     switch (in)
@@ -111,7 +111,7 @@ nsString nsNodeTypeInfo::getGroupName(int in)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsNodeTypeInfo::addType(nsNodeDef *ndef)
 {
     ndef->setId(m_types.size());
@@ -126,7 +126,7 @@ void nsNodeTypeInfo::addType(nsNodeDef *ndef)
 
 
 
-// ----------------------------------------------------------------------------
+
 void nsNodeTypeInfo::registerTypes(void)
 {
 	// Inputs

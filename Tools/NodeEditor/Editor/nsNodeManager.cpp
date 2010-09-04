@@ -27,15 +27,15 @@
 #include "nsNodeManager.h"
 
 
-// ----------------------------------------------------------------------------
+
 NS_IMPLEMENT_SINGLETON(nsNodeManager);
 
-// ----------------------------------------------------------------------------
+
 nsNodeManager::nsNodeManager()
 {
 }
 
-// ----------------------------------------------------------------------------
+
 nsNodeManager::~nsNodeManager()
 {
     clear();
@@ -43,7 +43,7 @@ nsNodeManager::~nsNodeManager()
 
 
 
-// ----------------------------------------------------------------------------
+
 void nsNodeManager::clear(void)
 {
     if (!m_trees.empty())
@@ -56,7 +56,7 @@ void nsNodeManager::clear(void)
     }
 }
 
-// ----------------------------------------------------------------------------
+
 void nsNodeManager::deleteTree(nsNodeTree *tree)
 {
     if (m_trees.find(tree) != 0)
@@ -66,7 +66,7 @@ void nsNodeManager::deleteTree(nsNodeTree *tree)
     }
 }
 
-// ----------------------------------------------------------------------------
+
 nsNodeTree *nsNodeManager::createTree(const nsString &name)
 {
     nsNodeTree *nt = new nsNodeTree(name);

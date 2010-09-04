@@ -35,7 +35,7 @@
 #include "nsNodeTree.h"
 
 
-// ----------------------------------------------------------------------------
+
 class nsNodeManager : public nsSingleton<nsNodeManager>
 {
 protected:

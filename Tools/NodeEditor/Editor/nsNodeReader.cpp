@@ -35,18 +35,18 @@
 
 
 
-// ----------------------------------------------------------------------------
+
 nsNodeReader::nsNodeReader()
 {
 }
 
-// ----------------------------------------------------------------------------
+
 nsNodeReader::~nsNodeReader()
 {
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsNodeReader::readNode(nsNodeTree *dest, wxXmlNode *node)
 {
     nsString nodeType   = nsXmlUtils::getAttributeString("type",    node);
@@ -105,7 +105,7 @@ void nsNodeReader::readNode(nsNodeTree *dest, wxXmlNode *node)
 
 }
 
-// ----------------------------------------------------------------------------
+
 void nsNodeReader::load(wxMemoryInputStream &buf)
 {
     wxXmlDocument doc;
@@ -217,7 +217,7 @@ void nsNodeReader::load(wxMemoryInputStream &buf)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsNodeReader::load(const wxString &path)
 {
     if (!wxFileExists(path))

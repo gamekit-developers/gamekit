@@ -37,7 +37,7 @@
 #include "nsData.h"
 
 
-// ----------------------------------------------------------------------------
+
 // System type information
 class nsNodeTypeInfo : public nsSingleton<nsNodeTypeInfo>
 {

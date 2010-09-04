@@ -33,7 +33,7 @@
 #include "nsNodeManager.h"
 
 
-// ----------------------------------------------------------------------------
+
 class nsApp : public wxApp
 {
 private:

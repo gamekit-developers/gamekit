@@ -30,13 +30,13 @@
 static const wxString nsXmlInvalidAttribute = wxString("Attr_Invalid");
 
 
-// ----------------------------------------------------------------------------
+
 bool     nsXmlUtils::hasAttribute(const nsString &attr, wxXmlNode *node)
 {
     return node->HasAttribute(attr);
 }
 
-// ----------------------------------------------------------------------------
+
 bool     nsXmlUtils::getAttributeBool(const nsString &attr, wxXmlNode *node, bool def)
 {
     wxString attrWx = node->GetAttribute(attr, nsXmlInvalidAttribute);
@@ -47,7 +47,7 @@ bool     nsXmlUtils::getAttributeBool(const nsString &attr, wxXmlNode *node, boo
 }
 
 
-// ----------------------------------------------------------------------------
+
 int      nsXmlUtils::getAttributeInt(const nsString &attr, wxXmlNode *node, int def)
 {
     wxString attrWx = node->GetAttribute(attr, nsXmlInvalidAttribute);
@@ -56,7 +56,7 @@ int      nsXmlUtils::getAttributeInt(const nsString &attr, wxXmlNode *node, int 
     return atoi(wxToAscii(attrWx));
 }
 
-// ----------------------------------------------------------------------------
+
 NSfloat  nsXmlUtils::getAttributeFloat(const nsString &attr, wxXmlNode *node, NSfloat def)
 {
     wxString attrWx = node->GetAttribute(attr, nsXmlInvalidAttribute);
@@ -66,7 +66,7 @@ NSfloat  nsXmlUtils::getAttributeFloat(const nsString &attr, wxXmlNode *node, NS
 }
 
 
-// ----------------------------------------------------------------------------
+
 nsString  nsXmlUtils::getAttributeString(const nsString &attr, wxXmlNode *node, const nsString &def)
 {
     wxString attrWx = node->GetAttribute(attr, nsXmlInvalidAttribute);
@@ -75,7 +75,7 @@ nsString  nsXmlUtils::getAttributeString(const nsString &attr, wxXmlNode *node, 
     return nsString(attrWx);
 }
 
-// ----------------------------------------------------------------------------
+
 NSvec2   nsXmlUtils::getAttributeVec2(const nsString &attr, wxXmlNode *node, const NSvec2 &def)
 {
     wxString attrWx = node->GetAttribute(attr, nsXmlInvalidAttribute);
@@ -84,7 +84,7 @@ NSvec2   nsXmlUtils::getAttributeVec2(const nsString &attr, wxXmlNode *node, con
     return nsStringConverter::toVec2(nsString(attrWx));
 }
 
-// ----------------------------------------------------------------------------
+
 NSvec3   nsXmlUtils::getAttributeVec3(const nsString &attr, wxXmlNode *node, const NSvec3 &def)
 {
     wxString attrWx = node->GetAttribute(attr, nsXmlInvalidAttribute);
@@ -93,7 +93,7 @@ NSvec3   nsXmlUtils::getAttributeVec3(const nsString &attr, wxXmlNode *node, con
     return nsStringConverter::toVec3(nsString(attrWx));
 }
 
-// ----------------------------------------------------------------------------
+
 NSvec4   nsXmlUtils::getAttributeVec4(const nsString &attr, wxXmlNode *node, const NSvec4 &def)
 {
     wxString attrWx = node->GetAttribute(attr, nsXmlInvalidAttribute);
@@ -102,7 +102,7 @@ NSvec4   nsXmlUtils::getAttributeVec4(const nsString &attr, wxXmlNode *node, con
     return nsStringConverter::toVec4(nsString(attrWx));
 }
 
-// ----------------------------------------------------------------------------
+
 NSquat   nsXmlUtils::getAttributeQuat(const nsString &attr, wxXmlNode *node, const NSquat &def)
 {
     wxString attrWx = node->GetAttribute(attr, nsXmlInvalidAttribute);
@@ -111,7 +111,7 @@ NSquat   nsXmlUtils::getAttributeQuat(const nsString &attr, wxXmlNode *node, con
     return nsStringConverter::toQuat(nsString(attrWx));
 }
 
-// ----------------------------------------------------------------------------
+
 NSrect   nsXmlUtils::getAttributeRect(const nsString &attr, wxXmlNode *node, const NSrect &def)
 {
     wxString attrWx = node->GetAttribute(attr, nsXmlInvalidAttribute);
@@ -120,7 +120,7 @@ NSrect   nsXmlUtils::getAttributeRect(const nsString &attr, wxXmlNode *node, con
     return nsStringConverter::toRect(nsString(attrWx));
 }
 
-// ----------------------------------------------------------------------------
+
 NScolor  nsXmlUtils::getAttributeColor(const nsString &attr, wxXmlNode *node, const NScolor &def)
 {
     wxString attrWx = node->GetAttribute(attr, nsXmlInvalidAttribute);

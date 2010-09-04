@@ -31,7 +31,7 @@
 #include "nsNodeTypeInfo.h"
 #include "nsNode.h"
 
-// ----------------------------------------------------------------------------
+
 class nsNodeTree
 {
 protected:

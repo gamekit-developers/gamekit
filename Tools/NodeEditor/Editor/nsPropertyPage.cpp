@@ -31,11 +31,11 @@
 #include <wx/sizer.h>
 #include <wx/settings.h>
 
-// ----------------------------------------------------------------------------
+
 NS_IMPLEMENT_SINGLETON(nsPropertyPage);
 
 
-// ----------------------------------------------------------------------------
+
 // Property Layout Manager
 class nsPropertyManager : public wxPropertyGridManager
 {
@@ -51,7 +51,7 @@ public:
 };
 
 
-// ----------------------------------------------------------------------------
+
 nsPropertyPage::nsPropertyPage(wxWindow *parent)
     :   wxPanel(parent, NS_WID_PROPERTY, wxPoint(0,0), nsDefaultSize, nsBorderNone)
 {
@@ -83,12 +83,12 @@ nsPropertyPage::nsPropertyPage(wxWindow *parent)
 }
 
 
-// ----------------------------------------------------------------------------
+
 nsPropertyPage::~nsPropertyPage()
 {
 }
 
-// ----------------------------------------------------------------------------
+
 void nsPropertyPage::initialize(void)
 {
     if (m_default) return;
@@ -111,7 +111,7 @@ void nsPropertyPage::initialize(void)
     Refresh();
 }
 
-// ----------------------------------------------------------------------------
+
 void nsPropertyPage::treeEvent(nsTreeEvent &evt)
 {
     if (evt.getId() == NS_TREE_CHANGED)
@@ -139,7 +139,7 @@ void nsPropertyPage::treeEvent(nsTreeEvent &evt)
     }
 }
 
-// ----------------------------------------------------------------------------
+
 void nsPropertyPage::nodeEvent(nsNodeEvent &evt)
 {
    if (evt.getId() == NS_NODE_ADD || evt.getId() == NS_NODE_SELECT)

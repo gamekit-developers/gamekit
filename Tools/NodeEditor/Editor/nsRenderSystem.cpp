@@ -46,11 +46,11 @@
 
 
 
-// ----------------------------------------------------------------------------
+
 NS_IMPLEMENT_SINGLETON(nsRenderSystem);
 
 
-// ----------------------------------------------------------------------------
+
 // wxColor converters
 NScolor ColorFromWxColor(const wxColour &v)
 {
@@ -70,7 +70,7 @@ static NScolor  nsSysHighlightGrad;
 #define nsWHITE GREY[NS_PAL_HIGHLIGHT]
 
 
-// ----------------------------------------------------------------------------
+
 // vertex decl
 struct nsVertex
 {
@@ -92,7 +92,7 @@ const NSfloat   nsSocketTextSize    = 10.f;
 typedef nsArray<nsVertex> VertexBuffer;
 
 
-// ----------------------------------------------------------------------------
+
 // Paths
 class nsPath
 {
@@ -223,7 +223,7 @@ public:
 };
 
 
-// ----------------------------------------------------------------------------
+
 // Private internal render tools
 class nsRenderSystemPrivate
 {
@@ -814,21 +814,21 @@ public:
 
 
 
-// ----------------------------------------------------------------------------
+
 nsRenderSystem::nsRenderSystem() : m_context(new nsRenderSystemPrivate())
 {
     // load fonts at start up
     m_context->loadFonts();
 }
 
-// ----------------------------------------------------------------------------
+
 nsRenderSystem::~nsRenderSystem()
 {
     delete m_context;
 }
 
 
-// ----------------------------------------------------------------------------
+
 // one time setup
 void nsRenderSystem::initializeContextData(void)
 {
@@ -836,7 +836,7 @@ void nsRenderSystem::initializeContextData(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 // cleanup
 void nsRenderSystem::finalizeContextData(void)
 {
@@ -844,14 +844,14 @@ void nsRenderSystem::finalizeContextData(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 // setup viewport rendering
 void nsRenderSystem::loadViewport(const NSrect &rect)
 {
     glViewport((GLint)rect.x, (GLint)rect.y, (GLsizei)rect.width, (GLsizei)rect.height);
 }
 
-// ----------------------------------------------------------------------------
+
 // projection
 void nsRenderSystem::loadProjection(const NSrect &rect)
 {
@@ -874,7 +874,7 @@ void nsRenderSystem::loadProjection(const NSrect &rect)
 }
 
 
-// ----------------------------------------------------------------------------
+
 // clear buffers
 void nsRenderSystem::clear(void)
 {
@@ -886,7 +886,7 @@ void nsRenderSystem::clear(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsRenderSystem::drawSocketLinks(nsNodes &nodes)
 {
     VertexBuffer &buf = m_context->m_lineBuffer;
@@ -958,7 +958,7 @@ void nsRenderSystem::drawSocketLinks(nsNodes &nodes)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsRenderSystem::paintSocket(nsNode *parent, nsSocket *sock)
 {
     const NSrect &base = sock->getDerrivedRect();
@@ -1021,7 +1021,7 @@ void nsRenderSystem::paintSocket(nsNode *parent, nsSocket *sock)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsRenderSystem::drawNode(nsNode *nd)
 {
 
@@ -1111,7 +1111,7 @@ void nsRenderSystem::drawNode(nsNode *nd)
     }
 }
 
-// ----------------------------------------------------------------------------
+
 // socket linking
 void nsRenderSystem::drawConnectingSocket(nsSocket *sock, const NSvec2 &pos, const NSvec2 &mouse)
 {
@@ -1150,7 +1150,7 @@ void nsRenderSystem::drawConnectingSocket(nsSocket *sock, const NSvec2 &pos, con
     glDisable( GL_LINE_SMOOTH );
 }
 
-// ----------------------------------------------------------------------------
+
 // selection rect
 void nsRenderSystem::drawDragRect(const NSrect &rect)
 {
@@ -1168,7 +1168,7 @@ void nsRenderSystem::drawDragRect(const NSrect &rect)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsRenderSystem::drawBackground(void)
 {
     NSfloat step = 25.0f;

@@ -27,7 +27,7 @@
 #include "nsNodeTree.h"
 
 
-// ----------------------------------------------------------------------------
+
 nsNodeTree::nsNodeTree(const nsString &name)
     :   m_name(name),
         m_isGroup(false),
@@ -41,14 +41,14 @@ nsNodeTree::nsNodeTree(const nsString &name)
 }
 
 
-// ----------------------------------------------------------------------------
+
 nsNodeTree::~nsNodeTree()
 {
     clear();
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsNodeTree::deleteNode(nsNode *node)
 {
     if (node && m_nodes.find(node) != 0)
@@ -60,7 +60,7 @@ void nsNodeTree::deleteNode(nsNode *node)
 }
 
 
-// ----------------------------------------------------------------------------
+
 nsNode *nsNodeTree::createNode(nsNodeDef *nt)
 {
     nsNode *nd = new nsNode(this, nt);
@@ -69,7 +69,7 @@ nsNode *nsNodeTree::createNode(nsNodeDef *nt)
 }
 
 
-// ----------------------------------------------------------------------------
+
 nsNode *nsNodeTree::createCloneNode(nsNode *nd)
 {
     nsNode *nnd = nd->clone(this);
@@ -77,7 +77,7 @@ nsNode *nsNodeTree::createCloneNode(nsNode *nd)
     return nnd;
 }
 
-// ----------------------------------------------------------------------------
+
 void nsNodeTree::bringToFront(nsNodes &list, nsNode *node)
 {
     // make node the first to be rendered / hit tested
@@ -99,13 +99,13 @@ void nsNodeTree::bringToFront(nsNodes &list, nsNode *node)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsNodeTree::bringToFront(nsNode *node)
 {
     bringToFront(m_nodes, node);
 }
 
-// ----------------------------------------------------------------------------
+
 void nsNodeTree::clear(void)
 {
     if (!m_nodes.empty())

@@ -46,10 +46,10 @@
 
 #include "Resource/Icon.xpm"
 
-// ----------------------------------------------------------------------------
+
 NS_IMPLEMENT_SINGLETON(nsMainWindow);
 
-// ----------------------------------------------------------------------------
+
 BEGIN_EVENT_TABLE( nsMainWindow, wxFrame )
 
     // file menu
@@ -88,7 +88,7 @@ END_EVENT_TABLE()
 
 
 
-// ----------------------------------------------------------------------------
+
 nsMainWindow::nsMainWindow()
     :   wxFrame(NULL, NS_WID_MAINWINDOW, "Node Editor", wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE)
 {
@@ -130,7 +130,7 @@ nsMainWindow::nsMainWindow()
 }
 
 
-// ----------------------------------------------------------------------------
+
 nsMainWindow::~nsMainWindow()
 {
     //if (m_previewApp)
@@ -145,7 +145,7 @@ nsMainWindow::~nsMainWindow()
     delete m_auiManager;
 }
 
-// ----------------------------------------------------------------------------
+
 void nsMainWindow::loadSettings(void)
 {
     // window settings
@@ -196,7 +196,7 @@ void nsMainWindow::loadSettings(void)
     delete def;
 }
 
-// ----------------------------------------------------------------------------
+
 void nsMainWindow::saveSettings(void)
 {
     // window settings
@@ -215,7 +215,7 @@ void nsMainWindow::saveSettings(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsMainWindow::loadWindows(void)
 {
     wxAuiPaneInfo inf;
@@ -241,7 +241,7 @@ void nsMainWindow::loadWindows(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsMainWindow::loadMenus(void)
 {
     wxMenuBar *menubar = new wxMenuBar();
@@ -333,7 +333,7 @@ void nsMainWindow::loadMenus(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsMainWindow::makeEditMenu(wxMenu *menu)
 {
     // the base edit toolbox
@@ -364,7 +364,7 @@ void nsMainWindow::makeEditMenu(wxMenu *menu)
     item->SetHelp("Grab selected nodes.");
 }
 
-// ----------------------------------------------------------------------------
+
 void nsMainWindow::makeNodeMenu(wxWindow *caller, wxMenu *menu)
 {
     m_addMenuCaller = caller;
@@ -409,14 +409,14 @@ void nsMainWindow::makeNodeMenu(wxWindow *caller, wxMenu *menu)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsMainWindow::quitEvent(wxCommandEvent &evt)
 {
     // send close signal
     Close(true);
 }
 
-// ----------------------------------------------------------------------------
+
 void nsMainWindow::playEvent(wxCommandEvent &evt)
 {
     //if (!m_previewApp)
@@ -425,7 +425,7 @@ void nsMainWindow::playEvent(wxCommandEvent &evt)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsMainWindow::selectPreviewEvent(wxCommandEvent &evt)
 {
     wxFileDialog dlg(this, 
@@ -439,7 +439,7 @@ void nsMainWindow::selectPreviewEvent(wxCommandEvent &evt)
         m_preview = dlg.GetPath();
 }
 
-// ----------------------------------------------------------------------------
+
 void nsMainWindow::saveEvent(wxCommandEvent &evt)
 {
     // if modified 
@@ -467,7 +467,7 @@ void nsMainWindow::saveEvent(wxCommandEvent &evt)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsMainWindow::saveAsEvent(wxCommandEvent &evt)
 {
     wxFileDialog dlg(this, 
@@ -481,7 +481,7 @@ void nsMainWindow::saveAsEvent(wxCommandEvent &evt)
         m_currentFile = dlg.GetPath();
 }
 
-// ----------------------------------------------------------------------------
+
 void nsMainWindow::loadEvent(wxCommandEvent &evt)
 {
     wxFileDialog dlg(this, 
@@ -502,7 +502,7 @@ void nsMainWindow::loadEvent(wxCommandEvent &evt)
     }
 }
 
-// ----------------------------------------------------------------------------
+
 void nsMainWindow::solutionCheckEvent(wxCommandEvent &evt)
 {
     // show / hide solution
@@ -513,7 +513,7 @@ void nsMainWindow::solutionCheckEvent(wxCommandEvent &evt)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsMainWindow::propertiesCheckEvent( wxCommandEvent &evt )
 {
     // show / hide properties
@@ -523,7 +523,7 @@ void nsMainWindow::propertiesCheckEvent( wxCommandEvent &evt )
     m_auiManager->Update();
 }
 
-// ----------------------------------------------------------------------------
+
 void nsMainWindow::paneCloseEvent(wxAuiManagerEvent &evt)
 {
     int id = evt.GetPane()->window->GetId();
@@ -534,14 +534,14 @@ void nsMainWindow::paneCloseEvent(wxAuiManagerEvent &evt)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsMainWindow::showFullscreenEvent(wxCommandEvent &evt)
 {
     // full screen window
     ShowFullScreen(!IsFullScreen(), wxFULLSCREEN_NOCAPTION | wxFULLSCREEN_NOBORDER | wxFULLSCREEN_NOSTATUSBAR);
 }
 
-// ----------------------------------------------------------------------------
+
 void nsMainWindow::nodeAddEvent(wxCommandEvent &evt)
 {
     int id= evt.GetId() - NSID_NODE_MENU_START;
@@ -583,7 +583,7 @@ void nsMainWindow::nodeAddEvent(wxCommandEvent &evt)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsMainWindow::treeAddEvent(wxCommandEvent &evt)
 {
     // create new tree
@@ -598,56 +598,56 @@ void nsMainWindow::treeAddEvent(wxCommandEvent &evt)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsMainWindow::grabCapturedEvent(wxCommandEvent &evt)
 {
     // pass down to workspace
     nsWorkspace::getSingleton().grabCapturedEvent(evt);
 }
 
-// ----------------------------------------------------------------------------
+
 void nsMainWindow::deleteCapturedEvent(wxCommandEvent &evt)
 {
     // pass down to workspace
     nsWorkspace::getSingleton().deleteCapturedEvent(evt);
 }
 
-// ----------------------------------------------------------------------------
+
 void nsMainWindow::selectAllEvent(wxCommandEvent &evt)
 {
     // pass down to workspace
     nsWorkspace::getSingleton().selectAllEvent(evt);
 }
 
-// ----------------------------------------------------------------------------
+
 void nsMainWindow::cutEvent(wxCommandEvent &evt)
 {
     // pass down to workspace
     nsWorkspace::getSingleton().cutEvent(evt);
 }
 
-// ----------------------------------------------------------------------------
+
 void nsMainWindow::copyEvent(wxCommandEvent &evt)
 {
     // pass down to workspace
     nsWorkspace::getSingleton().copyEvent(evt);
 }
 
-// ----------------------------------------------------------------------------
+
 void nsMainWindow::pasteEvent(wxCommandEvent &evt)
 {
     // pass down to workspace
     nsWorkspace::getSingleton().pasteEvent(evt);
 }
 
-// ----------------------------------------------------------------------------
+
 void nsMainWindow::duplicateEvent(wxCommandEvent &evt)
 {
     // pass down to workspace
     nsWorkspace::getSingleton().duplicateEvent(evt);
 }
 
-// ----------------------------------------------------------------------------
+
 void nsMainWindow::setStatus(int i, const char *fmt, ...)
 {
 #ifdef _MSC_VER

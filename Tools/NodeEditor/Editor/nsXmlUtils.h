@@ -33,7 +33,7 @@
 #include "nsMath.h"
 
 
-// ----------------------------------------------------------------------------
+
 // nsilities for parsing node attributes
 class nsXmlUtils
 {

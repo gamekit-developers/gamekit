@@ -30,7 +30,7 @@
 typedef nsHashTable<nsPointerHashKey, nsNode *> nsOldNewMap;
 
 
-// ----------------------------------------------------------------------------
+
 nsNode *nsClipboard_findNode(nsOldNewMap &map, nsNode *find)
 {
     // lookup nsility
@@ -41,7 +41,7 @@ nsNode *nsClipboard_findNode(nsOldNewMap &map, nsNode *find)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsClipboard_link(nsOldNewMap &lookup, nsNodes &list)
 {
 
@@ -88,18 +88,18 @@ void nsClipboard_link(nsOldNewMap &lookup, nsNodes &list)
 }
 
 
-// ----------------------------------------------------------------------------
+
 nsClipboard::nsClipboard()
 {
 }
 
-// ----------------------------------------------------------------------------
+
 nsClipboard::~nsClipboard()
 {
     clear();
 }
 
-// ----------------------------------------------------------------------------
+
 void nsClipboard::clear(void)
 {
     if (!m_clip.empty())
@@ -112,7 +112,7 @@ void nsClipboard::clear(void)
     }
 }
 
-// ----------------------------------------------------------------------------
+
 void nsClipboard::paste(nsNodeTree *tree, nsNodes &list, const NSvec2 &position)
 {
     // paste into list from parent tree
@@ -147,7 +147,7 @@ void nsClipboard::paste(nsNodeTree *tree, nsNodes &list, const NSvec2 &position)
     nsClipboard_link(lookup, links);
 }
 
-// ----------------------------------------------------------------------------
+
 void nsClipboard::copy(nsNodes &list)
 {
     if (list.empty())
@@ -173,7 +173,7 @@ void nsClipboard::copy(nsNodes &list)
     nsClipboard_link(lookup, list);
 }
 
-// ----------------------------------------------------------------------------
+
 void nsClipboard::duplicate(nsNodeTree *tree, nsNodes &list, nsNodes &dest)
 {
     if (list.empty())

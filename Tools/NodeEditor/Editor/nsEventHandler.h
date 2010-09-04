@@ -33,7 +33,7 @@ class wxWindow;
 
 
 
-// ----------------------------------------------------------------------------
+
 enum nsNodifierID
 {
     NS_TREE_ADD,
@@ -73,13 +73,13 @@ public:
 
 };
 
-// ----------------------------------------------------------------------------
+
 typedef nsAbstractEvent<nsNodeTree> nsTreeEvent;
 typedef nsAbstractEvent<nsNode>     nsNodeEvent;
 typedef nsAbstractEvent<nsSocket>   nsSocketEvent;
 
 
-// ----------------------------------------------------------------------------
+
 // simple callback handler
 class nsNotifierBase
 {

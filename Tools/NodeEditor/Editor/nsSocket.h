@@ -33,7 +33,7 @@
 #include "nsNodeTypeInfo.h"
 
 
-// ----------------------------------------------------------------------------
+
 
 
 // Base socket definition
@@ -106,7 +106,7 @@ public:
 
 
 
-// ----------------------------------------------------------------------------
+
 class nsSocket : public nsSocketClass::Link
 {
 protected:
@@ -189,7 +189,7 @@ public:
 }
 
 
-// ----------------------------------------------------------------------------
+
 // short hand
 #define NS_CREATE_BOOL_SOCKET(dir, name, id, min, max, val)\
     NS_CREATE_SOCKET_T(NS_SPE_BOOL, dir, name, id, min, max, ((bool)val))

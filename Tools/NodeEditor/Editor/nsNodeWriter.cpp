@@ -31,17 +31,17 @@
 #include "nsMainWindow.h"
 
 
-// ----------------------------------------------------------------------------
+
 nsNodeWriter::nsNodeWriter()
 {
 }
 
-// ----------------------------------------------------------------------------
+
 nsNodeWriter::~nsNodeWriter()
 {
 }
 
-// ----------------------------------------------------------------------------
+
 static void nsWriteSocket(FILE *fp, nsSocket *sock)
 {
 	fprintf(fp, "\t\t\tSocket %s {  ", sock->getType()->getName().c_str());
@@ -57,13 +57,13 @@ static void nsWriteSocket(FILE *fp, nsSocket *sock)
 }
 
 
-// ----------------------------------------------------------------------------
+
 static void nsWriteVariable(wxXmlNode *xnode, nsNode *node)
 {
 }
 
 
-// ----------------------------------------------------------------------------
+
 static nsString nsGetNodeTypeString(nsNode *node)
 {
 	switch (node->getType()->getType())
@@ -92,7 +92,7 @@ static nsString nsGetNodeTypeString(nsNode *node)
 	return "NT_UNKNOWN";
 }
 
-// ----------------------------------------------------------------------------
+
 void nsNodeWriter::writeToFile(const char *path)
 {
     nsNodeManager &mgr = nsNodeManager::getSingleton();

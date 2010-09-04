@@ -28,7 +28,7 @@
 #include "nsNode.h"
 
 
-// ----------------------------------------------------------------------------
+
 nsSocket::nsSocket(nsNode *nd, nsSocketDef *def)
     :   m_type(def), m_parent(nd),
         m_from(0)
@@ -41,7 +41,7 @@ nsSocket::nsSocket(nsNode *nd, nsSocketDef *def)
 }
 
 
-// ----------------------------------------------------------------------------
+
 nsSocket::~nsSocket()
 {
     m_tosockets.clear();
@@ -49,7 +49,7 @@ nsSocket::~nsSocket()
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsSocket::connect(nsSocket *oth)
 {
     // ignore links on the same node
@@ -133,7 +133,7 @@ void nsSocket::connect(nsSocket *oth)
     }
 }
 
-// ----------------------------------------------------------------------------
+
 void nsSocket::updateFromParent(void)
 {
     if (!m_parent)
@@ -144,7 +144,7 @@ void nsSocket::updateFromParent(void)
     m_derrivedRect.y = prect.y + m_rect.y;
 }
 
-// ----------------------------------------------------------------------------
+
 void nsSocket::unlink(void)
 {
     // remove all refs to this
@@ -176,7 +176,7 @@ void nsSocket::unlink(void)
     m_from = 0;
 }
 
-// ----------------------------------------------------------------------------
+
 nsSocketDef::nsSocketDef(nsDirection dir, const nsString &name, int id, double min, double max, const nsValue& val)
     :   m_dir(dir),
         m_name(name),
@@ -191,12 +191,12 @@ nsSocketDef::nsSocketDef(nsDirection dir, const nsString &name, int id, double m
 }
 
 
-// ----------------------------------------------------------------------------
+
 nsSocketDef::~nsSocketDef()
 {
 }
 
-// ----------------------------------------------------------------------------
+
 nsSocket *nsSocketDef::create(nsNode *parent)
 {
     return new nsSocket(parent, this);

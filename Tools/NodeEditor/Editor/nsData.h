@@ -32,7 +32,7 @@ Data types for special nodes & sockets
 #include "nsMath.h"
 
 
-// ----------------------------------------------------------------------------
+
 // Abstract data for custom types attached to nodes.
 class nsNodeData
 {
@@ -130,7 +130,7 @@ public:
 };
 
 
-// ----------------------------------------------------------------------------
+
 class nsObjectSocketData
 {
 public:
@@ -178,13 +178,13 @@ public:
 
 
 
-// ----------------------------------------------------------------------------
+
 NS_INLINE void nsFromString(const nsString& s, nsObjectSocketData &v)
 { 
     v.setObject(s);
 }
 
-// ----------------------------------------------------------------------------
+
 NS_INLINE nsString nsToString(const nsObjectSocketData &v)
 { 
     return v.getObject();
@@ -192,7 +192,7 @@ NS_INLINE nsString nsToString(const nsObjectSocketData &v)
 
 
 
-// ----------------------------------------------------------------------------
+
 // Clamped data type
 template <typename T>
 class nsTypeClamp

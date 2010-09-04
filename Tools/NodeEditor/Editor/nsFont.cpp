@@ -31,7 +31,7 @@
 #include <wx/dcmemory.h>
 
 
-// ----------------------------------------------------------------------------
+
 nsFont::nsFont(const wxFont &font, int size)
 {
     // wxInitAllImageHandlers();
@@ -46,13 +46,13 @@ nsFont::nsFont(const wxFont &font, int size)
     doCreate();
 }
 
-// ----------------------------------------------------------------------------
+
 nsFont::~nsFont()
 {
     doDestroy();
 }
 
-// ----------------------------------------------------------------------------
+
 nsChar nsFont::getChar( char ch ) const
 {
     int pos = ( int )ch;
@@ -67,7 +67,7 @@ nsChar nsFont::getChar( char ch ) const
     return r;
 }
 
-// ----------------------------------------------------------------------------
+
 NSfloat nsFont::getPixelWidth(NSfloat size, const char *str, int len)
 {
     NSfloat scale = size / (NSfloat)m_res;
@@ -95,7 +95,7 @@ NSfloat nsFont::getPixelWidth(NSfloat size, const char *str, int len)
     return ret;
 }
 
-// ----------------------------------------------------------------------------
+
 // Render font to single channel image
 void nsFont::doCreate(void)
 {
@@ -171,7 +171,7 @@ void nsFont::doCreate(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 void nsFont::doDestroy(void)
 {
     if (m_imaData)
@@ -188,7 +188,7 @@ void nsFont::doDestroy(void)
 }
 
 
-// ----------------------------------------------------------------------------
+
 // lookup for the best fitting image size
 wxPoint nsFont::findBestSize(int res)
 {

@@ -33,7 +33,7 @@
 #include "nsMath.h"
 
 
-// ----------------------------------------------------------------------------
+
 // Simple OpenGL 2D render tools
 class nsRenderSystem  : public nsSingleton<nsRenderSystem>
 {
