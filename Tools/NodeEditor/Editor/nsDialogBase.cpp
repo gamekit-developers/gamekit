@@ -46,6 +46,7 @@ Common Layout:
 #include <wx/combobox.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
+#include <wx/panel.h>
 
 #define DEFAULT_SIZEX 150
 #define DEFAULT_SIZEY 200
@@ -214,8 +215,7 @@ nsMouseButtonDialog::nsMouseButtonDialog(wxWindow *parent, nsNode *node)
 
 
 	m_delay->SetValue(bd->getDelay());
-	m_delay->SetMin(0);
-	m_delay->SetMax(NS_LINEAR_MAX);
+	m_delay->SetRange(0, NS_LINEAR_MAX);
 
 	labelData->Add(label,   1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	labelData->Add(m_delay, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);

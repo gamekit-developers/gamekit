@@ -60,13 +60,13 @@
 /* #undef __WXGTK127__ */
 
 /* Define this if your version of GTK+ is greater than 2.0 */
-#define __WXGTK20__ 1
+/*#define __WXGTK20__ 1*/
 
 /* Define this if your version of GTK+ is greater than 2.6 */
 /*#define __WXGTK26__ 1*/
 
 /* Define this if your version of GTK+ is greater than 2.10 */
-/*#define __WXGTK210__ 1*/
+#define __WXGTK210__ 1
 
 /* Define this if you want to use GPE features */
 /* #undef __WXGPE__ */

@@ -288,17 +288,17 @@ void nsMainWindow::loadMenus(void)
     // --- View Menu ---
 
     view = new wxMenu();
-    item = view->Append(NS_ID_SOLUTION, wxT("Solution Explorer\tF2"));
+    item = view->AppendCheckItem(NS_ID_SOLUTION, wxT("Solution Explorer\tF2"));
     item->SetCheckable(true); item->Check(m_auiManager->GetPane(nsSolutionBrowser::getSingletonPtr()).IsShown());
     item->SetHelp(wxT("Show Solution Explorer."));
     m_viewSolution = item;
 
-    item = view->Append(NS_ID_PROPERTIES, wxT("Properties\tF3"));
+    item = view->AppendCheckItem(NS_ID_PROPERTIES, wxT("Properties\tF3"));
     item->SetCheckable(true); item->Check(m_auiManager->GetPane(nsPropertyPage::getSingletonPtr()).IsShown());
     item->SetHelp(wxT("Show Properties Window."));
     m_viewProperties = item;
 
-    item = view->Append(NS_ID_VARIABLES, wxT("Variable Editor\tF4"));
+    item = view->AppendCheckItem(NS_ID_VARIABLES, wxT("Variable Editor\tF4"));
     item->SetCheckable(true); item->Check(false);
     item->SetHelp(wxT("Show Variable Editor."));
     view->AppendSeparator();
