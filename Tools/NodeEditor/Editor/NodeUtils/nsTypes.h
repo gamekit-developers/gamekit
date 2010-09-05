@@ -1326,8 +1326,8 @@ protected:
         typename IndexArray::Pointer ip = m_indices.ptr();
         typename IndexArray::Pointer cp = m_chainar.ptr();
 
-        memset(ip, NS_NPOS, sizeof(NSsize)*nr);
-        memset(cp, NS_NPOS, sizeof(NSsize)*nr);
+        memset(ip, (int)NS_NPOS, sizeof(NSsize)*nr);
+        memset(cp, (int)NS_NPOS, sizeof(NSsize)*nr);
 
         m_capacity = nr;
 
