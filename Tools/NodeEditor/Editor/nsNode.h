@@ -54,28 +54,28 @@ public:
 
     virtual ~nsNodeDef();
 
-    NS_INLINE nsNodeTypes           getType(void)       const           {return m_type;}
-    NS_INLINE nsGroupTypes          getGroup(void)      const           {return m_group;}
-    NS_INLINE const nsString        &getName(void)      const           {return m_name;}
-    NS_INLINE nsColorPalette        &getPalette(void)                   {return m_palette;}
-    NS_INLINE const NSvec2          &getSize(void)      const           {return m_size;}
-    NS_INLINE const nsString        &getDocStr(void)    const           {return m_docStr;}
-    NS_INLINE int                   getId(void)                         {return m_id;}
+    UT_INLINE nsNodeTypes           getType(void)       const           {return m_type;}
+    UT_INLINE nsGroupTypes          getGroup(void)      const           {return m_group;}
+    UT_INLINE const nsString        &getName(void)      const           {return m_name;}
+    UT_INLINE nsColorPalette        &getPalette(void)                   {return m_palette;}
+    UT_INLINE const NSvec2          &getSize(void)      const           {return m_size;}
+    UT_INLINE const nsString        &getDocStr(void)    const           {return m_docStr;}
+    UT_INLINE int                   getId(void)                         {return m_id;}
 
 
-    NS_INLINE void                  setType(nsNodeTypes v)              {m_type = v;}
-    NS_INLINE void                  setGroup(nsGroupTypes v)            {m_group = v;}
-    NS_INLINE void                  setName(const nsString &v)          {m_name = v;}
-    NS_INLINE void                  setPalette(const nsColorPalette &v) {m_palette = v;}
-    NS_INLINE void                  setDocStr(const nsString &v)        {m_docStr = v;}
-    NS_INLINE void                  setId(int v)                        {m_id = v;}
+    UT_INLINE void                  setType(nsNodeTypes v)              {m_type = v;}
+    UT_INLINE void                  setGroup(nsGroupTypes v)            {m_group = v;}
+    UT_INLINE void                  setName(const nsString &v)          {m_name = v;}
+    UT_INLINE void                  setPalette(const nsColorPalette &v) {m_palette = v;}
+    UT_INLINE void                  setDocStr(const nsString &v)        {m_docStr = v;}
+    UT_INLINE void                  setId(int v)                        {m_id = v;}
 
 
-    NS_INLINE nsSocketListClass     &getInputs(void)                    {return m_inputs;}
-    NS_INLINE nsSocketListClass     &getOutputs(void)                   {return m_outputs;}
+    UT_INLINE nsSocketListClass     &getInputs(void)                    {return m_inputs;}
+    UT_INLINE nsSocketListClass     &getOutputs(void)                   {return m_outputs;}
 
-    NS_INLINE nsSocketDefIterator   getInputIterator(void)              {return nsSocketDefIterator(m_inputs);}
-    NS_INLINE nsSocketDefIterator   getOutputIterator(void)             {return nsSocketDefIterator(m_outputs);}
+    UT_INLINE nsSocketDefIterator   getInputIterator(void)              {return nsSocketDefIterator(m_inputs);}
+    UT_INLINE nsSocketDefIterator   getOutputIterator(void)             {return nsSocketDefIterator(m_outputs);}
     
 
 
@@ -116,26 +116,26 @@ public:
     ~nsNode();
 
 
-    NS_INLINE const NSrect    &getRect(void)                          {return m_rect;}
-    NS_INLINE nsNodeDef       *getType(void)                          {NS_ASSERT(m_type); return m_type;}
-    NS_INLINE nsNodeTree      *getParent(void)                        {NS_ASSERT(m_tree); return m_tree;}
-    NS_INLINE nsSocket        *getInput(NSsize i)                     {return ((i < m_inputs.size()  && i >=0 ) ? m_inputs.at(i)  : 0);}
-    NS_INLINE nsSocket        *getOutput(NSsize i)                    {return ((i < m_outputs.size() && i >=0 ) ? m_outputs.at(i) : 0);}
-    NS_INLINE nsSocket        *getFirstInput(void)                    {if (m_inputs.empty()) return 0; return m_inputs.begin();}
-    NS_INLINE nsSocket        *getFirstOutput(void)                   {if (m_outputs.empty()) return 0; return m_outputs.begin();}
+    UT_INLINE const NSrect    &getRect(void)                          {return m_rect;}
+    UT_INLINE nsNodeDef       *getType(void)                          {UT_ASSERT(m_type); return m_type;}
+    UT_INLINE nsNodeTree      *getParent(void)                        {UT_ASSERT(m_tree); return m_tree;}
+    UT_INLINE nsSocket        *getInput(UTsize i)                     {return ((i < m_inputs.size()  && i >=0 ) ? m_inputs.at(i)  : 0);}
+    UT_INLINE nsSocket        *getOutput(UTsize i)                    {return ((i < m_outputs.size() && i >=0 ) ? m_outputs.at(i) : 0);}
+    UT_INLINE nsSocket        *getFirstInput(void)                    {if (m_inputs.empty()) return 0; return m_inputs.begin();}
+    UT_INLINE nsSocket        *getFirstOutput(void)                   {if (m_outputs.empty()) return 0; return m_outputs.begin();}
 
     // info about the current game object.
-    NS_INLINE void            setAttachedName(const nsString &name)   {m_attachedObject = name;}
-    NS_INLINE const nsString  &getAttachedName(void)                  {return m_attachedObject;}
+    UT_INLINE void            setAttachedName(const nsString &name)   {m_attachedObject = name;}
+    UT_INLINE const nsString  &getAttachedName(void)                  {return m_attachedObject;}
 
 
     // activation state
-    NS_INLINE nsNodeState       getState(void)                          {return m_state;}
-    NS_INLINE void              setState(nsNodeState st)                {m_state = st;}
+    UT_INLINE nsNodeState       getState(void)                          {return m_state;}
+    UT_INLINE void              setState(nsNodeState st)                {m_state = st;}
 
-    NS_INLINE nsNodeData        *getData(void)                          {return m_data;}
+    UT_INLINE nsNodeData        *getData(void)                          {return m_data;}
 
-    NS_INLINE NSrect            getEditRect(void)
+    UT_INLINE NSrect            getEditRect(void)
 	{
 		return NSrect((m_rect.getRight() - (nsNodeEditSize + nsNodeEditOffset)), m_rect.y + nsNodeEditOffset, nsNodeEditSize, nsNodeEditSize);
 	}
@@ -147,8 +147,8 @@ public:
     void            translate(NSfloat x, NSfloat y);
     void            setPosition(NSfloat x, NSfloat y);
 
-    NS_INLINE void  translate(const NSvec2 &v)      { translate(v.x, v.y); }
-    NS_INLINE void  setPosition(const NSvec2 &v)    { setPosition(v.x, v.y); }
+    UT_INLINE void  translate(const NSvec2 &v)      { translate(v.x, v.y); }
+    UT_INLINE void  setPosition(const NSvec2 &v)    { setPosition(v.x, v.y); }
 };
 
 

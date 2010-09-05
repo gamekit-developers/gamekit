@@ -25,107 +25,107 @@
 
 
 // ----------------------------------------------------------------------------
-NS_INLINE void nsFromString(const nsString& s, bool &v)
+UT_INLINE void nsFromString(const nsString& s, bool &v)
 { 
     v = (s == "true") ? true : nsStringConverter::toInt(s) != 0; 
 }
 
 
 // ----------------------------------------------------------------------------
-NS_INLINE void nsFromString(const nsString& s, int &v)
+UT_INLINE void nsFromString(const nsString& s, int &v)
 { 
     v = nsStringConverter::fromString<int>(s); 
 }
 
 // ----------------------------------------------------------------------------
-NS_INLINE void nsFromString(const nsString& s, NSfloat &v)   
+UT_INLINE void nsFromString(const nsString& s, NSfloat &v)   
 { 
     v = nsStringConverter::fromString<NSfloat>(s); 
 }
 
 // ----------------------------------------------------------------------------
-NS_INLINE void nsFromString(const nsString& s, nsString &v)
+UT_INLINE void nsFromString(const nsString& s, nsString &v)
 { 
     v = s; 
 }
 
 // ----------------------------------------------------------------------------
-NS_INLINE void nsFromString(const nsString& s, NSvec2 &v)
+UT_INLINE void nsFromString(const nsString& s, NSvec2 &v)
 { 
     v = nsStringConverter::toVec2(s); 
 }
 
 // ----------------------------------------------------------------------------
-NS_INLINE void nsFromString(const nsString& s, NSvec3 &v)
+UT_INLINE void nsFromString(const nsString& s, NSvec3 &v)
 { 
     v = nsStringConverter::toVec3(s); 
 }
 // ----------------------------------------------------------------------------
-NS_INLINE void nsFromString(const nsString& s, NSvec4 &v)
+UT_INLINE void nsFromString(const nsString& s, NSvec4 &v)
 { 
     v = nsStringConverter::toVec4(s); 
 }
 
 // ----------------------------------------------------------------------------
-NS_INLINE void nsFromString(const nsString& s, NSquat &v)
+UT_INLINE void nsFromString(const nsString& s, NSquat &v)
 { 
     v = nsStringConverter::toQuat(s); 
 }
 
 // ----------------------------------------------------------------------------
-NS_INLINE void nsFromString(const nsString& s, NSrect &v)
+UT_INLINE void nsFromString(const nsString& s, NSrect &v)
 { 
     v = nsStringConverter::toRect(s); 
 }
 // ----------------------------------------------------------------------------
-NS_INLINE void nsFromString(const nsString& s, void *v)
+UT_INLINE void nsFromString(const nsString& s, void *v)
 { 
     v = nsStringConverter::fromString<void*>(s); 
 }
 // ----------------------------------------------------------------------------
-NS_INLINE nsString nsToString(bool v)
+UT_INLINE nsString nsToString(bool v)
 { 
     return v ? "true" : "false"; 
 }
 
 // ----------------------------------------------------------------------------
-NS_INLINE nsString nsToString(int v)
+UT_INLINE nsString nsToString(int v)
 {
     return nsStringConverter::toString<int>(v); 
 }
 // ----------------------------------------------------------------------------
-NS_INLINE nsString nsToString(NSfloat v)
+UT_INLINE nsString nsToString(NSfloat v)
 { 
     return nsStringConverter::toString<NSfloat>(v); 
 }
 // ----------------------------------------------------------------------------
-NS_INLINE nsString nsToString(const nsString &v)
+UT_INLINE nsString nsToString(const nsString &v)
 { 
     return v;
 }
 
 // ----------------------------------------------------------------------------
-NS_INLINE nsString nsToString(const NSvec2& v, char split = nsStringConverter::nsStringSplitter)    
+UT_INLINE nsString nsToString(const NSvec2& v, char split = nsStringConverter::nsStringSplitter)    
 { 
     return nsStringConverter::toStringArray<NSfloat, 2>(v.ptr(), split); 
 }
 // ----------------------------------------------------------------------------
-NS_INLINE nsString nsToString(const NSvec3& v, char split = nsStringConverter::nsStringSplitter)
+UT_INLINE nsString nsToString(const NSvec3& v, char split = nsStringConverter::nsStringSplitter)
 { 
     return nsStringConverter::toStringArray<NSfloat, 3>(v.ptr(), split); 
 }
 // ----------------------------------------------------------------------------
-NS_INLINE nsString nsToString(const NSvec4& v, char split = nsStringConverter::nsStringSplitter)
+UT_INLINE nsString nsToString(const NSvec4& v, char split = nsStringConverter::nsStringSplitter)
 { 
     return nsStringConverter::toStringArray<NSfloat, 4>(v.ptr(), split); 
 }
 // ----------------------------------------------------------------------------
-NS_INLINE nsString nsToString(const NSquat& v, char split = nsStringConverter::nsStringSplitter)
+UT_INLINE nsString nsToString(const NSquat& v, char split = nsStringConverter::nsStringSplitter)
 { 
     return nsStringConverter::toStringArray<NSfloat, 4>(v.ptr(), split); 
 }
 // ----------------------------------------------------------------------------
-NS_INLINE nsString nsToString(const NSrect& v, char split = nsStringConverter::nsStringSplitter)
+UT_INLINE nsString nsToString(const NSrect& v, char split = nsStringConverter::nsStringSplitter)
 { 
     return nsStringConverter::toStringArray<NSfloat, 4>(&v.x, split); 
 }

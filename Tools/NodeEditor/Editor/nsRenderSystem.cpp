@@ -89,7 +89,7 @@ const int       NS_GRADIENT_SIZE    = 4;
 // text sizes
 const NSfloat   nsHeaderTextSize    = 12.f;
 const NSfloat   nsSocketTextSize    = 10.f;
-typedef nsArray<nsVertex> VertexBuffer;
+typedef utArray<nsVertex> VertexBuffer;
 
 
 

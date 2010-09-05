@@ -50,7 +50,7 @@
 
 // Some day I will write a reusable string class
 typedef std::string         nsString;
-typedef nsArray<nsString>   nsStringArray;
+typedef utArray<nsString>   nsStringArray;
 
 
 // nsString nsility functions
@@ -250,26 +250,26 @@ class nsHashedString
 {
 protected:
     nsString m_key;
-    mutable NShash m_hash;
+    mutable UThash m_hash;
 
 public:
-    nsHashedString() : m_key(""), m_hash(NS_NPOS) {}
+    nsHashedString() : m_key(""), m_hash(UT_NPOS) {}
     ~nsHashedString() {}
 
     // Key Constructor
-    nsHashedString(char* k) : m_key(k), m_hash(NS_NPOS) {hash();}
-    nsHashedString(const char* k) : m_key(const_cast<char*>(k)), m_hash(NS_NPOS) {}
-    nsHashedString(const nsString& k) : m_key(k), m_hash(NS_NPOS) {}
+    nsHashedString(char* k) : m_key(k), m_hash(UT_NPOS) {hash();}
+    nsHashedString(const char* k) : m_key(const_cast<char*>(k)), m_hash(UT_NPOS) {}
+    nsHashedString(const nsString& k) : m_key(k), m_hash(UT_NPOS) {}
 
     // Copy constructor
     nsHashedString(const nsHashedString& k) : m_key(k.m_key), m_hash(k.m_hash) {}
 
-    NS_INLINE const nsString& str(void) const {return m_key;}
+    UT_INLINE const nsString& str(void) const {return m_key;}
 
-    NShash hash(void) const {
+    UThash hash(void) const {
 
         // use cached hash
-        if (m_hash != NS_NPOS) return m_hash;
+        if (m_hash != UT_NPOS) return m_hash;
 
         const char *str = m_key.c_str();
 
@@ -278,7 +278,7 @@ public:
         static const unsigned int FNVMultiple = 16777619u;
 
         // Fowler / Noll / Vo (FNV) Hash
-        m_hash = (NShash)InitialFNV;
+        m_hash = (UThash)InitialFNV;
         for (int i = 0; str[i]; i++) {
             m_hash = m_hash ^(str[i]);    // xor  the low 8 bits
             m_hash = m_hash * FNVMultiple;  // multiply by the magic number
@@ -286,19 +286,19 @@ public:
         return m_hash;
     }
 
-    NS_INLINE bool operator== (const nsHashedString& v) const    {return hash() == v.hash();}
-    NS_INLINE bool operator!= (const nsHashedString& v) const    {return hash() != v.hash();}
-    NS_INLINE bool operator== (const NShash& v) const            {return hash() == v;}
-    NS_INLINE bool operator!= (const NShash& v) const            {return hash() != v;}
+    UT_INLINE bool operator== (const nsHashedString& v) const    {return hash() == v.hash();}
+    UT_INLINE bool operator!= (const nsHashedString& v) const    {return hash() != v.hash();}
+    UT_INLINE bool operator== (const UThash& v) const            {return hash() == v;}
+    UT_INLINE bool operator!= (const UThash& v) const            {return hash() != v;}
 
 };
 
 // For operations on a fixed size character array
-template <const NSuint16 L>
+template <const UTuint16 L>
 class nsFixedString
 {
 public:
-    NS_ASSERTCOMP((L < 0xFFFF), Limit);
+    UT_ASSERTCOMP((L < 0xFFFF), Limit);
 
     typedef char Pointer[(L+1)];
 
@@ -312,7 +312,7 @@ public:
     {
         if (o.size())
         {
-            NSuint16 i;
+            UTuint16 i;
             const char *cp = o.c_str();
             for (i = 0; i < L && i < o.size(); ++i, ++m_size)
                 m_buffer[i] = cp[i];
@@ -326,7 +326,7 @@ public:
     {
         if (o)
         {
-            NSuint16 i;
+            UTuint16 i;
             for (i = 0; i < L && o[i]; ++i, ++m_size)
                 m_buffer[i]    = o[i];
             m_buffer[m_size] = 0;
@@ -334,7 +334,7 @@ public:
         m_buffer[m_size] = 0;
     }
     // Appends charcters upto max (L)
-    NS_INLINE void push_back(char ch)
+    UT_INLINE void push_back(char ch)
     {
         if (m_size >= L) return;
         m_buffer[m_size++] = ch;
@@ -355,18 +355,18 @@ public:
 	}
 
     // Nulify size
-    void resize(NSuint16 ns)
+    void resize(UTuint16 ns)
     {
         if (ns < L)
         {
             if (ns < m_size)
             {
-                for (NSuint16 i = ns; i < m_size; i++)
+                for (UTuint16 i = ns; i < m_size; i++)
                     m_buffer[i] = 0;
             }
             else
             {
-                for (NSuint16 i = m_size; i < ns; i++)
+                for (UTuint16 i = m_size; i < ns; i++)
                     m_buffer[i]    = 0;
             }
             m_size = ns;
@@ -382,7 +382,7 @@ public:
         {
             if (!(nsCharEqL(m_buffer, o.m_buffer, o.m_size)))
             {
-                NSuint16 i;
+                UTuint16 i;
                 m_size = 0;
                 for (i = 0; i < L && i < o.m_size; ++i, ++m_size)
                     m_buffer[i] = o.m_buffer[i];
@@ -394,26 +394,26 @@ public:
 
     // Raw data access
 
-    NS_INLINE const char* c_str(void) const                 { return m_buffer; }
-    NS_INLINE char* ptr(void)                               { return m_buffer; }
-    NS_INLINE const char* ptr(void) const                   { return m_buffer; }
-    NS_INLINE const char operator [](NSuint16 i) const      { NS_ASSERT(i < m_size && i < L); return m_buffer[i]; }
-    NS_INLINE const char at(NSuint16 i) const               { NS_ASSERT(i < m_size && i < L); return m_buffer[i]; }
-    NS_INLINE void clear(void)                              { m_buffer[0] = 0; m_size = 0; }
+    UT_INLINE const char* c_str(void) const                 { return m_buffer; }
+    UT_INLINE char* ptr(void)                               { return m_buffer; }
+    UT_INLINE const char* ptr(void) const                   { return m_buffer; }
+    UT_INLINE const char operator [](UTuint16 i) const      { UT_ASSERT(i < m_size && i < L); return m_buffer[i]; }
+    UT_INLINE const char at(UTuint16 i) const               { UT_ASSERT(i < m_size && i < L); return m_buffer[i]; }
+    UT_INLINE void clear(void)                              { m_buffer[0] = 0; m_size = 0; }
 
 
     // Size queries
 
-    NS_INLINE int empty(void) const                 { return m_size == 0; }
-    NS_INLINE int size(void) const                  { return m_size; }
-    NS_INLINE int capacity(void) const              { return L; }
+    UT_INLINE int empty(void) const                 { return m_size == 0; }
+    UT_INLINE int size(void) const                  { return m_size; }
+    UT_INLINE int capacity(void) const              { return L; }
 
 
-    NS_INLINE bool operator == (const nsFixedString& str) const { return nsCharEqL(m_buffer, str.m_buffer, bufMin(L, str.m_size + 1)); }
-    NS_INLINE bool operator != (const nsFixedString& str) const { return !nsCharEqL(m_buffer, str.m_buffer, bufMin(L, str.m_size + 1)); }
+    UT_INLINE bool operator == (const nsFixedString& str) const { return nsCharEqL(m_buffer, str.m_buffer, bufMin(L, str.m_size + 1)); }
+    UT_INLINE bool operator != (const nsFixedString& str) const { return !nsCharEqL(m_buffer, str.m_buffer, bufMin(L, str.m_size + 1)); }
 
     // hashing
-    NS_INLINE NShash hash(void) const
+    UT_INLINE UThash hash(void) const
     {
         nsCharHashKey ch(m_buffer);
         return ch.hash();
@@ -421,9 +421,9 @@ public:
 
 
 protected:
-    NS_INLINE NSuint16 bufMin(NSuint16 a, NSuint16 b) const { return a > b ? b : a; }
+    UT_INLINE UTuint16 bufMin(UTuint16 a, UTuint16 b) const { return a > b ? b : a; }
     Pointer m_buffer;
-    NSuint16 m_size;
+    UTuint16 m_size;
 };
 
 #endif//_nsString_h_

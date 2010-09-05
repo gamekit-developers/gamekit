@@ -27,15 +27,15 @@
 #include "nsClipboard.h"
 
 
-typedef nsHashTable<nsPointerHashKey, nsNode *> nsOldNewMap;
+typedef utHashTable<utPointerHashKey, nsNode *> nsOldNewMap;
 
 
 
 nsNode *nsClipboard_findNode(nsOldNewMap &map, nsNode *find)
 {
     // lookup nsility
-    NSsize pos = map.find(find);
-    if (pos != NS_NPOS)
+    UTsize pos = map.find(find);
+    if (pos != UT_NPOS)
         return map.at(pos);
     return 0;
 }
@@ -66,7 +66,7 @@ void nsClipboard_link(nsOldNewMap &lookup, nsNodes &list)
             {
                 link =sock->getSocketLink();
 
-                NS_ASSERT(link);
+                UT_ASSERT(link);
                 linkPar = link->getParent();
 
                 // from node -> parent
@@ -119,7 +119,7 @@ void nsClipboard::paste(nsNodeTree *tree, nsNodes &list, const NSvec2 &position)
     if (m_clip.empty() || !tree)
         return;
 
-    NSsize size = m_clip.size();
+    UTsize size = m_clip.size();
 
     nsOldNewMap lookup;
     nsNodes links;

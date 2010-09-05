@@ -78,15 +78,15 @@ public:
         return Blank;
     }
 
-    NS_INLINE unsigned int  &getImage(void)         const   {return m_image;}
-    NS_INLINE bool          isImageValid(void)      const   {return m_image != 0;}
-    NS_INLINE const NScolor &getDark(void)          const   {return m_color[NS_PAL_DARK];}
-    NS_INLINE const NScolor &getMiddle(void)        const   {return m_color[NS_PAL_MIDDLE];}
-    NS_INLINE const NScolor &getLight(void)         const   {return m_color[NS_PAL_LIGHT];}
-    NS_INLINE const NScolor &getShadow(void)        const   {return m_color[NS_PAL_SHADOW];}
-    NS_INLINE const NScolor &getHighlight(void)     const   {return m_color[NS_PAL_HIGHLIGHT];}
-    NS_INLINE const NScolor &getText(void)          const   {return m_color[NS_PAL_TEXT];}
-    NS_INLINE const NScolor &getTextHeader(void)    const   {return m_color[NS_PAL_TEXT_HEADER];}
+    UT_INLINE unsigned int  &getImage(void)         const   {return m_image;}
+    UT_INLINE bool          isImageValid(void)      const   {return m_image != 0;}
+    UT_INLINE const NScolor &getDark(void)          const   {return m_color[NS_PAL_DARK];}
+    UT_INLINE const NScolor &getMiddle(void)        const   {return m_color[NS_PAL_MIDDLE];}
+    UT_INLINE const NScolor &getLight(void)         const   {return m_color[NS_PAL_LIGHT];}
+    UT_INLINE const NScolor &getShadow(void)        const   {return m_color[NS_PAL_SHADOW];}
+    UT_INLINE const NScolor &getHighlight(void)     const   {return m_color[NS_PAL_HIGHLIGHT];}
+    UT_INLINE const NScolor &getText(void)          const   {return m_color[NS_PAL_TEXT];}
+    UT_INLINE const NScolor &getTextHeader(void)    const   {return m_color[NS_PAL_TEXT_HEADER];}
 };
 
 

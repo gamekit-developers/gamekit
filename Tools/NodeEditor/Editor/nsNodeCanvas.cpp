@@ -139,7 +139,7 @@ NSvec2 nsNodeCanvas::projectPoint(const NSvec2 &v)
     // or std projection
     // m_projection being NSrect(0.f, 0.f, m_size.x, m_size.y)
 
-    NS_ASSERT(m_size.valid() && !m_size.isZero());
+    UT_ASSERT(m_size.valid() && !m_size.isZero());
 
     return NSvec2(
                m_projection.x + m_projection.width * v.x / m_size.x,
@@ -289,7 +289,7 @@ void nsNodeCanvas::bringToFront(nsNode *node)
 void nsNodeCanvas::captureNode(nsNode *node)
 {
 
-    NS_ASSERT(node);
+    UT_ASSERT(node);
     if (!node)
         return;
 
@@ -952,7 +952,7 @@ void nsNodeCanvas::sizeEvent(wxSizeEvent &evt)
 
 NSvec2 nsNodeCanvas::getZoom(void)
 {
-    NS_ASSERT(m_size.valid() && !m_size.isZero());
+    UT_ASSERT(m_size.valid() && !m_size.isZero());
     // current zoom
     return NSvec2(m_projection.width / m_size.x, m_projection.height / m_size.y);
 }

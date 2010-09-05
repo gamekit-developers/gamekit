@@ -189,7 +189,7 @@ void nsNodeReader::load(wxMemoryInputStream &buf)
         if (!m_linker.empty())
         {
             // do link sockets
-            nsArrayIterator<SocketLink> iter = nsArrayIterator<SocketLink>(m_linker);
+            utArrayIterator<SocketLink> iter = utArrayIterator<SocketLink>(m_linker);
             while (iter.hasMoreElements())
             {
                 LinkPair &p = iter.getNext();
@@ -198,8 +198,8 @@ void nsNodeReader::load(wxMemoryInputStream &buf)
                 nsSocket *isock = p.inSock;
 
 
-                NSsize pos = m_sockMap.find(ftype);
-                if (pos != NS_NPOS)
+                UTsize pos = m_sockMap.find(ftype);
+                if (pos != UT_NPOS)
                 {
                     nsSocket *osock = m_sockMap.at(pos);
                     isock->connect(osock);

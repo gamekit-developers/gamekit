@@ -57,18 +57,18 @@ class wxMenuItem;
 class wxPGProperty;
 
 
-typedef nsList<nsNode *>                nsNodes;
-typedef nsListIterator<nsNodes>         nsNodeIterator;
-typedef nsListReverseIterator<nsNodes>  nsReverseNodeIterator;
-typedef nsList<nsNodeTree *>            nsTrees;
-typedef nsListIterator<nsTrees>         nsTreeIterator;
+typedef utList<nsNode *>                nsNodes;
+typedef utListIterator<nsNodes>         nsNodeIterator;
+typedef utListReverseIterator<nsNodes>  nsReverseNodeIterator;
+typedef utList<nsNodeTree *>            nsTrees;
+typedef utListIterator<nsTrees>         nsTreeIterator;
 
-typedef nsListClass<nsNodeDef>              nsNodeListClass;
-typedef nsListIterator<nsNodeListClass>     nsNodeDefIterator;
-typedef nsListClass<nsSocket>               nsSocketClass;
-typedef nsList<nsSocket*>                   nsSocketList;
-typedef nsListClass<nsSocketDef>            nsSocketListClass;
-typedef nsListIterator<nsSocketListClass>   nsSocketDefIterator;
+typedef utListClass<nsNodeDef>              nsNodeListClass;
+typedef utListIterator<nsNodeListClass>     nsNodeDefIterator;
+typedef utListClass<nsSocket>               nsSocketClass;
+typedef utList<nsSocket*>                   nsSocketList;
+typedef utListClass<nsSocketDef>            nsSocketListClass;
+typedef utListIterator<nsSocketListClass>   nsSocketDefIterator;
 
 enum nsWindowId
 {

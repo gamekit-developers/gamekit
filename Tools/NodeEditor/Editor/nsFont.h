@@ -56,7 +56,7 @@ typedef struct nsChar
 class nsFont
 {
 public:
-    typedef nsArray<nsChar *> CharacterVector;
+    typedef utArray<nsChar *> CharacterVector;
 
 
 public:

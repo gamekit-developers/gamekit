@@ -42,10 +42,10 @@
 class nsNodeTypeInfo : public nsSingleton<nsNodeTypeInfo>
 {
 public:
-    typedef nsList<nsNodeDef *>                     GroupList;
-    typedef nsListIterator<GroupList>               GroupListIterator;
-    typedef nsHashTable<nsIntHashKey, GroupList>    GroupMap;
-    typedef nsHashTableIterator<GroupMap>           GroupIterator;
+    typedef utList<nsNodeDef *>                     GroupList;
+    typedef utListIterator<GroupList>               GroupListIterator;
+    typedef utHashTable<utIntHashKey, GroupList>    GroupMap;
+    typedef utHashTableIterator<GroupMap>           GroupIterator;
 
 
 protected:

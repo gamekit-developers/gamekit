@@ -58,35 +58,35 @@ public:
     nsNodeTree(const nsString &name);
     ~nsNodeTree();
 
-    NS_INLINE void              setName(const nsString &name)           {m_name = name;}
-    NS_INLINE void              setGroup(bool val)                      {m_isGroup = val;}
-    NS_INLINE void              setGroupName(const nsString &name)      {m_groupName = name;}
-    NS_INLINE void              setAttachedName(const nsString &name)   {m_attachedObject = name;}
+    UT_INLINE void              setName(const nsString &name)           {m_name = name;}
+    UT_INLINE void              setGroup(bool val)                      {m_isGroup = val;}
+    UT_INLINE void              setGroupName(const nsString &name)      {m_groupName = name;}
+    UT_INLINE void              setAttachedName(const nsString &name)   {m_attachedObject = name;}
 
 
-    NS_INLINE const nsString      &getName(void)                          {return m_name;}
-    NS_INLINE const nsString      &getGroupName(void)                     {return m_groupName;}
-    NS_INLINE bool                isGroup(void)                           {return m_isGroup;}
-    NS_INLINE const nsString      &getAttachedName(void)                  {return m_attachedObject;}
+    UT_INLINE const nsString      &getName(void)                          {return m_name;}
+    UT_INLINE const nsString      &getGroupName(void)                     {return m_groupName;}
+    UT_INLINE bool                isGroup(void)                           {return m_isGroup;}
+    UT_INLINE const nsString      &getAttachedName(void)                  {return m_attachedObject;}
 
 
     // save / load data
-    NS_INLINE void                setOpen(bool v)                         {m_open = v;}
-    NS_INLINE void                setSize(const NSvec2 &size)             {m_size = size;}
-    NS_INLINE void                setProjection(const NSrect &proj)       {m_projection = proj;}
-    NS_INLINE bool                isOpen(void)                            {return m_open;}
-    NS_INLINE NSvec2              &getSize(void)                          {return m_size;}
-    NS_INLINE NSrect              &getProjection(void)                    {return m_projection;}
+    UT_INLINE void                setOpen(bool v)                         {m_open = v;}
+    UT_INLINE void                setSize(const NSvec2 &size)             {m_size = size;}
+    UT_INLINE void                setProjection(const NSrect &proj)       {m_projection = proj;}
+    UT_INLINE bool                isOpen(void)                            {return m_open;}
+    UT_INLINE NSvec2              &getSize(void)                          {return m_size;}
+    UT_INLINE NSrect              &getProjection(void)                    {return m_projection;}
 
 
     // Temporary canvas data (only valid as long as the editor is open) 
-    NS_INLINE void                attachCanvas(nsNodeCanvas *cnvs)        {m_client = cnvs;}
-    NS_INLINE nsNodeCanvas        *getAttachedCanvas(void)                {return m_client;}
+    UT_INLINE void                attachCanvas(nsNodeCanvas *cnvs)        {m_client = cnvs;}
+    UT_INLINE nsNodeCanvas        *getAttachedCanvas(void)                {return m_client;}
 
 
     // node access
-    NS_INLINE nsNodeIterator      getNodeIterator(void)                   {return nsNodeIterator(m_nodes);}
-    NS_INLINE NSsize              getNodeCount(void)                      {return m_nodes.size();}
+    UT_INLINE nsNodeIterator      getNodeIterator(void)                   {return nsNodeIterator(m_nodes);}
+    UT_INLINE UTsize              getNodeCount(void)                      {return m_nodes.size();}
 
 
     nsNode  *createNode(nsNodeDef *nt);

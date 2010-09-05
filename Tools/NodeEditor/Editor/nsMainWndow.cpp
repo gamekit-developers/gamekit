@@ -377,7 +377,7 @@ void nsMainWindow::makeNodeMenu(wxWindow *caller, wxMenu *menu)
     while (it.hasMoreElements())
     {
         nsNodeTypeInfo::GroupIterator::Pair kv = it.getNext();
-        wxString groupName = types.getGroupName(kv.first);
+        wxString groupName = types.getGroupName(kv.first.key());
 
         // current group
 

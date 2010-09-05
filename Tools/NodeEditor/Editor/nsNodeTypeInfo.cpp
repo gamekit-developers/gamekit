@@ -118,10 +118,10 @@ void nsNodeTypeInfo::addType(nsNodeDef *ndef)
     m_types.push_back(ndef);
 
     nsGroupTypes type = ndef->getGroup();
-    if (m_groups.find(type) == NS_NPOS)
+    if (m_groups.find(type) == UT_NPOS)
         m_groups.insert(type, GroupList());
-    if (m_groups.find(type) != NS_NPOS)
-        m_groups.get(type).second.push_back(ndef);
+    if (m_groups.find(type) != UT_NPOS)
+        m_groups.get(type)->push_back(ndef);
 }
 
 

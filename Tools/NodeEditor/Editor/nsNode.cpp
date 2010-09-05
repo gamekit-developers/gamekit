@@ -60,7 +60,7 @@ nsNode::nsNode(nsNodeTree *tree, nsNodeDef *def)
 nsNode::nsNode(nsNode *cpy, nsNodeTree *tree)
     :   m_type(0), m_tree(tree), m_state(NDST_INACTIVE)
 {
-    NS_ASSERT(cpy);
+    UT_ASSERT(cpy);
 
     m_type          = cpy->m_type;
     m_rect          = cpy->m_rect;

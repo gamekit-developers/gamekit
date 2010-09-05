@@ -69,16 +69,16 @@ protected:
 
         virtual ~TypedContent() {}
 
-        NS_INLINE const Info&   type(void) const    { return typeid(T); } 
-        NS_INLINE Content       *clone(void) const  { return new TypedContent<T>(m_value); } 
+        UT_INLINE const Info&   type(void) const    { return typeid(T); } 
+        UT_INLINE Content       *clone(void) const  { return new TypedContent<T>(m_value); } 
 
 
-        NS_INLINE void fromString(const nsString &v)
+        UT_INLINE void fromString(const nsString &v)
         {
             nsFromString(v, m_value);
         }
 
-        NS_INLINE nsString  toString(void) const
+        UT_INLINE nsString  toString(void) const
         {
             return nsToString(m_value);
         }
@@ -89,7 +89,7 @@ protected:
     Content *m_content;
 
     
-    NS_INLINE nsValue& swap(nsValue &rhs)
+    UT_INLINE nsValue& swap(nsValue &rhs)
     {
         std::swap(m_content, rhs.m_content);
         return *this;
@@ -119,13 +119,13 @@ public:
     }
 
     template<typename T>
-    NS_INLINE nsValue& operator = (const T &rhs) 
+    UT_INLINE nsValue& operator = (const T &rhs) 
     {
         nsValue(rhs).swap(*this);
         return *this;
     }
 
-    NS_INLINE nsValue& operator = (const nsValue &rhs) 
+    UT_INLINE nsValue& operator = (const nsValue &rhs) 
     {
         nsValue(rhs).swap(*this);
         return *this;
@@ -133,7 +133,7 @@ public:
 
 
     template<typename T>
-    NS_INLINE operator T(void) const
+    UT_INLINE operator T(void) const
     {
         if (m_content && m_content->type() == typeid(T))
             return static_cast<TypedContent<T>*>(m_content)->m_value;
@@ -141,7 +141,7 @@ public:
     }
 
     template<typename T>
-    NS_INLINE T get(const T& def = T()) const
+    UT_INLINE T get(const T& def = T()) const
     {
         if (m_content && m_content->type() == typeid(T))
             return static_cast<TypedContent<T>*>(m_content)->m_value;
@@ -149,24 +149,24 @@ public:
     }
 
 
-    NS_INLINE nsString toString(void) const
+    UT_INLINE nsString toString(void) const
     {
         if (m_content)
             return m_content->toString();
         return "";
     }
 
-    NS_INLINE void fromString(const nsString& v) const
+    UT_INLINE void fromString(const nsString& v) const
     {
         if (m_content)
             m_content->fromString(v);
     }
 
-    NS_INLINE bool isTypeOf(const nsValue& v) const
+    UT_INLINE bool isTypeOf(const nsValue& v) const
     {
         return m_content && v.m_content && m_content->type() ==  v.m_content->type();
     }
-    NS_INLINE bool isTypeOf(const Info& v) const
+    UT_INLINE bool isTypeOf(const Info& v) const
     {
         return m_content && m_content->type() ==  v;
     }

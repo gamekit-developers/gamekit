@@ -62,46 +62,46 @@ public:
     virtual ~nsSocketDef();
 
 
-    NS_INLINE nsDirection           getDirection(void) const                {return m_dir;}
-    NS_INLINE const nsString        &getName(void) const                    {return m_name;}
-    NS_INLINE nsColorPalette        &getPalette(void)                       {return m_palette;}
-    NS_INLINE const nsColorPalette  &getPalette(void) const                 {return m_palette;}
-    NS_INLINE const nsString        &getDocString(void) const               {return m_docStr;}
-    NS_INLINE int                   getId(void) const                       {return m_id;}
-    NS_INLINE double                getMin(void)const                       {return m_min;}
-    NS_INLINE double                getMax(void) const                      {return m_max;}
-    NS_INLINE const NSrect          &getRect(void) const                    {return m_rect;}
-    NS_INLINE int                   getUid(void) const                      {return m_uid;}
+    UT_INLINE nsDirection           getDirection(void) const                {return m_dir;}
+    UT_INLINE const nsString        &getName(void) const                    {return m_name;}
+    UT_INLINE nsColorPalette        &getPalette(void)                       {return m_palette;}
+    UT_INLINE const nsColorPalette  &getPalette(void) const                 {return m_palette;}
+    UT_INLINE const nsString        &getDocString(void) const               {return m_docStr;}
+    UT_INLINE int                   getId(void) const                       {return m_id;}
+    UT_INLINE double                getMin(void)const                       {return m_min;}
+    UT_INLINE double                getMax(void) const                      {return m_max;}
+    UT_INLINE const NSrect          &getRect(void) const                    {return m_rect;}
+    UT_INLINE int                   getUid(void) const                      {return m_uid;}
 
 
-    NS_INLINE void                  setDirection(const nsDirection &v)      {m_dir = v;}
-    NS_INLINE void                  setName(const nsString &v)              {m_name = v;}
-    NS_INLINE void                  setPalette(const nsColorPalette &v)     {m_palette = v;}
-    NS_INLINE void                  setDocString(const nsString &v)         {m_docStr = v;}
-    NS_INLINE void                  setId(int id)                           {m_id = id;}
-    NS_INLINE void                  setUid(int id)                          {m_uid = id;}
-    NS_INLINE void                  setMin(const double &v)                 {m_min = v;}
-    NS_INLINE void                  setMax(const double &v)                 {m_max = v;}
-    NS_INLINE void                  setRect(const NSrect &v)                {m_rect = v;}
+    UT_INLINE void                  setDirection(const nsDirection &v)      {m_dir = v;}
+    UT_INLINE void                  setName(const nsString &v)              {m_name = v;}
+    UT_INLINE void                  setPalette(const nsColorPalette &v)     {m_palette = v;}
+    UT_INLINE void                  setDocString(const nsString &v)         {m_docStr = v;}
+    UT_INLINE void                  setId(int id)                           {m_id = id;}
+    UT_INLINE void                  setUid(int id)                          {m_uid = id;}
+    UT_INLINE void                  setMin(const double &v)                 {m_min = v;}
+    UT_INLINE void                  setMax(const double &v)                 {m_max = v;}
+    UT_INLINE void                  setRect(const NSrect &v)                {m_rect = v;}
 
 
 
     // identity checks
 
-    NS_INLINE bool isTypeOf(nsSocketDef *def) const
+    UT_INLINE bool isTypeOf(nsSocketDef *def) const
     {
         if (!def) return false;
         return m_default.isTypeOf(def->m_default);
     }
 
 
-    NS_INLINE bool isOutput(void)   const { return m_dir == NS_SOCK_OUT;  }
-    NS_INLINE bool isInput(void)    const { return m_dir == NS_SOCK_IN;   }
+    UT_INLINE bool isOutput(void)   const { return m_dir == NS_SOCK_OUT;  }
+    UT_INLINE bool isInput(void)    const { return m_dir == NS_SOCK_IN;   }
 
 	
 	nsSocket                    *create(nsNode *parent);
 
-    NS_INLINE const nsValue &getValue(void) const {return m_default;}
+    UT_INLINE const nsValue &getValue(void) const {return m_default;}
 };
 
 
@@ -128,24 +128,24 @@ public:
     nsSocket(nsNode *nd, nsSocketDef *st);
     ~nsSocket();
 
-    NS_INLINE bool                  isConnectedOut(void)            {return !m_tosockets.empty();}
-    NS_INLINE bool                  isConnected(void)               {return m_from != 0;}
-    NS_INLINE nsSocket              *getSocketLink(void)            {return m_from;}
-    NS_INLINE nsNode                *getParent(void)                {return m_parent;}
-    NS_INLINE nsSocketDef           *getType(void)                  {return m_type;}
-    NS_INLINE bool                  isOutput(void)                  {return m_type->isOutput();}
-    NS_INLINE bool                  isInput(void)                   {return m_type->isInput();}
-    NS_INLINE NSrect                &getDerrivedRect(void)          {return m_derrivedRect;}
-    NS_INLINE NSrect                &getRect(void)                  {return m_rect;}
+    UT_INLINE bool                  isConnectedOut(void)            {return !m_tosockets.empty();}
+    UT_INLINE bool                  isConnected(void)               {return m_from != 0;}
+    UT_INLINE nsSocket              *getSocketLink(void)            {return m_from;}
+    UT_INLINE nsNode                *getParent(void)                {return m_parent;}
+    UT_INLINE nsSocketDef           *getType(void)                  {return m_type;}
+    UT_INLINE bool                  isOutput(void)                  {return m_type->isOutput();}
+    UT_INLINE bool                  isInput(void)                   {return m_type->isInput();}
+    UT_INLINE NSrect                &getDerrivedRect(void)          {return m_derrivedRect;}
+    UT_INLINE NSrect                &getRect(void)                  {return m_rect;}
 
-    NS_INLINE const nsValue         &getValue(void) const           {return m_value;}
-    NS_INLINE void                  setValue(const nsValue &v)      {m_value = v;}
+    UT_INLINE const nsValue         &getValue(void) const           {return m_value;}
+    UT_INLINE void                  setValue(const nsValue &v)      {m_value = v;}
 
 
 
     // identity checks
 
-    NS_INLINE bool isTypeOf(nsSocket *def) const
+    UT_INLINE bool isTypeOf(nsSocket *def) const
     {
         if (!def) return false;
         return m_type->isTypeOf(def->m_type);
@@ -163,7 +163,7 @@ public:
 
 
     // duplicate
-    NS_INLINE nsSocket *clone(nsNode *newParent)
+    UT_INLINE nsSocket *clone(nsNode *newParent)
     {
         nsSocket *sock = new nsSocket(newParent, m_type);
         sock->m_value = m_value;
@@ -174,7 +174,7 @@ public:
     // Sockets are only allowed to connect to others of the same type
     // Int->Float, is wrong
     // Float->Float, is ok
-    NS_INLINE bool canConnect(nsSocket *oth)
+    UT_INLINE bool canConnect(nsSocket *oth)
     {
         if (!oth) return false;
         return  m_parent != oth->m_parent &&  m_type->isTypeOf(oth->getType());

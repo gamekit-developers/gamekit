@@ -33,7 +33,7 @@ nsSocket::nsSocket(nsNode *nd, nsSocketDef *def)
     :   m_type(def), m_parent(nd),
         m_from(0)
 {
-    NS_ASSERT(m_parent);
+    UT_ASSERT(m_parent);
     m_value = def->getValue();
 
     m_rect = def->getRect();
@@ -69,7 +69,7 @@ void nsSocket::connect(nsSocket *oth)
             nsSocketList &links = m_from->m_tosockets;
 
             // other is zero so erase this in the from node
-            NS_ASSERT((!links.empty() && links.find(this)) && "Socket improperly linked!");
+            UT_ASSERT((!links.empty() && links.find(this)) && "Socket improperly linked!");
             links.erase(this);
 
             bool isFirst = getPrev() == 0;
@@ -110,7 +110,7 @@ void nsSocket::connect(nsSocket *oth)
         }
 
         // linking to
-        NS_ASSERT(oth->isOutput() && isInput());
+        UT_ASSERT(oth->isOutput() && isInput());
 
         m_from = oth;
         m_from->m_tosockets.push_back(this);
@@ -118,7 +118,7 @@ void nsSocket::connect(nsSocket *oth)
     else
     {
         // make sure this is an input
-        NS_ASSERT(isInput());
+        UT_ASSERT(isInput());
 
 
         if (m_from)
@@ -126,7 +126,7 @@ void nsSocket::connect(nsSocket *oth)
             nsSocketList &links = m_from->m_tosockets;
 
             // other is zero so erase this in the from node
-            NS_ASSERT((!links.empty() && links.find(this)) && "Socket improperly linked!");
+            UT_ASSERT((!links.empty() && links.find(this)) && "Socket improperly linked!");
             links.erase(this);
             m_from = 0;
         }
@@ -153,7 +153,7 @@ void nsSocket::unlink(void)
     {
         if (!m_tosockets.empty())
         {
-            nsListIterator<nsSocketList> it(m_tosockets);
+            utListIterator<nsSocketList> it(m_tosockets);
             while (it.hasMoreElements())
             {
                 nsSocket *sock = it.getNext();
@@ -167,7 +167,7 @@ void nsSocket::unlink(void)
         if (m_from)
         {
             nsSocketList &links = m_from->m_tosockets;
-            NS_ASSERT((!links.empty() && links.find(this)) && "Socket improperly linked!");
+            UT_ASSERT((!links.empty() && links.find(this)) && "Socket improperly linked!");
             links.erase(this);
         }
     }

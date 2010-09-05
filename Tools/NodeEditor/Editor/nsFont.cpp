@@ -179,7 +179,7 @@ void nsFont::doDestroy(void)
     m_imaData = 0;
 
     CharacterVector::Pointer ptr = m_chars.ptr();
-    NSsize nr = m_chars.size(), i=0;
+    UTsize nr = m_chars.size(), i=0;
 
     while (i < nr)
         delete ptr[i++];

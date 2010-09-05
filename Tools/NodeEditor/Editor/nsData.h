@@ -70,11 +70,11 @@ public:
     virtual ~nsButtonData() {}
     virtual nsNodeData *clone(void) {return new nsButtonData(*this); }
 
-	NS_INLINE int getValue(void) {return m_enum;}
-	NS_INLINE int getDelay(void) {return m_delay;}
+	UT_INLINE int getValue(void) {return m_enum;}
+	UT_INLINE int getDelay(void) {return m_delay;}
 
-	NS_INLINE void setValue(int v) {m_enum = v;}
-	NS_INLINE void setDelay(int v) {m_delay = v;}
+	UT_INLINE void setValue(int v) {m_enum = v;}
+	UT_INLINE void setDelay(int v) {m_delay = v;}
 
 };
 
@@ -108,25 +108,25 @@ public:
     virtual nsNodeData *clone(void) {return new nsMotionData(*this); }
 
 
-    NS_INLINE int                   getEnum(void)                           {return m_enum;}
-    NS_INLINE int                   getFlag(void)                           {return m_flag;}
-    NS_INLINE int                   getTransform(void)                      {return m_transform;}
-    NS_INLINE NSvec2                getClampX(void)                         {return m_cx;}
-    NS_INLINE NSvec2                getClampY(void)                         {return m_cy;}
-    NS_INLINE NSvec2                getClampZ(void)                         {return m_cz;}
-    NS_INLINE const nsString        &getRelitaveObject(void)                {return m_relObj;}
-    NS_INLINE bool                  getKeep(void)                           {return m_keep;}
-	NS_INLINE int                   getClampFlag(void)                      {return m_cf;}
+    UT_INLINE int                   getEnum(void)                           {return m_enum;}
+    UT_INLINE int                   getFlag(void)                           {return m_flag;}
+    UT_INLINE int                   getTransform(void)                      {return m_transform;}
+    UT_INLINE NSvec2                getClampX(void)                         {return m_cx;}
+    UT_INLINE NSvec2                getClampY(void)                         {return m_cy;}
+    UT_INLINE NSvec2                getClampZ(void)                         {return m_cz;}
+    UT_INLINE const nsString        &getRelitaveObject(void)                {return m_relObj;}
+    UT_INLINE bool                  getKeep(void)                           {return m_keep;}
+	UT_INLINE int                   getClampFlag(void)                      {return m_cf;}
 
-    NS_INLINE void                  setEnum(int v)                          {m_enum = v;}
-    NS_INLINE void                  setFlag(int v)                          {m_flag = v;}
-    NS_INLINE void                  setTransform(int v)                     {m_transform = v;}
-    NS_INLINE void                  setClampX(const NSvec2& v)              {m_cx = v;}
-    NS_INLINE void                  setClampY(const NSvec2& v)              {m_cy = v;}
-    NS_INLINE void                  setClampZ(const NSvec2& v)              {m_cz = v;}
-    NS_INLINE void                  setRelitaveObject(const nsString &v)    {m_relObj = v;}
-    NS_INLINE void                  setKeep(bool v)                         {m_keep = v;}
-	NS_INLINE void                  setClampFlag(int v)                     {m_cf = v;}
+    UT_INLINE void                  setEnum(int v)                          {m_enum = v;}
+    UT_INLINE void                  setFlag(int v)                          {m_flag = v;}
+    UT_INLINE void                  setTransform(int v)                     {m_transform = v;}
+    UT_INLINE void                  setClampX(const NSvec2& v)              {m_cx = v;}
+    UT_INLINE void                  setClampY(const NSvec2& v)              {m_cy = v;}
+    UT_INLINE void                  setClampZ(const NSvec2& v)              {m_cz = v;}
+    UT_INLINE void                  setRelitaveObject(const nsString &v)    {m_relObj = v;}
+    UT_INLINE void                  setKeep(bool v)                         {m_keep = v;}
+	UT_INLINE void                  setClampFlag(int v)                     {m_cf = v;}
 };
 
 
@@ -170,22 +170,22 @@ public:
     ~nsObjectSocketData() {}
 
 
-    NS_INLINE const nsString&       getObject(void) const           {return m_object;}
-    NS_INLINE const AccessType&     getAccess(void) const           {return m_access;}
-    NS_INLINE void                  setObject(const nsString& v)    {m_object = v;}
-    NS_INLINE void                  setAccess(const AccessType& v)  {m_access = v;}
+    UT_INLINE const nsString&       getObject(void) const           {return m_object;}
+    UT_INLINE const AccessType&     getAccess(void) const           {return m_access;}
+    UT_INLINE void                  setObject(const nsString& v)    {m_object = v;}
+    UT_INLINE void                  setAccess(const AccessType& v)  {m_access = v;}
 };
 
 
 
 
-NS_INLINE void nsFromString(const nsString& s, nsObjectSocketData &v)
+UT_INLINE void nsFromString(const nsString& s, nsObjectSocketData &v)
 { 
     v.setObject(s);
 }
 
 
-NS_INLINE nsString nsToString(const nsObjectSocketData &v)
+UT_INLINE nsString nsToString(const nsObjectSocketData &v)
 { 
     return v.getObject();
 }
@@ -211,7 +211,7 @@ public:
     double  m_min, m_max;
     bool    m_clamp;
 
-    NS_INLINE bool operator == (const nsTypeClamp<T>& rhs) const
+    UT_INLINE bool operator == (const nsTypeClamp<T>& rhs) const
     {
         return m_data == rhs.m_data;
     }

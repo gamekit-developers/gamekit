@@ -36,9 +36,9 @@
 class nsNodeReader
 {
 protected:
-    typedef nsHashTable<nsHashedString, nsNode*>    NodeLookup;
-    typedef nsHashTable<nsHashedString, nsSocket*>  SocketLookup;
-    typedef nsHashTableIterator<SocketLookup>       SocketLookupIter;
+    typedef utHashTable<nsHashedString, nsNode*>    NodeLookup;
+    typedef utHashTable<nsHashedString, nsSocket*>  SocketLookup;
+    typedef utHashTableIterator<SocketLookup>       SocketLookupIter;
 
     struct LinkPair
     {
@@ -46,7 +46,7 @@ protected:
         nsSocket *inSock;
     };
 
-    typedef nsArray<LinkPair>  SocketLink;
+    typedef utArray<LinkPair>  SocketLink;
 
     NodeLookup      m_nodes;
     SocketLink      m_linker;
