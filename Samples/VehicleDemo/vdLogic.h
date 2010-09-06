@@ -45,6 +45,7 @@ private:
 	void createInput();
 	void createVehicle();
 	void createCamera();
+	void createDisplayProps();
 
 public:
 
@@ -59,6 +60,8 @@ public:
 	gkKeyNode *m_leftKeyNode; 
 	gkKeyNode *m_rightKeyNode;
 	gkKeyNode *m_spaceKeyNode;
+	gkKeyNode *m_dKeyNode;
+	gkKeyNode *m_cKeyNode;
 	gkKeyNode *m_rKeyNode;
 	
 	gkCameraNode *m_cameraNode;

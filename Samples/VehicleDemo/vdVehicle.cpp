@@ -27,9 +27,111 @@
 
 #include "vdVehicle.h"
 
-vdVehicle::vdVehicle(gkScene *scene, const gkString &chassis, const gkScalar &power, const gkScalar &brakes, const gkScalar &rearBrakeRatio, const gkScalar & maxSteering)
+vdGearBox::vdGearBox(bool automatic, short numGears, gkScalar shiftTime, gkScalar reverseRatio)
+		: m_isAutomatic(automatic), m_numGears(numGears), m_reverseRatio(reverseRatio),
+		m_gears(0), m_currentGear(0), m_shifTime(shiftTime), m_isShifting(false), 
+		m_passedSinceShift(0)
+{
+	m_gears = new vdGear[m_numGears];
+}
+
+vdGearBox::~vdGearBox()
+{
+	delete []  m_gears;
+}
+
+void vdGearBox::setGear(const short &numGear, const gkScalar &ratio, const gkScalar &rpmLow, const gkScalar &rpmHigh)
+{
+	if(numGear>0 && numGear<=m_numGears)
+	{
+		m_gears[numGear-1].m_ratio = ratio;
+		m_gears[numGear-1].m_rpmLow = rpmLow;
+		m_gears[numGear-1].m_rpmHigh = rpmHigh;
+	}
+}
+
+gkScalar vdGearBox::getCurrentRatio(void)
+{
+	if(m_isShifting)
+		return 0;
+	if(m_currentGear>0 && m_currentGear<=m_numGears)
+		return m_gears[m_currentGear-1].m_ratio;
+	else if (m_currentGear==-1)
+		return m_reverseRatio;
+	else 
+		return 0;
+}
+
+void vdGearBox::setCurrentGear(short num)
+{
+	if(!m_isShifting && num >=-1 && num <=m_numGears)
+	{
+		m_isShifting = true;
+		m_passedSinceShift = 0;
+		
+		m_currentGear = num;
+	}
+}
+
+void vdGearBox::shiftUp(void)
+{
+	if(!m_isShifting)
+	{
+		m_isShifting = true;
+		m_passedSinceShift = 0;
+		
+		if(m_currentGear<m_numGears) m_currentGear+=1;
+	}
+}
+
+void vdGearBox::shiftDown(void)
+{
+	if(!m_isShifting)
+	{
+		m_isShifting = true;
+		m_passedSinceShift = 0;
+		
+		if(m_currentGear>-1) m_currentGear-=1;
+	}
+}
+
+void vdGearBox::update(gkScalar rate, const gkScalar &rpm)
+{
+	if(m_isShifting)
+	{
+		m_passedSinceShift += rate;
+		
+		if(m_passedSinceShift>m_shifTime)
+			m_isShifting = false;
+	}
+	else if(m_isAutomatic)
+	{
+		if(m_currentGear>0)
+		{
+			if(rpm>m_gears[m_currentGear-1].m_rpmHigh)
+			{
+				shiftUp();
+			}
+			else if(rpm<m_gears[m_currentGear-1].m_rpmLow)
+			{
+				if(m_currentGear>1)
+					shiftDown();
+			}
+		}
+		else if(m_currentGear==0)
+		{
+			if(rpm>2000)
+				shiftUp();
+		}
+	}
+}
+
+
+
+vdVehicle::vdVehicle(gkScene *scene, const gkString &chassis, const gkScalar &power, const gkScalar &brakes, const gkScalar &rearBrakeRatio, const gkScalar & maxSteering, const gkScalar &ruptor)
 		: m_scene(scene), m_dynamicWorld(0), m_raycaster(0), m_vehicle(0), m_object(0), m_chassis(0), 
-		m_gaz(0), m_brake(0), m_steer(0), m_enginePower(power), m_brakePower(brakes), m_rearBrakeRatio(rearBrakeRatio), m_maxSteering(maxSteering)
+		m_gaz(0), m_brake(0), m_steer(0), m_handBrake(false), m_engineTorque(power), m_brakePower(brakes), 
+		m_rearBrakeRatio(rearBrakeRatio), m_maxSteering(maxSteering), m_gearBox(0), m_currentRpm(0), m_ruptorRpm(ruptor)
 {
 
 	m_object = scene->getObject(chassis);
@@ -46,7 +148,7 @@ vdVehicle::~vdVehicle()
 
 void vdVehicle::tick(gkScalar rate)
 {
-	updateVehicle();
+	updateVehicle(rate);
 }
 
 void vdVehicle::createVehicle()
@@ -65,8 +167,40 @@ void vdVehicle::createVehicle()
 	m_dynamicWorld->addVehicle(m_vehicle);
 }
 
-void vdVehicle::updateVehicle()
+void vdVehicle::updateVehicle(gkScalar rate)
 {
+	float gearRatio=1;
+	float wheelTorque;
+	float frontBrake;
+	float rearBrake;
+	float steering;
+	float wheelRpm;
+	
+	
+	wheelRpm = 60 * getCurrentSpeedKmHour() / (3.6f * 2 * gkPi * m_vehicle->getWheelInfo(0).m_wheelsRadius);
+
+	if(m_gearBox)
+	{
+		gearRatio = m_gearBox->getCurrentRatio();
+		if(gearRatio == 0 )
+			m_currentRpm = m_ruptorRpm * m_gaz;
+		else
+			m_currentRpm = wheelRpm * gearRatio;
+		m_gearBox->update(rate, m_currentRpm);
+	}
+	
+	wheelTorque = m_gaz * m_engineTorque *gearRatio;
+	if(m_currentRpm > m_ruptorRpm)
+		wheelTorque = 0;
+	
+	frontBrake = m_brake * m_brakePower;
+	if(m_handBrake)
+		rearBrake = 100000;
+	else
+		rearBrake = m_brake * m_rearBrakeRatio * m_brakePower;
+	
+	steering = m_steer * m_maxSteering;
+	
 	btTransform trans;
 	gkTransformState gtrans;
 	
@@ -77,13 +211,14 @@ void vdVehicle::updateVehicle()
 		
 		if (btwheel.m_bIsFrontWheel)
 		{
-			m_vehicle->applyEngineForce(m_gaz * m_enginePower, i);
-			m_vehicle->setSteeringValue(m_steer * m_maxSteering, i);
-			m_vehicle->setBrake(m_brake * m_brakePower, i);
+			m_vehicle->applyEngineForce(wheelTorque, i);
+			m_vehicle->setSteeringValue(steering, i);
+			m_vehicle->setBrake(frontBrake, i);
 		}
 		else
 		{
-			m_vehicle->setBrake(m_brake * m_rearBrakeRatio * m_brakePower, i);
+			m_vehicle->setBrake(rearBrake, i);
+			//btwheel.m_deltaRotation = 0;
 		}
 	
 		//synchronize the wheels with the (interpolated) chassis worldtransform
@@ -121,31 +256,6 @@ void vdVehicle::addWheel(const gkString &name, gkScalar radius, gkVector3 connec
 	btwheel.m_frictionSlip = friction;
 	btwheel.m_rollInfluence = roll;
 	btwheel.m_maxSuspensionTravelCm = travelDist;
-}
-
-void vdVehicle::setTransfrom(const gkTransformState &v)
-{
-	m_object->setTransform(v);
-}
-
-void vdVehicle::setGaz(gkScalar ratio)
-{
-	m_gaz = ratio;
-}
-
-void vdVehicle::setBrake(gkScalar ratio)
-{
-	m_brake = ratio;
-}
-
-void vdVehicle::setSteer(gkScalar ratio)
-{
-	m_steer = ratio;
-}
-
-gkScalar vdVehicle::getCurrentSpeedKmHour(void)
-{
-	return m_vehicle->getCurrentSpeedKmHour();
 }
 
 gkScalar vdVehicle::getVelocityEulerZ(void)

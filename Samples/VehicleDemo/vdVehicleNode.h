@@ -41,7 +41,14 @@ public:
 		REAR,
 		LEFT,
 		RIGHT,
+		STEER_TIME,
+		HAND_BRAKE,
+		GEAR_UP,
+		GEAR_DOWN,
 		ZROT,
+		KMH,
+		GEAR,
+		RPM,
 	};
 
 	DECLARE_SOCKET_TYPE(UPDATE, bool);
@@ -49,7 +56,14 @@ public:
 	DECLARE_SOCKET_TYPE(REAR, bool);
 	DECLARE_SOCKET_TYPE(LEFT, bool);
 	DECLARE_SOCKET_TYPE(RIGHT, bool);
+	DECLARE_SOCKET_TYPE(STEER_TIME, gkScalar);
+	DECLARE_SOCKET_TYPE(HAND_BRAKE, bool);
+	DECLARE_SOCKET_TYPE(GEAR_UP, bool);
+	DECLARE_SOCKET_TYPE(GEAR_DOWN, bool);
 	DECLARE_SOCKET_TYPE(ZROT, gkScalar);
+	DECLARE_SOCKET_TYPE(KMH, int);
+	DECLARE_SOCKET_TYPE(GEAR, int);
+	DECLARE_SOCKET_TYPE(RPM, int);
 
 	vdVehicleNode(gkLogicTree *parent, size_t id);
 	virtual ~vdVehicleNode() {}
@@ -60,6 +74,7 @@ public:
 
 private:
 	vdVehicle *m_vehicle;
+	gkScalar   m_steer;
 };
 
 #endif // VDVEHICLENODE_H

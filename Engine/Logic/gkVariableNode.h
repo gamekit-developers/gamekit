@@ -28,8 +28,8 @@
 #define _gkVariableNode_h_
 
 #include "gkLogicNode.h"
-
-class gkVariable;
+#include "gkVariable.h"
+#include "gkGameObject.h"
 
 // these need to be reevaluated
 class gkVariableNode : public gkLogicNode
@@ -93,6 +93,66 @@ private:
     gkString        m_varName;
     bool            m_deg;
     gkVariable*     m_prop;
+};
+
+
+template <typename T>
+class gkVariableGetSetNode : public gkLogicNode
+{
+public:
+	enum
+	{
+		SET,
+		GET,
+	};
+	
+	DECLARE_SOCKET_TYPE(SET, T);
+	DECLARE_SOCKET_TYPE(GET, T);
+
+	gkVariableGetSetNode(gkLogicTree *parent, size_t id)
+		: gkLogicNode(parent, id) 
+	{
+		ADD_ISOCK(SET, T());
+		ADD_OSOCK(GET, T());
+	}
+
+	virtual ~gkVariableGetSetNode() {}
+	
+	void initialize()
+	{
+		if (!m_varName.empty())
+		{
+			gkGameObject *ob = GET_SOCKET(SET)->getGameObject();
+			if (ob != 0)
+			{
+				if (!ob->hasVariable(m_varName))
+					m_prop = ob->createVariable(m_varName, m_debug);
+				else
+					m_prop = ob->getVariable(m_varName);
+				
+				if (m_prop)
+					m_prop->setValue(GET_SOCKET_VALUE(SET));
+			}
+		}
+	}
+
+	void update(gkScalar tick)
+	{
+		if (m_prop)
+		{
+			T v = GET_SOCKET_VALUE(SET);
+			m_prop->setValue(v);
+			SET_SOCKET_VALUE(GET, v);
+		}
+	}
+	
+	GK_INLINE void setName(const gkString &varname) {m_varName = varname;}
+	GK_INLINE void setDebug(bool v)                 {m_debug = v;}
+
+private:
+	gkString    m_varName;
+	bool        m_debug;
+	gkVariable *m_prop;
 };
 
 #endif//_gkVariableNode_h_

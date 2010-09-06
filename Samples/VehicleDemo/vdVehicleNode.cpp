@@ -29,23 +29,56 @@
 //#include "OgreKit.h"
 
 vdVehicleNode::vdVehicleNode(gkLogicTree *parent, size_t id)
-		:	gkLogicNode(parent, id), m_vehicle(0)
+		:	gkLogicNode(parent, id), m_vehicle(0), m_steer(0)
 {
 	ADD_ISOCK(UPDATE, true);
 	ADD_ISOCK(FRONT, false);
 	ADD_ISOCK(REAR, false);
 	ADD_ISOCK(LEFT, false);
-	ADD_ISOCK(RIGHT, false);
+	ADD_ISOCK(RIGHT, false)
+	ADD_ISOCK(STEER_TIME, 0);
+	ADD_ISOCK(HAND_BRAKE, false);
+	ADD_ISOCK(GEAR_UP, false);
+	ADD_ISOCK(GEAR_DOWN, false);
 	ADD_OSOCK(ZROT, 0);
+	ADD_OSOCK(KMH, 0);
+	ADD_OSOCK(GEAR, 0);
+	ADD_OSOCK(RPM, 0);
 }
 
 bool vdVehicleNode::evaluate(gkScalar tick)
 {
+	float steerSpeed = GET_SOCKET_VALUE(STEER_TIME);
 	bool front = GET_SOCKET_VALUE(FRONT);
 	bool rear = GET_SOCKET_VALUE(REAR);
 	bool left = GET_SOCKET_VALUE(LEFT);
 	bool right = GET_SOCKET_VALUE(RIGHT);
 	bool brake = false;
+	
+	if(GET_SOCKET_VALUE(GEAR_UP))
+		m_vehicle->shiftUp();
+	else if (GET_SOCKET_VALUE(GEAR_DOWN))
+		m_vehicle->shiftDown();
+
+	if(left)
+		m_steer += tick/steerSpeed;
+	else if(right)
+		m_steer -= tick/steerSpeed;
+	else
+	{
+		if(m_steer>0)
+		{
+			m_steer -= tick/steerSpeed;
+			m_steer = gkMaxf(m_steer, 0);
+		}
+		else
+		{
+			m_steer += tick/steerSpeed;
+			m_steer = gkMinf(m_steer, 0);
+		}
+	}
+	
+	m_steer = gkClampf(m_steer, -1.0f, 1.0f);
 	
 	if(m_vehicle)
 	{
@@ -53,26 +86,39 @@ bool vdVehicleNode::evaluate(gkScalar tick)
 		m_vehicle->setSteer(0.0);
 		
 		if(front)
-			if(m_vehicle->getCurrentSpeedKmHour() > -FLT_MIN)
+		{
+			if(gkAbs(m_vehicle->getCurrentSpeedKmHour())<1 && m_vehicle->getCurrentGear() == -1)
+				m_vehicle->shiftUp();
+			if(m_vehicle->getCurrentGear() != -1)
 				m_vehicle->setGaz(1.0);
 			else
 				brake = true;
+		}
+		
 		if(rear)
-			if(m_vehicle->getCurrentSpeedKmHour() < FLT_MIN)
-				m_vehicle->setGaz(-0.5);
+		{
+			if(gkAbs(m_vehicle->getCurrentSpeedKmHour())<1 && m_vehicle->getCurrentGear() != -1)
+				m_vehicle->shiftDown();
+			if(m_vehicle->getCurrentGear()==-1)
+				m_vehicle->setGaz(1.0);
 			else
 				brake = true;
+		}
+		
 		if(brake)
 			m_vehicle->setBrake(1.0);
 		else
 			m_vehicle->setBrake(0.0);
-		if(left)
-			m_vehicle->setSteer(1.0);
-		else if(right)
-			m_vehicle->setSteer(-1.0);
+		
+		m_vehicle->setSteer(m_steer);
+		
+		m_vehicle->setHandBrake(GET_SOCKET_VALUE(HAND_BRAKE));
 	}
 	
 	SET_SOCKET_VALUE(ZROT, m_vehicle->getVelocityEulerZ());
+	SET_SOCKET_VALUE(KMH, (int)(m_vehicle->getCurrentSpeedKmHour()+0.5));
+	SET_SOCKET_VALUE(GEAR, m_vehicle->getCurrentGear());
+	SET_SOCKET_VALUE(RPM, m_vehicle->getCurrentRpm());
 	
 	bool update = GET_SOCKET_VALUE(UPDATE);
 	

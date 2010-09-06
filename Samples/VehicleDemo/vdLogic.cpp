@@ -31,11 +31,13 @@ vdLogic::vdLogic(gkScene *scene)
 		: m_scene(scene), m_tree(gkNodeManager::getSingleton().create()),
 		m_camera(scene->getMainCamera()), m_upKeyNode(0), m_downKeyNode(0),
 		m_leftKeyNode(0), m_rightKeyNode(0), m_spaceKeyNode(0), m_rKeyNode(0),
-		m_cameraNode(0)
+		m_cameraNode(0), m_dKeyNode(0), m_cKeyNode(0)
 {
 	createInput();
 	createVehicle();
 	createCamera();
+	createDisplayProps();
+	
 	m_tree->solveOrder();
 	m_camera->attachLogic(m_tree);
 }
@@ -62,6 +64,12 @@ void vdLogic::createInput()
 	m_spaceKeyNode = m_tree->createNode<gkKeyNode>();
 	m_spaceKeyNode->setKey(KC_SPACEKEY);
 
+	m_dKeyNode = m_tree->createNode<gkKeyNode>();
+	m_dKeyNode->setKey(KC_DKEY);
+	
+	m_cKeyNode = m_tree->createNode<gkKeyNode>();
+	m_cKeyNode->setKey(KC_CKEY);
+	
 	m_rKeyNode = m_tree->createNode<gkKeyNode>();
 	m_rKeyNode->setKey(KC_RKEY);
 }
@@ -69,10 +77,11 @@ void vdLogic::createInput()
 void vdLogic::createVehicle()
 {
 
-	float power=2000.0f;
+	float power=270.0f; //Engine torque N/m
 	float brake=60.0f;
 	float brakeRatio=0.6f;
-	float steer=0.3f;
+	float steer=0.69f;
+	float steerTime=0.21f;
 	
 	float connectionHeight = 0.4;
 	float sideOffset = 0.73;
@@ -80,14 +89,23 @@ void vdLogic::createVehicle()
 	float rearOffset = 1.282;
 	float radius = 0.357;
 	
-	float suspensionRestLength = 0.53;
-	float suspensionTravelCm = 16;
-	float suspensionStiffness= 50.0;
-	float suspensionRelax = 0.3 * 2.0 * btSqrt(suspensionStiffness);
-	float suspensionCompression = 0.1 * 2.0 * btSqrt(suspensionStiffness);
-	float friction = 1.3;
-	float rollInfluence = 0.1;
+	float suspensionRestLength = 0.58;
+	float suspensionTravelCm = 23;
+	float suspensionStiffness= 30.0;
+	float suspensionRelax = 0.1 * 2.0 * btSqrt(suspensionStiffness);
+	float suspensionCompression = 0.3 * 2.0 * btSqrt(suspensionStiffness);
+	float friction = 0.95f;
+	float rollInfluence = 0.5;
 
+	float diferencial = 3.5;
+	float gearReverse = -3.38 * diferencial;
+	float gear1 = 3.37 * diferencial;
+	float gear2 = 2.64 * diferencial;
+	float gear3 = 2.08 * diferencial;
+	float gear4 = 1.37 * diferencial;
+	float gear5 = 0.96 * diferencial;
+	float shiftTime = 0.4;
+	
 	gkVector3 wheelDirection(0,0,-1);
 	gkVector3 wheelAxle(1,0,0);
 	gkVector3 connectionPoint(0,0,0);
@@ -96,6 +114,7 @@ void vdLogic::createVehicle()
 	
 	m_vehicle = new vdVehicle(m_scene, "MiniCollision", power, brake, brakeRatio, steer);
 	
+	// wheels
 	connectionPoint = gkVector3(-sideOffset,frontOffest, connectionHeight);
 	m_vehicle->addWheel("wheel_MiniG_FT.L", radius, connectionPoint, wheelDirection, wheelAxle, isFront,
 						suspensionRestLength, suspensionStiffness, suspensionRelax, suspensionCompression,
@@ -117,6 +136,17 @@ void vdLogic::createVehicle()
 						suspensionRestLength, suspensionStiffness, suspensionRelax, suspensionCompression,
 						friction, rollInfluence, suspensionTravelCm);
 	
+	// gear box
+	vdGearBox *box = new vdGearBox(true, 5, shiftTime, gearReverse);
+	box->setGear(1, gear1, 2000, 3000);
+	box->setGear(2, gear2, 2000, 3800);
+	box->setGear(3, gear3, 2500, 4000);
+	box->setGear(4, gear4, 2600, 4100);
+	box->setGear(5, gear5, 2600, 4200);
+	
+	m_vehicle->setGearBox(box);
+	
+	
 	//simple node setup for logic
 	m_vehicleNode = m_tree->createNode<vdVehicleNode>();
 	
@@ -125,6 +155,10 @@ void vdLogic::createVehicle()
 	m_vehicleNode->getREAR()->link(m_downKeyNode->getIS_DOWN());
 	m_vehicleNode->getLEFT()->link(m_leftKeyNode->getIS_DOWN());
 	m_vehicleNode->getRIGHT()->link(m_rightKeyNode->getIS_DOWN());
+	m_vehicleNode->getSTEER_TIME()->setValue(steerTime);
+	m_vehicleNode->getHAND_BRAKE()->link(m_spaceKeyNode->getIS_DOWN());
+	m_vehicleNode->getGEAR_UP()->link(m_dKeyNode->getIS_DOWN());
+	m_vehicleNode->getGEAR_DOWN()->link(m_cKeyNode->getIS_DOWN());
 }
 
 void vdLogic::createCamera()
@@ -196,6 +230,25 @@ void vdLogic::createCamera()
 	m_cameraNode->getMIN_ROLL()->setValue(-360);
 	m_cameraNode->getINITIAL_PITCH()->setValue(76);
 	m_cameraNode->getKEEP_DISTANCE()->setValue(true);
+}
+
+void vdLogic::createDisplayProps(void)
+{
+	gkVariableGetSetNode<int> *kmhVarNode = m_tree->createNode<gkVariableGetSetNode<int> >();
+	kmhVarNode->setName("Km/h");
+	kmhVarNode->setDebug(true);
+	kmhVarNode->getSET()->link(m_vehicleNode->getKMH());
+	
+	gkVariableGetSetNode<int> *rpmVarNode = m_tree->createNode<gkVariableGetSetNode<int> >();
+	rpmVarNode->setName("Rpm");
+	rpmVarNode->setDebug(true);
+	rpmVarNode->getSET()->link(m_vehicleNode->getRPM());
+
+	gkVariableGetSetNode<int> *gearVarNode = m_tree->createNode<gkVariableGetSetNode<int> >();
+	gearVarNode->setName("Gear");
+	gearVarNode->setDebug(true);
+	gearVarNode->getSET()->link(m_vehicleNode->getGEAR());
+
 }
 
 void vdLogic::tick(gkScalar rate)
