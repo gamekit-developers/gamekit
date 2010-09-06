@@ -415,7 +415,7 @@ public:
     // hashing
     UT_INLINE UThash hash(void) const
     {
-        nsCharHashKey ch(m_buffer);
+        utCharHashKey ch(m_buffer);
         return ch.hash();
     }
 
