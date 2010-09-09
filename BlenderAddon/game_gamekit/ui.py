@@ -198,7 +198,8 @@ class GamekitSettings(bpy.types.IDPropertyGroup):
     pass  
 
 def addProperties():
-    bpy.types.Scene.PointerProperty(attr="gamekit", type=GamekitSettings, name="Gamekit", description="Gamekit Settings")
+    #bpy.types.Scene.PointerProperty(attr="gamekit", type=GamekitSettings, name="Gamekit", description="Gamekit Settings")
+    bpy.types.Scene.gamekit = bpy.props.PointerProperty(type=GamekitSettings, name="Gamekit", description="Gamekit Settings")
     
     default_path = os.environ.get("TEMP")
     if not default_path:
@@ -207,7 +208,7 @@ def addProperties():
         else:
             default_path = "/tmp/"
         
-    GamekitSettings.StringProperty( attr="gk_runtime_exec_path",
+    GamekitSettings.gk_runtime_exec_path = bpy.props.StringProperty(
                     name="Runtime",
                     description="Path of the gamekit executable",
                     maxlen = 512,
@@ -215,21 +216,21 @@ def addProperties():
                     subtype='FILE_PATH')
                     
                     
-    GamekitSettings.StringProperty( attr="gk_runtime_working_dir",
+    GamekitSettings.gk_runtime_working_dir = bpy.props.StringProperty(
                     name="Working Directory",
                     description="Directory in which to launch the game",
                     maxlen = 512,
                     default = default_path,
                     subtype='FILE_PATH')
 
-    GamekitSettings.StringProperty( attr="gk_export_tmp_dir",
+    GamekitSettings.gk_export_tmp_dir = bpy.props.StringProperty(
                     name="Temporary files",
                     description="Directory in which to store temporary files",
                     maxlen = 512,
                     default = default_path,
                     subtype='FILE_PATH')
 
-    GamekitSettings.EnumProperty( attr="gk_render_system",
+    GamekitSettings.gk_render_system = bpy.props.EnumProperty(
                     name="Render system",
                     items=(('GL', 'OpenGL', 'gl'),
                     ('D3D9', 'Direct 3D 9', 'd3d9'),
@@ -237,56 +238,56 @@ def addProperties():
                     ('D3D11', 'Direct 3D 11', 'd3d11')),
                     default = 'GL')
 
-    GamekitSettings.StringProperty( attr="gk_log_file",
+    GamekitSettings.gk_log_file = bpy.props.StringProperty(
                     name="Log",
                     description="Name of the log file that will be created in the working directory.",
                     maxlen=512,
                     default="OgreKit.log")
 
-    GamekitSettings.StringProperty( attr="gk_window_title",
+    GamekitSettings.gk_window_title = bpy.props.StringProperty(
                     name="Window title",
                     description="Name of the log file that will be created in the working directory.",
                     maxlen=512,
                     default="OgreKit")
 
-    GamekitSettings.BoolProperty( attr="gk_grab_input",
+    GamekitSettings.gk_grab_input = bpy.props.BoolProperty(
                     name="Grab input",
                     description="Grab mouse and keyboard event (cause other app to be unusable while game is runing).",
                     default=True)
 
-    GamekitSettings.BoolProperty( attr="gk_verbose",
+    GamekitSettings.gk_verbose = bpy.props.BoolProperty(
                     name="Verbose",
                     description="Verbose output on the console.",
                     default=False)
 
-    GamekitSettings.IntProperty( attr="gk_start_frame",
+    GamekitSettings.gk_start_frame = bpy.props.IntProperty(
                     name="Start frame",
                     min=1,
                     soft_min=1,
                     default =1)
 
-    GamekitSettings.BoolProperty( attr="gk_frustrum_culling",
+    GamekitSettings.gk_frustrum_culling = bpy.props.BoolProperty(
                     name="Frustrum culling",
                     default=True)
 
-    GamekitSettings.BoolProperty( attr="gk_debug_sound",
+    GamekitSettings.gk_debug_sound = bpy.props.BoolProperty(
                     name="Debug sound",
                     default=False)
 
-    GamekitSettings.BoolProperty( attr="gk_debug_physicsaabb",
+    GamekitSettings.gk_debug_physicsaabb = bpy.props.BoolProperty(
                     name="Physics AABB",
                     description="Show physics axis aligned bounding boxes",
                     default=False)
 
-    GamekitSettings.BoolProperty( attr="gk_build_instances",
+    GamekitSettings.gk_build_instances = bpy.props.BoolProperty(
                     name="Build instances",
                     default=False)
 
-    GamekitSettings.BoolProperty( attr="gk_use_shadows",
+    GamekitSettings.gk_use_shadows = bpy.props.BoolProperty(
                     name="Enable shadows",
                     default=True)
 
-    GamekitSettings.EnumProperty( attr="gk_shadow_type",
+    GamekitSettings.gk_shadow_type = bpy.props.EnumProperty(
                     name="Shadow type",
                     items=(('NONE', 'None', 'n'),
                     ('STENCIL_MODULATIVE', 'Stencil modulative', 'sm'),
@@ -298,7 +299,7 @@ def addProperties():
                     description = "Ogre shadow technique.",
                     default = 'STENCIL_ADDITIVE')
 
-    GamekitSettings.FloatVectorProperty( attr="gk_shadow_color",
+    GamekitSettings.gk_shadow_color = bpy.props.FloatVectorProperty(
                     name="Sadow color",
                     subtype='COLOR',
                     min=0.0,
@@ -307,7 +308,7 @@ def addProperties():
                     soft_max=1.0,
                     default = (0.0, 0.0, 0.0))
 
-    GamekitSettings.FloatProperty( attr="gk_far_dist_shadow",
+    GamekitSettings.gk_far_dist_shadow = bpy.props.FloatProperty(
                     name="Far distance shadow",
                     min=0.0,
                     max=1.0,

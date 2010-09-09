@@ -27,8 +27,9 @@
 bl_addon_info = {
     'name': 'Gamekit Engine',
     'author': 'Xavier Thomas (xat)',
-    'version': '0.1.525',
-    'blender': (2, 5, 4),
+    'version': (0,0,601),
+    'api': 31845,
+    'blender': (2, 5, 3),
     'location': 'Info Window > Render Engine > Gamekit',
     'description': 'Launch game using the fine gamekit engine',
     'wiki_url': 'http://wiki.blender.org/index.php/Extensions:2.5/Py/Scripts/Gamekit_Engine',
