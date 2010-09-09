@@ -31,6 +31,20 @@
 
 
 
+gsDynamicsWorld::gsDynamicsWorld(gkDynamicsWorld* dynamicsWorld)
+{
+	m_world = dynamicsWorld;
+}
+
+gsDynamicsWorld::~gsDynamicsWorld()
+{
+}
+
+void gsDynamicsWorld::exportBullet(const gkString& fileName)
+{
+	m_world->exportBullet(fileName);
+}
+
 gsRayTest::gsRayTest()
 {
 	m_ray = new gkRayTest();

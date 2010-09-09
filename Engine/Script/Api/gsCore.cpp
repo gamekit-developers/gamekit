@@ -25,7 +25,7 @@
 -------------------------------------------------------------------------------
 */
 #include "gsCore.h"
-
+#include "gsPhysics.h"
 
 
 
@@ -756,6 +756,19 @@ gsGameObject* gsScene::createEmpty(const gkString &name)
 			gkGameObject *obj = scene->createObject(name);
 			return new gsGameObject(obj);
 		}
+	}
+
+	return 0;
+}
+
+
+gsDynamicsWorld* gsScene::getDynamicsWorld(void)
+{
+	if (m_object)
+	{
+		gkScene *scene = cast<gkScene>();
+		gkDynamicsWorld* world = scene->getDynamicsWorld();
+		return new gsDynamicsWorld(world);
 	}
 
 	return 0;

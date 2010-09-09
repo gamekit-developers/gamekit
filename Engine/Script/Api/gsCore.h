@@ -259,7 +259,8 @@ public:
 
 	gsArray<gsGameObject, gkGameObject> &getObjectList(void);
 
-
+	gsDynamicsWorld* getDynamicsWorld(void);
+	
 	// internal
 	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsScene, gkObject);
 };

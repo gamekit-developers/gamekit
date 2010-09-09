@@ -352,3 +352,19 @@ void gkDynamicsWorld::handleDbvt(gkCamera *cam)
 
 	m_dbvt->mark(cam, (btDbvtBroadphase *)m_pairCache, m_objects);
 }
+
+
+
+void gkDynamicsWorld::exportBullet(const gkString &fileName)
+{
+	int maxSerializeBufferSize = 1024*1024*5;
+	
+	btDefaultSerializer*	serializer = new btDefaultSerializer(maxSerializeBufferSize);
+	m_dynamicsWorld->serialize(serializer);
+	
+	FILE* file = fopen(fileName.c_str(),"wb");
+	fwrite(serializer->getBufferPointer(),serializer->getCurrentBufferSize(),1, file);
+	
+	fclose(file);
+	delete serializer;
+}

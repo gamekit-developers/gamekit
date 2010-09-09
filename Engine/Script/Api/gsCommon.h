@@ -110,6 +110,7 @@ class gsFSM;
 class gsRayTest;
 class gsSweptTest;
 class gsConstraint;
+class gsDynamicsWorld;
 
 class gsLogicManager;
 class gsLogicObject;

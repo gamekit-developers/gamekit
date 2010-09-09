@@ -24,12 +24,27 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+#ifndef _gsPhysics_h_
+#define _gsPhysics_h_
+
 #include "gsCommon.h"
 #include "gsMath.h"
 #include "gsUtils.h"
 #include "Script/Lua/gkLuaUtils.h"
 
 
+
+class gsDynamicsWorld
+{
+private:
+	gkDynamicsWorld* m_world;
+	
+public:
+	gsDynamicsWorld(gkDynamicsWorld* dynamicsWorld);
+	~gsDynamicsWorld();
+	
+	void exportBullet(const gkString& fileName);
+};
 
 
 class gsRayTest
@@ -73,3 +88,5 @@ public:
 
 	gsGameObject *getObject(void);
 };
+
+#endif //_gsPhysics_h_

@@ -102,6 +102,8 @@ public:
 	void DrawDebug();
 
 	gkVariable *getDBVTInfo(void);
+	
+	void exportBullet(const gkString &fileName);
 };
 
 #endif//_gkDynamicsWorld_h_

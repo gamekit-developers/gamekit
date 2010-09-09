@@ -45,7 +45,7 @@
 %newobject gsScene::getCamera;
 %newobject gsScene::getSkeleton;
 %newobject gsScene::createEmpty;
-
+%newobject gsScene::getDynamicsWorld;
 
 
 // Classes

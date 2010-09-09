@@ -32,7 +32,8 @@
 %newobject gsRayTest::getObject;
 %newobject gsSweptTest::getObject;
 
-%rename(RayTest)      gsRayTest;
-%rename(SweptTest)    gsSweptTest;
+%rename(RayTest)       gsRayTest;
+%rename(SweptTest)     gsSweptTest;
+%rename(DynamicsWorld) gsDynamicsWorld;
 
 %include "gsPhysics.h"
