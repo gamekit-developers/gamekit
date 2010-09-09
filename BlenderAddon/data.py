@@ -2,13 +2,13 @@ bl_addon_data =
     {
     (2,5,3):
         {
-        (0,1,):
+        (0,0,601):
             {
             'binary_name':'ogrekit',
             'api_compatibility':
                 {
                 31845:{
-                    (0,0,601):(-1)
+                    (0,0,601):(995,-1)
                     }
                 },
             'binary_urls':
