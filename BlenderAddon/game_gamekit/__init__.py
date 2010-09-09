@@ -33,7 +33,7 @@ bl_addon_info = {
     'location': 'Info Window > Render Engine > Gamekit',
     'description': 'Launch game using the fine gamekit engine',
     'wiki_url': 'http://wiki.blender.org/index.php/Extensions:2.5/Py/Scripts/Gamekit_Engine',
-    'tracker_url': 'https://projects.blender.org/tracker/index.php?func=detail&aid=22933&group_id=153&atid=467',
+    'tracker_url': 'https://projects.blender.org/tracker/index.php?func=detail&aid=23378&group_id=153&atid=514',
     'category': 'Game Engine'}
 
 try:
