@@ -155,6 +155,7 @@ void gkResourceManager::destroy(gkResource* ob)
 
 void gkResourceManager::destroyAll(void)
 {
+	notifyDestroyAllInstancesImpl();
 	notifyDestroyAllImpl();
 
 

@@ -92,6 +92,7 @@ protected:
 	///Default to zero if the resource doesn't support cloning
 	virtual gkResource* cloneImpl(gkResource *orig, const gkResourceName &name, const gkResourceHandle &handle, const gkParameterMap *params = 0) {return 0;};
 
+	virtual void notifyDestroyAllInstancesImpl(void) {}
 	virtual void notifyDestroyAllImpl(void) {}
 
 	virtual void notifyResourceCreatedImpl(gkResource* res) {}

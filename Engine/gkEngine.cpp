@@ -274,11 +274,22 @@ void gkEngine::finalize()
 	gkSoundManager::getSingleton().stopAllSounds();
 #endif
 
+	gkResourceManager *tmgr;
+
+	tmgr = gkSceneManager::getSingletonPtr();
+	tmgr->destroyAll();
+
+	tmgr = gkGameObjectManager::getSingletonPtr();
+	tmgr->destroyAll();
+
+	tmgr = gkGroupManager::getSingletonPtr();
+	tmgr->destroyAll();
+
+
 	delete gkGroupManager::getSingletonPtr();
 	delete gkNodeManager::getSingletonPtr();
-	delete gkSceneManager::getSingletonPtr();
 	delete gkGameObjectManager::getSingletonPtr();
-
+	delete gkSceneManager::getSingletonPtr();
 	delete gkTextManager::getSingletonPtr();
 	delete gkLogicManager::getSingletonPtr();
 	delete gkWindowSystem::getSingletonPtr();

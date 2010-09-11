@@ -77,7 +77,6 @@ gkScene::gkScene(gkInstancedManager* creator, const gkResourceName &name, const 
 	     m_constraintManager(0),
 	     m_physicsWorld(0),
 	     m_meshManager(gkMeshManager::getSingletonPtr()),
-	     m_groupManager(gkGroupManager::getSingletonPtr()),
 	     m_debugger(0),
 	     m_hasLights(false),
 	     m_markDBVT(false),
@@ -726,10 +725,10 @@ void gkScene::createInstanceImpl(void)
 	}
 
 	// Build groups.
-	m_groupManager->createGameObjectInstances(this);
+	gkGroupManager::getSingleton().createGameObjectInstances(this);
 
 	if (gkEngine::getSingleton().getUserDefs().buildStaticGeometry)
-		m_groupManager->createStaticBatches(this);
+		gkGroupManager::getSingleton().createStaticBatches(this);
 
 
 	// Build parent / child hierarchy.
@@ -847,13 +846,13 @@ void gkScene::destroyInstanceImpl(void)
 	m_lights.clear(true);
 	m_staticControllers.clear(true);
 
-	m_groupManager->destroyGameObjectInstances(this);
 
+	gkGroupManager::getSingleton().destroyGameObjectInstances(this);
 
 
 	// Destroy all batched geometry
 	if (gkEngine::getSingleton().getUserDefs().buildStaticGeometry)
-		m_groupManager->destroyStaticBatches(this);
+		gkGroupManager::getSingleton().destroyStaticBatches(this);
 
 
 

@@ -37,6 +37,13 @@ gkInstancedManager::~gkInstancedManager()
 }
 
 
+void gkInstancedManager::notifyDestroyAllInstancesImpl(void)
+{
+	destroyAllInstances();
+}
+
+
+
 void gkInstancedManager::destroyAllInstances(void)
 {
 	Instances::Iterator it = getInstanceIterator();

@@ -209,7 +209,6 @@ private:
 	gkConstraintManager*    m_constraintManager;
 	gkDynamicsWorld*        m_physicsWorld;
 	gkMeshManager*          m_meshManager;
-	gkGroupManager*         m_groupManager;
 
 	bool                    m_hasLights;
 	bool                    m_markDBVT;

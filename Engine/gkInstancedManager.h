@@ -103,6 +103,9 @@ protected:
 
 	virtual void notifyInstanceCreatedImpl(gkInstancedObject* iobj) {}
 	virtual void notifyInstanceDestroyedImpl(gkInstancedObject* iobj) {}
+
+	virtual void notifyDestroyAllInstancesImpl(void);
+
 };
 
 #endif//_gkInstancedManager_h_
