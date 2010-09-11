@@ -104,7 +104,7 @@ void gkTextManager::getTextFiles(TextArray &dest, int textType)
 
 
 
-gkResource *gkTextManager::createImpl(const gkResourceName &name, const gkResourceHandle &handle, const gkParameterMap *param)
+gkResource *gkTextManager::createImpl(const gkResourceName &name, const gkResourceHandle &handle)
 {
 	UTsize tt = getTextType(name.str());
 

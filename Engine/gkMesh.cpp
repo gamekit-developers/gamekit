@@ -299,7 +299,7 @@ btTriangleMesh* gkMesh::getTriMesh(void)
 
 gkMesh* gkMesh::clone(void)
 {
-	gkMesh* nme = (gkMesh*)m_creator->clone(this, false);
+	gkMesh* nme = new gkMesh(m_creator, m_name, -1);
 	if (nme)
 	{
 

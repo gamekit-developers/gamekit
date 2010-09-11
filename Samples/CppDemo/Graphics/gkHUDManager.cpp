@@ -57,7 +57,7 @@ gkHUD *gkHUDManager::getOrCreate(const gkHashedString &name)
 }
 
 
-gkResource *gkHUDManager::createImpl(const gkResourceName &name, const gkResourceHandle &handle, const gkParameterMap *)
+gkResource *gkHUDManager::createImpl(const gkResourceName &name, const gkResourceHandle &handle)
 {
 	return new gkHUD(this, name, handle);
 }

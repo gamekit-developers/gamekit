@@ -67,14 +67,9 @@ public:
 	gkInstancedObject(gkInstancedManager *creator, const gkResourceName& name, const gkResourceHandle& handle);
 	virtual ~gkInstancedObject();
 
-	void addCreateInstanceQueue(void);
-	void addDestroyInstanceQueue(void);
-	void addReInstanceQueue(void);
-
-
-	void createInstance(void);
-	void destroyInstance(void);
-	void reinstance(void);
+	void createInstance(bool queue= false);
+	void destroyInstance(bool queue= false);
+	void reinstance(bool queue= false);
 
 	GK_INLINE bool           isInstanced(void) const           { return (m_instanceState & ST_CREATED) != 0;}
 	GK_INLINE bool           isBeingCreated(void) const        { return (m_instanceState & ST_CREATING) != 0;}

@@ -42,7 +42,7 @@ gkGroupManager::~gkGroupManager()
 }
 
 
-gkResource* gkGroupManager::createImpl(const gkResourceName& name, const gkResourceHandle& handle, const gkParameterMap*)
+gkResource* gkGroupManager::createImpl(const gkResourceName& name, const gkResourceHandle& handle)
 {
 	return new gkGameObjectGroup(this, name, handle);
 }

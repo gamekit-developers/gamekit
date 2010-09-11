@@ -61,8 +61,7 @@ public:
 	gkResource* getByName(const gkResourceName& name);
 
 
-	gkResource* create(const gkResourceName& name, const gkParameterMap *params = 0);
-	gkResource* clone(gkResource *res, bool track = true, const gkParameterMap *params = 0);
+	gkResource* create(const gkResourceName& name);
 
 
 	void destroy(const gkResourceHandle& handle);
@@ -87,10 +86,7 @@ protected:
 	void notifyResourceCreated(gkResource* res);
 	void notifyResourceDestroyed(gkResource* res);
 
-	virtual gkResource* createImpl(const gkResourceName& name, const gkResourceHandle& handle, const gkParameterMap *params) = 0;
-
-	///Default to zero if the resource doesn't support cloning
-	virtual gkResource* cloneImpl(gkResource *orig, const gkResourceName &name, const gkResourceHandle &handle, const gkParameterMap *params = 0) {return 0;};
+	virtual gkResource* createImpl(const gkResourceName& name, const gkResourceHandle& handle) = 0;
 
 	virtual void notifyDestroyAllInstancesImpl(void) {}
 	virtual void notifyDestroyAllImpl(void) {}

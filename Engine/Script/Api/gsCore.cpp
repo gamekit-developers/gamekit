@@ -656,11 +656,7 @@ void gsObject::createInstance(void)
 	if (m_object)
 	{
 		gkEngine *eng= gkEngine::getSingletonPtr();
-
-		if (eng->isRunning())
-			m_object->addCreateInstanceQueue();
-		else
-			m_object->createInstance();
+		m_object->createInstance(eng->isRunning());
 	}
 }
 
@@ -671,14 +667,9 @@ void gsObject::destroyInstance(void)
 	if (m_object)
 	{
 		gkEngine *eng= gkEngine::getSingletonPtr();
-
-		if (eng->isRunning())
-			m_object->addDestroyInstanceQueue();
-		else
-			m_object->destroyInstance();
+		m_object->destroyInstance(eng->isRunning());
 	}
 }
-
 
 
 void gsObject::reinstance(void)
@@ -686,14 +677,9 @@ void gsObject::reinstance(void)
 	if (m_object)
 	{
 		gkEngine *eng= gkEngine::getSingletonPtr();
-
-		if (eng->isRunning())
-			m_object->addReInstanceQueue();
-		else
-			m_object->reinstance();
+		m_object->reinstance(eng->isRunning());
 	}
 }
-
 
 
 gkString gsObject::getName(void)

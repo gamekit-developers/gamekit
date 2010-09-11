@@ -53,7 +53,7 @@ private:
 	int m_currentType;
 
 	void notifyResourceDestroyedImpl(gkResource* res);
-	gkResource* createImpl(const gkResourceName& name, const gkResourceHandle& handle, const gkParameterMap *params = 0);
+	gkResource* createImpl(const gkResourceName& name, const gkResourceHandle& handle);
 };
 
 

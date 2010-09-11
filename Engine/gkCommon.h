@@ -132,7 +132,6 @@ typedef utHashSet<gkEntity *>                        gkEntitySet;
 typedef utHashSet<gkSkeleton *>                      gkSkeletonSet;
 typedef utHashSet<gkPhysicsController *>             gkPhysicsControllerSet;
 typedef utArray<gkPhysicsController *>               gkPhysicsControllers;
-typedef utHashTable<gkHashedString, gkVariable>      gkParameterMap;
 
 enum gkTransformSpace
 {

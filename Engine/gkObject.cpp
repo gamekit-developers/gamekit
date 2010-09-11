@@ -42,27 +42,20 @@ gkInstancedObject::~gkInstancedObject()
 {
 }
 
-void gkInstancedObject::addCreateInstanceQueue(void)
-{
-	getInstanceCreator()->addCreateInstanceQueue(this);
-}
-
-void gkInstancedObject::addDestroyInstanceQueue(void)
-{
-	getInstanceCreator()->addDestroyInstanceQueue(this);
-}
-
-void gkInstancedObject::addReInstanceQueue(void)
-{
-	getInstanceCreator()->addReInstanceQueue(this);
-}
 
 
-void gkInstancedObject::createInstance(void)
+void gkInstancedObject::createInstance(bool queue)
 {
 
 	if (m_instanceState != ST_DESTROYED || !canCreateInstance())
 		return;
+
+	if (queue)
+	{
+		getInstanceCreator()->addCreateInstanceQueue(this);
+		return;
+	}
+
 
 	m_instanceState = ST_CREATING;
 
@@ -94,11 +87,18 @@ void gkInstancedObject::createInstance(void)
 
 
 
-void gkInstancedObject::destroyInstance(void)
+void gkInstancedObject::destroyInstance(bool queue)
 {
 
 	if (m_instanceState != ST_CREATED)
 		return;
+
+	if (queue)
+	{
+		getInstanceCreator()->addDestroyInstanceQueue(this);
+		return;
+	}
+
 
 	m_instanceState = ST_DESTROYING;
 
@@ -124,8 +124,14 @@ void gkInstancedObject::destroyInstance(void)
 
 
 
-void gkInstancedObject::reinstance(void)
+void gkInstancedObject::reinstance(bool queue)
 {
+	if (queue)
+	{
+		getInstanceCreator()->addReInstanceQueue(this);
+		return;
+	}
+
 	destroyInstance();
 	createInstance();
 }

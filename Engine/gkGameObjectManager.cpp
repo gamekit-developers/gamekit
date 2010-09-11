@@ -75,7 +75,7 @@ gkSkeleton* gkGameObjectManager::createSkeleton(const gkResourceName& name)
 	return static_cast<gkSkeleton*>(create(name));
 }
 
-gkResource* gkGameObjectManager::createImpl(const gkResourceName& name, const gkResourceHandle& handle, const gkParameterMap *)
+gkResource* gkGameObjectManager::createImpl(const gkResourceName& name, const gkResourceHandle& handle)
 {
 	int curType = m_currentType;
 	m_currentType = GK_OBJECT;

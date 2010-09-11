@@ -52,7 +52,7 @@ public:
 
 private:
 
-	gkResource *createImpl(const gkResourceName &name, const gkResourceHandle &handle, const gkParameterMap *params = 0);
+	gkResource *createImpl(const gkResourceName &name, const gkResourceHandle &handle);
 
 };
 

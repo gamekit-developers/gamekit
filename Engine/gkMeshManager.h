@@ -40,8 +40,8 @@ public:
 	gkMeshManager();
 	virtual ~gkMeshManager();
 
-	gkResource *createImpl(const gkResourceName &name, const gkResourceHandle &handle, const gkParameterMap *params = 0);
-	gkResource* cloneImpl(gkResource *orig, const gkResourceName &name, const gkResourceHandle &handle, const gkParameterMap *params = 0);
+	gkResource *createImpl(const gkResourceName &name, const gkResourceHandle &handle);
+	gkResource* cloneImpl(gkResource *orig, const gkResourceName &name, const gkResourceHandle &handle);
 
 	UT_DECLARE_SINGLETON(gkMeshManager);
 };

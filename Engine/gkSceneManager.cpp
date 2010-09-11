@@ -42,7 +42,7 @@ gkSceneManager::~gkSceneManager()
 
 
 
-gkResource* gkSceneManager::createImpl(const gkResourceName& name, const gkResourceHandle& handle, const gkParameterMap *)
+gkResource* gkSceneManager::createImpl(const gkResourceName& name, const gkResourceHandle& handle)
 {
 	return new gkScene(this, name, handle);
 }

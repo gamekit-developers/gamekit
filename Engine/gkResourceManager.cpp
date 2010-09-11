@@ -70,7 +70,7 @@ gkResource* gkResourceManager::getByHandle(const gkResourceHandle& handle)
 
 
 
-gkResource* gkResourceManager::create(const gkResourceName& name, const gkParameterMap *params)
+gkResource* gkResourceManager::create(const gkResourceName& name)
 {
 
 	if (exists(name))
@@ -79,7 +79,7 @@ gkResource* gkResourceManager::create(const gkResourceName& name, const gkParame
 		return 0;
 	}
 
-	gkResource* ob = createImpl(name, m_resourceHandles++, params);
+	gkResource* ob = createImpl(name, m_resourceHandles++);
 
 	if (!ob)
 	{
@@ -92,30 +92,6 @@ gkResource* gkResourceManager::create(const gkResourceName& name, const gkParame
 	m_resources.insert(ob->getResourceHandle(), ob);
 	return ob;
 }
-
-
-
-gkResource* gkResourceManager::clone(gkResource* res, bool track, const gkParameterMap *params)
-{
-	if (!res)
-		return 0;
-
-
-	gkString cloneName = res->getResourceName().str() + gkToString((int)m_resourceHandles + 1);
-	gkResource* ob = cloneImpl(res, cloneName, m_resourceHandles + 1, params);
-
-	if (ob != 0)
-	{
-		m_resourceHandles ++;
-		notifyResourceCreated(ob);
-		if (track)
-			m_resources.insert(ob->getResourceHandle(), ob);
-		return ob;
-	}
-
-	return 0;
-}
-
 
 
 void gkResourceManager::destroy(const gkResourceHandle& handle)

@@ -38,13 +38,13 @@ gkMeshManager::~gkMeshManager()
 	destroyAll();
 }
 
-gkResource *gkMeshManager::createImpl(const gkResourceName &name, const gkResourceHandle &handle, const gkParameterMap *)
+gkResource *gkMeshManager::createImpl(const gkResourceName &name, const gkResourceHandle &handle)
 {
 	return new gkMesh(this, name, handle);
 }
 
 
-gkResource* gkMeshManager::cloneImpl(gkResource *orig, const gkResourceName &name, const gkResourceHandle &handle, const gkParameterMap *)
+gkResource* gkMeshManager::cloneImpl(gkResource *orig, const gkResourceName &name, const gkResourceHandle &handle)
 {
 	return new gkMesh(this, name, handle);
 }

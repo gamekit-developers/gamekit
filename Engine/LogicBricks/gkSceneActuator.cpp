@@ -60,19 +60,15 @@ void gkSceneActuator::execute(void)
 	switch(m_mode)
 	{
 		case SC_RESTART:
-			m_object->getOwner()->reinstance();
+			m_object->getOwner()->reinstance(true);
 			break;
 		case SC_SET_SCENE:
 			scene= (gkScene*)gkSceneManager::getSingleton().getByName(m_sceneName);
 			if(scene && scene != m_object->getOwner())
 			{
-				scene->addDestroyInstanceQueue();
-
-				// Issue command to finish current 
-				m_object->getOwner()->addDestroyInstanceQueue();
-
-				// Issue command to create this 
-				scene->addCreateInstanceQueue();
+				scene->destroyInstance(true);
+				m_object->getOwner()->destroyInstance(true);
+				scene->createInstance(true);
 			}
 			break;
 		case SC_SET_CAMERA:

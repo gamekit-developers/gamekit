@@ -48,7 +48,7 @@ gkFontManager::~gkFontManager()
 }
 
 
-gkResource *gkFontManager::createImpl(const gkResourceName &name, const gkResourceHandle &handle, const gkParameterMap *)
+gkResource *gkFontManager::createImpl(const gkResourceName &name, const gkResourceHandle &handle)
 {
 	return new gkFont(this, name, handle);
 }
