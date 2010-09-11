@@ -33,6 +33,13 @@ namespace bParse {
 	typedef struct bStructHandle {int unused;}bStructHandle;
 	typedef btAlignedObjectArray<bStructHandle*>	bListBasePtr;
 	typedef btHashMap<btHashPtr, bStructHandle*> bPtrMap;
+
+	struct bLog
+	{
+		// detail 0 none, 1 all
+		static int detail; 
+	};
+
 }
 
 

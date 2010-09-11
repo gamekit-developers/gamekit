@@ -55,6 +55,20 @@ public:
 
 	gkVariable();
 	gkVariable(const gkString &n, bool dbg);
+
+	explicit gkVariable(bool v, const gkString &name = gkStringUtils::BLANK);
+	explicit gkVariable(int v, const gkString &name = gkStringUtils::BLANK);
+	explicit gkVariable(gkScalar v, const gkString &name = gkStringUtils::BLANK);
+	explicit gkVariable(const gkString& v, const gkString &name = gkStringUtils::BLANK);
+	explicit gkVariable(const gkVector2& v, const gkString &name = gkStringUtils::BLANK);
+	explicit gkVariable(const gkVector3& v, const gkString &name = gkStringUtils::BLANK);
+	explicit gkVariable(const gkVector4& v, const gkString &name = gkStringUtils::BLANK);
+	explicit gkVariable(const gkQuaternion& v, const gkString &name = gkStringUtils::BLANK);
+	explicit gkVariable(const gkMatrix3& v, const gkString &name = gkStringUtils::BLANK);
+	explicit gkVariable(const gkMatrix4& v, const gkString &name = gkStringUtils::BLANK);
+
+
+
 	~gkVariable();
 
 	gkVariable *clone(void);

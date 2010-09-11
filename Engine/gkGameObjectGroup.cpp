@@ -39,10 +39,10 @@
 
 
 
-gkGameObjectGroup::gkGameObjectGroup(gkGroupManager *manager, const gkHashedString &name)
-	:   m_name(name), m_manager(manager), m_geometry(0)
+gkGameObjectGroup::gkGameObjectGroup(gkResourceManager* creator, const gkResourceName &name, const gkResourceHandle& handle)
+	:   gkResource(creator, name, handle), 
+		m_geometry(0)
 {
-	GK_ASSERT(manager);
 }
 
 
@@ -53,15 +53,13 @@ gkGameObjectGroup::~gkGameObjectGroup()
 }
 
 
-
-
-void gkGameObjectGroup::addObject(gkGameObject *gobj)
+void gkGameObjectGroup::addObject(gkGameObject* gobj)
 {
-	if (!gobj) return;
+	if (!gobj)
+		return;
 
 
-
-	const gkHashedString &name = gobj->getName();
+	const gkHashedString& name = gobj->getName();
 	if (m_objects.find(name) != UT_NPOS)
 	{
 		gkLogMessage("GameObjectGroup: Duplicate object " << name.str() << " found within this group!.");
@@ -71,20 +69,17 @@ void gkGameObjectGroup::addObject(gkGameObject *gobj)
 
 	// Mark it as part of a group
 	gobj->_makeGroup(this);
-
 	m_objects.insert(name, gobj);
 }
 
 
 
-
-void gkGameObjectGroup::removeObject(gkGameObject *gobj)
+void gkGameObjectGroup::destroyObject(gkGameObject* gobj)
 {
-	if (!gobj) return;
+	if (!gobj) 
+		return;
 
-
-
-	const gkHashedString &name = gobj->getName();
+	const gkHashedString& name = gobj->getName();
 	if (m_objects.find(name) == UT_NPOS)
 	{
 		gkLogMessage("GameObjectGroup: Missing object " << name.str() << ". Object was not removed.");
@@ -92,6 +87,7 @@ void gkGameObjectGroup::removeObject(gkGameObject *gobj)
 	}
 
 	// Clear group flag
+	gobj->destroyInstance();
 	gobj->_makeGroup(0);
 
 	m_objects.erase(name);
@@ -99,14 +95,14 @@ void gkGameObjectGroup::removeObject(gkGameObject *gobj)
 
 
 
-bool gkGameObjectGroup::hasObject(const gkHashedString &name)
+bool gkGameObjectGroup::hasObject(const gkHashedString& name)
 {
 	return m_objects.find(name) != UT_NPOS;
 }
 
 
 
-gkGameObject *gkGameObjectGroup::getObject(const gkHashedString &name)
+gkGameObject* gkGameObjectGroup::getObject(const gkHashedString& name)
 {
 	UTsize pos = 0;
 	if ((pos = m_objects.find(name)) == UT_NPOS)
@@ -114,7 +110,6 @@ gkGameObject *gkGameObjectGroup::getObject(const gkHashedString &name)
 		gkLogMessage("GameObjectGroup: Missing object " << name.str() << ".");
 		return 0;
 	}
-
 
 	return m_objects.at(pos);
 }
@@ -126,40 +121,35 @@ void gkGameObjectGroup::destroyAllInstances(void)
 
 	Instances::Iterator iter = m_instances.iterator();
 	while (iter.hasMoreElements())
-		delete iter.getNext();
+	{
+		gkGameObjectInstance* inst= iter.getNext();
+		inst->destroyObjectInstances();
+		delete inst;
+	}
 
 
 	m_instances.clear();
+	m_objects.clear();
 }
 
 
 
-gkGameObjectInstance *gkGameObjectGroup::createInstance(gkScene *scene)
+gkGameObjectInstance* gkGameObjectGroup::createGroupInstance(void)
 {
-	gkGameObjectInstance *newInst = new gkGameObjectInstance(this, scene, m_manager->_getHandle());
-
-
-	GK_ASSERT(newInst->getOwner());
-
+	gkGameObjectInstance* newInst = new gkGameObjectInstance(this, static_cast<gkGroupManager*>(m_creator)->_getHandle());
 	m_instances.insert(newInst);
 
-
-	// push new objects
 
 
 	Objects::Iterator iter = m_objects.iterator();
 	while (iter.hasMoreElements())
-	{
-		// Adds a carbon copy.
 		newInst->addObject(iter.getNext().second);
-	}
-
 
 	return newInst;
 }
 
 
-void gkGameObjectGroup::destroyInstance(gkGameObjectInstance *inst)
+void gkGameObjectGroup::destroyGroupInstance(gkGameObjectInstance* inst)
 {
 
 	UTsize pos;
@@ -170,6 +160,8 @@ void gkGameObjectGroup::destroyInstance(gkGameObjectInstance *inst)
 		return;
 	}
 
+	inst->destroyObjectInstances();
+
 	delete m_instances.at(pos);
 	m_instances.erase(inst);
 }
@@ -177,11 +169,16 @@ void gkGameObjectGroup::destroyInstance(gkGameObjectInstance *inst)
 
 
 
-void gkGameObjectGroup::createGameObjectInstances(void)
+void gkGameObjectGroup::createGameObjectInstances(gkScene *scene)
 {
 	Instances::Iterator it = m_instances.iterator();
 	while (it.hasMoreElements())
-		it.getNext()->createInstance();
+	{
+		gkGameObjectInstance *inst = it.getNext();
+
+		if (!inst->isInstanced())
+			inst->createObjectInstances(scene);
+	}
 }
 
 
@@ -190,15 +187,20 @@ void gkGameObjectGroup::destroyGameObjectInstances(void)
 {
 	Instances::Iterator it = m_instances.iterator();
 	while (it.hasMoreElements())
-		it.getNext()->destroyInstance();
+	{
+		gkGameObjectInstance *inst = it.getNext();
+
+		if (inst->isInstanced())
+			inst->destroyObjectInstances();
+	}
 }
 
 
-void gkGameObjectGroup::cloneObjects(gkScene *scene,
-									 const gkTransformState &from,
+void gkGameObjectGroup::cloneObjects(gkScene* scene,
+                                     const gkTransformState& from,
                                      int time,
-                                     const gkVector3 &linearVelocity, bool tsLinLocal,
-                                     const gkVector3 &angularVelocity, bool tsAngLocal)
+                                     const gkVector3& linearVelocity, bool tsLinLocal,
+                                     const gkVector3& angularVelocity, bool tsAngLocal)
 {
 
 	const gkMatrix4 plocal = from.toMatrix();
@@ -207,8 +209,8 @@ void gkGameObjectGroup::cloneObjects(gkScene *scene,
 	Objects::Iterator iter = m_objects.iterator();
 	while (iter.hasMoreElements())
 	{
-		gkGameObject *oobj = iter.getNext().second;
-		gkGameObject *nobj = scene->cloneObject(oobj, time);
+		gkGameObject* oobj = iter.getNext().second;
+		gkGameObject* nobj = scene->cloneObject(oobj, time);
 
 
 
@@ -217,7 +219,7 @@ void gkGameObjectGroup::cloneObjects(gkScene *scene,
 
 
 
-		gkGameObjectProperties &props = nobj->getProperties();
+		gkGameObjectProperties& props = nobj->getProperties();
 
 		gkMatrix4 clocal;
 		props.m_transform.toMatrix(clocal);
@@ -246,9 +248,9 @@ void gkGameObjectGroup::cloneObjects(gkScene *scene,
 
 
 
-void gkGameObjectGroup::createStaticBatches(gkScene *scene)
+void gkGameObjectGroup::createStaticBatches(gkScene* scene)
 {
-	Ogre::SceneManager *mgr = scene->getManager();
+	Ogre::SceneManager* mgr = scene->getManager();
 	if (m_geometry)
 		mgr->destroyStaticGeometry(m_geometry);
 
@@ -261,23 +263,23 @@ void gkGameObjectGroup::createStaticBatches(gkScene *scene)
 	Instances::Iterator it = m_instances.iterator();
 	while (it.hasMoreElements())
 	{
-		gkGameObjectInstance *inst = it.getNext();
+		gkGameObjectInstance* inst = it.getNext();
 
 
 		gkGameObjectInstance::Objects::Iterator instIt = inst->getObjects().iterator();
 		while (instIt.hasMoreElements())
 		{
-			gkGameObject *obj = instIt.getNext().second;
+			gkGameObject* obj = instIt.getNext().second;
 			obj->createInstance();
 
 
 			if (obj->getType()==GK_ENTITY)
 			{
-				const gkGameObjectProperties &props = obj->getProperties();
+				const gkGameObjectProperties& props = obj->getProperties();
 
 				if (!props.isPhysicsObject())
 				{
-					gkEntity *ent = obj->getEntity();
+					gkEntity* ent = obj->getEntity();
 
 					if (!m_geometry)
 						m_geometry = mgr->createStaticGeometry(m_name.str());
@@ -305,7 +307,7 @@ void gkGameObjectGroup::createStaticBatches(gkScene *scene)
 
 
 
-void gkGameObjectGroup::destroyStaticBatches(gkScene *scene)
+void gkGameObjectGroup::destroyStaticBatches(gkScene* scene)
 {
 	bool isSceneUnloading = scene->isBeingDestroyed();
 
@@ -313,7 +315,7 @@ void gkGameObjectGroup::destroyStaticBatches(gkScene *scene)
 	{
 		if (m_geometry)
 		{
-			Ogre::SceneManager *mgr = scene->getManager();
+			Ogre::SceneManager* mgr = scene->getManager();
 			mgr->destroyStaticGeometry(m_geometry);
 		}
 	}

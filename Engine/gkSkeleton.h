@@ -89,7 +89,7 @@ public:
 	typedef utHashTable<gkHashedString, gkBone *>    Bones;
 
 public:
-	gkSkeleton(gkScene *scene, const gkString &name);
+	gkSkeleton(gkInstancedManager *creator, const gkResourceName& name, const gkResourceHandle& handle);
 	virtual ~gkSkeleton();
 
 	void            setEntity(Ogre::Entity *ent);

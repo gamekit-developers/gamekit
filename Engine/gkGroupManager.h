@@ -28,46 +28,57 @@
 #define _gkGroupManager_h_
 
 #include "gkCommon.h"
+#include "gkResourceManager.h"
+#include "Utils/utSingleton.h"
 
 
 
-class gkGroupManager
+class gkGroupManager : public gkResourceManager, public utSingleton<gkGroupManager>
 {
 public:
-	typedef utHashTable<gkHashedString, gkGameObjectGroup *> Groups;
+	UT_DECLARE_SINGLETON(gkGroupManager);
+
+	typedef utArray<gkGameObjectGroup*> Groups;
+	typedef utHashTable<utPointerHashKey, Groups> GroupAttachements;
+
 
 public:
 	gkGroupManager();
-	~gkGroupManager();
+	virtual ~gkGroupManager();
 
-	gkGameObjectGroup   *createGroup(const gkHashedString& id);
-	gkGameObjectGroup   *getGroup(const gkHashedString& id);
-	bool				 hasGroup(const gkHashedString &name);
-
-	void                destroyGroup(const gkHashedString& id);
-	void                destroyGroup(gkGameObjectGroup *group);
-	void                destroyAll(void);
 
 	///Place all of gkGameObjectGroup's instances in the Ogre scene
-	void createGameObjectInstances(void);
+	void createGameObjectInstances(gkScene* scene);
 
 	///Remove all of gkGameObjectGroup's instances in the Ogre scene
-	void destroyGameObjectInstances(void);
+	void destroyGameObjectInstances(gkScene* scene);
 
 
+	void createStaticBatches(gkScene* scene);
+	void destroyStaticBatches(gkScene* scene);
 
-	void createStaticBatches(gkScene *scene);
-	void destroyStaticBatches(gkScene *scene);
+
+	void attachGroupToScene(gkScene *sc, gkGameObjectGroup *group);
+	Groups::Iterator getAttachedGroupIterator(gkScene *sc);
 
 private:
 
+	gkResource* createImpl(const gkResourceName &name, const gkResourceHandle &handle, const gkParameterMap *params = 0);
+
+	gkResourceManager::ResourceListener *m_sceneListener;
+
+
+	GroupAttachements m_attachements;
+
+	void notifyDestroyAllImpl(void);
+	
+	
+	virtual void notifyResourceDestroyedImpl(gkResource* res);
 
 	friend class gkGameObjectGroup;
 	UTsize _getHandle(void) {return m_handles++;}
 
-
 	UTsize m_handles;
-	Groups m_groups;
 
 };
 

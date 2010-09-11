@@ -235,7 +235,7 @@ public:
 	gkString getName(void);
 
 	// internal wrap
-	OGRE_KIT_WRAP_CLASS_COPY_CTOR(gsObject, gkObject, m_object);
+	OGRE_KIT_WRAP_CLASS_COPY_CTOR(gsObject, gkInstancedObject, m_object);
 	OGRE_KIT_INTERNAL_CAST(m_object);
 };
 
@@ -262,7 +262,7 @@ public:
 	gsDynamicsWorld* getDynamicsWorld(void);
 	
 	// internal
-	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsScene, gkObject);
+	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsScene, gkInstancedObject);
 };
 
 extern gsScene* getActiveScene(void);
@@ -355,7 +355,7 @@ public:
 
 
 	// internal
-	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsGameObject, gkObject);
+	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsGameObject, gkInstancedObject);
 	OGRE_KIT_TEMPLATE_CAST(gkGameObject, m_object);
 	OGRE_KIT_TEMPLATE_NEW(gsGameObject, gkGameObject);
 };
@@ -368,7 +368,7 @@ public:
 	gsLight();
 	~gsLight() {}
 	// internal
-	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsLight, gkObject);
+	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsLight, gkInstancedObject);
 };
 
 
@@ -389,7 +389,7 @@ public:
 	void makeCurrent();
 
 	// internal
-	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsCamera, gkObject);
+	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsCamera, gkInstancedObject);
 };
 
 
@@ -404,7 +404,7 @@ public:
 	void playAction(const gkString &name, float blend);
 
 	// internal
-	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsEntity, gkObject);
+	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsEntity, gkInstancedObject);
 };
 
 
@@ -417,7 +417,7 @@ public:
 
 
 	// internal
-	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsSkeleton, gkObject);
+	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsSkeleton, gkInstancedObject);
 };
 
 

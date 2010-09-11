@@ -28,6 +28,8 @@
 #include "gkBlendLoader.h"
 #include "gkBlendFile.h"
 #include "gkLogger.h"
+#include "gkEngine.h"
+#include "gkUserDefs.h"
 #include "gkUtils.h"
 #include "bBlenderFile.h"
 #include "Blender.h"
@@ -68,16 +70,17 @@ gkBlendFile *gkBlendLoader::getFileByName(const gkString &fname)
 
 
 
-gkBlendFile *gkBlendLoader::loadAndCatch(const gkString &fname, int options, const gkString &inResourceGroup)
+gkBlendFile *gkBlendLoader::loadAndCatch(const gkString &fname, int options, const gkString &inResourceGroup, const gkString &scene)
 {
 	m_activeFile = getFileByName(fname);
 	if (m_activeFile != 0)
 		return m_activeFile;
 
+	bParse::bLog::detail = gkEngine::getSingleton().getUserDefs().verbose ? 1 : 0;
 
 	m_activeFile = new gkBlendFile(fname, inResourceGroup);
 
-	if (m_activeFile->parse(options))
+	if (m_activeFile->parse(options, scene))
 	{
 		m_files.push_back(m_activeFile);
 		return m_activeFile;
@@ -92,8 +95,13 @@ gkBlendFile *gkBlendLoader::loadAndCatch(const gkString &fname, int options, con
 }
 
 
+gkBlendFile *gkBlendLoader::loadFile(const gkString &fname, const gkString &scene, const gkString &inResourceGroup)
+{
+	return loadFile(fname, LO_ALL_SCENES, inResourceGroup, scene);
+}
 
-gkBlendFile *gkBlendLoader::loadFile(const gkString &fname, int options, const gkString &inResourceGroup)
+
+gkBlendFile *gkBlendLoader::loadFile(const gkString &fname, int options, const gkString &inResourceGroup, const gkString &scene)
 {
 	bool resetLoad = false;
 	try {

@@ -721,7 +721,7 @@ public:
 		{
 			if (n-1 == UT_NPOS)
 				break;
-			for (i=0; m_data[i] && m_data[i+1] && i<(n-1); i++)
+			for (i=0; /*m_data[i] && m_data[i+1] && */i<(n-1); i++)
 			{
 				if (cmp(m_data[i], m_data[i+1]))
 				{

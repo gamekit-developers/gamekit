@@ -389,7 +389,7 @@ void gkBlenderSceneConverter::convertObjectGroup(gkGameObjectGroup *gobj, Blende
 
 void gkBlenderSceneConverter::convertGroups(utArray<Blender::Object *> &groups)
 {
-	gkGroupManager *mgr = m_gscene->getGroupManager();
+	gkGroupManager *mgr = gkGroupManager::getSingletonPtr();
 
 
 
@@ -404,14 +404,16 @@ void gkBlenderSceneConverter::convertGroups(utArray<Blender::Object *> &groups)
 
 		const gkHashedString &groupName = GKB_IDNAME(bgrp);
 	
-		if (mgr->hasGroup(groupName))
+		if (mgr->exists(groupName))
 		{
 			// Can most likely assert here
 			continue;
 		}
 
 
-		gkGameObjectGroup *group = mgr->createGroup(groupName);
+		gkGameObjectGroup *group = (gkGameObjectGroup*)mgr->create(groupName);
+
+
 
 		for (Blender::GroupObject *bgobj = (Blender::GroupObject *)bgrp->gobject.first; bgobj; bgobj = bgobj->next)
 		{
@@ -436,7 +438,9 @@ void gkBlenderSceneConverter::convertGroups(utArray<Blender::Object *> &groups)
 
 		// Destroy if empty
 		if (group->isEmpty())
-			mgr->destroyGroup(group);
+			mgr->destroy(group);
+		else
+			mgr->attachGroupToScene(m_gscene, group);
 
 	}
 
@@ -453,21 +457,16 @@ void gkBlenderSceneConverter::convertGroups(utArray<Blender::Object *> &groups)
 
 		// Owning group
 		Blender::Group *bgobj = bobj->dup_group;
-		const gkHashedString &groupName = GKB_IDNAME(bgobj);
+		const gkHashedString groupName = GKB_IDNAME(bgobj);
 
 
-		if (mgr->hasGroup(groupName))
+		if (mgr->exists(groupName))
 		{
-			gkGameObjectGroup *ggobj   = mgr->getGroup(groupName);
+			gkGameObjectGroup *ggobj   = (gkGameObjectGroup*)mgr->getByName(groupName);
 
 
-			gkGameObjectInstance *inst = ggobj->createInstance(m_gscene);
-
-			// bobj is the empty owner. inst->getOwner() is 
-			// local to the gkGameObjectInstance class. 
-			// We still want position / logic on the owner 
-			// so do that per instance. 
-			convertObject(bobj, inst->getOwner());
+			gkGameObjectInstance *inst = ggobj->createGroupInstance();
+			inst->getOwnerTransform() = gkMathUtils::getFromFloat(bobj->obmat);
 		}
 	}
 }
@@ -1201,7 +1200,12 @@ void gkBlenderSceneConverter::convert(void)
 	if (m_gscene)
 		return;
 
-	m_gscene = gkSceneManager::getSingleton().create(GKB_IDNAME(m_bscene));
+	m_gscene = (gkScene*)gkSceneManager::getSingleton().create(GKB_IDNAME(m_bscene));
+	if (!m_gscene)
+	{
+		gkPrintf("SceneConverter: duplicate scene '%s'\n", (m_bscene->id.name + 2));
+		return;
+	}
 
 
 	if (m_bscene->world)
@@ -1238,14 +1242,6 @@ void gkBlenderSceneConverter::convert(void)
 
 	m_logic->resolveLinks();
 }
-
-
-
-//
-//                          Mesh Loader
-//
-
-
 
 
 
@@ -1320,9 +1316,12 @@ public:
 		        m_images[6] == rhs.m_images[6] &&
 		        m_images[7] == rhs.m_images[7];
 	}
-
-
 };
+
+// needs to be tested.. 
+#define OGREKIT_FORCE_16BIT_MESH 0
+
+
 
 class gkMeshPair
 {
@@ -1331,6 +1330,9 @@ public:
 	gkSubMesh     *item;
 
 	gkMeshPair() : test(), item(0)
+	{
+	}
+	gkMeshPair(gkSubMesh *cur) : test(), item(cur)
 	{
 	}
 
@@ -1346,7 +1348,11 @@ public:
 
 	bool operator == (const gkMeshPair &rhs) const
 	{
+#if OGREKIT_FORCE_16BIT_MESH == 0
 		return test == rhs.test;
+#else
+		return test == rhs.test && (item && (item->getIndexBuffer().size() * 3) < ((unsigned short)-1));
+#endif
 	}
 
 };
@@ -1782,7 +1788,7 @@ void gkBlenderMeshConverter::convert(void)
 			convertIndexedTriangle(&t[0], 0, 1, 2, f);
 		}
 
-		gkMeshPair tester;
+		gkMeshPair tester(curSubMesh);
 		if (sortByMat)
 		{
 			int mode=0;
@@ -2415,6 +2421,7 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
 			break;
 		case CONT_PYTHON:
 			{
+#ifdef OGREKIT_USE_LUA
 				gkScriptController *sc = new gkScriptController(gobj, lnk, bcont->name);
 				lc = sc;
 
@@ -2429,6 +2436,7 @@ void gkLogicLoader::convertObject(Blender::Object *bobj, gkGameObject *gobj)
 					else
 						sc->setScript(lua.create(GKB_IDNAME(pcon->text)));
 				}
+#endif
 
 			} break;
 

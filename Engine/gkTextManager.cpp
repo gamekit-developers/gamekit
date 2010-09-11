@@ -26,6 +26,45 @@
 */
 #include "gkTextManager.h"
 #include "gkTextFile.h"
+#include "gkLogger.h"
+
+
+#if OGREKIT_COMPILE_OGRE_SCRIPTS  == 1
+#include "OgreMaterialManager.h"
+#include "OgreParticleSystemManager.h"
+#include "OgreHighLevelGpuProgramManager.h"
+#include "OgreFontManager.h"
+#include "OgreOverlayManager.h"
+#include "gkFontManager.h"
+#endif
+
+
+#ifdef OGREKIT_USE_LUA
+#include "Script/Lua/gkLuaManager.h"
+#endif
+
+
+struct TextToTypeItem 
+{
+	const char *name;
+	const int   type;
+};
+
+static TextToTypeItem TextItemMap[] = {
+	{".material",   gkTextManager::TT_MATERIAL},
+	{".particle",   gkTextManager::TT_PARTICLE},
+	{".compositor", gkTextManager::TT_COMPOSIT},
+	{".overlay",    gkTextManager::TT_OVERLAY},
+	{".fontdef",    gkTextManager::TT_FONT},
+	{".cg",         gkTextManager::TT_CG},
+	{".glsl",       gkTextManager::TT_GLSL},
+	{".hlsl",       gkTextManager::TT_HLSL},
+	{".lua",        gkTextManager::TT_LUA},
+	{".xml",        gkTextManager::TT_XML},
+	{".ntree",      gkTextManager::TT_NTREE},
+	{".bfont",      gkTextManager::TT_BFONT},
+	{0, -1}
+};
 
 
 gkTextManager::gkTextManager()
@@ -38,77 +77,153 @@ gkTextManager::~gkTextManager()
 }
 
 
-
-gkTextFile *gkTextManager::getFile(const gkString &name)
+int gkTextManager::getTextType(const gkString &name)
 {
-	size_t pos;
-	if ((pos = m_files.find(name)) == GK_NPOS)
-		return 0;
-	return m_files.at(pos);
-}
-
-
-
-gkTextFile *gkTextManager::create(const gkString &name, const gkTextFile::TextType &type)
-{
-	size_t pos;
-	if ((pos = m_files.find(name)) != GK_NPOS)
-		return 0;
-
-	gkTextFile *ob = new gkTextFile(this, name, type);
-	m_files.insert(name, ob);
-	return ob;
-}
-
-
-void gkTextManager::destroy(const gkString &name)
-{
-	size_t pos;
-	if ((pos = m_files.find(name)) != GK_NPOS)
+	int i=0;
+	while (TextItemMap[i].name != 0)
 	{
-		gkTextFile *ob = m_files.at(pos);
-		m_files.remove(name);
-		delete ob;
+		if (name.find(TextItemMap[i].name) != name.npos)
+			return TextItemMap[i].type;
+		++i;
 	}
+	return TT_ANY;
+
 }
 
-
-void gkTextManager::destroy(gkTextFile *ob)
+void gkTextManager::getTextFiles(TextArray &dest, int textType)
 {
-	GK_ASSERT(ob);
-
-	gkString name = ob->getName();
-	size_t pos;
-	if ((pos = m_files.find(name)) != GK_NPOS)
-	{
-		gkTextFile *ob = m_files.at(pos);
-		m_files.remove(name);
-		delete ob;
-	}
-}
-
-
-
-void gkTextManager::destroyAll(void)
-{
-	utHashTableIterator<TextFiles> iter(m_files);
+	gkResourceManager::ResourceIterator iter = getResourceIterator();
 	while (iter.hasMoreElements())
 	{
-		gkTextFile *ob = iter.peekNextValue();
-		delete ob;
-		iter.next();
+		gkTextFile *tf = (gkTextFile*)iter.getNext().second;
+
+		if (tf->getType() == textType)
+			dest.push_back(tf);
+	}
+}
+
+
+
+gkResource *gkTextManager::createImpl(const gkResourceName &name, const gkResourceHandle &handle, const gkParameterMap *param)
+{
+	UTsize tt = getTextType(name.str());
+
+	return new gkTextFile(this, name, handle, tt);
+}
+
+void gkTextManager::parseScripts(void)
+{
+
+	gkResourceManager::ResourceIterator iter = getResourceIterator();
+	while (iter.hasMoreElements())
+	{
+		gkTextFile *tf = (gkTextFile*)iter.getNext().second;
+
+		const gkString &buf = tf->getText();
+		const int type = tf->getType();
+
+
+#if OGREKIT_COMPILE_OGRE_SCRIPTS  == 1
+
+		try {
+
+			if (type == TT_MATERIAL)
+			{
+				Ogre::DataStreamPtr memStream(
+					OGRE_NEW Ogre::MemoryDataStream((void *)buf.c_str(), buf.size()));
+
+				Ogre::MaterialManager::getSingleton().parseScript(memStream, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+			}
+			else if (type == TT_PARTICLE)
+			{
+				Ogre::DataStreamPtr memStream(
+					OGRE_NEW Ogre::MemoryDataStream((void *)buf.c_str(), buf.size()));
+
+
+				Ogre::ParticleSystemManager::getSingleton().parseScript(memStream, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+			}
+
+			else if (type >= TT_CG && type <= TT_HLSL)
+			{
+				Ogre::DataStreamPtr memStream(
+					OGRE_NEW Ogre::MemoryDataStream((void *)buf.c_str(), buf.size()));
+
+				Ogre::HighLevelGpuProgramManager::getSingleton().parseScript(memStream, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+			}
+
+			else if (type >= TT_CG && type <= TT_HLSL)
+			{
+				Ogre::DataStreamPtr memStream(
+					OGRE_NEW Ogre::MemoryDataStream((void *)buf.c_str(), buf.size()));
+
+				Ogre::HighLevelGpuProgramManager::getSingleton().parseScript(memStream, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+			}
+			else if (type == TT_FONT)
+			{
+				// Note: font must be an external file (.ttf anyway (texture fonts are not tested) )
+				Ogre::DataStreamPtr memStream(
+					OGRE_NEW Ogre::MemoryDataStream((void *)buf.c_str(), buf.size()));
+
+				Ogre::FontManager::getSingleton().parseScript(memStream, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+			}
+		}
+		catch (Ogre::Exception &e)
+		{
+			gkLogMessage("TextManager: " << e.getDescription());
+			continue;
+		}
+	
+			
+			
+		if (type == TT_BFONT)
+		{
+			utMemoryStream stream;
+			stream.open(buf.c_str(), buf.size(), utStream::SM_READ);
+
+			gkFontManager::getSingleton().parseScript(&stream);
+		}
+#endif
+#ifdef OGREKIT_USE_LUA
+
+		if (type == TT_LUA)
+			gkLuaManager::getSingleton().create(tf->getResourceName().str(), buf);
+#endif
 	}
 
-	m_files.clear();
+#if OGREKIT_COMPILE_OGRE_SCRIPTS  == 1
+
+	// Overlays are a dependant script. (.material .font)
+
+	try {
+
+		TextArray overlays;
+		getTextFiles(overlays, TT_OVERLAY);
+
+
+
+		TextArray::Iterator it = overlays.iterator();
+		while (it.hasMoreElements())
+		{
+			gkTextFile *tf = (gkTextFile*)it.getNext();
+
+			const gkString &buf = tf->getText();
+			const int type = tf->getType();
+
+			Ogre::DataStreamPtr memStream(
+				OGRE_NEW Ogre::MemoryDataStream((void *)buf.c_str(), buf.size()));
+
+
+			Ogre::OverlayManager::getSingleton().parseScript(memStream, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+		}
+	}
+	catch (Ogre::Exception &e)
+	{
+		gkLogMessage("TextManager: " << e.getDescription());
+	}
+
+#endif
+
 }
 
 
-
-bool gkTextManager::hasFile(const gkString &name)
-{
-	return m_files.find(name) != GK_NPOS;
-}
-
-
-
-GK_IMPLEMENT_SINGLETON(gkTextManager);
+UT_IMPLEMENT_SINGLETON(gkTextManager);

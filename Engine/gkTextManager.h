@@ -28,38 +28,52 @@
 #define _gkTextFileManager_h_
 
 #include "gkCommon.h"
-#include "gkHashedString.h"
-#include "gkTextFile.h"
-#include "OgreSingleton.h"
+#include "gkResourceManager.h"
+#include "Utils/utSingleton.h"
 
 
-class gkTextManager : public Ogre::Singleton<gkTextManager>
+
+class gkTextManager : public gkResourceManager, public utSingleton<gkTextManager>
 {
 public:
+	enum TextType
+	{
+		TT_ANY,		 // Undefined ( no *.ext or an unregistered *.ext )
+		TT_MATERIAL, // Ogre material script (*.material)
+		TT_PARTICLE, // Ogre particle script (*.particle)
+		TT_COMPOSIT, // todo: Ogre Compositor script (*.compositor)
+		TT_OVERLAY,  // Ogre overlay script (*.overlay)
+		TT_FONT,     // Ogre font script (*.fontdef)
+		TT_CG,       // CG source (*.cg)
+		TT_GLSL,     // OpenGL Shader Language      (*.glsl)
+		TT_HLSL,     // High Level Shader Language  (*.hlsl)
+		TT_LUA,      // Lua script (*.lua)
+		TT_XML,      // Undefined: Some other XML source (*.xml)
+		TT_NTREE,    // todo: NodeTree script (*.ntree)
+		TT_BFONT,    // Blender VFont script (Blender::VFont to Ogre::Font (*.bfont) )
+	};
 
-	typedef utHashTable<gkHashedString, gkTextFile *> TextFiles;
 
-protected:
-	TextFiles m_files;
+	typedef utArray<gkTextFile*> TextArray;
+
 
 public:
 	gkTextManager();
 	virtual ~gkTextManager();
 
-
-	gkTextFile *getFile(const gkString &name);
-
-	gkTextFile *create(const gkString &name, const gkTextFile::TextType &type = gkTextFile::TT_UNKNOWN);
+	gkResource *createImpl(const gkResourceName &name, const gkResourceHandle &handle, const gkParameterMap *params = 0);
 
 
-	void destroy(const gkString &name);
-	void destroy(gkTextFile *ob);
+	int getTextType(const gkString &name);
+	void getTextFiles(TextArray &dest, int textType);
 
-	void destroyAll(void);
-	bool hasFile(const gkString &name);
 
-	static gkTextManager &getSingleton(void);
-	static gkTextManager *getSingletonPtr(void);
+	void parseScripts(void);
+
+
+	UT_DECLARE_SINGLETON(gkTextManager);
+
+
 };
 
 

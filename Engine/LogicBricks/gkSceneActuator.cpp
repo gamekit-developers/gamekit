@@ -63,17 +63,16 @@ void gkSceneActuator::execute(void)
 			m_object->getOwner()->reinstance();
 			break;
 		case SC_SET_SCENE:
-			scene= gkSceneManager::getSingleton().getScene(m_sceneName);
+			scene= (gkScene*)gkSceneManager::getSingleton().getByName(m_sceneName);
 			if(scene && scene != m_object->getOwner())
 			{
-				scene->destroyInstance();
-				gkEngine &eng = gkEngine::getSingleton();
+				scene->addDestroyInstanceQueue();
 
 				// Issue command to finish current 
-				eng.addCommand(m_object->getOwner(), gkCreateParam::DESTROYINSTANCE);
+				m_object->getOwner()->addDestroyInstanceQueue();
 
 				// Issue command to create this 
-				eng.addCommand(scene, gkCreateParam::CREATEINSTANCE);
+				scene->addCreateInstanceQueue();
 			}
 			break;
 		case SC_SET_CAMERA:

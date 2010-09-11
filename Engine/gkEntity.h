@@ -35,7 +35,7 @@
 class gkEntity : public gkGameObject
 {
 public:
-	gkEntity(gkScene *scene, const gkString &name);
+	gkEntity(gkInstancedManager *creator, const gkResourceName& name, const gkResourceHandle& handle);
 	virtual ~gkEntity();
 
 	GK_INLINE Ogre::Entity *getEntity(void) { return m_entity; }

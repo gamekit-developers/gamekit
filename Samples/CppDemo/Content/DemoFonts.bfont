@@ -1,0 +1,13 @@
+BlenderInternalFont {
+	source		= YoFrankie;
+	size		= 48;
+	resolution  = 96;
+}
+
+
+PlainText {
+	source		= DejaVuSans;
+	size		= 14;
+	resolution  = 56;
+}
+

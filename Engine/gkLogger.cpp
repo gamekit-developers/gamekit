@@ -35,15 +35,12 @@
 # define gkvsnprintf    vsnprintf
 #endif
 
-using namespace Ogre;
-
-
 
 
 #define GK_BUFSIZE (0xFFFF)
 
 static char GK_ConsoleBuffer[GK_BUFSIZE+1];
-static Log *gLog = 0;
+static Ogre::Log *gLog = 0;
 
 
 void gkPrintf(const char *fmt, ...)
@@ -64,8 +61,19 @@ void gkPrintf(const char *fmt, ...)
 		// out to log stream so user def flags work
 		GK_ConsoleBuffer[size] = 0;
 		if (gLog != 0 && gLog->getLogDetail() != Ogre::LL_LOW)
+		{
+			if (GK_ConsoleBuffer[size-1] == '\n')
+				GK_ConsoleBuffer[--size] = 0;
 			gLog->logMessage(GK_ConsoleBuffer);
-		else printf("%s", GK_ConsoleBuffer);
+		}
+		else 
+		{
+			if (GK_ConsoleBuffer[size-1] != '\n')
+				printf("%s\n", GK_ConsoleBuffer);
+			else
+				printf("%s", GK_ConsoleBuffer);
+
+		}
 	}
 }
 
@@ -74,12 +82,14 @@ void gkLogger::enable(const gkString &name, bool verbose)
 {
 	if (!gLog)
 	{
-		LogManager *mgr = LogManager::getSingletonPtr();
+		Ogre::LogManager *mgr = Ogre::LogManager::getSingletonPtr();
 		if (!mgr)
-			mgr = new LogManager();
+			mgr = new Ogre::LogManager();
 		gLog = mgr->createLog(name);
+		mgr->setDefaultLog(gLog);
 
-		if (!verbose) gLog->setLogDetail(Ogre::LL_LOW);
+		if (!verbose) 
+			gLog->setLogDetail(Ogre::LL_LOW);
 	}
 }
 
@@ -89,16 +99,33 @@ void gkLogger::disable()
 {
 	if (gLog)
 	{
-		LogManager::getSingleton().destroyLog(gLog);
+		Ogre::LogManager::getSingleton().destroyLog(gLog);
 		gLog = 0;
-		delete LogManager::getSingletonPtr();
+		delete Ogre::LogManager::getSingletonPtr();
 	}
 }
 
 
 
-void gkLogger::write(const gkString &msg)
+void gkLogger::write(const gkString &msg, bool force)
 {
+	if (force)
+	{
+		if (gLog && gLog->getLogDetail() == Ogre::LL_LOW)
+		{
+			if (msg[msg.size()-1] != '\n')
+				printf("%s\n", msg.c_str());
+			else
+				printf("%s", msg.c_str());
+			return;
+		}
+		else
+		{
+			if (!gLog)
+				printf("%s", msg.c_str());
+		}
+	}
+
 	if (gLog != 0)
 		gLog->logMessage(msg);
 }

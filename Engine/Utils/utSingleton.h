@@ -56,6 +56,13 @@ public:
         UT_ASSERT(m_singleton);
         m_singleton = 0;
     }
+
+private:
+
+	utSingleton(const utSingleton& cpy) {}
+	utSingleton &operator = (const utSingleton& rhs) {return *this;}
+
+
 };
 
 

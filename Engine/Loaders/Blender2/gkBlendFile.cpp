@@ -27,8 +27,6 @@
 #include "OgreException.h"
 #include "OgreTexture.h"
 #include "OgreTextureManager.h"
-#include "OgreMaterialManager.h"
-#include "OgreParticleSystemManager.h"
 
 #include "bBlenderFile.h"
 #include "bMain.h"
@@ -41,6 +39,8 @@
 #include "gkScene.h"
 #include "gkGameObject.h"
 
+
+
 #include "gkBlenderDefines.h"
 #include "gkBlenderSceneConverter.h"
 #include "gkTextureLoader.h"
@@ -48,16 +48,19 @@
 #include "gkUtils.h"
 #include "gkLogger.h"
 
-
 #include "gkTextManager.h"
 #include "gkTextFile.h"
 #include "gkEngine.h"
 #include "gkUserDefs.h"
-#include "Script/Lua/gkLuaManager.h"
 
 #ifdef OGREKIT_OPENAL_SOUND
 # include "Sound/gkSoundManager.h"
 # include "Sound/gkSound.h"
+#endif
+
+#ifdef OGREKIT_COMPILE_OGRE_SCRIPTS
+#include "gkFontManager.h"
+#include "gkFont.h"
 #endif
 
 using namespace Ogre;
@@ -67,7 +70,9 @@ using namespace Ogre;
 gkBlendFile::gkBlendFile(const gkString &blendToLoad, const gkString &group)
 	:	m_name(blendToLoad),
 	    m_group(group),
-		m_activeScene(0)
+		m_activeScene(0),
+		m_findScene(""),
+		m_hasBFont(false)
 {
 }
 
@@ -87,7 +92,7 @@ gkBlendFile::~gkBlendFile()
 
 
 
-bool gkBlendFile::parse(int opts)
+bool gkBlendFile::parse(int opts, const gkString &scene)
 {
 
 	utMemoryStream fs;
@@ -115,6 +120,7 @@ bool gkBlendFile::parse(int opts)
 
 	doVersionTests();
 
+	m_findScene = scene;
 
 	if (opts == gkBlendLoader::LO_ONLY_ACTIVE_SCENE)
 		loadActive();
@@ -137,6 +143,7 @@ void gkBlendFile::loadActive(void)
 	if (fg)
 	{
 		buildAllTextures();
+		buildAllFonts();
 		buildTextFiles();
 		buildAllSounds();
 
@@ -147,7 +154,8 @@ void gkBlendFile::loadActive(void)
 			gkBlenderSceneConverter conv(this, sc);
 			conv.convert();
 
-			m_activeScene = gkSceneManager::getSingleton().getScene(GKB_IDNAME(sc));
+
+			m_activeScene = (gkScene*)gkSceneManager::getSingleton().getByName(GKB_IDNAME(sc));
 			if (m_activeScene)
 				m_scenes.push_back(m_activeScene);
 		}
@@ -161,6 +169,7 @@ void gkBlendFile::createInstances(void)
 {
 	// Load / convert all 
 	buildAllTextures();
+	buildAllFonts();
 	buildTextFiles();
 	buildAllSounds();
 
@@ -173,10 +182,14 @@ void gkBlendFile::createInstances(void)
 
 		if (sc != 0)
 		{
+			if (!m_findScene.empty() && m_findScene != GKB_IDNAME(sc))
+				continue;
+
+
 			gkBlenderSceneConverter conv(this, sc);
 			conv.convert();
 
-			gkScene *gks = gkSceneManager::getSingleton().getScene(GKB_IDNAME(sc));
+			gkScene *gks = (gkScene*)gkSceneManager::getSingleton().getByName(GKB_IDNAME(sc));
 			if (gks)
 				m_scenes.push_back(gks);
 		}
@@ -189,7 +202,7 @@ void gkBlendFile::createInstances(void)
 		// Grab the main scene
 		Blender::Scene *sc = (Blender::Scene *)fg->curscene;
 		if (sc != 0)
-			m_activeScene = gkSceneManager::getSingleton().getScene(GKB_IDNAME(sc));
+			m_activeScene =(gkScene*) gkSceneManager::getSingleton().getByName(GKB_IDNAME(sc));
 	}
 
 	if (m_activeScene == 0 && !m_scenes.empty())
@@ -212,8 +225,6 @@ gkScene *gkBlendFile::getSceneByName(const gkString &name)
 	}
 	return 0;
 }
-
-
 
 
 void gkBlendFile::buildTextFiles(void)
@@ -240,31 +251,20 @@ void gkBlendFile::buildTextFiles(void)
 			tl = tl->next;
 		}
 
-		// could be optimized
+
 		gkString str = ss.str();
-		if (!str.empty() && !txtMgr.hasFile(GKB_IDNAME(txt)))
+
+		if (!str.empty() && !txtMgr.exists(GKB_IDNAME(txt)))
 		{
-			gkTextFile *tf = txtMgr.create(GKB_IDNAME(txt));
+			gkTextFile *tf = (gkTextFile*)txtMgr.create(GKB_IDNAME(txt));
 			tf->setText(str);
 
-			if(tf->getName().find(".material") != gkString::npos)
-			{
-				DataStreamPtr memStream(
-				    OGRE_NEW MemoryDataStream((void *)str.c_str(), str.size()));
-
-				Ogre::MaterialManager::getSingleton().parseScript(memStream, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-			}
-			else if(tf->getName().find(".particle") != gkString::npos)
-			{
-				DataStreamPtr memStream(
-				    OGRE_NEW MemoryDataStream((void *)str.c_str(), str.size()));
-
-				Ogre::ParticleSystemManager::getSingleton().parseScript(memStream, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-			}
-			else if(tf->getName().find(".lua") != gkString::npos)
-				gkLuaManager::getSingleton().create(GKB_IDNAME(txt), str);
+			if (!m_hasBFont)
+				m_hasBFont = tf->getType() == gkTextManager::TT_BFONT;
 		}
 	}
+
+	txtMgr.parseScripts();
 }
 
 
@@ -300,7 +300,7 @@ void gkBlendFile::buildAllTextures(void)
 
 
 
-void gkBlendFile::buildAllSounds()
+void gkBlendFile::buildAllSounds(void)
 {
 #ifdef OGREKIT_OPENAL_SOUND
 
@@ -364,6 +364,31 @@ void gkBlendFile::buildAllSounds()
 #endif
 }
 
+void gkBlendFile::buildAllFonts(void)
+{
+#ifdef OGREKIT_COMPILE_OGRE_SCRIPTS
+	if (!m_hasBFont)
+		return;
+
+	bParse::bMain *mp = m_file->getMain();
+	bParse::bListBasePtr *fontList = mp->getVfont();
+
+	gkFontManager &fmgr = gkFontManager::getSingleton();
+
+	for (int i=0; i<fontList->size(); ++i)
+	{
+		Blender::VFont *vf = (Blender::VFont*)fontList->at(i);
+
+		if (vf->id.us <= 0 || !vf->packedfile)
+			continue;
+
+		Blender::PackedFile *pak = vf->packedfile;
+
+		gkFont *fnt = (gkFont*)fmgr.create(GKB_IDNAME(vf));
+		fnt->setData(pak->data, pak->size);
+	}
+#endif
+}
 
 
 void gkBlendFile::doVersionTests(void)
@@ -427,6 +452,26 @@ void gkBlendFile::doVersionTests(void)
 					lr->zmin *= gkRPD;
 				}
 			}
+		}
+	}
+
+	// BFont test
+	{
+		m_hasBFont = false;
+		iter = main->getText();
+		i=0;
+		s =iter->size();
+
+		while (i < s)
+		{
+			Blender::Text *ob = (Blender::Text *)iter->at(i++);
+
+			if (gkString(ob->id.name).find(".bfont"))
+			{
+				m_hasBFont = true;
+				break;
+			}
+
 		}
 	}
 }

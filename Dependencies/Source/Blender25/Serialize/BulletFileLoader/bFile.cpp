@@ -26,7 +26,7 @@ subject to the following restrictions:
 #define MAX_ARRAY_LENGTH 512
 using namespace bParse;
 
-
+int bLog::detail = 1;
 
 int numallocs = 0;
 
@@ -119,7 +119,7 @@ void bFile::parseHeader()
 	if (strncmp(header, m_headerString, 6)!=0)
 	{
 		memcpy(header, m_headerString, SIZEOFBLENDERHEADER);
-		printf ("Invalid %s file...",header);
+		printf ("Invalid %s file...\n",header);
 		return;
 	}
 
@@ -156,15 +156,17 @@ void bFile::parseHeader()
 		if (littleEndian==0)
 			mFlags |= FD_ENDIAN_SWAP;
 
-
-	printf ("%s\n",header);
-	printf ("\nsizeof(void*) == %d\n",int(sizeof(void*)));
-	const char* endStr = ((mFlags & FD_ENDIAN_SWAP)!=0) ? "yes" : "no";
-	printf ("Swapping endian? %s\n",endStr);
-	const char* bitStr = (mFlags &FD_FILE_64)!=0 ? "64 bit" : "32bit";
-	printf ("File format is %s\n",bitStr);
-	const char* varStr = (mFlags & FD_BITS_VARIES)!=0 ? "yes" : "no";
-	printf ("Varing pointer sizes? %s\n",varStr);
+	if (bLog::detail == 1)
+	{
+		printf ("%s\n",header);
+		printf ("\nsizeof(void*) == %d\n",int(sizeof(void*)));
+		const char* endStr = ((mFlags & FD_ENDIAN_SWAP)!=0) ? "yes" : "no";
+		printf ("Swapping endian? %s\n",endStr);
+		const char* bitStr = (mFlags &FD_FILE_64)!=0 ? "64 bit" : "32bit";
+		printf ("File format is %s\n",bitStr);
+		const char* varStr = (mFlags & FD_BITS_VARIES)!=0 ? "yes" : "no";
+		printf ("Varing pointer sizes? %s\n",varStr);
+	}
 
 
 	mFlags |= FD_OK;
@@ -285,7 +287,8 @@ void bFile::parseInternal(bool verboseDumpAllTypes, char* memDna,int memDnaLengt
 
 	updateOldPointers();
 
-	printf("numAllocs = %d\n",numallocs);
+	if (bLog::detail == 1)
+		printf("numAllocs = %d\n",numallocs);
 }
 
 
@@ -830,46 +833,45 @@ void bFile::resolvePointersMismatch()
 		}
 	}
 
-	 
-	for (i=0; i<m_pointerPtrFixupArray.size(); i++)
+    for (i=0;i<	m_pointerPtrFixupArray.size();i++)
 	{
-		char *cur= m_pointerPtrFixupArray.at(i);
-		void **ptrptr = (void **)cur;
-
-		bChunkInd *block = m_chunkPtrPtrMap.find(*ptrptr);
+		char* cur= m_pointerPtrFixupArray.at(i);
+		void** ptrptr = (void**)cur;
+    
+        bChunkInd *block = m_chunkPtrPtrMap.find(*ptrptr);
 		if (block)
 		{
-			int ptrMem = mMemoryDNA->getPointerSize();
-			int ptrFile = mFileDNA->getPointerSize();
+            int ptrMem = mMemoryDNA->getPointerSize();
+		    int ptrFile = mFileDNA->getPointerSize();
 
 
-			int blockLen = block->len / ptrFile;
+            int blockLen = block->len / ptrFile;
 
 			void *onptr = findLibPointer(*ptrptr);
-			if (onptr)
-			{
-				char *newPtr = new char[blockLen * ptrMem];
-				addDataBlock(newPtr);
-				memset(newPtr, 0, blockLen * ptrMem);
+            if (onptr)
+            {
+                char *newPtr = new char[blockLen * ptrMem];
+                addDataBlock(newPtr);
+                memset(newPtr, 0, blockLen * ptrMem);
 
-				void **onarray = (void **)onptr;
-				char *oldPtr = (char *)onarray;
+                void **onarray = (void**)onptr;
+                char *oldPtr = (char*)onarray;
 
-				int p = 0;
-				while (blockLen-- > 0)
-				{
-					btPointerUid dp = {0};
-					safeSwapPtr((char *)dp.m_uniqueIds, oldPtr);
+                int p = 0;
+                while (blockLen-- > 0)
+                {
+                    btPointerUid dp = {0};
+                    safeSwapPtr((char*)dp.m_uniqueIds, oldPtr);
 
-					void **tptr = (void **)(newPtr + p * ptrMem);
-					*tptr = findLibPointer(dp.m_ptr);
+                    void **tptr = (void**)(newPtr + p * ptrMem);
+                    *tptr = findLibPointer(dp.m_ptr);
 
-					oldPtr += ptrFile;
-					++p;
-				}
+                    oldPtr += ptrFile;
+                    ++p;
+                }
 
-				*ptrptr = newPtr;
-			}
+                *ptrptr = newPtr;
+            }
 		}
 	}
 }
@@ -1052,8 +1054,11 @@ void bFile::resolvePointersStructRecursive(char *strcPtr, int dna_nr, bool verbo
 void bFile::resolvePointers(bool verboseDumpAllBlocks)
 {
 	bParse::bDNA* fileDna = mFileDNA ? mFileDNA : mMemoryDNA;
+	if (bLog::detail == 1)
+	{
+		printf("resolvePointers start\n");
+	}
 
-	printf("resolvePointers start\n");
 	//char *dataPtr = mFileBuffer+mDataStart;
 
 	if (1) //mFlags & (FD_BITS_VARIES | FD_VERSION_VARIES))
@@ -1085,8 +1090,9 @@ void bFile::resolvePointers(bool verboseDumpAllBlocks)
 			}
 		}
 	}
-	
-	printf("resolvePointers end\n");
+
+	if (bLog::detail == 1)
+		printf("resolvePointers end\n");
 }
 
 

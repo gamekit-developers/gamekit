@@ -39,7 +39,7 @@
 gkDbvt::gkDbvt() 
 	:	m_tvs(0), 
 		m_tot(0),
-		m_debug("btDbvt", false)
+		m_debug(gkString("btDbvt"), false)
 {
 }
 

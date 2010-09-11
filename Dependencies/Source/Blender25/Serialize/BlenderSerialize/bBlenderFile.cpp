@@ -60,9 +60,12 @@ bMain* bBlenderFile::getMain()
 // ----------------------------------------------------- //
 void bBlenderFile::parseData()
 {
-	printf ("Building datablocks\n");
-	printf ("Chunk size = %d\n",CHUNK_HEADER_LEN);
-	printf ("File chunk size = %d\n", ChunkUtils::getOffset(mFlags));
+	if (bLog::detail == 1)
+	{
+		printf ("Building datablocks\n");
+		printf ("Chunk size = %d\n",CHUNK_HEADER_LEN);
+		printf ("File chunk size = %d\n", ChunkUtils::getOffset(mFlags));
+	}
 
 	const bool swap = (mFlags&FD_ENDIAN_SWAP)!=0;
 	

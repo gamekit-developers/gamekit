@@ -33,7 +33,7 @@
 #include "gkSerialize.h"
 
 
-class gkGameObject : public gkObject
+class gkGameObject : public gkInstancedObject
 {
 public:
 	typedef utHashTable<gkHashedString, gkVariable *>   VariableMap;
@@ -47,10 +47,13 @@ public:
 
 public:
 
-	gkGameObject(gkScene *scene, const gkString &name, gkGameObjectTypes type);
+	gkGameObject(gkInstancedManager *creator, const gkResourceName& name, const gkResourceHandle& handle, gkGameObjectTypes type = GK_OBJECT);
 	virtual ~gkGameObject();
 
+
+	GK_INLINE void                      setOwner(gkScene *scene)            {m_scene = scene;}
 	GK_INLINE gkScene                   *getOwner(void)                     {return m_scene;}
+
 	GK_INLINE Ogre::SceneNode           *getNode(void)                      {return m_node;}
 	GK_INLINE gkGameObjectTypes         getType(void)                       {return m_type;}
 	GK_INLINE gkGameObjectProperties    &getProperties(void)                {return m_baseProps;}
@@ -226,6 +229,10 @@ public:
 
 
 protected:
+
+	
+	bool canCreateInstance(void) {return m_scene != 0;}
+
 
 	void cloneImpl(gkGameObject *clob);
 

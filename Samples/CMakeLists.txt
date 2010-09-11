@@ -16,9 +16,13 @@ if (SAMPLES_VEHICLEDEMO)
     subdirs(VehicleDemo)
 endif()
 
-
-if (SAMPLES_LUARUNTIME)
+if (SAMPLES_LUARUNTIME AND OGREKIT_USE_LUA)
     subdirs(LuaRuntime)
+endif()
+
+
+if (SAMPLES_CPPDEMO)
+	subdirs(CppDemo)
 endif()
 
 endif()

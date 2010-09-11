@@ -30,6 +30,7 @@
 #include "gkObject.h"
 #include "gkMathUtils.h"
 #include "gkSerialize.h"
+#include "gkResource.h"
 #include "gkGameObjectGroup.h"
 #include "AI/gkNavMeshData.h"
 #include "Thread/gkAsyncResult.h"
@@ -37,11 +38,11 @@
 
 
 
-class gkScene : public gkObject
+class gkScene : public gkInstancedObject
 {
 public:
 
-	gkScene(const gkString &name);
+	gkScene(gkInstancedManager* creator, const gkResourceName &name, const gkResourceHandle& handle);
 	virtual ~gkScene();
 
 
@@ -50,98 +51,131 @@ public:
 
 
 
-	GK_INLINE gkSceneProperties        &getProperties(void)    { return m_baseProps;  }
+	GK_INLINE gkSceneProperties&        getProperties(void)    { return m_baseProps;  }
 
-	GK_INLINE gkSoundSceneProperties   &getSoundScene(void)    { return m_soundScene; }
+	GK_INLINE gkSoundSceneProperties&   getSoundScene(void)    { return m_soundScene; }
+
 
 	///Returns aabb for all static objects in the scene
-	const gkBoundingBox &getLimits() const { return m_limits; }
+	const gkBoundingBox& getLimits() const { return m_limits; }
 
 
 	///The Ogre scene manager is only available when this scene is instanced.
-	GK_INLINE Ogre::SceneManager *getManager(void) { GK_ASSERT(m_manager); return m_manager; }
+	GK_INLINE Ogre::SceneManager* getManager(void) { GK_ASSERT(m_manager); return m_manager; }
 
 
-	GK_INLINE gkGameObjectSet &getInstancedObjects(void)    { return m_instanceObjects; }
+	GK_INLINE gkGameObjectSet&      getInstancedObjects(void)    { return m_instanceObjects; }
+	GK_INLINE gkGameObjectHashMap&  getObjects(void)             { return m_objects; }
 
-	GK_INLINE gkDynamicsWorld *getDynamicsWorld(void)       { return m_physicsWorld; }
 
+	gkDynamicsWorld* getDynamicsWorld(void);
+	
 	// Callback events
 
-	void notifyInstanceCreated(gkGameObject *gobject);
-	void notifyInstanceDestroyed(gkGameObject *gobject);
-	void notifyObjectUpdate(gkGameObject *gobject);
+	void notifyInstanceCreated(gkGameObject* gobject);
+	void notifyInstanceDestroyed(gkGameObject* gobject);
+	void notifyObjectUpdate(gkGameObject* gobject);
 
 
-
-	bool            hasObject(const gkHashedString &ob);
-	bool            hasObject(gkGameObject *ob);
-	gkGameObject   *getObject(const gkHashedString &name);
-
-	bool            hasMesh(const gkHashedString &ob);
-	gkMesh         *getMesh(const gkHashedString &name);
+	void            addObject(gkGameObject* obj);
+	void            removeObject(gkGameObject* obj);
+	void            destroyObject(gkGameObject* obj);
 
 
-	gkGameObject   *createObject(const gkHashedString &name);
-	gkLight        *createLight(const gkHashedString &name);
-	gkCamera       *createCamera(const gkHashedString &name);
-	gkEntity       *createEntity(const gkHashedString &name);
-	gkSkeleton     *createSkeleton(const gkHashedString &name);
-	gkMesh         *createMesh(const gkHashedString &name);
+	bool            hasObject(const gkHashedString& ob);
+	bool            hasObject(gkGameObject* ob);
+	gkGameObject*   getObject(const gkHashedString& name);
+
+	bool            hasMesh(const gkHashedString& ob);
+	gkMesh*         getMesh(const gkHashedString& name);
 
 
-	gkGameObject   *cloneObject(gkGameObject *obj, int life);
-	void            endObject(gkGameObject *obj);
+	gkGameObject*   createObject(const gkHashedString& name);
+	gkLight*        createLight(const gkHashedString& name);
+	gkCamera*       createCamera(const gkHashedString& name);
+	gkEntity*       createEntity(const gkHashedString& name);
+	gkSkeleton*     createSkeleton(const gkHashedString& name);
+	gkMesh*         createMesh(const gkHashedString& name);
 
-	GK_INLINE gkGroupManager *getGroupManager(void) {return m_groupManager;}
 
-	gkDebugger *getDebugger(void);
+	gkGameObject*   cloneObject(gkGameObject* obj, int life, bool instantiate = false);
+	void            endObject(gkGameObject* obj);
+
+
+	void             getGroups(gkGroupArray &groups);
+
+
+	gkDebugger* getDebugger(void);
 
 	GK_INLINE void setNavMeshData(PNAVMESHDATA navMeshData) { m_navMeshData = navMeshData; }
 
 	typedef gkAsyncResult<PDT_NAV_MESH > ASYNC_DT_RESULT;
 
-	bool asyncTryToCreateNavigationMesh(gkActiveObject &activeObj, const gkRecast::Config &config, ASYNC_DT_RESULT result);
+	bool asyncTryToCreateNavigationMesh(gkActiveObject& activeObj, const gkRecast::Config& config, ASYNC_DT_RESULT result);
 
 
 
 	void applyConstraints(void);
-	gkConstraintManager *getConstraintManager(void);
+	gkConstraintManager* getConstraintManager(void);
+	void addConstraint(gkGameObject* gobj, gkConstraint* co);
 
 
-	gkPhysicsControllerSet &getStaticControllers(void) {return m_staticControllers;}
+	gkPhysicsControllerSet& getStaticControllers(void) {return m_staticControllers;}
 	void calculateLimits(void);
 
 
-	GK_INLINE gkCamera       *getMainCamera(void)   { return m_startCam; }
+	GK_INLINE gkCamera*       getMainCamera(void)   { return m_startCam; }
 	GK_INLINE bool           hasDefaultCamera(void) { return m_startCam != 0; }
 	GK_INLINE bool           hasCameras(void)       { return !m_cameras.empty(); }
-	GK_INLINE gkCameraSet    &getCameras(void)      { return m_cameras; }
-	void setMainCamera(gkCamera *cam);
+	GK_INLINE gkCameraSet&    getCameras(void)      { return m_cameras; }
+	void setMainCamera(gkCamera* cam);
 
 
 
-	GK_INLINE gkLightSet    &getLights(void) {return m_lights;}
+	GK_INLINE gkLightSet&    getLights(void) {return m_lights;}
 	GK_INLINE bool          hasLights(void)  {return isInstanced() ? !m_lights.empty() : m_hasLights;}
 
 
 	GK_INLINE void      setLayer(UTuint32 v)     {m_layers = v; }
 	GK_INLINE UTuint32  getLayer(void)           {return m_layers;}
 
-	gkGameObject *findInstancedObject(const gkString &name);
+	gkGameObject* findInstancedObject(const gkString& name);
+
+
+
+	// Local property access.
+
+	void setSceneManagerType(int type);
+	int getSceneManagerType(void);
+
+
+	void setWorldColor(const gkColor& col);
+	const gkColor& getWorldColor(void);
+
+	void setAmbientColor(const gkColor& col);
+	const gkColor& getAmbientColor(void);
+
+
+	void setGravity(const gkVector3& grav);
+	const gkVector3& getGravity(void);
+
+
+	gkRigidBody* createRigidBody(gkGameObject* obj, gkPhysicsProperties& prop);
+
+
+
+	void _applyBuiltinParents(void);
+	void _applyBuiltinPhysics(void);
+
+	void _createPhysicsObject(gkGameObject* obj);
+	void _destroyPhysicsObject(gkGameObject* obj);
+
+	void _unloadAndDestroy(gkGameObject* obj);
+
+	bool _replaceObjectInScene(gkGameObject* obj, gkScene* osc, gkScene* nsc);
+	void _eraseObject(gkGameObject* obj);
 
 private:
-
-	void applyBuiltinParents(void);
-	void applyBuiltinPhysics(void);
-	void applyNavigationMeshes(void);
-
-
-	void createPhysicsObject(gkGameObject *obj);
-	void destroyPhysicsObject(gkGameObject *obj);
-
-	void unloadAndDestroy(gkGameObject *obj);
-
 
 	void postCreateInstanceImpl(void);
 	void createInstanceImpl(void);
@@ -151,15 +185,15 @@ private:
 	void destroyClones(void);
 	void endObjects(void);
 
-	Ogre::SceneManager     *m_manager;
-	gkCamera               *m_startCam;
-	Ogre::Viewport         *m_viewport;
+	Ogre::SceneManager*     m_manager;
+	gkCamera*               m_startCam;
+	Ogre::Viewport*         m_viewport;
 
 
 	gkSceneProperties       m_baseProps;
 	gkSoundSceneProperties  m_soundScene;
 
-	gkDebugger              *m_debugger;
+	gkDebugger*             m_debugger;
 
 	gkGameObjectHashMap     m_objects;
 	gkGameObjectSet         m_instanceObjects;
@@ -172,10 +206,10 @@ private:
 	gkCameraSet             m_cameras;
 	gkLightSet              m_lights;
 
-	gkConstraintManager    *m_constraintManager;
-	gkDynamicsWorld        *m_physicsWorld;
-	gkMeshManager          *m_meshManager;
-	gkGroupManager         *m_groupManager;
+	gkConstraintManager*    m_constraintManager;
+	gkDynamicsWorld*        m_physicsWorld;
+	gkMeshManager*          m_meshManager;
+	gkGroupManager*         m_groupManager;
 
 	bool                    m_hasLights;
 	bool                    m_markDBVT;

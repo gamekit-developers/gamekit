@@ -29,6 +29,7 @@
 #include "gkLuaUtils.h"
 #include "gkUtils.h"
 #include "gkTextManager.h"
+#include "gkTextFile.h"
 
 
 extern "C" int _OgreKitLua_install(lua_State *L);
@@ -89,7 +90,7 @@ gkLuaScript *gkLuaManager::create(const gkString &name)
 	if ((pos = m_scripts.find(name)) != GK_NPOS)
 		return 0;
 
-	gkTextFile *intern = gkTextManager::getSingleton().getFile(name);
+	gkTextFile *intern = (gkTextFile*)gkTextManager::getSingleton().getByName(name);
 
 	if (intern == 0)
 	{

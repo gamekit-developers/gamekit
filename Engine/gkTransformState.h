@@ -36,14 +36,15 @@ class gkTransformState
 {
 public:
 
-	gkTransformState() {}
 
 	gkTransformState(const gkMatrix4 &mat)
 	{
 		gkMathUtils::extractTransform(mat, loc, rot, scl);
 	}
 
-	gkTransformState(const gkVector3 &oloc, const gkQuaternion &orot, const gkVector3 &oscl)
+	gkTransformState(const gkVector3    &oloc = gkVector3::ZERO, 
+					 const gkQuaternion &orot = gkQuaternion::IDENTITY, 
+					 const gkVector3    &oscl = gkVector3::UNIT_SCALE)
 	{
 		rot.w = orot.w;
 		rot.x = orot.x; rot.y = orot.y; rot.z = orot.z;

@@ -32,8 +32,14 @@
 typedef utString            gkString;
 typedef utStringArray       gkStringVector;
 
+
 #include "OgreString.h"
 #include "OgreStringConverter.h"
+
+namespace gkStringUtils
+{
+	static const gkString BLANK = "";
+}
 
 
 

@@ -29,98 +29,26 @@
 #include "gkLogger.h"
 
 
-
-
 gkMeshManager::gkMeshManager()
 {
 }
-
-
-
 
 gkMeshManager::~gkMeshManager()
 {
 	destroyAll();
 }
 
-
-
-
-gkMesh *gkMeshManager::getMesh(const gkHashedString &name)
+gkResource *gkMeshManager::createImpl(const gkResourceName &name, const gkResourceHandle &handle, const gkParameterMap *)
 {
-	UTsize pos;
-	if ((pos = m_objects.find(name)) == GK_NPOS)
-		return 0;
-	return m_objects.at(pos);
+	return new gkMesh(this, name, handle);
+}
+
+
+gkResource* gkMeshManager::cloneImpl(gkResource *orig, const gkResourceName &name, const gkResourceHandle &handle, const gkParameterMap *)
+{
+	return new gkMesh(this, name, handle);
 }
 
 
 
-
-
-gkMesh *gkMeshManager::create(const gkHashedString &name)
-{
-	UTsize pos;
-	if ((pos = m_objects.find(name)) != GK_NPOS)
-	{
-		gkLogMessage("Mesh: Duplicate mesh found " << name.str());
-		return 0;
-	}
-
-	gkMesh *ob = new gkMesh(name.str());
-	m_objects.insert(name, ob);
-	return ob;
-}
-
-
-
-
-
-void gkMeshManager::destroy(const gkHashedString &name)
-{
-	UTsize pos;
-	if ((pos = m_objects.find(name)) != GK_NPOS)
-	{
-		gkMesh *ob = m_objects.at(pos);
-		m_objects.remove(name);
-		delete ob;
-	}
-}
-
-
-
-void gkMeshManager::destroy(gkMesh *ob)
-{
-	GK_ASSERT(ob);
-
-	gkString name = ob->getName();
-	UTsize pos;
-	if ((pos = m_objects.find(name)) != GK_NPOS)
-	{
-		gkMesh *ob = m_objects.at(pos);
-		m_objects.remove(name);
-		delete ob;
-	}
-}
-
-
-
-void gkMeshManager::destroyAll(void)
-{
-	utHashTableIterator<ObjectMap> iter(m_objects);
-	while (iter.hasMoreElements())
-	{
-		gkMesh *ob = iter.peekNextValue();
-		delete ob;
-		iter.next();
-	}
-
-	m_objects.clear();
-}
-
-
-
-bool gkMeshManager::hasMesh(const gkHashedString &name)
-{
-	return m_objects.find(name) != GK_NPOS;
-}
+UT_IMPLEMENT_SINGLETON(gkMeshManager);

@@ -90,10 +90,6 @@ public:
 	void addListener(Listener *listener);
 	void removeListener(Listener *listener);
 
-
-	void addCommand(class gkObject *ob, const gkCreateParam::Type &type);
-
-
 private:
 
 	class Private;
@@ -108,7 +104,6 @@ private:
 	bool                    m_running;
 	gkUserDefs             *m_defs;
 	Listeners               m_listeners;
-	gkCreateParams              m_cmds;
 
 	static gkScalar         m_tickRate;
 	static gkScalar         m_animRate;

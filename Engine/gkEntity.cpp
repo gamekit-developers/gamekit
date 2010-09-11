@@ -44,8 +44,8 @@
 
 
 
-gkEntity::gkEntity(gkScene *scene, const gkString &name)
-	:	gkGameObject(scene, name, GK_ENTITY),
+gkEntity::gkEntity(gkInstancedManager *creator, const gkResourceName& name, const gkResourceHandle& handle)
+	:	gkGameObject(creator, name, handle, GK_ENTITY),
 	    m_entityProps(new gkEntityProperties()),
 	    m_entity(0),
 	    m_active(0),
@@ -100,7 +100,7 @@ void gkEntity::createInstanceImpl(void)
 		m_skeleton->setController(this);
 	}
 
-	m_entity = manager->createEntity(m_name, m_entityProps->m_mesh->getName());
+	m_entity = manager->createEntity(m_name.str(), m_entityProps->m_mesh->getResourceName().str());
 
 	if (parent && parent->getType() == GK_SKELETON)
 		m_skeleton->setEntity(m_entity);
@@ -226,7 +226,7 @@ void gkEntity::playAction(const gkString &act, gkScalar blend)
 
 gkGameObject *gkEntity::clone(const gkString &name)
 {
-	gkEntity *cl= new gkEntity(m_scene, name);
+	gkEntity *cl= new gkEntity(getInstanceCreator(), name, -1);
 
 	memcpy(cl->m_entityProps, m_entityProps, sizeof(gkEntityProperties));
 	cl->m_entityProps->m_mesh = m_entityProps->m_mesh;
@@ -292,11 +292,14 @@ void gkEntity::createMesh(void)
 
 	if (m_entityProps->m_mesh != 0)
 	{
-		Ogre::MeshPtr omesh = Ogre::MeshManager::getSingleton().getByName(m_entityProps->m_mesh->getName());
+		const gkString meshName = m_entityProps->m_mesh->getResourceName().str();
+
+
+		Ogre::MeshPtr omesh = Ogre::MeshManager::getSingleton().getByName(meshName);
 		if (omesh.isNull())
 		{
 			m_meshLoader = new gkEntityMeshLoader(this);
-			omesh = Ogre::MeshManager::getSingleton().create(m_entityProps->m_mesh->getName(), "<gkBuiltin>", true, m_meshLoader);
+			omesh = Ogre::MeshManager::getSingleton().create(meshName, "<gkBuiltin>", true, m_meshLoader);
 		}
 	}
 }

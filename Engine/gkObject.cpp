@@ -31,24 +31,37 @@
 
 
 
-gkObject::gkObject(const gkString &name)
-	:       m_name(name), m_instanceState(ST_DESTROYED)
+gkInstancedObject::gkInstancedObject(gkInstancedManager *creator, const gkResourceName& name, const gkResourceHandle& handle)
+	:	gkResource(creator, name, handle),
+	    m_instanceState(ST_DESTROYED)
 {
 }
 
 
-
-gkObject::~gkObject()
+gkInstancedObject::~gkInstancedObject()
 {
 }
 
+void gkInstancedObject::addCreateInstanceQueue(void)
+{
+	getInstanceCreator()->addCreateInstanceQueue(this);
+}
+
+void gkInstancedObject::addDestroyInstanceQueue(void)
+{
+	getInstanceCreator()->addDestroyInstanceQueue(this);
+}
+
+void gkInstancedObject::addReInstanceQueue(void)
+{
+	getInstanceCreator()->addReInstanceQueue(this);
+}
 
 
-
-void gkObject::createInstance(void)
+void gkInstancedObject::createInstance(void)
 {
 
-	if (m_instanceState != ST_DESTROYED)
+	if (m_instanceState != ST_DESTROYED || !canCreateInstance())
 		return;
 
 	m_instanceState = ST_CREATING;
@@ -67,17 +80,21 @@ void gkObject::createInstance(void)
 		}
 	}
 
-	catch (Ogre::Exception &e)
+	catch (Ogre::Exception& e)
 	{
 		m_instanceState = ST_ERROR;
 		gkLogMessage("Object: Loading failed. \n\t" << e.getDescription());
 	}
 
+
+	if (m_instanceState == ST_CREATED)
+		getInstanceCreator()->notifyInstanceCreated(this);
+
 }
 
 
 
-void gkObject::destroyInstance(void)
+void gkInstancedObject::destroyInstance(void)
 {
 
 	if (m_instanceState != ST_CREATED)
@@ -94,16 +111,20 @@ void gkObject::destroyInstance(void)
 		m_instanceState = ST_DESTROYED;
 	}
 
-	catch (Ogre::Exception &e)
+	catch (Ogre::Exception& e)
 	{
 		m_instanceState = ST_ERROR;
 		gkLogMessage("Object: Loading failed. \n\t" << e.getDescription());
 	}
+
+
+	if (m_instanceState == ST_DESTROYED)
+		getInstanceCreator()->notifyInstanceDestroyed(this);
 }
 
 
 
-void gkObject::reinstance(void)
+void gkInstancedObject::reinstance(void)
 {
 	destroyInstance();
 	createInstance();

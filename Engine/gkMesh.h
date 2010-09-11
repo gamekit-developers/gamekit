@@ -31,6 +31,7 @@
 
 #include "gkMathUtils.h"
 #include "gkSerialize.h"
+#include "gkResource.h"
 
 
 class btTriangleMesh;
@@ -155,7 +156,7 @@ private:
 };
 
 
-class gkMesh
+class gkMesh : public gkResource
 {
 public:
 
@@ -170,11 +171,10 @@ private:
 	bool                m_boundsInit;
 	VertexGroups        m_groups;
 	btTriangleMesh      *m_triMesh;
-	const gkString      m_name;
 
 public:
 
-	gkMesh(const gkString &name);
+	gkMesh(gkResourceManager* creator, const gkResourceName &name, const gkResourceHandle& handle);
 	~gkMesh();
 
 	void addSubMesh(gkSubMesh *me);
@@ -183,8 +183,6 @@ public:
 
 	btTriangleMesh          *getTriMesh(void);
 	gkMaterialProperties    &getFirstMaterial(void);
-
-	const gkString &getName(void) {return m_name;}
 
 
 	gkVertexGroup   *createVertexGroup(const gkString &name);

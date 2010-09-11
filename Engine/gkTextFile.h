@@ -28,38 +28,26 @@
 #define _gkTextFile_h_
 
 #include "gkCommon.h"
-#include "gkString.h"
+#include "gkResource.h"
 
-class gkTextManager;
-
-class gkTextFile
+class gkTextFile : public gkResource
 {
-public:
-
-	typedef enum TextType
-	{
-		TT_UNKNOWN      = 0, // any
-	} TextType;
-
 
 protected:
-	const gkString      m_name;
-	gkTextManager      *m_owner;
-	gkString            m_buffer;
-	TextType            m_type;
+	gkString m_buffer;
+	int      m_type;
 
 
 public:
-	gkTextFile(gkTextManager *owner, const gkString &name, const TextType &type);
+	gkTextFile(gkResourceManager* creator, const gkResourceName &name, const gkResourceHandle& handle, const int &type);
 	~gkTextFile();
 
 	void setText(const gkString &text) {m_buffer = text;}
 
-	GK_INLINE const gkString       &getName(void)   {return m_name;}
-	GK_INLINE gkTextManager        *getOwner(void)  {return m_owner;}
-	GK_INLINE gkString             &getText(void)   {return m_buffer;}
-	GK_INLINE UTsize                getSize(void)   {return (UTsize)m_buffer.size();}
-	GK_INLINE const TextType       &getType(void)   {return m_type;}
+
+	GK_INLINE gkString  &getText(void)   {return m_buffer;}
+	GK_INLINE UTsize    getSize(void)    {return (UTsize)m_buffer.size();}
+	GK_INLINE const int &getType(void)   {return m_type;}
 
 
 };

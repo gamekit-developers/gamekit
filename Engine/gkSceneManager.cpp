@@ -36,83 +36,24 @@ gkSceneManager::gkSceneManager()
 
 gkSceneManager::~gkSceneManager()
 {
+	destroyAllInstances();
 	destroyAll();
 }
 
 
-gkScene *gkSceneManager::getScene(const gkString &name)
+
+gkResource* gkSceneManager::createImpl(const gkResourceName& name, const gkResourceHandle& handle, const gkParameterMap *)
 {
-	size_t pos;
-	if ((pos = m_objects.find(name)) == GK_NPOS)
-		return 0;
-	return m_objects.at(pos);
+	return new gkScene(this, name, handle);
+}
+
+
+void gkSceneManager::notifyResourceDestroyedImpl(gkResource* res)
+{
+	GK_ASSERT(res);
+	static_cast<gkScene*>(res)->destroyInstance();
 }
 
 
 
-gkScene *gkSceneManager::create(const gkString &name)
-{
-	size_t pos;
-	if ((pos = m_objects.find(name)) != GK_NPOS)
-		return 0;
-
-	gkScene *ob = new gkScene(name);
-	m_objects.insert(name, ob);
-	return ob;
-}
-
-
-void gkSceneManager::destroy(const gkString &name)
-{
-	size_t pos;
-	if ((pos = m_objects.find(name)) != GK_NPOS)
-	{
-		gkScene *ob = m_objects.at(pos);
-		m_objects.remove(name);
-		ob->destroyInstance();
-		delete ob;
-	}
-}
-
-
-void gkSceneManager::destroy(gkScene *ob)
-{
-	GK_ASSERT(ob);
-
-	gkString name = ob->getName();
-	size_t pos;
-	if ((pos = m_objects.find(name)) != GK_NPOS)
-	{
-		gkScene *ob = m_objects.at(pos);
-		m_objects.remove(name);
-		ob->destroyInstance();
-		delete ob;
-	}
-}
-
-
-
-void gkSceneManager::destroyAll(void)
-{
-	utHashTableIterator<SceneObjectMap> iter(m_objects);
-	while (iter.hasMoreElements())
-	{
-		gkScene *ob = iter.peekNextValue();
-		ob->destroyInstance();
-		delete ob;
-		iter.next();
-	}
-
-	m_objects.clear();
-}
-
-
-
-bool gkSceneManager::hasScene(const gkString &name)
-{
-	return m_objects.find(name) != GK_NPOS;
-}
-
-
-
-GK_IMPLEMENT_SINGLETON(gkSceneManager);
+UT_IMPLEMENT_SINGLETON(gkSceneManager);

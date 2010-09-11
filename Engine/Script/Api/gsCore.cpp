@@ -645,7 +645,7 @@ gsObject::gsObject() : m_object(0)
 
 
 
-gsObject::gsObject(gkObject *ob) : m_object(ob)
+gsObject::gsObject(gkInstancedObject *ob) : m_object(ob)
 {
 }
 
@@ -658,7 +658,7 @@ void gsObject::createInstance(void)
 		gkEngine *eng= gkEngine::getSingletonPtr();
 
 		if (eng->isRunning())
-			eng->addCommand(m_object, gkCreateParam::CREATEINSTANCE);
+			m_object->addCreateInstanceQueue();
 		else
 			m_object->createInstance();
 	}
@@ -673,7 +673,7 @@ void gsObject::destroyInstance(void)
 		gkEngine *eng= gkEngine::getSingletonPtr();
 
 		if (eng->isRunning())
-			eng->addCommand(m_object, gkCreateParam::DESTROYINSTANCE);
+			m_object->addDestroyInstanceQueue();
 		else
 			m_object->destroyInstance();
 	}
@@ -688,7 +688,7 @@ void gsObject::reinstance(void)
 		gkEngine *eng= gkEngine::getSingletonPtr();
 
 		if (eng->isRunning())
-			eng->addCommand(m_object, gkCreateParam::REINSTANCE);
+			m_object->addReInstanceQueue();
 		else
 			m_object->reinstance();
 	}
@@ -712,7 +712,7 @@ gsScene::gsScene()
 }
 
 
-gsScene::gsScene(gkObject *ob) : gsObject(ob)
+gsScene::gsScene(gkInstancedObject *ob) : gsObject(ob)
 {
 }
 
@@ -814,7 +814,7 @@ gsGameObject::gsGameObject()
 
 
 
-gsGameObject::gsGameObject(gkObject *ob) : gsObject(ob)
+gsGameObject::gsGameObject(gkInstancedObject *ob) : gsObject(ob)
 {
 }
 
@@ -1369,7 +1369,7 @@ gsEntity::gsEntity()
 
 
 
-gsEntity::gsEntity(gkObject *ob) : gsGameObject(ob)
+gsEntity::gsEntity(gkInstancedObject *ob) : gsGameObject(ob)
 {
 }
 
@@ -1391,7 +1391,7 @@ gsLight::gsLight()
 
 
 
-gsLight::gsLight(gkObject *ob) : gsGameObject(ob)
+gsLight::gsLight(gkInstancedObject *ob) : gsGameObject(ob)
 {
 }
 
@@ -1404,7 +1404,7 @@ gsCamera::gsCamera()
 
 
 
-gsCamera::gsCamera(gkObject *ob) : gsGameObject(ob)
+gsCamera::gsCamera(gkInstancedObject *ob) : gsGameObject(ob)
 {
 }
 
@@ -1469,7 +1469,7 @@ gsSkeleton::gsSkeleton()
 
 
 
-gsSkeleton::gsSkeleton(gkObject *ob) : gsGameObject(ob)
+gsSkeleton::gsSkeleton(gkInstancedObject *ob) : gsGameObject(ob)
 {
 }
 

@@ -171,8 +171,9 @@
 #include "Physics/gkRayTest.h"
 #include "Physics/gkSweptTest.h"
 
+#ifdef OGREKIT_USE_LUA
 #include "Script/Lua/gkLuaManager.h"
-
+#endif
 #include "Utils/utCommon.h"
 #include "Utils/utString.h"
 #include "Utils/utTypes.h"

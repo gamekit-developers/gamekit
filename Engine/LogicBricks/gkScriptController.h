@@ -28,6 +28,7 @@
 #define _gkScriptController_h_
 
 #include "gkLogicController.h"
+#ifdef OGREKIT_USE_LUA
 
 
 class gkScriptController : public gkLogicController
@@ -54,5 +55,6 @@ public:
 	static gkScriptController* getCurrent(void);
 };
 
+#endif
 
 #endif//_gkScriptController_h_

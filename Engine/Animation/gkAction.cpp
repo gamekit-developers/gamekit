@@ -32,9 +32,15 @@
 
 
 
-gkAction::gkAction(const gkString &name) 
-	:	m_name(name), m_start(1), m_end(1), m_evalTime(1), m_weight(1.0),
-		m_blendFrames(1.0)
+gkAction::gkAction(const gkString &name)
+	:	m_name(name),
+	    m_start(1),
+	    m_end(1),
+	    m_evalTime(1),
+	    m_weight(1.0),
+	    m_blendFrames(1.0),
+	    m_enabled(true),
+		m_mode(GK_ACT_LOOP)
 {
 }
 
@@ -71,21 +77,76 @@ gkActionChannel *gkAction::getChannel(gkBone *bone)
 }
 
 
+void gkAction::setBlendFrames(gkScalar v)
+{
+	if (m_enabled)
+	{
+		m_blendFrames = gkClampf(v, 1, m_end);
+	}
+}
+
+
+void gkAction::setTimePosition(gkScalar v)
+{
+	if (m_enabled)
+	{
+		m_evalTime = gkClampf(v, m_start, m_end);
+	}
+}
+
+
+
+void gkAction::setWeight(gkScalar w)
+{
+	if (m_enabled)
+	{
+		m_weight = gkClampf(w, 0, 1);
+	}
+}
+
+
 
 void gkAction::evaluate(gkScalar time)
 {
-	// loop for now
-	if (m_evalTime <= m_start)
-		m_evalTime = m_start;
-	if (m_evalTime >= m_end)
-		m_evalTime = m_start;
+	if (!m_enabled)
+		return;
+
+	if (m_mode& GK_ACT_LOOP)
+	{
+		if (m_evalTime <= m_start)
+			m_evalTime = m_start;
+		if (m_evalTime >= m_end)
+			m_evalTime = m_start;
+	}
+	else
+	{
+		if (m_evalTime <= m_start)
+			m_evalTime = m_start;
+
+		if (m_evalTime + time >= m_end)
+			m_evalTime = m_end - time;
+	}
+
+
 
 	m_evalTime += time;
 
-	gkScalar delta = (m_evalTime - m_start) / (m_end - m_start);
+	gkScalar tick = m_evalTime;
+	if (m_mode & GK_ACT_INVERSE)
+		tick = (m_end - m_start) - m_evalTime;
+
+	gkScalar delta = (tick - m_start) / (m_end - m_start);
 
 	gkActionChannel **ptr = m_channels.ptr();
 	int len = getNumChannels(), i = 0;
 	while (i < len)
-		ptr[i++]->evaluate(m_evalTime, delta, m_weight);
+		ptr[i++]->evaluate(tick, delta, m_weight);
+}
+
+
+void gkAction::reset(void)
+{
+	m_evalTime = 0.f;
+	m_weight = 1.f;
+	m_enabled = false;
 }

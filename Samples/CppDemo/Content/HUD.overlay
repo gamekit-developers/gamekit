@@ -1,0 +1,63 @@
+m_momoData
+{
+	zorder 200
+
+	container TextArea(m_momoData/m_currentState)
+	{
+		metrics_mode pixels
+		font_name   BlenderInternalFont
+		left        128	
+		top         52
+		char_height 24
+	}
+
+	container Panel(m_momoData/Head0)
+	{
+		// Head image:
+		// L0, T0, R128, B128 /= 512, 512
+		// w128, h128
+		metrics_mode pixels
+
+		width		128
+		height 		128
+		material	OVR_Momo
+		uv_coords   0. 0.0 0.25 0.25
+	}
+}
+
+
+
+Camera_StateOverlay
+{
+	zorder 200
+	
+	container TextArea(Info)
+	{
+		metrics_mode pixels
+		font_name   PlainText
+		left        5	
+		top         128
+		char_height 14
+	}
+
+
+}
+
+
+NPC_RatOverlay
+{
+	zorder 200
+	
+	container Panel(NPC_MomoOverlay/Head)
+	{
+		// L320, T13, R483, B165 /= 512, 512
+		// w163, h152
+		
+		metrics_mode pixels
+		
+		width		163
+		height 		152
+		material	OVR_Rat
+		uv_coords   0.625 0.025390625 0.943359375 0.322265625
+	}
+}

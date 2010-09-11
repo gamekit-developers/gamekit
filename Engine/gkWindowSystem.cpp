@@ -117,6 +117,11 @@ gkWindowSystem::~gkWindowSystem()
 {
 	if (m_window)
 		WindowEventUtilities::removeWindowEventListener(m_window, m_internal);
+
+
+	UTsize i;
+	for (i=0; i<m_joysticks.size(); ++i)
+		delete m_joysticks[i];
 		
 	m_joysticks.clear();
 
@@ -206,6 +211,7 @@ RenderWindow *gkWindowSystem::createMainWindow(const gkUserDefs &prefs)
 		{
 			OIS::JoyStick *oisjs = (OIS::JoyStick *)m_internal->m_input->createInputObject(OIS::OISJoyStick, true);
 			oisjs->setEventCallback(m_internal);
+
 			
 			gkJoystick *gkjs = new gkJoystick(oisjs->getNumberOfComponents(OIS::OIS_Button), oisjs->getNumberOfComponents(OIS::OIS_Axis));
 			
@@ -328,13 +334,15 @@ gkWindowSystemPrivate::~Private()
 
 		if (m_mouse)
 			m_input->destroyInputObject(m_mouse);
+
+		UTsize i;
+		for (i=0; i<m_joysticks.size(); ++i)
+			m_input->destroyInputObject(m_joysticks[i]);
 		
 #else
 		if (m_touch)
 			m_input->destroyInputObject(m_touch);
 #endif
-		
-		m_joysticks.clear();
 
 		OIS::InputManager::destroyInputSystem(m_input);
 
@@ -639,7 +647,6 @@ bool gkWindowSystemPrivate::axisMoved(const OIS::JoyStickEvent &arg, int axis)
 	gkJoystick &js = *m_sys->m_joysticks[m_joysticks.find((OIS::JoyStick*)arg.device)];
 	
 	js.axes[axis] = arg.state.mAxes[axis].abs;
-	
 	if (!m_sys->m_listeners.empty())
 	{
 		gkWindowSystem::Listener *node = m_sys->m_listeners.begin();

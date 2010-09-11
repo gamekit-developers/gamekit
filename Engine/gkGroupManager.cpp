@@ -25,17 +25,16 @@
 -------------------------------------------------------------------------------
 */
 #include "gkGroupManager.h"
+#include "gkSceneManager.h"
 #include "gkGameObjectGroup.h"
 #include "gkLogger.h"
 
 
 
 gkGroupManager::gkGroupManager()
-	:    m_handles(0)
+	:    m_handles(0), m_sceneListener(0)
 {
 }
-
-
 
 gkGroupManager::~gkGroupManager()
 {
@@ -43,103 +42,136 @@ gkGroupManager::~gkGroupManager()
 }
 
 
-
-gkGameObjectGroup *gkGroupManager::createGroup(const gkHashedString &name)
+gkResource* gkGroupManager::createImpl(const gkResourceName& name, const gkResourceHandle& handle, const gkParameterMap*)
 {
-	if (m_groups.find(name) != UT_NPOS)
-	{
-		gkPrintf("GroupManager: Duplicate group '%s' found\n", name.str().c_str());
-		return 0;
-	}
-
-
-	gkGameObjectGroup *group = new gkGameObjectGroup(this, name);
-
-	m_groups.insert(name, group);
-	return group;
+	return new gkGameObjectGroup(this, name, handle);
 }
 
 
 
-gkGameObjectGroup *gkGroupManager::getGroup(const gkHashedString &name)
+void gkGroupManager::attachGroupToScene(gkScene* scene, gkGameObjectGroup* group)
+{
+	class Listener : public gkResourceManager::ResourceListener
+	{
+	public:
+		gkGroupManager* m_this;
+	public:
+		Listener(gkGroupManager* par) : m_this(par) {}
+
+		virtual ~Listener() {}
+
+		void notifyResourceDestroyed(gkResource* res)
+		{
+			if (gkGroupManager::getSingletonPtr())
+				m_this->m_attachements.erase((gkScene*)res);
+		}
+	};
+
+	if (!m_sceneListener)
+	{
+		m_sceneListener = new Listener(this);
+		gkSceneManager::getSingleton().addResourceListener(m_sceneListener);
+	}
+
+	UTsize pos;
+	if ((pos = m_attachements.find(scene)) != UT_NPOS)
+		m_attachements.at(pos).push_back(group);
+	else
+	{
+		Groups groups;
+		groups.push_back(group);
+		m_attachements.insert(scene, groups);
+	}
+}
+
+
+gkGroupManager::Groups::Iterator gkGroupManager::getAttachedGroupIterator(gkScene* sc)
 {
 	UTsize pos;
-	if ( (pos = m_groups.find(name)) == UT_NPOS)
-	{
-		gkPrintf("GroupManager: Missing group '%s'\n", name.str().c_str());
-		return 0;
-	}
-	return m_groups.at(pos);
+	if ((pos = m_attachements.find(sc)) != UT_NPOS)
+		return m_attachements.at(pos).iterator();
+	return Groups::Iterator();
 }
 
 
-void gkGroupManager::destroyGroup(const gkHashedString &name)
-{
-	destroyGroup(getGroup(name));
-}
 
-
-void gkGroupManager::destroyGroup(gkGameObjectGroup *group)
+void gkGroupManager::createGameObjectInstances(gkScene* scene)
 {
-	if (group && hasGroup(group->getName()))
+	UTsize pos;
+	if ((pos = m_attachements.find(scene)) != UT_NPOS)
 	{
-		m_groups.remove(group->getName());
-		delete group;
-
-		if (m_groups.empty())
-			m_groups.clear();
+		Groups::Iterator it = m_attachements.at(pos).iterator();
+		while (it.hasMoreElements())
+			it.getNext()->createGameObjectInstances(scene);
 	}
 }
 
 
-void gkGroupManager::destroyAll(void)
+
+void gkGroupManager::destroyGameObjectInstances(gkScene* scene)
 {
-	Groups::Iterator it = m_groups.iterator();
+	UTsize pos;
+	if ((pos = m_attachements.find(scene)) != UT_NPOS)
+	{
+		Groups::Iterator it = m_attachements.at(pos).iterator();
+		while (it.hasMoreElements())
+			it.getNext()->destroyGameObjectInstances();
+	}
+}
+
+
+void gkGroupManager::createStaticBatches(gkScene* scene)
+{
+	UTsize pos;
+	if ((pos = m_attachements.find(scene)) != UT_NPOS)
+	{
+		Groups::Iterator it = m_attachements.at(pos).iterator();
+		while (it.hasMoreElements())
+			it.getNext()->createStaticBatches(scene);
+	}
+}
+
+
+void gkGroupManager::destroyStaticBatches(gkScene* scene)
+{
+	UTsize pos;
+	if ((pos = m_attachements.find(scene)) != UT_NPOS)
+	{
+		Groups::Iterator it = m_attachements.at(pos).iterator();
+		while (it.hasMoreElements())
+			it.getNext()->destroyStaticBatches(scene);
+	}
+
+}
+
+void gkGroupManager::notifyDestroyAllImpl(void)
+{
+	m_attachements.clear();
+
+	if (m_sceneListener)
+	{
+		if (gkSceneManager::getSingletonPtr())
+			gkSceneManager::getSingleton().removeResourceListener(m_sceneListener);
+
+		delete m_sceneListener;
+		m_sceneListener = 0;
+	}
+
+	gkResourceManager::ResourceIterator it = getResourceIterator();
 	while (it.hasMoreElements())
-		delete it.getNext().second;
-
-	m_groups.clear();
-	m_handles = 0;
+	{
+		gkGameObjectGroup* grp = static_cast<gkGameObjectGroup*>(it.getNext().second);
+		grp->destroyAllInstances();
+	}
 }
 
 
-bool gkGroupManager::hasGroup(const gkHashedString &name)
+void gkGroupManager::notifyResourceDestroyedImpl(gkResource* res)
 {
-	return m_groups.find(name) != UT_NPOS;
+	gkGameObjectGroup* grp = static_cast<gkGameObjectGroup*>(res);
+	GK_ASSERT(grp);
+	if (grp) grp->destroyGameObjectInstances();
 }
 
 
-
-void gkGroupManager::createGameObjectInstances(void)
-{
-	// Pass command
-	Groups::Iterator it = m_groups.iterator();
-	while (it.hasMoreElements())
-		it.getNext().second->createGameObjectInstances();
-}
-
-
-
-void gkGroupManager::destroyGameObjectInstances(void)
-{
-	Groups::Iterator it = m_groups.iterator();
-	while (it.hasMoreElements())
-		it.getNext().second->destroyGameObjectInstances();
-}
-
-
-void gkGroupManager::createStaticBatches(gkScene *scene)
-{
-	Groups::Iterator it = m_groups.iterator();
-	while (it.hasMoreElements())
-		it.getNext().second->createStaticBatches(scene);
-}
-
-
-
-void gkGroupManager::destroyStaticBatches(gkScene *scene)
-{
-	Groups::Iterator it = m_groups.iterator();
-	while (it.hasMoreElements())
-		it.getNext().second->destroyStaticBatches(scene);
-}
+UT_IMPLEMENT_SINGLETON(gkGroupManager);

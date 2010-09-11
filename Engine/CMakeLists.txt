@@ -16,10 +16,14 @@ set(Core_SOURCE
     gkDebugScreen.cpp
     gkEngine.cpp
     gkEntity.cpp
+    gkFont.cpp
+    gkFontManager.cpp
     gkGameObject.cpp
+    gkGameObjectManager.cpp
     gkGameObjectGroup.cpp
     gkGameObjectInstance.cpp
     gkGroupManager.cpp
+    gkInstancedManager.cpp
     gkLight.cpp
     gkLogger.cpp
     gkMesh.cpp
@@ -33,6 +37,8 @@ set(Core_SOURCE
     gkTextManager.cpp
     gkTickState.cpp
     gkRenderFactory.cpp
+    gkResource.cpp
+    gkResourceManager.cpp
     gkScene.cpp
     gkSceneManager.cpp
     gkSkeleton.cpp
@@ -44,6 +50,7 @@ set(Core_SOURCE
     Utils/utString.cpp
     Utils/utStreams.cpp
     Utils/utRandom.cpp
+    Utils/utScript.cpp
 )
 
 set(Core_HEADER
@@ -58,10 +65,14 @@ set(Core_HEADER
     gkDebugScreen.h
     gkEngine.h
     gkEntity.h
+    gkFont.h
+    gkFontManager.h
     gkGameObject.h
+    gkGameObjectManager.h
     gkGameObjectGroup.h
     gkGameObjectInstance.h
     gkGroupManager.h
+    gkInstancedManager.h
     gkHashedString.h
     gkInput.h
     gkLight.h
@@ -78,6 +89,8 @@ set(Core_HEADER
     gkTextManager.h
     gkTickState.h
     gkRenderFactory.h
+    gkResource.h
+    gkResourceManager.h
     gkScene.h
     gkSceneManager.h
     gkSerialize.h
@@ -98,6 +111,7 @@ set(Core_HEADER
     Utils/utMemoryPool.h
     Utils/utStreams.h
     Utils/utRandom.h
+    Utils/utScript.h
 )
 
 if(APPLE)
@@ -499,6 +513,7 @@ endif()
 # ---------------------------------------------------------
 # Script Files
 # ---------------------------------------------------------
+if (OGREKIT_USE_LUA)
 
 if (OGREKIT_COMPLIE_SWIG AND SWIG_FOUND)
 
@@ -683,6 +698,8 @@ else()
 	endif()
 
 endif()
+
+endif() #OGREKIT_USE_LUA
 
 # ---------------------------------------------------------
 # Sound Files

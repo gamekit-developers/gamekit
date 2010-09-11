@@ -32,74 +32,64 @@
 #include "gkMathUtils.h"
 
 
-class gkGameObjectInstance : public gkObject
+class gkGameObjectInstance
 {
 public:
-	typedef utHashTable<gkHashedString, gkGameObject *>  Objects;
+	typedef utHashTable<gkHashedString, gkGameObject*>  Objects;
 
 
 protected:
 
 	const UTsize            m_id;
-
-	///This is local only to this instance, we use gkGameObject as the owner 
-    ///in order to add logic bricks to the whole collection.
-	gkGameObject            *m_owner;
-
-	gkGameObjectGroup       *m_parent;
-
+	gkTransformState        m_transform;
+	gkGameObjectGroup*      m_parent;
 	Objects                 m_objects;
-
-
-	// Reference to the scene.
-	gkScene                 *m_scene;
-
 	bool                    m_firstLoad;
-
-	virtual void createInstanceImpl(void);
-	virtual void destroyInstanceImpl(void);
-
-	void makeTransform(void);
-
+	bool                    m_isInstanced;
 
 public:
 
 
-	gkGameObjectInstance(gkGameObjectGroup *group, gkScene *scene, UTsize id);
+	gkGameObjectInstance(gkGameObjectGroup* group, UTsize id);
 	~gkGameObjectInstance();
 
 
-	gkGameObject *getObject(const gkHashedString &name);
+	gkGameObject* getObject(const gkHashedString& name);
 
-	void          destroyObject(const gkHashedString &name);
-	void          destroyObject(gkGameObject *gobj);
+	void          destroyObject(const gkHashedString& name);
+	void          destroyObject(gkGameObject* gobj);
 
 
 	///addObject will create a clone of this object, then add it the main list.
-	void addObject(gkGameObject *gobj);
+	void          addObject(gkGameObject* gobj);
 
 
 
-	bool          hasObject(const gkHashedString &name);
-	bool          hasObject(gkGameObject *gobj);
+	bool          hasObject(const gkHashedString& name);
+	bool          hasObject(gkGameObject* gobj);
 
 
-    ///Applies a transform to all objects in this instance.
-	void          applyTransform(const gkTransformState &trans);
+	///Applies a transform to all objects in this instance.
+	void          applyTransform(const gkTransformState& trans);
+
+
+	void createObjectInstances(gkScene *scene);
+	void destroyObjectInstances(void);
 
 
 
-	void cloneObjects(const gkTransformState &from, int time,
-	                  const gkVector3 &linearVelocity=gkVector3::ZERO, 
-					  bool tsLinLocal = true,
-	                  const gkVector3 &angularVelocity=gkVector3::ZERO, 
-					  bool tsAngLocal = true);
+	void cloneObjects(gkScene *scene, const gkTransformState& from, int time,
+	                  const gkVector3& linearVelocity=gkVector3::ZERO,
+	                  bool tsLinLocal = true,
+	                  const gkVector3& angularVelocity=gkVector3::ZERO,
+	                  bool tsAngLocal = true);
 
 
-	GK_INLINE gkGameObject          *getOwner(void)     {return m_owner;}
-	GK_INLINE gkGameObjectGroup     *getGroup(void)     {return m_parent;}
-	GK_INLINE Objects               &getObjects(void)   {return m_objects; }
-	GK_INLINE const UTsize          getId(void)         {return m_id;}
+	GK_INLINE gkTransformState&      getOwnerTransform(void)  {return m_transform;}
+	GK_INLINE gkGameObjectGroup*     getGroup(void)           {return m_parent;}
+	GK_INLINE Objects&               getObjects(void)         {return m_objects; }
+	GK_INLINE const UTsize           getId(void)              {return m_id;}
+	GK_INLINE bool                   isInstanced(void)        {return m_isInstanced;}
 };
 
 #endif //_gkGameObjectInstance_h_

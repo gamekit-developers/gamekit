@@ -64,6 +64,8 @@ void gkActionManager::update(gkScalar delta, gkScalar blendDelta)
 {
 	if (m_blend && m_active)
 	{
+		m_blend->enable(true);
+		m_active->enable(true);
 
 		gkScalar blendFrames = m_blend->getBlendFrames();
 		if (gkFuzzy(blendFrames))
@@ -92,7 +94,10 @@ void gkActionManager::update(gkScalar delta, gkScalar blendDelta)
 	}
 
 	if (m_active)
+	{
+		m_active->enable(true);
 		m_active->evaluate(delta);
+	}
 }
 
 

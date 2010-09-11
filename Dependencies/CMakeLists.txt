@@ -14,7 +14,11 @@ subdirs(Source/Recast)
 subdirs(Source/Detour)
 subdirs(Source/OpenSteer)
 subdirs(Source/Blender25)
-subdirs(Source/Lua)
+
+
+if (OGREKIT_USE_LUA)
+	subdirs(Source/Lua)
+endif()
 
 if (OGREKIT_OPENAL_SOUND)
     subdirs(Source/Codecs)

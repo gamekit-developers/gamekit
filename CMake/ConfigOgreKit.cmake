@@ -4,7 +4,14 @@ macro (configure_ogrekit ROOT OGREPATH)
 	set(GNUSTEP_SYSTEM_ROOT $ENV{GNUSTEP_SYSTEM_ROOT})
 	
 	if(APPLE OR GNUSTEP_SYSTEM_ROOT)
-		option(OGREKIT_USE_COCOA	"Use Cocoa"	ON)
+		
+		if (WIN32 AND NOT CMAKE_COMPILER_IS_GNUCXX)
+			set(OGREKIT_USE_COCOA FALSE CACHE BOOL "Forcing remove Use Cocoa" FORCE)
+		else()
+			option(OGREKIT_USE_COCOA	"Use Cocoa"	ON)
+		endif()
+		
+		
 	endif()
 	
 	if(OGREKIT_USE_COCOA)
@@ -18,6 +25,17 @@ macro (configure_ogrekit ROOT OGREPATH)
 	endif()
 
 	set(OGREKIT_INSTALL_PREFIX ${ROOT}/Bin)
+	
+	option(OGREKIT_USE_LUA               "Use Lua script bindings" ON)
+	option(OGREKIT_COMPILE_OGRE_SCRIPTS  "Automatically convert Blender TX to Ogre (.material, .font, .overlay... etc)" ON)
+
+	if (OGREKIT_USE_LUA)
+		add_definitions(-DOGREKIT_USE_LUA)	
+	endif()
+	
+	if (OGREKIT_COMPILE_OGRE_SCRIPTS)
+		add_definitions(-DOGREKIT_COMPILE_OGRE_SCRIPTS)	
+	endif()
 
 	set(OGREKIT_ZLIB_TARGET	ZLib)
 	set(OGREKIT_ZZIP_TARGET ZZipLib)
@@ -55,10 +73,18 @@ macro (configure_ogrekit ROOT OGREPATH)
 		endif (UNIX)
 	endif (APPLE)
 	
-	option(SAMPLES_RUNTIME        "Build Samples/Runtime"                 ON)
-	option(SAMPLES_LOGICDEMO      "Build Samples/LogicDemo"               ON)
-	option(SAMPLES_VEHICLEDEMO    "Build Samples/VehicleDemo"             ON)
-	option(SAMPLES_LUARUNTIME     "Build Samples/LuaRuntime"              ON)
+	option(SAMPLES_RUNTIME        "Build Samples/Runtime"     ON)
+	option(SAMPLES_LOGICDEMO      "Build Samples/LogicDemo"   ON)
+	option(SAMPLES_VEHICLEDEMO    "Build Samples/VehicleDemo" ON)
+	option(SAMPLES_CPPDEMO        "Build Samples/CppDemo"     ON)
+	
+	
+	
+	if (OGREKIT_USE_LUA)
+		option(SAMPLES_LUARUNTIME "Build Samples/LuaRuntime" ON)
+	else()
+		set(SAMPLES_LUARUNTIME FALSE CACHE BOOL "Forcing remove Samples/LuaRuntime" FORCE)
+	endif()
 
 
 	if (APPLE)

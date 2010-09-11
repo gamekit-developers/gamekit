@@ -28,31 +28,22 @@
 #define _gkMeshManager_h_
 
 #include "gkCommon.h"
-#include "gkHashedString.h"
+#include "gkResourceManager.h"
 #include "gkMesh.h"
+#include "Utils/utSingleton.h"
 
 
-class gkMeshManager
+
+class gkMeshManager : public gkResourceManager, public utSingleton<gkMeshManager>
 {
 public:
-	typedef utHashTable<gkHashedString, gkMesh *> ObjectMap;
-protected:
-
-	ObjectMap m_objects;
-
-public:
-
 	gkMeshManager();
-	~gkMeshManager();
+	virtual ~gkMeshManager();
 
+	gkResource *createImpl(const gkResourceName &name, const gkResourceHandle &handle, const gkParameterMap *params = 0);
+	gkResource* cloneImpl(gkResource *orig, const gkResourceName &name, const gkResourceHandle &handle, const gkParameterMap *params = 0);
 
-	gkMesh *getMesh(const gkHashedString &name);
-	gkMesh *create(const gkHashedString &name);
-
-	void destroy(const gkHashedString &name);
-	void destroy(gkMesh *ob);
-	void destroyAll(void);
-	bool hasMesh(const gkHashedString &name);
+	UT_DECLARE_SINGLETON(gkMeshManager);
 };
 
 #endif//_gkMeshManager_h_

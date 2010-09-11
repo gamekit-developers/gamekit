@@ -132,8 +132,8 @@ UTsize gkBone::_getBoneIndex(void)
 
 
 
-gkSkeleton::gkSkeleton(gkScene *scene, const gkString &name)
-	:    gkGameObject(scene, name, GK_SKELETON),
+gkSkeleton::gkSkeleton(gkInstancedManager *creator, const gkResourceName& name, const gkResourceHandle& handle)
+	:    gkGameObject(creator, name, handle, GK_SKELETON),
 	     m_controller(0),
 	     m_skelLoader(0)
 {
@@ -269,13 +269,9 @@ gkBone::BoneList &gkSkeleton::getRootBoneList(void)
 
 gkGameObject *gkSkeleton::clone(const gkString &name)
 {
-	gkSkeleton *cl= new gkSkeleton(m_scene, name);
-
-	// TODO, call clone on all bones
-
+	gkSkeleton *cl= new gkSkeleton(getInstanceCreator(), name, -1);
 	gkGameObject::cloneImpl(cl);
 	return cl;
-
 }
 
 
@@ -303,12 +299,12 @@ void gkSkeleton::createSkeleton(void)
 	if (m_skelLoader != 0)
 		return;
 
-	Ogre::SkeletonPtr oskel = Ogre::SkeletonManager::getSingleton().getByName(m_name);
+	Ogre::SkeletonPtr oskel = Ogre::SkeletonManager::getSingleton().getByName(m_name.str());
 	if (oskel.isNull())
 	{
 
 		m_skelLoader = new gkSkeletonLoader(this);
-		oskel = Ogre::SkeletonManager::getSingleton().create(m_name, "<gkBuiltin>", true, m_skelLoader);
+		oskel = Ogre::SkeletonManager::getSingleton().create(m_name.str(), "<gkBuiltin>", true, m_skelLoader);
 		oskel->load();
 	}
 

@@ -34,7 +34,7 @@
 class gkCamera : public gkGameObject
 {
 public:
-	gkCamera(gkScene *scene, const gkString &name);
+	gkCamera(gkInstancedManager *creator, const gkResourceName& name, const gkResourceHandle& handle);
 	virtual ~gkCamera() {}
 
 	GK_INLINE gkCameraProperties &getCameraProperties(void) {return m_cameraProps;}

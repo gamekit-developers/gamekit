@@ -179,4 +179,51 @@ protected:
 	UTuint16 m_size;
 };
 
+
+class utHashedString
+{
+protected:
+	utString m_key;
+	mutable UThash m_hash;
+
+public:
+	utHashedString() : m_key(""), m_hash(UT_NPOS) {}
+	~utHashedString() {}
+
+	utHashedString(char *k) : m_key(k), m_hash(UT_NPOS) {hash();}
+	utHashedString(const char *k) : m_key(const_cast<char *>(k)), m_hash(UT_NPOS) {hash();}
+	utHashedString(const utString &k) : m_key(k), m_hash(UT_NPOS) {hash();}
+	utHashedString(const utHashedString &k) : m_key(k.m_key), m_hash(k.m_hash) {}
+
+	UT_INLINE const utString &str(void) const {return m_key;}
+
+	UThash hash(void) const
+	{
+
+		// use cached hash
+		if (m_hash != UT_NPOS) return m_hash;
+
+		const char *str = m_key.c_str();
+
+		// magic numbers from http://www.isthe.com/chongo/tech/comp/fnv/
+		static const unsigned int  InitialFNV = 2166136261u;
+		static const unsigned int FNVMultiple = 16777619u;
+
+		// Fowler / Noll / Vo (FNV) Hash
+		m_hash = (UThash)InitialFNV;
+		for (int i = 0; str[i]; i++)
+		{
+			m_hash = m_hash ^(str[i]);    // xor  the low 8 bits
+			m_hash = m_hash * FNVMultiple;  // multiply by the magic number
+		}
+		return m_hash;
+	}
+
+	UT_INLINE bool operator== (const utHashedString &v) const    {return hash() == v.hash();}
+	UT_INLINE bool operator!= (const utHashedString &v) const    {return hash() != v.hash();}
+	UT_INLINE bool operator== (const UThash &v) const            {return hash() == v;}
+	UT_INLINE bool operator!= (const UThash &v) const            {return hash() != v;}
+
+};
+
 #endif//_utString_h_

@@ -1,0 +1,29 @@
+material OVR_Momo
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+
+			texture_unit
+			{
+				texture momo_health.png
+			}
+		}
+	}
+}
+material OVR_Rat
+{
+	technique
+	{
+		pass
+		{
+			scene_blend alpha_blend
+			texture_unit
+			{
+				texture hudsheet.png
+			}
+		}
+	}
+}

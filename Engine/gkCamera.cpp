@@ -26,17 +26,12 @@
 */
 #include "OgreSceneManager.h"
 #include "OgreSceneNode.h"
-
-
 #include "gkCamera.h"
 #include "gkScene.h"
 
 
-// TODO: Should never overide properties created from blender.
-
-
-gkCamera::gkCamera(gkScene *scene, const gkString &name)
-	:	gkGameObject(scene, name, GK_CAMERA),
+gkCamera::gkCamera(gkInstancedManager *creator, const gkResourceName& name, const gkResourceHandle& handle)
+	:	gkGameObject(creator, name, handle, GK_CAMERA),
 	    m_cameraProps(),
 	    m_camera(0)
 {
@@ -53,14 +48,16 @@ void gkCamera::createInstanceImpl(void)
 
 
 	Ogre::SceneManager *manager = m_scene->getManager();
-	m_camera = manager->createCamera(m_name);
+	m_camera = manager->createCamera(m_name.str());
 
 	m_camera->setNearClipDistance(m_cameraProps.m_clipstart);
 	m_camera->setFarClipDistance(m_cameraProps.m_clipend);
 	m_camera->setFOVy(gkDegree(m_cameraProps.m_fov));
 
-	m_node->attachObject(m_camera);
 
+
+
+	m_node->attachObject(m_camera);
 
 	if (m_cameraProps.m_start)
 		m_scene->setMainCamera(this);
@@ -148,11 +145,9 @@ void gkCamera::setMainCamera(bool v)
 }
 
 
-
-
 gkGameObject *gkCamera::clone(const gkString &name)
 {
-	gkCamera *cl = new gkCamera(m_scene, name);
+	gkCamera *cl = new gkCamera(getInstanceCreator(), name, -1);
 	memcpy(&cl->m_cameraProps, &m_cameraProps, sizeof(gkCameraProperties));
 
 	gkGameObject::cloneImpl(cl);

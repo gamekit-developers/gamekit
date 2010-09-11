@@ -38,7 +38,7 @@ class gkLogger
 public:
 	static void enable(const gkString &name, bool verbose);
 	static void disable();
-	static void write(const gkString &msg);
+	static void write(const gkString &msg, bool force = false);
 };
 
 // printf style logging
@@ -50,7 +50,7 @@ extern void gkPrintf(const char *fmt, ...);
 #define gkLogMessage(msg) {                 \
     std::stringstream stream;               \
     stream << msg;                          \
-    gkLogger::write(stream.str());          \
+    gkLogger::write(stream.str(), true);    \
 }
 
 

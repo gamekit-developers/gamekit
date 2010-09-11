@@ -25,6 +25,7 @@
 -------------------------------------------------------------------------------
 */
 #include "gkMesh.h"
+#include "gkResourceManager.h"
 #include "BulletCollision/CollisionShapes/btTriangleMesh.h"
 
 
@@ -40,14 +41,14 @@ gkVertex::gkVertex()
 
 
 
-gkVertex::gkVertex(const gkVertex &o)
+gkVertex::gkVertex(const gkVertex& o)
 {
 	*this = o;
 }
 
 
 
-gkVertex &gkVertex::operator = (const gkVertex &o)
+gkVertex& gkVertex::operator = (const gkVertex& o)
 {
 	co      = o.co;
 	no      = o.no;
@@ -72,7 +73,7 @@ public:
 
 
 
-	unsigned int getVertexIndex(gkSubMesh *sub, unsigned int index, const gkVertex &ref)
+	unsigned int getVertexIndex(gkSubMesh* sub, unsigned int index, const gkVertex& ref)
 	{
 		UTsize i = m_indexMap.find((int)index), fnd=UT_NPOS, size=sub->m_verts.size();
 
@@ -95,7 +96,7 @@ public:
 	}
 
 
-	bool vertEq(gkSubMesh *sub, const gkVertex &a, const gkVertex &b)
+	bool vertEq(gkSubMesh* sub, const gkVertex& a, const gkVertex& b)
 	{
 		if (!gkFuzzyT((a.co - b.co).squaredLength(), 1e-10))
 			return false;
@@ -139,9 +140,9 @@ gkSubMesh::~gkSubMesh()
 }
 
 
-gkSubMesh *gkSubMesh::clone(void)
+gkSubMesh* gkSubMesh::clone(void)
 {
-	gkSubMesh *nme = new gkSubMesh();
+	gkSubMesh* nme = new gkSubMesh();
 	nme->m_tris             = m_tris;
 	nme->m_verts            = m_verts;
 	nme->m_uvlayers         = m_uvlayers;
@@ -156,11 +157,11 @@ gkSubMesh *gkSubMesh::clone(void)
 
 
 
-void gkSubMesh::addTriangle(const gkVertex &v0,
+void gkSubMesh::addTriangle(const gkVertex& v0,
                             unsigned int i0,
-                            const gkVertex &v1,
+                            const gkVertex& v1,
                             unsigned int i1,
-                            const gkVertex &v2,
+                            const gkVertex& v2,
                             unsigned int i2, int flag
                            )
 {
@@ -175,13 +176,13 @@ void gkSubMesh::addTriangle(const gkVertex &v0,
 }
 
 
-void gkSubMesh::addDeformVert(const gkDeformVertex &dv)
+void gkSubMesh::addDeformVert(const gkDeformVertex& dv)
 {
 	m_defverts.push_back(dv);
 }
 
 
-gkBoundingBox &gkSubMesh::getBoundingBox(void)
+gkBoundingBox& gkSubMesh::getBoundingBox(void)
 {
 	if (!m_boundsInit)
 	{
@@ -191,7 +192,7 @@ gkBoundingBox &gkSubMesh::getBoundingBox(void)
 
 		while (i < s)
 		{
-			const gkVertex &vtx = ptr[i++];
+			const gkVertex& vtx = ptr[i++];
 			m_bounds.merge(vtx.co);
 		}
 
@@ -202,11 +203,11 @@ gkBoundingBox &gkSubMesh::getBoundingBox(void)
 
 
 
-gkMesh::gkMesh(const gkString &name)
-	:   m_bounds(gkBoundingBox::BOX_NULL),
+gkMesh::gkMesh(gkResourceManager* creator, const gkResourceName& name, const gkResourceHandle& handle)
+	:   gkResource(creator, name, handle),
+	    m_bounds(gkBoundingBox::BOX_NULL),
 	    m_boundsInit(false),
-	    m_triMesh(0),
-	    m_name(name)
+	    m_triMesh(0)
 {
 }
 
@@ -227,13 +228,13 @@ gkMesh::~gkMesh()
 }
 
 
-void gkMesh::addSubMesh(gkSubMesh *me)
+void gkMesh::addSubMesh(gkSubMesh* me)
 {
 	m_submeshes.push_back(me);
 }
 
 
-gkBoundingBox &gkMesh::getBoundingBox(void)
+gkBoundingBox& gkMesh::getBoundingBox(void)
 {
 	if (!m_boundsInit)
 	{
@@ -247,7 +248,7 @@ gkBoundingBox &gkMesh::getBoundingBox(void)
 }
 
 
-gkMaterialProperties &gkMesh::getFirstMaterial(void)
+gkMaterialProperties& gkMesh::getFirstMaterial(void)
 {
 	if (!m_submeshes.empty())
 		return m_submeshes.at(0)->getMaterial();
@@ -257,7 +258,7 @@ gkMaterialProperties &gkMesh::getFirstMaterial(void)
 }
 
 
-btTriangleMesh *gkMesh::getTriMesh(void)
+btTriangleMesh* gkMesh::getTriMesh(void)
 {
 	if (m_triMesh)
 		return m_triMesh;
@@ -268,9 +269,9 @@ btTriangleMesh *gkMesh::getTriMesh(void)
 	SubMeshIterator iter = getSubMeshIterator();
 	while (iter.hasMoreElements())
 	{
-		gkSubMesh *sub = iter.getNext();
+		gkSubMesh* sub = iter.getNext();
 
-		gkSubMesh::Triangles &ibuf = sub->getIndexBuffer();
+		gkSubMesh::Triangles& ibuf = sub->getIndexBuffer();
 		UTsize totface = ibuf.size(), i;
 		gkSubMesh::Triangles::Pointer ibufPtr = ibuf.ptr();
 		gkSubMesh::Verticies::Pointer vbuf = sub->getVertexBuffer().ptr();
@@ -278,7 +279,7 @@ btTriangleMesh *gkMesh::getTriMesh(void)
 
 		for (i=0; i<totface; ++i)
 		{
-			const gkTriangle &tri = ibufPtr[i];
+			const gkTriangle& tri = ibufPtr[i];
 
 			if (tri.flag & gkTriangle::TRI_COLLIDER)
 			{
@@ -296,31 +297,32 @@ btTriangleMesh *gkMesh::getTriMesh(void)
 
 
 
-gkMesh *gkMesh::clone(void)
+gkMesh* gkMesh::clone(void)
 {
-	gkMesh *nme = new gkMesh(m_name);
-	SubMeshIterator iter = getSubMeshIterator();
-	while (iter.hasMoreElements())
-		nme->addSubMesh(iter.getNext()->clone());
+	gkMesh* nme = (gkMesh*)m_creator->clone(this, false);
+	if (nme)
+	{
 
-	if (m_triMesh)
-		nme->getTriMesh();
+		SubMeshIterator iter = getSubMeshIterator();
+		while (iter.hasMoreElements())
+			nme->addSubMesh(iter.getNext()->clone());
 
+		if (m_triMesh)
+			nme->getTriMesh();
+	}
 	return nme;
 }
 
-
-
-gkVertexGroup *gkMesh::createVertexGroup(const gkString &name)
+gkVertexGroup* gkMesh::createVertexGroup(const gkString& name)
 {
-	gkVertexGroup *group = new gkVertexGroup(name, m_groups.size());
+	gkVertexGroup* group = new gkVertexGroup(name, m_groups.size());
 	m_groups.push_back(group);
 	return group;
 }
 
 
 
-gkVertexGroup *gkMesh::findVertexGroup(int i)
+gkVertexGroup* gkMesh::findVertexGroup(int i)
 {
 	if (i < (int)m_groups.size() && i >=0 )
 		return m_groups.at(i);
@@ -328,12 +330,12 @@ gkVertexGroup *gkMesh::findVertexGroup(int i)
 }
 
 
-gkVertexGroup *gkMesh::findVertexGroup(const gkString &name)
+gkVertexGroup* gkMesh::findVertexGroup(const gkString& name)
 {
 	UTsize i=0, s = m_groups.size();
 	while (i < s)
 	{
-		gkVertexGroup *grp = m_groups.at(i++);
+		gkVertexGroup* grp = m_groups.at(i++);
 		if (grp->getName() == name)
 			return grp;
 	}

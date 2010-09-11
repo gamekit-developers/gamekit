@@ -35,6 +35,17 @@
 
 class gkActionChannel;
 
+enum gkActionEvalMode
+{
+	///Reset loop when done.
+	GK_ACT_LOOP    = (1 << 0),
+	///Play till the end and stop.
+	GK_ACT_END     = (1 << 1),
+	///Invert frames
+	GK_ACT_INVERSE = (1 << 2)
+};
+
+
 
 class gkAction
 {
@@ -48,59 +59,49 @@ protected:
 	Channels            m_channels;
 	gkScalar            m_start, m_end;
 	gkScalar            m_evalTime, m_weight, m_blendFrames;
+	bool                m_enabled;
+	int                 m_mode;
 
 public:
 	gkAction(const gkString &name);
 	~gkAction();
 
-	GK_INLINE gkScalar getLength(void)
-	{ return m_end - m_start; }
+	GK_INLINE gkScalar         getLength(void)       { return m_end - m_start; }
+	GK_INLINE gkScalar         getStart(void)        { return m_start; }
+	GK_INLINE gkScalar         getEnd(void)          { return m_end; }
+	GK_INLINE const gkString  &getName(void)         { return m_name; }
+	GK_INLINE gkScalar         getBlendFrames(void)  { return m_blendFrames; }
+	GK_INLINE gkScalar         getTimePosition(void) { return m_evalTime; }
+	GK_INLINE gkScalar         getWeight(void)       { return m_weight; }
+	GK_INLINE int              getMode(void)         { return m_mode; }
 
-	GK_INLINE void setStart(gkScalar v)
-	{ m_start = v;}
 
-	GK_INLINE void setEnd(gkScalar v)
-	{ m_end = v;}
+	GK_INLINE gkAction::Channels::ConstPointer getChannels(void) {return m_channels.ptr();}
+	GK_INLINE int getNumChannels(void) {return(int)m_channels.size();}
 
-	GK_INLINE gkScalar getStart(void)
-	{ return m_start;}
 
-	GK_INLINE gkScalar getEnd(void)
-	{ return m_end;}
+	GK_INLINE void setStart(gkScalar v) { m_start = v;}
+	GK_INLINE void setEnd(gkScalar v)   { m_end = v;}
+	GK_INLINE void setMode(int v)       { m_mode = v; }
 
-	GK_INLINE const gkString &getName(void)
-	{ return m_name;}
 
 	void addChannel(gkActionChannel *chan);
-
-	GK_INLINE gkAction::Channels::ConstPointer getChannels(void)
-	{return m_channels.ptr();}
-
-	GK_INLINE int getNumChannels(void)
-	{return(int)m_channels.size();}
-
-
 	gkActionChannel *getChannel(gkBone *bone);
 
+	
+	void setBlendFrames(gkScalar v);
+	void setTimePosition(gkScalar v);
+	void setWeight(gkScalar w);
+	
+
+	GK_INLINE void enable(bool v)   {m_enabled = v;}
+	GK_INLINE bool isEnabled(void)  {return m_enabled;}
+	GK_INLINE bool isDone(void)     {return !m_enabled || m_evalTime >= (m_end - m_start);}
+
+
+
 	void evaluate(gkScalar time);
-
-	GK_INLINE void setBlendFrames(gkScalar v)
-	{m_blendFrames = gkClampf(v, 1, m_end);}
-
-	GK_INLINE gkScalar getBlendFrames(void)
-	{return m_blendFrames;}
-
-	GK_INLINE void setTimePosition(gkScalar v)
-	{m_evalTime = gkClampf(v, m_start, m_end);}
-
-	GK_INLINE gkScalar getTimePosition(void)
-	{return m_evalTime;}
-
-	GK_INLINE void setWeight(gkScalar w)
-	{m_weight = gkClampf(w, 0, 1); }
-
-	GK_INLINE gkScalar getWeight(void)
-	{ return m_weight; }
+	void reset(void);
 };
 
 

@@ -73,7 +73,7 @@ void gkEditObjectActuator::addObject(void)
 				if (obj->isInGroup())
 					obj->getGroup()->cloneObjects(m_scene, thisTransform, m_life, m_linv, m_lvlocal, m_angv, m_avlocal);
 				else
-					obj->getGroupInstance()->cloneObjects(thisTransform, m_life, m_linv, m_lvlocal, m_angv, m_avlocal);
+					obj->getGroupInstance()->cloneObjects(m_scene, thisTransform, m_life, m_linv, m_lvlocal, m_angv, m_avlocal);
 			}
 			else
 			{

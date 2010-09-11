@@ -24,15 +24,16 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkObject_h_
-#define _gkObject_h_
+#ifndef _gkInstancedObject_h_
+#define _gkInstancedObject_h_
 
-#include "gkCommon.h"
-#include "gkHashedString.h"
+#include "gkResource.h"
+#include "gkInstancedManager.h"
+
 
 
 ///Base class for objects that are repetitively removed or added to Ogre
-class gkObject
+class gkInstancedObject : public gkResource
 {
 public:
 
@@ -48,8 +49,7 @@ public:
 
 
 protected:
-	const gkString      m_name;
-	int                 m_instanceState;
+	int m_instanceState;
 
 
 	// Create and destroy events
@@ -60,28 +60,32 @@ protected:
 	virtual void destroyInstanceImpl(void) {}
 	virtual void postCreateInstanceImpl(void) {}
 	virtual void postDestroyInstanceImpl(void) {}
+	virtual bool canCreateInstance(void) {return true;}
 
 public:
 
-	gkObject(const gkString &name);
-	virtual ~gkObject();
+	gkInstancedObject(gkInstancedManager *creator, const gkResourceName& name, const gkResourceHandle& handle);
+	virtual ~gkInstancedObject();
 
+	void addCreateInstanceQueue(void);
+	void addDestroyInstanceQueue(void);
+	void addReInstanceQueue(void);
 
 
 	void createInstance(void);
 	void destroyInstance(void);
 	void reinstance(void);
 
-
-	GK_INLINE const gkString &getName(void)                    { return m_name;}
 	GK_INLINE bool           isInstanced(void) const           { return (m_instanceState & ST_CREATED) != 0;}
 	GK_INLINE bool           isBeingCreated(void) const        { return (m_instanceState & ST_CREATING) != 0;}
 	GK_INLINE bool           isBeingDestroyed(void) const      { return (m_instanceState & ST_DESTROYING) != 0;}
 	GK_INLINE int            getInstanceState(void) const      { return m_instanceState;}
 
 
+	GK_INLINE gkInstancedManager* getInstanceCreator(void)     {return static_cast<gkInstancedManager*>(m_creator);}
+
 };
 
 
 
-#endif//_gkObject_h_
+#endif//_gkInstancedObject_h_

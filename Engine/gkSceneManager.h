@@ -27,19 +27,15 @@
 #ifndef _gkSceneObjectManager_h_
 #define _gkSceneObjectManager_h_
 
-#include "gkCommon.h"
-#include "gkObject.h"
-#include "gkHashedString.h"
-#include "OgreSingleton.h"
+#include "gkInstancedManager.h"
+#include "Utils/utSingleton.h"
 
 
-class gkSceneManager : public Ogre::Singleton<gkSceneManager>
+
+class gkSceneManager : public gkInstancedManager, public utSingleton<gkSceneManager>
 {
 public:
-	typedef utHashTable<gkHashedString, gkScene *> SceneObjectMap;
-
-protected:
-	SceneObjectMap m_objects;
+	UT_DECLARE_SINGLETON(gkSceneManager);
 
 public:
 
@@ -47,15 +43,11 @@ public:
 	virtual ~gkSceneManager();
 
 
-	gkScene *getScene(const gkString &name);
-	gkScene *create(const gkString &name);
-	void destroy(const gkString &name);
-	void destroy(gkScene *ob);
-	void destroyAll(void);
-	bool hasScene(const gkString &name);
+	gkResource* createImpl(const gkResourceName& name, const gkResourceHandle& handle, const gkParameterMap *params = 0);
 
-	static gkSceneManager &getSingleton(void);
-	static gkSceneManager *getSingletonPtr(void);
+private:
+	void notifyResourceDestroyedImpl(gkResource* res);
+
 };
 
 

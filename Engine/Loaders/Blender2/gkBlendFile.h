@@ -51,7 +51,7 @@ public:
 
 
 
-	bool parse(int opts);
+	bool parse(int opts, const gkString &scene="");
 
 
 	gkScene *getSceneByName(const gkString &name);
@@ -78,8 +78,9 @@ protected:
 
 	void doVersionTests(void);
 	void buildTextFiles(void);
-	void buildAllTextures();
-	void buildAllSounds();
+	void buildAllTextures(void);
+	void buildAllSounds(void);
+	void buildAllFonts(void);
 
 
 	void loadActive(void);
@@ -92,6 +93,8 @@ protected:
 	Scenes                    m_scenes;      // All Scenes
 	gkScene                  *m_activeScene; // Main scene found during parse.
 	ImageTextureHashMap       m_imageLookup;
+	gkString                  m_findScene;
+	bool                      m_hasBFont;
 };
 
 

@@ -34,7 +34,7 @@
 class gkLight : public gkGameObject
 {
 public:
-	gkLight(gkScene *scene, const gkString &name);
+	gkLight(gkInstancedManager *creator, const gkResourceName& name, const gkResourceHandle& handle);
 	virtual ~gkLight() {}
 
 

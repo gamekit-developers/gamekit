@@ -51,12 +51,23 @@
 #include "gkDebugFps.h"
 #include "gkStats.h"
 #include "gkMessageManager.h"
+#include "gkMeshManager.h"
+#include "gkGroupManager.h"
+#include "gkGameObjectManager.h"
 
+
+#ifdef OGREKIT_USE_LUA
 #include "Script/Lua/gkLuaManager.h"
+#endif
 
 #ifdef OGREKIT_OPENAL_SOUND
 # include "Sound/gkSoundManager.h"
 #endif
+
+#ifdef OGREKIT_COMPILE_OGRE_SCRIPTS
+# include "gkFontManager.h"
+#endif
+
 
 using namespace Ogre;
 
@@ -195,8 +206,18 @@ void gkEngine::initialize(bool autoCreateWindow)
 	new gkNodeManager();
 	new gkBlendLoader();
 	new gkTextManager();
-	new gkLuaManager();
 	new gkMessageManager();
+	new gkMeshManager();
+	new gkGroupManager();
+	new gkGameObjectManager();
+
+#ifdef OGREKIT_USE_LUA
+	new gkLuaManager();
+#endif
+
+#ifdef OGREKIT_COMPILE_OGRE_SCRIPTS
+	new gkFontManager();
+#endif
 
 #ifdef OGREKIT_OPENAL_SOUND
 	new gkSoundManager();
@@ -253,13 +274,26 @@ void gkEngine::finalize()
 	gkSoundManager::getSingleton().stopAllSounds();
 #endif
 
+	delete gkGroupManager::getSingletonPtr();
 	delete gkNodeManager::getSingletonPtr();
 	delete gkSceneManager::getSingletonPtr();
+	delete gkGameObjectManager::getSingletonPtr();
+
 	delete gkTextManager::getSingletonPtr();
-	delete gkLuaManager::getSingletonPtr();
 	delete gkLogicManager::getSingletonPtr();
 	delete gkWindowSystem::getSingletonPtr();
 	delete gkMessageManager::getSingletonPtr();
+	delete gkMeshManager::getSingletonPtr();
+
+
+#ifdef OGREKIT_USE_LUA
+	delete gkLuaManager::getSingletonPtr();
+#endif
+
+#ifdef OGREKIT_COMPILE_OGRE_SCRIPTS
+	delete gkFontManager::getSingletonPtr();
+#endif
+
 
 #ifdef OGREKIT_OPENAL_SOUND
 	delete gkSoundManager::getSingletonPtr();
@@ -415,20 +449,6 @@ void gkEngine::removeListener(gkEngine::Listener *listener)
 }
 
 
-
-
-void gkEngine::addCommand(gkObject *ob, const gkCreateParam::Type &type)
-{
-	gkCreateParam cmd = {ob, type};
-
-	if (m_cmds.find(cmd) == UT_NPOS)
-		m_cmds.push_back(cmd);
-}
-
-
-
-
-
 void gkEngine::run(void)
 {
 	if (!initializeStepLoop()) return;
@@ -567,28 +587,9 @@ void gkEnginePrivate::tickImpl(gkScalar dt)
 	scene->applyConstraints();
 
 
-	// post process
-	if (!engine->m_cmds.empty())
-	{
-		utArrayIterator<gkCreateParams> iter(engine->m_cmds);
+	gkGameObjectManager::getSingleton().postProcessQueue();
+	gkSceneManager::getSingleton().postProcessQueue();
 
-		while (iter.hasMoreElements())
-		{
-			gkCreateParam &cmd = iter.getNext();
-
-			if (cmd.first != 0)
-			{
-				if (cmd.second == gkCreateParam::REINSTANCE)
-					cmd.first->reinstance();
-				else if (cmd.second == gkCreateParam::CREATEINSTANCE)
-					cmd.first->createInstance();
-				else if (cmd.second == gkCreateParam::DESTROYINSTANCE)
-					cmd.first->destroyInstance();
-			}
-		}
-
-		engine->m_cmds.clear();
-	}
 }
 
 

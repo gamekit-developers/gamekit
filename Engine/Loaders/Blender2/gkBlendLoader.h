@@ -50,6 +50,12 @@ public:
 
 	gkBlendFile *loadFile(  const gkString &fname,
 	                        int options = LO_ONLY_ACTIVE_SCENE,
+	                        const gkString &inResourceGroup = GK_DEF_GROUP,
+							const gkString &scene = ""
+	                     );
+
+	gkBlendFile *loadFile(  const gkString &fname,
+	                        const gkString &scene,
 	                        const gkString &inResourceGroup = GK_DEF_GROUP
 	                     );
 
@@ -68,7 +74,8 @@ private:
 
 	gkBlendFile *loadAndCatch(const gkString &fname,
 	                          int options = LO_ONLY_ACTIVE_SCENE,
-	                          const gkString &inResourceGroup = GK_DEF_GROUP
+	                          const gkString &inResourceGroup = GK_DEF_GROUP,
+						      const gkString &scene = ""
 	                         );
 
 	gkBlendFile    *m_activeFile;

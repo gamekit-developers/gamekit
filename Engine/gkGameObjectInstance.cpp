@@ -30,54 +30,42 @@
 #include "gkScene.h"
 #include "gkUtils.h"
 #include "gkLogger.h"
+#include "gkValue.h"
 
 
 
 
-gkGameObjectInstance::gkGameObjectInstance(gkGameObjectGroup *group, gkScene *scene, UTsize uid)
-	:   gkObject(group->getName().str()),
-	    m_id(uid),
-	    m_owner(0),
+gkGameObjectInstance::gkGameObjectInstance(gkGameObjectGroup* group, UTsize uid)
+	:   m_id(uid),
 	    m_parent(group),
-	    m_scene(scene),
-	    m_firstLoad(true)
+	    m_firstLoad(true),
+		m_isInstanced(false)
 {
-	GK_ASSERT(m_scene && m_parent);
-
-
-	// Create the owning object
-	m_owner = new gkGameObject(m_scene, gkUtils::getUniqueName("GameObjectInstance"), GK_OBJECT);
 }
 
 
 
 gkGameObjectInstance::~gkGameObjectInstance()
 {
-	// free all objects
-
 	Objects::Iterator iter = m_objects.iterator();
 	while (iter.hasMoreElements())
 	{
-		gkGameObject *gobj = iter.getNext().second;
-		gobj->destroyInstance();
+		gkGameObject* gobj = iter.getNext().second;
+		GK_ASSERT(!gobj->isInstanced());
 		delete gobj;
 	}
 
 	m_objects.clear();
-
-	delete m_owner;
-	m_owner = 0;
 }
 
 
 
-
-void gkGameObjectInstance::addObject(gkGameObject *gobj)
+void gkGameObjectInstance::addObject(gkGameObject* gobj)
 {
 	if (!gobj)
 		return;
 
-	const gkHashedString name = m_parent->getName().str() + "/" + gobj->getName() + "/Handle_" +  Ogre::StringConverter::toString(m_id);
+	const gkHashedString name = m_parent->getResourceName().str() + "/" + gobj->getName() + "/Handle_" +  gkToString((int)m_id);
 
 
 	if (m_objects.find(name) != UT_NPOS)
@@ -87,21 +75,25 @@ void gkGameObjectInstance::addObject(gkGameObject *gobj)
 	}
 
 
-	gkGameObject *ngobj = gobj->clone(name.str());
+	gkGameObject* ngobj = gobj->clone(name.str());
+	ngobj->setOwner(0);
+
+
 	m_objects.insert(name, ngobj);
+
 
 	// Lightly attach
 	ngobj->_makeGroupInstance(this);
 
 
-	ngobj->setActiveLayer(m_owner->isInActiveLayer());
-	ngobj->setLayer(m_owner->getLayer());
+	ngobj->setActiveLayer(true);
+	ngobj->setLayer(0xFFFFFFFF);
 }
 
 
 
 
-gkGameObject *gkGameObjectInstance::getObject(const gkHashedString &name)
+gkGameObject* gkGameObjectInstance::getObject(const gkHashedString& name)
 {
 	UTsize pos;
 	if ((pos = m_objects.find(name)) == UT_NPOS)
@@ -109,13 +101,11 @@ gkGameObject *gkGameObjectInstance::getObject(const gkHashedString &name)
 		gkLogMessage("GameObjectInstance: Missing object " << name.str() << ".");
 		return 0;
 	}
-
-
 	return m_objects.at(pos);
 }
 
 
-void gkGameObjectInstance::destroyObject(gkGameObject *gobj)
+void gkGameObjectInstance::destroyObject(gkGameObject* gobj)
 {
 	if (!gobj)
 		return;
@@ -143,7 +133,7 @@ void gkGameObjectInstance::destroyObject(gkGameObject *gobj)
 
 
 
-void gkGameObjectInstance::destroyObject(const gkHashedString &name)
+void gkGameObjectInstance::destroyObject(const gkHashedString& name)
 {
 
 	UTsize pos;
@@ -153,9 +143,7 @@ void gkGameObjectInstance::destroyObject(const gkHashedString &name)
 		return;
 	}
 
-
-
-	gkGameObject *gobj = m_objects.at(pos);
+	gkGameObject* gobj = m_objects.at(pos);
 	gobj->destroyInstance();
 
 
@@ -166,21 +154,14 @@ void gkGameObjectInstance::destroyObject(const gkHashedString &name)
 
 
 
-bool gkGameObjectInstance::hasObject(const gkHashedString &name)
+bool gkGameObjectInstance::hasObject(const gkHashedString& name)
 {
 	return m_objects.find(name) != UT_NPOS;
 }
 
 
 
-void gkGameObjectInstance::makeTransform(void)
-{
-	applyTransform(m_owner->getProperties().m_transform);
-}
-
-
-
-void gkGameObjectInstance::applyTransform(const gkTransformState &trans)
+void gkGameObjectInstance::applyTransform(const gkTransformState& trans)
 {
 	const gkMatrix4 plocal = trans.toMatrix();
 
@@ -188,10 +169,10 @@ void gkGameObjectInstance::applyTransform(const gkTransformState &trans)
 	Objects::Iterator iter = m_objects.iterator();
 	while (iter.hasMoreElements())
 	{
-		gkGameObject *obj = iter.getNext().second;
+		gkGameObject* obj = iter.getNext().second;
 
 		// Update transform relitave to owner
-		gkGameObjectProperties &props = obj->getProperties();
+		gkGameObjectProperties& props = obj->getProperties();
 
 
 		gkMatrix4 clocal;
@@ -205,19 +186,22 @@ void gkGameObjectInstance::applyTransform(const gkTransformState &trans)
 
 
 
-bool gkGameObjectInstance::hasObject(gkGameObject *gobj)
+bool gkGameObjectInstance::hasObject(gkGameObject* gobj)
 {
 	return gobj && m_objects.find(gobj->getName()) && gobj->getGroupInstance() == this;
 }
 
 
 
-
-void gkGameObjectInstance::cloneObjects(const gkTransformState &from,
-                                        int time,
-                                        const gkVector3 &linearVelocity, bool tsLinLocal,
-                                        const gkVector3 &angularVelocity, bool tsAngLocal)
+void gkGameObjectInstance::cloneObjects(gkScene *scene, const gkTransformState& from, int time,
+                                        const gkVector3& linearVelocity, bool tsLinLocal,
+                                        const gkVector3& angularVelocity, bool tsAngLocal)
 {
+	if (!isInstanced())
+		return;
+
+	GK_ASSERT(scene);
+
 
 	const gkMatrix4 plocal = from.toMatrix();
 
@@ -225,8 +209,8 @@ void gkGameObjectInstance::cloneObjects(const gkTransformState &from,
 	Objects::Iterator iter = m_objects.iterator();
 	while (iter.hasMoreElements())
 	{
-		gkGameObject *oobj = iter.getNext().second;
-		gkGameObject *nobj = m_scene->cloneObject(oobj, time);
+		gkGameObject* oobj = iter.getNext().second;
+		gkGameObject* nobj = scene->cloneObject(oobj, time);
 
 
 
@@ -235,15 +219,15 @@ void gkGameObjectInstance::cloneObjects(const gkTransformState &from,
 
 
 		// Update transform relitave to owner
-		gkGameObjectProperties &props = nobj->getProperties();
+		gkGameObjectProperties& props = nobj->getProperties();
 
 		gkMatrix4 clocal;
 		props.m_transform.toMatrix(clocal);
 
 		// merge back to transform state
 		props.m_transform = gkTransformState(plocal * clocal);
-		
-		
+
+
 		nobj->createInstance();
 
 
@@ -262,32 +246,42 @@ void gkGameObjectInstance::cloneObjects(const gkTransformState &from,
 
 }
 
-
-
-void gkGameObjectInstance::createInstanceImpl(void)
+void gkGameObjectInstance::createObjectInstances(gkScene *scene)
 {
-	if (!m_owner->isInActiveLayer())
-		return;
+	GK_ASSERT(scene);
+
 
 	if (m_firstLoad)
 	{
-		makeTransform();
+		applyTransform(m_transform);
 		m_firstLoad = false;
 	}
 
 	Objects::Iterator iter = m_objects.iterator();
 	while (iter.hasMoreElements())
-		iter.getNext().second->createInstance();
+	{
+		gkGameObject *gobj = iter.getNext().second;
+
+		gobj->setOwner(scene);
+
+		gobj->createInstance();
+	}
+
+	m_isInstanced = true;
 }
 
 
 
-void gkGameObjectInstance::destroyInstanceImpl(void)
+void gkGameObjectInstance::destroyObjectInstances(void)
 {
+
 	Objects::Iterator iter = m_objects.iterator();
 	while (iter.hasMoreElements())
 	{
-		iter.getNext().second->destroyInstance();
+		gkGameObject *gobj = iter.getNext().second;
+		gobj->destroyInstance();
+		gobj->setOwner(0);
 	}
 
+	m_isInstanced = false;
 }

@@ -24,8 +24,11 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+#ifdef OGREKIT_USE_LUA
+
 #include "gkScriptController.h"
 #include "gkTextManager.h"
+#include "gkTextFile.h"
 #include "Script/Lua/gkLuaManager.h"
 #include "Script/Lua/gkLuaUtils.h"
 
@@ -61,10 +64,10 @@ void gkScriptController::setScript(const gkString& str)
 	else
 	{
 		// Create on demand.
-		gkTextFile *tf = gkTextManager::getSingleton().getFile(str);
+		gkTextFile *tf = (gkTextFile*)gkTextManager::getSingleton().getByName(str);
 		if (tf)
 		{
-			gkLuaScript *scrpt = gkLuaManager::getSingleton().create(tf->getName(), tf->getText());
+			gkLuaScript *scrpt = gkLuaManager::getSingleton().create(tf->getResourceName().str(), tf->getText());
 			if (scrpt) 
 				m_script = scrpt;
 		}
@@ -92,3 +95,4 @@ void gkScriptController::execute(void)
 
 	scriptContext = 0;
 }
+#endif

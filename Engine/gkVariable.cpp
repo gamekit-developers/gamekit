@@ -43,9 +43,102 @@ gkVariable::gkVariable(const gkString &n, bool dbg)
 	:    m_value((int)0),
 	     m_type(VAR_NULL),
 	     m_name(n),
-	     m_debug(false), m_lock(false)
+	     m_debug(dbg), m_lock(false)
 {
 }
+
+
+gkVariable::gkVariable(bool v, const gkString &name)
+	:    m_value((int)0),
+	     m_type(VAR_NULL),
+	     m_name(""),
+	     m_debug(false), m_lock(false)
+{
+	setValue(v);
+}
+
+
+gkVariable::gkVariable(int v, const gkString &name)
+	:    m_value((int)0),
+	     m_type(VAR_NULL),
+	     m_name(""),
+	     m_debug(false), m_lock(false)
+{
+	setValue(v);
+}
+
+
+gkVariable::gkVariable(gkScalar v, const gkString &name)
+	:    m_value((int)0),
+	     m_type(VAR_NULL),
+	     m_name(""),
+	     m_debug(false), m_lock(false)
+{
+	setValue(v);
+}
+
+gkVariable::gkVariable(const gkString& v, const gkString &name)
+	:    m_value((int)0),
+	     m_type(VAR_NULL),
+	     m_name(""),
+	     m_debug(false), m_lock(false)
+{
+	setValue(v);
+}
+
+gkVariable::gkVariable(const gkVector2& v, const gkString &name)
+	:    m_value((int)0),
+	     m_type(VAR_NULL),
+	     m_name(""),
+	     m_debug(false), m_lock(false)
+{
+	setValue(v);
+}
+
+gkVariable::gkVariable(const gkVector3& v, const gkString &name)
+	:    m_value((int)0),
+	     m_type(VAR_NULL),
+	     m_name(""),
+	     m_debug(false), m_lock(false)
+{
+	setValue(v);
+}
+
+gkVariable::gkVariable(const gkVector4& v, const gkString &name)
+	:    m_value((int)0),
+	     m_type(VAR_NULL),
+	     m_name(""),
+	     m_debug(false), m_lock(false)
+{
+	setValue(v);
+}
+gkVariable::gkVariable(const gkQuaternion& v, const gkString &name)
+	:    m_value((int)0),
+	     m_type(VAR_NULL),
+	     m_name(""),
+	     m_debug(false), m_lock(false)
+{
+	setValue(v);
+}
+
+gkVariable::gkVariable(const gkMatrix3& v, const gkString &name)
+	:    m_value((int)0),
+	     m_type(VAR_NULL),
+	     m_name(""),
+	     m_debug(false), m_lock(false)
+{
+	setValue(v);
+}
+
+gkVariable::gkVariable(const gkMatrix4& v, const gkString &name)
+	:    m_value((int)0),
+	     m_type(VAR_NULL),
+	     m_name(""),
+	     m_debug(false), m_lock(false)
+{
+	setValue(v);
+}
+
 
 
 gkVariable::~gkVariable()

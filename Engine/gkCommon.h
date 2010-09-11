@@ -56,7 +56,8 @@
 
 #define GK_DEF_GROUP "General"
 
-class gkObject;
+
+class gkInstancedObject;
 class gkCamera;
 class gkEntity;
 class gkLight;
@@ -76,18 +77,12 @@ class gkVariable;
 class gkWindowSystem;
 class gkBlendFile;
 class gkUserDefs;
-class gkMeshManager;
-class gkMesh;
-
 
 class gkAction;
 class gkActionChannel;
 class gkActionManager;
 class gkBezierSpline;
 
-class gkGameObjectGroup;
-class gkGameObjectInstance;
-class gkGroupManager;
 
 class gkConstraintManager;
 class gkConstraint;
@@ -106,10 +101,29 @@ class gkDebugger;
 class gkScene;
 class gkActiveObject;
 
+class gkGameObjectGroup;
+class gkGameObjectInstance;
+class gkGroupManager;
+
+class gkTextManager;
+class gkTextFile;
+
+class gkInstancedManager;
+class gkResourceManager;
+class gkResource;
+
+typedef UTint32         gkResourceHandle;
+typedef gkHashedString  gkResourceName;
+
+
+class gkMeshManager;
+class gkMesh;
+
 
 // Common types
 typedef utHashTable<gkHashedString, gkGameObject *>  gkGameObjectHashMap;
 typedef utArray<gkGameObject *>                      gkGameObjectArray;
+typedef utArray<gkGameObjectGroup*>                  gkGroupArray;
 
 typedef utHashSet<gkGameObject *>                    gkGameObjectSet;
 typedef utHashSet<gkCamera *>                        gkCameraSet;
@@ -118,7 +132,7 @@ typedef utHashSet<gkEntity *>                        gkEntitySet;
 typedef utHashSet<gkSkeleton *>                      gkSkeletonSet;
 typedef utHashSet<gkPhysicsController *>             gkPhysicsControllerSet;
 typedef utArray<gkPhysicsController *>               gkPhysicsControllers;
-
+typedef utHashTable<gkHashedString, gkVariable>      gkParameterMap;
 
 enum gkTransformSpace
 {
@@ -135,27 +149,6 @@ struct Int2Type
 {
 	enum { value = v };
 };
-
-
-
-// Do user create commands outside, logic / physics systems
-struct gkCreateParam
-{
-	enum Type
-	{
-		REINSTANCE,
-		CREATEINSTANCE,
-		DESTROYINSTANCE
-	};
-
-	gkObject *first;
-	Type   second;
-
-	GK_INLINE bool operator == (const gkCreateParam& cmd) const 
-	{ return first == cmd.first && second == cmd.second; }
-};
-
-typedef utArray<gkCreateParam> gkCreateParams;
 
 
 #endif//_gkCommon_h_

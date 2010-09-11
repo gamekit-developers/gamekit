@@ -58,48 +58,25 @@ using namespace Ogre;
 
 
 
-gkGameObject::gkGameObject(gkScene *scene, const gkString &name, gkGameObjectTypes type)
-	:	gkObject(name),
-	    m_type(type),
-	    m_baseProps(),
-	    m_parent(0),
-	    m_scene(scene),
-	    m_node(0),
-	    m_logic(0), // FIXME: Detach
- 	    m_bricks(0), // FIXME: Detach
-	    m_rigidBody(0),
-	    m_character(0),
-	    m_groupID(0),
-		m_group(0),
-	    m_state(0),
-	    m_activeLayer(true),
+gkGameObject::gkGameObject(gkInstancedManager *creator, const gkResourceName& name, const gkResourceHandle& handle, gkGameObjectTypes type)
+	:	gkInstancedObject(creator, name, handle),
+	    m_type(type), m_baseProps(), m_parent(0), m_scene(0),
+	    m_node(0), m_logic(0), m_bricks(0),
+		m_rigidBody(0), m_character(0),
+	    m_groupID(0), m_group(0),
+	    m_state(0), m_activeLayer(true),
 	    m_layer(0xFFFFFFFF),
 	    m_isClone(false),
 	    m_flags(0)
 {
-	GK_ASSERT(m_scene);
-
-
 	m_life.tick = 0;
 	m_life.timeToLive = 0;
 }
 
 
-
-
 gkGameObject::~gkGameObject()
 {
 	clearVariables();
-
-
-	if (m_scene)
-	{
-		// TODO, should be the same for bricks and nodes.
-		// (No game object internal dependencies)!
-
-		gkConstraintManager *mgr = m_scene->getConstraintManager();
-		mgr->notifyObjectDestroyed(this);
-	}
 
 
 	if (m_bricks)
@@ -134,7 +111,7 @@ void gkGameObject::attachLogic(gkLogicLink *bricks)
 
 gkGameObject *gkGameObject::clone(const gkString &name)
 {
-	gkGameObject *ob = new gkGameObject(m_scene, name, m_type);
+	gkGameObject *ob = new gkGameObject(getInstanceCreator(), name, m_type);
 	cloneImpl(ob);
 	return ob;
 }
@@ -147,6 +124,7 @@ void gkGameObject::cloneImpl(gkGameObject *clob)
 	clob->m_activeLayer = clob->m_activeLayer;
 	memcpy(&clob->m_baseProps, &m_baseProps, sizeof(gkGameObjectProperties));
 	clob->m_isClone = true;
+	clob->m_scene = m_scene;
 
 	// clone variables
 	utHashTableIterator<VariableMap> iter(m_variables);
@@ -202,7 +180,7 @@ void gkGameObject::createInstanceImpl(void)
 		}
 	}
 
-	m_node = parentNode ? parentNode->createChildSceneNode(m_name) : manager->getRootSceneNode()->createChildSceneNode(m_name);
+	m_node = parentNode ? parentNode->createChildSceneNode(m_name.str()) : manager->getRootSceneNode()->createChildSceneNode(m_name.str());
 
 
 	applyTransformState(m_baseProps.m_transform);
