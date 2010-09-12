@@ -42,7 +42,7 @@ public:
 
 
 	OgreRenderSystem        rendersystem;       // Ogre render system to use
-	gkString                viewportOrientation;//portrait, landscaperight, landscapeleft
+	gkString                viewportOrientation;// portrait, landscaperight, landscapeleft
 	int                     sceneManager;       // TODO scene manager to use
 	gkString                log;                // Main log file name
 	bool                    verbose;            // Enable/Disable Ogre print-out
@@ -65,6 +65,7 @@ public:
 	bool                    fsaa;               // Enable Full scene anti aliasing.
 	int                     fsaaSamples;        // Anti aliasing samples.
 	bool                    enableshadows;
+	bool					viewportFraming;    // Enable / Disable Game scene viewport framing
 
 	gkString                shadowtechnique;
 	gkColor                 colourshadow;

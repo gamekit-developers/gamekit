@@ -81,7 +81,8 @@ gkScene::gkScene(gkInstancedManager* creator, const gkResourceName &name, const 
 	     m_hasLights(false),
 	     m_markDBVT(false),
 	     m_cloneCount(0),
-	     m_layers(0xFFFFFFFF)
+	     m_layers(0xFFFFFFFF),
+		 m_enableViewportFraming(false)
 {
 }
 
@@ -503,6 +504,57 @@ void gkScene::setMainCamera(gkCamera* cam)
 
 	const gkVector2& size = sys.getMouse()->winsize;
 
+	if (m_enableViewportFraming) 
+	{
+		int framing = m_baseProps.m_framing;
+		gkScalar wmax = size.x > size.y ? size.x : size.y;
+		gkScalar aspect = m_baseProps.m_framingAspectRatio;
+
+		gkCameraProperties &props = m_startCam->getCameraProperties();
+
+		gkVector2 shift(props.m_shiftx, -props.m_shifty);
+		
+		gkVector2 vsize;
+		if (aspect >= 1.f)
+			vsize = gkVector2(wmax, wmax/aspect) * 0.75f;			
+		else
+			vsize = gkVector2(wmax/aspect, wmax) * 0.8f;
+
+		gkScalar vmax = vsize.x > vsize.y ? vsize.x : vsize.y;
+
+		shift *= vmax/wmax;
+
+		gkScalar x = abs((size.x - vsize.x) / size.x);
+		gkScalar y = abs((size.y - vsize.y) / size.y);
+				
+		gkScalar l = x/2 + shift.x, r = 1 - x/2 + shift.x;
+		gkScalar t = y/2 + shift.y, b = 1 - y/2 + shift.y;
+
+		if (framing == gkSceneProperties::FR_LETTERBOX)
+		{
+			main->setWindow(l, t, r, b);
+		}
+		else if (framing == gkSceneProperties::FR_EXTEND)
+		{
+			if (aspect > 1.0f)
+				l = 0, r = 1;
+			else
+				t = 0, b = 1;
+
+			main->setWindow(l, t, r, b);
+		}
+		else if (framing == gkSceneProperties::FR_SCALE)
+		{
+			gkScalar w = r - l;
+			gkScalar h = b - t;
+
+			main->getFrustumExtents(l,r,t,b);
+
+			l *= w, r *= w, t *= h, b *= h;
+			main->setFrustumExtents(l,r,t,b);
+		}
+	}
+
 	m_viewport->setDimensions(0, 0, 1, 1);
 
 	main->setAspectRatio(size.x / size.y);
@@ -764,7 +816,10 @@ void gkScene::createInstanceImpl(void)
 
 	GK_ASSERT(m_viewport);
 
-	m_viewport->setBackgroundColour(m_baseProps.m_world);
+	if (m_enableViewportFraming)
+		m_viewport->setBackgroundColour(m_baseProps.m_framingColor);
+	else
+		m_viewport->setBackgroundColour(m_baseProps.m_world);
 	m_manager->setAmbientLight(m_baseProps.m_ambient);
 
 

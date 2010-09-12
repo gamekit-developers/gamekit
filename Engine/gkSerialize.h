@@ -163,16 +163,22 @@ public:
 		:   m_clipstart(0.1f),
 		    m_clipend(100.f),
 		    m_fov(49.13f),
+			m_orthoscale(7.314f),
 		    m_start(false),
-		    m_type(CA_ORTHOGRAPHIC)
+		    m_type(CA_ORTHOGRAPHIC),
+			m_shiftx(0),
+			m_shifty(0)			
 	{
 	}
 
 	gkScalar    m_clipstart;
 	gkScalar    m_clipend;
 	gkScalar    m_fov;
+	gkScalar	m_orthoscale;
 	bool        m_start;
 	int         m_type;
+	gkScalar	m_shiftx;
+	gkScalar	m_shifty;
 };
 
 
@@ -460,6 +466,13 @@ public:
 		MA_OCTREE,
 	};
 
+	enum Framing
+	{
+		FR_LETTERBOX,
+		FR_EXTEND,
+		FR_SCALE
+	};
+
 public:
 	gkSceneProperties()
 		:   m_manager(MA_GENERIC),
@@ -469,7 +482,10 @@ public:
 		    m_skyMat(""),
 		    m_skyOri(1.f, 0.f, 0.f, 0.f),
 		    m_skyDist(0.f),
-		    m_fog()
+		    m_fog(),
+			m_framing(FR_LETTERBOX),
+			m_framingColor(0.f, 0.f, 0.f),
+			m_framingAspectRatio(1.f)
 	{
 	}
 
@@ -481,6 +497,9 @@ public:
 	gkQuaternion    m_skyOri;
 	gkScalar        m_skyDist;
 	gkFogParams     m_fog;
+	int				m_framing;
+	gkColor			m_framingColor;
+	gkScalar		m_framingAspectRatio;
 };
 
 

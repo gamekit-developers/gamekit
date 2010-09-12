@@ -43,14 +43,18 @@ public:
 	void setClip(gkScalar start, gkScalar end);
 	void setFov(const gkRadian &fov);
 	void setFov(const gkDegree &fov);
+	void setOrthoScale(const gkScalar &scale);
 	void setMainCamera(bool v);
 	void makeCurrent(void);
+	void setProjType(gkCameraProperties::Type type);
 
-	GK_INLINE Ogre::Camera *getCamera(void)         {return m_camera;}
-	GK_INLINE const gkScalar &getClipStart(void)    {return m_cameraProps.m_clipstart;}
-	GK_INLINE const gkScalar &getClipEnd(void)      {return m_cameraProps.m_clipend;}
-	GK_INLINE const gkScalar &getFov(void)          {return m_cameraProps.m_fov;}
-	GK_INLINE bool isMainCamera(void)               {return m_cameraProps.m_start;}
+	GK_INLINE Ogre::Camera *getCamera(void)              {return m_camera;}
+	GK_INLINE const gkScalar &getClipStart(void)         {return m_cameraProps.m_clipstart;}
+	GK_INLINE const gkScalar &getClipEnd(void)           {return m_cameraProps.m_clipend;}
+	GK_INLINE const gkScalar &getFov(void)               {return m_cameraProps.m_fov;}
+	GK_INLINE const gkScalar &getOrthoScale(void)        {return m_cameraProps.m_orthoscale;}
+	GK_INLINE bool isMainCamera(void)                    {return m_cameraProps.m_start;}
+	GK_INLINE gkCameraProperties::Type getProjType(void) {return (gkCameraProperties::Type)m_cameraProps.m_type;}
 
 private:
 	gkGameObject *clone(const gkString &name);

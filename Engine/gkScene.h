@@ -141,6 +141,7 @@ public:
 
 	gkGameObject* findInstancedObject(const gkString& name);
 
+	GK_INLINE void      setViewportFraming(bool enable) {m_enableViewportFraming = enable; }
 
 
 	// Local property access.
@@ -216,6 +217,8 @@ private:
 	UTuint32                m_layers;
 	gkBoundingBox           m_limits;
 	PNAVMESHDATA            m_navMeshData;
+
+	bool                    m_enableViewportFraming;
 };
 
 #endif//_gkSceneObject_h_

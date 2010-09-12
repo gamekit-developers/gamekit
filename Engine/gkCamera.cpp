@@ -49,10 +49,20 @@ void gkCamera::createInstanceImpl(void)
 
 	Ogre::SceneManager *manager = m_scene->getManager();
 	m_camera = manager->createCamera(m_name.str());
-
+	
 	m_camera->setNearClipDistance(m_cameraProps.m_clipstart);
-	m_camera->setFarClipDistance(m_cameraProps.m_clipend);
-	m_camera->setFOVy(gkDegree(m_cameraProps.m_fov));
+	m_camera->setFarClipDistance(m_cameraProps.m_clipend);	
+
+	if (m_cameraProps.m_type == gkCameraProperties::CA_ORTHOGRAPHIC)
+	{	
+		m_camera->setProjectionType(Ogre::PT_ORTHOGRAPHIC);	
+		m_camera->setOrthoWindow(m_cameraProps.m_orthoscale, m_cameraProps.m_orthoscale);
+	}
+	else
+	{
+		m_camera->setProjectionType(Ogre::PT_PERSPECTIVE);
+		m_camera->setFOVy(gkDegree(m_cameraProps.m_fov));		
+	}	
 
 
 
@@ -135,7 +145,15 @@ void gkCamera::setFov(const gkDegree &fov)
 	}
 }
 
-
+void gkCamera::setOrthoScale(const gkScalar &scale)
+{	
+	if (m_cameraProps.m_orthoscale != scale)
+	{
+		m_cameraProps.m_orthoscale = scale;
+		if (m_camera)
+			m_camera->setOrthoWindow(scale, scale);
+	}
+}
 
 void gkCamera::setMainCamera(bool v)
 {
@@ -144,6 +162,26 @@ void gkCamera::setMainCamera(bool v)
 		m_scene->setMainCamera(this);
 }
 
+void gkCamera::setProjType(gkCameraProperties::Type type)
+{
+	if (m_cameraProps.m_type != type)
+	{
+		m_cameraProps.m_type = type;
+		if (m_camera)
+		{
+			if (type == gkCameraProperties::CA_ORTHOGRAPHIC)
+			{
+				m_camera->setProjectionType(Ogre::PT_ORTHOGRAPHIC);
+				m_camera->setOrthoWindow(m_cameraProps.m_orthoscale, m_cameraProps.m_orthoscale);	
+			}
+			else
+			{
+				m_camera->setProjectionType(Ogre::PT_PERSPECTIVE);
+				m_camera->setFOVy(gkDegree(m_cameraProps.m_fov));		
+			}
+		}
+	}
+}
 
 gkGameObject *gkCamera::clone(const gkString &name)
 {
