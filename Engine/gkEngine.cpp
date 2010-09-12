@@ -169,7 +169,7 @@ gkEngine::~gkEngine()
 
 
 
-void gkEngine::initialize(bool autoCreateWindow)
+void gkEngine::initialize()
 {
 	if (m_initialized) return;
 
@@ -223,7 +223,7 @@ void gkEngine::initialize(bool autoCreateWindow)
 	new gkSoundManager();
 #endif
 
-	if (autoCreateWindow) initializeWindow();
+	initializeWindow();
 
 	// create the builtin resource group
 	Ogre::ResourceGroupManager::getSingleton().createResourceGroup("<gkBuiltin>");

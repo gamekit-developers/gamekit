@@ -55,7 +55,7 @@ public:
 	static gkEngine *getSingletonPtr();
 
 
-	void initialize(bool autoCreateWindow = true);
+	void initialize();
 	void finalize(void);
 	void run(void);
 

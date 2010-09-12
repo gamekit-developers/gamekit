@@ -49,6 +49,7 @@ gkUserDefs::gkUserDefs()
 	    verbose(true),
 	    winsize(800, 600),
 	    wintitle("Ogre GameKit Demo"),
+		extWinhandle(""),
 	    fullscreen(false),
 	    resources(""),
 	    animspeed(25),

@@ -143,6 +143,11 @@ RenderWindow *gkWindowSystem::createMainWindow(const gkUserDefs &prefs)
 		params["FSAA"] = Ogre::StringConverter::toString(prefs.fsaaSamples);
 	}
 
+	if (!prefs.extWinhandle.empty())
+	{
+		 params["externalWindowHandle"] = prefs.extWinhandle;
+	}
+
 	m_window = Root::getSingleton().createRenderWindow(prefs.wintitle, 
 		(int)prefs.winsize.x, (int)prefs.winsize.y, prefs.fullscreen, &params);
 	m_window->setActive(true);

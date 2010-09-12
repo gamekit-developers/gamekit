@@ -48,6 +48,7 @@ public:
 	bool                    verbose;            // Enable/Disable Ogre print-out
 	gkVector2               winsize;            // Window width & height
 	gkString                wintitle;           // Window title
+	gkString				extWinhandle;		// External Window Handle
 	bool                    fullscreen;         // Fullscreen mode
 	gkString                resources;          // resources to load
 	gkScalar                animspeed;          // animation speed, depreciated
