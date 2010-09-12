@@ -34,6 +34,7 @@
 
 
 gkGameObjectManager::gkGameObjectManager()
+	:	gkInstancedManager("GameObjectManager", "GameObject")
 {
 }
 
@@ -94,7 +95,7 @@ gkResource* gkGameObjectManager::createImpl(const gkResourceName& name, const gk
 
 void gkGameObjectManager::notifyResourceDestroyedImpl(gkResource* res)
 {
-	gkGameObject *gobj = static_cast<gkGameObject*>(res);
+	gkGameObject* gobj = static_cast<gkGameObject*>(res);
 	if (gobj)
 		gobj->destroyInstance();
 }

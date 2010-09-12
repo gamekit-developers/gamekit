@@ -161,7 +161,9 @@ void gkGameLevel::notifyInstanceCreated(gkInstancedObject* inst)
 
 void gkGameLevel::notifyResourceCreated(gkResource* res)
 {
-	gkLogMessage("Asset(" << res->getResourceHandle() << "): Created -> " << res->getResourceName().str());
+
+	gkLogMessage(res->getManagerType() << ", " << res->getResourceType() <<
+		":handle " <<  res->getResourceHandle() << ", created " << res->getResourceName().str());
 }
 
 

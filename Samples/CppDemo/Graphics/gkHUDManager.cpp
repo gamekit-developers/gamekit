@@ -38,7 +38,8 @@
 #include "gkLogger.h"
 
 
-gkHUDManager::gkHUDManager()
+gkHUDManager::gkHUDManager() 
+	:	gkResourceManager("HUDManager", "HUD")
 {
 }
 

@@ -54,14 +54,19 @@ public:
 
 public:
 
-	gkResourceManager();
+	gkResourceManager(const gkString& type, const gkString &rtype);
 	virtual ~gkResourceManager();
 
 	gkResource* getByHandle(const gkResourceHandle& handle);
 	gkResource* getByName(const gkResourceName& name);
-
-
 	gkResource* create(const gkResourceName& name);
+
+
+
+	template<typename T> GK_INLINE T* getByHandle(const gkResourceHandle& handle) {return static_cast<T*>(getByHandle(handle));}
+	template<typename T> GK_INLINE T* getByName(const gkResourceName& name)       {return static_cast<T*>(getByName(name));}
+	template<typename T> GK_INLINE T* create(const gkResourceName& name)          {return static_cast<T*>(create(name));}
+	
 
 
 	void destroy(const gkResourceHandle& handle);
@@ -80,6 +85,9 @@ public:
 	void addResourceListener(ResourceListener* res);
 	void removeResourceListener(ResourceListener* res);
 
+	const gkString& getResourceType(void) {return m_resourceType;}
+	const gkString& getManagerType(void)  {return m_managerType;}
+
 
 protected:
 
@@ -96,6 +104,8 @@ protected:
 
 	Resources m_resources;
 	Listeners m_listsners;
+	gkString  m_managerType, m_resourceType;
+
 
 private:
 	gkResourceHandle m_resourceHandles;

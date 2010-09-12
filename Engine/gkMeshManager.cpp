@@ -30,6 +30,7 @@
 
 
 gkMeshManager::gkMeshManager()
+	:	gkResourceManager("MeshManager", "Mesh")
 {
 }
 
@@ -42,13 +43,6 @@ gkResource *gkMeshManager::createImpl(const gkResourceName &name, const gkResour
 {
 	return new gkMesh(this, name, handle);
 }
-
-
-gkResource* gkMeshManager::cloneImpl(gkResource *orig, const gkResourceName &name, const gkResourceHandle &handle)
-{
-	return new gkMesh(this, name, handle);
-}
-
 
 
 UT_IMPLEMENT_SINGLETON(gkMeshManager);

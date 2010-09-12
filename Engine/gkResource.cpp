@@ -25,3 +25,30 @@
 -------------------------------------------------------------------------------
 */
 #include "gkResource.h"
+#include "gkResourceManager.h"
+
+
+
+gkResource::gkResource(gkResourceManager* creator, const gkResourceName &name, const gkResourceHandle& handle)
+	:	m_creator(creator), m_name(name), m_resourceHandle(handle)
+{
+	GK_ASSERT(m_creator);
+}
+
+
+
+gkResource::~gkResource()
+{
+}
+
+
+
+const gkString& gkResource::getResourceType(void)
+{
+	return m_creator->getResourceType();
+}
+
+const gkString& gkResource::getManagerType(void)
+{
+	return m_creator->getManagerType();
+}

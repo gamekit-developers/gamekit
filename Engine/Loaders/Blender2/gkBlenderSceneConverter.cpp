@@ -45,7 +45,6 @@
 
 // float normal from short
 #define VEC3CPN(a, b) {a.x= (b[0]/32767.f); a.y= (b[1]/32767.f); a.z= (b[2]/32767.f);}
-#define BlenderMaterial(ob, i) ((ob && ob->mat && i <= ob->totcol) ? ob->mat[gkClamp<int>(i, 0, 16)] : 0)
 #define PtrSaftyCheck(x) (x != 0)
 
 // simple skybox creator
@@ -164,18 +163,40 @@ static Blender::Material *gkLoaderUtils_getMaterial(Blender::Object *ob, int ind
 {
 	if (!ob || ob->totcol == 0) return 0;
 
-	index = gkClamp<int>(index, 1, ob->totcol);
-	Blender::Material *ma;
+	index = gkClamp<int>(index, 0, ob->totcol-1);
+	Blender::Material *ma = 0;
 
-	if (ob->colbits & (1 << (index - 1)))
-		ma = (Blender::Material *)ob->mat[index-1];
+	int inObject = ob->matbits && ob->matbits[index] ? 1 : 0;
+
+	if (!inObject)
+		inObject = ob->colbits & (1 << index);
+
+
+	if (inObject)
+		ma = (Blender::Material *)ob->mat[index];
 	else
 	{
 		Blender::Mesh *me = (Blender::Mesh *)ob->data;
-		ma = (Blender::Material *)me->mat[index-1];
+		if (me && me->mat && me->mat[index])
+			ma = me->mat[index];
 	}
+
+
+
+//#define DEBUG_BPARSE_PTRPTR_ARRAY
+#ifdef DEBUG_BPARSE_PTRPTR_ARRAY
+
+	printf("Object(%s):\n\t"
+		   "Total Materials = %i\n\t"
+		   "In Object Data  = %i\n\t"
+		   "Material Index  = %i\n\t"
+		   "Material Name   = %s\n", 
+		   ob->id.name, ob->totcol, inObject, index, (ma ? ma->id.name : "NULL"));
+#endif
 	return ma;
 }
+
+#define BlenderMaterial(ob, i) gkLoaderUtils_getMaterial(ob, i)
 
 
 static void gkLoaderUtils_getLayers(
@@ -478,11 +499,12 @@ void gkBlenderSceneConverter::convertGroups(utArray<Blender::Object *> &groups)
 
 		if (mgr->exists(groupName))
 		{
-			gkGameObjectGroup *ggobj   = (gkGameObjectGroup*)mgr->getByName(groupName);
+			gkGameObjectGroup *ggobj = (gkGameObjectGroup*)mgr->getByName(groupName);
 
 
-			gkGameObjectInstance *inst = ggobj->createGroupInstance();
-			inst->getOwnerTransform() = gkMathUtils::getFromFloat(bobj->obmat);
+			gkGameObjectInstance *inst = ggobj->createGroupInstance(m_gscene, GKB_IDNAME(bobj));
+			if (inst) 
+				convertObject(bobj, inst->getRoot());
 		}
 	}
 }
@@ -731,7 +753,7 @@ void gkBlenderSceneConverter::convertObjectPhysics(gkGameObject *gobj, Blender::
 
 		if (me)
 		{
-			Blender::Material *ma = BlenderMaterial(me, 0);
+			Blender::Material *ma = BlenderMaterial(bobj, 0);
 			if (ma)
 			{
 				phy.m_restitution   = ma->reflect;
@@ -881,7 +903,7 @@ void gkBlenderSceneConverter::convertObjectMesh(gkGameObject *gobj, Blender::Obj
 
 	props.m_casts = gobj->getProperties().m_physics.isRigidOrDynamic() || !gobj->getProperties().isPhysicsObject();
 
-	Blender::Material *matr = BlenderMaterial(me, 0);
+	Blender::Material *matr = BlenderMaterial(bobj, 0);
 	if (matr)
 		props.m_casts = (matr->mode & MA_SHADBUF) != 0;
 
@@ -1340,10 +1362,6 @@ public:
 	}
 };
 
-// needs to be tested.. 
-#define OGREKIT_FORCE_16BIT_MESH 0
-
-
 
 class gkMeshPair
 {
@@ -1370,11 +1388,7 @@ public:
 
 	bool operator == (const gkMeshPair &rhs) const
 	{
-#if OGREKIT_FORCE_16BIT_MESH == 0
 		return test == rhs.test;
-#else
-		return test == rhs.test && (item && (item->getIndexBuffer().size() * 3) < ((unsigned short)-1));
-#endif
 	}
 
 };
@@ -1904,7 +1918,8 @@ void gkBlenderMeshConverter::convert(void)
 		gkSubMesh *val      = iter.peekNext().item;
 
 
-		Blender::Material *bmat = BlenderMaterial(m_bmesh, key.m_matnr);
+
+		Blender::Material *bmat = BlenderMaterial(m_bobj, key.m_matnr);
 		if (key.m_blenderMat)
 		{
 			if (bmat)
@@ -1923,12 +1938,6 @@ void gkBlenderMeshConverter::convert(void)
 		iter.getNext();
 	}
 }
-
-
-
-//
-//                          GameLogic Loader
-//
 
 
 

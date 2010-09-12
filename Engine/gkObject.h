@@ -50,6 +50,7 @@ public:
 
 protected:
 	int m_instanceState;
+	gkString m_instanceError;
 
 
 	// Create and destroy events

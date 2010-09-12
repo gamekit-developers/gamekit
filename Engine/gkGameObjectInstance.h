@@ -27,31 +27,39 @@
 #ifndef _gkGameObjectInstance_h_
 #define _gkGameObjectInstance_h_
 
-#include "gkObject.h"
+#include "gkGameObject.h"
 #include "gkTransformState.h"
 #include "gkMathUtils.h"
 
 
-class gkGameObjectInstance
+class gkGameObjectInstance : public gkInstancedObject, public gkGameObject::Notifier
 {
 public:
 	typedef utHashTable<gkHashedString, gkGameObject*>  Objects;
 
 
 protected:
-
-	const UTsize            m_id;
-	gkTransformState        m_transform;
-	gkGameObjectGroup*      m_parent;
 	Objects                 m_objects;
-	bool                    m_firstLoad;
-	bool                    m_isInstanced;
+	gkTransformState        m_transform;
+
+
+	gkGameObjectGroup*      m_parent;
+	gkScene*                m_scene;
+	gkGameObject*           m_owner;
+	const gkString          m_uidName;
+
+
+	void notifyGameObjectEvent(gkGameObject* gobj, const gkGameObject::Notifier::Event& id);
+
+	void createInstanceImpl(void);
+	void destroyInstanceImpl(void);
+	void postCreateInstanceImpl(void);
 
 public:
 
 
-	gkGameObjectInstance(gkGameObjectGroup* group, UTsize id);
-	~gkGameObjectInstance();
+	gkGameObjectInstance(gkInstancedManager *, const gkResourceName&, const gkResourceHandle&);
+	virtual ~gkGameObjectInstance();
 
 
 	gkGameObject* getObject(const gkHashedString& name);
@@ -73,10 +81,6 @@ public:
 	void          applyTransform(const gkTransformState& trans);
 
 
-	void createObjectInstances(gkScene *scene);
-	void destroyObjectInstances(void);
-
-
 
 	void cloneObjects(gkScene *scene, const gkTransformState& from, int time,
 	                  const gkVector3& linearVelocity=gkVector3::ZERO,
@@ -84,12 +88,13 @@ public:
 	                  const gkVector3& angularVelocity=gkVector3::ZERO,
 	                  bool tsAngLocal = true);
 
+	void _updateFromGroup(gkGameObjectGroup* group);
+
 
 	GK_INLINE gkTransformState&      getOwnerTransform(void)  {return m_transform;}
 	GK_INLINE gkGameObjectGroup*     getGroup(void)           {return m_parent;}
 	GK_INLINE Objects&               getObjects(void)         {return m_objects; }
-	GK_INLINE const UTsize           getId(void)              {return m_id;}
-	GK_INLINE bool                   isInstanced(void)        {return m_isInstanced;}
+	GK_INLINE gkGameObject*          getRoot(void)            {return m_owner;}
 };
 
 #endif //_gkGameObjectInstance_h_

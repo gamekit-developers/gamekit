@@ -70,7 +70,7 @@ public:
 
 public:
 
-	gkInstancedManager();
+	gkInstancedManager(const gkString& type, const gkString &rtype);
 	~gkInstancedManager();
 
 	void addCreateInstanceQueue(gkInstancedObject *iobj);

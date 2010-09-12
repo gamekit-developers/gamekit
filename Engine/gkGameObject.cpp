@@ -218,6 +218,8 @@ void gkGameObject::postCreateInstanceImpl(void)
 {
 	// tell scene
 	m_scene->notifyInstanceCreated(this);
+
+	sendNotification(Notifier::INSTANCE_CREATED);
 }
 
 
@@ -237,6 +239,8 @@ void gkGameObject::postDestroyInstanceImpl(void)
 		m_parent = 0;
 		m_children.clear();
 	}
+
+	sendNotification(Notifier::INSTANCE_DESTROYED);
 }
 
 
@@ -441,6 +445,8 @@ void gkGameObject::notifyUpdate(void)
 {
 	if (m_scene)
 		m_scene->notifyObjectUpdate(this);
+
+	sendNotification(Notifier::UPDATED);
 }
 
 
@@ -1061,4 +1067,33 @@ gkGameObject *gkGameObject::getChildEntity()
 	}
 
 	return 0;
+}
+
+
+void gkGameObject::sendNotification(const Notifier::Event& e)
+{
+	if (!m_events.empty())
+	{
+		Notifications::Iterator it = m_events.iterator();
+		while (it.hasMoreElements())
+			it.getNext()->notifyGameObjectEvent(this, e);
+	}
+}
+
+void gkGameObject::notifyResourceDestroying(void)
+{
+	sendNotification(Notifier::DESTROYING);
+}
+
+
+void gkGameObject::addEventListener(gkGameObject::Notifier *evt)
+{
+	GK_ASSERT(evt);
+	if (evt) m_events.push_back(evt);
+}
+
+void gkGameObject::removeEventListener(gkGameObject::Notifier *evt)
+{
+	GK_ASSERT(evt);
+	if (evt) m_events.erase(evt);
 }

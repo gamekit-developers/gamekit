@@ -32,7 +32,8 @@
 
 
 
-gkResourceManager::gkResourceManager() : m_resourceHandles(0)
+gkResourceManager::gkResourceManager(const gkString& type, const gkString &rtype) 
+	:  m_managerType(type), m_resourceType(rtype), m_resourceHandles(0)
 {
 }
 
@@ -40,8 +41,8 @@ gkResourceManager::gkResourceManager() : m_resourceHandles(0)
 
 gkResourceManager::~gkResourceManager()
 {
+	GK_ASSERT(m_resources.empty() && "Resources not cleared in derived class");
 }
-
 
 
 
@@ -75,7 +76,7 @@ gkResource* gkResourceManager::create(const gkResourceName& name)
 
 	if (exists(name))
 	{
-		gkLogMessage("ResourceManager: Duplicate resource " << name.str() << " found ");
+		gkLogMessage(m_managerType << ": Duplicate " << m_resourceType << " " << name.str() << " found ");
 		return 0;
 	}
 
@@ -83,7 +84,7 @@ gkResource* gkResourceManager::create(const gkResourceName& name)
 
 	if (!ob)
 	{
-		gkLogMessage("ResourceManager: Failed to create resource " << name.str());
+		gkLogMessage(m_managerType << ": Failed to create "  << m_resourceType << " " << name.str());
 		return 0;
 	}
 
@@ -100,6 +101,9 @@ void gkResourceManager::destroy(const gkResourceHandle& handle)
 	if (pos != UT_NPOS)
 	{
 		gkResource* res = m_resources.at(pos);
+		res->notifyResourceDestroying();
+
+
 
 		notifyResourceDestroyed(res);
 		m_resources.remove(handle);
@@ -113,6 +117,8 @@ void gkResourceManager::destroy(const gkResourceName& name)
 	gkResource* res = getByName(name);
 	if (res)
 	{
+		res->notifyResourceDestroying();
+
 		notifyResourceDestroyed(res);
 		m_resources.remove(res->getResourceHandle());
 		delete res;
@@ -139,6 +145,7 @@ void gkResourceManager::destroyAll(void)
 	while (iter.hasMoreElements())
 	{
 		gkResource* ob = iter.peekNextValue();
+		ob->notifyResourceDestroying();
 		notifyResourceDestroyed(ob);
 
 

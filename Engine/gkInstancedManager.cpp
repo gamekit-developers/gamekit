@@ -28,18 +28,21 @@
 #include "gkObject.h"
 
 
-gkInstancedManager::gkInstancedManager()
+gkInstancedManager::gkInstancedManager(const gkString& type, const gkString &rtype)
+	:	gkResourceManager(type, rtype)
 {
 }
 
 gkInstancedManager::~gkInstancedManager()
 {
+	GK_ASSERT(m_instances.empty() && "Instances not cleared in derived class");
 }
 
 
 void gkInstancedManager::notifyDestroyAllInstancesImpl(void)
 {
 	destroyAllInstances();
+	m_instanceQueue.clear();
 }
 
 

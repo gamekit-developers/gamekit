@@ -39,18 +39,38 @@
 
 
 
+gkGameObjectGroup::InstanceManager::InstanceManager(gkGameObjectGroup *group)
+:	gkInstancedManager("GroupInstanceManager", group->getName()), 
+	m_group(group)
+{
+}
+
+
+gkResource* gkGameObjectGroup::InstanceManager::createImpl(const gkResourceName& name, const gkResourceHandle& handle)
+{
+	return new gkGameObjectInstance(this, name, handle);
+}
+
+
 gkGameObjectGroup::gkGameObjectGroup(gkResourceManager* creator, const gkResourceName &name, const gkResourceHandle& handle)
 	:   gkResource(creator, name, handle), 
 		m_geometry(0)
 {
+	m_instanceManager = new InstanceManager(this);
 }
+
 
 
 
 gkGameObjectGroup::~gkGameObjectGroup()
 {
 	destroyAllInstances();
+	delete m_instanceManager;
+	m_instanceManager = 0;
+
+	m_objects.clear();
 }
+
 
 
 void gkGameObjectGroup::addObject(gkGameObject* gobj)
@@ -119,25 +139,30 @@ gkGameObject* gkGameObjectGroup::getObject(const gkHashedString& name)
 void gkGameObjectGroup::destroyAllInstances(void)
 {
 
-	Instances::Iterator iter = m_instances.iterator();
-	while (iter.hasMoreElements())
-	{
-		gkGameObjectInstance* inst= iter.getNext();
-		inst->destroyObjectInstances();
-		delete inst;
-	}
-
-
-	m_instances.clear();
-	m_objects.clear();
+	if (m_instanceManager)
+		m_instanceManager->destroyAll();
 }
 
 
-
-gkGameObjectInstance* gkGameObjectGroup::createGroupInstance(void)
+gkGameObjectInstance* gkGameObjectGroup::createGroupInstance(gkScene *scene, const gkResourceName& name)
 {
-	gkGameObjectInstance* newInst = new gkGameObjectInstance(this, static_cast<gkGroupManager*>(m_creator)->_getHandle());
-	m_instances.insert(newInst);
+	GK_ASSERT(m_instanceManager);
+
+	if (m_instanceManager->exists(name))
+	{
+		gkLogMessage("GameObjectGroup: Duplicate instance '" << name.str() << "'");
+		return 0;
+	}
+
+
+	gkGameObjectInstance *newInst = m_instanceManager->create<gkGameObjectInstance>(name);
+	newInst->_updateFromGroup(this);
+
+
+	gkGameObject *obj = newInst->getRoot();
+	GK_ASSERT(obj);
+	if (obj)
+		obj->setOwner(scene);
 
 
 
@@ -151,19 +176,14 @@ gkGameObjectInstance* gkGameObjectGroup::createGroupInstance(void)
 
 void gkGameObjectGroup::destroyGroupInstance(gkGameObjectInstance* inst)
 {
-
-	UTsize pos;
-
-	if ((pos = m_instances.find(inst)) == UT_NPOS )
+	if (!inst || !m_instanceManager->exists(inst->getResourceHandle()))
 	{
-		gkLogMessage("GameObjectGroup: Missing instance. Instance not destroyed");
+		gkLogMessage("GameObjectGroup: Missing instance.");
 		return;
 	}
 
-	inst->destroyObjectInstances();
-
-	delete m_instances.at(pos);
-	m_instances.erase(inst);
+	inst->destroyInstance();
+	m_instanceManager->destroy(inst);
 }
 
 
@@ -171,13 +191,21 @@ void gkGameObjectGroup::destroyGroupInstance(gkGameObjectInstance* inst)
 
 void gkGameObjectGroup::createGameObjectInstances(gkScene *scene)
 {
-	Instances::Iterator it = m_instances.iterator();
+	gkResourceManager::ResourceIterator it = m_instanceManager->getResourceIterator();
 	while (it.hasMoreElements())
 	{
-		gkGameObjectInstance *inst = it.getNext();
-
+		gkGameObjectInstance *inst = static_cast<gkGameObjectInstance*>(it.getNext().second);
 		if (!inst->isInstanced())
-			inst->createObjectInstances(scene);
+		{
+
+			gkGameObject *obj = inst->getRoot();
+
+			if (obj && obj->getOwner() != scene)
+				obj->setOwner(scene);
+
+			inst->createInstance();
+		}
+
 	}
 }
 
@@ -185,13 +213,13 @@ void gkGameObjectGroup::createGameObjectInstances(gkScene *scene)
 
 void gkGameObjectGroup::destroyGameObjectInstances(void)
 {
-	Instances::Iterator it = m_instances.iterator();
+	gkResourceManager::ResourceIterator it = m_instanceManager->getResourceIterator();
 	while (it.hasMoreElements())
 	{
-		gkGameObjectInstance *inst = it.getNext();
+		gkGameObjectInstance *inst = static_cast<gkGameObjectInstance*>(it.getNext().second);
 
 		if (inst->isInstanced())
-			inst->destroyObjectInstances();
+			inst->destroyInstance();
 	}
 }
 
@@ -260,10 +288,11 @@ void gkGameObjectGroup::createStaticBatches(gkScene* scene)
 	// Span all instances.
 
 
-	Instances::Iterator it = m_instances.iterator();
+	gkResourceManager::ResourceIterator it = m_instanceManager->getResourceIterator();
 	while (it.hasMoreElements())
 	{
-		gkGameObjectInstance* inst = it.getNext();
+		gkGameObjectInstance *inst = static_cast<gkGameObjectInstance*>(it.getNext().second);
+
 
 
 		gkGameObjectInstance::Objects::Iterator instIt = inst->getObjects().iterator();

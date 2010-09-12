@@ -31,6 +31,7 @@
 #include "gkTransformState.h"
 #include "gkMathUtils.h"
 #include "gkResource.h"
+#include "gkInstancedManager.h"
 
 
 ///Groups are a list of game objects that are grouped together by a common name.
@@ -40,15 +41,32 @@ class gkGameObjectGroup : public gkResource
 {
 public:
 	typedef utHashTable<gkHashedString, gkGameObject*>  Objects;
-	typedef utHashSet<gkGameObjectInstance*>            Instances;
+
+
+
+	class InstanceManager : public gkInstancedManager
+	{
+	public:
+
+
+		InstanceManager(gkGameObjectGroup *group);
+		virtual ~InstanceManager() {}
+
+
+		gkResource* createImpl(const gkResourceName& name, const gkResourceHandle& handle);
+
+	protected:
+		gkGameObjectGroup *m_group;
+	};
+
 
 
 protected:
 
 	Ogre::StaticGeometry*   m_geometry;
-	Instances               m_instances;
 	UTsize                  m_handle;
 	Objects                 m_objects;
+	InstanceManager*        m_instanceManager;
 
 
 public:
@@ -69,7 +87,7 @@ public:
 	gkGameObject*  getObject(const gkHashedString& name);
 
 
-	gkGameObjectInstance* createGroupInstance(void);
+	gkGameObjectInstance* createGroupInstance(gkScene *scene, const gkResourceName& name);
 	void                  destroyGroupInstance(gkGameObjectInstance* inst);
 
 
@@ -99,7 +117,7 @@ public:
 	                  bool tsAngLocal = true);
 
 
-	GK_INLINE Instances&                 getInstances(void)      {return m_instances;}
+	GK_INLINE InstanceManager&           getInstances(void)      {GK_ASSERT(m_instanceManager); return *m_instanceManager;}
 	GK_INLINE Objects&                   getObjects(void)        {return m_objects;}
 	GK_INLINE bool                       isEmpty(void)           {return m_objects.empty();}
 

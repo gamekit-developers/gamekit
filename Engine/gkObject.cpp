@@ -47,7 +47,14 @@ gkInstancedObject::~gkInstancedObject()
 void gkInstancedObject::createInstance(bool queue)
 {
 
-	if (m_instanceState != ST_DESTROYED || !canCreateInstance())
+	if (!canCreateInstance())
+	{
+		gkLogMessage(m_creator->getResourceType() << ": Object '" 
+			<<  m_name.str() << "' \n\t Cannot create instances.");
+		return;
+	}
+
+	if (m_instanceState != ST_DESTROYED)
 		return;
 
 	if (queue)
@@ -71,12 +78,18 @@ void gkInstancedObject::createInstance(bool queue)
 			postCreateInstanceImpl();
 			m_instanceState = ST_CREATED;
 		}
+		else
+		{
+			gkLogMessage(m_creator->getResourceType() << ": Object '" <<  m_name.str() << "' Instancing failed. \n\t" << 
+				(m_instanceError.empty() ? "Unknown error set" : m_instanceError));
+		}
 	}
 
 	catch (Ogre::Exception& e)
 	{
 		m_instanceState = ST_ERROR;
-		gkLogMessage("Object: Loading failed. \n\t" << e.getDescription());
+		gkLogMessage(m_creator->getResourceType() << ": Object '" <<  m_name.str() 
+			<< "' Instancing failed. \n\t" << e.getDescription());
 	}
 
 
@@ -106,6 +119,7 @@ void gkInstancedObject::destroyInstance(bool queue)
 	{
 		preDstroyInstanceImpl();
 		destroyInstanceImpl();
+
 		m_instanceState |= ST_DESTROYED;
 		postDestroyInstanceImpl();
 		m_instanceState = ST_DESTROYED;
@@ -114,7 +128,8 @@ void gkInstancedObject::destroyInstance(bool queue)
 	catch (Ogre::Exception& e)
 	{
 		m_instanceState = ST_ERROR;
-		gkLogMessage("Object: Loading failed. \n\t" << e.getDescription());
+		gkLogMessage(m_creator->getResourceType() << ": Object '" 
+			<<  m_name.str() << "' Destruction failed. \n\t" << e.getDescription());
 	}
 
 

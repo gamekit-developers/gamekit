@@ -37,7 +37,8 @@
 
 
 
-gkFontManager::gkFontManager()
+gkFontManager::gkFontManager() 
+	:	gkResourceManager("FontManager", "Font")
 {
 }
 

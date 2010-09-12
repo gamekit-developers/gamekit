@@ -27,6 +27,7 @@
 #include "gkGameObjectInstance.h"
 #include "gkGameObjectGroup.h"
 #include "gkGameObject.h"
+#include "gkGameObjectManager.h"
 #include "gkScene.h"
 #include "gkUtils.h"
 #include "gkLogger.h"
@@ -34,19 +35,23 @@
 
 
 
+gkGameObjectInstance::gkGameObjectInstance(gkInstancedManager *creator, const gkResourceName& name, const gkResourceHandle& handle)
+	:	gkInstancedObject(creator, name, handle),
+		m_parent(0), m_scene(0), m_owner(0),
+		m_uidName(gkString("/UID{" + gkToString((int)handle) + "}"))
 
-gkGameObjectInstance::gkGameObjectInstance(gkGameObjectGroup* group, UTsize uid)
-	:   m_id(uid),
-	    m_parent(group),
-	    m_firstLoad(true),
-		m_isInstanced(false)
 {
 }
 
 
-
 gkGameObjectInstance::~gkGameObjectInstance()
 {
+	if (m_owner != 0)
+		gkGameObjectManager::getSingleton().destroy(m_owner->getResourceHandle());
+
+	m_owner = 0;
+
+
 	Objects::Iterator iter = m_objects.iterator();
 	while (iter.hasMoreElements())
 	{
@@ -60,12 +65,31 @@ gkGameObjectInstance::~gkGameObjectInstance()
 
 
 
+void gkGameObjectInstance::_updateFromGroup(gkGameObjectGroup* group)
+{
+	GK_ASSERT(!m_parent);
+
+	if (!m_parent)
+	{
+		m_parent = group;
+
+
+		// create the object
+		m_owner = gkGameObjectManager::getSingleton().createObject(m_name);
+		if (m_owner != 0)
+			m_owner->addEventListener(this);
+
+	}
+}
+
+
+
 void gkGameObjectInstance::addObject(gkGameObject* gobj)
 {
 	if (!gobj)
 		return;
 
-	const gkHashedString name = m_parent->getResourceName().str() + "/" + gobj->getName() + "/Handle_" +  gkToString((int)m_id);
+	const gkResourceName& name = gobj->getName() + m_uidName;
 
 
 	if (m_objects.find(name) != UT_NPOS)
@@ -79,12 +103,12 @@ void gkGameObjectInstance::addObject(gkGameObject* gobj)
 	ngobj->setOwner(0);
 
 
+
 	m_objects.insert(name, ngobj);
 
 
 	// Lightly attach
 	ngobj->_makeGroupInstance(this);
-
 
 	ngobj->setActiveLayer(true);
 	ngobj->setLayer(0xFFFFFFFF);
@@ -163,6 +187,10 @@ bool gkGameObjectInstance::hasObject(const gkHashedString& name)
 
 void gkGameObjectInstance::applyTransform(const gkTransformState& trans)
 {
+	if (!isInstanced())
+		return;
+
+
 	const gkMatrix4 plocal = trans.toMatrix();
 
 
@@ -172,14 +200,9 @@ void gkGameObjectInstance::applyTransform(const gkTransformState& trans)
 		gkGameObject* obj = iter.getNext().second;
 
 		// Update transform relitave to owner
-		gkGameObjectProperties& props = obj->getProperties();
-
-
 		gkMatrix4 clocal;
-		props.m_transform.toMatrix(clocal);
-
-		// merge back to transform state
-		props.m_transform = gkTransformState(plocal * clocal);
+		obj->getTransformState().toMatrix(clocal);
+		obj->setTransform(plocal * clocal);
 	}
 
 }
@@ -190,7 +213,6 @@ bool gkGameObjectInstance::hasObject(gkGameObject* gobj)
 {
 	return gobj && m_objects.find(gobj->getName()) && gobj->getGroupInstance() == this;
 }
-
 
 
 void gkGameObjectInstance::cloneObjects(gkScene *scene, const gkTransformState& from, int time,
@@ -246,16 +268,18 @@ void gkGameObjectInstance::cloneObjects(gkScene *scene, const gkTransformState& 
 
 }
 
-void gkGameObjectInstance::createObjectInstances(gkScene *scene)
+
+void gkGameObjectInstance::createInstanceImpl(void)
 {
-	GK_ASSERT(scene);
-
-
-	if (m_firstLoad)
+	if (!m_owner || !m_owner->getOwner())
 	{
-		applyTransform(m_transform);
-		m_firstLoad = false;
+		m_instanceState = ST_ERROR;
+		m_instanceError = "Root object is not in any scene!";
+		return;
 	}
+
+
+	gkScene *scene = m_owner->getOwner();
 
 	Objects::Iterator iter = m_objects.iterator();
 	while (iter.hasMoreElements())
@@ -263,25 +287,41 @@ void gkGameObjectInstance::createObjectInstances(gkScene *scene)
 		gkGameObject *gobj = iter.getNext().second;
 
 		gobj->setOwner(scene);
-
 		gobj->createInstance();
 	}
+}
 
-	m_isInstanced = true;
+void gkGameObjectInstance::postCreateInstanceImpl(void)
+{
+	applyTransform(m_owner->getTransformState());
 }
 
 
-
-void gkGameObjectInstance::destroyObjectInstances(void)
+void gkGameObjectInstance::destroyInstanceImpl(void)
 {
+	if (!m_owner || !m_owner->getOwner())
+	{
+		m_instanceState = ST_ERROR;
+		m_instanceError = "Root object is not in any scene!";
+		return;
+	}
+
 
 	Objects::Iterator iter = m_objects.iterator();
 	while (iter.hasMoreElements())
 	{
 		gkGameObject *gobj = iter.getNext().second;
+
 		gobj->destroyInstance();
 		gobj->setOwner(0);
 	}
+}
 
-	m_isInstanced = false;
+
+void gkGameObjectInstance::notifyGameObjectEvent(gkGameObject* gobj, const gkGameObject::Notifier::Event& id)
+{
+	GK_ASSERT(gobj == m_owner);
+
+	if (id == gkGameObject::Notifier::UPDATED)
+		applyTransform(gobj->getTransformState());
 }

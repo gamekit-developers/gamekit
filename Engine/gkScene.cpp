@@ -115,14 +115,39 @@ gkScene::~gkScene()
 
 bool gkScene::hasObject(const gkHashedString& ob)
 {
-	return m_objects.find(ob) != GK_NPOS;
+	bool result = m_objects.find(ob) != GK_NPOS;
+
+	if (!result)
+	{
+		gkGameObjectManager& mgr = gkGameObjectManager::getSingleton();
+		if (mgr.exists(ob))
+		{
+			gkGameObject *obj = mgr.getByName<gkGameObject>(ob);
+			if (obj && obj->getOwner() == this)
+				result = true;
+		}
+	}
+	return result;
+
 }
 
 
 bool gkScene::hasObject(gkGameObject* gobj)
 {
 	GK_ASSERT(gobj);
-	return m_objects.find(gobj->getName()) != GK_NPOS;
+	bool result = m_objects.find(gobj->getName()) != GK_NPOS;
+
+	if (!result)
+	{
+		gkGameObjectManager& mgr = gkGameObjectManager::getSingleton();
+		if (mgr.exists(gobj->getResourceHandle()))
+		{
+			gkGameObject *obj = mgr.getByHandle<gkGameObject>(gobj->getResourceHandle());
+			if (obj && obj->getOwner() == this)
+				result = true;
+		}
+	}
+	return result;
 }
 
 
@@ -133,6 +158,17 @@ gkGameObject* gkScene::getObject(const gkHashedString& name)
 	UTsize pos = m_objects.find(name);
 	if (pos != GK_NPOS)
 		return m_objects.at(pos);
+	else
+	{
+		gkGameObjectManager& mgr = gkGameObjectManager::getSingleton();
+		if (mgr.exists(name))
+		{
+			gkGameObject *obj = mgr.getByName<gkGameObject>(name);
+			if (obj && obj->getOwner() == this)
+				return obj;
+		}
+
+	}
 	return 0;
 }
 

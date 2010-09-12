@@ -279,10 +279,11 @@ void gkEngine::finalize()
 	tmgr = gkSceneManager::getSingletonPtr();
 	tmgr->destroyAll();
 
-	tmgr = gkGameObjectManager::getSingletonPtr();
-	tmgr->destroyAll();
 
 	tmgr = gkGroupManager::getSingletonPtr();
+	tmgr->destroyAll();
+
+	tmgr = gkGameObjectManager::getSingletonPtr();
 	tmgr->destroyAll();
 
 

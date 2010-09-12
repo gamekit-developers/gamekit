@@ -67,7 +67,9 @@ static TextToTypeItem TextItemMap[] = {
 };
 
 
-gkTextManager::gkTextManager()
+
+gkTextManager::gkTextManager() 
+	:	gkResourceManager("TextManager", "TextFile")
 {
 }
 
