@@ -27,6 +27,7 @@
 #if wxUSE_CRASHREPORT
 
 #ifndef WX_PRECOMP
+#include "wx/crt.h"
 #endif  //WX_PRECOMP
 
 #include "wx/msw/debughlp.h"
