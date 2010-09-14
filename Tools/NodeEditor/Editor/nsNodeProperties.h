@@ -40,33 +40,33 @@
 class nsNodePropertyPage : public wxPropertyGridPage
 {
 protected:
-    nsPropertyManager   *m_manager;
-    nsNode              *m_node;
+	nsPropertyManager*   m_manager;
+	nsNode*              m_node;
 
 
-    wxPropertyCategory  *m_type, *m_data;
-    wxStringProperty    *m_typename;
-    wxStringProperty    *m_groupname;
-    wxStringProperty    *m_id;
-    wxStringProperty    *m_object;
-    virtual bool propertyChanged(wxPGProperty *prop)    {return false;}
+	wxPropertyCategory*  m_type, *m_data;
+	wxStringProperty*    m_typename;
+	wxStringProperty*    m_groupname;
+	wxStringProperty*    m_id;
+	wxStringProperty*    m_object;
+	virtual bool propertyChanged(wxPGProperty* prop)    {return false;}
 
 public:
 
-    nsNodePropertyPage(nsPropertyManager *manager);
-    virtual ~nsNodePropertyPage() {}
+	nsNodePropertyPage(nsPropertyManager* manager);
+	virtual ~nsNodePropertyPage() {}
 
 
-    void createProperties(void);
-    void selectRoot(void);
+	void createProperties(void);
+	void selectRoot(void);
 
-    // events
-    void propertyChangeEvent(wxPropertyGridEvent &evt);
+	// events
+	void propertyChangeEvent(wxPropertyGridEvent& evt);
 
-    // current node this page will operate on
-    void setNode(nsNode *node);
+	// current node this page will operate on
+	void setNode(nsNode* node);
 
-    DECLARE_EVENT_TABLE();
+	DECLARE_EVENT_TABLE();
 };
 
 

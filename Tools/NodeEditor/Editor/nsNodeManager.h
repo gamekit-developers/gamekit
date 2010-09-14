@@ -39,17 +39,17 @@
 class nsNodeManager : public nsSingleton<nsNodeManager>
 {
 protected:
-    nsTrees         m_trees;
+	nsTrees         m_trees;
 public:
-    nsNodeManager();
-    ~nsNodeManager();
+	nsNodeManager();
+	~nsNodeManager();
 
-    void            clear(void);
-    void            deleteTree(nsNodeTree *tree);
-    nsNodeTree      *createTree(const nsString &name = "Node Tree");
-    nsTreeIterator  getTreeIterator(void) {return nsTreeIterator(m_trees);}
+	void            clear(void);
+	void            deleteTree(nsNodeTree* tree);
+	nsNodeTree*      createTree(const nsString& name = "Node Tree");
+	nsTreeIterator  getTreeIterator(void) {return nsTreeIterator(m_trees);}
 
-    NS_DECLARE_SINGLETON(nsNodeManager);
+	NS_DECLARE_SINGLETON(nsNodeManager);
 };
 
 

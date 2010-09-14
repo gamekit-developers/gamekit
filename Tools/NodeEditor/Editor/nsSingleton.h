@@ -34,26 +34,26 @@ template <typename T>
 class nsSingleton
 {
 protected:
-    static T *m_singleton;
+	static T* m_singleton;
 
 
 public:
 
 
-    nsSingleton()
-    {
-        assert(!m_singleton);
-        m_singleton = static_cast<T *>(this);
-    }
+	nsSingleton()
+	{
+		assert(!m_singleton);
+		m_singleton = static_cast<T*>(this);
+	}
 
-    virtual ~nsSingleton()
-    {
-        assert(m_singleton);
-        m_singleton = 0;
-    }
+	virtual ~nsSingleton()
+	{
+		assert(m_singleton);
+		m_singleton = 0;
+	}
 
-    inline T &getSingleton(void)    {assert(m_singleton); return *m_singleton; }
-    inline T &getSingletonPtr(void) { return  m_singleton; }
+	inline T& getSingleton(void)    {assert(m_singleton); return *m_singleton; }
+	inline T& getSingletonPtr(void) { return  m_singleton; }
 
 };
 

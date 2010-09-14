@@ -61,14 +61,14 @@
 
 static int pow2( int n )
 {
-    --n;
-    n |= n >> 16;
-    n |= n >> 8;
-    n |= n >> 4;
-    n |= n >> 2;
-    n |= n >> 1;
-    ++n;
-    return n;
+	--n;
+	n |= n >> 16;
+	n |= n >> 8;
+	n |= n >> 4;
+	n |= n >> 2;
+	n |= n >> 1;
+	++n;
+	return n;
 }
 
 static bool SAVE_IMA = false;
@@ -79,290 +79,290 @@ static wxString NAME = wxT( "" );
 
 typedef struct wxTextExtents
 {
-    float width, height;
-}wxTextExtents;
+	float width, height;
+} wxTextExtents;
 
 typedef struct wxCharacter
 {
-    float xco, yco;
-    float width, height;
-}wxCharacter;
+	float xco, yco;
+	float width, height;
+} wxCharacter;
 
 
 class wxGLFont
 {
 public:
 
-    typedef std::vector<wxCharacter *> CharacterVector;
+	typedef std::vector<wxCharacter*> CharacterVector;
 
 public:
-    wxGLFont( const wxFont &font, int size );
-    ~wxGLFont();
+	wxGLFont( const wxFont& font, int size );
+	~wxGLFont();
 
-    void Save( const wxString &out );
+	void Save( const wxString& out );
 
 
 private:
-    void Create();
-    void Destory();
+	void Create();
+	void Destory();
 
 
-    unsigned char *m_imaData;
+	unsigned char* m_imaData;
 
-    wxPoint FindSize( int res );
+	wxPoint FindSize( int res );
 
-    int m_offset, m_maxChar;
-    float m_width, m_height;
-    float m_baseHeight;
-    float m_baseWidth;
-    wxCoord m_res;
-    wxFont m_font;
-    CharacterVector m_chars;
+	int m_offset, m_maxChar;
+	float m_width, m_height;
+	float m_baseHeight;
+	float m_baseWidth;
+	wxCoord m_res;
+	wxFont m_font;
+	CharacterVector m_chars;
 };
 
 
-wxGLFont::wxGLFont( const wxFont &font, int size )
+wxGLFont::wxGLFont( const wxFont& font, int size )
 {
-    m_imaData = 0;
-    m_offset = 0;
+	m_imaData = 0;
+	m_offset = 0;
 
-    m_width = 2;
-    m_height = 2;
-    m_baseHeight = 2;
-    m_res = size;
+	m_width = 2;
+	m_height = 2;
+	m_baseHeight = 2;
+	m_res = size;
 
-    m_font = font;
-    Create();
+	m_font = font;
+	Create();
 }
 
 
 wxGLFont::~wxGLFont()
 {
-    Destory();
+	Destory();
 }
 
 void wxGLFont::Destory()
 {
-    if ( m_imaData )
-        delete [] m_imaData;
-    m_imaData = 0;
+	if ( m_imaData )
+		delete [] m_imaData;
+	m_imaData = 0;
 
-    for ( wxGLFont::CharacterVector::iterator it = m_chars.begin();
-            it != m_chars.end(); ++it )
-        delete ( *it );
+	for ( wxGLFont::CharacterVector::iterator it = m_chars.begin();
+	        it != m_chars.end(); ++it )
+		delete ( *it );
 
-    m_chars.clear();
+	m_chars.clear();
 }
 
 wxPoint wxGLFont::FindSize( int res )
 {
-    wxMemoryDC dc;
+	wxMemoryDC dc;
 
-    m_font.SetPointSize( res );
-    dc.SetFont( m_font );
+	m_font.SetPointSize( res );
+	dc.SetFont( m_font );
 
-    wxCoord w, h;
-    wxCoord mw = 0.0, mh = 0.0;
-    wxCoord pad = 5;
+	wxCoord w, h;
+	wxCoord mw = 0.0, mh = 0.0;
+	wxCoord pad = 5;
 
-    for ( size_t i = CHARBEG; i < CHAREND; i++ )
-    {
-        wxString str( ( wxChar )i );
+	for ( size_t i = CHARBEG; i < CHAREND; i++ )
+	{
+		wxString str( ( wxChar )i );
 
 
-        dc.GetTextExtent( str, &w, &h );
+		dc.GetTextExtent( str, &w, &h );
 
-        mw = wxMax( w, mw );
-        mh = wxMax( h, mh );
-    }
+		mw = wxMax( w, mw );
+		mh = wxMax( h, mh );
+	}
 
-    wxCoord r = ( mw + pad ) * ( mh + pad ) * TOT;
-    wxCoord t = ( wxCoord )sqrtf( ( float )r );
-    t += wxMax( mw, mh );
+	wxCoord r = ( mw + pad ) * ( mh + pad ) * TOT;
+	wxCoord t = ( wxCoord )sqrtf( ( float )r );
+	t += wxMax( mw, mh );
 
-    wxCoord p = pow2( t );
+	wxCoord p = pow2( t );
 
-    wxCoord wi = p, he = p;
+	wxCoord wi = p, he = p;
 
-    if ( p*p*0.5 >=  r )
-        he = p * 0.5;
+	if ( p* p * 0.5 >=  r )
+		he = p * 0.5;
 
-    return wxPoint( wi, he );
+	return wxPoint( wi, he );
 }
 
 
 void wxGLFont::Create()
 {
-    Destory();
+	Destory();
 
-    wxCoord padding = 5;
+	wxCoord padding = 5;
 
-    wxPoint pt = FindSize( m_res );
-    m_width = pt.x; m_height = pt.y;
+	wxPoint pt = FindSize( m_res );
+	m_width = pt.x; m_height = pt.y;
 
-    wxMemoryDC dc;
-    wxBitmap bitmap( m_width, m_height );
-    dc.SelectObject( bitmap );
-    m_font.SetPointSize( m_res );
-    dc.SetBackground( wxColour( 0, 0, 0, 0 ) );
-    dc.Clear();
-    dc.SetFont( m_font );
-    dc.SetTextForeground( wxColour( 0xFFFFFF ) );
-
-
-    wxCoord xpos = 0, ypos = 0;
-
-    for ( size_t i = CHARBEG; i < CHAREND; i++ )
-    {
-        wxString str( ( wxChar )i );
-
-        wxCharacter *ch = new wxCharacter;
-
-        ch->xco = ch->yco = 0;
-        ch->width = ch->height = 0;
-        m_chars.push_back( ch );
+	wxMemoryDC dc;
+	wxBitmap bitmap( m_width, m_height );
+	dc.SelectObject( bitmap );
+	m_font.SetPointSize( m_res );
+	dc.SetBackground( wxColour( 0, 0, 0, 0 ) );
+	dc.Clear();
+	dc.SetFont( m_font );
+	dc.SetTextForeground( wxColour( 0xFFFFFF ) );
 
 
-        wxCoord w, h;
-        dc.GetTextExtent( str, &w, &h );
-        ch->xco = xpos;
-        ch->yco = ypos;
-        ch->width = w;
-        ch->height = h;
+	wxCoord xpos = 0, ypos = 0;
 
-        m_baseHeight = wxMax( m_baseHeight, h );
-        m_baseWidth  = wxMax( m_baseWidth, w );
+	for ( size_t i = CHARBEG; i < CHAREND; i++ )
+	{
+		wxString str( ( wxChar )i );
 
-        /* next char */
-        dc.DrawText( str, xpos, ypos );
+		wxCharacter* ch = new wxCharacter;
 
-        xpos += ( w + padding );
+		ch->xco = ch->yco = 0;
+		ch->width = ch->height = 0;
+		m_chars.push_back( ch );
 
-        if ( ( xpos + ( w + padding ) ) > ( m_width - m_res ) )
-        {
-            xpos = 0;
-            ypos += ( h + padding );
-        }
-    }
 
-    wxImage ima = bitmap.ConvertToImage();
+		wxCoord w, h;
+		dc.GetTextExtent( str, &w, &h );
+		ch->xco = xpos;
+		ch->yco = ypos;
+		ch->width = w;
+		ch->height = h;
 
-    if ( SAVE_IMA )
-    {
-        wxString tname = NAME;
-        tname.Replace( wxT( ".font" ), wxT( "" ) );
-        tname = wxString::Format( wxT( "%s%i.png" ), tname, m_res );
+		m_baseHeight = wxMax( m_baseHeight, h );
+		m_baseWidth  = wxMax( m_baseWidth, w );
 
-        ima.SaveFile( tname );
-    }
+		/* next char */
+		dc.DrawText( str, xpos, ypos );
 
-    int size = m_width * m_height;
+		xpos += ( w + padding );
 
-    m_imaData = new unsigned char[size];
-    unsigned char *pixels = ima.GetData();
+		if ( ( xpos + ( w + padding ) ) > ( m_width - m_res ) )
+		{
+			xpos = 0;
+			ypos += ( h + padding );
+		}
+	}
 
-    /* convert to alpha */
-    for ( int y = 0; y < m_height; y++ )
-    {
-        for ( int x = 0; x < m_width; x++ )
-        {
-            int in  = ( y * m_width + x ) * 3;
-            int out = ( y * m_width + x );
+	wxImage ima = bitmap.ConvertToImage();
 
-            /* just take red */
-            m_imaData[out+0] = pixels[in];
-        }
-    }
+	if ( SAVE_IMA )
+	{
+		wxString tname = NAME;
+		tname.Replace( wxT( ".font" ), wxT( "" ) );
+		tname = wxString::Format( wxT( "%s%i.png" ), tname, m_res );
+
+		ima.SaveFile( tname );
+	}
+
+	int size = m_width * m_height;
+
+	m_imaData = new unsigned char[size];
+	unsigned char* pixels = ima.GetData();
+
+	/* convert to alpha */
+	for ( int y = 0; y < m_height; y++ )
+	{
+		for ( int x = 0; x < m_width; x++ )
+		{
+			int in  = ( y * m_width + x ) * 3;
+			int out = ( y * m_width + x );
+
+			/* just take red */
+			m_imaData[out+0] = pixels[in];
+		}
+	}
 }
 
 
-void wxGLFont::Save( const wxString &out )
+void wxGLFont::Save( const wxString& out )
 {
-    // save to C++ compile-able file
+	// save to C++ compile-able file
 }
 
 
 class FontFrame : public wxDialog
 {
 public:
-    FontFrame();
-    virtual ~FontFrame();
+	FontFrame();
+	virtual ~FontFrame();
 
-    void initialize();
+	void initialize();
 
-    void OnQuit( wxCloseEvent &evt );
-    void OnSelectFont( wxCommandEvent &evt );
+	void OnQuit( wxCloseEvent& evt );
+	void OnSelectFont( wxCommandEvent& evt );
 
-    class wxGLFont *m_font;
-    wxSpinButton *m_resGetter;
-    int mRes;
+	class wxGLFont* m_font;
+	wxSpinButton* m_resGetter;
+	int mRes;
 
-    DECLARE_EVENT_TABLE();
+	DECLARE_EVENT_TABLE();
 };
 
 FontFrame::FontFrame() :
-        wxDialog( NULL, wxID_ANY, wxT( "Font Generator" ), wxDefaultPosition, wxSize( SIZEX, SIZEY ), wxDEFAULT_DIALOG_STYLE )
+	wxDialog( NULL, wxID_ANY, wxT( "Font Generator" ), wxDefaultPosition, wxSize( SIZEX, SIZEY ), wxDEFAULT_DIALOG_STYLE )
 {
 
-    SetMinSize( wxSize( SIZEX, SIZEY ) );
-    m_font = 0;
-    m_resGetter = 0;
+	SetMinSize( wxSize( SIZEX, SIZEY ) );
+	m_font = 0;
+	m_resGetter = 0;
 }
 
 FontFrame::~FontFrame()
 {
-    if ( m_font != 0 )
-    {
-        delete m_font;
-        m_font = 0;
-    }
+	if ( m_font != 0 )
+	{
+		delete m_font;
+		m_font = 0;
+	}
 
 }
 
 void FontFrame::initialize()
 {
-    Show( true );
+	Show( true );
 
 
-    wxSizer *sizer = new wxBoxSizer( wxHORIZONTAL );
-    sizer->SetMinSize( wxSize( SIZEY*2, SIZEY ) );
+	wxSizer* sizer = new wxBoxSizer( wxHORIZONTAL );
+	sizer->SetMinSize( wxSize( SIZEY * 2, SIZEY ) );
 
-    wxButton *button = new wxButton( this, ID_FONT,  "Select Font:" );
-    sizer->Add( button, wxSizerFlags(0).Align(wxCENTER).Border(wxALL, 10));
+	wxButton* button = new wxButton( this, ID_FONT,  "Select Font:" );
+	sizer->Add( button, wxSizerFlags(0).Align(wxCENTER).Border(wxALL, 10));
 
-    SetSizer( sizer );
-    sizer->SetSizeHints( this );
+	SetSizer( sizer );
+	sizer->SetSizeHints( this );
 
 }
 
 
-void FontFrame::OnQuit( wxCloseEvent &evt )
+void FontFrame::OnQuit( wxCloseEvent& evt )
 {
-    Destroy();
+	Destroy();
 }
 
-void FontFrame::OnSelectFont( wxCommandEvent &evt )
+void FontFrame::OnSelectFont( wxCommandEvent& evt )
 {
-    wxFontDialog dlg( this );
+	wxFontDialog dlg( this );
 
-    if ( dlg.ShowModal() ==  wxID_OK )
-    {
-        wxFont font = dlg.GetFontData().GetChosenFont();
-        if ( font.IsOk() )
-        {
-            wxFileDialog dlg( this, wxT( "Save Font File" ), wxT( "" ), wxT( "" ), wxT( "C++ Font files (*.inl)|*.inl" ) );
-            if ( dlg.ShowModal() ==  wxID_OK )
-            {
-                wxGLFont out(font, font.GetPointSize());
-                out.Save(dlg.GetPath());
-            }
-        }
-    }
+	if ( dlg.ShowModal() ==  wxID_OK )
+	{
+		wxFont font = dlg.GetFontData().GetChosenFont();
+		if ( font.IsOk() )
+		{
+			wxFileDialog dlg( this, wxT( "Save Font File" ), wxT( "" ), wxT( "" ), wxT( "C++ Font files (*.inl)|*.inl" ) );
+			if ( dlg.ShowModal() ==  wxID_OK )
+			{
+				wxGLFont out(font, font.GetPointSize());
+				out.Save(dlg.GetPath());
+			}
+		}
+	}
 }
 
 BEGIN_EVENT_TABLE( FontFrame, wxDialog )
-    EVT_CLOSE( FontFrame::OnQuit )
-    EVT_BUTTON( ID_FONT, FontFrame::OnSelectFont )
+	EVT_CLOSE( FontFrame::OnQuit )
+	EVT_BUTTON( ID_FONT, FontFrame::OnSelectFont )
 END_EVENT_TABLE()
 
 
@@ -370,14 +370,14 @@ END_EVENT_TABLE()
 class Application : public wxApp
 {
 public:
-    bool OnInit()
-    {
-        wxInitAllImageHandlers();
+	bool OnInit()
+	{
+		wxInitAllImageHandlers();
 
-        FontFrame *app = new FontFrame();
-        app->initialize();
-        return true;
-    }
+		FontFrame* app = new FontFrame();
+		app->initialize();
+		return true;
+	}
 };
 
 

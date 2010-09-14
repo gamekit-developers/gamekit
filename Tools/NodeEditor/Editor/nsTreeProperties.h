@@ -39,32 +39,32 @@
 class nsTreePropertyPage : public wxPropertyGridPage
 {
 protected:
-    nsPropertyManager   *m_manager;
-    nsNodeTree          *m_tree;
+	nsPropertyManager*   m_manager;
+	nsNodeTree*          m_tree;
 
-    wxStringProperty    *m_name;
-    wxStringProperty    *m_groupname;
-    wxStringProperty    *m_id;
-    wxBoolProperty      *m_isGroup;
-    wxStringProperty    *m_object;
+	wxStringProperty*    m_name;
+	wxStringProperty*    m_groupname;
+	wxStringProperty*    m_id;
+	wxBoolProperty*      m_isGroup;
+	wxStringProperty*    m_object;
 
-    wxPropertyCategory  *m_info;
-    wxPropertyCategory  *m_group;
+	wxPropertyCategory*  m_info;
+	wxPropertyCategory*  m_group;
 
 public:
-    nsTreePropertyPage(nsPropertyManager *manager);
-    virtual ~nsTreePropertyPage() {}
+	nsTreePropertyPage(nsPropertyManager* manager);
+	virtual ~nsTreePropertyPage() {}
 
-    // create default / initial properties
-    void createProperties(void);
+	// create default / initial properties
+	void createProperties(void);
 
-    // data change notification
-    void propertyChangeEvent(wxPropertyGridEvent &evt);
+	// data change notification
+	void propertyChangeEvent(wxPropertyGridEvent& evt);
 
-    void setTree(nsNodeTree *tree);
+	void setTree(nsNodeTree* tree);
 
-    // tree table
-    DECLARE_EVENT_TABLE();
+	// tree table
+	DECLARE_EVENT_TABLE();
 };
 
 #endif//_nsTreePropertyPage_h_

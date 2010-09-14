@@ -32,10 +32,10 @@ class nsNodeWriter
 {
 public:
 
-    nsNodeWriter();
-    ~nsNodeWriter();
+	nsNodeWriter();
+	~nsNodeWriter();
 
-    void writeToFile(const char *path);
+	void writeToFile(const char* path);
 };
 
 #endif//_nsNodeWriter_h_

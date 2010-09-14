@@ -36,54 +36,54 @@
 class wxAuiNotebook;
 class wxGLContext;
 
-class nsWorkspace :     public wxPanel, 
-                        public nsNotifierBase,
-                        public nsSingleton<nsWorkspace>
+class nsWorkspace :     public wxPanel,
+	public nsNotifierBase,
+	public nsSingleton<nsWorkspace>
 
 {
 protected:
 
-    nsGlHiddenContext       *m_hidenContext;
-    wxAuiNotebook           *m_book;
-    nsNodeCanvas            *m_activeCanvas;
-    nsClipboard             *m_clipboard;
+	nsGlHiddenContext*       m_hidenContext;
+	wxAuiNotebook*           m_book;
+	nsNodeCanvas*            m_activeCanvas;
+	nsClipboard*             m_clipboard;
 
-    void pageChangedEvent(wxAuiNotebookEvent& evt);
-    void pageClosedEvent(wxAuiNotebookEvent& evt);
+	void pageChangedEvent(wxAuiNotebookEvent& evt);
+	void pageClosedEvent(wxAuiNotebookEvent& evt);
 
 
 public:
-    nsWorkspace(wxWindow *parent);
-    virtual ~nsWorkspace();
+	nsWorkspace(wxWindow* parent);
+	virtual ~nsWorkspace();
 
 
 
-    void            finalizeContext(void);
-    void            initializeContext(void);
-    wxGLContext     *getGLContext(void);
+	void            finalizeContext(void);
+	void            initializeContext(void);
+	wxGLContext*     getGLContext(void);
 
-    // shared access to the clipboard
-    nsClipboard&    getClipboard(void) {UT_ASSERT(m_clipboard); return *m_clipboard; }
+	// shared access to the clipboard
+	nsClipboard&    getClipboard(void) {UT_ASSERT(m_clipboard); return *m_clipboard; }
 
-    // access to the current canvas page.
-    nsNodeCanvas    *getActiveCanvas(void) {return m_activeCanvas;}
+	// access to the current canvas page.
+	nsNodeCanvas*    getActiveCanvas(void) {return m_activeCanvas;}
 
-    // notifiers
-    void treeEvent(nsTreeEvent &evt);
+	// notifiers
+	void treeEvent(nsTreeEvent& evt);
 
-    // copied down from the main window
-    void grabCapturedEvent(wxCommandEvent &evt);
-    void deleteCapturedEvent(wxCommandEvent &evt);
-    void selectAllEvent(wxCommandEvent &evt);
-    void copyEvent(wxCommandEvent &evt);
-    void pasteEvent(wxCommandEvent &evt);
-    void cutEvent(wxCommandEvent &evt);
-    void duplicateEvent(wxCommandEvent &evt);
+	// copied down from the main window
+	void grabCapturedEvent(wxCommandEvent& evt);
+	void deleteCapturedEvent(wxCommandEvent& evt);
+	void selectAllEvent(wxCommandEvent& evt);
+	void copyEvent(wxCommandEvent& evt);
+	void pasteEvent(wxCommandEvent& evt);
+	void cutEvent(wxCommandEvent& evt);
+	void duplicateEvent(wxCommandEvent& evt);
 
-    NS_DECLARE_SINGLETON(nsWorkspace);
+	NS_DECLARE_SINGLETON(nsWorkspace);
 
-    // static tables
-    DECLARE_EVENT_TABLE();
+	// static tables
+	DECLARE_EVENT_TABLE();
 
 };
 

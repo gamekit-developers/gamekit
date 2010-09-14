@@ -36,40 +36,40 @@ class wxWindow;
 
 enum nsNodifierID
 {
-    NS_TREE_ADD,
-    NS_TREE_REMOVE,
-    NS_TREE_SELECT,
-    NS_TREE_DESELECT,
-    NS_TREE_CHANGED,
-    NS_TREE_CLEAR,
+	NS_TREE_ADD,
+	NS_TREE_REMOVE,
+	NS_TREE_SELECT,
+	NS_TREE_DESELECT,
+	NS_TREE_CHANGED,
+	NS_TREE_CLEAR,
 
-    NS_NODE_ADD,
-    NS_NODE_REMOVE,
-    NS_NODE_SELECT,
-    NS_NODE_DESELECT,
+	NS_NODE_ADD,
+	NS_NODE_REMOVE,
+	NS_NODE_SELECT,
+	NS_NODE_DESELECT,
 
-    NS_SOCKET_LINK,
-    NS_SOCKET_UNLINK,
+	NS_SOCKET_LINK,
+	NS_SOCKET_UNLINK,
 };
 
 template<typename T>
 class nsAbstractEvent
 {
 protected:
-    wxWindow        *m_caller;
-    T               *m_object;
-    nsNodifierID    m_id;
+	wxWindow*        m_caller;
+	T*               m_object;
+	nsNodifierID    m_id;
 
 public:
-    nsAbstractEvent(nsNodifierID id, wxWindow *caller, T *ob)
-        :   m_caller(caller), m_object(ob), m_id(id)
-    {
-    }
+	nsAbstractEvent(nsNodifierID id, wxWindow* caller, T* ob)
+		:   m_caller(caller), m_object(ob), m_id(id)
+	{
+	}
 
-    wxWindow        *getCaller(void)    {return m_caller;}
-    T               &ref(void)          {assert(m_object); return *m_object;}
-    T               *ptr(void)          {assert(m_object); return m_object;}
-    nsNodifierID    getId(void)         {return m_id;}
+	wxWindow*        getCaller(void)    {return m_caller;}
+	T&               ref(void)          {assert(m_object); return *m_object;}
+	T*               ptr(void)          {assert(m_object); return m_object;}
+	nsNodifierID    getId(void)         {return m_id;}
 
 };
 
@@ -84,11 +84,11 @@ typedef nsAbstractEvent<nsSocket>   nsSocketEvent;
 class nsNotifierBase
 {
 public:
-    virtual ~nsNotifierBase() {}
+	virtual ~nsNotifierBase() {}
 
-    virtual void treeEvent(nsTreeEvent &evt)         {}
-    virtual void nodeEvent(nsNodeEvent &evt)         {}
-    virtual void socketEvent(nsSocketEvent &evt)     {}
+	virtual void treeEvent(nsTreeEvent& evt)         {}
+	virtual void nodeEvent(nsNodeEvent& evt)         {}
+	virtual void socketEvent(nsSocketEvent& evt)     {}
 };
 
 

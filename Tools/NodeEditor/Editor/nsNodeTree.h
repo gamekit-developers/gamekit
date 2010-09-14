@@ -35,69 +35,69 @@
 class nsNodeTree
 {
 protected:
-    nsNodes         m_nodes;
-    nsString        m_name;
-    nsString        m_groupName;
+	nsNodes         m_nodes;
+	nsString        m_name;
+	nsString        m_groupName;
 
-    bool            m_isGroup, m_open;
-    NSrect          m_projection;
-    NSvec2          m_size;
-
-
-    // attached canvas 
-    nsNodeCanvas    *m_client;
+	bool            m_isGroup, m_open;
+	NSrect          m_projection;
+	NSvec2          m_size;
 
 
+	// attached canvas
+	nsNodeCanvas*    m_client;
 
-    // Root object for nodes within this tree
-    nsString        m_attachedObject;
+
+
+	// Root object for nodes within this tree
+	nsString        m_attachedObject;
 
 
 public:
 
-    nsNodeTree(const nsString &name);
-    ~nsNodeTree();
+	nsNodeTree(const nsString& name);
+	~nsNodeTree();
 
-    UT_INLINE void              setName(const nsString &name)           {m_name = name;}
-    UT_INLINE void              setGroup(bool val)                      {m_isGroup = val;}
-    UT_INLINE void              setGroupName(const nsString &name)      {m_groupName = name;}
-    UT_INLINE void              setAttachedName(const nsString &name)   {m_attachedObject = name;}
-
-
-    UT_INLINE const nsString      &getName(void)                          {return m_name;}
-    UT_INLINE const nsString      &getGroupName(void)                     {return m_groupName;}
-    UT_INLINE bool                isGroup(void)                           {return m_isGroup;}
-    UT_INLINE const nsString      &getAttachedName(void)                  {return m_attachedObject;}
+	UT_INLINE void              setName(const nsString& name)           {m_name = name;}
+	UT_INLINE void              setGroup(bool val)                      {m_isGroup = val;}
+	UT_INLINE void              setGroupName(const nsString& name)      {m_groupName = name;}
+	UT_INLINE void              setAttachedName(const nsString& name)   {m_attachedObject = name;}
 
 
-    // save / load data
-    UT_INLINE void                setOpen(bool v)                         {m_open = v;}
-    UT_INLINE void                setSize(const NSvec2 &size)             {m_size = size;}
-    UT_INLINE void                setProjection(const NSrect &proj)       {m_projection = proj;}
-    UT_INLINE bool                isOpen(void)                            {return m_open;}
-    UT_INLINE NSvec2              &getSize(void)                          {return m_size;}
-    UT_INLINE NSrect              &getProjection(void)                    {return m_projection;}
+	UT_INLINE const nsString&      getName(void)                          {return m_name;}
+	UT_INLINE const nsString&      getGroupName(void)                     {return m_groupName;}
+	UT_INLINE bool                isGroup(void)                           {return m_isGroup;}
+	UT_INLINE const nsString&      getAttachedName(void)                  {return m_attachedObject;}
 
 
-    // Temporary canvas data (only valid as long as the editor is open) 
-    UT_INLINE void                attachCanvas(nsNodeCanvas *cnvs)        {m_client = cnvs;}
-    UT_INLINE nsNodeCanvas        *getAttachedCanvas(void)                {return m_client;}
+	// save / load data
+	UT_INLINE void                setOpen(bool v)                         {m_open = v;}
+	UT_INLINE void                setSize(const NSvec2& size)             {m_size = size;}
+	UT_INLINE void                setProjection(const NSrect& proj)       {m_projection = proj;}
+	UT_INLINE bool                isOpen(void)                            {return m_open;}
+	UT_INLINE NSvec2&              getSize(void)                          {return m_size;}
+	UT_INLINE NSrect&              getProjection(void)                    {return m_projection;}
 
 
-    // node access
-    UT_INLINE nsNodeIterator      getNodeIterator(void)                   {return nsNodeIterator(m_nodes);}
-    UT_INLINE UTsize              getNodeCount(void)                      {return m_nodes.size();}
+	// Temporary canvas data (only valid as long as the editor is open)
+	UT_INLINE void                attachCanvas(nsNodeCanvas* cnvs)        {m_client = cnvs;}
+	UT_INLINE nsNodeCanvas*        getAttachedCanvas(void)                {return m_client;}
 
 
-    nsNode  *createNode(nsNodeDef *nt);
-    nsNode  *createCloneNode(nsNode *nd);
+	// node access
+	UT_INLINE nsNodeIterator      getNodeIterator(void)                   {return nsNodeIterator(m_nodes);}
+	UT_INLINE UTsize              getNodeCount(void)                      {return m_nodes.size();}
 
-    void    deleteNode(nsNode *node);
-    void    clear(void);
 
-    // render list sorting 
-    void    bringToFront(nsNode *node);
-    void    bringToFront(nsNodes &list, nsNode *node);
+	nsNode*  createNode(nsNodeDef* nt);
+	nsNode*  createCloneNode(nsNode* nd);
+
+	void    deleteNode(nsNode* node);
+	void    clear(void);
+
+	// render list sorting
+	void    bringToFront(nsNode* node);
+	void    bringToFront(nsNodes& list, nsNode* node);
 };
 
 

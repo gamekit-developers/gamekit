@@ -29,164 +29,164 @@
 
 
 
-nsSocket::nsSocket(nsNode *nd, nsSocketDef *def)
-    :   m_type(def), m_parent(nd),
-        m_from(0)
+nsSocket::nsSocket(nsNode* nd, nsSocketDef* def)
+	:   m_type(def), m_parent(nd),
+	    m_from(0)
 {
-    UT_ASSERT(m_parent);
-    m_value = def->getValue();
+	UT_ASSERT(m_parent);
+	m_value = def->getValue();
 
-    m_rect = def->getRect();
-    updateFromParent();
+	m_rect = def->getRect();
+	updateFromParent();
 }
 
 
 
 nsSocket::~nsSocket()
 {
-    m_tosockets.clear();
-    m_from = 0;
+	m_tosockets.clear();
+	m_from = 0;
 }
 
 
 
-void nsSocket::connect(nsSocket *oth)
+void nsSocket::connect(nsSocket* oth)
 {
-    // ignore links on the same node
-    if (oth && oth->m_parent == m_parent)
-        return;
+	// ignore links on the same node
+	if (oth && oth->m_parent == m_parent)
+		return;
 
-    if (oth)
-    {
-        if (m_from == oth)
-        {
-            // ignore linking to the same socket
-            return;
-        }
+	if (oth)
+	{
+		if (m_from == oth)
+		{
+			// ignore linking to the same socket
+			return;
+		}
 
-        if (m_from != 0)
-        {
-            nsSocketList &links = m_from->m_tosockets;
+		if (m_from != 0)
+		{
+			nsSocketList& links = m_from->m_tosockets;
 
-            // other is zero so erase this in the from node
-            UT_ASSERT((!links.empty() && links.find(this)) && "Socket improperly linked!");
-            links.erase(this);
+			// other is zero so erase this in the from node
+			UT_ASSERT((!links.empty() && links.find(this)) && "Socket improperly linked!");
+			links.erase(this);
 
-            bool isFirst = getPrev() == 0;
+			bool isFirst = getPrev() == 0;
 
-            nsSocket *sock = 0;
+			nsSocket* sock = 0;
 
-            if (isFirst)
-                sock = getNext();
-            else
-            {
-                // try top down
-                sock = getPrev();
-                if (sock)
-                {
-                    nsSocket *root = sock;
-                    while (root)
-                    {
-                        sock = root;
-                        root = root->getPrev();
-                        if (!root)
-                            break;
-                    }
-                }
-            }
+			if (isFirst)
+				sock = getNext();
+			else
+			{
+				// try top down
+				sock = getPrev();
+				if (sock)
+				{
+					nsSocket* root = sock;
+					while (root)
+					{
+						sock = root;
+						root = root->getPrev();
+						if (!root)
+							break;
+					}
+				}
+			}
 
-            while (sock)
-            {
-                if (sock != this && !sock->isConnected())
-                {
-                    if (m_from->canConnect(sock))
-                    {
-                        sock->connect(m_from);
-                        break;
-                    }
-                }
-                sock = sock->getNext();
-            }
-        }
+			while (sock)
+			{
+				if (sock != this && !sock->isConnected())
+				{
+					if (m_from->canConnect(sock))
+					{
+						sock->connect(m_from);
+						break;
+					}
+				}
+				sock = sock->getNext();
+			}
+		}
 
-        // linking to
-        UT_ASSERT(oth->isOutput() && isInput());
+		// linking to
+		UT_ASSERT(oth->isOutput() && isInput());
 
-        m_from = oth;
-        m_from->m_tosockets.push_back(this);
-    }
-    else
-    {
-        // make sure this is an input
-        UT_ASSERT(isInput());
+		m_from = oth;
+		m_from->m_tosockets.push_back(this);
+	}
+	else
+	{
+		// make sure this is an input
+		UT_ASSERT(isInput());
 
 
-        if (m_from)
-        {
-            nsSocketList &links = m_from->m_tosockets;
+		if (m_from)
+		{
+			nsSocketList& links = m_from->m_tosockets;
 
-            // other is zero so erase this in the from node
-            UT_ASSERT((!links.empty() && links.find(this)) && "Socket improperly linked!");
-            links.erase(this);
-            m_from = 0;
-        }
-    }
+			// other is zero so erase this in the from node
+			UT_ASSERT((!links.empty() && links.find(this)) && "Socket improperly linked!");
+			links.erase(this);
+			m_from = 0;
+		}
+	}
 }
 
 
 void nsSocket::updateFromParent(void)
 {
-    if (!m_parent)
-        return;
-    NSrect prect = m_parent->getRect();
-    m_derrivedRect = m_type->getRect();
-    m_derrivedRect.x = prect.x + m_rect.x;
-    m_derrivedRect.y = prect.y + m_rect.y;
+	if (!m_parent)
+		return;
+	NSrect prect = m_parent->getRect();
+	m_derrivedRect = m_type->getRect();
+	m_derrivedRect.x = prect.x + m_rect.x;
+	m_derrivedRect.y = prect.y + m_rect.y;
 }
 
 
 void nsSocket::unlink(void)
 {
-    // remove all refs to this
+	// remove all refs to this
 
-    if (m_type->isOutput())
-    {
-        if (!m_tosockets.empty())
-        {
-            utListIterator<nsSocketList> it(m_tosockets);
-            while (it.hasMoreElements())
-            {
-                nsSocket *sock = it.getNext();
-                if (sock->m_from == this)
-                    sock->m_from = 0;
-            }
-        }
-    }
-    else
-    {
-        if (m_from)
-        {
-            nsSocketList &links = m_from->m_tosockets;
-            UT_ASSERT((!links.empty() && links.find(this)) && "Socket improperly linked!");
-            links.erase(this);
-        }
-    }
+	if (m_type->isOutput())
+	{
+		if (!m_tosockets.empty())
+		{
+			utListIterator<nsSocketList> it(m_tosockets);
+			while (it.hasMoreElements())
+			{
+				nsSocket* sock = it.getNext();
+				if (sock->m_from == this)
+					sock->m_from = 0;
+			}
+		}
+	}
+	else
+	{
+		if (m_from)
+		{
+			nsSocketList& links = m_from->m_tosockets;
+			UT_ASSERT((!links.empty() && links.find(this)) && "Socket improperly linked!");
+			links.erase(this);
+		}
+	}
 
-    m_tosockets.clear();
-    m_from = 0;
+	m_tosockets.clear();
+	m_from = 0;
 }
 
 
-nsSocketDef::nsSocketDef(nsDirection dir, const nsString &name, int id, double min, double max, const nsValue& val)
-    :   m_dir(dir),
-        m_name(name),
-        m_docStr(""),
-        m_palette(),
-        m_id(id),
-        m_uid(-1),
-        m_min(min),
-        m_max(max),
-        m_default(val)
+nsSocketDef::nsSocketDef(nsDirection dir, const nsString& name, int id, double min, double max, const nsValue& val)
+	:   m_dir(dir),
+	    m_name(name),
+	    m_docStr(""),
+	    m_palette(),
+	    m_id(id),
+	    m_uid(-1),
+	    m_min(min),
+	    m_max(max),
+	    m_default(val)
 {
 }
 
@@ -197,7 +197,7 @@ nsSocketDef::~nsSocketDef()
 }
 
 
-nsSocket *nsSocketDef::create(nsNode *parent)
+nsSocket* nsSocketDef::create(nsNode* parent)
 {
-    return new nsSocket(parent, this);
+	return new nsSocket(parent, this);
 }

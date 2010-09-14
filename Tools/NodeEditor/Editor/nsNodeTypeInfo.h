@@ -42,37 +42,37 @@
 class nsNodeTypeInfo : public nsSingleton<nsNodeTypeInfo>
 {
 public:
-    typedef utList<nsNodeDef *>                     GroupList;
-    typedef utListIterator<GroupList>               GroupListIterator;
-    typedef utHashTable<utIntHashKey, GroupList>    GroupMap;
-    typedef utHashTableIterator<GroupMap>           GroupIterator;
+	typedef utList<nsNodeDef*>                     GroupList;
+	typedef utListIterator<GroupList>               GroupListIterator;
+	typedef utHashTable<utIntHashKey, GroupList>    GroupMap;
+	typedef utHashTableIterator<GroupMap>           GroupIterator;
 
 
 protected:
-    nsNodeListClass     m_types;
-    GroupMap            m_groups;
+	nsNodeListClass     m_types;
+	GroupMap            m_groups;
 
 
-    void addType(nsNodeDef *ndef);
+	void addType(nsNodeDef* ndef);
 
 public:
 
-    nsNodeTypeInfo();
-    ~nsNodeTypeInfo();
+	nsNodeTypeInfo();
+	~nsNodeTypeInfo();
 
-    nsNodeDef                   *findTypeInfo(int i);
-    nsNodeDef                   *findTypeInfo(const nsString &name);
-    nsString                    getGroupName(int in);
+	nsNodeDef*                   findTypeInfo(int i);
+	nsNodeDef*                   findTypeInfo(const nsString& name);
+	nsString                    getGroupName(int in);
 
 
-    int                         getGroupSize(void)      {return (int)m_groups.size();}
-    GroupIterator               getGroupIterator(void)  {return GroupIterator(m_groups);}
-    nsNodeDefIterator           getTypeIterator(void)   {return nsNodeDefIterator(m_types);}
-    nsNodeListClass             &getTypes(void)         {return m_types;}
+	int                         getGroupSize(void)      {return (int)m_groups.size();}
+	GroupIterator               getGroupIterator(void)  {return GroupIterator(m_groups);}
+	nsNodeDefIterator           getTypeIterator(void)   {return nsNodeDefIterator(m_types);}
+	nsNodeListClass&             getTypes(void)         {return m_types;}
 
-    void registerTypes(void);
+	void registerTypes(void);
 
-    NS_DECLARE_SINGLETON(nsNodeTypeInfo);
+	NS_DECLARE_SINGLETON(nsNodeTypeInfo);
 };
 
 #endif//_nsNodeTypeInfo_h_

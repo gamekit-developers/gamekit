@@ -30,7 +30,7 @@
 #include <wx/menu.h>
 #include <wx/statusbr.h>
 #include <wx/tooltip.h>
-#include <wx/filedlg.h> 
+#include <wx/filedlg.h>
 
 #include "nsMainWindow.h"
 #include "nsNodeCanvas.h"
@@ -52,191 +52,182 @@ NS_IMPLEMENT_SINGLETON(nsMainWindow);
 
 BEGIN_EVENT_TABLE( nsMainWindow, wxFrame )
 
-    // file menu
-    EVT_MENU(NSID_QUIT,         nsMainWindow::quitEvent)
-    EVT_MENU(NS_ID_NEW_TREE,    nsMainWindow::treeAddEvent )
-    EVT_MENU(NSID_SAVE,         nsMainWindow::saveEvent)
-    EVT_MENU(NSID_SAVEAS,       nsMainWindow::saveAsEvent)
-    EVT_MENU(NSID_OPEN,         nsMainWindow::loadEvent)
-    EVT_MENU(NSID_PREVIEW_FILE, nsMainWindow::selectPreviewEvent)
+	// file menu
+	EVT_MENU(NSID_QUIT,         nsMainWindow::quitEvent)
+	EVT_MENU(NS_ID_NEW_TREE,    nsMainWindow::treeAddEvent )
+	EVT_MENU(NSID_SAVE,         nsMainWindow::saveEvent)
+	EVT_MENU(NSID_SAVEAS,       nsMainWindow::saveAsEvent)
+	EVT_MENU(NSID_OPEN,         nsMainWindow::loadEvent)
 
 
-    // edit
-    EVT_MENU(NS_ID_CUT,         nsMainWindow::cutEvent)
-    EVT_MENU(NS_ID_COPY,        nsMainWindow::copyEvent)
-    EVT_MENU(NS_ID_PASTE,       nsMainWindow::pasteEvent)
-    EVT_MENU(NS_ID_DUPLICATE,   nsMainWindow::duplicateEvent)
-    EVT_MENU(NS_ID_GRAB,        nsMainWindow::grabCapturedEvent)
-    EVT_MENU(NS_ID_DELETE,      nsMainWindow::deleteCapturedEvent)
-    EVT_MENU(NS_ID_SELECT_ALL,  nsMainWindow::selectAllEvent)
+	// edit
+	EVT_MENU(NS_ID_CUT,         nsMainWindow::cutEvent)
+	EVT_MENU(NS_ID_COPY,        nsMainWindow::copyEvent)
+	EVT_MENU(NS_ID_PASTE,       nsMainWindow::pasteEvent)
+	EVT_MENU(NS_ID_DUPLICATE,   nsMainWindow::duplicateEvent)
+	EVT_MENU(NS_ID_DELETE,      nsMainWindow::deleteCapturedEvent)
+	EVT_MENU(NS_ID_SELECT_ALL,  nsMainWindow::selectAllEvent)
 
-    // view menu
-    EVT_MENU(NS_ID_SOLUTION,    nsMainWindow::solutionCheckEvent )
-    EVT_MENU(NS_ID_PROPERTIES,  nsMainWindow::propertiesCheckEvent )
-    EVT_MENU(NS_ID_FULLSCREEN,  nsMainWindow::showFullscreenEvent )
+	// view menu
+	EVT_MENU(NS_ID_SOLUTION,    nsMainWindow::solutionCheckEvent )
+	EVT_MENU(NS_ID_PROPERTIES,  nsMainWindow::propertiesCheckEvent )
+	EVT_MENU(NS_ID_FULLSCREEN,  nsMainWindow::showFullscreenEvent )
 
+	// aui events
+	EVT_AUI_PANE_CLOSE(nsMainWindow::paneCloseEvent)
 
-    // game menu
-    EVT_MENU(NS_ID_PLAY,  nsMainWindow::playEvent )
-
-    // aui events
-    EVT_AUI_PANE_CLOSE(nsMainWindow::paneCloseEvent)
-
-    // node add events
-    EVT_MENU_RANGE(NSID_NODE_MENU_START, NSID_NODE_MENU_END, nsMainWindow::nodeAddEvent )
+	// node add events
+	EVT_MENU_RANGE(NSID_NODE_MENU_START, NSID_NODE_MENU_END, nsMainWindow::nodeAddEvent )
 END_EVENT_TABLE()
 
 
 
 
 nsMainWindow::nsMainWindow()
-    :   wxFrame(NULL, NS_WID_MAINWINDOW, "Node Editor", wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE)
+	:   wxFrame(NULL, NS_WID_MAINWINDOW, "Node Editor", wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE)
 {
-    m_addMenuCaller = 0;
-    wxToolTip::SetDelay(5);
-    SetIcon( Icon_xpm );
+	m_addMenuCaller = 0;
+	wxToolTip::SetDelay(5);
+	SetIcon( Icon_xpm );
 
-    m_preview = "";
-    m_previewApp = 0;
+	// load objects pre show.
+	m_auiManager = new wxAuiManager(this, wxAUI_MGR_ALLOW_ACTIVE_PANE | wxAUI_MGR_DEFAULT);
 
-    // load objects pre show.
-    m_auiManager = new wxAuiManager(this, wxAUI_MGR_ALLOW_ACTIVE_PANE | wxAUI_MGR_DEFAULT);
+	wxAuiDockArt* art = m_auiManager->GetArtProvider();
+	art->SetMetric( wxAUI_DOCKART_PANE_BORDER_SIZE,  0 );
+	art->SetMetric( wxAUI_DOCKART_SASH_SIZE,         3 );
+	art->SetMetric( wxAUI_DOCKART_CAPTION_SIZE,      18 );
 
-    wxAuiDockArt *art = m_auiManager->GetArtProvider();
-    art->SetMetric( wxAUI_DOCKART_PANE_BORDER_SIZE,  0 );
-    art->SetMetric( wxAUI_DOCKART_SASH_SIZE,         3 );
-    art->SetMetric( wxAUI_DOCKART_CAPTION_SIZE,      18 );
+	loadWindows();
+	loadMenus();
+	loadSettings();
 
-    loadWindows();
-    loadMenus();
-    loadSettings();
+	m_auiManager->Update();
+	Show();
 
-    m_auiManager->Update();
-    Show();
+	m_currentFile = wxEmptyString;
 
-    m_currentFile = wxEmptyString;
-
-    // post show setup
-    nsWorkspace::getSingleton().initializeContext();
+	// post show setup
+	nsWorkspace::getSingleton().initializeContext();
 
 
 
-    // default start with a blank tree
-    wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, NS_ID_NEW_TREE);
-    ProcessWindowEvent(evt);
+	// default start with a blank tree
+	wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, NS_ID_NEW_TREE);
+	ProcessWindowEvent(evt);
 
 
-    setStatus(0, "Ready");
+	setStatus(0, "Ready");
 }
 
 
 
 nsMainWindow::~nsMainWindow()
 {
-    //if (m_previewApp)
-    //    delete m_previewApp;
-    //m_previewApp = 0;
+	//if (m_previewApp)
+	//    delete m_previewApp;
+	//m_previewApp = 0;
 
-    if (IsShown())
-        nsWorkspace::getSingleton().finalizeContext();
+	if (IsShown())
+		nsWorkspace::getSingleton().finalizeContext();
 
-    saveSettings();
-    m_auiManager->UnInit();
-    delete m_auiManager;
+	saveSettings();
+	m_auiManager->UnInit();
+	delete m_auiManager;
 }
 
 
 void nsMainWindow::loadSettings(void)
 {
-    // window settings
-    bool maximize = false;
-    wxSize size(800, 600);
-    wxPoint pos(10, 10);
-    wxString layout;
+	// window settings
+	bool maximize = false;
+	wxSize size(800, 600);
+	wxPoint pos(10, 10);
+	wxString layout;
 
-    wxConfig *def = new wxConfig("NodeEditor");
+	wxConfig* def = new wxConfig("NodeEditor");
 
-    if (def->HasEntry("/WindowSettings/sx"))
-        def->Read("/WindowSettings/sx", &size.x);
-    if (def->HasEntry("/WindowSettings/sy"))
-        def->Read("/WindowSettings/sy", &size.y);
-    if (def->HasEntry("/WindowSettings/px"))
-        def->Read("/WindowSettings/px", &pos.x);
-    if (def->HasEntry("/WindowSettings/py"))
-        def->Read("/WindowSettings/py", &pos.y);
-    if (def->HasEntry("/WindowSettings/maximize"))
-        def->Read("/WindowSettings/maximize", &maximize);
-    if (def->HasEntry("/WindowSettings/layout"))
-        def->Read("/WindowSettings/layout", &layout);
+	if (def->HasEntry("/WindowSettings/sx"))
+		def->Read("/WindowSettings/sx", &size.x);
+	if (def->HasEntry("/WindowSettings/sy"))
+		def->Read("/WindowSettings/sy", &size.y);
+	if (def->HasEntry("/WindowSettings/px"))
+		def->Read("/WindowSettings/px", &pos.x);
+	if (def->HasEntry("/WindowSettings/py"))
+		def->Read("/WindowSettings/py", &pos.y);
+	if (def->HasEntry("/WindowSettings/maximize"))
+		def->Read("/WindowSettings/maximize", &maximize);
+	if (def->HasEntry("/WindowSettings/layout"))
+		def->Read("/WindowSettings/layout", &layout);
 
-    if (!maximize)
-    {
-        SetSize(size);
-        SetPosition(pos);
-    }
-    else
-    {
-        SetPosition(wxPoint(10, 10));
-        SetSize(wxSize(800, 600));
-        Maximize();
-    }
+	if (!maximize)
+	{
+		SetSize(size);
+		SetPosition(pos);
+	}
+	else
+	{
+		SetPosition(wxPoint(10, 10));
+		SetSize(wxSize(800, 600));
+		Maximize();
+	}
 
-    if (!layout.empty())
-    {
-        m_auiManager->LoadPerspective(layout, true);
+	if (!layout.empty())
+	{
+		m_auiManager->LoadPerspective(layout, true);
 
-        // update menus
-        wxAuiPaneInfo inf = m_auiManager->GetPane(nsPropertyPage::getSingletonPtr());
-        m_viewProperties->Check(inf.IsShown());
+		// update menus
+		wxAuiPaneInfo inf = m_auiManager->GetPane(nsPropertyPage::getSingletonPtr());
+		m_viewProperties->Check(inf.IsShown());
 
-        inf = m_auiManager->GetPane(nsSolutionBrowser::getSingletonPtr());
-        m_viewSolution->Check(inf.IsShown());
-    }
+		inf = m_auiManager->GetPane(nsSolutionBrowser::getSingletonPtr());
+		m_viewSolution->Check(inf.IsShown());
+	}
 
-    delete def;
+	delete def;
 }
 
 
 void nsMainWindow::saveSettings(void)
 {
-    // window settings
-    wxConfig *def = new wxConfig("NodeEditor");
+	// window settings
+	wxConfig* def = new wxConfig("NodeEditor");
 
-    wxSize size = GetSize();
-    wxPoint pos = GetPosition();
+	wxSize size = GetSize();
+	wxPoint pos = GetPosition();
 
-    def->Write("/WindowSettings/sx",          size.x);
-    def->Write("/WindowSettings/sy",          size.y);
-    def->Write("/WindowSettings/px",          pos.x);
-    def->Write("/WindowSettings/py",          pos.y);
-    def->Write("/WindowSettings/maximize",    IsMaximized());
-    def->Write("/WindowSettings/layout",      m_auiManager->SavePerspective());
-    delete def;
+	def->Write("/WindowSettings/sx",          size.x);
+	def->Write("/WindowSettings/sy",          size.y);
+	def->Write("/WindowSettings/px",          pos.x);
+	def->Write("/WindowSettings/py",          pos.y);
+	def->Write("/WindowSettings/maximize",    IsMaximized());
+	def->Write("/WindowSettings/layout",      m_auiManager->SavePerspective());
+	delete def;
 }
 
 
 
 void nsMainWindow::loadWindows(void)
 {
-    wxAuiPaneInfo inf;
-    inf.DestroyOnClose(false).MaximizeButton(true).MinimizeButton(true);
+	wxAuiPaneInfo inf;
+	inf.DestroyOnClose(false).MaximizeButton(true).MinimizeButton(true);
 
 
-    nsSolutionBrowser *browser = new nsSolutionBrowser(this);
-    inf.Caption("Solution Explorer").Left().Layer(0).Name("Solution");
-    inf.TopDockable(false);
-    m_auiManager->AddPane(browser, inf);
+	nsSolutionBrowser* browser = new nsSolutionBrowser(this);
+	inf.Caption("Solution Explorer").Left().Layer(0).Name("Solution");
+	inf.TopDockable(false);
+	m_auiManager->AddPane(browser, inf);
 
-    nsPropertyPage *page = new nsPropertyPage(this);
-    page->initialize();
+	nsPropertyPage* page = new nsPropertyPage(this);
+	page->initialize();
 
-    inf.Caption("Property Browser").Right().Layer(0).Name("Property");
-    inf.TopDockable(false);
-    m_auiManager->AddPane(page, inf);
+	inf.Caption("Property Browser").Right().Layer(0).Name("Property");
+	inf.TopDockable(false);
+	m_auiManager->AddPane(page, inf);
 
-    nsWorkspace *work = new nsWorkspace(this);
-    inf = wxAuiPaneInfo().CenterPane().Name("Workspace");
-    m_auiManager->AddPane(work, inf);
+	nsWorkspace* work = new nsWorkspace(this);
+	inf = wxAuiPaneInfo().CenterPane().Name("Workspace");
+	m_auiManager->AddPane(work, inf);
 
 }
 
@@ -244,411 +235,363 @@ void nsMainWindow::loadWindows(void)
 
 void nsMainWindow::loadMenus(void)
 {
-    wxMenuBar *menubar = new wxMenuBar();
-    wxMenuItem *item;
-    wxMenu *file, *edit, *view;
+	wxMenuBar* menubar = new wxMenuBar();
+	wxMenuItem* item;
+	wxMenu* file, *edit, *view;
 
-    // --- File Menu ---
+	// --- File Menu ---
 
-    file = new wxMenu();
-    item = file->Append(NSID_NEW, "New Project");
-    item->SetHelp("Create a new node tree solution.");
+	file = new wxMenu();
+	item = file->Append(NSID_NEW, "New Project");
+	item->SetHelp("Create a new node tree solution.");
 
-    file->AppendSeparator();
+	file->AppendSeparator();
 
-    item = file->Append(NSID_OPEN, "Open Project\tCtrl-O");
-    item->SetHelp("Open node tree solution.");
+	item = file->Append(NSID_OPEN, "Open Project\tCtrl-O");
+	item->SetHelp("Open node tree solution.");
 
-    item = file->Append(NSID_SAVE, "Save\tCtrl-S");
-    item->SetHelp("Save existing solution.");
+	item = file->Append(NSID_SAVE, "Save\tCtrl-S");
+	item->SetHelp("Save existing solution.");
 
-    item = file->Append(NSID_SAVEAS, "Save As\tCtrl-Shift-S");
-    item->SetHelp("Save solution to another file.");
+	item = file->Append(NSID_SAVEAS, "Save As\tCtrl-Shift-S");
+	item->SetHelp("Save solution to another file.");
 
-    file->AppendSeparator();
-    item = file->Append(NS_ID_NEW_TREE, "New Tree\tCtrl-N");
-    item->SetHelp("Create a new node tree.");
+	file->AppendSeparator();
+	item = file->Append(NS_ID_NEW_TREE, "New Tree\tCtrl-N");
+	item->SetHelp("Create a new node tree.");
 
-    file->AppendSeparator();
-    item = file->Append(NSID_QUIT, "Exit");
-    item->SetHelp("Exit application.");
+	file->AppendSeparator();
+	item = file->Append(NSID_QUIT, "Exit");
+	item->SetHelp("Exit application.");
 
-    menubar->Append(file, "File");
+	menubar->Append(file, "File");
 
 
-    // --- Edit Menu ---
+	// --- Edit Menu ---
 
-    edit = new wxMenu();
-    edit->Append(NS_ID_UNDO, "Undo\tCtrl-Z");
-    edit->Append(NS_ID_REDO, "Redo\tCtrl-Shift-Z");
-    edit->AppendSeparator();
-    makeEditMenu(edit);
-    menubar->Append(edit, wxT("Edit"));
+	edit = new wxMenu();
+	edit->Append(NS_ID_UNDO, "Undo\tCtrl-Z");
+	edit->Append(NS_ID_REDO, "Redo\tCtrl-Shift-Z");
+	edit->AppendSeparator();
+	makeEditMenu(edit);
+	menubar->Append(edit, wxT("Edit"));
 
-    // --- View Menu ---
+	// --- View Menu ---
 
-    view = new wxMenu();
-    item = view->AppendCheckItem(NS_ID_SOLUTION, wxT("Solution Explorer\tF2"));
-    item->SetCheckable(true); item->Check(m_auiManager->GetPane(nsSolutionBrowser::getSingletonPtr()).IsShown());
-    item->SetHelp(wxT("Show Solution Explorer."));
-    m_viewSolution = item;
+	view = new wxMenu();
+	item = view->AppendCheckItem(NS_ID_SOLUTION, wxT("Solution Explorer\tF2"));
+	item->SetCheckable(true); item->Check(m_auiManager->GetPane(nsSolutionBrowser::getSingletonPtr()).IsShown());
+	item->SetHelp(wxT("Show Solution Explorer."));
+	m_viewSolution = item;
 
-    item = view->AppendCheckItem(NS_ID_PROPERTIES, wxT("Properties\tF3"));
-    item->SetCheckable(true); item->Check(m_auiManager->GetPane(nsPropertyPage::getSingletonPtr()).IsShown());
-    item->SetHelp(wxT("Show Properties Window."));
-    m_viewProperties = item;
+	item = view->AppendCheckItem(NS_ID_PROPERTIES, wxT("Properties\tF3"));
+	item->SetCheckable(true); item->Check(m_auiManager->GetPane(nsPropertyPage::getSingletonPtr()).IsShown());
+	item->SetHelp(wxT("Show Properties Window."));
+	m_viewProperties = item;
 
-    item = view->AppendCheckItem(NS_ID_VARIABLES, wxT("Variable Editor\tF4"));
-    item->SetCheckable(true); item->Check(false);
-    item->SetHelp(wxT("Show Variable Editor."));
-    view->AppendSeparator();
+	item = view->AppendCheckItem(NS_ID_VARIABLES, wxT("Variable Editor\tF4"));
+	item->SetCheckable(true); item->Check(false);
+	item->SetHelp(wxT("Show Variable Editor."));
+	view->AppendSeparator();
 
-    item = view->Append(NS_ID_FULLSCREEN, wxT("Full screen\tF12"));
-    item->SetHelp(wxT("Switch to full screen mode."));
-    menubar->Append(view, wxT("View"));
+	item = view->Append(NS_ID_FULLSCREEN, wxT("Full screen\tF12"));
+	item->SetHelp(wxT("Switch to full screen mode."));
+	menubar->Append(view, wxT("View"));
 
-    // --- Game Menu ---
-#if 0
+	SetMenuBar(menubar);
 
-    game = new wxMenu();
+	// status
 
-    item = game->Append(NSID_PREVIEW_FILE, "Open Blend\tF1");
-    item->SetHelp("Open .blend preview file.");
-    game->AppendSeparator();
-    item = game->Append(NS_ID_PLAY, "Play\tF5");
-    item->SetHelp("Play blend file");
-    menubar->Append(game, wxT("Game"));
-#endif
+	wxStatusBar* stat = new wxStatusBar(this);
+	stat->SetFieldsCount(2);
+	int widths[] = { -1, 150};
+	stat->SetStatusWidths(2, widths);
 
-    SetMenuBar(menubar);
-
-    // status
-
-    wxStatusBar *stat = new wxStatusBar(this);
-    stat->SetFieldsCount(2);
-    int widths[] = {-1, 150};
-    stat->SetStatusWidths(2, widths);
-
-    SetStatusBar(stat);
+	SetStatusBar(stat);
 }
 
 
 
-void nsMainWindow::makeEditMenu(wxMenu *menu)
+void nsMainWindow::makeEditMenu(wxMenu* menu)
 {
-    // the base edit toolbox
+	// the base edit toolbox
 
-    wxMenuItem *item;
+	wxMenuItem* item;
 
-    item = menu->Append(NS_ID_CUT, "Cut\tCtrl-X");
-    item->SetHelp("Cut selected nodes.");
+	item = menu->Append(NS_ID_CUT, "Cut\tCtrl-X");
+	item->SetHelp("Cut selected nodes.");
 
-    item = menu->Append(NS_ID_COPY, "Copy\tCtrl-C");
-    item->SetHelp("Copy selected nodes.");
+	item = menu->Append(NS_ID_COPY, "Copy\tCtrl-C");
+	item->SetHelp("Copy selected nodes.");
 
-    item = menu->Append(NS_ID_PASTE, "Paste\tCtrl-V");
-    item->SetHelp("Paste clipboard.");
+	item = menu->Append(NS_ID_PASTE, "Paste\tCtrl-V");
+	item->SetHelp("Paste clipboard.");
 
-    menu->AppendSeparator();
-    item = menu->Append(NS_ID_DUPLICATE, "Duplicate\tCtrl-D");
-    item->SetHelp("Duplicate selected nodes.");
+	menu->AppendSeparator();
+	item = menu->Append(NS_ID_DUPLICATE, "Duplicate\tCtrl-D");
+	item->SetHelp("Duplicate selected nodes.");
 
-    item = menu->Append(NS_ID_SELECT_ALL, "Select All\tCtrl-A");
-    item->SetHelp("Select All nodes.");
+	item = menu->Append(NS_ID_SELECT_ALL, "Select All\tCtrl-A");
+	item->SetHelp("Select All nodes.");
 
-    menu->AppendSeparator();
-    item = menu->Append(NS_ID_DELETE, "Delete\tDel");
-    item->SetHelp("Delete selected nodes.");
-
-    item = menu->Append(NS_ID_GRAB, "Grab\tCtrl-G");
-    item->SetHelp("Grab selected nodes.");
+	menu->AppendSeparator();
+	item = menu->Append(NS_ID_DELETE, "Delete\tDel");
+	item->SetHelp("Delete selected nodes.");
 }
 
 
-void nsMainWindow::makeNodeMenu(wxWindow *caller, wxMenu *menu)
+void nsMainWindow::makeNodeMenu(wxWindow* caller, wxMenu* menu)
 {
-    m_addMenuCaller = caller;
+	m_addMenuCaller = caller;
 
-    // the base add toolbox
-    nsNodeTypeInfo &types = nsNodeTypeInfo::getSingleton();
-
-
-    nsNodeTypeInfo::GroupIterator it = types.getGroupIterator();
-    while (it.hasMoreElements())
-    {
-        nsNodeTypeInfo::GroupIterator::Pair kv = it.getNext();
-        wxString groupName = types.getGroupName(kv.first.key());
-
-        // current group
-
-        wxMenu *sub= new wxMenu();
-        wxMenuItem *item;
-
-        nsNodeTypeInfo::GroupListIterator typeIt = nsNodeTypeInfo::GroupListIterator(kv.second);
-        while (typeIt.hasMoreElements())
-        {
-            nsNodeDef *nt = typeIt.getNext();
-            wxString nodeTypeName = nt->getName();
-            wxString nodeTypeHelp = nt->getDocStr();
+	// the base add toolbox
+	nsNodeTypeInfo& types = nsNodeTypeInfo::getSingleton();
 
 
-            item = sub->Append( NSID_NODE_MENU_START + nt->getId(), nodeTypeName);
+	nsNodeTypeInfo::GroupIterator it = types.getGroupIterator();
+	while (it.hasMoreElements())
+	{
+		nsNodeTypeInfo::GroupIterator::Pair kv = it.getNext();
+		wxString groupName = types.getGroupName(kv.first.key());
+
+		// current group
+
+		wxMenu* sub = new wxMenu();
+		wxMenuItem* item;
+
+		nsNodeTypeInfo::GroupListIterator typeIt = nsNodeTypeInfo::GroupListIterator(kv.second);
+		while (typeIt.hasMoreElements())
+		{
+			nsNodeDef* nt = typeIt.getNext();
+			wxString nodeTypeName = nt->getName();
+			wxString nodeTypeHelp = nt->getDocStr();
 
 
-            // help text
-            if (nodeTypeHelp.empty())
-                item->SetHelp(wxString::Format("Create new %s type", nodeTypeName));
-            else
-                item->SetHelp(nodeTypeHelp);
-        }
+			item = sub->Append( NSID_NODE_MENU_START + nt->getId(), nodeTypeName);
 
-        // append the group
-        item= menu->AppendSubMenu(sub, groupName);
-        item->SetHelp(wxString::Format("Node group %s", groupName));
-    }
+
+			// help text
+			if (nodeTypeHelp.empty())
+				item->SetHelp(wxString::Format("Create new %s type", nodeTypeName));
+			else
+				item->SetHelp(nodeTypeHelp);
+		}
+
+		// append the group
+		item = menu->AppendSubMenu(sub, groupName);
+		item->SetHelp(wxString::Format("Node group %s", groupName));
+	}
 }
 
 
 
-void nsMainWindow::quitEvent(wxCommandEvent &evt)
+void nsMainWindow::quitEvent(wxCommandEvent& evt)
 {
-    // send close signal
-    Close(true);
+	// send close signal
+	Close(true);
 }
 
 
-void nsMainWindow::playEvent(wxCommandEvent &evt)
+void nsMainWindow::saveEvent(wxCommandEvent& evt)
 {
-    //if (!m_previewApp)
-    //    m_previewApp = new nsOgreKitPreview();
-    //m_previewApp->start();
+	// if modified
+	if (m_currentFile == wxEmptyString)
+	{
+		wxFileDialog dlg(this,
+		                 "Save Node Logic",
+		                 wxEmptyString,
+		                 wxEmptyString,
+		                 "Node logic files (*.ntree)|*.ntree",
+		                 wxFD_SAVE);
+
+		if (dlg.ShowModal() == wxID_OK)
+			m_currentFile = dlg.GetPath();
+	}
+
+	if (m_currentFile != wxEmptyString)
+	{
+		nsNodeWriter writer;
+		writer.writeToFile(wxToAscii(m_currentFile));
+
+		SetTitle(wxString::Format("Node Editor [%s]", m_currentFile));
+	}
+
 }
 
 
 
-void nsMainWindow::selectPreviewEvent(wxCommandEvent &evt)
+void nsMainWindow::saveAsEvent(wxCommandEvent& evt)
 {
-    wxFileDialog dlg(this, 
-            "Select Blend File Preview",
-            wxEmptyString,
-            wxEmptyString,
-            "Blender Files (*.blend)|*.blend",
-            wxFD_SAVE);
+	wxFileDialog dlg(this,
+	                 "Save Node Logic",
+	                 wxEmptyString,
+	                 wxEmptyString,
+	                 "Node logic files (*.ntree)|*.ntree",
+	                 wxFD_SAVE);
 
-    if (dlg.ShowModal() == wxID_OK)
-        m_preview = dlg.GetPath();
+	if (dlg.ShowModal() == wxID_OK)
+		m_currentFile = dlg.GetPath();
 }
 
 
-void nsMainWindow::saveEvent(wxCommandEvent &evt)
+void nsMainWindow::loadEvent(wxCommandEvent& evt)
 {
-    // if modified 
-    if (m_currentFile == wxEmptyString)
-    {
-        wxFileDialog dlg(this, 
-                "Save Node Logic",
-                wxEmptyString,
-                wxEmptyString,
-                "Node logic files (*.ntree)|*.ntree",
-                wxFD_SAVE);
+	wxFileDialog dlg(this,
+	                 "Load Node Logic",
+	                 wxEmptyString,
+	                 wxEmptyString,
+	                 "Node logic files (*.ntree)|*.ntree",
+	                 wxFD_OPEN);
 
-        if (dlg.ShowModal() == wxID_OK)
-            m_currentFile = dlg.GetPath();
-    }
+	if (dlg.ShowModal() == wxID_OK)
+	{
+		m_currentFile = dlg.GetPath();
 
-    if (m_currentFile != wxEmptyString)
-    {
-        nsNodeWriter writer;
-        writer.writeToFile(wxToAscii(m_currentFile));
 
-        SetTitle(wxString::Format("Node Editor [%s]", m_currentFile));
-    }
-
+		nsNodeReader reader;
+		reader.load(m_currentFile);
+		SetTitle(wxString::Format("Node Editor [%s]", m_currentFile));
+	}
 }
 
 
-
-void nsMainWindow::saveAsEvent(wxCommandEvent &evt)
+void nsMainWindow::solutionCheckEvent(wxCommandEvent& evt)
 {
-    wxFileDialog dlg(this, 
-            "Save Node Logic",
-            wxEmptyString,
-            wxEmptyString,
-            "Node logic files (*.ntree)|*.ntree",
-            wxFD_SAVE);
-
-    if (dlg.ShowModal() == wxID_OK)
-        m_currentFile = dlg.GetPath();
+	// show / hide solution
+	wxAuiPaneInfo& inf = m_auiManager->GetPane(nsSolutionBrowser::getSingletonPtr());
+	inf.IsShown() ? inf.Hide() : inf.Show();
+	m_viewSolution->Check(inf.IsShown());
+	m_auiManager->Update();
 }
 
 
-void nsMainWindow::loadEvent(wxCommandEvent &evt)
+
+void nsMainWindow::propertiesCheckEvent( wxCommandEvent& evt )
 {
-    wxFileDialog dlg(this, 
-            "Load Node Logic",
-            wxEmptyString,
-            wxEmptyString,
-            "Node logic files (*.ntree)|*.ntree",
-            wxFD_OPEN);
-
-    if (dlg.ShowModal() == wxID_OK)
-    {
-        m_currentFile = dlg.GetPath();
-
-
-        nsNodeReader reader;
-        reader.load(m_currentFile);
-        SetTitle(wxString::Format("Node Editor [%s]", m_currentFile));
-    }
+	// show / hide properties
+	wxAuiPaneInfo& inf = m_auiManager->GetPane(nsPropertyPage::getSingletonPtr());
+	inf.IsShown() ? inf.Hide() : inf.Show();
+	m_viewProperties->Check(inf.IsShown());
+	m_auiManager->Update();
 }
 
 
-void nsMainWindow::solutionCheckEvent(wxCommandEvent &evt)
+void nsMainWindow::paneCloseEvent(wxAuiManagerEvent& evt)
 {
-    // show / hide solution
-    wxAuiPaneInfo &inf = m_auiManager->GetPane(nsSolutionBrowser::getSingletonPtr());
-    inf.IsShown() ? inf.Hide() : inf.Show();
-    m_viewSolution->Check(inf.IsShown());
-    m_auiManager->Update();
+	int id = evt.GetPane()->window->GetId();
+	if (id == NS_WID_SOLUTION)
+		m_viewSolution->Check(false);
+	else if (id == NS_WID_PROPERTY)
+		m_viewProperties->Check(false);
 }
 
 
 
-void nsMainWindow::propertiesCheckEvent( wxCommandEvent &evt )
+void nsMainWindow::showFullscreenEvent(wxCommandEvent& evt)
 {
-    // show / hide properties
-    wxAuiPaneInfo &inf = m_auiManager->GetPane(nsPropertyPage::getSingletonPtr());
-    inf.IsShown() ? inf.Hide() : inf.Show();
-    m_viewProperties->Check(inf.IsShown());
-    m_auiManager->Update();
+	// full screen window
+	ShowFullScreen(!IsFullScreen(), wxFULLSCREEN_NOCAPTION | wxFULLSCREEN_NOBORDER | wxFULLSCREEN_NOSTATUSBAR);
 }
 
 
-void nsMainWindow::paneCloseEvent(wxAuiManagerEvent &evt)
+void nsMainWindow::nodeAddEvent(wxCommandEvent& evt)
 {
-    int id = evt.GetPane()->window->GetId();
-    if (id == NS_WID_SOLUTION)
-        m_viewSolution->Check(false);
-    else if (id == NS_WID_PROPERTY)
-        m_viewProperties->Check(false);
+	int id = evt.GetId() - NSID_NODE_MENU_START;
+
+	// find menu identifier
+	nsNodeDef* nt = nsNodeTypeInfo::getSingleton().findTypeInfo( id );
+	if (!nt)
+	{
+		m_addMenuCaller = 0;
+		return;
+	}
+
+
+	// find the calling object & tree
+	nsNodeTree* tree = 0;
+	if (m_addMenuCaller && m_addMenuCaller->GetId() == NS_WID_CANVAS)
+		tree = static_cast<nsNodeCanvas*>(m_addMenuCaller)->getTree();
+	else if (m_addMenuCaller && m_addMenuCaller->GetId() == NS_WID_SOLUTION)
+		tree = static_cast<nsSolutionBrowser*>(m_addMenuCaller)->getSelectedTree();
+
+
+	if (!tree || !tree->getAttachedCanvas())
+	{
+		m_addMenuCaller = 0;
+		return;
+	}
+
+
+
+	nsNodeCanvas* canvas = tree->getAttachedCanvas();
+	if (canvas)
+	{
+		// drop node
+		nsNode* nd = tree->createNode(nt);
+		canvas->addNode(nd);
+	}
+
+	m_addMenuCaller = 0;
 }
 
 
 
-void nsMainWindow::showFullscreenEvent(wxCommandEvent &evt)
+void nsMainWindow::treeAddEvent(wxCommandEvent& evt)
 {
-    // full screen window
-    ShowFullScreen(!IsFullScreen(), wxFULLSCREEN_NOCAPTION | wxFULLSCREEN_NOBORDER | wxFULLSCREEN_NOSTATUSBAR);
+	// create new tree
+	nsNodeTree* tree = nsNodeManager::getSingleton().createTree();
+
+	nsTreeEvent treeEvent(NS_TREE_ADD, this, tree);
+
+	// send events
+	nsSolutionBrowser::getSingleton().treeEvent(treeEvent);
+	nsWorkspace::getSingleton().treeEvent(treeEvent);
 }
 
 
-void nsMainWindow::nodeAddEvent(wxCommandEvent &evt)
+void nsMainWindow::deleteCapturedEvent(wxCommandEvent& evt)
 {
-    int id= evt.GetId() - NSID_NODE_MENU_START;
-
-    // find menu identifier
-    nsNodeDef *nt= nsNodeTypeInfo::getSingleton().findTypeInfo( id );
-    if (!nt)
-    {
-        m_addMenuCaller = 0;
-        return;
-    }
-
-
-    // find the calling object & tree
-    nsNodeTree *tree = 0;
-    if (m_addMenuCaller && m_addMenuCaller->GetId() == NS_WID_CANVAS)
-        tree = static_cast<nsNodeCanvas *>(m_addMenuCaller)->getTree();
-    else if (m_addMenuCaller && m_addMenuCaller->GetId() == NS_WID_SOLUTION)
-        tree = static_cast<nsSolutionBrowser *>(m_addMenuCaller)->getSelectedTree();
-
-
-    if (!tree || !tree->getAttachedCanvas())
-    {
-        m_addMenuCaller = 0;
-        return;
-    }
-
-
-
-    nsNodeCanvas *canvas = tree->getAttachedCanvas();
-    if (canvas)
-    {
-        // drop node
-        nsNode *nd = tree->createNode(nt);
-        canvas->addNode(nd);
-    }
-
-    m_addMenuCaller = 0;
+	// pass down to workspace
+	nsWorkspace::getSingleton().deleteCapturedEvent(evt);
 }
 
 
-
-void nsMainWindow::treeAddEvent(wxCommandEvent &evt)
+void nsMainWindow::selectAllEvent(wxCommandEvent& evt)
 {
-    // create new tree
-    nsNodeTree *tree = nsNodeManager::getSingleton().createTree();
-
-    nsTreeEvent treeEvent(NS_TREE_ADD, this, tree);
-
-    // send events
-    nsSolutionBrowser::getSingleton().treeEvent(treeEvent);
-    nsWorkspace::getSingleton().treeEvent(treeEvent);
-    //nsPropertyPage::getSingleton().treeEvent(treeEvent);
+	// pass down to workspace
+	nsWorkspace::getSingleton().selectAllEvent(evt);
 }
 
 
-
-void nsMainWindow::grabCapturedEvent(wxCommandEvent &evt)
+void nsMainWindow::cutEvent(wxCommandEvent& evt)
 {
-    // pass down to workspace
-    nsWorkspace::getSingleton().grabCapturedEvent(evt);
+	// pass down to workspace
+	nsWorkspace::getSingleton().cutEvent(evt);
 }
 
 
-void nsMainWindow::deleteCapturedEvent(wxCommandEvent &evt)
+void nsMainWindow::copyEvent(wxCommandEvent& evt)
 {
-    // pass down to workspace
-    nsWorkspace::getSingleton().deleteCapturedEvent(evt);
+	// pass down to workspace
+	nsWorkspace::getSingleton().copyEvent(evt);
 }
 
 
-void nsMainWindow::selectAllEvent(wxCommandEvent &evt)
+void nsMainWindow::pasteEvent(wxCommandEvent& evt)
 {
-    // pass down to workspace
-    nsWorkspace::getSingleton().selectAllEvent(evt);
+	// pass down to workspace
+	nsWorkspace::getSingleton().pasteEvent(evt);
 }
 
 
-void nsMainWindow::cutEvent(wxCommandEvent &evt)
+void nsMainWindow::duplicateEvent(wxCommandEvent& evt)
 {
-    // pass down to workspace
-    nsWorkspace::getSingleton().cutEvent(evt);
+	// pass down to workspace
+	nsWorkspace::getSingleton().duplicateEvent(evt);
 }
 
 
-void nsMainWindow::copyEvent(wxCommandEvent &evt)
-{
-    // pass down to workspace
-    nsWorkspace::getSingleton().copyEvent(evt);
-}
-
-
-void nsMainWindow::pasteEvent(wxCommandEvent &evt)
-{
-    // pass down to workspace
-    nsWorkspace::getSingleton().pasteEvent(evt);
-}
-
-
-void nsMainWindow::duplicateEvent(wxCommandEvent &evt)
-{
-    // pass down to workspace
-    nsWorkspace::getSingleton().duplicateEvent(evt);
-}
-
-
-void nsMainWindow::setStatus(int i, const char *fmt, ...)
+void nsMainWindow::setStatus(int i, const char* fmt, ...)
 {
 #ifdef _MSC_VER
 # define ns_vsnprintf _vsnprintf
@@ -656,20 +599,20 @@ void nsMainWindow::setStatus(int i, const char *fmt, ...)
 # define ns_vsnprintf vsnprintf
 #endif
 
-    if (i < 0 && i >= 2 || !GetStatusBar())
-        return;
+	if (i < 0 && i >= 2 || !GetStatusBar())
+		return;
 
-    char buf[256];
-    va_list lst;
-    va_start(lst, fmt);
-    int size = ns_vsnprintf(buf, 256, fmt, lst);
-    va_end(lst);
+	char buf[256];
+	va_list lst;
+	va_start(lst, fmt);
+	int size = ns_vsnprintf(buf, 256, fmt, lst);
+	va_end(lst);
 
-    if (size < 0)
-    {
-        size = 256;
-        buf[size] = 0;
-    }
+	if (size < 0)
+	{
+		size = 256;
+		buf[size] = 0;
+	}
 
-    GetStatusBar()->SetStatusText(wxString(buf), i);
+	GetStatusBar()->SetStatusText(wxString(buf), i);
 }

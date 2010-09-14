@@ -28,15 +28,15 @@
 
 
 
-nsNodeTree::nsNodeTree(const nsString &name)
-    :   m_name(name),
-        m_isGroup(false),
-        m_open(false),
-        m_groupName(),
-        m_projection(0,0,0,0),
-        m_client(0),
-        m_size(0,0),
-        m_attachedObject("")
+nsNodeTree::nsNodeTree(const nsString& name)
+	:   m_name(name),
+	    m_isGroup(false),
+	    m_open(false),
+	    m_groupName(),
+	    m_projection(0, 0, 0, 0),
+	    m_client(0),
+	    m_size(0, 0),
+	    m_attachedObject("")
 {
 }
 
@@ -44,77 +44,76 @@ nsNodeTree::nsNodeTree(const nsString &name)
 
 nsNodeTree::~nsNodeTree()
 {
-    clear();
+	clear();
 }
 
 
 
-void nsNodeTree::deleteNode(nsNode *node)
+void nsNodeTree::deleteNode(nsNode* node)
 {
-    if (node && m_nodes.find(node) != 0)
-    {
-        node->unlink();
-        m_nodes.erase(node);
-        delete node;
-    }
+	if (node && m_nodes.find(node) != 0)
+	{
+		node->unlink();
+		m_nodes.erase(node);
+		delete node;
+	}
 }
 
 
 
-nsNode *nsNodeTree::createNode(nsNodeDef *nt)
+nsNode* nsNodeTree::createNode(nsNodeDef* nt)
 {
-    nsNode *nd = new nsNode(this, nt);
-    m_nodes.push_back(nd);
-    return nd;
+	nsNode* nd = new nsNode(this, nt);
+	m_nodes.push_back(nd);
+	return nd;
 }
 
 
 
-nsNode *nsNodeTree::createCloneNode(nsNode *nd)
+nsNode* nsNodeTree::createCloneNode(nsNode* nd)
 {
-    nsNode *nnd = nd->clone(this);
-    m_nodes.push_back(nnd);
-    return nnd;
+	nsNode* nnd = nd->clone(this);
+	m_nodes.push_back(nnd);
+	return nnd;
 }
 
 
-void nsNodeTree::bringToFront(nsNodes &list, nsNode *node)
+void nsNodeTree::bringToFront(nsNodes& list, nsNode* node)
 {
-    // make node the first to be rendered / hit tested
-    if (list.empty())
-        return;
+	// make node the first to be rendered / hit tested
+	if (list.empty())
+		return;
 
-    if ( node != 0 )
-    {
-        if (list.back() == node)
-            return;
+	if ( node != 0 )
+	{
+		if (list.back() == node)
+			return;
 
-        nsNodes::Pointer found = list.find( node );
-        if ( found != 0 )
-        {
-            list.erase( found );
-            list.push_back( node );
-        }
-    }
+		nsNodes::Pointer found = list.find( node );
+		if ( found != 0 )
+		{
+			list.erase( found );
+			list.push_back( node );
+		}
+	}
 }
 
 
 
-void nsNodeTree::bringToFront(nsNode *node)
+void nsNodeTree::bringToFront(nsNode* node)
 {
-    bringToFront(m_nodes, node);
+	bringToFront(m_nodes, node);
 }
 
 
 void nsNodeTree::clear(void)
 {
-    if (!m_nodes.empty())
-    {
-        nsNodeIterator it = getNodeIterator();
-        while(it.hasMoreElements())
-            delete it.getNext();
+	if (!m_nodes.empty())
+	{
+		nsNodeIterator it = getNodeIterator();
+		while (it.hasMoreElements())
+			delete it.getNext();
 
-        m_nodes.clear();
-    }
+		m_nodes.clear();
+	}
 }
-

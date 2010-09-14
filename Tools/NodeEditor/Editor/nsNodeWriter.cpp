@@ -42,7 +42,7 @@ nsNodeWriter::~nsNodeWriter()
 }
 
 
-static void nsWriteSocket(FILE *fp, nsSocket *sock)
+static void nsWriteSocket(FILE* fp, nsSocket* sock)
 {
 	fprintf(fp, "\t\t\tSocket %s {  ", sock->getType()->getName().c_str());
 
@@ -58,13 +58,13 @@ static void nsWriteSocket(FILE *fp, nsSocket *sock)
 
 
 
-static void nsWriteVariable(wxXmlNode *xnode, nsNode *node)
+static void nsWriteVariable(wxXmlNode* xnode, nsNode* node)
 {
 }
 
 
 
-static nsString nsGetNodeTypeString(nsNode *node)
+static nsString nsGetNodeTypeString(nsNode* node)
 {
 	switch (node->getType()->getType())
 	{
@@ -93,54 +93,6 @@ static nsString nsGetNodeTypeString(nsNode *node)
 }
 
 
-void nsNodeWriter::writeToFile(const char *path)
+void nsNodeWriter::writeToFile(const char* path)
 {
-    nsNodeManager &mgr = nsNodeManager::getSingleton();
-
-	FILE *fp = fopen(path, "wb");
-	if (!fp)
-		return;
-
-
-	nsTreeIterator trees = mgr.getTreeIterator();
-    while (trees.hasMoreElements())
-    {
-        nsNodeTree *tree = trees.getNext();
-
-
-		fprintf(fp, "\nNodeTree {\n");
-		//fprintf(fp, "\tname = %s;\n",		tree->getName().c_str());
-		fprintf(fp, "\tobject = \"%s\";\n\n",		tree->getAttachedName().c_str());
-
-
-		nsNodeIterator it = tree->getNodeIterator();
-        while (it.hasMoreElements())
-        {
-            nsNode *node = it.getNext();
-
-			fprintf(fp, "\tNode ND_%p {\n", node);
-			fprintf(fp, "\t\ttype = %s;\n",       nsGetNodeTypeString(node).c_str());
-			fprintf(fp, "\t\tobject = \"%s\";\n\n", node->getAttachedName().c_str());
-
-
-			nsSocket *sock = node->getFirstInput();
-			if (sock)
-			{
-				fprintf(fp, "\n\t\tInputs {\n");
-				while (sock)
-				{
-					nsWriteSocket(fp, sock);
-					sock = sock->getNext();
-				}
-				fprintf(fp, "\t\t}\n");
-			}
-
-			fprintf(fp, "\t}\n\n");
-
-        }
-
-		fprintf(fp, "}\n");
-    }
-
-	fclose(fp);
 }

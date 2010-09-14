@@ -38,7 +38,7 @@ nsNodeManager::nsNodeManager()
 
 nsNodeManager::~nsNodeManager()
 {
-    clear();
+	clear();
 }
 
 
@@ -46,30 +46,30 @@ nsNodeManager::~nsNodeManager()
 
 void nsNodeManager::clear(void)
 {
-    if (!m_trees.empty())
-    {
-        nsTreeIterator it = getTreeIterator();
-        while(it.hasMoreElements())
-            delete it.getNext();
+	if (!m_trees.empty())
+	{
+		nsTreeIterator it = getTreeIterator();
+		while (it.hasMoreElements())
+			delete it.getNext();
 
-        m_trees.clear();
-    }
+		m_trees.clear();
+	}
 }
 
 
-void nsNodeManager::deleteTree(nsNodeTree *tree)
+void nsNodeManager::deleteTree(nsNodeTree* tree)
 {
-    if (m_trees.find(tree) != 0)
-    {
-        m_trees.erase(tree);
-        delete tree;
-    }
+	if (m_trees.find(tree) != 0)
+	{
+		m_trees.erase(tree);
+		delete tree;
+	}
 }
 
 
-nsNodeTree *nsNodeManager::createTree(const nsString &name)
+nsNodeTree* nsNodeManager::createTree(const nsString& name)
 {
-    nsNodeTree *nt = new nsNodeTree(name);
-    m_trees.push_back(nt);
-    return nt;
+	nsNodeTree* nt = new nsNodeTree(name);
+	m_trees.push_back(nt);
+	return nt;
 }

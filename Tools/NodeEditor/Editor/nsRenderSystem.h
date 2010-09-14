@@ -39,48 +39,48 @@ class nsRenderSystem  : public nsSingleton<nsRenderSystem>
 {
 private:
 
-    nsRenderSystemPrivate   *m_context;
-    NSrect                  m_projection, m_clip;
+	nsRenderSystemPrivate*   m_context;
+	NSrect                  m_projection, m_clip;
 
-    void paintSocket(nsNode *parent, nsSocket *sock);
+	void paintSocket(nsNode* parent, nsSocket* sock);
 
 public:
 
-    nsRenderSystem();
-    ~nsRenderSystem();
+	nsRenderSystem();
+	~nsRenderSystem();
 
-    // one time setup
-    void initializeContextData(void);
+	// one time setup
+	void initializeContextData(void);
 
-    // cleanup
-    void finalizeContextData(void);
+	// cleanup
+	void finalizeContextData(void);
 
-    // setup viewport rendering
-    void loadViewport(const NSrect &rect);
+	// setup viewport rendering
+	void loadViewport(const NSrect& rect);
 
-    // projection
-    void loadProjection(const NSrect &rect);
+	// projection
+	void loadProjection(const NSrect& rect);
 
-    // clear buffers
-    void clear(void);
+	// clear buffers
+	void clear(void);
 
-    // back drop
-    void drawBackground(void);
+	// back drop
+	void drawBackground(void);
 
-    // node
-    void drawNode(nsNode *nd);
+	// node
+	void drawNode(nsNode* nd);
 
-    // socket linking
-    void drawConnectingSocket(nsSocket *sock, const NSvec2 &pos, const NSvec2 &mouse);
+	// socket linking
+	void drawConnectingSocket(nsSocket* sock, const NSvec2& pos, const NSvec2& mouse);
 
-    // all links
-    void drawSocketLinks(nsNodes &nodes);
+	// all links
+	void drawSocketLinks(nsNodes& nodes);
 
-    // selection rect
-    void drawDragRect(const NSrect &rect);
+	// selection rect
+	void drawDragRect(const NSrect& rect);
 
 
-    NS_DECLARE_SINGLETON(nsRenderSystem);
+	NS_DECLARE_SINGLETON(nsRenderSystem);
 };
 
 #endif//_nsRenderSystem_h_

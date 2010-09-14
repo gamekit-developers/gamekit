@@ -27,64 +27,64 @@
 #include "nsClipboard.h"
 
 
-typedef utHashTable<utPointerHashKey, nsNode *> nsOldNewMap;
+typedef utHashTable<utPointerHashKey, nsNode*> nsOldNewMap;
 
 
 
-nsNode *nsClipboard_findNode(nsOldNewMap &map, nsNode *find)
+nsNode* nsClipboard_findNode(nsOldNewMap& map, nsNode* find)
 {
-    // lookup nsility
-    UTsize pos = map.find(find);
-    if (pos != UT_NPOS)
-        return map.at(pos);
-    return 0;
+	// lookup nsility
+	UTsize pos = map.find(find);
+	if (pos != UT_NPOS)
+		return map.at(pos);
+	return 0;
 }
 
 
 
-void nsClipboard_link(nsOldNewMap &lookup, nsNodes &list)
+void nsClipboard_link(nsOldNewMap& lookup, nsNodes& list)
 {
 
-    nsSocket *sock, *link;
-    nsNode *linkPar;
+	nsSocket* sock, *link;
+	nsNode* linkPar;
 
-    // link copied sockets
-    nsNodeIterator it = nsNodeIterator(list);
-    while (it.hasMoreElements())
-    {
-        nsNode *orig = it.getNext();
-        nsNode *next = nsClipboard_findNode(lookup, orig);
+	// link copied sockets
+	nsNodeIterator it = nsNodeIterator(list);
+	while (it.hasMoreElements())
+	{
+		nsNode* orig = it.getNext();
+		nsNode* next = nsClipboard_findNode(lookup, orig);
 
-        if (!next) continue;
+		if (!next) continue;
 
 
-        // do link
-        sock = orig->getFirstInput();
-        while (sock)
-        {
-            if (sock->isConnected())
-            {
-                link =sock->getSocketLink();
+		// do link
+		sock = orig->getFirstInput();
+		while (sock)
+		{
+			if (sock->isConnected())
+			{
+				link = sock->getSocketLink();
 
-                UT_ASSERT(link);
-                linkPar = link->getParent();
+				UT_ASSERT(link);
+				linkPar = link->getParent();
 
-                // from node -> parent
-                nsNode *newPar = nsClipboard_findNode(lookup, linkPar);
+				// from node -> parent
+				nsNode* newPar = nsClipboard_findNode(lookup, linkPar);
 
-                if (newPar)
-                {
-                    // first
-                    nsSocket *thisInp = next->getInput(sock->getType()->getUid());
-                    nsSocket *thisOut = newPar->getOutput(link->getType()->getUid());
+				if (newPar)
+				{
+					// first
+					nsSocket* thisInp = next->getInput(sock->getType()->getUid());
+					nsSocket* thisOut = newPar->getOutput(link->getType()->getUid());
 
-                    if (thisInp && thisOut)
-                        thisInp->connect(thisOut);
-                }
-            }
-            sock = sock->getNext();
-        }
-    }
+					if (thisInp && thisOut)
+						thisInp->connect(thisOut);
+				}
+			}
+			sock = sock->getNext();
+		}
+	}
 }
 
 
@@ -96,102 +96,102 @@ nsClipboard::nsClipboard()
 
 nsClipboard::~nsClipboard()
 {
-    clear();
+	clear();
 }
 
 
 void nsClipboard::clear(void)
 {
-    if (!m_clip.empty())
-    {
-        // free contents
-        nsNodeIterator it(m_clip);
-        while (it.hasMoreElements())
-            delete it.getNext();
-        m_clip.clear();
-    }
+	if (!m_clip.empty())
+	{
+		// free contents
+		nsNodeIterator it(m_clip);
+		while (it.hasMoreElements())
+			delete it.getNext();
+		m_clip.clear();
+	}
 }
 
 
-void nsClipboard::paste(nsNodeTree *tree, nsNodes &list, const NSvec2 &position)
+void nsClipboard::paste(nsNodeTree* tree, nsNodes& list, const NSvec2& position)
 {
-    // paste into list from parent tree
-    if (m_clip.empty() || !tree)
-        return;
+	// paste into list from parent tree
+	if (m_clip.empty() || !tree)
+		return;
 
-    UTsize size = m_clip.size();
+	UTsize size = m_clip.size();
 
-    nsOldNewMap lookup;
-    nsNodes links;
+	nsOldNewMap lookup;
+	nsNodes links;
 
-    nsNodeIterator it(m_clip);
-    while (it.hasMoreElements())
-    {
-        nsNode *orig = it.getNext();
-        nsNode *next = tree->createCloneNode(orig);
-        lookup.insert(orig, next);
-        links.push_back(orig);
+	nsNodeIterator it(m_clip);
+	while (it.hasMoreElements())
+	{
+		nsNode* orig = it.getNext();
+		nsNode* next = tree->createCloneNode(orig);
+		lookup.insert(orig, next);
+		links.push_back(orig);
 
 
-        NSvec2 npos = next->getRect().getPosition();
-        next->setPosition(position.x, position.y);
+		NSvec2 npos = next->getRect().getPosition();
+		next->setPosition(position.x, position.y);
 
-        // maintain proportion
-        if (size > 1)
-            next->translate(npos.x, npos.y);
+		// maintain proportion
+		if (size > 1)
+			next->translate(npos.x, npos.y);
 
-        list.push_back(next);
-    }
+		list.push_back(next);
+	}
 
-    // re-iterate & relink
-    nsClipboard_link(lookup, links);
+	// re-iterate & relink
+	nsClipboard_link(lookup, links);
 }
 
 
-void nsClipboard::copy(nsNodes &list)
+void nsClipboard::copy(nsNodes& list)
 {
-    if (list.empty())
-        return;
+	if (list.empty())
+		return;
 
-    // clear previous contents
-    clear();
+	// clear previous contents
+	clear();
 
-    nsOldNewMap lookup;
+	nsOldNewMap lookup;
 
-    // build lookup of all items
-    nsNodeIterator it(list);
-    while (it.hasMoreElements())
-    {
-        nsNode *orig = it.getNext();
-        nsNode *next = orig->clone();
-        lookup.insert(orig, next);
+	// build lookup of all items
+	nsNodeIterator it(list);
+	while (it.hasMoreElements())
+	{
+		nsNode* orig = it.getNext();
+		nsNode* next = orig->clone();
+		lookup.insert(orig, next);
 
-        m_clip.push_back(next);
-    }
+		m_clip.push_back(next);
+	}
 
-    // re-iterate & relink
-    nsClipboard_link(lookup, list);
+	// re-iterate & relink
+	nsClipboard_link(lookup, list);
 }
 
 
-void nsClipboard::duplicate(nsNodeTree *tree, nsNodes &list, nsNodes &dest)
+void nsClipboard::duplicate(nsNodeTree* tree, nsNodes& list, nsNodes& dest)
 {
-    if (list.empty())
-        return;
+	if (list.empty())
+		return;
 
-    nsOldNewMap lookup;
+	nsOldNewMap lookup;
 
-    // build lookup of all items
-    nsNodeIterator it(list);
-    while (it.hasMoreElements())
-    {
-        nsNode *orig = it.getNext();
-        nsNode *next = tree->createCloneNode(orig);
-        lookup.insert(orig, next);
+	// build lookup of all items
+	nsNodeIterator it(list);
+	while (it.hasMoreElements())
+	{
+		nsNode* orig = it.getNext();
+		nsNode* next = tree->createCloneNode(orig);
+		lookup.insert(orig, next);
 
-        dest.push_back(next);
-    }
+		dest.push_back(next);
+	}
 
-    // re-iterate & relink
-    nsClipboard_link(lookup, list);
+	// re-iterate & relink
+	nsClipboard_link(lookup, list);
 }

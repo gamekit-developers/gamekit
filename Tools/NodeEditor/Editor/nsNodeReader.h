@@ -28,7 +28,7 @@
 #define _nsNodeReader_h_
 
 #include <wx/mstream.h>
-#include <wx/xml/xml.h> 
+#include <wx/xml/xml.h>
 #include "nsCommon.h"
 #include "NodeUtils/nsString.h"
 
@@ -36,33 +36,33 @@
 class nsNodeReader
 {
 protected:
-    typedef utHashTable<nsHashedString, nsNode*>    NodeLookup;
-    typedef utHashTable<nsHashedString, nsSocket*>  SocketLookup;
-    typedef utHashTableIterator<SocketLookup>       SocketLookupIter;
+	typedef utHashTable<nsHashedString, nsNode*>    NodeLookup;
+	typedef utHashTable<nsHashedString, nsSocket*>  SocketLookup;
+	typedef utHashTableIterator<SocketLookup>       SocketLookupIter;
 
-    struct LinkPair
-    {
-        nsString fromId;
-        nsSocket *inSock;
-    };
+	struct LinkPair
+	{
+		nsString fromId;
+		nsSocket* inSock;
+	};
 
-    typedef utArray<LinkPair>  SocketLink;
+	typedef utArray<LinkPair>  SocketLink;
 
-    NodeLookup      m_nodes;
-    SocketLink      m_linker;
-    SocketLookup    m_sockMap;
+	NodeLookup      m_nodes;
+	SocketLink      m_linker;
+	SocketLookup    m_sockMap;
 
 
-    void readNode(nsNodeTree *dest, wxXmlNode *node);
+	void readNode(nsNodeTree* dest, wxXmlNode* node);
 
 public:
 
-    nsNodeReader();
-    ~nsNodeReader();
+	nsNodeReader();
+	~nsNodeReader();
 
 
-    void    load(wxMemoryInputStream &buf);
-    void    load(const wxString &path);
+	void    load(wxMemoryInputStream& buf);
+	void    load(const wxString& path);
 };
 
 #endif//_nsNodeReader_h_

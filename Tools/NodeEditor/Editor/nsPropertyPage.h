@@ -41,35 +41,35 @@ class nsTreePropertyPage;
 class nsNodePropertyPage;
 
 
-class nsPropertyPage :  public wxPanel, 
-                        public nsNotifierBase,
-                        public nsSingleton<nsPropertyPage>
+class nsPropertyPage :  public wxPanel,
+	public nsNotifierBase,
+	public nsSingleton<nsPropertyPage>
 
 {
 protected:
 
-    nsToolBar               *m_tool;
-    nsPropertyManager       *m_manager;
+	nsToolBar*               m_tool;
+	nsPropertyManager*       m_manager;
 
-    wxPropertyGridPage      *m_default;
-    nsTreePropertyPage      *m_tree; 
-    nsNodePropertyPage      *m_nodeTypes;
+	wxPropertyGridPage*      m_default;
+	nsTreePropertyPage*      m_tree;
+	nsNodePropertyPage*      m_nodeTypes;
 
 
 public:
-    nsPropertyPage(wxWindow *parent);
-    virtual ~nsPropertyPage();
+	nsPropertyPage(wxWindow* parent);
+	virtual ~nsPropertyPage();
 
-    // one time init
-    void initialize(void);
+	// one time init
+	void initialize(void);
 
-    // tree notifications
-    void treeEvent(nsTreeEvent &evt);
+	// tree notifications
+	void treeEvent(nsTreeEvent& evt);
 
-    // node notifications
-    void nodeEvent(nsNodeEvent &evt);
+	// node notifications
+	void nodeEvent(nsNodeEvent& evt);
 
-    NS_DECLARE_SINGLETON(nsPropertyPage)
+	NS_DECLARE_SINGLETON(nsPropertyPage)
 
 };
 

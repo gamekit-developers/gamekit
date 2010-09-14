@@ -30,32 +30,32 @@
 
 enum nsColorPaletteEnum
 {
-    NS_PAL_DARK=0,
-    NS_PAL_MIDDLE,
-    NS_PAL_LIGHT,
-    NS_PAL_SHADOW,
-    NS_PAL_HIGHLIGHT,
-    NS_PAL_TEXT,
-    NS_PAL_TEXT_HEADER,
-    NS_PAL_MAX
+	NS_PAL_DARK = 0,
+	NS_PAL_MIDDLE,
+	NS_PAL_LIGHT,
+	NS_PAL_SHADOW,
+	NS_PAL_HIGHLIGHT,
+	NS_PAL_TEXT,
+	NS_PAL_TEXT_HEADER,
+	NS_PAL_MAX
 };
 
 
-enum nsDirection 
+enum nsDirection
 {
-    NS_SOCK_NULL,
-    NS_SOCK_IN,
-    NS_SOCK_OUT,
+	NS_SOCK_NULL,
+	NS_SOCK_IN,
+	NS_SOCK_OUT,
 };
 
 
 enum nsNodeTypes
 {
-    NT_NULL,
-    NT_SKELETON,
+	NT_NULL,
+	NT_SKELETON,
 
-    NT_MOUSE_MOTION,
-    NT_MOUSE_BUTTON,
+	NT_MOUSE_MOTION,
+	NT_MOUSE_BUTTON,
 
 	NT_OBJECT_MOTION,
 
@@ -74,17 +74,17 @@ enum nsNodeTypes
 
 enum nsSocketAlignment
 {
-    NS_SAL_TOP=0,
-    NS_SAL_BOTTOM,
+	NS_SAL_TOP = 0,
+	NS_SAL_BOTTOM,
 };
 
 enum nsGroupTypes
 {
-    NT_GROUP_ANIMATION,
-    NT_GROUP_USER_INPUT,
-    NT_GROUP_OUTPUT,
-    NT_GROUP_CONVERTER,
-    NT_GROUP_MAX,
+	NT_GROUP_ANIMATION,
+	NT_GROUP_USER_INPUT,
+	NT_GROUP_OUTPUT,
+	NT_GROUP_CONVERTER,
+	NT_GROUP_MAX,
 };
 
 static const float nsNodeHeaderSize       = 24.f;

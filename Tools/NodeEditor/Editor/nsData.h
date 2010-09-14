@@ -37,16 +37,16 @@ Data types for special nodes & sockets
 class nsNodeData
 {
 protected:
-    nsNodeDef *m_parent;
+	nsNodeDef* m_parent;
 
 public:
 
-    nsNodeData(nsNodeDef *parent) : m_parent(parent) {}
-    virtual ~nsNodeData() {}
+	nsNodeData(nsNodeDef* parent) : m_parent(parent) {}
+	virtual ~nsNodeData() {}
 
-    virtual nsNodeData* clone(void) {return new nsNodeData(*this);}
+	virtual nsNodeData* clone(void) {return new nsNodeData(*this);}
 
-    nsNodeDef *getParent(void) const {return m_parent;}
+	nsNodeDef* getParent(void) const {return m_parent;}
 };
 
 
@@ -56,19 +56,19 @@ class nsButtonData : public nsNodeData
 {
 private:
 
-	int m_enum; 
+	int m_enum;
 	int m_delay;
 
 public:
 
-	nsButtonData(nsNodeDef *parent)
+	nsButtonData(nsNodeDef* parent)
 		:   nsNodeData(parent), m_enum(-1), m_delay(-1)
-    {
-    }
+	{
+	}
 
 
-    virtual ~nsButtonData() {}
-    virtual nsNodeData *clone(void) {return new nsButtonData(*this); }
+	virtual ~nsButtonData() {}
+	virtual nsNodeData* clone(void) {return new nsButtonData(*this); }
 
 	UT_INLINE int getValue(void) {return m_enum;}
 	UT_INLINE int getDelay(void) {return m_delay;}
@@ -81,51 +81,51 @@ public:
 class nsMotionData : public nsNodeData
 {
 protected:
-    int         m_enum;
-    int         m_flag;
-    int         m_transform;
+	int         m_enum;
+	int         m_flag;
+	int         m_transform;
 	int         m_cf; // 1 | 2 | 4
-    NSvec2      m_cx, m_cy, m_cz;
-    nsString    m_relObj;
-    bool        m_keep;
+	NSvec2      m_cx, m_cy, m_cz;
+	nsString    m_relObj;
+	bool        m_keep;
 
 
 public:
 
-    nsMotionData(nsNodeDef *parent) 
-        :   nsNodeData(parent), m_enum(0), m_flag(-1), m_transform(1), 
-			m_cf(0), 
-			m_cx(0,0), 
-			m_cy(0,0), 
-			m_cz(0,0), 
-			m_relObj(""), 
-			m_keep(false)
-    {
-    }
+	nsMotionData(nsNodeDef* parent)
+		:   nsNodeData(parent), m_enum(0), m_flag(-1), m_transform(1),
+		    m_cf(0),
+		    m_cx(0, 0),
+		    m_cy(0, 0),
+		    m_cz(0, 0),
+		    m_relObj(""),
+		    m_keep(false)
+	{
+	}
 
 	virtual ~nsMotionData() {}
 
-    virtual nsNodeData *clone(void) {return new nsMotionData(*this); }
+	virtual nsNodeData* clone(void) {return new nsMotionData(*this); }
 
 
-    UT_INLINE int                   getEnum(void)                           {return m_enum;}
-    UT_INLINE int                   getFlag(void)                           {return m_flag;}
-    UT_INLINE int                   getTransform(void)                      {return m_transform;}
-    UT_INLINE NSvec2                getClampX(void)                         {return m_cx;}
-    UT_INLINE NSvec2                getClampY(void)                         {return m_cy;}
-    UT_INLINE NSvec2                getClampZ(void)                         {return m_cz;}
-    UT_INLINE const nsString        &getRelitaveObject(void)                {return m_relObj;}
-    UT_INLINE bool                  getKeep(void)                           {return m_keep;}
+	UT_INLINE int                   getEnum(void)                           {return m_enum;}
+	UT_INLINE int                   getFlag(void)                           {return m_flag;}
+	UT_INLINE int                   getTransform(void)                      {return m_transform;}
+	UT_INLINE NSvec2                getClampX(void)                         {return m_cx;}
+	UT_INLINE NSvec2                getClampY(void)                         {return m_cy;}
+	UT_INLINE NSvec2                getClampZ(void)                         {return m_cz;}
+	UT_INLINE const nsString&        getRelitaveObject(void)                {return m_relObj;}
+	UT_INLINE bool                  getKeep(void)                           {return m_keep;}
 	UT_INLINE int                   getClampFlag(void)                      {return m_cf;}
 
-    UT_INLINE void                  setEnum(int v)                          {m_enum = v;}
-    UT_INLINE void                  setFlag(int v)                          {m_flag = v;}
-    UT_INLINE void                  setTransform(int v)                     {m_transform = v;}
-    UT_INLINE void                  setClampX(const NSvec2& v)              {m_cx = v;}
-    UT_INLINE void                  setClampY(const NSvec2& v)              {m_cy = v;}
-    UT_INLINE void                  setClampZ(const NSvec2& v)              {m_cz = v;}
-    UT_INLINE void                  setRelitaveObject(const nsString &v)    {m_relObj = v;}
-    UT_INLINE void                  setKeep(bool v)                         {m_keep = v;}
+	UT_INLINE void                  setEnum(int v)                          {m_enum = v;}
+	UT_INLINE void                  setFlag(int v)                          {m_flag = v;}
+	UT_INLINE void                  setTransform(int v)                     {m_transform = v;}
+	UT_INLINE void                  setClampX(const NSvec2& v)              {m_cx = v;}
+	UT_INLINE void                  setClampY(const NSvec2& v)              {m_cy = v;}
+	UT_INLINE void                  setClampZ(const NSvec2& v)              {m_cz = v;}
+	UT_INLINE void                  setRelitaveObject(const nsString& v)    {m_relObj = v;}
+	UT_INLINE void                  setKeep(bool v)                         {m_keep = v;}
 	UT_INLINE void                  setClampFlag(int v)                     {m_cf = v;}
 };
 
@@ -135,59 +135,59 @@ class nsObjectSocketData
 {
 public:
 
-    enum AccessType
-    {
-        OSD_DEFAULT,
-        OSD_GET,
-        OSD_SET,
-        OSD_POSITION,
-        OSD_ORIENTATION,
-        OSD_ROTATION, 
-        OSD_LIV_VEL,
-        OSD_ANG_VEL,
-    };
+	enum AccessType
+	{
+		OSD_DEFAULT,
+		OSD_GET,
+		OSD_SET,
+		OSD_POSITION,
+		OSD_ORIENTATION,
+		OSD_ROTATION,
+		OSD_LIV_VEL,
+		OSD_ANG_VEL,
+	};
 
 protected:
 
 
-    AccessType          m_access;
-    nsString            m_object;
+	AccessType          m_access;
+	nsString            m_object;
 
 
 public:
 
 
-    nsObjectSocketData(const nsString &v = "") 
-        :   m_access(OSD_DEFAULT), m_object(v)
-    {
-    }
+	nsObjectSocketData(const nsString& v = "")
+		:   m_access(OSD_DEFAULT), m_object(v)
+	{
+	}
 
-    nsObjectSocketData(const nsObjectSocketData &rhs) 
-        :   m_access(rhs.m_access), m_object(rhs.m_object)
-    {
-    }
+	nsObjectSocketData(const nsObjectSocketData& rhs)
+		:   m_access(rhs.m_access), m_object(rhs.m_object)
+	{
+	}
 
-    ~nsObjectSocketData() {}
+	~nsObjectSocketData() {}
 
 
-    UT_INLINE const nsString&       getObject(void) const           {return m_object;}
-    UT_INLINE const AccessType&     getAccess(void) const           {return m_access;}
-    UT_INLINE void                  setObject(const nsString& v)    {m_object = v;}
-    UT_INLINE void                  setAccess(const AccessType& v)  {m_access = v;}
+	UT_INLINE const nsString&       getObject(void) const           {return m_object;}
+	UT_INLINE const AccessType&     getAccess(void) const           {return m_access;}
+	UT_INLINE void                  setObject(const nsString& v)    {m_object = v;}
+	UT_INLINE void                  setAccess(const AccessType& v)  {m_access = v;}
 };
 
 
 
 
-UT_INLINE void nsFromString(const nsString& s, nsObjectSocketData &v)
-{ 
-    v.setObject(s);
+UT_INLINE void nsFromString(const nsString& s, nsObjectSocketData& v)
+{
+	v.setObject(s);
 }
 
 
-UT_INLINE nsString nsToString(const nsObjectSocketData &v)
-{ 
-    return v.getObject();
+UT_INLINE nsString nsToString(const nsObjectSocketData& v)
+{
+	return v.getObject();
 }
 
 
@@ -199,29 +199,28 @@ class nsTypeClamp
 {
 public:
 
-    nsTypeClamp() {}
+	nsTypeClamp() {}
 
-    nsTypeClamp(const T& v, double _min, double _max, bool clamp) 
-        :   m_data(v), m_min(_min), m_max(_max), m_clamp(clamp)
-    {
-    }
+	nsTypeClamp(const T& v, double _min, double _max, bool clamp)
+		:   m_data(v), m_min(_min), m_max(_max), m_clamp(clamp)
+	{
+	}
 
 
-    T       m_data;
-    double  m_min, m_max;
-    bool    m_clamp;
+	T       m_data;
+	double  m_min, m_max;
+	bool    m_clamp;
 
-    UT_INLINE bool operator == (const nsTypeClamp<T>& rhs) const
-    {
-        return m_data == rhs.m_data;
-    }
+	UT_INLINE bool operator == (const nsTypeClamp<T>& rhs) const
+	{
+		return m_data == rhs.m_data;
+	}
 };
 
 
-typedef nsTypeClamp<NSvec2> NSClampedVec2; 
-typedef nsTypeClamp<NSvec3> NSClampedVec3; 
-typedef nsTypeClamp<NSvec4> NSClampedVec4; 
+typedef nsTypeClamp<NSvec2> NSClampedVec2;
+typedef nsTypeClamp<NSvec3> NSClampedVec3;
+typedef nsTypeClamp<NSvec4> NSClampedVec4;
 
 
 #endif//_nsData_h_
-

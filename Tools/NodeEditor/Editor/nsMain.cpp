@@ -38,44 +38,44 @@ class nsApp : public wxApp
 {
 private:
 
-    nsRenderSystem  *m_renderSystem;
-    nsNodeManager   *m_nodeManager;
-    nsNodeTypeInfo  *m_typeInfo;
+	nsRenderSystem*  m_renderSystem;
+	nsNodeManager*   m_nodeManager;
+	nsNodeTypeInfo*  m_typeInfo;
 
 
 public:
-    bool OnInit( void )
-    {
-        // load node types
-        m_typeInfo = new nsNodeTypeInfo();
-        m_typeInfo->registerTypes();
+	bool OnInit( void )
+	{
+		// load node types
+		m_typeInfo = new nsNodeTypeInfo();
+		m_typeInfo->registerTypes();
 
-        m_renderSystem = new nsRenderSystem();
+		m_renderSystem = new nsRenderSystem();
 
-        // main node manager
-        m_nodeManager = new nsNodeManager();
+		// main node manager
+		m_nodeManager = new nsNodeManager();
 
-        // load the app
-        nsMainWindow *win = new nsMainWindow();
-        SetTopWindow(win);
-        return true;
-    }
+		// load the app
+		nsMainWindow* win = new nsMainWindow();
+		SetTopWindow(win);
+		return true;
+	}
 
-    
-    int OnExit(void)
-    {
-        // remove all 
-        delete m_nodeManager;
-        m_nodeManager = 0;
 
-        delete m_renderSystem;
-        m_renderSystem = 0;
+	int OnExit(void)
+	{
+		// remove all
+		delete m_nodeManager;
+		m_nodeManager = 0;
 
-        delete m_typeInfo;
-        m_typeInfo = 0;
+		delete m_renderSystem;
+		m_renderSystem = 0;
 
-        return 0;
-    }
+		delete m_typeInfo;
+		m_typeInfo = 0;
+
+		return 0;
+	}
 
 };
 

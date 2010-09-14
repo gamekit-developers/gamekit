@@ -31,71 +31,71 @@
 
 
 BEGIN_EVENT_TABLE( nsNodePropertyPage, wxPropertyGridPage )
-    EVT_PG_CHANGED(wxID_ANY, nsNodePropertyPage::propertyChangeEvent)
+	EVT_PG_CHANGED(wxID_ANY, nsNodePropertyPage::propertyChangeEvent)
 END_EVENT_TABLE()
 
 
 
-nsNodePropertyPage::nsNodePropertyPage(nsPropertyManager *manager)
-    :   m_manager(manager),
-        m_node(0),
-        m_type(0),
-        m_data(0),
-        m_typename(0),
-        m_groupname(0),
-        m_id(0),
-        m_object(0)
+nsNodePropertyPage::nsNodePropertyPage(nsPropertyManager* manager)
+	:   m_manager(manager),
+	    m_node(0),
+	    m_type(0),
+	    m_data(0),
+	    m_typename(0),
+	    m_groupname(0),
+	    m_id(0),
+	    m_object(0)
 {
 }
 
 
 void nsNodePropertyPage::createProperties(void)
 {
-    // type info
+	// type info
 
-    m_type = new wxPropertyCategory("Information");
-    Append(m_type);
-
-
-    m_typename = new wxStringProperty("Type", wxPG_LABEL, "");
-    m_typename->SetHelpString("The type of data this node will operate on.");
-    m_type->AppendChild(m_typename);
+	m_type = new wxPropertyCategory("Information");
+	Append(m_type);
 
 
-    m_groupname = new wxStringProperty("Group", wxPG_LABEL, "");
-    m_groupname->SetHelpString("The containing group for menus.");
-    m_type->AppendChild(m_groupname);
+	m_typename = new wxStringProperty("Type", wxPG_LABEL, "");
+	m_typename->SetHelpString("The type of data this node will operate on.");
+	m_type->AppendChild(m_typename);
 
 
-    m_id = new wxStringProperty("Node Id", wxPG_LABEL, "");
-    m_id->SetHelpString("Unique node identifier.");
-    m_type->AppendChild(m_id);
+	m_groupname = new wxStringProperty("Group", wxPG_LABEL, "");
+	m_groupname->SetHelpString("The containing group for menus.");
+	m_type->AppendChild(m_groupname);
 
 
-    m_object =  new wxStringProperty("Attached Object", wxPG_LABEL, "");
-    m_object->SetHelpString("Attach a game object to this node. Blank to inherent from owning tree.");
-    m_type->AppendChild(m_object);
+	m_id = new wxStringProperty("Node Id", wxPG_LABEL, "");
+	m_id->SetHelpString("Unique node identifier.");
+	m_type->AppendChild(m_id);
+
+
+	m_object =  new wxStringProperty("Attached Object", wxPG_LABEL, "");
+	m_object->SetHelpString("Attach a game object to this node. Blank to inherent from owning tree.");
+	m_type->AppendChild(m_object);
 
 	DisableProperty(m_type);
-    EnableProperty(m_object);
+	EnableProperty(m_object);
 }
 
 
-void nsNodePropertyPage::propertyChangeEvent(wxPropertyGridEvent &evt)
+void nsNodePropertyPage::propertyChangeEvent(wxPropertyGridEvent& evt)
 {
-    if (!m_node)
-        return;
+	if (!m_node)
+		return;
 
 
-    wxPGProperty *prop = evt.GetProperty();
-    if (propertyChanged(prop))
-        evt.Skip();
-    else if (m_object == prop)
-    {
-        wxString str = prop->GetValue().GetString();
-        m_node->setAttachedName(wxToSTDString(str));
-        evt.Skip();
-    }
+	wxPGProperty* prop = evt.GetProperty();
+	if (propertyChanged(prop))
+		evt.Skip();
+	else if (m_object == prop)
+	{
+		wxString str = prop->GetValue().GetString();
+		m_node->setAttachedName(wxToSTDString(str));
+		evt.Skip();
+	}
 }
 
 
@@ -103,30 +103,30 @@ void nsNodePropertyPage::propertyChangeEvent(wxPropertyGridEvent &evt)
 
 void nsNodePropertyPage::selectRoot(void)
 {
-    // select the information property
-    SetSelection(m_type);
+	// select the information property
+	SetSelection(m_type);
 }
 
 
-void nsNodePropertyPage::setNode(nsNode *node)
+void nsNodePropertyPage::setNode(nsNode* node)
 {
-    if (m_node && m_node == node)
-        return;
+	if (m_node && m_node == node)
+		return;
 
-    m_node = node;
+	m_node = node;
 
-    if (m_node != 0)
-    {
-        // setup the ID
-        m_id->SetValue(wxString::Format("%p", m_node));
+	if (m_node != 0)
+	{
+		// setup the ID
+		m_id->SetValue(wxString::Format("%p", m_node));
 
 
 		m_typename->SetValue(wxString::Format("%s", m_node->getType()->getName().c_str()));
 		m_groupname->SetValue(wxString::Format("%s",
-			nsNodeTypeInfo::getSingleton().getGroupName(m_node->getType()->getGroup()).c_str() 
-			));
+		                                       nsNodeTypeInfo::getSingleton().getGroupName(m_node->getType()->getGroup()).c_str()
+		                                      ));
 
-        // apply object name
-        m_object->SetValue(wxString(m_node->getAttachedName()));
-    }
+		// apply object name
+		m_object->SetValue(wxString(m_node->getAttachedName()));
+	}
 }

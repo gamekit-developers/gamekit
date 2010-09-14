@@ -35,90 +35,79 @@
 class wxAuiManagerEvent;
 class nsOgreKitPreview;
 
-class nsMainWindow :    public wxFrame, 
-                        public nsSingleton<nsMainWindow>
+class nsMainWindow :    public wxFrame,
+	public nsSingleton<nsMainWindow>
 {
 protected:
-    wxAuiManager        *m_auiManager;
+	wxAuiManager*        m_auiManager;
 
-    // menu entries
-    wxMenuItem          *m_viewSolution;
-    wxMenuItem          *m_viewProperties;
-    wxWindow            *m_addMenuCaller;
-    wxString            m_currentFile, m_preview;
-    nsOgreKitPreview    *m_previewApp;
+	// menu entries
+	wxMenuItem*          m_viewSolution;
+	wxMenuItem*          m_viewProperties;
+	wxWindow*            m_addMenuCaller;
+	wxString            m_currentFile;
 
 
 private:
 
-    void    loadSettings(void);
-    void    saveSettings(void);
-    void    loadWindows(void);
-    void    loadMenus(void);
+	void    loadSettings(void);
+	void    saveSettings(void);
+	void    loadWindows(void);
+	void    loadMenus(void);
 
 
 
-    // events
-    void quitEvent(wxCommandEvent &evt);
-    void saveEvent(wxCommandEvent &evt);
-    void saveAsEvent(wxCommandEvent &evt);
-    void loadEvent(wxCommandEvent &evt);
-    void selectPreviewEvent(wxCommandEvent &evt);
+	// events
+	void quitEvent(wxCommandEvent& evt);
+	void saveEvent(wxCommandEvent& evt);
+	void saveAsEvent(wxCommandEvent& evt);
+	void loadEvent(wxCommandEvent& evt);
 
 
-    // show / hide panels
-    void solutionCheckEvent(wxCommandEvent &evt);
-    void propertiesCheckEvent(wxCommandEvent &evt);
-    void paneCloseEvent(wxAuiManagerEvent &evt);
-    void showFullscreenEvent(wxCommandEvent &evt);
+	// show / hide panels
+	void solutionCheckEvent(wxCommandEvent& evt);
+	void propertiesCheckEvent(wxCommandEvent& evt);
+	void paneCloseEvent(wxAuiManagerEvent& evt);
+	void showFullscreenEvent(wxCommandEvent& evt);
 
 
-    // node creation
-    void nodeAddEvent(wxCommandEvent &evt);
-    // tree creation
-    void treeAddEvent(wxCommandEvent &evt);
+	// node creation
+	void nodeAddEvent(wxCommandEvent& evt);
+	// tree creation
+	void treeAddEvent(wxCommandEvent& evt);
 
 
-    // global node space
-    void grabCapturedEvent(wxCommandEvent &evt);
-    void deleteCapturedEvent(wxCommandEvent &evt);
-    void selectAllEvent(wxCommandEvent &evt);
+	// global node space
+	void deleteCapturedEvent(wxCommandEvent& evt);
+	void selectAllEvent(wxCommandEvent& evt);
 
 
-    // copy, paste & cut 
-    void copyEvent(wxCommandEvent &evt);
-    void pasteEvent(wxCommandEvent &evt);
-    void cutEvent(wxCommandEvent &evt);
-    void duplicateEvent(wxCommandEvent &evt);
-
-
-    // game menu events
-    void playEvent(wxCommandEvent &evt);
+	// copy, paste & cut
+	void copyEvent(wxCommandEvent& evt);
+	void pasteEvent(wxCommandEvent& evt);
+	void cutEvent(wxCommandEvent& evt);
+	void duplicateEvent(wxCommandEvent& evt);
 
 
 public:
-    nsMainWindow();
-    virtual ~nsMainWindow();
+	nsMainWindow();
+	virtual ~nsMainWindow();
 
 
-    // the base add toolbox
-    void    makeNodeMenu(wxWindow *caller, wxMenu *menu);
+	// the base add toolbox
+	void    makeNodeMenu(wxWindow* caller, wxMenu* menu);
 
-    // the base edit toolbox
-    void    makeEditMenu(wxMenu *menu);
+	// the base edit toolbox
+	void    makeEditMenu(wxMenu* menu);
 
-    // status text nsilities
-    void    setStatus(int id, const char *fmt, ...);
+	// status text nsilities
+	void    setStatus(int id, const char* fmt, ...);
 
-    void                setPreviewFile(const wxString& file)    {m_preview = file;}
-    const wxString      &getPreviewFile(void)                   {return m_preview;}
+	// singleton access
+	NS_DECLARE_SINGLETON(nsMainWindow);
 
-
-    // singleton access
-    NS_DECLARE_SINGLETON(nsMainWindow);
-
-    // wx tables
-    DECLARE_EVENT_TABLE();
+	// wx tables
+	DECLARE_EVENT_TABLE();
 };
 
 

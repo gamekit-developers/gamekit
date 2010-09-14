@@ -27,7 +27,7 @@
 #ifndef _nsXmlUtils_h_
 #define _nsXmlUtils_h_
 
-#include <wx/xml/xml.h> 
+#include <wx/xml/xml.h>
 #include "NodeUtils/nsString.h"
 #include "nsVariable.h"
 #include "nsMath.h"
@@ -40,17 +40,17 @@ class nsXmlUtils
 public:
 
 
-    static bool     hasAttribute(const nsString &attr, wxXmlNode *node);
-    static bool     getAttributeBool(const nsString &attr, wxXmlNode *node, bool def = false);
-    static int      getAttributeInt(const nsString &attr, wxXmlNode *node, int def = 0);
-    static NSfloat  getAttributeFloat(const nsString &attr, wxXmlNode *node, NSfloat def = 0);
-    static nsString getAttributeString(const nsString &attr, wxXmlNode *node, const nsString &def = "");
-    static NSvec2   getAttributeVec2(const nsString &attr, wxXmlNode *node, const NSvec2 &def = NSvec2());
-    static NSvec3   getAttributeVec3(const nsString &attr, wxXmlNode *node, const NSvec3 &def = NSvec3());
-    static NSvec4   getAttributeVec4(const nsString &attr, wxXmlNode *node, const NSvec4 &def = NSvec4());
-    static NSquat   getAttributeQuat(const nsString &attr, wxXmlNode *node, const NSquat &def = NSquat());
-    static NSrect   getAttributeRect(const nsString &attr, wxXmlNode *node, const NSrect &def = NSrect());
-    static NScolor  getAttributeColor(const nsString &attr, wxXmlNode *node, const NScolor &def = NScolor());
+	static bool     hasAttribute(const nsString& attr, wxXmlNode* node);
+	static bool     getAttributeBool(const nsString& attr, wxXmlNode* node, bool def = false);
+	static int      getAttributeInt(const nsString& attr, wxXmlNode* node, int def = 0);
+	static NSfloat  getAttributeFloat(const nsString& attr, wxXmlNode* node, NSfloat def = 0);
+	static nsString getAttributeString(const nsString& attr, wxXmlNode* node, const nsString& def = "");
+	static NSvec2   getAttributeVec2(const nsString& attr, wxXmlNode* node, const NSvec2& def = NSvec2());
+	static NSvec3   getAttributeVec3(const nsString& attr, wxXmlNode* node, const NSvec3& def = NSvec3());
+	static NSvec4   getAttributeVec4(const nsString& attr, wxXmlNode* node, const NSvec4& def = NSvec4());
+	static NSquat   getAttributeQuat(const nsString& attr, wxXmlNode* node, const NSquat& def = NSquat());
+	static NSrect   getAttributeRect(const nsString& attr, wxXmlNode* node, const NSrect& def = NSrect());
+	static NScolor  getAttributeColor(const nsString& attr, wxXmlNode* node, const NScolor& def = NScolor());
 };
 
 #endif//_nsXmlUtils_h_

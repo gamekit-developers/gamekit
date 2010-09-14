@@ -34,13 +34,13 @@
 
 typedef struct nsTextExtents
 {
-    NSfloat width, height;
+	NSfloat width, height;
 } nsTextExtents;
 
 typedef struct nsChar
 {
-    NSfloat xco,yco;
-    NSfloat width, height;
+	NSfloat xco, yco;
+	NSfloat width, height;
 } nsChar;
 
 
@@ -56,33 +56,33 @@ typedef struct nsChar
 class nsFont
 {
 public:
-    typedef utArray<nsChar *> CharacterVector;
+	typedef utArray<nsChar*> CharacterVector;
 
 
 public:
-    nsFont(const wxFont &font, int size);
-    ~nsFont();
+	nsFont(const wxFont& font, int size);
+	~nsFont();
 
-    nsChar      getChar( char ch ) const;
-    NSfloat     getPixelWidth(NSfloat size, const char *str, int len);
+	nsChar      getChar( char ch ) const;
+	NSfloat     getPixelWidth(NSfloat size, const char* str, int len);
 
 private:
-    friend class nsRenderSystemPrivate;
+	friend class nsRenderSystemPrivate;
 
-    void        doCreate(void);
-    void        doDestroy(void);
-    wxPoint     findBestSize(int res);
+	void        doCreate(void);
+	void        doDestroy(void);
+	wxPoint     findBestSize(int res);
 
 
-    unsigned char   *m_imaData;
-    unsigned int    m_tex;
-    int             m_offset, m_maxChar;
-    float           m_width, m_height;
-    float           m_baseHeight;
-    float           m_baseWidth;
-    wxCoord         m_res;
-    wxFont          m_font;
-    CharacterVector m_chars;
+	unsigned char*   m_imaData;
+	unsigned int    m_tex;
+	int             m_offset, m_maxChar;
+	float           m_width, m_height;
+	float           m_baseHeight;
+	float           m_baseWidth;
+	wxCoord         m_res;
+	wxFont          m_font;
+	CharacterVector m_chars;
 };
 
 #endif//_nsFont_h_

@@ -35,42 +35,42 @@ class wxTreeCtrl;
 class wxTreeEvent;
 
 
-class nsSolutionBrowser :   public wxPanel, 
-                            public nsNotifierBase, 
-                            public nsSingleton<nsSolutionBrowser>
+class nsSolutionBrowser :   public wxPanel,
+	public nsNotifierBase,
+	public nsSingleton<nsSolutionBrowser>
 {
 protected:
-    wxTreeCtrl  *m_tree;
+	wxTreeCtrl*  m_tree;
 
-    // root events
-    void itemChangeEvent(wxTreeEvent &evt);
-    void itemActivatedEvent(wxTreeEvent &evt);
+	// root events
+	void itemChangeEvent(wxTreeEvent& evt);
+	void itemActivatedEvent(wxTreeEvent& evt);
 
-    // label editing
-    void labelEditEvent(wxTreeEvent &evt);
-    void labelMenuEditEvent(wxCommandEvent &evt);
+	// label editing
+	void labelEditEvent(wxTreeEvent& evt);
+	void labelMenuEditEvent(wxCommandEvent& evt);
 
-    // menu add
-    void treeOpenMenu(wxTreeEvent &evt);
-    void addTreeEvent(wxCommandEvent &evt);
-    void removeTreeEvent(wxCommandEvent &evt);
-    void openTreeEvent(wxCommandEvent &evt);
+	// menu add
+	void treeOpenMenu(wxTreeEvent& evt);
+	void addTreeEvent(wxCommandEvent& evt);
+	void removeTreeEvent(wxCommandEvent& evt);
+	void openTreeEvent(wxCommandEvent& evt);
 
 
 public:
-    nsSolutionBrowser(wxWindow *parent);
-    virtual ~nsSolutionBrowser();
+	nsSolutionBrowser(wxWindow* parent);
+	virtual ~nsSolutionBrowser();
 
-    void treeEvent(nsTreeEvent &evt);
+	void treeEvent(nsTreeEvent& evt);
 
-    // access to the current tree
-    nsNodeTree *getSelectedTree(void);
+	// access to the current tree
+	nsNodeTree* getSelectedTree(void);
 
 
-    NS_DECLARE_SINGLETON(nsSolutionBrowser);
+	NS_DECLARE_SINGLETON(nsSolutionBrowser);
 
-    // wx tables
-    DECLARE_EVENT_TABLE();
+	// wx tables
+	DECLARE_EVENT_TABLE();
 
 };
 

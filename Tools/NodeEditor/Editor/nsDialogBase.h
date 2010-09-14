@@ -41,7 +41,7 @@ class nsDialog : public wxDialog
 {
 public:
 
-	nsDialog(wxWindow *parent, int id, const wxString& name, nsNode *node);
+	nsDialog(wxWindow* parent, int id, const wxString& name, nsNode* node);
 	virtual ~nsDialog();
 	virtual void Flush(void) = 0;
 
@@ -49,10 +49,10 @@ public:
 protected:
 
 	wxSizer* GetRootSizer(void);
-	void ApplyRootSizer(wxSizer *sz);
-	nsNode *m_node;
+	void ApplyRootSizer(wxSizer* sz);
+	nsNode* m_node;
 
-	wxTextCtrl *m_name;
+	wxTextCtrl* m_name;
 
 };
 
@@ -62,13 +62,13 @@ class nsMouseMotionDialog : public nsDialog
 {
 private:
 
-	wxSpinCtrlDouble *m_scaleX;
-	wxSpinCtrlDouble *m_scaleY;
+	wxSpinCtrlDouble* m_scaleX;
+	wxSpinCtrlDouble* m_scaleY;
 
 
 public:
 
-	nsMouseMotionDialog(wxWindow *parent, nsNode *node);
+	nsMouseMotionDialog(wxWindow* parent, nsNode* node);
 	virtual ~nsMouseMotionDialog() {}
 	void Flush(void);
 
@@ -79,14 +79,14 @@ class nsMouseButtonDialog : public nsDialog
 {
 private:
 
-	wxCheckBox *m_update;
-	wxComboBox *m_button;
-	wxSpinCtrl *m_delay;
+	wxCheckBox* m_update;
+	wxComboBox* m_button;
+	wxSpinCtrl* m_delay;
 
 
 public:
 
-	nsMouseButtonDialog(wxWindow *parent, nsNode *node);
+	nsMouseButtonDialog(wxWindow* parent, nsNode* node);
 	virtual ~nsMouseButtonDialog() {}
 
 	void Flush(void);
@@ -100,27 +100,27 @@ class nsObjectMotionDialog : public nsDialog
 {
 private:
 
-	wxCheckBox *m_u;
-	wxSpinCtrlDouble *m_x;
-	wxSpinCtrlDouble *m_y;
-	wxSpinCtrlDouble *m_z;
-	wxSpinCtrlDouble *m_d;
+	wxCheckBox* m_u;
+	wxSpinCtrlDouble* m_x;
+	wxSpinCtrlDouble* m_y;
+	wxSpinCtrlDouble* m_z;
+	wxSpinCtrlDouble* m_d;
 
 
-	wxTextCtrl *m_gameObject;
-	wxComboBox *m_motionType;
-	wxComboBox *m_transformSpace;
+	wxTextCtrl* m_gameObject;
+	wxComboBox* m_motionType;
+	wxComboBox* m_transformSpace;
 
 
-	wxCheckBox *m_cx, *m_cy, *m_cz;
-	wxSpinCtrlDouble *m_minX, *m_maxX;
-	wxSpinCtrlDouble *m_minY, *m_maxY;
-	wxSpinCtrlDouble *m_minZ, *m_maxZ;
+	wxCheckBox* m_cx, *m_cy, *m_cz;
+	wxSpinCtrlDouble* m_minX, *m_maxX;
+	wxSpinCtrlDouble* m_minY, *m_maxY;
+	wxSpinCtrlDouble* m_minZ, *m_maxZ;
 
 
 public:
 
-	nsObjectMotionDialog(wxWindow *parent, nsNode *node);
+	nsObjectMotionDialog(wxWindow* parent, nsNode* node);
 	virtual ~nsObjectMotionDialog() {}
 
 	void Flush(void);
@@ -133,11 +133,11 @@ public:
 class nsBoolDialog : public nsDialog
 {
 private:
-	wxCheckBox *m_ctrl;
+	wxCheckBox* m_ctrl;
 
 public:
 
-	nsBoolDialog(wxWindow *parent, nsNode *node);
+	nsBoolDialog(wxWindow* parent, nsNode* node);
 	virtual ~nsBoolDialog() {}
 	void Flush(void);
 };
@@ -146,11 +146,11 @@ public:
 class nsIntDialog : public nsDialog
 {
 private:
-	wxSpinCtrl *m_ctrl;
+	wxSpinCtrl* m_ctrl;
 
 public:
 
-	nsIntDialog(wxWindow *parent, nsNode *node);
+	nsIntDialog(wxWindow* parent, nsNode* node);
 	virtual ~nsIntDialog() {}
 	void Flush(void);
 };
@@ -158,11 +158,11 @@ public:
 class nsFloatDialog : public nsDialog
 {
 private:
-	wxSpinCtrlDouble *m_ctrl;
+	wxSpinCtrlDouble* m_ctrl;
 
 public:
 
-	nsFloatDialog(wxWindow *parent, nsNode *node);
+	nsFloatDialog(wxWindow* parent, nsNode* node);
 	virtual ~nsFloatDialog() {}
 	void Flush(void);
 };

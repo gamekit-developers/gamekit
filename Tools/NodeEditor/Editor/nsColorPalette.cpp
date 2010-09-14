@@ -69,17 +69,17 @@ static nsColorPalette NS_SPE_OBJECT_PAL(GREY2);
 const nsColorPalette& nsSystemPalette::getPalette(int in)
 {
 #define PAL_CASE(x) case x: return x##_PAL;
-    switch (in)
-    {
-    PAL_CASE(NS_SPE_ANIMATION);
-    PAL_CASE(NS_SPE_INPUT);
-    PAL_CASE(NS_SPE_OUTPUT);
-    PAL_CASE(NS_SPE_CONVERTER);
-    PAL_CASE(NS_SPE_BOOL);
-    PAL_CASE(NS_SPE_INT);
-    PAL_CASE(NS_SPE_FLOAT);
-    PAL_CASE(NS_SPE_STRING);
-    PAL_CASE(NS_SPE_OBJECT)
-    }
-    return NS_SPE_DEF_PAL;
+	switch (in)
+	{
+		PAL_CASE(NS_SPE_ANIMATION);
+		PAL_CASE(NS_SPE_INPUT);
+		PAL_CASE(NS_SPE_OUTPUT);
+		PAL_CASE(NS_SPE_CONVERTER);
+		PAL_CASE(NS_SPE_BOOL);
+		PAL_CASE(NS_SPE_INT);
+		PAL_CASE(NS_SPE_FLOAT);
+		PAL_CASE(NS_SPE_STRING);
+		PAL_CASE(NS_SPE_OBJECT)
+	}
+	return NS_SPE_DEF_PAL;
 }

@@ -26,12 +26,12 @@
 
 Common Layout:
 
-	---
-	Node Data
-	---
-	Input Sockets
-	---
-	OK | Cancel
+    ---
+    Node Data
+    ---
+    Input Sockets
+    ---
+    OK | Cancel
 
 
 
@@ -41,7 +41,7 @@ Common Layout:
 #include "nsSocket.h"
 
 #include <wx/sizer.h>
-#include <wx/statline.h> 
+#include <wx/statline.h>
 #include <wx/button.h>
 #include <wx/combobox.h>
 #include <wx/stattext.h>
@@ -61,8 +61,8 @@ Common Layout:
 
 // Base implementation
 
-nsDialog::nsDialog(wxWindow *parent,int id, const wxString& name, nsNode *node) 
-	:	wxDialog(parent, id, name), m_node(node)
+nsDialog::nsDialog(wxWindow* parent, int id, const wxString& name, nsNode* node)
+	:    wxDialog(parent, id, name), m_node(node)
 {
 }
 
@@ -73,22 +73,22 @@ nsDialog::~nsDialog()
 
 wxSizer* nsDialog::GetRootSizer(void)
 {
-	wxSizer *sizer = new wxBoxSizer( wxVERTICAL );
+	wxSizer* sizer = new wxBoxSizer( wxVERTICAL );
 	return sizer;
 }
 
 
-void nsDialog::ApplyRootSizer(wxSizer *sz)
+void nsDialog::ApplyRootSizer(wxSizer* sz)
 {
-	wxBoxSizer *main = new wxBoxSizer(wxVERTICAL);
+	wxBoxSizer* main = new wxBoxSizer(wxVERTICAL);
 
 
-	wxSizer *okc = CreateButtonSizer(wxOK | wxCANCEL);
+	wxSizer* okc = CreateButtonSizer(wxOK | wxCANCEL);
 	sz->Add(okc, wxSizerFlags(1).Right());
 	main->Add(sz, wxSizerFlags(1).Border(wxALL, 10));
 
 	SetSizer( main );
-    main->SetSizeHints( this );
+	main->SetSizeHints( this );
 }
 
 
@@ -96,19 +96,19 @@ void nsDialog::ApplyRootSizer(wxSizer *sz)
 
 
 
-nsMouseMotionDialog::nsMouseMotionDialog(wxWindow *parent, nsNode *node)
-	:	nsDialog(parent, -1, wxT("Mouse Motion"), node)
+nsMouseMotionDialog::nsMouseMotionDialog(wxWindow* parent, nsNode* node)
+	:    nsDialog(parent, -1, wxT("Mouse Motion"), node)
 {
 
-	wxSizer *sizer = GetRootSizer();
+	wxSizer* sizer = GetRootSizer();
 
 	// No data
 
-	nsSocket *scaleX = node->getInput(0);
-	nsSocket *scaleY = node->getInput(1);
+	nsSocket* scaleX = node->getInput(0);
+	nsSocket* scaleY = node->getInput(1);
 
-	nsSocketDef *stype;
-	wxStaticText *xlab, *ylab;
+	nsSocketDef* stype;
+	wxStaticText* xlab, *ylab;
 
 	{
 		stype = scaleX->getType();
@@ -150,18 +150,18 @@ nsMouseMotionDialog::nsMouseMotionDialog(wxWindow *parent, nsNode *node)
 
 
 
-	wxStaticBoxSizer *sbs = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Input Sockets"));
+	wxStaticBoxSizer* sbs = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Input Sockets"));
 
 
-	// Input Sockets 
+	// Input Sockets
 
-	wxFlexGridSizer *fgs = new wxFlexGridSizer(2, 2, 0, 0);
-	fgs->Add(xlab, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-	fgs->Add(m_scaleX, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-	fgs->Add(ylab,  1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-	fgs->Add(m_scaleY,  1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	wxFlexGridSizer* fgs = new wxFlexGridSizer(2, 2, 0, 0);
+	fgs->Add(xlab, 1, wxALL | wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL, 5);
+	fgs->Add(m_scaleX, 1, wxALL | wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL, 5);
+	fgs->Add(ylab,  1, wxALL | wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL, 5);
+	fgs->Add(m_scaleY,  1, wxALL | wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL, 5);
 
-	sbs->Add(fgs,  1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	sbs->Add(fgs,  1, wxALL | wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL, 5);
 
 	sizer->Add(sbs, MAIN_SIZER_DEF);
 
@@ -177,16 +177,16 @@ void nsMouseMotionDialog::Flush(void)
 
 
 
-nsMouseButtonDialog::nsMouseButtonDialog(wxWindow *parent, nsNode *node)
-	:	nsDialog(parent, -1, wxT("Mouse Button"), node)
+nsMouseButtonDialog::nsMouseButtonDialog(wxWindow* parent, nsNode* node)
+	:    nsDialog(parent, -1, wxT("Mouse Button"), node)
 {
-	wxSizer *sizer = GetRootSizer();
-	nsButtonData *bd = (nsButtonData*)node->getData();
+	wxSizer* sizer = GetRootSizer();
+	nsButtonData* bd = (nsButtonData*)node->getData();
 
 
 
 
-	wxStaticBoxSizer *sbs = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Node Data"));
+	wxStaticBoxSizer* sbs = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Node Data"));
 
 	wxArrayString opts;
 	opts.push_back("Left");
@@ -194,7 +194,7 @@ nsMouseButtonDialog::nsMouseButtonDialog(wxWindow *parent, nsNode *node)
 	opts.push_back("Right");
 
 
-	wxFlexGridSizer *labelData = new wxFlexGridSizer( 2, 2, 1, 1);
+	wxFlexGridSizer* labelData = new wxFlexGridSizer( 2, 2, 1, 1);
 
 	wxString def = wxT("Left");
 	int val = bd->getValue();
@@ -204,11 +204,11 @@ nsMouseButtonDialog::nsMouseButtonDialog(wxWindow *parent, nsNode *node)
 		def = wxT("Right");
 
 
-	wxStaticText *label = new wxStaticText(this, -1, wxT("Mouse Button"));
+	wxStaticText* label = new wxStaticText(this, -1, wxT("Mouse Button"));
 	m_button = new wxComboBox(this, -1, def, wxDefaultPosition, wxDefaultSize, opts);
 
-	labelData->Add(label,    1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-	labelData->Add(m_button, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	labelData->Add(label,    1, wxALL | wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL, 5);
+	labelData->Add(m_button, 1, wxALL | wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL, 5);
 
 	label   = new wxStaticText(this, -1, wxT("Click Delay"));
 	m_delay = new wxSpinCtrl(this, -1, wxT("0"));
@@ -217,14 +217,14 @@ nsMouseButtonDialog::nsMouseButtonDialog(wxWindow *parent, nsNode *node)
 	m_delay->SetValue(bd->getDelay());
 	m_delay->SetRange(0, NS_LINEAR_MAX);
 
-	labelData->Add(label,   1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-	labelData->Add(m_delay, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	labelData->Add(label,   1, wxALL | wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL, 5);
+	labelData->Add(m_delay, 1, wxALL | wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL, 5);
 
 	sbs->Add( labelData, DATA_SIZER_DEF);
 	sizer->Add(sbs, MAIN_SIZER_DEF);
 
 
-	// Input Sockets 
+	// Input Sockets
 
 	sbs = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Input Sockets"));
 	m_update = new wxCheckBox(this, wxID_ANY, wxT("Update"));
@@ -234,7 +234,7 @@ nsMouseButtonDialog::nsMouseButtonDialog(wxWindow *parent, nsNode *node)
 		m_update->Disable();
 
 
-	sbs->Add( m_update, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	sbs->Add( m_update, 1, wxALL | wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL, 5);
 	sizer->Add(sbs, MAIN_SIZER_DEF);
 
 
@@ -244,7 +244,7 @@ nsMouseButtonDialog::nsMouseButtonDialog(wxWindow *parent, nsNode *node)
 
 void nsMouseButtonDialog::Flush(void)
 {
-	nsButtonData *bd = (nsButtonData*)m_node->getData();
+	nsButtonData* bd = (nsButtonData*)m_node->getData();
 	bd->setValue(m_button->GetSelection());
 	bd->setDelay(m_delay->GetValue());
 	m_node->getInput(0)->setValue(m_update->GetValue());
@@ -256,20 +256,20 @@ void nsMouseButtonDialog::Flush(void)
 
 
 
-nsObjectMotionDialog::nsObjectMotionDialog(wxWindow *parent, nsNode *node)
-	:	nsDialog(parent, -1, "Object Motion", node)
+nsObjectMotionDialog::nsObjectMotionDialog(wxWindow* parent, nsNode* node)
+	:    nsDialog(parent, -1, "Object Motion", node)
 {
-	wxSizer *sizer = GetRootSizer();
+	wxSizer* sizer = GetRootSizer();
 
 	// Data
-	nsMotionData *data = (nsMotionData*)node->getData();
+	nsMotionData* data = (nsMotionData*)node->getData();
 
-	wxStaticBoxSizer *sbs = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Motion Data"));
+	wxStaticBoxSizer* sbs = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Motion Data"));
 
 
 	wxArrayString mvals;
 
-	wxStaticText *mt, *ts;
+	wxStaticText* mt, *ts;
 	{
 		mt = new wxStaticText(this, wxID_ANY, wxT("Motion Type"));
 		mvals.push_back(wxT("Rotation"));
@@ -344,7 +344,7 @@ nsObjectMotionDialog::nsObjectMotionDialog(wxWindow *parent, nsNode *node)
 	}
 
 
-	wxFlexGridSizer *labelData = new wxFlexGridSizer( 5, 3, 0, 0);
+	wxFlexGridSizer* labelData = new wxFlexGridSizer( 5, 3, 0, 0);
 
 	labelData->Add(mt, DATA_ALIGN_ARGS);
 	labelData->Add(m_motionType, DATA_ALIGN_ARGS);
@@ -373,7 +373,7 @@ nsObjectMotionDialog::nsObjectMotionDialog(wxWindow *parent, nsNode *node)
 	sizer->Add(sbs, MAIN_SIZER_DEF);
 
 
-	// Input Sockets 
+	// Input Sockets
 
 	sbs = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Input Sockets"));
 	labelData = new wxFlexGridSizer( 5, 2, 0, 0);
@@ -385,8 +385,8 @@ nsObjectMotionDialog::nsObjectMotionDialog(wxWindow *parent, nsNode *node)
 	if (m_node->getInput(0)->isConnected())
 		m_u->Disable();
 
-	
-	wxStaticText *lx, *ly, *lz, *ld;
+
+	wxStaticText* lx, *ly, *lz, *ld;
 
 
 	lx = new wxStaticText(this, wxID_ANY, wxT("X"));
@@ -428,7 +428,7 @@ nsObjectMotionDialog::nsObjectMotionDialog(wxWindow *parent, nsNode *node)
 
 	ld = new wxStaticText(this, wxID_ANY, wxT("Damping"));
 	m_d = new wxSpinCtrlDouble(this);
-	m_d->SetRange(0,1);
+	m_d->SetRange(0, 1);
 	m_d->SetValue((float)m_node->getInput(4)->getValue());
 	m_d->SetIncrement(0.01);
 	if (m_node->getInput(4)->isConnected())
@@ -464,7 +464,7 @@ nsObjectMotionDialog::nsObjectMotionDialog(wxWindow *parent, nsNode *node)
 
 void nsObjectMotionDialog::Flush(void)
 {
-	nsMotionData *data = (nsMotionData*)m_node->getData();
+	nsMotionData* data = (nsMotionData*)m_node->getData();
 
 	data->setClampFlag(0);
 	data->setEnum(m_motionType->GetSelection());
@@ -502,12 +502,12 @@ void nsObjectMotionDialog::Flush(void)
 
 
 
-nsBoolDialog::nsBoolDialog(wxWindow *parent, nsNode *node)
+nsBoolDialog::nsBoolDialog(wxWindow* parent, nsNode* node)
 	: nsDialog(parent, -1, wxT("Bool"), node)
 {
-	wxSizer *sizer = GetRootSizer();
+	wxSizer* sizer = GetRootSizer();
 
-	wxStaticBoxSizer *sbs = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Input Sockets"));
+	wxStaticBoxSizer* sbs = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Input Sockets"));
 
 	m_ctrl = new wxCheckBox(this, wxID_ANY, wxT("Bool"));
 	m_ctrl->SetValue(node->getInput(0)->getValue());
@@ -522,23 +522,23 @@ nsBoolDialog::nsBoolDialog(wxWindow *parent, nsNode *node)
 	ApplyRootSizer(sizer);
 }
 
-void nsBoolDialog::Flush(void) 
+void nsBoolDialog::Flush(void)
 {
 	m_node->getInput(0)->setValue(m_ctrl->GetValue());
 }
 
 
 
-nsIntDialog::nsIntDialog(wxWindow *parent, nsNode *node)
+nsIntDialog::nsIntDialog(wxWindow* parent, nsNode* node)
 	: nsDialog(parent, -1, wxT("Int"), node)
 {
-	wxSizer *sizer = GetRootSizer();
+	wxSizer* sizer = GetRootSizer();
 
-	wxStaticBoxSizer *sbs = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Input Sockets"));
+	wxStaticBoxSizer* sbs = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Input Sockets"));
 
 
-	wxBoxSizer *bs = new wxBoxSizer(wxHORIZONTAL);
-	wxStaticText *label = new wxStaticText(this, wxID_ANY, wxT("Int"));
+	wxBoxSizer* bs = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText* label = new wxStaticText(this, wxID_ANY, wxT("Int"));
 
 
 	m_ctrl = new wxSpinCtrl(this, wxID_ANY);
@@ -561,22 +561,22 @@ nsIntDialog::nsIntDialog(wxWindow *parent, nsNode *node)
 	ApplyRootSizer(sizer);
 }
 
-void nsIntDialog::Flush(void) 
+void nsIntDialog::Flush(void)
 {
 	m_node->getInput(0)->setValue(m_ctrl->GetValue());
 }
 
 
 
-nsFloatDialog::nsFloatDialog(wxWindow *parent, nsNode *node)
+nsFloatDialog::nsFloatDialog(wxWindow* parent, nsNode* node)
 	: nsDialog(parent, -1, wxT("Float"), node)
 {
-	wxSizer *sizer = GetRootSizer();
+	wxSizer* sizer = GetRootSizer();
 
-	wxStaticBoxSizer *sbs = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Input Sockets"));
+	wxStaticBoxSizer* sbs = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Input Sockets"));
 
-	wxBoxSizer *bs = new wxBoxSizer(wxHORIZONTAL);
-	wxStaticText *label = new wxStaticText(this, wxID_ANY, wxT("Float"));
+	wxBoxSizer* bs = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText* label = new wxStaticText(this, wxID_ANY, wxT("Float"));
 
 	m_ctrl = new wxSpinCtrlDouble(this, wxID_ANY);
 	m_ctrl->SetRange(NS_LINEAR_MIN, NS_LINEAR_MAX);
@@ -596,7 +596,7 @@ nsFloatDialog::nsFloatDialog(wxWindow *parent, nsNode *node)
 	ApplyRootSizer(sizer);
 }
 
-void nsFloatDialog::Flush(void) 
+void nsFloatDialog::Flush(void)
 {
 	m_node->getInput(0)->setValue((float)m_ctrl->GetValue());
 }

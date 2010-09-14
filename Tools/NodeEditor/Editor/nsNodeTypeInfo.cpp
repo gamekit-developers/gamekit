@@ -43,85 +43,85 @@ nsNodeTypeInfo::nsNodeTypeInfo()
 
 nsNodeTypeInfo::~nsNodeTypeInfo()
 {
-    if (!m_types.empty())
-    {
-        nsNodeDef *def = m_types.begin(), *tmp;
-        while (def)
-        {
-            tmp = def;
-            def = def->getNext();
-            delete tmp;
-        }
-    }
+	if (!m_types.empty())
+	{
+		nsNodeDef* def = m_types.begin(), *tmp;
+		while (def)
+		{
+			tmp = def;
+			def = def->getNext();
+			delete tmp;
+		}
+	}
 }
 
 
 
-nsNodeDef *nsNodeTypeInfo::findTypeInfo(int i)
+nsNodeDef* nsNodeTypeInfo::findTypeInfo(int i)
 {
-    if (!m_types.empty())
-    {
-        nsNodeDef *def = m_types.begin();
-        while (def)
-        {
-            if (def->getId() == i)
-                return def;
+	if (!m_types.empty())
+	{
+		nsNodeDef* def = m_types.begin();
+		while (def)
+		{
+			if (def->getId() == i)
+				return def;
 
-            def = def->getNext();
-        }
-    }
-    return 0;
+			def = def->getNext();
+		}
+	}
+	return 0;
 }
 
 
-nsNodeDef *nsNodeTypeInfo::findTypeInfo(const nsString &name)
+nsNodeDef* nsNodeTypeInfo::findTypeInfo(const nsString& name)
 {
-    if (!m_types.empty())
-    {
-        nsNodeDef *def = m_types.begin();
-        while (def)
-        {
-            if (def->getName() == name)
-                return def;
+	if (!m_types.empty())
+	{
+		nsNodeDef* def = m_types.begin();
+		while (def)
+		{
+			if (def->getName() == name)
+				return def;
 
-            def = def->getNext();
-        }
-    }
-    return 0;
+			def = def->getNext();
+		}
+	}
+	return 0;
 }
 
 
 nsString nsNodeTypeInfo::getGroupName(int in)
 {
-    switch (in)
-    {
-    case NT_GROUP_ANIMATION:
-        return "Animation";
-    case NT_GROUP_USER_INPUT:
-        return "Input";
-    case NS_SPE_OUTPUT:
-        return "Output";
-    case NT_GROUP_CONVERTER:
-        return "Converter";
-    default:
-        break;
-    }
+	switch (in)
+	{
+	case NT_GROUP_ANIMATION:
+		return "Animation";
+	case NT_GROUP_USER_INPUT:
+		return "Input";
+	case NS_SPE_OUTPUT:
+		return "Output";
+	case NT_GROUP_CONVERTER:
+		return "Converter";
+	default:
+		break;
+	}
 
 	return "General";
 }
 
 
 
-void nsNodeTypeInfo::addType(nsNodeDef *ndef)
+void nsNodeTypeInfo::addType(nsNodeDef* ndef)
 {
-    ndef->setId(m_types.size());
-    m_types.push_back(ndef);
+	ndef->setId(m_types.size());
+	m_types.push_back(ndef);
 
-    nsGroupTypes type = ndef->getGroup();
-    if (m_groups.find(type) == UT_NPOS)
-        m_groups.insert(type, GroupList());
-    if (m_groups.find(type) != UT_NPOS)
-        m_groups.get(type)->push_back(ndef);
+	nsGroupTypes type = ndef->getGroup();
+	if (m_groups.find(type) == UT_NPOS)
+		m_groups.insert(type, GroupList());
+	if (m_groups.find(type) != UT_NPOS)
+		m_groups.get(type)->push_back(ndef);
 }
 
 

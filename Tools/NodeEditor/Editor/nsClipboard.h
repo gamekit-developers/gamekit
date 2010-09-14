@@ -35,19 +35,19 @@
 class nsClipboard
 {
 protected:
-    nsNodes     m_clip;
+	nsNodes     m_clip;
 
 public:
-    nsClipboard();
-    ~nsClipboard();
+	nsClipboard();
+	~nsClipboard();
 
-    bool isEmpty(void) {return m_clip.empty();}
+	bool isEmpty(void) {return m_clip.empty();}
 
 
-    void clear(void);
-    void paste(nsNodeTree *tree, nsNodes &list, const NSvec2 &position);
-    void copy(nsNodes &list);
-    void duplicate(nsNodeTree *tree, nsNodes &list, nsNodes &dest);
+	void clear(void);
+	void paste(nsNodeTree* tree, nsNodes& list, const NSvec2& position);
+	void copy(nsNodes& list);
+	void duplicate(nsNodeTree* tree, nsNodes& list, nsNodes& dest);
 
 };
 

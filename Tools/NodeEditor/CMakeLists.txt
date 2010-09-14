@@ -17,7 +17,6 @@ set(Nodes 1.0)
 
 #----------------------------------------------------------
 set(CMAKE_MODULE_PATH
-    ${PARENT_SOURCE_DIR}/CMake/Templates
     ${CMAKE_SOURCE_DIR}/CMake
     ${CMAKE_SOURCE_DIR}/wxWidgets-2.9.0/wxCMake
     )

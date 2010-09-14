@@ -57,10 +57,10 @@ class wxMenuItem;
 class wxPGProperty;
 
 
-typedef utList<nsNode *>                nsNodes;
+typedef utList<nsNode*>                nsNodes;
 typedef utListIterator<nsNodes>         nsNodeIterator;
 typedef utListReverseIterator<nsNodes>  nsReverseNodeIterator;
-typedef utList<nsNodeTree *>            nsTrees;
+typedef utList<nsNodeTree*>            nsTrees;
 typedef utListIterator<nsTrees>         nsTreeIterator;
 
 typedef utListClass<nsNodeDef>              nsNodeListClass;
@@ -72,64 +72,59 @@ typedef utListIterator<nsSocketListClass>   nsSocketDefIterator;
 
 enum nsWindowId
 {
-    NS_WID_MAINWINDOW,
-    NS_WID_SOLUTION,
-    NS_WID_SOLUTION_DATA,
-    NS_WID_WORKSPACE,
-    NS_WID_WORKSPACE_DATA,
-    NS_WID_PROPERTY,
-    NS_WID_PROPERTY_DATA,
-    NS_WID_PROPERTY_TREE,
-    NS_WID_PROPERTY_NODE,
-    NS_WID_CANVAS,
+	NS_WID_MAINWINDOW,
+	NS_WID_SOLUTION,
+	NS_WID_SOLUTION_DATA,
+	NS_WID_WORKSPACE,
+	NS_WID_WORKSPACE_DATA,
+	NS_WID_PROPERTY,
+	NS_WID_PROPERTY_DATA,
+	NS_WID_PROPERTY_TREE,
+	NS_WID_PROPERTY_NODE,
+	NS_WID_CANVAS,
 };
 
 
 
 enum nsEventID
 {
-    // File
-    NSID_NEW,
-    NSID_OPEN,
-    NSID_SAVE,
-    NSID_SAVEAS,
-    NSID_QUIT,
-    NSID_PREVIEW_FILE,
+	// File
+	NSID_NEW,
+	NSID_OPEN,
+	NSID_SAVE,
+	NSID_SAVEAS,
+	NSID_QUIT,
 
 
-    // Edit
-    NS_ID_UNDO,
-    NS_ID_REDO,
-    NS_ID_CUT,
-    NS_ID_COPY,
-    NS_ID_PASTE,
-    NS_ID_DUPLICATE,
-    NS_ID_DELETE,
-    NS_ID_GRAB,
-    NS_ID_SELECT_ALL,
+	// Edit
+	NS_ID_UNDO,
+	NS_ID_REDO,
+	NS_ID_CUT,
+	NS_ID_COPY,
+	NS_ID_PASTE,
+	NS_ID_DUPLICATE,
+	NS_ID_DELETE,
+	NS_ID_SELECT_ALL,
 
-    // View
-    NS_ID_SOLUTION,
-    NS_ID_PROPERTIES,
-    NS_ID_VARIABLES,
-    NS_ID_FULLSCREEN,
+	// View
+	NS_ID_SOLUTION,
+	NS_ID_PROPERTIES,
+	NS_ID_VARIABLES,
+	NS_ID_FULLSCREEN,
 
-    // Game 
-    NS_ID_PLAY,
+	// Project
+	NS_ID_NEW_TREE,
 
-    // Project
-    NS_ID_NEW_TREE,
-
-    // Node
-    NSID_NODE_MENU_START,
-    // dynamic
-    NSID_NODE_MENU_END= NSID_NODE_MENU_START + 9999,
+	// Node
+	NSID_NODE_MENU_START,
+	// dynamic
+	NSID_NODE_MENU_END = NSID_NODE_MENU_START + 9999,
 };
 
 enum nsNodeState
 {
-    NDST_INACTIVE,
-    NDST_ACTIVE,
+	NDST_INACTIVE,
+	NDST_ACTIVE,
 };
 
 

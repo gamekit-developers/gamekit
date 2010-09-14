@@ -30,125 +30,125 @@
 
 
 BEGIN_EVENT_TABLE( nsTreePropertyPage, wxPropertyGridPage )
-    EVT_PG_CHANGED(NS_WID_PROPERTY_DATA, nsTreePropertyPage::propertyChangeEvent)
+	EVT_PG_CHANGED(NS_WID_PROPERTY_DATA, nsTreePropertyPage::propertyChangeEvent)
 END_EVENT_TABLE()
 
 
 
-nsTreePropertyPage::nsTreePropertyPage(nsPropertyManager *manager)
-    :   m_manager(manager), m_tree(0),
-        m_name(0),m_groupname(0), m_id(0), m_isGroup(0), m_info(0), m_group(0), m_object(0)
+nsTreePropertyPage::nsTreePropertyPage(nsPropertyManager* manager)
+	:   m_manager(manager), m_tree(0),
+	    m_name(0), m_groupname(0), m_id(0), m_isGroup(0), m_info(0), m_group(0), m_object(0)
 {
 }
 
 
-void nsTreePropertyPage::setTree(nsNodeTree *tree)
+void nsTreePropertyPage::setTree(nsNodeTree* tree)
 {
-    m_tree = tree;
-    if (m_tree)
-    {
-        m_name->SetValue(wxString(m_tree->getName().c_str()));
+	m_tree = tree;
+	if (m_tree)
+	{
+		m_name->SetValue(wxString(m_tree->getName().c_str()));
 
-        wxString id = wxString::Format("%p", m_tree);
-        m_id->SetValue(id);
+		wxString id = wxString::Format("%p", m_tree);
+		m_id->SetValue(id);
 
-        if (m_object)
-            m_object->SetValue(wxString(m_tree->getAttachedName()));
+		if (m_object)
+			m_object->SetValue(wxString(m_tree->getAttachedName()));
 
 
-        EnableProperty(m_group);
-        if (m_tree->isGroup())
-        {
-            m_isGroup->SetValue(true);
-            m_groupname->SetValue(wxString(m_tree->getGroupName().c_str()));
-        }
-        else
-        {
-            DisableProperty(m_groupname);
-            m_isGroup->SetValue(false);
-            m_groupname->SetValue(wxEmptyString);
-        }
-    }
-    else
-    {
-        DisableProperty(m_group);
-    }
+		EnableProperty(m_group);
+		if (m_tree->isGroup())
+		{
+			m_isGroup->SetValue(true);
+			m_groupname->SetValue(wxString(m_tree->getGroupName().c_str()));
+		}
+		else
+		{
+			DisableProperty(m_groupname);
+			m_isGroup->SetValue(false);
+			m_groupname->SetValue(wxEmptyString);
+		}
+	}
+	else
+	{
+		DisableProperty(m_group);
+	}
 }
 
 
 
 void nsTreePropertyPage::createProperties(void)
 {
-    // create default / initial properties
+	// create default / initial properties
 
 
-    m_info = new wxPropertyCategory("Node Tree");
-    m_info->SetHelpString("Single node tree that will execute per frame.");
-    Append(m_info);
+	m_info = new wxPropertyCategory("Node Tree");
+	m_info->SetHelpString("Single node tree that will execute per frame.");
+	Append(m_info);
 
-    m_name = new wxStringProperty("Tree Name", wxPG_LABEL, "");
-    m_info->AppendChild(m_name);
+	m_name = new wxStringProperty("Tree Name", wxPG_LABEL, "");
+	m_info->AppendChild(m_name);
 
-    m_id = new wxStringProperty("Id", wxPG_LABEL, "");
-    m_info->AppendChild(m_id);
-
-
-    m_object = new wxStringProperty("Attached Object", wxPG_LABEL, "");
-    m_info->AppendChild(m_object);
+	m_id = new wxStringProperty("Id", wxPG_LABEL, "");
+	m_info->AppendChild(m_id);
 
 
-    // group settings
-
-    m_group = new wxPropertyCategory("Grouping");
-    Append(m_group);
-
-    m_groupname = new wxStringProperty("Group Name", wxPG_LABEL, "");
-    m_group->AppendChild(m_groupname);
+	m_object = new wxStringProperty("Attached Object", wxPG_LABEL, "");
+	m_info->AppendChild(m_object);
 
 
-    m_isGroup = new wxBoolProperty("IsGroup", wxPG_LABEL, "");
-    m_group->AppendChild(m_isGroup);
+	// group settings
 
-    // read only
-    DisableProperty(m_group);
-    DisableProperty(m_info);
-    EnableProperty(m_object);
+	m_group = new wxPropertyCategory("Grouping");
+	Append(m_group);
+
+	m_groupname = new wxStringProperty("Group Name", wxPG_LABEL, "");
+	m_group->AppendChild(m_groupname);
+
+
+	m_isGroup = new wxBoolProperty("IsGroup", wxPG_LABEL, "");
+	m_group->AppendChild(m_isGroup);
+
+	// read only
+	DisableProperty(m_group);
+	DisableProperty(m_info);
+	EnableProperty(m_object);
 }
 
 
 
-void nsTreePropertyPage::propertyChangeEvent(wxPropertyGridEvent &evt)
+void nsTreePropertyPage::propertyChangeEvent(wxPropertyGridEvent& evt)
 {
-    // data change notification
-    if (!m_tree) 
-        return;
+	// data change notification
+	if (!m_tree)
+		return;
 
-    wxPGProperty *prop = evt.GetProperty();
+	wxPGProperty* prop = evt.GetProperty();
 
 
-    if (prop == m_isGroup)
-    {
-        bool group = prop->GetValue().GetBool();
-        m_tree->setGroup(group);
-        if (group)
-            EnableProperty(m_groupname);
-        else
-        {
-            m_groupname->SetValue(wxEmptyString);
-            DisableProperty(m_groupname);
-        }
-        evt.Skip();
-    }
-    else if (prop == m_groupname)
-    {
-        wxString str = prop->GetValue().GetString();
-        if (!str.empty() && m_isGroup->GetValue().GetBool())
-            m_tree->setGroupName(nsString(str));
-        evt.Skip();
-    }
-    else if (prop == m_object)
-    {
-        wxString str = prop->GetValue().GetString();
-        m_tree->setAttachedName(nsString(str));
-    }
+	if (prop == m_isGroup)
+	{
+		bool group = prop->GetValue().GetBool();
+		m_tree->setGroup(group);
+		if (group)
+			EnableProperty(m_groupname);
+		else
+		{
+			m_groupname->SetValue(wxEmptyString);
+			DisableProperty(m_groupname);
+		}
+		evt.Skip();
+	}
+	else if (prop == m_groupname)
+	{
+		wxString str = prop->GetValue().GetString();
+		if (!str.empty() && m_isGroup->GetValue().GetBool())
+			m_tree->setGroupName(nsString(str));
+		evt.Skip();
+	}
+	else if (prop == m_object)
+	{
+		wxString str = prop->GetValue().GetString();
+		m_tree->setAttachedName(nsString(str));
+	}
 }
