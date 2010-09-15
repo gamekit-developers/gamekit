@@ -23,8 +23,12 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 
-All assets come from the game Club Silo from Luma studio.
+Track comes from the game Club Silo from Luma studio.
 http://www.luma.co.za/
+
+Buggy by Davide Maimone under 
+Creative Commons 
+Attribution-Noncommercial-Share Alike 
 
 This is a simple demo showcasing how to use bullet vehicle raycaster constraint.
 
@@ -43,3 +47,7 @@ Notes:
 	Turn left
 <RIGHT>
 	Trun right
+<SPACE>
+	HandBrake
+
+

@@ -26,6 +26,7 @@
 */
 
 #include "vdLogic.h"
+#include "vdBulletSerializeNode.h"
 
 vdLogic::vdLogic(gkScene *scene)
 		: m_scene(scene), m_tree(gkNodeManager::getSingleton().create()),
@@ -77,33 +78,34 @@ void vdLogic::createInput()
 void vdLogic::createVehicle()
 {
 
-	float power=270.0f; //Engine torque N/m
-	float brake=60.0f;
+	float power=170.0f; //Engine torque N/m
+	float brake=30.0f;
 	float brakeRatio=0.6f;
 	float steer=0.69f;
 	float steerTime=0.21f;
 	
-	float connectionHeight = 0.4;
-	float sideOffset = 0.73;
-	float frontOffest = 1.211;
-	float rearOffset = 1.282;
-	float radius = 0.357;
+	float connectionHeight = 0.267;
+	float sideOffsetF = 0.764;
+	float sideOffsetR = 0.848;
+	float frontOffest = 0.988;
+	float rearOffset = 0.965;
+	float radius = 0.370;
 	
-	float suspensionRestLength = 0.58;
-	float suspensionTravelCm = 23;
-	float suspensionStiffness= 30.0;
+	float suspensionTravelCm = 49;
+	float suspensionRestLength = .538;
+	float suspensionStiffness = 22.0;
 	float suspensionRelax = 0.1 * 2.0 * btSqrt(suspensionStiffness);
 	float suspensionCompression = 0.3 * 2.0 * btSqrt(suspensionStiffness);
 	float friction = 0.95f;
-	float rollInfluence = 0.5;
+	float rollInfluence = 0.1;
 
 	float diferencial = 3.5;
 	float gearReverse = -3.38 * diferencial;
-	float gear1 = 3.37 * diferencial;
-	float gear2 = 2.64 * diferencial;
-	float gear3 = 2.08 * diferencial;
+	float gear1 = 2.66 * diferencial;
+	float gear2 = 2.14 * diferencial;
+	float gear3 = 1.68 * diferencial;
 	float gear4 = 1.37 * diferencial;
-	float gear5 = 0.96 * diferencial;
+	float gear5 = 1.12 * diferencial;
 	float shiftTime = 0.4;
 	
 	gkVector3 wheelDirection(0,0,-1);
@@ -112,27 +114,56 @@ void vdLogic::createVehicle()
 	
 	bool isFront = true;
 	
-	m_vehicle = new vdVehicle(m_scene, "MiniCollision", power, brake, brakeRatio, steer);
+	
+	
+	
+	gkBlendFile* pBlendFileCar = gkBlendLoader::getSingleton().loadFile(gkUtils::getFile("buggy.blend"));
+	
+	gkGroupManager& groups = gkGroupManager::getSingleton();
+	gkGameObjectGroup* carGroup = (gkGameObjectGroup*)groups.getByName("CarGroup");
+	
+	groups.attachGroupToScene(m_scene, carGroup);
+	
+	gkGameObjectGroup::Objects::Iterator iter =  carGroup->getObjects().iterator();
+	while (iter.hasMoreElements())
+	{
+		gkGameObject *gobj = iter.getNext().second;
+
+		m_scene->addObject(gobj);
+
+		gobj->createInstance();
+	}
+	
+	gkGameObject* objCol = m_scene->getObject("ChassisCollision");
+	gkGameObject* objChassis = m_scene->getObject("Chassis");
+	objCol->setTransform(gkTransformState(gkVector3(-66.5, 295, -8.5), gkEuler(0,0,180).toQuaternion()));
+	objChassis->setParent(objCol);
+	m_scene->getObject("WishBone.F.R")->setParent(objChassis);
+	m_scene->getObject("WishBone.F.L")->setParent(objChassis);
+	m_scene->getObject("WishBone.R.R")->setParent(objChassis);
+	m_scene->getObject("WishBone.R.L")->setParent(objChassis);
+	
+	m_vehicle = new vdVehicle(m_scene, "ChassisCollision", power, brake, brakeRatio, steer);
 	
 	// wheels
-	connectionPoint = gkVector3(-sideOffset,frontOffest, connectionHeight);
-	m_vehicle->addWheel("wheel_MiniG_FT.L", radius, connectionPoint, wheelDirection, wheelAxle, isFront,
+	connectionPoint = gkVector3(-sideOffsetF,frontOffest, connectionHeight);
+	m_vehicle->addWheel("TireFL", radius, connectionPoint, wheelDirection, wheelAxle, isFront,
 						suspensionRestLength, suspensionStiffness, suspensionRelax, suspensionCompression,
 						friction, rollInfluence, suspensionTravelCm);
 	
-	connectionPoint = gkVector3(sideOffset,frontOffest, connectionHeight);
-	m_vehicle->addWheel("wheel_MiniG_FT.R", radius, connectionPoint, wheelDirection, wheelAxle, isFront,
+	connectionPoint = gkVector3(sideOffsetF,frontOffest, connectionHeight);
+	m_vehicle->addWheel("TireFR", radius, connectionPoint, wheelDirection, wheelAxle, isFront,
 						suspensionRestLength, suspensionStiffness, suspensionRelax, suspensionCompression,
 						friction, rollInfluence, suspensionTravelCm);
 	
 	isFront=false;
-	connectionPoint = gkVector3(-sideOffset,-rearOffset, connectionHeight);
-	m_vehicle->addWheel("wheel_MiniG_RR.L", radius, connectionPoint, wheelDirection, wheelAxle, isFront,
+	connectionPoint = gkVector3(-sideOffsetR,-rearOffset, connectionHeight);
+	m_vehicle->addWheel("TireRL", radius, connectionPoint, wheelDirection, wheelAxle, isFront,
 						suspensionRestLength, suspensionStiffness, suspensionRelax, suspensionCompression,
 						friction, rollInfluence, suspensionTravelCm);
 	
-	connectionPoint = gkVector3(sideOffset,-rearOffset, connectionHeight);
-	m_vehicle->addWheel("wheel_MiniG_RR.R", radius, connectionPoint, wheelDirection, wheelAxle, isFront,
+	connectionPoint = gkVector3(sideOffsetR,-rearOffset, connectionHeight);
+	m_vehicle->addWheel("TireRR", radius, connectionPoint, wheelDirection, wheelAxle, isFront,
 						suspensionRestLength, suspensionStiffness, suspensionRelax, suspensionCompression,
 						friction, rollInfluence, suspensionTravelCm);
 	
@@ -164,7 +195,7 @@ void vdLogic::createVehicle()
 void vdLogic::createCamera()
 {
 	gkObjectNode* centerObj = m_tree->createNode<gkObjectNode>();
-	centerObj->setOtherObject("MiniCollision");
+	centerObj->setOtherObject("ChassisCollision");
 	
 	m_cameraNode = m_tree->createNode<gkCameraNode>();
 	
@@ -218,7 +249,7 @@ void vdLogic::createCamera()
 	mathNode2->getA()->link(mpxNode2->getOUTPUT());
 	mathNode2->getB()->setValue(50);
 
-	m_cameraNode->getCENTER_OBJ()->setValue(m_scene->getObject("MiniCollision"));
+	m_cameraNode->getCENTER_OBJ()->setValue(m_scene->getObject("ChassisCollision"));
 	m_cameraNode->getCENTER_POSITION()->link(centerObj->getOUT_POSITION());
 	m_cameraNode->getREL_X()->link(mathNode2->getRESULT());
 	m_cameraNode->getAVOID_BLOCKING()->setValue(true);
@@ -248,6 +279,10 @@ void vdLogic::createDisplayProps(void)
 	gearVarNode->setName("Gear");
 	gearVarNode->setDebug(true);
 	gearVarNode->getSET()->link(m_vehicleNode->getGEAR());
+	
+	vdBulletSerializeNode *bulletNode = m_tree->createNode<vdBulletSerializeNode>();
+	bulletNode->setFileName("vehicle_demo.bullet");
+	bulletNode->getSERIALIZE()->link(m_rKeyNode->getIS_DOWN());
 
 }
 

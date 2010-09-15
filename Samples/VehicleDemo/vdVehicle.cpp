@@ -211,12 +211,12 @@ void vdVehicle::updateVehicle(gkScalar rate)
 		
 		if (btwheel.m_bIsFrontWheel)
 		{
-			m_vehicle->applyEngineForce(wheelTorque, i);
 			m_vehicle->setSteeringValue(steering, i);
 			m_vehicle->setBrake(frontBrake, i);
 		}
 		else
 		{
+			m_vehicle->applyEngineForce(wheelTorque, i);
 			m_vehicle->setBrake(rearBrake, i);
 			//btwheel.m_deltaRotation = 0;
 		}
@@ -225,11 +225,16 @@ void vdVehicle::updateVehicle(gkScalar rate)
 		m_vehicle->updateWheelTransform(i,true);
 		
 		//update wheels position
-		trans = m_vehicle->getWheelInfo(i).m_worldTransform;
+		trans = btwheel.m_worldTransform;
 		gtrans.setIdentity();
 		gtrans.loc = gkVector3(trans.getOrigin());
 		gtrans.rot = gkQuaternion(trans.getRotation().w(), trans.getRotation().x(), trans.getRotation().y(), trans.getRotation().z());
 		m_wheelObjects[i]->setTransform(gtrans);
+		
+		//debugdraw
+//		btCollisionShape *wheelShape = new btCylinderShapeX(btVector3(0.25, btwheel.m_wheelsRadius, btwheel.m_wheelsRadius));
+//		m_dynamicWorld->debugDrawObject(trans, wheelShape, btVector3(0,1,0));
+//		delete wheelShape;
 	}
 }
 

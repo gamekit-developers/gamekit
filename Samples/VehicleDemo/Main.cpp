@@ -109,7 +109,7 @@ int main(int argc, char **argv)
 
 	gkLogger::enable("VehicleDemo.log", true);
 
-	OgreKit okit("clubsilo_demo.blend", "OgreKitStartup.cfg");
+	OgreKit okit("../Runtime/Regression/clubsilo_packed.blend", "OgreKitStartup.cfg");
 
 	okit.run();
 

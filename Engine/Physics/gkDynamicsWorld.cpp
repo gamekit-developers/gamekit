@@ -254,6 +254,9 @@ void gkDynamicsWorld::step(gkScalar tick)
 {
 	GK_ASSERT(m_dynamicsWorld);
 	m_dynamicsWorld->stepSimulation(tick);
+	
+	// uncomment this to print bullet profiling information
+	//CProfileManager::dumpAll();
 }
 
 
