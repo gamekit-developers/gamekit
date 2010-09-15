@@ -278,8 +278,8 @@ void utFileStream::seek(const UTsize pos, int dir) const
 
 
 
-utMemoryStream::utMemoryStream()
-	:   m_buffer(0), m_pos(0), m_size(0), m_capacity(0)
+utMemoryStream::utMemoryStream(int mode)
+	:   m_buffer(0), m_pos(0), m_size(0), m_capacity(0), m_mode(mode)
 {
 }
 

@@ -116,7 +116,7 @@ protected:
 class utMemoryStream : public utStream
 {
 public:
-	utMemoryStream();
+	utMemoryStream(int mode = 0);
 	~utMemoryStream();
 
 	void clear(void);

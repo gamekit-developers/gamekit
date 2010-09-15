@@ -105,7 +105,7 @@ bool gkBlendFile::parse(int opts, const gkString &scene)
 	}
 
 	// Write contents and inflate.
-	utMemoryStream buffer;
+	utMemoryStream buffer(utStream::SM_WRITE);
 	fs.inflate(buffer);
 
 	m_file = new bParse::bBlenderFile((char*)buffer.ptr(), buffer.size());
