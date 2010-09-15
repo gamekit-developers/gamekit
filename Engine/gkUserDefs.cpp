@@ -70,7 +70,8 @@ gkUserDefs::gkUserDefs()
 	    shadowtechnique("stencilmodulative"),
 	    colourshadow(0.8f, 0.8f, 0.8f),
 	    fardistanceshadow(0),
-		viewportFraming(false)
+		viewportFraming(false),
+		defaultMipMap(5)
 {
 }
 
@@ -270,5 +271,10 @@ void gkUserDefs::parseString(const gkString &key, const gkString &val)
 	if (KeyEq("viewportframing")) //Replaceable to the Blender Camera's Passepartout option
 	{
 		viewportFraming = Ogre::StringConverter::parseBool(val);
+		return;
+	}
+	if (KeyEq("defaultmipmap"))
+	{
+		defaultMipMap = gkMax<int>(0, Ogre::StringConverter::parseInt(val));
 	}
 }

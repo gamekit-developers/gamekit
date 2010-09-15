@@ -67,6 +67,7 @@ public:
 	int                     fsaaSamples;        // Anti aliasing samples.
 	bool                    enableshadows;
 	bool					viewportFraming;    // Enable / Disable Game scene viewport framing
+    int                     defaultMipMap;      // Number of mipmaps to generate per texture (default 5)
 
 	gkString                shadowtechnique;
 	gkColor                 colourshadow;

@@ -29,6 +29,8 @@
 #include "OgreFreeImageCodec.h"
 #include "gkTextureLoader.h"
 #include "gkLogger.h"
+#include "gkEngine.h"
+#include "gkUserDefs.h"
 #include "Blender.h"
 
 
@@ -69,7 +71,7 @@ void gkTextureLoader::loadResource(Ogre::Resource *resource)
 
 	texture->setUsage(Ogre::TU_DEFAULT);
 	texture->setTextureType(Ogre::TEX_TYPE_2D);
-	texture->setNumMipmaps(Ogre::TextureManager::getSingleton().getDefaultNumMipmaps());
+	texture->setNumMipmaps(gkEngine::getSingleton().getUserDefs().defaultMipMap);
 	texture->setWidth(ima.getWidth());
 	texture->setHeight(ima.getHeight());
 	texture->setDepth(ima.getDepth());
