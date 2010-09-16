@@ -60,8 +60,10 @@ void gkCamera::createInstanceImpl(void)
 	}
 	else
 	{
+		float ratio = m_camera->getAspectRatio();
+		float fovy = 2*atan(tan(m_cameraProps.m_fov*gkPi/360)/ratio);
 		m_camera->setProjectionType(Ogre::PT_PERSPECTIVE);
-		m_camera->setFOVy(gkDegree(m_cameraProps.m_fov));		
+		m_camera->setFOVy(gkRadian(fovy));	
 	}	
 
 
@@ -128,7 +130,12 @@ void gkCamera::setFov(const gkRadian &fov)
 	if (m_cameraProps.m_fov != val)
 	{
 		m_cameraProps.m_fov = val;
-		if (m_camera) m_camera->setFOVy(gkRadian(fov));
+		if (m_camera) 
+		{
+			float ratio = m_camera->getAspectRatio();
+			float fovy = 2*atan(tan(m_cameraProps.m_fov*gkPi/360)/ratio);
+			m_camera->setFOVy(gkRadian(fovy));
+		}
 	}
 }
 
@@ -141,7 +148,11 @@ void gkCamera::setFov(const gkDegree &fov)
 	{
 		m_cameraProps.m_fov = val;
 		if (m_camera)
-			m_camera->setFOVy(gkRadian(fov));
+		{
+			float ratio = m_camera->getAspectRatio();
+			float fovy = 2*atan(tan(m_cameraProps.m_fov*gkPi/360)/ratio);
+			m_camera->setFOVy(gkRadian(fovy));
+		}
 	}
 }
 
@@ -176,8 +187,10 @@ void gkCamera::setProjType(gkCameraProperties::Type type)
 			}
 			else
 			{
+				float ratio = m_camera->getAspectRatio();
+				float fovy = 2*atan(tan(m_cameraProps.m_fov*gkPi/360)/ratio);
 				m_camera->setProjectionType(Ogre::PT_PERSPECTIVE);
-				m_camera->setFOVy(gkDegree(m_cameraProps.m_fov));		
+				m_camera->setFOVy(gkRadian(fovy));
 			}
 		}
 	}
