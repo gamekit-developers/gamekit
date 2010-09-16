@@ -1260,8 +1260,8 @@ function Scene:createEmpty(name)
 \LuaMethodMenu{GameObject,rotate}
 \LuaMethodMenu{GameObject,translate}
 \LuaMethodMenu{GameObject,scale}
-\LuaMethodMenu{GameObject,yaw}
 \LuaMethodMenu{GameObject,pitch}
+\LuaMethodMenu{GameObject,yaw}
 \LuaMethodMenu{GameObject,roll}
 \LuaMethodMenu{GameObject,getState}
 \LuaMethodMenu{GameObject,hasParent}
@@ -1308,7 +1308,7 @@ otherwise returns the world rotation.
 function GameObject:getRotation()
 \endcode
 
-\returns \LuaClassRef{Vector3} as Euler, yaw, pitch, roll 
+\returns \LuaClassRef{Vector3} as Euler, pitch, yaw, roll 
 
 \endpage
 
@@ -1382,7 +1382,7 @@ Returns the combined rotation of the object within the parent / child hierarchy.
 function GameObject:getWorldRotation()
 \endcode
 
-\returns \LuaClassRef{Vector3} as Euler, yaw, pitch, roll 
+\returns \LuaClassRef{Vector3} as Euler, pitch, yaw, roll 
 
 \endpage
 
@@ -1543,11 +1543,11 @@ function GameObject:setRotation(eul)
 \sectionseperator{Overload:}
 
 \code
-function GameObject:setRotation(yaw, pitch, roll)
+function GameObject:setRotation(pitch, yaw, roll)
 \endcode
 
-\param yaw x component in degrees.
-\param pitch y component in degrees.
+\param pitch x component in degrees.
+\param yaw y component in degrees.
 \param roll z component in degrees.
 
 
@@ -1589,11 +1589,11 @@ function GameObject:setOrientation(w, x, y, z)
 Rotates the game object.
 
 \code
-function GameObject:rotate(yaw,pitch,roll, ts=OgreKit.TS_PARENT)
+function GameObject:rotate(pitch, yaw, roll, ts=OgreKit.TS_PARENT)
 \endcode
 
-\param yaw x rotation in degrees.
-\param pitch y rotation in degrees.
+\param pitch x rotation in degrees.
+\param yaw y rotation in degrees.
 \param roll z rotation in degrees.
 \param ts \LuaClassRef{TransformSpace}
 
@@ -1606,7 +1606,7 @@ function GameObject:rotate(yaw,pitch,roll, ts=OgreKit.TS_PARENT)
 \code
 function GameObject:rotate(eul, ts=OgreKit.TS_PARENT)
 \endcode
-\param eul \LuaClassRef{Vector3} as yaw, pitch, and roll in degrees.
+\param eul \LuaClassRef{Vector3} as pitch, yaw and roll in degrees.
 \param ts \LuaClassRef{TransformSpace}
 
 
@@ -1678,29 +1678,11 @@ function GameObject:scale(x, y, z)
 \endpage
 
 
-
-
-<!-- ======================================== -->
-\LuaMethod{GameObject,yaw}
-\LuaClassUp{GameObject}
-
-Rotate object around the x axis.
-
-\code
-function GameObject:yaw(val, ts=OgreKit.TS_PARENT)
-\endcode
-
-\param val Rotation in degrees.
-\param ts \LuaClassRef{TransformSpace}
-
-\endpage
-
-
 <!-- ======================================== -->
 \LuaMethod{GameObject,pitch}
 \LuaClassUp{GameObject}
 
-Rotate object around the y axis.
+Rotate object around the x axis.
 
 \code
 function GameObject:pitch(val, ts=OgreKit.TS_PARENT)
@@ -1711,6 +1693,24 @@ function GameObject:pitch(val, ts=OgreKit.TS_PARENT)
 
 
 \endpage
+
+
+
+<!-- ======================================== -->
+\LuaMethod{GameObject,yaw}
+\LuaClassUp{GameObject}
+
+Rotate object around the y axis.
+
+\code
+function GameObject:yaw(val, ts=OgreKit.TS_PARENT)
+\endcode
+
+\param val Rotation in degrees.
+\param ts \LuaClassRef{TransformSpace}
+
+\endpage
+
 
 <!-- ======================================== -->
 \LuaMethod{GameObject,roll}

@@ -294,7 +294,7 @@ public:
 	void setPosition(float x, float y, float z);
 
 	void setRotation(const gsVector3 &v);
-	void setRotation(float yaw, float pitch, float roll);
+	void setRotation(float pitch, float yaw, float roll);
 
 	void setOrientation(const gsQuaternion &quat);
 	void setOrientation(float w, float x, float y, float z);

@@ -947,10 +947,10 @@ void gsGameObject::setRotation(const gsVector3 &v)
 
 
 
-void gsGameObject::setRotation(float yaw, float pitch, float roll)
+void gsGameObject::setRotation(float pitch, float yaw, float roll)
 {
 	if (m_object)
-		cast<gkGameObject>()->setOrientation(gkEuler(yaw, pitch, roll));
+		cast<gkGameObject>()->setOrientation(gkEuler(pitch, yaw, roll));
 }
 
 
