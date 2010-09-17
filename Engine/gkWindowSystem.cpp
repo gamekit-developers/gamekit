@@ -132,6 +132,8 @@ gkWindowSystem::~gkWindowSystem()
 // Creates the main Ogre window, and sets up the OIS input system
 RenderWindow *gkWindowSystem::createMainWindow(const gkUserDefs &prefs)
 {
+	int winsizex, winsizey;
+	
 	// one window for now
 	if (m_window)
 		return 0;
@@ -148,13 +150,56 @@ RenderWindow *gkWindowSystem::createMainWindow(const gkUserDefs &prefs)
 		 params["externalWindowHandle"] = prefs.extWinhandle;
 	}
 
+	if (prefs.fullscreen)
+	{
+		Ogre::RenderSystem* rsys = Root::getSingleton().getRenderSystem();
+		Ogre::ConfigOptionMap options = rsys->getConfigOptions();
+		Ogre::ConfigOption modeOption = options["Video Mode"];
+		bool found =false;
+		
+		gkPrintf("Available video modes:");
+		for(int i=0; i<modeOption.possibleValues.size(); i++)
+		{
+			int modex, modey;
+			gkString modeStr = modeOption.possibleValues[i];
+			gkPrintf("%s\n", modeStr.c_str());
+			
+			if(!found)
+			{
+				modex = Ogre::StringConverter::parseInt( modeStr.substr(0,4));
+				modey = Ogre::StringConverter::parseInt( modeStr.substr(7,4));
+				
+				if(modex>=(int)prefs.winsize.x && modey>=(int)prefs.winsize.y)
+				{
+					found = true;
+					winsizex = modex;
+					winsizey = modey;
+				}
+			}
+		}
+		if(found)
+		{
+			gkPrintf("Best video mode found: %i x %i, request was %i x %i\n", winsizex, winsizey, (int)prefs.winsize.x, (int)prefs.winsize.y);
+		}
+		else
+		{
+			gkPrintf("Unable to find a video mode with request minimun resolution: %i x %i\n", (int)prefs.winsize.x, (int)prefs.winsize.y);
+			return 0;
+		}
+	}
+	else
+	{
+		winsizex = (int)prefs.winsize.x;
+		winsizey = (int)prefs.winsize.y;
+	}
+
 	m_window = Root::getSingleton().createRenderWindow(prefs.wintitle, 
-		(int)prefs.winsize.x, (int)prefs.winsize.y, prefs.fullscreen, &params);
+		winsizex, winsizey, prefs.fullscreen, &params);
 	m_window->setActive(true);
 
 	// copy window size (used later for hit testing)
-	m_mouse.winsize.x = prefs.winsize.x;
-	m_mouse.winsize.y = prefs.winsize.y;
+	m_mouse.winsize.x = winsizex;
+	m_mouse.winsize.y = winsizey;
 
 	// OIS
 	try
