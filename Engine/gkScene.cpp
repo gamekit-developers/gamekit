@@ -585,6 +585,7 @@ void gkScene::setMainCamera(gkCamera* cam)
 	m_viewport->setDimensions(0, 0, 1, 1);
 
 	main->setAspectRatio(size.x / size.y);
+	cam->setFov(gkDegree(cam->getFov()));
 }
 
 
