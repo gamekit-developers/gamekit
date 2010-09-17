@@ -127,7 +127,7 @@ void gkCamera::setFov(const gkRadian &fov)
 
 	gkScalar val = fov.valueRadians();
 
-	m_cameraProps.m_fov = val;
+	m_cameraProps.m_fov = fov.valueDegrees();
 	if (m_camera) 
 	{
 		float ratio = m_camera->getAspectRatio();
@@ -142,7 +142,7 @@ void gkCamera::setFov(const gkDegree &fov)
 {
 	gkScalar val = fov.valueRadians();
 	
-	m_cameraProps.m_fov = val;
+	m_cameraProps.m_fov = fov.valueDegrees();
 	if (m_camera)
 	{
 		float ratio = m_camera->getAspectRatio();
