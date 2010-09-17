@@ -274,6 +274,8 @@ void gkEngine::finalize()
 	gkSoundManager::getSingleton().stopAllSounds();
 #endif
 
+	delete gkNodeManager::getSingletonPtr();
+
 	gkResourceManager *tmgr;
 
 	tmgr = gkSceneManager::getSingletonPtr();
@@ -287,8 +289,7 @@ void gkEngine::finalize()
 	tmgr->destroyAll();
 
 
-	delete gkGroupManager::getSingletonPtr();
-	delete gkNodeManager::getSingletonPtr();
+	delete gkGroupManager::getSingletonPtr();	
 	delete gkGameObjectManager::getSingletonPtr();
 	delete gkSceneManager::getSingletonPtr();
 	delete gkTextManager::getSingletonPtr();
