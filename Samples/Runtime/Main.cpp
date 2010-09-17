@@ -137,9 +137,6 @@ bool OgreKit::setup(void)
 		return false;
 	}
 
-	
-	if (gkEngine::getSingleton().getUserDefs().viewportFraming)
-		m_scene->setViewportFraming(true);
 
 	m_scene->createInstance();
 

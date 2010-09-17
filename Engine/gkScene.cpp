@@ -81,8 +81,7 @@ gkScene::gkScene(gkInstancedManager* creator, const gkResourceName &name, const 
 	     m_hasLights(false),
 	     m_markDBVT(false),
 	     m_cloneCount(0),
-	     m_layers(0xFFFFFFFF),
-		 m_enableViewportFraming(false)
+	     m_layers(0xFFFFFFFF)
 {
 }
 
@@ -539,8 +538,8 @@ void gkScene::setMainCamera(gkCamera* cam)
 	GK_ASSERT(m_viewport);
 
 	const gkVector2& size = sys.getMouse()->winsize;
-
-	if (m_enableViewportFraming) 
+	
+	if (m_baseProps.m_framing != gkSceneProperties::FR_EXTEND)
 	{
 		int framing = m_baseProps.m_framing;
 		gkScalar wmax = size.x > size.y ? size.x : size.y;
@@ -552,9 +551,9 @@ void gkScene::setMainCamera(gkCamera* cam)
 		
 		gkVector2 vsize;
 		if (aspect >= 1.f)
-			vsize = gkVector2(wmax, wmax/aspect) * 0.75f;			
+			vsize = gkVector2(wmax, wmax/aspect);			
 		else
-			vsize = gkVector2(wmax/aspect, wmax) * 0.8f;
+			vsize = gkVector2(wmax/aspect, wmax);		
 
 		gkScalar vmax = vsize.x > vsize.y ? vsize.x : vsize.y;
 
@@ -570,15 +569,6 @@ void gkScene::setMainCamera(gkCamera* cam)
 		{
 			main->setWindow(l, t, r, b);
 		}
-		else if (framing == gkSceneProperties::FR_EXTEND)
-		{
-			if (aspect > 1.0f)
-				l = 0, r = 1;
-			else
-				t = 0, b = 1;
-
-			main->setWindow(l, t, r, b);
-		}
 		else if (framing == gkSceneProperties::FR_SCALE)
 		{
 			gkScalar w = r - l;
@@ -590,6 +580,7 @@ void gkScene::setMainCamera(gkCamera* cam)
 			main->setFrustumExtents(l,r,t,b);
 		}
 	}
+
 
 	m_viewport->setDimensions(0, 0, 1, 1);
 
@@ -852,7 +843,7 @@ void gkScene::createInstanceImpl(void)
 
 	GK_ASSERT(m_viewport);
 
-	if (m_enableViewportFraming)
+	if (m_baseProps.m_framing == gkSceneProperties::FR_LETTERBOX)
 		m_viewport->setBackgroundColour(m_baseProps.m_framingColor);
 	else
 		m_viewport->setBackgroundColour(m_baseProps.m_world);

@@ -158,7 +158,7 @@ RenderWindow *gkWindowSystem::createMainWindow(const gkUserDefs &prefs)
 		bool found =false;
 		
 		gkPrintf("Available video modes:");
-		for(int i=0; i<modeOption.possibleValues.size(); i++)
+		for(size_t i=0; i<modeOption.possibleValues.size(); i++)
 		{
 			int modex, modey;
 			gkString modeStr = modeOption.possibleValues[i];

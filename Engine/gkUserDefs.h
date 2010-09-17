@@ -65,8 +65,7 @@ public:
 	bool                    disableSound;       // Disable OpenAL sound.
 	bool                    fsaa;               // Enable Full scene anti aliasing.
 	int                     fsaaSamples;        // Anti aliasing samples.
-	bool                    enableshadows;
-	bool					viewportFraming;    // Enable / Disable Game scene viewport framing
+	bool                    enableshadows;	
     int                     defaultMipMap;      // Number of mipmaps to generate per texture (default 5)
 
 	gkString                shadowtechnique;
