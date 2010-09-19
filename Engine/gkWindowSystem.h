@@ -36,7 +36,12 @@
 class gkWindowSystem : public Ogre::Singleton<gkWindowSystem>
 {
 public:
-
+	enum
+	{
+		FRAMING_EXTEND,
+		FRAMING_CROP,
+		FRAMING_LETTERBOX,
+	};
 
 	class Listener : public utListClass<Listener>::Link
 	{
@@ -74,6 +79,10 @@ protected:
 
 	ListenerList        m_listeners;
 
+	int m_requestedWidth;
+	int m_requestedHeight;
+	int m_framingType;
+
 public:
 	gkWindowSystem();
 	virtual ~gkWindowSystem();
@@ -82,6 +91,8 @@ public:
 
 	Ogre::RenderWindow *createMainWindow(const gkUserDefs &prefs);
 	Ogre::RenderWindow *getMainWindow(void);
+	Ogre::Viewport* addMainViewport(gkCamera* cam);
+	void setMainViewportDimension(Ogre::Viewport* viewport);
 
 	void addListener(Listener *l);
 	void removeListener(Listener *l);

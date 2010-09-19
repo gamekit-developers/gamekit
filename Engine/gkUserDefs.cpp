@@ -33,6 +33,7 @@
 #include "gkPath.h"
 #include "gkUtils.h"
 #include "gkPath.h"
+#include "gkWindowSystem.h"
 
 
 
@@ -51,6 +52,7 @@ gkUserDefs::gkUserDefs()
 	    wintitle("Ogre GameKit Demo"),
 		extWinhandle(""),
 	    fullscreen(false),
+	    framingType(gkWindowSystem::FRAMING_EXTEND),
 	    resources(""),
 	    animspeed(25),
 	    startframe(1),
@@ -185,6 +187,16 @@ void gkUserDefs::parseString(const gkString &key, const gkString &val)
 	if (KeyEq("fullscreen"))
 	{
 		fullscreen = Ogre::StringConverter::parseBool(val);
+		return;
+	}
+	if (KeyEq("framingtype"))
+	{
+		framingType = gkWindowSystem::FRAMING_EXTEND;
+
+		if (val.find("crop") != val.npos)
+			framingType = gkWindowSystem::FRAMING_CROP;
+		if (val.find("letterbox") != val.npos)
+			framingType = gkWindowSystem::FRAMING_LETTERBOX;
 		return;
 	}
 	if (KeyEq("resources"))

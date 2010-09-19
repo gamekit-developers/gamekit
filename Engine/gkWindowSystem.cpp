@@ -31,6 +31,9 @@
 #include "gkWindowSystem.h"
 #include "gkLogger.h"
 #include "gkUserDefs.h"
+#include "gkCamera.h"
+#include "gkEngine.h"
+#include "gkScene.h"
 
 using namespace Ogre;
 
@@ -138,6 +141,10 @@ RenderWindow *gkWindowSystem::createMainWindow(const gkUserDefs &prefs)
 	if (m_window)
 		return 0;
 
+	m_requestedWidth = (int)(prefs.winsize.x+0.5f);
+	m_requestedHeight = (int)(prefs.winsize.y+0.5f);
+	m_framingType = prefs.framingType;
+	
 	Ogre::NameValuePairList params;
 
 	if (prefs.fsaa)
@@ -169,7 +176,7 @@ RenderWindow *gkWindowSystem::createMainWindow(const gkUserDefs &prefs)
 				modex = Ogre::StringConverter::parseInt( modeStr.substr(0,4));
 				modey = Ogre::StringConverter::parseInt( modeStr.substr(7,4));
 				
-				if(modex>=(int)prefs.winsize.x && modey>=(int)prefs.winsize.y)
+				if(modex>=m_requestedWidth && modey>=m_requestedHeight)
 				{
 					found = true;
 					winsizex = modex;
@@ -189,14 +196,14 @@ RenderWindow *gkWindowSystem::createMainWindow(const gkUserDefs &prefs)
 	}
 	else
 	{
-		winsizex = (int)prefs.winsize.x;
-		winsizey = (int)prefs.winsize.y;
+		winsizex = m_requestedWidth;
+		winsizey = m_requestedHeight;
 	}
 
 	m_window = Root::getSingleton().createRenderWindow(prefs.wintitle, 
 		winsizex, winsizey, prefs.fullscreen, &params);
 	m_window->setActive(true);
-
+	
 	// copy window size (used later for hit testing)
 	m_mouse.winsize.x = winsizex;
 	m_mouse.winsize.y = winsizey;
@@ -271,8 +278,8 @@ RenderWindow *gkWindowSystem::createMainWindow(const gkUserDefs &prefs)
 		
 #ifndef OGREKIT_BUILD_IPHONE
 		const OIS::MouseState &st = m_internal->m_mouse->getMouseState();
-		st.width  = (int)prefs.winsize.x;
-		st.height = (int)prefs.winsize.y;
+		st.width  = winsizex;
+		st.height = winsizey;
 #endif
 		
 	}
@@ -290,6 +297,67 @@ RenderWindow *gkWindowSystem::createMainWindow(const gkUserDefs &prefs)
 RenderWindow *gkWindowSystem::getMainWindow(void)
 {
 	return m_window;
+}
+
+Viewport* gkWindowSystem::addMainViewport(gkCamera *cam)
+{
+	if (m_window)
+	{
+		Viewport* vp=  m_window->addViewport(cam->getCamera());
+		setMainViewportDimension(vp);
+		return vp;
+	}
+	return 0;
+}
+
+void gkWindowSystem::setMainViewportDimension(Viewport* viewport)
+{
+		float l = 0.0;
+		float r = 1.0;
+		float t = 0.0;
+		float b = 1.0;
+		int w = m_window->getWidth();
+		int h = m_window->getHeight();
+		
+		if(w != m_requestedWidth || h != m_requestedHeight)
+		{
+			switch(m_framingType)
+			{
+				case FRAMING_CROP:
+				{
+					l = (w-m_requestedWidth) / (2.0f*w);
+					r = (w+m_requestedWidth) / (2.0f*w);
+					t = (h-m_requestedHeight) / (2.0f*h);
+					b = (h+m_requestedHeight) / (2.0f*h);
+					break;
+				}
+				case FRAMING_LETTERBOX:
+				{
+					float hratio = (float)m_requestedWidth/(float)w;
+					float vratio = (float)m_requestedHeight/(float)h;
+					
+					if (hratio>vratio)
+					{
+						l= 0;
+						r= 1;
+						t= (1-(vratio/hratio))/2.0f;
+						b= t + (vratio/hratio);
+					}
+					else
+					{
+						
+						t= 0;
+						b= 1;
+						l= (1-(hratio/vratio))/2.0f;
+						r= l + (hratio/vratio);
+					}
+					break;
+				}
+			}
+		
+		}
+		
+		viewport->setDimensions(l, t, r-l, b-t);
 }
 
 void gkWindowSystem::addListener(Listener *l)
@@ -716,6 +784,9 @@ void gkWindowSystemPrivate::windowResized(RenderWindow *rw)
 	{
 		Viewport *vp = rw->getViewport(i);
 
+		// We assume all viewports are "main" vieport
+		m_sys->setMainViewportDimension(vp);
+		
 		Camera *cam = vp->getCamera();
 		cam->setAspectRatio(Real(vp->getActualWidth()) / Real(vp->getActualHeight()));
 
@@ -726,6 +797,15 @@ void gkWindowSystemPrivate::windowResized(RenderWindow *rw)
 
 		m_sys->m_mouse.winsize.x = (Real)state.width;
 		m_sys->m_mouse.winsize.y = (Real)state.height;
+	}
+	
+	// Ogre keep Y field of view constant, we want to keep X fov constant
+	gkScene* scene = gkEngine::getSingleton().getActiveScene();
+	if(scene)
+	{
+		gkCamera* cam = scene->getMainCamera();
+		if(cam)
+			cam->setFov(gkDegree(cam->getFov()));
 	}
 }
 

@@ -380,24 +380,6 @@ void gkBlenderSceneConverter::convertWorld(void)
 			}
 		}
 	}
-
-	
-	Blender::GameData &gm = m_bscene->gm;
-
-	props.m_framingColor.r = gm.framing.col[0];
-	props.m_framingColor.g = gm.framing.col[1];
-	props.m_framingColor.b = gm.framing.col[2];
-	
-	switch (gm.framing.type)
-	{
-	case SCE_GAMEFRAMING_BARS:	 props.m_framing = gkSceneProperties::FR_LETTERBOX; break;
-	case SCE_GAMEFRAMING_EXTEND: props.m_framing = gkSceneProperties::FR_EXTEND;    break;
-	case SCE_GAMEFRAMING_SCALE:  props.m_framing = gkSceneProperties::FR_SCALE;     break;
-	}
-
-	Blender::RenderData &r = m_bscene->r;
-
-	props.m_framingAspectRatio = (r.xsch * r.xasp) / (r.ysch * r.yasp);
 }
 
 
@@ -835,8 +817,6 @@ void gkBlenderSceneConverter::convertObjectCamera(gkGameObject *gobj, Blender::O
 	props.m_fov         = gkScalar(360) * gkMath::ATan(gkScalar(16) / camera->lens).valueRadians() / gkPi;
 	props.m_orthoscale  = camera->ortho_scale;
 	props.m_start       = m_bscene->camera == bobj;
-	props.m_shiftx		= camera->shiftx;
-	props.m_shifty		= camera->shifty;
 }
 
 

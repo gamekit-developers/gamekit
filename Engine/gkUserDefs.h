@@ -50,6 +50,7 @@ public:
 	gkString                wintitle;           // Window title
 	gkString				extWinhandle;		// External Window Handle
 	bool                    fullscreen;         // Fullscreen mode
+	int                     framingType;        // crop/letterbox/extend. Used when window is larger then requested
 	gkString                resources;          // resources to load
 	gkScalar                animspeed;          // animation speed, depreciated
 	gkScalar                startframe;         // animation frame at the start of the game
