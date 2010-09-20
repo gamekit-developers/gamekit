@@ -166,14 +166,18 @@ class GamekitStartGameOperator(bpy.types.Operator):
         scene = context.scene
         gks = scene.gamekit
         
-        # make sure path are absolute 
-        gks.gk_runtime_exec_path = bpy.path.abspath(gks.gk_runtime_exec_path)
-        #gks.gk_runtime_working_dir = bpy.utils.expandpath(gks.gk_runtime_working_dir)
-        if not gks.gk_runtime_working_dir.endswith(os.sep):
-            gks.gk_runtime_working_dir += os.sep
-        #gks.gk_export_tmp_dir = bpy.utils.expandpath(gks.gk_export_tmp_dir)
-        if not gks.gk_export_tmp_dir.endswith(os.sep):
-            gks.gk_export_tmp_dir += os.sep
+        if os.sys.platform == 'darwin' and gks.gk_runtime_exec_path[0] != '/':
+            blend_path = os.path.dirname(bpy.app.binary_path)
+            gks.gk_runtime_exec_path = blend_path + '/' + gks.gk_runtime_exec_path
+        else:
+            # make sure path are absolute 
+            gks.gk_runtime_exec_path = bpy.path.abspath(gks.gk_runtime_exec_path)
+            #gks.gk_runtime_working_dir = bpy.utils.expandpath(gks.gk_runtime_working_dir)
+            if not gks.gk_runtime_working_dir.endswith(os.sep):
+                gks.gk_runtime_working_dir += os.sep
+            #gks.gk_export_tmp_dir = bpy.utils.expandpath(gks.gk_export_tmp_dir)
+            if not gks.gk_export_tmp_dir.endswith(os.sep):
+                gks.gk_export_tmp_dir += os.sep
 
         gamefile = gks.gk_export_tmp_dir + "BOgreKitGame.blend"
         cfgfile = gks.gk_export_tmp_dir + "BOgreKitStartup.cfg"

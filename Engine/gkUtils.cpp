@@ -70,30 +70,37 @@ gkString gkUtils::getFile(const gkString &in)
 	char newName[1024];
 
 #ifdef __APPLE__
-
-	char *bundlePath = AppleGetBundleDirectory();
-
-	//cut off the .app filename
-	char *lastSlash = 0;
-	if (lastSlash = strrchr(bundlePath, '/'))
-		* lastSlash = '\0';
-
-	sprintf(newName, "%s/%s", bundlePath, "game.blend");
-	FILE *f = fopen(newName,"rb");
-
-	if (f)
+	FILE *f = fopen(in.c_str(),"rb");
+	if (f) //first, check outside of bundle
 	{
 		fclose(f);
+		sprintf(newName, "%s", in.c_str());
 	}
-	else
+	else 
 	{
-#ifdef OGREKIT_BUILD_IPHONE
-		sprintf(newName,"%s/%s",AppleGetBundleDirectory(),in.c_str());
-#else
-		sprintf(newName,"%s/%s/%s",AppleGetBundleDirectory(),"Contents/Resources",in.c_str());
-#endif
-	}
+		char *bundlePath = AppleGetBundleDirectory();
 
+		//cut off the .app filename
+		char *lastSlash = 0;
+		if (lastSlash = strrchr(bundlePath, '/'))
+			* lastSlash = '\0';
+
+		sprintf(newName, "%s/%s", bundlePath, "game.blend");
+		FILE *f = fopen(newName,"rb");
+
+		if (f)
+		{
+			fclose(f);
+		}
+		else
+		{
+#ifdef OGREKIT_BUILD_IPHONE
+			sprintf(newName,"%s/%s",AppleGetBundleDirectory(),in.c_str());
+#else
+			sprintf(newName,"%s/%s/%s",AppleGetBundleDirectory(),"Contents/Resources",in.c_str());
+#endif
+		}
+	}
 #else
 
 	sprintf(newName, "%s", in.c_str());
