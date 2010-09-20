@@ -28,6 +28,7 @@ include(CMakeDependentOption)
 include(CheckCXXCompilerFlag)
 include(ConfigOgreKit)
 include(ConfigGameKit)
+include(ConfigIPhone)
 
 configure_gamekit(${CMAKE_SOURCE_DIR}/Dependencies/Source/Blender25)
 configure_ogrekit(${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/OgreLite)

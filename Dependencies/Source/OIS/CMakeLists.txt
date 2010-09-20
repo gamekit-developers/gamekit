@@ -133,3 +133,5 @@ endif()
 
 include_directories(${OGREKIT_OIS_INCLUDE} )
 add_library(OIS ${OIS_SRC} ${OIS_HDR} ${OIS_PLAT})
+
+config_target_if_iphone_build(OIS TRUE)

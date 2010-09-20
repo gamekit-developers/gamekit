@@ -55,3 +55,5 @@ include_directories(
 	../../../bullet/src
 )
 add_library(${PROJECT_NAME} ${OPENSTEER_HDR} ${OPENSTEER_SRC})
+
+config_target_if_iphone_build(${PROJECT_NAME}  TRUE)

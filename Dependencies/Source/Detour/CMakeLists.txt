@@ -21,3 +21,5 @@ set(DETOUR_HDR
 include_directories( Include )
 
 add_library(${PROJECT_NAME} ${DETOUR_HDR} ${DETOUR_SRC})
+
+config_target_if_iphone_build(${PROJECT_NAME} TRUE)

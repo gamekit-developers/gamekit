@@ -62,3 +62,5 @@ set(VORBIS
 )
 
 add_library(OggVorbis ${OGG} ${VORBIS})
+
+config_target_if_iphone_build(OggVorbis TRUE)

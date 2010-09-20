@@ -125,16 +125,9 @@ macro (configure_ogrekit ROOT OGREPATH)
 	  add_definitions(-fno-regmove)
 	  remove_definitions(-msse)
 	  
-	  if(VERSION STRLESS "2.8.1")
-		message(STATUS "Copy iphone sdk files to " ${CMAKE_BINARY_DIR})
-		file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/SDK/iPhone/edit_linker_paths.sed DESTINATION ${CMAKE_BINARY_DIR})
-		file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/SDK/iPhone/fix_linker_paths.sh DESTINATION ${CMAKE_BINARY_DIR})
-		
-	  endif()
-	  
-	if (NOT OGRE_CONFIG_ENABLE_VIEWPORT_ORIENTATIONMODE)
+	  if (NOT OGRE_CONFIG_ENABLE_VIEWPORT_ORIENTATIONMODE)
 		set(OGRE_SET_DISABLE_VIEWPORT_ORIENTATIONMODE 1)
-	endif()
+	  endif()
 	  
 	elseif (APPLE)
 	
@@ -339,6 +332,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 		${OGREKIT_OPENAL_LIBRARY}
 		)
 		
+	#Check Build Settings
 	if (APPLE)
 		if (OGREKIT_BUILD_IPHONE)
 			set(OGRE_BUILD_RENDERSYSTEM_GL CACHE BOOL "Forcing remove OpenGL RenderSystem for iPhone" FORCE)
@@ -353,6 +347,11 @@ macro (configure_ogrekit ROOT OGREPATH)
 			if (NOT OGREKIT_BUILD_GLESRS)
 				message(SEND_ERROR "Turn ON OGREKIT_BUILD_GLESRS Option for iPhone")
 			endif()
+			
+			if(VERSION STRLESS "2.8.2")
+				message(ERROR "You should update the CMake 2.8.2 higher for iPhone build.")
+	  		endif()
+	  
 		else()
 			set(OGRE_BUILD_RENDERSYSTEM_GL TRUE CACHE BOOL "Forcing use OpenGL RenderSystem for OS X" FORCE)
 			set(OGRE_BUILD_RENDERSYSTEM_GLES CACHE BOOL "Forcing remove OpenGLES RenderSystem for OS X" FORCE)

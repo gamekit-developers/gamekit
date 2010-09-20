@@ -57,3 +57,5 @@ endif()
 include_directories(include)
 add_definitions(-DFT2_BUILD_LIBRARY)
 add_library(${OGREKIT_FREETYPE_TARGET} ${FREETYPE_SRC} ${FREETYPE_PLATFORM})
+
+config_target_if_iphone_build(${OGREKIT_FREETYPE_TARGET} TRUE)

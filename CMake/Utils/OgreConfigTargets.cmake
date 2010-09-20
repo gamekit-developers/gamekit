@@ -92,6 +92,7 @@ function(ogre_config_common TARGETNAME)
   endif(OGRE_BUILD_PLATFORM_IPHONE)
 
   ogre_create_vcproj_userfile(${TARGETNAME})
+  config_target_if_iphone_build(${TARGETNAME}  TRUE)
 endfunction(ogre_config_common)
 
 # setup library build

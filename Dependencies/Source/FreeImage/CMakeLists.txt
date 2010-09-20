@@ -654,3 +654,5 @@ set(ALLSOURCE
 	)
 
 add_library(${OGREKIT_FREEIMAGE_TARGET}	${ALLSOURCE})
+
+config_target_if_iphone_build(${OGREKIT_FREEIMAGE_TARGET} TRUE)
