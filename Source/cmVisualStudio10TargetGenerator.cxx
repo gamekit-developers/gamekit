@@ -1287,7 +1287,13 @@ void cmVisualStudio10TargetGenerator::WriteLinkOptions(std::string const&
     this->WriteString(
       "  <LinkLibraryDependencies>false</LinkLibraryDependencies>\n", 2);
     this->WriteString("</ProjectReference>\n", 2);
-    }
+    } else
+  {
+	  this->WriteString("<ProjectReference>\n", 2);
+    this->WriteString(
+      "  <LinkLibraryDependencies>true</LinkLibraryDependencies>\n", 2);
+    this->WriteString("</ProjectReference>\n", 2);
+	}
 }
 
 void cmVisualStudio10TargetGenerator::AddLibraries(

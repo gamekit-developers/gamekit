@@ -849,6 +849,7 @@ cmLocalVisualStudio7Generator
   return extraLinkOptionsBuildType;
 }
 
+
 void cmLocalVisualStudio7Generator::OutputBuildTool(std::ostream& fout,
                                                     const char* configName,
                                                     cmTarget &target,
@@ -975,7 +976,10 @@ void cmLocalVisualStudio7Generator::OutputBuildTool(std::ostream& fout,
     if(!gg->NeedLinkLibraryDependencies(target))
       {
       fout << "\t\t\t\tLinkLibraryDependencies=\"false\"\n";
-      }
+      } else
+	{
+		fout << "\t\t\t\tLinkLibraryDependencies=\"true\"\n";
+	 }
     linkOptions.OutputAdditionalOptions(fout, "\t\t\t\t", "\n");
     // Use the NOINHERIT macro to avoid getting VS project default
     // libraries which may be set by the user to something bad.
@@ -1051,7 +1055,10 @@ void cmLocalVisualStudio7Generator::OutputBuildTool(std::ostream& fout,
     if(!gg->NeedLinkLibraryDependencies(target))
       {
       fout << "\t\t\t\tLinkLibraryDependencies=\"false\"\n";
-      }
+      } else
+	{
+		fout << "\t\t\t\tLinkLibraryDependencies=\"true\"\n";
+	  }
     linkOptions.OutputAdditionalOptions(fout, "\t\t\t\t", "\n");
     // Use the NOINHERIT macro to avoid getting VS project default
     // libraries which may be set by the user to something bad.

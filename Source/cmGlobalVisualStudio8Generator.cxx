@@ -300,7 +300,8 @@ bool cmGlobalVisualStudio8Generator::NeedLinkLibraryDependencies(
         }
       }
     }
-  return false;
+  //return false;
+  return true;
 }
 
 //----------------------------------------------------------------------------

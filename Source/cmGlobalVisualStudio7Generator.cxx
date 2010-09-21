@@ -599,6 +599,12 @@ void cmGlobalVisualStudio7Generator::Configure()
   this->CreateGUID("REBUILD_CACHE");
   this->CreateGUID("PACKAGE");
 }
+ 
+bool cmGlobalVisualStudio7Generator::NeedLinkLibraryDependencies(cmTarget&)
+{
+	return true;
+
+}
 
 //----------------------------------------------------------------------------
 void

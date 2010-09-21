@@ -94,7 +94,7 @@ public:
 
   /** Return true if the target project file should have the option
       LinkLibraryDependencies and link to .sln dependencies. */
-  virtual bool NeedLinkLibraryDependencies(cmTarget&) { return false; }
+  virtual bool NeedLinkLibraryDependencies(cmTarget&);
 
 protected:
   virtual const char* GetIDEVersion() { return "7.0"; }
