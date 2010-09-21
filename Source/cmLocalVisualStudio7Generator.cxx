@@ -1670,17 +1670,20 @@ void cmLocalVisualStudio7Generator
   event.Write(target.GetPreBuildCommands());
   event.Finish();
 
-  // Add pre-link event.
-  tool = this->FortranProject? "VFPreLinkEventTool":"VCPreLinkEventTool";
-  event.Start(tool);
-  event.Write(target.GetPreLinkCommands());
-  cmsys::auto_ptr<cmCustomCommand> pcc(
-    this->MaybeCreateImplibDir(target, configName));
-  if(pcc.get())
-    {
-    event.Write(*pcc);
-    }
-  event.Finish();
+  if (!UseRelativePaths)
+  {
+	  // Add pre-link event.
+	  tool = this->FortranProject? "VFPreLinkEventTool":"VCPreLinkEventTool";
+	  event.Start(tool);
+	  event.Write(target.GetPreLinkCommands());
+	  cmsys::auto_ptr<cmCustomCommand> pcc(
+		this->MaybeCreateImplibDir(target, configName));
+	  if(pcc.get())
+		{
+		event.Write(*pcc);
+		}
+	  event.Finish();
+  }
 
   // Add post-build event.
   tool = this->FortranProject? "VFPostBuildEventTool":"VCPostBuildEventTool";
