@@ -1,1 +1,0 @@
-SUBDIRS(BlenderSerialize BulletFileLoader)
