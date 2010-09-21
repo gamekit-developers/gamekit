@@ -27,6 +27,7 @@ from bpy.props import *
 import os
 import subprocess
 import shlex
+from game_gamekit import config
 
 # Declare gamekit as a render engine
 class GamekitRender(bpy.types.RenderEngine):
@@ -51,104 +52,42 @@ class GamekitExportStartupFileOperator(bpy.types.Operator):
         gks = context.scene.gamekit
         scene = context.scene
 
-        try:
-            file = open(self.properties.filepath, 'w')
-        except IOError as er:
-            self.report('ERROR', str(er))
+        cfg = config.GamekitConfig()
+        
+        cfg.set("rendersystem", gks.gk_render_system.lower())
+        cfg.set('log', gks.gk_log_file)
+        cfg.set('debugfps', str(gdata.show_framerate_profile))
+        cfg.set('debugphysics', str(gdata.show_physics_visualization))
+        cfg.set('debugphysicsaabb', str(gks.gk_debug_physicsaabb))
+        cfg.set('grabinput', str(gks.gk_grab_input))
+        cfg.set('verbose', str(gks.gk_verbose))
+        cfg.set('winsize', str(gdata.resolution_x) + " " + str(gdata.resolution_y) )
+        cfg.set('wintitle', gks.gk_window_title)
+        cfg.set('fullscreen', str(gdata.show_fullscreen))
+        cfg.set('animspeed', str(scene.render.fps))
+        cfg.set('startframe', str(gks.gk_start_frame))
+        if gdata.material_mode == 'MULTITEXTURE':
+            cfg.set('blendermat', "True")
+        else:
+            cfg.set('blendermat', "False")
+        cfg.set('buildinstances', str(gks.gk_build_instances))
+        cfg.set('frustrumculling', str(gks.gk_frustrum_culling))
+        cfg.set('showdebugprops', str(gdata.show_debug_properties))
+        cfg.set('debugsounds', str(gks.gk_debug_sound))
+        cfg.set('enableshadows', str(gks.gk_use_shadows))
+        cfg.set('shadowtechnique', gks.gk_shadow_type.replace('_','').lower())
+        cfg.set('colourshadow', str(gks.gk_shadow_color.r) + " " + str(gks.gk_shadow_color.g) + " " + str(gks.gk_shadow_color.b))
+        cfg.set('fardistanceshadow', str(gks.gk_far_dist_shadow))
+        
+        if cfg.write_config(self.properties.filepath) is False:
+            self.report('ERROR', "Error saving gamekit comfig to: " + self.properties.filepath)
             return {'CANCELLED'}
         
-        file.write("rendersystem        = ")
-        file.write(gks.gk_render_system.lower())
-        file.write("\n")
-        
-        file.write("log                 = ")
-        file.write(gks.gk_log_file)
-        file.write("\n")
-        
-        file.write("debugfps            = ")
-        file.write( str(gdata.show_framerate_profile))
-        file.write("\n")
-        
-        file.write("debugphysics        = ")
-        file.write( str(gdata.show_physics_visualization))
-        file.write("\n")
-        
-        file.write("debugphysicsaabb    = ")
-        file.write( str(gks.gk_debug_physicsaabb))
-        file.write("\n")
-        
-        file.write("grabinput           = ")
-        file.write( str(gks.gk_grab_input))
-        file.write("\n")
-        
-        file.write("verbose             = ")
-        file.write(str(gks.gk_verbose))
-        file.write("\n")
-
-        file.write("winsize             = ")
-        file.write( str(gdata.resolution_x) + " " + str(gdata.resolution_y) )
-        file.write("\n")
-        
-        file.write("wintitle            = ")
-        file.write(gks.gk_window_title)
-        file.write("\n")
-        
-        file.write("fullscreen          = ")
-        file.write( str(gdata.show_fullscreen))  
-        file.write("\n")      
-      
-        file.write("animspeed           = ")
-        file.write( str(scene.render.fps))
-        file.write("\n")
-        
-        file.write("startframe          = ")
-        file.write( str(gks.gk_start_frame))
-        file.write("\n")
-        
-        file.write("blendermat          = ")
-        if gdata.material_mode == 'MULTITEXTURE':
-            file.write("True")
-        else:
-            file.write("False")
-        file.write("\n")
-        
-        file.write("buildinstances      = ")
-        file.write( str(gks.gk_build_instances))
-        file.write("\n")
-        
-        file.write("frustrumculling     = ")
-        file.write( str(gks.gk_frustrum_culling))
-        file.write("\n")
-        
-        file.write("showdebugprops      = ")
-        file.write( str(gdata.show_debug_properties))
-        file.write("\n")
-        
-        file.write("debugsounds         = ")
-        file.write( str(gks.gk_debug_sound))
-        file.write("\n")
-        
-        file.write("enableshadows       = ")
-        file.write( str(gks.gk_use_shadows))
-        file.write("\n")
-        
-        file.write("shadowtechnique     = ")
-        file.write(gks.gk_shadow_type.replace('_','').lower())
-        file.write("\n")
-        
-        file.write("colourshadow        = ")
-        file.write( str(gks.gk_shadow_color.r) + " " + str(gks.gk_shadow_color.g) + " " + str(gks.gk_shadow_color.b))
-        file.write("\n")
-        
-        file.write("fardistanceshadow   = ")
-        file.write( str(gks.gk_far_dist_shadow))
-        file.write("\n")
-        
-        file.close()
         return {'FINISHED'}
+        
     
     def invoke(self, context, event):
-        context.manager.add_fileselect(self)
+        context.window_manager.add_fileselect(self)
         return {'RUNNING_MODAL'}
     
 
@@ -166,22 +105,23 @@ class GamekitStartGameOperator(bpy.types.Operator):
         scene = context.scene
         gks = scene.gamekit
         
-        if os.sys.platform == 'darwin' and gks.gk_runtime_exec_path[0] != '/':
-            blend_path = os.path.dirname(bpy.app.binary_path)
-            gks.gk_runtime_exec_path = blend_path + '/' + gks.gk_runtime_exec_path
+        if gks.gk_runtime_exec_path[0:2] == "./":
+            pwd = os.path.dirname(bpy.app.binary_path)
+            execpath = pwd + '/' + gks.gk_runtime_exec_path
         else:
-            # make sure path are absolute 
-            gks.gk_runtime_exec_path = bpy.path.abspath(gks.gk_runtime_exec_path)
-            #gks.gk_runtime_working_dir = bpy.utils.expandpath(gks.gk_runtime_working_dir)
-            if not gks.gk_runtime_working_dir.endswith(os.sep):
-                gks.gk_runtime_working_dir += os.sep
-            #gks.gk_export_tmp_dir = bpy.utils.expandpath(gks.gk_export_tmp_dir)
-            if not gks.gk_export_tmp_dir.endswith(os.sep):
-                gks.gk_export_tmp_dir += os.sep
-
-        gamefile = gks.gk_export_tmp_dir + "BOgreKitGame.blend"
-        cfgfile = gks.gk_export_tmp_dir + "BOgreKitStartup.cfg"
-        cmdline = gks.gk_runtime_exec_path + " -c " + cfgfile + " " + gamefile
+            execpath = bpy.path.abspath(gks.gk_runtime_exec_path)
+            
+        tmpdir = bpy.context.user_preferences.filepaths.temporary_directory
+        if not tmpdir.endswith(os.sep):
+                tmpdir += os.sep
+                
+        gamefile = tmpdir + "gamekit_tmp.blend"
+        cfgfile = tmpdir + "gamekit_startup.cfg"
+        cmdline = execpath + " -c " + cfgfile + " " + gamefile
+        
+        workingdir = bpy.path.abspath(gks.gk_runtime_working_dir)
+        if not workingdir.endswith(os.sep):
+                workingdir += os.sep
         
         args =  shlex.split(cmdline.replace(os.sep, '/'))        
 
@@ -199,7 +139,7 @@ class GamekitStartGameOperator(bpy.types.Operator):
 
         # launch game
         try:
-            subp = subprocess.Popen(args, cwd=gks.gk_runtime_working_dir, shell=False)
+            subp = subprocess.Popen(args, cwd=workingdir, shell=False)
             subp.communicate() #like wait() but without the risk of deadlock with verbose output
             returnv = subp.returncode
 
