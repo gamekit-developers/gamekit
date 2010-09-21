@@ -27,8 +27,6 @@
 #ifndef _gkActionManager_h_
 #define _gkActionManager_h_
 
-
-
 #include "gkCommon.h"
 #include "gkMathUtils.h"
 

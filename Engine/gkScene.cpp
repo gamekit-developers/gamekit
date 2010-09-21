@@ -64,6 +64,12 @@
 #endif
 
 
+#if GK_EXTERNAL_RENDER == GK_EXTERNAL_RENDER_OGREKIT
+#include "External/Ogre/gkOgreMaterialLoader.h"
+#include "External/Ogre/gkOgreSkyboxGradient.h"
+#endif
+
+
 using namespace Ogre;
 
 
@@ -81,7 +87,8 @@ gkScene::gkScene(gkInstancedManager* creator, const gkResourceName &name, const 
 	     m_hasLights(false),
 	     m_markDBVT(false),
 	     m_cloneCount(0),
-	     m_layers(0xFFFFFFFF)
+	     m_layers(0xFFFFFFFF),
+		 m_skybox(0)
 {
 }
 
@@ -89,6 +96,11 @@ gkScene::gkScene(gkInstancedManager* creator, const gkResourceName &name, const 
 
 gkScene::~gkScene()
 {
+	if (m_skybox)
+	{
+		delete m_skybox;
+		m_skybox = 0;
+	}
 
 	if (m_constraintManager)
 	{
@@ -394,7 +406,7 @@ int gkScene::getSceneManagerType(void)
 
 
 
-void gkScene::setWorldColor(const gkColor& col)
+void gkScene::setHorizonColor(const gkColor& col)
 {
 	if (isInstanced())
 	{
@@ -404,16 +416,37 @@ void gkScene::setWorldColor(const gkColor& col)
 	else
 	{
 		// save for reinstanced state.
-		m_baseProps.m_world = col;
+		m_baseProps.m_material.m_horizon = col;
 	}
 }
 
 
-const gkColor& gkScene::getWorldColor(void)
+const gkColor& gkScene::getHorizonColor(void)
 {
-	return m_baseProps.m_world;
+	return m_baseProps.m_material.m_horizon;
 }
 
+
+
+void gkScene::setZenithColor(const gkColor& col)
+{
+	if (isInstanced())
+	{
+		GK_ASSERT(m_manager && m_viewport);
+		m_viewport->setBackgroundColour(col);
+	}
+	else
+	{
+		// save for reinstanced state.
+		m_baseProps.m_material.m_horizon = col;
+	}
+}
+
+
+const gkColor& gkScene::getZenithColor(void)
+{
+	return m_baseProps.m_material.m_zenith;
+}
 
 
 void gkScene::setAmbientColor(const gkColor& col)
@@ -425,7 +458,7 @@ void gkScene::setAmbientColor(const gkColor& col)
 	}
 	else
 	{
-		m_baseProps.m_ambient = col;
+		m_baseProps.m_material.m_ambient = col;
 	}
 }
 
@@ -433,7 +466,7 @@ void gkScene::setAmbientColor(const gkColor& col)
 
 const gkColor& gkScene::getAmbientColor(void)
 {
-	return m_baseProps.m_ambient;
+	return m_baseProps.m_material.m_ambient;
 }
 
 
@@ -730,10 +763,7 @@ void gkScene::createInstanceImpl(void)
 	// to extract more detailed management information
 
 	m_manager = Root::getSingleton().createSceneManager(ST_GENERIC, m_name.str());
-
-
-	if (!m_baseProps.m_skyMat.empty())
-		m_manager->setSkyBox(true, m_baseProps.m_skyMat, m_baseProps.m_skyDist, true, m_baseProps.m_skyOri);
+	m_skybox  = gkMaterialLoader::loadSceneMaterial(this, m_baseProps.m_material);
 
 
 
@@ -797,8 +827,8 @@ void gkScene::createInstanceImpl(void)
 
 	GK_ASSERT(m_viewport);
 
-	m_viewport->setBackgroundColour(m_baseProps.m_world);
-	m_manager->setAmbientLight(m_baseProps.m_ambient);
+	m_viewport->setBackgroundColour(m_baseProps.m_material.m_horizon);
+	m_manager->setAmbientLight(m_baseProps.m_material.m_ambient);
 
 
 
@@ -921,18 +951,24 @@ void gkScene::destroyInstanceImpl(void)
 		m_debugger = 0;
 	}
 
+	if (m_skybox)
+	{
+		delete m_skybox;
+		m_skybox = 0;
+	}
+
 
 	m_startCam = 0;
 	m_limits = gkBoundingBox::BOX_NULL;
 
-	// Clear ogre scene manager.
+
 	if (m_manager)
 	{
 		Ogre::Root::getSingleton().destroySceneManager(m_manager);
 		m_manager = 0;
 	}
 
-	// Finalize vp
+
 	if (m_viewport)
 	{
 		RenderWindow* window = gkWindowSystem::getSingleton().getMainWindow();

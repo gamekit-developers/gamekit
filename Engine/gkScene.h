@@ -27,7 +27,7 @@
 #ifndef _gkSceneObject_h_
 #define _gkSceneObject_h_
 
-#include "gkObject.h"
+#include "gkInstancedObject.h"
 #include "gkMathUtils.h"
 #include "gkSerialize.h"
 #include "gkResource.h"
@@ -148,8 +148,11 @@ public:
 	int getSceneManagerType(void);
 
 
-	void setWorldColor(const gkColor& col);
-	const gkColor& getWorldColor(void);
+	void setHorizonColor(const gkColor& col);
+	const gkColor& getHorizonColor(void);
+
+	void setZenithColor(const gkColor& col);
+	const gkColor& getZenithColor(void);
 
 	void setAmbientColor(const gkColor& col);
 	const gkColor& getAmbientColor(void);
@@ -215,6 +218,7 @@ private:
 	UTuint32                m_layers;
 	gkBoundingBox           m_limits;
 	PNAVMESHDATA            m_navMeshData;
+	class gkSkyBoxGradient* m_skybox;
 };
 
 #endif//_gkSceneObject_h_

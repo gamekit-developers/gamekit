@@ -24,32 +24,24 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkGameObjectChannel_h_
-#define _gkGameObjectChannel_h_
+#ifndef _gkAnimationConverter_h_
+#define _gkAnimationConverter_h_
+
+#include "bCommon.h"
 
 
-#include "Animation/gkAnimationChannel.h"
-#include "gkGameObject.h"
-
-class gkAction;
-
-
-class gkGameObjectChannel : public gkAnimationChannel
+class gkAnimationLoader
 {
-protected:
-	gkGameObject*        m_object;
-
-
 public:
-	gkGameObjectChannel(gkAction* parent, gkGameObject* object);
-	~gkGameObjectChannel();
 
-	GK_INLINE const gkTransformState& getTransfom(void) { GK_ASSERT(m_object); return m_object->getTransformState(); }
-	GK_INLINE gkMatrix4               getMatrix(void)   { GK_ASSERT(m_object); return getTransfom().toMatrix(); }
-	GK_INLINE gkGameObject*           getObject(void)   { GK_ASSERT(m_object); return m_object; }
+	gkAnimationLoader() {}
+	~gkAnimationLoader() {}
 
-	void evaluate(gkScalar time, gkScalar delta, gkScalar weight);
+
+	void convertGameObject(bParse::bListBasePtr *actions, class gkGameObject *obj, bool pre25compat);
+	void convertSkeleton(bParse::bListBasePtr *actions, class gkSkeletonResource *skel, bool pre25compat);
+
+
 };
 
-
-#endif//_gkGameObjectChannel_h_
+#endif//_gkAnimationConverter_h_

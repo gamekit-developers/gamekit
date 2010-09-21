@@ -52,6 +52,7 @@
 #include "gkStats.h"
 #include "gkMessageManager.h"
 #include "gkMeshManager.h"
+#include "gkSkeletonManager.h"
 #include "gkGroupManager.h"
 #include "gkGameObjectManager.h"
 
@@ -208,6 +209,7 @@ void gkEngine::initialize()
 	new gkTextManager();
 	new gkMessageManager();
 	new gkMeshManager();
+	new gkSkeletonManager();
 	new gkGroupManager();
 	new gkGameObjectManager();
 
@@ -297,6 +299,7 @@ void gkEngine::finalize()
 	delete gkWindowSystem::getSingletonPtr();
 	delete gkMessageManager::getSingletonPtr();
 	delete gkMeshManager::getSingletonPtr();
+	delete gkSkeletonManager::getSingletonPtr();
 
 
 #ifdef OGREKIT_USE_LUA

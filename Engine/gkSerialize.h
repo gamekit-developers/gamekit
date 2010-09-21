@@ -451,6 +451,40 @@ public:
 };
 
 
+
+class gkSceneMaterial
+{
+public:
+
+	enum Type
+	{
+		FLAT,
+		LINEAR,
+		RADIAL,
+		REFLECTED,
+	};
+
+public:
+
+	gkSceneMaterial()
+		:	m_type(FLAT),
+			m_name(""),
+			m_horizon(0,0,0,1),
+			m_zenith(0,0,0,1),
+			m_ambient(0,0,0,1),
+			m_distance(0.f)
+	{
+	}
+
+	int      m_type;
+	gkString m_name;
+	gkColor  m_horizon;
+	gkColor  m_zenith;
+	gkColor  m_ambient;
+	gkScalar m_distance;
+};
+
+
 class gkSceneProperties
 {
 public:
@@ -465,23 +499,15 @@ public:
 public:
 	gkSceneProperties()
 		:   m_manager(MA_GENERIC),
-		    m_world(0.f, 0.f, 0.f),
-		    m_ambient(0.f, 0.f, 0.f),
 		    m_gravity(0.f, 0.f, -9.81f),
-		    m_skyMat(""),
-		    m_skyOri(1.f, 0.f, 0.f, 0.f),
-		    m_skyDist(0.f),
+			m_material(),
 		    m_fog()
 	{
 	}
 
 	int             m_manager;
-	gkColor         m_world;
-	gkColor         m_ambient;
 	gkVector3       m_gravity;
-	gkString        m_skyMat;
-	gkQuaternion    m_skyOri;
-	gkScalar        m_skyDist;
+	gkSceneMaterial m_material;
 	gkFogParams     m_fog;
 };
 

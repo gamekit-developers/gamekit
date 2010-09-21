@@ -27,7 +27,6 @@
 #include "gkGamePlayer.h"
 #include "gkGameLevel.h"
 #include "gkCollisionCameraConstraint.h"
-#include "gkActionSequence.h"
 #include "OgreKit.h"
 #include "Graphics/gkHUDManager.h"
 #include "Graphics/gkHUD.h"
@@ -844,6 +843,13 @@ void gkGamePlayer::update(gkScalar delta)
 		m_isBtn1 = isButtonDownCache(GK_JOY_BUTTON_1, m_btn1Cache);
 		m_isBtn2 = isButtonDownCache(GK_JOY_BUTTON_2, m_btn2Cache);
 		m_isBtn3 = isButtonDownCache(GK_JOY_BUTTON_3, m_btn3Cache);
+	}
+	else
+	{
+		m_camRot.m_absolute.x = m_camRot.m_absolute.y = 0;
+		m_camRot.normalize();
+		m_movement.m_absolute.x = m_movement.m_absolute.y = 0;
+		m_movement.normalize();
 	}
 
 	cameraState();

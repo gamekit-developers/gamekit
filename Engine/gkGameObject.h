@@ -27,7 +27,7 @@
 #ifndef _gkGameObject_h_
 #define _gkGameObject_h_
 
-#include "gkObject.h"
+#include "gkInstancedObject.h"
 #include "gkMathUtils.h"
 #include "gkTransformState.h"
 #include "gkSerialize.h"
@@ -74,13 +74,13 @@ public:
 	virtual ~gkGameObject();
 
 
-	GK_INLINE void                      setOwner(gkScene* scene)            {m_scene = scene;}
-	GK_INLINE gkScene*                   getOwner(void)                     {return m_scene;}
+	GK_INLINE void                      setOwner(gkScene* scene) {m_scene = scene;}
+	GK_INLINE gkScene*                  getOwner(void)           {return m_scene;}
 
-	GK_INLINE Ogre::SceneNode*           getNode(void)                      {return m_node;}
-	GK_INLINE gkGameObjectTypes         getType(void)                       {return m_type;}
-	GK_INLINE gkGameObjectProperties&    getProperties(void)                {return m_baseProps;}
-	GK_INLINE bool                      isClone(void)                       {return m_isClone;}
+	GK_INLINE Ogre::SceneNode*          getNode(void)        {return m_node;}
+	GK_INLINE gkGameObjectTypes         getType(void)        {return m_type;}
+	GK_INLINE gkGameObjectProperties&   getProperties(void)  {return m_baseProps;}
+	GK_INLINE bool                      isClone(void)        {return m_isClone;}
 
 
 	bool hasSensorMaterial(const gkString& name, bool onlyFirst=true);
@@ -128,9 +128,9 @@ public:
 
 	// physics
 
-	GK_INLINE void          attachRigidBody(gkRigidBody* body)          {m_rigidBody = body;}
+	GK_INLINE void           attachRigidBody(gkRigidBody* body)          {m_rigidBody = body;}
 	GK_INLINE gkRigidBody*   getAttachedBody(void)                      {return m_rigidBody;}
-	GK_INLINE void          attachCharacter(gkCharacter* character)     {m_character = character;}
+	GK_INLINE void           attachCharacter(gkCharacter* character)     {m_character = character;}
 	GK_INLINE gkCharacter*   getAttachedCharacter(void)                 {return m_character;}
 	gkPhysicsController*     getPhysicsController(void);
 	btCollisionObject*       getCollisionObject(void);
@@ -150,14 +150,14 @@ public:
 	const gkVector3&         getPosition(void);
 	const gkQuaternion&      getOrientation(void);
 	const gkVector3&         getScale(void);
-	gkEuler                 getRotation(void);
+	gkEuler                  getRotation(void);
 
 	const gkTransformState&  getWorldTransformState(void);
 	const gkMatrix4&         getWorldTransform(void);
 	const gkVector3&         getWorldPosition(void);
 	const gkVector3&         getWorldScale(void);
 	const gkQuaternion&      getWorldOrientation(void);
-	gkEuler                 getWorldRotation(void);
+	gkEuler                  getWorldRotation(void);
 
 
 	void applyTransformState(const gkTransformState& newstate);

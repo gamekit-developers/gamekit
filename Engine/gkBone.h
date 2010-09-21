@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): Nestor Silveira.
+    Contributor(s): none yet.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -24,54 +24,59 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkEntityObject_h_
-#define _gkEntityObject_h_
+#ifndef _gkBone_h_
+#define _gkBone_h_
 
-#include "gkGameObject.h"
 #include "gkSerialize.h"
-#include "Animation/gkActionManager.h"
 
 
-class gkEntity : public gkGameObject
+class gkBone
 {
 public:
-	gkEntity(gkInstancedManager* creator, const gkResourceName& name, const gkResourceHandle& handle);
-	virtual ~gkEntity();
+	typedef utArray<gkBone *> BoneList;
 
-	GK_INLINE Ogre::Entity* getEntity(void) { return m_entity; }
+public:
 
-	GK_INLINE gkEntityProperties&  getEntityProperties(void) {return *m_entityProps;}
+	gkBone(const gkString &name);
+	~gkBone();
 
-	void          evalAction(gkAction* act, gkScalar animTime);
-	void          playAction(const gkString& act, gkScalar blend);
-	gkAction*     getActiveAction(void) const {return m_active;}
+	void setParent(gkBone *bone);
 
-	gkSkeleton*   getSkeleton(void) {return m_skeleton;}
-	void          setSkeleton(gkSkeleton* skel);
-	
-	void _resetPose(void);
+	void setRestPosition(const gkTransformState &st);
 
+	void applyChannelTransform(const gkTransformState &channel, gkScalar weight);
+	void applyPoseTransform(const gkTransformState &pose);
 
-	// Remove only the entity but keep the rest.
-	void _destroyAsStaticGeometry(void);
+	const gkTransformState  &getRest(void)      {return m_bind;}
 
 
-protected:
+	gkTransformState        &getPose(void)      {return m_pose;}
+
+	gkBone                  *getParent(void)    {return m_parent;}
+	BoneList                &getChildren(void)  {return m_children;}
 
 
-	virtual gkBoundingBox getAabb() const;
+	const gkString          &getName(void)      {return m_name;}
 
-	gkGameObject* clone(const gkString& name);
 
-	gkEntityProperties*     m_entityProps;
-	Ogre::Entity*           m_entity;
-	gkActionManager         m_actionMgr;
-	gkAction*               m_active;
-	gkSkeleton*             m_skeleton;
+	// Internal use
+	UTsize                  _getBoneIndex(void);
+	void                    _setOgreBone(Ogre::Bone *bone);
 
-	virtual void createInstanceImpl();
-	virtual void destroyInstanceImpl();
+private:
+
+	const gkString m_name;
+
+	Ogre::Bone *m_bone;
+
+	gkBone      *m_parent;
+	BoneList    m_children;
+
+	gkTransformState m_bind;
+
+	// The current pose matrix, calculated in applyChannelTransform
+	gkTransformState m_pose;
 };
 
 
-#endif//_gkEntityObject_h_
+#endif//_gkBone_h_

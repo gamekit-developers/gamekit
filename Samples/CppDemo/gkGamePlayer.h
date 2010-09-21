@@ -30,7 +30,7 @@
 
 #include "gkEngine.h"
 #include "gkApplication.h"
-#include "gkActionBlender.h"
+#include "Animation/gkActionBlender.h"
 #include "gkFSM.h"
 
 

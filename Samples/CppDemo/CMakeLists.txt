@@ -18,10 +18,6 @@ if (APPLE)
 endif()
 
 set(SRC ${CONTENT} 
-	gkActionBlender.h
-	gkActionBlender.cpp
-	gkActionSequence.h
-	gkActionSequence.cpp
 	gkApplication.h
 	gkApplication.cpp
 	gkCollisionCameraConstraint.h

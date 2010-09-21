@@ -7,6 +7,7 @@ cmake_minimum_required(VERSION 2.6)
 
 set(Core_SOURCE
     # ----- Source -----
+    gkBone.cpp
     gkCamera.cpp
     gkCam2ViewportRay.cpp
     gkCoreApplication.cpp
@@ -24,13 +25,13 @@ set(Core_SOURCE
     gkGameObjectInstance.cpp
     gkGroupManager.cpp
     gkInstancedManager.cpp
+    gkInstancedObject.cpp
     gkLight.cpp
     gkLogger.cpp
     gkMesh.cpp
     gkMeshManager.cpp
     gkMessageManager.cpp
     gkMathUtils.cpp
-    gkObject.cpp
     gkPath.cpp
     gkTextFile.cpp
     gkTickState.cpp
@@ -42,6 +43,8 @@ set(Core_SOURCE
     gkScene.cpp
     gkSceneManager.cpp
     gkSkeleton.cpp
+    gkSkeletonManager.cpp
+    gkSkeletonResource.cpp
     gkStats.cpp
     gkUserDefs.cpp
     gkUtils.cpp
@@ -55,6 +58,7 @@ set(Core_SOURCE
 
 set(Core_HEADER
     # ----- Headers -----
+    gkBone.h
     gkCamera.h
     gkCam2ViewportRay.h
     gkCommon.h
@@ -73,6 +77,7 @@ set(Core_HEADER
     gkGameObjectInstance.h
     gkGroupManager.h
     gkInstancedManager.h
+    gkInstancedObject.h
     gkHashedString.h
     gkInput.h
     gkLight.h
@@ -82,7 +87,6 @@ set(Core_HEADER
     gkMessageManager.h
     gkMathUtils.h
     gkMemoryTest.h
-    gkObject.h
     gkPath.h
     gkTextFile.h
     gkTickState.h
@@ -95,6 +99,8 @@ set(Core_HEADER
     gkSceneManager.h
     gkSerialize.h
     gkSkeleton.h
+    gkSkeletonManager.h
+    gkSkeletonResource.h
     gkStats.h
     gkString.h
     gkTransformState.h
@@ -206,14 +212,17 @@ endif()
 set(Animation_SOURCE
     # ----- Source -----
     Animation/gkAction.cpp
+    Animation/gkActionBlender.cpp
     Animation/gkActionChannel.cpp
     Animation/gkActionManager.cpp
+    Animation/gkActionSequence.cpp
+    Animation/gkAnimationChannel.cpp
     Animation/gkBezierSpline.cpp
+	Animation/gkObjectAction.cpp
     
     #TODO
     #Animation/gkLightAction.cpp
     #Animation/gkMaterialAction.cpp
-    #Animation/gkObjectAction.cpp
     #Animation/gkWorldAction.cpp
 )
 
@@ -221,14 +230,17 @@ set(Animation_SOURCE
 set(Animation_HEADER
     # ----- Headers -----
     Animation/gkAction.h
+    Animation/gkActionBlender.h
     Animation/gkActionChannel.h
     Animation/gkActionManager.h
+    Animation/gkActionSequence.h
+    Animation/gkAnimationChannel.h
     Animation/gkBezierSpline.h
-
+	Animation/gkObjectAction.h
+    
     #TODO
     #Animation/gkLightAction.h
     #Animation/gkMaterialAction.h
-    #Animation/gkObjectAction.h
     #Animation/gkWorldAction.h
 )
 
@@ -419,6 +431,10 @@ set(Blend_SOURCE
     Loaders/Blender2/gkBlendLoader.cpp
     Loaders/Blender2/gkTextureLoader.cpp
     Loaders/Blender2/gkBlenderSceneConverter.cpp
+    Loaders/Blender2/Converters/gkAnimationConverter.cpp
+    Loaders/Blender2/Converters/gkLogicBrickConverter.cpp
+    Loaders/Blender2/Converters/gkMeshConverter.cpp
+    Loaders/Blender2/Converters/gkSkeletonConverter.cpp
 )
 
 set(Blend_HEADER
@@ -429,6 +445,10 @@ set(Blend_HEADER
     Loaders/Blender2/gkBlenderDefines.h
     Loaders/Blender2/gkTextureLoader.h
     Loaders/Blender2/gkBlenderSceneConverter.h
+    Loaders/Blender2/Converters/gkAnimationConverter.h
+    Loaders/Blender2/Converters/gkLogicBrickConverter.h
+    Loaders/Blender2/Converters/gkMeshConverter.h
+    Loaders/Blender2/Converters/gkSkeletonConverter.h
 )
 
 if(APPLE)
@@ -759,6 +779,36 @@ else()
 	source_group(Network\\Source FILES ${Network_SOURCE})
 endif()
 
+
+
+# ---------------------------------------------------------
+# External Engine Files
+# ---------------------------------------------------------
+set(External_SOURCE
+    # ----- Source -----
+    External/Ogre/gkOgreMaterialLoader.cpp
+    External/Ogre/gkOgreMeshLoader.cpp
+    External/Ogre/gkOgreSkeletonLoader.cpp
+    External/Ogre/gkOgreSkyBoxGradient.cpp
+)
+
+set(External_HEADER
+    # ----- Header -----
+    External/Ogre/gkOgreMaterialLoader.h
+    External/Ogre/gkOgreMeshLoader.h
+    External/Ogre/gkOgreSkeletonLoader.h
+    External/Ogre/gkOgreSkyBoxGradient.h
+)
+
+if(APPLE)
+	source_group(External FILES ${External_SOURCE} ${External_HEADER})
+
+else()
+	source_group(External\\Header FILES ${External_HEADER})
+	source_group(External\\Source FILES ${External_SOURCE})
+endif()
+
+
 # ---------------------------------------------------------
 # Build setup
 # ---------------------------------------------------------
@@ -857,6 +907,7 @@ add_library(OgreKitCore STATIC
             ${Network_SOURCE}    ${Network_HEADER}
             ${NLogic_SOURCE}     ${NLogic_HEADER}
             ${Thread_SOURCE}     ${Thread_HEADER}
+            ${External_SOURCE}   ${External_HEADER}
             ${HiddenDepenCMakeLists}
             ${Extra_SOURCE}
     )

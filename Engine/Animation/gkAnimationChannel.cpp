@@ -24,32 +24,47 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkGameObjectChannel_h_
-#define _gkGameObjectChannel_h_
+#include "gkAction.h"
+#include "gkAnimationChannel.h"
 
 
-#include "Animation/gkAnimationChannel.h"
-#include "gkGameObject.h"
-
-class gkAction;
-
-
-class gkGameObjectChannel : public gkAnimationChannel
+gkAnimationChannel::gkAnimationChannel(gkAction* parent)
+	:    m_action(parent)
 {
-protected:
-	gkGameObject*        m_object;
+}
 
 
-public:
-	gkGameObjectChannel(gkAction* parent, gkGameObject* object);
-	~gkGameObjectChannel();
-
-	GK_INLINE const gkTransformState& getTransfom(void) { GK_ASSERT(m_object); return m_object->getTransformState(); }
-	GK_INLINE gkMatrix4               getMatrix(void)   { GK_ASSERT(m_object); return getTransfom().toMatrix(); }
-	GK_INLINE gkGameObject*           getObject(void)   { GK_ASSERT(m_object); return m_object; }
-
-	void evaluate(gkScalar time, gkScalar delta, gkScalar weight);
-};
 
 
-#endif//_gkGameObjectChannel_h_
+gkAnimationChannel::~gkAnimationChannel()
+{
+	gkBezierSpline** splines = m_splines.ptr();
+	int len = getNumSplines(), i = 0;
+	while (i < len)
+		delete splines[i++];
+
+}
+
+
+
+void gkAnimationChannel::addSpline(gkBezierSpline* spline)
+{
+	if (m_splines.empty())
+		m_splines.reserve(16);
+	m_splines.push_back(spline);
+}
+
+
+
+
+const gkBezierSpline** gkAnimationChannel::getSplines(void)
+{
+	return (const gkBezierSpline**)m_splines.ptr();
+}
+
+
+
+int gkAnimationChannel::getNumSplines(void)
+{
+	return (int)m_splines.size();
+}

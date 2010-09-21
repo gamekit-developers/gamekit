@@ -24,32 +24,25 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkGameObjectChannel_h_
-#define _gkGameObjectChannel_h_
+#include "gkSkeletonManager.h"
+#include "gkSkeletonResource.h"
+#include "gkLogger.h"
 
 
-#include "Animation/gkAnimationChannel.h"
-#include "gkGameObject.h"
-
-class gkAction;
-
-
-class gkGameObjectChannel : public gkAnimationChannel
+gkSkeletonManager::gkSkeletonManager()
+	:	gkResourceManager("SkeletonManager", "Skeleton")
 {
-protected:
-	gkGameObject*        m_object;
+}
+
+gkSkeletonManager::~gkSkeletonManager()
+{
+	destroyAll();
+}
+
+gkResource *gkSkeletonManager::createImpl(const gkResourceName &name, const gkResourceHandle &handle)
+{
+	return new gkSkeletonResource(this, name, handle);
+}
 
 
-public:
-	gkGameObjectChannel(gkAction* parent, gkGameObject* object);
-	~gkGameObjectChannel();
-
-	GK_INLINE const gkTransformState& getTransfom(void) { GK_ASSERT(m_object); return m_object->getTransformState(); }
-	GK_INLINE gkMatrix4               getMatrix(void)   { GK_ASSERT(m_object); return getTransfom().toMatrix(); }
-	GK_INLINE gkGameObject*           getObject(void)   { GK_ASSERT(m_object); return m_object; }
-
-	void evaluate(gkScalar time, gkScalar delta, gkScalar weight);
-};
-
-
-#endif//_gkGameObjectChannel_h_
+UT_IMPLEMENT_SINGLETON(gkSkeletonManager);

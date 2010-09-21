@@ -24,32 +24,31 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkGameObjectChannel_h_
-#define _gkGameObjectChannel_h_
+#ifndef _gkOgreSkyboxGradient_h_
+#define _gkOgreSkyboxGradient_h_
 
 
-#include "Animation/gkAnimationChannel.h"
-#include "gkGameObject.h"
+#include "OgreImage.h"
+#include "OgreResource.h"
+#include "gkSerialize.h"
 
-class gkAction;
-
-
-class gkGameObjectChannel : public gkAnimationChannel
+// simple skybox creator
+class gkSkyBoxGradient : public Ogre::ManualResourceLoader
 {
 protected:
-	gkGameObject*        m_object;
+	const gkSceneMaterial& m_material;
 
+	void fill(Ogre::Image &ima, int size, const Ogre::ColourValue &v, const Ogre::PixelFormat &fmt);
+	void grad(Ogre::Image &ima, int x1, int y1, int x2, int y2, int size,
+	          const Ogre::ColourValue &s, const Ogre::ColourValue &e, const Ogre::PixelFormat &fmt);
 
 public:
-	gkGameObjectChannel(gkAction* parent, gkGameObject* object);
-	~gkGameObjectChannel();
+	gkSkyBoxGradient(const gkSceneMaterial &material);
+	virtual ~gkSkyBoxGradient();
 
-	GK_INLINE const gkTransformState& getTransfom(void) { GK_ASSERT(m_object); return m_object->getTransformState(); }
-	GK_INLINE gkMatrix4               getMatrix(void)   { GK_ASSERT(m_object); return getTransfom().toMatrix(); }
-	GK_INLINE gkGameObject*           getObject(void)   { GK_ASSERT(m_object); return m_object; }
-
-	void evaluate(gkScalar time, gkScalar delta, gkScalar weight);
+	void loadResource(Ogre::Resource *resource);
 };
 
 
-#endif//_gkGameObjectChannel_h_
+#endif//_gkOgreSkyboxGradient_h_
+

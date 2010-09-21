@@ -24,7 +24,7 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "gkObject.h"
+#include "gkInstancedObject.h"
 #include "gkLogger.h"
 #include "OgreException.h"
 

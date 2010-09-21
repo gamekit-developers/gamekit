@@ -24,32 +24,51 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkGameObjectChannel_h_
-#define _gkGameObjectChannel_h_
+#ifndef _gkLogicBrickConverter_h_
+#define _gkLogicBrickConverter_h_
 
 
-#include "Animation/gkAnimationChannel.h"
-#include "gkGameObject.h"
+#include "Utils/utTypes.h"
 
-class gkAction;
+namespace Blender
+{
+class bController;
+class bActuator;
+class Object;
+}
+
+class gkLogicSensor;
+class gkLogicController;
+class gkLogicLink;
+class gkGameObject;
 
 
-class gkGameObjectChannel : public gkAnimationChannel
+class gkLogicLoader
 {
 protected:
-	gkGameObject*        m_object;
 
+	struct ResolveObject
+	{
+		gkLogicSensor* lsens;
+		gkLogicController* lcont;
+		Blender::bController* cont;
+		Blender::bActuator* act;
+	};
+
+	typedef utList<ResolveObject>   ResolveObjectList;
+	typedef utList<gkLogicLink*>   CreatedList;
+
+	ResolveObjectList               m_missing;
+	CreatedList                     m_createdLinks;
 
 public:
-	gkGameObjectChannel(gkAction* parent, gkGameObject* object);
-	~gkGameObjectChannel();
+	gkLogicLoader();
+	~gkLogicLoader();
 
-	GK_INLINE const gkTransformState& getTransfom(void) { GK_ASSERT(m_object); return m_object->getTransformState(); }
-	GK_INLINE gkMatrix4               getMatrix(void)   { GK_ASSERT(m_object); return getTransfom().toMatrix(); }
-	GK_INLINE gkGameObject*           getObject(void)   { GK_ASSERT(m_object); return m_object; }
+	void convertObject(Blender::Object* bobj, gkGameObject* gobj);
+	void resolveLinks(void);
 
-	void evaluate(gkScalar time, gkScalar delta, gkScalar weight);
+	static int getKey(int kc);
 };
 
-
-#endif//_gkGameObjectChannel_h_
+#endif//_gkLogicBrickConverter_h_

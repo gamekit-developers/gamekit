@@ -27,68 +27,27 @@
 #ifndef _gkActionChannel_h_
 #define _gkActionChannel_h_
 
-#include "gkBezierSpline.h"
-#include "gkTransformState.h"
-#include "gkSkeleton.h"
-
-
-class gkAction;
-
-
-enum gkActionChannelCode
-{
-	SC_LOC_X,
-	SC_LOC_Y,
-	SC_LOC_Z,
-	SC_SCL_X,
-	SC_SCL_Y,
-	SC_SCL_Z,
-	SC_ROT_X,
-	SC_ROT_Y,
-	SC_ROT_Z,
-	SC_ROT_W,
-};
+#include "Animation/gkAnimationChannel.h"
+#include "gkBone.h"
 
 
 ///An action channel holds splines for each manually controlled bone.
 ///Each spline may consist of one spline per gkActionChannelCode
-class gkActionChannel
+class gkActionChannel : public gkAnimationChannel
 {
-public:
-	typedef utArray<gkBezierSpline *> Splines;
-
-
 protected:
-	gkBone             *m_bone;
-	Splines             m_splines;
-	gkAction           *m_action;
+	gkBone* m_bone;
 
 public:
 
-	gkActionChannel(gkAction *parent, gkBone *bone);
-	~gkActionChannel();
+	gkActionChannel(gkAction* parent, gkBone* bone);
+	virtual ~gkActionChannel();
 
-	GK_INLINE gkTransformState &getPoseTransfom(void)
-	{ GK_ASSERT(m_bone); return m_bone->getPose(); }
-
-	GK_INLINE gkMatrix4 getPoseMatrix(void)
-	{ GK_ASSERT(m_bone); return m_bone->getPose().toMatrix(); }
-
-	GK_INLINE gkBone *getBone(void)
-	{ GK_ASSERT(m_bone); return m_bone; }
-
-	void addSpline(gkBezierSpline *spline);
-
-	const gkBezierSpline **getSplines(void);
-
-	int getNumSplines(void);
+	GK_INLINE gkTransformState& getPoseTransfom(void)      { GK_ASSERT(m_bone); return m_bone->getPose(); }
+	GK_INLINE gkMatrix4 getPoseMatrix(void)                { GK_ASSERT(m_bone); return m_bone->getPose().toMatrix(); }
+	GK_INLINE gkBone* getBone(void)                        { GK_ASSERT(m_bone); return m_bone; }
 
 
-	///Evaluates the curve for the given time. 
-	///time is the actual frame, eg; [1-25]
-	///delta is the time expressed in [0-1]
-	///weight is the abount of blending from a previous evaluation 
-	///to the next evaluation. expressed in [0-1]
 	void evaluate(gkScalar time, gkScalar delta, gkScalar weight);
 };
 

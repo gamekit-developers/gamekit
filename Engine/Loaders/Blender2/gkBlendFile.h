@@ -28,7 +28,7 @@
 #define _gkBlendFile_h_
 
 #include "gkLoaderCommon.h"
-#include "gkObject.h"
+#include "gkInstancedObject.h"
 #include "OgreResourceGroupManager.h"
 
 

@@ -29,54 +29,19 @@
 
 
 
-
-
 gkActionChannel::gkActionChannel(gkAction *parent, gkBone *bone) 
-	:	m_bone(bone), m_action(parent)
+	:	gkAnimationChannel(parent), m_bone(bone)
 {
 	GK_ASSERT(bone);
 }
 
 
-
-
 gkActionChannel::~gkActionChannel()
 {
-	gkBezierSpline **splines = m_splines.ptr();
-	int len = getNumSplines(), i = 0;
-	while (i < len)
-		delete splines[i++];
-
 }
 
 
-
-void gkActionChannel::addSpline(gkBezierSpline *spline)
-{
-	if (m_splines.empty())
-		m_splines.reserve(16);
-	m_splines.push_back(spline);
-}
-
-
-
-
-const gkBezierSpline **gkActionChannel::getSplines(void)
-{
-	return (const gkBezierSpline **)m_splines.ptr();
-}
-
-
-
-int gkActionChannel::getNumSplines(void)
-{
-	return (int)m_splines.size();
-}
-
-
-
-
-void gkActionChannel::evaluate(float time, float delta, float weight)
+void gkActionChannel::evaluate(gkScalar time, gkScalar delta, gkScalar weight)
 {
 	const gkBezierSpline **splines = getSplines();
 	int len = getNumSplines(), i = 0, nvrt;
@@ -124,5 +89,4 @@ void gkActionChannel::evaluate(float time, float delta, float weight)
 
 	// Apply specifics 
 	m_bone->applyChannelTransform(channel, weight);
-
 }

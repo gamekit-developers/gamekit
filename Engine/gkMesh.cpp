@@ -24,9 +24,16 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+#include "gkCommon.h"
 #include "gkMesh.h"
 #include "gkResourceManager.h"
 #include "BulletCollision/CollisionShapes/btTriangleMesh.h"
+
+
+
+#if GK_EXTERNAL_RENDER == GK_EXTERNAL_RENDER_OGREKIT
+#include "External/Ogre/gkOgreMeshLoader.h"
+#endif
 
 
 
@@ -207,13 +214,19 @@ gkMesh::gkMesh(gkResourceManager* creator, const gkResourceName& name, const gkR
 	:   gkResource(creator, name, handle),
 	    m_bounds(gkBoundingBox::BOX_NULL),
 	    m_boundsInit(false),
-	    m_triMesh(0)
+	    m_triMesh(0),
+		m_skeleton(0)
 {
+	m_meshLoader = new gkMeshLoader(this);
 }
 
 
 gkMesh::~gkMesh()
 {
+	delete m_meshLoader;
+	m_meshLoader = 0;
+
+
 	if (m_triMesh)
 		delete m_triMesh;
 	m_triMesh = 0;
@@ -265,7 +278,6 @@ btTriangleMesh* gkMesh::getTriMesh(void)
 
 
 	m_triMesh = new btTriangleMesh();
-
 	SubMeshIterator iter = getSubMeshIterator();
 	while (iter.hasMoreElements())
 	{
@@ -295,23 +307,6 @@ btTriangleMesh* gkMesh::getTriMesh(void)
 	return m_triMesh;
 }
 
-
-
-gkMesh* gkMesh::clone(void)
-{
-	gkMesh* nme = new gkMesh(m_creator, m_name, -1);
-	if (nme)
-	{
-
-		SubMeshIterator iter = getSubMeshIterator();
-		while (iter.hasMoreElements())
-			nme->addSubMesh(iter.getNext()->clone());
-
-		if (m_triMesh)
-			nme->getTriMesh();
-	}
-	return nme;
-}
 
 gkVertexGroup* gkMesh::createVertexGroup(const gkString& name)
 {

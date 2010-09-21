@@ -45,8 +45,6 @@ public:
 private:
 	bool validObject(Blender::Object *ob);
 	void applyParents(utArray<Blender::Object *> &children);
-	void loadSkyBox(void);
-
 
 	void convertSoundScene(void);
 	void convertWorld(void);
@@ -64,17 +62,7 @@ private:
 	void convertObjectLamp(gkGameObject *gobj, Blender::Object *bobj);
 	void convertObjectMesh(gkGameObject *gobj, Blender::Object *bobj);
 	void convertObjectArmature(gkGameObject *gobj, Blender::Object *bobj);
-
-	void convertSpline(Blender::BezTriple *bez,
-	                   gkActionChannel *chan,
-	                   int access,
-	                   int mode,
-	                   int totvert,
-	                   gkVector2 &range);
-
-	void convertObjectActions(gkGameObject *gobj, Blender::Object *bobj);
-	void convertObjectSkeleton(gkGameObject *gobj, Blender::Object *bobj);
-
+	void convertObjectSkeleton(gkSkeletonResource *gobj, Blender::Object *bobj);
 
 
 

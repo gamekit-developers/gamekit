@@ -76,6 +76,37 @@ gkSkeleton* gkGameObjectManager::createSkeleton(const gkResourceName& name)
 	return static_cast<gkSkeleton*>(create(name));
 }
 
+gkGameObject* gkGameObjectManager::getObject(const gkResourceName& name)
+{
+	return getByName<gkGameObject>(name);
+}
+
+gkLight* gkGameObjectManager::getLight(const gkResourceName& name)
+{
+	gkGameObject *ob = getObject(name);
+	return ob ? ob->getLight() : 0;
+}
+
+gkCamera* gkGameObjectManager::getCamera(const gkResourceName& name)
+{
+	gkGameObject *ob = getObject(name);
+	return ob ? ob->getCamera() : 0;
+}
+
+gkEntity* gkGameObjectManager::getEntity(const gkResourceName& name)
+{
+	gkGameObject *ob = getObject(name);
+	return ob ? ob->getEntity() : 0;
+}
+
+gkSkeleton* gkGameObjectManager::getSkeleton(const gkResourceName& name)
+{
+	gkGameObject *ob = getObject(name);
+	return ob ? ob->getSkeleton() : 0;
+}
+
+
+
 gkResource* gkGameObjectManager::createImpl(const gkResourceName& name, const gkResourceHandle& handle)
 {
 	int curType = m_currentType;

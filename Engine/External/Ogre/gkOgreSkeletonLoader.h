@@ -24,32 +24,32 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkGameObjectChannel_h_
-#define _gkGameObjectChannel_h_
+#ifndef _gkOgreSkeletonLoader_h_
+#define _gkOgreSkeletonLoader_h_
 
 
-#include "Animation/gkAnimationChannel.h"
-#include "gkGameObject.h"
-
-class gkAction;
+#include "OgreResource.h"
+#include "gkSkeletonResource.h"
 
 
-class gkGameObjectChannel : public gkAnimationChannel
+class gkSkeletonLoader : public Ogre::ManualResourceLoader
 {
-protected:
-	gkGameObject*        m_object;
-
-
 public:
-	gkGameObjectChannel(gkAction* parent, gkGameObject* object);
-	~gkGameObjectChannel();
 
-	GK_INLINE const gkTransformState& getTransfom(void) { GK_ASSERT(m_object); return m_object->getTransformState(); }
-	GK_INLINE gkMatrix4               getMatrix(void)   { GK_ASSERT(m_object); return getTransfom().toMatrix(); }
-	GK_INLINE gkGameObject*           getObject(void)   { GK_ASSERT(m_object); return m_object; }
+	gkSkeletonLoader(gkSkeletonResource *skel);
+	virtual ~gkSkeletonLoader();
 
-	void evaluate(gkScalar time, gkScalar delta, gkScalar weight);
+
+	void makeManual(gkEntity *ent);
+
+private:
+
+	void loadResource(Ogre::Resource *resource);
+	void recurseBone(Ogre::Skeleton *skel, gkBone *cur, Ogre::Bone *par);
+
+	gkSkeletonResource *m_skeleton;
+
 };
 
 
-#endif//_gkGameObjectChannel_h_
+#endif//_gkOgreSkeletonLoader_h_

@@ -57,11 +57,29 @@
 #define GK_DEF_GROUP "General"
 
 
+
+#define GK_EXTERNAL_RENDER_GAMEKIT		0
+#define GK_EXTERNAL_RENDER_OGREKIT		1
+#define GK_EXTERNAL_RENDER_IRRKIT		2
+#define GK_EXTERNAL_RENDER_HORDEKIT		3
+#define GK_EXTERNAL_RENDER				GK_EXTERNAL_RENDER_OGREKIT
+
+#define GK_VERSION_MAJOR	1
+#define GK_VERSION_MINOR	0
+#define GK_VERSION_SUB		1
+#define GK_VERSION			UT_ID(GK_VERSION_MAJOR, GK_VERSION_MINOR, GK_VERSION_SUB, 'a')
+
+
+
 class gkInstancedObject;
 class gkCamera;
 class gkEntity;
 class gkLight;
+class gkBone;
 class gkSkeleton;
+class gkSkeletonResource;
+class gkSkeletonManager;
+class gkSkeletonLoader;
 class gkGameObject;
 class gkEngine;
 class gkVariable;
@@ -118,7 +136,7 @@ typedef gkHashedString  gkResourceName;
 
 class gkMeshManager;
 class gkMesh;
-
+class gkMeshLoader;
 
 // Common types
 typedef utHashTable<gkHashedString, gkGameObject *>  gkGameObjectHashMap;

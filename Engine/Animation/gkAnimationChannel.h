@@ -24,32 +24,65 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkGameObjectChannel_h_
-#define _gkGameObjectChannel_h_
+#ifndef _gkAnimationChannel_h_
+#define _gkAnimationChannel_h_
 
 
-#include "Animation/gkAnimationChannel.h"
-#include "gkGameObject.h"
+#include "Animation/gkBezierSpline.h"
+#include "gkTransformState.h"
+
+
+
+
+enum gkCommonChannelCodes
+{
+	SC_LOC_X,
+	SC_LOC_Y,
+	SC_LOC_Z,
+	SC_SCL_X,
+	SC_SCL_Y,
+	SC_SCL_Z,
+	SC_ROT_X,
+	SC_ROT_Y,
+	SC_ROT_Z,
+	SC_ROT_W,
+};
 
 class gkAction;
 
 
-class gkGameObjectChannel : public gkAnimationChannel
-{
-protected:
-	gkGameObject*        m_object;
 
+class gkAnimationChannel
+{
+public:
+	typedef utArray<gkBezierSpline*> Splines;
+
+
+protected:
+
+
+	Splines      m_splines;
+	gkAction*    m_action;
 
 public:
-	gkGameObjectChannel(gkAction* parent, gkGameObject* object);
-	~gkGameObjectChannel();
 
-	GK_INLINE const gkTransformState& getTransfom(void) { GK_ASSERT(m_object); return m_object->getTransformState(); }
-	GK_INLINE gkMatrix4               getMatrix(void)   { GK_ASSERT(m_object); return getTransfom().toMatrix(); }
-	GK_INLINE gkGameObject*           getObject(void)   { GK_ASSERT(m_object); return m_object; }
+	gkAnimationChannel(gkAction* parent);
+	virtual ~gkAnimationChannel();
 
-	void evaluate(gkScalar time, gkScalar delta, gkScalar weight);
+
+	void addSpline(gkBezierSpline* spline);
+	const gkBezierSpline** getSplines(void);
+
+	int getNumSplines(void);
+
+
+	///Evaluates the curve for the given time.
+	///time is the actual frame, eg; [1-25]
+	///delta is the time expressed in [0-1]
+	///weight is the abount of blending from a previous evaluation
+	///to the next evaluation. expressed in [0-1]
+	virtual void evaluate(gkScalar time, gkScalar delta, gkScalar weight) = 0;
 };
 
 
-#endif//_gkGameObjectChannel_h_
+#endif//_gkActionChannel_h_

@@ -24,32 +24,46 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkGameObjectChannel_h_
-#define _gkGameObjectChannel_h_
+#include "gkSkeletonConverter.h"
+#include "gkSkeletonResource.h"
+#include "Blender.h"
 
 
-#include "Animation/gkAnimationChannel.h"
-#include "gkGameObject.h"
-
-class gkAction;
-
-
-class gkGameObjectChannel : public gkAnimationChannel
+void gkSkeletonLoader::buildBoneTree(Blender::Bone *cur, Blender::Bone *prev, gkBone *parent)
 {
-protected:
-	gkGameObject*        m_object;
+	// This is the normal resposition
+	GK_ASSERT(cur);
+	GK_ASSERT(m_skeleton);
+
+	gkMatrix4 parBind = gkMatrix4::IDENTITY;
+	if (prev != 0 && parent != 0)
+		parBind = gkMathUtils::getFromFloatNorm(prev->arm_mat).inverse();
+
+	// create the ogre bone
+	gkBone *bone = m_skeleton->createBone(cur->name);
+	if (parent)
+		bone->setParent(parent);
 
 
-public:
-	gkGameObjectChannel(gkAction* parent, gkGameObject* object);
-	~gkGameObjectChannel();
+	gkMatrix4 bind = parBind * gkMathUtils::getFromFloatNorm(cur->arm_mat);
 
-	GK_INLINE const gkTransformState& getTransfom(void) { GK_ASSERT(m_object); return m_object->getTransformState(); }
-	GK_INLINE gkMatrix4               getMatrix(void)   { GK_ASSERT(m_object); return getTransfom().toMatrix(); }
-	GK_INLINE gkGameObject*           getObject(void)   { GK_ASSERT(m_object); return m_object; }
+	gkQuaternion rot; gkVector3 loc, scl;
+	gkMathUtils::extractTransformFast(bind, loc, rot, scl);
 
-	void evaluate(gkScalar time, gkScalar delta, gkScalar weight);
-};
+	if (rot.isNaN())
+	{
+		rot = gkQuaternion();
+		scl = gkVector3(1,1,1);
+	}
+
+	bone->setRestPosition(gkTransformState(loc, rot, scl));
 
 
-#endif//_gkGameObjectChannel_h_
+	Blender::Bone *chi = static_cast<Blender::Bone *>(cur->childbase.first);
+	while (chi)
+	{
+		// recurse
+		buildBoneTree(chi, cur, bone);
+		chi = chi->next;
+	}
+}

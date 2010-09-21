@@ -122,7 +122,7 @@ void gkGameLevel::loadPickup(void)
 
 
 	m_pickup = (gkScene*)gkSceneManager::getSingleton().create("PickupLevel");
-	m_pickup->setWorldColor(gkColor(0.2f, 0.2f, 0.2f));
+	m_pickup->setHorizonColor(gkColor(0.2f, 0.2f, 0.2f));
 	m_pickup->setAmbientColor(gkColor(0.5f, 0.5f, 0.5f));
 
 

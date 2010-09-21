@@ -24,32 +24,18 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkGameObjectChannel_h_
-#define _gkGameObjectChannel_h_
+#ifndef _gkOgreMaterialLoader_h_
+#define _gkOgreMaterialLoader_h_
 
 
-#include "Animation/gkAnimationChannel.h"
-#include "gkGameObject.h"
 
-class gkAction;
-
-
-class gkGameObjectChannel : public gkAnimationChannel
+class gkMaterialLoader
 {
-protected:
-	gkGameObject*        m_object;
-
-
 public:
-	gkGameObjectChannel(gkAction* parent, gkGameObject* object);
-	~gkGameObjectChannel();
 
-	GK_INLINE const gkTransformState& getTransfom(void) { GK_ASSERT(m_object); return m_object->getTransformState(); }
-	GK_INLINE gkMatrix4               getMatrix(void)   { GK_ASSERT(m_object); return getTransfom().toMatrix(); }
-	GK_INLINE gkGameObject*           getObject(void)   { GK_ASSERT(m_object); return m_object; }
+	static class gkSkyBoxGradient* loadSceneMaterial(class gkScene *sc, const class gkSceneMaterial& material);
+	static void loadSubMeshMaterial(class gkSubMesh *mesh);
 
-	void evaluate(gkScalar time, gkScalar delta, gkScalar weight);
 };
 
-
-#endif//_gkGameObjectChannel_h_
+#endif//_gkOgreMaterialLoader_h_

@@ -24,32 +24,32 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkGameObjectChannel_h_
-#define _gkGameObjectChannel_h_
+#ifndef _gkSkeletonLoader_h_
+#define _gkSkeletonLoader_h_
+
+class gkSkeletonResource;
+class gkBone;
 
 
-#include "Animation/gkAnimationChannel.h"
-#include "gkGameObject.h"
-
-class gkAction;
-
-
-class gkGameObjectChannel : public gkAnimationChannel
+namespace Blender
 {
-protected:
-	gkGameObject*        m_object;
+class Bone;
+class bArmature;
+}
 
 
+
+class gkSkeletonLoader
+{
 public:
-	gkGameObjectChannel(gkAction* parent, gkGameObject* object);
-	~gkGameObjectChannel();
+	gkSkeletonLoader() : m_skeleton(0), m_armature(0) {}
 
-	GK_INLINE const gkTransformState& getTransfom(void) { GK_ASSERT(m_object); return m_object->getTransformState(); }
-	GK_INLINE gkMatrix4               getMatrix(void)   { GK_ASSERT(m_object); return getTransfom().toMatrix(); }
-	GK_INLINE gkGameObject*           getObject(void)   { GK_ASSERT(m_object); return m_object; }
+	void buildBoneTree(Blender::Bone* cur, Blender::Bone* prev, gkBone* parent);
 
-	void evaluate(gkScalar time, gkScalar delta, gkScalar weight);
+	gkSkeletonResource*      m_skeleton;
+	Blender::bArmature*      m_armature;
 };
 
 
-#endif//_gkGameObjectChannel_h_
+
+#endif//_gkSkeletonLoader_h_

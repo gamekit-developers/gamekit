@@ -25,7 +25,7 @@
 -------------------------------------------------------------------------------
 */
 #include "gkInstancedManager.h"
-#include "gkObject.h"
+#include "gkInstancedObject.h"
 
 
 gkInstancedManager::gkInstancedManager(const gkString& type, const gkString &rtype)

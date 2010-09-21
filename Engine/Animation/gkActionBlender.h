@@ -23,7 +23,6 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
-	This is a replacement candidate for gkActionManager
 */
 #ifndef _gkActionBlender_h_
 #define _gkActionBlender_h_

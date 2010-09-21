@@ -24,43 +24,53 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkGameObjectManager_h_
-#define _gkGameObjectManager_h_
-
-#include "gkInstancedManager.h"
-#include "Utils/utSingleton.h"
+#ifndef _gkSkeletonResource_h_
+#define _gkSkeletonResource_h_
 
 
+#include "gkSerialize.h"
+#include "gkResource.h"
+#include "gkBone.h"
 
-class gkGameObjectManager : public gkInstancedManager, public utSingleton<gkGameObjectManager>
+
+class gkSkeletonResource : public gkResource
 {
 public:
-	UT_DECLARE_SINGLETON(gkGameObjectManager);
+	typedef utHashTable<gkHashedString, gkAction *>  Actions;
+	typedef utHashTable<gkHashedString, gkBone *>    Bones;
 
 public:
+	gkSkeletonResource(gkResourceManager* creator, const gkResourceName &name, const gkResourceHandle& handle);
+	virtual ~gkSkeletonResource();
 
-	gkGameObjectManager();
-	virtual ~gkGameObjectManager();
-
-	gkGameObject* createObject(const gkResourceName& name);
-	gkLight* createLight(const gkResourceName& name);
-	gkCamera* createCamera(const gkResourceName& name);
-	gkEntity* createEntity(const gkResourceName& name);
-	gkSkeleton* createSkeleton(const gkResourceName& name);
+	gkBone         *createBone(const gkString &name);
+	gkBone         *getBone(const gkHashedString &name);
 
 
-	gkGameObject* getObject(const gkResourceName& name);
-	gkLight* getLight(const gkResourceName& name);
-	gkCamera* getCamera(const gkResourceName& name);
-	gkEntity* getEntity(const gkResourceName& name);
-	gkSkeleton* getSkeleton(const gkResourceName& name);
+	gkAction       *createAction(const gkHashedString &name);
+	gkAction       *getAction(const gkHashedString &name);
+
+	gkBone::BoneList &getRootBoneList(void);
+	gkBone::BoneList &getBoneList(void) {return m_boneList;}
+
+
+	GK_INLINE bool hasBone(const gkHashedString &name)        { return m_bones.find(name) != GK_NPOS; }
+	GK_INLINE bool hasAction(const gkHashedString &name)      { return m_actions.find(name) != GK_NPOS; }
+
+
+	gkSkeletonLoader* getExternalLoader(void) {return m_externalLoader;}
+	void makeManual(gkEntity *ent);
+
 
 private:
-	int m_currentType;
 
-	void notifyResourceDestroyedImpl(gkResource* res);
-	gkResource* createImpl(const gkResourceName& name, const gkResourceHandle& handle);
+	Actions             m_actions;
+	Bones               m_bones;
+	gkBone::BoneList    m_boneList, m_rootBoneList;
+
+
+	gkSkeletonLoader*   m_externalLoader;
 };
 
 
-#endif//_gkGameObjectManager_h_
+#endif//_gkSkeletonResource_h_
