@@ -66,7 +66,7 @@
 
 #if GK_EXTERNAL_RENDER == GK_EXTERNAL_RENDER_OGREKIT
 #include "External/Ogre/gkOgreMaterialLoader.h"
-#include "External/Ogre/gkOgreSkyboxGradient.h"
+#include "External/Ogre/gkOgreSkyBoxGradient.h"
 #endif
 
 

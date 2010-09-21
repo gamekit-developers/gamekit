@@ -27,7 +27,7 @@
 #include "gkMesh.h"
 #include "gkScene.h"
 #include "gkOgreMaterialLoader.h"
-#include "gkOgreSkyboxGradient.h"
+#include "gkOgreSkyBoxGradient.h"
 #include "OgreMeshManager.h"
 #include "OgreMaterial.h"
 #include "OgreMaterialManager.h"
