@@ -81,9 +81,6 @@ void gkSkeleton::createInstanceImpl(void)
 
 	if (m_baseProps.isInvisible())
 		m_node->setVisible(false);
-
-
-	updateFromController();
 }
 
 

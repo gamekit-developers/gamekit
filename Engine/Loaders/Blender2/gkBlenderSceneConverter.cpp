@@ -730,7 +730,7 @@ void gkBlenderSceneConverter::convertObjectArmature(gkGameObject* gobj, Blender:
 {
 	Blender::bArmature* armature = static_cast<Blender::bArmature*>(bobj->data);
 
-	gkResourceName skelName = GKB_IDNAME(armature);
+	gkResourceName skelName = GKB_IDNAME(bobj);
 
 
 	if (gkSkeletonManager::getSingleton().exists(skelName))
@@ -821,8 +821,8 @@ void gkBlenderSceneConverter::convert(void)
 				Blender::Mesh* me = static_cast<Blender::Mesh*>(obMe->data);
 				Blender::bArmature* ar = static_cast<Blender::bArmature*>(obAr->data);
 
-				if (memgr.exists(GKB_IDNAME(me)) && skmgr.exists(GKB_IDNAME(ar)))
-					memgr.getByName<gkMesh>(GKB_IDNAME(me))->_setSkeleton(skmgr.getByName<gkSkeletonResource>(GKB_IDNAME(ar)));
+				if (memgr.exists(GKB_IDNAME(me)) && skmgr.exists(GKB_IDNAME(obAr)))
+					memgr.getByName<gkMesh>(GKB_IDNAME(me))->_setSkeleton(skmgr.getByName<gkSkeletonResource>(GKB_IDNAME(obAr)));
 			}
 		}
 	}
