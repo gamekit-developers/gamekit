@@ -105,23 +105,27 @@ class GamekitStartGameOperator(bpy.types.Operator):
         scene = context.scene
         gks = scene.gamekit
         
-        if gks.gk_runtime_exec_path[0:2] == "./":
+        if gks.gk_runtime_exec_path[0:2] in { "./", ".\\" }:
             pwd = os.path.dirname(bpy.app.binary_path)
-            execpath = pwd + '/' + gks.gk_runtime_exec_path
+            execpath = pwd + os.sep + gks.gk_runtime_exec_path
         else:
             execpath = bpy.path.abspath(gks.gk_runtime_exec_path)
             
         tmpdir = bpy.context.user_preferences.filepaths.temporary_directory
+        if not os.path.exists(tmpdir):
+            tmpdir = os.getenv('TEMP')
         if not tmpdir.endswith(os.sep):
-                tmpdir += os.sep
+            tmpdir += os.sep
                 
         gamefile = tmpdir + "gamekit_tmp.blend"
         cfgfile = tmpdir + "gamekit_startup.cfg"
         cmdline = execpath + " -c " + cfgfile + " " + gamefile
         
         workingdir = bpy.path.abspath(gks.gk_runtime_working_dir)
+        if not os.path.exists(workingdir):
+            workingdir = os.getenv('TEMP')
         if not workingdir.endswith(os.sep):
-                workingdir += os.sep
+            workingdir += os.sep
         
         args =  shlex.split(cmdline.replace(os.sep, '/'))        
 
@@ -150,7 +154,7 @@ class GamekitStartGameOperator(bpy.types.Operator):
             self.report('INFO',"Gamekit exited normally.")
 
         except OSError as er:
-            self.report('ERROR', "Could not launch: " + cmdline + " in " + gks.gk_runtime_working_dir+ " : " + str(er))
+            self.report('ERROR', "Could not launch: " + cmdline + ". In directory:" + workingdir+ ". Error: " + str(er))
             return {'CANCELLED'}
             
         return {'FINISHED'}
