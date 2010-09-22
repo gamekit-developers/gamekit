@@ -133,8 +133,7 @@ properties_data_lamp.LAMP_MT_sunsky_presets.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 del properties_data_lamp
 
 # Base class for ou panels
-class RenderButtonsPanel(bpy.types.Panel):
-    bl_label = "Base Panel Class"
+class RenderButtonsPanel():
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "render"
@@ -146,7 +145,7 @@ class RenderButtonsPanel(bpy.types.Panel):
         return (rd.engine in self.COMPAT_ENGINES)
 
 # Runtime panel
-class RENDER_PT_gamekit_runtime(RenderButtonsPanel):
+class RENDER_PT_gamekit_runtime(RenderButtonsPanel, bpy.types.Panel):
     bl_label = "Gamekit Runtime"
     COMPAT_ENGINES = {'GAMEKIT_RENDER'}
 
@@ -164,7 +163,7 @@ class RENDER_PT_gamekit_runtime(RenderButtonsPanel):
         col.prop(gks, "gk_log_file")
 
 # Main Gamekit panel
-class RENDER_PT_gamekit(RenderButtonsPanel):
+class RENDER_PT_gamekit(RenderButtonsPanel, bpy.types.Panel):
     bl_label = "Gamekit"
     COMPAT_ENGINES = {'GAMEKIT_RENDER'}
 
@@ -208,7 +207,7 @@ class RENDER_PT_gamekit(RenderButtonsPanel):
         row.active = gks.gk_use_shadows
 
 
-class RENDER_PT_gamekit_performance(RenderButtonsPanel):
+class RENDER_PT_gamekit_performance(RenderButtonsPanel, bpy.types.Panel):
     bl_label = "Performance"
     COMPAT_ENGINES = {'GAMEKIT_RENDER'}
 
