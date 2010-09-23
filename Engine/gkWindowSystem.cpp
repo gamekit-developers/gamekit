@@ -108,7 +108,7 @@ public:
 };
 
 
-gkWindowSystem::gkWindowSystem() : m_window(0), m_exit(false)
+gkWindowSystem::gkWindowSystem() : m_window(0), m_exit(false), m_useExternalWindow(false)
 {
 	m_internal = new gkWindowSystemPrivate();
 	m_internal->m_sys = this;
@@ -155,6 +155,7 @@ RenderWindow *gkWindowSystem::createMainWindow(const gkUserDefs &prefs)
 	if (!prefs.extWinhandle.empty())
 	{
 		 params["externalWindowHandle"] = prefs.extWinhandle;
+		 m_useExternalWindow = true;
 	}
 
 	if (prefs.fullscreen)
@@ -376,7 +377,8 @@ void gkWindowSystem::process(void)
 #ifdef OGREKIT_BUILD_IPHONE
 	[m_internal->m_gestureView becomeFirstResponder];
 #endif
-	WindowEventUtilities::messagePump();
+	if (!m_useExternalWindow)
+		WindowEventUtilities::messagePump();
 }
 
 // Handle platform messages

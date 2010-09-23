@@ -83,6 +83,7 @@ protected:
 	int m_requestedHeight;
 	int m_framingType;
 
+	bool m_useExternalWindow;
 public:
 	gkWindowSystem();
 	virtual ~gkWindowSystem();
