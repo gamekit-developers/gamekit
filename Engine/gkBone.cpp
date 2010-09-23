@@ -50,6 +50,16 @@ void gkBone::setRestPosition(const gkTransformState &st)
 }
 
 
+void gkBone::applyRootTransform(const gkTransformState &root)
+{
+	gkMatrix4 bonemat = m_bind.toMatrix();
+	gkMatrix4 objmat = root.toMatrix();
+
+	bonemat = objmat * bonemat;
+
+	m_bind = gkTransformState(bonemat);
+}
+
 
 void gkBone::applyChannelTransform(const gkTransformState &channel, gkScalar weight)
 {

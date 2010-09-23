@@ -822,7 +822,23 @@ void gkBlenderSceneConverter::convert(void)
 				Blender::bArmature* ar = static_cast<Blender::bArmature*>(obAr->data);
 
 				if (memgr.exists(GKB_IDNAME(me)) && skmgr.exists(GKB_IDNAME(obAr)))
-					memgr.getByName<gkMesh>(GKB_IDNAME(me))->_setSkeleton(skmgr.getByName<gkSkeletonResource>(GKB_IDNAME(obAr)));
+				{
+					gkSkeletonResource *skel = skmgr.getByName<gkSkeletonResource>(GKB_IDNAME(obAr));
+
+					memgr.getByName<gkMesh>(GKB_IDNAME(me))->_setSkeleton(skel);
+
+					gkBone::BoneList::Iterator roots = skel->getRootBoneList().iterator();
+
+					while (roots.hasMoreElements())
+					{
+						gkBone *bone = roots.getNext();
+						gkMatrix4 eobmat = gkMathUtils::getFromFloat(obMe->obmat);
+						gkMatrix4 sobmat = gkMathUtils::getFromFloat(obAr->obmat);
+
+						bone->applyRootTransform(eobmat.inverse() * sobmat);
+					}
+
+				}
 			}
 		}
 	}

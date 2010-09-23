@@ -46,6 +46,7 @@ public:
 
 	void applyChannelTransform(const gkTransformState &channel, gkScalar weight);
 	void applyPoseTransform(const gkTransformState &pose);
+	void applyRootTransform(const gkTransformState &root);
 
 	const gkTransformState  &getRest(void)      {return m_bind;}
 
