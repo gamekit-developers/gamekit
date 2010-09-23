@@ -27,9 +27,10 @@ macro (configure_ogrekit ROOT OGREPATH)
 	set(OGREKIT_INSTALL_PREFIX ${ROOT}/Bin)
 	
 	option(OGREKIT_USE_LUA               "Use Lua script bindings" ON)
-	option(OGREKIT_COMPILE_OGRE_SCRIPTS  "Automatically convert Blender TX to Ogre (.material, .font, .overlay... etc)" ON)
-	option(OGREKIT_DEBUG_ASSERT          "Enable/Disable debug asserts." ON)
 	option(OGREKIT_COMPLIE_SWIG          "Enable compile time SWIG generation."  OFF)
+	option(OGREKIT_COMPILE_OGRE_SCRIPTS  "Automatically convert Blender TX to Ogre (.material, .font, .overlay... etc)" ON)
+	option(OGREKIT_COMPILE_WXWIDGETS     "Enable / Disable wxWidgets builds" OFF)
+	option(OGREKIT_DEBUG_ASSERT          "Enable/Disable debug asserts." ON)
 	option(OGREKIT_HEADER_GENERATOR      "Build Blender DNA to C++ generator."   OFF)
 	option(OGREKIT_UPDATE_DOCS           "Update Lua API documentation(Requires doxygen)." OFF)
 	option(OGREKIT_DISABLE_ZIP           "Disable external .zip resource loading" ON)
@@ -92,6 +93,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 	option(SAMPLES_LOGICDEMO      "Build Samples/LogicDemo"   ON)
 	option(SAMPLES_VEHICLEDEMO    "Build Samples/VehicleDemo" ON)
 	option(SAMPLES_CPPDEMO        "Build Samples/CppDemo"     ON)
+	option(SAMPLES_NODE_EDITOR    "Build Samples/NodeEditor"  OFF)
 	
 	
 	
@@ -99,6 +101,14 @@ macro (configure_ogrekit ROOT OGREPATH)
 		option(SAMPLES_LUARUNTIME "Build Samples/LuaRuntime" ON)
 	else()
 		set(SAMPLES_LUARUNTIME FALSE CACHE BOOL "Forcing remove Samples/LuaRuntime" FORCE)
+	endif()
+
+	if (SAMPLES_NODE_EDITOR)
+		set(OGREKIT_COMPILE_WXWIDGETS TRUE CACHE BOOL "Forcing wxWidgets" FORCE)
+	endif()
+	
+	if (NOT OGREKIT_COMPILE_WXWIDGETS)
+		set(SAMPLES_NODE_EDITOR FALSE CACHE BOOL "Forcing NodeEditor removal" FORCE)
 	endif()
 
 

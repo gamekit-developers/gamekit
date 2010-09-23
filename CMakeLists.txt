@@ -19,10 +19,10 @@ endif()
 
 # ---------------------------------------------------------
 set(CMAKE_MODULE_PATH
-    ${CMAKE_SOURCE_DIR}/CMake
-    ${CMAKE_SOURCE_DIR}/CMake/Utils
-    ${CMAKE_SOURCE_DIR}/CMake/Packages
-    ${CMAKE_SOURCE_DIR}/CMake/Templates
+    ${OGREKIT_SOURCE_DIR}/CMake
+    ${OGREKIT_SOURCE_DIR}/CMake/Utils
+    ${OGREKIT_SOURCE_DIR}/CMake/Packages
+    ${OGREKIT_SOURCE_DIR}/CMake/Templates
     )
 include(CMakeDependentOption)
 include(CheckCXXCompilerFlag)
@@ -30,11 +30,17 @@ include(ConfigOgreKit)
 include(ConfigGameKit)
 include(ConfigIPhone)
 
-configure_gamekit(${CMAKE_SOURCE_DIR}/Dependencies/Source/Blender25)
-configure_ogrekit(${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/OgreLite)
+
+configure_gamekit(${OGREKIT_SOURCE_DIR}/Dependencies/Source/Blender25)
+configure_ogrekit(${OGREKIT_SOURCE_DIR} ${OGREKIT_SOURCE_DIR}/OgreLite)
 
 set(OGREKIT_BULLET_LIBS BulletDynamics BulletCollision BulletSoftBody LinearMath)
-set(OGREKIT_BULLET_INCLUDE ${CMAKE_SOURCE_DIR}/bullet/src)
+set(OGREKIT_BULLET_INCLUDE ${OGREKIT_SOURCE_DIR}/bullet/src)
+
+if (NOT APPLE AND OGREKIT_COMPILE_WXWIDGETS)
+	include(wxSetup)
+	configure_wx_build(${OGREKIT_SOURCE_DIR})
+endif()
 
 # ---------------------------------------------------------
 # Common base paths
@@ -52,6 +58,11 @@ subdirs(bullet)
 subdirs(Dependencies)
 subdirs(OgreLite)
 subdirs(Engine)
+
+if (OGREKIT_COMPILE_WXWIDGETS)
+	subdirs(${OGREKIT_SOURCE_DIR}/${WX_VERSION})
+endif()
+
 subdirs(Samples)
 
 if (OGREKIT_UPDATE_DOCS)

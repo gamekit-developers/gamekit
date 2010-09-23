@@ -1,0 +1,232 @@
+<!--
+===============================================================================
+    This file is part of OgreKit.
+    http://gamekit.googlecode.com/
+
+    Copyright (c) 2006=2010 Charlie C.
+
+    Contributor(s): none yet.
+===============================================================================
+  This software is provided 'as=is', without any express or implied
+  warranty. In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
+===============================================================================
+This file contains the rules for adding custom 
+node types to be loaded & used inside the editor
+(Still very much a work in progress)
+-->
+
+<xs:schema xmlns="http://tempuri.org/NodeDef.xsd"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           targetNamespace="http://tempuri.org/NodeDef.xsd"
+           elementFormDefault="qualified" version="1.0" xml:lang="en"
+           xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd">
+
+    <!-- ========================= Forward Decls ========================= -->
+
+    <xs:element name="NodeTreeDef"      type="NodeTreeDefImpl"/>
+    <xs:element name="DocString"        type="DocStringImpl"/>
+    <xs:element name="Node"             type="NodeImpl"/>
+    <xs:element name="Socket"           type="SocketImpl"/>
+    <xs:element name="ColorPalette"     type="ColorPaletteImpl"/>
+    <xs:element name="BooleanSocket"    type="BooleanSocketImpl"/>
+    <xs:element name="IntSocket"        type="IntSocketImpl"/>
+    <xs:element name="FloatSocket"      type="FloatSocketImpl"/>
+    <xs:element name="StringSocket"     type="StringSocketImpl"/>
+    <xs:element name="Enum"             type="EnumImpl"/>
+    <xs:element name="EnumItem"         type="EnumItemImpl"/>
+    <xs:element name="Properties"       type="PropertyImpl"/>
+    <xs:element name="Variable"         type="VariableImpl"/>
+
+    <!-- ========================= Documentation ========================= -->
+
+    <xs:complexType name="DocStringImpl">
+        <xs:attribute name="docs" type="xs:string"/>
+    </xs:complexType>
+
+    
+    <!-- ========================= Node Tree ========================= -->
+
+    <xs:complexType name="NodeTreeDefImpl">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element ref="Node"/>
+            <xs:element ref="ColorPalette"/>
+        </xs:choice>
+    </xs:complexType>
+
+    
+    <!-- ========================= Node ========================= -->
+
+    <xs:complexType name="NodeImpl">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element ref="DocString"/>
+            <xs:element ref="Socket"/>
+            <xs:element ref="Properties"/>
+        </xs:choice>
+        <xs:attribute name="color"      type="ColorScheme"  use="optional"/>
+        <xs:attribute name="typename"   type="xs:string"    use="required"/>
+        <xs:attribute name="groupname"  type="xs:string"    use="required"/>
+        <xs:attribute name="size"       type="xs:string"    use="required"/>
+    </xs:complexType>
+
+
+    <!-- ========================= Node Data ========================= -->
+
+
+    <xs:complexType name="PropertyImpl">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element ref="Enum"/>
+            <xs:element ref="Variable"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="VariableImpl">
+        <xs:attribute name="type"       type="SocketType" use="required"/>
+        <xs:attribute name="name"       type="xs:string"  use="required"/>
+        <xs:attribute name="default"    type="xs:string"  use="required"/>
+        <xs:attribute name="docs"       type="xs:string"  use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="EnumImpl">
+        <xs:choice minOccurs="1" maxOccurs="unbounded">
+            <xs:element ref="EnumItem"/>
+        </xs:choice>
+        <xs:attribute name="name"   type="xs:string" use="required"/>
+        <xs:attribute name="docs"   type="xs:string" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="EnumItemImpl">
+        <xs:attribute name="name"   type="xs:string" use="required"/>
+    </xs:complexType>
+
+
+
+    <!-- ========================= Color ========================= -->
+
+    <xs:simpleType name="ColorScheme">
+        <xs:restriction base="xs:NMTOKENS">
+            <xs:enumeration value="Red" />
+            <xs:enumeration value="Yellow" />
+            <xs:enumeration value="Blue" />
+            <xs:enumeration value="Orange" />
+            <xs:enumeration value="Green" />
+            <xs:enumeration value="Purple" />
+            <xs:enumeration value="OrangeRed" />
+            <xs:enumeration value="YellowOrange" />
+            <xs:enumeration value="YellowGreen" />
+            <xs:enumeration value="BlueGreen" />
+            <xs:enumeration value="BluePurple" />
+            <xs:enumeration value="RedPurple" />
+            <xs:enumeration value="Grey" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- Palette used by the render system for 
+            color coding Nodes / Sockets 
+            (will replace ColorScheme)
+    -->
+    <xs:complexType name="ColorPaletteImpl">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+
+        <!-- used in the form of 'r,g,b,a'
+            values between [0, 255]
+        -->
+        <xs:attribute name="light"      type="xs:string" use="required"/>
+        <xs:attribute name="dark"       type="xs:string" use="required"/>
+        <xs:attribute name="shadow"     type="xs:string" use="required"/>
+        <xs:attribute name="highlight"  type="xs:string" use="required"/>
+        <xs:attribute name="text"       type="xs:string" use="required"/>
+        <xs:attribute name="textheader" type="xs:string" use="required"/>
+    </xs:complexType>
+
+
+    <!-- ========================= Sockets ========================= -->
+
+    <xs:simpleType name="SocketType">
+        <xs:restriction base="xs:NMTOKENS">
+            <xs:enumeration value="Boolean" />
+            <xs:enumeration value="Int" />
+            <xs:enumeration value="Float" />
+            <xs:enumeration value="String" />
+            <xs:enumeration value="Vector2" />
+            <xs:enumeration value="Vector3" />
+            <xs:enumeration value="Vector4" />
+            <xs:enumeration value="Quaternion" />
+            <xs:enumeration value="Enum" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    
+
+    <xs:simpleType name="SocketDirection">
+        <xs:restriction base="xs:NMTOKENS">
+            <xs:enumeration value="In"/>
+            <xs:enumeration value="Out" />
+        </xs:restriction>
+    </xs:simpleType>
+
+
+    <xs:complexType name="SocketImpl">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element ref="BooleanSocket"/>
+            <xs:element ref="IntSocket"/>
+            <xs:element ref="FloatSocket"/>
+            <xs:element ref="StringSocket"/>
+            <xs:element ref="DocString"/>
+        </xs:choice>
+
+        <xs:attribute name="index"      type="xs:nonNegativeInteger"    use="optional"/>
+        <xs:attribute name="color"      type="ColorScheme"              use="optional"/>
+        <xs:attribute name="type"       type="SocketType"               use="required"/>
+        <xs:attribute name="name"       type="xs:string"                use="required"/>
+        <xs:attribute name="direction"  type="SocketDirection"          use="required"/>
+
+        
+        <!-- rect= "x,y,w,h" -->
+        <xs:attribute name="rect"       type="xs:string" use="required"/>
+        <!-- default value -->
+        <xs:attribute name="default"    type="xs:string" use="optional"/>
+
+    </xs:complexType>
+
+    <xs:complexType name="BooleanSocketImpl">
+        <xs:attribute name="default" type="xs:boolean" use="required" />
+    </xs:complexType>
+
+    <!-- Integer socket -->
+
+    <xs:complexType name="IntSocketImpl">
+        <xs:attribute name="default" type="xs:int" use="required"/>
+        <xs:attribute name="min" type="xs:int" use="required"/>
+        <xs:attribute name="max" type="xs:int" use="required"/>
+    </xs:complexType>
+
+
+    <!-- Float socket -->
+    <xs:complexType name="FloatSocketImpl">
+        <xs:attribute name="default" type="xs:int" use="required"/>
+        <xs:attribute name="min" type="xs:int" use="required"/>
+        <xs:attribute name="max" type="xs:int" use="required"/>
+    </xs:complexType>
+
+
+    <!-- String socket -->
+    <xs:complexType name="StringSocketImpl">
+        <xs:attribute name="default" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    
+</xs:schema>

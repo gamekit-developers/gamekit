@@ -25,4 +25,8 @@ if (SAMPLES_CPPDEMO)
 	subdirs(CppDemo)
 endif()
 
+if (SAMPLES_NODE_EDITOR)
+	subdirs(NodeEditor)
+endif()
+
 endif()
