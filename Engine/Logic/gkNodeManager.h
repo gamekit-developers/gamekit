@@ -36,34 +36,34 @@ class gkGameObject;
 class gkNodeManager : public Ogre::Singleton<gkNodeManager>
 {
 public:
-    typedef utHashTable<utIntHashKey, gkLogicTree*> NodeTree;
-    typedef utHashTableIterator<NodeTree>           NodeTreeIterator;
-    typedef utList<gkLogicTree*>                    TreeList;
+	typedef utHashTable<utIntHashKey, gkLogicTree*> NodeTree;
+	typedef utHashTableIterator<NodeTree>           NodeTreeIterator;
+	typedef utList<gkLogicTree*>                    TreeList;
 public:
-    gkNodeManager();
-    ~gkNodeManager();
+	gkNodeManager();
+	~gkNodeManager();
 
-    gkLogicTree* create();
-    gkLogicTree* create(const gkString &name);
+	gkLogicTree* create();
+	gkLogicTree* create(const gkString& name);
 
-    gkLogicTree* get(int id);
-    gkLogicTree* get(const gkString &name);
+	gkLogicTree* get(int id);
+	gkLogicTree* get(const gkString& name);
 
-    NodeTreeIterator getIterator();
+	NodeTreeIterator getIterator();
 
-    void destroy(gkLogicTree* tree);
-    void destroy(int handle);
+	void destroy(gkLogicTree* tree);
+	void destroy(int handle);
 
-    static gkNodeManager& getSingleton();
-    static gkNodeManager* getSingletonPtr();
+	static gkNodeManager& getSingleton();
+	static gkNodeManager* getSingletonPtr();
 
-    void update(gkScalar tick);
-    void clear();
+	void update(gkScalar tick);
+	void clear();
 
 private:
-    TreeList    m_locals;
-    int         m_uniqueHandle;
-    NodeTree    m_trees;
+	TreeList    m_locals;
+	int         m_uniqueHandle;
+	NodeTree    m_trees;
 };
 
 

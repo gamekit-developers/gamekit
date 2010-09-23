@@ -35,7 +35,7 @@
 
 
 
-gkSkeletonResource::gkSkeletonResource(gkResourceManager* creator, const gkResourceName &name, const gkResourceHandle& handle)
+gkSkeletonResource::gkSkeletonResource(gkResourceManager* creator, const gkResourceName& name, const gkResourceHandle& handle)
 	:   gkResource(creator, name, handle)
 {
 	m_externalLoader = new gkSkeletonLoader(this);
@@ -56,25 +56,25 @@ gkSkeletonResource::~gkSkeletonResource()
 }
 
 
-gkBone *gkSkeletonResource::createBone(const gkString &name)
+gkBone* gkSkeletonResource::createBone(const gkString& name)
 {
 	if (hasBone(name))
 		return 0;
 
-	gkBone *manual = new gkBone(name);
+	gkBone* manual = new gkBone(name);
 	m_bones.insert(name, manual);
 	m_boneList.push_back(manual);
 	return manual;
 }
 
 
-void gkSkeletonResource::makeManual(gkEntity *ent)
+void gkSkeletonResource::makeManual(gkEntity* ent)
 {
 	m_externalLoader->makeManual(ent);
 }
 
 
-gkAction *gkSkeletonResource::createAction(const gkHashedString &name)
+gkAction* gkSkeletonResource::createAction(const gkHashedString& name)
 {
 	if (m_actions.find(name) != GK_NPOS)
 	{
@@ -82,7 +82,7 @@ gkAction *gkSkeletonResource::createAction(const gkHashedString &name)
 		return 0;
 	}
 
-	gkAction *act = new gkAction(name.str());
+	gkAction* act = new gkAction(name.str());
 
 	m_actions.insert(act->getName(), act);
 	return act;
@@ -91,7 +91,7 @@ gkAction *gkSkeletonResource::createAction(const gkHashedString &name)
 
 
 
-gkAction *gkSkeletonResource::getAction(const gkHashedString &name)
+gkAction* gkSkeletonResource::getAction(const gkHashedString& name)
 {
 	size_t pos;
 	if ((pos = m_actions.find(name)) == GK_NPOS)
@@ -102,7 +102,7 @@ gkAction *gkSkeletonResource::getAction(const gkHashedString &name)
 
 
 
-gkBone *gkSkeletonResource::getBone(const gkHashedString &name)
+gkBone* gkSkeletonResource::getBone(const gkHashedString& name)
 {
 	size_t pos;
 	if ((pos = m_bones.find(name)) == GK_NPOS)
@@ -112,13 +112,13 @@ gkBone *gkSkeletonResource::getBone(const gkHashedString &name)
 
 
 
-gkBone::BoneList &gkSkeletonResource::getRootBoneList(void)
+gkBone::BoneList& gkSkeletonResource::getRootBoneList(void)
 {
 	if (m_rootBoneList.empty())
 	{
-		for (UTsize i=0; i<m_boneList.size(); ++i)
+		for (UTsize i = 0; i < m_boneList.size(); ++i)
 		{
-			gkBone *bone = m_boneList.at(i);
+			gkBone* bone = m_boneList.at(i);
 
 			if (bone->getParent() == 0)
 				m_rootBoneList.push_back(bone);
@@ -126,4 +126,3 @@ gkBone::BoneList &gkSkeletonResource::getRootBoneList(void)
 	}
 	return m_rootBoneList;
 }
-

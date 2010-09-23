@@ -30,7 +30,7 @@
 
 
 
-gkMotionActuator::gkMotionActuator(gkGameObject *object, gkLogicLink *link, const gkString &name)
+gkMotionActuator::gkMotionActuator(gkGameObject* object, gkLogicLink* link, const gkString& name)
 	:       gkLogicActuator(object, link, name),
 	        m_type(0), m_linvInc(false), m_damping(1.f), m_dampIncr(0.f)
 {
@@ -43,9 +43,9 @@ gkMotionActuator::~gkMotionActuator()
 
 
 
-gkLogicBrick *gkMotionActuator::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick* gkMotionActuator::clone(gkLogicLink* link, gkGameObject* dest)
 {
-	gkMotionActuator *act = new gkMotionActuator(*this);
+	gkMotionActuator* act = new gkMotionActuator(*this);
 	act->cloneImpl(link, dest);
 	return act;
 }
@@ -67,15 +67,15 @@ void gkMotionActuator::execute(void)
 		if (m_rot.evaluate)
 			m_object->rotate(m_quat, m_rot.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
 
-		gkPhysicsController *object = m_object->getPhysicsController();
+		gkPhysicsController* object = m_object->getPhysicsController();
 
 		if (object)
 		{
-			gkRigidBody *body = dynamic_cast<gkRigidBody *>(object);
+			gkRigidBody* body = dynamic_cast<gkRigidBody*>(object);
 
-			if(body)
+			if (body)
 			{
-				// Tooltip, states it's the number of frames to reach the target. 
+				// Tooltip, states it's the number of frames to reach the target.
 				gkScalar val = 1.f;
 				if (m_damping > 0.f)
 				{
@@ -99,7 +99,7 @@ void gkMotionActuator::execute(void)
 					body->setLinearVelocity(extra * val, m_linv.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
 				}
 				if (m_angv.evaluate)
-					body->setAngularVelocity(m_angv.vec *val , m_angv.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
+					body->setAngularVelocity(m_angv.vec * val , m_angv.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
 			}
 		}
 	}

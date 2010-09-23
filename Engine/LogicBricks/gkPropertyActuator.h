@@ -48,27 +48,27 @@ private:
 	int         m_type;
 	gkString    m_prop, m_value, m_othOb;
 	bool        m_init;
-	gkVariable  *m_cur, *m_oth;
+	gkVariable*  m_cur, *m_oth;
 	gkVariable  m_propVal;
 
 
 public:
 
-	gkPropertyActuator(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	gkPropertyActuator(gkGameObject* object, gkLogicLink* link, const gkString& name);
 	virtual ~gkPropertyActuator();
 
-	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
+	gkLogicBrick* clone(gkLogicLink* link, gkGameObject* dest);
 
 	GK_INLINE void      setType(int v)                  {m_type = v;}
 	GK_INLINE int       getType(void)                   {return m_type;}
-	GK_INLINE void      setProperty(const gkString &v)  {m_prop = v;}
+	GK_INLINE void      setProperty(const gkString& v)  {m_prop = v;}
 	GK_INLINE gkString  getProperty(void)               {return m_prop;}
-	GK_INLINE void      setValue(const gkString &v)     {m_value = v;}
+	GK_INLINE void      setValue(const gkString& v)     {m_value = v;}
 	GK_INLINE gkString  getValue(void)                  {return m_value;}
-	GK_INLINE void      setObject(const gkString &v)    {m_othOb = v;}
+	GK_INLINE void      setObject(const gkString& v)    {m_othOb = v;}
 	GK_INLINE gkString  getObject(void)                 {return m_othOb;}
 
-	
+
 	void execute(void);
 };
 

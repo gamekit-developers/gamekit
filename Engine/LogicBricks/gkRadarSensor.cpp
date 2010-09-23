@@ -35,15 +35,15 @@
 #include "btBulletDynamicsCommon.h"
 
 
-gkRadarSensor::gkRadarSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
+gkRadarSensor::gkRadarSensor(gkGameObject* object, gkLogicLink* link, const gkString& name)
 	:        gkRaySensor(object, link, name), m_angle(0.1)
 {
 }
 
 
-gkLogicBrick *gkRadarSensor::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick* gkRadarSensor::clone(gkLogicLink* link, gkGameObject* dest)
 {
-	gkRadarSensor *sens = new gkRadarSensor(*this);
+	gkRadarSensor* sens = new gkRadarSensor(*this);
 	sens->cloneImpl(link, dest);
 	return sens;
 }
@@ -51,22 +51,22 @@ gkLogicBrick *gkRadarSensor::clone(gkLogicLink *link, gkGameObject *dest)
 
 bool gkRadarSensor::query(void)
 {
-	gkScene *scene = m_object->getOwner();
-	gkDynamicsWorld *dyn = scene->getDynamicsWorld();
+	gkScene* scene = m_object->getOwner();
+	gkDynamicsWorld* dyn = scene->getDynamicsWorld();
 
-	btDynamicsWorld *btw = dyn->getBulletWorld();
+	btDynamicsWorld* btw = dyn->getBulletWorld();
 
 	const gkScalar offs = m_range / 2.f;
 	gkEuler ori;
 	gkVector3 dir;
 	switch (m_axis)
 	{
-	case RA_XPOS: {dir = gkVector3(offs,0,0);  break;}
-	case RA_YPOS: {dir = gkVector3(0,offs,0);  break;}
-	case RA_ZPOS: {dir = gkVector3(0,0,offs);  break;}
-	case RA_XNEG: {dir = gkVector3(-offs,0,0); break;}
-	case RA_YNEG: {dir = gkVector3(0,-offs,0); break;}
-	case RA_ZNEG: {dir = gkVector3(0,0,-offs); break;}
+	case RA_XPOS: {dir = gkVector3(offs, 0, 0);  break;}
+	case RA_YPOS: {dir = gkVector3(0, offs, 0);  break;}
+	case RA_ZPOS: {dir = gkVector3(0, 0, offs);  break;}
+	case RA_XNEG: {dir = gkVector3(-offs, 0, 0); break;}
+	case RA_YNEG: {dir = gkVector3(0, -offs, 0); break;}
+	case RA_ZNEG: {dir = gkVector3(0, 0, -offs); break;}
 	}
 
 	switch (m_axis)
@@ -92,7 +92,7 @@ bool gkRadarSensor::query(void)
 	btt.setOrigin(btVector3(vec.x + dir.x, vec.y + dir.y, vec.z + dir.z));
 	btt.setRotation(btr);
 
-	btConeShapeZ btcs(m_range*tan(m_angle/2), m_range);
+	btConeShapeZ btcs(m_range * tan(m_angle / 2), m_range);
 
 	btCollisionObject btco = btCollisionObject();
 	btco.setCollisionShape(&btcs);
@@ -101,7 +101,7 @@ bool gkRadarSensor::query(void)
 	btw->contactTest( &btco, exec);
 
 	if (btw->getDebugDrawer())
-		btw->debugDrawObject(btt, &btcs, btVector3(0,1,0));
+		btw->debugDrawObject(btt, &btcs, btVector3(0, 1, 0));
 
 
 	if (!exec.hasHit())
@@ -110,7 +110,7 @@ bool gkRadarSensor::query(void)
 
 	if (m_object->getCollisionObject())
 	{
-		// don't collide with self ? 
+		// don't collide with self ?
 		// See: momo_ogre.blend sensor(Not Ray.Down) state 2
 		if (!exec.m_contactObjects.empty())
 			exec.m_contactObjects.erase(m_object->getCollisionObject());
@@ -123,13 +123,13 @@ bool gkRadarSensor::query(void)
 	if (m_material.empty() && m_prop.empty())
 		return true;
 
-	utArray<const btCollisionObject *> contacts = exec.m_contactObjects;
-	
-	utArrayIterator< utArray<const btCollisionObject *> > iter(contacts);
+	utArray<const btCollisionObject*> contacts = exec.m_contactObjects;
 
-	while(iter.hasMoreElements())
+	utArrayIterator< utArray<const btCollisionObject*> > iter(contacts);
+
+	while (iter.hasMoreElements())
 	{
-		gkGameObject *ob = gkPhysicsController::castObject(iter.peekNext());
+		gkGameObject* ob = gkPhysicsController::castObject(iter.peekNext());
 
 		if (gkPhysicsController::sensorTest(ob, m_prop, m_material))
 			return true;

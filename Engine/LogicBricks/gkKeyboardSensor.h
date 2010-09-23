@@ -51,10 +51,10 @@ protected:
 	bool m_allKeys;
 
 public:
-	gkKeyboardSensor(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	gkKeyboardSensor(gkGameObject* object, gkLogicLink* link, const gkString& name);
 	virtual ~gkKeyboardSensor() {}
 
-	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
+	gkLogicBrick* clone(gkLogicLink* link, gkGameObject* dest);
 
 	bool query(void);
 

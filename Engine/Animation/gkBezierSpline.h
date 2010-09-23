@@ -55,21 +55,21 @@ protected:
 	BezierInterpolation             m_interpMethod;
 
 
-	int solveRoots(const double &x,
+	int solveRoots(const double& x,
 	               const double p0,
 	               const double p1,
 	               const double p2,
 	               const double p3,
-	               double &s) const;
+	               double& s) const;
 
-	gkScalar interpolate(const double &t,
-	                     const double &p0,
-	                     const double &p1,
-	                     const double &p2,
-	                     const double &p3) const;
+	gkScalar interpolate(const double& t,
+	                     const double& p0,
+	                     const double& p1,
+	                     const double& p2,
+	                     const double& p3) const;
 
 
-	void updateHandles(gkScalar *p0, gkScalar *p1, gkScalar *p2, gkScalar *p3) const;
+	void updateHandles(gkScalar* p0, gkScalar* p1, gkScalar* p2, gkScalar* p3) const;
 
 
 public:
@@ -81,10 +81,10 @@ public:
 	// time is the current frame number
 	gkScalar interpolate(gkScalar delta, gkScalar time) const;
 
-	GK_INLINE void addVertex(const gkBezierVertex &v)
+	GK_INLINE void addVertex(const gkBezierVertex& v)
 	{m_verts.push_back(v);}
 
-	GK_INLINE const gkBezierVertex *getVerts(void) const
+	GK_INLINE const gkBezierVertex* getVerts(void) const
 	{return m_verts.ptr();}
 
 	GK_INLINE int getNumVerts(void) const
@@ -96,7 +96,7 @@ public:
 	{ return m_code ;}
 
 
-	GK_INLINE void setInterpolationMethod(const BezierInterpolation &meth)
+	GK_INLINE void setInterpolationMethod(const BezierInterpolation& meth)
 	{ m_interpMethod = meth; }
 
 

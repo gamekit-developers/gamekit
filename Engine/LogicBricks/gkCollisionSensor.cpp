@@ -49,7 +49,7 @@ void gkCollisionDispatch::dispatch(void)
 
 
 
-gkCollisionSensor::gkCollisionSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
+gkCollisionSensor::gkCollisionSensor(gkGameObject* object, gkLogicLink* link, const gkString& name)
 	:       gkLogicSensor(object, link, name), m_material(""), m_prop("")
 {
 	m_dispatchType = DIS_COLLISION;
@@ -58,9 +58,9 @@ gkCollisionSensor::gkCollisionSensor(gkGameObject *object, gkLogicLink *link, co
 
 
 
-gkLogicBrick *gkCollisionSensor::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick* gkCollisionSensor::clone(gkLogicLink* link, gkGameObject* dest)
 {
-	gkCollisionSensor *sens = new gkCollisionSensor(*this);
+	gkCollisionSensor* sens = new gkCollisionSensor(*this);
 	sens->cloneImpl(link, dest);
 	return sens;
 }
@@ -68,7 +68,7 @@ gkLogicBrick *gkCollisionSensor::clone(gkLogicLink *link, gkGameObject *dest)
 
 bool gkCollisionSensor::query(void)
 {
-	gkPhysicsController *object = m_object->getPhysicsController();
+	gkPhysicsController* object = m_object->getPhysicsController();
 	if (!object)
 		return false;
 

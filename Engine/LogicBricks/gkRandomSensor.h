@@ -37,14 +37,14 @@ private:
 	UTuint32 m_seed;
 	UTuint32 m_current;
 	unsigned int m_count;
-	
-	utRandomNumberGenerator *m_randGen;
+
+	utRandomNumberGenerator* m_randGen;
 
 public:
-	gkRandomSensor(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	gkRandomSensor(gkGameObject* object, gkLogicLink* link, const gkString& name);
 	~gkRandomSensor();
 
-	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
+	gkLogicBrick* clone(gkLogicLink* link, gkGameObject* dest);
 
 	bool query(void);
 	void setSeed(UTuint32 v);

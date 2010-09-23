@@ -47,7 +47,7 @@ public:
 	DECLARE_SOCKET_TYPE(IS_TRUE, bool);
 	DECLARE_SOCKET_TYPE(IS_FALSE, bool);
 
-	gkIfNode(gkLogicTree *parent, size_t id) 
+	gkIfNode(gkLogicTree* parent, size_t id)
 		: gkLogicNode(parent, id)
 	{
 		ADD_ISOCK(A, T());
@@ -56,9 +56,9 @@ public:
 		ADD_OSOCK(IS_FALSE, false);
 	}
 
-    virtual ~gkIfNode() {}
+	virtual ~gkIfNode() {}
 
-    bool evaluate(gkScalar tick)
+	bool evaluate(gkScalar tick)
 	{
 		bool result = doIf(Int2Type<stmt>());
 

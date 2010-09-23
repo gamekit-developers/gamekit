@@ -42,7 +42,7 @@ public:
 
 
 	bool update(gkScalar delta);
-	gkConstraint *clone(gkGameObject *clob);
+	gkConstraint* clone(gkGameObject* clob);
 
 
 	GK_INLINE void setMinX(gkScalar v)  {m_flag[0] |= 1; x[0] = v;}

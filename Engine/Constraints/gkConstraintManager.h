@@ -46,18 +46,18 @@ public:
 
 	void clear(void);
 
-	void notifyObjectDestroyed(gkGameObject *gobj);
-	void notifyObjectCloned(gkGameObject *oobj, gkGameObject *nobj);
-	void notifyInstanceCreated(gkGameObject *gobj);
-	void notifyInstanceDestroyed(gkGameObject *gobj);
+	void notifyObjectDestroyed(gkGameObject* gobj);
+	void notifyObjectCloned(gkGameObject* oobj, gkGameObject* nobj);
+	void notifyInstanceCreated(gkGameObject* gobj);
+	void notifyInstanceDestroyed(gkGameObject* gobj);
 
 
-	void addConstraint(gkGameObject *obj, gkConstraint *cons);
-	void removeConstraint(gkGameObject *obj, gkConstraint *cons);
+	void addConstraint(gkGameObject* obj, gkConstraint* cons);
+	void removeConstraint(gkGameObject* obj, gkConstraint* cons);
 
 
-	Constraints& getConstraints(gkGameObject *obj);
-	bool hasConstraints(gkGameObject *obj);
+	Constraints& getConstraints(gkGameObject* obj);
+	bool hasConstraints(gkGameObject* obj);
 
 
 
@@ -68,7 +68,7 @@ private:
 
 
 
-	void removeUpdate(gkConstraint *cons);
+	void removeUpdate(gkConstraint* cons);
 
 
 	Constraints            m_updateConstraints;

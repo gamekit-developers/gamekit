@@ -29,7 +29,7 @@
 
 
 
-gsProperty::gsProperty(gkVariable *var) : m_prop(var), m_creator(false)
+gsProperty::gsProperty(gkVariable* var) : m_prop(var), m_creator(false)
 {
 }
 
@@ -39,7 +39,7 @@ gsProperty::gsProperty() : m_prop(0), m_creator(false)
 }
 
 
-gsProperty::gsProperty(const gkString &name, bool value)
+gsProperty::gsProperty(const gkString& name, bool value)
 {
 	m_creator = true;
 	m_prop = new gkVariable(name, false);
@@ -47,7 +47,7 @@ gsProperty::gsProperty(const gkString &name, bool value)
 }
 
 
-gsProperty::gsProperty(const gkString &name, double value)
+gsProperty::gsProperty(const gkString& name, double value)
 {
 	m_creator = true;
 	m_prop = new gkVariable(name, false);
@@ -56,7 +56,7 @@ gsProperty::gsProperty(const gkString &name, double value)
 
 
 
-gsProperty::gsProperty(const gkString &name, const gkString &value)
+gsProperty::gsProperty(const gkString& name, const gkString& value)
 {
 	m_creator = true;
 	m_prop = new gkVariable(name, false);
@@ -65,7 +65,7 @@ gsProperty::gsProperty(const gkString &name, const gkString &value)
 
 
 
-gsProperty::gsProperty(const gsProperty &oth)
+gsProperty::gsProperty(const gsProperty& oth)
 {
 	m_creator = true;
 	m_prop = new gkVariable(oth.getName(), false);
@@ -82,7 +82,7 @@ gsProperty::~gsProperty()
 
 
 
-const gkString &gsProperty::getName(void) const
+const gkString& gsProperty::getName(void) const
 {
 	static gkString localStr = "";
 	if (m_prop)
@@ -92,7 +92,7 @@ const gkString &gsProperty::getName(void) const
 
 
 
-const gkString &gsProperty::getValue(void) const
+const gkString& gsProperty::getValue(void) const
 {
 	static gkString localStr;
 	if (m_prop)
@@ -183,7 +183,7 @@ void gsProperty::fromNumber(double v)
 
 
 
-void gsProperty::fromString(const gkString &v)
+void gsProperty::fromString(const gkString& v)
 {
 	if (m_prop)
 		m_prop->setValue(v);
@@ -198,20 +198,20 @@ void gsProperty::fromString(const gkString &v)
 #define PROP_INSERT_S(name, var) PROP_INSERT_T(name, var, gkString)
 
 
-static void gkVar_fromVar(gkVariable &v, bool &r)
+static void gkVar_fromVar(gkVariable& v, bool& r)
 {
 	r = v.getValueBool();
 }
 
-static void gkVar_fromVar(gkVariable &v, int &r)
+static void gkVar_fromVar(gkVariable& v, int& r)
 {
 	r = v.getValueInt();
 }
-static void gkVar_fromVar(gkVariable &v, gkScalar &r)
+static void gkVar_fromVar(gkVariable& v, gkScalar& r)
 {
 	r = v.getValueReal();
 }
-static void gkVar_fromVar(gkVariable &v, gkString &r)
+static void gkVar_fromVar(gkVariable& v, gkString& r)
 {
 	r = v.getValueString();
 }
@@ -239,7 +239,7 @@ static void gkVar_fromVar(gkVariable &v, gkString &r)
 
 
 
-gsUserDefs::gsUserDefs(gkUserDefs *defs)
+gsUserDefs::gsUserDefs(gkUserDefs* defs)
 {
 	m_defs = defs;
 
@@ -271,8 +271,8 @@ gsUserDefs::gsUserDefs(gkUserDefs *defs)
 
 gsUserDefs::~gsUserDefs()
 {
-	UTsize p=0;
-	for (; p< m_properties.size(); ++p)
+	UTsize p = 0;
+	for (; p < m_properties.size(); ++p)
 		delete m_properties.at(p);
 
 	m_properties.clear();
@@ -280,7 +280,7 @@ gsUserDefs::~gsUserDefs()
 
 
 
-void gsUserDefs::setValueEvent(gkVariable &v)
+void gsUserDefs::setValueEvent(gkVariable& v)
 {
 	if (m_properties.find(gkHashedString(v.getName())) != UT_NPOS)
 	{
@@ -311,7 +311,7 @@ void gsUserDefs::setValueEvent(gkVariable &v)
 
 
 
-const gsProperty &gsUserDefs::getProperty(const gkString &name)
+const gsProperty& gsUserDefs::getProperty(const gkString& name)
 {
 	return __getitem__(name.c_str());
 }
@@ -319,7 +319,7 @@ const gsProperty &gsUserDefs::getProperty(const gkString &name)
 
 
 
-void gsUserDefs::addProperty(const gsProperty &prop)
+void gsUserDefs::addProperty(const gsProperty& prop)
 {
 	if (!prop.getName().empty())
 	{
@@ -330,21 +330,21 @@ void gsUserDefs::addProperty(const gsProperty &prop)
 
 
 
-bool gsUserDefs::hasProperty(const gkString &name)
+bool gsUserDefs::hasProperty(const gkString& name)
 {
 	return m_properties.find(name) != UT_NPOS;
 }
 
 
 
-const gsProperty &gsUserDefs::__getitem__(const char *name)
+const gsProperty& gsUserDefs::__getitem__(const char* name)
 {
-	static gsProperty *prop=0;
+	static gsProperty* prop = 0;
 	UTsize pos = 0;
 	if ((pos = m_properties.find(gkHashedString(name))) != UT_NPOS)
 	{
 		delete prop;
-		prop = new gsProperty((const gsProperty &)(*(m_properties.at(pos))));
+		prop = new gsProperty((const gsProperty&)(*(m_properties.at(pos))));
 	}
 	else
 	{
@@ -357,7 +357,7 @@ const gsProperty &gsUserDefs::__getitem__(const char *name)
 
 
 
-void gsUserDefs::__setitem__(const char *name, bool  v)
+void gsUserDefs::__setitem__(const char* name, bool  v)
 {
 	UTsize pos = 0;
 	if ((pos = m_properties.find(gkHashedString(name))) != UT_NPOS)
@@ -369,7 +369,7 @@ void gsUserDefs::__setitem__(const char *name, bool  v)
 
 
 
-void gsUserDefs::__setitem__(const char *name, double v)
+void gsUserDefs::__setitem__(const char* name, double v)
 {
 	UTsize pos = 0;
 	if ((pos = m_properties.find(gkHashedString(name))) != UT_NPOS)
@@ -381,7 +381,7 @@ void gsUserDefs::__setitem__(const char *name, double v)
 
 
 
-void gsUserDefs::__setitem__(const char *name, const gkString &v)
+void gsUserDefs::__setitem__(const char* name, const gkString& v)
 {
 	UTsize pos = 0;
 	if ((pos = m_properties.find(gkHashedString(name))) != UT_NPOS)
@@ -394,10 +394,10 @@ void gsUserDefs::__setitem__(const char *name, const gkString &v)
 
 
 gsMouse::gsMouse()
-	:	xpos(0), ypos(0),
-	    xrel(0), yrel(0),
-	    winx(0), winy(0),
-	    wheel(0), moved(false)
+	:    xpos(0), ypos(0),
+	     xrel(0), yrel(0),
+	     winx(0), winy(0),
+	     wheel(0), moved(false)
 {
 }
 
@@ -414,7 +414,7 @@ void gsMouse::capture(void)
 {
 	if (!gkWindowSystem::getSingletonPtr()) return;
 
-	gkMouse *mse = gkWindowSystem::getSingleton().getMouse();
+	gkMouse* mse = gkWindowSystem::getSingleton().getMouse();
 	xpos    = mse->position.x;
 	ypos    = mse->position.y;
 	xrel    = mse->relitave.x;
@@ -480,7 +480,7 @@ gsEngine::~gsEngine()
 		delete m_defs;
 
 
-	for (UTsize i=0; i<m_ticks.size(); ++i)
+	for (UTsize i = 0; i < m_ticks.size(); ++i)
 		delete m_ticks.at(i);
 
 	if (m_engine)
@@ -516,9 +516,9 @@ void gsEngine::connect(int evt, gsSelf self, gsFunction method)
 void gsEngine::tick(gkScalar delta)
 {
 	UTsize i;
-	for (i=0; i<m_ticks.size(); ++i)
+	for (i = 0; i < m_ticks.size(); ++i)
 	{
-		gkLuaEvent *ob = m_ticks.at(i);
+		gkLuaEvent* ob = m_ticks.at(i);
 
 		ob->beginCall();
 		ob->addArgument(delta);
@@ -532,7 +532,7 @@ void gsEngine::tick(gkScalar delta)
 			{
 				i -= 1;
 			}
-			else 
+			else
 				break;
 			continue;
 		}
@@ -560,7 +560,7 @@ void gsEngine::requestExit(void)
 
 
 
-gsUserDefs &gsEngine::getUserDefs(void)
+gsUserDefs& gsEngine::getUserDefs(void)
 {
 	if (m_defs == 0)
 		m_defs = new gsUserDefs(&m_engine->getUserDefs());
@@ -570,14 +570,14 @@ gsUserDefs &gsEngine::getUserDefs(void)
 
 
 
-gsScene* gsEngine::loadBlendFile(const gkString &name)
+gsScene* gsEngine::loadBlendFile(const gkString& name)
 {
 	if (m_engine && !m_running && m_ctxOwner)
 	{
 		if (!m_engine->isInitialized())
 			gkLogMessage("gsEngine: loadBlendFile on uninitialized engine.");
 
-		gkBlendFile *gkb = m_engine->loadBlendFile(name, gkBlendLoader::LO_ONLY_ACTIVE_SCENE, "<gkBuiltin>");
+		gkBlendFile* gkb = m_engine->loadBlendFile(name, gkBlendLoader::LO_ONLY_ACTIVE_SCENE, "<gkBuiltin>");
 		if (!gkb)
 		{
 			printf("File Loading failed!\n");
@@ -594,7 +594,7 @@ gsScene* gsEngine::loadBlendFile(const gkString &name)
 }
 
 
-gsScene *gsEngine::getActiveScene(void)
+gsScene* gsEngine::getActiveScene(void)
 {
 	if (m_engine && m_engine->isInitialized())
 		return new gsScene(m_engine->getActiveScene());
@@ -615,7 +615,7 @@ void gsEngine::run(void)
 
 
 
-gsGameObject *gsGameObject::createNew(gkGameObject *ob)
+gsGameObject* gsGameObject::createNew(gkGameObject* ob)
 {
 	if (!ob) return 0;
 
@@ -645,7 +645,7 @@ gsObject::gsObject() : m_object(0)
 
 
 
-gsObject::gsObject(gkInstancedObject *ob) : m_object(ob)
+gsObject::gsObject(gkInstancedObject* ob) : m_object(ob)
 {
 }
 
@@ -655,7 +655,7 @@ void gsObject::createInstance(void)
 {
 	if (m_object)
 	{
-		gkEngine *eng= gkEngine::getSingletonPtr();
+		gkEngine* eng = gkEngine::getSingletonPtr();
 		m_object->createInstance(eng->isRunning());
 	}
 }
@@ -666,7 +666,7 @@ void gsObject::destroyInstance(void)
 {
 	if (m_object)
 	{
-		gkEngine *eng= gkEngine::getSingletonPtr();
+		gkEngine* eng = gkEngine::getSingletonPtr();
 		m_object->destroyInstance(eng->isRunning());
 	}
 }
@@ -676,7 +676,7 @@ void gsObject::reinstance(void)
 {
 	if (m_object)
 	{
-		gkEngine *eng= gkEngine::getSingletonPtr();
+		gkEngine* eng = gkEngine::getSingletonPtr();
 		m_object->reinstance(eng->isRunning());
 	}
 }
@@ -698,7 +698,7 @@ gsScene::gsScene()
 }
 
 
-gsScene::gsScene(gkInstancedObject *ob) : gsObject(ob)
+gsScene::gsScene(gkInstancedObject* ob) : gsObject(ob)
 {
 }
 
@@ -710,7 +710,7 @@ gsScene::~gsScene()
 
 
 
-bool gsScene::hasObject(const gkString &name)
+bool gsScene::hasObject(const gkString& name)
 {
 	if (m_object)
 		return cast<gkScene>()->hasObject(name);
@@ -720,11 +720,11 @@ bool gsScene::hasObject(const gkString &name)
 
 
 
-gsGameObject* gsScene::getObject(const gkString &name)
+gsGameObject* gsScene::getObject(const gkString& name)
 {
 	if (m_object)
 	{
-		gkGameObject *gobj = cast<gkScene>()->getObject(name);
+		gkGameObject* gobj = cast<gkScene>()->getObject(name);
 		if (gobj)
 			return gsGameObject::createNew(gobj);
 	}
@@ -732,14 +732,14 @@ gsGameObject* gsScene::getObject(const gkString &name)
 }
 
 
-gsGameObject* gsScene::createEmpty(const gkString &name)
+gsGameObject* gsScene::createEmpty(const gkString& name)
 {
 	if (m_object)
 	{
-		gkScene *scene = cast<gkScene>();
+		gkScene* scene = cast<gkScene>();
 		if (!scene->hasObject(name))
 		{
-			gkGameObject *obj = scene->createObject(name);
+			gkGameObject* obj = scene->createObject(name);
 			return new gsGameObject(obj);
 		}
 	}
@@ -752,7 +752,7 @@ gsDynamicsWorld* gsScene::getDynamicsWorld(void)
 {
 	if (m_object)
 	{
-		gkScene *scene = cast<gkScene>();
+		gkScene* scene = cast<gkScene>();
 		gkDynamicsWorld* world = scene->getDynamicsWorld();
 		return new gsDynamicsWorld(world);
 	}
@@ -763,7 +763,7 @@ gsDynamicsWorld* gsScene::getDynamicsWorld(void)
 
 gsScene* getActiveScene(void)
 {
-	gkEngine *eng = gkEngine::getSingletonPtr();
+	gkEngine* eng = gkEngine::getSingletonPtr();
 	if (eng && eng->isInitialized())
 		return new gsScene(eng->getActiveScene());
 	return 0;
@@ -778,13 +778,13 @@ gsArray<gsGameObject, gkGameObject> &gsScene::getObjectList(void)
 
 	if (m_object)
 	{
-		gkScene *scene = cast<gkScene>();
-		gkGameObjectSet &objs = scene->getInstancedObjects();
+		gkScene* scene = cast<gkScene>();
+		gkGameObjectSet& objs = scene->getInstancedObjects();
 		gkGameObjectSet::Iterator it = objs.iterator();
 
 		while (it.hasMoreElements())
 		{
-			gkGameObject *obj = it.getNext();
+			gkGameObject* obj = it.getNext();
 			m_objectCache.push(obj);
 		}
 	}
@@ -800,7 +800,7 @@ gsGameObject::gsGameObject()
 
 
 
-gsGameObject::gsGameObject(gkInstancedObject *ob) : gsObject(ob)
+gsGameObject::gsGameObject(gkInstancedObject* ob) : gsObject(ob)
 {
 }
 
@@ -890,7 +890,7 @@ gsVector3 gsGameObject::getAngularVelocity(void)
 
 
 
-void gsGameObject::setLinearVelocity(const gsVector3 &v)
+void gsGameObject::setLinearVelocity(const gsVector3& v)
 {
 	if (m_object)
 		cast<gkGameObject>()->setLinearVelocity(v);
@@ -901,12 +901,12 @@ void gsGameObject::setLinearVelocity(const gsVector3 &v)
 void gsGameObject::setLinearVelocity(float x, float y, float z)
 {
 	if (m_object)
-		cast<gkGameObject>()->setLinearVelocity(gkVector3(x,y,z));
+		cast<gkGameObject>()->setLinearVelocity(gkVector3(x, y, z));
 }
 
 
 
-void gsGameObject::setAngularVelocity(const gsVector3 &v)
+void gsGameObject::setAngularVelocity(const gsVector3& v)
 {
 	if (m_object)
 		cast<gkGameObject>()->setAngularVelocity(v);
@@ -917,12 +917,12 @@ void gsGameObject::setAngularVelocity(const gsVector3 &v)
 void gsGameObject::setAngularVelocity(float x, float y, float z)
 {
 	if (m_object)
-		cast<gkGameObject>()->setAngularVelocity(gkVector3(x,y,z));
+		cast<gkGameObject>()->setAngularVelocity(gkVector3(x, y, z));
 }
 
 
 
-void gsGameObject::setPosition(const gsVector3 &v)
+void gsGameObject::setPosition(const gsVector3& v)
 {
 	if (m_object)
 		cast<gkGameObject>()->setPosition(v);
@@ -933,13 +933,13 @@ void gsGameObject::setPosition(const gsVector3 &v)
 void gsGameObject::setPosition(float x, float y, float z)
 {
 	if (m_object)
-		cast<gkGameObject>()->setPosition(gkVector3(x,y,z));
+		cast<gkGameObject>()->setPosition(gkVector3(x, y, z));
 }
 
 
 
 
-void gsGameObject::setRotation(const gsVector3 &v)
+void gsGameObject::setRotation(const gsVector3& v)
 {
 	if (m_object)
 		cast<gkGameObject>()->setOrientation(gkEuler(v));
@@ -955,7 +955,7 @@ void gsGameObject::setRotation(float pitch, float yaw, float roll)
 
 
 
-void gsGameObject::setOrientation(const gsQuaternion &quat)
+void gsGameObject::setOrientation(const gsQuaternion& quat)
 {
 	if (m_object)
 		cast<gkGameObject>()->setOrientation(quat);
@@ -991,7 +991,7 @@ void gsGameObject::rotate(float dx, float dy, float dz)
 
 
 
-void gsGameObject::rotate(const gsVector3 &v)
+void gsGameObject::rotate(const gsVector3& v)
 {
 	if (m_object)
 		cast<gkGameObject>()->rotate(gkEuler(v), TRANSFORM_PARENT);
@@ -999,7 +999,7 @@ void gsGameObject::rotate(const gsVector3 &v)
 
 
 
-void gsGameObject::rotate(const gsQuaternion &v)
+void gsGameObject::rotate(const gsQuaternion& v)
 {
 	if (m_object)
 		cast<gkGameObject>()->rotate(v, TRANSFORM_PARENT);
@@ -1015,7 +1015,7 @@ void gsGameObject::rotate(float dx, float dy, float dz, gsTransformSpace ts)
 
 
 
-void gsGameObject::rotate(const gsVector3 &v, gsTransformSpace ts)
+void gsGameObject::rotate(const gsVector3& v, gsTransformSpace ts)
 {
 	if (m_object)
 		cast<gkGameObject>()->rotate(gkEuler(v), ts);
@@ -1023,7 +1023,7 @@ void gsGameObject::rotate(const gsVector3 &v, gsTransformSpace ts)
 
 
 
-void gsGameObject::rotate(const gsQuaternion &v, gsTransformSpace ts)
+void gsGameObject::rotate(const gsQuaternion& v, gsTransformSpace ts)
 {
 	if (m_object)
 		cast<gkGameObject>()->rotate(v, ts);
@@ -1031,7 +1031,7 @@ void gsGameObject::rotate(const gsQuaternion &v, gsTransformSpace ts)
 
 
 
-void gsGameObject::translate(const gsVector3 &v)
+void gsGameObject::translate(const gsVector3& v)
 {
 	if (m_object)
 		cast<gkGameObject>()->translate(v, TRANSFORM_PARENT);
@@ -1042,11 +1042,11 @@ void gsGameObject::translate(const gsVector3 &v)
 void gsGameObject::translate(float x, float y, float z)
 {
 	if (m_object)
-		cast<gkGameObject>()->translate(gkVector3(x,y,z), TRANSFORM_PARENT);
+		cast<gkGameObject>()->translate(gkVector3(x, y, z), TRANSFORM_PARENT);
 }
 
 
-void gsGameObject::translate(const gsVector3 &v, gsTransformSpace ts)
+void gsGameObject::translate(const gsVector3& v, gsTransformSpace ts)
 {
 	if (m_object)
 		cast<gkGameObject>()->translate(v, ts);
@@ -1056,11 +1056,11 @@ void gsGameObject::translate(const gsVector3 &v, gsTransformSpace ts)
 void gsGameObject::translate(float x, float y, float z, gsTransformSpace ts)
 {
 	if (m_object)
-		cast<gkGameObject>()->translate(gkVector3(x,y,z), ts);
+		cast<gkGameObject>()->translate(gkVector3(x, y, z), ts);
 }
 
 
-void gsGameObject::scale(const gsVector3 &v)
+void gsGameObject::scale(const gsVector3& v)
 {
 	if (m_object)
 		cast<gkGameObject>()->scale(v);
@@ -1071,7 +1071,7 @@ void gsGameObject::scale(const gsVector3 &v)
 void gsGameObject::scale(float x, float y, float z)
 {
 	if (m_object)
-		cast<gkGameObject>()->scale(gkVector3(x,y,z));
+		cast<gkGameObject>()->scale(gkVector3(x, y, z));
 }
 
 
@@ -1125,11 +1125,11 @@ void gsGameObject::roll(float deg, gsTransformSpace ts)
 
 
 
-gsProperty gsGameObject::__getitem__(const gkString &prop)
+gsProperty gsGameObject::__getitem__(const gkString& prop)
 {
 	if (m_object)
 	{
-		gkVariable *var = cast<gkGameObject>()->getVariable(prop);
+		gkVariable* var = cast<gkGameObject>()->getVariable(prop);
 		if (var)
 			return gsProperty(var);
 	}
@@ -1138,11 +1138,11 @@ gsProperty gsGameObject::__getitem__(const gkString &prop)
 
 
 
-void gsGameObject::__setitem__(const gkString &prop, bool  v)
+void gsGameObject::__setitem__(const gkString& prop, bool  v)
 {
 	if (m_object)
 	{
-		gkVariable *var = cast<gkGameObject>()->getVariable(prop);
+		gkVariable* var = cast<gkGameObject>()->getVariable(prop);
 		if (var)
 			(*var).setValue(v);
 	}
@@ -1150,11 +1150,11 @@ void gsGameObject::__setitem__(const gkString &prop, bool  v)
 
 
 
-void gsGameObject::__setitem__(const gkString &prop, float v)
+void gsGameObject::__setitem__(const gkString& prop, float v)
 {
 	if (m_object)
 	{
-		gkVariable *var = cast<gkGameObject>()->getVariable(prop);
+		gkVariable* var = cast<gkGameObject>()->getVariable(prop);
 		if (var)
 			(*var).setValue(v);
 	}
@@ -1162,11 +1162,11 @@ void gsGameObject::__setitem__(const gkString &prop, float v)
 
 
 
-void gsGameObject::__setitem__(const gkString &prop, const char *v)
+void gsGameObject::__setitem__(const gkString& prop, const char* v)
 {
 	if (m_object)
 	{
-		gkVariable *var = cast<gkGameObject>()->getVariable(prop);
+		gkVariable* var = cast<gkGameObject>()->getVariable(prop);
 		if (var)
 			(*var).setValue(gkString(v));
 	}
@@ -1200,12 +1200,12 @@ bool gsGameObject::hasParent()
 
 
 
-void gsGameObject::setParent(gsGameObject *par)
+void gsGameObject::setParent(gsGameObject* par)
 {
 	if (m_object && par)
 	{
-		gkGameObject *gobj = get();
-		gkGameObject *pobj = par->get();
+		gkGameObject* gobj = get();
+		gkGameObject* pobj = par->get();
 
 		if (gobj == pobj) return;
 
@@ -1224,12 +1224,12 @@ void gsGameObject::setParent(gsGameObject *par)
 
 
 
-void gsGameObject::setParentInPlace(gsGameObject *par)
+void gsGameObject::setParentInPlace(gsGameObject* par)
 {
 	if (m_object && par)
 	{
-		gkGameObject *gobj = get();
-		gkGameObject *pobj = par->get();
+		gkGameObject* gobj = get();
+		gkGameObject* pobj = par->get();
 
 		if (gobj == pobj) return;
 
@@ -1252,7 +1252,7 @@ void gsGameObject::clearParent(void)
 {
 	if (m_object)
 	{
-		gkGameObject *gobj = get();
+		gkGameObject* gobj = get();
 
 		if (gobj->hasParent())
 			gobj->clearParent();
@@ -1265,7 +1265,7 @@ void gsGameObject::clearParentInPlace(void)
 {
 	if (m_object)
 	{
-		gkGameObject *gobj = get();
+		gkGameObject* gobj = get();
 
 		if (gobj->hasParent())
 			gobj->clearParentInPlace();
@@ -1274,12 +1274,12 @@ void gsGameObject::clearParentInPlace(void)
 
 
 
-void gsGameObject::addChild(gsGameObject *chi)
+void gsGameObject::addChild(gsGameObject* chi)
 {
 	if (m_object && chi)
 	{
-		gkGameObject *gobj = get();
-		gkGameObject *cobj = chi->get();
+		gkGameObject* gobj = get();
+		gkGameObject* cobj = chi->get();
 		if (gobj == cobj) return;
 
 		if (!gobj->hasChild(cobj))
@@ -1288,12 +1288,12 @@ void gsGameObject::addChild(gsGameObject *chi)
 }
 
 
-void gsGameObject::removeChild(gsGameObject *chi)
+void gsGameObject::removeChild(gsGameObject* chi)
 {
 	if (m_object && chi)
 	{
-		gkGameObject *gobj = get();
-		gkGameObject *cobj = chi->get();
+		gkGameObject* gobj = get();
+		gkGameObject* cobj = chi->get();
 		if (gobj == cobj) return;
 
 
@@ -1316,7 +1316,7 @@ void gsGameObject::enableContacts(bool v)
 {
 	if (m_object)
 	{
-		gkPhysicsController *ob = get()->getPhysicsController();
+		gkPhysicsController* ob = get()->getPhysicsController();
 		if (ob)
 			ob->enableContactProcessing(v);
 	}
@@ -1328,7 +1328,7 @@ bool gsGameObject::hasContacts()
 {
 	if (m_object)
 	{
-		gkPhysicsController *ob = get()->getPhysicsController();
+		gkPhysicsController* ob = get()->getPhysicsController();
 		if (ob)
 			return !ob->getContacts().empty();
 	}
@@ -1337,11 +1337,11 @@ bool gsGameObject::hasContacts()
 
 
 
-bool gsGameObject::hasContact(const gkString &object)
+bool gsGameObject::hasContact(const gkString& object)
 {
 	if (m_object)
 	{
-		gkPhysicsController *ob = get()->getPhysicsController();
+		gkPhysicsController* ob = get()->getPhysicsController();
 		if (ob)
 			return ob->collidesWith(object);
 	}
@@ -1355,14 +1355,14 @@ gsEntity::gsEntity()
 
 
 
-gsEntity::gsEntity(gkInstancedObject *ob) : gsGameObject(ob)
+gsEntity::gsEntity(gkInstancedObject* ob) : gsGameObject(ob)
 {
 }
 
 
 
 
-void gsEntity::playAction(const gkString &name, float blend)
+void gsEntity::playAction(const gkString& name, float blend)
 {
 	if (m_object)
 		cast<gkEntity>()->playAction(name, blend);
@@ -1377,7 +1377,7 @@ gsLight::gsLight()
 
 
 
-gsLight::gsLight(gkInstancedObject *ob) : gsGameObject(ob)
+gsLight::gsLight(gkInstancedObject* ob) : gsGameObject(ob)
 {
 }
 
@@ -1390,7 +1390,7 @@ gsCamera::gsCamera()
 
 
 
-gsCamera::gsCamera(gkInstancedObject *ob) : gsGameObject(ob)
+gsCamera::gsCamera(gkInstancedObject* ob) : gsGameObject(ob)
 {
 }
 
@@ -1455,7 +1455,7 @@ gsSkeleton::gsSkeleton()
 
 
 
-gsSkeleton::gsSkeleton(gkInstancedObject *ob) : gsGameObject(ob)
+gsSkeleton::gsSkeleton(gkInstancedObject* ob) : gsGameObject(ob)
 {
 }
 
@@ -1467,7 +1467,7 @@ gsDebugger::gsDebugger(gsScene* sc)
 {
 	if (sc)
 	{
-		gkScene *scene = sc->cast<gkScene>();
+		gkScene* scene = sc->cast<gkScene>();
 		if (scene)
 			m_debugger = scene->getDebugger();
 
@@ -1477,7 +1477,7 @@ gsDebugger::gsDebugger(gsScene* sc)
 
 
 
-void gsDebugger::drawLine(const gsVector3 &from, const gsVector3 &to, const gsVector3 &color)
+void gsDebugger::drawLine(const gsVector3& from, const gsVector3& to, const gsVector3& color)
 {
 	if (m_debugger)
 		m_debugger->drawLine(from, to, color);
@@ -1490,20 +1490,20 @@ void gsDebugger::drawObjectAxis(gsGameObject* ptr, float size)
 {
 	if (m_debugger && ptr)
 	{
-		gkGameObject *ob = ptr->cast<gkGameObject>();
+		gkGameObject* ob = ptr->cast<gkGameObject>();
 		if (ob)
 		{
-			const gkVector3     &axis   = ob->getWorldPosition();
-			const gkQuaternion  &ori    = ob->getOrientation();
+			const gkVector3&     axis   = ob->getWorldPosition();
+			const gkQuaternion&  ori    = ob->getOrientation();
 
 			gkVector3 x = (ori * gkVector3(size, 0, 0));
 			gkVector3 y = (ori * gkVector3(0, size, 0));
 			gkVector3 z = (ori * gkVector3(0, 0, size));
 
 
-			m_debugger->drawLine(axis, axis + x, gkVector3(1,0,0));
-			m_debugger->drawLine(axis, axis + y, gkVector3(0,1,0));
-			m_debugger->drawLine(axis, axis + z, gkVector3(0,0,1));
+			m_debugger->drawLine(axis, axis + x, gkVector3(1, 0, 0));
+			m_debugger->drawLine(axis, axis + y, gkVector3(0, 1, 0));
+			m_debugger->drawLine(axis, axis + z, gkVector3(0, 0, 1));
 		}
 	}
 }
@@ -1519,8 +1519,7 @@ void gsDebugger::clear(void)
 
 
 
-void gsDebugPrint(const char *str)
+void gsDebugPrint(const char* str)
 {
 	gkDebugScreen::printTo(str);
 }
-

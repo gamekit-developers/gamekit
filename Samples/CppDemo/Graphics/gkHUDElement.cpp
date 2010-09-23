@@ -25,7 +25,7 @@
 -------------------------------------------------------------------------------
     This is a replacement candidate for Engine/Graphics
     - For now it wraps Ogre::Overlays to gk usable objects.
-    - Later it will be superseded by custom Ogre vertex buffer usage, 
+    - Later it will be superseded by custom Ogre vertex buffer usage,
     - abstracted for external GameKit external rendering.
 */
 #include "gkHUDElement.h"
@@ -35,8 +35,8 @@
 
 
 
-gkHUDElement::gkHUDElement(const gkString &name)
-	:	m_name(name), m_element(0)
+gkHUDElement::gkHUDElement(const gkString& name)
+	:    m_name(name), m_element(0)
 {
 	if (Ogre::OverlayManager::getSingleton().hasOverlayElement(name))
 		m_element = Ogre::OverlayManager::getSingleton().getOverlayElement(name);
@@ -50,13 +50,13 @@ gkHUDElement::~gkHUDElement()
 
 
 
-void gkHUDElement::setValue(const gkVariable &v)
+void gkHUDElement::setValue(const gkVariable& v)
 {
 	if (m_element)
 		m_element->setCaption(v.getValueString());
 }
 
-void gkHUDElement::setValue(const gkString &v)
+void gkHUDElement::setValue(const gkString& v)
 {
 	if (m_element)
 		m_element->setCaption(v);
@@ -69,8 +69,7 @@ Ogre::OverlayElement* gkHUDElement::_getElement(void)
 }
 
 
-void gkHUDElement::_setElement(Ogre::OverlayElement *ele)
+void gkHUDElement::_setElement(Ogre::OverlayElement* ele)
 {
 	m_element = ele;
 }
-

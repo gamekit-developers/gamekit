@@ -146,7 +146,7 @@ void gkBlenderSceneConverter::convertWorld(void)
 
 		// take half far distance of the main camera
 		props.m_distance = (m_bscene->camera && m_bscene->camera->type == OB_CAMERA ?
-						  ((Blender::Camera*)m_bscene->camera->data)->clipend * 0.5f : 10000.f);
+		                    ((Blender::Camera*)m_bscene->camera->data)->clipend * 0.5f : 10000.f);
 
 
 		if ((world->skytype & WO_SKYBLEND) || (world->skytype & WO_SKYREAL))
@@ -823,7 +823,7 @@ void gkBlenderSceneConverter::convert(void)
 
 				if (memgr.exists(GKB_IDNAME(me)) && skmgr.exists(GKB_IDNAME(obAr)))
 				{
-					gkSkeletonResource *skel = skmgr.getByName<gkSkeletonResource>(GKB_IDNAME(obAr));
+					gkSkeletonResource* skel = skmgr.getByName<gkSkeletonResource>(GKB_IDNAME(obAr));
 
 					memgr.getByName<gkMesh>(GKB_IDNAME(me))->_setSkeleton(skel);
 
@@ -831,7 +831,7 @@ void gkBlenderSceneConverter::convert(void)
 
 					while (roots.hasMoreElements())
 					{
-						gkBone *bone = roots.getNext();
+						gkBone* bone = roots.getNext();
 						gkMatrix4 eobmat = gkMathUtils::getFromFloat(obMe->obmat);
 						gkMatrix4 sobmat = gkMathUtils::getFromFloat(obAr->obmat);
 

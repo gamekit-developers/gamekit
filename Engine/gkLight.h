@@ -34,20 +34,20 @@
 class gkLight : public gkGameObject
 {
 public:
-	gkLight(gkInstancedManager *creator, const gkResourceName& name, const gkResourceHandle& handle);
+	gkLight(gkInstancedManager* creator, const gkResourceName& name, const gkResourceHandle& handle);
 	virtual ~gkLight() {}
 
 
-	GK_INLINE gkLightProperties &getLightProperties(void)           {return m_lightProps;}
-	GK_INLINE Ogre::Light *getLight(void)                           {return m_light;}
+	GK_INLINE gkLightProperties& getLightProperties(void)           {return m_lightProps;}
+	GK_INLINE Ogre::Light* getLight(void)                           {return m_light;}
 
 	void updateProperties(void);
 
 private:
-	gkGameObject *clone(const gkString &name);
+	gkGameObject* clone(const gkString& name);
 
 	gkLightProperties       m_lightProps;
-	Ogre::Light             *m_light;
+	Ogre::Light*             m_light;
 
 	virtual void createInstanceImpl(void);
 	virtual void destroyInstanceImpl(void);

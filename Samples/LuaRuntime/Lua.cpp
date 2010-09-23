@@ -28,17 +28,17 @@
 #include "Script/Lua/gkLuaUtils.h"
 
 
-extern "C" int _OgreKitLua_install(lua_State *L);
+extern "C" int _OgreKitLua_install(lua_State* L);
 
 
 /// Interpreter, for a builtin OgreKitLua executable
 /// This is a work around for not having a Lua system package installed.
 
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
 	TestMemory;
-	char *defname = "Test1.lua";
+	char* defname = "Test1.lua";
 
 
 
@@ -48,7 +48,7 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	lua_State *L = lua_open();
+	lua_State* L = lua_open();
 
 	// standard libraries
 	luaL_openlibs(L);
@@ -62,10 +62,10 @@ int main(int argc, char **argv)
 	lua_pushstring(L, "arg");
 	lua_newtable(L);
 
-	int nr = argc-1;
-	for (int i=nr; i>=0; --i)
+	int nr = argc - 1;
+	for (int i = nr; i >= 0; --i)
 	{
-		lua_pushnumber(L, i-1);
+		lua_pushnumber(L, i - 1);
 		lua_pushstring(L, argv[i]);
 		lua_settable(L, -3);
 	}

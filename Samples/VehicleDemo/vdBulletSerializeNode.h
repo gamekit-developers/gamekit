@@ -39,14 +39,14 @@ public:
 	{
 		SERIALIZE,
 	};
-	
+
 	DECLARE_SOCKET_TYPE(SERIALIZE, bool);
-	
-	vdBulletSerializeNode(gkLogicTree *parent, size_t id);
+
+	vdBulletSerializeNode(gkLogicTree* parent, size_t id);
 	virtual ~vdBulletSerializeNode() {}
-	
+
 	void setFileName(const gkString& v) {m_fileName = v;}
-	
+
 	void update(gkScalar tick);
 };
 

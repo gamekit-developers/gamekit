@@ -37,10 +37,10 @@ class gkLogicActuator;
 class gkLogicLink;
 
 
-typedef utList<gkLogicSensor *>          gkSensorList;
-typedef utArray<gkLogicSensor *>         gkSensors;
-typedef utArray<gkLogicController *>     gkControllers;
-typedef utArray<gkLogicActuator *>       gkActuators;
+typedef utList<gkLogicSensor*>          gkSensorList;
+typedef utArray<gkLogicSensor*>         gkSensors;
+typedef utArray<gkLogicController*>     gkControllers;
+typedef utArray<gkLogicActuator*>       gkActuators;
 
 typedef utListIterator<gkSensorList>    gkSensorListIterator;
 typedef utArrayIterator<gkSensors>      gkSensorIterator;
@@ -64,7 +64,7 @@ public:
 	{
 	public:
 
-		enum Mode 
+		enum Mode
 		{
 			OVERIDE,
 			AND,
@@ -76,40 +76,40 @@ public:
 		Listener() : m_mode(OVERIDE) {}
 		virtual ~Listener() {}
 
-		virtual bool executeEvent(gkLogicBrick *brick) = 0;
+		virtual bool executeEvent(gkLogicBrick* brick) = 0;
 	};
 
 
 protected:
 
-	gkGameObject       *m_object;
-	gkScene            *m_scene;
+	gkGameObject*       m_object;
+	gkScene*            m_scene;
 	const gkString      m_name;
-	gkLogicLink        *m_link;
+	gkLogicLink*        m_link;
 	int                 m_stateMask, m_pulseState, m_debugMask;
 	bool                m_isActive;
 	int                 m_priority;
-	Listener           *m_listener;
+	Listener*           m_listener;
 
-	virtual void        cloneImpl(gkLogicLink *link, gkGameObject *dest);
+	virtual void        cloneImpl(gkLogicLink* link, gkGameObject* dest);
 	virtual void        notifyActiveStatus(void) {}
 
 
 public:
-	gkLogicBrick(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	gkLogicBrick(gkGameObject* object, gkLogicLink* link, const gkString& name);
 	virtual ~gkLogicBrick() {}
 
 	bool inActiveState(void);
 
 	bool wantsDebug(void);
 
-	virtual gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest)=0;
+	virtual gkLogicBrick* clone(gkLogicLink* link, gkGameObject* dest) = 0;
 
 	virtual void notifyLinkDestroyed(void) {}
 
-	virtual void execute(void)=0;
+	virtual void execute(void) = 0;
 
-	GK_INLINE void setListener(gkLogicBrick::Listener *listener) {m_listener = listener;}
+	GK_INLINE void setListener(gkLogicBrick::Listener* listener) {m_listener = listener;}
 
 
 	GK_INLINE void              setPulse(int v)     { m_pulseState = v;}
@@ -120,13 +120,13 @@ public:
 	GK_INLINE void              setActive(bool v)   { m_isActive = v; notifyActiveStatus(); }
 	GK_INLINE bool              isActive(void)      { return m_isActive;}
 
-	GK_INLINE const gkString   &getName(void)       { return m_name; }
-	GK_INLINE gkGameObject     *getObject(void)     { return m_object; }
+	GK_INLINE const gkString&   getName(void)       { return m_name; }
+	GK_INLINE gkGameObject*     getObject(void)     { return m_object; }
 	GK_INLINE void              setMask(int v)      { m_stateMask = v;}
 	GK_INLINE int               getMask(void)       { return m_stateMask;}
 	GK_INLINE void              setDebugMask(int v) { m_debugMask = v;}
 	GK_INLINE int               getDebugMask(void)  { return m_debugMask;}
-	GK_INLINE gkLogicLink       *getLink(void)      { return m_link; }
+	GK_INLINE gkLogicLink*       getLink(void)      { return m_link; }
 	GK_INLINE int               getPriority(void)   { return m_priority;}
 
 	void setPriority(bool v);

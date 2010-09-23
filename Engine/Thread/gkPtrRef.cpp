@@ -27,7 +27,7 @@
 #include "gkPtrRef.h"
 
 gkReferences::gkReferences()
-: m_references(1)
+	: m_references(1)
 {
 }
 
@@ -47,7 +47,7 @@ int gkReferences::release()
 	{
 		gkCriticalSection::Lock tmp(m_cs);
 
-		if(--m_references != 0)
+		if (--m_references != 0)
 		{
 			return m_references;
 		}
@@ -59,9 +59,8 @@ int gkReferences::release()
 }
 
 int gkReferences::getReferences() const
-{ 
+{
 	gkCriticalSection::Lock tmp(m_cs);
 
-	return m_references; 
+	return m_references;
 }
-

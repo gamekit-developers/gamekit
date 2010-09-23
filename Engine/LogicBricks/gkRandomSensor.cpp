@@ -30,7 +30,7 @@
 #include "gkLogicDispatcher.h"
 
 
-gkRandomSensor::gkRandomSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
+gkRandomSensor::gkRandomSensor(gkGameObject* object, gkLogicLink* link, const gkString& name)
 	:       gkLogicSensor(object, link, name)
 {
 	m_randGen = new utRandomNumberGenerator(0);
@@ -45,9 +45,9 @@ gkRandomSensor::~gkRandomSensor()
 }
 
 
-gkLogicBrick *gkRandomSensor::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick* gkRandomSensor::clone(gkLogicLink* link, gkGameObject* dest)
 {
-	gkRandomSensor *sens = new gkRandomSensor(*this);
+	gkRandomSensor* sens = new gkRandomSensor(*this);
 	sens->cloneImpl(link, dest);
 	sens->m_randGen = new utRandomNumberGenerator(m_seed);
 	return sens;
@@ -65,11 +65,11 @@ void gkRandomSensor::setSeed(UTuint32 v)
 
 bool gkRandomSensor::query(void)
 {
-	m_count = m_count+1;
+	m_count = m_count + 1;
 	if (m_count > 32)
 	{
 		m_current = m_randGen->rand32();
 		m_count = 1;
 	}
-	return (m_current >> (m_count-1)) & 0x1;
+	return (m_current >> (m_count - 1)) & 0x1;
 }

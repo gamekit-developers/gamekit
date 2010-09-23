@@ -33,22 +33,22 @@
 
 namespace object
 {
-	gkString PLAYER = "Player";
-	gkString CAMERA = "View";
+gkString PLAYER = "Player";
+gkString CAMERA = "View";
 }
 
 namespace material
 {
-	gkString ARROW_CURSOR = "ArrowCursor";
+gkString ARROW_CURSOR = "ArrowCursor";
 }
 
-SceneLogic::SceneLogic(gkScene* pScene) 
-: m_scene(pScene),
-m_tree(gkNodeManager::getSingleton().create()),
-m_momo(0),
-m_camera(pScene->getMainCamera()),
-m_navMeshData(0),
-m_activeObject("SceneLogic")
+SceneLogic::SceneLogic(gkScene* pScene)
+	: m_scene(pScene),
+	  m_tree(gkNodeManager::getSingleton().create()),
+	  m_momo(0),
+	  m_camera(pScene->getMainCamera()),
+	  m_navMeshData(0),
+	  m_activeObject("SceneLogic")
 {
 	CreateInput();
 
@@ -67,7 +67,7 @@ m_activeObject("SceneLogic")
 	m_navMeshData = PNAVMESHDATA(new gkNavMeshData(pScene));
 
 	pScene->setNavMeshData(m_navMeshData);
-		
+
 	m_navMeshData->createInstances();
 }
 
@@ -87,13 +87,13 @@ void SceneLogic::CreateRats()
 
 	gkGameObjectSet::ConstIterator it = objs.iterator();
 
-	while(it.hasMoreElements())
+	while (it.hasMoreElements())
 	{
 		gkGameObject* ob = it.getNext();
 
-		if(ob->getProperties().isDynamic())
+		if (ob->getProperties().isDynamic())
 		{
-			if(ob->getName().find("Rat") != gkString::npos)
+			if (ob->getName().find("Rat") != gkString::npos)
 			{
 				m_rats.push_back(PRAT(new RatLogic(ob, this, m_momo)));
 			}
@@ -181,7 +181,7 @@ void SceneLogic::refreshNavigationMesh()
 
 void SceneLogic::tryToUpdateNavMeshForSteeringObjs()
 {
-	if(m_navMesh.hasResult())
+	if (m_navMesh.hasResult())
 	{
 		PDT_NAV_MESH navMesh = m_navMesh.getResult();
 
@@ -189,10 +189,10 @@ void SceneLogic::tryToUpdateNavMeshForSteeringObjs()
 
 		RATQUEUE::iterator it = m_rats.begin();
 
-		while(it != m_rats.end())
+		while (it != m_rats.end())
 		{
 			PRAT rat = *it;
-			
+
 			rat->m_steeringFollowing->setNavMesh(navMesh);
 
 			++it;
@@ -204,7 +204,3 @@ void SceneLogic::tick(gkScalar rate)
 {
 	tryToUpdateNavMeshForSteeringObjs();
 }
-
-
-
-

@@ -40,10 +40,10 @@
 #define GK_BUFSIZE (0xFFFF)
 
 static char GK_ConsoleBuffer[GK_BUFSIZE+1];
-static Ogre::Log *gLog = 0;
+static Ogre::Log* gLog = 0;
 
 
-void gkPrintf(const char *fmt, ...)
+void gkPrintf(const char* fmt, ...)
 {
 	va_list lst;
 	va_start(lst, fmt);
@@ -66,7 +66,7 @@ void gkPrintf(const char *fmt, ...)
 				GK_ConsoleBuffer[--size] = 0;
 			gLog->logMessage(GK_ConsoleBuffer);
 		}
-		else 
+		else
 		{
 			if (GK_ConsoleBuffer[size-1] != '\n')
 				printf("%s\n", GK_ConsoleBuffer);
@@ -78,17 +78,17 @@ void gkPrintf(const char *fmt, ...)
 }
 
 
-void gkLogger::enable(const gkString &name, bool verbose)
+void gkLogger::enable(const gkString& name, bool verbose)
 {
 	if (!gLog)
 	{
-		Ogre::LogManager *mgr = Ogre::LogManager::getSingletonPtr();
+		Ogre::LogManager* mgr = Ogre::LogManager::getSingletonPtr();
 		if (!mgr)
 			mgr = new Ogre::LogManager();
 		gLog = mgr->createLog(name);
 		mgr->setDefaultLog(gLog);
 
-		if (!verbose) 
+		if (!verbose)
 			gLog->setLogDetail(Ogre::LL_LOW);
 	}
 }
@@ -107,7 +107,7 @@ void gkLogger::disable()
 
 
 
-void gkLogger::write(const gkString &msg, bool force)
+void gkLogger::write(const gkString& msg, bool force)
 {
 	if (force)
 	{

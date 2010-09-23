@@ -45,7 +45,7 @@ double CubicRoot(const double d)
 
 
 
-bool StepCubic(const gkScalar *P0, const gkScalar *P1, const gkScalar *P2, const gkScalar *P3, gkScalar time, double &cval)
+bool StepCubic(const gkScalar* P0, const gkScalar* P1, const gkScalar* P2, const gkScalar* P3, gkScalar time, double& cval)
 {
 	gkScalar ts = (P3[0] - P0[0]);
 	if (ts <= 1.f)
@@ -82,11 +82,11 @@ bool StepCubic(const gkScalar *P0, const gkScalar *P1, const gkScalar *P2, const
 }
 
 
-gkScalar gkBezierSpline::interpolate(const double &t,
-                                     const double &p0,
-                                     const double &p1,
-                                     const double &p2,
-                                     const double &p3) const
+gkScalar gkBezierSpline::interpolate(const double& t,
+                                     const double& p0,
+                                     const double& p1,
+                                     const double& p2,
+                                     const double& p3) const
 {
 	double c0, c1, c2, c3;
 	double t2 = t * t;
@@ -102,12 +102,12 @@ gkScalar gkBezierSpline::interpolate(const double &t,
 
 
 
-int gkBezierSpline::solveRoots(const double &x,
+int gkBezierSpline::solveRoots(const double& x,
                                const double p0,
                                const double p1,
                                const double p2,
                                const double p3,
-                               double &s) const
+                               double& s) const
 {
 
 	// Adapped from Graphics Gems
@@ -224,7 +224,7 @@ int gkBezierSpline::solveRoots(const double &x,
 
 
 
-void gkBezierSpline::updateHandles(gkScalar *p0, gkScalar *p1, gkScalar *p2, gkScalar *p3) const
+void gkBezierSpline::updateHandles(gkScalar* p0, gkScalar* p1, gkScalar* p2, gkScalar* p3) const
 {
 	gkScalar lh = SplineAbs((p0[0] - p1[0]) + (p3[0] - p2[0]));
 	if (lh != 0.0)
@@ -244,7 +244,7 @@ void gkBezierSpline::updateHandles(gkScalar *p0, gkScalar *p1, gkScalar *p2, gkS
 
 gkScalar gkBezierSpline::interpolate(gkScalar delta, gkScalar time) const
 {
-	const gkBezierVertex *vp = m_verts.ptr();
+	const gkBezierVertex* vp = m_verts.ptr();
 	int totvert = (int)m_verts.size();
 	gkScalar p0[2], p1[2], p2[2], p3[2];
 	double r = 0.0;

@@ -48,11 +48,11 @@ public:
 	typedef utArray<Listener*> Listeners;
 
 public:
-	gkEngine(gkUserDefs *otherDefs = 0);
+	gkEngine(gkUserDefs* otherDefs = 0);
 	~gkEngine();
 
-	static gkEngine &getSingleton();
-	static gkEngine *getSingletonPtr();
+	static gkEngine& getSingleton();
+	static gkEngine* getSingletonPtr();
 
 
 	void initialize();
@@ -70,39 +70,39 @@ public:
 
 
 	bool hasActiveScene(void);
-	void setActiveScene(gkScene *sc);
+	void setActiveScene(gkScene* sc);
 
-	gkUserDefs &getUserDefs(void);
+	gkUserDefs& getUserDefs(void);
 	void requestExit(void);
 
-	gkBlendFile *loadBlendFile(const gkString &blend, int options=0, const gkString &inResource = GK_DEF_GROUP);
-	void loadResources(const gkString &name);
+	gkBlendFile* loadBlendFile(const gkString& blend, int options = 0, const gkString& inResource = GK_DEF_GROUP);
+	void loadResources(const gkString& name);
 
-	void addDebugProperty(gkVariable *prop);
-	void removeDebugProperty(gkVariable *prop);
+	void addDebugProperty(gkVariable* prop);
+	void removeDebugProperty(gkVariable* prop);
 
 	static gkScalar getStepRate();
 	static gkScalar getTickRate();
 	static gkScalar getAnimRate();
 
-	gkScene *getActiveScene(void);
+	gkScene* getActiveScene(void);
 
-	void addListener(Listener *listener);
-	void removeListener(Listener *listener);
+	void addListener(Listener* listener);
+	void removeListener(Listener* listener);
 
 private:
 
 	class Private;
-	Private                *m_private;
+	Private*                m_private;
 	friend class Private;
 
 
-	Ogre::Root             *m_root;
-	Ogre::RenderWindow     *m_window;
+	Ogre::Root*             m_root;
+	Ogre::RenderWindow*     m_window;
 	bool                    m_initialized;
 	bool                    m_ownsDefs;
 	bool                    m_running;
-	gkUserDefs             *m_defs;
+	gkUserDefs*             m_defs;
 	Listeners               m_listeners;
 
 	static gkScalar         m_tickRate;

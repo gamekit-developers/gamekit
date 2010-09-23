@@ -28,10 +28,10 @@
 #include "gkLogicTree.h"
 #include "gkLogger.h"
 
-gkStateMachineNode::gkStateMachineNode(gkLogicTree *parent, size_t id) 
-: gkLogicNode(parent, id),
-m_started(false),
-m_currentState(-1)
+gkStateMachineNode::gkStateMachineNode(gkLogicTree* parent, size_t id)
+	: gkLogicNode(parent, id),
+	  m_started(false),
+	  m_currentState(-1)
 {
 	ADD_ISOCK(UPDATE, true);
 	ADD_OSOCK(CURRENT_STATE, 0);
@@ -41,7 +41,7 @@ gkStateMachineNode::~gkStateMachineNode()
 {
 	size_t n = m_events.size();
 
-	for(size_t i=0; i<n; i++)
+	for (size_t i = 0; i < n; i++)
 	{
 		gkILogicSocket* pSocket = m_events[i];
 
@@ -51,7 +51,7 @@ gkStateMachineNode::~gkStateMachineNode()
 
 bool gkStateMachineNode::evaluate(gkScalar tick)
 {
-	if(m_currentState == -1)
+	if (m_currentState == -1)
 	{
 		setState(GET_SOCKET_VALUE(CURRENT_STATE));
 	}
@@ -61,10 +61,10 @@ bool gkStateMachineNode::evaluate(gkScalar tick)
 
 void gkStateMachineNode::update(gkScalar tick)
 {
-	if(m_currentState != GET_SOCKET_VALUE(CURRENT_STATE))
+	if (m_currentState != GET_SOCKET_VALUE(CURRENT_STATE))
 	{
 		m_timer.reset();
-		
+
 		m_currentState = GET_SOCKET_VALUE(CURRENT_STATE);
 	}
 
@@ -72,10 +72,10 @@ void gkStateMachineNode::update(gkScalar tick)
 
 	if (pos != GK_NPOS)
 	{
-		if(!m_started)
+		if (!m_started)
 		{
 			m_started = true;
-			
+
 			execute_start_trigger(-1, m_currentState);
 		}
 
@@ -83,26 +83,26 @@ void gkStateMachineNode::update(gkScalar tick)
 
 		REACTION_ITERATOR it(m_transitions.at(pos));
 
-		while (it.hasMoreElements()) 
+		while (it.hasMoreElements())
 		{
 			const void* p = it.peekNextKey().key();
 
 			const gkILogicSocket* pSocket = static_cast<const gkILogicSocket*>(p);
 
-			if(!pSocket->isConnected() || static_cast<const gkLogicSocket<bool>*>(pSocket)->getValue())
+			if (!pSocket->isConnected() || static_cast<const gkLogicSocket<bool>*>(pSocket)->getValue())
 			{
 				const Data* pTmpData  = &(it.peekNextValue());
 
-				if(pSocket->isConnected())
+				if (pSocket->isConnected())
 				{
 					pData = pTmpData;
 
-					if(pTmpData->m_state != m_currentState) 
+					if (pTmpData->m_state != m_currentState)
 					{
 						break;
 					}
 				}
-				else if(!pData)
+				else if (!pData)
 				{
 					pData = pTmpData;
 				}
@@ -111,9 +111,9 @@ void gkStateMachineNode::update(gkScalar tick)
 			it.next();
 		}
 
-		if(pData && pData->m_state != m_currentState && pData->m_ms < m_timer.getTimeMilliseconds())
+		if (pData && pData->m_state != m_currentState && pData->m_ms < m_timer.getTimeMilliseconds())
 		{
-			if(pData->m_trigger.get())
+			if (pData->m_trigger.get())
 				pData->m_trigger->execute(m_currentState, pData->m_state);
 
 			execute_end_trigger(m_currentState, pData->m_state);
@@ -132,7 +132,7 @@ gkLogicSocket<bool>* gkStateMachineNode::addTransition(int from, int to, unsigne
 	Data data(ms, to, trigger);
 
 	size_t pos = m_transitions.find(from);
-	
+
 	if (pos != GK_NPOS)
 	{
 		REACTION& reaction = m_transitions.at(pos);
@@ -155,10 +155,10 @@ gkIfNode<int, CMP_EQUALS>* gkStateMachineNode::isCurrentStatus(int status)
 {
 	const MAP::iterator it = m_statuses.find(status);
 
-	if(it == m_statuses.end())
+	if (it == m_statuses.end())
 	{
-		std::pair<MAP::iterator, bool> result = 
-			m_statuses.insert(MAP::value_type(status, m_parent->createNode<gkIfNode<int, CMP_EQUALS> >()));
+		std::pair<MAP::iterator, bool> result =
+		    m_statuses.insert(MAP::value_type(status, m_parent->createNode<gkIfNode<int, CMP_EQUALS> >()));
 
 		GK_ASSERT(result.second);
 
@@ -185,7 +185,7 @@ void gkStateMachineNode::setState(int state)
 void gkStateMachineNode::addStartTrigger(int state, ITrigger* trigger)
 {
 	size_t pos = m_startTriggers.find(state);
-	
+
 	GK_ASSERT(pos == GK_NPOS);
 
 	m_startTriggers.insert(state, gkPtrRef<ITrigger>(trigger));
@@ -194,7 +194,7 @@ void gkStateMachineNode::addStartTrigger(int state, ITrigger* trigger)
 void gkStateMachineNode::addEndTrigger(int state, ITrigger* trigger)
 {
 	size_t pos = m_endTriggers.find(state);
-	
+
 	GK_ASSERT(pos == GK_NPOS);
 
 	m_endTriggers.insert(state, gkPtrRef<ITrigger>(trigger));
@@ -204,15 +204,15 @@ void gkStateMachineNode::addEndTrigger(int state, ITrigger* trigger)
 void gkStateMachineNode::execute_start_trigger(int from, int to)
 {
 	size_t pos = m_startTriggers.find(to);
-	
-	if(pos != GK_NPOS)
+
+	if (pos != GK_NPOS)
 		m_startTriggers.at(pos)->execute(from, to);
 }
 
 void gkStateMachineNode::execute_end_trigger(int from, int to)
 {
 	size_t pos = m_endTriggers.find(from);
-	
-	if(pos != GK_NPOS)
+
+	if (pos != GK_NPOS)
 		m_endTriggers.at(pos)->execute(from, to);
 }

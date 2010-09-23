@@ -32,7 +32,7 @@
 
 
 
-gkResourceManager::gkResourceManager(const gkString& type, const gkString &rtype) 
+gkResourceManager::gkResourceManager(const gkString& type, const gkString& rtype)
 	:  m_managerType(type), m_resourceType(rtype), m_resourceHandles(0)
 {
 }
@@ -162,7 +162,7 @@ void gkResourceManager::notifyResourceCreated(gkResource* res)
 	if (res && !m_listsners.empty())
 	{
 		UTsize i;
-		for (i = 0; i<m_listsners.size(); ++i)
+		for (i = 0; i < m_listsners.size(); ++i)
 			m_listsners[i]->notifyResourceCreated(res);
 	}
 
@@ -175,7 +175,7 @@ void gkResourceManager::notifyResourceDestroyed(gkResource* res)
 	if (res && !m_listsners.empty())
 	{
 		UTsize i;
-		for (i = 0; i<m_listsners.size(); ++i)
+		for (i = 0; i < m_listsners.size(); ++i)
 			m_listsners[i]->notifyResourceDestroyed(res);
 	}
 

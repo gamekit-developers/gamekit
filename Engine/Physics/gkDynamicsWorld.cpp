@@ -42,17 +42,17 @@
 
 
 
-gkDynamicsWorld::gkDynamicsWorld(const gkString &name, gkScene *scene)
+gkDynamicsWorld::gkDynamicsWorld(const gkString& name, gkScene* scene)
 	:       m_scene(scene),
-	        m_dynamicsWorld(0), 
-			m_collisionConfiguration(0),
-	        m_pairCache(0), 
-			m_ghostPairCallback(0), 
-			m_dispatcher(0), 
-			m_constraintSolver(0),
-	        m_debug(0), 
-			m_handleContacts(true), 
-			m_dbvt(0)
+	        m_dynamicsWorld(0),
+	        m_collisionConfiguration(0),
+	        m_pairCache(0),
+	        m_ghostPairCallback(0),
+	        m_dispatcher(0),
+	        m_constraintSolver(0),
+	        m_debug(0),
+	        m_handleContacts(true),
+	        m_dbvt(0)
 {
 	createInstanceImpl();
 }
@@ -84,10 +84,10 @@ void gkDynamicsWorld::createInstanceImpl(void)
 	m_constraintSolver = new btSequentialImpulseConstraintSolver();
 	m_dynamicsWorld = new btDiscreteDynamicsWorld(m_dispatcher, m_pairCache, m_constraintSolver, m_collisionConfiguration);
 
-	gkVector3 &grav = m_scene->getProperties().m_gravity;
+	gkVector3& grav = m_scene->getProperties().m_gravity;
 	m_dynamicsWorld->setGravity(btVector3(grav.x, grav.y, grav.z));
 	m_dynamicsWorld->setWorldUserInfo(this);
-	m_dynamicsWorld->setInternalTickCallback(substepCallback, static_cast<void *>(this));
+	m_dynamicsWorld->setInternalTickCallback(substepCallback, static_cast<void*>(this));
 
 	enableDebugPhysics(gkEngine::getSingleton().getUserDefs().debugPhysics, gkEngine::getSingleton().getUserDefs().debugPhysicsAabb);
 
@@ -138,9 +138,9 @@ void gkDynamicsWorld::destroyInstanceImpl(void)
 
 void gkDynamicsWorld::enableDebugPhysics(bool enable, bool debugAabb)
 {
-	if(enable)
+	if (enable)
 	{
-		if(!m_debug)
+		if (!m_debug)
 		{
 			m_debug = new gkPhysicsDebug(this);
 
@@ -152,7 +152,7 @@ void gkDynamicsWorld::enableDebugPhysics(bool enable, bool debugAabb)
 		else
 			m_debug->setDebugMode(btIDebugDraw::DBG_DrawWireframe);
 	}
-	else if(m_debug)
+	else if (m_debug)
 	{
 		m_dynamicsWorld->setDebugDrawer(0);
 
@@ -163,10 +163,10 @@ void gkDynamicsWorld::enableDebugPhysics(bool enable, bool debugAabb)
 }
 
 
-gkRigidBody *gkDynamicsWorld::createRigidBody(gkGameObject *state)
+gkRigidBody* gkDynamicsWorld::createRigidBody(gkGameObject* state)
 {
 	GK_ASSERT(state);
-	gkRigidBody *rb = new gkRigidBody(state, this);
+	gkRigidBody* rb = new gkRigidBody(state, this);
 	rb->create();
 	m_objects.push_back(rb);
 	return rb;
@@ -174,10 +174,10 @@ gkRigidBody *gkDynamicsWorld::createRigidBody(gkGameObject *state)
 
 
 
-gkCharacter *gkDynamicsWorld::createCharacter(gkGameObject *state)
+gkCharacter* gkDynamicsWorld::createCharacter(gkGameObject* state)
 {
 	GK_ASSERT(state);
-	gkCharacter *character = new gkCharacter(state, this);
+	gkCharacter* character = new gkCharacter(state, this);
 	character->create();
 	m_objects.push_back(character);
 	return character;
@@ -185,7 +185,7 @@ gkCharacter *gkDynamicsWorld::createCharacter(gkGameObject *state)
 
 
 
-void gkDynamicsWorld::destroyObject(gkPhysicsController *cont)
+void gkDynamicsWorld::destroyObject(gkPhysicsController* cont)
 {
 	UTsize pos;
 	if ((pos = m_objects.find(cont)) != UT_NPOS)
@@ -200,13 +200,13 @@ void gkDynamicsWorld::destroyObject(gkPhysicsController *cont)
 
 
 
-void gkDynamicsWorld::localDrawObject(gkPhysicsController *phyCon)
+void gkDynamicsWorld::localDrawObject(gkPhysicsController* phyCon)
 {
-	btCollisionObject *colObj = phyCon->getCollisionObject();
+	btCollisionObject* colObj = phyCon->getCollisionObject();
 
 	GK_ASSERT(m_debug && m_dynamicsWorld && colObj);
 
-	if(colObj->isStaticObject()) 
+	if (colObj->isStaticObject())
 		return;
 
 
@@ -254,7 +254,7 @@ void gkDynamicsWorld::step(gkScalar tick)
 {
 	GK_ASSERT(m_dynamicsWorld);
 	m_dynamicsWorld->stepSimulation(tick);
-	
+
 	// uncomment this to print bullet profiling information
 	//CProfileManager::dumpAll();
 }
@@ -283,10 +283,10 @@ void gkDynamicsWorld::substep(gkScalar tick)
 
 		for (int i = 0; i < nr; ++i)
 		{
-			btPersistentManifold *manifold = m_dispatcher->getManifoldByIndexInternal(i);
+			btPersistentManifold* manifold = m_dispatcher->getManifoldByIndexInternal(i);
 
-			gkPhysicsController *colA = gkPhysicsController::castController(manifold->getBody0());
-			gkPhysicsController *colB = gkPhysicsController::castController(manifold->getBody1());
+			gkPhysicsController* colA = gkPhysicsController::castController(manifold->getBody0());
+			gkPhysicsController* colB = gkPhysicsController::castController(manifold->getBody1());
 
 
 			colA->_resetContactInfo();
@@ -295,10 +295,10 @@ void gkDynamicsWorld::substep(gkScalar tick)
 
 		for (int i = 0; i < nr; ++i)
 		{
-			btPersistentManifold *manifold = m_dispatcher->getManifoldByIndexInternal(i);
+			btPersistentManifold* manifold = m_dispatcher->getManifoldByIndexInternal(i);
 
-			gkPhysicsController *colA = gkPhysicsController::castController(manifold->getBody0());
-			gkPhysicsController *colB = gkPhysicsController::castController(manifold->getBody1());
+			gkPhysicsController* colA = gkPhysicsController::castController(manifold->getBody0());
+			gkPhysicsController* colB = gkPhysicsController::castController(manifold->getBody1());
 
 			colA->_handleManifold(manifold);
 			colB->_handleManifold(manifold);
@@ -317,10 +317,10 @@ void gkDynamicsWorld::DrawDebug()
 			gkPhysicsControllers::Iterator iter = m_objects.iterator();
 			while (iter.hasMoreElements())
 			{
-				gkPhysicsController *cont = iter.getNext();
+				gkPhysicsController* cont = iter.getNext();
 
 
-				gkGameObject *ob = cont->getObject();
+				gkGameObject* ob = cont->getObject();
 				if (ob->isInstanced())
 					localDrawObject(cont);
 			}
@@ -330,9 +330,9 @@ void gkDynamicsWorld::DrawDebug()
 
 
 
-void gkDynamicsWorld::substepCallback(btDynamicsWorld *dyn, btScalar tick)
+void gkDynamicsWorld::substepCallback(btDynamicsWorld* dyn, btScalar tick)
 {
-	gkDynamicsWorld *world = static_cast<gkDynamicsWorld *>(dyn->getWorldUserInfo());
+	gkDynamicsWorld* world = static_cast<gkDynamicsWorld*>(dyn->getWorldUserInfo());
 	GK_ASSERT(world);
 	world->substep(tick);
 }
@@ -340,7 +340,7 @@ void gkDynamicsWorld::substepCallback(btDynamicsWorld *dyn, btScalar tick)
 
 
 
-gkVariable *gkDynamicsWorld::getDBVTInfo(void)
+gkVariable* gkDynamicsWorld::getDBVTInfo(void)
 {
 	return m_dbvt ? m_dbvt->getInfo() : 0;
 }
@@ -348,26 +348,26 @@ gkVariable *gkDynamicsWorld::getDBVTInfo(void)
 
 
 
-void gkDynamicsWorld::handleDbvt(gkCamera *cam)
+void gkDynamicsWorld::handleDbvt(gkCamera* cam)
 {
 	if (!m_dbvt)
 		return;
 
-	m_dbvt->mark(cam, (btDbvtBroadphase *)m_pairCache, m_objects);
+	m_dbvt->mark(cam, (btDbvtBroadphase*)m_pairCache, m_objects);
 }
 
 
 
-void gkDynamicsWorld::exportBullet(const gkString &fileName)
+void gkDynamicsWorld::exportBullet(const gkString& fileName)
 {
-	int maxSerializeBufferSize = 1024*1024*5;
-	
-	btDefaultSerializer*	serializer = new btDefaultSerializer(maxSerializeBufferSize);
+	int maxSerializeBufferSize = 1024 * 1024 * 5;
+
+	btDefaultSerializer*    serializer = new btDefaultSerializer(maxSerializeBufferSize);
 	m_dynamicsWorld->serialize(serializer);
-	
-	FILE* file = fopen(fileName.c_str(),"wb");
-	fwrite(serializer->getBufferPointer(),serializer->getCurrentBufferSize(),1, file);
-	
+
+	FILE* file = fopen(fileName.c_str(), "wb");
+	fwrite(serializer->getBufferPointer(), serializer->getCurrentBufferSize(), 1, file);
+
 	fclose(file);
 	delete serializer;
 }

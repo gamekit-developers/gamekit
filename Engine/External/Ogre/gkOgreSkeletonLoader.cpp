@@ -34,11 +34,11 @@
 #include "OgreEntity.h"
 
 
-gkSkeletonLoader::gkSkeletonLoader(gkSkeletonResource *skel)
+gkSkeletonLoader::gkSkeletonLoader(gkSkeletonResource* skel)
 	:   m_skeleton(skel)
 {
-	Ogre::SkeletonManager &mgr = Ogre::SkeletonManager::getSingleton();
-	const gkString &name = m_skeleton->getResourceName().str();
+	Ogre::SkeletonManager& mgr = Ogre::SkeletonManager::getSingleton();
+	const gkString& name = m_skeleton->getResourceName().str();
 
 
 
@@ -51,32 +51,32 @@ gkSkeletonLoader::gkSkeletonLoader(gkSkeletonResource *skel)
 
 gkSkeletonLoader::~gkSkeletonLoader()
 {
-	Ogre::SkeletonManager &mgr = Ogre::SkeletonManager::getSingleton();
+	Ogre::SkeletonManager& mgr = Ogre::SkeletonManager::getSingleton();
 	mgr.remove(m_skeleton->getResourceName().str());
 }
 
 
 
-void gkSkeletonLoader::makeManual(gkEntity *ent)
+void gkSkeletonLoader::makeManual(gkEntity* ent)
 {
 
-	Ogre::Entity *oent = ent->getEntity();
+	Ogre::Entity* oent = ent->getEntity();
 	if (!oent || !oent->hasSkeleton())
 		return;
 
 
-	Ogre::SkeletonInstance *inst = oent->getSkeleton();
+	Ogre::SkeletonInstance* inst = oent->getSkeleton();
 
-	
+
 	gkBone::BoneList::Iterator it = m_skeleton->getBoneList().iterator();
 	while (it.hasMoreElements())
 	{
-		gkBone *bone = it.getNext();
+		gkBone* bone = it.getNext();
 
 
 		if (inst->hasBone(bone->getName()))
 		{
-			Ogre::Bone *obone = inst->getBone(bone->getName());
+			Ogre::Bone* obone = inst->getBone(bone->getName());
 			bone->_setOgreBone(obone);
 
 			obone->setManuallyControlled(true);
@@ -86,18 +86,18 @@ void gkSkeletonLoader::makeManual(gkEntity *ent)
 
 
 
-void gkSkeletonLoader::recurseBone(Ogre::Skeleton *skel, gkBone *cur, Ogre::Bone *par)
+void gkSkeletonLoader::recurseBone(Ogre::Skeleton* skel, gkBone* cur, Ogre::Bone* par)
 {
 	GK_ASSERT(cur);
 
-	Ogre::Bone *obone = skel->createBone(cur->getName());
+	Ogre::Bone* obone = skel->createBone(cur->getName());
 	cur->_setOgreBone(obone);
 
 
 	if (par != 0)
 		par->addChild(obone);
 
-	const gkTransformState &rest = cur->getRest();
+	const gkTransformState& rest = cur->getRest();
 	obone->setPosition(rest.loc);
 	obone->setOrientation(rest.rot);
 	obone->setScale(rest.scl);
@@ -105,21 +105,21 @@ void gkSkeletonLoader::recurseBone(Ogre::Skeleton *skel, gkBone *cur, Ogre::Bone
 	obone->setManuallyControlled(true);
 
 
-	gkBone::BoneList &bl = cur->getChildren();
-	for (UTsize i=0; i<bl.size(); ++i)
+	gkBone::BoneList& bl = cur->getChildren();
+	for (UTsize i = 0; i < bl.size(); ++i)
 		recurseBone(skel, bl[i], obone);
 }
 
 
 
-void gkSkeletonLoader::loadResource(Ogre::Resource *resource)
+void gkSkeletonLoader::loadResource(Ogre::Resource* resource)
 {
-	Ogre::Skeleton *oskel = static_cast<Ogre::Skeleton *>(resource);
+	Ogre::Skeleton* oskel = static_cast<Ogre::Skeleton*>(resource);
 
-	gkBone::BoneList &bl = m_skeleton->getRootBoneList();
-	for (UTsize i=0; i<bl.size(); ++i)
+	gkBone::BoneList& bl = m_skeleton->getRootBoneList();
+	for (UTsize i = 0; i < bl.size(); ++i)
 	{
-		gkBone *gbone = bl[i];
+		gkBone* gbone = bl[i];
 		recurseBone(oskel, gbone, 0);
 	}
 }

@@ -66,8 +66,8 @@ public:
 
 	gkKeyNode* m_shiftKeyNode;
 
-	gkKeyNode* m_wKeyNode; 
-	
+	gkKeyNode* m_wKeyNode;
+
 	gkKeyNode* m_sKeyNode;
 
 	gkKeyNode* m_cKeyNode;

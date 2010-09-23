@@ -33,16 +33,16 @@ using namespace Ogre;
 
 
 
-gkExitNode::gkExitNode(gkLogicTree *parent, size_t id)
-:       gkLogicNode(parent, id)
+gkExitNode::gkExitNode(gkLogicTree* parent, size_t id)
+	:       gkLogicNode(parent, id)
 {
-    ADD_ISOCK(EXIT, false);
+	ADD_ISOCK(EXIT, false);
 }
 
 bool gkExitNode::evaluate(gkScalar tick)
 {
-    if (GET_SOCKET_VALUE(EXIT))
-        gkEngine::getSingleton().requestExit();
+	if (GET_SOCKET_VALUE(EXIT))
+		gkEngine::getSingleton().requestExit();
 
-    return false;
+	return false;
 }

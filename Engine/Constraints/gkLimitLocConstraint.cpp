@@ -40,9 +40,9 @@ gkLimitLocConstraint::gkLimitLocConstraint()
 }
 
 
-gkConstraint *gkLimitLocConstraint::clone(gkGameObject *clob)
+gkConstraint* gkLimitLocConstraint::clone(gkGameObject* clob)
 {
-	gkLimitLocConstraint *cl = new gkLimitLocConstraint(*this);
+	gkLimitLocConstraint* cl = new gkLimitLocConstraint(*this);
 	cl->setObject(clob);
 	return cl;
 }
@@ -56,12 +56,12 @@ bool gkLimitLocConstraint::update(gkScalar delta)
 	m_matrix = m_object->getTransformState();
 
 
-	gkVector3 &position = m_matrix.loc;
+	gkVector3& position = m_matrix.loc;
 
 	bool doupd = false;
 
 	// min x
-	if (m_flag[0] &1)
+	if (m_flag[0] & 1)
 	{
 		if (position.x < x[0])
 		{
@@ -71,7 +71,7 @@ bool gkLimitLocConstraint::update(gkScalar delta)
 	}
 
 	// max x
-	if (m_flag[1] &1)
+	if (m_flag[1] & 1)
 	{
 		if (position.x > x[1])
 		{
@@ -81,7 +81,7 @@ bool gkLimitLocConstraint::update(gkScalar delta)
 	}
 
 	// min y
-	if (m_flag[0] &2)
+	if (m_flag[0] & 2)
 	{
 		if (position.y < y[0])
 		{
@@ -91,7 +91,7 @@ bool gkLimitLocConstraint::update(gkScalar delta)
 	}
 
 	// max y
-	if (m_flag[1] &2)
+	if (m_flag[1] & 2)
 	{
 		if (position.y > y[1])
 		{
@@ -101,7 +101,7 @@ bool gkLimitLocConstraint::update(gkScalar delta)
 	}
 
 	// min z
-	if (m_flag[0] &4)
+	if (m_flag[0] & 4)
 	{
 		if (position.z < z[0])
 		{
@@ -111,7 +111,7 @@ bool gkLimitLocConstraint::update(gkScalar delta)
 	}
 
 	// max z
-	if (m_flag[1] &4)
+	if (m_flag[1] & 4)
 	{
 		if (position.z > z[1])
 		{

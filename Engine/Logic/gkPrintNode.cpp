@@ -27,21 +27,21 @@
 #include "gkPrintNode.h"
 #include <stdio.h>
 
-gkPrintNode::gkPrintNode(gkLogicTree *parent, size_t id) :
-        gkLogicNode(parent, id)
+gkPrintNode::gkPrintNode(gkLogicTree* parent, size_t id) :
+	gkLogicNode(parent, id)
 {
-    ADD_ISOCK(PRINT, true);
-    ADD_ISOCK(VALUE, "");
+	ADD_ISOCK(PRINT, true);
+	ADD_ISOCK(VALUE, "");
 }
 
 bool gkPrintNode::evaluate(gkScalar tick)
 {
-    return GET_SOCKET_VALUE(PRINT);
+	return GET_SOCKET_VALUE(PRINT);
 }
 
 
 void gkPrintNode::update(gkScalar tick)
 {
-    // TODO: print to gui
-    printf("%s\n", GET_SOCKET_VALUE(VALUE).c_str());
+	// TODO: print to gui
+	printf("%s\n", GET_SOCKET_VALUE(VALUE).c_str());
 }

@@ -43,8 +43,8 @@ public:
 	DECLARE_SOCKET_TYPE(EUL, gkVector3);
 	DECLARE_SOCKET_TYPE(QUAT, gkQuaternion);
 
-	gkEulerToQuaternionNode(gkLogicTree *parent, size_t id) 
-		: gkLogicNode(parent, id) 
+	gkEulerToQuaternionNode(gkLogicTree* parent, size_t id)
+		: gkLogicNode(parent, id)
 	{
 		ADD_ISOCK(EUL, gkVector3::ZERO);
 		ADD_OSOCK(QUAT, gkQuaternion::IDENTITY);
@@ -55,7 +55,7 @@ public:
 	void update(gkScalar tick)
 	{
 		gkQuaternion out = gkEuler(GET_SOCKET_VALUE(EUL)).toQuaternion();
-		
+
 		SET_SOCKET_VALUE(QUAT, out);
 	}
 

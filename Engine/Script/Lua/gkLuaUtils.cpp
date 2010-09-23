@@ -29,7 +29,7 @@
 #include "Generated/gsTemplates.h"
 
 
-void install_Templates(lua_State *L)
+void install_Templates(lua_State* L)
 {
 	// Local built-in .lua bindings
 
@@ -39,10 +39,10 @@ void install_Templates(lua_State *L)
 	lua_pop(L, 1);
 }
 
-extern "C" int luaopen_OgreKit(lua_State *L);
+extern "C" int luaopen_OgreKit(lua_State* L);
 
 
-extern "C" int _OgreKitLua_install(lua_State *L)
+extern "C" int _OgreKitLua_install(lua_State* L)
 {
 	install_Templates(L);
 	return luaopen_OgreKit(L);
@@ -50,7 +50,7 @@ extern "C" int _OgreKitLua_install(lua_State *L)
 
 
 
-int lua_pushtraceback(lua_State *L)
+int lua_pushtraceback(lua_State* L)
 {
 	lua_getfield(L, LUA_GLOBALSINDEX, "debug");
 	if (!lua_istable(L, -1))
@@ -96,7 +96,7 @@ gkLuaEvent::~gkLuaEvent()
 
 gkLuaEvent* gkLuaEvent::clone(void)
 {
-	gkLuaEvent *evt = new gkLuaEvent(*this);
+	gkLuaEvent* evt = new gkLuaEvent(*this);
 	evt->m_self = m_self ? new gkLuaObject(*m_self) : 0;
 	evt->m_callback = m_callback ? new gkLuaObject(*m_callback) : 0;
 	return evt;
@@ -155,7 +155,7 @@ void gkLuaEvent::addArgument(float val)
 }
 
 
-bool gkLuaEvent::call(bool &result)
+bool gkLuaEvent::call(bool& result)
 {
 
 	result = false;
@@ -169,7 +169,7 @@ bool gkLuaEvent::call(bool &result)
 		// lua_error(L);
 		lua_pop(L, 1);
 		m_error = true;
-		
+
 		return false;
 	}
 
@@ -198,7 +198,7 @@ bool gkLuaEvent::call()
 }
 
 
-void lua_popall(lua_State *L)
+void lua_popall(lua_State* L)
 {
 	int t = lua_gettop(L);
 	if (t > 0)
@@ -206,9 +206,9 @@ void lua_popall(lua_State *L)
 }
 
 
-void lua_dumpstack(lua_State *L)
+void lua_dumpstack(lua_State* L)
 {
-	int top = lua_gettop(L), i=0;
+	int top = lua_gettop(L), i = 0;
 	while (top > 0)
 	{
 		char extra[256];
@@ -236,66 +236,66 @@ void lua_dumpstack(lua_State *L)
 }
 
 
-void lua_beginnamespace(lua_State *L, const char *nsp)
+void lua_beginnamespace(lua_State* L, const char* nsp)
 {
 	lua_pushstring(L, nsp);
 	lua_newtable(L);
 }
 
 
-void lua_endnamespace(lua_State *L)
+void lua_endnamespace(lua_State* L)
 {
 	lua_settable(L, -3);
 }
 
 
-void lua_addconstant(lua_State *L, const char *name, double v)
+void lua_addconstant(lua_State* L, const char* name, double v)
 {
 	lua_pushnumber(L, (lua_Number)v);
 	lua_setfield(L, -2, name);
 }
 
 
-void lua_addconstant(lua_State *L, const char *name, float v)
+void lua_addconstant(lua_State* L, const char* name, float v)
 {
 	lua_addconstant(L, name, (double)v);
 }
 
 
-void lua_addconstant(lua_State *L, const char *name, int v)
+void lua_addconstant(lua_State* L, const char* name, int v)
 {
 	lua_addconstant(L, name, (double)v);
 }
 
 
-void lua_addconstant(lua_State *L, const char *name, const char *v)
+void lua_addconstant(lua_State* L, const char* name, const char* v)
 {
 	lua_pushstring(L, v);
 	lua_setfield(L, -2, name);
 }
 
 
-bool lua_isclass(lua_State *L, int idx)
+bool lua_isclass(lua_State* L, int idx)
 {
 	return lua_isuserdata(L, idx) != 0 && lua_upvalueindex(1) != 0;
 }
 
 
-gkLuaTypeDef *lua_getclasstype(lua_State *L)
+gkLuaTypeDef* lua_getclasstype(lua_State* L)
 {
-	return static_cast<gkLuaTypeDef *>(lua_touserdata(L, lua_upvalueindex(GK_UPVALUETYPE)));
+	return static_cast<gkLuaTypeDef*>(lua_touserdata(L, lua_upvalueindex(GK_UPVALUETYPE)));
 }
 
 
 
-gkLuaMethodDef *lua_getmethodtype(lua_State *L)
+gkLuaMethodDef* lua_getmethodtype(lua_State* L)
 {
-	return static_cast<gkLuaMethodDef *>(lua_touserdata(L, lua_upvalueindex(GK_UPVALUEMETHOD)));
+	return static_cast<gkLuaMethodDef*>(lua_touserdata(L, lua_upvalueindex(GK_UPVALUEMETHOD)));
 }
 
 
 
-unsigned int lua_bindhash(const char *key)
+unsigned int lua_bindhash(const char* key)
 {
 	utCharHashKey chk(key);
 	return chk.hash();
@@ -315,10 +315,10 @@ static unsigned int __unm           = lua_bindhash("__unm");
 
 
 
-void lua_bindfindmethod(const char *name, gkLuaMethodDef *def, int *out)
+void lua_bindfindmethod(const char* name, gkLuaMethodDef* def, int* out)
 {
 	int i;
-	for (i=0; def[i].m_name != 0; ++i)
+	for (i = 0; def[i].m_name != 0; ++i)
 	{
 		if (utCharEq(def[i].m_name, name))
 		{
@@ -329,9 +329,9 @@ void lua_bindfindmethod(const char *name, gkLuaMethodDef *def, int *out)
 }
 
 
-int lua_bindtostring(lua_State *L)
+int lua_bindtostring(lua_State* L)
 {
-	gkLuaTypeDef *tstr = static_cast<gkLuaTypeDef *>(lua_touserdata(L, lua_upvalueindex(GK_UPVALUETYPE)));
+	gkLuaTypeDef* tstr = static_cast<gkLuaTypeDef*>(lua_touserdata(L, lua_upvalueindex(GK_UPVALUETYPE)));
 	if (tstr)
 	{
 		if (lua_isuserdata(L, 1))
@@ -349,15 +349,15 @@ int lua_bindtostring(lua_State *L)
 
 
 
-bool lua_bindvalidateparams(const char *dt, lua_State *L)
+bool lua_bindvalidateparams(const char* dt, lua_State* L)
 {
 	// validates function/method arguments
-	for (int i=0; dt[i] != LU_NIL; ++i)
+	for (int i = 0; dt[i] != LU_NIL; ++i)
 	{
 		if (dt[i] == LU_OPT)
 			return true;
 
-		int idx = i+1;
+		int idx = i + 1;
 		switch (dt[i])
 		{
 		case LU_BOOL:
@@ -381,7 +381,7 @@ bool lua_bindvalidateparams(const char *dt, lua_State *L)
 				return false;
 			break;
 		case LU_FUNCTION:
-			if (!lua_isfunction(L, i+1))
+			if (!lua_isfunction(L, i + 1))
 				return false;
 			break;
 		}
@@ -391,15 +391,15 @@ bool lua_bindvalidateparams(const char *dt, lua_State *L)
 
 
 
-int lua_binderrorparams(const char *meth, const char *dt, char *dest)
+int lua_binderrorparams(const char* meth, const char* dt, char* dest)
 {
 	// generates an error for function/method arguments
 	if (!dest)
 		return 0;
 
 
-	int len = sprintf(dest, "Expected: %s (", meth), tl=0;
-	for (int i=0; dt[i] != LU_NIL; ++i)
+	int len = sprintf(dest, "Expected: %s (", meth), tl = 0;
+	for (int i = 0; dt[i] != LU_NIL; ++i)
 	{
 		if ( dt[i] == LU_OPT)
 			tl = sprintf(dest, "optionally");
@@ -431,9 +431,9 @@ int lua_binderrorparams(const char *meth, const char *dt, char *dest)
 
 
 
-int lua_bindmethodwrapper(lua_State *L)
+int lua_bindmethodwrapper(lua_State* L)
 {
-	gkLuaMethodDef *mdef = lua_getmethodtype(L);
+	gkLuaMethodDef* mdef = lua_getmethodtype(L);
 
 	if (mdef != 0)
 	{
@@ -460,13 +460,13 @@ int lua_bindmethodwrapper(lua_State *L)
 
 
 
-int lua_bindpushclassmethodget(lua_State *L, unsigned int index, gkLuaTypeDef *type)
+int lua_bindpushclassmethodget(lua_State* L, unsigned int index, gkLuaTypeDef* type)
 {
 	// find class / base class methods
 	if (type->m_methods)
 	{
 		int gidx = -1, i;
-		for (i=0; type->m_methods[i].m_name != 0; ++i)
+		for (i = 0; type->m_methods[i].m_name != 0; ++i)
 		{
 			if (type->m_methods[i].m_hash == __getter_hash)
 				gidx = i;
@@ -495,13 +495,13 @@ int lua_bindpushclassmethodget(lua_State *L, unsigned int index, gkLuaTypeDef *t
 
 
 
-int lua_bindpushclassmethodset(lua_State *L, unsigned int index, gkLuaTypeDef *type)
+int lua_bindpushclassmethodset(lua_State* L, unsigned int index, gkLuaTypeDef* type)
 {
 	// find class / base class methods
 	if (type->m_methods)
 	{
 		int sidx = -1, i;
-		for (i=0; type->m_methods[i].m_name != 0; ++i)
+		for (i = 0; type->m_methods[i].m_name != 0; ++i)
 		{
 			if (type->m_methods[i].m_hash == __setter_hash)
 				sidx = i;
@@ -530,10 +530,10 @@ int lua_bindpushclassmethodset(lua_State *L, unsigned int index, gkLuaTypeDef *t
 
 
 
-int lua_bindclassindexerget(lua_State *L)
+int lua_bindclassindexerget(lua_State* L)
 {
 	// index method
-	gkLuaTypeDef *type =lua_getclasstype(L);
+	gkLuaTypeDef* type = lua_getclasstype(L);
 	if (type)
 	{
 		// find by name
@@ -544,10 +544,10 @@ int lua_bindclassindexerget(lua_State *L)
 }
 
 
-int lua_bindclassindexerset(lua_State *L)
+int lua_bindclassindexerset(lua_State* L)
 {
 	// index method
-	gkLuaTypeDef *type =lua_getclasstype(L);
+	gkLuaTypeDef* type = lua_getclasstype(L);
 	if (type)
 	{
 		// find by name
@@ -558,13 +558,13 @@ int lua_bindclassindexerset(lua_State *L)
 }
 
 
-int lua_findclassmethod(lua_State *L, const char *name, gkLuaTypeDef *cls)
+int lua_findclassmethod(lua_State* L, const char* name, gkLuaTypeDef* cls)
 {
 	return lua_bindpushclassmethodget(L, lua_bindhash(name), cls);
 }
 
 
-bool lua_bindisbuiltinmethod(gkLuaMethodDef *meth)
+bool lua_bindisbuiltinmethod(gkLuaMethodDef* meth)
 {
 	return (meth->m_hash == __constructor   ||
 	        meth->m_hash == __destructor    ||
@@ -592,7 +592,7 @@ bool lua_bindisbuiltinmethod(gkLuaMethodDef *meth)
 
 
 
-void lua_addclasstype(lua_State *L, gkLuaTypeDef *type)
+void lua_addclasstype(lua_State* L, gkLuaTypeDef* type)
 {
 	int ctor = -1, dtor = -1, tstr = -1, nidx = -1;
 	int addi = -1, subi = -1, muli = -1, divi = -1;
@@ -665,7 +665,7 @@ void lua_addclasstype(lua_State *L, gkLuaTypeDef *type)
 	if (type->m_methods)
 	{
 		int i;
-		for (i=0; type->m_methods[i].m_name != 0; ++i)
+		for (i = 0; type->m_methods[i].m_name != 0; ++i)
 		{
 			type->m_methods[i].m_hash = lua_bindhash(type->m_methods[i].m_name);
 			if (lua_bindisbuiltinmethod(&type->m_methods[i]))
@@ -683,10 +683,10 @@ void lua_addclasstype(lua_State *L, gkLuaTypeDef *type)
 }
 
 
-void lua_addmethods(lua_State *L, gkLuaMethodDef *methods)
+void lua_addmethods(lua_State* L, gkLuaMethodDef* methods)
 {
 	int i;
-	for (i=0; methods[i].m_name != 0; ++i)
+	for (i = 0; methods[i].m_name != 0; ++i)
 	{
 		methods[i].m_hash = lua_bindhash(methods[i].m_name);
 		if (lua_bindisbuiltinmethod(&methods[i]))

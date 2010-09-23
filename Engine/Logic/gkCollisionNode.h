@@ -36,7 +36,7 @@ class gkCollisionNode : public gkLogicNode
 {
 public:
 
-	enum 
+	enum
 	{
 		ENABLE,
 		TARGET,
@@ -55,7 +55,7 @@ public:
 	DECLARE_SOCKET_TYPE(COLLIDED_OBJ, gkGameObject*);
 	DECLARE_SOCKET_TYPE(CONTACT_POSITION, gkVector3);
 
-	gkCollisionNode(gkLogicTree *parent, size_t id);
+	gkCollisionNode(gkLogicTree* parent, size_t id);
 
 	~gkCollisionNode();
 

@@ -58,7 +58,7 @@ protected:
 public:
 
 
-	gkGameObjectInstance(gkInstancedManager *, const gkResourceName&, const gkResourceHandle&);
+	gkGameObjectInstance(gkInstancedManager*, const gkResourceName&, const gkResourceHandle&);
 	virtual ~gkGameObjectInstance();
 
 
@@ -82,10 +82,10 @@ public:
 
 
 
-	void cloneObjects(gkScene *scene, const gkTransformState& from, int time,
-	                  const gkVector3& linearVelocity=gkVector3::ZERO,
+	void cloneObjects(gkScene* scene, const gkTransformState& from, int time,
+	                  const gkVector3& linearVelocity = gkVector3::ZERO,
 	                  bool tsLinLocal = true,
-	                  const gkVector3& angularVelocity=gkVector3::ZERO,
+	                  const gkVector3& angularVelocity = gkVector3::ZERO,
 	                  bool tsAngLocal = true);
 
 	void _updateFromGroup(gkGameObjectGroup* group);

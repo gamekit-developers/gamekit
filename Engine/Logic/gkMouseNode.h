@@ -33,7 +33,7 @@
 class gkMouseNode : public gkLogicNode
 {
 public:
-	
+
 	enum
 	{
 		SCALE_X,
@@ -57,11 +57,11 @@ public:
 	DECLARE_SOCKET_TYPE(WHEEL, gkScalar);
 	DECLARE_SOCKET_TYPE(WHEEL_MOTION, bool);
 
-    gkMouseNode(gkLogicTree *parent, size_t id);
+	gkMouseNode(gkLogicTree* parent, size_t id);
 
-    virtual ~gkMouseNode() {}
+	virtual ~gkMouseNode() {}
 
-    bool evaluate(gkScalar tick);
+	bool evaluate(gkScalar tick);
 };
 
 #endif//_gkMouseNode_h_

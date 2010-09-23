@@ -29,7 +29,7 @@
 #include "Blender.h"
 
 
-void gkSkeletonLoader::buildBoneTree(Blender::Bone *cur, Blender::Bone *prev, gkBone *parent)
+void gkSkeletonLoader::buildBoneTree(Blender::Bone* cur, Blender::Bone* prev, gkBone* parent)
 {
 	// This is the normal resposition
 	GK_ASSERT(cur);
@@ -40,7 +40,7 @@ void gkSkeletonLoader::buildBoneTree(Blender::Bone *cur, Blender::Bone *prev, gk
 		parBind = gkMathUtils::getFromFloatNorm(prev->arm_mat).inverse();
 
 	// create the ogre bone
-	gkBone *bone = m_skeleton->createBone(cur->name);
+	gkBone* bone = m_skeleton->createBone(cur->name);
 	if (parent)
 		bone->setParent(parent);
 
@@ -53,13 +53,13 @@ void gkSkeletonLoader::buildBoneTree(Blender::Bone *cur, Blender::Bone *prev, gk
 	if (rot.isNaN())
 	{
 		rot = gkQuaternion();
-		scl = gkVector3(1,1,1);
+		scl = gkVector3(1, 1, 1);
 	}
 
 	bone->setRestPosition(gkTransformState(loc, rot, scl));
 
 
-	Blender::Bone *chi = static_cast<Blender::Bone *>(cur->childbase.first);
+	Blender::Bone* chi = static_cast<Blender::Bone*>(cur->childbase.first);
 	while (chi)
 	{
 		// recurse

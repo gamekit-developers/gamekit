@@ -35,11 +35,11 @@
 
 
 
-gkTextureLoader::gkTextureLoader(Blender::Image *ima)
+gkTextureLoader::gkTextureLoader(Blender::Image* ima)
 	:   m_stream(0)
 {
 	GK_ASSERT(ima);
-	Blender::PackedFile *pack = ima->packedfile;
+	Blender::PackedFile* pack = ima->packedfile;
 	if (pack)
 	{
 		m_stream = new utMemoryStream;
@@ -54,9 +54,9 @@ gkTextureLoader::~gkTextureLoader()
 }
 
 
-void gkTextureLoader::loadResource(Ogre::Resource *resource)
+void gkTextureLoader::loadResource(Ogre::Resource* resource)
 {
-	Ogre::Texture *texture = static_cast<Ogre::Texture *>(resource);
+	Ogre::Texture* texture = static_cast<Ogre::Texture*>(resource);
 
 	if (!m_stream)
 	{

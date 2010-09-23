@@ -30,16 +30,16 @@
 #include "gkGameObject.h"
 #include "gkVariable.h"
 
-gkMessageActuator::gkMessageActuator(gkGameObject *object, gkLogicLink *link, const gkString &name)
-		:	gkLogicActuator(object, link, name), m_to(""), m_subject(""), m_bodyType(BT_TEXT), m_bodyText(""), m_bodyProp("")
+gkMessageActuator::gkMessageActuator(gkGameObject* object, gkLogicLink* link, const gkString& name)
+	:    gkLogicActuator(object, link, name), m_to(""), m_subject(""), m_bodyType(BT_TEXT), m_bodyText(""), m_bodyProp("")
 {
 
 }
 
 
-gkLogicBrick *gkMessageActuator::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick* gkMessageActuator::clone(gkLogicLink* link, gkGameObject* dest)
 {
-	gkMessageActuator *act = new gkMessageActuator(*this);
+	gkMessageActuator* act = new gkMessageActuator(*this);
 	act->cloneImpl(link, dest);
 	return act;
 }
@@ -48,10 +48,10 @@ gkLogicBrick *gkMessageActuator::clone(gkLogicLink *link, gkGameObject *dest)
 void gkMessageActuator::execute(void)
 {
 	gkString from, body;
-	
+
 	from = m_object->getName();
-	
-	if(m_bodyType == BT_TEXT)
+
+	if (m_bodyType == BT_TEXT)
 	{
 		body = m_bodyText;
 	}
@@ -59,7 +59,6 @@ void gkMessageActuator::execute(void)
 	{
 		body = m_object->getVariable(m_bodyProp)->getValueString();
 	}
-	
+
 	gkMessageManager::getSingleton().sendMessage(from, m_to, m_subject, body);
 }
-

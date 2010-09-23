@@ -43,28 +43,28 @@ void gkSceneObstacle::findIntersectionWithVehiclePath(const AbstractVehicle& veh
 
 	gkRayTest rayTest;
 
-	if(rayTest.collides(ray))
+	if (rayTest.collides(ray))
 	{
-		gkGameObjectProperties &props = rayTest.getObject()->getProperties();
+		gkGameObjectProperties& props = rayTest.getObject()->getProperties();
 
-		if(!props.isDynamic())
+		if (!props.isDynamic())
 		{
 			pi.intersect = true;
 			pi.obstacle = this;
 			pi.distance = rayTest.getHitPoint().distance(vehicle.position());
-			
+
 			pi.steerHint = rayTest.getHitNormal();
 
-			if(vehicle.getState() != gkSteeringObject::AVOIDING)
+			if (vehicle.getState() != gkSteeringObject::AVOIDING)
 			{
 				m_lastDirection = pi.steerHint.dot(vehicle.side());
 			}
 
-			if(m_lastDirection > 0)
+			if (m_lastDirection > 0)
 			{
 				pi.steerHint += vehicle.side();
 			}
-			else if(m_lastDirection < 0)
+			else if (m_lastDirection < 0)
 			{
 				pi.steerHint -= vehicle.side();
 			}
@@ -77,4 +77,3 @@ void gkSceneObstacle::findIntersectionWithVehiclePath(const AbstractVehicle& veh
 		}
 	}
 }
-

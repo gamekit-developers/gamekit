@@ -49,14 +49,14 @@ public:
 	public:
 
 
-		InstanceManager(gkGameObjectGroup *group);
+		InstanceManager(gkGameObjectGroup* group);
 		virtual ~InstanceManager() {}
 
 
 		gkResource* createImpl(const gkResourceName& name, const gkResourceHandle& handle);
 
 	protected:
-		gkGameObjectGroup *m_group;
+		gkGameObjectGroup* m_group;
 	};
 
 
@@ -71,7 +71,7 @@ protected:
 
 public:
 
-	gkGameObjectGroup(gkResourceManager* creator, const gkResourceName &name, const gkResourceHandle& handle);
+	gkGameObjectGroup(gkResourceManager* creator, const gkResourceName& name, const gkResourceHandle& handle);
 	virtual ~gkGameObjectGroup();
 
 
@@ -87,7 +87,7 @@ public:
 	gkGameObject*  getObject(const gkHashedString& name);
 
 
-	gkGameObjectInstance* createGroupInstance(gkScene *scene, const gkResourceName& name);
+	gkGameObjectInstance* createGroupInstance(gkScene* scene, const gkResourceName& name);
 	void                  destroyGroupInstance(gkGameObjectInstance* inst);
 
 
@@ -111,9 +111,9 @@ public:
 
 	void cloneObjects(gkScene* scene,
 	                  const gkTransformState& from, int time,
-	                  const gkVector3& linearVelocity=gkVector3::ZERO,
+	                  const gkVector3& linearVelocity = gkVector3::ZERO,
 	                  bool tsLinLocal = true,
-	                  const gkVector3& angularVelocity=gkVector3::ZERO,
+	                  const gkVector3& angularVelocity = gkVector3::ZERO,
 	                  bool tsAngLocal = true);
 
 
@@ -121,7 +121,7 @@ public:
 	GK_INLINE Objects&                   getObjects(void)        {return m_objects;}
 	GK_INLINE bool                       isEmpty(void)           {return m_objects.empty();}
 
-	
+
 
 };
 

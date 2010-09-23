@@ -37,13 +37,13 @@
 
 
 
-gkPhysicsController::gkPhysicsController(gkGameObject *object, gkDynamicsWorld *owner)
-	:	m_owner(owner),
-	    m_object(object),
-	    m_collisionObject(0),
-	    m_shape(0),
-	    m_suspend(false), 
-		m_dbvtMark(true)
+gkPhysicsController::gkPhysicsController(gkGameObject* object, gkDynamicsWorld* owner)
+	:    m_owner(owner),
+	     m_object(object),
+	     m_collisionObject(0),
+	     m_shape(0),
+	     m_suspend(false),
+	     m_dbvtMark(true)
 {
 	// initial copy from object
 	memcpy(&m_props, &object->getProperties().m_physics, sizeof(gkPhysicsProperties));
@@ -62,7 +62,7 @@ gkPhysicsController::~gkPhysicsController()
 
 
 
-void gkPhysicsController::setShape(btCollisionShape *shape)
+void gkPhysicsController::setShape(btCollisionShape* shape)
 {
 	if (m_collisionObject)
 	{
@@ -102,7 +102,7 @@ gkContactInfo::Iterator gkPhysicsController::getContactIterator(void)
 
 
 
-bool gkPhysicsController::collidesWith(gkGameObject *ob, gkContactInfo* cpy)
+bool gkPhysicsController::collidesWith(gkGameObject* ob, gkContactInfo* cpy)
 {
 	if (!m_localContacts.empty())
 	{
@@ -152,7 +152,7 @@ bool gkPhysicsController::collidesWith(const gkString& name, gkContactInfo* cpy,
 		while (i < s)
 		{
 			GK_ASSERT(p[i].collider);
-			gkGameObject *gobj = p[i].collider->getObject();
+			gkGameObject* gobj = p[i].collider->getObject();
 
 			if (name.find(gobj->getName()) != gkString::npos)
 			{
@@ -178,7 +178,7 @@ bool gkPhysicsController::sensorCollides(const gkString& prop, const gkString& m
 
 	if (!m_localContacts.empty())
 	{
-		if (prop.empty() && material.empty()) 
+		if (prop.empty() && material.empty())
 		{
 			// any filter
 			return true;
@@ -194,7 +194,7 @@ bool gkPhysicsController::sensorCollides(const gkString& prop, const gkString& m
 		while (i < s)
 		{
 			GK_ASSERT(p[i].collider);
-			gkGameObject *gobj = p[i].collider->getObject();
+			gkGameObject* gobj = p[i].collider->getObject();
 
 
 			if (onlyActor)
@@ -255,7 +255,7 @@ bool gkPhysicsController::_markDbvt(bool v)
 		m_dbvtMark = v;
 		if ( m_object->getType() == GK_ENTITY &&  !m_object->getProperties().isInvisible())
 		{
-			Ogre::MovableObject *mov = m_object->getMovable();
+			Ogre::MovableObject* mov = m_object->getMovable();
 
 			if (mov)
 			{
@@ -269,7 +269,7 @@ bool gkPhysicsController::_markDbvt(bool v)
 
 
 
-bool gkPhysicsController::sensorTest(gkGameObject *ob, const gkString& prop, const gkString& material, bool onlyActor, bool testAllMaterials)
+bool gkPhysicsController::sensorTest(gkGameObject* ob, const gkString& prop, const gkString& material, bool onlyActor, bool testAllMaterials)
 {
 	GK_ASSERT(ob);
 
@@ -314,7 +314,7 @@ bool gkPhysicsController::sensorTest(gkGameObject *ob, const gkString& prop, con
 
 
 
-void gkPhysicsController::setTransformState(const gkTransformState &state)
+void gkPhysicsController::setTransformState(const gkTransformState& state)
 {
 	if (m_suspend || !m_collisionObject)
 		return;
@@ -374,14 +374,14 @@ void gkPhysicsController::enableContactProcessing(bool v)
 }
 
 
-gkPhysicsController* gkPhysicsController::castController(void *colObj)
+gkPhysicsController* gkPhysicsController::castController(void* colObj)
 {
 	GK_ASSERT(colObj);
 	return castController(static_cast<btCollisionObject*>(colObj));
 }
 
 
-gkPhysicsController* gkPhysicsController::castController(btCollisionObject *colObj)
+gkPhysicsController* gkPhysicsController::castController(btCollisionObject* colObj)
 {
 	GK_ASSERT(colObj);
 	return static_cast<gkPhysicsController*>(colObj->getUserPointer());
@@ -389,16 +389,16 @@ gkPhysicsController* gkPhysicsController::castController(btCollisionObject *colO
 
 
 
-gkGameObject* gkPhysicsController::castObject(btCollisionObject *colObj)
+gkGameObject* gkPhysicsController::castObject(btCollisionObject* colObj)
 {
 	GK_ASSERT(colObj);
-	gkPhysicsController *cont = static_cast<gkPhysicsController*>(colObj->getUserPointer());
+	gkPhysicsController* cont = static_cast<gkPhysicsController*>(colObj->getUserPointer());
 	GK_ASSERT(cont);
 	return cont->getObject();
 }
 
 
-gkGameObject* gkPhysicsController::castObject(const btCollisionObject *colObj)
+gkGameObject* gkPhysicsController::castObject(const btCollisionObject* colObj)
 {
 	return castObject(const_cast<btCollisionObject*>(colObj));
 }
@@ -418,10 +418,10 @@ void gkPhysicsController::suspend(bool v)
 
 
 		GK_ASSERT(m_owner);
-		btDynamicsWorld *dyn = getOwner();
+		btDynamicsWorld* dyn = getOwner();
 
 
-		btRigidBody *body = btRigidBody::upcast(m_collisionObject);
+		btRigidBody* body = btRigidBody::upcast(m_collisionObject);
 		if (m_suspend)
 		{
 			if (body)
@@ -440,14 +440,14 @@ void gkPhysicsController::suspend(bool v)
 }
 
 
-btCollisionObject *gkPhysicsController::getCollisionObject(void)
+btCollisionObject* gkPhysicsController::getCollisionObject(void)
 {
 	return m_collisionObject;
 }
 
 
 
-btCollisionShape *gkPhysicsController::getShape(void)
+btCollisionShape* gkPhysicsController::getShape(void)
 {
 	return m_shape;
 }
@@ -455,7 +455,7 @@ btCollisionShape *gkPhysicsController::getShape(void)
 
 
 
-btDynamicsWorld *gkPhysicsController::getOwner(void)
+btDynamicsWorld* gkPhysicsController::getOwner(void)
 {
 	if (m_owner)
 		return m_owner->getBulletWorld();
@@ -464,7 +464,7 @@ btDynamicsWorld *gkPhysicsController::getOwner(void)
 
 
 
-gkGameObject *gkPhysicsController::getObject(void)
+gkGameObject* gkPhysicsController::getObject(void)
 {
 	return m_object;
 }
@@ -472,7 +472,7 @@ gkGameObject *gkPhysicsController::getObject(void)
 
 gkBoundingBox gkPhysicsController::getAabb(void) const
 {
-	if(m_collisionObject)
+	if (m_collisionObject)
 	{
 		btVector3 aabbMin;
 		btVector3 aabbMax;
@@ -496,8 +496,8 @@ void gkPhysicsController::createShape(void)
 
 	GK_ASSERT(m_object);
 
-	gkMesh *me = 0;
-	gkEntity *ent = m_object->getEntity();
+	gkMesh* me = 0;
+	gkEntity* ent = m_object->getEntity();
 	if (ent != 0)
 		me = ent->getEntityProperties().m_mesh;
 
@@ -525,7 +525,7 @@ void gkPhysicsController::createShape(void)
 		{
 			if (me != 0)
 			{
-				btTriangleMesh *triMesh = me->getTriMesh();
+				btTriangleMesh* triMesh = me->getTriMesh();
 				if (triMesh->getNumTriangles() > 0)
 				{
 					if (m_props.m_shape == SH_CONVEX_TRIMESH)
@@ -555,17 +555,17 @@ void gkPhysicsController::createShape(void)
 
 
 
-void gkPhysicsController::setTransform(const btTransform &worldTrans)
+void gkPhysicsController::setTransform(const btTransform& worldTrans)
 {
 	GK_ASSERT(m_object && m_object->isInstanced());
 
 
-	const gkQuaternion &rot = gkMathUtils::get(worldTrans.getRotation());
-	const gkVector3 &loc = gkMathUtils::get(worldTrans.getOrigin());
+	const gkQuaternion& rot = gkMathUtils::get(worldTrans.getRotation());
+	const gkVector3& loc = gkMathUtils::get(worldTrans.getOrigin());
 
 	// apply to the node and sync state next update
 
-	Ogre::SceneNode *node = m_object->getNode();
+	Ogre::SceneNode* node = m_object->getNode();
 
 	node->setOrientation(rot);
 	node->setPosition(loc);
@@ -575,18 +575,18 @@ void gkPhysicsController::setTransform(const btTransform &worldTrans)
 
 
 
-void gkPhysicsController::_handleManifold(btPersistentManifold *manifold)
+void gkPhysicsController::_handleManifold(btPersistentManifold* manifold)
 {
-	if(m_suspend || !m_props.isContactListener() || !m_object->isInstanced()) 
+	if (m_suspend || !m_props.isContactListener() || !m_object->isInstanced())
 		return;
 
 
-	gkPhysicsController *colA = castController(manifold->getBody0());
-	gkPhysicsController *colB = castController(manifold->getBody1());
+	gkPhysicsController* colA = castController(manifold->getBody0());
+	gkPhysicsController* colB = castController(manifold->getBody1());
 
-	gkPhysicsController *collider = colB;
+	gkPhysicsController* collider = colB;
 
-	if(collider == this)
+	if (collider == this)
 	{
 		collider = colA;
 	}
@@ -600,7 +600,7 @@ void gkPhysicsController::_handleManifold(btPersistentManifold *manifold)
 		for (int j = 0; j < nrc; ++j)
 		{
 			gkContactInfo cinf;
-			btManifoldPoint &pt = manifold->getContactPoint(j);
+			btManifoldPoint& pt = manifold->getContactPoint(j);
 
 			if (pt.getDistance() < 0.f)
 			{
@@ -617,6 +617,6 @@ void gkPhysicsController::_handleManifold(btPersistentManifold *manifold)
 
 void gkPhysicsController::_resetContactInfo(void)
 {
-	if(m_props.isContactListener())
+	if (m_props.isContactListener())
 		m_localContacts.clear(true);
 }

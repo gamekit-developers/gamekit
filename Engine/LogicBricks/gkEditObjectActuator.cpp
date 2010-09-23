@@ -31,8 +31,8 @@
 
 
 
-gkEditObjectActuator::gkEditObjectActuator(gkGameObject *object, gkLogicLink *link, const gkString &name)
-	:   gkLogicActuator(object, link, name), m_linv(0,0,0), m_angv(0,0,0),
+gkEditObjectActuator::gkEditObjectActuator(gkGameObject* object, gkLogicLink* link, const gkString& name)
+	:   gkLogicActuator(object, link, name), m_linv(0, 0, 0), m_angv(0, 0, 0),
 	    m_lvlocal(false), m_avlocal(false), m_mode(0), m_dynMode(0), m_life(0), m_obj("")
 {
 }
@@ -44,9 +44,9 @@ gkEditObjectActuator::~gkEditObjectActuator()
 }
 
 
-gkLogicBrick *gkEditObjectActuator::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick* gkEditObjectActuator::clone(gkLogicLink* link, gkGameObject* dest)
 {
-	gkEditObjectActuator *act = new gkEditObjectActuator(*this);
+	gkEditObjectActuator* act = new gkEditObjectActuator(*this);
 	act->cloneImpl(link, dest);
 	return act;
 }
@@ -56,10 +56,10 @@ void gkEditObjectActuator::addObject(void)
 {
 	if (!m_obj.empty())
 	{
-		gkScene *scene = m_object->getOwner();
+		gkScene* scene = m_object->getOwner();
 		if (scene->hasObject(m_obj))
 		{
-			gkGameObject *obj = scene->getObject(m_obj);
+			gkGameObject* obj = scene->getObject(m_obj);
 
 
 			if ( obj->isInGroup() || obj->isGroupInstance() )
@@ -68,7 +68,7 @@ void gkEditObjectActuator::addObject(void)
 				gkTransformState thisTransform( m_object->getWorldPosition(),
 				                                m_object->getWorldOrientation(),
 				                                m_object->getWorldScale()
-				                               );
+				                              );
 
 				if (obj->isInGroup())
 					obj->getGroup()->cloneObjects(m_scene, thisTransform, m_life, m_linv, m_lvlocal, m_angv, m_avlocal);
@@ -77,7 +77,7 @@ void gkEditObjectActuator::addObject(void)
 			}
 			else
 			{
-				gkGameObject *nobj = scene->cloneObject(obj, m_life);
+				gkGameObject* nobj = scene->cloneObject(obj, m_life);
 
 				nobj->getProperties().m_transform.loc = m_object->getWorldPosition();
 				nobj->getProperties().m_transform.rot = m_object->getWorldOrientation();

@@ -37,14 +37,14 @@ class gkTransformState
 public:
 
 
-	gkTransformState(const gkMatrix4 &mat)
+	gkTransformState(const gkMatrix4& mat)
 	{
 		gkMathUtils::extractTransform(mat, loc, rot, scl);
 	}
 
-	gkTransformState(const gkVector3    &oloc = gkVector3::ZERO, 
-					 const gkQuaternion &orot = gkQuaternion::IDENTITY, 
-					 const gkVector3    &oscl = gkVector3::UNIT_SCALE)
+	gkTransformState(const gkVector3&    oloc = gkVector3::ZERO,
+	                 const gkQuaternion& orot = gkQuaternion::IDENTITY,
+	                 const gkVector3&    oscl = gkVector3::UNIT_SCALE)
 	{
 		rot.w = orot.w;
 		rot.x = orot.x; rot.y = orot.y; rot.z = orot.z;
@@ -52,7 +52,7 @@ public:
 		scl.x = oscl.x; scl.y = oscl.y; scl.z = oscl.z;
 	}
 
-	GK_INLINE const gkTransformState &operator= (const gkTransformState &o)
+	GK_INLINE const gkTransformState& operator= (const gkTransformState& o)
 	{
 		rot.w = o.rot.w;
 		rot.x = o.rot.x; rot.y = o.rot.y; rot.z = o.rot.z;
@@ -62,7 +62,7 @@ public:
 	}
 
 
-	GK_INLINE bool operator != (const gkTransformState &o) const
+	GK_INLINE bool operator != (const gkTransformState& o) const
 	{
 		return ((rot.w != o.rot.w) ||
 		        (rot.x != o.rot.x) ||
@@ -77,7 +77,7 @@ public:
 		       );
 	}
 
-	void set(const gkVector3 &oloc, const gkQuaternion &orot, const gkVector3 &oscl)
+	void set(const gkVector3& oloc, const gkQuaternion& orot, const gkVector3& oscl)
 	{
 		rot.w = orot.w;
 		rot.x = orot.x; rot.y = orot.y; rot.z = orot.z;
@@ -93,7 +93,7 @@ public:
 		scl.x = gkScalar(1.0); scl.y = gkScalar(1.0); scl.z = gkScalar(1.0);
 	}
 
-	GK_INLINE void      toMatrix(gkMatrix4 &m) const    { m.makeTransform(loc, scl, rot); }
+	GK_INLINE void      toMatrix(gkMatrix4& m) const    { m.makeTransform(loc, scl, rot); }
 	GK_INLINE gkMatrix4 toMatrix(void) const            { gkMatrix4 m; m.makeTransform(loc, scl, rot); return m;}
 
 
@@ -102,7 +102,7 @@ public:
 	GK_INLINE btVector3     toLocalScaling(void)    const { return btVector3(scl.x, scl.y, scl.z); }
 	GK_INLINE btTransform   toTransform(void)       const { btTransform t; toTransform(t); return t; }
 
-	GK_INLINE void toTransform(btTransform &trans)  const
+	GK_INLINE void toTransform(btTransform& trans)  const
 	{
 		trans.setIdentity();
 		trans.setOrigin(toOrigin());

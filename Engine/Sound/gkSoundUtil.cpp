@@ -73,7 +73,7 @@ bool alIsPlaying(ALuint src)
 }
 
 
-bool alErrorCheck(const char *message)
+bool alErrorCheck(const char* message)
 {
 	ALenum err;
 	if ((err = alGetError()) != AL_NO_ERROR)
@@ -85,7 +85,7 @@ bool alErrorCheck(const char *message)
 }
 
 
-bool alErrorThrow(const char *message)
+bool alErrorThrow(const char* message)
 {
 	return alErrorCheck(message);
 }
@@ -95,14 +95,14 @@ bool alErrorThrow(const char *message)
 bool alErrorCheck(void)
 {
 	ALint err;
-	ALCdevice *device = alcGetContextsDevice(alcGetCurrentContext());
-	if((err=alcGetError(device)) != ALC_NO_ERROR)
+	ALCdevice* device = alcGetContextsDevice(alcGetCurrentContext());
+	if ((err = alcGetError(device)) != ALC_NO_ERROR)
 	{
 		gkPrintf("ALC Error: %s occured\n", alcGetString(device, err));
 		return true;
 	}
 
-	if((err=alGetError()) != AL_NO_ERROR)
+	if ((err = alGetError()) != AL_NO_ERROR)
 	{
 		gkPrintf("AL Error: %s occured\n", alGetString(err));
 		return true;
@@ -113,7 +113,7 @@ bool alErrorCheck(void)
 
 
 
-int alGetBufType(const char *magic)
+int alGetBufType(const char* magic)
 {
 	if (!strncmp(magic, "RIFF", 4))
 		return GK_BUF_WAV;
@@ -123,11 +123,11 @@ int alGetBufType(const char *magic)
 }
 
 
-int alReadMagic(const char *file)
+int alReadMagic(const char* file)
 {
 	char buf[5] = {'\0'};
 
-	FILE *fp = fopen(file, "rb");
+	FILE* fp = fopen(file, "rb");
 	if (!fp)
 		return GK_BUF_NULL;
 

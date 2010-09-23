@@ -35,14 +35,14 @@
 class gkActionManager
 {
 protected:
-	gkAction        *m_active, *m_blend;
+	gkAction*        m_active, *m_blend;
 	gkScalar        m_blendTime;
 public:
 	gkActionManager();
 	~gkActionManager();
 
-	GK_INLINE gkAction *getActive(void) {return m_active;}
-	void setAction(gkAction *act);
+	GK_INLINE gkAction* getActive(void) {return m_active;}
+	void setAction(gkAction* act);
 
 	void update(gkScalar delta);
 	void update(gkScalar delta, gkScalar blendDelta);

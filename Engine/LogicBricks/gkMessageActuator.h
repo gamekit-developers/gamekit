@@ -38,24 +38,24 @@ public:
 		BT_TEXT,
 		BT_PROP,
 	};
-	
+
 private:
 	gkString m_to, m_subject, m_bodyText, m_bodyProp;
 	int m_bodyType;
 
 public:
-	gkMessageActuator(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	gkMessageActuator(gkGameObject* object, gkLogicLink* link, const gkString& name);
 	virtual ~gkMessageActuator() {}
-	
-	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
+
+	gkLogicBrick* clone(gkLogicLink* link, gkGameObject* dest);
 
 	void execute(void);
-	
+
 	GK_INLINE void setTo(gkString v)           {m_to = v;}
-	GK_INLINE void setSubject(const gkString &v)      {m_subject = v;}
+	GK_INLINE void setSubject(const gkString& v)      {m_subject = v;}
 	GK_INLINE void setBodyType(int v)          {m_bodyType = v;}
-	GK_INLINE void setBodyText(const gkString &v)     {m_bodyText = v;}
-	GK_INLINE void setBodyProperty(const gkString &v) {m_bodyProp = v;}
+	GK_INLINE void setBodyText(const gkString& v)     {m_bodyText = v;}
+	GK_INLINE void setBodyProperty(const gkString& v) {m_bodyProp = v;}
 
 	GK_INLINE const gkString& getTo(void)           {return m_to;}
 	GK_INLINE const gkString& getSubject(void)      {return m_subject;}

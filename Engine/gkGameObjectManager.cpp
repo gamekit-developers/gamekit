@@ -34,7 +34,7 @@
 
 
 gkGameObjectManager::gkGameObjectManager()
-	:	gkInstancedManager("GameObjectManager", "GameObject")
+	:    gkInstancedManager("GameObjectManager", "GameObject")
 {
 }
 
@@ -83,25 +83,25 @@ gkGameObject* gkGameObjectManager::getObject(const gkResourceName& name)
 
 gkLight* gkGameObjectManager::getLight(const gkResourceName& name)
 {
-	gkGameObject *ob = getObject(name);
+	gkGameObject* ob = getObject(name);
 	return ob ? ob->getLight() : 0;
 }
 
 gkCamera* gkGameObjectManager::getCamera(const gkResourceName& name)
 {
-	gkGameObject *ob = getObject(name);
+	gkGameObject* ob = getObject(name);
 	return ob ? ob->getCamera() : 0;
 }
 
 gkEntity* gkGameObjectManager::getEntity(const gkResourceName& name)
 {
-	gkGameObject *ob = getObject(name);
+	gkGameObject* ob = getObject(name);
 	return ob ? ob->getEntity() : 0;
 }
 
 gkSkeleton* gkGameObjectManager::getSkeleton(const gkResourceName& name)
 {
-	gkGameObject *ob = getObject(name);
+	gkGameObject* ob = getObject(name);
 	return ob ? ob->getSkeleton() : 0;
 }
 

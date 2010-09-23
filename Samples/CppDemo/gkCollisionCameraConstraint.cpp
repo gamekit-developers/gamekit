@@ -30,13 +30,13 @@
 #include "gkLogger.h"
 
 
-gkCollisionCameraConstraint::gkCollisionCameraConstraint() 
-	:	m_target(0),
-		m_cast(0),
-		m_length(0.f),
-		m_yOffs(0.f),
-		m_zOffs(0.f),
-		m_lhf(0.f)
+gkCollisionCameraConstraint::gkCollisionCameraConstraint()
+	:    m_target(0),
+	     m_cast(0),
+	     m_length(0.f),
+	     m_yOffs(0.f),
+	     m_zOffs(0.f),
+	     m_lhf(0.f)
 {
 }
 
@@ -62,7 +62,7 @@ bool gkCollisionCameraConstraint::update(gkScalar delta)
 	}
 
 	if (m_cast)
-	{ 
+	{
 		gkVector3 wPos;
 		gkVector3 oPos = m_object->getWorldPosition() + gkVector3(0.f, -m_yOffs, -m_zOffs);
 		gkVector3 tPos = m_target->getWorldPosition() + gkVector3(0.f, 0.f, -m_zOffs);;
@@ -79,7 +79,7 @@ bool gkCollisionCameraConstraint::update(gkScalar delta)
 		{
 			di = oPos.distance(m_cast->getHitPoint());
 			fac = m_influence * di;
-			
+
 
 			if (m_cast->getObject() != m_target)
 				m_object->translate(gkVector3(0.f, fac, 0.f));
@@ -95,7 +95,7 @@ bool gkCollisionCameraConstraint::update(gkScalar delta)
 
 		gkScalar diff = m_object->getPosition().y;
 		if (diff >= 0.f)
-			m_object->setPosition(gkVector3(0.f, -m_length/2.f, 0.f));
+			m_object->setPosition(gkVector3(0.f, -m_length / 2.f, 0.f));
 	}
 
 	return false;
@@ -103,9 +103,9 @@ bool gkCollisionCameraConstraint::update(gkScalar delta)
 
 
 
-gkConstraint *gkCollisionCameraConstraint::clone(gkGameObject *clob)
+gkConstraint* gkCollisionCameraConstraint::clone(gkGameObject* clob)
 {
-	gkCollisionCameraConstraint *c = new gkCollisionCameraConstraint(*this);
+	gkCollisionCameraConstraint* c = new gkCollisionCameraConstraint(*this);
 	c->m_cast = 0;
 	return c;
 }

@@ -36,18 +36,18 @@ class gkSkeletonLoader : public Ogre::ManualResourceLoader
 {
 public:
 
-	gkSkeletonLoader(gkSkeletonResource *skel);
+	gkSkeletonLoader(gkSkeletonResource* skel);
 	virtual ~gkSkeletonLoader();
 
 
-	void makeManual(gkEntity *ent);
+	void makeManual(gkEntity* ent);
 
 private:
 
-	void loadResource(Ogre::Resource *resource);
-	void recurseBone(Ogre::Skeleton *skel, gkBone *cur, Ogre::Bone *par);
+	void loadResource(Ogre::Resource* resource);
+	void recurseBone(Ogre::Skeleton* skel, gkBone* cur, Ogre::Bone* par);
 
-	gkSkeletonResource *m_skeleton;
+	gkSkeletonResource* m_skeleton;
 
 };
 

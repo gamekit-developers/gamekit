@@ -32,9 +32,9 @@ using namespace Ogre;
 
 
 
-gkLogicNode::gkLogicNode(gkLogicTree *parent, UTsize handle) :
-        m_handle(handle), m_object(0), m_other(0), m_parent(parent),
-        m_hasLinks(false), m_priority(0)
+gkLogicNode::gkLogicNode(gkLogicTree* parent, UTsize handle) :
+	m_handle(handle), m_object(0), m_other(0), m_parent(parent),
+	m_hasLinks(false), m_priority(0)
 {
 }
 
@@ -43,7 +43,7 @@ gkLogicNode::~gkLogicNode()
 	{
 		SocketIterator iter(m_inputs);
 
-		while(iter.hasMoreElements())
+		while (iter.hasMoreElements())
 		{
 			gkILogicSocket* pSocket = iter.getNext();
 
@@ -67,15 +67,15 @@ gkLogicNode::~gkLogicNode()
 
 gkILogicSocket* gkLogicNode::getInputSocket(UTsize index)
 {
-    if (index >= 0 && index < m_inputs.size())
-        return m_inputs.at(index);
-    return 0;
+	if (index >= 0 && index < m_inputs.size())
+		return m_inputs.at(index);
+	return 0;
 }
 
 
 gkILogicSocket* gkLogicNode::getOutputSocket(UTsize index)
 {
-    if (index >= 0 && index < m_outputs.size())
-        return m_outputs.at(index);
-    return 0;
+	if (index >= 0 && index < m_outputs.size())
+		return m_outputs.at(index);
+	return 0;
 }

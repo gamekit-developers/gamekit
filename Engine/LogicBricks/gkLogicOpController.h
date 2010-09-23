@@ -49,10 +49,10 @@ protected:
 
 public:
 
-	gkLogicOpController(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	gkLogicOpController(gkGameObject* object, gkLogicLink* link, const gkString& name);
 	virtual ~gkLogicOpController() {}
 
-	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
+	gkLogicBrick* clone(gkLogicLink* link, gkGameObject* dest);
 
 	void execute(void);
 	GK_INLINE void setOp(int nop)    {m_op = nop;}

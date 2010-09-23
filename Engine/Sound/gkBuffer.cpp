@@ -31,7 +31,7 @@
 
 
 
-gkBuffer::gkBuffer(gkSource *obj)
+gkBuffer::gkBuffer(gkSource* obj)
 	:   m_sound(obj),
 	    m_stream(obj->getStream()),
 	    m_loop(false),
@@ -148,7 +148,7 @@ void gkBuffer::setLoop(bool v)
 
 
 
-void gkBuffer::setPosition(const gkVector3 &v)
+void gkBuffer::setPosition(const gkVector3& v)
 {
 	if (!m_ok) return;
 
@@ -157,7 +157,7 @@ void gkBuffer::setPosition(const gkVector3 &v)
 }
 
 
-void gkBuffer::setDirection(const gkVector3 &v)
+void gkBuffer::setDirection(const gkVector3& v)
 {
 	if (!m_ok) return;
 
@@ -167,7 +167,7 @@ void gkBuffer::setDirection(const gkVector3 &v)
 
 
 
-void gkBuffer::setVelocity(const gkVector3 &v)
+void gkBuffer::setVelocity(const gkVector3& v)
 {
 	if (!m_ok) return;
 
@@ -212,10 +212,10 @@ void gkBuffer::queue(bool play)
 
 	// queue initial buffers
 	int blk = 0;
-	for (blk=0; blk<GK_SND_SAMPLES; ++blk)
+	for (blk = 0; blk < GK_SND_SAMPLES; ++blk)
 	{
 		UTsize br = 0;
-		const char *db = read(m_bps, br);
+		const char* db = read(m_bps, br);
 		if (br != 0 && db)
 		{
 			//printf ("Block Read: %i (%p)[%i];\n", m_smp, db, br);
@@ -264,7 +264,7 @@ void gkBuffer::finalize(void)
 
 
 
-void gkBuffer::setProperties(const gkSoundProperties &props)
+void gkBuffer::setProperties(const gkSoundProperties& props)
 {
 	m_props = props;
 }
@@ -302,7 +302,7 @@ void gkBuffer::reset(void)
 }
 
 
-const char *gkBuffer::read(UTsize len, UTsize &br)
+const char* gkBuffer::read(UTsize len, UTsize& br)
 {
 	if (!m_stream || m_eos)
 	{
@@ -312,7 +312,7 @@ const char *gkBuffer::read(UTsize len, UTsize &br)
 	}
 
 	// read contents from open stream
-	const char *blk = m_stream->read(m_pos, len, br);
+	const char* blk = m_stream->read(m_pos, len, br);
 	m_pos += br;
 	m_eos = br == 0;
 	return blk;
@@ -366,7 +366,7 @@ bool gkBuffer::stream(void)
 	if (!m_eos)
 	{
 		UTsize br = -1;
-		int totQue =0;
+		int totQue = 0;
 
 		while (nr--)
 		{
@@ -376,7 +376,7 @@ bool gkBuffer::stream(void)
 
 			if (br != 0)
 			{
-				const char *db = read(m_bps, br);
+				const char* db = read(m_bps, br);
 				if (br != 0 && db)
 				{
 					//printf ("Block Read: %i (%p)[%i];\n", m_smp, db, br);

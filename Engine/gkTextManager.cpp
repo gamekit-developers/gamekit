@@ -44,13 +44,14 @@
 #endif
 
 
-struct TextToTypeItem 
+struct TextToTypeItem
 {
-	const char *name;
+	const char* name;
 	const int   type;
 };
 
-static TextToTypeItem TextItemMap[] = {
+static TextToTypeItem TextItemMap[] =
+{
 	{".material",   gkTextManager::TT_MATERIAL},
 	{".particle",   gkTextManager::TT_PARTICLE},
 	{".compositor", gkTextManager::TT_COMPOSIT},
@@ -68,8 +69,8 @@ static TextToTypeItem TextItemMap[] = {
 
 
 
-gkTextManager::gkTextManager() 
-	:	gkResourceManager("TextManager", "TextFile")
+gkTextManager::gkTextManager()
+	:    gkResourceManager("TextManager", "TextFile")
 {
 }
 
@@ -79,9 +80,9 @@ gkTextManager::~gkTextManager()
 }
 
 
-int gkTextManager::getTextType(const gkString &name)
+int gkTextManager::getTextType(const gkString& name)
 {
-	int i=0;
+	int i = 0;
 	while (TextItemMap[i].name != 0)
 	{
 		if (name.find(TextItemMap[i].name) != name.npos)
@@ -92,12 +93,12 @@ int gkTextManager::getTextType(const gkString &name)
 
 }
 
-void gkTextManager::getTextFiles(TextArray &dest, int textType)
+void gkTextManager::getTextFiles(TextArray& dest, int textType)
 {
 	gkResourceManager::ResourceIterator iter = getResourceIterator();
 	while (iter.hasMoreElements())
 	{
-		gkTextFile *tf = (gkTextFile*)iter.getNext().second;
+		gkTextFile* tf = (gkTextFile*)iter.getNext().second;
 
 		if (tf->getType() == textType)
 			dest.push_back(tf);
@@ -106,7 +107,7 @@ void gkTextManager::getTextFiles(TextArray &dest, int textType)
 
 
 
-gkResource *gkTextManager::createImpl(const gkResourceName &name, const gkResourceHandle &handle)
+gkResource* gkTextManager::createImpl(const gkResourceName& name, const gkResourceHandle& handle)
 {
 	UTsize tt = getTextType(name.str());
 
@@ -119,27 +120,28 @@ void gkTextManager::parseScripts(void)
 	gkResourceManager::ResourceIterator iter = getResourceIterator();
 	while (iter.hasMoreElements())
 	{
-		gkTextFile *tf = (gkTextFile*)iter.getNext().second;
+		gkTextFile* tf = (gkTextFile*)iter.getNext().second;
 
-		const gkString &buf = tf->getText();
+		const gkString& buf = tf->getText();
 		const int type = tf->getType();
 
 
 #if OGREKIT_COMPILE_OGRE_SCRIPTS  == 1
 
-		try {
+		try
+		{
 
 			if (type == TT_MATERIAL)
 			{
 				Ogre::DataStreamPtr memStream(
-					OGRE_NEW Ogre::MemoryDataStream((void *)buf.c_str(), buf.size()));
+				    OGRE_NEW Ogre::MemoryDataStream((void*)buf.c_str(), buf.size()));
 
 				Ogre::MaterialManager::getSingleton().parseScript(memStream, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 			}
 			else if (type == TT_PARTICLE)
 			{
 				Ogre::DataStreamPtr memStream(
-					OGRE_NEW Ogre::MemoryDataStream((void *)buf.c_str(), buf.size()));
+				    OGRE_NEW Ogre::MemoryDataStream((void*)buf.c_str(), buf.size()));
 
 
 				Ogre::ParticleSystemManager::getSingleton().parseScript(memStream, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
@@ -148,7 +150,7 @@ void gkTextManager::parseScripts(void)
 			else if (type >= TT_CG && type <= TT_HLSL)
 			{
 				Ogre::DataStreamPtr memStream(
-					OGRE_NEW Ogre::MemoryDataStream((void *)buf.c_str(), buf.size()));
+				    OGRE_NEW Ogre::MemoryDataStream((void*)buf.c_str(), buf.size()));
 
 				Ogre::HighLevelGpuProgramManager::getSingleton().parseScript(memStream, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 			}
@@ -156,7 +158,7 @@ void gkTextManager::parseScripts(void)
 			else if (type >= TT_CG && type <= TT_HLSL)
 			{
 				Ogre::DataStreamPtr memStream(
-					OGRE_NEW Ogre::MemoryDataStream((void *)buf.c_str(), buf.size()));
+				    OGRE_NEW Ogre::MemoryDataStream((void*)buf.c_str(), buf.size()));
 
 				Ogre::HighLevelGpuProgramManager::getSingleton().parseScript(memStream, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 			}
@@ -164,19 +166,19 @@ void gkTextManager::parseScripts(void)
 			{
 				// Note: font must be an external file (.ttf anyway (texture fonts are not tested) )
 				Ogre::DataStreamPtr memStream(
-					OGRE_NEW Ogre::MemoryDataStream((void *)buf.c_str(), buf.size()));
+				    OGRE_NEW Ogre::MemoryDataStream((void*)buf.c_str(), buf.size()));
 
 				Ogre::FontManager::getSingleton().parseScript(memStream, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 			}
 		}
-		catch (Ogre::Exception &e)
+		catch (Ogre::Exception& e)
 		{
 			gkLogMessage("TextManager: " << e.getDescription());
 			continue;
 		}
-	
-			
-			
+
+
+
 		if (type == TT_BFONT)
 		{
 			utMemoryStream stream;
@@ -196,7 +198,8 @@ void gkTextManager::parseScripts(void)
 
 	// Overlays are a dependant script. (.material .font)
 
-	try {
+	try
+	{
 
 		TextArray overlays;
 		getTextFiles(overlays, TT_OVERLAY);
@@ -206,19 +209,19 @@ void gkTextManager::parseScripts(void)
 		TextArray::Iterator it = overlays.iterator();
 		while (it.hasMoreElements())
 		{
-			gkTextFile *tf = (gkTextFile*)it.getNext();
+			gkTextFile* tf = (gkTextFile*)it.getNext();
 
-			const gkString &buf = tf->getText();
+			const gkString& buf = tf->getText();
 			const int type = tf->getType();
 
 			Ogre::DataStreamPtr memStream(
-				OGRE_NEW Ogre::MemoryDataStream((void *)buf.c_str(), buf.size()));
+			    OGRE_NEW Ogre::MemoryDataStream((void*)buf.c_str(), buf.size()));
 
 
 			Ogre::OverlayManager::getSingleton().parseScript(memStream, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 		}
 	}
-	catch (Ogre::Exception &e)
+	catch (Ogre::Exception& e)
 	{
 		gkLogMessage("TextManager: " << e.getDescription());
 	}

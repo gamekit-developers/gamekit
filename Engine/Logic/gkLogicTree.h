@@ -36,58 +36,58 @@ class gkNodeManager;
 class gkLogicTree
 {
 public:
-    typedef utList<gkLogicNode*>        NodeList;
-    typedef utListIterator<NodeList>    NodeIterator;
+	typedef utList<gkLogicNode*>        NodeList;
+	typedef utListIterator<NodeList>    NodeIterator;
 
 
 public:
-    gkLogicTree(gkNodeManager* creator, UTsize id, const gkString &name);
-    gkLogicTree(gkNodeManager* creator, UTsize id);
-    ~gkLogicTree();
+	gkLogicTree(gkNodeManager* creator, UTsize id, const gkString& name);
+	gkLogicTree(gkNodeManager* creator, UTsize id);
+	~gkLogicTree();
 
-    // execute all nodes
-    void execute(gkScalar tick);
-
-
-    GK_INLINE const gkString& getName(void) const   {return m_name;}
-    GK_INLINE const UTsize getHandle(void)          {return m_handle;}
-    GK_INLINE gkNodeManager* getCreator(void)       {return m_creator;}
-    GK_INLINE gkGameObject* getAttachedObject(void) {return m_object;}
-    GK_INLINE bool hasNodes(void)                   {return !m_nodes.empty();}
-    GK_INLINE bool isGroup(void)                    {return !m_name.empty();}
-    GK_INLINE void markDirty(void)                  {m_initialized = false;}
-    GK_INLINE NodeIterator getNodeIterator(void)    {return NodeIterator(m_nodes);}
+	// execute all nodes
+	void execute(gkScalar tick);
 
 
-    void attachObject(gkGameObject *ob);
+	GK_INLINE const gkString& getName(void) const   {return m_name;}
+	GK_INLINE const UTsize getHandle(void)          {return m_handle;}
+	GK_INLINE gkNodeManager* getCreator(void)       {return m_creator;}
+	GK_INLINE gkGameObject* getAttachedObject(void) {return m_object;}
+	GK_INLINE bool hasNodes(void)                   {return !m_nodes.empty();}
+	GK_INLINE bool isGroup(void)                    {return !m_name.empty();}
+	GK_INLINE void markDirty(void)                  {m_initialized = false;}
+	GK_INLINE NodeIterator getNodeIterator(void)    {return NodeIterator(m_nodes);}
 
-    // node access
 
-    template<class T>       
-    T* createNode(void)
-    {
+	void attachObject(gkGameObject* ob);
+
+	// node access
+
+	template<class T>
+	T* createNode(void)
+	{
 		T* pNode = new T(this, m_uniqueHandle);
 		GK_ASSERT(pNode);
 
-		if(m_object) pNode->attachObject(m_object);
-        m_nodes.push_back(pNode);
+		if (m_object) pNode->attachObject(m_object);
+		m_nodes.push_back(pNode);
 		m_uniqueHandle ++;
 		return pNode;
-    }
+	}
 
-    gkLogicNode*            getNode(UTsize idx);
-    void                    destroyNodes(void);
-    void                    freeUnused(void);
-    void                    solveOrder(bool forceSolve=false);
+	gkLogicNode*            getNode(UTsize idx);
+	void                    destroyNodes(void);
+	void                    freeUnused(void);
+	void                    solveOrder(bool forceSolve = false);
 
 protected:
-    bool                m_initialized, m_sorted;
-    const UTsize        m_handle;
-    const gkString      m_name;
-    size_t              m_uniqueHandle;
-    gkNodeManager*      m_creator;
-    gkGameObject*       m_object;
-    NodeList            m_nodes;
+	bool                m_initialized, m_sorted;
+	const UTsize        m_handle;
+	const gkString      m_name;
+	size_t              m_uniqueHandle;
+	gkNodeManager*      m_creator;
+	gkGameObject*       m_object;
+	NodeList            m_nodes;
 };
 
 

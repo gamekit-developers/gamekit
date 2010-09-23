@@ -60,18 +60,18 @@ protected:
 	int m_firstTap, m_lastTap;
 
 
-	void cloneImpl(gkLogicLink *link, gkGameObject *dest);
+	void cloneImpl(gkLogicLink* link, gkGameObject* dest);
 
 
 public:
 
-	gkLogicSensor(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	gkLogicSensor(gkGameObject* object, gkLogicLink* link, const gkString& name);
 	virtual ~gkLogicSensor();
 
 	void connect(void);
 	void disconnect(void);
 
-	void link(gkLogicController *cont);
+	void link(gkLogicController* cont);
 
 	void execute(void);
 
@@ -83,18 +83,18 @@ public:
 	void reset(void);
 
 
-	///Tells the logic manager events have happened and a link should be opened or closed. 
+	///Tells the logic manager events have happened and a link should be opened or closed.
 	void dispatch(void);
 
 
 	bool isPositive(void);
 
-	GK_INLINE gkControllers &getControllers(void) {return m_controllers;}
+	GK_INLINE gkControllers& getControllers(void) {return m_controllers;}
 
 
-	GK_INLINE bool isNegativePulseMode(void) {return (m_pulse& PM_FALSE)!=0;}
-	GK_INLINE bool isPositivePulseMode(void) {return (m_pulse& PM_TRUE)!=0;}
-	GK_INLINE void setFrequency(int v)      {m_freq = (int)((((float)v)+.5)/2.0);}
+	GK_INLINE bool isNegativePulseMode(void) {return (m_pulse & PM_FALSE) != 0;}
+	GK_INLINE bool isPositivePulseMode(void) {return (m_pulse & PM_TRUE) != 0;}
+	GK_INLINE void setFrequency(int v)      {m_freq = (int)((((float)v) + .5) / 2.0);}
 	GK_INLINE int  getFrequency(void)       {return m_freq;}
 	GK_INLINE void setMode(int m)           {m_pulse = m;}
 	GK_INLINE int  getMode(void)            {return m_pulse;}

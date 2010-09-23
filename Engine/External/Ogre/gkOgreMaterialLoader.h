@@ -33,8 +33,8 @@ class gkMaterialLoader
 {
 public:
 
-	static class gkSkyBoxGradient* loadSceneMaterial(class gkScene *sc, const class gkSceneMaterial& material);
-	static void loadSubMeshMaterial(class gkSubMesh *mesh);
+	static class gkSkyBoxGradient* loadSceneMaterial(class gkScene* sc, const class gkSceneMaterial& material);
+	static void loadSubMeshMaterial(class gkSubMesh* mesh);
 
 };
 

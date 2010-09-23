@@ -34,8 +34,8 @@
 #include "Ogre.h"
 #include "btBulletDynamicsCommon.h"
 
-gkRayTestNode::gkRayTestNode(gkLogicTree *parent, size_t id) 
-: gkLogicNode(parent, id)
+gkRayTestNode::gkRayTestNode(gkLogicTree* parent, size_t id)
+	: gkLogicNode(parent, id)
 {
 	ADD_ISOCK(ENABLE, true);
 	ADD_ISOCK(TARGET, 0);
@@ -52,7 +52,7 @@ bool gkRayTestNode::evaluate(gkScalar tick)
 {
 	m_object = GET_SOCKET_VALUE(TARGET);
 
-	if(m_object && !m_object->isInstanced())
+	if (m_object && !m_object->isInstanced())
 	{
 		m_object = 0;
 	}
@@ -68,23 +68,23 @@ void gkRayTestNode::update(gkScalar tick)
 	SET_SOCKET_VALUE(HIT_NAME, "");
 	SET_SOCKET_VALUE(HIT_POSITION, gkVector3::ZERO);
 
-	if(GET_SOCKET_VALUE(ENABLE))
+	if (GET_SOCKET_VALUE(ENABLE))
 	{
 		gkVector3 origin = m_object->getPosition() + GET_SOCKET_VALUE(RAY_ORIGIN_OFFSET);
 
 		gkVector3 dir = m_object->getOrientation() * GET_SOCKET_VALUE(RAY_DIRECTION);
 
 		Ogre::Ray ray(origin, dir);
-		
+
 		gkRayTest rayTest;
-		
-		if(rayTest.collides(ray))
+
+		if (rayTest.collides(ray))
 		{
 			btCollisionObject* pCol = rayTest.getCollisionObject();
 
 			gkGameObject* pObj = gkPhysicsController::castObject(pCol);
 
-			if(pObj != m_object)
+			if (pObj != m_object)
 			{
 				SET_SOCKET_VALUE(HIT_POSITION, rayTest.getHitPoint());
 				SET_SOCKET_VALUE(HIT_OBJ, pObj);
@@ -98,8 +98,8 @@ void gkRayTestNode::update(gkScalar tick)
 
 ///////////////////////////////////////////////////
 
-gkScreenRayTestNode::gkScreenRayTestNode(gkLogicTree *parent, size_t id) 
-: gkLogicNode(parent, id)
+gkScreenRayTestNode::gkScreenRayTestNode(gkLogicTree* parent, size_t id)
+	: gkLogicNode(parent, id)
 {
 	ADD_ISOCK(ENABLE, true);
 	ADD_ISOCK(SCREEN_X, 0);
@@ -114,13 +114,13 @@ gkScreenRayTestNode::gkScreenRayTestNode(gkLogicTree *parent, size_t id)
 bool gkScreenRayTestNode::evaluate(gkScalar tick)
 {
 
-	if(GET_SOCKET_VALUE(ENABLE))
+	if (GET_SOCKET_VALUE(ENABLE))
 	{
 		gkCam2ViewportRay ray(GET_SOCKET_VALUE(SCREEN_X), GET_SOCKET_VALUE(SCREEN_Y));
-		
+
 		gkRayTest rayTest;
-		
-		if(rayTest.collides(ray))
+
+		if (rayTest.collides(ray))
 		{
 			btCollisionObject* pCol = rayTest.getCollisionObject();
 
@@ -132,13 +132,13 @@ bool gkScreenRayTestNode::evaluate(gkScalar tick)
 			SET_SOCKET_VALUE(HIT, true);
 			SET_SOCKET_VALUE(NOT_HIT, false);
 		}
-		else 
+		else
 		{
 			SET_SOCKET_VALUE(HIT, false);
 			SET_SOCKET_VALUE(NOT_HIT, true);
 			SET_SOCKET_VALUE(HIT_OBJ, 0);
 			SET_SOCKET_VALUE(HIT_NAME, "");
-			SET_SOCKET_VALUE(HIT_POSITION, gkVector3::ZERO);	
+			SET_SOCKET_VALUE(HIT_POSITION, gkVector3::ZERO);
 		}
 
 	}

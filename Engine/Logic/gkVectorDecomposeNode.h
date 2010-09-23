@@ -47,8 +47,8 @@ public:
 	DECLARE_SOCKET_TYPE(Y, gkScalar);
 	DECLARE_SOCKET_TYPE(Z, gkScalar);
 
-	gkVectorDecomposeNode(gkLogicTree *parent, size_t id) 
-		: gkLogicNode(parent, id) 
+	gkVectorDecomposeNode(gkLogicTree* parent, size_t id)
+		: gkLogicNode(parent, id)
 	{
 		ADD_ISOCK(VEC, gkVector3::ZERO);
 		ADD_OSOCK(X, 0);
@@ -61,7 +61,7 @@ public:
 	void update(gkScalar tick)
 	{
 		gkVector3 vec = GET_SOCKET_VALUE(VEC);
-		
+
 		SET_SOCKET_VALUE(X, vec.x);
 		SET_SOCKET_VALUE(Y, vec.y);
 		SET_SOCKET_VALUE(Z, vec.z);

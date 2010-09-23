@@ -36,7 +36,7 @@ class gkFSM
 {
 public:
 
-    gkFSM();
+	gkFSM();
 	~gkFSM();
 
 	void update();
@@ -48,7 +48,7 @@ public:
 		virtual ~IEvent() {}
 	};
 
-	template<typename OBJ, bool has_parameter = false, typename PARAM = int>
+	template < typename OBJ, bool has_parameter = false, typename PARAM = int >
 	class LogicEvent : public IEvent
 	{
 	public:
@@ -57,7 +57,7 @@ public:
 
 		LogicEvent(OBJ* obj, FUNCTION_0 func) : m_obj(obj), m_func0(func) { GK_ASSERT(m_obj && m_func0); }
 		LogicEvent(OBJ* obj, FUNCTION_1 func, PARAM param) : m_obj(obj), m_func1(func), m_param(param) { GK_ASSERT(m_obj && m_func1); }
-		~LogicEvent(){}
+		~LogicEvent() {}
 		bool evaluate() { return evaluate(Int2Type<has_parameter>()); }
 		bool evaluate(Int2Type<false>) { return (m_obj->*m_func0)(); }
 		bool evaluate(Int2Type<true>) { return (m_obj->*m_func1)(m_param); }
@@ -74,7 +74,7 @@ public:
 	{
 	public:
 		Event() : m_e(0) {};
-		~Event(){};
+		~Event() {};
 		void when(IEvent* e) { m_e = e;}
 
 	private:
@@ -90,7 +90,7 @@ public:
 		virtual ~ITrigger() {}
 	};
 
-	template<typename OBJ, bool has_parameter = false, typename PARAM = int>
+	template < typename OBJ, bool has_parameter = false, typename PARAM = int >
 	class LogicTrigger : public ITrigger
 	{
 	public:
@@ -99,7 +99,7 @@ public:
 
 		LogicTrigger(OBJ* obj, FUNCTION_0 func) : m_obj(obj), m_func0(func) { GK_ASSERT(m_obj && m_func0); }
 		LogicTrigger(OBJ* obj, FUNCTION_1 func, PARAM param) : m_obj(obj), m_func1(func), m_param(param) { GK_ASSERT(m_obj && m_func1); }
-		~LogicTrigger(){}
+		~LogicTrigger() {}
 		void execute(int fromState, int toState) { execute(Int2Type<has_parameter>(), fromState, toState); }
 		void execute(Int2Type<false>, int fromState, int toState) { (m_obj->*m_func0)(fromState, toState); }
 		void execute(Int2Type<true>, int fromState, int toState) { (m_obj->*m_func1)(m_param, fromState, toState); }
@@ -138,7 +138,7 @@ private:
 	int m_currentState;
 
 	typedef utPointerHashKey EVENT;
-	
+
 
 	struct Data
 	{
@@ -148,7 +148,7 @@ private:
 
 		Data() : m_ms(0), m_state(0), m_trigger(0) {}
 
-		Data(unsigned long ms, int state, ITrigger* trigger) 
+		Data(unsigned long ms, int state, ITrigger* trigger)
 			: m_ms(ms), m_state(state), m_trigger(trigger)
 		{
 		}

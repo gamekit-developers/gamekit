@@ -36,7 +36,7 @@
 
 
 gkBlendLoader::gkBlendLoader()
-	:	m_activeFile(0)
+	:    m_activeFile(0)
 {
 }
 
@@ -53,12 +53,12 @@ gkBlendLoader::~gkBlendLoader()
 
 
 
-gkBlendFile *gkBlendLoader::getFileByName(const gkString &fname)
+gkBlendFile* gkBlendLoader::getFileByName(const gkString& fname)
 {
 	FileList::Iterator it = m_files.iterator();
 	while (it.hasMoreElements())
 	{
-		gkBlendFile *fp = it.getNext();
+		gkBlendFile* fp = it.getNext();
 
 		if (fp->getFilePath() == fname)
 			return fp;
@@ -69,7 +69,7 @@ gkBlendFile *gkBlendLoader::getFileByName(const gkString &fname)
 
 
 
-gkBlendFile *gkBlendLoader::loadAndCatch(const gkString &fname, int options, const gkString &inResourceGroup, const gkString &scene)
+gkBlendFile* gkBlendLoader::loadAndCatch(const gkString& fname, int options, const gkString& inResourceGroup, const gkString& scene)
 {
 	m_activeFile = getFileByName(fname);
 	if (m_activeFile != 0)
@@ -94,20 +94,21 @@ gkBlendFile *gkBlendLoader::loadAndCatch(const gkString &fname, int options, con
 }
 
 
-gkBlendFile *gkBlendLoader::loadFile(const gkString &fname, const gkString &scene, const gkString &inResourceGroup)
+gkBlendFile* gkBlendLoader::loadFile(const gkString& fname, const gkString& scene, const gkString& inResourceGroup)
 {
 	return loadFile(fname, LO_ALL_SCENES, inResourceGroup, scene);
 }
 
 
-gkBlendFile *gkBlendLoader::loadFile(const gkString &fname, int options, const gkString &inResourceGroup, const gkString &scene)
+gkBlendFile* gkBlendLoader::loadFile(const gkString& fname, int options, const gkString& inResourceGroup, const gkString& scene)
 {
 	bool resetLoad = false;
-	try {
+	try
+	{
 
 		return loadAndCatch(fname, options, inResourceGroup);
 	}
-	catch (Ogre::Exception &e)
+	catch (Ogre::Exception& e)
 	{
 		gkLogMessage("BlendLoader: Ogre exception: " << e.getDescription());
 		resetLoad = true;

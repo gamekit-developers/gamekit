@@ -40,14 +40,14 @@ public:
 public:
 
 	gkPath();
-	gkPath(const gkString &file);
-	gkPath(const char *file);
+	gkPath(const gkString& file);
+	gkPath(const char* file);
 	~gkPath();
 
-	const gkString &getPath(void) const;
+	const gkString& getPath(void) const;
 	gkString        getAbsPath(void) const;
 
-	void            getAsString(gkString &dest) const;
+	void            getAsString(gkString& dest) const;
 	gkString        getAsString(void) const;
 	gkString        directory(void) const;
 	gkString        base(void) const;
@@ -60,7 +60,7 @@ public:
 	void    normalizePlatform(void) const;
 
 	int     getFileSize(void) const;
-	void    append(const gkString &v);
+	void    append(const gkString& v);
 
 	bool    isAbs(void) const;
 	bool    isRel(void) const;
@@ -68,7 +68,7 @@ public:
 	bool    exists(void) const;
 	bool    isFile(void) const;
 	bool    isDir(void) const;
-	void    split(gkStringVector &arr) const;
+	void    split(gkStringVector& arr) const;
 
 	gkString    getBundlePath(void) const;
 	bool        isFileInBundle(void) const;

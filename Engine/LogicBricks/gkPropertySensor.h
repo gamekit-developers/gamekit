@@ -46,7 +46,7 @@ public:
 protected:
 
 	gkVariable  m_old, m_test;
-	gkVariable  *m_cur;
+	gkVariable*  m_cur;
 	gkString    m_propVal;
 	gkString    m_propMax;
 	int         m_type;
@@ -55,10 +55,10 @@ protected:
 
 public:
 
-	gkPropertySensor(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	gkPropertySensor(gkGameObject* object, gkLogicLink* link, const gkString& name);
 	virtual ~gkPropertySensor() {}
 
-	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
+	gkLogicBrick* clone(gkLogicLink* link, gkGameObject* dest);
 
 	bool query(void);
 
@@ -66,11 +66,11 @@ public:
 	GK_INLINE void  setType(int type)               {m_type = type;}
 	GK_INLINE int   getType(void)                   {return m_type;}
 
-	GK_INLINE void  setProperty(const gkString &v)  {m_propName = v;}
+	GK_INLINE void  setProperty(const gkString& v)  {m_propName = v;}
 	GK_INLINE const gkString& getProperty(void)     {return m_propName;}
-	GK_INLINE void  setValue(const gkString &v)     {m_propVal = v;}
+	GK_INLINE void  setValue(const gkString& v)     {m_propVal = v;}
 	GK_INLINE gkString getValue(void)               {return m_propVal;}
-	GK_INLINE void  setMaxValue(const gkString &v)  {m_propMax = v;}
+	GK_INLINE void  setMaxValue(const gkString& v)  {m_propMax = v;}
 	GK_INLINE gkString getMaxValue(void)            {return m_propMax;}
 };
 

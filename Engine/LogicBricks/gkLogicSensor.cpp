@@ -39,7 +39,7 @@ enum TapMode
 };
 
 
-gkLogicSensor::gkLogicSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
+gkLogicSensor::gkLogicSensor(gkGameObject* object, gkLogicLink* link, const gkString& name)
 	:       gkLogicBrick(object, link, name),
 	        m_freq(0), m_tick(0), m_pulse(PM_IDLE),
 	        m_invert(false), m_positive(false), m_suspend(false), m_tap(false), m_firstExec(true),
@@ -58,7 +58,7 @@ gkLogicSensor::~gkLogicSensor()
 
 
 
-void gkLogicSensor::cloneImpl(gkLogicLink *link, gkGameObject *dest)
+void gkLogicSensor::cloneImpl(gkLogicLink* link, gkGameObject* dest)
 {
 	gkLogicBrick::cloneImpl(link, dest);
 	m_controllers.clear();
@@ -90,7 +90,7 @@ void gkLogicSensor::disconnect(void)
 }
 
 
-void gkLogicSensor::link(gkLogicController *cont)
+void gkLogicSensor::link(gkLogicController* cont)
 {
 	UT_ASSERT(cont && m_controllers.find(cont) == UT_NPOS);
 
@@ -99,7 +99,7 @@ void gkLogicSensor::link(gkLogicController *cont)
 }
 
 
-bool gkLogicController_cSort(gkLogicController *const &a, gkLogicController *const &b)
+bool gkLogicController_cSort(gkLogicController* const& a, gkLogicController* const& b)
 {
 	return a->getPriority() < b->getPriority();
 }
@@ -122,7 +122,7 @@ bool gkLogicSensor::isPositive(void)
 
 	if (m_invert)
 	{
-		if (!(m_tap && !(m_pulse &PM_TRUE)))
+		if (!(m_tap && !(m_pulse & PM_TRUE)))
 			result = !result;
 	}
 
@@ -247,12 +247,12 @@ void gkLogicSensor::dispatch(void)
 	{
 		bool value = isPositive();
 
-		gkLogicManager &mgr = gkLogicManager::getSingleton();
+		gkLogicManager& mgr = gkLogicManager::getSingleton();
 
 		gkControllerIterator it(m_controllers);
 		while (it.hasMoreElements())
 		{
-			gkLogicController *cont = it.getNext();
+			gkLogicController* cont = it.getNext();
 			// fire pulse
 			mgr.push(this, cont, value);
 		}

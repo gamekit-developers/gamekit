@@ -65,15 +65,15 @@ public:
 	DECLARE_SOCKET_TYPE(GEAR, int);
 	DECLARE_SOCKET_TYPE(RPM, int);
 
-	vdVehicleNode(gkLogicTree *parent, size_t id);
+	vdVehicleNode(gkLogicTree* parent, size_t id);
 	virtual ~vdVehicleNode() {}
 
 	bool evaluate(gkScalar tick);
 
-	void setVehicle(vdVehicle *v)   {m_vehicle = v;}
+	void setVehicle(vdVehicle* v)   {m_vehicle = v;}
 
 private:
-	vdVehicle *m_vehicle;
+	vdVehicle* m_vehicle;
 	gkScalar   m_steer;
 };
 

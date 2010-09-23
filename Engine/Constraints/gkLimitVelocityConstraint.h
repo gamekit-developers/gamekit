@@ -38,10 +38,10 @@ public:
 	virtual ~gkLimitVelocityConstraint() {}
 
 	bool update(gkScalar delta);
-	gkConstraint *clone(gkGameObject *clob);
+	gkConstraint* clone(gkGameObject* clob);
 
 
-	GK_INLINE void setLimit(const gkVector2 &v) {m_lim = v;}
+	GK_INLINE void setLimit(const gkVector2& v) {m_lim = v;}
 
 private:
 	gkVector2 m_lim;

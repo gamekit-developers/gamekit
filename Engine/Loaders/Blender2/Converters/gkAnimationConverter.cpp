@@ -36,9 +36,9 @@
 #include "gkBezierSpline.h"
 
 
-void ConvertSpline(Blender::BezTriple *bez, gkActionChannel *chan, int access, int mode, int totvert, gkVector2 &range)
+void ConvertSpline(Blender::BezTriple* bez, gkActionChannel* chan, int access, int mode, int totvert, gkVector2& range)
 {
-	gkBezierSpline *spline = new gkBezierSpline(access);
+	gkBezierSpline* spline = new gkBezierSpline(access);
 
 	switch (mode)
 	{
@@ -56,7 +56,7 @@ void ConvertSpline(Blender::BezTriple *bez, gkActionChannel *chan, int access, i
 	}
 
 
-	Blender::BezTriple *bezt = bez;
+	Blender::BezTriple* bezt = bez;
 	for (int c = 0; c < totvert; c++, bezt++)
 	{
 		gkBezierVertex v;
@@ -83,26 +83,26 @@ void ConvertSpline(Blender::BezTriple *bez, gkActionChannel *chan, int access, i
 }
 
 
-void gkAnimationLoader::convertGameObject(bParse::bListBasePtr *actions, class gkGameObject *obj, bool pre25compat)
+void gkAnimationLoader::convertGameObject(bParse::bListBasePtr* actions, class gkGameObject* obj, bool pre25compat)
 {
 }
 
 
 
-void gkAnimationLoader::convertSkeleton(bParse::bListBasePtr *actions, gkSkeletonResource *skel, bool pre25compat)
+void gkAnimationLoader::convertSkeleton(bParse::bListBasePtr* actions, gkSkeletonResource* skel, bool pre25compat)
 {
 	for (int i = 0; i < actions->size(); ++i)
 	{
-		Blender::bAction *bact = (Blender::bAction *)actions->at(i);
+		Blender::bAction* bact = (Blender::bAction*)actions->at(i);
 
 		// find ownership
-		Blender::bActionChannel *bac = (Blender::bActionChannel *)bact->chanbase.first;
+		Blender::bActionChannel* bac = (Blender::bActionChannel*)bact->chanbase.first;
 
 
 		if (skel->hasAction(GKB_IDNAME(bact)))
 			continue;
 
-		gkAction *act = skel->createAction(GKB_IDNAME(bact));
+		gkAction* act = skel->createAction(GKB_IDNAME(bact));
 
 		// min/max
 		gkVector2 range(FLT_MAX, -FLT_MAX);
@@ -114,14 +114,14 @@ void gkAnimationLoader::convertSkeleton(bParse::bListBasePtr *actions, gkSkeleto
 			{
 				if (skel->hasBone(bac->name))
 				{
-					gkBone *bone = skel->getBone(bac->name);
+					gkBone* bone = skel->getBone(bac->name);
 
-					gkActionChannel *achan = new gkActionChannel(act, bone);
+					gkActionChannel* achan = new gkActionChannel(act, bone);
 					act->addChannel(achan);
 
 					if (bac->ipo)
 					{
-						Blender::IpoCurve *icu = (Blender::IpoCurve *)bac->ipo->curve.first;
+						Blender::IpoCurve* icu = (Blender::IpoCurve*)bac->ipo->curve.first;
 						while (icu)
 						{
 							if (icu->bezt)
@@ -156,7 +156,7 @@ void gkAnimationLoader::convertSkeleton(bParse::bListBasePtr *actions, gkSkeleto
 		{
 			// 250 + files
 
-			Blender::FCurve *bfc = (Blender::FCurve *)bact->curves.first;
+			Blender::FCurve* bfc = (Blender::FCurve*)bact->curves.first;
 
 			while (bfc)
 			{
@@ -164,21 +164,21 @@ void gkAnimationLoader::convertSkeleton(bParse::bListBasePtr *actions, gkSkeleto
 				utString bone_name;
 				utString transform_name;
 
-				if (rnap.substr(0,10)=="pose.bones")
+				if (rnap.substr(0, 10) == "pose.bones")
 				{
 					// TODO use regex?
 					size_t i = rnap.rfind('\"');
-					bone_name = rnap.substr(12, i-12);
-					transform_name = rnap.substr(i+3, rnap.length()-i+3);
+					bone_name = rnap.substr(12, i - 12);
+					transform_name = rnap.substr(i + 3, rnap.length() - i + 3);
 				}
 
 				if (skel->hasBone(bone_name))
 				{
-					gkBone *bone = skel->getBone(bone_name);
+					gkBone* bone = skel->getBone(bone_name);
 
 					// add one chanel per bone only
-					gkActionChannel *achan = act->getChannel(bone);
-					if(!achan)
+					gkActionChannel* achan = act->getChannel(bone);
+					if (!achan)
 					{
 						achan = new gkActionChannel(act, bone);
 						act->addChannel(achan);
@@ -187,22 +187,22 @@ void gkAnimationLoader::convertSkeleton(bParse::bListBasePtr *actions, gkSkeleto
 					if (bfc->bezt)
 					{
 						int code = -1;
-						if (transform_name=="rotation_quaternion")
+						if (transform_name == "rotation_quaternion")
 						{
-							if (bfc->array_index == 0) code =SC_ROT_W;
+							if (bfc->array_index == 0) code = SC_ROT_W;
 							else if (bfc->array_index == 1) code = SC_ROT_X;
 							else if (bfc->array_index == 2) code = SC_ROT_Y;
 							else if (bfc->array_index == 3) code = SC_ROT_Z;
 						}
-						else if (transform_name=="location")
+						else if (transform_name == "location")
 						{
-							if (bfc->array_index == 0) code =SC_LOC_X;
+							if (bfc->array_index == 0) code = SC_LOC_X;
 							else if (bfc->array_index == 1) code = SC_LOC_Y;
 							else if (bfc->array_index == 2) code = SC_LOC_Z;
 						}
-						else if (transform_name=="scale")
+						else if (transform_name == "scale")
 						{
-							if (bfc->array_index == 0) code =SC_SCL_X;
+							if (bfc->array_index == 0) code = SC_SCL_X;
 							else if (bfc->array_index == 1) code = SC_SCL_Y;
 							else if (bfc->array_index == 2) code = SC_SCL_Z;
 						}

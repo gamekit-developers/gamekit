@@ -38,8 +38,8 @@ public:
 	~gkAnimationLoader() {}
 
 
-	void convertGameObject(bParse::bListBasePtr *actions, class gkGameObject *obj, bool pre25compat);
-	void convertSkeleton(bParse::bListBasePtr *actions, class gkSkeletonResource *skel, bool pre25compat);
+	void convertGameObject(bParse::bListBasePtr* actions, class gkGameObject* obj, bool pre25compat);
+	void convertSkeleton(bParse::bListBasePtr* actions, class gkSkeletonResource* skel, bool pre25compat);
 
 
 };

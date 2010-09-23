@@ -34,20 +34,20 @@
 
 using namespace OpenSteer;
 
-gkNavPath::gkNavPath() 
+gkNavPath::gkNavPath()
 {
 	m_scene = gkEngine::getSingleton().getActiveScene();
-		
+
 	GK_ASSERT(m_scene);
 }
 
-gkNavPath::~gkNavPath() 
+gkNavPath::~gkNavPath()
 {
 }
 
 bool gkNavPath::create(PDT_NAV_MESH navMesh, const gkVector3& from, const gkVector3& to, const gkVector3& polyPickExt, int maxPathPolys, gkScalar pathRadius)
 {
-	if(gkRecast::findPath(navMesh, from, to, polyPickExt, maxPathPolys, m_path))
+	if (gkRecast::findPath(navMesh, from, to, polyPickExt, maxPathPolys, m_path))
 	{
 		m_pathRadius = PATH_RADIUS(m_path.size(), pathRadius);
 
@@ -65,24 +65,24 @@ void gkNavPath::showPath()
 {
 	gkPhysicsDebug* debug = m_scene->getDynamicsWorld()->getDebug();
 
-	if(debug)
+	if (debug)
 	{
 		unsigned int n = m_path.size();
 
-		if(n)
+		if (n)
 		{
-			static const btVector3 RED_COLOR(1,0,0);
+			static const btVector3 RED_COLOR(1, 0, 0);
 
 			gkVector3 oldPoint = m_path.at(0);
 
-			for(unsigned int i=1; i<n; i++)
+			for (unsigned int i = 1; i < n; i++)
 			{
 				gkVector3 point = m_path.at(i);
 
 				debug->drawLine(
-					btVector3(oldPoint.x, oldPoint.y, oldPoint.z), 
-					btVector3(point.x, point.y, point.z), 
-					RED_COLOR
+				    btVector3(oldPoint.x, oldPoint.y, oldPoint.z),
+				    btVector3(point.x, point.y, point.z),
+				    RED_COLOR
 				);
 
 				oldPoint = point;

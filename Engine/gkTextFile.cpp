@@ -27,8 +27,8 @@
 #include "gkTextFile.h"
 
 
-gkTextFile::gkTextFile(gkResourceManager* creator, const gkResourceName &name, const gkResourceHandle& handle, const int &type)
-	:	gkResource(creator, name, handle), m_buffer(""), m_type(type)
+gkTextFile::gkTextFile(gkResourceManager* creator, const gkResourceName& name, const gkResourceHandle& handle, const int& type)
+	:    gkResource(creator, name, handle), m_buffer(""), m_type(type)
 {
 }
 

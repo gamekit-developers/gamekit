@@ -39,15 +39,15 @@ protected:
 
 
 public:
-	gkTextFile(gkResourceManager* creator, const gkResourceName &name, const gkResourceHandle& handle, const int &type);
+	gkTextFile(gkResourceManager* creator, const gkResourceName& name, const gkResourceHandle& handle, const int& type);
 	~gkTextFile();
 
-	void setText(const gkString &text) {m_buffer = text;}
+	void setText(const gkString& text) {m_buffer = text;}
 
 
-	GK_INLINE gkString  &getText(void)   {return m_buffer;}
+	GK_INLINE gkString&  getText(void)   {return m_buffer;}
 	GK_INLINE UTsize    getSize(void)    {return (UTsize)m_buffer.size();}
-	GK_INLINE const int &getType(void)   {return m_type;}
+	GK_INLINE const int& getType(void)   {return m_type;}
 
 
 };

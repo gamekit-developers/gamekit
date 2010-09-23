@@ -34,12 +34,12 @@
 class gkBuffer
 {
 private:
-	// Force internal usage. 
+	// Force internal usage.
 	friend class gkSource;
 	friend class gkStreamer;
 
 
-	gkBuffer(gkSource *obj);
+	gkBuffer(gkSource* obj);
 	~gkBuffer();
 
 
@@ -50,30 +50,30 @@ private:
 	bool isDone(void)       {return m_exit;}
 	bool isValid(void)      {return m_ok;}
 	bool isLooped(void)     {return m_loop;}
-	bool isInitialized(void){return m_isInit;}
+	bool isInitialized(void) {return m_isInit;}
 
-	void setPosition(const gkVector3 &v);
-	void setDirection(const gkVector3 &v);
-	void setVelocity(const gkVector3 &v);
+	void setPosition(const gkVector3& v);
+	void setDirection(const gkVector3& v);
+	void setVelocity(const gkVector3& v);
 
-	void setProperties(const gkSoundProperties &props);
+	void setProperties(const gkSoundProperties& props);
 
 
 	bool stream(void);
 	void finalize(void);
 	void reset(void);
 
-	void queue(bool play=false);
+	void queue(bool play = false);
 	bool initialize(void);
 
 	void doSuspend(void);
 	void do3D(void);
 	void doProperties(void);
 
-	const char *read(UTsize len, UTsize &br);
+	const char* read(UTsize len, UTsize& br);
 
-	gkSource            *m_sound;
-	gkSoundStream       *m_stream;
+	gkSource*            m_sound;
+	gkSoundStream*       m_stream;
 	ALuint              m_buffer[GK_SND_SAMPLES];
 	ALuint              m_source;
 	bool                m_loop, m_ok, m_exit, m_initial, m_isInit;

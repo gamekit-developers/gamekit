@@ -42,7 +42,7 @@ public:
 
 	typedef int STATE;
 
-	enum 
+	enum
 	{
 		//Inputs
 		ANIM_BLEND_FRAMES = MAX_SOCKETS,
@@ -82,13 +82,13 @@ public:
 	DECLARE_SOCKET_TYPE(NOT_FALLING, bool);
 	DECLARE_SOCKET_TYPE(OUTPUT_AI_STATE, STATE);
 
-    gkCharacterNode(gkLogicTree *parent, size_t id);
+	gkCharacterNode(gkLogicTree* parent, size_t id);
 	~gkCharacterNode();
 
 	void initialize();
 	bool evaluate(gkScalar tick);
 	void update(gkScalar tick);
-	
+
 	struct StateData
 	{
 		STATE m_state;
@@ -114,13 +114,13 @@ public:
 	STATE getState(int previousIdx = 0) const;
 
 	GK_INLINE bool isFalling() const { return m_falling; }
-	
+
 private:
 	void update_state(gkScalar tick);
 	void update_animation(STATE previousTickState);
 	void notifyState(int state);
 	StateData* getStateData(int state);
-	
+
 private:
 
 	MAP m_map;

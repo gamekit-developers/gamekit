@@ -34,11 +34,11 @@ class gkUtils
 public:
 	static bool IS_LUA_PACKAGE;
 
-	static bool isResource(const gkString &name, const gkString &group = Ogre::StringUtil::BLANK);
+	static bool isResource(const gkString& name, const gkString& group = Ogre::StringUtil::BLANK);
 
-	static gkString getFile(const gkString &in);
+	static gkString getFile(const gkString& in);
 
-	static gkString getUniqueName(const gkString &in);
+	static gkString getUniqueName(const gkString& in);
 };
 
 

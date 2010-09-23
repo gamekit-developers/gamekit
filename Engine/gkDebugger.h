@@ -51,15 +51,15 @@ public:
 
 
 public:
-	gkDebugger(gkScene *parent);
+	gkDebugger(gkScene* parent);
 	virtual ~gkDebugger();
 
-	void drawLine(const gkVector3 &from, const gkVector3 &to, const gkVector3 &color);
+	void drawLine(const gkVector3& from, const gkVector3& to, const gkVector3& color);
 
 	void clear(void);
 
 #ifdef OGREKIT_OPENAL_SOUND
-	void draw3dSound(const gkSoundProperties &props);
+	void draw3dSound(const gkSoundProperties& props);
 #endif
 
 	void flush(void);
@@ -67,15 +67,15 @@ public:
 protected:
 
 
-	Ogre::Real getSquaredViewDepth(const Ogre::Camera *cam) const;
+	Ogre::Real getSquaredViewDepth(const Ogre::Camera* cam) const;
 	Ogre::Real getBoundingRadius(void) const;
 
 
 	void verifyNode(void);
 	void growBuffer(UTsize newSize);
 
-	Ogre::SceneNode    *m_node;
-	gkScene            *m_parent;
+	Ogre::SceneNode*    m_node;
+	gkScene*            m_parent;
 	Ogre::Real          m_radius;
 	Buffer              m_lineBuf;
 	Ogre::Vector3       m_bbmin, m_bbmax;

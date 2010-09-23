@@ -29,8 +29,8 @@
 
 #include "gkLogicNode.h"
 
-// print incomming socket information to 
-// a specific stream, right now it's stdio 
+// print incomming socket information to
+// a specific stream, right now it's stdio
 class gkPrintNode : public gkLogicNode
 {
 public:
@@ -44,11 +44,11 @@ public:
 	DECLARE_SOCKET_TYPE(PRINT, bool);
 	DECLARE_SOCKET_TYPE(VALUE, gkString);
 
-    gkPrintNode(gkLogicTree *parent, size_t id);
-    virtual ~gkPrintNode() {}
+	gkPrintNode(gkLogicTree* parent, size_t id);
+	virtual ~gkPrintNode() {}
 
-    void update(gkScalar tick);
-    bool evaluate(gkScalar tick);
+	void update(gkScalar tick);
+	bool evaluate(gkScalar tick);
 };
 
 

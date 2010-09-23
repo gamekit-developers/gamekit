@@ -50,9 +50,9 @@ public:
 	DECLARE_SOCKET_TYPE(INPUT, K);
 	DECLARE_SOCKET_TYPE(OUTPUT, V);
 	DECLARE_SOCKET_TYPE(HAS_OUTPUT, bool);
-	
 
-    gkMapNode(gkLogicTree *parent, size_t id)
+
+	gkMapNode(gkLogicTree* parent, size_t id)
 		: gkLogicNode(parent, id)
 	{
 		ADD_ISOCK(UPDATE, true);
@@ -73,20 +73,20 @@ public:
 	{
 		K key = GET_SOCKET_VALUE(INPUT);
 
-		if(m_currentKey != key)
+		if (m_currentKey != key)
 		{
 			MAP& mapping = GET_SOCKET_REF_VALUE(MAPPING);
 
 			typename MAP::const_iterator it = mapping.find(key);
 
-			if(it == mapping.end())
+			if (it == mapping.end())
 			{
 				SET_SOCKET_VALUE(HAS_OUTPUT, false);
 			}
 			else
 			{
 				SET_SOCKET_VALUE(OUTPUT, it->second);
-				
+
 				SET_SOCKET_VALUE(HAS_OUTPUT, true);
 			}
 

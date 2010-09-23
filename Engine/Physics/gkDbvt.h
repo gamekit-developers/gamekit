@@ -39,10 +39,10 @@ public:
 	gkDbvt();
 	~gkDbvt();
 
-	gkVariable *getInfo(void) {return &m_debug;}
-	void mark(gkCamera *cam, struct btDbvtBroadphase *cullTree, gkPhysicsControllers &controllers);
+	gkVariable* getInfo(void) {return &m_debug;}
+	void mark(gkCamera* cam, struct btDbvtBroadphase* cullTree, gkPhysicsControllers& controllers);
 
-	void Process(const btDbvtNode *nd);
+	void Process(const btDbvtNode* nd);
 
 private:
 	void updateDebug(void);

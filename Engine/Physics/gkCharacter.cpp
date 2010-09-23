@@ -37,7 +37,7 @@
 
 
 
-gkCharacter::gkCharacter(gkGameObject *object, gkDynamicsWorld *owner)
+gkCharacter::gkCharacter(gkGameObject* object, gkDynamicsWorld* owner)
 	: gkPhysicsController(object, owner), m_character(0)
 {
 }
@@ -68,18 +68,18 @@ void gkCharacter::create(void)
 
 	GK_ASSERT(m_object && m_object->isInstanced() && m_object->isInActiveLayer());
 
-	// use the most up to date transform. 
+	// use the most up to date transform.
 	const gkTransformState& trans = m_object->getTransformState();
 
 
 	createShape();
 
 
-	if (!m_shape) 
+	if (!m_shape)
 		return;
 
 
-	btPairCachingGhostObject *ghost = new btPairCachingGhostObject();
+	btPairCachingGhostObject* ghost = new btPairCachingGhostObject();
 	ghost->setCollisionShape(m_shape);
 
 	m_collisionObject = ghost;
@@ -93,16 +93,16 @@ void gkCharacter::create(void)
 	// intertwine
 	ghost->setUserPointer(this);
 
-	btDynamicsWorld *dyn = getOwner();
+	btDynamicsWorld* dyn = getOwner();
 
 	ghost->setCollisionFlags(btCollisionObject::CF_CHARACTER_OBJECT);
 
-	btCollisionShape *pShape = ghost->getCollisionShape();
+	btCollisionShape* pShape = ghost->getCollisionShape();
 
-	gkScalar stepHeight = getAabb().getSize().z/1.5f;
+	gkScalar stepHeight = getAabb().getSize().z / 1.5f;
 
 	m_character = new btKinematicCharacterController(
-	    ghost, static_cast<btConvexShape *>(ghost->getCollisionShape()), stepHeight);
+	    ghost, static_cast<btConvexShape*>(ghost->getCollisionShape()), stepHeight);
 
 	m_character->setUpAxis(2);
 
@@ -113,7 +113,7 @@ void gkCharacter::create(void)
 
 
 
-btPairCachingGhostObject *gkCharacter::getGhostObject() const
+btPairCachingGhostObject* gkCharacter::getGhostObject() const
 {
 	GK_ASSERT(m_collisionObject);
 	return static_cast<btPairCachingGhostObject*>(m_collisionObject);
@@ -151,7 +151,7 @@ void gkCharacter::destroy(void)
 
 
 
-void gkCharacter::setVelocity(const gkVector3 &v, gkScalar timeInterval)
+void gkCharacter::setVelocity(const gkVector3& v, gkScalar timeInterval)
 {
 	if (!m_character || !m_collisionObject)
 		return;
@@ -164,7 +164,7 @@ void gkCharacter::setVelocity(const gkVector3 &v, gkScalar timeInterval)
 
 
 
-void gkCharacter::setWorldTransform(const btTransform &worldTrans)
+void gkCharacter::setWorldTransform(const btTransform& worldTrans)
 {
 	if (!m_character || !m_collisionObject)
 		return;
@@ -176,7 +176,7 @@ void gkCharacter::setWorldTransform(const btTransform &worldTrans)
 
 
 
-void gkCharacter::updateAction( btCollisionWorld *collisionWorld, btScalar deltaTime)
+void gkCharacter::updateAction( btCollisionWorld* collisionWorld, btScalar deltaTime)
 {
 	if (!m_character || !m_collisionObject)
 		return;

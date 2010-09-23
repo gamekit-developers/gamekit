@@ -38,47 +38,47 @@
 
 
 gkUserDefs::gkUserDefs()
-	:   
+	:
 #ifdef OGREKIT_BUILD_IPHONE
-		rendersystem(OGRE_RS_GLES),
-		viewportOrientation("landscaperight"),
+	rendersystem(OGRE_RS_GLES),
+	viewportOrientation("landscaperight"),
 #else
-		rendersystem(OGRE_RS_GL),
-		viewportOrientation(""),
+	rendersystem(OGRE_RS_GL),
+	viewportOrientation(""),
 #endif
-	    log("OgreKit.log"),
-	    verbose(true),
-	    winsize(800, 600),
-	    wintitle("Ogre GameKit Demo"),
-		extWinhandle(""),
-	    fullscreen(false),
-	    framingType(gkWindowSystem::FRAMING_EXTEND),
-	    resources(""),
-	    animspeed(25),
-	    startframe(1),
-	    blendermat(true),
-	    grabInput(true),
-	    debugFps(false),
-	    debugPhysics(false),
-	    debugPhysicsAabb(false),
-	    enableshadows(true),
-	    buildStaticGeometry(false),
-	    useBulletDbvt(true),
-	    showDebugProps(false),
-	    debugSounds(false),
-		fsaa(false),
-		fsaaSamples(4),
-		disableSound(false),
-	    shadowtechnique("stencilmodulative"),
-	    colourshadow(0.8f, 0.8f, 0.8f),
-	    fardistanceshadow(0),
-		defaultMipMap(5)
+	log("OgreKit.log"),
+	verbose(true),
+	winsize(800, 600),
+	wintitle("Ogre GameKit Demo"),
+	extWinhandle(""),
+	fullscreen(false),
+	framingType(gkWindowSystem::FRAMING_EXTEND),
+	resources(""),
+	animspeed(25),
+	startframe(1),
+	blendermat(true),
+	grabInput(true),
+	debugFps(false),
+	debugPhysics(false),
+	debugPhysicsAabb(false),
+	enableshadows(true),
+	buildStaticGeometry(false),
+	useBulletDbvt(true),
+	showDebugProps(false),
+	debugSounds(false),
+	fsaa(false),
+	fsaaSamples(4),
+	disableSound(false),
+	shadowtechnique("stencilmodulative"),
+	colourshadow(0.8f, 0.8f, 0.8f),
+	fardistanceshadow(0),
+	defaultMipMap(5)
 {
 }
 
 
 
-void gkUserDefs::load(const gkString &fname)
+void gkUserDefs::load(const gkString& fname)
 {
 	gkString startup;
 
@@ -100,7 +100,7 @@ void gkUserDefs::load(const gkString &fname)
 		Ogre::ConfigFile::SectionIterator cit = fp.getSectionIterator();
 		while (cit.hasMoreElements())
 		{
-			Ogre::ConfigFile::SettingsMultiMap *ptr = cit.getNext();
+			Ogre::ConfigFile::SettingsMultiMap* ptr = cit.getNext();
 			for (Ogre::ConfigFile::SettingsMultiMap::iterator dit = ptr->begin(); dit != ptr->end(); ++dit)
 			{
 				gkString key = dit->first;
@@ -112,7 +112,7 @@ void gkUserDefs::load(const gkString &fname)
 			}
 		}
 	}
-	catch (Ogre::Exception &e)
+	catch (Ogre::Exception& e)
 	{
 		gkLogMessage("Failed to initialize resource file!\n" << e.getDescription());
 	}
@@ -120,7 +120,7 @@ void gkUserDefs::load(const gkString &fname)
 
 
 
-void gkUserDefs::parseString(const gkString &key, const gkString &val)
+void gkUserDefs::parseString(const gkString& key, const gkString& val)
 {
 #define KeyEq(b) (key == b)
 

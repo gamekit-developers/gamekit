@@ -30,11 +30,11 @@
 #include "gkLogger.h"
 
 
-gkButtonNode::gkButtonNode(gkLogicTree *parent, size_t id) 
-: gkLogicNode(parent, id), 
-m_pressed(false), 
-m_delay(0), 
-m_counter(0)
+gkButtonNode::gkButtonNode(gkLogicTree* parent, size_t id)
+	: gkLogicNode(parent, id),
+	  m_pressed(false),
+	  m_delay(0),
+	  m_counter(0)
 {
 	ADD_ISOCK(UPDATED, true);
 	ADD_OSOCK(IS_DOWN, false);
@@ -47,7 +47,7 @@ bool gkButtonNode::evaluate(gkScalar tick)
 {
 	bool ok = GET_SOCKET_VALUE(UPDATED);
 
-	if(ok && ++m_counter > m_delay)
+	if (ok && ++m_counter > m_delay)
 	{
 		m_counter = 0;
 	}
@@ -92,4 +92,3 @@ bool gkMouseButtonNode::isButtonDown() const
 {
 	return gkWindowSystem::getSingleton().getMouse()->isButtonDown(m_button);
 }
-

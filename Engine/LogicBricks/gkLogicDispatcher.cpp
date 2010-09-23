@@ -32,7 +32,7 @@
 
 
 
-void gkAbstractDispatcher::doDispatch(SensorList &sens)
+void gkAbstractDispatcher::doDispatch(SensorList& sens)
 {
 	if (!sens.empty())
 	{
@@ -40,8 +40,8 @@ void gkAbstractDispatcher::doDispatch(SensorList &sens)
 
 		while (it.hasMoreElements())
 		{
-			gkLogicSensor   *sens = it.getNext();
-			gkGameObject    *obj = sens->getObject();
+			gkLogicSensor*   sens = it.getNext();
+			gkGameObject*    obj = sens->getObject();
 
 			if (obj && obj->isInstanced())
 				sens->execute();

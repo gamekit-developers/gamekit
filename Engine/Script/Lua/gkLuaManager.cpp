@@ -32,7 +32,7 @@
 #include "gkTextFile.h"
 
 
-extern "C" int _OgreKitLua_install(lua_State *L);
+extern "C" int _OgreKitLua_install(lua_State* L);
 
 
 
@@ -62,7 +62,7 @@ void gkLuaManager::decompile(void)
 
 
 
-gkLuaScript *gkLuaManager::getScript(const gkString &name)
+gkLuaScript* gkLuaManager::getScript(const gkString& name)
 {
 	UTsize pos;
 	if ((pos = m_scripts.find(name)) == GK_NPOS)
@@ -72,25 +72,25 @@ gkLuaScript *gkLuaManager::getScript(const gkString &name)
 
 
 
-gkLuaScript *gkLuaManager::create(const gkString &name, const gkString &text)
+gkLuaScript* gkLuaManager::create(const gkString& name, const gkString& text)
 {
 	UTsize pos;
 	if ((pos = m_scripts.find(name)) != GK_NPOS)
 		return 0;
 
-	gkLuaScript *ob = new gkLuaScript(this, name, text);
+	gkLuaScript* ob = new gkLuaScript(this, name, text);
 	m_scripts.insert(name, ob);
 	return ob;
 }
 
 
-gkLuaScript *gkLuaManager::create(const gkString &name)
+gkLuaScript* gkLuaManager::create(const gkString& name)
 {
 	UTsize pos;
 	if ((pos = m_scripts.find(name)) != GK_NPOS)
 		return 0;
 
-	gkTextFile *intern = (gkTextFile*)gkTextManager::getSingleton().getByName(name);
+	gkTextFile* intern = (gkTextFile*)gkTextManager::getSingleton().getByName(name);
 
 	if (intern == 0)
 	{
@@ -98,25 +98,25 @@ gkLuaScript *gkLuaManager::create(const gkString &name)
 		return 0;
 	}
 
-	gkLuaScript *ob = new gkLuaScript(this, name, intern->getText());
+	gkLuaScript* ob = new gkLuaScript(this, name, intern->getText());
 	m_scripts.insert(name, ob);
 	return ob;
 }
 
 
-void gkLuaManager::destroy(const gkString &name)
+void gkLuaManager::destroy(const gkString& name)
 {
 	UTsize pos;
 	if ((pos = m_scripts.find(name)) != GK_NPOS)
 	{
-		gkLuaScript *ob = m_scripts.at(pos);
+		gkLuaScript* ob = m_scripts.at(pos);
 		m_scripts.remove(name);
 		delete ob;
 	}
 }
 
 
-void gkLuaManager::destroy(gkLuaScript *ob)
+void gkLuaManager::destroy(gkLuaScript* ob)
 {
 	GK_ASSERT(ob);
 	destroy(ob->getName());
@@ -128,7 +128,7 @@ void gkLuaManager::destroyAll(void)
 	utHashTableIterator<ScriptMap> iter(m_scripts);
 	while (iter.hasMoreElements())
 	{
-		gkLuaScript *ob = iter.peekNextValue();
+		gkLuaScript* ob = iter.peekNextValue();
 		delete ob;
 		iter.next();
 	}
@@ -137,7 +137,7 @@ void gkLuaManager::destroyAll(void)
 
 
 
-bool gkLuaManager::hasScript(const gkString &name)
+bool gkLuaManager::hasScript(const gkString& name)
 {
 	return m_scripts.find(name) != GK_NPOS;
 }

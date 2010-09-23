@@ -42,11 +42,11 @@ class gkLuaManager : public Ogre::Singleton<gkLuaManager>
 public:
 
 
-	typedef utHashTable<gkHashedString, gkLuaScript *> ScriptMap;
-	typedef utList<gkLuaScript *> ScriptList;
+	typedef utHashTable<gkHashedString, gkLuaScript*> ScriptMap;
+	typedef utList<gkLuaScript*> ScriptList;
 
 private:
-	lua_State   *L;
+	lua_State*   L;
 	ScriptMap   m_scripts;
 
 
@@ -55,34 +55,34 @@ public:
 	virtual ~gkLuaManager();
 
 	// access to the lua virtual machine
-	GK_INLINE lua_State *getLua(void) {return L;}
+	GK_INLINE lua_State* getLua(void) {return L;}
 
 	void decompile(void);
 
 
-	gkLuaScript *getScript(const gkString &name);
+	gkLuaScript* getScript(const gkString& name);
 
 	// Create new script from text buffer
-	gkLuaScript *create(const gkString &name, const gkString &text);
+	gkLuaScript* create(const gkString& name, const gkString& text);
 
 	// create from internal text file manager
-	gkLuaScript *create(const gkString &name);
+	gkLuaScript* create(const gkString& name);
 
 	// Destroys named file
-	void destroy(const gkString &name);
+	void destroy(const gkString& name);
 
 	// Destroys file pointer
-	void destroy(gkLuaScript *ob);
+	void destroy(gkLuaScript* ob);
 
 	// Destroys all internal files
 	void destroyAll(void);
 
 	// Test for file existance
-	bool hasScript(const gkString &name);
+	bool hasScript(const gkString& name);
 
 
-	static gkLuaManager &getSingleton();
-	static gkLuaManager *getSingletonPtr();
+	static gkLuaManager& getSingleton();
+	static gkLuaManager* getSingletonPtr();
 };
 
 #endif//_gkLuaManager_h_

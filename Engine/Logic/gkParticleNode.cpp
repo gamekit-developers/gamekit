@@ -35,8 +35,8 @@
 
 using namespace Ogre;
 
-gkParticleNode::gkParticleNode(gkLogicTree *parent, size_t id)
-: gkLogicNode(parent, id)
+gkParticleNode::gkParticleNode(gkLogicTree* parent, size_t id)
+	: gkLogicNode(parent, id)
 {
 	ADD_ISOCK(CREATE, false);
 	ADD_ISOCK(POSITION, gkVector3::ZERO);
@@ -63,25 +63,25 @@ bool gkParticleNode::evaluate(Real tick)
 
 void gkParticleNode::update(Real tick)
 {
-	if(GET_SOCKET_VALUE(CREATE))
+	if (GET_SOCKET_VALUE(CREATE))
 	{
 		m_particles.push_back(
-			new ParticleSystem(GET_SOCKET_VALUE(PARTICLE_SYSTEM_NAME), 
-				GET_SOCKET_VALUE(POSITION),
-				GET_SOCKET_VALUE(ORIENTATION)));
+		    new ParticleSystem(GET_SOCKET_VALUE(PARTICLE_SYSTEM_NAME),
+		                       GET_SOCKET_VALUE(POSITION),
+		                       GET_SOCKET_VALUE(ORIENTATION)));
 	}
 	else
 	{
 		ParticleObjectIterator iter(m_particles);
-		
+
 		while (iter.hasMoreElements())
 		{
 			ParticleSystem* pParticle = iter.getNext();
 
-			if(pParticle->HasExpired())
+			if (pParticle->HasExpired())
 			{
 				ParticleObjects::Pointer p = m_particles.find(pParticle);
-				
+
 				m_particles.erase(p);
 
 				delete pParticle;
@@ -93,9 +93,9 @@ void gkParticleNode::update(Real tick)
 }
 
 gkParticleNode::ParticleSystem::ParticleSystem(const gkString& name, const gkVector3& position, const gkQuaternion& q)
-: m_node(0),
-m_particleSystem(0),
-m_time_to_live(0)
+	: m_node(0),
+	  m_particleSystem(0),
+	  m_time_to_live(0)
 {
 	gkScene* pScene = gkEngine::getSingleton().getActiveScene();
 
@@ -120,7 +120,7 @@ m_time_to_live(0)
 
 	m_time_to_live = 0;
 
-	for(unsigned short i=0; i<n; i++)
+	for (unsigned short i = 0; i < n; i++)
 	{
 		m_time_to_live = btMax(m_time_to_live, m_particleSystem->getEmitter(i)->getTimeToLive());
 	}
@@ -132,7 +132,7 @@ m_time_to_live(0)
 
 gkParticleNode::ParticleSystem::~ParticleSystem()
 {
-	if(m_node)
+	if (m_node)
 	{
 		GK_ASSERT(m_particleSystem);
 
@@ -149,5 +149,3 @@ gkParticleNode::ParticleSystem::~ParticleSystem()
 		m_node = 0;
 	}
 }
-
-

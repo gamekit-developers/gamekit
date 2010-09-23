@@ -31,7 +31,7 @@
 
 
 
-gkStreamer::gkStreamer(const gkString &name)
+gkStreamer::gkStreamer(const gkString& name)
 	:   m_name(name),
 	    m_thread(0),
 	    m_stop(true),
@@ -132,7 +132,7 @@ bool gkStreamer::isEmpty(void)
 
 
 
-void gkStreamer::playSound(gkSource *snd)
+void gkStreamer::playSound(gkSource* snd)
 {
 	gkCriticalSection::Lock lock(m_cs);
 	if (snd && !snd->isBound())
@@ -149,7 +149,7 @@ void gkStreamer::playSound(gkSource *snd)
 }
 
 
-void gkStreamer::stopSound(gkSource *snd)
+void gkStreamer::stopSound(gkSource* snd)
 {
 	gkCriticalSection::Lock lock(m_cs);
 	if (snd && snd->isBound())
@@ -168,7 +168,7 @@ void gkStreamer::stopSound(gkSource *snd)
 
 
 
-void gkStreamer::freeBuffers(gkStreamer::Buffers &buffers)
+void gkStreamer::freeBuffers(gkStreamer::Buffers& buffers)
 {
 	// Remove temporary buffers, from the update list
 
@@ -176,7 +176,7 @@ void gkStreamer::freeBuffers(gkStreamer::Buffers &buffers)
 
 	UTsize i, s, p;
 	Buffers::Pointer b;
-	gkBuffer *tmp;
+	gkBuffer* tmp;
 
 	i = 0;
 	s = buffers.size();
@@ -206,7 +206,7 @@ void gkStreamer::processBuffers(void)
 	UTsize i, s;
 	Buffers::Pointer qb;
 	Sources::Pointer qs;
-	gkBuffer *tmp;
+	gkBuffer* tmp;
 
 
 	if (!m_queueBuffers.empty())
@@ -287,7 +287,7 @@ void gkStreamer::finishBuffers(void)
 	{
 		UTsize i, s;
 		Buffers::Pointer b;
-		gkBuffer *tmp;
+		gkBuffer* tmp;
 
 
 		i = 0;
@@ -345,7 +345,7 @@ void gkStreamer::run(void)
 
 				while (i < s)
 				{
-					gkBuffer *buf = b[i++];
+					gkBuffer* buf = b[i++];
 
 					buf->stream();
 

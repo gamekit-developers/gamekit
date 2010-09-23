@@ -35,7 +35,7 @@ class gkMultiplexerNode : public gkLogicNode
 public:
 
 	enum
-	{	
+	{
 		UPDATE,
 		INPUT_FALSE,
 		INPUT_TRUE,
@@ -49,7 +49,7 @@ public:
 	DECLARE_SOCKET_TYPE(SEL, bool);
 	DECLARE_SOCKET_TYPE(OUTPUT, T);
 
-	gkMultiplexerNode(gkLogicTree *parent, size_t id) 
+	gkMultiplexerNode(gkLogicTree* parent, size_t id)
 		: gkLogicNode(parent, id)
 	{
 		ADD_ISOCK(UPDATE, true);
@@ -59,13 +59,13 @@ public:
 		ADD_OSOCK(OUTPUT, T());
 	}
 
-    virtual ~gkMultiplexerNode() {}
+	virtual ~gkMultiplexerNode() {}
 
-    bool evaluate(gkScalar tick)
+	bool evaluate(gkScalar tick)
 	{
-		if(GET_SOCKET_VALUE(UPDATE))
+		if (GET_SOCKET_VALUE(UPDATE))
 		{
-			if(GET_SOCKET_VALUE(SEL))
+			if (GET_SOCKET_VALUE(SEL))
 			{
 				SET_SOCKET_VALUE(OUTPUT, GET_SOCKET_VALUE(INPUT_TRUE));
 			}

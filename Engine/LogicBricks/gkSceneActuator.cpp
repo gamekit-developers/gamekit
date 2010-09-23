@@ -32,15 +32,15 @@
 #include "gkEngine.h"
 
 
-gkSceneActuator::gkSceneActuator(gkGameObject *object, gkLogicLink *link, const gkString &name)
-		:	gkLogicActuator(object, link, name)
+gkSceneActuator::gkSceneActuator(gkGameObject* object, gkLogicLink* link, const gkString& name)
+	:    gkLogicActuator(object, link, name)
 {
 }
 
 
-gkLogicBrick *gkSceneActuator::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick* gkSceneActuator::clone(gkLogicLink* link, gkGameObject* dest)
 {
-	gkSceneActuator *act = new gkSceneActuator(*this);
+	gkSceneActuator* act = new gkSceneActuator(*this);
 	act->cloneImpl(link, dest);
 	return act;
 }
@@ -48,45 +48,44 @@ gkLogicBrick *gkSceneActuator::clone(gkLogicLink *link, gkGameObject *dest)
 
 void gkSceneActuator::execute(void)
 {
-	gkScene *scene = 0;
-	gkGameObject *obj = 0;
-	
+	gkScene* scene = 0;
+	gkGameObject* obj = 0;
+
 	if (isPulseOff())
 		return;
 
 	if (!m_object->isInstanced())
 		return;
-		
-	switch(m_mode)
-	{
-		case SC_RESTART:
-			m_object->getOwner()->reinstance(true);
-			break;
-		case SC_SET_SCENE:
-			scene= (gkScene*)gkSceneManager::getSingleton().getByName(m_sceneName);
-			if(scene && scene != m_object->getOwner())
-			{
-				scene->destroyInstance(true);
-				m_object->getOwner()->destroyInstance(true);
-				scene->createInstance(true);
-			}
-			break;
-		case SC_SET_CAMERA:
-			obj = m_object->getOwner()->getObject(m_camera);
-			if(obj && obj->getType() == GK_CAMERA)
-				m_object->getOwner()->setMainCamera((gkCamera*)obj);
-			break;
-		case SC_ADD_FRONT:
-			break;
-		case SC_ADD_BACK:
-			break;
-		case SC_REMOVE:
-			break;
-		case SC_SUSPEND:
-			break;
-		case SC_RESUME:
-			break;
-	}
-	
-}
 
+	switch (m_mode)
+	{
+	case SC_RESTART:
+		m_object->getOwner()->reinstance(true);
+		break;
+	case SC_SET_SCENE:
+		scene = (gkScene*)gkSceneManager::getSingleton().getByName(m_sceneName);
+		if (scene && scene != m_object->getOwner())
+		{
+			scene->destroyInstance(true);
+			m_object->getOwner()->destroyInstance(true);
+			scene->createInstance(true);
+		}
+		break;
+	case SC_SET_CAMERA:
+		obj = m_object->getOwner()->getObject(m_camera);
+		if (obj && obj->getType() == GK_CAMERA)
+			m_object->getOwner()->setMainCamera((gkCamera*)obj);
+		break;
+	case SC_ADD_FRONT:
+		break;
+	case SC_ADD_BACK:
+		break;
+	case SC_REMOVE:
+		break;
+	case SC_SUSPEND:
+		break;
+	case SC_RESUME:
+		break;
+	}
+
+}

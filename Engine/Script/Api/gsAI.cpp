@@ -31,7 +31,7 @@
 class gsTrigger : public gkFSM::ITrigger
 {
 private:
-	gkLuaEvent *m_event;
+	gkLuaEvent* m_event;
 
 	void execute(int fromState, int toState);
 
@@ -47,7 +47,7 @@ class gsEvent : public gkFSM::IEvent
 {
 private:
 	friend class gsFSM;
-	gkLuaEvent *m_event;
+	gkLuaEvent* m_event;
 
 	// call
 	bool evaluate();
@@ -66,7 +66,7 @@ class gsUpdateEvent
 {
 private:
 	friend class gsFSM;
-	gkLuaEvent *m_event;
+	gkLuaEvent* m_event;
 
 	virtual ~gsUpdateEvent();
 
@@ -175,7 +175,7 @@ gsUpdateEvent::gsUpdateEvent(gsSelf lself, gsFunction lexecute)
 
 
 
-gsWhenEvent::gsWhenEvent(gkFSM::Event *evt) : m_event(evt)
+gsWhenEvent::gsWhenEvent(gkFSM::Event* evt) : m_event(evt)
 {
 }
 

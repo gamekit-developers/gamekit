@@ -38,12 +38,12 @@ public:
 
 
 	bool update(gkScalar delta);
-	gkConstraint *clone(gkGameObject *clob);
+	gkConstraint* clone(gkGameObject* clob);
 
 
-	GK_INLINE void setLimitX(const gkVector2 &v) {m_flag |= 1; mXBounds = v;}
-	GK_INLINE void setLimitY(const gkVector2 &v) {m_flag |= 2; mYBounds = v;}
-	GK_INLINE void setLimitZ(const gkVector2 &v) {m_flag |= 4; mZBounds = v;}
+	GK_INLINE void setLimitX(const gkVector2& v) {m_flag |= 1; mXBounds = v;}
+	GK_INLINE void setLimitY(const gkVector2& v) {m_flag |= 2; mYBounds = v;}
+	GK_INLINE void setLimitZ(const gkVector2& v) {m_flag |= 4; mZBounds = v;}
 	GK_INLINE void clearAxis(void) {m_flag = 0;}
 
 private:

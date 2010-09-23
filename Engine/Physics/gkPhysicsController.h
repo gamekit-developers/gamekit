@@ -42,7 +42,7 @@ class gkDynamicsWorld;
 
 struct gkContactInfo
 {
-	gkPhysicsController *collider;
+	gkPhysicsController* collider;
 	btManifoldPoint      point;
 
 	typedef utArray<gkContactInfo> Array;
@@ -54,13 +54,13 @@ struct gkContactInfo
 class gkPhysicsController
 {
 public:
-	gkPhysicsController(gkGameObject *object, gkDynamicsWorld *owner);
+	gkPhysicsController(gkGameObject* object, gkDynamicsWorld* owner);
 	virtual ~gkPhysicsController();
 
 
-	virtual void setTransformState(const gkTransformState &state);
+	virtual void setTransformState(const gkTransformState& state);
 
-	
+
 	virtual void updateTransform(void);
 
 	bool isStaticObject(void);
@@ -79,47 +79,47 @@ public:
 
 	// Collision tests.
 
-	bool collidesWith(gkGameObject *ob, gkContactInfo* cpy=0);
-	bool collidesWith(const gkString& name, gkContactInfo* cpy=0, bool emptyFilter=true);
+	bool collidesWith(gkGameObject* ob, gkContactInfo* cpy = 0);
+	bool collidesWith(const gkString& name, gkContactInfo* cpy = 0, bool emptyFilter = true);
 
-	// Sensor tests, 
+	// Sensor tests,
 	// If prop is empty and material is empty, return any old collision.
 	// If onlyActor is true, filter collision on actor settings (gkGameObjectProperties).
 	// If testAllMaterials is true, test all assigned opposed to only testing the first assigned.
-	bool sensorCollides(const gkString& prop, const gkString& material="", bool onlyActor=false, bool testAllMaterials=false);
-	static bool sensorTest(gkGameObject *ob, const gkString& prop, const gkString& material="", bool onlyActor=false, bool testAllMaterials=false);
+	bool sensorCollides(const gkString& prop, const gkString& material = "", bool onlyActor = false, bool testAllMaterials = false);
+	static bool sensorTest(gkGameObject* ob, const gkString& prop, const gkString& material = "", bool onlyActor = false, bool testAllMaterials = false);
 
-	static gkPhysicsController* castController(btCollisionObject *colObj);
-	static gkPhysicsController* castController(void *colObj);
-	static gkGameObject* castObject(btCollisionObject *colObj);
-	static gkGameObject* castObject(const btCollisionObject *colObj);
+	static gkPhysicsController* castController(btCollisionObject* colObj);
+	static gkPhysicsController* castController(void* colObj);
+	static gkGameObject* castObject(btCollisionObject* colObj);
+	static gkGameObject* castObject(const btCollisionObject* colObj);
 
 
-	btCollisionObject *getCollisionObject(void);
+	btCollisionObject* getCollisionObject(void);
 
-	btCollisionShape *getShape(void);
+	btCollisionShape* getShape(void);
 
-	btDynamicsWorld *getOwner(void);
+	btDynamicsWorld* getOwner(void);
 
-	gkGameObject *getObject(void);
+	gkGameObject* getObject(void);
 
 
 	gkBoundingBox getAabb(void) const;
 
-	void setShape(btCollisionShape *shape);
+	void setShape(btCollisionShape* shape);
 
 
 	virtual void create(void)  = 0;
 	virtual void destroy(void) = 0;
 
 
-	void _handleManifold(btPersistentManifold *manifold);
+	void _handleManifold(btPersistentManifold* manifold);
 	void _resetContactInfo(void);
 	bool _markDbvt(bool v);
 
 protected:
 
-	void setTransform(const btTransform &worldTrans);
+	void setTransform(const btTransform& worldTrans);
 
 
 	void createShape(void);
@@ -127,12 +127,12 @@ protected:
 
 	gkContactInfo::Array m_localContacts;
 
-	gkDynamicsWorld *m_owner;
-	gkGameObject *m_object;
+	gkDynamicsWorld* m_owner;
+	gkGameObject* m_object;
 
-	btCollisionObject *m_collisionObject;
+	btCollisionObject* m_collisionObject;
 
-	btCollisionShape *m_shape;
+	btCollisionShape* m_shape;
 	bool m_suspend;
 	bool m_dbvtMark;
 

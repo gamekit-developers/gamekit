@@ -34,11 +34,11 @@
 
 
 gkGameLevel::gkGameLevel()
-	:	m_pickup(0),
-		m_killThemAll(0),
-		m_level(GK_LEVEL_EXIT),
-		m_keyboard(0),
-		m_mouse(0)
+	:    m_pickup(0),
+	     m_killThemAll(0),
+	     m_level(GK_LEVEL_EXIT),
+	     m_keyboard(0),
+	     m_mouse(0)
 {
 	m_keyboard = gkWindowSystem::getSingleton().getKeyboard();
 	m_mouse = gkWindowSystem::getSingleton().getMouse();
@@ -74,7 +74,7 @@ gkGameLevel::~gkGameLevel()
 }
 
 
-void gkGameLevel::loadLevel(const gkLevel &level)
+void gkGameLevel::loadLevel(const gkLevel& level)
 {
 	m_level = level;
 
@@ -95,7 +95,7 @@ void gkGameLevel::loadPickup(void)
 		return;
 	}
 
-	gkBlendFile *playerData = gkBlendLoader::getSingleton().loadFile(GK_RESOURCE_PLAYER);
+	gkBlendFile* playerData = gkBlendLoader::getSingleton().loadFile(GK_RESOURCE_PLAYER);
 	if (!playerData || !playerData->getMainScene())
 	{
 		gkPrintf("GameLevel: Blend '%s' loading failed", GK_RESOURCE_PLAYER);
@@ -107,7 +107,7 @@ void gkGameLevel::loadPickup(void)
 	gkPrintf("GameLevel: Blend '%s' loaded", GK_RESOURCE_PLAYER);
 
 
-	gkBlendFile *mapData = gkBlendLoader::getSingleton().loadFile(GK_RESOURCE_MAPS, "Pickup");
+	gkBlendFile* mapData = gkBlendLoader::getSingleton().loadFile(GK_RESOURCE_MAPS, "Pickup");
 	if (!mapData || !mapData->getMainScene())
 	{
 		gkPrintf("GameLevel: Blend '%s'->Pickup loading failed", GK_RESOURCE_MAPS);
@@ -117,7 +117,7 @@ void gkGameLevel::loadPickup(void)
 	// log status
 	gkPrintf("GameLevel: Blend '%s'->Pickup loaded", GK_RESOURCE_MAPS);
 
-	gkScene *sc = mapData->getMainScene();
+	gkScene* sc = mapData->getMainScene();
 
 
 
@@ -132,7 +132,7 @@ void gkGameLevel::loadPickup(void)
 	gkGameObjectHashMap::Iterator it = sc->getObjects();
 	while (it.hasMoreElements())
 	{
-		gkGameObject *obj = it.getNext().second;
+		gkGameObject* obj = it.getNext().second;
 		if (obj->isInActiveLayer())
 			m_pickup->addObject(obj);
 	}
@@ -163,7 +163,7 @@ void gkGameLevel::notifyResourceCreated(gkResource* res)
 {
 
 	gkLogMessage(res->getManagerType() << ", " << res->getResourceType() <<
-		":handle " <<  res->getResourceHandle() << ", created " << res->getResourceName().str());
+	             ":handle " <<  res->getResourceHandle() << ", created " << res->getResourceName().str());
 }
 
 
@@ -184,7 +184,7 @@ void gkGameLevel::tick(gkScalar delta)
 
 
 
-gkScene *gkGameLevel::getLevel(void)
+gkScene* gkGameLevel::getLevel(void)
 {
 	if (m_level == GK_LEVEL_PICKUP)
 		return m_pickup;

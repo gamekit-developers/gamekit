@@ -70,8 +70,8 @@ public:
 	void setMode(int mode)                          {m_mode = mode;}
 	void setDirection(int way)                      {m_way = way;}
 	void setPriority(int pri)                       {m_priority = pri;}
-	void setAction(gkAction *act)                   {m_base = act;}
-	void setActionSequence(gkActionSequence *act)   {m_sequ = act;}
+	void setAction(gkAction* act)                   {m_base = act;}
+	void setActionSequence(gkActionSequence* act)   {m_sequ = act;}
 
 	void setBlendFrames(gkScalar f);
 	bool evaluate(gkScalar delta);
@@ -88,8 +88,8 @@ private:
 	gkScalar m_time;
 
 
-	gkAction *m_base;
-	gkActionSequence *m_sequ;
+	gkAction* m_base;
+	gkActionSequence* m_sequ;
 	bool m_enabled;
 };
 
@@ -108,8 +108,8 @@ public:
 	gkActionBlender();
 	~gkActionBlender();
 
-	void push(gkAction *action, gkScalar frames, int mode = GK_ACT_END, int priority = 0);
-	void push(gkActionSequence *action, gkScalar frames, int mode = GK_ACT_END, int priority = 0);
+	void push(gkAction* action, gkScalar frames, int mode = GK_ACT_END, int priority = 0);
+	void push(gkActionSequence* action, gkScalar frames, int mode = GK_ACT_END, int priority = 0);
 
 	void evaluate(gkScalar delta);
 
@@ -121,7 +121,7 @@ public:
 
 private:
 
-	void pushStack(gkActionBlend &blend);
+	void pushStack(gkActionBlend& blend);
 
 	Stack  m_stack;
 	UTsize m_max;

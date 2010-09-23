@@ -36,10 +36,10 @@
 
 
 
-gkDbvt::gkDbvt() 
-	:	m_tvs(0), 
-		m_tot(0),
-		m_debug(gkString("btDbvt"), false)
+gkDbvt::gkDbvt()
+	:    m_tvs(0),
+	     m_tot(0),
+	     m_debug(gkString("btDbvt"), false)
 {
 }
 
@@ -51,25 +51,25 @@ gkDbvt::~gkDbvt()
 
 
 
-void gkDbvt::Process(const btDbvtNode *nd)
+void gkDbvt::Process(const btDbvtNode* nd)
 {
-	btBroadphaseProxy *proxy = (btBroadphaseProxy *)nd->data;
+	btBroadphaseProxy* proxy = (btBroadphaseProxy*)nd->data;
 	if (gkPhysicsController::castController(proxy->m_clientObject)->_markDbvt(true))
 		m_tvs++;
 }
 
 
 
-void gkDbvt::mark(gkCamera *cam, btDbvtBroadphase *cullTree, gkPhysicsControllers &controllers)
+void gkDbvt::mark(gkCamera* cam, btDbvtBroadphase* cullTree, gkPhysicsControllers& controllers)
 {
 	GK_ASSERT(cam && cullTree);
 
-	const Ogre::Plane *planes = cam->getCamera()->getFrustumPlanes();
+	const Ogre::Plane* planes = cam->getCamera()->getFrustumPlanes();
 
 	btVector3 normals[6];
 	btScalar offsets[6];
 
-	for (int i=0; i<6; ++i)
+	for (int i = 0; i < 6; ++i)
 	{
 		normals[i].setValue(planes[i].normal.x, planes[i].normal.y, planes[i].normal.z);
 		offsets[i] = planes[i].d;
@@ -83,7 +83,7 @@ void gkDbvt::mark(gkCamera *cam, btDbvtBroadphase *cullTree, gkPhysicsController
 	{
 		// Mark all invisible
 
-		gkPhysicsControllers::Iterator iter= controllers.iterator();
+		gkPhysicsControllers::Iterator iter = controllers.iterator();
 		while (iter.hasMoreElements())
 			iter.getNext()->_markDbvt(false);
 	}

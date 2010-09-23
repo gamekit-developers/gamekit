@@ -33,11 +33,11 @@
 
 using namespace OpenSteer;
 
-gkSteeringWander::gkSteeringWander(gkGameObject* obj, gkScalar maxSpeed, const gkVector3& forward, const gkVector3& up, const gkVector3& side, gkScalar minPredictionTime, gkScalar maxPredictionTime) 
-: gkSteeringObject(obj, maxSpeed, forward, up, side),
-m_sceneObstable(new gkSceneObstacle(30)),
-m_minPredictionTime(minPredictionTime),
-m_maxPredictionTime(maxPredictionTime)
+gkSteeringWander::gkSteeringWander(gkGameObject* obj, gkScalar maxSpeed, const gkVector3& forward, const gkVector3& up, const gkVector3& side, gkScalar minPredictionTime, gkScalar maxPredictionTime)
+	: gkSteeringObject(obj, maxSpeed, forward, up, side),
+	  m_sceneObstable(new gkSceneObstacle(30)),
+	  m_minPredictionTime(minPredictionTime),
+	  m_maxPredictionTime(maxPredictionTime)
 {
 	m_allObstacles.push_back(m_sceneObstable);
 }
@@ -55,31 +55,31 @@ bool gkSteeringWander::steering(STATE& newState, const float elapsedTime)
 
 	gkVector3 steer = steerToAvoidObstacles(avoidancePredictTime, m_allObstacles);
 
-    if (steer != Vec3::zero)
-    {
+	if (steer != Vec3::zero)
+	{
 		newState = AVOIDING;
-    }
-    else
-    {
-        const Vec3 wander = steerForWander(elapsedTime);
+	}
+	else
+	{
+		const Vec3 wander = steerForWander(elapsedTime);
 
-        if (clearPath)
-        {
+		if (clearPath)
+		{
 			newState = WANDER;
 
-            steer = limitMaxDeviationAngle (wander, 0.707f, forward());
-        }
-        else
-        {
+			steer = limitMaxDeviationAngle (wander, 0.707f, forward());
+		}
+		else
+		{
 			newState = EVADING;
-			
-            const Vec3 evade = steerToEvadeOthers();
+
+			const Vec3 evade = steerToEvadeOthers();
 
 			steer = limitMaxDeviationAngle (wander + evade, 0.707f, forward());
-        }
-    }
+		}
+	}
 
 	applySteeringForce(steer, elapsedTime);
-	
+
 	return true;
 }

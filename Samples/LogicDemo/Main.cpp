@@ -32,12 +32,12 @@ class OgreKit : public gkCoreApplication
 {
 public:
 
-    OgreKit(const gkString &blend, const gkString& startCfg) 
+	OgreKit(const gkString& blend, const gkString& startCfg)
 		: m_blend(gkUtils::getFile(blend)), m_sceneLogic(0)
 	{
 		gkPath path = gkUtils::getFile(startCfg);
 
-		if(path.isFile())
+		if (path.isFile())
 		{
 			m_prefs.load(path.getPath());
 		}
@@ -45,7 +45,7 @@ public:
 		{
 			gkLogMessage("ERROR: FILE NOT FOUND ---> " << startCfg);
 		}
-    }
+	}
 
 	~OgreKit()
 	{
@@ -57,11 +57,11 @@ public:
 		m_sceneLogic->tick(rate);
 	}
 
-    bool setup()
-    {
-        gkBlendFile* pBlendFile = m_engine->loadBlendFile(m_blend);
+	bool setup()
+	{
+		gkBlendFile* pBlendFile = m_engine->loadBlendFile(m_blend);
 
-		if(pBlendFile)
+		if (pBlendFile)
 		{
 			gkScene* pScene = pBlendFile->getMainScene();
 
@@ -80,7 +80,7 @@ public:
 			gkLogMessage("ERROR: FILE NOT FOUND ---> " << m_blend);
 			return false;
 		}
-    }
+	}
 
 private:
 
@@ -89,11 +89,11 @@ private:
 	SceneLogic* m_sceneLogic;
 };
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
 	// See ReadMe.txt for how to use this demo
 
-    TestMemory;
+	TestMemory;
 
 	// This demo only works with momo_ogre_plus.blend file because it contains
 	// (Ogre) material definitions and (Ogre) particle definitions inside blender's TX blocks.
@@ -111,4 +111,3 @@ int main(int argc, char **argv)
 
 	return 0;
 }
-

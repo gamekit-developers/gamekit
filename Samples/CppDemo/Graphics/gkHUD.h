@@ -25,7 +25,7 @@
 -------------------------------------------------------------------------------
     This is a replacement candidate for Engine/Graphics
     - For now it wraps Ogre::Overlays to gk usable objects.
-    - Later it will be superseded by custom Ogre vertex buffer usage, 
+    - Later it will be superseded by custom Ogre vertex buffer usage,
     - abstracted for external GameKit external rendering.
 */
 #ifndef _gkHUD_h_
@@ -40,20 +40,20 @@ class gkHUDElement;
 class gkHUD : public gkResource
 {
 public:
-	typedef utArray<gkHUDElement *> ChildNodes;
+	typedef utArray<gkHUDElement*> ChildNodes;
 
 
 public:
 
 
-	gkHUD(gkResourceManager* creator, const gkResourceName &name, const gkResourceHandle& handle);
+	gkHUD(gkResourceManager* creator, const gkResourceName& name, const gkResourceHandle& handle);
 	virtual ~gkHUD();
 
-	void show(bool v= true);
+	void show(bool v = true);
 
-	void addChild(gkHUDElement *hud);
+	void addChild(gkHUDElement* hud);
 
-	gkHUDElement* getChild(const gkString &name);
+	gkHUDElement* getChild(const gkString& name);
 	ChildNodes&   getChildren(void) {return m_children;}
 
 
@@ -61,7 +61,7 @@ public:
 	void _setOverlay(Ogre::Overlay* over);
 
 protected:
-	Ogre::Overlay *m_overlay;
+	Ogre::Overlay* m_overlay;
 	ChildNodes     m_children;
 
 private:

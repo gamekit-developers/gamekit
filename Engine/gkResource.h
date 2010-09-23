@@ -29,7 +29,7 @@
 
 #include "gkCommon.h"
 
-class gkResource 
+class gkResource
 {
 protected:
 	gkResourceManager*     m_creator;
@@ -43,7 +43,7 @@ protected:
 
 public:
 
-	gkResource(gkResourceManager* creator, const gkResourceName &name, const gkResourceHandle& handle);
+	gkResource(gkResourceManager* creator, const gkResourceName& name, const gkResourceHandle& handle);
 	virtual ~gkResource();
 
 

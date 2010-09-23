@@ -38,7 +38,7 @@ typedef utStringArray       gkStringVector;
 
 namespace gkStringUtils
 {
-	static const gkString BLANK = "";
+static const gkString BLANK = "";
 }
 
 

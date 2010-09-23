@@ -36,7 +36,7 @@ enum GK_FUNCTION_NODE_PARAM
 	FUNCTION_NODE_PARAM_TWO
 };
 
-template<typename OBJ, typename R, GK_FUNCTION_NODE_PARAM parameter = FUNCTION_NODE_PARAM_NONE, typename PARAM = int>
+template < typename OBJ, typename R, GK_FUNCTION_NODE_PARAM parameter = FUNCTION_NODE_PARAM_NONE, typename PARAM = int >
 class gkFunctionNode : public gkLogicNode
 {
 public:
@@ -45,7 +45,7 @@ public:
 	{
 		OBJECT,
 		FUNCTION_0, // without param
-		FUNCTION_1, // with tick 
+		FUNCTION_1, // with tick
 		FUNCTION_2, // with tick and param
 		PARAMETER,
 		RESULT
@@ -62,7 +62,7 @@ public:
 	DECLARE_SOCKET_TYPE(PARAMETER, PARAM);
 	DECLARE_SOCKET_TYPE(RESULT, R);
 
-	gkFunctionNode(gkLogicTree *parent, size_t id) 
+	gkFunctionNode(gkLogicTree* parent, size_t id)
 		: gkLogicNode(parent, id)
 	{
 		ADD_ISOCK(OBJECT, 0);
@@ -73,9 +73,9 @@ public:
 		ADD_OSOCK(RESULT, R());
 	}
 
-    virtual ~gkFunctionNode() {}
+	virtual ~gkFunctionNode() {}
 
-    bool evaluate(gkScalar tick, Int2Type<FUNCTION_NODE_PARAM_NONE>)
+	bool evaluate(gkScalar tick, Int2Type<FUNCTION_NODE_PARAM_NONE>)
 	{
 		F0 f0 = GET_SOCKET_VALUE(FUNCTION_0);
 
@@ -86,7 +86,7 @@ public:
 		return false;
 	}
 
-    bool evaluate(gkScalar tick, Int2Type<FUNCTION_NODE_PARAM_ONE>)
+	bool evaluate(gkScalar tick, Int2Type<FUNCTION_NODE_PARAM_ONE>)
 	{
 		F1 f1 = GET_SOCKET_VALUE(FUNCTION_1);
 
@@ -97,7 +97,7 @@ public:
 		return false;
 	}
 
-    bool evaluate(gkScalar tick, Int2Type<FUNCTION_NODE_PARAM_TWO>)
+	bool evaluate(gkScalar tick, Int2Type<FUNCTION_NODE_PARAM_TWO>)
 	{
 		F2 f2 = GET_SOCKET_VALUE(FUNCTION_2);
 
@@ -108,7 +108,7 @@ public:
 		return false;
 	}
 
-    bool evaluate(gkScalar tick)
+	bool evaluate(gkScalar tick)
 	{
 		return evaluate(tick, Int2Type<parameter>());
 	}

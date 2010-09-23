@@ -32,7 +32,7 @@
 
 
 
-gkSound::gkSound(const gkString &name)
+gkSound::gkSound(const gkString& name)
 	:   m_name(name),
 	    m_stream(0)
 {
@@ -50,7 +50,7 @@ gkSound::~gkSound()
 }
 
 
-bool gkSound::load(const char *fname)
+bool gkSound::load(const char* fname)
 {
 
 	int magic = alReadMagic(fname);
@@ -59,7 +59,7 @@ bool gkSound::load(const char *fname)
 		if (m_stream)
 			delete m_stream;
 
-		gkWaveform *wave = new gkWaveform();
+		gkWaveform* wave = new gkWaveform();
 		if (!wave->load(fname))
 		{
 			delete wave;
@@ -72,7 +72,7 @@ bool gkSound::load(const char *fname)
 		if (m_stream)
 			delete m_stream;
 
-		gkOgg *ogg = new gkOgg();
+		gkOgg* ogg = new gkOgg();
 		if (!ogg->load(fname))
 		{
 			delete ogg;
@@ -85,12 +85,12 @@ bool gkSound::load(const char *fname)
 
 
 
-bool gkSound::loadToMemory(const char *file)
+bool gkSound::loadToMemory(const char* file)
 {
 	bool result = false;
 	if (alReadMagic(file) != GK_BUF_NULL)
 	{
-		FILE *fp = fopen(file, "rb");
+		FILE* fp = fopen(file, "rb");
 		if (fp)
 		{
 			fseek(fp, 0L, SEEK_END);
@@ -98,7 +98,7 @@ bool gkSound::loadToMemory(const char *file)
 			fseek(fp, 0L, SEEK_SET);
 
 
-			char *temp = new char[len];
+			char* temp = new char[len];
 			int br = fread(temp, 1, len, fp);
 			result = load(temp, len);
 			delete []temp;
@@ -112,12 +112,12 @@ bool gkSound::loadToMemory(const char *file)
 
 
 
-bool gkSound::load(void *handle, UTsize len)
+bool gkSound::load(void* handle, UTsize len)
 {
 	if (handle && len > 0 && len != UT_NPOS)
 	{
 
-		char *cp = (char *)handle;
+		char* cp = (char*)handle;
 		int magic = alGetBufType(cp);
 
 		if (magic != GK_BUF_NULL)
@@ -127,8 +127,8 @@ bool gkSound::load(void *handle, UTsize len)
 
 			if (magic == GK_BUF_WAV)
 			{
-				gkWaveform *wave = new gkWaveform();
-				if (!wave->load((char *)handle, len))
+				gkWaveform* wave = new gkWaveform();
+				if (!wave->load((char*)handle, len))
 				{
 					delete wave;
 					wave = 0;
@@ -137,8 +137,8 @@ bool gkSound::load(void *handle, UTsize len)
 			}
 			else if (magic == GK_BUF_OGG)
 			{
-				gkOgg *ogg = new gkOgg();
-				if (!ogg->load((char *)handle, len))
+				gkOgg* ogg = new gkOgg();
+				if (!ogg->load((char*)handle, len))
 				{
 					delete ogg;
 					ogg = 0;
@@ -157,8 +157,8 @@ bool gkSound::load(void *handle, UTsize len)
 
 void gkSound::stopPlayback(void)
 {
-	gkSoundManager &mgr = gkSoundManager::getSingleton();
-	for (UTsize i=0; i<m_sources.size(); ++i)
+	gkSoundManager& mgr = gkSoundManager::getSingleton();
+	for (UTsize i = 0; i < m_sources.size(); ++i)
 	{
 		m_sources[i]->stop();
 		GK_ASSERT(!m_sources[i]->isBound());
@@ -169,10 +169,10 @@ void gkSound::stopPlayback(void)
 
 
 
-gkSource *gkSound::createSource(void)
+gkSource* gkSound::createSource(void)
 {
 	// add it to the manager
-	gkSource *src = new gkSource(this);
+	gkSource* src = new gkSource(this);
 	gkSoundManager::getSingleton().notifySourceCreated(src);
 	m_sources.push_back(src);
 	return src;
@@ -180,7 +180,7 @@ gkSource *gkSound::createSource(void)
 
 
 
-void gkSound::destroySource(gkSource *src)
+void gkSound::destroySource(gkSource* src)
 {
 	UTsize pos;
 	if ((pos = m_sources.find(src)) != UT_NPOS)

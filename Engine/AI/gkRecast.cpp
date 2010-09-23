@@ -42,12 +42,12 @@
 
 gkDetourNavMesh::~gkDetourNavMesh()
 {
-	if(m_p) delete m_p;
+	if (m_p) delete m_p;
 }
 
 PDT_NAV_MESH gkRecast::createNavMesh(PMESHDATA meshData, const Config& config)
 {
-	if(!meshData.get()) 
+	if (!meshData.get())
 		return PDT_NAV_MESH(0);
 
 	rcConfig cfg;
@@ -72,7 +72,7 @@ PDT_NAV_MESH gkRecast::createNavMesh(PMESHDATA meshData, const Config& config)
 	cfg.detailSampleDist = config.DETAIL_SAMPLE_DIST < 0.9f ? 0 : cfg.cs * config.DETAIL_SAMPLE_DIST;
 	cfg.detailSampleMaxError = cfg.ch * config.DETAIL_SAMPLE_ERROR;
 
-	if(!meshData->getVertCount())
+	if (!meshData->getVertCount())
 		return PDT_NAV_MESH(0);
 
 	gkScalar bmin[3], bmax[3];
@@ -96,14 +96,14 @@ PDT_NAV_MESH gkRecast::createNavMesh(PMESHDATA meshData, const Config& config)
 	rcVcopy(cfg.bmax, bmax);
 	rcCalcGridSize(cfg.bmin, cfg.bmax, cfg.cs, &cfg.width, &cfg.height);
 
-	rcBuildTimes m_buildTimes; 
+	rcBuildTimes m_buildTimes;
 	// Reset build times gathering.
 	memset(&m_buildTimes, 0, sizeof(m_buildTimes));
 	rcSetBuildTimes(&m_buildTimes);
 
-	// Start the build process.	
+	// Start the build process.
 	rcTimeVal totStartTime = rcGetPerformanceTimer();
-	
+
 	//gkPrintf("Building navigation:");
 	//gkPrintf(" - %d x %d cells", cfg.width, cfg.height);
 	//gkPrintf(" - %.1fK verts, %.1fK tris", nverts/1000.0f, ntris/1000.0f);
@@ -111,7 +111,7 @@ PDT_NAV_MESH gkRecast::createNavMesh(PMESHDATA meshData, const Config& config)
 	//
 	// Step 2. Rasterize input polygon soup.
 	//
-	
+
 	// Allocate voxel heighfield where we rasterize our input data to.
 	rcHeightfield heightField;
 
@@ -120,19 +120,19 @@ PDT_NAV_MESH gkRecast::createNavMesh(PMESHDATA meshData, const Config& config)
 		gkPrintf("buildNavigation: Could not create solid heightfield.");
 		return PDT_NAV_MESH(0);
 	}
-	
+
 	{
 		// Allocate array that can hold triangle flags.
 		// If you have multiple meshes you need to process, allocate
 		// and array which can hold the max number of triangles you need to process.
-		
+
 		utArray<unsigned char> triflags;
 		triflags.resize(ntris);
-		
+
 		// Find triangles which are walkable based on their slope and rasterize them.
 		// If your input data is multiple meshes, you can transform them here, calculate
 		// the flags for each of the meshes and rasterize them.
-		memset(triflags.ptr(), 0, ntris*sizeof(unsigned char));
+		memset(triflags.ptr(), 0, ntris * sizeof(unsigned char));
 		rcMarkWalkableTriangles(cfg.walkableSlopeAngle, verts, nverts, tris, ntris, triflags.ptr());
 		rcRasterizeTriangles(verts, nverts, tris, triflags.ptr(), ntris, heightField);
 	}
@@ -140,7 +140,7 @@ PDT_NAV_MESH gkRecast::createNavMesh(PMESHDATA meshData, const Config& config)
 	//
 	// Step 3. Filter walkables surfaces.
 	//
-	
+
 	// Once all geoemtry is rasterized, we do initial pass of filtering to
 	// remove unwanted overhangs caused by the conservative rasterization
 	// as well as filter spans where the character cannot possibly stand.
@@ -160,14 +160,14 @@ PDT_NAV_MESH gkRecast::createNavMesh(PMESHDATA meshData, const Config& config)
 		gkPrintf("buildNavigation: Could not build compact data.");
 		return PDT_NAV_MESH(0);
 	}
-	
+
 	// Erode the walkable area by agent radius.
 	if (!rcErodeArea(RC_WALKABLE_AREA, cfg.walkableRadius, chf))
 	{
 		gkPrintf("buildNavigation: Could not erode.");
 		return PDT_NAV_MESH(0);
 	}
-	
+
 	//
 	// Mark areas from objects
 	//
@@ -175,17 +175,17 @@ PDT_NAV_MESH gkRecast::createNavMesh(PMESHDATA meshData, const Config& config)
 	gkScene* scene = gkEngine::getSingleton().getActiveScene();
 	gkGameObjectSet& objects = scene->getInstancedObjects();
 	gkGameObjectSet::Iterator it = objects.iterator();
-	while(it.hasMoreElements())
+	while (it.hasMoreElements())
 	{
 		gkGameObject* obj = it.getNext();
 
-		if(!obj->getNavData().isEmpty())
+		if (!obj->getNavData().isEmpty())
 		{
 			size_t tBaseIndex = obj->getNavData().triangleBaseIndex;
-			size_t vBaseIndex = tBaseIndex/2;
+			size_t vBaseIndex = tBaseIndex / 2;
 
 			const float* v = verts + vBaseIndex;
-			const int nVerts = obj->getNavData().nIndex/3;
+			const int nVerts = obj->getNavData().nIndex / 3;
 
 			const gkGameObjectProperties& prop = obj->getProperties();
 
@@ -211,7 +211,7 @@ PDT_NAV_MESH gkRecast::createNavMesh(PMESHDATA meshData, const Config& config)
 	//
 	// Step 5. Trace and simplify region contours.
 	//
-	
+
 	// Create contours.
 	rcContourSet cset;
 
@@ -225,7 +225,7 @@ PDT_NAV_MESH gkRecast::createNavMesh(PMESHDATA meshData, const Config& config)
 	//
 	// Step 6. Build polygons mesh from contours.
 	//
-	
+
 	// Build polygon navmesh from the contours.
 	rcPolyMesh pmesh;
 	if (!rcBuildPolyMesh(cset, cfg.maxVertsPerPoly, pmesh))
@@ -234,7 +234,7 @@ PDT_NAV_MESH gkRecast::createNavMesh(PMESHDATA meshData, const Config& config)
 		return PDT_NAV_MESH(0);
 	}
 
-	
+
 	//
 	// Step 7. Create detail mesh which allows to access approximate height on each polygon.
 	//
@@ -249,7 +249,7 @@ PDT_NAV_MESH gkRecast::createNavMesh(PMESHDATA meshData, const Config& config)
 
 	// At this point the navigation mesh data is ready, you can access it from pmesh.
 	// See rcDebugDrawPolyMesh or dtCreateNavMeshData as examples how to access the data.
-	
+
 	//
 	// Step 8. Create Detour data from Recast poly mesh.
 	//
@@ -274,24 +274,24 @@ PDT_NAV_MESH gkRecast::createNavMesh(PMESHDATA meshData, const Config& config)
 	params.detailVertsCount = dmesh.nverts;
 	params.detailTris = dmesh.tris;
 	params.detailTriCount = dmesh.ntris;
-/*		params.offMeshConVerts = m_geom->getOffMeshConnectionVerts();
-	params.offMeshConRad = m_geom->getOffMeshConnectionRads();
-	params.offMeshConDir = m_geom->getOffMeshConnectionDirs();
-	params.offMeshConAreas = m_geom->getOffMeshConnectionAreas();
-	params.offMeshConFlags = m_geom->getOffMeshConnectionFlags();
-	params.offMeshConCount = m_geom->getOffMeshConnectionCount();
-	*/		
-	params.walkableHeight = cfg.walkableHeight*cfg.ch;
-	params.walkableRadius = cfg.walkableRadius*cfg.cs;;
-	params.walkableClimb = cfg.walkableClimb*cfg.ch;
+	/*        params.offMeshConVerts = m_geom->getOffMeshConnectionVerts();
+	    params.offMeshConRad = m_geom->getOffMeshConnectionRads();
+	    params.offMeshConDir = m_geom->getOffMeshConnectionDirs();
+	    params.offMeshConAreas = m_geom->getOffMeshConnectionAreas();
+	    params.offMeshConFlags = m_geom->getOffMeshConnectionFlags();
+	    params.offMeshConCount = m_geom->getOffMeshConnectionCount();
+	    */
+	params.walkableHeight = cfg.walkableHeight * cfg.ch;
+	params.walkableRadius = cfg.walkableRadius * cfg.cs;;
+	params.walkableClimb = cfg.walkableClimb * cfg.ch;
 	rcVcopy(params.bmin, pmesh.bmin);
 	rcVcopy(params.bmax, pmesh.bmax);
 	params.cs = cfg.cs;
 	params.ch = cfg.ch;
-	
+
 	unsigned char* navData = 0;
 	int navDataSize = 0;
-	
+
 	if (!dtCreateNavMeshData(&params, &navData, &navDataSize))
 	{
 		gkPrintf("Could not build Detour navmesh.");
@@ -299,7 +299,7 @@ PDT_NAV_MESH gkRecast::createNavMesh(PMESHDATA meshData, const Config& config)
 	}
 
 	navMesh = PDT_NAV_MESH(new gkDetourNavMesh(new dtNavMesh));
-	
+
 	if (!navMesh->m_p->init(navData, navDataSize, DT_TILE_FREE_DATA, 2048))
 	{
 		delete [] navData;
@@ -309,7 +309,7 @@ PDT_NAV_MESH gkRecast::createNavMesh(PMESHDATA meshData, const Config& config)
 
 	rcTimeVal totEndTime = rcGetPerformanceTimer();
 
-	gkPrintf("Navigation mesh created: %.1fms", rcGetDeltaTimeUsec(totStartTime, totEndTime)/1000.0f);
+	gkPrintf("Navigation mesh created: %.1fms", rcGetDeltaTimeUsec(totStartTime, totEndTime) / 1000.0f);
 
 	return navMesh;
 }
@@ -318,7 +318,7 @@ bool gkRecast::findPath(PDT_NAV_MESH navMesh, const gkVector3& from, const gkVec
 {
 	GK_ASSERT(!(includeFlags & excludeFlags) && "includeFlags with excludeFlags cannot overlap");
 
-	if(navMesh.get() && navMesh->m_p)
+	if (navMesh.get() && navMesh->m_p)
 	{
 		gkVector3 startPos(from);
 		gkVector3 endPos(to);
@@ -334,28 +334,28 @@ bool gkRecast::findPath(PDT_NAV_MESH navMesh, const gkVector3& from, const gkVec
 
 		dtPolyRef endRef = navMesh->m_p->findNearestPoly(endPos.ptr(), polyPickExt.ptr(), &filter, 0);
 
-		if(startRef && endRef)
+		if (startRef && endRef)
 		{
 			utArray<dtPolyRef> polys;
 			polys.resize(maxPathPolys);
 
 			int npolys = navMesh->m_p->findPath(startRef, endRef, startPos.ptr(), endPos.ptr(), &filter, polys.ptr(), maxPathPolys);
 
-			if(npolys > 1)
+			if (npolys > 1)
 			{
 				path.clear();
 
 				utArray<gkScalar> straightPath;
-				straightPath.resize(maxPathPolys*3);
+				straightPath.resize(maxPathPolys * 3);
 
 				int nstraightPath = navMesh->m_p->findStraightPath(startPos.ptr(), endPos.ptr(), polys.ptr(), npolys, straightPath.ptr(), 0, 0, maxPathPolys);
 
 				std::swap(startPos.y, startPos.z);
 				std::swap(endPos.y, endPos.z);
-				
+
 				gkVector3 point;
 
-				for(int i=0; i<nstraightPath*3; i+=3)
+				for (int i = 0; i < nstraightPath * 3; i += 3)
 				{
 					point.x = straightPath[i];
 					point.y = straightPath[i+2];

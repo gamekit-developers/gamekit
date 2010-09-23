@@ -37,39 +37,39 @@ class gkLogicLoader;
 class gkBlenderSceneConverter
 {
 public:
-	gkBlenderSceneConverter(gkBlendFile *fp, Blender::Scene *sc);
+	gkBlenderSceneConverter(gkBlendFile* fp, Blender::Scene* sc);
 	~gkBlenderSceneConverter();
 
 	void convert(void);
 
 private:
-	bool validObject(Blender::Object *ob);
-	void applyParents(utArray<Blender::Object *> &children);
+	bool validObject(Blender::Object* ob);
+	void applyParents(utArray<Blender::Object*> &children);
 
 	void convertSoundScene(void);
 	void convertWorld(void);
-	void convertGroups(utArray<Blender::Object *> &groups);
-	void convertObject(Blender::Object *ob, gkGameObject *gobj = 0);
+	void convertGroups(utArray<Blender::Object*> &groups);
+	void convertObject(Blender::Object* ob, gkGameObject* gobj = 0);
 
-	void convertObjectGroup(gkGameObjectGroup *gobj, Blender::Object *bobj);
-	void convertObjectGeneral(gkGameObject *gobj, Blender::Object *bobj);
+	void convertObjectGroup(gkGameObjectGroup* gobj, Blender::Object* bobj);
+	void convertObjectGeneral(gkGameObject* gobj, Blender::Object* bobj);
 
-	void convertObjectLogic(gkGameObject *gobj, Blender::Object *bobj);
-	void convertObjectProperties(gkGameObject *gobj, Blender::Object *bobj);
-	void convertObjectConstraints(gkGameObject *gobj, Blender::Object *bobj);
-	void convertObjectPhysics(gkGameObject *gobj, Blender::Object *bobj);
-	void convertObjectCamera(gkGameObject *gobj, Blender::Object *bobj);
-	void convertObjectLamp(gkGameObject *gobj, Blender::Object *bobj);
-	void convertObjectMesh(gkGameObject *gobj, Blender::Object *bobj);
-	void convertObjectArmature(gkGameObject *gobj, Blender::Object *bobj);
-	void convertObjectSkeleton(gkSkeletonResource *gobj, Blender::Object *bobj);
+	void convertObjectLogic(gkGameObject* gobj, Blender::Object* bobj);
+	void convertObjectProperties(gkGameObject* gobj, Blender::Object* bobj);
+	void convertObjectConstraints(gkGameObject* gobj, Blender::Object* bobj);
+	void convertObjectPhysics(gkGameObject* gobj, Blender::Object* bobj);
+	void convertObjectCamera(gkGameObject* gobj, Blender::Object* bobj);
+	void convertObjectLamp(gkGameObject* gobj, Blender::Object* bobj);
+	void convertObjectMesh(gkGameObject* gobj, Blender::Object* bobj);
+	void convertObjectArmature(gkGameObject* gobj, Blender::Object* bobj);
+	void convertObjectSkeleton(gkSkeletonResource* gobj, Blender::Object* bobj);
 
 
 
-	Blender::Scene  *m_bscene;
-	gkScene         *m_gscene;
-	gkLogicLoader   *m_logic;
-	gkBlendFile     *m_file;
+	Blender::Scene*  m_bscene;
+	gkScene*         m_gscene;
+	gkLogicLoader*   m_logic;
+	gkBlendFile*     m_file;
 };
 
 #endif//_gkBlenderSceneConverter_h_

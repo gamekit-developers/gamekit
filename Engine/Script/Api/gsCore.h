@@ -65,7 +65,7 @@ enum gsTransformSpace
 
 enum gsGameObjectTypes
 {
-	OB_UNKNOWN=0,
+	OB_UNKNOWN = 0,
 	OB_CAMERA,
 	OB_LIGHT,
 	OB_ENTITY,
@@ -99,14 +99,14 @@ private:
 
 public:
 	gsProperty();
-	gsProperty(const gkString &name, bool value);
-	gsProperty(const gkString &name, double value);
-	gsProperty(const gkString &name, const gkString &value);
-	gsProperty(const gsProperty &oth);
+	gsProperty(const gkString& name, bool value);
+	gsProperty(const gkString& name, double value);
+	gsProperty(const gkString& name, const gkString& value);
+	gsProperty(const gsProperty& oth);
 	~gsProperty();
 
-	const gkString &getName(void) const;
-	const gkString &getValue(void) const;
+	const gkString& getName(void) const;
+	const gkString& getValue(void) const;
 	void makeDebug(bool v);
 	gsPropertyType getType(void) const;
 	bool toBool(void) const;
@@ -114,7 +114,7 @@ public:
 	gkString toString(void) const;
 	void fromBool(bool v);
 	void  fromNumber(double v);
-	void fromString(const gkString &v);
+	void fromString(const gkString& v);
 
 
 	// internal wrap
@@ -125,21 +125,21 @@ public:
 class gsUserDefs
 {
 private:
-	typedef utHashTable<gkHashedString, gsProperty *> PropertyMap;
+	typedef utHashTable<gkHashedString, gsProperty*> PropertyMap;
 	PropertyMap m_properties;
 
-	void setValueEvent(gkVariable &v);
+	void setValueEvent(gkVariable& v);
 public:
 	~gsUserDefs();
 
-	const gsProperty &getProperty(const gkString &name);
-	void addProperty(const gsProperty &prop);
-	bool hasProperty(const gkString &name);
+	const gsProperty& getProperty(const gkString& name);
+	void addProperty(const gsProperty& prop);
+	bool hasProperty(const gkString& name);
 
-	const gsProperty    &__getitem__(const char *name);
-	void                __setitem__(const char *name, bool  v);
-	void                __setitem__(const char *name, double v);
-	void                __setitem__(const char *name, const gkString &v);
+	const gsProperty&    __getitem__(const char* name);
+	void                __setitem__(const char* name, bool  v);
+	void                __setitem__(const char* name, double v);
+	void                __setitem__(const char* name, const gkString& v);
 
 	// internal wrap
 	OGRE_KIT_WRAP_CLASS_COPY_CTOR(gsUserDefs, gkUserDefs, m_defs);
@@ -186,8 +186,8 @@ class gsEngine
 private:
 
 	bool m_ctxOwner, m_running;
-	gsUserDefs *m_defs;
-	typedef utArray<gkLuaEvent *> Connectors;
+	gsUserDefs* m_defs;
+	typedef utArray<gkLuaEvent*> Connectors;
 
 	Connectors m_ticks;
 
@@ -209,11 +209,11 @@ public:
 	void connect(int evt, gsSelf self, gsFunction method);
 
 
-	gsScene *loadBlendFile(const gkString &name);
-	gsScene *getActiveScene(void);
+	gsScene* loadBlendFile(const gkString& name);
+	gsScene* getActiveScene(void);
 
 
-	gsUserDefs &getUserDefs(void);
+	gsUserDefs& getUserDefs(void);
 
 
 	// internal wrap
@@ -251,16 +251,16 @@ public:
 	~gsScene();
 
 
-	bool hasObject(const gkString &name);
+	bool hasObject(const gkString& name);
 
-	gsGameObject *getObject(const gkString &name);
-	gsGameObject *createEmpty(const gkString &name);
+	gsGameObject* getObject(const gkString& name);
+	gsGameObject* createEmpty(const gkString& name);
 
 
 	gsArray<gsGameObject, gkGameObject> &getObjectList(void);
 
 	gsDynamicsWorld* getDynamicsWorld(void);
-	
+
 	// internal
 	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsScene, gkInstancedObject);
 };
@@ -284,37 +284,37 @@ public:
 	gsVector3 getLinearVelocity(void);
 	gsVector3 getAngularVelocity(void);
 
-	void setLinearVelocity(const gsVector3 &v);
+	void setLinearVelocity(const gsVector3& v);
 	void setLinearVelocity(float x, float y, float z);
 
-	void setAngularVelocity(const gsVector3 &v);
+	void setAngularVelocity(const gsVector3& v);
 	void setAngularVelocity(float x, float y, float z);
 
-	void setPosition(const gsVector3 &v);
+	void setPosition(const gsVector3& v);
 	void setPosition(float x, float y, float z);
 
-	void setRotation(const gsVector3 &v);
+	void setRotation(const gsVector3& v);
 	void setRotation(float pitch, float yaw, float roll);
 
-	void setOrientation(const gsQuaternion &quat);
+	void setOrientation(const gsQuaternion& quat);
 	void setOrientation(float w, float x, float y, float z);
 
 	gsGameObjectTypes getType(void);
 
 	void rotate(float dx, float dy, float dz);
-	void rotate(const gsVector3 &v);
-	void rotate(const gsQuaternion &v);
+	void rotate(const gsVector3& v);
+	void rotate(const gsQuaternion& v);
 	void rotate(float dx, float dy, float dz, gsTransformSpace ts);
-	void rotate(const gsVector3 &v, gsTransformSpace ts);
-	void rotate(const gsQuaternion &v, gsTransformSpace ts);
+	void rotate(const gsVector3& v, gsTransformSpace ts);
+	void rotate(const gsQuaternion& v, gsTransformSpace ts);
 
 
 	void translate(float x, float y, float z);
-	void translate(const gsVector3 &v);
+	void translate(const gsVector3& v);
 	void translate(float x, float y, float z, gsTransformSpace ts);
-	void translate(const gsVector3 &v, gsTransformSpace ts);
+	void translate(const gsVector3& v, gsTransformSpace ts);
 
-	void scale(const gsVector3 &v);
+	void scale(const gsVector3& v);
 	void scale(float x, float y, float z);
 
 
@@ -332,26 +332,26 @@ public:
 	int getState(void);
 
 	bool hasParent();
-	void setParent(gsGameObject *par);
-	void setParentInPlace(gsGameObject *par);
+	void setParent(gsGameObject* par);
+	void setParentInPlace(gsGameObject* par);
 	void clearParent(void);
 	void clearParentInPlace(void);
-	void addChild(gsGameObject *chi);
-	void removeChild(gsGameObject *chi);
+	void addChild(gsGameObject* chi);
+	void removeChild(gsGameObject* chi);
 
 
-	gsGameObject *getParent(void);
+	gsGameObject* getParent(void);
 
 	void enableContacts(bool v);
 	bool hasContacts();
-	bool hasContact(const gkString &object);
+	bool hasContact(const gkString& object);
 
-	gsScene *getScene(void);
+	gsScene* getScene(void);
 
-	gsProperty  __getitem__(const gkString &prop);
-	void        __setitem__(const gkString &prop, bool  v);
-	void        __setitem__(const gkString &prop, float v);
-	void        __setitem__(const gkString &prop, const char *v);
+	gsProperty  __getitem__(const gkString& prop);
+	void        __setitem__(const gkString& prop, bool  v);
+	void        __setitem__(const gkString& prop, float v);
+	void        __setitem__(const gkString& prop, const char* v);
 
 
 	// internal
@@ -401,7 +401,7 @@ public:
 	gsEntity();
 	~gsEntity() {}
 
-	void playAction(const gkString &name, float blend);
+	void playAction(const gkString& name, float blend);
 
 	// internal
 	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsEntity, gkInstancedObject);
@@ -426,22 +426,22 @@ public:
 class gsDebugger
 {
 protected:
-	class gkDebugger *m_debugger;
+	class gkDebugger* m_debugger;
 
 public:
 
-	gsDebugger(gsScene *sc);
+	gsDebugger(gsScene* sc);
 	~gsDebugger() {}
 
-	void drawLine(const gsVector3 &from, const gsVector3 &to, const gsVector3 &color);
-	void drawObjectAxis(gsGameObject *ptr, float size);
+	void drawLine(const gsVector3& from, const gsVector3& to, const gsVector3& color);
+	void drawObjectAxis(gsGameObject* ptr, float size);
 
 	void clear(void);
 };
 
 
 
-extern void gsDebugPrint(const char *str);
+extern void gsDebugPrint(const char* str);
 
 
 #endif//_OgreKitApi_h_

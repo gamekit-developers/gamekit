@@ -43,9 +43,9 @@
 class gkOgg : public gkSoundStream
 {
 private:
-	utStream        *m_reader;
+	utStream*        m_reader;
 	OggVorbis_File  m_stream;
-	vorbis_info    *m_inf;
+	vorbis_info*    m_inf;
 
 	bool            m_eos;
 	ov_callbacks    m_callbacks;
@@ -55,13 +55,13 @@ public:
 	gkOgg();
 	virtual ~gkOgg();
 
-	bool load(const char *fname);
-	bool load(const char *buf, int len);
+	bool load(const char* fname);
+	bool load(const char* buf, int len);
 
 
 	// stream impl
-	const char      *read(UTsize len, UTsize &br);
-	const char      *read(UTsize pos, UTsize len, UTsize &br);
+	const char*      read(UTsize len, UTsize& br);
+	const char*      read(UTsize pos, UTsize len, UTsize& br);
 	bool            eos(void);
 	void            seek(UTsize pos, int way);
 

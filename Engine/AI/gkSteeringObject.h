@@ -59,25 +59,25 @@ public:
 	GK_INLINE gkVector3 up() const { return m_obj->getOrientation() * m_up; }
 	GK_INLINE gkVector3 forward() const { return m_obj->getOrientation() * m_forward; }
 	GK_INLINE gkVector3 position() const { return m_obj->getPosition(); }
-	GK_INLINE gkVector3 velocity() const { 	return forward() * m_speed; }
+	GK_INLINE gkVector3 velocity() const {     return forward() * m_speed; }
 	GK_INLINE gkVector3 predictFuturePosition(const float predictionTime) const { return position() + (velocity() * predictionTime); }
 
-    GK_INLINE float mass() const {return m_mass;}
-    GK_INLINE float setMass(float m) {return m_mass = m;}
+	GK_INLINE float mass() const {return m_mass;}
+	GK_INLINE float setMass(float m) {return m_mass = m;}
 
-    GK_INLINE float speed() const {return m_speed;}
-    GK_INLINE float setSpeed(float s) {return m_speed = s;}
+	GK_INLINE float speed() const {return m_speed;}
+	GK_INLINE float setSpeed(float s) {return m_speed = s;}
 
-    GK_INLINE float radius() const {return m_radius;}
-    GK_INLINE float setRadius(float m) {return m_radius = m;}
+	GK_INLINE float radius() const {return m_radius;}
+	GK_INLINE float setRadius(float m) {return m_radius = m;}
 
-    GK_INLINE float maxForce() const {return m_maxForce;}
-    GK_INLINE float setMaxForce(float mf) {return m_maxForce = mf;}
+	GK_INLINE float maxForce() const {return m_maxForce;}
+	GK_INLINE float setMaxForce(float mf) {return m_maxForce = mf;}
 
-    GK_INLINE float maxSpeed(void) const {return m_maxSpeed;}
-    GK_INLINE float setMaxSpeed(float ms) {return m_maxSpeed = ms;}
+	GK_INLINE float maxSpeed(void) const {return m_maxSpeed;}
+	GK_INLINE float setMaxSpeed(float ms) {return m_maxSpeed = ms;}
 
-    GK_INLINE gkScalar curvature () const {return m_curvature;}
+	GK_INLINE gkScalar curvature () const {return m_curvature;}
 	void measurePathCurvature (const float elapsedTime);
 
 	virtual bool inGoal() const { return false; }
@@ -85,8 +85,8 @@ public:
 	virtual void reset();
 	virtual void notifyInGoal();
 
-	virtual void setGoalPosition(const gkVector3& position){};
-	virtual void setGoalRadius(gkScalar radius){};
+	virtual void setGoalPosition(const gkVector3& position) {};
+	virtual void setGoalRadius(gkScalar radius) {};
 
 	bool update(gkScalar tick);
 
@@ -95,7 +95,7 @@ public:
 	gkString getDebugStringState() const;
 
 protected:
-	
+
 	void applySteeringForce(const OpenSteer::Vec3& force, const float elapsedTime);
 	void applyBrakingForce(const float rate, const float deltaTime);
 	OpenSteer::Vec3 adjustRawSteeringForce(const OpenSteer::Vec3& force);
@@ -119,18 +119,18 @@ protected:
 	typedef std::set<gkSteeringObject*> OTHERS;
 	static OTHERS m_others;
 
-    float m_mass;       // mass (defaults to unity so acceleration=force)
+	float m_mass;       // mass (defaults to unity so acceleration=force)
 
-    float m_radius;     // size of bounding sphere, for obstacle avoidance, etc.
+	float m_radius;     // size of bounding sphere, for obstacle avoidance, etc.
 
-    float m_speed;      // speed along Forward direction.  Because local space
-                       // is velocity-aligned, velocity = Forward * Speed
+	float m_speed;      // speed along Forward direction.  Because local space
+	// is velocity-aligned, velocity = Forward * Speed
 
-    float m_maxForce;   // the maximum steering force this vehicle can apply
-                       // (steering force is clipped to this magnitude)
+	float m_maxForce;   // the maximum steering force this vehicle can apply
+	// (steering force is clipped to this magnitude)
 
-    float m_maxSpeed;   // the maximum speed this vehicle is allowed to move
-                       // (velocity is clipped to this magnitude)
+	float m_maxSpeed;   // the maximum speed this vehicle is allowed to move
+	// (velocity is clipped to this magnitude)
 
 private:
 
@@ -143,9 +143,9 @@ private:
 	gkVector3 m_side;
 
 	gkScalar m_curvature;
-    OpenSteer::Vec3 m_lastForward;
+	OpenSteer::Vec3 m_lastForward;
 	OpenSteer::Vec3 m_lastPosition;
-    gkScalar m_smoothedCurvature;
+	gkScalar m_smoothedCurvature;
 
 	gkVector3 m_lastFuturePosition;
 

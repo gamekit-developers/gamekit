@@ -45,17 +45,17 @@ public:
 	DECLARE_SOCKET_TYPE(B, T);
 	DECLARE_SOCKET_TYPE(RESULT, T);
 
-	gkMathNode(gkLogicTree *parent, size_t id) 
-		: gkLogicNode(parent, id) 
+	gkMathNode(gkLogicTree* parent, size_t id)
+		: gkLogicNode(parent, id)
 	{
 		ADD_ISOCK(A, T());
 		ADD_ISOCK(B, T());
 		ADD_OSOCK(RESULT, T());
 	}
 
-    virtual ~gkMathNode() {}
+	virtual ~gkMathNode() {}
 
-    void update(gkScalar tick)
+	void update(gkScalar tick)
 	{
 		m_a = GET_SOCKET_VALUE(A);
 		m_b = GET_SOCKET_VALUE(B);
@@ -181,7 +181,7 @@ public:
 	{
 		if (m_a > 0 && m_b > 0)
 			return gkMath::Log(m_a) / gkMath::Log(m_b);
-		else 
+		else
 			return 0;
 	}
 

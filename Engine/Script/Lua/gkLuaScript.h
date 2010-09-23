@@ -40,14 +40,14 @@ protected:
 	int             m_script;
 	bool            m_compiled, m_isInvalid;
 
-	gkLuaManager    *m_owner;
+	gkLuaManager*    m_owner;
 	void compile(void);
 
 public:
-	gkLuaScript(gkLuaManager *parent, const gkString &name, const gkString &text);
+	gkLuaScript(gkLuaManager* parent, const gkString& name, const gkString& text);
 	~gkLuaScript();
 
-	GK_INLINE const gkString &getName(void) {return m_name;}
+	GK_INLINE const gkString& getName(void) {return m_name;}
 	GK_INLINE bool  compiled(void)          {return m_compiled;}
 
 	void decompile(void);

@@ -30,15 +30,15 @@
 #include "gkScene.h"
 
 
-gkParentActuator::gkParentActuator(gkGameObject *object, gkLogicLink *link, const gkString &name)
-		:	gkLogicActuator(object, link, name), m_mode(0), m_obj(""), m_compound(false), m_ghost(false)
+gkParentActuator::gkParentActuator(gkGameObject* object, gkLogicLink* link, const gkString& name)
+	:    gkLogicActuator(object, link, name), m_mode(0), m_obj(""), m_compound(false), m_ghost(false)
 {
 }
 
 
-gkLogicBrick *gkParentActuator::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick* gkParentActuator::clone(gkLogicLink* link, gkGameObject* dest)
 {
-	gkParentActuator *act = new gkParentActuator(*this);
+	gkParentActuator* act = new gkParentActuator(*this);
 	act->cloneImpl(link, dest);
 	return act;
 }
@@ -53,21 +53,21 @@ void gkParentActuator::execute(void)
 	switch (m_mode)
 	{
 	case PA_SET:
-	{
-		gkScene *scene = m_object->getOwner();
-		if(scene->hasObject(m_obj))
 		{
-			gkGameObject *par = scene->getObject(m_obj);
-			
-			if(m_object->getParent() != par)
+			gkScene* scene = m_object->getOwner();
+			if (scene->hasObject(m_obj))
 			{
-				if(m_object->getParent())
-					m_object->clearParentInPlace();
-				m_object->setParentInPlace(par);
+				gkGameObject* par = scene->getObject(m_obj);
+
+				if (m_object->getParent() != par)
+				{
+					if (m_object->getParent())
+						m_object->clearParentInPlace();
+					m_object->setParentInPlace(par);
+				}
 			}
+			break;
 		}
-		break;
-	}
 	case PA_CLEAR:
 		m_object->clearParentInPlace();
 		break;

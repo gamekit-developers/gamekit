@@ -30,10 +30,10 @@
 #include "gkScene.h"
 
 
-gkCamera::gkCamera(gkInstancedManager *creator, const gkResourceName& name, const gkResourceHandle& handle)
-	:	gkGameObject(creator, name, handle, GK_CAMERA),
-	    m_cameraProps(),
-	    m_camera(0)
+gkCamera::gkCamera(gkInstancedManager* creator, const gkResourceName& name, const gkResourceHandle& handle)
+	:    gkGameObject(creator, name, handle, GK_CAMERA),
+	     m_cameraProps(),
+	     m_camera(0)
 {
 }
 
@@ -47,24 +47,24 @@ void gkCamera::createInstanceImpl(void)
 
 
 
-	Ogre::SceneManager *manager = m_scene->getManager();
+	Ogre::SceneManager* manager = m_scene->getManager();
 	m_camera = manager->createCamera(m_name.str());
-	
+
 	m_camera->setNearClipDistance(m_cameraProps.m_clipstart);
-	m_camera->setFarClipDistance(m_cameraProps.m_clipend);	
+	m_camera->setFarClipDistance(m_cameraProps.m_clipend);
 
 	if (m_cameraProps.m_type == gkCameraProperties::CA_ORTHOGRAPHIC)
-	{	
-		m_camera->setProjectionType(Ogre::PT_ORTHOGRAPHIC);	
+	{
+		m_camera->setProjectionType(Ogre::PT_ORTHOGRAPHIC);
 		m_camera->setOrthoWindow(m_cameraProps.m_orthoscale, m_cameraProps.m_orthoscale);
 	}
 	else
 	{
 		float ratio = m_camera->getAspectRatio();
-		float fovy = 2*atan(tan(m_cameraProps.m_fov*gkPi/360)/ratio);
+		float fovy = 2 * atan(tan(m_cameraProps.m_fov * gkPi / 360) / ratio);
 		m_camera->setProjectionType(Ogre::PT_PERSPECTIVE);
 		m_camera->setFOVy(gkRadian(fovy));
-	}	
+	}
 
 
 
@@ -84,7 +84,7 @@ void gkCamera::destroyInstanceImpl(void)
 
 	if (!m_scene->isBeingDestroyed())
 	{
-		Ogre::SceneManager *manager = m_scene->getManager();
+		Ogre::SceneManager* manager = m_scene->getManager();
 
 
 		m_node->detachObject(m_camera);
@@ -122,37 +122,37 @@ void gkCamera::setClip(gkScalar start, gkScalar end)
 
 
 
-void gkCamera::setFov(const gkRadian &fov)
+void gkCamera::setFov(const gkRadian& fov)
 {
 
 	gkScalar val = fov.valueRadians();
 
-	m_cameraProps.m_fov = fov.valueDegrees();
-	if (m_camera) 
-	{
-		float ratio = m_camera->getAspectRatio();
-		float fovy = 2*atan(tan(val/2)/ratio);
-		m_camera->setFOVy(gkRadian(fovy));
-	}
-}
-
-
-
-void gkCamera::setFov(const gkDegree &fov)
-{
-	gkScalar val = fov.valueRadians();
-	
 	m_cameraProps.m_fov = fov.valueDegrees();
 	if (m_camera)
 	{
 		float ratio = m_camera->getAspectRatio();
-		float fovy = 2*atan(tan(val/2)/ratio);
+		float fovy = 2 * atan(tan(val / 2) / ratio);
 		m_camera->setFOVy(gkRadian(fovy));
 	}
 }
 
-void gkCamera::setOrthoScale(const gkScalar &scale)
-{	
+
+
+void gkCamera::setFov(const gkDegree& fov)
+{
+	gkScalar val = fov.valueRadians();
+
+	m_cameraProps.m_fov = fov.valueDegrees();
+	if (m_camera)
+	{
+		float ratio = m_camera->getAspectRatio();
+		float fovy = 2 * atan(tan(val / 2) / ratio);
+		m_camera->setFOVy(gkRadian(fovy));
+	}
+}
+
+void gkCamera::setOrthoScale(const gkScalar& scale)
+{
 	if (m_cameraProps.m_orthoscale != scale)
 	{
 		m_cameraProps.m_orthoscale = scale;
@@ -178,12 +178,12 @@ void gkCamera::setProjType(gkCameraProperties::Type type)
 			if (type == gkCameraProperties::CA_ORTHOGRAPHIC)
 			{
 				m_camera->setProjectionType(Ogre::PT_ORTHOGRAPHIC);
-				m_camera->setOrthoWindow(m_cameraProps.m_orthoscale, m_cameraProps.m_orthoscale);	
+				m_camera->setOrthoWindow(m_cameraProps.m_orthoscale, m_cameraProps.m_orthoscale);
 			}
 			else
 			{
 				float ratio = m_camera->getAspectRatio();
-				float fovy = 2*atan(tan(m_cameraProps.m_fov*gkPi/360)/ratio);
+				float fovy = 2 * atan(tan(m_cameraProps.m_fov * gkPi / 360) / ratio);
 				m_camera->setProjectionType(Ogre::PT_PERSPECTIVE);
 				m_camera->setFOVy(gkRadian(fovy));
 			}
@@ -191,9 +191,9 @@ void gkCamera::setProjType(gkCameraProperties::Type type)
 	}
 }
 
-gkGameObject *gkCamera::clone(const gkString &name)
+gkGameObject* gkCamera::clone(const gkString& name)
 {
-	gkCamera *cl = new gkCamera(getInstanceCreator(), name, -1);
+	gkCamera* cl = new gkCamera(getInstanceCreator(), name, -1);
 	memcpy(&cl->m_cameraProps, &m_cameraProps, sizeof(gkCameraProperties));
 
 	gkGameObject::cloneImpl(cl);

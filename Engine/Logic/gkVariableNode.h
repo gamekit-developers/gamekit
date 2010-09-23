@@ -47,19 +47,19 @@ public:
 	DECLARE_SOCKET_TYPE(VALUE, gkVariable);
 	DECLARE_SOCKET_TYPE(RESULT, gkVariable);
 
-    gkVariableNode(gkLogicTree *parent, size_t id);
-    virtual ~gkVariableNode() {}
+	gkVariableNode(gkLogicTree* parent, size_t id);
+	virtual ~gkVariableNode() {}
 
-    bool evaluate(gkScalar tick);
-    void initialize();
+	bool evaluate(gkScalar tick);
+	void initialize();
 
-    GK_INLINE void setName(const gkString &varname) {m_varName = varname;}
-    GK_INLINE void setDebug(void)                   {m_debug = true;}
+	GK_INLINE void setName(const gkString& varname) {m_varName = varname;}
+	GK_INLINE void setDebug(void)                   {m_debug = true;}
 
 private:
-    gkString        m_varName;
-    gkVariable*     m_prop;
-    bool            m_debug;
+	gkString        m_varName;
+	gkVariable*     m_prop;
+	bool            m_debug;
 };
 
 
@@ -78,21 +78,21 @@ public:
 	DECLARE_SOCKET_TYPE(VALUE, gkVariable);
 	DECLARE_SOCKET_TYPE(RESULT, gkVariable);
 
-    VariableOpNode(gkLogicTree *parent, size_t id);
-    virtual ~VariableOpNode() {}
+	VariableOpNode(gkLogicTree* parent, size_t id);
+	virtual ~VariableOpNode() {}
 
-    bool evaluate(gkScalar tick);
-    void initialize();
+	bool evaluate(gkScalar tick);
+	void initialize();
 
-    GK_INLINE void setFunction(int func)              {m_function = func;}
-    GK_INLINE void setName(const gkString &varname)   {m_varName = varname;}
-    GK_INLINE void setToDegree(bool v)                {m_deg = v;}
+	GK_INLINE void setFunction(int func)              {m_function = func;}
+	GK_INLINE void setName(const gkString& varname)   {m_varName = varname;}
+	GK_INLINE void setToDegree(bool v)                {m_deg = v;}
 
 private:
-    int             m_function;
-    gkString        m_varName;
-    bool            m_deg;
-    gkVariable*     m_prop;
+	int             m_function;
+	gkString        m_varName;
+	bool            m_deg;
+	gkVariable*     m_prop;
 };
 
 
@@ -105,31 +105,31 @@ public:
 		SET,
 		GET,
 	};
-	
+
 	DECLARE_SOCKET_TYPE(SET, T);
 	DECLARE_SOCKET_TYPE(GET, T);
 
-	gkVariableGetSetNode(gkLogicTree *parent, size_t id)
-		: gkLogicNode(parent, id) 
+	gkVariableGetSetNode(gkLogicTree* parent, size_t id)
+		: gkLogicNode(parent, id)
 	{
 		ADD_ISOCK(SET, T());
 		ADD_OSOCK(GET, T());
 	}
 
 	virtual ~gkVariableGetSetNode() {}
-	
+
 	void initialize()
 	{
 		if (!m_varName.empty())
 		{
-			gkGameObject *ob = GET_SOCKET(SET)->getGameObject();
+			gkGameObject* ob = GET_SOCKET(SET)->getGameObject();
 			if (ob != 0)
 			{
 				if (!ob->hasVariable(m_varName))
 					m_prop = ob->createVariable(m_varName, m_debug);
 				else
 					m_prop = ob->getVariable(m_varName);
-				
+
 				if (m_prop)
 					m_prop->setValue(GET_SOCKET_VALUE(SET));
 			}
@@ -145,14 +145,14 @@ public:
 			SET_SOCKET_VALUE(GET, v);
 		}
 	}
-	
-	GK_INLINE void setName(const gkString &varname) {m_varName = varname;}
+
+	GK_INLINE void setName(const gkString& varname) {m_varName = varname;}
 	GK_INLINE void setDebug(bool v)                 {m_debug = v;}
 
 private:
 	gkString    m_varName;
 	bool        m_debug;
-	gkVariable *m_prop;
+	gkVariable* m_prop;
 };
 
 #endif//_gkVariableNode_h_

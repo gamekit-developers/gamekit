@@ -38,15 +38,15 @@
 
 using namespace Ogre;
 
-gkPickNode::gkPickNode(gkLogicTree *parent, size_t id)
-: gkLogicNode(parent, id),
-m_pickedBody(0),
-m_scene(0),
-m_constraint(0),
-m_oldPickingPos(0, 0, 0),
-m_oldPickingDist(0),
-m_angularFactor(gkVector3::ZERO),
-m_activationState(0)
+gkPickNode::gkPickNode(gkLogicTree* parent, size_t id)
+	: gkLogicNode(parent, id),
+	  m_pickedBody(0),
+	  m_scene(0),
+	  m_constraint(0),
+	  m_oldPickingPos(0, 0, 0),
+	  m_oldPickingDist(0),
+	  m_angularFactor(gkVector3::ZERO),
+	  m_activationState(0)
 {
 	ADD_ISOCK(UPDATE, false);
 	ADD_ISOCK(CREATE_PICK, false);
@@ -54,7 +54,7 @@ m_activationState(0)
 	ADD_ISOCK(X, 0);
 	ADD_ISOCK(Y, 0);
 	ADD_ISOCK(DISABLE_ROTATION, true);
-	
+
 	ADD_OSOCK(PICKED_OBJ, 0);
 	ADD_OSOCK(CAUGHT_TRUE, false);
 	ADD_OSOCK(CAUGHT_FALSE, true);
@@ -76,7 +76,7 @@ bool gkPickNode::evaluate(Real tick)
 {
 	bool enable = GET_SOCKET_VALUE(UPDATE);
 
-	if(!enable)
+	if (!enable)
 	{
 		ReleasePick();
 	}
@@ -86,11 +86,11 @@ bool gkPickNode::evaluate(Real tick)
 
 void gkPickNode::update(Real tick)
 {
-	if(GET_SOCKET_VALUE(CREATE_PICK))
+	if (GET_SOCKET_VALUE(CREATE_PICK))
 	{
 		CreatePick();
 	}
-	else if(GET_SOCKET_VALUE(RELEASE_PICK))
+	else if (GET_SOCKET_VALUE(RELEASE_PICK))
 	{
 		ReleasePick();
 	}
@@ -105,10 +105,10 @@ void gkPickNode::CreatePick()
 	ReleasePick();
 
 	Ogre::Ray ray = GetRay();
-	
+
 	gkRayTest rayTest;
 
-	if(rayTest.collides(ray))
+	if (rayTest.collides(ray))
 	{
 		btCollisionObject* pCol = rayTest.getCollisionObject();
 
@@ -122,7 +122,7 @@ void gkPickNode::CreatePick()
 
 			m_angularFactor = gkVector3(body->getAngularFactor());
 
-			if(GET_SOCKET_VALUE(DISABLE_ROTATION))
+			if (GET_SOCKET_VALUE(DISABLE_ROTATION))
 			{
 				body->setAngularFactor(0);
 			}
@@ -158,7 +158,7 @@ void gkPickNode::CreatePick()
 			//save mouse position for dragging
 			m_oldPickingPos = rayTo;
 
-			m_oldPickingDist = (hitPos-rayFrom).length();
+			m_oldPickingDist = (hitPos - rayFrom).length();
 
 			//very weak constraint for picking
 			m_constraint->m_setting.m_tau = 0.1f;
@@ -176,7 +176,7 @@ void gkPickNode::CreatePick()
 
 void gkPickNode::ReleasePick()
 {
-	if(m_constraint)
+	if (m_constraint)
 	{
 		btDynamicsWorld* pWorld = m_scene->getDynamicsWorld()->getBulletWorld();
 
@@ -204,7 +204,7 @@ void gkPickNode::ReleasePick()
 
 void gkPickNode::UpdatePick()
 {
-	if(m_constraint)
+	if (m_constraint)
 	{
 		gkVector3 newPivotB = GetPivotPosition();
 
@@ -222,7 +222,7 @@ gkVector3 gkPickNode::GetPivotPosition()
 	Ray ray = GetRay();
 
 	gkVector3 dir(ray.getDirection());
-	
+
 	dir.normalise();
 
 	dir *= m_oldPickingDist;
@@ -230,4 +230,3 @@ gkVector3 gkPickNode::GetPivotPosition()
 	return ray.getOrigin() + dir;
 
 }
-

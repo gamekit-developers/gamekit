@@ -39,12 +39,12 @@
 
 
 
-gkEntity::gkEntity(gkInstancedManager *creator, const gkResourceName& name, const gkResourceHandle& handle)
-	:	gkGameObject(creator, name, handle, GK_ENTITY),
-	    m_entityProps(new gkEntityProperties()),
-	    m_entity(0),
-	    m_active(0),
-	    m_skeleton(0)
+gkEntity::gkEntity(gkInstancedManager* creator, const gkResourceName& name, const gkResourceHandle& handle)
+	:    gkGameObject(creator, name, handle, GK_ENTITY),
+	     m_entityProps(new gkEntityProperties()),
+	     m_entity(0),
+	     m_active(0),
+	     m_skeleton(0)
 {
 }
 
@@ -71,7 +71,7 @@ void gkEntity::createInstanceImpl(void)
 	if (m_skeleton)
 		m_skeleton->createInstance();
 
-	Ogre::SceneManager *manager = m_scene->getManager();
+	Ogre::SceneManager* manager = m_scene->getManager();
 	m_entity = manager->createEntity(m_name.str(), m_entityProps->m_mesh->getResourceName().str());
 
 
@@ -80,7 +80,7 @@ void gkEntity::createInstanceImpl(void)
 
 	if (m_skeleton)
 		m_skeleton->updateFromController();
-	
+
 
 	if (!m_entityProps->m_startPose.empty())
 		_resetPose();
@@ -97,7 +97,7 @@ void gkEntity::destroyInstanceImpl(void)
 	if (m_entity)
 	{
 
-		Ogre::SceneManager *manager = m_scene->getManager();
+		Ogre::SceneManager* manager = m_scene->getManager();
 
 		if (!m_entityProps->m_startPose.empty())
 			_resetPose();
@@ -106,7 +106,7 @@ void gkEntity::destroyInstanceImpl(void)
 		{
 			if (m_node)
 				m_node->detachObject(m_entity);
-		
+
 			manager->destroyEntity(m_entity);
 		}
 	}
@@ -134,7 +134,7 @@ void gkEntity::_destroyAsStaticGeometry(void)
 {
 	if (m_entity != 0)
 	{
-		Ogre::SceneManager *manager = m_scene->getManager();
+		Ogre::SceneManager* manager = m_scene->getManager();
 
 		if (!m_entityProps->m_startPose.empty())
 			_resetPose();
@@ -151,7 +151,7 @@ void gkEntity::_destroyAsStaticGeometry(void)
 
 
 
-void gkEntity::evalAction(gkAction *act, gkScalar animTime)
+void gkEntity::evalAction(gkAction* act, gkScalar animTime)
 {
 	if (m_skeleton)
 	{
@@ -174,7 +174,7 @@ void gkEntity::evalAction(gkAction *act, gkScalar animTime)
 
 
 
-void gkEntity::playAction(const gkString &act, gkScalar blend)
+void gkEntity::playAction(const gkString& act, gkScalar blend)
 {
 	if (m_skeleton)
 	{
@@ -200,9 +200,9 @@ void gkEntity::playAction(const gkString &act, gkScalar blend)
 
 
 
-gkGameObject *gkEntity::clone(const gkString &name)
+gkGameObject* gkEntity::clone(const gkString& name)
 {
-	gkEntity *cl= new gkEntity(getInstanceCreator(), name, -1);
+	gkEntity* cl = new gkEntity(getInstanceCreator(), name, -1);
 
 	memcpy(cl->m_entityProps, m_entityProps, sizeof(gkEntityProperties));
 	cl->m_entityProps->m_mesh = m_entityProps->m_mesh;

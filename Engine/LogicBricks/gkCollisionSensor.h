@@ -49,14 +49,14 @@ protected:
 
 public:
 
-	gkCollisionSensor(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	gkCollisionSensor(gkGameObject* object, gkLogicLink* link, const gkString& name);
 	virtual ~gkCollisionSensor() {}
 
-	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
+	gkLogicBrick* clone(gkLogicLink* link, gkGameObject* dest);
 
 	bool query(void);
-	GK_INLINE void            setMaterial(const gkString &material)    {m_material = material;}
-	GK_INLINE void            setProperty(const gkString &prop)        {m_prop = prop;}
+	GK_INLINE void            setMaterial(const gkString& material)    {m_material = material;}
+	GK_INLINE void            setProperty(const gkString& prop)        {m_prop = prop;}
 	GK_INLINE const gkString& getMaterial(void)                        {return m_material;}
 	GK_INLINE const gkString& getProperty(void)                        {return m_prop;}
 

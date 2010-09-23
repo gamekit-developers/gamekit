@@ -35,43 +35,43 @@
 class gkBlendFile
 {
 public:
-	typedef utArray<Ogre::ManualResourceLoader *> ManualResourceLoaderList;
+	typedef utArray<Ogre::ManualResourceLoader*> ManualResourceLoaderList;
 
 	// Image lookup for sharing textures
-	typedef utHashTable<utPointerHashKey, Ogre::Texture *> ImageTextureHashMap;
+	typedef utHashTable<utPointerHashKey, Ogre::Texture*> ImageTextureHashMap;
 
-	typedef utArray<gkScene *> Scenes;
+	typedef utArray<gkScene*> Scenes;
 
 public:
 
 
-	gkBlendFile(const gkString &blendToLoad, const gkString &group = GK_DEF_GROUP);
+	gkBlendFile(const gkString& blendToLoad, const gkString& group = GK_DEF_GROUP);
 	~gkBlendFile();
 
 
 
 
-	bool parse(int opts, const gkString &scene="");
+	bool parse(int opts, const gkString& scene = "");
 
 
-	gkScene *getSceneByName(const gkString &name);
+	gkScene* getSceneByName(const gkString& name);
 
-	GK_INLINE gkScene *getMainScene(void) {return m_activeScene;}
-	GK_INLINE Scenes  &getScenes(void)    {return m_scenes;}
+	GK_INLINE gkScene* getMainScene(void) {return m_activeScene;}
+	GK_INLINE Scenes&  getScenes(void)    {return m_scenes;}
 
 
-	///Internal manual loader registration (used mainly for Blender image to Ogre Texture ). 
-	void _registerLoader(Ogre::ManualResourceLoader *loader)  {m_loaders.push_back(loader);}
+	///Internal manual loader registration (used mainly for Blender image to Ogre Texture ).
+	void _registerLoader(Ogre::ManualResourceLoader* loader)  {m_loaders.push_back(loader);}
 
-	bParse::bBlenderFile *_getInternalFile(void) {GK_ASSERT(m_file); return m_file;}
+	bParse::bBlenderFile* _getInternalFile(void) {GK_ASSERT(m_file); return m_file;}
 
 
 
 	///Access to the original group name. Used for placing created resources in the same group.
-	GK_INLINE const gkString &getGroup(void) {return m_group;}
+	GK_INLINE const gkString& getGroup(void) {return m_group;}
 
 
- 	GK_INLINE const gkString &getFilePath(void) {return m_name;}
+	GK_INLINE const gkString& getFilePath(void) {return m_name;}
 
 
 protected:
@@ -89,9 +89,9 @@ protected:
 	ManualResourceLoaderList  m_loaders;     // Ogre Loaders
 	const gkString            m_group;       // Ogre Ogre::Resource Group
 	const gkString            m_name;        // Current file path.
- 	bParse::bBlenderFile     *m_file;        // bParse File Pointer
+	bParse::bBlenderFile*     m_file;        // bParse File Pointer
 	Scenes                    m_scenes;      // All Scenes
-	gkScene                  *m_activeScene; // Main scene found during parse.
+	gkScene*                  m_activeScene; // Main scene found during parse.
 	ImageTextureHashMap       m_imageLookup;
 	gkString                  m_findScene;
 	bool                      m_hasBFont;

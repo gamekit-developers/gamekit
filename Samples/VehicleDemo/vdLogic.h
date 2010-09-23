@@ -35,9 +35,9 @@
 class vdLogic
 {
 public:
-	vdLogic(gkScene *scene);
+	vdLogic(gkScene* scene);
 	~vdLogic();
-	
+
 	void tick(gkScalar rate);
 
 private:
@@ -49,27 +49,27 @@ private:
 
 public:
 
-	gkScene *m_scene;
+	gkScene* m_scene;
 
-	gkGameObject *m_camera;
-	
-	gkLogicTree *m_tree;
+	gkGameObject* m_camera;
 
-	gkKeyNode *m_upKeyNode;
-	gkKeyNode *m_downKeyNode;
-	gkKeyNode *m_leftKeyNode; 
-	gkKeyNode *m_rightKeyNode;
-	gkKeyNode *m_spaceKeyNode;
-	gkKeyNode *m_dKeyNode;
-	gkKeyNode *m_cKeyNode;
-	gkKeyNode *m_rKeyNode;
-	
-	gkCameraNode *m_cameraNode;
+	gkLogicTree* m_tree;
 
-	vdVehicleNode *m_vehicleNode;
-	
+	gkKeyNode* m_upKeyNode;
+	gkKeyNode* m_downKeyNode;
+	gkKeyNode* m_leftKeyNode;
+	gkKeyNode* m_rightKeyNode;
+	gkKeyNode* m_spaceKeyNode;
+	gkKeyNode* m_dKeyNode;
+	gkKeyNode* m_cKeyNode;
+	gkKeyNode* m_rKeyNode;
+
+	gkCameraNode* m_cameraNode;
+
+	vdVehicleNode* m_vehicleNode;
+
 private:
-	vdVehicle *m_vehicle;
+	vdVehicle* m_vehicle;
 };
 
 #endif // VDLOGIC_H

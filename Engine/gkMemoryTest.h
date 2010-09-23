@@ -38,7 +38,7 @@
 
 
 
-inline int debug_hook(int type, char *msg, int *ret)
+inline int debug_hook(int type, char* msg, int* ret)
 {
 	printf("%s", msg);
 	return 0;

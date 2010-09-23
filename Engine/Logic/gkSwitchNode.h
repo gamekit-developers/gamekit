@@ -34,7 +34,7 @@
 #define START_OT 12
 #define CASE_MAX 23
 
-// switch & case support upto 10 labels 
+// switch & case support upto 10 labels
 class gkSwitchNode : public gkLogicNode
 {
 public:
@@ -45,10 +45,10 @@ public:
     void update(gkScalar tick);
     void initialize();
 
-    // number of labels to test 
+    // number of labels to test
     GK_INLINE void setNrLabels(int nr)  {m_labels = gkClamp<int>(nr, 1, 10);}
 
-    // inputs 
+    // inputs
     GK_INLINE gkLogicSocket* getUpdate(void)        {return &m_sockets[0];}
     GK_INLINE gkLogicSocket* getSwitch(void)        {return &m_sockets[1];}
     GK_INLINE gkLogicSocket* getCase(int idx) {

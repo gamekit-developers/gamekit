@@ -54,28 +54,28 @@ public:
 	gsArrayIterator(Array& a) : m_iter(a) {}
 #endif
 
-	gsArrayIterator()	{}
-	~gsArrayIterator()	{}
+	gsArrayIterator()    {}
+	~gsArrayIterator()    {}
 
 
 	inline bool hasMoreElements(void) {return m_iter.hasMoreElements();}
 	inline void moveNext(void) { m_iter.next();}
 
 	inline W* peekNext(void)
-	{ 
+	{
 		if (m_iter.hasMoreElements())
 		{
-			B *base = m_iter.peekNext();
+			B* base = m_iter.peekNext();
 			return W::createNew(base);
 		}
 		return 0;
 	}
 
 	inline W* getNext(void)
-	{ 
+	{
 		if (m_iter.hasMoreElements())
 		{
-			B *base = m_iter.getNext();
+			B* base = m_iter.getNext();
 			return W::createNew(base);
 		}
 		return 0;
@@ -86,7 +86,7 @@ public:
 
 
 template <typename W, typename B>
-class gsArray 
+class gsArray
 {
 public:
 	typedef utArray<B*>            Array;
@@ -105,37 +105,37 @@ public:
 
 	inline void clear(void) { m_array.clear(); }
 
-	inline int	size(void)  const { return (int)m_array.size(); }
+	inline int    size(void)  const { return (int)m_array.size(); }
 	inline bool empty(void) const { return size() == 0; }
 
 	inline W* __getitem__(int i) {return at(i);}
 
-	inline W* at(int i) 
-	{ 
+	inline W* at(int i)
+	{
 		if (i >= 0 && i < size())
 		{
-			B *base = m_array.at(i);
+			B* base = m_array.at(i);
 			return W::createNew(base);
 		}
 		return 0;
 	}
 
 
-	inline void push(W *val)
+	inline void push(W* val)
 	{
 		if (val)
 		{
-			B *intern = OGRE_KIT_OBJECT(B, val);
+			B* intern = OGRE_KIT_OBJECT(B, val);
 			if (intern)
 				m_array.push_back(intern);
 		}
 	}
 
-	bool erase(W *val)
+	bool erase(W* val)
 	{
 		if (val)
 		{
-			B *intern = OGRE_KIT_OBJECT(B, val);
+			B* intern = OGRE_KIT_OBJECT(B, val);
 			if (intern)
 			{
 				UTsize pos = m_array.find(intern);
@@ -156,7 +156,7 @@ public:
 
 
 #ifndef SWIG
-	inline void push(B *val)
+	inline void push(B* val)
 	{
 		m_array.push_back(val);
 	}

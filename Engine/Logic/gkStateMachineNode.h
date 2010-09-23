@@ -45,7 +45,7 @@ public:
 
 		//Outputs
 		CURRENT_STATE,
-		
+
 		//////////
 		MAX_SOCKETS
 	};
@@ -53,7 +53,7 @@ public:
 	DECLARE_SOCKET_TYPE(UPDATE, bool);
 	DECLARE_SOCKET_TYPE(CURRENT_STATE, int);
 
-    gkStateMachineNode(gkLogicTree *parent, size_t id);
+	gkStateMachineNode(gkLogicTree* parent, size_t id);
 
 	~gkStateMachineNode();
 
@@ -97,7 +97,7 @@ private:
 
 		Data() : m_ms(0), m_state(0), m_trigger(0) {}
 
-		Data(unsigned long ms, int state, ITrigger* trigger) 
+		Data(unsigned long ms, int state, ITrigger* trigger)
 			: m_ms(ms), m_state(state), m_trigger(trigger)
 		{
 		}

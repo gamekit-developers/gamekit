@@ -26,21 +26,21 @@
 */
 #include "gkRandomNode.h"
 
-gkRandomNode::gkRandomNode(gkLogicTree *parent, size_t id) :
-        gkLogicNode(parent, id)
+gkRandomNode::gkRandomNode(gkLogicTree* parent, size_t id) :
+	gkLogicNode(parent, id)
 {
-    ADD_ISOCK(UPDATE, true);
-    ADD_ISOCK(MIN, 0);
-    ADD_ISOCK(MAX, 0);
-    ADD_OSOCK(RESULT, 0);
+	ADD_ISOCK(UPDATE, true);
+	ADD_ISOCK(MIN, 0);
+	ADD_ISOCK(MAX, 0);
+	ADD_OSOCK(RESULT, 0);
 }
 
 bool gkRandomNode::evaluate(gkScalar tick)
 {
-    return GET_SOCKET_VALUE(UPDATE);
+	return GET_SOCKET_VALUE(UPDATE);
 }
 
 void gkRandomNode::update(gkScalar tick)
 {
-    SET_SOCKET_VALUE(RESULT, gkMath::RangeRandom(GET_SOCKET_VALUE(MIN), GET_SOCKET_VALUE(MAX)));
+	SET_SOCKET_VALUE(RESULT, gkMath::RangeRandom(GET_SOCKET_VALUE(MIN), GET_SOCKET_VALUE(MAX)));
 }

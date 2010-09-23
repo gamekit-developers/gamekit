@@ -34,7 +34,7 @@
 class gkBlendLoader : public utSingleton<gkBlendLoader>
 {
 public:
-	typedef utArray<gkBlendFile *> FileList;
+	typedef utArray<gkBlendFile*> FileList;
 
 
 	enum LoadOptions
@@ -48,23 +48,23 @@ public:
 	gkBlendLoader();
 	~gkBlendLoader();
 
-	gkBlendFile *loadFile(  const gkString &fname,
+	gkBlendFile* loadFile(  const gkString& fname,
 	                        int options = LO_ONLY_ACTIVE_SCENE,
-	                        const gkString &inResourceGroup = GK_DEF_GROUP,
-							const gkString &scene = ""
+	                        const gkString& inResourceGroup = GK_DEF_GROUP,
+	                        const gkString& scene = ""
 	                     );
 
-	gkBlendFile *loadFile(  const gkString &fname,
-	                        const gkString &scene,
-	                        const gkString &inResourceGroup = GK_DEF_GROUP
+	gkBlendFile* loadFile(  const gkString& fname,
+	                        const gkString& scene,
+	                        const gkString& inResourceGroup = GK_DEF_GROUP
 	                     );
 
 
-	gkBlendFile *getFileByName(const gkString &fname);
+	gkBlendFile* getFileByName(const gkString& fname);
 
 
-	GK_INLINE FileList      &getFiles(void)          {return m_files;}
-	GK_INLINE gkBlendFile   *getActiveBlend(void)    {return m_activeFile;}
+	GK_INLINE FileList&      getFiles(void)          {return m_files;}
+	GK_INLINE gkBlendFile*   getActiveBlend(void)    {return m_activeFile;}
 
 
 
@@ -72,13 +72,13 @@ public:
 
 private:
 
-	gkBlendFile *loadAndCatch(const gkString &fname,
+	gkBlendFile* loadAndCatch(const gkString& fname,
 	                          int options = LO_ONLY_ACTIVE_SCENE,
-	                          const gkString &inResourceGroup = GK_DEF_GROUP,
-						      const gkString &scene = ""
+	                          const gkString& inResourceGroup = GK_DEF_GROUP,
+	                          const gkString& scene = ""
 	                         );
 
-	gkBlendFile    *m_activeFile;
+	gkBlendFile*    m_activeFile;
 	FileList        m_files;
 };
 

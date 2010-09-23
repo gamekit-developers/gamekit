@@ -53,8 +53,8 @@ private:
 	int                 m_mode;         // playback mode
 	bool                m_sndInit;      // state chech
 	gkString            m_sndRef;       // reference to the sould block name
-	gkSound             *m_sound;       // the sound to play
-	gkSource            *m_player;      // running sound
+	gkSound*             m_sound;       // the sound to play
+	gkSource*            m_player;      // running sound
 	gkSoundProperties    m_props;       // properties to attach to the sound stream
 
 
@@ -63,18 +63,18 @@ private:
 
 public:
 
-	gkSoundActuator(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	gkSoundActuator(gkGameObject* object, gkLogicLink* link, const gkString& name);
 	virtual ~gkSoundActuator();
 
-	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
+	gkLogicBrick* clone(gkLogicLink* link, gkGameObject* dest);
 
 	GK_INLINE void                  setMode(int v)                      {m_mode = v;}
-	GK_INLINE void                  setSoundFile(const gkString &v)     {m_sndRef = v;}
-	GK_INLINE gkSoundProperties     &getProperties(void)                {return m_props;}
+	GK_INLINE void                  setSoundFile(const gkString& v)     {m_sndRef = v;}
+	GK_INLINE gkSoundProperties&     getProperties(void)                {return m_props;}
 	GK_INLINE int                   getMode(void)                       {return m_mode;}
-	GK_INLINE const gkString        &getSoundFile(void)                 {return m_sndRef;}
+	GK_INLINE const gkString&        getSoundFile(void)                 {return m_sndRef;}
 
-	
+
 	void execute(void);
 };
 

@@ -38,11 +38,11 @@ class gsDynamicsWorld
 {
 private:
 	gkDynamicsWorld* m_world;
-	
+
 public:
 	gsDynamicsWorld(gkDynamicsWorld* dynamicsWorld);
 	~gsDynamicsWorld();
-	
+
 	void exportBullet(const gkString& fileName);
 };
 
@@ -50,18 +50,18 @@ public:
 class gsRayTest
 {
 private:
-	gkRayTest *m_ray;
+	gkRayTest* m_ray;
 
 public:
 	gsRayTest();
 	~gsRayTest();
 
 
-	bool cast(const gsRay &ray);
+	bool cast(const gsRay& ray);
 
 	gsVector3 getHitPoint(void);
 	gsVector3 getHitNormal(void);
-	gsGameObject *getObject(void);
+	gsGameObject* getObject(void);
 	float getHitFraction(void);
 };
 
@@ -71,7 +71,7 @@ public:
 class gsSweptTest
 {
 private:
-	gkSweptTest *m_test;
+	gkSweptTest* m_test;
 	gkSweptTest::AVOID_LIST m_avoid;
 
 public:
@@ -79,14 +79,14 @@ public:
 	gsSweptTest(gsArray<gsGameObject, gkGameObject> &avoid);
 	~gsSweptTest();
 
-	bool collides(const gsRay &ray, float rayRadius);
+	bool collides(const gsRay& ray, float rayRadius);
 
 	gsVector3 getHitPoint(void);
 	gsVector3 getHitNormal(void);
 	gsVector3 getReflection(void);
 	gsVector3 getSliding(void);
 
-	gsGameObject *getObject(void);
+	gsGameObject* getObject(void);
 };
 
 #endif //_gsPhysics_h_

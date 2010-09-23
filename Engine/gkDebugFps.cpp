@@ -85,17 +85,17 @@ void gkDebugFps::initialize(void)
 		// always initialize after gkDebugScreen!
 
 
-		Ogre::OverlayManager &mgr = Ogre::OverlayManager::getSingleton();
+		Ogre::OverlayManager& mgr = Ogre::OverlayManager::getSingleton();
 		m_over  = mgr.create("<gkBuiltin/gkDebugFps>");
 		m_key   = mgr.createOverlayElement("TextArea", "<gkBuiltin/gkDebugFps/Keys>");
 		m_val   = mgr.createOverlayElement("TextArea", "<gkBuiltin/gkDebugFps/Vals>");
-		m_cont  = (Ogre::OverlayContainer *)mgr.createOverlayElement("Panel", "<gkBuiltin/gkDebugFps/Containter1>");
+		m_cont  = (Ogre::OverlayContainer*)mgr.createOverlayElement("Panel", "<gkBuiltin/gkDebugFps/Containter1>");
 
 
 		m_cont->setMetricsMode(Ogre::GMM_PIXELS);
 		m_cont->setVerticalAlignment(Ogre::GVA_TOP);
 		m_cont->setHorizontalAlignment(Ogre::GHA_RIGHT);
-		m_cont->setLeft(-16*PROP_SIZE);
+		m_cont->setLeft(-16 * PROP_SIZE);
 		m_cont->setTop(10);
 
 		m_key->setMetricsMode(Ogre::GMM_PIXELS);
@@ -105,16 +105,16 @@ void gkDebugFps::initialize(void)
 		m_val->setMetricsMode(Ogre::GMM_PIXELS);
 		m_val->setVerticalAlignment(Ogre::GVA_TOP);
 		m_val->setHorizontalAlignment(Ogre::GHA_LEFT);
-		m_val->setLeft(8*PROP_SIZE);
+		m_val->setLeft(8 * PROP_SIZE);
 
-		Ogre::TextAreaOverlayElement *textArea;
+		Ogre::TextAreaOverlayElement* textArea;
 
-		textArea = static_cast<Ogre::TextAreaOverlayElement *>(m_key);
+		textArea = static_cast<Ogre::TextAreaOverlayElement*>(m_key);
 		textArea->setFontName("<gkBuiltin/Font>");
 		textArea->setCharHeight(PROP_SIZE);
 		textArea->setColour(Ogre::ColourValue::White);
 
-		textArea = static_cast<Ogre::TextAreaOverlayElement *>(m_val);
+		textArea = static_cast<Ogre::TextAreaOverlayElement*>(m_val);
 		textArea->setFontName("<gkBuiltin/Font>");
 		textArea->setCharHeight(PROP_SIZE);
 		textArea->setColour(Ogre::ColourValue::White);
@@ -126,7 +126,7 @@ void gkDebugFps::initialize(void)
 		m_cont->addChild(m_val);
 		m_over->add2D(m_cont);
 	}
-	catch (Ogre::Exception &e)
+	catch (Ogre::Exception& e)
 	{
 		gkPrintf("%s", e.getDescription().c_str());
 		return;
@@ -155,24 +155,24 @@ void gkDebugFps::draw(void)
 	if (!m_over || !m_key || !m_val)
 		return;
 
-	Ogre::RenderWindow *window= gkWindowSystem::getSingleton().getMainWindow();
-	const Ogre::RenderTarget::FrameStats &ogrestats = window->getStatistics();
+	Ogre::RenderWindow* window = gkWindowSystem::getSingleton().getMainWindow();
+	const Ogre::RenderTarget::FrameStats& ogrestats = window->getStatistics();
 
 	gkVariable* dbvtVal = 0;
-	gkDynamicsWorld *wo = gkEngine::getSingleton().getActiveScene()->getDynamicsWorld();
+	gkDynamicsWorld* wo = gkEngine::getSingleton().getActiveScene()->getDynamicsWorld();
 	if (wo) dbvtVal = wo->getDBVTInfo();
 
 
-	float swap = gkStats::getSingleton().getLastTotalMicroSeconds()/1000.0f;
-	float render = gkStats::getSingleton().getLastRenderMicroSeconds()/1000.0f;
-	float phys = gkStats::getSingleton().getLastPhysicsMicroSeconds()/1000.0f;
-	float logicb = gkStats::getSingleton().getLastLogicBricksMicroSeconds()/1000.0f;
-	float logicn = gkStats::getSingleton().getLastLogicNodesMicroSeconds()/1000.0f;
-	float sound = gkStats::getSingleton().getLastSoundMicroSeconds()/1000.0f;
-	float dbvt = gkStats::getSingleton().getLastDbvtMicroSeconds()/1000.0f;
-	float bufswaplod = gkStats::getSingleton().getLastBufSwapLodMicroSeconds()/1000.0f;
+	float swap = gkStats::getSingleton().getLastTotalMicroSeconds() / 1000.0f;
+	float render = gkStats::getSingleton().getLastRenderMicroSeconds() / 1000.0f;
+	float phys = gkStats::getSingleton().getLastPhysicsMicroSeconds() / 1000.0f;
+	float logicb = gkStats::getSingleton().getLastLogicBricksMicroSeconds() / 1000.0f;
+	float logicn = gkStats::getSingleton().getLastLogicNodesMicroSeconds() / 1000.0f;
+	float sound = gkStats::getSingleton().getLastSoundMicroSeconds() / 1000.0f;
+	float dbvt = gkStats::getSingleton().getLastDbvtMicroSeconds() / 1000.0f;
+	float bufswaplod = gkStats::getSingleton().getLastBufSwapLodMicroSeconds() / 1000.0f;
 
-	gkString vals="";
+	gkString vals = "";
 
 	vals += Ogre::StringConverter::toString(ogrestats.lastFPS) + '\n';
 	vals += Ogre::StringConverter::toString(ogrestats.avgFPS) + '\n';
@@ -191,25 +191,25 @@ void gkDebugFps::draw(void)
 	vals += Ogre::StringConverter::toString(swap, 3, 7, '0', std::ios::fixed) + "ms 100%\n";
 
 	vals += Ogre::StringConverter::toString(render, 3, 7, '0', std::ios::fixed) + "ms ";
-	vals += Ogre::StringConverter::toString( int(100*render/swap), 3 ) + "%\n";
+	vals += Ogre::StringConverter::toString( int(100 * render / swap), 3 ) + "%\n";
 
 	vals += Ogre::StringConverter::toString(phys, 3, 7, '0', std::ios::fixed) + "ms ";
-	vals += Ogre::StringConverter::toString( int(100*phys/swap), 3 ) + "%\n";
+	vals += Ogre::StringConverter::toString( int(100 * phys / swap), 3 ) + "%\n";
 
 	vals += Ogre::StringConverter::toString(logicb, 3, 7, '0', std::ios::fixed) + "ms ";
-	vals += Ogre::StringConverter::toString( int(100*logicb/swap), 3 ) + "%\n";
+	vals += Ogre::StringConverter::toString( int(100 * logicb / swap), 3 ) + "%\n";
 
 	vals += Ogre::StringConverter::toString(logicn, 3, 7, '0', std::ios::fixed) + "ms ";
-	vals += Ogre::StringConverter::toString( int(100*logicn/swap), 3 ) + "%\n";
+	vals += Ogre::StringConverter::toString( int(100 * logicn / swap), 3 ) + "%\n";
 
 	vals += Ogre::StringConverter::toString(sound, 3, 7, '0', std::ios::fixed) + "ms ";
-	vals += Ogre::StringConverter::toString( int(100*sound/swap), 3 ) + "%\n";
+	vals += Ogre::StringConverter::toString( int(100 * sound / swap), 3 ) + "%\n";
 
 	vals += Ogre::StringConverter::toString(dbvt, 3, 7, '0', std::ios::fixed) + "ms ";
-	vals += Ogre::StringConverter::toString( int(100*dbvt/swap), 3 ) + "%\n";
+	vals += Ogre::StringConverter::toString( int(100 * dbvt / swap), 3 ) + "%\n";
 
 	vals += Ogre::StringConverter::toString(bufswaplod, 3, 7, '0', std::ios::fixed) + "ms ";
-	vals += Ogre::StringConverter::toString( int(100*bufswaplod/swap), 3 ) + "%\n";
+	vals += Ogre::StringConverter::toString( int(100 * bufswaplod / swap), 3 ) + "%\n";
 
 	if (!m_keys.empty() && !vals.empty())
 	{

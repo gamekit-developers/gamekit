@@ -34,17 +34,17 @@
 
 gkCam2ViewportRay::gkCam2ViewportRay(gkScalar x, gkScalar y, gkScalar rayLength)
 {
-	gkScene *pScene = gkEngine::getSingleton().getActiveScene();
+	gkScene* pScene = gkEngine::getSingleton().getActiveScene();
 
 	GK_ASSERT(pScene);
 
-	gkCamera *pCamera = pScene->getMainCamera();
+	gkCamera* pCamera = pScene->getMainCamera();
 
 	GK_ASSERT(pCamera);
 
 	gkVector2 pos(x, y);
 
-	gkWindowSystem *pWindowSystem = gkWindowSystem::getSingletonPtr();
+	gkWindowSystem* pWindowSystem = gkWindowSystem::getSingletonPtr();
 
 	gkScalar width = pWindowSystem->getMainWindow()->getWidth();
 
@@ -52,14 +52,14 @@ gkCam2ViewportRay::gkCam2ViewportRay(gkScalar x, gkScalar y, gkScalar rayLength)
 
 	GK_ASSERT(width && height);
 
-	Ogre::Ray ray = pCamera->getCamera()->getCameraToViewportRay(pos.x/width, pos.y/height);
+	Ogre::Ray ray = pCamera->getCamera()->getCameraToViewportRay(pos.x / width, pos.y / height);
 
 	gkVector3 p0 = ray.getOrigin();
 
 	gkVector3 p1 = p0 + ray.getDirection() * rayLength;
 
 	setOrigin(p0);
-	setDirection(p1-p0);
+	setDirection(p1 - p0);
 }
 
 gkCam2ViewportRay::~gkCam2ViewportRay()

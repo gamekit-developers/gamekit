@@ -39,11 +39,11 @@
 
 gkVertex::gkVertex()
 {
-	co = no = (0,0,0);
+	co = no = (0, 0, 0);
 	vcol = 0xFFFFFFFF;
 	vba  = -1;
-	for (int _i=0; _i<GK_UV_MAX; _i++)
-		uv[_i] = gkVector2(0,0);
+	for (int _i = 0; _i < GK_UV_MAX; _i++)
+		uv[_i] = gkVector2(0, 0);
 }
 
 
@@ -61,7 +61,7 @@ gkVertex& gkVertex::operator = (const gkVertex& o)
 	no      = o.no;
 	vcol    = o.vcol;
 	vba     = o.vba;
-	for (int _i=0; _i<GK_UV_MAX; _i++)
+	for (int _i = 0; _i < GK_UV_MAX; _i++)
 		uv[_i] = o.uv[_i];
 	return *this;
 }
@@ -82,7 +82,7 @@ public:
 
 	unsigned int getVertexIndex(gkSubMesh* sub, unsigned int index, const gkVertex& ref)
 	{
-		UTsize i = m_indexMap.find((int)index), fnd=UT_NPOS, size=sub->m_verts.size();
+		UTsize i = m_indexMap.find((int)index), fnd = UT_NPOS, size = sub->m_verts.size();
 
 		if (i != UT_NPOS)
 		{
@@ -117,7 +117,7 @@ public:
 		}
 
 		bool result = true;
-		for (int i = 0; i <sub->getUvLayerCount(); i++)
+		for (int i = 0; i < sub->getUvLayerCount(); i++)
 		{
 			result = gkFuzzyT((a.uv[i] - b.uv[i]).squaredLength(), 1e-10);
 			if (!result)
@@ -194,7 +194,7 @@ gkBoundingBox& gkSubMesh::getBoundingBox(void)
 	if (!m_boundsInit)
 	{
 		m_boundsInit = true;
-		UTsize i =0, s = m_verts.size();
+		UTsize i = 0, s = m_verts.size();
 		Verticies::Pointer ptr = m_verts.ptr();
 
 		while (i < s)
@@ -215,7 +215,7 @@ gkMesh::gkMesh(gkResourceManager* creator, const gkResourceName& name, const gkR
 	    m_bounds(gkBoundingBox::BOX_NULL),
 	    m_boundsInit(false),
 	    m_triMesh(0),
-		m_skeleton(0)
+	    m_skeleton(0)
 {
 	m_meshLoader = new gkMeshLoader(this);
 }
@@ -235,7 +235,7 @@ gkMesh::~gkMesh()
 	while (iter.hasMoreElements())
 		delete iter.getNext();
 
-	for (UTsize i=0; i<m_groups.size(); ++i)
+	for (UTsize i = 0; i < m_groups.size(); ++i)
 		delete m_groups[i];
 	m_groups.clear();
 }
@@ -289,7 +289,7 @@ btTriangleMesh* gkMesh::getTriMesh(void)
 		gkSubMesh::Verticies::Pointer vbuf = sub->getVertexBuffer().ptr();
 
 
-		for (i=0; i<totface; ++i)
+		for (i = 0; i < totface; ++i)
 		{
 			const gkTriangle& tri = ibufPtr[i];
 
@@ -319,7 +319,7 @@ gkVertexGroup* gkMesh::createVertexGroup(const gkString& name)
 
 gkVertexGroup* gkMesh::findVertexGroup(int i)
 {
-	if (i < (int)m_groups.size() && i >=0 )
+	if (i < (int)m_groups.size() && i >= 0 )
 		return m_groups.at(i);
 	return 0;
 }
@@ -327,7 +327,7 @@ gkVertexGroup* gkMesh::findVertexGroup(int i)
 
 gkVertexGroup* gkMesh::findVertexGroup(const gkString& name)
 {
-	UTsize i=0, s = m_groups.size();
+	UTsize i = 0, s = m_groups.size();
 	while (i < s)
 	{
 		gkVertexGroup* grp = m_groups.at(i++);

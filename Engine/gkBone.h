@@ -33,44 +33,44 @@
 class gkBone
 {
 public:
-	typedef utArray<gkBone *> BoneList;
+	typedef utArray<gkBone*> BoneList;
 
 public:
 
-	gkBone(const gkString &name);
+	gkBone(const gkString& name);
 	~gkBone();
 
-	void setParent(gkBone *bone);
+	void setParent(gkBone* bone);
 
-	void setRestPosition(const gkTransformState &st);
+	void setRestPosition(const gkTransformState& st);
 
-	void applyChannelTransform(const gkTransformState &channel, gkScalar weight);
-	void applyPoseTransform(const gkTransformState &pose);
-	void applyRootTransform(const gkTransformState &root);
+	void applyChannelTransform(const gkTransformState& channel, gkScalar weight);
+	void applyPoseTransform(const gkTransformState& pose);
+	void applyRootTransform(const gkTransformState& root);
 
-	const gkTransformState  &getRest(void)      {return m_bind;}
-
-
-	gkTransformState        &getPose(void)      {return m_pose;}
-
-	gkBone                  *getParent(void)    {return m_parent;}
-	BoneList                &getChildren(void)  {return m_children;}
+	const gkTransformState&  getRest(void)      {return m_bind;}
 
 
-	const gkString          &getName(void)      {return m_name;}
+	gkTransformState&        getPose(void)      {return m_pose;}
+
+	gkBone*                  getParent(void)    {return m_parent;}
+	BoneList&                getChildren(void)  {return m_children;}
+
+
+	const gkString&          getName(void)      {return m_name;}
 
 
 	// Internal use
 	UTsize                  _getBoneIndex(void);
-	void                    _setOgreBone(Ogre::Bone *bone);
+	void                    _setOgreBone(Ogre::Bone* bone);
 
 private:
 
 	const gkString m_name;
 
-	Ogre::Bone *m_bone;
+	Ogre::Bone* m_bone;
 
-	gkBone      *m_parent;
+	gkBone*      m_parent;
 	BoneList    m_children;
 
 	gkTransformState m_bind;

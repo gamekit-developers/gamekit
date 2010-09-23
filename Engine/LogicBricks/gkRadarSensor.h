@@ -36,10 +36,10 @@ private:
 
 
 public:
-	gkRadarSensor(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	gkRadarSensor(gkGameObject* object, gkLogicLink* link, const gkString& name);
 	virtual ~gkRadarSensor() {}
 
-	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
+	gkLogicBrick* clone(gkLogicLink* link, gkGameObject* dest);
 
 	bool query(void);
 

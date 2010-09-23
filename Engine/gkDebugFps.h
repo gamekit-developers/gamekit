@@ -37,9 +37,9 @@ private:
 
 	gkString m_keys;
 
-	Ogre::Overlay           *m_over;
-	Ogre::OverlayContainer  *m_cont;
-	Ogre::OverlayElement    *m_key, *m_val;
+	Ogre::Overlay*           m_over;
+	Ogre::OverlayContainer*  m_cont;
+	Ogre::OverlayElement*    m_key, *m_val;
 
 
 public:

@@ -29,17 +29,17 @@
 #include "gkLogicManager.h"
 
 
-gkDelaySensor::gkDelaySensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
-		:	gkLogicSensor(object, link, name), m_count(0)
+gkDelaySensor::gkDelaySensor(gkGameObject* object, gkLogicLink* link, const gkString& name)
+	:    gkLogicSensor(object, link, name), m_count(0)
 {
 	m_dispatchType = DIS_CONSTANT;
 	connect();
 }
 
 
-gkLogicBrick *gkDelaySensor::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick* gkDelaySensor::clone(gkLogicLink* link, gkGameObject* dest)
 {
-	gkDelaySensor *sens = new gkDelaySensor(*this);
+	gkDelaySensor* sens = new gkDelaySensor(*this);
 	sens->cloneImpl(link, dest);
 	return sens;
 }
@@ -48,12 +48,12 @@ gkLogicBrick *gkDelaySensor::clone(gkLogicLink *link, gkGameObject *dest)
 bool gkDelaySensor::query(void)
 {
 	m_count += 1;
-	if(m_count > m_delay+m_duration)
-		if(m_repeat) m_count = 0;
+	if (m_count > m_delay + m_duration)
+		if (m_repeat) m_count = 0;
 		else return false;
-	if(m_count <= m_delay)
+	if (m_count <= m_delay)
 		return false;
-	if(m_duration==0)
+	if (m_duration == 0)
 		return false;
 	return true;
 }

@@ -33,86 +33,86 @@ class gkILogicSocket
 {
 public:
 
-    gkILogicSocket() 
+	gkILogicSocket()
 		: m_isInput(true), m_from(0), m_connected(false), m_parent(0)
-    {
-    }
+	{
+	}
 
-    gkILogicSocket(gkLogicNode* par, bool isInput) 
+	gkILogicSocket(gkLogicNode* par, bool isInput)
 		: m_isInput(isInput), m_from(0), m_connected(false), m_parent(par)
-    {
-    }
+	{
+	}
 
 	virtual ~gkILogicSocket() {};
 
-	void link(gkILogicSocket *fsock);
-	
+	void link(gkILogicSocket* fsock);
+
 	gkGameObject* getGameObject()const;
 
 	// owner node
-    GK_INLINE gkLogicNode* getParent() const
-	{ 
-		return m_parent; 
+	GK_INLINE gkLogicNode* getParent() const
+	{
+		return m_parent;
 	}
 
-    GK_INLINE bool isLinked() const             
-	{ 
-		return m_from != 0; 
+	GK_INLINE bool isLinked() const
+	{
+		return m_from != 0;
 	}
 
-    GK_INLINE bool isConnected() const
-	{ 
-		return m_connected; 
+	GK_INLINE bool isConnected() const
+	{
+		return m_connected;
 	}
 
-    GK_INLINE gkILogicSocket* getFrom() const    
-	{ 
-		return m_from; 
+	GK_INLINE gkILogicSocket* getFrom() const
+	{
+		return m_from;
 	}
 
 protected:
 
 	bool m_isInput;
 
-    typedef utList<gkILogicSocket*> Sockets;
+	typedef utList<gkILogicSocket*> Sockets;
 
 	typedef utListIterator<Sockets> SocketIterator;
 
 	// from socket to 'this' (used to link an input socket with an output socket)
 	// Only one makes sense
-    gkILogicSocket* m_from;      
+	gkILogicSocket* m_from;
 
 	// from 'this' to sockets (used to link an output socket with one or more than one input socket)
 	Sockets m_to;
 
 private:
 
-    bool m_connected;
+	bool m_connected;
 
 	// owner node
-	gkLogicNode* m_parent;    
+	gkLogicNode* m_parent;
 };
 
 template<typename T>
 class gkLogicSocket : public gkILogicSocket
 {
 public:
-    gkLogicSocket() 
+	gkLogicSocket()
 		: gkILogicSocket()
-    {
-    }
+	{
+	}
 
-    gkLogicSocket(gkLogicNode* par, bool isInput, T defaultValue)
+	gkLogicSocket(gkLogicNode* par, bool isInput, T defaultValue)
 		: gkILogicSocket(par, isInput), m_data(defaultValue)
-    {
-    }
+	{
+	}
 
-    void setValue(const T& value)    
-	{ 
-		if(!m_isInput) 
+	void setValue(const T& value)
+	{
+		if (!m_isInput)
 		{
 			SocketIterator sockit(m_to);
-			
+
 			while (sockit.hasMoreElements())
 			{
 				gkLogicSocket<T>* sock = dynamic_cast<gkLogicSocket<T>*>(sockit.getNext());
@@ -123,12 +123,12 @@ public:
 			}
 		}
 
-		m_data = value; 
+		m_data = value;
 	}
 
-    T getValue() const
-    {
-        if(m_from)
+	T getValue() const
+	{
+		if (m_from)
 		{
 			gkLogicSocket<T>* sock = dynamic_cast<gkLogicSocket<T>*>(m_from);
 
@@ -136,13 +136,13 @@ public:
 
 			return sock->getValue();
 		}
-        
-        return m_data;
-    }
 
-    T& getRefValue()
-    {
-        if(m_from)
+		return m_data;
+	}
+
+	T& getRefValue()
+	{
+		if (m_from)
 		{
 			gkLogicSocket<T>* sock = dynamic_cast<gkLogicSocket<T>*>(m_from);
 
@@ -150,9 +150,9 @@ public:
 
 			return sock->getRefValue();
 		}
-        
-        return m_data;
-    }
+
+		return m_data;
+	}
 
 
 private:
@@ -160,35 +160,35 @@ private:
 	T m_data;
 };
 
-template<typename T> 
-gkLogicSocket<T>* getSocket(gkILogicSocket* pSock) 
-{ 
+template<typename T>
+gkLogicSocket<T>* getSocket(gkILogicSocket* pSock)
+{
 	return static_cast<gkLogicSocket<T>*>(pSock);
 }
 
 #define ADD_ISOCK( name, value ){      \
-	addISock < _SOCKET_TYPE_##name > ( m_sockets[ (name) ], value );	\
+    addISock < _SOCKET_TYPE_##name > ( m_sockets[ (name) ], value );    \
 }
 
 #define ADD_OSOCK(name, value){      \
-	addOSock< _SOCKET_TYPE_##name > ( m_sockets[ (name) ], value );	\
+    addOSock< _SOCKET_TYPE_##name > ( m_sockets[ (name) ], value );    \
 }
 
-#define SET_SOCKET_VALUE( name, value )	\
-	setSocketValue< _SOCKET_TYPE_##name > ( (name), (value) )	\
+#define SET_SOCKET_VALUE( name, value )    \
+    setSocketValue< _SOCKET_TYPE_##name > ( (name), (value) )    \
 
 #define GET_SOCKET_VALUE( name )      \
-	getSocketValue< _SOCKET_TYPE_##name > ( (name) )	\
+    getSocketValue< _SOCKET_TYPE_##name > ( (name) )    \
 
 #define GET_SOCKET_REF_VALUE( name )      \
-	getSocketRefValue< _SOCKET_TYPE_##name > ( (name) )	\
+    getSocketRefValue< _SOCKET_TYPE_##name > ( (name) )    \
 
 #define GET_SOCKET( name )      \
-	getSocket< _SOCKET_TYPE_##name > ( (name) )	\
+    getSocket< _SOCKET_TYPE_##name > ( (name) )    \
 
-#define DECLARE_SOCKET_TYPE( name, type)	\
-	typedef type _SOCKET_TYPE_##name;	\
-	GK_INLINE gkLogicSocket< type >* get##name() { return getSocket< type > ( (name) ); } \
+#define DECLARE_SOCKET_TYPE( name, type)    \
+    typedef type _SOCKET_TYPE_##name;    \
+    GK_INLINE gkLogicSocket< type >* get##name() { return getSocket< type > ( (name) ); } \
 
 
 #define CHECK_RETV(cond) {                  \

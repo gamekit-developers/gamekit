@@ -35,8 +35,8 @@
 #include "OgreHardwareBufferManager.h"
 
 
-static const UTuint16 gk16BitClamp = (0xFFFF)-1;
-static const UTuint32 gk32BitClamp = (0xFFFFFFFF)-1;
+static const UTuint16 gk16BitClamp = (0xFFFF) - 1;
+static const UTuint32 gk32BitClamp = (0xFFFFFFFF) - 1;
 
 
 gkMeshLoader::gkMeshLoader(gkMesh* me)
@@ -56,7 +56,7 @@ gkMeshLoader::gkMeshLoader(gkMesh* me)
 
 gkMeshLoader::~gkMeshLoader()
 {
-	Ogre::MeshManager &mgr = Ogre::MeshManager::getSingleton();
+	Ogre::MeshManager& mgr = Ogre::MeshManager::getSingleton();
 	mgr.remove(m_mesh->getResourceName().str());
 }
 
@@ -145,7 +145,7 @@ void gkMeshLoader::loadSubMesh(Ogre::SubMesh* submesh, gkSubMesh* gks)
 			indices32 = static_cast<unsigned int*>(indexBuffer->lock(Ogre::HardwareBuffer::HBL_NORMAL));
 
 
-		UTsize iBufTot = iBufSize/3;
+		UTsize iBufTot = iBufSize / 3;
 
 		gkTriangle* ibuf = gks->getIndexBuffer().ptr();
 
@@ -227,7 +227,7 @@ void gkMeshLoader::loadSubMesh(Ogre::SubMesh* submesh, gkSubMesh* gks)
 		}
 
 		vertBuf->unlock();
-		gkSkeletonResource *skel = m_mesh->getSkeleton();
+		gkSkeletonResource* skel = m_mesh->getSkeleton();
 
 
 		if (skel)
@@ -275,7 +275,7 @@ void gkMeshLoader::loadResource(Ogre::Resource* res)
 
 	if (m_mesh->getSkeleton())
 	{
-		gkSkeletonResource *res = m_mesh->getSkeleton();
+		gkSkeletonResource* res = m_mesh->getSkeleton();
 		omesh->setSkeletonName(res->getResourceName().str());
 	}
 
@@ -286,7 +286,7 @@ void gkMeshLoader::loadResource(Ogre::Resource* res)
 	{
 		gkSubMesh* gks = iter.getNext();
 
-		Ogre::SubMesh *submesh = omesh->createSubMesh();
+		Ogre::SubMesh* submesh = omesh->createSubMesh();
 		submesh->setMaterialName(gks->getMaterialName());
 
 		gkMaterialLoader::loadSubMeshMaterial(gks);

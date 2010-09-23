@@ -27,11 +27,11 @@
 #include "gkGroupNode.h"
 #include "gkLogicTree.h"
 
-gkGroupNode::gkGroupNode(gkLogicTree *parent, size_t id) 
-: gkLogicNode(parent, id)
+gkGroupNode::gkGroupNode(gkLogicTree* parent, size_t id)
+	: gkLogicNode(parent, id)
 {
-    ADD_ISOCK(EXECUTE, false);
-    ADD_OSOCK(RETURN, false);
+	ADD_ISOCK(EXECUTE, false);
+	ADD_OSOCK(RETURN, false);
 }
 
 bool gkGroupNode::evaluate(gkScalar tick)
@@ -41,15 +41,15 @@ bool gkGroupNode::evaluate(gkScalar tick)
 
 void gkGroupNode::update(gkScalar tick)
 {
-    utListIterator<Groups> it(m_groupList);
-    while (it.hasMoreElements())
-    {
-        gkLogicTree *ltree = it.getNext();
-        if (ltree->getAttachedObject() != m_object)
-            ltree->attachObject(m_object);
+	utListIterator<Groups> it(m_groupList);
+	while (it.hasMoreElements())
+	{
+		gkLogicTree* ltree = it.getNext();
+		if (ltree->getAttachedObject() != m_object)
+			ltree->attachObject(m_object);
 
-        ltree->execute(tick);
-    }
-    // TODO push a return from exec
-    SET_SOCKET_VALUE(RETURN, true);
+		ltree->execute(tick);
+	}
+	// TODO push a return from exec
+	SET_SOCKET_VALUE(RETURN, true);
 }

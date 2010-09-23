@@ -48,15 +48,15 @@ private:
 
 public:
 
-	gkVisibilityActuator(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	gkVisibilityActuator(gkGameObject* object, gkLogicLink* link, const gkString& name);
 	virtual ~gkVisibilityActuator();
 
-	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
+	gkLogicBrick* clone(gkLogicLink* link, gkGameObject* dest);
 
 	GK_INLINE void  setFlag(int v)          {m_flag = v;}
 	GK_INLINE int   getFlag(void)           {return m_flag;}
 
-	
+
 	void execute(void);
 };
 

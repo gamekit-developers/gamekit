@@ -40,16 +40,16 @@ static gkScriptController* scriptContext = 0;
 
 
 
-gkScriptController::gkScriptController(gkGameObject *object, gkLogicLink *link, const gkString &name)
+gkScriptController::gkScriptController(gkGameObject* object, gkLogicLink* link, const gkString& name)
 	:       gkLogicController(object, link, name), m_script(0), m_error(false), m_isModule(false)
 {
 }
 
 
 
-gkLogicBrick *gkScriptController::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick* gkScriptController::clone(gkLogicLink* link, gkGameObject* dest)
 {
-	gkScriptController *cont = new gkScriptController(*this);
+	gkScriptController* cont = new gkScriptController(*this);
 	cont->cloneImpl(link, dest);
 
 	return cont;
@@ -58,17 +58,17 @@ gkLogicBrick *gkScriptController::clone(gkLogicLink *link, gkGameObject *dest)
 
 void gkScriptController::setScript(const gkString& str)
 {
-	gkLuaScript *scrpt = gkLuaManager::getSingleton().getScript(str);
-	if (scrpt) 
+	gkLuaScript* scrpt = gkLuaManager::getSingleton().getScript(str);
+	if (scrpt)
 		m_script = scrpt;
 	else
 	{
 		// Create on demand.
-		gkTextFile *tf = (gkTextFile*)gkTextManager::getSingleton().getByName(str);
+		gkTextFile* tf = (gkTextFile*)gkTextManager::getSingleton().getByName(str);
 		if (tf)
 		{
-			gkLuaScript *scrpt = gkLuaManager::getSingleton().create(tf->getResourceName().str(), tf->getText());
-			if (scrpt) 
+			gkLuaScript* scrpt = gkLuaManager::getSingleton().create(tf->getResourceName().str(), tf->getText());
+			if (scrpt)
 				m_script = scrpt;
 		}
 	}
@@ -90,7 +90,7 @@ void gkScriptController::execute(void)
 	scriptContext = this;
 
 	// Main script, can be null.
-	if (m_script !=0)
+	if (m_script != 0)
 		m_error = !m_script->execute();
 
 	scriptContext = 0;

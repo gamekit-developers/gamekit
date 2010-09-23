@@ -32,13 +32,13 @@
 
 
 
-gkLogicController::gkLogicController(gkGameObject *object, gkLogicLink *link, const gkString &name)
+gkLogicController::gkLogicController(gkGameObject* object, gkLogicLink* link, const gkString& name)
 	:       gkLogicBrick(object, link, name), m_activeState(false)
 {
 }
 
 
-void gkLogicController::cloneImpl(gkLogicLink *link, gkGameObject *dest)
+void gkLogicController::cloneImpl(gkLogicLink* link, gkGameObject* dest)
 {
 	gkLogicBrick::cloneImpl(link, dest);
 	m_sensors.clear();
@@ -65,13 +65,13 @@ void gkLogicController::_execute(void)
 
 
 
-bool gkLogicController_sSort(gkLogicSensor *const &a, gkLogicSensor *const &b)
+bool gkLogicController_sSort(gkLogicSensor* const& a, gkLogicSensor* const& b)
 {
 	return a->getPriority() < b->getPriority();
 }
 
 
-bool gkLogicController_aSort(gkLogicActuator *const &a, gkLogicActuator *const &b)
+bool gkLogicController_aSort(gkLogicActuator* const& a, gkLogicActuator* const& b)
 {
 	return a->getPriority() < b->getPriority();
 }
@@ -84,13 +84,13 @@ void gkLogicController::sort(void)
 }
 
 
-void gkLogicController::link(gkLogicSensor *v)
+void gkLogicController::link(gkLogicSensor* v)
 {
 	UT_ASSERT(v && m_sensors.find(v) == UT_NPOS);
 	m_sensors.push_back(v);
 
 
-	gkLogicLink *olink = v->getLink();
+	gkLogicLink* olink = v->getLink();
 
 
 	// append state bits
@@ -107,14 +107,14 @@ void gkLogicController::link(gkLogicSensor *v)
 
 
 
-void gkLogicController::link(gkLogicActuator *v)
+void gkLogicController::link(gkLogicActuator* v)
 {
 	UT_ASSERT(v && m_actuators.find(v) == UT_NPOS);
 	m_actuators.push_back(v);
 
 	v->setPriority(getPriority());
 
-	gkLogicLink *olink = v->getLink();
+	gkLogicLink* olink = v->getLink();
 
 	// append state bits
 

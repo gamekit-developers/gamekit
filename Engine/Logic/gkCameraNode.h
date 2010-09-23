@@ -36,7 +36,7 @@ class gkCameraNode : public gkLogicNode
 {
 public:
 
-	enum 
+	enum
 	{
 		UPDATE,
 		CENTER_OBJ,
@@ -85,7 +85,7 @@ public:
 	DECLARE_SOCKET_TYPE(CURRENT_ROLL, gkQuaternion);
 	DECLARE_SOCKET_TYPE(CURRENT_PITCH, gkQuaternion);
 
-	gkCameraNode(gkLogicTree *parent, size_t id);
+	gkCameraNode(gkLogicTree* parent, size_t id);
 	~gkCameraNode();
 
 	bool evaluate(gkScalar tick);

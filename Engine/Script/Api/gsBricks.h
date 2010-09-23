@@ -196,7 +196,7 @@ enum gsRandomActuatorDistribution
 	RA_FLOAT_UNIFORM   = gkRandomActuator::RA_FLOAT_UNIFORM,
 	RA_FLOAT_NORMAL    = gkRandomActuator::RA_FLOAT_NORMAL,
 	RA_FLOAT_NEGEXP    = gkRandomActuator::RA_FLOAT_NEGEXP,
-	
+
 };
 
 
@@ -252,8 +252,8 @@ public:
 	~gsLogicManager();
 
 
-	gsLogicObject *newObject(gsGameObject *obj);
-	gsLogicObject *getObject(const gkString &name);
+	gsLogicObject* newObject(gsGameObject* obj);
+	gsLogicObject* getObject(const gkString& name);
 	gsArray<gsLogicObject, gkLogicLink> getObjectList();
 };
 
@@ -275,9 +275,9 @@ public:
 	bool                 isDebug(void);
 
 
-	gsSensor       *getSensor(const gkString &name);
-	gsController   *getController(const gkString &name);
-	gsActuator     *getActuator(const gkString &name);
+	gsSensor*       getSensor(const gkString& name);
+	gsController*   getController(const gkString& name);
+	gsActuator*     getActuator(const gkString& name);
 
 	gsArray<gsSensor, gkLogicSensor>         getSensors();
 	gsArray<gsController, gkLogicController> getControllers();
@@ -290,7 +290,7 @@ public:
 
 
 #ifndef SWIG
-	bool hasBrick(gkLogicLink *link, const gkString &name);
+	bool hasBrick(gkLogicLink* link, const gkString& name);
 	gkString getUniqueName(void);
 	void makeOwner(bool v) {m_owner = v;}
 #endif
@@ -307,19 +307,19 @@ protected:
 
 
 	template<typename T>
-	T *create(gsLogicObject *parent, const gkString &name)
+	T* create(gsLogicObject* parent, const gkString& name)
 	{
-		T *ret = 0;
+		T* ret = 0;
 		if (parent)
 		{
 			gkString cpy = name;
 			if (cpy.empty())
 				cpy = parent->getUniqueName();
 
-			gkLogicLink *lnk = parent->get();
+			gkLogicLink* lnk = parent->get();
 			if (lnk && !parent->hasBrick(lnk, cpy))
 			{
-				gkGameObject *ob = lnk->getObject();
+				gkGameObject* ob = lnk->getObject();
 				ret = new T(ob, lnk, cpy);
 				ret->setMask(1);
 				ret->setDebugMask(lnk->getDebug());
@@ -332,17 +332,17 @@ protected:
 	class EventListener : public gkLogicBrick::Listener
 	{
 	private:
-		gkLuaEvent *m_evt;
-		gkLogicBrick *m_parent;
+		gkLuaEvent* m_evt;
+		gkLogicBrick* m_parent;
 
 	public:
-		EventListener(gsListenerMode mode, gkLogicBrick *par, gsSelf self, gsFunction func);
+		EventListener(gsListenerMode mode, gkLogicBrick* par, gsSelf self, gsFunction func);
 		virtual ~EventListener();
 
-		virtual bool executeEvent(gkLogicBrick *brick);
+		virtual bool executeEvent(gkLogicBrick* brick);
 	};
 
-	EventListener *m_listener;
+	EventListener* m_listener;
 
 
 public:
@@ -402,10 +402,10 @@ class gsActuatorSensor : public gsSensor
 {
 public:
 	gsActuatorSensor();
-	gsActuatorSensor(gsLogicObject *parent, const gkString &name="");
+	gsActuatorSensor(gsLogicObject* parent, const gkString& name = "");
 	~gsActuatorSensor();
 
-	void      setActuatorName(const gkString &str)  { BRICK_SET(setActuatorName(str));  }
+	void      setActuatorName(const gkString& str)  { BRICK_SET(setActuatorName(str));  }
 	gkString  getActuatorName(void)                 { BRICK_GET(getActuatorName(), "");   }
 
 	OGRE_KIT_LOGIC_BRICK(ActuatorSensor);
@@ -417,7 +417,7 @@ class gsAlwaysSensor : public gsSensor
 {
 public:
 	gsAlwaysSensor();
-	gsAlwaysSensor(gsLogicObject *parent, const gkString &name="");
+	gsAlwaysSensor(gsLogicObject* parent, const gkString& name = "");
 	~gsAlwaysSensor();
 
 
@@ -430,14 +430,14 @@ class gsCollisionSensor : public gsSensor
 {
 public:
 	gsCollisionSensor();
-	gsCollisionSensor(gsLogicObject *parent, const gkString &name="");
+	gsCollisionSensor(gsLogicObject* parent, const gkString& name = "");
 	~gsCollisionSensor();
 
 
-	void      setMaterialName(const gkString &str)  { BRICK_SET(setMaterial(str));  }
+	void      setMaterialName(const gkString& str)  { BRICK_SET(setMaterial(str));  }
 	gkString  getMaterialName(void)                 { BRICK_GET(getMaterial(), ""); }
 
-	void      setPropertyName(const gkString &str)  { BRICK_SET(setProperty(str));  }
+	void      setPropertyName(const gkString& str)  { BRICK_SET(setProperty(str));  }
 	gkString  getPropertyName(void)                 { BRICK_GET(getProperty(), ""); }
 
 	OGRE_KIT_LOGIC_BRICK(CollisionSensor);
@@ -449,14 +449,14 @@ class gsTouchSensor : public gsSensor
 {
 public:
 	gsTouchSensor();
-	gsTouchSensor(gsLogicObject *parent, const gkString &name="");
+	gsTouchSensor(gsLogicObject* parent, const gkString& name = "");
 	~gsTouchSensor();
 
 
-	void      setMaterialName(const gkString &str)  { BRICK_SET(setMaterial(str));  }
+	void      setMaterialName(const gkString& str)  { BRICK_SET(setMaterial(str));  }
 	gkString  getMaterialName(void)                 { BRICK_GET(getMaterial(), ""); }
 
-	void      setPropertyName(const gkString &str)  { BRICK_SET(setProperty(str));  }
+	void      setPropertyName(const gkString& str)  { BRICK_SET(setProperty(str));  }
 	gkString  getPropertyName(void)                 { BRICK_GET(getProperty(), ""); }
 
 	OGRE_KIT_LOGIC_BRICK(TouchSensor);
@@ -468,7 +468,7 @@ class gsDelaySensor : public gsSensor
 {
 public:
 	gsDelaySensor();
-	gsDelaySensor(gsLogicObject *parent, const gkString &name="");
+	gsDelaySensor(gsLogicObject* parent, const gkString& name = "");
 	~gsDelaySensor();
 
 
@@ -489,7 +489,7 @@ class gsKeyboardSensor : public gsSensor
 {
 public:
 	gsKeyboardSensor();
-	gsKeyboardSensor(gsLogicObject *parent, const gkString &name="");
+	gsKeyboardSensor(gsLogicObject* parent, const gkString& name = "");
 	~gsKeyboardSensor();
 
 
@@ -512,11 +512,11 @@ class gsMessageSensor : public gsSensor
 {
 public:
 	gsMessageSensor();
-	gsMessageSensor(gsLogicObject *parent, const gkString &name="");
+	gsMessageSensor(gsLogicObject* parent, const gkString& name = "");
 	~gsMessageSensor();
 
 
-	void      setSubject(const gkString &v) {BRICK_SET(setSubject(v));}
+	void      setSubject(const gkString& v) {BRICK_SET(setSubject(v));}
 	gkString  getSubject(void)              {BRICK_GET(getSubject(), "");}
 
 	OGRE_KIT_LOGIC_BRICK(MessageSensor);
@@ -529,7 +529,7 @@ class gsMouseSensor : public gsSensor
 {
 public:
 	gsMouseSensor();
-	gsMouseSensor(gsLogicObject *parent, const gkString &name="");
+	gsMouseSensor(gsLogicObject* parent, const gkString& name = "");
 	~gsMouseSensor();
 
 	void setType(int v) {BRICK_SET(setType(v));}
@@ -544,14 +544,14 @@ class gsNearSensor : public gsSensor
 {
 public:
 	gsNearSensor();
-	gsNearSensor(gsLogicObject *parent, const gkString &name="");
+	gsNearSensor(gsLogicObject* parent, const gkString& name = "");
 	~gsNearSensor();
 
 
 	void     setRange(float v)              {BRICK_SET(setRange(v));}
 	void     setResetRange(float v)         {BRICK_SET(setResetRange(v));}
-	void     setMaterial(const gkString &v) {BRICK_SET(setMaterial(v));}
-	void     setProperty(const gkString &v) {BRICK_SET(setProperty(v));}
+	void     setMaterial(const gkString& v) {BRICK_SET(setMaterial(v));}
+	void     setProperty(const gkString& v) {BRICK_SET(setProperty(v));}
 	float    getRange(void)                 {BRICK_GET(getRange(), 0.f);}
 	float    getResetRange(void)            {BRICK_GET(getResetRange(), 0.f);}
 	gkString getMaterial(void)              {BRICK_GET(getMaterial(), "");}
@@ -566,14 +566,14 @@ class gsPropertySensor : public gsSensor
 {
 public:
 	gsPropertySensor();
-	gsPropertySensor(gsLogicObject *parent, const gkString &name="");
+	gsPropertySensor(gsLogicObject* parent, const gkString& name = "");
 	~gsPropertySensor();
 
 
 
 	void      setType(int type)                  {BRICK_SET(setType(type));}
-	void      setPropertyName(const gkString &v) {BRICK_SET(setProperty(v));}
-	void      setValue(const gkString &v)        {BRICK_SET(setValue(v));}
+	void      setPropertyName(const gkString& v) {BRICK_SET(setProperty(v));}
+	void      setValue(const gkString& v)        {BRICK_SET(setValue(v));}
 
 	int       getType(void)                      {BRICK_GET(getType(), PST_EQUAL);}
 	gkString  getPropertyName(void)              {BRICK_GET(getProperty(), "");}
@@ -589,7 +589,7 @@ class gsRaySensor : public gsSensor
 {
 public:
 	gsRaySensor();
-	gsRaySensor(gsLogicObject *parent, const gkString &name="");
+	gsRaySensor(gsLogicObject* parent, const gkString& name = "");
 	~gsRaySensor();
 
 	void      setRange(float v)               {BRICK_SET(setRange(v));}
@@ -612,7 +612,7 @@ class gsRadarSensor : public gsSensor
 {
 public:
 	gsRadarSensor();
-	gsRadarSensor(gsLogicObject *parent, const gkString &name="");
+	gsRadarSensor(gsLogicObject* parent, const gkString& name = "");
 	~gsRadarSensor();
 
 	void      setRange(float v)               {BRICK_SET(setRange(v));}
@@ -639,7 +639,7 @@ class gsRandomSensor : public gsSensor
 {
 public:
 	gsRandomSensor();
-	gsRandomSensor(gsLogicObject *parent, const gkString &name="");
+	gsRandomSensor(gsLogicObject* parent, const gkString& name = "");
 	~gsRandomSensor();
 
 	void      setSeed(int v)               {BRICK_SET(setSeed((UTuint32)gkAbs(v)));}
@@ -657,8 +657,8 @@ public:
 	~gsController();
 
 
-	void link(gsSensor *sens);
-	void link(gsActuator *act);
+	void link(gsSensor* sens);
+	void link(gsActuator* act);
 
 
 
@@ -671,7 +671,7 @@ public:
 class gsLogicOpController : public gsController
 {
 public:
-	gsLogicOpController(gsLogicObject *parent, const gkString &name="");
+	gsLogicOpController(gsLogicObject* parent, const gkString& name = "");
 
 
 	gsLogicOpController();
@@ -688,18 +688,18 @@ public:
 class gsScriptController : public gsController
 {
 public:
-	gsScriptController(gsLogicObject *parent, const gkString &name="");
+	gsScriptController(gsLogicObject* parent, const gkString& name = "");
 	gsScriptController();
 	~gsScriptController();
 
-	void setScript(const gkString &name)  { BRICK_SET( setScript(name) ); }
+	void setScript(const gkString& name)  { BRICK_SET( setScript(name) ); }
 
 
 	OGRE_KIT_LOGIC_BRICK(ScriptController);
 };
 
 // global context
-extern gsScriptController *getCurrentController(void);
+extern gsScriptController* getCurrentController(void);
 
 
 
@@ -719,7 +719,7 @@ public:
 class gsActionActuator : public gsActuator
 {
 public:
-	gsActionActuator(gsLogicObject *parent, const gkString &name="");
+	gsActionActuator(gsLogicObject* parent, const gkString& name = "");
 	gsActionActuator();
 	~gsActionActuator();
 
@@ -728,8 +728,8 @@ public:
 	void  setBlend(int v)                 {BRICK_SET( setBlend(v) );}
 	void  setMode(int v)                  {BRICK_SET( setMode(v) );}
 	void  setPriority(int v)              {BRICK_SET( setPriority(v) );}
-	void  setAction(const gkString &v)    {BRICK_SET( setAction(v) );}
-	void  setProperty(const gkString &v)  {BRICK_SET( setProperty(v) );}
+	void  setAction(const gkString& v)    {BRICK_SET( setAction(v) );}
+	void  setProperty(const gkString& v)  {BRICK_SET( setProperty(v) );}
 	void  setReset(bool v)                {BRICK_SET( setReset(v) );}
 
 	int       getStart(void)              {BRICK_GET( getStart(), 0 );}
@@ -749,22 +749,22 @@ public:
 class gsEditObjectActuator : public gsActuator
 {
 public:
-	gsEditObjectActuator(gsLogicObject *parent, const gkString &name="");
+	gsEditObjectActuator(gsLogicObject* parent, const gkString& name = "");
 	gsEditObjectActuator();
 	~gsEditObjectActuator();
 
 	void  setType(int v)                                          {BRICK_SET( setMode(v) );}
 	void  setDynMode(int v)                                       {BRICK_SET( setDynMode(v) );}
-	void  setObject(const gkString &v)                            {BRICK_SET( setObject(v) );}
-	void  setLinearVelocity(const gsVector3 &v, bool isLocal)     {BRICK_SET( setLinV(v) ); BRICK_SET( setLinVL(isLocal) );}
-	void  setAngularVelocity(const gsVector3 &v, bool isLocal)    {BRICK_SET( setAngV(v) ); BRICK_SET( setAngVL(isLocal) );}
+	void  setObject(const gkString& v)                            {BRICK_SET( setObject(v) );}
+	void  setLinearVelocity(const gsVector3& v, bool isLocal)     {BRICK_SET( setLinV(v) ); BRICK_SET( setLinVL(isLocal) );}
+	void  setAngularVelocity(const gsVector3& v, bool isLocal)    {BRICK_SET( setAngV(v) ); BRICK_SET( setAngVL(isLocal) );}
 	void  setLifeSpan(int v)                                      {BRICK_SET( setLifeSpan(v) ); }
 
 	int        getType(void)                  {BRICK_GET( getMode(),    EOT_ADDOBJ );}
 	int        getDynMode(void)               {BRICK_GET( getDynMode(), EOD_RESTORE );}
 	gkString   getObject(void)                {BRICK_GET( getObject(), "");}
-	gsVector3  getLinearVelocity(void)        {BRICK_GET( getLinV(), gsVector3(0,0,0) );}
-	gsVector3  getAngularVelocity(void)       {BRICK_GET( getAngV(), gsVector3(0,0,0) );}
+	gsVector3  getLinearVelocity(void)        {BRICK_GET( getLinV(), gsVector3(0, 0, 0) );}
+	gsVector3  getAngularVelocity(void)       {BRICK_GET( getAngV(), gsVector3(0, 0, 0) );}
 	int        getLifeSpan(void)              {BRICK_GET( getLifeSpan(), 0 );}
 
 
@@ -777,7 +777,7 @@ public:
 class gsGameActuator : public gsActuator
 {
 public:
-	gsGameActuator(gsLogicObject *parent, const gkString &name="");
+	gsGameActuator(gsLogicObject* parent, const gkString& name = "");
 	gsGameActuator();
 	~gsGameActuator();
 
@@ -793,17 +793,17 @@ public:
 class gsMessageActuator : public gsActuator
 {
 public:
-	gsMessageActuator(gsLogicObject *parent, const gkString &name="");
+	gsMessageActuator(gsLogicObject* parent, const gkString& name = "");
 	gsMessageActuator();
 	~gsMessageActuator();
 
-	void      setTo(const gkString &v)           {BRICK_SET( setTo(v) );}
+	void      setTo(const gkString& v)           {BRICK_SET( setTo(v) );}
 	gkString  getTo(void)                        {BRICK_GET( getTo(), "" );}
-	void      setSubject(const gkString &v)      {BRICK_SET( setSubject(v) );}
-    gkString  getSubject(void)                   {BRICK_GET( getSubject(), "" );}
-	void      setBodyText(const gkString &v)     {BRICK_SET( setBodyText(v) );}
+	void      setSubject(const gkString& v)      {BRICK_SET( setSubject(v) );}
+	gkString  getSubject(void)                   {BRICK_GET( getSubject(), "" );}
+	void      setBodyText(const gkString& v)     {BRICK_SET( setBodyText(v) );}
 	gkString  getBodyText(void)                  {BRICK_GET( getBodyText(), "" );}
-	void      setBodyProperty(const gkString &v) {BRICK_SET( setBodyProperty(v) );}
+	void      setBodyProperty(const gkString& v) {BRICK_SET( setBodyProperty(v) );}
 	gkString  getBodyProperty(void)              {BRICK_GET( getBodyProperty(), "" );}
 	void      setBodyType(int v)                 {BRICK_SET( setBodyType(v) );}
 	int       getBodyType(void)                  {BRICK_GET( getBodyType(), MBT_TEXT );}
@@ -815,27 +815,27 @@ public:
 class gsMotionActuator : public gsActuator
 {
 public:
-	gsMotionActuator(gsLogicObject *parent, const gkString &name="");
+	gsMotionActuator(gsLogicObject* parent, const gkString& name = "");
 	gsMotionActuator();
 	~gsMotionActuator();
 
-	void setTranslation(float x, float y, float z, bool tsLocal=true)     { BRICK_SET( setTranslation(gkVector3(x,y,z), tsLocal) ); }
-	void setTranslation(const gsVector3& vec, bool tsLocal=true)          { BRICK_SET( setTranslation(vec, tsLocal) ); }
+	void setTranslation(float x, float y, float z, bool tsLocal = true)     { BRICK_SET( setTranslation(gkVector3(x, y, z), tsLocal) ); }
+	void setTranslation(const gsVector3& vec, bool tsLocal = true)          { BRICK_SET( setTranslation(vec, tsLocal) ); }
 
-	void setRotation(float x, float y, float z, bool tsLocal=true)        { BRICK_SET( setRotation(gkVector3(x,y,z), tsLocal) ); }
-	void setRotation(const gsVector3& vec, bool tsLocal=true)             { BRICK_SET( setRotation(vec, tsLocal) ); }
+	void setRotation(float x, float y, float z, bool tsLocal = true)        { BRICK_SET( setRotation(gkVector3(x, y, z), tsLocal) ); }
+	void setRotation(const gsVector3& vec, bool tsLocal = true)             { BRICK_SET( setRotation(vec, tsLocal) ); }
 
-	void setForce(float x, float y, float z, bool tsLocal=true)           { BRICK_SET( setForce(gkVector3(x,y,z), tsLocal) ); }
-	void setForce(const gsVector3& vec, bool tsLocal=true)                { BRICK_SET( setForce(vec, tsLocal) ); }
+	void setForce(float x, float y, float z, bool tsLocal = true)           { BRICK_SET( setForce(gkVector3(x, y, z), tsLocal) ); }
+	void setForce(const gsVector3& vec, bool tsLocal = true)                { BRICK_SET( setForce(vec, tsLocal) ); }
 
-	void setTorque(float x, float y, float z, bool tsLocal=true)          { BRICK_SET( setTorque(gkVector3(x,y,z), tsLocal) ); }
-	void setTorque(const gsVector3& vec, bool tsLocal=true)               { BRICK_SET( setTorque(vec, tsLocal) ); }
+	void setTorque(float x, float y, float z, bool tsLocal = true)          { BRICK_SET( setTorque(gkVector3(x, y, z), tsLocal) ); }
+	void setTorque(const gsVector3& vec, bool tsLocal = true)               { BRICK_SET( setTorque(vec, tsLocal) ); }
 
-	void setLinearVelocity(float x, float y, float z, bool tsLocal=true)  { BRICK_SET( setLinearVelocity(gkVector3(x,y,z), tsLocal) ); }
-	void setLinearVelocity(const gsVector3& vec, bool tsLocal=true)       { BRICK_SET( setLinearVelocity(vec, tsLocal) ); }
+	void setLinearVelocity(float x, float y, float z, bool tsLocal = true)  { BRICK_SET( setLinearVelocity(gkVector3(x, y, z), tsLocal) ); }
+	void setLinearVelocity(const gsVector3& vec, bool tsLocal = true)       { BRICK_SET( setLinearVelocity(vec, tsLocal) ); }
 
-	void setAngularVelocity(float x, float y, float z, bool tsLocal=true) { BRICK_SET( setAngularVelocity(gkVector3(x,y,z), tsLocal) ); }
-	void setAngularVelocity(const gsVector3& vec, bool tsLocal=true)      { BRICK_SET( setAngularVelocity(vec, tsLocal) ); }
+	void setAngularVelocity(float x, float y, float z, bool tsLocal = true) { BRICK_SET( setAngularVelocity(gkVector3(x, y, z), tsLocal) ); }
+	void setAngularVelocity(const gsVector3& vec, bool tsLocal = true)      { BRICK_SET( setAngularVelocity(vec, tsLocal) ); }
 
 	void  setIncrementalTargetVelocity(float v)   { BRICK_SET( setDamping(v) ); }
 	void  setIncrementalVelocity(bool v)          { BRICK_SET( setIncrementalVelocity(v) ); }
@@ -843,12 +843,12 @@ public:
 	bool  getIncrementalVelocity(void)            { BRICK_GET( getIncrementalVelocity(), false ); }
 
 
-	gsVector3 getTranslation(void)        {BRICK_GET(getTranslation(), gkVector3(0,0,0))}
-	gsVector3 getRotation(void)           {BRICK_GET(getRotation(), gkVector3(0,0,0))}
-	gsVector3 getForce(void)              {BRICK_GET(getForce(), gkVector3(0,0,0))}
-	gsVector3 getTorque(void)             {BRICK_GET(getTorque(), gkVector3(0,0,0))}
-	gsVector3 getLinearVelocity(void)     {BRICK_GET(getLinearVelocity(), gkVector3(0,0,0))}
-	gsVector3 getAngularVelocity(void)    {BRICK_GET(getAngularVelocity(), gkVector3(0,0,0))}
+	gsVector3 getTranslation(void)        {BRICK_GET(getTranslation(), gkVector3(0, 0, 0))}
+	gsVector3 getRotation(void)           {BRICK_GET(getRotation(), gkVector3(0, 0, 0))}
+	gsVector3 getForce(void)              {BRICK_GET(getForce(), gkVector3(0, 0, 0))}
+	gsVector3 getTorque(void)             {BRICK_GET(getTorque(), gkVector3(0, 0, 0))}
+	gsVector3 getLinearVelocity(void)     {BRICK_GET(getLinearVelocity(), gkVector3(0, 0, 0))}
+	gsVector3 getAngularVelocity(void)    {BRICK_GET(getAngularVelocity(), gkVector3(0, 0, 0))}
 
 	OGRE_KIT_LOGIC_BRICK(MotionActuator);
 };
@@ -857,16 +857,16 @@ public:
 class gsParentActuator : public gsActuator
 {
 public:
-	gsParentActuator(gsLogicObject *parent, const gkString &name="");
+	gsParentActuator(gsLogicObject* parent, const gkString& name = "");
 	gsParentActuator();
 	~gsParentActuator();
 
 	void      setMode(int v)               {BRICK_SET( setMode(v) );}
 	int       getMode(void)                {BRICK_GET( getMode(), PA_SET );}
-	void      setParent(const gkString &v) {BRICK_SET( setParent(v) );}
+	void      setParent(const gkString& v) {BRICK_SET( setParent(v) );}
 	gkString  getParent(void)              {BRICK_GET( getParent(), "" );}
 	void      setCompound(bool v)          {BRICK_SET( setCompound(v) );}
-    bool      getCompound(void)            {BRICK_GET( getCompound(), false );}
+	bool      getCompound(void)            {BRICK_GET( getCompound(), false );}
 	void      setGhost(bool v)             {BRICK_SET( setGhost(v) );}
 	bool      getGhost(void)               {BRICK_GET( getGhost(), false );}
 
@@ -879,17 +879,17 @@ public:
 class gsPropertyActuator : public gsActuator
 {
 public:
-	gsPropertyActuator(gsLogicObject *parent, const gkString &name="");
+	gsPropertyActuator(gsLogicObject* parent, const gkString& name = "");
 	gsPropertyActuator();
 	~gsPropertyActuator();
 
 	void      setType(int v)                  {BRICK_SET( setType(v) );}
 	int       getType(void)                   {BRICK_GET( getType(), PA_ASSIGN );}
-	void      setProperty(const gkString &v)  {BRICK_SET( setProperty(v) );}
+	void      setProperty(const gkString& v)  {BRICK_SET( setProperty(v) );}
 	gkString  getProperty(void)               {BRICK_GET( getProperty(), "" );}
-	void      setValue(const gkString &v)     {BRICK_SET( setValue(v) );}
-    gkString  getValue(void)                  {BRICK_GET( getValue(), "" );}
-	void      setObject(const gkString &v)    {BRICK_SET( setObject(v) );}
+	void      setValue(const gkString& v)     {BRICK_SET( setValue(v) );}
+	gkString  getValue(void)                  {BRICK_GET( getValue(), "" );}
+	void      setObject(const gkString& v)    {BRICK_SET( setObject(v) );}
 	gkString  getObject(void)                 {BRICK_GET( getObject(), "" );}
 
 
@@ -900,15 +900,15 @@ public:
 class gsRandomActuator : public gsActuator
 {
 public:
-	gsRandomActuator(gsLogicObject *parent, const gkString &name="");
+	gsRandomActuator(gsLogicObject* parent, const gkString& name = "");
 	gsRandomActuator();
 	~gsRandomActuator();
-	
+
 	void     setSeed(int v)                 {BRICK_SET( setSeed(v) );}
 	int      getSeed(void)                  {BRICK_GET( getSeed(), 0 );}
 	void     setDistribution(int v)         {BRICK_SET( setDistribution(v) );}
 	int      getDistribution(void)          {BRICK_GET( getDistribution(), RA_BOOL_CONSTANT );}
-	void     setProperty(const gkString &v) {BRICK_SET( setProperty(v) );}
+	void     setProperty(const gkString& v) {BRICK_SET( setProperty(v) );}
 	gkString getProperty(void)              {BRICK_GET( getProperty(), "" );}
 	void     setMin(float v)                {BRICK_SET( setMin(v) );}
 	float    getMin(void)                   {BRICK_GET( getMin(), 0 );}
@@ -931,15 +931,15 @@ public:
 class gsSceneActuator : public gsActuator
 {
 public:
-	gsSceneActuator(gsLogicObject *parent, const gkString &name="");
+	gsSceneActuator(gsLogicObject* parent, const gkString& name = "");
 	gsSceneActuator();
 	~gsSceneActuator();
 
-    void     setMode(int v)                  {BRICK_SET( setMode(v) );}
+	void     setMode(int v)                  {BRICK_SET( setMode(v) );}
 	int      getMode(void)                   {BRICK_GET( getMode(), SC_RESTART );}
-	void     setScene(const gkString &v)     {BRICK_SET( setScene(v) );}
+	void     setScene(const gkString& v)     {BRICK_SET( setScene(v) );}
 	gkString getScene(void)                  {BRICK_GET( getScene(), "" );}
-	void     setCamera(const gkString &v)    {BRICK_SET( setCamera(v) );}
+	void     setCamera(const gkString& v)    {BRICK_SET( setCamera(v) );}
 	gkString getCamera(void)                 {BRICK_GET( getCamera(), "" );}
 
 
@@ -950,13 +950,13 @@ public:
 class gsSoundActuator : public gsActuator
 {
 public:
-	gsSoundActuator(gsLogicObject *parent, const gkString &name="");
+	gsSoundActuator(gsLogicObject* parent, const gkString& name = "");
 	gsSoundActuator();
 	~gsSoundActuator();
 
-    void     setType(int v)                      {BRICK_SET( setMode(v) );}
+	void     setType(int v)                      {BRICK_SET( setMode(v) );}
 	int      getType(void)                       {BRICK_GET( getMode(), SA_PLAY_STOP );}
-	void     setSoundFile(const gkString &v)     {BRICK_SET( setSoundFile(v) );}
+	void     setSoundFile(const gkString& v)     {BRICK_SET( setSoundFile(v) );}
 	gkString getSoundFile(void)                  {BRICK_GET( getSoundFile(), "" );}
 
 
@@ -968,13 +968,13 @@ public:
 class gsStateActuator : public gsActuator
 {
 public:
-	gsStateActuator(gsLogicObject *parent, const gkString &name="");
+	gsStateActuator(gsLogicObject* parent, const gkString& name = "");
 	gsStateActuator();
 	~gsStateActuator();
 
-    void     setMask(int v) {BRICK_SET( setMask(v) );}
+	void     setMask(int v) {BRICK_SET( setMask(v) );}
 	int      getMask(void)  {BRICK_GET( getMask(), 0 );}
-    void     setOp(int v)   {BRICK_SET( setOp(v) );}
+	void     setOp(int v)   {BRICK_SET( setOp(v) );}
 	int      getOp(void)    {BRICK_GET( getOp(), SOP_ADD );}
 
 	OGRE_KIT_LOGIC_BRICK(StateActuator);
@@ -985,11 +985,11 @@ public:
 class gsVisibilityActuator : public gsActuator
 {
 public:
-	gsVisibilityActuator(gsLogicObject *parent, const gkString &name="");
+	gsVisibilityActuator(gsLogicObject* parent, const gkString& name = "");
 	gsVisibilityActuator();
 	~gsVisibilityActuator();
 
-	
+
 	void     setFlag(int v) {BRICK_SET( setFlag(v) );}
 	int      getFlag(void)  {BRICK_GET( getFlag(), 0 );}
 

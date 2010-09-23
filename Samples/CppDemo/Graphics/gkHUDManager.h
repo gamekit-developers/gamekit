@@ -25,7 +25,7 @@
 -------------------------------------------------------------------------------
     This is a replacement candidate for Engine/Graphics
     - For now it wraps Ogre::Overlays to gk usable objects.
-    - Later it will be superseded by custom Ogre vertex buffer usage, 
+    - Later it will be superseded by custom Ogre vertex buffer usage,
     - abstracted for external GameKit external rendering.
 */
 #ifndef _gkHUDManager_h_
@@ -46,13 +46,13 @@ public:
 	gkHUDManager();
 	virtual ~gkHUDManager();
 
-	gkHUD *getOrCreate(const gkHashedString &name);
+	gkHUD* getOrCreate(const gkHashedString& name);
 
 	UT_DECLARE_SINGLETON(gkHUDManager);
 
 private:
 
-	gkResource *createImpl(const gkResourceName &name, const gkResourceHandle &handle);
+	gkResource* createImpl(const gkResourceName& name, const gkResourceHandle& handle);
 
 };
 

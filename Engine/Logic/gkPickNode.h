@@ -37,7 +37,7 @@ class gkRigidBody;
 class gkPickNode : public gkLogicNode
 {
 public:
-	enum 
+	enum
 	{
 		UPDATE,
 		CREATE_PICK,
@@ -61,7 +61,7 @@ public:
 	DECLARE_SOCKET_TYPE(CAUGHT_TRUE, bool);
 	DECLARE_SOCKET_TYPE(CAUGHT_FALSE, bool);
 
-	gkPickNode(gkLogicTree *parent, size_t id);
+	gkPickNode(gkLogicTree* parent, size_t id);
 
 	~gkPickNode();
 
@@ -93,7 +93,7 @@ private:
 	gkVector3 m_angularFactor;
 	int m_activationState;
 
-	
+
 };
 
 #endif//_gkPickNode_h_

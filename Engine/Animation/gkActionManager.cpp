@@ -30,8 +30,8 @@
 
 
 
-gkActionManager::gkActionManager() 
-	:	m_active(0), m_blend(0), m_blendTime(0.0)
+gkActionManager::gkActionManager()
+	:    m_active(0), m_blend(0), m_blendTime(0.0)
 {
 }
 
@@ -43,7 +43,7 @@ gkActionManager::~gkActionManager()
 
 
 
-void gkActionManager::setAction(gkAction *act)
+void gkActionManager::setAction(gkAction* act)
 {
 	if (act)
 	{

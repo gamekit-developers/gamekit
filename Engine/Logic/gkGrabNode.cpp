@@ -35,9 +35,9 @@
 #include "gkUtils.h"
 #include "OgreRoot.h"
 
-gkGrabNode::gkGrabNode(gkLogicTree *parent, size_t id)
-: gkPickNode(parent, id),
-m_target(0)
+gkGrabNode::gkGrabNode(gkLogicTree* parent, size_t id)
+	: gkPickNode(parent, id),
+	  m_target(0)
 {
 	ADD_ISOCK(THROW_OBJECT, false);
 	ADD_ISOCK(TARGET, 0);
@@ -55,12 +55,12 @@ bool gkGrabNode::evaluate(gkScalar tick)
 {
 	m_target = GET_SOCKET_VALUE(TARGET);
 
-	if(m_target && !m_target->isInstanced())
+	if (m_target && !m_target->isInstanced())
 	{
 		ReleasePick();
 	}
 
-	if(GET_SOCKET_VALUE(THROWED))
+	if (GET_SOCKET_VALUE(THROWED))
 	{
 		SET_SOCKET_VALUE(THROWED, false);
 	}
@@ -74,7 +74,7 @@ void gkGrabNode::update(gkScalar tick)
 {
 	gkPickNode::update(tick);
 
-	if(GET_SOCKET_VALUE(THROW_OBJECT))
+	if (GET_SOCKET_VALUE(THROW_OBJECT))
 	{
 		ThrowObject();
 	}
@@ -84,7 +84,7 @@ void gkGrabNode::ThrowObject()
 {
 	gkVector3 vel = GET_SOCKET_VALUE(THROW_VEL);
 
-	if(m_pickedBody && vel != gkVector3::ZERO)
+	if (m_pickedBody && vel != gkVector3::ZERO)
 	{
 		m_pickedBody->setLinearVelocity(m_target->getOrientation() * vel);
 
@@ -94,7 +94,7 @@ void gkGrabNode::ThrowObject()
 	}
 }
 
-Ogre::Ray gkGrabNode::GetRay() 
+Ogre::Ray gkGrabNode::GetRay()
 {
 	gkVector3 dir = m_target->getOrientation() * GET_SOCKET_VALUE(GRAB_DIRECTION);
 
@@ -103,7 +103,7 @@ Ogre::Ray gkGrabNode::GetRay()
 	return ray;
 }
 
-gkVector3 gkGrabNode::GetPivotPosition() 
+gkVector3 gkGrabNode::GetPivotPosition()
 {
 	gkVector3 newPivotB = gkPickNode::GetPivotPosition();
 
@@ -111,5 +111,5 @@ gkVector3 gkGrabNode::GetPivotPosition()
 
 	newPivotB += offsetPos;
 
- 	return newPivotB;
+	return newPivotB;
 }

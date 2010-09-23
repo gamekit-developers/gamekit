@@ -42,7 +42,7 @@ class gkScene : public gkInstancedObject
 {
 public:
 
-	gkScene(gkInstancedManager* creator, const gkResourceName &name, const gkResourceHandle& handle);
+	gkScene(gkInstancedManager* creator, const gkResourceName& name, const gkResourceHandle& handle);
 	virtual ~gkScene();
 
 
@@ -69,7 +69,7 @@ public:
 
 
 	gkDynamicsWorld* getDynamicsWorld(void);
-	
+
 	// Callback events
 
 	void notifyInstanceCreated(gkGameObject* gobject);
@@ -102,7 +102,7 @@ public:
 	void            endObject(gkGameObject* obj);
 
 
-	void             getGroups(gkGroupArray &groups);
+	void             getGroups(gkGroupArray& groups);
 
 
 	gkDebugger* getDebugger(void);

@@ -34,13 +34,13 @@ class gkActuatorSensor : public gkLogicSensor
 {
 private:
 	gkString m_actuatorName;
-	
+
 public:
-	gkActuatorSensor(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	gkActuatorSensor(gkGameObject* object, gkLogicLink* link, const gkString& name);
 	virtual ~gkActuatorSensor() {}
-	
-	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
-	
+
+	gkLogicBrick* clone(gkLogicLink* link, gkGameObject* dest);
+
 	bool query(void);
 	GK_INLINE void            setActuatorName(const gkString& v) { m_actuatorName = v; }
 	GK_INLINE const gkString& getActuatorName(void)              { return m_actuatorName;}

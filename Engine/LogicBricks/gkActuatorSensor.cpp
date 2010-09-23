@@ -33,17 +33,17 @@
 #include "gkLogicActuator.h"
 
 
-gkActuatorSensor::gkActuatorSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
-		:	gkLogicSensor(object, link, name), m_actuatorName("")
+gkActuatorSensor::gkActuatorSensor(gkGameObject* object, gkLogicLink* link, const gkString& name)
+	:    gkLogicSensor(object, link, name), m_actuatorName("")
 {
 	m_dispatchType = DIS_CONSTANT;
 	connect();
 }
 
 
-gkLogicBrick *gkActuatorSensor::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick* gkActuatorSensor::clone(gkLogicLink* link, gkGameObject* dest)
 {
-	gkActuatorSensor *sens = new gkActuatorSensor(*this);
+	gkActuatorSensor* sens = new gkActuatorSensor(*this);
 	sens->cloneImpl(link, dest);
 	return sens;
 }
@@ -51,6 +51,6 @@ gkLogicBrick *gkActuatorSensor::clone(gkLogicLink *link, gkGameObject *dest)
 
 bool gkActuatorSensor::query(void)
 {
-	gkLogicActuator * act = m_object->getLogicBricks()->findActuator(m_actuatorName);
+	gkLogicActuator* act = m_object->getLogicBricks()->findActuator(m_actuatorName);
 	return act->isPulseOn();
 }

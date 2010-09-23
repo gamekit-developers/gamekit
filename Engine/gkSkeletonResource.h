@@ -36,30 +36,30 @@
 class gkSkeletonResource : public gkResource
 {
 public:
-	typedef utHashTable<gkHashedString, gkAction *>  Actions;
-	typedef utHashTable<gkHashedString, gkBone *>    Bones;
+	typedef utHashTable<gkHashedString, gkAction*>  Actions;
+	typedef utHashTable<gkHashedString, gkBone*>    Bones;
 
 public:
-	gkSkeletonResource(gkResourceManager* creator, const gkResourceName &name, const gkResourceHandle& handle);
+	gkSkeletonResource(gkResourceManager* creator, const gkResourceName& name, const gkResourceHandle& handle);
 	virtual ~gkSkeletonResource();
 
-	gkBone         *createBone(const gkString &name);
-	gkBone         *getBone(const gkHashedString &name);
+	gkBone*         createBone(const gkString& name);
+	gkBone*         getBone(const gkHashedString& name);
 
 
-	gkAction       *createAction(const gkHashedString &name);
-	gkAction       *getAction(const gkHashedString &name);
+	gkAction*       createAction(const gkHashedString& name);
+	gkAction*       getAction(const gkHashedString& name);
 
-	gkBone::BoneList &getRootBoneList(void);
-	gkBone::BoneList &getBoneList(void) {return m_boneList;}
+	gkBone::BoneList& getRootBoneList(void);
+	gkBone::BoneList& getBoneList(void) {return m_boneList;}
 
 
-	GK_INLINE bool hasBone(const gkHashedString &name)        { return m_bones.find(name) != GK_NPOS; }
-	GK_INLINE bool hasAction(const gkHashedString &name)      { return m_actions.find(name) != GK_NPOS; }
+	GK_INLINE bool hasBone(const gkHashedString& name)        { return m_bones.find(name) != GK_NPOS; }
+	GK_INLINE bool hasAction(const gkHashedString& name)      { return m_actions.find(name) != GK_NPOS; }
 
 
 	gkSkeletonLoader* getExternalLoader(void) {return m_externalLoader;}
-	void makeManual(gkEntity *ent);
+	void makeManual(gkEntity* ent);
 
 
 private:

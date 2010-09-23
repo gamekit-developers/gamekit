@@ -30,7 +30,7 @@
 
 
 gkMeshManager::gkMeshManager()
-	:	gkResourceManager("MeshManager", "Mesh")
+	:    gkResourceManager("MeshManager", "Mesh")
 {
 }
 
@@ -39,7 +39,7 @@ gkMeshManager::~gkMeshManager()
 	destroyAll();
 }
 
-gkResource *gkMeshManager::createImpl(const gkResourceName &name, const gkResourceHandle &handle)
+gkResource* gkMeshManager::createImpl(const gkResourceName& name, const gkResourceHandle& handle)
 {
 	return new gkMesh(this, name, handle);
 }

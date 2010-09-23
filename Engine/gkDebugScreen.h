@@ -42,15 +42,15 @@ public:
 	void initialize();
 	void finalize();
 
-	static void printTo(const gkString &buf);
+	static void printTo(const gkString& buf);
 
 	GK_INLINE void lock(bool doit)      { m_isLocked = doit; }
 	GK_INLINE bool isInitialized()      { return m_isInit; }
 	GK_INLINE bool isLocked()           { return m_isLocked; }
 	GK_INLINE bool isShown()            { return m_isShown; }
-	GK_INLINE const gkString &getText() { return m_txtBuffer;  }
+	GK_INLINE const gkString& getText() { return m_txtBuffer;  }
 
-	GK_INLINE void setText(const gkString &txt)
+	GK_INLINE void setText(const gkString& txt)
 	{
 		m_txtBuffer = txt;
 		_getClipped();
@@ -58,7 +58,7 @@ public:
 
 
 	void show(bool doit);
-	void pushText(const gkString &text);
+	void pushText(const gkString& text);
 	void clear();
 	void _getClipped();
 
@@ -67,9 +67,9 @@ private:
 	bool m_isInit, m_isLocked, m_isShown;
 	utString m_txtBuffer;
 
-	Ogre::Overlay               *m_over;
-	Ogre::OverlayElement        *m_ele;
-	Ogre::ManualResourceLoader  *m_font;
+	Ogre::Overlay*               m_over;
+	Ogre::OverlayElement*        m_ele;
+	Ogre::ManualResourceLoader*  m_font;
 
 
 	class ScreenBufferItem : public utListClass<ScreenBufferItem>::Link
@@ -94,6 +94,6 @@ private:
 	utStringArray       m_splitBuf;
 };
 
-extern void dsPrintf(const char *fmt, ...);
+extern void dsPrintf(const char* fmt, ...);
 
 #endif//_gkDebugScreen_h_

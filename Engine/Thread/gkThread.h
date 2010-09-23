@@ -40,9 +40,9 @@
 class gkCall : public gkReferences
 {
 public:
-	gkCall(){};
+	gkCall() {};
 
-	virtual ~gkCall(){};
+	virtual ~gkCall() {};
 
 	virtual void run() = 0;
 };
@@ -62,7 +62,7 @@ private:
 #ifdef WIN32
 	static unsigned __stdcall task(void* p);
 #else
-	static void *task(void* p);
+	static void* task(void* p);
 #endif
 
 	void run();

@@ -33,7 +33,7 @@
 class gkParticleNode : public gkLogicNode
 {
 public:
-	enum 
+	enum
 	{
 		CREATE,
 		POSITION,
@@ -46,7 +46,7 @@ public:
 	DECLARE_SOCKET_TYPE(ORIENTATION, gkQuaternion);
 	DECLARE_SOCKET_TYPE(PARTICLE_SYSTEM_NAME, gkString);
 
-	gkParticleNode(gkLogicTree *parent, size_t id);
+	gkParticleNode(gkLogicTree* parent, size_t id);
 
 	~gkParticleNode();
 
@@ -78,7 +78,7 @@ private:
 	typedef utList<ParticleSystem*> ParticleObjects;
 	typedef utListIterator<ParticleObjects> ParticleObjectIterator;
 
-	ParticleObjects	m_particles;
+	ParticleObjects    m_particles;
 
 };
 

@@ -40,28 +40,28 @@ class gkNavPath : public OpenSteer::PolylineSegmentedPathwaySegmentRadii
 public:
 
 	gkNavPath();
-	
+
 	~gkNavPath();
 
 	bool create(PDT_NAV_MESH navMesh, const gkVector3& from, const gkVector3& to, const gkVector3& polyPickExt, int maxPathPolys, gkScalar pathRadius);
-	
+
 	void showPath();
 
 	bool empty() const { return m_path.empty(); }
-	
-	void clear(){ m_path.clear(); }
-	
+
+	void clear() { m_path.clear(); }
+
 	gkVector3 getPoint(int index) { return m_path.at(index); }
-	
+
 	int getPoints() const { return m_path.size(); }
-	
+
 private:
 
 	PATH_POINTS m_path;
 
 	typedef std::vector<gkScalar> PATH_RADIUS;
 	PATH_RADIUS m_pathRadius;
-	
+
 	gkScene* m_scene;
 };
 

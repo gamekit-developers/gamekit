@@ -29,33 +29,33 @@
 
 
 gkActionStrip::gkActionStrip()
-	:	m_scaledRange(-1.f, -1.f),
-		m_scaleDelta(GK_INFINITY),
-		m_curBlend(0.f),
-		m_parentWeight(1.f),
-	    m_action(0),
-	    m_blend(0.f, 0.f),
-	    m_init(false),
-	    m_time(0.f),
-		m_prevDelta(0.f)
+	:    m_scaledRange(-1.f, -1.f),
+	     m_scaleDelta(GK_INFINITY),
+	     m_curBlend(0.f),
+	     m_parentWeight(1.f),
+	     m_action(0),
+	     m_blend(0.f, 0.f),
+	     m_init(false),
+	     m_time(0.f),
+	     m_prevDelta(0.f)
 {
 }
 
 
-void gkActionStrip::setBlend(const gkVector2 &io)
+void gkActionStrip::setBlend(const gkVector2& io)
 {
 	m_blend = io;
 	m_init = false;
 }
 
 
-void gkActionStrip::setDeltaRange(const gkVector2 &v)
+void gkActionStrip::setDeltaRange(const gkVector2& v)
 {
 	m_scaledRange = v;
 }
 
 
-void gkActionStrip::evaluate(const gkScalar &delta)
+void gkActionStrip::evaluate(const gkScalar& delta)
 {
 	if (m_action)
 	{
@@ -64,7 +64,7 @@ void gkActionStrip::evaluate(const gkScalar &delta)
 		if (!m_init)
 		{
 			// Set the default seed
- 			m_init = true;
+			m_init = true;
 			m_parentWeight = 1.f;
 
 			m_curBlend = 0.f;
@@ -89,9 +89,9 @@ void gkActionStrip::evaluate(const gkScalar &delta)
 			gkScalar nlen = getLength();
 			gkScalar dlen = 0.f;
 
-			if (nlen < olen) 
+			if (nlen < olen)
 				dlen = olen - nlen;
-			else 
+			else
 				dlen = nlen - olen;
 
 			m_scaleDelta = m_prevDelta + (dlen / gkEngine::getTickRate());
@@ -160,13 +160,13 @@ void gkActionStrip::setParentWeight(gkScalar w)
 
 
 gkActionSequence::gkActionSequence()
-	:	m_range(FLT_MAX, -FLT_MAX),
-	    m_evalTime(0.f),
-	    m_default(0),
-	    m_weight(1.f),
-		m_defTime(0.f),
-	    m_enabled(true),
-		m_active(0)
+	:    m_range(FLT_MAX, -FLT_MAX),
+	     m_evalTime(0.f),
+	     m_default(0),
+	     m_weight(1.f),
+	     m_defTime(0.f),
+	     m_enabled(true),
+	     m_active(0)
 {
 }
 
@@ -180,7 +180,7 @@ gkActionSequence::~gkActionSequence()
 
 
 
-void gkActionSequence::addItem(gkAction *act, const gkVector2& timeRange, const gkVector2& blendIO)
+void gkActionSequence::addItem(gkAction* act, const gkVector2& timeRange, const gkVector2& blendIO)
 {
 	if (!act)
 		return;
@@ -194,7 +194,7 @@ void gkActionSequence::addItem(gkAction *act, const gkVector2& timeRange, const 
 		m_range.y = timeRange.y;
 
 
-	gkActionStrip *seq = new gkActionStrip();
+	gkActionStrip* seq = new gkActionStrip();
 	seq->setAction(act);
 
 
@@ -220,7 +220,7 @@ void gkActionSequence::clearWeights(void)
 
 	while (i < s)
 	{
-		gkActionStrip *seq = p[i];
+		gkActionStrip* seq = p[i];
 		seq->reset();
 		++i;
 	}
@@ -265,7 +265,7 @@ void gkActionSequence::setWeight(gkScalar w)
 	}
 }
 
-void gkActionSequence::setTimePosition(const gkScalar &v)
+void gkActionSequence::setTimePosition(const gkScalar& v)
 {
 	if (m_enabled)
 	{
@@ -275,7 +275,7 @@ void gkActionSequence::setTimePosition(const gkScalar &v)
 
 }
 
-void gkActionSequence::evaluate(const gkScalar &delta)
+void gkActionSequence::evaluate(const gkScalar& delta)
 {
 	if (!m_enabled)
 		return;
@@ -295,7 +295,7 @@ void gkActionSequence::evaluate(const gkScalar &delta)
 
 	if (m_default)
 	{
-		// Loop in background 
+		// Loop in background
 
 		m_defTime += delta;
 		if (m_defTime >= m_default->getLength())
@@ -305,7 +305,7 @@ void gkActionSequence::evaluate(const gkScalar &delta)
 
 	while (i < s)
 	{
-		gkActionStrip *seq = p[i++];
+		gkActionStrip* seq = p[i++];
 		const gkScalar st  = seq->getStart();
 		const gkScalar end = st + seq->getEnd();
 

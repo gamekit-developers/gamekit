@@ -36,7 +36,7 @@ private:
 	bool m_hasHit;
 
 public:
-	utArray<const btCollisionObject *>  m_contactObjects;
+	utArray<const btCollisionObject*>  m_contactObjects;
 
 	gkAllContactResultCallback() : btCollisionWorld::ContactResultCallback(), m_hasHit(false)
 	{
@@ -49,11 +49,11 @@ public:
 
 	bool hasHit(void) {return m_hasHit;}
 
-	virtual	btScalar	addSingleResult(btManifoldPoint &cp, const btCollisionObject *colObj0, int partId0, int index0, const btCollisionObject *colObj1, int partId1, int index1)
+	virtual    btScalar    addSingleResult(btManifoldPoint& cp, const btCollisionObject* colObj0, int partId0, int index0, const btCollisionObject* colObj1, int partId1, int index1)
 	{
 		m_hasHit = true;
 
-		if(m_contactObjects.find(colObj1)==UT_NPOS)
+		if (m_contactObjects.find(colObj1) == UT_NPOS)
 			m_contactObjects.push_back(colObj1);
 
 		return 0.;

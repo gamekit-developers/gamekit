@@ -36,11 +36,11 @@ private:
 	unsigned int m_delay, m_duration, m_count;
 	bool m_repeat;
 public:
-	gkDelaySensor(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	gkDelaySensor(gkGameObject* object, gkLogicLink* link, const gkString& name);
 	virtual ~gkDelaySensor() {}
-	
-	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
-	
+
+	gkLogicBrick* clone(gkLogicLink* link, gkGameObject* dest);
+
 	bool query(void);
 	GK_INLINE void setDelay(unsigned int v)    {m_delay = v;}
 	GK_INLINE void setDuration(unsigned int v) {m_duration = v;}

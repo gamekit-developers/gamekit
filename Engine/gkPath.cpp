@@ -57,7 +57,7 @@ const gkString gkPath::SEPERATOR = "/";
 
 
 
-void gkGetCurrentDir(gkString &buf)
+void gkGetCurrentDir(gkString& buf)
 {
 	char buffer[240];
 	getcwd(buffer, 240);
@@ -71,13 +71,13 @@ gkPath::gkPath()
 }
 
 
-gkPath::gkPath(const gkString &file) :
+gkPath::gkPath(const gkString& file) :
 	m_path(file)
 {
 }
 
 
-gkPath::gkPath(const char *file) :
+gkPath::gkPath(const char* file) :
 	m_path(file)
 {
 }
@@ -88,7 +88,7 @@ gkPath::~gkPath()
 }
 
 
-const gkString &gkPath::getPath(void) const
+const gkString& gkPath::getPath(void) const
 {
 	return m_path;
 }
@@ -120,7 +120,7 @@ int gkPath::getFileSize(void) const
 }
 
 
-void gkPath::append(const gkString &v)
+void gkPath::append(const gkString& v)
 {
 	if (m_path.at(m_path.size() - 1) != SEPERATOR[0])
 		m_path += SEPERATOR;
@@ -138,7 +138,7 @@ gkString gkPath::getAsString(void) const
 }
 
 
-void gkPath::getAsString(gkString &dest) const
+void gkPath::getAsString(gkString& dest) const
 {
 	if (!isFile())
 		return;
@@ -149,10 +149,10 @@ void gkPath::getAsString(gkString &dest) const
 	if (fileSize <= 0)
 		return;
 
-	char *data = new char[fileSize+1];
+	char* data = new char[fileSize+1];
 
 
-	FILE *fp = fopen(m_path.c_str(), "rb");  // always in binary
+	FILE* fp = fopen(m_path.c_str(), "rb");  // always in binary
 	GK_ASSERT(fp);
 
 	fread(data, fileSize, 1, fp);
@@ -267,9 +267,9 @@ gkString gkPath::getBundlePath(void) const
 	CFRelease(pathStr);
 	CFRelease(bundleURL);
 
-	char *lastSlash = 0;
-	if (lastSlash = strrchr((char *)path, '/'))
-		*lastSlash = '\0';
+	char* lastSlash = 0;
+	if (lastSlash = strrchr((char*)path, '/'))
+		* lastSlash = '\0';
 
 	return path;
 #endif
@@ -292,8 +292,8 @@ bool gkPath::exists(void) const
 bool gkPath::isFile(void) const
 {
 	// skip blender relative paths.
-    // stat can sometimes be extremely slow!
-    // (not sure if fopen() == NULL would be any better.)
+	// stat can sometimes be extremely slow!
+	// (not sure if fopen() == NULL would be any better.)
 	if (m_path[0] == '/' && m_path[1] == '/')
 		return false;
 
@@ -316,13 +316,13 @@ bool gkPath::isFileInBundle(void) const
 {
 #ifdef __APPLE__
 	char newName[1024];
-	
+
 #ifdef OGREKIT_BUILD_IPHONE
 	sprintf(newName, "%s/%s", getBundlePath().c_str(), m_path.c_str());
 #else
 	sprintf(newName, "%s/%s/%s", getBundlePath().c_str(), "Contents/Resources", m_path.c_str());
 #endif
-	
+
 	struct stat st;
 	return stat(newName, &st) == 0 && S_ISREG(st.st_mode);
 #else
@@ -332,7 +332,7 @@ bool gkPath::isFileInBundle(void) const
 }
 
 
-void gkPath::split(gkStringVector &arr) const
+void gkPath::split(gkStringVector& arr) const
 {
 	utStringUtils::split(arr, m_path, SEPERATOR);
 }

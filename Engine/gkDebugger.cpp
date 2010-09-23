@@ -41,7 +41,7 @@
 #endif
 
 
-gkDebugger::gkDebugger(gkScene *parent)
+gkDebugger::gkDebugger(gkScene* parent)
 	:   m_node(0),
 	    m_parent(parent),
 	    m_radius(0.f),
@@ -59,7 +59,7 @@ gkDebugger::~gkDebugger()
 {
 	if (m_node && m_parent->isInstanced())
 	{
-		Ogre::SceneManager *mgr = m_parent->getManager();
+		Ogre::SceneManager* mgr = m_parent->getManager();
 		mgr->destroySceneNode(m_node);
 		m_node = 0;
 	}
@@ -81,7 +81,7 @@ void gkDebugger::verifyNode(void)
 
 	if (m_parent->isInstanced())
 	{
-		Ogre::SceneManager *mgr = m_parent->getManager();
+		Ogre::SceneManager* mgr = m_parent->getManager();
 		m_node = mgr->getRootSceneNode()->createChildSceneNode();
 		m_node->attachObject(this);
 
@@ -113,11 +113,11 @@ void gkDebugger::flush(void)
 
 	if (!m_buffer.isNull())
 	{
-		DebugVertex *vp = (DebugVertex *)m_buffer->lock(0, sizeof(DebugVertex)*m_lineBuf.size(), Ogre::HardwareBuffer::HBL_DISCARD);
+		DebugVertex* vp = (DebugVertex*)m_buffer->lock(0, sizeof(DebugVertex) * m_lineBuf.size(), Ogre::HardwareBuffer::HBL_DISCARD);
 
 		// write contents to buffer
 		Buffer::Pointer ptr = m_lineBuf.ptr();
-		UTsize i=0, size = m_lineBuf.size();
+		UTsize i = 0, size = m_lineBuf.size();
 		while (i < size) (*vp++) = ptr[i++];
 
 		m_buffer->unlock();
@@ -160,7 +160,7 @@ void gkDebugger::growBuffer(UTsize newSize)
 	m_bufSize = newSize;
 
 	mRenderOp.vertexData = new Ogre::VertexData();
-	Ogre::VertexDeclaration *decl = mRenderOp.vertexData->vertexDeclaration;
+	Ogre::VertexDeclaration* decl = mRenderOp.vertexData->vertexDeclaration;
 
 	size_t offs = 0;
 	decl->addElement(0, offs, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
@@ -184,7 +184,7 @@ void gkDebugger::growBuffer(UTsize newSize)
 }
 
 
-void gkDebugger::drawLine(const gkVector3 &from, const gkVector3 &to, const gkVector3 &color)
+void gkDebugger::drawLine(const gkVector3& from, const gkVector3& to, const gkVector3& color)
 {
 	verifyNode();
 
@@ -211,7 +211,7 @@ void gkDebugger::drawLine(const gkVector3 &from, const gkVector3 &to, const gkVe
 
 #ifdef OGREKIT_OPENAL_SOUND
 
-void gkDebugger::draw3dSound(const gkSoundProperties &props)
+void gkDebugger::draw3dSound(const gkSoundProperties& props)
 {
 	// Draw arrow  (sound --> ...)
 	// head is the direction
@@ -221,9 +221,9 @@ void gkDebugger::draw3dSound(const gkSoundProperties &props)
 	// cone height is the objects AABB size
 
 
-	const gkVector3 RED(1,0,0);
-	const gkVector3 ORANGE(1,0.5,0.0);
-	const gkVector3 WHITE(1,1,1);
+	const gkVector3 RED(1, 0, 0);
+	const gkVector3 ORANGE(1, 0.5, 0.0);
+	const gkVector3 WHITE(1, 1, 1);
 
 	gkScalar ia = gkMaxf(props.m_coneAngle.x, 1.f);
 	gkScalar oa = gkMaxf(props.m_coneAngle.y, 1.f);
@@ -275,7 +275,7 @@ void gkDebugger::draw3dSound(const gkSoundProperties &props)
 
 #endif
 
-Ogre::Real gkDebugger::getSquaredViewDepth(const Ogre::Camera *cam) const
+Ogre::Real gkDebugger::getSquaredViewDepth(const Ogre::Camera* cam) const
 {
 	Ogre::Vector3 min, max, mid, dist;
 	min = mBox.getMinimum();

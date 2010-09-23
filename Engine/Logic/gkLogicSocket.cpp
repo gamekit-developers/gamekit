@@ -31,15 +31,15 @@
 #include <typeinfo>
 
 
-void gkILogicSocket::link(gkILogicSocket *fsock)
+void gkILogicSocket::link(gkILogicSocket* fsock)
 {
 	GK_ASSERT(fsock);
 
 	GK_ASSERT(typeid(*this) == typeid(*fsock) && "Types have to match");
 
-	if(m_isInput)
+	if (m_isInput)
 	{
-		GK_ASSERT(!m_from && "Only one link for input socket"); 
+		GK_ASSERT(!m_from && "Only one link for input socket");
 
 		GK_ASSERT(!fsock->m_isInput && "Cannot link input to input");
 
@@ -49,7 +49,7 @@ void gkILogicSocket::link(gkILogicSocket *fsock)
 	{
 		GK_ASSERT(fsock->m_isInput && "Cannot link output to output");
 
-		if(!m_to.find(fsock))
+		if (!m_to.find(fsock))
 		{
 			m_to.push_back(fsock);
 		}
@@ -61,7 +61,7 @@ void gkILogicSocket::link(gkILogicSocket *fsock)
 	{
 		m_parent->setLinked();
 
-		gkLogicNode *nd = fsock->getParent();
+		gkLogicNode* nd = fsock->getParent();
 
 		if (nd) nd->setLinked();
 	}
@@ -74,5 +74,3 @@ gkGameObject* gkILogicSocket::getGameObject()const
 
 	return m_parent ? m_parent->getAttachedObject() : 0;
 }
-
-

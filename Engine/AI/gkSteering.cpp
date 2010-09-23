@@ -27,12 +27,12 @@
 #include "Ogre.h"
 #include "gkSteering.h"
 
-gkSteering::gkSteering(const gkVector3& steerAxis) 
-: m_steerAxis(steerAxis)
+gkSteering::gkSteering(const gkVector3& steerAxis)
+	: m_steerAxis(steerAxis)
 {
 }
 
-gkSteering::~gkSteering() 
+gkSteering::~gkSteering()
 {
 }
 
@@ -46,7 +46,7 @@ gkRadian gkSteering::getAngle(const gkVector3& from, const gkVector3& to)
 
 	Ogre::Radian angle;
 	Ogre::Vector3 rAxis;
-	
+
 	q.ToAngleAxis(angle, rAxis);
 
 	rAxis = angle.valueRadians() * (rAxis * m_steerAxis);
@@ -63,10 +63,7 @@ gkQuaternion gkSteering::getRotation(const gkVector3& from, const gkVector3& to)
 
 gkVector3 gkSteering::getProjectionOnPlane(const gkVector3& V, const gkVector3& N)
 {
-	//U = V - (V dot N)N 
+	//U = V - (V dot N)N
 
 	return  V - V.dotProduct(N) * N;
 }
-
-
-

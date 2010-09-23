@@ -70,12 +70,12 @@ public:
 
 public:
 
-	gkInstancedManager(const gkString& type, const gkString &rtype);
+	gkInstancedManager(const gkString& type, const gkString& rtype);
 	~gkInstancedManager();
 
-	void addCreateInstanceQueue(gkInstancedObject *iobj);
-	void addDestroyInstanceQueue(gkInstancedObject *iobj);
-	void addReInstanceQueue(gkInstancedObject *iobj);
+	void addCreateInstanceQueue(gkInstancedObject* iobj);
+	void addDestroyInstanceQueue(gkInstancedObject* iobj);
+	void addReInstanceQueue(gkInstancedObject* iobj);
 	void postProcessQueue(void);
 
 

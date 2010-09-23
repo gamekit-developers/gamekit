@@ -48,14 +48,14 @@ public:
 	public:
 		virtual ~Listener() {}
 
-		virtual void mouseMoved(const gkMouse &mouse) {}
-		virtual void mousePressed(const gkMouse &mouse) {}
-		virtual void mouseReleased(const gkMouse &mouse) {}
-		virtual void keyPressed(const gkKeyboard &key, const gkScanCode &sc) {}
-		virtual void keyReleased(const gkKeyboard &key, const gkScanCode &sc) {}
-		virtual void joystickMoved(const gkJoystick &joystick, int axis) {}
-		virtual void joystickPressed(const gkJoystick &joystick, int button) {}
-		virtual void joystickReleased(const gkJoystick &joystick, int button) {}
+		virtual void mouseMoved(const gkMouse& mouse) {}
+		virtual void mousePressed(const gkMouse& mouse) {}
+		virtual void mouseReleased(const gkMouse& mouse) {}
+		virtual void keyPressed(const gkKeyboard& key, const gkScanCode& sc) {}
+		virtual void keyReleased(const gkKeyboard& key, const gkScanCode& sc) {}
+		virtual void joystickMoved(const gkJoystick& joystick, int axis) {}
+		virtual void joystickPressed(const gkJoystick& joystick, int button) {}
+		virtual void joystickReleased(const gkJoystick& joystick, int button) {}
 	};
 
 	typedef utListClass<Listener> ListenerList;
@@ -72,9 +72,9 @@ protected:
 
 	// Internal interface implementation
 	class Private;
-	Private            *m_internal;
+	Private*            m_internal;
 
-	Ogre::RenderWindow *m_window;
+	Ogre::RenderWindow* m_window;
 	bool                m_exit;
 
 	ListenerList        m_listeners;
@@ -90,13 +90,13 @@ public:
 
 
 
-	Ogre::RenderWindow *createMainWindow(const gkUserDefs &prefs);
-	Ogre::RenderWindow *getMainWindow(void);
+	Ogre::RenderWindow* createMainWindow(const gkUserDefs& prefs);
+	Ogre::RenderWindow* getMainWindow(void);
 	Ogre::Viewport* addMainViewport(gkCamera* cam);
 	void setMainViewportDimension(Ogre::Viewport* viewport);
 
-	void addListener(Listener *l);
-	void removeListener(Listener *l);
+	void addListener(Listener* l);
+	void removeListener(Listener* l);
 
 	void process(void);
 	void dispatch(void);
@@ -105,13 +105,13 @@ public:
 
 	GK_INLINE void exit(bool v)                  {m_exit = v;}
 	GK_INLINE bool exitRequest(void)             {return m_exit;}
-	GK_INLINE gkKeyboard *getKeyboard(void)      {return &m_keyboard;}
-	GK_INLINE gkMouse *getMouse(void)            {return &m_mouse;}
+	GK_INLINE gkKeyboard* getKeyboard(void)      {return &m_keyboard;}
+	GK_INLINE gkMouse* getMouse(void)            {return &m_mouse;}
 	GK_INLINE unsigned int getNumJoysticks(void) {return m_joysticks.size();}
-	GK_INLINE gkJoystick *getJoystick(int index) {return (index>=(int)m_joysticks.size() ||index<0) ? 0:m_joysticks[index];}
+	GK_INLINE gkJoystick* getJoystick(int index) {return (index >= (int)m_joysticks.size() || index < 0) ? 0 : m_joysticks[index];}
 
-	static gkWindowSystem &getSingleton(void);
-	static gkWindowSystem *getSingletonPtr(void);
+	static gkWindowSystem& getSingleton(void);
+	static gkWindowSystem* getSingletonPtr(void);
 };
 
 #endif//_gkWindowSystem_h_

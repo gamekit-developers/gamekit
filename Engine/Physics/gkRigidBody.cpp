@@ -33,7 +33,7 @@
 
 
 
-gkRigidBody::gkRigidBody(gkGameObject *object, gkDynamicsWorld *owner)
+gkRigidBody::gkRigidBody(gkGameObject* object, gkDynamicsWorld* owner)
 	:    gkPhysicsController(object, owner),
 	     m_body(0),
 	     m_oldActivationState(-1)
@@ -55,7 +55,7 @@ gkRigidBody::~gkRigidBody()
 
 
 
-btRigidBody *gkRigidBody::getBody(void)
+btRigidBody* gkRigidBody::getBody(void)
 {
 	return m_body;
 }
@@ -70,15 +70,15 @@ void gkRigidBody::create(void)
 	GK_ASSERT(m_object && m_object->isInstanced() && m_object->isInActiveLayer());
 
 	createShape();
-	if (!m_shape) 
+	if (!m_shape)
 		return;
 
 
-	const gkGameObjectProperties &props = m_object->getProperties();
-	const gkPhysicsProperties &phy = props.m_physics;
+	const gkGameObjectProperties& props = m_object->getProperties();
+	const gkPhysicsProperties& phy = props.m_physics;
 
-	// use the most up to date transform. 
-	const gkTransformState &tstate = m_object->getTransformState();
+	// use the most up to date transform.
+	const gkTransformState& tstate = m_object->getTransformState();
 
 
 	if (phy.isRigidOrDynamic())
@@ -89,34 +89,34 @@ void gkRigidBody::create(void)
 		m_body = new btRigidBody(phy.m_mass, this, m_shape, inertia);
 
 		m_body->setLinearFactor(
-			btVector3( 
-			    (phy.m_mode & GK_LOCK_LINV_X) ? 0.f : 1.f, 
-				(phy.m_mode & GK_LOCK_LINV_Y) ? 0.f : 1.f, 
-				(phy.m_mode & GK_LOCK_LINV_Z) ? 0.f : 1.f
-				));
+		    btVector3(
+		        (phy.m_mode & GK_LOCK_LINV_X) ? 0.f : 1.f,
+		        (phy.m_mode & GK_LOCK_LINV_Y) ? 0.f : 1.f,
+		        (phy.m_mode & GK_LOCK_LINV_Z) ? 0.f : 1.f
+		    ));
 
 		if (phy.isDynamic())
 			m_body->setAngularFactor(0.f);
 		else
 		{
 			m_body->setAngularFactor(
-				btVector3( 
-					(phy.m_mode & GK_LOCK_ANGV_X) ? 0.f : 1.f, 
-					(phy.m_mode & GK_LOCK_ANGV_Y) ? 0.f : 1.f, 
-					(phy.m_mode & GK_LOCK_ANGV_Z) ? 0.f : 1.f
-					));
+			    btVector3(
+			        (phy.m_mode & GK_LOCK_ANGV_X) ? 0.f : 1.f,
+			        (phy.m_mode & GK_LOCK_ANGV_Y) ? 0.f : 1.f,
+			        (phy.m_mode & GK_LOCK_ANGV_Z) ? 0.f : 1.f
+			    ));
 		}
 
 		m_body->setDamping(phy.m_linearDamp, phy.m_angularDamp);
 	}
 	else
 	{
-		m_body = new btRigidBody(0.f, 0, m_shape, btVector3(0,0,0));
+		m_body = new btRigidBody(0.f, 0, m_shape, btVector3(0, 0, 0));
 		m_body->setDamping(0.f, 0.f);
 		m_body->setAngularFactor(0.f);
 	}
 
-	btDynamicsWorld *dyn = getOwner();
+	btDynamicsWorld* dyn = getOwner();
 	m_body->setUserPointer(this);
 
 	m_body->setFriction(phy.m_friction);
@@ -155,7 +155,7 @@ void gkRigidBody::destroy(void)
 
 
 
-void gkRigidBody::setLinearVelocity(const gkVector3 &v, int tspace)
+void gkRigidBody::setLinearVelocity(const gkVector3& v, int tspace)
 {
 	if (m_suspend) // block
 		return;
@@ -167,7 +167,7 @@ void gkRigidBody::setLinearVelocity(const gkVector3 &v, int tspace)
 	if (m_body->isStaticOrKinematicObject())
 		return;
 
-	if (v.squaredLength() > GK_EPSILON*GK_EPSILON) 
+	if (v.squaredLength() > GK_EPSILON * GK_EPSILON)
 		m_body->activate();
 
 	gkVector3 vel;
@@ -200,7 +200,7 @@ void gkRigidBody::setLinearVelocity(const gkVector3 &v, int tspace)
 
 
 
-void gkRigidBody::setAngularVelocity(const gkVector3 &v, int tspace)
+void gkRigidBody::setAngularVelocity(const gkVector3& v, int tspace)
 {
 	if (m_suspend) // block
 		return;
@@ -213,7 +213,7 @@ void gkRigidBody::setAngularVelocity(const gkVector3 &v, int tspace)
 	if (!getProperties().isRigid())
 		return;
 
-	if (v.squaredLength() > GK_EPSILON*GK_EPSILON) 
+	if (v.squaredLength() > GK_EPSILON * GK_EPSILON)
 		m_body->activate();
 
 
@@ -250,7 +250,7 @@ void gkRigidBody::setAngularVelocity(const gkVector3 &v, int tspace)
 
 
 
-void gkRigidBody::applyTorque(const gkVector3 &v, int tspace)
+void gkRigidBody::applyTorque(const gkVector3& v, int tspace)
 {
 	if (m_suspend) // block
 		return;
@@ -261,7 +261,7 @@ void gkRigidBody::applyTorque(const gkVector3 &v, int tspace)
 	if (m_body->isStaticOrKinematicObject())
 		return;
 
-	if (v.squaredLength() > GK_EPSILON*GK_EPSILON) m_body->activate();
+	if (v.squaredLength() > GK_EPSILON * GK_EPSILON) m_body->activate();
 
 	gkVector3 vel;
 	switch (tspace)
@@ -286,7 +286,7 @@ void gkRigidBody::applyTorque(const gkVector3 &v, int tspace)
 
 
 
-void gkRigidBody::applyForce(const gkVector3 &v, int tspace)
+void gkRigidBody::applyForce(const gkVector3& v, int tspace)
 {
 	if (m_suspend) // block
 		return;
@@ -347,7 +347,7 @@ gkVector3 gkRigidBody::getAngularVelocity()
 
 
 
-void gkRigidBody::getWorldTransform(btTransform &worldTrans) const
+void gkRigidBody::getWorldTransform(btTransform& worldTrans) const
 {
 	if (m_suspend || !m_object->isInstanced() || !m_body)
 		return;
@@ -379,7 +379,7 @@ void gkRigidBody::getWorldTransform(btTransform &worldTrans) const
 
 
 
-void gkRigidBody::setWorldTransform(const btTransform &worldTrans)
+void gkRigidBody::setWorldTransform(const btTransform& worldTrans)
 {
 	if (m_suspend || !m_object->isInstanced() || !m_body)
 		return;

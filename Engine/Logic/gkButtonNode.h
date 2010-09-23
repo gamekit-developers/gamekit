@@ -50,7 +50,7 @@ public:
 	DECLARE_SOCKET_TYPE(PRESS, bool);
 	DECLARE_SOCKET_TYPE(RELEASE, bool);
 
-    gkButtonNode(gkLogicTree *parent, size_t id);
+	gkButtonNode(gkLogicTree* parent, size_t id);
 
 	virtual ~gkButtonNode() {}
 
@@ -59,7 +59,7 @@ public:
 
 	GK_INLINE void setDelay(int d)
 	{
-		m_delay= d;
+		m_delay = d;
 	}
 
 	virtual bool isButtonDown() const = 0;
@@ -68,7 +68,7 @@ private:
 
 	int m_delay;
 	int m_counter;
-	
+
 	bool m_pressed;
 };
 
@@ -76,7 +76,7 @@ class gkKeyNode : public gkButtonNode
 {
 public:
 
-	gkKeyNode(gkLogicTree *parent, size_t id)
+	gkKeyNode(gkLogicTree* parent, size_t id)
 		: gkButtonNode(parent, id), m_key(KC_NONE)
 	{
 	}
@@ -85,11 +85,11 @@ public:
 	{
 	}
 
-	GK_INLINE void setKey(gkScanCode key) 
+	GK_INLINE void setKey(gkScanCode key)
 	{
 		m_key = key;
 	}
-	
+
 	bool isButtonDown() const;
 
 private:
@@ -101,7 +101,7 @@ class gkMouseButtonNode : public gkButtonNode
 {
 public:
 
-	gkMouseButtonNode(gkLogicTree *parent, size_t id) 
+	gkMouseButtonNode(gkLogicTree* parent, size_t id)
 		: gkButtonNode(parent, id), m_button(gkMouse::Left)
 	{
 	}
@@ -112,7 +112,7 @@ public:
 
 	GK_INLINE void setButton(gkMouse::Buttons button)
 	{
-		m_button= button;
+		m_button = button;
 	}
 
 	bool isButtonDown() const;

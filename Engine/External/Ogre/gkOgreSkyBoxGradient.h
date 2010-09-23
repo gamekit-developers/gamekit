@@ -38,17 +38,16 @@ class gkSkyBoxGradient : public Ogre::ManualResourceLoader
 protected:
 	const gkSceneMaterial& m_material;
 
-	void fill(Ogre::Image &ima, int size, const Ogre::ColourValue &v, const Ogre::PixelFormat &fmt);
-	void grad(Ogre::Image &ima, int x1, int y1, int x2, int y2, int size,
-	          const Ogre::ColourValue &s, const Ogre::ColourValue &e, const Ogre::PixelFormat &fmt);
+	void fill(Ogre::Image& ima, int size, const Ogre::ColourValue& v, const Ogre::PixelFormat& fmt);
+	void grad(Ogre::Image& ima, int x1, int y1, int x2, int y2, int size,
+	          const Ogre::ColourValue& s, const Ogre::ColourValue& e, const Ogre::PixelFormat& fmt);
 
 public:
-	gkSkyBoxGradient(const gkSceneMaterial &material);
+	gkSkyBoxGradient(const gkSceneMaterial& material);
 	virtual ~gkSkyBoxGradient();
 
-	void loadResource(Ogre::Resource *resource);
+	void loadResource(Ogre::Resource* resource);
 };
 
 
 #endif//_gkOgreSkyboxGradient_h_
-

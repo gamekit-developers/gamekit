@@ -50,7 +50,7 @@ void gkMouseDispatch::dispatch(void)
 
 
 
-gkMouseSensor::gkMouseSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
+gkMouseSensor::gkMouseSensor(gkGameObject* object, gkLogicLink* link, const gkString& name)
 	:       gkLogicSensor(object, link, name), m_type(MOUSE_NILL), m_rayQuery(0), m_last(false)
 {
 	m_dispatchType = DIS_MOUSE;
@@ -66,9 +66,9 @@ gkMouseSensor::~gkMouseSensor()
 
 
 
-gkLogicBrick *gkMouseSensor::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick* gkMouseSensor::clone(gkLogicLink* link, gkGameObject* dest)
 {
-	gkMouseSensor *sens = new gkMouseSensor(*this);
+	gkMouseSensor* sens = new gkMouseSensor(*this);
 	sens->m_rayQuery = 0;
 	sens->cloneImpl(link, dest);
 	return sens;
@@ -81,7 +81,7 @@ bool gkMouseSensor::query(void)
 		return false;
 
 
-	gkMouse *mse = gkWindowSystem::getSingleton().getMouse();
+	gkMouse* mse = gkWindowSystem::getSingleton().getMouse();
 	switch (m_type)
 	{
 	case MOUSE_LEFT:
@@ -116,11 +116,11 @@ bool gkMouseSensor::rayTest(void)
 
 
 	GK_ASSERT(m_object);
-	gkCamera *cam = m_object->getOwner()->getMainCamera();
-	Ogre::Camera *oc = cam->getCamera();
+	gkCamera* cam = m_object->getOwner()->getMainCamera();
+	Ogre::Camera* oc = cam->getCamera();
 
 
-	gkMouse *mse = gkWindowSystem::getSingleton().getMouse();
+	gkMouse* mse = gkWindowSystem::getSingleton().getMouse();
 
 	gkScalar ncx = mse->position.x / mse->winsize.x;
 	gkScalar ncy = mse->position.y / mse->winsize.y;
@@ -131,14 +131,14 @@ bool gkMouseSensor::rayTest(void)
 
 	if (m_rayQuery == 0)
 	{
-		Ogre::SceneManager *mgr = m_object->getOwner()->getManager();
+		Ogre::SceneManager* mgr = m_object->getOwner()->getManager();
 		m_rayQuery = mgr->createRayQuery(dest);
 	}
 	else m_rayQuery->setRay(dest);
 
 
 	// do the test
-	Ogre::RaySceneQueryResult &res = m_rayQuery->execute();
+	Ogre::RaySceneQueryResult& res = m_rayQuery->execute();
 
 	bool result = false;
 	for (Ogre::RaySceneQueryResult::iterator it = res.begin(); it != res.end(); ++it)

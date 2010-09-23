@@ -33,7 +33,7 @@
 #include "gkSyncObj.h"
 #include "gkPtrRef.h"
 
-class gkActiveObject : public gkCall, gkNonCopyable 
+class gkActiveObject : public gkCall, gkNonCopyable
 {
 public:
 
@@ -42,7 +42,7 @@ public:
 	virtual ~gkActiveObject();
 
 	void enqueue(gkPtrRef<gkCall> call, bool front = false);
-	
+
 	void join();
 
 	void reset();

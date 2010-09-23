@@ -37,14 +37,14 @@ class gkSteeringCapture : public gkSteeringObject
 public:
 
 	gkSteeringCapture(
-		gkGameObject* obj, 
-		gkScalar maxSpeed, 
-		const gkVector3& forward, 
-		const gkVector3& up, 
-		const gkVector3& side, 
-		gkGameObject* target,
-		gkScalar minPredictionTime,
-		gkScalar maxPredictionTime
+	    gkGameObject* obj,
+	    gkScalar maxSpeed,
+	    const gkVector3& forward,
+	    const gkVector3& up,
+	    const gkVector3& side,
+	    gkGameObject* target,
+	    gkScalar minPredictionTime,
+	    gkScalar maxPredictionTime
 	);
 
 	~gkSteeringCapture();
@@ -52,12 +52,12 @@ public:
 	bool inGoal() const;
 
 	GK_INLINE const gkVector3& getGoalPosition() const { return m_target->getPosition(); }
-	
+
 	GK_INLINE gkScalar getGoalRadius() const
 	{
-		const gkGameObjectProperties &props = m_target->getProperties();
-    
-		const gkPhysicsProperties &phy = props.m_physics;
+		const gkGameObjectProperties& props = m_target->getProperties();
+
+		const gkPhysicsProperties& phy = props.m_physics;
 
 		return phy.m_radius;
 	}

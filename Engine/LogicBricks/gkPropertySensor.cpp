@@ -31,8 +31,8 @@
 
 
 
-gkPropertySensor::gkPropertySensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
-	:   gkLogicSensor(object, link, name), m_old(), m_cur(0), m_type(-1), m_propName(""), m_propVal(), m_propMax(), 
+gkPropertySensor::gkPropertySensor(gkGameObject* object, gkLogicLink* link, const gkString& name)
+	:   gkLogicSensor(object, link, name), m_old(), m_cur(0), m_type(-1), m_propName(""), m_propVal(), m_propMax(),
 	    m_init(false), m_change(false)
 
 {
@@ -41,9 +41,9 @@ gkPropertySensor::gkPropertySensor(gkGameObject *object, gkLogicLink *link, cons
 }
 
 
-gkLogicBrick *gkPropertySensor::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick* gkPropertySensor::clone(gkLogicLink* link, gkGameObject* dest)
 {
-	gkPropertySensor *sens = new gkPropertySensor(*this);
+	gkPropertySensor* sens = new gkPropertySensor(*this);
 	sens->m_cur      = 0;
 	sens->m_init     = false;
 	sens->cloneImpl(link, dest);

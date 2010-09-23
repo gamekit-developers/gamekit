@@ -39,9 +39,9 @@ gkLimitVelocityConstraint::gkLimitVelocityConstraint()
 }
 
 
-gkConstraint *gkLimitVelocityConstraint::clone(gkGameObject *clob)
+gkConstraint* gkLimitVelocityConstraint::clone(gkGameObject* clob)
 {
-	gkLimitVelocityConstraint *cl = new gkLimitVelocityConstraint(*this);
+	gkLimitVelocityConstraint* cl = new gkLimitVelocityConstraint(*this);
 	cl->setObject(clob);
 	return cl;
 }
@@ -53,7 +53,7 @@ bool gkLimitVelocityConstraint::update(gkScalar delta)
 	if (!m_object) return false;
 
 
-	const gkVector3 &vel = m_object->getLinearVelocity();
+	const gkVector3& vel = m_object->getLinearVelocity();
 	const gkScalar len = vel.length();
 
 

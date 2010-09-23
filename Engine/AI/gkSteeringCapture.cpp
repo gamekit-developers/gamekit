@@ -33,12 +33,12 @@
 
 using namespace OpenSteer;
 
-gkSteeringCapture::gkSteeringCapture(gkGameObject* obj, gkScalar maxSpeed, const gkVector3& forward, const gkVector3& up, const gkVector3& side, gkGameObject* target, gkScalar minPredictionTime, gkScalar maxPredictionTime) 
-: gkSteeringObject(obj, maxSpeed, forward, up, side),
-m_target(target),
-m_sceneObstable(new gkSceneObstacle(30)),
-m_minPredictionTime(minPredictionTime),
-m_maxPredictionTime(maxPredictionTime)
+gkSteeringCapture::gkSteeringCapture(gkGameObject* obj, gkScalar maxSpeed, const gkVector3& forward, const gkVector3& up, const gkVector3& side, gkGameObject* target, gkScalar minPredictionTime, gkScalar maxPredictionTime)
+	: gkSteeringObject(obj, maxSpeed, forward, up, side),
+	  m_target(target),
+	  m_sceneObstable(new gkSceneObstacle(30)),
+	  m_minPredictionTime(minPredictionTime),
+	  m_maxPredictionTime(maxPredictionTime)
 {
 	m_allObstacles.push_back(m_sceneObstable);
 }
@@ -63,31 +63,31 @@ bool gkSteeringCapture::steering(STATE& newState, const float elapsedTime)
 
 	gkVector3 steer = steerToAvoidObstacles(avoidancePredictTime, m_allObstacles);
 
-    if (steer != Vec3::zero)
-    {
+	if (steer != Vec3::zero)
+	{
 		newState = AVOIDING;
-    }
-    else
-    {
-        const Vec3 seek = xxxsteerForSeek(m_target->getPosition());
+	}
+	else
+	{
+		const Vec3 seek = xxxsteerForSeek(m_target->getPosition());
 
-        if (clearPath)
-        {
+		if (clearPath)
+		{
 			newState = SEEKING;
 
-            steer = limitMaxDeviationAngle (seek, 0.707f, forward());
-        }
-        else
-        {
+			steer = limitMaxDeviationAngle (seek, 0.707f, forward());
+		}
+		else
+		{
 			newState = EVADING;
-			
-            const Vec3 evade = steerToEvadeOthers(m_target);
+
+			const Vec3 evade = steerToEvadeOthers(m_target);
 
 			steer = limitMaxDeviationAngle (seek + evade, 0.707f, forward());
-        }
-    }
+		}
+	}
 
 	applySteeringForce(steer, elapsedTime);
-	
+
 	return true;
 }

@@ -32,7 +32,7 @@
 
 
 
-gkLogicOpController::gkLogicOpController(gkGameObject *object, gkLogicLink *link, const gkString &name)
+gkLogicOpController::gkLogicOpController(gkGameObject* object, gkLogicLink* link, const gkString& name)
 	:       gkLogicController(object, link, name), m_op(OP_NILL), m_isInverter(false)
 {
 }
@@ -40,9 +40,9 @@ gkLogicOpController::gkLogicOpController(gkGameObject *object, gkLogicLink *link
 
 
 
-gkLogicBrick *gkLogicOpController::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick* gkLogicOpController::clone(gkLogicLink* link, gkGameObject* dest)
 {
-	gkLogicOpController *cont = new gkLogicOpController(*this);
+	gkLogicOpController* cont = new gkLogicOpController(*this);
 	cont->cloneImpl(link, dest);
 	return cont;
 }
@@ -58,7 +58,7 @@ void gkLogicOpController::execute(void)
 	}
 
 	bool doUpdate = false;
-	bool seed = true, last = false, pos=false;
+	bool seed = true, last = false, pos = false;
 
 	switch (m_op)
 	{
@@ -68,7 +68,7 @@ void gkLogicOpController::execute(void)
 			gkSensorIterator it(m_sensors);
 			while (it.hasMoreElements())
 			{
-				gkLogicSensor *sens = it.getNext();
+				gkLogicSensor* sens = it.getNext();
 
 				pos = sens->isPositive();
 				if (pos)
@@ -91,7 +91,7 @@ void gkLogicOpController::execute(void)
 			while (it.hasMoreElements())
 			{
 
-				gkLogicSensor *sens = it.getNext();
+				gkLogicSensor* sens = it.getNext();
 				seed = sens->isPositive();
 
 				if (seed && last)
@@ -117,7 +117,7 @@ void gkLogicOpController::execute(void)
 			gkSensorIterator it(m_sensors);
 			while (it.hasMoreElements())
 			{
-				gkLogicSensor *sens = it.getNext();
+				gkLogicSensor* sens = it.getNext();
 
 				pos = sens->isPositive();
 				if (seed)
@@ -138,11 +138,11 @@ void gkLogicOpController::execute(void)
 		break;
 	}
 
-	gkLogicManager &mgr = gkLogicManager::getSingleton();
+	gkLogicManager& mgr = gkLogicManager::getSingleton();
 	gkActuatorIterator it(m_actuators);
 	while (it.hasMoreElements())
 	{
-		gkLogicActuator *act = it.getNext();
+		gkLogicActuator* act = it.getNext();
 		mgr.push(this, act, doUpdate);
 	}
 }

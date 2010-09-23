@@ -90,7 +90,7 @@ gkScalar gkEngine::m_animRate = 25;
 class gkEnginePrivate : public FrameListener, public gkTickState
 {
 public:
-	Private(gkEngine *par)
+	Private(gkEngine* par)
 		:       gkTickState((int)ENGINE_TICKS_PER_SECOND),
 		        engine(par),
 		        windowsystem(0),
@@ -115,18 +115,18 @@ public:
 	void endTickImpl(void);
 
 
-	bool frameStarted(const FrameEvent &evt);
-	bool frameRenderingQueued(const FrameEvent &evt);
-	bool frameEnded(const FrameEvent &evt);
+	bool frameStarted(const FrameEvent& evt);
+	bool frameRenderingQueued(const FrameEvent& evt);
+	bool frameEnded(const FrameEvent& evt);
 
-	gkEngine                   *engine;
-	gkWindowSystem             *windowsystem;       // current window system
-	gkScene                    *scene;              // current scene
-	gkRenderFactoryPrivate     *plugin_factory;     // static plugin loading
-	Ogre::Root                 *root;
-	gkDebugScreen              *debug;
-	gkDebugPropertyPage        *debugPage;
-	gkDebugFps                 *debugFps;
+	gkEngine*                   engine;
+	gkWindowSystem*             windowsystem;       // current window system
+	gkScene*                    scene;              // current scene
+	gkRenderFactoryPrivate*     plugin_factory;     // static plugin loading
+	Ogre::Root*                 root;
+	gkDebugScreen*              debug;
+	gkDebugPropertyPage*        debugPage;
+	gkDebugFps*                 debugFps;
 };
 
 
@@ -134,12 +134,12 @@ public:
 
 
 
-gkEngine::gkEngine(gkUserDefs *oth)
+gkEngine::gkEngine(gkUserDefs* oth)
 	:       m_root(0),
 	        m_window(0),
 	        m_initialized(false),
 	        m_ownsDefs(oth != 0),
-			m_running(false)
+	        m_running(false)
 {
 	m_private = new gkEnginePrivate(this);
 	if (oth != 0)
@@ -154,7 +154,7 @@ gkEngine::gkEngine(gkUserDefs *oth)
 gkEngine::~gkEngine()
 {
 
-	if (m_initialized) 
+	if (m_initialized)
 		finalize();
 
 
@@ -175,7 +175,7 @@ void gkEngine::initialize()
 	if (m_initialized) return;
 
 
-	gkUserDefs &defs = getUserDefs();
+	gkUserDefs& defs = getUserDefs();
 	gkLogger::enable(defs.log, defs.verbose);
 
 	if (defs.rendersystem == OGRE_RS_UNKNOWN)
@@ -188,7 +188,7 @@ void gkEngine::initialize()
 	m_private->plugin_factory->createRenderSystem(m_root, defs.rendersystem);
 	m_private->plugin_factory->createParticleSystem(m_root);
 
-	const RenderSystemList &renderers = m_root->getAvailableRenderers();
+	const RenderSystemList& renderers = m_root->getAvailableRenderers();
 	if (renderers.empty())
 	{
 		gkPrintf("No rendersystems present\n");
@@ -198,7 +198,7 @@ void gkEngine::initialize()
 
 	m_root->initialise(false);
 
-	gkWindowSystem *sys = m_private->windowsystem = new gkWindowSystem();
+	gkWindowSystem* sys = m_private->windowsystem = new gkWindowSystem();
 
 
 	// gk Managers
@@ -255,8 +255,8 @@ void gkEngine::initializeWindow(void)
 {
 	if (m_private->windowsystem && !m_window)
 	{
-		gkWindowSystem *sys = m_private->windowsystem;
-		gkUserDefs &defs = getUserDefs();
+		gkWindowSystem* sys = m_private->windowsystem;
+		gkUserDefs& defs = getUserDefs();
 
 		m_window = sys->createMainWindow(defs);
 		if (!defs.resources.empty())
@@ -278,7 +278,7 @@ void gkEngine::finalize()
 
 	delete gkNodeManager::getSingletonPtr();
 
-	gkResourceManager *tmgr;
+	gkResourceManager* tmgr;
 
 	tmgr = gkSceneManager::getSingletonPtr();
 	tmgr->destroyAll();
@@ -291,7 +291,7 @@ void gkEngine::finalize()
 	tmgr->destroyAll();
 
 
-	delete gkGroupManager::getSingletonPtr();	
+	delete gkGroupManager::getSingletonPtr();
 	delete gkGameObjectManager::getSingletonPtr();
 	delete gkSceneManager::getSingletonPtr();
 	delete gkTextManager::getSingletonPtr();
@@ -331,7 +331,7 @@ void gkEngine::finalize()
 
 
 
-gkUserDefs &gkEngine::getUserDefs(void)
+gkUserDefs& gkEngine::getUserDefs(void)
 {
 	GK_ASSERT(m_defs);
 	return *m_defs;
@@ -346,7 +346,7 @@ void gkEngine::requestExit(void)
 
 
 
-gkBlendFile *gkEngine::loadBlendFile(const gkString &blend, int options, const gkString &inResource)
+gkBlendFile* gkEngine::loadBlendFile(const gkString& blend, int options, const gkString& inResource)
 {
 	// This function is not really needed any more.
 	// just use gkBlendLoader::getSingleton()
@@ -355,7 +355,7 @@ gkBlendFile *gkEngine::loadBlendFile(const gkString &blend, int options, const g
 
 
 
-void gkEngine::loadResources(const gkString &name)
+void gkEngine::loadResources(const gkString& name)
 {
 	if (name.empty()) return;
 
@@ -364,19 +364,19 @@ void gkEngine::loadResources(const gkString &name)
 		ConfigFile fp;
 		fp.load(name);
 
-		ResourceGroupManager *resourceManager = ResourceGroupManager::getSingletonPtr();
+		ResourceGroupManager* resourceManager = ResourceGroupManager::getSingletonPtr();
 		ConfigFile::SectionIterator cit = fp.getSectionIterator();
 
 		while (cit.hasMoreElements())
 		{
 			gkString name = cit.peekNextKey();
-			ConfigFile::SettingsMultiMap *ptr = cit.getNext();
+			ConfigFile::SettingsMultiMap* ptr = cit.getNext();
 			for (ConfigFile::SettingsMultiMap::iterator dit = ptr->begin(); dit != ptr->end(); ++dit)
 				resourceManager->addResourceLocation(dit->second, dit->first, name);
 		}
 		ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 	}
-	catch (Exception &e)
+	catch (Exception& e)
 	{
 		gkLogMessage("Engine: Failed to load resource file!\n" << e.getDescription());
 	}
@@ -384,7 +384,7 @@ void gkEngine::loadResources(const gkString &name)
 
 
 
-void gkEngine::addDebugProperty(gkVariable *prop)
+void gkEngine::addDebugProperty(gkVariable* prop)
 {
 	if (m_defs->showDebugProps)
 	{
@@ -399,7 +399,7 @@ void gkEngine::addDebugProperty(gkVariable *prop)
 
 
 
-void gkEngine::removeDebugProperty(gkVariable *prop)
+void gkEngine::removeDebugProperty(gkVariable* prop)
 {
 	if (m_defs->showDebugProps)
 	{
@@ -440,7 +440,7 @@ bool gkEngine::hasActiveScene(void)
 
 
 
-gkScene *gkEngine::getActiveScene(void)
+gkScene* gkEngine::getActiveScene(void)
 {
 	GK_ASSERT(m_private);
 	return m_private->scene;
@@ -449,7 +449,7 @@ gkScene *gkEngine::getActiveScene(void)
 
 
 
-void gkEngine::addListener(gkEngine::Listener *listener)
+void gkEngine::addListener(gkEngine::Listener* listener)
 {
 	m_listeners.push_back(listener);
 }
@@ -458,7 +458,7 @@ void gkEngine::addListener(gkEngine::Listener *listener)
 
 
 
-void gkEngine::removeListener(gkEngine::Listener *listener)
+void gkEngine::removeListener(gkEngine::Listener* listener)
 {
 	if (m_listeners.find(listener))
 		m_listeners.erase(listener);
@@ -468,11 +468,11 @@ void gkEngine::removeListener(gkEngine::Listener *listener)
 void gkEngine::run(void)
 {
 	if (!initializeStepLoop()) return;
-	
+
 	while (stepOneFrame());
-	
+
 	finalizeStepLoop();
-	
+
 }
 
 bool gkEngine::initializeStepLoop(void)
@@ -486,7 +486,7 @@ bool gkEngine::initializeStepLoop(void)
 		return false;
 	}
 
-	gkWindowSystem *sys = m_private->windowsystem;
+	gkWindowSystem* sys = m_private->windowsystem;
 	if (!sys)
 	{
 		gkLogMessage("Engine: Can't run with out a window system. exiting\n");
@@ -502,19 +502,19 @@ bool gkEngine::initializeStepLoop(void)
 	m_private->reset();
 
 	m_running = true;
-	
+
 	return true;
 }
 
 
 bool gkEngine::stepOneFrame(void)
 {
-	gkWindowSystem *sys = m_private->windowsystem;
+	gkWindowSystem* sys = m_private->windowsystem;
 	sys->process();
-	
+
 	if (!m_root->renderOneFrame())
 		return false;
-	
+
 	return !sys->exitRequest();
 }
 
@@ -526,7 +526,7 @@ void gkEngine::finalizeStepLoop(void)
 }
 
 
-bool gkEnginePrivate::frameStarted(const FrameEvent &evt)
+bool gkEnginePrivate::frameStarted(const FrameEvent& evt)
 {
 	gkStats::getSingleton().startClock();
 
@@ -535,7 +535,7 @@ bool gkEnginePrivate::frameStarted(const FrameEvent &evt)
 
 
 
-bool gkEnginePrivate::frameRenderingQueued(const FrameEvent &evt)
+bool gkEnginePrivate::frameRenderingQueued(const FrameEvent& evt)
 {
 	gkStats::getSingleton().stopRenderClock();
 
@@ -551,7 +551,7 @@ bool gkEnginePrivate::frameRenderingQueued(const FrameEvent &evt)
 
 
 
-bool gkEnginePrivate::frameEnded(const FrameEvent &evt)
+bool gkEnginePrivate::frameEnded(const FrameEvent& evt)
 {
 	gkStats::getSingleton().stopBufSwapLodClock();
 	gkStats::getSingleton().nextFrame();
@@ -597,7 +597,7 @@ void gkEnginePrivate::tickImpl(gkScalar dt)
 
 	// update callbacks
 	utArrayIterator<gkEngine::Listeners> iter(engine->m_listeners);
-	while(iter.hasMoreElements())
+	while (iter.hasMoreElements())
 		iter.getNext()->tick(dt);
 
 	scene->applyConstraints();
@@ -609,9 +609,9 @@ void gkEnginePrivate::tickImpl(gkScalar dt)
 }
 
 
-void gkEngine::setActiveScene(gkScene *sc)
+void gkEngine::setActiveScene(gkScene* sc)
 {
-	GK_ASSERT(m_private); 
+	GK_ASSERT(m_private);
 	m_private->scene = sc;
 }
 

@@ -38,22 +38,22 @@ class gkSteeringPathFollowing : public gkSteeringObject
 public:
 
 	gkSteeringPathFollowing(
-		gkGameObject* obj, 
-		gkScalar maxSpeed, 
-		const gkVector3& forward, 
-		const gkVector3& up, 
-		const gkVector3& side, 
-		const gkVector3& polyPickExt,
-		int maxPathPolys,
-		gkScalar minimumTurningRadius
+	    gkGameObject* obj,
+	    gkScalar maxSpeed,
+	    const gkVector3& forward,
+	    const gkVector3& up,
+	    const gkVector3& side,
+	    const gkVector3& polyPickExt,
+	    int maxPathPolys,
+	    gkScalar minimumTurningRadius
 	);
 
 	~gkSteeringPathFollowing();
 
 	bool inGoal() const;
 
-	GK_INLINE void setGoalPosition(const gkVector3& position){ m_goalPosition = position; }
-	GK_INLINE void setGoalRadius(gkScalar radius){ m_goalRadius = radius; }
+	GK_INLINE void setGoalPosition(const gkVector3& position) { m_goalPosition = position; }
+	GK_INLINE void setGoalRadius(gkScalar radius) { m_goalRadius = radius; }
 
 	GK_INLINE const gkVector3& getGoalPosition() const { return m_goalPosition; }
 	GK_INLINE gkScalar getGoalRadius() const { return m_goalRadius; }
@@ -65,7 +65,7 @@ public:
 private:
 
 	bool createPath();
-	
+
 private:
 
 	PDT_NAV_MESH m_navMesh;
@@ -77,7 +77,7 @@ private:
 	gkNavPath m_navPath;
 
 	gkVector3 m_polyPickExt;
-	
+
 	int m_maxPathPolys;
 
 	gkScalar m_minimumTurningRadius;

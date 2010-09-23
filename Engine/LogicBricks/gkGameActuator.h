@@ -51,18 +51,18 @@ private:
 
 public:
 
-	gkGameActuator(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	gkGameActuator(gkGameObject* object, gkLogicLink* link, const gkString& name);
 	virtual ~gkGameActuator();
 
-	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
+	gkLogicBrick* clone(gkLogicLink* link, gkGameObject* dest);
 
 	GK_INLINE void  setMode(int v)                  {m_mode = v;}
-	GK_INLINE void  setGameFile(const gkString &v)  {m_otherGame = v;}
+	GK_INLINE void  setGameFile(const gkString& v)  {m_otherGame = v;}
 
 	GK_INLINE int             getMode(void)         {return m_mode;}
-	GK_INLINE const gkString &getGameFile(void)     {return m_otherGame;}
+	GK_INLINE const gkString& getGameFile(void)     {return m_otherGame;}
 
-	
+
 	void execute(void);
 };
 

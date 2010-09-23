@@ -261,7 +261,7 @@ public:
 			return (buttons[button] == GK_Pressed);
 		return false;
 	}
-	
+
 	GK_INLINE int getAxisValue(int axis) const
 	{
 		if (axis >= 0 && axis < (int)axes.size())
@@ -273,11 +273,11 @@ public:
 	{
 		buttonCount = 0;
 		UTsize i;
-		for (i=0; i<buttons.size(); ++i)
-			buttons[i] =GK_NullState; 
+		for (i = 0; i < buttons.size(); ++i)
+			buttons[i] = GK_NullState;
 
-		for (i=0; i<axes.size(); ++i)
-			axes[i] =0; 
+		for (i = 0; i < axes.size(); ++i)
+			axes[i] = 0;
 	}
 
 public:

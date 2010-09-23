@@ -40,25 +40,25 @@ public:
 	bool update(gkScalar delta);
 
 
-	gkConstraint *clone(gkGameObject *clob);
+	gkConstraint* clone(gkGameObject* clob);
 
 
 	///Target to include in casting, fires a ray from m_object to the target.
-	GK_INLINE void setTarget(gkGameObject *tar) {m_target = tar;}
+	GK_INLINE void setTarget(gkGameObject* tar) {m_target = tar;}
 
 	///Ray length/distance from object to target.
 	GK_INLINE void setLength(gkScalar v) {m_length = v;}
-	///Moves the ray forward 
+	///Moves the ray forward
 	GK_INLINE void setForwardOffs(gkScalar v) {m_yOffs = v;}
-	
-	///Moves the ray down 
+
+	///Moves the ray down
 	GK_INLINE void setDownOffs(gkScalar v) {m_zOffs = v;}
 
 
 private:
 
-	gkGameObject *m_target;
-	class gkRayTest *m_cast;
+	gkGameObject* m_target;
+	class gkRayTest* m_cast;
 	gkScalar m_length, m_yOffs, m_zOffs, m_lhf;
 };
 

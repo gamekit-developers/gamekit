@@ -756,7 +756,7 @@ void nsNodeCanvas::rightClickEvent(wxMouseEvent& evt)
 		{
 			bringToFront(nodeAtPoint);
 
-            if (nodeAtPoint->getState() == NDST_INACTIVE)
+			if (nodeAtPoint->getState() == NDST_INACTIVE)
 				releaseCapture();
 
 			// set status

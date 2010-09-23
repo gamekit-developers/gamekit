@@ -33,15 +33,15 @@ using namespace Ogre;
 
 namespace
 {
-	const gkScalar width = 32;
-	const gkScalar height = 32;
+const gkScalar width = 32;
+const gkScalar height = 32;
 }
 
-gkCursorNode::gkCursorNode(gkLogicTree *parent, size_t id)
-: gkLogicNode(parent, id),
-m_overlay(0),
-m_panelContainer(0),
-m_panelElement(0)
+gkCursorNode::gkCursorNode(gkLogicTree* parent, size_t id)
+	: gkLogicNode(parent, id),
+	  m_overlay(0),
+	  m_panelContainer(0),
+	  m_panelElement(0)
 {
 	ADD_ISOCK(ENABLE, false);
 	ADD_ISOCK(UPDATE, false);
@@ -88,7 +88,7 @@ void gkCursorNode::initialize()
 	m_panelContainer->addChild(m_panelElement);
 
 	m_overlay->add2D(m_panelContainer);
-	
+
 	++idx;
 }
 
@@ -96,17 +96,17 @@ bool gkCursorNode::evaluate(Real tick)
 {
 	bool enable = GET_SOCKET_VALUE(ENABLE);
 
-	if(enable && !m_overlay->isVisible())
+	if (enable && !m_overlay->isVisible())
 	{
 		m_overlay->show();
 
-		if(!GET_SOCKET_VALUE(UPDATE))
+		if (!GET_SOCKET_VALUE(UPDATE))
 		{
 			update(0);
 		}
-		
+
 	}
-	else if(!enable && m_overlay->isVisible())
+	else if (!enable && m_overlay->isVisible())
 	{
 		m_overlay->hide();
 	}
@@ -116,27 +116,24 @@ bool gkCursorNode::evaluate(Real tick)
 
 void gkCursorNode::update(Real tick)
 {
-	if(m_panelElement->getMaterialName() != GET_SOCKET_VALUE(MATERIAL_NAME))
+	if (m_panelElement->getMaterialName() != GET_SOCKET_VALUE(MATERIAL_NAME))
 	{
 		m_panelElement->setMaterialName(GET_SOCKET_VALUE(MATERIAL_NAME));
 	}
 
 	gkScalar width = GET_SOCKET_VALUE(WIDTH);
-	
-	if(m_panelElement->getWidth() != width)
+
+	if (m_panelElement->getWidth() != width)
 	{
 		m_panelElement->setWidth(width);
 	}
 
 	gkScalar height = GET_SOCKET_VALUE(HEIGHT);
-	
-	if(m_panelElement->getHeight() != height)
+
+	if (m_panelElement->getHeight() != height)
 	{
 		m_panelElement->setHeight(height);
 	}
 
 	m_panelContainer->setPosition(GET_SOCKET_VALUE(X), GET_SOCKET_VALUE(Y));
 }
-
-
-

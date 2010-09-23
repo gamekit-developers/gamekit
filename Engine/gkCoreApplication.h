@@ -42,7 +42,7 @@ protected:
 
 
 protected:
-	gkEngine   *m_engine;
+	gkEngine*   m_engine;
 	gkUserDefs  m_prefs;
 
 	virtual bool setup(void) {return false;}
@@ -54,7 +54,7 @@ public:
 	virtual ~gkCoreApplication();
 
 	// access to user options ( apply before a call to run )
-	gkUserDefs &getPrefs(void) {return m_prefs;}
+	gkUserDefs& getPrefs(void) {return m_prefs;}
 
 	void run(void);
 };

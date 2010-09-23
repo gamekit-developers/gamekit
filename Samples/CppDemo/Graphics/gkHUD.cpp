@@ -25,7 +25,7 @@
 -------------------------------------------------------------------------------
     This is a replacement candidate for Engine/Graphics
     - For now it wraps Ogre::Overlays to gk usable objects.
-    - Later it will be superseded by custom Ogre vertex buffer usage, 
+    - Later it will be superseded by custom Ogre vertex buffer usage,
     - abstracted for external GameKit external rendering.
 */
 #include "gkHUD.h"
@@ -37,8 +37,8 @@
 
 
 
-gkHUD::gkHUD(gkResourceManager* creator, const gkResourceName &name, const gkResourceHandle& handle)
-	:	gkResource(creator, name, handle), m_overlay(0)
+gkHUD::gkHUD(gkResourceManager* creator, const gkResourceName& name, const gkResourceHandle& handle)
+	:    gkResource(creator, name, handle), m_overlay(0)
 {
 	newImpl();
 }
@@ -70,25 +70,25 @@ void gkHUD::show(bool v)
 
 
 
-void gkHUD::addChild(gkHUDElement *hud)
+void gkHUD::addChild(gkHUDElement* hud)
 {
 	m_children.push_back(hud);
 }
 
 
-gkHUDElement* gkHUD::getChild(const gkString &name)
+gkHUDElement* gkHUD::getChild(const gkString& name)
 {
 	ChildNodes::Iterator it = m_children.iterator();
 	while (it.hasMoreElements())
 	{
-		gkHUDElement *ele = it.getNext();
+		gkHUDElement* ele = it.getNext();
 		if (ele->getName() == name)
 			return ele;
 	}
 	return 0;
 }
 
-		
+
 Ogre::Overlay* gkHUD::_getOverlay(void)
 {
 	return m_overlay;
@@ -104,7 +104,8 @@ void gkHUD::_setOverlay(Ogre::Overlay* over)
 void gkHUD::newImpl(void)
 {
 
-	try {
+	try
+	{
 
 		m_overlay = Ogre::OverlayManager::getSingleton().getByName(m_name.str());
 
@@ -115,15 +116,15 @@ void gkHUD::newImpl(void)
 
 			while (elements.hasMoreElements())
 			{
-				Ogre::OverlayElement *ele = (Ogre::OverlayElement*)elements.getNext();
+				Ogre::OverlayElement* ele = (Ogre::OverlayElement*)elements.getNext();
 
-				gkHUDElement *hele = new gkHUDElement(ele->getName());
+				gkHUDElement* hele = new gkHUDElement(ele->getName());
 				addChild(hele);
 			}
 
 		}
 	}
-	catch (Ogre::Exception &e)
+	catch (Ogre::Exception& e)
 	{
 		gkLogMessage("HUD: " << e.getDescription());
 		m_overlay = 0;

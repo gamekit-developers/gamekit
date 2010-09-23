@@ -29,7 +29,7 @@
 
 
 
-gkBone::gkBone(const gkString &name)
+gkBone::gkBone(const gkString& name)
 	:    m_name(name), m_bone(0), m_bind(), m_parent(0)
 {
 	m_bind.setIdentity();
@@ -44,13 +44,13 @@ gkBone::~gkBone()
 
 
 
-void gkBone::setRestPosition(const gkTransformState &st)
+void gkBone::setRestPosition(const gkTransformState& st)
 {
 	m_bind = st;
 }
 
 
-void gkBone::applyRootTransform(const gkTransformState &root)
+void gkBone::applyRootTransform(const gkTransformState& root)
 {
 	gkMatrix4 bonemat = m_bind.toMatrix();
 	gkMatrix4 objmat = root.toMatrix();
@@ -61,7 +61,7 @@ void gkBone::applyRootTransform(const gkTransformState &root)
 }
 
 
-void gkBone::applyChannelTransform(const gkTransformState &channel, gkScalar weight)
+void gkBone::applyChannelTransform(const gkTransformState& channel, gkScalar weight)
 {
 	// save previous pose
 	gkTransformState blendmat = m_pose;
@@ -86,7 +86,7 @@ void gkBone::applyChannelTransform(const gkTransformState &channel, gkScalar wei
 }
 
 
-void gkBone::applyPoseTransform(const gkTransformState &pose)
+void gkBone::applyPoseTransform(const gkTransformState& pose)
 {
 	if (!m_bone)
 		return;
@@ -99,7 +99,7 @@ void gkBone::applyPoseTransform(const gkTransformState &pose)
 
 
 
-void gkBone::setParent(gkBone *bone)
+void gkBone::setParent(gkBone* bone)
 {
 	if (!bone)
 		return;
@@ -114,7 +114,7 @@ void gkBone::setParent(gkBone *bone)
 
 
 
-void gkBone::_setOgreBone(Ogre::Bone *bone)
+void gkBone::_setOgreBone(Ogre::Bone* bone)
 {
 	m_bone = bone;
 }

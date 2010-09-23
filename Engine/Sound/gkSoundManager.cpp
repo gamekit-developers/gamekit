@@ -87,7 +87,7 @@ void gkSoundManager::initialize(void)
 	UT_ASSERT(!m_disabled && "Sound system disabled!");
 
 
-	ALCcontext *ctx = alcGetCurrentContext();
+	ALCcontext* ctx = alcGetCurrentContext();
 	if (ctx)
 		gkLogMessage("Warning: ALC context already present!");
 
@@ -146,7 +146,7 @@ bool gkSoundManager::isValidContext(void)
 
 
 
-void gkSoundManager::notifySourceCreated(gkSource *src)
+void gkSoundManager::notifySourceCreated(gkSource* src)
 {
 	if (!gkSndCtxValid())
 		return;
@@ -160,7 +160,7 @@ void gkSoundManager::notifySourceCreated(gkSource *src)
 
 
 
-void gkSoundManager::notifySourceDestroyed(gkSource *src)
+void gkSoundManager::notifySourceDestroyed(gkSource* src)
 {
 	if (!gkSndCtxValid())
 		return;
@@ -263,7 +263,7 @@ void gkSoundManager::updateSoundProperties(void)
 
 
 
-void gkSoundManager::update(gkScene *scene)
+void gkSoundManager::update(gkScene* scene)
 {
 	if (!gkSndCtxValid())
 		return;
@@ -271,7 +271,7 @@ void gkSoundManager::update(gkScene *scene)
 	collectGarbage();
 
 
-	gkCamera *obj = scene->getMainCamera();
+	gkCamera* obj = scene->getMainCamera();
 
 	const gkVector3 pos     = obj->getWorldPosition();
 	const gkVector3 vel     = obj->getLinearVelocity();
@@ -297,11 +297,11 @@ void gkSoundManager::update(gkScene *scene)
 		s = m_playingSources.size();
 		p = m_playingSources.ptr();
 
-		gkDebugger *debug = scene->getDebugger();
+		gkDebugger* debug = scene->getDebugger();
 
 		while (i < s)
 		{
-			gkSource *src = p[i++];
+			gkSource* src = p[i++];
 
 			// Draw 3D only.
 
@@ -333,7 +333,7 @@ void gkSoundManager::collectGarbage(void)
 		p = m_gcSources.ptr();
 		while (i < s)
 		{
-			gkSource *src = p[i++];
+			gkSource* src = p[i++];
 
 			if (!src->isPlaying())
 			{
@@ -356,7 +356,7 @@ void gkSoundManager::collectGarbage(void)
 
 		while (i < s)
 		{
-			gkSource *src = p[i++];
+			gkSource* src = p[i++];
 			GK_ASSERT(!src->isBound());
 
 			// Free
@@ -381,7 +381,7 @@ void gkSoundManager::collectGarbage(void)
 
 
 
-void gkSoundManager::removePlayback(gkSound *sndToDelete)
+void gkSoundManager::removePlayback(gkSound* sndToDelete)
 {
 	if (!gkSndCtxValid())
 		return;
@@ -404,7 +404,7 @@ void gkSoundManager::removePlayback(gkSound *sndToDelete)
 
 		while (i < s)
 		{
-			gkSource *src = p[i++];
+			gkSource* src = p[i++];
 
 			if (src->getCreator() == sndToDelete)
 			{
@@ -431,7 +431,7 @@ void gkSoundManager::removePlayback(gkSound *sndToDelete)
 
 		while (i < s)
 		{
-			gkSource *src = p[i++];
+			gkSource* src = p[i++];
 
 			f = m_playingSources.find(src);
 
@@ -456,7 +456,7 @@ bool gkSoundManager::hasSounds(void)
 }
 
 
-void gkSoundManager::playSound(gkSource *snd)
+void gkSoundManager::playSound(gkSource* snd)
 {
 	if (!gkSndCtxValid())
 		return;
@@ -476,7 +476,7 @@ void gkSoundManager::playSound(gkSource *snd)
 }
 
 
-void gkSoundManager::stopSound(gkSource *snd)
+void gkSoundManager::stopSound(gkSource* snd)
 {
 	if (!gkSndCtxValid())
 		return;
@@ -490,7 +490,7 @@ void gkSoundManager::stopSound(gkSource *snd)
 
 
 
-gkSound *gkSoundManager::getSound(const gkHashedString &name)
+gkSound* gkSoundManager::getSound(const gkHashedString& name)
 {
 	// Always test the return value, no guarantee that this manager can create playback.
 	if (!gkSndCtxValid())
@@ -506,7 +506,7 @@ gkSound *gkSoundManager::getSound(const gkHashedString &name)
 
 
 
-gkSound *gkSoundManager::createSound(const gkHashedString &name)
+gkSound* gkSoundManager::createSound(const gkHashedString& name)
 {
 
 	// Always test the return value, no guarantee that this manager can create playback.
@@ -518,14 +518,14 @@ gkSound *gkSoundManager::createSound(const gkHashedString &name)
 	if ((pos = m_objects.find(name)) != GK_NPOS)
 		return 0;
 
-	gkSound *ob = new gkSound(name.str());
+	gkSound* ob = new gkSound(name.str());
 	m_objects.insert(name, ob);
 	return ob;
 }
 
 
 
-void gkSoundManager::destroy(const gkHashedString &name)
+void gkSoundManager::destroy(const gkHashedString& name)
 {
 	if (!gkSndCtxValid())
 		return;
@@ -534,7 +534,7 @@ void gkSoundManager::destroy(const gkHashedString &name)
 	UTsize pos;
 	if ((pos = m_objects.find(name)) != GK_NPOS)
 	{
-		gkSound *ob = m_objects.at(pos);
+		gkSound* ob = m_objects.at(pos);
 
 		// Force stop.
 		removePlayback(ob);
@@ -547,7 +547,7 @@ void gkSoundManager::destroy(const gkHashedString &name)
 
 
 
-void gkSoundManager::destroy(gkSound *ob)
+void gkSoundManager::destroy(gkSound* ob)
 {
 	if (!gkSndCtxValid())
 		return;
@@ -573,7 +573,7 @@ void gkSoundManager::destroyAll(void)
 	utHashTableIterator<ObjectMap> iter(m_objects);
 	while (iter.hasMoreElements())
 	{
-		gkSound *ob = iter.peekNextValue();
+		gkSound* ob = iter.peekNextValue();
 		removePlayback(ob);
 
 		delete ob;
@@ -586,7 +586,7 @@ void gkSoundManager::destroyAll(void)
 
 
 
-bool gkSoundManager::hasSound(const gkHashedString &name)
+bool gkSoundManager::hasSound(const gkHashedString& name)
 {
 	if (!gkSndCtxValid())
 		return false;

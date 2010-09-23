@@ -29,8 +29,8 @@
 
 
 
-gkSceneManager::gkSceneManager() 
-	:	gkInstancedManager("SceneManager", "Scene")
+gkSceneManager::gkSceneManager()
+	:    gkInstancedManager("SceneManager", "Scene")
 {
 }
 

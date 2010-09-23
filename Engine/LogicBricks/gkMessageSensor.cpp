@@ -30,12 +30,12 @@
 #include "gkLogicDispatcher.h"
 
 
-gkMessageSensor::gkMessageSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
+gkMessageSensor::gkMessageSensor(gkGameObject* object, gkLogicLink* link, const gkString& name)
 	:       gkLogicSensor(object, link, name)
 {
 	m_listener = new gkMessageManager::GenericMessageListener();
 	gkMessageManager::getSingleton().addListener(m_listener);
-	
+
 	m_dispatchType = DIS_CONSTANT;
 	connect();
 }
@@ -50,11 +50,11 @@ gkMessageSensor::~gkMessageSensor()
 }
 
 
-gkLogicBrick * gkMessageSensor::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick* gkMessageSensor::clone(gkLogicLink* link, gkGameObject* dest)
 {
-	gkMessageSensor *sens = new gkMessageSensor(*this);
+	gkMessageSensor* sens = new gkMessageSensor(*this);
 	sens->cloneImpl(link, dest);
-	sens->m_listener = new gkMessageManager::GenericMessageListener("","",m_listener->m_subjectFilter);
+	sens->m_listener = new gkMessageManager::GenericMessageListener("", "", m_listener->m_subjectFilter);
 	return sens;
 }
 
@@ -62,26 +62,25 @@ gkLogicBrick * gkMessageSensor::clone(gkLogicLink *link, gkGameObject *dest)
 bool gkMessageSensor::query(void)
 {
 	bool ret = false;
-	
+
 	m_messages.clear();
-	
-	if(m_listener->m_messages.size() >0 )
+
+	if (m_listener->m_messages.size() > 0 )
 	{
 		ret = true;
-		
+
 		// We copy the massages so that Logic scripts can retrieve messages recieved between each logic step
 		utArrayIterator<utArray<gkMessageManager::Message> > iter(m_listener->m_messages);
-		while(iter.hasMoreElements())
+		while (iter.hasMoreElements())
 		{
 			gkMessageManager::Message m = iter.peekNext();
-			
+
 			m_messages.push_back(m);
 			iter.getNext();
 		}
 	}
-	
+
 	m_listener->emptyMessages();
-	
+
 	return ret;
 }
-

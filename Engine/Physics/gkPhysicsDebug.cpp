@@ -31,35 +31,35 @@
 
 
 
-gkPhysicsDebug::gkPhysicsDebug(gkDynamicsWorld *wo)
+gkPhysicsDebug::gkPhysicsDebug(gkDynamicsWorld* wo)
 	:       m_physics(wo), m_flags(0)
 {
 }
 
 gkPhysicsDebug::~gkPhysicsDebug()
 {
-	gkDebugger *dbg = m_physics->getScene()->getDebugger();
+	gkDebugger* dbg = m_physics->getScene()->getDebugger();
 	if (dbg)
 		dbg->clear();
 }
 
-void gkPhysicsDebug::drawLine(const btVector3 &from, const btVector3 &to, const btVector3 &color)
+void gkPhysicsDebug::drawLine(const btVector3& from, const btVector3& to, const btVector3& color)
 {
-	gkDebugger *dbg = m_physics->getScene()->getDebugger();
+	gkDebugger* dbg = m_physics->getScene()->getDebugger();
 	if (dbg)
 		dbg->drawLine(gkVector3(from.x(), from.y(), from.z()), gkVector3(to.x(), to.y(), to.z()), gkVector3(color.x(), color.y(), color.z()));
 
 }
 
-void gkPhysicsDebug::drawContactPoint(const btVector3 &PointOnB, const btVector3 &normalOnB, btScalar distance, int lifeTime, const btVector3 &color)
+void gkPhysicsDebug::drawContactPoint(const btVector3& PointOnB, const btVector3& normalOnB, btScalar distance, int lifeTime, const btVector3& color)
 {
 }
 
-void gkPhysicsDebug::draw3dText(const btVector3 &location, const char *textString)
+void gkPhysicsDebug::draw3dText(const btVector3& location, const char* textString)
 {
 }
 
-void gkPhysicsDebug::reportErrorWarning(const char *warningString)
+void gkPhysicsDebug::reportErrorWarning(const char* warningString)
 {
 	dsPrintf("Warning: %s", warningString);
 }

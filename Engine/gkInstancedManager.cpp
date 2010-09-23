@@ -28,8 +28,8 @@
 #include "gkInstancedObject.h"
 
 
-gkInstancedManager::gkInstancedManager(const gkString& type, const gkString &rtype)
-	:	gkResourceManager(type, rtype)
+gkInstancedManager::gkInstancedManager(const gkString& type, const gkString& rtype)
+	:    gkResourceManager(type, rtype)
 {
 }
 
@@ -55,7 +55,7 @@ void gkInstancedManager::destroyAllInstances(void)
 }
 
 
-void gkInstancedManager::addCreateInstanceQueue(gkInstancedObject *iobj)
+void gkInstancedManager::addCreateInstanceQueue(gkInstancedObject* iobj)
 {
 	if (iobj && !iobj->isInstanced())
 	{
@@ -69,7 +69,7 @@ void gkInstancedManager::addCreateInstanceQueue(gkInstancedObject *iobj)
 
 
 
-void gkInstancedManager::addDestroyInstanceQueue(gkInstancedObject *iobj)
+void gkInstancedManager::addDestroyInstanceQueue(gkInstancedObject* iobj)
 {
 	if (iobj && iobj->isInstanced())
 	{
@@ -79,7 +79,7 @@ void gkInstancedManager::addDestroyInstanceQueue(gkInstancedObject *iobj)
 	}
 }
 
-void gkInstancedManager::addReInstanceQueue(gkInstancedObject *iobj)
+void gkInstancedManager::addReInstanceQueue(gkInstancedObject* iobj)
 {
 	if (iobj && iobj->isInstanced())
 	{
@@ -95,7 +95,7 @@ void gkInstancedManager::postProcessQueue(void)
 
 	while (it.hasMoreElements())
 	{
-		InstanceParam &iq = it.getNext();
+		InstanceParam& iq = it.getNext();
 
 		switch (iq.second)
 		{
@@ -116,7 +116,7 @@ void gkInstancedManager::postProcessQueue(void)
 
 
 
-void gkInstancedManager::notifyInstanceCreated(gkInstancedObject *iobj)
+void gkInstancedManager::notifyInstanceCreated(gkInstancedObject* iobj)
 {
 	if (iobj)
 	{
@@ -127,19 +127,19 @@ void gkInstancedManager::notifyInstanceCreated(gkInstancedObject *iobj)
 		notifyInstanceCreatedImpl(iobj);
 
 		UTsize i;
-		for (i = 0; i<m_instanceListeners.size(); ++i)
+		for (i = 0; i < m_instanceListeners.size(); ++i)
 			m_instanceListeners[i]->notifyInstanceCreated(iobj);
 	}
 
 
 }
 
-void gkInstancedManager::notifyInstanceDestroyed(gkInstancedObject *iobj)
+void gkInstancedManager::notifyInstanceDestroyed(gkInstancedObject* iobj)
 {
 	if (iobj)
 	{
 		UTsize i;
-		for (i = 0; i<m_instanceListeners.size(); ++i)
+		for (i = 0; i < m_instanceListeners.size(); ++i)
 			m_instanceListeners[i]->notifyInstanceDestroyed(iobj);
 
 		notifyInstanceDestroyedImpl(iobj);
@@ -160,5 +160,3 @@ void gkInstancedManager::removeInstanceListener(gkInstancedManager::InstancedLis
 	if (m_instanceListeners.find(li) != UT_NPOS)
 		m_instanceListeners.erase(li);
 }
-
-

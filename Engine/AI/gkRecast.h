@@ -83,19 +83,19 @@ struct gkRecast
 	};
 
 	static PDT_NAV_MESH createNavMesh(
-		PMESHDATA meshData, 
-		const Config& config
+	    PMESHDATA meshData,
+	    const Config& config
 	);
 
 	static bool findPath(
-		PDT_NAV_MESH navMesh, 
-		const gkVector3& from, 
-		const gkVector3& to, 
-		const gkVector3& polyPickExt, 
-		int maxPathPolys, 
-		PATH_POINTS& path,
-		unsigned short includeFlags = 0xffff,
-		unsigned short excludeFlags = 0
+	    PDT_NAV_MESH navMesh,
+	    const gkVector3& from,
+	    const gkVector3& to,
+	    const gkVector3& polyPickExt,
+	    int maxPathPolys,
+	    PATH_POINTS& path,
+	    unsigned short includeFlags = 0xffff,
+	    unsigned short excludeFlags = 0
 	);
 
 };

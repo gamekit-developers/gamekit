@@ -36,7 +36,7 @@
 
 
 
-gkActionActuator::gkActionActuator(gkGameObject *object, gkLogicLink *link, const gkString &name)
+gkActionActuator::gkActionActuator(gkGameObject* object, gkLogicLink* link, const gkString& name)
 	:   gkLogicActuator(object, link, name),
 	    m_start(1),
 	    m_end(1),
@@ -66,9 +66,9 @@ gkActionActuator::~gkActionActuator()
 
 
 
-gkLogicBrick *gkActionActuator::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick* gkActionActuator::clone(gkLogicLink* link, gkGameObject* dest)
 {
-	gkActionActuator *act = new gkActionActuator(*this);
+	gkActionActuator* act = new gkActionActuator(*this);
 	act->cloneImpl(link, dest);
 	act->m_skeleton = dest->getSkeleton();
 	act->m_isInit = false;
@@ -91,10 +91,10 @@ void gkActionActuator::doInit(void)
 
 		// update rate is (animRate / tickRate) ... 25.f / 60.f
 
-		gkUserDefs &defs = gkEngine::getSingleton().getUserDefs();
+		gkUserDefs& defs = gkEngine::getSingleton().getUserDefs();
 		m_fps = defs.animspeed  * gkEngine::getStepRate();
 		if (gkNan(m_fps))
-			m_fps = (25.f *gkEngine::getStepRate());
+			m_fps = (25.f * gkEngine::getStepRate());
 
 		m_curTick = m_start;
 	}
@@ -163,7 +163,7 @@ void gkActionActuator::execute(void)
 
 	if (m_action != 0)
 	{
-		gkEntity *ent = m_skeleton->getController();
+		gkEntity* ent = m_skeleton->getController();
 
 		if (ent)
 		{

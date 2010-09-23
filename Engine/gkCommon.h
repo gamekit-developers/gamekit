@@ -32,7 +32,7 @@
 #if defined(WIN32)
 // std min / max fix
 #ifndef NOMINMAX
-#define NOMINMAX 1 
+#define NOMINMAX 1
 #endif
 #endif
 
@@ -58,16 +58,16 @@
 
 
 
-#define GK_EXTERNAL_RENDER_GAMEKIT		0
-#define GK_EXTERNAL_RENDER_OGREKIT		1
-#define GK_EXTERNAL_RENDER_IRRKIT		2
-#define GK_EXTERNAL_RENDER_HORDEKIT		3
-#define GK_EXTERNAL_RENDER				GK_EXTERNAL_RENDER_OGREKIT
+#define GK_EXTERNAL_RENDER_GAMEKIT        0
+#define GK_EXTERNAL_RENDER_OGREKIT        1
+#define GK_EXTERNAL_RENDER_IRRKIT        2
+#define GK_EXTERNAL_RENDER_HORDEKIT        3
+#define GK_EXTERNAL_RENDER                GK_EXTERNAL_RENDER_OGREKIT
 
-#define GK_VERSION_MAJOR	1
-#define GK_VERSION_MINOR	0
-#define GK_VERSION_SUB		1
-#define GK_VERSION			UT_ID(GK_VERSION_MAJOR, GK_VERSION_MINOR, GK_VERSION_SUB, 'a')
+#define GK_VERSION_MAJOR    1
+#define GK_VERSION_MINOR    0
+#define GK_VERSION_SUB        1
+#define GK_VERSION            UT_ID(GK_VERSION_MAJOR, GK_VERSION_MINOR, GK_VERSION_SUB, 'a')
 
 
 
@@ -139,17 +139,17 @@ class gkMesh;
 class gkMeshLoader;
 
 // Common types
-typedef utHashTable<gkHashedString, gkGameObject *>  gkGameObjectHashMap;
-typedef utArray<gkGameObject *>                      gkGameObjectArray;
+typedef utHashTable<gkHashedString, gkGameObject*>  gkGameObjectHashMap;
+typedef utArray<gkGameObject*>                      gkGameObjectArray;
 typedef utArray<gkGameObjectGroup*>                  gkGroupArray;
 
-typedef utHashSet<gkGameObject *>                    gkGameObjectSet;
-typedef utHashSet<gkCamera *>                        gkCameraSet;
-typedef utHashSet<gkLight *>                         gkLightSet;
-typedef utHashSet<gkEntity *>                        gkEntitySet;
-typedef utHashSet<gkSkeleton *>                      gkSkeletonSet;
-typedef utHashSet<gkPhysicsController *>             gkPhysicsControllerSet;
-typedef utArray<gkPhysicsController *>               gkPhysicsControllers;
+typedef utHashSet<gkGameObject*>                    gkGameObjectSet;
+typedef utHashSet<gkCamera*>                        gkCameraSet;
+typedef utHashSet<gkLight*>                         gkLightSet;
+typedef utHashSet<gkEntity*>                        gkEntitySet;
+typedef utHashSet<gkSkeleton*>                      gkSkeletonSet;
+typedef utHashSet<gkPhysicsController*>             gkPhysicsControllerSet;
+typedef utArray<gkPhysicsController*>               gkPhysicsControllers;
 
 enum gkTransformSpace
 {

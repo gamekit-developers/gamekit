@@ -37,8 +37,8 @@ class gkUserDefs
 {
 public:
 	gkUserDefs();
-	void load(const gkString &fname);
-	void parseString(const gkString &key, const gkString &val);
+	void load(const gkString& fname);
+	void parseString(const gkString& key, const gkString& val);
 
 
 	OgreRenderSystem        rendersystem;       // Ogre render system to use
@@ -48,7 +48,7 @@ public:
 	bool                    verbose;            // Enable/Disable Ogre print-out
 	gkVector2               winsize;            // Window width & height
 	gkString                wintitle;           // Window title
-	gkString				extWinhandle;		// External Window Handle
+	gkString                extWinhandle;        // External Window Handle
 	bool                    fullscreen;         // Fullscreen mode
 	int                     framingType;        // crop/letterbox/extend. Used when window is larger then requested
 	gkString                resources;          // resources to load
@@ -66,8 +66,8 @@ public:
 	bool                    disableSound;       // Disable OpenAL sound.
 	bool                    fsaa;               // Enable Full scene anti aliasing.
 	int                     fsaaSamples;        // Anti aliasing samples.
-	bool                    enableshadows;	
-    int                     defaultMipMap;      // Number of mipmaps to generate per texture (default 5)
+	bool                    enableshadows;
+	int                     defaultMipMap;      // Number of mipmaps to generate per texture (default 5)
 
 	gkString                shadowtechnique;
 	gkColor                 colourshadow;

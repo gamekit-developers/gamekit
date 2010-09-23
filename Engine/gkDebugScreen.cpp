@@ -32,7 +32,7 @@
 //#include "User/gkmonofont.inl"
 #include "User/gkfont.inl"
 
-static gkDebugScreen *gConsole = 0;
+static gkDebugScreen* gConsole = 0;
 #define SCREEN_SIZE 14
 
 
@@ -43,14 +43,14 @@ public:
 
 	virtual ~gkBuiltinFont() {}
 
-	void loadResource(Ogre::Resource *res)
+	void loadResource(Ogre::Resource* res)
 	{
-		Ogre::Font *font = (Ogre::Font *)res;
+		Ogre::Font* font = (Ogre::Font*)res;
 
 		font->setTrueTypeSize(SCREEN_SIZE);
 		font->setTrueTypeResolution(SCREEN_SIZE * 4);
 
-		Ogre::DataStreamPtr memStream(OGRE_NEW Ogre::MemoryDataStream((void *)gkBuiltinFontPtr, gkBuiltinFontSize));
+		Ogre::DataStreamPtr memStream(OGRE_NEW Ogre::MemoryDataStream((void*)gkBuiltinFontPtr, gkBuiltinFontSize));
 		font->loadManualResource(memStream);
 	}
 
@@ -84,22 +84,22 @@ void gkDebugScreen::initialize()
 		Ogre::FontPtr fp = Ogre::FontManager::getSingleton().create("<gkBuiltin/Font>", "<gkBuiltin>", true, m_font);
 		fp->load();
 
-		Ogre::OverlayManager &mgr = Ogre::OverlayManager::getSingleton();
+		Ogre::OverlayManager& mgr = Ogre::OverlayManager::getSingleton();
 		m_over  = mgr.create("<gkBuiltin/gkDebugScreen>");
 		m_ele   = mgr.createOverlayElement("TextArea", "<gkBuiltin/gkDebugScreen/TextArea>");
 
-		Ogre::OverlayContainer *cont = (Ogre::OverlayContainer *)mgr.createOverlayElement("BorderPanel", "<gkBuiltin/gkDebugScreen/Containter>");
+		Ogre::OverlayContainer* cont = (Ogre::OverlayContainer*)mgr.createOverlayElement("BorderPanel", "<gkBuiltin/gkDebugScreen/Containter>");
 		cont->setMetricsMode(Ogre::GMM_PIXELS);
 		cont->setVerticalAlignment(Ogre::GVA_TOP);
 
-		const gkVector2 &dims = gkWindowSystem::getSingleton().getMouse()->winsize;
+		const gkVector2& dims = gkWindowSystem::getSingleton().getMouse()->winsize;
 
 		m_ele->setMetricsMode(Ogre::GMM_PIXELS);
 		m_ele->setVerticalAlignment(Ogre::GVA_TOP);
-		m_ele->setPosition(0,0);
+		m_ele->setPosition(0, 0);
 		m_ele->setDimensions(dims.x, dims.y);
 
-		Ogre::TextAreaOverlayElement *textArea = static_cast<Ogre::TextAreaOverlayElement *>(m_ele);
+		Ogre::TextAreaOverlayElement* textArea = static_cast<Ogre::TextAreaOverlayElement*>(m_ele);
 		textArea->setFontName("<gkBuiltin/Font>");
 		textArea->setCharHeight(SCREEN_SIZE);
 		textArea->setColour(Ogre::ColourValue::White);
@@ -108,7 +108,7 @@ void gkDebugScreen::initialize()
 		cont->addChild(m_ele);
 		m_over->add2D(cont);
 	}
-	catch (Ogre::Exception &e)
+	catch (Ogre::Exception& e)
 	{
 		gkPrintf("%s", e.getDescription().c_str());
 		return;
@@ -164,20 +164,20 @@ void gkDebugScreen::clear()
 
 
 // ------------------------------------------------------------------------
-void gkDebugScreen::pushText(const gkString &text)
+void gkDebugScreen::pushText(const gkString& text)
 {
 	utStringUtils::split(m_splitBuf, text, "\n\r");
-	Ogre::TextAreaOverlayElement *textArea = static_cast<Ogre::TextAreaOverlayElement *>(m_ele);
+	Ogre::TextAreaOverlayElement* textArea = static_cast<Ogre::TextAreaOverlayElement*>(m_ele);
 
-	const gkVector2 &winSize = gkWindowSystem::getSingleton().getMouse()->winsize;
+	const gkVector2& winSize = gkWindowSystem::getSingleton().getMouse()->winsize;
 
 
 
 	gkScalar che = textArea->getCharHeight();
 
-	for (UTsize i=0; i<m_splitBuf.size(); ++i)
+	for (UTsize i = 0; i < m_splitBuf.size(); ++i)
 	{
-		ScreenBufferItem *item  = m_lineBuffer.alloc();
+		ScreenBufferItem* item  = m_lineBuffer.alloc();
 		item->clear();
 		item->m_buf = m_splitBuf.at(i);
 
@@ -196,7 +196,7 @@ void gkDebugScreen::pushText(const gkString &text)
 		m_txtBuffer.resize(0);
 
 
-		ScreenBufferItem *node = m_lines.begin();
+		ScreenBufferItem* node = m_lines.begin();
 		while (node)
 		{
 			m_txtBuffer += node->m_buf + "\n";
@@ -218,7 +218,7 @@ void gkDebugScreen::_getClipped()
 	}
 }
 
-void gkDebugScreen::printTo(const gkString &buf)
+void gkDebugScreen::printTo(const gkString& buf)
 {
 	if (gConsole != 0)
 	{
@@ -228,7 +228,7 @@ void gkDebugScreen::printTo(const gkString &buf)
 
 }
 
-void dsPrintf(const char *fmt, ...)
+void dsPrintf(const char* fmt, ...)
 {
 	if (gConsole == 0)
 		return;

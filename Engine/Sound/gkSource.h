@@ -88,31 +88,31 @@ public:
 class gkSource
 {
 private:
-	gkBuffer            *m_playback;    // active playback buffer
+	gkBuffer*            m_playback;    // active playback buffer
 	gkSoundProperties    m_props;       // properties to attach to the sound stream
-	gkSound             *m_reference;   // reference sound object
+	gkSound*             m_reference;   // reference sound object
 
-	// Force internal usage. 
+	// Force internal usage.
 
 	friend class gkBuffer;
 	friend class gkStreamer;
 
 	// Bind / unbind a buffer to this object.
 	// This object is only playable when a buffer is attached.
-	void bind(gkBuffer *buf);
+	void bind(gkBuffer* buf);
 
 	// Playback buffer.
-	gkBuffer *getBuffer(void) {return m_playback;}
+	gkBuffer* getBuffer(void) {return m_playback;}
 
 	// Playback stream.
-	gkSoundStream *getStream(void);
+	gkSoundStream* getStream(void);
 
 
 
 	gkCriticalSection   m_cs;
 public:
 
-	gkSource(gkSound *sound);
+	gkSource(gkSound* sound);
 	virtual ~gkSource();
 
 
@@ -120,13 +120,13 @@ public:
 	GK_INLINE bool                  isPlaying(void)         {return isBound();}
 	GK_INLINE bool                  isBound(void)           {return m_playback != 0;}
 	GK_INLINE bool                  isLooped(void)          {return m_props.m_loop;}
-	GK_INLINE gkSoundProperties     &getProperties(void)    {return m_props;}
-	GK_INLINE gkSound               *getCreator(void)       {return m_reference;}
+	GK_INLINE gkSoundProperties&     getProperties(void)    {return m_props;}
+	GK_INLINE gkSound*               getCreator(void)       {return m_reference;}
 
-	GK_INLINE void setProperties(gkSoundProperties &props)  {m_props = props;}
+	GK_INLINE void setProperties(gkSoundProperties& props)  {m_props = props;}
 
 	// Object state for 3D sounds
-	void updatePropsForObject(gkGameObject *obj);
+	void updatePropsForObject(gkGameObject* obj);
 
 
 	bool isPaused(void);

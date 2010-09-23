@@ -64,14 +64,14 @@ protected:
 	int m_type;
 	bool m_last;
 
-	Ogre::RaySceneQuery *m_rayQuery;
+	Ogre::RaySceneQuery* m_rayQuery;
 	bool rayTest(void);
 
 public:
-	gkMouseSensor(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	gkMouseSensor(gkGameObject* object, gkLogicLink* link, const gkString& name);
 	virtual ~gkMouseSensor();
 
-	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
+	gkLogicBrick* clone(gkLogicLink* link, gkGameObject* dest);
 
 	bool query(void);
 

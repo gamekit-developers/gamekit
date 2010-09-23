@@ -45,14 +45,14 @@
 #include "btBulletDynamicsCommon.h"
 #include "BulletDynamics/Character/btKinematicCharacterController.h"
 
-gkCharacterNode::gkCharacterNode(gkLogicTree *parent, size_t id) 
-: gkStateMachineNode(parent, id),
-m_obj(0),
-m_ent(0),
-m_currentStateData(0),
-m_scene(0),
-m_forward(gkVector3::ZERO),
-m_falling(false)
+gkCharacterNode::gkCharacterNode(gkLogicTree* parent, size_t id)
+	: gkStateMachineNode(parent, id),
+	  m_obj(0),
+	  m_ent(0),
+	  m_currentStateData(0),
+	  m_scene(0),
+	  m_forward(gkVector3::ZERO),
+	  m_falling(false)
 {
 	ADD_ISOCK(ANIM_BLEND_FRAMES, 10);
 	ADD_ISOCK(ENABLE_ROTATION, false);
@@ -61,7 +61,7 @@ m_falling(false)
 	ADD_ISOCK(JUMP, false);
 	ADD_ISOCK(GRAVITY, 9.81f);
 	ADD_ISOCK(JUMP_SPEED, 10);
-	
+
 	ADD_OSOCK(ANIM_HAS_REACHED_END, false);
 	ADD_OSOCK(ANIM_NOT_HAS_REACHED_END, true);
 	ADD_OSOCK(ANIM_TIME_POSITION, 0);
@@ -79,19 +79,19 @@ gkCharacterNode::~gkCharacterNode()
 void gkCharacterNode::initialize()
 {
 	GK_ASSERT(m_forward != gkVector3::ZERO);
-		
+
 	GK_ASSERT(m_obj);
-		
+
 	gkGameObject* childEntity = m_obj->getChildEntity();
-		
+
 	GK_ASSERT(childEntity);
-		
+
 	m_ent = childEntity->getEntity();
-		
+
 	GK_ASSERT(m_ent);
-		
+
 	m_scene = gkEngine::getSingleton().getActiveScene();
-		
+
 	GK_ASSERT(m_scene);
 }
 
@@ -103,7 +103,7 @@ bool gkCharacterNode::evaluate(gkScalar tick)
 void gkCharacterNode::update(gkScalar tick)
 {
 	STATE previousTickState = m_currentStateData->m_state;
-	
+
 	update_state(tick);
 
 	update_animation(previousTickState);
@@ -112,11 +112,11 @@ void gkCharacterNode::update(gkScalar tick)
 gkCharacterNode::STATE gkCharacterNode::getState(int previousIdx) const
 {
 	const StateData* state = m_currentStateData;
-	
-	while(previousIdx-- && state)
+
+	while (previousIdx-- && state)
 		state = state->m_previous;
-	
-	if(state)
+
+	if (state)
 	{
 		return state->m_state;
 	}
@@ -127,26 +127,26 @@ gkCharacterNode::STATE gkCharacterNode::getState(int previousIdx) const
 void gkCharacterNode::update_state(gkScalar tick)
 {
 	STATE aiState = GET_SOCKET_VALUE(INPUT_AI_STATE);
-	
+
 	SET_SOCKET_VALUE(OUTPUT_AI_STATE, aiState);
 
 	gkStateMachineNode::update(tick);
 
-	if(aiState == NULL_STATE)
+	if (aiState == NULL_STATE)
 	{
-		if(GET_SOCKET_VALUE(ENABLE_ROTATION) && m_currentStateData->m_allow_rotation)
+		if (GET_SOCKET_VALUE(ENABLE_ROTATION) && m_currentStateData->m_allow_rotation)
 		{
 			m_obj->setOrientation(GET_SOCKET_VALUE(ROTATION_VALUE));
 		}
 
-		if(GET_SOCKET_VALUE(JUMP))
+		if (GET_SOCKET_VALUE(JUMP))
 		{
 			gkScalar jumpSpeed = GET_SOCKET_VALUE(JUMP_SPEED);
 
-			const gkGameObjectProperties &props = m_obj->getProperties();
-			const gkPhysicsProperties &phy = props.m_physics;
+			const gkGameObjectProperties& props = m_obj->getProperties();
+			const gkPhysicsProperties& phy = props.m_physics;
 
-			if(m_obj->getAttachedCharacter())
+			if (m_obj->getAttachedCharacter())
 			{
 				m_obj->getAttachedCharacter()->getCharacterController()->setJumpSpeed(phy.m_mass * jumpSpeed);
 				m_obj->getAttachedCharacter()->getCharacterController()->jump();
@@ -159,9 +159,9 @@ void gkCharacterNode::update_state(gkScalar tick)
 
 		StateData* state = m_currentStateData;
 
-		while(state->m_usePreviousVelocity && state->m_previous)
+		while (state->m_usePreviousVelocity && state->m_previous)
 			state = state->m_previous;
-		
+
 		m_obj->setLinearVelocity(m_forward * state->m_velocity, TRANSFORM_LOCAL);
 	}
 
@@ -173,7 +173,7 @@ void gkCharacterNode::update_state(gkScalar tick)
 
 		m_falling = false;
 
-		if(m_obj->getAttachedCharacter())
+		if (m_obj->getAttachedCharacter())
 		{
 			m_falling = !m_obj->getAttachedCharacter()->getCharacterController()->onGround();
 		}
@@ -188,13 +188,13 @@ void gkCharacterNode::update_state(gkScalar tick)
 		SET_SOCKET_VALUE(NOT_FALLING, !m_falling);
 	}
 
-	
+
 	{
 		// GRAVITY
 
 		gkScalar gravity = GET_SOCKET_VALUE(GRAVITY);
 
-		if(m_obj->getAttachedCharacter())
+		if (m_obj->getAttachedCharacter())
 		{
 			m_obj->getAttachedCharacter()->getCharacterController()->setGravity(gravity);
 		}
@@ -207,7 +207,7 @@ void gkCharacterNode::update_state(gkScalar tick)
 
 void gkCharacterNode::update_animation(STATE previousTickState)
 {
-	if(m_currentStateData->m_state != previousTickState)
+	if (m_currentStateData->m_state != previousTickState)
 	{
 		SET_SOCKET_VALUE(ANIM_HAS_REACHED_END, false);
 		SET_SOCKET_VALUE(ANIM_NOT_HAS_REACHED_END, true);
@@ -215,25 +215,25 @@ void gkCharacterNode::update_animation(STATE previousTickState)
 		//gkLogMessage(m_currentStateData->m_state << ":" << m_currentStateData->m_animName);
 	}
 
-	if(!GET_SOCKET_VALUE(ANIM_HAS_REACHED_END))
+	if (!GET_SOCKET_VALUE(ANIM_HAS_REACHED_END))
 	{
 		m_ent->playAction(m_currentStateData->m_animName, GET_SOCKET_VALUE(ANIM_BLEND_FRAMES));
 
 		gkAction* pAct = m_ent->getActiveAction();
 
 		GK_ASSERT(pAct);
-		
+
 		gkScalar time = pAct->getTimePosition();
 
 		SET_SOCKET_VALUE(ANIM_TIME_POSITION, time);
 
-		if(time >= pAct->getEnd())
+		if (time >= pAct->getEnd())
 		{
 			SET_SOCKET_VALUE(ANIM_HAS_REACHED_END, true);
 			SET_SOCKET_VALUE(ANIM_NOT_HAS_REACHED_END, false);
 		}
 	}
-	else if(m_currentStateData->m_loop)
+	else if (m_currentStateData->m_loop)
 	{
 		m_ent->playAction(m_currentStateData->m_animName, GET_SOCKET_VALUE(ANIM_BLEND_FRAMES));
 	}
@@ -265,4 +265,3 @@ void gkCharacterNode::setMapping(const MAP& map)
 
 	m_map = map;
 }
-

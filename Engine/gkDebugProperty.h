@@ -40,11 +40,11 @@ private:
 	bool m_isInit, m_isShown;
 
 
-	Ogre::Overlay           *m_over;
-	Ogre::OverlayContainer  *m_cont;
-	Ogre::OverlayElement    *m_key, *m_val;
+	Ogre::Overlay*           m_over;
+	Ogre::OverlayContainer*  m_cont;
+	Ogre::OverlayElement*    m_key, *m_val;
 
-	typedef utList<gkVariable *> VariableList;
+	typedef utList<gkVariable*> VariableList;
 	VariableList m_props;
 
 
@@ -61,9 +61,9 @@ public:
 	bool isShown(void) {return m_isShown;}
 
 
-	void addVariable(gkVariable *prop);
-	void removeVariable(gkVariable *prop);
-	bool hasVariable(gkVariable *prop);
+	void addVariable(gkVariable* prop);
+	void removeVariable(gkVariable* prop);
+	bool hasVariable(gkVariable* prop);
 
 
 	void clearProps(void);

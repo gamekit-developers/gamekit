@@ -47,11 +47,11 @@ public:
 	DECLARE_SOCKET_TYPE(MAX, gkScalar);
 	DECLARE_SOCKET_TYPE(RESULT, gkScalar);
 
-    gkRandomNode(gkLogicTree *parent, size_t id);
-    virtual ~gkRandomNode() {}
+	gkRandomNode(gkLogicTree* parent, size_t id);
+	virtual ~gkRandomNode() {}
 
-    void update(gkScalar tick);
-    bool evaluate(gkScalar tick);
+	void update(gkScalar tick);
+	bool evaluate(gkScalar tick);
 };
 
 #endif//_gkRandomNode_h_

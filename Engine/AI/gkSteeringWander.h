@@ -37,13 +37,13 @@ class gkSteeringWander : public gkSteeringObject
 public:
 
 	gkSteeringWander(
-		gkGameObject* obj, 
-		gkScalar maxSpeed, 
-		const gkVector3& forward, 
-		const gkVector3& up, 
-		const gkVector3& side, 
-		gkScalar minPredictionTime,
-		gkScalar maxPredictionTime
+	    gkGameObject* obj,
+	    gkScalar maxSpeed,
+	    const gkVector3& forward,
+	    const gkVector3& up,
+	    const gkVector3& side,
+	    gkScalar minPredictionTime,
+	    gkScalar maxPredictionTime
 	);
 
 	~gkSteeringWander();

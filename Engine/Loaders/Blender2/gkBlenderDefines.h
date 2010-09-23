@@ -2920,8 +2920,8 @@
 #define COMMANDKEY      172
 #define GRLESSKEY       173
 
-#define G_FILE_SHOW_DEBUG_PROPS  (1 << 4)				/* deprecated */
-#define G_FILE_GAME_MAT			 (1 << 12)				/* deprecated */
-#define G_FILE_SHOW_PHYSICS		 (1 << 14)				/* deprecated */
+#define G_FILE_SHOW_DEBUG_PROPS  (1 << 4)                /* deprecated */
+#define G_FILE_GAME_MAT             (1 << 12)                /* deprecated */
+#define G_FILE_SHOW_PHYSICS         (1 << 14)                /* deprecated */
 
 #endif//_gkBlenderDefines_h_

@@ -32,8 +32,8 @@
 
 
 gkGroupManager::gkGroupManager()
-	:	gkResourceManager("GroupManager", "Group"),
-		m_handles(0), m_sceneListener(0)
+	:    gkResourceManager("GroupManager", "Group"),
+	     m_handles(0), m_sceneListener(0)
 {
 }
 

@@ -42,19 +42,19 @@ class gkCharacter : public gkPhysicsController, public btActionInterface
 {
 public:
 
-	gkCharacter(gkGameObject *object, gkDynamicsWorld *owner);
+	gkCharacter(gkGameObject* object, gkDynamicsWorld* owner);
 	virtual ~gkCharacter();
 
 
-	void setVelocity(const gkVector3 &v, gkScalar timeInterval);
+	void setVelocity(const gkVector3& v, gkScalar timeInterval);
 
 
-	btPairCachingGhostObject *getGhostObject() const;
-	btKinematicCharacterController *getCharacterController() const { return m_character; }
+	btPairCachingGhostObject* getGhostObject() const;
+	btKinematicCharacterController* getCharacterController() const { return m_character; }
 
-	void updateAction( btCollisionWorld *collisionWorld, btScalar deltaTime);
+	void updateAction( btCollisionWorld* collisionWorld, btScalar deltaTime);
 
-	void debugDraw(btIDebugDraw *debugDrawer) {}
+	void debugDraw(btIDebugDraw* debugDrawer) {}
 
 
 	void create(void);
@@ -62,9 +62,9 @@ public:
 
 protected:
 
-	void setWorldTransform(const btTransform &worldTrans);
+	void setWorldTransform(const btTransform& worldTrans);
 
-	btKinematicCharacterController *m_character;
+	btKinematicCharacterController* m_character;
 };
 
 #endif//_gkCharacter_h_

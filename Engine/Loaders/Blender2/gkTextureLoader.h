@@ -36,13 +36,13 @@
 class gkTextureLoader : public Ogre::ManualResourceLoader
 {
 public:
-	gkTextureLoader(Blender::Image *ima);
+	gkTextureLoader(Blender::Image* ima);
 	virtual ~gkTextureLoader();
 
-	void loadResource(Ogre::Resource *resource);
+	void loadResource(Ogre::Resource* resource);
 
 protected:
-	utMemoryStream      *m_stream;
+	utMemoryStream*      m_stream;
 };
 
 

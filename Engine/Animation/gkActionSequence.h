@@ -32,7 +32,7 @@
 
 
 
-///Single action strip that supports blend in and blend out operations 
+///Single action strip that supports blend in and blend out operations
 ///as part of the larger action sequence.
 class gkActionStrip
 {
@@ -41,13 +41,13 @@ public:
 	~gkActionStrip() {}
 
 
-	void setAction(gkAction *act)         {m_action = act;}
-	
+	void setAction(gkAction* act)         {m_action = act;}
+
 
 	///Blend min/max in frames
-	void setBlend(const gkVector2 &io);
-	
-	gkAction          *getAction(void)    {return m_action;}
+	void setBlend(const gkVector2& io);
+
+	gkAction*          getAction(void)    {return m_action;}
 	const gkVector2&  getBlend(void)      {return m_blend;}
 	gkScalar          getWeight(void)     {return m_curBlend; }
 	gkScalar          getStart(void)      {return m_scaledRange.x;}
@@ -56,11 +56,11 @@ public:
 
 
 	///The start and end frame, the time will be scaled to fit
-	void setDeltaRange(const gkVector2 &v);
+	void setDeltaRange(const gkVector2& v);
 
 	void enable(bool v);
 
-	void evaluate(const gkScalar &delta);
+	void evaluate(const gkScalar& delta);
 	void reset(void);
 
 	///Scales weights as a whole, for use in blending between seperate gkActionSequence objects
@@ -74,7 +74,7 @@ private:
 	gkScalar  m_scaleDelta, m_parentWeight;
 
 	gkScalar   m_curBlend, m_time, m_prevDelta;
-	gkAction  *m_action;
+	gkAction*  m_action;
 	gkVector2  m_blend;
 	bool       m_init;
 };
@@ -82,7 +82,7 @@ private:
 
 
 ///Chain of actions to form a larger set animation sequences.
-class gkActionSequence 
+class gkActionSequence
 {
 public:
 
@@ -94,11 +94,11 @@ public:
 	~gkActionSequence();
 
 
-	void addItem(gkAction *act, const gkVector2& timeRange, const gkVector2& blendIO = gkVector2(0.f, 0.f));
+	void addItem(gkAction* act, const gkVector2& timeRange, const gkVector2& blendIO = gkVector2(0.f, 0.f));
 
 
 	///The default / underlying sequence item to play when weight's are zero.
-	void setDefault(gkAction *act) {m_default = act;}
+	void setDefault(gkAction* act) {m_default = act;}
 
 	gkAction* getActiveStrip(void) {return m_active;}
 
@@ -108,7 +108,7 @@ public:
 	gkScalar getLength(void)   {return m_range.y - m_range.x;}
 
 
-	void      setTimePosition(const gkScalar &v);
+	void      setTimePosition(const gkScalar& v);
 	gkScalar  getTimePosition(void)              {return m_evalTime;}
 
 
@@ -117,7 +117,7 @@ public:
 	GK_INLINE bool isDone(void)     {return !m_enabled || m_evalTime >= getLength();}
 
 
-	void evaluate(const gkScalar &delta);
+	void evaluate(const gkScalar& delta);
 
 	void setWeight(gkScalar w);
 
@@ -131,8 +131,8 @@ protected:
 	bool m_timeDirty;
 	gkVector2 m_range;
 	gkScalar  m_evalTime, m_weight, m_defTime;
-	gkAction  *m_default;
-	gkAction  *m_active;
+	gkAction*  m_default;
+	gkAction*  m_active;
 	bool m_enabled;
 };
 

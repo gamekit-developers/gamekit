@@ -33,7 +33,7 @@
 
 
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
 	TestMemory;
 
@@ -67,7 +67,7 @@ int main(int argc, char **argv)
 	}
 
 	{
-		gkHUDManager *mgr = new gkHUDManager();
+		gkHUDManager* mgr = new gkHUDManager();
 
 		gkGameLevel game;
 		game.loadLevel(GK_LEVEL_PICKUP);

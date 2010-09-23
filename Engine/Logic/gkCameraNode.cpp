@@ -37,18 +37,18 @@
 #include "btBulletDynamicsCommon.h"
 #include <limits>
 
-gkCameraNode::gkCameraNode(gkLogicTree *parent, size_t id)
-: gkLogicNode(parent, id),
-m_center(gkVector3::ZERO),
-m_oldCenter(gkVector3::ZERO),
-m_target(0),
-m_centerObj(0),
-m_rollNode(gkQuaternion::IDENTITY),
-m_pitchNode(gkQuaternion::IDENTITY),
-m_idealRadius(0),
-m_radiusIdealIsSet(false),
-m_oldRadius(0),
-m_oldRadiusIsSet(false)
+gkCameraNode::gkCameraNode(gkLogicTree* parent, size_t id)
+	: gkLogicNode(parent, id),
+	  m_center(gkVector3::ZERO),
+	  m_oldCenter(gkVector3::ZERO),
+	  m_target(0),
+	  m_centerObj(0),
+	  m_rollNode(gkQuaternion::IDENTITY),
+	  m_pitchNode(gkQuaternion::IDENTITY),
+	  m_idealRadius(0),
+	  m_radiusIdealIsSet(false),
+	  m_oldRadius(0),
+	  m_oldRadiusIsSet(false)
 {
 	ADD_ISOCK(UPDATE, true);
 	ADD_ISOCK(CENTER_OBJ, 0);
@@ -82,7 +82,7 @@ bool gkCameraNode::evaluate(gkScalar tick)
 {
 	m_centerObj = GET_SOCKET_VALUE(CENTER_OBJ);
 
-	if(m_target != GET_SOCKET_VALUE(TARGET))
+	if (m_target != GET_SOCKET_VALUE(TARGET))
 	{
 		m_radiusIdealIsSet = false;
 
@@ -91,7 +91,7 @@ bool gkCameraNode::evaluate(gkScalar tick)
 		m_target = GET_SOCKET_VALUE(TARGET);
 
 		m_rollNode = gkQuaternion(gkDegree(GET_SOCKET_VALUE(INITIAL_ROLL)), gkVector3::UNIT_Z);
-		
+
 		m_pitchNode = gkQuaternion(gkDegree(GET_SOCKET_VALUE(INITIAL_PITCH)), gkVector3::UNIT_X);
 
 		m_oldCenter = m_center = GET_SOCKET_VALUE(CENTER_POSITION);
@@ -108,7 +108,7 @@ void gkCameraNode::update(gkScalar tick)
 
 	gkScalar rollDegrees = rollNode.getRoll().valueDegrees();
 
-	if(rollDegrees >= GET_SOCKET_VALUE(MIN_ROLL) && rollDegrees <= GET_SOCKET_VALUE(MAX_ROLL))
+	if (rollDegrees >= GET_SOCKET_VALUE(MIN_ROLL) && rollDegrees <= GET_SOCKET_VALUE(MAX_ROLL))
 	{
 		m_rollNode = rollNode;
 	}
@@ -117,14 +117,14 @@ void gkCameraNode::update(gkScalar tick)
 
 	gkScalar pitchDegrees = pitchNode.getPitch().valueDegrees();
 
-	if(pitchDegrees >= GET_SOCKET_VALUE(MIN_PITCH) && pitchDegrees <= GET_SOCKET_VALUE(MAX_PITCH))
+	if (pitchDegrees >= GET_SOCKET_VALUE(MIN_PITCH) && pitchDegrees <= GET_SOCKET_VALUE(MAX_PITCH))
 	{
 		m_pitchNode = pitchNode;
 	}
 
 	m_target->setOrientation(m_rollNode * m_pitchNode);
 
-	if(m_center != GET_SOCKET_VALUE(CENTER_POSITION))
+	if (m_center != GET_SOCKET_VALUE(CENTER_POSITION))
 	{
 		m_oldCenter = m_center;
 
@@ -138,17 +138,17 @@ void gkCameraNode::update(gkScalar tick)
 	{
 		gkVector3 newZPosition = currentPosition;
 
-		if(GET_SOCKET_VALUE(REL_Z))
+		if (GET_SOCKET_VALUE(REL_Z))
 		{
 			newZPosition.z += newZPosition.z * GET_SOCKET_VALUE(REL_Z) * 0.5;
 
 			m_radiusIdealIsSet = false;
 		}
 
-		if(GET_SOCKET_VALUE(KEEP_DISTANCE))
+		if (GET_SOCKET_VALUE(KEEP_DISTANCE))
 		{
 			dir = m_oldCenter - newZPosition;
-			
+
 			m_oldCenter = m_center;
 		}
 		else
@@ -156,20 +156,20 @@ void gkCameraNode::update(gkScalar tick)
 			dir = m_center - newZPosition;
 		}
 	}
-	
+
 	gkScalar radius = dir.length();
 
-	if(!m_radiusIdealIsSet)
+	if (!m_radiusIdealIsSet)
 	{
 		m_idealRadius = radius;
-		
+
 		m_radiusIdealIsSet = true;
 	}
 
-	if(!m_oldRadiusIsSet)
+	if (!m_oldRadiusIsSet)
 	{
 		m_oldRadius = radius;
-		
+
 		m_oldRadiusIsSet = true;
 	}
 
@@ -181,11 +181,11 @@ void gkCameraNode::update(gkScalar tick)
 	gkScalar minZ = GET_SOCKET_VALUE(MIN_Z);
 	gkScalar maxZ = GET_SOCKET_VALUE(MAX_Z);
 
-	if(radius < minZ)
+	if (radius < minZ)
 	{
 		radius = minZ;
-	} 
-	else if(radius > maxZ)
+	}
+	else if (radius > maxZ)
 	{
 		radius = maxZ;
 	}
@@ -206,10 +206,10 @@ void gkCameraNode::calculateNewPosition(const gkVector3& currentPosition, gkScal
 
 	bool newPosSet = false;
 
-	if(GET_SOCKET_VALUE(AVOID_BLOCKING))
+	if (GET_SOCKET_VALUE(AVOID_BLOCKING))
 	{
 		gkVector3 direction = tmpPosition - m_center;
-		
+
 		Ogre::Ray ray(m_center, direction);
 
 		gkSweptTest::AVOID_LIST avoidList;
@@ -219,7 +219,7 @@ void gkCameraNode::calculateNewPosition(const gkVector3& currentPosition, gkScal
 
 		gkScalar blokingRadius = GET_SOCKET_VALUE(BLOCKING_RADIUS);
 
-		if(sweptTest.collides(ray, blokingRadius))
+		if (sweptTest.collides(ray, blokingRadius))
 		{
 			gkVector3 displacement = (sweptTest.getHitPoint() - currentPosition) * 0.9f;
 
@@ -228,10 +228,9 @@ void gkCameraNode::calculateNewPosition(const gkVector3& currentPosition, gkScal
 			newPosSet = true;
 		}
 	}
-	
-	if(!newPosSet)
+
+	if (!newPosSet)
 	{
 		m_target->setPosition(tmpPosition);
 	}
 }
-

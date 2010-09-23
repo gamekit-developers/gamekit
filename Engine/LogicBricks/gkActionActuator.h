@@ -55,8 +55,8 @@ private:
 	gkString m_startAct, m_startProp;
 
 	bool m_reset, m_isInit;
-	gkAction        *m_action;
-	gkSkeleton      *m_skeleton;
+	gkAction*        m_action;
+	gkSkeleton*      m_skeleton;
 
 	void doInit(void);
 
@@ -66,10 +66,10 @@ private:
 
 public:
 
-	gkActionActuator(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	gkActionActuator(gkGameObject* object, gkLogicLink* link, const gkString& name);
 	virtual ~gkActionActuator();
 
-	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
+	gkLogicBrick* clone(gkLogicLink* link, gkGameObject* dest);
 
 
 	GK_INLINE void  setStart(int v)                 {m_start = v;}
@@ -77,8 +77,8 @@ public:
 	GK_INLINE void  setBlend(int v)                 {m_blend = v;}
 	GK_INLINE void  setMode(int v)                  {m_mode = v;}
 	GK_INLINE void  setPriority(int v)              {m_prio = v;}
-	GK_INLINE void  setAction(const gkString &v)    {m_startAct = v;}
-	GK_INLINE void  setProperty(const gkString &v)  {m_startProp = v;}
+	GK_INLINE void  setAction(const gkString& v)    {m_startAct = v;}
+	GK_INLINE void  setProperty(const gkString& v)  {m_startProp = v;}
 	GK_INLINE void  setReset(bool v)                {m_reset = v;}
 
 	GK_INLINE int   getStart(void)                 {return m_start;}

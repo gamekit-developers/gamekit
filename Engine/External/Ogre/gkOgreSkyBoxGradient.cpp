@@ -33,7 +33,7 @@
 #include "OgrePass.h"
 
 
-gkSkyBoxGradient::gkSkyBoxGradient(const gkSceneMaterial &material)
+gkSkyBoxGradient::gkSkyBoxGradient(const gkSceneMaterial& material)
 	: m_material(material)
 {
 

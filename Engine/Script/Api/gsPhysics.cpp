@@ -58,7 +58,7 @@ gsRayTest::~gsRayTest()
 }
 
 
-bool gsRayTest::cast(const gsRay &ray)
+bool gsRayTest::cast(const gsRay& ray)
 {
 	return m_ray->collides(ray);
 }
@@ -101,10 +101,10 @@ gsSweptTest::gsSweptTest(gsArray<gsGameObject, gkGameObject> &avoid)
 	if (!avoid.empty())
 	{
 		int size = avoid.size(), i;
-		for (i=0; i<size; ++i)
+		for (i = 0; i < size; ++i)
 		{
-			gkGameObject *ob = avoid.iat(i);
-			btCollisionObject *col=0;
+			gkGameObject* ob = avoid.iat(i);
+			btCollisionObject* col = 0;
 			if ((col = ob->getCollisionObject()) != 0)
 				m_avoid.insert(col);
 		}
@@ -120,7 +120,7 @@ gsSweptTest::~gsSweptTest()
 }
 
 
-bool gsSweptTest::collides(const gsRay &ray, float rayRadius)
+bool gsSweptTest::collides(const gsRay& ray, float rayRadius)
 {
 	return m_test->collides(ray, rayRadius);
 }
@@ -151,7 +151,7 @@ gsVector3 gsSweptTest::getSliding(void)
 }
 
 
-gsGameObject *gsSweptTest::getObject(void)
+gsGameObject* gsSweptTest::getObject(void)
 {
 	return (new gsGameObject(m_test->getObject()));
 }

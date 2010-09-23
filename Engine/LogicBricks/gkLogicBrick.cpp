@@ -30,7 +30,7 @@
 #include "gkLogicManager.h"
 
 
-gkLogicBrick::gkLogicBrick(gkGameObject *object, gkLogicLink *link, const gkString &name)
+gkLogicBrick::gkLogicBrick(gkGameObject* object, gkLogicLink* link, const gkString& name)
 	:       m_object(object), m_name(name), m_link(link), m_stateMask(0), m_pulseState(BM_IDLE),
 	        m_debugMask(0), m_isActive(false), m_priority(0), m_listener(0)
 {
@@ -39,7 +39,7 @@ gkLogicBrick::gkLogicBrick(gkGameObject *object, gkLogicLink *link, const gkStri
 }
 
 
-void gkLogicBrick::cloneImpl(gkLogicLink *link, gkGameObject *dest)
+void gkLogicBrick::cloneImpl(gkLogicLink* link, gkGameObject* dest)
 {
 	m_object        = dest;
 	m_scene         = m_object->getOwner();
@@ -53,13 +53,13 @@ void gkLogicBrick::cloneImpl(gkLogicLink *link, gkGameObject *dest)
 
 bool gkLogicBrick::inActiveState(void)
 {
-	return (m_stateMask & m_link->getState())!=0;
+	return (m_stateMask & m_link->getState()) != 0;
 }
 
 
 bool gkLogicBrick::wantsDebug(void)
 {
-	return (m_debugMask)!=0;
+	return (m_debugMask) != 0;
 }
 
 

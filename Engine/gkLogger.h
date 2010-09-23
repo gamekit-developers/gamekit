@@ -36,13 +36,13 @@
 class gkLogger
 {
 public:
-	static void enable(const gkString &name, bool verbose);
+	static void enable(const gkString& name, bool verbose);
 	static void disable();
-	static void write(const gkString &msg, bool force = false);
+	static void write(const gkString& msg, bool force = false);
 };
 
 // printf style logging
-extern void gkPrintf(const char *fmt, ...);
+extern void gkPrintf(const char* fmt, ...);
 
 
 

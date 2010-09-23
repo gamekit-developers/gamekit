@@ -83,7 +83,7 @@ public:
 	GK_INLINE bool                      isClone(void)        {return m_isClone;}
 
 
-	bool hasSensorMaterial(const gkString& name, bool onlyFirst=true);
+	bool hasSensorMaterial(const gkString& name, bool onlyFirst = true);
 
 	// subtype access
 	GK_INLINE gkEntity*      getEntity(void)    {return m_type == GK_ENTITY ?   (gkEntity*)this : 0; }
@@ -217,7 +217,7 @@ public:
 
 	void GK_INLINE recalcNavData(int i, int n)
 	{
-		if(m_navMeshData.triangleBaseIndex > i)
+		if (m_navMeshData.triangleBaseIndex > i)
 		{
 			m_navMeshData.triangleBaseIndex -= n;
 		}
@@ -252,8 +252,8 @@ public:
 
 
 	// events
-	void addEventListener(Notifier *evt);
-	void removeEventListener(Notifier *evt);
+	void addEventListener(Notifier* evt);
+	void removeEventListener(Notifier* evt);
 
 
 protected:

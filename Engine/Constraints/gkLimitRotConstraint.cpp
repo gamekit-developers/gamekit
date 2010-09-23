@@ -41,9 +41,9 @@ gkLimitRotConstraint::gkLimitRotConstraint()
 
 
 
-gkConstraint *gkLimitRotConstraint::clone(gkGameObject *clob)
+gkConstraint* gkLimitRotConstraint::clone(gkGameObject* clob)
 {
-	gkLimitRotConstraint *cl = new gkLimitRotConstraint(*this);
+	gkLimitRotConstraint* cl = new gkLimitRotConstraint(*this);
 	cl->setObject(clob);
 	return cl;
 }

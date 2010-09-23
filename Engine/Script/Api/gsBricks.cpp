@@ -32,7 +32,7 @@
 #define GS_TYPE_RET(P, T)  if (GS_TYPEOF(P, gk##T)) { return new gs##T(P); }
 
 
-gsSensor* gsSensor::createNew(gkLogicSensor *ob)
+gsSensor* gsSensor::createNew(gkLogicSensor* ob)
 {
 	GS_TYPE_RET(ob, ActuatorSensor);
 	GS_TYPE_RET(ob, AlwaysSensor);
@@ -51,7 +51,7 @@ gsSensor* gsSensor::createNew(gkLogicSensor *ob)
 
 
 
-gsController* gsController::createNew(gkLogicController *ob)
+gsController* gsController::createNew(gkLogicController* ob)
 {
 	GS_TYPE_RET(ob, LogicOpController);
 	GS_TYPE_RET(ob, ScriptController);
@@ -59,7 +59,7 @@ gsController* gsController::createNew(gkLogicController *ob)
 }
 
 
-gsActuator* gsActuator::createNew(gkLogicActuator *ob)
+gsActuator* gsActuator::createNew(gkLogicActuator* ob)
 {
 	GS_TYPE_RET(ob, ActionActuator);
 	GS_TYPE_RET(ob, EditObjectActuator);
@@ -89,17 +89,17 @@ gsLogicManager::~gsLogicManager()
 
 
 
-gsLogicObject *gsLogicManager::newObject(gsGameObject *obj)
+gsLogicObject* gsLogicManager::newObject(gsGameObject* obj)
 {
-	gkLogicManager *lptr = gkLogicManager::getSingletonPtr();
+	gkLogicManager* lptr = gkLogicManager::getSingletonPtr();
 
 	if (lptr && obj)
 	{
-		gkLogicLink *lnk = lptr->createLink();
+		gkLogicLink* lnk = lptr->createLink();
 
 		lnk->setObject(obj->get());
 		lnk->setState(1);
-		gsLogicObject *ob = new gsLogicObject(lnk);
+		gsLogicObject* ob = new gsLogicObject(lnk);
 		ob->makeOwner(true);
 		return ob;
 	}
@@ -108,21 +108,21 @@ gsLogicObject *gsLogicManager::newObject(gsGameObject *obj)
 }
 
 
-gsLogicObject *gsLogicManager::getObject(const gkString& name)
+gsLogicObject* gsLogicManager::getObject(const gkString& name)
 {
-	gkLogicManager *lptr = gkLogicManager::getSingletonPtr();
+	gkLogicManager* lptr = gkLogicManager::getSingletonPtr();
 
 	if (lptr)
 	{
-		gkLogicManager::Links &lnks = lptr->getLinks();
+		gkLogicManager::Links& lnks = lptr->getLinks();
 		if (!lnks.empty())
 		{
 			gkLogicManager::LinkIterator iter(lnks);
 
 			while (iter.hasMoreElements())
 			{
-				gkLogicLink *lnk = iter.getNext();
-				gkGameObject *obj = lnk->getObject();
+				gkLogicLink* lnk = iter.getNext();
+				gkGameObject* obj = lnk->getObject();
 
 				if (obj && obj->getName() == name)
 					return new gsLogicObject(lnk);
@@ -136,11 +136,11 @@ gsLogicObject *gsLogicManager::getObject(const gkString& name)
 
 gsArray<gsLogicObject, gkLogicLink> gsLogicManager::getObjectList()
 {
-	gkLogicManager *lptr = gkLogicManager::getSingletonPtr();
+	gkLogicManager* lptr = gkLogicManager::getSingletonPtr();
 
 	if (lptr)
 	{
-		gkLogicManager::Links &lnks = lptr->getLinks();
+		gkLogicManager::Links& lnks = lptr->getLinks();
 
 		gsArray<gsLogicObject, gkLogicLink> arr;
 
@@ -150,7 +150,7 @@ gsArray<gsLogicObject, gkLogicLink> gsLogicManager::getObjectList()
 
 			while (iter.hasMoreElements())
 			{
-				gkLogicLink *lnk = iter.getNext();
+				gkLogicLink* lnk = iter.getNext();
 				arr.push(lnk);
 			}
 		}
@@ -162,7 +162,7 @@ gsArray<gsLogicObject, gkLogicLink> gsLogicManager::getObjectList()
 
 
 //
-//  Link impl 
+//  Link impl
 //
 
 
@@ -174,7 +174,7 @@ gsLogicObject::gsLogicObject() : m_link(0), m_incr(0), m_owner(false)
 }
 
 
-gsLogicObject::gsLogicObject(gkLogicLink *lnk)  : m_link(lnk), m_incr(0), m_owner(false)
+gsLogicObject::gsLogicObject(gkLogicLink* lnk)  : m_link(lnk), m_incr(0), m_owner(false)
 {
 }
 
@@ -184,7 +184,7 @@ gsLogicObject::~gsLogicObject()
 {
 	if (m_owner && m_link)
 	{
-		gkLogicManager *lptr = gkLogicManager::getSingletonPtr();
+		gkLogicManager* lptr = gkLogicManager::getSingletonPtr();
 		if (lptr)
 			lptr->destroy(m_link);
 
@@ -192,14 +192,14 @@ gsLogicObject::~gsLogicObject()
 }
 
 
-static void gsLogicObject_setDebugBricks(gkLogicLink::BrickList &lnks)
+static void gsLogicObject_setDebugBricks(gkLogicLink::BrickList& lnks)
 {
 	if (!lnks.empty())
 	{
 		utListIterator<gkLogicLink::BrickList> iter(lnks);
 		while (iter.hasMoreElements())
 		{
-			gkLogicBrick *brk = iter.getNext();
+			gkLogicBrick* brk = iter.getNext();
 			brk->setDebugMask(brk->getLink()->getDebug());
 		}
 	}
@@ -238,11 +238,11 @@ gkString gsLogicObject::getName(void)
 }
 
 
-gsSensor *gsLogicObject::getSensor(const gkString& name)
+gsSensor* gsLogicObject::getSensor(const gkString& name)
 {
 	if (m_link)
 	{
-		gkLogicSensor *brick = m_link->findSensor(name);
+		gkLogicSensor* brick = m_link->findSensor(name);
 		if (brick)
 			return gsSensor::createNew(brick);
 	}
@@ -251,11 +251,11 @@ gsSensor *gsLogicObject::getSensor(const gkString& name)
 }
 
 
-gsController *gsLogicObject::getController(const gkString& name)
+gsController* gsLogicObject::getController(const gkString& name)
 {
 	if (m_link)
 	{
-		gkLogicController *brick = m_link->findController(name);
+		gkLogicController* brick = m_link->findController(name);
 		if (brick)
 			return gsController::createNew(brick);
 	}
@@ -263,11 +263,11 @@ gsController *gsLogicObject::getController(const gkString& name)
 }
 
 
-gsActuator *gsLogicObject::getActuator(const gkString& name)
+gsActuator* gsLogicObject::getActuator(const gkString& name)
 {
 	if (m_link)
 	{
-		gkLogicActuator *brick = m_link->findActuator(name);
+		gkLogicActuator* brick = m_link->findActuator(name);
 		if (brick)
 			return gsActuator::createNew(brick);
 	}
@@ -275,7 +275,7 @@ gsActuator *gsLogicObject::getActuator(const gkString& name)
 }
 
 
-bool gsLogicObject::hasBrick(gkLogicLink* link, const gkString &name)
+bool gsLogicObject::hasBrick(gkLogicLink* link, const gkString& name)
 {
 	if (link->findSensor(name)) return true;
 	if (link->findController(name)) return true;
@@ -293,14 +293,14 @@ gkString gsLogicObject::getUniqueName(void)
 
 
 template<typename W, typename B>
-static void gsLogicObject_getBricks(gsArray<W, B> &dest, gkLogicLink::BrickList &lnks)
+static void gsLogicObject_getBricks(gsArray<W, B> &dest, gkLogicLink::BrickList& lnks)
 {
 	if (!lnks.empty())
 	{
 		utListIterator<gkLogicLink::BrickList> iter(lnks);
 		while (iter.hasMoreElements())
 		{
-			B *lnk = (B*)iter.getNext();
+			B* lnk = (B*)iter.getNext();
 			dest.push(lnk);
 		}
 	}
@@ -340,7 +340,7 @@ gsArray<gsActuator, gkLogicActuator> gsLogicObject::getActuators()
 
 
 //
-//  Base Brick impl 
+//  Base Brick impl
 //
 
 
@@ -351,7 +351,7 @@ gsBrick::gsBrick() : m_brick(0), m_isLocal(false), m_listener(0)
 }
 
 
-gsBrick::gsBrick(gkLogicBrick *brk)  : m_brick(brk), m_isLocal(false), m_listener(0)
+gsBrick::gsBrick(gkLogicBrick* brk)  : m_brick(brk), m_isLocal(false), m_listener(0)
 {
 }
 
@@ -371,8 +371,8 @@ gsBrick::~gsBrick()
 }
 
 
-gsBrick::EventListener::EventListener(gsListenerMode mode, gkLogicBrick *par, gsSelf self, gsFunction fnc) 
-	:	m_evt(new gkLuaEvent(self, fnc)), m_parent(par)
+gsBrick::EventListener::EventListener(gsListenerMode mode, gkLogicBrick* par, gsSelf self, gsFunction fnc)
+	:    m_evt(new gkLuaEvent(self, fnc)), m_parent(par)
 {
 	if (mode == LM_EVT_OVERIDE)
 		m_mode = gkLogicBrick::Listener::OVERIDE;
@@ -385,13 +385,13 @@ gsBrick::EventListener::EventListener(gsListenerMode mode, gkLogicBrick *par, gs
 gsBrick::EventListener::~EventListener()
 {
 	if (m_parent)
-		m_parent->setListener(0); 
+		m_parent->setListener(0);
 
 	delete m_evt;
 }
 
 
-bool gsBrick::EventListener::executeEvent(gkLogicBrick *brick)
+bool gsBrick::EventListener::executeEvent(gkLogicBrick* brick)
 {
 	m_evt->beginCall();
 
@@ -402,7 +402,7 @@ bool gsBrick::EventListener::executeEvent(gkLogicBrick *brick)
 		delete m_evt;
 		m_evt = 0;
 		if (m_parent)
-			m_parent->setListener(0); 
+			m_parent->setListener(0);
 	}
 	return result;
 }
@@ -418,28 +418,28 @@ gkString gsBrick::getName(void)
 
 
 #define GS_IMPLEMENT_DEFAULT_BRICK(base, cls) \
-	cls::~cls() {}\
-	cls::cls() {}\
-	cls::cls(gkLogicBrick *brk) : base(brk) {}
+    cls::~cls() {}\
+    cls::cls() {}\
+    cls::cls(gkLogicBrick *brk) : base(brk) {}
 
 #define GS_IMPLEMENT_USER_BRICK(base, cls, wrap) \
-	GS_IMPLEMENT_DEFAULT_BRICK(base, cls)\
-	cls::cls(gsLogicObject *parent, const gkString& name) {\
-		m_isLocal = true;\
-		m_brick = create<wrap>(parent, name);\
-	}
+    GS_IMPLEMENT_DEFAULT_BRICK(base, cls)\
+    cls::cls(gsLogicObject *parent, const gkString& name) {\
+        m_isLocal = true;\
+        m_brick = create<wrap>(parent, name);\
+    }
 
 #define GS_IMPLEMENT_USER_BRICK_GENERIC(base, cls) \
-	GS_IMPLEMENT_DEFAULT_BRICK(base, gs##cls)\
-	gs##cls::gs##cls(gsLogicObject *parent, const gkString& name) {\
-		m_isLocal = true;\
-		m_brick = create<gk##cls>(parent, name);\
-	}
+    GS_IMPLEMENT_DEFAULT_BRICK(base, gs##cls)\
+    gs##cls::gs##cls(gsLogicObject *parent, const gkString& name) {\
+        m_isLocal = true;\
+        m_brick = create<gk##cls>(parent, name);\
+    }
 
 
 
 //
-//  Base Sensor impl 
+//  Base Sensor impl
 //
 
 GS_IMPLEMENT_DEFAULT_BRICK(gsBrick, gsSensor);
@@ -460,13 +460,13 @@ GS_IMPLEMENT_USER_BRICK_GENERIC(gsSensor, TouchSensor);
 
 
 //
-//  Base Controller impl 
+//  Base Controller impl
 //
 
 GS_IMPLEMENT_DEFAULT_BRICK(gsBrick, gsController);
 
 
-void gsController::link(gsSensor *sens)
+void gsController::link(gsSensor* sens)
 {
 	if (sens && sens->get())
 		sens->get()->link(get());
@@ -474,7 +474,7 @@ void gsController::link(gsSensor *sens)
 
 
 
-void gsController::link(gsActuator *act)
+void gsController::link(gsActuator* act)
 {
 	if (act && act->get())
 		get()->link(act->get());
@@ -488,7 +488,7 @@ GS_IMPLEMENT_USER_BRICK_GENERIC(gsController, ScriptController);
 
 gsScriptController* getCurrentController(void)
 {
-	gkScriptController *ctx = gkScriptController::getCurrent();
+	gkScriptController* ctx = gkScriptController::getCurrent();
 	if (ctx) return new gsScriptController(ctx);
 	return 0;
 }
@@ -496,7 +496,7 @@ gsScriptController* getCurrentController(void)
 
 
 //
-//  Base Actuator impl 
+//  Base Actuator impl
 //
 
 GS_IMPLEMENT_DEFAULT_BRICK(gsBrick, gsActuator);

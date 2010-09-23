@@ -35,7 +35,7 @@ class gkGrabNode : public gkPickNode
 {
 public:
 
-	enum 
+	enum
 	{
 		THROW_OBJECT = MAX_SOCKETS,
 		TARGET,
@@ -52,7 +52,7 @@ public:
 	DECLARE_SOCKET_TYPE(RELATED_OFFSET_POSITION, gkVector3);
 	DECLARE_SOCKET_TYPE(THROWED, bool);
 
-	gkGrabNode(gkLogicTree *parent, size_t id);
+	gkGrabNode(gkLogicTree* parent, size_t id);
 
 	~gkGrabNode();
 

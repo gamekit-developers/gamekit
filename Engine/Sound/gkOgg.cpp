@@ -33,11 +33,11 @@
 
 
 
-static size_t gkOggRead(void *ptr, size_t bl, size_t nr, void *blk)
+static size_t gkOggRead(void* ptr, size_t bl, size_t nr, void* blk)
 {
-	utStream *block = (utStream *)blk;
+	utStream* block = (utStream*)blk;
 	if (!block)
-		return ((size_t)-1);
+		return ((size_t) - 1);
 
 	size_t nl = bl * nr;
 	return block->read(ptr, nl);
@@ -45,9 +45,9 @@ static size_t gkOggRead(void *ptr, size_t bl, size_t nr, void *blk)
 
 
 
-static int gkOggSeek(void *blk, ogg_int64_t off, int way)
+static int gkOggSeek(void* blk, ogg_int64_t off, int way)
 {
-	utStream *block = (utStream *)blk;
+	utStream* block = (utStream*)blk;
 	if (!block)
 		return -1;
 
@@ -57,9 +57,9 @@ static int gkOggSeek(void *blk, ogg_int64_t off, int way)
 
 
 
-static long gkOggTell(void *blk)
+static long gkOggTell(void* blk)
 {
-	utStream *block = (utStream *)blk;
+	utStream* block = (utStream*)blk;
 	if (!block)
 		return -1;
 
@@ -92,11 +92,11 @@ gkOgg::~gkOgg()
 }
 
 
-bool gkOgg::load(const char *fname)
+bool gkOgg::load(const char* fname)
 {
 
 	m_reader = new utFileStream();
-	static_cast<utFileStream *>(m_reader)->open(fname, utStream::SM_READ);
+	static_cast<utFileStream*>(m_reader)->open(fname, utStream::SM_READ);
 
 
 	if (!m_reader->isOpen())
@@ -122,10 +122,10 @@ bool gkOgg::load(const char *fname)
 
 
 
-bool gkOgg::load(const char *buf, int len)
+bool gkOgg::load(const char* buf, int len)
 {
 	m_reader = new utMemoryStream();
-	static_cast<utMemoryStream *>(m_reader)->open(buf, len, utStream::SM_READ);
+	static_cast<utMemoryStream*>(m_reader)->open(buf, len, utStream::SM_READ);
 
 	if (!m_reader->isOpen())
 	{
@@ -150,7 +150,7 @@ bool gkOgg::load(const char *buf, int len)
 
 
 
-const char *gkOgg::read(UTsize pos, UTsize len, UTsize &br)
+const char* gkOgg::read(UTsize pos, UTsize len, UTsize& br)
 {
 	if (pos != UT_NPOS)
 		seek(pos, SEEK_SET);
@@ -159,7 +159,7 @@ const char *gkOgg::read(UTsize pos, UTsize len, UTsize &br)
 
 
 
-const char *gkOgg::read(UTsize len, UTsize &br)
+const char* gkOgg::read(UTsize len, UTsize& br)
 {
 	static char blk[OV_FIXED_BUF];
 	br = 0;
@@ -168,7 +168,7 @@ const char *gkOgg::read(UTsize len, UTsize &br)
 	if (len > OV_FIXED_BUF)
 		len = OV_FIXED_BUF;
 
-	while(br < len)
+	while (br < len)
 	{
 		long v = ov_read(&m_stream, blk + br, len - br, 0, 2, 1, &bs);
 		if (v == 0)     // end of stream

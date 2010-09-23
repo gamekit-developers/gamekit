@@ -27,7 +27,7 @@
 #include "gkMathUtils.h"
 
 
-gkMatrix3 gkMathUtils::getMat3FromEuler(const gkVector3 &eul, bool isDegree)
+gkMatrix3 gkMathUtils::getMat3FromEuler(const gkVector3& eul, bool isDegree)
 {
 	gkMatrix3 rx, ry, rz;
 
@@ -59,11 +59,11 @@ gkMatrix3 gkMathUtils::getMat3FromEuler(const gkVector3 &eul, bool isDegree)
 	if (!gkFuzzy(eul.z)) rz.FromAxisAngle(gkVector3::UNIT_Z, Rz);
 	else rz = gkMatrix3::IDENTITY;
 
-	return gkMatrix3(rz*ry*rx);
+	return gkMatrix3(rz * ry * rx);
 }
 
 
-gkQuaternion gkMathUtils::getQuatFromEuler(const gkVector3 &eul, bool isDegree)
+gkQuaternion gkMathUtils::getQuatFromEuler(const gkVector3& eul, bool isDegree)
 {
 	if (gkFuzzyVec(eul))
 		return gkQuaternion::IDENTITY;
@@ -73,7 +73,7 @@ gkQuaternion gkMathUtils::getQuatFromEuler(const gkVector3 &eul, bool isDegree)
 
 
 
-gkVector3 gkMathUtils::getEulerFromQuat(const gkQuaternion &q, bool toDegree)
+gkVector3 gkMathUtils::getEulerFromQuat(const gkQuaternion& q, bool toDegree)
 {
 	gkMatrix3 matr;
 	q.ToRotationMatrix(matr);
@@ -138,7 +138,7 @@ gkMatrix4 gkMathUtils::getFromFloatNorm(const float m[][4])
 }
 
 
-void gkMathUtils::extractLocEulScale(const gkMatrix4 &m, gkVector3 &loc, gkVector3 &eul, gkVector3 &scale, bool inDegrees)
+void gkMathUtils::extractLocEulScale(const gkMatrix4& m, gkVector3& loc, gkVector3& eul, gkVector3& scale, bool inDegrees)
 {
 	// extract translation
 	loc = m.getTrans();
@@ -159,24 +159,24 @@ void gkMathUtils::extractLocEulScale(const gkMatrix4 &m, gkVector3 &loc, gkVecto
 
 
 
-void gkMathUtils::makeLocEulScale(gkMatrix4 &dest, const gkVector3 &loc, const gkVector3 &eul, const gkVector3 &scale, bool inDegrees)
+void gkMathUtils::makeLocEulScale(gkMatrix4& dest, const gkVector3& loc, const gkVector3& eul, const gkVector3& scale, bool inDegrees)
 {
 	dest.makeTransform(loc, scale, getQuatFromEuler(eul, inDegrees));
 }
 
 
-void gkMathUtils::makeLocQuatScale(gkMatrix4 &dest, const gkVector3 &loc, const gkQuaternion &q, const gkVector3 &scale)
+void gkMathUtils::makeLocQuatScale(gkMatrix4& dest, const gkVector3& loc, const gkQuaternion& q, const gkVector3& scale)
 {
 	dest.makeTransform(loc, scale, q);
 }
 
-gkQuaternion gkMathUtils::interp(const gkQuaternion &a, const gkQuaternion &b, gkScalar t, bool fast)
+gkQuaternion gkMathUtils::interp(const gkQuaternion& a, const gkQuaternion& b, gkScalar t, bool fast)
 {
 	return fast ? gkQuaternion::nlerp(t, a, b, a.Dot(b) < 0.0) : gkQuaternion::Slerp(t, a, b, a.Dot(b) < 0.0);
 }
 
 
-gkVector3 gkMathUtils::interp(const gkVector3 &a, const gkVector3 &b, gkScalar t)
+gkVector3 gkMathUtils::interp(const gkVector3& a, const gkVector3& b, gkScalar t)
 {
 	gkScalar s = 1.f - t;
 	gkVector3 ret;
@@ -187,7 +187,7 @@ gkVector3 gkMathUtils::interp(const gkVector3 &a, const gkVector3 &b, gkScalar t
 }
 
 
-gkVector2 gkMathUtils::interp(const gkVector2 &a, const gkVector2 &b, gkScalar t)
+gkVector2 gkMathUtils::interp(const gkVector2& a, const gkVector2& b, gkScalar t)
 {
 	gkScalar s = 1.f - t;
 	gkVector2 ret;
@@ -197,14 +197,14 @@ gkVector2 gkMathUtils::interp(const gkVector2 &a, const gkVector2 &b, gkScalar t
 }
 
 
-gkScalar gkMathUtils::interp(const gkScalar &a, const gkScalar &b, gkScalar t)
+gkScalar gkMathUtils::interp(const gkScalar& a, const gkScalar& b, gkScalar t)
 {
 	gkScalar s = 1.f - t;
 	return s * a + t * b;
 }
 
 
-void gkMathUtils::extractTransform(const gkMatrix4 &m, gkVector3 &loc, gkQuaternion &quat, gkVector3 &scale)
+void gkMathUtils::extractTransform(const gkMatrix4& m, gkVector3& loc, gkQuaternion& quat, gkVector3& scale)
 {
 	// extract translation
 	loc = m.getTrans();
@@ -227,7 +227,7 @@ void gkMathUtils::extractTransform(const gkMatrix4 &m, gkVector3 &loc, gkQuatern
 
 
 
-void gkMathUtils::extractTransformFast(const gkMatrix4 &m, gkVector3 &loc, gkQuaternion &quat, gkVector3 &scale, bool getScale)
+void gkMathUtils::extractTransformFast(const gkMatrix4& m, gkVector3& loc, gkQuaternion& quat, gkVector3& scale, bool getScale)
 {
 	// extract translation
 	loc = m.getTrans();
@@ -245,7 +245,7 @@ void gkMathUtils::extractTransformFast(const gkMatrix4 &m, gkVector3 &loc, gkQua
 
 
 
-void gkMathUtils::blendMatrixFast(gkMatrix4 &dest, const gkMatrix4 &A, const gkMatrix4 &B, gkScalar fact, bool fastRot, bool getScale)
+void gkMathUtils::blendMatrixFast(gkMatrix4& dest, const gkMatrix4& A, const gkMatrix4& B, gkScalar fact, bool fastRot, bool getScale)
 {
 	if (fact <= 0)
 	{
@@ -280,7 +280,7 @@ void gkMathUtils::blendMatrixFast(gkMatrix4 &dest, const gkMatrix4 &A, const gkM
 }
 
 
-void gkMathUtils::extractMatrix(const float m[][4], gkVector3 &loc, gkQuaternion &quat, gkVector3 &scale)
+void gkMathUtils::extractMatrix(const float m[][4], gkVector3& loc, gkQuaternion& quat, gkVector3& scale)
 {
 	// Used for extracting transforms from a Blender4x4 matrix
 	gkMatrix4 btomat = getFromFloat(m);

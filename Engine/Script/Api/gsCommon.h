@@ -63,10 +63,10 @@
     T *get(void) {return static_cast<T *>(membername);}
 
 #define OGRE_KIT_TEMPLATE_NEW(W, T)\
-	static W* createNew(T *ob);\
+    static W* createNew(T *ob);\
 
 #define OGRE_KIT_TEMPLATE_NEW_INLINE(W, T)\
-	static W* createNew(T *ob) {return new W(ob); }
+    static W* createNew(T *ob) {return new W(ob); }
 
 
 
@@ -77,13 +77,13 @@
 #define OGRE_KIT_NEW(B)  B::createNew(val)
 
 
-#define OGRE_KIT_LOGIC_BRICK(base)							\
-	OGRE_KIT_WRAP_BASE_COPY_CTOR(gs##base, gkLogicBrick);	\
-	OGRE_KIT_TEMPLATE_CAST(gk##base, m_brick)
+#define OGRE_KIT_LOGIC_BRICK(base)                            \
+    OGRE_KIT_WRAP_BASE_COPY_CTOR(gs##base, gkLogicBrick);    \
+    OGRE_KIT_TEMPLATE_CAST(gk##base, m_brick)
 
-#define OGRE_KIT_LOGIC_BRICK_BASE(base)							\
-	OGRE_KIT_WRAP_BASE_COPY_CTOR(gs##base, gkLogicBrick);	\
-	OGRE_KIT_TEMPLATE_CAST(gk##Logic##base, m_brick)
+#define OGRE_KIT_LOGIC_BRICK_BASE(base)                            \
+    OGRE_KIT_WRAP_BASE_COPY_CTOR(gs##base, gkLogicBrick);    \
+    OGRE_KIT_TEMPLATE_CAST(gk##Logic##base, m_brick)
 
 #endif
 

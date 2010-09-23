@@ -37,7 +37,7 @@
 
 
 
-gkSkyBoxGradient* gkMaterialLoader::loadSceneMaterial(class gkScene *sc, const gkSceneMaterial& material)
+gkSkyBoxGradient* gkMaterialLoader::loadSceneMaterial(class gkScene* sc, const gkSceneMaterial& material)
 {
 	const gkSceneMaterial& mat = material;
 
@@ -46,21 +46,21 @@ gkSkyBoxGradient* gkMaterialLoader::loadSceneMaterial(class gkScene *sc, const g
 	if (!matptr.isNull())
 	{
 		sc->getManager()->setSkyBox(true, mat.m_name, mat.m_distance, true, gkEuler(-90, 0, 0).toQuaternion());
-		return 0; 
+		return 0;
 	}
 
 	if (mat.m_type == gkSceneMaterial::FLAT)
 		return 0;
-	gkSkyBoxGradient *grad = new gkSkyBoxGradient(mat);
+	gkSkyBoxGradient* grad = new gkSkyBoxGradient(mat);
 	sc->getManager()->setSkyBox(true, mat.m_name, mat.m_distance, true);
 	return grad;
 }
 
 
 
-void gkMaterialLoader::loadSubMeshMaterial(gkSubMesh *mesh)
+void gkMaterialLoader::loadSubMeshMaterial(gkSubMesh* mesh)
 {
-	gkMaterialProperties &gma = mesh->getMaterial();
+	gkMaterialProperties& gma = mesh->getMaterial();
 	if (gma.m_name.empty())
 		gma.m_name = "<gkBuiltin/DefaultMaterial>";
 
@@ -111,12 +111,12 @@ void gkMaterialLoader::loadSubMeshMaterial(gkSubMesh *mesh)
 		oma->setShininess(gma.m_hardness);
 	}
 
-	Ogre::Pass *pass = oma->getTechnique(0)->getPass(0);
+	Ogre::Pass* pass = oma->getTechnique(0)->getPass(0);
 
-	for (int i=0; i<gma.m_totaltex; ++i)
+	for (int i = 0; i < gma.m_totaltex; ++i)
 	{
-		gkTexureProperties &gte = gma.m_textures[i];
-		Ogre::TextureUnitState *otus = pass->createTextureUnitState(gte.m_name.c_str(), gte.m_layer);
+		gkTexureProperties& gte = gma.m_textures[i];
+		Ogre::TextureUnitState* otus = pass->createTextureUnitState(gte.m_name.c_str(), gte.m_layer);
 		otus->setColourOperation(Ogre::LBO_MODULATE);
 	}
 
@@ -125,5 +125,5 @@ void gkMaterialLoader::loadSubMeshMaterial(gkSubMesh *mesh)
 		pass->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
 		pass->setAlphaRejectSettings(Ogre::CMPF_GREATER_EQUAL, 150);
 		pass->setDepthWriteEnabled(false);
-	}}
-
+	}
+}

@@ -27,15 +27,15 @@
 
 #include "vdBulletSerializeNode.h"
 
-vdBulletSerializeNode::vdBulletSerializeNode(gkLogicTree *parent, size_t id)
-		: gkLogicNode(parent, id), m_fileName("")
+vdBulletSerializeNode::vdBulletSerializeNode(gkLogicTree* parent, size_t id)
+	: gkLogicNode(parent, id), m_fileName("")
 {
 	ADD_ISOCK(SERIALIZE, true);
 }
 
 void vdBulletSerializeNode::update(gkScalar tick)
 {
-	if(GET_SOCKET_VALUE(SERIALIZE) && m_fileName != "")
+	if (GET_SOCKET_VALUE(SERIALIZE) && m_fileName != "")
 	{
 		gkEngine::getSingleton().getActiveScene()->getDynamicsWorld()->exportBullet(m_fileName);
 	}

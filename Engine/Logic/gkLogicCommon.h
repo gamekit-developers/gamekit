@@ -39,63 +39,63 @@ class gkGameObject;
 
 typedef enum gkMotionTypes
 {
-    MT_NONE = -1,
-    MT_ROTATION,
-    MT_TRANSLATION,
-    MT_SCALE,
-    MT_FORCE,
-    MT_TORQUE,
-    MT_LINV,
-    MT_ANGV,
-}gkMotionTypes;
+	MT_NONE = -1,
+	MT_ROTATION,
+	MT_TRANSLATION,
+	MT_SCALE,
+	MT_FORCE,
+	MT_TORQUE,
+	MT_LINV,
+	MT_ANGV,
+} gkMotionTypes;
 
 typedef enum gkMathFunction
 {
-    MTH_NO_FUNC = -1,
-    MTH_ADD,
-    MTH_SUBTRACT,
-    MTH_MULTIPLY,
-    MTH_DIVIDE,
-    MTH_SINE,
-    MTH_COSINE,
-    MTH_TANGENT,
-    MTH_ARCSINE,
-    MTH_ARCCOSINE,
-    MTH_ARCTANGENT,
-    MTH_POWER,
-    MTH_LOGARITHM,
-    MTH_MINIMUM,
-    MTH_MAXIMUM,
-    MTH_ROUND,
-    MTH_LESS_THAN,
-    MTH_GREATER_THAN,
-    MTH_SQRT,
-    MTH_SQR,
-}gkMathFunction;
+	MTH_NO_FUNC = -1,
+	MTH_ADD,
+	MTH_SUBTRACT,
+	MTH_MULTIPLY,
+	MTH_DIVIDE,
+	MTH_SINE,
+	MTH_COSINE,
+	MTH_TANGENT,
+	MTH_ARCSINE,
+	MTH_ARCCOSINE,
+	MTH_ARCTANGENT,
+	MTH_POWER,
+	MTH_LOGARITHM,
+	MTH_MINIMUM,
+	MTH_MAXIMUM,
+	MTH_ROUND,
+	MTH_LESS_THAN,
+	MTH_GREATER_THAN,
+	MTH_SQRT,
+	MTH_SQR,
+} gkMathFunction;
 
 typedef enum gkBoolStatement
 {
-    CMP_NULL = 0,
-    CMP_TRUE,
-    CMP_FALSE,
-    CMP_AND,
-    CMP_OR,
-    CMP_NOT,
-    CMP_EQUALS,
-    CMP_NOT_EQUAL,
-    CMP_GREATER,
-    CMP_LESS,
-    CMP_GTHAN,
-    CMP_LTHAN,
+	CMP_NULL = 0,
+	CMP_TRUE,
+	CMP_FALSE,
+	CMP_AND,
+	CMP_OR,
+	CMP_NOT,
+	CMP_EQUALS,
+	CMP_NOT_EQUAL,
+	CMP_GREATER,
+	CMP_LESS,
+	CMP_GTHAN,
+	CMP_LTHAN,
 	CMP_FIND,
 } gkBoolStatement;
 
 typedef enum gkObjectFunction
 {
-    OB_FUNC_NONE = 0,
-    OB_FUNC_DESTROY,
-    OB_FUNC_ADD,
-}gkObjectFunction;
+	OB_FUNC_NONE = 0,
+	OB_FUNC_DESTROY,
+	OB_FUNC_ADD,
+} gkObjectFunction;
 
 
 #endif//_gkLogicCommon_h_

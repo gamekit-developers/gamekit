@@ -31,10 +31,10 @@
 #include "gkCriticalSection.h"
 #include "gkCommon.h"
 
-template<typename T> 
+template<typename T>
 class gkQueue : gkNonCopyable
 {
-public:	
+public:
 
 	gkQueue(const gkString& name);
 
@@ -64,29 +64,29 @@ private:
 	gkSyncObj m_syncObj;
 
 	std::deque<T> m_queue;
-	
+
 	bool m_petitionToFinish;
 
 	gkString m_name;
 };
 
-template< typename T > 
+template< typename T >
 gkQueue<T>::gkQueue(const gkString& name)
-: m_name(name)
+	: m_name(name)
 {
 }
 
-template< typename T > 
+template< typename T >
 gkQueue<T>::~gkQueue()
 {
 }
 
-template< typename T > 
+template< typename T >
 void gkQueue<T>::push(const T& obj, bool front)
 {
 	gkCriticalSection::Lock guard(m_cs);
 
-	if(front)
+	if (front)
 	{
 		m_queue.push_front(obj);
 	}
@@ -98,16 +98,16 @@ void gkQueue<T>::push(const T& obj, bool front)
 	m_syncObj.signal();
 }
 
-template< typename T > 
+template< typename T >
 bool gkQueue<T>::pop(T& obj)
 {
 	m_syncObj.wait();
 
 	gkCriticalSection::Lock guard(m_cs);
 
-	if(m_queue.empty())
+	if (m_queue.empty())
 	{
-		if(m_petitionToFinish)
+		if (m_petitionToFinish)
 		{
 			return false;
 		}
@@ -126,7 +126,7 @@ bool gkQueue<T>::pop(T& obj)
 	return true;
 }
 
-template< typename T > 
+template< typename T >
 void gkQueue<T>::petitionToFinish()
 {
 	gkCriticalSection::Lock guard(m_cs);
@@ -136,7 +136,7 @@ void gkQueue<T>::petitionToFinish()
 	m_syncObj.signal();
 }
 
-template< typename T > 
+template< typename T >
 bool gkQueue<T>::isEmpty() const
 {
 	gkCriticalSection::Lock guard(m_cs);
@@ -145,7 +145,7 @@ bool gkQueue<T>::isEmpty() const
 }
 
 
-template< typename T > 
+template< typename T >
 void gkQueue<T>::reset()
 {
 	gkCriticalSection::Lock guard(m_cs);
@@ -153,12 +153,12 @@ void gkQueue<T>::reset()
 	m_queue.clear();
 }
 
-template< typename T > 
+template< typename T >
 void gkQueue<T>::resetButKeepLast()
 {
 	gkCriticalSection::Lock guard(m_cs);
 
-	while(m_queue.size() > 1)
+	while (m_queue.size() > 1)
 	{
 		m_syncObj.wait();
 

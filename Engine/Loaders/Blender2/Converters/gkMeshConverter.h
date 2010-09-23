@@ -33,13 +33,13 @@
 
 namespace Blender
 {
-	class Object;
-	class Mesh;
-	class MDeformVert;
-	class Material;
-	class Image;
-	class MCol;
-	class MTex;
+class Object;
+class Mesh;
+class MDeformVert;
+class Material;
+class Image;
+class MCol;
+class MTex;
 }
 
 class gkBlendFile;
@@ -50,7 +50,7 @@ class gkBlenderMeshConverter
 {
 public:
 
-	gkBlenderMeshConverter(gkMesh *gmesh, Blender::Object *bobject, Blender::Mesh *bmesh);
+	gkBlenderMeshConverter(gkMesh* gmesh, Blender::Object* bobject, Blender::Mesh* bmesh);
 	~gkBlenderMeshConverter();
 
 	void convert(void);
@@ -63,19 +63,19 @@ private:
 	typedef utArray<gkDeformVertex>                     AssignmentList;
 	typedef utHashTable<utIntHashKey, AssignmentList>   AssignmentListMap;
 
-	void convertBoneAssignments(int dgi, AssignmentListMap &dest);
-	void assignBoneAssignments(gkSubMesh *me, AssignmentListMap &dest);
-	void findWeight(int i, gkSubMesh *me, AssignmentListMap &dest);
+	void convertBoneAssignments(int dgi, AssignmentListMap& dest);
+	void assignBoneAssignments(gkSubMesh* me, AssignmentListMap& dest);
+	void findWeight(int i, gkSubMesh* me, AssignmentListMap& dest);
 
 
 	struct PackedFace
 	{
-		Blender::MDeformVert    *dverts;
-		Blender::MVert          *verts;
+		Blender::MDeformVert*    dverts;
+		Blender::MVert*          verts;
 		gkVector2               uvLayers[8][4];
 		int                     totlay;
-		unsigned int            *colors;
-		unsigned int            *index;
+		unsigned int*            colors;
+		unsigned int*            index;
 	};
 
 
@@ -86,27 +86,27 @@ private:
 	};
 
 
-	void convertIndexedTriangle( TempFace *dest,
+	void convertIndexedTriangle( TempFace* dest,
 	                             unsigned int v0,
 	                             unsigned int v1,
 	                             unsigned int v2,
-	                             PackedFace &face
+	                             PackedFace& face
 	                           );
 
-	void calcNormal(TempFace *tri);
+	void calcNormal(TempFace* tri);
 
-	void convertMaterial(Blender::Material *bma, gkMaterialProperties &gma, class gkMeshHashKey &hk);
-	void convertTextureFace(gkMaterialProperties &gma, class gkMeshHashKey &hk, Blender::Image **imas);
+	void convertMaterial(Blender::Material* bma, gkMaterialProperties& gma, class gkMeshHashKey& hk);
+	void convertTextureFace(gkMaterialProperties& gma, class gkMeshHashKey& hk, Blender::Image** imas);
 
-	int findTextureLayer(Blender::MTex *te);
+	int findTextureLayer(Blender::MTex* te);
 
 
 	unsigned int packColour(const Blender::MCol& col, bool opengl);
 
 
-	gkMesh          *m_gmesh;
-	Blender::Mesh   *m_bmesh;
-	Blender::Object *m_bobj;
+	gkMesh*          m_gmesh;
+	Blender::Mesh*   m_bmesh;
+	Blender::Object* m_bobj;
 };
 
 

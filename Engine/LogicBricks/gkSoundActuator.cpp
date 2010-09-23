@@ -33,7 +33,7 @@
 
 
 
-gkSoundActuator::gkSoundActuator(gkGameObject *object, gkLogicLink *link, const gkString &name)
+gkSoundActuator::gkSoundActuator(gkGameObject* object, gkLogicLink* link, const gkString& name)
 	:   gkLogicActuator(object, link, name),
 	    m_mode(SA_PLAY_STOP),
 	    m_sndInit(false),
@@ -52,9 +52,9 @@ gkSoundActuator::~gkSoundActuator()
 
 
 
-gkLogicBrick *gkSoundActuator::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick* gkSoundActuator::clone(gkLogicLink* link, gkGameObject* dest)
 {
-	gkSoundActuator *act = new gkSoundActuator(*this);
+	gkSoundActuator* act = new gkSoundActuator(*this);
 	act->cloneImpl(link, dest);
 	act->m_player = 0;
 	act->m_sound = 0;

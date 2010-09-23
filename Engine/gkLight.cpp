@@ -33,7 +33,7 @@
 
 
 
-gkLight::gkLight(gkInstancedManager *creator, const gkResourceName& name, const gkResourceHandle& handle)
+gkLight::gkLight(gkInstancedManager* creator, const gkResourceName& name, const gkResourceHandle& handle)
 	:    gkGameObject(creator, name, handle, GK_LIGHT),
 	     m_lightProps(), m_light(0)
 {
@@ -78,7 +78,7 @@ void gkLight::createInstanceImpl(void)
 
 	GK_ASSERT(!m_light);
 
-	Ogre::SceneManager *manager = m_scene->getManager();
+	Ogre::SceneManager* manager = m_scene->getManager();
 
 	m_light = manager->createLight(m_name.str());
 	m_node->attachObject(m_light);
@@ -95,7 +95,7 @@ void gkLight::destroyInstanceImpl(void)
 
 	if (!m_scene->isBeingDestroyed())
 	{
-		Ogre::SceneManager *manager = m_scene->getManager();
+		Ogre::SceneManager* manager = m_scene->getManager();
 
 		m_node->detachObject(m_light);
 		manager->destroyLight(m_light);
@@ -108,9 +108,9 @@ void gkLight::destroyInstanceImpl(void)
 
 
 
-gkGameObject *gkLight::clone(const gkString &name)
+gkGameObject* gkLight::clone(const gkString& name)
 {
-	gkLight *cl = new gkLight(getInstanceCreator(), name, -1);
+	gkLight* cl = new gkLight(getInstanceCreator(), name, -1);
 	memcpy(&cl->m_lightProps, &m_lightProps, sizeof(gkLightProperties));
 
 	gkGameObject::cloneImpl(cl);

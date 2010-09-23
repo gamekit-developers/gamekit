@@ -31,11 +31,11 @@
 
 
 gkConstraint::gkConstraint()
-    :   m_object(0),
-        m_space(TRANSFORM_LOCAL),
-        m_influence(1.0)
+	:   m_object(0),
+	    m_space(TRANSFORM_LOCAL),
+	    m_influence(1.0)
 {
-    m_matrix.setIdentity();
+	m_matrix.setIdentity();
 }
 
 

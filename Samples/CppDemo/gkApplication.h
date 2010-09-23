@@ -37,19 +37,19 @@ class gkGamePlayer;
 
 namespace gkAppData
 {
-	static const gkScalar gkJoyMax            = 32767.f;
-	static const gkScalar gkJoyDeadZone       = gkJoyMax / 5.f;
-	static const gkScalar gkJoyReboundFac     = 2.95f;
-	static const gkScalar gkJoyWalkToRunTol   = 0.875f;
-	static const gkScalar gkFixedTickDelta    = 1.f / 60.f;
-	static const gkScalar gkFixedTickDelta2   = 2.f * gkFixedTickDelta;
-	static const gkScalar gkAnimationTick     = (25.f * gkFixedTickDelta);
-	static const gkScalar gkAnimationTickFast = (32.f * gkFixedTickDelta);
-	static const gkScalar gkAnimationAttack   = (40.f * gkFixedTickDelta);
-	static const gkScalar gkPlayerHeadZ       = 0.25f;
-	static const gkScalar gkPlayerImpulseZ    = 8.25f;
-	static const gkScalar gkCameraTol         = 0.25f;
-	static const gkScalar gkGlobalActionBlend = 35.98765f;
+static const gkScalar gkJoyMax            = 32767.f;
+static const gkScalar gkJoyDeadZone       = gkJoyMax / 5.f;
+static const gkScalar gkJoyReboundFac     = 2.95f;
+static const gkScalar gkJoyWalkToRunTol   = 0.875f;
+static const gkScalar gkFixedTickDelta    = 1.f / 60.f;
+static const gkScalar gkFixedTickDelta2   = 2.f* gkFixedTickDelta;
+static const gkScalar gkAnimationTick     = (25.f* gkFixedTickDelta);
+static const gkScalar gkAnimationTickFast = (32.f* gkFixedTickDelta);
+static const gkScalar gkAnimationAttack   = (40.f* gkFixedTickDelta);
+static const gkScalar gkPlayerHeadZ       = 0.25f;
+static const gkScalar gkPlayerImpulseZ    = 8.25f;
+static const gkScalar gkCameraTol         = 0.25f;
+static const gkScalar gkGlobalActionBlend = 35.98765f;
 };
 
 
@@ -109,7 +109,7 @@ struct gkJoystickAxisState
 
 	GK_INLINE void normalize(void)
 	{
-		m_normal = m_absolute / gkAppData::gkJoyMax; 
+		m_normal = m_absolute / gkAppData::gkJoyMax;
 		m_normal.x = gkClampf(m_normal.x, -1.f, 1.f);
 		m_normal.y = gkClampf(m_normal.y, -1.f, 1.f);
 
@@ -151,9 +151,9 @@ enum gkJoystickButtons
 };
 
 
-#define GK_RESOURCE_MAPS	"Maps.blend"
-#define GK_RESOURCE_PLAYER	"Momo.blend"
-#define GK_RESOURCE_NPC		"Rat.blend"
+#define GK_RESOURCE_MAPS    "Maps.blend"
+#define GK_RESOURCE_PLAYER    "Momo.blend"
+#define GK_RESOURCE_NPC        "Rat.blend"
 
 #define GK_RESOURCE_PLAYER_MESH "MeshMomo"
 #define GK_RESOURCE_PLAYER_SKEL "RigMomo"
@@ -163,14 +163,14 @@ enum gkJoystickButtons
 #define GK_RESOURCE_PLAYER_XROT "xRot"
 
 #define FSM_TRANSITION_WHEN(fsm, f, t, e) \
-	fsm->addTransition(f, t)->when(new gkFSM::LogicEvent<gkGamePlayer>(this, &gkGamePlayer::e))
+    fsm->addTransition(f, t)->when(new gkFSM::LogicEvent<gkGamePlayer>(this, &gkGamePlayer::e))
 #define FSM_TRANSITION_WHEN_DELAY(fsm, f, t, d, e) \
-	fsm->addTransition(f, t, d)->when(new gkFSM::LogicEvent<gkGamePlayer>(this, &gkGamePlayer::e))
+    fsm->addTransition(f, t, d)->when(new gkFSM::LogicEvent<gkGamePlayer>(this, &gkGamePlayer::e))
 
 #define FSM_START_TRIG(fsm, s, e) \
-	fsm->addStartTrigger(s, new gkFSM::LogicTrigger<gkGamePlayer>(this, &gkGamePlayer::e))
+    fsm->addStartTrigger(s, new gkFSM::LogicTrigger<gkGamePlayer>(this, &gkGamePlayer::e))
 #define FSM_END_TRIG(fsm, s, e) \
-	fsm->addEndTrigger(s, new gkFSM::LogicTrigger<gkGamePlayer>(this, &gkGamePlayer::e))
+    fsm->addEndTrigger(s, new gkFSM::LogicTrigger<gkGamePlayer>(this, &gkGamePlayer::e))
 
 
 class gkHUD;

@@ -56,23 +56,23 @@ class gkPtrRef
 {
 public:
 
-	explicit gkPtrRef(T* p = 0) 
-	: m_obj(p) 
-	{ 
+	explicit gkPtrRef(T* p = 0)
+		: m_obj(p)
+	{
 	}
 
-	~gkPtrRef() 
-	{ 
-		if(m_obj)
+	~gkPtrRef()
+	{
+		if (m_obj)
 		{
-			m_obj->release(); 
+			m_obj->release();
 		}
 	}
 
 	gkPtrRef(const gkPtrRef& obj)
-	: m_obj(obj.m_obj)
+		: m_obj(obj.m_obj)
 	{
-		if(m_obj)
+		if (m_obj)
 		{
 			m_obj->addRef();
 		}
@@ -80,14 +80,14 @@ public:
 
 	gkPtrRef& operator = (const gkPtrRef& obj)
 	{
-		if(this != &obj) 
+		if (this != &obj)
 		{
-			if(obj.m_obj)
+			if (obj.m_obj)
 			{
 				obj.m_obj->addRef();
 			}
 
-			if(m_obj)
+			if (m_obj)
 			{
 				m_obj->release();
 			}
@@ -99,23 +99,23 @@ public:
 	}
 
 	T* get() const
-	{ 
-		return m_obj; 
+	{
+		return m_obj;
 	}
 
 
 	T& operator*() const
-	{ 
-		GK_ASSERT(m_obj); 
-		
-		return *m_obj; 
-	}
-	
-	T* operator->() const
-	{ 
-		GK_ASSERT(m_obj); 
+	{
+		GK_ASSERT(m_obj);
 
-		return m_obj; 
+		return *m_obj;
+	}
+
+	T* operator->() const
+	{
+		GK_ASSERT(m_obj);
+
+		return m_obj;
 	}
 
 private:

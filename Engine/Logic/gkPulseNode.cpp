@@ -27,8 +27,8 @@
 #include "gkPulseNode.h"
 #include "gkLogger.h"
 
-gkPulseNode::gkPulseNode(gkLogicTree *parent, size_t id) 
-: gkLogicNode(parent, id)
+gkPulseNode::gkPulseNode(gkLogicTree* parent, size_t id)
+	: gkLogicNode(parent, id)
 {
 	ADD_ISOCK(UPDATE, false);
 	ADD_OSOCK(OUTPUT, false);
@@ -38,7 +38,7 @@ bool gkPulseNode::evaluate(gkScalar tick)
 {
 	bool update = GET_SOCKET_VALUE(UPDATE);
 
-	if(!update)
+	if (!update)
 	{
 		SET_SOCKET_VALUE(OUTPUT, false);
 	}

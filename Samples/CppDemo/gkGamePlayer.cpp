@@ -35,28 +35,28 @@
 
 
 
-gkGamePlayer::gkGamePlayer(gkGameLevel *levelData) 
-	:	m_levelData(levelData),
-		m_physics(0),
-		m_xRot(0),
-		m_zRot(0),
-		m_camera(0),
-		m_entity(0),
-		m_skeleton(0),
-		m_idleSwitch(0),
-		m_jumpFrom(-1),
-		m_btn1Cache(0),
-		m_btn2Cache(0),
-		m_btn3Cache(0),
-		m_isBtn1(false),
-		m_isBtn2(false),
-		m_isBtn3(false),
-		m_textInit(false),
-		m_momoData(0),
-		m_currentState(0),
-		m_cameraData(0),
-		m_cameraState(0),
-		m_comboAttack(0)
+gkGamePlayer::gkGamePlayer(gkGameLevel* levelData)
+	:    m_levelData(levelData),
+	     m_physics(0),
+	     m_xRot(0),
+	     m_zRot(0),
+	     m_camera(0),
+	     m_entity(0),
+	     m_skeleton(0),
+	     m_idleSwitch(0),
+	     m_jumpFrom(-1),
+	     m_btn1Cache(0),
+	     m_btn2Cache(0),
+	     m_btn3Cache(0),
+	     m_isBtn1(false),
+	     m_isBtn2(false),
+	     m_isBtn3(false),
+	     m_textInit(false),
+	     m_momoData(0),
+	     m_currentState(0),
+	     m_cameraData(0),
+	     m_cameraState(0),
+	     m_comboAttack(0)
 {
 }
 
@@ -68,20 +68,20 @@ gkGamePlayer::~gkGamePlayer()
 
 
 
-void gkGamePlayer::load(gkBlendFile *playerData)
+void gkGamePlayer::load(gkBlendFile* playerData)
 {
-	gkScene *dest = m_levelData->getLevel();
-	gkScene *tscene = playerData->getMainScene();
+	gkScene* dest = m_levelData->getLevel();
+	gkScene* tscene = playerData->getMainScene();
 
 
 	GK_ASSERT(
-		tscene->hasObject(GK_RESOURCE_PLAYER_SKEL) && 
-		tscene->hasObject(GK_RESOURCE_PLAYER_MESH) && 
-		tscene->hasObject(GK_RESOURCE_PLAYER_VIEW) && 
-		tscene->hasObject(GK_RESOURCE_PLAYER_ZROT) && 
-		tscene->hasObject(GK_RESOURCE_PLAYER_XROT) && 
-		tscene->hasObject(GK_RESOURCE_PLAYER_PHYS)
-		);
+	    tscene->hasObject(GK_RESOURCE_PLAYER_SKEL) &&
+	    tscene->hasObject(GK_RESOURCE_PLAYER_MESH) &&
+	    tscene->hasObject(GK_RESOURCE_PLAYER_VIEW) &&
+	    tscene->hasObject(GK_RESOURCE_PLAYER_ZROT) &&
+	    tscene->hasObject(GK_RESOURCE_PLAYER_XROT) &&
+	    tscene->hasObject(GK_RESOURCE_PLAYER_PHYS)
+	);
 
 
 	m_skeleton = tscene->getObject(GK_RESOURCE_PLAYER_SKEL)->getSkeleton();
@@ -100,17 +100,17 @@ void gkGamePlayer::load(gkBlendFile *playerData)
 	dest->addObject(m_physics);
 
 
-	gkPhysicsProperties &props = m_physics->getProperties().m_physics;
+	gkPhysicsProperties& props = m_physics->getProperties().m_physics;
 	props.m_mode |= GK_CONTACT;
 
 
 
-	// add constraint clamping 
-	gkLimitRotConstraint *lr = new gkLimitRotConstraint();
+	// add constraint clamping
+	gkLimitRotConstraint* lr = new gkLimitRotConstraint();
 	lr->setLimitX(gkVector2(-90, 5));
 	dest->addConstraint(m_xRot, lr);
 
-	gkLimitLocConstraint *ll = new gkLimitLocConstraint();
+	gkLimitLocConstraint* ll = new gkLimitLocConstraint();
 	ll->setMinX(-30.f);
 	ll->setMaxX(30.f);
 	ll->setMinY(-30.f);
@@ -118,9 +118,9 @@ void gkGamePlayer::load(gkBlendFile *playerData)
 	ll->setMinZ(0.f);
 	ll->setMaxZ(30.f);
 	dest->addConstraint(m_physics, ll);
-	
-	
-	gkCollisionCameraConstraint *col = new gkCollisionCameraConstraint();
+
+
+	gkCollisionCameraConstraint* col = new gkCollisionCameraConstraint();
 	col->setTarget(m_physics);
 	col->setLength(.95f);
 	col->setForwardOffs(.125f);
@@ -128,7 +128,7 @@ void gkGamePlayer::load(gkBlendFile *playerData)
 	dest->addConstraint(m_camera, col);
 
 
-	
+
 	m_camera->setMainCamera(true);
 
 
@@ -144,7 +144,7 @@ void gkGamePlayer::load(gkBlendFile *playerData)
 	m_animations[GK_ANIM_WALL_FLIP]   = m_skeleton->getAction("Momo_WallFlip");
 
 	//m_animations[GK_ANIM_WALL_FLIP]->setMode(GK_ACT_END | GK_ACT_INVERSE);
-	m_animations[GK_ANIM_IDLE_CURRENT]= m_animations[GK_ANIM_IDLE];
+	m_animations[GK_ANIM_IDLE_CURRENT] = m_animations[GK_ANIM_IDLE];
 
 
 
@@ -209,17 +209,17 @@ void gkGamePlayer::load(gkBlendFile *playerData)
 	FSM_TRANSITION_WHEN(this, GK_PLAY_JUMP, GK_PLAY_RUN, isOnGroundAndFromRun);
 	FSM_TRANSITION_WHEN(this, GK_PLAY_JUMP, GK_PLAY_LAND, isOnGroundAndNotFromRun);
 
-	
+
 	FSM_TRANSITION_WHEN(this, GK_PLAY_LAND, GK_PLAY_IDLE, isLandingDone);
-	
-	
+
+
 	FSM_START_TRIG(this, GK_PLAY_IDLE, idleStart);
 	FSM_START_TRIG(this, GK_PLAY_JUMP, jumpStart);
 	FSM_START_TRIG(this, GK_PLAY_LAND, landStart);
 	FSM_START_TRIG(this, GK_PLAY_ATTACK_COMBO, comboStart);
 	FSM_START_TRIG(this, GK_PLAY_ATTACK_1, kickStart);
-	
-	
+
+
 	FSM_END_TRIG(this, GK_PLAY_RUN, runEnd);
 	FSM_END_TRIG(this, GK_PLAY_WALK, walkEnd);
 	FSM_END_TRIG(this, GK_PLAY_IDLE, idleEnd);
@@ -268,7 +268,7 @@ void gkGamePlayer::notifyState(int state)
 	{
 		switch (state)
 		{
-		case GK_PLAY_IDLE: 
+		case GK_PLAY_IDLE:
 			{
 				if (m_animations[GK_ANIM_IDLE_CURRENT] == m_animations[GK_ANIM_IDLE_NASTY])
 					m_currentState->setValue("IdleNasty");
@@ -340,10 +340,10 @@ bool gkGamePlayer::wantsToStop(void)
 }
 
 
-bool gkGamePlayer::isButtonDownCache(int btn, int &cache)
+bool gkGamePlayer::isButtonDownCache(int btn, int& cache)
 {
-	gkJoystick *js = m_levelData->getJoystick();
-	if (js) 
+	gkJoystick* js = m_levelData->getJoystick();
+	if (js)
 	{
 		bool result = js->isButtonDown(btn);
 
@@ -479,7 +479,7 @@ void gkGamePlayer::idleEnd(int from, int to)
 		{
 			m_jumpFrom = from;
 			applyJump();
-		}break;
+		} break;
 	case GK_PLAY_IDLE:
 		{
 			// do skid stop
@@ -499,7 +499,7 @@ void gkGamePlayer::walkEnd(int from, int to)
 		{
 			m_jumpFrom = from;
 			applyJump();
-		}break;
+		} break;
 	case GK_PLAY_IDLE:
 		{
 			// do skid stop
@@ -517,7 +517,7 @@ void gkGamePlayer::runEnd(int from, int to)
 		{
 			m_jumpFrom = from;
 			applyJump();
-		}break;
+		} break;
 	case GK_PLAY_RUN_ATTACK_0:
 	case GK_PLAY_RUN_ATTACK_1:
 		applyComboThrust();
@@ -545,7 +545,7 @@ void gkGamePlayer::jumpEnd(int from, int to)
 
 			// hit the ground running
 			m_animations[GK_ANIM_RUN]->setTimePosition(9.f);
-		}break;
+		} break;
 	case GK_PLAY_IDLE:
 		{
 			// do skid stop
@@ -604,10 +604,10 @@ void gkGamePlayer::kickEnd(int from, int to)
 
 bool gkGamePlayer::groundTest(void)
 {
-	gkScene *scene = m_physics->getOwner();
-	gkDynamicsWorld *dyn = scene->getDynamicsWorld();
+	gkScene* scene = m_physics->getOwner();
+	gkDynamicsWorld* dyn = scene->getDynamicsWorld();
 
-	btDynamicsWorld *btw = dyn->getBulletWorld();
+	btDynamicsWorld* btw = dyn->getBulletWorld();
 
 	const gkScalar range = gkAppData::gkPlayerHeadZ;
 	const gkScalar angle = range * gkMath::Tan(22.5f);
@@ -642,13 +642,13 @@ bool gkGamePlayer::groundTest(void)
 
 	if (!exec.m_contactObjects.empty())
 	{
-		utArray<const btCollisionObject *>::ConstIterator cit = exec.m_contactObjects.iterator();
+		utArray<const btCollisionObject*>::ConstIterator cit = exec.m_contactObjects.iterator();
 		while (cit.hasMoreElements())
 		{
-			gkGameObject *ob = gkPhysicsController::castObject(cit.getNext());
+			gkGameObject* ob = gkPhysicsController::castObject(cit.getNext());
 
-			if (gkPhysicsController::sensorTest(ob, "Floor", "", true) || 
-				gkPhysicsController::sensorTest(ob, "Crate", "", true))
+			if (gkPhysicsController::sensorTest(ob, "Floor", "", true) ||
+			        gkPhysicsController::sensorTest(ob, "Crate", "", true))
 			{
 				return true;
 			}
@@ -694,13 +694,13 @@ void gkGamePlayer::applyComboThrust(gkScalar fac)
 
 void gkGamePlayer::comboState(void)
 {
-	gkAction *prev = m_comboAttack->getActiveStrip();
+	gkAction* prev = m_comboAttack->getActiveStrip();
 
 
 	m_blendMgr.push(m_comboAttack, gkAppData::gkGlobalActionBlend);
 	m_blendMgr.evaluate(gkAppData::gkAnimationTick);
 
-	gkAction *cur = m_comboAttack->getActiveStrip();
+	gkAction* cur = m_comboAttack->getActiveStrip();
 
 
 	if (prev != cur && cur != m_animations[GK_ANIM_KICK])
@@ -809,8 +809,8 @@ void gkGamePlayer::cameraState(void)
 		gkString value;
 		value += "Pitch: " + cam_datap + "\n";
 		value += "Roll: " + cam_datar + "\n";
-		value += "AxisUD: " + gkVariable((int) (gkDPR *crAxUD / gkAppData::gkFixedTickDelta2)).getValueString() + "\n";
-		value += "AxisLR: " + gkVariable((int) (gkDPR *crAxLR / gkAppData::gkFixedTickDelta2)).getValueString() + "\n";
+		value += "AxisUD: " + gkVariable((int) (gkDPR * crAxUD / gkAppData::gkFixedTickDelta2)).getValueString() + "\n";
+		value += "AxisLR: " + gkVariable((int) (gkDPR * crAxLR / gkAppData::gkFixedTickDelta2)).getValueString() + "\n";
 
 
 		m_cameraState->setValue(value);
@@ -829,7 +829,7 @@ void gkGamePlayer::update(gkScalar delta)
 		setInitialText();
 	}
 
-	gkJoystick *js = m_levelData->getJoystick();
+	gkJoystick* js = m_levelData->getJoystick();
 
 	if (js)
 	{

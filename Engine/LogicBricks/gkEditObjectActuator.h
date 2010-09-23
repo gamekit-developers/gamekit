@@ -66,17 +66,17 @@ private:
 
 public:
 
-	gkEditObjectActuator(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	gkEditObjectActuator(gkGameObject* object, gkLogicLink* link, const gkString& name);
 	virtual ~gkEditObjectActuator();
 
-	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
+	gkLogicBrick* clone(gkLogicLink* link, gkGameObject* dest);
 
 	GK_INLINE void  setMode(int v)                  {m_mode = v;}
 	GK_INLINE void  setDynMode(int v)               {m_dynMode = v;}
-	GK_INLINE void  setObject(const gkString &v)    {m_obj = v;}
-	GK_INLINE void  setLinV(const gkVector3 &v)     {m_linv = v;}
+	GK_INLINE void  setObject(const gkString& v)    {m_obj = v;}
+	GK_INLINE void  setLinV(const gkVector3& v)     {m_linv = v;}
 	GK_INLINE void  setLinVL(bool v)                {m_lvlocal = v;}
-	GK_INLINE void  setAngV(const gkVector3 &v)     {m_angv = v;}
+	GK_INLINE void  setAngV(const gkVector3& v)     {m_angv = v;}
 	GK_INLINE void  setAngVL(bool v)                {m_avlocal = v;}
 	GK_INLINE void  setLifeSpan(int v)              {m_life = v;}
 
@@ -92,7 +92,7 @@ public:
 
 
 
-	
+
 	void execute(void);
 };
 

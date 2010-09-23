@@ -35,33 +35,33 @@ class btCollisionObject;
 class gkSweptTest
 {
 public:
-	typedef std::set<btCollisionObject *> AVOID_LIST;
+	typedef std::set<btCollisionObject*> AVOID_LIST;
 
-	gkSweptTest(const AVOID_LIST &avoidList);
+	gkSweptTest(const AVOID_LIST& avoidList);
 
 	~gkSweptTest();
 
-	bool collides(const Ogre::Ray &ray, gkScalar rayRadius);
+	bool collides(const Ogre::Ray& ray, gkScalar rayRadius);
 
-	const gkVector3 &getHitPoint() const { return m_hitPointWorld; }
+	const gkVector3& getHitPoint() const { return m_hitPointWorld; }
 
-	const gkVector3 &getHitNormal() const { return m_hitNormalWorld; }
+	const gkVector3& getHitNormal() const { return m_hitNormalWorld; }
 
-	const gkVector3 &getReflection() const { return m_reflection; }
+	const gkVector3& getReflection() const { return m_reflection; }
 
-	const gkVector3 &getSliding() const { return m_sliding; }
+	const gkVector3& getSliding() const { return m_sliding; }
 
-	btCollisionObject *getCollisionObject() const { return m_collisionObject; }
+	btCollisionObject* getCollisionObject() const { return m_collisionObject; }
 
-	gkGameObject *getObject() const;
+	gkGameObject* getObject() const;
 
 private:
 
-	const AVOID_LIST &m_avoidList;
+	const AVOID_LIST& m_avoidList;
 
 	gkVector3 m_hitPointWorld;
 
-	btCollisionObject *m_collisionObject;
+	btCollisionObject* m_collisionObject;
 
 	gkVector3 m_hitNormalWorld;
 

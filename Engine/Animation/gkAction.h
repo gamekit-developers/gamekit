@@ -50,7 +50,7 @@ enum gkActionEvalMode
 class gkAction
 {
 public:
-	typedef utArray<gkActionChannel *> Channels;
+	typedef utArray<gkActionChannel*> Channels;
 
 
 protected:
@@ -63,13 +63,13 @@ protected:
 	int                 m_mode;
 
 public:
-	gkAction(const gkString &name);
+	gkAction(const gkString& name);
 	~gkAction();
 
 	GK_INLINE gkScalar         getLength(void)       { return m_end - m_start; }
 	GK_INLINE gkScalar         getStart(void)        { return m_start; }
 	GK_INLINE gkScalar         getEnd(void)          { return m_end; }
-	GK_INLINE const gkString  &getName(void)         { return m_name; }
+	GK_INLINE const gkString&  getName(void)         { return m_name; }
 	GK_INLINE gkScalar         getBlendFrames(void)  { return m_blendFrames; }
 	GK_INLINE gkScalar         getTimePosition(void) { return m_evalTime; }
 	GK_INLINE gkScalar         getWeight(void)       { return m_weight; }
@@ -85,14 +85,14 @@ public:
 	GK_INLINE void setMode(int v)       { m_mode = v; }
 
 
-	void addChannel(gkActionChannel *chan);
-	gkActionChannel *getChannel(gkBone *bone);
+	void addChannel(gkActionChannel* chan);
+	gkActionChannel* getChannel(gkBone* bone);
 
-	
+
 	void setBlendFrames(gkScalar v);
 	void setTimePosition(gkScalar v);
 	void setWeight(gkScalar w);
-	
+
 
 	GK_INLINE void enable(bool v)   {m_enabled = v;}
 	GK_INLINE bool isEnabled(void)  {return m_enabled;}

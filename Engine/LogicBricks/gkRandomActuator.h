@@ -50,7 +50,7 @@ public:
 	};
 
 private:
-	utRandomNumberGenerator *m_randGen;
+	utRandomNumberGenerator* m_randGen;
 	int m_distribution;
 	int m_seed;
 	gkString m_prop;
@@ -63,18 +63,18 @@ private:
 	int m_current, m_count;
 
 public:
-	gkRandomActuator(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	gkRandomActuator(gkGameObject* object, gkLogicLink* link, const gkString& name);
 	virtual ~gkRandomActuator();
-	
-	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
+
+	gkLogicBrick* clone(gkLogicLink* link, gkGameObject* dest);
 	void execute(void);
-	
+
 	void                      setSeed(int v);
 	GK_INLINE int             getSeed(void)                  {return m_seed;}
 	GK_INLINE void            setDistribution(int v)         {m_distribution = v;}
 	GK_INLINE int             getDistribution(void)          {return m_distribution;}
-	GK_INLINE void            setProperty(const gkString &v) {m_prop = v;}
-	GK_INLINE const gkString &getProperty(void)              {return m_prop;}
+	GK_INLINE void            setProperty(const gkString& v) {m_prop = v;}
+	GK_INLINE const gkString& getProperty(void)              {return m_prop;}
 	GK_INLINE void            setMin(float v)                {m_min = v;}
 	GK_INLINE float           getMin(void)                   {return m_min;}
 	GK_INLINE void            setMax(float v)                {m_max = v;}

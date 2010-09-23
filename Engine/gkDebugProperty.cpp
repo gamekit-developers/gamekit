@@ -61,11 +61,11 @@ void gkDebugPropertyPage::initialize(void)
 		// always initialize after gkDebugScreen!
 
 
-		Ogre::OverlayManager &mgr = Ogre::OverlayManager::getSingleton();
+		Ogre::OverlayManager& mgr = Ogre::OverlayManager::getSingleton();
 		m_over  = mgr.create("<gkBuiltin/gkDebugPropertyPage>");
 		m_key   = mgr.createOverlayElement("TextArea", "<gkBuiltin/gkDebugPropertyPage/Keys>");
 		m_val   = mgr.createOverlayElement("TextArea", "<gkBuiltin/gkDebugPropertyPage/Vals>");
-		m_cont  = (Ogre::OverlayContainer *)mgr.createOverlayElement("Panel", "<gkBuiltin/gkDebugPropertyPage/Containter1>");
+		m_cont  = (Ogre::OverlayContainer*)mgr.createOverlayElement("Panel", "<gkBuiltin/gkDebugPropertyPage/Containter1>");
 
 
 		m_cont->setMetricsMode(Ogre::GMM_PIXELS);
@@ -80,14 +80,14 @@ void gkDebugPropertyPage::initialize(void)
 		m_val->setVerticalAlignment(Ogre::GVA_TOP);
 		m_val->setHorizontalAlignment(Ogre::GHA_LEFT);
 
-		Ogre::TextAreaOverlayElement *textArea;
+		Ogre::TextAreaOverlayElement* textArea;
 
-		textArea = static_cast<Ogre::TextAreaOverlayElement *>(m_key);
+		textArea = static_cast<Ogre::TextAreaOverlayElement*>(m_key);
 		textArea->setFontName("<gkBuiltin/Font>");
 		textArea->setCharHeight(PROP_SIZE);
 		textArea->setColour(Ogre::ColourValue::White);
 
-		textArea = static_cast<Ogre::TextAreaOverlayElement *>(m_val);
+		textArea = static_cast<Ogre::TextAreaOverlayElement*>(m_val);
 		textArea->setFontName("<gkBuiltin/Font>");
 		textArea->setCharHeight(PROP_SIZE);
 		textArea->setColour(Ogre::ColourValue::White);
@@ -99,7 +99,7 @@ void gkDebugPropertyPage::initialize(void)
 		m_cont->addChild(m_val);
 		m_over->add2D(m_cont);
 	}
-	catch (Ogre::Exception &e)
+	catch (Ogre::Exception& e)
 	{
 		gkPrintf("%s", e.getDescription().c_str());
 		return;
@@ -124,7 +124,7 @@ void gkDebugPropertyPage::show(bool v)
 
 
 
-void gkDebugPropertyPage::addVariable(gkVariable *prop)
+void gkDebugPropertyPage::addVariable(gkVariable* prop)
 {
 	if (hasVariable(prop))
 		return;
@@ -150,7 +150,7 @@ void gkDebugPropertyPage::addVariable(gkVariable *prop)
 
 
 
-void gkDebugPropertyPage::removeVariable(gkVariable *prop)
+void gkDebugPropertyPage::removeVariable(gkVariable* prop)
 {
 	VariableList::Pointer p = m_props.find(prop);
 	if (p != 0)
@@ -159,7 +159,7 @@ void gkDebugPropertyPage::removeVariable(gkVariable *prop)
 
 
 
-bool gkDebugPropertyPage::hasVariable(gkVariable *prop)
+bool gkDebugPropertyPage::hasVariable(gkVariable* prop)
 {
 	return m_props.find(prop) != 0;
 }
@@ -181,11 +181,11 @@ void gkDebugPropertyPage::draw(void)
 
 	utListIterator<VariableList> iter(m_props);
 
-	gkString keys = "", vals="";
+	gkString keys = "", vals = "";
 
 	while (iter.hasMoreElements())
 	{
-		gkVariable *prop = iter.getNext();
+		gkVariable* prop = iter.getNext();
 		keys += prop->getName() + ":\n";
 		vals += prop->getValueString() + '\n';
 	}

@@ -43,7 +43,7 @@ public:
 
 
 private:
-	void loadSubMesh(Ogre::SubMesh* submesh, gkSubMesh *gks);
+	void loadSubMesh(Ogre::SubMesh* submesh, gkSubMesh* gks);
 	void loadResource(Ogre::Resource* res);
 
 	gkMesh* m_mesh;

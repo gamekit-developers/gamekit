@@ -36,8 +36,8 @@ class gkSoundStream
 public:
 	virtual ~gkSoundStream() {}
 
-	virtual const char *read(UTsize len, UTsize &br) = 0;
-	virtual const char *read(UTsize pos, UTsize len, UTsize &br) = 0;
+	virtual const char* read(UTsize len, UTsize& br) = 0;
+	virtual const char* read(UTsize pos, UTsize len, UTsize& br) = 0;
 
 	virtual bool        eos(void) = 0;
 	virtual void        seek(UTsize pos, int way) = 0;

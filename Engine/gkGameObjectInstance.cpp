@@ -35,10 +35,10 @@
 
 
 
-gkGameObjectInstance::gkGameObjectInstance(gkInstancedManager *creator, const gkResourceName& name, const gkResourceHandle& handle)
-	:	gkInstancedObject(creator, name, handle),
-		m_parent(0), m_scene(0), m_owner(0),
-		m_uidName(gkString("/UID{" + gkToString((int)handle) + "}"))
+gkGameObjectInstance::gkGameObjectInstance(gkInstancedManager* creator, const gkResourceName& name, const gkResourceHandle& handle)
+	:    gkInstancedObject(creator, name, handle),
+	     m_parent(0), m_scene(0), m_owner(0),
+	     m_uidName(gkString("/UID{" + gkToString((int)handle) + "}"))
 
 {
 }
@@ -215,7 +215,7 @@ bool gkGameObjectInstance::hasObject(gkGameObject* gobj)
 }
 
 
-void gkGameObjectInstance::cloneObjects(gkScene *scene, const gkTransformState& from, int time,
+void gkGameObjectInstance::cloneObjects(gkScene* scene, const gkTransformState& from, int time,
                                         const gkVector3& linearVelocity, bool tsLinLocal,
                                         const gkVector3& angularVelocity, bool tsAngLocal)
 {
@@ -279,12 +279,12 @@ void gkGameObjectInstance::createInstanceImpl(void)
 	}
 
 
-	gkScene *scene = m_owner->getOwner();
+	gkScene* scene = m_owner->getOwner();
 
 	Objects::Iterator iter = m_objects.iterator();
 	while (iter.hasMoreElements())
 	{
-		gkGameObject *gobj = iter.getNext().second;
+		gkGameObject* gobj = iter.getNext().second;
 
 		gobj->setOwner(scene);
 		gobj->createInstance();
@@ -310,7 +310,7 @@ void gkGameObjectInstance::destroyInstanceImpl(void)
 	Objects::Iterator iter = m_objects.iterator();
 	while (iter.hasMoreElements())
 	{
-		gkGameObject *gobj = iter.getNext().second;
+		gkGameObject* gobj = iter.getNext().second;
 
 		gobj->destroyInstance();
 		gobj->setOwner(0);

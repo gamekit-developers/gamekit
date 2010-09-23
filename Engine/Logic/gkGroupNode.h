@@ -29,13 +29,13 @@
 
 #include "gkLogicNode.h"
 
-// execute x number of subtrees  
+// execute x number of subtrees
 class gkGroupNode : public gkLogicNode
 {
 public:
-    typedef utList<gkLogicTree*> Groups;
+	typedef utList<gkLogicTree*> Groups;
 
-	enum 
+	enum
 	{
 		EXECUTE,
 		RETURN
@@ -44,16 +44,16 @@ public:
 	DECLARE_SOCKET_TYPE(EXECUTE, bool);
 	DECLARE_SOCKET_TYPE(RETURN, bool);
 
-    gkGroupNode(gkLogicTree *parent, size_t id);
-    virtual ~gkGroupNode() {}
+	gkGroupNode(gkLogicTree* parent, size_t id);
+	virtual ~gkGroupNode() {}
 
-    void update(gkScalar tick);
-    bool evaluate(gkScalar tick);
+	void update(gkScalar tick);
+	bool evaluate(gkScalar tick);
 
-    GK_INLINE void addTree(gkLogicTree *ltree)  {GK_ASSERT(ltree); m_groupList.push_back(ltree);}
+	GK_INLINE void addTree(gkLogicTree* ltree)  {GK_ASSERT(ltree); m_groupList.push_back(ltree);}
 
 private:
-    Groups              m_groupList;
+	Groups              m_groupList;
 };
 
 #endif//_gkGroupNode_h_

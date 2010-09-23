@@ -27,10 +27,10 @@
 #include "gkActiveObject.h"
 #include "gkLogger.h"
 
-gkActiveObject::gkActiveObject(const gkString& name) 
-: m_name(name),
-m_thread(0),
-m_queue(name)
+gkActiveObject::gkActiveObject(const gkString& name)
+	: m_name(name),
+	  m_thread(0),
+	  m_queue(name)
 {
 	m_thread = new gkThread(this);
 }
@@ -44,15 +44,15 @@ void gkActiveObject::run()
 {
 	gkPtrRef<gkCall> pCall;
 
-	while(m_queue.pop(pCall))
-	{				
-		try	
+	while (m_queue.pop(pCall))
+	{
+		try
 		{
 			pCall->run();
 
 			pCall = gkPtrRef<gkCall>(0);
 		}
-		catch(...) // catch all the exceptions.
+		catch (...) // catch all the exceptions.
 		{
 			gkLogMessage(m_name.c_str() << "call error." );
 		}

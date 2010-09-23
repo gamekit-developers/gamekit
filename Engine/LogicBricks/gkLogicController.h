@@ -37,21 +37,21 @@ protected:
 	gkActuators     m_actuators;
 	bool            m_activeState;
 
-	void            cloneImpl(gkLogicLink *link, gkGameObject *dest);
+	void            cloneImpl(gkLogicLink* link, gkGameObject* dest);
 
 public:
 
-	gkLogicController(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	gkLogicController(gkGameObject* object, gkLogicLink* link, const gkString& name);
 	virtual ~gkLogicController() {}
 
 	void _execute(void);
 
 	void sort(void);
-	void link(gkLogicSensor *v);
-	void link(gkLogicActuator *v);
+	void link(gkLogicSensor* v);
+	void link(gkLogicActuator* v);
 
-	gkSensors      &getSensors(void)        {return m_sensors;}
-	gkActuators    &getActuators(void)      {return m_actuators;}
+	gkSensors&      getSensors(void)        {return m_sensors;}
+	gkActuators&    getActuators(void)      {return m_actuators;}
 
 };
 

@@ -30,15 +30,15 @@
 class gkNonCopyable
 {
 protected:
-    gkNonCopyable(){};
+	gkNonCopyable() {};
 
-    ~gkNonCopyable(){};
+	~gkNonCopyable() {};
 
-private:  
-	
-    gkNonCopyable( const gkNonCopyable& );
-    
+private:
+
+	gkNonCopyable( const gkNonCopyable& );
+
 	const gkNonCopyable& operator=( const gkNonCopyable& );
-}; 
+};
 
 #endif//_gkNonCopyable_h_

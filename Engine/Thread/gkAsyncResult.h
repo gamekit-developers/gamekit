@@ -33,7 +33,7 @@
 #include "gkSyncObj.h"
 
 
-template< typename T > 
+template< typename T >
 class gkAsyncResult
 {
 	template< typename K >
@@ -49,7 +49,7 @@ class gkAsyncResult
 		{
 			{
 				gkCriticalSection::Lock tmp(m_cs);
-				
+
 				--m_hasValue;
 			}
 
@@ -66,7 +66,7 @@ class gkAsyncResult
 
 			++m_hasValue;
 
-			m_syncObj.signal();	
+			m_syncObj.signal();
 		}
 
 
@@ -75,15 +75,15 @@ class gkAsyncResult
 		void reset()
 		{
 			gkCriticalSection::Lock tmp(m_cs);
-				
-			while(m_hasValue > 0)
+
+			while (m_hasValue > 0)
 			{
 				--m_hasValue;
 
 				m_syncObj.wait();
 			}
 
-			while(m_hasValue < 0)
+			while (m_hasValue < 0)
 			{
 				++m_hasValue;
 
@@ -102,7 +102,7 @@ class gkAsyncResult
 		gkCriticalSection m_cs;
 	};
 
-public:	
+public:
 
 	gkAsyncResult();
 
@@ -125,35 +125,35 @@ private:
 	gkObj<T>* m_obj;
 };
 
-template< typename T > 
-gkAsyncResult<T>::gkAsyncResult() 
-: m_obj(new gkObj<T>)
+template< typename T >
+gkAsyncResult<T>::gkAsyncResult()
+	: m_obj(new gkObj<T>)
 {
 }
 
-template< typename T > 
+template< typename T >
 gkAsyncResult<T>::~gkAsyncResult()
 {
- 	m_obj->release();
+	m_obj->release();
 }
 
-template< typename T > 
+template< typename T >
 gkAsyncResult<T>::gkAsyncResult(const gkAsyncResult& obj)
-: m_obj(obj.m_obj)
+	: m_obj(obj.m_obj)
 {
 	m_obj->addRef();
 }
 
-template< typename T > 
-const T& gkAsyncResult<T>::getResult() 
+template< typename T >
+const T& gkAsyncResult<T>::getResult()
 {
 	return m_obj->getResult();
 }
 
-template< typename T> 
+template< typename T>
 gkAsyncResult<T>&  gkAsyncResult<T>::operator = (const gkAsyncResult& obj)
 {
-	if(this != &obj)
+	if (this != &obj)
 	{
 		obj.m_obj->addRef();
 
@@ -165,7 +165,7 @@ gkAsyncResult<T>&  gkAsyncResult<T>::operator = (const gkAsyncResult& obj)
 	return *this;
 }
 
-template< typename T> 
+template< typename T>
 gkAsyncResult<T>& gkAsyncResult<T>::operator = (const T& value)
 {
 	m_obj->setResult(value);
@@ -173,19 +173,16 @@ gkAsyncResult<T>& gkAsyncResult<T>::operator = (const T& value)
 	return *this;
 }
 
-template< typename T> 
+template< typename T>
 bool gkAsyncResult<T>::hasResult() const
 {
 	return m_obj->hasResult();
 }
 
-template< typename T> 
+template< typename T>
 void gkAsyncResult<T>::reset()
 {
 	m_obj->reset();
 }
 
 #endif //_gkAsyncResult_h_
-
-
-

@@ -31,8 +31,8 @@
 #include "OgreFontManager.h"
 
 
-gkFont::gkFont(gkResourceManager* creator, const gkResourceName &name, const gkResourceHandle& handle) 
-:	gkResource(creator, name, handle), m_data(0)
+gkFont::gkFont(gkResourceManager* creator, const gkResourceName& name, const gkResourceHandle& handle)
+	:    gkResource(creator, name, handle), m_data(0)
 {
 }
 
@@ -42,16 +42,16 @@ gkFont::gkFont(gkResourceManager* creator, const gkResourceName &name, const gkR
 gkFont::~gkFont()
 {
 	UTsize i;
-	for (i=0; i<m_loaders.size(); ++i)
+	for (i = 0; i < m_loaders.size(); ++i)
 		delete m_loaders[i];
 	m_loaders.clear();
 	delete m_data;
 }
 
 
-void gkFont::setData(void *data, UTsize size)
+void gkFont::setData(void* data, UTsize size)
 {
-	if (size ==0 || size == UT_NPOS)
+	if (size == 0 || size == UT_NPOS)
 		return;
 
 	if (m_data)
@@ -65,15 +65,15 @@ void gkFont::setData(void *data, UTsize size)
 
 gkFont::Loader* gkFont::addLoader(UTsize size, UTsize resolution)
 {
-	Loader *loader = new Loader(this, size, resolution);
+	Loader* loader = new Loader(this, size, resolution);
 	m_loaders.push_back(loader);
 	return loader;
 }
 
 
-void gkFont::Loader::loadResource(Ogre::Resource *resource)
+void gkFont::Loader::loadResource(Ogre::Resource* resource)
 {
-	Ogre::Font *font = (Ogre::Font *)resource;
+	Ogre::Font* font = (Ogre::Font*)resource;
 	if (!m_parent || !m_parent->m_data || m_parent->m_data->size() == 0 || font != m_font)
 		return;
 
@@ -84,7 +84,7 @@ void gkFont::Loader::loadResource(Ogre::Resource *resource)
 	m_font->setTrueTypeResolution(m_resolution);
 
 
-	Ogre::DataStreamPtr memStream(OGRE_NEW Ogre::MemoryDataStream((void *)m_parent->m_data->ptr(), m_parent->m_data->size(), false, true));
+	Ogre::DataStreamPtr memStream(OGRE_NEW Ogre::MemoryDataStream((void*)m_parent->m_data->ptr(), m_parent->m_data->size(), false, true));
 	m_font->loadManualResource(memStream);
 }
 

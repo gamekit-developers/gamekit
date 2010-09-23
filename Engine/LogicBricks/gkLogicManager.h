@@ -41,7 +41,7 @@ class gkAbstractDispatcher;
 
 enum gkDispatchedTypes
 {
-	DIS_CONSTANT=0,
+	DIS_CONSTANT = 0,
 	DIS_KEY,
 	DIS_MOUSE,
 	DIS_COLLISION,
@@ -58,22 +58,22 @@ public:
 
 	typedef utListClass<gkLogicLink> Links;
 	typedef utListIterator<Links>    LinkIterator;
-	typedef gkAbstractDispatcher     *gkAbstractDispatcherPtr;
-	typedef utArray<gkLogicBrick *>  Bricks;
+	typedef gkAbstractDispatcher*     gkAbstractDispatcherPtr;
+	typedef utArray<gkLogicBrick*>  Bricks;
 
 protected:
 
 	Links m_links;
 
-	gkAbstractDispatcherPtr    *m_dispatchers;
+	gkAbstractDispatcherPtr*    m_dispatchers;
 	Bricks                      m_cin,  m_ain, m_aout; // Temporary open or closed links
 	bool                        m_sort;
 
 
-	void push(gkLogicBrick *a, gkLogicBrick *b, Bricks &in, bool stateValue);
+	void push(gkLogicBrick* a, gkLogicBrick* b, Bricks& in, bool stateValue);
 
 	void clearActuators(void);
-	void clearActive(gkLogicLink *link);
+	void clearActive(gkLogicLink* link);
 
 	void sort(void);
 
@@ -82,18 +82,18 @@ public:
 	gkLogicManager();
 	~gkLogicManager();
 
-	gkLogicLink *createLink(void);
+	gkLogicLink* createLink(void);
 
-	void destroy(gkLogicLink *link);
-	
+	void destroy(gkLogicLink* link);
+
 	GK_INLINE Links& getLinks(void) {return m_links;}
 
 	void notifySceneInstanceDestroyed(void);
-	void notifyLinkInstanceDestroyed(gkLogicLink *link);
+	void notifyLinkInstanceDestroyed(gkLogicLink* link);
 
 
 	///Notifies the manager that a state change has taken place.
-	void notifyState(unsigned int state, gkLogicLink *link);
+	void notifyState(unsigned int state, gkLogicLink* link);
 
 
 	///Notifies the manager to sort logic bricks based on their priority.
@@ -106,14 +106,14 @@ public:
 	void update(gkScalar delta);
 
 
-	GK_INLINE gkAbstractDispatcher &getDispatcher(int dt) { GK_ASSERT(m_dispatchers && dt >= 0 && dt <= DIS_MAX); return *m_dispatchers[dt]; }
+	GK_INLINE gkAbstractDispatcher& getDispatcher(int dt) { GK_ASSERT(m_dispatchers && dt >= 0 && dt <= DIS_MAX); return *m_dispatchers[dt]; }
 
 
 	///Tells the manager a link from a sensor to controller has been opened or closed.
-	void push(gkLogicSensor *s, gkLogicController *v, bool stateValue);
+	void push(gkLogicSensor* s, gkLogicController* v, bool stateValue);
 
 	///Tells the manager a link from a controller to an actuator has been opened or closed.
-	void push(gkLogicController *c, gkLogicActuator *v, bool stateValue);
+	void push(gkLogicController* c, gkLogicActuator* v, bool stateValue);
 
 
 	UT_DECLARE_SINGLETON(gkLogicManager);

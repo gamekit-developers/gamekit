@@ -36,7 +36,7 @@
 #include "btBulletCollisionCommon.h"
 
 
-gkNearSensor::gkNearSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
+gkNearSensor::gkNearSensor(gkGameObject* object, gkLogicLink* link, const gkString& name)
 	:        gkLogicSensor(object, link, name), m_range(0.01), m_resetrange(0.01), m_previous(false), m_material(""), m_prop("")
 {
 	m_dispatchType = DIS_CONSTANT;
@@ -44,9 +44,9 @@ gkNearSensor::gkNearSensor(gkGameObject *object, gkLogicLink *link, const gkStri
 }
 
 
-gkLogicBrick *gkNearSensor::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick* gkNearSensor::clone(gkLogicLink* link, gkGameObject* dest)
 {
-	gkNearSensor *sens = new gkNearSensor(*this);
+	gkNearSensor* sens = new gkNearSensor(*this);
 	sens->cloneImpl(link, dest);
 	return sens;
 }
@@ -55,10 +55,10 @@ gkLogicBrick *gkNearSensor::clone(gkLogicLink *link, gkGameObject *dest)
 
 bool gkNearSensor::query(void)
 {
-	gkScene *scene = m_object->getOwner();
-	gkDynamicsWorld *dyn = scene->getDynamicsWorld();
+	gkScene* scene = m_object->getOwner();
+	gkDynamicsWorld* dyn = scene->getDynamicsWorld();
 
-	btDynamicsWorld *btw = dyn->getBulletWorld();
+	btDynamicsWorld* btw = dyn->getBulletWorld();
 
 	gkVector3 vec = m_object->getWorldPosition();
 
@@ -79,7 +79,7 @@ bool gkNearSensor::query(void)
 	btw->contactTest( &btco, exec);
 
 	if (btw->getDebugDrawer())
-		btw->debugDrawObject(btt, &btss, btVector3(0,1,0));
+		btw->debugDrawObject(btt, &btss, btVector3(0, 1, 0));
 
 	if (!exec.hasHit())
 		return m_previous = false;
@@ -89,12 +89,12 @@ bool gkNearSensor::query(void)
 	if (m_material.empty() && m_prop.empty())
 		return m_previous = true;
 
-	utArray<const btCollisionObject *> contacts = exec.m_contactObjects;
-	utArrayIterator< utArray<const btCollisionObject *> > iter(contacts);
+	utArray<const btCollisionObject*> contacts = exec.m_contactObjects;
+	utArrayIterator< utArray<const btCollisionObject*> > iter(contacts);
 
-	while(iter.hasMoreElements())
+	while (iter.hasMoreElements())
 	{
-		gkGameObject *ob = gkPhysicsController::castObject(iter.peekNext());
+		gkGameObject* ob = gkPhysicsController::castObject(iter.peekNext());
 
 		if (gkPhysicsController::sensorTest(ob, m_prop, m_material))
 			return m_previous = true;

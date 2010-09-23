@@ -58,21 +58,21 @@ public:
 	void destroyStaticBatches(gkScene* scene);
 
 
-	void attachGroupToScene(gkScene *sc, gkGameObjectGroup *group);
-	Groups::Iterator getAttachedGroupIterator(gkScene *sc);
+	void attachGroupToScene(gkScene* sc, gkGameObjectGroup* group);
+	Groups::Iterator getAttachedGroupIterator(gkScene* sc);
 
 private:
 
-	gkResource* createImpl(const gkResourceName &name, const gkResourceHandle &handle);
+	gkResource* createImpl(const gkResourceName& name, const gkResourceHandle& handle);
 
-	gkResourceManager::ResourceListener *m_sceneListener;
+	gkResourceManager::ResourceListener* m_sceneListener;
 
 
 	GroupAttachements m_attachements;
 
 	void notifyDestroyAllImpl(void);
-	
-	
+
+
 	virtual void notifyResourceDestroyedImpl(gkResource* res);
 
 	friend class gkGameObjectGroup;

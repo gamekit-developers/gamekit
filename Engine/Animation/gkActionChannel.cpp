@@ -29,8 +29,8 @@
 
 
 
-gkActionChannel::gkActionChannel(gkAction *parent, gkBone *bone) 
-	:	gkAnimationChannel(parent), m_bone(bone)
+gkActionChannel::gkActionChannel(gkAction* parent, gkBone* bone)
+	:    gkAnimationChannel(parent), m_bone(bone)
 {
 	GK_ASSERT(bone);
 }
@@ -43,7 +43,7 @@ gkActionChannel::~gkActionChannel()
 
 void gkActionChannel::evaluate(gkScalar time, gkScalar delta, gkScalar weight)
 {
-	const gkBezierSpline **splines = getSplines();
+	const gkBezierSpline** splines = getSplines();
 	int len = getNumSplines(), i = 0, nvrt;
 
 	// clear previous channel
@@ -52,10 +52,10 @@ void gkActionChannel::evaluate(gkScalar time, gkScalar delta, gkScalar weight)
 
 	while (i < len)
 	{
-		const gkBezierSpline *spline = splines[i++];
+		const gkBezierSpline* spline = splines[i++];
 
 		nvrt = spline->getNumVerts();
-		const gkBezierVertex *verts = spline->getVerts();
+		const gkBezierVertex* verts = spline->getVerts();
 
 		float eval = 0.f;
 		if (nvrt > 0)
@@ -87,6 +87,6 @@ void gkActionChannel::evaluate(gkScalar time, gkScalar delta, gkScalar weight)
 	GK_ASSERT(!channel.rot.isNaN());
 	GK_ASSERT(!channel.scl.isNaN());
 
-	// Apply specifics 
+	// Apply specifics
 	m_bone->applyChannelTransform(channel, weight);
 }

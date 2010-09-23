@@ -54,46 +54,46 @@ public:
 
 
 	gkVariable();
-	gkVariable(const gkString &n, bool dbg);
+	gkVariable(const gkString& n, bool dbg);
 
-	explicit gkVariable(bool v, const gkString &name = gkStringUtils::BLANK);
-	explicit gkVariable(int v, const gkString &name = gkStringUtils::BLANK);
-	explicit gkVariable(gkScalar v, const gkString &name = gkStringUtils::BLANK);
-	explicit gkVariable(const gkString& v, const gkString &name = gkStringUtils::BLANK);
-	explicit gkVariable(const gkVector2& v, const gkString &name = gkStringUtils::BLANK);
-	explicit gkVariable(const gkVector3& v, const gkString &name = gkStringUtils::BLANK);
-	explicit gkVariable(const gkVector4& v, const gkString &name = gkStringUtils::BLANK);
-	explicit gkVariable(const gkQuaternion& v, const gkString &name = gkStringUtils::BLANK);
-	explicit gkVariable(const gkMatrix3& v, const gkString &name = gkStringUtils::BLANK);
-	explicit gkVariable(const gkMatrix4& v, const gkString &name = gkStringUtils::BLANK);
+	explicit gkVariable(bool v, const gkString& name = gkStringUtils::BLANK);
+	explicit gkVariable(int v, const gkString& name = gkStringUtils::BLANK);
+	explicit gkVariable(gkScalar v, const gkString& name = gkStringUtils::BLANK);
+	explicit gkVariable(const gkString& v, const gkString& name = gkStringUtils::BLANK);
+	explicit gkVariable(const gkVector2& v, const gkString& name = gkStringUtils::BLANK);
+	explicit gkVariable(const gkVector3& v, const gkString& name = gkStringUtils::BLANK);
+	explicit gkVariable(const gkVector4& v, const gkString& name = gkStringUtils::BLANK);
+	explicit gkVariable(const gkQuaternion& v, const gkString& name = gkStringUtils::BLANK);
+	explicit gkVariable(const gkMatrix3& v, const gkString& name = gkStringUtils::BLANK);
+	explicit gkVariable(const gkMatrix4& v, const gkString& name = gkStringUtils::BLANK);
 
 
 
 	~gkVariable();
 
-	gkVariable *clone(void);
+	gkVariable* clone(void);
 
 	GK_INLINE int   getType(void) const           { return m_type;}
 	GK_INLINE void  setDebug(bool v)              { m_debug = v;}
 	GK_INLINE void  setReadOnly(bool v)           { m_lock = v;}
 	GK_INLINE bool  isReadOnly(void)              { return m_lock;}
 	GK_INLINE bool  isDebug(void) const           { return m_debug; }
-	GK_INLINE const gkString &getName(void) const { return m_name; }
+	GK_INLINE const gkString& getName(void) const { return m_name; }
 
-	void setValue(int type, const gkString &v);
+	void setValue(int type, const gkString& v);
 
 
 	void setValue(bool v);
 	void setValue(int v);
 	void setValue(gkScalar v);
-	void setValue(const gkString &v);
-	void setValue(const gkVector2 &v);
-	void setValue(const gkVector3 &v);
-	void setValue(const gkVector4 &v);
-	void setValue(const gkQuaternion &v);
-	void setValue(const gkMatrix3 &v);
-	void setValue(const gkMatrix4 &v);
-	void setValue(const gkVariable &v);
+	void setValue(const gkString& v);
+	void setValue(const gkVector2& v);
+	void setValue(const gkVector3& v);
+	void setValue(const gkVector4& v);
+	void setValue(const gkQuaternion& v);
+	void setValue(const gkMatrix3& v);
+	void setValue(const gkMatrix4& v);
+	void setValue(const gkVariable& v);
 
 
 
@@ -108,25 +108,25 @@ public:
 	gkMatrix3    getValueMatrix3(void) const;
 	gkMatrix4    getValueMatrix4(void) const;
 
-	bool operator < (const gkVariable &o) const;
-	bool operator > (const gkVariable &o) const;
+	bool operator < (const gkVariable& o) const;
+	bool operator > (const gkVariable& o) const;
 
-	bool operator <= (const gkVariable &o) const;
-	bool operator >= (const gkVariable &o) const;
+	bool operator <= (const gkVariable& o) const;
+	bool operator >= (const gkVariable& o) const;
 
-	bool operator == (const gkVariable &o) const;
-	bool operator != (const gkVariable &o) const;
+	bool operator == (const gkVariable& o) const;
+	bool operator != (const gkVariable& o) const;
 
 
-	void assign(const gkString &o);
-	void add(const gkString &o);
-	void inverse(const gkString &o);
-	void toggle(const gkString &o);
+	void assign(const gkString& o);
+	void add(const gkString& o);
+	void inverse(const gkString& o);
+	void toggle(const gkString& o);
 
-	void assign(const gkVariable &o);
-	void add(const gkVariable &o);
-	void inverse(const gkVariable &o);
-	void toggle(const gkVariable &o);
+	void assign(const gkVariable& o);
+	void add(const gkVariable& o);
+	void inverse(const gkVariable& o);
+	void toggle(const gkVariable& o);
 
 	bool hasInverse(void);
 
@@ -136,8 +136,8 @@ public:
 
 private:
 
-	gkValue	     m_value;
-	gkValue	     m_default;
+	gkValue         m_value;
+	gkValue         m_default;
 	int          m_type;
 	gkString     m_name;
 	bool         m_debug, m_lock;

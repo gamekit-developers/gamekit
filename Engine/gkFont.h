@@ -41,13 +41,13 @@ public:
 	class Loader : public Ogre::ManualResourceLoader
 	{
 	private:
-		gkFont *m_parent;
+		gkFont* m_parent;
 		Ogre::Font* m_font;
 		UTsize m_size, m_resolution;
 
 	public:
 
-		Loader(gkFont *parent, UTsize size, UTsize resolution)
+		Loader(gkFont* parent, UTsize size, UTsize resolution)
 			: m_parent(parent), m_font(0), m_size(size), m_resolution(resolution)
 		{
 		}
@@ -55,7 +55,7 @@ public:
 
 		void setFont(Ogre::Font* font)  {m_font = font;}
 
-		void loadResource(Ogre::Resource *resource);
+		void loadResource(Ogre::Resource* resource);
 	};
 
 	typedef utArray<Loader*> Loaders;
@@ -63,14 +63,14 @@ public:
 
 public:
 
-	gkFont(gkResourceManager* creator, const gkResourceName &name, const gkResourceHandle& handle);
+	gkFont(gkResourceManager* creator, const gkResourceName& name, const gkResourceHandle& handle);
 	~gkFont();
 
-	void setData(void *data, UTsize size);
+	void setData(void* data, UTsize size);
 
-	const void     *getData(void)    {return m_data->ptr();}
+	const void*     getData(void)    {return m_data->ptr();}
 	UTsize          getSize(void)    {return m_data->size();}
-	utMemoryStream  *getBuffer(void) {return m_data;}
+	utMemoryStream*  getBuffer(void) {return m_data;}
 
 
 
@@ -78,7 +78,7 @@ public:
 
 
 private:
-	utMemoryStream *m_data;
+	utMemoryStream* m_data;
 
 	friend class Loader;
 	Loaders m_loaders;

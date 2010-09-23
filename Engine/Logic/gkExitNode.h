@@ -41,11 +41,11 @@ public:
 
 	DECLARE_SOCKET_TYPE(EXIT, bool);
 
-    gkExitNode(gkLogicTree *parent, size_t id);
+	gkExitNode(gkLogicTree* parent, size_t id);
 
 	virtual ~gkExitNode() {}
 
-    bool evaluate(gkScalar tick);
+	bool evaluate(gkScalar tick);
 };
 
 

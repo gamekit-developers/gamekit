@@ -30,7 +30,7 @@
 
 
 gkSkeletonManager::gkSkeletonManager()
-	:	gkResourceManager("SkeletonManager", "Skeleton")
+	:    gkResourceManager("SkeletonManager", "Skeleton")
 {
 }
 
@@ -39,7 +39,7 @@ gkSkeletonManager::~gkSkeletonManager()
 	destroyAll();
 }
 
-gkResource *gkSkeletonManager::createImpl(const gkResourceName &name, const gkResourceHandle &handle)
+gkResource* gkSkeletonManager::createImpl(const gkResourceName& name, const gkResourceHandle& handle)
 {
 	return new gkSkeletonResource(this, name, handle);
 }

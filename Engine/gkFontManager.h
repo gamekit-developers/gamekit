@@ -42,10 +42,10 @@ public:
 	virtual ~gkFontManager();
 
 
-	gkResource *createImpl(const gkResourceName &name, const gkResourceHandle &handle);
+	gkResource* createImpl(const gkResourceName& name, const gkResourceHandle& handle);
 
 
-	void parseScript(utMemoryStream *buffer);
+	void parseScript(utMemoryStream* buffer);
 
 	UT_DECLARE_SINGLETON(gkFontManager);
 };

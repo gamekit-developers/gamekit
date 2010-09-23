@@ -37,8 +37,8 @@
 
 
 
-gkFontManager::gkFontManager() 
-	:	gkResourceManager("FontManager", "Font")
+gkFontManager::gkFontManager()
+	:    gkResourceManager("FontManager", "Font")
 {
 }
 
@@ -49,19 +49,19 @@ gkFontManager::~gkFontManager()
 }
 
 
-gkResource *gkFontManager::createImpl(const gkResourceName &name, const gkResourceHandle &handle)
+gkResource* gkFontManager::createImpl(const gkResourceName& name, const gkResourceHandle& handle)
 {
 	return new gkFont(this, name, handle);
 }
 
 
-void gkFontManager::parseScript(utMemoryStream *buffer)
+void gkFontManager::parseScript(utMemoryStream* buffer)
 {
 	utScript script;
 	script.parseBuffer("FontManager:parseScript", gkString((const char*)buffer->ptr()));
 
 
-	utScriptTree *treePtr = script.getTreePtr();
+	utScriptTree* treePtr = script.getTreePtr();
 
 	if (treePtr->getNodes().empty())
 		return;
@@ -70,7 +70,7 @@ void gkFontManager::parseScript(utMemoryStream *buffer)
 	utScriptTree::Nodes::Iterator niter = treePtr->getNodes().iterator();
 	while (niter.hasMoreElements())
 	{
-		utScriptNode *tree = niter.getNext();
+		utScriptNode* tree = niter.getNext();
 
 		if (!tree->hasAttribute("source"))
 		{
@@ -106,13 +106,14 @@ void gkFontManager::parseScript(utMemoryStream *buffer)
 		if (tree->hasAttribute("resolution"))
 			gkFromString(tree->getAttribute("resolution")->getValue(), res);
 
-		try {
+		try
+		{
 
-			gkFont::Loader *fl = gkf->addLoader(size > 0 && size != UT_NPOS ? size : 12, res != UT_NPOS ? res : 55);
+			gkFont::Loader* fl = gkf->addLoader(size > 0 && size != UT_NPOS ? size : 12, res != UT_NPOS ? res : 55);
 			fp = Ogre::FontManager::getSingleton().create(name, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true, fl);
 			fl->setFont(fp.getPointer());
 		}
-		catch (Ogre::Exception &e)
+		catch (Ogre::Exception& e)
 		{
 			gkLogMessage("FontManager::parseScript: " << e.getDescription());
 		}

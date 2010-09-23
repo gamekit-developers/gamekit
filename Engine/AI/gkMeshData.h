@@ -47,7 +47,7 @@ struct gkMeshData : public gkReferences, gkNonCopyable
 	GK_INLINE const float* getNormals() const { return &normals.at(0).x; }
 	GK_INLINE const int* getTris() const { return &tris.at(0); }
 	GK_INLINE int getVertCount() const { return verts.size(); }
-	GK_INLINE int getTriCount() const { return tris.size()/3; }
+	GK_INLINE int getTriCount() const { return tris.size() / 3; }
 	GK_INLINE void copy(const gkMeshData& obj) {verts = obj.verts; tris = obj.tris; normals = obj.normals; }
 };
 

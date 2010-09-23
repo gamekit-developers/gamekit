@@ -35,7 +35,7 @@
 
 
 
-gkRaySensor::gkRaySensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
+gkRaySensor::gkRaySensor(gkGameObject* object, gkLogicLink* link, const gkString& name)
 	:       gkLogicSensor(object, link, name), m_range(0.01), m_axis(-1), m_material(""), m_prop("")
 {
 	m_dispatchType = DIS_CONSTANT;
@@ -44,9 +44,9 @@ gkRaySensor::gkRaySensor(gkGameObject *object, gkLogicLink *link, const gkString
 
 
 
-gkLogicBrick *gkRaySensor::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick* gkRaySensor::clone(gkLogicLink* link, gkGameObject* dest)
 {
-	gkRaySensor *sens = new gkRaySensor(*this);
+	gkRaySensor* sens = new gkRaySensor(*this);
 	sens->cloneImpl(link, dest);
 	return sens;
 }
@@ -59,18 +59,18 @@ bool gkRaySensor::query(void)
 	gkVector3 dir;
 	switch (m_axis)
 	{
-	case RA_XPOS: {dir = gkVector3(m_range,0,0);  break;}
-	case RA_YPOS: {dir = gkVector3(0,m_range,0);  break;}
-	case RA_ZPOS: {dir = gkVector3(0,0,m_range);  break;}
-	case RA_XNEG: {dir = gkVector3(-m_range,0,0); break;}
-	case RA_YNEG: {dir = gkVector3(0,-m_range,0); break;}
-	case RA_ZNEG: {dir = gkVector3(0,0,-m_range); break;}
+	case RA_XPOS: {dir = gkVector3(m_range, 0, 0);  break;}
+	case RA_YPOS: {dir = gkVector3(0, m_range, 0);  break;}
+	case RA_ZPOS: {dir = gkVector3(0, 0, m_range);  break;}
+	case RA_XNEG: {dir = gkVector3(-m_range, 0, 0); break;}
+	case RA_YNEG: {dir = gkVector3(0, -m_range, 0); break;}
+	case RA_ZNEG: {dir = gkVector3(0, 0, -m_range); break;}
 	}
 
 	gkRayTest test;
 	if (test.collides(gkRay(m_object->getWorldPosition(), dir)))
 	{
-		gkGameObject *hit = gkPhysicsController::castObject(test.getCollisionObject());
+		gkGameObject* hit = gkPhysicsController::castObject(test.getCollisionObject());
 		if (hit && hit != m_object)
 		{
 			bool onlyActorTODO = false;

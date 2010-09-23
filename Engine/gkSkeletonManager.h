@@ -38,7 +38,7 @@ public:
 	gkSkeletonManager();
 	virtual ~gkSkeletonManager();
 
-	gkResource *createImpl(const gkResourceName &name, const gkResourceHandle &handle);
+	gkResource* createImpl(const gkResourceName& name, const gkResourceHandle& handle);
 
 	UT_DECLARE_SINGLETON(gkSkeletonManager);
 };

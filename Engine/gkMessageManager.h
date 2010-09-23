@@ -41,16 +41,16 @@ public:
 		gkString m_to;
 		gkString m_subject;
 		gkString m_body;
-		
-		Message & operator = (const Message & m);
+
+		Message& operator = (const Message& m);
 	};
 
-	struct	MessageListener
+	struct    MessageListener
 	{
 		MessageListener() {}
 		virtual ~MessageListener() {}
 
-		virtual void handleMessage(gkMessageManager::Message *message) = 0;
+		virtual void handleMessage(gkMessageManager::Message* message) = 0;
 	};
 
 	struct GenericMessageListener : public MessageListener
@@ -58,12 +58,12 @@ public:
 		gkString m_fromFilter, m_toFilter, m_subjectFilter;
 		utArray<Message> m_messages;
 
-		GenericMessageListener(gkString fromfilter="", gkString tofilter="", gkString subjectfilter="")
-			:	m_fromFilter(fromfilter), m_toFilter(tofilter), m_subjectFilter(subjectfilter) {}
-		
+		GenericMessageListener(gkString fromfilter = "", gkString tofilter = "", gkString subjectfilter = "")
+			:    m_fromFilter(fromfilter), m_toFilter(tofilter), m_subjectFilter(subjectfilter) {}
+
 		~GenericMessageListener() {m_messages.clear();}
-		
-		void handleMessage(gkMessageManager::Message *message);
+
+		void handleMessage(gkMessageManager::Message* message);
 		void emptyMessages() {m_messages.clear();}
 	};
 
@@ -74,12 +74,12 @@ public:
 	gkMessageManager();
 	virtual ~gkMessageManager() {}
 
-	void addListener(MessageListener *listener);
-	void removeListener(MessageListener * listener);
+	void addListener(MessageListener* listener);
+	void removeListener(MessageListener* listener);
 	void sendMessage(gkString from, gkString to, gkString subject, gkString body);
 
-	static gkMessageManager &getSingleton(void);
-	static gkMessageManager *getSingletonPtr(void);
+	static gkMessageManager& getSingleton(void);
+	static gkMessageManager* getSingletonPtr(void);
 };
 
 #endif // GKMESSAGEMANAGER_H

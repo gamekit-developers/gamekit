@@ -50,29 +50,29 @@ class gkDynamicsWorld
 {
 protected:
 
-	gkScene                    *m_scene;
-	btDynamicsWorld            *m_dynamicsWorld;
-	btCollisionConfiguration   *m_collisionConfiguration;;
-	btBroadphaseInterface      *m_pairCache;
-	btGhostPairCallback        *m_ghostPairCallback;
-	btDispatcher               *m_dispatcher;
-	btConstraintSolver         *m_constraintSolver;
+	gkScene*                    m_scene;
+	btDynamicsWorld*            m_dynamicsWorld;
+	btCollisionConfiguration*   m_collisionConfiguration;;
+	btBroadphaseInterface*      m_pairCache;
+	btGhostPairCallback*        m_ghostPairCallback;
+	btDispatcher*               m_dispatcher;
+	btConstraintSolver*         m_constraintSolver;
 	gkPhysicsControllers       m_objects;
-	gkPhysicsDebug             *m_debug;
+	gkPhysicsDebug*             m_debug;
 	bool                       m_handleContacts;
-	gkDbvt                     *m_dbvt;
+	gkDbvt*                     m_dbvt;
 
 
 	// drawing all but static wireframes
-	void localDrawObject(gkPhysicsController *phyCon);
+	void localDrawObject(gkPhysicsController* phyCon);
 
 	void createInstanceImpl(void);
 	void destroyInstanceImpl(void);
 
-	static void substepCallback(btDynamicsWorld *dyn, btScalar tick);
+	static void substepCallback(btDynamicsWorld* dyn, btScalar tick);
 
 public:
-	gkDynamicsWorld(const gkString &name, gkScene *scene);
+	gkDynamicsWorld(const gkString& name, gkScene* scene);
 	virtual ~gkDynamicsWorld();
 
 	// Do one full physics step
@@ -82,28 +82,28 @@ public:
 	void EnableContacts(bool enable) { m_handleContacts = enable; }
 
 
-	gkRigidBody *createRigidBody(gkGameObject *state);
+	gkRigidBody* createRigidBody(gkGameObject* state);
 
-	gkCharacter *createCharacter(gkGameObject *state);
+	gkCharacter* createCharacter(gkGameObject* state);
 
-	void destroyObject(gkPhysicsController *cont);
+	void destroyObject(gkPhysicsController* cont);
 
-	GK_INLINE btDynamicsWorld *getBulletWorld(void) {GK_ASSERT(m_dynamicsWorld); return m_dynamicsWorld;}
-	GK_INLINE gkScene *getScene(void)               {GK_ASSERT(m_scene); return m_scene;}
+	GK_INLINE btDynamicsWorld* getBulletWorld(void) {GK_ASSERT(m_dynamicsWorld); return m_dynamicsWorld;}
+	GK_INLINE gkScene* getScene(void)               {GK_ASSERT(m_scene); return m_scene;}
 
 	void enableDebugPhysics(bool enable, bool debugAabb);
 
 	void resetContacts();
 
-	void handleDbvt(gkCamera *cam);
+	void handleDbvt(gkCamera* cam);
 
-	gkPhysicsDebug *getDebug() const { return m_debug; }
+	gkPhysicsDebug* getDebug() const { return m_debug; }
 
 	void DrawDebug();
 
-	gkVariable *getDBVTInfo(void);
-	
-	void exportBullet(const gkString &fileName);
+	gkVariable* getDBVTInfo(void);
+
+	void exportBullet(const gkString& fileName);
 };
 
 #endif//_gkDynamicsWorld_h_

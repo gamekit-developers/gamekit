@@ -83,7 +83,7 @@ gkRenderFactoryPrivate::gkRenderFactoryPrivate() :
 
 gkRenderFactoryPrivate::~gkRenderFactoryPrivate()
 {
-	if(m_particleSystem)
+	if (m_particleSystem)
 	{
 		delete m_particleSystem;
 		m_particleSystem = 0;
@@ -97,7 +97,7 @@ gkRenderFactoryPrivate::~gkRenderFactoryPrivate()
 }
 
 
-void gkRenderFactoryPrivate::createRenderSystem(Ogre::Root *r, OgreRenderSystem backend)
+void gkRenderFactoryPrivate::createRenderSystem(Ogre::Root* r, OgreRenderSystem backend)
 {
 	if (m_renderSystem != 0)
 		return;
@@ -142,7 +142,7 @@ void gkRenderFactoryPrivate::createRenderSystem(Ogre::Root *r, OgreRenderSystem 
 	GK_ASSERT(m_renderSystem);
 }
 
-void gkRenderFactoryPrivate::createParticleSystem(Ogre::Root *r)
+void gkRenderFactoryPrivate::createParticleSystem(Ogre::Root* r)
 {
 	m_particleSystem = new Ogre::ParticleFXPlugin();
 	r->installPlugin(m_particleSystem);

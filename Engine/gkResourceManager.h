@@ -54,7 +54,7 @@ public:
 
 public:
 
-	gkResourceManager(const gkString& type, const gkString &rtype);
+	gkResourceManager(const gkString& type, const gkString& rtype);
 	virtual ~gkResourceManager();
 
 	gkResource* getByHandle(const gkResourceHandle& handle);
@@ -66,7 +66,7 @@ public:
 	template<typename T> GK_INLINE T* getByHandle(const gkResourceHandle& handle) {return static_cast<T*>(getByHandle(handle));}
 	template<typename T> GK_INLINE T* getByName(const gkResourceName& name)       {return static_cast<T*>(getByName(name));}
 	template<typename T> GK_INLINE T* create(const gkResourceName& name)          {return static_cast<T*>(create(name));}
-	
+
 
 
 	void destroy(const gkResourceHandle& handle);

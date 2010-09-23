@@ -44,15 +44,15 @@ class gkDynamicsWorld;
 class gkRigidBody : public gkPhysicsController, public btMotionState
 {
 public:
-	gkRigidBody(gkGameObject *object, gkDynamicsWorld *owner);
+	gkRigidBody(gkGameObject* object, gkDynamicsWorld* owner);
 	virtual ~gkRigidBody();
 
-	void        applyTorque(const gkVector3 &t, int tspace = TRANSFORM_PARENT);
-	void        applyForce(const gkVector3 &f, int tspace = TRANSFORM_PARENT);
+	void        applyTorque(const gkVector3& t, int tspace = TRANSFORM_PARENT);
+	void        applyForce(const gkVector3& f, int tspace = TRANSFORM_PARENT);
 
 
-	void        setLinearVelocity(const gkVector3 &linv, int tspace = TRANSFORM_PARENT);
-	void        setAngularVelocity(const gkVector3 &angv, int tspace = TRANSFORM_PARENT);
+	void        setLinearVelocity(const gkVector3& linv, int tspace = TRANSFORM_PARENT);
+	void        setAngularVelocity(const gkVector3& angv, int tspace = TRANSFORM_PARENT);
 	gkVector3   getLinearVelocity(void);
 	gkVector3   getAngularVelocity(void);
 
@@ -65,18 +65,18 @@ public:
 		return oldState;
 	}
 
-	btRigidBody *getBody(void);
-	
+	btRigidBody* getBody(void);
+
 
 	void create(void);
 	void destroy(void);
 
 private:
 
-	void getWorldTransform(btTransform &worldTrans) const;
-	void setWorldTransform(const btTransform &worldTrans);
+	void getWorldTransform(btTransform& worldTrans) const;
+	void setWorldTransform(const btTransform& worldTrans);
 
-	btRigidBody *m_body;
+	btRigidBody* m_body;
 
 	int m_oldActivationState;
 };

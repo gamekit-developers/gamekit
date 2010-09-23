@@ -32,35 +32,32 @@ const gkString gkDefaultBlend   = "momo_ogre.blend";
 const gkString gkDefaultConfig  = "OgreKitStartup.cfg";
 
 
-
-// ----------------------------------------------------------------------------
 class OgreKit : public gkCoreApplication, public gkWindowSystem::Listener
 {
 public:
 	gkString    m_blend;
-	gkScene    *m_scene;
+	gkScene*    m_scene;
 public:
 	OgreKit();
 	virtual ~OgreKit() {}
 
-	int setup(int argc, char **argv);
+	int setup(int argc, char** argv);
 
-	void keyReleased(const gkKeyboard &key, const gkScanCode &sc);
+	void keyReleased(const gkKeyboard& key, const gkScanCode& sc);
 private:
 
 	bool setup(void);
 };
 
 
-// ----------------------------------------------------------------------------
+
 OgreKit::OgreKit()
 	:   m_blend(gkDefaultBlend), m_scene(0)
 {
 }
 
 
-// ----------------------------------------------------------------------------
-int OgreKit::setup(int argc, char **argv)
+int OgreKit::setup(int argc, char** argv)
 {
 	gkString cfgfname;
 
@@ -88,19 +85,19 @@ int OgreKit::setup(int argc, char **argv)
 #endif
 
 	}
-	catch (TCLAP::ArgException &e)
+	catch (TCLAP::ArgException& e)
 	{
-		std::cerr <<"error: " <<e.error() <<" for arg " <<e.argId() <<std::endl;
+		std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
 		return -1;
 	}
-	catch (TCLAP::ExitException &)
+	catch (TCLAP::ExitException&)
 	{
 		// just return and exit app
 		return -1;
 	}
 	catch (...)
 	{
-		std::cerr <<"Unknown exception." <<std::endl;
+		std::cerr << "Unknown exception." << std::endl;
 		return -1;
 	}
 
@@ -119,11 +116,9 @@ int OgreKit::setup(int argc, char **argv)
 }
 
 
-
-// ----------------------------------------------------------------------------
 bool OgreKit::setup(void)
 {
-	gkBlendFile *blend = gkBlendLoader::getSingleton().loadFile(gkUtils::getFile(m_blend), gkBlendLoader::LO_ALL_SCENES);
+	gkBlendFile* blend = gkBlendLoader::getSingleton().loadFile(gkUtils::getFile(m_blend), gkBlendLoader::LO_ALL_SCENES);
 	if (!blend)
 	{
 		gkPrintf("File loading failed.\n");
@@ -146,17 +141,14 @@ bool OgreKit::setup(void)
 }
 
 
-// ----------------------------------------------------------------------------
-void OgreKit::keyReleased(const gkKeyboard &key, const gkScanCode &sc)
+
+void OgreKit::keyReleased(const gkKeyboard& key, const gkScanCode& sc)
 {
 	if (sc == KC_ESCKEY)
 		m_engine->requestExit();
 }
 
-
-
-// ----------------------------------------------------------------------------
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
 
 	TestMemory;

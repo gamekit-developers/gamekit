@@ -38,7 +38,7 @@
 
 
 
-gkSource::gkSource(gkSound *sound)
+gkSource::gkSource(gkSound* sound)
 	:   m_playback(0),
 	    m_props(),
 	    m_reference(sound)
@@ -53,7 +53,7 @@ gkSource::~gkSource()
 
 
 
-void gkSource::bind(gkBuffer *buf)
+void gkSource::bind(gkBuffer* buf)
 {
 	gkCriticalSection::Lock lock(m_cs);
 
@@ -64,7 +64,7 @@ void gkSource::bind(gkBuffer *buf)
 
 
 
-void gkSource::updatePropsForObject(gkGameObject *obj)
+void gkSource::updatePropsForObject(gkGameObject* obj)
 {
 	gkCriticalSection::Lock lock(m_cs);
 
@@ -101,7 +101,7 @@ bool gkSource::isPaused(void)
 
 
 
-gkSoundStream *gkSource::getStream(void)
+gkSoundStream* gkSource::getStream(void)
 {
 	return m_reference ? m_reference->getStream() : 0;
 }
@@ -116,7 +116,7 @@ void gkSource::play(void)
 
 		if (m_reference && !m_playback)
 		{
-			gkSoundStream *stream = m_reference->getStream();
+			gkSoundStream* stream = m_reference->getStream();
 			if (stream) addPlay = true;
 		}
 	}
@@ -147,7 +147,7 @@ void gkSource::stop(void)
 
 		if (m_reference && m_playback)
 		{
-			gkSoundStream *stream = m_reference->getStream();
+			gkSoundStream* stream = m_reference->getStream();
 			if (stream) stopPlay = true;
 		}
 	}

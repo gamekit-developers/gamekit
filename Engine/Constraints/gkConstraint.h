@@ -41,24 +41,24 @@ public:
 	GK_INLINE void              setInfluence(gkScalar v)                {m_influence = gkClampf(v, 0.0, 1.0);}
 	GK_INLINE gkScalar          getInfluence(void)                      {return m_influence;}
 
-	GK_INLINE void              setSpace(const gkTransformSpace &v)     {m_space = v;}
+	GK_INLINE void              setSpace(const gkTransformSpace& v)     {m_space = v;}
 	GK_INLINE gkTransformSpace  getSpace(void)                          {return m_space;}
 
-	GK_INLINE void             setMatrix(const gkTransformState &m)     {m_matrix = m;}
-	GK_INLINE gkTransformState &getMatrix(void)                         {return m_matrix;}
+	GK_INLINE void             setMatrix(const gkTransformState& m)     {m_matrix = m;}
+	GK_INLINE gkTransformState& getMatrix(void)                         {return m_matrix;}
 
 
-	GK_INLINE void             setObject(gkGameObject *obj)             {m_object = obj;}
+	GK_INLINE void             setObject(gkGameObject* obj)             {m_object = obj;}
 	GK_INLINE gkGameObject*    getObject(void)                          {return m_object;}
 
 	virtual bool            update(gkScalar delta) = 0;
-	virtual gkConstraint   *clone(gkGameObject *clob) = 0;
+	virtual gkConstraint*   clone(gkGameObject* clob) = 0;
 
 	void _applyMatrix(void);
 
 protected:
 
-	gkGameObject           *m_object;
+	gkGameObject*           m_object;
 	gkTransformSpace        m_space;
 	gkScalar                m_influence;
 	gkTransformState        m_matrix;

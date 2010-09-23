@@ -41,15 +41,15 @@ extern "C" {
 
 
 
-typedef int (*gkLuaMethod)(lua_State *L);
+typedef int (*gkLuaMethod)(lua_State* L);
 
 
 struct gkLuaMethodDef
 {
-	const char      *m_name;
+	const char*      m_name;
 	gkLuaMethod      m_meth;
 	int              m_flag;
-	const char      *m_params;
+	const char*      m_params;
 	// internal
 	unsigned int     m_hash;
 };
@@ -57,9 +57,9 @@ struct gkLuaMethodDef
 
 struct gkLuaTypeDef
 {
-	const char              *m_name;
-	gkLuaTypeDef            *m_parent;
-	gkLuaMethodDef          *m_methods;
+	const char*              m_name;
+	gkLuaTypeDef*            m_parent;
+	gkLuaMethodDef*          m_methods;
 };
 
 
@@ -80,7 +80,7 @@ enum gkLuaDataTypes
 
 typedef struct gkLuaCurState
 {
-	lua_State *L;
+	lua_State* L;
 	int m_id;
 } gkLuaCurState;
 
@@ -88,12 +88,12 @@ typedef struct gkLuaCurState
 class gkLuaObject
 {
 private:
-	lua_State *L;
+	lua_State* L;
 	int m_ref, m_own;
 public:
 
 	gkLuaObject() : L(0), m_ref(-1) {}
-	gkLuaObject(lua_State *_L, int input) : L(_L), m_ref(-1), m_own(1) {ref(input);}
+	gkLuaObject(lua_State* _L, int input) : L(_L), m_ref(-1), m_own(1) {ref(input);}
 	gkLuaObject(const gkLuaObject& ob) : L(ob.L), m_ref(ob.m_ref), m_own(0) {}
 
 	~gkLuaObject() { unref(); }
@@ -120,16 +120,16 @@ public:
 	}
 
 	int         get(void)   {return m_ref;}
-	lua_State  *getL(void)  {return L;}
+	lua_State*  getL(void)  {return L;}
 };
 
 class gkLuaEvent
 {
 protected:
 
-	lua_State   *L;
-	gkLuaObject *m_self;
-	gkLuaObject *m_callback;
+	lua_State*   L;
+	gkLuaObject* m_self;
+	gkLuaObject* m_callback;
 	int          m_callArgs, m_trace;
 	bool         m_error;
 
@@ -158,7 +158,7 @@ public:
 
 
 	// return bool
-	bool call(bool &result);
+	bool call(bool& result);
 
 };
 
@@ -167,10 +167,10 @@ public:
 class gkLuaState
 {
 private:
-	lua_State *L;
+	lua_State* L;
 	int m_top;
 public:
-	gkLuaState(lua_State *_L) : L(_L) { m_top = lua_gettop(L); }
+	gkLuaState(lua_State* _L) : L(_L) { m_top = lua_gettop(L); }
 	~gkLuaState() {lua_settop(L, m_top);}
 };
 
@@ -178,24 +178,24 @@ public:
 #define lua_savestate(L) gkLuaState ___lock___(L);
 
 
-extern void lua_popall(lua_State *L);
-extern void lua_dumpstack(lua_State *L);
-extern int  lua_pushtraceback(lua_State *L);
-extern bool lua_isclass(lua_State *L, int idx);
+extern void lua_popall(lua_State* L);
+extern void lua_dumpstack(lua_State* L);
+extern int  lua_pushtraceback(lua_State* L);
+extern bool lua_isclass(lua_State* L, int idx);
 
-extern gkLuaTypeDef *lua_getclasstype(lua_State *L);
-extern gkLuaMethodDef *lua_getmethodtype(lua_State *L);
-extern int lua_findclassmethod(lua_State *L, const char *name, gkLuaTypeDef *cls);
+extern gkLuaTypeDef* lua_getclasstype(lua_State* L);
+extern gkLuaMethodDef* lua_getmethodtype(lua_State* L);
+extern int lua_findclassmethod(lua_State* L, const char* name, gkLuaTypeDef* cls);
 
 
 // binding
-extern void lua_beginnamespace(lua_State *L, const char *nsp);
-extern void lua_endnamespace(lua_State *L);
-extern void lua_addclasstype(lua_State *L, gkLuaTypeDef *type);
-extern void lua_addmethods(lua_State *L, gkLuaMethodDef *type);
-extern void lua_addconstant(lua_State *L, const char *name, double v);
-extern void lua_addconstant(lua_State *L, const char *name, float v);
-extern void lua_addconstant(lua_State *L, const char *name, int v);
-extern void lua_addconstant(lua_State *L, const char *name, const char *v);
+extern void lua_beginnamespace(lua_State* L, const char* nsp);
+extern void lua_endnamespace(lua_State* L);
+extern void lua_addclasstype(lua_State* L, gkLuaTypeDef* type);
+extern void lua_addmethods(lua_State* L, gkLuaMethodDef* type);
+extern void lua_addconstant(lua_State* L, const char* name, double v);
+extern void lua_addconstant(lua_State* L, const char* name, float v);
+extern void lua_addconstant(lua_State* L, const char* name, int v);
+extern void lua_addconstant(lua_State* L, const char* name, const char* v);
 
 #endif//_gkLuaUtils_h_

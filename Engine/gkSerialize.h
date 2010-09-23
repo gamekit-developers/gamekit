@@ -115,7 +115,7 @@ public:
 	gkMaterialProperties()
 		:   m_name(),
 		    m_mode(MA_RECEIVESHADOWS | MA_LIGHTINGENABLED | MA_DEPTHWRITE),
-		    m_diffuse(1.f,1.f,1.f,1.f),
+		    m_diffuse(1.f, 1.f, 1.f, 1.f),
 		    m_specular(0.f, 0.f, 0.f, 0.f),
 		    m_hardness(0.f),
 		    m_refraction(1.f),
@@ -163,7 +163,7 @@ public:
 		:   m_clipstart(0.1f),
 		    m_clipend(100.f),
 		    m_fov(49.13f),
-			m_orthoscale(7.314f),
+		    m_orthoscale(7.314f),
 		    m_start(false),
 		    m_type(CA_ORTHOGRAPHIC)
 	{
@@ -172,7 +172,7 @@ public:
 	gkScalar    m_clipstart;
 	gkScalar    m_clipend;
 	gkScalar    m_fov;
-	gkScalar	m_orthoscale;
+	gkScalar    m_orthoscale;
 	bool        m_start;
 	int         m_type;
 };
@@ -189,7 +189,7 @@ public:
 	{
 	}
 
-	gkMesh         *m_mesh;
+	gkMesh*         m_mesh;
 	bool            m_casts;
 	gkString        m_source;
 	gkString        m_startPose;
@@ -211,7 +211,7 @@ public:
 public:
 
 	gkLightProperties()
-		:   m_diffuse(0.f,0.f,0.f),
+		:   m_diffuse(0.f, 0.f, 0.f),
 		    m_specular(0.f, 0.f, 0.f),
 		    m_type(LI_POINT),
 		    m_spot(30.f, 40.f),
@@ -343,7 +343,7 @@ typedef enum gkGameObjectTypes
 enum gkGameObjectMode
 {
 	GK_GHOST        = (1 << 0),  // gkCharacter controller
-	GK_ACTOR        = (1 << 1),  // Sensor listener 
+	GK_ACTOR        = (1 << 1),  // Sensor listener
 	GK_INVISIBLE    = (1 << 2),  // Marked invisible
 	GK_OCCLUDER     = (1 << 3),  // Occluder
 	GK_HAS_LOGIC    = (1 << 4),  // Has game logic
@@ -361,7 +361,7 @@ public:
 		    m_state(0),
 		    m_physics(),
 		    m_findPathFlag(0xFF),
-			m_parent("")
+		    m_parent("")
 	{
 		m_transform.setIdentity();
 	}
@@ -371,7 +371,7 @@ public:
 	int                 m_mode;
 	int                 m_state;
 	gkPhysicsProperties m_physics;
-	unsigned char		m_findPathFlag;
+	unsigned char        m_findPathFlag;
 	gkString            m_parent;
 
 
@@ -409,7 +409,7 @@ public:
 		    m_start(0.f),
 		    m_end(0.f),
 		    m_intensity(0.f),
-		    m_color(0.f,0.f,0.f)
+		    m_color(0.f, 0.f, 0.f)
 	{
 	}
 
@@ -426,7 +426,7 @@ class gkSoundSceneProperties
 public:
 	enum DistanceModel
 	{
-		DM_NONE =0,
+		DM_NONE = 0,
 		DM_INVERSE,
 		DM_LINEAR,
 		DM_EXPONENT,
@@ -444,9 +444,9 @@ public:
 	{
 	}
 
-	int			m_distModel;
-	gkScalar	m_dopplerFactor;
-	gkScalar	m_sndSpeed;
+	int            m_distModel;
+	gkScalar    m_dopplerFactor;
+	gkScalar    m_sndSpeed;
 
 };
 
@@ -467,12 +467,12 @@ public:
 public:
 
 	gkSceneMaterial()
-		:	m_type(FLAT),
-			m_name(""),
-			m_horizon(0,0,0,1),
-			m_zenith(0,0,0,1),
-			m_ambient(0,0,0,1),
-			m_distance(0.f)
+		:    m_type(FLAT),
+		     m_name(""),
+		     m_horizon(0, 0, 0, 1),
+		     m_zenith(0, 0, 0, 1),
+		     m_ambient(0, 0, 0, 1),
+		     m_distance(0.f)
 	{
 	}
 
@@ -500,7 +500,7 @@ public:
 	gkSceneProperties()
 		:   m_manager(MA_GENERIC),
 		    m_gravity(0.f, 0.f, -9.81f),
-			m_material(),
+		    m_material(),
 		    m_fog()
 	{
 	}

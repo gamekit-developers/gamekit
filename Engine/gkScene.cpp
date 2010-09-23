@@ -74,7 +74,7 @@ using namespace Ogre;
 
 
 
-gkScene::gkScene(gkInstancedManager* creator, const gkResourceName &name, const gkResourceHandle& handle)
+gkScene::gkScene(gkInstancedManager* creator, const gkResourceName& name, const gkResourceHandle& handle)
 	:    gkInstancedObject(creator, name, handle),
 	     m_manager(0),
 	     m_startCam(0),
@@ -88,7 +88,7 @@ gkScene::gkScene(gkInstancedManager* creator, const gkResourceName &name, const 
 	     m_markDBVT(false),
 	     m_cloneCount(0),
 	     m_layers(0xFFFFFFFF),
-		 m_skybox(0)
+	     m_skybox(0)
 {
 }
 
@@ -133,7 +133,7 @@ bool gkScene::hasObject(const gkHashedString& ob)
 		gkGameObjectManager& mgr = gkGameObjectManager::getSingleton();
 		if (mgr.exists(ob))
 		{
-			gkGameObject *obj = mgr.getByName<gkGameObject>(ob);
+			gkGameObject* obj = mgr.getByName<gkGameObject>(ob);
 			if (obj && obj->getOwner() == this)
 				result = true;
 		}
@@ -153,7 +153,7 @@ bool gkScene::hasObject(gkGameObject* gobj)
 		gkGameObjectManager& mgr = gkGameObjectManager::getSingleton();
 		if (mgr.exists(gobj->getResourceHandle()))
 		{
-			gkGameObject *obj = mgr.getByHandle<gkGameObject>(gobj->getResourceHandle());
+			gkGameObject* obj = mgr.getByHandle<gkGameObject>(gobj->getResourceHandle());
 			if (obj && obj->getOwner() == this)
 				result = true;
 		}
@@ -174,7 +174,7 @@ gkGameObject* gkScene::getObject(const gkHashedString& name)
 		gkGameObjectManager& mgr = gkGameObjectManager::getSingleton();
 		if (mgr.exists(name))
 		{
-			gkGameObject *obj = mgr.getByName<gkGameObject>(name);
+			gkGameObject* obj = mgr.getByName<gkGameObject>(name);
 			if (obj && obj->getOwner() == this)
 				return obj;
 		}
@@ -215,7 +215,7 @@ gkGameObject* gkScene::createObject(const gkHashedString& name)
 		return 0;
 	}
 
-	gkGameObject *gobj = gkGameObjectManager::getSingleton().createObject(name);
+	gkGameObject* gobj = gkGameObjectManager::getSingleton().createObject(name);
 	addObject(gobj);
 	return gobj;
 }
@@ -229,7 +229,7 @@ gkLight* gkScene::createLight(const gkHashedString& name)
 		return 0;
 	}
 
-	gkLight *gobj = gkGameObjectManager::getSingleton().createLight(name);
+	gkLight* gobj = gkGameObjectManager::getSingleton().createLight(name);
 	addObject(gobj);
 	return gobj;
 }
@@ -245,7 +245,7 @@ gkCamera* gkScene::createCamera(const gkHashedString& name)
 		return 0;
 	}
 
-	gkCamera *gobj = gkGameObjectManager::getSingleton().createCamera(name);
+	gkCamera* gobj = gkGameObjectManager::getSingleton().createCamera(name);
 	addObject(gobj);
 	return gobj;
 }
@@ -261,7 +261,7 @@ gkEntity* gkScene::createEntity(const gkHashedString& name)
 	}
 
 
-	gkEntity *gobj = gkGameObjectManager::getSingleton().createEntity(name);
+	gkEntity* gobj = gkGameObjectManager::getSingleton().createEntity(name);
 	addObject(gobj);
 	return gobj;
 }
@@ -288,7 +288,7 @@ bool gkScene::_replaceObjectInScene(gkGameObject* gobj, gkScene* osc, gkScene* n
 {
 	GK_ASSERT(gobj && gobj->getOwner() == osc && gobj->getOwner() != nsc);
 
-	if (nsc->getObject(gobj->getName())!= 0)
+	if (nsc->getObject(gobj->getName()) != 0)
 	{
 		gkLogMessage("Scene: Another object by the name "
 		             << gobj->getName() << " exists in scene " << nsc->getName() << ". Cannot replace!");
@@ -528,7 +528,7 @@ gkConstraintManager* gkScene::getConstraintManager(void)
 }
 
 
-void gkScene::getGroups(gkGroupArray &groups)
+void gkScene::getGroups(gkGroupArray& groups)
 {
 }
 
@@ -558,7 +558,7 @@ void gkScene::setMainCamera(gkCamera* cam)
 	GK_ASSERT(main);
 
 	gkWindowSystem& sys = gkWindowSystem::getSingleton();
-	
+
 	if (!m_viewport)
 	{
 		m_viewport = sys.addMainViewport(cam);
@@ -683,7 +683,7 @@ void gkScene::_applyBuiltinParents(void)
 	gkGameObjectSet::Iterator it = m_instanceObjects.iterator();
 	while (it.hasMoreElements())
 	{
-		gkGameObject* gobj = it.getNext(), *pobj=0;
+		gkGameObject* gobj = it.getNext(), *pobj = 0;
 
 
 
@@ -897,7 +897,7 @@ void gkScene::destroyInstanceImpl(void)
 	if (m_objects.empty())
 		return;
 
-	if(m_navMeshData.get())
+	if (m_navMeshData.get())
 		m_navMeshData->destroyInstances();
 
 #ifdef OGREKIT_USE_LUA
@@ -1032,7 +1032,7 @@ void gkScene::setShadows()
 {
 	gkUserDefs& defs = gkEngine::getSingleton().getUserDefs();
 
-	if(defs.enableshadows)
+	if (defs.enableshadows)
 	{
 		Ogre::ShadowTechnique shadowTechnique = ::ParseShadowTechnique(defs.shadowtechnique);
 
@@ -1058,7 +1058,7 @@ void gkScene::notifyInstanceCreated(gkGameObject* gobj)
 	}
 
 
-	if(m_navMeshData.get())
+	if (m_navMeshData.get())
 		m_navMeshData->updateOrCreate(gobj);
 
 
@@ -1085,7 +1085,7 @@ void gkScene::notifyInstanceDestroyed(gkGameObject* gobj)
 		m_constraintManager->notifyInstanceDestroyed(gobj);
 
 
-	if(m_navMeshData.get())
+	if (m_navMeshData.get())
 		m_navMeshData->destroyInstance(gobj);
 
 	// destroy physics
@@ -1111,7 +1111,7 @@ void gkScene::notifyObjectUpdate(gkGameObject* gobj)
 	if (!isBeingCreated())
 	{
 
-		if(m_navMeshData.get())
+		if (m_navMeshData.get())
 			m_navMeshData->updateOrCreate(gobj);
 	}
 }
@@ -1388,7 +1388,7 @@ bool gkScene::asyncTryToCreateNavigationMesh(gkActiveObject& activeObj, const gk
 
 	result.reset();
 
-	if(m_navMeshData.get() && m_navMeshData->hasChanged())
+	if (m_navMeshData.get() && m_navMeshData->hasChanged())
 	{
 		gkPtrRef<gkCall> call(new CreateNavMeshCall(PMESHDATA(m_navMeshData->cloneData()), config, result));
 

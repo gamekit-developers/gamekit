@@ -30,9 +30,9 @@
 #include "gkDynamicsWorld.h"
 #include "gkLogger.h"
 
-gkShowPhysicsNode::gkShowPhysicsNode(gkLogicTree *parent, size_t id) 
-: gkLogicNode(parent, id),
-m_scene(0)
+gkShowPhysicsNode::gkShowPhysicsNode(gkLogicTree* parent, size_t id)
+	: gkLogicNode(parent, id),
+	  m_scene(0)
 {
 	ADD_ISOCK(ENABLE, false);
 	ADD_ISOCK(SHOW_AABB, false);
@@ -49,4 +49,3 @@ bool gkShowPhysicsNode::evaluate(gkScalar tick)
 
 	return false;
 }
-

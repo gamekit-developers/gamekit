@@ -36,9 +36,9 @@
 #include "BulletDynamics/Character/btKinematicCharacterController.h"
 
 
-gkCollisionNode::gkCollisionNode(gkLogicTree *parent, size_t id)
-: gkLogicNode(parent, id),
-m_object(0)
+gkCollisionNode::gkCollisionNode(gkLogicTree* parent, size_t id)
+	: gkLogicNode(parent, id),
+	  m_object(0)
 {
 	ADD_ISOCK(ENABLE, false);
 	ADD_ISOCK(TARGET, 0);
@@ -66,7 +66,7 @@ bool gkCollisionNode::evaluate(gkScalar tick)
 
 	m_object = 0;
 
-	if(pObj && pObj->isInstanced())
+	if (pObj && pObj->isInstanced())
 	{
 		m_object = pObj->getPhysicsController();
 	}
@@ -78,14 +78,14 @@ void gkCollisionNode::update(gkScalar tick)
 {
 	SET_SOCKET_VALUE(HAS_COLLIDED, false);
 
-	if(m_timer.getTimeMilliseconds() > 300)
+	if (m_timer.getTimeMilliseconds() > 300)
 	{
 		SET_SOCKET_VALUE(NOT_HAS_COLLIDED, true);
 		m_timer.reset();
 	}
-	
 
-	if(GET_SOCKET_VALUE(ENABLE))
+
+	if (GET_SOCKET_VALUE(ENABLE))
 	{
 		m_object->enableContactProcessing(true);
 
@@ -105,6 +105,3 @@ void gkCollisionNode::update(gkScalar tick)
 		m_object->enableContactProcessing(false);
 	}
 }
-
-
-

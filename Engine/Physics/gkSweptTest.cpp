@@ -33,14 +33,14 @@
 
 class SweptTestResultCallback : public btCollisionWorld::ClosestConvexResultCallback
 {
-	const gkSweptTest::AVOID_LIST &m_avoidList;
+	const gkSweptTest::AVOID_LIST& m_avoidList;
 	btScalar m_allowedPenetration;
-	btOverlappingPairCache *m_pairCache;
-	btDispatcher *m_dispatcher;
+	btOverlappingPairCache* m_pairCache;
+	btDispatcher* m_dispatcher;
 
 
 public:
-	SweptTestResultCallback(const gkSweptTest::AVOID_LIST &avoidList, const btVector3 &fromA, const btVector3 &toA,btOverlappingPairCache *pairCache,btDispatcher *dispatcher) :
+	SweptTestResultCallback(const gkSweptTest::AVOID_LIST& avoidList, const btVector3& fromA, const btVector3& toA, btOverlappingPairCache* pairCache, btDispatcher* dispatcher) :
 		btCollisionWorld::ClosestConvexResultCallback(fromA, toA),
 		m_avoidList(avoidList),
 		m_allowedPenetration(0.0f),
@@ -49,31 +49,31 @@ public:
 	{
 	}
 
-	btScalar addSingleResult(btCollisionWorld::LocalConvexResult &convexResult,bool normalInWorldSpace)
+	btScalar addSingleResult(btCollisionWorld::LocalConvexResult& convexResult, bool normalInWorldSpace)
 	{
 		if (m_avoidList.end() != m_avoidList.find(convexResult.m_hitCollisionObject))
 			return 1.0f;
 
 		//ignore result if there is no contact response
-		if(!convexResult.m_hitCollisionObject->hasContactResponse())
+		if (!convexResult.m_hitCollisionObject->hasContactResponse())
 			return 1.0f;
 
-		btVector3 linVelA,linVelB;
-		linVelA = m_convexToWorld-m_convexFromWorld;
-		linVelB = btVector3(0,0,0);
+		btVector3 linVelA, linVelB;
+		linVelA = m_convexToWorld - m_convexFromWorld;
+		linVelB = btVector3(0, 0, 0);
 
-		btVector3 relativeVelocity = (linVelA-linVelB);
+		btVector3 relativeVelocity = (linVelA - linVelB);
 		//don't report time of impact for motion away from the contact normal (or causes minor penetration)
-		if (convexResult.m_hitNormalLocal.dot(relativeVelocity)>=-m_allowedPenetration)
+		if (convexResult.m_hitNormalLocal.dot(relativeVelocity) >= -m_allowedPenetration)
 			return 1.f;
 
 		return ClosestConvexResultCallback::addSingleResult (convexResult, normalInWorldSpace);
 	}
 
-	bool needsCollision(btBroadphaseProxy *proxy0) const
+	bool needsCollision(btBroadphaseProxy* proxy0) const
 	{
 		//don't collide with itself
-		if (m_avoidList.end() != m_avoidList.find(static_cast<btCollisionObject *>(proxy0->m_clientObject)))
+		if (m_avoidList.end() != m_avoidList.find(static_cast<btCollisionObject*>(proxy0->m_clientObject)))
 			return false;
 
 		///don't do CCD when the collision filters are not matching
@@ -86,7 +86,7 @@ public:
 
 /////////////////////////////////////////////////////////////////////////////
 
-gkSweptTest::gkSweptTest(const AVOID_LIST &avoidList)
+gkSweptTest::gkSweptTest(const AVOID_LIST& avoidList)
 	: m_hitPointWorld(gkVector3::ZERO),
 	  m_collisionObject(0),
 	  m_avoidList(avoidList)
@@ -97,7 +97,7 @@ gkSweptTest::~gkSweptTest()
 {
 }
 
-bool gkSweptTest::collides(const Ogre::Ray &ray, gkScalar rayRadius)
+bool gkSweptTest::collides(const Ogre::Ray& ray, gkScalar rayRadius)
 {
 	gkVector3 from = ray.getOrigin();
 	gkVector3 to = ray.getOrigin() + ray.getDirection();
@@ -112,11 +112,11 @@ bool gkSweptTest::collides(const Ogre::Ray &ray, gkScalar rayRadius)
 	start.setOrigin(rayFrom);
 	end.setOrigin(rayTo);
 
-	gkScene *pScene = gkEngine::getSingleton().getActiveScene();
+	gkScene* pScene = gkEngine::getSingleton().getActiveScene();
 
 	GK_ASSERT(pScene);
 
-	btDynamicsWorld *pWorld = pScene->getDynamicsWorld()->getBulletWorld();
+	btDynamicsWorld* pWorld = pScene->getDynamicsWorld()->getBulletWorld();
 
 	GK_ASSERT(pWorld);
 
@@ -127,7 +127,7 @@ bool gkSweptTest::collides(const Ogre::Ray &ray, gkScalar rayRadius)
 	btSphereShape tmpSphere(rayRadius);
 	pWorld->convexSweepTest(&tmpSphere, start, end, rayCallback);
 
-	if(rayCallback.hasHit())
+	if (rayCallback.hasHit())
 	{
 		m_hitPointWorld = gkVector3(rayCallback.m_hitPointWorld);
 
@@ -147,7 +147,7 @@ bool gkSweptTest::collides(const Ogre::Ray &ray, gkScalar rayRadius)
 	return false;
 }
 
-gkGameObject *gkSweptTest::getObject() const
+gkGameObject* gkSweptTest::getObject() const
 {
-	return static_cast<gkPhysicsController *>(m_collisionObject->getUserPointer())->getObject();
+	return static_cast<gkPhysicsController*>(m_collisionObject->getUserPointer())->getObject();
 }

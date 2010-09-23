@@ -43,11 +43,11 @@ class gkGamePlayer : public gkFSM
 {
 public:
 
-	gkGamePlayer(gkGameLevel *levelData);
+	gkGamePlayer(gkGameLevel* levelData);
 	~gkGamePlayer();
 
 
-	void load(gkBlendFile *playerData);
+	void load(gkBlendFile* playerData);
 
 
 	void update(gkScalar delta);
@@ -120,28 +120,28 @@ protected:
 
 	int m_jumpFrom;
 
-	gkGameLevel  *m_levelData;
-	gkGameObject *m_physics;
-	gkGameObject *m_xRot, *m_zRot;
-	gkCamera     *m_camera;
-	gkEntity     *m_entity;
-	gkSkeleton   *m_skeleton;
+	gkGameLevel*  m_levelData;
+	gkGameObject* m_physics;
+	gkGameObject* m_xRot, *m_zRot;
+	gkCamera*     m_camera;
+	gkEntity*     m_entity;
+	gkSkeleton*   m_skeleton;
 
 
 	gkAnimations m_animations;
-	gkActionSequence *m_comboAttack;
+	gkActionSequence* m_comboAttack;
 
 
 	gkActionBlender m_blendMgr;
 	int m_idleSwitch;
 
 	int m_btn1Cache, m_btn2Cache, m_btn3Cache;
-	bool isButtonDownCache(int btn, int &cache);
+	bool isButtonDownCache(int btn, int& cache);
 	bool m_isBtn1, m_isBtn2, m_isBtn3;
 
-	
-	gkHUD *m_momoData, *m_cameraData;
-	gkHUDElement *m_currentState, *m_cameraState;
+
+	gkHUD* m_momoData, *m_cameraData;
+	gkHUDElement* m_currentState, *m_cameraState;
 
 
 

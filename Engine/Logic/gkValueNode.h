@@ -42,10 +42,10 @@ public:
 	DECLARE_SOCKET_TYPE(VALUE, gkScalar);
 	DECLARE_SOCKET_TYPE(RESULT, gkScalar);
 
-    gkValueNode(gkLogicTree *parent, size_t id);
-    virtual ~gkValueNode() {}
+	gkValueNode(gkLogicTree* parent, size_t id);
+	virtual ~gkValueNode() {}
 
-    void update(gkScalar tick);
+	void update(gkScalar tick);
 };
 
 

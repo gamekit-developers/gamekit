@@ -28,8 +28,9 @@
 #include "gkMessageManager.h"
 
 
-gkMessageManager::Message & gkMessageManager::Message::operator = (const Message & m)
-{	m_from = m.m_from;
+gkMessageManager::Message& gkMessageManager::Message::operator = (const Message& m)
+{
+	m_from = m.m_from;
 	m_to = m.m_to;
 	m_subject = m.m_subject;
 	m_body = m.m_body;
@@ -37,13 +38,13 @@ gkMessageManager::Message & gkMessageManager::Message::operator = (const Message
 }
 
 
-void gkMessageManager::GenericMessageListener::handleMessage(gkMessageManager::Message *message)
+void gkMessageManager::GenericMessageListener::handleMessage(gkMessageManager::Message* message)
 {
-	if(!m_fromFilter.empty() && m_fromFilter.compare(message->m_from) != 0) return;
-	if(!m_toFilter.empty() && m_toFilter.compare(message->m_to) != 0) return;
-	if(!m_subjectFilter.empty() && m_subjectFilter.compare(message->m_subject) != 0) return;
-	
-	Message m= *message;
+	if (!m_fromFilter.empty() && m_fromFilter.compare(message->m_from) != 0) return;
+	if (!m_toFilter.empty() && m_toFilter.compare(message->m_to) != 0) return;
+	if (!m_subjectFilter.empty() && m_subjectFilter.compare(message->m_subject) != 0) return;
+
+	Message m = *message;
 
 	m_messages.push_back(m);
 }
@@ -51,18 +52,18 @@ void gkMessageManager::GenericMessageListener::handleMessage(gkMessageManager::M
 
 gkMessageManager::gkMessageManager()
 {
-	
+
 }
 
 
-void gkMessageManager::addListener(MessageListener *listener)
+void gkMessageManager::addListener(MessageListener* listener)
 {
-	if( m_listeners.find(listener) == UT_NPOS)
+	if ( m_listeners.find(listener) == UT_NPOS)
 		m_listeners.push_back(listener);
 }
 
 
-void gkMessageManager::removeListener(MessageListener *listener)
+void gkMessageManager::removeListener(MessageListener* listener)
 {
 	m_listeners.erase(listener);
 }
@@ -70,19 +71,19 @@ void gkMessageManager::removeListener(MessageListener *listener)
 
 void gkMessageManager::sendMessage(gkString from, gkString to, gkString subject, gkString body)
 {
-	Message *m = new Message();
+	Message* m = new Message();
 	m->m_from = from;
 	m->m_to = to;
 	m->m_subject = subject;
 	m->m_body = body;
-	
+
 	utArrayIterator<utArray<MessageListener*> > iter(m_listeners);
-	while(iter.hasMoreElements())
+	while (iter.hasMoreElements())
 	{
 		iter.peekNext()->handleMessage(m);
 		iter.getNext();
 	}
-	
+
 	delete m;
 }
 

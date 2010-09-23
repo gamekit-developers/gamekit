@@ -42,7 +42,7 @@ private:
 	unsigned long   m_skip, m_loop;
 	unsigned long   m_cur, m_next;
 	gkScalar        m_fixed, m_invt;
-	btClock         *m_clock;
+	btClock*         m_clock;
 	bool            m_lock, m_init;
 
 protected:

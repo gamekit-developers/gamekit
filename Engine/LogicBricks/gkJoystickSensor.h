@@ -49,13 +49,13 @@ class gkJoystickSensor : public gkLogicSensor
 public:
 	enum JoyType
 	{
-		JT_NONE =0,
+		JT_NONE = 0,
 		JT_AXIS,
 		JT_AXIS_PAIR,
 		JT_BUTTON,
 		JT_HAT,
 	};
-	
+
 	enum AxisDir
 	{
 		AD_LEFT,
@@ -63,17 +63,17 @@ public:
 		AD_TOP,
 		AD_BOTTOM,
 	};
-	
+
 protected:
 	unsigned int m_joystickIndex, m_elementIndex, m_axisThreshold;
 	bool         m_allEvents;
 	int          m_eventType, m_axisDirection;
-	
+
 public:
-	gkJoystickSensor(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	gkJoystickSensor(gkGameObject* object, gkLogicLink* link, const gkString& name);
 	virtual ~gkJoystickSensor() {}
-	
-	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
+
+	gkLogicBrick* clone(gkLogicLink* link, gkGameObject* dest);
 
 	bool query(void);
 

@@ -51,19 +51,19 @@ private:
 	gkString m_camera;
 
 public:
-	gkSceneActuator(gkGameObject *object, gkLogicLink *link, const gkString &name);
-	virtual ~gkSceneActuator(){}
+	gkSceneActuator(gkGameObject* object, gkLogicLink* link, const gkString& name);
+	virtual ~gkSceneActuator() {}
 
 
-	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
+	gkLogicBrick* clone(gkLogicLink* link, gkGameObject* dest);
 	void execute(void);
-	
+
 	GK_INLINE void            setMode(int v)               {m_mode = v;}
 	GK_INLINE int             getMode(void)                {return m_mode;}
-	GK_INLINE void            setScene(const gkString &v)  {m_sceneName = v;}
-	GK_INLINE const gkString &getScene(void)               {return m_sceneName;}
-	GK_INLINE void            setCamera(const gkString &v) {m_camera = v;}
-	GK_INLINE const gkString &getCamera(void)              {return m_camera;}
+	GK_INLINE void            setScene(const gkString& v)  {m_sceneName = v;}
+	GK_INLINE const gkString& getScene(void)               {return m_sceneName;}
+	GK_INLINE void            setCamera(const gkString& v) {m_camera = v;}
+	GK_INLINE const gkString& getCamera(void)              {return m_camera;}
 };
 
 #endif // GKSCENEACTUATOR_H

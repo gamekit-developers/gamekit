@@ -38,7 +38,7 @@ class gkTextManager : public gkResourceManager, public utSingleton<gkTextManager
 public:
 	enum TextType
 	{
-		TT_ANY,		 // Undefined ( no *.ext or an unregistered *.ext )
+		TT_ANY,      // Undefined ( no *.ext or an unregistered *.ext )
 		TT_MATERIAL, // Ogre material script (*.material)
 		TT_PARTICLE, // Ogre particle script (*.particle)
 		TT_COMPOSIT, // todo: Ogre Compositor script (*.compositor)
@@ -61,11 +61,11 @@ public:
 	gkTextManager();
 	virtual ~gkTextManager();
 
-	gkResource *createImpl(const gkResourceName &name, const gkResourceHandle &handle);
+	gkResource* createImpl(const gkResourceName& name, const gkResourceHandle& handle);
 
 
-	int getTextType(const gkString &name);
-	void getTextFiles(TextArray &dest, int textType);
+	int getTextType(const gkString& name);
+	void getTextFiles(TextArray& dest, int textType);
 
 
 	void parseScripts(void);

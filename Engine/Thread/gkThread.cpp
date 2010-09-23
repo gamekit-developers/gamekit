@@ -52,19 +52,19 @@ void* gkThread::task(void* p)
 #endif
 
 gkThread::gkThread(gkCall* call)
-: m_call(call)
+	: m_call(call)
 {
 	GK_ASSERT(m_call);
 
 #ifdef WIN32
 	m_hChilThread = (HANDLE)_beginthreadex(
-		0, // no security
-		65535, 
-		task, 
-		this, 
-		0, // running 
-		&m_threadId
-	);
+	                    0, // no security
+	                    65535,
+	                    task,
+	                    this,
+	                    0, // running
+	                    &m_threadId
+	                );
 #else
 	int failed = pthread_create(&m_threadId, NULL, &task, this);
 
@@ -92,4 +92,3 @@ void gkThread::run()
 
 	m_syncObj.signal();
 }
-

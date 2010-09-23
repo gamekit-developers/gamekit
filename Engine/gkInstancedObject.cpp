@@ -31,9 +31,9 @@
 
 
 
-gkInstancedObject::gkInstancedObject(gkInstancedManager *creator, const gkResourceName& name, const gkResourceHandle& handle)
-	:	gkResource(creator, name, handle),
-	    m_instanceState(ST_DESTROYED)
+gkInstancedObject::gkInstancedObject(gkInstancedManager* creator, const gkResourceName& name, const gkResourceHandle& handle)
+	:    gkResource(creator, name, handle),
+	     m_instanceState(ST_DESTROYED)
 {
 }
 
@@ -49,8 +49,8 @@ void gkInstancedObject::createInstance(bool queue)
 
 	if (!canCreateInstance())
 	{
-		gkLogMessage(m_creator->getResourceType() << ": Object '" 
-			<<  m_name.str() << "' \n\t Cannot create instances.");
+		gkLogMessage(m_creator->getResourceType() << ": Object '"
+		             <<  m_name.str() << "' \n\t Cannot create instances.");
 		return;
 	}
 
@@ -80,16 +80,16 @@ void gkInstancedObject::createInstance(bool queue)
 		}
 		else
 		{
-			gkLogMessage(m_creator->getResourceType() << ": Object '" <<  m_name.str() << "' Instancing failed. \n\t" << 
-				(m_instanceError.empty() ? "Unknown error set" : m_instanceError));
+			gkLogMessage(m_creator->getResourceType() << ": Object '" <<  m_name.str() << "' Instancing failed. \n\t" <<
+			             (m_instanceError.empty() ? "Unknown error set" : m_instanceError));
 		}
 	}
 
 	catch (Ogre::Exception& e)
 	{
 		m_instanceState = ST_ERROR;
-		gkLogMessage(m_creator->getResourceType() << ": Object '" <<  m_name.str() 
-			<< "' Instancing failed. \n\t" << e.getDescription());
+		gkLogMessage(m_creator->getResourceType() << ": Object '" <<  m_name.str()
+		             << "' Instancing failed. \n\t" << e.getDescription());
 	}
 
 
@@ -128,8 +128,8 @@ void gkInstancedObject::destroyInstance(bool queue)
 	catch (Ogre::Exception& e)
 	{
 		m_instanceState = ST_ERROR;
-		gkLogMessage(m_creator->getResourceType() << ": Object '" 
-			<<  m_name.str() << "' Destruction failed. \n\t" << e.getDescription());
+		gkLogMessage(m_creator->getResourceType() << ": Object '"
+		             <<  m_name.str() << "' Destruction failed. \n\t" << e.getDescription());
 	}
 
 

@@ -30,25 +30,25 @@ using namespace Ogre;
 
 
 
-gkTimerNode::gkTimerNode(gkLogicTree *parent, size_t id) 
-:       gkLogicNode(parent, id)
+gkTimerNode::gkTimerNode(gkLogicTree* parent, size_t id)
+	:       gkLogicNode(parent, id)
 {
-    ADD_ISOCK(UPDATE, true);
-    ADD_ISOCK(VALUE, 0);
-    ADD_OSOCK(RESULT, 0);
+	ADD_ISOCK(UPDATE, true);
+	ADD_ISOCK(VALUE, 0);
+	ADD_OSOCK(RESULT, 0);
 }
 
 
 bool gkTimerNode::evaluate(gkScalar tick)
 {
-    return GET_SOCKET_VALUE(UPDATE);
+	return GET_SOCKET_VALUE(UPDATE);
 }
 
 void gkTimerNode::update(gkScalar tick)
 {
-    gkScalar st = GET_SOCKET_VALUE(VALUE);
-    st += tick;
+	gkScalar st = GET_SOCKET_VALUE(VALUE);
+	st += tick;
 
-    SET_SOCKET_VALUE(VALUE, st); // re apply to inital value
-    SET_SOCKET_VALUE(RESULT, st);
+	SET_SOCKET_VALUE(VALUE, st); // re apply to inital value
+	SET_SOCKET_VALUE(RESULT, st);
 }

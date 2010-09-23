@@ -34,7 +34,7 @@ class gkStats : public Ogre::Singleton<gkStats>
 {
 
 private:
-	Ogre::Timer *m_clock;
+	Ogre::Timer* m_clock;
 
 	unsigned long m_start;
 	unsigned long m_render;
@@ -79,8 +79,8 @@ public:
 	unsigned long getLastBufSwapLodMicroSeconds(void)  {return m_lastBufswaplod;}
 	unsigned long getLastTotalMicroSeconds(void)       {return m_lastTotal;}
 
-	static gkStats &getSingleton(void);
-	static gkStats *getSingletonPtr(void);
+	static gkStats& getSingleton(void);
+	static gkStats* getSingletonPtr(void);
 };
 
 #endif //_gkStats_h_

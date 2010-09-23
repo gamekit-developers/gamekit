@@ -75,10 +75,10 @@ void gkLogicManager::clear(void)
 
 	if (!m_links.empty())
 	{
-		gkLogicLink *node = m_links.begin();
+		gkLogicLink* node = m_links.begin();
 		while (node)
 		{
-			gkLogicLink *tmp = node;
+			gkLogicLink* tmp = node;
 			node = node->getNext();
 			delete tmp;
 		}
@@ -90,7 +90,7 @@ void gkLogicManager::clear(void)
 }
 
 
-void gkLogicManager::clearActive(gkLogicLink *link)
+void gkLogicManager::clearActive(gkLogicLink* link)
 {
 	// remove from the active/running actuator list
 
@@ -101,7 +101,7 @@ void gkLogicManager::clearActive(gkLogicLink *link)
 		utListIterator<gkLogicLink::BrickList> iter(link->getControllers());
 		while (iter.hasMoreElements())
 		{
-			gkLogicController *cont = (gkLogicController *)iter.getNext();
+			gkLogicController* cont = (gkLogicController*)iter.getNext();
 
 			// switch off controllers
 			cont->setActive(false);
@@ -116,7 +116,7 @@ void gkLogicManager::clearActive(gkLogicLink *link)
 		iter = utListIterator<gkLogicLink::BrickList>(link->getActuators());
 		while (iter.hasMoreElements())
 		{
-			gkLogicActuator *act = (gkLogicActuator *)iter.getNext();
+			gkLogicActuator* act = (gkLogicActuator*)iter.getNext();
 
 			// switch off actuators
 			act->setActive(false);
@@ -133,7 +133,7 @@ void gkLogicManager::clearActive(gkLogicLink *link)
 
 
 
-void gkLogicManager::destroy(gkLogicLink *link)
+void gkLogicManager::destroy(gkLogicLink* link)
 {
 	if (!m_links.empty())
 	{
@@ -149,9 +149,9 @@ void gkLogicManager::destroy(gkLogicLink *link)
 }
 
 
-gkLogicLink *gkLogicManager::createLink(void)
+gkLogicLink* gkLogicManager::createLink(void)
 {
-	gkLogicLink *link = new gkLogicLink();
+	gkLogicLink* link = new gkLogicLink();
 	m_links.push_back(link);
 	return link;
 }
@@ -159,7 +159,7 @@ gkLogicLink *gkLogicManager::createLink(void)
 #define GK_DEBUG_EXEC 1
 
 
-void gkLogicManager::push(gkLogicSensor *a, gkLogicController *b, bool stateValue)
+void gkLogicManager::push(gkLogicSensor* a, gkLogicController* b, bool stateValue)
 {
 	if (b->inActiveState())
 	{
@@ -173,7 +173,7 @@ void gkLogicManager::push(gkLogicSensor *a, gkLogicController *b, bool stateValu
 
 
 
-void gkLogicManager::push(gkLogicController *a, gkLogicActuator *b, bool stateValue)
+void gkLogicManager::push(gkLogicController* a, gkLogicActuator* b, bool stateValue)
 {
 	if (a->inActiveState())
 	{
@@ -186,7 +186,7 @@ void gkLogicManager::push(gkLogicController *a, gkLogicActuator *b, bool stateVa
 }
 
 
-void gkLogicManager::push(gkLogicBrick *a, gkLogicBrick *b, Bricks &in, bool stateValue)
+void gkLogicManager::push(gkLogicBrick* a, gkLogicBrick* b, Bricks& in, bool stateValue)
 {
 	a->setPulse(stateValue ? BM_ON : BM_OFF);
 
@@ -198,11 +198,11 @@ void gkLogicManager::push(gkLogicBrick *a, gkLogicBrick *b, Bricks &in, bool sta
 }
 
 
-void gkLogicManager::notifyState(unsigned int state, gkLogicLink *link)
+void gkLogicManager::notifyState(unsigned int state, gkLogicLink* link)
 {
 	if (!m_ain.empty())
 	{
-		UTsize i, s, f=0;
+		UTsize i, s, f = 0;
 		Bricks::Pointer b;
 
 		i = 0; s = m_ain.size();
@@ -216,7 +216,7 @@ void gkLogicManager::notifyState(unsigned int state, gkLogicLink *link)
 			}
 
 #ifdef GK_DEBUG_EXEC
-			if (f==0 && b[i]->wantsDebug())
+			if (f == 0 && b[i]->wantsDebug())
 			{
 				dsPrintf("===== State Change %i =====\n", state);
 				f = 1;
@@ -248,7 +248,7 @@ void gkLogicManager::notifySceneInstanceDestroyed(void)
 
 	if (!m_links.empty())
 	{
-		gkLogicLink *node = m_links.begin();
+		gkLogicLink* node = m_links.begin();
 		while (node)
 		{
 			clearActive(node);
@@ -258,7 +258,7 @@ void gkLogicManager::notifySceneInstanceDestroyed(void)
 }
 
 
-void gkLogicManager::notifyLinkInstanceDestroyed(gkLogicLink *link)
+void gkLogicManager::notifyLinkInstanceDestroyed(gkLogicLink* link)
 {
 	clearActive(link);
 }
@@ -301,7 +301,7 @@ void gkLogicManager::sort(void)
 	if (m_dispatchers)
 	{
 		UTsize i = 0;
-		while (i<DIS_MAX)
+		while (i < DIS_MAX)
 			m_dispatchers[i++]->sort();
 	}
 }
@@ -321,7 +321,7 @@ void gkLogicManager::update(gkScalar delta)
 	}
 
 	i = 0;
-	while (i<DIS_MAX)
+	while (i < DIS_MAX)
 		m_dispatchers[i++]->dispatch();
 
 	if (!m_cin.empty())

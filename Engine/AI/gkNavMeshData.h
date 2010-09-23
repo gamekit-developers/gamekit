@@ -66,13 +66,13 @@ public:
 		return p;
 	}
 
-	GK_INLINE bool hasChanged() const { return m_hasChanged; } 
+	GK_INLINE bool hasChanged() const { return m_hasChanged; }
 	GK_INLINE void resetHasChanged() { m_hasChanged = false; }
 
 private:
 
-	void processTriangle(btVector3* triangle,int partId, int triangleIndex);
-	
+	void processTriangle(btVector3* triangle, int partId, int triangleIndex);
+
 	void addTriangle(const gkVector3& v1, const gkVector3& v2, const gkVector3& v3, int triangleIndex);
 
 	void AddCollisionObj();
@@ -80,7 +80,7 @@ private:
 	bool isValid(gkGameObject* pObj);
 
 private:
-	
+
 	mutable gkCriticalSection m_cs;
 
 	gkGameObject* m_object;

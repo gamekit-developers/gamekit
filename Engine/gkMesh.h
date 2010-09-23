@@ -183,7 +183,7 @@ public:
 
 	void addSubMesh(gkSubMesh* me);
 	void _setSkeleton(gkSkeletonResource* res) {m_skeleton = res;}
-	gkSkeletonResource *getSkeleton(void)      {return m_skeleton;}
+	gkSkeletonResource* getSkeleton(void)      {return m_skeleton;}
 
 
 	gkBoundingBox& getBoundingBox(void);
@@ -200,7 +200,7 @@ public:
 	SubMeshIterator getSubMeshIterator(void) {return SubMeshIterator(m_submeshes);}
 
 
-	gkMeshLoader *getLoader(void) {return m_meshLoader;}
+	gkMeshLoader* getLoader(void) {return m_meshLoader;}
 };
 
 #endif//_gkMesh_h_

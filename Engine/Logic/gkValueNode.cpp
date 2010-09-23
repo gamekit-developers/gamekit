@@ -26,15 +26,15 @@
 */
 #include "gkValueNode.h"
 
-gkValueNode::gkValueNode(gkLogicTree *parent, size_t id) :
-        gkLogicNode(parent, id)
+gkValueNode::gkValueNode(gkLogicTree* parent, size_t id) :
+	gkLogicNode(parent, id)
 {
-    ADD_ISOCK(VALUE, 0);
-    ADD_OSOCK(RESULT, 0);
+	ADD_ISOCK(VALUE, 0);
+	ADD_OSOCK(RESULT, 0);
 }
 
 
 void gkValueNode::update(gkScalar tick)
 {
-    SET_SOCKET_VALUE(RESULT, GET_SOCKET_VALUE(VALUE));
+	SET_SOCKET_VALUE(RESULT, GET_SOCKET_VALUE(VALUE));
 }

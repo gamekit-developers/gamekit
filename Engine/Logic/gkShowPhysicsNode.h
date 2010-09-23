@@ -44,7 +44,7 @@ public:
 	DECLARE_SOCKET_TYPE(ENABLE, bool);
 	DECLARE_SOCKET_TYPE(SHOW_AABB, bool);
 
-    gkShowPhysicsNode(gkLogicTree *parent, size_t id);
+	gkShowPhysicsNode(gkLogicTree* parent, size_t id);
 
 	virtual ~gkShowPhysicsNode() {}
 

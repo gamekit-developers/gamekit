@@ -34,14 +34,14 @@
 class gkMessageSensor : public gkLogicSensor
 {
 private:
-	gkMessageManager::GenericMessageListener *m_listener;
+	gkMessageManager::GenericMessageListener* m_listener;
 	utArray<gkMessageManager::Message>       m_messages;
 
 public:
-	gkMessageSensor(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	gkMessageSensor(gkGameObject* object, gkLogicLink* link, const gkString& name);
 	~gkMessageSensor();
 
-	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
+	gkLogicBrick* clone(gkLogicLink* link, gkGameObject* dest);
 
 	bool query(void);
 	GK_INLINE void            setSubject(const gkString& v) {m_listener->m_subjectFilter = v;}

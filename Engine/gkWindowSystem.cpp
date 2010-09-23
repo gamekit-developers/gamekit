@@ -72,38 +72,38 @@ public:
 	Private();
 	virtual ~Private();
 
-	bool mouseMoved(const OIS::MouseEvent &arg);
-	bool mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
-	bool mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
-	bool keyPressed(const OIS::KeyEvent &arg);
-	bool keyReleased(const OIS::KeyEvent &arg);
+	bool mouseMoved(const OIS::MouseEvent& arg);
+	bool mousePressed(const OIS::MouseEvent& arg, OIS::MouseButtonID id);
+	bool mouseReleased(const OIS::MouseEvent& arg, OIS::MouseButtonID id);
+	bool keyPressed(const OIS::KeyEvent& arg);
+	bool keyReleased(const OIS::KeyEvent& arg);
 
 #ifdef OGREKIT_BUILD_IPHONE
-	bool touchPressed(const OIS::MultiTouchEvent &arg);
-	bool touchReleased(const OIS::MultiTouchEvent &arg);
-	bool touchMoved(const OIS::MultiTouchEvent &arg);
-	bool touchCancelled(const OIS::MultiTouchEvent &arg);
-	
-	void transformInputState(OIS::MultiTouchState &state);
+	bool touchPressed(const OIS::MultiTouchEvent& arg);
+	bool touchReleased(const OIS::MultiTouchEvent& arg);
+	bool touchMoved(const OIS::MultiTouchEvent& arg);
+	bool touchCancelled(const OIS::MultiTouchEvent& arg);
+
+	void transformInputState(OIS::MultiTouchState& state);
 #endif
-	
-	void windowResized(RenderWindow *rw);
-	void windowClosed(RenderWindow *rw);
-	bool buttonPressed(const OIS::JoyStickEvent &arg, int i);
-	bool buttonReleased(const OIS::JoyStickEvent &arg, int i);
-	bool axisMoved(const OIS::JoyStickEvent &arg, int i);
+
+	void windowResized(RenderWindow* rw);
+	void windowClosed(RenderWindow* rw);
+	bool buttonPressed(const OIS::JoyStickEvent& arg, int i);
+	bool buttonReleased(const OIS::JoyStickEvent& arg, int i);
+	bool axisMoved(const OIS::JoyStickEvent& arg, int i);
 
 	int getCode(int kc);
 
-	gkWindowSystem         *m_sys;
-	OIS::InputManager      *m_input;
-	OIS::Keyboard          *m_keyboard;
-	OIS::Mouse             *m_mouse;
+	gkWindowSystem*         m_sys;
+	OIS::InputManager*      m_input;
+	OIS::Keyboard*          m_keyboard;
+	OIS::Mouse*             m_mouse;
 	utArray<OIS::JoyStick*> m_joysticks;
-	
+
 #ifdef OGREKIT_BUILD_IPHONE
-	OIS::MultiTouch        *m_touch;
-	gkGestureView          *m_gestureView;
+	OIS::MultiTouch*        m_touch;
+	gkGestureView*          m_gestureView;
 #endif
 };
 
@@ -123,9 +123,9 @@ gkWindowSystem::~gkWindowSystem()
 
 
 	UTsize i;
-	for (i=0; i<m_joysticks.size(); ++i)
+	for (i = 0; i < m_joysticks.size(); ++i)
 		delete m_joysticks[i];
-		
+
 	m_joysticks.clear();
 
 	delete m_internal;
@@ -133,18 +133,18 @@ gkWindowSystem::~gkWindowSystem()
 
 
 // Creates the main Ogre window, and sets up the OIS input system
-RenderWindow *gkWindowSystem::createMainWindow(const gkUserDefs &prefs)
+RenderWindow* gkWindowSystem::createMainWindow(const gkUserDefs& prefs)
 {
 	int winsizex, winsizey;
-	
+
 	// one window for now
 	if (m_window)
 		return 0;
 
-	m_requestedWidth = (int)(prefs.winsize.x+0.5f);
-	m_requestedHeight = (int)(prefs.winsize.y+0.5f);
+	m_requestedWidth = (int)(prefs.winsize.x + 0.5f);
+	m_requestedHeight = (int)(prefs.winsize.y + 0.5f);
 	m_framingType = prefs.framingType;
-	
+
 	Ogre::NameValuePairList params;
 
 	if (prefs.fsaa)
@@ -154,8 +154,8 @@ RenderWindow *gkWindowSystem::createMainWindow(const gkUserDefs &prefs)
 
 	if (!prefs.extWinhandle.empty())
 	{
-		 params["externalWindowHandle"] = prefs.extWinhandle;
-		 m_useExternalWindow = true;
+		params["externalWindowHandle"] = prefs.extWinhandle;
+		m_useExternalWindow = true;
 	}
 
 	if (prefs.fullscreen)
@@ -163,21 +163,21 @@ RenderWindow *gkWindowSystem::createMainWindow(const gkUserDefs &prefs)
 		Ogre::RenderSystem* rsys = Root::getSingleton().getRenderSystem();
 		Ogre::ConfigOptionMap options = rsys->getConfigOptions();
 		Ogre::ConfigOption modeOption = options["Video Mode"];
-		bool found =false;
-		
+		bool found = false;
+
 		gkPrintf("Available video modes:");
-		for(size_t i=0; i<modeOption.possibleValues.size(); i++)
+		for (size_t i = 0; i < modeOption.possibleValues.size(); i++)
 		{
 			int modex, modey;
 			gkString modeStr = modeOption.possibleValues[i];
 			gkPrintf("%s\n", modeStr.c_str());
-			
-			if(!found)
+
+			if (!found)
 			{
-				modex = Ogre::StringConverter::parseInt( modeStr.substr(0,4));
-				modey = Ogre::StringConverter::parseInt( modeStr.substr(7,4));
-				
-				if(modex>=m_requestedWidth && modey>=m_requestedHeight)
+				modex = Ogre::StringConverter::parseInt( modeStr.substr(0, 4));
+				modey = Ogre::StringConverter::parseInt( modeStr.substr(7, 4));
+
+				if (modex >= m_requestedWidth && modey >= m_requestedHeight)
 				{
 					found = true;
 					winsizex = modex;
@@ -185,7 +185,7 @@ RenderWindow *gkWindowSystem::createMainWindow(const gkUserDefs &prefs)
 				}
 			}
 		}
-		if(found)
+		if (found)
 		{
 			gkPrintf("Best video mode found: %i x %i, request was %i x %i\n", winsizex, winsizey, (int)prefs.winsize.x, (int)prefs.winsize.y);
 		}
@@ -201,10 +201,10 @@ RenderWindow *gkWindowSystem::createMainWindow(const gkUserDefs &prefs)
 		winsizey = m_requestedHeight;
 	}
 
-	m_window = Root::getSingleton().createRenderWindow(prefs.wintitle, 
-		winsizex, winsizey, prefs.fullscreen, &params);
+	m_window = Root::getSingleton().createRenderWindow(prefs.wintitle,
+	           winsizex, winsizey, prefs.fullscreen, &params);
 	m_window->setActive(true);
-	
+
 	// copy window size (used later for hit testing)
 	m_mouse.winsize.x = winsizex;
 	m_mouse.winsize.y = winsizey;
@@ -245,46 +245,46 @@ RenderWindow *gkWindowSystem::createMainWindow(const gkUserDefs &prefs)
 		m_internal->m_input->enableAddOnFactory(OIS::InputManager::AddOn_All);
 
 #ifndef OGREKIT_BUILD_IPHONE
-		
-		m_internal->m_keyboard = (OIS::Keyboard *) m_internal->m_input->createInputObject(OIS::OISKeyboard, true);
+
+		m_internal->m_keyboard = (OIS::Keyboard*) m_internal->m_input->createInputObject(OIS::OISKeyboard, true);
 		m_internal->m_keyboard->setEventCallback(m_internal);
 
-		m_internal->m_mouse = (OIS::Mouse *)m_internal->m_input->createInputObject(OIS::OISMouse, true);
+		m_internal->m_mouse = (OIS::Mouse*)m_internal->m_input->createInputObject(OIS::OISMouse, true);
 		m_internal->m_mouse->setEventCallback(m_internal);
 
-#else 		
-		
+#else
+
 		m_internal->m_gestureView = [[gkGestureView alloc] init];
-		
-		[[[UIApplication sharedApplication] keyWindow] addSubview:m_internal->m_gestureView];
-		
+
+[[[UIApplication sharedApplication] keyWindow] addSubview: m_internal->m_gestureView];
+
 		[m_internal->m_gestureView becomeFirstResponder];
-		
-		m_internal->m_touch = (OIS::MultiTouch *) m_internal->m_input->createInputObject(OIS::OISMultiTouch, true);
+
+		m_internal->m_touch = (OIS::MultiTouch*) m_internal->m_input->createInputObject(OIS::OISMultiTouch, true);
 		GK_ASSERT(m_internal->m_touch);
 		m_internal->m_touch->setEventCallback(m_internal);
 #endif
-		
-		for(int i=0; i< m_internal->m_input->getNumberOfDevices(OIS::OISJoyStick); i++)
+
+		for (int i = 0; i < m_internal->m_input->getNumberOfDevices(OIS::OISJoyStick); i++)
 		{
-			OIS::JoyStick *oisjs = (OIS::JoyStick *)m_internal->m_input->createInputObject(OIS::OISJoyStick, true);
+			OIS::JoyStick* oisjs = (OIS::JoyStick*)m_internal->m_input->createInputObject(OIS::OISJoyStick, true);
 			oisjs->setEventCallback(m_internal);
 
-			
-			gkJoystick *gkjs = new gkJoystick(oisjs->getNumberOfComponents(OIS::OIS_Button), oisjs->getNumberOfComponents(OIS::OIS_Axis));
-			
+
+			gkJoystick* gkjs = new gkJoystick(oisjs->getNumberOfComponents(OIS::OIS_Button), oisjs->getNumberOfComponents(OIS::OIS_Axis));
+
 			m_internal->m_joysticks.push_back(oisjs);
 			m_joysticks.push_back(gkjs);
 		}
-		
+
 #ifndef OGREKIT_BUILD_IPHONE
-		const OIS::MouseState &st = m_internal->m_mouse->getMouseState();
+		const OIS::MouseState& st = m_internal->m_mouse->getMouseState();
 		st.width  = winsizex;
 		st.height = winsizey;
 #endif
-		
+
 	}
-	catch (OIS::Exception &e)
+	catch (OIS::Exception& e)
 	{
 		gkPrintf("%s", e.what());
 		return 0;
@@ -295,16 +295,16 @@ RenderWindow *gkWindowSystem::createMainWindow(const gkUserDefs &prefs)
 }
 
 
-RenderWindow *gkWindowSystem::getMainWindow(void)
+RenderWindow* gkWindowSystem::getMainWindow(void)
 {
 	return m_window;
 }
 
-Viewport* gkWindowSystem::addMainViewport(gkCamera *cam)
+Viewport* gkWindowSystem::addMainViewport(gkCamera* cam)
 {
 	if (m_window)
 	{
-		Viewport* vp=  m_window->addViewport(cam->getCamera());
+		Viewport* vp =  m_window->addViewport(cam->getCamera());
 		setMainViewportDimension(vp);
 		return vp;
 	}
@@ -313,60 +313,60 @@ Viewport* gkWindowSystem::addMainViewport(gkCamera *cam)
 
 void gkWindowSystem::setMainViewportDimension(Viewport* viewport)
 {
-		float l = 0.0;
-		float r = 1.0;
-		float t = 0.0;
-		float b = 1.0;
-		int w = m_window->getWidth();
-		int h = m_window->getHeight();
-		
-		if(w != m_requestedWidth || h != m_requestedHeight)
+	float l = 0.0;
+	float r = 1.0;
+	float t = 0.0;
+	float b = 1.0;
+	int w = m_window->getWidth();
+	int h = m_window->getHeight();
+
+	if (w != m_requestedWidth || h != m_requestedHeight)
+	{
+		switch (m_framingType)
 		{
-			switch(m_framingType)
+		case FRAMING_CROP:
 			{
-				case FRAMING_CROP:
-				{
-					l = (w-m_requestedWidth) / (2.0f*w);
-					r = (w+m_requestedWidth) / (2.0f*w);
-					t = (h-m_requestedHeight) / (2.0f*h);
-					b = (h+m_requestedHeight) / (2.0f*h);
-					break;
-				}
-				case FRAMING_LETTERBOX:
-				{
-					float hratio = (float)m_requestedWidth/(float)w;
-					float vratio = (float)m_requestedHeight/(float)h;
-					
-					if (hratio>vratio)
-					{
-						l= 0;
-						r= 1;
-						t= (1-(vratio/hratio))/2.0f;
-						b= t + (vratio/hratio);
-					}
-					else
-					{
-						
-						t= 0;
-						b= 1;
-						l= (1-(hratio/vratio))/2.0f;
-						r= l + (hratio/vratio);
-					}
-					break;
-				}
+				l = (w - m_requestedWidth) / (2.0f * w);
+				r = (w + m_requestedWidth) / (2.0f * w);
+				t = (h - m_requestedHeight) / (2.0f * h);
+				b = (h + m_requestedHeight) / (2.0f * h);
+				break;
 			}
-		
+		case FRAMING_LETTERBOX:
+			{
+				float hratio = (float)m_requestedWidth / (float)w;
+				float vratio = (float)m_requestedHeight / (float)h;
+
+				if (hratio > vratio)
+				{
+					l = 0;
+					r = 1;
+					t = (1 - (vratio / hratio)) / 2.0f;
+					b = t + (vratio / hratio);
+				}
+				else
+				{
+
+					t = 0;
+					b = 1;
+					l = (1 - (hratio / vratio)) / 2.0f;
+					r = l + (hratio / vratio);
+				}
+				break;
+			}
 		}
-		
-		viewport->setDimensions(l, t, r-l, b-t);
+
+	}
+
+	viewport->setDimensions(l, t, r - l, b - t);
 }
 
-void gkWindowSystem::addListener(Listener *l)
+void gkWindowSystem::addListener(Listener* l)
 {
 	m_listeners.push_back(l);
 }
 
-void gkWindowSystem::removeListener(Listener *l)
+void gkWindowSystem::removeListener(Listener* l)
 {
 	m_listeners.erase(l);
 }
@@ -383,34 +383,34 @@ void gkWindowSystem::process(void)
 
 // Handle platform messages
 void gkWindowSystem::dispatch(void)
-{	
+{
 #ifndef OGREKIT_BUILD_IPHONE
 	GK_ASSERT(m_internal && m_internal->m_mouse && m_internal->m_keyboard);
-	
+
 	m_mouse.moved = false;
 	m_mouse.wheelDelta = 0.f;
 	m_mouse.relitave.x = 0.f;
 	m_mouse.relitave.y = 0.f;
-	
+
 
 	m_internal->m_mouse->capture();
 	m_internal->m_keyboard->capture();
-	
+
 	utArrayIterator<utArray<OIS::JoyStick*> > iter(m_internal->m_joysticks);
-	while(iter.hasMoreElements())
+	while (iter.hasMoreElements())
 	{
 		iter.peekNext()->capture();
 		iter.getNext();
 	}
-	
+
 #else
 	GK_ASSERT(m_internal && m_internal->m_touch);
-	
-	m_internal->m_touch->capture();	//OIS don't thing, currently. so instead use a previous saved touch event
-	
+
+	m_internal->m_touch->capture();    //OIS don't thing, currently. so instead use a previous saved touch event
+
 	if (m_mouse.buttons[gkMouse::Left] != GK_Pressed)
 		m_mouse.moved = false;
-#endif	
+#endif
 
 
 }
@@ -422,7 +422,7 @@ void gkWindowSystem::clearStates(void)
 	m_keyboard.clear();
 
 	UTsize i;
-	for (i=0; i<m_joysticks.size(); ++i)
+	for (i = 0; i < m_joysticks.size(); ++i)
 		m_joysticks[i]->clear();
 }
 
@@ -443,7 +443,7 @@ gkWindowSystemPrivate::~Private()
 #ifdef OGREKIT_BUILD_IPHONE
 	[m_gestureView release];
 #endif
-	
+
 	if (m_input)
 	{
 		// free input
@@ -456,9 +456,9 @@ gkWindowSystemPrivate::~Private()
 			m_input->destroyInputObject(m_mouse);
 
 		UTsize i;
-		for (i=0; i<m_joysticks.size(); ++i)
+		for (i = 0; i < m_joysticks.size(); ++i)
 			m_input->destroyInputObject(m_joysticks[i]);
-		
+
 #else
 		if (m_touch)
 			m_input->destroyInputObject(m_touch);
@@ -476,121 +476,121 @@ gkWindowSystemPrivate::~Private()
 #ifdef OGREKIT_BUILD_IPHONE
 
 //copy from ogre3d samplebrowser
-void gkWindowSystemPrivate::transformInputState(OIS::MultiTouchState &state)
+void gkWindowSystemPrivate::transformInputState(OIS::MultiTouchState& state)
 {
 	GK_ASSERT(m_sys->m_window && m_sys->m_window->getViewport(0));
-	
-	Ogre::Viewport *viewport = m_sys->m_window->getViewport(0);
-	
+
+	Ogre::Viewport* viewport = m_sys->m_window->getViewport(0);
+
 	int w = viewport->getActualWidth();
 	int h = viewport->getActualHeight();
 	int absX = state.X.abs;
 	int absY = state.Y.abs;
 	int relX = state.X.rel;
 	int relY = state.Y.rel;
-	
+
 	switch (viewport->getOrientationMode())
 	{
-		case Ogre::OR_DEGREE_0:   //OR_PORTRAIT
-			break;
-		case Ogre::OR_DEGREE_90:  //OR_LANDSCAPERIGHT
-			state.X.abs = w - absY;
-			state.Y.abs = absX;
-			state.X.rel = -relY;
-			state.Y.rel = relX;
-			break;
-		case Ogre::OR_DEGREE_180:
-			state.X.abs = w - absX;
-			state.Y.abs = h - absY;
-			state.X.rel = -relX;
-			state.Y.rel = -relY;
-			break;
-		case Ogre::OR_DEGREE_270: //OR_LANDSCAPELEFT
-			state.X.abs = absY;
-			state.Y.abs = h - absX;
-			state.X.rel = relY;
-			state.Y.rel = -relX;
-			break;
+	case Ogre::OR_DEGREE_0:   //OR_PORTRAIT
+		break;
+	case Ogre::OR_DEGREE_90:  //OR_LANDSCAPERIGHT
+		state.X.abs = w - absY;
+		state.Y.abs = absX;
+		state.X.rel = -relY;
+		state.Y.rel = relX;
+		break;
+	case Ogre::OR_DEGREE_180:
+		state.X.abs = w - absX;
+		state.Y.abs = h - absY;
+		state.X.rel = -relX;
+		state.Y.rel = -relY;
+		break;
+	case Ogre::OR_DEGREE_270: //OR_LANDSCAPELEFT
+		state.X.abs = absY;
+		state.Y.abs = h - absX;
+		state.X.rel = relY;
+		state.Y.rel = -relX;
+		break;
 	}
 }
 
 bool gkWindowSystemPrivate::touchPressed(const OIS::MultiTouchEvent& arg)
 {
-	gkMouse &data = m_sys->m_mouse;
-	
+	gkMouse& data = m_sys->m_mouse;
+
 	data.buttons[gkMouse::Left] = GK_Pressed;
-	
+
 
 	if (!m_sys->m_listeners.empty())
 	{
-		gkWindowSystem::Listener *node = m_sys->m_listeners.begin();
+		gkWindowSystem::Listener* node = m_sys->m_listeners.begin();
 		while (node)
 		{
 			node->mousePressed(data);
 			node = node->getNext();
 		}
 	}
-	
+
 	return true;
 }
 
 bool gkWindowSystemPrivate::touchReleased(const OIS::MultiTouchEvent& arg)
 {
-	gkMouse &data = m_sys->m_mouse;
-	
+	gkMouse& data = m_sys->m_mouse;
+
 	data.buttons[gkMouse::Left] = GK_Released;
-	
+
 	if (!m_sys->m_listeners.empty())
 	{
-		gkWindowSystem::Listener *node = m_sys->m_listeners.begin();
+		gkWindowSystem::Listener* node = m_sys->m_listeners.begin();
 		while (node)
 		{
 			node->mousePressed(data);
 			node = node->getNext();
 		}
 	}
-	
+
 	return true;
 }
 
 bool gkWindowSystemPrivate::touchMoved(const OIS::MultiTouchEvent& arg)
 {
-	gkMouse &data = m_sys->m_mouse;
+	gkMouse& data = m_sys->m_mouse;
 	OIS::MultiTouchState state = arg.state;;
-	
+
 	transformInputState(state);
-	
+
 	data.position.x = (Real)state.X.abs;
 	data.position.y = (Real)state.Y.abs;
 	data.relitave.x = (Real)state.X.rel;
 	data.relitave.y = (Real)state.Y.rel;
 	data.moved = true;
-	
+
 	data.wheelDelta = 0;
 
 	if (!m_sys->m_listeners.empty())
 	{
-		gkWindowSystem::Listener *node = m_sys->m_listeners.begin();
+		gkWindowSystem::Listener* node = m_sys->m_listeners.begin();
 		while (node)
 		{
 			node->mouseMoved(data);
 			node = node->getNext();
 		}
 	}
-	
+
 	return true;
 }
 
-bool gkWindowSystemPrivate::touchCancelled(const OIS::MultiTouchEvent &arg)
+bool gkWindowSystemPrivate::touchCancelled(const OIS::MultiTouchEvent& arg)
 {
 	return true;
 }
 #endif //OGREKIT_BUILD_IPHONE
 
 
-bool gkWindowSystemPrivate::mouseMoved(const OIS::MouseEvent &arg)
+bool gkWindowSystemPrivate::mouseMoved(const OIS::MouseEvent& arg)
 {
-	gkMouse &data = m_sys->m_mouse;
+	gkMouse& data = m_sys->m_mouse;
 
 	data.position.x = (Real)arg.state.X.abs;
 	data.position.y = (Real)arg.state.Y.abs;
@@ -604,7 +604,7 @@ bool gkWindowSystemPrivate::mouseMoved(const OIS::MouseEvent &arg)
 
 	if (!m_sys->m_listeners.empty())
 	{
-		gkWindowSystem::Listener *node = m_sys->m_listeners.begin();
+		gkWindowSystem::Listener* node = m_sys->m_listeners.begin();
 		while (node)
 		{
 			node->mouseMoved(data);
@@ -615,9 +615,9 @@ bool gkWindowSystemPrivate::mouseMoved(const OIS::MouseEvent &arg)
 	return true;
 }
 
-bool gkWindowSystemPrivate::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
+bool gkWindowSystemPrivate::mousePressed(const OIS::MouseEvent& arg, OIS::MouseButtonID id)
 {
-	gkMouse &data = m_sys->m_mouse;
+	gkMouse& data = m_sys->m_mouse;
 
 	switch (id)
 	{
@@ -634,7 +634,7 @@ bool gkWindowSystemPrivate::mousePressed(const OIS::MouseEvent &arg, OIS::MouseB
 
 	if (!m_sys->m_listeners.empty())
 	{
-		gkWindowSystem::Listener *node = m_sys->m_listeners.begin();
+		gkWindowSystem::Listener* node = m_sys->m_listeners.begin();
 		while (node)
 		{
 			node->mousePressed(data);
@@ -645,9 +645,9 @@ bool gkWindowSystemPrivate::mousePressed(const OIS::MouseEvent &arg, OIS::MouseB
 	return true;
 }
 
-bool gkWindowSystemPrivate::mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
+bool gkWindowSystemPrivate::mouseReleased(const OIS::MouseEvent& arg, OIS::MouseButtonID id)
 {
-	gkMouse &data = m_sys->m_mouse;
+	gkMouse& data = m_sys->m_mouse;
 
 	switch (id)
 	{
@@ -664,7 +664,7 @@ bool gkWindowSystemPrivate::mouseReleased(const OIS::MouseEvent &arg, OIS::Mouse
 
 	if (!m_sys->m_listeners.empty())
 	{
-		gkWindowSystem::Listener *node = m_sys->m_listeners.begin();
+		gkWindowSystem::Listener* node = m_sys->m_listeners.begin();
 		while (node)
 		{
 			node->mouseReleased(data);
@@ -675,9 +675,9 @@ bool gkWindowSystemPrivate::mouseReleased(const OIS::MouseEvent &arg, OIS::Mouse
 	return true;
 }
 
-bool gkWindowSystemPrivate::keyPressed(const OIS::KeyEvent &arg)
+bool gkWindowSystemPrivate::keyPressed(const OIS::KeyEvent& arg)
 {
-	gkKeyboard &key = m_sys->m_keyboard;
+	gkKeyboard& key = m_sys->m_keyboard;
 
 	int kc = getCode(arg.key);
 	key.keys[kc] = GK_Pressed;
@@ -686,7 +686,7 @@ bool gkWindowSystemPrivate::keyPressed(const OIS::KeyEvent &arg)
 
 	if (!m_sys->m_listeners.empty())
 	{
-		gkWindowSystem::Listener *node = m_sys->m_listeners.begin();
+		gkWindowSystem::Listener* node = m_sys->m_listeners.begin();
 		while (node)
 		{
 			node->keyPressed(key, (gkScanCode)kc);
@@ -697,9 +697,9 @@ bool gkWindowSystemPrivate::keyPressed(const OIS::KeyEvent &arg)
 	return true;
 }
 
-bool gkWindowSystemPrivate::keyReleased(const OIS::KeyEvent &arg)
+bool gkWindowSystemPrivate::keyReleased(const OIS::KeyEvent& arg)
 {
-	gkKeyboard &key = m_sys->m_keyboard;
+	gkKeyboard& key = m_sys->m_keyboard;
 
 	int kc = getCode(arg.key);
 	key.keys[kc] = GK_Released;
@@ -707,7 +707,7 @@ bool gkWindowSystemPrivate::keyReleased(const OIS::KeyEvent &arg)
 
 	if (!m_sys->m_listeners.empty())
 	{
-		gkWindowSystem::Listener *node = m_sys->m_listeners.begin();
+		gkWindowSystem::Listener* node = m_sys->m_listeners.begin();
 		while (node)
 		{
 			node->keyReleased(key, (gkScanCode)kc);
@@ -719,17 +719,17 @@ bool gkWindowSystemPrivate::keyReleased(const OIS::KeyEvent &arg)
 	return true;
 }
 
-bool gkWindowSystemPrivate::buttonPressed(const OIS::JoyStickEvent &arg, int button)
+bool gkWindowSystemPrivate::buttonPressed(const OIS::JoyStickEvent& arg, int button)
 {
 	// Hum we assume coresponding gk and OIs joystick have the same place in their array
-	gkJoystick &js = *m_sys->m_joysticks[m_joysticks.find((OIS::JoyStick*)arg.device)];
+	gkJoystick& js = *m_sys->m_joysticks[m_joysticks.find((OIS::JoyStick*)arg.device)];
 
 	js.buttons[button] = GK_Pressed;
-	js.buttonCount +=1;
+	js.buttonCount += 1;
 
 	if (!m_sys->m_listeners.empty())
 	{
-		gkWindowSystem::Listener *node = m_sys->m_listeners.begin();
+		gkWindowSystem::Listener* node = m_sys->m_listeners.begin();
 		while (node)
 		{
 			node->joystickPressed(js, button);
@@ -740,17 +740,17 @@ bool gkWindowSystemPrivate::buttonPressed(const OIS::JoyStickEvent &arg, int but
 	return true;
 }
 
-bool gkWindowSystemPrivate::buttonReleased(const OIS::JoyStickEvent &arg, int button)
+bool gkWindowSystemPrivate::buttonReleased(const OIS::JoyStickEvent& arg, int button)
 {
 	// Hum we assume coresponding gk and OIs joystick have the same place in their array
-	gkJoystick &js = *m_sys->m_joysticks[m_joysticks.find((OIS::JoyStick*)arg.device)];
+	gkJoystick& js = *m_sys->m_joysticks[m_joysticks.find((OIS::JoyStick*)arg.device)];
 
 	js.buttons[button] = GK_Released;
-	js.buttonCount -=1;
+	js.buttonCount -= 1;
 
 	if (!m_sys->m_listeners.empty())
 	{
-		gkWindowSystem::Listener *node = m_sys->m_listeners.begin();
+		gkWindowSystem::Listener* node = m_sys->m_listeners.begin();
 		while (node)
 		{
 			node->joystickReleased(js, button);
@@ -761,15 +761,15 @@ bool gkWindowSystemPrivate::buttonReleased(const OIS::JoyStickEvent &arg, int bu
 	return true;
 }
 
-bool gkWindowSystemPrivate::axisMoved(const OIS::JoyStickEvent &arg, int axis)
+bool gkWindowSystemPrivate::axisMoved(const OIS::JoyStickEvent& arg, int axis)
 {
 	// Hum we assume coresponding gk and OIs joystick have the same place in their array
-	gkJoystick &js = *m_sys->m_joysticks[m_joysticks.find((OIS::JoyStick*)arg.device)];
-	
+	gkJoystick& js = *m_sys->m_joysticks[m_joysticks.find((OIS::JoyStick*)arg.device)];
+
 	js.axes[axis] = arg.state.mAxes[axis].abs;
 	if (!m_sys->m_listeners.empty())
 	{
-		gkWindowSystem::Listener *node = m_sys->m_listeners.begin();
+		gkWindowSystem::Listener* node = m_sys->m_listeners.begin();
 		while (node)
 		{
 			node->joystickMoved(js, axis);
@@ -779,20 +779,20 @@ bool gkWindowSystemPrivate::axisMoved(const OIS::JoyStickEvent &arg, int axis)
 	return true;
 }
 
-void gkWindowSystemPrivate::windowResized(RenderWindow *rw)
+void gkWindowSystemPrivate::windowResized(RenderWindow* rw)
 {
 	unsigned short sz = rw->getNumViewports();
 	for (unsigned short i = 0; i < sz; ++i)
 	{
-		Viewport *vp = rw->getViewport(i);
+		Viewport* vp = rw->getViewport(i);
 
 		// We assume all viewports are "main" vieport
 		m_sys->setMainViewportDimension(vp);
-		
-		Camera *cam = vp->getCamera();
+
+		Camera* cam = vp->getCamera();
 		cam->setAspectRatio(Real(vp->getActualWidth()) / Real(vp->getActualHeight()));
 
-		const OIS::MouseState &state = m_mouse->getMouseState();
+		const OIS::MouseState& state = m_mouse->getMouseState();
 
 		state.width = gkMax<int>(state.width, vp->getActualWidth());
 		state.height = gkMax<int>(state.height, vp->getActualHeight());
@@ -800,19 +800,19 @@ void gkWindowSystemPrivate::windowResized(RenderWindow *rw)
 		m_sys->m_mouse.winsize.x = (Real)state.width;
 		m_sys->m_mouse.winsize.y = (Real)state.height;
 	}
-	
+
 	// Ogre keep Y field of view constant, we want to keep X fov constant
 	gkScene* scene = gkEngine::getSingleton().getActiveScene();
-	if(scene)
+	if (scene)
 	{
 		gkCamera* cam = scene->getMainCamera();
-		if(cam)
+		if (cam)
 			cam->setFov(gkDegree(cam->getFov()));
 	}
 }
 
 
-void gkWindowSystemPrivate::windowClosed(RenderWindow *rw)
+void gkWindowSystemPrivate::windowClosed(RenderWindow* rw)
 {
 	GK_ASSERT(m_sys);
 	m_sys->m_exit = true;

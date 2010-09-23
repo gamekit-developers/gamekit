@@ -29,7 +29,7 @@
 #include "gkLogicDispatcher.h"
 
 
-gkAlwaysSensor::gkAlwaysSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
+gkAlwaysSensor::gkAlwaysSensor(gkGameObject* object, gkLogicLink* link, const gkString& name)
 	:       gkLogicSensor(object, link, name)
 {
 	m_dispatchType = DIS_CONSTANT;
@@ -37,9 +37,9 @@ gkAlwaysSensor::gkAlwaysSensor(gkGameObject *object, gkLogicLink *link, const gk
 }
 
 
-gkLogicBrick *gkAlwaysSensor::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick* gkAlwaysSensor::clone(gkLogicLink* link, gkGameObject* dest)
 {
-	gkAlwaysSensor *sens = new gkAlwaysSensor(*this);
+	gkAlwaysSensor* sens = new gkAlwaysSensor(*this);
 	sens->cloneImpl(link, dest);
 	return sens;
 }

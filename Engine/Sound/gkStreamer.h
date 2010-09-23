@@ -43,12 +43,12 @@ class gkStreamer : public gkCall
 {
 public:
 
-	gkStreamer(const gkString &name);
+	gkStreamer(const gkString& name);
 	virtual ~gkStreamer();
 
 
-	void playSound(gkSource *snd);
-	void stopSound(gkSource *snd);
+	void playSound(gkSource* snd);
+	void stopSound(gkSource* snd);
 
 
 	void stopAllSounds(void);
@@ -68,17 +68,17 @@ private:
 	void beginTick(void);
 	void endTick(void);
 
-	typedef utArray<gkBuffer *> Buffers;
-	typedef utArray<gkSource *> Sources;
+	typedef utArray<gkBuffer*> Buffers;
+	typedef utArray<gkSource*> Sources;
 
 
 	gkCriticalSection   m_cs;
 	const gkString      m_name;
-	gkThread           *m_thread;
+	gkThread*           m_thread;
 	bool                m_stop;
 	bool                m_finish;
 
-	void freeBuffers(Buffers &bufs);
+	void freeBuffers(Buffers& bufs);
 	void finishBuffers(void);
 	void processBuffers(void);
 

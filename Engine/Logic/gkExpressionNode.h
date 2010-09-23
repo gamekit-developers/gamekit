@@ -34,8 +34,8 @@
 
 
 // not used for now.
-// this needs either a custom lexer & parser or the 
-// use of the current scripting engine to handle 
+// this needs either a custom lexer & parser or the
+// use of the current scripting engine to handle
 class gkExpressionNode : public gkLogicNode
 {
 public:
@@ -49,7 +49,7 @@ public:
     // number of expressions to evaluate
     GK_INLINE void setNr(int nr)                  {m_nr = nr;}
 
-    // expression string 
+    // expression string
     GK_INLINE void setExpr(const gkString &str)   {m_code = str;}
 
     // inputs

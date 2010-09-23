@@ -39,22 +39,22 @@ private:
 
 public:
 
-	gkNearSensor(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	gkNearSensor(gkGameObject* object, gkLogicLink* link, const gkString& name);
 	virtual ~gkNearSensor() {}
 
-	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
+	gkLogicBrick* clone(gkLogicLink* link, gkGameObject* dest);
 
 	bool query(void);
 
 	GK_INLINE void setRange(gkScalar v)             {m_range = v;}
 	GK_INLINE void setResetRange(gkScalar v)        {m_resetrange = v;}
-	GK_INLINE void setMaterial(const gkString &v)   {m_material = v; m_prop = "";}
-	GK_INLINE void setProperty(const gkString &v)   {m_prop = v; m_material = "";}
+	GK_INLINE void setMaterial(const gkString& v)   {m_material = v; m_prop = "";}
+	GK_INLINE void setProperty(const gkString& v)   {m_prop = v; m_material = "";}
 
 	GK_INLINE gkScalar getRange(void)               {return m_range;}
 	GK_INLINE gkScalar getResetRange(void)          {return m_resetrange;}
-	GK_INLINE const gkString &getMaterial(void)     {return m_material;}
-	GK_INLINE const gkString &getProperty(void)     {return m_prop;}
+	GK_INLINE const gkString& getMaterial(void)     {return m_material;}
+	GK_INLINE const gkString& getProperty(void)     {return m_prop;}
 
 };
 

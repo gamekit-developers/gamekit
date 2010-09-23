@@ -48,7 +48,7 @@ public:
 
 	gkSkeleton*   getSkeleton(void) {return m_skeleton;}
 	void          setSkeleton(gkSkeleton* skel);
-	
+
 	void _resetPose(void);
 
 

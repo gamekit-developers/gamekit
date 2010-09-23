@@ -31,7 +31,7 @@
 
 
 
-gkStateActuator::gkStateActuator(gkGameObject *object, gkLogicLink *link, const gkString &name)
+gkStateActuator::gkStateActuator(gkGameObject* object, gkLogicLink* link, const gkString& name)
 	:       gkLogicActuator(object, link, name), m_stateMask(0), m_op(OP_NILL)
 {
 }
@@ -42,9 +42,9 @@ gkStateActuator::~gkStateActuator()
 }
 
 
-gkLogicBrick *gkStateActuator::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick* gkStateActuator::clone(gkLogicLink* link, gkGameObject* dest)
 {
-	gkStateActuator *act = new gkStateActuator(*this);
+	gkStateActuator* act = new gkStateActuator(*this);
 	act->cloneImpl(link, dest);
 	return act;
 }

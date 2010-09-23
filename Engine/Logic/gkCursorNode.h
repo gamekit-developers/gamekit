@@ -32,7 +32,7 @@
 class gkCursorNode : public gkLogicNode
 {
 public:
-	enum 
+	enum
 	{
 		ENABLE,
 		UPDATE,
@@ -51,7 +51,7 @@ public:
 	DECLARE_SOCKET_TYPE(WIDTH, gkScalar);
 	DECLARE_SOCKET_TYPE(HEIGHT, gkScalar);
 
-	gkCursorNode(gkLogicTree *parent, size_t id);
+	gkCursorNode(gkLogicTree* parent, size_t id);
 
 	~gkCursorNode();
 

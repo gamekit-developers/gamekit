@@ -32,12 +32,12 @@ class OgreKit : public gkCoreApplication, public gkWindowSystem::Listener
 {
 public:
 
-    OgreKit(const gkString &blend, const gkString& startCfg) 
+	OgreKit(const gkString& blend, const gkString& startCfg)
 		: m_blend(gkUtils::getFile(blend)), m_logic(0)
 	{
 		gkPath path = gkUtils::getFile(startCfg);
 
-		if(path.isFile())
+		if (path.isFile())
 		{
 			m_prefs.load(path.getPath());
 		}
@@ -52,7 +52,7 @@ public:
 		delete m_logic;
 	}
 
-	
+
 	void tick(gkScalar rate)
 	{
 		m_logic->tick(rate);
@@ -62,7 +62,7 @@ public:
 	{
 		gkBlendFile* pBlendFile = m_engine->loadBlendFile(m_blend);
 
-		if(pBlendFile)
+		if (pBlendFile)
 		{
 			gkScene* pScene = pBlendFile->getMainScene();
 
@@ -71,8 +71,8 @@ public:
 			pScene->createInstance();
 
 			m_logic = new vdLogic(pScene);
-			
-			
+
+
 			// add input hooks
 			gkWindowSystem::getSingleton().addListener(this);
 			return true;
@@ -83,12 +83,12 @@ public:
 			return false;
 		}
 	}
-	
-	void keyPressed(const gkKeyboard &key, const gkScanCode &sc)
+
+	void keyPressed(const gkKeyboard& key, const gkScanCode& sc)
 	{
 	}
 
-	void keyReleased(const gkKeyboard &key, const gkScanCode &sc)
+	void keyReleased(const gkKeyboard& key, const gkScanCode& sc)
 	{
 		if (sc == KC_ESCKEY)
 			m_engine->requestExit();
@@ -97,11 +97,11 @@ public:
 private:
 
 	gkString  m_blend;
-	vdLogic   *m_logic;
+	vdLogic*   m_logic;
 };
 
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
 	// See ReadMe.txt for how to use this demo
 
@@ -115,4 +115,3 @@ int main(int argc, char **argv)
 
 	return 0;
 }
-

@@ -47,12 +47,12 @@ protected:
 
 public:
 
-	gkStateActuator(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	gkStateActuator(gkGameObject* object, gkLogicLink* link, const gkString& name);
 	virtual ~gkStateActuator();
 
-	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
+	gkLogicBrick* clone(gkLogicLink* link, gkGameObject* dest);
 
-	
+
 	void execute(void);
 
 	GK_INLINE void setMask(int v)       {m_stateMask = v;}

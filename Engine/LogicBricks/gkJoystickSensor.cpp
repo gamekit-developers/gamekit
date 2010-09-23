@@ -49,7 +49,7 @@ void gkJoyDispatch::dispatch(void)
 }
 
 //-----------------------------------------------------------------------------
-gkJoystickSensor::gkJoystickSensor(gkGameObject *object, gkLogicLink *link, const gkString &name)
+gkJoystickSensor::gkJoystickSensor(gkGameObject* object, gkLogicLink* link, const gkString& name)
 	:       gkLogicSensor(object, link, name)
 {
 	m_dispatchType = DIS_JOY;
@@ -57,9 +57,9 @@ gkJoystickSensor::gkJoystickSensor(gkGameObject *object, gkLogicLink *link, cons
 }
 
 
-gkLogicBrick *gkJoystickSensor::clone(gkLogicLink *link, gkGameObject *dest)
+gkLogicBrick* gkJoystickSensor::clone(gkLogicLink* link, gkGameObject* dest)
 {
-	gkJoystickSensor *sens = new gkJoystickSensor(*this);
+	gkJoystickSensor* sens = new gkJoystickSensor(*this);
 	sens->cloneImpl(link, dest);
 	return sens;
 }
@@ -67,10 +67,10 @@ gkLogicBrick *gkJoystickSensor::clone(gkLogicLink *link, gkGameObject *dest)
 
 bool gkJoystickSensor::query(void)
 {
-	gkJoystick *js = gkWindowSystem::getSingleton().getJoystick(m_joystickIndex);
-	if(js==0)
+	gkJoystick* js = gkWindowSystem::getSingleton().getJoystick(m_joystickIndex);
+	if (js == 0)
 		return false;
-	
+
 	switch (m_eventType)
 	{
 	case JT_AXIS:
@@ -79,7 +79,7 @@ bool gkJoystickSensor::query(void)
 		{
 			int axis1 = js->getAxisValue(m_elementIndex * 2);
 			int axis2 = js->getAxisValue(1 + m_elementIndex * 2);
-			bool ret=false;
+			bool ret = false;
 			if (m_allEvents)
 			{
 				ret = (gkAbs(axis1) > m_axisThreshold) ? true : false;
@@ -87,7 +87,8 @@ bool gkJoystickSensor::query(void)
 			}
 			else
 			{
-				switch (m_axisDirection) {
+				switch (m_axisDirection)
+				{
 				case AD_LEFT:   ret = (axis1 < -1*(int)m_axisThreshold) ? true : false; break;
 				case AD_RIGHT:  ret = (axis1 > (int)m_axisThreshold) ? true : false; break;
 				case AD_BOTTOM: ret = (axis2 > (int)m_axisThreshold) ? true : false; break;
@@ -99,8 +100,8 @@ bool gkJoystickSensor::query(void)
 	case JT_BUTTON:
 		if (m_allEvents)
 		{
-			for(int i=0; i<(int)js->buttons.size(); i++)
-				if(js->isButtonDown(i)) return true;
+			for (int i = 0; i < (int)js->buttons.size(); i++)
+				if (js->isButtonDown(i)) return true;
 			return false;
 		}
 		else
@@ -109,7 +110,7 @@ bool gkJoystickSensor::query(void)
 	default:
 		printf("todo!\n");
 		break;
-		
+
 	}
 	return false;
 }

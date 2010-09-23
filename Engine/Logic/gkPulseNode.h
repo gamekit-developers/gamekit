@@ -42,7 +42,7 @@ public:
 	DECLARE_SOCKET_TYPE(UPDATE, bool);
 	DECLARE_SOCKET_TYPE(OUTPUT, bool);
 
-    gkPulseNode(gkLogicTree *parent, size_t id);
+	gkPulseNode(gkLogicTree* parent, size_t id);
 
 	virtual ~gkPulseNode() {}
 

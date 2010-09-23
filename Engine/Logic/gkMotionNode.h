@@ -48,41 +48,41 @@ public:
 	DECLARE_SOCKET_TYPE(Z, gkScalar);
 	DECLARE_SOCKET_TYPE(DAMPING, gkScalar);
 
-    gkMotionNode(gkLogicTree *parent, size_t id);
-    virtual ~gkMotionNode() {}
-    void initialize();
+	gkMotionNode(gkLogicTree* parent, size_t id);
+	virtual ~gkMotionNode() {}
+	void initialize();
 
-    void update(gkScalar tick);
-    bool evaluate(gkScalar tick);
+	void update(gkScalar tick);
+	bool evaluate(gkScalar tick);
 
-    GK_INLINE void setMotionType(gkMotionTypes t)   {m_motionType = t;}
-    GK_INLINE void setSpace(int ts)                 {m_space = ts;}
-    GK_INLINE void keepVelocity(void)               {m_keep = true;}
+	GK_INLINE void setMotionType(gkMotionTypes t)   {m_motionType = t;}
+	GK_INLINE void setSpace(int ts)                 {m_space = ts;}
+	GK_INLINE void keepVelocity(void)               {m_keep = true;}
 
 
-    GK_INLINE void setMinX(gkScalar v)  {m_flag |= 1;x[0] = v;}
-    GK_INLINE void setMaxX(gkScalar v)  {m_flag |= 1;x[1] = v;}
-    GK_INLINE void setMinY(gkScalar v)  {m_flag |= 2;y[0] = v;}
-    GK_INLINE void setMaxY(gkScalar v)  {m_flag |= 2;y[1] = v;}
-    GK_INLINE void setMinZ(gkScalar v)  {m_flag |= 4;z[0] = v;}
-    GK_INLINE void setMaxZ(gkScalar v)  {m_flag |= 4;z[1] = v;}
+	GK_INLINE void setMinX(gkScalar v)  {m_flag |= 1; x[0] = v;}
+	GK_INLINE void setMaxX(gkScalar v)  {m_flag |= 1; x[1] = v;}
+	GK_INLINE void setMinY(gkScalar v)  {m_flag |= 2; y[0] = v;}
+	GK_INLINE void setMaxY(gkScalar v)  {m_flag |= 2; y[1] = v;}
+	GK_INLINE void setMinZ(gkScalar v)  {m_flag |= 4; z[0] = v;}
+	GK_INLINE void setMaxZ(gkScalar v)  {m_flag |= 4; z[1] = v;}
 
-    // todo, just pass object ptr
-    void setOtherObject(const gkString &obname) {m_otherName = obname;}
+	// todo, just pass object ptr
+	void setOtherObject(const gkString& obname) {m_otherName = obname;}
 
 private:
-    int     getLRS();
-    void    applyConstraints(int lrs);
-    void    applyObject(gkVector3 &vec);
+	int     getLRS();
+	void    applyConstraints(int lrs);
+	void    applyObject(gkVector3& vec);
 
-    gkMotionTypes   m_motionType;
-    int             m_space;
-    bool            m_keep;
+	gkMotionTypes   m_motionType;
+	int             m_space;
+	bool            m_keep;
 
-    short           m_flag;
-    gkScalar        x[2], y[2], z[2];
-    gkGameObject*   m_current;
-    gkString        m_otherName;
+	short           m_flag;
+	gkScalar        x[2], y[2], z[2];
+	gkGameObject*   m_current;
+	gkString        m_otherName;
 };
 
 

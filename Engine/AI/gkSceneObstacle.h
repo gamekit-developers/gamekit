@@ -32,10 +32,10 @@
 class gkSceneObstacle : public OpenSteer::Obstacle
 {
 public:
-    
+
 	gkSceneObstacle(gkScalar howFarCanSee) : m_howFarCanSee(howFarCanSee), m_lastDirection(0) {}
 
-    ~gkSceneObstacle() {}
+	~gkSceneObstacle() {}
 
 	void findIntersectionWithVehiclePath (const OpenSteer::AbstractVehicle& vehicle, OpenSteer::AbstractObstacle::PathIntersection& pi) const;
 

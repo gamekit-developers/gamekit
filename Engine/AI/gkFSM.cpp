@@ -27,9 +27,9 @@
 #include "gkFSM.h"
 #include "gkLogger.h"
 
-gkFSM::gkFSM() 
-: m_started(false),
-m_currentState(-1)
+gkFSM::gkFSM()
+	: m_started(false),
+	  m_currentState(-1)
 {
 }
 
@@ -37,11 +37,11 @@ gkFSM::~gkFSM()
 {
 	size_t n = m_events.size();
 
-	for(size_t i=0; i<n; i++)
+	for (size_t i = 0; i < n; i++)
 	{
 		Event* pEvent = m_events[i];
 
-		if(pEvent->m_e)
+		if (pEvent->m_e)
 			delete pEvent->m_e;
 
 		delete pEvent;
@@ -54,10 +54,10 @@ void gkFSM::update()
 
 	if (pos != GK_NPOS)
 	{
-		if(!m_started)
+		if (!m_started)
 		{
 			m_started = true;
-			
+
 			execute_start_trigger(-1, m_currentState);
 		}
 
@@ -65,26 +65,26 @@ void gkFSM::update()
 
 		REACTION_ITERATOR it(m_transitions.at(pos));
 
-		while (it.hasMoreElements()) 
+		while (it.hasMoreElements())
 		{
 			const void* p = it.peekNextKey().key();
 
 			const Event* pEvent = static_cast<const Event*>(p);
 
-			if(!pEvent->m_e || pEvent->m_e->evaluate())
+			if (!pEvent->m_e || pEvent->m_e->evaluate())
 			{
 				const Data* pTmpData  = &(it.peekNextValue());
 
-				if(pEvent->m_e)
+				if (pEvent->m_e)
 				{
 					pData = pTmpData;
 
-					if(pTmpData->m_state != m_currentState) 
+					if (pTmpData->m_state != m_currentState)
 					{
 						break;
 					}
 				}
-				else if(!pData)
+				else if (!pData)
 				{
 					pData = pTmpData;
 				}
@@ -93,9 +93,9 @@ void gkFSM::update()
 			it.next();
 		}
 
-		if(pData && pData->m_state != m_currentState && pData->m_ms < m_timer.getTimeMilliseconds())
+		if (pData && pData->m_state != m_currentState && pData->m_ms < m_timer.getTimeMilliseconds())
 		{
-			if(pData->m_trigger.get())
+			if (pData->m_trigger.get())
 				pData->m_trigger->execute(m_currentState, pData->m_state);
 
 			execute_end_trigger(m_currentState, pData->m_state);
@@ -110,7 +110,7 @@ void gkFSM::update()
 void gkFSM::addStartTrigger(int state, ITrigger* trigger)
 {
 	size_t pos = m_startTriggers.find(state);
-	
+
 	GK_ASSERT(pos == GK_NPOS);
 
 	m_startTriggers.insert(state, gkPtrRef<ITrigger>(trigger));
@@ -119,7 +119,7 @@ void gkFSM::addStartTrigger(int state, ITrigger* trigger)
 void gkFSM::addEndTrigger(int state, ITrigger* trigger)
 {
 	size_t pos = m_endTriggers.find(state);
-	
+
 	GK_ASSERT(pos == GK_NPOS);
 
 	m_endTriggers.insert(state, gkPtrRef<ITrigger>(trigger));
@@ -128,16 +128,16 @@ void gkFSM::addEndTrigger(int state, ITrigger* trigger)
 void gkFSM::execute_start_trigger(int from, int to)
 {
 	size_t pos = m_startTriggers.find(to);
-	
-	if(pos != GK_NPOS)
+
+	if (pos != GK_NPOS)
 		m_startTriggers.at(pos)->execute(from, to);
 }
 
 void gkFSM::execute_end_trigger(int from, int to)
 {
 	size_t pos = m_endTriggers.find(from);
-	
-	if(pos != GK_NPOS)
+
+	if (pos != GK_NPOS)
 		m_endTriggers.at(pos)->execute(from, to);
 }
 
@@ -148,7 +148,7 @@ gkFSM::Event* gkFSM::addTransition(int from, int to, unsigned long ms, ITrigger*
 	Data data(ms, to, trigger);
 
 	size_t pos = m_transitions.find(from);
-	
+
 	if (pos != GK_NPOS)
 	{
 		REACTION& reaction = m_transitions.at(pos);

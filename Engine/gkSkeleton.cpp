@@ -32,7 +32,7 @@
 #include "gkEntity.h"
 
 
-gkSkeleton::gkSkeleton(gkInstancedManager *creator, const gkResourceName& name, const gkResourceHandle& handle)
+gkSkeleton::gkSkeleton(gkInstancedManager* creator, const gkResourceName& name, const gkResourceHandle& handle)
 	:    gkGameObject(creator, name, handle, GK_SKELETON),
 	     m_controller(0),
 	     m_resource(0)
@@ -111,9 +111,9 @@ void gkSkeleton::updateFromController(void)
 }
 
 
-gkGameObject *gkSkeleton::clone(const gkString &name)
+gkGameObject* gkSkeleton::clone(const gkString& name)
 {
-	gkSkeleton *cl= new gkSkeleton(getInstanceCreator(), name, -1);
+	gkSkeleton* cl = new gkSkeleton(getInstanceCreator(), name, -1);
 	gkGameObject::cloneImpl(cl);
 	return cl;
 }

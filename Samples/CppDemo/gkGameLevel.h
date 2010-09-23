@@ -35,9 +35,9 @@
 #include "gkResourceManager.h"
 
 
-class gkGameLevel : public gkEngine::Listener, 
-					public gkInstancedManager::InstancedListener,
-					public gkResourceManager::ResourceListener
+class gkGameLevel : public gkEngine::Listener,
+	public gkInstancedManager::InstancedListener,
+	public gkResourceManager::ResourceListener
 {
 public:
 
@@ -45,11 +45,11 @@ public:
 	virtual ~gkGameLevel();
 
 
-	void loadLevel(const gkLevel &level);
+	void loadLevel(const gkLevel& level);
 
-	gkScene *getLevel(void);
+	gkScene* getLevel(void);
 
-	gkJoystick *getJoystick(void) {return m_joy;}
+	gkJoystick* getJoystick(void) {return m_joy;}
 
 protected:
 
@@ -58,15 +58,15 @@ protected:
 
 	void loadPickup(void);
 
-	gkScene *m_pickup;
-	gkScene *m_killThemAll;
+	gkScene* m_pickup;
+	gkScene* m_killThemAll;
 	gkLevel m_level;
 
-	gkGamePlayer *m_player;
+	gkGamePlayer* m_player;
 
-	gkKeyboard *m_keyboard;
-	gkMouse *m_mouse;
-	gkJoystick *m_joy;
+	gkKeyboard* m_keyboard;
+	gkMouse* m_mouse;
+	gkJoystick* m_joy;
 	void tick(gkScalar delta);
 };
 

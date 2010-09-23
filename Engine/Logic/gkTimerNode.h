@@ -44,11 +44,11 @@ public:
 	DECLARE_SOCKET_TYPE(VALUE, gkScalar);
 	DECLARE_SOCKET_TYPE(RESULT, gkScalar);
 
-    gkTimerNode(gkLogicTree *parent, size_t id);
-    virtual ~gkTimerNode() {}
+	gkTimerNode(gkLogicTree* parent, size_t id);
+	virtual ~gkTimerNode() {}
 
-    void update(gkScalar tick);
-    bool evaluate(gkScalar tick);
+	void update(gkScalar tick);
+	bool evaluate(gkScalar tick);
 };
 
 #endif//_gkTimerNode_h_

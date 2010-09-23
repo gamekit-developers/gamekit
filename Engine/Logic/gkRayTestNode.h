@@ -35,7 +35,7 @@ class gkRayTestNode : public gkLogicNode
 {
 public:
 
-	enum 
+	enum
 	{
 		ENABLE,
 		TARGET,
@@ -58,7 +58,7 @@ public:
 	DECLARE_SOCKET_TYPE(HIT_NAME, gkString);
 	DECLARE_SOCKET_TYPE(HIT_POSITION, gkVector3);
 
-    gkRayTestNode(gkLogicTree *parent, size_t id);
+	gkRayTestNode(gkLogicTree* parent, size_t id);
 
 	virtual ~gkRayTestNode() {}
 
@@ -75,7 +75,7 @@ class gkScreenRayTestNode : public gkLogicNode
 {
 public:
 
-	enum 
+	enum
 	{
 		ENABLE,
 		SCREEN_X,
@@ -96,7 +96,7 @@ public:
 	DECLARE_SOCKET_TYPE(HIT_NAME, gkString);
 	DECLARE_SOCKET_TYPE(HIT_POSITION, gkVector3);
 
-    gkScreenRayTestNode(gkLogicTree *parent, size_t id);
+	gkScreenRayTestNode(gkLogicTree* parent, size_t id);
 
 	virtual ~gkScreenRayTestNode() {}
 

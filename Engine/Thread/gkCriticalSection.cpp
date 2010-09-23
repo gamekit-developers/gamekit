@@ -35,7 +35,7 @@
 ////////////////////////////////////////////
 
 gkCriticalSection::gkCriticalSection()
-{		
+{
 #ifdef WIN32
 	InitializeCriticalSection(&m_cs);
 #else
@@ -43,7 +43,7 @@ gkCriticalSection::gkCriticalSection()
 	GK_ASSERT(!failed);
 #endif
 }
-	
+
 gkCriticalSection::~gkCriticalSection()
 {
 #ifdef WIN32
@@ -76,7 +76,7 @@ void gkCriticalSection::EndLock()
 }
 
 gkCriticalSection::Lock::Lock(gkCriticalSection& obj)
-:m_obj(obj)
+	: m_obj(obj)
 {
 #ifdef WIN32
 	EnterCriticalSection(&m_obj.m_cs);
@@ -87,7 +87,7 @@ gkCriticalSection::Lock::Lock(gkCriticalSection& obj)
 }
 
 gkCriticalSection::Lock::~Lock()
-{	
+{
 #ifdef WIN32
 	LeaveCriticalSection(&m_obj.m_cs);
 #else

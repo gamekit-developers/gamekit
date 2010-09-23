@@ -62,11 +62,11 @@ public:
 
 private:
 
-	#ifdef WIN32
+#ifdef WIN32
 	CRITICAL_SECTION m_cs;
-	#else
+#else
 	pthread_mutex_t m_cs;
-	#endif
+#endif
 };
 
 #endif//_gkCriticalSection_h_

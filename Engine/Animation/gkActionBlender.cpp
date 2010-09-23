@@ -29,15 +29,15 @@
 
 
 gkActionBlend::gkActionBlend()
-	:	m_priority(0),
-		m_way(0),
-		m_mode(GK_ACT_LOOP),
-		m_blend(0),
-		m_frames(0),
-		m_time(0.f),
-		m_base(0),
-		m_sequ(0),
-		m_enabled(true)
+	:    m_priority(0),
+	     m_way(0),
+	     m_mode(GK_ACT_LOOP),
+	     m_blend(0),
+	     m_frames(0),
+	     m_time(0.f),
+	     m_base(0),
+	     m_sequ(0),
+	     m_enabled(true)
 
 {
 }
@@ -82,7 +82,7 @@ bool gkActionBlend::evaluate(gkScalar delta)
 			m_time = 0.f;
 		m_time += delta;
 	}
-	else 
+	else
 	{
 		m_time += delta;
 		if (m_time >= getLength())
@@ -139,7 +139,7 @@ void gkActionBlend::reset(void)
 
 
 gkActionBlender::gkActionBlender()
-	:	m_max(2)
+	:    m_max(2)
 {
 }
 
@@ -149,13 +149,13 @@ gkActionBlender::~gkActionBlender()
 }
 
 
-bool gkActionBlendSort(const gkActionBlend& a, const gkActionBlend &b)
+bool gkActionBlendSort(const gkActionBlend& a, const gkActionBlend& b)
 {
 	return a.getPriority() > b.getPriority();
 }
 
 
-void gkActionBlender::push(gkAction *action, gkScalar frames, int mode, int priority)
+void gkActionBlender::push(gkAction* action, gkScalar frames, int mode, int priority)
 {
 	gkActionBlend act;
 	act.setAction(action);
@@ -172,7 +172,7 @@ void gkActionBlender::push(gkAction *action, gkScalar frames, int mode, int prio
 
 
 
-void gkActionBlender::push(gkActionSequence *action, gkScalar frames, int mode, int priority)
+void gkActionBlender::push(gkActionSequence* action, gkScalar frames, int mode, int priority)
 {
 	gkActionBlend act;
 	act.setActionSequence(action);
@@ -189,9 +189,9 @@ void gkActionBlender::push(gkActionSequence *action, gkScalar frames, int mode, 
 
 
 
-void gkActionBlender::pushStack(gkActionBlend &blend)
+void gkActionBlender::pushStack(gkActionBlend& blend)
 {
-	if (m_stack.size() >= m_max) 
+	if (m_stack.size() >= m_max)
 	{
 		m_stack.back().reset();
 		m_stack.pop_back();
@@ -219,7 +219,7 @@ void gkActionBlender::evaluate(gkScalar delta)
 
 		while (i < s)
 		{
-			gkActionBlend &ab = p[i];
+			gkActionBlend& ab = p[i];
 			if (s == 1)
 			{
 				ab.setMode(GK_ACT_LOOP);
@@ -265,4 +265,3 @@ void gkActionBlender::evaluate(gkScalar delta)
 
 	}
 }
-

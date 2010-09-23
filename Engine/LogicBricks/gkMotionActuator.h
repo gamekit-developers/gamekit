@@ -42,7 +42,7 @@ public:
 
 	struct MotionData
 	{
-		MotionData() :  vec(0,0,0), local(true), evaluate(false) {}
+		MotionData() :  vec(0, 0, 0), local(true), evaluate(false) {}
 
 		gkVector3 vec;
 		bool local, evaluate;
@@ -59,12 +59,12 @@ protected:
 
 public:
 
-	gkMotionActuator(gkGameObject *object, gkLogicLink *link, const gkString &name);
+	gkMotionActuator(gkGameObject* object, gkLogicLink* link, const gkString& name);
 	virtual ~gkMotionActuator();
 
-	gkLogicBrick *clone(gkLogicLink *link, gkGameObject *dest);
+	gkLogicBrick* clone(gkLogicLink* link, gkGameObject* dest);
 
-	
+
 	void execute(void);
 
 
@@ -75,14 +75,14 @@ public:
 	GK_INLINE bool     getIncrementalVelocity(void) {return m_linvInc;}
 
 
-	GK_INLINE void setTranslation(const gkVector3 &v, bool local)
+	GK_INLINE void setTranslation(const gkVector3& v, bool local)
 	{
 		m_loc.vec = v;
 		m_loc.local = local;
 		m_loc.evaluate = !gkFuzzyVec(m_loc.vec);
 	}
 
-	GK_INLINE void setRotation(const gkVector3 &v, bool local)
+	GK_INLINE void setRotation(const gkVector3& v, bool local)
 	{
 		m_quat = gkMathUtils::getQuatFromEuler(v, false);
 		m_rot.vec = v;
@@ -91,40 +91,40 @@ public:
 
 	}
 
-	GK_INLINE void setForce(const gkVector3 &v, bool local)
+	GK_INLINE void setForce(const gkVector3& v, bool local)
 	{
 		m_force.vec = v;
 		m_force.local = local;
 		m_force.evaluate = !gkFuzzyVec(m_force.vec);
 	}
 
-	GK_INLINE void setTorque(const gkVector3 &v, bool local)
+	GK_INLINE void setTorque(const gkVector3& v, bool local)
 	{
 		m_torque.vec = v;
 		m_torque.local = local;
 		m_torque.evaluate = !gkFuzzyVec(m_torque.vec);
 	}
 
-	GK_INLINE void setLinearVelocity(const gkVector3 &v, bool local)
+	GK_INLINE void setLinearVelocity(const gkVector3& v, bool local)
 	{
 		m_linv.vec = v;
 		m_linv.local = local;
 		m_linv.evaluate = !gkFuzzyVec(m_linv.vec);
 	}
 
-	GK_INLINE void setAngularVelocity(const gkVector3 &v, bool local)
+	GK_INLINE void setAngularVelocity(const gkVector3& v, bool local)
 	{
 		m_angv.vec = v;
 		m_angv.local = local;
 		m_angv.evaluate = !gkFuzzyVec(m_angv.vec);
 	}
 
-	GK_INLINE const gkVector3 &getTranslation(void)     {return m_loc.vec;}
-	GK_INLINE const gkVector3 &getRotation(void)        {return m_rot.vec;}
-	GK_INLINE const gkVector3 &getForce(void)           {return m_force.vec;}
-	GK_INLINE const gkVector3 &getTorque(void)          {return m_torque.vec;}
-	GK_INLINE const gkVector3 &getLinearVelocity(void)  {return m_linv.vec;}
-	GK_INLINE const gkVector3 &getAngularVelocity(void) {return m_angv.vec;}
+	GK_INLINE const gkVector3& getTranslation(void)     {return m_loc.vec;}
+	GK_INLINE const gkVector3& getRotation(void)        {return m_rot.vec;}
+	GK_INLINE const gkVector3& getForce(void)           {return m_force.vec;}
+	GK_INLINE const gkVector3& getTorque(void)          {return m_torque.vec;}
+	GK_INLINE const gkVector3& getLinearVelocity(void)  {return m_linv.vec;}
+	GK_INLINE const gkVector3& getAngularVelocity(void) {return m_angv.vec;}
 };
 
 
