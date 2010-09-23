@@ -142,6 +142,7 @@ vdVehicle::vdVehicle(gkScene *scene, const gkString &chassis, const gkScalar &po
 
 vdVehicle::~vdVehicle()
 {
+    delete m_gearBox;
 	delete m_vehicle;
 	delete m_raycaster;
 }

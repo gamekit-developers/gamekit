@@ -5,16 +5,22 @@ cmake_minimum_required(VERSION 2.6)
 
 project(Dependencies)
 SET(Dependencies 1.0)
+subdirs(Source/Blender25)
 
+
+include(NoWarn)
 subdirs(Source/FreeImage)
 subdirs(Source/OIS)
-subdirs(Source/ZZipLib)
 subdirs(Source/FreeType)
 subdirs(Source/Recast)
 subdirs(Source/Detour)
 subdirs(Source/OpenSteer)
-subdirs(Source/Blender25)
 
+
+
+if (NOT OGREKIT_DISABLE_ZIP)
+	subdirs(Source/ZZipLib)
+endif()
 
 if (OGREKIT_USE_LUA)
 	subdirs(Source/Lua)

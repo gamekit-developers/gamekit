@@ -28,11 +28,24 @@ macro (configure_ogrekit ROOT OGREPATH)
 	
 	option(OGREKIT_USE_LUA               "Use Lua script bindings" ON)
 	option(OGREKIT_COMPILE_OGRE_SCRIPTS  "Automatically convert Blender TX to Ogre (.material, .font, .overlay... etc)" ON)
+	option(OGREKIT_DEBUG_ASSERT          "Enable/Disable debug asserts." ON)
+	option(OGREKIT_COMPLIE_SWIG          "Enable compile time SWIG generation."  OFF)
+	option(OGREKIT_HEADER_GENERATOR      "Build Blender DNA to C++ generator."   OFF)
+	option(OGREKIT_UPDATE_DOCS           "Update Lua API documentation(Requires doxygen)." OFF)
+	option(OGREKIT_DISABLE_ZIP           "Disable external .zip resource loading" ON)
+
 
 	if (OGREKIT_USE_LUA)
 		add_definitions(-DOGREKIT_USE_LUA)	
+	else()
+		set(OGREKIT_COMPLIE_SWIG FALSE CACHE BOOL "Disabling Swig" FORCE)
 	endif()
 	
+	if (OGREKIT_DEBUG_ASSERT)
+		add_definitions(-DUT_DEBUG_ASSERT)
+	endif()
+
+
 	if (OGREKIT_COMPILE_OGRE_SCRIPTS)
 		add_definitions(-DOGREKIT_COMPILE_OGRE_SCRIPTS)	
 	endif()
@@ -44,10 +57,10 @@ macro (configure_ogrekit ROOT OGREPATH)
 	set(OGREKIT_RECAST_TARGET Recast)
 	set(OGREKIT_DETOUR_TARGET Detour)
 	set(OGREKIT_OPENSTEER_TARGET OpenSteer)
-	set(OGREKIT_V8_TARGET V8)
 	set(OGREKIT_LUA_TARGET Lua)
+	set(OGREKIT_OGGVORBIS_TARGET OggVorbis)
 	
-
+	
 	set(OGRE_BINARY_DIR ${OGREPATH}/Bin)
 	set(OGRE_TEMPLATES_DIR ${ROOT}/CMake/Templates)
 	set(OGRELITE_SOURCE_DIR ${OGREPATH})
@@ -73,6 +86,8 @@ macro (configure_ogrekit ROOT OGREPATH)
 		endif (UNIX)
 	endif (APPLE)
 	
+	
+	
 	option(SAMPLES_RUNTIME        "Build Samples/Runtime"     ON)
 	option(SAMPLES_LOGICDEMO      "Build Samples/LogicDemo"   ON)
 	option(SAMPLES_VEHICLEDEMO    "Build Samples/VehicleDemo" ON)
@@ -96,9 +111,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 		add_definitions("-DOGREKIT_BUILD_IPHONE")		
 	endif()
 
-	option(OGREKIT_COMPLIE_SWIG "Enable compile time SWIG generation."  OFF)
-	option(OGREKIT_HEADER_GENERATOR "Build Blender DNA to C++ generator."   OFF)
-	
+
 	#copy from ogre3d build
 	# Set up iPhone overrides.
 	if (OGRE_BUILD_PLATFORM_IPHONE)
@@ -151,8 +164,6 @@ macro (configure_ogrekit ROOT OGREPATH)
 	  
 	endif ()
 
-	option(OGREKIT_UPDATE_DOCS "Update Lua API documentation(Requires doxygen)." OFF)
-
 
 	if (OGREKIT_COMPLIE_SWIG)
 		
@@ -168,7 +179,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 	set(OGREKIT_ZLIB_INCLUDE ${OGREKIT_DEP_DIR}/FreeImage/ZLib)
 	set(OGREKIT_ZZIP_INCLUDE ${OGREKIT_DEP_DIR}/ZZipLib)
 	set(OGREKIT_OIS_INCLUDE ${OGREKIT_DEP_DIR}/OIS/include)
-	set(OGREKIT_OGRE_INCLUDE ${OGREPATH}/OgreMain/include ${OGREPATH}/Settings ${OGREKIT_PLATFORM})
+	set(OGREKIT_OGRE_INCLUDE ${OGREPATH}/OgreMain/include ${OGREKIT_BINARY_DIR}/Settings ${OGREKIT_PLATFORM})
 	set(OGREKIT_LUA_INCLUDE ${OGREKIT_DEP_DIR}/Lua/lua)
 	set(OGREKIT_OGGVORBIS_INCLUDE ${OGREKIT_DEP_DIR}/Codecs/include)
 	
@@ -181,13 +192,12 @@ macro (configure_ogrekit ROOT OGREPATH)
 		${OGREKIT_FREEIMAGE_INCLUDE}
 		${OGREKIT_FREETYPE_INCLUDE}
 		${OGREKIT_ZLIB_INCLUDE}
-		${OGREKIT_ZZIP_INCLUDE}
 		${OGREKIT_OIS_INCLUDE}
-		${OGREKIT_LUA_INCLUDE}
-		${OGREKIT_OGGVORBIS_INCLUDE}
 		${OGREKIT_RECAST_INCLUDE}
 		${OGREKIT_DETOUR_INCLUDE}
 		${OGREKIT_OPENSTEER_INCLUDE}
+		${GAMEKIT_SERIALIZE_BULLET}
+		${GAMEKIT_SERIALIZE_BLENDER}
 	)
 
 
@@ -321,7 +331,6 @@ macro (configure_ogrekit ROOT OGREPATH)
 		${OGREKIT_FREEIMAGE_TARGET} 
 		${OGREKIT_FREETYPE_TARGET} 
 		${OGREKIT_ZLIB_TARGET} 
-		${OGREKIT_ZZIP_TARGET}
 		${OGREKIT_GLRS_LIBS}
 		${OGREKIT_D3D9_LIBS}
 		${OGREKIT_D3D10_LIBS}
@@ -329,8 +338,26 @@ macro (configure_ogrekit ROOT OGREPATH)
 		${OGREKIT_RECAST_TARGET}
 		${OGREKIT_DETOUR_TARGET}
 		${OGREKIT_OPENSTEER_TARGET}
-		${OGREKIT_OPENAL_LIBRARY}
+		${GAMEKIT_SERIALIZE_BLENDER_TARGET}
 		)
+
+	if (OGREKIT_OPENAL_SOUND)
+
+		list(APPEND OGREKIT_OGRE_LIBS	${OGREKIT_OPENAL_LIBRARY} ${OGREKIT_OGGVORBIS_TARGET})
+		list(APPEND OGREKIT_DEP_INCLUDE ${OGREKIT_OPENAL_INCLUDE} ${OGREKIT_OGGVORBIS_INCLUDE})
+	endif()
+		
+	if (OGREKIT_USE_LUA)
+		list(APPEND OGREKIT_OGRE_LIBS	${OGREKIT_LUA_TARGET})
+		list(APPEND OGREKIT_DEP_INCLUDE ${OGREKIT_LUA_INCLUDE})
+	endif()
+
+	if (NOT OGREKIT_DISABLE_ZIP)
+		list(APPEND OGREKIT_OGRE_LIBS	${OGREKIT_ZZIP_TARGET})
+		list(APPEND OGREKIT_DEP_INCLUDE ${OGREKIT_ZZIP_INCLUDE})
+	endif()
+
+	
 		
 	#Check Build Settings
 	if (APPLE)

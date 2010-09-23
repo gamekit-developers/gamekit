@@ -15,8 +15,12 @@ set(OGRE_BUILD_PLUGIN_PFX        TRUE)
 set(OGRE_CONFIG_ENABLE_FREEIMAGE TRUE)
 set(OGRE_CONFIG_ENABLE_DDS       TRUE)
 
-## Keep Zip support ? 
-set(OGRE_CONFIG_ENABLE_ZIP       TRUE)
+
+if (OGREKIT_DISABLE_ZIP)
+	set(OGRE_CONFIG_ENABLE_ZIP FALSE)
+else()
+	set(OGRE_CONFIG_ENABLE_ZIP TRUE)
+endif()
 
 
 
@@ -39,9 +43,16 @@ if (CMAKE_COMPILER_IS_GNUCXX)
 endif (CMAKE_COMPILER_IS_GNUCXX)
 
 
+# Configure settings
+if (OGREKIT_DISABLE_ZIP)
+	set(OGRE_NO_ZIP_ARCHIVE 1)
+else()
+	set(OGRE_NO_ZIP_ARCHIVE 0)
+endif()
+configure_file(${OgreLite_SOURCE_DIR}/Settings/OgreBuildSettings.h.in ${OGREKIT_BINARY_DIR}/Settings/OgreBuildSettings.h)
 
 include_directories(${OGRELITE_SOURCE_DIR}/OgreMain/include)
-include_directories(${OGRELITE_SOURCE_DIR}/Settings)
+include_directories(${OGREKIT_BINARY_DIR}/Settings)
 
 if (APPLE)
   if (OGRE_BUILD_PLATFORM_IPHONE)

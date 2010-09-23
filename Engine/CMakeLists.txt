@@ -834,16 +834,7 @@ endif()
 include_directories(
     ${OGREKIT_OGRE_INCLUDE}
     ${OGRELITE_SOURCE_DIR}/PlugIns/ParticleFX/include
-    ${OGREKIT_RECAST_INCLUDE}
-    ${OGREKIT_DETOUR_INCLUDE}
-    ${OGREKIT_OPENSTEER_INCLUDE}
-    ${OGREKIT_OIS_INCLUDE}
-    ${OGREKIT_ZLIB_INCLUDE}
-    ${OGREKIT_LUA_INCLUDE}
-    ${OGREKIT_OPENAL_INCLUDE}
-    ${GAMEKIT_SERIALIZE_BLENDER}
-    ${GAMEKIT_SERIALIZE_BULLET}
-    ${GAMEKIT_SERIALIZE_BLENDER_HEADERS}
+    ${OGREKIT_DEP_INCLUDE}
     ./
     ./AI
     ./Animation
@@ -890,8 +881,6 @@ add_definitions(-DSTATIC_LINKED)
 
 if (OGREKIT_OPENAL_SOUND AND OPENAL_FOUND)
     set(Extra_SOURCE ${Sound_SOURCE} ${Sound_HEADER} )
-    include_directories( ${OGREKIT_OGGVORBIS_INCLUDE})
-    link_libraries(OggVorbis)
 endif()
 
 

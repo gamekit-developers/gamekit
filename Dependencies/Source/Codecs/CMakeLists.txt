@@ -1,8 +1,3 @@
-if (MSVC)
-    add_definitions(/W0)
-endif()
-
-
 include_directories(include Vorbis)
 
 set(OGG
@@ -61,6 +56,6 @@ set(VORBIS
     Vorbis/window.c
 )
 
-add_library(OggVorbis ${OGG} ${VORBIS})
+add_library(${OGREKIT_OGGVORBIS_TARGET} ${OGG} ${VORBIS})
 
-config_target_if_iphone_build(OggVorbis TRUE)
+config_target_if_iphone_build(${OGREKIT_OGGVORBIS_TARGET} TRUE)

@@ -27,7 +27,7 @@
 
 #include <assert.h>
 
-#if defined(DEBUG) || defined(_DEBUG)
+#if (defined(DEBUG) || defined(_DEBUG)) && defined (UT_DEBUG_ASSERT) 
 # define UT_DEBUG 1
 # define UT_ASSERT(x) assert(x)
 #else

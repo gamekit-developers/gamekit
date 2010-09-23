@@ -45,12 +45,8 @@ set(OGREKIT_INCLUDE ${OGREKIT_OGRE_INCLUDE}
                     ${OGREKIT_DEP_INCLUDE}
                     )
 
-if (OGREKIT_USE_LUA)
-	set(OGREKIT_LIB             OgreKitCore ${OGREKIT_LUA_TARGET})
-	set(OGREKIT_STD_LUA_LIB     OgreKitCore ${OGREKIT_LUA_TARGET})
-else()
-	set(OGREKIT_LIB             OgreKitCore)
-endif()
+set(OGREKIT_LIB OgreKitCore)
+
 
 subdirs(bullet)
 subdirs(Dependencies)
