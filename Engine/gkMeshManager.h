@@ -30,7 +30,7 @@
 #include "gkCommon.h"
 #include "gkResourceManager.h"
 #include "gkMesh.h"
-#include "Utils/utSingleton.h"
+#include "utSingleton.h"
 
 
 

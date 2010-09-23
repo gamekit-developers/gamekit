@@ -28,7 +28,7 @@
 #define _gkOgreMeshLoader_h_
 
 #include "OgreResource.h"
-#include "Utils/utCommon.h"
+#include "utCommon.h"
 class gkMesh;
 class gkSubMesh;
 

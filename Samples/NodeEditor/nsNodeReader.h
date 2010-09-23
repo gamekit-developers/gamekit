@@ -30,7 +30,7 @@
 #include <wx/mstream.h>
 #include <wx/xml/xml.h>
 #include "nsCommon.h"
-#include "NodeUtils/nsString.h"
+#include "nsString.h"
 
 
 class nsNodeReader

@@ -28,7 +28,7 @@
 #define _gkGameObjectManager_h_
 
 #include "gkInstancedManager.h"
-#include "Utils/utSingleton.h"
+#include "utSingleton.h"
 
 
 

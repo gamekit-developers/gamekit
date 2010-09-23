@@ -28,7 +28,7 @@
 #define _gkSkeletonManager_h_
 
 #include "gkResourceManager.h"
-#include "Utils/utSingleton.h"
+#include "utSingleton.h"
 
 
 

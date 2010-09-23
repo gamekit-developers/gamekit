@@ -31,7 +31,7 @@ include(ConfigGameKit)
 include(ConfigIPhone)
 
 
-configure_gamekit(${OGREKIT_SOURCE_DIR}/Dependencies/Source/Blender25)
+configure_gamekit(${OGREKIT_SOURCE_DIR}/Dependencies/Source)
 configure_ogrekit(${OGREKIT_SOURCE_DIR} ${OGREKIT_SOURCE_DIR}/OgreLite)
 
 set(OGREKIT_BULLET_LIBS BulletDynamics BulletCollision BulletSoftBody LinearMath)
@@ -51,7 +51,7 @@ set(OGREKIT_INCLUDE ${OGREKIT_OGRE_INCLUDE}
                     ${OGREKIT_DEP_INCLUDE}
                     )
 
-set(OGREKIT_LIB OgreKitCore)
+set(OGREKIT_LIB OgreKitCore ${OGREKIT_OGRE_LIBS})
 
 
 subdirs(bullet)

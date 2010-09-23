@@ -27,7 +27,7 @@
 #include "gkWaveform.h"
 #include "gkSoundUtil.h"
 #include "gkLogger.h"
-#include "Utils/utTypes.h"
+#include "utTypes.h"
 
 
 

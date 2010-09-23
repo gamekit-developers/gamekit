@@ -27,7 +27,7 @@
 #ifndef _gkContactTest_h_
 #define _gkContactTest_h_
 
-#include "Utils/utTypes.h"
+#include "utTypes.h"
 #include "btBulletCollisionCommon.h"
 
 class gkAllContactResultCallback : public btCollisionWorld::ContactResultCallback

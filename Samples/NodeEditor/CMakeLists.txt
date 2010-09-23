@@ -21,11 +21,11 @@ set(NS_SRC
     nsSocket.cpp
     nsSocketEditors.cpp
     nsSolutionBrowser.cpp
+    nsString.cpp
     nsTreeProperties.cpp
     nsVariable.cpp
     nsWorkspace.cpp
     nsXmlUtils.cpp
-    NodeUtils/nsString.cpp
 )
 
 
@@ -55,13 +55,12 @@ set(NS_HDR
     nsSocket.h
     nsSocketEditors.h
     nsSolutionBrowser.h
+    nsString.h
     nsTreeProperties.h
     nsVariable.h
     nsWorkspace.h
     nsXmlUtils.h
-    NodeUtils/nsCommon.h
-    NodeUtils/nsTypes.h
-    NodeUtils/nsString.h
+    nsDefaultStringConverters.inl
 )
 
 if (WIN32)
@@ -84,7 +83,8 @@ set(ALL
     ${PLAT_RESOURCE}
 )
 
-include_directories(. )#${OGREKIT_INCLUDE})
+include_directories(. ${GAMEKIT_UTILS_PATH})
+link_libraries(${GAMEKIT_UTILS_TARGET})
 setup_wx()
 
 if (WIN32)

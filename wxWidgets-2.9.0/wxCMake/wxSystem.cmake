@@ -27,8 +27,6 @@ if (WIN32)
 	    add_definitions( -D_CRT_SECURE_NO_WARNINGS )
 	    add_definitions( -D_CRT_SECURE_NO_DEPRECATE )
 	    add_definitions( -D_SCL_SECURE_NO_WARNINGS )
-	else ()
-        message("WARNING: This platform is untested and may not currently work")
     endif()
 
 

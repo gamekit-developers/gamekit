@@ -30,7 +30,7 @@
 #include "nsCommon.h"
 #include "nsSingleton.h"
 #include "nsEventHandler.h"
-#include "NodeUtils/nsTypes.h"
+#include "utTypes.h"
 #include <wx/panel.h>
 #include <wx/propgrid/manager.h>
 

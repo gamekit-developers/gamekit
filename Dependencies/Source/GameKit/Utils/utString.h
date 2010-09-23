@@ -28,8 +28,8 @@
 #include <string.h>
 #include <string>
 
-#include "Utils/utCommon.h"
-#include "Utils/utTypes.h"
+#include "utCommon.h"
+#include "utTypes.h"
 
 #define utStrlen            strlen
 #define utStrcpy            strncpy

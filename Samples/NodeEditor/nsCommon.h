@@ -27,9 +27,9 @@
 #ifndef _nsCommon_h_
 #define _nsCommon_h_
 
-#include "NodeUtils/nsTypes.h"
-#include "NodeUtils/nsCommon.h"
-#include "NodeUtils/nsString.h"
+#include "utTypes.h"
+#include "utCommon.h"
+#include "nsString.h"
 
 // all forwards
 class nsMainWindow;

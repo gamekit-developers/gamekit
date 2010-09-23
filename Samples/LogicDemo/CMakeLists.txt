@@ -35,31 +35,13 @@ set(SRC
 )
 
 include_directories(
-    ${OGREKIT_OGRE_INCLUDE}
-    ${OGREKIT_BULLET_INCLUDE}
-    ${OGREKIT_OPENSTEER_INCLUDE}
-    ${OGREKIT_DETOUR_INCLUDE}
-    ../../Engine/
-    ../../Engine/Script/
-    ../../Engine/Loaders/Blender/
-    ../../Engine/Physics/
-    ../../Engine/LogicBricks
-    ../../Engine/Logic
-    ../../Engine/Utils
-    ../../Engine/Animation
-    ../../Engine/AI
+	${OGREKIT_INCLUDE}
 )
 
 link_libraries(
     ${OGREKIT_LIB}
 )
 
-if (WIN32)
-	if (CMAKE_COMPILER_IS_GNUCXX)
-		# FreeImage LibRawLite dependency 
-		link_libraries(ws2_32)
-	endif (CMAKE_COMPILER_IS_GNUCXX)
-endif(WIN32)
 
 set(HiddenCMakeLists ../CMakeLists.txt)
 source_group(ParentCMakeLists FILES ${HiddenCMakeLists})

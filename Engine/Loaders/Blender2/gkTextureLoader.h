@@ -29,7 +29,7 @@
 
 #include "gkLoaderCommon.h"
 #include "OgreResource.h"
-#include "Utils/utStreams.h"
+#include "utStreams.h"
 
 
 

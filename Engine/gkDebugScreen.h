@@ -31,7 +31,7 @@
 #include "gkHashedString.h"
 #include "OgreStringVector.h"
 #include "OgreStdHeaders.h"
-#include "Utils/utMemoryPool.h"
+#include "utMemoryPool.h"
 
 class gkDebugScreen
 {

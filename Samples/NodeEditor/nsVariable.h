@@ -29,7 +29,7 @@
 
 #include "nsCommon.h"
 #include "nsMath.h"
-#include "NodeUtils/nsString.h"
+#include "nsString.h"
 #include <typeinfo>
 
 

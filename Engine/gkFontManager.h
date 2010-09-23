@@ -30,8 +30,8 @@
 
 #include "gkCommon.h"
 #include "gkResourceManager.h"
-#include "Utils/utSingleton.h"
-#include "Utils/utStreams.h"
+#include "utSingleton.h"
+#include "utStreams.h"
 
 
 

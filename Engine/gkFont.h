@@ -30,7 +30,7 @@
 
 #include "gkCommon.h"
 #include "gkResource.h"
-#include "Utils/utStreams.h"
+#include "utStreams.h"
 #include "OgreResource.h"
 
 ///Internal font, loaded from Blender VFont objects in .ttf format.

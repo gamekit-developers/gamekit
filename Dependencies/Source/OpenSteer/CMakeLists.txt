@@ -51,6 +51,7 @@ set(OPENSTEER_HDR
 include_directories( 
 	include 
 	${OGREKIT_OGRE_INCLUDE}
+	${GAMEKIT_UTILS_PATH}
 	../../../Engine
 	../../../bullet/src
 )

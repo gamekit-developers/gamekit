@@ -28,7 +28,7 @@
 #define _gkLogicBrickConverter_h_
 
 
-#include "Utils/utTypes.h"
+#include "utTypes.h"
 
 namespace Blender
 {

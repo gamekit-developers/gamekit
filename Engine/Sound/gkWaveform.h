@@ -28,7 +28,7 @@
 #define _gkWaveform_h_
 
 #include "gkSoundStream.h"
-#include "Utils/utStreams.h"
+#include "utStreams.h"
 
 
 class gkWaveform : public gkSoundStream

@@ -27,8 +27,7 @@
 
 #include <string.h>
 #include <string>
-#include "NodeUtils/nsCommon.h"
-#include "NodeUtils/nsTypes.h"
+#include "utTypes.h"
 #include "nsMath.h"
 #include <sstream>
 #include <stdarg.h>
@@ -243,7 +242,7 @@ public:
 	}
 };
 
-#include "NodeUtils/nsDefaultStringConverters.inl"
+#include "nsDefaultStringConverters.inl"
 
 
 class nsHashedString

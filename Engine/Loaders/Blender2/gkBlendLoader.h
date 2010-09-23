@@ -28,7 +28,7 @@
 #define _gkBlendLoader_h_
 
 #include "gkLoaderCommon.h"
-#include "Utils/utSingleton.h"
+#include "utSingleton.h"
 
 
 class gkBlendLoader : public utSingleton<gkBlendLoader>

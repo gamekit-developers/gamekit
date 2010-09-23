@@ -26,7 +26,7 @@
 #define _utStreams_h_
 
 
-#include "Utils/utString.h"
+#include "utString.h"
 
 
 class utStream
@@ -62,15 +62,16 @@ public:
 	virtual void    seek(const UTsize pos, int dir) const = 0;
 	virtual UTsize  size(void) const = 0;
 
+#ifdef UT_USE_ZLIB
 	void inflate(utStream &dest);
-
+#endif
 
 protected:
 
 	virtual void reserve(UTsize nr) {}
-
+#ifdef UT_USE_ZLIB
 	int tryInflate(utStream &dest);
-
+#endif
 };
 
 

@@ -29,7 +29,7 @@
 #define GKRANDOMACTUATOR_H
 
 #include "gkLogicActuator.h"
-#include "Utils/utRandom.h"
+#include "utRandom.h"
 
 class gkRandomActuator : public gkLogicActuator
 {

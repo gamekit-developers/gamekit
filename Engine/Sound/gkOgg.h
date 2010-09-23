@@ -28,7 +28,7 @@
 #define _gkOgg_h_
 
 #include "gkSoundStream.h"
-#include "Utils/utStreams.h"
+#include "utStreams.h"
 
 #include <stdio.h>
 

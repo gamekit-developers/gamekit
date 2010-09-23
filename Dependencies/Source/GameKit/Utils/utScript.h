@@ -25,7 +25,7 @@
 #ifndef _utScript_h_
 #define _utScript_h_
 
-#include "Utils/utString.h"
+#include "utString.h"
 
 
 class utScriptTree;

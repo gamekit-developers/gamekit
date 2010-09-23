@@ -27,7 +27,7 @@
 #ifndef _gkSoundStream_h_
 #define _gkSoundStream_h_
 
-#include "Utils/utCommon.h"
+#include "utCommon.h"
 
 
 class gkSoundStream

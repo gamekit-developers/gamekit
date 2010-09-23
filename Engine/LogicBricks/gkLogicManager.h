@@ -29,7 +29,7 @@
 
 #include "gkCommon.h"
 #include "gkMathUtils.h"
-#include "Utils/utSingleton.h"
+#include "utSingleton.h"
 
 class gkLogicBrick;
 class gkLogicSensor;

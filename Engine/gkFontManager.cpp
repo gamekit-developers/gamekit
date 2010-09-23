@@ -31,7 +31,7 @@
 #include "gkFont.h"
 #include "gkLogger.h"
 #include "OgreFontManager.h"
-#include "Utils/utScript.h"
+#include "utScript.h"
 #include "gkVariable.h"
 #include "gkMathUtils.h"
 

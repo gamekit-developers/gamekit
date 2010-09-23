@@ -28,7 +28,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <memory.h>
+#ifdef UT_USE_ZLIB
 #include "zlib.h"
+#endif
 
 
 
@@ -55,7 +57,7 @@ public:
 
 
 
-
+#ifdef UT_USE_ZLIB
 
 void utStream::inflate(utStream &dest)
 {
@@ -72,31 +74,6 @@ void utStream::inflate(utStream &dest)
 	}
 
 }
-
-
-UTsize utStream::write(const utStream &cpy)
-{
-	// copy from stream
-	if (size() != cpy.size() && cpy.isOpen() && cpy.size() > 0)
-	{
-		UTsize size= cpy.size();
-		UTsize old_pos= cpy.position();
-
-		cpy.seek(0, SEEK_SET);
-
-		char *tbuf = new char[size+1];
-		cpy.read(tbuf, size);
-		size = write(tbuf, size);
-		delete []tbuf;
-
-		// restore position
-		cpy.seek(old_pos, SEEK_SET);
-		return size;
-	}
-	return 0;
-}
-
-
 
 int utStream::tryInflate(utStream &dest)
 {
@@ -154,6 +131,34 @@ int utStream::tryInflate(utStream &dest)
 
 	::inflateEnd(&strm);
 	return ret == Z_STREAM_END ? Z_OK : Z_DATA_ERROR;
+}
+
+
+
+
+#endif
+
+
+UTsize utStream::write(const utStream &cpy)
+{
+	// copy from stream
+	if (size() != cpy.size() && cpy.isOpen() && cpy.size() > 0)
+	{
+		UTsize size= cpy.size();
+		UTsize old_pos= cpy.position();
+
+		cpy.seek(0, SEEK_SET);
+
+		char *tbuf = new char[size+1];
+		cpy.read(tbuf, size);
+		size = write(tbuf, size);
+		delete []tbuf;
+
+		// restore position
+		cpy.seek(old_pos, SEEK_SET);
+		return size;
+	}
+	return 0;
 }
 
 

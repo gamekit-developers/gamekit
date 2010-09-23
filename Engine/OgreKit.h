@@ -179,9 +179,9 @@
 #ifdef OGREKIT_USE_LUA
 #include "Script/Lua/gkLuaManager.h"
 #endif
-#include "Utils/utCommon.h"
-#include "Utils/utString.h"
-#include "Utils/utTypes.h"
+#include "utCommon.h"
+#include "utString.h"
+#include "utTypes.h"
 
 #include "Thread/gkActiveObject.h"
 #include "Thread/gkCriticalSection.h"

@@ -27,7 +27,7 @@
 #ifndef _gkString_h_
 #define _gkString_h_
 
-#include "Utils/utString.h"
+#include "utString.h"
 
 typedef utString            gkString;
 typedef utStringArray       gkStringVector;

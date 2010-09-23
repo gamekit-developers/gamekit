@@ -29,7 +29,7 @@
 #define GKRANDOMSENSOR_H
 
 #include "gkLogicSensor.h"
-#include "Utils/utRandom.h"
+#include "utRandom.h"
 
 class gkRandomSensor : public gkLogicSensor
 {

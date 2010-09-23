@@ -33,7 +33,7 @@
 
 
 #include "gkCommon.h"
-#include "Utils/utSingleton.h"
+#include "utSingleton.h"
 #include "gkResourceManager.h"
 
 class gkHUD;

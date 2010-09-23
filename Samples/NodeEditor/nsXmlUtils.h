@@ -28,7 +28,7 @@
 #define _nsXmlUtils_h_
 
 #include <wx/xml/xml.h>
-#include "NodeUtils/nsString.h"
+#include "nsString.h"
 #include "nsVariable.h"
 #include "nsMath.h"
 

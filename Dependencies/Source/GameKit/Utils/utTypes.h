@@ -25,17 +25,17 @@
 #ifndef _utTypes_h_
 #define _utTypes_h_
 
-#include "NodeUtils/nsCommon.h"
+#include "utCommon.h"
 #include <memory.h>
 
 
 #define _UT_CACHE_LIMIT 999
 
 
-template <typename T> UT_INLINE void    utSwap(T& a, T& b)                              { T t(a); a = b; b = t; }
-template <typename T> UT_INLINE T       utMax(const T& a, const T& b)                   { return a < b ? b : a; }
-template <typename T> UT_INLINE T       utMin(const T& a, const T& b)                   { return a < b ? a : b; }
-template <typename T> UT_INLINE T       utClamp(const T& v, const T& a, const T& b)     { return v < a ? a : v > b ? b : v; }
+template <typename T> UT_INLINE void    utSwap(T &a, T &b)                              { T t(a); a = b; b = t; }
+template <typename T> UT_INLINE T       utMax(const T &a, const T &b)                   { return a < b ? b : a; }
+template <typename T> UT_INLINE T       utMin(const T &a, const T &b)                   { return a < b ? a : b; }
+template <typename T> UT_INLINE T       utClamp(const T &v, const T &a, const T &b)     { return v < a ? a : v > b ? b : v; }
 
 
 // List iterator access.
@@ -61,7 +61,7 @@ public:
 	utListIterator() : m_iterator(0), m_cur(0) {}
 
 	utListIterator(Iterator first) : m_iterator(first), m_cur(first) {}
-	utListIterator(T& v) : m_iterator(v.begin()), m_cur(v.begin()) { }
+	utListIterator(T &v) : m_iterator(v.begin()), m_cur(v.begin()) { }
 	~utListIterator() {}
 
 	UT_INLINE bool hasMoreElements(void) const {  return m_cur != 0;  }
@@ -116,7 +116,7 @@ public:
 	utListReverseIterator() : m_iterator(0), m_cur(0) {}
 
 	utListReverseIterator(Iterator last) : m_iterator(last), m_cur(last) {}
-	utListReverseIterator(T& v) : m_iterator(v.end()), m_cur(v.end()) {}
+	utListReverseIterator(T &v) : m_iterator(v.end()), m_cur(v.end()) {}
 
 
 	~utListReverseIterator() {}
@@ -158,11 +158,11 @@ template <typename T>
 class utListClass
 {
 public:
-	typedef T*             ValueType;
-	typedef const T*       ConstValueType;
-	typedef T*             Pointer;
-	typedef T*             ReferenceType;
-	typedef const T*       ConstReferenceType;
+	typedef T             *ValueType;
+	typedef const T       *ConstValueType;
+	typedef T             *Pointer;
+	typedef T             *ReferenceType;
+	typedef const T       *ConstReferenceType;
 
 	typedef utListIterator<utListClass<T> >              Iterator;
 	typedef utListReverseIterator<utListClass<T> >       ReverseIterator;
@@ -174,8 +174,8 @@ public:
 	class Link
 	{
 	protected:
-		T* m_next;
-		T* m_prev;
+		T *m_next;
+		T *m_prev;
 		friend class utListClass;
 
 	public:
@@ -183,9 +183,9 @@ public:
 		Link() : m_next(0), m_prev(0) {}
 		~Link() {}
 
-		UT_INLINE T* getNext(void) {return m_next;}
-		UT_INLINE T* getPrev(void) {return m_prev;}
-		UT_INLINE T* getLink(void) { return (T*)this; }
+		UT_INLINE T *getNext(void) {return m_next;}
+		UT_INLINE T *getPrev(void) {return m_prev;}
+		UT_INLINE T *getLink(void) { return (T *)this; }
 	};
 
 
@@ -305,10 +305,10 @@ public:
 	UT_INLINE bool empty(void) const            { return m_size == 0; }
 	UT_INLINE UTsize size(void)const            { return m_size; }
 
-	UT_INLINE ValueType begin(void)             { return m_first; }
-	UT_INLINE ValueType end(void)               { return m_last; }
-	UT_INLINE ConstValueType begin(void) const  { return m_first; }
-	UT_INLINE ConstValueType end(void) const    { return m_last; }
+	UT_INLINE ValueType begin(void)             { UT_ASSERT(m_first); return m_first; }
+	UT_INLINE ValueType end(void)               { UT_ASSERT(m_last); return m_last; }
+	UT_INLINE ConstValueType begin(void) const  { UT_ASSERT(m_first); return m_first; }
+	UT_INLINE ConstValueType end(void) const    { UT_ASSERT(m_last); return m_last; }
 
 
 	UT_INLINE Iterator              iterator(void)               { return m_first ? Iterator(m_first) : Iterator(); }
@@ -319,8 +319,8 @@ public:
 
 protected:
 
-	T* m_first;
-	T* m_last;
+	T *m_first;
+	T *m_last;
 	UTsize m_size;
 };
 
@@ -332,28 +332,28 @@ public:
 	class Link
 	{
 	protected:
-		Link*     next;
-		Link*     prev;
+		Link     *next;
+		Link     *prev;
 		friend class utList;
 
 	public:
 
 		Link() : next(0), prev(0) {}
-		Link(const T& v) : next(0), prev(0), link(v) {}
+		Link(const T &v) : next(0), prev(0), link(v) {}
 
 
-		UT_INLINE Link*  getNext(void)  {return next;}
-		UT_INLINE Link*  getPrev(void)  {return prev;}
-		UT_INLINE T&     getLink(void)  {return link;}
+		UT_INLINE Link  *getNext(void)  {return next;}
+		UT_INLINE Link  *getPrev(void)  {return prev;}
+		UT_INLINE T     &getLink(void)  {return link;}
 		T link;
 	};
 
-	typedef Link*              Pointer;
-	typedef const Link*        ConstPointer;
+	typedef Link              *Pointer;
+	typedef const Link        *ConstPointer;
 	typedef T                  ValueType;
 	typedef const T            ConstValueType;
-	typedef T&                 ReferenceType;
-	typedef const T&           ConstReferenceType;
+	typedef T                 &ReferenceType;
+	typedef const T           &ConstReferenceType;
 
 
 	typedef utListIterator<utList<T> >        Iterator;
@@ -368,10 +368,10 @@ public:
 
 	void clear(void)
 	{
-		Link* node = m_first;
+		Link *node = m_first;
 		while (node)
 		{
-			Link* temp = node;
+			Link *temp = node;
 			node = node->next;
 			delete temp;
 		}
@@ -379,9 +379,9 @@ public:
 		m_size = 0;
 	}
 
-	UT_INLINE void push_back(const T& v)
+	UT_INLINE void push_back(const T &v)
 	{
-		Link* link = new Link(v);
+		Link *link = new Link(v);
 		link->prev = m_last;
 		if (m_last) m_last->next = link;
 		if (!m_first) m_first = link;
@@ -389,9 +389,9 @@ public:
 		m_size ++;
 	}
 
-	UT_INLINE void push_front(const T& v)
+	UT_INLINE void push_front(const T &v)
 	{
-		Link* link = new Link(v);
+		Link *link = new Link(v);
 		link->next = m_first;
 		if (m_first) m_first->prev = link;
 		if (!m_last) m_last = link;
@@ -399,9 +399,9 @@ public:
 		m_size ++;
 	}
 
-	Pointer find(const T& v)
+	Pointer find(const T &v)
 	{
-		Link* node = m_first;
+		Link *node = m_first;
 		while (node)
 		{
 			if (node->link == v) return node;
@@ -414,7 +414,7 @@ public:
 	{
 		UT_ASSERT(index < m_size);
 		UTsize i = 0;
-		Link* node = m_first;
+		Link *node = m_first;
 		while (node)
 		{
 			if (i == index) break;
@@ -429,7 +429,7 @@ public:
 	{
 		UT_ASSERT(index < m_size);
 		UTsize i = 0;
-		Link* node = m_first;
+		Link *node = m_first;
 		while (node)
 		{
 			if (i == index) break;
@@ -443,7 +443,7 @@ public:
 	Pointer link_at(UTsize index)
 	{
 		UTsize i = 0;
-		Link* node = m_first;
+		Link *node = m_first;
 		while (node)
 		{
 			if (i == index) return node;
@@ -468,24 +468,24 @@ public:
 			clear();
 	}
 
-	void erase(const T& v)
+	void erase(const T &v)
 	{
 		Pointer fnd = find(v);
 		if (fnd)
 			erase(fnd);
 	}
 
-	void sort(bool (*cmp)(const T& a, const T& b))
+	void sort(bool (*cmp)(const T &a, const T &b))
 	{
-		UTsize i, n = m_size;
-		Link* a;
+		UTsize i, n=m_size;
+		Link *a;
 		bool swapped = false;
 		if (n < 2 || !cmp)
 			return;
 		do
 		{
 			a = m_first;
-			for (i = 0; a && a->next && i < n - 1; i++, a = a->next)
+			for (i=0; a && a->next && i<n-1; i++, a = a->next)
 			{
 				if (cmp(a->link, a->next->link))
 				{
@@ -493,7 +493,7 @@ public:
 					swapped = true;
 				}
 			}
-			n -= 1;
+			n-=1;
 		}
 		while (swapped && n != UT_NPOS);
 	}
@@ -520,12 +520,12 @@ public:
 
 protected:
 
-	Link*     m_first;
-	Link*     m_last;
+	Link     *m_first;
+	Link     *m_last;
 	UTsize    m_size;
 
 
-	void swap(Link* a, Link* b)
+	void swap(Link *a, Link *b)
 	{
 		ValueType v(a->link);
 		a->link = b->link;
@@ -557,7 +557,7 @@ public:
 
 	utArrayIterator() : m_iterator(0), m_cur(0), m_capacity(0) {}
 	utArrayIterator(Iterator begin, UTsize size) : m_iterator(begin), m_cur(0), m_capacity(size) {}
-	utArrayIterator(T& v) : m_iterator(v.ptr()), m_cur(0), m_capacity(v.size()) { }
+	utArrayIterator(T &v) : m_iterator(v.ptr()), m_cur(0), m_capacity(v.size()) { }
 
 	~utArrayIterator() {}
 
@@ -574,14 +574,14 @@ template <typename T>
 class utArray
 {
 public:
-	typedef T*           Pointer;
-	typedef const T*     ConstPointer;
+	typedef T           *Pointer;
+	typedef const T     *ConstPointer;
 
 	typedef T            ValueType;
 	typedef const T      ConstValueType;
 
-	typedef T&           ReferenceType;
-	typedef const T&     ConstReferenceType;
+	typedef T           &ReferenceType;
+	typedef const T     &ConstReferenceType;
 
 	typedef utArrayIterator<utArray<T> >       Iterator;
 	typedef const utArrayIterator<utArray<T> > ConstIterator;
@@ -598,7 +598,7 @@ public:
 
 	~utArray() { clear(); }
 
-	void clear(bool useCache = false)
+	void clear(bool useCache=false)
 	{
 		if (!useCache)
 		{
@@ -618,7 +618,7 @@ public:
 		}
 	}
 
-	UTsize find(const T& v)
+	UTsize find(const T &v)
 	{
 		for (UTsize i = 0; i < m_size; i++)
 		{
@@ -628,7 +628,7 @@ public:
 		return UT_NPOS;
 	}
 
-	UT_INLINE void push_back(const T& v)
+	UT_INLINE void push_back(const T &v)
 	{
 		if (m_size == m_capacity)
 			reserve(m_size == 0 ? 8 : m_size * 2);
@@ -644,7 +644,7 @@ public:
 	}
 
 
-	void erase(const T& v)
+	void erase(const T &v)
 	{
 		erase(find(v));
 	}
@@ -655,7 +655,7 @@ public:
 		{
 			if (pos != UT_NPOS)
 			{
-				swap(pos, m_size - 1);
+				swap(pos, m_size-1);
 				m_size--;
 				m_data[m_size].~T();
 			}
@@ -677,7 +677,7 @@ public:
 		m_size = nr;
 	}
 
-	void resize(UTsize nr, const T& fill)
+	void resize(UTsize nr, const T &fill)
 	{
 		if (nr < m_size)
 		{
@@ -700,7 +700,7 @@ public:
 
 		if (m_capacity < nr)
 		{
-			T* p = new T[nr];
+			T *p = new T[nr];
 			if (m_data != 0)
 			{
 				copy(p, m_data, m_size);
@@ -711,35 +711,35 @@ public:
 		}
 	}
 
-	void sort(bool (*cmp)(const T& a, const T& b))
+	void sort(bool (*cmp)(const T &a, const T &b))
 	{
-		UTsize i, n = m_size;
+		UTsize i, n=m_size;
 		bool swapped = false;
 		if (n < 2 || !cmp)
 			return;
 		do
 		{
-			if (n - 1 == UT_NPOS)
+			if (n-1 == UT_NPOS)
 				break;
-			for (i = 0; m_data[i] && m_data[i+1] && i < (n - 1); i++)
+			for (i=0; /*m_data[i] && m_data[i+1] && */i<(n-1); i++)
 			{
 				if (cmp(m_data[i], m_data[i+1]))
 				{
-					swap(i, i + 1);
+					swap(i, i+1);
 					swapped = true;
 				}
 			}
-			n -= 1;
+			n-=1;
 		}
 		while (swapped && n != UT_NPOS);
 	}
 
-	UT_INLINE T& operator[](UTsize idx)             { UT_ASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
-	UT_INLINE const T& operator[](UTsize idx) const { UT_ASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
-	UT_INLINE T& at(UTsize idx)                     { UT_ASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
-	UT_INLINE const T& at(UTsize idx) const         { UT_ASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
-	UT_INLINE T& front(void)                        { UT_ASSERT(m_size > 0); return m_data[0]; }
-	UT_INLINE T& back(void)                         { UT_ASSERT(m_size > 0); return m_data[m_size-1]; }
+	UT_INLINE T &operator[](UTsize idx)             { UT_ASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
+	UT_INLINE const T &operator[](UTsize idx) const { UT_ASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
+	UT_INLINE T &at(UTsize idx)                     { UT_ASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
+	UT_INLINE const T &at(UTsize idx) const         { UT_ASSERT(idx >= 0 && idx < m_capacity); return m_data[idx]; }
+	UT_INLINE T &front(void)                        { UT_ASSERT(m_size > 0); return m_data[0]; }
+	UT_INLINE T &back(void)                         { UT_ASSERT(m_size > 0); return m_data[m_size-1]; }
 
 
 	UT_INLINE ConstPointer ptr(void) const          { return m_data; }
@@ -780,7 +780,7 @@ protected:
 
 	void swap(UTsize a, UTsize b)
 	{
-		ValueType t = m_data[a];
+		ValueType t= m_data[a];
 		m_data[a] = m_data[b];
 		m_data[b] = t;
 	}
@@ -809,7 +809,7 @@ public:
 	utStackIterator() : m_iterator(0), m_top(0), m_capacity(0)  {}
 
 	utStackIterator(Iterator begin, UTsize top) : m_iterator(begin), m_top(top), m_capacity(top) {}
-	utStackIterator(T& v) : m_iterator(v.begin()), m_top(v.itop()), m_capacity(v.itop()) {}
+	utStackIterator(T &v) : m_iterator(v.begin()), m_top(v.itop()), m_capacity(v.itop()) {}
 
 	~utStackIterator() {}
 
@@ -856,15 +856,15 @@ template <typename T>
 class utStack
 {
 public:
-	typedef T* Pointer;
-	typedef const T* ConstPointer;
+	typedef T *Pointer;
+	typedef const T *ConstPointer;
 
 	typedef T        ValueType;
 	typedef const T  ConstValueType;
 
 
-	typedef T& ReferenceType;
-	typedef const T& ConstReferenceType;
+	typedef T &ReferenceType;
+	typedef const T &ConstReferenceType;
 
 
 	typedef utStackIterator<utStack<T> >       Iterator;
@@ -876,7 +876,7 @@ public:
 	utStack(UTsize rsp) : m_size(0), m_capacity(0), m_top(0), m_stack(0) { reserve(rsp); }
 
 
-	utStack(const utStack& o) : m_size(o.m_size), m_capacity(0), m_top(o.m_top), m_stack(0)
+	utStack(const utStack &o) : m_size(o.m_size), m_capacity(0), m_top(o.m_top), m_stack(0)
 	{
 		reserve(o.m_size);
 		UT_ASSERT(m_stack && o.m_stack);
@@ -899,7 +899,7 @@ public:
 	}
 
 
-	void push(const T& v)
+	void push(const T &v)
 	{
 		UT_ASSERT(m_top != UT_NPOS);
 		if (m_size == m_capacity)
@@ -929,7 +929,7 @@ public:
 	{
 		if (m_capacity < nr)
 		{
-			T* temp = new T[nr];
+			T *temp = new T[nr];
 			if (m_stack)
 			{
 				copy(temp, m_stack, m_size);
@@ -973,8 +973,8 @@ class utHashTableIterator
 public:
 
 	typedef typename T::Pointer        Iterator;
-	typedef typename T::Entry&          Pair;
-	typedef typename T::ConstEntry&     ConstPair;
+	typedef typename T::Entry          &Pair;
+	typedef typename T::ConstEntry     &ConstPair;
 
 	typedef typename T::ReferenceKeyType         KeyType;
 	typedef typename T::ReferenceValueType       ValueType;
@@ -991,7 +991,7 @@ protected:
 public:
 	utHashTableIterator() : m_iterator(0), m_cur(0), m_capacity(0)  {}
 	utHashTableIterator(Iterator begin, UTsize size) : m_iterator(begin), m_cur(0), m_capacity(size) { }
-	utHashTableIterator(T& v) : m_iterator(v.ptr()), m_cur(0), m_capacity(v.size()) {}
+	utHashTableIterator(T &v) : m_iterator(v.ptr()), m_cur(0), m_capacity(v.size()) {}
 
 	~utHashTableIterator() {}
 
@@ -1027,17 +1027,18 @@ public:
 class utCharHashKey
 {
 protected:
-	char* m_key;
+	char *m_key;
 	mutable UThash m_hash;
 
 public:
 	utCharHashKey() : m_key(0), m_hash(UT_NPOS) {}
-	utCharHashKey(char* k) : m_key(k), m_hash(UT_NPOS) {hash();}
-	utCharHashKey(const char* k) : m_key(const_cast<char*>(k)), m_hash(UT_NPOS) {}
+	utCharHashKey(char *k) : m_key(k), m_hash(UT_NPOS) {hash();}
+	utCharHashKey(const char *k) : m_key(const_cast<char *>(k)), m_hash(UT_NPOS) {}
 
 	// Copy constructor
-	utCharHashKey(const utCharHashKey& k) : m_key(k.m_key), m_hash(k.m_hash) {}
+	utCharHashKey(const utCharHashKey &k) : m_key(k.m_key), m_hash(k.m_hash) {}
 
+	UT_INLINE const char *key(void) const {return m_key;}
 
 	UThash hash(void) const
 	{
@@ -1050,16 +1051,16 @@ public:
 		m_hash = (UThash)_UT_INITIAL_FNV;
 		for (int i = 0; m_key[i]; i++)
 		{
-			m_hash = m_hash ^ (m_key[i]);   // xor  the low 8 bits
+			m_hash = m_hash ^(m_key[i]);    // xor  the low 8 bits
 			m_hash = m_hash * _UT_MULTIPLE_FNV;  // multiply by the magic number
 		}
 		return m_hash;
 	}
 
-	UT_INLINE bool operator== (const utCharHashKey& v) const    {return hash() == v.hash();}
-	UT_INLINE bool operator!= (const utCharHashKey& v) const    {return hash() != v.hash();}
-	UT_INLINE bool operator== (const UThash& v) const           {return hash() == v;}
-	UT_INLINE bool operator!= (const UThash& v) const           {return hash() != v;}
+	UT_INLINE bool operator== (const utCharHashKey &v) const    {return hash() == v.hash();}
+	UT_INLINE bool operator!= (const utCharHashKey &v) const    {return hash() != v.hash();}
+	UT_INLINE bool operator== (const UThash &v) const           {return hash() == v;}
+	UT_INLINE bool operator!= (const UThash &v) const           {return hash() != v;}
 };
 
 class utIntHashKey
@@ -1069,29 +1070,29 @@ protected:
 public:
 	utIntHashKey() : m_key(0) {}
 	utIntHashKey(UTint32 k) : m_key(k) {}
-	utIntHashKey(const utIntHashKey& k) : m_key(k.m_key) {}
+	utIntHashKey(const utIntHashKey &k) : m_key(k.m_key) {}
 
+	UT_INLINE UTint32 key(void)  const  { return m_key; }
 	UT_INLINE UThash  hash(void) const  { return static_cast<UThash>(m_key) * _UT_INITIAL_FNV; }
-	UT_INLINE UTint32 key(void) const   { return m_key; }
 
-	UT_INLINE bool operator== (const utIntHashKey& v) const {return hash() == v.hash();}
-	UT_INLINE bool operator!= (const utIntHashKey& v) const {return hash() != v.hash();}
-	UT_INLINE bool operator== (const UThash& v) const       {return hash() == v;}
-	UT_INLINE bool operator!= (const UThash& v) const       {return hash() != v;}
+	UT_INLINE bool operator== (const utIntHashKey &v) const {return hash() == v.hash();}
+	UT_INLINE bool operator!= (const utIntHashKey &v) const {return hash() != v.hash();}
+	UT_INLINE bool operator== (const UThash &v) const       {return hash() == v;}
+	UT_INLINE bool operator!= (const UThash &v) const       {return hash() != v;}
 };
 
 class utPointerHashKey
 {
 protected:
-	void* m_key;
+	void *m_key;
 
 public:
 	utPointerHashKey() : m_key(0) {}
-	utPointerHashKey(void* k) : m_key(k) {}
-	utPointerHashKey(const utPointerHashKey& k) : m_key(k.m_key) {}
+	utPointerHashKey(void *k) : m_key(k) {}
+	utPointerHashKey(const utPointerHashKey &k) : m_key(k.m_key) {}
 
-	UT_INLINE void*          key(void)       {return m_key;}
-	UT_INLINE const void*    key(void) const {return m_key;}
+	UT_INLINE void          *key(void)       {return m_key;}
+	UT_INLINE const void    *key(void) const {return m_key;}
 
 
 	UT_INLINE UThash hash(void) const
@@ -1102,10 +1103,10 @@ public:
 	}
 
 
-	UT_INLINE bool operator== (const utPointerHashKey& v) const {return hash() == v.hash();}
-	UT_INLINE bool operator!= (const utPointerHashKey& v) const {return hash() != v.hash();}
-	UT_INLINE bool operator== (const UThash& v) const           {return hash() == v;}
-	UT_INLINE bool operator!= (const UThash& v) const           {return hash() != v;}
+	UT_INLINE bool operator== (const utPointerHashKey &v) const {return hash() == v.hash();}
+	UT_INLINE bool operator!= (const utPointerHashKey &v) const {return hash() != v.hash();}
+	UT_INLINE bool operator== (const UThash &v) const           {return hash() == v;}
+	UT_INLINE bool operator!= (const UThash &v) const           {return hash() != v;}
 };
 
 template<typename Key, typename Value>
@@ -1115,14 +1116,14 @@ struct utHashEntry
 	Value  second;
 
 	utHashEntry() {}
-	utHashEntry(const Key& k, const Value& v) : first(k), second(v) {}
-	UT_INLINE const utHashEntry& operator=(const utHashEntry& rhs)
+	utHashEntry(const Key &k, const Value &v) : first(k), second(v) {}
+	UT_INLINE const utHashEntry &operator=(const utHashEntry &rhs)
 	{
 		first = rhs.first;
 		second = rhs.second;
 		return *this;
 	}
-	UT_INLINE bool operator==(const utHashEntry& rhs) const
+	UT_INLINE bool operator==(const utHashEntry &rhs) const
 	{
 		return first == rhs.first && second == rhs.second;
 	}
@@ -1142,8 +1143,8 @@ struct utHashEntry
 
 #if _UT_UTHASHTABLE_FORCE_POW2 == 1
 #define _UT_UTHASHTABLE_POW2(x) \
-    --x; x |= x >> 16; x |= x >> 8; x |= x >> 4; \
-    x |= x >> 2; x |= x >> 1; ++x;
+	--x; x |= x >> 16; x |= x >> 8; x |= x >> 4; \
+	x |= x >> 2; x |= x >> 1; ++x;
 
 #define _UT_UTHASHTABLE_IS_POW2(x) (x && !((x-1) & x))
 #endif
@@ -1162,8 +1163,8 @@ public:
 	typedef utHashEntry<Key, Value>        Entry;
 	typedef const utHashEntry<Key, Value>  ConstEntry;
 
-	typedef Entry*  EntryArray;
-	typedef UTsize* IndexArray;
+	typedef Entry  *EntryArray;
+	typedef UTsize *IndexArray;
 
 
 	typedef Key            KeyType;
@@ -1172,14 +1173,14 @@ public:
 	typedef const Key      ConstKeyType;
 	typedef const Value    ConstValueType;
 
-	typedef Value&          ReferenceValueType;
-	typedef const Value&    ConstReferenceValueType;
+	typedef Value          &ReferenceValueType;
+	typedef const Value    &ConstReferenceValueType;
 
-	typedef Key&            ReferenceKeyType;
-	typedef const Key&      ConstReferenceKeyType;
+	typedef Key            &ReferenceKeyType;
+	typedef const Key      &ConstReferenceKeyType;
 
 	typedef EntryArray Pointer;
-	typedef const Entry* ConstPointer;
+	typedef const Entry *ConstPointer;
 
 
 	typedef utHashTableIterator<utHashTable<Key, Value> > Iterator;
@@ -1200,7 +1201,7 @@ public:
 	{
 	}
 
-	utHashTable(const utHashTable& rhs)
+	utHashTable(const utHashTable &rhs)
 		:    m_size(0), m_capacity(0), m_lastPos(UT_NPOS),
 		     m_iptr(0), m_nptr(0), m_bptr(0), m_cache(0)
 	{
@@ -1244,8 +1245,8 @@ public:
 
 				UTsize i;
 
-				// Must zero
-				for (i = 0; i < m_capacity; ++i)
+				// Must zero 
+				for (i=0; i<m_capacity; ++i)
 				{
 					m_iptr[i] = UT_NPOS;
 					m_nptr[i] = UT_NPOS;
@@ -1254,16 +1255,16 @@ public:
 		}
 
 	}
-	Value&              at(UTsize i)                    { UT_ASSERT(m_bptr && i >= 0 && i < m_size); return m_bptr[i].second; }
-	Value&              operator [](UTsize i)           { UT_ASSERT(m_bptr && i >= 0 && i < m_size); return m_bptr[i].second; }
-	const Value&        at(UTsize i)const               { UT_ASSERT(m_bptr && i >= 0 && i < m_size); return m_bptr[i].second; }
-	const Value&        operator [](UTsize i) const     { UT_ASSERT(m_bptr && i >= 0 && i < m_size); return m_bptr[i].second; }
-	Key&                keyAt(UTsize i)                 { UT_ASSERT(m_bptr && i >= 0 && i < m_size); return m_bptr[i].first; }
-	const Key&          keyAt(UTsize i)const            { UT_ASSERT(m_bptr && i >= 0 && i < m_size); return m_bptr[i].first; }
+	Value              &at(UTsize i)                    { UT_ASSERT(m_bptr && i >= 0 && i < m_size); return m_bptr[i].second; }
+	Value              &operator [](UTsize i)           { UT_ASSERT(m_bptr && i >= 0 && i < m_size); return m_bptr[i].second; }
+	const Value        &at(UTsize i)const               { UT_ASSERT(m_bptr && i >= 0 && i < m_size); return m_bptr[i].second; }
+	const Value        &operator [](UTsize i) const     { UT_ASSERT(m_bptr && i >= 0 && i < m_size); return m_bptr[i].second; }
+	Key                &keyAt(UTsize i)                 { UT_ASSERT(m_bptr && i >= 0 && i < m_size); return m_bptr[i].first; }
+	const Key          &keyAt(UTsize i)const            { UT_ASSERT(m_bptr && i >= 0 && i < m_size); return m_bptr[i].first; }
 
 
 	// Find and cache key
-	Value* get(const Key& key)
+	Value* get(const Key &key)
 	{
 		if (!m_bptr || m_size == 0)
 			return (Value*)0;
@@ -1277,7 +1278,7 @@ public:
 			if (i == UT_NPOS) return (Value*)0;
 
 
-			UT_ASSERT(i >= 0 && i < m_size);
+			UT_ASSERT(i >=0 && i < m_size);
 
 			m_lastKey = hr;
 			m_lastPos = i;
@@ -1285,16 +1286,12 @@ public:
 
 		return &m_bptr[m_lastPos].second;
 	}
-	const Value* get(const Key& key) const
-	{
-		return get(key);
-	}
 
 
-	Value*         operator [](const Key& key)       { return get(key); }
-	const Value*   operator [](const Key& key) const { return get(key); }
+	Value*         operator [](const Key &key)       { return get(key); }
+	const Value*   operator [](const Key &key) const { return get(key); }
 
-	UTsize find(const Key& key) const
+	UTsize find(const Key &key) const
 	{
 		if (m_capacity == 0 || m_capacity == UT_NPOS || m_size == 0)
 			return UT_NPOS;
@@ -1327,9 +1324,9 @@ public:
 
 
 
-	void erase(const Key& key) {remove(key);}
+	void erase(const Key &key) {remove(key);}
 
-	void remove(const Key& key)
+	void remove(const Key &key)
 	{
 		UThash hash, lhash;
 		UTsize index, pindex, findex;
@@ -1395,7 +1392,7 @@ public:
 		return;
 	}
 
-	bool insert(const Key& key, const Value& val)
+	bool insert(const Key &key, const Value &val)
 	{
 		if (find(key) != UT_NPOS)
 			return false;
@@ -1445,11 +1442,11 @@ public:
 		UT_ASSERT(m_bptr && m_iptr && m_nptr);
 
 
-		UTsize min_col = m_size, max_col = 0;
-		UTsize i, tot = 0, avg = 0;
-		for (i = 0; i < m_size; ++i)
+		UTsize min_col= m_size, max_col = 0;
+		UTsize i, tot=0, avg = 0;
+		for (i=0; i<m_size; ++i)
 		{
-			Key& key = m_bptr[i].first;
+			Key &key = m_bptr[i].first;
 
 			UThash hr = _UT_UTHASHTABLE_HASH(key);
 
@@ -1507,10 +1504,10 @@ private:
 			b = m_size > 0 ? m_size - 1 : 0;
 
 			// Zero i & n (from end of buffer)
-			for (i = b; i < m_capacity; ++i)
+			for (i=b; i<m_capacity; ++i)
 				m_nptr[i] = m_iptr[i] = UT_NPOS;
 
-			for (i = 0; i < m_size; ++i)
+			for (i=0; i<m_size; ++i)
 			{
 				m_bptr[i] = rhs.m_bptr[i];
 				m_iptr[i] = rhs.m_iptr[i];
@@ -1521,15 +1518,15 @@ private:
 	}
 
 	template<typename ArrayType>
-	void reserveType(ArrayType** old, UTsize nr, bool cpy = false)
+	void reserveType(ArrayType **old, UTsize nr, bool cpy=false)
 	{
 		UTsize i;
-		ArrayType* nar = new ArrayType[nr];
-		if ((*old) != 0)
+		ArrayType *nar = new ArrayType[nr];
+		if ((*old)!= 0)
 		{
 			if (cpy)
 			{
-				const ArrayType* oar = (*old);
+				const ArrayType *oar = (*old);
 				for (i = 0; i < m_size; i++) nar[i] = oar[i];
 			}
 			delete [](*old);
@@ -1570,7 +1567,7 @@ private:
 
 
 		UTsize i, h;
-		for (i = 0; i < m_capacity; ++i)
+		for (i=0; i<m_capacity; ++i)
 			m_iptr[i] = m_nptr[i] = UT_NPOS;
 
 		for (i = 0; i < m_size; i++)
@@ -1603,7 +1600,7 @@ UT_INLINE UThash gkHash(int v)
 }
 
 
-UT_INLINE UThash gkHash(const char* v)
+UT_INLINE UThash gkHash(const char *v)
 {
 	utCharHashKey hk(v);
 	return hk.hash();
@@ -1611,7 +1608,7 @@ UT_INLINE UThash gkHash(const char* v)
 
 
 
-UT_INLINE UThash gkHash(void* v)
+UT_INLINE UThash gkHash(void *v)
 {
 	utPointerHashKey hk(v);
 	return hk.hash();
@@ -1623,8 +1620,8 @@ class utHashSetIterator
 public:
 
 	typedef typename T::Pointer         Iterator;
-	typedef typename T::ValueType&       ValueType;
-	typedef typename T::ConstValueType&  ConstValueType;
+	typedef typename T::ValueType       &ValueType;
+	typedef typename T::ConstValueType  &ConstValueType;
 
 
 protected:
@@ -1637,7 +1634,7 @@ protected:
 public:
 	utHashSetIterator() : m_iterator(0), m_cur(0), m_capacity(0)  {}
 	utHashSetIterator(Iterator begin, UTsize size) : m_iterator(begin), m_cur(0), m_capacity(size) { }
-	utHashSetIterator(T& t) : m_iterator(t.ptr()), m_cur(0), m_capacity(t.size()) { }
+	utHashSetIterator(T &t) : m_iterator(t.ptr()), m_cur(0), m_capacity(t.size()) { }
 	~utHashSetIterator() {}
 
 	UT_INLINE bool             hasMoreElements(void) const  { return (m_iterator && m_cur < m_capacity); }
@@ -1660,8 +1657,8 @@ public:
 		mutable UThash m_cache;
 	public:
 		THashKey() : m_key(T()), m_cache(UT_NPOS) {}
-		THashKey(const T& k) : m_key(k), m_cache(UT_NPOS) {}
-		THashKey(const THashKey& k) : m_key(k.m_key), m_cache(k.m_cache) {}
+		THashKey(const T &k) : m_key(k), m_cache(UT_NPOS) {}
+		THashKey(const THashKey &k) : m_key(k.m_key), m_cache(k.m_cache) {}
 
 		UT_INLINE UThash hash(void) const
 		{
@@ -1670,10 +1667,10 @@ public:
 			return m_cache;
 
 		}
-		UT_INLINE bool operator== (const THashKey& v) const     {return hash() == v.hash();}
-		UT_INLINE bool operator!= (const THashKey& v) const     {return hash() != v.hash();}
-		UT_INLINE bool operator== (const UThash& v) const       {return hash() == v;}
-		UT_INLINE bool operator!= (const UThash& v) const       {return hash() != v;}
+		UT_INLINE bool operator== (const THashKey &v) const     {return hash() == v.hash();}
+		UT_INLINE bool operator!= (const THashKey &v) const     {return hash() != v.hash();}
+		UT_INLINE bool operator== (const UThash &v) const       {return hash() == v;}
+		UT_INLINE bool operator!= (const UThash &v) const       {return hash() != v;}
 	};
 
 
@@ -1689,33 +1686,33 @@ public:
 
 
 	utHashSet() {}
-	utHashSet(const utHashSet& oth) : m_table(oth) {}
+	utHashSet(const utHashSet &oth) : m_table(oth) {}
 	~utHashSet() {m_table.clear();}
 
 
-	void clear(bool useCache = false)
+	void clear(bool useCache=false)
 	{
 		m_table.clear(useCache);
 	}
 
-	bool insert(const T& v)
+	bool insert(const T &v)
 	{
 		return m_table.insert(v, v);
 	}
 
-	void erase(const T& v)
+	void erase(const T &v)
 	{
 		m_table.remove(v);
 	}
 
 
-	UTsize find(const T& v) { return m_table.find(v); }
+	UTsize find(const T &v) { return m_table.find(v); }
 
 
-	UT_INLINE T&       operator[](UTsize idx)        { UT_ASSERT(idx >= 0 && idx < size()); return m_table.at(idx); }
-	UT_INLINE const T& operator[](UTsize idx) const  { UT_ASSERT(idx >= 0 && idx < size()); return m_table.at(idx); }
-	UT_INLINE T&       at(UTsize idx)                { UT_ASSERT(idx >= 0 && idx < size()); return m_table.at(idx); }
-	UT_INLINE const T& at(UTsize idx) const          { UT_ASSERT(idx >= 0 && idx < size()); return m_table.at(idx); }
+	UT_INLINE T       &operator[](UTsize idx)        { UT_ASSERT(idx >= 0 && idx < size()); return m_table.at(idx); }
+	UT_INLINE const T &operator[](UTsize idx) const  { UT_ASSERT(idx >= 0 && idx < size()); return m_table.at(idx); }
+	UT_INLINE T       &at(UTsize idx)                { UT_ASSERT(idx >= 0 && idx < size()); return m_table.at(idx); }
+	UT_INLINE const T &at(UTsize idx) const          { UT_ASSERT(idx >= 0 && idx < size()); return m_table.at(idx); }
 
 	UT_INLINE UTsize size(void)  const              { return m_table.size(); }
 	UT_INLINE bool   empty(void) const              { return m_table.empty();}

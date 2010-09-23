@@ -15,11 +15,7 @@ set(SRC
 	Main.mm)
 
 include_directories(
-    ${OGREKIT_OGRE_INCLUDE}
-    ${OGREKIT_BULLET_INCLUDE}
-    ${OGREKIT_OPENSTEER_INCLUDE}
-    ../../Engine/
-    ../../Engine/AI
+	${OGREKIT_INCLUDE}
 )
 
 link_libraries(

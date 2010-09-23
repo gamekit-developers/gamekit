@@ -32,7 +32,7 @@ extern "C" {
 #include <lualib.h>
 #include <lauxlib.h>
 }
-#include "Utils/utTypes.h"
+#include "utTypes.h"
 
 #define GK_UPVALUETYPE      1
 #define GK_UPVALUEMETHOD    2

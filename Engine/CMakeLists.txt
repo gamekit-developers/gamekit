@@ -50,10 +50,6 @@ set(Core_SOURCE
     gkUtils.cpp
     gkWindowSystem.cpp
     gkVariable.cpp
-    Utils/utString.cpp
-    Utils/utStreams.cpp
-    Utils/utRandom.cpp
-    Utils/utScript.cpp
 )
 
 set(Core_HEADER
@@ -110,14 +106,6 @@ set(Core_HEADER
     gkVariable.h
     gkWindowSystem.h
     OgreKit.h
-    Utils/utCommon.h
-    Utils/utString.h
-    Utils/utTypes.h
-    Utils/utStreams.h
-    Utils/utMemoryPool.h
-    Utils/utStreams.h
-    Utils/utRandom.h
-    Utils/utScript.h
 )
 
 if(APPLE)
@@ -846,7 +834,6 @@ include_directories(
     ./Sound
     ./Loaders/Blender2
     ./Physics
-    ./Utils
     ./Thread
     )
 
@@ -859,10 +846,7 @@ config_target_if_iphone_build(LinearMath TRUE)
 link_libraries(
     ${OGREKIT_OGRE_LIBS}
     Plugin_ParticleFX
-    ${GAMEKIT_SERIALIZE_BLENDER_TARGET}
-    ${GAMEKIT_SERIALIZE_BULLET_TARGET}
     ${OGREKIT_BULLET_LIBS}
-    OIS
     )
 
 link_directories(${OGRE_LIBDIR})
