@@ -29,6 +29,31 @@ import subprocess
 import shlex
 from game_gamekit import config
 
+def touch(fname):
+    if os.path.exists(fname):
+        os.utime(fname, None)
+    else:
+        open(fname, 'w').close()
+
+def is_dir_writable(dir):
+    fname = dir + "temporarytestfile.touch"
+    try:
+        touch(fname)
+        os.remove(fname)
+    except:
+        return False
+    return True
+    
+def assure_temp_dir(dir):
+    tmpdir = dir
+    if not tmpdir.endswith(os.sep):
+        tmpdir += os.sep
+    if not os.path.isdir(tmpdir) or not is_dir_writable(tmpdir):
+        tmpdir = os.getenv('TEMP')
+    if not tmpdir.endswith(os.sep):
+        tmpdir += os.sep
+    return tmpdir
+    
 # Declare gamekit as a render engine
 class GamekitRender(bpy.types.RenderEngine):
     bl_idname = 'GAMEKIT_RENDER'
@@ -54,6 +79,8 @@ class GamekitExportStartupFileOperator(bpy.types.Operator):
 
         cfg = config.GamekitConfig()
         
+        cfg.set("runtime", gks.gk_runtime_exec_path)
+        cfg.set("workingdir", gks.gk_runtime_working_dir)
         cfg.set("rendersystem", gks.gk_render_system.lower())
         cfg.set('log', gks.gk_log_file)
         cfg.set('debugfps', str(gdata.show_framerate_profile))
@@ -87,6 +114,7 @@ class GamekitExportStartupFileOperator(bpy.types.Operator):
         
     
     def invoke(self, context, event):
+        self.properties.filepath = "//GamekitStartup.cfg"
         context.window_manager.add_fileselect(self)
         return {'RUNNING_MODAL'}
     
@@ -105,27 +133,16 @@ class GamekitStartGameOperator(bpy.types.Operator):
         scene = context.scene
         gks = scene.gamekit
         
-        if gks.gk_runtime_exec_path[0:2] in { "./", ".\\" }:
+        execpath = bpy.path.abspath(gks.gk_runtime_exec_path)
+        if execpath[0:2] in { "./", ".\\" }:
             pwd = os.path.dirname(bpy.app.binary_path)
-            execpath = pwd + os.sep + gks.gk_runtime_exec_path
-        else:
-            execpath = bpy.path.abspath(gks.gk_runtime_exec_path)
-            
-        tmpdir = bpy.context.user_preferences.filepaths.temporary_directory
-        if not os.path.exists(tmpdir):
-            tmpdir = os.getenv('TEMP')
-        if not tmpdir.endswith(os.sep):
-            tmpdir += os.sep
-                
+            execpath = pwd + os.sep + execpath
+        
+        tmpdir = assure_temp_dir(bpy.path.abspath(bpy.context.user_preferences.filepaths.temporary_directory))
         gamefile = tmpdir + "gamekit_tmp.blend"
         cfgfile = tmpdir + "gamekit_startup.cfg"
         cmdline = execpath + " -c " + cfgfile + " " + gamefile
-        
-        workingdir = bpy.path.abspath(gks.gk_runtime_working_dir)
-        if not os.path.exists(workingdir):
-            workingdir = os.getenv('TEMP')
-        if not workingdir.endswith(os.sep):
-            workingdir += os.sep
+        workingdir = assure_temp_dir(bpy.path.abspath(gks.gk_runtime_working_dir))
         
         args =  shlex.split(cmdline.replace(os.sep, '/'))        
 

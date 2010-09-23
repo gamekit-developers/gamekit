@@ -30,7 +30,7 @@ class GamekitConfig:
     cfg = dict()
     
     defaultswin= {
-                'runtime':'./OgreKit/AppOgreKit',
+                'runtime':'./OgreKit/OgreKit-NoDX.exe',
                 'workingdir':'//'
                 }
 
