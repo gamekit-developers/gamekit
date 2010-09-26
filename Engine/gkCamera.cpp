@@ -194,7 +194,7 @@ void gkCamera::setProjType(gkCameraProperties::Type type)
 gkGameObject* gkCamera::clone(const gkString& name)
 {
 	gkCamera* cl = new gkCamera(getInstanceCreator(), name, -1);
-	memcpy(&cl->m_cameraProps, &m_cameraProps, sizeof(gkCameraProperties));
+	cl->m_cameraProps = m_cameraProps;
 
 	gkGameObject::cloneImpl(cl);
 	return cl;

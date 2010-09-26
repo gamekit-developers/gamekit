@@ -200,7 +200,7 @@ set(wxSUPPORT_SOURCE
 
 #----------------------------------------------------------
 # Copied from ogre
-macro(use_precompiled_header TARGET HEADER_FILE SRC_FILE)
+macro(use_precompiled_header_wx TARGET HEADER_FILE SRC_FILE)
     get_filename_component(HEADER ${HEADER_FILE} NAME)
 
     if (MSVC)
@@ -208,7 +208,7 @@ macro(use_precompiled_header TARGET HEADER_FILE SRC_FILE)
         set_source_files_properties(${SRC_FILE} PROPERTIES COMPILE_FLAGS /Ycwx/${HEADER})
     endif()
 
-endmacro(use_precompiled_header)
+endmacro(use_precompiled_header_wx)
 
 
 macro(SORT_ARGS OUT2)

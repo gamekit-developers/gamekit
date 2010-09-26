@@ -111,7 +111,7 @@ void gkLight::destroyInstanceImpl(void)
 gkGameObject* gkLight::clone(const gkString& name)
 {
 	gkLight* cl = new gkLight(getInstanceCreator(), name, -1);
-	memcpy(&cl->m_lightProps, &m_lightProps, sizeof(gkLightProperties));
+	cl->m_lightProps = m_lightProps;
 
 	gkGameObject::cloneImpl(cl);
 	return cl;

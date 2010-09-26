@@ -95,7 +95,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 	option(SAMPLES_VEHICLEDEMO    "Build Samples/VehicleDemo" ON)
 	option(SAMPLES_CPPDEMO        "Build Samples/CppDemo"     ON)
 	option(SAMPLES_NODE_EDITOR    "Build Samples/NodeEditor"  OFF)
-	
+	option(SAMPLES_EMBEDDEMO      "Build Samples/EmbedDemo"   OFF)
 	
 	
 	if (OGREKIT_USE_LUA)
@@ -104,12 +104,13 @@ macro (configure_ogrekit ROOT OGREPATH)
 		set(SAMPLES_LUARUNTIME FALSE CACHE BOOL "Forcing remove Samples/LuaRuntime" FORCE)
 	endif()
 
-	if (SAMPLES_NODE_EDITOR)
+	if (SAMPLES_NODE_EDITOR OR SAMPLES_EMBEDDEMO)
 		set(OGREKIT_COMPILE_WXWIDGETS TRUE CACHE BOOL "Forcing wxWidgets" FORCE)
 	endif()
 	
 	if (NOT OGREKIT_COMPILE_WXWIDGETS)
 		set(SAMPLES_NODE_EDITOR FALSE CACHE BOOL "Forcing NodeEditor removal" FORCE)
+        set(SAMPLES_EMBEDDEMO   FALSE CACHE BOOL "Forcing EmbedDemo removal"  FORCE)
 	endif()
 
 

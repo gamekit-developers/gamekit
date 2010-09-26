@@ -44,14 +44,39 @@ gkBlendLoader::gkBlendLoader()
 
 gkBlendLoader::~gkBlendLoader()
 {
+	unloadAll(false);
+}
+
+void gkBlendLoader::clearResourceGroup(const gkString& inResourceGroup)
+{
+	if (Ogre::ResourceGroupManager::getSingleton().resourceGroupExists(inResourceGroup))
+		Ogre::ResourceGroupManager::getSingleton().clearResourceGroup(inResourceGroup);
+}
+
+void gkBlendLoader::unloadAll(bool exceptActiveFile)
+{
 	FileList::Iterator it = m_files.iterator();
 	while (it.hasMoreElements())
 	{
-		delete it.getNext();
+		FileList::ValueType file = it.getNext();
+		if (m_activeFile != file)			
+			delete file;
+	}
+
+	m_files.clear();
+	
+	if (m_activeFile)
+	{
+		if (exceptActiveFile)
+		{	
+			m_files.push_back(m_activeFile);	
+		}
+		else
+		{
+			delete m_activeFile; m_activeFile = NULL;		
+		}
 	}
 }
-
-
 
 gkBlendFile* gkBlendLoader::getFileByName(const gkString& fname)
 {
@@ -105,6 +130,8 @@ gkBlendFile* gkBlendLoader::loadFile(const gkString& fname, int options, const g
 	bool resetLoad = false;
 	try
 	{
+		if (!Ogre::ResourceGroupManager::getSingleton().resourceGroupExists(inResourceGroup))
+			Ogre::ResourceGroupManager::getSingleton().createResourceGroup(inResourceGroup);
 
 		return loadAndCatch(fname, options, inResourceGroup);
 	}

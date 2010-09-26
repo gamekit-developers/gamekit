@@ -865,7 +865,7 @@ void gkScene::createInstanceImpl(void)
 	// Set sound scene.
 
 	gkSoundManager& sndMgr = gkSoundManager::getSingleton();
-	memcpy(&sndMgr.getProperties(), &m_soundScene, sizeof(gkSoundSceneProperties));
+	sndMgr.getProperties() = m_soundScene;
 
 	sndMgr.updateSoundProperties();
 

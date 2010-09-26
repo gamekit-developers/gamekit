@@ -157,7 +157,7 @@ gkSubMesh* gkSubMesh::clone(void)
 	nme->m_hasVertexColors  = m_hasVertexColors;
 	nme->m_boundsInit       = false;
 	nme->m_defverts         = m_defverts;
-	memcpy(nme->m_material, m_material, sizeof(gkMaterialProperties));
+	*nme->m_material        = *m_material;
 	nme->getBoundingBox();
 	return nme;
 }

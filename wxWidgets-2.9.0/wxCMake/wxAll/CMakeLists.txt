@@ -1,6 +1,6 @@
 setup_wx_all(wxAll)
 if (wxWidgets_PRECOMP)
-    use_precompiled_header(wxAll ${wxROOT_INC}/wx/wxprec.h dummy.cpp)
+    use_precompiled_header_wx(wxAll ${wxROOT_INC}/wx/wxprec.h dummy.cpp)
     set(wxPRECOMPSRC dummy.cpp)
 endif()
 make_header(wxALLHDR ${wxALL_HDR})

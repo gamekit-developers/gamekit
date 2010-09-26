@@ -204,8 +204,7 @@ gkGameObject* gkEntity::clone(const gkString& name)
 {
 	gkEntity* cl = new gkEntity(getInstanceCreator(), name, -1);
 
-	memcpy(cl->m_entityProps, m_entityProps, sizeof(gkEntityProperties));
-	cl->m_entityProps->m_mesh = m_entityProps->m_mesh;
+	*cl->m_entityProps = *m_entityProps;
 
 	gkGameObject::cloneImpl(cl);
 	return cl;

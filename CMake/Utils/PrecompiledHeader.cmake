@@ -21,6 +21,7 @@ macro(use_precompiled_header TARGET HEADER_FILE SRC_FILE)
     set_source_files_properties(${SRC_FILE}
       PPROPERTIES COMPILE_FLAGS /Yc"${HEADER}"
 	)
+	add_definitions("/Zm1000")
     
   elseif (CMAKE_COMPILER_IS_GNUCXX)
     # disabled because it seems to increase compile time

@@ -101,14 +101,11 @@ void Win32NativeMouse::capture()
 	// clear previous states
 	mState.X.rel = mState.Y.rel = mState.Z.rel = 0;
 
-	if (!mMouseInit && mHandle)
+	if (!mMouseInit && mHandle && ::GetFocus() == mHandle)
 	{
-		RECT rect; POINT pos;
+		RECT rect;
 		::GetWindowRect(mHandle, &rect);
-        pos.x = rect.left;
-        pos.y = rect.top;
-
-		::SetCursorPos(pos.x + (rect.right / 2), pos.y + (rect.bottom / 2));
+		::SetCursorPos(rect.left + (rect.right - rect.left) / 2, rect.top + (rect.bottom - rect.top) / 2);
 	}
 
 	if (!mEvents.empty())

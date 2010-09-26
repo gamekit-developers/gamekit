@@ -1,0 +1,80 @@
+# ---------------------------------------------------------
+cmake_minimum_required(VERSION 2.6)
+
+project(AppEmbedDemo)
+
+set(DEMO_BLEND logo_text.blend)
+
+if (APPLE)
+    include_directories(${OGRELITE_SOURCE_DIR}/OgreMain/include/OSX)
+    SET(EXETYPE MACOSX_BUNDLE)
+    SET_SOURCE_FILES_PROPERTIES(MainMenu.nib  PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
+    SET_SOURCE_FILES_PROPERTIES(${DEMO_BLEND} PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
+    SET (NibFile MainMenu.nib)
+endif()
+
+set(DEMO_SRC
+	Main.cpp
+	okApp.cpp
+	okWin.cpp
+	okUtils.cpp
+	StdAfx.cpp
+    ${DEMO_BLEND}
+)
+
+set(DEMO_HDR
+	okApp.h
+	okWin.h
+	okUtils.h
+	StdAfx.h
+)
+
+set(ALL
+	${DEMO_SRC}
+	${DEMO_HDR}
+)
+
+include_directories(
+	. 
+	${GAMEKIT_UTILS_PATH} 
+	${OGREKIT_INCLUDE}
+)
+
+link_libraries(
+	${GAMEKIT_UTILS_TARGET} 
+	${OGREKIT_LIB}
+)
+
+setup_wx()
+
+set(HiddenCMakeLists ../CMakeLists.txt)
+source_group(ParentCMakeLists FILES ${HiddenCMakeLists})
+
+use_precompiled_header(${PROJECT_NAME} StdAfx.h StdAfx.cpp)
+
+
+if (APPLE)    
+    add_executable(
+	    ${PROJECT_NAME} 
+	    MACOSX_BUNDLE
+	    MainMenu.nib
+	    ${SRC} 
+	    ${HiddenCMakeLists}
+    )
+else()
+    if (WIN32)
+        add_executable(${PROJECT_NAME} WIN32 ${ALL} ${HiddenCMakeLists})
+    else()
+        add_executable(${PROJECT_NAME} ${ALL} ${HiddenCMakeLists})
+    endif()
+    
+    IF (NOT INTERNAL_CREATE_DISTRIBUTABLE_MSVC_PROJECTFILES)
+		ADD_CUSTOM_COMMAND(
+			TARGET ${PROJECT_NAME} 
+			POST_BUILD
+			COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/${DEMO_BLEND} ${CMAKE_CURRENT_BINARY_DIR}/${DEMO_BLEND}
+		)
+	ENDIF ()
+endif()
+
+#add_dependencies(${PROJECT_NAME} wxAll)

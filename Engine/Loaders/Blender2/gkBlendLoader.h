@@ -66,7 +66,8 @@ public:
 	GK_INLINE FileList&      getFiles(void)          {return m_files;}
 	GK_INLINE gkBlendFile*   getActiveBlend(void)    {return m_activeFile;}
 
-
+	void clearResourceGroup(const gkString& inResourceGroup);
+	void unloadAll(bool exceptActiveFile=false);
 
 	UT_DECLARE_SINGLETON(gkBlendLoader);
 

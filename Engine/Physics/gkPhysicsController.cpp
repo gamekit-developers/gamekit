@@ -46,7 +46,7 @@ gkPhysicsController::gkPhysicsController(gkGameObject* object, gkDynamicsWorld* 
 	     m_dbvtMark(true)
 {
 	// initial copy from object
-	memcpy(&m_props, &object->getProperties().m_physics, sizeof(gkPhysicsProperties));
+	m_props = object->getProperties().m_physics;
 }
 
 

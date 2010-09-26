@@ -29,4 +29,8 @@ if (SAMPLES_NODE_EDITOR)
 	subdirs(NodeEditor)
 endif()
 
+if (SAMPLES_EMBEDDEMO)
+    subdirs(EmbedDemo)
+endif()
+
 endif()
