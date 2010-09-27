@@ -91,8 +91,8 @@ void gkSoundManager::initialize(void)
 	if (ctx)
 		gkLogMessage("Warning: ALC context already present!");
 
-	// Clear error.
-	alGetError();
+	// Don't get/clear the error here, because alGetError requires a valid context.
+	// alGetError();
 
 	/// \todo, need to be able to specify a device
 	m_device = alcOpenDevice(NULL);

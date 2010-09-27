@@ -20,6 +20,8 @@ restrictions:
 
     3. This notice may not be removed or altered from any source distribution.
 */
+
+#define _WIN32_DCOM //otherwise CoSetProxyBlanket is not defined in Visual Studio 2005
 #include "win32/Win32JoyStick.h"
 #include "win32/Win32InputManager.h"
 #include "win32/Win32ForceFeedback.h"
@@ -533,7 +535,7 @@ bool Win32JoyStick::_doButtonClick( int button, DIDEVICEOBJECTDATA& di )
 //--------------------------------------------------------------------------------------------------//
 bool Win32JoyStick::_changePOV( int pov, DIDEVICEOBJECTDATA& di )
 {
-	//Some drivers report a value of 65,535, instead of ó1,
+	//Some drivers report a value of 65,535, instead of ÅE,
 	//for the center position
 	if(LOWORD(di.dwData) == 0xFFFF)
 	{
