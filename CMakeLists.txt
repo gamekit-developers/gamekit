@@ -40,6 +40,7 @@ set(OGREKIT_BULLET_INCLUDE ${OGREKIT_SOURCE_DIR}/bullet/src)
 if (NOT APPLE AND OGREKIT_COMPILE_WXWIDGETS)
 	include(wxSetup)
 	configure_wx_build(${OGREKIT_SOURCE_DIR})
+	setup_wx()
 endif()
 
 
