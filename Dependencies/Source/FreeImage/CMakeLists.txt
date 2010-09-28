@@ -650,7 +650,7 @@ set(ALLSOURCE
 	${fi_IlmThread_SRCS}
 	${fi_IlmThread_HDRS}
 	${fi_IlmThread_SRCS_PLAT}
-	${fi_rawlite_SRCS}
+	## ${fi_rawlite_SRCS}
 	)
 
 add_library(${OGREKIT_FREEIMAGE_TARGET}	${ALLSOURCE})
