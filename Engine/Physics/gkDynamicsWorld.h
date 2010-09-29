@@ -48,6 +48,19 @@ class gkDbvt;
 
 class gkDynamicsWorld
 {
+public:
+
+	class Listener
+	{
+	public:
+		virtual ~Listener() {}
+		virtual void presubtick(gkScalar rate) = 0;
+		virtual void subtick(gkScalar rate) = 0;
+	};
+
+	typedef utArray<Listener*> Listeners;
+
+
 protected:
 
 	gkScene*                    m_scene;
@@ -61,6 +74,7 @@ protected:
 	gkPhysicsDebug*             m_debug;
 	bool                       m_handleContacts;
 	gkDbvt*                     m_dbvt;
+	Listeners                   m_listeners;
 
 
 	// drawing all but static wireframes
@@ -70,6 +84,7 @@ protected:
 	void destroyInstanceImpl(void);
 
 	static void substepCallback(btDynamicsWorld* dyn, btScalar tick);
+	static void presubstepCallback(btDynamicsWorld *dyn, btScalar tick);
 
 public:
 	gkDynamicsWorld(const gkString& name, gkScene* scene);
@@ -77,6 +92,7 @@ public:
 
 	// Do one full physics step
 	void step(gkScalar tick);
+	void presubstep(gkScalar tick);
 	void substep(gkScalar tick);
 
 	void EnableContacts(bool enable) { m_handleContacts = enable; }
@@ -104,6 +120,9 @@ public:
 	gkVariable* getDBVTInfo(void);
 
 	void exportBullet(const gkString& fileName);
+	
+	void addListener(Listener *listener);
+	void removeListener(Listener *listener);
 };
 
 #endif//_gkDynamicsWorld_h_

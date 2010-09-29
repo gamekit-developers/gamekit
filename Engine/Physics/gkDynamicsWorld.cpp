@@ -274,6 +274,14 @@ void gkDynamicsWorld::resetContacts()
 }
 
 
+void gkDynamicsWorld::presubstep(gkScalar tick)
+{
+	// update callbacks
+	utArrayIterator<gkDynamicsWorld::Listeners> iter(m_listeners);
+	while(iter.hasMoreElements())
+		iter.getNext()->presubtick(tick);
+}
+
 
 void gkDynamicsWorld::substep(gkScalar tick)
 {
@@ -304,6 +312,11 @@ void gkDynamicsWorld::substep(gkScalar tick)
 			colB->_handleManifold(manifold);
 		}
 	}
+	
+	// update callbacks
+	utArrayIterator<gkDynamicsWorld::Listeners> iter(m_listeners);
+	while(iter.hasMoreElements())
+		iter.getNext()->subtick(tick);
 }
 
 
@@ -339,6 +352,12 @@ void gkDynamicsWorld::substepCallback(btDynamicsWorld* dyn, btScalar tick)
 
 
 
+void gkDynamicsWorld::presubstepCallback(btDynamicsWorld *dyn, btScalar tick)
+{
+	gkDynamicsWorld *world = static_cast<gkDynamicsWorld *>(dyn->getWorldUserInfo());
+	GK_ASSERT(world);
+	world->presubstep(tick);
+}
 
 gkVariable* gkDynamicsWorld::getDBVTInfo(void)
 {
@@ -371,3 +390,19 @@ void gkDynamicsWorld::exportBullet(const gkString& fileName)
 	fclose(file);
 	delete serializer;
 }
+
+void gkDynamicsWorld::addListener(gkDynamicsWorld::Listener *listener)
+{
+	m_listeners.push_back(listener);
+}
+
+
+
+
+
+void gkDynamicsWorld::removeListener(gkDynamicsWorld::Listener *listener)
+{
+	if (m_listeners.find(listener))
+		m_listeners.erase(listener);
+}
+
