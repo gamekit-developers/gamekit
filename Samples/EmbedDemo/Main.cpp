@@ -197,7 +197,7 @@ EmbedFrame::EmbedFrame() :
 	m_logListener(NULL),
 	m_logBox(NULL)
 {
-    SetIcon(wxICON(sample));
+//    SetIcon(wxICON(sample));
 
     wxMenu *menu = new wxMenu;
 	menu->Append(wxID_OPEN);
