@@ -25,56 +25,28 @@
 -------------------------------------------------------------------------------
 */
 
-#ifndef VDVEHICLENODE_H
-#define VDVEHICLENODE_H
+#ifndef GKBUGGY_H
+#define GKBUGGY_H
 
-#include "OgreKit.h"
-#include "vdVehicle.h"
+#include "gkVehicle.h"
 
-class vdVehicleNode : public gkLogicNode
+class gkBuggy : public gkVehicle
 {
 public:
-	enum
-	{
-		UPDATE,
-		FRONT,
-		REAR,
-		LEFT,
-		RIGHT,
-		STEER_TIME,
-		HAND_BRAKE,
-		GEAR_UP,
-		GEAR_DOWN,
-		ZROT,
-		KMH,
-		GEAR,
-		RPM,
-	};
-
-	DECLARE_SOCKET_TYPE(UPDATE, bool);
-	DECLARE_SOCKET_TYPE(FRONT, bool);
-	DECLARE_SOCKET_TYPE(REAR, bool);
-	DECLARE_SOCKET_TYPE(LEFT, bool);
-	DECLARE_SOCKET_TYPE(RIGHT, bool);
-	DECLARE_SOCKET_TYPE(STEER_TIME, gkScalar);
-	DECLARE_SOCKET_TYPE(HAND_BRAKE, bool);
-	DECLARE_SOCKET_TYPE(GEAR_UP, bool);
-	DECLARE_SOCKET_TYPE(GEAR_DOWN, bool);
-	DECLARE_SOCKET_TYPE(ZROT, gkScalar);
-	DECLARE_SOCKET_TYPE(KMH, int);
-	DECLARE_SOCKET_TYPE(GEAR, int);
-	DECLARE_SOCKET_TYPE(RPM, int);
-
-	vdVehicleNode(gkLogicTree* parent, size_t id);
-	virtual ~vdVehicleNode() {}
-
-	bool evaluate(gkScalar tick);
-
-	void setVehicle(vdVehicle* v)   {m_vehicle = v;}
-
-private:
-	vdVehicle* m_vehicle;
-	gkScalar   m_steer;
+	gkBuggy(gkScene* scene);
+	~gkBuggy();
+	
+	virtual void load();
+	
 };
 
-#endif // VDVEHICLENODE_H
+#define GK_RESOURCE_BUGGY_FILE    "buggy.blend"
+#define GK_RESOURCE_BUGGY_GROUP   "CarGroup"
+#define GK_RESOURCE_BUGGY_PHYSOBJ "ChassisCollision"
+#define GK_RESOURCE_BUGGY_CHASSIS "Chassis"
+#define GK_RESOURCE_BUGGY_WHELLFL "TireFL"
+#define GK_RESOURCE_BUGGY_WHELLFR "TireFR"
+#define GK_RESOURCE_BUGGY_WHELLRL "TireRL"
+#define GK_RESOURCE_BUGGY_WHELLRR "TireRR"
+
+#endif // GKBUGGY_H

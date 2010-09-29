@@ -26,7 +26,7 @@
 */
 
 #include "OgreKit.h"
-#include "vdLogic.h"
+#include "gkLogic.h"
 
 class OgreKit : public gkCoreApplication, public gkWindowSystem::Listener
 {
@@ -70,7 +70,7 @@ public:
 
 			pScene->createInstance();
 
-			m_logic = new vdLogic(pScene);
+			m_logic = new gkLogic(pScene);
 
 
 			// add input hooks
@@ -97,7 +97,7 @@ public:
 private:
 
 	gkString  m_blend;
-	vdLogic*   m_logic;
+	gkLogic*   m_logic;
 };
 
 

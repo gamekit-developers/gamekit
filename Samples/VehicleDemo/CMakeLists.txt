@@ -23,14 +23,16 @@ endif()
 set(SRC 
 	${DATA} 
 	Main.cpp 
-	vdVehicle.cpp
-	vdVehicle.h
-	vdLogic.cpp
-	vdLogic.h
-	vdVehicleNode.cpp
-	vdVehicleNode.h
-	vdBulletSerializeNode.cpp
-	vdBulletSerializeNode.h
+	gkVehicle.cpp
+	gkVehicle.h
+	gkLogic.cpp
+	gkLogic.h
+	gkVehicleNode.cpp
+	gkVehicleNode.h
+	gkBulletSerializeNode.cpp
+	gkBulletSerializeNode.h
+	gkBuggy.cpp
+	gkBuggy.h
 )
 
 include_directories(

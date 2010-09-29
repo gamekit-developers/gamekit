@@ -25,24 +25,42 @@
 -------------------------------------------------------------------------------
 */
 
-#ifndef VDVEHICLE_H
-#define VDVEHICLE_H
+#ifndef GKVEHICLE_H
+#define GKVEHICLE_H
 
 #include "OgreKit.h"
 #include "btBulletDynamicsCommon.h"
 
-typedef struct vdGear
+typedef struct gkWheelProperties
+{
+	gkGameObject* m_object;
+	gkScalar      m_radius;
+	bool          m_isFront;
+	gkVector3     m_connectionPoint;
+	gkVector3     m_wheelDirection;
+	gkVector3     m_wheelAxle;
+	gkScalar      m_restLength;
+	gkScalar      m_stiffness;
+	gkScalar      m_dampingRelax;
+	gkScalar      m_dampingComp;
+	gkScalar      m_friction;
+	gkScalar      m_rollInfluence;
+	gkScalar      m_travelDistCm;
+	
+} gkWheelProperties;
+
+typedef struct gkGear
 {
 	gkScalar m_ratio;
 	gkScalar m_rpmLow;
 	gkScalar m_rpmHigh;
 
-	vdGear(const gkScalar& ratio = 0.0f, const gkScalar& rpmLow = 1000.0f, const gkScalar& rpmHigh = 4000.0f)
+	gkGear(const gkScalar& ratio = 0.0f, const gkScalar& rpmLow = 1000.0f, const gkScalar& rpmHigh = 4000.0f)
 		: m_ratio(ratio), m_rpmLow(rpmLow), m_rpmHigh(rpmHigh) {}
 
-} vdGear;
+} gkGear;
 
-class vdGearBox
+class gkGearBox
 {
 private:
 	bool      m_isAutomatic;
@@ -50,17 +68,17 @@ private:
 	gkScalar  m_reverseRatio;
 	short     m_type;
 	short     m_numGears;
-	vdGear*   m_gears;
+	gkGear*   m_gears;
 	gkScalar  m_shifTime;
 	bool      m_isShifting;
 	gkScalar  m_passedSinceShift;
 
 public:
-	vdGearBox(bool automatic, short numGears, gkScalar shiftTime = 1.0f, gkScalar reverseRatio = 0.0f);
-	~vdGearBox();
+	gkGearBox(bool automatic, short numGears, gkScalar shiftTime = 1.0f, gkScalar reverseRatio = 0.0f);
+	~gkGearBox();
 
 	gkScalar getCurrentRatio(void);
-	void setGear(const short& numGear, const gkScalar& ratio, const gkScalar& rpmLow, const gkScalar& rpmHigh);
+	void setGearProperties(const short& numGear, const gkScalar& ratio, const gkScalar& rpmLow, const gkScalar& rpmHigh);
 
 	int getCurrentGear(void) { return m_currentGear; }
 	void setCurrentGear(short num);
@@ -71,19 +89,19 @@ public:
 	void update(gkScalar rate, const gkScalar& rpm);
 };
 
-class vdVehicle
+class gkVehicle : public gkDynamicsWorld::Listener
 {
-private:
+protected:
 	gkScene*                           m_scene;
 	btDynamicsWorld*                   m_dynamicWorld;
 	btDefaultVehicleRaycaster*         m_raycaster;
 	btRaycastVehicle*                  m_vehicle;
 	btRaycastVehicle::btVehicleTuning  m_tuning;
 	gkGameObject*                      m_object;
-	utArray<gkGameObject*>             m_wheelObjects;
+	utArray<gkWheelProperties*>        m_wheels;
 	btRigidBody*                       m_chassis;
 
-	vdGearBox*                         m_gearBox;
+	gkGearBox*                         m_gearBox;
 
 	gkScalar m_engineTorque;
 	gkScalar m_brakePower;
@@ -97,25 +115,40 @@ private:
 	gkScalar m_steer;
 	bool m_handBrake;
 
+	void updateTransmition(gkScalar rate);
+	void updateWheels(gkScalar rate);
+	
+public:
+	gkVehicle(gkScene* scene);
+	~gkVehicle();
+
+	virtual void load() = 0;
+
 	void createVehicle(void);
 	void updateVehicle(gkScalar rate);
-
-public:
-	vdVehicle(gkScene* scene, const gkString& chassis, const gkScalar& power, const gkScalar& brakes, const gkScalar& rearBrakeRatio, const gkScalar& maxSteering, const gkScalar& ruptor = 6000);
-	~vdVehicle();
-
-	void addWheel(const gkString& name, gkScalar radius, gkVector3 connectionPoint, gkVector3 wheelDirection,
+	
+	void addWheel(gkGameObject* object, gkScalar radius, gkVector3 connectionPoint, gkVector3 wheelDirection,
 	              gkVector3 wheelAxle, bool isFront, gkScalar restLength, gkScalar stiffness, gkScalar dampingRelax,
 	              gkScalar dampingComp, gkScalar friction, gkScalar roll, gkScalar travelDist);
 
 	void tick(gkScalar rate);
+	void presubtick(gkScalar rate);
+	void subtick(gkScalar rate);
 
-	void setTransfrom(const gkTransformState& v) { m_object->setTransform(v); }
+	void setTransform(const gkTransformState& v) { m_object->setTransform(v); }
+
+	void setEngineTorque(gkScalar v)             { m_engineTorque = v; }
+	void setBrakePower(gkScalar v)               { m_brakePower = v; }
+	void setRearBrakeRatio(gkScalar v)           { m_rearBrakeRatio = v; }
+	void setMaxSteeringAngle(gkScalar v)         { m_maxSteering = v; }
+	void setRuptorRpm(gkScalar v)                { m_ruptorRpm = v; }
+	void setChassisObject(gkGameObject* v)       { m_object = v; }
+	
 	void setGaz(gkScalar ratio)                  { m_gaz = ratio; }
 	void setBrake(gkScalar ratio)                { m_brake = ratio; }
 	void setSteer(gkScalar ratio)                { m_steer = ratio; }
 	void setHandBrake(bool v)                    { m_handBrake = v; }
-	void setGearBox(vdGearBox* box)              { m_gearBox = box; }
+	void setGearBox(gkGearBox* box)              { m_gearBox = box; }
 
 	gkScalar getCurrentSpeedKmHour(void)         { return m_vehicle->getCurrentSpeedKmHour(); }
 	int getCurrentGear(void)                     { return m_gearBox ? m_gearBox->getCurrentGear() : 0; }
@@ -127,4 +160,4 @@ public:
 	void shiftDown(void) {if (m_gearBox) m_gearBox->shiftDown();}
 };
 
-#endif // VDVEHICLE_H
+#endif // GKVEHICLE_H

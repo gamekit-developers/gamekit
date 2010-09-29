@@ -25,51 +25,56 @@
 -------------------------------------------------------------------------------
 */
 
-#ifndef VDLOGIC_H
-#define VDLOGIC_H
+#ifndef GKVEHICLENODE_H
+#define GKVEHICLENODE_H
 
 #include "OgreKit.h"
-#include "vdVehicle.h"
-#include "vdVehicleNode.h"
+#include "gkVehicle.h"
 
-class vdLogic
+class gkVehicleNode : public gkLogicNode
 {
 public:
-	vdLogic(gkScene* scene);
-	~vdLogic();
+	enum
+	{
+		UPDATE,
+		FRONT,
+		REAR,
+		LEFT,
+		RIGHT,
+		STEER_TIME,
+		HAND_BRAKE,
+		GEAR_UP,
+		GEAR_DOWN,
+		ZROT,
+		KMH,
+		GEAR,
+		RPM,
+	};
 
-	void tick(gkScalar rate);
+	DECLARE_SOCKET_TYPE(UPDATE, bool);
+	DECLARE_SOCKET_TYPE(FRONT, bool);
+	DECLARE_SOCKET_TYPE(REAR, bool);
+	DECLARE_SOCKET_TYPE(LEFT, bool);
+	DECLARE_SOCKET_TYPE(RIGHT, bool);
+	DECLARE_SOCKET_TYPE(STEER_TIME, gkScalar);
+	DECLARE_SOCKET_TYPE(HAND_BRAKE, bool);
+	DECLARE_SOCKET_TYPE(GEAR_UP, bool);
+	DECLARE_SOCKET_TYPE(GEAR_DOWN, bool);
+	DECLARE_SOCKET_TYPE(ZROT, gkScalar);
+	DECLARE_SOCKET_TYPE(KMH, int);
+	DECLARE_SOCKET_TYPE(GEAR, int);
+	DECLARE_SOCKET_TYPE(RPM, int);
+
+	gkVehicleNode(gkLogicTree* parent, size_t id);
+	virtual ~gkVehicleNode() {}
+
+	bool evaluate(gkScalar tick);
+
+	void setVehicle(gkVehicle* v)   {m_vehicle = v;}
 
 private:
-
-	void createInput();
-	void createVehicle();
-	void createCamera();
-	void createDisplayProps();
-
-public:
-
-	gkScene* m_scene;
-
-	gkGameObject* m_camera;
-
-	gkLogicTree* m_tree;
-
-	gkKeyNode* m_upKeyNode;
-	gkKeyNode* m_downKeyNode;
-	gkKeyNode* m_leftKeyNode;
-	gkKeyNode* m_rightKeyNode;
-	gkKeyNode* m_spaceKeyNode;
-	gkKeyNode* m_dKeyNode;
-	gkKeyNode* m_cKeyNode;
-	gkKeyNode* m_rKeyNode;
-
-	gkCameraNode* m_cameraNode;
-
-	vdVehicleNode* m_vehicleNode;
-
-private:
-	vdVehicle* m_vehicle;
+	gkVehicle* m_vehicle;
+	gkScalar   m_steer;
 };
 
-#endif // VDLOGIC_H
+#endif // GKVEHICLENODE_H

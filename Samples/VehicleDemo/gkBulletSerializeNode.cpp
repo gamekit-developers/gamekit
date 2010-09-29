@@ -25,29 +25,18 @@
 -------------------------------------------------------------------------------
 */
 
-#ifndef VDBULLETSERIALIZENODE_H
-#define VDBULLETSERIALIZENODE_H
+#include "gkBulletSerializeNode.h"
 
-#include "OgreKit.h"
-
-class vdBulletSerializeNode : public gkLogicNode
+gkBulletSerializeNode::gkBulletSerializeNode(gkLogicTree* parent, size_t id)
+	: gkLogicNode(parent, id), m_fileName("")
 {
-private:
-	gkString m_fileName;
-public:
-	enum
+	ADD_ISOCK(SERIALIZE, true);
+}
+
+void gkBulletSerializeNode::update(gkScalar tick)
+{
+	if (GET_SOCKET_VALUE(SERIALIZE) && m_fileName != "")
 	{
-		SERIALIZE,
-	};
-
-	DECLARE_SOCKET_TYPE(SERIALIZE, bool);
-
-	vdBulletSerializeNode(gkLogicTree* parent, size_t id);
-	virtual ~vdBulletSerializeNode() {}
-
-	void setFileName(const gkString& v) {m_fileName = v;}
-
-	void update(gkScalar tick);
-};
-
-#endif // VDBULLETSERIALIZENODE_H
+		gkEngine::getSingleton().getActiveScene()->getDynamicsWorld()->exportBullet(m_fileName);
+	}
+}
