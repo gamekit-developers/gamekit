@@ -161,4 +161,5 @@ void okWindow::OnTimer(wxTimerEvent& event)
 	if (!m_okApp) return;
 	
 	m_okApp->step();
+	Refresh();
 }
