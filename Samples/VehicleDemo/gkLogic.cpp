@@ -86,7 +86,7 @@ void gkLogic::createVehicle()
 	m_vehicle->setTransform(gkTransformState(gkVector3(-66.5, 295, -8.5), gkEuler(0, 0, 180).toQuaternion()));
 
 
-	float steerTime = 0.35f;
+	float steerTime = 0.15f;
 
 	//simple node setup for logic
 	m_vehicleNode = m_tree->createNode<gkVehicleNode>();
