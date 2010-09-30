@@ -222,11 +222,9 @@ EmbedFrame::EmbedFrame() :
 
 	
 	m_logBox = new wxListBox(this, ID_LOG_BOX, wxPoint(0, WIN_SIZE_Y), wxSize(WIN_SIZE_X, LOG_BOX_HEIGHT));
-	//m_logBox->SetWindowStyle(m_logBox->GetWindowStyle()); // | wxLB_HSCROLL | wxLB_ALWAYS_SB);
 
 	EmbedApp* app = (EmbedApp*)wxTheApp;
 	okWindow* win = new okWindow(this);
-	//win->SetWindowStyle(win->GetWindowStyle() | wxTAB_TRAVERSAL);
 
 	EmbedLog *logListener = new EmbedLog(m_logBox);
 	delete wxLog::SetActiveTarget(logListener);

@@ -31,7 +31,7 @@
 
 #define DEFAULT_BLEND_FILE	"momo_ogre.blend"
 #define DEFAULT_CONFIG_FILE "OgreKitStartup.cfg"
-#define DEFAULT_LOG			"okLog"
+#define DEFAULT_LOG			"oklog.log"
 
 #define DEFAULT_RES_GROUP	"okapp_res"
 

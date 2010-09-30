@@ -112,6 +112,11 @@ macro (configure_ogrekit ROOT OGREPATH)
 		set(SAMPLES_NODE_EDITOR FALSE CACHE BOOL "Forcing NodeEditor removal" FORCE)
         set(SAMPLES_EMBEDDEMO   FALSE CACHE BOOL "Forcing EmbedDemo removal"  FORCE)
 	endif()
+    
+    if (WIN32 AND SAMPLES_EMBEDDEMO AND NOT OGREKIT_OIS_WIN32_NATIVE)
+        set(SAMPLES_EMBEDDEMO   FALSE CACHE BOOL "Forcing EmbedDemo removal"  FORCE)
+        message(WARNING "EmbedDemo is required OGREKIT_OIS_WIN32_NATIVE option.")
+    endif()
 
 
 	if (APPLE)
@@ -406,7 +411,8 @@ macro (configure_ogrekit ROOT OGREPATH)
 				message(SEND_ERROR "Turn OFF OGREKIT_BUILD_GLESRS Option for OS X")
 			endif()
 		endif()
-	endif()
+	endif(APPLE)
+ 
 
 endmacro(configure_ogrekit)
 
