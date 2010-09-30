@@ -41,6 +41,7 @@
 #define STATUS_FPS      4
 #define DEMO_BLEND		"logo_text.blend"
 #define APP_TITLE		"OgreKit Embedding Demo"
+#define SET_EXIT_IF_EXCEPTION_RAISED 0
 
 
 class EmbedLog : public wxLog, public Ogre::LogListener
@@ -84,6 +85,7 @@ public:
 	GK_INLINE okApp*   GetOkApp()           { return m_okApp; }
 	GK_INLINE wxString GetBlendFile() const { return m_blend; }
 
+#if SET_EXIT_IF_EXCEPTION_RAISED
 	virtual void OnFatalException()
 	{
 		Exit();
@@ -93,6 +95,7 @@ public:
 	{
 		return false;
 	}
+#endif
 };
 
 
@@ -197,7 +200,9 @@ EmbedFrame::EmbedFrame() :
 	m_logListener(NULL),
 	m_logBox(NULL)
 {
-//    SetIcon(wxICON(sample));
+#ifdef WIN32
+    SetIcon(wxICON(sample));
+#endif
 
     wxMenu *menu = new wxMenu;
 	menu->Append(wxID_OPEN);
@@ -219,7 +224,6 @@ EmbedFrame::EmbedFrame() :
 
     wxStatusBar *sbar = CreateStatusBar();
 	m_statusBar = sbar;
-
 	
 	m_logBox = new wxListBox(this, ID_LOG_BOX, wxPoint(0, WIN_SIZE_Y), wxSize(WIN_SIZE_X, LOG_BOX_HEIGHT));
 
@@ -266,8 +270,11 @@ EmbedFrame::EmbedFrame() :
 
 	SetClientSize(WIN_SIZE_X, WIN_SIZE_Y + sbar->GetSize().GetHeight() + LOG_BOX_HEIGHT);
 
-	m_okWin->SetCanFocus(true);
-	m_okWin->SetFocus();
+	if (m_okWin)
+	{
+		m_okWin->SetCanFocus(true);
+		m_okWin->SetFocus();
+	}
 
 	DragAcceptFiles(true);
 	SetSizerAndFit(vbox);
@@ -277,8 +284,12 @@ EmbedFrame::EmbedFrame() :
 
 EmbedFrame::~EmbedFrame()
 {
-	Ogre::Log *log = Ogre::LogManager::getSingleton().getDefaultLog();
-	if (log) log->removeListener(m_logListener);
+	if (Ogre::LogManager::getSingletonPtr())
+	{
+		Ogre::Log *log = Ogre::LogManager::getSingleton().getDefaultLog();
+		if (log) log->removeListener(m_logListener);
+	}
+
 	delete wxLog::SetActiveTarget(NULL); //delete m_logListener
 }
 
@@ -334,6 +345,8 @@ bool EmbedFrame::OpenBlendFile(const wxString &file)
 	m_okWin->SendSizeEvent();
 
 	GetMenuBar()->SetLabel(ID_TIMER_PAUSE, m_okWin->isRunnigGameLoop() ? "&Pause" : "&Resume");
+	if (!m_timer.IsRunning())
+		m_timer.Start(1000/STATUS_FPS);
 
 	return true;
 }
@@ -412,13 +425,20 @@ void EmbedFrame::OnClose(wxCommandEvent& WXUNUSED(event))
 
 void EmbedFrame::OnTimer(wxTimerEvent& WXUNUSED(event))
 {
-	if (!m_okWin || !m_statusBar) return;
+	try
+	{
+		if (!m_okWin || !m_statusBar || !gkWindowSystem::getSingletonPtr()) return;
 
-	const Ogre::RenderTarget::FrameStats& stats = gkWindowSystem::getSingleton().getMainWindow()->getStatistics();
+		const Ogre::RenderTarget::FrameStats& stats = gkWindowSystem::getSingleton().getMainWindow()->getStatistics();
 
-	m_statusBar->SetStatusText(wxString::Format("FPS: %.3f (%.3f/%.3f/%.3f) NumTris: %d NumBatches: %d",  
-		stats.lastFPS, stats.avgFPS, stats.bestFPS, stats.worstFPS, stats.triangleCount, stats.batchCount));
+		m_statusBar->SetStatusText(wxString::Format("FPS: %.3f (%.3f/%.3f/%.3f) NumTris: %d NumBatches: %d",  
+			stats.lastFPS, stats.avgFPS, stats.bestFPS, stats.worstFPS, stats.triangleCount, stats.batchCount));
 
-	if (wxTheApp->IsActive() && m_okWin->isRunnigGameLoop() && !m_okWin->HasFocus())
-		m_okWin->SetFocusFromKbd ();
+		if (wxTheApp->IsActive() && m_okWin->isRunnigGameLoop() && !m_okWin->HasFocus())
+			m_okWin->SetFocusFromKbd ();	
+	}
+	catch (...)
+	{
+		m_timer.Stop();
+	}
 }

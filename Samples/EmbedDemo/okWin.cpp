@@ -160,6 +160,33 @@ void okWindow::OnTimer(wxTimerEvent& event)
 {
 	if (!m_okApp) return;
 	
-	m_okApp->step();
+	try 
+	{
+		m_okApp->step();		
+	} 
+	catch (Ogre::Exception& e) 
+	{
+		stopGameLoop();
+		Alert(wxString::Format("%s", e.getFullDescription().c_str()));
+	} 
+	catch (std::exception& e) 
+	{
+		stopGameLoop();
+		Alert(e.what());
+	} 
+	catch (...) 
+	{
+		stopGameLoop();
+		Alert("Unknown exception raised.");
+	}
+
+#ifndef WIN32
 	Refresh();
+#endif
+}
+
+void okWindow::Alert(const wxString& msg)
+{
+	wxMessageDialog dlg(this, msg, "Alert");
+	dlg.ShowModal();
 }

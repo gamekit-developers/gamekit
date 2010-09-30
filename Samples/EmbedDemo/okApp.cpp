@@ -34,6 +34,8 @@
 #define DEFAULT_LOG			"oklog.log"
 
 #define DEFAULT_RES_GROUP	"okapp_res"
+#define DEFAULT_SCENE_NAME	"DefaultScene"
+#define DEFAULT_CAMERA_NAME	"DefaultCamera"
 
 okApp::okApp() 
 	: m_scene(NULL), m_showDebug(false), m_inited(false)
@@ -61,10 +63,22 @@ bool okApp::setup(void)
     if (!blend)
     {
         gkPrintf("File loading failed. %s\n", m_blend.c_str());
-        return false;
-    }
+		gkPrintf("Create Default Empty Scene. %s\n", DEFAULT_SCENE_NAME);
 
-	m_scene = blend->getMainScene();
+		m_scene = (gkScene*)gkSceneManager::getSingleton().create(DEFAULT_SCENE_NAME);
+
+		if (m_scene)
+		{
+			m_scene->createCamera(DEFAULT_CAMERA_NAME);
+			m_engine->setActiveScene(m_scene);
+		}
+    }
+	else
+	{
+		m_scene = blend->getMainScene();	
+	}
+
+	
 	if (!m_scene)
 	{
 		gkPrintf("No usable scenes found in blend. %s\n", m_blend.c_str());

@@ -45,6 +45,8 @@ public:
 	GK_INLINE bool isRunnigGameLoop() { return m_timer.IsRunning(); }
 	void startGameLoop();
 	GK_INLINE void stopGameLoop()  { if (m_timer.IsRunning()) m_timer.Stop();   }
+
+	void Alert(const wxString& msg);
 private:
 	DECLARE_EVENT_TABLE()
 
