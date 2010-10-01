@@ -10,14 +10,15 @@ subdirs(Source/GameKit/Utils)
 
 
 include(NoWarn)
-subdirs(Source/FreeImage)
 subdirs(Source/OIS)
 subdirs(Source/FreeType)
 subdirs(Source/Recast)
 subdirs(Source/Detour)
 subdirs(Source/OpenSteer)
 
-
+if (OGREKIT_USE_STATIC_FREEIMAGE)
+	subdirs(Source/FreeImage)
+endif()
 
 if (NOT OGREKIT_DISABLE_ZIP)
 	subdirs(Source/ZZipLib)

@@ -34,7 +34,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 	option(OGREKIT_HEADER_GENERATOR      "Build Blender DNA to C++ generator."   OFF)
 	option(OGREKIT_UPDATE_DOCS           "Update Lua API documentation(Requires doxygen)." OFF)
 	option(OGREKIT_DISABLE_ZIP           "Disable external .zip resource loading" ON)
-
+	option(OGREKIT_USE_STATIC_FREEIMAGE  "Compile and link statically FreeImage and all its plugins" ON)
 
 	if (OGREKIT_USE_LUA)
 		add_definitions(-DOGREKIT_USE_LUA)	
@@ -51,9 +51,8 @@ macro (configure_ogrekit ROOT OGREPATH)
 		add_definitions(-DOGREKIT_COMPILE_OGRE_SCRIPTS)	
 	endif()
 
-	set(OGREKIT_ZLIB_TARGET	ZLib)
+
 	set(OGREKIT_ZZIP_TARGET ZZipLib)
-	set(OGREKIT_FREEIMAGE_TARGET FreeImage)
 	set(OGREKIT_FREETYPE_TARGET freetype)
 	set(OGREKIT_RECAST_TARGET Recast)
 	set(OGREKIT_DETOUR_TARGET Detour)
@@ -70,6 +69,36 @@ macro (configure_ogrekit ROOT OGREPATH)
 	include(OgreConfigTargets)
 	include(DependenciesOgreKit)
 	include(MacroLogFeature)
+
+
+	if (NOT OGREKIT_USE_STATIC_FREEIMAGE)
+	
+		if(ZLIB_FOUND)
+			set(OGREKIT_ZLIB_TARGET	${ZLIB_LIBRARY})
+			set(OGREKIT_FREEIMAGE_INCLUDE	${ZLIB_INCLUDE_DIR})
+		else(ZLIB_FOUND)
+			message("Zlib not found.")
+			message("Package is mandatory, please install it or enable static FreeImage compilation.")
+		endif(ZLIB_FOUND)
+		
+		
+		if(FreeImage_FOUND)
+			set(OGREKIT_FREEIMAGE_TARGET	${FreeImage_LIBRARY})	
+			set(OGREKIT_FREEIMAGE_INCLUDE	${FreeImage_INCLUDE_DIR})
+		else(FreeImage_FOUND)
+			message("FreeImage not found")
+			message("Package is mandatory, please install it or enable static FreeImage compilation.")
+		endif(FreeImage_FOUND)
+		
+	else(NOT OGREKIT_USE_STATIC_FREEIMAGE)
+	
+		set(OGREKIT_ZLIB_TARGET	ZLib)
+		set(OGREKIT_FREEIMAGE_TARGET FreeImage)
+		set(OGREKIT_ZLIB_INCLUDE ${OGREKIT_DEP_DIR}/FreeImage/ZLib)
+		set(OGREKIT_FREEIMAGE_INCLUDE ${OGREKIT_DEP_DIR}/FreeImage)
+		
+	endif(NOT OGREKIT_USE_STATIC_FREEIMAGE)
+
 
 	if (APPLE)
 		if (OGRE_BUILD_PLATFORM_IPHONE)
@@ -191,9 +220,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 
 
 	set(OGREKIT_DEP_DIR ${ROOT}/Dependencies/Source)
-	set(OGREKIT_FREEIMAGE_INCLUDE ${OGREKIT_DEP_DIR}/FreeImage)
 	set(OGREKIT_FREETYPE_INCLUDE ${OGREKIT_DEP_DIR}/FreeType/include)
-	set(OGREKIT_ZLIB_INCLUDE ${OGREKIT_DEP_DIR}/FreeImage/ZLib)
 	set(OGREKIT_ZZIP_INCLUDE ${OGREKIT_DEP_DIR}/ZZipLib)
 	set(OGREKIT_OIS_INCLUDE ${OGREKIT_DEP_DIR}/OIS/include)
 	set(OGREKIT_OGRE_INCLUDE ${OGREPATH}/OgreMain/include ${OGREKIT_BINARY_DIR}/Settings ${OGREKIT_PLATFORM})
@@ -206,7 +233,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 	
 
 	set(OGREKIT_DEP_INCLUDE
-#		${OGREKIT_FREEIMAGE_INCLUDE}
+#		${OGREKIT_FREEIMAGE_INCLUDE} Conflicts with OpenSteer includes and needed by Ogre, not OgreKit
 		${OGREKIT_FREETYPE_INCLUDE}
 		${OGREKIT_ZLIB_INCLUDE}
 		${OGREKIT_OIS_INCLUDE}

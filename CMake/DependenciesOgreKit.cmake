@@ -56,6 +56,14 @@ if(NOT WIN32)
 
 endif()
 
+if(NOT OGREKIT_USE_STATIC_FREEIMAGE)
+	find_package(FreeImage)
+	macro_log_feature(FreeImage_FOUND "FreeImage" "Support for the FreeImage library" "http://freeimage.sourceforge.net/" FALSE "" "")
+
+	find_package(ZLIB)
+	macro_log_feature(ZLIB_FOUND "ZLib" "Support for the ZLib library" "http://www.zlib.net/" FALSE "" "")
+
+endif()
 #######################################################################
 # Apple-specific
 #######################################################################
