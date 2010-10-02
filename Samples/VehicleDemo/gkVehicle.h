@@ -91,9 +91,17 @@ public:
 
 class gkVehicle : public gkDynamicsWorld::Listener
 {
+public:
+	enum
+	{
+		DT_PROPULSION,
+		DT_TRACTION,
+		DT_ALLWHEEL
+	};
+	
 protected:
 	gkScene*                           m_scene;
-	btDynamicsWorld*                   m_dynamicWorld;
+	gkDynamicsWorld*                   m_dynamicWorld;
 	btDefaultVehicleRaycaster*         m_raycaster;
 	btRaycastVehicle*                  m_vehicle;
 	btRaycastVehicle::btVehicleTuning  m_tuning;
@@ -103,6 +111,7 @@ protected:
 
 	gkGearBox*                         m_gearBox;
 
+	short int m_driveTrain;
 	gkScalar m_engineTorque;
 	gkScalar m_brakePower;
 	gkScalar m_rearBrakeRatio;
@@ -137,6 +146,7 @@ public:
 
 	void setTransform(const gkTransformState& v) { m_object->setTransform(v); }
 
+	void setDriveTrain(short int v)              { m_driveTrain = v; }
 	void setEngineTorque(gkScalar v)             { m_engineTorque = v; }
 	void setBrakePower(gkScalar v)               { m_brakePower = v; }
 	void setRearBrakeRatio(gkScalar v)           { m_rearBrakeRatio = v; }
@@ -158,6 +168,9 @@ public:
 
 	void shiftUp(void)   {if (m_gearBox) m_gearBox->shiftUp();}
 	void shiftDown(void) {if (m_gearBox) m_gearBox->shiftDown();}
+	
+	bool isWheelDriven(int i);
+	int getNumberOfDrivenWheel(void);
 };
 
 #endif // GKVEHICLE_H

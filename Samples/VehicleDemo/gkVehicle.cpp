@@ -131,13 +131,17 @@ void gkGearBox::update(gkScalar rate, const gkScalar& rpm)
 gkVehicle::gkVehicle(gkScene* scene)
 	: m_scene(scene), m_dynamicWorld(0), m_raycaster(0), m_vehicle(0), m_object(0), m_chassis(0),
 	  m_gaz(0), m_brake(0), m_steer(0), m_handBrake(false), m_engineTorque(0), m_brakePower(0),
-	  m_rearBrakeRatio(1.0f), m_maxSteering(0), m_gearBox(0), m_currentRpm(0), m_ruptorRpm(0)
+	  m_rearBrakeRatio(1.0f), m_maxSteering(0), m_gearBox(0), m_currentRpm(0), m_ruptorRpm(0),
+	  m_driveTrain(DT_PROPULSION)
 {
 
 }
 
 gkVehicle::~gkVehicle()
 {
+	if(m_dynamicWorld)
+		m_dynamicWorld->removeListener(this);
+		
 	gkWheelProperties** ptr = m_wheels.ptr();
 	for (int i = 0; i < m_wheels.size(); ++i)
 		delete ptr[i];
@@ -162,7 +166,27 @@ void gkVehicle::presubtick(gkScalar rate)
 
 void gkVehicle::subtick(gkScalar rate)
 {
-
+	for(int i=0; i<m_wheels.size(); i++)
+	{
+		gkWheelProperties* wheel = m_wheels[i];
+		btWheelInfo& btwheel = m_vehicle->getWheelInfo(i);
+		
+		// Block rear wheels when using handbrake
+		if(m_handBrake && !btwheel.m_bIsFrontWheel)
+			btwheel.m_deltaRotation = 0;
+		
+		
+		// Rotate the wheel when not in contact
+		if(!btwheel.m_raycastInfo.m_isInContact)
+		{
+			if(m_gaz > 0.05f && isWheelDriven(i) )
+				btwheel.m_deltaRotation = m_gaz;
+			else
+				btwheel.m_deltaRotation *= 0.995;
+		}
+		
+		btwheel.m_rotation += btwheel.m_deltaRotation;
+	}
 }
 
 void gkVehicle::createVehicle()
@@ -172,17 +196,18 @@ void gkVehicle::createVehicle()
 		if (!m_object->isInstanced())
 			m_object->createInstance();
 
-		m_dynamicWorld = m_scene->getDynamicsWorld()->getBulletWorld();
+		m_dynamicWorld = m_scene->getDynamicsWorld();
+		m_dynamicWorld->addListener(this);
 		
 		m_chassis = ((gkRigidBody*)m_object->getPhysicsController())->getBody();
 		m_chassis->setActivationState(DISABLE_DEACTIVATION);
 	
-		m_raycaster = new btDefaultVehicleRaycaster(m_dynamicWorld);
+		m_raycaster = new btDefaultVehicleRaycaster(m_dynamicWorld->getBulletWorld());
 	
 		m_vehicle = new btRaycastVehicle(m_tuning, m_chassis, m_raycaster);
 		m_vehicle->setCoordinateSystem(0, 2, 1);
 	
-		m_dynamicWorld->addVehicle(m_vehicle);
+		m_dynamicWorld->getBulletWorld()->addVehicle(m_vehicle);
 		
 		for(int i=0; i<m_wheels.size(); i++)
 		{
@@ -234,7 +259,7 @@ void gkVehicle::updateVehicle(gkScalar rate)
 	updateTransmition(rate);
 	
 	gearRatio = (m_gearBox)? m_gearBox->getCurrentRatio():1;
-	wheelTorque = m_gaz * m_engineTorque * gearRatio;
+	wheelTorque = m_gaz * m_engineTorque * gearRatio / getNumberOfDrivenWheel();
 	if (m_currentRpm > m_ruptorRpm)
 		wheelTorque = 0;
 
@@ -254,6 +279,9 @@ void gkVehicle::updateVehicle(gkScalar rate)
 	{
 		btWheelInfo& btwheel = m_vehicle->getWheelInfo(i);
 
+		if(isWheelDriven(i))
+			m_vehicle->applyEngineForce(wheelTorque, i);
+		
 		if (btwheel.m_bIsFrontWheel)
 		{
 			m_vehicle->setSteeringValue(steering, i);
@@ -261,9 +289,7 @@ void gkVehicle::updateVehicle(gkScalar rate)
 		}
 		else
 		{
-			m_vehicle->applyEngineForce(wheelTorque, i);
 			m_vehicle->setBrake(rearBrake, i);
-			//btwheel.m_deltaRotation = 0;
 		}
 
 		//synchronize the wheels with the (interpolated) chassis worldtransform
@@ -329,4 +355,29 @@ gkScalar gkVehicle::getVelocityEulerZ(void)
 	eul = gkMathUtils::getEulerFromQuat(rot, true);
 
 	return -eul.z;
+}
+
+bool gkVehicle::isWheelDriven(int i)
+{
+	if(i<0 || i>=m_wheels.size() )
+		return false;
+		
+	switch(m_driveTrain)
+	{
+		case DT_ALLWHEEL: return true;
+		case DT_PROPULSION: return !m_wheels[i]->m_isFront;
+		case DT_TRACTION: return m_wheels[i]->m_isFront;
+		default: return false;
+	}
+}
+
+int gkVehicle::getNumberOfDrivenWheel(void)
+{
+	int count = 0;
+	for(int i=0; i<m_wheels.size(); i++)
+	{
+		if(isWheelDriven(i))
+			count++;
+	}
+	return count;
 }

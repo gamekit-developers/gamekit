@@ -82,6 +82,7 @@ void gkBuggy::load(void)
 	}
 	
 	// general
+	setDriveTrain(gkVehicle::DT_ALLWHEEL);
 	setChassisObject(objCol);
 	setEngineTorque(330);
 	setBrakePower(30);
