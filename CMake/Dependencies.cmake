@@ -17,30 +17,30 @@ set(OGRE_DEPENDENCIES_DIR "" CACHE PATH "Path to prebuilt OGRE dependencies")
 include(FindPkgMacros)
 getenv_path(OGRE_DEPENDENCIES_DIR)
 if(OGRE_BUILD_PLATFORM_IPHONE)
-  set(OGRE_DEP_SEARCH_PATH 
-    ${OGRE_DEPENDENCIES_DIR}
-    ${ENV_OGRE_DEPENDENCIES_DIR}
-    "${OGRE_BINARY_DIR}/iPhoneDependencies"
-    "${OGRE_SOURCE_DIR}/iPhoneDependencies"
-    "${OGRE_BINARY_DIR}/../iPhoneDependencies"
-    "${OGRE_SOURCE_DIR}/../iPhoneDependencies"
-  )
+	set(OGRE_DEP_SEARCH_PATH 
+		${OGRE_DEPENDENCIES_DIR}
+		${ENV_OGRE_DEPENDENCIES_DIR}
+		"${OGRE_BINARY_DIR}/iPhoneDependencies"
+		"${OGRE_SOURCE_DIR}/iPhoneDependencies"
+		"${OGRE_BINARY_DIR}/../iPhoneDependencies"
+		"${OGRE_SOURCE_DIR}/../iPhoneDependencies"
+	)
 else()
-  set(OGRE_DEP_SEARCH_PATH 
-    ${OGRE_DEPENDENCIES_DIR}
-    ${ENV_OGRE_DEPENDENCIES_DIR}
-    "${OGRE_BINARY_DIR}/Dependencies"
-    "${OGRE_SOURCE_DIR}/Dependencies"
-    "${OGRE_BINARY_DIR}/../Dependencies"
-    "${OGRE_SOURCE_DIR}/../Dependencies"
-  )
+	set(OGRE_DEP_SEARCH_PATH 
+		${OGRE_DEPENDENCIES_DIR}
+		${ENV_OGRE_DEPENDENCIES_DIR}
+		"${OGRE_BINARY_DIR}/Dependencies"
+		"${OGRE_SOURCE_DIR}/Dependencies"
+		"${OGRE_BINARY_DIR}/../Dependencies"
+		"${OGRE_SOURCE_DIR}/../Dependencies"
+	)
 endif()
 
 message(STATUS "Search path: ${OGRE_DEP_SEARCH_PATH}")
 
 # Set hardcoded path guesses for various platforms
 if (UNIX)
-  set(OGRE_DEP_SEARCH_PATH ${OGRE_DEP_SEARCH_PATH} /usr/local)
+	set(OGRE_DEP_SEARCH_PATH ${OGRE_DEP_SEARCH_PATH} /usr/local)
 endif ()
 
 # give guesses as hints to the find_package calls
@@ -60,9 +60,9 @@ find_package(ZLIB)
 macro_log_feature(ZLIB_FOUND "zlib" "Simple data compression library" "http://www.zlib.net" FALSE "" "")
 
 if (ZLIB_FOUND)
-  # Find zziplib
-  find_package(ZZip)
-  macro_log_feature(ZZip_FOUND "zziplib" "Extract data from zip archives" "http://zziplib.sourceforge.net" FALSE "" "")
+	# Find zziplib
+	find_package(ZZip)
+	macro_log_feature(ZZip_FOUND "zziplib" "Extract data from zip archives" "http://zziplib.sourceforge.net" FALSE "" "")
 endif ()
 
 # Find FreeImage
@@ -80,7 +80,7 @@ if (UNIX)
 	macro_log_feature(X11_Xt_FOUND "Xt" "X Toolkit" "http://www.x.org" TRUE "" "")
 	find_library(XAW_LIBRARY NAMES Xaw Xaw7 PATHS ${DEP_LIB_SEARCH_DIR} ${X11_LIB_SEARCH_PATH})
 	macro_log_feature(XAW_LIBRARY "Xaw" "X11 Athena widget set" "http://www.x.org" TRUE "" "")
-  mark_as_advanced(XAW_LIBRARY)
+	mark_as_advanced(XAW_LIBRARY)
 endif ()
 
 
@@ -177,19 +177,19 @@ macro_log_feature(CppUnit_FOUND "CppUnit" "Library for performing unit tests" "h
 # Apple-specific
 #######################################################################
 if (APPLE)
-  if (OGRE_BUILD_PLATFORM_IPHONE)
-    find_package(iPhoneSDK)
-    macro_log_feature(iPhoneSDK_FOUND "iPhone SDK" "iPhone SDK" "http://developer.apple.com/iphone" FALSE "" "")
-  else()
-    find_package(Carbon)
-    macro_log_feature(Carbon_FOUND "Carbon" "Carbon" "http://developer.apple.com/mac" TRUE "" "")
-
-    find_package(Cocoa)
-    macro_log_feature(Cocoa_FOUND "Cocoa" "Cocoa" "http://developer.apple.com/mac" TRUE "" "")
-
-    find_package(IOKit)
-    macro_log_feature(IOKit_FOUND "IOKit" "IOKit HID framework needed by the samples" "http://developer.apple.com/mac" FALSE "" "")
-  endif (OGRE_BUILD_PLATFORM_IPHONE)
+	if (OGRE_BUILD_PLATFORM_IPHONE)
+		find_package(iPhoneSDK)
+		macro_log_feature(iPhoneSDK_FOUND "iPhone SDK" "iPhone SDK" "http://developer.apple.com/iphone" FALSE "" "")
+	else()
+		find_package(Carbon)
+		macro_log_feature(Carbon_FOUND "Carbon" "Carbon" "http://developer.apple.com/mac" TRUE "" "")
+	
+		find_package(Cocoa)
+		macro_log_feature(Cocoa_FOUND "Cocoa" "Cocoa" "http://developer.apple.com/mac" TRUE "" "")
+	
+		find_package(IOKit)
+		macro_log_feature(IOKit_FOUND "IOKit" "IOKit HID framework needed by the samples" "http://developer.apple.com/mac" FALSE "" "")
+	endif (OGRE_BUILD_PLATFORM_IPHONE)
 endif(APPLE)
 
 # Display results, terminate if anything required is missing
@@ -197,31 +197,31 @@ MACRO_DISPLAY_FEATURE_LOG()
 
 # Add library and include paths from the dependencies
 include_directories(
-  ${ZLIB_INCLUDE_DIRS}
-  ${ZZip_INCLUDE_DIRS}
-  ${FreeImage_INCLUDE_DIRS}
-  ${FREETYPE_INCLUDE_DIRS}
-  ${OPENGL_INCLUDE_DIRS}
-  ${OPENGLES_INCLUDE_DIRS}
-  ${OIS_INCLUDE_DIRS}
-  ${Cg_INCLUDE_DIRS}
-  ${X11_INCLUDE_DIR}
-  ${DirectX_INCLUDE_DIRS}
-  ${CppUnit_INCLUDE_DIRS}
-  ${Carbon_INCLUDE_DIRS}
-  ${Cocoa_INCLUDE_DIRS}
+	${ZLIB_INCLUDE_DIRS}
+	${ZZip_INCLUDE_DIRS}
+	${FreeImage_INCLUDE_DIRS}
+	${FREETYPE_INCLUDE_DIRS}
+	${OPENGL_INCLUDE_DIRS}
+	${OPENGLES_INCLUDE_DIRS}
+	${OIS_INCLUDE_DIRS}
+	${Cg_INCLUDE_DIRS}
+	${X11_INCLUDE_DIR}
+	${DirectX_INCLUDE_DIRS}
+	${CppUnit_INCLUDE_DIRS}
+	${Carbon_INCLUDE_DIRS}
+	${Cocoa_INCLUDE_DIRS}
 )
 
 link_directories(
-  ${OPENGL_LIBRARY_DIRS}
-  ${OPENGLES_LIBRARY_DIRS}
-  ${Cg_LIBRARY_DIRS}
-  ${X11_LIBRARY_DIRS}
-  ${DirectX_LIBRARY_DIRS}
-  ${CppUnit_LIBRARY_DIRS}
+	${OPENGL_LIBRARY_DIRS}
+	${OPENGLES_LIBRARY_DIRS}
+	${Cg_LIBRARY_DIRS}
+	${X11_LIBRARY_DIRS}
+	${DirectX_LIBRARY_DIRS}
+	${CppUnit_LIBRARY_DIRS}
 )
 
 if (Boost_FOUND)
-  include_directories(${Boost_INCLUDE_DIRS})
-  link_directories(${Boost_LIBRARY_DIRS})
+	include_directories(${Boost_INCLUDE_DIRS})
+	link_directories(${Boost_LIBRARY_DIRS})
 endif ()

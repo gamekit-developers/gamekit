@@ -1,11 +1,11 @@
 set(OIS_SRC 
-    src/OISEffect.cpp
-    src/OISException.cpp
-    src/OISForceFeedback.cpp
-    src/OISInputManager.cpp
-    src/OISJoyStick.cpp
-    src/OISKeyboard.cpp
-    src/OISObject.cpp
+	src/OISEffect.cpp
+	src/OISException.cpp
+	src/OISForceFeedback.cpp
+	src/OISInputManager.cpp
+	src/OISJoyStick.cpp
+	src/OISKeyboard.cpp
+	src/OISObject.cpp
 )
 
 if (OGREKIT_BUILD_IPHONE)
@@ -68,7 +68,7 @@ if (WIN32)
 			src/win32native/Win32NativeJoystick.cpp
 			src/win32native/Win32NativeMouse.cpp
 			)
-    endif ()
+	endif ()
 
 endif()
 
@@ -105,8 +105,8 @@ if (APPLE)
 			src/mac/MacMouse.cpp
 		)
 	endif()
-    
-    if (IOKit_FOUND)
+	
+	if (IOKit_FOUND)
 		link_libraries(${IOKit_LIBRARIES})
 	endif()
 else ()

@@ -10,11 +10,11 @@ set(TargetName AppCppDemo)
 
 
 if (APPLE)
-    include_directories(${OGRELITE_SOURCE_DIR}/OgreMain/include/OSX)
-    SET(EXETYPE MACOSX_BUNDLE)
-    SET_SOURCE_FILES_PROPERTIES( MainMenu.nib  PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
-    SET_SOURCE_FILES_PROPERTIES(${CONTENT} PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
-    SET (NibFile MainMenu.nib)
+	include_directories(${OGRELITE_SOURCE_DIR}/OgreMain/include/OSX)
+	SET(EXETYPE MACOSX_BUNDLE)
+	SET_SOURCE_FILES_PROPERTIES( MainMenu.nib  PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
+	SET_SOURCE_FILES_PROPERTIES(${CONTENT} PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
+	SET (NibFile MainMenu.nib)
 endif()
 
 set(SRC ${CONTENT} 
@@ -42,7 +42,7 @@ include_directories(
 )
 
 link_libraries(
-    ${OGREKIT_LIB}
+	${OGREKIT_LIB}
 )
 
 
@@ -53,12 +53,12 @@ source_group(ParentCMakeLists FILES ${HiddenCMakeLists})
 if (APPLE)
 
 	add_executable(
-	    ${TargetName} 
-	    MACOSX_BUNDLE
-	    MainMenu.nib
-	    ${SRC} 
-	    ${HiddenCMakeLists}
-    )
+		${TargetName} 
+		MACOSX_BUNDLE
+		MainMenu.nib
+		${SRC} 
+		${HiddenCMakeLists}
+	)
 
 else ()
 

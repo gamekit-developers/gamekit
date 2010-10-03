@@ -19,7 +19,7 @@ include_directories(
 )
 
 link_libraries(
-    ${OGREKIT_LIB}
+	${OGREKIT_LIB}
 )
 
 
@@ -29,12 +29,12 @@ source_group(ParentCMakeLists FILES ${HiddenCMakeLists})
 
 
 add_executable(
-    IPhoneDemo 
-    MACOSX_BUNDLE
-    MainMenu.nib
-    ${SRC} 
-    ${HiddenCMakeLists}
-   )
+	IPhoneDemo 
+	MACOSX_BUNDLE
+	MainMenu.nib
+	${SRC} 
+	${HiddenCMakeLists}
+	)
 
 set(MACOSX_BUNDLE_GUI_IDENTIFIER "com.yourcompany.\${PRODUCT_NAME:rfc1034identifier}")
 set_property(TARGET IPhoneDemo PROPERTY MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Info.plist)

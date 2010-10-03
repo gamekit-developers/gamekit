@@ -15,13 +15,13 @@ include(MacroLogFeature)
 
 # Find X11
 if (UNIX) 
-    ## TEST THIS
-    find_package(X11)
-    macro_log_feature(X11_FOUND "X11" "X Window system" "http://www.x.org" TRUE "" "")
-    macro_log_feature(X11_Xt_FOUND "Xt" "X Toolkit" "http://www.x.org" TRUE "" "")
-    find_library(XAW_LIBRARY NAMES Xaw Xaw7 PATHS ${DEP_LIB_SEARCH_DIR} ${X11_LIB_SEARCH_PATH})
-    macro_log_feature(XAW_LIBRARY "Xaw" "X11 Athena widget set" "http://www.x.org" TRUE "" "")
-    mark_as_advanced(XAW_LIBRARY)
+	## TEST THIS
+	find_package(X11)
+	macro_log_feature(X11_FOUND "X11" "X Window system" "http://www.x.org" TRUE "" "")
+	macro_log_feature(X11_Xt_FOUND "Xt" "X Toolkit" "http://www.x.org" TRUE "" "")
+	find_library(XAW_LIBRARY NAMES Xaw Xaw7 PATHS ${DEP_LIB_SEARCH_DIR} ${X11_LIB_SEARCH_PATH})
+	macro_log_feature(XAW_LIBRARY "Xaw" "X11 Athena widget set" "http://www.x.org" TRUE "" "")
+	mark_as_advanced(XAW_LIBRARY)
 endif ()
 
 
@@ -68,14 +68,14 @@ endif()
 # Apple-specific
 #######################################################################
 if (APPLE AND NOT OGREKIT_BUILD_IPHONE)
-    find_package(Carbon)
-    macro_log_feature(Carbon_FOUND "Carbon" "Carbon" "http://developer.apple.com/mac" TRUE "" "")
+	find_package(Carbon)
+	macro_log_feature(Carbon_FOUND "Carbon" "Carbon" "http://developer.apple.com/mac" TRUE "" "")
 
-    find_package(Cocoa)
-    macro_log_feature(Cocoa_FOUND "Cocoa" "Cocoa" "http://developer.apple.com/mac" TRUE "" "")
+	find_package(Cocoa)
+	macro_log_feature(Cocoa_FOUND "Cocoa" "Cocoa" "http://developer.apple.com/mac" TRUE "" "")
 
-    find_package(IOKit)
-    macro_log_feature(IOKit_FOUND "IOKit" "IOKit HID framework needed by the samples" "http://developer.apple.com/mac" FALSE "" "")
+	find_package(IOKit)
+	macro_log_feature(IOKit_FOUND "IOKit" "IOKit HID framework needed by the samples" "http://developer.apple.com/mac" FALSE "" "")
 endif()
 
 # Display results, terminate if anything required is missing
@@ -84,19 +84,19 @@ MACRO_DISPLAY_FEATURE_LOG()
 if (NOT OGREKIT_BUILD_IPHONE)
 	# Add library and include paths from the dependencies
 	include_directories(
-	  ${OPENGL_INCLUDE_DIRS}
-	  ${Cg_INCLUDE_DIRS}
-	  ${X11_INCLUDE_DIR}
-	  ${DirectX_INCLUDE_DIRS}
-	  ${Carbon_INCLUDE_DIRS}
-	  ${Cocoa_INCLUDE_DIRS}
+		${OPENGL_INCLUDE_DIRS}
+		${Cg_INCLUDE_DIRS}
+		${X11_INCLUDE_DIR}
+		${DirectX_INCLUDE_DIRS}
+		${Carbon_INCLUDE_DIRS}
+		${Cocoa_INCLUDE_DIRS}
 	)
 	
 	link_directories(
-	  ${OPENGL_LIBRARY_DIRS}
-	  ${Cg_LIBRARY_DIRS}
-	  ${X11_LIBRARY_DIRS}
-	  ${DirectX_LIBRARY_DIRS}
+		${OPENGL_LIBRARY_DIRS}
+		${Cg_LIBRARY_DIRS}
+		${X11_LIBRARY_DIRS}
+		${DirectX_LIBRARY_DIRS}
 	)
 
 endif()

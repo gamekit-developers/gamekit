@@ -4,11 +4,11 @@ cmake_minimum_required(VERSION 2.6)
 
 
 if (APPLE)
-    include_directories(${OGRELITE_SOURCE_DIR}/OgreMain/include/OSX)
-    SET(EXETYPE MACOSX_BUNDLE)
-    SET_SOURCE_FILES_PROPERTIES( MainMenu.nib  PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
-    SET_SOURCE_FILES_PROPERTIES(momo_ogre.blend PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
-    SET (NibFile MainMenu.nib)
+	include_directories(${OGRELITE_SOURCE_DIR}/OgreMain/include/OSX)
+	SET(EXETYPE MACOSX_BUNDLE)
+	SET_SOURCE_FILES_PROPERTIES( MainMenu.nib  PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
+	SET_SOURCE_FILES_PROPERTIES(momo_ogre.blend PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
+	SET (NibFile MainMenu.nib)
 endif()
 
 set(SRC momo_ogre.blend Main.cpp)
@@ -17,11 +17,11 @@ set(SRC momo_ogre.blend Main.cpp)
 
 include_directories(
 	${OGREKIT_INCLUDE}
-    ../../Dependencies/Source/tclap/include
+	../../Dependencies/Source/tclap/include
 )
 
 link_libraries(
-    ${OGREKIT_LIB}
+	${OGREKIT_LIB}
 )
 
 
@@ -32,12 +32,12 @@ source_group(ParentCMakeLists FILES ${HiddenCMakeLists})
 if (APPLE)
 
 	add_executable(
-	    AppOgreKit 
-	    MACOSX_BUNDLE
-	    MainMenu.nib
-	    ${SRC} 
-	    ${HiddenCMakeLists}
-    )
+		AppOgreKit 
+		MACOSX_BUNDLE
+		MainMenu.nib
+		${SRC} 
+		${HiddenCMakeLists}
+	)
 
 else ()
 

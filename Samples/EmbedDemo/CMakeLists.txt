@@ -6,11 +6,11 @@ project(AppEmbedDemo)
 set(DEMO_BLEND logo_text.blend)
 
 if (APPLE)
-    include_directories(${OGRELITE_SOURCE_DIR}/OgreMain/include/OSX)
-    SET(EXETYPE MACOSX_BUNDLE)
-    SET_SOURCE_FILES_PROPERTIES(MainMenu.nib  PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
-    SET_SOURCE_FILES_PROPERTIES(${DEMO_BLEND} PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
-    SET (NibFile MainMenu.nib)
+	include_directories(${OGRELITE_SOURCE_DIR}/OgreMain/include/OSX)
+	SET(EXETYPE MACOSX_BUNDLE)
+	SET_SOURCE_FILES_PROPERTIES(MainMenu.nib  PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
+	SET_SOURCE_FILES_PROPERTIES(${DEMO_BLEND} PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
+	SET (NibFile MainMenu.nib)
 endif()
 
 set(DEMO_SRC
@@ -19,7 +19,7 @@ set(DEMO_SRC
 	okWin.cpp
 	okUtils.cpp
 	StdAfx.cpp
-    ${DEMO_BLEND}
+	${DEMO_BLEND}
 )
 
 set(DEMO_HDR
@@ -54,21 +54,21 @@ use_precompiled_header(${PROJECT_NAME} StdAfx.h StdAfx.cpp)
 
 
 if (APPLE)    
-    add_executable(
-	    ${PROJECT_NAME} 
-	    MACOSX_BUNDLE
-	    MainMenu.nib
-	    ${SRC} 
-	    ${HiddenCMakeLists}
-    )
+	add_executable(
+		${PROJECT_NAME} 
+		MACOSX_BUNDLE
+		MainMenu.nib
+		${ALL} 
+		${HiddenCMakeLists}
+	)
 else()
-    if (WIN32)
-        add_executable(${PROJECT_NAME} WIN32 ${ALL} ${HiddenCMakeLists})
-    else()
-        add_executable(${PROJECT_NAME} ${ALL} ${HiddenCMakeLists})
-    endif()
-    
-    IF (NOT INTERNAL_CREATE_DISTRIBUTABLE_MSVC_PROJECTFILES)
+	if (WIN32)
+		add_executable(${PROJECT_NAME} WIN32 ${ALL} ${HiddenCMakeLists})
+	else()
+		add_executable(${PROJECT_NAME} ${ALL} ${HiddenCMakeLists})
+	endif()
+
+	IF (NOT INTERNAL_CREATE_DISTRIBUTABLE_MSVC_PROJECTFILES)
 		ADD_CUSTOM_COMMAND(
 			TARGET ${PROJECT_NAME} 
 			POST_BUILD
@@ -76,5 +76,3 @@ else()
 		)
 	ENDIF ()
 endif()
-
-#add_dependencies(${PROJECT_NAME} wxAll)

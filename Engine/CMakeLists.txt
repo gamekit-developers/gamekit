@@ -6,106 +6,106 @@ cmake_minimum_required(VERSION 2.6)
 # ---------------------------------------------------------
 
 set(Core_SOURCE
-    # ----- Source -----
-    gkBone.cpp
-    gkCamera.cpp
-    gkCam2ViewportRay.cpp
-    gkCoreApplication.cpp
-    gkDebugFps.cpp
-    gkDebugger.cpp
-    gkDebugProperty.cpp
-    gkDebugScreen.cpp
-    gkEngine.cpp
-    gkEntity.cpp
-    gkFont.cpp
-    gkFontManager.cpp
-    gkGameObject.cpp
-    gkGameObjectManager.cpp
-    gkGameObjectGroup.cpp
-    gkGameObjectInstance.cpp
-    gkGroupManager.cpp
-    gkInstancedManager.cpp
-    gkInstancedObject.cpp
-    gkLight.cpp
-    gkLogger.cpp
-    gkMesh.cpp
-    gkMeshManager.cpp
-    gkMessageManager.cpp
-    gkMathUtils.cpp
-    gkPath.cpp
-    gkTextFile.cpp
-    gkTickState.cpp
-    gkTextManager.cpp
-    gkTickState.cpp
-    gkRenderFactory.cpp
-    gkResource.cpp
-    gkResourceManager.cpp
-    gkScene.cpp
-    gkSceneManager.cpp
-    gkSkeleton.cpp
-    gkSkeletonManager.cpp
-    gkSkeletonResource.cpp
-    gkStats.cpp
-    gkUserDefs.cpp
-    gkUtils.cpp
-    gkWindowSystem.cpp
-    gkVariable.cpp
+	# ----- Source -----
+	gkBone.cpp
+	gkCamera.cpp
+	gkCam2ViewportRay.cpp
+	gkCoreApplication.cpp
+	gkDebugFps.cpp
+	gkDebugger.cpp
+	gkDebugProperty.cpp
+	gkDebugScreen.cpp
+	gkEngine.cpp
+	gkEntity.cpp
+	gkFont.cpp
+	gkFontManager.cpp
+	gkGameObject.cpp
+	gkGameObjectManager.cpp
+	gkGameObjectGroup.cpp
+	gkGameObjectInstance.cpp
+	gkGroupManager.cpp
+	gkInstancedManager.cpp
+	gkInstancedObject.cpp
+	gkLight.cpp
+	gkLogger.cpp
+	gkMesh.cpp
+	gkMeshManager.cpp
+	gkMessageManager.cpp
+	gkMathUtils.cpp
+	gkPath.cpp
+	gkTextFile.cpp
+	gkTickState.cpp
+	gkTextManager.cpp
+	gkTickState.cpp
+	gkRenderFactory.cpp
+	gkResource.cpp
+	gkResourceManager.cpp
+	gkScene.cpp
+	gkSceneManager.cpp
+	gkSkeleton.cpp
+	gkSkeletonManager.cpp
+	gkSkeletonResource.cpp
+	gkStats.cpp
+	gkUserDefs.cpp
+	gkUtils.cpp
+	gkWindowSystem.cpp
+	gkVariable.cpp
 )
 
 set(Core_HEADER
-    # ----- Headers -----
-    gkBone.h
-    gkCamera.h
-    gkCam2ViewportRay.h
-    gkCommon.h
-    gkCoreApplication.h
-    gkDebugFps.h
-    gkDebugger.h
-    gkDebugProperty.h
-    gkDebugScreen.h
-    gkEngine.h
-    gkEntity.h
-    gkFont.h
-    gkFontManager.h
-    gkGameObject.h
-    gkGameObjectManager.h
-    gkGameObjectGroup.h
-    gkGameObjectInstance.h
-    gkGroupManager.h
-    gkInstancedManager.h
-    gkInstancedObject.h
-    gkHashedString.h
-    gkInput.h
-    gkLight.h
-    gkLogger.h
-    gkMesh.h
-    gkMeshManager.h
-    gkMessageManager.h
-    gkMathUtils.h
-    gkMemoryTest.h
-    gkPath.h
-    gkTextFile.h
-    gkTickState.h
-    gkTextManager.h
-    gkTickState.h
-    gkRenderFactory.h
-    gkResource.h
-    gkResourceManager.h
-    gkScene.h
-    gkSceneManager.h
-    gkSerialize.h
-    gkSkeleton.h
-    gkSkeletonManager.h
-    gkSkeletonResource.h
-    gkStats.h
-    gkString.h
-    gkTransformState.h
-    gkUserDefs.h
-    gkUtils.h
-    gkValue.h
-    gkVariable.h
-    gkWindowSystem.h
-    OgreKit.h
+	# ----- Headers -----
+	gkBone.h
+	gkCamera.h
+	gkCam2ViewportRay.h
+	gkCommon.h
+	gkCoreApplication.h
+	gkDebugFps.h
+	gkDebugger.h
+	gkDebugProperty.h
+	gkDebugScreen.h
+	gkEngine.h
+	gkEntity.h
+	gkFont.h
+	gkFontManager.h
+	gkGameObject.h
+	gkGameObjectManager.h
+	gkGameObjectGroup.h
+	gkGameObjectInstance.h
+	gkGroupManager.h
+	gkInstancedManager.h
+	gkInstancedObject.h
+	gkHashedString.h
+	gkInput.h
+	gkLight.h
+	gkLogger.h
+	gkMesh.h
+	gkMeshManager.h
+	gkMessageManager.h
+	gkMathUtils.h
+	gkMemoryTest.h
+	gkPath.h
+	gkTextFile.h
+	gkTickState.h
+	gkTextManager.h
+	gkTickState.h
+	gkRenderFactory.h
+	gkResource.h
+	gkResourceManager.h
+	gkScene.h
+	gkSceneManager.h
+	gkSerialize.h
+	gkSkeleton.h
+	gkSkeletonManager.h
+	gkSkeletonResource.h
+	gkStats.h
+	gkString.h
+	gkTransformState.h
+	gkUserDefs.h
+	gkUtils.h
+	gkValue.h
+	gkVariable.h
+	gkWindowSystem.h
+	OgreKit.h
 )
 
 if(APPLE)
@@ -120,32 +120,32 @@ endif()
 # ---------------------------------------------------------
 
 set(AI_SOURCE
-    # ----- Source -----
-    AI/gkRecast.cpp
-    AI/gkNavMeshData.cpp
-    AI/gkNavPath.cpp
-    AI/gkSteering.cpp
-    AI/gkSteeringObject.cpp
-    AI/gkSteeringCapture.cpp
-    AI/gkSteeringPathFollowing.cpp
-    AI/gkSteeringWander.cpp
-    AI/gkSceneObstacle.cpp
-    AI/gkFSM.cpp
+	# ----- Source -----
+	AI/gkRecast.cpp
+	AI/gkNavMeshData.cpp
+	AI/gkNavPath.cpp
+	AI/gkSteering.cpp
+	AI/gkSteeringObject.cpp
+	AI/gkSteeringCapture.cpp
+	AI/gkSteeringPathFollowing.cpp
+	AI/gkSteeringWander.cpp
+	AI/gkSceneObstacle.cpp
+	AI/gkFSM.cpp
 )
 
 set(AI_HEADER
-    # ----- Headers -----
-    AI/gkMeshData.h
-    AI/gkRecast.h
-    AI/gkNavMeshData.h
-    AI/gkNavPath.h
-    AI/gkSteering.h
-    AI/gkSteeringObject.h
-    AI/gkSteeringCapture.h
-    AI/gkSteeringPathFollowing.h
-    AI/gkSteeringWander.h
-    AI/gkSceneObstacle.h
-    AI/gkFSM.h
+	# ----- Headers -----
+	AI/gkMeshData.h
+	AI/gkRecast.h
+	AI/gkNavMeshData.h
+	AI/gkNavPath.h
+	AI/gkSteering.h
+	AI/gkSteeringObject.h
+	AI/gkSteeringCapture.h
+	AI/gkSteeringPathFollowing.h
+	AI/gkSteeringWander.h
+	AI/gkSceneObstacle.h
+	AI/gkFSM.h
 )
 
 if(APPLE)
@@ -162,24 +162,24 @@ endif()
 # ---------------------------------------------------------
 
 set(Thread_SOURCE
-    # ----- Source -----
-    Thread/gkActiveObject.cpp
-    Thread/gkCriticalSection.cpp
-    Thread/gkPtrRef.cpp
-    Thread/gkSyncObj.cpp
-    Thread/gkThread.cpp
+	# ----- Source -----
+	Thread/gkActiveObject.cpp
+	Thread/gkCriticalSection.cpp
+	Thread/gkPtrRef.cpp
+	Thread/gkSyncObj.cpp
+	Thread/gkThread.cpp
 )
 
 set(Thread_HEADER
-    # ----- Headers -----
-    Thread/gkAsyncResult.h
-    Thread/gkActiveObject.h
-    Thread/gkCriticalSection.h
-    Thread/gkNonCopyable.h
-    Thread/gkPtrRef.h
-    Thread/gkQueue.h
-    Thread/gkSyncObj.h
-    Thread/gkThread.h
+	# ----- Headers -----
+	Thread/gkAsyncResult.h
+	Thread/gkActiveObject.h
+	Thread/gkCriticalSection.h
+	Thread/gkNonCopyable.h
+	Thread/gkPtrRef.h
+	Thread/gkQueue.h
+	Thread/gkSyncObj.h
+	Thread/gkThread.h
 )
 
 if(APPLE)
@@ -198,38 +198,38 @@ endif()
 
 
 set(Animation_SOURCE
-    # ----- Source -----
-    Animation/gkAction.cpp
-    Animation/gkActionBlender.cpp
-    Animation/gkActionChannel.cpp
-    Animation/gkActionManager.cpp
-    Animation/gkActionSequence.cpp
-    Animation/gkAnimationChannel.cpp
-    Animation/gkBezierSpline.cpp
+	# ----- Source -----
+	Animation/gkAction.cpp
+	Animation/gkActionBlender.cpp
+	Animation/gkActionChannel.cpp
+	Animation/gkActionManager.cpp
+	Animation/gkActionSequence.cpp
+	Animation/gkAnimationChannel.cpp
+	Animation/gkBezierSpline.cpp
 	Animation/gkObjectAction.cpp
-    
-    #TODO
-    #Animation/gkLightAction.cpp
-    #Animation/gkMaterialAction.cpp
-    #Animation/gkWorldAction.cpp
+	
+	#TODO
+	#Animation/gkLightAction.cpp
+	#Animation/gkMaterialAction.cpp
+	#Animation/gkWorldAction.cpp
 )
 
 
 set(Animation_HEADER
-    # ----- Headers -----
-    Animation/gkAction.h
-    Animation/gkActionBlender.h
-    Animation/gkActionChannel.h
-    Animation/gkActionManager.h
-    Animation/gkActionSequence.h
-    Animation/gkAnimationChannel.h
-    Animation/gkBezierSpline.h
+	# ----- Headers -----
+	Animation/gkAction.h
+	Animation/gkActionBlender.h
+	Animation/gkActionChannel.h
+	Animation/gkActionManager.h
+	Animation/gkActionSequence.h
+	Animation/gkAnimationChannel.h
+	Animation/gkBezierSpline.h
 	Animation/gkObjectAction.h
-    
-    #TODO
-    #Animation/gkLightAction.h
-    #Animation/gkMaterialAction.h
-    #Animation/gkWorldAction.h
+	
+	#TODO
+	#Animation/gkLightAction.h
+	#Animation/gkMaterialAction.h
+	#Animation/gkWorldAction.h
 )
 
 if(APPLE)
@@ -244,77 +244,77 @@ endif()
 # Logic Nodes
 # ---------------------------------------------------------
 set(NLogic_SOURCE
-    # ----- Source -----
-    Logic/gkButtonNode.cpp
-    Logic/gkCameraNode.cpp
-    Logic/gkCharacterNode.cpp
-    Logic/gkCollisionNode.cpp
-    Logic/gkExitNode.cpp
-    Logic/gkExpressionNode.cpp
-    Logic/gkGrabNode.cpp
-    Logic/gkGroupNode.cpp
-    Logic/gkNodeManager.cpp
-    Logic/gkLogicNode.cpp
-    Logic/gkLogicSocket.cpp
-    Logic/gkLogicTree.cpp
-    Logic/gkMotionNode.cpp
-    Logic/gkMouseNode.cpp
-    Logic/gkObjectNode.cpp
-    Logic/gkPrintNode.cpp
-    Logic/gkRandomNode.cpp
-    Logic/gkRayTestNode.cpp
-    Logic/gkSwitchNode.cpp
-    Logic/gkTimerNode.cpp
-    Logic/gkValueNode.cpp
-    Logic/gkVariableNode.cpp
-    Logic/gkCursorNode.cpp
-    Logic/gkParticleNode.cpp
-    Logic/gkPickNode.cpp
-    Logic/gkPulseNode.cpp
-    Logic/gkShowPhysicsNode.cpp
-    Logic/gkStateMachineNode.cpp
+	# ----- Source -----
+	Logic/gkButtonNode.cpp
+	Logic/gkCameraNode.cpp
+	Logic/gkCharacterNode.cpp
+	Logic/gkCollisionNode.cpp
+	Logic/gkExitNode.cpp
+	Logic/gkExpressionNode.cpp
+	Logic/gkGrabNode.cpp
+	Logic/gkGroupNode.cpp
+	Logic/gkNodeManager.cpp
+	Logic/gkLogicNode.cpp
+	Logic/gkLogicSocket.cpp
+	Logic/gkLogicTree.cpp
+	Logic/gkMotionNode.cpp
+	Logic/gkMouseNode.cpp
+	Logic/gkObjectNode.cpp
+	Logic/gkPrintNode.cpp
+	Logic/gkRandomNode.cpp
+	Logic/gkRayTestNode.cpp
+	Logic/gkSwitchNode.cpp
+	Logic/gkTimerNode.cpp
+	Logic/gkValueNode.cpp
+	Logic/gkVariableNode.cpp
+	Logic/gkCursorNode.cpp
+	Logic/gkParticleNode.cpp
+	Logic/gkPickNode.cpp
+	Logic/gkPulseNode.cpp
+	Logic/gkShowPhysicsNode.cpp
+	Logic/gkStateMachineNode.cpp
 )
 
 set(NLogic_HEADER
-    # ----- Headers -----
-    Logic/gkButtonNode.h
-    Logic/gkCameraNode.h
-    Logic/gkCharacterNode.h
-    Logic/gkCollisionNode.h
-    Logic/gkExitNode.h
-    Logic/gkExpressionNode.h
-    Logic/gkFunctionNode.h
-    Logic/gkGrabNode.h
-    Logic/gkGroupNode.h
-    Logic/gkIfNode.h
-    Logic/gkLogicCommon.h
-    Logic/gkNodeManager.h
-    Logic/gkLogicNode.h
-    Logic/gkLogicSocket.h
-    Logic/gkLogicTree.h
-    Logic/gkMapNode.h
-    Logic/gkMathNode.h
-    Logic/gkMotionNode.h
-    Logic/gkMouseNode.h
-    Logic/gkMultiplexerNode.h
-    Logic/gkObjectNode.h
-    Logic/gkPrintNode.h
-    Logic/gkRandomNode.h
-    Logic/gkRayTestNode.h
-    Logic/gkSwitchNode.h
-    Logic/gkTimerNode.h
-    Logic/gkValueNode.h
-    Logic/gkVariableNode.h
-    Logic/gkCursorNode.h
-    Logic/gkParticleNode.h
-    Logic/gkPickNode.h
-    Logic/gkPulseNode.h
-    Logic/gkShowPhysicsNode.h
-    Logic/gkStateMachineNode.h
-    Logic/gkQuaternionToEulerNode.h
-    Logic/gkEulerToQuaternionNode.h
-    Logic/gkVectorComposeNode.h
-    Logic/gkVectorDecomposeNode.h
+	# ----- Headers -----
+	Logic/gkButtonNode.h
+	Logic/gkCameraNode.h
+	Logic/gkCharacterNode.h
+	Logic/gkCollisionNode.h
+	Logic/gkExitNode.h
+	Logic/gkExpressionNode.h
+	Logic/gkFunctionNode.h
+	Logic/gkGrabNode.h
+	Logic/gkGroupNode.h
+	Logic/gkIfNode.h
+	Logic/gkLogicCommon.h
+	Logic/gkNodeManager.h
+	Logic/gkLogicNode.h
+	Logic/gkLogicSocket.h
+	Logic/gkLogicTree.h
+	Logic/gkMapNode.h
+	Logic/gkMathNode.h
+	Logic/gkMotionNode.h
+	Logic/gkMouseNode.h
+	Logic/gkMultiplexerNode.h
+	Logic/gkObjectNode.h
+	Logic/gkPrintNode.h
+	Logic/gkRandomNode.h
+	Logic/gkRayTestNode.h
+	Logic/gkSwitchNode.h
+	Logic/gkTimerNode.h
+	Logic/gkValueNode.h
+	Logic/gkVariableNode.h
+	Logic/gkCursorNode.h
+	Logic/gkParticleNode.h
+	Logic/gkPickNode.h
+	Logic/gkPulseNode.h
+	Logic/gkShowPhysicsNode.h
+	Logic/gkStateMachineNode.h
+	Logic/gkQuaternionToEulerNode.h
+	Logic/gkEulerToQuaternionNode.h
+	Logic/gkVectorComposeNode.h
+	Logic/gkVectorDecomposeNode.h
 )
 
 if(APPLE)
@@ -329,78 +329,78 @@ endif()
 # Logic Bricks
 # ---------------------------------------------------------
 set(Logic_SOURCE
-    LogicBricks/gkActionActuator.cpp
-    LogicBricks/gkActuatorSensor.cpp
-    LogicBricks/gkAlwaysSensor.cpp
-    LogicBricks/gkCollisionSensor.cpp
-    LogicBricks/gkDelaySensor.cpp
-    LogicBricks/gkEditObjectActuator.cpp
-    LogicBricks/gkGameActuator.cpp
-    LogicBricks/gkJoystickSensor.cpp
-    LogicBricks/gkKeyboardSensor.cpp
-    LogicBricks/gkLogicActuator.cpp
-    LogicBricks/gkLogicBrick.cpp
-    LogicBricks/gkLogicController.cpp
-    LogicBricks/gkLogicDispatcher.cpp
-    LogicBricks/gkLogicLink.cpp
-    LogicBricks/gkLogicManager.cpp
-    LogicBricks/gkLogicOpController.cpp
-    LogicBricks/gkLogicSensor.cpp
-    LogicBricks/gkMotionActuator.cpp
-    LogicBricks/gkMouseSensor.cpp
-    LogicBricks/gkMessageActuator.cpp
-    LogicBricks/gkMessageSensor.cpp
-    LogicBricks/gkNearSensor.cpp
-    LogicBricks/gkParentActuator.cpp
-    LogicBricks/gkRadarSensor.cpp
-    LogicBricks/gkRandomActuator.cpp
-    LogicBricks/gkRandomSensor.cpp
-    LogicBricks/gkRaySensor.cpp
-    LogicBricks/gkSceneActuator.cpp
-    LogicBricks/gkScriptController.cpp
-    LogicBricks/gkStateActuator.cpp
-    LogicBricks/gkVisibilityActuator.cpp
-    LogicBricks/gkPropertySensor.cpp
-    LogicBricks/gkPropertyActuator.cpp
-    LogicBricks/gkSoundActuator.cpp
+	LogicBricks/gkActionActuator.cpp
+	LogicBricks/gkActuatorSensor.cpp
+	LogicBricks/gkAlwaysSensor.cpp
+	LogicBricks/gkCollisionSensor.cpp
+	LogicBricks/gkDelaySensor.cpp
+	LogicBricks/gkEditObjectActuator.cpp
+	LogicBricks/gkGameActuator.cpp
+	LogicBricks/gkJoystickSensor.cpp
+	LogicBricks/gkKeyboardSensor.cpp
+	LogicBricks/gkLogicActuator.cpp
+	LogicBricks/gkLogicBrick.cpp
+	LogicBricks/gkLogicController.cpp
+	LogicBricks/gkLogicDispatcher.cpp
+	LogicBricks/gkLogicLink.cpp
+	LogicBricks/gkLogicManager.cpp
+	LogicBricks/gkLogicOpController.cpp
+	LogicBricks/gkLogicSensor.cpp
+	LogicBricks/gkMotionActuator.cpp
+	LogicBricks/gkMouseSensor.cpp
+	LogicBricks/gkMessageActuator.cpp
+	LogicBricks/gkMessageSensor.cpp
+	LogicBricks/gkNearSensor.cpp
+	LogicBricks/gkParentActuator.cpp
+	LogicBricks/gkRadarSensor.cpp
+	LogicBricks/gkRandomActuator.cpp
+	LogicBricks/gkRandomSensor.cpp
+	LogicBricks/gkRaySensor.cpp
+	LogicBricks/gkSceneActuator.cpp
+	LogicBricks/gkScriptController.cpp
+	LogicBricks/gkStateActuator.cpp
+	LogicBricks/gkVisibilityActuator.cpp
+	LogicBricks/gkPropertySensor.cpp
+	LogicBricks/gkPropertyActuator.cpp
+	LogicBricks/gkSoundActuator.cpp
 )
 
 
 set(Logic_HEADER
-    LogicBricks/gkActionActuator.h
-    LogicBricks/gkActuatorSensor.h
-    LogicBricks/gkAlwaysSensor.h
-    LogicBricks/gkCollisionSensor.h
-    LogicBricks/gkDelaySensor.h
-    LogicBricks/gkEditObjectActuator.h
-    LogicBricks/gkGameActuator.h
-    LogicBricks/gkJoystickSensor.h
-    LogicBricks/gkKeyboardSensor.h
-    LogicBricks/gkLogicActuator.h
-    LogicBricks/gkLogicBrick.h
-    LogicBricks/gkLogicController.h
-    LogicBricks/gkLogicDispatcher.h
-    LogicBricks/gkLogicLink.h
-    LogicBricks/gkLogicManager.h
-    LogicBricks/gkLogicOpController.h
-    LogicBricks/gkLogicSensor.h
-    LogicBricks/gkMotionActuator.h
-    LogicBricks/gkMouseSensor.h
-    LogicBricks/gkMessageActuator.h
-    LogicBricks/gkMessageSensor.h
-    LogicBricks/gkNearSensor.h
-    LogicBricks/gkParentActuator.h
-    LogicBricks/gkRadarSensor.h
-    LogicBricks/gkRandomActuator.h
-    LogicBricks/gkRandomSensor.h
-    LogicBricks/gkRaySensor.h
-    LogicBricks/gkSceneActuator.h
-    LogicBricks/gkScriptController.h
-    LogicBricks/gkStateActuator.h
-    LogicBricks/gkVisibilityActuator.h
-    LogicBricks/gkPropertySensor.h
-    LogicBricks/gkPropertyActuator.h
-    LogicBricks/gkSoundActuator.h
+	LogicBricks/gkActionActuator.h
+	LogicBricks/gkActuatorSensor.h
+	LogicBricks/gkAlwaysSensor.h
+	LogicBricks/gkCollisionSensor.h
+	LogicBricks/gkDelaySensor.h
+	LogicBricks/gkEditObjectActuator.h
+	LogicBricks/gkGameActuator.h
+	LogicBricks/gkJoystickSensor.h
+	LogicBricks/gkKeyboardSensor.h
+	LogicBricks/gkLogicActuator.h
+	LogicBricks/gkLogicBrick.h
+	LogicBricks/gkLogicController.h
+	LogicBricks/gkLogicDispatcher.h
+	LogicBricks/gkLogicLink.h
+	LogicBricks/gkLogicManager.h
+	LogicBricks/gkLogicOpController.h
+	LogicBricks/gkLogicSensor.h
+	LogicBricks/gkMotionActuator.h
+	LogicBricks/gkMouseSensor.h
+	LogicBricks/gkMessageActuator.h
+	LogicBricks/gkMessageSensor.h
+	LogicBricks/gkNearSensor.h
+	LogicBricks/gkParentActuator.h
+	LogicBricks/gkRadarSensor.h
+	LogicBricks/gkRandomActuator.h
+	LogicBricks/gkRandomSensor.h
+	LogicBricks/gkRaySensor.h
+	LogicBricks/gkSceneActuator.h
+	LogicBricks/gkScriptController.h
+	LogicBricks/gkStateActuator.h
+	LogicBricks/gkVisibilityActuator.h
+	LogicBricks/gkPropertySensor.h
+	LogicBricks/gkPropertyActuator.h
+	LogicBricks/gkSoundActuator.h
 )
 
 if(APPLE)
@@ -414,29 +414,29 @@ endif()
 # BlendFile Loaders
 # ---------------------------------------------------------
 set(Blend_SOURCE
-    # ----- Public Source -----
-    Loaders/Blender2/gkBlendFile.cpp
-    Loaders/Blender2/gkBlendLoader.cpp
-    Loaders/Blender2/gkTextureLoader.cpp
-    Loaders/Blender2/gkBlenderSceneConverter.cpp
-    Loaders/Blender2/Converters/gkAnimationConverter.cpp
-    Loaders/Blender2/Converters/gkLogicBrickConverter.cpp
-    Loaders/Blender2/Converters/gkMeshConverter.cpp
-    Loaders/Blender2/Converters/gkSkeletonConverter.cpp
+	# ----- Public Source -----
+	Loaders/Blender2/gkBlendFile.cpp
+	Loaders/Blender2/gkBlendLoader.cpp
+	Loaders/Blender2/gkTextureLoader.cpp
+	Loaders/Blender2/gkBlenderSceneConverter.cpp
+	Loaders/Blender2/Converters/gkAnimationConverter.cpp
+	Loaders/Blender2/Converters/gkLogicBrickConverter.cpp
+	Loaders/Blender2/Converters/gkMeshConverter.cpp
+	Loaders/Blender2/Converters/gkSkeletonConverter.cpp
 )
 
 set(Blend_HEADER
-    # ----- Public Headers -----
-    Loaders/Blender2/gkBlendFile.h
-    Loaders/Blender2/gkBlendLoader.h
-    Loaders/Blender2/gkLoaderCommon.h
-    Loaders/Blender2/gkBlenderDefines.h
-    Loaders/Blender2/gkTextureLoader.h
-    Loaders/Blender2/gkBlenderSceneConverter.h
-    Loaders/Blender2/Converters/gkAnimationConverter.h
-    Loaders/Blender2/Converters/gkLogicBrickConverter.h
-    Loaders/Blender2/Converters/gkMeshConverter.h
-    Loaders/Blender2/Converters/gkSkeletonConverter.h
+	# ----- Public Headers -----
+	Loaders/Blender2/gkBlendFile.h
+	Loaders/Blender2/gkBlendLoader.h
+	Loaders/Blender2/gkLoaderCommon.h
+	Loaders/Blender2/gkBlenderDefines.h
+	Loaders/Blender2/gkTextureLoader.h
+	Loaders/Blender2/gkBlenderSceneConverter.h
+	Loaders/Blender2/Converters/gkAnimationConverter.h
+	Loaders/Blender2/Converters/gkLogicBrickConverter.h
+	Loaders/Blender2/Converters/gkMeshConverter.h
+	Loaders/Blender2/Converters/gkSkeletonConverter.h
 )
 
 if(APPLE)
@@ -451,21 +451,21 @@ endif()
 # Constraints
 # ---------------------------------------------------------
 set(Constraint_SOURCE
-    # ----- Source -----
-    Constraints/gkConstraint.cpp
-    Constraints/gkConstraintManager.cpp
-    Constraints/gkLimitLocConstraint.cpp
-    Constraints/gkLimitRotConstraint.cpp
-    Constraints/gkLimitVelocityConstraint.cpp
+	# ----- Source -----
+	Constraints/gkConstraint.cpp
+	Constraints/gkConstraintManager.cpp
+	Constraints/gkLimitLocConstraint.cpp
+	Constraints/gkLimitRotConstraint.cpp
+	Constraints/gkLimitVelocityConstraint.cpp
 )
 
 set(Constraint_HEADER
-    # ----- Header -----
-    Constraints/gkConstraint.h
-    Constraints/gkConstraintManager.h
-    Constraints/gkLimitLocConstraint.h
-    Constraints/gkLimitRotConstraint.h
-    Constraints/gkLimitVelocityConstraint.h
+	# ----- Header -----
+	Constraints/gkConstraint.h
+	Constraints/gkConstraintManager.h
+	Constraints/gkLimitLocConstraint.h
+	Constraints/gkLimitRotConstraint.h
+	Constraints/gkLimitVelocityConstraint.h
 )
 
 if(APPLE)
@@ -481,34 +481,34 @@ endif()
 # Physics
 # ---------------------------------------------------------
 set(Physics_SOURCE
-    # ----- Source -----
-    Physics/gkCharacter.cpp
-    Physics/gkDbvt.cpp
-    Physics/gkDynamicsWorld.cpp
-    Physics/gkPhysicsController.cpp
-    Physics/gkPhysicsDebug.cpp
-    Physics/gkRagDoll.cpp
-    Physics/gkRayTest.cpp
-    Physics/gkRigidBody.cpp
-    Physics/gkSoftBody.cpp
-    Physics/gkSweptTest.cpp
-    Physics/gkVehicle.cpp
+	# ----- Source -----
+	Physics/gkCharacter.cpp
+	Physics/gkDbvt.cpp
+	Physics/gkDynamicsWorld.cpp
+	Physics/gkPhysicsController.cpp
+	Physics/gkPhysicsDebug.cpp
+	Physics/gkRagDoll.cpp
+	Physics/gkRayTest.cpp
+	Physics/gkRigidBody.cpp
+	Physics/gkSoftBody.cpp
+	Physics/gkSweptTest.cpp
+	Physics/gkVehicle.cpp
 )
 
 set(Physics_HEADER
-    # ----- Header -----
-    Physics/gkCharacter.h
-    Physics/gkContactTest.h
-    Physics/gkDbvt.h
-    Physics/gkDynamicsWorld.h
-    Physics/gkPhysicsController.h
-    Physics/gkPhysicsDebug.h
-    Physics/gkRagDoll.h
-    Physics/gkRayTest.h
-    Physics/gkRigidBody.h
-    Physics/gkSoftBody.h
-    Physics/gkSweptTest.h
-    Physics/gkVehicle.h
+	# ----- Header -----
+	Physics/gkCharacter.h
+	Physics/gkContactTest.h
+	Physics/gkDbvt.h
+	Physics/gkDynamicsWorld.h
+	Physics/gkPhysicsController.h
+	Physics/gkPhysicsDebug.h
+	Physics/gkRagDoll.h
+	Physics/gkRayTest.h
+	Physics/gkRigidBody.h
+	Physics/gkSoftBody.h
+	Physics/gkSweptTest.h
+	Physics/gkVehicle.h
 )
 
 if(APPLE)
@@ -526,173 +526,173 @@ if (OGREKIT_USE_LUA)
 if (OGREKIT_COMPLIE_SWIG AND SWIG_FOUND)
 
 
-    set(Script_INC
-        # ----- Include Files -----
-        Script/Api/OgreKit.i
-        Script/Api/gsTypes.i
-        Script/Api/gsTypeConverters.i
-        Script/Api/gsAI.i
-        Script/Api/gsAnimation.i
-        Script/Api/gsBricks.i
-        Script/Api/gsConstraints.i
-        Script/Api/gsCore.i
-        Script/Api/gsMacros.i
-        Script/Api/gsMath.i
-        Script/Api/gsNetwork.i
-        Script/Api/gsNodes.i
-        Script/Api/gsParticles.i
-        Script/Api/gsPhysics.i
-        Script/Api/gsSound.i
-        Script/Api/gsThread.i
-        Script/Api/gsTypes.i
-        Script/Api/gsUtils.i
-    )
+	set(Script_INC
+		# ----- Include Files -----
+		Script/Api/OgreKit.i
+		Script/Api/gsTypes.i
+		Script/Api/gsTypeConverters.i
+		Script/Api/gsAI.i
+		Script/Api/gsAnimation.i
+		Script/Api/gsBricks.i
+		Script/Api/gsConstraints.i
+		Script/Api/gsCore.i
+		Script/Api/gsMacros.i
+		Script/Api/gsMath.i
+		Script/Api/gsNetwork.i
+		Script/Api/gsNodes.i
+		Script/Api/gsParticles.i
+		Script/Api/gsPhysics.i
+		Script/Api/gsSound.i
+		Script/Api/gsThread.i
+		Script/Api/gsTypes.i
+		Script/Api/gsUtils.i
+	)
 
-    set(Script_TMPL
-        Script/Api/System.lua
-        Script/Api/Class.lua
-    )
-    add_templates(GEN_TEMPLATES_OUT Script/Api/Generated/gsTemplates.h ${Script_TMPL})
+	set(Script_TMPL
+		Script/Api/System.lua
+		Script/Api/Class.lua
+	)
+	add_templates(GEN_TEMPLATES_OUT Script/Api/Generated/gsTemplates.h ${Script_TMPL})
 
-    set(Script_HEADER
-        # ----- Common Files -----
-        Script/Lua/gkLuaManager.h
-        Script/Lua/gkLuaScript.h
-        Script/Lua/gkLuaUtils.h
-        Script/Api/gsAI.h
-        Script/Api/gsAnimation.h
-        Script/Api/gsBricks.h
-        Script/Api/gsCommon.h
-        Script/Api/gsConstraints.h
-        Script/Api/gsCore.h
-        Script/Api/gsMath.h
-        Script/Api/gsNetwork.h
-        Script/Api/gsNodes.h
-        Script/Api/gsParticles.h
-        Script/Api/gsPhysics.h
-        Script/Api/gsSound.h
-        Script/Api/gsThread.h
-        Script/Api/gsUtils.h
-        ${Script_INC}
-        ${GEN_TEMPLATES_OUT}
-    )
+	set(Script_HEADER
+		# ----- Common Files -----
+		Script/Lua/gkLuaManager.h
+		Script/Lua/gkLuaScript.h
+		Script/Lua/gkLuaUtils.h
+		Script/Api/gsAI.h
+		Script/Api/gsAnimation.h
+		Script/Api/gsBricks.h
+		Script/Api/gsCommon.h
+		Script/Api/gsConstraints.h
+		Script/Api/gsCore.h
+		Script/Api/gsMath.h
+		Script/Api/gsNetwork.h
+		Script/Api/gsNodes.h
+		Script/Api/gsParticles.h
+		Script/Api/gsPhysics.h
+		Script/Api/gsSound.h
+		Script/Api/gsThread.h
+		Script/Api/gsUtils.h
+		${Script_INC}
+		${GEN_TEMPLATES_OUT}
+	)
 
-    set(SWIG_INPUT
-        Script/Api/OgreKit.i
-    )
-
-
-    swig_source_lua(SWIG_API2_OUTPUT_LUA Script_HEADER ${SWIG_INPUT})
+	set(SWIG_INPUT
+		Script/Api/OgreKit.i
+	)
 
 
-    set(Script_SOURCE
-        ${Script_TMPL}
-        ${SWIG_API2_OUTPUT_LUA}
-        Script/Lua/gkLuaManager.cpp
-        Script/Lua/gkLuaScript.cpp
-        Script/Lua/gkLuaUtils.cpp
-        Script/Api/gsAI.cpp
-        Script/Api/gsAnimation.cpp
-        Script/Api/gsBricks.cpp
-        Script/Api/gsConstraints.cpp
-        Script/Api/gsCore.cpp
-        Script/Api/gsMath.cpp
-        Script/Api/gsNetwork.cpp
-        Script/Api/gsNodes.cpp
-        Script/Api/gsParticles.cpp
-        Script/Api/gsPhysics.cpp
-        Script/Api/gsSound.cpp
-        Script/Api/gsThread.cpp
-        Script/Api/gsUtils.cpp
-    )
+	swig_source_lua(SWIG_API2_OUTPUT_LUA Script_HEADER ${SWIG_INPUT})
+
+
+	set(Script_SOURCE
+		${Script_TMPL}
+		${SWIG_API2_OUTPUT_LUA}
+		Script/Lua/gkLuaManager.cpp
+		Script/Lua/gkLuaScript.cpp
+		Script/Lua/gkLuaUtils.cpp
+		Script/Api/gsAI.cpp
+		Script/Api/gsAnimation.cpp
+		Script/Api/gsBricks.cpp
+		Script/Api/gsConstraints.cpp
+		Script/Api/gsCore.cpp
+		Script/Api/gsMath.cpp
+		Script/Api/gsNetwork.cpp
+		Script/Api/gsNodes.cpp
+		Script/Api/gsParticles.cpp
+		Script/Api/gsPhysics.cpp
+		Script/Api/gsSound.cpp
+		Script/Api/gsThread.cpp
+		Script/Api/gsUtils.cpp
+	)
 
 	if(APPLE)
 		source_group(Script/uiltin   FILES ${Script_TMPL})
 		source_group(Script/Includes  FILES ${SWIG_INPUT} ${Script_INC})
-	    	source_group(Script/Header    FILES ${Script_HEADER})
-	    	source_group(Script/Source    FILES ${Script_SOURCE})
+			source_group(Script/Header    FILES ${Script_HEADER})
+			source_group(Script/Source    FILES ${Script_SOURCE})
 	else()
-    		source_group(Script\\Builtin   FILES ${Script_TMPL})
-    		source_group(Script\\Includes  FILES ${SWIG_INPUT} ${Script_INC})
-    		source_group(Script\\Header    FILES ${Script_HEADER})
-    		source_group(Script\\Source    FILES ${Script_SOURCE})
+			source_group(Script\\Builtin   FILES ${Script_TMPL})
+			source_group(Script\\Includes  FILES ${SWIG_INPUT} ${Script_INC})
+			source_group(Script\\Header    FILES ${Script_HEADER})
+			source_group(Script\\Source    FILES ${Script_SOURCE})
 	endif()
 
 
 else()
 
-    set(Script_INC
-        # ----- Include Files -----
-        Script/Api/OgreKit.i
-        Script/Api/gsTypes.i
-        Script/Api/gsTypeConverters.i
-        Script/Api/gsAI.i
-        Script/Api/gsAnimation.i
-        Script/Api/gsBricks.i
-        Script/Api/gsConstraints.i
-        Script/Api/gsCore.i
-        Script/Api/gsMacros.i
-        Script/Api/gsMath.i
-        Script/Api/gsNetwork.i
-        Script/Api/gsNodes.i
-        Script/Api/gsParticles.i
-        Script/Api/gsPhysics.i
-        Script/Api/gsSound.i
-        Script/Api/gsThread.i
-        Script/Api/gsTypes.i
-        Script/Api/gsUtils.i
-    )
+	set(Script_INC
+		# ----- Include Files -----
+		Script/Api/OgreKit.i
+		Script/Api/gsTypes.i
+		Script/Api/gsTypeConverters.i
+		Script/Api/gsAI.i
+		Script/Api/gsAnimation.i
+		Script/Api/gsBricks.i
+		Script/Api/gsConstraints.i
+		Script/Api/gsCore.i
+		Script/Api/gsMacros.i
+		Script/Api/gsMath.i
+		Script/Api/gsNetwork.i
+		Script/Api/gsNodes.i
+		Script/Api/gsParticles.i
+		Script/Api/gsPhysics.i
+		Script/Api/gsSound.i
+		Script/Api/gsThread.i
+		Script/Api/gsTypes.i
+		Script/Api/gsUtils.i
+	)
 
-    set(Script_HEADER
-        # ----- Common Files -----
-        Script/Api/Generated/gsTemplates.h
-        Script/Lua/gkLuaManager.h
-        Script/Lua/gkLuaScript.h
-        Script/Lua/gkLuaUtils.h
-        Script/Api/gsAI.h
-        Script/Api/gsAnimation.h
-        Script/Api/gsBricks.h
-        Script/Api/gsCommon.h
-        Script/Api/gsConstraints.h
-        Script/Api/gsCore.h
-        Script/Api/gsMath.h
-        Script/Api/gsNetwork.h
-        Script/Api/gsNodes.h
-        Script/Api/gsParticles.h
-        Script/Api/gsPhysics.h
-        Script/Api/gsSound.h
-        Script/Api/gsThread.h
-        Script/Api/gsUtils.h
-        ${Script_INC}
-    )
+	set(Script_HEADER
+		# ----- Common Files -----
+		Script/Api/Generated/gsTemplates.h
+		Script/Lua/gkLuaManager.h
+		Script/Lua/gkLuaScript.h
+		Script/Lua/gkLuaUtils.h
+		Script/Api/gsAI.h
+		Script/Api/gsAnimation.h
+		Script/Api/gsBricks.h
+		Script/Api/gsCommon.h
+		Script/Api/gsConstraints.h
+		Script/Api/gsCore.h
+		Script/Api/gsMath.h
+		Script/Api/gsNetwork.h
+		Script/Api/gsNodes.h
+		Script/Api/gsParticles.h
+		Script/Api/gsPhysics.h
+		Script/Api/gsSound.h
+		Script/Api/gsThread.h
+		Script/Api/gsUtils.h
+		${Script_INC}
+	)
 
 
-    set(Script_TMPL
-        Script/Api/System.lua
-        Script/Api/Class.lua
-    )
+	set(Script_TMPL
+		Script/Api/System.lua
+		Script/Api/Class.lua
+	)
 
-    set(Script_SOURCE
+	set(Script_SOURCE
 		${Script_TMPL}
-        Script/Api/Generated/OgreKitLua.cpp
-        Script/Lua/gkLuaManager.cpp
-        Script/Lua/gkLuaScript.cpp
-        Script/Lua/gkLuaUtils.cpp
-        Script/Api/gsAI.cpp
-        Script/Api/gsAnimation.cpp
-        Script/Api/gsBricks.cpp
-        Script/Api/gsConstraints.cpp
-        Script/Api/gsCore.cpp
-        Script/Api/gsMath.cpp
-        Script/Api/gsNetwork.cpp
-        Script/Api/gsNodes.cpp
-        Script/Api/gsParticles.cpp
-        Script/Api/gsPhysics.cpp
-        Script/Api/gsSound.cpp
-        Script/Api/gsThread.cpp
-        Script/Api/gsUtils.cpp
-    )
-    
+		Script/Api/Generated/OgreKitLua.cpp
+		Script/Lua/gkLuaManager.cpp
+		Script/Lua/gkLuaScript.cpp
+		Script/Lua/gkLuaUtils.cpp
+		Script/Api/gsAI.cpp
+		Script/Api/gsAnimation.cpp
+		Script/Api/gsBricks.cpp
+		Script/Api/gsConstraints.cpp
+		Script/Api/gsCore.cpp
+		Script/Api/gsMath.cpp
+		Script/Api/gsNetwork.cpp
+		Script/Api/gsNodes.cpp
+		Script/Api/gsParticles.cpp
+		Script/Api/gsPhysics.cpp
+		Script/Api/gsSound.cpp
+		Script/Api/gsThread.cpp
+		Script/Api/gsUtils.cpp
+	)
+	
 	if(APPLE)
 		source_group(Script/Builtin   FILES ${Script_TMPL})
 		source_group(Script/Include   FILES ${Script_INC})
@@ -713,29 +713,29 @@ endif() #OGREKIT_USE_LUA
 # Sound Files
 # ---------------------------------------------------------
 set(Sound_SOURCE
-    # ----- Source -----
-    Sound/gkBuffer.cpp
-    Sound/gkOgg.cpp
-    Sound/gkSource.cpp
-    Sound/gkSound.cpp
-    Sound/gkSoundManager.cpp
-    Sound/gkSoundStream.cpp
-    Sound/gkSoundUtil.cpp
-    Sound/gkStreamer.cpp
-    Sound/gkWaveform.cpp
+	# ----- Source -----
+	Sound/gkBuffer.cpp
+	Sound/gkOgg.cpp
+	Sound/gkSource.cpp
+	Sound/gkSound.cpp
+	Sound/gkSoundManager.cpp
+	Sound/gkSoundStream.cpp
+	Sound/gkSoundUtil.cpp
+	Sound/gkStreamer.cpp
+	Sound/gkWaveform.cpp
 )
 
 set(Sound_HEADER
-    # ----- Header -----
-    Sound/gkBuffer.h
-    Sound/gkSource.h
-    Sound/gkOgg.h
-    Sound/gkSound.h
-    Sound/gkSoundManager.h
-    Sound/gkSoundStream.h
-    Sound/gkSoundUtil.h
-    Sound/gkStreamer.h
-    Sound/gkWaveform.h
+	# ----- Header -----
+	Sound/gkBuffer.h
+	Sound/gkSource.h
+	Sound/gkOgg.h
+	Sound/gkSound.h
+	Sound/gkSoundManager.h
+	Sound/gkSoundStream.h
+	Sound/gkSoundUtil.h
+	Sound/gkStreamer.h
+	Sound/gkWaveform.h
 )
 
 if(APPLE)
@@ -750,13 +750,13 @@ endif()
 # Network Files
 # ---------------------------------------------------------
 set(Network_SOURCE
-    # ----- Source -----
-    Network/gkNetworkManager.cpp
+	# ----- Source -----
+	Network/gkNetworkManager.cpp
 )
 
 set(Network_HEADER
-    # ----- Header -----
-    Network/gkNetworkManager.h
+	# ----- Header -----
+	Network/gkNetworkManager.h
 )
 
 if(APPLE)
@@ -773,19 +773,19 @@ endif()
 # External Engine Files
 # ---------------------------------------------------------
 set(External_SOURCE
-    # ----- Source -----
-    External/Ogre/gkOgreMaterialLoader.cpp
-    External/Ogre/gkOgreMeshLoader.cpp
-    External/Ogre/gkOgreSkeletonLoader.cpp
-    External/Ogre/gkOgreSkyBoxGradient.cpp
+	# ----- Source -----
+	External/Ogre/gkOgreMaterialLoader.cpp
+	External/Ogre/gkOgreMeshLoader.cpp
+	External/Ogre/gkOgreSkeletonLoader.cpp
+	External/Ogre/gkOgreSkyBoxGradient.cpp
 )
 
 set(External_HEADER
-    # ----- Header -----
-    External/Ogre/gkOgreMaterialLoader.h
-    External/Ogre/gkOgreMeshLoader.h
-    External/Ogre/gkOgreSkeletonLoader.h
-    External/Ogre/gkOgreSkyBoxGradient.h
+	# ----- Header -----
+	External/Ogre/gkOgreMaterialLoader.h
+	External/Ogre/gkOgreMeshLoader.h
+	External/Ogre/gkOgreSkeletonLoader.h
+	External/Ogre/gkOgreSkyBoxGradient.h
 )
 
 if(APPLE)
@@ -810,7 +810,7 @@ if(OGREKIT_USE_COCOA)
 endif()
 
 if (OGREKIT_OPENAL_SOUND AND OPENAL_FOUND)
-    add_definitions(-DOGREKIT_OPENAL_SOUND)
+	add_definitions(-DOGREKIT_OPENAL_SOUND)
 endif()
 
 if (OGREKIT_BUILD_IPHONE)
@@ -820,22 +820,22 @@ endif()
 
 
 include_directories(
-    ${OGREKIT_OGRE_INCLUDE}
-    ${OGRELITE_SOURCE_DIR}/PlugIns/ParticleFX/include
-    ${OGREKIT_DEP_INCLUDE}
-    ./
-    ./AI
-    ./Animation
-    ./Constraints
-    ./LogicBricks
-    ./Logic
-    ./Script
-    ./Script/Api
-    ./Sound
-    ./Loaders/Blender2
-    ./Physics
-    ./Thread
-    )
+	${OGREKIT_OGRE_INCLUDE}
+	${OGRELITE_SOURCE_DIR}/PlugIns/ParticleFX/include
+	${OGREKIT_DEP_INCLUDE}
+	./
+	./AI
+	./Animation
+	./Constraints
+	./LogicBricks
+	./Logic
+	./Script
+	./Script/Api
+	./Sound
+	./Loaders/Blender2
+	./Physics
+	./Thread
+	)
 
 #Reconfigure external Bullet libraries ${OGREKIT_BULLET_LIBS} before link 
 config_target_if_iphone_build(BulletDynamics TRUE)
@@ -844,10 +844,10 @@ config_target_if_iphone_build(BulletSoftBody TRUE)
 config_target_if_iphone_build(LinearMath TRUE)
 
 link_libraries(
-    ${OGREKIT_OGRE_LIBS}
-    Plugin_ParticleFX
-    ${OGREKIT_BULLET_LIBS}
-    )
+	${OGREKIT_OGRE_LIBS}
+	Plugin_ParticleFX
+	${OGREKIT_BULLET_LIBS}
+	)
 
 link_directories(${OGRE_LIBDIR})
 include_directories(${OGREKIT_BULLET_INCLUDE})
@@ -864,25 +864,25 @@ add_definitions(-DSTATIC_LINKED)
 
 
 if (OGREKIT_OPENAL_SOUND AND OPENAL_FOUND)
-    set(Extra_SOURCE ${Sound_SOURCE} ${Sound_HEADER} )
+	set(Extra_SOURCE ${Sound_SOURCE} ${Sound_HEADER} )
 endif()
 
 
 add_library(OgreKitCore STATIC
-            ${Core_SOURCE}       ${Core_HEADER}
-            ${Logic_SOURCE}      ${Logic_HEADER}
-            ${Blend_SOURCE}      ${Blend_HEADER}
-            ${AI_SOURCE}         ${AI_HEADER}
-            ${Animation_SOURCE}  ${Animation_HEADER}
-            ${Constraint_SOURCE} ${Constraint_HEADER}
-            ${Physics_SOURCE}    ${Physics_HEADER}
-            ${Script_SOURCE}     ${Script_HEADER}
-            ${Network_SOURCE}    ${Network_HEADER}
-            ${NLogic_SOURCE}     ${NLogic_HEADER}
-            ${Thread_SOURCE}     ${Thread_HEADER}
-            ${External_SOURCE}   ${External_HEADER}
-            ${HiddenDepenCMakeLists}
-            ${Extra_SOURCE}
-    )
+			${Core_SOURCE}       ${Core_HEADER}
+			${Logic_SOURCE}      ${Logic_HEADER}
+			${Blend_SOURCE}      ${Blend_HEADER}
+			${AI_SOURCE}         ${AI_HEADER}
+			${Animation_SOURCE}  ${Animation_HEADER}
+			${Constraint_SOURCE} ${Constraint_HEADER}
+			${Physics_SOURCE}    ${Physics_HEADER}
+			${Script_SOURCE}     ${Script_HEADER}
+			${Network_SOURCE}    ${Network_HEADER}
+			${NLogic_SOURCE}     ${NLogic_HEADER}
+			${Thread_SOURCE}     ${Thread_HEADER}
+			${External_SOURCE}   ${External_HEADER}
+			${HiddenDepenCMakeLists}
+			${Extra_SOURCE}
+	)
 
 config_target_if_iphone_build(OgreKitCore TRUE)

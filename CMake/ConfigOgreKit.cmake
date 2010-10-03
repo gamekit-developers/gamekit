@@ -65,7 +65,8 @@ macro (configure_ogrekit ROOT OGREPATH)
 	set(OGRE_BINARY_DIR ${OGREPATH}/Bin)
 	set(OGRE_TEMPLATES_DIR ${ROOT}/CMake/Templates)
 	set(OGRELITE_SOURCE_DIR ${OGREPATH})
-
+    set(OGREKIT_DEP_DIR ${ROOT}/Dependencies/Source)
+    
 	include(OgreConfigTargets)
 	include(DependenciesOgreKit)
 	include(MacroLogFeature)
@@ -95,7 +96,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 		set(OGREKIT_ZLIB_TARGET	ZLib)
 		set(OGREKIT_FREEIMAGE_TARGET FreeImage)
 		set(OGREKIT_ZLIB_INCLUDE ${OGREKIT_DEP_DIR}/FreeImage/ZLib)
-		set(OGREKIT_FREEIMAGE_INCLUDE ${OGREKIT_DEP_DIR}/FreeImage)
+		set(OGREKIT_FREEIMAGE_INCLUDE ${OGREKIT_DEP_DIR}/FreeImage)        
 		
 	endif(NOT OGREKIT_USE_STATIC_FREEIMAGE)
 
@@ -139,13 +140,13 @@ macro (configure_ogrekit ROOT OGREPATH)
 	
 	if (NOT OGREKIT_COMPILE_WXWIDGETS)
 		set(SAMPLES_NODE_EDITOR FALSE CACHE BOOL "Forcing NodeEditor removal" FORCE)
-        set(SAMPLES_EMBEDDEMO   FALSE CACHE BOOL "Forcing EmbedDemo removal"  FORCE)
+		set(SAMPLES_EMBEDDEMO   FALSE CACHE BOOL "Forcing EmbedDemo removal"  FORCE)
 	endif()
     
-    if (WIN32 AND SAMPLES_EMBEDDEMO AND NOT OGREKIT_OIS_WIN32_NATIVE)
-        set(SAMPLES_EMBEDDEMO   FALSE CACHE BOOL "Forcing EmbedDemo removal"  FORCE)
-        message(WARNING "EmbedDemo is required OGREKIT_OIS_WIN32_NATIVE option.")
-    endif()
+	if (WIN32 AND SAMPLES_EMBEDDEMO AND NOT OGREKIT_OIS_WIN32_NATIVE)
+		set(SAMPLES_EMBEDDEMO   FALSE CACHE BOOL "Forcing EmbedDemo removal"  FORCE)
+		message(WARNING "EmbedDemo is required OGREKIT_OIS_WIN32_NATIVE option.")
+	endif()
 
 
 	if (APPLE)
@@ -161,53 +162,53 @@ macro (configure_ogrekit ROOT OGREPATH)
 	#copy from ogre3d build
 	# Set up iPhone overrides.
 	if (OGRE_BUILD_PLATFORM_IPHONE)
-	  include_directories("${OGREPATH}/OgreMain/include/iPhone")
+		include_directories("${OGREPATH}/OgreMain/include/iPhone")
 	
-	  # Set build variables
-	  set(CMAKE_OSX_SYSROOT iphoneos3.2)
-	  set(CMAKE_OSX_DEPLOYMENT_TARGET "")
-	  set(CMAKE_EXE_LINKER_FLAGS "-framework Foundation -framework CoreGraphics -framework QuartzCore -framework UIKit")
-	  set(XCODE_ATTRIBUTE_SDKROOT iphoneos3.2)
-	  set(OGRE_BUILD_RENDERSYSTEM_GLES TRUE CACHE BOOL "Forcing OpenGL ES RenderSystem for iPhone" FORCE)
-	  set(OGRE_STATIC TRUE CACHE BOOL "Forcing static build for iPhone" FORCE)
-	  set(MACOSX_BUNDLE_GUI_IDENTIFIER "com.yourcompany.\${PRODUCT_NAME:rfc1034identifier}")
-	  set(OGRE_CONFIG_ENABLE_VIEWPORT_ORIENTATIONMODE TRUE CACHE BOOL "Forcing viewport orientation support for iPhone" FORCE)
+		# Set build variables
+		set(CMAKE_OSX_SYSROOT iphoneos3.2)
+		set(CMAKE_OSX_DEPLOYMENT_TARGET "")
+		set(CMAKE_EXE_LINKER_FLAGS "-framework Foundation -framework CoreGraphics -framework QuartzCore -framework UIKit")
+		set(XCODE_ATTRIBUTE_SDKROOT iphoneos3.2)
+		set(OGRE_BUILD_RENDERSYSTEM_GLES TRUE CACHE BOOL "Forcing OpenGL ES RenderSystem for iPhone" FORCE)
+		set(OGRE_STATIC TRUE CACHE BOOL "Forcing static build for iPhone" FORCE)
+		set(MACOSX_BUNDLE_GUI_IDENTIFIER "com.yourcompany.\${PRODUCT_NAME:rfc1034identifier}")
+		set(OGRE_CONFIG_ENABLE_VIEWPORT_ORIENTATIONMODE TRUE CACHE BOOL "Forcing viewport orientation support for iPhone" FORCE)
 	
-	  # CMake 2.8.1 added the ability to specify per-target architectures.
-	  # As a side effect, it creates corrupt Xcode projects if you try do it for the whole project.
-	  if(VERSION STRLESS "2.8.1")
-		set(CMAKE_OSX_ARCHITECTURES $(ARCHS_STANDARD_32_BIT))
-	  else()
-		set(CMAKE_OSX_ARCHITECTURES "armv6;armv7;")
-	  endif()
+		# CMake 2.8.1 added the ability to specify per-target architectures.
+		# As a side effect, it creates corrupt Xcode projects if you try do it for the whole project.
+		if(VERSION STRLESS "2.8.1")
+			set(CMAKE_OSX_ARCHITECTURES $(ARCHS_STANDARD_32_BIT))
+		else()
+			set(CMAKE_OSX_ARCHITECTURES "armv6;armv7;")
+		endif()
 	
-	  add_definitions(-fno-regmove)
-	  remove_definitions(-msse)
-	  
-	  if (NOT OGRE_CONFIG_ENABLE_VIEWPORT_ORIENTATIONMODE)
-		set(OGRE_SET_DISABLE_VIEWPORT_ORIENTATIONMODE 1)
-	  endif()
-	  
+		add_definitions(-fno-regmove)
+		remove_definitions(-msse)
+	
+		if (NOT OGRE_CONFIG_ENABLE_VIEWPORT_ORIENTATIONMODE)
+			set(OGRE_SET_DISABLE_VIEWPORT_ORIENTATIONMODE 1)
+		endif()
+	
 	elseif (APPLE)
 	
-	  # Set 10.4 as the base SDK by default
-	  set(XCODE_ATTRIBUTE_SDKROOT macosx10.4)
+		# Set 10.4 as the base SDK by default
+		set(XCODE_ATTRIBUTE_SDKROOT macosx10.4)
 	
-	  if (NOT CMAKE_OSX_ARCHITECTURES)
-		set(CMAKE_OSX_ARCHITECTURES "i386")
-	  endif()
+		if (NOT CMAKE_OSX_ARCHITECTURES)
+			set(CMAKE_OSX_ARCHITECTURES "i386")
+		endif()
 	  
-	  # 10.6 sets x86_64 as the default architecture.
-	  # Because Carbon isn't supported on 64-bit and we still need it, force the architectures to ppc and i386
-	  if(CMAKE_OSX_ARCHITECTURES MATCHES "x86_64" OR CMAKE_OSX_ARCHITECTURES MATCHES "ppc64")
-		string(REPLACE "x86_64" "" CMAKE_OSX_ARCHITECTURES ${CMAKE_OSX_ARCHITECTURES})
-		string(REPLACE "ppc64" "" CMAKE_OSX_ARCHITECTURES ${CMAKE_OSX_ARCHITECTURES})
-	  endif()
+		# 10.6 sets x86_64 as the default architecture.
+		# Because Carbon isn't supported on 64-bit and we still need it, force the architectures to ppc and i386
+		if(CMAKE_OSX_ARCHITECTURES MATCHES "x86_64" OR CMAKE_OSX_ARCHITECTURES MATCHES "ppc64")
+			string(REPLACE "x86_64" "" CMAKE_OSX_ARCHITECTURES ${CMAKE_OSX_ARCHITECTURES})
+			string(REPLACE "ppc64" "" CMAKE_OSX_ARCHITECTURES ${CMAKE_OSX_ARCHITECTURES})
+		endif()
 	
-	  # Make sure that the OpenGL render system is selected for non-iPhone Apple builds
-	  set(OGRE_BUILD_RENDERSYSTEM_GL TRUE)
-	  set(OGRE_BUILD_RENDERSYSTEM_GLES FALSE)
-	  
+		# Make sure that the OpenGL render system is selected for non-iPhone Apple builds
+		set(OGRE_BUILD_RENDERSYSTEM_GL TRUE)
+		set(OGRE_BUILD_RENDERSYSTEM_GLES FALSE)
+	
 	endif ()
 
 
@@ -218,8 +219,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 
 	endif()
 
-
-	set(OGREKIT_DEP_DIR ${ROOT}/Dependencies/Source)
+	
 	set(OGREKIT_FREETYPE_INCLUDE ${OGREKIT_DEP_DIR}/FreeType/include)
 	set(OGREKIT_ZZIP_INCLUDE ${OGREKIT_DEP_DIR}/ZZipLib)
 	set(OGREKIT_OIS_INCLUDE ${OGREKIT_DEP_DIR}/OIS/include)
@@ -242,7 +242,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 		${OGREKIT_OPENSTEER_INCLUDE}
 		${GAMEKIT_SERIALIZE_BULLET}
 		${GAMEKIT_SERIALIZE_BLENDER}
-	    ${GAMEKIT_UTILS_PATH}
+		${GAMEKIT_UTILS_PATH}
 	)
 
 
@@ -304,8 +304,6 @@ macro (configure_ogrekit ROOT OGREPATH)
 	endif()
 
 	if (OPENGL_FOUND AND OGREKIT_BUILD_GLRS)
-
-
 		set(OGRE_BUILD_RENDERSYSTEM_GL  TRUE)
 		set(OGREKIT_GLRS_LIBS           RenderSystem_GL)
 		set(OGREKIT_GLRS_ROOT           ${OGREPATH}/RenderSystems/GL)
@@ -384,8 +382,8 @@ macro (configure_ogrekit ROOT OGREPATH)
 		${OGREKIT_OPENSTEER_TARGET}
 		${GAMEKIT_SERIALIZE_BLENDER_TARGET}
 		${GAMEKIT_SERIALIZE_BULLET_TARGET}
-	    ${GAMEKIT_UTILS_TARGET}
-	    ${OGREKIT_OIS_TARGET}
+		${GAMEKIT_UTILS_TARGET}
+		${OGREKIT_OIS_TARGET}
 		${OGREKIT_ZLIB_TARGET} 
 		)
 

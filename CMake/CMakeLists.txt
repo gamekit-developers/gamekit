@@ -20,45 +20,45 @@ else(WIN32)
 endif(WIN32)
 
 set(INST_FILES
-  Packages/FindOIS.cmake
-  Packages/FindOGRE.cmake
-  Utils/FindPkgMacros.cmake
-  Utils/PreprocessorUtils.cmake
-  Utils/OgreConfigTargets.cmake
-  Utils/OgreGetVersion.cmake
-  Utils/OgreFindFrameworks.cmake
+	Packages/FindOIS.cmake
+	Packages/FindOGRE.cmake
+	Utils/FindPkgMacros.cmake
+	Utils/PreprocessorUtils.cmake
+	Utils/OgreConfigTargets.cmake
+	Utils/OgreGetVersion.cmake
+	Utils/OgreFindFrameworks.cmake
 ) 
 set(STATIC_INST_FILES
-  Packages/FindCg.cmake
-  Packages/FindDirectX.cmake
-  Packages/FindFreeImage.cmake
-  Packages/FindFreetype.cmake
-  Packages/FindOpenGLES.cmake
-  Packages/FindPOCO.cmake
-  Packages/FindTBB.cmake
-  Packages/FindZLIB.cmake
-  Packages/FindZZip.cmake
+	Packages/FindCg.cmake
+	Packages/FindDirectX.cmake
+	Packages/FindFreeImage.cmake
+	Packages/FindFreetype.cmake
+	Packages/FindOpenGLES.cmake
+	Packages/FindPOCO.cmake
+	Packages/FindTBB.cmake
+	Packages/FindZLIB.cmake
+	Packages/FindZZip.cmake
 )
 if (WIN32)
-  set(INST_FILES ${INST_FILES}
-    Templates/VisualStudioUserFile.vcproj.user.in
-  )
+	set(INST_FILES ${INST_FILES}
+		Templates/VisualStudioUserFile.vcproj.user.in
+	)
 endif ()
 
 if (APPLE)
-  set(INST_FILES ${INST_FILES}
-    Packages/FindIOKit.cmake
-  )
-  set(STATIC_INST_FILES ${STATIC_INST_FILES}
-    Packages/FindCarbon.cmake
-    Packages/FindCocoa.cmake
-  )
-  set(STATIC_INST_FILES ${STATIC_INST_FILES}
-    Packages/FindiPhoneSDK.cmake
-  )
+	set(INST_FILES ${INST_FILES}
+		Packages/FindIOKit.cmake
+	)
+	set(STATIC_INST_FILES ${STATIC_INST_FILES}
+		Packages/FindCarbon.cmake
+		Packages/FindCocoa.cmake
+	)
+	set(STATIC_INST_FILES ${STATIC_INST_FILES}
+		Packages/FindiPhoneSDK.cmake
+	)
 endif ()
 
 install(FILES ${INST_FILES} DESTINATION ${OGRE_CMAKE_DIR})
 if (OGRE_STATIC)
-  install(FILES ${STATIC_INST_FILES} DESTINATION ${OGRE_CMAKE_DIR})
+	install(FILES ${STATIC_INST_FILES} DESTINATION ${OGRE_CMAKE_DIR})
 endif ()

@@ -1,23 +1,23 @@
 # Adding options only to speed up build/dev time
 
 if (OGREKIT_BUILD_IPHONE)
-    subdirs(IPhoneDemo)
+	subdirs(IPhoneDemo)
 else()
 
 if (SAMPLES_RUNTIME)
-    subdirs(Runtime)
+	subdirs(Runtime)
 endif()
 
 if (SAMPLES_LOGICDEMO)
-    subdirs(LogicDemo)
+	subdirs(LogicDemo)
 endif()
 
 if (SAMPLES_VEHICLEDEMO)
-    subdirs(VehicleDemo)
+	subdirs(VehicleDemo)
 endif()
 
 if (SAMPLES_LUARUNTIME AND OGREKIT_USE_LUA)
-    subdirs(LuaRuntime)
+	subdirs(LuaRuntime)
 endif()
 
 
@@ -30,7 +30,7 @@ if (SAMPLES_NODE_EDITOR)
 endif()
 
 if (SAMPLES_EMBEDDEMO)
-    subdirs(EmbedDemo)
+	subdirs(EmbedDemo)
 endif()
 
 endif()

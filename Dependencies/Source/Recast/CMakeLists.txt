@@ -5,8 +5,8 @@ project(Recast)
 SET(${PROJECT_NAME} 1.0)
 
 set(RECAST_SRC 
-    Source/Recast.cpp
-    Source/RecastArea.cpp
+	Source/Recast.cpp
+	Source/RecastArea.cpp
 	Source/RecastContour.cpp
 	Source/RecastFilter.cpp
 	Source/RecastLog.cpp
@@ -18,9 +18,9 @@ set(RECAST_SRC
 )
 
 set(RECAST_HDR
-    Include/Recast.h
-    Include/RecastLog.h
-    Include/RecastTimer.h
+	Include/Recast.h
+	Include/RecastLog.h
+	Include/RecastTimer.h
 )
 
 include_directories( Include )

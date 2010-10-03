@@ -10,11 +10,11 @@ set(CONTENT
 
 
 if (APPLE)
-    include_directories(${OGRELITE_SOURCE_DIR}/OgreMain/include/OSX)
-    SET(EXETYPE MACOSX_BUNDLE)
-    SET_SOURCE_FILES_PROPERTIES( MainMenu.nib  PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
-    SET_SOURCE_FILES_PROPERTIES(${CONTENT} PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
-    SET (NibFile MainMenu.nib)
+	include_directories(${OGRELITE_SOURCE_DIR}/OgreMain/include/OSX)
+	SET(EXETYPE MACOSX_BUNDLE)
+	SET_SOURCE_FILES_PROPERTIES( MainMenu.nib  PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
+	SET_SOURCE_FILES_PROPERTIES(${CONTENT} PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
+	SET (NibFile MainMenu.nib)
 endif()
 
 set(SRC Lua.cpp ${CONTENT})
@@ -25,12 +25,12 @@ link_libraries(${OGREKIT_LIB})
 if (APPLE)
 
 	add_executable(
-	    AppLuaRuntime 
-	    MACOSX_BUNDLE
-	    MainMenu.nib
-	    ${SRC} 
-	    ${HiddenCMakeLists}
-    )
+		AppLuaRuntime 
+		MACOSX_BUNDLE
+		MainMenu.nib
+		${SRC} 
+		${HiddenCMakeLists}
+	)
 
 else ()
 
