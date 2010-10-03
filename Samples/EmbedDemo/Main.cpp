@@ -33,16 +33,21 @@
 #define WIN_SIZE_X		640
 #define WIN_SIZE_Y		480
 #define LOG_BOX_HEIGHT  100
-#define ID_STATUS_TIMER	wxID_HIGHEST + 100
-#define ID_LOG_BOX		wxID_HIGHEST + 101
-#define ID_LOG_CLEAR	wxID_HIGHEST + 102
-#define ID_LOG_SAVE		wxID_HIGHEST + 103
-#define ID_TIMER_PAUSE	wxID_HIGHEST + 104
+
 #define STATUS_FPS      4
 #define DEMO_BLEND		"logo_text.blend"
 #define APP_TITLE		"OgreKit Embedding Demo"
 #define SET_EXIT_IF_EXCEPTION_RAISED 0
+#define ENABLE_LOG_BOX	1		//0: disable Logbox, 1: enable Logbox
 
+enum 
+{
+	ID_STATUS_TIMER	= wxID_HIGHEST + 100,
+	ID_LOG_BOX,
+	ID_LOG_CLEAR,
+	ID_LOG_SAVE,
+	ID_TIMER_PAUSE
+};
 
 class EmbedLog : public wxLog, public Ogre::LogListener
 {
@@ -212,11 +217,6 @@ EmbedFrame::EmbedFrame() :
     menuBar->Append(menu, "&File");
 
 	menu = new wxMenu;
-	menu->Append(ID_LOG_CLEAR, "&Clear Log");
-	menu->Append(ID_LOG_SAVE,  "&Save Log");
-	menuBar->Append(menu, "&Log");
-
-	menu = new wxMenu;
 	menu->Append(ID_TIMER_PAUSE, "&Pause");
 	menuBar->Append(menu, "&Game");
 
@@ -225,7 +225,14 @@ EmbedFrame::EmbedFrame() :
     wxStatusBar *sbar = CreateStatusBar();
 	m_statusBar = sbar;
 	
+#if ENABLE_LOG_BOX
 	m_logBox = new wxListBox(this, ID_LOG_BOX, wxPoint(0, WIN_SIZE_Y), wxSize(WIN_SIZE_X, LOG_BOX_HEIGHT));
+
+	menu = new wxMenu;
+	menu->Append(ID_LOG_CLEAR, "&Clear Log");
+	menu->Append(ID_LOG_SAVE,  "&Save Log");
+	menuBar->Append(menu, "&Log");
+#endif
 
 	EmbedApp* app = (EmbedApp*)wxTheApp;
 	okWindow* win = new okWindow(this);
@@ -268,7 +275,14 @@ EmbedFrame::EmbedFrame() :
 		m_logBox->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(EmbedFrame::OnKeyDown), NULL, this);
 	}
 
-	SetClientSize(WIN_SIZE_X, WIN_SIZE_Y + sbar->GetSize().GetHeight() + LOG_BOX_HEIGHT);
+	int sizeX = WIN_SIZE_X;
+	int sizeY = WIN_SIZE_Y + sbar->GetSize().GetHeight();
+
+#if ENABLE_LOG_BOX
+	sizeY += LOG_BOX_HEIGHT;
+#endif
+
+	SetClientSize(sizeX, sizeY);
 
 	if (m_okWin)
 	{
@@ -433,9 +447,10 @@ void EmbedFrame::OnTimer(wxTimerEvent& WXUNUSED(event))
 
 		m_statusBar->SetStatusText(wxString::Format("FPS: %.3f (%.3f/%.3f/%.3f) NumTris: %d NumBatches: %d",  
 			stats.lastFPS, stats.avgFPS, stats.bestFPS, stats.worstFPS, stats.triangleCount, stats.batchCount));
-
+#if ENABLE_LOG_BOX
 		if (wxTheApp->IsActive() && m_okWin->isRunnigGameLoop() && !m_okWin->HasFocus())
-			m_okWin->SetFocusFromKbd ();	
+			m_okWin->SetFocusFromKbd ();
+#endif
 	}
 	catch (...)
 	{
