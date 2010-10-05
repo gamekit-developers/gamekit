@@ -5,7 +5,8 @@ project(AppVehicleDemo)
 SET(${PROJECT_NAME} 1.0)
 
 set(DATA 
-	clubsilo_demo.blend 
+	clubsilo_demo.blend
+	buggy.blend
 	OgreKitStartup.cfg 
 	OgreKitResource.cfg 
 	ReadMe.txt

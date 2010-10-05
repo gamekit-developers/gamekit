@@ -91,9 +91,12 @@ bool OgreKit::init()
 	m_blend  = gkDefaultBlend;
 	cfgfname = gkDefaultConfig;
 	
+	//960x640, 480x320
+
 	m_prefs.winsize.x        = 320;
     m_prefs.winsize.y        = 480;
 
+	
 #if USE_VIEWPORT_LANDSCAPE
 	m_prefs.viewportOrientation = "landscaperight";
 #else	
@@ -154,10 +157,6 @@ int main(int argc, char **argv)
     NSTimer *mTimer;
     OgreKit m_okit;
 
-    // Use of the CADisplayLink class is the preferred method for controlling your animation timing.
-    // CADisplayLink will link to the main display and fire every vsync when added to a given run-loop.
-    // The NSTimer class is used only as fallback when running on a pre 3.1 device where CADisplayLink
-    // isn't available.
     id m_displayLink;
     NSDate* m_date;
     NSTimeInterval m_lastFrameTime;
@@ -185,12 +184,6 @@ int main(int argc, char **argv)
 
 - (void)setLastFrameTime:(NSTimeInterval)frameInterval
 {
-    // Frame interval defines how many display frames must pass between each time the
-    // display link fires. The display link will only fire 30 times a second when the
-    // frame internal is two on a display that refreshes 60 times a second. The default
-    // frame interval setting of one will fire 60 times a second when the display refreshes
-    // at 60 times a second. A frame interval setting of less than one results in undefined
-    // behavior.
     if (frameInterval >= 1)
     {
         m_lastFrameTime = frameInterval;
@@ -210,9 +203,6 @@ int main(int argc, char **argv)
 		
 	if (m_displayLinkSupported)
 	{
-		// CADisplayLink is API new to iPhone SDK 3.1. Compiling against earlier versions will result in a warning, but can be dismissed
-		// if the system version runtime check for CADisplayLink exists in -initWithCoder:. The runtime check ensures this code will
-		// not be called in system versions earlier than 3.1.
 		m_date = [[NSDate alloc] init];
 		m_lastFrameTime = -[m_date timeIntervalSinceNow];
 		
@@ -245,8 +235,6 @@ int main(int argc, char **argv)
 	
 	m_okit.init();
 	
-	// A system version of 3.1 or greater is required to use CADisplayLink. The NSTimer
-	// class is used as fallback when it isn't available.
 #if USE_CADISPLAYLINK
 	NSString *reqSysVer = @"3.1";
 	NSString *currSysVer = [[UIDevice currentDevice] systemVersion];

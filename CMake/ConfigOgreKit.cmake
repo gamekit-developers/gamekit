@@ -299,7 +299,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 		option(OGREKIT_BUILD_GLRS "Enable the OpenGL render system" ON)
 	endif()
 	
-	if (OPENGLES_FOUND)
+	if (OPENGLES_FOUND AND OGREKIT_BUILD_IPHONE)
 		option(OGREKIT_BUILD_GLESRS "Enable the OpenGLES system" ON)
 	endif()
 

@@ -51,7 +51,15 @@ using namespace Ogre;
 
 @implementation gkGestureView
 
+- (BOOL)canBecomeFirstResponder
+{
+	return YES;
+}
 
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event 
+{
+	[self.nextResponder touchesBegan:event];
+}
 
 @end
 
