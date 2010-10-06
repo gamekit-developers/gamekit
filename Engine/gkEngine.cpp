@@ -36,7 +36,6 @@
 #include "gkSceneManager.h"
 #include "gkLogger.h"
 #include "gkUtils.h"
-#include "gkSoundManager.h"
 #include "gkLogicManager.h"
 #include "gkBlendFile.h"
 #include "gkBlendLoader.h"
