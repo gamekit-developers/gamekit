@@ -103,8 +103,8 @@ void nsNodePropertyPage::propertyChangeEvent(wxPropertyGridEvent& evt)
 
 void nsNodePropertyPage::selectRoot(void)
 {
-	// select the information property
-	SetSelection(m_type);
+	// select the information property	
+	DoSetSelection(m_type);
 }
 
 

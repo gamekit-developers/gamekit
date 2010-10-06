@@ -6,7 +6,7 @@
 # setup_wx()
 # add_executable(Some_wxWidgets_app ... )
 #-------------------------------------------------------------------
-set(WX_VERSION wxWidgets-2.9.0)
+set(WX_VERSION wxWidgets-2.9.1)
 
 
 macro(configure_wx_build ROOT)

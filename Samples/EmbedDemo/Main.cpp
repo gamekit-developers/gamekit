@@ -169,7 +169,8 @@ bool EmbedApp::OnInit()
 	
 	m_okApp = new okApp;
 
-    new EmbedFrame();
+    EmbedFrame* frame = new EmbedFrame();
+	SetTopWindow(frame);
 
     return true;
 }
@@ -282,7 +283,7 @@ EmbedFrame::EmbedFrame() :
 	sizeY += LOG_BOX_HEIGHT;
 #endif
 
-	SetClientSize(sizeX, sizeY);
+
 
 	if (m_okWin)
 	{
@@ -293,7 +294,9 @@ EmbedFrame::EmbedFrame() :
 	DragAcceptFiles(true);
 	SetSizerAndFit(vbox);
 
-    Show();       
+	SetClientSize(sizeX, sizeY);
+
+    Show();
 }
 
 EmbedFrame::~EmbedFrame()
