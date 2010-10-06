@@ -245,6 +245,39 @@ void gkLogicLoader::convertObject(Blender::Object* bobj, gkGameObject* gobj)
 				aa->setProperty(gkLogicLoader_formatText(baa->frameProp));
 
 			} break;
+		case ACT_IPO:
+			{
+				gkActionActuator* aa = new gkActionActuator(gobj, lnk, bact->name);
+				la = aa;
+				Blender::bIpoActuator* bia = (Blender::bIpoActuator*)bact->data;
+				
+				aa->setStart(bia->sta);
+				aa->setEnd(bia->end);
+				aa->setBlend(0);
+
+				int mode = 0;
+				switch (bia->type)
+				{
+				case ACT_ACTION_PINGPONG:   {mode = gkActionActuator::AA_PONG;          break;}
+				case ACT_ACTION_FLIPPER:    {mode = gkActionActuator::AA_FLIPPER;       break;}
+				case ACT_ACTION_LOOP_STOP:  {mode = gkActionActuator::AA_LOOP_STOP;     break;}
+				case ACT_ACTION_LOOP_END:   {mode = gkActionActuator::AA_LOOP_END;      break;}
+				case ACT_ACTION_FROM_PROP:  {mode = gkActionActuator::AA_PROPERTY;      break;}
+				case ACT_ACTION_PLAY:
+				case ACT_ACTION_KEY2KEY:
+				case ACT_ACTION_MOTION:
+				default:
+					{mode = gkActionActuator::AA_PLAY; break;}
+				}
+				aa->setMode(mode);
+
+				aa->setPriority(0);
+				aa->setReset(false);
+
+				// TODO set action that was active in UI
+				aa->setAction("Action");
+				aa->setProperty(gkLogicLoader_formatText(bia->frameProp));
+			} break;
 		case ACT_GAME:
 			{
 				gkGameActuator* ga = new gkGameActuator(gobj, lnk, bact->name);

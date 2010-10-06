@@ -100,7 +100,8 @@ class gkAction;
 class gkActionChannel;
 class gkActionManager;
 class gkBezierSpline;
-
+class gkGameObjectChannel;
+class gkAnimationChannel;
 
 class gkConstraintManager;
 class gkConstraint;

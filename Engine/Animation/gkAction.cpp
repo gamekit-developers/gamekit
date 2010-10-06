@@ -26,7 +26,7 @@
 */
 #include "gkAction.h"
 #include "gkActionChannel.h"
-
+#include "gkObjectAction.h"
 
 
 
@@ -40,7 +40,8 @@ gkAction::gkAction(const gkString& name)
 	     m_weight(1.0),
 	     m_blendFrames(1.0),
 	     m_enabled(true),
-	     m_mode(GK_ACT_LOOP)
+	     m_mode(GK_ACT_LOOP),
+	     m_objectChannel(0)
 {
 }
 
@@ -48,6 +49,9 @@ gkAction::gkAction(const gkString& name)
 
 gkAction::~gkAction()
 {
+	if(m_objectChannel)
+		delete m_objectChannel;
+
 	gkActionChannel** ptr = m_channels.ptr();
 	int len = getNumChannels(), i;
 	for (i = 0; i < len; ++i)
@@ -141,6 +145,9 @@ void gkAction::evaluate(gkScalar time)
 	int len = getNumChannels(), i = 0;
 	while (i < len)
 		ptr[i++]->evaluate(tick, delta, m_weight);
+	
+	if(m_objectChannel !=0)
+		m_objectChannel->evaluate(tick, delta, m_weight);
 }
 
 

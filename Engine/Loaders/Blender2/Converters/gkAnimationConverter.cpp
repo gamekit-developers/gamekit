@@ -34,9 +34,10 @@
 #include "gkAction.h"
 #include "gkActionChannel.h"
 #include "gkBezierSpline.h"
+#include "gkObjectAction.h"
 
 
-void ConvertSpline(Blender::BezTriple* bez, gkActionChannel* chan, int access, int mode, int totvert, gkVector2& range)
+void ConvertSpline(Blender::BezTriple* bez, gkAnimationChannel* chan, int access, int mode, int totvert, gkVector2& range)
 {
 	gkBezierSpline* spline = new gkBezierSpline(access);
 
@@ -85,6 +86,82 @@ void ConvertSpline(Blender::BezTriple* bez, gkActionChannel* chan, int access, i
 
 void gkAnimationLoader::convertGameObject(bParse::bListBasePtr* actions, class gkGameObject* obj, bool pre25compat)
 {
+	for (int i = 0; i < actions->size(); ++i)
+	{
+		Blender::bAction* bact = (Blender::bAction*)actions->at(i);
+
+		// find ownership
+		Blender::bActionChannel* bac = (Blender::bActionChannel*)bact->chanbase.first;
+
+
+		if (obj->hasAction(GKB_IDNAME(bact)))
+			continue;
+
+		gkAction* act = obj->createAction(GKB_IDNAME(bact));
+
+		// min/max
+		gkVector2 range(FLT_MAX, -FLT_MAX);
+
+		if (bac && pre25compat)
+		{
+			// older file
+		
+		}
+		else
+		{
+			// 250 + files
+
+			Blender::FCurve* bfc = (Blender::FCurve*)bact->curves.first;
+
+			while (bfc)
+			{
+				utString transform_name(bfc->rna_path);
+				
+				// one object chanel per action
+				gkGameObjectChannel* gochan = act->getObjectChannel();
+				if (!gochan)
+				{
+					gochan = new gkGameObjectChannel(act, obj);
+					act->setObjectChannel(gochan);
+				}
+				
+				if (bfc->bezt)
+				{
+					int code = -1;
+					if (transform_name == "rotation_quaternion")
+					{
+						if (bfc->array_index == 0) code = SC_ROT_W;
+						else if (bfc->array_index == 1) code = SC_ROT_X;
+						else if (bfc->array_index == 2) code = SC_ROT_Y;
+						else if (bfc->array_index == 3) code = SC_ROT_Z;
+					}
+					else if (transform_name == "location")
+					{
+						if (bfc->array_index == 0) code = SC_LOC_X;
+						else if (bfc->array_index == 1) code = SC_LOC_Y;
+						else if (bfc->array_index == 2) code = SC_LOC_Z;
+					}
+					else if (transform_name == "scale")
+					{
+						if (bfc->array_index == 0) code = SC_SCL_X;
+						else if (bfc->array_index == 1) code = SC_SCL_Y;
+						else if (bfc->array_index == 2) code = SC_SCL_Z;
+					}
+					
+					// ignore any other codes
+					if (code != -1 && bfc->totvert > 0)
+						ConvertSpline(bfc->bezt, gochan, code, bfc->bezt->ipo, bfc->totvert, range);
+				
+				}
+				bfc = bfc->next;
+			}
+		}
+
+		// apply time range
+		act->setStart(range.x);
+		act->setEnd(range.y);
+
+	}
 }
 
 

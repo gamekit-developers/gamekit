@@ -52,6 +52,7 @@
 #include "gkMesh.h"
 #include "gkVariable.h"
 
+#include "gkAction.h"
 
 using namespace Ogre;
 
@@ -1098,3 +1099,29 @@ void gkGameObject::removeEventListener(gkGameObject::Notifier* evt)
 	GK_ASSERT(evt);
 	if (evt) m_events.erase(evt);
 }
+
+
+gkAction* gkGameObject::createAction(const gkHashedString& name)
+{
+	if (m_actions.find(name) != GK_NPOS)
+	{
+		gkPrintf("GameObject: Duplicate action '%s'\n", name.str().c_str());
+		return 0;
+	}
+
+	gkAction* act = new gkAction(name.str());
+
+	m_actions.insert(act->getName(), act);
+	return act;
+}
+
+
+gkAction* gkGameObject::getAction(const gkHashedString& name)
+{
+	size_t pos;
+	if ((pos = m_actions.find(name)) == GK_NPOS)
+		return 0;
+
+	return m_actions.at(pos);
+}
+

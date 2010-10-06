@@ -81,23 +81,25 @@ gkLogicBrick* gkActionActuator::clone(gkLogicLink* link, gkGameObject* dest)
 void gkActionActuator::doInit(void)
 {
 	if (m_skeleton != 0)
-	{
 		m_action = m_skeleton->getAction(m_startAct);
-		if (m_action)
-		{
-			m_action->setTimePosition(0.f);
-			m_action->setBlendFrames(m_blend);
-		}
-
-		// update rate is (animRate / tickRate) ... 25.f / 60.f
-
-		gkUserDefs& defs = gkEngine::getSingleton().getUserDefs();
-		m_fps = defs.animspeed  * gkEngine::getStepRate();
-		if (gkNan(m_fps))
-			m_fps = (25.f * gkEngine::getStepRate());
-
-		m_curTick = m_start;
+	else 
+		m_action = m_object->getAction(m_startAct);
+	
+	if (m_action)
+	{
+		m_action->setTimePosition(0.f);
+		m_action->setBlendFrames(m_blend);
 	}
+	
+	// update rate is (animRate / tickRate) ... 25.f / 60.f
+	
+	gkUserDefs& defs = gkEngine::getSingleton().getUserDefs();
+	m_fps = defs.animspeed  * gkEngine::getStepRate();
+	if (gkNan(m_fps))
+		m_fps = (25.f * gkEngine::getStepRate());
+	
+	m_curTick = m_start;
+	
 }
 
 
@@ -152,9 +154,6 @@ void gkActionActuator::execute(void)
 			return;
 	}
 
-	if (!m_skeleton)
-		return;
-
 	if (!m_isInit)
 	{
 		m_isInit = true;
@@ -163,25 +162,25 @@ void gkActionActuator::execute(void)
 
 	if (m_action != 0)
 	{
-		gkEntity* ent = m_skeleton->getController();
-
-		if (ent)
+		switch (m_mode)
 		{
-
-			switch (m_mode)
-			{
-			case AA_PLAY:
-				playStop();
-				break;
-			case AA_LOOP_STOP:
-			case AA_LOOP_END:
-			default:
-				play();
-				break;
-			}
-
-
+		case AA_PLAY:
+			playStop();
+			break;
+		case AA_LOOP_STOP:
+		case AA_LOOP_END:
+		default:
+			play();
+			break;
+		}
+		
+		if (m_skeleton !=0)
+		{
+			gkEntity* ent = m_skeleton->getController();
 			ent->evalAction(m_action, 0.f);
 		}
+		else
+			m_action->evaluate(0.f);
+		
 	}
 }

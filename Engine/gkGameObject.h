@@ -67,6 +67,7 @@ public:
 
 	typedef utArray<Notifier*> Notifications;
 
+	typedef utHashTable<gkHashedString, gkAction*>  Actions;
 
 public:
 
@@ -256,6 +257,12 @@ public:
 	void removeEventListener(Notifier* evt);
 
 
+	// actions
+	gkAction*       createAction(const gkHashedString& name);
+	gkAction*       getAction(const gkHashedString& name);
+	GK_INLINE bool  hasAction(const gkHashedString& name)      { return m_actions.find(name) != GK_NPOS; }
+
+
 protected:
 
 
@@ -309,6 +316,7 @@ protected:
 	int                         m_flags;
 	LifeSpan                    m_life;
 
+	Actions                     m_actions;
 
 	virtual void createInstanceImpl(void);
 	virtual void destroyInstanceImpl(void);

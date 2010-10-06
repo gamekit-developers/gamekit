@@ -319,6 +319,7 @@ void gkBlenderSceneConverter::convertObject(Blender::Object* bobj, gkGameObject*
 		convertObjectPhysics(gobj, bobj);
 		convertObjectConstraints(gobj, bobj);
 		convertObjectLogic(gobj, bobj);
+		convertObjectActions(gobj, bobj);
 
 
 		// object data
@@ -592,6 +593,14 @@ void gkBlenderSceneConverter::convertObjectLogic(gkGameObject* gobj, Blender::Ob
 	m_logic->convertObject(bobj, gobj);
 }
 
+
+void gkBlenderSceneConverter::convertObjectActions(gkGameObject* gobj, Blender::Object* bobj)
+{
+	gkAnimationLoader anims;
+	bParse::bMain* mp = m_file->_getInternalFile()->getMain();
+
+	anims.convertGameObject(mp->getAction(), gobj, mp->getVersion() <= 249);
+}
 
 
 void gkBlenderSceneConverter::convertObjectCamera(gkGameObject* gobj, Blender::Object* bobj)

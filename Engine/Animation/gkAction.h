@@ -55,12 +55,13 @@ public:
 
 protected:
 
-	const gkString      m_name;
-	Channels            m_channels;
-	gkScalar            m_start, m_end;
-	gkScalar            m_evalTime, m_weight, m_blendFrames;
-	bool                m_enabled;
-	int                 m_mode;
+	const gkString       m_name;
+	Channels             m_channels;
+	gkScalar             m_start, m_end;
+	gkScalar             m_evalTime, m_weight, m_blendFrames;
+	bool                 m_enabled;
+	int                  m_mode;
+	gkGameObjectChannel* m_objectChannel;
 
 public:
 	gkAction(const gkString& name);
@@ -87,6 +88,9 @@ public:
 
 	void addChannel(gkActionChannel* chan);
 	gkActionChannel* getChannel(gkBone* bone);
+	
+	GK_INLINE void setObjectChannel(gkGameObjectChannel* chan)  { m_objectChannel = chan; }
+	GK_INLINE gkGameObjectChannel * getObjectChannel()          { return m_objectChannel; }
 
 
 	void setBlendFrames(gkScalar v);
