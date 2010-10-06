@@ -449,7 +449,7 @@ void EmbedFrame::OnTimer(wxTimerEvent& WXUNUSED(event))
 		const Ogre::RenderTarget::FrameStats& stats = gkWindowSystem::getSingleton().getMainWindow()->getStatistics();
 
 		m_statusBar->SetStatusText(wxString::Format("FPS: %.3f (%.3f/%.3f/%.3f) NumTris: %d NumBatches: %d",  
-			stats.lastFPS, stats.avgFPS, stats.bestFPS, stats.worstFPS, stats.triangleCount, stats.batchCount));
+			stats.lastFPS, stats.avgFPS, stats.bestFPS, stats.worstFPS, (int)stats.triangleCount, (int)stats.batchCount));
 #if ENABLE_LOG_BOX
 		if (wxTheApp->IsActive() && m_okWin->isRunnigGameLoop() && !m_okWin->HasFocus())
 			m_okWin->SetFocusFromKbd ();
