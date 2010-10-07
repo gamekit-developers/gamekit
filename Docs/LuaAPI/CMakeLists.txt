@@ -5,6 +5,7 @@ include(FindDoxygen)
 
 file(GLOB_RECURSE SRC Source/*.inl Source/*.h)
 
+set(OGREKIT_DOC_IMAGES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Images)
 
 set(OGREKIT_DOC_IMAGES 
 	${CMAKE_CURRENT_SOURCE_DIR}/bg_t.gif
@@ -14,11 +15,7 @@ set(OGREKIT_DOC_IMAGES
 
 if (DOXYGEN_FOUND)
 
-	if(WIN32)
-		set(CPCMD copy ${OGREKIT_DOC_IMAGES} ${CMAKE_CURRENT_SOURCE_DIR}/local/html/)
-	else()
-		set(CPCMD cp ${OGREKIT_DOC_IMAGES} ${CMAKE_CURRENT_SOURCE_DIR}/local/html/)
-	endif()
+	set(CPCMD ${CMAKE_COMMAND} -E copy_directory ${OGREKIT_DOC_IMAGES_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/local/html)
 	
 	add_custom_target(LuaApiManual
 		COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.txt && ${CPCMD}
