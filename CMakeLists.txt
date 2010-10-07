@@ -92,6 +92,10 @@ endif()
 
 subdirs(Samples)
 
-if (OGREKIT_UPDATE_DOCS)
+if (OGREKIT_UPDATE_CPP_DOCS)
+	subdirs(Docs/CppAPI)
+endif()
+
+if (OGREKIT_UPDATE_LUA_DOCS)
 	subdirs(Docs/LuaAPI)
 endif()
