@@ -210,7 +210,7 @@ void gkAnimationLoader::convertGameObject(bParse::bListBasePtr* actions, class g
 				bfc = bfc->next;
 			}
 			
-			if(bobj && bobj->rotmode == 1) // ROT_MODE_EUL == 1 in blender
+			if(bobj && bobj->rotmode == 1 && act->getObjectChannel()) // ROT_MODE_EUL == 1 in blender
 				act->getObjectChannel()->setEulerRotation(true);
 			
 			// apply time range
