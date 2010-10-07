@@ -29,7 +29,7 @@
 
 
 gkGameObjectChannel::gkGameObjectChannel(gkAction* parent, gkGameObject* object)
-	:    gkAnimationChannel(parent), m_object(object)
+	:    gkAnimationChannel(parent), m_object(object), m_isEulerRotation(false)
 {
 }
 
@@ -48,6 +48,8 @@ void gkGameObjectChannel::evaluate(gkScalar time, gkScalar delta, gkScalar weigh
 	gkTransformState channel;
 	channel.setIdentity();
 
+	gkEuler euler(0,0,0);
+	
 	while (i < len)
 	{
 		const gkBezierSpline* spline = splines[i++];
@@ -71,16 +73,23 @@ void gkGameObjectChannel::evaluate(gkScalar time, gkScalar delta, gkScalar weigh
 		case SC_ROT_Y: { channel.rot.y = eval; break; }
 		case SC_ROT_Z: { channel.rot.z = eval; break; }
 		case SC_ROT_W: { channel.rot.w = eval; break; }
+		case SC_ROT_EULER_X: { euler.x = eval; break; }
+		case SC_ROT_EULER_Y: { euler.y = eval; break; }
+		case SC_ROT_EULER_Z: { euler.z = eval; break; }
 		}
 	}
 
-
-	// prevent divide by zero
-	if (gkFuzzy(channel.rot.Norm()))
-		channel.rot = Ogre::Quaternion::IDENTITY;
+	if(m_isEulerRotation)
+		channel.rot = euler.toQuaternion();
 	else
-		channel.rot.normalise();
-
+	{
+		// prevent divide by zero
+		if (gkFuzzy(channel.rot.Norm()))
+			channel.rot = Ogre::Quaternion::IDENTITY;
+		else
+			channel.rot.normalise();
+	}
+	
 	GK_ASSERT(!channel.loc.isNaN());
 	GK_ASSERT(!channel.rot.isNaN());
 	GK_ASSERT(!channel.scl.isNaN());

@@ -27,7 +27,6 @@
 #include "gkAnimationConverter.h"
 #include "gkSkeletonResource.h"
 #include "gkSkeletonManager.h"
-#include "Blender.h"
 #include "gkBlenderDefines.h"
 #include "gkLoaderCommon.h"
 
@@ -84,35 +83,84 @@ void ConvertSpline(Blender::BezTriple* bez, gkAnimationChannel* chan, int access
 }
 
 
-void gkAnimationLoader::convertGameObject(bParse::bListBasePtr* actions, class gkGameObject* obj, bool pre25compat)
+void gkAnimationLoader::convertGameObject(bParse::bListBasePtr* actions, class gkGameObject* obj, bool pre25compat, Blender::Object* bobj)
 {
-	for (int i = 0; i < actions->size(); ++i)
+	if(pre25compat)
 	{
-		Blender::bAction* bact = (Blender::bAction*)actions->at(i);
-
-		// find ownership
-		Blender::bActionChannel* bac = (Blender::bActionChannel*)bact->chanbase.first;
-
-
-		if (obj->hasAction(GKB_IDNAME(bact)))
-			continue;
-
-		gkAction* act = obj->createAction(GKB_IDNAME(bact));
-
-		// min/max
-		gkVector2 range(FLT_MAX, -FLT_MAX);
-
-		if (bac && pre25compat)
+		// for older files
+		if(bobj && bobj->ipo)
 		{
-			// older file
-		
+			Blender::Ipo* bipo = bobj->ipo;
+			
+			gkAction* act = obj->createAction(GKB_IDNAME(bipo));
+			
+			// min/max
+			gkVector2 range(FLT_MAX, -FLT_MAX);
+			
+			Blender::IpoCurve* icu = (Blender::IpoCurve*)bipo->curve.first;
+			
+			while (icu)
+			{
+				// one object chanel per action
+				gkGameObjectChannel* gochan = act->getObjectChannel();
+				if (!gochan)
+				{
+					gochan = new gkGameObjectChannel(act, obj);
+					act->setObjectChannel(gochan);
+				}
+				
+				if (icu->bezt)
+				{
+					int code = -1;
+					switch (icu->adrcode)
+					{
+					case OB_ROT_X:  { code = SC_ROT_EULER_X;  break; }
+					case OB_ROT_Y:  { code = SC_ROT_EULER_Y;  break; }
+					case OB_ROT_Z:  { code = SC_ROT_EULER_Z;  break; }
+					case OB_LOC_X:  { code = SC_LOC_X;  break; }
+					case OB_LOC_Y:  { code = SC_LOC_Y;  break; }
+					case OB_LOC_Z:  { code = SC_LOC_Z;  break; }
+					case OB_SIZE_X: { code = SC_SCL_X;  break; }
+					case OB_SIZE_Y: { code = SC_SCL_Y;  break; }
+					case OB_SIZE_Z: { code = SC_SCL_Z;  break; }
+					}
+					
+					// ignore any other codes
+					if (code != -1 && icu->totvert > 0)
+						ConvertSpline(icu->bezt, gochan, code, icu->ipo, icu->totvert, range);
+				}
+				icu = icu->next;
+			}
+			
+			// never quaternion for blender <2.4 
+			act->getObjectChannel()->setEulerRotation(true);
+			
+			// apply time range
+			act->setStart(range.x);
+			act->setEnd(range.y);
 		}
-		else
+	}
+	else
+	{
+		// 250 + files
+		
+		for (int i = 0; i < actions->size(); ++i)
 		{
-			// 250 + files
-
+			Blender::bAction* bact = (Blender::bAction*)actions->at(i);
+	
+			// find ownership
+			Blender::bActionChannel* bac = (Blender::bActionChannel*)bact->chanbase.first;
+	
+			if (obj->hasAction(GKB_IDNAME(bact)))
+				continue;
+	
+			gkAction* act = obj->createAction(GKB_IDNAME(bact));
+			
+			// min/max
+			gkVector2 range(FLT_MAX, -FLT_MAX);
+			
 			Blender::FCurve* bfc = (Blender::FCurve*)bact->curves.first;
-
+			
 			while (bfc)
 			{
 				utString transform_name(bfc->rna_path);
@@ -135,6 +183,12 @@ void gkAnimationLoader::convertGameObject(bParse::bListBasePtr* actions, class g
 						else if (bfc->array_index == 2) code = SC_ROT_Y;
 						else if (bfc->array_index == 3) code = SC_ROT_Z;
 					}
+					else if (transform_name == "rotation_euler")
+					{
+						if (bfc->array_index == 0) code = SC_ROT_EULER_X;
+						else if (bfc->array_index == 1) code = SC_ROT_EULER_Y;
+						else if (bfc->array_index == 2) code = SC_ROT_EULER_Z;
+					}
 					else if (transform_name == "location")
 					{
 						if (bfc->array_index == 0) code = SC_LOC_X;
@@ -151,16 +205,19 @@ void gkAnimationLoader::convertGameObject(bParse::bListBasePtr* actions, class g
 					// ignore any other codes
 					if (code != -1 && bfc->totvert > 0)
 						ConvertSpline(bfc->bezt, gochan, code, bfc->bezt->ipo, bfc->totvert, range);
-				
+					
 				}
 				bfc = bfc->next;
 			}
+			
+			if(bobj && bobj->rotmode == 1) // ROT_MODE_EUL == 1 in blender
+				act->getObjectChannel()->setEulerRotation(true);
+			
+			// apply time range
+			act->setStart(range.x);
+			act->setEnd(range.y);
+	
 		}
-
-		// apply time range
-		act->setStart(range.x);
-		act->setEnd(range.y);
-
 	}
 }
 

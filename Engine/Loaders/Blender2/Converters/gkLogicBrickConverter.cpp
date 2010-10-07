@@ -274,8 +274,12 @@ void gkLogicLoader::convertObject(Blender::Object* bobj, gkGameObject* gobj)
 				aa->setPriority(0);
 				aa->setReset(false);
 
-				// TODO set action that was active in UI
-				aa->setAction("Action");
+				
+				if (bobj->adt)	// 2.5
+					aa->setAction(bobj->adt->action ? GKB_IDNAME(bobj->adt->action) : "");
+				else			// older files
+					aa->setAction(bobj->ipo ? GKB_IDNAME(bobj->ipo) : "");
+				
 				aa->setProperty(gkLogicLoader_formatText(bia->frameProp));
 			} break;
 		case ACT_GAME:

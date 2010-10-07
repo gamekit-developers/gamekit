@@ -599,7 +599,7 @@ void gkBlenderSceneConverter::convertObjectActions(gkGameObject* gobj, Blender::
 	gkAnimationLoader anims;
 	bParse::bMain* mp = m_file->_getInternalFile()->getMain();
 
-	anims.convertGameObject(mp->getAction(), gobj, mp->getVersion() <= 249);
+	anims.convertGameObject(mp->getAction(), gobj, mp->getVersion() <= 249, bobj);
 }
 
 

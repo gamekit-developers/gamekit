@@ -46,6 +46,9 @@ enum gkCommonChannelCodes
 	SC_ROT_Y,
 	SC_ROT_Z,
 	SC_ROT_W,
+	SC_ROT_EULER_X,
+	SC_ROT_EULER_Y,
+	SC_ROT_EULER_Z,
 };
 
 class gkAction;

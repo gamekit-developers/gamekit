@@ -28,6 +28,7 @@
 #define _gkAnimationConverter_h_
 
 #include "bCommon.h"
+#include "Blender.h"
 
 
 class gkAnimationLoader
@@ -38,7 +39,7 @@ public:
 	~gkAnimationLoader() {}
 
 
-	void convertGameObject(bParse::bListBasePtr* actions, class gkGameObject* obj, bool pre25compat);
+	void convertGameObject(bParse::bListBasePtr* actions, class gkGameObject* obj, bool pre25compat, Blender::Object* bobj=0);
 	void convertSkeleton(bParse::bListBasePtr* actions, class gkSkeletonResource* skel, bool pre25compat);
 
 

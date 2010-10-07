@@ -38,6 +38,7 @@ class gkGameObjectChannel : public gkAnimationChannel
 {
 protected:
 	gkGameObject*        m_object;
+	bool                 m_isEulerRotation;
 
 
 public:
@@ -47,6 +48,9 @@ public:
 	GK_INLINE const gkTransformState& getTransfom(void) { GK_ASSERT(m_object); return m_object->getTransformState(); }
 	GK_INLINE gkMatrix4               getMatrix(void)   { GK_ASSERT(m_object); return getTransfom().toMatrix(); }
 	GK_INLINE gkGameObject*           getObject(void)   { GK_ASSERT(m_object); return m_object; }
+	
+	GK_INLINE bool                    isEulerRotation(void)    { return m_isEulerRotation; }
+	GK_INLINE void                    setEulerRotation(bool v) { m_isEulerRotation = v; }
 
 	void evaluate(gkScalar time, gkScalar delta, gkScalar weight);
 };
