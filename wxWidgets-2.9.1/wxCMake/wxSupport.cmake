@@ -69,9 +69,7 @@ set(wxPNG
 
 if (WIN32)
 	set(TIFF_PLATFORM_SRC src/tiff/libtiff/tif_win32.c)
-endif()
-
-if (APPLE)
+elseif (APPLE)
 	set(TIFF_PLATFORM_SRC src/tiff/libtiff/tif_unix.c)
 else()
 	set(TIFF_PLATFORM_SRC src/tiff/libtiff/tif_unix.c)
