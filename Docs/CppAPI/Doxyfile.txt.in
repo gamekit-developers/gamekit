@@ -5,7 +5,7 @@
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = OgreKit
 PROJECT_NUMBER         = 
-OUTPUT_DIRECTORY       = ${CMAKE_CURRENT_BINARY_DIR}
+OUTPUT_DIRECTORY       = "${CMAKE_CURRENT_BINARY_DIR}"
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
 BRIEF_MEMBER_DESC      = YES
@@ -99,7 +99,7 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = ${CMAKE_SOURCE_DIR}/Engine
+INPUT                  = "${CMAKE_SOURCE_DIR}/Engine"
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.cpp \
                          *.h
@@ -141,9 +141,9 @@ IGNORE_PREFIX          =
 GENERATE_HTML          = YES
 HTML_OUTPUT            = html
 HTML_FILE_EXTENSION    = .html
-HTML_HEADER            = ${CMAKE_CURRENT_SOURCE_DIR}/header.html
-HTML_FOOTER            = ${CMAKE_CURRENT_SOURCE_DIR}/footer.html
-HTML_STYLESHEET        = ${CMAKE_CURRENT_SOURCE_DIR}/style.css
+HTML_HEADER            = header.html
+HTML_FOOTER            = footer.html
+HTML_STYLESHEET        = style.css
 HTML_COLORSTYLE_HUE    = 80
 HTML_COLORSTYLE_SAT    = 90
 HTML_COLORSTYLE_GAMMA  = 60
