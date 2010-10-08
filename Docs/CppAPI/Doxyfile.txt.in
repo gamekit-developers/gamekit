@@ -335,3 +335,4 @@ ALIASES += endpage="<br>\n\n<hr>\n\n"
 ALIASES += sectionseperator="\n\n"
 ALIASES += sectionseperator{1}="\n\n<b>\1</b>\n\n"
 
+INPUT=${CMAKE_SOURCE_DIR}/Engine
