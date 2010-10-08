@@ -20,14 +20,6 @@ if (DOXYGEN_FOUND)
 		COMMENT "Building OgreKit Lua Documentation" 
 		SOURCES ${SRC}
 		)
-	
-	add_custom_command(
-		TARGET LuaApiManual 
-		PRE_BUILD
-		COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/header.html	${CMAKE_CURRENT_BINARY_DIR}/header.html
-		COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/footer.html	${CMAKE_CURRENT_BINARY_DIR}/footer.html
-		COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/style.css		${CMAKE_CURRENT_BINARY_DIR}/style.css
-		)
 
 	add_custom_command(
 		TARGET LuaApiManual 
