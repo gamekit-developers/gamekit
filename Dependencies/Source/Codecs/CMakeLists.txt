@@ -32,7 +32,7 @@ set(VORBIS
 	Vorbis/window.h
 
 	Vorbis/analysis.c
-	Vorbis/barkmel.c
+	#Vorbis/barkmel.c
 	Vorbis/bitrate.c
 	Vorbis/block.c
 	Vorbis/codebook.c
