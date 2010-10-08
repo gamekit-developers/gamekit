@@ -24,7 +24,7 @@ if (DOXYGEN_FOUND)
 		)
 	
 	add_custom_command(
-		TARGET LuaApiManual 
+		TARGET CppApiManual 
 		PRE_BUILD
 		COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/header.html	${CMAKE_CURRENT_BINARY_DIR}/header.html
 		COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/footer.html	${CMAKE_CURRENT_BINARY_DIR}/footer.html
