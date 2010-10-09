@@ -14,7 +14,7 @@ set(OGREKIT_DOXYFILE_CPP ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.txt)
 if (DOXYGEN_FOUND)
 	configure_file(${OGREKIT_DOXYFILE_CPP_IN} ${OGREKIT_DOXYFILE_CPP})
 	
-	add_custom_target(LuaApiManual ALL
+	add_custom_target(LuaApiManual
 		COMMAND ${DOXYGEN_EXECUTABLE} ${OGREKIT_DOXYFILE_CPP}
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BUILD_DIR} 
 		COMMENT "Building OgreKit Lua Documentation" 

@@ -16,7 +16,7 @@ if (DOXYGEN_FOUND)
 	configure_file(${OGREKIT_DOXYFILE_CPP_IN} ${OGREKIT_DOXYFILE_CPP})
 
 
-	add_custom_target(CppApiManual ALL
+	add_custom_target(CppApiManual
 		COMMAND ${DOXYGEN_EXECUTABLE} ${OGREKIT_DOXYFILE_CPP}
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} 
 		COMMENT "Building OgreKit C++ Documentation" 
