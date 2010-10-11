@@ -90,6 +90,10 @@ if (OGREKIT_COMPILE_WXWIDGETS)
 	subdirs(${OGREKIT_SOURCE_DIR}/${WX_VERSION})
 endif()
 
+if (OGREKIT_USE_FILETOOLS)
+	subdirs(${OGREKIT_SOURCE_DIR}/Tools/FileTools)
+endif()
+
 subdirs(Samples)
 
 if (OGREKIT_UPDATE_CPP_DOCS)

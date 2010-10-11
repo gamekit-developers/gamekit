@@ -33,4 +33,8 @@ if (SAMPLES_EMBEDDEMO)
 	subdirs(EmbedDemo)
 endif()
 
+if (SAMPLES_INSPECTOR)
+	subdirs(FileInspector)
+endif()
+
 endif()

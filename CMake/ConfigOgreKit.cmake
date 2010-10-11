@@ -36,6 +36,8 @@ macro (configure_ogrekit ROOT OGREPATH)
 	option(OGREKIT_UPDATE_LUA_DOCS       "Update Lua API documentation(Requires doxygen)." OFF)
 	option(OGREKIT_DISABLE_ZIP           "Disable external .zip resource loading" ON)
 	option(OGREKIT_USE_STATIC_FREEIMAGE  "Compile and link statically FreeImage and all its plugins" ON)
+	option(OGREKIT_USE_FILETOOLS         "Compile FBT file format utilities" ON)
+
 
 	if (OGREKIT_USE_LUA)
 		add_definitions(-DOGREKIT_USE_LUA)	
@@ -121,12 +123,13 @@ macro (configure_ogrekit ROOT OGREPATH)
 	
 	
 	
-	option(SAMPLES_RUNTIME        "Build Samples/Runtime"     ON)
-	option(SAMPLES_LOGICDEMO      "Build Samples/LogicDemo"   ON)
-	option(SAMPLES_VEHICLEDEMO    "Build Samples/VehicleDemo" ON)
-	option(SAMPLES_CPPDEMO        "Build Samples/CppDemo"     ON)
-	option(SAMPLES_NODE_EDITOR    "Build Samples/NodeEditor"  OFF)
-	option(SAMPLES_EMBEDDEMO      "Build Samples/EmbedDemo"   OFF)
+	option(SAMPLES_RUNTIME        "Build Samples/Runtime"       ON)
+	option(SAMPLES_LOGICDEMO      "Build Samples/LogicDemo"     ON)
+	option(SAMPLES_VEHICLEDEMO    "Build Samples/VehicleDemo"   ON)
+	option(SAMPLES_CPPDEMO        "Build Samples/CppDemo"       ON)
+	option(SAMPLES_NODE_EDITOR    "Build Samples/NodeEditor"    OFF)
+	option(SAMPLES_EMBEDDEMO      "Build Samples/EmbedDemo"     OFF)
+	option(SAMPLES_INSPECTOR      "Build Samples/FileInspector" OFF)
 	
 	
 	if (OGREKIT_USE_LUA)
@@ -140,8 +143,9 @@ macro (configure_ogrekit ROOT OGREPATH)
 	endif()
 	
 	if (NOT OGREKIT_COMPILE_WXWIDGETS)
-		set(SAMPLES_NODE_EDITOR FALSE CACHE BOOL "Forcing NodeEditor removal" FORCE)
-		set(SAMPLES_EMBEDDEMO   FALSE CACHE BOOL "Forcing EmbedDemo removal"  FORCE)
+		set(SAMPLES_NODE_EDITOR FALSE CACHE BOOL "Forcing NodeEditor removal"    FORCE)
+		set(SAMPLES_EMBEDDEMO   FALSE CACHE BOOL "Forcing EmbedDemo removal"     FORCE)
+		set(SAMPLES_INSPECTOR   FALSE CACHE BOOL "Forcing FileInspector removal" FORCE)
 	endif()
     
 	if (WIN32 AND SAMPLES_EMBEDDEMO AND NOT OGREKIT_OIS_WIN32_NATIVE)
