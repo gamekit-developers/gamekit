@@ -1125,3 +1125,25 @@ gkAction* gkGameObject::getAction(const gkHashedString& name)
 	return m_actions.at(pos);
 }
 
+
+void gkGameObject::playAction(const gkString& act, gkScalar blend, int mode, int priority)
+{
+	gkAction* gact = getAction(act);
+	playAction(gact, blend, mode, priority);
+}
+
+
+void gkGameObject::playAction(gkAction* act, gkScalar blend, int mode, int priority)
+{
+	if(act)
+	{
+		m_actionBlender.push(act, blend, mode, priority);
+		m_scene->updateObjectActions(this);
+	}
+}
+
+
+void gkGameObject::updateActions(const gkScalar tick)
+{
+	m_actionBlender.evaluate(tick);
+}

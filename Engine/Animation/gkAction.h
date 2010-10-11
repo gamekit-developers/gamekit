@@ -30,7 +30,6 @@
 #include "gkCommon.h"
 #include "gkMathUtils.h"
 #include "gkBezierSpline.h"
-#include "gkSkeleton.h"
 
 
 class gkActionChannel;

@@ -102,6 +102,7 @@ class gkActionManager;
 class gkBezierSpline;
 class gkGameObjectChannel;
 class gkAnimationChannel;
+class gkActionBlender;
 
 class gkConstraintManager;
 class gkConstraint;

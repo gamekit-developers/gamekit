@@ -31,7 +31,7 @@
 #include "gkMathUtils.h"
 #include "gkTransformState.h"
 #include "gkSerialize.h"
-
+#include "Animation/gkActionBlender.h"
 
 class gkGameObject : public gkInstancedObject
 {
@@ -258,9 +258,12 @@ public:
 
 
 	// actions
-	gkAction*       createAction(const gkHashedString& name);
-	gkAction*       getAction(const gkHashedString& name);
-	GK_INLINE bool  hasAction(const gkHashedString& name)      { return m_actions.find(name) != GK_NPOS; }
+	gkAction*               createAction(const gkHashedString& name);
+	virtual gkAction*       getAction(const gkHashedString& name);
+	virtual GK_INLINE bool  hasAction(const gkHashedString& name)      { return m_actions.find(name) != GK_NPOS; }
+	void                    playAction(const gkString& act, gkScalar blend, int mode = GK_ACT_END, int priority = 0);
+	void                    playAction(gkAction* act, gkScalar blend, int mode = GK_ACT_END, int priority = 0);
+	void                    updateActions(const gkScalar tick);
 
 
 protected:
@@ -316,6 +319,7 @@ protected:
 	int                         m_flags;
 	LifeSpan                    m_life;
 
+	gkActionBlender             m_actionBlender;
 	Actions                     m_actions;
 
 	virtual void createInstanceImpl(void);

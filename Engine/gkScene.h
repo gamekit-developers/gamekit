@@ -80,6 +80,7 @@ public:
 	void            addObject(gkGameObject* obj);
 	void            removeObject(gkGameObject* obj);
 	void            destroyObject(gkGameObject* obj);
+	void            updateObjectActions(gkGameObject* obj);
 
 
 	bool            hasObject(const gkHashedString& ob);
@@ -186,6 +187,7 @@ private:
 	void tickClones(void);
 	void destroyClones(void);
 	void endObjects(void);
+	void updateObjectsActions(const gkScalar tick);
 
 	Ogre::SceneManager*     m_manager;
 	gkCamera*               m_startCam;
@@ -204,6 +206,7 @@ private:
 	gkGameObjectArray       m_clones;
 	gkGameObjectArray       m_tickClones;
 	gkGameObjectSet         m_endObjects;
+	gkGameObjectSet         m_updateAnimObjects;
 	gkPhysicsControllerSet  m_staticControllers;
 	gkCameraSet             m_cameras;
 	gkLightSet              m_lights;

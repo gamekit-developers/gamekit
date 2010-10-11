@@ -54,16 +54,18 @@ void gkSkeleton::_setInternalSkeleton(gkSkeletonResource* skr)
 
 gkAction* gkSkeleton::getAction(const gkHashedString& name)
 {
-	if (m_resource)
-		return m_resource->getAction(name);
-	return 0;
+	gkAction* act;
+	
+	if ( m_resource && (act = m_resource->getAction(name)))
+		return act;
+	
+	return gkGameObject::getAction(name);
 }
+
 
 bool gkSkeleton::hasAction(const gkHashedString& name)
 {
-	if (m_resource)
-		return m_resource->hasAction(name);
-	return false;
+	return getAction(name) ? true:false;
 }
 
 

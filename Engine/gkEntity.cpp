@@ -43,7 +43,6 @@ gkEntity::gkEntity(gkInstancedManager* creator, const gkResourceName& name, cons
 	:    gkGameObject(creator, name, handle, GK_ENTITY),
 	     m_entityProps(new gkEntityProperties()),
 	     m_entity(0),
-	     m_active(0),
 	     m_skeleton(0)
 {
 }
@@ -149,55 +148,16 @@ void gkEntity::_destroyAsStaticGeometry(void)
 }
 
 
-
-
-void gkEntity::evalAction(gkAction* act, gkScalar animTime)
+gkAction* gkEntity::getAction(const gkHashedString& name)
 {
-	if (m_skeleton)
-	{
-		if (act && act != m_active)
-		{
-			if (m_skeleton->hasAction(act->getName()))
-			{
-				m_active = m_skeleton->getAction(act->getName());
-				m_actionMgr.setAction(m_active);
-			}
-			else return;
-
-		}
-
-		if (m_active)
-			m_actionMgr.update(animTime, 0.416f);
-	}
+	gkAction* act;
+	size_t pos;
+	
+	if ( m_skeleton && (act = m_skeleton->getAction(name)))
+		return act;
+	
+	return gkGameObject::getAction(name);
 }
-
-
-
-
-void gkEntity::playAction(const gkString& act, gkScalar blend)
-{
-	if (m_skeleton)
-	{
-		if (m_active == 0 || act != m_active->getName())
-		{
-			if (m_skeleton->hasAction(act))
-			{
-				m_active = m_skeleton->getAction(act);
-				m_actionMgr.setAction(m_active);
-			}
-			else  return;
-		}
-
-		if (m_active)
-		{
-			m_active->setBlendFrames(blend);
-			m_actionMgr.update(0.416f);
-		}
-	}
-
-}
-
-
 
 
 gkGameObject* gkEntity::clone(const gkString& name)
@@ -221,10 +181,9 @@ void gkEntity::_resetPose(void)
 		{
 			if (m_skeleton->hasAction(m_entityProps->m_startPose))
 			{
-				m_active = m_skeleton->getAction(m_entityProps->m_startPose);
-				m_actionMgr.setAction(m_active);
-				m_active->setTimePosition(gkEngine::getSingleton().getUserDefs().startframe);
-				m_actionMgr.update(0.416f);
+				gkAction* act = m_skeleton->getAction(m_entityProps->m_startPose);
+				act->setTimePosition(gkEngine::getSingleton().getUserDefs().startframe);
+				act->evaluate(0.0f);
 			}
 		}
 	}

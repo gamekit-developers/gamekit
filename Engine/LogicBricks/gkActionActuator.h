@@ -49,19 +49,16 @@ public:
 
 private:
 
-	gkScalar m_start, m_end, m_blend, m_fps, m_curTick;
+	gkScalar m_start, m_end, m_blend, m_curTick;
 	int m_mode, m_prio;
 
 	gkString m_startAct, m_startProp;
 
 	bool m_reset, m_isInit;
 	gkAction*        m_action;
-	gkSkeleton*      m_skeleton;
 
 	void doInit(void);
 
-	void play(void);
-	void playStop(void);
 	void notifyActiveStatus(void);
 
 public:

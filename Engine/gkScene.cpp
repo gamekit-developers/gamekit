@@ -1280,6 +1280,29 @@ void gkScene::endObjects(void)
 }
 
 
+void gkScene::updateObjectActions(gkGameObject* obj)
+{
+	m_updateAnimObjects.insert(obj);
+}
+
+
+void gkScene::updateObjectsActions(const gkScalar tick)
+{
+	if (!m_updateAnimObjects.empty())
+	{
+		gkUserDefs& defs = gkEngine::getSingleton().getUserDefs();
+		gkScalar dframe = tick * defs.animspeed;
+		
+		gkGameObjectSet::Iterator it = m_updateAnimObjects.iterator();
+		while (it.hasMoreElements())
+			it.getNext()->updateActions(dframe);
+
+		m_endObjects.clear(true);
+	}
+
+}
+
+
 
 
 void gkScene::beginFrame(void)
@@ -1327,6 +1350,9 @@ void gkScene::update(gkScalar tickRate)
 	gkStats::getSingleton().startClock();
 	gkNodeManager::getSingleton().update(tickRate);
 	gkStats::getSingleton().stopLogicNodesClock();
+
+	updateObjectsActions(tickRate);
+
 
 #if OGREKIT_OPENAL_SOUND
 	// update sound manager.

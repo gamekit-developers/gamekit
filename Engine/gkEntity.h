@@ -29,7 +29,6 @@
 
 #include "gkGameObject.h"
 #include "gkSerialize.h"
-#include "Animation/gkActionManager.h"
 
 
 class gkEntity : public gkGameObject
@@ -42,9 +41,8 @@ public:
 
 	GK_INLINE gkEntityProperties&  getEntityProperties(void) {return *m_entityProps;}
 
-	void          evalAction(gkAction* act, gkScalar animTime);
-	void          playAction(const gkString& act, gkScalar blend);
-	gkAction*     getActiveAction(void) const {return m_active;}
+	virtual gkAction*       getAction(const gkHashedString& name);
+	virtual GK_INLINE bool  hasAction(const gkHashedString& name) {return getAction(name) ? true:false; }
 
 	gkSkeleton*   getSkeleton(void) {return m_skeleton;}
 	void          setSkeleton(gkSkeleton* skel);
@@ -65,8 +63,6 @@ protected:
 
 	gkEntityProperties*     m_entityProps;
 	Ogre::Entity*           m_entity;
-	gkActionManager         m_actionMgr;
-	gkAction*               m_active;
 	gkSkeleton*             m_skeleton;
 
 	virtual void createInstanceImpl();

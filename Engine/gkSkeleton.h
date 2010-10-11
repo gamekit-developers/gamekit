@@ -50,8 +50,8 @@ public:
 
 
 
-	gkAction* getAction(const gkHashedString& name);
-	bool hasAction(const gkHashedString& name);
+	virtual gkAction* getAction(const gkHashedString& name);
+	virtual bool hasAction(const gkHashedString& name);
 
 protected:
 

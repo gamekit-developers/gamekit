@@ -41,7 +41,6 @@ gkActionActuator::gkActionActuator(gkGameObject* object, gkLogicLink* link, cons
 	    m_start(1),
 	    m_end(1),
 	    m_blend(0),
-	    m_fps(0.f),
 	    m_curTick(0.f),
 	    m_mode(0),
 	    m_prio(0),
@@ -49,13 +48,9 @@ gkActionActuator::gkActionActuator(gkGameObject* object, gkLogicLink* link, cons
 	    m_startProp(""),
 	    m_reset(true),
 	    m_isInit(false),
-	    m_action(0),
-	    m_skeleton(0)
+	    m_action(0)
 {
-	if (object->getType() != GK_SKELETON )
-		gkPrintf("Warning: action actuator parent not a skeleton!");
-	else
-		m_skeleton = object->getSkeleton();
+
 }
 
 
@@ -70,7 +65,6 @@ gkLogicBrick* gkActionActuator::clone(gkLogicLink* link, gkGameObject* dest)
 {
 	gkActionActuator* act = new gkActionActuator(*this);
 	act->cloneImpl(link, dest);
-	act->m_skeleton = dest->getSkeleton();
 	act->m_isInit = false;
 	act->m_action = 0;
 	return act;
@@ -80,54 +74,18 @@ gkLogicBrick* gkActionActuator::clone(gkLogicLink* link, gkGameObject* dest)
 
 void gkActionActuator::doInit(void)
 {
-	if (m_skeleton != 0)
-		m_action = m_skeleton->getAction(m_startAct);
-	else 
-		m_action = m_object->getAction(m_startAct);
+	m_action = m_object->getAction(m_startAct);
 	
 	if (m_action)
 	{
-		m_action->setTimePosition(0.f);
+		m_action->setTimePosition(m_start);
 		m_action->setBlendFrames(m_blend);
 	}
-	
-	// update rate is (animRate / tickRate) ... 25.f / 60.f
-	
-	gkUserDefs& defs = gkEngine::getSingleton().getUserDefs();
-	m_fps = defs.animspeed  * gkEngine::getStepRate();
-	if (gkNan(m_fps))
-		m_fps = (25.f * gkEngine::getStepRate());
 	
 	m_curTick = m_start;
 	
 }
 
-
-
-
-void gkActionActuator::play(void)
-{
-
-	// loop anim
-	if (m_curTick >= m_end)
-		m_curTick = m_start;
-
-
-	m_action->setTimePosition(m_curTick);
-	m_curTick += m_fps;
-}
-
-
-
-void gkActionActuator::playStop(void)
-{
-	if (m_curTick >= m_end)
-		m_curTick = m_end;
-
-
-	m_action->setTimePosition(m_curTick);
-	m_curTick += m_fps;
-}
 
 
 void gkActionActuator::notifyActiveStatus(void)
@@ -136,17 +94,25 @@ void gkActionActuator::notifyActiveStatus(void)
 	{
 		if (m_reset)
 			m_curTick = m_start;
+			if (m_action != 0)
+				m_action->setTimePosition(m_start);
 	}
 }
 
 
 void gkActionActuator::execute(void)
 {
+	if (m_action != 0)
+		m_curTick = m_action->getTimePosition();
 
 	if (isPulseOff())
 	{
 		if (m_reset)
+		{
 			m_curTick = m_start;
+			if (m_action != 0)
+				m_action->setTimePosition(m_start);
+		}
 
 		if (m_curTick < m_end && (m_mode == AA_PLAY || m_mode == AA_LOOP_END))
 			setPulse(BM_ON);
@@ -164,23 +130,17 @@ void gkActionActuator::execute(void)
 	{
 		switch (m_mode)
 		{
-		case AA_PLAY:
-			playStop();
-			break;
 		case AA_LOOP_STOP:
 		case AA_LOOP_END:
+			// loop anim
+			if (m_curTick >= m_end)
+				m_action->setTimePosition(m_start);
+		case AA_PLAY:
 		default:
-			play();
+			m_object->playAction(m_action, m_blend);
 			break;
 		}
 		
-		if (m_skeleton !=0)
-		{
-			gkEntity* ent = m_skeleton->getController();
-			ent->evalAction(m_action, 0.f);
-		}
-		else
-			m_action->evaluate(0.f);
 		
 	}
 }
