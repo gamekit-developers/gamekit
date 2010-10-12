@@ -103,8 +103,10 @@
 # endif
 #endif
 
+#ifdef WIN32
 #if !defined (__BORLANDC__) && !defined (__WATCOMC__)
-   //#define lfind _lfind
+   #define lfind _lfind
+#endif
 #endif
 
 #ifdef __DMC__
