@@ -24,6 +24,7 @@
 -------------------------------------------------------------------------------
 */
 #include <wx/imaglist.h>
+#include <wx/bitmap.h>
 #include "fbtIcons.h"
 
 #include "Resource/system-search.xpm"
@@ -44,31 +45,20 @@ struct fbtIcon
 };
 
 
-fbtIcon fbt_project_icons[] =
-{
-
-	{ICO_PRJ_SYSTEM,        16, 16, wxBitmap(system_search_xpm)},
-	{ICO_PRJ_TEXT,          16, 16, wxBitmap(text_x_generic_xpm)},
-	{ICO_PRJ_TEXT_NEW,      16, 16, wxBitmap(document_new_xpm)},
-	{ICO_PRJ_PACKAGE,       16, 16, wxBitmap(package_x_generic_xpm)},
-	{ICO_PRJ_FOLDER_CLOSE,  16, 16, wxBitmap(folder_xpm)},
-	{ICO_PRJ_FOLDER_OPEN,   16, 16, wxBitmap(folder_open_xpm)},
-	{ -1, -1}
-};
-
-fbtIcon fbt_inspector_icons[] =
-{
-
-	{ICO_INS_SYSTEM,    16, 16, wxBitmap(package_x_generic_xpm)},
-	{ICO_INS_CHUNK,     16, 16, wxBitmap(chunk_xpm)},
-	{ICO_INS_FBT,       16, 16, wxBitmap(applications_other_xpm)},
-	{ -1, -1}
-};
-
-
 
 wxImageList* fbtMakeProjectImageList(void)
 {
+	fbtIcon fbt_project_icons[] =
+	{
+		{ICO_PRJ_SYSTEM,        16, 16, wxBitmap(system_search_xpm)},
+		{ICO_PRJ_TEXT,          16, 16, wxBitmap(text_x_generic_xpm)},
+		{ICO_PRJ_TEXT_NEW,      16, 16, wxBitmap(document_new_xpm)},
+		{ICO_PRJ_PACKAGE,       16, 16, wxBitmap(package_x_generic_xpm)},
+		{ICO_PRJ_FOLDER_CLOSE,  16, 16, wxBitmap(folder_xpm)},
+		{ICO_PRJ_FOLDER_OPEN,   16, 16, wxBitmap(folder_open_xpm)},
+		{ -1, -1}
+	};
+	
 	wxImageList* il = new wxImageList(16, 16);
 
 	int i = 0;
@@ -83,6 +73,14 @@ wxImageList* fbtMakeProjectImageList(void)
 
 wxImageList* fbtMakeInspectorImageList(void)
 {
+	fbtIcon fbt_inspector_icons[] =
+	{
+		{ICO_INS_SYSTEM,    16, 16, wxBitmap(package_x_generic_xpm)},
+		{ICO_INS_CHUNK,     16, 16, wxBitmap(chunk_xpm)},
+		{ICO_INS_FBT,       16, 16, wxBitmap(applications_other_xpm)},
+		{ -1, -1}
+	};
+	
 	wxImageList* il = new wxImageList(16, 16);
 
 	int i = 0;

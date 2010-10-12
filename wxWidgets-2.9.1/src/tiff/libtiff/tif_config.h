@@ -104,7 +104,7 @@
 #endif
 
 #if !defined (__BORLANDC__) && !defined (__WATCOMC__)
-   #define lfind _lfind
+   //#define lfind _lfind
 #endif
 
 #ifdef __DMC__

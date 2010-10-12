@@ -1104,7 +1104,7 @@ void fbtMainFrame::inspLayoutEvent(wxCommandEvent& evt)
 
 void fbtMainFrame::populateChunks(fbtList& chunks)
 {
-	wxTreeItemId& root = m_chunkExplorer->AddRoot(m_file->getHeader().c_str(), ICO_INS_SYSTEM, ICO_INS_SYSTEM);
+	wxTreeItemId root = m_chunkExplorer->AddRoot(m_file->getHeader().c_str(), ICO_INS_SYSTEM, ICO_INS_SYSTEM);
 
 	wxFileName fname(m_file->getPath());
 	m_chunkExplorer->AppendItem(root, fname.GetName(), ICO_INS_FBT, ICO_INS_FBT);
@@ -1119,7 +1119,7 @@ void fbtMainFrame::populateChunks(fbtList& chunks)
 
 		fbtFixedString<4> idName = fbtByteToString(node->m_chunk.m_code);
 
-		wxTreeItemId& curBlock = m_chunkExplorer->AppendItem(root, idName.c_str(), ICO_INS_CHUNK, ICO_INS_CHUNK);
+		wxTreeItemId curBlock = m_chunkExplorer->AppendItem(root, idName.c_str(), ICO_INS_CHUNK, ICO_INS_CHUNK);
 
 		m_chunkExplorer->AppendItem(curBlock, wxString::Format("length   : %i",    (node->m_chunk.m_len)));
 		m_chunkExplorer->AppendItem(curBlock, wxString::Format("count    : %i",    (node->m_chunk.m_nr)));
@@ -1316,10 +1316,10 @@ void fbtMainFrame::populate(fbtBinTables* table, int index)
 		ftbName& name = table->m_name[i];
 
 		wxVector<wxVariant> data;
-		data.push_back( wxVariant((int)i) );
+		data.push_back( wxVariant((int)i).MakeString() );
 		data.push_back( wxVariant(wxString(name.m_name)) );
-		data.push_back( wxVariant(name.m_ptrCount) );
-		data.push_back( wxVariant(name.m_arraySize) );
+		data.push_back( wxVariant(name.m_ptrCount).MakeString() );
+		data.push_back( wxVariant(name.m_arraySize).MakeString() );
 		m_name[index]->AppendItem( data );
 
 	}
@@ -1329,10 +1329,10 @@ void fbtMainFrame::populate(fbtBinTables* table, int index)
 		fbtType& type = table->m_type[i];
 
 		wxVector<wxVariant> data;
-		data.push_back( wxVariant((int)i) );
+		data.push_back( wxVariant((int)i).MakeString() );
 		data.push_back( wxVariant(wxString(type.m_name)) );
-		data.push_back( wxVariant((int)type.m_strcId) );
-		data.push_back( wxVariant((int)table->m_tlen[i]) );
+		data.push_back( wxVariant((int)type.m_strcId).MakeString() );
+		data.push_back( wxVariant((int)table->m_tlen[i]).MakeString() );
 		m_type[index]->AppendItem( data );
 
 	}
@@ -1344,10 +1344,10 @@ void fbtMainFrame::populate(fbtBinTables* table, int index)
 
 
 		wxVector<wxVariant> data;
-		data.push_back( wxVariant((int)i) );
+		data.push_back( wxVariant((int)i).MakeString() );
 		data.push_back( wxVariant(wxString(table->m_type[type[0]].m_name)));
-		data.push_back( wxVariant((int)type[1]) );
-		data.push_back( wxVariant((int)table->m_tlen[type[0]]) );
+		data.push_back( wxVariant((int)type[1]).MakeString() );
+		data.push_back( wxVariant((int)table->m_tlen[type[0]]).MakeString() );
 		m_strc[index]->AppendItem( data );
 
 	}
