@@ -151,7 +151,6 @@ void gkEntity::_destroyAsStaticGeometry(void)
 gkAction* gkEntity::getAction(const gkHashedString& name)
 {
 	gkAction* act;
-	size_t pos;
 	
 	if ( m_skeleton && (act = m_skeleton->getAction(name)))
 		return act;

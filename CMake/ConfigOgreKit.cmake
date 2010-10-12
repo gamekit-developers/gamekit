@@ -36,7 +36,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 	option(OGREKIT_UPDATE_LUA_DOCS       "Update Lua API documentation(Requires doxygen)." OFF)
 	option(OGREKIT_DISABLE_ZIP           "Disable external .zip resource loading" ON)
 	option(OGREKIT_USE_STATIC_FREEIMAGE  "Compile and link statically FreeImage and all its plugins" ON)
-	option(OGREKIT_USE_FILETOOLS         "Compile FBT file format utilities" ON)
+	option(OGREKIT_USE_FILETOOLS         "Compile FBT file format utilities" OFF)
 
 
 	if (OGREKIT_USE_LUA)
@@ -130,7 +130,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 	option(SAMPLES_NODE_EDITOR    "Build Samples/NodeEditor"    OFF)
 	option(SAMPLES_EMBEDDEMO      "Build Samples/EmbedDemo"     OFF)
 	option(SAMPLES_INSPECTOR      "Build Samples/FileInspector" OFF)
-	
+
 	
 	if (OGREKIT_USE_LUA)
 		option(SAMPLES_LUARUNTIME "Build Samples/LuaRuntime" ON)
@@ -147,6 +147,11 @@ macro (configure_ogrekit ROOT OGREPATH)
 		set(SAMPLES_EMBEDDEMO   FALSE CACHE BOOL "Forcing EmbedDemo removal"     FORCE)
 		set(SAMPLES_INSPECTOR   FALSE CACHE BOOL "Forcing FileInspector removal" FORCE)
 	endif()
+
+	if (SAMPLES_INSPECTOR)	
+		set(OGREKIT_USE_FILETOOLS   TRUE CACHE BOOL "Forcing File Utils removal" FORCE)
+	endif()
+
     
 	if (WIN32 AND SAMPLES_EMBEDDEMO AND NOT OGREKIT_OIS_WIN32_NATIVE)
 		set(SAMPLES_EMBEDDEMO   FALSE CACHE BOOL "Forcing EmbedDemo removal"  FORCE)
