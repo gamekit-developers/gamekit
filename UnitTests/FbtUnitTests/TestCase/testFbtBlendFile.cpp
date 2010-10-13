@@ -23,6 +23,114 @@ bool parseBlendFile(const char *fname)
 	return fp.parse(fname, fbtFile::PM_READTOMEMORY) == fbtFile::FS_OK;	
 }
 
+
+
+bool parse_Ptr_PtrPtr_PtrArray(const char *fname, 
+						      int& ptrPtrCount,
+						      int& ptrArrayCount)
+{
+	fbtBlend fp;
+	bool parseOk = fp.parse(fname, fbtFile::PM_READTOMEMORY) == fbtFile::FS_OK;
+	if (!parseOk)
+		return false;
+
+	for (Blender::Text* tx = (Blender::Text*)fp.m_text.first; tx; tx = (Blender::Text*)tx->id.next)
+	{
+		for (Blender::TextLine* tl = (Blender::TextLine*)tx->lines.first; tl; tl = tl->next)
+		{
+			bool textLine = tl->line != 0;
+			if (!textLine)
+				return false;
+
+			bool lengthMatch = strlen(tl->line) == tl->len;
+			if (!lengthMatch)
+				return false;
+		}
+	}
+
+	for (Blender::bScreen* bs = (Blender::bScreen*)fp.m_screen.first; bs; bs = (Blender::bScreen*)bs->id.next)
+	{
+		bool edgebaseElements = bs->edgebase.first != 0;
+		if (!edgebaseElements)
+			return false;
+
+		for (Blender::ScrEdge* edge = (Blender::ScrEdge*)bs->edgebase.first; edge; edge = edge->next)
+		{
+			Blender::ScrVert* v1 = edge->v1;
+			Blender::ScrVert* v2 = edge->v2;
+
+			bool hasVerts = v1 != 0;
+			if (!hasVerts)
+				return false;
+		}
+	}
+
+	ptrPtrCount = 0;
+	ptrArrayCount = 0;
+
+	fbtList& objects = fp.m_object;
+	for (Object* ob = (Object*)objects.first; ob; ob = (Object*)ob->id.next)
+	{
+		bool meshHasData = ob->data && ob->type == 1;
+		if (meshHasData)
+		{
+
+			Mesh* me = (Mesh*)ob->data;
+
+			bool meshHasMaterials = me->mat && *me->mat;
+			if (!meshHasMaterials)
+				return false;
+
+			for (int i = 0; i < me->totcol; ++i)
+			{
+				Material* ma = me->mat[i];
+				if (ma)
+				{
+					++ptrPtrCount;
+
+					if (ma->mtex)
+					{
+
+						int i = 0;
+						while (ma->mtex[i] != 0)
+						{
+							if (ma->mtex[i]->tex)
+							{
+								++ptrArrayCount;
+							}
+							++i;
+						}
+					}
+				}
+			}
+		}
+	}
+	return true;
+}
+
+
+TEST(TEST_CASE_NAME, parsePointer32BitLinks)
+{
+	int ptrPtrCount;
+	int ptrArrayCount;
+	EXPECT_TRUE(parse_Ptr_PtrPtr_PtrArray("TestData/le32bitLink.blend", ptrPtrCount, ptrArrayCount));
+
+	ASSERT_EQ(ptrPtrCount, 4);
+	ASSERT_EQ(ptrArrayCount, 24);
+}
+
+
+TEST(TEST_CASE_NAME, parsePointer64BitLinks)
+{
+	int ptrPtrCount;
+	int ptrArrayCount;
+	EXPECT_TRUE(parse_Ptr_PtrPtr_PtrArray("TestData/le64bitLink.blend", ptrPtrCount, ptrArrayCount));
+
+	ASSERT_EQ(ptrPtrCount, 4);
+	ASSERT_EQ(ptrArrayCount, 24);
+}
+
+
 TEST(TEST_CASE_NAME, parseBlend32bit)
 {	
 	EXPECT_TRUE(parseBlendFile("TestData/be32bit.blend"));
