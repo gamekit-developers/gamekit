@@ -33,18 +33,13 @@
 class fbtStream
 {
 public:
-
-
 	enum StreamMode
 	{
 		SM_READ = 1,
 		SM_WRITE = 2,
 	};
 
-
-
 public:
-
 	fbtStream() {}
 	virtual ~fbtStream() {}
 
@@ -57,17 +52,12 @@ public:
 
 	virtual FBTsize  read(void* dest, FBTsize nr) const = 0;
 	virtual FBTsize  write(const void* src, FBTsize nr) = 0;
-	FBTsize          write(const fbtStream& cpy);
 	virtual FBTsize  writef(const char* fmt, ...) {return 0;};
 
-
 	virtual FBTsize  position(void) const = 0;
-	virtual void    seek(const FBTsize pos, int dir) const = 0;
 	virtual FBTsize  size(void) const = 0;
 
-
 protected:
-
 	virtual void reserve(FBTsize nr) {}
 };
 
@@ -87,23 +77,23 @@ public:
 	void close(void);
 
 	bool isOpen(void)   const {return m_handle != 0;}
-	bool eof(void)      const {return !m_handle || m_pos >= m_size;}
+	bool eof(void)      const;
 
 	FBTsize  read(void* dest, FBTsize nr) const;
 	FBTsize  write(const void* src, FBTsize nr);
 	FBTsize  writef(const char* buf, ...);
-	FBTsize  position(void)          const {return m_pos;}
-	void    seek(const FBTsize pos, int dir)  const;
 
-	FBTsize size(void) const {return m_size;}
+
+	FBTsize  position(void) const;
+	FBTsize  size(void)     const;
+
+	void write(fbtMemoryStream &ms) const;
 
 protected:
 
 
 	fbtFixedString<272> m_file;
 	fbtFileHandle       m_handle;
-	mutable FBTsize     m_pos;
-	FBTsize             m_size;
 	int                 m_mode;
 };
 
@@ -122,23 +112,21 @@ public:
 	void close(void);
 
 	bool isOpen(void)   const {return m_handle != 0;}
-	bool eof(void)      const {return !m_handle || m_pos >= m_size;}
+	bool eof(void)      const;
 
 	FBTsize  read(void* dest, FBTsize nr) const;
 	FBTsize  write(const void* src, FBTsize nr);
 	FBTsize  writef(const char* buf, ...);
-	void     seek(const FBTsize pos, int dir)  const;
-	FBTsize  position(void) const {return m_pos;}
 
-	FBTsize size(void) const {return m_size;}
 
+	FBTsize  position(void) const;
+	FBTsize size(void) const;
+	
 protected:
 
 
 	fbtFixedString<272> m_file;
 	fbtFileHandle       m_handle;
-	mutable FBTsize     m_pos;
-	FBTsize             m_size;
 	int                 m_mode;
 };
 
@@ -160,29 +148,28 @@ public:
 	void open(const void* buffer, FBTsize size, fbtStream::StreamMode mode);
 
 
-	bool    isOpen(void)    const   {return m_buffer != 0;}
-	bool    eof(void)       const   {return !m_buffer || m_pos >= m_size;}
+	bool     isOpen(void)    const   {return m_buffer != 0;}
+	bool     eof(void)       const   {return !m_buffer || m_pos >= m_size;}
 	FBTsize  position(void)  const   {return m_pos;}
 	FBTsize  size(void)      const   {return m_size;}
 
-	FBTsize read(void* dest, FBTsize nr) const;
-	FBTsize write(const void* src, FBTsize nr);
+	FBTsize  read(void* dest, FBTsize nr) const;
+	FBTsize  write(const void* src, FBTsize nr);
 	FBTsize  writef(const char* buf, ...);
 
-
-	void    seek(const FBTsize pos, int dir) const;
 
 	void*            ptr(void)          {return m_buffer;}
 	const void*      ptr(void) const    {return m_buffer;}
 
-protected:
 
 	void reserve(FBTsize nr);
+protected:
+	friend class fbtFileStream;
 
 	char*            m_buffer;
 	mutable FBTsize  m_pos;
 	FBTsize          m_size, m_capacity;
-	int             m_mode;
+	int              m_mode;
 };
 
 

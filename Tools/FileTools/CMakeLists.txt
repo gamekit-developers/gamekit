@@ -31,10 +31,17 @@ project(FBT)
 list(APPEND CMAKE_MODULE_PATH ${FBT_SOURCE_DIR}/CMake)
 
 
-set(FBT_USE_ZLIB 0)
-add_definitions(-DFBT_USE_GZ_FILE=0)
-add_definitions(-DFFBT_USE_COMPILER_CHECKS=0)
-add_definitions(-DFBT_USE_DEBUG_ASSERTS=0)
+#set(FBT_USE_ZLIB 0)
+#set(FBT_ZLIB_INCLUDE )
+#set(FBT_ZLIB_LIBRARY )
+
+if (FBT_USE_ZLIB)
+    add_definitions(-DFBT_USE_GZ_FILE=1)
+endif()
+
+#add_definitions(-DFFBT_USE_COMPILER_CHECKS=0)
+#add_definitions(-DFBT_USE_DEBUG_ASSERTS=0)
+
 
 subdirs(Compiler)
 subdirs(File)
