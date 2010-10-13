@@ -1,0 +1,7 @@
+macro(setup_gtest)
+	set(GTEST_VERSION 1.5.0)
+	set(OGREKIT_GTEST_TARGET gtest)
+	set(GTEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/gtest-${GTEST_VERSION})
+	set(GTEST_INCLUDE ${GTEST_DIR}/include ${GTEST_DIR})
+	set(GTEST_LIB gtest)
+endmacro()

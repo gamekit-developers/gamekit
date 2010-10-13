@@ -103,3 +103,7 @@ endif()
 if (OGREKIT_UPDATE_LUA_DOCS)
 	subdirs(Docs/LuaAPI)
 endif()
+
+if (OGREKIT_ENABLE_UNITTESTS)
+	subdirs(UnitTests)
+endif()
