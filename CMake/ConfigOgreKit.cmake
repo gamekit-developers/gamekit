@@ -34,9 +34,10 @@ macro (configure_ogrekit ROOT OGREPATH)
 	option(OGREKIT_HEADER_GENERATOR      "Build Blender DNA to C++ generator."   OFF)
 	option(OGREKIT_UPDATE_CPP_DOCS       "Update C++ API documentation(Requires doxygen)." OFF)
 	option(OGREKIT_UPDATE_LUA_DOCS       "Update Lua API documentation(Requires doxygen)." OFF)
+	option(OGREKIT_UPDATE_FBT_DOCS       "Update FBT API documentation(Requires doxygen)." OFF)
 	option(OGREKIT_DISABLE_ZIP           "Disable external .zip resource loading" ON)
 	option(OGREKIT_USE_STATIC_FREEIMAGE  "Compile and link statically FreeImage and all its plugins" ON)
-	option(OGREKIT_ENABLE_UNITTESTS      "Enable / Disalbe Unittests" OFF)
+	option(OGREKIT_ENABLE_UNITTESTS      "Enable / Disable Unittests" OFF)
 	option(OGREKIT_USE_FILETOOLS         "Compile FBT file format utilities" OFF)
 
 

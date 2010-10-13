@@ -16,7 +16,7 @@ if (DOXYGEN_FOUND)
 	configure_file(${OGREKIT_DOXYFILE_CPP_IN} ${OGREKIT_DOXYFILE_CPP})
 
 
-	add_custom_target(DocCppApiManual
+	add_custom_target(DocFbtApiManual
 		COMMAND ${DOXYGEN_EXECUTABLE} ${OGREKIT_DOXYFILE_CPP}
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} 
 		COMMENT "Building OgreKit C++ Documentation" 
@@ -24,7 +24,7 @@ if (DOXYGEN_FOUND)
 		)
 
 	add_custom_command(
-		TARGET DocCppApiManual
+		TARGET DocFbtApiManual 
 		POST_BUILD
 		COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different ${OGREKIT_DOC_IMAGES_DIR}/bg_t.gif		${OGREKIT_DOC_IMAGES_DEST}/bg_t.gif
 		COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different ${OGREKIT_DOC_IMAGES_DIR}/top_bg.gif		${OGREKIT_DOC_IMAGES_DEST}/top_bg.gif

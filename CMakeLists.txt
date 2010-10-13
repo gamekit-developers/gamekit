@@ -104,6 +104,10 @@ if (OGREKIT_UPDATE_LUA_DOCS)
 	subdirs(Docs/LuaAPI)
 endif()
 
+if (OGREKIT_UPDATE_FBT_DOCS)
+	subdirs(Docs/FbtAPI)
+endif()
+
 if (OGREKIT_ENABLE_UNITTESTS)
 	subdirs(UnitTests)
 endif()

@@ -143,7 +143,7 @@ gkVehicle::~gkVehicle()
 		m_dynamicWorld->removeListener(this);
 		
 	gkWheelProperties** ptr = m_wheels.ptr();
-	for (int i = 0; i < m_wheels.size(); ++i)
+	for (UTsize i = 0; i < m_wheels.size(); ++i)
 		delete ptr[i];
 		
 	if(m_gearBox)
@@ -166,7 +166,7 @@ void gkVehicle::presubtick(gkScalar rate)
 
 void gkVehicle::subtick(gkScalar rate)
 {
-	for(int i=0; i<m_wheels.size(); i++)
+	for(UTsize i=0; i<m_wheels.size(); i++)
 	{
 		gkWheelProperties* wheel = m_wheels[i];
 		btWheelInfo& btwheel = m_vehicle->getWheelInfo(i);
@@ -209,7 +209,7 @@ void gkVehicle::createVehicle()
 	
 		m_dynamicWorld->getBulletWorld()->addVehicle(m_vehicle);
 		
-		for(int i=0; i<m_wheels.size(); i++)
+		for(UTsize i=0; i<m_wheels.size(); i++)
 		{
 			gkWheelProperties* wheel = m_wheels[i];
 			btVector3 cp(wheel->m_connectionPoint.x, wheel->m_connectionPoint.y, wheel->m_connectionPoint.z);
@@ -359,7 +359,7 @@ gkScalar gkVehicle::getVelocityEulerZ(void)
 
 bool gkVehicle::isWheelDriven(int i)
 {
-	if(i<0 || i>=m_wheels.size() )
+	if(i<0 || i>=(int)m_wheels.size())
 		return false;
 		
 	switch(m_driveTrain)
@@ -374,7 +374,7 @@ bool gkVehicle::isWheelDriven(int i)
 int gkVehicle::getNumberOfDrivenWheel(void)
 {
 	int count = 0;
-	for(int i=0; i<m_wheels.size(); i++)
+	for(UTsize i=0; i<m_wheels.size(); i++)
 	{
 		if(isWheelDriven(i))
 			count++;
