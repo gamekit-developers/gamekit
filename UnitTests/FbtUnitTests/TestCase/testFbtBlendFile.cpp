@@ -90,15 +90,14 @@ bool parse_Ptr_PtrPtr_PtrArray(const char *fname,
 
 					if (ma->mtex)
 					{
-
-						int i = 0;
-						while (ma->mtex[i] != 0)
+						int j = 0;
+						while (ma->mtex[j] != 0)
 						{
-							if (ma->mtex[i]->tex)
+							if (ma->mtex[j]->tex)
 							{
 								++ptrArrayCount;
 							}
-							++i;
+							++j;
 						}
 					}
 				}
