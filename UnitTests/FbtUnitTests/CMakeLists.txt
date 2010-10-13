@@ -3,6 +3,10 @@ cmake_minimum_required(VERSION 2.6)
 
 project(UnitTestFbt)
 
+
+set(OGREKIT_USE_FILETOOLS TRUE CACHE BOOL "Forcing FileTools" FORCE)
+
+
 set(APP_DATA_DIR TestData)
 
 file(GLOB_RECURSE APP_SRC TestCase/*.cpp TestCase/*.h)
@@ -40,6 +44,7 @@ link_libraries(
 	bfBlend
 	btBulletFile
 )
+
 
 
 
