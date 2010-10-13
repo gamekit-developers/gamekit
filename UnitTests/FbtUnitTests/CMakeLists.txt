@@ -28,8 +28,6 @@ set(ALL
 include_directories(
 	.
 	./TestCase
-	${GAMEKIT_UTILS_PATH} 
-	${OGREKIT_INCLUDE}
 	${GTEST_INCLUDE}
 	${FBT_SOURCE_DIR}/File
 	${FBT_SOURCE_DIR}/FileFormats/Blend
@@ -37,14 +35,15 @@ include_directories(
 )
 
 link_libraries(
-	${GAMEKIT_UTILS_TARGET} 
-	${OGREKIT_LIB}
 	${GTEST_LIB}
 	fbtFile
 	bfBlend
 	btBulletFile
 )
 
+if (UNIX)
+	link_libraries(pthread)
+endif()
 
 
 

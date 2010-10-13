@@ -12,6 +12,9 @@ if (OGREKIT_BUILD_IPHONE)
 	set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/OISInputManager.cpp PROPERTIES COMPILE_FLAGS "-x objective-c++")
 endif()
 
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/CMake/OISSettings.in ${CMAKE_CURRENT_BINARY_DIR}/OISSettings.h)
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
 set(OIS_HDR
 	include/OIS.h
 	include/OISConfig.h
@@ -28,9 +31,12 @@ set(OIS_HDR
 	include/OISMultiTouch.h
 	include/OISObject.h
 	include/OISPrereqs.h
+	${CMAKE_CURRENT_BINARY_DIR}/OISSettings.h
 )
 
+
 if (WIN32)
+
 	set(OIS_BUILD_WIN32 FALSE)
 	if (OGREKIT_OIS_WIN32_NATIVE)
 		set(OIS_BUILD_WIN32 TRUE)
@@ -56,7 +62,6 @@ if (WIN32)
 			)
 		link_libraries(${DirectX_DXGUID_LIBRARY} ${DirectX_DINPUT8_LIBRARY} ${DirectX_XINPUT_LIBRARY})
 	else ()
-		add_definitions(-DOIS_WIN32_NATIVE)
 		set(OIS_PLAT 
 			include/win32native/Win32NativeInputManager.h
 			include/win32native/Win32NativeJoystick.h

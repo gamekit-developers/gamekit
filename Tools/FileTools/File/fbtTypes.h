@@ -715,9 +715,7 @@ public:
 
 
 
-///For handing invalid pointers,
-///We are only interested in specified address value
-///which points to nothing
+//For handing invalid pointers
 class fbtSizeHashKey
 {
 protected:
@@ -755,7 +753,6 @@ public:
 		_FBT_TWHASH(m_hash);
 		return m_hash;
 	}
-
 
 	FBT_INLINE bool operator== (const fbtSizeHashKey& v) const  { return hash() == v.hash();}
 	FBT_INLINE bool operator!= (const fbtSizeHashKey& v) const  { return hash() != v.hash();}

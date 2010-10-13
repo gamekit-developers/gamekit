@@ -41,22 +41,10 @@ macro (configure_ogrekit ROOT OGREPATH)
 	option(OGREKIT_USE_FILETOOLS         "Compile FBT file format utilities" OFF)
 
 
-	if (OGREKIT_USE_LUA)
-		add_definitions(-DOGREKIT_USE_LUA)	
-	else()
+	if (NOT OGREKIT_USE_LUA)
 		set(OGREKIT_COMPLIE_SWIG FALSE CACHE BOOL "Disabling Swig" FORCE)
 	endif()
 	
-	if (OGREKIT_DEBUG_ASSERT)
-		add_definitions(-DUT_DEBUG_ASSERT)
-	endif()
-
-
-	if (OGREKIT_COMPILE_OGRE_SCRIPTS)
-		add_definitions(-DOGREKIT_COMPILE_OGRE_SCRIPTS)	
-	endif()
-
-
 	set(OGREKIT_ZZIP_TARGET ZZipLib)
 	set(OGREKIT_FREETYPE_TARGET freetype)
 	set(OGREKIT_RECAST_TARGET Recast)
@@ -167,7 +155,6 @@ macro (configure_ogrekit ROOT OGREPATH)
 
 	if (OGREKIT_BUILD_IPHONE)
 		set(OGRE_BUILD_PLATFORM_IPHONE TRUE)
-		add_definitions("-DOGREKIT_BUILD_IPHONE")		
 	endif()
 
 
@@ -450,6 +437,8 @@ macro (configure_ogrekit ROOT OGREPATH)
 		endif()
 	endif(APPLE)
  
+	configure_file(${CMAKE_SOURCE_DIR}/CMake/Templates/OgreKitSettings.in ${CMAKE_BINARY_DIR}/Engine/gkSettings.h)
+	include_directories(${CMAKE_BINARY_DIR}/Engine)
 
 endmacro(configure_ogrekit)
 
@@ -457,8 +446,6 @@ endmacro(configure_ogrekit)
 macro(configure_rendersystem)
 
 	if (OGRE_BUILD_RENDERSYSTEM_GL)
-		
-		add_definitions(-DOGREKIT_GLRS)
 
 		include_directories(
 			${OGREKIT_GLRS_ROOT}/include
@@ -476,8 +463,6 @@ macro(configure_rendersystem)
 
 	if (OGRE_BUILD_RENDERSYSTEM_GLES)
 		
-		add_definitions(-DOGREKIT_GLESRS)
-
 		include_directories(
 			${OGREKIT_GLESRS_ROOT}/include
 			${OGREKIT_GLESRS_ROOT}/include/EAGL			
@@ -491,8 +476,6 @@ macro(configure_rendersystem)
 
 	if (OGREKIT_BUILD_D3D9RS)
 
-		add_definitions(-DOGREKIT_D3D9RS)
-		
 		include_directories(
 			${OGREKIT_D3D9_ROOT}/include
 		)
@@ -505,7 +488,6 @@ macro(configure_rendersystem)
 	endif()
 	
 	if (OGREKIT_BUILD_D3D10RS AND DirectX_D3D10_FOUND)
-		add_definitions(-DOGREKIT_D3D10RS)
 		
 		include_directories(
 			${OGREKIT_D3D10_ROOT}/include
@@ -519,8 +501,7 @@ macro(configure_rendersystem)
 	endif()
 
 	if (OGREKIT_BUILD_D3D11RS AND DirectX_D3D11_FOUND)
-		add_definitions(-DOGREKIT_D3D11RS)
-		
+
 		include_directories(
 			${OGREKIT_D3D11_ROOT}/include
 		)

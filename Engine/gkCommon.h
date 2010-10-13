@@ -27,6 +27,7 @@
 #ifndef _gkCommon_h_
 #define _gkCommon_h_
 
+#include "gkSettings.h"
 #include "gkHashedString.h"
 
 #if defined(WIN32)

@@ -238,7 +238,7 @@ int fbtFile::parseStreamImpl(fbtStream* stream)
 
 
 	// preallocate table
-	m_map.reserve(0xFFFF);
+	m_map.reserve(fbtDefaultAlloc);
 
 
 	Chunk chunk;
@@ -593,7 +593,7 @@ int fbtFile::link(void)
 							}
 							else
 							{
-								fbtPrintf("**block not found @ 0x%p)\n", src);
+								//fbtPrintf("**block not found @ 0x%p)\n", src);
 							}
 						}
 						else
@@ -770,8 +770,8 @@ int fbtChunk::read(fbtFile::Chunk* dest, fbtStream* stream, int flags)
 				FBTuint64   m_ptr;
 				FBTuint32   m_doublePtr[2];
 			} ptr;
-			ptr.m_doublePtr[1] = 0;
 			ptr.m_doublePtr[0] = src.m_old;
+			ptr.m_doublePtr[1] = 0;
 
 			c64.m_old     = ptr.m_ptr;
 			c64.m_typeid  = src.m_typeid;

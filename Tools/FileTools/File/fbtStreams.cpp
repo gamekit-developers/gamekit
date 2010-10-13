@@ -28,18 +28,6 @@
 #include "fbtPlatformHeaders.h"
 
 
-
-#if FBT_COMPILER == FBT_COMPILER_MSVC
-# define fbtp_printf(ptr, size, fmt, lst)   _vsnprintf_s(ptr, size, size, fmt, static_cast<va_list>(lst))
-#else
-# define fbtp_printf    vsnprintf
-#endif
-
-#ifdef _MSC_VER
-#pragma warning(disable : 4996)
-#endif
-
-
 #if FBT_USE_GZ_FILE == 1
 #include "zlib.h"
 #endif

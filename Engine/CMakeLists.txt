@@ -105,6 +105,7 @@ set(Core_HEADER
 	gkValue.h
 	gkVariable.h
 	gkWindowSystem.h
+	${CMAKE_BINARY_DIR}/Engine/gkSettings.h
 	OgreKit.h
 )
 
@@ -807,10 +808,6 @@ endif ()
 
 if(OGREKIT_USE_COCOA)
 	set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/Thread/gkSyncObj.cpp PROPERTIES COMPILE_FLAGS "-x objective-c++")
-endif()
-
-if (OGREKIT_OPENAL_SOUND AND OPENAL_FOUND)
-	add_definitions(-DOGREKIT_OPENAL_SOUND)
 endif()
 
 if (OGREKIT_BUILD_IPHONE)

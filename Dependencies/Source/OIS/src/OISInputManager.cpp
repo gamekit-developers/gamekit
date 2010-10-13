@@ -24,6 +24,7 @@ restrictions:
 #include "OISException.h"
 #include "OISFactoryCreator.h"
 #include "OISObject.h"
+#include "OISSettings.h"
 #include <sstream>
 #include <algorithm>
 

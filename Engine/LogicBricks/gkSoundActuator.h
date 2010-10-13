@@ -26,11 +26,12 @@
 */
 #ifndef _gkSoundActuator_h_
 #define _gkSoundActuator_h_
+#include "gkCommon.h"
 
 #ifdef OGREKIT_OPENAL_SOUND
 
-#include "gkLogicActuator.h"
-#include "gkSound.h"
+#include "LogicBricks/gkLogicActuator.h"
+#include "Sound/gkSound.h"
 
 
 

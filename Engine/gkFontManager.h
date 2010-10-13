@@ -26,9 +26,11 @@
 */
 #ifndef _gkFontManager_h_
 #define _gkFontManager_h_
+#include "gkCommon.h"
+
+
 #ifdef OGREKIT_COMPILE_OGRE_SCRIPTS
 
-#include "gkCommon.h"
 #include "gkResourceManager.h"
 #include "utSingleton.h"
 #include "utStreams.h"

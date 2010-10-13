@@ -53,6 +53,8 @@
 #include "gkEngine.h"
 #include "gkUserDefs.h"
 
+#include "gkCommon.h"
+
 #ifdef OGREKIT_OPENAL_SOUND
 # include "Sound/gkSoundManager.h"
 # include "Sound/gkSound.h"

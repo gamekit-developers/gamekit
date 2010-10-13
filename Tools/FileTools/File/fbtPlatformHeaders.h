@@ -1,6 +1,6 @@
 /*
 -------------------------------------------------------------------------------
-    This file is part of FBT (File Binary Tables AKA SDNA).
+    This file is part of FBT (File Binary Tables).
     http://gamekit.googlecode.com/
 
     Copyright (c) 2010 Charlie C & Erwin Coumans.
@@ -26,11 +26,9 @@
 #ifndef _fbtPlatformHeaders_h_
 #define _fbtPlatformHeaders_h_
 
-// source include only
 #ifndef FBT_IN_SOURCE
 #error source include only!
 #endif
-
 
 #if FBT_PLATFORM == FBT_PLATFORM_WIN32
 # if FBT_COMPILER == FBT_COMPILER_MSVC
@@ -50,11 +48,14 @@
 #include <stdarg.h>
 #include <memory.h>
 
+#ifdef _MSC_VER
+#pragma warning(disable : 4996)
+#endif
 
 #if FBT_COMPILER == FBT_COMPILER_MSVC
-# define fbtp_printf(ptr, size, fmt, lst)   _vsnprintf_s(ptr, size, size, fmt, static_cast<va_list>(lst))
+# define fbtp_printf(ptr, size, fmt, lst) _vsnprintf_s(ptr, size, size, fmt, lst)
 #else
-# define fbtp_printf    vsnprintf
+# define fbtp_printf vsnprintf
 #endif
 
 #endif//_fbtPlatformHeaders_h_
