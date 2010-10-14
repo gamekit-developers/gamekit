@@ -85,6 +85,11 @@ gkGameObject::~gkGameObject()
 		gkLogicManager::getSingleton().destroy(m_bricks);
 		m_bricks = 0;
 	}
+
+	Actions::Iterator it = m_actions.iterator();
+	while (it.hasMoreElements())
+		delete it.getNext().second;
+
 }
 
 
