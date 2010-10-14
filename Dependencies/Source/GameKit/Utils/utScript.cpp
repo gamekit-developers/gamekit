@@ -26,6 +26,9 @@
 #include "string.h"
 #include "stdio.h"
 #include "stdlib.h"
+#ifdef _MSC_VER
+#pragma warning(disable : 4996)
+#endif
 
 
 #define utPrintSLM(s,l,m) printf("%s(%i):%s\n", s, l, m)

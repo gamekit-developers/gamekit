@@ -28,6 +28,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <memory.h>
+
+#ifdef _MSC_VER
+#pragma warning(disable : 4996)
+#endif
+
 #ifdef UT_USE_ZLIB
 #include "zlib.h"
 #endif
