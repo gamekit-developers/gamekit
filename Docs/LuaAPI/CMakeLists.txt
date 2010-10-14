@@ -1,7 +1,7 @@
 
 # ---------------------------------------------------------
 include(FindDoxygen)
-
+include(FindHHC)
 
 file(GLOB_RECURSE SRC Source/*.inl Source/*.h)
 
@@ -11,7 +11,9 @@ set(OGREKIT_DOC_IMAGES_DEST ${CMAKE_CURRENT_BINARY_DIR}/html)
 set(OGREKIT_DOXYFILE_CPP_IN ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.txt.in)
 set(OGREKIT_DOXYFILE_CPP ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.txt)
 
-if (DOXYGEN_FOUND)
+if (DOXYGEN_FOUND)	
+	find_hhc_location()
+	
 	configure_file(${OGREKIT_DOXYFILE_CPP_IN} ${OGREKIT_DOXYFILE_CPP})
 	
 	add_custom_target(DocLuaApiManual
