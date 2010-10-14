@@ -28,11 +28,12 @@
 #define _gkSoundActuator_h_
 #include "gkCommon.h"
 
-#ifdef OGREKIT_OPENAL_SOUND
 
 #include "LogicBricks/gkLogicActuator.h"
-#include "Sound/gkSound.h"
 
+#ifdef OGREKIT_OPENAL_SOUND
+#include "Sound/gkSound.h"
+#endif
 
 
 class gkSoundActuator : public gkLogicActuator
@@ -54,30 +55,31 @@ private:
 	int                 m_mode;         // playback mode
 	bool                m_sndInit;      // state chech
 	gkString            m_sndRef;       // reference to the sould block name
+
+#ifdef OGREKIT_OPENAL_SOUND
+
 	gkSound*             m_sound;       // the sound to play
 	gkSource*            m_player;      // running sound
 	gkSoundProperties    m_props;       // properties to attach to the sound stream
 
-
 	void notifyActiveStatus(void);
 	void notifyLinkDestroyed(void);
-
+#endif
 public:
 
 	gkSoundActuator(gkGameObject* object, gkLogicLink* link, const gkString& name);
 	virtual ~gkSoundActuator();
 
 	gkLogicBrick* clone(gkLogicLink* link, gkGameObject* dest);
+#ifdef OGREKIT_OPENAL_SOUND
+	GK_INLINE gkSoundProperties&    getProperties(void)                {return m_props;}
+#endif
 
 	GK_INLINE void                  setMode(int v)                      {m_mode = v;}
 	GK_INLINE void                  setSoundFile(const gkString& v)     {m_sndRef = v;}
-	GK_INLINE gkSoundProperties&     getProperties(void)                {return m_props;}
 	GK_INLINE int                   getMode(void)                       {return m_mode;}
-	GK_INLINE const gkString&        getSoundFile(void)                 {return m_sndRef;}
-
+	GK_INLINE const gkString&       getSoundFile(void)                  {return m_sndRef;}
 
 	void execute(void);
 };
-
-#endif //OGREKIT_OPENAL_SOUND
 #endif//_gkSoundActuator_h_

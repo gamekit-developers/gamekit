@@ -25,22 +25,24 @@
 -------------------------------------------------------------------------------
 */
 #include "gkCommon.h"
-#ifdef OGREKIT_OPENAL_SOUND
-
 #include "gkSoundActuator.h"
+
+#ifdef OGREKIT_OPENAL_SOUND
 #include "gkLogger.h"
 #include "gkSoundManager.h"
 #include "gkSound.h"
-
-
+#endif
 
 gkSoundActuator::gkSoundActuator(gkGameObject* object, gkLogicLink* link, const gkString& name)
 	:   gkLogicActuator(object, link, name),
 	    m_mode(SA_PLAY_STOP),
 	    m_sndInit(false),
-	    m_sndRef(""),
+	    m_sndRef("")
+#ifdef OGREKIT_OPENAL_SOUND
+	    ,
 	    m_sound(0),
 	    m_player(0)
+#endif
 {
 }
 
@@ -48,7 +50,9 @@ gkSoundActuator::gkSoundActuator(gkGameObject* object, gkLogicLink* link, const 
 
 gkSoundActuator::~gkSoundActuator()
 {
+#ifdef OGREKIT_OPENAL_SOUND
 	notifyLinkDestroyed();
+#endif
 }
 
 
@@ -57,12 +61,15 @@ gkLogicBrick* gkSoundActuator::clone(gkLogicLink* link, gkGameObject* dest)
 {
 	gkSoundActuator* act = new gkSoundActuator(*this);
 	act->cloneImpl(link, dest);
+#ifdef OGREKIT_OPENAL_SOUND
 	act->m_player = 0;
 	act->m_sound = 0;
 	act->m_sndInit = false;
+#endif
 	return act;
 }
 
+#ifdef OGREKIT_OPENAL_SOUND
 
 
 void gkSoundActuator::notifyLinkDestroyed(void)
@@ -89,9 +96,12 @@ void gkSoundActuator::notifyActiveStatus(void)
 	}
 }
 
+#endif
 
 void gkSoundActuator::execute(void)
 {
+
+#ifdef OGREKIT_OPENAL_SOUND
 	if (!m_sndInit)
 	{
 		m_sndInit = true;
@@ -160,9 +170,6 @@ void gkSoundActuator::execute(void)
 
 		if (m_props.m_3dSound)
 			m_player->updatePropsForObject(m_object);
-
-
 	}
+#endif
 }
-
-#endif//OGREKIT_OPENAL_SOUND
