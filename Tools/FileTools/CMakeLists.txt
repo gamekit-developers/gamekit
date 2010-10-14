@@ -31,6 +31,7 @@ project(FBT)
 list(APPEND CMAKE_MODULE_PATH ${FBT_SOURCE_DIR}/CMake)
 
 
+#set(FBT_USE_BLEND_TEST 0)
 #set(FBT_USE_ZLIB 0)
 #set(FBT_ZLIB_INCLUDE )
 #set(FBT_ZLIB_LIBRARY )
@@ -47,3 +48,7 @@ subdirs(Compiler)
 subdirs(File)
 subdirs(FileFormats/Blend)
 subdirs(FileFormats/Bullet)
+
+if (FBT_USE_BLEND_TEST)
+	subdirs(FileTest)
+endif()
