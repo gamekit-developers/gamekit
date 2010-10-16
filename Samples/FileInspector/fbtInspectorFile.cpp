@@ -37,8 +37,8 @@ const FBTuint32 GLOB = FBT_ID('P', 'R', 'O', 'J');
 const FBTuint32 ENDB = FBT_ID('E', 'N', 'D', 'B');
 const FBTuint32 FBT1 = FBT_ID('D', 'N', 'A', '1');
 const FBTuint32 DATA = FBT_ID('D', 'A', 'T', 'A');
-
 const FBTuint16 FP   = FBT_ID2('F', 'P');
+
 }
 
 
@@ -49,7 +49,6 @@ fbtInspectorFile::fbtInspectorFile()
 {
 	m_project   = new fbtProjectFile();
 	m_memory    = new fbtBinTables();
-	m_dataIsData = true;
 
 	initializeTables(m_memory);
 }
@@ -88,7 +87,8 @@ void fbtInspectorFile::writeData(fbtStream* stream, FBTsize len, void* writeData
 	ch.m_len    = len;
 	ch.m_nr     = 1;
 	ch.m_old    = (FBTsize)writeData;
-	ch.m_typeid = 0;
+	ch.m_typeid = m_memory->findTypeId("Link");
+
 
 	stream->write(&ch, sizeof(Chunk));
 	stream->write(writeData, ch.m_len);
@@ -101,7 +101,12 @@ void fbtInspectorFile::writeGlobal(fbtStream* stream)
 
 	writeStruct(stream, m_memory->findTypeId("fbtProjectFile"), fbtIdCodes::GLOB, sizeof(fbtProjectFile), m_project);
 	if (m_project->m_windowLayout)
-		writeData(stream, strlen(m_project->m_windowLayout), m_project->m_windowLayout);
+	{
+		char *data = m_project->m_windowLayout;
+		FBTsize len = strlen(data);
+		data[len] = 0;
+		writeData(stream, len+1, data);
+	}
 
 
 	if (m_project->m_projectFiles.m_first)

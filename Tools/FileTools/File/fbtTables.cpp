@@ -125,7 +125,7 @@ bool fbtBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 	}
 	else
 	{
-		m_name = (Names)fbtMalloc((nl * sizeof(ftbName)) + 1);
+		m_name = (Names)fbtMalloc((nl * sizeof(fbtName)) + 1);
 	}
 
 
@@ -133,7 +133,7 @@ bool fbtBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 	i = 0;
 	while (i < nl && i < fbtMaxTable)
 	{
-		ftbName name = {cp, i, fbtCharHashKey(cp).hash(), 0, 0, 0, 1};
+		fbtName name = {cp, i, fbtCharHashKey(cp).hash(), 0, 0, 0, 1};
 
 		fbtFixedString<64> bn;
 
@@ -263,6 +263,8 @@ bool fbtBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 		m_strc = (Strcs)fbtMalloc(nl * fbtMaxMember * sizeof(FBTtype) + 1);
 
 
+	m_typeFinder.reserve(m_typeNr);
+
 
 	i = 0;
 	while (i < nl)
@@ -276,6 +278,8 @@ bool fbtBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 			tp[1] = fbtSwap16(tp[1]);
 
 			m_type[tp[0]].m_strcId = m_strcNr - 1;
+
+			m_typeFinder.insert(m_type[tp[0]].m_name, m_type[tp[0]]);
 
 
 			k = tp[1];
@@ -297,7 +301,7 @@ bool fbtBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 		{
 			FBT_ASSERT( tp[1] < fbtMaxMember );
 			m_type[tp[0]].m_strcId = m_strcNr - 1;
-
+			m_typeFinder.insert(m_type[tp[0]].m_name, m_type[tp[0]]);
 
 			tp += (2 * tp[1]) + 2;
 		}
@@ -448,16 +452,10 @@ void fbtBinTables::putMember(FBTtype* cp, fbtStruct* off, FBTtype nr, FBTuint32&
 }
 
 
-FBTtype fbtBinTables::findTypeId(const char* cp)
+FBTtype fbtBinTables::findTypeId(const fbtCharHashKey &cp)
 {
-	FBThash chk = fbtCharHashKey(cp).hash();
-
-	FBTtype i;
-	for (i = 0; i < m_typeNr; ++i)
-	{
-		if (m_type[i].m_typeId == chk)
-			return m_type[i].m_strcId;
-	}
-
-	return 0;
+	FBTsizeType pos = m_typeFinder.find(cp);
+	if (pos != FBT_NPOS)
+		return m_typeFinder.at(pos).m_strcId;
+	return -1;
 }

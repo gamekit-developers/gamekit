@@ -1,5 +1,5 @@
 /* XPM */
-static char * folder_open_xpm[] = {
+static const char * folder_open_xpm[] = {
 "16 16 117 2",
 "  	c None",
 ". 	c #7A7A7A",

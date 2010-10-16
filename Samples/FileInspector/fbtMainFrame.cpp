@@ -33,6 +33,7 @@
 #include "fbtBlend.h"
 #include "fbtBullet.h"
 #include "fbtIcons.h"
+#include "fbtDataView.h"
 
 #include <wx/aui/aui.h>
 #include <wx/menu.h>
@@ -86,21 +87,22 @@ BEGIN_EVENT_TABLE( fbtMainFrame, wxFrame )
 	EVT_MENU(FBT_CLOSE_ALL,     fbtMainFrame::closeAllEvent)
 	EVT_MENU(FBT_RESET_LAYOUT,  fbtMainFrame::resetLayoutEvent)
 	EVT_MENU(FBT_EDIT_LAYOUT,   fbtMainFrame::resetLayoutEvent)
-	EVT_MENU(FBT_INSP_LAYOUT,   fbtMainFrame::inspLayoutEvent)
 
 
 	EVT_TREE_ITEM_ACTIVATED(FBT_WINDOW_PRJ,     fbtMainFrame::itemActivatedEvent)
 	EVT_TREE_BEGIN_LABEL_EDIT(FBT_WINDOW_PRJ,   fbtMainFrame::editLabelBegin)
 	EVT_TREE_END_LABEL_EDIT(FBT_WINDOW_PRJ,     fbtMainFrame::editLabelEnd)
 	EVT_TREE_ITEM_MENU(FBT_WINDOW_PRJ,          fbtMainFrame::openProjectMenu)
+	
 	EVT_MENU(FBT_DELETE_FILE,                   fbtMainFrame::deleteSelectedEvent)
 	EVT_MENU(FBT_RENAME,                        fbtMainFrame::renameSelectedEvent)
 	EVT_MENU(FBT_EXPORT,                        fbtMainFrame::exportTextEvent)
 	EVT_MENU(FBT_EXPORT_ALL,                    fbtMainFrame::exportAllTextEvent)
 	EVT_MENU(FBT_NEW_NOTE,                      fbtMainFrame::newNote)
 
-END_EVENT_TABLE()
+	EVT_TREE_ITEM_ACTIVATED(FBT_WINDOW_FBT,     fbtMainFrame::chunkActivated)
 
+END_EVENT_TABLE()
 
 
 
@@ -108,8 +110,18 @@ END_EVENT_TABLE()
 class fbtTextFileData : public wxTreeItemData
 {
 public:
-	fbtTextFileData(fbtText* fp) : m_file(fp) {}
+	fbtTextFileData(fbtText* fp) : m_file(fp){}
 	fbtText* m_file;
+};
+
+
+
+class fbtChunkData : public wxTreeItemData
+{
+public:
+	fbtChunkData(fbtFile::MemoryChunk* mch, int index = 0) : m_chunk(mch), m_index(index) {}
+	fbtFile::MemoryChunk* m_chunk;
+	int m_index;
 };
 
 
@@ -127,7 +139,6 @@ fbtMainFrame::fbtMainFrame()
 	    m_chunkExplorer(0),
 	    m_projectExplorer(0),
 	    m_startupPerspective(wxEmptyString),
-	    m_inspectPerspective(wxEmptyString),
 		m_projPath(wxEmptyString),
 	    m_curProject(0),
 	    m_compiledTables(0),
@@ -152,8 +163,6 @@ fbtMainFrame::fbtMainFrame()
 	art->SetMetric(wxAUI_DOCKART_SASH_SIZE,         2);
 	art->SetMetric(wxAUI_DOCKART_CAPTION_SIZE,      18);
 
-	//art->SetColor(wxAUI_DOCKART_SASH_COLOUR,                        art->GetColor(wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR));
-	//art->SetColor(wxAUI_DOCKART_BORDER_COLOUR,                      art->GetColor(wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR));
 	art->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR,            art->GetColor(wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR));
 	art->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR,   art->GetColor(wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR));
 	art->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_TEXT_COLOUR,       *wxWHITE);
@@ -206,17 +215,12 @@ void fbtMainFrame::loadDataView(wxChoicebook* parent, int i)
 	parent->AddPage(m_strc[i], wxT("Structure"));
 }
 
-
 void fbtMainFrame::loadWindows(void)
 {
-
 	wxAuiPaneInfo inf;
 
-
-
-
-	m_fbtBook = new wxAuiNotebook(this, FBT_WINDOW_FBT, wxDefaultPosition, wxSize(250, 200), fbtNoteStyleProjT);
-	m_chunkExplorer = new wxTreeCtrl(this, -1, wxDefaultPosition, wxSize(200, 200));
+	m_fbtBook = new wxAuiNotebook(this, -1, wxDefaultPosition, wxSize(250, 200), fbtNoteStyleProjT);
+	m_chunkExplorer = new wxTreeCtrl(this, FBT_WINDOW_FBT, wxDefaultPosition, wxSize(200, 200));
 
 	m_chunkExplorer->AssignImageList(fbtMakeInspectorImageList());
 
@@ -227,24 +231,17 @@ void fbtMainFrame::loadWindows(void)
 	loadDataView(m_fpBook, 1);
 
 	inf = wxAuiPaneInfo().Caption(wxT("Inspector")).Right().Layer(FBT_ISP_LAYER).Name(wxT("FBTE")).Hide();
-
-
 	m_fbtBook->AddPage(m_chunkExplorer, wxT("Explorer"));
-	m_fbtBook->AddPage(m_mpBook,        wxT("Memory Tables"));
-	m_fbtBook->AddPage(m_fpBook,        wxT("File Tables"));
+	m_fbtBook->AddPage(m_mpBook, wxT("Memory Tables"));
+	m_fbtBook->AddPage(m_fpBook, wxT("File Tables"));
 	m_auiManager->AddPane(m_fbtBook, inf);
 
 
 
-
-
-
 	m_projBook = new wxAuiNotebook(this, -1, wxDefaultPosition, wxSize(250, 200), fbtNoteStyleProjT);
-
-
 	m_projectExplorer = new wxTreeCtrl(this, FBT_WINDOW_PRJ,
 	                                   wxDefaultPosition, wxSize(200, 200),
-	                                   wxTR_EDIT_LABELS | wxTR_ROW_LINES | /*wxTR_MULTIPLE | */wxTR_DEFAULT_STYLE);
+	                                   fbtTreeStyle);
 
 
 	m_projectExplorer->AssignImageList(fbtMakeProjectImageList());
@@ -273,8 +270,6 @@ void fbtMainFrame::loadWindows(void)
 	m_output->AddPage(m_logWindow, wxT("Log"));
 	m_output->AddPage(m_cpBook,    wxT("Compiled Tables"));
 	m_auiManager->AddPane(m_output, inf);
-
-
 
 
 	m_note = new wxAuiNotebook(this, FBT_WINDOW_WRK, wxDefaultPosition, wxDefaultSize, fbtNoteStyle);
@@ -335,11 +330,10 @@ void fbtMainFrame::loadMenus(void)
 
 
 	iter = new wxMenu();
-	item = iter->Append(FBT_WINDOW_FBT_VIEW, wxT("Inspector\tF1"));
-	item = iter->Append(FBT_WINDOW_PRJ_VIEW, wxT("Project\tF2"));
-	item = iter->Append(FBT_WINDOW_OUT_VIEW, wxT("Output\tF3"));
+	item = iter->Append(FBT_WINDOW_FBT_VIEW, wxT("Inspector"));
+	item = iter->Append(FBT_WINDOW_PRJ_VIEW, wxT("Project"));
+	item = iter->Append(FBT_WINDOW_OUT_VIEW, wxT("Output"));
 	menubar->Append(iter, wxT("View"));
-
 
 
 	iter = new wxMenu();
@@ -364,7 +358,6 @@ void fbtMainFrame::loadMenus(void)
 	iter = new wxMenu();
 	item = iter->Append(FBT_CLOSE_ALL, wxT("Close All Documents"));
 	iter->AppendSeparator();
-	item = iter->Append(FBT_INSP_LAYOUT, wxT("Inspector layout"));
 	item = iter->Append(FBT_EDIT_LAYOUT, wxT("Edit layout"));
 
 	iter->AppendSeparator();
@@ -488,10 +481,7 @@ void fbtMainFrame::openProject(const wxString& projPath)
 	if (newFile->parse(projPath) == fbtFile::FS_OK)
 	{
 		clearProject();
-
-		delete m_curProject;
 		m_curProject = newFile;
-
 		m_projPath = projPath;
 
 		buildProject();
@@ -715,12 +705,11 @@ void fbtMainFrame::newEvent(wxCommandEvent& evt)
 	{
 		// eg add save dialog yes | no | cancel ...
 	}
+
 	clearProject();
 
-	delete m_curProject;
 	m_curProject = new fbtInspectorFile();
-	proj = m_curProject->getFileGlobal();
-	m_projPath = wxEmptyString;
+	m_projPath  = wxEmptyString;
 
 	m_auiManager->LoadPerspective(m_startupPerspective, true);
 }
@@ -984,14 +973,40 @@ void fbtMainFrame::itemActivatedEvent(wxTreeEvent& evt)
 }
 
 
+void fbtMainFrame::chunkActivated(wxTreeEvent& evt)
+{
+	if (!m_file)
+		return;
+
+	fbtChunkData* item = (fbtChunkData*)m_chunkExplorer->GetItemData(evt.GetItem());
+	if (item && item->m_chunk)
+	{
+		fbtChunkCtrl *ctrl = new fbtChunkCtrl(this, FBT_WINDOW_CHK, wxDefaultPosition, wxSize(450, 200), wxDV_HORIZ_RULES | wxDV_VERT_RULES);
+		ctrl->LoadChunk(m_file, item->m_chunk, item->m_index);
+
+
+		m_note->AddPage(ctrl, m_chunkExplorer->GetItemText(evt.GetItem()), true);
+
+		m_auiManager->Update();
+
+
+		ctrl->FitParent();
+	}
+}
+
+
+
+
 void fbtMainFrame::closeAllPages(void)
 {
 	size_t i = 0, p = 0;
 	while (m_note->GetPageCount())
 	{
-		if (!m_note->DeletePage(m_note->GetPageCount() - 1))
+		if (!m_note->DeletePage(0))
 			break;
 	}
+
+	m_auiManager->Update();
 }
 
 
@@ -1073,34 +1088,7 @@ void fbtMainFrame::resetLayoutEvent(wxCommandEvent& evt)
 	m_auiManager->LoadPerspective(m_startupPerspective, true);
 }
 
-
-void fbtMainFrame::loadInspectorLayout(void)
-{
-	if (m_inspectPerspective.IsEmpty())
-	{
-		m_auiManager->GetPane(m_projBook).Hide();
-		m_auiManager->GetPane(m_output).Hide();
-		m_auiManager->GetPane(m_fbtBook).Show().Left();
-
-		m_fbtBook->SetSelection(0);
-		m_auiManager->Update();
-
-		m_inspectPerspective = m_auiManager->SavePerspective();
-	}
-	else
-	{
-		m_fbtBook->SetSelection(0);
-		m_auiManager->Update();
-		m_auiManager->LoadPerspective(m_inspectPerspective, true);
-	}
-}
-
-void fbtMainFrame::inspLayoutEvent(wxCommandEvent& evt)
-{
-	loadInspectorLayout();
-}
-
-
+#define ChunkCodeSub(n) (n->m_chunk.m_code != data && n->m_chunk.m_code != aray) 
 
 void fbtMainFrame::populateChunks(fbtList& chunks)
 {
@@ -1109,22 +1097,44 @@ void fbtMainFrame::populateChunks(fbtList& chunks)
 	wxFileName fname(m_file->getPath());
 	m_chunkExplorer->AppendItem(root, fname.GetName(), ICO_INS_FBT, ICO_INS_FBT);
 
+	
+	fbtBinTables *mem = m_file->getMemoryTable();
+
+
+
+	FBTuint32 i;
+	const FBTuint32 data = FBT_ID('D', 'A', 'T', 'A');
+	const FBTuint32 aray = FBT_ID('A', 'R', 'A', 'Y');
+
+
+	FBTuint32 skipLinks = fbtCharHashKey("Link").hash();
+
+	wxTreeItemId prevData = root;
+
 
 	for (fbtFile::MemoryChunk* node = (fbtFile::MemoryChunk*)chunks.first; node; node = node->m_next)
 	{
-		if (node->m_chunk.m_code == FBT_ID('D', 'A', 'T', 'A'))
+		if (mem->m_type[mem->m_strc[node->m_newTypeId][0]].m_typeId == skipLinks)
 			continue;
 
+		bool addToRoot = ChunkCodeSub(node);
 
 
-		fbtFixedString<4> idName = fbtByteToString(node->m_chunk.m_code);
+		wxString name = wxString::Format("%s", mem->m_type[mem->m_strc[node->m_newTypeId][0]].m_name);
+		wxTreeItemId id;
 
-		wxTreeItemId curBlock = m_chunkExplorer->AppendItem(root, idName.c_str(), ICO_INS_CHUNK, ICO_INS_CHUNK);
+		if (node->m_chunk.m_nr > 1)
 
-		m_chunkExplorer->AppendItem(curBlock, wxString::Format("length   : %i",    (node->m_chunk.m_len)));
-		m_chunkExplorer->AppendItem(curBlock, wxString::Format("count    : %i",    (node->m_chunk.m_nr)));
-		m_chunkExplorer->AppendItem(curBlock, wxString::Format("struct   : %i",    (node->m_chunk.m_typeid)));
-		m_chunkExplorer->AppendItem(curBlock, wxString::Format("address  : 0x%p",  (node->m_newBlock)));
+		{
+			id = m_chunkExplorer->AppendItem(root, name, ICO_INS_CHUNK, ICO_INS_CHUNK);
+			for (i=0; i<node->m_chunk.m_nr; i++)
+				m_chunkExplorer->AppendItem(id, name, ICO_INS_CHUNK, ICO_INS_CHUNK, new fbtChunkData(node, i));
+		}
+		else
+			id = m_chunkExplorer->AppendItem(root, name, ICO_INS_CHUNK, ICO_INS_CHUNK, new fbtChunkData(node));
+
+
+
 
 	}
 
@@ -1261,7 +1271,7 @@ void fbtMainFrame::loadMainFile(const wxString& path)
 	else
 		m_file = new btBulletFile();
 
-	m_auiManager->GetPane(m_fbtBook).Show().Left();
+	m_auiManager->GetPane(m_fbtBook).Show();
 	m_auiManager->Update();
 
 
@@ -1313,7 +1323,7 @@ void fbtMainFrame::populate(fbtBinTables* table, int index)
 
 	for (i = 0; i < table->m_nameNr; i++)
 	{
-		ftbName& name = table->m_name[i];
+		fbtName& name = table->m_name[i];
 
 		wxVector<wxVariant> data;
 		data.push_back( wxVariant((int)i).MakeString() );
@@ -1388,9 +1398,10 @@ void fbtMainFrame::buildProject(void)
 
 void fbtMainFrame::destroyProject(void)
 {
-	closeAllPages();
 
+	closeAllPages();
 	m_chunkExplorer->DeleteAllItems();
+
 	m_projectExplorer->DeleteAllItems();
 	m_logWindow->Clear();
 
@@ -1411,29 +1422,28 @@ void fbtMainFrame::destroyProject(void)
 	m_curProject = 0;
 
 
+	m_projBook->SetSelection(0);
+	m_output->SetSelection(0);
+	m_fbtBook->SetSelection(0);
+	m_mpBook->SetSelection(0);
+	m_fpBook->SetSelection(0);
+	m_cpBook->SetSelection(0);
 }
+
 
 
 void fbtMainFrame::clearProject(void)
 {
-	closeAllPages();
-
-	m_chunkExplorer->DeleteAllItems();
-
-	m_logWindow->Clear();
+	destroyProject();
 	createNewProjectTree();
-
-	m_output->SetSelection(0);
-
-
-	SetTitle(wxString(fbtDefaultTitle));
-	unpopulate();
 }
 
 
 void fbtMainFrame::unpopulate(void)
 {
+	closeAllPages();
 	m_chunkExplorer->DeleteAllItems();
+	m_logWindow->Clear();
 
 	for (int i = 0;  i < 3; i++)
 	{
@@ -1445,6 +1455,14 @@ void fbtMainFrame::unpopulate(void)
 	if (m_file)
 		delete m_file;
 	m_file = 0;
+
+	m_projBook->SetSelection(0);
+	m_output->SetSelection(0);
+	m_fbtBook->SetSelection(0);
+	m_mpBook->SetSelection(0);
+	m_fpBook->SetSelection(0);
+	m_cpBook->SetSelection(0);
+
 }
 
 
@@ -1485,6 +1503,9 @@ void fbtMainFrame::editLabelEnd(wxTreeEvent& evt)
 
 	}
 }
+
+
+
 
 void fbtMainFrame::genCppHeader(wxCommandEvent& evt)
 {

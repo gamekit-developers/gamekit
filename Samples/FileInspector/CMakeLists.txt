@@ -5,6 +5,7 @@ set(INSP_SRC
     fbtApp.cpp
     fbtTextFile.cpp
     fbtMainFrame.cpp
+    fbtDataView.cpp
     fbtInspectorFile.cpp
     fbtIcons.cpp
     Serialize/fbtDataApi.cpp
@@ -14,6 +15,7 @@ set(INSP_SRC
 set(INSP_HDR
     fbtApp.h
     fbtTextFile.h
+    fbtDataView.h
     fbtMainFrame.h
     fbtInspectorFile.h
     fbtIcons.h
@@ -22,6 +24,10 @@ set(INSP_HDR
 set(INSP_API Serialize/fbtDataApi.h)
 if (WIN32)
 	set(PLAT_RESOURCE Win32/application.rc)
+else()
+	if (NOT APPLE)
+		link_libraries(X11 SM)
+	endif()
 endif()
 
 add_fbt(fbtInspector ${INSP_API})

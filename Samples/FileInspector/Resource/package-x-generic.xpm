@@ -1,5 +1,5 @@
 /* XPM */
-static char * package_x_generic_xpm[] = {
+static const char * package_x_generic_xpm[] = {
 "16 16 85 1",
 " 	c None",
 ".	c #8F5902",

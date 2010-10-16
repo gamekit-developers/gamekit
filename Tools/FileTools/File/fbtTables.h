@@ -58,7 +58,7 @@ FBT_INLINE fbtFixedString<4> fbtByteToString(FBTuint32 i)
 }
 
 
-typedef struct ftbName
+typedef struct fbtName
 {
 	char*           m_name;     // note: memory is in the raw table.
 	int             m_loc;
@@ -67,7 +67,7 @@ typedef struct ftbName
 	int             m_numSlots, m_isFptr;
 	int             m_arraySize;
 	int             m_slots[FBT_ARRAY_SLOTS];
-} ftbName;
+} fbtName;
 
 typedef struct fbtType
 {
@@ -124,7 +124,7 @@ public:
 class fbtBinTables
 {
 public:
-	typedef ftbName*                Names;  // < fbtMaxTable
+	typedef fbtName*                Names;  // < fbtMaxTable
 	typedef fbtType*                Types;  // < fbtMaxTable
 	typedef FBTtype*                TypeL;  // < fbtMaxTable
 	typedef FBTtype**               Strcs;  // < fbtMaxTable * fbtMaxMember;
@@ -140,6 +140,7 @@ public:
 	typedef fbtArray<FBTuint32>     NameB;
 	typedef fbtArray<fbtStruct*>    OffsM;
 
+	typedef fbtHashTable<fbtCharHashKey, fbtType> TypeFinder;
 
 public:
 
@@ -150,7 +151,7 @@ public:
 	bool read(bool swap);
 	bool read(const void* ptr, const FBTsize& len, bool swap);
 
-	FBTtype findTypeId(const char* cp);
+	FBTtype findTypeId(const fbtCharHashKey &cp);
 
 
 	Names   m_name;
@@ -172,6 +173,9 @@ public:
 
 
 private:
+
+	TypeFinder m_typeFinder;
+
 	void putMember(FBTtype* cp, fbtStruct* off, FBTtype nr, FBTuint32& cof, FBTuint32& depth);
 	void compile(FBTtype i, FBTtype nr, fbtStruct* off, FBTuint32& cof, FBTuint32& depth);
 	void compile(void);

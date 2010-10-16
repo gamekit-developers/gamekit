@@ -23,36 +23,37 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include <wx/app.h>
-#include <wx/image.h>
-#include "fbtMainFrame.h"
+#ifndef _fbtDataView_h_
+#define _fbtDataView_h_
 
+#include <wx/dataview.h>
+#include "fbtTypes.h"
+#include "fbtTables.h"
+#include "fbtFile.h"
 
-class fbtApp : public wxApp
+class fbtChunkViewModel;
+
+class fbtChunkCtrl : public wxDataViewCtrl
 {
-private:
-	fbtMainFrame* m_frame;
-
 public:
 
+	fbtChunkCtrl(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize& size, long style);
+	virtual ~fbtChunkCtrl();
 
-	bool OnInit( void )
-	{
-		wxInitAllImageHandlers();
+	void DeleteAllItems(void);
+	void LoadChunk(fbtFile* fp, fbtFile::MemoryChunk* mch, int nrIndex);
+	void FitParent(void);
 
-		m_frame = new fbtMainFrame();
-		if (argc > 1) m_frame->openProject(argv[argc-1]);
-		m_frame->Show();
-		return true;
-	}
+private:
 
+	void LoadColumns(void);
 
-	int OnExit(void)
-	{
-		return 0;
-	}
-
+	fbtChunkViewModel *m_model;
 };
 
 
-IMPLEMENT_APP( fbtApp );
+
+
+
+
+#endif//_fbtDataView_h_

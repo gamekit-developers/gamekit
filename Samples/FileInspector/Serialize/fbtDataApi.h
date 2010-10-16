@@ -30,9 +30,17 @@
 #define INSP_VERSION_MAJOR      1
 #define INSP_VERSION_MINOR      0
 #define INSP_VERSION_SUB        0
-#define INSP_VERSION_REV        5
+#define INSP_VERSION_REV        9
 #define INSPECTOR_VERSION_FILE  FBT_ID(INSP_VERSION_MAJOR, INSP_VERSION_MINOR, INSP_VERSION_SUB, INSP_VERSION_REV)
 #define privsec public
+
+
+typedef struct Link 
+{
+	// using Link as a data holder 
+	void *m_data;
+}Link;
+
 
 
 class fbtText

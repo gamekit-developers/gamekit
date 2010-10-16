@@ -1398,8 +1398,6 @@ public:
 				for (FBTuint16 i = m_size; i < ns; i++) m_buffer[i] = 0;
 			m_size = ns;
 			m_buffer[m_size] = 0;
-			hash();
-
 		}
 	}
 

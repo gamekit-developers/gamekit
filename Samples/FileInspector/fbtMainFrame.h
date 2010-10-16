@@ -38,12 +38,14 @@ class wxTextCtrl;
 class wxTreeCtrl;
 class wxGrid;
 class wxAuiNotebook;
+class wxAuiNotebookEvent;
 class wxAuiManager;
 class wxDataViewListCtrl;
 class wxStyledTextCtrl;
 class wxChoicebook;
 class fbtProjectTree;
 class fbtTextFile;
+class fbtChunkCtrl;
 
 
 class fbtMainFrame : public wxFrame
@@ -70,18 +72,20 @@ private:
 	void newEvent(wxCommandEvent& evt);
 	void newFileEvent(wxCommandEvent& evt);
 	void openFBTEvent(wxCommandEvent& evt);
+
 	void fbtViewEvent(wxCommandEvent& evt);
 	void projViewEvent(wxCommandEvent& evt);
 	void outViewEvent(wxCommandEvent& evt);
+
 	void buildEvent(wxCommandEvent& evt);
 	void gtcEvent(wxCommandEvent& evt);
+
 	void itemActivatedEvent(wxTreeEvent& evt);
 	void editLabelBegin(wxTreeEvent& evt);
 	void editLabelEnd(wxTreeEvent& evt);
 	void openProjectMenu(wxTreeEvent& evt);
 	void closeAllEvent(wxCommandEvent& evt);
 	void resetLayoutEvent(wxCommandEvent& evt);
-	void inspLayoutEvent(wxCommandEvent& evt);
 	void deleteSelectedEvent(wxCommandEvent& evt);
 	void renameSelectedEvent(wxCommandEvent& evt);
 	void editTextEvent(wxCommandEvent& evt);
@@ -89,12 +93,9 @@ private:
 	void exportAllTextEvent(wxCommandEvent& evt);
 	void newNote(wxCommandEvent& evt);
 	void genCppHeader(wxCommandEvent& evt);
-
+	void chunkActivated(wxTreeEvent& evt);
 
 	void closeAllPages(void);
-
-	void loadInspectorLayout(void);
-
 
 	void openNewFile(const wxString& name, fbtText* fp);
 
@@ -114,7 +115,10 @@ private:
 	void saveProject(const wxString& path);
 	void buildProject(void);
 	void clearProject(void);
+
+
 	void destroyProject(void);
+	void createNewLayout(void);
 
 
 	void loadDataView(wxChoicebook* parent, int index);
@@ -125,18 +129,17 @@ private:
 	void    loadMenus(void);
 
 	wxAuiManager*           m_auiManager;
-	wxAuiNotebook*          m_note;     // text edit / graph visual
-	wxAuiNotebook*          m_projBook; // project
-	wxAuiNotebook*          m_output;   // output
-	wxAuiNotebook*          m_fbtBook;  // fbt explorer
+	wxAuiNotebook*          m_note;
+	wxAuiNotebook*          m_projBook;
+	wxAuiNotebook*          m_output;
+	wxAuiNotebook*          m_fbtBook;
 
 
 	wxTextCtrl*             m_logWindow;
 	wxTreeCtrl*             m_chunkExplorer;
 	wxTreeCtrl*             m_projectExplorer;
 	wxString                m_startupPerspective;
-	wxString                m_inspectPerspective;
-	wxString				m_projPath;
+	wxString                m_projPath;
 
 	fbtInspectorFile*       m_curProject;
 	fbtBinTables*           m_compiledTables;

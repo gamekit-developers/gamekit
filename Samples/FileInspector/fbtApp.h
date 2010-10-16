@@ -65,7 +65,6 @@ enum FBTEventID
 	// Window
 	FBT_CLOSE_ALL,
 	FBT_EDIT_LAYOUT,
-	FBT_INSP_LAYOUT,
 	FBT_RESET_LAYOUT,
 
 	// Help
@@ -88,25 +87,31 @@ enum FBTEventID
 	// Work Windows
 	FBT_WINDOW_TXT,
 	FBT_WINDOW_VIZ,
+	FBT_WINDOW_CHK,
 
 };
-
 
 #define fbtNoteStyle wxAUI_NB_TOP            | wxAUI_NB_TAB_MOVE          | \
                      wxAUI_NB_SCROLL_BUTTONS | wxAUI_NB_WINDOWLIST_BUTTON | \
                      wxAUI_NB_TAB_SPLIT      | \
-                     wxAUI_NB_CLOSE_BUTTON   | wxAUI_NB_TAB_EXTERNAL_MOVE
+                     wxAUI_NB_CLOSE_BUTTON 
 
 #define fbtNoteStyleProjB wxAUI_NB_BOTTOM         | wxAUI_NB_TAB_MOVE          | \
-                          wxAUI_NB_SCROLL_BUTTONS | wxAUI_NB_TAB_EXTERNAL_MOVE
+                          wxAUI_NB_SCROLL_BUTTONS
 #define fbtNoteStyleProjT wxAUI_NB_TOP            | wxAUI_NB_TAB_MOVE          | \
-                          wxAUI_NB_SCROLL_BUTTONS | wxAUI_NB_TAB_EXTERNAL_MOVE
+                          wxAUI_NB_SCROLL_BUTTONS
 
-#define fbtDefaultTitle         wxString::Format("File Inspector - v%i.%i.%i", INSP_VERSION_MAJOR, INSP_VERSION_MINOR, INSP_VERSION_SUB)
-#define fbtDataViewDefault      wxDATAVIEW_CELL_INERT,  -1, wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_REORDERABLE
+
+#define fbtDefaultTitle			wxString::Format("File Inspector - v%i.%i.%i", INSP_VERSION_MAJOR, INSP_VERSION_MINOR, INSP_VERSION_SUB)
 #define fbtDataViewText         wxDATAVIEW_CELL_INERT,  128, wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_REORDERABLE
 #define fbtDataViewSmall        wxDATAVIEW_CELL_INERT, -1, wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE | wxCOL_SORTABLE | wxDATAVIEW_COL_REORDERABLE
-#define fbtDataViewDefaultT     -1, wxDATAVIEW_CELL_INERT, wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_REORDERABLE
+
+
+#ifdef __WXMSW__
+# define fbtTreeStyle wxTR_EDIT_LABELS | wxTR_ROW_LINES | wxTR_DEFAULT_STYLE
+#else
+# define fbtTreeStyle wxTR_EDIT_LABELS | wxTR_DEFAULT_STYLE
+#endif
 
 
 #define FBT_WRK_LAYER 0

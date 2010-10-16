@@ -71,7 +71,7 @@ struct fbtChunk
 
 fbtFile::fbtFile(const char* uid)
 	:   m_version(-1), m_fileHeader(0), m_uhid(uid),
-	    m_memory(0), m_file(0), m_curFile(0), m_dataIsData(false)
+	    m_memory(0), m_file(0), m_curFile(0)
 {
 }
 
@@ -345,29 +345,18 @@ public:
 	fbtBinTables* m_mp;
 	fbtBinTables* m_fp;
 
-	fbtStruct* find(const FBTuint64& kvp);
+	fbtStruct* find(const fbtCharHashKey& kvp);
 	fbtStruct* find(fbtStruct* strc, const FBTuint32& idx, const FBTuint32& dp, const FBTuint64& kvp);
-
-	void    reportStatus(fbtStruct* strc, fbtBinTables* mp, fbtBinTables* fp);
-	int     link(void);
+	int        link(void);
 
 };
 
 
-fbtStruct* fbtLinkCompiler::find(const FBTuint64& kvp)
+fbtStruct* fbtLinkCompiler::find(const fbtCharHashKey& kvp)
 {
-	fbtBinTables::OffsM::Pointer md = m_fp->m_offs.ptr();
-	FBTsizeType i, s = m_fp->m_offs.size();
-
-
-	for (i = 0; i < s; ++i)
-	{
-		fbtStruct* strc = md[i];
-
-		if (strc->m_val.k64 == kvp)
-			return strc;
-	}
-
+	FBTtype i;
+	if ( (i = m_fp->findTypeId(kvp)) != ((FBTtype)-1))
+		return m_fp->m_offs.at(i);
 	return 0;
 }
 
@@ -404,7 +393,7 @@ int fbtLinkCompiler::link(void)
 	for (i = 0; i < s; ++i)
 	{
 		fbtStruct* strc = md[i];
-		strc->m_link = find(strc->m_val.k64);
+		strc->m_link = find(m_mp->m_type[strc->m_key.k16[0]].m_name);
 
 
 		if (strc->m_link)
@@ -462,7 +451,7 @@ int fbtFile::link(void)
 		node->m_newTypeId = ms->m_strcId;
 
 
-		if (m_memory->m_type[ms->m_key.k16[0]].m_typeId == hk || (m_dataIsData && node->m_chunk.m_code == DATA))
+		if (m_memory->m_type[ms->m_key.k16[0]].m_typeId == hk)
 		{
 			FBTsize totSize = node->m_chunk.m_len;
 			node->m_newBlock = fbtMalloc(totSize);
@@ -511,7 +500,7 @@ int fbtFile::link(void)
 
 
 		fbtStruct* cs = md[node->m_newTypeId];
-		if (m_memory->m_type[cs->m_key.k16[0]].m_typeId == hk  || (m_dataIsData && node->m_chunk.m_code == DATA))
+		if (m_memory->m_type[cs->m_key.k16[0]].m_typeId == hk)
 			continue;
 
 		if (!cs->m_link || skip(m_memory->m_type[cs->m_key.k16[0]].m_typeId) || !node->m_newBlock)
@@ -546,8 +535,8 @@ int fbtFile::link(void)
 
 
 
-				const ftbName& nameD = m_memory->m_name[scs->m_key.k16[1]];
-				const ftbName& nameS = m_file->m_name[sos->m_key.k16[1]];
+				const fbtName& nameD = m_memory->m_name[scs->m_key.k16[1]];
+				const fbtName& nameS = m_file->m_name[sos->m_key.k16[1]];
 
 
 

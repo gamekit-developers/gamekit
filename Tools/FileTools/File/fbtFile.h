@@ -176,9 +176,6 @@ protected:
 
 	int m_version, m_fileHeader;
 	char* m_curFile;
-	bool m_dataIsData;
-
-
 
 	typedef fbtHashTable<fbtSizeHashKey, MemoryChunk*> ChunkMap;
 	fbtList     m_chunks;
