@@ -53,7 +53,7 @@
 #endif
 
 #if FBT_COMPILER == FBT_COMPILER_MSVC
-# define fbtp_printf(ptr, size, fmt, lst) _vsnprintf_s(ptr, size, size, fmt, lst)
+# define fbtp_printf(ptr, size, fmt, lst) _vsnprintf_s(ptr, size, fmt, lst)
 #else
 # define fbtp_printf vsnprintf
 #endif

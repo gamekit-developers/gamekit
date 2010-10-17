@@ -81,7 +81,7 @@ void fbtDebugger::setReportHook(Reporter& hook)
 
 void fbtDebugger::report(const char* fmt, ...)
 {
-	char ReportBuf[FBT_DEBUG_BUF_SIZE];
+	char ReportBuf[FBT_DEBUG_BUF_SIZE+1];
 
 	va_list lst;
 	va_start(lst, fmt);
@@ -124,7 +124,7 @@ void fbtDebugger::report(const char* fmt, ...)
 
 void fbtDebugger::reportIDE(const char* src, long line, const char* fmt, ...)
 {
-	static char ReportBuf[FBT_DEBUG_BUF_SIZE];
+	static char ReportBuf[FBT_DEBUG_BUF_SIZE+1];
 
 	va_list lst;
 	va_start(lst, fmt);
@@ -153,7 +153,7 @@ void fbtDebugger::reportIDE(const char* src, long line, const char* fmt, ...)
 
 void fbtDebugger::errorIDE(const char* src, long line, const char* fmt, ...)
 {
-	static char ReportBuf[FBT_DEBUG_BUF_SIZE];
+	static char ReportBuf[FBT_DEBUG_BUF_SIZE+1];
 
 	va_list lst;
 	va_start(lst, fmt);
