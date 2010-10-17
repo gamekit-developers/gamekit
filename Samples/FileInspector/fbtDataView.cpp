@@ -126,7 +126,6 @@ public:
 	fbtKey32        m_key;
 	FBTint32        m_off, m_poff;
 	FBTint32        m_len;
-	FBTint32        m_chunkOff;
 	FBTint32		m_arrIndex;
 	bool			m_isContainer;
 	bool			m_isArray;
@@ -200,7 +199,6 @@ fbtChunkViewNode *fbtChunkViewModel::Alloc(void)
 	fbtChunkViewNode *node = new fbtChunkViewNode();
 	node->m_chunk = m_chunk;
 	node->m_tables = m_tables;
-	node->m_chunkOff = m_chunkOff;
 
 	m_alloc.push_back(node);
 	return node;
@@ -311,13 +309,10 @@ void fbtChunkViewModel::GetValue(wxVariant& variant, const wxDataViewItem& item,
 		case 1:
 			{
 
-				FBTsize dataOffset = (m_chunk->m_chunk.m_len * m_chunkOff) + node->m_off;
+				char *cur = static_cast<char*>(m_chunk->m_newBlock) + (node->m_len * m_chunkOff);
+				char *data = (cur + node->m_off);
 
-
-				const char *data = (const char *)static_cast<char*>(m_chunk->m_newBlock) + dataOffset;
 				const fbtName &name = m_tables->m_name[node->m_key.k16[1]];
-
-
 
 				if (node->m_key.k16[0] <= 1)
 				{
@@ -331,7 +326,7 @@ void fbtChunkViewModel::GetValue(wxVariant& variant, const wxDataViewItem& item,
 						if (node->m_isArray && !node->m_isContainer)
 						{
 							char ch = (*data);
-							int len = strlen((const char *)static_cast<char*>(m_chunk->m_newBlock) + node->m_poff);
+							int len = strlen(cur + node->m_poff);
 
 							if (ch != 0 && node->m_arrIndex < len)
 								variant = wxString(ch);
@@ -478,6 +473,9 @@ void fbtChunkViewModel::CompileElement(FBTtype* strc, FBTint32 count, FBTuint32&
 	FBTint32 e, a;
 	for (e = 0; e < count; ++e, strc += 2)
 	{
+		FBTint32 totArray = m_tables->m_name[strc[1]].m_arraySize;
+		FBTuint32 len = (m_tables->m_name[strc[1]].m_ptrCount ? m_tables->m_ptr : m_tables->m_tlen[strc[0]]) * totArray;
+
 
 		if (strc[0] >= m_firstStrc && m_tables->m_name[strc[1]].m_ptrCount == 0)
 		{
@@ -486,11 +484,10 @@ void fbtChunkViewModel::CompileElement(FBTtype* strc, FBTint32 count, FBTuint32&
 			node->m_key.k16[0]  = strc[0];
 			node->m_key.k16[1]  = strc[1];
 			node->m_off         = cof;
-			node->m_len         = m_tables->m_tlen[strc[0]];
+			node->m_len         = len;
 			node->m_isContainer = true;
-			node->m_isArray		= m_tables->m_name[strc[1]].m_arraySize > 1;
+			node->m_isArray		= totArray > 1;
 			node->m_arrIndex    = 0;
-
 
 			if (parent)
 				node->setParent(parent);
@@ -498,19 +495,18 @@ void fbtChunkViewModel::CompileElement(FBTtype* strc, FBTint32 count, FBTuint32&
 			ItemAdded(parent, node);
 
 			FBTint32 strcId = m_tables->m_type[strc[0]].m_strcId;
-
-			Compile(strcId, m_tables->m_name[strc[1]].m_arraySize, node, cof);
+			Compile(strcId, totArray, node, cof);
 		}
 		else
 		{
-			if (m_tables->m_name[strc[1]].m_arraySize == 1)
+			if (totArray == 1)
 			{
 				fbtChunkViewNode *node = Alloc();
 
 				node->m_key.k16[0]  = strc[0];
 				node->m_key.k16[1]  = strc[1];
 				node->m_off         = cof;
-				node->m_len         = m_tables->m_tlen[strc[0]];
+				node->m_len         = len;
 				node->m_isContainer = false;
 				node->m_isArray     = false;
 				node->m_arrIndex    = 0;
@@ -518,7 +514,7 @@ void fbtChunkViewModel::CompileElement(FBTtype* strc, FBTint32 count, FBTuint32&
 				if (parent)
 					node->setParent(parent);
 
-				cof += (m_tables->m_name[strc[1]].m_ptrCount ? m_tables->m_ptr : m_tables->m_tlen[strc[0]]) * m_tables->m_name[strc[1]].m_arraySize;
+				cof += node->m_len;
 				ItemAdded(parent, node);
 			}
 			else
@@ -530,7 +526,7 @@ void fbtChunkViewModel::CompileElement(FBTtype* strc, FBTint32 count, FBTuint32&
 				node->m_key.k16[0]  = strc[0];
 				node->m_key.k16[1]  = strc[1];
 				node->m_off         = cof;
-				node->m_len         = m_tables->m_tlen[strc[0]];
+				node->m_len         = len;
 				node->m_isContainer = true;
 				node->m_isArray     = true;
 				node->m_arrIndex    = 0;
@@ -540,41 +536,25 @@ void fbtChunkViewModel::CompileElement(FBTtype* strc, FBTint32 count, FBTuint32&
 
 				ItemAdded(parent, node);
 
+				FBTuint32 elementLength = node->m_len / totArray;
 
-
-				// slot[0]
-				//   | [0][0]
-				//   - [0][1]
-				// slot[1]
-				//   | [1][0]
-				//   - [1][1]
-				FBTint32 tot = 0;
-
-				FBTuint32 elementLength = (m_tables->m_name[strc[1]].m_ptrCount ? m_tables->m_ptr : m_tables->m_tlen[strc[0]]);
-
-
-
-				for (a = 0; a < m_tables->m_name[strc[1]].m_arraySize; a ++, tot++)
+				for (a = 0; a < totArray; a ++)
 				{
-					int slot = name.m_slots[a];
-
 					fbtChunkViewNode *anode = Alloc();
 
 					anode->m_key.k16[0]  = strc[0];
 					anode->m_key.k16[1]  = strc[1];
 					anode->m_off         = cof;
 					anode->m_poff        = node->m_off;
-					anode->m_len         = m_tables->m_tlen[strc[0]];
+					anode->m_len         = elementLength;
 					anode->m_isContainer = false;
 					anode->m_isArray     = true;
-					anode->m_arrIndex    = tot;
+					anode->m_arrIndex    = a;
 					cof += elementLength;
+
 					anode->setParent(node);
 					ItemAdded(node, anode);
-
 				}
-
-
 			}
 		}
 
