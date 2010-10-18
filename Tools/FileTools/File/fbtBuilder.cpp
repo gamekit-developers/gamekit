@@ -498,10 +498,24 @@ void fbtBuilder::writeValidationProgram(const fbtPath& path)
 	path.split(split, '/', '\\');
 
 	// find split points
+
+
 	int i;
+	int last = 0;
+	for (i = path.size()-1; i > 0; --i)
+	{
+		if (path[i] == '.') 
+		{
+			last = i;
+			break;
+		}
+	}
+
+	
+	
 	for (i = 0; i < path.size(); ++i)
 	{
-		if (path[i] == '.')
+		if (i >= last)
 			break;
 
 		string.push_back(path[i]);
