@@ -1116,6 +1116,8 @@ void fbtMainFrame::populateChunks(fbtList& chunks)
 	{
 		if (mem->m_type[mem->m_strc[node->m_newTypeId][0]].m_typeId == skipLinks)
 			continue;
+		if (!node->m_newBlock)
+			continue;
 
 		bool addToRoot = ChunkCodeSub(node);
 
