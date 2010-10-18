@@ -49,6 +49,13 @@ btBulletFile::~btBulletFile()
 
 
 
+
+int btBulletFile::notifyData(void* p, const Chunk& id)
+{
+	return FS_OK;
+}
+
+
 int btBulletFile::initializeTables(fbtBinTables* tables)
 {
 	return tables->read(btBulletFBT, btBulletLen, false) ? FS_OK : FS_FAILED;

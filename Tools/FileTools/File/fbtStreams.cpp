@@ -34,7 +34,7 @@
 
 
 fbtFileStream::fbtFileStream() 
-	:    m_file(), m_handle(0), m_mode(0)
+	:    m_file(), m_handle(0), m_mode(0), m_size(0)
 {
 }
 
@@ -62,6 +62,18 @@ void fbtFileStream::open(const char* p, fbtStream::StreamMode mode)
 
 	m_file = p;
 	m_handle = fopen(m_file.c_str(), fm);
+
+	if (mode & fbtStream::SM_READ)
+	{
+		FILE *fp = (FILE*)m_handle;
+
+		int pos = position();
+		fseek(fp, 0, SEEK_END);
+		m_size = ftell(fp);
+		fseek(fp, 0, SEEK_SET);
+	}
+
+
 }
 
 
@@ -92,7 +104,15 @@ FBTsize fbtFileStream::position(void) const
 
 FBTsize fbtFileStream::size(void) const
 {
-	return 0;
+	return m_size;
+}
+
+FBTsize fbtFileStream::seek(FBTint32 off, FBTint32 way)
+{
+	if (!m_handle)
+		return 0;
+
+	return fseek((FILE*)m_handle, off, way);
 }
 
 
@@ -320,6 +340,18 @@ void fbtMemoryStream::clear(void)
 	m_size = m_pos = 0;
 	if (m_buffer)
 		m_buffer[0] = 0;
+}
+
+
+FBTsize fbtMemoryStream::seek(FBTint32 off, FBTint32 way)
+{
+	if (way == SEEK_SET)
+		m_pos = fbtClamp<FBTsize>(off, 0, m_size);
+	else if (way == SEEK_CUR)
+		m_pos = fbtClamp<FBTsize>(m_pos + off, 0, m_size);
+	else if (way == SEEK_END)
+		m_pos = m_size;
+	return m_pos;
 }
 
 

@@ -248,9 +248,20 @@ int fbtFile::parseStreamImpl(fbtStream* stream)
 
 	do
 	{
-		if ((status = fbtChunk::read(&chunk, stream, m_fileHeader)) < 0)
-			return status;
+		if ((status = fbtChunk::read(&chunk, stream, m_fileHeader)) <= 0)
+		{
+			FBT_INVALID_READ;
+			return FS_INV_READ;
+		}
 
+
+		if (chunk.m_code == SDNA)
+		{
+
+			chunk.m_code = DNA1;
+			stream->seek(-status, SEEK_CUR);
+			chunk.m_len = stream->size() - stream->position();
+		}
 
 		// exit on end byte
 		if (chunk.m_code == ENDB)
@@ -731,6 +742,7 @@ int fbtFile::reflect(const char* path, const fbtEndian& endian)
 
 int fbtChunk::read(fbtFile::Chunk* dest, fbtStream* stream, int flags)
 {
+	int bytesRead = 0;
 	bool bitsVary   = (flags & fbtFile::FH_VAR_BITS) != 0;
 	bool swapEndian = (flags & fbtFile::FH_ENDIAN_SWAP) != 0;
 
@@ -745,7 +757,7 @@ int fbtChunk::read(fbtFile::Chunk* dest, fbtStream* stream, int flags)
 		if (bitsVary)
 		{
 			fbtFile::Chunk32 src;
-			if (stream->read(&src, Block32) <= 0)
+			if ((bytesRead = stream->read(&src, Block32)) <= 0)
 			{
 				FBT_INVALID_READ;
 				return fbtFile::FS_INV_READ;
@@ -768,7 +780,7 @@ int fbtChunk::read(fbtFile::Chunk* dest, fbtStream* stream, int flags)
 		}
 		else
 		{
-			if (stream->read(&c64, BlockSize) <= 0)
+			if ((bytesRead = stream->read(&c64, BlockSize)) <= 0)
 			{
 				FBT_INVALID_READ;
 				return fbtFile::FS_INV_READ;
@@ -796,7 +808,7 @@ int fbtChunk::read(fbtFile::Chunk* dest, fbtStream* stream, int flags)
 		if (bitsVary)
 		{
 			fbtFile::Chunk64 src;
-			if (stream->read(&src, Block64) <= 0)
+			if ((bytesRead = stream->read(&src, Block64)) <= 0)
 			{
 				FBT_INVALID_READ;
 				return fbtFile::FS_INV_READ;
@@ -822,7 +834,7 @@ int fbtChunk::read(fbtFile::Chunk* dest, fbtStream* stream, int flags)
 		}
 		else
 		{
-			if (stream->read(&c32, BlockSize) <= 0)
+			if ((bytesRead = stream->read(&c32, BlockSize)) <= 0)
 			{
 				FBT_INVALID_READ;
 				return fbtFile::FS_INV_READ;
@@ -852,5 +864,5 @@ int fbtChunk::read(fbtFile::Chunk* dest, fbtStream* stream, int flags)
 	}
 
 	fbtMemcpy(dest, cpy, BlockSize);
-	return fbtFile::FS_OK;
+	return bytesRead;
 }

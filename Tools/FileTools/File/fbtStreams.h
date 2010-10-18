@@ -57,6 +57,8 @@ public:
 	virtual FBTsize  position(void) const = 0;
 	virtual FBTsize  size(void) const = 0;
 
+	virtual FBTsize seek(FBTint32 off, FBTint32 way) {return 0;}
+
 protected:
 	virtual void reserve(FBTsize nr) {}
 };
@@ -86,6 +88,7 @@ public:
 
 	FBTsize  position(void) const;
 	FBTsize  size(void)     const;
+	FBTsize seek(FBTint32 off, FBTint32 way);
 
 	void write(fbtMemoryStream &ms) const;
 
@@ -95,6 +98,7 @@ protected:
 	fbtFixedString<272> m_file;
 	fbtFileHandle       m_handle;
 	int                 m_mode;
+	int					m_size;
 };
 
 
@@ -121,7 +125,9 @@ public:
 
 	FBTsize  position(void) const;
 	FBTsize size(void) const;
-	
+
+	// watch it no size / seek
+
 protected:
 
 
@@ -160,6 +166,8 @@ public:
 
 	void*            ptr(void)          {return m_buffer;}
 	const void*      ptr(void) const    {return m_buffer;}
+
+	FBTsize seek(FBTint32 off, FBTint32 way);
 
 
 	void reserve(FBTsize nr);

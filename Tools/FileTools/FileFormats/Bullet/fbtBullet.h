@@ -39,6 +39,8 @@ public:
 
 protected:
 
+	virtual int notifyData(void* p, const Chunk& id);
+
 	virtual int initializeTables(fbtBinTables* tables);
 	virtual void*   getFBT(void);
 	virtual FBTsize getFBTlength(void);
