@@ -119,5 +119,7 @@ class gsSensor;
 class gsController;
 class gsActuator;
 
+class gsLuaManager;
+class gsLuaScript;
 
 #endif//_gsCommon_h_

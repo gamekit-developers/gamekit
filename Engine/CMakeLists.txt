@@ -543,6 +543,7 @@ if (OGREKIT_COMPLIE_SWIG AND SWIG_FOUND)
 		Script/Api/gsNodes.i
 		Script/Api/gsParticles.i
 		Script/Api/gsPhysics.i
+		Script/Api/gsScript.i
 		Script/Api/gsSound.i
 		Script/Api/gsThread.i
 		Script/Api/gsTypes.i
@@ -571,6 +572,7 @@ if (OGREKIT_COMPLIE_SWIG AND SWIG_FOUND)
 		Script/Api/gsNodes.h
 		Script/Api/gsParticles.h
 		Script/Api/gsPhysics.h
+		Script/Api/gsScript.h
 		Script/Api/gsSound.h
 		Script/Api/gsThread.h
 		Script/Api/gsUtils.h
@@ -602,6 +604,7 @@ if (OGREKIT_COMPLIE_SWIG AND SWIG_FOUND)
 		Script/Api/gsNodes.cpp
 		Script/Api/gsParticles.cpp
 		Script/Api/gsPhysics.cpp
+		Script/Api/gsScript.cpp
 		Script/Api/gsSound.cpp
 		Script/Api/gsThread.cpp
 		Script/Api/gsUtils.cpp
@@ -638,6 +641,7 @@ else()
 		Script/Api/gsNodes.i
 		Script/Api/gsParticles.i
 		Script/Api/gsPhysics.i
+		Script/Api/gsScript.i
 		Script/Api/gsSound.i
 		Script/Api/gsThread.i
 		Script/Api/gsTypes.i
@@ -661,6 +665,7 @@ else()
 		Script/Api/gsNodes.h
 		Script/Api/gsParticles.h
 		Script/Api/gsPhysics.h
+		Script/Api/gsScript.h
 		Script/Api/gsSound.h
 		Script/Api/gsThread.h
 		Script/Api/gsUtils.h
@@ -689,6 +694,7 @@ else()
 		Script/Api/gsNodes.cpp
 		Script/Api/gsParticles.cpp
 		Script/Api/gsPhysics.cpp
+		Script/Api/gsScript.cpp
 		Script/Api/gsSound.cpp
 		Script/Api/gsThread.cpp
 		Script/Api/gsUtils.cpp

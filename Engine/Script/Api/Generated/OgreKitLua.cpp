@@ -1543,44 +1543,46 @@ SWIG_Lua_dostring(lua_State *L, const char* str) {
 #define SWIGTYPE_p_gsLogicManager swig_types[34]
 #define SWIGTYPE_p_gsLogicObject swig_types[35]
 #define SWIGTYPE_p_gsLogicOpController swig_types[36]
-#define SWIGTYPE_p_gsMessageActuator swig_types[37]
-#define SWIGTYPE_p_gsMessageSensor swig_types[38]
-#define SWIGTYPE_p_gsMotionActuator swig_types[39]
-#define SWIGTYPE_p_gsMouse swig_types[40]
-#define SWIGTYPE_p_gsMouseSensor swig_types[41]
-#define SWIGTYPE_p_gsNearSensor swig_types[42]
-#define SWIGTYPE_p_gsObject swig_types[43]
-#define SWIGTYPE_p_gsParentActuator swig_types[44]
-#define SWIGTYPE_p_gsProperty swig_types[45]
-#define SWIGTYPE_p_gsPropertyActuator swig_types[46]
-#define SWIGTYPE_p_gsPropertySensor swig_types[47]
-#define SWIGTYPE_p_gsQuaternion swig_types[48]
-#define SWIGTYPE_p_gsRadarSensor swig_types[49]
-#define SWIGTYPE_p_gsRandomActuator swig_types[50]
-#define SWIGTYPE_p_gsRandomSensor swig_types[51]
-#define SWIGTYPE_p_gsRay swig_types[52]
-#define SWIGTYPE_p_gsRaySensor swig_types[53]
-#define SWIGTYPE_p_gsRayTest swig_types[54]
-#define SWIGTYPE_p_gsScene swig_types[55]
-#define SWIGTYPE_p_gsSceneActuator swig_types[56]
-#define SWIGTYPE_p_gsScriptController swig_types[57]
-#define SWIGTYPE_p_gsSensor swig_types[58]
-#define SWIGTYPE_p_gsSkeleton swig_types[59]
-#define SWIGTYPE_p_gsSoundActuator swig_types[60]
-#define SWIGTYPE_p_gsStateActuator swig_types[61]
-#define SWIGTYPE_p_gsSweptTest swig_types[62]
-#define SWIGTYPE_p_gsTouchSensor swig_types[63]
-#define SWIGTYPE_p_gsUserDefs swig_types[64]
-#define SWIGTYPE_p_gsVector3 swig_types[65]
-#define SWIGTYPE_p_gsVisibilityActuator swig_types[66]
-#define SWIGTYPE_p_gsWhenEvent swig_types[67]
-#define SWIGTYPE_p_utArrayT_gkGameObject_p_t swig_types[68]
-#define SWIGTYPE_p_utArrayT_gkLogicActuator_p_t swig_types[69]
-#define SWIGTYPE_p_utArrayT_gkLogicController_p_t swig_types[70]
-#define SWIGTYPE_p_utArrayT_gkLogicLink_p_t swig_types[71]
-#define SWIGTYPE_p_utArrayT_gkLogicSensor_p_t swig_types[72]
-static swig_type_info *swig_types[74];
-static swig_module_info swig_module = {swig_types, 73, 0, 0, 0, 0};
+#define SWIGTYPE_p_gsLuaManager swig_types[37]
+#define SWIGTYPE_p_gsLuaScript swig_types[38]
+#define SWIGTYPE_p_gsMessageActuator swig_types[39]
+#define SWIGTYPE_p_gsMessageSensor swig_types[40]
+#define SWIGTYPE_p_gsMotionActuator swig_types[41]
+#define SWIGTYPE_p_gsMouse swig_types[42]
+#define SWIGTYPE_p_gsMouseSensor swig_types[43]
+#define SWIGTYPE_p_gsNearSensor swig_types[44]
+#define SWIGTYPE_p_gsObject swig_types[45]
+#define SWIGTYPE_p_gsParentActuator swig_types[46]
+#define SWIGTYPE_p_gsProperty swig_types[47]
+#define SWIGTYPE_p_gsPropertyActuator swig_types[48]
+#define SWIGTYPE_p_gsPropertySensor swig_types[49]
+#define SWIGTYPE_p_gsQuaternion swig_types[50]
+#define SWIGTYPE_p_gsRadarSensor swig_types[51]
+#define SWIGTYPE_p_gsRandomActuator swig_types[52]
+#define SWIGTYPE_p_gsRandomSensor swig_types[53]
+#define SWIGTYPE_p_gsRay swig_types[54]
+#define SWIGTYPE_p_gsRaySensor swig_types[55]
+#define SWIGTYPE_p_gsRayTest swig_types[56]
+#define SWIGTYPE_p_gsScene swig_types[57]
+#define SWIGTYPE_p_gsSceneActuator swig_types[58]
+#define SWIGTYPE_p_gsScriptController swig_types[59]
+#define SWIGTYPE_p_gsSensor swig_types[60]
+#define SWIGTYPE_p_gsSkeleton swig_types[61]
+#define SWIGTYPE_p_gsSoundActuator swig_types[62]
+#define SWIGTYPE_p_gsStateActuator swig_types[63]
+#define SWIGTYPE_p_gsSweptTest swig_types[64]
+#define SWIGTYPE_p_gsTouchSensor swig_types[65]
+#define SWIGTYPE_p_gsUserDefs swig_types[66]
+#define SWIGTYPE_p_gsVector3 swig_types[67]
+#define SWIGTYPE_p_gsVisibilityActuator swig_types[68]
+#define SWIGTYPE_p_gsWhenEvent swig_types[69]
+#define SWIGTYPE_p_utArrayT_gkGameObject_p_t swig_types[70]
+#define SWIGTYPE_p_utArrayT_gkLogicActuator_p_t swig_types[71]
+#define SWIGTYPE_p_utArrayT_gkLogicController_p_t swig_types[72]
+#define SWIGTYPE_p_utArrayT_gkLogicLink_p_t swig_types[73]
+#define SWIGTYPE_p_utArrayT_gkLogicSensor_p_t swig_types[74]
+static swig_type_info *swig_types[76];
+static swig_module_info swig_module = {swig_types, 75, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -1722,6 +1724,9 @@ static int gsCreateObject(lua_State *L, gsGameObject *obj)
 }
 
 
+
+
+#include "gsScript.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -23288,6 +23293,174 @@ static swig_lua_class *swig_gsSweptTest_bases[] = {0};
 static const char *swig_gsSweptTest_base_names[] = {0};
 static swig_lua_class _wrap_class_gsSweptTest = { "SweptTest", &SWIGTYPE_p_gsSweptTest,_wrap_new_SweptTest, swig_delete_SweptTest, swig_gsSweptTest_methods, swig_gsSweptTest_attributes, swig_gsSweptTest_bases, swig_gsSweptTest_base_names };
 
+static int _wrap_LuaScript_execute(lua_State* L) {
+  int SWIG_arg = 0;
+  gsLuaScript *arg1 = (gsLuaScript *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("execute",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("execute",1,"gsLuaScript *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsLuaScript,0))){
+    SWIG_fail_ptr("LuaScript_execute",1,SWIGTYPE_p_gsLuaScript);
+  }
+  
+  result = (bool)(arg1)->execute();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LuaScript_getName(lua_State* L) {
+  int SWIG_arg = 0;
+  gsLuaScript *arg1 = (gsLuaScript *) 0 ;
+  gkString *result = 0 ;
+  
+  SWIG_check_num_args("getName",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getName",1,"gsLuaScript *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsLuaScript,0))){
+    SWIG_fail_ptr("LuaScript_getName",1,SWIGTYPE_p_gsLuaScript);
+  }
+  
+  result = (gkString *) &(arg1)->getName();
+  
+  lua_pushstring(L, result->c_str()); SWIG_arg++;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_LuaScript(void *obj) {
+gsLuaScript *arg1 = (gsLuaScript *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gsLuaScript_methods[] = {
+    {"execute", _wrap_LuaScript_execute}, 
+    {"getName", _wrap_LuaScript_getName}, 
+    {0,0}
+};
+static swig_lua_attribute swig_gsLuaScript_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_gsLuaScript_bases[] = {0};
+static const char *swig_gsLuaScript_base_names[] = {0};
+static swig_lua_class _wrap_class_gsLuaScript = { "LuaScript", &SWIGTYPE_p_gsLuaScript,0, swig_delete_LuaScript, swig_gsLuaScript_methods, swig_gsLuaScript_attributes, swig_gsLuaScript_bases, swig_gsLuaScript_base_names };
+
+static int _wrap_new_LuaManager(lua_State* L) {
+  int SWIG_arg = 0;
+  gsLuaManager *result = 0 ;
+  
+  SWIG_check_num_args("gsLuaManager",0,0)
+  result = (gsLuaManager *)new gsLuaManager();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsLuaManager,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LuaManager_getScript(lua_State* L) {
+  int SWIG_arg = 0;
+  gsLuaManager *arg1 = (gsLuaManager *) 0 ;
+  gkString *arg2 = 0 ;
+  gkString temp2 ;
+  gsLuaScript *result = 0 ;
+  
+  SWIG_check_num_args("getScript",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getScript",1,"gsLuaManager *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("getScript",2,"gkString const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsLuaManager,0))){
+    SWIG_fail_ptr("LuaManager_getScript",1,SWIGTYPE_p_gsLuaManager);
+  }
+  
+  
+  temp2 = gkString((const char*)lua_tostring(L, 2));
+  arg2 = &temp2;
+  
+  result = (gsLuaScript *)(arg1)->getScript((gkString const &)*arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsLuaScript,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LuaManager_create(lua_State* L) {
+  int SWIG_arg = 0;
+  gsLuaManager *arg1 = (gsLuaManager *) 0 ;
+  gkString *arg2 = 0 ;
+  gkString *arg3 = 0 ;
+  gkString temp2 ;
+  gkString temp3 ;
+  gsLuaScript *result = 0 ;
+  
+  SWIG_check_num_args("create",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("create",1,"gsLuaManager *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("create",2,"gkString const &");
+  if(!lua_isstring(L,3)) SWIG_fail_arg("create",3,"gkString const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsLuaManager,0))){
+    SWIG_fail_ptr("LuaManager_create",1,SWIGTYPE_p_gsLuaManager);
+  }
+  
+  
+  temp2 = gkString((const char*)lua_tostring(L, 2));
+  arg2 = &temp2;
+  
+  
+  temp3 = gkString((const char*)lua_tostring(L, 3));
+  arg3 = &temp3;
+  
+  result = (gsLuaScript *)(arg1)->create((gkString const &)*arg2,(gkString const &)*arg3);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsLuaScript,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_LuaManager(void *obj) {
+gsLuaManager *arg1 = (gsLuaManager *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gsLuaManager_methods[] = {
+    {"getScript", _wrap_LuaManager_getScript}, 
+    {"create", _wrap_LuaManager_create}, 
+    {0,0}
+};
+static swig_lua_attribute swig_gsLuaManager_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_gsLuaManager_bases[] = {0};
+static const char *swig_gsLuaManager_base_names[] = {0};
+static swig_lua_class _wrap_class_gsLuaManager = { "LuaManager", &SWIGTYPE_p_gsLuaManager,_wrap_new_LuaManager, swig_delete_LuaManager, swig_gsLuaManager_methods, swig_gsLuaManager_attributes, swig_gsLuaManager_bases, swig_gsLuaManager_base_names };
+
 #ifdef __cplusplus
 }
 #endif
@@ -23778,6 +23951,8 @@ static swig_type_info _swigt__p_gsLight = {"_p_gsLight", "gsLight *", 0, 0, (voi
 static swig_type_info _swigt__p_gsLogicManager = {"_p_gsLogicManager", "gsLogicManager *", 0, 0, (void*)&_wrap_class_gsLogicManager, 0};
 static swig_type_info _swigt__p_gsLogicObject = {"_p_gsLogicObject", "gsLogicObject *", 0, 0, (void*)&_wrap_class_gsLogicObject, 0};
 static swig_type_info _swigt__p_gsLogicOpController = {"_p_gsLogicOpController", "gsLogicOpController *", 0, 0, (void*)&_wrap_class_gsLogicOpController, 0};
+static swig_type_info _swigt__p_gsLuaManager = {"_p_gsLuaManager", "gsLuaManager *", 0, 0, (void*)&_wrap_class_gsLuaManager, 0};
+static swig_type_info _swigt__p_gsLuaScript = {"_p_gsLuaScript", "gsLuaScript *", 0, 0, (void*)&_wrap_class_gsLuaScript, 0};
 static swig_type_info _swigt__p_gsMessageActuator = {"_p_gsMessageActuator", "gsMessageActuator *", 0, 0, (void*)&_wrap_class_gsMessageActuator, 0};
 static swig_type_info _swigt__p_gsMessageSensor = {"_p_gsMessageSensor", "gsMessageSensor *", 0, 0, (void*)&_wrap_class_gsMessageSensor, 0};
 static swig_type_info _swigt__p_gsMotionActuator = {"_p_gsMotionActuator", "gsMotionActuator *", 0, 0, (void*)&_wrap_class_gsMotionActuator, 0};
@@ -23853,6 +24028,8 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_gsLogicManager,
   &_swigt__p_gsLogicObject,
   &_swigt__p_gsLogicOpController,
+  &_swigt__p_gsLuaManager,
+  &_swigt__p_gsLuaScript,
   &_swigt__p_gsMessageActuator,
   &_swigt__p_gsMessageSensor,
   &_swigt__p_gsMotionActuator,
@@ -23928,6 +24105,8 @@ static swig_cast_info _swigc__p_gsLight[] = {  {&_swigt__p_gsLight, 0, 0, 0},{0,
 static swig_cast_info _swigc__p_gsLogicManager[] = {  {&_swigt__p_gsLogicManager, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsLogicObject[] = {  {&_swigt__p_gsLogicObject, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsLogicOpController[] = {  {&_swigt__p_gsLogicOpController, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsLuaManager[] = {  {&_swigt__p_gsLuaManager, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsLuaScript[] = {  {&_swigt__p_gsLuaScript, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsMessageActuator[] = {  {&_swigt__p_gsMessageActuator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsMessageSensor[] = {  {&_swigt__p_gsMessageSensor, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsMotionActuator[] = {  {&_swigt__p_gsMotionActuator, 0, 0, 0},{0, 0, 0, 0}};
@@ -24003,6 +24182,8 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_gsLogicManager,
   _swigc__p_gsLogicObject,
   _swigc__p_gsLogicOpController,
+  _swigc__p_gsLuaManager,
+  _swigc__p_gsLuaScript,
   _swigc__p_gsMessageActuator,
   _swigc__p_gsMessageSensor,
   _swigc__p_gsMotionActuator,

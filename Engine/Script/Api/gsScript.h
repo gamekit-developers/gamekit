@@ -3,7 +3,7 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Charlie C.
+    Copyright (c) 2006-2010 Xavier T.
 
     Contributor(s): none yet.
 -------------------------------------------------------------------------------
@@ -24,39 +24,36 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-%module OgreKit
-%{
+
+#ifndef GSSCRIPT_H
+#define GSSCRIPT_H
+
 #include "gsCommon.h"
-%}
 
-// internal binding utils don't bother 
-%ignore OGRE_KIT_WRAP_CLASS_COPY_CTOR;
-%ignore OGRE_KIT_WRAP_CLASS;
-%ignore OGRE_KIT_INTERNAL_CAST;
-%ignore OGRE_KIT_WRAP_BASE_COPY_CTOR;
-%ignore OGRE_KIT_WRAP_CLASS_DEF_CTOR;
-%ignore OGRE_KIT_TEMPLATE_CAST;
-%ignore OGRE_KIT_TEMPLATE_NEW;
-%ignore OGRE_KIT_TEMPLATE_NEW_INLINE;
 
-// dependent types
-%include "gsTypes.i"
+class gsLuaScript
+{
+public:
+	bool execute(void);
+	const gkString& getName(void);
+	
+	// internal          
+	OGRE_KIT_WRAP_CLASS_COPY_CTOR(gsLuaScript, gkLuaScript, m_luaScript);
+};
 
-%include "gsCommon.h"
-%include "gsUtils.i"
-%include "gsMath.i"
-%include "gsCore.i"
-// sub modules
-%include "gsAI.i"
-%include "gsAnimation.i"
-%include "gsBricks.i"
-%include "gsConstraints.i"
-%include "gsNetwork.i"
-%include "gsNodes.i"
-%include "gsParticles.i"
-%include "gsPhysics.i"
-%include "gsSound.i"
-%include "gsThread.i"
-%include "gsTypeConverters.i"
-%include "gsScript.i"
 
+class gsLuaManager
+{
+public:
+	gsLuaManager();
+	~gsLuaManager();
+
+	gsLuaScript* getScript(const gkString& name);
+	gsLuaScript* create(const gkString& name, const gkString& text);
+	
+	// internal
+	OGRE_KIT_WRAP_CLASS(gkLuaManager, m_luaManager);
+};
+
+
+#endif // GSSCRIPT_H

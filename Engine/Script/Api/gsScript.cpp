@@ -3,7 +3,7 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Charlie C.
+    Copyright (c) 2006-2010 Xavier T.
 
     Contributor(s): none yet.
 -------------------------------------------------------------------------------
@@ -24,39 +24,65 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-%module OgreKit
-%{
-#include "gsCommon.h"
-%}
 
-// internal binding utils don't bother 
-%ignore OGRE_KIT_WRAP_CLASS_COPY_CTOR;
-%ignore OGRE_KIT_WRAP_CLASS;
-%ignore OGRE_KIT_INTERNAL_CAST;
-%ignore OGRE_KIT_WRAP_BASE_COPY_CTOR;
-%ignore OGRE_KIT_WRAP_CLASS_DEF_CTOR;
-%ignore OGRE_KIT_TEMPLATE_CAST;
-%ignore OGRE_KIT_TEMPLATE_NEW;
-%ignore OGRE_KIT_TEMPLATE_NEW_INLINE;
+#include "gsScript.h"
+#include "gsCore.h"
 
-// dependent types
-%include "gsTypes.i"
 
-%include "gsCommon.h"
-%include "gsUtils.i"
-%include "gsMath.i"
-%include "gsCore.i"
-// sub modules
-%include "gsAI.i"
-%include "gsAnimation.i"
-%include "gsBricks.i"
-%include "gsConstraints.i"
-%include "gsNetwork.i"
-%include "gsNodes.i"
-%include "gsParticles.i"
-%include "gsPhysics.i"
-%include "gsSound.i"
-%include "gsThread.i"
-%include "gsTypeConverters.i"
-%include "gsScript.i"
+gsLuaScript::gsLuaScript(gkLuaScript* script) : m_luaScript(script)
+{
+}
 
+bool gsLuaScript::execute(void)
+{
+	if(m_luaScript)
+		return m_luaScript->execute();
+		
+	return false;
+}
+
+const gkString& gsLuaScript::getName(void)
+{
+	if(m_luaScript)
+		return m_luaScript->getName();
+		
+	return "";
+}
+
+gsLuaManager::gsLuaManager()
+{
+	m_luaManager = gkLuaManager::getSingletonPtr();
+}
+
+gsLuaManager::~gsLuaManager()
+{
+}
+
+gsLuaScript* gsLuaManager::getScript(const gkString &name)
+{
+	gkLuaManager* lptr = gkLuaManager::getSingletonPtr();
+
+	if (lptr)
+	{
+		gkLuaScript* script = lptr->getScript(name);
+		
+		if(script)
+			return new gsLuaScript(script);
+	}
+	return 0;
+}
+
+gsLuaScript* gsLuaManager::create(const gkString &name, const gkString &text)
+{
+
+	gkLuaManager* lptr = gkLuaManager::getSingletonPtr();
+
+	if (lptr)
+	{
+		gkLuaScript* script = lptr->create(name, text);
+		
+		if(script)
+			return new gsLuaScript(script);
+	}
+	return 0;
+}
