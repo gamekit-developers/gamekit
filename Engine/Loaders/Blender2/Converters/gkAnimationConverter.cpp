@@ -33,7 +33,7 @@
 #include "gkAction.h"
 #include "gkActionChannel.h"
 #include "gkBezierSpline.h"
-#include "gkObjectAction.h"
+#include "gkGameObjectChannel.h"
 
 
 void ConvertSpline(Blender::BezTriple* bez, gkAnimationChannel* chan, int access, int mode, int totvert, gkVector2& range)

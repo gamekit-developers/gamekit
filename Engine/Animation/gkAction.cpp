@@ -26,7 +26,7 @@
 */
 #include "gkAction.h"
 #include "gkActionChannel.h"
-#include "gkObjectAction.h"
+#include "gkGameObjectChannel.h"
 
 
 

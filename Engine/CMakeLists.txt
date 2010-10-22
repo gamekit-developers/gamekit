@@ -207,7 +207,7 @@ set(Animation_SOURCE
 	Animation/gkActionSequence.cpp
 	Animation/gkAnimationChannel.cpp
 	Animation/gkBezierSpline.cpp
-	Animation/gkObjectAction.cpp
+	Animation/gkGameObjectChannel.cpp
 	
 	#TODO
 	#Animation/gkLightAction.cpp
@@ -225,7 +225,7 @@ set(Animation_HEADER
 	Animation/gkActionSequence.h
 	Animation/gkAnimationChannel.h
 	Animation/gkBezierSpline.h
-	Animation/gkObjectAction.h
+	Animation/gkGameObjectChannel.h
 	
 	#TODO
 	#Animation/gkLightAction.h
