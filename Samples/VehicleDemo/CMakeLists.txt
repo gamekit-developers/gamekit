@@ -65,7 +65,7 @@ else ()
 			ADD_CUSTOM_COMMAND(
 				TARGET ${PROJECT_NAME}
 				POST_BUILD
-				COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/../Runtime/Regression/clubsilo_packed.blend ${CMAKE_CURRENT_BINARY_DIR}/../Runtime/Regression/clubsilo_packed.blend
+				COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/clubsilo_demo.blend ${CMAKE_CURRENT_BINARY_DIR}/clubsilo_demo.blend
 				COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/buggy.blend ${CMAKE_CURRENT_BINARY_DIR}
 				COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/OgreKitResource.cfg ${CMAKE_CURRENT_BINARY_DIR}
 				COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/OgreKitStartup.cfg ${CMAKE_CURRENT_BINARY_DIR})
