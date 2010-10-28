@@ -43,10 +43,11 @@ bool gsLuaScript::execute(void)
 
 const gkString& gsLuaScript::getName(void)
 {
+	static gkString localStr = "";
 	if(m_luaScript)
 		return m_luaScript->getName();
 		
-	return "";
+	return localStr;
 }
 
 gsLuaManager::gsLuaManager()
