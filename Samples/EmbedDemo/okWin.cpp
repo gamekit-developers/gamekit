@@ -29,25 +29,40 @@
 #include "okApp.h"
 #include "okWin.h"
 #include "okUtils.h"
+#include "okCamera.h"
 
+
+#define ROT_SPEED			0.01
+#define ZOOM_SPEED			0.01
+#define MOV_SPEED			0.01
+#define MAX_CAM_RADIUS		100
+#define DEFAULT_CAM_RADIUS	10
 
 #define FPS 60
 #define ID_REFESH_TIMER wxID_HIGHEST + 1
+
+IMPLEMENT_DYNAMIC_CLASS(okWindow, wxWindow)
 
 okWindow::okWindow(wxWindow* parent) : 
 	wxWindow(parent, -1),
 	m_timer(this, ID_REFESH_TIMER),
 	m_okApp(NULL),	
-	m_renderWindow(NULL),	
-	m_viewport(NULL),
-	m_camera(NULL)
-{
-	
+	m_okCam(NULL),
+	m_renderWindow(NULL),
+	m_camera(NULL),
+	m_sceneMgr(NULL),
+	m_renderOnly(false),
+	m_enableCameraControl(false),
+	m_LClick(false),
+	m_MClick(false),
+	m_RClick(false),
+	m_posMouse(-1,-1)
+{ 
 }
 
 okWindow::~okWindow()
 {
-	stopGameLoop();
+	uninit();
 }
 
 BEGIN_EVENT_TABLE(okWindow, wxWindow)
@@ -55,36 +70,112 @@ BEGIN_EVENT_TABLE(okWindow, wxWindow)
 	EVT_PAINT(okWindow::OnPaint)
 	EVT_ERASE_BACKGROUND(okWindow::OnEraseBackground)
 	EVT_TIMER(ID_REFESH_TIMER, okWindow::OnTimer)
-	EVT_RIGHT_DOWN(okWindow::OnLButtonDown)
+	
+	EVT_LEFT_DOWN(okWindow::OnLButtonDown)
+	EVT_LEFT_UP(okWindow::OnLButtonUp)
+	EVT_MIDDLE_DOWN(okWindow::OnMButtonDown)
+	EVT_MIDDLE_UP(okWindow::OnMButtonUp)
+	EVT_RIGHT_DOWN(okWindow::OnRButtonDown)
+	EVT_RIGHT_UP(okWindow::OnRButtonUp)
+	EVT_MOUSEWHEEL(okWindow::OnMouseWheel)
+	EVT_MOTION(okWindow::OnMouseMove)
+
+	EVT_SET_FOCUS(okWindow::OnSetFocus)
+	EVT_KILL_FOCUS(okWindow::OnKillFocus)
+	EVT_ENTER_WINDOW(okWindow::OnEnterWindow)
+	EVT_LEAVE_WINDOW(okWindow::OnLeaveWindow)
 END_EVENT_TABLE()
+
+void okWindow::OnSetFocus(wxFocusEvent& event)
+{
+}
+
+void okWindow::OnKillFocus(wxFocusEvent& event)
+{
+}
+
+
+void okWindow::OnEnterWindow(wxMouseEvent& event)
+{
+	SetFocus(); //catch key event
+}
+
+void okWindow::OnLeaveWindow(wxMouseEvent& event)
+{
+}
+
 
 void okWindow::OnLButtonDown(wxMouseEvent& event)
 {
-	SetFocus();
+	m_LClick = true;
+	m_posMouse = event.GetLogicalPosition(wxClientDC(this));
+}
+
+
+void okWindow::OnLButtonUp(wxMouseEvent& event)
+{	
+	m_LClick = false;
+}
+
+void okWindow::OnRButtonDown(wxMouseEvent& event)
+{	
+	m_RClick = true;
+}
+void okWindow::OnRButtonUp(wxMouseEvent& event)
+{	
+	m_RClick = false;
+}
+
+void okWindow::OnMButtonDown(wxMouseEvent& event)
+{
+	m_MClick = true;
+}
+
+void okWindow::OnMButtonUp(wxMouseEvent& event)
+{	
+	m_MClick = false;
+}
+
+void okWindow::OnMouseWheel(wxMouseEvent& event)
+{	
+	int dir = event.GetWheelRotation();
+
+	if (m_enableCameraControl && m_okCam)
+	{
+		m_okCam->zoom(ZOOM_SPEED * -dir);
+	}
+}
+
+
+
+void okWindow::OnMouseMove(wxMouseEvent& event)
+{	
+	if (m_enableCameraControl && m_okCam)
+	{
+		wxPoint pos = event.GetLogicalPosition(wxClientDC(this));
+		
+		wxPoint posRel = pos - m_posMouse;
+
+		m_posMouse = pos;
+
+		if (m_LClick)		
+			m_okCam->rotate(gkRadian(-posRel.x * ROT_SPEED), gkRadian(-posRel.y * ROT_SPEED));		
+		else if (m_MClick)
+			m_okCam->setTargetPostion(gkVector3(-posRel.x * MOV_SPEED, posRel.y * MOV_SPEED, 0), true);
+	}
 }
 
 void okWindow::OnSize(wxSizeEvent& event)
-{
-	wxSize size = event.GetSize();
-	if (m_renderWindow) 
-	{
-		m_renderWindow->resize(size.GetWidth(), size.GetHeight());
-		m_renderWindow->windowMovedOrResized();
-		if (size.GetHeight() != 0)
-			m_camera->setAspectRatio(gkScalar(size.GetWidth())/size.GetHeight());
-
-		if (!isRunnigGameLoop())
-			m_renderWindow->update();
-	}
+{	
+	resize();
 }
+
 
 void okWindow::OnPaint(wxPaintEvent& WXUNUSED(event))
 {
 	wxPaintDC dc(this);
 
-	if (!m_renderWindow) return;
-	
-	m_renderWindow->update();
+	drawRenderWindow();
 }
 
 void okWindow::OnEraseBackground(wxEraseEvent& WXUNUSED(event))
@@ -98,10 +189,9 @@ void okWindow::startGameLoop()
 		m_timer.Start(1000/FPS); 
 }
 
-bool okWindow::Init(okApp* app, const gkString& blend, const gkString& cfg, int winSizeX, int winSizeY)
+bool okWindow::init(okApp* app, const gkString& blend, const gkString& cfg, int winSizeX, int winSizeY)
 {
 	if (m_okApp || !app) return false;
-
 
 	gkString handle = getNativeWinHandleFromWxWin(this);
 	if (handle.empty()) 
@@ -113,47 +203,105 @@ bool okWindow::Init(okApp* app, const gkString& blend, const gkString& cfg, int 
 	m_okApp = app;
 	SetSize(wxSize(winSizeX, winSizeY));
 
-	UpdateRenderWindow();
+	setupRenderWindow();
 			
 	startGameLoop();
 
 	return true;
 }
 
-void okWindow::UpdateRenderWindow()
+void okWindow::setupRenderWindow()
 {
 	GK_ASSERT(m_okApp);
 
+	if (!gkWindowSystem::getSingletonPtr())
+		return;
+
 	m_renderWindow = gkWindowSystem::getSingleton().getMainWindow(); 
 	if (!m_renderWindow) return;
-	m_viewport = m_renderWindow->getViewport(0);	
-	m_camera = m_viewport->getCamera();
+
+	gkScene *scene = m_okApp->getActiveScene(); GK_ASSERT(scene);
+	gkCamera* cam = scene->getMainCamera(); GK_ASSERT(cam);
+	m_camera = cam->getCamera(); GK_ASSERT(m_camera);
+	m_sceneMgr = m_camera->getSceneManager(); GK_ASSERT(m_sceneMgr);
+
+	if (m_enableCameraControl)
+	{
+		if (!m_okCam) 
+			m_okCam = new okCamera(m_camera->getSceneManager());
+
+		m_okCam->attachCamera(m_camera);
+		m_okCam->setRadiusRange(0.1f, MAX_CAM_RADIUS);
+		m_okCam->setTargetMode(gkVector3::ZERO, DEFAULT_CAM_RADIUS);
+	}
 }
 
-void okWindow::Uninit()
+void okWindow::uninit()
 {
-	if (!m_okApp) return;
-
 	stopGameLoop();
-	
+
 	m_renderWindow = NULL;
-	m_viewport = NULL;
 	m_camera = NULL;
+
+	delete m_okCam; m_okCam = NULL;
 }
 
-bool okWindow::Load(const gkString& blend, const gkString& cfg)
+
+void okWindow::resize()
+{
+	if (!m_renderWindow)  return;
+	wxSize size = GetClientSize();
+
+	m_renderWindow->resize(size.GetWidth(), size.GetHeight());
+	m_renderWindow->windowMovedOrResized();
+	if (m_camera && size.GetHeight() != 0)
+		m_camera->setAspectRatio(gkScalar(size.GetWidth())/size.GetHeight());
+
+	if (!isRunnigGameLoop())
+		m_renderWindow->update();	
+}
+
+bool okWindow::load(const gkString& blend, const gkString& cfg)
 {
 	if (!m_okApp) return false;
 
-	Uninit();
+	uninit();
 
 	if (!m_okApp->load(blend))
 		return false;
 
-	UpdateRenderWindow();
+	setupRenderWindow();
 	startGameLoop();
 
 	return true;
+}
+
+bool okWindow::changeScene(const wxString& sceneName)
+{
+	if (!m_okApp) return false;
+
+	if (m_okApp->getActiveSceneName() == sceneName)
+		return true;
+
+	uninit();
+
+	if (!m_okApp->changeScene(WX2GK(sceneName)))
+		return false;
+
+	setupRenderWindow();
+	startGameLoop();
+	resize();
+
+	return true;
+}
+
+void okWindow::drawRenderWindow()
+{
+	if (!m_renderWindow) return;
+	
+	Ogre::Root::getSingleton()._fireFrameStarted();
+	m_renderWindow->update();
+	Ogre::Root::getSingleton()._fireFrameEnded();
 }
 
 void okWindow::OnTimer(wxTimerEvent& event)
@@ -161,23 +309,29 @@ void okWindow::OnTimer(wxTimerEvent& event)
 	if (!m_okApp) return;
 	
 	try 
-	{
-		m_okApp->step();		
+	{		
+		if (m_renderOnly)
+			drawRenderWindow();
+		else
+			m_okApp->step();
+
+		if (m_okCam) m_okCam->updateHelper();
+	
 	} 
 	catch (Ogre::Exception& e) 
 	{
 		stopGameLoop();
-		Alert(wxString::Format("%s", e.getFullDescription().c_str()));
+		alert(wxString::Format("%s", e.getFullDescription().c_str()));
 	} 
 	catch (std::exception& e) 
 	{
 		stopGameLoop();
-		Alert(e.what());
+		alert(e.what());
 	} 
 	catch (...) 
 	{
 		stopGameLoop();
-		Alert("Unknown exception raised.");
+		alert("Unknown exception raised.");
 	}
 
 #ifndef WIN32
@@ -185,8 +339,48 @@ void okWindow::OnTimer(wxTimerEvent& event)
 #endif
 }
 
-void okWindow::Alert(const wxString& msg)
+void okWindow::alert(const wxString& msg)
 {
 	wxMessageDialog dlg(this, msg, "Alert");
 	dlg.ShowModal();
+}
+
+void okWindow::setCameraPolyMode(Ogre::PolygonMode polyMode)
+{
+	if (m_okCam)
+		m_okCam->setPolygonMode(polyMode);
+}
+
+bool okWindow::getShowBoundingBox()
+{
+	return m_sceneMgr ? m_sceneMgr->getShowBoundingBoxes() : false;
+}
+
+void okWindow::showBoundingBox(bool show)
+{
+	if (m_sceneMgr) 
+		m_sceneMgr->showBoundingBoxes(show);
+}
+
+bool okWindow::getShowAxis()
+{
+	return m_okCam ? m_okCam->getShowAxis() : false;
+}
+
+void okWindow::showAxis(bool show)
+{
+	if (m_okCam)
+		m_okCam->showAxis(show);
+}
+
+void okWindow::clearScene()
+{
+	if (!m_okApp) return;
+
+	delete m_okCam; m_okCam = NULL;
+
+	m_okApp->unload();
+	m_okApp->createEmptyScene();
+
+	setupRenderWindow();
 }

@@ -1,0 +1,46 @@
+0.1:	Initial draft.
+0.2:	Added multiple-arg opts, various cleanup.
+0.3:	Standardized API a bit, massive cleanup.
+0.4:	Fixed yet another off-by-one error in moving optsind around.
+0.5:	Fixed copyright, which mysteriously claimed Xerox owned this code.
+	(Probably because I imported a template from some code I wrote for
+	Xerox.)  And *finally* fixed the !@#@# optsind bug.  As always,
+	when you find yourself struggling to get the side effects of an
+	operation right, the operation is in the wrong place.
+0.6:	s/tf/ft/ in optlib.3, started using man2html.  Added BSD licensing.
+0.7:	The massive rewrite, of course, introduced a subtle bug; '--' would
+	leave it such that argv[optsind] was the '--', which is supposed to
+	be eaten.  Hadn't tested that.  *sigh*.
+0.8:	And another subtle bug; the semantics of options which have no
+	values (especially those created by optsmake()) were such that
+	they would attempt to free random things (like previous integer
+	options) as though they were pointers.  I *think* this is fixed.
+	Note that optsopt() will leak a small amount of memory, though
+	never (I hope!) more than two allocations at a time; it allocates
+	a small amount of storage, but frees it if it needs to allocate
+	more.
+0.9:	Minor changes.  Should be better at handling multiple passes through
+	multiple argument lists.
+	Moved history from README into ChangeLog.
+	Removed "optsver", deprecated in favor of the version stuff.
+0.9.1:	Renamed "optlib" to "opts" and sanitized Makefile.
+	Removed optsver from man page.
+0.9.2:  --foo options with arguments were trying to grab the word after
+	their argument, not their argument.  Fixed, I hope.
+	Updated copyright info, date in man page, and email address
+0.9.3	invalid short options caused optsgets() to loop forevere.
+0.9.4	optsfind could strncmp against NULL on nameless options (which
+	are implicitly never matched by --name options, now)
+0.9.5	POSIX mode added, argument getting broken out into separate function.
+0.9.6	Fixed bug if ptrdiff_t is long, and long is longer than int.
+	Updated readme.
+0.9.7	After returning '?' once, optsopt will start returning -1.
+0.9.8	Licensing change (remove GPL)
+0.9.9	Add is_set feature
+	Correct off-by-one error in list of option types ("buffer" wasn't
+	in the list)
+	Clean up handling of OTYPE_BUF a little.
+	Add optscheck() call to optsget() and optsgets()
+0.9.10	Don't check for missing value on OTYPE_ARG, which has sub-arguments
+        to hold its values.
+	Fix missing argument to error().

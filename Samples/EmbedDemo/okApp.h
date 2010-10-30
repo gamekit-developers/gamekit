@@ -34,8 +34,9 @@ class okApp : public gkCoreApplication, public gkWindowSystem::Listener
 	gkString m_cfg;
 	gkScene* m_scene;
 	bool m_inited;
+	gkBlendFile* m_blendFile;
 
-	bool m_showDebug; 
+	bool m_showPhysicsDebug; 
 
 	bool setup();
 protected:
@@ -48,14 +49,23 @@ public:
 	bool init(const gkString& blend, const gkString& cfg, const gkString& windowHandle, int winSizeX, int winSizeY);
 	void uninit();
 
-	bool load(const gkString& blend);
+	bool load(const gkString& blend, const gkString& sceneName="");
 	void unload();
+	bool changeScene(const gkString& sceneName);
+
+	bool createEmptyScene();
 
 	bool step();
 
-    void keyReleased(const gkKeyboard& key, const gkScanCode& sc);
+	gkScene* getActiveScene() { return m_scene; }
+	gkString getActiveSceneName();
+	gkBlendFile* getBlendFile() { return m_blendFile; }
 	
-	GK_INLINE void setBlendFileName(const gkString &blend) { m_blend = blend; }
+
+	GK_INLINE bool getShowPhysicsDebug() { return m_showPhysicsDebug; }
+	void setShowPhysicsDebug(bool show);
+	
+	GK_INLINE void setBlendFileName(const gkString& blend) { m_blend = blend; }
 	GK_INLINE gkString getBlendFileName() const { return m_blend; }
 };
 

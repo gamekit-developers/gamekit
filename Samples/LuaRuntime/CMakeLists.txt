@@ -18,8 +18,11 @@ if (APPLE)
 endif()
 
 set(SRC Lua.cpp ${CONTENT})
-include_directories(${OGREKIT_INCLUDE})
-link_libraries(${OGREKIT_LIB})
+include_directories(
+	${OGREKIT_INCLUDE}
+	${OGREKIT_OPTS_INCLUDE}
+	)
+link_libraries(${OGREKIT_LIB} ${OGREKIT_OPTS_TARGET})
 
 
 if (APPLE)

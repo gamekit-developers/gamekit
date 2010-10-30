@@ -29,6 +29,7 @@
 #define _okWin_h_
 
 class okApp;
+class okCamera;
 
 class okWindow : public wxWindow
 {
@@ -36,34 +37,77 @@ public:
 	okWindow(wxWindow* parent=NULL);
 	~okWindow();
 
-	bool Init(okApp* app, const gkString& blend="", const gkString& cfg="", int winSizeX=800, int winSizeY=600);
-	void Uninit();
-	bool Load(const gkString& blend="", const gkString& cfg="");
+	bool init(okApp* app, const gkString& blend="", const gkString& cfg="", int winSizeX=800, int winSizeY=600);
+	void uninit();
+	bool load(const gkString& blend="", const gkString& cfg="");
+	void resize();
 
-	GK_INLINE okApp* getApp() { return m_okApp; }
+	okApp* getApp() { return m_okApp; }
 
-	GK_INLINE bool isRunnigGameLoop() { return m_timer.IsRunning(); }
+	bool isRunnigGameLoop() { return m_timer.IsRunning(); }
 	void startGameLoop();
-	GK_INLINE void stopGameLoop()  { if (m_timer.IsRunning()) m_timer.Stop();   }
+	void stopGameLoop()  { if (m_timer.IsRunning()) m_timer.Stop();   }
 
-	void Alert(const wxString& msg);
+	void alert(const wxString& msg);
+
+	void setRenderOnly(bool renderOnly) { m_renderOnly = renderOnly; }
+	void setEanbleCameraControl(bool enable) { m_enableCameraControl = enable; }
+
+	void setCameraPolyMode(Ogre::PolygonMode polyMode);
+
+	bool getShowBoundingBox();
+	void showBoundingBox(bool show);
+	void toggleShowBoundingBox() { showBoundingBox(!getShowBoundingBox()); }
+
+	bool getShowAxis();
+	void showAxis(bool show);
+	void toggleShowAxis() { showAxis(!getShowAxis()); }
+
+	void clearScene();
+	bool changeScene(const wxString& sceneName);
+
 private:
 	DECLARE_EVENT_TABLE()
+	DECLARE_DYNAMIC_CLASS_NO_COPY(okWindow)
 
+	void OnExit(wxCloseEvent& event);
 	void OnSize(wxSizeEvent& event);
 	void OnPaint(wxPaintEvent& event);
 	void OnTimer(wxTimerEvent& event);
 	void OnEraseBackground(wxEraseEvent& event);
-	void OnLButtonDown(wxMouseEvent& event);
 
-	void UpdateRenderWindow();
+	void OnLButtonDown(wxMouseEvent& event);
+	void OnLButtonUp(wxMouseEvent& event);
+	void OnRButtonDown(wxMouseEvent& event);
+	void OnRButtonUp(wxMouseEvent& event);
+	void OnMButtonDown(wxMouseEvent& event);
+	void OnMButtonUp(wxMouseEvent& event);
+	void OnMouseWheel(wxMouseEvent& event);
+	void OnMouseMove(wxMouseEvent& event);
+	void OnSetFocus(wxFocusEvent& event);
+	void OnKillFocus(wxFocusEvent& event);
+	void OnEnterWindow(wxMouseEvent& event);
+	void OnLeaveWindow(wxMouseEvent& event);
+
+	void setupRenderWindow();
+	void drawRenderWindow();
 
 	okApp* m_okApp;
 	wxTimer m_timer;
 
+	wxPoint m_posMouse;
+	bool m_renderOnly; //don't call engine update()
+	bool m_enableCameraControl;
+
 	Ogre::RenderWindow *m_renderWindow;
-	Ogre::Viewport* m_viewport;
 	Ogre::Camera* m_camera;
+	Ogre::SceneManager* m_sceneMgr;
+
+	okCamera* m_okCam;
+
+	bool m_LClick;
+	bool m_MClick;
+	bool m_RClick;
 };
 
 #endif //_okWin_h_

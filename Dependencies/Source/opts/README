@@ -1,0 +1,41 @@
+Please read the associated file "COPYRIGHT" for copyright and distribution
+information.
+
+This library is intended to serve as a nearly drop-in replacement for
+the POSIX "getopt()" routine.  It offers the following enhancements:
+	1.  A single option flag can accept multiple arguments.
+	2.  The arguments to options can have specified types (short, int,
+		long, double, or string), and some checking is done for you.
+	3.  A single call can do all of the assignments, parsing, etc.
+		normally needed.
+	4.  Options can have their values automatically saved to a file.
+		As of this writing, no attempt is made to watch out for
+		embedded newlines and the like; this may be fixed in a later
+		version.
+
+It is written in portable ANSI C, but does use a '/' as a directory separator.
+(This is portable to DOS, but may not be to some arcane systems, especially
+those without directories.)  This applies only to one routine.
+
+To use this, install libopts.a and opts.h in "the right places" for your
+system, put `#include <opts.h>' in your source, and link with -lopts.  The
+sample "optstest" program should indicate the usage reasonably well.  (These
+instructions are somewhat Unix-biased, but you should be able to extrapolate.)
+
+You can just link opts.o into a program.
+
+Comments?  Questions?  Feature requests?  Let me know.
+
+This source recently underwent major revisions, please let me know if
+there are any bugs, or if you can get warnings on this code from any
+compiler.
+
+Warning flags:  The only gcc warning flag I'm aware of that I can't use
+is -Wwrite-strings, and that's because it warns for
+	char *foo = "bar";
+which is perfectly legal.  (As long as you don't modify *foo.)  I could
+probably fix this, but I don't like const.  If anyone cares, I'll fix it.
+
+Code should survive all warning flags.
+
+Modification history is in ChangeLog.

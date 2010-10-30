@@ -1,0 +1,30 @@
+This software and associated documentation is copyright 1995, 1996, 1997,
+1998, 1999, and 2000 Peter Seebach, and may be distributed as noted below.
+
+This software is distributed `as is', free of charge.  No warranty of
+suitability or reliability is offered; use this at your own risk.  The
+author of this code assumes NO RESPONSIBILITY for any damages, direct or
+incidental, resulting from the use of this software.
+
+This software may be distributed under the terms of the "Berkeley License",
+or the Artistic License , at your option. It may not be distributed under
+other terms or licenses without prior written agreement with the author.
+Please read the associated files in the subdirectory "LICENSES" for
+licensing information.  and remember, you may choose *either* of these
+licenses.  (You are also welcome to try to distribute it under all of them,
+but this may prove more difficult.) Other distribution terms may be
+available by explicit request; mail me for details.
+
+This software is no longer available under the GPL.  As you will doubtless
+notice, the version of the Berkeley license I use still has the dreaded
+"advertising clause", so this software cannot be redistributed under the GPL.
+I am doing this because one of the FSF people told me that, if I don't
+explicitly warn people that they *can't* link my code with GPL'd code, that
+I am magically *required* to redistribute my code under the GPL.  I'd rather
+retain some artistic control here.  ;)
+
+Questions?  Comments?  Problems?  Write seebs@plethora.net, or
+seebs@pobox.com.
+
+My web page is http://www.plethora.net/~seebs/, and may have newer versions
+or FAQs at some time in the future.

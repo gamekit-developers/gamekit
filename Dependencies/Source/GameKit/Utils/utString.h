@@ -226,4 +226,6 @@ public:
 
 };
 
+utString utStringFormat(const char* format, ...);
+
 #endif//_utString_h_

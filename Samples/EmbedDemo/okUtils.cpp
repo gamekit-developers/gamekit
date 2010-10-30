@@ -48,7 +48,7 @@ gkString getNativeWinHandleFromWxWin(wxWindow* win)
 	Display* display = GDK_WINDOW_XDISPLAY( widget->window );
 	Window wid = GDK_WINDOW_XWINDOW( widget->window );   // Window is a typedef for XID, which is a typedef for unsigned int
 	// Get the right display (DisplayString() returns ":display.screen")
-	Ogre::String displayStr = DisplayString( display );
+	gkString displayStr = DisplayString( display );
 	displayStr = displayStr.substr( 1, ( displayStr.find( ".", 0 ) - 1 ) );
 	// Put all together
 	handleStream << displayStr << ':' << DefaultScreen( display ) << ':' << wid;

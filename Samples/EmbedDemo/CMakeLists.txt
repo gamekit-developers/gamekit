@@ -17,6 +17,7 @@ set(DEMO_SRC
 	Main.cpp
 	okApp.cpp
 	okWin.cpp
+	okCamera.cpp
 	okUtils.cpp
 	StdAfx.cpp
 	${DEMO_BLEND}
@@ -25,6 +26,7 @@ set(DEMO_SRC
 set(DEMO_HDR
 	okApp.h
 	okWin.h
+	okCamera.h
 	okUtils.h
 	StdAfx.h
 )

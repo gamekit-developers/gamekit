@@ -26,19 +26,20 @@ macro (configure_ogrekit ROOT OGREPATH)
 
 	set(OGREKIT_INSTALL_PREFIX ${ROOT}/Bin)
 	
-	option(OGREKIT_USE_LUA               "Use Lua script bindings" ON)
-	option(OGREKIT_COMPLIE_SWIG          "Enable compile time SWIG generation."  OFF)
-	option(OGREKIT_COMPILE_OGRE_SCRIPTS  "Automatically convert Blender TX to Ogre (.material, .font, .overlay... etc)" ON)
-	option(OGREKIT_COMPILE_WXWIDGETS     "Enable / Disable wxWidgets builds" OFF)
-	option(OGREKIT_DEBUG_ASSERT          "Enable/Disable debug asserts." ON)
-	option(OGREKIT_HEADER_GENERATOR      "Build Blender DNA to C++ generator."   OFF)
-	option(OGREKIT_UPDATE_CPP_DOCS       "Update C++ API documentation(Requires doxygen)." OFF)
-	option(OGREKIT_UPDATE_LUA_DOCS       "Update Lua API documentation(Requires doxygen)." OFF)
-	option(OGREKIT_UPDATE_FBT_DOCS       "Update FBT API documentation(Requires doxygen)." OFF)
-	option(OGREKIT_DISABLE_ZIP           "Disable external .zip resource loading" ON)
-	option(OGREKIT_USE_STATIC_FREEIMAGE  "Compile and link statically FreeImage and all its plugins" ON)
-	option(OGREKIT_ENABLE_UNITTESTS      "Enable / Disable Unittests" OFF)
-	option(OGREKIT_USE_FILETOOLS         "Compile FBT file format utilities" OFF)
+	option(OGREKIT_USE_LUA					"Use Lua script bindings" ON)
+	option(OGREKIT_COMPLIE_SWIG				"Enable compile time SWIG generation."  OFF)
+	option(OGREKIT_COMPILE_OGRE_SCRIPTS		"Automatically convert Blender TX to Ogre (.material, .font, .overlay... etc)" ON)
+	option(OGREKIT_COMPILE_WXWIDGETS		"Enable / Disable wxWidgets builds" OFF)
+	option(OGREKIT_DEBUG_ASSERT				"Enable/Disable debug asserts." ON)
+	option(OGREKIT_HEADER_GENERATOR			"Build Blender DNA to C++ generator."   OFF)
+	option(OGREKIT_UPDATE_CPP_DOCS			"Update C++ API documentation(Requires doxygen)." OFF)
+	option(OGREKIT_UPDATE_LUA_DOCS			"Update Lua API documentation(Requires doxygen)." OFF)
+	option(OGREKIT_UPDATE_FBT_DOCS			"Update FBT API documentation(Requires doxygen)." OFF)
+	option(OGREKIT_DISABLE_ZIP				"Disable external .zip resource loading" ON)
+	option(OGREKIT_USE_STATIC_FREEIMAGE		"Compile and link statically FreeImage and all its plugins" ON)	
+	option(OGREKIT_ENABLE_UNITTESTS			"Enable / Disable Unittests" OFF)
+	option(OGREKIT_USE_FILETOOLS			"Compile FBT file format utilities" OFF)
+	option(OGREKIT_COMPILE_TINYXML			"Enable / Disable TinyXml builds" OFF)
 
 
 	if (NOT OGREKIT_USE_LUA)
@@ -53,13 +54,15 @@ macro (configure_ogrekit ROOT OGREPATH)
 	set(OGREKIT_LUA_TARGET Lua)
 	set(OGREKIT_OGGVORBIS_TARGET OggVorbis)
 	set(OGREKIT_OIS_TARGET OIS)
-	
+	set(OGREKIT_TINYXML_TARGET TinyXml)
+	set(OGREKIT_OPTS_TARGET opts)
 	
 	set(OGRE_BINARY_DIR ${OGREPATH}/Bin)
 	set(OGRE_TEMPLATES_DIR ${ROOT}/CMake/Templates)
 	set(OGRELITE_SOURCE_DIR ${OGREPATH})
     set(OGREKIT_DEP_DIR ${ROOT}/Dependencies/Source)
-    
+	set(OGREKIT_SAMPLES_DIR ${ROOT}/Samples)
+	
 	include(OgreConfigTargets)
 	include(DependenciesOgreKit)
 	include(MacroLogFeature)
@@ -121,21 +124,29 @@ macro (configure_ogrekit ROOT OGREPATH)
 	option(SAMPLES_EMBEDDEMO      "Build Samples/EmbedDemo"     OFF)
 	option(SAMPLES_INSPECTOR      "Build Samples/FileInspector" OFF)
 
+    option(SAMPLES_LUA_EDITOR     "Build Samples/LuaEditor"   OFF)
 	
 	if (OGREKIT_USE_LUA)
 		option(SAMPLES_LUARUNTIME "Build Samples/LuaRuntime" ON)
 	else()
 		set(SAMPLES_LUARUNTIME FALSE CACHE BOOL "Forcing remove Samples/LuaRuntime" FORCE)
+		set(SAMPLES_LUA_EDITOR FALSE CACHE BOOL "Forcing LuaEditor removal"  FORCE)
 	endif()
 
-	if (SAMPLES_NODE_EDITOR OR SAMPLES_EMBEDDEMO)
+	if (SAMPLES_NODE_EDITOR OR SAMPLES_EMBEDDEMO OR SAMPLES_LUA_EDITOR)
 		set(OGREKIT_COMPILE_WXWIDGETS TRUE CACHE BOOL "Forcing wxWidgets" FORCE)
+	endif()
+	
+	if (SAMPLES_LUA_EDITOR)
+		set(OGREKIT_USE_LUA TRUE CACHE BOOL "Forcing Lua" FORCE)
+		set(OGREKIT_COMPILE_TINYXML TRUE CACHE BOOL "Forcing TinyXml" FORCE)
 	endif()
 	
 	if (NOT OGREKIT_COMPILE_WXWIDGETS)
 		set(SAMPLES_NODE_EDITOR FALSE CACHE BOOL "Forcing NodeEditor removal"    FORCE)
 		set(SAMPLES_EMBEDDEMO   FALSE CACHE BOOL "Forcing EmbedDemo removal"     FORCE)
 		set(SAMPLES_INSPECTOR   FALSE CACHE BOOL "Forcing FileInspector removal" FORCE)
+		set(SAMPLES_LUA_EDITOR  FALSE CACHE BOOL "Forcing LuaEditor removal"  FORCE)
 	endif()
 
 	if (SAMPLES_INSPECTOR)	
@@ -143,9 +154,10 @@ macro (configure_ogrekit ROOT OGREPATH)
 	endif()
 
     
-	if (WIN32 AND SAMPLES_EMBEDDEMO AND NOT OGREKIT_OIS_WIN32_NATIVE)
+	if (WIN32 AND (SAMPLES_EMBEDDEMO OR SAMPLES_LUA_EDITOR) AND NOT OGREKIT_OIS_WIN32_NATIVE)
 		set(SAMPLES_EMBEDDEMO   FALSE CACHE BOOL "Forcing EmbedDemo removal"  FORCE)
-		message(WARNING "EmbedDemo is required OGREKIT_OIS_WIN32_NATIVE option.")
+		set(SAMPLES_LUA_EDITOR  FALSE CACHE BOOL "Forcing LuaEditor removal"  FORCE)
+		message(WARNING "EmbedDemo or LauEditor is required OGREKIT_OIS_WIN32_NATIVE option.")
 	endif()
 
 
@@ -229,7 +241,8 @@ macro (configure_ogrekit ROOT OGREPATH)
 	set(OGREKIT_RECAST_INCLUDE ${OGREKIT_DEP_DIR}/Recast/Include)
 	set(OGREKIT_DETOUR_INCLUDE ${OGREKIT_DEP_DIR}/Detour/Include)
 	set(OGREKIT_OPENSTEER_INCLUDE ${OGREKIT_DEP_DIR}/OpenSteer/include)
-	
+	set(OGREKIT_TINYXML_INCLUDE ${OGREKIT_DEP_DIR}/TinyXml)
+	set(OGREKIT_OPTS_INCLUDE ${OGREKIT_DEP_DIR}/opts)
 
 	set(OGREKIT_DEP_INCLUDE
 #		${OGREKIT_FREEIMAGE_INCLUDE} Conflicts with OpenSteer includes and needed by Ogre, not OgreKit
@@ -241,7 +254,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 		${OGREKIT_OPENSTEER_INCLUDE}
 		${GAMEKIT_SERIALIZE_BULLET}
 		${GAMEKIT_SERIALIZE_BLENDER}
-		${GAMEKIT_UTILS_PATH}
+		${GAMEKIT_UTILS_PATH}		
 	)
 
 
@@ -402,7 +415,6 @@ macro (configure_ogrekit ROOT OGREPATH)
 		list(APPEND OGREKIT_DEP_INCLUDE ${OGREKIT_ZZIP_INCLUDE})
 	endif()
 
-	
 		
 	#Check Build Settings
 	if (APPLE)
@@ -446,7 +458,7 @@ endmacro(configure_ogrekit)
 macro(configure_rendersystem)
 
 	if (OGRE_BUILD_RENDERSYSTEM_GL)
-
+		
 		include_directories(
 			${OGREKIT_GLRS_ROOT}/include
 			${OGREKIT_GLRS_ROOT}/src/GLSL/include
@@ -465,7 +477,7 @@ macro(configure_rendersystem)
 		
 		include_directories(
 			${OGREKIT_GLESRS_ROOT}/include
-			${OGREKIT_GLESRS_ROOT}/include/EAGL			
+			${OGREKIT_GLESRS_ROOT}/include/EAGL
 		)
 	
 		link_libraries(
@@ -501,7 +513,7 @@ macro(configure_rendersystem)
 	endif()
 
 	if (OGREKIT_BUILD_D3D11RS AND DirectX_D3D11_FOUND)
-
+		
 		include_directories(
 			${OGREKIT_D3D11_ROOT}/include
 		)

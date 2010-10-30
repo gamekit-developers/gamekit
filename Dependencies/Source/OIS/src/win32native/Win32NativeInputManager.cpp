@@ -50,7 +50,7 @@ static LRESULT WINAPI OIS_SystemProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
 //-------------------------------------------------------------//
 Win32NativeInputManager::Win32NativeInputManager() :
 		OIS::InputManager("Win32NativeInputManager"),
-		mKeyboard(0), mMouse(0), mOldProc(0), mGrab(true), mHide(true), mHandle(0)
+		mKeyboard(0), mMouse(0), mOldProc(0), mGrab(true), mHide(true), mHandle(0), mPass(false)
 {
 	if (gMgr)
 		OIS_EXCEPT(E_InvalidParam, "Win32NativeInputManager::Win32NativeInputManager >> Only one InputManager supported by this implementation");
@@ -92,6 +92,9 @@ void Win32NativeInputManager::_initialize(ParamList &paramList)
             else if (i->second == "DISCL_NONEXCLUSIVE")
 				mGrab= false;
         }
+
+		if( i->first == "w32_pass_event" )
+			mPass = true;
 	}
 
 	if (mOldProc != 0)
@@ -121,7 +124,7 @@ LRESULT WINAPI Win32NativeInputManager::_proc(HWND hWnd, UINT msg, WPARAM wParam
 		if (mMouse != 0)
 		{
 			mMouse->handleMouse(hWnd, msg, wParam, lParam);
-			return 0;
+			if (!mPass) return 0;
 		}
 		break;
 	case WM_SYSKEYUP:
@@ -131,7 +134,7 @@ LRESULT WINAPI Win32NativeInputManager::_proc(HWND hWnd, UINT msg, WPARAM wParam
 		if (mKeyboard)
 		{
 			mKeyboard->handleKey(msg, wParam, lParam);
-			return 0;
+			if (!mPass) return 0;
 		}
 		break;
 	}

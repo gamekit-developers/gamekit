@@ -27,7 +27,7 @@
 #include <sstream>
 #include <cctype>
 #include <algorithm>
-
+#include <stdarg.h>
 
 
 
@@ -127,4 +127,32 @@ void utStringUtils::replace( utString &in, const utString &from, const utString 
 			}
 		}
 	}
+}
+
+
+utString utStringFormat(const char* format, ...)
+{
+#ifdef _MSC_VER
+# define ut_vsnprintf _vsnprintf_s
+#else
+# define ut_vsnprintf vsnprintf
+#endif
+
+	va_list args;
+	va_start(args, format);
+
+	int nBuf = 0;
+	const int BUF_SIZE = 1024;
+	char szBuffer[BUF_SIZE+1];
+
+	nBuf = ut_vsnprintf(szBuffer, BUF_SIZE, format, args);
+
+	if (nBuf < 0) 	
+		szBuffer[BUF_SIZE] = 0;
+
+	va_end(args);
+
+	return utString(szBuffer);
+
+#undef ut_vsnprintf
 }

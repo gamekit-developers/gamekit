@@ -1,0 +1,7 @@
+Version = 1
+ProjectName = "Test0"
+StartLuaFile = "Test0.lua"
+Files = {
+	"Test0.lua",
+	"Test0.blend"
+}

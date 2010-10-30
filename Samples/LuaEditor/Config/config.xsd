@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:attribute name="name"  type="xs:string"/>
+  <xs:attribute name="value" type="xs:string"/>
+
+  <xs:element name="config">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="section"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="section">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="group" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute ref="name" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="group">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="entry"  minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute ref="name" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="entry">
+    <xs:complexType>
+    <xs:attribute ref="name" use="required"/>
+    <xs:attribute ref="value"/>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

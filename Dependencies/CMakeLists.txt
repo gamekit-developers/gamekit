@@ -15,6 +15,7 @@ subdirs(Source/FreeType)
 subdirs(Source/Recast)
 subdirs(Source/Detour)
 subdirs(Source/OpenSteer)
+subdirs(Source/opts)
 
 if (OGREKIT_USE_STATIC_FREEIMAGE)
 	subdirs(Source/FreeImage)
@@ -35,3 +36,8 @@ if (OGREKIT_OPENAL_SOUND)
 		subdirs(Source/OpenAL)
 	endif()
 endif()
+
+if (OGREKIT_COMPILE_TINYXML)
+    subdirs(Source/TinyXml)
+endif()
+

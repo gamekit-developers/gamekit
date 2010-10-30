@@ -26,6 +26,11 @@
 */
 #include "gkMemoryTest.h"
 #include "Script/Lua/gkLuaUtils.h"
+#include "opts.h"
+
+#ifdef WIN32
+#include <direct.h>
+#endif
 
 
 extern "C" int _OgreKitLua_install(lua_State* L);
@@ -34,19 +39,60 @@ extern "C" int _OgreKitLua_install(lua_State* L);
 /// Interpreter, for a builtin OgreKitLua executable
 /// This is a work around for not having a Lua system package installed.
 
+#define DEFAULT_LUA_FILE "Test1.lua"
 
 int main(int argc, char** argv)
 {
 	TestMemory;
-	char* defname = "Test1.lua";
 
-
-
-	if (argc < 1)
+	char* workingDir = 0;
+	char* luaFile = 0; 
+	char* logFile = 0;
+	int pauseFlag = 0;
+	int helpFlag = 0;
+	
+	option options[] = 
 	{
-		printf("Usage: %s file.lua [file.lua arguments]\n", argv[0]);
+		{ OTYPE_STR, 'd', "dir", "working directory", OFLAG_NONE, &workingDir, 0, 0, 0 },
+		{ OTYPE_STR, 's', "lua", "start lua file", OFLAG_NONE, &luaFile, 0, 0, 0 },
+		{ OTYPE_STR, 'l', "log", "log file", OFLAG_NONE, &logFile, 0, 0, 0 },
+		{ OTYPE_BOL, 'p', "pause", "pause flags", OFLAG_NONE, &pauseFlag, 0, 0, 0 },
+		{ OTYPE_BOL, 'h', "help", "print usage", OFLAG_NONE, &helpFlag, 0, 0, 0 },
+		{ OTYPE_END, '\0', "", "", OFLAG_NONE, 0, 0, 0, 0 }, //end of options
+	};
+
+	optsetstyle(0);
+
+	int ret = optsgets(argc, argv, options);
+
+	if (helpFlag != 0 || (ret != 0 && optsind >= argc))
+	{
+		printf("Usage: %s\n", argv[0]);
+		for (option* op = &options[0]; op->type; ++op)
+			if (!((op->type == OTYPE_NUL) && (op->flags & OFLAG_ARG)))
+				printf("\t%s\n", optsusage(op));
+		printf("\t[lua arguments ...]\n");
 		return 1;
 	}
+
+	if (!luaFile)
+	{
+		if (optsind < argc && strstr(argv[optsind], "lua"))
+			luaFile = argv[optsind++];
+		else
+			luaFile = DEFAULT_LUA_FILE;
+	}
+
+	if (workingDir)
+	{
+		printf("Set workding directory: %s\n", workingDir);
+#ifdef WIN32
+		_chdir(workingDir);
+#else
+		chdir(workingDir);
+#endif
+	}
+		
 
 	lua_State* L = lua_open();
 
@@ -62,16 +108,13 @@ int main(int argc, char** argv)
 	lua_pushstring(L, "arg");
 	lua_newtable(L);
 
-	int nr = argc - 1;
-	for (int i = nr; i >= 0; --i)
+	//remaining args
+	for (int i = optsind; i < argc; ++i) 
 	{
-		lua_pushnumber(L, i - 1);
+		lua_pushnumber(L, i - optsind + 1); //start index: 1
 		lua_pushstring(L, argv[i]);
 		lua_settable(L, -3);
 	}
-	if (nr > 0)
-		defname = argv[1];
-
 
 	lua_settable(L, -3);
 
@@ -83,7 +126,7 @@ int main(int argc, char** argv)
 	lua_pushtraceback(L);
 	int tb = lua_gettop(L);
 
-	int status = luaL_loadfile(L, defname);
+	int status = luaL_loadfile(L, luaFile);
 	if (status != 0)
 	{
 		printf("%s\n", lua_tostring(L, -1));
@@ -99,5 +142,10 @@ int main(int argc, char** argv)
 	}
 
 	lua_close(L);
+
+#ifdef WIN32
+	if (pauseFlag) system("PAUSE");
+#endif
+
 	return 0;
 }

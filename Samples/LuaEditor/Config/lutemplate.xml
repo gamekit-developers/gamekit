@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="config.xsl"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="config.xsd">
+
+  <section name="template">
+    <group name="info">
+      <entry name="names" value="Empty;Test0;Test1"/>
+    </group>
+
+    <group name="Empty">
+      <entry name="title" value="Empty Project"/>
+      <entry name="preview" value="Data/Empty.xpm"/>
+      <entry name="desc" value="Just create the empty project."/>
+      <entry name="files" value=""/>
+    </group>
+    
+    <group name="Test0">
+      <entry name="title" value="Minimal Sample"/>
+      <entry name="preview" value="Data/Test0.xpm"/>
+      <entry name="desc" value="Display the turning cube."/>
+      <entry name="files" value="Data/Test0.lua;Data/Test0.blend"/>
+      <entry name="start_lua" value="Data/Test0.lua"/>
+    </group>
+
+    <group name="Test1">
+      <entry name="title" value="Character Control Sample"/>
+      <entry name="preview" value="Data/Test1.xpm"/>
+      <entry name="desc" value="You can control the momo character in the map."/>
+      <entry name="files" value="Data/Test1.lua;Data/Test1.blend"/>
+      <entry name="start_lua" value="Data/Test1.lua"/>
+    </group>
+  </section>
+  
+</config>

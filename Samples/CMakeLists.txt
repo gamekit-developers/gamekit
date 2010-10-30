@@ -37,4 +37,8 @@ if (SAMPLES_INSPECTOR)
 	subdirs(FileInspector)
 endif()
 
+if (SAMPLES_LUA_EDITOR)
+    subdirs(LuaEditor)
+endif()
+
 endif()

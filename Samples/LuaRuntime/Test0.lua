@@ -46,7 +46,14 @@ function OgreKitApp:OnTick(delta)
 
 end
 
+--- Print input arguments
+function printArgs()	
+	for i=1, #arg do
+		print(i, arg[i])
+	end
+end
 
+printArgs()
 
 -- Create the application.
 local app = OgreKitApp()

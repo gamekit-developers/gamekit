@@ -51,9 +51,9 @@ enum
 
 class EmbedLog : public wxLog, public Ogre::LogListener
 {
-	wxListBox *m_logBox;
+	wxListBox* m_logBox;
 public:
-	EmbedLog(wxListBox *lb) : m_logBox(lb) {}
+	EmbedLog(wxListBox* lb) : m_logBox(lb) {}
 
 	void log(const wxString &msg)
 	{
@@ -61,14 +61,14 @@ public:
 		m_logBox->Select(m_logBox->Append(msg));
 	}
 
-	virtual void messageLogged (const Ogre::String &message, Ogre::LogMessageLevel lml, bool maskDebug, const Ogre::String &logName)
+	virtual void messageLogged (const Ogre::String& message, Ogre::LogMessageLevel lml, bool maskDebug, const Ogre::String& logName)
 	{
 		log(message.c_str());
 	}
 
-	virtual void  DoLogString (const wxString &msg, time_t timestamp) //wxlog
+	virtual void  DoLogText(const wxString& msg) //wxlog
 	{		
-		log(wxDateTime(timestamp).FormatTime() + " : " + msg);
+		log(msg);
 	}
 };
 
@@ -87,8 +87,8 @@ public:
 	virtual void OnInitCmdLine(wxCmdLineParser&  parser);
 	virtual bool OnCmdLineParsed(wxCmdLineParser& parser);
 
-	GK_INLINE okApp*   GetOkApp()           { return m_okApp; }
-	GK_INLINE wxString GetBlendFile() const { return m_blend; }
+	GK_INLINE okApp*   getOkApp()           { return m_okApp; }
+	GK_INLINE wxString getBlendFile() const { return m_blend; }
 
 #if SET_EXIT_IF_EXCEPTION_RAISED
 	virtual void OnFatalException()
@@ -110,7 +110,7 @@ public:
     EmbedFrame();
 	virtual ~EmbedFrame();
 
-	GK_INLINE void SetAppTitle(const wxString &blend) { SetTitle(wxString::Format("%s - %s", APP_TITLE, blend)); }
+	GK_INLINE void setAppTitle(const wxString& blend) { SetTitle(wxString::Format("%s - %s", APP_TITLE, blend)); }
 	
 private:
 	void OnOpen(wxCommandEvent& event);
@@ -140,7 +140,7 @@ private:
 
 IMPLEMENT_APP(EmbedApp)
 
-void EmbedApp::OnInitCmdLine(wxCmdLineParser&  parser)
+void EmbedApp::OnInitCmdLine(wxCmdLineParser& parser)
 {
 	static const wxCmdLineEntryDesc cmdLineDesc[] =
 	{
@@ -210,11 +210,11 @@ EmbedFrame::EmbedFrame() :
     SetIcon(wxICON(sample));
 #endif
 
-    wxMenu *menu = new wxMenu;
+    wxMenu* menu = new wxMenu;
 	menu->Append(wxID_OPEN);
 	menu->AppendSeparator();
     menu->Append(wxID_CLOSE);
-    wxMenuBar *menuBar = new wxMenuBar;
+    wxMenuBar* menuBar = new wxMenuBar;
     menuBar->Append(menu, "&File");
 
 	menu = new wxMenu;
@@ -223,7 +223,7 @@ EmbedFrame::EmbedFrame() :
 
     SetMenuBar(menuBar);
 
-    wxStatusBar *sbar = CreateStatusBar();
+    wxStatusBar* sbar = CreateStatusBar();
 	m_statusBar = sbar;
 	
 #if ENABLE_LOG_BOX
@@ -238,19 +238,19 @@ EmbedFrame::EmbedFrame() :
 	EmbedApp* app = (EmbedApp*)wxTheApp;
 	okWindow* win = new okWindow(this);
 
-	EmbedLog *logListener = new EmbedLog(m_logBox);
+	EmbedLog* logListener = new EmbedLog(m_logBox);
 	delete wxLog::SetActiveTarget(logListener);
 
-	Ogre::Log *log = Ogre::LogManager::getSingleton().getDefaultLog();
+	Ogre::Log* log = Ogre::LogManager::getSingleton().getDefaultLog();
 	if (log) log->addListener(logListener);
 
 	m_logListener = logListener;
-	wxString blend = app->GetBlendFile();
+	wxString blend = app->getBlendFile();
 	if (blend.empty()) blend = DEMO_BLEND;
 
 	wxLogMessage("Initing... %s ", blend);
 	Ogre::Timer watch;
-	if (win->Init(app->GetOkApp(), WX2GK(blend), "", WIN_SIZE_X, WIN_SIZE_Y)) 
+	if (win->init(app->getOkApp(), WX2GK(blend), "", WIN_SIZE_X, WIN_SIZE_Y)) 
 	{		
 		wxLogMessage("Elapsed time for initing: %.3f seconds", watch.getMilliseconds()/1000.0f);
 		m_timer.Start(1000/STATUS_FPS);
@@ -262,7 +262,7 @@ EmbedFrame::EmbedFrame() :
 		wxLogMessage("Error - Can't init the Ogrekit.");
 	}
 
-	wxBoxSizer *vbox = new wxBoxSizer(wxVERTICAL);
+	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
 
 	if (m_okWin) 
 	{
@@ -283,8 +283,6 @@ EmbedFrame::EmbedFrame() :
 	sizeY += LOG_BOX_HEIGHT;
 #endif
 
-
-
 	if (m_okWin)
 	{
 		m_okWin->SetCanFocus(true);
@@ -303,7 +301,7 @@ EmbedFrame::~EmbedFrame()
 {
 	if (Ogre::LogManager::getSingletonPtr())
 	{
-		Ogre::Log *log = Ogre::LogManager::getSingleton().getDefaultLog();
+		Ogre::Log* log = Ogre::LogManager::getSingleton().getDefaultLog();
 		if (log) log->removeListener(m_logListener);
 	}
 
@@ -327,7 +325,7 @@ void EmbedFrame::OnDropFiles(wxDropFilesEvent& event)
 	OpenBlendFile(file);
 }
 
-bool EmbedFrame::OpenBlendFile(const wxString &file)
+bool EmbedFrame::OpenBlendFile(const wxString& file)
 {
 	if (!m_okWin) return false;
 
@@ -343,7 +341,7 @@ bool EmbedFrame::OpenBlendFile(const wxString &file)
 	wxLogMessage("Loading... %s ", file);
 
 	Ogre::Timer watch;
-	if (!m_okWin->Load(WX2GK(file)))
+	if (!m_okWin->load(WX2GK(file)))
 	{
 		wxString msg = wxString::Format("Error - Can't load the blend file: %s", file);
 		wxLogMessage(msg);
@@ -356,7 +354,7 @@ bool EmbedFrame::OpenBlendFile(const wxString &file)
 
 	wxLogMessage("Elapsed time for loading: %.3f seconds", watch.getMilliseconds()/1000.0f);
 
-	SetAppTitle(wxFileName::FileName(file).GetFullName());
+	setAppTitle(wxFileName::FileName(file).GetFullName());
 
 	m_okWin->SetFocus();
 	m_okWin->SendSizeEvent();
@@ -394,7 +392,7 @@ void EmbedFrame::OnSaveLog(wxCommandEvent& WXUNUSED(event))
 {
 	if (!m_logBox) return;
 
-	wxFileDialog *dlg = new wxFileDialog(this, wxFileSelectorPromptStr,  "",  "", "Text File (*.txt)|*.txt", wxFD_SAVE);
+	wxFileDialog* dlg = new wxFileDialog(this, wxFileSelectorPromptStr,  "",  "", "Text File (*.txt)|*.txt", wxFD_SAVE);
 	if (dlg->ShowModal() == wxID_OK)
 	{
 		 wxString fileName = dlg->GetPath();
@@ -426,7 +424,7 @@ void EmbedFrame::OnOpen(wxCommandEvent& WXUNUSED(event))
 	if (m_timer.IsRunning())
 		m_timer.Stop();
 
-	wxFileDialog *dlg = new wxFileDialog(this);
+	wxFileDialog* dlg = new wxFileDialog(this);
 	if (dlg->ShowModal() == wxID_OK)
 	{
 		 wxString fileName = dlg->GetPath();
@@ -450,10 +448,7 @@ void EmbedFrame::OnTimer(wxTimerEvent& WXUNUSED(event))
 
 		m_statusBar->SetStatusText(wxString::Format("FPS: %.3f (%.3f/%.3f/%.3f) NumTris: %d NumBatches: %d",  
 			stats.lastFPS, stats.avgFPS, stats.bestFPS, stats.worstFPS, (int)stats.triangleCount, (int)stats.batchCount));
-#if ENABLE_LOG_BOX
-		if (wxTheApp->IsActive() && m_okWin->isRunnigGameLoop() && !m_okWin->HasFocus())
-			m_okWin->SetFocusFromKbd ();
-#endif
+
 	}
 	catch (...)
 	{

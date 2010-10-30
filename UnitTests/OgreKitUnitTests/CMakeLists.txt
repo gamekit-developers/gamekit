@@ -24,18 +24,14 @@ set(ALL
 include_directories(
 	.
 	./TestCase
-	${GAMEKIT_UTILS_PATH} 
 	${OGREKIT_INCLUDE}
 	${GTEST_INCLUDE}
 )
 
 link_libraries(
-	${GAMEKIT_UTILS_TARGET} 
 	${OGREKIT_LIB}
 	${GTEST_LIB}
 )
-
-
 
 set(HiddenCMakeLists ../CMakeLists.txt)
 source_group(ParentCMakeLists FILES ${HiddenCMakeLists})

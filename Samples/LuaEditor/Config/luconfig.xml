@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="config.xsl"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="config.xsd">
+
+  <section name="app">
+    <group name="runtime">
+      <entry name="win32_path" value="../LuaRuntime/RelWithDebInfo/AppLuaRuntime.exe"/>
+      <entry name="linux_path" value="../LuaRuntime/RelWithDebInfo/AppLuaRuntime"/>
+    </group>
+    <group name="help">
+      <entry name="path" value="Help/OgreKitLuaApi.chm"/>
+      <entry name="topic" value="Help/index.hhk"/>
+    </group>
+    <group name="edit">
+      <entry name="font_name" value="Verdana"/>
+      <entry name="font_size" value="11"/>
+      <entry name="linenumber_margin" value="50"/>
+      <entry name="bookmark_margin" value="16"/>
+      <entry name="folder_margin" value="16"/>
+      <entry name="keywords" value="and break do else elseif end false for function if in local nil not or repeat return then true until while "/>
+    </group>
+    <group name="file">
+      <entry name="base_blend" value="Data/base.blend"/>
+      <entry name="proj_template" value="Config/lutemplate.xml"/>
+    </group>
+  </section>
+
+</config>

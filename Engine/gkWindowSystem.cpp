@@ -217,6 +217,7 @@ RenderWindow* gkWindowSystem::createMainWindow(const gkUserDefs& prefs)
 	m_mouse.winsize.x = winsizex;
 	m_mouse.winsize.y = winsizey;
 
+
 	// OIS
 	try
 	{
@@ -235,6 +236,9 @@ RenderWindow* gkWindowSystem::createMainWindow(const gkUserDefs& prefs)
 			params.insert(std::make_pair(std::string("w32_mouse"),   std::string("DISCL_NONEXCLUSIVE")));
 			params.insert(std::make_pair(std::string("w32_keyboard"), std::string("DISCL_FOREGROUND")));
 			params.insert(std::make_pair(std::string("w32_keyboard"),  std::string("DISCL_NONEXCLUSIVE")));
+
+			if (m_useExternalWindow)
+				params.insert(std::make_pair(std::string("w32_pass_event"), std::string(""))); //pass event to old window proc
 
 #elif OGRE_PLATFORM == OGRE_PLATFORM_APPLE
 			params.insert(std::make_pair(std::string("MacAutoRepeatOn"), std::string("true")));
@@ -264,7 +268,7 @@ RenderWindow* gkWindowSystem::createMainWindow(const gkUserDefs& prefs)
 
 		m_internal->m_gestureView = [[gkGestureView alloc] init];
 
-[[[UIApplication sharedApplication] keyWindow] addSubview: m_internal->m_gestureView];
+		[[[UIApplication sharedApplication] keyWindow] addSubview: m_internal->m_gestureView];
 
 		[m_internal->m_gestureView becomeFirstResponder];
 
@@ -297,6 +301,7 @@ RenderWindow* gkWindowSystem::createMainWindow(const gkUserDefs& prefs)
 		gkPrintf("%s", e.what());
 		return 0;
 	}
+
 
 	WindowEventUtilities::addWindowEventListener(m_window, m_internal);
 	return m_window;
@@ -400,7 +405,6 @@ void gkWindowSystem::dispatch(void)
 	m_mouse.relitave.x = 0.f;
 	m_mouse.relitave.y = 0.f;
 
-
 	m_internal->m_mouse->capture();
 	m_internal->m_keyboard->capture();
 
@@ -471,6 +475,7 @@ gkWindowSystemPrivate::~Private()
 		if (m_touch)
 			m_input->destroyInputObject(m_touch);
 #endif
+
 
 		OIS::InputManager::destroyInputSystem(m_input);
 

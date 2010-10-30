@@ -13,3 +13,6 @@ subdirs(${GTEST_DIR})
 subdirs(OgreKitUnitTests)
 subdirs(FbtUnitTests)
 
+if (SAMPLES_LUA_EDITOR)
+subdirs(LuaEditorUnitTests)
+endif()

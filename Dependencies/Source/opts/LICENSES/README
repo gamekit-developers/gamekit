@@ -1,0 +1,11 @@
+These licenses are borrowed from various sources.  The Artistic license is a
+slightly modified version of the Perl license.  The BSD license is a very
+slightly modified version of the license associated with BSD 4.4.
+
+The changes to the Artistic license only remove references to such things as
+embedding the interpreter for "this language" in other programs, and other
+things that apply well to Perl, but not to my software.  The BSD license
+changes reflect the subtle differences between me and the Regents of the
+University of California, Berkeley.
+
+-s
