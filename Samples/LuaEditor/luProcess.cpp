@@ -32,7 +32,7 @@
 #include <wx/txtstrm.h> 
 
 luProcess::luProcess(luMainFrame *parent, const wxString& cmd)
-    : wxProcess(parent), m_cmd(cmd)
+    : wxProcess(parent), m_cmd(cmd), m_status(-1)
 {
     m_parent = parent;
 }
@@ -40,53 +40,7 @@ luProcess::luProcess(luMainFrame *parent, const wxString& cmd)
 
 void luProcess::OnTerminate(int pid, int status)
 {
-    wxLogStatus(m_parent, _T("Process %u ('%s') terminated with exit code %d."),
-                pid, m_cmd.c_str(), status);
+	m_status = status;
 
-    m_parent->OnAsyncTermination(this);
+    m_parent->OnAsyncTermination(this, status);
 }
-
-
-bool luPipedProcess::HasInput()
-{
-    bool hasInput = false;
-
-#if 0
-    if ( IsInputAvailable() )
-    {
-        wxTextInputStream tis(*GetInputStream());
-
-        wxString msg;
-        msg << tis.ReadLine(); //stdout
-
-        m_parent->addPipedOutput(msg);
-
-        hasInput = true;
-    }
-#endif
-    if ( IsErrorAvailable() )
-    {
-        wxTextInputStream tis(*GetErrorStream());
-
-        wxString msg;
-        msg << tis.ReadLine(); //stderr
-
-        m_parent->addPipedOutput(msg);
-
-        hasInput = true;
-    }
-
-    return hasInput;
-}
-
-void luPipedProcess::OnTerminate(int pid, int status)
-{
-    while (HasInput())
-        ;
-
-    m_parent->OnProcessTerminated(this);
-
-    luProcess::OnTerminate(pid, status);
-}
-
-

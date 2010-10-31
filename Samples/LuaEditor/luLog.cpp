@@ -27,7 +27,10 @@
 
 
 #include "StdAfx.h"
+#include "luDefs.h"
 #include "luLog.h"
+#include "luUtils.h"
+#include "luMainFrame.h"
 
 luLog::luLog(wxListBox *lb) 
 	: m_logBox(lb) 
@@ -48,4 +51,107 @@ void luLog::messageLogged(const Ogre::String &message, Ogre::LogMessageLevel lml
 void luLog::DoLogText(const wxString &msg) 
 {		
 	log(msg);
+}
+
+//--
+
+luLogFile::luLogFile(const wxString& fileName) :
+	m_fileName(fileName)
+{
+	reset();
+}
+
+void luLogFile::reset()
+{
+	m_modifiedTime = wxDateTime::Now();
+	m_fileOffset = 0;
+}
+
+void luLogFile::watch(const wxString& fileName)
+{
+	m_fileName = fileName;
+	reset();
+}
+
+bool luLogFile::isModified()
+{
+	if (!wxFileName::FileExists(m_fileName)) return false;
+	
+	wxDateTime time = wxFileName(m_fileName).GetModificationTime();
+	return m_modifiedTime < time;
+}
+
+wxString luLogFile::readLog()
+{			
+	wxFile file;
+	if (!file.Open(m_fileName, wxFile::read)) return "";
+
+	wxDateTime time = wxFileName(m_fileName).GetModificationTime();
+
+	wxString text;
+	
+	file.Seek(m_fileOffset);
+
+	char buf[256+1];
+
+	while (!file.Eof())
+	{
+		ssize_t len = file.Read(buf, sizeof(buf)-1);
+		buf[len] = 0;
+
+		text += buf;
+	} 
+
+	m_fileOffset = file.Tell();
+	if (m_fileOffset != 0)
+		m_modifiedTime = time;
+	
+	return text;
+}
+
+//--
+
+BEGIN_EVENT_TABLE(luLogEdit, wxTextCtrl)
+	EVT_LEFT_DCLICK (luLogEdit::OnLButtonDBClick)
+END_EVENT_TABLE()
+
+luLogEdit::luLogEdit(wxWindow* parent, int id) :
+	wxTextCtrl(parent, id, wxT(""), wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY)
+{
+
+}
+
+
+void luLogEdit::OnLButtonDBClick(wxMouseEvent& event)
+{
+	long pos = GetInsertionPoint();
+	long x = 0, y = 0;
+	PositionToXY(pos, &x, &y);
+	wxString line = GetLineText(y);
+
+	//01:15:55: TestError.lua:49: attempt to index field 'object' (a nil value)
+	size_t i = wxString(line).MakeLower().find(".lua:");
+	if (i != wxString::npos)
+	{
+		size_t k = line.rfind(':', i);
+		size_t p = i+4;
+		size_t s = line.find(':', p+1);
+
+		if (k != wxString::npos && p != wxString::npos && s != wxString::npos)
+		{
+			wxString luaFile = line.SubString(k+1, p-1).Trim().Trim(false);
+			wxString lineNo = line.SubString(p+1, s-1).Trim().Trim(false);
+			long line = 0;
+			if (lineNo.ToLong(&line))
+			{
+				luMainFrame* frame = getLuMainFrame();
+				if (frame) frame->gotoLuaSource(luaFile, line);
+			}
+
+			//AppendText(luaFile + "    " + lineNo+"\n");
+		}
+	}
+	
+
+	event.Skip();
 }

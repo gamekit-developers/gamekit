@@ -26,6 +26,7 @@
 */
 #include "gkMemoryTest.h"
 #include "Script/Lua/gkLuaUtils.h"
+#include "gkLogger.h"
 #include "opts.h"
 
 #ifdef WIN32
@@ -85,12 +86,17 @@ int main(int argc, char** argv)
 
 	if (workingDir)
 	{
-		printf("Set workding directory: %s\n", workingDir);
+		printf("Set working directory: %s\n", workingDir);
 #ifdef WIN32
 		_chdir(workingDir);
 #else
 		chdir(workingDir);
 #endif
+	}
+
+	if (logFile)
+	{
+		gkLogger::enable(logFile, false);
 	}
 		
 
@@ -127,16 +133,17 @@ int main(int argc, char** argv)
 	int tb = lua_gettop(L);
 
 	int status = luaL_loadfile(L, luaFile);
+
 	if (status != 0)
 	{
-		printf("%s\n", lua_tostring(L, -1));
+		gkPrintf("%s\n", lua_tostring(L, -1));
 		lua_pop(L, 1);
 	}
 	else
 	{
 		if (lua_pcall(L, 0, LUA_MULTRET, tb) != 0)
 		{
-			printf("%s\n", lua_tostring(L, -1));
+			gkPrintf("%s\n", lua_tostring(L, -1));
 			lua_pop(L, 1);
 		}
 	}

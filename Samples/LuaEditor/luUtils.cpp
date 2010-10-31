@@ -52,3 +52,19 @@ void alertDlg(const wxString& msg, wxWindow* parent, const wxString& title)
 	wxMessageDialog dlg(parent, msg, title);
 	dlg.ShowModal();
 }
+
+int selectPage(wxAuiNotebook* noteBook, wxWindow* page)
+{
+	if (!noteBook || !page) return -1;
+
+	for (size_t i = 0; i < noteBook->GetPageCount(); i++)
+	{
+		if (page == noteBook->GetPage(i))
+		{
+			noteBook->SetSelection(i);
+			return (int)i;
+		}
+	}
+
+	return -1;
+}

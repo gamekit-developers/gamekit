@@ -35,24 +35,12 @@ public:
     luProcess(luMainFrame* parent, const wxString& cmd);
     virtual void OnTerminate(int pid, int status);
 
+	int getStatus() { return m_status; }
 protected:
     luMainFrame* m_parent;
     wxString m_cmd;
-};
 
-
-class luPipedProcess : public luProcess
-{
-public:
-    luPipedProcess(luMainFrame* parent, const wxString& cmd)
-        : luProcess(parent, cmd)
-	{
-            Redirect();
-	}
-
-    virtual void OnTerminate(int pid, int status);
-
-    virtual bool HasInput();
+	int m_status;
 };
 
 

@@ -32,6 +32,7 @@
 class okApp;
 class okWindow;
 class luLog;
+class luLogFile;
 class luProjPanel;
 class luPropsPanel;
 class luProjectFile;
@@ -39,7 +40,7 @@ class luPipedProcess;
 class luProcess;
 class luEdit;
 class luHhkFile;
-
+class luLogEdit;
 
 class luMainFrame : public wxFrame
 {
@@ -61,6 +62,7 @@ public:
 	void alert(const wxString& msg);
 
 	luEdit* getFocusEdit() { return m_focusEdit; }
+	luEdit* findLuEdit(const wxString& fileName);
 	luProjectFile* getProjectFile() { return m_projFile; }
 	wxString getPathInProject(const wxString& pathName, bool relPath);
 	bool saveAllModifiedFilesInProject();
@@ -76,6 +78,8 @@ public:
 	okWindow* getOkWin() { return m_okWin; }
 
 	bool setProjectName(const wxString& name);
+
+	bool gotoLuaSource(const wxString& luaFile, int lineNo);
 private:
 
 	void OnOpen(wxCommandEvent& event);
@@ -127,7 +131,8 @@ private:
 
 	wxAuiManager*		m_aui;
 	okWindow*			m_okWin;
-	wxListBox*			m_logBox;	
+	wxListBox*			m_logBox;
+	luLogEdit*			m_logRuntime;
 	wxStatusBar*		m_statusBar;
 	luLog*				m_logListener;
 	wxTimer				m_timer;
@@ -160,16 +165,16 @@ private:
 	bool saveProjFile();
 
 	void refreshInspPanel();
+	
+	luProcess* m_runtimeProcess;
 
-	wxTimer	m_timerWakeup;
-	luProcess* m_processRuntime;
-	luPipedProcess* m_processPiped;	
+	luLogFile* m_runtimeLogFile;
+
 
 public:
 	void addPipedOutput(const wxString& str);
 
-	void OnProcessTerminated(luPipedProcess* process);
-	void OnAsyncTermination(luProcess* process);
+	void OnAsyncTermination(luProcess* process, int exitCode);
 
 	DECLARE_EVENT_TABLE()
 

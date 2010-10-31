@@ -40,4 +40,29 @@ public:
 	virtual void DoLogText(const wxString &msg); //wxlog
 };
 
+class luLogFile
+{
+	wxString m_fileName;
+	wxDateTime m_modifiedTime;
+	wxFileOffset  m_fileOffset;
+public:
+	luLogFile(const wxString& fileName = "");
+
+	wxString getFileName() { return m_fileName; }
+	void watch(const wxString& fileName);
+	void reset();
+
+	bool isModified();
+	wxString readLog();
+};
+
+class luLogEdit : public wxTextCtrl
+{
+	void OnLButtonDBClick(wxMouseEvent& event);
+public:
+	luLogEdit(wxWindow* parent, int id = wxID_ANY);
+
+	DECLARE_EVENT_TABLE()
+};
+
 #endif //_luLog_h_

@@ -31,7 +31,7 @@
 
 #define WIN_SIZE_X			640
 #define WIN_SIZE_Y			480
-#define LOG_BOX_HEIGHT		100
+#define LOG_BOX_HEIGHT		140
 
 #define STATUS_FPS			4
 #define DEMO_BLEND			"Test0.blend"
@@ -127,6 +127,7 @@ enum MENU_ID
 enum WIN_ID
 {
 	ID_LOG_BOX = wxID_HIGHEST + 1000,
+	ID_LOG_RUNTIME_EDIT,
 	ID_PROJ_WIN,
 	ID_PROJ_TREE,
 	ID_PROJ_LIST,

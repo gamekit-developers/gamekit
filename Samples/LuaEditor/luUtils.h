@@ -48,4 +48,6 @@ GK_INLINE luMainFrame* getLuMainFrame()
 
 void alertDlg(const wxString& msg, wxWindow* parent = NULL, const wxString& title = "Alert");
 
+int selectPage(wxAuiNotebook* noteBook, wxWindow* page);
+
 #endif //_LauUtils_h_

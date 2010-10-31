@@ -26,6 +26,7 @@
 */
 #include "gkLuaUtils.h"
 #include "utString.h"
+#include "gkLogger.h"
 #include "Generated/gsTemplates.h"
 
 
@@ -164,7 +165,7 @@ bool gkLuaEvent::call(bool& result)
 
 	if (lua_pcall(L, m_callArgs, 1, m_trace) != 0)
 	{
-		printf("%s\n", lua_tostring(L, -1));
+		gkPrintf("%s\n", lua_tostring(L, -1));
 		// re throw
 		// lua_error(L);
 		lua_pop(L, 1);
@@ -186,7 +187,7 @@ bool gkLuaEvent::call()
 
 	if (lua_pcall(L, m_callArgs, 0, m_trace) != 0)
 	{
-		printf("%s\n", lua_tostring(L, -1));
+		gkPrintf("%s\n", lua_tostring(L, -1));
 		// re throw
 		// lua_error(L);
 		lua_pop(L, 1);
@@ -229,7 +230,7 @@ void lua_dumpstack(lua_State* L)
 		case LUA_TTHREAD:           sprintf(extra, "LUA_TTHREAD             : %p", lua_topointer(L, top));  break;
 		}
 
-		printf("%i: %s\n", i, extra);
+		gkPrintf("%i: %s\n", i, extra);
 		i++;
 		top--;
 	}

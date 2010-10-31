@@ -60,11 +60,11 @@ void gkPrintf(const char* fmt, ...)
 	{
 		// out to log stream so user def flags work
 		GK_ConsoleBuffer[size] = 0;
-		if (gLog != 0 && gLog->getLogDetail() != Ogre::LL_LOW)
+		if (gLog != 0)
 		{
 			if (GK_ConsoleBuffer[size-1] == '\n')
 				GK_ConsoleBuffer[--size] = 0;
-			gLog->logMessage(GK_ConsoleBuffer);
+			gLog->logMessage(GK_ConsoleBuffer, Ogre::LML_CRITICAL);
 		}
 		else
 		{
@@ -90,6 +90,7 @@ void gkLogger::enable(const gkString& name, bool verbose)
 
 		if (!verbose)
 			gLog->setLogDetail(Ogre::LL_LOW);
+
 	}
 }
 

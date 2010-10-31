@@ -28,6 +28,7 @@
 #include "gkLuaScript.h"
 #include "gkLuaUtils.h"
 #include "gkDebugScreen.h"
+#include "gkLogger.h"
 
 
 
@@ -71,7 +72,7 @@ void gkLuaScript::compile(void)
 		lua_pushvalue(L, LUA_GLOBALSINDEX);
 		if (luaL_loadbuffer(L, m_text.c_str(), m_text.size() - 1, m_name.c_str()) != 0)
 		{
-			printf("%s\n", lua_tostring(L, -1));
+			gkPrintf("%s\n", lua_tostring(L, -1));
 			dsPrintf("%s\n", lua_tostring(L, -1));
 			lua_pop(L, 1);
 			m_isInvalid = true;
@@ -114,7 +115,7 @@ bool gkLuaScript::execute(void)
 	lua_rawgeti(L, LUA_REGISTRYINDEX, m_script);
 	if (lua_pcall(L, 0, LUA_MULTRET, trace) != 0)
 	{
-		printf("%s\n", lua_tostring(L, -1));
+		gkPrintf("%s\n", lua_tostring(L, -1));
 		dsPrintf("%s\n", lua_tostring(L, -1));
 		lua_pop(L, 1);
 		m_isInvalid = true;

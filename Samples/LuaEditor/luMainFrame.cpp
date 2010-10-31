@@ -51,9 +51,7 @@
 #include "luConfig.h"
 #include "Resource/app.xpm"
 
-#define TEST_PROJ_FILE "Data/Test0.okproj"
-#define TEST_LUA_FILE "Test0.lua"
-
+#define RUNTIME_LOG_FILE "LuaRuntime.log"
 
 #define DEFAULT_CAMERA_RADIUS 10
 
@@ -178,18 +176,18 @@ luMainFrame::luMainFrame() :
 	wxFrame(NULL, wxID_ANY, APP_TITLE, wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE | wxSUNKEN_BORDER),
 	m_okWin(NULL),
 	m_timer(this, ID_STATUS_TIMER),
-	m_timerWakeup(this, ID_WAKEUP_TIMER),
 	m_statusBar(NULL),
 	m_logListener(NULL),
 	m_logBox(NULL),
+	m_runtimeLogFile(NULL),
+	m_logRuntime(NULL),
 	m_pidHelp(0),
 	m_pidRuntime(0),
 	m_projPanel(NULL),
 	m_propsPanel(NULL),
 	m_aui(NULL),	
 	m_projFile(NULL),
-	m_processRuntime(NULL),
-	m_processPiped(NULL),
+	m_runtimeProcess(NULL),
 	m_bookMain(NULL),
 	m_bookOutput(NULL),
 	m_bookProps(NULL),
@@ -235,6 +233,9 @@ luMainFrame::luMainFrame() :
 	m_helpTopic = new luHhkFile;
 	if (!m_helpTopic->load(LuConfig.getHelpTopicFile()))
 		alert(wxString("Can't open help topic file: ") + LuConfig.getHelpTopicFile());
+
+	wxString runtimeLogFile = wxFileName::GetCwd() + "/" + RUNTIME_LOG_FILE;
+	m_runtimeLogFile = new luLogFile(runtimeLogFile);	
 }
 
 luMainFrame::~luMainFrame()
@@ -252,9 +253,9 @@ luMainFrame::~luMainFrame()
 	}
 
 	SAFE_DELETE(m_helpTopic);
+	SAFE_DELETE(m_runtimeLogFile);
 
-
-	SAFE_DELETE(m_processRuntime);
+	SAFE_DELETE(m_runtimeProcess);
 	SAFE_DELETE(m_projFile);
 	if (Ogre::LogManager::getSingletonPtr())
 	{
@@ -281,8 +282,8 @@ void luMainFrame::setupWindows()
 	m_bookOutput = new wxAuiNotebook(this, ID_BOOK_OUTPUT, wxDefaultPosition, wxDefaultSize, BOOK_OUTPUT_STYLE);
 	m_bookOutput->AddPage(m_logBox, "Log", false, pageBmp);
 
-	m_bookOutput->AddPage(new wxTextCtrl(this, -1, wxT(""), wxDefaultPosition, wxSize(200, 200), wxTE_MULTILINE | wxTE_READONLY),
-		"Build", false, pageBmp);
+	m_logRuntime = new luLogEdit(this, ID_LOG_RUNTIME_EDIT);
+	m_bookOutput->AddPage(m_logRuntime, "Run", false, pageBmp);
 
 	//-- props
 
@@ -1264,9 +1265,12 @@ void luMainFrame::OnTimer(wxTimerEvent& event)
 
 void luMainFrame::OnIdle(wxIdleEvent& event)
 {
-	if (m_processPiped && m_processPiped->HasInput())
+	if (m_runtimeProcess)
 	{
-		 event.RequestMore();
+		if (m_runtimeLogFile->isModified())
+		{
+			m_logRuntime->AppendText(m_runtimeLogFile->readLog());
+		}
 	}
 }
 
@@ -1313,20 +1317,15 @@ void luMainFrame::OnShowHelp(wxCommandEvent& WXUNUSED(event))
 }
 
 
-void luMainFrame::OnProcessTerminated(luPipedProcess* process)
+void luMainFrame::OnAsyncTermination(luProcess* process, int exitCode)
 {
-	//RemovePipedProcess(process);
-	wxASSERT(m_processPiped == NULL);
-	m_processPiped = NULL;
-	m_timerWakeup.Stop();
-}
+	wxASSERT(m_runtimeProcess == process);
 
-void luMainFrame::OnAsyncTermination(luProcess* process)
-{
-	//m_allAsync.Remove(process);
-	wxASSERT(m_processRuntime == process);
-	SAFE_DELETE(m_processRuntime);
+	gkPrintf("Runtime process is terminated. pid: %ld exit: %d", process->GetPid(), exitCode);
+	
+	SAFE_DELETE(m_runtimeProcess);
 	m_pidRuntime = 0;
+	
 }
 
 void luMainFrame::OnRunRuntime(wxCommandEvent& WXUNUSED(event))
@@ -1337,7 +1336,7 @@ void luMainFrame::OnRunRuntime(wxCommandEvent& WXUNUSED(event))
 		return;
 	}
 
-	wxASSERT(!m_processRuntime && "Runtime process is still alive?");
+	wxASSERT(!m_runtimeProcess && "Runtime process is still alive?");
 
 	if (!m_projFile)
 	{
@@ -1364,39 +1363,30 @@ void luMainFrame::OnRunRuntime(wxCommandEvent& WXUNUSED(event))
 		alert("Can't save modified file.");
 		return;
 	}
-
-	wxString dirName = m_projFile->getProjDir();
+	
+	wxString dirName = m_projFile->getProjDir();	
 	gkPrintf("Working Directory: %s", WX2GK(dirName).c_str());
-	wxString cmd = wxString::Format("%s -s %s -d %s", runtimePath, luaFile, dirName);
+	wxString cmd = wxString::Format("%s -s %s -d %s -l %s", runtimePath, luaFile, dirName, m_runtimeLogFile->getFileName());
 
 	wxString args;
 	args = wxGetTextFromUser(cmd + "\nEnter arguments to launch: ", "Execute Runtime", "");
 	cmd += " " + args;
 
-#define USE_PIPED_PROCESS 0
-
-#if USE_PIPED_PROCESS
-	m_processPiped = new luPipedProcess(this, cmd);
-	m_processRuntime = m_processPiped;
-#else
-	m_processRuntime = new luProcess(this, cmd);
-#endif
+	m_runtimeProcess = new luProcess(this, cmd);
 		
-		
-	m_pidRuntime = wxExecute(cmd, wxEXEC_ASYNC, m_processRuntime);
+	m_pidRuntime = wxExecute(cmd, wxEXEC_ASYNC, m_runtimeProcess);
 	if (m_pidRuntime <= 0)
 	{
 		alert("Can't execute the Runtime Process.");
 		
-		SAFE_DELETE(m_processRuntime);
-		m_processPiped = NULL;
+		SAFE_DELETE(m_runtimeProcess);
 	}
 	else
-	{
-		if (m_processPiped)
-			m_timerWakeup.Start(100);
+	{	
+		m_logRuntime->Clear();
+		m_runtimeLogFile->reset();
+		selectPage(m_bookOutput, m_logRuntime);
 	}
-
 }
 
 void luMainFrame::OnProjTreeItemActivated(wxTreeEvent& event)
@@ -1498,5 +1488,29 @@ bool luMainFrame::setProjectName(const wxString& name)
 		
 	m_projPanel->setProjectName(name);
 
+	return true;
+}
+
+luEdit* luMainFrame::findLuEdit(const wxString& fileName)
+{
+	for (size_t i = 0; i < m_bookMain->GetPageCount(); i++)
+	{
+		luEdit* edit = dynamic_cast<luEdit*>(m_bookMain->GetPage(i));
+		if (!edit) continue;
+
+		if (wxFileName(edit->getFileName()).GetFullName() == fileName)
+			return edit;
+	}
+
+	return NULL;
+}
+
+bool luMainFrame::gotoLuaSource(const wxString& luaFile, int lineNo)
+{
+	luEdit* edit = findLuEdit(luaFile);
+	if (!edit) return false; //TODO: check unopened lua file in project
+	
+	edit->GotoLine(lineNo-1);
+	edit->SetFocus();
 	return true;
 }
