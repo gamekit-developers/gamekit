@@ -30,43 +30,12 @@
 #include "okCamera.h"
 
 #define USE_DEBUG_CAMERA	0
-#define DEFAULT_MIN_RADIUS	0.1f
-#define DEFAULT_MAX_RADIUS	100.0f
 #define AXIS_OBJ_NAME		"AxisObj"
 #define AXIS_LENGTH			2
 
 #define MAT_X_AXIS			"axis/red"	
 #define MAT_Y_AXIS			"axis/green"
 #define MAT_Z_AXIS			"axis/blue"
-
-
-//-- spehre coordinate
-
-
-GK_INLINE gkVector3 sphere2cart(const gkVector3& p) //p(radius,yaw,pitch)
-{
-	gkVector3 t(gkVector3::ZERO);
-
-	t.x = p.x * Ogre::Math::Sin(p.y) * Ogre::Math::Sin(p.z + Ogre::Math::PI/2);
-	t.y = p.x * Ogre::Math::Cos(p.z + Ogre::Math::PI/2);
-	t.z = p.x * Ogre::Math::Cos(p.y) * Ogre::Math::Sin(p.z + Ogre::Math::PI/2);
-
-	return t;
-}
-
-GK_INLINE gkVector3 cart2sphere(const gkVector3& p) //ret(radius,yaw,pitch)
-{
-	gkVector3 t(gkVector3::ZERO);
-
-	gkScalar len = p.length();
-	
-	t.x = len;
-	t.y = Ogre::Math::ATan2(p.x, p.z).valueRadians();
-	t.z = Ogre::Math::ACos(p.y / len).valueRadians() - Ogre::Math::PI/2;
-
-	return t;
-}
-
 
 
 Ogre::ManualObject *createAxis(Ogre::SceneManager* smgr, const gkString& name, float axisLen)
@@ -155,12 +124,7 @@ okCamera::okCamera(Ogre::SceneManager* smgr, Ogre::Camera* camera, okCamera::CAM
 	m_cameraNode(NULL),
 	m_targetNode(NULL),
 	m_axisNode(NULL),
-	m_axisPos(CENTER),	
-	m_spherePos(gkVector3::ZERO),
-	m_offsetPos(gkVector3::ZERO),
-	m_minRadius(DEFAULT_MIN_RADIUS),
-	m_maxRadius(DEFAULT_MAX_RADIUS),
-	m_usePitchLimit(true)
+	m_axisPos(CENTER)
 {
 	GK_ASSERT(smgr);
 
@@ -168,17 +132,18 @@ okCamera::okCamera(Ogre::SceneManager* smgr, Ogre::Camera* camera, okCamera::CAM
 
 	Ogre::SceneNode* rootNode = smgr->getRootSceneNode();
 
-	m_cameraNode = rootNode->createChildSceneNode();
 	m_targetNode = rootNode->createChildSceneNode();
+	m_cameraNode = m_targetNode->createChildSceneNode();
+	
 	m_axisNode   = rootNode->createChildSceneNode();
-
 	m_axis = createAxis(m_sceneMgr, utStringFormat(AXIS_OBJ_NAME"_%d", sCount++), AXIS_LENGTH);
 	m_axis->setRenderQueueGroup(Ogre::RENDER_QUEUE_OVERLAY+1);
 	m_axisNode->attachObject(m_axis);
-
 	m_axis->setVisible(m_showAxis);
 
-	m_cameraNode->setFixedYawAxis(true);
+	m_targetNode->setFixedYawAxis(true, Ogre::Vector3::UNIT_Y);
+	m_cameraNode->setPosition(0,0,0);
+
 
 	if (camera) 
 		attachCamera(camera);
@@ -199,13 +164,14 @@ okCamera::~okCamera()
 		m_sceneMgr->destroyMovableObject(m_axis); m_axis = NULL;
 	}
 
-	m_sceneMgr->destroySceneNode(m_targetNode); m_targetNode = NULL;
 	m_sceneMgr->destroySceneNode(m_cameraNode); m_cameraNode = NULL;
+	m_sceneMgr->destroySceneNode(m_targetNode); m_targetNode = NULL;
+	
 
 	if (m_camera) { m_sceneMgr->destroyCamera(m_camera); m_camera = NULL; }
 }
 
-void okCamera::reset(const gkVector3& pos)
+void okCamera::reset(const gkVector3& pos, CAMERA_DIR dir)
 {
 	if (m_camera) 
 	{
@@ -213,11 +179,13 @@ void okCamera::reset(const gkVector3& pos)
 		m_camera->setPosition(gkVector3::ZERO);
 	}
 
-	m_cameraNode->setOrientation(gkQuaternion::IDENTITY);
-	m_cameraNode->setPosition(pos);
+	m_targetNode->setOrientation(gkQuaternion::IDENTITY);
+	m_targetNode->setPosition(gkVector3::ZERO);
 
-	m_spherePos = gkVector3::ZERO;
-	m_offsetPos = gkVector3::ZERO;	
+	m_cameraNode->setOrientation(gkQuaternion::IDENTITY);
+
+
+	m_cameraNode->setPosition(pos);
 }
 
 bool okCamera::attachCamera(Ogre::Camera* camera)
@@ -263,42 +231,6 @@ gkScalar okCamera::getBoundingRadius()
 	return m_camera->getBoundingRadius(); 
 }
 
-void okCamera::setPosition(const gkVector3& pos)
-{
-	if (m_mode == MODE_TARGET) 
-	{
-		gkVector3 tpos = pos - m_targetNode->getPosition();
-		m_spherePos = cart2sphere(tpos);
-		m_spherePos.x = gkMin(m_maxRadius, gkMax(m_minRadius, m_spherePos.x));
-		m_cameraNode->setPosition(pos);
-		m_cameraNode->lookAt(m_targetNode->getPosition(), Ogre::Node::TS_WORLD);
-	} 
-	else 
-	{
-		m_cameraNode->setPosition(pos);
-		m_spherePos = gkVector3(pos.length(), 0, 0);
-	}
-}
-
-void okCamera::setOrientation(const gkQuaternion& ori)
-{
-	if (m_mode == MODE_TARGET) 
-	{
-		//can't change orietation
-	} 
-	else 
-	{
-		m_cameraNode->setOrientation(ori);
-	}
-}
-
-void okCamera::setDirection(const gkVector3& dir)
-{
-	//lookAt(dir);
-
-	m_cameraNode->setDirection(dir);
-}
-
 //--
 
 void okCamera::setTargetPostion(gkVector3 pos, bool relative)
@@ -311,102 +243,28 @@ void okCamera::setTargetPostion(gkVector3 pos, bool relative)
 	zoom(0);
 }
 
-void okCamera::move(const gkVector3& trans)
-{
-	if (m_mode == MODE_TARGET) 
-	{
-		gkVector3 to = getPosition() + trans;
-		setPosition(to);
-	} 
-	else 
-	{
-		gkVector3 to = getOrientation() * trans;
-		//m_cameraNode->translate(to, Ogre::SceneNode::TS_LOCAL);
-		m_cameraNode->setPosition(getPosition() + to);
-	}
-}
-
-gkVector3 okCamera::calcSpherePos(gkRadian yaw, gkRadian pitch, gkScalar zoom)
-{
-	gkVector3 spherePos = m_spherePos;
-
-	spherePos.x += zoom;
-	spherePos.y += yaw.valueRadians();
-	spherePos.z += pitch.valueRadians();
-
-	const gkScalar limitPitch = gkPi/2 - 0.05;
-
-	spherePos.x  = gkMin(m_maxRadius, gkMax(m_minRadius, spherePos.x));
-	
-
-	if (m_usePitchLimit)
-		spherePos.z = gkMax(-limitPitch, gkMin(limitPitch, spherePos.z));
-	else
-	{
-		if (spherePos.z >= gkPi/2)
-			spherePos.y -= gkPi/2;
-		else if (spherePos.z <= -gkPi/2)
-			spherePos.y += gkPi/2;
-	}
-
-	spherePos.y -= int(spherePos.y  / (gkPi*2)) * gkPi*2;
-
-	return spherePos;
-}
-
-gkVector3 okCamera::calcPos(gkRadian yaw, gkRadian pitch, gkScalar zoom)
-{
-	if (m_mode == MODE_TARGET) 
-	{
-		gkVector3 spherePos = calcSpherePos(yaw, pitch, zoom);
-
-		gkVector3 tpos = m_targetNode->getPosition();
-		gkVector3 cpos = getPosition();
-		gkVector3 t = sphere2cart(spherePos);
-		
-		return (tpos + t);
-	} 
-	else 
-	{
-		gkVector3 tpos = m_cameraNode->getPosition();
-		tpos.z += zoom;
-		return tpos;
-	}
-}
 
 void okCamera::rotate(gkRadian yaw, gkRadian pitch, gkScalar zoom)
 {
-	if (m_mode == MODE_TARGET) 
+
+	if (m_mode == MODE_TARGET)
 	{
-		m_spherePos = calcSpherePos(yaw, pitch, zoom);
+		m_targetNode->yaw(yaw, Ogre::Node::TS_WORLD);
+		m_targetNode->pitch(pitch, Ogre::Node::TS_LOCAL);
 
-		gkVector3 tpos = m_targetNode->getPosition();
-		gkVector3 cpos = getPosition();
-		gkVector3 npos = tpos + sphere2cart(m_spherePos);;
-
-		m_cameraNode->setPosition(npos);
-		m_cameraNode->lookAt(tpos, Ogre::Node::TS_WORLD);
-
-		if (m_offsetPos != gkVector3::ZERO)
-			m_cameraNode->setPosition(npos + m_cameraNode->getOrientation() * m_offsetPos);
-
-	} 
-	else 
+		m_cameraNode->translate(0, 0, zoom);
+	}
+	else
 	{
-		m_cameraNode->pitch(pitch);
-		m_cameraNode->rotate(gkVector3(0,1,0),yaw, Ogre::Node::TS_WORLD);
+		m_cameraNode->yaw(yaw, Ogre::Node::TS_WORLD);
+		m_cameraNode->pitch(pitch, Ogre::Node::TS_LOCAL);
 
-		move(gkVector3(0,0,zoom));
+		m_cameraNode->translate(0, 0, zoom);
 	}
 }
 
 void okCamera::update(const gkVector3& pos)
 {
-	if (m_mode == MODE_FREE) return;
-
-	gkVector3 disp = (pos - m_targetNode->getPosition()) * 0.1;
-	m_targetNode->translate(disp);
-	zoom(0);
 	
 }
 
@@ -418,70 +276,12 @@ void okCamera::updateHelper()
 #endif
 }
 
-void okCamera::lookAt(const gkVector3& pos)
-{
-	m_cameraNode->lookAt(pos, Ogre::Node::TS_WORLD);
-}
-
-gkRadian okCamera::getYaw()
-{
-	if (m_mode == MODE_FREE)
-		return m_cameraNode->getOrientation().getYaw();
-	else
-		return gkRadian(m_spherePos.y);
-}
-
-gkRadian okCamera::getPitch()
-{
-	if (m_mode == MODE_FREE)
-		return m_cameraNode->getOrientation().getPitch();
-	else
-		return gkRadian(m_spherePos.z);
-}
-
-gkScalar okCamera::getRadius()
-{
-	if (m_mode == MODE_FREE)
-		return 0;
-	else
-		return m_spherePos.x;
-}
-
-bool okCamera::setRadius(gkScalar radius, bool adjustRange)
-{
-	if (m_mode == MODE_FREE)
-		return false;
-
-	if (!adjustRange && (m_minRadius > radius || radius > m_maxRadius))
-		return false;
-
-	m_spherePos.x = radius;
-	if (radius < m_minRadius) m_minRadius = radius;
-	if (radius > m_maxRadius) m_maxRadius = radius;
-
-	zoom(0);
-
-	return true;
-}
-
-bool okCamera::setRadiusRange(gkScalar minRadius, gkScalar maxRadius) 
-{ 
-	if (maxRadius < minRadius) 
-		return false;
-
-	m_minRadius = minRadius; 
-	m_maxRadius = maxRadius;
-
-	return true;
-}
-
 
 void okCamera::setTargetMode(gkVector3 pos, gkScalar radius)
 {
 	m_mode = MODE_TARGET;
-	m_targetNode->setPosition(pos);
-	m_spherePos = gkVector3(radius,0,0);
-	rotate(gkRadian(0),gkRadian(0),0);
+	m_targetNode->setPosition(pos);	
+	rotate(gkRadian(0),gkRadian(0),radius);
 }
 
 void okCamera::setFreeMode()
@@ -489,13 +289,6 @@ void okCamera::setFreeMode()
 	m_mode = MODE_FREE;
 }
 
-void okCamera::setClipDistance(gkScalar nearDist, gkScalar farDist)
-{
-	GK_ASSERT(m_camera);
-
-	if (nearDist >= 0) m_camera->setNearClipDistance(nearDist);
-	if (farDist  >= 0) m_camera->setFarClipDistance(farDist);
-}
 
 void okCamera::setAspectRatio(gkScalar ratio)
 {

@@ -43,6 +43,7 @@ public:
 	void resize();
 
 	okApp* getApp() { return m_okApp; }
+	okCamera* getCamera() { return m_okCam; }
 
 	bool isRunnigGameLoop() { return m_timer.IsRunning(); }
 	void startGameLoop();

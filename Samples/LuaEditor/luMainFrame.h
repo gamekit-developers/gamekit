@@ -118,6 +118,7 @@ private:
 	void OnWinPageNext(wxCommandEvent& event);
 
 	void OnChangeCameraPolyMode(wxCommandEvent& event);
+	void OnChangeCameraDirection(wxCommandEvent& event);
 	void OnShowPhysicsDebug(wxCommandEvent& event);
 	void OnShowBoundingBox(wxCommandEvent& event);
 	void OnShowAxis(wxCommandEvent& event);   

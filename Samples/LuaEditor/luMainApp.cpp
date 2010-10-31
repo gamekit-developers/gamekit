@@ -67,7 +67,10 @@ bool luMainApp::OnCmdLineParsed(wxCmdLineParser& parser)
 {
 	wxString file;
 	if (parser.Found("f", &file))
-		m_projFile = file;		
+	{
+		m_projFile = file;
+		gkPrintf("args: %s", (const char*)file);
+	}
 
 	return true;
 }

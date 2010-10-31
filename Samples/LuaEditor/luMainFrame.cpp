@@ -31,6 +31,7 @@
 
 #include "okApp.h"
 #include "okWin.h"
+#include "okCamera.h"
 #include "okUtils.h"
 #include "luDefs.h"
 #include "luFile.h"
@@ -52,6 +53,9 @@
 
 #define TEST_PROJ_FILE "Data/Test0.okproj"
 #define TEST_LUA_FILE "Test0.lua"
+
+
+#define DEFAULT_CAMERA_RADIUS 10
 
 GK_INLINE bool IsSameFile(const wxString& file1, const wxString& file2)
 {
@@ -113,6 +117,11 @@ BEGIN_EVENT_TABLE(luMainFrame, wxFrame)
 	EVT_MENU(ID_CAMERA_POINTS,		luMainFrame::OnChangeCameraPolyMode)
 	EVT_MENU(ID_CAMERA_WIREFRAME,	luMainFrame::OnChangeCameraPolyMode)
 	EVT_MENU(ID_CAMERA_SOLID,		luMainFrame::OnChangeCameraPolyMode)
+
+	EVT_MENU(ID_CAMERA_POS_RESET,	luMainFrame::OnChangeCameraDirection)
+	EVT_MENU(ID_CAMERA_POS_FRONT,	luMainFrame::OnChangeCameraDirection)
+	EVT_MENU(ID_CAMERA_POS_RIGHT,	luMainFrame::OnChangeCameraDirection)
+	EVT_MENU(ID_CAMERA_POS_TOP,		luMainFrame::OnChangeCameraDirection)
 
 	EVT_MENU(ID_SHOW_PHYSICS_DEBUG, luMainFrame::OnShowPhysicsDebug)
 	EVT_MENU(ID_SHOW_BOUNDING_BOX,	luMainFrame::OnShowBoundingBox)
@@ -221,7 +230,7 @@ luMainFrame::luMainFrame() :
 
 	wxString projFile = getLuApp()->getProjFileToOpen();
 	if (!projFile.IsEmpty())
-		openFileByType(TEST_PROJ_FILE);
+		openFileByType(projFile);
 
 	m_helpTopic = new luHhkFile;
 	if (!m_helpTopic->load(LuConfig.getHelpTopicFile()))
@@ -466,6 +475,14 @@ void luMainFrame::setupMenu()
 	submenu->Append(ID_CAMERA_WIREFRAME, "&Wireframe");
 	submenu->Append(ID_CAMERA_SOLID, "&Solid");
 	menu->AppendSubMenu(submenu, "Polygon &Mode");
+	
+	submenu = new wxMenu;
+	submenu->Append(ID_CAMERA_POS_RESET, "&Reset\tCtrl-Enter");
+	submenu->Append(ID_CAMERA_POS_TOP, "&Top");
+	submenu->Append(ID_CAMERA_POS_FRONT, "&Front");
+	submenu->Append(ID_CAMERA_POS_RIGHT, "Ri&ght");
+	
+	menu->AppendSubMenu(submenu, "Camera Direction");
 
 	menu->Append(ID_SHOW_PHYSICS_DEBUG, "Show &Physics Debug");
 	menu->Append(ID_SHOW_BOUNDING_BOX, "Show &Bounding Box");
@@ -585,6 +602,26 @@ void luMainFrame::OnChangeCameraPolyMode(wxCommandEvent& event)
 		m_okWin->setCameraPolyMode(Ogre::PM_WIREFRAME);
 	else if (id == ID_CAMERA_SOLID)
 		m_okWin->setCameraPolyMode(Ogre::PM_SOLID);
+}
+
+void luMainFrame::OnChangeCameraDirection(wxCommandEvent& event)
+{
+	if (!m_okWin || !m_okWin->getCamera()) return;
+
+	okCamera* camera = m_okWin->getCamera();
+
+	gkVector3 pos(0,0, DEFAULT_CAMERA_RADIUS);
+
+	int id = event.GetId();
+	okCamera::CAMERA_DIR dir = okCamera::DIR_RESET;
+	if (id == ID_CAMERA_POS_FRONT)
+		dir = okCamera::DIR_FRONT;
+	else if (id == ID_CAMERA_POS_TOP)
+		dir = okCamera::DIR_TOP;
+	else if (id == ID_CAMERA_POS_RIGHT)
+		dir = okCamera::DIR_RIGHT;
+
+	camera->reset(pos, dir);
 }
 
 void luMainFrame::OnShowPhysicsDebug(wxCommandEvent& event)

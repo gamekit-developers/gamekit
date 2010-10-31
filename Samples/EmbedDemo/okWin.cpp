@@ -129,6 +129,7 @@ void okWindow::OnRButtonUp(wxMouseEvent& event)
 void okWindow::OnMButtonDown(wxMouseEvent& event)
 {
 	m_MClick = true;
+	m_posMouse = event.GetLogicalPosition(wxClientDC(this));
 }
 
 void okWindow::OnMButtonUp(wxMouseEvent& event)
@@ -161,7 +162,7 @@ void okWindow::OnMouseMove(wxMouseEvent& event)
 		if (m_LClick)		
 			m_okCam->rotate(gkRadian(-posRel.x * ROT_SPEED), gkRadian(-posRel.y * ROT_SPEED));		
 		else if (m_MClick)
-			m_okCam->setTargetPostion(gkVector3(-posRel.x * MOV_SPEED, posRel.y * MOV_SPEED, 0), true);
+			m_okCam->setTargetPostion(m_okCam->getOrientation() * gkVector3(-posRel.x * MOV_SPEED, posRel.y * MOV_SPEED, 0), true);
 	}
 }
 
@@ -220,7 +221,7 @@ void okWindow::setupRenderWindow()
 	m_renderWindow = gkWindowSystem::getSingleton().getMainWindow(); 
 	if (!m_renderWindow) return;
 
-	gkScene *scene = m_okApp->getActiveScene(); GK_ASSERT(scene);
+	gkScene* scene = m_okApp->getActiveScene(); GK_ASSERT(scene);
 	gkCamera* cam = scene->getMainCamera(); GK_ASSERT(cam);
 	m_camera = cam->getCamera(); GK_ASSERT(m_camera);
 	m_sceneMgr = m_camera->getSceneManager(); GK_ASSERT(m_sceneMgr);
@@ -228,11 +229,10 @@ void okWindow::setupRenderWindow()
 	if (m_enableCameraControl)
 	{
 		if (!m_okCam) 
-			m_okCam = new okCamera(m_camera->getSceneManager());
-
+			m_okCam = new okCamera(m_camera->getSceneManager(), NULL, okCamera::MODE_TARGET);
+		
 		m_okCam->attachCamera(m_camera);
-		m_okCam->setRadiusRange(0.1f, MAX_CAM_RADIUS);
-		m_okCam->setTargetMode(gkVector3::ZERO, DEFAULT_CAM_RADIUS);
+		m_okCam->reset(gkVector3(0,0,DEFAULT_CAM_RADIUS));		
 	}
 }
 
