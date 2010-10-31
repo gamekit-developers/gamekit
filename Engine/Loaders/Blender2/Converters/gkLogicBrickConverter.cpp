@@ -753,6 +753,7 @@ void gkLogicLoader::convertObject(Blender::Object* bobj, gkGameObject* gobj)
 				ks->setKey(getKey(bks->key));
 				ks->setMod0(getKey(bks->qual));
 				ks->setMod1(getKey(bks->qual2));
+				ks->setAllKeys(bks->type == SENS_ALL_KEYS);
 			} break;
 		case SENS_RADAR:
 			{
