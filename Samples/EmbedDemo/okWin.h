@@ -31,6 +31,12 @@
 class okApp;
 class okCamera;
 
+enum OKWIN_COMMAND_ID
+{
+	ID_OKWIN_REFESH_TIMER = wxID_HIGHEST + 1,
+	ID_OKWIN_OBJECT_SELECTED
+};
+
 class okWindow : public wxWindow
 {
 public:
@@ -66,6 +72,10 @@ public:
 
 	void clearScene();
 	bool changeScene(const wxString& sceneName);
+
+	gkGameObject* getSelectedObject() { return m_selObj; }
+	gkGameObject* selectObject(const wxString& objName);
+	gkGameObject* pickObject(int x, int y);
 
 private:
 	DECLARE_EVENT_TABLE()
@@ -103,12 +113,14 @@ private:
 	Ogre::RenderWindow *m_renderWindow;
 	Ogre::Camera* m_camera;
 	Ogre::SceneManager* m_sceneMgr;
-
+	gkGameObject* m_selObj;
 	okCamera* m_okCam;
 
 	bool m_LClick;
 	bool m_MClick;
 	bool m_RClick;
+
+	void selectObject(gkGameObject* obj);
 };
 
 #endif //_okWin_h_

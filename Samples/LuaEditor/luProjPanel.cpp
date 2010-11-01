@@ -53,6 +53,7 @@ BEGIN_EVENT_TABLE(luProjPanel, wxPanel)
 	EVT_CHOICE(ID_PROJ_OBJ_TYPE_CHICE, luProjPanel::OnObjTypeChanged)
 	EVT_TEXT_ENTER(ID_PROJ_OBJ_SEARCH_TEXT, luProjPanel::OnObjSearchEnter)
 	EVT_TEXT(ID_PROJ_OBJ_SEARCH_TEXT, luProjPanel::OnObjSearchEnter)
+	EVT_LIST_ITEM_SELECTED(ID_PROJ_LIST, luProjPanel::OnObjListChanged)
 END_EVENT_TABLE()
 
 
@@ -74,7 +75,7 @@ void luProjTree::OnKeyChar(wxKeyEvent& event)
 	int key = event.GetKeyCode();
 	if (key == WXK_DELETE)
 	{
-	    wxCommandEvent evt(ID_PROJ_REMOVE_FILE);
+	    wxCommandEvent evt(wxEVT_NULL, ID_PROJ_REMOVE_FILE);
 		wxTheApp->GetTopWindow()->GetEventHandler()->ProcessEvent(evt);
 		gkPrintf("delete");
 	}
@@ -425,4 +426,11 @@ void luProjPanel::OnObjSearchEnter(wxCommandEvent& event)
 	}
 
 	wxBell();
+}
+
+
+void luProjPanel::OnObjListChanged(wxListEvent& event)
+{
+	wxString name = event.GetText();
+	getLuMainFrame()->selectGameObject(name);		
 }

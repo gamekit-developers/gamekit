@@ -196,7 +196,7 @@ public:
 
 		m_listTemplate->SetSelection(0);
 
-        wxCommandEvent evt(wxEVT_COMMAND_LISTBOX_SELECTED);
+        wxCommandEvent evt(wxEVT_NULL, wxEVT_COMMAND_LISTBOX_SELECTED);
 		OnListItemSelected(evt);
 
 

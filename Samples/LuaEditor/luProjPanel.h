@@ -119,7 +119,7 @@ public:
 
 	luProjTree* getTreeCtrl() { return m_tree; }
 
-	GK_INLINE wxTreeItemId getRootItem()
+	wxTreeItemId getRootItem()
 	{
 		return m_tree ? m_tree->GetRootItem() : wxTreeItemId();
 	}
@@ -173,6 +173,8 @@ public:
 	wxSearchCtrl* getSearch() { return m_insp ? m_insp->getSearch() : NULL; }
 	void addListItem(const wxString& name, const wxString& type);
 	void clearListItems();
+
+	void OnObjListChanged(wxListEvent& event);
 
 	DECLARE_EVENT_TABLE()
 

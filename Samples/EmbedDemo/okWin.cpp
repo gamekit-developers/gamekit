@@ -38,14 +38,16 @@
 #define MAX_CAM_RADIUS		100
 #define DEFAULT_CAM_RADIUS	10
 
+#define RAY_LENGTH			100
+
 #define FPS 60
-#define ID_REFESH_TIMER wxID_HIGHEST + 1
+
 
 IMPLEMENT_DYNAMIC_CLASS(okWindow, wxWindow)
 
 okWindow::okWindow(wxWindow* parent) : 
 	wxWindow(parent, -1),
-	m_timer(this, ID_REFESH_TIMER),
+	m_timer(this, 	ID_OKWIN_REFESH_TIMER),
 	m_okApp(NULL),	
 	m_okCam(NULL),
 	m_renderWindow(NULL),
@@ -56,7 +58,8 @@ okWindow::okWindow(wxWindow* parent) :
 	m_LClick(false),
 	m_MClick(false),
 	m_RClick(false),
-	m_posMouse(-1,-1)
+	m_posMouse(-1,-1),
+	m_selObj(NULL)
 { 
 }
 
@@ -69,7 +72,7 @@ BEGIN_EVENT_TABLE(okWindow, wxWindow)
 	EVT_SIZE(okWindow::OnSize)
 	EVT_PAINT(okWindow::OnPaint)
 	EVT_ERASE_BACKGROUND(okWindow::OnEraseBackground)
-	EVT_TIMER(ID_REFESH_TIMER, okWindow::OnTimer)
+	EVT_TIMER(ID_OKWIN_REFESH_TIMER, okWindow::OnTimer)
 	
 	EVT_LEFT_DOWN(okWindow::OnLButtonDown)
 	EVT_LEFT_UP(okWindow::OnLButtonUp)
@@ -120,7 +123,17 @@ void okWindow::OnLButtonUp(wxMouseEvent& event)
 void okWindow::OnRButtonDown(wxMouseEvent& event)
 {	
 	m_RClick = true;
+	m_posMouse = event.GetLogicalPosition(wxClientDC(this));
+
+	if (m_enableCameraControl)
+	{
+		wxPoint pos = event.GetPosition();
+		gkGameObject* obj = pickObject(pos.x, pos.y);
+		if (obj)
+			selectObject(obj);
+	}
 }
+
 void okWindow::OnRButtonUp(wxMouseEvent& event)
 {	
 	m_RClick = false;
@@ -241,7 +254,9 @@ void okWindow::uninit()
 	stopGameLoop();
 
 	m_renderWindow = NULL;
-	m_camera = NULL;
+	m_camera = NULL;	
+	m_sceneMgr = NULL;
+	m_selObj = NULL;
 
 	delete m_okCam; m_okCam = NULL;
 }
@@ -377,10 +392,69 @@ void okWindow::clearScene()
 {
 	if (!m_okApp) return;
 
-	delete m_okCam; m_okCam = NULL;
+	uninit();
 
 	m_okApp->unload();
 	m_okApp->createEmptyScene();
 
 	setupRenderWindow();
+}
+
+void okWindow::selectObject(gkGameObject* obj)
+{
+	if (m_selObj && m_selObj->getNode())
+	{
+		m_selObj->getNode()->showBoundingBox(false);
+		m_selObj = NULL;
+	}
+
+	if (!obj) return;
+
+	Ogre::SceneNode* node = obj->getNode();
+	if (node) node->showBoundingBox(true);
+
+	m_selObj = obj;
+
+	wxCommandEvent evt(wxEVT_NULL, ID_OKWIN_OBJECT_SELECTED);
+	wxTheApp->GetTopWindow()->GetEventHandler()->ProcessEvent(evt);
+}
+
+gkGameObject* okWindow::selectObject(const wxString& objName)
+{	
+	if (!m_okApp) return NULL;
+
+
+	gkScene* scene = m_okApp->getActiveScene();
+	gkGameObject* obj = scene->getObject(WX2GK(objName));	
+
+	selectObject(obj);
+	
+	return obj;
+}
+
+
+gkGameObject* okWindow::pickObject(int x, int y)
+{
+	if (!m_camera) return NULL;
+
+	wxSize size = GetClientSize();
+	float px = float(x)/size.GetWidth(), py = float(y)/size.GetHeight();
+
+	Ogre::Ray ray = m_camera->getCameraToViewportRay(px, py);
+	ray.setDirection(ray.getDirection()*RAY_LENGTH);
+	gkRayTest rayTest;
+
+	if (rayTest.collides(ray))
+	{
+		btCollisionObject* pCol = rayTest.getCollisionObject();
+		gkPhysicsController* pObj = static_cast<gkPhysicsController*>(pCol->getUserPointer());
+		gkRigidBody* pickedBody = dynamic_cast<gkRigidBody*>(pObj);
+
+		if (pickedBody)
+		{
+			return pickedBody->getObject();
+		}
+	}
+
+	return NULL;
 }

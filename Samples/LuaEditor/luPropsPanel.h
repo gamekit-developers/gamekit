@@ -28,9 +28,13 @@
 #ifndef _luPropsPanel_h_
 #define _luPropsPanel_h_
 
+
+class luObjectProperty;
+
 class luPropsPanel : public wxPanel
 {
 	wxPropertyGrid* m_prop;
+	luObjectProperty* m_obj;
 
 	void OnPropertyGridChanged( wxPropertyGridEvent& event );
 
@@ -39,6 +43,7 @@ public:
 	~luPropsPanel();
 
 	void setProjectName(const wxString& name);
+	void selectObject(gkGameObject* obj);
 
 	DECLARE_EVENT_TABLE()
 };

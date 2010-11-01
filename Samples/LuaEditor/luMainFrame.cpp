@@ -121,6 +121,8 @@ BEGIN_EVENT_TABLE(luMainFrame, wxFrame)
 	EVT_MENU(ID_CAMERA_POS_RIGHT,	luMainFrame::OnChangeCameraDirection)
 	EVT_MENU(ID_CAMERA_POS_TOP,		luMainFrame::OnChangeCameraDirection)
 
+	EVT_COMMAND(ID_OKWIN_OBJECT_SELECTED, wxEVT_NULL, luMainFrame::OnGameObjectSelected)
+
 	EVT_MENU(ID_SHOW_PHYSICS_DEBUG, luMainFrame::OnShowPhysicsDebug)
 	EVT_MENU(ID_SHOW_BOUNDING_BOX,	luMainFrame::OnShowBoundingBox)
 	EVT_MENU(ID_SHOW_AXIS,			luMainFrame::OnShowAxis)
@@ -173,7 +175,7 @@ END_EVENT_TABLE()
 
 
 luMainFrame::luMainFrame() : 
-	wxFrame(NULL, wxID_ANY, APP_TITLE, wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE | wxSUNKEN_BORDER),
+	wxFrame(NULL, ID_MAIN_FRAME, APP_TITLE, wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE | wxSUNKEN_BORDER),
 	m_okWin(NULL),
 	m_timer(this, ID_STATUS_TIMER),
 	m_statusBar(NULL),
@@ -1513,4 +1515,22 @@ bool luMainFrame::gotoLuaSource(const wxString& luaFile, int lineNo)
 	edit->GotoLine(lineNo-1);
 	edit->SetFocus();
 	return true;
+}
+
+bool luMainFrame::selectGameObject(const wxString& name)
+{
+	if (!m_okWin) return false;
+
+	gkGameObject *obj = m_okWin->selectObject(name);
+
+	return obj != NULL;
+}
+
+void luMainFrame::OnGameObjectSelected(wxCommandEvent& event)
+{
+	if (!m_okWin) return;
+
+	gkGameObject *obj = m_okWin->getSelectedObject();
+
+	if (m_propsPanel) m_propsPanel->selectObject(obj);
 }

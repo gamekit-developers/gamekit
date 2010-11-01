@@ -36,7 +36,6 @@ class luLogFile;
 class luProjPanel;
 class luPropsPanel;
 class luProjectFile;
-class luPipedProcess;
 class luProcess;
 class luEdit;
 class luHhkFile;
@@ -80,6 +79,7 @@ public:
 	bool setProjectName(const wxString& name);
 
 	bool gotoLuaSource(const wxString& luaFile, int lineNo);
+	bool selectGameObject(const wxString& name);
 private:
 
 	void OnOpen(wxCommandEvent& event);
@@ -129,6 +129,9 @@ private:
 
 	void OnProjTreeItemActivated(wxTreeEvent& event);
 
+	void OnGameObjectSelected(wxCommandEvent& event);
+
+
 	wxAuiManager*		m_aui;
 	okWindow*			m_okWin;
 	wxListBox*			m_logBox;
@@ -169,7 +172,6 @@ private:
 	luProcess* m_runtimeProcess;
 
 	luLogFile* m_runtimeLogFile;
-
 
 public:
 	void addPipedOutput(const wxString& str);

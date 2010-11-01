@@ -28,30 +28,9 @@
 #ifndef _luUtils_h_
 #define _luUtils_h_
 
-#include "liTypes.h"
 //-- type
-#if 0
-template <typename T>
-T getValue(const std::map<T,T> &nvmap, const T &name, const T &defvalue)
-{
-	std::map<T,T>::const_iterator i = nvmap.find(name);
-	return i != nvmap.end() ? i->second : defvalue;
-}
+#include "liTypes.h"
 
-
-GK_INLINE
-gkString getValue(const Ogre::NameValuePairList &nvmap, const gkString& name, const gkString& defvalue)
-{
-	Ogre::NameValuePairList::const_iterator i = nvmap.find(name);
-	return i != nvmap.end() ? i->second : defvalue;
-}
-
-struct ComparePointerLess
-{
-	template<typename T>
-	bool operator() (const T *p1, const T *p2) const { return *p1 < *p2; }
-};
-#endif
 
 //-- memory
 
@@ -64,59 +43,6 @@ struct ComparePointerLess
 #endif
 
 #define ARRAY_SIZE(a)        (int)(sizeof(a) / sizeof(a[0]))
-#if 0
-template<typename T, typename S>
-bool remove_it(T &v, S &it) //vector
-{
-	for (T::iterator i = v.begin(); i != v.end(); i++) {
-		if (*i == it) {
-			v.erase(i);
-			return true;
-		}
-	}
-
-	return false;
-}
-
-template<typename T, typename S>
-bool delete_it(T &v, S &it) //vector
-{
-	bool ok = remove_it(v, it);
-	delete it;
-
-	return ok;
-}
-
-
-template<typename T, typename S>
-bool delete_it(std::map<T,S> &m, const T &it) //map
-{
-	std::map<T,S>::iterator i = m.find(it);
-	if (i != m.end()) {
-		delete i->second;
-		m.erase(i);
-		return true;
-	}
-
-	return false;
-}
-
-template<typename T>
-void delete_all(T &v) //vector
-{
-	for (T::iterator i = v.begin(); i != v.end(); i++)
-		delete (*i);
-	v.clear();
-}
-
-template<typename T, typename S>
-void delete_all(std::map<T,S> &m)  //map
-{
-	for (std::map<T,S>::iterator i = m.begin(); i != m.end(); i++)
-		delete i->second;
-	m.clear();
-}
-#endif
 
 //-- gkString
 
