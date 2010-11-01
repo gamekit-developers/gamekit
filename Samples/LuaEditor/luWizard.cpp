@@ -36,7 +36,7 @@
 #include "Resource/app_wiz.xpm"
 
 
-class luNewProjNamePage : public wxWizardPageSimple 
+class luNewProjNamePage : public wxWizardPageSimple
 {
 
 
@@ -48,9 +48,9 @@ class luNewProjNamePage : public wxWizardPageSimple
 public:
 	wxString getProjName() { return m_textName ? m_textName->GetLabelText() : ""; }
 	wxString getProjFileName() { return m_filePicker ? m_filePicker->GetPath() : ""; }
-	
 
-	luNewProjNamePage(wxWizard* parent) : 
+
+	luNewProjNamePage(wxWizard* parent) :
 		wxWizardPageSimple(parent)
 
 	{
@@ -64,7 +64,7 @@ public:
 		}
 
 		this->SetSizeHints( wxDefaultSize, wxDefaultSize );
-	
+
 		wxFlexGridSizer* fgSizer10;
 		fgSizer10 = new wxFlexGridSizer( 2, 2, 0, 10 );
 		fgSizer10->AddGrowableCol( 1 );
@@ -74,22 +74,22 @@ public:
 		m_staticText6 = new wxStaticText( this, wxID_ANY, wxT("Project Name"), wxDefaultPosition, wxDefaultSize, 0 );
 		m_staticText6->Wrap( -1 );
 		fgSizer10->Add( m_staticText6, 0, wxALL, 5 );
-	
+
 		m_textName= new wxTextCtrl( this, wxID_ANY, wxFileName(fileName).GetName(), wxDefaultPosition, wxDefaultSize, 0);
 		fgSizer10->Add( m_textName , 0, wxALL|wxEXPAND, 5 );
-	
+
 		m_staticText4 = new wxStaticText( this, wxID_ANY, wxT("Project File Name"), wxDefaultPosition, wxDefaultSize, 0 );
 		m_staticText4->Wrap( -1 );
 		fgSizer10->Add( m_staticText4, 0, wxALL, 5 );
-	
-		m_filePicker = new wxFilePickerCtrl( this, wxID_ANY, fileName, 
-			wxT("Create Project File"), wxT("Project Files (*.okproj)|*.okproj"), 
+
+		m_filePicker = new wxFilePickerCtrl( this, wxID_ANY, fileName,
+			wxT("Create Project File"), wxT("Project Files (*.okproj)|*.okproj"),
 			wxDefaultPosition, wxDefaultSize, wxFLP_USE_TEXTCTRL | wxFLP_SAVE);
 		fgSizer10->Add( m_filePicker, 0, wxALL|wxEXPAND, 5 );
-	
+
 		this->SetSizer( fgSizer10 );
 		this->Layout();
-	
+
 		this->Centre( wxBOTH );
 
 		SetSizerAndFit(fgSizer10);
@@ -132,7 +132,7 @@ class luNewProjTemplatePage : public wxWizardPageSimple
 	luProjTempList* m_projTempList;
 
 	wxStaticText* m_staticText5;
-		
+
 	wxListBox* m_listTemplate;
 	wxStaticBitmap* m_imgPreview;
 	wxTextCtrl* m_textTitle;
@@ -147,44 +147,44 @@ public:
 	luNewProjTemplatePage(wxWizard* parent) : wxWizardPageSimple(parent)
 	{
 		this->SetSizeHints( wxDefaultSize, wxDefaultSize );
-	
+
 		wxFlexGridSizer* fgSizer10;
 		fgSizer10 = new wxFlexGridSizer( 3, 2, 0, 10 );
 		fgSizer10->AddGrowableCol( 1 );
 		fgSizer10->SetFlexibleDirection( wxBOTH );
 		fgSizer10->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 		m_staticText5 = new wxStaticText( this, wxID_ANY, wxT("Project Templates"), wxDefaultPosition, wxDefaultSize, 0 );
 		m_staticText5->Wrap( -1 );
 		fgSizer10->Add( m_staticText5, 0, wxALL, 5 );
-	
+
 		m_textTitle = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
 		fgSizer10->Add( m_textTitle, 0, wxALL, 5 );
-	
-		m_listTemplate = new wxListBox( this, ID_WIZARD_TEMPL_LIST, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
+
+		m_listTemplate = new wxListBox( this, ID_WIZARD_TEMPL_LIST, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
 		fgSizer10->Add( m_listTemplate, 0, wxALL, 5 );
-	
-		m_imgPreview = new wxStaticBitmap( this, wxID_ANY, wxBitmap("Data/Empty.xpm", wxBITMAP_TYPE_ANY), 
+
+		m_imgPreview = new wxStaticBitmap( this, wxID_ANY, wxBitmap("Data/Empty.xpm", wxBITMAP_TYPE_ANY),
 			wxDefaultPosition, wxDefaultSize, 0 );
 		fgSizer10->Add( m_imgPreview, 0, wxALL, 5 );
-	
+
 		m_staticText6 = new wxStaticText( this, wxID_ANY, wxT("Description"), wxDefaultPosition, wxDefaultSize, 0 );
 		m_staticText6->Wrap( -1 );
 		fgSizer10->Add( m_staticText6, 0, wxALL, 5 );
-	
+
 		m_textDesc = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY );
 		fgSizer10->Add( m_textDesc, 0, wxALL|wxEXPAND, 5 );
-	
-	
+
+
 		this->SetSizer( fgSizer10 );
 		this->Layout();
-	
+
 		this->Centre( wxBOTH );
 
 		//--
 
 		luProjTempList *ptlist = getLuApp()->getProjTempList(); GK_ASSERT(ptlist);
-		for (size_t i = 0; i < ptlist->size(); i++) 
+		for (size_t i = 0; i < ptlist->size(); i++)
 		{
 			const luProjTemplate& templ = (*ptlist)[i];
 			m_listTemplate->Append(templ.name);
@@ -196,8 +196,9 @@ public:
 
 		m_listTemplate->SetSelection(0);
 
-		OnListItemSelected(wxCommandEvent(wxEVT_COMMAND_LISTBOX_SELECTED));
-		
+        wxCommandEvent evt(wxEVT_COMMAND_LISTBOX_SELECTED);
+		OnListItemSelected(evt);
+
 
 		SetSizerAndFit(fgSizer10);
 	}
@@ -205,7 +206,7 @@ public:
 	void OnListItemSelected(wxCommandEvent& event)
 	{
 		int sel = m_listTemplate->GetSelection();
-		if (sel < 0 || sel >= (int)m_projTempList->size()) 
+		if (sel < 0 || sel >= (int)m_projTempList->size())
 		{
 			m_curSel = -1;
 			return;
@@ -239,12 +240,12 @@ luNewProjWizard::luNewProjWizard(wxFrame* parent, bool useSizer) :
                    wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
 	SetBitmapPlacement(wxWIZARD_VALIGN_CENTRE);
-    
+
     SetLayoutAdaptationMode(wxDIALOG_ADAPTATION_MODE_ENABLED);
 
     m_page1 = new wxWizardPageSimple(this);
 
-	new wxStaticText(m_page1, wxID_ANY,    
+	new wxStaticText(m_page1, wxID_ANY,
 		_T("Create New Project for LuaEditor"),
 		wxPoint(5,5)
 	);
@@ -256,11 +257,11 @@ luNewProjWizard::luNewProjWizard(wxFrame* parent, bool useSizer) :
 	wxWizardPageSimple::Chain(m_page1, m_page2);
 	wxWizardPageSimple::Chain(m_page2, m_page3);
 	wxWizardPageSimple::Chain(m_page3, m_page4);
-	
+
 
 	if (useSizer)
 		GetPageAreaSizer()->Add(m_page1);
-    
+
 }
 
 

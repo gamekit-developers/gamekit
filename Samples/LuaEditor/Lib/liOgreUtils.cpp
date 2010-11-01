@@ -26,7 +26,7 @@
 */
 
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "liUtils.h"
 #include "liOgreUtils.h"
 

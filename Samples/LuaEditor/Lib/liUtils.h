@@ -30,7 +30,7 @@
 
 #include "liTypes.h"
 //-- type
-
+#if 0
 template <typename T>
 T getValue(const std::map<T,T> &nvmap, const T &name, const T &defvalue)
 {
@@ -51,7 +51,7 @@ struct ComparePointerLess
 	template<typename T>
 	bool operator() (const T *p1, const T *p2) const { return *p1 < *p2; }
 };
-
+#endif
 
 //-- memory
 
@@ -61,10 +61,10 @@ struct ComparePointerLess
 
 #ifndef SAFE_DELETE_ARRAY
 #define SAFE_DELETE_ARRAY(p) { if (p) { delete[] (p);   (p)=NULL; } }
-#endif 
+#endif
 
-#define ARRAY_SIZE(a)        (int)(sizeof(a) / sizeof(a[0])) 
-
+#define ARRAY_SIZE(a)        (int)(sizeof(a) / sizeof(a[0]))
+#if 0
 template<typename T, typename S>
 bool remove_it(T &v, S &it) //vector
 {
@@ -83,7 +83,7 @@ bool delete_it(T &v, S &it) //vector
 {
 	bool ok = remove_it(v, it);
 	delete it;
-	
+
 	return ok;
 }
 
@@ -92,12 +92,12 @@ template<typename T, typename S>
 bool delete_it(std::map<T,S> &m, const T &it) //map
 {
 	std::map<T,S>::iterator i = m.find(it);
-	if (i != m.end()) {		
+	if (i != m.end()) {
 		delete i->second;
-		m.erase(i);		
+		m.erase(i);
 		return true;
 	}
-	
+
 	return false;
 }
 
@@ -116,11 +116,11 @@ void delete_all(std::map<T,S> &m)  //map
 		delete i->second;
 	m.clear();
 }
-
+#endif
 
 //-- gkString
 
-//ex) c:/temp/a.txt 
+//ex) c:/temp/a.txt
 gkString getFileName(const gkString& path);     //a.txt
 gkString getDirName(const gkString& path);      //c:/temp
 gkString getFileNameExt(const gkString& path);  //txt
@@ -150,9 +150,9 @@ GK_INLINE bool strFind(const gkString& s, const gkString& match, bool caseSensit
 
 GK_INLINE int findStr(const gkString& s, const liStrVec &ss, bool caseSenstive=false)
 {
-	for (size_t i = 0; i < ss.size(); i++) 
+	for (size_t i = 0; i < ss.size(); i++)
 		if (strCmp(s, ss[i], caseSenstive)) return (int)i;
-	
+
 	return -1;
 }
 
@@ -168,7 +168,7 @@ int parseStrArray(liStrVec &v, const gkString& str, const gkString& delims=", ")
 	if (str.empty()) return 0;
 
 	v = strSplit(str, delims);
-	
+
 	return v.size();
 }
 

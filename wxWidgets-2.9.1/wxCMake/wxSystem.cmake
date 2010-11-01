@@ -19,7 +19,6 @@ set(wxSTC_INC	${wxROOT_SRC}/stc/scintilla/include ${wxROOT_SRC}/stc/scintilla/sr
 set(wxALL_INC	${wxROOT_INC}/setup ${wxROOT_INC} ${wxZLIB_INC} ${wxJPEG_INC} ${wxPNG_INC} ${wxTIFF_INC} ${wxEXPAT_INC} ${wxSTC_INC})
 
 
-
 if (WIN32)
 
 	if (MSVC)

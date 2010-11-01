@@ -42,8 +42,8 @@ set(LIB_SRC
 	Lib/liXmlConfig.h
 	Lib/liXmlUtils.cpp
 	Lib/liXmlUtils.h
-	Lib/liBlendFile.cpp
-	Lib/liBlendFile.h
+	#Lib/liBlendFile.cpp
+	#Lib/liBlendFile.h
 	Lib/liLuaUtils.cpp
 	Lib/liLuaUtils.h
 	Lib/liOgreUtils.h
@@ -118,19 +118,20 @@ set(ALL
 
 include_directories(
 	. 
-	${GAMEKIT_UTILS_PATH} 
+	#${GAMEKIT_UTILS_PATH} 
 	${OGREKIT_INCLUDE}
 	${OK_UTILS_PATH}
 	${OGREKIT_TINYXML_INCLUDE}
 )
 
 link_libraries(
-	${GAMEKIT_UTILS_TARGET} 
+	#${GAMEKIT_UTILS_TARGET} 
 	${OGREKIT_LIB}
 	${OGREKIT_TINYXML_TARGET}
 )
 
 setup_wx()
+
 
 set(HiddenCMakeLists ../CMakeLists.txt)
 source_group(ParentCMakeLists FILES ${HiddenCMakeLists})

@@ -41,12 +41,12 @@ BEGIN_EVENT_TABLE(luProjTree, wxTreeCtrl)
 	//EVT_TREE_ITEM_ACTIVATED(ID_PROJ_TREE, luProjTree::OnItemActivated)
 	EVT_TREE_ITEM_MENU(ID_PROJ_TREE, luProjTree::OnItemMenu)
 	//EVT_CHAR(luProjTree::OnKeyChar)
-	//EVT_KEY_DOWN(luProjTree::OnKeyChar)	
+	//EVT_KEY_DOWN(luProjTree::OnKeyChar)
 	EVT_TREE_KEY_DOWN(ID_PROJ_TREE, luProjTree::OnTreeKeyDown)
 END_EVENT_TABLE()
 
 
-BEGIN_EVENT_TABLE(luInspPanel, wxPanel)	 
+BEGIN_EVENT_TABLE(luInspPanel, wxPanel)
 END_EVENT_TABLE()
 
 BEGIN_EVENT_TABLE(luProjPanel, wxPanel)
@@ -72,9 +72,10 @@ luProjTree::~luProjTree()
 void luProjTree::OnKeyChar(wxKeyEvent& event)
 {
 	int key = event.GetKeyCode();
-	if (key == WXK_DELETE) 
+	if (key == WXK_DELETE)
 	{
-		wxTheApp->GetTopWindow()->GetEventHandler()->ProcessEvent(wxCommandEvent(ID_PROJ_REMOVE_FILE));
+	    wxCommandEvent evt(ID_PROJ_REMOVE_FILE);
+		wxTheApp->GetTopWindow()->GetEventHandler()->ProcessEvent(evt);
 		gkPrintf("delete");
 	}
 	//gkPrintf("key: %d", key);
@@ -99,7 +100,7 @@ void luProjTree::OnItemMenu(wxTreeEvent& event)
 }
 
 void luProjTree::OnItemActivated(wxTreeEvent& event)
-{    
+{
     wxTreeItemId itemId = event.GetItem();
     ItemData* item = (ItemData*)GetItemData(itemId);
 
@@ -108,21 +109,21 @@ void luProjTree::OnItemActivated(wxTreeEvent& event)
 	if (!item || !frame) return;
 	int data = item->GetData();
 
-	wxString name = item->GetName();	
+	wxString name = item->GetName();
 }
 
-void luProjTree::OnSelChanged(wxTreeEvent& event) 
+void luProjTree::OnSelChanged(wxTreeEvent& event)
 {
 }
 
 void luProjTree::showMenu(wxTreeItemId id, const wxPoint& pt)
 {
 	wxMenu menu;
-    menu.Append(ID_PROJ_ACTIVE_FILE, "&Open");	
+    menu.Append(ID_PROJ_ACTIVE_FILE, "&Open");
 	menu.Append(ID_PROJ_REMOVE_FILE, "&Remove");
 
 	int data = getSelectedItemData();
-	
+
 	if (data == ITEM_LUA)
 		menu.Append(ID_PROJ_STARTUP_FILE, "&StartUp");
 
@@ -131,11 +132,11 @@ void luProjTree::showMenu(wxTreeItemId id, const wxPoint& pt)
 
 
 luProjTree::ItemData* luProjTree::_getSelectedItemData()
-{	
-	if (GetFocusedItem().IsOk())	
+{
+	if (GetFocusedItem().IsOk())
 		return (ItemData*)GetItemData(GetFocusedItem());
-	
-	return NULL;		
+
+	return NULL;
 }
 
 int luProjTree::getSelectedItemData()
@@ -151,7 +152,7 @@ wxString luProjTree::getSelectedItemName()
 }
 
 
-wxTreeItemId luProjTree::findItemByData(wxTreeItemId& parent, const wxString& data)
+wxTreeItemId luProjTree::findItemByData(const wxTreeItemId& parent, const wxString& data)
 {
 	if (!parent.IsOk()) return parent;
 
@@ -169,7 +170,7 @@ wxTreeItemId luProjTree::findItemByData(wxTreeItemId& parent, const wxString& da
 		{
 			wxTreeItemId find = findItemByData(item, data); //find is item self or children.
 			if (find.IsOk()) return find;
-			
+
 			item = GetNextChild(item, cookie);
 		}
 	}
@@ -180,7 +181,7 @@ wxTreeItemId luProjTree::findItemByData(wxTreeItemId& parent, const wxString& da
 
 
 
-wxTreeItemId luProjTree::findItemByText(wxTreeItemId& parent, const wxString& text)
+wxTreeItemId luProjTree::findItemByText(const wxTreeItemId& parent, const wxString& text)
 {
 	if (!parent.IsOk()) return parent;
 
@@ -195,7 +196,7 @@ wxTreeItemId luProjTree::findItemByText(wxTreeItemId& parent, const wxString& te
 		{
 			wxTreeItemId find = findItemByText(item, text); //find is item self or children.
 			if (find.IsOk()) return find;
-			
+
 			item = GetNextChild(item, cookie);
 		}
 	}
@@ -220,7 +221,7 @@ luInspPanel::luInspPanel(wxWindow* parent) :
 	sizer->AddGrowableRow( 1 );
 	sizer->SetFlexibleDirection( wxBOTH );
 	sizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	wxFlexGridSizer* top;
 	top = new wxFlexGridSizer( 1, 2, 0, 0 );
 	top->AddGrowableCol( 1 );
@@ -228,7 +229,7 @@ luInspPanel::luInspPanel(wxWindow* parent) :
 	top->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
 	m_search = new wxSearchCtrl(this, ID_PROJ_OBJ_SEARCH_TEXT);
-	
+
 
 #ifndef __WXMAC__
 	m_search->ShowSearchButton( true );
@@ -238,13 +239,13 @@ luInspPanel::luInspPanel(wxWindow* parent) :
 	m_choice->SetMinSize(wxSize(80,-1));
 	top->Add(m_choice, 0, wxALL, 5);
 	top->Add(m_search, 1, wxALL | wxEXPAND, 5);
-	
+
 	m_choice->Append("All", (void*)-10); //don't use -1
 	for (int i = 0; i <= GK_SKELETON; i++)
 	{
 		m_choice->Append(getLuObjectTypeName((gkGameObjectTypes)i), (void*)i);
 	}
-	
+
 
 	//-- list
 
@@ -270,14 +271,14 @@ luInspPanel::luInspPanel(wxWindow* parent) :
 
 //-- panel
 
-luProjPanel::luProjPanel(wxWindow *parent) :  
+luProjPanel::luProjPanel(wxWindow *parent) :
 	wxPanel(parent, ID_PROJ_WIN, wxDefaultPosition, wxSize(200, 200)),
 	m_tree(NULL),
 	m_splitter(NULL),
 	m_insp(NULL),
 	m_fontNormal(NULL),
-	m_fontBold(NULL)	
-{	
+	m_fontBold(NULL)
+{
 	//m_fontNormal = new wxFont(*wxNORMAL_FONT);
 	m_fontNormal = new wxFont(10, wxDEFAULT, wxNORMAL, wxNORMAL);
 	m_fontBold = new wxFont(m_fontNormal->Bold());
@@ -323,8 +324,8 @@ wxTreeItemId luProjPanel::addBlendFile(const wxString& path, gkBlendFile* blend)
 {
 	wxTreeItemId parent = addFile(path, ITEM_BLEND);
 	if (parent.IsOk())
-	{			
-		
+	{
+
 		const gkBlendFile::Scenes& scenes = blend->getScenes();
 		for (size_t i = 0; i < scenes.size(); i++)
 		{
@@ -354,7 +355,7 @@ bool luProjPanel::removeFile(const wxString& path)
 
 	wxTreeItemId item = m_tree->findItemByData(path);
 	if (!item.IsOk()) return false;
-	
+
 	m_tree->Delete(item);
 
 	return true;
@@ -367,7 +368,7 @@ bool luProjPanel::setProjectName(const wxString& name)
 	if (!root.IsOk()) return false;
 
 	m_tree->SetItemText(root, name);
-	
+
 	return true;
 }
 
@@ -417,7 +418,7 @@ void luProjPanel::OnObjSearchEnter(wxCommandEvent& event)
 	for (int i = 0; i < list->GetItemCount(); i++)
 	{
 		if (list->GetItemText(i).MakeLower().find(text) != wxString::npos)
-		{			
+		{
 			list->SetItemState(i, wxLIST_STATE_SELECTED|wxLIST_STATE_FOCUSED, wxLIST_STATE_SELECTED|wxLIST_STATE_FOCUSED);
 			return;
 		}

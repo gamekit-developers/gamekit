@@ -27,7 +27,7 @@
 
 
 #include "StdAfx.h"
-#include "lib/liUtils.h"
+#include "Lib/liUtils.h"
 #include "liBlendFile.h"
 #include "Loaders/Blender2/gkLoaderCommon.h"
 #include "bBlenderFile.h"
@@ -104,9 +104,9 @@ bool liBlendLoader::load(const gkString& fileName, bool forceReload)
 		SAFE_DELETE(bfile);
 		return false;
 	}
-	
+
 	m_files.insert(BlendFileList::value_type(fileName, new liBlendFile(bfile)));
-	
+
 	return true;
 }
 

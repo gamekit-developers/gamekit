@@ -31,94 +31,94 @@
 #include "luEdit.h"
 #include "luUtils.h"
 
-luFindDlg::luFindDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : 
+luFindDlg::luFindDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) :
 	wxDialog( parent, id, title, pos, size, style ),
 	m_firstSearch(true)
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
-	
+
 	wxFlexGridSizer* fgSizer1;
 	fgSizer1 = new wxFlexGridSizer( 3, 1, 0, 0 );
 	fgSizer1->AddGrowableCol( 0 );
 	fgSizer1->AddGrowableRow( 1 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	wxFlexGridSizer* topSizer;
 	topSizer = new wxFlexGridSizer( 1, 2, 0, 10 );
 	topSizer->AddGrowableCol( 1 );
 	topSizer->SetFlexibleDirection( wxBOTH );
 	topSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	m_staticText1 = new wxStaticText( this, wxID_ANY, wxT("Search for:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1->Wrap( -1 );
 	topSizer->Add( m_staticText1, 0, wxALL, 5 );
-	
-	m_searchCombo = new wxComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( -1,-1 ), 0, NULL, 0 ); 
+
+	m_searchCombo = new wxComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( -1,-1 ), 0, NULL, 0 );
 	topSizer->Add( m_searchCombo, 0, wxEXPAND|wxRIGHT, 5 );
-	
+
 	fgSizer1->Add( topSizer, 1, wxEXPAND|wxTOP, 5 );
-	
+
 	wxFlexGridSizer* midSizer;
 	midSizer = new wxFlexGridSizer( 2, 2, 0, 10 );
 	midSizer->AddGrowableCol( 1 );
 	midSizer->AddGrowableRow( 1 );
 	midSizer->SetFlexibleDirection( wxBOTH );
 	midSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	wxStaticBoxSizer* opt1Sizer;
 	opt1Sizer = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("options") ), wxVERTICAL );
-	
+
 	m_matchCase = new wxCheckBox( this, wxID_ANY, wxT("Match Case"), wxDefaultPosition, wxDefaultSize, 0 );
 	opt1Sizer->Add( m_matchCase, 0, wxALL, 5 );
-	
+
 	m_matchWholeWords = new wxCheckBox( this, wxID_ANY, wxT("Match whole words only"), wxDefaultPosition, wxDefaultSize, 0 );
 	opt1Sizer->Add( m_matchWholeWords, 0, wxALL, 5 );
-	
+
 	m_regularExp = new wxCheckBox( this, wxID_ANY, wxT("Regular expressions"), wxDefaultPosition, wxDefaultSize, 0 );
 	opt1Sizer->Add( m_regularExp, 0, wxALL, 5 );
-	
+
 	midSizer->Add( opt1Sizer, 1, wxEXPAND, 5 );
-	
+
 	wxStaticBoxSizer* opt2Sizer;
 	opt2Sizer = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("direction") ), wxVERTICAL );
-	
+
 	m_dirFoward = new wxRadioButton( this, wxID_ANY, wxT("Foward"), wxDefaultPosition, wxDefaultSize, 0 );
 	opt2Sizer->Add( m_dirFoward, 0, wxALL, 5 );
-	
+
 	m_dirBackward = new wxRadioButton( this, wxID_ANY, wxT("Backward"), wxDefaultPosition, wxDefaultSize, 0 );
 	opt2Sizer->Add( m_dirBackward, 0, wxALL, 5 );
-	
+
 	midSizer->Add( opt2Sizer, 1, wxEXPAND, 5 );
-	
+
 	fgSizer1->Add( midSizer, 1, wxEXPAND, 5 );
-	
+
 	wxFlexGridSizer* btmSizer;
 	btmSizer = new wxFlexGridSizer( 1, 4, 0, 0 );
 	btmSizer->AddGrowableCol( 0 );
 	btmSizer->AddGrowableRow( 1 );
 	btmSizer->SetFlexibleDirection( wxBOTH );
 	btmSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
-	
+
+
 	btmSizer->Add( 0, 0, 1, wxEXPAND, 5 );
-	
+
 	m_findBtn = new wxButton( this, ID_FIND_BUTTON, wxT("Find"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_findBtn->SetDefault();
 	btmSizer->Add( m_findBtn, 0, wxALL, 5 );
 
 	m_closeBtn = new wxButton( this, wxID_CANCEL, wxT("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	btmSizer->Add( m_closeBtn, 0, wxALL, 5 );
-	
-	
-	
+
+
+
 	btmSizer->Add( 20, 0, 1, wxEXPAND, 5 );
-	
+
 	fgSizer1->Add( btmSizer, 1, wxALL|wxEXPAND, 5 );
-	
+
 	this->SetSizer( fgSizer1 );
 	this->Layout();
-	
+
 	this->Centre( wxBOTH );
 }
 
@@ -128,7 +128,7 @@ luFindDlg::~luFindDlg()
 
 BEGIN_EVENT_TABLE(luFindDlg, wxDialog)
 	//EVT_KEY_DOWN(luFindDlg::OnKeyDown)
-	EVT_BUTTON(ID_FIND_BUTTON, OnFindClick)
+	EVT_BUTTON(ID_FIND_BUTTON, luFindDlg::OnFindClick)
 END_EVENT_TABLE()
 
 void luFindDlg::OnKeyDown(wxKeyEvent& event)
@@ -138,8 +138,8 @@ void luFindDlg::OnKeyDown(wxKeyEvent& event)
 		EndModal(0);
 }
 
-void luFindDlg::OnFindClick( wxCommandEvent& event ) 
-{ 
+void luFindDlg::OnFindClick( wxCommandEvent& event )
+{
 	wxString str = m_searchCombo->GetValue();
 	if (str.IsEmpty()) return;
 
@@ -149,15 +149,15 @@ void luFindDlg::OnFindClick( wxCommandEvent& event )
 	int flags = 0;
 	if (m_matchCase->IsChecked()) flags |= SCFIND_MATCHCASE;
 	if (m_matchWholeWords->IsChecked()) flags |= SCFIND_WHOLEWORD;
-	if (m_regularExp->IsChecked()) flags |= SCFIND_REGEXP;	
+	if (m_regularExp->IsChecked()) flags |= SCFIND_REGEXP;
 
 
-	int start = 0; 
+	int start = 0;
 	if (m_firstSearch)
-		m_firstSearch = false;				
-	else 
+		m_firstSearch = false;
+	else
 		start = edit->GetSelectionStart() + 1;
-	
+
 	int pos = edit->FindText(start, edit->GetLength(), str, flags);
 	if (pos < 0)
 	{
@@ -167,7 +167,7 @@ void luFindDlg::OnFindClick( wxCommandEvent& event )
 
 	edit->SetSelection(pos, pos + str.Length());
 	edit->EnsureCaretVisible();
-	
+
 }
 
 //--
@@ -175,111 +175,111 @@ void luFindDlg::OnFindClick( wxCommandEvent& event )
 luReplaceDlg::luReplaceDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
-	
+
 	wxFlexGridSizer* fgSizer1;
 	fgSizer1 = new wxFlexGridSizer( 3, 1, 0, 0 );
 	fgSizer1->AddGrowableCol( 0 );
 	fgSizer1->AddGrowableRow( 2 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	wxFlexGridSizer* topSizer;
 	topSizer = new wxFlexGridSizer( 1, 2, 0, 10 );
 	topSizer->AddGrowableCol( 1 );
 	topSizer->SetFlexibleDirection( wxBOTH );
 	topSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	m_staticText1 = new wxStaticText( this, wxID_ANY, wxT("Search for:"), wxDefaultPosition, wxSize( 80,-1 ), 0 );
 	m_staticText1->Wrap( -1 );
 	topSizer->Add( m_staticText1, 0, wxALL, 5 );
-	
-	m_searchCombo = new wxComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( -1,-1 ), 0, NULL, 0 ); 
+
+	m_searchCombo = new wxComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( -1,-1 ), 0, NULL, 0 );
 	topSizer->Add( m_searchCombo, 0, wxEXPAND|wxRIGHT, 5 );
-	
+
 	fgSizer1->Add( topSizer, 1, wxEXPAND|wxTOP, 5 );
-	
+
 	wxFlexGridSizer* topSizer1;
 	topSizer1 = new wxFlexGridSizer( 1, 2, 0, 10 );
 	topSizer1->AddGrowableCol( 1 );
 	topSizer1->SetFlexibleDirection( wxBOTH );
 	topSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	m_staticText11 = new wxStaticText( this, wxID_ANY, wxT("Replace with:"), wxDefaultPosition, wxSize( 80,-1 ), 0 );
 	m_staticText11->Wrap( -1 );
 	topSizer1->Add( m_staticText11, 0, wxALL, 5 );
-	
-	m_replaceCombo = new wxComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( -1,-1 ), 0, NULL, 0 ); 
+
+	m_replaceCombo = new wxComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( -1,-1 ), 0, NULL, 0 );
 	topSizer1->Add( m_replaceCombo, 0, wxEXPAND|wxRIGHT, 5 );
-	
+
 	fgSizer1->Add( topSizer1, 1, wxEXPAND, 5 );
-	
+
 	wxFlexGridSizer* midSizer;
 	midSizer = new wxFlexGridSizer( 2, 2, 0, 10 );
 	midSizer->AddGrowableCol( 1 );
 	midSizer->AddGrowableRow( 1 );
 	midSizer->SetFlexibleDirection( wxBOTH );
 	midSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	wxStaticBoxSizer* opt1Sizer;
 	opt1Sizer = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("options") ), wxVERTICAL );
-	
+
 	m_matchCase = new wxCheckBox( this, wxID_ANY, wxT("Match Case"), wxDefaultPosition, wxDefaultSize, 0 );
 	opt1Sizer->Add( m_matchCase, 0, wxALL, 5 );
-	
+
 	m_matchWholeWords = new wxCheckBox( this, wxID_ANY, wxT("Match whole words only"), wxDefaultPosition, wxDefaultSize, 0 );
 	opt1Sizer->Add( m_matchWholeWords, 0, wxALL, 5 );
-	
+
 	m_regularExp = new wxCheckBox( this, wxID_ANY, wxT("Regular expressions"), wxDefaultPosition, wxDefaultSize, 0 );
 	opt1Sizer->Add( m_regularExp, 0, wxALL, 5 );
-	
+
 	m_selectionOnly = new wxCheckBox( this, wxID_ANY, wxT("Replace in selection only"), wxDefaultPosition, wxDefaultSize, 0 );
 	opt1Sizer->Add( m_selectionOnly, 0, wxALL, 5 );
-	
+
 	midSizer->Add( opt1Sizer, 1, wxEXPAND, 5 );
-	
+
 	wxStaticBoxSizer* opt2Sizer;
 	opt2Sizer = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("direction") ), wxVERTICAL );
-	
+
 	m_dirFoward = new wxRadioButton( this, wxID_ANY, wxT("Foward"), wxDefaultPosition, wxDefaultSize, 0 );
 	opt2Sizer->Add( m_dirFoward, 0, wxALL, 5 );
-	
+
 	m_dirBackward = new wxRadioButton( this, wxID_ANY, wxT("Backward"), wxDefaultPosition, wxDefaultSize, 0 );
 	opt2Sizer->Add( m_dirBackward, 0, wxALL, 5 );
-	
+
 	midSizer->Add( opt2Sizer, 1, wxEXPAND, 5 );
-	
+
 	fgSizer1->Add( midSizer, 1, wxEXPAND, 5 );
-	
+
 	wxFlexGridSizer* btmSizer;
 	btmSizer = new wxFlexGridSizer( 1, 6, 0, 0 );
 	btmSizer->AddGrowableCol( 0 );
 	btmSizer->SetFlexibleDirection( wxBOTH );
 	btmSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
-	
+
+
 	btmSizer->Add( 0, 0, 1, 0, 5 );
-	
+
 	m_findBtn = new wxButton( this, ID_FIND_BUTTON, wxT("Next Match"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_findBtn->SetDefault();
 	btmSizer->Add( m_findBtn, 0, wxALL, 5 );
-	
+
 	m_replaceBtn = new wxButton( this, ID_REPLACE_BUTTON, wxT("Replace"), wxDefaultPosition, wxDefaultSize, 0 );
 	btmSizer->Add( m_replaceBtn, 0, wxALL, 5 );
-	
+
 	m_repAllBtn = new wxButton( this, ID_REPLACE_ALL_BUTTON, wxT("Replace All"), wxDefaultPosition, wxDefaultSize, 0 );
 	btmSizer->Add( m_repAllBtn, 0, wxALL, 5 );
-	
+
 	m_closeBtn = new wxButton( this, wxID_CANCEL, wxT("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	btmSizer->Add( m_closeBtn, 0, wxALL, 5 );
-	
-	
+
+
 	btmSizer->Add( 20, 0, 1, wxEXPAND, 5 );
-	
+
 	fgSizer1->Add( btmSizer, 1, wxEXPAND, 5 );
-	
+
 	this->SetSizer( fgSizer1 );
 	this->Layout();
-	
+
 	this->Centre( wxBOTH );
 }
 
@@ -289,13 +289,13 @@ luReplaceDlg::~luReplaceDlg()
 
 BEGIN_EVENT_TABLE(luReplaceDlg, wxDialog)
 	//EVT_KEY_DOWN(luReplaceDlg::OnKeyDown)
-	EVT_BUTTON(ID_FIND_BUTTON, OnFindClick)
-	EVT_BUTTON(ID_REPLACE_BUTTON, OnReplaceClick)
-	EVT_BUTTON(ID_REPLACE_ALL_BUTTON, OnReplaceAllClick)
+	EVT_BUTTON(ID_FIND_BUTTON, luReplaceDlg::OnFindClick)
+	EVT_BUTTON(ID_REPLACE_BUTTON, luReplaceDlg::OnReplaceClick)
+	EVT_BUTTON(ID_REPLACE_ALL_BUTTON, luReplaceDlg::OnReplaceAllClick)
 END_EVENT_TABLE()
 
-void luReplaceDlg::OnFindClick( wxCommandEvent& event ) 
-{ 
+void luReplaceDlg::OnFindClick( wxCommandEvent& event )
+{
 	alertDlg("find");
 }
 

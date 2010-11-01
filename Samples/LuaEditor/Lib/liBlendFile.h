@@ -30,13 +30,13 @@
 #define _liBlendFile_h_
 
 #include "utSingleton.h"
-#include "lib/liTypes.h"
+#include "Lib/liTypes.h"
 
 class liBlendFile
 {
 	bParse::bBlenderFile* m_file;
 public:
-	liBlendFile(bParse::bBlenderFile* m_file = NULL);	
+	liBlendFile(bParse::bBlenderFile* m_file = NULL);
 	virtual ~liBlendFile();
 
 	int getObjectNames(liStrVec& names);

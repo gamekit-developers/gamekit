@@ -2,8 +2,8 @@
 #define _StdAfx_h_
 
 #include <wx/wx.h>
-#include <wx/aui/framemanager.h> 
-#include <wx/aui/dockart.h> 
+#include <wx/aui/framemanager.h>
+#include <wx/aui/dockart.h>
 #include <wx/aui/auibook.h>
 #include <wx/aui/aui.h>
 #include <wx/toolbar.h>
@@ -18,34 +18,34 @@
 #include <wx/stc/stc.h>
 #include <wx/frame.h>
 #include <wx/font.h>
-#include <wx/log.h> 
-#include <wx/dcclient.h> 
-#include <wx/menu.h> 
-#include <wx/dcmemory.h> 
-#include <wx/splitter.h> 
+#include <wx/log.h>
+#include <wx/dcclient.h>
+#include <wx/menu.h>
+#include <wx/dcmemory.h>
+#include <wx/splitter.h>
 #include <wx/listctrl.h>
 #include <wx/propgrid/propgrid.h>
 #include <wx/srchctrl.h>
-#include <wx/wizard.h> 
+#include <wx/wizard.h>
 
-#include <wx/timer.h> 
+#include <wx/timer.h>
 #include <wx/app.h>
-#include <wx/statusbr.h> 
-#include <wx/filename.h> 
-#include <wx/textctrl.h> 
+#include <wx/statusbr.h>
+#include <wx/filename.h>
+#include <wx/textctrl.h>
 #include <wx/treectrl.h>
 #include <wx/listbox.h>
-#include <wx/apptrait.h> 
+#include <wx/apptrait.h>
 #include <wx/textfile.h>
-#include <wx/cmdline.h> 
-//#include <wx/html/helpctrl.h> 
+#include <wx/cmdline.h>
+//#include <wx/html/helpctrl.h>
 //#include <wx/cshelp.h>
 //#include <wx/filesys.h>
 //#include <wx/fs_zip.h>
 #include <wx/process.h>
 
-#include <scintilla.h>
-#include <scilexer.h>
+#include <Scintilla.h>
+#include <SciLexer.h>
 
 #include "OgreKit.h"
 

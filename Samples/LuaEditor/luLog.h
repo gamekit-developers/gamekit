@@ -34,7 +34,7 @@ class luLog : public wxLog, public Ogre::LogListener
 public:
 	luLog(wxListBox *lb);
 
-	GK_INLINE void log(const wxString &msg);
+	void log(const wxString &msg);
 
 	virtual void messageLogged(const Ogre::String &message, Ogre::LogMessageLevel lml, bool maskDebug, const Ogre::String &logName);
 	virtual void DoLogText(const wxString &msg); //wxlog

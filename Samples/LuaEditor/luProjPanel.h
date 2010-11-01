@@ -55,8 +55,8 @@ protected:
 
 	void OnTreeKeyDown(wxTreeEvent& event);
 
-	wxTreeItemId findItemByData(wxTreeItemId& parent, const wxString& data);
-	wxTreeItemId findItemByText(wxTreeItemId& parent, const wxString& text);
+	wxTreeItemId findItemByData(const wxTreeItemId& parent, const wxString& data);
+	wxTreeItemId findItemByText(const wxTreeItemId& parent, const wxString& text);
 
 	ItemData* _getSelectedItemData();
 
@@ -66,7 +66,7 @@ public:
 
 	wxTreeItemId findItemByData(const wxString& data) { return findItemByData(GetRootItem(), data); }
 	wxTreeItemId findItemByText(const wxString& text) { return findItemByText(GetRootItem(), text); }
-	
+
 	int getSelectedItemData();
 	wxString getSelectedItemName();
 
@@ -80,7 +80,7 @@ class luInspPanel : public wxPanel
 	wxSearchCtrl* m_search;
 	wxListCtrl* m_list;
 	wxChoice* m_choice;
-	
+
 public:
 	luInspPanel(wxWindow* parent);
 
@@ -99,7 +99,6 @@ class luProjPanel : public wxPanel
 	wxFont* m_fontNormal;
 	wxFont* m_fontBold;
 
-	wxTreeItemId findItemByText(wxTreeItemId& parent, const wxString& text);
 	void setItemFont(wxTreeItemId item, bool bold);
 
 	void OnObjTypeChanged(wxCommandEvent& event);
@@ -120,15 +119,11 @@ public:
 
 	luProjTree* getTreeCtrl() { return m_tree; }
 
-	wxTreeItemId getRootItem()
+	GK_INLINE wxTreeItemId getRootItem()
 	{
 		return m_tree ? m_tree->GetRootItem() : wxTreeItemId();
 	}
 
-	wxTreeItemId findItemByText(const wxString& text)
-	{
-		return findItemByText(getRootItem(), text);
-	}
 
 	void setRootItemText(const wxString& text)
 	{
@@ -156,7 +151,7 @@ public:
 	{
 		return m_tree ? m_tree->getSelectedItemName() : "";
 	}
-	
+
 	wxTreeItemId getFile(const wxString& path)
 	{
 		return m_tree ? m_tree->findItemByData(path) : wxTreeItemId();

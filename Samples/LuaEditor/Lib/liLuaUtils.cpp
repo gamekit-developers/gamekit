@@ -38,8 +38,6 @@ extern "C" {
 #include "liUtils.h"
 #include "liLuaUtils.h"
 
-#include <io.h>
-
 
 lua_State* LUA_init(bool useLibs);
 void LUA_uninit(lua_State* L);
@@ -109,8 +107,9 @@ bool LUA_loadfile(lua_State* L, const gkString& filename, gkString& text)
 	FILE *fp = fopen(filename.c_str(), "rt");
 	if (!fp) return false;
 
-	long len = _filelength(_fileno(fp));
+	long len = fseek(fp, 0, SEEK_END);//_filelength(_fileno(fp));
 	if (len <= 0) return false; //empty file?
+	fseek(fp, 0, SEEK_SET);
 
 	char *buf = new char[len+1];
 	buf[len]=0;
@@ -145,11 +144,11 @@ void LUA_dumpStack(lua_State* L)
 	int count = lua_gettop(L);
 	dump += utStringFormat("[LUA] dump stack count: %d\n", count);
 
-	for (int i = 1; i <= count; i++) 
+	for (int i = 1; i <= count; i++)
 	{
 		dump += utStringFormat("[%d] ", i);
 		int t = lua_type(L, i);
-		switch (t) 
+		switch (t)
 		{
 		case LUA_TSTRING:
 			dump += utStringFormat("'%s' ", lua_tostring(L, i)); break;
@@ -176,7 +175,7 @@ gkString LUA_getGlobalStr(lua_State* L, const gkString& name)
 
 	gkString value;
 
-	if (top < lua_gettop(L) && lua_isstring(L, -1)) 
+	if (top < lua_gettop(L) && lua_isstring(L, -1))
 	{
 		const char *str = lua_tostring(L, -1);
 		if (str) value = str;
@@ -188,7 +187,7 @@ gkString LUA_getGlobalStr(lua_State* L, const gkString& name)
 }
 
 
- 
+
 //call from file
 bool LUA_call(lua_State* L, const gkString& filename, gkString& error)
 {
@@ -215,7 +214,7 @@ bool LUA_call(lua_State* L, const gkString& buf, const gkString& name, gkString&
 
 	error.empty();
 
-	if (luaL_loadbuffer(L, buf.c_str(), buf.size(), name.c_str())) 
+	if (luaL_loadbuffer(L, buf.c_str(), buf.size(), name.c_str()))
 	{
 		gkString msg = LUA_popStr(L);
 
@@ -232,13 +231,13 @@ bool LUA_call(lua_State* L, const gkString& buf, const gkString& name, gkString&
 	int err = lua_pcall(L, 0, 0, base); //ret if 0: succ else: return error code
 	lua_remove(L, base); //remove traceback function
 
-	if (err != 0) 
+	if (err != 0)
 	{
 		error = utStringFormat("[LUA] ERROR: %s (ret: %d)", lua_tostring(L, -1), err);
 		gkPrintf(error.c_str());
 		lua_pop(L, 1); //pop one-elements(error msg)
 		return false;
-	} 
+	}
 
 	return true;
 }
@@ -248,7 +247,7 @@ int LUA_getTable(lua_State* L, const gkString& table) //return old top for stack
 	GK_ASSERT(L); if (!L) return -1;
 
 	int top = lua_gettop(L);
-	lua_getglobal(L, table.c_str()); 	
+	lua_getglobal(L, table.c_str());
 	if (!lua_istable(L, -1))
 	{
 		lua_settop(L, top);
@@ -260,7 +259,7 @@ int LUA_getTable(lua_State* L, const gkString& table) //return old top for stack
 }
 
 gkString LUA_getfield(lua_State* L, const gkString& table, const gkString& field)
-{	
+{
 	int top = LUA_getTable(L, table);
 	if (top < 0) return "";
 
@@ -268,11 +267,11 @@ gkString LUA_getfield(lua_State* L, const gkString& table, const gkString& field
 
 	gkString value;
 
-	if (top < lua_gettop(L) - 1 && lua_isstring(L, -1)) 
+	if (top < lua_gettop(L) - 1 && lua_isstring(L, -1))
 	{
 		const char *str = lua_tostring(L, -1);
 		if (str) value = str;
-	}	
+	}
 
 	lua_settop(L, top);
 
@@ -289,11 +288,11 @@ gkString LUA_getfield(lua_State* L, const gkString& table, int index)
 
 	gkString value;
 
-	if (top < lua_gettop(L) - 1 && lua_isstring(L, -1)) 
+	if (top < lua_gettop(L) - 1 && lua_isstring(L, -1))
 	{
 		const char *str = lua_tostring(L, -1);
 		if (str) value = str;
-	}	
+	}
 
 	lua_settop(L, top);
 
@@ -314,9 +313,9 @@ int LUA_getTableSize(lua_State* L, const gkString& table)
 //--
 
 lua_State* LUA_init(bool useLibs)
-{	
+{
 	lua_State* L = lua_open();
-	if (!L) 
+	if (!L)
 	{
 		gkPrintf("[LUA] ERROR: initLua() is failed");
 		return NULL;
@@ -334,8 +333,8 @@ lua_State* LUA_init(bool useLibs)
 void LUA_uninit(lua_State* L)
 {
 	if (!L) return;
-	
-	lua_close(L);	
+
+	lua_close(L);
 }
 
 //--
@@ -343,9 +342,9 @@ void LUA_uninit(lua_State* L)
 liLuaScript::liLuaScript(bool useLibs) : m_L(NULL)
 {
 	m_L = LUA_init(useLibs);
-	
+
 	if (!m_L)
-		gkPrintf("[LUA] Can't Init Lua Scripts.");			
+		gkPrintf("[LUA] Can't Init Lua Scripts.");
 }
 
 liLuaScript::~liLuaScript()
@@ -355,33 +354,33 @@ liLuaScript::~liLuaScript()
 }
 
 //pop stack top gkString
-gkString liLuaScript::popStr() 
-{ 
-	return LUA_popStr(m_L); 
+gkString liLuaScript::popStr()
+{
+	return LUA_popStr(m_L);
 }
 
 //return gkString from global table
-gkString liLuaScript::getGlobalStr(const gkString& name) 
-{ 
-	return LUA_getGlobalStr(m_L, name); 
+gkString liLuaScript::getGlobalStr(const gkString& name)
+{
+	return LUA_getGlobalStr(m_L, name);
 }
 
 //call from file
-bool liLuaScript::call(const gkString& filename) 
-{ 
-	return LUA_call(m_L, filename, m_error); 
+bool liLuaScript::call(const gkString& filename)
+{
+	return LUA_call(m_L, filename, m_error);
 }
 
 //call from buffer
-bool liLuaScript::call(const gkString& buf, const gkString& name) 
-{ 
-	return LUA_call(m_L, buf, name, m_error); 
+bool liLuaScript::call(const gkString& buf, const gkString& name)
+{
+	return LUA_call(m_L, buf, name, m_error);
 }
 
 //dump stack
-void liLuaScript::dumpStack() 
-{ 
-	LUA_dumpStack(m_L); 
+void liLuaScript::dumpStack()
+{
+	LUA_dumpStack(m_L);
 }
 
 int liLuaScript::getTop() const
