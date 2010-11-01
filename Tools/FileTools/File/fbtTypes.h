@@ -143,10 +143,9 @@ typedef FBTint64    FBTintPtr;
 #else
 typedef FBTuint32   FBTuintPtr;
 typedef FBTint32    FBTintPtr;
-typedef FBTuint32   FBTsize;
 #endif
 
-typedef FBTuintPtr      FBTsize;
+typedef FBTuintPtr  FBTsize;
 
 
 // Type for arrays & tables (Always unsigned & 32bit)

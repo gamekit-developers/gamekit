@@ -27,7 +27,23 @@
 #include "gkStats.h"
 #include "gkCommon.h"
 
+
 gkStats::gkStats()
+	:	m_start(0),
+		m_render(0),
+		m_logicBricks(0),
+		m_logicNodes(0),
+		m_physics(0),
+		m_sound(0),
+		m_bufswaplod(0),
+		m_lastRender(0),
+		m_lastLogicBricks(0),
+		m_lastLogicNodes(0),
+		m_lastPhysics(0),
+		m_lastDbvt(0),
+		m_lastSound(0),
+		m_lastBufswaplod(0),
+		m_lastTotal(0)
 {
 	m_clock = new Ogre::Timer();
 	resetClock();

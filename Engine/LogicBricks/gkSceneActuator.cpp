@@ -33,7 +33,10 @@
 
 
 gkSceneActuator::gkSceneActuator(gkGameObject* object, gkLogicLink* link, const gkString& name)
-	:    gkLogicActuator(object, link, name)
+	:   gkLogicActuator(object, link, name),
+		m_mode(0),
+		m_sceneName(gkStringUtils::BLANK),
+		m_camera(gkStringUtils::BLANK)
 {
 }
 

@@ -66,18 +66,18 @@ public:
 	gkAction(const gkString& name);
 	~gkAction();
 
-	GK_INLINE gkScalar         getLength(void)       { return m_end - m_start; }
-	GK_INLINE gkScalar         getStart(void)        { return m_start; }
-	GK_INLINE gkScalar         getEnd(void)          { return m_end; }
-	GK_INLINE const gkString&  getName(void)         { return m_name; }
-	GK_INLINE gkScalar         getBlendFrames(void)  { return m_blendFrames; }
-	GK_INLINE gkScalar         getTimePosition(void) { return m_evalTime; }
-	GK_INLINE gkScalar         getWeight(void)       { return m_weight; }
-	GK_INLINE int              getMode(void)         { return m_mode; }
+	GK_INLINE gkScalar         getLength(void) const       { return m_end - m_start; }
+	GK_INLINE gkScalar         getStart(void) const        { return m_start; }
+	GK_INLINE gkScalar         getEnd(void) const          { return m_end; }
+	GK_INLINE const gkString&  getName(void) const         { return m_name; }
+	GK_INLINE gkScalar         getBlendFrames(void) const  { return m_blendFrames; }
+	GK_INLINE gkScalar         getTimePosition(void) const { return m_evalTime; }
+	GK_INLINE gkScalar         getWeight(void) const       { return m_weight; }
+	GK_INLINE int              getMode(void) const         { return m_mode; }
 
 
-	GK_INLINE gkAction::Channels::ConstPointer getChannels(void) {return m_channels.ptr();}
-	GK_INLINE int getNumChannels(void) {return(int)m_channels.size();}
+	GK_INLINE gkAction::Channels::ConstPointer getChannels(void) const {return m_channels.ptr();}
+	GK_INLINE int getNumChannels(void) const {return(int)m_channels.size();}
 
 
 	GK_INLINE void setStart(gkScalar v) { m_start = v;}
@@ -89,7 +89,7 @@ public:
 	gkActionChannel* getChannel(gkBone* bone);
 	
 	GK_INLINE void setObjectChannel(gkGameObjectChannel* chan)  { m_objectChannel = chan; }
-	GK_INLINE gkGameObjectChannel * getObjectChannel()          { return m_objectChannel; }
+	GK_INLINE gkGameObjectChannel* getObjectChannel(void)       { return m_objectChannel; }
 
 
 	void setBlendFrames(gkScalar v);
@@ -97,9 +97,9 @@ public:
 	void setWeight(gkScalar w);
 
 
-	GK_INLINE void enable(bool v)   {m_enabled = v;}
-	GK_INLINE bool isEnabled(void)  {return m_enabled;}
-	GK_INLINE bool isDone(void)     {return !m_enabled || m_evalTime >= (m_end - m_start);}
+	GK_INLINE void enable(bool v)        {m_enabled = v;}
+	GK_INLINE bool isEnabled(void) const {return m_enabled;}
+	GK_INLINE bool isDone(void) const    {return !m_enabled || m_evalTime >= (m_end - m_start);}
 
 
 

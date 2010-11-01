@@ -55,10 +55,11 @@ public:
 	gkLogicBrick* clone(gkLogicLink* link, gkGameObject* dest);
 
 	bool query(void);
-	GK_INLINE void            setMaterial(const gkString& material)    {m_material = material;}
-	GK_INLINE void            setProperty(const gkString& prop)        {m_prop = prop;}
-	GK_INLINE const gkString& getMaterial(void)                        {return m_material;}
-	GK_INLINE const gkString& getProperty(void)                        {return m_prop;}
+
+	GK_INLINE void            setMaterial(const gkString& material)       {m_material = material;}
+	GK_INLINE void            setProperty(const gkString& prop)           {m_prop = prop;}
+	GK_INLINE const gkString& getMaterial(void)                     const {return m_material;}
+	GK_INLINE const gkString& getProperty(void)                     const {return m_prop;}
 
 };
 

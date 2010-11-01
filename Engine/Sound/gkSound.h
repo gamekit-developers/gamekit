@@ -55,7 +55,7 @@ public:
 	virtual ~gkSound();
 
 
-	GK_INLINE const gkString&    getName(void)          {return m_name;}
+	GK_INLINE const gkString&    getName(void) const    {return m_name;}
 	GK_INLINE gkSoundStream*     getStream(void)        {return m_stream;}
 
 	gkSource*    createSource(void);

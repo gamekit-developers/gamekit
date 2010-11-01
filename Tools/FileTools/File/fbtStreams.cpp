@@ -67,7 +67,7 @@ void fbtFileStream::open(const char* p, fbtStream::StreamMode mode)
 	{
 		FILE *fp = (FILE*)m_handle;
 
-		int pos = position();
+		position();
 		fseek(fp, 0, SEEK_END);
 		m_size = ftell(fp);
 		fseek(fp, 0, SEEK_SET);

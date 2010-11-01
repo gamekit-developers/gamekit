@@ -64,14 +64,14 @@ public:
 
 
 	GK_INLINE void  setType(int type)               {m_type = type;}
-	GK_INLINE int   getType(void)                   {return m_type;}
-
 	GK_INLINE void  setProperty(const gkString& v)  {m_propName = v;}
-	GK_INLINE const gkString& getProperty(void)     {return m_propName;}
 	GK_INLINE void  setValue(const gkString& v)     {m_propVal = v;}
-	GK_INLINE gkString getValue(void)               {return m_propVal;}
 	GK_INLINE void  setMaxValue(const gkString& v)  {m_propMax = v;}
-	GK_INLINE gkString getMaxValue(void)            {return m_propMax;}
+
+	GK_INLINE const gkString& getProperty(void)     const {return m_propName;}
+	GK_INLINE const gkString& getValue(void)        const {return m_propVal;}
+	GK_INLINE const gkString& getMaxValue(void)     const {return m_propMax;}
+	GK_INLINE int             getType(void)         const {return m_type;}
 };
 
 

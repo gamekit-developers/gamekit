@@ -105,7 +105,19 @@ public:
 	};
 
 
-	fbtStruct()     {}
+	fbtStruct()
+		:	m_key(),
+			m_val(),
+			m_off(0),
+			m_len(0),
+			m_nr(0),
+			m_dp(0),
+			m_strcId(0),
+			m_flag(0),
+			m_members(),
+			m_link(0)
+	{
+	}
 	~fbtStruct()    {}
 
 

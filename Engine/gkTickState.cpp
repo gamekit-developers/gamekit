@@ -30,9 +30,18 @@
 #define gkMSScale                gkScalar(0.001)
 
 
-
 gkTickState::gkTickState()
-	:   m_clock(0)
+	:   m_ticks(0),
+		m_rate(0),
+		m_skip(0),
+		m_loop(0),
+		m_cur(0),
+		m_next(0),
+		m_fixed(0.f),
+		m_invt(0),
+		m_clock(0),
+		m_lock(false),
+		m_init(false)
 {
 	initialize(60);
 }
@@ -40,7 +49,17 @@ gkTickState::gkTickState()
 
 
 gkTickState::gkTickState(int rate)
-	:   m_clock(0)
+	:   m_ticks(0),
+		m_rate(0),
+		m_skip(0),
+		m_loop(0),
+		m_cur(0),
+		m_next(0),
+		m_fixed(0.f),
+		m_invt(0),
+		m_clock(0),
+		m_lock(false),
+		m_init(false)
 {
 	initialize(rate);
 }

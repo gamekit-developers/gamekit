@@ -53,13 +53,15 @@ public:
 	void execute(void);
 
 	GK_INLINE void            setMode(int v)               {m_mode = v;}
-	GK_INLINE int             getMode(void)                {return m_mode;}
 	GK_INLINE void            setParent(const gkString& v) {m_obj = v;}
-	GK_INLINE const gkString& getParent(void)              {return m_obj;}
 	GK_INLINE void            setCompound(bool v)          {m_compound = v;}
-	GK_INLINE bool            getCompound(void)            {return m_compound;}
 	GK_INLINE void            setGhost(bool v)             {m_ghost = v;}
-	GK_INLINE bool            getGhost(void)               {return m_ghost;}
+
+	GK_INLINE int             getMode(void)                const {return m_mode;}
+	GK_INLINE const gkString& getParent(void)              const {return m_obj;}
+	GK_INLINE bool            getCompound(void)            const {return m_compound;}
+	GK_INLINE bool            getGhost(void)               const {return m_ghost;}
 };
+
 
 #endif // GKPARENTACTUATOR_H

@@ -48,9 +48,12 @@ void gkJoyDispatch::dispatch(void)
 	doDispatch(m_sensors);
 }
 
-//-----------------------------------------------------------------------------
+
 gkJoystickSensor::gkJoystickSensor(gkGameObject* object, gkLogicLink* link, const gkString& name)
-	:       gkLogicSensor(object, link, name)
+	:   gkLogicSensor(object, link, name),
+		m_joystickIndex(0),m_elementIndex(0),
+		m_axisThreshold(0), m_allEvents(false),
+		m_eventType(0), m_axisDirection(0)
 {
 	m_dispatchType = DIS_JOY;
 	connect();

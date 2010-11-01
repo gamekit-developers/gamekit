@@ -51,17 +51,17 @@ public:
 
 	void execute(void);
 
-	GK_INLINE void setTo(gkString v)           {m_to = v;}
+	GK_INLINE void setTo(gkString v)                  {m_to = v;}
 	GK_INLINE void setSubject(const gkString& v)      {m_subject = v;}
-	GK_INLINE void setBodyType(int v)          {m_bodyType = v;}
+	GK_INLINE void setBodyType(int v)                 {m_bodyType = v;}
 	GK_INLINE void setBodyText(const gkString& v)     {m_bodyText = v;}
 	GK_INLINE void setBodyProperty(const gkString& v) {m_bodyProp = v;}
 
-	GK_INLINE const gkString& getTo(void)           {return m_to;}
-	GK_INLINE const gkString& getSubject(void)      {return m_subject;}
-	GK_INLINE int             getBodyType(void)     {return m_bodyType;}
-	GK_INLINE const gkString& getBodyText(void)     {return m_bodyText;}
-	GK_INLINE const gkString& getBodyProperty(void) {return m_bodyProp;}
+	GK_INLINE const gkString& getTo(void)           const {return m_to;}
+	GK_INLINE const gkString& getSubject(void)      const {return m_subject;}
+	GK_INLINE int             getBodyType(void)     const {return m_bodyType;}
+	GK_INLINE const gkString& getBodyText(void)     const {return m_bodyText;}
+	GK_INLINE const gkString& getBodyProperty(void) const {return m_bodyProp;}
 };
 
 #endif // GKMESSAGEACTUATOR_H

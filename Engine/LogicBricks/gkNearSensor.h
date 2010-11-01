@@ -51,10 +51,10 @@ public:
 	GK_INLINE void setMaterial(const gkString& v)   {m_material = v; m_prop = "";}
 	GK_INLINE void setProperty(const gkString& v)   {m_prop = v; m_material = "";}
 
-	GK_INLINE gkScalar getRange(void)               {return m_range;}
-	GK_INLINE gkScalar getResetRange(void)          {return m_resetrange;}
-	GK_INLINE const gkString& getMaterial(void)     {return m_material;}
-	GK_INLINE const gkString& getProperty(void)     {return m_prop;}
+	GK_INLINE gkScalar getRange(void)               const {return m_range;}
+	GK_INLINE gkScalar getResetRange(void)          const {return m_resetrange;}
+	GK_INLINE const gkString& getMaterial(void)     const {return m_material;}
+	GK_INLINE const gkString& getProperty(void)     const {return m_prop;}
 
 };
 

@@ -42,8 +42,8 @@ public:
 	gkLogicBrick* clone(gkLogicLink* link, gkGameObject* dest);
 
 	bool query(void);
-	GK_INLINE void            setActuatorName(const gkString& v) { m_actuatorName = v; }
-	GK_INLINE const gkString& getActuatorName(void)              { return m_actuatorName;}
+	GK_INLINE void            setActuatorName(const gkString& v)       { m_actuatorName = v; }
+	GK_INLINE const gkString& getActuatorName(void)              const { return m_actuatorName;}
 };
 
 #endif // GKACTUATORSENSOR_H

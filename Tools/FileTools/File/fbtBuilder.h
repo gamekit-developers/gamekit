@@ -41,10 +41,19 @@ class fbtVariable
 public:
 
 	fbtVariable()
-		:   m_type(), m_name(), m_typeId(-1),
-		    m_nameId(-1), m_ptrCount(0), m_numSlots(0),
-		    m_isFptr(0), m_lstat(0), m_undefined(0),
-		    m_isDependentType(false), m_arraySize(1)
+		:   m_type(), 
+			m_name(), 
+			m_typeId(-1),
+		    m_nameId(-1), 
+			m_ptrCount(0), 
+			m_numSlots(0),
+		    m_isFptr(0), 
+			m_lstat(0), 
+			m_undefined(0),
+		    m_isDependentType(false), 
+			m_arraySize(1),
+			m_path(),
+			m_line(-1)
 	{
 	}
 
@@ -144,8 +153,8 @@ private:
 
 	void makeName(fbtVariable&, bool);
 
-	FBTsize             fbt_start;
-	fbtPathArray   fbt_includes;
+	FBTsize           fbt_start;
+	fbtPathArray      fbt_includes;
 	fbtStringPtrArray fbt_namespaces, fbt_skip;
 
 	fbtBuildStructs fbt_struct_builders;

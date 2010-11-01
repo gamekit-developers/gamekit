@@ -53,9 +53,8 @@ public:
 
 	gkLogicBrick* clone(gkLogicLink* link, gkGameObject* dest);
 
-	GK_INLINE void  setFlag(int v)          {m_flag = v;}
-	GK_INLINE int   getFlag(void)           {return m_flag;}
-
+	GK_INLINE void  setFlag(int v)       {m_flag = v;}
+	GK_INLINE int   getFlag(void)  const {return m_flag;}
 
 	void execute(void);
 };

@@ -116,7 +116,14 @@ public:
 };
 
 
-gkWindowSystem::gkWindowSystem() : m_window(0), m_exit(false), m_useExternalWindow(false)
+gkWindowSystem::gkWindowSystem() 
+:	m_internal(0),
+	m_window(0), 
+	m_exit(false), 
+	m_requestedWidth(0), 
+	m_requestedHeight(0),
+	m_framingType(0),
+	m_useExternalWindow(false)
 {
 	m_internal = new gkWindowSystemPrivate();
 	m_internal->m_sys = this;
@@ -176,12 +183,12 @@ RenderWindow* gkWindowSystem::createMainWindow(const gkUserDefs& prefs)
 		gkPrintf("Available video modes:");
 		for (size_t i = 0; i < modeOption.possibleValues.size(); i++)
 		{
-			int modex, modey;
 			gkString modeStr = modeOption.possibleValues[i];
 			gkPrintf("%s\n", modeStr.c_str());
 
 			if (!found)
 			{
+				int modex, modey;
 				modex = Ogre::StringConverter::parseInt( modeStr.substr(0, 4));
 				modey = Ogre::StringConverter::parseInt( modeStr.substr(7, 4));
 

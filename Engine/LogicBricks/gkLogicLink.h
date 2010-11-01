@@ -86,12 +86,12 @@ public:
 	BrickList& getControllers(void) {return m_controllers;}
 	BrickList& getActuators(void) {return m_actuators;}
 
-	GK_INLINE void          setDebug(int v)                 {m_debug = v;}
-	GK_INLINE int           getDebug(void)                  {return m_debug;}
-	GK_INLINE void          setState(int v)                 {m_state = v;}
-	GK_INLINE int           getState(void)                  {return m_state;}
-	GK_INLINE void          setObject(gkGameObject* v)      {m_object = v;}
-	GK_INLINE gkGameObject*  getObject(void)                {return m_object;}
+	GK_INLINE void          setDebug(int v)                   {m_debug = v;}
+	GK_INLINE void          setState(int v)                   {m_state = v;}
+	GK_INLINE void          setObject(gkGameObject* v)        {m_object = v;}
+	GK_INLINE int           getState(void)              const {return m_state;}
+	GK_INLINE int           getDebug(void)              const {return m_debug;}
+	GK_INLINE gkGameObject* getObject(void)             const {return m_object;}
 };
 
 #endif//_gkLogicLink_h_

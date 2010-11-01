@@ -43,8 +43,8 @@ public:
 
 	bool query(void);
 
-	GK_INLINE void      setAngle(gkScalar v)  {m_angle = v;}
-	GK_INLINE gkScalar  getAngle(void)        {return m_angle;}
+	GK_INLINE void      setAngle(gkScalar v)       {m_angle = v;}
+	GK_INLINE gkScalar  getAngle(void)       const {return m_angle;}
 };
 
 #endif // _gkRadarSensor_h_

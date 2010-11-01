@@ -31,7 +31,10 @@
 
 
 gkRandomSensor::gkRandomSensor(gkGameObject* object, gkLogicLink* link, const gkString& name)
-	:       gkLogicSensor(object, link, name)
+	:	gkLogicSensor(object, link, name),
+		m_seed(0),
+		m_current(0),
+		m_count(0)
 {
 	m_randGen = new utRandomNumberGenerator(0);
 	m_dispatchType = DIS_CONSTANT;

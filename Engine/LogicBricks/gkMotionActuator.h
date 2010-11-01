@@ -71,8 +71,6 @@ public:
 	GK_INLINE void setType(int v)                   {m_type = v;}
 	GK_INLINE void setDamping(gkScalar v)           {m_damping = v;}
 	GK_INLINE void setIncrementalVelocity(bool v)   {m_linvInc = v;}
-	GK_INLINE gkScalar getDamping(void)             {return m_damping;}
-	GK_INLINE bool     getIncrementalVelocity(void) {return m_linvInc;}
 
 
 	GK_INLINE void setTranslation(const gkVector3& v, bool local)
@@ -119,12 +117,14 @@ public:
 		m_angv.evaluate = !gkFuzzyVec(m_angv.vec);
 	}
 
-	GK_INLINE const gkVector3& getTranslation(void)     {return m_loc.vec;}
-	GK_INLINE const gkVector3& getRotation(void)        {return m_rot.vec;}
-	GK_INLINE const gkVector3& getForce(void)           {return m_force.vec;}
-	GK_INLINE const gkVector3& getTorque(void)          {return m_torque.vec;}
-	GK_INLINE const gkVector3& getLinearVelocity(void)  {return m_linv.vec;}
-	GK_INLINE const gkVector3& getAngularVelocity(void) {return m_angv.vec;}
+	GK_INLINE const gkVector3& getTranslation(void)         const {return m_loc.vec;}
+	GK_INLINE const gkVector3& getRotation(void)            const {return m_rot.vec;}
+	GK_INLINE const gkVector3& getForce(void)               const {return m_force.vec;}
+	GK_INLINE const gkVector3& getTorque(void)              const {return m_torque.vec;}
+	GK_INLINE const gkVector3& getLinearVelocity(void)      const {return m_linv.vec;}
+	GK_INLINE const gkVector3& getAngularVelocity(void)     const {return m_angv.vec;}
+	GK_INLINE gkScalar         getDamping(void)             const {return m_damping;}
+	GK_INLINE bool             getIncrementalVelocity(void) const {return m_linvInc;}
 };
 
 

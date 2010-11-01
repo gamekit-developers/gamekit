@@ -68,11 +68,13 @@ static void gkWaveform_SwapHeader(gkWaveform::Header& v)
 
 
 gkWaveform::gkWaveform()
-	:   m_reader(0),
+	:   m_header(),
+		m_reader(0),
 	    m_sampleStart(0),
 	    m_totalLen(0),
 	    m_data(0)
 {
+	memset(&m_header, 0, sizeof(Header));
 }
 
 

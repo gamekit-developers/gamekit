@@ -46,6 +46,7 @@ gkUserDefs::gkUserDefs()
 	rendersystem(OGRE_RS_GL),
 	viewportOrientation(""),
 #endif
+	sceneManager(-1),
 	log("OgreKit.log"),
 	verbose(true),
 	winsize(800, 600),

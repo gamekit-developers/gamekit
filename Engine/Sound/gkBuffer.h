@@ -33,24 +33,15 @@
 
 class gkBuffer
 {
-private:
-	// Force internal usage.
-	friend class gkSource;
-	friend class gkStreamer;
-
-
-	gkBuffer(gkSource* obj);
-	~gkBuffer();
-
-
+public:
 	void suspend(bool v);
 	void setLoop(bool v);
 
-	bool isSuspended(void)  {return m_suspend;}
-	bool isDone(void)       {return m_exit;}
-	bool isValid(void)      {return m_ok;}
-	bool isLooped(void)     {return m_loop;}
-	bool isInitialized(void) {return m_isInit;}
+
+	bool stream(void);
+	void finalize(void);
+	void reset(void);
+
 
 	void setPosition(const gkVector3& v);
 	void setDirection(const gkVector3& v);
@@ -59,9 +50,21 @@ private:
 	void setProperties(const gkSoundProperties& props);
 
 
-	bool stream(void);
-	void finalize(void);
-	void reset(void);
+	bool isSuspended(void) const   {return m_suspend;}
+	bool isDone(void) const        {return m_exit;}
+	bool isValid(void) const       {return m_ok;}
+	bool isLooped(void) const      {return m_loop;}
+	bool isInitialized(void) const {return m_isInit;}
+
+
+private:
+	// Force internal usage.
+	friend class gkSource;
+	friend class gkStreamer;
+
+
+	gkBuffer(gkSource* obj);
+	~gkBuffer();
 
 	void queue(bool play = false);
 	bool initialize(void);

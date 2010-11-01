@@ -46,9 +46,9 @@ public:
 	GK_INLINE void setDuration(unsigned int v) {m_duration = v;}
 	GK_INLINE void setRepeat(bool v)           {m_repeat = v;}
 
-	GK_INLINE unsigned int getDelay(void)      {return m_delay;}
-	GK_INLINE unsigned int getDuration(void)   {return m_duration;}
-	GK_INLINE bool         getRepeat(void)     {return m_repeat;}
+	GK_INLINE unsigned int getDelay(void)      const {return m_delay;}
+	GK_INLINE unsigned int getDuration(void)   const {return m_duration;}
+	GK_INLINE bool         getRepeat(void)     const {return m_repeat;}
 
 };
 

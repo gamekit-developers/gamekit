@@ -36,8 +36,7 @@ void gkAbstractDispatcher::doDispatch(SensorList& sens)
 {
 	if (!sens.empty())
 	{
-		SensorIterator it = SensorIterator(sens);
-
+		SensorList::Iterator it = sens.iterator();
 		while (it.hasMoreElements())
 		{
 			gkLogicSensor*   sens = it.getNext();
@@ -55,7 +54,7 @@ void gkAbstractDispatcher::reset(void)
 {
 	if (!m_sensors.empty())
 	{
-		gkAbstractDispatcher::SensorIterator it = getIterator();
+		gkAbstractDispatcher::SensorList::Iterator it = m_sensors.iterator();
 		while (it.hasMoreElements())
 			it.getNext()->reset();
 	}
@@ -66,7 +65,7 @@ void gkAbstractDispatcher::sort(void)
 {
 	if (!m_sensors.empty())
 	{
-		gkAbstractDispatcher::SensorIterator it = getIterator();
+		gkAbstractDispatcher::SensorList::Iterator it = m_sensors.iterator();
 		while (it.hasMoreElements())
 			it.getNext()->sort();
 	}

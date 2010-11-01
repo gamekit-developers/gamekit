@@ -30,7 +30,11 @@
 
 
 gkDelaySensor::gkDelaySensor(gkGameObject* object, gkLogicLink* link, const gkString& name)
-	:    gkLogicSensor(object, link, name), m_count(0)
+	:   gkLogicSensor(object, link, name), 
+		m_delay(0),
+		m_duration(0),
+		m_count(0),
+		m_repeat(false)
 {
 	m_dispatchType = DIS_CONSTANT;
 	connect();

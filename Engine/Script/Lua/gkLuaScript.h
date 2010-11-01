@@ -47,8 +47,8 @@ public:
 	gkLuaScript(gkLuaManager* parent, const gkString& name, const gkString& text);
 	~gkLuaScript();
 
-	GK_INLINE const gkString& getName(void) {return m_name;}
-	GK_INLINE bool  compiled(void)          {return m_compiled;}
+	GK_INLINE const gkString& getName(void) const {return m_name;}
+	GK_INLINE bool  compiled(void)          const {return m_compiled;}
 
 	void decompile(void);
 	// compile & run the script

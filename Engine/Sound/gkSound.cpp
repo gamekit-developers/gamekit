@@ -99,7 +99,7 @@ bool gkSound::loadToMemory(const char* file)
 
 
 			char* temp = new char[len];
-			int br = fread(temp, 1, len, fp);
+			fread(temp, 1, len, fp);
 			result = load(temp, len);
 			delete []temp;
 

@@ -160,7 +160,8 @@ void gkActionStrip::setParentWeight(gkScalar w)
 
 
 gkActionSequence::gkActionSequence()
-	:    m_range(FLT_MAX, -FLT_MAX),
+	:    m_timeDirty(true),
+	     m_range(FLT_MAX, -FLT_MAX),
 	     m_evalTime(0.f),
 	     m_default(0),
 	     m_weight(1.f),

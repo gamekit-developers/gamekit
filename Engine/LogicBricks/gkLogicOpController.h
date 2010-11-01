@@ -55,8 +55,8 @@ public:
 	gkLogicBrick* clone(gkLogicLink* link, gkGameObject* dest);
 
 	void execute(void);
-	GK_INLINE void setOp(int nop)    {m_op = nop;}
-	GK_INLINE int  getOp(void)       {return m_op;}
+	GK_INLINE void setOp(int nop)       {m_op = nop;}
+	GK_INLINE int  getOp(void)    const {return m_op;}
 };
 
 

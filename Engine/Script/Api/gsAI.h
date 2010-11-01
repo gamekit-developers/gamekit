@@ -50,8 +50,8 @@ class gsFSM
 private:
 	typedef utHashTable<utIntHashKey, class gsUpdateEvent*> EVENT;
 
-	gkFSM*    m_fsm;
-	int        m_curState;
+	gkFSM*   m_fsm;
+	int      m_curState;
 	EVENT    m_events;
 
 public:

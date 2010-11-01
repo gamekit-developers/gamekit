@@ -51,8 +51,8 @@ private:
 	Header      m_header;       // Format header
 	int         m_sampleStart;  // start of 'data' chunk
 	int         m_totalLen;     // length of 'data' chunk
-	utStream*    m_reader;
-	char*        m_data;
+	utStream*   m_reader;
+	char*       m_data;
 
 	bool        loadStreamImpl(void);
 
@@ -66,10 +66,10 @@ public:
 	bool load(const char* buf, int len);
 
 
-	const Header&    getHeader(void)    const   { return m_header; }
+	const Header&   getHeader(void)    const   { return m_header; }
 
-	const char*      read(UTsize len, UTsize& br);
-	const char*      read(UTsize pos, UTsize len, UTsize& br);
+	const char*     read(UTsize len, UTsize& br);
+	const char*     read(UTsize pos, UTsize len, UTsize& br);
 	bool            eos(void);
 	void            seek(UTsize pos, int way);
 

@@ -61,11 +61,11 @@ public:
 	gkActionSequence* getSequence(void) {return m_sequ;}
 
 
-	gkScalar getLength(void);
+	gkScalar getLength(void) const;
 
 	void enable(bool v);
-	GK_INLINE bool isEnabled(void)  {return m_enabled;}
-	GK_INLINE bool isDone(void)     {return !m_enabled || m_time >= getLength();}
+	GK_INLINE bool isEnabled(void) const {return m_enabled;}
+	GK_INLINE bool isDone(void) const    {return !m_enabled || m_time >= getLength();}
 
 	void setMode(int mode)                          {m_mode = mode;}
 	void setDirection(int way)                      {m_way = way;}
@@ -114,8 +114,8 @@ public:
 	void evaluate(gkScalar delta);
 
 
-	void   setMaximumActions(UTsize v) {m_max = v;}
-	UTsize getMaximumActions(void)     {return m_max;}
+	void   setMaximumActions(UTsize v)    {m_max = v;}
+	UTsize getMaximumActions(void) const  {return m_max;}
 
 
 

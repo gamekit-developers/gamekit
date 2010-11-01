@@ -51,13 +51,13 @@ void gkLogicBrick::cloneImpl(gkLogicLink* link, gkGameObject* dest)
 }
 
 
-bool gkLogicBrick::inActiveState(void)
+bool gkLogicBrick::inActiveState(void) const
 {
 	return (m_stateMask & m_link->getState()) != 0;
 }
 
 
-bool gkLogicBrick::wantsDebug(void)
+bool gkLogicBrick::wantsDebug(void) const
 {
 	return (m_debugMask) != 0;
 }

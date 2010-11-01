@@ -116,7 +116,7 @@ void gkLogicSensor::sort(void)
 }
 
 
-bool gkLogicSensor::isPositive(void)
+bool gkLogicSensor::isPositive(void) const
 {
 	bool result = m_positive;
 

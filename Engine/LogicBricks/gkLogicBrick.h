@@ -99,9 +99,9 @@ public:
 	gkLogicBrick(gkGameObject* object, gkLogicLink* link, const gkString& name);
 	virtual ~gkLogicBrick() {}
 
-	bool inActiveState(void);
+	bool inActiveState(void) const;
 
-	bool wantsDebug(void);
+	bool wantsDebug(void) const;
 
 	virtual gkLogicBrick* clone(gkLogicLink* link, gkGameObject* dest) = 0;
 
@@ -112,22 +112,22 @@ public:
 	GK_INLINE void setListener(gkLogicBrick::Listener* listener) {m_listener = listener;}
 
 
-	GK_INLINE void              setPulse(int v)     { m_pulseState = v;}
-	GK_INLINE int               getPulse(void)      { return m_pulseState;}
-	GK_INLINE bool              isPulseOn(void)     { return m_pulseState == BM_ON; }
-	GK_INLINE bool              isPulseOff(void)    { return m_pulseState == BM_OFF; }
-	GK_INLINE bool              isIdle(void)        { return m_pulseState == BM_IDLE; }
-	GK_INLINE void              setActive(bool v)   { m_isActive = v; notifyActiveStatus(); }
-	GK_INLINE bool              isActive(void)      { return m_isActive;}
+	GK_INLINE void              setPulse(int v)           { m_pulseState = v;}
+	GK_INLINE int               getPulse(void)      const { return m_pulseState;}
+	GK_INLINE bool              isPulseOn(void)     const { return m_pulseState == BM_ON; }
+	GK_INLINE bool              isPulseOff(void)    const { return m_pulseState == BM_OFF; }
+	GK_INLINE bool              isIdle(void)        const { return m_pulseState == BM_IDLE; }
+	GK_INLINE void              setActive(bool v)         { m_isActive = v; notifyActiveStatus(); }
+	GK_INLINE bool              isActive(void)      const { return m_isActive;}
 
-	GK_INLINE const gkString&   getName(void)       { return m_name; }
-	GK_INLINE gkGameObject*     getObject(void)     { return m_object; }
-	GK_INLINE void              setMask(int v)      { m_stateMask = v;}
-	GK_INLINE int               getMask(void)       { return m_stateMask;}
-	GK_INLINE void              setDebugMask(int v) { m_debugMask = v;}
-	GK_INLINE int               getDebugMask(void)  { return m_debugMask;}
-	GK_INLINE gkLogicLink*       getLink(void)      { return m_link; }
-	GK_INLINE int               getPriority(void)   { return m_priority;}
+	GK_INLINE const gkString&   getName(void)       const { return m_name; }
+	GK_INLINE gkGameObject*     getObject(void)           { return m_object; }
+	GK_INLINE void              setMask(int v)            { m_stateMask = v;}
+	GK_INLINE int               getMask(void)       const { return m_stateMask;}
+	GK_INLINE void              setDebugMask(int v)       { m_debugMask = v;}
+	GK_INLINE int               getDebugMask(void)  const { return m_debugMask;}
+	GK_INLINE gkLogicLink*      getLink(void)             { return m_link; }
+	GK_INLINE int               getPriority(void)   const { return m_priority;}
 
 	void setPriority(bool v);
 	void setPriority(int v);

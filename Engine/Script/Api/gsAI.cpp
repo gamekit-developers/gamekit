@@ -195,9 +195,9 @@ void gsWhenEvent::when(gsSelf self, gsFunction trigger)
 
 
 
-gsFSM::gsFSM()
+gsFSM::gsFSM() 
+	:	m_fsm(new gkFSM()), m_curState(0)
 {
-	m_fsm = new gkFSM();
 }
 
 

@@ -258,8 +258,6 @@ utToken *utScriptScanner::scan(void)
 {
 	utToken *pt= makeToken();
 
-	char s=' ';
-
 	for (;;)
 	{
 		if (CTOK == TOK_END)
@@ -337,7 +335,6 @@ utToken *utScriptScanner::scan(void)
 			else if (CTOK == '/' && NTOK == '/')
 			{
 				ADVANCEC(2);
-				s= CTOK;
 				while (!MATCH_NL(CTOK))
 				{
 					ADVANCE;

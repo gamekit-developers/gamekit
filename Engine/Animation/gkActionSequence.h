@@ -47,12 +47,12 @@ public:
 	///Blend min/max in frames
 	void setBlend(const gkVector2& io);
 
-	gkAction*          getAction(void)    {return m_action;}
-	const gkVector2&  getBlend(void)      {return m_blend;}
-	gkScalar          getWeight(void)     {return m_curBlend; }
-	gkScalar          getStart(void)      {return m_scaledRange.x;}
-	gkScalar          getEnd(void)        {return m_scaledRange.y;}
-	gkScalar          getLength(void)     {return m_scaledRange.y - m_scaledRange.x;}
+	gkAction*         getAction(void) const  {return m_action;}
+	const gkVector2&  getBlend(void)  const  {return m_blend;}
+	gkScalar          getWeight(void) const  {return m_curBlend; }
+	gkScalar          getStart(void)  const  {return m_scaledRange.x;}
+	gkScalar          getEnd(void)    const  {return m_scaledRange.y;}
+	gkScalar          getLength(void) const  {return m_scaledRange.y - m_scaledRange.x;}
 
 
 	///The start and end frame, the time will be scaled to fit
@@ -103,18 +103,18 @@ public:
 	gkAction* getActiveStrip(void) {return m_active;}
 
 
-	gkScalar getStart(void)    {return m_range.x;}
-	gkScalar getEnd(void)      {return m_range.y;}
-	gkScalar getLength(void)   {return m_range.y - m_range.x;}
+	gkScalar getStart(void)  const  {return m_range.x;}
+	gkScalar getEnd(void)    const  {return m_range.y;}
+	gkScalar getLength(void) const  {return m_range.y - m_range.x;}
 
 
 	void      setTimePosition(const gkScalar& v);
-	gkScalar  getTimePosition(void)              {return m_evalTime;}
+	gkScalar  getTimePosition(void) const {return m_evalTime;}
 
 
-	GK_INLINE void enable(bool v)   {m_enabled = v;}
-	GK_INLINE bool isEnabled(void)  {return m_enabled;}
-	GK_INLINE bool isDone(void)     {return !m_enabled || m_evalTime >= getLength();}
+	GK_INLINE void enable(bool v)        { m_enabled = v;}
+	GK_INLINE bool isEnabled(void) const { return m_enabled;}
+	GK_INLINE bool isDone(void)    const { return !m_enabled || m_evalTime >= getLength();}
 
 
 	void evaluate(const gkScalar& delta);

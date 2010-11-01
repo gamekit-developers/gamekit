@@ -72,9 +72,12 @@ public:
 
 
 
-fbtBuilder::fbtBuilder()
+fbtBuilder::fbtBuilder() 
+	:	m_build(new fbtBuildInfo()),
+		fbt_start(0),
+		m_curBuf(0),
+		m_writeMode(0)
 {
-	m_build = new fbtBuildInfo();
 }
 
 
@@ -168,7 +171,7 @@ int fbtBuilder::parseFile(const fbtPath& id)
 int fbtBuilder::doParse(void)
 {
 
-	fbtTokenID TOK = NULL_TOKEN, PTOK = NULL_TOKEN;
+	fbtTokenID TOK = NULL_TOKEN;
 
 
 	while (fbtValidToken(TOK))
@@ -205,7 +208,6 @@ int fbtBuilder::doParse(void)
 					{
 						do
 						{
-							PTOK = TOK;
 							TOK = fbtLex(tp);
 
 							if (TOK == RBRACKET)
@@ -590,6 +592,7 @@ void fbtBuilder::writeValidationProgram(const fbtPath& path)
 
 #endif
 
+	fclose(fp);
 
 }
 
@@ -720,7 +723,7 @@ int fbtBuildInfo::getTLengths(fbtBuildStructs& struct_builders)
 
 	FBTtype* tln64 = m_64ln.ptr();
 	FBTtype* tlens = m_tlen.ptr();
-	FBTsize nrel = 0, ct, cn, len, fake64;
+	FBTsize nrel = 0, ct, len, fake64;
 
 	int status = LNK_OK;
 
@@ -759,14 +762,11 @@ int fbtBuildInfo::getTLengths(fbtBuildStructs& struct_builders)
 				len     = 0;
 				fake64  = 0;
 				bool hasPtr = false;
-				bool mustBe8Align = false;
 
 				for (e = 0; e < nrel; ++e)
 				{
 					fbtVariable& v = vptr[e];
 					ct = v.m_typeId;
-					cn = v.m_nameId;
-
 
 					if (v.m_ptrCount > 0)
 					{

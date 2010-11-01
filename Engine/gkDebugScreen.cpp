@@ -1,5 +1,12 @@
 /*
----------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+    This file is part of OgreKit.
+    http://gamekit.googlecode.com/
+
+    Copyright (c) 2006-2010 Charlie C.
+
+    Contributor(s): none yet.
+-------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -15,7 +22,7 @@
   2. Altered source versions must be plainly marked as such, and must not be
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
----------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 */
 #include "gkDebugScreen.h"
 #include "gkLogger.h"
@@ -36,7 +43,7 @@ static gkDebugScreen* gConsole = 0;
 #define SCREEN_SIZE 14
 
 
-// ------------------------------------------------------------------------
+
 class gkBuiltinFont : public Ogre::ManualResourceLoader
 {
 public:
@@ -57,21 +64,21 @@ public:
 };
 
 
-// ------------------------------------------------------------------------
+
 gkDebugScreen::gkDebugScreen() :
 	m_isInit(false), m_isLocked(false), m_isShown(false),
-	m_txtBuffer(""), m_over(0), m_font(0), m_lineBuffer(128)
+	m_txtBuffer(""), m_over(0), m_ele(0), m_font(0), m_lineBuffer(128)
 {
 }
 
-// ------------------------------------------------------------------------
+
 gkDebugScreen::~gkDebugScreen()
 {
 	finalize();
 }
 
 
-// ------------------------------------------------------------------------
+
 void gkDebugScreen::initialize()
 {
 	if (m_isInit)
@@ -120,7 +127,7 @@ void gkDebugScreen::initialize()
 }
 
 
-// ------------------------------------------------------------------------
+
 void gkDebugScreen::finalize()
 {
 	if (!m_isInit)
@@ -133,7 +140,7 @@ void gkDebugScreen::finalize()
 }
 
 
-// ------------------------------------------------------------------------
+
 void gkDebugScreen::show(bool doit)
 {
 	if (m_over != 0 && m_isShown != doit)
@@ -146,7 +153,7 @@ void gkDebugScreen::show(bool doit)
 	}
 }
 
-// ------------------------------------------------------------------------
+
 void gkDebugScreen::clear()
 {
 	if (!m_lines.empty())
@@ -163,7 +170,7 @@ void gkDebugScreen::clear()
 
 
 
-// ------------------------------------------------------------------------
+
 void gkDebugScreen::pushText(const gkString& text)
 {
 	utStringUtils::split(m_splitBuf, text, "\n\r");

@@ -60,13 +60,14 @@ public:
 	gkLogicBrick* clone(gkLogicLink* link, gkGameObject* dest);
 
 	GK_INLINE void      setType(int v)                  {m_type = v;}
-	GK_INLINE int       getType(void)                   {return m_type;}
 	GK_INLINE void      setProperty(const gkString& v)  {m_prop = v;}
-	GK_INLINE gkString  getProperty(void)               {return m_prop;}
 	GK_INLINE void      setValue(const gkString& v)     {m_value = v;}
-	GK_INLINE gkString  getValue(void)                  {return m_value;}
 	GK_INLINE void      setObject(const gkString& v)    {m_othOb = v;}
-	GK_INLINE gkString  getObject(void)                 {return m_othOb;}
+
+	GK_INLINE int       getType(void)                   const {return m_type;}
+	GK_INLINE gkString  getProperty(void)               const {return m_prop;}
+	GK_INLINE gkString  getValue(void)                  const {return m_value;}
+	GK_INLINE gkString  getObject(void)                 const {return m_othOb;}
 
 
 	void execute(void);

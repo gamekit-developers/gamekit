@@ -100,7 +100,7 @@ public:
 	{ m_interpMethod = meth; }
 
 
-	GK_INLINE BezierInterpolation getInterpolationMethod(void)
+	GK_INLINE BezierInterpolation getInterpolationMethod(void) const
 	{ return m_interpMethod; }
 };
 

@@ -34,7 +34,8 @@
 
 
 gkGameObjectManager::gkGameObjectManager()
-	:    gkInstancedManager("GameObjectManager", "GameObject")
+	:    gkInstancedManager("GameObjectManager", "GameObject"),
+	     m_currentType(GK_OBJECT)
 {
 }
 

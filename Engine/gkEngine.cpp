@@ -197,7 +197,7 @@ void gkEngine::initialize()
 
 	m_root->initialise(false);
 
-	gkWindowSystem* sys = m_private->windowsystem = new gkWindowSystem();
+	m_private->windowsystem = new gkWindowSystem();
 
 
 	// gk Managers

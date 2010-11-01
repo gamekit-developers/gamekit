@@ -161,7 +161,7 @@ const char* gkOgg::read(UTsize pos, UTsize len, UTsize& br)
 
 const char* gkOgg::read(UTsize len, UTsize& br)
 {
-	static char blk[OV_FIXED_BUF];
+	static char blk[OV_FIXED_BUF] = {0};
 	br = 0;
 	int bs;
 

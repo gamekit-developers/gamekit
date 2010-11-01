@@ -70,9 +70,8 @@ int lua_pushtraceback(lua_State* L)
 }
 
 
-
 gkLuaEvent::gkLuaEvent(gkLuaCurState fnc)
-	:   L(fnc.L), m_self(0), m_trace(-1), m_error(false)
+	:   L(fnc.L), m_self(0), m_callback(0), m_callArgs(0), m_trace(-1), m_error(false)
 {
 	m_callback = new gkLuaObject(L, fnc.m_id);
 }
@@ -80,7 +79,7 @@ gkLuaEvent::gkLuaEvent(gkLuaCurState fnc)
 
 
 gkLuaEvent::gkLuaEvent(gkLuaCurState self, gkLuaCurState fnc)
-	:   L(fnc.L), m_trace(-1), m_error(false)
+	:   L(fnc.L), m_self(0), m_callback(0), m_callArgs(0), m_trace(-1), m_error(false)
 {
 	m_self = new gkLuaObject(L, self.m_id);
 	m_callback = new gkLuaObject(L, fnc.m_id);
@@ -214,8 +213,7 @@ void lua_dumpstack(lua_State* L)
 	{
 		char extra[256];
 		extra[0] = 0;
-		bool ret = false;
-
+		
 		switch (lua_type(L, top))
 		{
 		case LUA_TNONE:             sprintf(extra, "LUA_TNONE               : NONE"); break;

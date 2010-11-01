@@ -32,7 +32,7 @@
 
 gkRandomActuator::gkRandomActuator(gkGameObject* object, gkLogicLink* link, const gkString& name)
 	: gkLogicActuator(object, link, name), m_seed(0), m_distribution(0), m_prop(""),
-	  m_min(0), m_max(1), m_constant(0), m_mean(0), m_deviation(0), m_halflife(0), m_count(0)
+	  m_min(0), m_max(1), m_constant(0), m_mean(0), m_deviation(0), m_halflife(0), m_current(0), m_count(0)
 {
 	m_randGen = new utRandomNumberGenerator(0);
 }

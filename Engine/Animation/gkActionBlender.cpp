@@ -43,7 +43,7 @@ gkActionBlend::gkActionBlend()
 }
 
 
-gkScalar gkActionBlend::getLength(void)
+gkScalar gkActionBlend::getLength(void) const
 {
 	if (m_base)
 		return m_base->getLength();

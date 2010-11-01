@@ -64,10 +64,10 @@ public:
 	GK_INLINE void setProperty(const gkString& v)   {m_prop = v; m_material = "";}
 
 
-	GK_INLINE gkScalar        getRange(void)       {return m_range;}
-	GK_INLINE int             getAxis(void)        {return m_axis;}
-	GK_INLINE const gkString& getMaterial(void)    {return m_material;}
-	GK_INLINE const gkString& getProperty(void)    {return m_prop;}
+	GK_INLINE gkScalar        getRange(void)        const {return m_range;}
+	GK_INLINE int             getAxis(void)         const {return m_axis;}
+	GK_INLINE const gkString& getMaterial(void)     const {return m_material;}
+	GK_INLINE const gkString& getProperty(void)     const {return m_prop;}
 };
 
 

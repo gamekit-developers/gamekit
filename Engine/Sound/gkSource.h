@@ -109,19 +109,19 @@ private:
 
 
 
-	gkCriticalSection   m_cs;
+	mutable gkCriticalSection m_cs;
 public:
 
 	gkSource(gkSound* sound);
 	virtual ~gkSource();
 
 
-	GK_INLINE bool                  isStopped(void)         {return !isPlaying() || isPaused(); }
-	GK_INLINE bool                  isPlaying(void)         {return isBound();}
-	GK_INLINE bool                  isBound(void)           {return m_playback != 0;}
-	GK_INLINE bool                  isLooped(void)          {return m_props.m_loop;}
-	GK_INLINE gkSoundProperties&     getProperties(void)    {return m_props;}
-	GK_INLINE gkSound*               getCreator(void)       {return m_reference;}
+	GK_INLINE bool                  isStopped(void)   const  {return !isPlaying() || isPaused(); }
+	GK_INLINE bool                  isPlaying(void)   const  {return isBound();}
+	GK_INLINE bool                  isBound(void)     const  {return m_playback != 0;}
+	GK_INLINE bool                  isLooped(void)    const  {return m_props.m_loop;}
+	GK_INLINE gkSoundProperties&    getProperties(void)      {return m_props;}
+	GK_INLINE gkSound*              getCreator(void)         {return m_reference;}
 
 	GK_INLINE void setProperties(gkSoundProperties& props)  {m_props = props;}
 
@@ -129,7 +129,7 @@ public:
 	void updatePropsForObject(gkGameObject* obj);
 
 
-	bool isPaused(void);
+	bool isPaused(void) const;
 
 	// playing states
 	void play(void);

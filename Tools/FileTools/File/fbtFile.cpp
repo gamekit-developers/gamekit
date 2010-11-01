@@ -304,19 +304,24 @@ int fbtFile::parseStreamImpl(fbtStream* stream)
 		}
 		else
 		{
+#if FBT_ASSERT_INSERT
 			FBTsizeType pos;
 			if ((pos = m_map.find(chunk.m_old)) != FBT_NPOS)
 			{
 				fbtFree(curPtr);
-#if FBT_ASSERT_INSERT
 				int result = fbtMemcmp(&m_map.at(pos)->m_chunk, &chunk, fbtChunk::BlockSize);
 				if (result != 0)
 				{
 					FBT_INVALID_READ;
 					return FS_INV_READ;
 				}
-#endif
 			}
+#else
+			if (m_map.find(chunk.m_old) != FBT_NPOS)
+			{
+				fbtFree(curPtr);
+			}
+#endif
 			else
 			{
 				MemoryChunk* bin = static_cast<MemoryChunk*>(fbtMalloc(sizeof(MemoryChunk)));
@@ -438,7 +443,7 @@ int fbtFile::link(void)
 {
 	fbtBinTables::OffsM::Pointer md = m_memory->m_offs.ptr();
 	fbtBinTables::OffsM::Pointer fd = m_file->m_offs.ptr();
-	FBTsizeType s = m_memory->m_offs.size(), s2, i2, a2, n;
+	FBTsizeType s2, i2, a2, n;
 	fbtStruct::Array::Pointer p2;
 	FBTsize mlen, malen, total, pi;
 

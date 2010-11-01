@@ -49,7 +49,7 @@ public:
 	bool query(void);
 	void setSeed(UTuint32 v);
 
-	GK_INLINE UTuint32 getSeed(void) {return m_seed;}
+	GK_INLINE UTuint32 getSeed(void) const {return m_seed;}
 };
 
 #endif // GKRANDOMSENSOR_H

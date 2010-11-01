@@ -92,7 +92,7 @@ private:
 	int m_ref, m_own;
 public:
 
-	gkLuaObject() : L(0), m_ref(-1) {}
+	gkLuaObject() : L(0), m_ref(-1), m_own(0) {}
 	gkLuaObject(lua_State* _L, int input) : L(_L), m_ref(-1), m_own(1) {ref(input);}
 	gkLuaObject(const gkLuaObject& ob) : L(ob.L), m_ref(ob.m_ref), m_own(0) {}
 
@@ -119,8 +119,8 @@ public:
 		}
 	}
 
-	int         get(void)   {return m_ref;}
-	lua_State*  getL(void)  {return L;}
+	int         get(void)   const {return m_ref;}
+	lua_State*  getL(void)        {return L;}
 };
 
 class gkLuaEvent

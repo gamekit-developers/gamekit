@@ -87,28 +87,27 @@ public:
 	void dispatch(void);
 
 
-	bool isPositive(void);
+	bool isPositive(void) const;
 
 	GK_INLINE gkControllers& getControllers(void) {return m_controllers;}
 
 
-	GK_INLINE bool isNegativePulseMode(void) {return (m_pulse & PM_FALSE) != 0;}
-	GK_INLINE bool isPositivePulseMode(void) {return (m_pulse & PM_TRUE) != 0;}
-	GK_INLINE void setFrequency(int v)      {m_freq = (int)((((float)v) + .5) / 2.0);}
-	GK_INLINE int  getFrequency(void)       {return m_freq;}
-	GK_INLINE void setMode(int m)           {m_pulse = m;}
-	GK_INLINE int  getMode(void)            {return m_pulse;}
-	GK_INLINE void invert(bool v)           {m_invert = v;}
-	GK_INLINE bool isInverse(void)          {return m_invert;}
-	GK_INLINE void suspend(bool v)          {m_suspend = v;}
-	GK_INLINE bool isSuspended(void)        {return m_suspend;}
-	GK_INLINE void setTap(bool v)           {m_tap = v;}
-	GK_INLINE bool isTap(void)              {return m_tap;}
-	GK_INLINE void setDetector(bool v)      {m_isDetector = v;}
-	GK_INLINE bool isDetector(void)         {return m_isDetector;}
-	GK_INLINE void setStartState(int v)     {m_oldState = v;}
-	GK_INLINE int  getDispatcher(void)      {return m_dispatchType;}
-
+	GK_INLINE bool isNegativePulseMode(void) const {return (m_pulse & PM_FALSE) != 0;}
+	GK_INLINE bool isPositivePulseMode(void) const {return (m_pulse & PM_TRUE) != 0;}
+	GK_INLINE void setFrequency(int v)             {m_freq = (int)((((float)v) + .5) / 2.0);}
+	GK_INLINE int  getFrequency(void)        const {return m_freq;}
+	GK_INLINE void setMode(int m)                  {m_pulse = m;}
+	GK_INLINE int  getMode(void)             const {return m_pulse;}
+	GK_INLINE void invert(bool v)                  {m_invert = v;}
+	GK_INLINE bool isInverse(void)           const {return m_invert;}
+	GK_INLINE void suspend(bool v)                 {m_suspend = v;}
+	GK_INLINE bool isSuspended(void)         const {return m_suspend;}
+	GK_INLINE void setTap(bool v)                  {m_tap = v;}
+	GK_INLINE bool isTap(void)               const {return m_tap;}
+	GK_INLINE void setDetector(bool v)             {m_isDetector = v;}
+	GK_INLINE bool isDetector(void)          const {return m_isDetector;}
+	GK_INLINE void setStartState(int v)            {m_oldState = v;}
+	GK_INLINE int  getDispatcher(void)       const {return m_dispatchType;}
 };
 
 

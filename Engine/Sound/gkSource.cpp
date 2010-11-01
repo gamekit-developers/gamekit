@@ -93,12 +93,11 @@ void gkSource::updatePropsForObject(gkGameObject* obj)
 
 
 
-bool gkSource::isPaused(void)
+bool gkSource::isPaused(void) const
 {
 	gkCriticalSection::Lock lock(m_cs);
 	return m_playback ? m_playback->isSuspended() : false;
 }
-
 
 
 gkSoundStream* gkSource::getStream(void)
