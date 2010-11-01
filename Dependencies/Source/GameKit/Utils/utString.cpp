@@ -27,6 +27,7 @@
 #include <sstream>
 #include <cctype>
 #include <algorithm>
+#include <stdio.h>
 #include <stdarg.h>
 
 
