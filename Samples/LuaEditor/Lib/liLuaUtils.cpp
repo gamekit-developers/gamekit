@@ -107,14 +107,16 @@ bool LUA_loadfile(lua_State* L, const gkString& filename, gkString& text)
 	FILE *fp = fopen(filename.c_str(), "rt");
 	if (!fp) return false;
 
-	long len = fseek(fp, 0, SEEK_END);//_filelength(_fileno(fp));
+	fseek(fp, 0, SEEK_END);
+	long len = ftell(fp);
 	if (len <= 0) return false; //empty file?
 	fseek(fp, 0, SEEK_SET);
 
 	char *buf = new char[len+1];
 	buf[len]=0;
 	size_t rlen = fread(buf, sizeof(char), len, fp);
-	if (rlen == 0) {
+	if (rlen == 0) 
+	{
 		SAFE_DELETE_ARRAY(buf);
 		return false;
 	}
