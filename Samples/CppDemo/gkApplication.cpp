@@ -51,7 +51,7 @@ int main(int argc, char** argv)
 	//prefs.fsaa = true;
 	//prefs.debugPhysics = true;
 	//prefs.debugFps = true;
-	prefs.grabInput = false;
+	//prefs.grabInput = false;
 
 
 	gkEngine eng(&prefs);

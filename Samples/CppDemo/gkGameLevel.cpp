@@ -41,8 +41,8 @@ gkGameLevel::gkGameLevel()
 	     m_mouse(0)
 {
 	m_keyboard = gkWindowSystem::getSingleton().getKeyboard();
-	m_mouse = gkWindowSystem::getSingleton().getMouse();
-	m_joy = gkWindowSystem::getSingleton().getJoystick(0);
+	m_mouse    = gkWindowSystem::getSingleton().getMouse();
+	m_joy      = gkWindowSystem::getSingleton().getJoystick(0);
 
 	gkGameObjectManager::getSingleton().addInstanceListener(this);
 	gkGameObjectManager::getSingleton().addResourceListener(this);
@@ -68,9 +68,7 @@ gkGameLevel::~gkGameLevel()
 	gkFontManager::getSingleton().removeResourceListener(this);
 
 	if (m_pickup)
-	{
 		gkSceneManager::getSingleton().destroy(m_pickup->getResourceHandle());
-	}
 }
 
 

@@ -43,6 +43,19 @@ class gkGamePlayer : public gkFSM
 {
 public:
 
+	struct Data
+	{
+		gkGameObject* m_physics;
+		gkGameObject* m_xRot, *m_zRot;
+		gkCamera*     m_camera;
+		gkEntity*     m_entity;
+		gkSkeleton*   m_skeleton;
+
+	};
+
+
+public:
+
 	gkGamePlayer(gkGameLevel* levelData);
 	~gkGamePlayer();
 
@@ -54,6 +67,7 @@ public:
 
 	void notifyState(int state);
 
+	Data& getData(void) {return m_playerData;}
 
 protected:
 	void setInitialText(void);
@@ -109,9 +123,6 @@ protected:
 	void comboState(void);
 	void kickState(void);
 
-	void cameraState(void);
-
-
 	void applyComboThrust(gkScalar fac = 5.f);
 	void applyJump(void);
 	bool groundTest(void);
@@ -121,11 +132,16 @@ protected:
 	int m_jumpFrom;
 
 	gkGameLevel*  m_levelData;
+
+
+	Data          m_playerData;
+
 	gkGameObject* m_physics;
 	gkGameObject* m_xRot, *m_zRot;
 	gkCamera*     m_camera;
 	gkEntity*     m_entity;
 	gkSkeleton*   m_skeleton;
+
 
 
 	gkAnimations m_animations;
@@ -135,17 +151,12 @@ protected:
 	gkActionBlender m_blendMgr;
 	int m_idleSwitch;
 
-	int m_btn1Cache, m_btn2Cache, m_btn3Cache;
-	bool isButtonDownCache(int btn, int& cache);
-	bool m_isBtn1, m_isBtn2, m_isBtn3;
-
 
 	gkHUD* m_momoData, *m_cameraData;
 	gkHUDElement* m_currentState, *m_cameraState;
 
 
-
-	gkJoystickAxisState m_camRot, m_movement;
+	gkGameController *m_input;
 };
 
 

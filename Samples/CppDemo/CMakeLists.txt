@@ -17,37 +17,83 @@ if (APPLE)
 	SET (NibFile MainMenu.nib)
 endif()
 
-set(SRC ${CONTENT} 
-	gkApplication.h
-	gkApplication.cpp
-	gkCollisionCameraConstraint.h
-	gkCollisionCameraConstraint.cpp
-	gkGamePlayer.h
-	gkGamePlayer.cpp
-	gkGameLevel.h
-	gkGameLevel.cpp
-	gkGameNPC.h
-	gkGameNPC.cpp
-	Graphics/gkHUD.h
+
+set(CPP_CONT_SRC
+	Controllers/gkJoystickController.cpp
+	Controllers/gkDefaultController.cpp
+)
+
+set(CPP_CONT_HDR
+	gkGameController.h
+	Controllers/gkJoystickController.h
+	Controllers/gkDefaultController.h
+)
+
+
+
+set(CPP_GRAPH_SRC
 	Graphics/gkHUD.cpp
-	Graphics/gkHUDElement.h
 	Graphics/gkHUDElement.cpp
-	Graphics/gkHUDManager.h
 	Graphics/gkHUDManager.cpp
+)
+
+set(CPP_GRAPH_HDR
+	Graphics/gkHUD.h
+	Graphics/gkHUDElement.h
+	Graphics/gkHUDManager.h
+)
+
+set(CPP_MAIN_SRC
+	gkApplication.cpp
+	gkCollisionCameraConstraint.cpp
+	gkGamePlayer.cpp
+	gkGameLevel.cpp
+	# gkGameNPC.cpp
+)
+
+set(CPP_MAIN_HDR
+	gkApplication.h
+	gkCollisionCameraConstraint.h
+	gkGamePlayer.h
+	gkGameLevel.h
+	# gkGameNPC.h
+)
+
+
+set(SRC 
+	${CONTENT} 
+	${CPP_MAIN_SRC}  ${CPP_MAIN_HDR}
+	${CPP_CONT_SRC}  ${CPP_CONT_HDR}
+	${CPP_GRAPH_SRC} ${CPP_GRAPH_HDR}
 	)
+
+
+
+if(WIN32)
+
+	source_group(Main\\Source FILES ${CPP_MAIN_SRC})
+	source_group(Main\\Header FILES ${CPP_MAIN_HDR})
+
+	source_group(HUD\\Source FILES ${CPP_GRAPH_SRC})
+	source_group(HUD\\Header FILES ${CPP_GRAPH_HDR})
+
+
+	source_group(Controllers\\Source FILES ${CPP_CONT_SRC})
+	source_group(Controllers\\Header FILES ${CPP_CONT_HDR})
+
+	source_group(Datafiles FILES ${CONTENT})
+endif()
 
 
 include_directories(
 	${OGREKIT_INCLUDE}
+	.
+	
 )
 
 link_libraries(
 	${OGREKIT_LIB}
 )
-
-
-set(HiddenCMakeLists ../CMakeLists.txt)
-source_group(ParentCMakeLists FILES ${HiddenCMakeLists})
 
 
 if (APPLE)
@@ -57,12 +103,11 @@ if (APPLE)
 		MACOSX_BUNDLE
 		MainMenu.nib
 		${SRC} 
-		${HiddenCMakeLists}
 	)
 
 else ()
 
-	add_executable(${TargetName} ${SRC} ${HiddenCMakeLists})
+	add_executable(${TargetName} ${SRC})
 	
 	
 	IF (NOT INTERNAL_CREATE_DISTRIBUTABLE_MSVC_PROJECTFILES)

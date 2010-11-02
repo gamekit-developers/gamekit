@@ -25,6 +25,8 @@
 -------------------------------------------------------------------------------
 */
 #include "gkGamePlayer.h"
+#include "Controllers/gkDefaultController.h"
+#include "Controllers/gkJoystickController.h"
 #include "gkGameLevel.h"
 #include "gkCollisionCameraConstraint.h"
 #include "OgreKit.h"
@@ -45,12 +47,6 @@ gkGamePlayer::gkGamePlayer(gkGameLevel* levelData)
 	     m_skeleton(0),
 	     m_idleSwitch(0),
 	     m_jumpFrom(-1),
-	     m_btn1Cache(0),
-	     m_btn2Cache(0),
-	     m_btn3Cache(0),
-	     m_isBtn1(false),
-	     m_isBtn2(false),
-	     m_isBtn3(false),
 	     m_textInit(false),
 	     m_momoData(0),
 	     m_currentState(0),
@@ -58,11 +54,16 @@ gkGamePlayer::gkGamePlayer(gkGameLevel* levelData)
 	     m_cameraState(0),
 	     m_comboAttack(0)
 {
+	if (gkWindowSystem::getSingleton().getJoystick(0))
+		m_input = new gkJoystickController(this);
+	else
+		m_input = new gkDefaultController(this);
 }
 
 
 gkGamePlayer::~gkGamePlayer()
 {
+	delete m_input;
 	delete m_comboAttack;
 }
 
@@ -90,6 +91,13 @@ void gkGamePlayer::load(gkBlendFile* playerData)
 	m_zRot     = tscene->getObject(GK_RESOURCE_PLAYER_ZROT);
 	m_xRot     = tscene->getObject(GK_RESOURCE_PLAYER_XROT);
 	m_physics  = tscene->getObject(GK_RESOURCE_PLAYER_PHYS);
+
+	m_playerData.m_physics = m_physics;
+	m_playerData.m_xRot = m_xRot;
+	m_playerData.m_zRot = m_zRot;
+	m_playerData.m_camera = m_camera;
+	m_playerData.m_entity = m_entity;
+	m_playerData.m_skeleton = m_skeleton;
 
 
 	dest->addObject(m_skeleton);
@@ -254,11 +262,10 @@ void gkGamePlayer::setInitialText(void)
 
 	if (m_currentState)
 	{
-
-		if (m_levelData->getJoystick())
-			m_currentState->setValue("Found game controller!");
-		else
-			m_currentState->setValue("No game controller found...");
+		//if (m_levelData->getJoystick())
+		//	m_currentState->setValue("Found game controller!");
+		//else
+		//	m_currentState->setValue("No game controller found...");
 	}
 }
 
@@ -325,53 +332,34 @@ bool gkGamePlayer::isOnGroundAndFromRun(void)
 
 bool gkGamePlayer::wantsToRun(void)
 {
-	return !m_movement.isDead() && !m_movement.isInFactor(gkAppData::gkJoyWalkToRunTol);
+	return m_input->hasInput(gkGameController::IC_RUN);
 }
 
 
 bool gkGamePlayer::wantsToWalk(void)
 {
-	return !m_movement.isDead() && m_movement.isInFactor(gkAppData::gkJoyWalkToRunTol);
+	return m_input->hasInput(gkGameController::IC_WALK);
 }
 
 bool gkGamePlayer::wantsToStop(void)
 {
-	return m_movement.isDead();
-}
-
-
-bool gkGamePlayer::isButtonDownCache(int btn, int& cache)
-{
-	gkJoystick* js = m_levelData->getJoystick();
-	if (js)
-	{
-		bool result = js->isButtonDown(btn);
-
-		if (result && cache == 0)
-			cache = 1;
-		else if (cache == 1 && result)
-			result = false;
-		else if (cache == 1 && !result)
-			cache = 0;
-		return result;
-	}
-	return false;
+	return m_input->hasInput(gkGameController::IC_STOP);
 }
 
 
 bool gkGamePlayer::wantsToWhip(void)
 {
-	return m_isBtn1;
+	return m_input->hasInput(gkGameController::IC_BUTTON_0);
 }
 
 bool gkGamePlayer::wantsToJump(void)
 {
-	return m_isBtn2;
+	return m_input->hasInput(gkGameController::IC_BUTTON_1);
 }
 
 bool gkGamePlayer::wantsComboAttack(void)
 {
-	return m_isBtn3;
+	return m_input->hasInput(gkGameController::IC_BUTTON_2);
 }
 
 
@@ -424,8 +412,6 @@ bool gkGamePlayer::isOnLedge(void)
 	return false;
 }
 
-
-
 void gkGamePlayer::idleStart(int from, int to)
 {
 	m_animations[GK_ANIM_IDLE_CURRENT]->setTimePosition(0.f);
@@ -448,8 +434,6 @@ void gkGamePlayer::comboStart(int from, int to)
 
 void gkGamePlayer::landStart(int from, int to)
 {
-
-
 	/// Move jump toward the end
 	m_animations[GK_ANIM_JUMP]->setTimePosition(35.f);
 }
@@ -704,41 +688,13 @@ void gkGamePlayer::comboState(void)
 
 
 	if (prev != cur && cur != m_animations[GK_ANIM_KICK])
-	{
 		applyComboThrust();
-	}
-
-
 }
-
-
 
 void gkGamePlayer::moveState(void)
 {
-	gkScalar axRotLR = (m_movement.m_normal.y * gkPi);
-	gkScalar axRotUD = (-m_movement.m_normal.x * gkPi);
-	gkScalar axTan = -gkMath::ATan2(axRotLR, axRotUD).valueDegrees();
 
-
-	gkScalar speed = 3.f;
-	if (m_movement.isInFactor(gkAppData::gkJoyWalkToRunTol))
-		speed /= 4.f;
-
-	gkScalar axLinUD = speed * -m_movement.m_normal.x;
-	gkScalar axLinLR = speed * m_movement.m_normal.y;
-	gkVector3 linvel   = m_physics->getLinearVelocity();
-
-
-	gkQuaternion curZRot = m_zRot->getOrientation();
-
-	gkQuaternion aOri = gkEuler(0.f, 0.f, axTan).toQuaternion();
-
-	aOri.normalise();
-
-	gkVector3 m = curZRot * gkVector3(axLinLR, axLinUD, linvel.z);
-
-	m_physics->setLinearVelocity(m);
-	m_entity->setOrientation(aOri * curZRot);
+	m_input->movePlayer();
 
 	m_blendMgr.push(m_animations[this->getState() == GK_PLAY_WALK ? GK_ANIM_WALK : GK_ANIM_RUN], gkAppData::gkGlobalActionBlend);
 	m_blendMgr.evaluate(gkAppData::gkAnimationTick);
@@ -773,54 +729,6 @@ void gkGamePlayer::jumpState(void)
 }
 
 
-
-void gkGamePlayer::cameraState(void)
-{
-	gkScalar crAxUD = (m_camRot.m_normal.x * gkPih) * gkAppData::gkFixedTickDelta2;
-	gkScalar crAxLR = (m_camRot.m_normal.y * gkPih) * gkAppData::gkFixedTickDelta2;
-
-
-	m_xRot->pitch(gkRadian(crAxUD));
-
-	if (m_camRot.isDeadUD())
-	{
-		// Auto rebound pitch.
-		gkScalar cPitch = m_xRot->getRotation().x.valueRadians();
-
-		cPitch = -gkAppData::gkJoyReboundFac * cPitch;
-		m_xRot->pitch(gkDegree(cPitch));
-	}
-
-	if (!m_camRot.isDeadLR())
-		m_zRot->roll(gkRadian(crAxLR));
-
-	m_zRot->translate((m_physics->getPosition() - (m_zRot->getPosition() + gkVector3(0, 0, -gkAppData::gkPlayerHeadZ))) * gkAppData::gkCameraTol);
-
-
-	if (m_cameraState)
-	{
-		gkString cam_datap;
-		gkString cam_datar;
-
-
-		cam_datap = gkToString((int)m_xRot->getRotation().x.valueDegrees());
-		cam_datar = gkToString((int)m_zRot->getRotation().z.valueDegrees());
-
-		gkString value;
-		value += "Pitch: " + cam_datap + "\n";
-		value += "Roll: " + cam_datar + "\n";
-		value += "AxisUD: " + gkVariable((int) (gkDPR * crAxUD / gkAppData::gkFixedTickDelta2)).getValueString() + "\n";
-		value += "AxisLR: " + gkVariable((int) (gkDPR * crAxLR / gkAppData::gkFixedTickDelta2)).getValueString() + "\n";
-
-
-		m_cameraState->setValue(value);
-
-	}
-
-}
-
-
-
 void gkGamePlayer::update(gkScalar delta)
 {
 	if (!m_textInit)
@@ -829,35 +737,12 @@ void gkGamePlayer::update(gkScalar delta)
 		setInitialText();
 	}
 
-	gkJoystick* js = m_levelData->getJoystick();
-
-	if (js)
-	{
-		m_camRot.m_absolute   = gkVector2(js->getAxisValue(0), js->getAxisValue(1));
-		m_camRot.normalize();
-
-		m_movement.m_absolute = gkVector2(js->getAxisValue(2), js->getAxisValue(3));
-		m_movement.normalize();
-
-
-		m_isBtn1 = isButtonDownCache(GK_JOY_BUTTON_1, m_btn1Cache);
-		m_isBtn2 = isButtonDownCache(GK_JOY_BUTTON_2, m_btn2Cache);
-		m_isBtn3 = isButtonDownCache(GK_JOY_BUTTON_3, m_btn3Cache);
-	}
-	else
-	{
-		m_camRot.m_absolute.x = m_camRot.m_absolute.y = 0;
-		m_camRot.normalize();
-		m_movement.m_absolute.x = m_movement.m_absolute.y = 0;
-		m_movement.normalize();
-	}
-
-	cameraState();
+	m_input->updateInputState();
+	m_input->moveCamera();
 
 	gkFSM::update();
 
-
-	switch (this->getState())
+	switch (getState())
 	{
 	case GK_PLAY_IDLE:
 		idleState();

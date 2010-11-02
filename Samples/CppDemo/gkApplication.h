@@ -31,7 +31,7 @@
 
 class gkGameLevel;
 class gkGamePlayer;
-
+class gkGameController;
 
 #define GK_CPP_VERBOSE_LOG false
 
