@@ -1365,7 +1365,13 @@ gsEntity::gsEntity(gkInstancedObject* ob) : gsGameObject(ob)
 void gsEntity::playAction(const gkString& name, float blend)
 {
 	if (m_object)
-		cast<gkEntity>()->playAction(name, blend);
+	{
+		gkEntity *ent = cast<gkEntity>();
+		if (ent->getActionPlayer(name) == 0)
+			ent->addAction(name);
+
+		ent->playAction(name, blend);
+	}
 }
 
 
