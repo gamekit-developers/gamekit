@@ -81,6 +81,7 @@ protected:
 	Ogre::Vector3       m_bbmin, m_bbmax;
 	UTsize              m_bufSize;
 	int                 m_flags;
+	bool                m_d3dColor;
 
 	Ogre::HardwareVertexBufferSharedPtr m_buffer;
 

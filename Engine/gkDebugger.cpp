@@ -35,6 +35,9 @@
 #include "OgreMaterial.h"
 #include "gkDebugger.h"
 #include "gkScene.h"
+#include "gkEngine.h"
+#include "gkUserDefs.h"
+
 
 #ifdef OGREKIT_OPENAL_SOUND
 #include "Sound/gkSource.h"
@@ -48,7 +51,8 @@ gkDebugger::gkDebugger(gkScene* parent)
 	    m_bbmin(GK_INFINITY, GK_INFINITY, GK_INFINITY),
 	    m_bbmax(-GK_INFINITY, -GK_INFINITY, -GK_INFINITY),
 	    m_bufSize(0),
-	    m_flags(0)
+	    m_flags(0),
+		m_d3dColor(gkEngine::getSingleton().getUserDefs().rendersystem != OGRE_RS_GL)
 {
 	growBuffer(128);
 	m_lineBuf.reserve(128);
@@ -166,7 +170,7 @@ void gkDebugger::growBuffer(UTsize newSize)
 	decl->addElement(0, offs, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
 	offs += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
 	decl->addElement(0, offs, Ogre::VET_COLOUR, Ogre::VES_DIFFUSE);
-	offs += Ogre::VertexElement::getTypeSize(Ogre::VET_COLOUR);
+	offs += Ogre::VertexElement::getTypeSize(Ogre::VET_COLOUR_ABGR);
 
 
 	mRenderOp.vertexData->vertexStart = 0;
@@ -191,7 +195,7 @@ void gkDebugger::drawLine(const gkVector3& from, const gkVector3& to, const gkVe
 	if (!m_node) return;
 
 	DebugVertex v0, v1;
-	Ogre::PixelUtil::packColour(color.x, color.y, color.z, 1.f, Ogre::PF_BYTE_RGBA, &v0.color);
+	Ogre::PixelUtil::packColour(color.x, color.y, color.z, 1.f, m_d3dColor ? Ogre::PF_A8R8G8B8 : Ogre::PF_A8B8G8R8, &v0.color);
 
 	v0.v = from;
 	v1.v = to;
