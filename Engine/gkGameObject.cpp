@@ -1129,9 +1129,15 @@ void gkGameObject::removeEventListener(gkGameObject::Notifier* evt)
 
 gkActionPlayer* gkGameObject::addAction(gkAction* action)
 {
-	gkActionPlayer* act = new gkActionPlayer(action, this);
+	const gkHashedString name = action->getName();
 
-	m_actions.insert(act->getName(), act);
+	gkActionPlayer* act;
+	if (act = getActionPlayer(name))
+		return act; 
+
+	act = new gkActionPlayer(action, this);
+
+	m_actions.insert(name, act);
 	return act;
 }
 
