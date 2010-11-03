@@ -29,15 +29,8 @@
 
 
 #include "Animation/gkBezierSpline.h"
+#include "Animation/gkActionDefs.h"
 #include "gkTransformState.h"
-
-
-
-
-
-
-class gkAction;
-
 
 
 class gkAnimationChannel

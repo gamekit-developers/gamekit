@@ -35,6 +35,7 @@
 #include "gkDynamicsWorld.h"
 #include "gkPhysicsDebug.h"
 #include "gkAction.h"
+#include "gkActionPlayer.h"
 #include "gkLogger.h"
 #include "gkSteering.h"
 #include "gkRayTest.h"

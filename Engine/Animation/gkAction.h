@@ -29,7 +29,7 @@
 
 #include "gkMathUtils.h"
 #include "gkResource.h"
-
+#include "Animation/gkActionDefs.h"
 
 class gkAction : public gkResource
 {

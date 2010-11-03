@@ -25,6 +25,7 @@
 -------------------------------------------------------------------------------
 */
 #include "gkActionBlender.h"
+#include "gkActionPlayer.h"
 #include "gkLogger.h"
 
 

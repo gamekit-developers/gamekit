@@ -30,17 +30,6 @@
 
 #include "gkAction.h"
 
-
-enum gkActionEvalMode
-{
-	///Reset loop when done.
-	GK_ACT_LOOP    = (1 << 0),
-	///Play till the end and stop.
-	GK_ACT_END     = (1 << 1),
-	///Invert frames
-	GK_ACT_INVERSE = (1 << 2)
-};
-
 class gkActionPlayer
 {
 protected:

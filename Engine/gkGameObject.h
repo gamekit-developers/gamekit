@@ -31,7 +31,8 @@
 #include "gkMathUtils.h"
 #include "gkTransformState.h"
 #include "gkSerialize.h"
-#include "Animation/gkActionBlender.h"
+#include "Animation/gkActionDefs.h"
+
 
 class gkGameObject : public gkInstancedObject
 {
@@ -264,6 +265,7 @@ public:
 	void                    playAction(const gkString& act, gkScalar blend, int mode = GK_ACT_END, int priority = 0);
 	void                    playAction(gkActionPlayer* act, gkScalar blend, int mode = GK_ACT_END, int priority = 0);
 	void                    updateActions(const gkScalar tick);
+	gkActionBlender&        getActionBlender(void);
 
 
 protected:
@@ -319,7 +321,7 @@ protected:
 	int                         m_flags;
 	LifeSpan                    m_life;
 
-	gkActionBlender             m_actionBlender;
+	gkActionBlender*            m_actionBlender;
 	Actions                     m_actions;
 
 	virtual void createInstanceImpl(void);
@@ -327,6 +329,7 @@ protected:
 	virtual void postCreateInstanceImpl(void);
 	virtual void postDestroyInstanceImpl(void);
 	virtual void notifyResourceDestroying(void);
+
 
 
 	void sendNotification(const Notifier::Event& e);

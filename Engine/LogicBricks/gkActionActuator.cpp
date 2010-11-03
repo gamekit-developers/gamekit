@@ -26,6 +26,7 @@
 */
 #include "gkActionActuator.h"
 #include "gkAction.h"
+#include "gkActionPlayer.h"
 #include "gkActionManager.h"
 #include "gkEngine.h"
 #include "gkLogger.h"

@@ -27,9 +27,8 @@
 #ifndef _gkActionBlender_h_
 #define _gkActionBlender_h_
 
-#include "gkActionPlayer.h"
-
-
+#include "Animation/gkActionDefs.h"
+#include "gkMathUtils.h"
 
 ///Action blend item, for overall blending / switching between actions
 class gkActionBlend

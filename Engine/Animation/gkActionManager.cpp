@@ -38,6 +38,7 @@ gkActionManager::gkActionManager()
 
 gkActionManager::~gkActionManager()
 {
+	destroyAll();
 }
 
 

@@ -29,9 +29,8 @@
 
 #include "utSingleton.h"
 #include "gkResourceManager.h"
+#include "Animation/gkActionDefs.h"
 
-class gkKeyedAction;
-class gkActionSequence;
 
 ///Manage all the actions/animations
 class gkActionManager : public gkResourceManager, public utSingleton<gkActionManager>

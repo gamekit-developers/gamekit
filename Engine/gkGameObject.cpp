@@ -55,6 +55,7 @@
 #include "gkAction.h"
 #include "gkActionManager.h"
 #include "gkActionPlayer.h"
+#include "gkActionBlender.h"
 
 using namespace Ogre;
 
@@ -70,7 +71,8 @@ gkGameObject::gkGameObject(gkInstancedManager* creator, const gkResourceName& na
 	     m_state(0), m_activeLayer(true),
 	     m_layer(0xFFFFFFFF),
 	     m_isClone(false),
-	     m_flags(0)
+	     m_flags(0),
+		 m_actionBlender(0)
 {
 	m_life.tick = 0;
 	m_life.timeToLive = 0;
@@ -87,11 +89,18 @@ gkGameObject::~gkGameObject()
 		gkLogicManager::getSingleton().destroy(m_bricks);
 		m_bricks = 0;
 	}
+
+
+
+	delete m_actionBlender;
+	m_actionBlender = 0;
+
+
+
 	Actions::Iterator it = m_actions.iterator();
 	while (it.hasMoreElements())
 		delete it.getNext().second;
 }
-
 
 
 
@@ -128,7 +137,6 @@ gkGameObject* gkGameObject::clone(const gkString& name)
 void gkGameObject::cloneImpl(gkGameObject* clob)
 {
 	clob->m_activeLayer = clob->m_activeLayer;
-	//memcpy(&clob->m_baseProps, &m_baseProps, sizeof(gkGameObjectProperties));
 	clob->m_baseProps = m_baseProps;
 	clob->m_isClone = true;
 	clob->m_scene = m_scene;
@@ -1143,6 +1151,15 @@ gkActionPlayer* gkGameObject::getActionPlayer(const gkHashedString& name)
 	return m_actions.at(pos);
 }
 
+gkActionBlender& gkGameObject::getActionBlender(void)
+{
+	if (!m_actionBlender)
+		m_actionBlender = new gkActionBlender();
+
+	GK_ASSERT(m_actionBlender);
+	return *m_actionBlender;
+}
+
 
 void gkGameObject::playAction(const gkString& act, gkScalar blend, int mode, int priority)
 {
@@ -1155,7 +1172,7 @@ void gkGameObject::playAction(gkActionPlayer* act, gkScalar blend, int mode, int
 {
 	if(act)
 	{
-		m_actionBlender.push(act, blend, mode, priority);
+		getActionBlender().push(act, blend, mode, priority);
 		m_scene->updateObjectActions(this);
 	}
 }
@@ -1164,5 +1181,5 @@ void gkGameObject::playAction(gkActionPlayer* act, gkScalar blend, int mode, int
 ///tick is in animation frame (gkUserPrefs.animspeed * delta time in second)
 void gkGameObject::updateActions(const gkScalar tick)
 {
-	m_actionBlender.evaluate(tick);
+	getActionBlender().evaluate(tick);
 }

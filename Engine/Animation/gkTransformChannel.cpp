@@ -34,7 +34,7 @@ gkTransformChannel::gkTransformChannel(const gkString& name, gkAction* parent)
 
 void gkTransformChannel::evaluateImpl(const gkScalar& time, const gkScalar& delta, const gkScalar& weight, gkGameObject* object) const
 {
-	if(!object || !weight >0)
+	if(!object || (weight <= 0.f))
 		return;
 
 	const gkBezierSpline** splines = getSplines();

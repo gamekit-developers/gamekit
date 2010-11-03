@@ -28,7 +28,7 @@
 #ifndef GKTRANSFORMCHANNEL_H
 #define GKTRANSFORMCHANNEL_H
 
-#include "gkAnimationChannel.h"
+#include "Animation/gkAnimationChannel.h"
 #include "gkCommon.h"
 
 #include "gkGameObject.h"

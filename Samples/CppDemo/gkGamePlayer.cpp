@@ -64,7 +64,6 @@ gkGamePlayer::gkGamePlayer(gkGameLevel* levelData)
 gkGamePlayer::~gkGamePlayer()
 {
 	delete m_input;
-	delete m_comboAttack;
 }
 
 
@@ -159,10 +158,11 @@ void gkGamePlayer::load(gkBlendFile* playerData)
 	m_comboAttack = gkActionManager::getSingleton().createActionSequence("Momo_ComboAttack");
 	m_comboAttack->addItem("Momo_Kick",      gkVector2(0.f,  17.f), gkVector2(0.f,  3.f));
 	m_comboAttack->addItem("Momo_Run",       gkVector2(15.f, 32.f), gkVector2(2.f,  4.f));
-	m_comboAttack->addItem("Momo_TailWhip",      gkVector2(25.f, 45.f), gkVector2(7.f,  0.f));
+	m_comboAttack->addItem("Momo_TailWhip",  gkVector2(25.f, 45.f), gkVector2(7.f,  0.f));
 
 	m_animations[GK_ANIM_COMBO_ATTACK] = m_skeleton->addAction(m_comboAttack);
 	m_animations[GK_ANIM_COMBO_ATTACK]->setMode(GK_ACT_END); //not LOOP
+
 
 
 	setState(GK_PLAY_IDLE);

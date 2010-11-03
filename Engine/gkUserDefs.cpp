@@ -56,7 +56,6 @@ gkUserDefs::gkUserDefs()
 	framingType(gkWindowSystem::FRAMING_EXTEND),
 	resources(""),
 	animspeed(25),
-	startframe(1),
 	blendermat(true),
 	grabInput(true),
 	debugFps(false),
@@ -212,12 +211,6 @@ void gkUserDefs::parseString(const gkString& key, const gkString& val)
 	{
 		animspeed = Ogre::StringConverter::parseReal(val);
 		animspeed = gkMaxf(animspeed, 1.0);
-		return;
-	}
-	if (KeyEq("startframe"))
-	{
-		startframe = Ogre::StringConverter::parseReal(val);
-		startframe = gkMaxf(startframe, 1.0);
 		return;
 	}
 	if (KeyEq("blendermat"))

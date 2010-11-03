@@ -32,7 +32,7 @@
 #include "gkUserDefs.h"
 #include "gkSkeleton.h"
 #include "gkMesh.h"
-
+#include "gkActionPlayer.h"
 
 
 
@@ -172,8 +172,7 @@ void gkEntity::_resetPose(void)
 			
 			if (act)
 			{
-				// TODO why userpref startframe instead of action->getStart() ?
-				act->setTimePosition(gkEngine::getSingleton().getUserDefs().startframe);
+				act->setTimePosition(act->getStart());
 				act->evaluate(0.0f);
 			}
 		}

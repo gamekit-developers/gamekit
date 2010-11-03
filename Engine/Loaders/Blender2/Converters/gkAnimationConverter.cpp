@@ -36,6 +36,7 @@
 #include "gkTransformChannel.h"
 #include "gkActionManager.h"
 #include "gkKeyedAction.h"
+#include "gkActionPlayer.h"
 
 #include "gkLight.h"
 
