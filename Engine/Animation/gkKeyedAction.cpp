@@ -3,7 +3,7 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Charlie C.
+    Copyright (c) 2006-2010 Xavier T.
 
     Contributor(s): none yet.
 -------------------------------------------------------------------------------
@@ -24,36 +24,50 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkGameObjectChannel_h_
-#define _gkGameObjectChannel_h_
 
+#include "gkKeyedAction.h"
+#include "gkAnimationChannel.h"
 
-#include "Animation/gkAnimationChannel.h"
-#include "gkGameObject.h"
-
-class gkAction;
-
-
-class gkGameObjectChannel : public gkAnimationChannel
+gkKeyedAction::gkKeyedAction(gkResourceManager* creator, const gkResourceName& name, const gkResourceHandle& handle)
+	:	gkAction(creator, name, handle)
 {
-protected:
-	gkGameObject*        m_object;
-	bool                 m_isEulerRotation;
+}
 
 
-public:
-	gkGameObjectChannel(gkAction* parent, gkGameObject* object);
-	~gkGameObjectChannel();
-
-	GK_INLINE const gkTransformState& getTransfom(void) { GK_ASSERT(m_object); return m_object->getTransformState(); }
-	GK_INLINE gkMatrix4               getMatrix(void)   { GK_ASSERT(m_object); return getTransfom().toMatrix(); }
-	GK_INLINE gkGameObject*           getObject(void)   { GK_ASSERT(m_object); return m_object; }
-	
-	GK_INLINE bool                    isEulerRotation(void)    { return m_isEulerRotation; }
-	GK_INLINE void                    setEulerRotation(bool v) { m_isEulerRotation = v; }
-
-	void evaluate(gkScalar time, gkScalar delta, gkScalar weight);
-};
+gkKeyedAction::~gkKeyedAction()
+{
+	gkAnimationChannel** ptr = m_channels.ptr();
+	int len = getNumChannels(), i;
+	for (i = 0; i < len; ++i)
+		delete ptr[i];
+}
 
 
-#endif//_gkGameObjectChannel_h_
+void gkKeyedAction::evaluate(const gkScalar& time, const gkScalar& delta, const gkScalar& weight, gkGameObject* object) const
+{
+	gkAnimationChannel* const* ptr = m_channels.ptr();
+	int len = getNumChannels(), i = 0;
+	while (i < len)
+		ptr[i++]->evaluate(time, delta, weight, object);
+}
+
+
+void gkKeyedAction::addChannel(gkAnimationChannel* chan)
+{
+	GK_ASSERT(chan);
+	m_channels.push_back(chan);
+}
+
+
+gkAnimationChannel* gkKeyedAction::getChannel(const gkString& name)
+{
+	for (UTsize i = 0; i < m_channels.size(); i++)
+	{
+		gkAnimationChannel* chan = m_channels[i];
+		if (chan->getName() == name)
+		{
+			return chan;
+		}
+	}
+	return NULL;
+}

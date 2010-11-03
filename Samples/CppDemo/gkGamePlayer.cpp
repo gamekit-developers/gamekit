@@ -141,15 +141,14 @@ void gkGamePlayer::load(gkBlendFile* playerData)
 
 
 	// save animation states
-
-	m_animations[GK_ANIM_IDLE]        = m_skeleton->getAction("Momo_Idle1");
-	m_animations[GK_ANIM_IDLE_NASTY]  = m_skeleton->getAction("Momo_IdleNasty");
-	m_animations[GK_ANIM_WALK]        = m_skeleton->getAction("Momo_Walk");
-	m_animations[GK_ANIM_RUN]         = m_skeleton->getAction("Momo_Run");
-	m_animations[GK_ANIM_JUMP]        = m_skeleton->getAction("Momo_Jump");
-	m_animations[GK_ANIM_WHIP]        = m_skeleton->getAction("Momo_TailWhip");
-	m_animations[GK_ANIM_KICK]        = m_skeleton->getAction("Momo_Kick");
-	m_animations[GK_ANIM_WALL_FLIP]   = m_skeleton->getAction("Momo_WallFlip");
+	m_animations[GK_ANIM_IDLE]        = m_skeleton->addAction("Momo_Idle1");
+	m_animations[GK_ANIM_IDLE_NASTY]  = m_skeleton->addAction("Momo_IdleNasty");
+	m_animations[GK_ANIM_WALK]        = m_skeleton->addAction("Momo_Walk");
+	m_animations[GK_ANIM_RUN]         = m_skeleton->addAction("Momo_Run");
+	m_animations[GK_ANIM_JUMP]        = m_skeleton->addAction("Momo_Jump");
+	m_animations[GK_ANIM_WHIP]        = m_skeleton->addAction("Momo_TailWhip");
+	m_animations[GK_ANIM_KICK]        = m_skeleton->addAction("Momo_Kick");
+	m_animations[GK_ANIM_WALL_FLIP]   = m_skeleton->addAction("Momo_WallFlip");
 
 	//m_animations[GK_ANIM_WALL_FLIP]->setMode(GK_ACT_END | GK_ACT_INVERSE);
 	m_animations[GK_ANIM_IDLE_CURRENT] = m_animations[GK_ANIM_IDLE];
@@ -157,11 +156,13 @@ void gkGamePlayer::load(gkBlendFile* playerData)
 
 
 	// COMBO: Kick + Run + Whip
-	m_comboAttack = new gkActionSequence();
-	m_comboAttack->addItem(m_animations[GK_ANIM_KICK],      gkVector2(0.f,  17.f), gkVector2(0.f,  3.f));
-	m_comboAttack->addItem(m_animations[GK_ANIM_RUN],       gkVector2(15.f, 32.f), gkVector2(2.f,  4.f));
-	m_comboAttack->addItem(m_animations[GK_ANIM_WHIP],      gkVector2(25.f, 45.f), gkVector2(7.f,  0.f));
+	m_comboAttack = gkActionManager::getSingleton().createActionSequence("Momo_ComboAttack");
+	m_comboAttack->addItem("Momo_Kick",      gkVector2(0.f,  17.f), gkVector2(0.f,  3.f));
+	m_comboAttack->addItem("Momo_Run",       gkVector2(15.f, 32.f), gkVector2(2.f,  4.f));
+	m_comboAttack->addItem("Momo_TailWhip",      gkVector2(25.f, 45.f), gkVector2(7.f,  0.f));
 
+	m_animations[GK_ANIM_COMBO_ATTACK] = m_skeleton->addAction(m_comboAttack);
+	m_animations[GK_ANIM_COMBO_ATTACK]->setMode(GK_ACT_END); //not LOOP
 
 
 	setState(GK_PLAY_IDLE);
@@ -376,7 +377,7 @@ bool gkGamePlayer::wantsToKickAndWhipDone(void)
 
 bool gkGamePlayer::isDoneComboAttack(void)
 {
-	return m_comboAttack->isDone();
+	return m_animations[GK_ANIM_COMBO_ATTACK]->isDone();
 }
 
 
@@ -427,7 +428,7 @@ void gkGamePlayer::jumpStart(int from, int to)
 
 void gkGamePlayer::comboStart(int from, int to)
 {
-	m_comboAttack->reset();
+	m_animations[GK_ANIM_COMBO_ATTACK]->reset();
 	applyComboThrust(3.5556f);
 }
 
@@ -678,16 +679,16 @@ void gkGamePlayer::applyComboThrust(gkScalar fac)
 
 void gkGamePlayer::comboState(void)
 {
-	gkAction* prev = m_comboAttack->getActiveStrip();
+	gkScalar prev = m_animations[GK_ANIM_COMBO_ATTACK]->getTimePosition();
 
 
-	m_blendMgr.push(m_comboAttack, gkAppData::gkGlobalActionBlend);
+	m_blendMgr.push(m_animations[GK_ANIM_COMBO_ATTACK], gkAppData::gkGlobalActionBlend);
 	m_blendMgr.evaluate(gkAppData::gkAnimationTick);
 
-	gkAction* cur = m_comboAttack->getActiveStrip();
+	gkScalar cur = m_animations[GK_ANIM_COMBO_ATTACK]->getTimePosition();
 
 
-	if (prev != cur && cur != m_animations[GK_ANIM_KICK])
+	if (prev <25.f && cur >25.f)
 		applyComboThrust();
 }
 

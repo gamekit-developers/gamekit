@@ -26,6 +26,7 @@
 */
 #include "gkActionActuator.h"
 #include "gkAction.h"
+#include "gkActionManager.h"
 #include "gkEngine.h"
 #include "gkLogger.h"
 #include "gkUserDefs.h"
@@ -74,12 +75,18 @@ gkLogicBrick* gkActionActuator::clone(gkLogicLink* link, gkGameObject* dest)
 
 void gkActionActuator::doInit(void)
 {
-	m_action = m_object->getAction(m_startAct);
+	m_action = m_object->getActionPlayer(m_startAct);
+	
+	if(!m_action)
+	{
+		gkAction* res = static_cast<gkAction*>(gkActionManager::getSingleton().getByName(m_startAct));
+		if(res)
+			m_action = m_object->addAction(res);
+	}
 	
 	if (m_action)
 	{
 		m_action->setTimePosition(m_start);
-		m_action->setBlendFrames(m_blend);
 	}
 	
 	m_curTick = m_start;

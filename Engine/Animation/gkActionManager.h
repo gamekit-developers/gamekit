@@ -27,25 +27,42 @@
 #ifndef _gkActionManager_h_
 #define _gkActionManager_h_
 
-#include "gkCommon.h"
-#include "gkMathUtils.h"
+#include "utSingleton.h"
+#include "gkResourceManager.h"
 
+class gkKeyedAction;
+class gkActionSequence;
 
-///Updates a collection of weight blended gkAction objects
-class gkActionManager
+///Manage all the actions/animations
+class gkActionManager : public gkResourceManager, public utSingleton<gkActionManager>
 {
-protected:
-	gkAction*        m_active, *m_blend;
-	gkScalar        m_blendTime;
+public:
+	enum gkActionTypes
+	{
+		GK_ACT_NULL = 0,
+		GK_ACT_KEYED,
+		GK_ACT_SEQ,
+	};
+
+private:
+	int m_currentType;
+
 public:
 	gkActionManager();
-	~gkActionManager();
+	virtual ~gkActionManager();
+	
+	gkKeyedAction*    createKeyedAction(const gkResourceName& name);
+	gkActionSequence* createActionSequence(const gkResourceName& name);
 
-	GK_INLINE gkAction* getActive(void) {return m_active;}
-	void setAction(gkAction* act);
+	gkKeyedAction*    getKeyedAction(const gkResourceName& name);
+	gkActionSequence* getActionSequence(const gkResourceName& name);
+	
+	UT_DECLARE_SINGLETON(gkActionManager);
+	
+private:
+	virtual gkResource* createImpl(const gkResourceName &name, const gkResourceHandle &handle);
+	
 
-	void update(gkScalar delta);
-	void update(gkScalar delta, gkScalar blendDelta);
 };
 
 #endif//_gkActionManager_h_

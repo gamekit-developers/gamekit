@@ -219,7 +219,7 @@ void gkCharacterNode::update_animation(STATE previousTickState)
 	{
 		m_ent->playAction(m_currentStateData->m_animName, GET_SOCKET_VALUE(ANIM_BLEND_FRAMES));
 
-		gkAction* pAct = m_ent->getAction(m_currentStateData->m_animName);
+		gkActionPlayer* pAct = m_ent->getActionPlayer(m_currentStateData->m_animName);
 
 		GK_ASSERT(pAct);
 

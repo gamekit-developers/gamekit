@@ -27,9 +27,7 @@
 #ifndef _gkActionBlender_h_
 #define _gkActionBlender_h_
 
-
-#include "Animation/gkAction.h"
-#include "gkActionSequence.h"
+#include "gkActionPlayer.h"
 
 
 
@@ -57,8 +55,7 @@ public:
 	gkScalar getBlendFrames(void) const  {return 1.f / m_frames; }
 
 
-	gkAction*         getAction(void)   {return m_base;}
-	gkActionSequence* getSequence(void) {return m_sequ;}
+	gkActionPlayer*         getAction(void)   {return m_base;}
 
 
 	gkScalar getLength(void) const;
@@ -70,8 +67,7 @@ public:
 	void setMode(int mode)                          {m_mode = mode;}
 	void setDirection(int way)                      {m_way = way;}
 	void setPriority(int pri)                       {m_priority = pri;}
-	void setAction(gkAction* act)                   {m_base = act;}
-	void setActionSequence(gkActionSequence* act)   {m_sequ = act;}
+	void setAction(gkActionPlayer* act)                   {m_base = act;}
 
 	void setBlendFrames(gkScalar f);
 	bool evaluate(gkScalar delta);
@@ -79,7 +75,7 @@ public:
 	void reset(void);
 
 
-	bool operator == (const gkActionBlend& rhs) const { return m_base == rhs.m_base && m_sequ == rhs.m_sequ;}
+	bool operator == (const gkActionBlend& rhs) const { return m_base == rhs.m_base;}
 
 private:
 
@@ -88,8 +84,7 @@ private:
 	gkScalar m_time;
 
 
-	gkAction* m_base;
-	gkActionSequence* m_sequ;
+	gkActionPlayer* m_base;
 	bool m_enabled;
 };
 
@@ -108,8 +103,7 @@ public:
 	gkActionBlender();
 	~gkActionBlender();
 
-	void push(gkAction* action, gkScalar frames, int mode = GK_ACT_END, int priority = 0);
-	void push(gkActionSequence* action, gkScalar frames, int mode = GK_ACT_END, int priority = 0);
+	void push(gkActionPlayer* action, const gkScalar& frames, int mode = GK_ACT_END, int priority = 0);
 
 	void evaluate(gkScalar delta);
 

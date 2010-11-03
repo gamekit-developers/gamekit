@@ -27,85 +27,37 @@
 #ifndef _gkAction_h_
 #define _gkAction_h_
 
-#include "gkCommon.h"
 #include "gkMathUtils.h"
-#include "gkBezierSpline.h"
+#include "gkResource.h"
 
 
-class gkActionChannel;
-
-enum gkActionEvalMode
+class gkAction : public gkResource
 {
-	///Reset loop when done.
-	GK_ACT_LOOP    = (1 << 0),
-	///Play till the end and stop.
-	GK_ACT_END     = (1 << 1),
-	///Invert frames
-	GK_ACT_INVERSE = (1 << 2)
-};
-
-
-
-class gkAction
-{
-public:
-	typedef utArray<gkActionChannel*> Channels;
-
-
 protected:
-
-	const gkString       m_name;
-	Channels             m_channels;
 	gkScalar             m_start, m_end;
-	gkScalar             m_evalTime, m_weight, m_blendFrames;
-	bool                 m_enabled;
-	int                  m_mode;
-	gkGameObjectChannel* m_objectChannel;
-
+	
 public:
-	gkAction(const gkString& name);
-	~gkAction();
-
+	gkAction(gkResourceManager* creator, const gkResourceName& name, const gkResourceHandle& handle)
+		:	gkResource(creator, name, handle), m_start(1), m_end(1)
+	{}
+	
+	virtual ~gkAction() {}
+	
 	GK_INLINE gkScalar         getLength(void) const       { return m_end - m_start; }
 	GK_INLINE gkScalar         getStart(void) const        { return m_start; }
 	GK_INLINE gkScalar         getEnd(void) const          { return m_end; }
-	GK_INLINE const gkString&  getName(void) const         { return m_name; }
-	GK_INLINE gkScalar         getBlendFrames(void) const  { return m_blendFrames; }
-	GK_INLINE gkScalar         getTimePosition(void) const { return m_evalTime; }
-	GK_INLINE gkScalar         getWeight(void) const       { return m_weight; }
-	GK_INLINE int              getMode(void) const         { return m_mode; }
-
-
-	GK_INLINE gkAction::Channels::ConstPointer getChannels(void) const {return m_channels.ptr();}
-	GK_INLINE int getNumChannels(void) const {return(int)m_channels.size();}
-
-
-	GK_INLINE void setStart(gkScalar v) { m_start = v;}
-	GK_INLINE void setEnd(gkScalar v)   { m_end = v;}
-	GK_INLINE void setMode(int v)       { m_mode = v; }
-
-
-	void addChannel(gkActionChannel* chan);
-	gkActionChannel* getChannel(gkBone* bone);
 	
-	GK_INLINE void setObjectChannel(gkGameObjectChannel* chan)  { m_objectChannel = chan; }
-	GK_INLINE gkGameObjectChannel* getObjectChannel(void)       { return m_objectChannel; }
+	GK_INLINE void             setStart(gkScalar v)        { m_start = v; }
+	GK_INLINE void             setEnd(gkScalar v)          { m_end = v; }
+	
+	virtual void evaluate(const gkScalar& time, const gkScalar& delta, const gkScalar& weight, gkGameObject* object) const = 0;
 
-
-	void setBlendFrames(gkScalar v);
-	void setTimePosition(gkScalar v);
-	void setWeight(gkScalar w);
-
-
-	GK_INLINE void enable(bool v)        {m_enabled = v;}
-	GK_INLINE bool isEnabled(void) const {return m_enabled;}
-	GK_INLINE bool isDone(void) const    {return !m_enabled || m_evalTime >= (m_end - m_start);}
-
-
-
-	void evaluate(gkScalar time);
-	void reset(void);
 };
+
+
+
+
+
 
 
 #endif//_gkAction_h_

@@ -87,10 +87,12 @@ enum gkAnimationStates
 	GK_ANIM_WHIP,
 	GK_ANIM_KICK,
 	GK_ANIM_WALL_FLIP,
+	GK_ANIM_COMBO_ATTACK,
 	GK_ANIM_MAX,
 };
 
-typedef gkAction* gkAnimations[GK_ANIM_MAX];
+class gkActionPlayer;
+typedef gkActionPlayer* gkAnimations[GK_ANIM_MAX];
 
 
 struct gkJoystickAxisState

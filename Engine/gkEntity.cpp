@@ -30,8 +30,6 @@
 #include "gkScene.h"
 #include "gkEngine.h"
 #include "gkUserDefs.h"
-#include "gkActionManager.h"
-#include "gkAction.h"
 #include "gkSkeleton.h"
 #include "gkMesh.h"
 
@@ -148,17 +146,6 @@ void gkEntity::_destroyAsStaticGeometry(void)
 }
 
 
-gkAction* gkEntity::getAction(const gkHashedString& name)
-{
-	gkAction* act;
-	
-	if ( m_skeleton && (act = m_skeleton->getAction(name)))
-		return act;
-	
-	return gkGameObject::getAction(name);
-}
-
-
 gkGameObject* gkEntity::clone(const gkString& name)
 {
 	gkEntity* cl = new gkEntity(getInstanceCreator(), name, -1);
@@ -178,9 +165,14 @@ void gkEntity::_resetPose(void)
 	{
 		if (!m_entityProps->m_startPose.empty())
 		{
-			if (m_skeleton->hasAction(m_entityProps->m_startPose))
+			gkActionPlayer* act = getActionPlayer(m_entityProps->m_startPose);
+			
+			if(!act)
+				act = addAction(m_entityProps->m_startPose);
+			
+			if (act)
 			{
-				gkAction* act = m_skeleton->getAction(m_entityProps->m_startPose);
+				// TODO why userpref startframe instead of action->getStart() ?
 				act->setTimePosition(gkEngine::getSingleton().getUserDefs().startframe);
 				act->evaluate(0.0f);
 			}

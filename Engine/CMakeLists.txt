@@ -200,14 +200,14 @@ endif()
 
 set(Animation_SOURCE
 	# ----- Source -----
-	Animation/gkAction.cpp
 	Animation/gkActionBlender.cpp
-	Animation/gkActionChannel.cpp
 	Animation/gkActionManager.cpp
+	Animation/gkActionPlayer.cpp
 	Animation/gkActionSequence.cpp
 	Animation/gkAnimationChannel.cpp
 	Animation/gkBezierSpline.cpp
-	Animation/gkGameObjectChannel.cpp
+	Animation/gkKeyedAction.cpp
+	Animation/gkTransformChannel.cpp
 	
 	#TODO
 	#Animation/gkLightAction.cpp
@@ -220,12 +220,13 @@ set(Animation_HEADER
 	# ----- Headers -----
 	Animation/gkAction.h
 	Animation/gkActionBlender.h
-	Animation/gkActionChannel.h
 	Animation/gkActionManager.h
+	Animation/gkActionPlayer.h
 	Animation/gkActionSequence.h
 	Animation/gkAnimationChannel.h
 	Animation/gkBezierSpline.h
-	Animation/gkGameObjectChannel.h
+	Animation/gkKeyedAction.h
+	Animation/gkTransformChannel.h
 	
 	#TODO
 	#Animation/gkLightAction.h

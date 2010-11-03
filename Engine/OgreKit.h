@@ -76,11 +76,11 @@
 #include "AI/gkFSM.h"
 
 #include "Animation/gkAction.h"
-#include "Animation/gkActionChannel.h"
 #include "Animation/gkActionManager.h"
 #include "Animation/gkBezierSpline.h"
 #include "Animation/gkActionBlender.h"
 #include "Animation/gkActionSequence.h"
+#include "Animation/gkKeyedAction.h"
 
 #include "Constraints/gkConstraint.h"
 #include "Constraints/gkConstraintManager.h"

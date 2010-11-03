@@ -38,10 +38,14 @@ public:
 	gkAnimationLoader() {}
 	~gkAnimationLoader() {}
 
+	void convertAction(Blender::bAction* action, bool pre25compat);
+	void convertActions(bParse::bListBasePtr* actions, bool pre25compat);
 
-	void convertGameObject(bParse::bListBasePtr* actions, class gkGameObject* obj, bool pre25compat, Blender::Object* bobj=0);
-	void convertSkeleton(bParse::bListBasePtr* actions, class gkSkeletonResource* skel, bool pre25compat);
-
+	void convertObject(class gkGameObject* obj, Blender::Object* bobj, bool pre25compat);
+	void convertLamp(class gkGameObject* obj, Blender::Object* bobj, bool pre25compat);
+	void convertCamera(class gkGameObject* obj, Blender::Object* bobj, bool pre25compat);
+	void convertMesh(class gkGameObject* obj, Blender::Object* bobj, bool pre25compat);
+	void convertArmature(class gkGameObject* obj, Blender::Object* bobj, bool pre25compat);
 
 };
 

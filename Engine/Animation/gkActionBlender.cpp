@@ -36,7 +36,6 @@ gkActionBlend::gkActionBlend()
 	     m_frames(0),
 	     m_time(0.f),
 	     m_base(0),
-	     m_sequ(0),
 	     m_enabled(true)
 
 {
@@ -47,8 +46,6 @@ gkScalar gkActionBlend::getLength(void) const
 {
 	if (m_base)
 		return m_base->getLength();
-	if (m_sequ)
-		return m_sequ->getLength();
 	return 0.f;
 }
 
@@ -67,13 +64,12 @@ void gkActionBlend::enable(bool v)
 	m_enabled = v;
 
 	if (m_base) m_base->enable(m_enabled);
-	if (m_sequ) m_sequ->enable(m_enabled);
 }
 
 
 bool gkActionBlend::evaluate(gkScalar delta)
 {
-	if (!m_enabled || !(m_base || m_sequ))
+	if (!m_enabled || !m_base)
 		return true;
 
 	if (m_mode == GK_ACT_LOOP)
@@ -88,39 +84,21 @@ bool gkActionBlend::evaluate(gkScalar delta)
 		if (m_time >= getLength())
 			m_time = getLength();
 	}
-
-
+	
+	
 	if (m_way != AB_NONE)
 	{
 		m_blend = gkClampf(m_blend + m_frames, 0.f, 1.f);
-
-		if (m_base)
-			m_base->setWeight(m_way == gkActionBlend::AB_IN ? m_blend : 1.f - m_blend);
-		else if (m_sequ)
-			m_sequ->setWeight(m_way == gkActionBlend::AB_IN ? m_blend : 1.f - m_blend);
+		m_base->setWeight(m_way == gkActionBlend::AB_IN ? m_blend : 1.f - m_blend);
 	}
 	else
-	{
-		if (m_base)
-			m_base->setWeight(1.f);
-		else if (m_sequ)
-			m_sequ->setWeight(1.f);
-
-	}
-
+		m_base->setWeight(1.f);
+	
 	// Apply objects
-
-	if (m_base)
-	{
-		m_base->setTimePosition(m_time);
-		m_base->evaluate(0.f);
-	}
-	else if (m_sequ)
-	{
-		m_sequ->setTimePosition(m_time);
-		m_sequ->evaluate(delta);
-	}
-
+	m_base->setTimePosition(m_time);
+	m_base->evaluate(0.f);
+	
+	
 	return m_way == gkActionBlend::AB_OUT ? (1.f - m_blend) <= 0.f : false;
 }
 
@@ -155,27 +133,10 @@ bool gkActionBlendSort(const gkActionBlend& a, const gkActionBlend& b)
 }
 
 
-void gkActionBlender::push(gkAction* action, gkScalar frames, int mode, int priority)
+void gkActionBlender::push(gkActionPlayer* action, const gkScalar& frames, int mode, int priority)
 {
 	gkActionBlend act;
 	act.setAction(action);
-
-	if (m_stack.find(act) == UT_NPOS)
-	{
-		act.enable(true);
-		act.setBlendFrames(frames);
-		act.setMode(mode);
-		act.setPriority(priority);
-		pushStack(act);
-	}
-}
-
-
-
-void gkActionBlender::push(gkActionSequence* action, gkScalar frames, int mode, int priority)
-{
-	gkActionBlend act;
-	act.setActionSequence(action);
 
 	if (m_stack.find(act) == UT_NPOS)
 	{

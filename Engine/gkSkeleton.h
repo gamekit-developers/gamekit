@@ -45,13 +45,10 @@ public:
 	void                 updateFromController(void);
 
 
-
 	gkSkeletonResource*  getInternalSkeleton(void) {return m_resource;}
 
 
-
-	virtual gkAction* getAction(const gkHashedString& name);
-	virtual bool hasAction(const gkHashedString& name);
+	gkBone*              getBone(const gkHashedString& name);
 
 protected:
 

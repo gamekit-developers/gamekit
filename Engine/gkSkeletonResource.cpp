@@ -25,7 +25,6 @@
 -------------------------------------------------------------------------------
 */
 #include "gkSkeletonResource.h"
-#include "gkAction.h"
 #include "gkBone.h"
 #include "gkLogger.h"
 
@@ -45,10 +44,6 @@ gkSkeletonResource::gkSkeletonResource(gkResourceManager* creator, const gkResou
 gkSkeletonResource::~gkSkeletonResource()
 {
 	delete m_externalLoader;
-
-	Actions::Iterator iter = m_actions.iterator();
-	while (iter.hasMoreElements())
-		delete iter.getNext().second;
 
 	Bones::Iterator biter = m_bones.iterator();
 	while (biter.hasMoreElements())
@@ -71,33 +66,6 @@ gkBone* gkSkeletonResource::createBone(const gkString& name)
 void gkSkeletonResource::makeManual(gkEntity* ent)
 {
 	m_externalLoader->makeManual(ent);
-}
-
-
-gkAction* gkSkeletonResource::createAction(const gkHashedString& name)
-{
-	if (m_actions.find(name) != GK_NPOS)
-	{
-		gkPrintf("SkeletonResource: Duplicate action '%s'\n", name.str().c_str());
-		return 0;
-	}
-
-	gkAction* act = new gkAction(name.str());
-
-	m_actions.insert(act->getName(), act);
-	return act;
-}
-
-
-
-
-gkAction* gkSkeletonResource::getAction(const gkHashedString& name)
-{
-	size_t pos;
-	if ((pos = m_actions.find(name)) == GK_NPOS)
-		return 0;
-
-	return m_actions.at(pos);
 }
 
 

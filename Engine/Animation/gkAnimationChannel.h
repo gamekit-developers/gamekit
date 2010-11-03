@@ -34,22 +34,7 @@
 
 
 
-enum gkCommonChannelCodes
-{
-	SC_LOC_X,
-	SC_LOC_Y,
-	SC_LOC_Z,
-	SC_SCL_X,
-	SC_SCL_Y,
-	SC_SCL_Z,
-	SC_ROT_X,
-	SC_ROT_Y,
-	SC_ROT_Z,
-	SC_ROT_W,
-	SC_ROT_EULER_X,
-	SC_ROT_EULER_Y,
-	SC_ROT_EULER_Z,
-};
+
 
 class gkAction;
 
@@ -63,20 +48,22 @@ public:
 
 protected:
 
-
-	Splines      m_splines;
+	const gkString       m_name;
+	Splines              m_splines;
 	gkAction*    m_action;
 
 public:
 
-	gkAnimationChannel(gkAction* parent);
+	gkAnimationChannel(const gkString& name, gkAction* parent);
 	virtual ~gkAnimationChannel();
 
 
 	void addSpline(gkBezierSpline* spline);
-	const gkBezierSpline** getSplines(void);
+	const gkBezierSpline** getSplines(void) const;
 
-	int getNumSplines(void);
+	int getNumSplines(void) const;
+
+	const gkString& getName(void) const {return m_name;}
 
 
 	///Evaluates the curve for the given time.
@@ -84,7 +71,11 @@ public:
 	///delta is the time expressed in [0-1]
 	///weight is the abount of blending from a previous evaluation
 	///to the next evaluation. expressed in [0-1]
-	virtual void evaluate(gkScalar time, gkScalar delta, gkScalar weight) = 0;
+	///object is the game object used to apply evaluation result
+	void evaluate(const gkScalar& time, const gkScalar& delta, const gkScalar& weight, gkGameObject* object) const;
+	
+protected:
+	virtual void evaluateImpl(const gkScalar& time, const gkScalar& delta, const gkScalar& weight, gkGameObject* object) const = 0;
 };
 
 

@@ -3,7 +3,7 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Charlie C.
+    Copyright (c) 2006-2010 Xavier T.
 
     Contributor(s): none yet.
 -------------------------------------------------------------------------------
@@ -24,32 +24,34 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkActionChannel_h_
-#define _gkActionChannel_h_
 
-#include "Animation/gkAnimationChannel.h"
-#include "gkBone.h"
+#ifndef GKKEYEDACTION_H
+#define GKKEYEDACTION_H
 
+#include "gkAction.h"
 
-///An action channel holds splines for each manually controlled bone.
-///Each spline may consist of one spline per gkActionChannelCode
-class gkActionChannel : public gkAnimationChannel
+class gkAnimationChannel;
+
+class gkKeyedAction : public gkAction
 {
+public:
+	typedef utArray<gkAnimationChannel*> Channels;
+	
 protected:
-	gkBone* m_bone;
+	Channels             m_channels;
 
 public:
+	gkKeyedAction(gkResourceManager* creator, const gkResourceName& name, const gkResourceHandle& handle);
+	virtual ~gkKeyedAction();
 
-	gkActionChannel(gkAction* parent, gkBone* bone);
-	virtual ~gkActionChannel();
-
-	GK_INLINE gkTransformState& getPoseTransfom(void)      { GK_ASSERT(m_bone); return m_bone->getPose(); }
-	GK_INLINE gkMatrix4 getPoseMatrix(void)                { GK_ASSERT(m_bone); return m_bone->getPose().toMatrix(); }
-	GK_INLINE gkBone* getBone(void)                        { GK_ASSERT(m_bone); return m_bone; }
-
-
-	void evaluate(gkScalar time, gkScalar delta, gkScalar weight);
+	GK_INLINE Channels::ConstPointer getChannels(void) const    { return m_channels.ptr(); }
+	GK_INLINE int                    getNumChannels(void) const { return(int)m_channels.size(); }
+	
+	void addChannel(gkAnimationChannel* chan);
+	gkAnimationChannel* getChannel(const gkString& name);
+	
+	virtual void evaluate(const gkScalar& time, const gkScalar& delta, const gkScalar& weight, gkGameObject* object) const;
 };
 
 
-#endif//_gkActionChannel_h_
+#endif // GKKEYEDACTION_H

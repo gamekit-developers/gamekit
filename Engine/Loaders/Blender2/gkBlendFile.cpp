@@ -39,7 +39,7 @@
 #include "gkScene.h"
 #include "gkGameObject.h"
 
-
+#include "Converters/gkAnimationConverter.h"
 
 #include "gkBlenderDefines.h"
 #include "gkBlenderSceneConverter.h"
@@ -148,6 +148,7 @@ void gkBlendFile::loadActive(void)
 		buildAllFonts();
 		buildTextFiles();
 		buildAllSounds();
+		buildAllActions();
 
 		// parse & build
 		Blender::Scene* sc = (Blender::Scene*)fg->curscene;
@@ -174,6 +175,7 @@ void gkBlendFile::createInstances(void)
 	buildAllFonts();
 	buildTextFiles();
 	buildAllSounds();
+	buildAllActions();
 
 
 	bParse::bListBasePtr* scenes = m_file->getMain()->getScene();
@@ -390,6 +392,15 @@ void gkBlendFile::buildAllFonts(void)
 		fnt->setData(pak->data, pak->size);
 	}
 #endif
+}
+
+
+void gkBlendFile::buildAllActions(void)
+{
+	gkAnimationLoader anims;
+	bParse::bMain* mp = m_file->getMain();
+
+	anims.convertActions(mp->getAction(), mp->getVersion() <= 249);
 }
 
 

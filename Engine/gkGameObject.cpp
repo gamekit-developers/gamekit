@@ -53,6 +53,8 @@
 #include "gkVariable.h"
 
 #include "gkAction.h"
+#include "gkActionManager.h"
+#include "gkActionPlayer.h"
 
 using namespace Ogre;
 
@@ -85,11 +87,9 @@ gkGameObject::~gkGameObject()
 		gkLogicManager::getSingleton().destroy(m_bricks);
 		m_bricks = 0;
 	}
-
 	Actions::Iterator it = m_actions.iterator();
 	while (it.hasMoreElements())
 		delete it.getNext().second;
-
 }
 
 
@@ -459,24 +459,38 @@ void gkGameObject::notifyUpdate(void)
 
 
 
-void gkGameObject::applyTransformState(const gkTransformState& newstate)
+void gkGameObject::applyTransformState(const gkTransformState& newstate, const gkScalar& weight)
 {
 	if (isImmovable())
 		return;
 
 	if (m_node)
 	{
-		m_node->setPosition(newstate.loc);
-		m_node->setOrientation(newstate.rot);
-		m_node->setScale(newstate.scl);
+		gkTransformState state = newstate;
+		
+		if (weight < 1.f)
+		{
+			const gkTransformState& cur = getTransformState();
+	
+			// blend poses
+			state.loc = gkMathUtils::interp(newstate.loc, cur.loc, weight);
+			state.rot = gkMathUtils::interp(newstate.rot, cur.rot, weight);
+			state.rot.normalise();
+			state.scl = gkMathUtils::interp(newstate.scl, cur.scl, weight);
+	
+		}
+		
+		m_node->setPosition(state.loc);
+		m_node->setOrientation(state.rot);
+		m_node->setScale(state.scl);
 
 		if (m_rigidBody)
 		{
-			m_rigidBody->setTransformState(newstate);
+			m_rigidBody->setTransformState(state);
 		}
 		else if (m_character)
 		{
-			m_character->setTransformState(newstate);
+			m_character->setTransformState(state);
 		}
 	}
 }
@@ -1105,23 +1119,22 @@ void gkGameObject::removeEventListener(gkGameObject::Notifier* evt)
 	if (evt) m_events.erase(evt);
 }
 
-
-gkAction* gkGameObject::createAction(const gkHashedString& name)
+gkActionPlayer* gkGameObject::addAction(gkAction* action)
 {
-	if (m_actions.find(name) != GK_NPOS)
-	{
-		gkPrintf("GameObject: Duplicate action '%s'\n", name.str().c_str());
-		return 0;
-	}
-
-	gkAction* act = new gkAction(name.str());
+	gkActionPlayer* act = new gkActionPlayer(action, this);
 
 	m_actions.insert(act->getName(), act);
 	return act;
 }
 
+gkActionPlayer* gkGameObject::addAction(const gkHashedString& name)
+{
+	gkAction* res = gkActionManager::getSingleton().getByName<gkAction>(name);
+	return addAction(res);
+}
 
-gkAction* gkGameObject::getAction(const gkHashedString& name)
+
+gkActionPlayer* gkGameObject::getActionPlayer(const gkHashedString& name)
 {
 	size_t pos;
 	if ((pos = m_actions.find(name)) == GK_NPOS)
@@ -1133,12 +1146,12 @@ gkAction* gkGameObject::getAction(const gkHashedString& name)
 
 void gkGameObject::playAction(const gkString& act, gkScalar blend, int mode, int priority)
 {
-	gkAction* gact = getAction(act);
+	gkActionPlayer* gact = getActionPlayer(act);
 	playAction(gact, blend, mode, priority);
 }
 
 
-void gkGameObject::playAction(gkAction* act, gkScalar blend, int mode, int priority)
+void gkGameObject::playAction(gkActionPlayer* act, gkScalar blend, int mode, int priority)
 {
 	if(act)
 	{
@@ -1147,7 +1160,8 @@ void gkGameObject::playAction(gkAction* act, gkScalar blend, int mode, int prior
 	}
 }
 
-
+///Called by the scene when object is animated
+///tick is in animation frame (gkUserPrefs.animspeed * delta time in second)
 void gkGameObject::updateActions(const gkScalar tick)
 {
 	m_actionBlender.evaluate(tick);

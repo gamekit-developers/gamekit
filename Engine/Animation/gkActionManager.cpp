@@ -26,15 +26,14 @@
 */
 #include "gkActionManager.h"
 #include "gkAction.h"
-#include "gkActionChannel.h"
-
+#include "gkActionSequence.h"
+#include "gkKeyedAction.h"
 
 
 gkActionManager::gkActionManager()
-	:    m_active(0), m_blend(0), m_blendTime(0.0)
+	: gkResourceManager("ActionManager", "Action")
 {
 }
-
 
 
 gkActionManager::~gkActionManager()
@@ -42,67 +41,44 @@ gkActionManager::~gkActionManager()
 }
 
 
-
-void gkActionManager::setAction(gkAction* act)
+gkKeyedAction* gkActionManager::createKeyedAction(const gkResourceName &name)
 {
-	if (act)
-	{
-		if (!m_active)
-			m_active = act;
-		else
-		{
-			m_blend = act;
-			m_blend->setWeight(0.0);
-			m_blend->setTimePosition(0.0);
-		}
-	}
+	m_currentType = GK_ACT_KEYED;
+	return create<gkKeyedAction>(name);
 }
 
 
-
-void gkActionManager::update(gkScalar delta, gkScalar blendDelta)
+gkActionSequence* gkActionManager::createActionSequence(const gkResourceName &name)
 {
-	if (m_blend && m_active)
-	{
-		m_blend->enable(true);
-		m_active->enable(true);
-
-		gkScalar blendFrames = m_blend->getBlendFrames();
-		if (gkFuzzy(blendFrames))
-			blendFrames = 1;
-
-		blendFrames = 1.f / blendFrames;
-
-		m_blendTime += blendFrames;
-
-		if (m_blendTime < 1.0)
-		{
-			m_blend->setWeight(m_blendTime);
-			m_active->setWeight(1.f - m_blendTime);
-			m_blend->evaluate(blendDelta);
-		}
-		else
-		{
-			m_blendTime = 0.f;
-			m_active->setWeight(0.f);
-			m_active->setTimePosition(0);
-
-			m_blend->setWeight(1.f);
-			m_active = m_blend;
-			m_blend = 0;
-		}
-	}
-
-	if (m_active)
-	{
-		m_active->enable(true);
-		m_active->evaluate(delta);
-	}
+	m_currentType = GK_ACT_SEQ;
+	return create<gkActionSequence>(name);
 }
 
 
-
-void gkActionManager::update(gkScalar delta)
+gkKeyedAction* gkActionManager::getKeyedAction(const gkResourceName &name)
 {
-	update(delta, delta);
+	return getByName<gkKeyedAction>(name);
 }
+
+
+gkActionSequence* gkActionManager::getActionSequence(const gkResourceName &name)
+{
+	return getByName<gkActionSequence>(name);
+}
+
+
+gkResource* gkActionManager::createImpl(const gkResourceName &name, const gkResourceHandle &handle)
+{
+
+	int curType = m_currentType;
+	m_currentType = GK_ACT_KEYED;
+
+	switch (curType)
+	{
+	case GK_ACT_SEQ:     return new gkActionSequence(this, name, handle);
+	}
+	return new gkKeyedAction(this, name, handle);
+}
+
+
+UT_IMPLEMENT_SINGLETON(gkActionManager);

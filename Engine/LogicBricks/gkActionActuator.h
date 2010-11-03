@@ -28,9 +28,8 @@
 #define _gkActionActuator_h_
 
 #include "gkLogicActuator.h"
-#include "Animation/gkActionManager.h"
 
-
+class gkActionPlayer;
 
 class gkActionActuator : public gkLogicActuator
 {
@@ -55,7 +54,7 @@ private:
 	gkString m_startAct, m_startProp;
 
 	bool m_reset, m_isInit;
-	gkAction*        m_action;
+	gkActionPlayer*        m_action;
 
 	void doInit(void);
 

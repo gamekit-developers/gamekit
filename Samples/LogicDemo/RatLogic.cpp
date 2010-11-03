@@ -127,6 +127,12 @@ RatLogic::RatLogic(gkGameObject* obj, SceneLogic* scene, PMOMO momo)
 
 	m_steeringWander->setMaxForce(10);
 
+	m_obj->getChildEntity()->addAction(animation::IDLE_STR);
+	m_obj->getChildEntity()->addAction(animation::WALK_STR);
+	m_obj->getChildEntity()->addAction(animation::RUN_STR);
+	m_obj->getChildEntity()->addAction(animation::DEATH_STR);
+	m_obj->getChildEntity()->addAction(animation::STOP_STR);
+	
 	m_characterNode = m_tree->createNode<gkCharacterNode>();
 	m_characterNode->setObj(m_obj);
 

@@ -97,13 +97,6 @@ class gkWindowSystem;
 class gkBlendFile;
 class gkUserDefs;
 
-class gkAction;
-class gkActionChannel;
-class gkActionManager;
-class gkBezierSpline;
-class gkGameObjectChannel;
-class gkAnimationChannel;
-class gkActionBlender;
 
 class gkConstraintManager;
 class gkConstraint;

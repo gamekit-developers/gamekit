@@ -52,24 +52,6 @@ void gkSkeleton::_setInternalSkeleton(gkSkeletonResource* skr)
 }
 
 
-gkAction* gkSkeleton::getAction(const gkHashedString& name)
-{
-	gkAction* act;
-	
-	if ( m_resource && (act = m_resource->getAction(name)))
-		return act;
-	
-	return gkGameObject::getAction(name);
-}
-
-
-bool gkSkeleton::hasAction(const gkHashedString& name)
-{
-	return getAction(name) ? true:false;
-}
-
-
-
 void gkSkeleton::createInstanceImpl(void)
 {
 	if (!m_resource)
@@ -118,4 +100,11 @@ gkGameObject* gkSkeleton::clone(const gkString& name)
 	gkSkeleton* cl = new gkSkeleton(getInstanceCreator(), name, -1);
 	gkGameObject::cloneImpl(cl);
 	return cl;
+}
+
+gkBone* gkSkeleton::getBone(const gkHashedString& name)
+{
+	if(m_resource)
+		return m_resource->getBone(name);
+	return 0;
 }

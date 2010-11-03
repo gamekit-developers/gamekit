@@ -319,7 +319,7 @@ void gkBlenderSceneConverter::convertObject(Blender::Object* bobj, gkGameObject*
 		convertObjectPhysics(gobj, bobj);
 		convertObjectConstraints(gobj, bobj);
 		convertObjectLogic(gobj, bobj);
-		convertObjectActions(gobj, bobj);
+		convertObjectAnimations(gobj, bobj);
 
 
 		// object data
@@ -594,12 +594,12 @@ void gkBlenderSceneConverter::convertObjectLogic(gkGameObject* gobj, Blender::Ob
 }
 
 
-void gkBlenderSceneConverter::convertObjectActions(gkGameObject* gobj, Blender::Object* bobj)
+void gkBlenderSceneConverter::convertObjectAnimations(gkGameObject* gobj, Blender::Object* bobj)
 {
 	gkAnimationLoader anims;
 	bParse::bMain* mp = m_file->_getInternalFile()->getMain();
 
-	anims.convertGameObject(mp->getAction(), gobj, mp->getVersion() <= 249, bobj);
+	anims.convertObject(gobj, bobj, mp->getVersion() <= 249);
 }
 
 
@@ -711,7 +711,6 @@ void gkBlenderSceneConverter::convertObjectSkeleton(gkSkeletonResource* sobj, Bl
 	GK_ASSERT(sobj && bobj->data);
 
 	gkSkeletonLoader loader;
-	gkAnimationLoader anims;
 
 
 	loader.m_armature = static_cast<Blender::bArmature*>(bobj->data);
@@ -727,10 +726,6 @@ void gkBlenderSceneConverter::convertObjectSkeleton(gkSkeletonResource* sobj, Bl
 			loader.buildBoneTree(bone, NULL, NULL);
 		bone = bone->next;
 	}
-
-	bParse::bMain* mp = m_file->_getInternalFile()->getMain();
-
-	anims.convertSkeleton(mp->getAction(), sobj, mp->getVersion() <= 249);
 }
 
 

@@ -41,9 +41,6 @@ public:
 
 	GK_INLINE gkEntityProperties&  getEntityProperties(void) {return *m_entityProps;}
 
-	virtual gkAction*       getAction(const gkHashedString& name);
-	virtual GK_INLINE bool  hasAction(const gkHashedString& name) {return getAction(name) ? true:false; }
-
 	gkSkeleton*   getSkeleton(void) {return m_skeleton;}
 	void          setSkeleton(gkSkeleton* skel);
 

@@ -28,8 +28,8 @@
 #include "gkAnimationChannel.h"
 
 
-gkAnimationChannel::gkAnimationChannel(gkAction* parent)
-	:    m_action(parent)
+gkAnimationChannel::gkAnimationChannel(const gkString& name, gkAction* parent)
+	:    m_name(name), m_action(parent)
 {
 }
 
@@ -57,14 +57,21 @@ void gkAnimationChannel::addSpline(gkBezierSpline* spline)
 
 
 
-const gkBezierSpline** gkAnimationChannel::getSplines(void)
+const gkBezierSpline** gkAnimationChannel::getSplines(void) const
 {
 	return (const gkBezierSpline**)m_splines.ptr();
 }
 
 
 
-int gkAnimationChannel::getNumSplines(void)
+int gkAnimationChannel::getNumSplines(void) const
 {
 	return (int)m_splines.size();
+}
+
+
+
+void gkAnimationChannel::evaluate(const gkScalar& time, const gkScalar& delta, const gkScalar& weight, gkGameObject* object) const
+{
+	evaluateImpl(time, delta, weight, object);
 }

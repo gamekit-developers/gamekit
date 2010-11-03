@@ -81,6 +81,7 @@ protected:
 	void buildAllTextures(void);
 	void buildAllSounds(void);
 	void buildAllFonts(void);
+	void buildAllActions(void);
 
 
 	void loadActive(void);

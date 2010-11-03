@@ -25,27 +25,28 @@
 -------------------------------------------------------------------------------
 */
 #include "gkActionSequence.h"
+#include "gkActionManager.h"
 #include "gkEngine.h"
 
 
 gkActionStrip::gkActionStrip()
 	:    m_scaledRange(-1.f, -1.f),
-	     m_scaleDelta(GK_INFINITY),
-	     m_curBlend(0.f),
-	     m_parentWeight(1.f),
-	     m_action(0),
+	     m_weight(1.f),
+	     m_actionPlayer(),
 	     m_blend(0.f, 0.f),
-	     m_init(false),
-	     m_time(0.f),
-	     m_prevDelta(0.f)
+	     m_curBlend(1.f)
 {
+	m_actionPlayer.enable(true);
 }
 
+void gkActionStrip::setAction(gkAction* act)
+{
+	m_actionPlayer.setAction(act);
+}
 
 void gkActionStrip::setBlend(const gkVector2& io)
 {
 	m_blend = io;
-	m_init = false;
 }
 
 
@@ -55,77 +56,37 @@ void gkActionStrip::setDeltaRange(const gkVector2& v)
 }
 
 
-void gkActionStrip::evaluate(const gkScalar& delta)
+void gkActionStrip::evaluate(gkScalar time, gkScalar weight, gkGameObject* object)
 {
-	if (m_action)
+	if (object)
 	{
-		m_action->enable(true);
+		gkScalar scaledTime = time * m_actionPlayer.getLength() / getLength();
+		
+		m_actionPlayer.setTimePosition(scaledTime);
 
-		if (!m_init)
+
+		if (!m_actionPlayer.isDone())
 		{
-			// Set the default seed
-			m_init = true;
-			m_parentWeight = 1.f;
-
-			m_curBlend = 0.f;
-			m_time = 0.f;
-
-
-			m_action->setTimePosition(0.f);
-
-			if (gkFuzzy(m_blend.x))
-				m_curBlend = 1.f;
-
-			m_action->setWeight(m_curBlend);
-
-			m_prevDelta = GK_INFINITY;
-		}
-
-		if (delta != m_prevDelta)
-		{
-			m_prevDelta = delta;
-
-			gkScalar olen = m_action->getLength();
-			gkScalar nlen = getLength();
-			gkScalar dlen = 0.f;
-
-			if (nlen < olen)
-				dlen = olen - nlen;
-			else
-				dlen = nlen - olen;
-
-			m_scaleDelta = m_prevDelta + (dlen / gkEngine::getTickRate());
-		}
-
-		gkScalar bi, bo;
-		bi = m_blend.x;
-		bo = m_blend.y;
-
-		m_time += (m_scaleDelta);
-		m_action->setTimePosition(m_time);
-
-		if (!gkFuzzy(bi))
-		{
-			if (m_curBlend < 1.f)
+			gkScalar bi, bo;
+			bi = m_blend.x;
+			bo = m_blend.y;
+			
+			m_curBlend = 1.0f;
+			
+			if (!gkFuzzy(bi) && time < bi)
 			{
-				m_curBlend += 1.f / bi;
+				m_curBlend *= time / bi;
 			}
+			
+			if (!gkFuzzy(bo) && (time + bo) > getLength())
+			{
+				m_curBlend *= (getLength() - time) / bo;
+			}
+			
+			m_actionPlayer.setWeight(gkClampf(weight * m_weight * m_curBlend, 0.f, 1.f));
+			m_actionPlayer.setObject(object);
+			m_actionPlayer.evaluate(0.f);
 		}
-
-
-		if (!gkFuzzy(bo) && (m_time + bo) > getLength())
-		{
-			m_curBlend -= 1.f / bo;
-		}
-		else if (m_time >= bo)
-		{
-			m_curBlend = 1.f;
-		}
-
-		m_action->setWeight(gkClampf(m_curBlend, 0.f, m_parentWeight));
-
-		if (!m_action->isDone())
-			m_action->evaluate(0.f);
 	}
 }
 
@@ -134,24 +95,14 @@ void gkActionStrip::evaluate(const gkScalar& delta)
 
 void gkActionStrip::reset(void)
 {
-	m_init = false;
-	if (m_action)
-		m_action->reset();
+	m_actionPlayer.reset();
 }
 
 
 
 void gkActionStrip::enable(bool v)
 {
-	if (m_action)
-		m_action->enable(v);
-}
-
-
-
-void gkActionStrip::setParentWeight(gkScalar w)
-{
-	m_parentWeight = w;
+	m_actionPlayer.enable(v);
 }
 
 
@@ -159,15 +110,9 @@ void gkActionStrip::setParentWeight(gkScalar w)
 
 
 
-gkActionSequence::gkActionSequence()
-	:    m_timeDirty(true),
-	     m_range(FLT_MAX, -FLT_MAX),
-	     m_evalTime(0.f),
-	     m_default(0),
-	     m_weight(1.f),
-	     m_defTime(0.f),
-	     m_enabled(true),
-	     m_active(0)
+
+gkActionSequence::gkActionSequence(gkResourceManager* creator, const gkResourceName& name, const gkResourceHandle& handle)
+	:	gkAction(creator, name, handle)
 {
 }
 
@@ -180,6 +125,12 @@ gkActionSequence::~gkActionSequence()
 }
 
 
+void gkActionSequence::addItem(const gkString& act, const gkVector2& timeRange, const gkVector2& blendIO)
+{
+	gkAction* action = gkActionManager::getSingleton().getByName<gkAction>(act);
+	addItem(action, timeRange, blendIO);
+}
+
 
 void gkActionSequence::addItem(gkAction* act, const gkVector2& timeRange, const gkVector2& blendIO)
 {
@@ -189,10 +140,10 @@ void gkActionSequence::addItem(gkAction* act, const gkVector2& timeRange, const 
 
 	// start and end time
 
-	if (m_range.x > timeRange.x)
-		m_range.x = timeRange.x;
-	if (m_range.y < timeRange.y)
-		m_range.y = timeRange.y;
+	if (m_start > timeRange.x)
+		m_start = timeRange.x;
+	if (m_end < timeRange.y)
+		m_end = timeRange.y;
 
 
 	gkActionStrip* seq = new gkActionStrip();
@@ -203,129 +154,42 @@ void gkActionSequence::addItem(gkAction* act, const gkVector2& timeRange, const 
 	seq->setDeltaRange(timeRange);
 	seq->enable(true);
 	m_seq.push_back(seq);
-
-	clearWeights();
-
-}
-
-
-void gkActionSequence::clearWeights(void)
-{
-	UTsize i, s;
-	Sequences::Pointer p;
-
-	i = 0;
-	s = m_seq.size();
-	p = m_seq.ptr();
-
-
-	while (i < s)
-	{
-		gkActionStrip* seq = p[i];
-		seq->reset();
-		++i;
-	}
 }
 
 
 
-void gkActionSequence::reset(void)
-{
-	m_enabled = false;
-	m_evalTime = 0.f;
-	m_defTime = 0.f;
-	clearWeights();
+//void gkActionSequence::evaluate(const gkScalar& time, const gkScalar& delta, const gkScalar& weight, gkGameObject* object) const
+//{
+//	UTsize i, s;
+//	gkActionStrip* const* p;
+
+//	i = 0;
+//	s = m_seq.size();
+//	p = m_seq.ptr();
 
 
-	if (m_default)
-	{
-		m_default->enable(false);
-		m_default->setWeight(1.f);
-		m_default->setTimePosition(0.f);
-	}
-}
+//	while (i < s)
+//	{
+//		gkActionStrip* seq = p[i++];
+//		const gkScalar st  = seq->getStart();
+//		const gkScalar end = st + seq->getEnd();
 
 
-
-void gkActionSequence::setWeight(gkScalar w)
-{
-	if (m_enabled)
-	{
-		if (m_weight != w)
-		{
-			m_weight = w;
-			UTsize i, s;
-			Sequences::Pointer p;
-
-			i = 0;
-			s = m_seq.size();
-			p = m_seq.ptr();
-
-			while (i < s) p[i++]->setParentWeight(m_weight);
-		}
-	}
-}
-
-void gkActionSequence::setTimePosition(const gkScalar& v)
-{
-	if (m_enabled)
-	{
-		m_evalTime = v;
-		m_timeDirty = true;
-	}
-
-}
-
-void gkActionSequence::evaluate(const gkScalar& delta)
-{
-	if (!m_enabled)
-		return;
-
-	UTsize i, s;
-	Sequences::Pointer p;
-
-	i = 0;
-	s = m_seq.size();
-	p = m_seq.ptr();
+//		if (time < st || time > end)
+//		{
+//			// out of current range
+//			continue;
+//		}
 
 
-	if (m_timeDirty)
-		m_timeDirty = false;
-	else
-		m_evalTime += delta;
-
-	if (m_default)
-	{
-		// Loop in background
-
-		m_defTime += delta;
-		if (m_defTime >= m_default->getLength())
-			m_defTime = 0.f;
-
-	}
-
-	while (i < s)
-	{
-		gkActionStrip* seq = p[i++];
-		const gkScalar st  = seq->getStart();
-		const gkScalar end = st + seq->getEnd();
+//		if (time <= m_start)
+//		{
+//			// out of initial starting range
+//			continue;
+//		}
 
 
-		if (m_evalTime < st || m_evalTime > end)
-		{
-			// out of current range
-			continue;
-		}
-
-
-		if (m_evalTime <= m_range.x)
-		{
-			// out of initial starting range
-			continue;
-		}
-
-
-		m_active = seq->getAction();
-		seq->evaluate(delta);
-	}
-}
+////		m_active = seq->getAction();
+//		seq->evaluate(time-st, weight, object);
+//	}
+//}

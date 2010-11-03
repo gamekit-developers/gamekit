@@ -3,7 +3,7 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Charlie C.
+    Copyright (c) 2006-2010 Xavier T.
 
     Contributor(s): none yet.
 -------------------------------------------------------------------------------
@@ -24,25 +24,19 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "gkAction.h"
-#include "gkActionChannel.h"
 
+#include "gkTransformChannel.h"
 
-
-gkActionChannel::gkActionChannel(gkAction* parent, gkBone* bone)
-	:    gkAnimationChannel(parent), m_bone(bone)
-{
-	GK_ASSERT(bone);
-}
-
-
-gkActionChannel::~gkActionChannel()
+gkTransformChannel::gkTransformChannel(const gkString& name, gkAction* parent)
+		:	gkAnimationChannel(name, parent), m_isEulerRotation(false)
 {
 }
 
-
-void gkActionChannel::evaluate(gkScalar time, gkScalar delta, gkScalar weight)
+void gkTransformChannel::evaluateImpl(const gkScalar& time, const gkScalar& delta, const gkScalar& weight, gkGameObject* object) const
 {
+	if(!object || !weight >0)
+		return;
+
 	const gkBezierSpline** splines = getSplines();
 	int len = getNumSplines(), i = 0, nvrt;
 
@@ -50,6 +44,8 @@ void gkActionChannel::evaluate(gkScalar time, gkScalar delta, gkScalar weight)
 	gkTransformState channel;
 	channel.setIdentity();
 
+	gkEuler euler(0,0,0);
+	
 	while (i < len)
 	{
 		const gkBezierSpline* spline = splines[i++];
@@ -69,24 +65,30 @@ void gkActionChannel::evaluate(gkScalar time, gkScalar delta, gkScalar weight)
 		case SC_SCL_X: { channel.scl.x = eval; break; }
 		case SC_SCL_Y: { channel.scl.y = eval; break; }
 		case SC_SCL_Z: { channel.scl.z = eval; break; }
-		case SC_ROT_X: { channel.rot.x = eval; break; }
-		case SC_ROT_Y: { channel.rot.y = eval; break; }
-		case SC_ROT_Z: { channel.rot.z = eval; break; }
-		case SC_ROT_W: { channel.rot.w = eval; break; }
+		case SC_ROT_QUAT_X: { channel.rot.x = eval; break; }
+		case SC_ROT_QUAT_Y: { channel.rot.y = eval; break; }
+		case SC_ROT_QUAT_Z: { channel.rot.z = eval; break; }
+		case SC_ROT_QUAT_W: { channel.rot.w = eval; break; }
+		case SC_ROT_EULER_X: { euler.x = eval; break; }
+		case SC_ROT_EULER_Y: { euler.y = eval; break; }
+		case SC_ROT_EULER_Z: { euler.z = eval; break; }
 		}
 	}
 
-
-	// prevent divide by zero
-	if (gkFuzzy(channel.rot.Norm()))
-		channel.rot = Ogre::Quaternion::IDENTITY;
+	if(m_isEulerRotation)
+		channel.rot = euler.toQuaternion();
 	else
-		channel.rot.normalise();
-
+	{
+		// prevent divide by zero
+		if (gkFuzzy(channel.rot.Norm()))
+			channel.rot = Ogre::Quaternion::IDENTITY;
+		else
+			channel.rot.normalise();
+	}
+	
 	GK_ASSERT(!channel.loc.isNaN());
 	GK_ASSERT(!channel.rot.isNaN());
 	GK_ASSERT(!channel.scl.isNaN());
 
-	// Apply specifics
-	m_bone->applyChannelTransform(channel, weight);
+	applyTransform(object, &channel, weight);
 }

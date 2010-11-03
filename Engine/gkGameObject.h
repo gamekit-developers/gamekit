@@ -67,7 +67,7 @@ public:
 
 	typedef utArray<Notifier*> Notifications;
 
-	typedef utHashTable<gkHashedString, gkAction*>  Actions;
+	typedef utHashTable<gkHashedString, gkActionPlayer*>  Actions;
 
 public:
 
@@ -161,7 +161,7 @@ public:
 	gkEuler                  getWorldRotation(void);
 
 
-	void applyTransformState(const gkTransformState& newstate);
+	void applyTransformState(const gkTransformState& newstate, const gkScalar& weight=1.f);
 	void setTransform(const gkMatrix4& v);
 	void setTransform(const gkTransformState& v);
 	void setPosition(const gkVector3& v);
@@ -258,11 +258,11 @@ public:
 
 
 	// actions
-	gkAction*               createAction(const gkHashedString& name);
-	virtual gkAction*       getAction(const gkHashedString& name);
-	virtual GK_INLINE bool  hasAction(const gkHashedString& name)      { return m_actions.find(name) != GK_NPOS; }
+	gkActionPlayer*         addAction(const gkHashedString& name);
+	gkActionPlayer*         addAction(gkAction* action);
+	gkActionPlayer*         getActionPlayer(const gkHashedString& name);
 	void                    playAction(const gkString& act, gkScalar blend, int mode = GK_ACT_END, int priority = 0);
-	void                    playAction(gkAction* act, gkScalar blend, int mode = GK_ACT_END, int priority = 0);
+	void                    playAction(gkActionPlayer* act, gkScalar blend, int mode = GK_ACT_END, int priority = 0);
 	void                    updateActions(const gkScalar tick);
 
 
