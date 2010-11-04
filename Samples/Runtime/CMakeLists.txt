@@ -49,7 +49,6 @@ else ()
 			TARGET AppOgreKit 
 			POST_BUILD
 			COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/momo_ogre.blend ${CMAKE_CURRENT_BINARY_DIR}/momo_ogre.blend
-			COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/OgreKitStartup.cfg ${CMAKE_CURRENT_BINARY_DIR}/OgreKitStartup.cfg
 		)
 	ENDIF ()
 
