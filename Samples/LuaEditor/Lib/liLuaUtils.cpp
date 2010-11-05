@@ -52,6 +52,19 @@ void LUA_dumpStack(lua_State* L); //dump stack
 
 //--
 
+void LUA_defLog(const char* str) { gkPrintf(str); }
+
+LUA_log gLOG = LUA_defLog;
+
+LUA_log LUA_getLog() { return gLOG; }
+
+void LUA_setLog(LUA_log log)
+{
+	gLOG = log ? log : LUA_defLog;
+}
+
+//--
+
 gkString LUA_popStr(lua_State* L)
 {
 	GK_ASSERT(L); if (!L) return "";
@@ -67,14 +80,10 @@ int CPRINT(lua_State* L)
 {
 	gkString msg = LUA_popStr(L);
 
-	gkPrintf("%s", msg.c_str());
+	//gLOG("%s", msg.c_str());
+	gLOG(msg.c_str());
 
 	return 0;
-}
-
-void LUA_log(const gkString& s)
-{
-	gkPrintf("%s\n", s.c_str());
 }
 
 int LUA_traceback(lua_State* L)
@@ -82,13 +91,15 @@ int LUA_traceback(lua_State* L)
 	GK_ASSERT(L); if (!L) return 1;
 
 	lua_getfield(L, LUA_GLOBALSINDEX, "debug");
-	if (!lua_istable(L, -1)) {
+	if (!lua_istable(L, -1)) 
+	{
 		lua_pop(L, 1);
 		return 1;
 	}
 
 	lua_getfield(L, -1, "traceback");
-	if (!lua_isfunction(L, -1)) {
+	if (!lua_isfunction(L, -1)) 
+	{
 		lua_pop(L, 2);
 		return 1;
 	}
@@ -163,7 +174,7 @@ void LUA_dumpStack(lua_State* L)
 		}
 	}
 
-	gkPrintf("%s", dump.c_str());
+	gLOG(dump.c_str());
 }
 
 //--
@@ -199,9 +210,10 @@ bool LUA_call(lua_State* L, const gkString& filename, gkString& error)
 
 	gkString text;
 
-	if (!LUA_loadfile(L, filename, text)) {
+	if (!LUA_loadfile(L, filename, text)) 
+	{
 		error = utStringFormat("[LUA] ERROR: can't load lua file: '%s'", filename.c_str());
-		gkPrintf(error.c_str());
+		gLOG(error.c_str());
 		return false;
 	}
 
@@ -221,7 +233,7 @@ bool LUA_call(lua_State* L, const gkString& buf, const gkString& name, gkString&
 		gkString msg = LUA_popStr(L);
 
 		error = utStringFormat("[LUA] ERROR: can't load lua buf: '%s' '%s'", name.c_str(), msg.c_str());
-		gkPrintf(error.c_str());
+		gLOG(error.c_str());
 		return false;
 	}
 
@@ -236,7 +248,7 @@ bool LUA_call(lua_State* L, const gkString& buf, const gkString& name, gkString&
 	if (err != 0)
 	{
 		error = utStringFormat("[LUA] ERROR: %s (ret: %d)", lua_tostring(L, -1), err);
-		gkPrintf(error.c_str());
+		gLOG(error.c_str());
 		lua_pop(L, 1); //pop one-elements(error msg)
 		return false;
 	}
@@ -253,7 +265,7 @@ int LUA_getTable(lua_State* L, const gkString& table) //return old top for stack
 	if (!lua_istable(L, -1))
 	{
 		lua_settop(L, top);
-		gkPrintf("[LUA] ERROR: %s isn't table", table.c_str());
+		gLOG(utStringFormat("[LUA] ERROR: %s isn't table", table.c_str()).c_str());
 		return -1;
 	}
 
@@ -319,7 +331,7 @@ lua_State* LUA_init(bool useLibs)
 	lua_State* L = lua_open();
 	if (!L)
 	{
-		gkPrintf("[LUA] ERROR: initLua() is failed");
+		gLOG("[LUA] ERROR: initLua() is failed");
 		return NULL;
 	}
 
@@ -327,7 +339,7 @@ lua_State* LUA_init(bool useLibs)
 		luaL_openlibs(L);
 
 	// register common func
-	lua_register(L, "CPRINT", CPRINT);
+	lua_register(L, "print", CPRINT);
 
 	return L;
 }
@@ -341,16 +353,30 @@ void LUA_uninit(lua_State* L)
 
 //--
 
-liLuaScript::liLuaScript(bool useLibs) : m_L(NULL)
+class luLuaLog
 {
+	LUA_log m_olog;
+public:
+	luLuaLog(LUA_log log) : m_olog(LUA_getLog()) { LUA_setLog(log); }
+	~luLuaLog() { LUA_setLog(m_olog); }
+};
+
+#define SET_LUALOG luLuaLog _log(m_log)
+
+liLuaScript::liLuaScript(bool useLibs, LUA_log log) : m_L(NULL), m_log(log)
+{
+	SET_LUALOG;
+
 	m_L = LUA_init(useLibs);
 
 	if (!m_L)
-		gkPrintf("[LUA] Can't Init Lua Scripts.");
+		gLOG("[LUA] Can't Init Lua Scripts.");
 }
 
 liLuaScript::~liLuaScript()
 {
+	SET_LUALOG;
+
 	if (m_L)
 		LUA_uninit(m_L);
 }
@@ -358,49 +384,67 @@ liLuaScript::~liLuaScript()
 //pop stack top gkString
 gkString liLuaScript::popStr()
 {
+	SET_LUALOG;
+
 	return LUA_popStr(m_L);
 }
 
 //return gkString from global table
 gkString liLuaScript::getGlobalStr(const gkString& name)
 {
+	SET_LUALOG;
+
 	return LUA_getGlobalStr(m_L, name);
 }
 
 //call from file
 bool liLuaScript::call(const gkString& filename)
 {
+	SET_LUALOG;
+
 	return LUA_call(m_L, filename, m_error);
 }
 
 //call from buffer
 bool liLuaScript::call(const gkString& buf, const gkString& name)
 {
+	SET_LUALOG;
+
 	return LUA_call(m_L, buf, name, m_error);
 }
 
 //dump stack
 void liLuaScript::dumpStack()
 {
+	SET_LUALOG;
+
 	LUA_dumpStack(m_L);
 }
 
 int liLuaScript::getTop() const
 {
+	SET_LUALOG;
+
 	return lua_gettop(m_L);
 }
 
 int liLuaScript::getTableSize(const gkString& table)
 {
+	SET_LUALOG;
+
 	return LUA_getTableSize(m_L, table);
 }
 
 gkString liLuaScript::getTableStr(const gkString& table, const gkString& field)
 {
+	SET_LUALOG;
+
 	return LUA_getfield(m_L, table, field);
 }
 
 gkString liLuaScript::getTableStr(const gkString& table, int index)
 {
+	SET_LUALOG;
+
 	return LUA_getfield(m_L, table, index);
 }

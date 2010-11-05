@@ -43,6 +43,7 @@
 #include "luProjPanel.h"
 #include "luUtils.h"
 #include "luPropsPanel.h"
+#include "luOutputs.h"
 #include "luEdit.h"
 #include "Lib/liUtils.h"
 #include "luProcess.h"
@@ -182,6 +183,7 @@ luMainFrame::luMainFrame() :
 	m_logListener(NULL),
 	m_logBox(NULL),
 	m_runtimeLogFile(NULL),
+	m_consoleEdit(NULL),
 	m_logRuntime(NULL),
 	m_pidHelp(0),
 	m_pidRuntime(0),
@@ -279,13 +281,18 @@ void luMainFrame::setupWindows()
 
 
 	//-- output
-	m_logBox = new wxListBox(this, ID_LOG_BOX, wxDefaultPosition, wxDefaultSize); //wxSize(WIN_SIZE_X, LOG_BOX_HEIGHT));
+	m_logBox = new luLogBox(this, ID_LOG_BOX);
 
 	m_bookOutput = new wxAuiNotebook(this, ID_BOOK_OUTPUT, wxDefaultPosition, wxDefaultSize, BOOK_OUTPUT_STYLE);
 	m_bookOutput->AddPage(m_logBox, "Log", false, pageBmp);
 
 	m_logRuntime = new luLogEdit(this, ID_LOG_RUNTIME_EDIT);
 	m_bookOutput->AddPage(m_logRuntime, "Run", false, pageBmp);
+
+	m_consoleEdit = new luConsoleEdit(this, ID_CONSOLE_EDIT);
+	m_bookOutput->AddPage(m_consoleEdit, "Console", false, pageBmp);
+
+	//m_bookOutput->SetSelection(2);
 
 	//-- props
 
@@ -1188,26 +1195,8 @@ void luMainFrame::OnSaveLog(wxCommandEvent& WXUNUSED(event))
 	wxFileDialog *dlg = new wxFileDialog(this, wxFileSelectorPromptStr,  "",  "", "Text File (*.txt)|*.txt", wxFD_SAVE);
 	if (dlg->ShowModal() == wxID_OK)
 	{
-		 wxString fileName = dlg->GetPath();
-		 wxTextFile file(fileName);
-		 
-		 bool ok = wxFile::Exists(fileName) ? file.Open() : file.Create();
-
-		 if (ok)
-		 {
-			 file.Clear();
-			 wxArrayString lines = m_logBox->GetStrings();
-			 for (size_t i = 0; i < lines.GetCount(); i++)
-			 {
-				 file.AddLine(lines[i]);
-			 }
-			 file.Write();
-			 wxLogMessage("Log file is saved: %s", fileName);
-		 }
-		 else
-		 {
-			 wxLogMessage("Can't open log file: %s", fileName);
-		 }		 
+		wxString fileName = dlg->GetPath();
+		m_logBox->save(fileName);		
 	}
 }
 

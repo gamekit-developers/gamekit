@@ -65,6 +65,7 @@ set(APP_SRC
 	luConfig.cpp
 	luFindRepDlg.cpp
 	luDefs.cpp
+	luOutputs.cpp
 	${OK_UTILS_PATH}/okApp.cpp
 	${OK_UTILS_PATH}/okWin.cpp
 	${OK_UTILS_PATH}/okUtils.cpp
@@ -87,6 +88,7 @@ set(APP_HDR
 	luWizard.h
 	luConfig.h
 	luFindRepDlg.h
+	luOutputs.h
 	${OK_UTILS_PATH}/okApp.h
 	${OK_UTILS_PATH}/okWin.h
 	${OK_UTILS_PATH}/okUtils.h

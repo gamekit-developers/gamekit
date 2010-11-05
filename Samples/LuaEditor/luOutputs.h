@@ -25,47 +25,55 @@
 -------------------------------------------------------------------------------
 */
 
+#ifndef _luOutputs_h_
+#define _luOutputs_h_
 
-#ifndef _liLuaUtils_h_
-#define _liLuaUtils_h_
-
-struct lua_State;
-
-typedef void (*LUA_log)(const char*);
-
-class liLuaScript {
-	lua_State* m_L;
-	gkString m_error;
-	LUA_log m_log;
-
+class luLogBox : public wxListBox
+{
 public:
-	liLuaScript(bool useLibs = true, LUA_log log = NULL);
-	virtual ~liLuaScript();
+	luLogBox(wxWindow* parent, int id = wxID_ANY);
 
-	bool isInited() { return m_L != NULL; }
-
-	const gkString& getLastError() const { return m_error; }
-	void setLog(LUA_log log) { m_log = log; }
-
-	//pop stack top gkString, if stack is empty, return ""
-	gkString popStr();
-	//return gkString from global table
-	gkString getGlobalStr(const gkString& name);
-
-	//call from file
-	bool call(const gkString& filename);
-	//call from buffer
-	bool call(const gkString& buf, const gkString& name);
-
-	//dump stack
-	void dumpStack();
-
-	lua_State* getLuaState() { return m_L; }
-	int getTop() const;
-
-	int getTableSize(const gkString& table);
-	gkString getTableStr(const gkString& table, const gkString& field);
-	gkString getTableStr(const gkString& table, int index);
+	bool save(const wxString& fileName);
 };
 
-#endif //_liLuaUtils_h_
+class luLogEdit : public wxTextCtrl
+{
+	void OnLButtonDBClick(wxMouseEvent& event);
+public:
+	luLogEdit(wxWindow* parent, int id = wxID_ANY);
+
+	DECLARE_EVENT_TABLE()
+};
+
+class liLuaScript;
+
+class luConsoleEdit : public wxTextCtrl, public utSingleton<luConsoleEdit>
+{
+	liLuaScript* m_script;
+	wxString m_prompt;
+
+	wxArrayString m_commands;
+	int m_lastCmdIndex;
+	void addCommand(const wxString& cmd);
+	void pasteCommand(int move);
+	void replaceCommand(const wxString& cmd);
+
+	long getLastPromptPos();
+
+	void OnKeyDown(wxKeyEvent& event);
+
+	static void consoleLog(const char *log);
+public:
+	luConsoleEdit(wxWindow* parent, int id = wxID_ANY);
+	~luConsoleEdit();
+	
+	void writeLine(const wxString& line, bool newLine=false);
+	void runCmd(const wxString& cmd, bool prompt=true, bool echo=true);
+
+	DECLARE_EVENT_TABLE()
+
+	UT_DECLARE_SINGLETON(luConsoleEdit)
+};
+
+
+#endif//_luOutputs_h_

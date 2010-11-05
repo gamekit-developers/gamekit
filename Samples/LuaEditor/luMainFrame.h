@@ -40,6 +40,8 @@ class luProcess;
 class luEdit;
 class luHhkFile;
 class luLogEdit;
+class luLogBox;
+class luConsoleEdit;
 
 class luMainFrame : public wxFrame
 {
@@ -134,8 +136,9 @@ private:
 
 	wxAuiManager*		m_aui;
 	okWindow*			m_okWin;
-	wxListBox*			m_logBox;
+	luLogBox*			m_logBox;
 	luLogEdit*			m_logRuntime;
+	luConsoleEdit*		m_consoleEdit;
 	wxStatusBar*		m_statusBar;
 	luLog*				m_logListener;
 	wxTimer				m_timer;

@@ -56,13 +56,4 @@ public:
 	wxString readLog();
 };
 
-class luLogEdit : public wxTextCtrl
-{
-	void OnLButtonDBClick(wxMouseEvent& event);
-public:
-	luLogEdit(wxWindow* parent, int id = wxID_ANY);
-
-	DECLARE_EVENT_TABLE()
-};
-
 #endif //_luLog_h_
