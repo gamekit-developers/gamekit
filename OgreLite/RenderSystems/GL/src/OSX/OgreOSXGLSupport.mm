@@ -1,8 +1,8 @@
 /*
 -----------------------------------------------------------------------------
 This source file is part of OGRE
-    (Object-oriented Graphics Rendering Engine)
-For the latest info, see http://www.ogre3d.org/
+(Object-oriented Graphics Rendering Engine)
+For the latest info, see http://www.ogre3d.org
 
 Copyright (c) 2000-2009 Torus Knot Software Ltd
 
@@ -60,6 +60,7 @@ void OSXGLSupport::addConfig( void )
 	ConfigOption optBitDepth;
     ConfigOption optFSAA;
 	ConfigOption optRTTMode;
+    ConfigOption optMacAPI;
 
 	// FS setting possiblities
 	optFullScreen.name = "Full Screen";
@@ -78,20 +79,20 @@ void OSXGLSupport::addConfig( void )
 	mOptions[ optBitDepth.name ] = optBitDepth;
 
 	CGLRendererInfoObj rend;
-    
-#if (MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_4)
-	GLint nrend;
+
+#if defined(MAC_OS_X_VERSION_10_4) && MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
+    long nrend;
 	CGLQueryRendererInfo(CGDisplayIDToOpenGLDisplayMask(kCGDirectMainDisplay), &rend, &nrend);
 #else
-    long nrend;
+	GLint nrend;
 	CGLQueryRendererInfo(CGDisplayIDToOpenGLDisplayMask(kCGDirectMainDisplay), &rend, &nrend);
 #endif
 
-#if (MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_4)
-    GLint maxSamples;
+#if defined(MAC_OS_X_VERSION_10_4) && MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
+	long maxSamples;
 	CGLDescribeRenderer(rend, 0, kCGLRPMaxSamples, &maxSamples);
 #else
-	long maxSamples;
+    GLint maxSamples;
 	CGLDescribeRenderer(rend, 0, kCGLRPMaxSamples, &maxSamples);
 #endif
 
@@ -219,9 +220,7 @@ void OSXGLSupport::addConfig( void )
 #endif
 		String resoString = StringConverter::toString(fWidth) + " x " + StringConverter::toString(fHeight);
 		optVideoMode.possibleValues.push_back(resoString);
-		
-//		LogManager::getSingleton().logMessage( "Added resolution: " + resoString);
-	}
+    }
 	
     // Release memory
     CFRelease(goodModes);
@@ -233,7 +232,14 @@ void OSXGLSupport::addConfig( void )
 	optRTTMode.currentValue = "FBO";
 	optRTTMode.immutable = false;
 
-	mOptions[optFullScreen.name] = optFullScreen;
+    optMacAPI.name = "macAPI";
+    optMacAPI.possibleValues.push_back( "cocoa" );
+    optMacAPI.possibleValues.push_back( "carbon" );
+    optMacAPI.currentValue = "carbon";
+    optMacAPI.immutable = false;
+
+    mOptions[optMacAPI.name] = optMacAPI;
+    mOptions[optFullScreen.name] = optFullScreen;
 	mOptions[optVideoMode.name] = optVideoMode;
     mOptions[optFSAA.name] = optFSAA;
 	mOptions[optRTTMode.name] = optRTTMode;
@@ -252,7 +258,6 @@ RenderWindow* OSXGLSupport::createWindow( bool autoCreateWindow, GLRenderSystem*
 		if( opt == mOptions.end() )
 			OGRE_EXCEPT( Exception::ERR_RENDERINGAPI_ERROR, "Can't find full screen options!", "OSXGLSupport::createWindow" );
 		bool fullscreen = ( opt->second.currentValue == "Yes" );
-
 		opt = mOptions.find( "Video Mode" );
 		if( opt == mOptions.end() )
 			OGRE_EXCEPT( Exception::ERR_RENDERINGAPI_ERROR, "Can't find video mode options!", "OSXGLSupport::createWindow" );
@@ -285,37 +290,38 @@ RenderWindow* OSXGLSupport::createWindow( bool autoCreateWindow, GLRenderSystem*
 RenderWindow* OSXGLSupport::newWindow( const String &name, unsigned int width, unsigned int height, 
 	bool fullScreen, const NameValuePairList *miscParams )
 {
-	//  Does the user want Cocoa or Carbon, default to carbon...
+	// Does the user want Cocoa or Carbon, default to Carbon...
 	mAPI = "carbon";
-	mContextType = "AGL";
+	mContextType = "CGL";
 	
 	if(miscParams)
 	{
-		NameValuePairList::const_iterator opt(NULL);
-		
-		// First we must determine if this is a carbon or a cocoa window
+		ConfigOptionMap::const_iterator opt(NULL);
+
+		// First we must determine if this is a Carbon or a Cocoa window
 		// that we wish to create
-		opt = miscParams->find("macAPI");
-		if(opt != miscParams->end() && opt->second == "cocoa")
+		opt = mOptions.find("macAPI");
+        String m = opt->second.currentValue;
+		if(opt != mOptions.end() && opt->second.currentValue == "cocoa")
 		{
-			// Our user wants a cocoa compatable system
+			// Our user wants a Cocoa compatible system
 			mAPI = "cocoa";
 			mContextType = "NSOpenGL";
 		}
 	}
 	
-	// Create the window, if cocoa return a cocoa window
+	// Create the window, if Cocoa return a Cocoa window
 	if(mAPI == "cocoa")
 	{
 		LogManager::getSingleton().logMessage("Creating a Cocoa Compatible Render System");
-		OSXCocoaWindow* window = new OSXCocoaWindow();
+		OSXCocoaWindow* window = OGRE_NEW OSXCocoaWindow();
 		window->create(name, width, height, fullScreen, miscParams);
 		return window;
 	}
 	
-	// Otherwise default to carbon
+	// Otherwise default to Carbon
 	LogManager::getSingleton().logMessage("Creating a Carbon Compatible Render System");
-	OSXCarbonWindow* window = new OSXCarbonWindow();
+	OSXCarbonWindow* window = OGRE_NEW OSXCarbonWindow();
 	window->create(name, width, height, fullScreen, miscParams);
 	return window;
 }
@@ -364,11 +370,11 @@ bool OSXGLSupport::supportsPBuffers()
 GLPBuffer* OSXGLSupport::createPBuffer(PixelComponentType format, size_t width, size_t height)
 {
 //	if(mContextType == "NSOpenGL")
-//		return new OSXCocoaPBuffer(format, width, height);
+//		return OGRE_NEW OSXCocoaPBuffer(format, width, height);
 //	if(mContextType == "CGL")
-//		return new OSXCGLPBuffer(format, width, height);
+//		return OGRE_NEW OSXCGLPBuffer(format, width, height);
 //	else
-		return new OSXPBuffer(format, width, height);
+		return OGRE_NEW OSXPBuffer(format, width, height);
 }
 
 #if defined(MAC_OS_X_VERSION_10_6) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
@@ -395,7 +401,7 @@ CFComparisonResult OSXGLSupport::_compareModes (const void *val1, const void *va
 	size_t height = CGDisplayModeGetHeight(thisMode);
 	size_t otherHeight = CGDisplayModeGetHeight(otherMode);
 
-	// sort modes in screen size order
+	// Sort modes in screen size order
 	if (width * height < otherWidth * otherHeight)
 	{
 		return kCFCompareLessThan;
@@ -405,23 +411,7 @@ CFComparisonResult OSXGLSupport::_compareModes (const void *val1, const void *va
 		return kCFCompareGreaterThan;
 	}
 
-    // TODO: DJR - Find out DisplayMode API method for determining display depth
-	// sort modes by bits per pixel
-//    uint32_t ioFlags = CGDisplayModeGetIOFlags(modeInfo);
-
-//	size_t bitsPerPixel = _getDictionaryLong(thisMode, kCGDisplayBitsPerPixel);
-//	size_t otherBitsPerPixel = _getDictionaryLong(otherMode, kCGDisplayBitsPerPixel);
-//
-//	if (bitsPerPixel < otherBitsPerPixel)
-//	{
-//		return kCFCompareLessThan;
-//	}
-//	else if (bitsPerPixel > otherBitsPerPixel)
-//	{
-//		return kCFCompareGreaterThan;
-//	}
-
-	// sort modes by refresh rate.
+	// Sort modes by refresh rate.
 	double refreshRate = CGDisplayModeGetRefreshRate(thisMode);
 	double otherRefreshRate = CGDisplayModeGetRefreshRate(otherMode);
 
@@ -460,7 +450,7 @@ CFComparisonResult OSXGLSupport::_compareModes (const void *val1, const void *va
     long height = _getDictionaryLong(thisMode, kCGDisplayHeight);
     long otherHeight = _getDictionaryLong(otherMode, kCGDisplayHeight);
     
-    // sort modes in screen size order
+    // Sort modes in screen size order
     if (width * height < otherWidth * otherHeight)
     {
         return kCFCompareLessThan;
@@ -470,7 +460,7 @@ CFComparisonResult OSXGLSupport::_compareModes (const void *val1, const void *va
         return kCFCompareGreaterThan;
     }
     
-    // sort modes by bits per pixel
+    // Sort modes by bits per pixel
     long bitsPerPixel = _getDictionaryLong(thisMode, kCGDisplayBitsPerPixel);
     long otherBitsPerPixel = _getDictionaryLong(otherMode, kCGDisplayBitsPerPixel);
     
@@ -483,7 +473,7 @@ CFComparisonResult OSXGLSupport::_compareModes (const void *val1, const void *va
         return kCFCompareGreaterThan;
     }
     
-    // sort modes by refresh rate.
+    // Sort modes by refresh rate.
     long refreshRate = _getDictionaryLong(thisMode, kCGDisplayRefreshRate);
     long otherRefreshRate = _getDictionaryLong(otherMode, kCGDisplayRefreshRate);
     
@@ -523,6 +513,5 @@ long OSXGLSupport::_getDictionaryLong(CFDictionaryRef dict, const void* key)
 		
 	return value;
 }
-
 
 }

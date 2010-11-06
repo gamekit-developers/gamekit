@@ -148,7 +148,7 @@ namespace Ogre {
 // Win32 compilers use _DEBUG for specifying debug builds.
 // for MinGW, we set DEBUG
 #   if defined(_DEBUG) || defined(DEBUG)
-#       define OGRE_DEBUG_MODE 0
+#       define OGRE_DEBUG_MODE 1
 #   else
 #       define OGRE_DEBUG_MODE 0
 #   endif
@@ -212,7 +212,7 @@ namespace Ogre {
 // (??? this is wrong, on Linux debug builds aren't marked in any way unless
 // you mark it yourself any way you like it -- zap ???)
 #   ifdef DEBUG
-#       define OGRE_DEBUG_MODE 0
+#       define OGRE_DEBUG_MODE 1
 #   else
 #       define OGRE_DEBUG_MODE 0
 #   endif

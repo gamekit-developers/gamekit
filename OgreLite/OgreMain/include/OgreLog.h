@@ -65,7 +65,7 @@ namespace Ogre {
     class LogListener
     {
 	public:
-        virtual ~LogListener() {};
+        virtual ~LogListener() {}
 
         /**
         @remarks
@@ -188,7 +188,7 @@ namespace Ogre {
 			threads. Multiple threads can hold their own Stream instances pointing
 			at the same Log though and that is threadsafe.
 		*/
-		class Stream
+		class _OgrePrivate Stream
 		{
 		protected:
 			Log* mTarget;

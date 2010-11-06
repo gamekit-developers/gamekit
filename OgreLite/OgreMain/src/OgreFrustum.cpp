@@ -47,7 +47,7 @@ namespace Ogre {
     String Frustum::msMovableType = "Frustum";
     const Real Frustum::INFINITE_FAR_PLANE_ADJUST = 0.00001;
     //-----------------------------------------------------------------------
-    Frustum::Frustum() : 
+    Frustum::Frustum(const String& name) : 
         mProjType(PT_PERSPECTIVE), 
         mFOVy(Radian(Math::PI/4.0f)), 
         mFarDist(100000.0f), 
@@ -78,6 +78,7 @@ namespace Ogre {
         // Alter superclass members
         mVisible = false;
         mParentNode = 0;
+        mName = name;
 
         mLastLinkedReflectionPlane.normal = Vector3::ZERO;
         mLastLinkedObliqueProjPlane.normal = Vector3::ZERO;
@@ -394,7 +395,13 @@ namespace Ogre {
 	{
 		// Common calcs
 		Real left, right, bottom, top;
-		calcProjectionParameters(left, right, bottom, top);
+
+#if OGRE_NO_VIEWPORT_ORIENTATIONMODE == 0
+        if (mOrientationMode != OR_PORTRAIT)
+            calcProjectionParameters(bottom, top, left, right);
+        else
+#endif
+            calcProjectionParameters(left, right, bottom, top);
 
 		if (!mCustomProjMatrix)
 		{
@@ -476,15 +483,15 @@ namespace Ogre {
 					Vector4(Math::Sign(plane.normal.x), 
 					Math::Sign(plane.normal.y), 1.0f, 1.0f);
 					*/
-					Vector4 q;
-					q.x = (Math::Sign(plane.normal.x) + mProjMatrix[0][2]) / mProjMatrix[0][0];
-					q.y = (Math::Sign(plane.normal.y) + mProjMatrix[1][2]) / mProjMatrix[1][1];
-					q.z = -1;
-					q.w = (1 + mProjMatrix[2][2]) / mProjMatrix[2][3];
+					Vector4 qVec;
+					qVec.x = (Math::Sign(plane.normal.x) + mProjMatrix[0][2]) / mProjMatrix[0][0];
+					qVec.y = (Math::Sign(plane.normal.y) + mProjMatrix[1][2]) / mProjMatrix[1][1];
+					qVec.z = -1;
+					qVec.w = (1 + mProjMatrix[2][2]) / mProjMatrix[2][3];
 
 					// Calculate the scaled plane vector
 					Vector4 clipPlane4d(plane.normal.x, plane.normal.y, plane.normal.z, plane.d);
-					Vector4 c = clipPlane4d * (2 / (clipPlane4d.dotProduct(q)));
+					Vector4 c = clipPlane4d * (2 / (clipPlane4d.dotProduct(qVec)));
 
 					// Replace the third row of the projection matrix
 					mProjMatrix[2][0] = c.x;

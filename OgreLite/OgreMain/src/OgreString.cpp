@@ -27,7 +27,6 @@ THE SOFTWARE.
 */
 #include "OgreStableHeaders.h"
 #include "OgreString.h"
-
 #include "OgreStringVector.h"
 
 namespace Ogre {
@@ -68,9 +67,9 @@ namespace Ogre {
     }
 
     //-----------------------------------------------------------------------
-    vector<String>::type StringUtil::split( const String& str, const String& delims, unsigned int maxSplits)
+    StringVector StringUtil::split( const String& str, const String& delims, unsigned int maxSplits)
     {
-        vector<String>::type ret;
+        StringVector ret;
         // Pre-allocate some space for performance
         ret.reserve(maxSplits ? maxSplits+1 : 10);    // 10 is guessed capacity for most case
 
@@ -110,9 +109,9 @@ namespace Ogre {
         return ret;
     }
 	//-----------------------------------------------------------------------
-	vector< String >::type StringUtil::tokenise( const String& str, const String& singleDelims, const String& doubleDelims, unsigned int maxSplits)
+	StringVector StringUtil::tokenise( const String& str, const String& singleDelims, const String& doubleDelims, unsigned int maxSplits)
 	{
-        vector<String>::type ret;
+        StringVector ret;
         // Pre-allocate some space for performance
         ret.reserve(maxSplits ? maxSplits+1 : 10);    // 10 is guessed capacity for most case
 
@@ -354,11 +353,13 @@ namespace Ogre {
 	const String StringUtil::replaceAll(const String& source, const String& replaceWhat, const String& replaceWithWhat)
 	{
 		String result = source;
+        String::size_type pos = 0;
 		while(1)
 		{
-			String::size_type pos = result.find(replaceWhat);
+			pos = result.find(replaceWhat,pos);
 			if (pos == String::npos) break;
 			result.replace(pos,replaceWhat.size(),replaceWithWhat);
+            pos += replaceWithWhat.size();
 		}
 		return result;
 	}

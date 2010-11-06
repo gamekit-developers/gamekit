@@ -37,7 +37,7 @@ THE SOFTWARE.
 
 namespace Ogre {
     /// Specialisation of HardwareVertexBuffer for emulation
-    class _OgrePrivate GLESDefaultHardwareVertexBuffer : public HardwareVertexBuffer
+    class _OgreGLESExport GLESDefaultHardwareVertexBuffer : public HardwareVertexBuffer
     {
         protected:
             unsigned char* mpData;
@@ -48,7 +48,9 @@ namespace Ogre {
 
         public:
             GLESDefaultHardwareVertexBuffer(size_t vertexSize, size_t numVertices,
-                                          HardwareBuffer::Usage usage);
+                                            HardwareBuffer::Usage usage);
+            GLESDefaultHardwareVertexBuffer(HardwareBufferManagerBase* mgr, size_t vertexSize, size_t numVertices, 
+                                            HardwareBuffer::Usage usage);
             virtual ~GLESDefaultHardwareVertexBuffer();
             /** See HardwareBuffer. */
             void readData(size_t offset, size_t length, void* pDest);
@@ -64,7 +66,7 @@ namespace Ogre {
     };
 
     /// Specialisation of HardwareIndexBuffer for emulation
-    class _OgrePrivate GLESDefaultHardwareIndexBuffer : public HardwareIndexBuffer
+    class _OgreGLESExport GLESDefaultHardwareIndexBuffer : public HardwareIndexBuffer
     {
         protected:
             unsigned char* mpData;
@@ -96,7 +98,7 @@ namespace Ogre {
         rendering system (which is required to create a 'real' hardware
         buffer manager.
     */
-    class _OgrePrivate GLESDefaultHardwareBufferManagerBase : public HardwareBufferManagerBase
+    class _OgreGLESExport GLESDefaultHardwareBufferManagerBase : public HardwareBufferManagerBase
     {
         public:
             GLESDefaultHardwareBufferManagerBase();
@@ -114,7 +116,7 @@ namespace Ogre {
     };
 
 	/// GLESDefaultHardwareBufferManagerBase as a Singleton
-	class _OgrePrivate GLESDefaultHardwareBufferManager : public HardwareBufferManager
+	class _OgreGLESExport GLESDefaultHardwareBufferManager : public HardwareBufferManager
 	{
 	public:
 		GLESDefaultHardwareBufferManager()

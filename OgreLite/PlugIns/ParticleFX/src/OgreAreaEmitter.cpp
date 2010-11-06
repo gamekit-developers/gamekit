@@ -1,5 +1,4 @@
 /*
-/*
 -----------------------------------------------------------------------------
 This source file is part of OGRE
 (Object-oriented Graphics Rendering Engine)
@@ -83,14 +82,12 @@ namespace Ogre {
         return genConstantEmissionCount(timeElapsed);
     }
     //-----------------------------------------------------------------------
-    void AreaEmitter::setDirection( const Vector3& direction )
+    void AreaEmitter::setDirection( const Vector3& inDirection )
     {
-        ParticleEmitter::setDirection( direction );
+        ParticleEmitter::setDirection( inDirection );
 
         // Update the ranges
         genAreaAxes();
-
-        
     }
     //-----------------------------------------------------------------------
     void AreaEmitter::setSize(const Vector3& size)

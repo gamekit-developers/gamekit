@@ -51,6 +51,14 @@ else()
 endif()
 configure_file(${OgreLite_SOURCE_DIR}/Settings/OgreBuildSettings.h.in ${OGREKIT_BINARY_DIR}/Settings/OgreBuildSettings.h)
 
+# determine Ogre version numbers
+include(OgreGetVersion)
+ogre_get_version(${OGRE_SOURCE_DIR}/OgreMain/include/OgrePrerequisites.h)
+message(STATUS "Configuring OGRE ${OGRE_VERSION}")
+# Configure version file for use by scripts
+#configure_file("${OGRE_TEMPLATES_DIR}/version.txt.in" "${OGRE_BINARY_DIR}/version.txt" @ONLY)
+
+
 include_directories(${OGRELITE_SOURCE_DIR}/OgreMain/include)
 include_directories(${OGREKIT_BINARY_DIR}/Settings)
 

@@ -214,8 +214,6 @@ namespace Ogre
 			unsigned int winWidth, winHeight;
 			winWidth = width;
 			winHeight = height;
-			if (!fullScreen)
-				adjustWindow(width, height, &winWidth, &winHeight);
 
 
 			// No specified top left -> Center the window in the middle of the monitor
@@ -273,6 +271,8 @@ namespace Ogre
 						dwStyle |= WS_OVERLAPPEDWINDOW;
 				}
 
+				adjustWindow(width, height, dwStyle, &winWidth, &winHeight);
+
 				if (!outerSize)
 				{
 					// Calculate window dimensions required
@@ -310,6 +310,7 @@ namespace Ogre
 			mIsExternal = false;
 			mHWnd = CreateWindowEx(dwStyleEx, "OgreD3D9Wnd", title.c_str(), dwStyle,
 				mLeft, mTop, winWidth, winHeight, parentHWnd, 0, hInst, this);
+			mStyle = dwStyle;
 
 			WindowEventUtilities::_addRenderWindow(this);
 		}
@@ -350,7 +351,7 @@ namespace Ogre
 			if (fullScreen != mIsFullScreen)
 				mSwitchingFullscreen = true;
 
-			DWORD dwStyle = WS_VISIBLE | WS_CLIPCHILDREN;
+			mStyle = WS_VISIBLE | WS_CLIPCHILDREN;
 
 			bool oldFullscreen = mIsFullScreen;
 			mIsFullScreen = fullScreen;
@@ -359,7 +360,7 @@ namespace Ogre
 
 			if (fullScreen)
 			{
-				dwStyle |= WS_POPUP;
+				mStyle |= WS_POPUP;
 				
 				// Get the nearest monitor to this window.
 				HMONITOR hMonitor = MonitorFromWindow(mHWnd, MONITOR_DEFAULTTONEAREST);
@@ -385,18 +386,20 @@ namespace Ogre
 				{
 					SetWindowPos(mHWnd, HWND_TOPMOST, mLeft, mTop, width, height, SWP_NOACTIVATE);
 					//MoveWindow(mHWnd, mLeft, mTop, mWidth, mHeight, FALSE);
-					SetWindowLong(mHWnd, GWL_STYLE, dwStyle);
+					SetWindowLong(mHWnd, GWL_STYLE, mStyle);
 					SetWindowPos(mHWnd, 0, 0,0, 0,0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 				}
 			}
 			else
 			{
-				dwStyle |= WS_OVERLAPPEDWINDOW;
+				mStyle |= WS_OVERLAPPEDWINDOW;
 				// Calculate window dimensions required
 				// to get the requested client area
+				unsigned int winWidth, winHeight;
+				adjustWindow(mWidth, mHeight, mStyle, &winWidth, &winHeight);
 
-				SetWindowLong(mHWnd, GWL_STYLE, dwStyle);
-				SetWindowPos(mHWnd, HWND_NOTOPMOST, 0, 0, mWidth, mHeight,
+				SetWindowLong(mHWnd, GWL_STYLE, mStyle);
+				SetWindowPos(mHWnd, HWND_NOTOPMOST, 0, 0, winWidth, winHeight,
 					SWP_DRAWFRAME | SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOACTIVATE);
 				// Note that we also set the position in the restoreLostDevice method
 				// via _finishSwitchingFullScreen
@@ -413,12 +416,12 @@ namespace Ogre
 	} 
 
 	void D3D9RenderWindow::adjustWindow(unsigned int clientWidth, unsigned int clientHeight, 
-		unsigned int* winWidth, unsigned int* winHeight)
+		DWORD style, unsigned int* winWidth, unsigned int* winHeight)
 	{
 		// NB only call this for non full screen
 		RECT rc;
 		SetRect(&rc, 0, 0, clientWidth, clientHeight);
-		AdjustWindowRect(&rc, WS_VISIBLE | WS_CLIPCHILDREN | WS_OVERLAPPEDWINDOW, false);
+		AdjustWindowRect(&rc, style, false);
 		*winWidth = rc.right - rc.left;
 		*winHeight = rc.bottom - rc.top;
 
@@ -453,20 +456,11 @@ namespace Ogre
 		}
 		else
 		{
-			bool updateRect = false;
-
 			// When switching back to windowed mode, need to reset window size 
 			// after device has been restored
 			// We may have had a resize event which polluted our desired sizes
-			if (mWidth != mDesiredWidth ||
-				mHeight != mDesiredHeight)
-			{
-				mWidth = mDesiredWidth;
-				mHeight = mDesiredHeight;
-				updateRect = true;
-			}
 			unsigned int winWidth, winHeight;
-			adjustWindow(mWidth, mHeight, &winWidth, &winHeight);
+			adjustWindow(mDesiredWidth, mDesiredHeight, mStyle, &winWidth, &winHeight);
 
 			// deal with centreing when switching down to smaller resolution
 
@@ -485,8 +479,11 @@ namespace Ogre
 			SetWindowPos(mHWnd, HWND_NOTOPMOST, left, top, winWidth, winHeight,
 				SWP_DRAWFRAME | SWP_FRAMECHANGED | SWP_NOACTIVATE);
 
-			if (updateRect)
+			if (mWidth != mDesiredWidth ||
+				mHeight != mDesiredHeight)
 			{
+				mWidth = mDesiredWidth;
+				mHeight = mDesiredHeight;
 				// Notify viewports of resize
 				ViewportList::iterator it = mViewportList.begin();
 				while( it != mViewportList.end() )
@@ -683,7 +680,7 @@ namespace Ogre
 		if (mHWnd && !mIsFullScreen)
 		{
 			unsigned int winWidth, winHeight;
-			adjustWindow(width, height, &winWidth, &winHeight);
+			adjustWindow(width, height, mStyle, &winWidth, &winHeight);
 			SetWindowPos(mHWnd, 0, 0, 0, winWidth, winHeight,
 				SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
 		}

@@ -62,7 +62,7 @@ namespace Ogre {
         /** Creates a new OverlayElement instance with the name supplied. */
         virtual OverlayElement* createOverlayElement(const String& instanceName) = 0;
         /** Destroys a OverlayElement which this factory created previously. */
-        virtual void destroyOverlayElement(OverlayElement* pElement) { delete pElement; };
+        virtual void destroyOverlayElement(OverlayElement* pElement) { delete pElement; }
         /** Gets the string uniquely identifying the type of element this factory creates. */
         virtual const String& getTypeName(void) const = 0;
     };
@@ -78,11 +78,7 @@ namespace Ogre {
             return OGRE_NEW PanelOverlayElement(instanceName);
         }
         /** See OverlayElementFactory */
-        const String& getTypeName(void) const
-        {
-            static String name = "Panel";
-            return name;
-        }
+        virtual const String& getTypeName(void) const;
     };
 
     /** Factory for creating BorderPanelOverlayElement instances. */
@@ -95,11 +91,7 @@ namespace Ogre {
             return OGRE_NEW BorderPanelOverlayElement(instanceName);
         }
         /** See OverlayElementFactory */
-        const String& getTypeName(void) const
-        {
-            static String name = "BorderPanel";
-            return name;
-        }
+        virtual const String& getTypeName(void) const;
     };
 
     /** Factory for creating TextAreaOverlayElement instances. */
@@ -112,11 +104,7 @@ namespace Ogre {
             return OGRE_NEW TextAreaOverlayElement(instanceName);
         }
         /** See OverlayElementFactory */
-        const String& getTypeName(void) const
-        {
-            static String name = "TextArea";
-            return name;
-        }
+        virtual const String& getTypeName(void) const;
     };
 	/** @} */
 	/** @} */

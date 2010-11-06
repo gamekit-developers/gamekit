@@ -446,13 +446,13 @@ namespace Ogre{
 			switch(count1)
 			{
 			case 2:
-				*op = (GpuConstantType)(GCT_MATRIX_2X2 + count2 - 1);
+				*op = (GpuConstantType)(GCT_MATRIX_2X2 + count2 - 2);
 				break;
 			case 3:
-				*op = (GpuConstantType)(GCT_MATRIX_3X2 + count2 - 1);
+				*op = (GpuConstantType)(GCT_MATRIX_3X2 + count2 - 2);
 				break;
 			case 4:
-				*op = (GpuConstantType)(GCT_MATRIX_4X2 + count2 - 1);
+				*op = (GpuConstantType)(GCT_MATRIX_4X2 + count2 - 2);
 				break;
 			}
 
@@ -642,8 +642,8 @@ namespace Ogre{
 		// Apply the texture aliases
 		if(compiler->getListener())
 		{
-			PreApplyTextureAliasesScriptCompilerEvent evt(mMaterial, &mTextureAliases);
-			compiler->_fireEvent(&evt, 0);
+			PreApplyTextureAliasesScriptCompilerEvent locEvt(mMaterial, &mTextureAliases);
+			compiler->_fireEvent(&locEvt, 0);
 		}
 		mMaterial->applyTextureAliases(mTextureAliases);
 		mTextureAliases.clear();
@@ -1005,51 +1005,56 @@ namespace Ogre{
 						}
 						else
 						{
-							AbstractNodeList::const_iterator i0 = getNodeAt(prop->values, 0),
-								i1 = getNodeAt(prop->values, 1),
-								i2 = getNodeAt(prop->values, 2);
-							ColourValue val(0.0f, 0.0f, 0.0f, 1.0f);
-							if(getFloat(*i0, &val.r) && getFloat(*i1, &val.g) && getFloat(*i2, &val.b))
+							if(prop->values.size() < 4)
 							{
-								if(prop->values.size() == 4)
-								{
-									mPass->setSpecular(val);
-
-									AbstractNodeList::const_iterator i3 = getNodeAt(prop->values, 3);
-									Real shininess = 0.0f;
-									if(getReal(*i3, &shininess))
-										mPass->setShininess(shininess);
-									else
-										compiler->addError(ScriptCompiler::CE_INVALIDPARAMETERS, prop->file, prop->line,
-											"specular fourth argument must be a valid number for shininess attribute");
-								}
-								else if(prop->values.size() > 4)
-								{
-									AbstractNodeList::const_iterator i3 = getNodeAt(prop->values, 3);
-									if(!getFloat(*i3, &val.a))
-										compiler->addError(ScriptCompiler::CE_INVALIDPARAMETERS, prop->file, prop->line,
-											"specular fourth argument must be a valid color component value");
-									else
-										mPass->setSpecular(val);
-									
-									AbstractNodeList::const_iterator i4 = getNodeAt(prop->values, 4);
-									Real shininess = 0.0f;
-									if(getReal(*i4, &shininess))
-										mPass->setShininess(shininess);
-									else
-										compiler->addError(ScriptCompiler::CE_INVALIDPARAMETERS, prop->file, prop->line,
-											"specular fourth argument must be a valid number for shininess attribute"); 
-								}
-								else
-									compiler->addError(ScriptCompiler::CE_NUMBEREXPECTED, prop->file, prop->line,
-										"specular expects at least 4 arguments"); 
-
+								compiler->addError(ScriptCompiler::CE_NUMBEREXPECTED, prop->file, prop->line,
+										"specular expects at least 4 arguments");
 							}
 							else
 							{
-								compiler->addError(ScriptCompiler::CE_INVALIDPARAMETERS, prop->file, prop->line,
-									"specular must have first 3 arguments be a valid colour");
+								AbstractNodeList::const_iterator i0 = getNodeAt(prop->values, 0),
+								i1 = getNodeAt(prop->values, 1),
+								i2 = getNodeAt(prop->values, 2);
+								ColourValue val(0.0f, 0.0f, 0.0f, 1.0f);
+								if(getFloat(*i0, &val.r) && getFloat(*i1, &val.g) && getFloat(*i2, &val.b))
+								{
+									if(prop->values.size() == 4)
+									{
+										mPass->setSpecular(val);
+
+										AbstractNodeList::const_iterator i3 = getNodeAt(prop->values, 3);
+										Real shininess = 0.0f;
+										if(getReal(*i3, &shininess))
+											mPass->setShininess(shininess);
+										else
+											compiler->addError(ScriptCompiler::CE_INVALIDPARAMETERS, prop->file, prop->line,
+												"specular fourth argument must be a valid number for shininess attribute");
+									}
+									else
+									{
+										AbstractNodeList::const_iterator i3 = getNodeAt(prop->values, 3);
+										if(!getFloat(*i3, &val.a))
+											compiler->addError(ScriptCompiler::CE_INVALIDPARAMETERS, prop->file, prop->line,
+												"specular fourth argument must be a valid color component value");
+										else
+											mPass->setSpecular(val);
+										
+										AbstractNodeList::const_iterator i4 = getNodeAt(prop->values, 4);
+										Real shininess = 0.0f;
+										if(getReal(*i4, &shininess))
+											mPass->setShininess(shininess);
+										else
+											compiler->addError(ScriptCompiler::CE_INVALIDPARAMETERS, prop->file, prop->line,
+												"specular fourth argument must be a valid number for shininess attribute"); 
+									}
+								}
+								else
+								{
+									compiler->addError(ScriptCompiler::CE_INVALIDPARAMETERS, prop->file, prop->line,
+										"specular must have first 3 arguments be a valid colour");
+								}	
 							}
+							
 						}
 					}
 					break;
@@ -2749,11 +2754,11 @@ namespace Ogre{
 							if(compiler->getListener())
 							{
 								// Run each name through the listener
-								for(int i = 0; i < 6; ++i)
+								for(int j = 0; j < 6; ++j)
 								{
-									ProcessResourceNameScriptCompilerEvent evt(ProcessResourceNameScriptCompilerEvent::TEXTURE, names[i]);
+									ProcessResourceNameScriptCompilerEvent evt(ProcessResourceNameScriptCompilerEvent::TEXTURE, names[j]);
 									compiler->_fireEvent(&evt, 0);
-									names[i] = evt.mName;
+									names[j] = evt.mName;
 								}
 							}
 
@@ -4023,15 +4028,15 @@ namespace Ogre{
 				{
 					String name = prop->name, value;
 					bool first = true;
-					for(AbstractNodeList::iterator i = prop->values.begin(); i != prop->values.end(); ++i)
+					for(AbstractNodeList::iterator it = prop->values.begin(); it != prop->values.end(); ++it)
 					{
-						if((*i)->type == ANT_ATOM)
+						if((*it)->type == ANT_ATOM)
 						{
 							if(!first)
 								value += " ";
 							else
 								first = false;
-							value += ((AtomAbstractNode*)(*i).get())->value;
+							value += ((AtomAbstractNode*)(*it).get())->value;
 						}
 					}
 					customParameters.push_back(std::make_pair(name, value));
@@ -4117,15 +4122,15 @@ namespace Ogre{
 				{
 					String name = prop->name, value;
 					bool first = true;
-					for(AbstractNodeList::iterator i = prop->values.begin(); i != prop->values.end(); ++i)
+					for(AbstractNodeList::iterator it = prop->values.begin(); it != prop->values.end(); ++it)
 					{
-						if((*i)->type == ANT_ATOM)
+						if((*it)->type == ANT_ATOM)
 						{
 							if(!first)
 								value += " ";
 							else
 								first = false;
-							value += ((AtomAbstractNode*)(*i).get())->value;
+							value += ((AtomAbstractNode*)(*it).get())->value;
 						}
 					}
 					customParameters.push_back(std::make_pair(name, value));
@@ -4223,9 +4228,9 @@ namespace Ogre{
 				{
 					String name = prop->name, value;
 					bool first = true;
-					for(AbstractNodeList::iterator i = prop->values.begin(); i != prop->values.end(); ++i)
+					for(AbstractNodeList::iterator it = prop->values.begin(); it != prop->values.end(); ++it)
 					{
-						if((*i)->type == ANT_ATOM)
+						if((*it)->type == ANT_ATOM)
 						{
 							if(!first)
 								value += " ";
@@ -4234,13 +4239,13 @@ namespace Ogre{
 
 							if(prop->name == "attach")
 							{
-								ProcessResourceNameScriptCompilerEvent evt(ProcessResourceNameScriptCompilerEvent::GPU_PROGRAM, ((AtomAbstractNode*)(*i).get())->value);
+								ProcessResourceNameScriptCompilerEvent evt(ProcessResourceNameScriptCompilerEvent::GPU_PROGRAM, ((AtomAbstractNode*)(*it).get())->value);
 								compiler->_fireEvent(&evt, 0);
 								value += evt.mName;
 							}
 							else
 							{
-								value += ((AtomAbstractNode*)(*i).get())->value;
+								value += ((AtomAbstractNode*)(*it).get())->value;
 							}
 						}
 					}
@@ -4930,16 +4935,16 @@ namespace Ogre{
 						{
 							String name = ((AtomAbstractNode*)prop->values.front().get())->value;
 							
-							ProcessResourceNameScriptCompilerEvent evt(ProcessResourceNameScriptCompilerEvent::MATERIAL, name);
-							compiler->_fireEvent(&evt, 0);
+							ProcessResourceNameScriptCompilerEvent locEvt(ProcessResourceNameScriptCompilerEvent::MATERIAL, name);
+							compiler->_fireEvent(&locEvt, 0);
 
-							if(!mSystem->setParameter("material", evt.mName))
+							if(!mSystem->setParameter("material", locEvt.mName))
 							{
 								if(mSystem->getRenderer())
 								{
-									if(!mSystem->getRenderer()->setParameter("material", evt.mName))
+									if(!mSystem->getRenderer()->setParameter("material", locEvt.mName))
 										compiler->addError(ScriptCompiler::CE_INVALIDPARAMETERS, prop->file, prop->line,
-											"material property could not be set with material \"" + evt.mName + "\"");
+											"material property could not be set with material \"" + locEvt.mName + "\"");
 								}
 							}
 						}
@@ -4956,14 +4961,14 @@ namespace Ogre{
 						String name = prop->name, value;
 
 						// Glob the values together
-						for(AbstractNodeList::iterator i = prop->values.begin(); i != prop->values.end(); ++i)
+						for(AbstractNodeList::iterator it = prop->values.begin(); it != prop->values.end(); ++it)
 						{
-							if((*i)->type == ANT_ATOM)
+							if((*it)->type == ANT_ATOM)
 							{
 								if(value.empty())
-									value = ((AtomAbstractNode*)(*i).get())->value;
+									value = ((AtomAbstractNode*)(*it).get())->value;
 								else
-									value = value + " " + ((AtomAbstractNode*)(*i).get())->value;
+									value = value + " " + ((AtomAbstractNode*)(*it).get())->value;
 							}
 							else
 							{
@@ -5027,14 +5032,14 @@ namespace Ogre{
 				String value;
 
 				// Glob the values together
-				for(AbstractNodeList::iterator i = prop->values.begin(); i != prop->values.end(); ++i)
+				for(AbstractNodeList::iterator it = prop->values.begin(); it != prop->values.end(); ++it)
 				{
-					if((*i)->type == ANT_ATOM)
+					if((*it)->type == ANT_ATOM)
 					{
 						if(value.empty())
-							value = ((AtomAbstractNode*)(*i).get())->value;
+							value = ((AtomAbstractNode*)(*it).get())->value;
 						else
-							value = value + " " + ((AtomAbstractNode*)(*i).get())->value;
+							value = value + " " + ((AtomAbstractNode*)(*it).get())->value;
 					}
 					else
 					{
@@ -5092,14 +5097,14 @@ namespace Ogre{
 				String value;
 
 				// Glob the values together
-				for(AbstractNodeList::iterator i = prop->values.begin(); i != prop->values.end(); ++i)
+				for(AbstractNodeList::iterator it = prop->values.begin(); it != prop->values.end(); ++it)
 				{
-					if((*i)->type == ANT_ATOM)
+					if((*it)->type == ANT_ATOM)
 					{
 						if(value.empty())
-							value = ((AtomAbstractNode*)(*i).get())->value;
+							value = ((AtomAbstractNode*)(*it).get())->value;
 						else
-							value = value + " " + ((AtomAbstractNode*)(*i).get())->value;
+							value = value + " " + ((AtomAbstractNode*)(*it).get())->value;
 					}
 					else
 					{
@@ -5203,15 +5208,15 @@ namespace Ogre{
 					{
 						size_t atomIndex = 1;
 
-						AbstractNodeList::const_iterator i = getNodeAt(prop->values, 0);
+						AbstractNodeList::const_iterator it = getNodeAt(prop->values, 0);
 
-						if((*i)->type != ANT_ATOM)
+						if((*it)->type != ANT_ATOM)
 						{
 							compiler->addError(ScriptCompiler::CE_INVALIDPARAMETERS, prop->file, prop->line);
 							return;
 						}
 						// Save the first atom, should be name
-						AtomAbstractNode *atom0 = (AtomAbstractNode*)(*i).get();
+						AtomAbstractNode *atom0 = (AtomAbstractNode*)(*it).get();
 
 						size_t width = 0, height = 0;
 						float widthFactor = 1.0f, heightFactor = 1.0f;
@@ -5224,13 +5229,13 @@ namespace Ogre{
 
 						while (atomIndex < prop->values.size())
 						{
-							i = getNodeAt(prop->values, static_cast<int>(atomIndex++));
-							if((*i)->type != ANT_ATOM)
+							it = getNodeAt(prop->values, static_cast<int>(atomIndex++));
+							if((*it)->type != ANT_ATOM)
 							{
 								compiler->addError(ScriptCompiler::CE_INVALIDPARAMETERS, prop->file, prop->line);
 								return;
 							}
-							AtomAbstractNode *atom = (AtomAbstractNode*)(*i).get();
+							AtomAbstractNode *atom = (AtomAbstractNode*)(*it).get();
 
 							switch(atom->id)
 							{
@@ -5261,13 +5266,13 @@ namespace Ogre{
 										pFactor = &heightFactor;
 									}
 									// advance to next to get scaling
-									i = getNodeAt(prop->values, static_cast<int>(atomIndex++));
-									if(prop->values.end() == i || (*i)->type != ANT_ATOM)
+									it = getNodeAt(prop->values, static_cast<int>(atomIndex++));
+									if(prop->values.end() == it || (*it)->type != ANT_ATOM)
 									{
 										compiler->addError(ScriptCompiler::CE_INVALIDPARAMETERS, prop->file, prop->line);
 										return;
 									}
-									atom = (AtomAbstractNode*)(*i).get();
+									atom = (AtomAbstractNode*)(*it).get();
 									if (!StringConverter::isNumber(atom->value))
 									{
 										compiler->addError(ScriptCompiler::CE_INVALIDPARAMETERS, prop->file, prop->line);
@@ -5365,18 +5370,18 @@ namespace Ogre{
 					{
 						String texName, refCompName, refTexName;
 
-						AbstractNodeList::const_iterator i = getNodeAt(prop->values, 0);
-						if(!getString(*i, &texName))
+						AbstractNodeList::const_iterator it = getNodeAt(prop->values, 0);
+						if(!getString(*it, &texName))
 							compiler->addError(ScriptCompiler::CE_INVALIDPARAMETERS, prop->file, prop->line,
 							"texture_ref must have 3 string arguments");
 
-						i = getNodeAt(prop->values, 1);
-						if(!getString(*i, &refCompName))
+						it = getNodeAt(prop->values, 1);
+						if(!getString(*it, &refCompName))
 							compiler->addError(ScriptCompiler::CE_INVALIDPARAMETERS, prop->file, prop->line,
 							"texture_ref must have 3 string arguments");
 
-						i = getNodeAt(prop->values, 2);
-						if(!getString(*i, &refTexName))
+						it = getNodeAt(prop->values, 2);
+						if(!getString(*it, &refTexName))
 							compiler->addError(ScriptCompiler::CE_INVALIDPARAMETERS, prop->file, prop->line,
 							"texture_ref must have 3 string arguments");
 

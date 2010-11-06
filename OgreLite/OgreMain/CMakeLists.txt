@@ -352,6 +352,7 @@ set (SOURCE_FILES
   src/OgreOverlayContainer.cpp
   src/OgreOverlayElement.cpp
   src/OgreOverlayElementCommands.cpp
+  src/OgreOverlayElementFactory.cpp
   src/OgreOverlayManager.cpp
   src/OgrePanelOverlayElement.cpp
   src/OgreParticle.cpp
@@ -646,9 +647,19 @@ if (OGRE_CONFIG_ENABLE_ZIP)
   list(APPEND LIBRARIES "${OGREKIT_ZLIB_TARGET}")
 endif ()
 
+set (TARGET_LINK_FLAGS "")
 
 # setup OgreMain target
 add_library(OgreMain ${OGRE_LIB_TYPE} ${PREC_HEADER} ${HEADER_FILES} ${SOURCE_FILES} ${PLATFORM_HEADER_FILES} ${PLATFORM_SOURCE_FILES} ${THREAD_HEADER_FILES} ${THREAD_SOURCE_FILES})
+# In visual studio 2010 - 64 bit we get this error: "LINK : fatal error LNK1210: exceeded internal ILK size limit; link with /INCREMENTAL:NO"
+if(WIN32 AND MSVC10 AND CMAKE_CL_64)
+  set_target_properties(OgreMain PROPERTIES 
+                        VERSION ${OGRE_SOVERSION}
+                        LINK_FLAGS "/INCREMENTAL:NO"
+                      )
+else()
+  set_target_properties(OgreMain PROPERTIES VERSION ${OGRE_SOVERSION})
+endif()
 
 if (APPLE)
   if (NOT OGRE_BUILD_PLATFORM_IPHONE)
@@ -666,9 +677,9 @@ if (APPLE)
     set_target_properties(OgreMain PROPERTIES XCODE_ATTRIBUTE_GCC_UNROLL_LOOPS "YES")
     add_custom_command(TARGET OgreMain POST_BUILD
       COMMAND mkdir ARGS -p ${OGRE_BINARY_DIR}/lib/$(CONFIGURATION)/Ogre.framework/Headers/Threading
-	  COMMAND /Developer/Library/PrivateFrameworks/DevToolsCore.framework/Resources/pbxcp ARGS -exclude .DS_Store -exclude CVS -exclude .svn -exclude 'CMakeLists.txt' -resolve-src-symlinks ${OGRE_SOURCE_DIR}/OgreMain/include/Threading/* ${OGRE_BINARY_DIR}/lib/$(CONFIGURATION)/Ogre.framework/Headers/Threading/
+	  COMMAND /Developer/Library/PrivateFrameworks/DevToolsCore.framework/Resources/pbxcp ARGS -exclude .DS_Store -exclude .hg -exclude 'CMakeLists.txt' -resolve-src-symlinks ${OGRE_SOURCE_DIR}/OgreMain/include/Threading/* ${OGRE_BINARY_DIR}/lib/$(CONFIGURATION)/Ogre.framework/Headers/Threading/
       COMMAND mkdir ARGS -p ${OGRE_BINARY_DIR}/lib/$(CONFIGURATION)/Ogre.framework/Headers/OSX
-      COMMAND /Developer/Library/PrivateFrameworks/DevToolsCore.framework/Resources/pbxcp ARGS -exclude .DS_Store -exclude CVS -exclude .svn -exclude 'CMakeLists.txt' -resolve-src-symlinks ${OGRE_SOURCE_DIR}/OgreMain/include/OSX/*.h ${OGRE_BINARY_DIR}/lib/$(CONFIGURATION)/Ogre.framework/Headers/OSX/	
+      COMMAND /Developer/Library/PrivateFrameworks/DevToolsCore.framework/Resources/pbxcp ARGS -exclude .DS_Store -exclude .hg -exclude 'CMakeLists.txt' -resolve-src-symlinks ${OGRE_SOURCE_DIR}/OgreMain/include/OSX/*.h ${OGRE_BINARY_DIR}/lib/$(CONFIGURATION)/Ogre.framework/Headers/OSX/	
 	)
   else ()
     set_target_properties(OgreMain PROPERTIES INSTALL_NAME_DIR "OGRE")
