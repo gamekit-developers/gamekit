@@ -11,7 +11,10 @@ if (APPLE)
 	SET (NibFile MainMenu.nib)
 endif()
 
-set(SRC momo_ogre.blend OgreKitStartup.cfg Main.cpp)
+set(SRC 
+	momo_ogre.blend
+	Main.cpp
+)
 
 
 
