@@ -26,6 +26,7 @@
 */
 
 
+
 #include "OgreRenderWindow.h"
 #include "OgreRoot.h"
 #include "OgreWindowEventUtilities.h"
@@ -38,15 +39,10 @@
 #include "gkScene.h"
 #include "gkWindowSystem.h"
 #include "gkWindowSystemPrivate.h"
+
+
 #include "gkWindowSystemPrivateIOS.h"
 
-#import <UIKit/UIKit.h>
-
-@interface gkGestureView : UIView
-{
-}
-
-@end
 
 @implementation gkGestureView
 
@@ -98,7 +94,7 @@ bool gkWindowSystemPrivateIOS::setup(gkWindowSystem* sys, const gkUserDefs& pref
 
 		OIS::ParamList params;
 
-		params.insert(std::make_pair("WINDOW", StringConverter::toString(handle)));
+		params.insert(std::make_pair("WINDOW", Ogre::StringConverter::toString(handle)));
 		m_input = OIS::InputManager::createInputSystem(params);
 		m_input->enableAddOnFactory(OIS::InputManager::AddOn_All);
 
@@ -135,7 +131,7 @@ void gkWindowSystemPrivateIOS::process(void)
 {
 	[m_gestureView becomeFirstResponder];
 
-	gkWindowSystemPrivate::provess();
+	gkWindowSystemPrivate::process();
 }
 
 
@@ -223,10 +219,10 @@ bool gkWindowSystemPrivateIOS::touchMoved(const OIS::MultiTouchEvent& arg)
 
 	transformInputState(state);
 
-	data.position.x = (Real)state.X.abs;
-	data.position.y = (Real)state.Y.abs;
-	data.relitave.x = (Real)state.X.rel;
-	data.relitave.y = (Real)state.Y.rel;
+	data.position.x = (gkScalar)state.X.abs;
+	data.position.y = (gkScalar)state.Y.abs;
+	data.relitave.x = (gkScalar)state.X.rel;
+	data.relitave.y = (gkScalar)state.Y.rel;
 	data.moved = true;
 
 	data.wheelDelta = 0;

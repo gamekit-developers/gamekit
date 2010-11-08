@@ -32,6 +32,7 @@
 #include "gkInput.h"
 
 class gkWindowSystemPrivate;
+class gkWindowSystemPrivateIOS;
 
 class gkWindowSystem : public utSingleton<gkWindowSystem>
 {
@@ -62,7 +63,8 @@ public:
 
 protected:
 	friend class gkWindowSystemPrivate;
-
+	friend class gkWindowSystemPrivateIOS;
+	
 	gkKeyboard				m_keyboard;
 
 	gkMouse					m_mouse;

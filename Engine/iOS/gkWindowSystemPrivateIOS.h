@@ -28,7 +28,14 @@
 #ifndef _gkWindowSystemPrivateIOS_h_
 #define _gkWindowSystemPrivateIOS_h_
 
-@interface gkGestureView;
+
+#import <UIKit/UIKit.h>
+
+@interface gkGestureView : UIView
+{
+}
+
+@end
 
 // Internal interface
 class gkWindowSystemPrivateIOS : 
@@ -36,6 +43,13 @@ class gkWindowSystemPrivateIOS :
 	public OIS::MultiTouchListener
 {
 public:
+	gkWindowSystemPrivateIOS();
+	virtual ~gkWindowSystemPrivateIOS();
+	
+	virtual bool setup(gkWindowSystem* sys, const gkUserDefs& prefs);
+	virtual void dispatch(void);
+	virtual void process(void);
+	
 	bool touchPressed(const OIS::MultiTouchEvent& arg);
 	bool touchReleased(const OIS::MultiTouchEvent& arg);
 	bool touchMoved(const OIS::MultiTouchEvent& arg);
