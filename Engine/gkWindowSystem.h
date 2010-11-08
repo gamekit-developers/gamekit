@@ -27,13 +27,13 @@
 #ifndef _gkWindowSystem_h_
 #define _gkWindowSystem_h_
 
-
-#include "OgreSingleton.h"
+#include "utSingleton.h"
 #include "gkCommon.h"
 #include "gkInput.h"
 
+class gkWindowSystemPrivate;
 
-class gkWindowSystem : public Ogre::Singleton<gkWindowSystem>
+class gkWindowSystem : public utSingleton<gkWindowSystem>
 {
 public:
 	enum
@@ -61,23 +61,21 @@ public:
 	typedef utListClass<Listener> ListenerList;
 
 protected:
-	friend class Private;
+	friend class gkWindowSystemPrivate;
 
-	gkKeyboard          m_keyboard;
+	gkKeyboard				m_keyboard;
 
-	gkMouse             m_mouse;
+	gkMouse					m_mouse;
 
-	utArray<gkJoystick*> m_joysticks;
-
+	utArray<gkJoystick*>	m_joysticks;
 
 	// Internal interface implementation
-	class Private;
-	Private*            m_internal;
+	gkWindowSystemPrivate*	m_internal;
 
-	Ogre::RenderWindow* m_window;
-	bool                m_exit;
+	Ogre::RenderWindow*		m_window;
+	bool					m_exit;
 
-	ListenerList        m_listeners;
+	ListenerList			m_listeners;
 
 	int m_requestedWidth;
 	int m_requestedHeight;
@@ -87,8 +85,6 @@ protected:
 public:
 	gkWindowSystem();
 	virtual ~gkWindowSystem();
-
-
 
 	Ogre::RenderWindow* createMainWindow(const gkUserDefs& prefs);
 	Ogre::RenderWindow* getMainWindow(void);
@@ -110,8 +106,7 @@ public:
 	GK_INLINE unsigned int getNumJoysticks(void) {return m_joysticks.size();}
 	GK_INLINE gkJoystick* getJoystick(int index) {return (index >= (int)m_joysticks.size() || index < 0) ? 0 : m_joysticks[index];}
 
-	static gkWindowSystem& getSingleton(void);
-	static gkWindowSystem* getSingletonPtr(void);
+	UT_DECLARE_SINGLETON(gkWindowSystem);
 };
 
 #endif//_gkWindowSystem_h_

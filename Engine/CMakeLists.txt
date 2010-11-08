@@ -49,6 +49,7 @@ set(Core_SOURCE
 	gkUserDefs.cpp
 	gkUtils.cpp
 	gkWindowSystem.cpp
+	gkWindowSystemPrivate.cpp
 	gkVariable.cpp
 )
 
@@ -105,9 +106,15 @@ set(Core_HEADER
 	gkValue.h
 	gkVariable.h
 	gkWindowSystem.h
+	gkWindowSystemPrivate.h
 	${CMAKE_BINARY_DIR}/Engine/gkSettings.h
 	OgreKit.h
 )
+
+if (OGREKIT_BUILD_IPHONE)
+	list(APPEND Core_HEADER iOS/gkWindowSystemPrivateIOS.h)
+	list(APPEND Core_SOURCE iOS/gkWindowSystemPrivateIOS.mm)
+endif()
 
 if(APPLE)
 	source_group(Core FILES ${Core_HEADER} ${Core_SOURCE})
@@ -820,6 +827,7 @@ endif()
 if (OGREKIT_BUILD_IPHONE)
 	set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/gkWindowSystem.cpp PROPERTIES COMPILE_FLAGS "-x objective-c++")
 	set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/Thread/gkSyncObj.cpp PROPERTIES COMPILE_FLAGS "-x objective-c++")
+	include_directories(./iOS)
 endif()
 
 
@@ -865,12 +873,9 @@ source_group(DependenciesCMakeLists FILES ${HiddenDepenCMakeLists})
 # for swig no __declspec(dllexport)
 add_definitions(-DSTATIC_LINKED)
 
-
-
 if (OGREKIT_OPENAL_SOUND AND OPENAL_FOUND)
 	set(Extra_SOURCE ${Sound_SOURCE} ${Sound_HEADER} )
 endif()
-
 
 add_library(OgreKitCore STATIC
 			${Core_SOURCE}       ${Core_HEADER}
