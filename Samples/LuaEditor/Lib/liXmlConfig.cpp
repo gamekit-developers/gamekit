@@ -35,7 +35,8 @@ namespace xml
 #define TAG_GROUP   "group"
 #define TAG_SECTION "section"
 
-#define DELIM ";"
+#define STR_DELIM ";"
+#define NUM_DELIM " ,\t"
 
 //-- config
 
@@ -149,21 +150,21 @@ bool getValue(const liStrSections& sections, const gkString &key, gkString &valu
 liStrVec xmlConfig::getStrVec(const gkString &name)
 {
 	liStrVec v;
-	parseStrArray(v, getString(name), DELIM);
+	parseStrArray(v, getString(name), STR_DELIM);
 	return v;
 }
 
 liIntVec xmlConfig::getIntVec(const gkString &name)
 {
 	liIntVec v;
-	parseIntArray(v, getString(name), DELIM);
+	parseIntArray(v, getString(name), NUM_DELIM);
 	return v;
 }
 
 liScalarVec xmlConfig::getScalarVec(const gkString &name)
 {
 	liScalarVec v;
-	parseScalarArray(v, getString(name), DELIM);
+	parseScalarArray(v, getString(name), NUM_DELIM);
 	return v;
 }
 

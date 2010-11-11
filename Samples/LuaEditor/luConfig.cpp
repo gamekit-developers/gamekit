@@ -30,3 +30,11 @@
 
 UT_IMPLEMENT_SINGLETON(luConfig)
 
+wxColour luConfig::getColor(const gkString& name, const wxColour& defValue)
+{
+	liIntVec vec = getIntVec(name);
+	if (vec.size() != 3)
+		return defValue;
+
+	return wxColour(vec[0], vec[1], vec[2]);
+}

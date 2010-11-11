@@ -17,8 +17,26 @@
       <entry name="linenumber_margin" value="50"/>
       <entry name="bookmark_margin" value="16"/>
       <entry name="folder_margin" value="16"/>
-      <entry name="keywords" value="and break do else elseif end false for function if in local nil not or repeat return then true until while "/>
+      <entry name="keywords" value="and break do else elseif end false for function if in local nil not or repeat return then true until while "/>      
     </group>
+    <group name="edit_font_color">
+      <entry name="default" value="0 0 0"/>
+      <entry name="comment" value="0 128 0"/>
+      <entry name="comment_line" value="0 128 0"/>
+      <entry name="comment_doc" value="0 128 0"/>
+      <entry name="number" value="0 128 128"/>
+      <entry name="word" value="0 0 128"/>
+      <entry name="string" value="128 0 128"/>
+      <entry name="identifier" value="0 0 0"/>
+      <entry name="preprocessor" value="128 0 0"/>
+      <entry name="operator" value="128 128 0"/>
+    </group>
+    <group name="edit_font_bold">
+      <entry name="word" value="true"/>
+    </group>
+    <group name="edit_font_bgcolor">
+      <entry name="default" value="255 255 255"/>
+    </group>      
     <group name="file">
       <entry name="base_blend" value="Data/base.blend"/>
       <entry name="proj_template" value="Config/lutemplate.xml"/>

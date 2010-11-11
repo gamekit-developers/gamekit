@@ -117,21 +117,27 @@ luEdit::luEdit(wxWindow *parent) :
 
 	StyleClearAll();
 
-	setStyleColor(SCE_LUA_DEFAULT, wxColour(0, 0, 0));
-	setStyleColor(SCE_LUA_COMMENT, wxColour(0, 0x80, 0));
-	setStyleColor(SCE_LUA_COMMENTLINE, wxColour(0, 0x80, 0));
-	setStyleColor(SCE_LUA_COMMENTDOC, wxColour(0, 0x80, 0));
-	//setStyleColor(SCE_LUA_COMMENTLINEDOC, wxColour(0, 0x80, 0));
-	//setStyleColor(SCE_LUA_COMMENTDOCKEYWORD, wxColour(0, 0x80, 0));
-	//setStyleColor(SCE_LUA_COMMENTDOCKEYWORDERROR, wxColour(0, 0x80, 0));
-	setStyleColor(SCE_LUA_NUMBER, wxColour(0, 0x80, 0x80));
-	setStyleColor(SCE_LUA_WORD, wxColour(0, 0, 0x80));
-	StyleSetBold(SCE_LUA_WORD, 1);	
-	setStyleColor(SCE_LUA_STRING, wxColour(0x80, 0, 0x80));
-	setStyleColor(SCE_LUA_IDENTIFIER, wxColour(0, 0, 0));
-	setStyleColor(SCE_LUA_PREPROCESSOR, wxColour(0x80, 0, 0));
-	setStyleColor(SCE_LUA_OPERATOR, wxColour(0x80, 0x80, 0));
+	setStyleColor(SCE_LUA_DEFAULT,		LuConfig.getDefaultFontColor(),			LuConfig.getDefaultFontBgColor());
+	setStyleColor(SCE_LUA_COMMENT,		LuConfig.getCommentFontColor(),			LuConfig.getCommentFontBgColor());
+	setStyleColor(SCE_LUA_COMMENTLINE,	LuConfig.getCommentLineFontColor(),		LuConfig.getCommentLineFontBgColor());
+	setStyleColor(SCE_LUA_COMMENTDOC,	LuConfig.getCommentDocFontColor(),		LuConfig.getCommentDocFontBgColor());
+	setStyleColor(SCE_LUA_NUMBER,		LuConfig.getNumberFontColor(),			LuConfig.getNumberFontBgColor());
+	setStyleColor(SCE_LUA_WORD,			LuConfig.getWordFontColor(),			LuConfig.getWordFontBgColor());
+	setStyleColor(SCE_LUA_STRING,		LuConfig.getStringFontColor(),			LuConfig.getStringFontBgColor());
+	setStyleColor(SCE_LUA_IDENTIFIER,	LuConfig.getIdentifierFontColor(),		LuConfig.getIdentifierFontBgColor());
+	setStyleColor(SCE_LUA_PREPROCESSOR,	LuConfig.getPreprocessorFontColor(),	LuConfig.getPreprocessorFontBgColor());
+	setStyleColor(SCE_LUA_OPERATOR,		LuConfig.getOperatorFontColor(),		LuConfig.getOperatorFontBgColor());
 
+	StyleSetBold(SCE_LUA_DEFAULT,		LuConfig.getDefaultFontBold());		
+	StyleSetBold(SCE_LUA_COMMENT,		LuConfig.getCommentFontBold());		
+	StyleSetBold(SCE_LUA_COMMENTLINE,	LuConfig.getCommentLineFontBold());	
+	StyleSetBold(SCE_LUA_COMMENTDOC,	LuConfig.getCommentDocFontBold());	
+	StyleSetBold(SCE_LUA_NUMBER,		LuConfig.getNumberFontBold());		
+	StyleSetBold(SCE_LUA_WORD,			LuConfig.getWordFontBold());			
+	StyleSetBold(SCE_LUA_STRING,		LuConfig.getStringFontBold());		
+	StyleSetBold(SCE_LUA_IDENTIFIER,	LuConfig.getIdentifierFontBold());	
+	StyleSetBold(SCE_LUA_PREPROCESSOR,	LuConfig.getPreprocessorFontBold());	
+	StyleSetBold(SCE_LUA_OPERATOR,		LuConfig.getOperatorFontBold());		
 
 	SetMarginType(LINE_MARGIN_ID, wxSTC_MARGIN_NUMBER);
 	SetMarginType(FOLDER_MARGIN_ID, wxSTC_MARGIN_SYMBOL);
@@ -188,10 +194,11 @@ void luEdit::setStyleColor(int style, const wxColour& foreCol, const wxColour& b
 	StyleSetBackground(style, backCol);
 }
 
-void luEdit::setStyleFont(int style, const wxString& fontName, int fontSize)
+void luEdit::setStyleFont(int style, const wxString& fontName, int fontSize, bool fontBold)
 {
 	wxFont font(fontSize, wxMODERN, wxNORMAL, wxNORMAL, false, fontName);
 	StyleSetFont(style, font);
+	StyleSetBold(style, fontBold);
 }
 
 bool luEdit::openFile(const wxString& fileName)
@@ -460,7 +467,7 @@ void luEdit::OnConvertEOL(wxCommandEvent &event)
 	SetEOLMode (eolMode);
 }
 
-void luEdit::OnMarginClick (wxStyledTextEvent &event) 
+void luEdit::OnMarginClick(wxStyledTextEvent &event) 
 {
 	if (event.GetMargin() == 2) 
 	{
@@ -472,7 +479,7 @@ void luEdit::OnMarginClick (wxStyledTextEvent &event)
 	}
 }
 
-void luEdit::OnCharAdded (wxStyledTextEvent &event) 
+void luEdit::OnCharAdded(wxStyledTextEvent &event) 
 {
 	char chr = (char)event.GetKey();
 	int currentLine = GetCurrentLine();

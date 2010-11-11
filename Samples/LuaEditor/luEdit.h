@@ -84,7 +84,7 @@ public:
 	~luEdit();
 
 	void setStyleColor(int style, const wxColour& foreCol, const wxColour& backCol=*wxWHITE);
-	void setStyleFont(int style, const wxString& fontName, int fontSize);
+	void setStyleFont(int style, const wxString& fontName, int fontSize, bool fontBold=false);
 
 	bool openFile(const wxString& fileName);
 	const wxString& getFileName() { return m_fileName; }
