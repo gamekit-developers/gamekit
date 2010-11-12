@@ -30,11 +30,9 @@
 
 class luEdit : public wxStyledTextCtrl
 {
-	bool m_displayLineNumber;
-	bool m_displayFolder;
-
 	int m_marginLineNumber;
 	int m_marginFolder;
+	int m_marginBookmark;
 
 	wxString m_fileName;
 
@@ -72,6 +70,10 @@ class luEdit : public wxStyledTextCtrl
     void OnSetReadOnly(wxCommandEvent &event);
     void OnWrapmodeOn(wxCommandEvent &event);
     void OnUseCharset(wxCommandEvent &event);
+	void OnBookmarkToggle(wxCommandEvent &event);
+	void OnBookmarkClearAll(wxCommandEvent &event);
+	void OnBookmarkNext(wxCommandEvent &event);
+	void OnBookmarkPrev(wxCommandEvent &event);
     // extra
     void OnChangeCase(wxCommandEvent &event);
     void OnConvertEOL(wxCommandEvent &event);
@@ -79,9 +81,12 @@ class luEdit : public wxStyledTextCtrl
     void OnMarginClick(wxStyledTextEvent &event);
     void OnCharAdded(wxStyledTextEvent &event);
 
+	bool hasBookmark(int line);
 public:
 	luEdit(wxWindow* parent);
 	~luEdit();
+
+	void gotoLineEnsureVisible(int line);
 
 	void setStyleColor(int style, const wxColour& foreCol, const wxColour& backCol=*wxWHITE);
 	void setStyleFont(int style, const wxString& fontName, int fontSize, bool fontBold=false);

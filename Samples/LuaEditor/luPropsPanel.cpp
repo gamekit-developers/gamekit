@@ -34,17 +34,18 @@
 #define PANEL_NAME			"Properties"
 
 #define PNAME_PROJECT_NAME	"ProjectName"
+#define PNAME_PROJECT_DIR	"Directroy"
 #define PNAME_WINSIZE_X		"WinSizeX"
 #define PNAME_WINSIZE_Y		"WinSizeY"
 #define PNAME_FULLSCREEN	"FullScreen"
 
 BEGIN_EVENT_TABLE(luPropsPanel, wxPanel)
 	EVT_PG_CHANGED( -1, luPropsPanel::OnPropertyGridChanged )
-	END_EVENT_TABLE()
+END_EVENT_TABLE()
 
-	WX_PG_DECLARE_VARIANT_DATA(gkVector3)
+WX_PG_DECLARE_VARIANT_DATA(gkVector3)
 
-	WX_PG_IMPLEMENT_VARIANT_DATA_DUMMY_EQ(gkVector3)
+WX_PG_IMPLEMENT_VARIANT_DATA_DUMMY_EQ(gkVector3)
 
 
 class luVector3Property : public wxPGProperty
@@ -67,7 +68,7 @@ protected:
 WX_PG_IMPLEMENT_PROPERTY_CLASS(luVector3Property,wxPGProperty, gkVector3,const gkVector3&,TextCtrl)
 
 
-	luVector3Property::luVector3Property( const wxString& label, const wxString& name, const gkVector3& value )
+luVector3Property::luVector3Property( const wxString& label, const wxString& name, const gkVector3& value )
 	: wxPGProperty(label,name)
 {
 	SetValue( WXVARIANT(value) );
@@ -181,6 +182,7 @@ luPropsPanel::luPropsPanel(wxWindow* parent) :
 
 
 	m_prop->Append( new wxStringProperty(PNAME_PROJECT_NAME, wxPG_LABEL) );
+	m_prop->Append( new wxStringProperty(PNAME_PROJECT_DIR, wxPG_LABEL) );
 	m_prop->Append( new wxIntProperty(PNAME_WINSIZE_X, wxPG_LABEL) );
 	m_prop->Append( new wxIntProperty(PNAME_WINSIZE_Y, wxPG_LABEL) );
 	m_prop->Append( new wxBoolProperty(PNAME_FULLSCREEN, wxPG_LABEL) );
@@ -217,6 +219,15 @@ void luPropsPanel::setProjectName(const wxString& name)
 	p->SetValue(name);
 }
 
+void luPropsPanel::setProjectDir(const wxString& name)
+{
+	if (!m_prop) return;
+
+	wxPGProperty* p = m_prop->GetProperty(PNAME_PROJECT_DIR);
+	if (!p) return;
+	p->SetValue(name);
+}
+
 void luPropsPanel::selectObject(gkGameObject* obj)
 {
 	if (!m_obj) return;
@@ -224,5 +235,4 @@ void luPropsPanel::selectObject(gkGameObject* obj)
 	luGameObjProps p(obj);
 	wxVariant v; v << p;
 	m_obj->SetValue(v);
-
 }

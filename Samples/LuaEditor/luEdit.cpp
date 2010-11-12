@@ -42,10 +42,13 @@ misrepresented as being the original software.
 #define DEFAULT_LUA_FONT_NAME	"Verdana"
 #define DEFAULT_LUA_FONT_SIZE	11
 #define LINE_MARGIN_ID			0
-#define DIVIDER_MARGIN_ID		1
+#define BOOKMARK_MARGIN_ID		1
 #define FOLDER_MARGIN_ID		2
 #define DEFAULT_FOLDER_MARGIN	16
+#define DEFAULT_BOOKMARK_MARGIN 16
 
+
+#define BOOKMARK_ID				1
 
 BEGIN_EVENT_TABLE (luEdit, wxStyledTextCtrl)
 	// common
@@ -85,6 +88,10 @@ BEGIN_EVENT_TABLE (luEdit, wxStyledTextCtrl)
 	EVT_MENU(ID_CODE_WRAPMODEON,	luEdit::OnWrapmodeOn)
 	EVT_MENU(ID_CODE_CHARSETANSI,	luEdit::OnUseCharset)
 	EVT_MENU(ID_CODE_CHARSETMAC,	luEdit::OnUseCharset)
+	EVT_MENU(ID_CODE_BOOKMARK_TOGGLE, luEdit::OnBookmarkToggle)
+	EVT_MENU(ID_CODE_BOOKMARK_CELAR, luEdit::OnBookmarkClearAll)
+	EVT_MENU(ID_CODE_BOOKMARK_NEXT, luEdit::OnBookmarkNext)
+	EVT_MENU(ID_CODE_BOOKMARK_PREV, luEdit::OnBookmarkPrev)
 	// extra ID_CODE
 	EVT_MENU(ID_CODE_CHANGELOWER,	luEdit::OnChangeCase)
 	EVT_MENU(ID_CODE_CHANGEUPPER,	luEdit::OnChangeCase)
@@ -98,8 +105,9 @@ END_EVENT_TABLE()
 
 luEdit::luEdit(wxWindow *parent) :  
 	wxStyledTextCtrl(parent),
-	m_displayLineNumber(true),
-	m_displayFolder(true)
+	m_marginLineNumber(0),
+	m_marginFolder(0),
+	m_marginBookmark(0)
 {	
 	gkString keywords = LuConfig.getEditKeywords(DEFAULT_LUA_KEYWORDS);
 	SetLexer(SCLEX_LUA);
@@ -113,43 +121,48 @@ luEdit::luEdit(wxWindow *parent) :
 	
 	m_marginLineNumber = LuConfig.getEditLineNumberMargin(TextWidth(wxSTC_STYLE_LINENUMBER, wxT("_9999")));
 	m_marginFolder = LuConfig.getEditFolderMargin(DEFAULT_FOLDER_MARGIN);
+	m_marginBookmark = LuConfig.getEditFolderMargin(DEFAULT_BOOKMARK_MARGIN);
 
+	SetTabWidth(LuConfig.getEditTabSize());
+	SetIndent(LuConfig.getEditIndentSize());
 
 	StyleClearAll();
 
-	setStyleColor(SCE_LUA_DEFAULT,		LuConfig.getDefaultFontColor(),			LuConfig.getDefaultFontBgColor());
-	setStyleColor(SCE_LUA_COMMENT,		LuConfig.getCommentFontColor(),			LuConfig.getCommentFontBgColor());
-	setStyleColor(SCE_LUA_COMMENTLINE,	LuConfig.getCommentLineFontColor(),		LuConfig.getCommentLineFontBgColor());
-	setStyleColor(SCE_LUA_COMMENTDOC,	LuConfig.getCommentDocFontColor(),		LuConfig.getCommentDocFontBgColor());
-	setStyleColor(SCE_LUA_NUMBER,		LuConfig.getNumberFontColor(),			LuConfig.getNumberFontBgColor());
-	setStyleColor(SCE_LUA_WORD,			LuConfig.getWordFontColor(),			LuConfig.getWordFontBgColor());
-	setStyleColor(SCE_LUA_STRING,		LuConfig.getStringFontColor(),			LuConfig.getStringFontBgColor());
-	setStyleColor(SCE_LUA_IDENTIFIER,	LuConfig.getIdentifierFontColor(),		LuConfig.getIdentifierFontBgColor());
-	setStyleColor(SCE_LUA_PREPROCESSOR,	LuConfig.getPreprocessorFontColor(),	LuConfig.getPreprocessorFontBgColor());
-	setStyleColor(SCE_LUA_OPERATOR,		LuConfig.getOperatorFontColor(),		LuConfig.getOperatorFontBgColor());
-
-	StyleSetBold(SCE_LUA_DEFAULT,		LuConfig.getDefaultFontBold());		
-	StyleSetBold(SCE_LUA_COMMENT,		LuConfig.getCommentFontBold());		
-	StyleSetBold(SCE_LUA_COMMENTLINE,	LuConfig.getCommentLineFontBold());	
-	StyleSetBold(SCE_LUA_COMMENTDOC,	LuConfig.getCommentDocFontBold());	
-	StyleSetBold(SCE_LUA_NUMBER,		LuConfig.getNumberFontBold());		
-	StyleSetBold(SCE_LUA_WORD,			LuConfig.getWordFontBold());			
-	StyleSetBold(SCE_LUA_STRING,		LuConfig.getStringFontBold());		
-	StyleSetBold(SCE_LUA_IDENTIFIER,	LuConfig.getIdentifierFontBold());	
-	StyleSetBold(SCE_LUA_PREPROCESSOR,	LuConfig.getPreprocessorFontBold());	
-	StyleSetBold(SCE_LUA_OPERATOR,		LuConfig.getOperatorFontBold());		
+	setStyleColor(SCE_LUA_DEFAULT,		LuConfig.getEditDefaultFontColor(),			LuConfig.getEditDefaultFontBgColor());
+	setStyleColor(SCE_LUA_COMMENT,		LuConfig.getEditCommentFontColor(),			LuConfig.getEditCommentFontBgColor());
+	setStyleColor(SCE_LUA_COMMENTLINE,	LuConfig.getEditCommentLineFontColor(),		LuConfig.getEditCommentLineFontBgColor());
+	setStyleColor(SCE_LUA_COMMENTDOC,	LuConfig.getEditCommentDocFontColor(),		LuConfig.getEditCommentDocFontBgColor());
+	setStyleColor(SCE_LUA_NUMBER,		LuConfig.getEditNumberFontColor(),			LuConfig.getEditNumberFontBgColor());
+	setStyleColor(SCE_LUA_WORD,			LuConfig.getEditWordFontColor(),			LuConfig.getEditWordFontBgColor());
+	setStyleColor(SCE_LUA_STRING,		LuConfig.getEditStringFontColor(),			LuConfig.getEditStringFontBgColor());
+	setStyleColor(SCE_LUA_IDENTIFIER,	LuConfig.getEditIdentifierFontColor(),		LuConfig.getEditIdentifierFontBgColor());
+	setStyleColor(SCE_LUA_PREPROCESSOR,	LuConfig.getEditPreprocessorFontColor(),	LuConfig.getEditPreprocessorFontBgColor());
+	setStyleColor(SCE_LUA_OPERATOR,		LuConfig.getEditOperatorFontColor(),		LuConfig.getEditOperatorFontBgColor());
+													
+	StyleSetBold(SCE_LUA_DEFAULT,		LuConfig.getEditDefaultFontBold());		
+	StyleSetBold(SCE_LUA_COMMENT,		LuConfig.getEditCommentFontBold());		
+	StyleSetBold(SCE_LUA_COMMENTLINE,	LuConfig.getEditCommentLineFontBold());	
+	StyleSetBold(SCE_LUA_COMMENTDOC,	LuConfig.getEditCommentDocFontBold());	
+	StyleSetBold(SCE_LUA_NUMBER,		LuConfig.getEditNumberFontBold());		
+	StyleSetBold(SCE_LUA_WORD,			LuConfig.getEditWordFontBold());			
+	StyleSetBold(SCE_LUA_STRING,		LuConfig.getEditStringFontBold());		
+	StyleSetBold(SCE_LUA_IDENTIFIER,	LuConfig.getEditIdentifierFontBold());	
+	StyleSetBold(SCE_LUA_PREPROCESSOR,	LuConfig.getEditPreprocessorFontBold());	
+	StyleSetBold(SCE_LUA_OPERATOR,		LuConfig.getEditOperatorFontBold());		
 
 	SetMarginType(LINE_MARGIN_ID, wxSTC_MARGIN_NUMBER);
 	SetMarginType(FOLDER_MARGIN_ID, wxSTC_MARGIN_SYMBOL);
 	SetMarginMask(FOLDER_MARGIN_ID, wxSTC_MASK_FOLDERS);
 
-	SetMarginWidth(LINE_MARGIN_ID, m_marginLineNumber);
-	SetMarginWidth(FOLDER_MARGIN_ID, m_marginFolder);
+	SetMarginWidth(LINE_MARGIN_ID, LuConfig.getEditViewLineNumber() ? m_marginLineNumber : 0);
+	SetMarginWidth(FOLDER_MARGIN_ID, LuConfig.getEditViewFolder() ? m_marginFolder : 0);
+	SetMarginWidth(BOOKMARK_MARGIN_ID, LuConfig.getEditViewBookmark() ? m_marginBookmark : 0);
 
-	// set margin as unused
-	SetMarginType (DIVIDER_MARGIN_ID, wxSTC_MARGIN_SYMBOL);
-	SetMarginWidth (DIVIDER_MARGIN_ID, 0);
-	SetMarginSensitive (DIVIDER_MARGIN_ID, false);
+	SetViewEOL(LuConfig.getEditViewEOL());
+	SetViewWhiteSpace(LuConfig.getEditViewWhiteSpace() ? wxSTC_WS_VISIBLEALWAYS: wxSTC_WS_INVISIBLE);
+	SetIndentationGuides(LuConfig.getEditViewIndentGuide());
+	SetEdgeMode(LuConfig.getEditViewLongLineMark() ? wxSTC_EDGE_LINE: wxSTC_EDGE_NONE);
+
 
 	// markers
 	MarkerDefine(wxSTC_MARKNUM_FOLDER,        SC_MARK_PLUS,		wxT("BLACK"), wxT("BLACK"));
@@ -159,7 +172,6 @@ luEdit::luEdit(wxWindow *parent) :
 	MarkerDefine(wxSTC_MARKNUM_FOLDEROPENMID, wxSTC_MARK_EMPTY,	wxT("BLACK"), wxT("WHITE"));
 	MarkerDefine(wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_EMPTY, wxT("BLACK"), wxT("BLACK"));
 	MarkerDefine(wxSTC_MARKNUM_FOLDERTAIL,    wxSTC_MARK_EMPTY, wxT("BLACK"), wxT("BLACK"));
-
 
 
 	SetMarginWidth (FOLDER_MARGIN_ID,m_marginFolder);
@@ -174,10 +186,7 @@ luEdit::luEdit(wxWindow *parent) :
 	SetProperty(wxT("fold.html.preprocessor"), "1");
 	SetProperty(wxT("styling.within.preprocessor"), "1");        
 
-
-
-	SetFoldFlags (wxSTC_FOLDFLAG_LINEBEFORE_CONTRACTED |
-		wxSTC_FOLDFLAG_LINEAFTER_CONTRACTED);
+	SetFoldFlags (wxSTC_FOLDFLAG_LINEBEFORE_CONTRACTED | wxSTC_FOLDFLAG_LINEAFTER_CONTRACTED);
 }
 
 luEdit::~luEdit()
@@ -246,8 +255,9 @@ void luEdit::OnKillFocus(wxFocusEvent& event)
 void luEdit::OnSize( wxSizeEvent& event ) 
 {
 	int x = GetClientSize().x + 
-		(m_displayLineNumber ? m_marginLineNumber : 0) +
-		(m_displayFolder    ? m_marginFolder : 0);
+		(GetMarginWidth(LINE_MARGIN_ID)		? m_marginLineNumber : 0) +
+		(GetMarginWidth(FOLDER_MARGIN_ID)	? m_marginFolder : 0) +
+		(GetMarginWidth(BOOKMARK_MARGIN_ID)	? m_marginBookmark : 0);
 
 	if (x > 0) SetScrollWidth (x);
 
@@ -333,7 +343,7 @@ void luEdit::OnBraceMatch(wxCommandEvent &WXUNUSED(event))
 void luEdit::OnGoto(wxCommandEvent &WXUNUSED(event)) 
 {	
 	wxString str = wxGetTextFromUser("Enter Line Number: ", "Goto Line", "");
-	unsigned long line= 0;
+	unsigned long line = 0;
 	if (str.ToULong(&line))
 		GotoLine(line);
 }
@@ -376,8 +386,8 @@ void luEdit::OnIndentGuide(wxCommandEvent &WXUNUSED(event))
 
 void luEdit::OnLineNumber(wxCommandEvent &WXUNUSED(event)) 
 {
-	SetMarginWidth(m_marginLineNumber,
-		GetMarginWidth (0) == 0 ? m_marginLineNumber : 0);
+	SetMarginWidth(LINE_MARGIN_ID,
+		GetMarginWidth(LINE_MARGIN_ID) == 0 ? m_marginLineNumber : 0);
 }
 
 void luEdit::OnLongLineOn(wxCommandEvent &WXUNUSED(event)) 
@@ -394,6 +404,62 @@ void luEdit::OnWhiteSpace(wxCommandEvent &WXUNUSED(event))
 void luEdit::OnFoldToggle(wxCommandEvent &WXUNUSED(event)) 
 {
 	ToggleFold (GetFoldParent(GetCurrentLine()));
+}
+
+
+
+bool luEdit::hasBookmark(int line)
+{
+	return (MarkerGet(line) & (1<<BOOKMARK_ID)) != 0;
+}
+
+
+void luEdit::gotoLineEnsureVisible(int line)
+{
+	EnsureVisible(line);
+	GotoLine(line);
+}
+
+void luEdit::OnBookmarkToggle(wxCommandEvent &WXUNUSED(event)) 
+{
+	int line = GetCurrentLine();
+	if (hasBookmark(line))
+		MarkerDelete(line, BOOKMARK_ID);
+	else
+		MarkerAdd(line, BOOKMARK_ID);
+}
+
+void luEdit::OnBookmarkClearAll(wxCommandEvent &WXUNUSED(event)) 
+{
+	MarkerDeleteAll(BOOKMARK_ID);
+}
+
+void luEdit::OnBookmarkNext(wxCommandEvent &WXUNUSED(event)) 
+{	
+	int line = GetCurrentLine();
+	int nline = MarkerNext(line+1, 1<<BOOKMARK_ID);
+	if (nline >= 0 && nline != line)	
+		gotoLineEnsureVisible(nline);	
+	else
+	{
+		nline = MarkerNext(0, 1<<BOOKMARK_ID);
+		if (nline >= 0 && nline != line)
+			gotoLineEnsureVisible(nline);
+	}
+}
+
+void luEdit::OnBookmarkPrev(wxCommandEvent &WXUNUSED(event)) 
+{	
+	int line = GetCurrentLine();
+	int nline = MarkerPrevious(line-1, 1<<BOOKMARK_ID);
+	if (nline >= 0 && nline != line)	
+		gotoLineEnsureVisible(nline);	
+	else
+	{
+		nline = MarkerPrevious(GetLineCount()-1, 1<<BOOKMARK_ID);
+		if (nline >= 0 && nline != line)
+			gotoLineEnsureVisible(nline);
+	}
 }
 
 void luEdit::OnSetOverType(wxCommandEvent &WXUNUSED(event)) 
@@ -482,10 +548,15 @@ void luEdit::OnMarginClick(wxStyledTextEvent &event)
 void luEdit::OnCharAdded(wxStyledTextEvent &event) 
 {
 	char chr = (char)event.GetKey();
-	int currentLine = GetCurrentLine();
-	// Change this if support for mac files with \r is needed
+
+#ifndef __WXMAC__
 	if (chr == '\n') 
+#else
+	if (chr == '\r')
+#endif
 	{
+		int currentLine = GetCurrentLine();
+
 		int lineInd = 0;
 
 		if (currentLine > 0) 
@@ -494,8 +565,8 @@ void luEdit::OnCharAdded(wxStyledTextEvent &event)
 		if (lineInd == 0) 
 			return;
 
-		SetLineIndentation (currentLine, lineInd);
-		GotoPos(PositionFromLine (currentLine) + lineInd);
+		SetLineIndentation(currentLine, lineInd);
+		GotoPos(PositionFromLine (currentLine) + lineInd/GetTabWidth());
 	}
 }
 

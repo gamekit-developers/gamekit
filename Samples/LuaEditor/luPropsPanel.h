@@ -43,6 +43,7 @@ public:
 	~luPropsPanel();
 
 	void setProjectName(const wxString& name);
+	void setProjectDir(const wxString& name);
 	void selectObject(gkGameObject* obj);
 
 	DECLARE_EVENT_TABLE()

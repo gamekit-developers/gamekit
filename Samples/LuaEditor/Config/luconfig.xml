@@ -12,9 +12,12 @@
       <entry name="topic" value="Help/index.hhk"/>
     </group>
     <group name="edit">
+      <entry name="tab_size" value="4"/>
+      <entry name="indent_size" value="4"/>
+      <entry name="set_tab_indent" value="true"/>
       <entry name="font_name" value="Verdana"/>
       <entry name="font_size" value="11"/>
-      <entry name="linenumber_margin" value="50"/>
+      <entry name="linenumber_margin" value="40"/>
       <entry name="bookmark_margin" value="16"/>
       <entry name="folder_margin" value="16"/>
       <entry name="keywords" value="and break do else elseif end false for function if in local nil not or repeat return then true until while "/>      
@@ -36,7 +39,16 @@
     </group>
     <group name="edit_font_bgcolor">
       <entry name="default" value="255 255 255"/>
-    </group>      
+    </group>
+    <group name="edit_view">
+      <entry name="eol" value="false"/>
+      <entry name="white_space" value="false"/>
+      <entry name="indent_guide" value="false"/>      
+      <entry name="long_line_mark" value="false"/>
+      <entry name="line_number" value="true"/>
+      <entry name="folder" value="true"/>
+      <entry name="bookmark" value="true"/>
+    </group>
     <group name="file">
       <entry name="base_blend" value="Data/base.blend"/>
       <entry name="proj_template" value="Config/lutemplate.xml"/>

@@ -132,42 +132,47 @@ BEGIN_EVENT_TABLE(luMainFrame, wxFrame)
 
 	//-- send event to focused edit
 	// edit
-    EVT_MENU (wxID_CLEAR,			luMainFrame::OnEdit)
-    EVT_MENU (wxID_CUT,				luMainFrame::OnEdit)
-    EVT_MENU (wxID_COPY,			luMainFrame::OnEdit)
-    EVT_MENU (wxID_PASTE,			luMainFrame::OnEdit)
-    EVT_MENU (ID_CODE_INDENTINC,	luMainFrame::OnEdit)
-    EVT_MENU (ID_CODE_INDENTRED,	luMainFrame::OnEdit)
-    EVT_MENU (wxID_SELECTALL,		luMainFrame::OnEdit)
-    EVT_MENU (ID_CODE_SELECTLINE,	luMainFrame::OnEdit)
-    EVT_MENU (wxID_REDO,			luMainFrame::OnEdit)
-    EVT_MENU (wxID_UNDO,			luMainFrame::OnEdit)
+    EVT_MENU(wxID_CLEAR,			luMainFrame::OnEdit)
+    EVT_MENU(wxID_CUT,				luMainFrame::OnEdit)
+    EVT_MENU(wxID_COPY,			luMainFrame::OnEdit)
+    EVT_MENU(wxID_PASTE,			luMainFrame::OnEdit)
+    EVT_MENU(ID_CODE_INDENTINC,	luMainFrame::OnEdit)
+    EVT_MENU(ID_CODE_INDENTRED,	luMainFrame::OnEdit)
+    EVT_MENU(wxID_SELECTALL,		luMainFrame::OnEdit)
+    EVT_MENU(ID_CODE_SELECTLINE,	luMainFrame::OnEdit)
+    EVT_MENU(wxID_REDO,			luMainFrame::OnEdit)
+    EVT_MENU(wxID_UNDO,			luMainFrame::OnEdit)
     // find
-    EVT_MENU (wxID_FIND,            luMainFrame::OnEdit)
-    EVT_MENU (ID_CODE_FINDNEXT,     luMainFrame::OnEdit)
-    EVT_MENU (ID_CODE_REPLACE,      luMainFrame::OnEdit)
-    EVT_MENU (ID_CODE_REPLACENEXT,  luMainFrame::OnEdit)
-    EVT_MENU (ID_CODE_BRACEMATCH,   luMainFrame::OnEdit)
-    EVT_MENU (ID_CODE_GOTO,         luMainFrame::OnEdit)
+    EVT_MENU(wxID_FIND,            luMainFrame::OnEdit)
+    EVT_MENU(ID_CODE_FINDNEXT,     luMainFrame::OnEdit)
+    EVT_MENU(ID_CODE_REPLACE,      luMainFrame::OnEdit)
+    EVT_MENU(ID_CODE_REPLACENEXT,  luMainFrame::OnEdit)
+    EVT_MENU(ID_CODE_BRACEMATCH,   luMainFrame::OnEdit)
+    EVT_MENU(ID_CODE_GOTO,         luMainFrame::OnEdit)
     // view
     EVT_MENU_RANGE (ID_CODE_HILIGHTFIRST, ID_CODE_HILIGHTLAST, luMainFrame::OnEdit)
-    EVT_MENU (ID_CODE_DISPLAYEOL,   luMainFrame::OnEdit)
-    EVT_MENU (ID_CODE_INDENTGUIDE,  luMainFrame::OnEdit)
-    EVT_MENU (ID_CODE_LINENUMBER,   luMainFrame::OnEdit)
-    EVT_MENU (ID_CODE_LONGLINEON,   luMainFrame::OnEdit)
-    EVT_MENU (ID_CODE_WHITESPACE,   luMainFrame::OnEdit)
-    EVT_MENU (ID_CODE_FOLDTOGGLE,   luMainFrame::OnEdit)
-    EVT_MENU (ID_CODE_OVERTYPE,     luMainFrame::OnEdit)
-    EVT_MENU (ID_CODE_READONLY,     luMainFrame::OnEdit)
-    EVT_MENU (ID_CODE_WRAPMODEON,   luMainFrame::OnEdit)
+    EVT_MENU(ID_CODE_DISPLAYEOL,   luMainFrame::OnEdit)
+    EVT_MENU(ID_CODE_INDENTGUIDE,  luMainFrame::OnEdit)
+    EVT_MENU(ID_CODE_LINENUMBER,   luMainFrame::OnEdit)
+    EVT_MENU(ID_CODE_LONGLINEON,   luMainFrame::OnEdit)
+    EVT_MENU(ID_CODE_WHITESPACE,   luMainFrame::OnEdit)
+    EVT_MENU(ID_CODE_FOLDTOGGLE,   luMainFrame::OnEdit)
+    EVT_MENU(ID_CODE_OVERTYPE,     luMainFrame::OnEdit)
+    EVT_MENU(ID_CODE_READONLY,     luMainFrame::OnEdit)
+    EVT_MENU(ID_CODE_WRAPMODEON,   luMainFrame::OnEdit)
     // extra
-    EVT_MENU (ID_CODE_CHANGELOWER,  luMainFrame::OnEdit)
-    EVT_MENU (ID_CODE_CHANGEUPPER,  luMainFrame::OnEdit)
-    EVT_MENU (ID_CODE_CONVERTCR,    luMainFrame::OnEdit)
-    EVT_MENU (ID_CODE_CONVERTCRLF,  luMainFrame::OnEdit)
-    EVT_MENU (ID_CODE_CONVERTLF,    luMainFrame::OnEdit)
-    EVT_MENU (ID_CODE_CHARSETANSI,  luMainFrame::OnEdit)
-    EVT_MENU (ID_CODE_CHARSETMAC,   luMainFrame::OnEdit)
+    EVT_MENU(ID_CODE_CHANGELOWER,  luMainFrame::OnEdit)
+    EVT_MENU(ID_CODE_CHANGEUPPER,  luMainFrame::OnEdit)
+    EVT_MENU(ID_CODE_CONVERTCR,    luMainFrame::OnEdit)
+    EVT_MENU(ID_CODE_CONVERTCRLF,  luMainFrame::OnEdit)
+    EVT_MENU(ID_CODE_CONVERTLF,    luMainFrame::OnEdit)
+    EVT_MENU(ID_CODE_CHARSETANSI,  luMainFrame::OnEdit)
+    EVT_MENU(ID_CODE_CHARSETMAC,   luMainFrame::OnEdit)
+	
+	EVT_MENU(ID_CODE_BOOKMARK_TOGGLE,	luMainFrame::OnEdit)
+	EVT_MENU(ID_CODE_BOOKMARK_CELAR,	luMainFrame::OnEdit)
+	EVT_MENU(ID_CODE_BOOKMARK_NEXT,		luMainFrame::OnEdit)
+	EVT_MENU(ID_CODE_BOOKMARK_PREV,		luMainFrame::OnEdit)
 
 	EVT_AUINOTEBOOK_PAGE_CLOSE(ID_BOOK_MAIN, luMainFrame::OnClosePage)
 	//EVT_TREE_KEY_DOWN(ID_PROJ_TREE, luProjTree::OnKeyChar)
@@ -412,69 +417,80 @@ void luMainFrame::setupMenu()
 
     // Edit menu
     wxMenu *menuEdit = new wxMenu;
-    menuEdit->Append (wxID_UNDO, wxT("&Undo\tCtrl+Z"));
-    menuEdit->Append (wxID_REDO, wxT("&Redo\tCtrl+Shift+Z"));
+    menuEdit->Append(wxID_UNDO, wxT("&Undo\tCtrl+Z"));
+    menuEdit->Append(wxID_REDO, wxT("&Redo\tCtrl+Shift+Z"));
     menuEdit->AppendSeparator();
-    menuEdit->Append (wxID_CUT, wxT("Cu&t\tCtrl+X"));
-    menuEdit->Append (wxID_COPY, wxT("&Copy\tCtrl+C"));
-    menuEdit->Append (wxID_PASTE, wxT("&Paste\tCtrl+V"));
-    menuEdit->Append (wxID_CLEAR, wxT("&Delete\tDel"));
+    menuEdit->Append(wxID_CUT, wxT("Cu&t\tCtrl+X"));
+    menuEdit->Append(wxID_COPY, wxT("&Copy\tCtrl+C"));
+    menuEdit->Append(wxID_PASTE, wxT("&Paste\tCtrl+V"));
+    menuEdit->Append(wxID_CLEAR, wxT("&Delete\tDel"));
     menuEdit->AppendSeparator();
-    menuEdit->Append (wxID_FIND, wxT("&Find\tCtrl+F"));
-    menuEdit->Append (ID_CODE_FINDNEXT, wxT("Find &next\tF3"));
-    menuEdit->Enable (ID_CODE_FINDNEXT, false);
-    menuEdit->Append (ID_CODE_REPLACE, wxT("&Replace\tCtrl+R"));
-    menuEdit->Append (ID_CODE_REPLACENEXT, wxT("Replace &again\tShift+F4"));
-    menuEdit->Enable (ID_CODE_REPLACENEXT, false);
+    menuEdit->Append(wxID_FIND, wxT("&Find\tCtrl+F"));
+    menuEdit->Append(ID_CODE_FINDNEXT, wxT("Find &next\tF3"));
+    menuEdit->Enable(ID_CODE_FINDNEXT, false);
+    menuEdit->Append(ID_CODE_REPLACE, wxT("&Replace\tCtrl+R"));
+    menuEdit->Append(ID_CODE_REPLACENEXT, wxT("Replace &again\tShift+F4"));
+    menuEdit->Enable(ID_CODE_REPLACENEXT, false);
     menuEdit->AppendSeparator();
-    menuEdit->Append (ID_CODE_BRACEMATCH, wxT("&Match brace\tCtrl+M"));
-    menuEdit->Append (ID_CODE_GOTO, wxT("&Goto\tCtrl+G"));
+    menuEdit->Append(ID_CODE_BRACEMATCH, wxT("&Match brace\tCtrl+M"));
+    menuEdit->Append(ID_CODE_GOTO, wxT("&Goto\tCtrl+G"));
     menuEdit->AppendSeparator();
-    menuEdit->Append (ID_CODE_INDENTINC, wxT("&Indent increase\tTab"));
-    menuEdit->Append (ID_CODE_INDENTRED, wxT("I&ndent reduce\tShift+Tab"));
+    menuEdit->Append(ID_CODE_INDENTINC, wxT("&Indent increase\tTab"));
+    menuEdit->Append(ID_CODE_INDENTRED, wxT("I&ndent reduce\tShift+Tab"));
     menuEdit->AppendSeparator();
-    menuEdit->Append (wxID_SELECTALL, wxT("&Select all\tCtrl+A"));
-    menuEdit->Append (ID_CODE_SELECTLINE, wxT("Select &line\tCtrl+L"));
+    menuEdit->Append(wxID_SELECTALL, wxT("&Select all\tCtrl+A"));
+    menuEdit->Append(ID_CODE_SELECTLINE, wxT("Select &line\tCtrl+L"));
+	menuEdit->AppendSeparator();
+	menuEdit->AppendCheckItem(ID_CODE_FOLDTOGGLE, wxT("&Toggle current fold\tCtrl+T"));
+	menuEdit->AppendCheckItem(ID_CODE_OVERTYPE, wxT("&Overwrite mode\tIns"));
+	menuEdit->AppendCheckItem(ID_CODE_WRAPMODEON, wxT("&Wrap mode"));
 
-    // charset submenu
-    wxMenu *menuCharset = new wxMenu;
-    menuCharset->Append (ID_CODE_CHARSETANSI, wxT("&ANSI (Windows)"));
-    menuCharset->Append (ID_CODE_CHARSETMAC, wxT("&MAC (Macintosh)"));
+
+	wxMenu* menuBookmark = new wxMenu;
+	menuBookmark->AppendCheckItem(ID_CODE_BOOKMARK_TOGGLE, wxT("&Toggle bookmark\tCtrl+F2"));
+	menuBookmark->AppendCheckItem(ID_CODE_BOOKMARK_CELAR, wxT("ClearAll bookmark\tCtrl+Shift+F2"));
+	menuBookmark->AppendCheckItem(ID_CODE_BOOKMARK_NEXT, wxT("Goto next bookmark\tF2"));
+	menuBookmark->AppendCheckItem(ID_CODE_BOOKMARK_PREV, wxT("Goto prev bookmark\tShift+F2"));
+	menuEdit->AppendSeparator();
+	menuEdit->AppendSubMenu(menuBookmark, wxT("Bookmark .."));
+	
+    // charset menu
+    wxMenu* menuCharset = new wxMenu;
+    menuCharset->Append(ID_CODE_CHARSETANSI, wxT("&ANSI (Windows)"));
+    menuCharset->Append(ID_CODE_CHARSETMAC, wxT("&MAC (Macintosh)"));
+	menuEdit->AppendSeparator();
+	menuEdit->Append (ID_CODE_USECHARSET, wxT("Use &code page of .."), menuCharset);
 
     // View menu
-    wxMenu *menuView = new wxMenu;
-	menuView->AppendCheckItem (ID_CODE_FOLDTOGGLE, wxT("&Toggle current fold\tCtrl+T"));
-	menuView->AppendCheckItem (ID_CODE_OVERTYPE, wxT("&Overwrite mode\tIns"));
-	menuView->AppendCheckItem (ID_CODE_WRAPMODEON, wxT("&Wrap mode\tCtrl+U"));
+    wxMenu* menuView = new wxMenu;
+	menuView->AppendCheckItem(ID_CODE_DISPLAYEOL,  wxT("Show line &endings"));
+	menuView->AppendCheckItem(ID_CODE_INDENTGUIDE, wxT("Show &indent guides"));
+	menuView->AppendCheckItem(ID_CODE_LINENUMBER,  wxT("Show line &numbers"));
+	menuView->AppendCheckItem(ID_CODE_LONGLINEON,  wxT("Show &long line marker"));
+	menuView->AppendCheckItem(ID_CODE_WHITESPACE,  wxT("Show white&space"));
 	menuView->AppendSeparator();
-	menuView->AppendCheckItem (ID_CODE_DISPLAYEOL, wxT("Show line &endings"));
-	menuView->AppendCheckItem (ID_CODE_INDENTGUIDE, wxT("Show &indent guides"));
-	menuView->AppendCheckItem (ID_CODE_LINENUMBER, wxT("Show line &numbers"));
-	menuView->AppendCheckItem (ID_CODE_LONGLINEON, wxT("Show &long line marker"));
-	menuView->AppendCheckItem (ID_CODE_WHITESPACE, wxT("Show white&space"));
-	menuView->AppendSeparator();
-	menuView->Append (ID_CODE_USECHARSET, wxT("Use &code page of .."), menuCharset);
+		
 
     // change case submenu
     wxMenu *menuChangeCase = new wxMenu;
-    menuChangeCase->Append (ID_CODE_CHANGEUPPER, wxT("&Upper case"));
-    menuChangeCase->Append (ID_CODE_CHANGELOWER, wxT("&Lower case"));
+    menuChangeCase->Append(ID_CODE_CHANGEUPPER, wxT("&Upper case\tCtrl+Shift+U"));
+    menuChangeCase->Append(ID_CODE_CHANGELOWER, wxT("&Lower case\tCtrl+U"));
 
     // convert EOL submenu
     wxMenu *menuConvertEOL = new wxMenu;
-    menuConvertEOL->Append (ID_CODE_CONVERTCR, wxT("CR (&Linux)"));
-    menuConvertEOL->Append (ID_CODE_CONVERTCRLF, wxT("CR+LF (&Windows)"));
-    menuConvertEOL->Append (ID_CODE_CONVERTLF, wxT("LF (&Macintosh)"));
+    menuConvertEOL->Append(ID_CODE_CONVERTCR, wxT("CR (&Linux)"));
+    menuConvertEOL->Append(ID_CODE_CONVERTCRLF, wxT("CR+LF (&Windows)"));
+    menuConvertEOL->Append(ID_CODE_CONVERTLF, wxT("LF (&Macintosh)"));
 
     // Extra menu
     wxMenu *menuExtra = new wxMenu;
 	menuEdit->AppendSeparator();
-    menuEdit->Append (ID_CODE_CHANGECASE, wxT("Change &case to .."), menuChangeCase);
-    menuEdit->Append (ID_CODE_CONVERTEOL, wxT("Convert line &endings to .."), menuConvertEOL);
+    menuEdit->Append(ID_CODE_CHANGECASE, wxT("Change &case to .."), menuChangeCase);
+    menuEdit->Append(ID_CODE_CONVERTEOL, wxT("Convert line &endings to .."), menuConvertEOL);
 
 	menuEdit->AppendSubMenu(menuView, "View");
 
-	menuBar->Append (menuEdit, wxT("&Edit"));
+	menuBar->Append(menuEdit, wxT("&Edit"));
 
 	//-- render
 	menu = new wxMenu;
@@ -559,6 +575,9 @@ void luMainFrame::setupToolbar()
 
 	tb->SetToolBitmapSize(wxSize(16,16));
 	
+	tb->AddTool(ID_NEW_PROJ_FILE, "NewProject",  wxArtProvider::GetBitmap(wxART_NORMAL_FILE, wxART_OTHER, wxSize(16,16)));
+	tb->AddTool(ID_OPEN_PROJ_FILE, "OpenProject",  wxArtProvider::GetBitmap(wxART_FILE_OPEN, wxART_OTHER, wxSize(16,16)));	
+	tb->AddTool(wxID_SAVE, "SaveAll",	 wxArtProvider::GetBitmap(wxART_FILE_SAVE, wxART_OTHER, wxSize(16,16)));
 	tb->AddTool(ID_RUN_RUNTIME,  "Run",  wxArtProvider::GetBitmap(wxART_INFORMATION, wxART_OTHER, wxSize(16,16)));
     tb->AddTool(ID_SHOW_HELP, "Help", wxArtProvider::GetBitmap(wxART_QUESTION, wxART_OTHER, wxSize(16,16)));
 
@@ -1040,6 +1059,7 @@ bool luMainFrame::openProjFile(const wxString& fileName)
 	if (m_propsPanel)
 	{
 		m_propsPanel->setProjectName(proj->getProjName());
+		m_propsPanel->setProjectDir(proj->getProjDir());
 	}
 
 	SAFE_DELETE(oldProj);

@@ -35,56 +35,68 @@ class luConfig : public xml::xmlConfig, public utSingleton<luConfig>
 public:
 
 #ifdef WIN32
-	gkString getRuntimePath() { return getString("app.runtime.win32_path"); }
+	gkString getRuntimePath()								{ return getString("app.runtime.win32_path"); }
 #else
-	gkString getRuntimePath() { return getString("app.runtime.linux_path"); }
+	gkString getRuntimePath()								{ return getString("app.runtime.linux_path"); }
 #endif
 
-	gkString getHelpFilePath()  { return getString("app.help.path"); }
-	gkString getHelpTopicFile() { return getString("app.help.topic"); }
+	gkString getHelpFilePath()								{ return getString("app.help.path"); }
+	gkString getHelpTopicFile()								{ return getString("app.help.topic"); }
+		
+	gkString getBaseBlendFile()								{ return getString("app.file.base_blend"); }
+	gkString getProjTemplateFile()							{ return getString("app.file.proj_template"); }
 
+	//-- edit
+
+	int getEditTabSize(int defValue=4)						{ return getInt("app.edit.tab_size", defValue); }
+	int getEditIndentSize(int defValue=4)					{ return getInt("app.edit.indent_size", defValue); }
 	gkString getEditFontName(const gkString& defValue="")	{ return getString("app.edit.font_name", defValue); }
 	int	getEditFontSize(int defValue=0)						{ return getInt("app.edit.font_size", defValue); }
 	int	getEditLineNumberMargin(int defValue=0)				{ return getInt("app.edit.linenumber_margin", defValue); }
 	int	getEditBookmarkMargin(int defValue=0)				{ return getInt("app.edit.bookmark_margin", defValue); }
 	int	getEditFolderMargin(int defValue=0)					{ return getInt("app.edit.folder_margin", defValue); }
 	gkString getEditKeywords(const gkString& defValue="")	{ return getString("app.edit.keywords", defValue); }
-	
-	gkString getBaseBlendFile()		{ return getString("app.file.base_blend"); }
-	gkString getProjTemplateFile()	{ return getString("app.file.proj_template"); }
 
-	wxColour getDefaultFontColor()		{ return getColor("app.edit_font_color.default"); }
-	wxColour getCommentFontColor()		{ return getColor("app.edit_font_color.comment"); }
-	wxColour getCommentLineFontColor()	{ return getColor("app.edit_font_color.comment_line"); }
-	wxColour getCommentDocFontColor()	{ return getColor("app.edit_font_color.comment_doc"); }
-	wxColour getNumberFontColor()		{ return getColor("app.edit_font_color.number"); }
-	wxColour getWordFontColor()			{ return getColor("app.edit_font_color.word"); }
-	wxColour getStringFontColor()		{ return getColor("app.edit_font_color.string"); }
-	wxColour getIdentifierFontColor()	{ return getColor("app.edit_font_color.identifier"); }
-	wxColour getPreprocessorFontColor()	{ return getColor("app.edit_font_color.preprocessor"); }
-	wxColour getOperatorFontColor()		{ return getColor("app.edit_font_color.operator"); }
+	bool getEditViewLineNumber()							{ return getBool("app.edit_view.line_number"); }		
+	bool getEditViewFolder()								{ return getBool("app.edit_view.folder"); }
+	bool getEditViewBookmark()								{ return getBool("app.edit_view.bookmark"); }
+	bool getEditViewLongLineMark()							{ return getBool("app.edit_view.long_line_mark"); }
+	bool getEditViewEOL()									{ return getBool("app.edit_view.eol"); }
+	bool getEditViewWhiteSpace()							{ return getBool("app.edit_view.white_space"); }
+	bool getEditViewIndentGuide()							{ return getBool("app.edit_view.indent_guide"); }
 
-	wxColour getDefaultFontBgColor()		{ return getColor("app.edit_font_bgcolor.default", *wxWHITE); }
-	wxColour getCommentFontBgColor()		{ return getColor("app.edit_font_bgcolor.comment", *wxWHITE); }
-	wxColour getCommentLineFontBgColor()	{ return getColor("app.edit_font_bgcolor.comment_line", *wxWHITE); }
-	wxColour getCommentDocFontBgColor()		{ return getColor("app.edit_font_bgcolor.comment_doc", *wxWHITE); }
-	wxColour getNumberFontBgColor()			{ return getColor("app.edit_font_bgcolor.number", *wxWHITE); }
-	wxColour getWordFontBgColor()			{ return getColor("app.edit_font_bgcolor.word", *wxWHITE); }
-	wxColour getStringFontBgColor()			{ return getColor("app.edit_font_bgcolor.string", *wxWHITE); }
-	wxColour getIdentifierFontBgColor()		{ return getColor("app.edit_font_bgcolor.identifier", *wxWHITE); }
-	wxColour getPreprocessorFontBgColor()	{ return getColor("app.edit_font_bgcolor.preprocessor", *wxWHITE); }
-	wxColour getOperatorFontBgColor()		{ return getColor("app.edit_font_bgcolor.operator", *wxWHITE); }
+	wxColour getEditDefaultFontColor()						{ return getColor("app.edit_font_color.default"); }
+	wxColour getEditCommentFontColor()						{ return getColor("app.edit_font_color.comment"); }
+	wxColour getEditCommentLineFontColor()					{ return getColor("app.edit_font_color.comment_line"); }
+	wxColour getEditCommentDocFontColor()					{ return getColor("app.edit_font_color.comment_doc"); }
+	wxColour getEditNumberFontColor()						{ return getColor("app.edit_font_color.number"); }
+	wxColour getEditWordFontColor()							{ return getColor("app.edit_font_color.word"); }
+	wxColour getEditStringFontColor()						{ return getColor("app.edit_font_color.string"); }
+	wxColour getEditIdentifierFontColor()					{ return getColor("app.edit_font_color.identifier"); }
+	wxColour getEditPreprocessorFontColor()					{ return getColor("app.edit_font_color.preprocessor"); }
+	wxColour getEditOperatorFontColor()						{ return getColor("app.edit_font_color.operator"); }
 
-	bool getDefaultFontBold()			{ return getBool("app.edit_font_bold.default"); }
-	bool getCommentFontBold()			{ return getBool("app.edit_font_bold.comment"); }
-	bool getCommentLineFontBold()		{ return getBool("app.edit_font_bold.comment_line"); }
-	bool getCommentDocFontBold()		{ return getBool("app.edit_font_bold.comment_doc"); }
-	bool getNumberFontBold()			{ return getBool("app.edit_font_bold.number"); }
-	bool getWordFontBold()				{ return getBool("app.edit_font_bold.word"); }
-	bool getStringFontBold()			{ return getBool("app.edit_font_bold.string"); }
-	bool getIdentifierFontBold()		{ return getBool("app.edit_font_bold.identifier"); }
-	bool getPreprocessorFontBold()		{ return getBool("app.edit_font_bold.preprocessor"); }
-	bool getOperatorFontBold()			{ return getBool("app.edit_font_bold.operator"); }
+	wxColour getEditDefaultFontBgColor()					{ return getColor("app.edit_font_bgcolor.default", *wxWHITE); }
+	wxColour getEditCommentFontBgColor()					{ return getColor("app.edit_font_bgcolor.comment", *wxWHITE); }
+	wxColour getEditCommentLineFontBgColor()				{ return getColor("app.edit_font_bgcolor.comment_line", *wxWHITE); }
+	wxColour getEditCommentDocFontBgColor()					{ return getColor("app.edit_font_bgcolor.comment_doc", *wxWHITE); }
+	wxColour getEditNumberFontBgColor()						{ return getColor("app.edit_font_bgcolor.number", *wxWHITE); }
+	wxColour getEditWordFontBgColor()						{ return getColor("app.edit_font_bgcolor.word", *wxWHITE); }
+	wxColour getEditStringFontBgColor()						{ return getColor("app.edit_font_bgcolor.string", *wxWHITE); }
+	wxColour getEditIdentifierFontBgColor()					{ return getColor("app.edit_font_bgcolor.identifier", *wxWHITE); }
+	wxColour getEditPreprocessorFontBgColor()				{ return getColor("app.edit_font_bgcolor.preprocessor", *wxWHITE); }
+	wxColour getEditOperatorFontBgColor()					{ return getColor("app.edit_font_bgcolor.operator", *wxWHITE); }
+
+	bool getEditDefaultFontBold()							{ return getBool("app.edit_font_bold.default"); }
+	bool getEditCommentFontBold()							{ return getBool("app.edit_font_bold.comment"); }
+	bool getEditCommentLineFontBold()						{ return getBool("app.edit_font_bold.comment_line"); }
+	bool getEditCommentDocFontBold()						{ return getBool("app.edit_font_bold.comment_doc"); }
+	bool getEditNumberFontBold()							{ return getBool("app.edit_font_bold.number"); }
+	bool getEditWordFontBold()								{ return getBool("app.edit_font_bold.word"); }
+	bool getEditStringFontBold()							{ return getBool("app.edit_font_bold.string"); }
+	bool getEditIdentifierFontBold()						{ return getBool("app.edit_font_bold.identifier"); }
+	bool getEditPreprocessorFontBold()						{ return getBool("app.edit_font_bold.preprocessor"); }
+	bool getEditOperatorFontBold()							{ return getBool("app.edit_font_bold.operator"); }
 
 	wxColour getColor(const gkString& name, const wxColour& defValue=*wxBLACK);
 
