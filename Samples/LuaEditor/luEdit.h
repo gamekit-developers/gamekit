@@ -54,8 +54,8 @@ class luEdit : public wxStyledTextCtrl
     void OnReplaceNext(wxCommandEvent &event);
     void OnBraceMatch(wxCommandEvent &event);
     void OnGoto(wxCommandEvent &event);
-    void OnEditIndentInc(wxCommandEvent &event);
-    void OnEditIndentRed(wxCommandEvent &event);
+    void OnEditIndentIncrease(wxCommandEvent &event);
+    void OnEditIndentReduce(wxCommandEvent &event);
     void OnEditSelectAll(wxCommandEvent &event);
     void OnEditSelectLine(wxCommandEvent &event);
     // view

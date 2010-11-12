@@ -62,8 +62,8 @@ BEGIN_EVENT_TABLE (luEdit, wxStyledTextCtrl)
 	EVT_MENU(wxID_CUT,				luEdit::OnEditCut)
 	EVT_MENU(wxID_COPY,				luEdit::OnEditCopy)
 	EVT_MENU(wxID_PASTE,			luEdit::OnEditPaste)
-	EVT_MENU(ID_CODE_INDENTINC,		luEdit::OnEditIndentInc)
-	EVT_MENU(ID_CODE_INDENTRED,		luEdit::OnEditIndentRed)
+	EVT_MENU(ID_CODE_INDENTINC,		luEdit::OnEditIndentIncrease)
+	EVT_MENU(ID_CODE_INDENTRED,		luEdit::OnEditIndentReduce)
 	EVT_MENU(wxID_SELECTALL,		luEdit::OnEditSelectAll)
 	EVT_MENU(ID_CODE_SELECTLINE,	luEdit::OnEditSelectLine)
 	EVT_MENU(wxID_REDO,				luEdit::OnEditRedo)
@@ -259,7 +259,7 @@ void luEdit::OnSize( wxSizeEvent& event )
 		(GetMarginWidth(FOLDER_MARGIN_ID)	? m_marginFolder : 0) +
 		(GetMarginWidth(BOOKMARK_MARGIN_ID)	? m_marginBookmark : 0);
 
-	if (x > 0) SetScrollWidth (x);
+	if (x > 0) SetScrollWidth(x);
 
 	event.Skip();
 }
@@ -269,21 +269,21 @@ void luEdit::OnEditRedo(wxCommandEvent &WXUNUSED(event))
 {
 	if (!CanRedo()) 
 		return;
-	Redo ();
+	Redo();
 }
 
 void luEdit::OnEditUndo(wxCommandEvent &WXUNUSED(event)) 
 {
 	if (!CanUndo()) 
 		return;
-	Undo ();
+	Undo();
 }
 
 void luEdit::OnEditClear(wxCommandEvent &WXUNUSED(event)) 
 {
 	if (GetReadOnly()) 
 		return;
-	Clear ();
+	Clear();
 }
 
 void luEdit::OnEditCut(wxCommandEvent &WXUNUSED(event)) 
@@ -296,13 +296,13 @@ void luEdit::OnEditCut(wxCommandEvent &WXUNUSED(event))
 void luEdit::OnEditCopy(wxCommandEvent &WXUNUSED(event)) 
 {
 	if (GetSelectionEnd()-GetSelectionStart() <= 0) return;
-	Copy ();
+	Copy();
 }
 
 void luEdit::OnEditPaste(wxCommandEvent &WXUNUSED(event)) 
 {
 	if (!CanPaste()) return;
-	Paste ();
+	Paste();
 }
 
 void luEdit::OnFind(wxCommandEvent &WXUNUSED(event)) 
@@ -327,16 +327,16 @@ void luEdit::OnReplaceNext(wxCommandEvent &WXUNUSED(event))
 
 void luEdit::OnBraceMatch(wxCommandEvent &WXUNUSED(event)) 
 {
-	int min = GetCurrentPos ();
-	int max = BraceMatch (min);
+	int min = GetCurrentPos();
+	int max = BraceMatch(min);
 	if (max > (min+1)) 
 	{
-		BraceHighlight (min+1, max);
-		SetSelection (min+1, max);
+		BraceHighlight(min+1, max);
+		SetSelection(min+1, max);
 	}
 	else
 	{
-		BraceBadLight (min);
+		BraceBadLight(min);
 	}
 }
 
@@ -348,26 +348,26 @@ void luEdit::OnGoto(wxCommandEvent &WXUNUSED(event))
 		GotoLine(line);
 }
 
-void luEdit::OnEditIndentInc(wxCommandEvent &WXUNUSED(event)) 
+void luEdit::OnEditIndentIncrease(wxCommandEvent &WXUNUSED(event)) 
 {
-	CmdKeyExecute (wxSTC_CMD_TAB);
+	CmdKeyExecute(wxSTC_CMD_TAB);
 }
 
-void luEdit::OnEditIndentRed(wxCommandEvent &WXUNUSED(event)) 
+void luEdit::OnEditIndentReduce(wxCommandEvent &WXUNUSED(event)) 
 {
-	CmdKeyExecute (wxSTC_CMD_DELETEBACK);
+	CmdKeyExecute(wxSTC_CMD_BACKTAB);
 }
 
 void luEdit::OnEditSelectAll(wxCommandEvent &WXUNUSED(event)) 
 {
-	SetSelection (0, GetTextLength ());
+	SetSelection(0, GetTextLength());
 }
 
 void luEdit::OnEditSelectLine(wxCommandEvent &WXUNUSED(event)) 
 {
-	int lineStart = PositionFromLine (GetCurrentLine());
-	int lineEnd = PositionFromLine (GetCurrentLine() + 1);
-	SetSelection (lineStart, lineEnd);
+	int lineStart = PositionFromLine(GetCurrentLine());
+	int lineEnd = PositionFromLine(GetCurrentLine() + 1);
+	SetSelection(lineStart, lineEnd);
 }
 
 void luEdit::OnHilightLang(wxCommandEvent &event) 
@@ -376,12 +376,12 @@ void luEdit::OnHilightLang(wxCommandEvent &event)
 
 void luEdit::OnDisplayEOL(wxCommandEvent &WXUNUSED(event)) 
 {
-	SetViewEOL (!GetViewEOL());
+	SetViewEOL(!GetViewEOL());
 }
 
 void luEdit::OnIndentGuide(wxCommandEvent &WXUNUSED(event)) 
 {
-	SetIndentationGuides (!GetIndentationGuides());
+	SetIndentationGuides(!GetIndentationGuides());
 }
 
 void luEdit::OnLineNumber(wxCommandEvent &WXUNUSED(event)) 
@@ -403,7 +403,7 @@ void luEdit::OnWhiteSpace(wxCommandEvent &WXUNUSED(event))
 
 void luEdit::OnFoldToggle(wxCommandEvent &WXUNUSED(event)) 
 {
-	ToggleFold (GetFoldParent(GetCurrentLine()));
+	ToggleFold(GetFoldParent(GetCurrentLine()));
 }
 
 
@@ -464,17 +464,17 @@ void luEdit::OnBookmarkPrev(wxCommandEvent &WXUNUSED(event))
 
 void luEdit::OnSetOverType(wxCommandEvent &WXUNUSED(event)) 
 {
-	SetOvertype (!GetOvertype());
+	SetOvertype(!GetOvertype());
 }
 
 void luEdit::OnSetReadOnly(wxCommandEvent &WXUNUSED(event)) 
 {
-	SetReadOnly (!GetReadOnly());
+	SetReadOnly(!GetReadOnly());
 }
 
 void luEdit::OnWrapmodeOn(wxCommandEvent &WXUNUSED(event)) 
 {
-	SetWrapMode (GetWrapMode() == 0? wxSTC_WRAP_WORD: wxSTC_WRAP_NONE);
+	SetWrapMode(GetWrapMode() == 0? wxSTC_WRAP_WORD: wxSTC_WRAP_NONE);
 }
 
 void luEdit::OnUseCharset(wxCommandEvent &event) 
@@ -495,7 +495,7 @@ void luEdit::OnUseCharset(wxCommandEvent &event)
 	{
 		StyleSetCharacterSet (i, charset);
 	}
-	SetCodePage (charset);
+	SetCodePage(charset);
 }
 
 
@@ -504,11 +504,11 @@ void luEdit::OnChangeCase(wxCommandEvent &event)
 	switch (event.GetId()) 
 	{
 	case ID_CODE_CHANGELOWER: 
-		CmdKeyExecute (wxSTC_CMD_LOWERCASE);
+		CmdKeyExecute(wxSTC_CMD_LOWERCASE);
 		break;
 
 	case ID_CODE_CHANGEUPPER: 
-		CmdKeyExecute (wxSTC_CMD_UPPERCASE);
+		CmdKeyExecute(wxSTC_CMD_UPPERCASE);
 		break;
 
 	}
@@ -529,19 +529,19 @@ void luEdit::OnConvertEOL(wxCommandEvent &event)
 		eolMode = wxSTC_EOL_LF; 
 		break;
 	}
-	ConvertEOLs (eolMode);
-	SetEOLMode (eolMode);
+	ConvertEOLs(eolMode);
+	SetEOLMode(eolMode);
 }
 
 void luEdit::OnMarginClick(wxStyledTextEvent &event) 
 {
 	if (event.GetMargin() == 2) 
 	{
-		int lineClick = LineFromPosition (event.GetPosition());
-		int levelClick = GetFoldLevel (lineClick);
+		int lineClick = LineFromPosition(event.GetPosition());
+		int levelClick = GetFoldLevel(lineClick);
 
 		if ((levelClick & wxSTC_FOLDLEVELHEADERFLAG) > 0) 
-			ToggleFold (lineClick);
+			ToggleFold(lineClick);
 	}
 }
 
@@ -566,7 +566,7 @@ void luEdit::OnCharAdded(wxStyledTextEvent &event)
 			return;
 
 		SetLineIndentation(currentLine, lineInd);
-		GotoPos(PositionFromLine (currentLine) + lineInd/GetTabWidth());
+		GotoPos(PositionFromLine(currentLine) + lineInd/GetTabWidth());
 	}
 }
 
