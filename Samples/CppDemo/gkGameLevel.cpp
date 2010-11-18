@@ -93,7 +93,7 @@ void gkGameLevel::loadPickup(void)
 		return;
 	}
 
-	gkBlendFile* playerData = gkBlendLoader::getSingleton().loadFile(GK_RESOURCE_PLAYER);
+	gkBlendFile* playerData = gkBlendLoader::getSingleton().loadFile(gkUtils::getFile(GK_RESOURCE_PLAYER));
 	if (!playerData || !playerData->getMainScene())
 	{
 		gkPrintf("GameLevel: Blend '%s' loading failed", GK_RESOURCE_PLAYER);
@@ -105,7 +105,7 @@ void gkGameLevel::loadPickup(void)
 	gkPrintf("GameLevel: Blend '%s' loaded", GK_RESOURCE_PLAYER);
 
 
-	gkBlendFile* mapData = gkBlendLoader::getSingleton().loadFile(GK_RESOURCE_MAPS, "Pickup");
+	gkBlendFile* mapData = gkBlendLoader::getSingleton().loadFile(gkUtils::getFile(GK_RESOURCE_MAPS), "Pickup");
 	if (!mapData || !mapData->getMainScene())
 	{
 		gkPrintf("GameLevel: Blend '%s'->Pickup loading failed", GK_RESOURCE_MAPS);

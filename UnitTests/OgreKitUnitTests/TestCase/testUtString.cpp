@@ -15,6 +15,8 @@ TEST(TEST_CASE_NAME, testStringFormat)
 	for (int i = 0; i < STRING_SIZE; i++)
 		longString[i] = '0';
 
+
+	longString[1022] = '9';
 	longString[1023] = '1';
 	longString[1024] = '1'; //utStringFormat's internal buf end
 	longString[1025] = '2';
@@ -24,7 +26,11 @@ TEST(TEST_CASE_NAME, testStringFormat)
 
 	gkString slong = utStringFormat("%s", longString);
 
+#ifdef __APPLE__
+	longString[1023] = 0;  //NOTE: OSX vnsprintf's bufsize include null('\0'), othersize don't include.
+#else
 	longString[1024] = 0;
+#endif
 	//printf("%s", slong.c_str());
 	EXPECT_STREQ(slong.c_str(), longString);
 }
