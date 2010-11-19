@@ -78,7 +78,7 @@ extern int bfBlenderLen;
 
 
 fbtBlend::fbtBlend()
-	:   fbtFile("BLENDER")
+	:   fbtFile("BLENDER"), m_stripList(0)
 {
 }
 
@@ -131,6 +131,8 @@ int fbtBlend::writeData(fbtStream* stream)
 	{
 		if (node->m_newTypeId > m_memory->m_strcNr)
 			continue;
+		if (!node->m_newBlock)
+			continue;
 
 		void* wd = node->m_newBlock;
 
@@ -149,32 +151,17 @@ int fbtBlend::writeData(fbtStream* stream)
 }
 
 
-//Example skip list for better performance
-//#define FBT_BLEND_ONLY_BUILD_SCENE
-
 
 bool fbtBlend::skip(const FBTuint32& id)
 {
-	static FBTuint32 skipList[] =
-	{
 
-#ifdef FBT_BLEND_ONLY_BUILD_SCENE
-		fbtCharHashKey("Panel").hash(),
-		fbtCharHashKey("ARegion").hash(),
-		fbtCharHashKey("ScrArea").hash(),
-		fbtCharHashKey("ScrVert").hash(),
-		fbtCharHashKey("ScrEdge").hash(),
-		fbtCharHashKey("bScreen").hash(),
-		// others
-#endif
-		0,
-	};
-
+	if (!m_stripList)
+		return false;
 
 	int i = 0;
-	while (skipList[i] != 0)
+	while (m_stripList[i] != 0)
 	{
-		if (skipList[i++] == id)
+		if (m_stripList[i++] == id)
 			return true;
 	}
 

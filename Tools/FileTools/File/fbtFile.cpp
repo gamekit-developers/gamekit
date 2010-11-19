@@ -700,7 +700,11 @@ int fbtFile::compileOffsets(void)
 
 int fbtFile::reflect(const char* path, const fbtEndian& endian)
 {
+#if FBT_USE_GZ_FILE == 1
+	fbtGzStream fs;
+#else
 	fbtFileStream fs;
+#endif
 	fs.open(path, fbtStream::SM_WRITE);
 
 

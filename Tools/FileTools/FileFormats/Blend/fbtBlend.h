@@ -69,13 +69,16 @@ public:
 
 	Blender::FileGlobal* m_fg;
 
+
+	void setIgnoreList(FBTuint32 *stripList) {m_stripList = stripList;}
+
 protected:
 	virtual int notifyData(void* p, const Chunk& id);
 	virtual int initializeTables(fbtBinTables* tables);
 	virtual bool skip(const FBTuint32& id);
 	virtual int writeData(fbtStream* stream);
 
-
+	FBTuint32* m_stripList;
 
 	virtual void*   getFBT(void);
 	virtual FBTsize getFBTlength(void);

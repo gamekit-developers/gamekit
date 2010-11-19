@@ -153,6 +153,7 @@ public:
 
 	fbtList& getChunks(void) {return m_chunks;}
 
+    virtual void setIgnoreList(FBTuint32 *stripList) {}
 
 protected:
 

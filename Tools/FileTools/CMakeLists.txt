@@ -36,6 +36,16 @@ list(APPEND CMAKE_MODULE_PATH ${FBT_SOURCE_DIR}/CMake)
 #set(FBT_ZLIB_INCLUDE )
 #set(FBT_ZLIB_LIBRARY )
 
+if(OGREKIT_ZLIB_TARGET) #use ZLib in Ogrekit dependence libraries
+	set(FBT_USE_ZLIB 1)
+	set(FBT_ZLIB_INCLUDE ${OGREKIT_ZLIB_INCLUDE})
+	set(FBT_ZLIB_LIBRARY ${OGREKIT_ZLIB_TARGET})	
+else()
+	message(STATUS "Can't found ZLib: ftbFile don't support compressed file.")
+endif()
+
+option(FBT_BLEND_STRIP "Compile .blend file stripper" OFF)
+
 if (FBT_USE_ZLIB)
     add_definitions(-DFBT_USE_GZ_FILE=1)
 endif()
@@ -51,4 +61,8 @@ subdirs(FileFormats/Bullet)
 
 if (FBT_USE_BLEND_TEST)
 	subdirs(FileTest)
+endif()
+
+if (FBT_BLEND_STRIP)
+	subdirs(Strip)
 endif()
