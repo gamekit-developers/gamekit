@@ -24,21 +24,24 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkBezierSpline_h_
-#define _gkBezierSpline_h_
+#ifndef _akBezierSpline_h_
+#define _akBezierSpline_h_
 
-#include "gkCommon.h"
-#include "gkMathUtils.h"
 
-struct gkBezierVertex
+#include "akCommon.h"
+#include "akMathUtils.h"
+
+#include "utTypes.h"
+
+struct akBezierVertex
 {
-	gkScalar h1[2];
-	gkScalar cp[2];
-	gkScalar h2[2];
+	akScalar h1[2];
+	akScalar cp[2];
+	akScalar h2[2];
 };
 
 
-class gkBezierSpline
+class akBezierSpline
 {
 public:
 
@@ -50,7 +53,7 @@ public:
 	};
 
 protected:
-	utArray<gkBezierVertex>         m_verts;
+	utArray<akBezierVertex>         m_verts;
 	int                             m_code;
 	BezierInterpolation             m_interpMethod;
 
@@ -62,47 +65,47 @@ protected:
 	               const double p3,
 	               double& s) const;
 
-	gkScalar interpolate(const double& t,
+	akScalar interpolate(const double& t,
 	                     const double& p0,
 	                     const double& p1,
 	                     const double& p2,
 	                     const double& p3) const;
 
 
-	void updateHandles(gkScalar* p0, gkScalar* p1, gkScalar* p2, gkScalar* p3) const;
+	void updateHandles(akScalar* p0, akScalar* p1, akScalar* p2, akScalar* p3) const;
 
 
 public:
-	gkBezierSpline(int code) : m_code(code), m_interpMethod(BEZ_LINEAR) {}
-	~gkBezierSpline() {}
+	akBezierSpline(int code) : m_code(code), m_interpMethod(BEZ_LINEAR) {}
+	~akBezierSpline() {}
 
 	// interpolate across this spline
 	// delta is the normalized time
 	// time is the current frame number
-	gkScalar interpolate(gkScalar delta, gkScalar time) const;
+	akScalar interpolate(akScalar delta, akScalar time) const;
 
-	GK_INLINE void addVertex(const gkBezierVertex& v)
+	UT_INLINE void addVertex(const akBezierVertex& v)
 	{m_verts.push_back(v);}
 
-	GK_INLINE const gkBezierVertex* getVerts(void) const
+	UT_INLINE const akBezierVertex* getVerts(void) const
 	{return m_verts.ptr();}
 
-	GK_INLINE int getNumVerts(void) const
+	UT_INLINE int getNumVerts(void) const
 	{return(int)m_verts.size();}
 
 	///Gets the code bound to this spline.
 	///ie; where to apply results, loc, rot, ...
-	GK_INLINE int getCode(void) const
+	UT_INLINE int getCode(void) const
 	{ return m_code ;}
 
 
-	GK_INLINE void setInterpolationMethod(const BezierInterpolation& meth)
+	UT_INLINE void setInterpolationMethod(const BezierInterpolation& meth)
 	{ m_interpMethod = meth; }
 
 
-	GK_INLINE BezierInterpolation getInterpolationMethod(void) const
+	UT_INLINE BezierInterpolation getInterpolationMethod(void) const
 	{ return m_interpMethod; }
 };
 
 
-#endif//_gkBezierSpline_h_
+#endif//_akBezierSpline_h_

@@ -24,14 +24,16 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkActionBlender_h_
-#define _gkActionBlender_h_
+#ifndef _akAnimationBlender_h_
+#define _akAnimationBlender_h_
 
-#include "Animation/gkActionDefs.h"
-#include "gkMathUtils.h"
+#include "akCommon.h"
+#include "akMathUtils.h"
 
-///Action blend item, for overall blending / switching between actions
-class gkActionBlend
+#include "utTypes.h"
+
+///Animation blend item, for overall blending / switching between actions
+class akAnimationBlend
 {
 public:
 
@@ -44,81 +46,81 @@ public:
 
 public:
 
-	gkActionBlend();
-	~gkActionBlend() {}
+	akAnimationBlend();
+	~akAnimationBlend() {}
 
 
 	int      getMode(void) const         {return m_mode;}
 	int      getDirection(void) const    {return m_way; }
 	int      getPriority(void) const     {return m_priority;}
-	gkScalar getBlendFrames(void) const  {return 1.f / m_frames; }
+	akScalar getBlendFrames(void) const  {return 1.f / m_frames; }
 
 
-	gkActionPlayer*         getAction(void)   {return m_base;}
+	akAnimationPlayer*         getAnimationPlayer(void)   {return m_base;}
 
 
-	gkScalar getLength(void) const;
+	akScalar getLength(void) const;
 
 	void enable(bool v);
-	GK_INLINE bool isEnabled(void) const {return m_enabled;}
-	GK_INLINE bool isDone(void) const    {return !m_enabled || m_time >= getLength();}
+	UT_INLINE bool isEnabled(void) const {return m_enabled;}
+	UT_INLINE bool isDone(void) const    {return !m_enabled || m_time >= getLength();}
 
 	void setMode(int mode)                          {m_mode = mode;}
 	void setDirection(int way)                      {m_way = way;}
 	void setPriority(int pri)                       {m_priority = pri;}
-	void setAction(gkActionPlayer* act)                   {m_base = act;}
+	void setAnimationPlayer(akAnimationPlayer* act) {m_base = act;}
 
-	void setBlendFrames(gkScalar f);
-	bool evaluate(gkScalar delta);
+	void setBlendFrames(akScalar f);
+	bool evaluate(akScalar delta);
 
 	void reset(void);
 
 
-	bool operator == (const gkActionBlend& rhs) const { return m_base == rhs.m_base;}
+	bool operator == (const akAnimationBlend& rhs) const { return m_base == rhs.m_base;}
 
 private:
 
 	int m_priority, m_way, m_mode;
-	gkScalar m_blend, m_frames;
-	gkScalar m_time;
+	akScalar m_blend, m_frames;
+	akScalar m_time;
 
 
-	gkActionPlayer* m_base;
+	akAnimationPlayer* m_base;
 	bool m_enabled;
 };
 
 
 
 
-///Pushes prioritized actions onto a stack for changing and
-///blending between a chain of gkAction or gkActionSequence objects
-class gkActionBlender
+///Pushes prioritized animation player onto a stack for changing and
+///blending between a chain of Animation
+class akAnimationBlender
 {
 public:
-	typedef utArray<gkActionBlend> Stack;
+	typedef utArray<akAnimationBlend> Stack;
 
 public:
 
-	gkActionBlender();
-	~gkActionBlender();
+	akAnimationBlender();
+	~akAnimationBlender();
 
-	void push(gkActionPlayer* action, const gkScalar& frames, int mode = GK_ACT_END, int priority = 0);
+	void push(akAnimationPlayer* action, const akScalar& frames, int mode = AK_ACT_END, int priority = 0);
 
-	void evaluate(gkScalar delta);
+	void evaluate(akScalar delta);
 
 
-	void   setMaximumActions(UTsize v)    {m_max = v;}
-	UTsize getMaximumActions(void) const  {return m_max;}
+	void   setMaximumAnimations(UTsize v)    {m_max = v;}
+	UTsize getMaximumAnimation(void) const  {return m_max;}
 
 
 
 private:
 
-	void pushStack(gkActionBlend& blend);
+	void pushStack(akAnimationBlend& blend);
 
 	Stack  m_stack;
 	UTsize m_max;
 };
 
 
-#endif//_gkActionBlender_h_
+#endif//_akAnimationBlender_h_

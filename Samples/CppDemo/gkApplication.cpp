@@ -98,6 +98,7 @@ int main(int argc, char** argv)
 		delete mgr;
 	}
 
+	eng.finalize();
 
 	return 0;
 }

@@ -24,39 +24,40 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkAnimationChannel_h_
-#define _gkAnimationChannel_h_
+#ifndef _akAnimationChannel_h_
+#define _akAnimationChannel_h_
 
 
-#include "Animation/gkBezierSpline.h"
-#include "Animation/gkActionDefs.h"
-#include "gkTransformState.h"
+#include "akBezierSpline.h"
+#include "akCommon.h"
+
+#include "utString.h"
 
 
-class gkAnimationChannel
+class akAnimationChannel
 {
 public:
-	typedef utArray<gkBezierSpline*> Splines;
+	typedef utArray<akBezierSpline*> Splines;
 
 
 protected:
 
-	const gkString       m_name;
+	const utString       m_name;
 	Splines              m_splines;
-	gkAction*    m_action;
+	akAnimation*    m_action;
 
 public:
 
-	gkAnimationChannel(const gkString& name, gkAction* parent);
-	virtual ~gkAnimationChannel();
+	akAnimationChannel(const utString& name, akAnimation* parent);
+	virtual ~akAnimationChannel();
 
 
-	void addSpline(gkBezierSpline* spline);
-	const gkBezierSpline** getSplines(void) const;
+	void addSpline(akBezierSpline* spline);
+	const akBezierSpline** getSplines(void) const;
 
 	int getNumSplines(void) const;
 
-	const gkString& getName(void) const {return m_name;}
+	const utString& getName(void) const {return m_name;}
 
 
 	///Evaluates the curve for the given time.
@@ -65,11 +66,11 @@ public:
 	///weight is the abount of blending from a previous evaluation
 	///to the next evaluation. expressed in [0-1]
 	///object is the game object used to apply evaluation result
-	void evaluate(const gkScalar& time, const gkScalar& delta, const gkScalar& weight, gkGameObject* object) const;
+	void evaluate(const akScalar& time, const akScalar& delta, const akScalar& weight, void* object) const;
 	
 protected:
-	virtual void evaluateImpl(const gkScalar& time, const gkScalar& delta, const gkScalar& weight, gkGameObject* object) const = 0;
+	virtual void evaluateImpl(const akScalar& time, const akScalar& delta, const akScalar& weight, void* object) const = 0;
 };
 
 
-#endif//_gkActionChannel_h_
+#endif//_akAnimationChannel_h_

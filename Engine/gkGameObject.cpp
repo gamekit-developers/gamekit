@@ -52,10 +52,7 @@
 #include "gkMesh.h"
 #include "gkVariable.h"
 
-#include "gkAction.h"
-#include "gkActionManager.h"
-#include "gkActionPlayer.h"
-#include "gkActionBlender.h"
+#include "gkAnimationManager.h"
 
 using namespace Ogre;
 
@@ -72,10 +69,11 @@ gkGameObject::gkGameObject(gkInstancedManager* creator, const gkResourceName& na
 	     m_layer(0xFFFFFFFF),
 	     m_isClone(false),
 	     m_flags(0),
-		 m_actionBlender(0)
+	     m_actionBlender(0)
 {
 	m_life.tick = 0;
 	m_life.timeToLive = 0;
+	
 }
 
 
@@ -90,14 +88,10 @@ gkGameObject::~gkGameObject()
 		m_bricks = 0;
 	}
 
+	if(m_actionBlender)
+		delete m_actionBlender;
 
-
-	delete m_actionBlender;
-	m_actionBlender = 0;
-
-
-
-	Actions::Iterator it = m_actions.iterator();
+	Animation::Iterator it = m_actions.iterator();
 	while (it.hasMoreElements())
 		delete it.getNext().second;
 }
@@ -1127,28 +1121,34 @@ void gkGameObject::removeEventListener(gkGameObject::Notifier* evt)
 	if (evt) m_events.erase(evt);
 }
 
-gkActionPlayer* gkGameObject::addAction(gkAction* action)
+
+gkAnimationPlayer* gkGameObject::addAnimation(gkAnimation* action, const gkHashedString& name)
 {
-	const gkHashedString name = action->getName();
+	if(!m_actionBlender)
+		m_actionBlender = new gkAnimationBlender();
+	
+	gkAnimationPlayer* act;
+	if (getAnimationPlayer(name))
+		return 0; 
 
-	gkActionPlayer* act;
-	if (act = getActionPlayer(name))
-		return act; 
-
-	act = new gkActionPlayer(action, this);
+	act = new gkAnimationPlayer(action, this);
 
 	m_actions.insert(name, act);
 	return act;
 }
 
-gkActionPlayer* gkGameObject::addAction(const gkHashedString& name)
+gkAnimationPlayer* gkGameObject::addAnimation(const gkHashedString& name)
 {
-	gkAction* res = gkActionManager::getSingleton().getByName<gkAction>(name);
-	return addAction(res);
+	gkAnimation* res = gkAnimationManager::getSingleton().getAnimation(name);
+	
+	if(!res)
+		return 0;
+	
+	return addAnimation(res, name);
 }
 
 
-gkActionPlayer* gkGameObject::getActionPlayer(const gkHashedString& name)
+gkAnimationPlayer* gkGameObject::getAnimationPlayer(const gkHashedString& name)
 {
 	size_t pos;
 	if ((pos = m_actions.find(name)) == GK_NPOS)
@@ -1157,35 +1157,32 @@ gkActionPlayer* gkGameObject::getActionPlayer(const gkHashedString& name)
 	return m_actions.at(pos);
 }
 
-gkActionBlender& gkGameObject::getActionBlender(void)
+gkAnimationBlender& gkGameObject::getAnimationBlender(void)
 {
-	if (!m_actionBlender)
-		m_actionBlender = new gkActionBlender();
-
-	GK_ASSERT(m_actionBlender);
 	return *m_actionBlender;
 }
 
 
-void gkGameObject::playAction(const gkString& act, gkScalar blend, int mode, int priority)
+void gkGameObject::playAnimation(const gkString& act, gkScalar blend, int mode, int priority)
 {
-	gkActionPlayer* gact = getActionPlayer(act);
-	playAction(gact, blend, mode, priority);
+	gkAnimationPlayer* gact = getAnimationPlayer(act);
+	playAnimation(gact, blend, mode, priority);
 }
 
 
-void gkGameObject::playAction(gkActionPlayer* act, gkScalar blend, int mode, int priority)
+void gkGameObject::playAnimation(gkAnimationPlayer* act, gkScalar blend, int mode, int priority)
 {
 	if(act)
 	{
-		getActionBlender().push(act, blend, mode, priority);
-		m_scene->updateObjectActions(this);
+		getAnimationBlender().push(act, blend, mode, priority);
+		m_scene->pushAnimationUpdate(this);
 	}
 }
 
 ///Called by the scene when object is animated
 ///tick is in animation frame (gkUserPrefs.animspeed * delta time in second)
-void gkGameObject::updateActions(const gkScalar tick)
+void gkGameObject::updateAnimationBlender(const gkScalar tick)
 {
-	getActionBlender().evaluate(tick);
+	getAnimationBlender().evaluate(tick);
 }
+

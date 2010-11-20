@@ -203,42 +203,18 @@ endif()
 # Animation Files
 # ---------------------------------------------------------
 
-
-
 set(Animation_SOURCE
 	# ----- Source -----
-	Animation/gkActionBlender.cpp
-	Animation/gkActionManager.cpp
-	Animation/gkActionPlayer.cpp
-	Animation/gkActionSequence.cpp
-	Animation/gkAnimationChannel.cpp
-	Animation/gkBezierSpline.cpp
-	Animation/gkKeyedAction.cpp
-	Animation/gkTransformChannel.cpp
-	
-	#TODO
-	#Animation/gkLightAction.cpp
-	#Animation/gkMaterialAction.cpp
-	#Animation/gkWorldAction.cpp
+	Animation/gkAnimation.cpp
+	Animation/gkAnimationManager.cpp
 )
 
 
 set(Animation_HEADER
 	# ----- Headers -----
-	Animation/gkAction.h
-	Animation/gkActionBlender.h
-	Animation/gkActionManager.h
-	Animation/gkActionPlayer.h
-	Animation/gkActionSequence.h
-	Animation/gkAnimationChannel.h
-	Animation/gkBezierSpline.h
-	Animation/gkKeyedAction.h
-	Animation/gkTransformChannel.h
-	
-	#TODO
-	#Animation/gkLightAction.h
-	#Animation/gkMaterialAction.h
-	#Animation/gkWorldAction.h
+	Animation/gkAnimation.h
+	Animation/gkAnimationDefs.h
+	Animation/gkAnimationManager.h
 )
 
 if(APPLE)

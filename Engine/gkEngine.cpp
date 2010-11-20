@@ -54,7 +54,8 @@
 #include "gkSkeletonManager.h"
 #include "gkGroupManager.h"
 #include "gkGameObjectManager.h"
-#include "gkActionManager.h"
+
+#include "gkAnimationManager.h"
 
 
 #ifdef OGREKIT_USE_LUA
@@ -212,7 +213,9 @@ void gkEngine::initialize()
 	new gkSkeletonManager();
 	new gkGroupManager();
 	new gkGameObjectManager();
-	new gkActionManager();
+
+
+	new gkAnimationManager();
 
 #ifdef OGREKIT_USE_LUA
 	new gkLuaManager();
@@ -301,7 +304,7 @@ void gkEngine::finalize()
 	delete gkMessageManager::getSingletonPtr();
 	delete gkMeshManager::getSingletonPtr();
 	delete gkSkeletonManager::getSingletonPtr();
-	delete gkActionManager::getSingletonPtr();
+	delete gkAnimationManager::getSingletonPtr();
 
 
 #ifdef OGREKIT_USE_LUA

@@ -24,7 +24,10 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "gkBezierSpline.h"
+#include "akBezierSpline.h"
+
+#include <float.h>
+#include <math.h>
 
 #define SplineTOL                DBL_EPSILON
 #define SplineAbs(x)            fabs(x)
@@ -45,21 +48,21 @@ double CubicRoot(const double d)
 
 
 
-bool StepCubic(const gkScalar* P0, const gkScalar* P1, const gkScalar* P2, const gkScalar* P3, gkScalar time, double& cval)
+bool StepCubic(const akScalar* P0, const akScalar* P1, const akScalar* P2, const akScalar* P3, akScalar time, double& cval)
 {
-	gkScalar ts = (P3[0] - P0[0]);
+	akScalar ts = (P3[0] - P0[0]);
 	if (ts <= 1.f)
 		ts = 2.f;
 	if (ts >= 60.f)
 		ts = 60.f;
 
 
-	const gkScalar step = (1.f / ts) / 4.f;
+	const akScalar step = (1.f / ts) / 4.f;
 	// 240 max, anything else is choppy
 
 	cval = 0.0;
-	gkScalar s = 1.f, sc, sst;
-	gkScalar t = 0.f, tc, tts;
+	akScalar s = 1.f, sc, sst;
+	akScalar t = 0.f, tc, tts;
 
 
 	while (t <= 1.0)
@@ -82,7 +85,7 @@ bool StepCubic(const gkScalar* P0, const gkScalar* P1, const gkScalar* P2, const
 }
 
 
-gkScalar gkBezierSpline::interpolate(const double& t,
+akScalar akBezierSpline::interpolate(const double& t,
                                      const double& p0,
                                      const double& p1,
                                      const double& p2,
@@ -97,12 +100,12 @@ gkScalar gkBezierSpline::interpolate(const double& t,
 	c2 = 3.0 * p0 - 6.0 * p1 + 3.0 * p2;
 	c3 = -p0 + 3.0 * p1 - 3.0 * p2 + p3;
 
-	return (gkScalar)(c0 + t * c1 + t2 * c2 + t3 * c3);
+	return (akScalar)(c0 + t * c1 + t2 * c2 + t3 * c3);
 }
 
 
 
-int gkBezierSpline::solveRoots(const double& x,
+int akBezierSpline::solveRoots(const double& x,
                                const double p0,
                                const double p1,
                                const double p2,
@@ -129,7 +132,7 @@ int gkBezierSpline::solveRoots(const double& x,
 	c2 = 3.0 * p0 - 6.0 * p1 + 3.0 * p2;
 	c3 = -p0 + 3.0 * p1 - 3.0 * p2 + p3;
 
-	if (m_interpMethod == gkBezierSpline::BEZ_LINEAR)
+	if (m_interpMethod == akBezierSpline::BEZ_LINEAR)
 	{
 		// do linear
 		if (SplineFuzzy(c1))
@@ -224,29 +227,29 @@ int gkBezierSpline::solveRoots(const double& x,
 
 
 
-void gkBezierSpline::updateHandles(gkScalar* p0, gkScalar* p1, gkScalar* p2, gkScalar* p3) const
+void akBezierSpline::updateHandles(akScalar* p0, akScalar* p1, akScalar* p2, akScalar* p3) const
 {
-	gkScalar lh = SplineAbs((p0[0] - p1[0]) + (p3[0] - p2[0]));
+	akScalar lh = SplineAbs((p0[0] - p1[0]) + (p3[0] - p2[0]));
 	if (lh != 0.0)
 	{
 		if (lh > (p3[0] - p0[0]))
 		{
-			gkScalar f = (p3[0] - p0[0]) / lh;
-			p1[0] = (p0[0] - f * gkAbs((p0[0] - p1[0])));
-			p1[1] = (p0[1] - f * gkAbs((p0[1] - p1[1])));
-			p2[0] = (p3[0] - f * gkAbs((p3[0] - p2[0])));
-			p2[1] = (p3[1] - f * gkAbs((p3[1] - p2[1])));
+			akScalar f = (p3[0] - p0[0]) / lh;
+			p1[0] = (p0[0] - f * akAbs((p0[0] - p1[0])));
+			p1[1] = (p0[1] - f * akAbs((p0[1] - p1[1])));
+			p2[0] = (p3[0] - f * akAbs((p3[0] - p2[0])));
+			p2[1] = (p3[1] - f * akAbs((p3[1] - p2[1])));
 		}
 	}
 }
 
 
 
-gkScalar gkBezierSpline::interpolate(gkScalar delta, gkScalar time) const
+akScalar akBezierSpline::interpolate(akScalar delta, akScalar time) const
 {
-	const gkBezierVertex* vp = m_verts.ptr();
+	const akBezierVertex* vp = m_verts.ptr();
 	int totvert = (int)m_verts.size();
-	gkScalar p0[2], p1[2], p2[2], p3[2];
+	akScalar p0[2], p1[2], p2[2], p3[2];
 	double r = 0.0;
 
 	if (!vp || !totvert)
@@ -289,7 +292,7 @@ gkScalar gkBezierSpline::interpolate(gkScalar delta, gkScalar time) const
 			{
 				//printf("Failed %f\n", r);
 				if (StepCubic(p0, p1, p2, p3, time, r))
-					return (gkScalar)r;
+					return (akScalar)r;
 			}
 		}
 	}

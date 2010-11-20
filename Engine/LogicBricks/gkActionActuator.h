@@ -29,7 +29,8 @@
 
 #include "gkLogicActuator.h"
 
-class gkActionPlayer;
+#include "Animation/gkAnimationDefs.h"
+
 
 class gkActionActuator : public gkLogicActuator
 {
@@ -54,7 +55,7 @@ private:
 	gkString m_startAct, m_startProp;
 
 	bool m_reset, m_isInit;
-	gkActionPlayer*        m_action;
+	gkAnimationPlayer*        m_action;
 
 	void doInit(void);
 
@@ -73,7 +74,7 @@ public:
 	GK_INLINE void  setBlend(int v)                 {m_blend = v;}
 	GK_INLINE void  setMode(int v)                  {m_mode = v;}
 	GK_INLINE void  setPriority(int v)              {m_prio = v;}
-	GK_INLINE void  setAction(const gkString& v)    {m_startAct = v;}
+	GK_INLINE void  setAnimation(const gkString& v) {m_startAct = v;}
 	GK_INLINE void  setProperty(const gkString& v)  {m_startProp = v;}
 	GK_INLINE void  setReset(bool v)                {m_reset = v;}
 
@@ -82,7 +83,7 @@ public:
 	GK_INLINE int   getBlend(void)                 const {return m_blend;}
 	GK_INLINE int   getMode(void)                  const {return m_mode;}
 	GK_INLINE int   getPriority(void)              const {return m_prio;}
-	GK_INLINE const gkString& getAction(void)      const {return m_startAct;}
+	GK_INLINE const gkString& getAnimation(void)      const {return m_startAct;}
 	GK_INLINE const gkString& getProperty(void)    const {return m_startProp;}
 	GK_INLINE bool  getReset(void)                 const {return m_reset;}
 

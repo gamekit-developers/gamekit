@@ -32,8 +32,6 @@
 #include "gkUserDefs.h"
 #include "gkSkeleton.h"
 #include "gkMesh.h"
-#include "gkActionPlayer.h"
-
 
 
 
@@ -165,10 +163,10 @@ void gkEntity::_resetPose(void)
 	{
 		if (!m_entityProps->m_startPose.empty())
 		{
-			gkActionPlayer* act = getActionPlayer(m_entityProps->m_startPose);
+			gkAnimationPlayer* act = getAnimationPlayer(m_entityProps->m_startPose);
 			
 			if(!act)
-				act = addAction(m_entityProps->m_startPose);
+				act = addAnimation(m_entityProps->m_startPose);
 			
 			if (act)
 			{

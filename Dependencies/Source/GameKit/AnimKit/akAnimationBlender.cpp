@@ -24,15 +24,14 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "gkActionBlender.h"
-#include "gkActionPlayer.h"
-#include "gkLogger.h"
+#include "akAnimationBlender.h"
+#include "akAnimationPlayer.h"
 
 
-gkActionBlend::gkActionBlend()
+akAnimationBlend::akAnimationBlend()
 	:    m_priority(0),
 	     m_way(0),
-	     m_mode(GK_ACT_LOOP),
+	     m_mode(AK_ACT_LOOP),
 	     m_blend(0),
 	     m_frames(0),
 	     m_time(0.f),
@@ -43,7 +42,7 @@ gkActionBlend::gkActionBlend()
 }
 
 
-gkScalar gkActionBlend::getLength(void) const
+akScalar akAnimationBlend::getLength(void) const
 {
 	if (m_base)
 		return m_base->getLength();
@@ -51,7 +50,7 @@ gkScalar gkActionBlend::getLength(void) const
 }
 
 
-void gkActionBlend::setBlendFrames(gkScalar frames)
+void akAnimationBlend::setBlendFrames(akScalar frames)
 {
 	if (frames <= 0.001f)
 		frames = 1;
@@ -60,7 +59,7 @@ void gkActionBlend::setBlendFrames(gkScalar frames)
 
 
 
-void gkActionBlend::enable(bool v)
+void akAnimationBlend::enable(bool v)
 {
 	m_enabled = v;
 
@@ -68,12 +67,12 @@ void gkActionBlend::enable(bool v)
 }
 
 
-bool gkActionBlend::evaluate(gkScalar delta)
+bool akAnimationBlend::evaluate(akScalar delta)
 {
 	if (!m_enabled || !m_base)
 		return true;
 
-	if (m_mode == GK_ACT_LOOP)
+	if (m_mode == AK_ACT_LOOP)
 	{
 		if (m_time >= getLength())
 			m_time = 0.f;
@@ -89,24 +88,25 @@ bool gkActionBlend::evaluate(gkScalar delta)
 	
 	if (m_way != AB_NONE)
 	{
-		m_blend = gkClampf(m_blend + m_frames, 0.f, 1.f);
-		m_base->setWeight(m_way == gkActionBlend::AB_IN ? m_blend : 1.f - m_blend);
+		m_blend = akClampf(m_blend + m_frames, 0.f, 1.f);
+		m_base->setWeight(m_way == akAnimationBlend::AB_IN ? m_blend : 1.f - m_blend);
 	}
 	else
 		m_base->setWeight(1.f);
 	
 	// Apply objects
-	m_base->setTimePosition(m_time);
-	m_base->evaluate(0.f);
+	//m_base->setTimePosition(m_time);
+	//m_base->evaluate(0.f);
+	m_base->evaluate(delta);
 	
 	
-	return m_way == gkActionBlend::AB_OUT ? (1.f - m_blend) <= 0.f : false;
+	return m_way == akAnimationBlend::AB_OUT ? (1.f - m_blend) <= 0.f : false;
 }
 
 
 
 
-void gkActionBlend::reset(void)
+void akAnimationBlend::reset(void)
 {
 	m_blend = 1.f;
 	m_time  = 0.f;
@@ -117,27 +117,27 @@ void gkActionBlend::reset(void)
 
 
 
-gkActionBlender::gkActionBlender()
+akAnimationBlender::akAnimationBlender()
 	:    m_max(2)
 {
 }
 
 
-gkActionBlender::~gkActionBlender()
+akAnimationBlender::~akAnimationBlender()
 {
 }
 
 
-bool gkActionBlendSort(const gkActionBlend& a, const gkActionBlend& b)
+bool akAnimationBlendSort(const akAnimationBlend& a, const akAnimationBlend& b)
 {
 	return a.getPriority() > b.getPriority();
 }
 
 
-void gkActionBlender::push(gkActionPlayer* action, const gkScalar& frames, int mode, int priority)
+void akAnimationBlender::push(akAnimationPlayer* action, const akScalar& frames, int mode, int priority)
 {
-	gkActionBlend act;
-	act.setAction(action);
+	akAnimationBlend act;
+	act.setAnimationPlayer(action);
 
 	if (m_stack.find(act) == UT_NPOS)
 	{
@@ -151,7 +151,7 @@ void gkActionBlender::push(gkActionPlayer* action, const gkScalar& frames, int m
 
 
 
-void gkActionBlender::pushStack(gkActionBlend& blend)
+void akAnimationBlender::pushStack(akAnimationBlend& blend)
 {
 	if (m_stack.size() >= m_max)
 	{
@@ -161,11 +161,11 @@ void gkActionBlender::pushStack(gkActionBlend& blend)
 	m_stack.push_back(blend);
 
 	if (blend.getPriority() > 0 && m_stack.size() > 1)
-		m_stack.sort(gkActionBlendSort);
+		m_stack.sort(akAnimationBlendSort);
 }
 
 
-void gkActionBlender::evaluate(gkScalar delta)
+void akAnimationBlender::evaluate(akScalar delta)
 {
 	if (!m_stack.empty())
 	{
@@ -181,19 +181,19 @@ void gkActionBlender::evaluate(gkScalar delta)
 
 		while (i < s)
 		{
-			gkActionBlend& ab = p[i];
+			akAnimationBlend& ab = p[i];
 			if (s == 1)
 			{
-				ab.setMode(GK_ACT_LOOP);
-				ab.setDirection(gkActionBlend::AB_NONE);
+				ab.setMode(AK_ACT_LOOP);
+				ab.setDirection(akAnimationBlend::AB_NONE);
 			}
 			else
 			{
-				ab.setMode(GK_ACT_END);
+				ab.setMode(AK_ACT_END);
 				if (i == 0)
-					ab.setDirection(gkActionBlend::AB_OUT);
+					ab.setDirection(akAnimationBlend::AB_OUT);
 				else
-					ab.setDirection(gkActionBlend::AB_IN);
+					ab.setDirection(akAnimationBlend::AB_IN);
 			}
 			if (ab.evaluate(delta))
 				done.push_back(ab);
@@ -222,7 +222,7 @@ void gkActionBlender::evaluate(gkScalar delta)
 		{
 			done.clear();
 			if (m_stack.size() > 1)
-				m_stack.sort(gkActionBlendSort);
+				m_stack.sort(akAnimationBlendSort);
 		}
 
 	}

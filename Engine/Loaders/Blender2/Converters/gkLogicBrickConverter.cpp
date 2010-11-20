@@ -241,7 +241,7 @@ void gkLogicLoader::convertObject(Blender::Object* bobj, gkGameObject* gobj)
 				aa->setPriority(baa->priority);
 				aa->setReset(baa->end_reset != 0);
 
-				aa->setAction(baa->act ? GKB_IDNAME(baa->act) : "");
+				aa->setAnimation(baa->act ? GKB_IDNAME(baa->act) : "");
 				aa->setProperty(gkLogicLoader_formatText(baa->frameProp));
 
 			} break;
@@ -276,9 +276,9 @@ void gkLogicLoader::convertObject(Blender::Object* bobj, gkGameObject* gobj)
 
 				
 				if (bobj->adt)	// 2.5
-					aa->setAction(bobj->adt->action ? GKB_IDNAME(bobj->adt->action) : "");
+					aa->setAnimation(bobj->adt->action ? GKB_IDNAME(bobj->adt->action) : "");
 				else			// older files
-					aa->setAction(bobj->ipo ? GKB_IDNAME(bobj->ipo) : "");
+					aa->setAnimation(bobj->ipo ? GKB_IDNAME(bobj->ipo) : "");
 				
 				aa->setProperty(gkLogicLoader_formatText(bia->frameProp));
 			} break;

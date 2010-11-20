@@ -347,6 +347,8 @@ public:
 	bool hasContact(const gkString& object);
 
 	gsScene* getScene(void);
+	
+	void playAnimation(const gkString& name, float blend);
 
 	gsProperty  __getitem__(const gkString& prop);
 	void        __setitem__(const gkString& prop, bool  v);
@@ -400,8 +402,6 @@ public:
 
 	gsEntity();
 	~gsEntity() {}
-
-	void playAction(const gkString& name, float blend);
 
 	// internal
 	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsEntity, gkInstancedObject);

@@ -25,59 +25,60 @@
 -------------------------------------------------------------------------------
 */
 
-#include "gkActionPlayer.h"
-#include "gkActionSequence.h"
+#include "akAnimationPlayer.h"
+#include "akAnimationSequence.h"
 
 
-gkActionPlayer::gkActionPlayer()
+akAnimationPlayer::akAnimationPlayer()
 	:	m_action(0),
 	    m_evalTime(1),
 	     m_weight(1.0),
 	     m_enabled(true),
-	     m_mode(GK_ACT_LOOP),
-	     m_object(0)
+	     m_mode(AK_ACT_LOOP),
+	     m_speedfactor(1.0f)
 {
 }
 
-gkActionPlayer::gkActionPlayer(gkAction* resource, gkGameObject* object)
+akAnimationPlayer::akAnimationPlayer(akAnimation* resource)
 	:	m_action(resource),
 	    m_evalTime(1),
 	     m_weight(1.0),
 	     m_enabled(true),
-	     m_mode(GK_ACT_LOOP),
-	     m_object(object)
+	     m_mode(AK_ACT_LOOP),
+	     m_speedfactor(1.0f)
 {
 }
 
-void gkActionPlayer::setTimePosition(gkScalar v)
+void akAnimationPlayer::setTimePosition(akScalar v)
 {
 	if (m_enabled && m_action)
 	{
-		m_evalTime = gkClampf(v, m_action->getStart(), m_action->getEnd());
+		m_evalTime = akClampf(v, m_action->getStart(), m_action->getEnd());
 	}
 }
 
 
 
-void gkActionPlayer::setWeight(gkScalar w)
+void akAnimationPlayer::setWeight(akScalar w)
 {
 	if (m_enabled)
 	{
-		m_weight = gkClampf(w, 0, 1);
+		m_weight = akClampf(w, 0, 1);
 	}
 }
 
 
 
-void gkActionPlayer::evaluate(gkScalar time)
+void akAnimationPlayer::evaluate(akScalar tick)
 {
 	if (!m_enabled || !m_action)
 		return;
 	
-	gkScalar start = m_action->getStart();
-	gkScalar end = m_action->getEnd();
+	akScalar start = m_action->getStart();
+	akScalar end = m_action->getEnd();
+	akScalar dt = m_speedfactor * tick;
 	
-	if (m_mode & GK_ACT_LOOP)
+	if (m_mode & AK_ACT_LOOP)
 	{
 		if (m_evalTime <= start)
 			m_evalTime = start;
@@ -89,29 +90,25 @@ void gkActionPlayer::evaluate(gkScalar time)
 		if (m_evalTime <= start)
 			m_evalTime = start;
 
-		if (m_evalTime + time >= end)
-			m_evalTime = end - time;
+		if (m_evalTime + dt >= end)
+			m_evalTime = end - dt;
 	}
 
+	m_evalTime += dt;
 
+	akScalar time = m_evalTime;
+	if (m_mode & AK_ACT_INVERSE)
+		time = (end - start) - m_evalTime;
 
-	m_evalTime += time;
-
-	gkScalar tick = m_evalTime;
-	if (m_mode & GK_ACT_INVERSE)
-		tick = (end - start) - m_evalTime;
-
-	gkScalar delta = (tick - start) / (end - start);
-
-	m_action->evaluate(tick, delta, m_weight, m_object);
+	evaluateImpl(time);
 	
 	
 }
 
 
-void gkActionPlayer::reset(void)
+void akAnimationPlayer::reset(void)
 {
 	m_evalTime = 0.f;
-	m_weight = 1.f;
-	m_enabled = false;
+//	m_weight = 1.f;
+//	m_enabled = false;
 }

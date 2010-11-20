@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Xavier T.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -24,44 +24,41 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkActionManager_h_
-#define _gkActionManager_h_
+#ifndef _akAnimation_h_
+#define _akAnimation_h_
 
-#include "utSingleton.h"
-#include "gkResourceManager.h"
-#include "Animation/gkActionDefs.h"
+#include "utCommon.h"
+#include "utString.h"
+
+#include "akCommon.h"
+#include "akMathUtils.h"
 
 
-///Manage all the actions/animations
-class gkActionManager : public gkResourceManager, public utSingleton<gkActionManager>
+
+class akAnimation
 {
+protected:
+	akScalar             m_start, m_end;
+	
 public:
-	enum gkActionTypes
-	{
-		GK_ACT_NULL = 0,
-		GK_ACT_KEYED,
-		GK_ACT_SEQ,
-	};
-
-private:
-	int m_currentType;
-
-public:
-	gkActionManager();
-	virtual ~gkActionManager();
+	akAnimation() : m_start(1), m_end(1) {}
+	virtual ~akAnimation() {}
 	
-	gkKeyedAction*    createKeyedAction(const gkResourceName& name);
-	gkActionSequence* createActionSequence(const gkResourceName& name);
-
-	gkKeyedAction*    getKeyedAction(const gkResourceName& name);
-	gkActionSequence* getActionSequence(const gkResourceName& name);
+	UT_INLINE akScalar         getLength(void) const       { return m_end - m_start; }
+	UT_INLINE akScalar         getStart(void) const        { return m_start; }
+	UT_INLINE akScalar         getEnd(void) const          { return m_end; }
 	
-	UT_DECLARE_SINGLETON(gkActionManager);
+	UT_INLINE void             setStart(akScalar v)        { m_start = v; }
+	UT_INLINE void             setEnd(akScalar v)          { m_end = v; }
 	
-private:
-	virtual gkResource* createImpl(const gkResourceName &name, const gkResourceHandle &handle);
-	
+	virtual void evaluate(const akScalar& time, const akScalar& weight, void* object) const = 0;
 
 };
 
-#endif//_gkActionManager_h_
+
+
+
+
+
+
+#endif//_akAnimation_h_

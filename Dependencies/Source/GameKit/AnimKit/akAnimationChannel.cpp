@@ -24,62 +24,53 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "gkActionManager.h"
-#include "gkAction.h"
-#include "gkActionSequence.h"
-#include "gkKeyedAction.h"
+#include "akAnimation.h"
+#include "akAnimationChannel.h"
 
 
-gkActionManager::gkActionManager()
-	: gkResourceManager("ActionManager", "Action")
+akAnimationChannel::akAnimationChannel(const utString& name, akAnimation* parent)
+	:    m_name(name), m_action(parent)
 {
 }
 
 
-gkActionManager::~gkActionManager()
+
+
+akAnimationChannel::~akAnimationChannel()
 {
-	destroyAll();
+	akBezierSpline** splines = m_splines.ptr();
+	int len = getNumSplines(), i = 0;
+	while (i < len)
+		delete splines[i++];
 }
 
 
-gkKeyedAction* gkActionManager::createKeyedAction(const gkResourceName &name)
+
+void akAnimationChannel::addSpline(akBezierSpline* spline)
 {
-	m_currentType = GK_ACT_KEYED;
-	return create<gkKeyedAction>(name);
+	if (m_splines.empty())
+		m_splines.reserve(16);
+	m_splines.push_back(spline);
 }
 
 
-gkActionSequence* gkActionManager::createActionSequence(const gkResourceName &name)
+
+
+const akBezierSpline** akAnimationChannel::getSplines(void) const
 {
-	m_currentType = GK_ACT_SEQ;
-	return create<gkActionSequence>(name);
+	return (const akBezierSpline**)m_splines.ptr();
 }
 
 
-gkKeyedAction* gkActionManager::getKeyedAction(const gkResourceName &name)
+
+int akAnimationChannel::getNumSplines(void) const
 {
-	return getByName<gkKeyedAction>(name);
+	return (int)m_splines.size();
 }
 
 
-gkActionSequence* gkActionManager::getActionSequence(const gkResourceName &name)
+
+void akAnimationChannel::evaluate(const akScalar& time, const akScalar& delta, const akScalar& weight, void* object) const
 {
-	return getByName<gkActionSequence>(name);
+	evaluateImpl(time, delta, weight, object);
 }
-
-
-gkResource* gkActionManager::createImpl(const gkResourceName &name, const gkResourceHandle &handle)
-{
-
-	int curType = m_currentType;
-	m_currentType = GK_ACT_KEYED;
-
-	switch (curType)
-	{
-	case GK_ACT_SEQ:     return new gkActionSequence(this, name, handle);
-	}
-	return new gkKeyedAction(this, name, handle);
-}
-
-
-UT_IMPLEMENT_SINGLETON(gkActionManager);

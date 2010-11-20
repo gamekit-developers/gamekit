@@ -25,19 +25,27 @@
 -------------------------------------------------------------------------------
 */
 
-#include "gkTransformChannel.h"
+#include "gkAnimation.h"
 
-gkTransformChannel::gkTransformChannel(const gkString& name, gkAction* parent)
-		:	gkAnimationChannel(name, parent), m_isEulerRotation(false)
+#include "gkGameObject.h"
+#include "gkBone.h"
+#include "gkEntity.h"
+#include "gkSkeleton.h"
+
+#include "gkAnimationManager.h"
+
+
+gkTransformChannel::gkTransformChannel(const gkString& name, gkAnimation* parent)
+		:	akAnimationChannel(name, parent), m_isEulerRotation(false)
 {
 }
 
-void gkTransformChannel::evaluateImpl(const gkScalar& time, const gkScalar& delta, const gkScalar& weight, gkGameObject* object) const
+void gkTransformChannel::evaluateImpl(const gkScalar& time, const gkScalar& delta, const gkScalar& weight, void* object) const
 {
 	if(!object || (weight <= 0.f))
 		return;
 
-	const gkBezierSpline** splines = getSplines();
+	const akBezierSpline** splines = getSplines();
 	int len = getNumSplines(), i = 0, nvrt;
 
 	// clear previous channel
@@ -48,10 +56,10 @@ void gkTransformChannel::evaluateImpl(const gkScalar& time, const gkScalar& delt
 	
 	while (i < len)
 	{
-		const gkBezierSpline* spline = splines[i++];
+		const akBezierSpline* spline = splines[i++];
 
 		nvrt = spline->getNumVerts();
-		const gkBezierVertex* verts = spline->getVerts();
+		const akBezierVertex* verts = spline->getVerts();
 
 		float eval = 0.f;
 		if (nvrt > 0)
@@ -92,3 +100,60 @@ void gkTransformChannel::evaluateImpl(const gkScalar& time, const gkScalar& delt
 
 	applyTransform(object, &channel, weight);
 }
+
+
+void gkObjectChannel::applyTransform(void* object, const gkTransformState* transform, const gkScalar& weight) const
+{
+	if(!object)
+		return;
+
+	static_cast<gkGameObject*>(object)->applyTransformState(*transform, weight);
+}
+
+
+void gkBoneChannel::applyTransform(void* object, const gkTransformState* transform, const gkScalar& weight) const
+{
+	gkGameObject* obj = 0;
+	gkSkeleton* skel = 0;
+	
+	if(!object)
+		return;
+	
+	obj = static_cast<gkGameObject*>(object);
+	
+	switch (obj->getType())
+	{
+	case GK_ENTITY: skel = obj->getEntity()->getSkeleton(); break;
+	case GK_SKELETON: skel = obj->getSkeleton(); break;
+	}
+	
+	if(skel)
+	{
+		gkBone* bone = skel->getBone(m_name);
+		if(bone)
+			bone->applyChannelTransform(*transform, weight);
+	}
+}
+
+
+gkKeyedAnimation::gkKeyedAnimation(gkResourceManager *creator, const gkResourceName &name, const gkResourceHandle &handle)
+		:	akKeyedAnimation(), gkResource(creator, name, handle)
+{
+
+}
+
+
+gkAnimationSequence::gkAnimationSequence(gkResourceManager *creator, const gkResourceName &name, const gkResourceHandle &handle)
+		:	akAnimationSequence(), gkResource(creator, name, handle)
+{
+
+}
+
+void gkAnimationSequence::addItem(const gkHashedString &animation, const akScalar& start, const akScalar& end, const akScalar& blendin, const akScalar& blendout)
+{
+	gkAnimation* anim = gkAnimationManager::getSingleton().getAnimation(animation);
+	
+	if (anim)
+		akAnimationSequence::addItem(anim, start, end, blendin, blendout);
+}
+

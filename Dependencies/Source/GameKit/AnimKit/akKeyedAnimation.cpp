@@ -25,45 +25,47 @@
 -------------------------------------------------------------------------------
 */
 
-#include "gkKeyedAction.h"
-#include "gkAnimationChannel.h"
+#include "akKeyedAnimation.h"
+#include "akAnimationChannel.h"
 
-gkKeyedAction::gkKeyedAction(gkResourceManager* creator, const gkResourceName& name, const gkResourceHandle& handle)
-	:	gkAction(creator, name, handle)
+akKeyedAnimation::akKeyedAnimation()
+	:	akAnimation()
 {
 }
 
 
-gkKeyedAction::~gkKeyedAction()
+akKeyedAnimation::~akKeyedAnimation()
 {
-	gkAnimationChannel** ptr = m_channels.ptr();
+	akAnimationChannel** ptr = m_channels.ptr();
 	int len = getNumChannels(), i;
 	for (i = 0; i < len; ++i)
 		delete ptr[i];
 }
 
 
-void gkKeyedAction::evaluate(const gkScalar& time, const gkScalar& delta, const gkScalar& weight, gkGameObject* object) const
+void akKeyedAnimation::evaluate(const akScalar& time, const akScalar& weight, void* object) const
 {
-	gkAnimationChannel* const* ptr = m_channels.ptr();
+	akScalar delta = (time - m_start) / (m_end - m_start);
+
+	akAnimationChannel* const* ptr = m_channels.ptr();
 	int len = getNumChannels(), i = 0;
 	while (i < len)
 		ptr[i++]->evaluate(time, delta, weight, object);
 }
 
 
-void gkKeyedAction::addChannel(gkAnimationChannel* chan)
+void akKeyedAnimation::addChannel(akAnimationChannel* chan)
 {
-	GK_ASSERT(chan);
+	UT_ASSERT(chan);
 	m_channels.push_back(chan);
 }
 
 
-gkAnimationChannel* gkKeyedAction::getChannel(const gkString& name)
+akAnimationChannel* akKeyedAnimation::getChannel(const utString& name)
 {
 	for (UTsize i = 0; i < m_channels.size(); i++)
 	{
-		gkAnimationChannel* chan = m_channels[i];
+		akAnimationChannel* chan = m_channels[i];
 		if (chan->getName() == name)
 		{
 			return chan;

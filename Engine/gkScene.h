@@ -80,7 +80,6 @@ public:
 	void            addObject(gkGameObject* obj);
 	void            removeObject(gkGameObject* obj);
 	void            destroyObject(gkGameObject* obj);
-	void            updateObjectActions(gkGameObject* obj);
 
 
 	bool            hasObject(const gkHashedString& ob);
@@ -143,6 +142,11 @@ public:
 	gkGameObject* findInstancedObject(const gkString& name);
 
 
+	///Add an object to the list of object that need to be animated.
+	///All those objects will have their animations updated trough the object's animation player
+	///and acording to the actual frame time.
+	void  pushAnimationUpdate(gkGameObject* obj);
+
 	// Local property access.
 
 	void setSceneManagerType(int type);
@@ -178,6 +182,7 @@ public:
 	bool _replaceObjectInScene(gkGameObject* obj, gkScene* osc, gkScene* nsc);
 	void _eraseObject(gkGameObject* obj);
 
+	
 private:
 
 	void postCreateInstanceImpl(void);
@@ -187,7 +192,7 @@ private:
 	void tickClones(void);
 	void destroyClones(void);
 	void endObjects(void);
-	void updateObjectsActions(const gkScalar tick);
+	void updateObjectsAnimations(const gkScalar tick);
 
 	Ogre::SceneManager*     m_manager;
 	gkCamera*               m_startCam;

@@ -25,33 +25,32 @@
 -------------------------------------------------------------------------------
 */
 
-#ifndef GKKEYEDACTION_H
-#define GKKEYEDACTION_H
+#ifndef AKKEYEDANIMATION_H
+#define AKKEYEDANIMATION_H
 
-#include "gkAction.h"
+#include "akAnimation.h"
 
-class gkAnimationChannel;
 
-class gkKeyedAction : public gkAction
+class akKeyedAnimation : public akAnimation
 {
 public:
-	typedef utArray<gkAnimationChannel*> Channels;
+	typedef utArray<akAnimationChannel*> Channels;
 	
 protected:
 	Channels             m_channels;
 
 public:
-	gkKeyedAction(gkResourceManager* creator, const gkResourceName& name, const gkResourceHandle& handle);
-	virtual ~gkKeyedAction();
+	akKeyedAnimation();
+	virtual ~akKeyedAnimation();
 
-	GK_INLINE Channels::ConstPointer getChannels(void) const    { return m_channels.ptr(); }
-	GK_INLINE int                    getNumChannels(void) const { return(int)m_channels.size(); }
+	UT_INLINE Channels::ConstPointer getChannels(void) const    { return m_channels.ptr(); }
+	UT_INLINE int                    getNumChannels(void) const { return(int)m_channels.size(); }
 	
-	void addChannel(gkAnimationChannel* chan);
-	gkAnimationChannel* getChannel(const gkString& name);
+	void addChannel(akAnimationChannel* chan);
+	akAnimationChannel* getChannel(const utString& name);
 	
-	virtual void evaluate(const gkScalar& time, const gkScalar& delta, const gkScalar& weight, gkGameObject* object) const;
+	virtual void evaluate(const akScalar& time, const akScalar& weight, void* object) const;
 };
 
 
-#endif // GKKEYEDACTION_H
+#endif // AKKEYEDANIMATION_H

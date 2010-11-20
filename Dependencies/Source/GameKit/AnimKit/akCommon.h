@@ -24,40 +24,27 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkAction_h_
-#define _gkAction_h_
+#ifndef _akCommon_h_
+#define _akCommon_h_
 
-#include "gkMathUtils.h"
-#include "gkResource.h"
-#include "Animation/gkActionDefs.h"
 
-class gkAction : public gkResource
+enum akAnimationEvalMode
 {
-protected:
-	gkScalar             m_start, m_end;
-	
-public:
-	gkAction(gkResourceManager* creator, const gkResourceName& name, const gkResourceHandle& handle)
-		:	gkResource(creator, name, handle), m_start(1), m_end(1)
-	{}
-	
-	virtual ~gkAction() {}
-	
-	GK_INLINE gkScalar         getLength(void) const       { return m_end - m_start; }
-	GK_INLINE gkScalar         getStart(void) const        { return m_start; }
-	GK_INLINE gkScalar         getEnd(void) const          { return m_end; }
-	
-	GK_INLINE void             setStart(gkScalar v)        { m_start = v; }
-	GK_INLINE void             setEnd(gkScalar v)          { m_end = v; }
-	
-	virtual void evaluate(const gkScalar& time, const gkScalar& delta, const gkScalar& weight, gkGameObject* object) const = 0;
-
+	///Reset loop when done.
+	AK_ACT_LOOP    = (1 << 0),
+	///Play till the end and stop.
+	AK_ACT_END     = (1 << 1),
+	///Invert frames
+	AK_ACT_INVERSE = (1 << 2)
 };
 
+class akAnimation;
+class akAnimationBlender;
+class akAnimationChannel;
+class akAnimationPlayer;
+class akAnimationSequence;
+class akBezierSpline;
+class akKeyedAnimation;
 
 
-
-
-
-
-#endif//_gkAction_h_
+#endif//_akCommon_h_

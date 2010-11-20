@@ -10,6 +10,9 @@ macro (configure_gamekit ROOT)
 	set(GAMEKIT_UTILS_TARGET				GameKitUtils)
 	set(GAMEKIT_UTILS_PATH					${ROOT}/GameKit/Utils)
 
+	set(GAMEKIT_ANIMKIT_TARGET				AnimKit)
+	set(GAMEKIT_ANIMKIT_PATH				${ROOT}/GameKit/AnimKit)
+
 	set(GAMEKIT_SERIALIZE_BLENDER_TARGET	BulletFileLoader BlenderSerialize)
 
 endmacro(configure_gamekit)

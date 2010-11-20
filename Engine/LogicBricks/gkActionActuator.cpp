@@ -25,16 +25,13 @@
 -------------------------------------------------------------------------------
 */
 #include "gkActionActuator.h"
-#include "gkAction.h"
-#include "gkActionPlayer.h"
-#include "gkActionManager.h"
 #include "gkEngine.h"
 #include "gkLogger.h"
 #include "gkUserDefs.h"
 #include "gkGameObject.h"
 #include "gkSkeleton.h"
 #include "gkEntity.h"
-
+#include "gkAnimationManager.h"
 
 
 
@@ -76,13 +73,13 @@ gkLogicBrick* gkActionActuator::clone(gkLogicLink* link, gkGameObject* dest)
 
 void gkActionActuator::doInit(void)
 {
-	m_action = m_object->getActionPlayer(m_startAct);
+	m_action = m_object->getAnimationPlayer(m_startAct);
 	
 	if(!m_action)
 	{
-		gkAction* res = static_cast<gkAction*>(gkActionManager::getSingleton().getByName(m_startAct));
+		gkAnimation* res = gkAnimationManager::getSingleton().getAnimation(m_startAct);
 		if(res)
-			m_action = m_object->addAction(res);
+			m_action = m_object->addAnimation(res, m_startAct);
 	}
 	
 	if (m_action)
@@ -145,7 +142,7 @@ void gkActionActuator::execute(void)
 				m_action->setTimePosition(m_start);
 		case AA_PLAY:
 		default:
-			m_object->playAction(m_action, m_blend);
+			m_object->playAnimation(m_action, m_blend);
 			break;
 		}
 		

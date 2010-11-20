@@ -1349,6 +1349,19 @@ bool gsGameObject::hasContact(const gkString& object)
 }
 
 
+void gsGameObject::playAnimation(const gkString& name, float blend)
+{
+	if (m_object)
+	{
+		if (get()->getAnimationPlayer(name) == 0)
+			get()->addAnimation(name);
+
+		get()->playAnimation(name, blend);
+	}
+}
+
+
+
 gsEntity::gsEntity()
 {
 }
@@ -1358,22 +1371,6 @@ gsEntity::gsEntity()
 gsEntity::gsEntity(gkInstancedObject* ob) : gsGameObject(ob)
 {
 }
-
-
-
-
-void gsEntity::playAction(const gkString& name, float blend)
-{
-	if (m_object)
-	{
-		gkEntity *ent = cast<gkEntity>();
-		if (ent->getActionPlayer(name) == 0)
-			ent->addAction(name);
-
-		ent->playAction(name, blend);
-	}
-}
-
 
 
 

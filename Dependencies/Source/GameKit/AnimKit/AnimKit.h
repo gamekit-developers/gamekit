@@ -3,7 +3,7 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Charlie C.
+    Copyright (c) 2006-2010 Xavier T.
 
     Contributor(s): none yet.
 -------------------------------------------------------------------------------
@@ -24,54 +24,18 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "gkAction.h"
-#include "gkAnimationChannel.h"
+
+#ifndef ANIMKIT_H
+#define ANIMKIT_H
 
 
-gkAnimationChannel::gkAnimationChannel(const gkString& name, gkAction* parent)
-	:    m_name(name), m_action(parent)
-{
-}
+#include "akAnimation.h"
+#include "akAnimationBlender.h"
+#include "akAnimationChannel.h"
+#include "akAnimationPlayer.h"
+#include "akAnimationSequence.h"
+#include "akKeyedAnimation.h"
+#include "akBezierSpline.h"
 
 
-
-
-gkAnimationChannel::~gkAnimationChannel()
-{
-	gkBezierSpline** splines = m_splines.ptr();
-	int len = getNumSplines(), i = 0;
-	while (i < len)
-		delete splines[i++];
-
-}
-
-
-
-void gkAnimationChannel::addSpline(gkBezierSpline* spline)
-{
-	if (m_splines.empty())
-		m_splines.reserve(16);
-	m_splines.push_back(spline);
-}
-
-
-
-
-const gkBezierSpline** gkAnimationChannel::getSplines(void) const
-{
-	return (const gkBezierSpline**)m_splines.ptr();
-}
-
-
-
-int gkAnimationChannel::getNumSplines(void) const
-{
-	return (int)m_splines.size();
-}
-
-
-
-void gkAnimationChannel::evaluate(const gkScalar& time, const gkScalar& delta, const gkScalar& weight, gkGameObject* object) const
-{
-	evaluateImpl(time, delta, weight, object);
-}
+#endif // ANIMKIT_H

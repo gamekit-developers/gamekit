@@ -8875,6 +8875,39 @@ fail:
 }
 
 
+static int _wrap_GameObject_playAnimation(lua_State* L) {
+  int SWIG_arg = 0;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gkString *arg2 = 0 ;
+  float arg3 ;
+  gkString temp2 ;
+  
+  SWIG_check_num_args("playAnimation",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("playAnimation",1,"gsGameObject *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("playAnimation",2,"gkString const &");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("playAnimation",3,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_playAnimation",1,SWIGTYPE_p_gsGameObject);
+  }
+  
+  
+  temp2 = gkString((const char*)lua_tostring(L, 2));
+  arg2 = &temp2;
+  
+  arg3 = (float)lua_tonumber(L, 3);
+  (arg1)->playAnimation((gkString const &)*arg2,arg3);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_GameObject___getitem(lua_State* L) {
   int SWIG_arg = 0;
   gsGameObject *arg1 = (gsGameObject *) 0 ;
@@ -9133,6 +9166,7 @@ static swig_lua_method swig_gsGameObject_methods[] = {
     {"hasContacts", _wrap_GameObject_hasContacts}, 
     {"hasContact", _wrap_GameObject_hasContact}, 
     {"getScene", _wrap_GameObject_getScene}, 
+    {"playAnimation", _wrap_GameObject_playAnimation}, 
     {"__getitem", _wrap_GameObject___getitem}, 
     {"__setitem", _wrap_GameObject___setitem}, 
     {0,0}
@@ -9379,45 +9413,11 @@ fail:
 }
 
 
-static int _wrap_Entity_playAction(lua_State* L) {
-  int SWIG_arg = 0;
-  gsEntity *arg1 = (gsEntity *) 0 ;
-  gkString *arg2 = 0 ;
-  float arg3 ;
-  gkString temp2 ;
-  
-  SWIG_check_num_args("playAction",3,3)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("playAction",1,"gsEntity *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("playAction",2,"gkString const &");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("playAction",3,"float");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsEntity,0))){
-    SWIG_fail_ptr("Entity_playAction",1,SWIGTYPE_p_gsEntity);
-  }
-  
-  
-  temp2 = gkString((const char*)lua_tostring(L, 2));
-  arg2 = &temp2;
-  
-  arg3 = (float)lua_tonumber(L, 3);
-  (arg1)->playAction((gkString const &)*arg2,arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
 static void swig_delete_Entity(void *obj) {
 gsEntity *arg1 = (gsEntity *) obj;
 delete arg1;
 }
 static swig_lua_method swig_gsEntity_methods[] = {
-    {"playAction", _wrap_Entity_playAction}, 
     {0,0}
 };
 static swig_lua_attribute swig_gsEntity_attributes[] = {
@@ -17066,25 +17066,25 @@ fail:
 }
 
 
-static int _wrap_ActionActuator_setAction(lua_State* L) {
+static int _wrap_ActionActuator_setAnimation(lua_State* L) {
   int SWIG_arg = 0;
   gsActionActuator *arg1 = (gsActionActuator *) 0 ;
   gkString *arg2 = 0 ;
   gkString temp2 ;
   
-  SWIG_check_num_args("setAction",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setAction",1,"gsActionActuator *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("setAction",2,"gkString const &");
+  SWIG_check_num_args("setAnimation",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setAnimation",1,"gsActionActuator *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("setAnimation",2,"gkString const &");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsActionActuator,0))){
-    SWIG_fail_ptr("ActionActuator_setAction",1,SWIGTYPE_p_gsActionActuator);
+    SWIG_fail_ptr("ActionActuator_setAnimation",1,SWIGTYPE_p_gsActionActuator);
   }
   
   
   temp2 = gkString((const char*)lua_tostring(L, 2));
   arg2 = &temp2;
   
-  (arg1)->setAction((gkString const &)*arg2);
+  (arg1)->setAnimation((gkString const &)*arg2);
   
   return SWIG_arg;
   
@@ -17272,19 +17272,19 @@ fail:
 }
 
 
-static int _wrap_ActionActuator_getAction(lua_State* L) {
+static int _wrap_ActionActuator_getAnimation(lua_State* L) {
   int SWIG_arg = 0;
   gsActionActuator *arg1 = (gsActionActuator *) 0 ;
   gkString result;
   
-  SWIG_check_num_args("getAction",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getAction",1,"gsActionActuator *");
+  SWIG_check_num_args("getAnimation",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getAnimation",1,"gsActionActuator *");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsActionActuator,0))){
-    SWIG_fail_ptr("ActionActuator_getAction",1,SWIGTYPE_p_gsActionActuator);
+    SWIG_fail_ptr("ActionActuator_getAnimation",1,SWIGTYPE_p_gsActionActuator);
   }
   
-  result = (arg1)->getAction();
+  result = (arg1)->getAnimation();
   
   lua_pushstring(L, (&result)->c_str()); SWIG_arg++;
   
@@ -17358,7 +17358,7 @@ static swig_lua_method swig_gsActionActuator_methods[] = {
     {"setBlend", _wrap_ActionActuator_setBlend}, 
     {"setMode", _wrap_ActionActuator_setMode}, 
     {"setPriority", _wrap_ActionActuator_setPriority}, 
-    {"setAction", _wrap_ActionActuator_setAction}, 
+    {"setAnimation", _wrap_ActionActuator_setAnimation}, 
     {"setProperty", _wrap_ActionActuator_setProperty}, 
     {"setReset", _wrap_ActionActuator_setReset}, 
     {"getStart", _wrap_ActionActuator_getStart}, 
@@ -17366,7 +17366,7 @@ static swig_lua_method swig_gsActionActuator_methods[] = {
     {"getBlend", _wrap_ActionActuator_getBlend}, 
     {"getMode", _wrap_ActionActuator_getMode}, 
     {"getPriority", _wrap_ActionActuator_getPriority}, 
-    {"getAction", _wrap_ActionActuator_getAction}, 
+    {"getAnimation", _wrap_ActionActuator_getAnimation}, 
     {"getProperty", _wrap_ActionActuator_getProperty}, 
     {"getReset", _wrap_ActionActuator_getReset}, 
     {0,0}

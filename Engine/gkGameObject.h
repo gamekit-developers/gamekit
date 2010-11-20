@@ -31,8 +31,8 @@
 #include "gkMathUtils.h"
 #include "gkTransformState.h"
 #include "gkSerialize.h"
-#include "Animation/gkActionDefs.h"
 
+#include "Animation/gkAnimation.h"
 
 class gkGameObject : public gkInstancedObject
 {
@@ -68,7 +68,7 @@ public:
 
 	typedef utArray<Notifier*> Notifications;
 
-	typedef utHashTable<gkHashedString, gkActionPlayer*>  Actions;
+	typedef utHashTable<gkHashedString, gkAnimationPlayer*>  Animation;
 
 public:
 
@@ -258,14 +258,14 @@ public:
 	void removeEventListener(Notifier* evt);
 
 
-	// actions
-	gkActionPlayer*         addAction(const gkHashedString& name);
-	gkActionPlayer*         addAction(gkAction* action);
-	gkActionPlayer*         getActionPlayer(const gkHashedString& name);
-	void                    playAction(const gkString& act, gkScalar blend, int mode = GK_ACT_END, int priority = 0);
-	void                    playAction(gkActionPlayer* act, gkScalar blend, int mode = GK_ACT_END, int priority = 0);
-	void                    updateActions(const gkScalar tick);
-	gkActionBlender&        getActionBlender(void);
+	// animation
+	gkAnimationPlayer*     addAnimation(const gkHashedString& name);
+	gkAnimationPlayer*     addAnimation(gkAnimation* action, const gkHashedString& playername);
+	gkAnimationPlayer*     getAnimationPlayer(const gkHashedString& name);
+	void                   playAnimation(const gkString& act, gkScalar blend, int mode = AK_ACT_END, int priority = 0);
+	void                   playAnimation(gkAnimationPlayer* act, gkScalar blend, int mode = AK_ACT_END, int priority = 0);
+	void                   updateAnimationBlender(const gkScalar tick);
+	gkAnimationBlender&    getAnimationBlender(void);
 
 
 protected:
@@ -321,8 +321,10 @@ protected:
 	int                         m_flags;
 	LifeSpan                    m_life;
 
-	gkActionBlender*            m_actionBlender;
-	Actions                     m_actions;
+
+	gkAnimationBlender*         m_actionBlender;
+	Animation                   m_actions;
+
 
 	virtual void createInstanceImpl(void);
 	virtual void destroyInstanceImpl(void);

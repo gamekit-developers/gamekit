@@ -34,7 +34,7 @@
 #include "Graphics/gkHUD.h"
 #include "Graphics/gkHUDElement.h"
 
-
+#include "Animation/gkAnimationManager.h"
 
 
 gkGamePlayer::gkGamePlayer(gkGameLevel* levelData)
@@ -140,28 +140,40 @@ void gkGamePlayer::load(gkBlendFile* playerData)
 
 
 	// save animation states
-	m_animations[GK_ANIM_IDLE]        = m_skeleton->addAction("Momo_Idle1");
-	m_animations[GK_ANIM_IDLE_NASTY]  = m_skeleton->addAction("Momo_IdleNasty");
-	m_animations[GK_ANIM_WALK]        = m_skeleton->addAction("Momo_Walk");
-	m_animations[GK_ANIM_RUN]         = m_skeleton->addAction("Momo_Run");
-	m_animations[GK_ANIM_JUMP]        = m_skeleton->addAction("Momo_Jump");
-	m_animations[GK_ANIM_WHIP]        = m_skeleton->addAction("Momo_TailWhip");
-	m_animations[GK_ANIM_KICK]        = m_skeleton->addAction("Momo_Kick");
-	m_animations[GK_ANIM_WALL_FLIP]   = m_skeleton->addAction("Momo_WallFlip");
+	m_skeleton->addAnimation("Momo_Idle1");
+	m_skeleton->addAnimation("Momo_IdleNasty");
+	m_skeleton->addAnimation("Momo_Walk");
+	m_skeleton->addAnimation("Momo_Run");
+	m_skeleton->addAnimation("Momo_Jump");
+	m_skeleton->addAnimation("Momo_TailWhip");
+	m_skeleton->addAnimation("Momo_Kick");
+	m_skeleton->addAnimation("Momo_WallFlip");
+	
+	m_animations[GK_ANIM_IDLE]        = m_skeleton->getAnimationPlayer("Momo_Idle1");
+	m_animations[GK_ANIM_IDLE_NASTY]  = m_skeleton->getAnimationPlayer("Momo_IdleNasty");
+	m_animations[GK_ANIM_WALK]        = m_skeleton->getAnimationPlayer("Momo_Walk");
+	m_animations[GK_ANIM_RUN]         = m_skeleton->getAnimationPlayer("Momo_Run");
+	m_animations[GK_ANIM_JUMP]        = m_skeleton->getAnimationPlayer("Momo_Jump");
+	m_animations[GK_ANIM_WHIP]        = m_skeleton->getAnimationPlayer("Momo_TailWhip");
+	m_animations[GK_ANIM_KICK]        = m_skeleton->getAnimationPlayer("Momo_Kick");
+	m_animations[GK_ANIM_WALL_FLIP]   = m_skeleton->getAnimationPlayer("Momo_WallFlip");
 
-	//m_animations[GK_ANIM_WALL_FLIP]->setMode(GK_ACT_END | GK_ACT_INVERSE);
+	//m_animations[GK_ANIM_WALL_FLIP]->setMode(AK_ACT_END | AK_ACT_INVERSE);
 	m_animations[GK_ANIM_IDLE_CURRENT] = m_animations[GK_ANIM_IDLE];
 
-
-
+	m_animations[GK_ANIM_JUMP]->setMode(AK_ACT_END);
+	
+	m_animations[GK_ANIM_WHIP]->setSpeedFactor(gkAppData::gkAnimationAttack);
+	m_animations[GK_ANIM_KICK]->setSpeedFactor(gkAppData::gkAnimationAttack);
+	
 	// COMBO: Kick + Run + Whip
-	m_comboAttack = gkActionManager::getSingleton().createActionSequence("Momo_ComboAttack");
-	m_comboAttack->addItem("Momo_Kick",      gkVector2(0.f,  17.f), gkVector2(0.f,  3.f));
-	m_comboAttack->addItem("Momo_Run",       gkVector2(15.f, 32.f), gkVector2(2.f,  4.f));
-	m_comboAttack->addItem("Momo_TailWhip",  gkVector2(25.f, 45.f), gkVector2(7.f,  0.f));
+	m_comboAttack = gkAnimationManager::getSingleton().createAnimationSequence("Momo_ComboAttack");
+	m_comboAttack->addItem("Momo_Kick",      0.f,  17.f, 0.f, 3.f);
+	m_comboAttack->addItem("Momo_Run",       15.f, 32.f, 2.f, 4.f);
+	m_comboAttack->addItem("Momo_TailWhip",  25.f, 45.f, 7.f, 0.f);
 
-	m_animations[GK_ANIM_COMBO_ATTACK] = m_skeleton->addAction(m_comboAttack);
-	m_animations[GK_ANIM_COMBO_ATTACK]->setMode(GK_ACT_END); //not LOOP
+	m_animations[GK_ANIM_COMBO_ATTACK] = m_skeleton->addAnimation(m_comboAttack, "Momo_ComboAttack");
+	m_animations[GK_ANIM_COMBO_ATTACK]->setMode(AK_ACT_END); //not LOOP
 
 
 
@@ -422,6 +434,7 @@ void gkGamePlayer::idleStart(int from, int to)
 void gkGamePlayer::jumpStart(int from, int to)
 {
 	m_animations[GK_ANIM_JUMP]->reset();
+	m_animations[GK_ANIM_JUMP]->setSpeedFactor(1.0f);
 	applyJump();
 
 }
@@ -436,7 +449,8 @@ void gkGamePlayer::comboStart(int from, int to)
 void gkGamePlayer::landStart(int from, int to)
 {
 	/// Move jump toward the end
-	m_animations[GK_ANIM_JUMP]->setTimePosition(35.f);
+	m_animations[GK_ANIM_JUMP]->setTimePosition(20.f);
+	m_animations[GK_ANIM_JUMP]->setSpeedFactor(gkAppData::gkAnimationFast);
 }
 
 void gkGamePlayer::kickStart(int from, int to)
@@ -570,6 +584,7 @@ void gkGamePlayer::runAttack1End(int from, int to)
 void gkGamePlayer::landEnd(int from, int to)
 {
 	m_animations[GK_ANIM_JUMP]->reset();
+	m_animations[GK_ANIM_JUMP]->setSpeedFactor(1.0f);
 }
 
 
@@ -658,14 +673,12 @@ void gkGamePlayer::applyJump(void)
 
 void gkGamePlayer::whipState(void)
 {
-	m_blendMgr.push(m_animations[GK_ANIM_WHIP], gkAppData::gkGlobalActionBlend);
-	m_blendMgr.evaluate(gkAppData::gkAnimationAttack);
+	m_entity->playAnimation(m_animations[GK_ANIM_WHIP], gkAppData::gkGlobalActionBlend);
 }
 
 void gkGamePlayer::kickState(void)
 {
-	m_blendMgr.push(m_animations[GK_ANIM_KICK], gkAppData::gkGlobalActionBlend);
-	m_blendMgr.evaluate(gkAppData::gkAnimationAttack);
+	m_entity->playAnimation(m_animations[GK_ANIM_KICK], gkAppData::gkGlobalActionBlend);
 }
 
 
@@ -679,26 +692,22 @@ void gkGamePlayer::applyComboThrust(gkScalar fac)
 
 void gkGamePlayer::comboState(void)
 {
-	gkScalar prev = m_animations[GK_ANIM_COMBO_ATTACK]->getTimePosition();
-
-
-	m_blendMgr.push(m_animations[GK_ANIM_COMBO_ATTACK], gkAppData::gkGlobalActionBlend);
-	m_blendMgr.evaluate(gkAppData::gkAnimationTick);
-
+	static gkScalar prev = -1;
 	gkScalar cur = m_animations[GK_ANIM_COMBO_ATTACK]->getTimePosition();
 
-
-	if (prev <25.f && cur >25.f)
+	if( prev < cur && prev <15.f && cur >15.f)
 		applyComboThrust();
+		
+	prev = cur;
+	
+	m_entity->playAnimation(m_animations[GK_ANIM_COMBO_ATTACK], gkAppData::gkGlobalActionBlend);
 }
 
 void gkGamePlayer::moveState(void)
 {
-
 	m_input->movePlayer();
 
-	m_blendMgr.push(m_animations[this->getState() == GK_PLAY_WALK ? GK_ANIM_WALK : GK_ANIM_RUN], gkAppData::gkGlobalActionBlend);
-	m_blendMgr.evaluate(gkAppData::gkAnimationTick);
+	m_entity->playAnimation(m_animations[this->getState() == GK_PLAY_WALK ? GK_ANIM_WALK : GK_ANIM_RUN], gkAppData::gkGlobalActionBlend);
 }
 
 
@@ -706,15 +715,13 @@ void gkGamePlayer::moveState(void)
 
 void gkGamePlayer::idleState(void)
 {
-	m_blendMgr.push(m_animations[GK_ANIM_IDLE_CURRENT], gkAppData::gkGlobalActionBlend);
-	m_blendMgr.evaluate(gkAppData::gkAnimationTick);
+	m_entity->playAnimation(m_animations[GK_ANIM_IDLE_CURRENT], gkAppData::gkGlobalActionBlend);
 }
 
 
 void gkGamePlayer::landState(void)
 {
-	m_blendMgr.push(m_animations[GK_ANIM_JUMP], 0.f);
-	m_blendMgr.evaluate(gkAppData::gkAnimationTickFast);
+	m_entity->playAnimation(m_animations[GK_ANIM_JUMP], 0.f);
 }
 
 
@@ -722,11 +729,12 @@ void gkGamePlayer::landState(void)
 void gkGamePlayer::jumpState(void)
 {
 	if (m_animations[GK_ANIM_JUMP]->getTimePosition() > 17.f)
-		return;
+	{
+		m_animations[GK_ANIM_JUMP]->setTimePosition(17.f);
+		m_animations[GK_ANIM_JUMP]->setSpeedFactor(0);
+	}
 
-
-	m_blendMgr.push(m_animations[GK_ANIM_JUMP], gkAppData::gkGlobalActionBlend);
-	m_blendMgr.evaluate(gkAppData::gkAnimationTick);
+	m_entity->playAnimation(m_animations[GK_ANIM_JUMP], gkAppData::gkGlobalActionBlend);
 }
 
 

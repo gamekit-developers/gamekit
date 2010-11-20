@@ -1271,6 +1271,7 @@ function Scene:createEmpty(name)
 \LuaMethodMenu{GameObject,clearParent}
 \LuaMethodMenu{GameObject,clearParentInPlace}
 \LuaMethodMenu{GameObject,getScene}
+\LuaMethodMenu{GameObject,playAnimation}
 \endmenu
 
 
@@ -1887,6 +1888,26 @@ function GameObject:getType()
 
 
 
+<!-- ======================================== -->
+\LuaMethod{GameObject,playAnimation}
+\LuaClassUp{GameObject}
+
+Plays an animation. 
+
+
+\code
+function GameObject:playAnimation(name, blend)
+\endcode
+
+\param name Identifier of the animation.
+\param blend The number of blend-in frames, if a previous action is playing.
+
+
+\endpage
+
+
+
+
 <!-- ============================================ Camera ============================================ -->
 \LuaClass{Camera}
 \LuaClassExtend{GameObject}
@@ -2002,29 +2023,12 @@ function Camera:makeCurrent()
 \LuaClassExtend{GameObject}
 
 \beginmenu{Methods}
-\LuaMethodMenu{Entity,playAction}
 \endmenu
 
 
 
 \endpage
 
-<!-- ======================================== -->
-\LuaMethod{Entity,playAction}
-\LuaClassUp{Entity}
-
-Plays an action object. 
-
-
-\code
-function Entity:playAction(name, blend)
-\endcode
-
-\param name Identifier of the action.
-\param blend The number of blend-in frames, if a previous action is playing.
-
-
-\endpage
 
 
 <!-- ============================================ Light ============================================ -->

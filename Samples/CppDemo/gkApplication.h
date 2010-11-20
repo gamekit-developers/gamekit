@@ -43,9 +43,8 @@ static const gkScalar gkJoyReboundFac     = 2.95f;
 static const gkScalar gkJoyWalkToRunTol   = 0.875f;
 static const gkScalar gkFixedTickDelta    = 1.f / 60.f;
 static const gkScalar gkFixedTickDelta2   = 2.f* gkFixedTickDelta;
-static const gkScalar gkAnimationTick     = (25.f* gkFixedTickDelta);
-static const gkScalar gkAnimationTickFast = (32.f* gkFixedTickDelta);
-static const gkScalar gkAnimationAttack   = (40.f* gkFixedTickDelta);
+static const gkScalar gkAnimationFast     = 1.27f;
+static const gkScalar gkAnimationAttack   = 1.35f;
 static const gkScalar gkPlayerHeadZ       = 0.25f;
 static const gkScalar gkPlayerImpulseZ    = 8.25f;
 static const gkScalar gkCameraTol         = 0.25f;
@@ -91,8 +90,8 @@ enum gkAnimationStates
 	GK_ANIM_MAX,
 };
 
-class gkActionPlayer;
-typedef gkActionPlayer* gkAnimations[GK_ANIM_MAX];
+class gkAnimationPlayer;
+typedef gkAnimationPlayer* gkAnimations[GK_ANIM_MAX];
 
 
 struct gkJoystickAxisState

@@ -34,8 +34,6 @@
 #include "gkScene.h"
 #include "gkDynamicsWorld.h"
 #include "gkPhysicsDebug.h"
-#include "gkAction.h"
-#include "gkActionPlayer.h"
 #include "gkLogger.h"
 #include "gkSteering.h"
 #include "gkRayTest.h"
@@ -218,9 +216,9 @@ void gkCharacterNode::update_animation(STATE previousTickState)
 
 	if (!GET_SOCKET_VALUE(ANIM_HAS_REACHED_END))
 	{
-		m_ent->playAction(m_currentStateData->m_animName, GET_SOCKET_VALUE(ANIM_BLEND_FRAMES));
+		m_ent->playAnimation(m_currentStateData->m_animName, GET_SOCKET_VALUE(ANIM_BLEND_FRAMES));
 
-		gkActionPlayer* pAct = m_ent->getActionPlayer(m_currentStateData->m_animName);
+		gkAnimationPlayer* pAct = m_ent->getAnimationPlayer(m_currentStateData->m_animName);
 
 		GK_ASSERT(pAct);
 
@@ -236,7 +234,7 @@ void gkCharacterNode::update_animation(STATE previousTickState)
 	}
 	else if (m_currentStateData->m_loop)
 	{
-		m_ent->playAction(m_currentStateData->m_animName, GET_SOCKET_VALUE(ANIM_BLEND_FRAMES));
+		m_ent->playAnimation(m_currentStateData->m_animName, GET_SOCKET_VALUE(ANIM_BLEND_FRAMES));
 	}
 }
 

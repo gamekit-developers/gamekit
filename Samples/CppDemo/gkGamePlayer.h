@@ -30,12 +30,12 @@
 
 #include "gkEngine.h"
 #include "gkApplication.h"
-#include "Animation/gkActionBlender.h"
+#include "Animation/gkAnimation.h"
 #include "gkFSM.h"
 
 
 class gkRadarSensor;
-class gkActionSequence;
+class akAnimationSequence;
 
 
 
@@ -145,10 +145,8 @@ protected:
 
 
 	gkAnimations m_animations;
-	gkActionSequence* m_comboAttack;
+	gkAnimationSequence* m_comboAttack;
 
-
-	gkActionBlender m_blendMgr;
 	int m_idleSwitch;
 
 

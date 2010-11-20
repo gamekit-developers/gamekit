@@ -728,7 +728,7 @@ public:
 	void  setBlend(int v)                 {BRICK_SET( setBlend(v) );}
 	void  setMode(int v)                  {BRICK_SET( setMode(v) );}
 	void  setPriority(int v)              {BRICK_SET( setPriority(v) );}
-	void  setAction(const gkString& v)    {BRICK_SET( setAction(v) );}
+	void  setAnimation(const gkString& v) {BRICK_SET( setAnimation(v) );}
 	void  setProperty(const gkString& v)  {BRICK_SET( setProperty(v) );}
 	void  setReset(bool v)                {BRICK_SET( setReset(v) );}
 
@@ -737,7 +737,7 @@ public:
 	int       getBlend(void)              {BRICK_GET( getBlend(), 0 );}
 	int       getMode(void)               {BRICK_GET( getMode(), 0 );}
 	int       getPriority(void)           {BRICK_GET( getPriority(), 0 );}
-	gkString  getAction(void)             {BRICK_GET( getAction(), "" );}
+	gkString  getAnimation(void)          {BRICK_GET( getAnimation(), "" );}
 	gkString  getProperty(void)           {BRICK_GET( getProperty(), "" );}
 	bool      getReset(void)              {BRICK_GET( getReset(), 0 );}
 

@@ -30,30 +30,28 @@
 #include "gkBlenderDefines.h"
 #include "gkLoaderCommon.h"
 
-#include "gkAction.h"
-#include "gkAnimationChannel.h"
-#include "gkBezierSpline.h"
-#include "gkTransformChannel.h"
-#include "gkActionManager.h"
-#include "gkKeyedAction.h"
-#include "gkActionPlayer.h"
+
+#include "gkAnimation.h"
+#include "gkAnimationManager.h"
+
+#include "AnimKit.h"
 
 #include "gkLight.h"
 
-void ConvertSpline(Blender::BezTriple* bez, gkAnimationChannel* chan, int access, int mode, int totvert, gkVector2& range)
+void ConvertSpline(Blender::BezTriple* bez, akAnimationChannel* chan, int access, int mode, int totvert, gkVector2& range)
 {
-	gkBezierSpline* spline = new gkBezierSpline(access);
+	akBezierSpline* spline = new akBezierSpline(access);
 
 	switch (mode)
 	{
 	case 0://BEZT_IPO_CONST:
-		spline->setInterpolationMethod(gkBezierSpline::BEZ_CONSTANT);
+		spline->setInterpolationMethod(akBezierSpline::BEZ_CONSTANT);
 		break;
 	case 1://BEZT_IPO_LIN:
-		spline->setInterpolationMethod(gkBezierSpline::BEZ_LINEAR);
+		spline->setInterpolationMethod(akBezierSpline::BEZ_LINEAR);
 		break;
 	case 2://BEZT_IPO_BEZ:
-		spline->setInterpolationMethod(gkBezierSpline::BEZ_CUBIC);
+		spline->setInterpolationMethod(akBezierSpline::BEZ_CUBIC);
 		break;
 	default:
 		return;
@@ -63,7 +61,7 @@ void ConvertSpline(Blender::BezTriple* bez, gkAnimationChannel* chan, int access
 	Blender::BezTriple* bezt = bez;
 	for (int c = 0; c < totvert; c++, bezt++)
 	{
-		gkBezierVertex v;
+		akBezierVertex v;
 
 		v.h1[0] = bezt->vec[0][0];
 		v.h1[1] = bezt->vec[0][1];
@@ -87,19 +85,19 @@ void ConvertSpline(Blender::BezTriple* bez, gkAnimationChannel* chan, int access
 }
 
 
-void convertLightIpo(Blender::Ipo* bipo, gkAnimationChannel* chan, gkVector2& range)
+void convertLightIpo(Blender::Ipo* bipo, akAnimationChannel* chan, gkVector2& range)
 {
 //todo
 }
 
 
-void convertMaterialIpo(Blender::Ipo* bipo, gkAnimationChannel* chan, gkVector2& range)
+void convertMaterialIpo(Blender::Ipo* bipo, akAnimationChannel* chan, gkVector2& range)
 {
 //todo
 }
 
 
-void convertActionIpo(Blender::Ipo* bipo, gkAnimationChannel* chan, gkVector2& range)
+void convertActionIpo(Blender::Ipo* bipo, akAnimationChannel* chan, gkVector2& range)
 {
 	Blender::IpoCurve* icu = (Blender::IpoCurve*)bipo->curve.first;
 	while (icu)
@@ -133,7 +131,7 @@ void convertActionIpo(Blender::Ipo* bipo, gkAnimationChannel* chan, gkVector2& r
 }
 
 
-void convertObjectIpo(Blender::Ipo* bipo, gkAnimationChannel* chan, gkVector2& range)
+void convertObjectIpo(Blender::Ipo* bipo, akAnimationChannel* chan, gkVector2& range)
 {
 	Blender::IpoCurve* icu = (Blender::IpoCurve*)bipo->curve.first;
 	while (icu)
@@ -163,10 +161,10 @@ void convertObjectIpo(Blender::Ipo* bipo, gkAnimationChannel* chan, gkVector2& r
 }
 
 
-gkAction* convertObjectIpoToAnimation(Blender::Ipo* bipo)
+gkAnimation* convertObjectIpoToAnimation(Blender::Ipo* bipo)
 {
-	gkActionManager& amgr = gkActionManager::getSingleton();
-	gkKeyedAction* act = amgr.createKeyedAction(GKB_IDNAME(bipo));
+	gkAnimationManager& amgr = gkAnimationManager::getSingleton();
+	gkKeyedAnimation* act = amgr.createKeyedAnimation(GKB_IDNAME(bipo));
 	
 	if(!act)
 		return 0;
@@ -218,7 +216,7 @@ gkAction* convertObjectIpoToAnimation(Blender::Ipo* bipo)
 void convertAction24(Blender::bAction* action)
 {
 	// 2.4x actions are always Pose actions 
-	gkKeyedAction* act = gkActionManager::getSingleton().createKeyedAction(GKB_IDNAME(action));
+	gkKeyedAnimation* act = gkAnimationManager::getSingleton().createKeyedAnimation(GKB_IDNAME(action));
 	
 	if(!act)
 		return;
@@ -248,7 +246,7 @@ void convertAction24(Blender::bAction* action)
 
 void convertAction25(Blender::bAction* action)
 {
-	gkKeyedAction* act = gkActionManager::getSingleton().createKeyedAction(GKB_IDNAME(action));
+	gkKeyedAnimation* act = gkAnimationManager::getSingleton().createKeyedAnimation(GKB_IDNAME(action));
 	
 	if(!act)
 		return;
@@ -265,7 +263,7 @@ void convertAction25(Blender::bAction* action)
 		utString chan_name;
 		utString transform_name;
 		
-		gkAnimationChannel* chan;
+		akAnimationChannel* chan;
 		
 		// Pose action
 		if (rnap.substr(0, 10) == "pose.bones")
@@ -295,7 +293,7 @@ void convertAction25(Blender::bAction* action)
 				
 				ochan->setEulerRotation(true);
 				
-				chan = static_cast<gkAnimationChannel*>(ochan);
+				chan = static_cast<akAnimationChannel*>(ochan);
 				act->addChannel(chan);
 			}
 		}
@@ -357,17 +355,17 @@ void convert25AnimData(gkGameObject* obj, Blender::AnimData* adt)
 	
 	if(adt->action)
 	{
-		gkAction* act =  gkActionManager::getSingleton().getByName<gkAction>(GKB_IDNAME(adt->action));
+		gkAnimation* act =  dynamic_cast<gkAnimation*>(gkAnimationManager::getSingleton().getByName(GKB_IDNAME(adt->action)));
 		
 		if(!act)
 		{
 			convertAction25(adt->action);
-			act =  gkActionManager::getSingleton().getByName<gkAction>(GKB_IDNAME(adt->action));
+			act =  dynamic_cast<gkAnimation*>(gkAnimationManager::getSingleton().getByName(GKB_IDNAME(adt->action)));
 		}
 		
 		if(act)
 		{
-			gkActionPlayer* play = obj->addAction(act);
+			gkAnimationPlayer* play = obj->addAnimation(act, GKB_IDNAME(adt->action));
 			play->setWeight(adt->act_influence);
 		}
 		
@@ -401,27 +399,27 @@ void gkAnimationLoader::convertObject(gkGameObject* obj, Blender::Object* bobj, 
 	{
 		if(bobj && bobj->ipo)
 		{
-			gkAction* act =  gkActionManager::getSingleton().getByName<gkAction>(GKB_IDNAME(bobj->ipo));
+			gkAnimation* act =  dynamic_cast<gkAnimation*>(gkAnimationManager::getSingleton().getByName(GKB_IDNAME(bobj->ipo)));
 			
 			if(!act)
 				act = convertObjectIpoToAnimation(bobj->ipo);
 			
 			if(act)
-				obj->addAction(act->getName());
+				obj->addAnimation(act, GKB_IDNAME(bobj->ipo));
 		}
 		
 		if(bobj && bobj->action)
 		{
-			gkAction* act =  gkActionManager::getSingleton().getByName<gkAction>(GKB_IDNAME(bobj->action));
+			gkAnimation* act =  dynamic_cast<gkAnimation*>(gkAnimationManager::getSingleton().getByName(GKB_IDNAME(bobj->action)));
 			
 			if(!act)
 			{
 				convertAction(bobj->action, pre25compat);
-				act =  gkActionManager::getSingleton().getByName<gkAction>(GKB_IDNAME(bobj->action));
+				act =  dynamic_cast<gkAnimation*>(gkAnimationManager::getSingleton().getByName(GKB_IDNAME(bobj->action)));
 			}
 			
 			if(act)
-				obj->addAction(act);
+				obj->addAnimation(act, GKB_IDNAME(bobj->action));
 		}
 		// TODO 2.4 NLA
 	}
