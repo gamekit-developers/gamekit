@@ -55,7 +55,7 @@ public:
 
 	UT_INLINE void             setMode(int v)              { m_mode = v; }
 	UT_INLINE void             setAnimation(akAnimation* v){ m_action = v; }
-	UT_INLINE akScalar         setSpeedFactor(akScalar v)  { m_speedfactor = v; }
+	UT_INLINE void             setSpeedFactor(akScalar v)  { m_speedfactor = v; }
 
 	UT_INLINE void             enable(bool v)              { m_enabled = v; }
 	UT_INLINE bool             isEnabled(void) const       { return m_enabled; }

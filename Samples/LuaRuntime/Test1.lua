@@ -444,7 +444,7 @@ function Player:OnIdle()
 	
 	-- No input, just sit and wait 
 
-	self.mesh:playAction("Momo_IdleNasty", 20)
+	self.mesh:playAnimation("Momo_IdleNasty", 20)
 end
 
 
@@ -456,7 +456,7 @@ function Player:OnRun()
 
 	self:Move(OgreKit.Vector3(0, 3, 0))
 	
-	self.mesh:playAction("Momo_Run", 7)
+	self.mesh:playAnimation("Momo_Run", 7)
 end
 
 
@@ -469,7 +469,7 @@ function Player:OnBackup()
 	self:Move(OgreKit.Vector3(0, -1.5, 0))
 
 
-	self.mesh:playAction("Momo_WalkBack", 7)
+	self.mesh:playAnimation("Momo_WalkBack", 7)
 end
 
 
@@ -500,7 +500,7 @@ function Player:OnJump()
 
 
 
-	self.mesh:playAction("Momo_Jump", 10)
+	self.mesh:playAnimation("Momo_Jump", 10)
 	
 	-- Advance time
 	self.hangtime = self.hangtime + 1
@@ -511,7 +511,7 @@ end
 -------------------------------------------------------------------------------
 function Player:OnFall()
 
-	self.mesh:playAction("Momo_Fall", 20)
+	self.mesh:playAnimation("Momo_Fall", 20)
 
 end
 
@@ -550,7 +550,7 @@ function Player:OnHover()
 	self.mesh:setRotation(-xeul.x, self.iFly, xeul.z)
 	self.physics:setLinearVelocity(mvec)
 
-	self.mesh:playAction("Momo_Glide", 20)
+	self.mesh:playAnimation("Momo_Glide", 20)
 
 end
 
