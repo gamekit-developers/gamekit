@@ -109,7 +109,7 @@ int OgreKit::setup(int argc, char** argv)
 	gkPath path = cfgfname;
 
 	// overide settings if found
-	if (path.isFileInBundle())
+	if (path.isFile())
 		m_prefs.load(path.getPath());
 
 	return 0;
