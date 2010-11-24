@@ -70,6 +70,8 @@
 # include "gkFontManager.h"
 #endif
 
+#include "External/Ogre/gkOgreBlendArchive.h"
+
 
 using namespace Ogre;
 
@@ -98,15 +100,18 @@ public:
 		        scene(0),
 		        debug(0),
 		        debugPage(0),
-		        debugFps(0)
+		        debugFps(0),
+				archive_factory(0)
 
 	{
 		plugin_factory = new gkRenderFactoryPrivate();
+		archive_factory = new gkBlendArchiveFactory();
 	}
 
 	virtual ~Private()
 	{
 		delete plugin_factory;
+		delete archive_factory;
 	}
 
 
@@ -128,6 +133,8 @@ public:
 	gkDebugScreen*              debug;
 	gkDebugPropertyPage*        debugPage;
 	gkDebugFps*                 debugFps;
+	
+	gkBlendArchiveFactory*		archive_factory;
 };
 
 
@@ -188,6 +195,7 @@ void gkEngine::initialize()
 	m_root = new Root("", "");
 	m_private->plugin_factory->createRenderSystem(m_root, defs.rendersystem);
 	m_private->plugin_factory->createParticleSystem(m_root);
+	m_private->archive_factory->addArchiveFactory();	
 
 	const RenderSystemList& renderers = m_root->getAvailableRenderers();
 	if (renderers.empty())
@@ -200,6 +208,7 @@ void gkEngine::initialize()
 	m_root->initialise(false);
 
 	m_private->windowsystem = new gkWindowSystem();
+	
 
 
 	// gk Managers

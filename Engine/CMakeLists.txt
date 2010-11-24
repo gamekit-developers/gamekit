@@ -769,6 +769,7 @@ set(External_SOURCE
 	External/Ogre/gkOgreMeshLoader.cpp
 	External/Ogre/gkOgreSkeletonLoader.cpp
 	External/Ogre/gkOgreSkyBoxGradient.cpp
+	External/Ogre/gkOgreBlendArchive.cpp
 )
 
 set(External_HEADER
@@ -777,6 +778,7 @@ set(External_HEADER
 	External/Ogre/gkOgreMeshLoader.h
 	External/Ogre/gkOgreSkeletonLoader.h
 	External/Ogre/gkOgreSkyBoxGradient.h
+	External/Ogre/gkOgreBlendArchive.h
 )
 
 if(APPLE)

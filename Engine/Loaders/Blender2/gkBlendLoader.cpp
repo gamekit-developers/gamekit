@@ -32,12 +32,14 @@
 #include "gkUtils.h"
 #include "bBlenderFile.h"
 #include "Blender.h"
-
+#include "External/Ogre/gkOgreBlendArchive.h"
 
 
 gkBlendLoader::gkBlendLoader()
-	:    m_activeFile(0)
+	:   m_activeFile(0)
 {
+	Ogre::ResourceGroupManager::getSingleton().addResourceLocation("",
+		gkBlendArchiveFactory::ARCHIVE_TYPE,  Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 }
 
 
@@ -45,6 +47,8 @@ gkBlendLoader::gkBlendLoader()
 gkBlendLoader::~gkBlendLoader()
 {
 	unloadAll(false);
+	Ogre::ResourceGroupManager::getSingleton().removeResourceLocation("",
+		Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 }
 
 void gkBlendLoader::clearResourceGroup(const gkString& inResourceGroup)

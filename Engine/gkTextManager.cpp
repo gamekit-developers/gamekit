@@ -30,14 +30,15 @@
 #include "gkLogger.h"
 
 
-#if OGREKIT_COMPILE_OGRE_SCRIPTS  == 1
+#ifdef OGREKIT_COMPILE_OGRE_SCRIPTS
 #include "OgreMaterialManager.h"
 #include "OgreParticleSystemManager.h"
 #include "OgreHighLevelGpuProgramManager.h"
 #include "OgreFontManager.h"
 #include "OgreOverlayManager.h"
 #include "gkFontManager.h"
-#endif
+#include "External/Ogre/gkOgreBlendArchive.h"
+#endif //OGREKIT_COMPILE_OGRE_SCRIPTS
 
 
 #ifdef OGREKIT_USE_LUA
@@ -101,7 +102,7 @@ void gkTextManager::getTextFiles(TextArray& dest, int textType)
 	{
 		gkTextFile* tf = (gkTextFile*)iter.getNext().second;
 
-		if (tf->getType() == textType)
+		if (textType < 0 || tf->getType() == textType)
 			dest.push_back(tf);
 	}
 }
@@ -115,9 +116,9 @@ gkResource* gkTextManager::createImpl(const gkResourceName& name, const gkResour
 	return new gkTextFile(this, name, handle, tt);
 }
 
+
 void gkTextManager::parseScripts(void)
 {
-
 	gkResourceManager::ResourceIterator iter = getResourceIterator();
 	while (iter.hasMoreElements())
 	{
@@ -127,7 +128,7 @@ void gkTextManager::parseScripts(void)
 		const int type = tf->getType();
 
 
-#if OGREKIT_COMPILE_OGRE_SCRIPTS  == 1
+#ifdef OGREKIT_COMPILE_OGRE_SCRIPTS
 
 		try
 		{
@@ -138,6 +139,7 @@ void gkTextManager::parseScripts(void)
 				    OGRE_NEW Ogre::MemoryDataStream((void*)buf.c_str(), buf.size()));
 
 				Ogre::MaterialManager::getSingleton().parseScript(memStream, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+
 			}
 			else if (type == TT_PARTICLE)
 			{
@@ -146,22 +148,6 @@ void gkTextManager::parseScripts(void)
 
 
 				Ogre::ParticleSystemManager::getSingleton().parseScript(memStream, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-			}
-
-			else if (type >= TT_CG && type <= TT_HLSL)
-			{
-				Ogre::DataStreamPtr memStream(
-				    OGRE_NEW Ogre::MemoryDataStream((void*)buf.c_str(), buf.size()));
-
-				Ogre::HighLevelGpuProgramManager::getSingleton().parseScript(memStream, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-			}
-
-			else if (type >= TT_CG && type <= TT_HLSL)
-			{
-				Ogre::DataStreamPtr memStream(
-				    OGRE_NEW Ogre::MemoryDataStream((void*)buf.c_str(), buf.size()));
-
-				Ogre::HighLevelGpuProgramManager::getSingleton().parseScript(memStream, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 			}
 			else if (type == TT_FONT)
 			{
@@ -195,7 +181,7 @@ void gkTextManager::parseScripts(void)
 #endif
 	}
 
-#if OGREKIT_COMPILE_OGRE_SCRIPTS  == 1
+#ifdef OGREKIT_COMPILE_OGRE_SCRIPTS
 
 	// Overlays are a dependant script. (.material .font)
 

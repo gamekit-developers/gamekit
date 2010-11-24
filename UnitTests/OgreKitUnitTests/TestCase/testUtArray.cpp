@@ -48,3 +48,21 @@ TEST(TEST_CASE_NAME, testCopy)
 
 	EXPECT_EQ(arr4.size(), arr5.size());
 }
+
+bool cmp(const int &a, const int &b)
+{
+	return a > b;
+}
+
+TEST(TEST_CASE_NAME, testSort)
+{
+	const int count = 10;
+	utArray<int> arr1;
+	for (int i = count-1; i >= 0; i--)
+		arr1.push_back(i);
+
+	arr1.sort(cmp);
+
+	for (int i = 0; i < count; i++)
+		EXPECT_EQ(arr1[i], i);
+}
