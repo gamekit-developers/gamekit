@@ -67,7 +67,7 @@ gkAnimationSequence* gkAnimationManager::getAnimationSequence(const gkResourceNa
 
 gkAnimation* gkAnimationManager::getAnimation(const gkResourceName& name)
 {
-	return dynamic_cast<gkAnimation*>(getByName(name));
+	return static_cast<gkAnimation*>(getByName(name));
 }
 
 

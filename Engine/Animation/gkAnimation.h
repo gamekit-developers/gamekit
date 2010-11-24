@@ -40,24 +40,59 @@
 //#include "akAnimationPlayer.h"
 
 typedef akAnimationBlender gkAnimationBlender;
-typedef akAnimation gkAnimation;
+//typedef akAnimation gkAnimation;
 
-class gkKeyedAnimation : public akKeyedAnimation, public gkResource
+class gkAnimation : public gkResource
 {
 public:
-	gkKeyedAnimation(gkResourceManager* creator, const gkResourceName& name, const gkResourceHandle& handle);
-	virtual ~gkKeyedAnimation() {}
+	gkAnimation(gkResourceManager* creator, const gkResourceName& name, const gkResourceHandle& handle) : gkResource(creator, name, handle) {}
+	virtual ~gkAnimation() {}
+
+	virtual akAnimation* getInternal(void) =0;
 
 };
 
 
-class gkAnimationSequence : public akAnimationSequence, public gkResource
+class gkKeyedAnimation : public gkAnimation
+{
+public:
+	gkKeyedAnimation(gkResourceManager* creator, const gkResourceName& name, const gkResourceHandle& handle);
+	virtual ~gkKeyedAnimation() {}
+	
+	virtual akAnimation* getInternal(void) { return &m_animation;}
+	
+	UT_INLINE akScalar         getLength(void) const       { return m_animation.getLength(); }
+	UT_INLINE void             setLength(akScalar v)       { m_animation.setLength(v); }
+	
+	UT_INLINE akKeyedAnimation::Channels::ConstPointer getChannels(void) const    { return m_animation.getChannels(); }
+	UT_INLINE int                                      getNumChannels(void) const { return m_animation.getNumChannels(); }
+	
+	UT_INLINE void                addChannel(akAnimationChannel* chan) { m_animation.addChannel(chan); }
+	UT_INLINE akAnimationChannel* getChannel(const utString& name)     { return m_animation.getChannel(name); }
+	
+private:
+	akKeyedAnimation m_animation;
+};
+
+
+class gkAnimationSequence : public gkAnimation
 {
 public:
 	gkAnimationSequence(gkResourceManager* creator, const gkResourceName& name, const gkResourceHandle& handle);
 	virtual ~gkAnimationSequence() {}
 	
+	virtual akAnimation* getInternal(void) { return &m_animation;}
+	
+	UT_INLINE akScalar         getLength(void) const       { return m_animation.getLength(); }
+	UT_INLINE void             setLength(akScalar v)       { m_animation.setLength(v); }
+	
+	UT_INLINE void addItem(akAnimation* act, const akScalar& start, const akScalar& end, const akScalar& blendin = 0, const akScalar& blendout = 0, bool fitLength = true)
+	 { m_animation.addItem(act, start, end, blendin, blendout, fitLength); }
+	
 	void addItem(const gkHashedString& animation, const akScalar& start, const akScalar& end, const akScalar& blendin = 0, const akScalar& blendout = 0);
+
+private:
+	akAnimationSequence m_animation;
 };
 
 
@@ -68,7 +103,7 @@ protected:
 	
 public:
 	gkAnimationPlayer() : akAnimationPlayer(), m_object(0) {}
-	gkAnimationPlayer(gkAnimation* resource, gkGameObject* object) : akAnimationPlayer(resource), m_object(object) {}
+	gkAnimationPlayer(gkAnimation* resource, gkGameObject* object) : akAnimationPlayer(resource->getInternal()), m_object(object) {}
 	~gkAnimationPlayer() {}
 	
 	GK_INLINE gkGameObject*    getObject(void) const       { return m_object; }
@@ -103,7 +138,7 @@ protected:
 	bool                 m_isEulerRotation;
 	
 public:
-	gkTransformChannel(const utString& name, akAnimation* parent);
+	gkTransformChannel(const utString& name, gkAnimation* parent);
 	virtual ~gkTransformChannel() {}
 		
 	GK_INLINE bool                    isEulerRotation(void) const { return m_isEulerRotation; }

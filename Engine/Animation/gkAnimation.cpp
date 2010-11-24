@@ -36,7 +36,7 @@
 
 
 gkTransformChannel::gkTransformChannel(const gkString& name, gkAnimation* parent)
-		:	akAnimationChannel(name, parent), m_isEulerRotation(false)
+		:	akAnimationChannel(name, parent->getInternal()), m_isEulerRotation(false)
 {
 }
 
@@ -137,14 +137,14 @@ void gkBoneChannel::applyTransform(void* object, const gkTransformState* transfo
 
 
 gkKeyedAnimation::gkKeyedAnimation(gkResourceManager *creator, const gkResourceName &name, const gkResourceHandle &handle)
-		:	akKeyedAnimation(), gkResource(creator, name, handle)
+		:	gkAnimation(creator, name, handle)
 {
 
 }
 
 
 gkAnimationSequence::gkAnimationSequence(gkResourceManager *creator, const gkResourceName &name, const gkResourceHandle &handle)
-		:	akAnimationSequence(), gkResource(creator, name, handle)
+		:	gkAnimation(creator, name, handle)
 {
 
 }
@@ -154,6 +154,6 @@ void gkAnimationSequence::addItem(const gkHashedString &animation, const akScala
 	gkAnimation* anim = gkAnimationManager::getSingleton().getAnimation(animation);
 	
 	if (anim)
-		akAnimationSequence::addItem(anim, start, end, blendin, blendout);
+		addItem(anim->getInternal(), start, end, blendin, blendout);
 }
 
