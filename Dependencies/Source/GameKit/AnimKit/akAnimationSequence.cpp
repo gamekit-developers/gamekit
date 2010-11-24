@@ -101,18 +101,13 @@ akAnimationSequence::~akAnimationSequence()
 }
 
 
-void akAnimationSequence::addItem(akAnimation* act, const akScalar& start, const akScalar& end, const akScalar& blendin, const akScalar& blendout)
+void akAnimationSequence::addItem(akAnimation* act, const akScalar& start, const akScalar& end, const akScalar& blendin, const akScalar& blendout, bool fitLength)
 {
 	if (!act)
 		return;
 
-
-	// start and end time
-
-	if (m_start > start)
-		m_start = start;
-	if (m_end < end)
-		m_end = end;
+	if ( fitLength && m_length < end)
+		m_length = end;
 
 
 	akAnimationStrip* seq = new akAnimationStrip();
@@ -150,7 +145,7 @@ void akAnimationSequence::evaluate(const akScalar& time, const akScalar& weight,
 		}
 
 
-		if (time <= m_start)
+		if (time <= 0)
 		{
 			// out of initial starting range
 			continue;

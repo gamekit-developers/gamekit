@@ -1180,7 +1180,7 @@ void gkGameObject::playAnimation(gkAnimationPlayer* act, gkScalar blend, int mod
 }
 
 ///Called by the scene when object is animated
-///tick is in animation frame (gkUserPrefs.animspeed * delta time in second)
+///tick is in second
 void gkGameObject::updateAnimationBlender(const gkScalar tick)
 {
 	getAnimationBlender().evaluate(tick);

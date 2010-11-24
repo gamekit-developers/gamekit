@@ -170,7 +170,7 @@ void gkEntity::_resetPose(void)
 			
 			if (act)
 			{
-				act->setTimePosition(act->getStart());
+				act->setTimePosition(0);
 				act->evaluate(0.0f);
 			}
 		}

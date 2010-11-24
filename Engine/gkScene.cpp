@@ -1290,12 +1290,9 @@ void gkScene::updateObjectsAnimations(const gkScalar tick)
 {
 	if (!m_updateAnimObjects.empty())
 	{
-		gkUserDefs& defs = gkEngine::getSingleton().getUserDefs();
-		gkScalar dframe = tick * defs.animspeed;
-		
 		gkGameObjectSet::Iterator it = m_updateAnimObjects.iterator();
 		while (it.hasMoreElements())
-			it.getNext()->updateAnimationBlender(dframe);
+			it.getNext()->updateAnimationBlender(tick);
 
 		m_endObjects.clear(true);
 	}

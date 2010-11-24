@@ -38,18 +38,14 @@
 class akAnimation
 {
 protected:
-	akScalar             m_start, m_end;
+	akScalar m_length;
 	
 public:
-	akAnimation() : m_start(1), m_end(1) {}
+	akAnimation() : m_length(0) {}
 	virtual ~akAnimation() {}
 	
-	UT_INLINE akScalar         getLength(void) const       { return m_end - m_start; }
-	UT_INLINE akScalar         getStart(void) const        { return m_start; }
-	UT_INLINE akScalar         getEnd(void) const          { return m_end; }
-	
-	UT_INLINE void             setStart(akScalar v)        { m_start = v; }
-	UT_INLINE void             setEnd(akScalar v)          { m_end = v; }
+	UT_INLINE akScalar         getLength(void) const       { return m_length; }
+	UT_INLINE void             setLength(akScalar v)       { m_length = v; }
 	
 	virtual void evaluate(const akScalar& time, const akScalar& weight, void* object) const = 0;
 

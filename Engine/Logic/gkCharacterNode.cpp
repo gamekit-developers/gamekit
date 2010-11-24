@@ -226,7 +226,7 @@ void gkCharacterNode::update_animation(STATE previousTickState)
 
 		SET_SOCKET_VALUE(ANIM_TIME_POSITION, time);
 
-		if (time >= pAct->getEnd())
+		if (time >= pAct->getLength())
 		{
 			SET_SOCKET_VALUE(ANIM_HAS_REACHED_END, true);
 			SET_SOCKET_VALUE(ANIM_NOT_HAS_REACHED_END, false);

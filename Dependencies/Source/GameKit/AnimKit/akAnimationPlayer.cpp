@@ -31,7 +31,7 @@
 
 akAnimationPlayer::akAnimationPlayer()
 	:	m_action(0),
-	    m_evalTime(1),
+	    m_evalTime(0.f),
 	     m_weight(1.0),
 	     m_enabled(true),
 	     m_mode(AK_ACT_LOOP),
@@ -41,7 +41,7 @@ akAnimationPlayer::akAnimationPlayer()
 
 akAnimationPlayer::akAnimationPlayer(akAnimation* resource)
 	:	m_action(resource),
-	    m_evalTime(1),
+	    m_evalTime(0.f),
 	     m_weight(1.0),
 	     m_enabled(true),
 	     m_mode(AK_ACT_LOOP),
@@ -53,7 +53,7 @@ void akAnimationPlayer::setTimePosition(akScalar v)
 {
 	if (m_enabled && m_action)
 	{
-		m_evalTime = akClampf(v, m_action->getStart(), m_action->getEnd());
+		m_evalTime = akClampf(v, 0.f, m_action->getLength());
 	}
 }
 
@@ -74,21 +74,20 @@ void akAnimationPlayer::evaluate(akScalar tick)
 	if (!m_enabled || !m_action)
 		return;
 	
-	akScalar start = m_action->getStart();
-	akScalar end = m_action->getEnd();
+	akScalar end = m_action->getLength();
 	akScalar dt = m_speedfactor * tick;
 	
 	if (m_mode & AK_ACT_LOOP)
 	{
-		if (m_evalTime <= start)
-			m_evalTime = start;
+		if (m_evalTime <= 0.f)
+			m_evalTime = 0.f;
 		if (m_evalTime >= end)
-			m_evalTime = start;
+			m_evalTime = 0.f;
 	}
 	else
 	{
-		if (m_evalTime <= start)
-			m_evalTime = start;
+		if (m_evalTime <= 0.f)
+			m_evalTime = 0.f;
 
 		if (m_evalTime + dt >= end)
 			m_evalTime = end - dt;
@@ -98,7 +97,7 @@ void akAnimationPlayer::evaluate(akScalar tick)
 
 	akScalar time = m_evalTime;
 	if (m_mode & AK_ACT_INVERSE)
-		time = (end - start) - m_evalTime;
+		time = end - m_evalTime;
 
 	evaluateImpl(time);
 	

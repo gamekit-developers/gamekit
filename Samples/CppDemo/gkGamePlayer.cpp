@@ -161,16 +161,16 @@ void gkGamePlayer::load(gkBlendFile* playerData)
 	//m_animations[GK_ANIM_WALL_FLIP]->setMode(AK_ACT_END | AK_ACT_INVERSE);
 	m_animations[GK_ANIM_IDLE_CURRENT] = m_animations[GK_ANIM_IDLE];
 
-	m_animations[GK_ANIM_JUMP]->setMode(AK_ACT_END);
+	//m_animations[GK_ANIM_JUMP]->setMode(AK_ACT_END);
 	
 	m_animations[GK_ANIM_WHIP]->setSpeedFactor(gkAppData::gkAnimationAttack);
 	m_animations[GK_ANIM_KICK]->setSpeedFactor(gkAppData::gkAnimationAttack);
 	
 	// COMBO: Kick + Run + Whip
 	m_comboAttack = gkAnimationManager::getSingleton().createAnimationSequence("Momo_ComboAttack");
-	m_comboAttack->addItem("Momo_Kick",      0.f,  17.f, 0.f, 3.f);
-	m_comboAttack->addItem("Momo_Run",       15.f, 32.f, 2.f, 4.f);
-	m_comboAttack->addItem("Momo_TailWhip",  25.f, 45.f, 7.f, 0.f);
+	m_comboAttack->addItem("Momo_Kick",      0.f,       17.f/25.f, 0.f,      3.f/25.f);
+	m_comboAttack->addItem("Momo_Run",       15.f/25.f, 32.f/25.f, 2.f/25.f, 4.f/25.f);
+	m_comboAttack->addItem("Momo_TailWhip",  25.f/25.f, 45.f/25.f, 7.f/25.f, 0.f/25.f);
 
 	m_animations[GK_ANIM_COMBO_ATTACK] = m_skeleton->addAnimation(m_comboAttack, "Momo_ComboAttack");
 	m_animations[GK_ANIM_COMBO_ATTACK]->setMode(AK_ACT_END); //not LOOP
@@ -378,12 +378,12 @@ bool gkGamePlayer::wantsComboAttack(void)
 
 bool gkGamePlayer::wantsToWhipAndKickDone(void)
 {
-	return wantsToWhip() && m_animations[GK_ANIM_KICK]->getTimePosition() >= m_animations[GK_ANIM_KICK]->getLength() - 7;
+	return wantsToWhip() && m_animations[GK_ANIM_KICK]->getTimePosition() >= m_animations[GK_ANIM_KICK]->getLength() - 7.f/25.f;
 }
 
 bool gkGamePlayer::wantsToKickAndWhipDone(void)
 {
-	return wantsToWhip() && m_animations[GK_ANIM_WHIP]->getTimePosition() >= m_animations[GK_ANIM_WHIP]->getLength() - 7;
+	return wantsToWhip() && m_animations[GK_ANIM_WHIP]->getTimePosition() >= m_animations[GK_ANIM_WHIP]->getLength() - 7.f/25.f;
 }
 
 
@@ -449,7 +449,7 @@ void gkGamePlayer::comboStart(int from, int to)
 void gkGamePlayer::landStart(int from, int to)
 {
 	/// Move jump toward the end
-	m_animations[GK_ANIM_JUMP]->setTimePosition(20.f);
+	m_animations[GK_ANIM_JUMP]->setTimePosition(20.f/25.f);
 	m_animations[GK_ANIM_JUMP]->setSpeedFactor(gkAppData::gkAnimationFast);
 }
 
@@ -695,7 +695,7 @@ void gkGamePlayer::comboState(void)
 	static gkScalar prev = -1;
 	gkScalar cur = m_animations[GK_ANIM_COMBO_ATTACK]->getTimePosition();
 
-	if( prev < cur && prev <15.f && cur >15.f)
+	if( prev < cur && prev <15.f/25.f && cur >15.f/25.f)
 		applyComboThrust();
 		
 	prev = cur;
@@ -728,9 +728,9 @@ void gkGamePlayer::landState(void)
 
 void gkGamePlayer::jumpState(void)
 {
-	if (m_animations[GK_ANIM_JUMP]->getTimePosition() > 17.f)
+	if (m_animations[GK_ANIM_JUMP]->getTimePosition() > 17.f/25.f)
 	{
-		m_animations[GK_ANIM_JUMP]->setTimePosition(17.f);
+		m_animations[GK_ANIM_JUMP]->setTimePosition(17.f/25.f);
 		m_animations[GK_ANIM_JUMP]->setSpeedFactor(0);
 	}
 

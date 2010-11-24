@@ -50,8 +50,6 @@ public:
 	UT_INLINE int              getMode(void) const         { return m_mode; }
 	UT_INLINE akScalar         getSpeedFactor(void) const  { return m_speedfactor; }
 	UT_INLINE akScalar         getLength(void) const       { return m_action? m_action->getLength() : 0;}
-	UT_INLINE akScalar         getStart(void) const        { return m_action? m_action->getStart() : 1;}
-	UT_INLINE akScalar         getEnd(void) const          { return m_action? m_action->getEnd() : 1;}
 
 	UT_INLINE void             setMode(int v)              { m_mode = v; }
 	UT_INLINE void             setAnimation(akAnimation* v){ m_action = v; }

@@ -88,7 +88,7 @@ public:
 	akAnimationSequence();
 	virtual ~akAnimationSequence();
 
-	void addItem(akAnimation* act, const akScalar& start, const akScalar& end, const akScalar& blendin = 0, const akScalar& blendout = 0);
+	void addItem(akAnimation* act, const akScalar& start, const akScalar& end, const akScalar& blendin = 0, const akScalar& blendout = 0, bool fitLength = true);
 
 
 	virtual void evaluate(const akScalar& time, const akScalar& weight, void* object) const;

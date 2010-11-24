@@ -52,7 +52,6 @@ public:
 	bool                    fullscreen;         // Fullscreen mode
 	int                     framingType;        // crop/letterbox/extend. Used when window is larger then requested
 	gkString                resources;          // resources to load
-	gkScalar                animspeed;          // animation speed, depreciated
 	bool                    blendermat;         // convert meshes using blender materials
 	bool                    grabInput;          // hide & grab the mouse
 	bool                    debugFps;           // show fps and profiling information

@@ -399,8 +399,11 @@ void gkBlendFile::buildAllActions(void)
 {
 	gkAnimationLoader anims;
 	bParse::bMain* mp = m_file->getMain();
-
-	anims.convertActions(mp->getAction(), mp->getVersion() <= 249);
+	
+	Blender::FileGlobal* fg = (Blender::FileGlobal*)m_file->getFileGlobal();
+	gkScalar animfps = fg->curscene->r.frs_sec / fg->curscene->r.frs_sec_base;
+	
+	anims.convertActions(mp->getAction(), mp->getVersion() <= 249, animfps);
 }
 
 

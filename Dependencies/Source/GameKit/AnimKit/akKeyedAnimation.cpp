@@ -45,7 +45,7 @@ akKeyedAnimation::~akKeyedAnimation()
 
 void akKeyedAnimation::evaluate(const akScalar& time, const akScalar& weight, void* object) const
 {
-	akScalar delta = (time - m_start) / (m_end - m_start);
+	akScalar delta = time / m_length;
 
 	akAnimationChannel* const* ptr = m_channels.ptr();
 	int len = getNumChannels(), i = 0;

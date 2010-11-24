@@ -38,7 +38,70 @@
 
 #include "gkLight.h"
 
-void ConvertSpline(Blender::BezTriple* bez, akAnimationChannel* chan, int access, int mode, int totvert, gkVector2& range)
+
+gkScalar getSplineFirstKeyTime(Blender::BezTriple* bez, int totvert)
+{
+	gkScalar start = FLT_MAX;
+	
+	Blender::BezTriple* bezt = bez;
+	for (int c = 0; c < totvert; c++, bezt++)
+		if (start > bezt->vec[1][0]) start = bezt->vec[1][0];
+	
+	return start;
+}
+
+gkScalar getIPOFirstKeyTime(Blender::Ipo* bipo)
+{
+	gkScalar start = FLT_MAX;
+	gkScalar tmp;
+	
+	Blender::IpoCurve* icu = (Blender::IpoCurve*)bipo->curve.first;
+	while (icu)
+	{
+		if (icu->bezt)
+		{
+			tmp = getSplineFirstKeyTime(icu->bezt, icu->totvert);
+			if (start > tmp) start = tmp;
+		}
+		icu = icu->next;
+	}
+	return start;
+}
+
+gkScalar get24ActionFirstKeyTime(Blender::bAction* action)
+{
+	gkScalar start = FLT_MAX;
+	gkScalar tmp;
+	
+	Blender::bActionChannel* bac = (Blender::bActionChannel*)action->chanbase.first;
+	while (bac)
+	{
+		if (bac->ipo)
+		{
+			tmp = getIPOFirstKeyTime(bac->ipo);
+			if (start > tmp) start = tmp;
+		}
+		bac = bac->next;
+	}
+	return start;
+}
+
+gkScalar get25ActionFirstKeyTime(Blender::bAction* action)
+{
+	gkScalar start = FLT_MAX;
+	gkScalar tmp;
+	
+	Blender::FCurve* bfc = (Blender::FCurve*)action->curves.first;
+	while (bfc)
+	{
+		tmp = getSplineFirstKeyTime(bfc->bezt, bfc->totvert);
+		if (start > tmp) start = tmp;
+		bfc = bfc->next;
+	}
+	return start;
+}
+
+void ConvertSpline(Blender::BezTriple* bez, akAnimationChannel* chan, int access, int mode, int totvert, gkScalar start, gkScalar& end, gkScalar animfps)
 {
 	akBezierSpline* spline = new akBezierSpline(access);
 
@@ -63,17 +126,16 @@ void ConvertSpline(Blender::BezTriple* bez, akAnimationChannel* chan, int access
 	{
 		akBezierVertex v;
 
-		v.h1[0] = bezt->vec[0][0];
+		v.h1[0] = (bezt->vec[0][0] - start)/animfps;
 		v.h1[1] = bezt->vec[0][1];
-		v.cp[0] = bezt->vec[1][0];
+		v.cp[0] = (bezt->vec[1][0] - start)/animfps;
 		v.cp[1] = bezt->vec[1][1];
-		v.h2[0] = bezt->vec[2][0];
+		v.h2[0] = (bezt->vec[2][0] - start)/animfps;
 		v.h2[1] = bezt->vec[2][1];
 
 
 		// calculate global time
-		if (range.x > v.cp[0]) range.x = v.cp[0];
-		if (range.y < v.cp[0]) range.y = v.cp[0];
+		if (end < v.cp[0]) end = v.cp[0];
 		spline->addVertex(v);
 	}
 
@@ -85,19 +147,19 @@ void ConvertSpline(Blender::BezTriple* bez, akAnimationChannel* chan, int access
 }
 
 
-void convertLightIpo(Blender::Ipo* bipo, akAnimationChannel* chan, gkVector2& range)
+void convertLightIpo(Blender::Ipo* bipo, akAnimationChannel* chan, gkScalar start, gkScalar& end, gkScalar animfps)
 {
 //todo
 }
 
 
-void convertMaterialIpo(Blender::Ipo* bipo, akAnimationChannel* chan, gkVector2& range)
+void convertMaterialIpo(Blender::Ipo* bipo, akAnimationChannel* chan, gkScalar start, gkScalar& end, gkScalar animfps)
 {
 //todo
 }
 
 
-void convertActionIpo(Blender::Ipo* bipo, akAnimationChannel* chan, gkVector2& range)
+void convertActionIpo(Blender::Ipo* bipo, akAnimationChannel* chan, gkScalar start, gkScalar& end, gkScalar animfps)
 {
 	Blender::IpoCurve* icu = (Blender::IpoCurve*)bipo->curve.first;
 	while (icu)
@@ -124,14 +186,14 @@ void convertActionIpo(Blender::Ipo* bipo, akAnimationChannel* chan, gkVector2& r
 			
 			// ignore any other codes
 			if (code != -1 && icu->totvert > 0)
-				ConvertSpline(icu->bezt, chan, code, icu->ipo, icu->totvert, range);
+				ConvertSpline(icu->bezt, chan, code, icu->ipo, icu->totvert, start, end, animfps);
 		}
 		icu = icu->next;
 	}
 }
 
 
-void convertObjectIpo(Blender::Ipo* bipo, akAnimationChannel* chan, gkVector2& range)
+void convertObjectIpo(Blender::Ipo* bipo, akAnimationChannel* chan, gkScalar start, gkScalar& end, gkScalar animfps)
 {
 	Blender::IpoCurve* icu = (Blender::IpoCurve*)bipo->curve.first;
 	while (icu)
@@ -154,36 +216,34 @@ void convertObjectIpo(Blender::Ipo* bipo, akAnimationChannel* chan, gkVector2& r
 			
 			// ignore any other codes
 			if (code != -1 && icu->totvert > 0)
-				ConvertSpline(icu->bezt, chan, code, icu->ipo, icu->totvert, range);
+				ConvertSpline(icu->bezt, chan, code, icu->ipo, icu->totvert, start, end, animfps);
 		}
 		icu = icu->next;
 	}
 }
 
 
-gkAnimation* convertObjectIpoToAnimation(Blender::Ipo* bipo)
+gkAnimation* convertObjectIpoToAnimation(Blender::Ipo* bipo, gkScalar animfps)
 {
 	gkAnimationManager& amgr = gkAnimationManager::getSingleton();
 	gkKeyedAnimation* act = amgr.createKeyedAnimation(GKB_IDNAME(bipo));
+	gkScalar start, end;
 	
 	if(!act)
 		return 0;
 	
-	// min/max
-	gkVector2 range(FLT_MAX, -FLT_MAX);
-	
-	
 	gkObjectChannel* chan = new gkObjectChannel(GKB_IDNAME(bipo), act);
 	act->addChannel(chan);
 	
-	convertObjectIpo(bipo, chan, range);
+	start = getIPOFirstKeyTime(bipo);
+	end = -FLT_MAX;
+	convertObjectIpo(bipo, chan, start, end, animfps);
 	
 	// never quaternion for blender <2.4 
 	chan->setEulerRotation(true);
 	
 	// apply time range
-	act->setStart(range.x);
-	act->setEnd(range.y);
+	act->setLength(end);
 	
 	return act;
 }
@@ -213,7 +273,7 @@ gkAnimation* convertObjectIpoToAnimation(Blender::Ipo* bipo)
 //	return act;
 //}
 
-void convertAction24(Blender::bAction* action)
+void convertAction24(Blender::bAction* action, gkScalar animfps)
 {
 	// 2.4x actions are always Pose actions 
 	gkKeyedAnimation* act = gkAnimationManager::getSingleton().createKeyedAnimation(GKB_IDNAME(action));
@@ -222,7 +282,8 @@ void convertAction24(Blender::bAction* action)
 		return;
 	
 	// min/max
-	gkVector2 range(FLT_MAX, -FLT_MAX);
+	gkScalar start = get24ActionFirstKeyTime(action);
+	gkScalar end = -FLT_MAX;
 	
 	
 	Blender::bActionChannel* bac = (Blender::bActionChannel*)action->chanbase.first;
@@ -233,18 +294,17 @@ void convertAction24(Blender::bAction* action)
 		act->addChannel(chan);
 		
 		if (bac->ipo)
-			convertActionIpo(bac->ipo, chan, range);
+			convertActionIpo(bac->ipo, chan, start, end, animfps);
 				
 		bac = bac->next;
 	}
 	
 	// apply time range
-	act->setStart(range.x);
-	act->setEnd(range.y);
+	act->setLength(end);
 }
 
 
-void convertAction25(Blender::bAction* action)
+void convertAction25(Blender::bAction* action, gkScalar animfps)
 {
 	gkKeyedAnimation* act = gkAnimationManager::getSingleton().createKeyedAnimation(GKB_IDNAME(action));
 	
@@ -252,7 +312,8 @@ void convertAction25(Blender::bAction* action)
 		return;
 	
 	// min/max
-	gkVector2 range(FLT_MAX, -FLT_MAX);
+	gkScalar start = get25ActionFirstKeyTime(action);
+	gkScalar end = -FLT_MAX;
 	
 	
 	Blender::FCurve* bfc = (Blender::FCurve*)action->curves.first;
@@ -330,7 +391,7 @@ void convertAction25(Blender::bAction* action)
 			
 			// ignore any other codes
 			if (code != -1 && bfc->totvert > 0)
-				ConvertSpline(bfc->bezt, chan, code, bfc->bezt->ipo, bfc->totvert, range);
+				ConvertSpline(bfc->bezt, chan, code, bfc->bezt->ipo, bfc->totvert, start, end, animfps);
 		}
 		
 		bfc = bfc->next;
@@ -338,12 +399,11 @@ void convertAction25(Blender::bAction* action)
 	
 	
 	// apply time range
-	act->setStart(range.x);
-	act->setEnd(range.y);
+	act->setLength(end);
 }
 
 
-void convert25AnimData(gkGameObject* obj, Blender::AnimData* adt)
+void convert25AnimData(gkGameObject* obj, Blender::AnimData* adt, gkScalar animfps)
 {
 	if(!adt)
 		return;
@@ -359,7 +419,7 @@ void convert25AnimData(gkGameObject* obj, Blender::AnimData* adt)
 		
 		if(!act)
 		{
-			convertAction25(adt->action);
+			convertAction25(adt->action, animfps);
 			act =  dynamic_cast<gkAnimation*>(gkAnimationManager::getSingleton().getByName(GKB_IDNAME(adt->action)));
 		}
 		
@@ -373,26 +433,26 @@ void convert25AnimData(gkGameObject* obj, Blender::AnimData* adt)
 }
 
 
-void gkAnimationLoader::convertAction(Blender::bAction* action, bool pre25compat)
+void gkAnimationLoader::convertAction(Blender::bAction* action, bool pre25compat, gkScalar animfps)
 {
 	if(pre25compat)
-		convertAction24(action);
+		convertAction24(action, animfps);
 	else
-		convertAction25(action);
+		convertAction25(action, animfps);
 }
 
 
-void gkAnimationLoader::convertActions(bParse::bListBasePtr* actions, bool pre25compat)
+void gkAnimationLoader::convertActions(bParse::bListBasePtr* actions, bool pre25compat, gkScalar animfps)
 {
 	for (int i = 0; i < actions->size(); ++i)
 	{
 		Blender::bAction* bact = (Blender::bAction*)actions->at(i);
-		convertAction(bact, pre25compat);
+		convertAction(bact, pre25compat, animfps);
 	}
 }
 
 
-void gkAnimationLoader::convertObject(gkGameObject* obj, Blender::Object* bobj, bool pre25compat)
+void gkAnimationLoader::convertObject(gkGameObject* obj, Blender::Object* bobj, bool pre25compat, gkScalar animfps)
 {
 	// 2.4x
 	if(pre25compat)
@@ -402,7 +462,7 @@ void gkAnimationLoader::convertObject(gkGameObject* obj, Blender::Object* bobj, 
 			gkAnimation* act =  dynamic_cast<gkAnimation*>(gkAnimationManager::getSingleton().getByName(GKB_IDNAME(bobj->ipo)));
 			
 			if(!act)
-				act = convertObjectIpoToAnimation(bobj->ipo);
+				act = convertObjectIpoToAnimation(bobj->ipo, animfps);
 			
 			if(act)
 				obj->addAnimation(act, GKB_IDNAME(bobj->ipo));
@@ -414,7 +474,7 @@ void gkAnimationLoader::convertObject(gkGameObject* obj, Blender::Object* bobj, 
 			
 			if(!act)
 			{
-				convertAction(bobj->action, pre25compat);
+				convertAction(bobj->action, pre25compat, animfps);
 				act =  dynamic_cast<gkAnimation*>(gkAnimationManager::getSingleton().getByName(GKB_IDNAME(bobj->action)));
 			}
 			
@@ -426,21 +486,21 @@ void gkAnimationLoader::convertObject(gkGameObject* obj, Blender::Object* bobj, 
 	// 2.5x
 	else
 	{
-		convert25AnimData(obj, bobj->adt);
+		convert25AnimData(obj, bobj->adt, animfps);
 	}
 	
 	// object data
 	switch (bobj->type)
 	{
-	case OB_LAMP:       convertLamp(obj, bobj, pre25compat);        break;
-	case OB_CAMERA:     convertCamera(obj, bobj, pre25compat);      break;
-	case OB_MESH:       convertMesh(obj, bobj, pre25compat);        break;
-	case OB_ARMATURE:   convertArmature(obj, bobj, pre25compat);    break;
+	case OB_LAMP:       convertLamp(obj, bobj, pre25compat, animfps);        break;
+	case OB_CAMERA:     convertCamera(obj, bobj, pre25compat, animfps);      break;
+	case OB_MESH:       convertMesh(obj, bobj, pre25compat, animfps);        break;
+	case OB_ARMATURE:   convertArmature(obj, bobj, pre25compat, animfps);    break;
 	}
 }
 
 
-void gkAnimationLoader::convertLamp(gkGameObject* obj, Blender::Object* bobj, bool pre25compat)
+void gkAnimationLoader::convertLamp(gkGameObject* obj, Blender::Object* bobj, bool pre25compat, gkScalar animfps)
 {
 	Blender::Lamp* blamp = static_cast<Blender::Lamp*>(bobj->data);
 	
@@ -449,11 +509,11 @@ void gkAnimationLoader::convertLamp(gkGameObject* obj, Blender::Object* bobj, bo
 //		convertLampIpoToAnimation(blamp->ipo);
 	}
 	else
-		convert25AnimData(obj, blamp->adt);
+		convert25AnimData(obj, blamp->adt, animfps);
 }
 
 
-void gkAnimationLoader::convertCamera(gkGameObject* obj, Blender::Object* bobj, bool pre25compat)
+void gkAnimationLoader::convertCamera(gkGameObject* obj, Blender::Object* bobj, bool pre25compat, gkScalar animfps)
 {
 	Blender::Camera* bcam = static_cast<Blender::Camera*>(bobj->data);
 	
@@ -462,11 +522,11 @@ void gkAnimationLoader::convertCamera(gkGameObject* obj, Blender::Object* bobj, 
 	// TODO bcam->ipo
 	}
 	else
-		convert25AnimData(obj, bcam->adt);
+		convert25AnimData(obj, bcam->adt, animfps);
 }
 
 
-void gkAnimationLoader::convertMesh(gkGameObject* obj, Blender::Object* bobj, bool pre25compat)
+void gkAnimationLoader::convertMesh(gkGameObject* obj, Blender::Object* bobj, bool pre25compat, gkScalar animfps)
 {
 	Blender::Mesh* bmesh = static_cast<Blender::Mesh*>(bobj->data);
 	
@@ -475,15 +535,15 @@ void gkAnimationLoader::convertMesh(gkGameObject* obj, Blender::Object* bobj, bo
 		// TODO bmesh->ipo
 	}
 	else
-		convert25AnimData(obj, bmesh->adt);
+		convert25AnimData(obj, bmesh->adt, animfps);
 }
 
 
-void gkAnimationLoader::convertArmature(gkGameObject* obj, Blender::Object* bobj, bool pre25compat)
+void gkAnimationLoader::convertArmature(gkGameObject* obj, Blender::Object* bobj, bool pre25compat, gkScalar animfps)
 {
 	Blender::bArmature* barm = static_cast<Blender::bArmature*>(bobj->data);
 	
 	// nothing to do for 2.4x
 	if(!pre25compat)
-		convert25AnimData(obj, barm->adt);
+		convert25AnimData(obj, barm->adt, animfps);
 }

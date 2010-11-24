@@ -83,7 +83,6 @@ public:
 
 	static gkScalar getStepRate();
 	static gkScalar getTickRate();
-	static gkScalar getAnimRate();
 
 	gkScene* getActiveScene(void);
 
@@ -106,7 +105,6 @@ private:
 	Listeners               m_listeners;
 
 	static gkScalar         m_tickRate;
-	static gkScalar         m_animRate;
 };
 
 

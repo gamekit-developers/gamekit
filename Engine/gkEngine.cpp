@@ -82,7 +82,6 @@ using namespace Ogre;
 
 // tick states
 gkScalar gkEngine::m_tickRate = ENGINE_TICKS_PER_SECOND;
-gkScalar gkEngine::m_animRate = 25;
 
 
 
@@ -257,7 +256,6 @@ void gkEngine::initialize()
 	// statistics and profiling
 	new gkStats();
 
-	m_animRate = defs.animspeed;
 	m_initialized = true;
 }
 
@@ -436,12 +434,6 @@ gkScalar gkEngine::getTickRate(void)
 	return ENGINE_TICKS_PER_SECOND;
 }
 
-
-
-gkScalar gkEngine::getAnimRate(void)
-{
-	return m_animRate;
-}
 
 
 

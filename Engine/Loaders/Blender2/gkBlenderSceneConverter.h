@@ -54,7 +54,7 @@ private:
 	void convertObjectGroup(gkGameObjectGroup* gobj, Blender::Object* bobj);
 	void convertObjectGeneral(gkGameObject* gobj, Blender::Object* bobj);
 
-	void convertObjectAnimations(gkGameObject* gobj, Blender::Object* bobj);
+	void convertObjectAnimations(gkGameObject* gobj, Blender::Object* bobj, gkScalar animfps);
 	void convertObjectLogic(gkGameObject* gobj, Blender::Object* bobj);
 	void convertObjectProperties(gkGameObject* gobj, Blender::Object* bobj);
 	void convertObjectConstraints(gkGameObject* gobj, Blender::Object* bobj);

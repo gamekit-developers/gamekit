@@ -29,6 +29,7 @@
 
 #include "bCommon.h"
 #include "Blender.h"
+#include "gkMathUtils.h"
 
 
 class gkAnimationLoader
@@ -38,14 +39,14 @@ public:
 	gkAnimationLoader() {}
 	~gkAnimationLoader() {}
 
-	void convertAction(Blender::bAction* action, bool pre25compat);
-	void convertActions(bParse::bListBasePtr* actions, bool pre25compat);
+	void convertAction(Blender::bAction* action, bool pre25compat, gkScalar animfps);
+	void convertActions(bParse::bListBasePtr* actions, bool pre25compat, gkScalar animfps);
 
-	void convertObject(class gkGameObject* obj, Blender::Object* bobj, bool pre25compat);
-	void convertLamp(class gkGameObject* obj, Blender::Object* bobj, bool pre25compat);
-	void convertCamera(class gkGameObject* obj, Blender::Object* bobj, bool pre25compat);
-	void convertMesh(class gkGameObject* obj, Blender::Object* bobj, bool pre25compat);
-	void convertArmature(class gkGameObject* obj, Blender::Object* bobj, bool pre25compat);
+	void convertObject(class gkGameObject* obj, Blender::Object* bobj, bool pre25compat, gkScalar animfps);
+	void convertLamp(class gkGameObject* obj, Blender::Object* bobj, bool pre25compat, gkScalar animfps);
+	void convertCamera(class gkGameObject* obj, Blender::Object* bobj, bool pre25compat, gkScalar animfps);
+	void convertMesh(class gkGameObject* obj, Blender::Object* bobj, bool pre25compat, gkScalar animfps);
+	void convertArmature(class gkGameObject* obj, Blender::Object* bobj, bool pre25compat, gkScalar animfps);
 
 };
 
