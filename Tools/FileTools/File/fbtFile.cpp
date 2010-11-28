@@ -697,6 +697,13 @@ int fbtFile::compileOffsets(void)
 	return lnk.link();
 }
 
+bool fbtFile::_setuid(const char* uid)
+{
+	if (!uid || strlen(uid) != 7) return false;
+
+	m_uhid = uid;
+	return true;
+}
 
 int fbtFile::reflect(const char* path, const fbtEndian& endian)
 {

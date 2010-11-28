@@ -25,6 +25,7 @@
 */
 #include "fbtBlend.h"
 #include "Blender.h"
+#include <stdio.h>
 using namespace Blender;
 
 
@@ -38,10 +39,32 @@ static FBTuint32 skipList[] =
 	fbtCharHashKey("ScrVert").hash(),
 	fbtCharHashKey("ScrEdge").hash(),
 	fbtCharHashKey("bScreen").hash(),
+	fbtCharHashKey("View3D").hash(),
+	fbtCharHashKey("SpaceButs").hash(),
+	fbtCharHashKey("SpaceOops").hash(),
+	fbtCharHashKey("SpaceImage").hash(),
+	fbtCharHashKey("SpaceIpo").hash(),
+	fbtCharHashKey("SpaceAction").hash(),
+	fbtCharHashKey("SpaceFile").hash(),
+	fbtCharHashKey("SpaceSound").hash(),
+	fbtCharHashKey("SpaceNla").hash(),
+	fbtCharHashKey("SpaceTime").hash(),
+	fbtCharHashKey("wmWindowManager").hash(),
+	fbtCharHashKey("wmWindow").hash(),
 
 	// ... others
 	0,
 };
+
+long getFileSize(const char* fileName)
+{
+	FILE* fp = fopen(fileName, "rb");
+	if (!fp) return 0;
+	fseek(fp, 0, SEEK_END);
+	long size = ftell(fp);
+	fclose(fp); fp = 0;
+	return size;
+}
 
 
 // This program will read in a normal .blend file, and reflect it back to disk without 
@@ -69,8 +92,14 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
+	fp._setuid("BLENDEs"); //Prevent access from Blender. bFile only compare first 6 chars of uid.
+
 	fp.reflect(outFile);
-	fbtPrintf("Done.\n");
+	long orgSize = getFileSize(inFile);
+	long redSize = getFileSize(outFile);
+	long diff = orgSize - redSize;
+	float per = float(diff)/orgSize * 100;
+	fbtPrintf("File size reduced: %ld Bytes (%.3f%%). Done.\n", diff, per);
 	
 	return 0;
 }

@@ -478,7 +478,7 @@ void fbtMainFrame::openProject(const wxString& projPath)
 
 
 	fbtInspectorFile* newFile = new fbtInspectorFile();
-	if (newFile->parse(projPath) == fbtFile::FS_OK)
+	if (newFile->parse(projPath, fbtFile::PM_COMPRESSED) == fbtFile::FS_OK)
 	{
 		clearProject();
 		m_curProject = newFile;
@@ -1278,7 +1278,7 @@ void fbtMainFrame::loadMainFile(const wxString& path)
 
 
 
-	if (m_file->parse(path.c_str()) == fbtFile::FS_OK)
+	if (m_file->parse(path.c_str(), fbtFile::PM_COMPRESSED) == fbtFile::FS_OK)
 	{
 		populate(m_file->getMemoryTable(), 0);
 		populate(m_file->getFileTable(), 1);

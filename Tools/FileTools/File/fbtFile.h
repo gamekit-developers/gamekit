@@ -155,6 +155,8 @@ public:
 
     virtual void setIgnoreList(FBTuint32 *stripList) {}
 
+	bool _setuid(const char* uid);
+
 protected:
 
 	int parseMagic(const char* cp);
