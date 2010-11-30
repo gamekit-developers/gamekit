@@ -26,6 +26,8 @@
 #include "fbtBlend.h"
 #include "Blender.h"
 #include <stdio.h>
+#include <string>
+#include <algorithm>
 using namespace Blender;
 
 
@@ -66,6 +68,13 @@ long getFileSize(const char* fileName)
 	return size;
 }
 
+std::string strToLower(const std::string& str)
+{
+	std::string ss(str);
+    std::transform(str.begin(), str.end(), ss.begin(), tolower);
+	return ss;
+}
+
 
 // This program will read in a normal .blend file, and reflect it back to disk without 
 // the structures containted in skipList. 
@@ -75,28 +84,31 @@ int main(int argc, char** argv)
 {
 	if (argc < 3)
 	{
-		fbtPrintf("Usage: %s infile.blend outfile.blend\n", argv[0]);
+		fbtPrintf("Usage: %s infile.blend outfile.strip\n", argv[0]);
 		return 1;
 	}
 
-	char* inFile = argv[argc-2];
-	char* outFile = argv[argc-1];
+	std::string inFile = argv[argc-2];	
+	std::string outFile = argv[argc-1];
 
-	fbtPrintf("Strip %s to %s...\n", inFile, outFile);
+	if (strToLower(outFile).find(".blend") != std::string::npos)
+		outFile += ".strip";
+
+	fbtPrintf("Strip %s to %s...\n", inFile.c_str(), outFile.c_str());
 
 	fbtBlend fp;
 	fp.setIgnoreList(skipList);
 
-	if (fp.parse(inFile, fbtFile::PM_COMPRESSED) != fbtFile::FS_OK)
+	if (fp.parse(inFile.c_str(), fbtFile::PM_COMPRESSED) != fbtFile::FS_OK)
 	{
 		return 1;
 	}
 
 	fp._setuid("BLENDEs"); //Prevent access from Blender. bFile only compare first 6 chars of uid.
 
-	fp.reflect(outFile);
-	long orgSize = getFileSize(inFile);
-	long redSize = getFileSize(outFile);
+	fp.reflect(outFile.c_str());
+	long orgSize = getFileSize(inFile.c_str());
+	long redSize = getFileSize(outFile.c_str());
 	long diff = orgSize - redSize;
 	float per = float(diff)/orgSize * 100;
 	fbtPrintf("File size reduced: %ld Bytes (%.3f%%). Done.\n", diff, per);
