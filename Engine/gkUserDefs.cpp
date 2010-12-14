@@ -55,7 +55,7 @@ gkUserDefs::gkUserDefs()
 	fullscreen(false),
 	framingType(gkWindowSystem::FRAMING_EXTEND),
 	resources(""),
-	blendermat(true),
+	blendermat(false),
 	grabInput(true),
 	debugFps(false),
 	debugPhysics(false),
