@@ -39,69 +39,78 @@
 #include "gkLight.h"
 
 
-gkScalar getSplineFirstKeyTime(Blender::BezTriple* bez, int totvert)
+void getSplineStartEnd(Blender::BezTriple* bez, int totvert, gkScalar& start, gkScalar& end)
 {
-	gkScalar start = FLT_MAX;
+	start = FLT_MAX;
+	end = -FLT_MAX;
 	
 	Blender::BezTriple* bezt = bez;
 	for (int c = 0; c < totvert; c++, bezt++)
+	{
 		if (start > bezt->vec[1][0]) start = bezt->vec[1][0];
-	
-	return start;
+		if (end < bezt->vec[1][0]) end = bezt->vec[1][0];
+	}
 }
 
-gkScalar getIPOFirstKeyTime(Blender::Ipo* bipo)
+void getIPOStartEnd(Blender::Ipo* bipo, gkScalar& start, gkScalar& end)
 {
-	gkScalar start = FLT_MAX;
-	gkScalar tmp;
+	start = FLT_MAX;
+	end = -FLT_MAX;
+	
+	gkScalar tstart, tend;
 	
 	Blender::IpoCurve* icu = (Blender::IpoCurve*)bipo->curve.first;
 	while (icu)
 	{
 		if (icu->bezt)
 		{
-			tmp = getSplineFirstKeyTime(icu->bezt, icu->totvert);
-			if (start > tmp) start = tmp;
+			getSplineStartEnd(icu->bezt, icu->totvert, tstart, tend);
+			if (start > tstart) start = tstart;
+			if (end < tend) end = tend;
 		}
 		icu = icu->next;
 	}
-	return start;
 }
 
-gkScalar get24ActionFirstKeyTime(Blender::bAction* action)
+void get24ActionStartEnd(Blender::bAction* action, gkScalar& start, gkScalar& end)
 {
-	gkScalar start = FLT_MAX;
-	gkScalar tmp;
+	start = FLT_MAX;
+	end = -FLT_MAX;
+	
+	gkScalar tstart, tend;
 	
 	Blender::bActionChannel* bac = (Blender::bActionChannel*)action->chanbase.first;
 	while (bac)
 	{
 		if (bac->ipo)
 		{
-			tmp = getIPOFirstKeyTime(bac->ipo);
-			if (start > tmp) start = tmp;
+			getIPOStartEnd(bac->ipo, tstart, tend);
+			if (start > tstart) start = tstart;
+			if (end < tend) end = tend;
 		}
 		bac = bac->next;
 	}
-	return start;
 }
 
-gkScalar get25ActionFirstKeyTime(Blender::bAction* action)
+void get25ActionStartEnd(Blender::bAction* action, gkScalar& start, gkScalar& end)
 {
-	gkScalar start = FLT_MAX;
-	gkScalar tmp;
+	start = FLT_MAX;
+	end = -FLT_MAX;
+	
+	gkScalar tstart, tend;
 	
 	Blender::FCurve* bfc = (Blender::FCurve*)action->curves.first;
 	while (bfc)
 	{
-		tmp = getSplineFirstKeyTime(bfc->bezt, bfc->totvert);
-		if (start > tmp) start = tmp;
+		getSplineStartEnd(bfc->bezt, bfc->totvert, tstart, tend);
+		if (start > tstart) start = tstart;
+		if (end < tend) end = tend;
 		bfc = bfc->next;
 	}
-	return start;
 }
 
-void ConvertSpline(Blender::BezTriple* bez, akAnimationChannel* chan, int access, int mode, int totvert, gkScalar start, gkScalar& end, gkScalar animfps)
+void ConvertSpline(Blender::BezTriple* bez, akAnimationChannel* chan, int access, int mode, int totvert, 
+                   gkScalar xoffset, gkScalar xfactor, gkScalar yoffset, gkScalar yfactor)
 {
 	akBezierSpline* spline = new akBezierSpline(access);
 
@@ -126,16 +135,13 @@ void ConvertSpline(Blender::BezTriple* bez, akAnimationChannel* chan, int access
 	{
 		akBezierVertex v;
 
-		v.h1[0] = (bezt->vec[0][0] - start)/animfps;
-		v.h1[1] = bezt->vec[0][1];
-		v.cp[0] = (bezt->vec[1][0] - start)/animfps;
-		v.cp[1] = bezt->vec[1][1];
-		v.h2[0] = (bezt->vec[2][0] - start)/animfps;
-		v.h2[1] = bezt->vec[2][1];
+		v.h1[0] = (bezt->vec[0][0] + xoffset) * xfactor;
+		v.h1[1] = (bezt->vec[0][1] + yoffset) * yfactor;
+		v.cp[0] = (bezt->vec[1][0] + xoffset) * xfactor;
+		v.cp[1] = (bezt->vec[1][1] + yoffset) * yfactor;
+		v.h2[0] = (bezt->vec[2][0] + xoffset) * xfactor;
+		v.h2[1] = (bezt->vec[2][1] + yoffset) * yfactor;
 
-
-		// calculate global time
-		if (end < v.cp[0]) end = v.cp[0];
 		spline->addVertex(v);
 	}
 
@@ -159,13 +165,15 @@ void convertMaterialIpo(Blender::Ipo* bipo, akAnimationChannel* chan, gkScalar s
 }
 
 
-void convertActionIpo(Blender::Ipo* bipo, akAnimationChannel* chan, gkScalar start, gkScalar& end, gkScalar animfps)
+void convertActionIpo(Blender::Ipo* bipo, akAnimationChannel* chan, gkScalar start, gkScalar animfps)
 {
 	Blender::IpoCurve* icu = (Blender::IpoCurve*)bipo->curve.first;
 	while (icu)
 	{
 		if (icu->bezt)
 		{
+			gkScalar yfactor = 1;
+			
 			int code = -1;
 			switch (icu->adrcode)
 			{
@@ -173,9 +181,9 @@ void convertActionIpo(Blender::Ipo* bipo, akAnimationChannel* chan, gkScalar sta
 			case AC_QUAT_X: code = gkTransformChannel::SC_ROT_QUAT_X; break;
 			case AC_QUAT_Y: code = gkTransformChannel::SC_ROT_QUAT_Y; break;
 			case AC_QUAT_Z: code = gkTransformChannel::SC_ROT_QUAT_Z; break;
-			case AC_EUL_X: code = gkTransformChannel::SC_ROT_EULER_X; break;
-			case AC_EUL_Y: code = gkTransformChannel::SC_ROT_EULER_Y; break;
-			case AC_EUL_Z: code = gkTransformChannel::SC_ROT_EULER_Z; break;
+			case AC_EUL_X: code = gkTransformChannel::SC_ROT_EULER_X; yfactor = 10*gkRPD; break;
+			case AC_EUL_Y: code = gkTransformChannel::SC_ROT_EULER_Y; yfactor = 10*gkRPD; break;
+			case AC_EUL_Z: code = gkTransformChannel::SC_ROT_EULER_Z; yfactor = 10*gkRPD; break;
 			case AC_LOC_X: code = gkTransformChannel::SC_LOC_X; break;
 			case AC_LOC_Y: code = gkTransformChannel::SC_LOC_Y; break;
 			case AC_LOC_Z: code = gkTransformChannel::SC_LOC_Z; break;
@@ -186,7 +194,7 @@ void convertActionIpo(Blender::Ipo* bipo, akAnimationChannel* chan, gkScalar sta
 			
 			// ignore any other codes
 			if (code != -1 && icu->totvert > 0)
-				ConvertSpline(icu->bezt, chan, code, icu->ipo, icu->totvert, start, end, animfps);
+				ConvertSpline(icu->bezt, chan, code, icu->ipo, icu->totvert, -start, 1.0f/animfps, 0, 1);
 		}
 		icu = icu->next;
 	}
@@ -200,12 +208,14 @@ void convertObjectIpo(Blender::Ipo* bipo, akAnimationChannel* chan, gkScalar sta
 	{
 		if (icu->bezt)
 		{
+			gkScalar yfactor = 1;
+			
 			int code = -1;
 			switch (icu->adrcode)
 			{
-			case OB_ROT_X: code = gkTransformChannel::SC_ROT_EULER_X; break;
-			case OB_ROT_Y: code = gkTransformChannel::SC_ROT_EULER_Y; break;
-			case OB_ROT_Z: code = gkTransformChannel::SC_ROT_EULER_Z; break;
+			case OB_ROT_X: code = gkTransformChannel::SC_ROT_EULER_X; yfactor = 10*gkRPD; break;
+			case OB_ROT_Y: code = gkTransformChannel::SC_ROT_EULER_Y; yfactor = 10*gkRPD; break;
+			case OB_ROT_Z: code = gkTransformChannel::SC_ROT_EULER_Z; yfactor = 10*gkRPD; break;
 			case OB_LOC_X: code = gkTransformChannel::SC_LOC_X; break;
 			case OB_LOC_Y: code = gkTransformChannel::SC_LOC_Y; break;
 			case OB_LOC_Z: code = gkTransformChannel::SC_LOC_Z; break;
@@ -216,7 +226,7 @@ void convertObjectIpo(Blender::Ipo* bipo, akAnimationChannel* chan, gkScalar sta
 			
 			// ignore any other codes
 			if (code != -1 && icu->totvert > 0)
-				ConvertSpline(icu->bezt, chan, code, icu->ipo, icu->totvert, start, end, animfps);
+				ConvertSpline(icu->bezt, chan, code, icu->ipo, icu->totvert, -start, 1.0f/animfps, 0, yfactor);
 		}
 		icu = icu->next;
 	}
@@ -235,15 +245,15 @@ gkAnimation* convertObjectIpoToAnimation(Blender::Ipo* bipo, gkScalar animfps)
 	gkObjectChannel* chan = new gkObjectChannel(GKB_IDNAME(bipo), act);
 	act->addChannel(chan);
 	
-	start = getIPOFirstKeyTime(bipo);
-	end = -FLT_MAX;
+	getIPOStartEnd(bipo, start, end);
+
 	convertObjectIpo(bipo, chan, start, end, animfps);
 	
 	// never quaternion for blender <2.4 
 	chan->setEulerRotation(true);
 	
 	// apply time range
-	act->setLength(end);
+	act->setLength( (end-start)/animfps);
 	
 	return act;
 }
@@ -282,9 +292,8 @@ void convertAction24(Blender::bAction* action, gkScalar animfps)
 		return;
 	
 	// min/max
-	gkScalar start = get24ActionFirstKeyTime(action);
-	gkScalar end = -FLT_MAX;
-	
+	gkScalar start, end;
+	get24ActionStartEnd(action, start, end);
 	
 	Blender::bActionChannel* bac = (Blender::bActionChannel*)action->chanbase.first;
 	
@@ -294,13 +303,13 @@ void convertAction24(Blender::bAction* action, gkScalar animfps)
 		act->addChannel(chan);
 		
 		if (bac->ipo)
-			convertActionIpo(bac->ipo, chan, start, end, animfps);
+			convertActionIpo(bac->ipo, chan, start, animfps);
 				
 		bac = bac->next;
 	}
 	
 	// apply time range
-	act->setLength(end);
+	act->setLength( (end-start)/animfps);
 }
 
 
@@ -312,9 +321,8 @@ void convertAction25(Blender::bAction* action, gkScalar animfps)
 		return;
 	
 	// min/max
-	gkScalar start = get25ActionFirstKeyTime(action);
-	gkScalar end = -FLT_MAX;
-	
+	gkScalar start, end;
+	get25ActionStartEnd(action, start, end);
 	
 	Blender::FCurve* bfc = (Blender::FCurve*)action->curves.first;
 	
@@ -391,7 +399,7 @@ void convertAction25(Blender::bAction* action, gkScalar animfps)
 			
 			// ignore any other codes
 			if (code != -1 && bfc->totvert > 0)
-				ConvertSpline(bfc->bezt, chan, code, bfc->bezt->ipo, bfc->totvert, start, end, animfps);
+				ConvertSpline(bfc->bezt, chan, code, bfc->bezt->ipo, bfc->totvert, -start, 1.0f/animfps, 0, 1);
 		}
 		
 		bfc = bfc->next;
@@ -399,7 +407,7 @@ void convertAction25(Blender::bAction* action, gkScalar animfps)
 	
 	
 	// apply time range
-	act->setLength(end);
+	act->setLength( (end-start)/animfps);
 }
 
 
