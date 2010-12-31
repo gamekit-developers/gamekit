@@ -118,7 +118,31 @@ void gkUserDefs::load(const gkString& fname)
 	}
 }
 
+OgreRenderSystem gkUserDefs::getOgreRenderSystem(const gkString& val)
+{
+	OgreRenderSystem rendersystem = OGRE_RS_GL;
 
+	if (val.find("d3d9") != val.npos)
+		rendersystem = OGRE_RS_D3D9;
+	else if (val.find("d3d10") != val.npos)
+		rendersystem = OGRE_RS_D3D10;
+	else if (val.find("d3d11") != val.npos)
+		rendersystem = OGRE_RS_D3D11;
+
+	return rendersystem;
+}
+
+int gkUserDefs::getViewportFramingType(const gkString& val)
+{
+	int framingType = gkViewport::FRAMING_EXTEND;
+
+	if (val.find("crop") != val.npos)
+		framingType = gkViewport::FRAMING_CROP;
+	else if (val.find("letterbox") != val.npos)
+		framingType = gkViewport::FRAMING_LETTERBOX;
+
+	return framingType;
+}
 
 void gkUserDefs::parseString(const gkString& key, const gkString& val)
 {
@@ -126,16 +150,7 @@ void gkUserDefs::parseString(const gkString& key, const gkString& val)
 
 	if (KeyEq("rendersystem"))
 	{
-		rendersystem = OGRE_RS_GL;
-
-
-		if (val.find("d3d9") != val.npos)
-			rendersystem = OGRE_RS_D3D9;
-		if (val.find("d3d10") != val.npos)
-			rendersystem = OGRE_RS_D3D10;
-		if (val.find("d3d11") != val.npos)
-			rendersystem = OGRE_RS_D3D11;
-
+		rendersystem = getOgreRenderSystem(val);
 		return;
 	}
 	if (KeyEq("viewportorientation"))
@@ -191,12 +206,7 @@ void gkUserDefs::parseString(const gkString& key, const gkString& val)
 	}
 	if (KeyEq("framingtype"))
 	{
-		framingType = gkViewport::FRAMING_EXTEND;
-
-		if (val.find("crop") != val.npos)
-			framingType = gkViewport::FRAMING_CROP;
-		if (val.find("letterbox") != val.npos)
-			framingType = gkViewport::FRAMING_LETTERBOX;
+		framingType = getViewportFramingType(val);
 		return;
 	}
 	if (KeyEq("resources"))
@@ -217,7 +227,7 @@ void gkUserDefs::parseString(const gkString& key, const gkString& val)
 		buildStaticGeometry = Ogre::StringConverter::parseBool(val);
 		return;
 	}
-	if (KeyEq("frustumculling"))
+	if (KeyEq("usebulletdbvt"))
 	{
 		useBulletDbvt = Ogre::StringConverter::parseBool(val);
 		return;
