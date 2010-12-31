@@ -38,7 +38,7 @@ gkSkeletonLoader::gkSkeletonLoader(gkSkeletonResource* skel)
 	:   m_skeleton(skel)
 {
 	Ogre::SkeletonManager& mgr = Ogre::SkeletonManager::getSingleton();
-	const gkString& name = m_skeleton->getResourceName().str();
+	const gkString& name = m_skeleton->getResourceName().getName();
 
 
 
@@ -52,7 +52,7 @@ gkSkeletonLoader::gkSkeletonLoader(gkSkeletonResource* skel)
 gkSkeletonLoader::~gkSkeletonLoader()
 {
 	Ogre::SkeletonManager& mgr = Ogre::SkeletonManager::getSingleton();
-	mgr.remove(m_skeleton->getResourceName().str());
+	mgr.remove(m_skeleton->getResourceName().getName());
 }
 
 

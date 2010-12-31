@@ -32,8 +32,8 @@
 
 
 
-gkSound::gkSound(const gkString& name)
-	:   m_name(name),
+gkSound::gkSound(gkResourceManager *creator, const gkResourceName &name, const gkResourceHandle &handle)
+	:   gkResource(creator, name, handle),
 	    m_stream(0)
 {
 }

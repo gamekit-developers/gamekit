@@ -39,8 +39,9 @@ public:
 
 	enum LoadOptions
 	{
-		LO_ONLY_ACTIVE_SCENE,      // Load only the active scene found.
-		LO_ALL_SCENES,             // Load all scenes.
+		LO_ONLY_ACTIVE_SCENE	= 1 << 0,	// Load only the active scene found.
+		LO_ALL_SCENES			= 1 << 1,	// Load all scenes.
+		LO_IGNORE_CACHE_FILE	= 1 << 2	// Load the blend file even if loaded.
 	};
 
 
@@ -51,12 +52,14 @@ public:
 	gkBlendFile* loadFile(  const gkString& fname,
 	                        int options = LO_ONLY_ACTIVE_SCENE,
 	                        const gkString& inResourceGroup = GK_DEF_GROUP,
-	                        const gkString& scene = ""
+	                        const gkString& scene = "",
+							const gkString& group = ""
 	                     );
 
 	gkBlendFile* loadFile(  const gkString& fname,
 	                        const gkString& scene,
-	                        const gkString& inResourceGroup = GK_DEF_GROUP
+	                        const gkString& inResourceGroup = GK_DEF_GROUP,
+							const gkString& group = ""
 	                     );
 
 
@@ -66,8 +69,10 @@ public:
 	GK_INLINE FileList&      getFiles(void)          {return m_files;}
 	GK_INLINE gkBlendFile*   getActiveBlend(void)    {return m_activeFile;}
 
-	void clearResourceGroup(const gkString& inResourceGroup);
 	void unloadAll(bool exceptActiveFile=false);
+
+	GK_INLINE void unloadFile(const gkString& fname) { unloadFile(getFileByName(fname)); }
+	void unloadFile(gkBlendFile* blendFile);
 
 	UT_DECLARE_SINGLETON(gkBlendLoader);
 
@@ -76,7 +81,8 @@ private:
 	gkBlendFile* loadAndCatch(const gkString& fname,
 	                          int options = LO_ONLY_ACTIVE_SCENE,
 	                          const gkString& inResourceGroup = GK_DEF_GROUP,
-	                          const gkString& scene = ""
+	                          const gkString& scene = "",
+							  const gkString& group = ""
 	                         );
 
 	gkBlendFile*    m_activeFile;

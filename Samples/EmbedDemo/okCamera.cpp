@@ -115,16 +115,16 @@ Ogre::ManualObject *createAxis(Ogre::SceneManager* smgr, const gkString& name, f
 
 //--
 
-okCamera::okCamera(Ogre::SceneManager* smgr, Ogre::Camera* camera, okCamera::CAMERA_MODE mode) : 
-	m_camera(NULL),
-	m_sceneMgr(smgr),
-	m_axis(NULL),
-	m_showAxis(false),
-	m_mode(mode),
-	m_cameraNode(NULL),
-	m_targetNode(NULL),
-	m_axisNode(NULL),
-	m_axisPos(CENTER)
+okCamera::okCamera(Ogre::SceneManager* smgr, Ogre::Camera* camera, okCamera::CAMERA_MODE mode) 
+	:	m_camera(NULL),
+		m_sceneMgr(smgr),
+		m_axis(NULL),
+		m_showAxis(false),
+		m_mode(mode),
+		m_cameraNode(NULL),
+		m_targetNode(NULL),
+		m_axisNode(NULL),
+		m_axisPos(CENTER)
 {
 	GK_ASSERT(smgr);
 

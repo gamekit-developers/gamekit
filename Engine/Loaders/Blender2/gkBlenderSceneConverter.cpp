@@ -39,7 +39,7 @@
 
 
 gkBlenderSceneConverter::gkBlenderSceneConverter(gkBlendFile* fp, Blender::Scene* sc)
-	:   m_bscene(sc), m_gscene(0), m_file(fp)
+	:   m_bscene(sc), m_gscene(0), m_file(fp), m_groupName(fp->getGroupName())
 {
 	m_logic = new gkLogicLoader();
 }
@@ -216,7 +216,7 @@ void gkBlenderSceneConverter::convertGroups(utArray<Blender::Object*> &groups)
 	{
 		Blender::Group* bgrp = (Blender::Group*)lbp->at(i);
 
-		const gkHashedString& groupName = GKB_IDNAME(bgrp);
+		const gkResourceName groupName(GKB_IDNAME(bgrp), m_groupName);
 
 		if (mgr->exists(groupName))
 		{
@@ -271,7 +271,7 @@ void gkBlenderSceneConverter::convertGroups(utArray<Blender::Object*> &groups)
 
 		// Owning group
 		Blender::Group* bgobj = bobj->dup_group;
-		const gkHashedString groupName = GKB_IDNAME(bgobj);
+		const gkResourceName groupName(GKB_IDNAME(bgobj), m_groupName);
 
 
 		if (mgr->exists(groupName))
@@ -279,7 +279,7 @@ void gkBlenderSceneConverter::convertGroups(utArray<Blender::Object*> &groups)
 			gkGameObjectGroup* ggobj = (gkGameObjectGroup*)mgr->getByName(groupName);
 
 
-			gkGameObjectInstance* inst = ggobj->createGroupInstance(m_gscene, GKB_IDNAME(bobj));
+			gkGameObjectInstance* inst = ggobj->createGroupInstance(m_gscene, gkResourceName(GKB_IDNAME(bobj), m_groupName));
 			if (inst)
 				convertObject(bobj, inst->getRoot());
 		}
@@ -298,14 +298,14 @@ void gkBlenderSceneConverter::convertObject(Blender::Object* bobj, gkGameObject*
 
 	if (gobj == 0)
 	{
-
+		gkHashedString name(GKB_IDNAME(bobj));
 		switch (bobj->type)
 		{
-		case OB_EMPTY:      gobj = m_gscene->createObject(GKB_IDNAME(bobj));    break;
-		case OB_LAMP:       gobj = m_gscene->createLight(GKB_IDNAME(bobj));     break;
-		case OB_CAMERA:     gobj = m_gscene->createCamera(GKB_IDNAME(bobj));    break;
-		case OB_MESH:       gobj = m_gscene->createEntity(GKB_IDNAME(bobj));    break;
-		case OB_ARMATURE:   gobj = m_gscene->createSkeleton(GKB_IDNAME(bobj));  break;
+		case OB_EMPTY:      gobj = m_gscene->createObject(name);    break;
+		case OB_LAMP:       gobj = m_gscene->createLight(name);     break;
+		case OB_CAMERA:     gobj = m_gscene->createCamera(name);    break;
+		case OB_MESH:       gobj = m_gscene->createEntity(name);    break;
+		case OB_ARMATURE:   gobj = m_gscene->createSkeleton(name);  break;
 		}
 
 	}
@@ -598,7 +598,7 @@ void gkBlenderSceneConverter::convertObjectLogic(gkGameObject* gobj, Blender::Ob
 
 void gkBlenderSceneConverter::convertObjectAnimations(gkGameObject* gobj, Blender::Object* bobj, gkScalar animfps)
 {
-	gkAnimationLoader anims;
+	gkAnimationLoader anims(m_groupName);
 	bParse::bMain* mp = m_file->_getInternalFile()->getMain();
 
 	anims.convertObject(gobj, bobj, mp->getVersion() <= 249, animfps);
@@ -736,7 +736,7 @@ void gkBlenderSceneConverter::convertObjectArmature(gkGameObject* gobj, Blender:
 {
 	Blender::bArmature* armature = static_cast<Blender::bArmature*>(bobj->data);
 
-	gkResourceName skelName = GKB_IDNAME(bobj);
+	const gkResourceName skelName(GKB_IDNAME(bobj), m_groupName);
 
 
 	if (gkSkeletonManager::getSingleton().exists(skelName))
@@ -758,7 +758,7 @@ void gkBlenderSceneConverter::convert(void)
 	if (m_gscene)
 		return;
 
-	m_gscene = (gkScene*)gkSceneManager::getSingleton().create(GKB_IDNAME(m_bscene));
+	m_gscene = (gkScene*)gkSceneManager::getSingleton().create(gkResourceName(GKB_IDNAME(m_bscene), m_groupName));
 	if (!m_gscene)
 	{
 		gkPrintf("SceneConverter: duplicate scene '%s'\n", (m_bscene->id.name + 2));

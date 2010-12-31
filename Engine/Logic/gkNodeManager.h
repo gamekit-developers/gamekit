@@ -29,11 +29,11 @@
 
 #include "gkLogicCommon.h"
 #include "gkMathUtils.h"
-#include "OgreSingleton.h"
+#include "utSingleton.h"
 
 class gkGameObject;
 
-class gkNodeManager : public Ogre::Singleton<gkNodeManager>
+class gkNodeManager : public utSingleton<gkNodeManager>
 {
 public:
 	typedef utHashTable<utIntHashKey, gkLogicTree*> NodeTree;

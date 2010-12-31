@@ -35,6 +35,12 @@
 #include "luUtils.h"
 #include "luFile.h"
 
+#if defined(_MSC_VER) && defined(_DEBUG) //DEBUG:test memory leaks
+#include <malloc.h>
+#include <crtdbg.h>
+#define _VC_DEBUG
+#endif
+
 IMPLEMENT_APP(luMainApp)
 
 luMainApp::luMainApp() : 
@@ -42,6 +48,9 @@ luMainApp::luMainApp() :
 	m_config(NULL),
 	m_projTempList(NULL)
 { 
+#ifdef _VC_DEBUG
+ //_CrtSetBreakAlloc(142974); 
+#endif
 }
 
 luMainApp::~luMainApp()

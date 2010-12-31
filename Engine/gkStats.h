@@ -27,10 +27,10 @@
 #ifndef _gkStats_h_
 #define _gkStats_h_
 
-#include "OgreSingleton.h"
+#include "utSingleton.h"
 #include "OgreTimer.h"
 
-class gkStats : public Ogre::Singleton<gkStats>
+class gkStats : public utSingleton<gkStats>
 {
 
 private:
@@ -44,6 +44,7 @@ private:
 	unsigned long m_dbvt;
 	unsigned long m_sound;
 	unsigned long m_bufswaplod;
+	unsigned long m_animations;
 
 	unsigned long m_lastRender;
 	unsigned long m_lastLogicBricks;
@@ -52,6 +53,7 @@ private:
 	unsigned long m_lastDbvt;
 	unsigned long m_lastSound;
 	unsigned long m_lastBufswaplod;
+	unsigned long m_lastAnimations;
 	unsigned long m_lastTotal;
 public:
 	gkStats();
@@ -69,6 +71,7 @@ public:
 	void stopDbvtClock(void);
 	void stopSoundClock(void);
 	void stopBufSwapLodClock(void);
+	void stopAnimationsClock(void);
 
 	unsigned long getLastRenderMicroSeconds(void)      {return m_lastRender; }
 	unsigned long getLastLogicBricksMicroSeconds(void) {return m_lastLogicBricks; }
@@ -77,10 +80,10 @@ public:
 	unsigned long getLastDbvtMicroSeconds(void)        {return m_lastDbvt;}
 	unsigned long getLastSoundMicroSeconds(void)       {return m_lastSound;}
 	unsigned long getLastBufSwapLodMicroSeconds(void)  {return m_lastBufswaplod;}
+	unsigned long getLastAnimationsMicroSeconds(void)  {return m_lastAnimations;}
 	unsigned long getLastTotalMicroSeconds(void)       {return m_lastTotal;}
 
-	static gkStats& getSingleton(void);
-	static gkStats* getSingletonPtr(void);
+	UT_DECLARE_SINGLETON(gkStats);
 };
 
 #endif //_gkStats_h_

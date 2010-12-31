@@ -67,10 +67,11 @@ private:
 
 
 
-	Blender::Scene*  m_bscene;
-	gkScene*         m_gscene;
-	gkLogicLoader*   m_logic;
-	gkBlendFile*     m_file;
+	Blender::Scene*				m_bscene;
+	gkScene*					m_gscene;
+	gkLogicLoader*				m_logic;
+	gkBlendFile*				m_file;
+	const gkResourceNameString	m_groupName;
 };
 
 #endif//_gkBlenderSceneConverter_h_

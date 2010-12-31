@@ -150,7 +150,7 @@ gkGameObjectInstance* gkGameObjectGroup::createGroupInstance(gkScene* scene, con
 
 	if (m_instanceManager->exists(name))
 	{
-		gkLogMessage("GameObjectGroup: Duplicate instance '" << name.str() << "'");
+		gkLogMessage("GameObjectGroup: Duplicate instance '" << name.getName() << "(" << name.getGroup() << ")'");
 		return 0;
 	}
 
@@ -311,7 +311,7 @@ void gkGameObjectGroup::createStaticBatches(gkScene* scene)
 					gkEntity* ent = obj->getEntity();
 
 					if (!m_geometry)
-						m_geometry = mgr->createStaticGeometry(m_name.str());
+						m_geometry = mgr->createStaticGeometry(m_name.getName());
 
 
 					m_geometry->addEntity(ent->getEntity(),

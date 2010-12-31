@@ -97,7 +97,7 @@ protected:
 
 public:
 	gkLogicBrick(gkGameObject* object, gkLogicLink* link, const gkString& name);
-	virtual ~gkLogicBrick() {}
+	virtual ~gkLogicBrick();
 
 	bool inActiveState(void) const;
 
@@ -131,6 +131,8 @@ public:
 
 	void setPriority(bool v);
 	void setPriority(int v);
+
+	const gkString&				getObjectGroupName(void) const;
 };
 
 

@@ -59,7 +59,7 @@ gkLogicBrick* gkScriptController::clone(gkLogicLink* link, gkGameObject* dest)
 
 void gkScriptController::setScript(const gkString& str)
 {
-	gkLuaScript* scrpt = gkLuaManager::getSingleton().getScript(str);
+	gkLuaScript* scrpt = gkLuaManager::getSingleton().getByName<gkLuaScript>(gkResourceName(str, getObjectGroupName()));
 	if (scrpt)
 		m_script = scrpt;
 	else
@@ -68,7 +68,9 @@ void gkScriptController::setScript(const gkString& str)
 		gkTextFile* tf = (gkTextFile*)gkTextManager::getSingleton().getByName(str);
 		if (tf)
 		{
-			gkLuaScript* scrpt = gkLuaManager::getSingleton().create(tf->getResourceName().str(), tf->getText());
+			//gkLuaScript* scrpt = gkLuaManager::getSingleton().createFromText(tf->getResourceName().getName(), tf->getText());
+			gkLuaScript* scrpt = gkLuaManager::getSingleton().createFromText(
+				gkResourceName(tf->getResourceName().getName(), getObjectGroupName()), tf->getText());
 			if (scrpt)
 				m_script = scrpt;
 		}
@@ -96,4 +98,4 @@ void gkScriptController::execute(void)
 
 	scriptContext = 0;
 }
-#endif
+#endif //OGREKIT_USE_LUA

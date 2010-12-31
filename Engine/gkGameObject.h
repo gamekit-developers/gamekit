@@ -68,7 +68,7 @@ public:
 
 	typedef utArray<Notifier*> Notifications;
 
-	typedef utHashTable<gkHashedString, gkAnimationPlayer*>  Animation;
+	typedef utHashTable<gkHashedString, gkAnimationPlayer*>  Animations;
 
 public:
 
@@ -266,6 +266,11 @@ public:
 	void                   playAnimation(gkAnimationPlayer* act, gkScalar blend, int mode = AK_ACT_END, int priority = 0);
 	void                   updateAnimationBlender(const gkScalar tick);
 	gkAnimationBlender&    getAnimationBlender(void);
+	GK_INLINE bool         hasAnimationBlender(void) { return m_actionBlender != 0; }
+
+	GK_INLINE const Animations& getAnimations(void) { return m_actions; }
+	void getAnimationNames(utArray<gkHashedString>& names);
+
 
 
 protected:
@@ -323,7 +328,7 @@ protected:
 
 
 	gkAnimationBlender*         m_actionBlender;
-	Animation                   m_actions;
+	Animations                  m_actions;
 
 
 	virtual void createInstanceImpl(void);

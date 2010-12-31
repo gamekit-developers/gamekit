@@ -28,13 +28,23 @@
 #ifndef _luPropsPanel_h_
 #define _luPropsPanel_h_
 
-
+class luPhysicsProperty;
 class luObjectProperty;
+class luLightObjProperty;
+class luEntityObjProperty;
+class luProjectProperty;
+class luProjectFile;
+class luCameraObjProperty;
 
 class luPropsPanel : public wxPanel
 {
 	wxPropertyGrid* m_prop;
+	luProjectProperty* m_proj;
 	luObjectProperty* m_obj;
+	luPhysicsProperty* m_physics;
+	luLightObjProperty* m_light;
+	luEntityObjProperty* m_entity;
+	luCameraObjProperty* m_camera;
 
 	void OnPropertyGridChanged( wxPropertyGridEvent& event );
 
@@ -42,8 +52,7 @@ public:
 	luPropsPanel(wxWindow* parent);
 	~luPropsPanel();
 
-	void setProjectName(const wxString& name);
-	void setProjectDir(const wxString& name);
+	void updateProject(luProjectFile* project);
 	void selectObject(gkGameObject* obj);
 
 	DECLARE_EVENT_TABLE()

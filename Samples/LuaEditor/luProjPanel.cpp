@@ -29,6 +29,7 @@
 #include "luUtils.h"
 #include "luProjPanel.h"
 #include "luMainFrame.h"
+#include "Lib/liUtils.h"
 
 #define ROOT_ITEM_NAME	"Project"
 #define PANEL_NAME		"Project"
@@ -59,8 +60,8 @@ END_EVENT_TABLE()
 
 //--
 
-luProjTree::luProjTree(wxWindow* parent) :
-	wxTreeCtrl(parent, ID_PROJ_TREE, wxDefaultPosition, wxDefaultSize, TREECTRL_STYLE)
+luProjTree::luProjTree(wxWindow* parent) 
+	:	wxTreeCtrl(parent, ID_PROJ_TREE, wxDefaultPosition, wxDefaultSize, TREECTRL_STYLE)
 {
 	wxTreeItemId item = AddRoot(ROOT_ITEM_NAME);
 }
@@ -208,11 +209,11 @@ wxTreeItemId luProjTree::findItemByText(const wxTreeItemId& parent, const wxStri
 
 //-- insp
 
-luInspPanel::luInspPanel(wxWindow* parent) :
-	wxPanel(parent, ID_PROJ_INSP_WIN),
-	m_search(NULL),
-	m_list(NULL),
-	m_choice(NULL)
+luInspPanel::luInspPanel(wxWindow* parent) 
+	:	wxPanel(parent, ID_PROJ_INSP_WIN),
+		m_search(NULL),
+		m_list(NULL),
+		m_choice(NULL)
 {
 
 
@@ -272,13 +273,13 @@ luInspPanel::luInspPanel(wxWindow* parent) :
 
 //-- panel
 
-luProjPanel::luProjPanel(wxWindow *parent) :
-	wxPanel(parent, ID_PROJ_WIN, wxDefaultPosition, wxSize(200, 200)),
-	m_tree(NULL),
-	m_splitter(NULL),
-	m_insp(NULL),
-	m_fontNormal(NULL),
-	m_fontBold(NULL)
+luProjPanel::luProjPanel(wxWindow *parent)
+	:	wxPanel(parent, ID_PROJ_PANEL, wxDefaultPosition, wxSize(200, 200)),
+		m_tree(NULL),
+		m_splitter(NULL),
+		m_insp(NULL),
+		m_fontNormal(NULL),
+		m_fontBold(NULL)
 {
 	//m_fontNormal = new wxFont(*wxNORMAL_FONT);
 	m_fontNormal = new wxFont(10, wxDEFAULT, wxNORMAL, wxNORMAL);
@@ -298,7 +299,8 @@ luProjPanel::luProjPanel(wxWindow *parent) :
 
 luProjPanel::~luProjPanel()
 {
-
+	SAFE_DELETE(m_fontNormal);
+	SAFE_DELETE(m_fontBold);
 }
 
 void luProjPanel::setItemFont(wxTreeItemId item, bool bold)
@@ -382,7 +384,7 @@ void luProjPanel::clearTreeItems()
 	tree->AddRoot(ROOT_ITEM_NAME);
 }
 
-//--
+//-- 
 
 void luProjPanel::addListItem(const wxString& name, const wxString& type)
 {
@@ -406,7 +408,7 @@ void luProjPanel::OnObjTypeChanged(wxCommandEvent& event)
 	wxChoice* choice = getChoice();
 	int sel = choice->GetCurrentSelection();
 	int type = (int)choice->GetClientData(sel);
-	gkPrintf("%d %d", sel, type);
+	//gkPrintf("%d %d", sel, type);
 
 }
 
@@ -432,5 +434,7 @@ void luProjPanel::OnObjSearchEnter(wxCommandEvent& event)
 void luProjPanel::OnObjListChanged(wxListEvent& event)
 {
 	wxString name = event.GetText();
+	wxString type = getListCtrl()->GetItemText(event.GetIndex(), 1);
+
 	getLuMainFrame()->selectGameObject(name);		
 }

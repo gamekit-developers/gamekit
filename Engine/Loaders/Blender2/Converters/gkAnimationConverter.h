@@ -31,12 +31,18 @@
 #include "Blender.h"
 #include "gkMathUtils.h"
 
-
 class gkAnimationLoader
 {
+	const gkResourceNameString	m_groupName;
+
+	gkAnimation* convertObjectIpoToAnimation(Blender::Ipo* bipo, gkScalar animfps);
+	void convertAction24(Blender::bAction* action, gkScalar animfps);
+	void convertAction25(Blender::bAction* action, gkScalar animfps);
+	void convert25AnimData(gkGameObject* obj, Blender::AnimData* adt, gkScalar animfps);
+
 public:
 
-	gkAnimationLoader() {}
+	gkAnimationLoader(const gkResourceNameString& groupName="") : m_groupName(groupName) {}
 	~gkAnimationLoader() {}
 
 	void convertAction(Blender::bAction* action, bool pre25compat, gkScalar animfps);

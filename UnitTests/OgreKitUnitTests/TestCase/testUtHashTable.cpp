@@ -13,6 +13,20 @@ TEST(TEST_CASE_NAME, testSize)
 	EXPECT_EQ(table1.size(), count);
 }
 
+TEST(TEST_CASE_NAME, testAssignEmpty)
+{
+	utHashTable<utIntHashKey, int> table1, table2;
+
+	const int count = 10;
+	for (int i = 0; i < count; i++)
+		table1.insert(i, i);
+
+	EXPECT_EQ(table1.size(), count);
+	EXPECT_EQ(table2.size(), 0);
+	table1 = table2;
+	EXPECT_EQ(table1.size(), 0);
+}
+
 TEST(TEST_CASE_NAME, testNestedType)
 {
 	typedef utHashTable<utHashedString, utString> tEntry;

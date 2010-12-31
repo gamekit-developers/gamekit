@@ -7,6 +7,10 @@
       <entry name="win32_path" value="../LuaRuntime/RelWithDebInfo/AppLuaRuntime.exe"/>
       <entry name="linux_path" value="../LuaRuntime/RelWithDebInfo/AppLuaRuntime"/>
     </group>
+	<group name="debug_runtime">
+      <entry name="win32_path" value="../LuaRuntime/Debug/AppLuaRuntime.exe"/>
+      <entry name="linux_path" value="../LuaRuntime/Debug/AppLuaRuntime"/>
+    </group>
     <group name="help">
       <entry name="path" value="Help/OgreKitLuaApi.chm"/>
       <entry name="topic" value="Help/index.hhk"/>

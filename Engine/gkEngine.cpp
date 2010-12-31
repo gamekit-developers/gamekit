@@ -32,6 +32,7 @@
 
 #include "gkEngine.h"
 #include "gkWindowSystem.h"
+#include "gkWindow.h"
 #include "gkScene.h"
 #include "gkSceneManager.h"
 #include "gkLogger.h"
@@ -54,7 +55,7 @@
 #include "gkSkeletonManager.h"
 #include "gkGroupManager.h"
 #include "gkGameObjectManager.h"
-
+#include "gkResourceGroupManager.h"
 #include "gkAnimationManager.h"
 
 
@@ -96,7 +97,7 @@ public:
 		:       gkTickState((int)ENGINE_TICKS_PER_SECOND),
 		        engine(par),
 		        windowsystem(0),
-		        scene(0),
+		        curScene(0),
 		        debug(0),
 		        debugPage(0),
 		        debugFps(0),
@@ -126,7 +127,8 @@ public:
 
 	gkEngine*                   engine;
 	gkWindowSystem*             windowsystem;       // current window system
-	gkScene*                    scene;              // current scene
+	gkScene*                    curScene;			// current scene
+	gkSceneArray				scenes;
 	gkRenderFactoryPrivate*     plugin_factory;     // static plugin loading
 	Ogre::Root*                 root;
 	gkDebugScreen*              debug;
@@ -211,6 +213,7 @@ void gkEngine::initialize()
 
 
 	// gk Managers
+	new gkResourceGroupManager();
 	new gkSceneManager();
 	new gkLogicManager();
 	new gkNodeManager();
@@ -269,7 +272,7 @@ void gkEngine::initializeWindow(void)
 		gkWindowSystem* sys = m_private->windowsystem;
 		gkUserDefs& defs = getUserDefs();
 
-		m_window = sys->createMainWindow(defs);
+		m_window = sys->createWindow(defs);
 		if (!defs.resources.empty())
 			loadResources(defs.resources);
 	}
@@ -328,6 +331,7 @@ void gkEngine::finalize()
 #endif
 
 	delete gkBlendLoader::getSingletonPtr();
+	delete gkResourceGroupManager::getSingletonPtr();
 
 	delete gkStats::getSingletonPtr();
 	delete m_private->debugFps;
@@ -440,16 +444,34 @@ gkScalar gkEngine::getTickRate(void)
 bool gkEngine::hasActiveScene(void)
 {
 	GK_ASSERT(m_private);
-	return m_private->scene != 0;
+	return m_private->curScene != 0;
 }
 
+void gkEngine::registerActiveScene(gkScene* scene)
+{
+	GK_ASSERT(m_private && scene);
+	if (m_private->scenes.find(scene) == UT_NPOS)
+	{
+		m_private->scenes.push_back(scene);
+		if (m_private->curScene == 0)
+			m_private->curScene = scene;
+	}
+}
+
+void gkEngine::unregisterActiveScene(gkScene* scene)
+{
+	GK_ASSERT(m_private && scene);
+	m_private->scenes.erase(m_private->scenes.find(scene));
+	if (m_private->curScene == scene)
+		m_private->curScene = 0;
+}
 
 
 
 gkScene* gkEngine::getActiveScene(void)
 {
 	GK_ASSERT(m_private);
-	return m_private->scene;
+	return m_private->curScene;
 }
 
 
@@ -486,7 +508,7 @@ bool gkEngine::initializeStepLoop(void)
 	// init main game loop
 
 	GK_ASSERT(m_private);
-	if (!m_private->scene)
+	if (m_private->scenes.empty())
 	{
 		gkLogMessage("Engine: Can't run with out a registered scene. exiting\n");
 		return false;
@@ -545,13 +567,13 @@ bool gkEnginePrivate::frameRenderingQueued(const FrameEvent& evt)
 {
 	gkStats::getSingleton().stopRenderClock();
 
-	if (scene)
+	if (!scenes.empty())
 		tick();
 
 	// restart the clock to mesure time for swapping buffer and updatind scenemanager LOD
 	gkStats::getSingleton().startClock();
 
-	return scene != 0;
+	return !scenes.empty();
 }
 
 
@@ -570,8 +592,11 @@ bool gkEnginePrivate::frameEnded(const FrameEvent& evt)
 
 void gkEnginePrivate::beginTickImpl(void)
 {
-	GK_ASSERT(scene);
-	scene->beginFrame();
+	GK_ASSERT(!scenes.empty());
+
+	gkSceneArray::Iterator iter(scenes);
+	while (iter.hasMoreElements())
+		iter.getNext()->beginFrame();	
 }
 
 
@@ -592,21 +617,29 @@ void gkEnginePrivate::endTickImpl(void)
 void gkEnginePrivate::tickImpl(gkScalar dt)
 {
 	// Proccess one full game tick
-	GK_ASSERT(windowsystem && scene && engine);
+	GK_ASSERT(windowsystem && !scenes.empty() && engine);
 
 
 	// dispatch inputs
 	windowsystem->dispatch();
 
 	// update main scene
-	scene->update(dt);
+	gkSceneArray::Iterator siter1(scenes);
+	while (siter1.hasMoreElements())
+	{
+		gkScene* scene = siter1.getNext();
+		curScene = scene;
+		scene->update(dt);
+	}
 
 	// update callbacks
 	utArrayIterator<gkEngine::Listeners> iter(engine->m_listeners);
 	while (iter.hasMoreElements())
 		iter.getNext()->tick(dt);
 
-	scene->applyConstraints();
+	gkSceneArray::Iterator siter2(scenes);
+	while (siter2.hasMoreElements())
+		siter2.getNext()->applyConstraints();
 
 
 	gkGameObjectManager::getSingleton().postProcessQueue();
@@ -615,11 +648,6 @@ void gkEnginePrivate::tickImpl(gkScalar dt)
 }
 
 
-void gkEngine::setActiveScene(gkScene* sc)
-{
-	GK_ASSERT(m_private);
-	m_private->scene = sc;
-}
 
 
-GK_IMPLEMENT_SINGLETON(gkEngine);
+UT_IMPLEMENT_SINGLETON(gkEngine);

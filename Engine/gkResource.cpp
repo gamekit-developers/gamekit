@@ -30,7 +30,9 @@
 
 
 gkResource::gkResource(gkResourceManager* creator, const gkResourceName& name, const gkResourceHandle& handle)
-	:    m_creator(creator), m_name(name), m_resourceHandle(handle)
+	:	m_creator(creator), 
+		m_name(name), 
+		m_resourceHandle(handle)
 {
 	GK_ASSERT(m_creator);
 }

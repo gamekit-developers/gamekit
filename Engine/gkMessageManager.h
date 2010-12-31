@@ -25,13 +25,13 @@
 -------------------------------------------------------------------------------
 */
 
-#ifndef GKMESSAGEMANAGER_H
-#define GKMESSAGEMANAGER_H
+#ifndef _gkMessageManager_h_
+#define _gkMessageManager_h_
 
 #include "gkCommon.h"
-#include "OgreSingleton.h"
+#include "utSingleton.h"
 
-class gkMessageManager : public Ogre::Singleton<gkMessageManager>
+class gkMessageManager : public utSingleton<gkMessageManager>
 {
 public:
 
@@ -78,8 +78,7 @@ public:
 	void removeListener(MessageListener* listener);
 	void sendMessage(gkString from, gkString to, gkString subject, gkString body);
 
-	static gkMessageManager& getSingleton(void);
-	static gkMessageManager* getSingletonPtr(void);
+	UT_DECLARE_SINGLETON(gkMessageManager);
 };
 
-#endif // GKMESSAGEMANAGER_H
+#endif // _gkMessageManager_h_

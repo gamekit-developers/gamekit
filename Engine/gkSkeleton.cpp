@@ -42,7 +42,7 @@ gkSkeleton::gkSkeleton(gkInstancedManager* creator, const gkResourceName& name, 
 
 
 gkSkeleton::~gkSkeleton()
-{
+{	
 }
 
 
@@ -56,7 +56,7 @@ void gkSkeleton::createInstanceImpl(void)
 {
 	if (!m_resource)
 	{
-		gkPrintf("Skeleton: '%s' Has no internal data.\n", m_name.str().c_str());
+		gkPrintf("Skeleton: '%s' Has no internal data.\n", m_name.getName().c_str());
 		m_instanceState = ST_ERROR;
 		return;
 	}
@@ -79,7 +79,7 @@ void gkSkeleton::updateFromController(void)
 {
 	if (!m_resource)
 	{
-		gkPrintf("Skeleton: '%s' Has no internal data.\n", m_name.str().c_str());
+		gkPrintf("Skeleton: '%s' Has no internal data.\n", m_name.getName().c_str());
 		return;
 	}
 

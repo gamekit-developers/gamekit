@@ -28,61 +28,69 @@
 #define _gkLuaManager_h_
 
 #include "gkCommon.h"
+#include "gkResourceManager.h"
 #include "gkMathUtils.h"
 #include "gkEngine.h"
 #include "gkString.h"
-#include "OgreSingleton.h"
+#include "utSingleton.h"
 #include "Script/Lua/gkLuaScript.h"
 
 struct lua_State;
 
 
-class gkLuaManager : public Ogre::Singleton<gkLuaManager>
+class gkLuaManager : public gkResourceManager, public utSingleton<gkLuaManager>
 {
 public:
 
 
-	typedef utHashTable<gkHashedString, gkLuaScript*> ScriptMap;
-	typedef utList<gkLuaScript*> ScriptList;
+	//typedef utHashTable<gkHashedString, gkLuaScript*> ScriptMap;
+	//typedef utList<gkLuaScript*> ScriptList;
 
 private:
 	lua_State*   L;
-	ScriptMap   m_scripts;
+	//ScriptMap   m_scripts;
 
 
 public:
 	gkLuaManager();
 	virtual ~gkLuaManager();
 
+	gkResource* createImpl(const gkResourceName& name, const gkResourceHandle& handle);
+
+
 	// access to the lua virtual machine
 	GK_INLINE lua_State* getLua(void) {return L;}
 
-	void decompile(void);
+	void decompileAll(void);
+	void decompileGroup(const gkString& group);
 
 
-	gkLuaScript* getScript(const gkString& name);
+	//gkLuaScript* getScript(const gkString& name);
 
 	// Create new script from text buffer
-	gkLuaScript* create(const gkString& name, const gkString& text);
+	gkLuaScript* createFromText(const gkResourceName& name, const gkString& text);
 
 	// create from internal text file manager
-	gkLuaScript* create(const gkString& name);
+	gkLuaScript* createFromTextBlock(const gkResourceName& name);
 
 	// Destroys named file
-	void destroy(const gkString& name);
+	//void destroy(const gkString& name);
 
 	// Destroys file pointer
-	void destroy(gkLuaScript* ob);
+	//void destroy(gkLuaScript* ob);
 
 	// Destroys all internal files
-	void destroyAll(void);
+	//void destroyAll(void);
 
 	// Test for file existance
-	bool hasScript(const gkString& name);
+	//bool hasScript(const gkString& name);
+
+protected:
+	virtual void notifyResourceCreatedImpl(gkResource* res);
+	virtual void notifyResourceDestroyedImpl(gkResource* res);
 
 
-	static gkLuaManager& getSingleton();
-	static gkLuaManager* getSingletonPtr();
+	UT_DECLARE_SINGLETON(gkLuaManager);
 };
 
 #endif//_gkLuaManager_h_

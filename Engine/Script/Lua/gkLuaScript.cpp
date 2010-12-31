@@ -33,31 +33,41 @@
 
 
 
-gkLuaScript::gkLuaScript(gkLuaManager* parent, const utString& name, const utString& buffer)
-	:       m_script(0), m_name(name), m_text(buffer), m_compiled(false), m_isInvalid(false), m_owner(parent)
+gkLuaScript::gkLuaScript(gkResourceManager *creator, const gkResourceName &name, const gkResourceHandle &handle)
+	:	gkResource(creator, name, handle),
+		m_script(0), 
+		m_text(""), 
+		m_compiled(false), 
+		m_isInvalid(false)
 {
 }
 
 
 gkLuaScript::~gkLuaScript()
 {
-	lua_State* L = m_owner->getLua();
+	lua_State* L = gkLuaManager::getSingleton().getLua();
 	if (m_script != -1)
 		luaL_unref(L, LUA_REGISTRYINDEX, m_script);
 }
 
-
+void gkLuaScript::setScript(const gkString& text)
+{
+	m_text = text;
+	m_compiled = false;
+}
 
 void gkLuaScript::decompile(void)
 {
-	lua_State* L = m_owner->getLua();
+	if (!isCompiled())
+		return;
+
+	lua_State* L = gkLuaManager::getSingleton().getLua();
 	if (m_script != -1)
 		luaL_unref(L, LUA_REGISTRYINDEX, m_script);
 	m_script = -1;
 	m_compiled = false;
 	m_isInvalid = false;
 	lua_gc(L, LUA_GCCOLLECT, 0);
-
 }
 
 
@@ -66,11 +76,11 @@ void gkLuaScript::compile(void)
 	if (m_isInvalid)
 		return;
 
-	lua_State* L = m_owner->getLua();
+	lua_State* L = gkLuaManager::getSingleton().getLua();
 	//lua_dumpstack(L);
 	{
 		lua_pushvalue(L, LUA_GLOBALSINDEX);
-		if (luaL_loadbuffer(L, m_text.c_str(), m_text.size() - 1, m_name.c_str()) != 0)
+		if (luaL_loadbuffer(L, m_text.c_str(), m_text.size() - 1, getName().c_str()) != 0)
 		{
 			gkPrintf("%s\n", lua_tostring(L, -1));
 			dsPrintf("%s\n", lua_tostring(L, -1));
@@ -107,7 +117,7 @@ bool gkLuaScript::execute(void)
 	if (m_isInvalid)
 		return false;
 
-	lua_State* L = m_owner->getLua();
+	lua_State* L = gkLuaManager::getSingleton().getLua();;
 	//lua_dumpstack(L);
 	lua_pushtraceback(L);
 	int trace = lua_gettop(L);

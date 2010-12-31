@@ -33,7 +33,7 @@ class luEdit;
 
 class luFindDlg : public wxDialog 
 {
-
+	void setupControls();
 protected:
 	wxStaticText* m_staticText1;
 	wxComboBox* m_searchCombo;
@@ -61,6 +61,7 @@ public:
 
 class luReplaceDlg : public wxDialog 
 {
+	void setupControls();
 protected:
 	wxStaticText* m_staticText1;
 	wxComboBox* m_searchCombo;

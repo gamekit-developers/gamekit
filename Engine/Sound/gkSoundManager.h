@@ -28,12 +28,12 @@
 #define _gkSoundManager_h_
 
 
-
-#include "gkStreamer.h"
 #include "gkCommon.h"
+#include "gkResourceManager.h"
+#include "gkStreamer.h"
 #include "gkHashedString.h"
 #include "gkSerialize.h"
-#include "OgreSingleton.h"
+#include "utSingleton.h"
 #include "gkTransformState.h"
 
 
@@ -45,25 +45,23 @@ class gkCamera;
 
 
 // Sound system manager
-class gkSoundManager : public Ogre::Singleton<gkSoundManager>
+class gkSoundManager : public gkResourceManager, public utSingleton<gkSoundManager>
 {
 public:
-	typedef utHashTable<gkHashedString, gkSound*> ObjectMap;
 	typedef utArray<gkSource*> Sources;
 
-
 private:
-	ObjectMap           m_objects;         // all loaded sounds
-	ALCdevice*           m_device;         // OpenAL Device
-	ALCcontext*          m_context;        // OpenAL Context
-	gkStreamer*          m_stream;         // Playback stream
-	Sources             m_playingSources;  // list of currently active sources
-	Sources             m_gcSources;       // sources to remove when done playing
-	bool                m_valid, m_disabled;
+	ALCdevice*          m_device;			// OpenAL Device
+	ALCcontext*         m_context;			// OpenAL Context
+	gkStreamer*         m_stream;			// Playback stream
+	Sources             m_playingSources;	// list of currently active sources
+	Sources             m_gcSources;		// sources to remove when done playing
+	bool                m_valid;
+	bool				m_disabled;
 
 
 	void initialize(void);
-	gkSoundSceneProperties m_props; // conversion properties
+	gkSoundSceneProperties m_props;			// conversion properties
 	void removePlayback(gkSound* sndToDelete);
 
 public:
@@ -71,44 +69,39 @@ public:
 	gkSoundManager();
 	virtual ~gkSoundManager();
 
+	gkResource* createImpl(const gkResourceName& name, const gkResourceHandle& handle);
+
 
 	void stopAllSounds(void);
 
-	bool        hasSounds(void);
-	void        playSound(gkSource*);
-	void        stopSound(gkSource*);
+	bool hasSounds(void);
+	void playSound(gkSource*);
+	void stopSound(gkSource*);
 
-	void        update(gkScene* scene);
-	void        collectGarbage(void);
+	void update(gkScene* scene);
+	void collectGarbage(void);
 
 
-	void        notifySourceCreated(gkSource*);
-	void        notifySourceDestroyed(gkSource*);
-
-	gkSound* getSound(const gkHashedString& name);
-	gkSound* createSound(const gkHashedString& name);
-
-	void destroy(const gkHashedString& name);
-	void destroy(gkSound* ob);
-	void destroyAll(void);
-	bool hasSound(const gkHashedString& name);
+	void notifySourceCreated(gkSource*);
+	void notifySourceDestroyed(gkSource*);
 
 	bool isValidContext(void);
 
 	gkSoundSceneProperties& getProperties(void) {return m_props;}
 	void updateSoundProperties(void);
 
-
-	static gkSoundManager& getSingleton(void);
-	static gkSoundManager* getSingletonPtr(void);
-
-
 	static ALCcontext* getCurrentContext(void)
 	{
 		return getSingleton().m_context;
 	}
 
+protected:
+	virtual void notifyDestroyAllImpl(void);
 
+	virtual void notifyResourceCreatedImpl(gkResource* res);
+	virtual void notifyResourceDestroyedImpl(gkResource* res);
+
+	UT_DECLARE_SINGLETON(gkSoundManager);
 };
 
 #endif//_gkSoundManager_h_

@@ -107,7 +107,7 @@ void gkHUD::newImpl(void)
 	try
 	{
 
-		m_overlay = Ogre::OverlayManager::getSingleton().getByName(m_name.str());
+		m_overlay = Ogre::OverlayManager::getSingleton().getByName(m_name.getName());
 
 		// Auto create if it's here
 		if (m_overlay)

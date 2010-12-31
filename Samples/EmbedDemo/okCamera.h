@@ -30,7 +30,8 @@
 #define _okCamera_h_
 
 
-class okCamera {
+class okCamera 
+{
 public:
 	enum CAMERA_MODE { MODE_FREE, MODE_TARGET };
 	enum CAMERA_DIR  { DIR_RESET, DIR_TOP, DIR_FRONT, DIR_RIGHT };

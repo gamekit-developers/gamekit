@@ -68,7 +68,7 @@ public:
 	void getTextFiles(TextArray& dest, int textType);
 
 
-	void parseScripts(void);
+	void parseScripts(const gkString& group="");
 
 
 	UT_DECLARE_SINGLETON(gkTextManager);

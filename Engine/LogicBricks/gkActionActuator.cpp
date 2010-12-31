@@ -77,7 +77,7 @@ void gkActionActuator::doInit(void)
 	
 	if(!m_action)
 	{
-		gkAnimation* res = gkAnimationManager::getSingleton().getAnimation(m_startAct);
+		gkAnimation* res = gkAnimationManager::getSingleton().getAnimation(gkResourceName(m_startAct, getObjectGroupName()));
 		if(res)
 			m_action = m_object->addAnimation(res, m_startAct);
 	}

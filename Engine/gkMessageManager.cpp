@@ -87,4 +87,4 @@ void gkMessageManager::sendMessage(gkString from, gkString to, gkString subject,
 	delete m;
 }
 
-GK_IMPLEMENT_SINGLETON(gkMessageManager);
+UT_IMPLEMENT_SINGLETON(gkMessageManager);

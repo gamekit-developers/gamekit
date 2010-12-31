@@ -45,7 +45,7 @@ public:
 public:
 
 
-	gkBlendFile(const gkString& blendToLoad, const gkString& group = GK_DEF_GROUP);
+	gkBlendFile(const gkString& blendToLoad, const gkString& inResourceGroup = GK_DEF_GROUP, const gkString& group="");
 	~gkBlendFile();
 
 
@@ -68,11 +68,11 @@ public:
 
 
 	///Access to the original group name. Used for placing created resources in the same group.
-	GK_INLINE const gkString& getGroup(void) {return m_group;}
+	GK_INLINE const gkString& getResourceGroup(void) {return m_inResourceGroup;}
 
 
-	GK_INLINE const gkString& getFilePath(void) {return m_name;}
-
+	GK_INLINE const gkString& getFilePath(void)  {return m_name;}
+	GK_INLINE const gkString& getGroupName(void) {return m_group;}
 
 protected:
 
@@ -87,15 +87,16 @@ protected:
 	void loadActive(void);
 	void createInstances(void);
 
-	ManualResourceLoaderList  m_loaders;     // Ogre Loaders
-	const gkString            m_group;       // Ogre Ogre::Resource Group
-	const gkString            m_name;        // Current file path.
-	bParse::bBlenderFile*     m_file;        // bParse File Pointer
-	Scenes                    m_scenes;      // All Scenes
-	gkScene*                  m_activeScene; // Main scene found during parse.
-	ImageTextureHashMap       m_imageLookup;
-	gkString                  m_findScene;
-	bool                      m_hasBFont;
+	ManualResourceLoaderList	m_loaders;			// Ogre Loaders
+	const gkString				m_inResourceGroup;	// Ogre Ogre::Resource Group
+	const gkString				m_name;				// Current file path.
+	const gkString				m_group;			// resource group
+	bParse::bBlenderFile*		m_file;				// bParse File Pointer
+	Scenes						m_scenes;			// All Scenes
+	gkScene*					m_activeScene;		// Main scene found during parse.
+	ImageTextureHashMap			m_imageLookup;
+	gkString					m_findScene;
+	bool						m_hasBFont;
 };
 
 

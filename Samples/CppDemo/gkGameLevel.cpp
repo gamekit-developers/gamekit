@@ -154,14 +154,14 @@ void gkGameLevel::loadPickup(void)
 
 void gkGameLevel::notifyInstanceCreated(gkInstancedObject* inst)
 {
-	gkLogMessage("GameLevel: Instanced -> " << inst->getResourceName().str());
+	gkLogMessage("GameLevel: Instanced -> " << inst->getResourceName().getName());
 }
 
 void gkGameLevel::notifyResourceCreated(gkResource* res)
 {
 
 	gkLogMessage(res->getManagerType() << ", " << res->getResourceType() <<
-	             ":handle " <<  res->getResourceHandle() << ", created " << res->getResourceName().str());
+	             ":handle " <<  res->getResourceHandle() << ", created " << res->getResourceName().getName());
 }
 
 

@@ -34,6 +34,7 @@
 #include "gkUtils.h"
 #include "gkPath.h"
 #include "gkWindowSystem.h"
+#include "gkViewport.h"
 
 
 
@@ -53,7 +54,7 @@ gkUserDefs::gkUserDefs()
 	wintitle("Ogre GameKit Demo"),
 	extWinhandle(""),
 	fullscreen(false),
-	framingType(gkWindowSystem::FRAMING_EXTEND),
+	framingType(gkViewport::FRAMING_EXTEND),
 	resources(""),
 	blendermat(true),
 	grabInput(true),
@@ -190,12 +191,12 @@ void gkUserDefs::parseString(const gkString& key, const gkString& val)
 	}
 	if (KeyEq("framingtype"))
 	{
-		framingType = gkWindowSystem::FRAMING_EXTEND;
+		framingType = gkViewport::FRAMING_EXTEND;
 
 		if (val.find("crop") != val.npos)
-			framingType = gkWindowSystem::FRAMING_CROP;
+			framingType = gkViewport::FRAMING_CROP;
 		if (val.find("letterbox") != val.npos)
-			framingType = gkWindowSystem::FRAMING_LETTERBOX;
+			framingType = gkViewport::FRAMING_LETTERBOX;
 		return;
 	}
 	if (KeyEq("resources"))

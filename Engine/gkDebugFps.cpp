@@ -27,6 +27,7 @@
 #include "gkDebugFps.h"
 #include "gkLogger.h"
 #include "gkWindowSystem.h"
+#include "gkWindow.h"
 #include "gkEngine.h"
 #include "gkScene.h"
 #include "gkDynamicsWorld.h"
@@ -67,6 +68,7 @@ gkDebugFps::gkDebugFps()
 	m_keys += "Sound:\n";
 	m_keys += "DBVT:\n";
 	m_keys += "Bufferswap&LOD:\n";
+	m_keys += "Animations:\n";
 }
 
 
@@ -155,7 +157,7 @@ void gkDebugFps::draw(void)
 	if (!m_over || !m_key || !m_val)
 		return;
 
-	Ogre::RenderWindow* window = gkWindowSystem::getSingleton().getMainWindow();
+	Ogre::RenderWindow* window = gkWindowSystem::getSingleton().getMainWindow()->getRenderWindow();
 	const Ogre::RenderTarget::FrameStats& ogrestats = window->getStatistics();
 
 	gkVariable* dbvtVal = 0;
@@ -171,6 +173,7 @@ void gkDebugFps::draw(void)
 	float sound = gkStats::getSingleton().getLastSoundMicroSeconds() / 1000.0f;
 	float dbvt = gkStats::getSingleton().getLastDbvtMicroSeconds() / 1000.0f;
 	float bufswaplod = gkStats::getSingleton().getLastBufSwapLodMicroSeconds() / 1000.0f;
+	float animations = gkStats::getSingleton().getLastAnimationsMicroSeconds() / 1000.0f;
 
 	gkString vals = "";
 
@@ -210,6 +213,9 @@ void gkDebugFps::draw(void)
 
 	vals += Ogre::StringConverter::toString(bufswaplod, 3, 7, '0', std::ios::fixed) + "ms ";
 	vals += Ogre::StringConverter::toString( int(100 * bufswaplod / swap), 3 ) + "%\n";
+
+	vals += Ogre::StringConverter::toString(animations, 3, 7, '0', std::ios::fixed) + "ms ";
+	vals += Ogre::StringConverter::toString( int(100 * animations / swap), 3 ) + "%\n";
 
 	if (!m_keys.empty() && !vals.empty())
 	{

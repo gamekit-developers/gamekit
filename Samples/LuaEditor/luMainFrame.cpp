@@ -50,7 +50,17 @@
 #include "luWizard.h"
 #include "luFile.h"
 #include "luConfig.h"
+#include "luAnimDlg.h"
+
 #include "Resource/app.xpm"
+
+#if defined(_MSC_VER) && defined(_DEBUG)
+#include <malloc.h>
+#include <crtdbg.h>
+#define _VC_DEBUG
+#endif
+
+
 
 #define RUNTIME_LOG_FILE "LuaRuntime.log"
 
@@ -109,6 +119,9 @@ BEGIN_EVENT_TABLE(luMainFrame, wxFrame)
 	EVT_MENU(ID_SHOW_PROJ_WIN,		luMainFrame::OnShowProjWin)
 	EVT_MENU(ID_SHOW_LOG_WIN,		luMainFrame::OnShowLogWin)
 	EVT_MENU(ID_SHOW_PROPS_WIN,		luMainFrame::OnShowPropsWin)
+
+	EVT_MENU(ID_TOOL_ANIM_MANAGER,	luMainFrame::OnToolAnimManager)
+	EVT_MENU(ID_TOOL_STATE_MANAGER,	luMainFrame::OnToolStateManager)	
 	
 	EVT_MENU(ID_WIN_PAGE_PREV,		luMainFrame::OnWinPagePrev)
 	EVT_MENU(ID_WIN_PAGE_NEXT,		luMainFrame::OnWinPageNext)
@@ -203,18 +216,20 @@ luMainFrame::luMainFrame() :
 	m_focusEdit(NULL),
 	m_isLoadingProjFile(false),
 	m_isLoadedBlendFile(false),
-	m_helpTopic(NULL)
+	m_helpTopic(NULL),
+	m_animDlg(NULL)
 {    
 	SetIcon(app_icon_xpm);
+
+#ifdef _VC_DEBUG
+	//_CrtSetBreakAlloc(15528); 
+#endif
+
 
 
 	//-- setup aui
 	m_aui = new wxAuiManager(this, wxAUI_MGR_ALLOW_ACTIVE_PANE | wxAUI_MGR_DEFAULT);
-	wxAuiDockArt* art = m_aui->GetArtProvider();
-
-	art->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE,  0);
-	art->SetMetric(wxAUI_DOCKART_SASH_SIZE,         3);
-	art->SetMetric(wxAUI_DOCKART_CAPTION_SIZE,      18);
+	setupDefaultAuiDockArt(m_aui);
 
 	//-- setup menu
 	setupMenu();
@@ -249,6 +264,7 @@ luMainFrame::luMainFrame() :
 
 luMainFrame::~luMainFrame()
 {
+
 	if (m_pidRuntime > 0)
 	{
 		wxProcess::Kill(m_pidRuntime);
@@ -260,18 +276,27 @@ luMainFrame::~luMainFrame()
 		wxProcess::Kill(m_pidHelp);
 		m_pidHelp = 0;
 	}
+	
+	SAFE_DELETE(m_animDlg);
 
 	SAFE_DELETE(m_helpTopic);
 	SAFE_DELETE(m_runtimeLogFile);
 
 	SAFE_DELETE(m_runtimeProcess);
 	SAFE_DELETE(m_projFile);
+
 	if (Ogre::LogManager::getSingletonPtr())
 	{
 		Ogre::Log *log = Ogre::LogManager::getSingleton().getDefaultLog();
 		if (log) log->removeListener(m_logListener);		
 	}
 	delete wxLog::SetActiveTarget(NULL); //delete m_logListener
+
+	if (m_aui) 
+	{
+		m_aui->UnInit();
+		SAFE_DELETE(m_aui);
+	}
 }
 
 void luMainFrame::setAppTitle(const wxString &blend) 
@@ -316,7 +341,7 @@ void luMainFrame::setupWindows()
 
 	//-- okWin
 	luMainApp* app = (luMainApp*)wxTheApp;
-	okWindow* win = new okWindow(this);
+	okWindow* win = new okWindow(this, wxSize(WIN_SIZE_X, WIN_SIZE_Y));
 	win->setRenderOnly(true);
 	win->setEanbleCameraControl(true);
 
@@ -332,7 +357,9 @@ void luMainFrame::setupWindows()
 
 	wxLogMessage("Initing...");
 	Ogre::Timer watch;
-	if (win->init(app->getOkApp(), "", "", WIN_SIZE_X, WIN_SIZE_Y)) 
+	okApp* okapp = app->getOkApp();
+	bool ok = okapp->init("", win->getNativeHandle(), WIN_SIZE_X, WIN_SIZE_Y); GK_ASSERT(ok);
+	if (win->init(okapp, okapp->getMainWindow())) 
 	{		
 		wxLogMessage("Elapsed time for initing: %.3f seconds", watch.getMilliseconds()/1000.0f);
 		m_timer.Start(1000/STATUS_FPS);
@@ -483,7 +510,6 @@ void luMainFrame::setupMenu()
     menuConvertEOL->Append(ID_CODE_CONVERTLF, wxT("LF (&Macintosh)"));
 
     // Extra menu
-    wxMenu *menuExtra = new wxMenu;
 	menuEdit->AppendSeparator();
     menuEdit->Append(ID_CODE_CHANGECASE, wxT("Change &case to .."), menuChangeCase);
     menuEdit->Append(ID_CODE_CONVERTEOL, wxT("Convert line &endings to .."), menuConvertEOL);
@@ -535,8 +561,8 @@ void luMainFrame::setupMenu()
 
 	//-- tools
 	menu = new wxMenu;
-	menu->Append(-1, "Animation Manger");
-	menu->Append(-1, "State Manager");
+	menu->Append(ID_TOOL_ANIM_MANAGER, "Animation Manger");
+	menu->Append(ID_TOOL_STATE_MANAGER, "State Manager");
 
 	menuBar->Append(menu, "&Tools");
 
@@ -579,9 +605,12 @@ void luMainFrame::setupToolbar()
 	tb->AddTool(ID_OPEN_PROJ_FILE, "OpenProject",  wxArtProvider::GetBitmap(wxART_FILE_OPEN, wxART_OTHER, wxSize(16,16)));	
 	tb->AddTool(wxID_SAVE, "SaveAll",	 wxArtProvider::GetBitmap(wxART_FILE_SAVE, wxART_OTHER, wxSize(16,16)));
 	tb->AddTool(ID_RUN_RUNTIME,  "Run",  wxArtProvider::GetBitmap(wxART_INFORMATION, wxART_OTHER, wxSize(16,16)));
+	tb->AddTool(ID_TOOL_ANIM_MANAGER,  "Animation",  wxArtProvider::GetBitmap(wxART_TICK_MARK, wxART_OTHER, wxSize(16,16)));
+	
+    tb->AddSeparator();
+
     tb->AddTool(ID_SHOW_HELP, "Help", wxArtProvider::GetBitmap(wxART_QUESTION, wxART_OTHER, wxSize(16,16)));
 
-    tb->AddSeparator();
 	tb->Realize();
 
 	m_aui->AddPane(tb, wxAuiPaneInfo().
@@ -1025,6 +1054,7 @@ bool luMainFrame::openProjFile(const wxString& fileName)
 	m_projFile = proj;
 	m_isLoadingProjFile = true;
 	m_isLoadedBlendFile = false;
+	m_blendFile = "";
 
 	gkString dir = proj->getProjDir();
 
@@ -1058,8 +1088,7 @@ bool luMainFrame::openProjFile(const wxString& fileName)
 
 	if (m_propsPanel)
 	{
-		m_propsPanel->setProjectName(proj->getProjName());
-		m_propsPanel->setProjectDir(proj->getProjDir());
+		m_propsPanel->updateProject(proj);
 	}
 
 	SAFE_DELETE(oldProj);
@@ -1093,7 +1122,7 @@ bool luMainFrame::openBlendFile(const wxString& fileName, bool addToProject)
 			}
 		}
 
-		if (IsSameFile(fileName, m_okWin->getApp()->getBlendFileName()))
+		if (IsSameFile(fileName, m_blendFile))
 		{
 			wxLogMessage("Already loaded.");
 			return true;
@@ -1102,7 +1131,7 @@ bool luMainFrame::openBlendFile(const wxString& fileName, bool addToProject)
 		wxLogMessage("Loading... %s ", fileName);
 
 		Ogre::Timer watch;
-		if (!m_okWin->load(WX2GK(fileName)))
+		if (!m_okWin->loadScene(WX2GK(fileName)))
 		{
 			wxString msg = wxString::Format("Error - Can't load the blend file: %s", fileName);
 			wxLogMessage(msg);
@@ -1110,6 +1139,8 @@ bool luMainFrame::openBlendFile(const wxString& fileName, bool addToProject)
 
 			return false;
 		}
+
+		m_blendFile = fileName;
 
 		wxLogMessage("Elapsed time for loading: %.3f seconds", watch.getMilliseconds()/1000.0f);
 
@@ -1122,7 +1153,7 @@ bool luMainFrame::openBlendFile(const wxString& fileName, bool addToProject)
 		if (m_isLoadingProjFile)
 			m_isLoadedBlendFile = true;
 
-		refreshInspPanel();
+		onSceneChanged();
 	}
 
 	if (addToProject && isProjectCreated())
@@ -1133,10 +1164,16 @@ bool luMainFrame::openBlendFile(const wxString& fileName, bool addToProject)
 	return true;
 }
 
+void luMainFrame::onSceneChanged()
+{
+	SAFE_DELETE(m_animDlg);
+	refreshInspPanel();
+}
+
 void luMainFrame::refreshInspPanel()
 {
 	m_projPanel->clearListItems();
-	gkScene *scene = getOkApp()->getActiveScene();
+	gkScene *scene = getOkApp()->getFirstScene();
 	if (scene)
 	{
 		gkGameObjectHashMap& objects = scene->getObjects();
@@ -1146,6 +1183,8 @@ void luMainFrame::refreshInspPanel()
 			m_projPanel->addListItem(obj->getName(), getLuObjectTypeName(obj->getType()));
 		}
 	}
+
+
 }
 
 
@@ -1267,7 +1306,10 @@ void luMainFrame::OnTimer(wxTimerEvent& event)
 
 	if (!m_okWin || !m_statusBar || !gkWindowSystem::getSingletonPtr()) return;
 
-	const Ogre::RenderTarget::FrameStats& stats = gkWindowSystem::getSingleton().getMainWindow()->getStatistics();
+	if (m_animDlg)
+		m_animDlg->update();
+
+	const Ogre::RenderTarget::FrameStats& stats = gkWindowSystem::getSingleton().getMainWindow()->getRenderWindow()->getStatistics();
 
 	m_statusBar->SetStatusText(wxString::Format("FPS: %.3f (%.3f/%.3f/%.3f) NumTris: %d NumBatches: %d",  
 		stats.lastFPS, stats.avgFPS, stats.bestFPS, stats.worstFPS, (int)stats.triangleCount, (int)stats.batchCount));
@@ -1459,7 +1501,7 @@ bool luMainFrame::addFileToProject(const wxString& pathName, int data)
 
 	if (data == ITEM_BLEND)
 	{
-		gkBlendFile* blend = getOkApp()->getBlendFile();
+		gkBlendFile* blend = getOkApp()->getFirstBlendFile();
 		item = m_projPanel->addBlendFile(relPath, blend);
 	}
 	else
@@ -1483,7 +1525,7 @@ bool luMainFrame::changeScene(const wxString& sceneName)
 	if (!m_okWin) return false;
 
 	bool ok = m_okWin->changeScene(sceneName);
-	refreshInspPanel();
+	onSceneChanged();
 	return ok;
 }
 
@@ -1542,4 +1584,32 @@ void luMainFrame::OnGameObjectSelected(wxCommandEvent& event)
 	gkGameObject *obj = m_okWin->getSelectedObject();
 
 	if (m_propsPanel) m_propsPanel->selectObject(obj);
+}
+
+
+void luMainFrame::showAnimDlg()
+{
+	if (!m_okWin) return;
+
+	gkGameObject *obj = m_okWin->getSelectedObject();
+	if (!obj) 
+	{
+		alert("First, Select an object for animation.");
+		return;
+	}
+
+	if (!m_animDlg)
+		m_animDlg = new luAnimDlg(this);
+	
+	m_animDlg->selectObject(obj, m_okWin->getScene());	
+}
+
+void luMainFrame::OnToolAnimManager(wxCommandEvent& event)
+{
+	showAnimDlg();
+}
+
+void luMainFrame::OnToolStateManager(wxCommandEvent& event)
+{
+	alert("StateManager");
 }

@@ -32,10 +32,9 @@
 class gkResource
 {
 protected:
-	gkResourceManager*     m_creator;
-	const gkResourceName   m_name;
-	const gkResourceHandle m_resourceHandle;
-
+	gkResourceManager*		m_creator;
+	const gkResourceName	m_name;	
+	const gkResourceHandle	m_resourceHandle;	
 
 	friend class gkResourceManager;
 	virtual void notifyResourceDestroying(void) {}
@@ -47,10 +46,11 @@ public:
 	virtual ~gkResource();
 
 
-	GK_INLINE const gkResourceName&    getResourceName(void)   const { return m_name; }
-	GK_INLINE const gkString&          getName(void)           const { return m_name.str(); }
-	GK_INLINE const gkResourceHandle&  getResourceHandle(void) const { return m_resourceHandle; }
-	GK_INLINE gkResourceManager*       getCreator(void)              { return m_creator; }
+	GK_INLINE const gkResourceName&		getResourceName(void)		const { return m_name; }
+	GK_INLINE const gkString&			getName(void)				const { return m_name.name.str(); }
+	GK_INLINE const gkString&			getGroupName(void)			const { return m_name.group.str(); }
+	GK_INLINE const gkResourceHandle&	getResourceHandle(void)		const { return m_resourceHandle; }
+	GK_INLINE gkResourceManager*		getCreator(void)			{ return m_creator; }
 
 
 

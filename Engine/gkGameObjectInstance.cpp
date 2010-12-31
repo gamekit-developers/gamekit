@@ -89,7 +89,7 @@ void gkGameObjectInstance::addObject(gkGameObject* gobj)
 	if (!gobj)
 		return;
 
-	const gkResourceName& name = gobj->getName() + m_uidName;
+	const gkResourceNameString& name = gobj->getName() + m_uidName;
 
 
 	if (m_objects.find(name) != UT_NPOS)

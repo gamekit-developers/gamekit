@@ -30,16 +30,14 @@
 #include "gkEngine.h"
 #include "gkUserDefs.h"
 #include "gkUtils.h"
+#include "gkResourceGroupManager.h"
 #include "bBlenderFile.h"
 #include "Blender.h"
-#include "External/Ogre/gkOgreBlendArchive.h"
 
 
 gkBlendLoader::gkBlendLoader()
 	:   m_activeFile(0)
 {
-	Ogre::ResourceGroupManager::getSingleton().addResourceLocation("",
-		gkBlendArchiveFactory::ARCHIVE_TYPE,  Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 }
 
 
@@ -47,15 +45,10 @@ gkBlendLoader::gkBlendLoader()
 gkBlendLoader::~gkBlendLoader()
 {
 	unloadAll(false);
-	Ogre::ResourceGroupManager::getSingleton().removeResourceLocation("",
-		Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+
 }
 
-void gkBlendLoader::clearResourceGroup(const gkString& inResourceGroup)
-{
-	if (Ogre::ResourceGroupManager::getSingleton().resourceGroupExists(inResourceGroup))
-		Ogre::ResourceGroupManager::getSingleton().clearResourceGroup(inResourceGroup);
-}
+
 
 void gkBlendLoader::unloadAll(bool exceptActiveFile)
 {
@@ -77,7 +70,7 @@ void gkBlendLoader::unloadAll(bool exceptActiveFile)
 		}
 		else
 		{
-			delete m_activeFile; m_activeFile = NULL;		
+			delete m_activeFile; m_activeFile = 0;		
 		}
 	}
 }
@@ -96,17 +89,26 @@ gkBlendFile* gkBlendLoader::getFileByName(const gkString& fname)
 	return 0;
 }
 
-
-
-gkBlendFile* gkBlendLoader::loadAndCatch(const gkString& fname, int options, const gkString& inResourceGroup, const gkString& scene)
+void gkBlendLoader::unloadFile(gkBlendFile* blendFile)
 {
-	m_activeFile = getFileByName(fname);
-	if (m_activeFile != 0)
-		return m_activeFile;
+	m_files.erase(m_files.find(blendFile));
+	if (m_activeFile == blendFile)
+		m_activeFile = NULL;
+	delete blendFile;
+}
+
+gkBlendFile* gkBlendLoader::loadAndCatch(const gkString& fname, int options, const gkString& inResourceGroup, const gkString& scene, const gkString& group)
+{
+	if (!(options & LO_IGNORE_CACHE_FILE))
+	{
+		m_activeFile = getFileByName(fname);
+		if (m_activeFile != 0)
+			return m_activeFile;
+	}
 
 	bParse::bLog::detail = gkEngine::getSingleton().getUserDefs().verbose ? 1 : 0;
 
-	m_activeFile = new gkBlendFile(fname, inResourceGroup);
+	m_activeFile = new gkBlendFile(fname, inResourceGroup, group);
 
 	if (m_activeFile->parse(options, scene))
 	{
@@ -123,21 +125,20 @@ gkBlendFile* gkBlendLoader::loadAndCatch(const gkString& fname, int options, con
 }
 
 
-gkBlendFile* gkBlendLoader::loadFile(const gkString& fname, const gkString& scene, const gkString& inResourceGroup)
+gkBlendFile* gkBlendLoader::loadFile(const gkString& fname, const gkString& scene, const gkString& inResourceGroup, const gkString& group)
 {
-	return loadFile(fname, LO_ALL_SCENES, inResourceGroup, scene);
+	return loadFile(fname, LO_ALL_SCENES, inResourceGroup, scene, group);
 }
 
 
-gkBlendFile* gkBlendLoader::loadFile(const gkString& fname, int options, const gkString& inResourceGroup, const gkString& scene)
+gkBlendFile* gkBlendLoader::loadFile(const gkString& fname, int options, const gkString& inResourceGroup, const gkString& scene, const gkString& group)
 {
 	bool resetLoad = false;
 	try
 	{
-		if (!Ogre::ResourceGroupManager::getSingleton().resourceGroupExists(inResourceGroup))
-			Ogre::ResourceGroupManager::getSingleton().createResourceGroup(inResourceGroup);
+		gkResourceGroupManager::getSingleton().createResourceGroup(inResourceGroup);
 
-		return loadAndCatch(fname, options, inResourceGroup);
+		return loadAndCatch(fname, options, inResourceGroup, scene, group);
 	}
 	catch (Ogre::Exception& e)
 	{

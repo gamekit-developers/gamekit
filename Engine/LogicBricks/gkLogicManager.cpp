@@ -354,4 +354,4 @@ void gkLogicManager::update(gkScalar delta)
 }
 
 
-UT_IMPLEMENT_SINGLETON(gkLogicManager)
+UT_IMPLEMENT_SINGLETON(gkLogicManager);

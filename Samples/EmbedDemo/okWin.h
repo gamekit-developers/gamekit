@@ -40,12 +40,13 @@ enum OKWIN_COMMAND_ID
 class okWindow : public wxWindow
 {
 public:
-	okWindow(wxWindow* parent=NULL);
+	okWindow(wxWindow* parent=NULL, const wxSize& size = wxDefaultSize);
 	~okWindow();
 
-	bool init(okApp* app, const gkString& blend="", const gkString& cfg="", int winSizeX=800, int winSizeY=600);
-	void uninit();
-	bool load(const gkString& blend="", const gkString& cfg="");
+	gkString getNativeHandle();
+
+	bool init(okApp* app, gkWindow* win);
+	void uninit();	
 	void resize();
 
 	okApp* getApp() { return m_okApp; }
@@ -57,8 +58,9 @@ public:
 
 	void alert(const wxString& msg);
 
-	void setRenderOnly(bool renderOnly) { m_renderOnly = renderOnly; }
+	void setRenderOnly(bool renderOnly);
 	void setEanbleCameraControl(bool enable) { m_enableCameraControl = enable; }
+	void setPlayAnimSelObj(bool enable) { m_playAnimSelObj = enable; }
 
 	void setCameraPolyMode(Ogre::PolygonMode polyMode);
 
@@ -70,7 +72,11 @@ public:
 	void showAxis(bool show);
 	void toggleShowAxis() { showAxis(!getShowAxis()); }
 
-	void clearScene();
+	gkScene* getScene() { return m_scene; }
+	bool loadScene(const gkString& blend="", const gkString& scene="", bool ignoreCache=false);
+	void unloadScene();
+
+	void clearScene(); //unload & create empty scene
 	bool changeScene(const wxString& sceneName);
 
 	gkGameObject* getSelectedObject() { return m_selObj; }
@@ -109,12 +115,15 @@ private:
 	wxPoint m_posMouse;
 	bool m_renderOnly; //don't call engine update()
 	bool m_enableCameraControl;
+	bool m_playAnimSelObj;
 
 	Ogre::RenderWindow *m_renderWindow;
 	Ogre::Camera* m_camera;
 	Ogre::SceneManager* m_sceneMgr;
 	gkGameObject* m_selObj;
 	okCamera* m_okCam;
+	gkScene* m_scene;
+	gkWindow* m_win;
 
 	bool m_LClick;
 	bool m_MClick;

@@ -40,26 +40,29 @@
 
 #define RAY_LENGTH			100
 
-#define FPS 60
+#define FPS					60
 
 
 IMPLEMENT_DYNAMIC_CLASS(okWindow, wxWindow)
 
-okWindow::okWindow(wxWindow* parent) : 
-	wxWindow(parent, -1),
-	m_timer(this, 	ID_OKWIN_REFESH_TIMER),
-	m_okApp(NULL),	
-	m_okCam(NULL),
-	m_renderWindow(NULL),
-	m_camera(NULL),
-	m_sceneMgr(NULL),
-	m_renderOnly(false),
-	m_enableCameraControl(false),
-	m_LClick(false),
-	m_MClick(false),
-	m_RClick(false),
-	m_posMouse(-1,-1),
-	m_selObj(NULL)
+okWindow::okWindow(wxWindow* parent, const wxSize& size) 
+	:	wxWindow(parent, -1, wxDefaultPosition, size),
+		m_timer(this, 	ID_OKWIN_REFESH_TIMER),
+		m_okApp(NULL),	
+		m_okCam(NULL),
+		m_renderWindow(NULL),
+		m_camera(NULL),
+		m_sceneMgr(NULL),
+		m_renderOnly(false),
+		m_enableCameraControl(false),
+		m_LClick(false),
+		m_MClick(false),
+		m_RClick(false),
+		m_posMouse(-1,-1),
+		m_selObj(NULL),
+		m_scene(NULL),
+		m_win(NULL),
+		m_playAnimSelObj(false)
 { 
 }
 
@@ -203,39 +206,72 @@ void okWindow::startGameLoop()
 		m_timer.Start(1000/FPS); 
 }
 
-bool okWindow::init(okApp* app, const gkString& blend, const gkString& cfg, int winSizeX, int winSizeY)
+gkString okWindow::getNativeHandle()
+{
+	return getNativeWinHandleFromWxWin(this);
+}
+
+bool okWindow::init(okApp* app, gkWindow* win)
 {
 	if (m_okApp || !app) return false;
 
-	gkString handle = getNativeWinHandleFromWxWin(this);
-	if (handle.empty()) 
-		return false;
+	const wxSize& size = GetClientSize(); 
 
-	if (!app->init(blend, cfg, handle, winSizeX, winSizeY))
-		return false;
+	if (!win)
+	{		
+		gkWindow* win = app->createWindow(getNativeHandle(), size.GetWidth(), size.GetHeight());
+		if (!win) return false;
+
+		m_win = win;
+	}
+	else 
+	{
+		m_win = win;
+		m_scene = m_win->getRenderScene();
+		if (m_scene)
+		{
+			setupRenderWindow();			
+			startGameLoop();
+		}
+	}
+
+	GK_ASSERT(m_win);
 
 	m_okApp = app;
-	SetSize(wxSize(winSizeX, winSizeY));
-
-	setupRenderWindow();
-			
-	startGameLoop();
 
 	return true;
 }
 
+void okWindow::uninit()
+{
+	if (!m_okApp) return;
+
+	unloadScene();
+
+	m_okApp->destroyWindow(m_win);
+	m_win = NULL;
+	m_okApp = NULL;
+}
+
+void okWindow::setRenderOnly(bool renderOnly) 
+{ 
+	m_renderOnly = renderOnly;
+	if (m_scene)
+		m_scene->setUpdateFlags(0);
+}
+
+
 void okWindow::setupRenderWindow()
 {
-	GK_ASSERT(m_okApp);
+	GK_ASSERT(m_win && m_scene);	
 
-	if (!gkWindowSystem::getSingletonPtr())
-		return;
-
-	m_renderWindow = gkWindowSystem::getSingleton().getMainWindow(); 
+	m_renderWindow = m_win->getRenderWindow();
+		
 	if (!m_renderWindow) return;
-
-	gkScene* scene = m_okApp->getActiveScene(); GK_ASSERT(scene);
-	gkCamera* cam = scene->getMainCamera(); GK_ASSERT(cam);
+	
+	
+	//if (!m_scene) m_scene = m_okApp->getFirstScene(); GK_ASSERT(m_scene);
+	gkCamera* cam = m_scene->getMainCamera(); GK_ASSERT(cam);
 	m_camera = cam->getCamera(); GK_ASSERT(m_camera);
 	m_sceneMgr = m_camera->getSceneManager(); GK_ASSERT(m_sceneMgr);
 
@@ -249,16 +285,22 @@ void okWindow::setupRenderWindow()
 	}
 }
 
-void okWindow::uninit()
+void okWindow::unloadScene()
 {
 	stopGameLoop();
+
+	delete m_okCam; m_okCam = NULL;
+
+	if (m_okApp && m_scene)
+	{
+		m_okApp->unloadScene(m_scene);
+		m_scene = NULL;
+	}
 
 	m_renderWindow = NULL;
 	m_camera = NULL;	
 	m_sceneMgr = NULL;
 	m_selObj = NULL;
-
-	delete m_okCam; m_okCam = NULL;
 }
 
 
@@ -276,14 +318,24 @@ void okWindow::resize()
 		m_renderWindow->update();	
 }
 
-bool okWindow::load(const gkString& blend, const gkString& cfg)
+bool okWindow::loadScene(const gkString& blend, const gkString& scene, bool ignoreCache)
 {
 	if (!m_okApp) return false;
 
-	uninit();
+	unloadScene();
 
-	if (!m_okApp->load(blend))
+	GK_ASSERT(m_win);
+
+	if (!blend.empty())
+		m_scene = m_okApp->loadScene(m_win, blend, scene, ignoreCache);
+	else
+		m_scene = m_okApp->getFirstScene();
+
+	if (!m_scene)
 		return false;
+
+	if (m_renderOnly)
+		m_scene->setUpdateFlags(0);
 
 	setupRenderWindow();
 	startGameLoop();
@@ -293,15 +345,18 @@ bool okWindow::load(const gkString& blend, const gkString& cfg)
 
 bool okWindow::changeScene(const wxString& sceneName)
 {
-	if (!m_okApp) return false;
+	if (!m_scene) return false;
 
-	if (m_okApp->getActiveSceneName() == sceneName)
+	if (m_scene->getName() == sceneName)
 		return true;
 
-	uninit();
+	unloadScene();
 
-	if (!m_okApp->changeScene(WX2GK(sceneName)))
+	if (!m_okApp->changeScene(m_scene, WX2GK(sceneName)))
 		return false;
+
+	if (m_renderOnly)
+		m_scene->setUpdateFlags(0);
 
 	setupRenderWindow();
 	startGameLoop();
@@ -325,10 +380,7 @@ void okWindow::OnTimer(wxTimerEvent& event)
 	
 	try 
 	{		
-		if (m_renderOnly)
-			drawRenderWindow();
-		else
-			m_okApp->step();
+		m_okApp->step();
 
 		if (m_okCam) m_okCam->updateHelper();
 	
@@ -394,8 +446,7 @@ void okWindow::clearScene()
 
 	uninit();
 
-	m_okApp->unload();
-	m_okApp->createEmptyScene();
+	m_scene = m_okApp->createEmptyScene();
 
 	setupRenderWindow();
 }
@@ -421,11 +472,9 @@ void okWindow::selectObject(gkGameObject* obj)
 
 gkGameObject* okWindow::selectObject(const wxString& objName)
 {	
-	if (!m_okApp) return NULL;
+	if (!m_scene) return NULL;
 
-
-	gkScene* scene = m_okApp->getActiveScene();
-	gkGameObject* obj = scene->getObject(WX2GK(objName));	
+	gkGameObject* obj = m_scene->getObject(WX2GK(objName));	
 
 	selectObject(obj);
 	

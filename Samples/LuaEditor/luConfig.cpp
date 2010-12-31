@@ -30,6 +30,23 @@
 
 UT_IMPLEMENT_SINGLETON(luConfig)
 
+gkString luConfig::getRuntimePath()
+{
+#ifdef _DEBUG
+#ifdef WIN32
+	return getString("app.debug_runtime.win32_path"); 
+#else
+	return getString("app.debug_runtime.linux_path");
+#endif
+#else
+#ifdef WIN32
+	return getString("app.runtime.win32_path"); 
+#else
+	return getString("app.runtime.linux_path");
+#endif
+#endif
+}
+
 wxColour luConfig::getColor(const gkString& name, const wxColour& defValue)
 {
 	liIntVec vec = getIntVec(name);

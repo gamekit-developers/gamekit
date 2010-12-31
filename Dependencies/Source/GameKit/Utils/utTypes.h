@@ -1493,8 +1493,10 @@ private:
 
 	void doCopy(const utHashTable<Key, Value> &rhs)
 	{
-		if (rhs.valid() && !rhs.empty())
-		{
+		if (rhs.empty())
+			clear();
+		else if (rhs.valid())
+		{			
 			reserve(rhs.m_capacity);
 
 			UTsize i, b;

@@ -25,6 +25,7 @@
 #include <wx/splitter.h>
 #include <wx/listctrl.h>
 #include <wx/propgrid/propgrid.h>
+#include <wx/propgrid/advprops.h>
 #include <wx/srchctrl.h>
 #include <wx/wizard.h>
 

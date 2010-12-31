@@ -105,7 +105,7 @@ void gkSoundActuator::execute(void)
 	if (!m_sndInit)
 	{
 		m_sndInit = true;
-		m_sound = gkSoundManager::getSingleton().getSound(m_sndRef);
+		m_sound = gkSoundManager::getSingleton().getByName<gkSound>(m_sndRef);
 
 		if (m_sound)
 		{

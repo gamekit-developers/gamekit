@@ -55,6 +55,6 @@ public:
 	static gkScriptController* getCurrent(void);
 };
 
-#endif
+#endif//OGREKIT_USE_LUA
 
 #endif//_gkScriptController_h_

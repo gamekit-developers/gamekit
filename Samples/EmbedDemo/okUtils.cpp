@@ -26,6 +26,7 @@
 */
 
 #include "StdAfx.h"
+#include "okUtils.h"
 
 #ifdef __WXGTK__
 #include "gdk/gdk.h"
@@ -57,4 +58,10 @@ gkString getNativeWinHandleFromWxWin(wxWindow* win)
 #error Not supported yet!
 #endif
 	return handle;
+}
+
+gkString getBaseFileName(const gkString& fileName)
+{
+	wxFileName fn(fileName);
+	return WX2GK(fn.GetName());
 }

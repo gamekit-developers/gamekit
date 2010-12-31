@@ -29,15 +29,11 @@
 
 #include "gkCommon.h"
 #include "gkMathUtils.h"
+#include "utSingleton.h"
 
-#include "OgreSingleton.h"
-
-
-class gkEngine : public Ogre::Singleton<gkEngine>
+class gkEngine : public utSingleton<gkEngine>
 {
 public:
-
-
 	class Listener
 	{
 	public:
@@ -45,15 +41,11 @@ public:
 		virtual void tick(gkScalar rate) = 0;
 	};
 
-	typedef utArray<Listener*> Listeners;
+	typedef utArray<Listener*>	Listeners;
 
 public:
 	gkEngine(gkUserDefs* otherDefs = 0);
 	~gkEngine();
-
-	static gkEngine& getSingleton();
-	static gkEngine* getSingletonPtr();
-
 
 	void initialize();
 	void finalize(void);
@@ -68,9 +60,7 @@ public:
 
 	void initializeWindow(void);
 
-
 	bool hasActiveScene(void);
-	void setActiveScene(gkScene* sc);
 
 	gkUserDefs& getUserDefs(void);
 	void requestExit(void);
@@ -86,6 +76,9 @@ public:
 
 	gkScene* getActiveScene(void);
 
+	void registerActiveScene(gkScene* scene);
+	void unregisterActiveScene(gkScene* scene);
+
 	void addListener(Listener* listener);
 	void removeListener(Listener* listener);
 
@@ -97,7 +90,7 @@ private:
 
 
 	Ogre::Root*             m_root;
-	Ogre::RenderWindow*     m_window;
+	gkWindow*				m_window;
 	bool                    m_initialized;
 	bool                    m_ownsDefs;
 	bool                    m_running;
@@ -105,6 +98,8 @@ private:
 	Listeners               m_listeners;
 
 	static gkScalar         m_tickRate;
+
+	UT_DECLARE_SINGLETON(gkEngine);
 };
 
 

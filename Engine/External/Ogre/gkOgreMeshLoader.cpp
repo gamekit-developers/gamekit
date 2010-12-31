@@ -43,7 +43,7 @@ gkMeshLoader::gkMeshLoader(gkMesh* me)
 	:    m_mesh(me)
 {
 	Ogre::MeshManager& mgr = Ogre::MeshManager::getSingleton();
-	const gkString& name = m_mesh->getResourceName().str();
+	const gkString& name = m_mesh->getResourceName().getName();
 
 
 
@@ -57,7 +57,7 @@ gkMeshLoader::gkMeshLoader(gkMesh* me)
 gkMeshLoader::~gkMeshLoader()
 {
 	Ogre::MeshManager& mgr = Ogre::MeshManager::getSingleton();
-	mgr.remove(m_mesh->getResourceName().str());
+	mgr.remove(m_mesh->getResourceName().getName());
 }
 
 
@@ -276,7 +276,7 @@ void gkMeshLoader::loadResource(Ogre::Resource* res)
 	if (m_mesh->getSkeleton())
 	{
 		gkSkeletonResource* res = m_mesh->getSkeleton();
-		omesh->setSkeletonName(res->getResourceName().str());
+		omesh->setSkeletonName(res->getResourceName().getName());
 	}
 
 

@@ -40,6 +40,7 @@ set(Core_SOURCE
 	gkRenderFactory.cpp
 	gkResource.cpp
 	gkResourceManager.cpp
+	gkResourceGroupManager.cpp
 	gkScene.cpp
 	gkSceneManager.cpp
 	gkSkeleton.cpp
@@ -49,7 +50,8 @@ set(Core_SOURCE
 	gkUserDefs.cpp
 	gkUtils.cpp
 	gkWindowSystem.cpp
-	gkWindowSystemPrivate.cpp
+	gkWindow.cpp
+	gkViewport.cpp
 	gkVariable.cpp
 )
 
@@ -91,7 +93,9 @@ set(Core_HEADER
 	gkTickState.h
 	gkRenderFactory.h
 	gkResource.h
+	gkResourceName.h
 	gkResourceManager.h
+	gkResourceGroupManager.h
 	gkScene.h
 	gkSceneManager.h
 	gkSerialize.h
@@ -106,14 +110,15 @@ set(Core_HEADER
 	gkValue.h
 	gkVariable.h
 	gkWindowSystem.h
-	gkWindowSystemPrivate.h
+	gkWindow.h
+	gkViewport.h
 	${CMAKE_BINARY_DIR}/Engine/gkSettings.h
 	OgreKit.h
 )
 
 if (OGREKIT_BUILD_IPHONE)
-	list(APPEND Core_HEADER iOS/gkWindowSystemPrivateIOS.h)
-	list(APPEND Core_SOURCE iOS/gkWindowSystemPrivateIOS.mm)
+	list(APPEND Core_HEADER iOS/gkWindowIOS.h)
+	list(APPEND Core_SOURCE iOS/gkWindowIOS.mm)
 endif()
 
 if(APPLE)

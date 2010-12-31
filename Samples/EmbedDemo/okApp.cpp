@@ -27,21 +27,22 @@
 
 #include "StdAfx.h"
 #include "okApp.h"
+#include "okUtils.h"
+#include "Animation/gkAnimationManager.h"
 
-
-#define DEFAULT_BLEND_FILE	"momo_ogre.blend"
 #define DEFAULT_CONFIG_FILE "OgreKitStartup.cfg"
 #define DEFAULT_LOG			"oklog.log"
 
-#define DEFAULT_RES_GROUP	"okapp_res"
 #define DEFAULT_SCENE_NAME	"DefaultScene"
 #define DEFAULT_CAMERA_NAME	"DefaultCamera"
 
-okApp::okApp() : 
-	m_scene(NULL), 
-	m_showPhysicsDebug(false), 
-	m_inited(false),
-	m_blendFile(NULL)
+UT_IMPLEMENT_SINGLETON(okApp)
+
+okApp::okApp() 
+	:	m_showPhysicsDebug(false), 
+		m_inited(false),		
+		m_winCount(0),
+		m_sceneCount(0)
 {
 	gkLogger::enable(DEFAULT_LOG, true);
 }
@@ -60,53 +61,36 @@ void  okApp::tick (gkScalar rate)
 }
 
 
-bool okApp::createEmptyScene()
+gkScene* okApp::createEmptyScene()
 {
-	if (m_scene)
-		return false;
+	if (hasScene())
+		return NULL;
 
-	m_scene = (gkScene*)gkSceneManager::getSingleton().create(DEFAULT_SCENE_NAME);
+	gkScene* scene = (gkScene*)gkSceneManager::getSingleton().create(gkResourceName(DEFAULT_SCENE_NAME, DEFAULT_SCENE_NAME));
 
-	if (m_scene)
+	if (scene)
 	{
-		gkCamera* camera = m_scene->createCamera(DEFAULT_CAMERA_NAME); GK_ASSERT(camera);				
-		m_scene->createInstance();
-		m_engine->setActiveScene(m_scene);
+		gkCamera* camera = scene->createCamera(DEFAULT_CAMERA_NAME); GK_ASSERT(camera);				
+		scene->createInstance();
 
 		GK_ASSERT(camera->getCamera());
 
-		return true;
+		okSceneInfo info;
+		info.scene = scene;
+
+		m_scenes.push_back(info);	
 	}
 
-	return false;
+	return scene;
 }
 
 bool okApp::setup(void)
-{
-    gkBlendFile *blend = gkBlendLoader::getSingleton().loadFile(gkUtils::getFile(m_blend), gkBlendLoader::LO_ALL_SCENES, DEFAULT_RES_GROUP);
-    if (!blend)
-    {
-        gkPrintf("File loading failed. %s\n", m_blend.c_str());
-		gkPrintf("Create Default Empty Scene. %s\n", DEFAULT_SCENE_NAME);
-
-		createEmptyScene();
-    }
-	else
+{	
+	if (!createEmptyScene())
 	{
-		m_scene = blend->getMainScene();	
-	}
-
-	
-	if (!m_scene)
-	{
-		gkPrintf("No usable scenes found in blend. %s\n", m_blend.c_str());
+		gkPrintf("Can't create empty scene.");
 		return false;
 	}
-
-	if (m_showPhysicsDebug)
-		m_scene->getDynamicsWorld()->enableDebugPhysics(true, true);
-
-	m_scene->createInstance();
 
     gkWindowSystem::getSingleton().addListener(this);
 
@@ -115,34 +99,51 @@ bool okApp::setup(void)
 }
 
 
-bool okApp::init(const gkString& blend, const gkString& cfg, const gkString& windowHandle, int winSizeX, int winSizeY)
+gkWindow* okApp::createWindow(const gkString& windowHandle, int winSizeX, int winSizeY)
 {
-	if (!blend.empty())
-		m_blend = blend;
+	if (!isInited()) return false;
 
+	gkUserDefs  prefs	= m_prefs;
+
+	prefs.winsize.x     = winSizeX;
+	prefs.winsize.y     = winSizeY;
+	prefs.wintitle      = utStringFormat("okwin_%d", m_winCount++); 	
+	prefs.extWinhandle	= windowHandle;
+
+	gkWindow* window = gkWindowSystem::getSingleton().createWindow(prefs);
+
+	return window;
+}
+
+void okApp::destroyWindow(gkWindow* win)
+{
+	if (!isInited()) return;
+
+	gkWindowSystem::getSingleton().destroyWindow(win);
+}
+
+bool okApp::init(const gkString& cfg, const gkString& windowHandle, int winSizeX, int winSizeY)
+{
 	m_cfg = cfg;
 
-	if (m_blend.empty())
-		m_blend = DEFAULT_BLEND_FILE; 
-	if (m_cfg.empty())
-		m_cfg = DEFAULT_CONFIG_FILE;
-
-
-	m_prefs.winsize.x        = winSizeX;
+	m_prefs.winsize.x        = winSizeX; 
 	m_prefs.winsize.y        = winSizeY;
-	m_prefs.wintitle         = ""; 
+	m_prefs.wintitle         = utStringFormat("okwin_%d", m_winCount++); 
 	m_prefs.verbose          = false; 
 	m_prefs.grabInput        = false;
 	m_prefs.debugPhysics     = false;
 	m_prefs.debugPhysicsAabb = false;
 
-	gkPath path = m_cfg;
-
-	// overide settings if found
-	if (path.isFileInBundle()) 
+	if (!m_cfg.empty())
 	{
-		m_prefs.load(path.getPath());
-		gkPrintf("Load config file: %s", path.getPath().c_str());
+		gkPath path = m_cfg;
+
+		// overide settings if found
+		if (path.isFileInBundle()) 
+		{
+			m_prefs.load(path.getPath());
+			gkPrintf("Load config file: %s", path.getPath().c_str());
+		}
 	}
 
 	m_prefs.extWinhandle = windowHandle;
@@ -170,93 +171,159 @@ void okApp::uninit()
 		m_engine = NULL;
 	}
 
+	m_scenes.clear();
+
 	m_inited = false;
 }
 
-void okApp::unload()
+gkWindow* okApp::getMainWindow()
 {
-	gkBlendLoader::getSingleton().clearResourceGroup(DEFAULT_RES_GROUP);	
-	//m_engine->clearAllScenes();
-	//m_engine->unloadAllResources();
-
-	gkSceneManager::getSingleton().destroyAllInstances();
-	gkSceneManager::getSingleton().destroyAll();
-	gkGameObjectManager::getSingleton().destroyAll();
-
-	gkGroupManager::getSingleton().destroyAll();
-	gkTextManager::getSingleton().destroyAll();
-	gkSkeletonManager::getSingleton().destroyAll();
-	gkMeshManager::getSingleton().destroyAll();
-	gkBlendLoader::getSingleton().unloadAll();
-
-	m_scene = NULL;
-	m_blendFile = NULL;	
+	return gkWindowSystem::getSingleton().getMainWindow();
 }
 
-bool okApp::load(const gkString& blend, const gkString& sceneName)
+UTsize okApp::findSceneInfo(gkScene* scene)
 {
-	if (!m_inited) return false;
+	for (UTsize i = 0; i < m_scenes.size(); i++)
+		if (m_scenes[i].scene == scene)
+			return i;
 
-	//GK_ASSERT(m_scene);
+	return UT_NPOS;
+}
 
-	unload();
+gkBlendFile* okApp::getSceneBlendFile(gkScene* scene)
+{
+	UTsize i = findSceneInfo(scene);
+	return i != UT_NPOS ? m_scenes[i].blend : NULL;
+}
+
+void okApp::unloadAllScenes()
+{	
+	gkSceneManager::getSingleton().destroyAllInstances();
+	gkSceneManager::getSingleton().destroyAll();
+
+	gkResourceGroupManager::getSingleton().destroyAllResourceGroup();
+
+	for (UTsize i = 0; i < m_scenes.size(); i++)
+	{
+		if (m_scenes[i].blend)
+			gkBlendLoader::getSingleton().unloadFile(m_scenes[i].blend);
+
+		gkResourceGroupManager::getSingleton().clearResourceGroup(m_scenes[i].group);
+	}
+
+	m_scenes.clear();
+}
+
+void okApp::unloadScene(gkScene* scene)
+{
+	if (!scene)
+		return;
+
+	gkString groupName = scene->getGroupName();
+		
+	scene->destroyInstance();
+	scene->_eraseAllObjects();
+	gkSceneManager::getSingleton().destroy(scene);
 	
-	gkBlendFile* file = gkBlendLoader::getSingleton().loadFile(blend, gkBlendLoader::LO_ALL_SCENES, DEFAULT_RES_GROUP);
+
+	UTsize i = findSceneInfo(scene);
+	if (i != UT_NPOS)
+	{
+		if (m_scenes[i].blend)
+			gkBlendLoader::getSingleton().unloadFile(m_scenes[i].blend);	
+
+		m_scenes.erase(i);
+	}
+	
+
+	gkResourceGroupManager::getSingleton().destroyResourceGroup(groupName);
+}
+
+gkScene* okApp::loadScene(gkWindow* window, const gkString& blend, const gkString& sceneName, bool ignoreCache)
+{
+	if (!m_inited) return NULL;
+
+	GK_ASSERT(window);
+
+	gkString group = utStringFormat("okscene_%d", m_sceneCount++);
+	int options = gkBlendLoader::LO_ONLY_ACTIVE_SCENE;
+	if (ignoreCache) options |= gkBlendLoader::LO_IGNORE_CACHE_FILE;
+	gkBlendFile* file = gkBlendLoader::getSingleton().loadFile(blend, options, group, sceneName, group);
 	if (!file) 
 	{
 		gkPrintf("Can't open the blend file: %s", blend.c_str());
 		return false;
 	}
 
+	gkScene* scene = NULL;
 	
 	if (!sceneName.empty())
-		m_scene = file->getSceneByName(sceneName);
+		scene = file->getSceneByName(sceneName);
 
-	if (!m_scene)	
-		m_scene = file->getMainScene();
+	if (!scene)	
+		scene = file->getMainScene();
 
-	if (!m_scene)
+	if (!scene)
 	{
 		gkPrintf("Can't create the scene.");
 		return false;
 	}
 
+	scene->setDisplayWindow(window);
+
 	if (m_showPhysicsDebug)
-		m_scene->getDynamicsWorld()->enableDebugPhysics(true, true);
+		scene->getDynamicsWorld()->enableDebugPhysics(true, true);
 
-	m_scene->createInstance();
-	m_blend = blend;
+	scene->createInstance();
 
-	m_blendFile = file;
+	okSceneInfo info;
+	info.scene = scene;
+	info.blend = file;
+	info.group = group;
 
-	return true;
+	m_scenes.push_back(info);
+
+
+	return scene;
 }
 
-gkString okApp::getActiveSceneName()
+gkString okApp::getFirstSceneName()
 {
-	return m_scene ? m_scene->getName() : "";
+	gkScene* scene = getFirstScene();
+	return scene ? scene->getName() : "";
 }
 
-bool okApp::changeScene(const gkString& sceneName)
+gkBlendFile* okApp::getFirstBlendFile()
 {
-	if (!m_inited || !m_blendFile) return false;
+	return m_scenes.empty() ? NULL : m_scenes[0].blend;
+}
 
-	if (getActiveSceneName() == sceneName) return true;
+bool okApp::changeScene(gkScene* scene, const gkString& sceneName)
+{
+	if (!m_inited || !scene) return false;
 
-	gkScene* newScene = m_blendFile->getSceneByName(sceneName);
+	if (scene->getName() == sceneName) return true;
+
+
+	gkBlendFile* blend = getSceneBlendFile(scene);
+	if (!blend) return false;
+
+	gkScene* newScene = blend->getSceneByName(sceneName);
 	if (!newScene) return false;
 
-	if (m_scene)
+	UTsize i = findSceneInfo(scene); GK_ASSERT(i != UT_NPOS);
+
+	if (scene)
 	{
-		if (m_scene == newScene)
+		if (scene == newScene)
 			return false;
 
-		m_scene->destroyInstance();
+		scene->destroyInstance();
 	}
 
 	if (!newScene->isInstanced())
 		newScene->createInstance();
-	m_scene = newScene;
+	m_scenes[i].scene = newScene;
 
 	return true;
 }
@@ -270,8 +337,10 @@ bool okApp::step()
 }
 
 
+
 void okApp::setShowPhysicsDebug(bool show)
 {
 	m_showPhysicsDebug = show;
-	m_scene->getDynamicsWorld()->enableDebugPhysics(show, true);	
+	for (UTsize i = 0; i < m_scenes.size(); i++)
+		m_scenes[i].scene->getDynamicsWorld()->enableDebugPhysics(show, true);	
 }

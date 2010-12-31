@@ -123,4 +123,4 @@ void gkNodeManager::clear()
 	m_locals.clear();
 }
 
-GK_IMPLEMENT_SINGLETON(gkNodeManager);
+UT_IMPLEMENT_SINGLETON(gkNodeManager);

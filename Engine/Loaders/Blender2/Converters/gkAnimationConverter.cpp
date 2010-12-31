@@ -233,10 +233,12 @@ void convertObjectIpo(Blender::Ipo* bipo, akAnimationChannel* chan, gkScalar sta
 }
 
 
-gkAnimation* convertObjectIpoToAnimation(Blender::Ipo* bipo, gkScalar animfps)
+gkAnimation* gkAnimationLoader::convertObjectIpoToAnimation(Blender::Ipo* bipo, gkScalar animfps)
 {
+	gkResourceName name(GKB_IDNAME(bipo), m_groupName);
+
 	gkAnimationManager& amgr = gkAnimationManager::getSingleton();
-	gkKeyedAnimation* act = amgr.createKeyedAnimation(GKB_IDNAME(bipo));
+	gkKeyedAnimation* act = amgr.createKeyedAnimation(name);
 	gkScalar start, end;
 	
 	if(!act)
@@ -283,10 +285,10 @@ gkAnimation* convertObjectIpoToAnimation(Blender::Ipo* bipo, gkScalar animfps)
 //	return act;
 //}
 
-void convertAction24(Blender::bAction* action, gkScalar animfps)
+void gkAnimationLoader::convertAction24(Blender::bAction* action, gkScalar animfps)
 {
 	// 2.4x actions are always Pose actions 
-	gkKeyedAnimation* act = gkAnimationManager::getSingleton().createKeyedAnimation(GKB_IDNAME(action));
+	gkKeyedAnimation* act = gkAnimationManager::getSingleton().createKeyedAnimation(gkResourceName(GKB_IDNAME(action), m_groupName));
 	
 	if(!act)
 		return;
@@ -313,9 +315,9 @@ void convertAction24(Blender::bAction* action, gkScalar animfps)
 }
 
 
-void convertAction25(Blender::bAction* action, gkScalar animfps)
+void gkAnimationLoader::convertAction25(Blender::bAction* action, gkScalar animfps)
 {
-	gkKeyedAnimation* act = gkAnimationManager::getSingleton().createKeyedAnimation(GKB_IDNAME(action));
+	gkKeyedAnimation* act = gkAnimationManager::getSingleton().createKeyedAnimation(gkResourceName(GKB_IDNAME(action), m_groupName));
 	
 	if(!act)
 		return;
@@ -411,7 +413,7 @@ void convertAction25(Blender::bAction* action, gkScalar animfps)
 }
 
 
-void convert25AnimData(gkGameObject* obj, Blender::AnimData* adt, gkScalar animfps)
+void gkAnimationLoader::convert25AnimData(gkGameObject* obj, Blender::AnimData* adt, gkScalar animfps)
 {
 	if(!adt)
 		return;
@@ -423,12 +425,13 @@ void convert25AnimData(gkGameObject* obj, Blender::AnimData* adt, gkScalar animf
 	
 	if(adt->action)
 	{
-		gkAnimation* act =  dynamic_cast<gkAnimation*>(gkAnimationManager::getSingleton().getByName(GKB_IDNAME(adt->action)));
+		gkResourceName name(GKB_IDNAME(adt->action), m_groupName);
+		gkAnimation* act =  dynamic_cast<gkAnimation*>(gkAnimationManager::getSingleton().getByName(name));
 		
 		if(!act)
 		{
 			convertAction25(adt->action, animfps);
-			act =  dynamic_cast<gkAnimation*>(gkAnimationManager::getSingleton().getByName(GKB_IDNAME(adt->action)));
+			act =  dynamic_cast<gkAnimation*>(gkAnimationManager::getSingleton().getByName(name));
 		}
 		
 		if(act)
@@ -467,7 +470,7 @@ void gkAnimationLoader::convertObject(gkGameObject* obj, Blender::Object* bobj, 
 	{
 		if(bobj && bobj->ipo)
 		{
-			gkAnimation* act =  dynamic_cast<gkAnimation*>(gkAnimationManager::getSingleton().getByName(GKB_IDNAME(bobj->ipo)));
+			gkAnimation* act =  dynamic_cast<gkAnimation*>(gkAnimationManager::getSingleton().getByName(gkResourceName(GKB_IDNAME(bobj->ipo), m_groupName)));
 			
 			if(!act)
 				act = convertObjectIpoToAnimation(bobj->ipo, animfps);
@@ -478,12 +481,13 @@ void gkAnimationLoader::convertObject(gkGameObject* obj, Blender::Object* bobj, 
 		
 		if(bobj && bobj->action)
 		{
-			gkAnimation* act =  dynamic_cast<gkAnimation*>(gkAnimationManager::getSingleton().getByName(GKB_IDNAME(bobj->action)));
+			gkResourceName name(GKB_IDNAME(bobj->action), m_groupName);
+			gkAnimation* act =  dynamic_cast<gkAnimation*>(gkAnimationManager::getSingleton().getByName(name));
 			
 			if(!act)
 			{
 				convertAction(bobj->action, pre25compat, animfps);
-				act =  dynamic_cast<gkAnimation*>(gkAnimationManager::getSingleton().getByName(GKB_IDNAME(bobj->action)));
+				act =  dynamic_cast<gkAnimation*>(gkAnimationManager::getSingleton().getByName(name));
 			}
 			
 			if(act)

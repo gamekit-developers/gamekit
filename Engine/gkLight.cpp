@@ -80,7 +80,7 @@ void gkLight::createInstanceImpl(void)
 
 	Ogre::SceneManager* manager = m_scene->getManager();
 
-	m_light = manager->createLight(m_name.str());
+	m_light = manager->createLight(m_name.getName());
 	m_node->attachObject(m_light);
 
 	updateProperties();

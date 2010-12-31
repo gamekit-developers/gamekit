@@ -66,6 +66,8 @@
 #include "gkUtils.h"
 #include "gkVariable.h"
 #include "gkWindowSystem.h"
+#include "gkWindow.h"
+#include "gkResourceGroupManager.h"
 
 #include "AI/gkRecast.h"
 #include "AI/gkNavMeshData.h"
@@ -76,6 +78,7 @@
 #include "AI/gkFSM.h"
 
 #include "Animation/gkAnimation.h"
+#include "Animation/gkAnimationManager.h"
 
 #include "Constraints/gkConstraint.h"
 #include "Constraints/gkConstraintManager.h"

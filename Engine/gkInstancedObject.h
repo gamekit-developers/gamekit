@@ -56,7 +56,7 @@ protected:
 	// Create and destroy events
 
 	virtual void preCreateInstanceImpl(void) {}
-	virtual void preDstroyInstanceImpl(void) {}
+	virtual void preDestroyInstanceImpl(void) {}
 	virtual void createInstanceImpl(void) {}
 	virtual void destroyInstanceImpl(void) {}
 	virtual void postCreateInstanceImpl(void) {}

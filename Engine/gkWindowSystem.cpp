@@ -34,10 +34,10 @@
 #include "gkCamera.h"
 #include "gkEngine.h"
 #include "gkScene.h"
-#include "gkWindowSystemPrivate.h"
+#include "gkWindow.h"
 
 #ifdef OGREKIT_BUILD_IPHONE
-#include "gkWindowSystemPrivateIOS.h"
+#include "gkWindowIOS.h"
 #endif
 
 
@@ -46,223 +46,120 @@ using namespace Ogre;
 UT_IMPLEMENT_SINGLETON(gkWindowSystem);
 
 gkWindowSystem::gkWindowSystem() 
-:	m_internal(0),
-	m_window(0), 
-	m_exit(false), 
-	m_requestedWidth(0), 
-	m_requestedHeight(0),
-	m_framingType(0),
-	m_useExternalWindow(false)
+	:	m_exit(false)
 {
-#ifdef OGREKIT_BUILD_IPHONE
-	m_internal = new gkWindowSystemPrivateIOS();
-#else
-	m_internal = new gkWindowSystemPrivate();
-#endif
+
 }
 
 
 gkWindowSystem::~gkWindowSystem()
 {
-	if (m_window)
-		WindowEventUtilities::removeWindowEventListener(m_window, m_internal);
-
-
 	UTsize i;
-	for (i = 0; i < m_joysticks.size(); ++i)
-		delete m_joysticks[i];
+	for (i = 0; i < m_windows.size(); i++)
+		delete m_windows[i];
 
-	m_joysticks.clear();
-
-	delete m_internal;
+	m_windows.clear();
 }
 
 
-// Creates the main Ogre window, and sets up the OIS input system
-RenderWindow* gkWindowSystem::createMainWindow(const gkUserDefs& prefs)
+// Creates the render window, and sets up the OIS input system
+gkWindow* gkWindowSystem::createWindow(const gkUserDefs& prefs)
 {
-	int winsizex, winsizey;
+#ifdef OGREKIT_BUILD_IPHONE
+	gkWindow* window = new gkWindowIOS();
+#else
+	gkWindow* window = new gkWindow();
+#endif
 
-	// one window for now
-	if (m_window)
-		return 0;
-
-	m_requestedWidth = (int)(prefs.winsize.x + 0.5f);
-	m_requestedHeight = (int)(prefs.winsize.y + 0.5f);
-	m_framingType = prefs.framingType;
-
-	Ogre::NameValuePairList params;
-
-	if (prefs.fsaa)
+	if (!window->createWindow(this, prefs))
 	{
-		params["FSAA"] = Ogre::StringConverter::toString(prefs.fsaaSamples);
-	}
-
-	if (!prefs.extWinhandle.empty())
-	{
-		params["externalWindowHandle"] = prefs.extWinhandle;
-		m_useExternalWindow = true;
-	}
-
-	if (prefs.fullscreen)
-	{
-		Ogre::RenderSystem* rsys = Root::getSingleton().getRenderSystem();
-		Ogre::ConfigOptionMap options = rsys->getConfigOptions();
-		Ogre::ConfigOption modeOption = options["Video Mode"];
-		bool found = false;
-
-		gkPrintf("Available video modes:");
-		for (size_t i = 0; i < modeOption.possibleValues.size(); i++)
-		{
-			gkString modeStr = modeOption.possibleValues[i];
-			gkPrintf("%s\n", modeStr.c_str());
-
-			if (!found)
-			{
-				int modex, modey;
-				modex = Ogre::StringConverter::parseInt( modeStr.substr(0, 4));
-				modey = Ogre::StringConverter::parseInt( modeStr.substr(7, 4));
-
-				if (modex >= m_requestedWidth && modey >= m_requestedHeight)
-				{
-					found = true;
-					winsizex = modex;
-					winsizey = modey;
-				}
-			}
-		}
-		if (found)
-		{
-			gkPrintf("Best video mode found: %i x %i, request was %i x %i\n", winsizex, winsizey, (int)prefs.winsize.x, (int)prefs.winsize.y);
-		}
-		else
-		{
-			gkPrintf("Unable to find a video mode with request minimun resolution: %i x %i\n", (int)prefs.winsize.x, (int)prefs.winsize.y);
-			return 0;
-		}
-	}
-	else
-	{
-		winsizex = m_requestedWidth;
-		winsizey = m_requestedHeight;
-	}
-
-	m_window = Root::getSingleton().createRenderWindow(prefs.wintitle,
-	           winsizex, winsizey, prefs.fullscreen, &params);
-	m_window->setActive(true);
-
-	// copy window size (used later for hit testing)
-	m_mouse.winsize.x = winsizex;
-	m_mouse.winsize.y = winsizey;
-
-
-	if (!m_internal->setup(this, prefs))
-	{
-		gkPrintf("Unable setup gkWindowSystem internal object.");
+		delete window;
+		gkPrintf("Unable setup gkWindow object.");
 		return 0;
 	}
 
-	WindowEventUtilities::addWindowEventListener(m_window, m_internal);
-	return m_window;
+	m_windows.push_back(window);
+
+	return window;
+}
+
+void gkWindowSystem::destroyWindow(gkWindow* window)
+{
+	if (!window) return;
+
+	delete window;
+
+	m_windows.erase(m_windows.find(window));
 }
 
 
-RenderWindow* gkWindowSystem::getMainWindow(void)
+gkWindow* gkWindowSystem::getMainWindow(void)
 {
-	return m_window;
+	return m_windows.empty() ? NULL : m_windows[0];
 }
 
-Viewport* gkWindowSystem::addMainViewport(gkCamera* cam)
+Ogre::RenderWindow* gkWindowSystem::getMainRenderWindow(void)
 {
-	if (m_window)
-	{
-		Viewport* vp =  m_window->addViewport(cam->getCamera());
-		setMainViewportDimension(vp);
-		return vp;
-	}
-	return 0;
-}
-
-void gkWindowSystem::setMainViewportDimension(Viewport* viewport)
-{
-	float l = 0.0;
-	float r = 1.0;
-	float t = 0.0;
-	float b = 1.0;
-	int w = m_window->getWidth();
-	int h = m_window->getHeight();
-
-	if (w != m_requestedWidth || h != m_requestedHeight)
-	{
-		switch (m_framingType)
-		{
-		case FRAMING_CROP:
-			{
-				l = (w - m_requestedWidth) / (2.0f * w);
-				r = (w + m_requestedWidth) / (2.0f * w);
-				t = (h - m_requestedHeight) / (2.0f * h);
-				b = (h + m_requestedHeight) / (2.0f * h);
-				break;
-			}
-		case FRAMING_LETTERBOX:
-			{
-				float hratio = (float)m_requestedWidth / (float)w;
-				float vratio = (float)m_requestedHeight / (float)h;
-
-				if (hratio > vratio)
-				{
-					l = 0;
-					r = 1;
-					t = (1 - (vratio / hratio)) / 2.0f;
-					b = t + (vratio / hratio);
-				}
-				else
-				{
-
-					t = 0;
-					b = 1;
-					l = (1 - (hratio / vratio)) / 2.0f;
-					r = l + (hratio / vratio);
-				}
-				break;
-			}
-		}
-
-	}
-
-	viewport->setDimensions(l, t, r - l, b - t);
+	gkWindow* window = getMainWindow(); GK_ASSERT(window);
+	return window ? window->getRenderWindow() : NULL;
 }
 
 void gkWindowSystem::addListener(Listener* l)
 {
-	m_listeners.push_back(l);
+	gkWindow* window = getMainWindow(); GK_ASSERT(window);	
+	if (window) window->addListener(l);
 }
 
 void gkWindowSystem::removeListener(Listener* l)
 {
-	m_listeners.erase(l);
+	gkWindow* window = getMainWindow(); GK_ASSERT(window);	
+	if (window) window->removeListener(l);
 }
 
 // Call platform event loop
 void gkWindowSystem::process(void)
 {
-	m_internal->process();
+	UTsize i;
+	for (i = 0; i < m_windows.size(); i++)
+		m_windows[i]->process();
 }
 
 // Handle platform messages
 void gkWindowSystem::dispatch(void)
 {
-	m_internal->dispatch();
+	UTsize i;
+	for (i = 0; i < m_windows.size(); i++)
+		m_windows[i]->dispatch();
 }
 
 
 void gkWindowSystem::clearStates(void)
 {
-	m_mouse.clear();
-	m_keyboard.clear();
-
 	UTsize i;
-	for (i = 0; i < m_joysticks.size(); ++i)
-		m_joysticks[i]->clear();
+	for (i = 0; i < m_windows.size(); i++)
+		m_windows[i]->clearStates();
 }
 
+gkKeyboard* gkWindowSystem::getKeyboard(void)      
+{
+	GK_ASSERT(getMainWindow());
+	return getMainWindow()->getKeyboard();
+}
+
+gkMouse* gkWindowSystem::getMouse(void)            
+{
+	GK_ASSERT(getMainWindow());
+	return getMainWindow()->getMouse();
+}
+
+unsigned int gkWindowSystem::getNumJoysticks(void) 
+{
+	GK_ASSERT(getMainWindow());
+	return getMainWindow()->getNumJoysticks();
+}
+
+gkJoystick* gkWindowSystem::getJoystick(int index) 
+{
+	GK_ASSERT(getMainWindow());
+	return getMainWindow()->getJoystick(index);
+}

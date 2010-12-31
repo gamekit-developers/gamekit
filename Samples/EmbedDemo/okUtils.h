@@ -33,5 +33,17 @@ gkString getNativeWinHandleFromWxWin(wxWindow* win);
 GK_INLINE gkString WX2GK(const wxString& s) { return gkString(s.mb_str(wxConvUTF8)); }
 GK_INLINE wxString GK2WX(const gkString& s) { return wxString(s.c_str()); }
 
+GK_INLINE wxColor GK2WX(const gkColor &s) { return wxColor(s.r * 255, s.g * 255, s.b * 255, s.a * 255); }
+GK_INLINE gkColor WX2GK(const wxColor &s) { return gkColor(s.Red() / 255.0f, s.Green() / 255.0f, s.Blue() / 255.0f, s.Alpha() / 255.0f); }
+
+GK_INLINE wxString GK2STR(const UTint32 v)			{ return wxString::Format("%d", v);			}
+GK_INLINE wxString GK2STR(const UTuint32 v)			{ return wxString::Format("%u", v);			}
+GK_INLINE wxString GK2STR(const gkScalar v)			{ return wxString::Format("%g", double(v));	}
+
+GK_INLINE UTint32	WX2INT(const wxString& s)		{ long v = 0; s.ToLong(&v); return UTint32(v);				}
+GK_INLINE UTuint32	WX2UINT(const wxString& s)		{ unsigned long v = 0; s.ToULong(&v); return UTuint32(v);	}
+GK_INLINE gkScalar	WX2SCALAR(const wxString& s)	{ double v = 0; s.ToDouble(&v); return gkScalar(v);			}
+
+gkString getBaseFileName(const gkString& s);
 
 #endif //_okUtils_h_

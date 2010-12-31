@@ -72,6 +72,7 @@ public:
 	void destroy(const gkResourceHandle& handle);
 	void destroy(const gkResourceName& name);
 	void destroy(gkResource* ob);
+	void destroyGroup(const gkResourceNameString& group);
 	void destroyAll(void);
 
 	bool exists(const gkResourceName& name);
@@ -98,6 +99,9 @@ protected:
 
 	virtual void notifyDestroyAllInstancesImpl(void) {}
 	virtual void notifyDestroyAllImpl(void) {}
+
+	virtual void notifyDestroyGroupInstancesImpl(const gkResourceNameString& group) {}
+	virtual void notifyDestroyGroupImpl(const gkResourceNameString& group) {}
 
 	virtual void notifyResourceCreatedImpl(gkResource* res) {}
 	virtual void notifyResourceDestroyedImpl(gkResource* res) {}

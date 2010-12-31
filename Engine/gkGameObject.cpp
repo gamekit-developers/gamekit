@@ -73,7 +73,6 @@ gkGameObject::gkGameObject(gkInstancedManager* creator, const gkResourceName& na
 {
 	m_life.tick = 0;
 	m_life.timeToLive = 0;
-	
 }
 
 
@@ -91,7 +90,7 @@ gkGameObject::~gkGameObject()
 	if(m_actionBlender)
 		delete m_actionBlender;
 
-	Animation::Iterator it = m_actions.iterator();
+	Animations::Iterator it = m_actions.iterator();
 	while (it.hasMoreElements())
 		delete it.getNext().second;
 }
@@ -189,7 +188,7 @@ void gkGameObject::createInstanceImpl(void)
 		}
 	}
 
-	m_node = parentNode ? parentNode->createChildSceneNode(m_name.str()) : manager->getRootSceneNode()->createChildSceneNode(m_name.str());
+	m_node = parentNode ? parentNode->createChildSceneNode(m_name.getName()) : manager->getRootSceneNode()->createChildSceneNode(m_name.getName());
 
 
 	applyTransformState(m_baseProps.m_transform);
@@ -1121,6 +1120,13 @@ void gkGameObject::removeEventListener(gkGameObject::Notifier* evt)
 	if (evt) m_events.erase(evt);
 }
 
+void gkGameObject::getAnimationNames(utArray<gkHashedString>& names)
+{
+	Animations::Iterator it = m_actions.iterator();
+	while (it.hasMoreElements())
+		names.push_back(it.getNext().first);
+}
+
 
 gkAnimationPlayer* gkGameObject::addAnimation(gkAnimation* action, const gkHashedString& name)
 {
@@ -1139,7 +1145,7 @@ gkAnimationPlayer* gkGameObject::addAnimation(gkAnimation* action, const gkHashe
 
 gkAnimationPlayer* gkGameObject::addAnimation(const gkHashedString& name)
 {
-	gkAnimation* res = gkAnimationManager::getSingleton().getAnimation(name);
+	gkAnimation* res = gkAnimationManager::getSingleton().getAnimation(gkResourceName(name, getGroupName()));
 	
 	if(!res)
 		return 0;
@@ -1183,6 +1189,8 @@ void gkGameObject::playAnimation(gkAnimationPlayer* act, gkScalar blend, int mod
 ///tick is in second
 void gkGameObject::updateAnimationBlender(const gkScalar tick)
 {
+	GK_ASSERT(hasAnimationBlender());
+
 	getAnimationBlender().evaluate(tick);
 }
 

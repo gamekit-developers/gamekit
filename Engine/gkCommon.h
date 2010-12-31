@@ -45,30 +45,21 @@
 #define GK_INLINE           UT_INLINE
 #define GK_ASSERT           UT_ASSERT
 
-#define GK_IMPLEMENT_SINGLETON(cls)\
-    template<> cls* Ogre::Singleton<cls>::ms_Singleton= 0;\
-    cls& cls::getSingleton() {  \
-        UT_ASSERT(ms_Singleton);   \
-        return *ms_Singleton;   \
-    }\
-    cls* cls::getSingletonPtr(){ \
-        return ms_Singleton;\
-    }
 
 #define GK_DEF_GROUP "General"
 
 
 
-#define GK_EXTERNAL_RENDER_GAMEKIT        0
-#define GK_EXTERNAL_RENDER_OGREKIT        1
-#define GK_EXTERNAL_RENDER_IRRKIT        2
-#define GK_EXTERNAL_RENDER_HORDEKIT        3
-#define GK_EXTERNAL_RENDER                GK_EXTERNAL_RENDER_OGREKIT
+#define GK_EXTERNAL_RENDER_GAMEKIT			0
+#define GK_EXTERNAL_RENDER_OGREKIT			1
+#define GK_EXTERNAL_RENDER_IRRKIT			2
+#define GK_EXTERNAL_RENDER_HORDEKIT			3
+#define GK_EXTERNAL_RENDER					GK_EXTERNAL_RENDER_OGREKIT
 
-#define GK_VERSION_MAJOR    1
-#define GK_VERSION_MINOR    0
-#define GK_VERSION_SUB        1
-#define GK_VERSION            UT_ID(GK_VERSION_MAJOR, GK_VERSION_MINOR, GK_VERSION_SUB, 'a')
+#define GK_VERSION_MAJOR					1
+#define GK_VERSION_MINOR					0
+#define GK_VERSION_SUB						1
+#define GK_VERSION							UT_ID(GK_VERSION_MAJOR, GK_VERSION_MINOR, GK_VERSION_SUB, 'a')
 
 
 
@@ -86,6 +77,8 @@ class gkEngine;
 class gkVariable;
 class gkKeyboard;
 class gkMouse;
+class gkJoystick;
+class gkTouch;
 class gkScene;
 class gkSceneManager;
 class gkLogicManager;
@@ -93,10 +86,11 @@ class gkLogicTree;
 class gkConstraint;
 class gkLogicManager;
 class gkVariable;
+class gkViewport;
+class gkWindow;
 class gkWindowSystem;
 class gkBlendFile;
 class gkUserDefs;
-
 
 class gkConstraintManager;
 class gkConstraint;
@@ -127,25 +121,35 @@ class gkResourceManager;
 class gkResource;
 
 typedef UTint32         gkResourceHandle;
-typedef gkHashedString  gkResourceName;
+typedef gkHashedString  gkResourceNameString;
 
 
 class gkMeshManager;
 class gkMesh;
 class gkMeshLoader;
 
-// Common types
-typedef utHashTable<gkHashedString, gkGameObject*>  gkGameObjectHashMap;
-typedef utArray<gkGameObject*>                      gkGameObjectArray;
-typedef utArray<gkGameObjectGroup*>                  gkGroupArray;
+class gkAnimation;
+class gkKeyedAnimation;
+class gkAnimationSequence;
+class gkAnimationPlayer;
+class gkAnimationManager;
+class gkTransformChannel;
+class gkBoneChannel;
+class gkObjectChannel;
 
-typedef utHashSet<gkGameObject*>                    gkGameObjectSet;
-typedef utHashSet<gkCamera*>                        gkCameraSet;
-typedef utHashSet<gkLight*>                         gkLightSet;
-typedef utHashSet<gkEntity*>                        gkEntitySet;
-typedef utHashSet<gkSkeleton*>                      gkSkeletonSet;
-typedef utHashSet<gkPhysicsController*>             gkPhysicsControllerSet;
-typedef utArray<gkPhysicsController*>               gkPhysicsControllers;
+// Common types
+typedef utHashTable<gkHashedString, gkGameObject*>	gkGameObjectHashMap;
+typedef utArray<gkGameObject*>						gkGameObjectArray;
+typedef utArray<gkGameObjectGroup*>					gkGroupArray;
+typedef utArray<gkScene*>							gkSceneArray;
+
+typedef utHashSet<gkGameObject*>					gkGameObjectSet;
+typedef utHashSet<gkCamera*>						gkCameraSet;
+typedef utHashSet<gkLight*>							gkLightSet;
+typedef utHashSet<gkEntity*>						gkEntitySet;
+typedef utHashSet<gkSkeleton*>						gkSkeletonSet;
+typedef utHashSet<gkPhysicsController*>				gkPhysicsControllerSet;
+typedef utArray<gkPhysicsController*>				gkPhysicsControllers;
 
 enum gkTransformSpace
 {
@@ -163,5 +167,6 @@ struct Int2Type
 	enum { value = v };
 };
 
+#include "gkResourceName.h"
 
 #endif//_gkCommon_h_

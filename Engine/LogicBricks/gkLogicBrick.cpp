@@ -29,7 +29,6 @@
 #include "gkLogicLink.h"
 #include "gkLogicManager.h"
 
-
 gkLogicBrick::gkLogicBrick(gkGameObject* object, gkLogicLink* link, const gkString& name)
 	:       m_object(object), m_name(name), m_link(link), m_stateMask(0), m_pulseState(BM_IDLE),
 	        m_debugMask(0), m_isActive(false), m_priority(0), m_listener(0)
@@ -38,6 +37,10 @@ gkLogicBrick::gkLogicBrick(gkGameObject* object, gkLogicLink* link, const gkStri
 	m_scene = m_object->getOwner();
 }
 
+
+gkLogicBrick::~gkLogicBrick()
+{
+}
 
 void gkLogicBrick::cloneImpl(gkLogicLink* link, gkGameObject* dest)
 {
@@ -78,4 +81,10 @@ void gkLogicBrick::setPriority(int v)
 	m_priority = v;
 	if (op != m_priority)
 		gkLogicManager::getSingleton().notifySort();
+}
+
+
+const gkString& gkLogicBrick::getObjectGroupName(void) const
+{
+	return m_object->getGroupName();
 }

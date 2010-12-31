@@ -34,11 +34,7 @@ class luConfig : public xml::xmlConfig, public utSingleton<luConfig>
 {
 public:
 
-#ifdef WIN32
-	gkString getRuntimePath()								{ return getString("app.runtime.win32_path"); }
-#else
-	gkString getRuntimePath()								{ return getString("app.runtime.linux_path"); }
-#endif
+	gkString getRuntimePath();
 
 	gkString getHelpFilePath()								{ return getString("app.help.path"); }
 	gkString getHelpTopicFile()								{ return getString("app.help.topic"); }

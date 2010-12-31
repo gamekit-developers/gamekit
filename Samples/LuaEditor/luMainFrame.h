@@ -42,6 +42,7 @@ class luHhkFile;
 class luLogEdit;
 class luLogBox;
 class luConsoleEdit;
+class luAnimDlg;
 
 class luMainFrame : public wxFrame
 {
@@ -82,6 +83,10 @@ public:
 
 	bool gotoLuaSource(const wxString& luaFile, int lineNo);
 	bool selectGameObject(const wxString& name);
+
+	void onSceneChanged();
+	void showAnimDlg();
+	void onAnimDlgClosed() { m_animDlg = NULL; }
 private:
 
 	void OnOpen(wxCommandEvent& event);
@@ -120,6 +125,9 @@ private:
 	void OnShowLogWin(wxCommandEvent& event);
 	void OnShowPropsWin(wxCommandEvent& event);
 
+	void OnToolAnimManager(wxCommandEvent& event);
+	void OnToolStateManager(wxCommandEvent& event);
+
 	void OnWinPagePrev(wxCommandEvent& event);
 	void OnWinPageNext(wxCommandEvent& event);
 
@@ -151,6 +159,7 @@ private:
 	luPropsPanel*		m_propsPanel;
 	luEdit*				m_focusEdit;
 	luHhkFile*			m_helpTopic;
+	luAnimDlg*			m_animDlg;
 	
 	wxAuiNotebook*		m_bookMain;
 	wxAuiNotebook*		m_bookOutput;
@@ -176,6 +185,7 @@ private:
 
 	luLogFile* m_runtimeLogFile;
 
+	wxString m_blendFile;
 public:
 	void addPipedOutput(const wxString& str);
 

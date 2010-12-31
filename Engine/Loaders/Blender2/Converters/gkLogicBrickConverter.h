@@ -28,7 +28,7 @@
 #define _gkLogicBrickConverter_h_
 
 
-#include "utTypes.h"
+#include "gkCommon.h"
 
 namespace Blender
 {
@@ -55,12 +55,12 @@ protected:
 		Blender::bActuator* act;
 	};
 
-	typedef utList<ResolveObject>   ResolveObjectList;
-	typedef utList<gkLogicLink*>   CreatedList;
+	typedef utList<ResolveObject>	ResolveObjectList;
+	typedef utList<gkLogicLink*>	CreatedList;
 
 	ResolveObjectList               m_missing;
 	CreatedList                     m_createdLinks;
-
+	
 public:
 	gkLogicLoader();
 	~gkLogicLoader();

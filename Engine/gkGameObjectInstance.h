@@ -58,7 +58,7 @@ protected:
 public:
 
 
-	gkGameObjectInstance(gkInstancedManager*, const gkResourceName&, const gkResourceHandle&);
+	gkGameObjectInstance(gkInstancedManager* creator, const gkResourceName& name, const gkResourceHandle& handle);
 	virtual ~gkGameObjectInstance();
 
 

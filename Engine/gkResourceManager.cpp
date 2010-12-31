@@ -48,16 +48,22 @@ gkResourceManager::~gkResourceManager()
 
 gkResource* gkResourceManager::getByName(const gkResourceName& name)
 {
+	gkResource* obCan = 0;
 	Resources::Iterator iter = m_resources.iterator();
 	while (iter.hasMoreElements())
 	{
 		gkResource* ob = iter.peekNextValue();
-		if (ob->getResourceName() == name)
-			return ob;
+		if (ob->getResourceName().isNameEqual(name))
+		{
+			if (ob->getResourceName().isGroupEqual(name))
+				return ob;
+			else if (name.isGroupEmpty())
+				obCan = ob;
+		}
 
 		iter.next();
 	}
-	return 0;
+	return obCan;
 }
 
 
@@ -76,7 +82,7 @@ gkResource* gkResourceManager::create(const gkResourceName& name)
 
 	if (exists(name))
 	{
-		gkLogMessage(m_managerType << ": Duplicate " << m_resourceType << " " << name.str() << " found ");
+		gkLogMessage(m_managerType << ": Duplicate " << m_resourceType << " " << name.getName() << "(" << name.getGroup() << ") found ");
 		return 0;
 	}
 
@@ -84,7 +90,7 @@ gkResource* gkResourceManager::create(const gkResourceName& name)
 
 	if (!ob)
 	{
-		gkLogMessage(m_managerType << ": Failed to create "  << m_resourceType << " " << name.str());
+		gkLogMessage(m_managerType << ": Failed to create "  << m_resourceType << " " << name.getName() << "(" << name.getGroup() << ")");
 		return 0;
 	}
 
@@ -133,7 +139,32 @@ void gkResourceManager::destroy(gkResource* ob)
 		destroy(ob->getResourceHandle());
 }
 
+void gkResourceManager::destroyGroup(const gkResourceNameString& group)
+{
+	notifyDestroyGroupInstancesImpl(group);
+	notifyDestroyGroupImpl(group);
 
+	Resources tmp;
+	tmp.reserve(m_resources.size());
+
+	Resources::Iterator iter = m_resources.iterator();
+	while (iter.hasMoreElements())
+	{
+		gkResource* ob = iter.peekNextValue();
+		if (ob->getResourceName().group == group)
+		{
+			ob->notifyResourceDestroying();
+			notifyResourceDestroyed(ob);
+
+			delete ob;
+		}
+		else
+			tmp.insert(iter.peekNextKey(), ob);
+		iter.next();
+	}
+
+	m_resources = tmp;
+}
 
 void gkResourceManager::destroyAll(void)
 {
@@ -206,15 +237,5 @@ bool gkResourceManager::exists(const gkResourceHandle& handle)
 
 bool gkResourceManager::exists(const gkResourceName& name)
 {
-	Resources::Iterator iter = m_resources.iterator();
-	while (iter.hasMoreElements())
-	{
-		gkResource* ob = iter.peekNextValue();
-		if (ob->getResourceName() == name)
-			return true;
-
-		iter.next();
-	}
-
-	return false;
+	return getByName(name) != NULL;
 }

@@ -317,16 +317,16 @@ public:
 	gkScalar    m_restitution;
 	gkScalar    m_friction;
 
-	bool isContactListener(void)    const { return (m_mode & GK_CONTACT) != 0;}
-	bool isDosser(void)             const { return (m_mode & GK_NO_SLEEP) == 0;}
-	bool isRigidOrDynamic(void)     const { return m_type == GK_DYNAMIC || m_type == GK_RIGID;}
-	bool isRigidOrStatic(void)      const { return m_type == GK_STATIC  || m_type == GK_RIGID;}
-	bool isPhysicsObject(void)      const { return m_type != GK_NO_COLLISION; }
-	bool isStatic(void)             const { return m_type == GK_STATIC; }
-	bool isDynamic(void)            const { return m_type == GK_DYNAMIC; }
-	bool isRigid(void)              const { return m_type == GK_RIGID; }
-	bool isSoft(void)               const { return m_type == GK_SOFT; }
-	bool isMeshShape(void)          const { return m_shape >= SH_CONVEX_TRIMESH;}
+	GK_INLINE bool isContactListener(void)    const { return (m_mode & GK_CONTACT) != 0;}
+	GK_INLINE bool isDosser(void)             const { return (m_mode & GK_NO_SLEEP) == 0;}
+	GK_INLINE bool isRigidOrDynamic(void)     const { return m_type == GK_DYNAMIC || m_type == GK_RIGID;}
+	GK_INLINE bool isRigidOrStatic(void)      const { return m_type == GK_STATIC  || m_type == GK_RIGID;}
+	GK_INLINE bool isPhysicsObject(void)      const { return m_type != GK_NO_COLLISION; }
+	GK_INLINE bool isStatic(void)             const { return m_type == GK_STATIC; }
+	GK_INLINE bool isDynamic(void)            const { return m_type == GK_DYNAMIC; }
+	GK_INLINE bool isRigid(void)              const { return m_type == GK_RIGID; }
+	GK_INLINE bool isSoft(void)               const { return m_type == GK_SOFT; }
+	GK_INLINE bool isMeshShape(void)          const { return m_shape >= SH_CONVEX_TRIMESH;}
 };
 
 
@@ -371,25 +371,27 @@ public:
 	int                 m_mode;
 	int                 m_state;
 	gkPhysicsProperties m_physics;
-	unsigned char        m_findPathFlag;
+	unsigned char       m_findPathFlag;
 	gkString            m_parent;
 
 
 
-	bool isContactListener(void)    const { return m_physics.isContactListener(); }
-	bool isDosser(void)             const { return m_physics.isDosser(); }
-	bool isRigidOrDynamic(void)     const { return m_physics.isRigidOrDynamic();}
-	bool isRigidOrStatic(void)      const { return m_physics.isRigidOrStatic();}
+	GK_INLINE bool isContactListener(void)    const { return m_physics.isContactListener(); }
+	GK_INLINE bool isDosser(void)             const { return m_physics.isDosser(); }
+	GK_INLINE bool isRigidOrDynamic(void)     const { return m_physics.isRigidOrDynamic();}
+	GK_INLINE bool isRigidOrStatic(void)      const { return m_physics.isRigidOrStatic();}
+	
+	GK_INLINE bool isPhysicsObject(void)      const { return m_physics.isPhysicsObject(); }
+	GK_INLINE bool isStatic(void)             const { return m_physics.isStatic(); }
+	GK_INLINE bool isDynamic(void)            const { return m_physics.isDynamic(); }
+	GK_INLINE bool isRigid(void)              const { return m_physics.isRigid(); }
+	GK_INLINE bool isSoft(void)               const { return m_physics.isSoft(); }
+	GK_INLINE bool isMeshShape(void)          const { return m_physics.isMeshShape(); }
 
-	bool isPhysicsObject(void)      const { return m_physics.isPhysicsObject(); }
-	bool isStatic(void)             const { return m_physics.isStatic(); }
-	bool isDynamic(void)            const { return m_physics.isDynamic(); }
-	bool isRigid(void)              const { return m_physics.isRigid(); }
-	bool isSoft(void)               const { return m_physics.isSoft(); }
-	bool isActor(void)              const { return (m_mode & GK_ACTOR)      != 0; }
-	bool isInvisible(void)          const { return (m_mode & GK_INVISIBLE)  != 0; }
-	bool isOccluder(void)           const { return (m_mode & GK_OCCLUDER)   != 0; }
-	bool isGhost(void)              const { return (m_mode & GK_GHOST)      != 0; }
+	GK_INLINE bool isActor(void)              const { return (m_mode & GK_ACTOR)      != 0; }
+	GK_INLINE bool isInvisible(void)          const { return (m_mode & GK_INVISIBLE)  != 0; }
+	GK_INLINE bool isOccluder(void)           const { return (m_mode & GK_OCCLUDER)   != 0; }
+	GK_INLINE bool isGhost(void)              const { return (m_mode & GK_GHOST)      != 0; }
 };
 
 class gkFogParams

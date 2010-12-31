@@ -36,6 +36,7 @@ gkStats::gkStats()
 		m_physics(0),
 		m_sound(0),
 		m_bufswaplod(0),
+		m_animations(0),
 		m_lastRender(0),
 		m_lastLogicBricks(0),
 		m_lastLogicNodes(0),
@@ -43,6 +44,7 @@ gkStats::gkStats()
 		m_lastDbvt(0),
 		m_lastSound(0),
 		m_lastBufswaplod(0),
+		m_lastAnimations(0),
 		m_lastTotal(0)
 {
 	m_clock = new Ogre::Timer();
@@ -59,6 +61,7 @@ void gkStats::resetClock(void)
 	m_dbvt = 0;
 	m_sound = 0;
 	m_bufswaplod = 0;
+	m_animations = 0;
 }
 
 void gkStats::startClock(void)
@@ -75,6 +78,7 @@ void gkStats::nextFrame(void)
 	m_lastDbvt = m_dbvt;
 	m_lastSound = m_sound;
 	m_lastBufswaplod = m_bufswaplod;
+	m_lastAnimations = m_animations;
 
 	resetClock();
 
@@ -117,4 +121,9 @@ void gkStats::stopBufSwapLodClock(void)
 	m_bufswaplod += m_clock->getMicroseconds() - m_start;
 }
 
-GK_IMPLEMENT_SINGLETON(gkStats)
+void gkStats::stopAnimationsClock(void)
+{
+	m_animations += m_clock->getMicroseconds() - m_start;
+}
+
+UT_IMPLEMENT_SINGLETON(gkStats);

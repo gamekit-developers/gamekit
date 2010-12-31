@@ -28,6 +28,7 @@
 #define _gkSound_h_
 
 #include "gkCommon.h"
+#include "gkResource.h"
 #include "gkSource.h"
 
 #include "gkSoundUtil.h"
@@ -39,29 +40,27 @@ class gkStreamer;
 
 
 
-class gkSound
+class gkSound : public gkResource
 {
 private:
 	typedef utArray<gkSource*> Sources;
 
 
-	const gkString      m_name;
-	gkSoundStream*       m_stream;
-	Sources             m_sources;
+	gkSoundStream*	m_stream;
+	Sources			m_sources;
 
 public:
 
-	gkSound(const gkString& name);
+	gkSound(gkResourceManager *creator, const gkResourceName &name, const gkResourceHandle &handle);
 	virtual ~gkSound();
 
 
-	GK_INLINE const gkString&    getName(void) const    {return m_name;}
-	GK_INLINE gkSoundStream*     getStream(void)        {return m_stream;}
+	GK_INLINE	gkSoundStream*     getStream(void)        {return m_stream;}
 
-	gkSource*    createSource(void);
-	void        destroySource(gkSource*);
+	gkSource*	createSource(void);
+	void		destroySource(gkSource*);
 
-	void        stopPlayback(void);
+	void		stopPlayback(void);
 
 
 	///Loads sound block from file, then dumps it into memory

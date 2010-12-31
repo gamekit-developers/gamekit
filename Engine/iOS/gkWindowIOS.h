@@ -3,9 +3,9 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Charlie C.
+    Copyright (c) 2006-2010 harkon.kr
 
-    Contributor(s): silveira.nestor.
+    Contributor(s): none yet.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -25,43 +25,41 @@
 -------------------------------------------------------------------------------
 */
 
-#ifndef _gkWindowSystemPrivate_h_
-#define _gkWindowSystemPrivate_h_
+#ifndef _gkWindowIOS_h_
+#define _gkWindowIOS_h_
+
+
+#import <UIKit/UIKit.h>
+
+@interface gkGestureView : UIView
+{
+}
+
+@end
 
 // Internal interface
-class gkWindowSystemPrivate :
-	public OIS::MouseListener,
-	public OIS::KeyListener,
-	public OIS::JoyStickListener,
-	public Ogre::WindowEventListener
+class gkWindowIOS : 
+	public gkWindow,
+	public OIS::MultiTouchListener
 {
-public:
-	gkWindowSystemPrivate();
-	virtual ~gkWindowSystemPrivate();
+	virtual bool setupInput(const gkUserDefs& prefs);
 
-	virtual bool setup(gkWindowSystem* sys, const gkUserDefs& prefs);
+public:
+	gkWindowIOS();
+	virtual ~gkWindowIOS();
+	
 	virtual void dispatch(void);
 	virtual void process(void);
+	
+	bool touchPressed(const OIS::MultiTouchEvent& arg);
+	bool touchReleased(const OIS::MultiTouchEvent& arg);
+	bool touchMoved(const OIS::MultiTouchEvent& arg);
+	bool touchCancelled(const OIS::MultiTouchEvent& arg);
 
-	bool mouseMoved(const OIS::MouseEvent& arg);
-	bool mousePressed(const OIS::MouseEvent& arg, OIS::MouseButtonID id);
-	bool mouseReleased(const OIS::MouseEvent& arg, OIS::MouseButtonID id);
-	bool keyPressed(const OIS::KeyEvent& arg);
-	bool keyReleased(const OIS::KeyEvent& arg);
+	void transformInputState(OIS::MultiTouchState& state);
 
-	void windowResized(Ogre::RenderWindow* rw);
-	void windowClosed(Ogre::RenderWindow* rw);
-	bool buttonPressed(const OIS::JoyStickEvent& arg, int i);
-	bool buttonReleased(const OIS::JoyStickEvent& arg, int i);
-	bool axisMoved(const OIS::JoyStickEvent& arg, int i);
-
-	int getCode(int kc);
-
-	gkWindowSystem*         m_sys;
-	OIS::InputManager*      m_input;
-	OIS::Keyboard*          m_keyboard;
-	OIS::Mouse*             m_mouse;
-	utArray<OIS::JoyStick*> m_joysticks;
+	OIS::MultiTouch*        m_itouch;
+	gkGestureView*          m_gestureView;
 };
 
-#endif //_gkWindowSystemPrivate_h_
+#endif //_gkWindowIOS_h_

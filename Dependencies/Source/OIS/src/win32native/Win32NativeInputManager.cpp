@@ -36,14 +36,15 @@ using namespace OIS;
 //-------------------------------------------------------------//
 // No access to multiple GWLP_USERDATA so only one instance! 
 // ...(or HWND lookups with maps)
-static Win32NativeInputManager *gMgr= 0;
+//static Win32NativeInputManager *gMgr= 0;
 
 
 //-------------------------------------------------------------//
 static LRESULT WINAPI OIS_SystemProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	if (gMgr)
-		return gMgr->_proc(hWnd, msg, wParam, lParam);
+	Win32NativeInputManager* mgr = (Win32NativeInputManager*)::GetWindowLongPtr(hWnd, GWLP_USERDATA);
+	if (mgr) 
+		return mgr->_proc(hWnd, msg, wParam, lParam);
 	return ::DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
@@ -52,17 +53,18 @@ Win32NativeInputManager::Win32NativeInputManager() :
 		OIS::InputManager("Win32NativeInputManager"),
 		mKeyboard(0), mMouse(0), mOldProc(0), mGrab(true), mHide(true), mHandle(0), mPass(false)
 {
-	if (gMgr)
-		OIS_EXCEPT(E_InvalidParam, "Win32NativeInputManager::Win32NativeInputManager >> Only one InputManager supported by this implementation");
-
-	gMgr= this;
 	mFactories.push_back(this);
 }
 
 //-------------------------------------------------------------//
 Win32NativeInputManager::~Win32NativeInputManager()
 {
-	gMgr= 0;
+	if (mHandle)
+	{
+		::SetWindowLongPtr(mHandle, DWLP_USER, 0);
+		if (mOldProc != 0) //restore old
+			::SetWindowLongPtr(mHandle, GWL_WNDPROC, (LONG_PTR)mOldProc);
+	}
 }
 
 //-------------------------------------------------------------//
@@ -81,6 +83,16 @@ void Win32NativeInputManager::_initialize(ParamList &paramList)
 	mOldProc= (WNDPROC)::GetWindowLongPtr(mHandle, GWL_WNDPROC);
 	if (!mOldProc)
 		OIS_EXCEPT(E_General, "Win32NativeInputManager::Win32NativeInputManager >> Window has no existing procedure");
+
+	::SetLastError(0);
+	LONG_PTR ret = ::SetWindowLongPtr(mHandle, GWLP_USERDATA, (LONG_PTR)this);
+	if (ret == 0 && ::GetLastError() != 0)
+	{
+		char tmp[256];
+		sprintf(tmp, "Win32NativeInputManager::Win32NativeInputManager >> Can't set Window procdure! %d", ::GetLastError());
+		OIS_EXCEPT(E_General, tmp);
+	}
+	
 
 	ParamList::iterator i = paramList.begin(), e = paramList.end();
 	for( ; i != e; ++i ) 

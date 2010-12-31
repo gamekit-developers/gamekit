@@ -41,8 +41,10 @@ gkSkyBoxGradient* gkMaterialLoader::loadSceneMaterial(class gkScene* sc, const g
 {
 	const gkSceneMaterial& mat = material;
 
+	gkString resGroup = sc->getGroupName();
+	if (resGroup.empty()) resGroup = Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME;
 	// use user defined
-	Ogre::MaterialPtr matptr = Ogre::MaterialManager::getSingleton().getByName(mat.m_name);
+	Ogre::MaterialPtr matptr = Ogre::MaterialManager::getSingleton().getByName(mat.m_name, resGroup);
 	if (!matptr.isNull())
 	{
 		sc->getManager()->setSkyBox(true, mat.m_name, mat.m_distance, true, gkEuler(-90, 0, 0).toQuaternion());

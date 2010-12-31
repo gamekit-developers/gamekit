@@ -30,6 +30,7 @@
 #include "gkUtils.h"
 #include "gkTextManager.h"
 #include "gkTextFile.h"
+#include "gkLogger.h"
 
 
 extern "C" int _OgreKitLua_install(lua_State* L);
@@ -37,7 +38,8 @@ extern "C" int _OgreKitLua_install(lua_State* L);
 
 
 gkLuaManager::gkLuaManager()
-	:       L(0)
+	:   gkResourceManager("LuaManager", "Lua"),
+		L(0)
 {
 	L = lua_open();
 	luaL_openlibs(L);
@@ -52,96 +54,79 @@ gkLuaManager::~gkLuaManager()
 	if (L) lua_close(L);
 }
 
-
-void gkLuaManager::decompile(void)
+gkResource* gkLuaManager::createImpl(const gkResourceName& name, const gkResourceHandle& handle)
 {
-	utHashTableIterator<ScriptMap> iter(m_scripts);
+	return new gkLuaScript(this, name, handle);
+}
+
+
+void gkLuaManager::notifyResourceCreatedImpl(gkResource* res)
+{
+	gkTextFile* intern = (gkTextFile*)gkTextManager::getSingleton().getByName(res->getName());
+
+	if (intern)
+	{
+		gkLuaScript* script = (gkLuaScript*)res;
+		script->setScript(intern->getText());		
+	}
+}
+
+void gkLuaManager::notifyResourceDestroyedImpl(gkResource* res)
+{
+}
+
+
+void gkLuaManager::decompileAll(void)
+{
+	Resources::Iterator iter = m_resources.iterator();
 	while (iter.hasMoreElements())
-		iter.getNext().second->decompile();
+	{
+		gkLuaScript* script = (gkLuaScript*)iter.peekNextValue();
+		script->decompile();
+		iter.next();
+	}
+
 }
 
 
-
-gkLuaScript* gkLuaManager::getScript(const gkString& name)
+void gkLuaManager::decompileGroup(const gkString& group)
 {
-	UTsize pos;
-	if ((pos = m_scripts.find(name)) == GK_NPOS)
+	Resources::Iterator iter = m_resources.iterator();
+	while (iter.hasMoreElements())
+	{
+		gkLuaScript* script = (gkLuaScript*)iter.peekNextValue();
+		if (script->getGroupName() == group)
+			script->decompile();
+		iter.next();
+	}
+}
+
+gkLuaScript* gkLuaManager::createFromText(const gkResourceName& name, const gkString& text)
+{
+	if (exists(name))
 		return 0;
-	return m_scripts.at(pos);
+
+	gkLuaScript* script = create<gkLuaScript>(name);
+
+	script->setScript(text);
+	return script;
 }
 
 
-
-gkLuaScript* gkLuaManager::create(const gkString& name, const gkString& text)
+gkLuaScript* gkLuaManager::createFromTextBlock(const gkResourceName& name)
 {
-	UTsize pos;
-	if ((pos = m_scripts.find(name)) != GK_NPOS)
-		return 0;
-
-	gkLuaScript* ob = new gkLuaScript(this, name, text);
-	m_scripts.insert(name, ob);
-	return ob;
-}
-
-
-gkLuaScript* gkLuaManager::create(const gkString& name)
-{
-	UTsize pos;
-	if ((pos = m_scripts.find(name)) != GK_NPOS)
+	if (exists(name))
 		return 0;
 
 	gkTextFile* intern = (gkTextFile*)gkTextManager::getSingleton().getByName(name);
 
 	if (intern == 0)
 	{
-		printf("Invalid internal text file %s\n", name.c_str());
+		gkPrintf("Invalid internal text file %s\n", name.getName().c_str());
 		return 0;
 	}
 
-	gkLuaScript* ob = new gkLuaScript(this, name, intern->getText());
-	m_scripts.insert(name, ob);
-	return ob;
+	return createFromText(name, intern->getText());
 }
 
-
-void gkLuaManager::destroy(const gkString& name)
-{
-	UTsize pos;
-	if ((pos = m_scripts.find(name)) != GK_NPOS)
-	{
-		gkLuaScript* ob = m_scripts.at(pos);
-		m_scripts.remove(name);
-		delete ob;
-	}
-}
-
-
-void gkLuaManager::destroy(gkLuaScript* ob)
-{
-	GK_ASSERT(ob);
-	destroy(ob->getName());
-}
-
-
-void gkLuaManager::destroyAll(void)
-{
-	utHashTableIterator<ScriptMap> iter(m_scripts);
-	while (iter.hasMoreElements())
-	{
-		gkLuaScript* ob = iter.peekNextValue();
-		delete ob;
-		iter.next();
-	}
-	m_scripts.clear();
-}
-
-
-
-bool gkLuaManager::hasScript(const gkString& name)
-{
-	return m_scripts.find(name) != GK_NPOS;
-}
-
-
-
-GK_IMPLEMENT_SINGLETON(gkLuaManager);
+UT_IMPLEMENT_SINGLETON(gkLuaManager);

@@ -124,10 +124,10 @@ public:
 	void calculateLimits(void);
 
 
-	GK_INLINE gkCamera*       getMainCamera(void)   { return m_startCam; }
-	GK_INLINE bool           hasDefaultCamera(void) { return m_startCam != 0; }
-	GK_INLINE bool           hasCameras(void)       { return !m_cameras.empty(); }
-	GK_INLINE gkCameraSet&    getCameras(void)      { return m_cameras; }
+	GK_INLINE gkCamera*		getMainCamera(void)		{ return m_startCam; }
+	GK_INLINE bool			hasDefaultCamera(void)	{ return m_startCam != 0; }
+	GK_INLINE bool			hasCameras(void)		{ return !m_cameras.empty(); }
+	GK_INLINE gkCameraSet&	getCameras(void)		{ return m_cameras; }
 	void setMainCamera(gkCamera* cam);
 
 
@@ -170,6 +170,8 @@ public:
 	gkRigidBody* createRigidBody(gkGameObject* obj, gkPhysicsProperties& prop);
 
 
+	gkWindow* getDisplayWindow(void);
+	void setDisplayWindow(gkWindow* window);
 
 	void _applyBuiltinParents(void);
 	void _applyBuiltinPhysics(void);
@@ -182,7 +184,24 @@ public:
 	bool _replaceObjectInScene(gkGameObject* obj, gkScene* osc, gkScene* nsc);
 	void _eraseObject(gkGameObject* obj);
 
-	
+	void _eraseAllObjects();
+
+	enum UPDATE_FLAGS
+	{
+		UF_NONE			= 0,
+		UF_PHYSICS		= 1 << 0,
+		UF_LOGIC_BRICKS	= 1 << 1,
+		UF_NODE_TREES	= 1 << 2,
+		UF_ANIMATIONS	= 1 << 3,
+		UF_SOUNDS		= 1 << 4,
+		UF_DBVT			= 1 << 5,
+		UF_DEBUG		= 1 << 6,
+		UF_ALL			= 0xFFFFFFFF
+	};
+
+	GK_INLINE UTuint32 getUpdateFlags()				{ return m_updateFlags;  }
+	GK_INLINE void setUpdateFlags(UTuint32 flags)	{ m_updateFlags = flags; }
+
 private:
 
 	void postCreateInstanceImpl(void);
@@ -196,8 +215,8 @@ private:
 
 	Ogre::SceneManager*     m_manager;
 	gkCamera*               m_startCam;
-	Ogre::Viewport*         m_viewport;
-
+	gkViewport*				m_viewport;
+	gkWindow*				m_window;
 
 	gkSceneProperties       m_baseProps;
 	gkSoundSceneProperties  m_soundScene;
@@ -227,6 +246,8 @@ private:
 	gkBoundingBox           m_limits;
 	PNAVMESHDATA            m_navMeshData;
 	class gkSkyBoxGradient* m_skybox;
+
+	UTuint32				m_updateFlags;
 };
 
 #endif//_gkSceneObject_h_

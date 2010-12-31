@@ -43,11 +43,15 @@ GK_INLINE luMainApp* getLuApp()
 
 GK_INLINE luMainFrame* getLuMainFrame()
 {
+	GK_ASSERT(wxTheApp->GetTopWindow());
+
 	return (luMainFrame*)wxTheApp->GetTopWindow();
 }
 
 void alertDlg(const wxString& msg, wxWindow* parent = NULL, const wxString& title = "Alert");
 
 int selectPage(wxAuiNotebook* noteBook, wxWindow* page);
+
+void setupDefaultAuiDockArt(wxAuiManager* aui);
 
 #endif //_LauUtils_h_

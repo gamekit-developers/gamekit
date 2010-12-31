@@ -151,7 +151,7 @@ gkAnimationSequence::gkAnimationSequence(gkResourceManager *creator, const gkRes
 
 void gkAnimationSequence::addItem(const gkHashedString &animation, const akScalar& start, const akScalar& end, const akScalar& blendin, const akScalar& blendout)
 {
-	gkAnimation* anim = gkAnimationManager::getSingleton().getAnimation(animation);
+	gkAnimation* anim = gkAnimationManager::getSingleton().getAnimation(gkResourceName(animation, getGroupName()));
 	
 	if (anim)
 		addItem(anim->getInternal(), start, end, blendin, blendout);

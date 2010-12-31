@@ -111,14 +111,15 @@ void gkTextManager::getTextFiles(TextArray& dest, int textType)
 
 gkResource* gkTextManager::createImpl(const gkResourceName& name, const gkResourceHandle& handle)
 {
-	UTsize tt = getTextType(name.str());
+	UTsize tt = getTextType(name.getName());
 
 	return new gkTextFile(this, name, handle, tt);
 }
 
-
-void gkTextManager::parseScripts(void)
+void gkTextManager::parseScripts(const gkString& group)
 {
+	const gkString &resGroup = group.empty() ? Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME : group;
+
 	gkResourceManager::ResourceIterator iter = getResourceIterator();
 	while (iter.hasMoreElements())
 	{
@@ -138,7 +139,7 @@ void gkTextManager::parseScripts(void)
 				Ogre::DataStreamPtr memStream(
 				    OGRE_NEW Ogre::MemoryDataStream((void*)buf.c_str(), buf.size()));
 
-				Ogre::MaterialManager::getSingleton().parseScript(memStream, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+				Ogre::MaterialManager::getSingleton().parseScript(memStream, resGroup);
 
 			}
 			else if (type == TT_PARTICLE)
@@ -147,7 +148,7 @@ void gkTextManager::parseScripts(void)
 				    OGRE_NEW Ogre::MemoryDataStream((void*)buf.c_str(), buf.size()));
 
 
-				Ogre::ParticleSystemManager::getSingleton().parseScript(memStream, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+				Ogre::ParticleSystemManager::getSingleton().parseScript(memStream, resGroup);
 			}
 			else if (type == TT_FONT)
 			{
@@ -155,7 +156,7 @@ void gkTextManager::parseScripts(void)
 				Ogre::DataStreamPtr memStream(
 				    OGRE_NEW Ogre::MemoryDataStream((void*)buf.c_str(), buf.size()));
 
-				Ogre::FontManager::getSingleton().parseScript(memStream, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+				Ogre::FontManager::getSingleton().parseScript(memStream, resGroup);
 			}
 		}
 		catch (Ogre::Exception& e)
@@ -177,7 +178,7 @@ void gkTextManager::parseScripts(void)
 #ifdef OGREKIT_USE_LUA
 
 		if (type == TT_LUA)
-			gkLuaManager::getSingleton().create(tf->getResourceName().str(), buf);
+			gkLuaManager::getSingleton().createFromText(gkResourceName(tf->getResourceName().getName(), resGroup), buf);
 #endif
 	}
 

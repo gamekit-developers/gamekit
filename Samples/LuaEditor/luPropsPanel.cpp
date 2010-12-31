@@ -30,166 +30,45 @@
 #include "luUtils.h"
 #include "luPropsPanel.h"
 #include "luMainFrame.h"
+#include "luProps.h"
+#include "luFile.h"
 
 #define PANEL_NAME			"Properties"
-
-#define PNAME_PROJECT_NAME	"ProjectName"
-#define PNAME_PROJECT_DIR	"Directroy"
-#define PNAME_WINSIZE_X		"WinSizeX"
-#define PNAME_WINSIZE_Y		"WinSizeY"
-#define PNAME_FULLSCREEN	"FullScreen"
 
 BEGIN_EVENT_TABLE(luPropsPanel, wxPanel)
 	EVT_PG_CHANGED( -1, luPropsPanel::OnPropertyGridChanged )
 END_EVENT_TABLE()
 
-WX_PG_DECLARE_VARIANT_DATA(gkVector3)
-
-WX_PG_IMPLEMENT_VARIANT_DATA_DUMMY_EQ(gkVector3)
-
-
-class luVector3Property : public wxPGProperty
-{
-	WX_PG_DECLARE_PROPERTY_CLASS(luVector3Property)
-public:
-
-	luVector3Property( const wxString& label = wxPG_LABEL,
-		const wxString& name = wxPG_LABEL,
-		const gkVector3& value = gkVector3() );
-	virtual ~luVector3Property();
-
-	wxVariant ChildChanged( wxVariant& thisValue,
-		int childIndex, wxVariant& childValue ) const;
-	virtual void RefreshChildren();
-
-protected:
-};
-
-WX_PG_IMPLEMENT_PROPERTY_CLASS(luVector3Property,wxPGProperty, gkVector3,const gkVector3&,TextCtrl)
-
-
-luVector3Property::luVector3Property( const wxString& label, const wxString& name, const gkVector3& value )
-	: wxPGProperty(label,name)
-{
-	SetValue( WXVARIANT(value) );
-	AddPrivateChild( new wxFloatProperty(wxT("X"),wxPG_LABEL,value.x) );
-	AddPrivateChild( new wxFloatProperty(wxT("Y"),wxPG_LABEL,value.y) );
-	AddPrivateChild( new wxFloatProperty(wxT("Z"),wxPG_LABEL,value.z) );
-}
-
-luVector3Property::~luVector3Property() { }
-
-void luVector3Property::RefreshChildren()
-{
-	if ( !GetChildCount() ) return;
-	const gkVector3& vector = gkVector3RefFromVariant(m_value);
-	Item(0)->SetValue( vector.x );
-	Item(1)->SetValue( vector.y );
-	Item(2)->SetValue( vector.z );
-}
-
-wxVariant  luVector3Property::ChildChanged( wxVariant& thisValue, int childIndex, wxVariant& childValue ) const
-{
-	gkVector3 vector;
-	vector << thisValue;
-	switch ( childIndex )
-	{
-	case 0: vector.x = childValue.GetDouble(); break;
-	case 1: vector.y = childValue.GetDouble(); break;
-	case 2: vector.z = childValue.GetDouble(); break;
-	}
-	return thisValue << vector;
-}
-
-
-//--
-
-struct luGameObjProps
-{
-	gkString name;
-	gkString type;
-	gkVector3 pos;
-
-	luGameObjProps(gkGameObject* obj = NULL) : pos(gkVector3::ZERO)
-	{
-		if (!obj) return;
-		name = obj->getName();
-		type = getLuObjectTypeName(obj->getType());
-		pos = obj->getPosition();
-	}
-};
-
-WX_PG_DECLARE_VARIANT_DATA(luGameObjProps)
-
-WX_PG_IMPLEMENT_VARIANT_DATA_DUMMY_EQ(luGameObjProps)
-
-
-class luObjectProperty : public wxPGProperty
-{
-	WX_PG_DECLARE_PROPERTY_CLASS(luObjectProperty)
-public:
-	luObjectProperty(const wxString& label = wxPG_LABEL, const wxString& name = wxPG_LABEL) :
-	wxPGProperty(label, name)
-	{
-		AddPrivateChild( new wxStringProperty("Name", wxPG_LABEL) );
-		AddPrivateChild( new wxStringProperty("Type", wxPG_LABEL) );
-		AddPrivateChild( new luVector3Property("Pos"));
-	}
-
-	wxVariant ChildChanged( wxVariant& thisValue,
-		int childIndex, wxVariant& childValue ) const;
-	virtual void RefreshChildren();
-};
-
-WX_PG_IMPLEMENT_PROPERTY_CLASS(luObjectProperty,wxPGProperty, luGameObjProps,const luGameObjProps&,TextCtrl)
-
-void luObjectProperty::RefreshChildren()
-{
-	if ( !GetChildCount() ) return;
-
-	const luGameObjProps& obj = luGameObjPropsRefFromVariant(m_value);
-	Item(0)->SetValue( obj.name );
-	Item(1)->SetValue( obj.type );
-	Item(2)->SetValue( WXVARIANT(obj.pos) );
-}
-
-wxVariant  luObjectProperty::ChildChanged( wxVariant& thisValue, int childIndex, wxVariant& childValue ) const
-{
-	luGameObjProps obj;
-	obj << thisValue;
-	switch ( childIndex )
-	{
-	case 0: { obj.name = childValue.GetString(); break; }
-	case 1: { obj.type = childValue.GetString(); break; }
-	case 2: 
-		{
-			const gkVector3& vector = gkVector3RefFromVariant(childValue);
-			obj.pos = vector; break;
-		}
-	}
-	return thisValue << obj;
-}
-
 
 luPropsPanel::luPropsPanel(wxWindow* parent) :
 	wxPanel(parent, ID_PROPS_PANEL, wxDefaultPosition, wxDefaultSize),
 	m_prop(NULL),
-	m_obj(NULL)
+	m_obj(NULL),
+	m_light(NULL),
+	m_physics(NULL),
+	m_entity(NULL),
+	m_proj(NULL),
+	m_camera(NULL)
 {
 	m_prop = new wxPropertyGrid(this,ID_PROPS_PROJ,wxDefaultPosition,wxSize(400,400),
 		wxPG_SPLITTER_AUTO_CENTER |
 		wxPG_BOLD_MODIFIED );
-
-
-	m_prop->Append( new wxStringProperty(PNAME_PROJECT_NAME, wxPG_LABEL) );
-	m_prop->Append( new wxStringProperty(PNAME_PROJECT_DIR, wxPG_LABEL) );
-	m_prop->Append( new wxIntProperty(PNAME_WINSIZE_X, wxPG_LABEL) );
-	m_prop->Append( new wxIntProperty(PNAME_WINSIZE_Y, wxPG_LABEL) );
-	m_prop->Append( new wxBoolProperty(PNAME_FULLSCREEN, wxPG_LABEL) );
+	
+	m_prop->Append( m_proj = new luProjectProperty(wxT("Project"), wxPG_LABEL) );
 
 	m_prop->Append( m_obj = new luObjectProperty("Object"));
+	m_prop->Append( m_physics = new luPhysicsProperty("Physics"));
+	m_prop->Append( m_entity = new luEntityObjProperty("Entity"));
+	m_prop->Append( m_light = new luLightObjProperty("Light"));
+	m_prop->Append( m_camera = new luCameraObjProperty("Camera"));
 
 	addControlToPanel(this, m_prop, PANEL_NAME);
+
+	m_obj->Hide(true);
+	m_physics->Hide(true);
+	m_entity->Hide(true);
+	m_light->Hide(true);
+	m_camera->Hide(true);
 }
 
 luPropsPanel::~luPropsPanel()
@@ -198,6 +77,7 @@ luPropsPanel::~luPropsPanel()
 
 void luPropsPanel::OnPropertyGridChanged( wxPropertyGridEvent& event )
 {
+#if 0
 	wxPGProperty* p = event.GetProperty();
 
 	if (!p) return;
@@ -207,32 +87,66 @@ void luPropsPanel::OnPropertyGridChanged( wxPropertyGridEvent& event )
 		luMainFrame* frame = getLuMainFrame(); GK_ASSERT(frame);
 		frame->setProjectName(p->GetValueAsString());
 	}
+#endif
 }
 
 
-void luPropsPanel::setProjectName(const wxString& name)
+void luPropsPanel::updateProject(luProjectFile *project)
 {
 	if (!m_prop) return;
 
-	wxPGProperty* p = m_prop->GetProperty(PNAME_PROJECT_NAME);
-	if (!p) return;
-	p->SetValue(name);
+	m_proj->Hide(!project);
+
+	if (!project)
+		return;
+	
+	wxVariant v;
+	v << luProjectProps(project);
+	m_proj->SetValue(v);
 }
 
-void luPropsPanel::setProjectDir(const wxString& name)
-{
-	if (!m_prop) return;
-
-	wxPGProperty* p = m_prop->GetProperty(PNAME_PROJECT_DIR);
-	if (!p) return;
-	p->SetValue(name);
-}
 
 void luPropsPanel::selectObject(gkGameObject* obj)
 {
-	if (!m_obj) return;
+	if (!obj)
+	{
+		m_obj->Hide(true);
+		m_physics->Hide(true);
+		m_entity->Hide(true);
+		m_light->Hide(true);
+		m_camera->Hide(true);
+		return;
+	}
 
-	luGameObjProps p(obj);
-	wxVariant v; v << p;
+	m_obj->Hide(false);
+	m_physics->Hide(false);
+	m_entity->Hide(obj->getEntity() == NULL);
+	m_light->Hide(obj->getLight() == NULL);
+	m_camera->Hide(obj->getCamera() == NULL);
+	
+
+	wxVariant v; 
+	v << luGameObjProps(obj);
 	m_obj->SetValue(v);
+
+	v << luPhysicsProps(obj);
+	m_physics->SetValue(v);
+
+	if (obj->getEntity())
+	{
+		v << luEntityObjProps(obj);
+		m_entity->SetValue(v);
+	}
+
+	if (obj->getLight())
+	{
+		v << luLightObjProps(obj);
+		m_light->SetValue(v);
+	}
+
+	if (obj->getCamera())
+	{
+		v << luCameraObjProps(obj);
+		m_camera->SetValue(v);
+	}
 }

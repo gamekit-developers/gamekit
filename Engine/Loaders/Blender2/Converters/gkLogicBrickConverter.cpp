@@ -83,6 +83,8 @@ void gkLogicLoader::convertObject(Blender::Object* bobj, gkGameObject* gobj)
 {
 	GK_ASSERT(gobj && bobj);
 
+	gkString groupName = gobj->getGroupName();
+
 	if (!bobj->sensors.first && !bobj->controllers.first && !bobj->actuators.first)
 		return;
 
@@ -588,10 +590,11 @@ void gkLogicLoader::convertObject(Blender::Object* bobj, gkGameObject* gobj)
 				if (pcon->text)
 				{
 					gkLuaManager& lua = gkLuaManager::getSingleton();
-					if (lua.hasScript(GKB_IDNAME(pcon->text)))
-						sc->setScript(lua.getScript(GKB_IDNAME(pcon->text)));
+					gkResourceName scriptName(GKB_IDNAME(pcon->text), groupName);
+					if (lua.exists(scriptName))
+						sc->setScript(lua.getByName<gkLuaScript>(scriptName));
 					else
-						sc->setScript(lua.create(GKB_IDNAME(pcon->text)));
+						sc->setScript(lua.create<gkLuaScript>(scriptName));
 				}
 #endif
 

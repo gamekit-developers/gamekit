@@ -29,6 +29,7 @@
 #include "gkCamera.h"
 #include "gkScene.h"
 #include "gkWindowSystem.h"
+#include "gkWindow.h"
 #include "gkDynamicsWorld.h"
 #include "OgreRenderWindow.h"
 
@@ -43,12 +44,16 @@ gkCam2ViewportRay::gkCam2ViewportRay(gkScalar x, gkScalar y, gkScalar rayLength)
 	GK_ASSERT(pCamera);
 
 	gkVector2 pos(x, y);
+	
+	gkWindow* pWindow = pScene->getDisplayWindow();
+	if (pWindow == 0)
+		pWindow = gkWindowSystem::getSingleton().getMainWindow();
 
-	gkWindowSystem* pWindowSystem = gkWindowSystem::getSingletonPtr();
+	GK_ASSERT(pWindow);
 
-	gkScalar width = pWindowSystem->getMainWindow()->getWidth();
+	gkScalar width = pWindow->getWidth();
 
-	gkScalar height = pWindowSystem->getMainWindow()->getHeight();
+	gkScalar height = pWindow->getHeight();
 
 	GK_ASSERT(width && height);
 

@@ -36,56 +36,81 @@
 #include "gkEngine.h"
 #include "gkScene.h"
 #include "gkWindowSystem.h"
-#include "gkWindowSystemPrivate.h"
+#include "gkWindow.h"
+#include "gkViewport.h"
 
 using namespace Ogre;
 
-// Internal interface
-gkWindowSystemPrivate::gkWindowSystemPrivate() :
-	m_sys(0),
-	m_input(0), 
-	m_keyboard(0), 
-	m_mouse(0)
+gkWindow::gkWindow() 
+	:	m_sys(0),
+		m_input(0), 
+		m_ikeyboard(0), 
+		m_imouse(0),
+		m_rwindow(0),
+		m_requestedWidth(0), 
+		m_requestedHeight(0),
+		m_framingType(0),
+		m_useExternalWindow(false),
+		m_scene(0)
 {
 }
 
-gkWindowSystemPrivate::~gkWindowSystemPrivate()
+gkWindow::~gkWindow()
 {
+	if (m_rwindow)
+	{				
+		WindowEventUtilities::removeWindowEventListener(m_rwindow, this);
+	}
+
+	UTsize i;
+	for (i = 0; i < m_joysticks.size(); i++)
+		delete m_joysticks[i];
+
+	m_joysticks.clear();
+
+	gkPrintf("[viewport] %d", m_viewports.size());
+	for (i = 0; i < m_viewports.size(); i++)
+		delete m_viewports[i];
+
+	m_viewports.clear();
 
 	if (m_input)
 	{
 		// free input
 
-		if (m_keyboard)
-			m_input->destroyInputObject(m_keyboard);
+		if (m_ikeyboard)
+			m_input->destroyInputObject(m_ikeyboard);
 
-		if (m_mouse)
-			m_input->destroyInputObject(m_mouse);
-
-		UTsize i;
-		for (i = 0; i < m_joysticks.size(); ++i)
-			m_input->destroyInputObject(m_joysticks[i]);
+		if (m_imouse)
+			m_input->destroyInputObject(m_imouse);
+		
+		for (i = 0; i < m_ijoysticks.size(); i++)
+			m_input->destroyInputObject(m_ijoysticks[i]);
 
 
 		OIS::InputManager::destroyInputSystem(m_input);
 
-		m_input = 0; m_keyboard = 0; m_mouse = 0;
+		m_input = 0; m_ikeyboard = 0; m_imouse = 0;
 	}
 }
 
-
-bool gkWindowSystemPrivate::setup(gkWindowSystem* sys, const gkUserDefs& prefs)
+size_t gkWindow::getWindowHandle()
 {
-	if (!sys || m_sys) 
-		return false;
+	size_t handle = 0;
 
-	m_sys = sys;
+	if (m_rwindow)
+		m_rwindow->getCustomAttribute("WINDOW", &handle);
 
+	return handle;
+}
+
+bool gkWindow::setupInput(const gkUserDefs& prefs)
+{
 	// OIS
 	try
-	{
-		size_t handle;
-		m_sys->m_window->getCustomAttribute("WINDOW", &handle);
+	{		
+		size_t handle = getWindowHandle();
+		if (handle == 0) return false;
 
 
 		OIS::ParamList params;
@@ -94,16 +119,16 @@ bool gkWindowSystemPrivate::setup(gkWindowSystem* sys, const gkUserDefs& prefs)
 		{
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
-			params.insert(std::make_pair(std::string("w32_mouse"),		std::string("DISCL_FOREGROUND")));
-			params.insert(std::make_pair(std::string("w32_mouse"),		std::string("DISCL_NONEXCLUSIVE")));
-			params.insert(std::make_pair(std::string("w32_keyboard"),	std::string("DISCL_FOREGROUND")));
-			params.insert(std::make_pair(std::string("w32_keyboard"),	std::string("DISCL_NONEXCLUSIVE")));
+			params.insert(std::make_pair(std::string("w32_mouse"),			std::string("DISCL_FOREGROUND")));
+			params.insert(std::make_pair(std::string("w32_mouse"),			std::string("DISCL_NONEXCLUSIVE")));
+			params.insert(std::make_pair(std::string("w32_keyboard"),		std::string("DISCL_FOREGROUND")));
+			params.insert(std::make_pair(std::string("w32_keyboard"),		std::string("DISCL_NONEXCLUSIVE")));
 
-			if (m_sys->m_useExternalWindow)
+			if (m_useExternalWindow)
 				params.insert(std::make_pair(std::string("w32_pass_event"), std::string(""))); //pass event to old window proc
 
 #elif OGRE_PLATFORM == OGRE_PLATFORM_APPLE
-			params.insert(std::make_pair(std::string("MacAutoRepeatOn"), std::string("true")));
+			params.insert(std::make_pair(std::string("MacAutoRepeatOn"),	std::string("true")));
 #else
 			params.insert(std::make_pair(std::string("x11_mouse_grab"),		std::string("false")));
 			params.insert(std::make_pair(std::string("x11_mouse_hide"),		std::string("false")));
@@ -117,14 +142,14 @@ bool gkWindowSystemPrivate::setup(gkWindowSystem* sys, const gkUserDefs& prefs)
 		m_input->enableAddOnFactory(OIS::InputManager::AddOn_All);
 
 
-		m_keyboard = (OIS::Keyboard*) m_input->createInputObject(OIS::OISKeyboard, true);
-		m_keyboard->setEventCallback(this);
+		m_ikeyboard = (OIS::Keyboard*) m_input->createInputObject(OIS::OISKeyboard, true);
+		m_ikeyboard->setEventCallback(this);
 
-		m_mouse = (OIS::Mouse*)m_input->createInputObject(OIS::OISMouse, true);
-		m_mouse->setEventCallback(this);
+		m_imouse = (OIS::Mouse*)m_input->createInputObject(OIS::OISMouse, true);
+		m_imouse->setEventCallback(this);
 
-
-		for (int i = 0; i < m_input->getNumberOfDevices(OIS::OISJoyStick); i++)
+		int i;
+		for (i = 0; i < m_input->getNumberOfDevices(OIS::OISJoyStick); i++)
 		{
 			OIS::JoyStick* oisjs = (OIS::JoyStick*)m_input->createInputObject(OIS::OISJoyStick, true);
 			oisjs->setEventCallback(this);
@@ -132,13 +157,13 @@ bool gkWindowSystemPrivate::setup(gkWindowSystem* sys, const gkUserDefs& prefs)
 
 			gkJoystick* gkjs = new gkJoystick(oisjs->getNumberOfComponents(OIS::OIS_Button), oisjs->getNumberOfComponents(OIS::OIS_Axis));
 
-			m_joysticks.push_back(oisjs);
-			m_sys->m_joysticks.push_back(gkjs);
+			m_ijoysticks.push_back(oisjs);
+			m_joysticks.push_back(gkjs);
 		}
 
-		const OIS::MouseState& st = m_mouse->getMouseState();
-		st.width  = m_sys->m_mouse.winsize.x;
-		st.height = m_sys->m_mouse.winsize.y;
+		const OIS::MouseState& st = m_imouse->getMouseState();
+		st.width  = getWidth(); 
+		st.height = getHeight();
 
 	}
 	catch (OIS::Exception& e)
@@ -150,20 +175,154 @@ bool gkWindowSystemPrivate::setup(gkWindowSystem* sys, const gkUserDefs& prefs)
 	return true;
 }
 
+bool gkWindow::createWindow(gkWindowSystem* sys, const gkUserDefs& prefs)
+{
+	try
+	{
+		if (!sys || m_rwindow) 
+			return false;
 
-void gkWindowSystemPrivate::dispatch(void)
+		m_sys = sys;
+
+		int winsizex, winsizey;
+
+		m_requestedWidth = (int)(prefs.winsize.x + 0.5f);
+		m_requestedHeight = (int)(prefs.winsize.y + 0.5f);
+		m_framingType = prefs.framingType;
+
+		Ogre::NameValuePairList params;
+
+		if (prefs.fsaa)
+		{
+			params["FSAA"] = Ogre::StringConverter::toString(prefs.fsaaSamples);
+		}
+
+		if (!prefs.extWinhandle.empty())
+		{
+			params["externalWindowHandle"] = prefs.extWinhandle;
+			m_useExternalWindow = true;
+		}
+
+		if (prefs.fullscreen)
+		{
+			Ogre::RenderSystem* rsys = Root::getSingleton().getRenderSystem();
+			Ogre::ConfigOptionMap options = rsys->getConfigOptions();
+			Ogre::ConfigOption modeOption = options["Video Mode"];
+			bool found = false;
+
+			gkPrintf("Available video modes:");
+			size_t i;
+			for (i = 0; i < modeOption.possibleValues.size(); i++)
+			{
+				gkString modeStr = modeOption.possibleValues[i];
+				gkPrintf("%s\n", modeStr.c_str());
+
+				if (!found)
+				{
+					int modex, modey;
+					modex = Ogre::StringConverter::parseInt( modeStr.substr(0, 4));
+					modey = Ogre::StringConverter::parseInt( modeStr.substr(7, 4));
+
+					if (modex >= m_requestedWidth && modey >= m_requestedHeight)
+					{
+						found = true;
+						winsizex = modex;
+						winsizey = modey;
+					}
+				}
+			}
+			if (found)
+			{
+				gkPrintf("Best video mode found: %i x %i, request was %i x %i\n", winsizex, winsizey, (int)prefs.winsize.x, (int)prefs.winsize.y);
+			}
+			else
+			{
+				gkPrintf("Unable to find a video mode with request minimun resolution: %i x %i\n", (int)prefs.winsize.x, (int)prefs.winsize.y);
+				return 0;
+			}
+		}
+		else
+		{
+			winsizex = m_requestedWidth;
+			winsizey = m_requestedHeight;
+		}
+
+		m_rwindow = Root::getSingleton().createRenderWindow(prefs.wintitle,
+				   winsizex, winsizey, prefs.fullscreen, &params);
+		m_rwindow->setActive(true);
+
+		// copy window size (used later for hit testing)
+		m_mouse.winsize.x = winsizex;
+		m_mouse.winsize.y = winsizey;	
+
+		if (!setupInput(prefs))
+		{
+			gkPrintf("Unable setup gkWindow input objects.");
+			return false;
+		}
+
+		WindowEventUtilities::addWindowEventListener(m_rwindow, this);
+
+	}
+	catch (OIS::Exception& e)
+	{
+		gkPrintf("gkWindow: %s", e.what());
+		return false;
+	}
+	
+	return true;
+}
+
+void gkWindow::addListener(gkWindowSystem::Listener* l)
+{
+	m_listeners.push_back(l);
+}
+
+void gkWindow::removeListener(gkWindowSystem::Listener* l)
+{
+	m_listeners.erase(l);
+}
+
+gkViewport* gkWindow::addViewport(gkCamera* cam, int zorder)
+{	
+	if (m_rwindow)
+	{
+		Viewport* vp =  m_rwindow->addViewport(cam->getCamera(), zorder); GK_ASSERT(vp);
+
+		gkViewport* viewport = new gkViewport(this, vp);
+		viewport->setDimension(m_framingType);
+		m_viewports.push_back(viewport);
+
+		return viewport;
+	}
+	return 0;
+}
+
+void gkWindow::removeViewport(gkViewport* viewport)
+{
+	if (m_rwindow && viewport)
+	{
+		m_viewports.erase(m_viewports.find(viewport));
+		m_rwindow->removeViewport(viewport->getViewport()->getZOrder());
+		delete viewport;
+	}
+}
+
+
+
+void gkWindow::dispatch(void)
 {
 	GK_ASSERT(m_mouse && m_keyboard);
 
-	m_sys->m_mouse.moved = false;
-	m_sys->m_mouse.wheelDelta = 0.f;
-	m_sys->m_mouse.relitave.x = 0.f;
-	m_sys->m_mouse.relitave.y = 0.f;
+	m_mouse.moved = false;
+	m_mouse.wheelDelta = 0.f;
+	m_mouse.relitave.x = 0.f;
+	m_mouse.relitave.y = 0.f;
 
-	m_mouse->capture();
-	m_keyboard->capture();
+	m_imouse->capture();
+	m_ikeyboard->capture();
 
-	utArrayIterator<utArray<OIS::JoyStick*> > iter(m_joysticks);
+	utArrayIterator<utArray<OIS::JoyStick*> > iter(m_ijoysticks);
 	while (iter.hasMoreElements())
 	{
 		iter.peekNext()->capture();
@@ -171,29 +330,40 @@ void gkWindowSystemPrivate::dispatch(void)
 	}
 }
 
-void gkWindowSystemPrivate::process(void)
+void gkWindow::process(void)
 {
-	if (!m_sys->m_useExternalWindow)
+	if (!m_useExternalWindow)
 		WindowEventUtilities::messagePump();
 }
 
-bool gkWindowSystemPrivate::mouseMoved(const OIS::MouseEvent& arg)
-{
-	gkMouse& data = m_sys->m_mouse;
+void gkWindow::clearStates(void)
+{	
+	m_mouse.clear();
+	m_keyboard.clear();
+	
+	UTsize i;
+	for (i = 0; i < m_joysticks.size(); i++)
+		m_joysticks[i]->clear();
+}
 
-	data.position.x = (Real)arg.state.X.abs;
-	data.position.y = (Real)arg.state.Y.abs;
-	data.relitave.x = (Real)arg.state.X.rel;
-	data.relitave.y = (Real)arg.state.Y.rel;
+bool gkWindow::mouseMoved(const OIS::MouseEvent& arg)
+{
+	gkMouse& data = m_mouse;
+
+	data.position.x = (gkScalar)arg.state.X.abs;
+	data.position.y = (gkScalar)arg.state.Y.abs;
+	data.relitave.x = (gkScalar)arg.state.X.rel;
+	data.relitave.y = (gkScalar)arg.state.Y.rel;
 	data.moved = true;
 
 	if (arg.state.Z.rel != 0)
 		data.wheelDelta = arg.state.Z.rel > 0 ? 1.f : -1.f;
-	else data.wheelDelta = 0;
+	else 
+		data.wheelDelta = 0;
 
-	if (!m_sys->m_listeners.empty())
+	if (!m_listeners.empty())
 	{
-		gkWindowSystem::Listener* node = m_sys->m_listeners.begin();
+		gkWindowSystem::Listener* node = m_listeners.begin();
 		while (node)
 		{
 			node->mouseMoved(data);
@@ -204,9 +374,9 @@ bool gkWindowSystemPrivate::mouseMoved(const OIS::MouseEvent& arg)
 	return true;
 }
 
-bool gkWindowSystemPrivate::mousePressed(const OIS::MouseEvent& arg, OIS::MouseButtonID id)
+bool gkWindow::mousePressed(const OIS::MouseEvent& arg, OIS::MouseButtonID id)
 {
-	gkMouse& data = m_sys->m_mouse;
+	gkMouse& data = m_mouse;
 
 	switch (id)
 	{
@@ -221,9 +391,9 @@ bool gkWindowSystemPrivate::mousePressed(const OIS::MouseEvent& arg, OIS::MouseB
 		break;
 	}
 
-	if (!m_sys->m_listeners.empty())
+	if (!m_listeners.empty())
 	{
-		gkWindowSystem::Listener* node = m_sys->m_listeners.begin();
+		gkWindowSystem::Listener* node = m_listeners.begin();
 		while (node)
 		{
 			node->mousePressed(data);
@@ -234,9 +404,9 @@ bool gkWindowSystemPrivate::mousePressed(const OIS::MouseEvent& arg, OIS::MouseB
 	return true;
 }
 
-bool gkWindowSystemPrivate::mouseReleased(const OIS::MouseEvent& arg, OIS::MouseButtonID id)
+bool gkWindow::mouseReleased(const OIS::MouseEvent& arg, OIS::MouseButtonID id)
 {
-	gkMouse& data = m_sys->m_mouse;
+	gkMouse& data = m_mouse;
 
 	switch (id)
 	{
@@ -251,9 +421,9 @@ bool gkWindowSystemPrivate::mouseReleased(const OIS::MouseEvent& arg, OIS::Mouse
 		break;
 	}
 
-	if (!m_sys->m_listeners.empty())
+	if (!m_listeners.empty())
 	{
-		gkWindowSystem::Listener* node = m_sys->m_listeners.begin();
+		gkWindowSystem::Listener* node = m_listeners.begin();
 		while (node)
 		{
 			node->mouseReleased(data);
@@ -264,18 +434,18 @@ bool gkWindowSystemPrivate::mouseReleased(const OIS::MouseEvent& arg, OIS::Mouse
 	return true;
 }
 
-bool gkWindowSystemPrivate::keyPressed(const OIS::KeyEvent& arg)
+bool gkWindow::keyPressed(const OIS::KeyEvent& arg)
 {
-	gkKeyboard& key = m_sys->m_keyboard;
+	gkKeyboard& key = m_keyboard;
 
 	int kc = getCode(arg.key);
 	key.keys[kc] = GK_Pressed;
 	key.key_count += 1;
 
 
-	if (!m_sys->m_listeners.empty())
+	if (!m_listeners.empty())
 	{
-		gkWindowSystem::Listener* node = m_sys->m_listeners.begin();
+		gkWindowSystem::Listener* node = m_listeners.begin();
 		while (node)
 		{
 			node->keyPressed(key, (gkScanCode)kc);
@@ -286,17 +456,17 @@ bool gkWindowSystemPrivate::keyPressed(const OIS::KeyEvent& arg)
 	return true;
 }
 
-bool gkWindowSystemPrivate::keyReleased(const OIS::KeyEvent& arg)
+bool gkWindow::keyReleased(const OIS::KeyEvent& arg)
 {
-	gkKeyboard& key = m_sys->m_keyboard;
+	gkKeyboard& key = m_keyboard;
 
 	int kc = getCode(arg.key);
 	key.keys[kc] = GK_Released;
 	key.key_count -= 1;
 
-	if (!m_sys->m_listeners.empty())
+	if (!m_listeners.empty())
 	{
-		gkWindowSystem::Listener* node = m_sys->m_listeners.begin();
+		gkWindowSystem::Listener* node = m_listeners.begin();
 		while (node)
 		{
 			node->keyReleased(key, (gkScanCode)kc);
@@ -308,17 +478,17 @@ bool gkWindowSystemPrivate::keyReleased(const OIS::KeyEvent& arg)
 	return true;
 }
 
-bool gkWindowSystemPrivate::buttonPressed(const OIS::JoyStickEvent& arg, int button)
+bool gkWindow::buttonPressed(const OIS::JoyStickEvent& arg, int button)
 {
 	// Hum we assume coresponding gk and OIs joystick have the same place in their array
-	gkJoystick& js = *m_sys->m_joysticks[m_joysticks.find((OIS::JoyStick*)arg.device)];
+	gkJoystick& js = *m_joysticks[m_ijoysticks.find((OIS::JoyStick*)arg.device)];
 
 	js.buttons[button] = GK_Pressed;
 	js.buttonCount += 1;
 
-	if (!m_sys->m_listeners.empty())
+	if (!m_listeners.empty())
 	{
-		gkWindowSystem::Listener* node = m_sys->m_listeners.begin();
+		gkWindowSystem::Listener* node = m_listeners.begin();
 		while (node)
 		{
 			node->joystickPressed(js, button);
@@ -329,17 +499,17 @@ bool gkWindowSystemPrivate::buttonPressed(const OIS::JoyStickEvent& arg, int but
 	return true;
 }
 
-bool gkWindowSystemPrivate::buttonReleased(const OIS::JoyStickEvent& arg, int button)
+bool gkWindow::buttonReleased(const OIS::JoyStickEvent& arg, int button)
 {
 	// Hum we assume coresponding gk and OIs joystick have the same place in their array
-	gkJoystick& js = *m_sys->m_joysticks[m_joysticks.find((OIS::JoyStick*)arg.device)];
+	gkJoystick& js = *m_joysticks[m_ijoysticks.find((OIS::JoyStick*)arg.device)];
 
 	js.buttons[button] = GK_Released;
 	js.buttonCount -= 1;
 
-	if (!m_sys->m_listeners.empty())
+	if (!m_listeners.empty())
 	{
-		gkWindowSystem::Listener* node = m_sys->m_listeners.begin();
+		gkWindowSystem::Listener* node = m_listeners.begin();
 		while (node)
 		{
 			node->joystickReleased(js, button);
@@ -350,15 +520,15 @@ bool gkWindowSystemPrivate::buttonReleased(const OIS::JoyStickEvent& arg, int bu
 	return true;
 }
 
-bool gkWindowSystemPrivate::axisMoved(const OIS::JoyStickEvent& arg, int axis)
+bool gkWindow::axisMoved(const OIS::JoyStickEvent& arg, int axis)
 {
-	// Hum we assume coresponding gk and OIs joystick have the same place in their array
-	gkJoystick& js = *m_sys->m_joysticks[m_joysticks.find((OIS::JoyStick*)arg.device)];
+	// Hum we assume coresponding gk and OIS joystick have the same place in their array
+	gkJoystick& js = *m_joysticks[m_ijoysticks.find((OIS::JoyStick*)arg.device)];
 
 	js.axes[axis] = arg.state.mAxes[axis].abs;
-	if (!m_sys->m_listeners.empty())
+	if (!m_listeners.empty())
 	{
-		gkWindowSystem::Listener* node = m_sys->m_listeners.begin();
+		gkWindowSystem::Listener* node = m_listeners.begin();
 		while (node)
 		{
 			node->joystickMoved(js, axis);
@@ -368,30 +538,29 @@ bool gkWindowSystemPrivate::axisMoved(const OIS::JoyStickEvent& arg, int axis)
 	return true;
 }
 
-void gkWindowSystemPrivate::windowResized(RenderWindow* rw)
+void gkWindow::windowResized(RenderWindow* rw)
 {
-	unsigned short sz = rw->getNumViewports();
-	for (unsigned short i = 0; i < sz; ++i)
+	UTsize i;
+	for (i = 0; i < m_viewports.size(); ++i)
 	{
-		Viewport* vp = rw->getViewport(i);
+		m_viewports[i]->setDimension(m_viewports[i]->getFraming());
+		Viewport* vp = m_viewports[i]->getViewport();
 
 		// We assume all viewports are "main" vieport
-		m_sys->setMainViewportDimension(vp);
-
 		Camera* cam = vp->getCamera();
-		cam->setAspectRatio(Real(vp->getActualWidth()) / Real(vp->getActualHeight()));
+		cam->setAspectRatio(gkScalar(vp->getActualWidth()) / gkScalar(vp->getActualHeight()));
 
-		const OIS::MouseState& state = m_mouse->getMouseState();
+		const OIS::MouseState& state = m_imouse->getMouseState();
 
 		state.width = gkMax<int>(state.width, vp->getActualWidth());
 		state.height = gkMax<int>(state.height, vp->getActualHeight());
 
-		m_sys->m_mouse.winsize.x = (Real)state.width;
-		m_sys->m_mouse.winsize.y = (Real)state.height;
+		m_mouse.winsize.x = (gkScalar)state.width;
+		m_mouse.winsize.y = (gkScalar)state.height;
 	}
 
 	// Ogre keep Y field of view constant, we want to keep X fov constant
-	gkScene* scene = gkEngine::getSingleton().getActiveScene();
+	gkScene* scene = getRenderScene();
 	if (scene)
 	{
 		gkCamera* cam = scene->getMainCamera();
@@ -401,14 +570,24 @@ void gkWindowSystemPrivate::windowResized(RenderWindow* rw)
 }
 
 
-void gkWindowSystemPrivate::windowClosed(RenderWindow* rw)
+void gkWindow::windowClosed(RenderWindow* rw)
 {
 	GK_ASSERT(m_sys);
-	m_sys->m_exit = true;
+	if (m_sys->getMainWindow() == this)
+		m_sys->exit(true);
 }
 
+void gkWindow::setRenderScene(gkScene* scene)
+{
+	m_scene = scene;
+}
 
-int gkWindowSystemPrivate::getCode(int kc)
+gkScene* gkWindow::getRenderScene(void)			
+{ 
+	return m_scene ? m_scene : gkEngine::getSingleton().getActiveScene(); 
+}
+
+int gkWindow::getCode(int kc)
 {
 #define CASE(ret, c) case (c): return ret
 

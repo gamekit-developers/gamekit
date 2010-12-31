@@ -68,3 +68,14 @@ int selectPage(wxAuiNotebook* noteBook, wxWindow* page)
 
 	return -1;
 }
+
+void setupDefaultAuiDockArt(wxAuiManager* aui)
+{
+	wxASSERT(aui);
+
+	wxAuiDockArt* art = aui->GetArtProvider();
+
+	art->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE,  0);
+	art->SetMetric(wxAUI_DOCKART_SASH_SIZE,         3);
+	art->SetMetric(wxAUI_DOCKART_CAPTION_SIZE,      18);
+}

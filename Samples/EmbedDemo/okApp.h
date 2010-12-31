@@ -28,17 +28,34 @@
 #ifndef _okApp_h_
 #define _okApp_h_
 
-class okApp : public gkCoreApplication, public gkWindowSystem::Listener
+struct okSceneInfo 
+{	
+	gkScene* scene;
+	gkBlendFile* blend;
+	gkString group;
+
+	okSceneInfo() : scene(0), blend(0) {}
+};
+
+typedef utArray<okSceneInfo> okSceneInfoArray;
+
+class okApp : public gkCoreApplication, public gkWindowSystem::Listener, public utSingleton<okApp>
 {
-	gkString m_blend;
+	okSceneInfoArray m_scenes;
+
 	gkString m_cfg;
-	gkScene* m_scene;
 	bool m_inited;
-	gkBlendFile* m_blendFile;
+	int m_winCount;
+	int m_sceneCount;
 
 	bool m_showPhysicsDebug; 
 
-	bool setup();
+	bool hasScene() { return !m_scenes.empty(); }
+
+	virtual bool setup();
+
+	UTsize findSceneInfo(gkScene* scene);
+	gkBlendFile* getSceneBlendFile(gkScene* scene);
 protected:
 	virtual void  tick (gkScalar rate);
 
@@ -46,27 +63,38 @@ public:
 	okApp();
 	virtual ~okApp();
 	
-	bool init(const gkString& blend, const gkString& cfg, const gkString& windowHandle, int winSizeX, int winSizeY);
+	bool init(const gkString& cfg, const gkString& windowHandle, int winSizeX, int winSizeY);
 	void uninit();
 
-	bool load(const gkString& blend, const gkString& sceneName="");
-	void unload();
-	bool changeScene(const gkString& sceneName);
+	GK_INLINE bool isInited() const { return m_inited; }
 
-	bool createEmptyScene();
+	gkWindow* createWindow(const gkString& windowHandle, int winSizeX, int winSizeY);
+	gkWindow* getMainWindow();
+	void destroyWindow(gkWindow* win);
 
+	gkScene* loadScene(gkWindow* window, const gkString& blend, const gkString& sceneName="", bool ignoreCache=false);
+	void unloadScene(gkScene* scene);
+	void unloadAllScenes();
+	bool changeScene(gkScene* scene, const gkString& sceneName);
+
+	gkScene* createEmptyScene();
+	GK_INLINE gkScene* getFirstScene() { return m_scenes.empty() ? NULL : m_scenes[0].scene; }
+	gkString getFirstSceneName();
+	gkBlendFile* getFirstBlendFile();
 	bool step();
 
-	gkScene* getActiveScene() { return m_scene; }
-	gkString getActiveSceneName();
-	gkBlendFile* getBlendFile() { return m_blendFile; }
+	//gkScene* getActiveScene() { return m_scene; }
+	
+	//gkBlendFile* getBlendFile() { return m_blendFile; }
 	
 
 	GK_INLINE bool getShowPhysicsDebug() { return m_showPhysicsDebug; }
 	void setShowPhysicsDebug(bool show);
 	
-	GK_INLINE void setBlendFileName(const gkString& blend) { m_blend = blend; }
-	GK_INLINE gkString getBlendFileName() const { return m_blend; }
+	//GK_INLINE void setBlendFileName(const gkString& blend) { m_blend = blend; }
+	//GK_INLINE gkString getBlendFileName() const { return m_blend; }
+
+	UT_DECLARE_SINGLETON(okApp)
 };
 
 #endif //_okApp_h_

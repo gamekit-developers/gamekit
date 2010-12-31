@@ -41,7 +41,8 @@
 
 
 gkSoundManager::gkSoundManager()
-	:   m_stream(0),
+	:   gkResourceManager("SoundManager", "Sound"),
+		m_stream(0),
 	    m_valid(false),
 	    m_device(0),
 	    m_context(0),
@@ -77,6 +78,14 @@ gkSoundManager::~gkSoundManager()
 }
 
 
+gkResource* gkSoundManager::createImpl(const gkResourceName& name, const gkResourceHandle& handle)
+{
+	// Always test the return value, no guarantee that this manager can create playback.
+	if (!gkSndCtxValid())
+		return 0;
+
+	return new gkSound(this, name, handle);
+}
 
 
 void gkSoundManager::initialize(void)
@@ -489,76 +498,23 @@ void gkSoundManager::stopSound(gkSource* snd)
 }
 
 
-
-gkSound* gkSoundManager::getSound(const gkHashedString& name)
-{
-	// Always test the return value, no guarantee that this manager can create playback.
-	if (!gkSndCtxValid())
-		return 0;
-
-	UTsize pos;
-	if ((pos = m_objects.find(name)) == GK_NPOS)
-		return 0;
-
-
-	return m_objects.at(pos);
-}
-
-
-
-gkSound* gkSoundManager::createSound(const gkHashedString& name)
+void gkSoundManager::notifyResourceCreatedImpl(gkResource* res)
 {
 
-	// Always test the return value, no guarantee that this manager can create playback.
-	if (!gkSndCtxValid())
-		return 0;
-
-
-	UTsize pos;
-	if ((pos = m_objects.find(name)) != GK_NPOS)
-		return 0;
-
-	gkSound* ob = new gkSound(name.str());
-	m_objects.insert(name, ob);
-	return ob;
 }
 
-
-
-void gkSoundManager::destroy(const gkHashedString& name)
+void gkSoundManager::notifyResourceDestroyedImpl(gkResource* res)
 {
 	if (!gkSndCtxValid())
 		return;
 
-
-	UTsize pos;
-	if ((pos = m_objects.find(name)) != GK_NPOS)
-	{
-		gkSound* ob = m_objects.at(pos);
-
-		// Force stop.
-		removePlayback(ob);
-
-
-		m_objects.remove(name);
-		delete ob;
-	}
+	gkSound* ob = (gkSound*)res;
+	// Force stop.
+	removePlayback(ob);
 }
 
 
-
-void gkSoundManager::destroy(gkSound* ob)
-{
-	if (!gkSndCtxValid())
-		return;
-
-	GK_ASSERT(ob);
-	destroy(ob->getName());
-}
-
-
-
-void gkSoundManager::destroyAll(void)
+void gkSoundManager::notifyDestroyAllImpl(void)
 {
 	if (!gkSndCtxValid())
 		return;
@@ -567,34 +523,7 @@ void gkSoundManager::destroyAll(void)
 
 	// Destroy thread.
 	if (m_stream) m_stream->exit();
-
-
-
-	utHashTableIterator<ObjectMap> iter(m_objects);
-	while (iter.hasMoreElements())
-	{
-		gkSound* ob = iter.peekNextValue();
-		removePlayback(ob);
-
-		delete ob;
-		iter.next();
-	}
-
-	m_objects.clear();
 }
 
 
-
-
-bool gkSoundManager::hasSound(const gkHashedString& name)
-{
-	if (!gkSndCtxValid())
-		return false;
-
-
-
-	return m_objects.find(name) != GK_NPOS;
-}
-
-
-GK_IMPLEMENT_SINGLETON(gkSoundManager);
+UT_IMPLEMENT_SINGLETON(gkSoundManager);

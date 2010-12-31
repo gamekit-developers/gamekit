@@ -67,7 +67,7 @@ void gkEntity::createInstanceImpl(void)
 		m_skeleton->createInstance();
 
 	Ogre::SceneManager* manager = m_scene->getManager();
-	m_entity = manager->createEntity(m_name.str(), m_entityProps->m_mesh->getResourceName().str());
+	m_entity = manager->createEntity(m_name.getName(), m_entityProps->m_mesh->getResourceName().getName());
 
 
 	m_entity->setCastShadows(m_entityProps->m_casts);

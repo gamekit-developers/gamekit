@@ -27,28 +27,29 @@
 #ifndef _gkLuaScript_h_
 #define _gkLuaScript_h_
 
+#include "gkCommon.h"
+#include "gkResource.h"
 
 struct lua_State;
-class gkLuaManager;
 
-
-
-class gkLuaScript
+class gkLuaScript : public gkResource
 {
 protected:
-	const gkString  m_name, m_text;
+	//const gkString  m_name, 
+	gkString		m_text;
 	int             m_script;
-	bool            m_compiled, m_isInvalid;
+	bool            m_compiled;
+	bool			m_isInvalid;
 
-	gkLuaManager*    m_owner;
 	void compile(void);
 
 public:
-	gkLuaScript(gkLuaManager* parent, const gkString& name, const gkString& text);
+	gkLuaScript(gkResourceManager *creator, const gkResourceName &name, const gkResourceHandle &handle);
 	~gkLuaScript();
 
-	GK_INLINE const gkString& getName(void) const {return m_name;}
-	GK_INLINE bool  compiled(void)          const {return m_compiled;}
+	GK_INLINE bool  isCompiled(void)          const {return m_compiled;}
+
+	void setScript(const gkString& text);
 
 	void decompile(void);
 	// compile & run the script
@@ -57,4 +58,4 @@ public:
 
 
 
-#endif//_gkScript_h_
+#endif//_gkLuaScript_h_

@@ -294,4 +294,12 @@ public:
 	AxisStates      axes;
 };
 
+class gkTouch
+{
+public:
+	gkTouch()
+	{
+	}
+};
+
 #endif//_gkInput_h_

@@ -48,7 +48,7 @@ void gkCamera::createInstanceImpl(void)
 
 
 	Ogre::SceneManager* manager = m_scene->getManager();
-	m_camera = manager->createCamera(m_name.str());
+	m_camera = manager->createCamera(m_name.getName());
 
 	m_camera->setNearClipDistance(m_cameraProps.m_clipstart);
 	m_camera->setFarClipDistance(m_cameraProps.m_clipend);

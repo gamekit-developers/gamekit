@@ -31,6 +31,8 @@
 #include "OgreStringConverter.h"
 
 #include "gkWindowSystem.h"
+#include "gkWindow.h"
+#include "gkViewport.h"
 #include "gkCamera.h"
 #include "gkEntity.h"
 #include "gkLight.h"
@@ -69,8 +71,9 @@
 #include "External/Ogre/gkOgreSkyBoxGradient.h"
 #endif
 
-
 using namespace Ogre;
+
+#define DEFAULT_STARTUP_LUA_FILE		"OnInit.lua"
 
 
 
@@ -88,7 +91,9 @@ gkScene::gkScene(gkInstancedManager* creator, const gkResourceName& name, const 
 	     m_markDBVT(false),
 	     m_cloneCount(0),
 	     m_layers(0xFFFFFFFF),
-	     m_skybox(0)
+	     m_skybox(0),
+		 m_window(NULL),
+		 m_updateFlags(UF_ALL)
 {
 }
 
@@ -122,6 +127,17 @@ gkScene::~gkScene()
 }
 
 
+gkWindow* gkScene::getDisplayWindow(void)
+{
+	return m_window ? m_window : gkWindowSystem::getSingleton().getMainWindow();
+}
+
+void gkScene::setDisplayWindow(gkWindow* window)
+{
+	m_window = window;
+	if (m_window)
+		m_window->setRenderScene(this);
+}
 
 
 bool gkScene::hasObject(const gkHashedString& ob)
@@ -131,9 +147,10 @@ bool gkScene::hasObject(const gkHashedString& ob)
 	if (!result)
 	{
 		gkGameObjectManager& mgr = gkGameObjectManager::getSingleton();
-		if (mgr.exists(ob))
+		gkResourceName rname(ob, m_name.group);
+		if (mgr.exists(rname))
 		{
-			gkGameObject* obj = mgr.getByName<gkGameObject>(ob);
+			gkGameObject* obj = mgr.getByName<gkGameObject>(rname);
 			if (obj && obj->getOwner() == this)
 				result = true;
 		}
@@ -172,9 +189,11 @@ gkGameObject* gkScene::getObject(const gkHashedString& name)
 	else
 	{
 		gkGameObjectManager& mgr = gkGameObjectManager::getSingleton();
-		if (mgr.exists(name))
+
+		gkResourceName rname(name, getGroupName());
+		if (mgr.exists(rname))
 		{
-			gkGameObject* obj = mgr.getByName<gkGameObject>(name);
+			gkGameObject* obj = mgr.getByName<gkGameObject>(rname);
 			if (obj && obj->getOwner() == this)
 				return obj;
 		}
@@ -202,7 +221,7 @@ gkMesh* gkScene::getMesh(const gkHashedString& name)
 gkMesh* gkScene::createMesh(const gkHashedString& name)
 {
 	GK_ASSERT(m_meshManager);
-	return (gkMesh*)m_meshManager->create(name);
+	return (gkMesh*)m_meshManager->create(gkResourceName(name, getGroupName()));
 }
 
 
@@ -215,7 +234,7 @@ gkGameObject* gkScene::createObject(const gkHashedString& name)
 		return 0;
 	}
 
-	gkGameObject* gobj = gkGameObjectManager::getSingleton().createObject(name);
+	gkGameObject* gobj = gkGameObjectManager::getSingleton().createObject(gkResourceName(name, getGroupName()));
 	addObject(gobj);
 	return gobj;
 }
@@ -229,7 +248,7 @@ gkLight* gkScene::createLight(const gkHashedString& name)
 		return 0;
 	}
 
-	gkLight* gobj = gkGameObjectManager::getSingleton().createLight(name);
+	gkLight* gobj = gkGameObjectManager::getSingleton().createLight(gkResourceName(name, getGroupName()));
 	addObject(gobj);
 	return gobj;
 }
@@ -245,7 +264,7 @@ gkCamera* gkScene::createCamera(const gkHashedString& name)
 		return 0;
 	}
 
-	gkCamera* gobj = gkGameObjectManager::getSingleton().createCamera(name);
+	gkCamera* gobj = gkGameObjectManager::getSingleton().createCamera(gkResourceName(name, getGroupName()));
 	addObject(gobj);
 	return gobj;
 }
@@ -261,7 +280,7 @@ gkEntity* gkScene::createEntity(const gkHashedString& name)
 	}
 
 
-	gkEntity* gobj = gkGameObjectManager::getSingleton().createEntity(name);
+	gkEntity* gobj = gkGameObjectManager::getSingleton().createEntity(gkResourceName(name, getGroupName()));
 	addObject(gobj);
 	return gobj;
 }
@@ -278,7 +297,7 @@ gkSkeleton* gkScene::createSkeleton(const gkHashedString& name)
 	}
 
 
-	gkSkeleton* gobj = gkGameObjectManager::getSingleton().createSkeleton(name);
+	gkSkeleton* gobj = gkGameObjectManager::getSingleton().createSkeleton(gkResourceName(name, getGroupName()));
 	addObject(gobj);
 	return gobj;
 }
@@ -326,12 +345,36 @@ void gkScene::_eraseObject(gkGameObject* gobj)
 	gobj->destroyInstance();
 	gobj->setOwner(0);
 
+	if (m_constraintManager)
+		m_constraintManager->notifyObjectDestroyed(gobj);
+
 	m_objects.remove(name);
+}
+
+void gkScene::_eraseAllObjects()
+{
+	gkGameObjectHashMap::Iterator it = m_objects.iterator();
+	while (it.hasMoreElements())
+	{
+		gkGameObject* gobj = it.getNext().second;
+		
+		//gobj->destroyInstance();
+		
+		gkGameObjectManager::getSingleton().destroy(gobj);
+		//gobj->setOwner(0);		
+	}
+
+	m_objects.clear();
+
+	if (m_constraintManager) 
+		m_constraintManager->clear();	
 }
 
 
 void gkScene::addObject(gkGameObject* gobj)
 {
+	GK_ASSERT(gobj);
+
 	const gkHashedString name = gobj->getName();
 
 	if (m_objects.find(name) != GK_NPOS)
@@ -411,7 +454,7 @@ void gkScene::setHorizonColor(const gkColor& col)
 	if (isInstanced())
 	{
 		GK_ASSERT(m_manager && m_viewport);
-		m_viewport->setBackgroundColour(col);
+		m_viewport->getViewport()->setBackgroundColour(col);
 	}
 	else
 	{
@@ -433,7 +476,7 @@ void gkScene::setZenithColor(const gkColor& col)
 	if (isInstanced())
 	{
 		GK_ASSERT(m_manager && m_viewport);
-		m_viewport->setBackgroundColour(col);
+		m_viewport->getViewport()->setBackgroundColour(col);
 	}
 	else
 	{
@@ -498,7 +541,7 @@ gkDebugger* gkScene::getDebugger(void)
 gkDynamicsWorld* gkScene::getDynamicsWorld(void)
 {
 	if (!m_physicsWorld)
-		m_physicsWorld = new gkDynamicsWorld(m_name.str(), this);
+		m_physicsWorld = new gkDynamicsWorld(m_name.getName(), this);
 	return m_physicsWorld;
 }
 
@@ -557,18 +600,18 @@ void gkScene::setMainCamera(gkCamera* cam)
 	Camera* main = m_startCam->getCamera();
 	GK_ASSERT(main);
 
-	gkWindowSystem& sys = gkWindowSystem::getSingleton();
 
 	if (!m_viewport)
 	{
-		m_viewport = sys.addMainViewport(cam);
+		gkWindow* window = getDisplayWindow(); GK_ASSERT(window);
+		m_viewport = window->addViewport(cam);
 	}
 	else
-		m_viewport->setCamera(main);
+		m_viewport->getViewport()->setCamera(main);
 
 	GK_ASSERT(m_viewport);
 
-	const gkVector2& size = sys.getMouse()->winsize;
+	gkVector2 size = getDisplayWindow()->getSize();
 
 	main->setAspectRatio(size.x / size.y);
 	cam->setFov(gkDegree(cam->getFov()));
@@ -754,15 +797,21 @@ void gkScene::createInstanceImpl(void)
 {
 	if (m_objects.empty())
 	{
-		gkPrintf("Scene: '%s' Has no creatable objects.\n", m_name.str().c_str());
+		gkPrintf("Scene: '%s' Has no creatable objects.\n", m_name.getName().c_str());
 		m_instanceState = ST_ERROR;
 		return;
 	}
 
+	if (!ResourceGroupManager::getSingleton().resourceGroupExists(getGroupName()))
+		ResourceGroupManager::getSingleton().createResourceGroup(getGroupName());
+
+	if (!m_window)
+		setDisplayWindow(gkWindowSystem::getSingleton().getMainWindow());
+
 	// generic for now, but later scene properties will be used
 	// to extract more detailed management information
 
-	m_manager = Root::getSingleton().createSceneManager(ST_GENERIC, m_name.str());
+	m_manager = Root::getSingleton().createSceneManager(ST_GENERIC, m_name.getFullName());
 	m_skybox  = gkMaterialLoader::loadSceneMaterial(this, m_baseProps.m_material);
 
 
@@ -827,7 +876,7 @@ void gkScene::createInstanceImpl(void)
 
 	GK_ASSERT(m_viewport);
 
-	m_viewport->setBackgroundColour(m_baseProps.m_material.m_horizon);
+	m_viewport->getViewport()->setBackgroundColour(m_baseProps.m_material.m_horizon);
 	m_manager->setAmbientLight(m_baseProps.m_material.m_ambient);
 
 
@@ -842,7 +891,7 @@ void gkScene::createInstanceImpl(void)
 		else if (iparam == "landscapeleft")
 			oparam = Ogre::OR_LANDSCAPERIGHT;
 
-		m_viewport->setOrientationMode((Ogre::OrientationMode)oparam);
+		m_viewport->getViewport()->setOrientationMode((Ogre::OrientationMode)oparam);
 	}
 
 
@@ -873,16 +922,14 @@ void gkScene::createInstanceImpl(void)
 
 
 	// notify main scene
-	gkEngine::getSingleton().setActiveScene(this);
+	gkEngine::getSingleton().registerActiveScene(this);
 }
-
-
 
 
 void gkScene::postCreateInstanceImpl(void)
 {
 #ifdef OGREKIT_USE_LUA
-	gkLuaScript* script = gkLuaManager::getSingleton().getScript("OnInit.lua");
+	gkLuaScript* script = gkLuaManager::getSingleton().getByName<gkLuaScript>(gkResourceName(DEFAULT_STARTUP_LUA_FILE, getGroupName()));
 
 	if (script)
 		script->execute();
@@ -894,15 +941,15 @@ void gkScene::postCreateInstanceImpl(void)
 
 void gkScene::destroyInstanceImpl(void)
 {
-	if (m_objects.empty())
-		return;
+	//if (m_objects.empty())
+	//	return;
 
 	if (m_navMeshData.get())
 		m_navMeshData->destroyInstances();
 
 #ifdef OGREKIT_USE_LUA
 	// Free scripts
-	gkLuaManager::getSingleton().decompile();
+	gkLuaManager::getSingleton().decompileGroup(getGroupName());
 #endif
 
 	m_cameras.clear(true);
@@ -928,6 +975,7 @@ void gkScene::destroyInstanceImpl(void)
 		GK_ASSERT(gobj->isInstanced());
 
 		gobj->destroyInstance();
+	//	gkGameObjectManager::getSingleton().destroy(gobj);
 	}
 	m_instanceObjects.clear(true);
 
@@ -971,18 +1019,16 @@ void gkScene::destroyInstanceImpl(void)
 
 	if (m_viewport)
 	{
-		RenderWindow* window = gkWindowSystem::getSingleton().getMainWindow();
-
-		if (window)
-		{
-			window->removeViewport(0);
-			m_viewport = 0;
-		}
+		getDisplayWindow()->removeViewport(m_viewport);
+		
+		m_viewport = 0;		
 	}
 
 	gkLogicManager::getSingleton().notifySceneInstanceDestroyed();
 	gkWindowSystem::getSingleton().clearStates();
-	gkEngine::getSingleton().setActiveScene(0);
+
+	
+	gkEngine::getSingleton().unregisterActiveScene(this);
 
 
 
@@ -991,6 +1037,7 @@ void gkScene::destroyInstanceImpl(void)
 	gkSoundManager::getSingleton().stopAllSounds();
 
 #endif
+
 }
 
 
@@ -1339,45 +1386,67 @@ void gkScene::update(gkScalar tickRate)
 	GK_ASSERT(m_physicsWorld);
 
 	// update simulation
-	gkStats::getSingleton().startClock();
-	m_physicsWorld->step(tickRate);
-	gkStats::getSingleton().stopPhysicsClock();
+	if (m_updateFlags & UF_PHYSICS)
+	{
+		gkStats::getSingleton().startClock();
+		m_physicsWorld->step(tickRate);
+		gkStats::getSingleton().stopPhysicsClock();
+	}
 
 
 	// update logic bricks
-	gkStats::getSingleton().startClock();
-	gkLogicManager::getSingleton().update(tickRate);
-	gkStats::getSingleton().stopLogicBricksClock();
+	if (m_updateFlags & UF_LOGIC_BRICKS)
+	{
+		gkStats::getSingleton().startClock();
+		gkLogicManager::getSingleton().update(tickRate);
+		gkStats::getSingleton().stopLogicBricksClock();
+	}
 
 	// update node trees
-	gkStats::getSingleton().startClock();
-	gkNodeManager::getSingleton().update(tickRate);
-	gkStats::getSingleton().stopLogicNodesClock();
+	if (m_updateFlags & UF_NODE_TREES)
+	{
+		gkStats::getSingleton().startClock();
+		gkNodeManager::getSingleton().update(tickRate);
+		gkStats::getSingleton().stopLogicNodesClock();
+	}
 
-	updateObjectsAnimations(tickRate);
+	// update animations
+	if (m_updateFlags & UF_ANIMATIONS)
+	{
+		gkStats::getSingleton().startClock();
+		updateObjectsAnimations(tickRate);
+		gkStats::getSingleton().stopAnimationsClock();
+	}
 
 
 #if OGREKIT_OPENAL_SOUND
 	// update sound manager.
-	gkStats::getSingleton().startClock();
-	gkSoundManager::getSingleton().update(this);
-	gkStats::getSingleton().stopSoundClock();
+	if (m_updateFlags & UF_SOUNDS)
+	{
+		gkStats::getSingleton().startClock();
+		gkSoundManager::getSingleton().update(this);
+		gkStats::getSingleton().stopSoundClock();
+	}
 #endif
 
-
-	gkStats::getSingleton().startClock();
-	if (m_markDBVT)
+	if (m_updateFlags & UF_DBVT)
 	{
-		m_markDBVT = false;
-		m_physicsWorld->handleDbvt(m_startCam);
+		gkStats::getSingleton().startClock();
+		if (m_markDBVT)
+		{
+			m_markDBVT = false;
+			m_physicsWorld->handleDbvt(m_startCam);
+		}
+		gkStats::getSingleton().stopDbvtClock();
 	}
 
-	gkStats::getSingleton().stopDbvtClock();
-
-	if (m_debugger)
+	if (m_updateFlags & UF_DEBUG)
 	{
-		m_physicsWorld->DrawDebug();
-		m_debugger->flush();
+		if (m_debugger)
+		{
+			m_physicsWorld->DrawDebug();
+			m_debugger->flush();
+		}
 	}
 
 

@@ -69,12 +69,13 @@ using namespace Ogre;
 
 
 
-gkBlendFile::gkBlendFile(const gkString& blendToLoad, const gkString& group)
-	:    m_name(blendToLoad),
-	     m_group(group),
-	     m_activeScene(0),
-	     m_findScene(""),
-	     m_hasBFont(false)
+gkBlendFile::gkBlendFile(const gkString& blendToLoad, const gkString& inResourceGroup, const gkString& group)
+	:	m_name(blendToLoad),
+		m_inResourceGroup(inResourceGroup),
+		m_group(group),
+		m_activeScene(0),
+		m_findScene(""),
+		m_hasBFont(false)
 {
 }
 
@@ -124,7 +125,7 @@ bool gkBlendFile::parse(int opts, const gkString& scene)
 
 	m_findScene = scene;
 
-	if (opts == gkBlendLoader::LO_ONLY_ACTIVE_SCENE)
+	if (opts & gkBlendLoader::LO_ONLY_ACTIVE_SCENE)
 		loadActive();
 	else
 		createInstances();
@@ -158,7 +159,7 @@ void gkBlendFile::loadActive(void)
 			conv.convert();
 
 
-			m_activeScene = (gkScene*)gkSceneManager::getSingleton().getByName(GKB_IDNAME(sc));
+			m_activeScene = (gkScene*)gkSceneManager::getSingleton().getByName(gkResourceName(GKB_IDNAME(sc), m_group));
 			if (m_activeScene)
 				m_scenes.push_back(m_activeScene);
 		}
@@ -193,7 +194,7 @@ void gkBlendFile::createInstances(void)
 			gkBlenderSceneConverter conv(this, sc);
 			conv.convert();
 
-			gkScene* gks = (gkScene*)gkSceneManager::getSingleton().getByName(GKB_IDNAME(sc));
+			gkScene* gks = (gkScene*)gkSceneManager::getSingleton().getByName(gkResourceName(GKB_IDNAME(sc), m_group));
 			if (gks)
 				m_scenes.push_back(gks);
 		}
@@ -206,7 +207,7 @@ void gkBlendFile::createInstances(void)
 		// Grab the main scene
 		Blender::Scene* sc = (Blender::Scene*)fg->curscene;
 		if (sc != 0)
-			m_activeScene = (gkScene*) gkSceneManager::getSingleton().getByName(GKB_IDNAME(sc));
+			m_activeScene = (gkScene*) gkSceneManager::getSingleton().getByName(gkResourceName(GKB_IDNAME(sc), m_group));
 	}
 
 	if (m_activeScene == 0 && !m_scenes.empty())
@@ -258,9 +259,11 @@ void gkBlendFile::buildTextFiles(void)
 
 		gkString str = ss.str();
 
-		if (!str.empty() && !txtMgr.exists(GKB_IDNAME(txt)))
+		gkResourceName txtName(GKB_IDNAME(txt), m_group);
+
+		if (!str.empty() && !txtMgr.exists(txtName))
 		{
-			gkTextFile* tf = (gkTextFile*)txtMgr.create(GKB_IDNAME(txt));
+			gkTextFile* tf = (gkTextFile*)txtMgr.create(txtName);
 			tf->setText(str);
 
 			if (!m_hasBFont)
@@ -268,7 +271,7 @@ void gkBlendFile::buildTextFiles(void)
 		}
 	}
 
-	txtMgr.parseScripts();
+	txtMgr.parseScripts(m_group);
 }
 
 
@@ -286,14 +289,15 @@ void gkBlendFile::buildAllTextures(void)
 		if (ima->id.us <= 0)
 			continue;
 
+		gkString name(GKB_IDNAME(ima));
 
-		Ogre::TexturePtr tex = Ogre::TextureManager::getSingleton().getByName(GKB_IDNAME(ima));
+		Ogre::TexturePtr tex = Ogre::TextureManager::getSingleton().getByName(name);
 		if (!tex.isNull())
 			continue;
 
 
 		gkTextureLoader* loader = new gkTextureLoader(ima);
-		tex = Ogre::TextureManager::getSingleton().create(GKB_IDNAME(ima), m_group, true, loader);
+		tex = Ogre::TextureManager::getSingleton().create(GKB_IDNAME(ima), m_inResourceGroup, true, loader);
 
 		if (!tex.isNull())
 			m_loaders.push_back(loader);
@@ -331,9 +335,9 @@ void gkBlendFile::buildAllSounds(void)
 		if (sound->packedfile || sound->newpackedfile || isFile)
 		{
 			Blender::PackedFile* pak = sound->packedfile ? sound->packedfile : sound->newpackedfile;
-			if (((pak && pak->data) || isFile) && !mgr->hasSound(GKB_IDNAME(sound)))
+			if (((pak && pak->data) || isFile) && !mgr->exists(gkResourceName(GKB_IDNAME(sound), m_group)))
 			{
-				gkSound* sndObj = mgr->createSound(GKB_IDNAME(sound));
+				gkSound* sndObj = mgr->create<gkSound>(gkResourceName(GKB_IDNAME(sound), m_group));
 				if (!sndObj)
 					continue;
 
@@ -388,7 +392,7 @@ void gkBlendFile::buildAllFonts(void)
 
 		Blender::PackedFile* pak = vf->packedfile;
 
-		gkFont* fnt = (gkFont*)fmgr.create(GKB_IDNAME(vf));
+		gkFont* fnt = (gkFont*)fmgr.create(gkResourceName(GKB_IDNAME(vf), m_group));
 		fnt->setData(pak->data, pak->size);
 	}
 #endif
@@ -397,7 +401,7 @@ void gkBlendFile::buildAllFonts(void)
 
 void gkBlendFile::buildAllActions(void)
 {
-	gkAnimationLoader anims;
+	gkAnimationLoader anims(m_group);
 	bParse::bMain* mp = m_file->getMain();
 	
 	Blender::FileGlobal* fg = (Blender::FileGlobal*)m_file->getFileGlobal();

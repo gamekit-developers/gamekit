@@ -36,6 +36,7 @@
 
 #define STATUS_FPS      4
 #define DEMO_BLEND		"logo_text.blend"
+#define DEMO_BLEND2		"logo_text2.blend"
 #define APP_TITLE		"OgreKit Embedding Demo"
 #define SET_EXIT_IF_EXCEPTION_RAISED 0
 #define ENABLE_LOG_BOX	1		//0: disable Logbox, 1: enable Logbox
@@ -46,7 +47,8 @@ enum
 	ID_LOG_BOX,
 	ID_LOG_CLEAR,
 	ID_LOG_SAVE,
-	ID_TIMER_PAUSE
+	ID_TIMER_PAUSE,
+	ID_NEW_WINDOW
 };
 
 class EmbedLog : public wxLog, public Ogre::LogListener
@@ -103,6 +105,7 @@ public:
 #endif
 };
 
+class SecondFrame;
 
 class EmbedFrame : public wxFrame
 {
@@ -112,9 +115,11 @@ public:
 
 	GK_INLINE void setAppTitle(const wxString& blend) { SetTitle(wxString::Format("%s - %s", APP_TITLE, blend)); }
 	
+	void secondFrameClosed() { m_secondFrame = NULL; }
 private:
 	void OnOpen(wxCommandEvent& event);
     void OnClose(wxCommandEvent& event);
+	void OnNewWindow(wxCommandEvent& event);
 
 	void OnSize(wxSizeEvent& event);
 	void OnTimer(wxTimerEvent& event);
@@ -130,11 +135,58 @@ private:
 
     DECLARE_EVENT_TABLE()
 
-	okWindow*    m_okWin;
-	wxListBox*   m_logBox;	
-	wxStatusBar* m_statusBar;
-	EmbedLog*    m_logListener;
-	wxTimer	     m_timer;
+	okWindow*		m_okWin;
+	wxListBox*		m_logBox;	
+	wxStatusBar*	m_statusBar;
+	EmbedLog*		m_logListener;
+	wxTimer			m_timer;
+	SecondFrame*	m_secondFrame;
+	wxString		m_blendFile;
+};
+
+
+class SecondFrame : public wxFrame
+{
+	okWindow* m_okWin;
+public:
+	SecondFrame(wxWindow* parent)
+		:	wxFrame(parent, wxID_ANY, "SecondFrame"),
+			m_okWin(NULL)
+	{
+		EmbedApp* app = (EmbedApp*)wxTheApp;
+		okWindow* win = new okWindow(this, wxSize(WIN_SIZE_X, WIN_SIZE_Y));
+
+		wxString blend = DEMO_BLEND2;
+
+		wxLogMessage("Second Initing... %s ", blend);
+		if (win->init(app->getOkApp(), NULL)) 
+		{		
+			win->loadScene(WX2GK(blend), "", true);
+			m_okWin = win;			
+		}
+		else
+		{
+			wxLogMessage("Can't create Second Window.");
+			delete win; win = NULL;
+		}
+
+		wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
+
+		if (m_okWin) 
+			vbox->Add(m_okWin, wxSizerFlags(1).Expand());
+
+
+		SetSizerAndFit(vbox);
+
+		SetClientSize(640, 480);
+		Show();
+	}
+
+	virtual ~SecondFrame()
+	{
+		if (GetParent()) 
+			((EmbedFrame*)GetParent())->secondFrameClosed();
+	}
 };
 
 
@@ -190,6 +242,7 @@ int EmbedApp::OnExit()
 BEGIN_EVENT_TABLE(EmbedFrame, wxFrame)
     EVT_MENU(wxID_CLOSE, EmbedFrame::OnClose)
 	EVT_MENU(wxID_OPEN, EmbedFrame::OnOpen)
+	EVT_MENU(ID_NEW_WINDOW, EmbedFrame::OnNewWindow)
 	EVT_MENU(ID_LOG_CLEAR, EmbedFrame::OnClearLog)
 	EVT_MENU(ID_LOG_SAVE, EmbedFrame::OnSaveLog)
 	EVT_TIMER(ID_STATUS_TIMER, EmbedFrame::OnTimer)	
@@ -198,13 +251,14 @@ BEGIN_EVENT_TABLE(EmbedFrame, wxFrame)
 	EVT_DROP_FILES(EmbedFrame::OnDropFiles)
 END_EVENT_TABLE()
 
-EmbedFrame::EmbedFrame() : 
-	wxFrame(NULL, wxID_ANY, APP_TITLE),
-	m_okWin(NULL),
-	m_timer(this, ID_STATUS_TIMER),
-	m_statusBar(NULL),
-	m_logListener(NULL),
-	m_logBox(NULL)
+EmbedFrame::EmbedFrame() 
+	:	wxFrame(NULL, wxID_ANY, APP_TITLE),
+		m_okWin(NULL),
+		m_timer(this, ID_STATUS_TIMER),
+		m_statusBar(NULL),
+		m_logListener(NULL),
+		m_logBox(NULL),
+		m_secondFrame(NULL)
 {
 #ifdef WIN32
     SetIcon(wxICON(sample));
@@ -212,8 +266,10 @@ EmbedFrame::EmbedFrame() :
 
     wxMenu* menu = new wxMenu;
 	menu->Append(wxID_OPEN);
+	menu->Append(ID_NEW_WINDOW, "&New Window");
 	menu->AppendSeparator();
-    menu->Append(wxID_CLOSE);
+    menu->Append(wxID_CLOSE);	
+	
     wxMenuBar* menuBar = new wxMenuBar;
     menuBar->Append(menu, "&File");
 
@@ -236,7 +292,7 @@ EmbedFrame::EmbedFrame() :
 #endif
 
 	EmbedApp* app = (EmbedApp*)wxTheApp;
-	okWindow* win = new okWindow(this);
+	okWindow* win = new okWindow(this, wxSize(WIN_SIZE_X, WIN_SIZE_Y));
 
 	EmbedLog* logListener = new EmbedLog(m_logBox);
 	delete wxLog::SetActiveTarget(logListener);
@@ -250,8 +306,13 @@ EmbedFrame::EmbedFrame() :
 
 	wxLogMessage("Initing... %s ", blend);
 	Ogre::Timer watch;
-	if (win->init(app->getOkApp(), WX2GK(blend), "", WIN_SIZE_X, WIN_SIZE_Y)) 
-	{		
+
+	okApp* okapp = app->getOkApp();
+	bool ok = okapp->init("", win->getNativeHandle(), WIN_SIZE_X, WIN_SIZE_Y); GK_ASSERT(ok);
+	if (win->init(okapp, okapp->getMainWindow())) 
+	{
+		win->loadScene(WX2GK(blend));
+
 		wxLogMessage("Elapsed time for initing: %.3f seconds", watch.getMilliseconds()/1000.0f);
 		m_timer.Start(1000/STATUS_FPS);
 		m_okWin = win;
@@ -332,16 +393,17 @@ bool EmbedFrame::OpenBlendFile(const wxString& file)
 	EmbedApp* app = (EmbedApp*)wxTheApp;
 	wxSize size = m_okWin->GetSize();
 
-	if (file.CmpNoCase(m_okWin->getApp()->getBlendFileName().c_str()) == 0)
+	if (file.CmpNoCase(m_blendFile) == 0)
 	{
 		wxLogMessage("Already loaded.");
 		return true;
 	}
 
+
 	wxLogMessage("Loading... %s ", file);
 
 	Ogre::Timer watch;
-	if (!m_okWin->load(WX2GK(file)))
+	if (!m_okWin->loadScene(WX2GK(file)))
 	{
 		wxString msg = wxString::Format("Error - Can't load the blend file: %s", file);
 		wxLogMessage(msg);
@@ -351,6 +413,8 @@ bool EmbedFrame::OpenBlendFile(const wxString& file)
 
 		return false;
 	}
+
+	m_blendFile = file;
 
 	wxLogMessage("Elapsed time for loading: %.3f seconds", watch.getMilliseconds()/1000.0f);
 
@@ -364,6 +428,15 @@ bool EmbedFrame::OpenBlendFile(const wxString& file)
 		m_timer.Start(1000/STATUS_FPS);
 
 	return true;
+}
+
+void EmbedFrame::OnNewWindow(wxCommandEvent& WXUNUSED(event))
+{
+	if (m_secondFrame)
+		return;
+
+	m_secondFrame = new SecondFrame(this);
+
 }
 
 void EmbedFrame::OnPauseRun(wxCommandEvent& event)
@@ -444,7 +517,7 @@ void EmbedFrame::OnTimer(wxTimerEvent& WXUNUSED(event))
 	{
 		if (!m_okWin || !m_statusBar || !gkWindowSystem::getSingletonPtr()) return;
 
-		const Ogre::RenderTarget::FrameStats& stats = gkWindowSystem::getSingleton().getMainWindow()->getStatistics();
+		const Ogre::RenderTarget::FrameStats& stats = gkWindowSystem::getSingleton().getMainRenderWindow()->getStatistics();
 
 		m_statusBar->SetStatusText(wxString::Format("FPS: %.3f (%.3f/%.3f/%.3f) NumTris: %d NumBatches: %d",  
 			stats.lastFPS, stats.avgFPS, stats.bestFPS, stats.worstFPS, (int)stats.triangleCount, (int)stats.batchCount));

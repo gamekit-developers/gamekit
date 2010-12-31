@@ -53,9 +53,10 @@ set(LIB_SRC
 set(APP_SRC
 	luMainApp.cpp
 	luMainFrame.cpp
-	luLog.cpp
+	luLog.cpp	
 	luProjPanel.cpp
 	luPropsPanel.cpp
+	luProps.cpp
 	luUtils.cpp
 	luHelp.cpp
 	luEdit.cpp
@@ -66,6 +67,8 @@ set(APP_SRC
 	luFindRepDlg.cpp
 	luDefs.cpp
 	luOutputs.cpp
+	luAnimDlg.cpp
+	luStateFrame.cpp	
 	${OK_UTILS_PATH}/okApp.cpp
 	${OK_UTILS_PATH}/okWin.cpp
 	${OK_UTILS_PATH}/okUtils.cpp
@@ -79,6 +82,7 @@ set(APP_HDR
 	luLog.h
 	luProjPanel.h
 	luPropsPanel.h
+	luProps.h
 	luUtils.h
 	luHelp.h
 	luEdit.h
@@ -89,6 +93,8 @@ set(APP_HDR
 	luConfig.h
 	luFindRepDlg.h
 	luOutputs.h
+	luAnimDlg.h
+	luStateFrame.h
 	${OK_UTILS_PATH}/okApp.h
 	${OK_UTILS_PATH}/okWin.h
 	${OK_UTILS_PATH}/okUtils.h
