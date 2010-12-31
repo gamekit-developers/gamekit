@@ -68,7 +68,6 @@ gkWindow::~gkWindow()
 
 	m_joysticks.clear();
 
-	gkPrintf("[viewport] %d", m_viewports.size());
 	for (i = 0; i < m_viewports.size(); i++)
 		delete m_viewports[i];
 

@@ -27,6 +27,7 @@
 #include "gkMemoryTest.h"
 #include "Script/Lua/gkLuaUtils.h"
 #include "gkLogger.h"
+#include "gkUtils.h"
 #include "opts.h"
 
 #ifdef WIN32
@@ -132,7 +133,7 @@ int main(int argc, char** argv)
 	lua_pushtraceback(L);
 	int tb = lua_gettop(L);
 
-	int status = luaL_loadfile(L, luaFile);
+	int status = luaL_loadfile(L, gkUtils::getFile(luaFile).c_str());
 
 	if (status != 0)
 	{

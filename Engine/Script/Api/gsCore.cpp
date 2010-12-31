@@ -577,7 +577,7 @@ gsScene* gsEngine::loadBlendFile(const gkString& name)
 		if (!m_engine->isInitialized())
 			gkLogMessage("gsEngine: loadBlendFile on uninitialized engine.");
 
-		gkBlendFile* gkb = m_engine->loadBlendFile(name, gkBlendLoader::LO_ONLY_ACTIVE_SCENE, "<gkBuiltin>");
+		gkBlendFile* gkb = m_engine->loadBlendFile(gkUtils::getFile(name), gkBlendLoader::LO_ONLY_ACTIVE_SCENE, "<gkBuiltin>");
 		if (!gkb)
 		{
 			printf("File Loading failed!\n");
