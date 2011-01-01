@@ -90,7 +90,7 @@ int OgreKit::setup(int argc, char** argv)
 		TCLAP::ValueArg<bool>			debugPhysics_arg("p", "debugphysics", "Display debug physics.", false, m_prefs.debugPhysics, "bool");
 		TCLAP::ValueArg<bool>			debugPhysicsAabb_arg("a", "debugphysicsaabb", "Display debug physics aabb.", false, m_prefs.debugPhysicsAabb, "bool");
 		TCLAP::ValueArg<bool>			buildStaticGeometry_arg("", "buildinstances", "Build Static Geometry.", false, m_prefs.buildStaticGeometry, "bool");
-		TCLAP::ValueArg<bool>			useBulletDbvt_arg("", "usebulletdbvt", "Use bullet dbvt.", false, m_prefs.useBulletDbvt, "bool");
+		TCLAP::ValueArg<bool>			useBulletDbvt_arg("", "frustumculling", "Enable view frustum culling by dbvt.", false, m_prefs.useBulletDbvt, "bool");
 		TCLAP::ValueArg<bool>			showDebugProps_arg("", "showdebugprops", "Show debug props.", false, m_prefs.showDebugProps, "bool");
 		TCLAP::ValueArg<bool>			debugSounds_arg("", "debugsounds", "Debug sounds.", false, m_prefs.debugSounds, "bool");
 		TCLAP::ValueArg<bool>			disableSound_arg("s", "disablesound", "Disable sounds.", false, m_prefs.disableSound, "bool");

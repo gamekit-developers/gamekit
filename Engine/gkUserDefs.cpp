@@ -227,7 +227,7 @@ void gkUserDefs::parseString(const gkString& key, const gkString& val)
 		buildStaticGeometry = Ogre::StringConverter::parseBool(val);
 		return;
 	}
-	if (KeyEq("usebulletdbvt"))
+	if (KeyEq("frustumculling"))
 	{
 		useBulletDbvt = Ogre::StringConverter::parseBool(val);
 		return;
