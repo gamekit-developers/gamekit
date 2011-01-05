@@ -44,7 +44,7 @@ public:
 		BM_MIXTURE,
 		BM_MULTIPLY,
 		BM_ADDITIVE,
-		BM_SUBTRACT,
+		BM_SUBTRACT
 	};
 
 	enum Mode
@@ -57,14 +57,14 @@ public:
 		TM_AMBIENT      = (1 << 5),
 		TM_REFRACTION   = (1 << 6),
 		TM_MIRROR       = (1 << 7),
-		TM_NORMAL       = (1 << 8),
+		TM_NORMAL       = (1 << 8)
 	};
 
 
 	enum Type
 	{
 		IMT_IMAGE,
-		IMT_CUBEMAP,
+		IMT_CUBEMAP
 	};
 
 public:
@@ -107,7 +107,7 @@ public:
 		MA_TWOSIDE          = (1 << 5),
 		MA_ALPHABLEND       = (1 << 6),
 		MA_ADDITIVEBLEND    = (1 << 7),
-		MA_HASFACETEX       = (1 << 8),
+		MA_HASFACETEX       = (1 << 8)
 	};
 
 
@@ -153,7 +153,7 @@ public:
 	enum Type
 	{
 		CA_PERSPECTIVE,
-		CA_ORTHOGRAPHIC,
+		CA_ORTHOGRAPHIC
 	};
 
 public:
@@ -204,7 +204,7 @@ public:
 	{
 		LI_POINT,
 		LI_SPOT,
-		LI_DIR,
+		LI_DIR
 	};
 
 
@@ -252,7 +252,7 @@ enum gkPhysicsType
 	GK_STATIC,
 	GK_DYNAMIC,
 	GK_RIGID,
-	GK_SOFT,
+	GK_SOFT
 };
 
 
@@ -279,6 +279,44 @@ enum gkPhysicsShape
 	SH_BVH_MESH,
 };
 
+enum gkPhysicsConstraintType
+{
+	GK_BALL_CONSTRAINT,
+	GK_HINGE_CONSTRAINT,
+	GK_CONETWIST_CONSTRAINT,
+	GK_VEHICLE_CONSTRAINT,
+	GK_D6_CONSTRAINT,
+	GK_SLIDER_CONSTRAINT,
+	GK_CONTACT_CONSTRAINT
+};
+
+class gkPhysicsConstraintProperties
+{
+public:
+
+	gkPhysicsConstraintProperties()
+		:	m_type(GK_BALL_CONSTRAINT),
+			m_pivot(0.f, 0.f, 0.f),
+			m_axis(0.f, 0.f, 0.f),
+			m_flag(0),
+			m_disableLinkedCollision(true)
+	{
+		for (int i = 0; i < 6; i++) m_minLimit[i] = m_maxLimit[i] = 0.f;
+	}
+
+	gkString	m_target;
+
+	int			m_type;
+	gkVector3	m_pivot;
+	gkVector3	m_axis;
+
+	gkScalar	m_minLimit[6];
+	gkScalar	m_maxLimit[6];	
+	
+	int			m_flag;
+	bool		m_disableLinkedCollision;
+
+};
 
 class gkPhysicsProperties
 {
@@ -316,21 +354,25 @@ public:
 	gkScalar    m_maxVel;
 	gkScalar    m_restitution;
 	gkScalar    m_friction;
+	utArray<gkPhysicsConstraintProperties> m_constraints;
 
-	GK_INLINE bool isContactListener(void)    const { return (m_mode & GK_CONTACT) != 0;}
-	GK_INLINE bool isDosser(void)             const { return (m_mode & GK_NO_SLEEP) == 0;}
-	GK_INLINE bool isRigidOrDynamic(void)     const { return m_type == GK_DYNAMIC || m_type == GK_RIGID;}
-	GK_INLINE bool isRigidOrStatic(void)      const { return m_type == GK_STATIC  || m_type == GK_RIGID;}
+	GK_INLINE bool isContactListener(void)    const { return (m_mode & GK_CONTACT) != 0; }
+	GK_INLINE bool isDosser(void)             const { return (m_mode & GK_NO_SLEEP) == 0; }
+	GK_INLINE bool isRigidOrDynamic(void)     const { return m_type == GK_DYNAMIC || m_type == GK_RIGID; }
+	GK_INLINE bool isRigidOrStatic(void)      const { return m_type == GK_STATIC  || m_type == GK_RIGID; }
 	GK_INLINE bool isPhysicsObject(void)      const { return m_type != GK_NO_COLLISION; }
 	GK_INLINE bool isStatic(void)             const { return m_type == GK_STATIC; }
 	GK_INLINE bool isDynamic(void)            const { return m_type == GK_DYNAMIC; }
 	GK_INLINE bool isRigid(void)              const { return m_type == GK_RIGID; }
 	GK_INLINE bool isSoft(void)               const { return m_type == GK_SOFT; }
-	GK_INLINE bool isMeshShape(void)          const { return m_shape >= SH_CONVEX_TRIMESH;}
+	GK_INLINE bool isMeshShape(void)          const { return m_shape >= SH_CONVEX_TRIMESH; }
+
+	GK_INLINE UTsize getConstraintCount(void) const { return m_constraints.size(); }
+	GK_INLINE const  gkPhysicsConstraintProperties& getConstraint(UTsize i) const { return m_constraints[i]; }
 };
 
 
-typedef enum gkGameObjectTypes
+enum gkGameObjectTypes
 {
 	GK_OB_NULL = 0,
 	GK_CAMERA,
@@ -338,7 +380,7 @@ typedef enum gkGameObjectTypes
 	GK_ENTITY,
 	GK_OBJECT,
 	GK_SKELETON,
-} gkGameObjectTypes;
+};
 
 enum gkGameObjectMode
 {
@@ -387,6 +429,7 @@ public:
 	GK_INLINE bool isRigid(void)              const { return m_physics.isRigid(); }
 	GK_INLINE bool isSoft(void)               const { return m_physics.isSoft(); }
 	GK_INLINE bool isMeshShape(void)          const { return m_physics.isMeshShape(); }
+	GK_INLINE bool hasPhysicsConstraint(void) const { return m_physics.getConstraintCount() != 0; }
 
 	GK_INLINE bool isActor(void)              const { return (m_mode & GK_ACTOR)      != 0; }
 	GK_INLINE bool isInvisible(void)          const { return (m_mode & GK_INVISIBLE)  != 0; }
@@ -446,7 +489,7 @@ public:
 	{
 	}
 
-	int            m_distModel;
+	int         m_distModel;
 	gkScalar    m_dopplerFactor;
 	gkScalar    m_sndSpeed;
 

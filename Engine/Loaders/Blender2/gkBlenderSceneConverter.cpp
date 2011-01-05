@@ -410,63 +410,93 @@ void gkBlenderSceneConverter::convertObjectProperties(gkGameObject* gobj, Blende
 
 void gkBlenderSceneConverter::convertObjectConstraints(gkGameObject* gobj, Blender::Object* bobj)
 {
-	// TODO: setup physics constraints & add more
-
-
+	// TODO: add more constraints
 	gkConstraintManager* mgr = m_gscene->getConstraintManager();
-
 
 	for (Blender::bConstraint* bc = (Blender::bConstraint*)bobj->constraints.first; bc; bc = bc->next)
 	{
-		if (bc->enforce == 0.0)
-			continue;
 
-		gkConstraint* co = 0;
-
-
-		if (bc->type == CONSTRAINT_TYPE_ROTLIMIT)
+		if (bc->type == CONSTRAINT_TYPE_RIGIDBODYJOINT)
 		{
-			// rotation is in radians.
-			Blender::bRotLimitConstraint* lr = (Blender::bRotLimitConstraint*)bc->data;
-			if (!lr->flag)
+
+			Blender::bRigidBodyJointConstraint* jc = (Blender::bRigidBodyJointConstraint*)bc->data;
+
+			gkPhysicsConstraintProperties p;
+			p.m_target = GKB_IDNAME(jc->tar);
+			p.m_axis  = gkVector3(jc->axX, jc->axY, jc->axZ);
+			p.m_pivot = gkVector3(jc->pivX, jc->pivY, jc->pivZ);
+			for (int i = 0; i < 6; i++)
+			{
+				p.m_minLimit[i] = jc->minLimit[i];
+				p.m_maxLimit[i] = jc->maxLimit[i];
+			}
+			p.m_flag = jc->flag;
+			p.m_disableLinkedCollision = (jc->flag & CONSTRAINT_DISABLE_LINKED_COLLISION) != 0;
+
+			
+			if (jc->type == CONSTRAINT_RB_BALL)
+				p.m_type = GK_BALL_CONSTRAINT;
+			else if (jc->type == CONSTRAINT_RB_HINGE)
+				p.m_type = GK_HINGE_CONSTRAINT;			
+			else if (jc->type == CONSTRAINT_RB_CONETWIST)			
+				p.m_type = GK_CONETWIST_CONSTRAINT;			
+			else if (jc->type == CONSTRAINT_RB_VEHICLE)			
+				p.m_type = GK_VEHICLE_CONSTRAINT;			
+			else if (jc->type == CONSTRAINT_RB_GENERIC6DOF)			
+				p.m_type = GK_D6_CONSTRAINT;
+
+			gobj->getProperties().m_physics.m_constraints.push_back(p);
+
+		}
+		else
+		{
+			if (bc->enforce == 0.0)
 				continue;
 
-			gkLimitRotConstraint* c = new gkLimitRotConstraint();
-			co = c;
+			gkConstraint* co = 0;
 
-			if (lr->flag & LIMIT_XROT)
-				c->setLimitX(gkVector2(lr->xmin * gkDPR, lr->xmax * gkDPR));
-			if (lr->flag & LIMIT_YROT)
-				c->setLimitY(gkVector2(lr->ymin * gkDPR, lr->ymax * gkDPR));
-			if (lr->flag & LIMIT_ZROT)
-				c->setLimitZ(gkVector2(lr->zmin * gkDPR, lr->zmax * gkDPR));
-		}
-		else if (bc->type == CONSTRAINT_TYPE_LOCLIMIT)
-		{
-			Blender::bLocLimitConstraint* ll = (Blender::bLocLimitConstraint*)bc->data;
-			if (!ll->flag)
-				continue;
+			if (bc->type == CONSTRAINT_TYPE_ROTLIMIT)
+			{
+				// rotation is in radians.
+				Blender::bRotLimitConstraint* lr = (Blender::bRotLimitConstraint*)bc->data;
+				if (!lr->flag)
+					continue;
 
-			gkLimitLocConstraint* c = new gkLimitLocConstraint();
-			co = c;
+				gkLimitRotConstraint* c = new gkLimitRotConstraint();
+				co = c;
 
+				if (lr->flag & LIMIT_XROT)
+					c->setLimitX(gkVector2(lr->xmin * gkDPR, lr->xmax * gkDPR));
+				if (lr->flag & LIMIT_YROT)
+					c->setLimitY(gkVector2(lr->ymin * gkDPR, lr->ymax * gkDPR));
+				if (lr->flag & LIMIT_ZROT)
+					c->setLimitZ(gkVector2(lr->zmin * gkDPR, lr->zmax * gkDPR));
+			}
+			else if (bc->type == CONSTRAINT_TYPE_LOCLIMIT)
+			{
+				Blender::bLocLimitConstraint* ll = (Blender::bLocLimitConstraint*)bc->data;
+				if (!ll->flag)
+					continue;
 
-			if (ll->flag & LIMIT_XMIN) c->setMinX(ll->xmin);
-			if (ll->flag & LIMIT_XMAX) c->setMaxX(ll->xmax);
-			if (ll->flag & LIMIT_YMIN) c->setMinY(ll->ymin);
-			if (ll->flag & LIMIT_YMAX) c->setMaxY(ll->ymax);
-			if (ll->flag & LIMIT_ZMIN) c->setMinZ(ll->zmin);
-			if (ll->flag & LIMIT_ZMAX) c->setMaxZ(ll->zmax);
-		}
-
-
-		if (co)
-		{
-			co->setSpace(bc->ownspace == CONSTRAINT_SPACE_LOCAL ? TRANSFORM_LOCAL : TRANSFORM_WORLD);
-			co->setInfluence(bc->enforce);
+				gkLimitLocConstraint* c = new gkLimitLocConstraint();
+				co = c;
 
 
-			mgr->addConstraint(gobj, co);
+				if (ll->flag & LIMIT_XMIN) c->setMinX(ll->xmin);
+				if (ll->flag & LIMIT_XMAX) c->setMaxX(ll->xmax);
+				if (ll->flag & LIMIT_YMIN) c->setMinY(ll->ymin);
+				if (ll->flag & LIMIT_YMAX) c->setMaxY(ll->ymax);
+				if (ll->flag & LIMIT_ZMIN) c->setMinZ(ll->zmin);
+				if (ll->flag & LIMIT_ZMAX) c->setMaxZ(ll->zmax);
+			}
+
+			if (co)
+			{
+				co->setSpace(bc->ownspace == CONSTRAINT_SPACE_LOCAL ? TRANSFORM_LOCAL : TRANSFORM_WORLD);
+				co->setInfluence(bc->enforce);		
+	
+				mgr->addConstraint(gobj, co);
+			}
 		}
 	}
 }

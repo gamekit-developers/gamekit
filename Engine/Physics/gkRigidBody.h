@@ -67,9 +67,17 @@ public:
 
 	btRigidBody* getBody(void);
 
+	void addConstraint(btTypedConstraint* constraint, bool disableLinkedCollision = false);
+	void removeConstraint(btTypedConstraint* constraint);
+
+	GK_INLINE UTsize getConstraintCount(void)	{ return m_constraints.size(); }
+	btTypedConstraint* getConstraint(UTsize i)	{ return m_constraints[i];     }
+
 
 	void create(void);
 	void destroy(void);
+
+	void createConstraints(void);
 
 private:
 
@@ -77,6 +85,7 @@ private:
 	void setWorldTransform(const btTransform& worldTrans);
 
 	btRigidBody* m_body;
+	utArray<btTypedConstraint*> m_constraints;
 
 	int m_oldActivationState;
 };

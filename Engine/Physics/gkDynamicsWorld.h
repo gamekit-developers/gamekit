@@ -38,6 +38,7 @@ class btBroadphaseInterface;
 class btDispatcher;
 class btConstraintSolver;
 class btRigidBody;
+class btTypedConstraint;
 class gkRigidBody;
 class gkCharacter;
 class btTriangleMesh;
@@ -45,6 +46,7 @@ class btCollisionShape;
 class btGhostPairCallback;
 class gkPhysicsDebug;
 class gkDbvt;
+class gkPhysicsConstraintProperties;
 
 class gkDynamicsWorld
 {
@@ -70,9 +72,9 @@ protected:
 	btGhostPairCallback*        m_ghostPairCallback;
 	btDispatcher*               m_dispatcher;
 	btConstraintSolver*         m_constraintSolver;
-	gkPhysicsControllers       m_objects;
+	gkPhysicsControllers        m_objects;
 	gkPhysicsDebug*             m_debug;
-	bool                       m_handleContacts;
+	bool                        m_handleContacts;
 	gkDbvt*                     m_dbvt;
 	Listeners                   m_listeners;
 
@@ -97,6 +99,8 @@ public:
 
 	void EnableContacts(bool enable) { m_handleContacts = enable; }
 
+	btRigidBody* getFixedBody();
+	btTypedConstraint* createConstraint(btRigidBody* rbA, btRigidBody* rbB, const gkPhysicsConstraintProperties& props);
 
 	gkRigidBody* createRigidBody(gkGameObject* state);
 
@@ -124,5 +128,6 @@ public:
 	void addListener(Listener *listener);
 	void removeListener(Listener *listener);
 };
+
 
 #endif//_gkDynamicsWorld_h_

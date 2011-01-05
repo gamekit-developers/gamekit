@@ -686,6 +686,21 @@ void gkScene::_createPhysicsObject(gkGameObject* obj)
 }
 
 
+void gkScene::_createPhysicsConstraint(gkGameObject* obj)
+{
+	GK_ASSERT(obj && obj->isInstanced() && m_physicsWorld);
+
+	gkGameObjectProperties&  props  = obj->getProperties();
+
+	if (!props.isPhysicsObject() || !props.hasPhysicsConstraint() || obj->hasParent())
+		return;
+
+	gkRigidBody* body = obj->getAttachedBody();	
+	GK_ASSERT(body);
+	body->createConstraints();
+}
+
+
 
 void gkScene::_destroyPhysicsObject(gkGameObject* obj)
 {
@@ -773,6 +788,10 @@ void gkScene::_applyBuiltinPhysics(void)
 	gkGameObjectSet::Iterator it = m_instanceObjects.iterator();
 	while (it.hasMoreElements())
 		_createPhysicsObject(it.getNext());
+
+	gkGameObjectSet::Iterator it2 = m_instanceObjects.iterator();
+	while (it2.hasMoreElements())
+		_createPhysicsConstraint(it2.getNext());
 }
 
 

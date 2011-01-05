@@ -27,6 +27,7 @@
 #include "gkDynamicsWorld.h"
 #include "gkGameObject.h"
 #include "gkRigidBody.h"
+#include "gkScene.h"
 
 #include "btBulletDynamicsCommon.h"
 
@@ -44,6 +45,11 @@ gkRigidBody::gkRigidBody(gkGameObject* object, gkDynamicsWorld* owner)
 
 gkRigidBody::~gkRigidBody()
 {
+	UTsize i;
+	for (i = 0; i < m_constraints.size(); i++)
+		delete m_constraints[i];
+	m_constraints.clear();
+
 	delete m_shape;
 	m_shape = 0;
 
@@ -134,6 +140,16 @@ void gkRigidBody::create(void)
 
 void gkRigidBody::destroy(void)
 {
+	btDynamicsWorld* dyn = getOwner();
+
+	UTsize i;
+	for (i = 0; i < m_constraints.size(); i++)
+	{
+		dyn->removeConstraint(m_constraints[i]);
+		delete m_constraints[i];
+	}
+	m_constraints.clear();
+
 	if (m_body)
 	{
 		// intertwine
@@ -141,7 +157,7 @@ void gkRigidBody::destroy(void)
 		m_body->setMotionState(0);
 
 		if (!m_suspend)
-			getOwner()->removeRigidBody(m_body);
+			dyn->removeRigidBody(m_body);
 
 		delete m_shape;
 		m_shape = 0;
@@ -150,9 +166,56 @@ void gkRigidBody::destroy(void)
 		m_body = 0;
 
 		m_collisionObject = 0;
-	}
+	}	
 }
 
+void gkRigidBody::addConstraint(btTypedConstraint* constraint, bool disableLinkedCollision)
+{
+	GK_ASSERT(constraint && m_constraints.find(constraint) == UT_NPOS);
+
+	getOwner()->addConstraint(constraint, disableLinkedCollision);
+	m_constraints.push_back(constraint);
+}
+
+void gkRigidBody::removeConstraint(btTypedConstraint* constraint)
+{
+	GK_ASSERT(constraint && m_constraints.find(constraint) != UT_NPOS);
+
+	m_constraints.erase(m_constraints.find(constraint));
+}
+
+
+void gkRigidBody::createConstraints(void)
+{
+	gkGameObject* obj = getObject();
+	gkScene* scene = obj->getOwner();
+
+	gkGameObjectProperties&  props  = obj->getProperties();
+
+	UTsize i;
+	for (i = 0; i < props.m_physics.m_constraints.size(); i++)
+	{
+		gkPhysicsConstraintProperties& cprops = props.m_physics.m_constraints[i];
+
+		btRigidBody* rbA = getBody();
+		btRigidBody* rbB = 0;
+
+		if (!cprops.m_target.empty())
+		{
+			gkGameObject* target = scene->findInstancedObject(cprops.m_target);
+
+			GK_ASSERT(target && target->getAttachedBody());
+
+			rbB = target->getAttachedBody()->getBody();
+		}
+
+		btTypedConstraint* constraint = m_owner->createConstraint(rbA, rbB, cprops);
+
+		if (constraint)
+			addConstraint(constraint);
+
+	}
+}
 
 
 void gkRigidBody::setLinearVelocity(const gkVector3& v, int tspace)

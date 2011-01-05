@@ -162,6 +162,112 @@ void gkDynamicsWorld::enableDebugPhysics(bool enable, bool debugAabb)
 	}
 }
 
+btRigidBody* gkDynamicsWorld::getFixedBody()
+{
+	static btRigidBody s_fixed(0, 0,0);
+    s_fixed.setMassProps(btScalar(0.),btVector3(btScalar(0.),btScalar(0.),btScalar(0.)));
+
+    return &s_fixed;
+}
+
+btTypedConstraint* gkDynamicsWorld::createConstraint(btRigidBody* rbA, btRigidBody*rbB, const gkPhysicsConstraintProperties& props)
+{
+	btVector3 pivotInA(gkMathUtils::get(props.m_pivot));
+	btVector3 pivotInB(0,0,0);
+	
+	pivotInB = rbB ? rbB->getCenterOfMassTransform().inverse()(rbA->getCenterOfMassTransform()(pivotInA)) :
+		rbA->getCenterOfMassTransform() * pivotInA;	
+
+	//localConstraintFrameBasis
+	btMatrix3x3 localCFrame;
+	localCFrame.setEulerZYX(props.m_axis.x, props.m_axis.y, props.m_axis.z);
+	btVector3 axisInA = localCFrame.getColumn(0);
+	btVector3 axis1 = localCFrame.getColumn(1);
+	btVector3 axis2 = localCFrame.getColumn(2);
+	bool angularOnly = false;
+
+
+	btTypedConstraint* constraint = 0;
+
+	if (props.m_type == GK_BALL_CONSTRAINT)
+	{
+		btPoint2PointConstraint* p2p = 0;
+
+		if (rbB)
+			p2p = new btPoint2PointConstraint(*rbA,*rbB,pivotInA,pivotInB);
+		else			
+			p2p = new btPoint2PointConstraint(*rbA,pivotInA);			
+
+		constraint = p2p;
+	}
+	else if (props.m_type == GK_HINGE_CONSTRAINT)
+	{
+		btHingeConstraint* hinge = 0;
+		if (rbB)
+		{
+			btVector3 axisInB = rbB->getCenterOfMassTransform().getBasis().inverse() * (rbA->getCenterOfMassTransform().getBasis() * axisInA);
+
+			hinge = new btHingeConstraint(*rbA, *rbB, pivotInA, pivotInB, axisInA, axisInB);
+		} 
+		else
+		{
+			hinge = new btHingeConstraint(*rbA, pivotInA, axisInA);
+		}
+		hinge->setAngularOnly(angularOnly);
+
+		constraint = hinge;
+
+	}
+	else if (props.m_type == GK_D6_CONSTRAINT)
+	{
+        btTransform frameInA;
+        btTransform frameInB;
+        if (axis1.length() == 0.0)
+        {
+			btPlaneSpace1(axisInA, axis1, axis2);
+        }
+        frameInA.getBasis().setValue(axisInA.x(), axis1.x(), axis2.x(),
+									axisInA.y(), axis1.y(), axis2.y(),
+									axisInA.z(), axis1.z(), axis2.z());
+        frameInA.setOrigin( pivotInA );
+                                                
+        btTransform inv = rbB ? rbB->getCenterOfMassTransform().inverse() : btTransform::getIdentity();
+        btTransform globalFrameA = rbA->getCenterOfMassTransform() * frameInA;
+        frameInB = inv  * globalFrameA;
+        bool useReferenceFrameA = true;
+                                                
+        if (!rbB)
+			rbB = getFixedBody();
+        btGeneric6DofSpringConstraint* genericConstraint = new btGeneric6DofSpringConstraint(*rbA, *rbB, frameInA, frameInB, useReferenceFrameA);
+
+        //if it is a generic 6DOF constraint, set all the limits accordingly
+        int dof, dofbit=1;
+        for (dof=0;dof<6;dof++)
+        {
+			if (props.m_flag & dofbit)
+			{
+				///this access is a bloated, will probably make special cases for common arrays
+				btScalar minLimit = props.m_minLimit[dof];
+				btScalar maxLimit = props.m_maxLimit[dof];
+				genericConstraint->setLimit(dof, minLimit, maxLimit);
+			} 
+			else
+			{
+				//minLimit > maxLimit means free(disabled limit) for this degree of freedom
+				genericConstraint->setLimit(dof, 1, -1);
+			}
+			dofbit<<=1;
+        }
+
+		constraint = genericConstraint;
+	}
+	else if (props.m_type == GK_CONETWIST_CONSTRAINT)
+	{
+		//TODO: implement conetwist constraint
+	}
+
+	return constraint;
+}
 
 gkRigidBody* gkDynamicsWorld::createRigidBody(gkGameObject* state)
 {

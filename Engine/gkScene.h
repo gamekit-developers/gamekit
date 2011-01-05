@@ -177,6 +177,7 @@ public:
 	void _applyBuiltinPhysics(void);
 
 	void _createPhysicsObject(gkGameObject* obj);
+	void _createPhysicsConstraint(gkGameObject* obj);
 	void _destroyPhysicsObject(gkGameObject* obj);
 
 	void _unloadAndDestroy(gkGameObject* obj);
