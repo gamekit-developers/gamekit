@@ -70,8 +70,8 @@ public:
 	void addConstraint(btTypedConstraint* constraint, bool disableLinkedCollision = false);
 	void removeConstraint(btTypedConstraint* constraint);
 
-	GK_INLINE UTsize getConstraintCount(void)	{ return m_constraints.size(); }
-	btTypedConstraint* getConstraint(UTsize i)	{ return m_constraints[i];     }
+	GK_INLINE UTsize getConstraintCount(void)				{ return m_constraints.size(); }
+	GK_INLINE btTypedConstraint* getConstraint(UTsize i)	{ return m_constraints[i];     }
 
 
 	void create(void);

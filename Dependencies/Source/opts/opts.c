@@ -1107,3 +1107,26 @@ badopt(void) {
 		return '?';
 	}
 }
+
+void optsclean(option *options) 
+{
+	int i = 0;
+	option *o = 0;
+
+	if (last_optstring)
+	{
+		free(last_optstring);
+		last_optstring = 0;
+	}
+
+	while (options[i].type != OTYPE_END)
+	{
+		o = &options[i];
+		if (o->type == OTYPE_STR && o->value && *(char**)o->value)
+		{
+			free(*(char**)(o->value));
+			options[i].value = 0;
+		}
+		i++;
+	}
+}

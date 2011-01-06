@@ -92,8 +92,11 @@ void gkResourceGroupManager::destroyResourceGroup(const gkResourceNameString& gr
 	gkMeshManager::getSingleton().destroyGroup(group);
 	gkSkeletonManager::getSingleton().destroyGroup(group);
 	gkAnimationManager::getSingleton().destroyGroup(group);
+
+#ifdef OGREKIT_OPENAL_SOUND
 	gkSoundManager::getSingleton().stopAllSounds();
 	gkSoundManager::getSingleton().destroyGroup(group);
+#endif
 
 #ifdef OGREKIT_USE_LUA
 	gkLuaManager::getSingleton().destroyGroup(group);
@@ -112,8 +115,15 @@ void gkResourceGroupManager::destroyAllResourceGroup(void)
 	gkTextManager::getSingleton().destroyAll();
 	gkMeshManager::getSingleton().destroyAll();
 	gkSkeletonManager::getSingleton().destroyAll();
+
+#ifdef OGREKIT_OPENAL_SOUND
 	gkSoundManager::getSingleton().destroyAll();
+#endif
+
+#ifdef OGREKIT_USE_LUA
 	gkLuaManager::getSingleton().destroyAll();
+#endif
+
 	gkAnimationManager::getSingleton().destroyAll();
 
 }

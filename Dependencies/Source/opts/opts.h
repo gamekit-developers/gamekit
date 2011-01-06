@@ -74,6 +74,7 @@ extern int optsopt(int, char **, char *);
 extern int optsetstyle(int);
 extern option *optsmake(char *);
 extern option *optsfind(int, char *, option *);
+extern void optsclean(option *);
 extern int optsind, optserr, optsok;
 extern opt_value optsval;
 extern char *optsarg;

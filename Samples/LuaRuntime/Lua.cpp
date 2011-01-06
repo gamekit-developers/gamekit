@@ -34,7 +34,6 @@
 #include <direct.h>
 #endif
 
-
 extern "C" int _OgreKitLua_install(lua_State* L);
 
 
@@ -42,6 +41,7 @@ extern "C" int _OgreKitLua_install(lua_State* L);
 /// This is a work around for not having a Lua system package installed.
 
 #define DEFAULT_LUA_FILE "Test1.lua"
+
 
 int main(int argc, char** argv)
 {
@@ -74,6 +74,9 @@ int main(int argc, char** argv)
 			if (!((op->type == OTYPE_NUL) && (op->flags & OFLAG_ARG)))
 				printf("\t%s\n", optsusage(op));
 		printf("\t[lua arguments ...]\n");
+		
+		optsclean(options);
+		
 		return 1;
 	}
 
@@ -150,6 +153,8 @@ int main(int argc, char** argv)
 	}
 
 	lua_close(L);
+
+	optsclean(options);
 
 #ifdef WIN32
 	if (pauseFlag) system("PAUSE");
