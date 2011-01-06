@@ -29,7 +29,6 @@
 #include "gkResourceGroupManager.h"
 #include "gkLogger.h"
 #include "gkGroupManager.h"
-#include "gkSoundManager.h"
 #include "gkTextManager.h"
 #include "gkAnimationManager.h"
 #include "gkMeshManager.h"
@@ -38,6 +37,10 @@
 #include "External/Ogre/gkOgreBlendArchive.h"
 
 #include "OgreResourceGroupManager.h"
+
+#ifdef OGREKIT_OPENAL_SOUND
+#include "gkSoundManager.h"
+#endif
 
 #ifdef OGREKIT_USE_LUA
 #include "Script/Lua/gkLuaManager.h"
