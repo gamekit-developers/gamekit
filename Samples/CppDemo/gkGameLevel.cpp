@@ -30,7 +30,7 @@
 #include "gkFontManager.h"
 #include "OgreKit.h"
 
-
+#define LEVEL_GROUP_NAME "CppDemo"
 
 
 gkGameLevel::gkGameLevel()
@@ -93,7 +93,7 @@ void gkGameLevel::loadPickup(void)
 		return;
 	}
 
-	gkBlendFile* playerData = gkBlendLoader::getSingleton().loadFile(gkUtils::getFile(GK_RESOURCE_PLAYER));
+	gkBlendFile* playerData = gkBlendLoader::getSingleton().loadFile(gkUtils::getFile(GK_RESOURCE_PLAYER), "", LEVEL_GROUP_NAME);
 	if (!playerData || !playerData->getMainScene())
 	{
 		gkPrintf("GameLevel: Blend '%s' loading failed", GK_RESOURCE_PLAYER);
@@ -105,7 +105,7 @@ void gkGameLevel::loadPickup(void)
 	gkPrintf("GameLevel: Blend '%s' loaded", GK_RESOURCE_PLAYER);
 
 
-	gkBlendFile* mapData = gkBlendLoader::getSingleton().loadFile(gkUtils::getFile(GK_RESOURCE_MAPS), "Pickup");
+	gkBlendFile* mapData = gkBlendLoader::getSingleton().loadFile(gkUtils::getFile(GK_RESOURCE_MAPS), "Pickup", LEVEL_GROUP_NAME);
 	if (!mapData || !mapData->getMainScene())
 	{
 		gkPrintf("GameLevel: Blend '%s'->Pickup loading failed", GK_RESOURCE_MAPS);
@@ -127,6 +127,7 @@ void gkGameLevel::loadPickup(void)
 
 	// copy objects
 
+#if 0
 	gkGameObjectHashMap::Iterator it = sc->getObjects();
 	while (it.hasMoreElements())
 	{
@@ -140,7 +141,9 @@ void gkGameLevel::loadPickup(void)
 	gkGroupManager::Groups::Iterator giter = groups.getAttachedGroupIterator(sc);
 	while (giter.hasMoreElements())
 		groups.attachGroupToScene(m_pickup, giter.getNext());
-
+#else
+	gkSceneManager::getSingleton().copyObjects(sc, m_pickup);
+#endif
 
 	m_player = new gkGamePlayer(this);
 	m_player->load(playerData);

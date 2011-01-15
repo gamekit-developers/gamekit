@@ -100,7 +100,7 @@ void gkTextManager::getTextFiles(TextArray& dest, int textType)
 	gkResourceManager::ResourceIterator iter = getResourceIterator();
 	while (iter.hasMoreElements())
 	{
-		gkTextFile* tf = (gkTextFile*)iter.getNext().second;
+		gkTextFile* tf = static_cast<gkTextFile*>(iter.getNext().second);
 
 		if (textType < 0 || tf->getType() == textType)
 			dest.push_back(tf);
@@ -118,12 +118,13 @@ gkResource* gkTextManager::createImpl(const gkResourceName& name, const gkResour
 
 void gkTextManager::parseScripts(const gkString& group)
 {
-	const gkString &resGroup = group.empty() ? Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME : group;
 
 	gkResourceManager::ResourceIterator iter = getResourceIterator();
 	while (iter.hasMoreElements())
 	{
-		gkTextFile* tf = (gkTextFile*)iter.getNext().second;
+		gkTextFile* tf = static_cast<gkTextFile*>(iter.getNext().second);
+
+		if (!group.empty() && tf->getGroupName() != group) continue;
 
 		const gkString& buf = tf->getText();
 		const int type = tf->getType();
@@ -139,7 +140,7 @@ void gkTextManager::parseScripts(const gkString& group)
 				Ogre::DataStreamPtr memStream(
 				    OGRE_NEW Ogre::MemoryDataStream((void*)buf.c_str(), buf.size()));
 
-				Ogre::MaterialManager::getSingleton().parseScript(memStream, resGroup);
+				Ogre::MaterialManager::getSingleton().parseScript(memStream, group);
 
 			}
 			else if (type == TT_PARTICLE)
@@ -148,7 +149,7 @@ void gkTextManager::parseScripts(const gkString& group)
 				    OGRE_NEW Ogre::MemoryDataStream((void*)buf.c_str(), buf.size()));
 
 
-				Ogre::ParticleSystemManager::getSingleton().parseScript(memStream, resGroup);
+				Ogre::ParticleSystemManager::getSingleton().parseScript(memStream, group);
 			}
 			else if (type == TT_FONT)
 			{
@@ -156,7 +157,7 @@ void gkTextManager::parseScripts(const gkString& group)
 				Ogre::DataStreamPtr memStream(
 				    OGRE_NEW Ogre::MemoryDataStream((void*)buf.c_str(), buf.size()));
 
-				Ogre::FontManager::getSingleton().parseScript(memStream, resGroup);
+				Ogre::FontManager::getSingleton().parseScript(memStream, group);
 			}
 		}
 		catch (Ogre::Exception& e)
@@ -178,7 +179,7 @@ void gkTextManager::parseScripts(const gkString& group)
 #ifdef OGREKIT_USE_LUA
 
 		if (type == TT_LUA)
-			gkLuaManager::getSingleton().createFromText(gkResourceName(tf->getResourceName().getName(), resGroup), buf);
+			gkLuaManager::getSingleton().createFromText(gkResourceName(tf->getResourceName().getName(), group), buf);
 #endif
 	}
 

@@ -35,8 +35,9 @@
 #include "gkSkeletonManager.h"
 #include "gkGameObjectManager.h"
 #include "External/Ogre/gkOgreBlendArchive.h"
-
 #include "OgreResourceGroupManager.h"
+
+#include "gkSceneManager.h"
 
 #ifdef OGREKIT_OPENAL_SOUND
 #include "gkSoundManager.h"
@@ -68,13 +69,13 @@ gkResourceGroupManager::~gkResourceGroupManager()
 		Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 }
 
-bool gkResourceGroupManager::createResourceGroup(const gkResourceNameString& group)
+bool gkResourceGroupManager::createResourceGroup(const gkResourceNameString& group, bool inGlobalPool)
 {
 	if (existResourceGroup(group)) return false;
 
 	try 
 	{
-		Ogre::ResourceGroupManager::getSingleton().createResourceGroup(group.str());
+		Ogre::ResourceGroupManager::getSingleton().createResourceGroup(group.str(), inGlobalPool);
 		m_groups.push_back(group);
 	}
 	catch (Ogre::Exception& e)
@@ -86,9 +87,16 @@ bool gkResourceGroupManager::createResourceGroup(const gkResourceNameString& gro
 	return true;
 }
 
+
 void gkResourceGroupManager::destroyResourceGroup(const gkResourceNameString& group)
 {
 	if (!existResourceGroup(group)) return;
+
+	gkSceneManager::getSingleton().destroyGroupInstances(group.str());
+	gkGameObjectManager::getSingleton().destroyGroupInstances(group.str());
+
+	gkSceneManager::getSingleton().destroyGroup(group);
+	gkGameObjectManager::getSingleton().destroyGroup(group);
 
 	gkGroupManager::getSingleton().destroyGroup(group);
 	gkTextManager::getSingleton().destroyGroup(group);
@@ -139,6 +147,6 @@ bool gkResourceGroupManager::existResourceGroup(const gkResourceNameString& grou
 
 void gkResourceGroupManager::clearResourceGroup(const gkResourceNameString& group)
 {
-	if (Ogre::ResourceGroupManager::getSingleton().resourceGroupExists(group.str()))
+	if (existResourceGroup(group))
 		Ogre::ResourceGroupManager::getSingleton().clearResourceGroup(group.str());
 }

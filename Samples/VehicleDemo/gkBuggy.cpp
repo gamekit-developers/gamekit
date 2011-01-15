@@ -40,46 +40,17 @@ gkBuggy::~gkBuggy()
 
 void gkBuggy::load(void)
 {
-	gkBlendFile* pBlendFileCar = gkBlendLoader::getSingleton().loadFile(gkUtils::getFile(GK_RESOURCE_BUGGY_FILE));
+	gkBlendFile* pBlendFileCar = gkBlendLoader::getSingleton().loadFile(gkUtils::getFile(GK_RESOURCE_BUGGY_FILE), "", VEHICLE_RESOURCE_GROUP);
 
-	gkGroupManager& groups = gkGroupManager::getSingleton();
-	gkGameObjectGroup* carGroup = (gkGameObjectGroup*)groups.getByName(GK_RESOURCE_BUGGY_GROUP);
-
-	groups.attachGroupToScene(m_scene, carGroup);
-
-	gkGameObjectGroup::Objects::Iterator iter =  carGroup->getObjects().iterator();
-	while (iter.hasMoreElements())
-	{
-		gkGameObject* gobj = iter.getNext().second;
-
-		m_scene->addObject(gobj);
-
-		gobj->createInstance();
-	}
-
-	// Set parent-child. This should have be done by the loader
+	gkScene* carScene = pBlendFileCar->getMainScene();
+	gkSceneManager::getSingleton().copyObjects(carScene, m_scene);
 	gkGameObject* objCol = m_scene->getObject(GK_RESOURCE_BUGGY_PHYSOBJ);
+
+#ifdef _DEBUG
 	gkGameObject* objChassis = m_scene->getObject(GK_RESOURCE_BUGGY_CHASSIS);
-	objChassis->setParent(objCol);
-	
-	gkGameObjectGroup::Objects::Iterator iter2 =  carGroup->getObjects().iterator();
-	while (iter2.hasMoreElements())
-	{
-		gkGameObject* gobj = iter2.getNext().second;
-		
-		if(gobj!=objCol && gobj!=objChassis)
-		{
-			gkString name = gobj->getName();
-			
-			if(name!=GK_RESOURCE_BUGGY_WHELLFL && 
-			   name!=GK_RESOURCE_BUGGY_WHELLFR && 
-			   name!=GK_RESOURCE_BUGGY_WHELLRL && 
-			   name!=GK_RESOURCE_BUGGY_WHELLRR)
-			{
-				gobj->setParent(objChassis);
-			}
-		}
-	}
+	gkGameObject* o = m_scene->getObject("Circle.022");
+	GK_ASSERT(o && o->getParent() && o->getParent() == objChassis);
+#endif
 	
 	// general
 	setDriveTrain(gkVehicle::DT_ALLWHEEL);

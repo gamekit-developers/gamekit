@@ -44,7 +44,7 @@ gkSkeletonLoader::gkSkeletonLoader(gkSkeletonResource* skel)
 
 	Ogre::SkeletonPtr oskel = mgr.getByName(name);
 	if (oskel.isNull())
-		oskel = mgr.create(name, "<gkBuiltin>", true, this);
+		oskel = mgr.create(name, skel->getGroupName(), true, this); //GK_BUILTIN_GROUP
 }
 
 

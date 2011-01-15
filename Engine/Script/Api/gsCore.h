@@ -212,6 +212,8 @@ public:
 	gsScene* loadBlendFile(const gkString& name);
 	gsScene* getActiveScene(void);
 
+	void unloadBlendFile(const gkString& name);
+	void unloadAllBlendFiles();
 
 	gsUserDefs& getUserDefs(void);
 

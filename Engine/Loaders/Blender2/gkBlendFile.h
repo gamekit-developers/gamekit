@@ -43,16 +43,10 @@ public:
 	typedef utArray<gkScene*> Scenes;
 
 public:
-
-
-	gkBlendFile(const gkString& blendToLoad, const gkString& inResourceGroup = GK_DEF_GROUP, const gkString& group="");
+	gkBlendFile(const gkString& blendToLoad, const gkString& group);
 	~gkBlendFile();
 
-
-
-
 	bool parse(int opts, const gkString& scene = "");
-
 
 	gkScene* getSceneByName(const gkString& name);
 
@@ -65,14 +59,10 @@ public:
 
 	bParse::bBlenderFile* _getInternalFile(void) {GK_ASSERT(m_file); return m_file;}
 
-
-
 	///Access to the original group name. Used for placing created resources in the same group.
-	GK_INLINE const gkString& getResourceGroup(void) {return m_inResourceGroup;}
-
+	GK_INLINE const gkString& getResourceGroup(void) {return m_group;}
 
 	GK_INLINE const gkString& getFilePath(void)  {return m_name;}
-	GK_INLINE const gkString& getGroupName(void) {return m_group;}
 
 protected:
 
@@ -88,7 +78,6 @@ protected:
 	void createInstances(void);
 
 	ManualResourceLoaderList	m_loaders;			// Ogre Loaders
-	const gkString				m_inResourceGroup;	// Ogre Ogre::Resource Group
 	const gkString				m_name;				// Current file path.
 	const gkString				m_group;			// resource group
 	bParse::bBlenderFile*		m_file;				// bParse File Pointer

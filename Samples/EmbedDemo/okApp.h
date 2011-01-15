@@ -28,6 +28,7 @@
 #ifndef _okApp_h_
 #define _okApp_h_
 
+#if 0
 struct okSceneInfo 
 {	
 	gkScene* scene;
@@ -38,15 +39,16 @@ struct okSceneInfo
 };
 
 typedef utArray<okSceneInfo> okSceneInfoArray;
+#endif
 
 class okApp : public gkCoreApplication, public gkWindowSystem::Listener, public utSingleton<okApp>
 {
-	okSceneInfoArray m_scenes;
+	utArray<gkScene*> m_scenes;
 
 	gkString m_cfg;
 	bool m_inited;
 	int m_winCount;
-	int m_sceneCount;
+//	int m_sceneCount;
 
 	bool m_showPhysicsDebug; 
 
@@ -54,8 +56,8 @@ class okApp : public gkCoreApplication, public gkWindowSystem::Listener, public 
 
 	virtual bool setup();
 
-	UTsize findSceneInfo(gkScene* scene);
-	gkBlendFile* getSceneBlendFile(gkScene* scene);
+	//UTsize findSceneInfo(gkScene* scene);
+	//gkBlendFile* getSceneBlendFile(gkScene* scene);
 protected:
 	virtual void  tick (gkScalar rate);
 
@@ -73,26 +75,22 @@ public:
 	void destroyWindow(gkWindow* win);
 
 	gkScene* loadScene(gkWindow* window, const gkString& blend, const gkString& sceneName="", bool ignoreCache=false);
+	gkScene* mergeScene(gkScene* dstScene, const gkString& blend, const gkString& sceneName="", bool ignoreCache=false);
+
 	void unloadScene(gkScene* scene);
 	void unloadAllScenes();
 	bool changeScene(gkScene* scene, const gkString& sceneName);
 
 	gkScene* createEmptyScene();
-	GK_INLINE gkScene* getFirstScene() { return m_scenes.empty() ? NULL : m_scenes[0].scene; }
+	GK_INLINE gkScene* getFirstScene() { return m_scenes.empty() ? NULL : m_scenes[0]; }
 	gkString getFirstSceneName();
 	gkBlendFile* getFirstBlendFile();
+	gkBlendFile* getBlendFile(const gkString& fname);
 	bool step();
-
-	//gkScene* getActiveScene() { return m_scene; }
-	
-	//gkBlendFile* getBlendFile() { return m_blendFile; }
 	
 
 	GK_INLINE bool getShowPhysicsDebug() { return m_showPhysicsDebug; }
 	void setShowPhysicsDebug(bool show);
-	
-	//GK_INLINE void setBlendFileName(const gkString& blend) { m_blend = blend; }
-	//GK_INLINE gkString getBlendFileName() const { return m_blend; }
 
 	UT_DECLARE_SINGLETON(okApp)
 };

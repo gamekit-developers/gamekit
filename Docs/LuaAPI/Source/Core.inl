@@ -932,6 +932,8 @@ function Keyboard:isKeyDown(code)
 \LuaMethodMenu{Engine,requestExit}
 \LuaMethodMenu{Engine,connect}
 \LuaMethodMenu{Engine,loadBlendFile}
+\LuaMethodMenu{Engine,unloadBlendFile}
+\LuaMethodMenu{Engine,unloadAllBlendFiles}
 \LuaMethodMenu{Engine,getActiveScene}
 \LuaMethodMenu{Engine,getUserDefs}
 \endmenu
@@ -1050,6 +1052,32 @@ function Engine:loadBlendFile(name)
 
 \endpage
 
+
+<!-- ======================================== -->
+\LuaMethod{Engine,unloadBlendFile}
+
+
+Unload the .blend file and scene.
+
+\code
+function Engine:unloadBlendFile(name)
+\endcode
+
+\param name Path to the blend file.
+
+\endpage
+
+<!-- ======================================== -->
+\LuaMethod{Engine,unloadAllBlendFiles}
+
+
+Unload all .blend files and scenes.
+
+\code
+function Engine:unloadAllBlendFiles()
+\endcode
+
+\endpage
 
 
 

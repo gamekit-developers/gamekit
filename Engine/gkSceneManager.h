@@ -45,6 +45,18 @@ public:
 
 	gkResource* createImpl(const gkResourceName& name, const gkResourceHandle& handle);
 
+	enum 
+	{
+		OBJ_CAMERA	= 1 << 0,
+		OBJ_LIGHT	= 1 << 1,
+		OBJ_ENTITY	= 1 << 2,
+		OBJ_OBJECT	= 1 << 3,
+		OBJ_SKELETON = 1 << 4
+	};
+
+	void copyObjects(gkScene* fromScene, gkScene* toScene, int exceptObjectTypes = OBJ_CAMERA | OBJ_LIGHT);
+	gkScene* createEmptyScene(const gkString& sceneName = "Scene", const gkString& cameraName = "Camera", const gkString& group = "");
+
 private:
 	void notifyResourceDestroyedImpl(gkResource* res);
 

@@ -173,4 +173,6 @@ public:
 	int getNumberOfDrivenWheel(void);
 };
 
+#define VEHICLE_RESOURCE_GROUP "VehicleDemo"
+
 #endif // GKVEHICLE_H

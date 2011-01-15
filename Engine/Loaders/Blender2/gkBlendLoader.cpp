@@ -44,20 +44,36 @@ gkBlendLoader::gkBlendLoader()
 
 gkBlendLoader::~gkBlendLoader()
 {
-	unloadAll(false);
+	UTsize i;
+	for (i = 0; i < m_files.size(); i++)
+		delete m_files[i];
+	m_files.clear();
+	m_activeFile = 0;
+}
 
+bool gkBlendLoader::hasResourceGroup(const gkString& group, gkBlendFile* exceptFile)
+{
+	UTsize i;
+	for (i = 0; i < m_files.size(); i++)
+		if (m_files[i] != exceptFile && m_files[i]->getResourceGroup() == group)
+			return true;
+
+	return false;
 }
 
 
 
 void gkBlendLoader::unloadAll(bool exceptActiveFile)
 {
-	FileList::Iterator it = m_files.iterator();
-	while (it.hasMoreElements())
+	UTsize i;
+	for (i = 0; i < m_files.size(); i++)
 	{
-		FileList::ValueType file = it.getNext();
-		if (m_activeFile != file)			
-			delete file;
+		if (m_files[i] != m_activeFile)
+		{
+			gkString group = m_files[i]->getResourceGroup();
+			delete m_files[i]; m_files[i] = 0;
+			gkResourceGroupManager::getSingleton().destroyResourceGroup(group);
+		}
 	}
 
 	m_files.clear();
@@ -70,9 +86,31 @@ void gkBlendLoader::unloadAll(bool exceptActiveFile)
 		}
 		else
 		{
-			delete m_activeFile; m_activeFile = 0;		
+			gkString group = m_activeFile->getResourceGroup();
+			delete m_activeFile; m_activeFile = 0;
+			gkResourceGroupManager::getSingleton().destroyResourceGroup(group);
 		}
 	}
+}
+
+void gkBlendLoader::unloadGroup(const gkString& group)
+{
+	FileList tmp;
+	UTsize i;
+	for (i = 0; i < m_files.size(); i++)
+	{
+		if (m_files[i]->getResourceGroup() == group)
+		{
+			gkString group = m_files[i]->getResourceGroup();
+			delete m_files[i]; m_files[i] = 0;
+		}
+		else
+			tmp.push_back(m_files[i]);
+	}
+
+	gkResourceGroupManager::getSingleton().destroyResourceGroup(group);
+
+	m_files = tmp;
 }
 
 gkBlendFile* gkBlendLoader::getFileByName(const gkString& fname)
@@ -91,24 +129,44 @@ gkBlendFile* gkBlendLoader::getFileByName(const gkString& fname)
 
 void gkBlendLoader::unloadFile(gkBlendFile* blendFile)
 {
+	if (!blendFile) return;
+
+	gkString group = blendFile->getResourceGroup();	
+
 	m_files.erase(m_files.find(blendFile));
 	if (m_activeFile == blendFile)
 		m_activeFile = NULL;
+	
 	delete blendFile;
+
+	if (!hasResourceGroup(group))
+		gkResourceGroupManager::getSingleton().destroyResourceGroup(group);
 }
 
-gkBlendFile* gkBlendLoader::loadAndCatch(const gkString& fname, int options, const gkString& inResourceGroup, const gkString& scene, const gkString& group)
+gkBlendFile* gkBlendLoader::loadAndCatch(const gkString& fname, int options, const gkString& scene, const gkString& group)
 {
-	if (!(options & LO_IGNORE_CACHE_FILE))
+	if ((options & LO_IGNORE_CACHE_FILE) != 0)
 	{
 		m_activeFile = getFileByName(fname);
 		if (m_activeFile != 0)
 			return m_activeFile;
 	}
 
+	bool useUniqueGroup = false;
+	gkString groupName = group;
+	if (groupName.empty() && (options & LO_CREATE_UNIQUE_GROUP) != 0) 
+	{
+		groupName = gkUtils::getUniqueName("BLEND");
+		useUniqueGroup = true;
+	}
+
+	bool inGlolbalPool = (options & LO_CREATE_PRIVATE_GROUP) == 0;
+
+	gkResourceGroupManager::getSingleton().createResourceGroup(groupName, inGlolbalPool);
+
 	bParse::bLog::detail = gkEngine::getSingleton().getUserDefs().verbose ? 1 : 0;
 
-	m_activeFile = new gkBlendFile(fname, inResourceGroup, group);
+	m_activeFile = new gkBlendFile(fname, groupName);
 
 	if (m_activeFile->parse(options, scene))
 	{
@@ -125,20 +183,18 @@ gkBlendFile* gkBlendLoader::loadAndCatch(const gkString& fname, int options, con
 }
 
 
-gkBlendFile* gkBlendLoader::loadFile(const gkString& fname, const gkString& scene, const gkString& inResourceGroup, const gkString& group)
+gkBlendFile* gkBlendLoader::loadFile(const gkString& fname, const gkString& scene, const gkString& group)
 {
-	return loadFile(fname, LO_ALL_SCENES, inResourceGroup, scene, group);
+	return loadFile(fname, LO_ALL_SCENES, scene, group);
 }
 
 
-gkBlendFile* gkBlendLoader::loadFile(const gkString& fname, int options, const gkString& inResourceGroup, const gkString& scene, const gkString& group)
+gkBlendFile* gkBlendLoader::loadFile(const gkString& fname, int options, const gkString& scene, const gkString& group)
 {
 	bool resetLoad = false;
 	try
 	{
-		gkResourceGroupManager::getSingleton().createResourceGroup(inResourceGroup);
-
-		return loadAndCatch(fname, options, inResourceGroup, scene, group);
+		return loadAndCatch(fname, options, scene, group);
 	}
 	catch (Ogre::Exception& e)
 	{

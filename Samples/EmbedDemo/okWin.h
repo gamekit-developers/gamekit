@@ -74,9 +74,10 @@ public:
 
 	gkScene* getScene() { return m_scene; }
 	bool loadScene(const gkString& blend="", const gkString& scene="", bool ignoreCache=false);
+	bool mergeScene(const gkString& blend="", const gkString& scene="", bool ignoreCache=false);
 	void unloadScene();
 
-	void clearScene(); //unload & create empty scene
+	void resetScene(); //unload & create empty scene
 	bool changeScene(const wxString& sceneName);
 
 	gkGameObject* getSelectedObject() { return m_selObj; }

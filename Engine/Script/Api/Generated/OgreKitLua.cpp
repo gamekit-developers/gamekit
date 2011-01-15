@@ -6089,6 +6089,59 @@ fail:
 }
 
 
+static int _wrap_Engine_unloadBlendFile(lua_State* L) {
+  int SWIG_arg = 0;
+  gsEngine *arg1 = (gsEngine *) 0 ;
+  gkString *arg2 = 0 ;
+  gkString temp2 ;
+  
+  SWIG_check_num_args("unloadBlendFile",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("unloadBlendFile",1,"gsEngine *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("unloadBlendFile",2,"gkString const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsEngine,0))){
+    SWIG_fail_ptr("Engine_unloadBlendFile",1,SWIGTYPE_p_gsEngine);
+  }
+  
+  
+  temp2 = gkString((const char*)lua_tostring(L, 2));
+  arg2 = &temp2;
+  
+  (arg1)->unloadBlendFile((gkString const &)*arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Engine_unloadAllBlendFiles(lua_State* L) {
+  int SWIG_arg = 0;
+  gsEngine *arg1 = (gsEngine *) 0 ;
+  
+  SWIG_check_num_args("unloadAllBlendFiles",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("unloadAllBlendFiles",1,"gsEngine *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsEngine,0))){
+    SWIG_fail_ptr("Engine_unloadAllBlendFiles",1,SWIGTYPE_p_gsEngine);
+  }
+  
+  (arg1)->unloadAllBlendFiles();
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_Engine_getUserDefs(lua_State* L) {
   int SWIG_arg = 0;
   gsEngine *arg1 = (gsEngine *) 0 ;
@@ -6124,6 +6177,8 @@ static swig_lua_method swig_gsEngine_methods[] = {
     {"connect", _wrap_Engine_connect}, 
     {"loadBlendFile", _wrap_Engine_loadBlendFile}, 
     {"getActiveScene", _wrap_Engine_getActiveScene}, 
+    {"unloadBlendFile", _wrap_Engine_unloadBlendFile}, 
+    {"unloadAllBlendFiles", _wrap_Engine_unloadAllBlendFiles}, 
     {"getUserDefs", _wrap_Engine_getUserDefs}, 
     {0,0}
 };

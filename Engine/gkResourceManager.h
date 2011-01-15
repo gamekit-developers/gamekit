@@ -79,17 +79,18 @@ public:
 	bool exists(const gkResourceHandle& handle);
 
 
-	ResourceIterator getResourceIterator(void) {return m_resources.iterator();}
-	Resources& getResources(void) {return m_resources;}
+	GK_INLINE ResourceIterator getResourceIterator(void) {return m_resources.iterator();}
+	GK_INLINE Resources& getResources(void) {return m_resources;}
 
 
 	void addResourceListener(ResourceListener* res);
 	void removeResourceListener(ResourceListener* res);
 
-	const gkString& getResourceType(void) {return m_resourceType;}
-	const gkString& getManagerType(void)  {return m_managerType;}
+	GK_INLINE const gkString& getResourceType(void) {return m_resourceType;}
+	GK_INLINE const gkString& getManagerType(void)  {return m_managerType;}
 
-
+	GK_INLINE UTsize getResourceCount(void) {return m_resources.size();}
+	GK_INLINE UTsize getListenerCount(void) {return m_listeners.size();}
 protected:
 
 	void notifyResourceCreated(gkResource* res);
@@ -107,7 +108,7 @@ protected:
 	virtual void notifyResourceDestroyedImpl(gkResource* res) {}
 
 	Resources m_resources;
-	Listeners m_listsners;
+	Listeners m_listeners;
 	gkString  m_managerType, m_resourceType;
 
 

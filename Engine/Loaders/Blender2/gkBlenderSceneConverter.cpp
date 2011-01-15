@@ -39,7 +39,7 @@
 
 
 gkBlenderSceneConverter::gkBlenderSceneConverter(gkBlendFile* fp, Blender::Scene* sc)
-	:   m_bscene(sc), m_gscene(0), m_file(fp), m_groupName(fp->getGroupName())
+	:   m_bscene(sc), m_gscene(0), m_file(fp), m_groupName(fp->getResourceGroup())
 {
 	m_logic = new gkLogicLoader();
 }
@@ -794,6 +794,8 @@ void gkBlenderSceneConverter::convert(void)
 		gkPrintf("SceneConverter: duplicate scene '%s'\n", (m_bscene->id.name + 2));
 		return;
 	}
+
+	m_gscene->setLoadBlendFile(m_file);
 
 
 	if (m_bscene->world)

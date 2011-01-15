@@ -33,17 +33,17 @@
 #include "OgrePass.h"
 
 
-gkSkyBoxGradient::gkSkyBoxGradient(const gkSceneMaterial& material)
+gkSkyBoxGradient::gkSkyBoxGradient(const gkSceneMaterial& material, const gkString& group)
 	: m_material(material)
 {
 
-	Ogre::MaterialPtr ptr = Ogre::MaterialManager::getSingleton().create(m_material.m_name, "<gkBuiltin>");
+	Ogre::MaterialPtr ptr = Ogre::MaterialManager::getSingleton().create(m_material.m_name, group); //GK_BUILTIN_GROUP);
 
 	ptr->setLightingEnabled(false);
 	ptr->setReceiveShadows(false);
 
 
-	Ogre::TexturePtr txptr =  Ogre::TextureManager::getSingleton().create(m_material.m_name, "<gkBuiltin>", true, this);
+	Ogre::TexturePtr txptr =  Ogre::TextureManager::getSingleton().create(m_material.m_name, group, true, this); //GK_BUILTIN_GROUP
 	Ogre::TextureUnitState* tus = ptr->getTechnique(0)->getPass(0)->createTextureUnitState();
 
 	tus->setTextureName(m_material.m_name, Ogre::TEX_TYPE_CUBE_MAP);

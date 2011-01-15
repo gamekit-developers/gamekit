@@ -37,7 +37,7 @@
 #define STATUS_FPS      4
 #define DEMO_BLEND		"logo_text.blend"
 #define DEMO_BLEND2		"logo_text2.blend"
-#define APP_TITLE		"OgreKit Embedding Demo"
+#define APP_TITLE		"OgreKit EmbedDemo"
 #define SET_EXIT_IF_EXCEPTION_RAISED 0
 #define ENABLE_LOG_BOX	1		//0: disable Logbox, 1: enable Logbox
 
@@ -48,6 +48,9 @@ enum
 	ID_LOG_CLEAR,
 	ID_LOG_SAVE,
 	ID_TIMER_PAUSE,
+	ID_DUMP_INFO,
+	ID_MERGE_SCENE,
+	ID_RESET_SCENE,
 	ID_NEW_WINDOW
 };
 
@@ -130,8 +133,11 @@ private:
 	void OnSaveLog(wxCommandEvent& event);
 
 	void OnPauseRun(wxCommandEvent& event);
+	void OnDumpInfo(wxCommandEvent& event);
+	void OnMergeScene(wxCommandEvent& event);
+	void OnResetScene(wxCommandEvent& event);
 
-	bool OpenBlendFile(const wxString& file);
+	bool OpenBlendFile(const wxString& file, bool mergeScene=false);
 
     DECLARE_EVENT_TABLE()
 
@@ -141,7 +147,6 @@ private:
 	EmbedLog*		m_logListener;
 	wxTimer			m_timer;
 	SecondFrame*	m_secondFrame;
-	wxString		m_blendFile;
 };
 
 
@@ -247,6 +252,9 @@ BEGIN_EVENT_TABLE(EmbedFrame, wxFrame)
 	EVT_MENU(ID_LOG_SAVE, EmbedFrame::OnSaveLog)
 	EVT_TIMER(ID_STATUS_TIMER, EmbedFrame::OnTimer)	
 	EVT_MENU(ID_TIMER_PAUSE, EmbedFrame::OnPauseRun)
+	EVT_MENU(ID_DUMP_INFO, EmbedFrame::OnDumpInfo)
+	EVT_MENU(ID_MERGE_SCENE, EmbedFrame::OnMergeScene)
+	EVT_MENU(ID_RESET_SCENE, EmbedFrame::OnResetScene)
 	EVT_KEY_DOWN(EmbedFrame::OnKeyDown)
 	EVT_DROP_FILES(EmbedFrame::OnDropFiles)
 END_EVENT_TABLE()
@@ -266,6 +274,8 @@ EmbedFrame::EmbedFrame()
 
     wxMenu* menu = new wxMenu;
 	menu->Append(wxID_OPEN);
+	menu->Append(ID_MERGE_SCENE, "&Merge Scene");
+	menu->Append(ID_RESET_SCENE, "&Reset Scene");
 	menu->Append(ID_NEW_WINDOW, "&New Window");
 	menu->AppendSeparator();
     menu->Append(wxID_CLOSE);	
@@ -275,6 +285,7 @@ EmbedFrame::EmbedFrame()
 
 	menu = new wxMenu;
 	menu->Append(ID_TIMER_PAUSE, "&Pause");
+	menu->Append(ID_DUMP_INFO, "&Dump");
 	menuBar->Append(menu, "&Game");
 
     SetMenuBar(menuBar);
@@ -386,14 +397,16 @@ void EmbedFrame::OnDropFiles(wxDropFilesEvent& event)
 	OpenBlendFile(file);
 }
 
-bool EmbedFrame::OpenBlendFile(const wxString& file)
+bool EmbedFrame::OpenBlendFile(const wxString& file, bool mergeScene)
 {
 	if (!m_okWin) return false;
 
 	EmbedApp* app = (EmbedApp*)wxTheApp;
 	wxSize size = m_okWin->GetSize();
 
-	if (file.CmpNoCase(m_blendFile) == 0)
+	gkString fname = WX2GK(file);
+
+	if (m_okWin->getApp()->getBlendFile(fname) != NULL)
 	{
 		wxLogMessage("Already loaded.");
 		return true;
@@ -403,7 +416,14 @@ bool EmbedFrame::OpenBlendFile(const wxString& file)
 	wxLogMessage("Loading... %s ", file);
 
 	Ogre::Timer watch;
-	if (!m_okWin->loadScene(WX2GK(file)))
+	bool ok = false;
+	
+	if (mergeScene)
+		ok = m_okWin->mergeScene(fname);
+	else
+		ok = m_okWin->loadScene(fname);
+
+	if (!ok)
 	{
 		wxString msg = wxString::Format("Error - Can't load the blend file: %s", file);
 		wxLogMessage(msg);
@@ -413,8 +433,6 @@ bool EmbedFrame::OpenBlendFile(const wxString& file)
 
 		return false;
 	}
-
-	m_blendFile = file;
 
 	wxLogMessage("Elapsed time for loading: %.3f seconds", watch.getMilliseconds()/1000.0f);
 
@@ -427,6 +445,8 @@ bool EmbedFrame::OpenBlendFile(const wxString& file)
 	if (!m_timer.IsRunning())
 		m_timer.Start(1000/STATUS_FPS);
 
+	dumpGkInfo();
+
 	return true;
 }
 
@@ -438,6 +458,14 @@ void EmbedFrame::OnNewWindow(wxCommandEvent& WXUNUSED(event))
 	m_secondFrame = new SecondFrame(this);
 
 }
+
+void EmbedFrame::OnDumpInfo(wxCommandEvent& event)
+{
+	if (!m_okWin) return;
+
+	dumpGkInfo();
+}
+
 
 void EmbedFrame::OnPauseRun(wxCommandEvent& event)
 {
@@ -502,6 +530,33 @@ void EmbedFrame::OnOpen(wxCommandEvent& WXUNUSED(event))
 	{
 		 wxString fileName = dlg->GetPath();
 		 OpenBlendFile(fileName);
+	}
+}
+
+void EmbedFrame::OnResetScene(wxCommandEvent& WXUNUSED(event))
+{
+	if (!m_okWin) return;
+
+	if (m_secondFrame)
+	{
+		delete m_secondFrame;
+		m_secondFrame = NULL;
+	}
+	
+	m_okWin->resetScene();
+}
+
+
+void EmbedFrame::OnMergeScene(wxCommandEvent& event)
+{
+	if (m_timer.IsRunning())
+		m_timer.Stop();
+
+	wxFileDialog* dlg = new wxFileDialog(this);
+	if (dlg->ShowModal() == wxID_OK)
+	{
+		 wxString fileName = dlg->GetPath();
+		 OpenBlendFile(fileName, true);
 	}
 }
 

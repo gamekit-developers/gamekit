@@ -27,14 +27,14 @@
 #ifndef _gkOgreMaterialLoader_h_
 #define _gkOgreMaterialLoader_h_
 
-
+#include "gkString.h"
 
 class gkMaterialLoader
 {
 public:
 
-	static class gkSkyBoxGradient* loadSceneMaterial(class gkScene* sc, const class gkSceneMaterial& material);
-	static void loadSubMeshMaterial(class gkSubMesh* mesh);
+	static class gkSkyBoxGradient* loadSceneSkyMaterial(class gkScene* sc, const class gkSceneMaterial& material);
+	static void loadSubMeshMaterial(class gkSubMesh* mesh, const gkString& group);
 
 };
 

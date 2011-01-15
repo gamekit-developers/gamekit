@@ -567,30 +567,63 @@ gsUserDefs& gsEngine::getUserDefs(void)
 	return *m_defs;
 }
 
-
-
-
 gsScene* gsEngine::loadBlendFile(const gkString& name)
 {
-	if (m_engine && !m_running && m_ctxOwner)
+	if (m_engine && m_ctxOwner) // && !m_running
 	{
 		if (!m_engine->isInitialized())
-			gkLogMessage("gsEngine: loadBlendFile on uninitialized engine.");
-
-		gkBlendFile* gkb = m_engine->loadBlendFile(gkUtils::getFile(name), gkBlendLoader::LO_ONLY_ACTIVE_SCENE, "<gkBuiltin>");
-		if (!gkb)
 		{
-			printf("File Loading failed!\n");
+			gkLogMessage("gsEngine: loadBlendFile on uninitialized engine.");
 			return 0;
 		}
 
-		if (gkb->getMainScene())
-			return new gsScene(gkb->getMainScene());
+		int options = gkBlendLoader::LO_ONLY_ACTIVE_SCENE | gkBlendLoader::LO_CREATE_UNIQUE_GROUP;
+		gkBlendFile* gkb = gkBlendLoader::getSingleton().loadFile(gkUtils::getFile(name), options);
+		if (!gkb)
+		{
+			gkLogMessage("gsEngine: File Loading failed!\n");
+			return 0;
+		}
+		
+		gkScene* scene = gkb->getMainScene();
+		gkScene* activeScene = m_engine->getActiveScene();
+
+		if (scene)
+		{
+			if (activeScene)
+				gkSceneManager::getSingleton().copyObjects(scene, activeScene);
+			else
+				activeScene = scene;
+		
+			return new gsScene(activeScene);
+		}
 		else
 			gkLogMessage("gsEngine: no usable scenes found in blend.");
 	}
 
 	return 0;
+}
+
+void gsEngine::unloadBlendFile(const gkString& name)
+{
+	if (m_engine && m_ctxOwner)
+	{
+		if (!m_engine->isInitialized())
+			gkLogMessage("gsEngine: unloadBlendFile on uninitialized engine.");
+
+		gkBlendLoader::getSingleton().unloadFile(name);
+	}
+}
+
+void gsEngine::unloadAllBlendFiles()
+{
+	if (m_engine && m_ctxOwner)
+	{
+		if (!m_engine->isInitialized())
+			gkLogMessage("gsEngine: unloadAllBlendFiles on uninitialized engine.");
+
+		gkBlendLoader::getSingleton().unloadAll();
+	}
 }
 
 

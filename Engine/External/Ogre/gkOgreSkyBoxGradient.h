@@ -43,7 +43,7 @@ protected:
 	          const Ogre::ColourValue& s, const Ogre::ColourValue& e, const Ogre::PixelFormat& fmt);
 
 public:
-	gkSkyBoxGradient(const gkSceneMaterial& material);
+	gkSkyBoxGradient(const gkSceneMaterial& material, const gkString& group);
 	virtual ~gkSkyBoxGradient();
 
 	void loadResource(Ogre::Resource* resource);

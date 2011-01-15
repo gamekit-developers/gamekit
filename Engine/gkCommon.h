@@ -46,8 +46,8 @@
 #define GK_ASSERT           UT_ASSERT
 
 
-#define GK_DEF_GROUP "General"
-
+#define GK_DEF_GROUP		"General"
+#define GK_BUILTIN_GROUP	"<gkBuiltin>"
 
 
 #define GK_EXTERNAL_RENDER_GAMEKIT			0

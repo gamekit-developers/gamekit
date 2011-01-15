@@ -1030,7 +1030,7 @@ bool luMainFrame::saveProject(bool closeOpendFile)
 		}
 
 		m_focusEdit = NULL;
-		if (m_okWin) m_okWin->clearScene();
+		if (m_okWin) m_okWin->resetScene();
 	}
 
 	return ok;

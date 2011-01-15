@@ -88,7 +88,7 @@ void gkDebugScreen::initialize()
 	{
 
 		m_font = new gkBuiltinFont;
-		Ogre::FontPtr fp = Ogre::FontManager::getSingleton().create("<gkBuiltin/Font>", "<gkBuiltin>", true, m_font);
+		Ogre::FontPtr fp = Ogre::FontManager::getSingleton().create("<gkBuiltin/Font>", GK_BUILTIN_GROUP, true, m_font);
 		fp->load();
 
 		Ogre::OverlayManager& mgr = Ogre::OverlayManager::getSingleton();

@@ -49,6 +49,29 @@ TEST(TEST_CASE_NAME, testCopy)
 	EXPECT_EQ(arr4.size(), arr5.size());
 }
 
+#if 0
+TEST(TEST_CASE_NAME, testIter)
+{
+	const int count = 10;
+	utArray<int> arr1;
+	for (int i = 0; i < count; i++)
+		arr1.push_back(i);
+
+	int check = 0;
+	utArray<int>::Iterator it = arr1.iterator();
+	while (it.hasMoreElements())
+	{
+		utArray<int>::ValueType v = it.getNext();
+		if (v % 2 == 0)
+			arr1.erase(v);
+		EXPECT_TRUE(v == check); //TODO:fix
+		//printf("%d\n", v);
+		check++;
+	}
+	EXPECT_EQ(check, count);
+}
+#endif
+
 bool cmp(const int &a, const int &b)
 {
 	return a > b;

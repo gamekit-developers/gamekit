@@ -92,8 +92,9 @@ gkScene::gkScene(gkInstancedManager* creator, const gkResourceName& name, const 
 	     m_cloneCount(0),
 	     m_layers(0xFFFFFFFF),
 	     m_skybox(0),
-		 m_window(NULL),
-		 m_updateFlags(UF_ALL)
+		 m_window(0),
+		 m_updateFlags(UF_ALL),
+		 m_blendFile(0)
 {
 }
 
@@ -733,17 +734,15 @@ void gkScene::_destroyPhysicsObject(gkGameObject* obj)
 
 
 
-void gkScene::_applyBuiltinParents(void)
+void gkScene::_applyBuiltinParents(gkGameObjectSet& instanceObjects)
 {
 	// One time setup on instance creation.
 	GK_ASSERT(isBeingCreated());
 
-	gkGameObjectSet::Iterator it = m_instanceObjects.iterator();
+	gkGameObjectSet::Iterator it = instanceObjects.iterator();
 	while (it.hasMoreElements())
 	{
 		gkGameObject* gobj = it.getNext(), *pobj = 0;
-
-
 
 		GK_ASSERT(gobj->isInstanced());
 
@@ -780,16 +779,16 @@ void gkScene::_applyBuiltinParents(void)
 
 
 
-void gkScene::_applyBuiltinPhysics(void)
+void gkScene::_applyBuiltinPhysics(gkGameObjectSet& instanceObjects)
 {
 	GK_ASSERT(isBeingCreated());
 
 
-	gkGameObjectSet::Iterator it = m_instanceObjects.iterator();
+	gkGameObjectSet::Iterator it = instanceObjects.iterator();
 	while (it.hasMoreElements())
 		_createPhysicsObject(it.getNext());
 
-	gkGameObjectSet::Iterator it2 = m_instanceObjects.iterator();
+	gkGameObjectSet::Iterator it2 = instanceObjects.iterator();
 	while (it2.hasMoreElements())
 		_createPhysicsConstraint(it2.getNext());
 }
@@ -821,9 +820,6 @@ void gkScene::createInstanceImpl(void)
 		return;
 	}
 
-	if (!ResourceGroupManager::getSingleton().resourceGroupExists(getGroupName()))
-		ResourceGroupManager::getSingleton().createResourceGroup(getGroupName());
-
 	if (!m_window)
 		setDisplayWindow(gkWindowSystem::getSingleton().getMainWindow());
 
@@ -831,7 +827,7 @@ void gkScene::createInstanceImpl(void)
 	// to extract more detailed management information
 
 	m_manager = Root::getSingleton().createSceneManager(ST_GENERIC, m_name.getFullName());
-	m_skybox  = gkMaterialLoader::loadSceneMaterial(this, m_baseProps.m_material);
+	m_skybox  = gkMaterialLoader::loadSceneSkyMaterial(this, m_baseProps.m_material);
 
 
 
@@ -863,10 +859,10 @@ void gkScene::createInstanceImpl(void)
 
 
 	// Build parent / child hierarchy.
-	_applyBuiltinParents();
+	_applyBuiltinParents(m_instanceObjects);
 
 	// Build physics.
-	_applyBuiltinPhysics();
+	_applyBuiltinPhysics(m_instanceObjects);
 
 	if (!m_viewport)
 	{
@@ -1052,11 +1048,10 @@ void gkScene::destroyInstanceImpl(void)
 
 
 #ifdef OGREKIT_OPENAL_SOUND
-
 	gkSoundManager::getSingleton().stopAllSounds();
-
 #endif
 
+	//_eraseAllObjects();
 }
 
 

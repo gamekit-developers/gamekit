@@ -27,6 +27,7 @@
 
 #include "StdAfx.h"
 #include "okUtils.h"
+#include "gkFontManager.h"
 
 #ifdef __WXGTK__
 #include "gdk/gdk.h"
@@ -64,4 +65,39 @@ gkString getBaseFileName(const gkString& fileName)
 {
 	wxFileName fn(fileName);
 	return WX2GK(fn.GetName());
+}
+
+void dumpGkInfo()
+{
+	gkPrintf("scene: %d object: %d objinst: %d group: %d sound: %d lua: %d skel: %d mesh: %d anim: %d text: %d blend: %d font: %d window: %d resgroup: %d", 
+		gkSceneManager::getSingleton().getResourceCount(),
+		gkGameObjectManager::getSingleton().getResourceCount(),
+		gkGameObjectManager::getSingleton().getInstances().size(),
+		gkGroupManager::getSingleton().getResourceCount(),
+		gkSoundManager::getSingleton().getResourceCount(),
+		gkLuaManager::getSingleton().getResourceCount(),
+		gkSkeletonManager::getSingleton().getResourceCount(),
+		gkMeshManager::getSingleton().getResourceCount(),
+		gkAnimationManager::getSingleton().getResourceCount(),
+		gkTextManager::getSingleton().getResourceCount(),
+		gkBlendLoader::getSingleton().getFiles().size(),
+		gkFontManager::getSingleton().getResourceCount(),
+		gkWindowSystem::getSingleton().getWindowCount(),
+		gkResourceGroupManager::getSingleton().getResourceGroupList().size()
+	);
+
+	
+	gkResourceManager::ResourceIterator it = gkSceneManager::getSingleton().getResourceIterator();
+	while (it.hasMoreElements())
+	{
+		gkScene* scene = static_cast<gkScene*>(it.getNext().second);
+		gkPrintf("scene name: %s group: %s objects: %d instances: %d light: %d camera: %d",
+			scene->getName().c_str(),
+			scene->getResourceName().getFullName().c_str(),
+			scene->getObjects().size(),
+			scene->getInstancedObjects().size(),
+			scene->getLights().size(),
+			scene->getCameras().size()
+		);
+	}
 }

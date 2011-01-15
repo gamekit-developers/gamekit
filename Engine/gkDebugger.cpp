@@ -92,13 +92,12 @@ void gkDebugger::verifyNode(void)
 		const gkString matname = "gkDebugger::Material";
 
 
-		m_pMaterial = Ogre::MaterialManager::getSingleton().getByName(matname);
+		m_pMaterial = Ogre::MaterialManager::getSingleton().getByName(matname, GK_BUILTIN_GROUP);
 		if (m_pMaterial.isNull())
 		{
-			m_pMaterial = Ogre::MaterialManager::getSingleton().create(matname, "<gkBuiltin>");
+			m_pMaterial = Ogre::MaterialManager::getSingleton().create(matname, GK_BUILTIN_GROUP);
 			m_pMaterial->setLightingEnabled(false);
 			m_pMaterial->setReceiveShadows(false);
-
 		}
 	}
 }

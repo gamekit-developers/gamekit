@@ -69,9 +69,8 @@ using namespace Ogre;
 
 
 
-gkBlendFile::gkBlendFile(const gkString& blendToLoad, const gkString& inResourceGroup, const gkString& group)
+gkBlendFile::gkBlendFile(const gkString& blendToLoad, const gkString& group)
 	:	m_name(blendToLoad),
-		m_inResourceGroup(inResourceGroup),
 		m_group(group),
 		m_activeScene(0),
 		m_findScene(""),
@@ -291,13 +290,13 @@ void gkBlendFile::buildAllTextures(void)
 
 		gkString name(GKB_IDNAME(ima));
 
-		Ogre::TexturePtr tex = Ogre::TextureManager::getSingleton().getByName(name);
+		Ogre::TexturePtr tex = Ogre::TextureManager::getSingleton().getByName(name, m_group);
 		if (!tex.isNull())
 			continue;
 
 
 		gkTextureLoader* loader = new gkTextureLoader(ima);
-		tex = Ogre::TextureManager::getSingleton().create(GKB_IDNAME(ima), m_inResourceGroup, true, loader);
+		tex = Ogre::TextureManager::getSingleton().create(GKB_IDNAME(ima), m_group, true, loader);
 
 		if (!tex.isNull())
 			m_loaders.push_back(loader);

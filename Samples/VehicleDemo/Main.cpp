@@ -60,7 +60,7 @@ public:
 
 	bool setup()
 	{
-		gkBlendFile* pBlendFile = m_engine->loadBlendFile(m_blend);
+		gkBlendFile* pBlendFile = gkBlendLoader::getSingleton().loadFile(m_blend, "", VEHICLE_RESOURCE_GROUP);
 
 		if (pBlendFile)
 		{

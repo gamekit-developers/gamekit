@@ -47,6 +47,7 @@ int main(int argc, char** argv)
 {
 	TestMemory;
 
+	const char* startLuaFile = DEFAULT_LUA_FILE;
 	char* workingDir = 0;
 	char* luaFile = 0; 
 	char* logFile = 0;
@@ -80,12 +81,12 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	if (!luaFile)
+	if (luaFile)
+		startLuaFile = luaFile;
+	else
 	{
 		if (optsind < argc && strstr(argv[optsind], "lua"))
-			luaFile = argv[optsind++];
-		else
-			luaFile = DEFAULT_LUA_FILE;
+			startLuaFile = argv[optsind++];
 	}
 
 	if (workingDir)
@@ -136,7 +137,7 @@ int main(int argc, char** argv)
 	lua_pushtraceback(L);
 	int tb = lua_gettop(L);
 
-	int status = luaL_loadfile(L, gkUtils::getFile(luaFile).c_str());
+	int status = luaL_loadfile(L, gkUtils::getFile(startLuaFile).c_str());
 
 	if (status != 0)
 	{

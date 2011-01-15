@@ -39,9 +39,11 @@ public:
 
 	enum LoadOptions
 	{
-		LO_ONLY_ACTIVE_SCENE	= 1 << 0,	// Load only the active scene found.
-		LO_ALL_SCENES			= 1 << 1,	// Load all scenes.
-		LO_IGNORE_CACHE_FILE	= 1 << 2	// Load the blend file even if loaded.
+		LO_ONLY_ACTIVE_SCENE		= 1 << 0,	// Load only the active scene found.
+		LO_ALL_SCENES				= 1 << 1,	// Load all scenes.
+		LO_IGNORE_CACHE_FILE		= 1 << 2,	// Load the blend file even if loaded.
+		LO_CREATE_UNIQUE_GROUP		= 1 << 3,	// Create unique resource group.
+		LO_CREATE_PRIVATE_GROUP		= 1 << 4	// Create private resource group, so invisible in the global pool.
 	};
 
 
@@ -50,15 +52,13 @@ public:
 	~gkBlendLoader();
 
 	gkBlendFile* loadFile(  const gkString& fname,
-	                        int options = LO_ONLY_ACTIVE_SCENE,
-	                        const gkString& inResourceGroup = GK_DEF_GROUP,
+	                        int options = LO_ONLY_ACTIVE_SCENE,							
 	                        const gkString& scene = "",
 							const gkString& group = ""
 	                     );
 
 	gkBlendFile* loadFile(  const gkString& fname,
 	                        const gkString& scene,
-	                        const gkString& inResourceGroup = GK_DEF_GROUP,
 							const gkString& group = ""
 	                     );
 
@@ -70,6 +70,7 @@ public:
 	GK_INLINE gkBlendFile*   getActiveBlend(void)    {return m_activeFile;}
 
 	void unloadAll(bool exceptActiveFile=false);
+	void unloadGroup(const gkString& group);
 
 	GK_INLINE void unloadFile(const gkString& fname) { unloadFile(getFileByName(fname)); }
 	void unloadFile(gkBlendFile* blendFile);
@@ -80,10 +81,11 @@ private:
 
 	gkBlendFile* loadAndCatch(const gkString& fname,
 	                          int options = LO_ONLY_ACTIVE_SCENE,
-	                          const gkString& inResourceGroup = GK_DEF_GROUP,
 	                          const gkString& scene = "",
 							  const gkString& group = ""
 	                         );
+
+	bool			hasResourceGroup(const gkString& group, gkBlendFile* exceptFile = NULL);
 
 	gkBlendFile*    m_activeFile;
 	FileList        m_files;

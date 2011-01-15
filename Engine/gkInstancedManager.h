@@ -78,7 +78,7 @@ public:
 	void addReInstanceQueue(gkInstancedObject* iobj);
 	void postProcessQueue(void);
 
-
+	void destroyGroupInstances(const gkString& group);
 	void destroyAllInstances(void);
 
 	void notifyInstanceCreated(gkInstancedObject* iobj);

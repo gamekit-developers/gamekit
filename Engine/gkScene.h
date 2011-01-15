@@ -173,8 +173,8 @@ public:
 	gkWindow* getDisplayWindow(void);
 	void setDisplayWindow(gkWindow* window);
 
-	void _applyBuiltinParents(void);
-	void _applyBuiltinPhysics(void);
+	void _applyBuiltinParents(gkGameObjectSet& instanceObjects);
+	void _applyBuiltinPhysics(gkGameObjectSet& instanceObjects);
 
 	void _createPhysicsObject(gkGameObject* obj);
 	void _createPhysicsConstraint(gkGameObject* obj);
@@ -200,8 +200,11 @@ public:
 		UF_ALL			= 0xFFFFFFFF
 	};
 
-	GK_INLINE UTuint32 getUpdateFlags()				{ return m_updateFlags;  }
-	GK_INLINE void setUpdateFlags(UTuint32 flags)	{ m_updateFlags = flags; }
+	GK_INLINE UTuint32 getUpdateFlags(void)					{ return m_updateFlags;		}
+	GK_INLINE void setUpdateFlags(UTuint32 flags)			{ m_updateFlags = flags;	}
+
+	GK_INLINE gkBlendFile* getLoadBlendFile(void)			{ return m_blendFile;		}
+	GK_INLINE void setLoadBlendFile(gkBlendFile* blendFile)	{ m_blendFile = blendFile;	}
 
 private:
 
@@ -249,6 +252,7 @@ private:
 	class gkSkyBoxGradient* m_skybox;
 
 	UTuint32				m_updateFlags;
+	gkBlendFile*			m_blendFile;
 };
 
 #endif//_gkSceneObject_h_

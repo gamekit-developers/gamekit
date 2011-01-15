@@ -45,7 +45,16 @@ void gkInstancedManager::notifyDestroyAllInstancesImpl(void)
 	m_instanceQueue.clear();
 }
 
-
+void gkInstancedManager::destroyGroupInstances(const gkString& group)
+{
+	Instances::Iterator it = getInstanceIterator();
+	while (it.hasMoreElements())
+	{
+		gkInstancedObject* obj = it.getNext();
+		if (obj->getGroupName() == group)
+			obj->destroyInstance();
+	}
+}
 
 void gkInstancedManager::destroyAllInstances(void)
 {

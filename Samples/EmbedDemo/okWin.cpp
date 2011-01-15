@@ -320,17 +320,14 @@ void okWindow::resize()
 
 bool okWindow::loadScene(const gkString& blend, const gkString& scene, bool ignoreCache)
 {
-	if (!m_okApp) return false;
+	if (!m_okApp || blend.empty()) return false;
 
 	unloadScene();
 
-	GK_ASSERT(m_win);
-
-	if (!blend.empty())
-		m_scene = m_okApp->loadScene(m_win, blend, scene, ignoreCache);
-	else
-		m_scene = m_okApp->getFirstScene();
-
+	GK_ASSERT(m_win);	
+	
+	m_scene = m_okApp->loadScene(m_win, blend, scene, ignoreCache);
+	
 	if (!m_scene)
 		return false;
 
@@ -342,6 +339,25 @@ bool okWindow::loadScene(const gkString& blend, const gkString& scene, bool igno
 
 	return true;
 }
+
+bool okWindow::mergeScene(const gkString& blend, const gkString& scene, bool ignoreCache)
+{
+	if (!m_okApp || !m_scene) return false;
+
+	GK_ASSERT(m_win);
+	
+	if (!m_okApp->mergeScene(m_scene, blend, scene, ignoreCache))
+		return false;
+
+	if (m_renderOnly)
+		m_scene->setUpdateFlags(0);
+
+	setupRenderWindow();
+	startGameLoop();
+
+	return true;
+}
+
 
 bool okWindow::changeScene(const wxString& sceneName)
 {
@@ -440,15 +456,17 @@ void okWindow::showAxis(bool show)
 		m_okCam->showAxis(show);
 }
 
-void okWindow::clearScene()
+void okWindow::resetScene()
 {
 	if (!m_okApp) return;
 
-	uninit();
+	m_okApp->unloadAllScenes();
 
 	m_scene = m_okApp->createEmptyScene();
 
 	setupRenderWindow();
+	startGameLoop();
+
 }
 
 void okWindow::selectObject(gkGameObject* obj)

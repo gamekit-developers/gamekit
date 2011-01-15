@@ -35,42 +35,42 @@
 #include "OgrePass.h"
 #include "OgreSceneManager.h"
 
-
-
-gkSkyBoxGradient* gkMaterialLoader::loadSceneMaterial(class gkScene* sc, const gkSceneMaterial& material)
+gkSkyBoxGradient* gkMaterialLoader::loadSceneSkyMaterial(class gkScene* sc, const gkSceneMaterial& material)
 {
-	const gkSceneMaterial& mat = material;
+	//skybox material should be exist in the global resource pool.
+	//multiple skybox materials don't working in multi window/scene.
+	gkString groupName = sc->getGroupName(); //GK_BUILTIN_GROUP; //
 
-	gkString resGroup = sc->getGroupName();
-	if (resGroup.empty()) resGroup = Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME;
+	
 	// use user defined
-	Ogre::MaterialPtr matptr = Ogre::MaterialManager::getSingleton().getByName(mat.m_name, resGroup);
+	Ogre::MaterialPtr matptr = Ogre::MaterialManager::getSingleton().getByName(material.m_name);
 	if (!matptr.isNull())
 	{
-		sc->getManager()->setSkyBox(true, mat.m_name, mat.m_distance, true, gkEuler(-90, 0, 0).toQuaternion());
+		sc->getManager()->setSkyBox(true, material.m_name, material.m_distance, true, gkEuler(-90, 0, 0).toQuaternion());
 		return 0;
 	}
 
-	if (mat.m_type == gkSceneMaterial::FLAT)
+	if (material.m_type == gkSceneMaterial::FLAT)
 		return 0;
-	gkSkyBoxGradient* grad = new gkSkyBoxGradient(mat);
-	sc->getManager()->setSkyBox(true, mat.m_name, mat.m_distance, true);
+
+	gkSkyBoxGradient* grad = new gkSkyBoxGradient(material, groupName); //sc->getGroupName());
+	sc->getManager()->setSkyBox(true, material.m_name, material.m_distance, true);
 	return grad;
 }
 
 
 
-void gkMaterialLoader::loadSubMeshMaterial(gkSubMesh* mesh)
+void gkMaterialLoader::loadSubMeshMaterial(gkSubMesh* mesh, const gkString& group)
 {
 	gkMaterialProperties& gma = mesh->getMaterial();
 	if (gma.m_name.empty())
 		gma.m_name = "<gkBuiltin/DefaultMaterial>";
 
-	Ogre::MaterialPtr oma = Ogre::MaterialManager::getSingleton().getByName(gma.m_name.c_str());
+	Ogre::MaterialPtr oma = Ogre::MaterialManager::getSingleton().getByName(gma.m_name.c_str(), group);
 	if (!oma.isNull())
 		return;
 
-	oma = Ogre::MaterialManager::getSingleton().create(gma.m_name.c_str(), "<gkBuiltin>");
+	oma = Ogre::MaterialManager::getSingleton().create(gma.m_name, group);//GK_BUILTIN_GROUP);
 
 	if (gma.m_mode & gkMaterialProperties::MA_INVISIBLE)
 	{

@@ -243,7 +243,7 @@ void gkEngine::initialize()
 	initializeWindow();
 
 	// create the builtin resource group
-	Ogre::ResourceGroupManager::getSingleton().createResourceGroup("<gkBuiltin>");
+	gkResourceGroupManager::getSingleton().createResourceGroup(GK_BUILTIN_GROUP);
 
 	// debug info
 	m_private->debug = new gkDebugScreen();
@@ -362,11 +362,11 @@ void gkEngine::requestExit(void)
 
 
 
-gkBlendFile* gkEngine::loadBlendFile(const gkString& blend, int options, const gkString& inResource)
+gkBlendFile* gkEngine::loadBlendFile(const gkString& blend, int options, const gkString& group)
 {
 	// This function is not really needed any more.
 	// just use gkBlendLoader::getSingleton()
-	return gkBlendLoader::getSingleton().loadFile(blend, options, inResource);
+	return gkBlendLoader::getSingleton().loadFile(blend, options, "", group);
 }
 
 

@@ -40,11 +40,13 @@ public:
 	gkResourceGroupManager();	
 	virtual ~gkResourceGroupManager();
 
-	bool createResourceGroup(const gkResourceNameString& group);
+	bool createResourceGroup(const gkResourceNameString& group, bool inGlobalPool=true);
 	void destroyResourceGroup(const gkResourceNameString& group);
-	void clearResourceGroup(const gkResourceNameString& inResourceGroup);
+	void clearResourceGroup(const gkResourceNameString& group);
 	bool existResourceGroup(const gkResourceNameString& group);
 	void destroyAllResourceGroup(void);
+
+	GK_INLINE const utArray<gkResourceNameString> getResourceGroupList() { return m_groups; }
 
 	UT_DECLARE_SINGLETON(gkResourceGroupManager)
 };

@@ -49,7 +49,7 @@ gkMeshLoader::gkMeshLoader(gkMesh* me)
 
 	Ogre::MeshPtr omesh = mgr.getByName(name);
 	if (omesh.isNull())
-		omesh = mgr.create(name, "<gkBuiltin>", true, this);
+		omesh = mgr.create(name, me->getGroupName(), true, this); //GK_BUILTIN_GROUP
 }
 
 
@@ -289,7 +289,7 @@ void gkMeshLoader::loadResource(Ogre::Resource* res)
 		Ogre::SubMesh* submesh = omesh->createSubMesh();
 		submesh->setMaterialName(gks->getMaterialName());
 
-		gkMaterialLoader::loadSubMeshMaterial(gks);
+		gkMaterialLoader::loadSubMeshMaterial(gks, m_mesh->getGroupName());
 		loadSubMesh(submesh, gks);
 
 	}

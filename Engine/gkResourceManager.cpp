@@ -190,11 +190,11 @@ void gkResourceManager::destroyAll(void)
 
 void gkResourceManager::notifyResourceCreated(gkResource* res)
 {
-	if (res && !m_listsners.empty())
+	if (res && !m_listeners.empty())
 	{
 		UTsize i;
-		for (i = 0; i < m_listsners.size(); ++i)
-			m_listsners[i]->notifyResourceCreated(res);
+		for (i = 0; i < m_listeners.size(); ++i)
+			m_listeners[i]->notifyResourceCreated(res);
 	}
 
 	notifyResourceCreatedImpl(res);
@@ -203,11 +203,11 @@ void gkResourceManager::notifyResourceCreated(gkResource* res)
 
 void gkResourceManager::notifyResourceDestroyed(gkResource* res)
 {
-	if (res && !m_listsners.empty())
+	if (res && !m_listeners.empty())
 	{
 		UTsize i;
-		for (i = 0; i < m_listsners.size(); ++i)
-			m_listsners[i]->notifyResourceDestroyed(res);
+		for (i = 0; i < m_listeners.size(); ++i)
+			m_listeners[i]->notifyResourceDestroyed(res);
 	}
 
 	notifyResourceDestroyedImpl(res);
@@ -216,16 +216,16 @@ void gkResourceManager::notifyResourceDestroyed(gkResource* res)
 
 void gkResourceManager::addResourceListener(gkResourceManager::ResourceListener* res)
 {
-	if (m_listsners.find(res) == UT_NPOS)
-		m_listsners.push_back(res);
+	if (m_listeners.find(res) == UT_NPOS)
+		m_listeners.push_back(res);
 }
 
 
 void gkResourceManager::removeResourceListener(gkResourceManager::ResourceListener* res)
 {
 	UTsize pos;
-	if ((pos = m_listsners.find(res)) != UT_NPOS)
-		m_listsners.erase(pos);
+	if ((pos = m_listeners.find(res)) != UT_NPOS)
+		m_listeners.erase(pos);
 }
 
 

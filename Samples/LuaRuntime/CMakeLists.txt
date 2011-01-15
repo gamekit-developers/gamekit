@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 2.6)
 set(CONTENT 
 	Test0.blend
 	Test1.blend
+	Test2.blend
 	Test0.lua
 	Test1.lua
 )
@@ -46,6 +47,7 @@ else ()
 			POST_BUILD
 			COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/Test0.blend ${CMAKE_CURRENT_BINARY_DIR}/Test0.blend
 			COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/Test1.blend ${CMAKE_CURRENT_BINARY_DIR}/Test1.blend
+			COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/Test2.blend ${CMAKE_CURRENT_BINARY_DIR}/Test2.blend
 			COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/Test0.lua   ${CMAKE_CURRENT_BINARY_DIR}/Test0.lua
 			COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/Test1.lua   ${CMAKE_CURRENT_BINARY_DIR}/Test1.lua
 		)

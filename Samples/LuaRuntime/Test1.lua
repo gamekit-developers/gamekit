@@ -598,9 +598,10 @@ function OgreKitApp:constructor()
 
 	self.keyboard   = OgreKit.Keyboard()
 	self.scene      = self:loadBlendFile("Test1.blend");
-
-
 	self.scene:createInstance();
+
+	self:loadBlendFile("Test2.blend");
+	
 	self.player = Player(self.scene)
 
 end

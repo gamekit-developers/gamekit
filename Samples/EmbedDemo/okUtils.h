@@ -29,6 +29,8 @@
 #define _okUtils_h_
 
 gkString getNativeWinHandleFromWxWin(wxWindow* win);
+gkString getBaseFileName(const gkString& s);
+void dumpGkInfo();
 
 GK_INLINE gkString WX2GK(const wxString& s) { return gkString(s.mb_str(wxConvUTF8)); }
 GK_INLINE wxString GK2WX(const gkString& s) { return wxString(s.c_str()); }
@@ -44,6 +46,5 @@ GK_INLINE UTint32	WX2INT(const wxString& s)		{ long v = 0; s.ToLong(&v); return 
 GK_INLINE UTuint32	WX2UINT(const wxString& s)		{ unsigned long v = 0; s.ToULong(&v); return UTuint32(v);	}
 GK_INLINE gkScalar	WX2SCALAR(const wxString& s)	{ double v = 0; s.ToDouble(&v); return gkScalar(v);			}
 
-gkString getBaseFileName(const gkString& s);
 
 #endif //_okUtils_h_
