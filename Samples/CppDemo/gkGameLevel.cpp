@@ -123,27 +123,7 @@ void gkGameLevel::loadPickup(void)
 	m_pickup->setHorizonColor(gkColor(0.2f, 0.2f, 0.2f));
 	m_pickup->setAmbientColor(gkColor(0.5f, 0.5f, 0.5f));
 
-
-
-	// copy objects
-
-#if 0
-	gkGameObjectHashMap::Iterator it = sc->getObjects();
-	while (it.hasMoreElements())
-	{
-		gkGameObject* obj = it.getNext().second;
-		if (obj->isInActiveLayer())
-			m_pickup->addObject(obj);
-	}
-
-	gkGroupManager& groups = gkGroupManager::getSingleton();
-
-	gkGroupManager::Groups::Iterator giter = groups.getAttachedGroupIterator(sc);
-	while (giter.hasMoreElements())
-		groups.attachGroupToScene(m_pickup, giter.getNext());
-#else
 	gkSceneManager::getSingleton().copyObjects(sc, m_pickup);
-#endif
 
 	m_player = new gkGamePlayer(this);
 	m_player->load(playerData);

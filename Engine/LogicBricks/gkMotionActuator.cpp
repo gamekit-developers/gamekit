@@ -89,7 +89,20 @@ void gkMotionActuator::execute(void)
 				if (m_force.evaluate)
 					body->applyForce(m_force.vec * val, m_force.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
 				if (m_torque.evaluate)
-					body->applyTorque(m_torque.vec * val, m_torque.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
+				{
+					if (body->getProperties().isDynamic())
+					{
+						//workaround for incompatibility between 'DYNAMIC' game object, and angular factor
+						//a DYNAMIC object has some inconsistency: it has no angular effect due to collisions, but still has torque
+						btRigidBody* btbody = body->getBody();
+						const btVector3 old = btbody->getAngularFactor();
+						btbody->setAngularFactor(btVector3(1,1,1));
+						body->applyTorque(m_torque.vec * val, m_torque.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
+						btbody->setAngularFactor(old);
+					}
+					else
+						body->applyTorque(m_torque.vec * val, m_torque.local ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
+				}
 
 				if (m_linv.evaluate)
 				{
