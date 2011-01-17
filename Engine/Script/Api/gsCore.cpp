@@ -1405,6 +1405,18 @@ gsEntity::gsEntity(gkInstancedObject* ob) : gsGameObject(ob)
 {
 }
 
+bool gsEntity::hasCharacter(void)
+{
+	return get()->getAttachedCharacter() != 0;
+}
+
+gsCharacter* gsEntity::getCharacter(void)
+{
+	if (!hasCharacter()) return 0;
+
+	return new gsCharacter(this);
+}
+
 
 
 gsLight::gsLight()

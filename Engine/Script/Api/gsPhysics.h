@@ -89,4 +89,27 @@ public:
 	gsGameObject* getObject(void);
 };
 
+class gsCharacter
+{
+private:
+    gkCharacter* m_character;
+		
+public:
+    gsCharacter(gsGameObject* object);
+    ~gsCharacter(void);
+
+    gsGameObject* getObject(void);
+
+    void setLinearVelocity(float forward, float backward, float rightward, float leftward, float timeInterval);    
+
+    void setGravity(float gravity);
+
+    void setRotation(const gsVector3& axis, float scalar);
+
+    void setJumpSpeed(float scalar);
+    void jump(void);
+
+    bool isOnGround(void);
+}; 
+
 #endif //_gsPhysics_h_

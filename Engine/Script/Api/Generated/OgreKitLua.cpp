@@ -1526,63 +1526,64 @@ SWIG_Lua_dostring(lua_State *L, const char* str) {
 #define SWIGTYPE_p_gsArrayT_gsSensor_gkLogicSensor_t swig_types[17]
 #define SWIGTYPE_p_gsBrick swig_types[18]
 #define SWIGTYPE_p_gsCamera swig_types[19]
-#define SWIGTYPE_p_gsCollisionSensor swig_types[20]
-#define SWIGTYPE_p_gsController swig_types[21]
-#define SWIGTYPE_p_gsDebugger swig_types[22]
-#define SWIGTYPE_p_gsDelaySensor swig_types[23]
-#define SWIGTYPE_p_gsDynamicsWorld swig_types[24]
-#define SWIGTYPE_p_gsEditObjectActuator swig_types[25]
-#define SWIGTYPE_p_gsEngine swig_types[26]
-#define SWIGTYPE_p_gsEntity swig_types[27]
-#define SWIGTYPE_p_gsFSM swig_types[28]
-#define SWIGTYPE_p_gsGameActuator swig_types[29]
-#define SWIGTYPE_p_gsGameObject swig_types[30]
-#define SWIGTYPE_p_gsKeyboard swig_types[31]
-#define SWIGTYPE_p_gsKeyboardSensor swig_types[32]
-#define SWIGTYPE_p_gsLight swig_types[33]
-#define SWIGTYPE_p_gsLogicManager swig_types[34]
-#define SWIGTYPE_p_gsLogicObject swig_types[35]
-#define SWIGTYPE_p_gsLogicOpController swig_types[36]
-#define SWIGTYPE_p_gsLuaManager swig_types[37]
-#define SWIGTYPE_p_gsLuaScript swig_types[38]
-#define SWIGTYPE_p_gsMessageActuator swig_types[39]
-#define SWIGTYPE_p_gsMessageSensor swig_types[40]
-#define SWIGTYPE_p_gsMotionActuator swig_types[41]
-#define SWIGTYPE_p_gsMouse swig_types[42]
-#define SWIGTYPE_p_gsMouseSensor swig_types[43]
-#define SWIGTYPE_p_gsNearSensor swig_types[44]
-#define SWIGTYPE_p_gsObject swig_types[45]
-#define SWIGTYPE_p_gsParentActuator swig_types[46]
-#define SWIGTYPE_p_gsProperty swig_types[47]
-#define SWIGTYPE_p_gsPropertyActuator swig_types[48]
-#define SWIGTYPE_p_gsPropertySensor swig_types[49]
-#define SWIGTYPE_p_gsQuaternion swig_types[50]
-#define SWIGTYPE_p_gsRadarSensor swig_types[51]
-#define SWIGTYPE_p_gsRandomActuator swig_types[52]
-#define SWIGTYPE_p_gsRandomSensor swig_types[53]
-#define SWIGTYPE_p_gsRay swig_types[54]
-#define SWIGTYPE_p_gsRaySensor swig_types[55]
-#define SWIGTYPE_p_gsRayTest swig_types[56]
-#define SWIGTYPE_p_gsScene swig_types[57]
-#define SWIGTYPE_p_gsSceneActuator swig_types[58]
-#define SWIGTYPE_p_gsScriptController swig_types[59]
-#define SWIGTYPE_p_gsSensor swig_types[60]
-#define SWIGTYPE_p_gsSkeleton swig_types[61]
-#define SWIGTYPE_p_gsSoundActuator swig_types[62]
-#define SWIGTYPE_p_gsStateActuator swig_types[63]
-#define SWIGTYPE_p_gsSweptTest swig_types[64]
-#define SWIGTYPE_p_gsTouchSensor swig_types[65]
-#define SWIGTYPE_p_gsUserDefs swig_types[66]
-#define SWIGTYPE_p_gsVector3 swig_types[67]
-#define SWIGTYPE_p_gsVisibilityActuator swig_types[68]
-#define SWIGTYPE_p_gsWhenEvent swig_types[69]
-#define SWIGTYPE_p_utArrayT_gkGameObject_p_t swig_types[70]
-#define SWIGTYPE_p_utArrayT_gkLogicActuator_p_t swig_types[71]
-#define SWIGTYPE_p_utArrayT_gkLogicController_p_t swig_types[72]
-#define SWIGTYPE_p_utArrayT_gkLogicLink_p_t swig_types[73]
-#define SWIGTYPE_p_utArrayT_gkLogicSensor_p_t swig_types[74]
-static swig_type_info *swig_types[76];
-static swig_module_info swig_module = {swig_types, 75, 0, 0, 0, 0};
+#define SWIGTYPE_p_gsCharacter swig_types[20]
+#define SWIGTYPE_p_gsCollisionSensor swig_types[21]
+#define SWIGTYPE_p_gsController swig_types[22]
+#define SWIGTYPE_p_gsDebugger swig_types[23]
+#define SWIGTYPE_p_gsDelaySensor swig_types[24]
+#define SWIGTYPE_p_gsDynamicsWorld swig_types[25]
+#define SWIGTYPE_p_gsEditObjectActuator swig_types[26]
+#define SWIGTYPE_p_gsEngine swig_types[27]
+#define SWIGTYPE_p_gsEntity swig_types[28]
+#define SWIGTYPE_p_gsFSM swig_types[29]
+#define SWIGTYPE_p_gsGameActuator swig_types[30]
+#define SWIGTYPE_p_gsGameObject swig_types[31]
+#define SWIGTYPE_p_gsKeyboard swig_types[32]
+#define SWIGTYPE_p_gsKeyboardSensor swig_types[33]
+#define SWIGTYPE_p_gsLight swig_types[34]
+#define SWIGTYPE_p_gsLogicManager swig_types[35]
+#define SWIGTYPE_p_gsLogicObject swig_types[36]
+#define SWIGTYPE_p_gsLogicOpController swig_types[37]
+#define SWIGTYPE_p_gsLuaManager swig_types[38]
+#define SWIGTYPE_p_gsLuaScript swig_types[39]
+#define SWIGTYPE_p_gsMessageActuator swig_types[40]
+#define SWIGTYPE_p_gsMessageSensor swig_types[41]
+#define SWIGTYPE_p_gsMotionActuator swig_types[42]
+#define SWIGTYPE_p_gsMouse swig_types[43]
+#define SWIGTYPE_p_gsMouseSensor swig_types[44]
+#define SWIGTYPE_p_gsNearSensor swig_types[45]
+#define SWIGTYPE_p_gsObject swig_types[46]
+#define SWIGTYPE_p_gsParentActuator swig_types[47]
+#define SWIGTYPE_p_gsProperty swig_types[48]
+#define SWIGTYPE_p_gsPropertyActuator swig_types[49]
+#define SWIGTYPE_p_gsPropertySensor swig_types[50]
+#define SWIGTYPE_p_gsQuaternion swig_types[51]
+#define SWIGTYPE_p_gsRadarSensor swig_types[52]
+#define SWIGTYPE_p_gsRandomActuator swig_types[53]
+#define SWIGTYPE_p_gsRandomSensor swig_types[54]
+#define SWIGTYPE_p_gsRay swig_types[55]
+#define SWIGTYPE_p_gsRaySensor swig_types[56]
+#define SWIGTYPE_p_gsRayTest swig_types[57]
+#define SWIGTYPE_p_gsScene swig_types[58]
+#define SWIGTYPE_p_gsSceneActuator swig_types[59]
+#define SWIGTYPE_p_gsScriptController swig_types[60]
+#define SWIGTYPE_p_gsSensor swig_types[61]
+#define SWIGTYPE_p_gsSkeleton swig_types[62]
+#define SWIGTYPE_p_gsSoundActuator swig_types[63]
+#define SWIGTYPE_p_gsStateActuator swig_types[64]
+#define SWIGTYPE_p_gsSweptTest swig_types[65]
+#define SWIGTYPE_p_gsTouchSensor swig_types[66]
+#define SWIGTYPE_p_gsUserDefs swig_types[67]
+#define SWIGTYPE_p_gsVector3 swig_types[68]
+#define SWIGTYPE_p_gsVisibilityActuator swig_types[69]
+#define SWIGTYPE_p_gsWhenEvent swig_types[70]
+#define SWIGTYPE_p_utArrayT_gkGameObject_p_t swig_types[71]
+#define SWIGTYPE_p_utArrayT_gkLogicActuator_p_t swig_types[72]
+#define SWIGTYPE_p_utArrayT_gkLogicController_p_t swig_types[73]
+#define SWIGTYPE_p_utArrayT_gkLogicLink_p_t swig_types[74]
+#define SWIGTYPE_p_utArrayT_gkLogicSensor_p_t swig_types[75]
+static swig_type_info *swig_types[77];
+static swig_module_info swig_module = {swig_types, 76, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -9468,11 +9469,61 @@ fail:
 }
 
 
+static int _wrap_Entity_hasCharacter(lua_State* L) {
+  int SWIG_arg = 0;
+  gsEntity *arg1 = (gsEntity *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("hasCharacter",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("hasCharacter",1,"gsEntity *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsEntity,0))){
+    SWIG_fail_ptr("Entity_hasCharacter",1,SWIGTYPE_p_gsEntity);
+  }
+  
+  result = (bool)(arg1)->hasCharacter();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Entity_getCharacter(lua_State* L) {
+  int SWIG_arg = 0;
+  gsEntity *arg1 = (gsEntity *) 0 ;
+  gsCharacter *result = 0 ;
+  
+  SWIG_check_num_args("getCharacter",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getCharacter",1,"gsEntity *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsEntity,0))){
+    SWIG_fail_ptr("Entity_getCharacter",1,SWIGTYPE_p_gsEntity);
+  }
+  
+  result = (gsCharacter *)(arg1)->getCharacter();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsCharacter,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static void swig_delete_Entity(void *obj) {
 gsEntity *arg1 = (gsEntity *) obj;
 delete arg1;
 }
 static swig_lua_method swig_gsEntity_methods[] = {
+    {"hasCharacter", _wrap_Entity_hasCharacter}, 
+    {"getCharacter", _wrap_Entity_getCharacter}, 
     {0,0}
 };
 static swig_lua_attribute swig_gsEntity_attributes[] = {
@@ -23348,6 +23399,247 @@ static swig_lua_class *swig_gsSweptTest_bases[] = {0};
 static const char *swig_gsSweptTest_base_names[] = {0};
 static swig_lua_class _wrap_class_gsSweptTest = { "SweptTest", &SWIGTYPE_p_gsSweptTest,_wrap_new_SweptTest, swig_delete_SweptTest, swig_gsSweptTest_methods, swig_gsSweptTest_attributes, swig_gsSweptTest_bases, swig_gsSweptTest_base_names };
 
+static int _wrap_new_Character(lua_State* L) {
+  int SWIG_arg = 0;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  gsCharacter *result = 0 ;
+  
+  SWIG_check_num_args("gsCharacter",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsCharacter",1,"gsGameObject *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("new_Character",1,SWIGTYPE_p_gsGameObject);
+  }
+  
+  result = (gsCharacter *)new gsCharacter(arg1);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsCharacter,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Character_getObject(lua_State* L) {
+  int SWIG_arg = 0;
+  gsCharacter *arg1 = (gsCharacter *) 0 ;
+  gsGameObject *result = 0 ;
+  
+  SWIG_check_num_args("getObject",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getObject",1,"gsCharacter *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsCharacter,0))){
+    SWIG_fail_ptr("Character_getObject",1,SWIGTYPE_p_gsCharacter);
+  }
+  
+  result = (gsGameObject *)(arg1)->getObject();
+  if (result) {
+    SWIG_arg += gsCreateObject(L, result); 
+  } 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Character_setLinearVelocity(lua_State* L) {
+  int SWIG_arg = 0;
+  gsCharacter *arg1 = (gsCharacter *) 0 ;
+  float arg2 ;
+  float arg3 ;
+  float arg4 ;
+  float arg5 ;
+  float arg6 ;
+  
+  SWIG_check_num_args("setLinearVelocity",6,6)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setLinearVelocity",1,"gsCharacter *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("setLinearVelocity",2,"float");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("setLinearVelocity",3,"float");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("setLinearVelocity",4,"float");
+  if(!lua_isnumber(L,5)) SWIG_fail_arg("setLinearVelocity",5,"float");
+  if(!lua_isnumber(L,6)) SWIG_fail_arg("setLinearVelocity",6,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsCharacter,0))){
+    SWIG_fail_ptr("Character_setLinearVelocity",1,SWIGTYPE_p_gsCharacter);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  arg3 = (float)lua_tonumber(L, 3);
+  arg4 = (float)lua_tonumber(L, 4);
+  arg5 = (float)lua_tonumber(L, 5);
+  arg6 = (float)lua_tonumber(L, 6);
+  (arg1)->setLinearVelocity(arg2,arg3,arg4,arg5,arg6);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Character_setGravity(lua_State* L) {
+  int SWIG_arg = 0;
+  gsCharacter *arg1 = (gsCharacter *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("setGravity",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setGravity",1,"gsCharacter *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("setGravity",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsCharacter,0))){
+    SWIG_fail_ptr("Character_setGravity",1,SWIGTYPE_p_gsCharacter);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  (arg1)->setGravity(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Character_setRotation(lua_State* L) {
+  int SWIG_arg = 0;
+  gsCharacter *arg1 = (gsCharacter *) 0 ;
+  gsVector3 *arg2 = 0 ;
+  float arg3 ;
+  
+  SWIG_check_num_args("setRotation",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setRotation",1,"gsCharacter *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setRotation",2,"gsVector3 const &");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("setRotation",3,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsCharacter,0))){
+    SWIG_fail_ptr("Character_setRotation",1,SWIGTYPE_p_gsCharacter);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Character_setRotation",2,SWIGTYPE_p_gsVector3);
+  }
+  
+  arg3 = (float)lua_tonumber(L, 3);
+  (arg1)->setRotation((gsVector3 const &)*arg2,arg3);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Character_setJumpSpeed(lua_State* L) {
+  int SWIG_arg = 0;
+  gsCharacter *arg1 = (gsCharacter *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("setJumpSpeed",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setJumpSpeed",1,"gsCharacter *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("setJumpSpeed",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsCharacter,0))){
+    SWIG_fail_ptr("Character_setJumpSpeed",1,SWIGTYPE_p_gsCharacter);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  (arg1)->setJumpSpeed(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Character_jump(lua_State* L) {
+  int SWIG_arg = 0;
+  gsCharacter *arg1 = (gsCharacter *) 0 ;
+  
+  SWIG_check_num_args("jump",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("jump",1,"gsCharacter *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsCharacter,0))){
+    SWIG_fail_ptr("Character_jump",1,SWIGTYPE_p_gsCharacter);
+  }
+  
+  (arg1)->jump();
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_Character_isOnGround(lua_State* L) {
+  int SWIG_arg = 0;
+  gsCharacter *arg1 = (gsCharacter *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("isOnGround",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isOnGround",1,"gsCharacter *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsCharacter,0))){
+    SWIG_fail_ptr("Character_isOnGround",1,SWIGTYPE_p_gsCharacter);
+  }
+  
+  result = (bool)(arg1)->isOnGround();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_Character(void *obj) {
+gsCharacter *arg1 = (gsCharacter *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gsCharacter_methods[] = {
+    {"getObject", _wrap_Character_getObject}, 
+    {"setLinearVelocity", _wrap_Character_setLinearVelocity}, 
+    {"setGravity", _wrap_Character_setGravity}, 
+    {"setRotation", _wrap_Character_setRotation}, 
+    {"setJumpSpeed", _wrap_Character_setJumpSpeed}, 
+    {"jump", _wrap_Character_jump}, 
+    {"isOnGround", _wrap_Character_isOnGround}, 
+    {0,0}
+};
+static swig_lua_attribute swig_gsCharacter_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_gsCharacter_bases[] = {0};
+static const char *swig_gsCharacter_base_names[] = {0};
+static swig_lua_class _wrap_class_gsCharacter = { "Character", &SWIGTYPE_p_gsCharacter,_wrap_new_Character, swig_delete_Character, swig_gsCharacter_methods, swig_gsCharacter_attributes, swig_gsCharacter_bases, swig_gsCharacter_base_names };
+
 static int _wrap_LuaScript_execute(lua_State* L) {
   int SWIG_arg = 0;
   gsLuaScript *arg1 = (gsLuaScript *) 0 ;
@@ -23989,6 +24281,7 @@ static swig_type_info _swigt__p_gsArrayT_gsLogicObject_gkLogicLink_t = {"_p_gsAr
 static swig_type_info _swigt__p_gsArrayT_gsSensor_gkLogicSensor_t = {"_p_gsArrayT_gsSensor_gkLogicSensor_t", "gsArray< gsSensor,gkLogicSensor > *", 0, 0, (void*)&_wrap_class_gsArray_Sl_gsSensor_Sc_gkLogicSensor_Sg_, 0};
 static swig_type_info _swigt__p_gsBrick = {"_p_gsBrick", "gsBrick *", 0, 0, (void*)&_wrap_class_gsBrick, 0};
 static swig_type_info _swigt__p_gsCamera = {"_p_gsCamera", "gsCamera *", 0, 0, (void*)&_wrap_class_gsCamera, 0};
+static swig_type_info _swigt__p_gsCharacter = {"_p_gsCharacter", "gsCharacter *", 0, 0, (void*)&_wrap_class_gsCharacter, 0};
 static swig_type_info _swigt__p_gsCollisionSensor = {"_p_gsCollisionSensor", "gsCollisionSensor *", 0, 0, (void*)&_wrap_class_gsCollisionSensor, 0};
 static swig_type_info _swigt__p_gsController = {"_p_gsController", "gsController *", 0, 0, (void*)&_wrap_class_gsController, 0};
 static swig_type_info _swigt__p_gsDebugger = {"_p_gsDebugger", "gsDebugger *", 0, 0, (void*)&_wrap_class_gsDebugger, 0};
@@ -24066,6 +24359,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_gsArrayT_gsSensor_gkLogicSensor_t,
   &_swigt__p_gsBrick,
   &_swigt__p_gsCamera,
+  &_swigt__p_gsCharacter,
   &_swigt__p_gsCollisionSensor,
   &_swigt__p_gsController,
   &_swigt__p_gsDebugger,
@@ -24143,6 +24437,7 @@ static swig_cast_info _swigc__p_gsArrayT_gsLogicObject_gkLogicLink_t[] = {  {&_s
 static swig_cast_info _swigc__p_gsArrayT_gsSensor_gkLogicSensor_t[] = {  {&_swigt__p_gsArrayT_gsSensor_gkLogicSensor_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsBrick[] = {  {&_swigt__p_gsAlwaysSensor, _p_gsAlwaysSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsDelaySensor, _p_gsDelaySensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsMessageSensor, _p_gsMessageSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsMouseSensor, _p_gsMouseSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsPropertySensor, _p_gsPropertySensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsRaySensor, _p_gsRaySensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsRandomSensor, _p_gsRandomSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsSensor, _p_gsSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsBrick, 0, 0, 0},  {&_swigt__p_gsCollisionSensor, _p_gsCollisionSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsTouchSensor, _p_gsTouchSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsKeyboardSensor, _p_gsKeyboardSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsNearSensor, _p_gsNearSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsRadarSensor, _p_gsRadarSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsActuatorSensor, _p_gsActuatorSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsController, _p_gsControllerTo_p_gsBrick, 0, 0},  {&_swigt__p_gsLogicOpController, _p_gsLogicOpControllerTo_p_gsBrick, 0, 0},  {&_swigt__p_gsScriptController, _p_gsScriptControllerTo_p_gsBrick, 0, 0},  {&_swigt__p_gsActuator, _p_gsActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsActionActuator, _p_gsActionActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsEditObjectActuator, _p_gsEditObjectActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsGameActuator, _p_gsGameActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsMessageActuator, _p_gsMessageActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsMotionActuator, _p_gsMotionActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsParentActuator, _p_gsParentActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsPropertyActuator, _p_gsPropertyActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsRandomActuator, _p_gsRandomActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsSceneActuator, _p_gsSceneActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsSoundActuator, _p_gsSoundActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsStateActuator, _p_gsStateActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsVisibilityActuator, _p_gsVisibilityActuatorTo_p_gsBrick, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsCamera[] = {  {&_swigt__p_gsCamera, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsCharacter[] = {  {&_swigt__p_gsCharacter, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsCollisionSensor[] = {  {&_swigt__p_gsCollisionSensor, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsController[] = {  {&_swigt__p_gsController, 0, 0, 0},  {&_swigt__p_gsLogicOpController, _p_gsLogicOpControllerTo_p_gsController, 0, 0},  {&_swigt__p_gsScriptController, _p_gsScriptControllerTo_p_gsController, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsDebugger[] = {  {&_swigt__p_gsDebugger, 0, 0, 0},{0, 0, 0, 0}};
@@ -24220,6 +24515,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_gsArrayT_gsSensor_gkLogicSensor_t,
   _swigc__p_gsBrick,
   _swigc__p_gsCamera,
+  _swigc__p_gsCharacter,
   _swigc__p_gsCollisionSensor,
   _swigc__p_gsController,
   _swigc__p_gsDebugger,

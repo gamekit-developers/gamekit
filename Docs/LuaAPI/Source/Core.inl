@@ -2051,9 +2051,35 @@ function Camera:makeCurrent()
 \LuaClassExtend{GameObject}
 
 \beginmenu{Methods}
+\LuaMethodMenu{Entity,getCharacter}
+\LuaMethodMenu{Entity,hasCharacter}
 \endmenu
 
+<!-- ======================================== -->
+\LuaMethod{Entity,getCharacter}
+\LuaClassUp{Entity}
 
+Returns the attached character(or nil) of the entity. 
+
+\code
+function Entity:getCharacter()
+\endcode
+
+\return \LuaClassRef{Character}
+
+\endpage
+
+<!-- ======================================== -->
+\LuaMethod{Entity,hasCharacter}
+\LuaClassUp{Entity}
+
+Test the attached character is exists. 
+
+\code
+function Entity:hasCharacter()
+\endcode
+
+\return bool True if the character is attached to the entity.
 
 \endpage
 

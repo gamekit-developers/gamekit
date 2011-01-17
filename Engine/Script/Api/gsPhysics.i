@@ -35,5 +35,6 @@
 %rename(RayTest)       gsRayTest;
 %rename(SweptTest)     gsSweptTest;
 %rename(DynamicsWorld) gsDynamicsWorld;
+%rename(Character)     gsCharacter;
 
 %include "gsPhysics.h"

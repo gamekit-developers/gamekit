@@ -161,6 +161,29 @@ void gkCharacter::setVelocity(const gkVector3& v, gkScalar timeInterval)
 	m_character->setVelocityForTimeInterval(velocity, timeInterval);
 }
 
+void gkCharacter::setLinearVelocity(gkScalar forward, gkScalar backward, gkScalar rightward, gkScalar leftward, gkScalar timeInterval)
+{
+	btTransform xform =  getGhostObject()->getWorldTransform();
+
+	gkVector3 walkDirection(0.f, 0.f, 0.f);
+
+	if (leftward != 0)
+		walkDirection -= gkVector3(leftward, 0.f, 0.f);
+
+	if (rightward != 0)
+		walkDirection += gkVector3(rightward, 0.f, 0.f);
+
+	if (forward != 0)
+		walkDirection += gkVector3(0.f, forward, 0.f);
+
+	if (backward != 0)
+		walkDirection -= gkVector3(0.f, backward, 0.f);
+
+	gkVector3 result = gkMathUtils::get(xform.getRotation()) * walkDirection;
+
+	setVelocity(result, timeInterval); 
+} 
+
 
 
 
@@ -185,3 +208,33 @@ void gkCharacter::updateAction( btCollisionWorld* collisionWorld, btScalar delta
 
 	setWorldTransform(m_collisionObject->getWorldTransform());
 }
+
+
+
+void gkCharacter::setGravity(gkScalar gravity)
+{
+	m_character->setGravity(btScalar(gravity));
+}
+
+void gkCharacter::setRotation(const gkVector3& axis, gkScalar scalar)
+{
+	btMatrix3x3 orn = m_character->getGhostObject()->getWorldTransform().getBasis();
+	orn *= btMatrix3x3(btQuaternion(gkMathUtils::get(axis), scalar));
+	m_character->getGhostObject()->getWorldTransform().setBasis(orn);
+}
+
+void gkCharacter::setJumpSpeed(gkScalar scalar)
+{
+	m_character->setJumpSpeed(scalar);
+}
+
+void gkCharacter::jump(void)
+{
+	m_character->jump();
+}
+
+bool gkCharacter::isOnGround(void)
+{
+	return m_character->onGround();
+}
+

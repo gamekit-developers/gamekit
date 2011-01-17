@@ -246,4 +246,137 @@ function SweptTest:getObject()
 
 \endpage
 
+
+
+<!-- ============================================ Character ============================================ -->
+\LuaClass{Character}
+\LuaSectionUp{Physics}
+
+
+\beginmenu{Methods}
+\LuaMethodMenu{Character,setLinearVelocity}
+\LuaMethodMenu{Character,setGravity}
+\LuaMethodMenu{Character,setRotation}
+\LuaMethodMenu{Character,setJumpSpeed}
+\LuaMethodMenu{Character,jump}
+\LuaMethodMenu{Character,isOnGround}
+\LuaMethodMenu{Character,getObject}
+\endmenu
+
+
+
+<!-- ======================================== -->
+\LuaMethod{Character,setLinearVelocity}
+\LuaClassUp{Character}
+
+Move the character.
+
+\code
+function Character:setLinearVelocity(forward, backward, rightward, leftward, timeInterval)
+\endcode
+
+\param forawd The speed in forward direction.
+\param backward The speed in backward direction.
+\param rightward The speed in rightward direction.
+\param leftward The speed in leftward direction.
+\param timeInterval The character should move for the given time period.
+
+
+
+\endpage
+
+
+<!-- ======================================== -->
+\LuaMethod{Character,setGravity}
+\LuaClassUp{Character}
+
+Set acceleration of gravity.
+
+\code
+function Character:setGravity(gravity)
+\endcode
+
+\param gravity The acceleration of gravity.
+
+\endpage
+
+<!-- ======================================== -->
+\LuaMethod{Character,setRotation}
+\LuaClassUp{Character}
+
+
+\code
+function Character:setRotation(axis, scalar)
+\endcode
+
+Ratate the character.
+
+\param axis The \LuaClassRef{Vector3} is the axis that the character will rotate.
+\param scalar The amount to ratation.
+
+\endpage
+
+
+
+<!-- ======================================== -->
+\LuaMethod{Character,setJumpSpeed}
+\LuaClassUp{Character}
+
+Set the character jump speed.
+
+\code
+function Character:setJumpSpeed()
+\endcode
+
+\param scalar The speed of jump.
+
+\endpage
+
+
+<!-- ======================================== -->
+\LuaMethod{Character,jump}
+\LuaClassUp{Character}
+
+Make the character jump.
+
+
+\code
+function Character:jump()
+\endcode
+
+
+\endpage
+
+
+<!-- ======================================== -->
+\LuaMethod{Character,isOnGround}
+\LuaClassUp{Character}
+
+Test the character is on gound.
+
+
+\code
+function Character:isOnGround()
+\endcode
+
+\returns bool True if the character is on ground.
+
+\endpage
+
+
+<!-- ======================================== -->
+\LuaMethod{Character,getObject}
+\LuaClassUp{Character}
+
+Returns the object of the character is attached.
+
+\code
+function Character:getObject()
+\endcode
+
+\returns \LuaClassRef{GameObject}
+
+
+\endpage
+
 */

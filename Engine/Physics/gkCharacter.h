@@ -47,6 +47,7 @@ public:
 
 
 	void setVelocity(const gkVector3& v, gkScalar timeInterval);
+	void setLinearVelocity(gkScalar forward, gkScalar backward, gkScalar rightward, gkScalar leftward, gkScalar timeInterval);
 
 
 	btPairCachingGhostObject* getGhostObject() const;
@@ -56,6 +57,14 @@ public:
 
 	void debugDraw(btIDebugDraw* debugDrawer) {}
 
+	void setGravity(gkScalar gravity);
+
+	void setRotation(const gkVector3& axis, gkScalar scalar);
+
+	void setJumpSpeed(gkScalar scalar);
+	void jump(void);
+
+	bool isOnGround(void);
 
 	void create(void);
 	void destroy(void);

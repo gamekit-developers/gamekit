@@ -27,10 +27,6 @@
 #include "gsPhysics.h"
 #include "gsCore.h"
 
-
-
-
-
 gsDynamicsWorld::gsDynamicsWorld(gkDynamicsWorld* dynamicsWorld)
 {
 	m_world = dynamicsWorld;
@@ -155,3 +151,51 @@ gsGameObject* gsSweptTest::getObject(void)
 {
 	return (new gsGameObject(m_test->getObject()));
 }
+
+
+gsCharacter::gsCharacter(gsGameObject* object)
+{
+	gkGameObject* obj = object->cast<gkGameObject>();
+	m_character = obj->getAttachedCharacter();
+	GK_ASSERT(m_character);
+} 
+
+gsCharacter::~gsCharacter(void)
+{
+} 
+
+gsGameObject* gsCharacter::getObject(void)
+{
+	return (new gsGameObject(m_character->getObject()));
+} 
+
+void gsCharacter::setLinearVelocity(float forward, float backward, float rightward, float leftward, float timeInterval)
+{
+	m_character->setLinearVelocity(forward, backward, rightward, leftward, timeInterval); 
+} 
+
+void gsCharacter::setGravity(float gravity)
+{
+	m_character->setGravity(btScalar(gravity));
+}
+
+void gsCharacter::setRotation(const gsVector3& axis, float scalar)
+{
+	m_character->setRotation(axis, scalar);	
+}
+
+void gsCharacter::setJumpSpeed(float scalar)
+{
+	m_character->setJumpSpeed(scalar);
+}
+
+void gsCharacter::jump(void)
+{
+	m_character->jump();
+}
+
+bool gsCharacter::isOnGround(void)
+{
+	return m_character->isOnGround();
+}
+

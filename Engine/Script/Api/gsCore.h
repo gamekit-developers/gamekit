@@ -396,7 +396,7 @@ public:
 	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsCamera, gkInstancedObject);
 };
 
-
+class gsCharacter;
 
 class gsEntity : public gsGameObject
 {
@@ -404,6 +404,9 @@ public:
 
 	gsEntity();
 	~gsEntity() {}
+
+	bool hasCharacter(void);
+	gsCharacter* getCharacter(void);
 
 	// internal
 	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsEntity, gkInstancedObject);
