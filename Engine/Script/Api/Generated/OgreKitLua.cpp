@@ -9506,7 +9506,7 @@ static int _wrap_Entity_getCharacter(lua_State* L) {
   }
   
   result = (gsCharacter *)(arg1)->getCharacter();
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsCharacter,0); SWIG_arg++; 
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsCharacter,1); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;

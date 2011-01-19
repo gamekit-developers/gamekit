@@ -25,6 +25,7 @@ restrictions:
 */
 #include <assert.h>
 #include <stdlib.h>
+#include <map>
 #include "win32native/Win32NativeInputManager.h"
 #include "win32native/Win32NativeKeyboard.h"
 #include "win32native/Win32NativeMouse.h"
@@ -33,18 +34,18 @@ restrictions:
 using namespace OIS;
 
 
-//-------------------------------------------------------------//
-// No access to multiple GWLP_USERDATA so only one instance! 
-// ...(or HWND lookups with maps)
-//static Win32NativeInputManager *gMgr= 0;
+//GWLP_USERDATA is used by Ogre WindowEventUtilities.
+typedef std::map<HWND, Win32NativeInputManager*> Win32InputMgrMap;
+static Win32InputMgrMap gMgr;
 
 
 //-------------------------------------------------------------//
 static LRESULT WINAPI OIS_SystemProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	Win32NativeInputManager* mgr = (Win32NativeInputManager*)::GetWindowLongPtr(hWnd, GWLP_USERDATA);
-	if (mgr) 
-		return mgr->_proc(hWnd, msg, wParam, lParam);
+	Win32InputMgrMap::iterator i = gMgr.find(hWnd);
+	if (i != gMgr.end())
+		return i->second->_proc(hWnd, msg, wParam, lParam);
+
 	return ::DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
@@ -61,9 +62,10 @@ Win32NativeInputManager::~Win32NativeInputManager()
 {
 	if (mHandle)
 	{
-		::SetWindowLongPtr(mHandle, DWLP_USER, 0);
 		if (mOldProc != 0) //restore old
 			::SetWindowLongPtr(mHandle, GWL_WNDPROC, (LONG_PTR)mOldProc);
+
+		gMgr.erase(mHandle);
 	}
 }
 
@@ -84,15 +86,7 @@ void Win32NativeInputManager::_initialize(ParamList &paramList)
 	if (!mOldProc)
 		OIS_EXCEPT(E_General, "Win32NativeInputManager::Win32NativeInputManager >> Window has no existing procedure");
 
-	::SetLastError(0);
-	LONG_PTR ret = ::SetWindowLongPtr(mHandle, GWLP_USERDATA, (LONG_PTR)this);
-	if (ret == 0 && ::GetLastError() != 0)
-	{
-		char tmp[256];
-		sprintf(tmp, "Win32NativeInputManager::Win32NativeInputManager >> Can't set Window procdure! %d", ::GetLastError());
-		OIS_EXCEPT(E_General, tmp);
-	}
-	
+	gMgr[mHandle] = this;
 
 	ParamList::iterator i = paramList.begin(), e = paramList.end();
 	for( ; i != e; ++i ) 

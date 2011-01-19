@@ -39,6 +39,7 @@
 %newobject gsGameObject::getCamera;
 %newobject gsGameObject::getParent;
 %newobject gsGameObject::getSkeleton;
+%newobject gsEntity::getCharacter;
 %newobject gsScene::getObject;
 %newobject gsScene::getEntity;
 %newobject gsScene::getLight;
