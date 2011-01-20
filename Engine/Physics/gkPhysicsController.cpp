@@ -55,25 +55,42 @@ gkPhysicsController::~gkPhysicsController()
 {
 	if (m_shape)
 	{
-		delete m_shape;
+		destroyShape(m_shape);
 		m_shape = 0;
 	}
 }
 
+void gkPhysicsController::destroyShape(btCollisionShape* shape)
+{
+	if (!shape) return;
 
+	if (shape->isCompound())
+	{
+		btCompoundShape* compShape = static_cast<btCompoundShape*>(shape);
+		int i;
+		for (i = 0; i < compShape->getNumChildShapes(); i++)
+		{
+			btCollisionShape* childShape = compShape->getChildShape(i);
+			if (childShape->isCompound())
+				destroyShape(childShape);
+			else
+				delete childShape;
+		}
+	}
+
+	delete shape;
+}
 
 void gkPhysicsController::setShape(btCollisionShape* shape)
 {
 	if (m_collisionObject)
 	{
-		if (m_shape)
-			delete m_shape;
+		destroyShape(m_shape);
 
 		m_shape = shape;
 		m_collisionObject->setCollisionShape(m_shape);
 	}
 }
-
 
 
 bool gkPhysicsController::isStaticObject(void)
@@ -489,13 +506,15 @@ gkBoundingBox gkPhysicsController::getAabb(void) const
 	return gkBoundingBox();
 }
 
-
-
 void gkPhysicsController::createShape(void)
 {
+	GK_ASSERT(!m_shape && m_object);
 
-	GK_ASSERT(m_object);
+	m_shape = _createShape();
+}
 
+btCollisionShape* gkPhysicsController::_createShape(void)
+{
 	gkMesh* me = 0;
 	gkEntity* ent = m_object->getEntity();
 	if (ent != 0)
@@ -507,17 +526,18 @@ void gkPhysicsController::createShape(void)
 	else
 		size *= m_props.m_radius;
 
+	btCollisionShape* shape = 0;	
 
 	switch (m_props.m_shape)
 	{
 	case SH_BOX:
-		m_shape = new btBoxShape(btVector3(size.x, size.y, size.z));
+		shape = new btBoxShape(btVector3(size.x, size.y, size.z));
 		break;
 	case SH_CONE:
-		m_shape = new btConeShapeZ(gkMax(size.x, size.y), 2.f * size.z);
+		shape = new btConeShapeZ(gkMax(size.x, size.y), 2.f * size.z);
 		break;
 	case SH_CYLINDER:
-		m_shape = new btCylinderShapeZ(btVector3(size.x, size.y, size.z));
+		shape = new btCylinderShapeZ(btVector3(size.x, size.y, size.z));
 		break;
 	case SH_CONVEX_TRIMESH:
 	case SH_GIMPACT_MESH:
@@ -529,27 +549,38 @@ void gkPhysicsController::createShape(void)
 				if (triMesh->getNumTriangles() > 0)
 				{
 					if (m_props.m_shape == SH_CONVEX_TRIMESH)
-						m_shape = new btConvexTriangleMeshShape(triMesh);
+						shape = new btConvexTriangleMeshShape(triMesh);
 					else if (m_props.m_shape == SH_GIMPACT_MESH)
-						m_shape = new btConvexTriangleMeshShape(triMesh);
+						shape = new btConvexTriangleMeshShape(triMesh);
 					else
-						m_shape = new btBvhTriangleMeshShape(triMesh, true);
+						shape = new btBvhTriangleMeshShape(triMesh, true);
 					break;
 				}
 				else
-					return;
+					return 0;
 			}
 		}
 	case SH_SPHERE:
-		m_shape = new btSphereShape(gkMax(size.x, gkMax(size.y, size.z)));
+		shape = new btSphereShape(gkMax(size.x, gkMax(size.y, size.z)));
 		break;
 	}
 
-	if (!m_shape)
-		return;
+	if (!shape)
+		return 0;
 
-	m_shape->setMargin(m_props.m_margin);
-	m_shape->setLocalScaling(gkMathUtils::get(m_object->getScale()));
+	shape->setMargin(m_props.m_margin);
+	shape->setLocalScaling(gkMathUtils::get(m_object->getScale()));
+
+
+	if (m_props.isCompound())
+	{
+		btCompoundShape *compShape = new btCompoundShape();
+		compShape->addChildShape(btTransform::getIdentity(), shape);
+		return compShape;
+	}
+	
+	return shape;
+	
 }
 
 

@@ -24,6 +24,7 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+#include "gkCommon.h"
 #include "OgreRoot.h"
 #include "OgreSceneManager.h"
 #include "OgreRenderWindow.h"
@@ -648,8 +649,6 @@ void gkScene::_createPhysicsObject(gkGameObject* obj)
 	if (!props.isPhysicsObject() || obj->hasParent())
 		return;
 
-	// TODO make compound shape from children.
-
 	gkEntity* ent = obj->getEntity();
 	if (ent && props.m_physics.isMeshShape())
 	{
@@ -686,14 +685,54 @@ void gkScene::_createPhysicsObject(gkGameObject* obj)
 	}
 }
 
-
-void gkScene::_createPhysicsConstraint(gkGameObject* obj)
+void gkScene::_postCreatePhysicsObject(gkGameObject* obj)
 {
 	GK_ASSERT(obj && obj->isInstanced() && m_physicsWorld);
 
 	gkGameObjectProperties&  props  = obj->getProperties();
+	if (!props.isPhysicsObject())
+		return;
 
-	if (!props.isPhysicsObject() || !props.hasPhysicsConstraint() || obj->hasParent())
+	if (props.m_physics.hasPhysicsConstraint())
+		_createPhysicsConstraint(obj);
+
+	if (props.m_physics.isCompoundChild())
+	{
+		gkGameObject* parent = obj->getParent(); 
+		while (parent && parent->getParent()) parent = parent->getParent();
+		if (!parent || !parent->getProperties().isRigidOrDynamic() || !parent->getProperties().m_physics.isCompound()) 
+			return;
+
+		gkPhysicsController* parentCont = parent->getPhysicsController(); 
+		GK_ASSERT(parentCont && parentCont->getShape() && parentCont->getShape()->isCompound());
+		btCompoundShape* compShape = static_cast<btCompoundShape*>(parentCont->getShape());
+		
+		gkPhysicsController cont(obj, m_physicsWorld);
+		btCollisionShape *shape = cont._createShape();
+		
+		gkMatrix4 m;
+		if (obj->getParent() != parent)
+			m = parent->getWorldTransform().inverse() * obj->getWorldTransform();
+		else
+			m = obj->getTransform();
+
+		shape->setLocalScaling(gkMathUtils::get(obj->getWorldScale()));
+		compShape->addChildShape(gkMathUtils::get(m), shape);
+
+		gkRigidBody* body = static_cast<gkRigidBody*>(parent->getPhysicsController());
+		GK_ASSERT(body);
+		body->recalLocalInertia();
+	}
+}
+
+
+void gkScene::_createPhysicsConstraint(gkGameObject* obj)
+{
+	GK_ASSERT(obj && obj->isInstanced() && m_physicsWorld);
+	gkGameObjectProperties&  props  = obj->getProperties();
+
+	GK_ASSERT(props.isPhysicsObject() && props.m_physics.hasPhysicsConstraint());
+	if (!props.isPhysicsObject() || !props.m_physics.hasPhysicsConstraint() || obj->hasParent())
 		return;
 
 	gkRigidBody* body = obj->getAttachedBody();	
@@ -736,9 +775,6 @@ void gkScene::_destroyPhysicsObject(gkGameObject* obj)
 
 void gkScene::_applyBuiltinParents(gkGameObjectSet& instanceObjects)
 {
-	// One time setup on instance creation.
-	GK_ASSERT(isBeingCreated());
-
 	gkGameObjectSet::Iterator it = instanceObjects.iterator();
 	while (it.hasMoreElements())
 	{
@@ -781,16 +817,24 @@ void gkScene::_applyBuiltinParents(gkGameObjectSet& instanceObjects)
 
 void gkScene::_applyBuiltinPhysics(gkGameObjectSet& instanceObjects)
 {
-	GK_ASSERT(isBeingCreated());
-
+	utArray<gkGameObject*> objs;
+	objs.reserve(instanceObjects.size());
 
 	gkGameObjectSet::Iterator it = instanceObjects.iterator();
 	while (it.hasMoreElements())
-		_createPhysicsObject(it.getNext());
+	{
+		gkGameObject* obj = it.getNext();
+		if (obj->getProperties().isPhysicsObject())
+		{
+			_createPhysicsObject(obj);
+			if (obj->getProperties().m_physics.isLinkedToOther())
+				objs.push_back(obj);
+		}
+	}
 
-	gkGameObjectSet::Iterator it2 = instanceObjects.iterator();
-	while (it2.hasMoreElements())
-		_createPhysicsConstraint(it2.getNext());
+	UTsize i;
+	for (i = 0; i < objs.size(); i++)
+		_postCreatePhysicsObject(objs[i]);
 }
 
 
@@ -1125,7 +1169,10 @@ void gkScene::notifyInstanceCreated(gkGameObject* gobj)
 
 	// apply physics
 	if (!isBeingCreated())
+	{
 		_createPhysicsObject(gobj);
+			_postCreatePhysicsObject(gobj);
+	}
 
 
 	if (gobj->getType() == GK_CAMERA)

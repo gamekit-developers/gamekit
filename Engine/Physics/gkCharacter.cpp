@@ -47,9 +47,6 @@ gkCharacter::gkCharacter(gkGameObject* object, gkDynamicsWorld* owner)
 
 gkCharacter::~gkCharacter()
 {
-	delete m_shape;
-	m_shape = 0;
-
 	delete m_character;
 	m_character = 0;
 

@@ -258,14 +258,16 @@ enum gkPhysicsType
 
 enum gkPhysicsMode
 {
-	GK_NO_SLEEP     = (1 << 0),
-	GK_CONTACT      = (1 << 1),
-	GK_LOCK_LINV_X  = (1 << 2),
-	GK_LOCK_LINV_Y  = (1 << 3),
-	GK_LOCK_LINV_Z  = (1 << 4),
-	GK_LOCK_ANGV_X  = (1 << 5),
-	GK_LOCK_ANGV_Y  = (1 << 6),
-	GK_LOCK_ANGV_Z  = (1 << 7),
+	GK_NO_SLEEP       = (1 << 0),
+	GK_CONTACT        = (1 << 1),
+	GK_LOCK_LINV_X    = (1 << 2),
+	GK_LOCK_LINV_Y    = (1 << 3),
+	GK_LOCK_LINV_Z    = (1 << 4),
+	GK_LOCK_ANGV_X    = (1 << 5),
+	GK_LOCK_ANGV_Y    = (1 << 6),
+	GK_LOCK_ANGV_Z    = (1 << 7),
+	GK_COMPOUND		  = (1 << 8),
+	GK_COMPOUND_CHILD = (1 << 9)
 };
 
 enum gkPhysicsShape
@@ -358,6 +360,8 @@ public:
 
 	GK_INLINE bool isContactListener(void)    const { return (m_mode & GK_CONTACT) != 0; }
 	GK_INLINE bool isDosser(void)             const { return (m_mode & GK_NO_SLEEP) == 0; }
+	GK_INLINE bool isCompound(void)	          const { return (m_mode & GK_COMPOUND) != 0; }  
+	GK_INLINE bool isCompoundChild(void)	  const { return (m_mode & GK_COMPOUND_CHILD) != 0; }
 	GK_INLINE bool isRigidOrDynamic(void)     const { return m_type == GK_DYNAMIC || m_type == GK_RIGID; }
 	GK_INLINE bool isRigidOrStatic(void)      const { return m_type == GK_STATIC  || m_type == GK_RIGID; }
 	GK_INLINE bool isPhysicsObject(void)      const { return m_type != GK_NO_COLLISION; }
@@ -366,9 +370,11 @@ public:
 	GK_INLINE bool isRigid(void)              const { return m_type == GK_RIGID; }
 	GK_INLINE bool isSoft(void)               const { return m_type == GK_SOFT; }
 	GK_INLINE bool isMeshShape(void)          const { return m_shape >= SH_CONVEX_TRIMESH; }
+	GK_INLINE bool hasPhysicsConstraint(void) const { return getConstraintCount() != 0; }
+	GK_INLINE bool isLinkedToOther(void)      const { return hasPhysicsConstraint() || isCompoundChild(); }
 
 	GK_INLINE UTsize getConstraintCount(void) const { return m_constraints.size(); }
-	GK_INLINE const  gkPhysicsConstraintProperties& getConstraint(UTsize i) const { return m_constraints[i]; }
+	GK_INLINE const  gkPhysicsConstraintProperties& getConstraint(UTsize i) const { return m_constraints[i]; }	
 };
 
 
@@ -417,9 +423,8 @@ public:
 	gkString            m_parent;
 
 
-
 	GK_INLINE bool isContactListener(void)    const { return m_physics.isContactListener(); }
-	GK_INLINE bool isDosser(void)             const { return m_physics.isDosser(); }
+	GK_INLINE bool isDosser(void)             const { return m_physics.isDosser(); }	
 	GK_INLINE bool isRigidOrDynamic(void)     const { return m_physics.isRigidOrDynamic();}
 	GK_INLINE bool isRigidOrStatic(void)      const { return m_physics.isRigidOrStatic();}
 	
@@ -429,7 +434,6 @@ public:
 	GK_INLINE bool isRigid(void)              const { return m_physics.isRigid(); }
 	GK_INLINE bool isSoft(void)               const { return m_physics.isSoft(); }
 	GK_INLINE bool isMeshShape(void)          const { return m_physics.isMeshShape(); }
-	GK_INLINE bool hasPhysicsConstraint(void) const { return m_physics.getConstraintCount() != 0; }
 
 	GK_INLINE bool isActor(void)              const { return (m_mode & GK_ACTOR)      != 0; }
 	GK_INLINE bool isInvisible(void)          const { return (m_mode & GK_INVISIBLE)  != 0; }

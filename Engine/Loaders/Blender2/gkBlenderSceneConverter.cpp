@@ -522,9 +522,14 @@ void gkBlenderSceneConverter::convertObjectPhysics(gkGameObject* gobj, Blender::
 			phy.m_type = GK_NO_COLLISION;
 	}
 
-	// Fixme: Compound shapes.
-	if (bobj->parent)
+
+	Blender::Object* parent = bobj->parent;
+	while (parent && parent->parent) 
+		parent = parent->parent;
+	
+	if (parent && (bobj->gameflag  & OB_CHILD) == 0)
 		phy.m_type = GK_NO_COLLISION;
+
 
 	if (!props.isPhysicsObject())
 		return;
@@ -539,7 +544,8 @@ void gkBlenderSceneConverter::convertObjectPhysics(gkGameObject* gobj, Blender::
 	if (bobj->gameflag & OB_OCCLUDER)
 		props.m_mode |= GK_OCCLUDER;
 
-	if (bobj->gameflag & OB_COLLISION_RESPONSE)             phy.m_mode |= GK_NO_SLEEP;
+	if (bobj->gameflag  & OB_CHILD)							phy.m_mode |= parent ? GK_COMPOUND_CHILD : GK_COMPOUND;
+	if (bobj->gameflag  & OB_COLLISION_RESPONSE)            phy.m_mode |= GK_NO_SLEEP;
 	if (bobj->gameflag2 & OB_LOCK_RIGID_BODY_X_AXIS)        phy.m_mode |= GK_LOCK_LINV_X;
 	if (bobj->gameflag2 & OB_LOCK_RIGID_BODY_Y_AXIS)        phy.m_mode |= GK_LOCK_LINV_Y;
 	if (bobj->gameflag2 & OB_LOCK_RIGID_BODY_Z_AXIS)        phy.m_mode |= GK_LOCK_LINV_Z;

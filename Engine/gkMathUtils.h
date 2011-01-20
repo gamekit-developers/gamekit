@@ -213,7 +213,8 @@ public:
 	static GK_INLINE btVector3      get(const gkVector3& v)     { return btVector3(v.x, v.y, v.z); }
 	static GK_INLINE gkQuaternion   get(const btQuaternion& v)  { return gkQuaternion(v.w(), v.x(), v.y(), v.z()); }
 	static GK_INLINE btQuaternion   get(const gkQuaternion& v)  { return btQuaternion(v.x, v.y, v.z, v.w); }
-
+	static GK_INLINE btTransform	get(const gkMatrix3& m)		{ return btTransform(get(gkQuaternion(m))); }
+	static GK_INLINE btTransform	get(const gkMatrix4& m)		{ return btTransform(get(m.extractQuaternion()), get(m.getTrans())); }
 };
 
 

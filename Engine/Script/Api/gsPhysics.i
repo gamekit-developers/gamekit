@@ -31,6 +31,7 @@
 // Enable ownership
 %newobject gsRayTest::getObject;
 %newobject gsSweptTest::getObject;
+%newobject gsCharacter::getObject;
 
 %rename(RayTest)       gsRayTest;
 %rename(SweptTest)     gsSweptTest;

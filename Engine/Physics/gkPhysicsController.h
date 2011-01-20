@@ -109,13 +109,15 @@ public:
 	void setShape(btCollisionShape* shape);
 
 
-	virtual void create(void)  = 0;
-	virtual void destroy(void) = 0;
+	virtual void create(void)  {}
+	virtual void destroy(void) {}
 
 
 	void _handleManifold(btPersistentManifold* manifold);
 	void _resetContactInfo(void);
 	bool _markDbvt(bool v);
+	
+	btCollisionShape* _createShape(void);
 
 protected:
 
@@ -123,7 +125,7 @@ protected:
 
 
 	void createShape(void);
-
+	void destroyShape(btCollisionShape* shape);
 
 	gkContactInfo::Array m_localContacts;
 

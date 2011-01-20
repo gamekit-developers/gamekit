@@ -102,7 +102,7 @@ public:
 	void            endObject(gkGameObject* obj);
 
 
-	void             getGroups(gkGroupArray& groups);
+	void            getGroups(gkGroupArray& groups);
 
 
 	gkDebugger* getDebugger(void);
@@ -133,7 +133,7 @@ public:
 
 
 	GK_INLINE gkLightSet&    getLights(void) {return m_lights;}
-	GK_INLINE bool          hasLights(void)  {return isInstanced() ? !m_lights.empty() : m_hasLights;}
+	GK_INLINE bool           hasLights(void) {return isInstanced() ? !m_lights.empty() : m_hasLights;}
 
 
 	GK_INLINE void      setLayer(UTuint32 v)     {m_layers = v; }
@@ -175,8 +175,9 @@ public:
 
 	void _applyBuiltinParents(gkGameObjectSet& instanceObjects);
 	void _applyBuiltinPhysics(gkGameObjectSet& instanceObjects);
-
+	
 	void _createPhysicsObject(gkGameObject* obj);
+	void _postCreatePhysicsObject(gkGameObject* obj);
 	void _createPhysicsConstraint(gkGameObject* obj);
 	void _destroyPhysicsObject(gkGameObject* obj);
 

@@ -50,9 +50,6 @@ gkRigidBody::~gkRigidBody()
 		delete m_constraints[i];
 	m_constraints.clear();
 
-	delete m_shape;
-	m_shape = 0;
-
 	delete m_body;
 	m_body = 0;
 
@@ -448,4 +445,17 @@ void gkRigidBody::setWorldTransform(const btTransform& worldTrans)
 		return;
 
 	gkPhysicsController::setTransform(worldTrans);
+}
+
+
+void gkRigidBody::recalLocalInertia(void)
+{
+	GK_ASSERT(m_body && m_shape);
+	if (!m_body || !m_shape) return;
+
+	gkScalar mass = 1.f/ m_body->getInvMass();	
+
+	btVector3 localInertia;
+	m_shape->calculateLocalInertia(mass, localInertia);
+	m_body->setMassProps(mass, localInertia);
 }

@@ -79,6 +79,8 @@ public:
 
 	void createConstraints(void);
 
+	void recalLocalInertia(void);
+
 private:
 
 	void getWorldTransform(btTransform& worldTrans) const;
