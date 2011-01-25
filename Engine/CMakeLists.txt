@@ -543,7 +543,7 @@ if (OGREKIT_COMPLIE_SWIG AND SWIG_FOUND)
 		Script/Api/System.lua
 		Script/Api/Class.lua
 	)
-	add_templates(GEN_TEMPLATES_OUT Script/Api/Generated/gsTemplates.h ${Script_TMPL})
+	add_templates(0 GEN_TEMPLATES_OUT Script/Api/Generated/gsTemplates.h ${Script_TMPL})
 
 	set(Script_HEADER
 		# ----- Common Files -----

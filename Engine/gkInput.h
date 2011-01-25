@@ -159,7 +159,7 @@ public:
 public:
 
 	gkKeyboard()
-		:       key_count(0)
+		:       key_count(0), text(0), key_mod(0)
 	{
 		memset(keys, GK_NullState, sizeof(KeyState));
 	}
@@ -177,8 +177,17 @@ public:
 		memset(keys, GK_NullState, sizeof(KeyState));
 	}
 
-	int         key_count;  // currently pressed count
-	KeyState    keys;       // key buffer state
+	enum KEY_MODIFIER
+	{
+		KM_SHIFT = 1 << 0,
+		KM_CTRL  = 1 << 1,
+		KM_ALT   = 1 << 2
+	};
+
+	int          key_count;  // currently pressed count
+	KeyState     keys;       // key buffer state
+	unsigned int text;       // last input text character
+	int          key_mod;    // key modifier state
 };
 
 

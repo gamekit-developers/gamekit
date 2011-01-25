@@ -41,4 +41,8 @@ if (SAMPLES_LUA_EDITOR)
     subdirs(LuaEditor)
 endif()
 
+if (SAMPLES_GUIDEMO)
+    subdirs(GuiDemo)
+endif()
+
 endif()

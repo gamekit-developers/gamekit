@@ -42,3 +42,7 @@ if (OGREKIT_COMPILE_TINYXML)
     subdirs(Source/TinyXml)
 endif()
 
+if (OGREKIT_COMPILE_LIBROCKET)
+	subdirs(Source/libRocket/Build)
+endif()
+

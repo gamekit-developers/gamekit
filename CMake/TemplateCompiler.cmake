@@ -23,17 +23,20 @@ endmacro(TMPL_ABSOLUTE_SRC)
 #   Usage: ${TCL_EXECUTABLE} ${OUTFILE} {ARGN}                                #
 #                                                                             #
 # ----------------------------------------------------------------------------#
-macro(ADD_TEMPLATES OUT GENERATED)
-
-
+macro(ADD_TEMPLATES BINARY OUT GENERATED)
     get_filename_component(OUTFILE ${GENERATED} ABSOLUTE)
     tmpl_absolute_src(TEMPLATES ${ARGN})
     get_filename_component(ONAME ${OUTFILE} NAME)
 
-
+	if (${BINARY})
+		set(TCL_CMD ${TCL_EXECUTABLE} -b ${OUTFILE} ${TEMPLATES})
+	else()
+		set(TCL_CMD ${TCL_EXECUTABLE} ${OUTFILE} ${TEMPLATES})
+	endif()
+	
     add_custom_command(
 	    OUTPUT ${OUTFILE}
-	    COMMAND ${TCL_EXECUTABLE} ${OUTFILE} ${TEMPLATES}
+	    COMMAND ${TCL_CMD}
 	    DEPENDS ${TCL_EXECUTABLE} ${TEMPLATES}
 	    COMMENT "Building ${ONAME}"
 	    )

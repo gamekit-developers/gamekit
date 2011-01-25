@@ -115,7 +115,8 @@ public:
 	bool buttonReleased(const OIS::JoyStickEvent& arg, int i);
 	bool axisMoved(const OIS::JoyStickEvent& arg, int i);
 
-	int getCode(int kc);
+	static int getKeyCode(int kc);
+	int getKeyModifier();
 
 	GK_INLINE Ogre::RenderWindow* getRenderWindow() { return m_rwindow; }
 

@@ -437,10 +437,11 @@ bool gkWindow::keyPressed(const OIS::KeyEvent& arg)
 {
 	gkKeyboard& key = m_keyboard;
 
-	int kc = getCode(arg.key);
+	int kc = getKeyCode(arg.key);
 	key.keys[kc] = GK_Pressed;
 	key.key_count += 1;
-
+	key.text = arg.text;
+	key.key_mod = getKeyModifier();
 
 	if (!m_listeners.empty())
 	{
@@ -459,9 +460,11 @@ bool gkWindow::keyReleased(const OIS::KeyEvent& arg)
 {
 	gkKeyboard& key = m_keyboard;
 
-	int kc = getCode(arg.key);
+	int kc = getKeyCode(arg.key);
 	key.keys[kc] = GK_Released;
 	key.key_count -= 1;
+	key.text = arg.text;
+	key.key_mod = getKeyModifier();
 
 	if (!m_listeners.empty())
 	{
@@ -586,7 +589,23 @@ gkScene* gkWindow::getRenderScene(void)
 	return m_scene ? m_scene : gkEngine::getSingleton().getActiveScene(); 
 }
 
-int gkWindow::getCode(int kc)
+int gkWindow::getKeyModifier()
+{
+	if (!m_ikeyboard) return 0;
+
+	int modifier = 0;
+
+	if (m_ikeyboard->isModifierDown(OIS::Keyboard::Ctrl))
+		modifier |= gkKeyboard::KM_CTRL;
+	if (m_ikeyboard->isModifierDown(OIS::Keyboard::Shift))
+		modifier |= gkKeyboard::KM_SHIFT;
+	if (m_ikeyboard->isModifierDown(OIS::Keyboard::Alt))
+		modifier |= gkKeyboard::KM_ALT;
+
+	return modifier;
+}
+
+int gkWindow::getKeyCode(int kc)
 {
 #define CASE(ret, c) case (c): return ret
 

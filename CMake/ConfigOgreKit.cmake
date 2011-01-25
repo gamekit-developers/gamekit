@@ -4,14 +4,11 @@ macro (configure_ogrekit ROOT OGREPATH)
 	set(GNUSTEP_SYSTEM_ROOT $ENV{GNUSTEP_SYSTEM_ROOT})
 	
 	if(APPLE OR GNUSTEP_SYSTEM_ROOT)
-		
 		if (WIN32 AND NOT CMAKE_COMPILER_IS_GNUCXX)
 			set(OGREKIT_USE_COCOA FALSE CACHE BOOL "Forcing remove Use Cocoa" FORCE)
 		else()
 			option(OGREKIT_USE_COCOA	"Use Cocoa"	ON)
 		endif()
-		
-		
 	endif()
 	
 	if(OGREKIT_USE_COCOA)
@@ -40,6 +37,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 	option(OGREKIT_ENABLE_UNITTESTS			"Enable / Disable Unittests" OFF)
 	option(OGREKIT_USE_FILETOOLS			"Compile FBT file format utilities" OFF)
 	option(OGREKIT_COMPILE_TINYXML			"Enable / Disable TinyXml builds" OFF)
+	option(OGREKIT_COMPILE_LIBROCKET		"Enable / Disalbe libRocket builds" OFF)
 
 
 	if (NOT OGREKIT_USE_LUA)
@@ -123,8 +121,8 @@ macro (configure_ogrekit ROOT OGREPATH)
 	option(SAMPLES_NODE_EDITOR    "Build Samples/NodeEditor"    OFF)
 	option(SAMPLES_EMBEDDEMO      "Build Samples/EmbedDemo"     OFF)
 	option(SAMPLES_INSPECTOR      "Build Samples/FileInspector" OFF)
-
-    option(SAMPLES_LUA_EDITOR     "Build Samples/LuaEditor"   OFF)
+	option(SAMPLES_GUIDEMO        "Build Samples/GuiDemo"       OFF)
+    option(SAMPLES_LUA_EDITOR     "Build Samples/LuaEditor"     OFF)	
 	
 	if (OGREKIT_USE_LUA)
 		option(SAMPLES_LUARUNTIME "Build Samples/LuaRuntime" ON)
@@ -159,7 +157,11 @@ macro (configure_ogrekit ROOT OGREPATH)
 		set(SAMPLES_LUA_EDITOR  FALSE CACHE BOOL "Forcing LuaEditor removal"  FORCE)
 		message(WARNING "EmbedDemo or LauEditor is required OGREKIT_OIS_WIN32_NATIVE option.")
 	endif()
-
+	
+	if (SAMPLES_GUIDEMO AND NOT OGREKIT_COMPILE_LIBROCKET)
+		set(SAMPLES_GUIDEMO FALSE CACHE BOOL "Forcing GuiDemo removal"  FORCE)
+		message(WARNING "GuiDemo is required OGREKIT_COMPILE_LIBROCKET option.")
+	endif()
 
 	if (APPLE)
 		option(OGREKIT_BUILD_IPHONE	"Build GameKit on IPhone SDK"	OFF)
@@ -258,8 +260,9 @@ macro (configure_ogrekit ROOT OGREPATH)
 		${GAMEKIT_ANIMKIT_PATH}
 	)
 
-
-
+	
+	set(OGREKIT_LIBROCKET_INCLUDE ${OGREKIT_DEP_DIR}/libRocket/Include)
+	set(OGREKIT_LIBROCKET_LIBS RocketCore RocketControls RocketDebugger)
 
 	if (WIN32)
 		# Use static library. No SDK needed at build time.
@@ -284,13 +287,11 @@ macro (configure_ogrekit ROOT OGREPATH)
 		option(OGREKIT_OPENAL_SOUND "Enable building of the OpenAL subsystem" OFF)
 	endif()
 
-
 	set(OGREKIT_MINGW_DIRECT3D TRUE)
 	if (CMAKE_COMPILER_IS_GNUCXX)
 		# Some Issues with unresolved symbols
 		set(OGREKIT_MINGW_DIRECT3D FALSE)
 	endif()
-
 
 
 	if (WIN32)
@@ -305,9 +306,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 		endif()
 	endif()
 
-
-
-
+	
 	if (OPENGL_FOUND)
 		option(OGREKIT_BUILD_GLRS "Enable the OpenGL render system" ON)
 	endif()
@@ -324,8 +323,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 		set(OGREKIT_GLRS_INCLUDE        ${OGREPATH}/RenderSystems/GL/include)
 	endif()
 
-	if (OPENGLES_FOUND AND OGREKIT_BUILD_GLESRS)
-		
+	if (OPENGLES_FOUND AND OGREKIT_BUILD_GLESRS)		
 		set(OGRE_BUILD_RENDERSYSTEM_GLES TRUE)
 		set(OGREKIT_GLESRS_LIBS          RenderSystem_GLES)
 		set(OGREKIT_GLESRS_ROOT          ${OGREPATH}/RenderSystems/GLES)
@@ -350,7 +348,6 @@ macro (configure_ogrekit ROOT OGREPATH)
 		endif()
 
 		if (DirectX_FOUND AND OGREKIT_BUILD_D3D10RS)
-
 			set(OGRE_BUILD_RENDERSYSTEM_D3D10 TRUE)
 			set(OGREKIT_D3D10_LIBS            RenderSystem_Direct3D10)
 			set(OGREKIT_D3D10_ROOT            ${OGREPATH}/RenderSystems/Direct3D10)
@@ -359,7 +356,6 @@ macro (configure_ogrekit ROOT OGREPATH)
 
 
 		if (DirectX_FOUND AND OGREKIT_BUILD_D3D11RS)
-
 			set(OGRE_BUILD_RENDERSYSTEM_D3D11  TRUE)
 			set(OGREKIT_D3D11_LIBS             RenderSystem_Direct3D11)
 			set(OGREKIT_D3D11_ROOT             ${OGREPATH}/RenderSystems/Direct3D11)
@@ -402,7 +398,6 @@ macro (configure_ogrekit ROOT OGREPATH)
 		)
 
 	if (OGREKIT_OPENAL_SOUND)
-
 		list(APPEND OGREKIT_OGRE_LIBS	${OGREKIT_OPENAL_LIBRARY} ${OGREKIT_OGGVORBIS_TARGET})
 		list(APPEND OGREKIT_DEP_INCLUDE ${OGREKIT_OPENAL_INCLUDE} ${OGREKIT_OGGVORBIS_INCLUDE})
 	endif()

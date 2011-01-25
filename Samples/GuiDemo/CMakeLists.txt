@@ -1,0 +1,96 @@
+# ---------------------------------------------------------
+cmake_minimum_required(VERSION 2.6)
+
+project(AppGuiDemo)
+
+set(DEMO_BLEND logo_text.blend assets.blend)
+
+if (APPLE)
+	include_directories(${OGRELITE_SOURCE_DIR}/OgreMain/include/OSX)
+	SET(EXETYPE MACOSX_BUNDLE)
+	SET_SOURCE_FILES_PROPERTIES(MainMenu.nib  PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
+	SET_SOURCE_FILES_PROPERTIES(${DEMO_BLEND} PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
+	SET (NibFile MainMenu.nib)
+endif()
+
+set(FONT_TMPL
+	fonts/Delicious_Bold.otf
+	fonts/Delicious_BoldItalic.otf
+	fonts/Delicious_Italic.otf
+	fonts/Delicious_Roman.otf
+)
+
+#generate font file to inl file, turn on OGREKIT_COMPLIE_SWIG build option.
+#add_templates(1 GEN_TEMPLATES_OUT fonts/uifonts.inl ${FONT_TMPL})
+
+set(DEMO_SRC
+	main.cpp
+	uifonts.cpp
+	rocket/RenderInterfaceOgre3D.cpp
+	rocket/RocketRenderListener.cpp
+	rocket/RocketEventListener.cpp
+	rocket/SystemInterfaceOgre3D.cpp
+	rocket/FileInterfaceOgre3D.cpp
+	${DEMO_BLEND}
+)
+
+set(DEMO_HDR
+	rocket/RenderInterfaceOgre3D.h
+	rocket/RocketRenderListener.h
+	rocket/RocketEventListener.h
+	rocket/SystemInterfaceOgre3D.h
+	rocket/FileInterfaceOgre3D.h
+	#${GEN_TEMPLATES_OUT}
+)
+
+set(ALL
+	${DEMO_SRC}
+	${DEMO_HDR}
+)
+
+
+include_directories(
+	. 
+	#${GAMEKIT_UTILS_PATH} 
+	${OGREKIT_INCLUDE}
+	${OGREKIT_LIBROCKET_INCLUDE}
+)
+
+#message(STATUS ${OGREKIT_LIBROCKET_LIBS})
+
+link_libraries(
+	${OGREKIT_LIB}
+	${OGREKIT_LIBROCKET_LIBS}
+)
+
+#need for libRocket link
+add_definitions(-DSTATIC_LIB)
+
+set(HiddenCMakeLists ../CMakeLists.txt)
+source_group(ParentCMakeLists FILES ${HiddenCMakeLists})
+
+#use_precompiled_header(${PROJECT_NAME} StdAfx.h StdAfx.cpp)
+
+
+if (APPLE)    
+	add_executable(
+		${PROJECT_NAME} 
+		MACOSX_BUNDLE
+		MainMenu.nib
+		${ALL} 
+		${HiddenCMakeLists}
+	)
+else()
+
+	add_executable(${PROJECT_NAME} ${ALL} ${HiddenCMakeLists})
+
+	IF (NOT INTERNAL_CREATE_DISTRIBUTABLE_MSVC_PROJECTFILES)
+		foreach(bfile ${DEMO_BLEND})
+			ADD_CUSTOM_COMMAND(
+				TARGET ${PROJECT_NAME} 
+				POST_BUILD
+				COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/${bfile} ${CMAKE_CURRENT_BINARY_DIR}/${bfile}
+			)
+		endforeach()
+	ENDIF ()
+endif()
