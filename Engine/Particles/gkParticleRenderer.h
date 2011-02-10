@@ -46,7 +46,7 @@ protected:
 
 public:
 	static const gkString NAME;
-	
+
 	gkParticleRenderer();
 	virtual ~gkParticleRenderer();
 
@@ -60,10 +60,10 @@ public:
 class gkParticleRendererFactory : public Ogre::ParticleSystemRendererFactory
 {
 public:
-	GK_INLINE const Ogre::String& gkParticleRendererFactory::getType() const { return gkParticleRenderer::NAME; }
-	
+	GK_INLINE const Ogre::String& getType() const { return gkParticleRenderer::NAME; }
+
 	Ogre::ParticleSystemRenderer* createInstance(const Ogre::String& name);
-	
+
 	void destroyInstance(Ogre::ParticleSystemRenderer* inst);
 };
 
