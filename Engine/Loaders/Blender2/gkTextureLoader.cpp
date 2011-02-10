@@ -64,7 +64,7 @@ void gkTextureLoader::loadResource(Ogre::Resource* resource)
 		return;
 	}
 
-	Ogre::DataStreamPtr stream = Ogre::DataStreamPtr(new Ogre::MemoryDataStream(m_stream->ptr(), m_stream->size()));
+	Ogre::DataStreamPtr stream(OGRE_NEW Ogre::MemoryDataStream(m_stream->ptr(), m_stream->size()));
 
 	Ogre::Image ima;
 	ima.load(stream);

@@ -1554,36 +1554,37 @@ SWIG_Lua_dostring(lua_State *L, const char* str) {
 #define SWIGTYPE_p_gsNearSensor swig_types[45]
 #define SWIGTYPE_p_gsObject swig_types[46]
 #define SWIGTYPE_p_gsParentActuator swig_types[47]
-#define SWIGTYPE_p_gsProperty swig_types[48]
-#define SWIGTYPE_p_gsPropertyActuator swig_types[49]
-#define SWIGTYPE_p_gsPropertySensor swig_types[50]
-#define SWIGTYPE_p_gsQuaternion swig_types[51]
-#define SWIGTYPE_p_gsRadarSensor swig_types[52]
-#define SWIGTYPE_p_gsRandomActuator swig_types[53]
-#define SWIGTYPE_p_gsRandomSensor swig_types[54]
-#define SWIGTYPE_p_gsRay swig_types[55]
-#define SWIGTYPE_p_gsRaySensor swig_types[56]
-#define SWIGTYPE_p_gsRayTest swig_types[57]
-#define SWIGTYPE_p_gsScene swig_types[58]
-#define SWIGTYPE_p_gsSceneActuator swig_types[59]
-#define SWIGTYPE_p_gsScriptController swig_types[60]
-#define SWIGTYPE_p_gsSensor swig_types[61]
-#define SWIGTYPE_p_gsSkeleton swig_types[62]
-#define SWIGTYPE_p_gsSoundActuator swig_types[63]
-#define SWIGTYPE_p_gsStateActuator swig_types[64]
-#define SWIGTYPE_p_gsSweptTest swig_types[65]
-#define SWIGTYPE_p_gsTouchSensor swig_types[66]
-#define SWIGTYPE_p_gsUserDefs swig_types[67]
-#define SWIGTYPE_p_gsVector3 swig_types[68]
-#define SWIGTYPE_p_gsVisibilityActuator swig_types[69]
-#define SWIGTYPE_p_gsWhenEvent swig_types[70]
-#define SWIGTYPE_p_utArrayT_gkGameObject_p_t swig_types[71]
-#define SWIGTYPE_p_utArrayT_gkLogicActuator_p_t swig_types[72]
-#define SWIGTYPE_p_utArrayT_gkLogicController_p_t swig_types[73]
-#define SWIGTYPE_p_utArrayT_gkLogicLink_p_t swig_types[74]
-#define SWIGTYPE_p_utArrayT_gkLogicSensor_p_t swig_types[75]
-static swig_type_info *swig_types[77];
-static swig_module_info swig_module = {swig_types, 76, 0, 0, 0, 0};
+#define SWIGTYPE_p_gsParticles swig_types[48]
+#define SWIGTYPE_p_gsProperty swig_types[49]
+#define SWIGTYPE_p_gsPropertyActuator swig_types[50]
+#define SWIGTYPE_p_gsPropertySensor swig_types[51]
+#define SWIGTYPE_p_gsQuaternion swig_types[52]
+#define SWIGTYPE_p_gsRadarSensor swig_types[53]
+#define SWIGTYPE_p_gsRandomActuator swig_types[54]
+#define SWIGTYPE_p_gsRandomSensor swig_types[55]
+#define SWIGTYPE_p_gsRay swig_types[56]
+#define SWIGTYPE_p_gsRaySensor swig_types[57]
+#define SWIGTYPE_p_gsRayTest swig_types[58]
+#define SWIGTYPE_p_gsScene swig_types[59]
+#define SWIGTYPE_p_gsSceneActuator swig_types[60]
+#define SWIGTYPE_p_gsScriptController swig_types[61]
+#define SWIGTYPE_p_gsSensor swig_types[62]
+#define SWIGTYPE_p_gsSkeleton swig_types[63]
+#define SWIGTYPE_p_gsSoundActuator swig_types[64]
+#define SWIGTYPE_p_gsStateActuator swig_types[65]
+#define SWIGTYPE_p_gsSweptTest swig_types[66]
+#define SWIGTYPE_p_gsTouchSensor swig_types[67]
+#define SWIGTYPE_p_gsUserDefs swig_types[68]
+#define SWIGTYPE_p_gsVector3 swig_types[69]
+#define SWIGTYPE_p_gsVisibilityActuator swig_types[70]
+#define SWIGTYPE_p_gsWhenEvent swig_types[71]
+#define SWIGTYPE_p_utArrayT_gkGameObject_p_t swig_types[72]
+#define SWIGTYPE_p_utArrayT_gkLogicActuator_p_t swig_types[73]
+#define SWIGTYPE_p_utArrayT_gkLogicController_p_t swig_types[74]
+#define SWIGTYPE_p_utArrayT_gkLogicLink_p_t swig_types[75]
+#define SWIGTYPE_p_utArrayT_gkLogicSensor_p_t swig_types[76]
+static swig_type_info *swig_types[78];
+static swig_module_info swig_module = {swig_types, 77, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -9563,6 +9564,37 @@ static swig_lua_attribute swig_gsSkeleton_attributes[] = {
 static swig_lua_class *swig_gsSkeleton_bases[] = {0,0};
 static const char *swig_gsSkeleton_base_names[] = {"gsGameObject *",0};
 static swig_lua_class _wrap_class_gsSkeleton = { "Skeleton", &SWIGTYPE_p_gsSkeleton,_wrap_new_Skeleton, swig_delete_Skeleton, swig_gsSkeleton_methods, swig_gsSkeleton_attributes, swig_gsSkeleton_bases, swig_gsSkeleton_base_names };
+
+static int _wrap_new_Particles(lua_State* L) {
+  int SWIG_arg = 0;
+  gsParticles *result = 0 ;
+  
+  SWIG_check_num_args("gsParticles",0,0)
+  result = (gsParticles *)new gsParticles();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsParticles,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_Particles(void *obj) {
+gsParticles *arg1 = (gsParticles *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gsParticles_methods[] = {
+    {0,0}
+};
+static swig_lua_attribute swig_gsParticles_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_gsParticles_bases[] = {0,0};
+static const char *swig_gsParticles_base_names[] = {"gsGameObject *",0};
+static swig_lua_class _wrap_class_gsParticles = { "Particles", &SWIGTYPE_p_gsParticles,_wrap_new_Particles, swig_delete_Particles, swig_gsParticles_methods, swig_gsParticles_attributes, swig_gsParticles_bases, swig_gsParticles_base_names };
 
 static int _wrap_new_Debugger(lua_State* L) {
   int SWIG_arg = 0;
@@ -24096,6 +24128,9 @@ static void *_p_gsStateActuatorTo_p_gsActuator(void *x, int *SWIGUNUSEDPARM(newm
 static void *_p_gsVisibilityActuatorTo_p_gsActuator(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((gsActuator *)  ((gsVisibilityActuator *) x));
 }
+static void *_p_gsParticlesTo_p_gsGameObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((gsGameObject *)  ((gsParticles *) x));
+}
 static void *_p_gsLightTo_p_gsGameObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((gsGameObject *)  ((gsLight *) x));
 }
@@ -24107,6 +24142,9 @@ static void *_p_gsCameraTo_p_gsGameObject(void *x, int *SWIGUNUSEDPARM(newmemory
 }
 static void *_p_gsSkeletonTo_p_gsGameObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((gsGameObject *)  ((gsSkeleton *) x));
+}
+static void *_p_gsParticlesTo_p_gsObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((gsObject *) (gsGameObject *) ((gsParticles *) x));
 }
 static void *_p_gsSceneTo_p_gsObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((gsObject *)  ((gsScene *) x));
@@ -24309,6 +24347,7 @@ static swig_type_info _swigt__p_gsMouseSensor = {"_p_gsMouseSensor", "gsMouseSen
 static swig_type_info _swigt__p_gsNearSensor = {"_p_gsNearSensor", "gsNearSensor *", 0, 0, (void*)&_wrap_class_gsNearSensor, 0};
 static swig_type_info _swigt__p_gsObject = {"_p_gsObject", "gsObject *", 0, 0, (void*)&_wrap_class_gsObject, 0};
 static swig_type_info _swigt__p_gsParentActuator = {"_p_gsParentActuator", "gsParentActuator *", 0, 0, (void*)&_wrap_class_gsParentActuator, 0};
+static swig_type_info _swigt__p_gsParticles = {"_p_gsParticles", "gsParticles *", 0, 0, (void*)&_wrap_class_gsParticles, 0};
 static swig_type_info _swigt__p_gsProperty = {"_p_gsProperty", "gsProperty *", 0, 0, (void*)&_wrap_class_gsProperty, 0};
 static swig_type_info _swigt__p_gsPropertyActuator = {"_p_gsPropertyActuator", "gsPropertyActuator *", 0, 0, (void*)&_wrap_class_gsPropertyActuator, 0};
 static swig_type_info _swigt__p_gsPropertySensor = {"_p_gsPropertySensor", "gsPropertySensor *", 0, 0, (void*)&_wrap_class_gsPropertySensor, 0};
@@ -24387,6 +24426,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_gsNearSensor,
   &_swigt__p_gsObject,
   &_swigt__p_gsParentActuator,
+  &_swigt__p_gsParticles,
   &_swigt__p_gsProperty,
   &_swigt__p_gsPropertyActuator,
   &_swigt__p_gsPropertySensor,
@@ -24448,7 +24488,7 @@ static swig_cast_info _swigc__p_gsEngine[] = {  {&_swigt__p_gsEngine, 0, 0, 0},{
 static swig_cast_info _swigc__p_gsEntity[] = {  {&_swigt__p_gsEntity, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsFSM[] = {  {&_swigt__p_gsFSM, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsGameActuator[] = {  {&_swigt__p_gsGameActuator, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_gsGameObject[] = {  {&_swigt__p_gsLight, _p_gsLightTo_p_gsGameObject, 0, 0},  {&_swigt__p_gsGameObject, 0, 0, 0},  {&_swigt__p_gsEntity, _p_gsEntityTo_p_gsGameObject, 0, 0},  {&_swigt__p_gsCamera, _p_gsCameraTo_p_gsGameObject, 0, 0},  {&_swigt__p_gsSkeleton, _p_gsSkeletonTo_p_gsGameObject, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsGameObject[] = {  {&_swigt__p_gsParticles, _p_gsParticlesTo_p_gsGameObject, 0, 0},  {&_swigt__p_gsLight, _p_gsLightTo_p_gsGameObject, 0, 0},  {&_swigt__p_gsGameObject, 0, 0, 0},  {&_swigt__p_gsEntity, _p_gsEntityTo_p_gsGameObject, 0, 0},  {&_swigt__p_gsCamera, _p_gsCameraTo_p_gsGameObject, 0, 0},  {&_swigt__p_gsSkeleton, _p_gsSkeletonTo_p_gsGameObject, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsKeyboard[] = {  {&_swigt__p_gsKeyboard, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsKeyboardSensor[] = {  {&_swigt__p_gsKeyboardSensor, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsLight[] = {  {&_swigt__p_gsLight, 0, 0, 0},{0, 0, 0, 0}};
@@ -24463,8 +24503,9 @@ static swig_cast_info _swigc__p_gsMotionActuator[] = {  {&_swigt__p_gsMotionActu
 static swig_cast_info _swigc__p_gsMouse[] = {  {&_swigt__p_gsMouse, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsMouseSensor[] = {  {&_swigt__p_gsMouseSensor, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsNearSensor[] = {  {&_swigt__p_gsNearSensor, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_gsObject[] = {  {&_swigt__p_gsScene, _p_gsSceneTo_p_gsObject, 0, 0},  {&_swigt__p_gsLight, _p_gsLightTo_p_gsObject, 0, 0},  {&_swigt__p_gsObject, 0, 0, 0},  {&_swigt__p_gsGameObject, _p_gsGameObjectTo_p_gsObject, 0, 0},  {&_swigt__p_gsEntity, _p_gsEntityTo_p_gsObject, 0, 0},  {&_swigt__p_gsCamera, _p_gsCameraTo_p_gsObject, 0, 0},  {&_swigt__p_gsSkeleton, _p_gsSkeletonTo_p_gsObject, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsObject[] = {  {&_swigt__p_gsParticles, _p_gsParticlesTo_p_gsObject, 0, 0},  {&_swigt__p_gsScene, _p_gsSceneTo_p_gsObject, 0, 0},  {&_swigt__p_gsLight, _p_gsLightTo_p_gsObject, 0, 0},  {&_swigt__p_gsObject, 0, 0, 0},  {&_swigt__p_gsGameObject, _p_gsGameObjectTo_p_gsObject, 0, 0},  {&_swigt__p_gsEntity, _p_gsEntityTo_p_gsObject, 0, 0},  {&_swigt__p_gsCamera, _p_gsCameraTo_p_gsObject, 0, 0},  {&_swigt__p_gsSkeleton, _p_gsSkeletonTo_p_gsObject, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsParentActuator[] = {  {&_swigt__p_gsParentActuator, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsParticles[] = {  {&_swigt__p_gsParticles, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsProperty[] = {  {&_swigt__p_gsProperty, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsPropertyActuator[] = {  {&_swigt__p_gsPropertyActuator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsPropertySensor[] = {  {&_swigt__p_gsPropertySensor, 0, 0, 0},{0, 0, 0, 0}};
@@ -24543,6 +24584,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_gsNearSensor,
   _swigc__p_gsObject,
   _swigc__p_gsParentActuator,
+  _swigc__p_gsParticles,
   _swigc__p_gsProperty,
   _swigc__p_gsPropertyActuator,
   _swigc__p_gsPropertySensor,

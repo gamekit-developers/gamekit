@@ -25,18 +25,25 @@
 -------------------------------------------------------------------------------
 */
 
-#include "OgreRoot.h"
-#include "OgreParticleSystem.h"
-#include "OgreParticleEmitter.h"
 #include "gkParticleNode.h"
 #include "gkScene.h"
 #include "gkEngine.h"
+#include "gkGameObjectManager.h"
+#include "gkParticleManager.h"
+#include "gkParticleObject.h"
+#include "gkUtils.h"
 #include "LinearMath/btMinMax.h"
+
+#include "OgreRoot.h"
+#include "OgreParticleSystem.h"
+#include "OgreParticleEmitter.h"
+
 
 using namespace Ogre;
 
 gkParticleNode::gkParticleNode(gkLogicTree* parent, size_t id)
-	: gkLogicNode(parent, id)
+	:	gkLogicNode(parent, id),
+		m_scene(0)
 {
 	ADD_ISOCK(CREATE, false);
 	ADD_ISOCK(POSITION, gkVector3::ZERO);
@@ -50,11 +57,18 @@ gkParticleNode::~gkParticleNode()
 
 	while (iter.hasMoreElements())
 	{
-		ParticleSystem* pParticle = iter.getNext();
-
-		delete pParticle;
+		ParticleObject* p = iter.getNext();
+		delete p;	
 	}
 }
+
+void gkParticleNode::initialize()
+{
+	m_scene = gkEngine::getSingleton().getActiveScene();
+
+	GK_ASSERT(m_scene);
+}
+
 
 bool gkParticleNode::evaluate(Real tick)
 {
@@ -65,10 +79,14 @@ void gkParticleNode::update(Real tick)
 {
 	if (GET_SOCKET_VALUE(CREATE))
 	{
-		m_particles.push_back(
-		    new ParticleSystem(GET_SOCKET_VALUE(PARTICLE_SYSTEM_NAME),
-		                       GET_SOCKET_VALUE(POSITION),
-		                       GET_SOCKET_VALUE(ORIENTATION)));
+		gkParticleObject* p = m_scene->createParticleObject(gkUtils::getUniqueName("gkParticleNode"));
+
+		p->getParticleProperties().m_settings = GET_SOCKET_VALUE(PARTICLE_SYSTEM_NAME);
+		p->createInstance();
+		p->setOrientation(GET_SOCKET_VALUE(ORIENTATION));
+		p->setPosition(GET_SOCKET_VALUE(POSITION));
+
+		m_particles.push_back(new ParticleObject(p));
 	}
 	else
 	{
@@ -76,76 +94,40 @@ void gkParticleNode::update(Real tick)
 
 		while (iter.hasMoreElements())
 		{
-			ParticleSystem* pParticle = iter.getNext();
-
-			if (pParticle->HasExpired())
+			ParticleObject* p = iter.getNext();
+			if (p->isExpired())
 			{
-				ParticleObjects::Pointer p = m_particles.find(pParticle);
-
 				m_particles.erase(p);
-
-				delete pParticle;
-
-				break;
+				m_scene->destroyObject(p->m_parObj);
+				delete p;
+				//TODO: check iterator validation at erase.
 			}
 		}
 	}
 }
 
-gkParticleNode::ParticleSystem::ParticleSystem(const gkString& name, const gkVector3& position, const gkQuaternion& q)
-	: m_node(0),
-	  m_particleSystem(0),
-	  m_time_to_live(0)
+gkParticleNode::ParticleObject::ParticleObject(gkParticleObject* parObj)
+	:	m_parObj(parObj),
+		m_timeToLive(0)
 {
-	gkScene* pScene = gkEngine::getSingleton().getActiveScene();
+	GK_ASSERT(m_parObj);
 
-	m_node = pScene->getManager()->getRootSceneNode()->createChildSceneNode();
+	Ogre::ParticleSystem* psys = m_parObj->getParticleSystem();
+	GK_ASSERT(psys);
 
-	m_node->setPosition(position);
-	m_node->setOrientation(q);
-
-	GK_ASSERT(!m_particleSystem);
-
-	static int idx = 0;
-
-	gkString instanceName = "gkParticleNode" + Ogre::StringConverter::toString(idx++);
-
-	m_particleSystem = pScene->getManager()->createParticleSystem(instanceName, name);
-
-	m_particleSystem->setQueryFlags(0);
-
-	m_node->attachObject(m_particleSystem);
-
-	unsigned short n = m_particleSystem->getNumEmitters();
-
-	m_time_to_live = 0;
+	unsigned short n = psys->getNumEmitters();
 
 	for (unsigned short i = 0; i < n; i++)
 	{
-		m_time_to_live = btMax(m_time_to_live, m_particleSystem->getEmitter(i)->getTimeToLive());
+		m_timeToLive = gkMax(m_timeToLive, psys->getEmitter(i)->getTimeToLive());
 	}
 
-	m_time_to_live *= 1000;
+	m_timeToLive *= 1000;
 
 	m_timer.reset();
 }
 
-gkParticleNode::ParticleSystem::~ParticleSystem()
+gkParticleNode::ParticleObject::~ParticleObject()
 {
-	if (m_node)
-	{
-		GK_ASSERT(m_particleSystem);
 
-		m_node->detachObject(m_particleSystem);
-
-		gkScene* pScene = gkEngine::getSingleton().getActiveScene();
-
-		pScene->getManager()->destroyParticleSystem(m_particleSystem);
-
-		m_particleSystem = 0;
-
-		pScene->getManager()->getRootSceneNode()->removeAndDestroyChild(m_node->getName());
-
-		m_node = 0;
-	}
 }

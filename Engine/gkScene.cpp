@@ -38,11 +38,11 @@
 #include "gkEntity.h"
 #include "gkLight.h"
 #include "gkSkeleton.h"
+#include "gkParticleObject.h"
 #include "gkGameObjectGroup.h"
 #include "gkEngine.h"
 #include "gkScene.h"
 #include "gkLogicManager.h"
-#include "gkNodeManager.h"
 #include "gkLogger.h"
 #include "gkDynamicsWorld.h"
 #include "gkRigidBody.h"
@@ -57,6 +57,10 @@
 #include "gkConstraintManager.h"
 #include "gkGroupManager.h"
 #include "gkGameObjectManager.h"
+
+#ifdef OGREKIT_USE_NNODE
+#include "gkNodeManager.h"
+#endif
 
 #ifdef OGREKIT_OPENAL_SOUND
 #include "gkSoundManager.h"
@@ -304,6 +308,19 @@ gkSkeleton* gkScene::createSkeleton(const gkHashedString& name)
 	return gobj;
 }
 
+gkParticleObject* gkScene::createParticleObject(const gkHashedString& name)
+{
+	if (m_objects.find(name) != GK_NPOS)
+	{
+		gkPrintf("Scene: Duplicate object '%s' found\n", name.str().c_str());
+		return 0;
+	}
+
+	gkParticleObject* gobj = gkGameObjectManager::getSingleton().createParticleObject(gkResourceName(name, getGroupName()));
+	addObject(gobj);
+	return gobj;
+}
+
 
 bool gkScene::_replaceObjectInScene(gkGameObject* gobj, gkScene* osc, gkScene* nsc)
 {
@@ -433,7 +450,8 @@ void gkScene::destroyObject(gkGameObject* gobj)
 
 	gobj->destroyInstance();
 	m_objects.remove(name);
-	delete gobj;
+	gkGameObjectManager::getSingleton().destroy(gobj);
+	//delete gobj;
 }
 
 
@@ -1463,6 +1481,7 @@ void gkScene::update(gkScalar tickRate)
 		gkStats::getSingleton().stopLogicBricksClock();
 	}
 
+#ifdef OGREKIT_USE_NNODE
 	// update node trees
 	if (m_updateFlags & UF_NODE_TREES)
 	{
@@ -1470,6 +1489,7 @@ void gkScene::update(gkScalar tickRate)
 		gkNodeManager::getSingleton().update(tickRate);
 		gkStats::getSingleton().stopLogicNodesClock();
 	}
+#endif
 
 	// update animations
 	if (m_updateFlags & UF_ANIMATIONS)
@@ -1480,7 +1500,7 @@ void gkScene::update(gkScalar tickRate)
 	}
 
 
-#if OGREKIT_OPENAL_SOUND
+#ifdef OGREKIT_OPENAL_SOUND
 	// update sound manager.
 	if (m_updateFlags & UF_SOUNDS)
 	{
@@ -1521,7 +1541,7 @@ void gkScene::update(gkScalar tickRate)
 
 
 
-
+#ifdef OGREKIT_COMPILE_RECAST
 bool gkScene::asyncTryToCreateNavigationMesh(gkActiveObject& activeObj, const gkRecast::Config& config, ASYNC_DT_RESULT result)
 {
 	class CreateNavMeshCall : public gkCall
@@ -1560,3 +1580,4 @@ bool gkScene::asyncTryToCreateNavigationMesh(gkActiveObject& activeObj, const gk
 
 	return false;
 }
+#endif

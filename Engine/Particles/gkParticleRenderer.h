@@ -3,7 +3,7 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Charlie C.
+    Copyright (c) 2006-2010 harkon.kr.
 
     Contributor(s): none yet.
 -------------------------------------------------------------------------------
@@ -23,28 +23,50 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
-	Force rebuild when settings change
 */
-#ifndef _gkSettings_h_
-#define _gkSettings_h_
 
-#cmakedefine OGREKIT_USE_LUA 1
-#cmakedefine OGREKIT_COMPILE_OGRE_SCRIPTS 1
-#cmakedefine OGREKIT_DEBUG_ASSERT 1
-#cmakedefine OGREKIT_OPENAL_SOUND 1
-#cmakedefine OGRE_BUILD_RENDERSYSTEM_GL 1
-#cmakedefine OGRE_BUILD_RENDERSYSTEM_GLES 1
-#cmakedefine OGREKIT_BUILD_D3D9RS 1
-#cmakedefine OGREKIT_BUILD_D3D10RS 1
-#cmakedefine OGREKIT_BUILD_D3D11RS 1
-#cmakedefine OGREKIT_BUILD_IPHONE 1
-#cmakedefine OGREKIT_USE_NNODE 1
-#cmakedefine OGREKIT_COMPILE_RECAST 1
-#cmakedefine OGREKIT_COMPILE_OPENSTEER 1
+#ifndef _gkParticleRenderer_h_
+#define _gkParticleRenderer_h_
 
-#ifdef OGREKIT_DEBUG_ASSERT
-#define UT_DEBUG_ASSERT 1
-#endif
+#include "OgreBillboardParticleRenderer.h"
+#include "OgreParticle.h"
+
+class gkParticleResource;
+
+class gkParticleVisualData : public Ogre::ParticleVisualData
+{
+public:
+	Ogre::Vector3 m_initDir;
+};
+
+class gkParticleRenderer : public Ogre::BillboardParticleRenderer
+{
+protected:
+	gkParticleResource* m_creator;
+
+public:
+	static const gkString NAME;
+	
+	gkParticleRenderer();
+	virtual ~gkParticleRenderer();
+
+	GK_INLINE void setCreator(gkParticleResource* creator) { m_creator = creator; }
+
+	virtual Ogre::ParticleVisualData* _createVisualData(void) { return OGRE_NEW gkParticleVisualData; }
+	virtual void  _destroyVisualData(Ogre::ParticleVisualData *vis) { OGRE_DELETE vis; }
+};
 
 
-#endif//_gkSettings_h_
+class gkParticleRendererFactory : public Ogre::ParticleSystemRendererFactory
+{
+public:
+	GK_INLINE const Ogre::String& gkParticleRendererFactory::getType() const { return gkParticleRenderer::NAME; }
+	
+	Ogre::ParticleSystemRenderer* createInstance(const Ogre::String& name);
+	
+	void destroyInstance(Ogre::ParticleSystemRenderer* inst);
+};
+
+
+#endif//_gkParticleRenderer_h_
+

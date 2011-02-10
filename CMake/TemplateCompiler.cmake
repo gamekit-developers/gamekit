@@ -24,6 +24,7 @@ endmacro(TMPL_ABSOLUTE_SRC)
 #                                                                             #
 # ----------------------------------------------------------------------------#
 macro(ADD_TEMPLATES BINARY OUT GENERATED)
+		
     get_filename_component(OUTFILE ${GENERATED} ABSOLUTE)
     tmpl_absolute_src(TEMPLATES ${ARGN})
     get_filename_component(ONAME ${OUTFILE} NAME)
@@ -32,7 +33,7 @@ macro(ADD_TEMPLATES BINARY OUT GENERATED)
 		set(TCL_CMD ${TCL_EXECUTABLE} -b ${OUTFILE} ${TEMPLATES})
 	else()
 		set(TCL_CMD ${TCL_EXECUTABLE} ${OUTFILE} ${TEMPLATES})
-	endif()
+	endif()	
 	
     add_custom_command(
 	    OUTPUT ${OUTFILE}
@@ -40,7 +41,8 @@ macro(ADD_TEMPLATES BINARY OUT GENERATED)
 	    DEPENDS ${TCL_EXECUTABLE} ${TEMPLATES}
 	    COMMENT "Building ${ONAME}"
 	    )
-
-    set(${OUT} ${OUTFILE})
     
+	set(${OUT} ${OUTFILE})
+	set(TEMPLATES)	
+	
 endmacro(ADD_TEMPLATES)

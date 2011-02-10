@@ -417,8 +417,8 @@ void gsMouse::capture(void)
 	gkMouse* mse = gkWindowSystem::getSingleton().getMouse();
 	xpos    = mse->position.x;
 	ypos    = mse->position.y;
-	xrel    = mse->relitave.x;
-	yrel    = mse->relitave.y;
+	xrel    = mse->relative.x;
+	yrel    = mse->relative.y;
 	winx    = mse->winsize.x;
 	winy    = mse->winsize.y;
 	wheel   = mse->wheelDelta;
@@ -664,6 +664,8 @@ gsGameObject* gsGameObject::createNew(gkGameObject* ob)
 		return new gsGameObject(ob);
 	case GK_SKELETON:
 		return new gsSkeleton(ob);
+	case GK_PARTICLES:
+		return new gsParticles(ob);
 	default:
 		break;
 	}
@@ -1507,6 +1509,16 @@ gsSkeleton::gsSkeleton(gkInstancedObject* ob) : gsGameObject(ob)
 {
 }
 
+
+gsParticles::gsParticles()
+{
+}
+
+
+
+gsParticles::gsParticles(gkInstancedObject* ob) : gsGameObject(ob)
+{
+}
 
 
 

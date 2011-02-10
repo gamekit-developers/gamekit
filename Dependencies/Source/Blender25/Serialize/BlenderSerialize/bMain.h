@@ -44,7 +44,7 @@ namespace bParse {
 	{
 	//private:
 	public:
-		bBlenderFile*			mFP;
+		bBlenderFile*	mFP;
 		bListBasePtr	mPool;
 
 		int				mVersion;
@@ -93,7 +93,7 @@ namespace bParse {
 		bListBasePtr *getAction();
 		bListBasePtr *getNodetree();
 		bListBasePtr *getBrush();
-
+		bListBasePtr *getParticle();
 
 		
 		// tracking allocated memory

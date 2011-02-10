@@ -30,11 +30,14 @@
 #include "gkBuggy.h"
 
 gkLogic::gkLogic(gkScene* scene)
-	: m_scene(scene), m_tree(gkNodeManager::getSingleton().create()),
+	: m_scene(scene), m_tree(0),
 	  m_camera(scene->getMainCamera()), m_upKeyNode(0), m_downKeyNode(0),
 	  m_leftKeyNode(0), m_rightKeyNode(0), m_spaceKeyNode(0), m_rKeyNode(0),
 	  m_cameraNode(0), m_dKeyNode(0), m_cKeyNode(0)
 {
+	GK_ASSERT(m_scene);
+	m_tree = gkNodeManager::getSingleton().createLogicTree(m_scene->getGroupName());
+
 	createInput();
 	createVehicle();
 	createCamera();

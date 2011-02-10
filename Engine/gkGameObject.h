@@ -88,16 +88,16 @@ public:
 	bool hasSensorMaterial(const gkString& name, bool onlyFirst = true);
 
 	// subtype access
-	GK_INLINE gkEntity*      getEntity(void)    {return m_type == GK_ENTITY ?   (gkEntity*)this : 0; }
-	GK_INLINE gkCamera*      getCamera(void)    {return m_type == GK_CAMERA ?   (gkCamera*)this : 0; }
-	GK_INLINE gkLight*       getLight(void)     {return m_type == GK_LIGHT ?    (gkLight*)this : 0; }
-	GK_INLINE gkSkeleton*    getSkeleton(void)  {return m_type == GK_SKELETON ? (gkSkeleton*)this : 0; }
-
+	GK_INLINE gkEntity*         getEntity(void)         {return m_type == GK_ENTITY    ? (gkEntity*)this : 0; }
+	GK_INLINE gkCamera*         getCamera(void)         {return m_type == GK_CAMERA    ? (gkCamera*)this : 0; }
+	GK_INLINE gkLight*          getLight(void)          {return m_type == GK_LIGHT     ? (gkLight*)this : 0; }
+	GK_INLINE gkSkeleton*       getSkeleton(void)       {return m_type == GK_SKELETON  ? (gkSkeleton*)this : 0; }
+	GK_INLINE gkParticleObject* getParticleObject(void) {return m_type == GK_PARTICLES ? (gkParticleObject*)this : 0; }
 
 	// Parent / Child access.
-	GK_INLINE bool                      hasParent(void)          {return m_parent != 0;}
-	GK_INLINE gkGameObject*              getParent(void)         {return m_parent;}
-	GK_INLINE gkGameObjectArray&         getChildren(void)       {return m_children;}
+	GK_INLINE bool                      hasParent(void)         {return m_parent != 0;}
+	GK_INLINE gkGameObject*             getParent(void)         {return m_parent;}
+	GK_INLINE gkGameObjectArray&        getChildren(void)       {return m_children;}
 
 	void setParent(gkGameObject* par);
 	void setParentInPlace(gkGameObject* par);
@@ -190,7 +190,10 @@ public:
 	gkVector3   getLinearVelocity(void);
 	gkVector3   getAngularVelocity(void);
 
+#ifdef OGREKIT_USE_NNODE
 	void attachLogic(gkLogicTree* tree);
+#endif
+
 	void attachLogic(gkLogicLink* bricks);
 	GK_INLINE gkLogicLink* getLogicBricks() {return m_bricks;}
 

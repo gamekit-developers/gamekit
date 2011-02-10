@@ -42,7 +42,6 @@
 
 #include "gkLogicManager.h"
 #include "gkLogicLink.h"
-#include "gkNodeManager.h"
 #include "gkLogicTree.h"
 #include "gkConstraintManager.h"
 #include "gkGameObjectGroup.h"
@@ -96,7 +95,7 @@ gkGameObject::~gkGameObject()
 }
 
 
-
+#ifdef OGREKIT_USE_NNODE
 void gkGameObject::attachLogic(gkLogicTree* tree)
 {
 	if (!m_logic)
@@ -105,9 +104,7 @@ void gkGameObject::attachLogic(gkLogicTree* tree)
 		m_logic->attachObject(this);
 	}
 }
-
-
-
+#endif
 
 void gkGameObject::attachLogic(gkLogicLink* bricks)
 {
@@ -484,6 +481,7 @@ void gkGameObject::applyTransformState(const gkTransformState& newstate, const g
 		m_node->setPosition(state.loc);
 		m_node->setOrientation(state.rot);
 		m_node->setScale(state.scl);
+	//	m_node->needUpdate(true);
 
 		if (m_rigidBody)
 		{

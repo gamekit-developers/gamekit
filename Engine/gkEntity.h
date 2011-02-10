@@ -40,8 +40,10 @@ public:
 	GK_INLINE Ogre::Entity* getEntity(void) { return m_entity; }
 
 	GK_INLINE gkEntityProperties&  getEntityProperties(void) {return *m_entityProps;}
-
-	gkSkeleton*   getSkeleton(void) {return m_skeleton;}
+	
+	GK_INLINE gkMesh* getMesh(void) {return m_entityProps->m_mesh; }
+	
+	GK_INLINE gkSkeleton* getSkeleton(void) {return m_skeleton;}
 	void          setSkeleton(gkSkeleton* skel);
 
 	void _resetPose(void);

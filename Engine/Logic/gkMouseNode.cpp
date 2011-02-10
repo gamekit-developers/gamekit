@@ -55,8 +55,8 @@ bool gkMouseNode::evaluate(gkScalar tick)
 
 	if (dev->moved)
 	{
-		if (GET_SOCKET(REL_X)->isConnected()) x = dev->relitave.x * x_scale;
-		if (GET_SOCKET(REL_Y)->isConnected()) y = dev->relitave.y * y_scale;
+		if (GET_SOCKET(REL_X)->isConnected()) x = dev->relative.x * x_scale;
+		if (GET_SOCKET(REL_Y)->isConnected()) y = dev->relative.y * y_scale;
 	}
 
 	if (GET_SOCKET(ABS_X)->isConnected()) SET_SOCKET_VALUE(ABS_X, dev->position.x * x_scale);

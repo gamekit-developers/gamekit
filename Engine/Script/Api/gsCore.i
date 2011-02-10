@@ -39,12 +39,14 @@
 %newobject gsGameObject::getCamera;
 %newobject gsGameObject::getParent;
 %newobject gsGameObject::getSkeleton;
+%newobject gsGameObject::getParticles;
 %newobject gsEntity::getCharacter;
 %newobject gsScene::getObject;
 %newobject gsScene::getEntity;
 %newobject gsScene::getLight;
 %newobject gsScene::getCamera;
 %newobject gsScene::getSkeleton;
+%newobject gsScene::getParticles;
 %newobject gsScene::createEmpty;
 %newobject gsScene::getDynamicsWorld;
 
@@ -62,6 +64,7 @@ GS_SCRIPT_NAME(Mouse)
 GS_SCRIPT_NAME(Property)
 GS_SCRIPT_NAME(Scene)
 GS_SCRIPT_NAME(Skeleton)
+GS_SCRIPT_NAME(Particles)
 GS_SCRIPT_NAME(UserDefs)
 
 

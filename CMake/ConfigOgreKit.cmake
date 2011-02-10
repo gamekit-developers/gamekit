@@ -27,22 +27,24 @@ macro (configure_ogrekit ROOT OGREPATH)
 	option(OGREKIT_COMPLIE_SWIG				"Enable compile time SWIG generation."  OFF)
 	option(OGREKIT_COMPILE_OGRE_SCRIPTS		"Automatically convert Blender TX to Ogre (.material, .font, .overlay... etc)" ON)
 	option(OGREKIT_COMPILE_WXWIDGETS		"Enable / Disable wxWidgets builds" OFF)
-	option(OGREKIT_DEBUG_ASSERT				"Enable/Disable debug asserts." ON)
+	option(OGREKIT_DEBUG_ASSERT				"Enable / Disable debug asserts." ON)
 	option(OGREKIT_HEADER_GENERATOR			"Build Blender DNA to C++ generator."   OFF)
 	option(OGREKIT_UPDATE_CPP_DOCS			"Update C++ API documentation(Requires doxygen)." OFF)
 	option(OGREKIT_UPDATE_LUA_DOCS			"Update Lua API documentation(Requires doxygen)." OFF)
 	option(OGREKIT_UPDATE_FBT_DOCS			"Update FBT API documentation(Requires doxygen)." OFF)
 	option(OGREKIT_DISABLE_ZIP				"Disable external .zip resource loading" ON)
 	option(OGREKIT_USE_STATIC_FREEIMAGE		"Compile and link statically FreeImage and all its plugins" ON)	
-	option(OGREKIT_ENABLE_UNITTESTS			"Enable / Disable Unittests" OFF)
+	option(OGREKIT_ENABLE_UNITTESTS			"Enable / Disable UnitTests" OFF)
 	option(OGREKIT_USE_FILETOOLS			"Compile FBT file format utilities" OFF)
 	option(OGREKIT_COMPILE_TINYXML			"Enable / Disable TinyXml builds" OFF)
 	option(OGREKIT_COMPILE_LIBROCKET		"Enable / Disalbe libRocket builds" OFF)
-
-
-	if (NOT OGREKIT_USE_LUA)
-		set(OGREKIT_COMPLIE_SWIG FALSE CACHE BOOL "Disabling Swig" FORCE)
-	endif()
+	option(OGREKIT_GENERATE_BUILTIN_RES		"Generate build-in resources" OFF)
+	option(OGREKIT_COMPILE_TCL				"Compile TemplateGenerator" OFF)
+	option(OGREKIT_COMPILE_RECAST			"Enable / Disable Recast build" OFF)
+	option(OGREKIT_COMPILE_OPENSTEER		"Enable / Disable OpenSterr build" OFF)
+	option(OGREKIT_USE_NNODE				"Use Logic Node(It's Nodal Logic, not Blender LogicBrick)" OFF)
+	option(OGREKIT_COMPILE_OGRE_COMPONENTS	"Eanble compile additional Ogre components (RTShader, Terrain, Paging, ... etc)" OFF)
+	option(OGREKIT_COMPILE_OPTS				"Enable / Disable Opts builds" OFF)
 	
 	set(OGREKIT_ZZIP_TARGET ZZipLib)
 	set(OGREKIT_FREETYPE_TARGET freetype)
@@ -112,55 +114,60 @@ macro (configure_ogrekit ROOT OGREPATH)
 		endif (UNIX)
 	endif (APPLE)
 	
-	
-	
 	option(SAMPLES_RUNTIME        "Build Samples/Runtime"       ON)
-	option(SAMPLES_LOGICDEMO      "Build Samples/LogicDemo"     ON)
-	option(SAMPLES_VEHICLEDEMO    "Build Samples/VehicleDemo"   ON)
+	option(SAMPLES_LOGICDEMO      "Build Samples/LogicDemo"     OFF)
+	option(SAMPLES_VEHICLEDEMO    "Build Samples/VehicleDemo"   OFF)
 	option(SAMPLES_CPPDEMO        "Build Samples/CppDemo"       ON)
 	option(SAMPLES_NODE_EDITOR    "Build Samples/NodeEditor"    OFF)
 	option(SAMPLES_EMBEDDEMO      "Build Samples/EmbedDemo"     OFF)
 	option(SAMPLES_INSPECTOR      "Build Samples/FileInspector" OFF)
 	option(SAMPLES_GUIDEMO        "Build Samples/GuiDemo"       OFF)
-    option(SAMPLES_LUA_EDITOR     "Build Samples/LuaEditor"     OFF)	
+    option(SAMPLES_LUA_EDITOR     "Build Samples/LuaEditor"     OFF)
+	option(SAMPLES_LUARUNTIME     "Build Samples/LuaRuntime"    OFF)
 	
-	if (OGREKIT_USE_LUA)
-		option(SAMPLES_LUARUNTIME "Build Samples/LuaRuntime" ON)
-	else()
-		set(SAMPLES_LUARUNTIME FALSE CACHE BOOL "Forcing remove Samples/LuaRuntime" FORCE)
-		set(SAMPLES_LUA_EDITOR FALSE CACHE BOOL "Forcing LuaEditor removal"  FORCE)
+	if (SAMPLES_LOGICDEMO OR SAMPLES_VEHICLEDEMO)		
+		set(OGREKIT_USE_NNODE TRUE CACHE BOOL "Forcing Logic Node" FORCE)		
+	endif()
+	
+	if (SAMPLES_LOGICDEMO)
+		set(OGREKIT_COMPILE_RECAST TRUE CACHE BOOL "Forcing Recast" FORCE)
+		set(OGREKIT_COMPILE_OPENSTEER TRUE CACHE BOOL "Forcing OpenSteer" FORCE)
+	endif()
+	
+	if (SAMPLES_LUARUNTIME OR SAMPLES_LUA_EDITOR)
+		set(OGREKIT_USE_LUA TRUE CACHE BOOL "Forcing Lua" FORCE)
+	endif()
+	
+	if (SAMPLES_LUARUNTIME)
+		set(OGREKIT_COMPILE_OPTS TRUE CACHE BOOL "Forcing Opts" FORCE)
+	endif()
+	
+	if (NOT OGREKIT_USE_LUA)
+		set(OGREKIT_COMPLIE_SWIG FALSE CACHE BOOL "Disabling Swig" FORCE)
 	endif()
 
-	if (SAMPLES_NODE_EDITOR OR SAMPLES_EMBEDDEMO OR SAMPLES_LUA_EDITOR)
-		set(OGREKIT_COMPILE_WXWIDGETS TRUE CACHE BOOL "Forcing wxWidgets" FORCE)
+	if (SAMPLES_NODE_EDITOR OR SAMPLES_EMBEDDEMO OR SAMPLES_LUA_EDITOR OR SAMPLES_INSPECTOR)
+		set(OGREKIT_COMPILE_WXWIDGETS TRUE CACHE BOOL "Forcing wxWidgets" FORCE)	
 	endif()
 	
 	if (SAMPLES_LUA_EDITOR)
-		set(OGREKIT_USE_LUA TRUE CACHE BOOL "Forcing Lua" FORCE)
 		set(OGREKIT_COMPILE_TINYXML TRUE CACHE BOOL "Forcing TinyXml" FORCE)
-	endif()
-	
-	if (NOT OGREKIT_COMPILE_WXWIDGETS)
-		set(SAMPLES_NODE_EDITOR FALSE CACHE BOOL "Forcing NodeEditor removal"    FORCE)
-		set(SAMPLES_EMBEDDEMO   FALSE CACHE BOOL "Forcing EmbedDemo removal"     FORCE)
-		set(SAMPLES_INSPECTOR   FALSE CACHE BOOL "Forcing FileInspector removal" FORCE)
-		set(SAMPLES_LUA_EDITOR  FALSE CACHE BOOL "Forcing LuaEditor removal"  FORCE)
 	endif()
 
 	if (SAMPLES_INSPECTOR)	
-		set(OGREKIT_USE_FILETOOLS   TRUE CACHE BOOL "Forcing File Utils removal" FORCE)
+		set(OGREKIT_USE_FILETOOLS   TRUE CACHE BOOL "Forcing File Utils" FORCE)
 	endif()
 
-    
-	if (WIN32 AND (SAMPLES_EMBEDDEMO OR SAMPLES_LUA_EDITOR) AND NOT OGREKIT_OIS_WIN32_NATIVE)
-		set(SAMPLES_EMBEDDEMO   FALSE CACHE BOOL "Forcing EmbedDemo removal"  FORCE)
-		set(SAMPLES_LUA_EDITOR  FALSE CACHE BOOL "Forcing LuaEditor removal"  FORCE)
-		message(WARNING "EmbedDemo or LauEditor is required OGREKIT_OIS_WIN32_NATIVE option.")
+	if (WIN32 AND (SAMPLES_EMBEDDEMO OR SAMPLES_LUA_EDITOR))
+		set(OGREKIT_OIS_WIN32_NATIVE TRUE CACHE BOOL "Forcing OISWin32Native"  FORCE)
 	endif()
 	
-	if (SAMPLES_GUIDEMO AND NOT OGREKIT_COMPILE_LIBROCKET)
-		set(SAMPLES_GUIDEMO FALSE CACHE BOOL "Forcing GuiDemo removal"  FORCE)
-		message(WARNING "GuiDemo is required OGREKIT_COMPILE_LIBROCKET option.")
+	if (SAMPLES_GUIDEMO)
+		set(OGREKIT_COMPILE_LIBROCKET TRUE CACHE BOOL "Forcing LibRocket"  FORCE)
+	endif()
+	
+	if (OGREKIT_COMPLIE_SWIG OR OGREKIT_GENERATE_BUILTIN_RES)
+		set(OGREKIT_COMPILE_TCL TRUE CACHE BOOL "Forcing TCL"  FORCE)
 	endif()
 
 	if (APPLE)
@@ -170,7 +177,13 @@ macro (configure_ogrekit ROOT OGREPATH)
 	if (OGREKIT_BUILD_IPHONE)
 		set(OGRE_BUILD_PLATFORM_IPHONE TRUE)
 	endif()
-
+	
+	if (OGREKIT_COMPILE_OGRE_COMPONENTS)
+		set(OGRE_BUILD_COMPONENT_PAGING TRUE)
+		set(OGRE_BUILD_COMPONENT_PROPERTY TRUE)
+		set(OGRE_BUILD_COMPONENT_TERRAIN TRUE)
+		set(OGRE_BUILD_COMPONENT_RTSHADERSYSTEM TRUE)
+	endif()
 
 	#copy from ogre3d build
 	# Set up iPhone overrides.
@@ -226,12 +239,13 @@ macro (configure_ogrekit ROOT OGREPATH)
 
 
 	if (OGREKIT_COMPLIE_SWIG)
-		
 		include(RunSwig)
-		include(TemplateCompiler)
-
 	endif()
 
+
+	if (OGREKIT_COMPILE_TCL)	
+		include(TemplateCompiler)
+	endif()
 	
 	set(OGREKIT_FREETYPE_INCLUDE ${OGREKIT_DEP_DIR}/FreeType/include)
 	set(OGREKIT_ZZIP_INCLUDE ${OGREKIT_DEP_DIR}/ZZipLib)
@@ -250,10 +264,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 #		${OGREKIT_FREEIMAGE_INCLUDE} Conflicts with OpenSteer includes and needed by Ogre, not OgreKit
 		${OGREKIT_FREETYPE_INCLUDE}
 		${OGREKIT_ZLIB_INCLUDE}
-		${OGREKIT_OIS_INCLUDE}
-		${OGREKIT_RECAST_INCLUDE}
-		${OGREKIT_DETOUR_INCLUDE}
-		${OGREKIT_OPENSTEER_INCLUDE}
+		${OGREKIT_OIS_INCLUDE}		
 		${GAMEKIT_SERIALIZE_BULLET}
 		${GAMEKIT_SERIALIZE_BLENDER}
 		${GAMEKIT_UTILS_PATH}
@@ -385,10 +396,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 		${OGREKIT_GLRS_LIBS}
 		${OGREKIT_D3D9_LIBS}
 		${OGREKIT_D3D10_LIBS}
-		${OGREKIT_D3D11_LIBS}
-		${OGREKIT_RECAST_TARGET}
-		${OGREKIT_DETOUR_TARGET}
-		${OGREKIT_OPENSTEER_TARGET}
+		${OGREKIT_D3D11_LIBS}		
 		${GAMEKIT_SERIALIZE_BLENDER_TARGET}
 		${GAMEKIT_SERIALIZE_BULLET_TARGET}
 		${GAMEKIT_UTILS_TARGET}
@@ -412,6 +420,15 @@ macro (configure_ogrekit ROOT OGREPATH)
 		list(APPEND OGREKIT_DEP_INCLUDE ${OGREKIT_ZZIP_INCLUDE})
 	endif()
 
+	if (OGREKIT_COMPILE_RECAST)
+		list(APPEND OGREKIT_OGRE_LIBS	${OGREKIT_RECAST_TARGET}  ${OGREKIT_DETOUR_TARGET})
+		list(APPEND OGREKIT_DEP_INCLUDE ${OGREKIT_RECAST_INCLUDE} ${OGREKIT_DETOUR_INCLUDE})
+	endif()
+	
+	if (OGREKIT_COMPILE_OPENSTEER)
+		list(APPEND OGREKIT_OGRE_LIBS	${OGREKIT_OPENSTEER_TARGET})
+		list(APPEND OGREKIT_DEP_INCLUDE ${OGREKIT_OPENSTEER_INCLUDE})
+	endif()
 		
 	#Check Build Settings
 	if (APPLE)

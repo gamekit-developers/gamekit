@@ -43,7 +43,6 @@
 #include "gkRenderFactory.h"
 #include "gkUserDefs.h"
 #include "gkTextManager.h"
-#include "gkNodeManager.h"
 #include "gkDynamicsWorld.h"
 #include "gkDebugScreen.h"
 #include "gkDebugProperty.h"
@@ -57,7 +56,11 @@
 #include "gkGameObjectManager.h"
 #include "gkResourceGroupManager.h"
 #include "gkAnimationManager.h"
+#include "gkParticleManager.h"
 
+#ifdef OGREKIT_USE_NNODE
+#include "gkNodeManager.h"
+#endif
 
 #ifdef OGREKIT_USE_LUA
 #include "Script/Lua/gkLuaManager.h"
@@ -216,12 +219,15 @@ void gkEngine::initialize()
 	new gkResourceGroupManager();
 	new gkSceneManager();
 	new gkLogicManager();
+#ifdef OGREKIT_USE_NNODE
 	new gkNodeManager();
+#endif
 	new gkBlendLoader();
 	new gkTextManager();
 	new gkMessageManager();
 	new gkMeshManager();
 	new gkSkeletonManager();
+	new gkParticleManager();
 	new gkGroupManager();
 	new gkGameObjectManager();
 
@@ -244,6 +250,8 @@ void gkEngine::initialize()
 
 	// create the builtin resource group
 	gkResourceGroupManager::getSingleton().createResourceGroup(GK_BUILTIN_GROUP);
+
+	gkParticleManager::getSingleton().initialize();
 
 	// debug info
 	m_private->debug = new gkDebugScreen();
@@ -288,11 +296,14 @@ void gkEngine::finalize()
 
 #ifdef OGREKIT_OPENAL_SOUND
 	gkSoundManager::getSingleton().stopAllSounds();
-#endif
-
-	delete gkNodeManager::getSingletonPtr();
+#endif	
 
 	gkResourceManager* tmgr;
+
+#ifdef OGREKIT_USE_NNODE
+	tmgr = gkNodeManager::getSingletonPtr();
+	tmgr->destroyAll();
+#endif
 
 	tmgr = gkSceneManager::getSingletonPtr();
 	tmgr->destroyAll();
@@ -304,7 +315,9 @@ void gkEngine::finalize()
 	tmgr = gkGameObjectManager::getSingletonPtr();
 	tmgr->destroyAll();
 
-
+#ifdef OGREKIT_USE_NNODE
+	delete gkNodeManager::getSingletonPtr();
+#endif
 	delete gkGroupManager::getSingletonPtr();
 	delete gkGameObjectManager::getSingletonPtr();
 	delete gkSceneManager::getSingletonPtr();
@@ -314,6 +327,7 @@ void gkEngine::finalize()
 	delete gkMessageManager::getSingletonPtr();
 	delete gkMeshManager::getSingletonPtr();
 	delete gkSkeletonManager::getSingletonPtr();
+	delete gkParticleManager::getSingletonPtr();
 	delete gkAnimationManager::getSingletonPtr();
 
 

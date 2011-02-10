@@ -84,8 +84,8 @@ public:
 		if (mode & TF_INVISIBLE)    m_mode |= gkMaterialProperties::MA_INVISIBLE;
 		if (mode & TF_LIGHT)        m_mode |= gkMaterialProperties::MA_LIGHTINGENABLED;
 		if (mode & TF_TWOSIDE)      m_mode |= gkMaterialProperties::MA_TWOSIDE;
-		if ((alpha & TF_CLIP))      m_mode &= ~gkMaterialProperties::MA_DEPTHWRITE;
-		if (alpha & TF_ADD)          m_mode |= gkMaterialProperties::MA_ADDITIVEBLEND;
+		if (alpha & TF_CLIP)        m_mode &= ~gkMaterialProperties::MA_DEPTHWRITE;
+		if (alpha & TF_ADD)         m_mode |= gkMaterialProperties::MA_ADDITIVEBLEND;
 		if (mode & TF_TEX)          m_mode |= gkMaterialProperties::MA_HASFACETEX;
 
 		if (alpha & TF_ALPHA || alpha & TF_CLIP)

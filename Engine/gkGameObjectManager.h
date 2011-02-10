@@ -47,13 +47,14 @@ public:
 	gkCamera* createCamera(const gkResourceName& name);
 	gkEntity* createEntity(const gkResourceName& name);
 	gkSkeleton* createSkeleton(const gkResourceName& name);
-
+	gkParticleObject* createParticleObject(const gkResourceName& name);
 
 	gkGameObject* getObject(const gkResourceName& name);
 	gkLight* getLight(const gkResourceName& name);
 	gkCamera* getCamera(const gkResourceName& name);
 	gkEntity* getEntity(const gkResourceName& name);
 	gkSkeleton* getSkeleton(const gkResourceName& name);
+	gkParticleObject* getParticleObject(const gkResourceName& name);
 
 private:
 	int m_currentType;

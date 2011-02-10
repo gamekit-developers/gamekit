@@ -69,13 +69,19 @@
 #include "gkWindow.h"
 #include "gkResourceGroupManager.h"
 
+#include "AI/gkFSM.h"
+
+#ifdef OGREKIT_COMPILE_RECAST
 #include "AI/gkRecast.h"
+#endif
+
+#ifdef OGREKIT_COMPILE_OPENSTEER
 #include "AI/gkNavMeshData.h"
 #include "AI/gkSteeringObject.h"
 #include "AI/gkSteeringCapture.h"
 #include "AI/gkSteeringPathFollowing.h"
 #include "AI/gkSteeringWander.h"
-#include "AI/gkFSM.h"
+#endif
 
 #include "Animation/gkAnimation.h"
 #include "Animation/gkAnimationManager.h"
@@ -173,6 +179,10 @@
 #include "Physics/gkVehicle.h"
 #include "Physics/gkRayTest.h"
 #include "Physics/gkSweptTest.h"
+
+#include "Particles/gkParticleManager.h"
+#include "Particles/gkParticleResource.h"
+#include "Particles/gkParticleObject.h"
 
 #ifdef OGREKIT_USE_LUA
 #include "Script/Lua/gkLuaManager.h"

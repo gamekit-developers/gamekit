@@ -199,7 +199,7 @@ void gkGameObjectInstance::applyTransform(const gkTransformState& trans)
 	{
 		gkGameObject* obj = iter.getNext().second;
 
-		// Update transform relitave to owner
+		// Update transform relative to owner
 		gkMatrix4 clocal;
 		obj->getTransformState().toMatrix(clocal);
 		obj->setTransform(plocal * clocal);
@@ -240,7 +240,7 @@ void gkGameObjectInstance::cloneObjects(gkScene* scene, const gkTransformState& 
 		GK_ASSERT(!nobj->isGroupInstance());
 
 
-		// Update transform relitave to owner
+		// Update transform relative to owner
 		gkGameObjectProperties& props = nobj->getProperties();
 
 		gkMatrix4 clocal;

@@ -109,7 +109,7 @@ InputManager* InputManager::createInputSystem( ParamList &paramList )
 
 #if defined OIS_SDL_PLATFORM
 	im = new SDLInputManager();
-#elif OIS_WIN32_NATIVE
+#elif defined OIS_WIN32_NATIVE
 	im = new Win32NativeInputManager();
 #elif defined OIS_WIN32_PLATFORM
 	im = new Win32InputManager();

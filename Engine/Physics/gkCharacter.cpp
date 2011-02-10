@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Nestor Silveira.
 
-    Contributor(s): Charlie C.
+    Contributor(s): Charlie C. Danil Ko.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages

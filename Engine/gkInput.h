@@ -206,7 +206,7 @@ public:
 
 
 	gkVector2 getPosition(void) const {return position;}
-	gkVector2 getRelitave(void) const {return relitave;}
+	gkVector2 getRelitave(void) const {return relative;}
 
 	GK_INLINE bool isButtonDown(int button) const
 	{
@@ -221,8 +221,8 @@ public:
 	{
 		moved = false;
 		wheelDelta = 0.f;
-		relitave.x = 0.f;
-		relitave.y = 0.f;
+		relative.x = 0.f;
+		relative.y = 0.f;
 		position.x = 0.f;
 		position.y = 0.f;
 		buttons[0] = GK_NullState;
@@ -234,7 +234,7 @@ public:
 
 	gkMouse()
 		:       position(0, 0),
-		        relitave(0, 0),
+		        relative(0, 0),
 		        winsize(0, 0),
 		        moved(false),
 		        wheelDelta(0.0)
@@ -245,7 +245,7 @@ public:
 	}
 
 	gkVector2       position;   // absolite position
-	gkVector2       relitave;   // relitave position
+	gkVector2       relative;   // relative position
 	gkVector2       winsize;    // main window size
 	ButtonState     buttons;    // button pressed state
 	bool            moved;      // mouse moved

@@ -52,7 +52,7 @@ UT_IMPLEMENT_SINGLETON(gkResourceGroupManager)
 
 gkResourceGroupManager::gkResourceGroupManager()
 {
-	try 
+	try
 	{
 		Ogre::ResourceGroupManager::getSingleton().addResourceLocation("",
 			gkBlendArchiveFactory::ARCHIVE_TYPE,  Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);

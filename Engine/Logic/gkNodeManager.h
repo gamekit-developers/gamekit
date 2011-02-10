@@ -28,42 +28,37 @@
 #define _gkNodeManager_h_
 
 #include "gkLogicCommon.h"
+#include "gkResourceManager.h"
 #include "gkMathUtils.h"
 #include "utSingleton.h"
 
 class gkGameObject;
 
-class gkNodeManager : public utSingleton<gkNodeManager>
+class gkNodeManager : public gkResourceManager, public utSingleton<gkNodeManager>
 {
 public:
-	typedef utHashTable<utIntHashKey, gkLogicTree*> NodeTree;
-	typedef utHashTableIterator<NodeTree>           NodeTreeIterator;
-	typedef utList<gkLogicTree*>                    TreeList;
+	
 public:
 	gkNodeManager();
 	~gkNodeManager();
 
-	gkLogicTree* create();
-	gkLogicTree* create(const gkString& name);
+	gkResource* createImpl(const gkResourceName& name, const gkResourceHandle& handle);
 
-	gkLogicTree* get(int id);
-	gkLogicTree* get(const gkString& name);
-
-	NodeTreeIterator getIterator();
-
-	void destroy(gkLogicTree* tree);
-	void destroy(int handle);
-
-	static gkNodeManager& getSingleton();
-	static gkNodeManager* getSingletonPtr();
+	gkLogicTree* createLogicTree(const gkString& groupName=""); //create normal tree
 
 	void update(gkScalar tick);
-	void clear();
 
-private:
+protected:
+	virtual void notifyDestroyAllImpl(void);
+	virtual void notifyDestroyGroupImpl (const gkResourceNameString &group);
+
+	virtual void notifyResourceCreatedImpl(gkResource* res);
+	virtual void notifyResourceDestroyedImpl(gkResource* res);
+
+	typedef utList<gkLogicTree*>	TreeList;
 	TreeList    m_locals;
-	int         m_uniqueHandle;
-	NodeTree    m_trees;
+	
+	UT_DECLARE_SINGLETON(gkNodeManager);
 };
 
 

@@ -34,6 +34,9 @@
 #include "Converters/gkLogicBrickConverter.h"
 #include "Converters/gkMeshConverter.h"
 #include "Converters/gkSkeletonConverter.h"
+#include "gkParticleManager.h"
+#include "gkParticleObject.h"
+#include "gkParticleResource.h"
 #include "OgreKit.h"
 
 
@@ -205,8 +208,6 @@ void gkBlenderSceneConverter::convertGroups(utArray<Blender::Object*> &groups)
 {
 	gkGroupManager* mgr = gkGroupManager::getSingletonPtr();
 
-
-
 	// This is a complete list of groups & containing objects.
 	// The gkGameObjectGroup is a containter, the gkGameObjectGroupInstance
 	// is where the object should be added / removed from the scene.
@@ -224,9 +225,7 @@ void gkBlenderSceneConverter::convertGroups(utArray<Blender::Object*> &groups)
 			continue;
 		}
 
-
 		gkGameObjectGroup* group = (gkGameObjectGroup*)mgr->create(groupName);
-
 
 
 		for (Blender::GroupObject* bgobj = (Blender::GroupObject*)bgrp->gobject.first; bgobj; bgobj = bgobj->next)
@@ -238,17 +237,13 @@ void gkBlenderSceneConverter::convertGroups(utArray<Blender::Object*> &groups)
 				if (!validObject(bobj))
 					continue;
 
-
-
 				gkGameObject* gobj = m_gscene->getObject(GKB_IDNAME(bobj));
-
 
 				// add it to the list
 				if (gobj)
 					group->addObject(gobj);
 			}
 		}
-
 
 		// Destroy if empty
 		if (group->isEmpty())
@@ -323,7 +318,6 @@ void gkBlenderSceneConverter::convertObject(Blender::Object* bobj, gkGameObject*
 		convertObjectLogic(gobj, bobj);
 		convertObjectAnimations(gobj, bobj, animfps);
 
-
 		// object data
 		switch (bobj->type)
 		{
@@ -332,6 +326,8 @@ void gkBlenderSceneConverter::convertObject(Blender::Object* bobj, gkGameObject*
 		case OB_MESH:       convertObjectMesh(gobj, bobj);        break;
 		case OB_ARMATURE:   convertObjectArmature(gobj, bobj);    break;
 		}
+
+		convertObjectParticles(gobj, bobj); //need mesh info
 	}
 }
 
@@ -407,6 +403,52 @@ void gkBlenderSceneConverter::convertObjectProperties(gkGameObject* gobj, Blende
 }
 
 
+
+void gkBlenderSceneConverter::convertObjectParticles(gkGameObject* gobj, Blender::Object* bobj)
+{	
+	for (Blender::ParticleSystem* ps = (Blender::ParticleSystem*)bobj->particlesystem.first; ps; ps = ps->next)
+	{
+		gkString name = ps->name;
+		gkString pname = GKB_IDNAME(ps->part);
+
+		gkParticleResource* resource = gkParticleManager::getSingleton().getByName<gkParticleResource>(gkResourceName(pname, m_groupName));
+		if (!resource)
+			continue;
+		
+		gkParticleObject* pobj = m_gscene->createParticleObject(gkUtils::getUniqueName(name));
+		if (pobj)
+		{
+			gkParticleSettingsProperties& sprops = resource->getParticleProperties();
+			gkParticleSystemProperties& props = pobj->getParticleProperties();
+			
+			props.m_name = name;
+			props.m_seed = ps->seed;
+			props.m_settings = pname;
+						
+			gkGameObjectProperties& gprops = pobj->getProperties();
+			gprops.m_parent = gobj->getName();
+			gprops.m_transform = gobj->getProperties().m_transform;
+
+			props.m_material = "<gkBuiltin/Halo>";
+
+			if (!sprops.m_drawEmitter)
+				gobj->getProperties().m_mode |= GK_INVISIBLE;
+				
+			Blender::Material* ma = BlenderMaterial(bobj, sprops.m_material);
+			if (ma)
+			{
+				props.m_material = GKB_IDNAME(ma);
+			}
+
+			gkEntity* entity = gobj->getEntity();
+			if (entity)
+			{
+				props.m_mesh = entity->getMesh();
+				//pobj->setMaterialName(entity->getMesh()->getFirstMaterial().m_name);
+			}
+		}
+	}
+}
 
 void gkBlenderSceneConverter::convertObjectConstraints(gkGameObject* gobj, Blender::Object* bobj)
 {

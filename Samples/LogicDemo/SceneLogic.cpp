@@ -44,12 +44,15 @@ gkString ARROW_CURSOR = "ArrowCursor";
 
 SceneLogic::SceneLogic(gkScene* pScene)
 	: m_scene(pScene),
-	  m_tree(gkNodeManager::getSingleton().create()),
+	  m_tree(0),
 	  m_momo(0),
 	  m_camera(pScene->getMainCamera()),
 	  m_navMeshData(0),
 	  m_activeObject("SceneLogic")
 {
+	GK_ASSERT(m_scene);
+	m_tree = gkNodeManager::getSingleton().createLogicTree(m_scene->getGroupName());
+
 	CreateInput();
 
 	CreateMomo();

@@ -54,6 +54,7 @@ bMain::bMain(bBlenderFile *filePtr, const char *baseName, int fileVersion)
 	mData.insert(ID_NT,bListBasePtr());
 	mData.insert(ID_BR,bListBasePtr());
 	mData.insert(ID_SCRIPT, bListBasePtr());
+	mData.insert(ID_PA,bListBasePtr());
 }
 
 
@@ -387,6 +388,14 @@ bListBasePtr *bMain::getBrush()
 	return ptr;
 }
 
+// ------------------------------------------------------------//
+bListBasePtr *bMain::getParticle()
+{
+	bListBasePtr *ptr = _findCode(ID_PA);
+	if (!ptr)
+		return 0;
+	return ptr;
+}
 
 
 //eof

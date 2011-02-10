@@ -29,16 +29,11 @@
 
 using namespace Ogre;
 
-gkLogicTree::gkLogicTree(gkNodeManager* creator, UTsize id, const gkString& name)
-	:       m_handle(id), m_uniqueHandle(0), m_creator(creator), m_object(0),
-	        m_name(name), m_initialized(false), m_sorted(false)
-{
-}
-
-
-gkLogicTree::gkLogicTree(gkNodeManager* creator, UTsize id)
-	:       m_handle(id), m_uniqueHandle(0), m_creator(creator), m_object(0),
-	        m_name(StringUtil::BLANK), m_initialized(false), m_sorted(false)
+gkLogicTree::gkLogicTree(gkResourceManager *creator, const gkResourceName &name, const gkResourceHandle &handle)
+	:	gkResource(creator, name, handle),
+		m_object(0),
+		m_initialized(false), 
+		m_sorted(false)
 {
 }
 

@@ -29,77 +29,55 @@
 
 
 gkNodeManager::gkNodeManager()
-	:       m_uniqueHandle(0)
+	: gkResourceManager("NodeManager", "LogicNode")
 {
 }
 
 gkNodeManager::~gkNodeManager()
 {
-	clear();
+	destroyAll();
 }
 
-gkLogicTree* gkNodeManager::create()
+gkResource* gkNodeManager::createImpl(const gkResourceName& name, const gkResourceHandle& handle)
 {
-	// this is a normal tree
-	gkLogicTree* tree = new gkLogicTree(this, m_uniqueHandle);
-	m_trees.insert(m_uniqueHandle, tree);
-
-	m_locals.push_back(tree);
-	m_uniqueHandle++;
-	return tree;
+	return new gkLogicTree(this, name, handle);
 }
 
-
-gkLogicTree* gkNodeManager::create(const gkString& name)
+void gkNodeManager::notifyResourceCreatedImpl(gkResource* res)
 {
-	// this is a group tree
-	gkLogicTree* tree = new gkLogicTree(this, m_uniqueHandle, name);
-	m_trees.insert(m_uniqueHandle, tree);
-
-	m_uniqueHandle++;
-	return tree;
+	gkLogicTree* tree = static_cast<gkLogicTree*>(res);
+	if (tree->getName().empty())
+		m_locals.push_back(tree);
 }
 
-gkLogicTree* gkNodeManager::get(int id)
+void gkNodeManager::notifyResourceDestroyedImpl(gkResource* res)
 {
-	UTsize pos = m_trees.find(id);
-	if (pos != UT_NPOS)
-		return m_trees.at(pos);
-	return 0;
+	gkLogicTree* tree = static_cast<gkLogicTree*>(res);
+	if (tree->getName().empty())
+		m_locals.erase(tree);
 }
 
-gkLogicTree* gkNodeManager::get(const gkString& name)
+void gkNodeManager::notifyDestroyAllImpl()
 {
-	NodeTreeIterator iter(m_trees);
+	m_locals.clear();
+}
+
+void gkNodeManager::notifyDestroyGroupImpl(const gkResourceNameString &group)
+{
+	TreeList::Iterator iter(m_locals);
+
 	while (iter.hasMoreElements())
 	{
-		NodeTreeIterator::Pair kv = iter.getNext();
-		if (kv.second->getName() == name)
-			return kv.second;
+		gkLogicTree* tree = iter.getNext();
+		if (group == tree->getResourceName().group)
+			m_locals.erase(tree);
 	}
-	return 0;
 }
 
-void gkNodeManager::destroy(gkLogicTree* tree)
+gkLogicTree* gkNodeManager::createLogicTree(const gkString& groupName) //create normal tree
 {
-	if (tree)
-		destroy(tree->getHandle());
-}
-
-void gkNodeManager::destroy(int handle)
-{
-	UTsize pos = m_trees.find(handle);
-	if (pos != UT_NPOS)
-	{
-		gkLogicTree* ltree = m_trees.at(pos);
-
-		TreeList::Pointer node = m_locals.find(ltree);
-		if (node)
-			m_locals.erase(node);
-
-		delete ltree;
-		m_trees.remove(handle);
-	}
+	gkLogicTree* tree = create<gkLogicTree>(gkResourceName("", groupName));
+	return tree;
 }
 
 
@@ -112,15 +90,6 @@ void gkNodeManager::update(gkScalar tick)
 		while (iter.hasMoreElements())
 			iter.getNext()->execute(tick);
 	}
-}
-
-void gkNodeManager::clear()
-{
-	NodeTreeIterator iter(m_trees);
-	while (iter.hasMoreElements())
-		delete iter.getNext().second;
-	m_trees.clear();
-	m_locals.clear();
 }
 
 UT_IMPLEMENT_SINGLETON(gkNodeManager);

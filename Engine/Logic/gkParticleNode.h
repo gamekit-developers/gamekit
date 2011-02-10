@@ -30,6 +30,8 @@
 #include "gkLogicNode.h"
 #include "LinearMath/btQuickprof.h"
 
+class gkParticleObject;
+
 class gkParticleNode : public gkLogicNode
 {
 public:
@@ -50,36 +52,33 @@ public:
 
 	~gkParticleNode();
 
+	void initialize();
 	void update(Ogre::Real tick);
 	bool evaluate(Ogre::Real tick);
 
 private:
 
-	class ParticleSystem
+	class ParticleObject
 	{
 	public:
 
-		ParticleSystem(const gkString& name, const gkVector3& position, const gkQuaternion& q);
-		~ParticleSystem();
+		ParticleObject(gkParticleObject* parObj);
+		~ParticleObject();
 
-		bool HasExpired() { return m_timer.getTimeMilliseconds() > m_time_to_live; }
+		GK_INLINE bool isExpired() { return m_timer.getTimeMilliseconds() > m_timeToLive; }
 
-	private:
+		gkParticleObject* m_parObj;
 
-		Ogre::SceneNode* m_node;
-
-		Ogre::ParticleSystem* m_particleSystem;
-
-		gkScalar m_time_to_live;
+		gkScalar m_timeToLive;
 
 		btClock m_timer;
 	};
 
-	typedef utList<ParticleSystem*> ParticleObjects;
+	typedef utList<ParticleObject*> ParticleObjects;
 	typedef utListIterator<ParticleObjects> ParticleObjectIterator;
 
 	ParticleObjects    m_particles;
-
+	gkScene* m_scene;
 };
 
 #endif//_gkParticleNode_h_

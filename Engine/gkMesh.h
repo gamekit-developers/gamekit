@@ -77,7 +77,18 @@ struct gkTriangle
 	int flag;
 };
 
+struct gkTriFace
+{
+	gkVector3 p[3];
+	unsigned int i[3];
 
+	gkTriFace() { i[0] = i[1] = i[2] = 0; }
+
+	GK_INLINE gkVector3 normal()
+	{
+		return (p[1]-p[0]).crossProduct(p[2]-p[1]).normalisedCopy();
+	}
+};
 
 
 class gkSubMeshIndexer;
@@ -175,6 +186,8 @@ private:
 	gkSkeletonResource*  m_skeleton;
 	gkMeshLoader*        m_meshLoader;
 
+	UTsize               m_vertexCount;
+	UTsize               m_triFaceCount;
 
 public:
 
@@ -201,6 +214,12 @@ public:
 
 
 	gkMeshLoader* getLoader(void) {return m_meshLoader;}
+
+	UTsize getMeshVertexCount(void);
+	const gkVertex& getMeshVertex(UTsize n);
+
+	UTsize getMeshTriFaceCount(void);
+	gkTriFace getMeshTriFace(UTsize n); 
 };
 
 #endif//_gkMesh_h_

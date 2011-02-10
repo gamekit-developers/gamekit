@@ -13,10 +13,19 @@ subdirs(Source/GameKit/AnimKit)
 include(NoWarn)
 subdirs(Source/OIS)
 subdirs(Source/FreeType)
-subdirs(Source/Recast)
-subdirs(Source/Detour)
-subdirs(Source/OpenSteer)
-subdirs(Source/opts)
+
+if (OGREKIT_COMPILE_OPENSTEER)
+	subdirs(Source/OpenSteer)
+endif()
+
+if (OGREKIT_COMPILE_OPTS)
+	subdirs(Source/opts)
+endif()
+
+if (OGREKIT_COMPILE_RECAST)
+	subdirs(Source/Recast)
+	subdirs(Source/Detour)
+endif()
 
 if (OGREKIT_USE_STATIC_FREEIMAGE)
 	subdirs(Source/FreeImage)

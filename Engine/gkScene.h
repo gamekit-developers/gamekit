@@ -34,8 +34,10 @@
 #include "gkGameObjectGroup.h"
 #include "AI/gkNavMeshData.h"
 #include "Thread/gkAsyncResult.h"
-#include "gkRecast.h"
 
+#ifdef OGREKIT_COMPILE_RECAST
+#include "gkRecast.h"
+#endif
 
 
 class gkScene : public gkInstancedObject
@@ -77,42 +79,42 @@ public:
 	void notifyObjectUpdate(gkGameObject* gobject);
 
 
-	void            addObject(gkGameObject* obj);
-	void            removeObject(gkGameObject* obj);
-	void            destroyObject(gkGameObject* obj);
+	void              addObject(gkGameObject* obj);
+	void              removeObject(gkGameObject* obj);
+	void              destroyObject(gkGameObject* obj);
+					  
+					  
+	bool              hasObject(const gkHashedString& ob);
+	bool              hasObject(gkGameObject* ob);
+	gkGameObject*     getObject(const gkHashedString& name);
+					  
+	bool              hasMesh(const gkHashedString& ob);
+	gkMesh*           getMesh(const gkHashedString& name);
 
 
-	bool            hasObject(const gkHashedString& ob);
-	bool            hasObject(gkGameObject* ob);
-	gkGameObject*   getObject(const gkHashedString& name);
+	gkGameObject*     createObject(const gkHashedString& name);
+	gkLight*          createLight(const gkHashedString& name);
+	gkCamera*         createCamera(const gkHashedString& name);
+	gkEntity*         createEntity(const gkHashedString& name);
+	gkSkeleton*       createSkeleton(const gkHashedString& name);
+	gkMesh*           createMesh(const gkHashedString& name);
+	gkParticleObject* createParticleObject(const gkHashedString& name);
 
-	bool            hasMesh(const gkHashedString& ob);
-	gkMesh*         getMesh(const gkHashedString& name);
-
-
-	gkGameObject*   createObject(const gkHashedString& name);
-	gkLight*        createLight(const gkHashedString& name);
-	gkCamera*       createCamera(const gkHashedString& name);
-	gkEntity*       createEntity(const gkHashedString& name);
-	gkSkeleton*     createSkeleton(const gkHashedString& name);
-	gkMesh*         createMesh(const gkHashedString& name);
+	gkGameObject*     cloneObject(gkGameObject* obj, int life, bool instantiate = false);
+	void              endObject(gkGameObject* obj);
 
 
-	gkGameObject*   cloneObject(gkGameObject* obj, int life, bool instantiate = false);
-	void            endObject(gkGameObject* obj);
+	void              getGroups(gkGroupArray& groups);
 
 
-	void            getGroups(gkGroupArray& groups);
+	gkDebugger*       getDebugger(void);
 
+	GK_INLINE void    setNavMeshData(PNAVMESHDATA navMeshData) { m_navMeshData = navMeshData; }
 
-	gkDebugger* getDebugger(void);
-
-	GK_INLINE void setNavMeshData(PNAVMESHDATA navMeshData) { m_navMeshData = navMeshData; }
-
+#ifdef OGREKIT_COMPILE_RECAST
 	typedef gkAsyncResult<PDT_NAV_MESH > ASYNC_DT_RESULT;
-
 	bool asyncTryToCreateNavigationMesh(gkActiveObject& activeObj, const gkRecast::Config& config, ASYNC_DT_RESULT result);
-
+#endif
 
 
 	void applyConstraints(void);

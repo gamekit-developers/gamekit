@@ -72,6 +72,7 @@ protected:
 	void buildAllSounds(void);
 	void buildAllFonts(void);
 	void buildAllActions(void);
+	void buildAllParticles(void);
 
 
 	void loadActive(void);

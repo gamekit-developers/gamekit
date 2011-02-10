@@ -3,7 +3,7 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Charlie C.
+    Copyright (c) 2006-2010 harkon.kr.
 
     Contributor(s): none yet.
 -------------------------------------------------------------------------------
@@ -23,5 +23,40 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
-TODO, experiment with a bullet based particle system
 */
+
+#ifndef _gkParticleManager_h_
+#define _gkParticleManager_h_
+
+#include "gkResourceManager.h"
+#include "utSingleton.h"
+
+class gkParticleResource;
+class gkEmitterFactory;
+class gkAffectorFactory;
+class gkParticleRendererFactory;
+
+class gkParticleManager : public gkResourceManager, utSingleton<gkParticleManager>
+{
+protected:
+	gkEmitterFactory* m_emitterFactory;
+	gkAffectorFactory* m_affectorFactory;
+	gkParticleRendererFactory* m_rendererFactory;
+
+public:
+	gkParticleManager();
+	virtual ~gkParticleManager();
+
+	void initialize(void);
+
+	gkString createOrRetrieveHaloMaterial(const gkString& baseMatName);
+
+	gkResource* createImpl(const gkResourceName& name, const gkResourceHandle& handle);
+
+	gkParticleResource* createParticle(const gkResourceName& name, gkParticleSettingsProperties& pp);
+	gkParticleResource* createParticle(const gkResourceName& name);
+
+	UT_DECLARE_SINGLETON(gkParticleManager);
+};
+
+#endif//_gkParticleManager_h_

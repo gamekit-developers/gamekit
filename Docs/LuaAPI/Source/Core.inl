@@ -2103,6 +2103,15 @@ Implement access.
 
 \endpage
 
+<!-- ============================================ Particles ============================================ -->
+\LuaClass{Particles}
+\LuaClassExtend{GameObject}
+
+<b>Placeholder:</b> \n\n
+Implement access.
+
+\endpage
+
 <!-- ============================================ Debugger ============================================ -->
 \LuaClass{Debugger}
 

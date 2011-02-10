@@ -30,7 +30,7 @@
 #include "gkEntity.h"
 #include "gkLight.h"
 #include "gkSkeleton.h"
-
+#include "gkParticleObject.h"
 
 
 gkGameObjectManager::gkGameObjectManager()
@@ -77,6 +77,13 @@ gkSkeleton* gkGameObjectManager::createSkeleton(const gkResourceName& name)
 	return static_cast<gkSkeleton*>(create(name));
 }
 
+gkParticleObject* gkGameObjectManager::createParticleObject(const gkResourceName& name)
+{
+	m_currentType = GK_PARTICLES;
+	return static_cast<gkParticleObject*>(create(name));
+}
+
+
 gkGameObject* gkGameObjectManager::getObject(const gkResourceName& name)
 {
 	return getByName<gkGameObject>(name);
@@ -106,6 +113,11 @@ gkSkeleton* gkGameObjectManager::getSkeleton(const gkResourceName& name)
 	return ob ? ob->getSkeleton() : 0;
 }
 
+gkParticleObject * gkGameObjectManager::getParticleObject(const gkResourceName& name)
+{
+	gkGameObject* ob = getObject(name);
+	return ob ? ob->getParticleObject() : 0;
+}
 
 
 gkResource* gkGameObjectManager::createImpl(const gkResourceName& name, const gkResourceHandle& handle)
@@ -119,6 +131,7 @@ gkResource* gkGameObjectManager::createImpl(const gkResourceName& name, const gk
 	case GK_CAMERA:    return new gkCamera(this, name, handle);
 	case GK_ENTITY:    return new gkEntity(this, name, handle);
 	case GK_SKELETON:  return new gkSkeleton(this, name, handle);
+	case GK_PARTICLES: return new gkParticleObject(this, name, handle);
 	}
 	return new gkGameObject(this, name, handle);
 }

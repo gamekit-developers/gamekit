@@ -42,6 +42,22 @@ properties_game.PHYSICS_PT_game_physics.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_game.PHYSICS_PT_game_collision_bounds.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 del properties_game
     
+
+import properties_particle
+properties_particle.PARTICLE_PT_context_particles.COMPAT_ENGINES.add('GAMEKIT_RENDER')
+properties_particle.PARTICLE_PT_emission.COMPAT_ENGINES.add('GAMEKIT_RENDER')
+properties_particle.PARTICLE_PT_velocity.COMPAT_ENGINES.add('GAMEKIT_RENDER')
+properties_particle.PARTICLE_PT_rotation.COMPAT_ENGINES.add('GAMEKIT_RENDER')
+properties_particle.PARTICLE_PT_physics.COMPAT_ENGINES.add('GAMEKIT_RENDER')
+#properties_particle.PARTICLE_PT_boidbrain.COMPAT_ENGINES.add('GAMEKIT_RENDER')
+properties_particle.PARTICLE_PT_render.COMPAT_ENGINES.add('GAMEKIT_RENDER')
+properties_particle.PARTICLE_PT_draw.COMPAT_ENGINES.add('GAMEKIT_RENDER')
+#properties_particle.PARTICLE_PT_children.COMPAT_ENGINES.add('GAMEKIT_RENDER')
+properties_particle.PARTICLE_PT_field_weights.COMPAT_ENGINES.add('GAMEKIT_RENDER')
+properties_particle.PARTICLE_PT_force_fields.COMPAT_ENGINES.add('GAMEKIT_RENDER')
+#properties_particle.PARTICLE_PT_vertexgroups.COMPAT_ENGINES.add('GAMEKIT_RENDER')
+del properties_particle
+    
 import properties_material
 properties_material.MATERIAL_PT_context_material.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_material.MATERIAL_PT_custom_props.COMPAT_ENGINES.add('GAMEKIT_RENDER')

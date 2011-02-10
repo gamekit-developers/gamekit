@@ -64,6 +64,7 @@ private:
 	void convertObjectMesh(gkGameObject* gobj, Blender::Object* bobj);
 	void convertObjectArmature(gkGameObject* gobj, Blender::Object* bobj);
 	void convertObjectSkeleton(gkSkeletonResource* gobj, Blender::Object* bobj);
+	void convertObjectParticles(gkGameObject* gobj, Blender::Object* bobj);
 
 
 

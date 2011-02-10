@@ -425,6 +425,16 @@ public:
 	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsSkeleton, gkInstancedObject);
 };
 
+class gsParticles : public gsGameObject
+{
+public:
+	gsParticles();
+	~gsParticles() {}
+
+
+	// internal
+	OGRE_KIT_WRAP_BASE_COPY_CTOR(gsParticles, gkInstancedObject);
+};
 
 
 

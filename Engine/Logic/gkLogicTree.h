@@ -29,11 +29,12 @@
 
 #include "gkLogicCommon.h"
 #include "gkLogicNode.h"
+#include "gkResource.h"
 
 class gkGameObject;
 class gkNodeManager;
 
-class gkLogicTree
+class gkLogicTree : public gkResource
 {
 public:
 	typedef utList<gkLogicNode*>        NodeList;
@@ -41,6 +42,9 @@ public:
 
 
 public:
+	gkLogicTree(gkResourceManager *creator, const gkResourceName &name, const gkResourceHandle &handle);
+
+
 	gkLogicTree(gkNodeManager* creator, UTsize id, const gkString& name);
 	gkLogicTree(gkNodeManager* creator, UTsize id);
 	~gkLogicTree();
@@ -49,12 +53,9 @@ public:
 	void execute(gkScalar tick);
 
 
-	GK_INLINE const gkString& getName(void) const   {return m_name;}
-	GK_INLINE const UTsize getHandle(void)          {return m_handle;}
-	GK_INLINE gkNodeManager* getCreator(void)       {return m_creator;}
 	GK_INLINE gkGameObject* getAttachedObject(void) {return m_object;}
 	GK_INLINE bool hasNodes(void)                   {return !m_nodes.empty();}
-	GK_INLINE bool isGroup(void)                    {return !m_name.empty();}
+	GK_INLINE bool isGroup(void)                    {return !m_name.getName().empty();}
 	GK_INLINE void markDirty(void)                  {m_initialized = false;}
 	GK_INLINE NodeIterator getNodeIterator(void)    {return NodeIterator(m_nodes);}
 
@@ -82,10 +83,7 @@ public:
 
 protected:
 	bool                m_initialized, m_sorted;
-	const UTsize        m_handle;
-	const gkString      m_name;
 	size_t              m_uniqueHandle;
-	gkNodeManager*      m_creator;
 	gkGameObject*       m_object;
 	NodeList            m_nodes;
 };

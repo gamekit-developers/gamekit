@@ -3,7 +3,7 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Charlie C.
+    Copyright (c) 2006-2010 harkon.kr.
 
     Contributor(s): none yet.
 -------------------------------------------------------------------------------
@@ -23,28 +23,42 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
-	Force rebuild when settings change
 */
-#ifndef _gkSettings_h_
-#define _gkSettings_h_
 
-#cmakedefine OGREKIT_USE_LUA 1
-#cmakedefine OGREKIT_COMPILE_OGRE_SCRIPTS 1
-#cmakedefine OGREKIT_DEBUG_ASSERT 1
-#cmakedefine OGREKIT_OPENAL_SOUND 1
-#cmakedefine OGRE_BUILD_RENDERSYSTEM_GL 1
-#cmakedefine OGRE_BUILD_RENDERSYSTEM_GLES 1
-#cmakedefine OGREKIT_BUILD_D3D9RS 1
-#cmakedefine OGREKIT_BUILD_D3D10RS 1
-#cmakedefine OGREKIT_BUILD_D3D11RS 1
-#cmakedefine OGREKIT_BUILD_IPHONE 1
-#cmakedefine OGREKIT_USE_NNODE 1
-#cmakedefine OGREKIT_COMPILE_RECAST 1
-#cmakedefine OGREKIT_COMPILE_OPENSTEER 1
+#ifndef _gkParticleAffector_h_
+#define _gkParticleAffector_h_
 
-#ifdef OGREKIT_DEBUG_ASSERT
-#define UT_DEBUG_ASSERT 1
-#endif
+#include "OgreParticleAffector.h"
+#include "OgreParticleAffectorFactory.h"
+
+class gkParticleResource;
+
+class gkParticleAffector : public Ogre::ParticleAffector
+{
+protected:
+	gkParticleResource* m_creator;
+
+public:
+	static const Ogre::String NAME;
+
+	gkParticleAffector(Ogre::ParticleSystem* psys);
+	virtual ~gkParticleAffector();
+
+	virtual void _affectParticles(Ogre::ParticleSystem* psys, Ogre::Real timeElapsed);
+
+	GK_INLINE void setCreator(gkParticleResource* creator) { m_creator = creator; }
+
+	virtual void copyParametersTo(Ogre::StringInterface* dest) const;
+};
 
 
-#endif//_gkSettings_h_
+class gkAffectorFactory : public Ogre::ParticleAffectorFactory
+{
+public:
+	GK_INLINE Ogre::String getName() const { return gkParticleAffector::NAME; }
+
+	Ogre::ParticleAffector* createAffector(Ogre::ParticleSystem* psys);
+};
+
+#endif//_gkParticleAffector_h_
+

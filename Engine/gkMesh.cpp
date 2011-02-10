@@ -215,7 +215,9 @@ gkMesh::gkMesh(gkResourceManager* creator, const gkResourceName& name, const gkR
 	    m_bounds(gkBoundingBox::BOX_NULL),
 	    m_boundsInit(false),
 	    m_triMesh(0),
-	    m_skeleton(0)
+	    m_skeleton(0),
+		m_vertexCount(0),
+		m_triFaceCount(0)
 {
 	m_meshLoader = new gkMeshLoader(this);
 }
@@ -335,4 +337,86 @@ gkVertexGroup* gkMesh::findVertexGroup(const gkString& name)
 			return grp;
 	}
 	return 0;
+}
+
+UTsize gkMesh::getMeshVertexCount()
+{
+	if (m_vertexCount > 0) return m_vertexCount;
+
+	m_vertexCount = 0;
+	UTsize i = 0;
+	for (i = 0; i < m_submeshes.size(); i++)
+		m_vertexCount += m_submeshes[i]->getVertexBuffer().size();
+
+	return m_vertexCount;
+}
+
+const gkVertex& gkMesh::getMeshVertex(UTsize n)
+{
+	static const gkVertex v;
+
+	UTsize vertexCount = getMeshVertexCount();
+	if (n >= vertexCount) return v;
+
+	UTsize i = 0;
+	for (i = 0; i < m_submeshes.size(); i++)
+	{
+		UTsize scount = m_submeshes[i]->getVertexBuffer().size();
+		if (n >= scount)
+			n -= scount;
+		else
+			return m_submeshes[i]->getVertexBuffer()[n];
+	}
+
+	return v;
+}
+
+
+UTsize gkMesh::getMeshTriFaceCount()
+{
+	if (m_triFaceCount > 0) return m_triFaceCount;
+
+	m_triFaceCount = 0;
+	UTsize i = 0;
+	for (i = 0; i < m_submeshes.size(); i++)
+		m_triFaceCount += m_submeshes[i]->getIndexBuffer().size();
+
+	return m_triFaceCount;
+}
+
+gkTriFace gkMesh::getMeshTriFace(UTsize n)
+{
+	gkTriFace f;
+
+	UTsize faceCount = getMeshVertexCount();
+	if (n >= faceCount) return f;
+
+	UTsize i = 0, tot = 0;
+	for (i = 0; i < m_submeshes.size(); i++)
+	{
+		const gkSubMesh::Triangles& tris = m_submeshes[i]->getIndexBuffer();
+		UTsize scount = tris.size();
+		if (n >= scount)
+		{
+			n -= scount;
+			tot += scount;
+		}
+		else
+		{
+			const gkSubMesh::Verticies& verts = m_submeshes[i]->getVertexBuffer();
+			const gkTriangle& t = tris[n];
+
+			f.p[0] = verts[t.i0].co;
+			f.p[1] = verts[t.i1].co;
+			f.p[2] = verts[t.i2].co;
+
+			f.i[0] = t.i0 + tot;
+			f.i[1] = t.i1 + tot;
+			f.i[2] = t.i0 + tot;
+
+			break;
+		}
+	}
+
+	return f;
 }

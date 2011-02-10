@@ -133,33 +133,43 @@ endif()
 # ---------------------------------------------------------
 
 set(AI_SOURCE
-	# ----- Source -----
-	AI/gkRecast.cpp
-	AI/gkNavMeshData.cpp
-	AI/gkNavPath.cpp
+	# ----- Source -----	
+	AI/gkNavMeshData.cpp	
 	AI/gkSteering.cpp
-	AI/gkSteeringObject.cpp
-	AI/gkSteeringCapture.cpp
-	AI/gkSteeringPathFollowing.cpp
-	AI/gkSteeringWander.cpp
-	AI/gkSceneObstacle.cpp
 	AI/gkFSM.cpp
 )
 
 set(AI_HEADER
 	# ----- Headers -----
 	AI/gkMeshData.h
-	AI/gkRecast.h
 	AI/gkNavMeshData.h
-	AI/gkNavPath.h
 	AI/gkSteering.h
+	AI/gkFSM.h
+)
+
+if (OGREKIT_COMPILE_RECAST)
+list(APPEND AI_SOURCE AI/gkRecast.cpp)
+list(APPEND AI_HEADER AI/gkRecast.h)
+endif()
+
+if (OGREKIT_COMPILE_OPENSTEER)
+list(APPEND AI_SOURCE
+	AI/gkNavPath.cpp
+	AI/gkSteeringObject.cpp
+	AI/gkSteeringCapture.cpp
+	AI/gkSteeringPathFollowing.cpp
+	AI/gkSteeringWander.cpp
+	AI/gkSceneObstacle.cpp
+)
+list(APPEND AI_HEADER 
+	AI/gkNavPath.h
 	AI/gkSteeringObject.h
 	AI/gkSteeringCapture.h
 	AI/gkSteeringPathFollowing.h
 	AI/gkSteeringWander.h
 	AI/gkSceneObstacle.h
-	AI/gkFSM.h
 )
+endif()
 
 if(APPLE)
 	source_group(AI FILES ${AI_HEADER} ${AI_SOURCE})
@@ -230,9 +240,46 @@ else()
 	source_group(Animation\\Source FILES ${Animation_SOURCE})
 endif()
 
+
+# ---------------------------------------------------------
+# Particles Files
+# ---------------------------------------------------------
+
+set(Particles_SOURCE
+	# ----- Source -----
+	Particles/gkParticleObject.cpp
+	Particles/gkParticleResource.cpp
+	Particles/gkParticleAffector.cpp
+	Particles/gkParticleEmitter.cpp
+	Particles/gkParticleRenderer.cpp
+	Particles/gkParticleManager.cpp
+)
+
+
+set(Particles_HEADER
+	# ----- Headers -----
+	Particles/gkParticleObject.h
+	Particles/gkParticleResource.h
+	Particles/gkParticleAffector.h
+	Particles/gkParticleEmitter.h
+	Particles/gkParticleRenderer.h
+	Particles/gkParticleManager.h
+)
+
+if(APPLE)
+	source_group(Particles FILES ${Particles_HEADER}  ${Particles_SOURCE})
+
+else()
+	source_group(Particles\\Header FILES ${Particles_HEADER})
+	source_group(Particles\\Source FILES ${Particles_SOURCE})
+endif()
+
+
 # ---------------------------------------------------------
 # Logic Nodes
 # ---------------------------------------------------------
+if (OGREKIT_USE_NNODE)
+
 set(NLogic_SOURCE
 	# ----- Source -----
 	Logic/gkButtonNode.cpp
@@ -240,7 +287,7 @@ set(NLogic_SOURCE
 	Logic/gkCharacterNode.cpp
 	Logic/gkCollisionNode.cpp
 	Logic/gkExitNode.cpp
-	Logic/gkExpressionNode.cpp
+	#Logic/gkExpressionNode.cpp
 	Logic/gkGrabNode.cpp
 	Logic/gkGroupNode.cpp
 	Logic/gkNodeManager.cpp
@@ -253,7 +300,7 @@ set(NLogic_SOURCE
 	Logic/gkPrintNode.cpp
 	Logic/gkRandomNode.cpp
 	Logic/gkRayTestNode.cpp
-	Logic/gkSwitchNode.cpp
+	#Logic/gkSwitchNode.cpp
 	Logic/gkTimerNode.cpp
 	Logic/gkValueNode.cpp
 	Logic/gkVariableNode.cpp
@@ -313,6 +360,8 @@ if(APPLE)
 else()
 	source_group(LogicNodes\\Header FILES ${NLogic_HEADER})
 	source_group(LogicNodes\\Source FILES ${NLogic_SOURCE})
+endif()
+
 endif()
 
 # ---------------------------------------------------------
@@ -413,6 +462,7 @@ set(Blend_SOURCE
 	Loaders/Blender2/Converters/gkLogicBrickConverter.cpp
 	Loaders/Blender2/Converters/gkMeshConverter.cpp
 	Loaders/Blender2/Converters/gkSkeletonConverter.cpp
+	Loaders/Blender2/Converters/gkParticleConverter.cpp
 )
 
 set(Blend_HEADER
@@ -427,6 +477,7 @@ set(Blend_HEADER
 	Loaders/Blender2/Converters/gkLogicBrickConverter.h
 	Loaders/Blender2/Converters/gkMeshConverter.h
 	Loaders/Blender2/Converters/gkSkeletonConverter.h
+	Loaders/Blender2/Converters/gkParticleConverter.h
 )
 
 if(APPLE)
@@ -600,15 +651,15 @@ if (OGREKIT_COMPLIE_SWIG AND SWIG_FOUND)
 	)
 
 	if(APPLE)
-		source_group(Script/uiltin   FILES ${Script_TMPL})
+		source_group(Script/uiltin    FILES ${Script_TMPL})
 		source_group(Script/Includes  FILES ${SWIG_INPUT} ${Script_INC})
-			source_group(Script/Header    FILES ${Script_HEADER})
-			source_group(Script/Source    FILES ${Script_SOURCE})
+		source_group(Script/Header    FILES ${Script_HEADER})
+		source_group(Script/Source    FILES ${Script_SOURCE})
 	else()
-			source_group(Script\\Builtin   FILES ${Script_TMPL})
-			source_group(Script\\Includes  FILES ${SWIG_INPUT} ${Script_INC})
-			source_group(Script\\Header    FILES ${Script_HEADER})
-			source_group(Script\\Source    FILES ${Script_SOURCE})
+		source_group(Script\\Builtin   FILES ${Script_TMPL})
+		source_group(Script\\Includes  FILES ${SWIG_INPUT} ${Script_INC})
+		source_group(Script\\Header    FILES ${Script_HEADER})
+		source_group(Script\\Source    FILES ${Script_SOURCE})
 	endif()
 
 
@@ -794,6 +845,30 @@ else()
 	source_group(External\\Source FILES ${External_SOURCE})
 endif()
 
+# ---------------------------------------------------------
+# Resources Files
+# ---------------------------------------------------------
+
+set(Resources_FILES)
+
+if (OGREKIT_GENERATE_BUILTIN_RES)
+
+
+	
+	#particle
+	set(PARTICLE_TMPL
+		User/flare_alpha_64.png
+	)
+	add_templates(1 GEN_PARTICLE_OUT User/gkParticleTemplates.inl ${PARTICLE_TMPL})
+	LIST(APPEND Resources_FILES	${GEN_PARTICLE_OUT})
+	
+	#font, etc...
+	
+	source_group(Resources FILES ${Resources_FILES})			
+
+endif()
+
+
 
 # ---------------------------------------------------------
 # Build setup
@@ -830,6 +905,7 @@ include_directories(
 	./Loaders/Blender2
 	./Physics
 	./Thread
+	./Particles
 	)
 
 #Reconfigure external Bullet libraries ${OGREKIT_BULLET_LIBS} before link 
@@ -872,9 +948,11 @@ add_library(OgreKitCore STATIC
 			${Network_SOURCE}    ${Network_HEADER}
 			${NLogic_SOURCE}     ${NLogic_HEADER}
 			${Thread_SOURCE}     ${Thread_HEADER}
+			${Particles_SOURCE}  ${Particles_HEADER}
 			${External_SOURCE}   ${External_HEADER}
 			${HiddenDepenCMakeLists}
 			${Extra_SOURCE}
+			${Resources_FILES}
 	)
 
 config_target_if_iphone_build(OgreKitCore TRUE)

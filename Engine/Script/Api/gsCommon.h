@@ -106,6 +106,7 @@ class gsEngineEventObject;
 class gsMouse;
 class gsKeyboard;
 class gsSkeleton;
+class gsParticles;
 class gsFSM;
 class gsRayTest;
 class gsSweptTest;

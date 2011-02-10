@@ -3,7 +3,7 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Charlie C.
+    Copyright (c) 2006-2010 harkon.kr.
 
     Contributor(s): none yet.
 -------------------------------------------------------------------------------
@@ -23,28 +23,32 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
-	Force rebuild when settings change
 */
-#ifndef _gkSettings_h_
-#define _gkSettings_h_
 
-#cmakedefine OGREKIT_USE_LUA 1
-#cmakedefine OGREKIT_COMPILE_OGRE_SCRIPTS 1
-#cmakedefine OGREKIT_DEBUG_ASSERT 1
-#cmakedefine OGREKIT_OPENAL_SOUND 1
-#cmakedefine OGRE_BUILD_RENDERSYSTEM_GL 1
-#cmakedefine OGRE_BUILD_RENDERSYSTEM_GLES 1
-#cmakedefine OGREKIT_BUILD_D3D9RS 1
-#cmakedefine OGREKIT_BUILD_D3D10RS 1
-#cmakedefine OGREKIT_BUILD_D3D11RS 1
-#cmakedefine OGREKIT_BUILD_IPHONE 1
-#cmakedefine OGREKIT_USE_NNODE 1
-#cmakedefine OGREKIT_COMPILE_RECAST 1
-#cmakedefine OGREKIT_COMPILE_OPENSTEER 1
+#include "gkCommon.h"
+#include "gkParticleRenderer.h"
 
-#ifdef OGREKIT_DEBUG_ASSERT
-#define UT_DEBUG_ASSERT 1
-#endif
+const gkString gkParticleRenderer::NAME = "gkBillboard";
+
+gkParticleRenderer::gkParticleRenderer()
+	: m_creator(0)
+{
+}
+
+gkParticleRenderer::~gkParticleRenderer()
+{
+}
 
 
-#endif//_gkSettings_h_
+//--
+	
+Ogre::ParticleSystemRenderer* gkParticleRendererFactory::createInstance(const Ogre::String& name)
+{
+	return new gkParticleRenderer();
+}
+	
+void gkParticleRendererFactory::destroyInstance(Ogre::ParticleSystemRenderer* inst)
+{
+	delete inst;
+}
+

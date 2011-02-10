@@ -66,7 +66,7 @@ void gkBone::applyChannelTransform(const gkTransformState& channel, gkScalar wei
 	// save previous pose
 	gkTransformState blendmat = m_pose;
 
-	// combine relitave to binding position
+	// combine relative to binding position
 	m_pose.loc = m_bind.loc + m_bind.rot * channel.loc;
 	m_pose.rot = m_bind.rot * channel.rot;
 	m_pose.scl = m_bind.scl * channel.scl;

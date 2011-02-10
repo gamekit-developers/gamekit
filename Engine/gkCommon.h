@@ -137,6 +137,11 @@ class gkTransformChannel;
 class gkBoneChannel;
 class gkObjectChannel;
 
+class gkParticleObject;
+class gkParticleManager;
+class gkParticleAffector;
+class gkParticleEmitter;
+
 // Common types
 typedef utHashTable<gkHashedString, gkGameObject*>	gkGameObjectHashMap;
 typedef utArray<gkGameObject*>						gkGameObjectArray;

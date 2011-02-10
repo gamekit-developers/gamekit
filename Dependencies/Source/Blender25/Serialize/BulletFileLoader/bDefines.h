@@ -76,6 +76,9 @@
 #define ID_FLUIDSIM	MAKE_ID2('F', 'S')
 #define ID_NT		MAKE_ID2('N', 'T')
 #define ID_BR		MAKE_ID2('B', 'R')
+#define ID_PA		MAKE_ID2('P', 'A')
+#define ID_GD		MAKE_ID2('G', 'D')
+#define ID_WM		MAKE_ID2('W', 'M')
 
 
 #define ID_SEQ		MAKE_ID2('S', 'Q')

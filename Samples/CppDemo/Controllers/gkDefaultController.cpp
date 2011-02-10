@@ -79,10 +79,10 @@ void gkDefaultController::moveCamera(void)
 	{
 		const gkScalar tick = gkAppData::gkFixedTickDelta * .25f;
 
-		if (m_mouse->relitave.x!= 0.f)
-			data.m_zRot->roll(-gkRadian(m_mouse->relitave.x * tick));
-		if (m_mouse->relitave.y!= 0.f)
-			data.m_xRot->pitch(-gkRadian(m_mouse->relitave.y * tick));
+		if (m_mouse->relative.x!= 0.f)
+			data.m_zRot->roll(-gkRadian(m_mouse->relative.x * tick));
+		if (m_mouse->relative.y!= 0.f)
+			data.m_xRot->pitch(-gkRadian(m_mouse->relative.y * tick));
 	}
 	else
 	{

@@ -386,6 +386,7 @@ enum gkGameObjectTypes
 	GK_ENTITY,
 	GK_OBJECT,
 	GK_SKELETON,
+	GK_PARTICLES
 };
 
 enum gkGameObjectMode
@@ -558,6 +559,113 @@ public:
 	gkVector3       m_gravity;
 	gkSceneMaterial m_material;
 	gkFogParams     m_fog;
+};
+
+
+class gkParticleSettingsProperties
+{
+public:
+	enum Physics
+	{
+		PHY_NONE,
+		PHY_NEWTON,
+		PHY_KEYED,
+		PHY_BOIDS,	
+		PHY_FLUID
+	};
+
+	enum EmitFrom
+	{
+		EF_VERTS,
+		EF_FACES,
+		EF_VOLUME,
+		EF_PARTICLES
+	};
+
+	enum Render
+	{
+		R_NONE,
+		R_HALO,
+		R_LINE,
+		R_PATH,
+		R_OBJECT,
+		R_GROUP,
+		R_BILLBOARD
+	};
+
+
+public:
+	gkString		m_name;	
+	
+	int				m_amount;		//emission
+	int				m_emitfrom;
+	float			m_lifetime;
+	float			m_start;
+	float			m_end;
+	float			m_random;
+	float			m_jitter;
+	int				m_render;
+
+	gkVector3		m_velocity;		//velocity
+	float			m_velNormal;	
+	float			m_velTanget;
+
+	int				m_phyType;		//physics
+	float			m_size;			
+	float			m_mass;
+	float			m_sizeRandom;
+
+	int				m_material;		//render
+	int				m_trailCount;
+	bool			m_drawEmitter;
+
+	float			m_gravity;		//field weights
+
+
+public:
+	gkParticleSettingsProperties()
+		:	m_amount(1000),
+			m_emitfrom(EF_VERTS),
+			m_lifetime(50.f),
+			m_start(1.f),
+			m_end(200.f),
+			m_random(0.f),
+			m_jitter(1.f),
+			m_render(R_HALO),
+
+			m_velocity(0.f,0.f,0.f),
+			m_velNormal(1.f),
+			m_velTanget(0.f),
+
+			m_phyType(PHY_NEWTON),
+			m_size(0.05f),
+			m_mass(1.f),
+			m_sizeRandom(0.f),
+
+			m_material(0),
+			m_trailCount(1),
+			m_drawEmitter(false),
+
+			m_gravity(1.f)
+	{
+	}
+};
+
+class gkParticleSystemProperties
+{
+public:
+	gkString		m_name;
+	int				m_seed;
+	gkString		m_settings;
+	gkString		m_material;
+	gkMesh*			m_mesh;
+
+public:
+	gkParticleSystemProperties()
+		:	m_seed(0),
+			m_mesh(0)
+	{
+	}
 };
 
 

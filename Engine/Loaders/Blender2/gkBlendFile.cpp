@@ -32,7 +32,6 @@
 #include "bMain.h"
 #include "Blender.h"
 
-
 #include "gkBlendFile.h"
 #include "gkBlendLoader.h"
 #include "gkSceneManager.h"
@@ -40,6 +39,7 @@
 #include "gkGameObject.h"
 
 #include "Converters/gkAnimationConverter.h"
+#include "Converters/gkParticleConverter.h"
 
 #include "gkBlenderDefines.h"
 #include "gkBlenderSceneConverter.h"
@@ -149,6 +149,7 @@ void gkBlendFile::loadActive(void)
 		buildTextFiles();
 		buildAllSounds();
 		buildAllActions();
+		buildAllParticles();
 
 		// parse & build
 		Blender::Scene* sc = (Blender::Scene*)fg->curscene;
@@ -176,6 +177,7 @@ void gkBlendFile::createInstances(void)
 	buildTextFiles();
 	buildAllSounds();
 	buildAllActions();
+	buildAllParticles();
 
 
 	bParse::bListBasePtr* scenes = m_file->getMain()->getScene();
@@ -241,7 +243,8 @@ void gkBlendFile::buildTextFiles(void)
 
 	gkTextManager& txtMgr = gkTextManager::getSingleton();
 
-	for (int i = 0; i < text->size(); ++i)
+	int i;
+	for (i = 0; i < text->size(); ++i)
 	{
 		Blender::Text* txt = (Blender::Text*)text->at(i);
 		Blender::TextLine* tl = (Blender::TextLine*)txt->lines.first;
@@ -306,6 +309,21 @@ void gkBlendFile::buildAllTextures(void)
 }
 
 
+void gkBlendFile::buildAllParticles(void)
+{
+	bParse::bMain* mp = m_file->getMain();
+	
+	bParse::bListBasePtr* particleList = mp->getParticle();
+
+	int i;
+	for (i = 0; i < particleList->size(); ++i)
+	{
+		Blender::ParticleSettings* ps = (Blender::ParticleSettings*)particleList->at(i);
+
+		gkParticleConverter conv(m_group);
+		conv.convertParticle(ps);
+	}
+}
 
 void gkBlendFile::buildAllSounds(void)
 {
@@ -319,7 +337,8 @@ void gkBlendFile::buildAllSounds(void)
 	if (!mgr->isValidContext())
 		return;
 
-	for (int i = 0; i < soundList->size(); ++i)
+	int i;
+	for (i = 0; i < soundList->size(); ++i)
 	{
 		Blender::bSound* sound = (Blender::bSound*)soundList->at(i);
 
@@ -382,7 +401,8 @@ void gkBlendFile::buildAllFonts(void)
 
 	gkFontManager& fmgr = gkFontManager::getSingleton();
 
-	for (int i = 0; i < fontList->size(); ++i)
+	int i;
+	for (i = 0; i < fontList->size(); ++i)
 	{
 		Blender::VFont* vf = (Blender::VFont*)fontList->at(i);
 
@@ -408,6 +428,7 @@ void gkBlendFile::buildAllActions(void)
 	
 	anims.convertActions(mp->getAction(), mp->getVersion() <= 249, animfps);
 }
+
 
 
 void gkBlendFile::doVersionTests(void)

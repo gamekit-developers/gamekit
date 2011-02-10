@@ -70,4 +70,4 @@ if (APPLE)
   endif()
 endif()
 
-subdirs(OgreMain RenderSystems PlugIns)
+subdirs(OgreMain RenderSystems PlugIns Components)

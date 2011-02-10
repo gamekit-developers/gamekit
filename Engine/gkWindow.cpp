@@ -315,8 +315,8 @@ void gkWindow::dispatch(void)
 
 	m_mouse.moved = false;
 	m_mouse.wheelDelta = 0.f;
-	m_mouse.relitave.x = 0.f;
-	m_mouse.relitave.y = 0.f;
+	m_mouse.relative.x = 0.f;
+	m_mouse.relative.y = 0.f;
 
 	m_imouse->capture();
 	m_ikeyboard->capture();
@@ -351,8 +351,8 @@ bool gkWindow::mouseMoved(const OIS::MouseEvent& arg)
 
 	data.position.x = (gkScalar)arg.state.X.abs;
 	data.position.y = (gkScalar)arg.state.Y.abs;
-	data.relitave.x = (gkScalar)arg.state.X.rel;
-	data.relitave.y = (gkScalar)arg.state.Y.rel;
+	data.relative.x = (gkScalar)arg.state.X.rel;
+	data.relative.y = (gkScalar)arg.state.Y.rel;
 	data.moved = true;
 
 	if (arg.state.Z.rel != 0)
