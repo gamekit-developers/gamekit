@@ -206,7 +206,7 @@ public:
 
 
 	gkVector2 getPosition(void) const {return position;}
-	gkVector2 getRelitave(void) const {return relative;}
+	gkVector2 getRelative(void) const {return relative;}
 
 	GK_INLINE bool isButtonDown(int button) const
 	{

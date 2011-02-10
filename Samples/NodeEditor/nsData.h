@@ -114,7 +114,7 @@ public:
 	UT_INLINE NSvec2                getClampX(void)                         {return m_cx;}
 	UT_INLINE NSvec2                getClampY(void)                         {return m_cy;}
 	UT_INLINE NSvec2                getClampZ(void)                         {return m_cz;}
-	UT_INLINE const nsString&        getRelitaveObject(void)                {return m_relObj;}
+	UT_INLINE const nsString&       getRelativeObject(void)                 {return m_relObj;}
 	UT_INLINE bool                  getKeep(void)                           {return m_keep;}
 	UT_INLINE int                   getClampFlag(void)                      {return m_cf;}
 
@@ -124,7 +124,7 @@ public:
 	UT_INLINE void                  setClampX(const NSvec2& v)              {m_cx = v;}
 	UT_INLINE void                  setClampY(const NSvec2& v)              {m_cy = v;}
 	UT_INLINE void                  setClampZ(const NSvec2& v)              {m_cz = v;}
-	UT_INLINE void                  setRelitaveObject(const nsString& v)    {m_relObj = v;}
+	UT_INLINE void                  setRelativeObject(const nsString& v)    {m_relObj = v;}
 	UT_INLINE void                  setKeep(bool v)                         {m_keep = v;}
 	UT_INLINE void                  setClampFlag(int v)                     {m_cf = v;}
 };
