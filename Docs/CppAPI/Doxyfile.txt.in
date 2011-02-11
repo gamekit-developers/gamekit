@@ -252,7 +252,12 @@ EXPAND_ONLY_PREDEF     = NO
 SEARCH_INCLUDES        = YES
 INCLUDE_PATH           = 
 INCLUDE_FILE_PATTERNS  = 
-PREDEFINED             = 
+PREDEFINED             = OGREKIT_USE_LUA \
+                         OGREKIT_COMPILE_RECAST \
+                         OGREKIT_COMPILE_OGRE_SCRIPTS \
+                         OGREKIT_OPENAL_SOUND \
+                         OGREKIT_USE_NNODE \
+                         OGREKIT_COMPILE_OPENSTEER
 EXPAND_AS_DEFINED      = 
 SKIP_FUNCTION_MACROS   = YES
 
