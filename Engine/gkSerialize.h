@@ -391,13 +391,13 @@ enum gkGameObjectTypes
 
 enum gkGameObjectMode
 {
-	GK_GHOST        = (1 << 0),  // gkCharacter controller
-	GK_ACTOR        = (1 << 1),  // Sensor listener
-	GK_INVISIBLE    = (1 << 2),  // Marked invisible
-	GK_OCCLUDER     = (1 << 3),  // Occluder
-	GK_HAS_LOGIC    = (1 << 4),  // Has game logic
-	GK_IMMOVABLE    = (1 << 5),  // Marked as an immovable object
-	GK_STATIC_GEOM  = (1 << 6),  // Is part of static batch geometry.
+	GK_GHOST         = (1 << 0),  // gkCharacter controller
+	GK_ACTOR         = (1 << 1),  // Sensor listener
+	GK_INVISIBLE     = (1 << 2),  // Marked invisible
+	GK_OCCLUDER      = (1 << 3),  // Occluder
+	GK_HAS_LOGIC     = (1 << 4),  // Has game logic
+	GK_IMMOVABLE     = (1 << 5),  // Marked as an immovable object
+	GK_STATIC_GEOM   = (1 << 6)   // Is part of static batch geometry.
 };
 
 
@@ -422,6 +422,7 @@ public:
 	gkPhysicsProperties m_physics;
 	unsigned char       m_findPathFlag;
 	gkString            m_parent;
+	utArray<gkString>	m_particleObjs;
 
 
 	GK_INLINE bool isContactListener(void)    const { return m_physics.isContactListener(); }
@@ -436,10 +437,12 @@ public:
 	GK_INLINE bool isSoft(void)               const { return m_physics.isSoft(); }
 	GK_INLINE bool isMeshShape(void)          const { return m_physics.isMeshShape(); }
 
-	GK_INLINE bool isActor(void)              const { return (m_mode & GK_ACTOR)      != 0; }
-	GK_INLINE bool isInvisible(void)          const { return (m_mode & GK_INVISIBLE)  != 0; }
-	GK_INLINE bool isOccluder(void)           const { return (m_mode & GK_OCCLUDER)   != 0; }
-	GK_INLINE bool isGhost(void)              const { return (m_mode & GK_GHOST)      != 0; }
+	GK_INLINE bool isActor(void)              const { return (m_mode & GK_ACTOR)     != 0; }
+	GK_INLINE bool isInvisible(void)          const { return (m_mode & GK_INVISIBLE) != 0; }
+	GK_INLINE bool isOccluder(void)           const { return (m_mode & GK_OCCLUDER)  != 0; }
+	GK_INLINE bool isGhost(void)              const { return (m_mode & GK_GHOST)     != 0; }
+
+	GK_INLINE bool hasParticles(void)         const { return !m_particleObjs.empty(); }
 };
 
 class gkFogParams

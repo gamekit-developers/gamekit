@@ -26,6 +26,7 @@
 */
 #include "gkScene.h"
 #include "gkGameObject.h"
+#include "gkParticleObject.h"
 #include "gkGameObjectInstance.h"
 #include "gkEditObjectActuator.h"
 
@@ -79,13 +80,38 @@ void gkEditObjectActuator::addObject(void)
 			{
 				gkGameObject* nobj = scene->cloneObject(obj, m_life);
 
-				nobj->getProperties().m_transform.loc = m_object->getWorldPosition();
-				nobj->getProperties().m_transform.rot = m_object->getWorldOrientation();
+				gkGameObjectProperties& props = nobj->getProperties();
+
+				props.m_transform.loc = m_object->getWorldPosition();
+				props.m_transform.rot = m_object->getWorldOrientation();
 				nobj->createInstance();
 
 				// apply velocities
 				nobj->setLinearVelocity(m_linv, m_lvlocal ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
 				nobj->setAngularVelocity(m_angv,  m_avlocal ? TRANSFORM_LOCAL : TRANSFORM_PARENT);
+
+				
+				if (props.hasParticles())
+				{
+					UTsize i;
+					for (i = 0; i < props.m_particleObjs.size(); i++)
+					{
+						gkGameObject* child = scene->getObject(props.m_particleObjs[i]);						
+						if (child)
+						{
+							gkGameObject* pobj = scene->cloneObject(child, m_life);
+
+							gkGameObjectProperties& pprops = pobj->getProperties();
+
+							pprops.m_transform.loc = props.m_transform.loc;
+							pprops.m_transform.rot = props.m_transform.rot;
+
+							pobj->createInstance();
+							pobj->setParent(nobj);							
+						}
+					}
+				}
+
 			}
 
 		}

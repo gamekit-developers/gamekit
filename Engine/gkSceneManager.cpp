@@ -74,11 +74,12 @@ void gkSceneManager::copyObjects(gkScene* fromScene, gkScene* toScene, int excep
 		gkGameObject* obj = it.getNext().second;
 		gkGameObjectTypes type = obj->getType();
 
-		if ((type == GK_CAMERA && (exceptObjectTypes & OBJ_CAMERA)) ||
-			(type == GK_LIGHT && (exceptObjectTypes & OBJ_LIGHT)) ||
-			(type == GK_ENTITY && (exceptObjectTypes & OBJ_ENTITY)) ||
-			(type == GK_OBJECT && (exceptObjectTypes & OBJ_OBJECT)) ||
-			(type == GK_SKELETON && (exceptObjectTypes & OBJ_SKELETON))) 
+		if ((type == GK_CAMERA    && (exceptObjectTypes & OBJ_CAMERA))   ||
+			(type == GK_LIGHT     && (exceptObjectTypes & OBJ_LIGHT))    ||
+			(type == GK_ENTITY    && (exceptObjectTypes & OBJ_ENTITY))   ||
+			(type == GK_OBJECT    && (exceptObjectTypes & OBJ_OBJECT))   ||
+			(type == GK_SKELETON  && (exceptObjectTypes & OBJ_SKELETON)) ||
+			(type == GK_PARTICLES && (exceptObjectTypes & OBJ_PARTICLES)) )
 			continue;
 
 		if (obj->isInActiveLayer())

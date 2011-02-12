@@ -1329,6 +1329,7 @@ gkGameObject* gkScene::cloneObject(gkGameObject* obj, int lifeSpan, bool instant
 		m_tickClones.push_back(nobj);
 	else
 		m_clones.push_back(nobj);
+	
 
 	if (instantiate)
 		nobj->createInstance();

@@ -45,13 +45,14 @@ public:
 
 	gkResource* createImpl(const gkResourceName& name, const gkResourceHandle& handle);
 
-	enum 
+	enum ObjType
 	{
-		OBJ_CAMERA	= 1 << 0,
-		OBJ_LIGHT	= 1 << 1,
-		OBJ_ENTITY	= 1 << 2,
-		OBJ_OBJECT	= 1 << 3,
-		OBJ_SKELETON = 1 << 4
+		OBJ_CAMERA	  = 1 << 0,
+		OBJ_LIGHT	  = 1 << 1,
+		OBJ_ENTITY	  = 1 << 2,
+		OBJ_OBJECT	  = 1 << 3,
+		OBJ_SKELETON  = 1 << 4,
+		OBJ_PARTICLES = 1 << 5
 	};
 
 	void copyObjects(gkScene* fromScene, gkScene* toScene, int exceptObjectTypes = OBJ_CAMERA | OBJ_LIGHT);

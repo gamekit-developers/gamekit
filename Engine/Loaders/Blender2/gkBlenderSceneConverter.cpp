@@ -415,12 +415,19 @@ void gkBlenderSceneConverter::convertObjectParticles(gkGameObject* gobj, Blender
 		if (!resource)
 			continue;
 		
+		gkGameObjectProperties& gprops = gobj->getProperties();
+
 		gkParticleObject* pobj = m_gscene->createParticleObject(gkUtils::getUniqueName(name));
 		if (pobj)
 		{
+			pobj->setActiveLayer(gobj->isInActiveLayer());
+			pobj->setLayer(gobj->getLayer());
+
 			gkParticleSettingsProperties& sprops = resource->getParticleProperties();
 			gkParticleSystemProperties& props = pobj->getParticleProperties();
 			
+			gprops.m_particleObjs.push_back(pobj->getName());
+
 			props.m_name = name;
 			props.m_seed = ps->seed;
 			props.m_settings = pname;
