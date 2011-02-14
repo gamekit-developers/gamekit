@@ -8611,6 +8611,32 @@ fail:
 }
 
 
+static int _wrap_GameObject_changeState(lua_State* L) {
+  int SWIG_arg = 0;
+  gsGameObject *arg1 = (gsGameObject *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("changeState",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("changeState",1,"gsGameObject *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("changeState",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsGameObject,0))){
+    SWIG_fail_ptr("GameObject_changeState",1,SWIGTYPE_p_gsGameObject);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  (arg1)->changeState(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_GameObject_hasParent(lua_State* L) {
   int SWIG_arg = 0;
   gsGameObject *arg1 = (gsGameObject *) 0 ;
@@ -9211,6 +9237,7 @@ static swig_lua_method swig_gsGameObject_methods[] = {
     {"pitch", _wrap_GameObject_pitch}, 
     {"roll", _wrap_GameObject_roll}, 
     {"getState", _wrap_GameObject_getState}, 
+    {"changeState", _wrap_GameObject_changeState}, 
     {"hasParent", _wrap_GameObject_hasParent}, 
     {"setParent", _wrap_GameObject_setParent}, 
     {"setParentInPlace", _wrap_GameObject_setParentInPlace}, 

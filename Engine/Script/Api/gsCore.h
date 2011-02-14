@@ -332,6 +332,7 @@ public:
 	void roll(float deg, gsTransformSpace ts);
 
 	int getState(void);
+	void changeState(int v);
 
 	bool hasParent();
 	void setParent(gsGameObject* par);

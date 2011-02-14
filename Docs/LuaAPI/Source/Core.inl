@@ -1291,6 +1291,7 @@ function Scene:createEmpty(name)
 \LuaMethodMenu{GameObject,pitch}
 \LuaMethodMenu{GameObject,yaw}
 \LuaMethodMenu{GameObject,roll}
+\LuaMethodMenu{GameObject,changeState}
 \LuaMethodMenu{GameObject,getState}
 \LuaMethodMenu{GameObject,hasParent}
 \LuaMethodMenu{GameObject,setParent}
@@ -1759,17 +1760,17 @@ function GameObject:roll(val, ts=OgreKit.TS_PARENT)
 
 
 <!-- ======================================== -->
-\LuaMethod{GameObject,getState}
+\LuaMethod{GameObject,changeState}
 \LuaClassUp{GameObject}
 
+Change the logic brick state.
 
-Returns the logic brick state.
 
 \code
-function GameObject:getState()
+function GameObject:changeState(state)
 \endcode
 
-\returns number
+\param state as the new state.
 
 \endpage
 

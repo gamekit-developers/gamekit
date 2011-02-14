@@ -233,6 +233,7 @@ public:
 	GK_INLINE void  setState(int v)     {m_state = v;}
 	GK_INLINE int   getState(void)      {return m_state;}
 
+	void changeState(int v);
 
 	// See gkGameObjectMode
 

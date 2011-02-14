@@ -1192,3 +1192,17 @@ void gkGameObject::updateAnimationBlender(const gkScalar tick)
 	getAnimationBlender().evaluate(tick);
 }
 
+void gkGameObject::changeState(int v)
+{
+	int old = getState();
+	if (old == v) return;
+
+	setState(v);
+	if (m_bricks)
+	{
+		m_bricks->setState(v);
+
+		m_bricks->notifyState();
+		gkLogicManager::getSingleton().notifyState(v, m_bricks);
+	}
+}

@@ -1225,7 +1225,11 @@ int gsGameObject::getState(void)
 	return -1;
 }
 
-
+void gsGameObject::changeState(int v)
+{
+	if (m_object)
+		cast<gkGameObject>()->changeState(v);
+}
 
 
 bool gsGameObject::hasParent()
