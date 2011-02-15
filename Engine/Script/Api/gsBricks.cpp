@@ -55,6 +55,7 @@ gsController* gsController::createNew(gkLogicController* ob)
 {
 	GS_TYPE_RET(ob, LogicOpController);
 	GS_TYPE_RET(ob, ScriptController);
+	GS_TYPE_RET(ob, ExpressionController);
 	return new gsController(ob);
 }
 
@@ -484,6 +485,7 @@ void gsController::link(gsActuator* act)
 
 GS_IMPLEMENT_USER_BRICK_GENERIC(gsController, LogicOpController);
 GS_IMPLEMENT_USER_BRICK_GENERIC(gsController, ScriptController);
+GS_IMPLEMENT_USER_BRICK_GENERIC(gsController, ExpressionController);
 
 
 gsScriptController* getCurrentController(void)

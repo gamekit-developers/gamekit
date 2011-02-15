@@ -179,10 +179,10 @@ macro (configure_ogrekit ROOT OGREPATH)
 	endif()
 	
 	if (OGREKIT_COMPILE_OGRE_COMPONENTS)
-		set(OGRE_BUILD_COMPONENT_PAGING TRUE)
-		set(OGRE_BUILD_COMPONENT_PROPERTY TRUE)
-		set(OGRE_BUILD_COMPONENT_TERRAIN TRUE)
-		set(OGRE_BUILD_COMPONENT_RTSHADERSYSTEM TRUE)
+		option(OGRE_BUILD_COMPONENT_PAGING "Build Ogre Paging Compoment" ON)
+		option(OGRE_BUILD_COMPONENT_TERRAIN "Build Ogre Terrain Compoment" ON)
+		option(OGRE_BUILD_COMPONENT_RTSHADERSYSTEM "Build Ogre RTShaderSystem Compoment" OFF)
+		option(OGRE_BUILD_COMPONENT_PROPERTY "Build Ogre Property Compoment(Required boost)" OFF)
 	endif()
 
 	#copy from ogre3d build

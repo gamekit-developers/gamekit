@@ -1535,56 +1535,57 @@ SWIG_Lua_dostring(lua_State *L, const char* str) {
 #define SWIGTYPE_p_gsEditObjectActuator swig_types[26]
 #define SWIGTYPE_p_gsEngine swig_types[27]
 #define SWIGTYPE_p_gsEntity swig_types[28]
-#define SWIGTYPE_p_gsFSM swig_types[29]
-#define SWIGTYPE_p_gsGameActuator swig_types[30]
-#define SWIGTYPE_p_gsGameObject swig_types[31]
-#define SWIGTYPE_p_gsKeyboard swig_types[32]
-#define SWIGTYPE_p_gsKeyboardSensor swig_types[33]
-#define SWIGTYPE_p_gsLight swig_types[34]
-#define SWIGTYPE_p_gsLogicManager swig_types[35]
-#define SWIGTYPE_p_gsLogicObject swig_types[36]
-#define SWIGTYPE_p_gsLogicOpController swig_types[37]
-#define SWIGTYPE_p_gsLuaManager swig_types[38]
-#define SWIGTYPE_p_gsLuaScript swig_types[39]
-#define SWIGTYPE_p_gsMessageActuator swig_types[40]
-#define SWIGTYPE_p_gsMessageSensor swig_types[41]
-#define SWIGTYPE_p_gsMotionActuator swig_types[42]
-#define SWIGTYPE_p_gsMouse swig_types[43]
-#define SWIGTYPE_p_gsMouseSensor swig_types[44]
-#define SWIGTYPE_p_gsNearSensor swig_types[45]
-#define SWIGTYPE_p_gsObject swig_types[46]
-#define SWIGTYPE_p_gsParentActuator swig_types[47]
-#define SWIGTYPE_p_gsParticles swig_types[48]
-#define SWIGTYPE_p_gsProperty swig_types[49]
-#define SWIGTYPE_p_gsPropertyActuator swig_types[50]
-#define SWIGTYPE_p_gsPropertySensor swig_types[51]
-#define SWIGTYPE_p_gsQuaternion swig_types[52]
-#define SWIGTYPE_p_gsRadarSensor swig_types[53]
-#define SWIGTYPE_p_gsRandomActuator swig_types[54]
-#define SWIGTYPE_p_gsRandomSensor swig_types[55]
-#define SWIGTYPE_p_gsRay swig_types[56]
-#define SWIGTYPE_p_gsRaySensor swig_types[57]
-#define SWIGTYPE_p_gsRayTest swig_types[58]
-#define SWIGTYPE_p_gsScene swig_types[59]
-#define SWIGTYPE_p_gsSceneActuator swig_types[60]
-#define SWIGTYPE_p_gsScriptController swig_types[61]
-#define SWIGTYPE_p_gsSensor swig_types[62]
-#define SWIGTYPE_p_gsSkeleton swig_types[63]
-#define SWIGTYPE_p_gsSoundActuator swig_types[64]
-#define SWIGTYPE_p_gsStateActuator swig_types[65]
-#define SWIGTYPE_p_gsSweptTest swig_types[66]
-#define SWIGTYPE_p_gsTouchSensor swig_types[67]
-#define SWIGTYPE_p_gsUserDefs swig_types[68]
-#define SWIGTYPE_p_gsVector3 swig_types[69]
-#define SWIGTYPE_p_gsVisibilityActuator swig_types[70]
-#define SWIGTYPE_p_gsWhenEvent swig_types[71]
-#define SWIGTYPE_p_utArrayT_gkGameObject_p_t swig_types[72]
-#define SWIGTYPE_p_utArrayT_gkLogicActuator_p_t swig_types[73]
-#define SWIGTYPE_p_utArrayT_gkLogicController_p_t swig_types[74]
-#define SWIGTYPE_p_utArrayT_gkLogicLink_p_t swig_types[75]
-#define SWIGTYPE_p_utArrayT_gkLogicSensor_p_t swig_types[76]
-static swig_type_info *swig_types[78];
-static swig_module_info swig_module = {swig_types, 77, 0, 0, 0, 0};
+#define SWIGTYPE_p_gsExpressionController swig_types[29]
+#define SWIGTYPE_p_gsFSM swig_types[30]
+#define SWIGTYPE_p_gsGameActuator swig_types[31]
+#define SWIGTYPE_p_gsGameObject swig_types[32]
+#define SWIGTYPE_p_gsKeyboard swig_types[33]
+#define SWIGTYPE_p_gsKeyboardSensor swig_types[34]
+#define SWIGTYPE_p_gsLight swig_types[35]
+#define SWIGTYPE_p_gsLogicManager swig_types[36]
+#define SWIGTYPE_p_gsLogicObject swig_types[37]
+#define SWIGTYPE_p_gsLogicOpController swig_types[38]
+#define SWIGTYPE_p_gsLuaManager swig_types[39]
+#define SWIGTYPE_p_gsLuaScript swig_types[40]
+#define SWIGTYPE_p_gsMessageActuator swig_types[41]
+#define SWIGTYPE_p_gsMessageSensor swig_types[42]
+#define SWIGTYPE_p_gsMotionActuator swig_types[43]
+#define SWIGTYPE_p_gsMouse swig_types[44]
+#define SWIGTYPE_p_gsMouseSensor swig_types[45]
+#define SWIGTYPE_p_gsNearSensor swig_types[46]
+#define SWIGTYPE_p_gsObject swig_types[47]
+#define SWIGTYPE_p_gsParentActuator swig_types[48]
+#define SWIGTYPE_p_gsParticles swig_types[49]
+#define SWIGTYPE_p_gsProperty swig_types[50]
+#define SWIGTYPE_p_gsPropertyActuator swig_types[51]
+#define SWIGTYPE_p_gsPropertySensor swig_types[52]
+#define SWIGTYPE_p_gsQuaternion swig_types[53]
+#define SWIGTYPE_p_gsRadarSensor swig_types[54]
+#define SWIGTYPE_p_gsRandomActuator swig_types[55]
+#define SWIGTYPE_p_gsRandomSensor swig_types[56]
+#define SWIGTYPE_p_gsRay swig_types[57]
+#define SWIGTYPE_p_gsRaySensor swig_types[58]
+#define SWIGTYPE_p_gsRayTest swig_types[59]
+#define SWIGTYPE_p_gsScene swig_types[60]
+#define SWIGTYPE_p_gsSceneActuator swig_types[61]
+#define SWIGTYPE_p_gsScriptController swig_types[62]
+#define SWIGTYPE_p_gsSensor swig_types[63]
+#define SWIGTYPE_p_gsSkeleton swig_types[64]
+#define SWIGTYPE_p_gsSoundActuator swig_types[65]
+#define SWIGTYPE_p_gsStateActuator swig_types[66]
+#define SWIGTYPE_p_gsSweptTest swig_types[67]
+#define SWIGTYPE_p_gsTouchSensor swig_types[68]
+#define SWIGTYPE_p_gsUserDefs swig_types[69]
+#define SWIGTYPE_p_gsVector3 swig_types[70]
+#define SWIGTYPE_p_gsVisibilityActuator swig_types[71]
+#define SWIGTYPE_p_gsWhenEvent swig_types[72]
+#define SWIGTYPE_p_utArrayT_gkGameObject_p_t swig_types[73]
+#define SWIGTYPE_p_utArrayT_gkLogicActuator_p_t swig_types[74]
+#define SWIGTYPE_p_utArrayT_gkLogicController_p_t swig_types[75]
+#define SWIGTYPE_p_utArrayT_gkLogicLink_p_t swig_types[76]
+#define SWIGTYPE_p_utArrayT_gkLogicSensor_p_t swig_types[77]
+static swig_type_info *swig_types[79];
+static swig_module_info swig_module = {swig_types, 78, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -1686,6 +1687,7 @@ static int gsCreateController(lua_State *L, gsController *obj)
 
 	GS_TYPE_RET(ob, obj,  LogicOpController);
 	GS_TYPE_RET(ob, obj,  ScriptController);
+	GS_TYPE_RET(ob, obj,  ExpressionController);
 
 	SWIG_NewPointerObj(L, obj, SWIGTYPE_p_gsController, 1); 
 	return 1;
@@ -16756,6 +16758,176 @@ static swig_lua_class *swig_gsLogicOpController_bases[] = {0,0};
 static const char *swig_gsLogicOpController_base_names[] = {"gsController *",0};
 static swig_lua_class _wrap_class_gsLogicOpController = { "LogicOpController", &SWIGTYPE_p_gsLogicOpController,_wrap_new_LogicOpController, swig_delete_LogicOpController, swig_gsLogicOpController_methods, swig_gsLogicOpController_attributes, swig_gsLogicOpController_bases, swig_gsLogicOpController_base_names };
 
+static int _wrap_new_ExpressionController__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  gsLogicObject *arg1 = (gsLogicObject *) 0 ;
+  gkString *arg2 = 0 ;
+  gkString temp2 ;
+  gsExpressionController *result = 0 ;
+  
+  SWIG_check_num_args("gsExpressionController",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsExpressionController",1,"gsLogicObject *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("gsExpressionController",2,"gkString const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsLogicObject,0))){
+    SWIG_fail_ptr("new_ExpressionController",1,SWIGTYPE_p_gsLogicObject);
+  }
+  
+  
+  temp2 = gkString((const char*)lua_tostring(L, 2));
+  arg2 = &temp2;
+  
+  result = (gsExpressionController *)new gsExpressionController(arg1,(gkString const &)*arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsExpressionController,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_ExpressionController__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  gsLogicObject *arg1 = (gsLogicObject *) 0 ;
+  gsExpressionController *result = 0 ;
+  
+  SWIG_check_num_args("gsExpressionController",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("gsExpressionController",1,"gsLogicObject *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsLogicObject,0))){
+    SWIG_fail_ptr("new_ExpressionController",1,SWIGTYPE_p_gsLogicObject);
+  }
+  
+  result = (gsExpressionController *)new gsExpressionController(arg1);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsExpressionController,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_ExpressionController__SWIG_2(lua_State* L) {
+  int SWIG_arg = 0;
+  gsExpressionController *result = 0 ;
+  
+  SWIG_check_num_args("gsExpressionController",0,0)
+  result = (gsExpressionController *)new gsExpressionController();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_gsExpressionController,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_ExpressionController(lua_State* L) {
+  int argc;
+  int argv[3]={
+    1,2,3
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 0) {
+    return _wrap_new_ExpressionController__SWIG_2(L);
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsLogicObject, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      return _wrap_new_ExpressionController__SWIG_1(L);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_gsLogicObject, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        return _wrap_new_ExpressionController__SWIG_0(L);
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'new_ExpressionController'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    gsExpressionController(gsLogicObject *,gkString const &)\n"
+    "    gsExpressionController(gsLogicObject *)\n"
+    "    gsExpressionController()\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_ExpressionController_setExpression(lua_State* L) {
+  int SWIG_arg = 0;
+  gsExpressionController *arg1 = (gsExpressionController *) 0 ;
+  gkString *arg2 = 0 ;
+  gkString temp2 ;
+  
+  SWIG_check_num_args("setExpression",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setExpression",1,"gsExpressionController *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("setExpression",2,"gkString const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsExpressionController,0))){
+    SWIG_fail_ptr("ExpressionController_setExpression",1,SWIGTYPE_p_gsExpressionController);
+  }
+  
+  
+  temp2 = gkString((const char*)lua_tostring(L, 2));
+  arg2 = &temp2;
+  
+  (arg1)->setExpression((gkString const &)*arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_ExpressionController(void *obj) {
+gsExpressionController *arg1 = (gsExpressionController *) obj;
+delete arg1;
+}
+static swig_lua_method swig_gsExpressionController_methods[] = {
+    {"setExpression", _wrap_ExpressionController_setExpression}, 
+    {0,0}
+};
+static swig_lua_attribute swig_gsExpressionController_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_gsExpressionController_bases[] = {0,0};
+static const char *swig_gsExpressionController_base_names[] = {"gsController *",0};
+static swig_lua_class _wrap_class_gsExpressionController = { "ExpressionController", &SWIGTYPE_p_gsExpressionController,_wrap_new_ExpressionController, swig_delete_ExpressionController, swig_gsExpressionController_methods, swig_gsExpressionController_attributes, swig_gsExpressionController_bases, swig_gsExpressionController_base_names };
+
 static int _wrap_new_ScriptController__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
   gsLogicObject *arg1 = (gsLogicObject *) 0 ;
@@ -24239,6 +24411,9 @@ static void *_p_gsControllerTo_p_gsBrick(void *x, int *SWIGUNUSEDPARM(newmemory)
 static void *_p_gsLogicOpControllerTo_p_gsBrick(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((gsBrick *) (gsController *) ((gsLogicOpController *) x));
 }
+static void *_p_gsExpressionControllerTo_p_gsBrick(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((gsBrick *) (gsController *) ((gsExpressionController *) x));
+}
 static void *_p_gsScriptControllerTo_p_gsBrick(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((gsBrick *) (gsController *) ((gsScriptController *) x));
 }
@@ -24323,6 +24498,9 @@ static void *_p_gsRandomSensorTo_p_gsSensor(void *x, int *SWIGUNUSEDPARM(newmemo
 static void *_p_gsLogicOpControllerTo_p_gsController(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((gsController *)  ((gsLogicOpController *) x));
 }
+static void *_p_gsExpressionControllerTo_p_gsController(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((gsController *)  ((gsExpressionController *) x));
+}
 static void *_p_gsScriptControllerTo_p_gsController(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((gsController *)  ((gsScriptController *) x));
 }
@@ -24355,6 +24533,7 @@ static swig_type_info _swigt__p_gsDynamicsWorld = {"_p_gsDynamicsWorld", "gsDyna
 static swig_type_info _swigt__p_gsEditObjectActuator = {"_p_gsEditObjectActuator", "gsEditObjectActuator *", 0, 0, (void*)&_wrap_class_gsEditObjectActuator, 0};
 static swig_type_info _swigt__p_gsEngine = {"_p_gsEngine", "gsEngine *", 0, 0, (void*)&_wrap_class_gsEngine, 0};
 static swig_type_info _swigt__p_gsEntity = {"_p_gsEntity", "gsEntity *", 0, 0, (void*)&_wrap_class_gsEntity, 0};
+static swig_type_info _swigt__p_gsExpressionController = {"_p_gsExpressionController", "gsExpressionController *", 0, 0, (void*)&_wrap_class_gsExpressionController, 0};
 static swig_type_info _swigt__p_gsFSM = {"_p_gsFSM", "gsFSM *", 0, 0, (void*)&_wrap_class_gsFSM, 0};
 static swig_type_info _swigt__p_gsGameActuator = {"_p_gsGameActuator", "gsGameActuator *", 0, 0, (void*)&_wrap_class_gsGameActuator, 0};
 static swig_type_info _swigt__p_gsGameObject = {"_p_gsGameObject", "gsGameObject *", 0, 0, (void*)&_wrap_class_gsGameObject, 0};
@@ -24434,6 +24613,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_gsEditObjectActuator,
   &_swigt__p_gsEngine,
   &_swigt__p_gsEntity,
+  &_swigt__p_gsExpressionController,
   &_swigt__p_gsFSM,
   &_swigt__p_gsGameActuator,
   &_swigt__p_gsGameObject,
@@ -24502,17 +24682,18 @@ static swig_cast_info _swigc__p_gsArrayT_gsController_gkLogicController_t[] = { 
 static swig_cast_info _swigc__p_gsArrayT_gsGameObject_gkGameObject_t[] = {  {&_swigt__p_gsArrayT_gsGameObject_gkGameObject_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsArrayT_gsLogicObject_gkLogicLink_t[] = {  {&_swigt__p_gsArrayT_gsLogicObject_gkLogicLink_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsArrayT_gsSensor_gkLogicSensor_t[] = {  {&_swigt__p_gsArrayT_gsSensor_gkLogicSensor_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_gsBrick[] = {  {&_swigt__p_gsAlwaysSensor, _p_gsAlwaysSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsDelaySensor, _p_gsDelaySensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsMessageSensor, _p_gsMessageSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsMouseSensor, _p_gsMouseSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsPropertySensor, _p_gsPropertySensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsRaySensor, _p_gsRaySensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsRandomSensor, _p_gsRandomSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsSensor, _p_gsSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsBrick, 0, 0, 0},  {&_swigt__p_gsCollisionSensor, _p_gsCollisionSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsTouchSensor, _p_gsTouchSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsKeyboardSensor, _p_gsKeyboardSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsNearSensor, _p_gsNearSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsRadarSensor, _p_gsRadarSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsActuatorSensor, _p_gsActuatorSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsController, _p_gsControllerTo_p_gsBrick, 0, 0},  {&_swigt__p_gsLogicOpController, _p_gsLogicOpControllerTo_p_gsBrick, 0, 0},  {&_swigt__p_gsScriptController, _p_gsScriptControllerTo_p_gsBrick, 0, 0},  {&_swigt__p_gsActuator, _p_gsActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsActionActuator, _p_gsActionActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsEditObjectActuator, _p_gsEditObjectActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsGameActuator, _p_gsGameActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsMessageActuator, _p_gsMessageActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsMotionActuator, _p_gsMotionActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsParentActuator, _p_gsParentActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsPropertyActuator, _p_gsPropertyActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsRandomActuator, _p_gsRandomActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsSceneActuator, _p_gsSceneActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsSoundActuator, _p_gsSoundActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsStateActuator, _p_gsStateActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsVisibilityActuator, _p_gsVisibilityActuatorTo_p_gsBrick, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsBrick[] = {  {&_swigt__p_gsAlwaysSensor, _p_gsAlwaysSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsDelaySensor, _p_gsDelaySensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsMessageSensor, _p_gsMessageSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsMouseSensor, _p_gsMouseSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsPropertySensor, _p_gsPropertySensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsRaySensor, _p_gsRaySensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsRandomSensor, _p_gsRandomSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsSensor, _p_gsSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsBrick, 0, 0, 0},  {&_swigt__p_gsCollisionSensor, _p_gsCollisionSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsTouchSensor, _p_gsTouchSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsKeyboardSensor, _p_gsKeyboardSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsNearSensor, _p_gsNearSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsRadarSensor, _p_gsRadarSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsActuatorSensor, _p_gsActuatorSensorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsController, _p_gsControllerTo_p_gsBrick, 0, 0},  {&_swigt__p_gsLogicOpController, _p_gsLogicOpControllerTo_p_gsBrick, 0, 0},  {&_swigt__p_gsExpressionController, _p_gsExpressionControllerTo_p_gsBrick, 0, 0},  {&_swigt__p_gsScriptController, _p_gsScriptControllerTo_p_gsBrick, 0, 0},  {&_swigt__p_gsActuator, _p_gsActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsActionActuator, _p_gsActionActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsEditObjectActuator, _p_gsEditObjectActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsGameActuator, _p_gsGameActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsMessageActuator, _p_gsMessageActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsMotionActuator, _p_gsMotionActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsParentActuator, _p_gsParentActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsPropertyActuator, _p_gsPropertyActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsRandomActuator, _p_gsRandomActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsSceneActuator, _p_gsSceneActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsSoundActuator, _p_gsSoundActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsStateActuator, _p_gsStateActuatorTo_p_gsBrick, 0, 0},  {&_swigt__p_gsVisibilityActuator, _p_gsVisibilityActuatorTo_p_gsBrick, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsCamera[] = {  {&_swigt__p_gsCamera, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsCharacter[] = {  {&_swigt__p_gsCharacter, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsCollisionSensor[] = {  {&_swigt__p_gsCollisionSensor, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_gsController[] = {  {&_swigt__p_gsController, 0, 0, 0},  {&_swigt__p_gsLogicOpController, _p_gsLogicOpControllerTo_p_gsController, 0, 0},  {&_swigt__p_gsScriptController, _p_gsScriptControllerTo_p_gsController, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsController[] = {  {&_swigt__p_gsController, 0, 0, 0},  {&_swigt__p_gsLogicOpController, _p_gsLogicOpControllerTo_p_gsController, 0, 0},  {&_swigt__p_gsExpressionController, _p_gsExpressionControllerTo_p_gsController, 0, 0},  {&_swigt__p_gsScriptController, _p_gsScriptControllerTo_p_gsController, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsDebugger[] = {  {&_swigt__p_gsDebugger, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsDelaySensor[] = {  {&_swigt__p_gsDelaySensor, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsDynamicsWorld[] = {  {&_swigt__p_gsDynamicsWorld, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsEditObjectActuator[] = {  {&_swigt__p_gsEditObjectActuator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsEngine[] = {  {&_swigt__p_gsEngine, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsEntity[] = {  {&_swigt__p_gsEntity, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_gsExpressionController[] = {  {&_swigt__p_gsExpressionController, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsFSM[] = {  {&_swigt__p_gsFSM, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsGameActuator[] = {  {&_swigt__p_gsGameActuator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_gsGameObject[] = {  {&_swigt__p_gsParticles, _p_gsParticlesTo_p_gsGameObject, 0, 0},  {&_swigt__p_gsLight, _p_gsLightTo_p_gsGameObject, 0, 0},  {&_swigt__p_gsGameObject, 0, 0, 0},  {&_swigt__p_gsEntity, _p_gsEntityTo_p_gsGameObject, 0, 0},  {&_swigt__p_gsCamera, _p_gsCameraTo_p_gsGameObject, 0, 0},  {&_swigt__p_gsSkeleton, _p_gsSkeletonTo_p_gsGameObject, 0, 0},{0, 0, 0, 0}};
@@ -24592,6 +24773,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_gsEditObjectActuator,
   _swigc__p_gsEngine,
   _swigc__p_gsEntity,
+  _swigc__p_gsExpressionController,
   _swigc__p_gsFSM,
   _swigc__p_gsGameActuator,
   _swigc__p_gsGameObject,

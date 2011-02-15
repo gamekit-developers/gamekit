@@ -684,6 +684,18 @@ public:
 	OGRE_KIT_LOGIC_BRICK(LogicOpController);
 };
 
+class gsExpressionController : public gsController
+{
+public:
+	gsExpressionController(gsLogicObject* parent, const gkString& name = "");
+	gsExpressionController();
+	~gsExpressionController();
+
+	void setExpression(const gkString& expr)  { BRICK_SET( setExpression(expr) ); }
+
+
+	OGRE_KIT_LOGIC_BRICK(ExpressionController);
+};
 
 class gsScriptController : public gsController
 {

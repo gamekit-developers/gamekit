@@ -2478,6 +2478,71 @@ function ScriptController:setScript(name)
 \endpage
 
 
+
+<!-- ============================================ ExpressionController ============================================ -->
+\LuaClass{ExpressionController}
+\LuaClassExtend{Controller}
+
+
+
+\beginmenu{Methods}
+\LuaMethodMenu{ExpressionController,constructor}
+\LuaMethodMenu{ExpressionController,setExpression}
+\endmenu
+
+\endpage
+
+
+
+<!-- ======================================== -->
+
+\LuaMethod{ExpressionController,constructor}
+
+
+
+Default constructor does nothing.
+
+\code
+function ExpressionController:constructor()
+\endcode
+
+
+<!-- ============================== -->
+\sectionseperator{Overload:}
+
+Creates a new controller.
+
+\code
+function ExpressionController:constructor(object, name="")
+\endcode
+
+\param object The parent \LuaClassRef{LogicObject}
+\param name   Unique identifier for this controller. If this is empty one will be generated automatically
+
+\returns \LuaClassRef{ExpressionController}
+
+\endpage
+
+
+
+
+
+<!-- ======================================== -->
+\LuaMethod{ExpressionController,setExpression}
+
+
+Sets the expression to call. This will be an Lua expression.
+
+
+\code
+function ScriptController:setExpression(expr)
+\endcode
+
+\param expr Lua expression.
+
+\endpage
+
+
 <!-- ============================================ Actuator ============================================ -->
 \LuaClass{Actuator}
 \LuaClassExtend{Brick}

@@ -68,9 +68,8 @@ void gkScriptController::setScript(const gkString& str)
 		gkTextFile* tf = (gkTextFile*)gkTextManager::getSingleton().getByName(str);
 		if (tf)
 		{
-			//gkLuaScript* scrpt = gkLuaManager::getSingleton().createFromText(tf->getResourceName().getName(), tf->getText());
 			gkLuaScript* scrpt = gkLuaManager::getSingleton().createFromText(
-				gkResourceName(tf->getResourceName().getName(), getObjectGroupName()), tf->getText());
+				gkResourceName(tf->getName(), getObjectGroupName()), tf->getText());
 			if (scrpt)
 				m_script = scrpt;
 		}

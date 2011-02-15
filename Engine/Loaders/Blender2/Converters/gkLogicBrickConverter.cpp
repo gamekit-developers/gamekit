@@ -578,6 +578,21 @@ void gkLogicLoader::convertObject(Blender::Object* bobj, gkGameObject* gobj)
 				lc = ac;
 			}
 			break;
+		case CONT_EXPRESSION:
+			{
+#ifdef OGREKIT_USE_LUA
+				gkExpressionController* sc = new gkExpressionController(gobj, lnk, bcont->name);
+				lc = sc;
+
+				Blender::bExpressionCont* pcon = (Blender::bExpressionCont*)bcont->data;
+				sc->setModule(false);
+
+				if (pcon->str)
+				{
+					sc->setExpression(pcon->str);
+				}
+#endif
+			} break;
 		case CONT_PYTHON:
 			{
 #ifdef OGREKIT_USE_LUA

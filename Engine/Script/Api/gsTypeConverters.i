@@ -82,6 +82,7 @@ static int gsCreateController(lua_State *L, gsController *obj)
 
 	GS_TYPE_RET(ob, obj,  LogicOpController);
 	GS_TYPE_RET(ob, obj,  ScriptController);
+	GS_TYPE_RET(ob, obj,  ExpressionController);
 
 	SWIG_NewPointerObj(L, obj, SWIGTYPE_p_gsController, 1); 
 	return 1;

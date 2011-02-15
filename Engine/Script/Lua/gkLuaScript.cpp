@@ -38,7 +38,9 @@ gkLuaScript::gkLuaScript(gkResourceManager *creator, const gkResourceName &name,
 		m_script(0), 
 		m_text(""), 
 		m_compiled(false), 
-		m_isInvalid(false)
+		m_isInvalid(false),
+		m_lastRetBoolValue(false),
+		m_lastRetStrValue("")
 {
 }
 
@@ -117,6 +119,9 @@ bool gkLuaScript::execute(void)
 	if (m_isInvalid)
 		return false;
 
+	m_lastRetBoolValue = false;
+	m_lastRetStrValue = "";
+
 	lua_State* L = gkLuaManager::getSingleton().getLua();;
 	//lua_dumpstack(L);
 	lua_pushtraceback(L);
@@ -131,6 +136,11 @@ bool gkLuaScript::execute(void)
 		m_isInvalid = true;
 		return false;
 	}
+	
+	m_lastRetBoolValue = lua_toboolean(L, -1) != 0;
+	char* str = (char*)lua_tostring(L, -1);
+	if (str) m_lastRetStrValue = str;
+
 	lua_gc(L, LUA_GCSTEP, 1);
 	lua_popall(L);
 	return true;

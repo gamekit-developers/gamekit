@@ -35,11 +35,13 @@ struct lua_State;
 class gkLuaScript : public gkResource
 {
 protected:
-	//const gkString  m_name, 
 	gkString		m_text;
 	int             m_script;
 	bool            m_compiled;
 	bool			m_isInvalid;
+
+	bool			m_lastRetBoolValue;
+	gkString		m_lastRetStrValue;
 
 	void compile(void);
 
@@ -54,6 +56,9 @@ public:
 	void decompile(void);
 	// compile & run the script
 	bool execute(void);
+
+	GK_INLINE bool     getReturnBoolValue() { return m_lastRetBoolValue; }
+	GK_INLINE gkString getReturnStrValue()  { return m_lastRetStrValue;  }
 };
 
 
