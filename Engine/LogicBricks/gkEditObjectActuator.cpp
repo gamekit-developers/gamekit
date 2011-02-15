@@ -103,11 +103,10 @@ void gkEditObjectActuator::addObject(void)
 
 							gkGameObjectProperties& pprops = pobj->getProperties();
 
-							pprops.m_transform.loc = props.m_transform.loc;
-							pprops.m_transform.rot = props.m_transform.rot;
+							pprops.m_transform = props.m_transform;
 
 							pobj->createInstance();
-							pobj->setParent(nobj);							
+							pobj->setParentInPlace(nobj);
 						}
 					}
 				}
