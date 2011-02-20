@@ -48,7 +48,6 @@ public:
 	bool                    verbose;            // Enable/Disable Ogre print-out
 	gkVector2               winsize;            // Window width & height
 	gkString                wintitle;           // Window title
-	gkString                extWinhandle;       // External Window Handle
 	bool                    fullscreen;         // Fullscreen mode
 	int                     framingType;        // crop/letterbox/extend. Used when window is larger then requested
 	gkString                resources;          // resources to load
@@ -70,6 +69,9 @@ public:
 	gkString                shadowtechnique;
 	gkColor                 colourshadow;
 	gkScalar                fardistanceshadow;
+
+	gkString                extWinhandle;       // External Window Handle
+	gkScalar				animFps;			// Default animation fps
 
 	static OgreRenderSystem getOgreRenderSystem(const gkString& val);
 	static int getViewportFramingType(const gkString& val);

@@ -566,7 +566,7 @@ endif()
 # ---------------------------------------------------------
 if (OGREKIT_USE_LUA)
 
-if (OGREKIT_COMPLIE_SWIG AND SWIG_FOUND)
+if (OGREKIT_COMPILE_SWIG AND SWIG_FOUND)
 
 
 	set(Script_INC

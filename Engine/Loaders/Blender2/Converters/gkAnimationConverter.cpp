@@ -101,11 +101,16 @@ void get25ActionStartEnd(Blender::bAction* action, gkScalar& start, gkScalar& en
 	
 	Blender::FCurve* bfc = (Blender::FCurve*)action->curves.first;
 	while (bfc)
-	{
+	{		
 		getSplineStartEnd(bfc->bezt, bfc->totvert, tstart, tend);
 		if (start > tstart) start = tstart;
 		if (end < tend) end = tend;
-		bfc = bfc->next;
+
+		//GK_ASSERT(!bfc->next || (bfc->next && bfc->next->prev == bfc));
+		if (bfc->next == 0 || bfc->next->prev != bfc)
+			break; //FIX: Momo_WalkBack fcurve is broken in uncompressed 256a.
+
+		bfc = bfc->next;		
 	}
 }
 
@@ -403,6 +408,9 @@ void gkAnimationLoader::convertAction25(Blender::bAction* action, gkScalar animf
 			if (code != -1 && bfc->totvert > 0)
 				ConvertSpline(bfc->bezt, chan, code, bfc->bezt->ipo, bfc->totvert, -start, 1.0f/animfps, 0, 1);
 		}
+
+		if (bfc->next == 0 || bfc->next->prev != bfc)
+			break; //FIX: Momo_WalkBack fcurve is broken in uncompressed 256a.
 		
 		bfc = bfc->next;
 	}
@@ -496,7 +504,7 @@ void gkAnimationLoader::convertObject(gkGameObject* obj, Blender::Object* bobj, 
 		// TODO 2.4 NLA
 	}
 	// 2.5x
-	else
+	else if (bobj->adt)
 	{
 		convert25AnimData(obj, bobj->adt, animfps);
 	}
@@ -546,7 +554,7 @@ void gkAnimationLoader::convertMesh(gkGameObject* obj, Blender::Object* bobj, bo
 	{
 		// TODO bmesh->ipo
 	}
-	else
+	else if (bmesh->adt)
 		convert25AnimData(obj, bmesh->adt, animfps);
 }
 

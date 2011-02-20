@@ -109,6 +109,8 @@ public:
 
 	virtual void execute(void) = 0;
 
+	virtual void update(void) {}
+
 	GK_INLINE void setListener(gkLogicBrick::Listener* listener) {m_listener = listener;}
 
 

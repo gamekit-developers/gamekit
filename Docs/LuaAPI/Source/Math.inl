@@ -941,4 +941,21 @@ function OgreKit.QuatMulVec3(a, b)
 
 \endpage
 
+<!-- ======================================== -->
+\LuaClass{Vec3RotationTo}
+\LuaSectionUp{Math}
+
+
+Gets the shortest arc quaternion to rotate a vector to the b vector.
+
+\code
+function OgreKit.Vec3RotationTo(a, b)
+\endcode
+
+\param a \LuaClassRef{Vector3}
+\param b \LuaClassRef{Vector3}
+\returns \LuaClassRef{Quaternion}
+
+\endpage
+
 */

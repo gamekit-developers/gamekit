@@ -1412,6 +1412,12 @@ void gkScene::pushAnimationUpdate(gkGameObject* obj)
 	m_updateAnimObjects.insert(obj);
 }
 
+void gkScene::removeAnimationUpdate(gkGameObject* obj)
+{
+	m_updateAnimObjects.erase(obj);
+}
+
+
 
 void gkScene::updateObjectsAnimations(const gkScalar tick)
 {

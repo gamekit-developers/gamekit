@@ -147,7 +147,8 @@ public:
 	///Add an object to the list of object that need to be animated.
 	///All those objects will have their animations updated trough the object's animation player
 	///and acording to the actual frame time.
-	void  pushAnimationUpdate(gkGameObject* obj);
+	void pushAnimationUpdate(gkGameObject* obj);
+	void removeAnimationUpdate(gkGameObject* obj);
 
 	// Local property access.
 

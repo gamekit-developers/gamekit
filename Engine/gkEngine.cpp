@@ -104,15 +104,21 @@ public:
 		        debug(0),
 		        debugPage(0),
 		        debugFps(0),
-				archive_factory(0)
+				archive_factory(0),
+				timer(0)
 
 	{
+		timer = new btClock();
+		timer->reset();
+		curTime = timer->getTimeMilliseconds();
+
 		plugin_factory = new gkRenderFactoryPrivate();
 		archive_factory = new gkBlendArchiveFactory();
 	}
 
 	virtual ~Private()
 	{
+		delete timer;
 		delete plugin_factory;
 		delete archive_factory;
 	}
@@ -138,6 +144,9 @@ public:
 	gkDebugPropertyPage*        debugPage;
 	gkDebugFps*                 debugFps;
 	
+	btClock*					timer;
+	unsigned long				curTime;
+
 	gkBlendArchiveFactory*		archive_factory;
 };
 
@@ -551,6 +560,8 @@ bool gkEngine::initializeStepLoop(void)
 
 bool gkEngine::stepOneFrame(void)
 {
+	m_private->curTime = m_private->timer->getTimeMilliseconds();
+
 	gkWindowSystem* sys = m_private->windowsystem;
 	sys->process();
 
@@ -567,6 +578,10 @@ void gkEngine::finalizeStepLoop(void)
 	m_running = false;
 }
 
+unsigned long gkEngine::getCurTime()
+{
+	return m_private->curTime;
+}
 
 bool gkEnginePrivate::frameStarted(const FrameEvent& evt)
 {

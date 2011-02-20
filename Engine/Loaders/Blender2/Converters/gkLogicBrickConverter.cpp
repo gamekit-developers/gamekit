@@ -83,6 +83,7 @@ void gkLogicLoader::convertObject(Blender::Object* bobj, gkGameObject* gobj)
 {
 	GK_ASSERT(gobj && bobj);
 
+	gkScalar animFps = gkEngine::getSingleton().getUserDefs().animFps;
 	gkString groupName = gobj->getGroupName();
 
 	if (!bobj->sensors.first && !bobj->controllers.first && !bobj->actuators.first)
@@ -220,8 +221,8 @@ void gkLogicLoader::convertObject(Blender::Object* bobj, gkGameObject* gobj)
 
 				Blender::bActionActuator* baa = (Blender::bActionActuator*)bact->data;
 
-				aa->setStart(baa->sta);
-				aa->setEnd(baa->end);
+				aa->setStart(baa->sta/animFps);
+				aa->setEnd(baa->end/animFps);
 				aa->setBlend(baa->blendin);
 
 				int mode = 0;

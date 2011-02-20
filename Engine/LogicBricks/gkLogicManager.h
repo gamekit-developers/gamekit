@@ -58,8 +58,9 @@ public:
 
 	typedef utListClass<gkLogicLink> Links;
 	typedef utListIterator<Links>    LinkIterator;
-	typedef gkAbstractDispatcher*     gkAbstractDispatcherPtr;
-	typedef utArray<gkLogicBrick*>  Bricks;
+	typedef gkAbstractDispatcher*    gkAbstractDispatcherPtr;
+	typedef utArray<gkLogicBrick*>   Bricks;
+	typedef utHashSet<gkLogicBrick*> BrickSet;
 
 protected:
 
@@ -69,6 +70,7 @@ protected:
 	Bricks                      m_cin,  m_ain, m_aout; // Temporary open or closed links
 	bool                        m_sort;
 
+	BrickSet					m_updateBricks;
 
 	void push(gkLogicBrick* a, gkLogicBrick* b, Bricks& in, bool stateValue);
 
@@ -115,6 +117,8 @@ public:
 	///Tells the manager a link from a controller to an actuator has been opened or closed.
 	void push(gkLogicController* c, gkLogicActuator* v, bool stateValue);
 
+	void GK_INLINE requestUpdate(gkLogicBrick* b) { if (b) m_updateBricks.insert(b); }
+	void GK_INLINE removeUpdate(gkLogicBrick* b)  { if (b) m_updateBricks.erase(b);  }
 
 	UT_DECLARE_SINGLETON(gkLogicManager);
 };

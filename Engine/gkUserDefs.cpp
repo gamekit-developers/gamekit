@@ -52,7 +52,6 @@ gkUserDefs::gkUserDefs()
 	verbose(true),
 	winsize(800, 600),
 	wintitle("Ogre GameKit Demo"),
-	extWinhandle(""),
 	fullscreen(false),
 	framingType(gkViewport::FRAMING_EXTEND),
 	resources(""),
@@ -72,7 +71,9 @@ gkUserDefs::gkUserDefs()
 	shadowtechnique("stencilmodulative"),
 	colourshadow(0.8f, 0.8f, 0.8f),
 	fardistanceshadow(0),
-	defaultMipMap(5)
+	defaultMipMap(5),
+	extWinhandle(""),
+	animFps(24.f)
 {
 }
 

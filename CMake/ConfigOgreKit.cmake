@@ -24,7 +24,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 	set(OGREKIT_INSTALL_PREFIX ${ROOT}/Bin)
 	
 	option(OGREKIT_USE_LUA					"Use Lua script bindings" ON)
-	option(OGREKIT_COMPLIE_SWIG				"Enable compile time SWIG generation."  OFF)
+	option(OGREKIT_COMPILE_SWIG				"Enable compile time SWIG generation."  OFF)
 	option(OGREKIT_COMPILE_OGRE_SCRIPTS		"Automatically convert Blender TX to Ogre (.material, .font, .overlay... etc)" ON)
 	option(OGREKIT_COMPILE_WXWIDGETS		"Enable / Disable wxWidgets builds" OFF)
 	option(OGREKIT_DEBUG_ASSERT				"Enable / Disable debug asserts." ON)
@@ -143,7 +143,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 	endif()
 	
 	if (NOT OGREKIT_USE_LUA)
-		set(OGREKIT_COMPLIE_SWIG FALSE CACHE BOOL "Disabling Swig" FORCE)
+		set(OGREKIT_COMPILE_SWIG FALSE CACHE BOOL "Disabling Swig" FORCE)
 	endif()
 
 	if (SAMPLES_NODE_EDITOR OR SAMPLES_EMBEDDEMO OR SAMPLES_LUA_EDITOR OR SAMPLES_INSPECTOR)
@@ -166,7 +166,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 		set(OGREKIT_COMPILE_LIBROCKET TRUE CACHE BOOL "Forcing LibRocket"  FORCE)
 	endif()
 	
-	if (OGREKIT_COMPLIE_SWIG OR OGREKIT_GENERATE_BUILTIN_RES)
+	if (OGREKIT_COMPILE_SWIG OR OGREKIT_GENERATE_BUILTIN_RES)
 		set(OGREKIT_COMPILE_TCL TRUE CACHE BOOL "Forcing TCL"  FORCE)
 	endif()
 
@@ -238,7 +238,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 	endif ()
 
 
-	if (OGREKIT_COMPLIE_SWIG)
+	if (OGREKIT_COMPILE_SWIG)
 		include(RunSwig)
 	endif()
 

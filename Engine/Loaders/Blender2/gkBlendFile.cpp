@@ -72,6 +72,7 @@ using namespace Ogre;
 gkBlendFile::gkBlendFile(const gkString& blendToLoad, const gkString& group)
 	:	m_name(blendToLoad),
 		m_group(group),
+		m_animFps(24),
 		m_activeScene(0),
 		m_findScene(""),
 		m_hasBFont(false)
@@ -143,7 +144,11 @@ void gkBlendFile::loadActive(void)
 
 	Blender::FileGlobal* fg = (Blender::FileGlobal*)m_file->getFileGlobal();
 	if (fg)
-	{
+	{		
+		m_animFps = fg->curscene->r.frs_sec / fg->curscene->r.frs_sec_base;
+		gkEngine::getSingleton().getUserDefs().animFps = m_animFps;
+
+
 		buildAllTextures();
 		buildAllFonts();
 		buildTextFiles();
@@ -171,6 +176,12 @@ void gkBlendFile::loadActive(void)
 
 void gkBlendFile::createInstances(void)
 {
+	Blender::FileGlobal* fg = (Blender::FileGlobal*)m_file->getFileGlobal();
+	if (fg)
+		gkEngine::getSingleton().getUserDefs().animFps = fg->curscene->r.frs_sec / fg->curscene->r.frs_sec_base;
+
+	m_animFps = gkEngine::getSingleton().getUserDefs().animFps;
+
 	// Load / convert all
 	buildAllTextures();
 	buildAllFonts();
@@ -202,7 +213,6 @@ void gkBlendFile::createInstances(void)
 	}
 
 
-	Blender::FileGlobal* fg = (Blender::FileGlobal*)m_file->getFileGlobal();
 	if (fg)
 	{
 		// Grab the main scene
@@ -315,12 +325,13 @@ void gkBlendFile::buildAllParticles(void)
 	
 	bParse::bListBasePtr* particleList = mp->getParticle();
 
+	gkParticleConverter conv(m_group, m_animFps);
+
 	int i;
 	for (i = 0; i < particleList->size(); ++i)
 	{
 		Blender::ParticleSettings* ps = (Blender::ParticleSettings*)particleList->at(i);
-
-		gkParticleConverter conv(m_group);
+		
 		conv.convertParticle(ps);
 	}
 }
@@ -422,11 +433,8 @@ void gkBlendFile::buildAllActions(void)
 {
 	gkAnimationLoader anims(m_group);
 	bParse::bMain* mp = m_file->getMain();
-	
-	Blender::FileGlobal* fg = (Blender::FileGlobal*)m_file->getFileGlobal();
-	gkScalar animfps = fg->curscene->r.frs_sec / fg->curscene->r.frs_sec_base;
-	
-	anims.convertActions(mp->getAction(), mp->getVersion() <= 249, animfps);
+		
+	anims.convertActions(mp->getAction(), mp->getVersion() <= 249, m_animFps);
 }
 
 

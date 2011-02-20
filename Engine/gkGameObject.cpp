@@ -1176,11 +1176,36 @@ void gkGameObject::playAnimation(const gkString& act, gkScalar blend, int mode, 
 
 void gkGameObject::playAnimation(gkAnimationPlayer* act, gkScalar blend, int mode, int priority)
 {
-	if(act)
+	if (act)
 	{
 		getAnimationBlender().push(act, blend, mode, priority);
 		m_scene->pushAnimationUpdate(this);
 	}
+}
+
+void gkGameObject::stopAnimation(const gkString& act)
+{
+	gkAnimationPlayer* gact = getAnimationPlayer(act);
+	stopAnimation(gact);
+}
+
+void gkGameObject::stopAnimation(gkAnimationPlayer* act)
+{
+	if (act)
+	{
+		getAnimationBlender().remove(act);
+	}
+}
+
+void gkGameObject::pauseAnimations(void)
+{
+	m_scene->removeAnimationUpdate(this);
+}
+
+void gkGameObject::resumeAnimations(void)
+{
+	if (!m_actions.empty())
+		m_scene->pushAnimationUpdate(this);
 }
 
 ///Called by the scene when object is animated

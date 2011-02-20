@@ -271,6 +271,12 @@ public:
 	void                   updateAnimationBlender(const gkScalar tick);
 	gkAnimationBlender&    getAnimationBlender(void);
 	GK_INLINE bool         hasAnimationBlender(void) { return m_actionBlender != 0; }
+	
+	void                   stopAnimation(const gkString& act);
+	void                   stopAnimation(gkAnimationPlayer* act);
+
+	void                   pauseAnimations(void);
+	void                   resumeAnimations(void);
 
 	GK_INLINE const Animations& getAnimations(void) { return m_actions; }
 	void getAnimationNames(utArray<gkHashedString>& names);

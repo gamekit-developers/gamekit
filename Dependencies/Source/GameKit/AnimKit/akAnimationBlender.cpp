@@ -165,6 +165,14 @@ void akAnimationBlender::pushStack(akAnimationBlend& blend)
 }
 
 
+void akAnimationBlender::remove(akAnimationPlayer* action)
+{
+	akAnimationBlend act;
+	act.setAnimationPlayer(action);
+
+	m_stack.erase(m_stack.find(act));
+}
+
 void akAnimationBlender::evaluate(akScalar delta)
 {
 	if (!m_stack.empty())

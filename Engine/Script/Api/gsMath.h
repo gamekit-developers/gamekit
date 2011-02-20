@@ -55,13 +55,13 @@ public:
 		return buffer;
 	}
 
-	float       normalize(void)                { return normalise(); }
-	float       dot(const gsVector3& v)        { return dotProduct(v); }
-	gsVector3   cross(const gsVector3& v)      { return gsVector3(crossProduct(v));}
-	float       length(void)                   { return gkVector3::length(); }
-	float       length2(void)                  { return gkVector3::squaredLength(); }
-	float       distance(const gsVector3& v)   { return gkVector3::distance(v); }
-	float       distance2(const gsVector3& v)  { return gkVector3::squaredDistance(v); }
+	float       normalize(void)                    { return normalise(); }
+	float       dot(const gsVector3& v)            { return dotProduct(v); }
+	gsVector3   cross(const gsVector3& v)          { return gsVector3(crossProduct(v));}
+	float       length(void)                       { return gkVector3::length(); }
+	float       length2(void)                      { return gkVector3::squaredLength(); }
+	float       distance(const gsVector3& v)       { return gkVector3::distance(v); }
+	float       distance2(const gsVector3& v)      { return gkVector3::squaredDistance(v); }
 
 	gsVector3 operator- (void)                { return -(gkVector3) * this; }
 	gsVector3 operator+ (const gsVector3& v)  { return ((const gkVector3&) * this).operator + (v); }
@@ -216,6 +216,11 @@ inline gsQuaternion gsQuatMulf(const gsQuaternion& a, const float& b)
 inline gsVector3 gsQuatMulVec3(const gsQuaternion& a, const gsVector3& b)
 {
 	return (gkQuaternion)a * (gkVector3)b;
+}
+
+inline gsQuaternion gsVec3RotationTo(const gsVector3& a, const gsVector3& b) 
+{ 
+	return ((gkVector3)a).getRotationTo(b); 
 }
 
 

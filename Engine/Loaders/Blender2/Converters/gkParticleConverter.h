@@ -36,10 +36,11 @@
 class gkParticleConverter
 {
 	const gkResourceNameString	m_groupName;
+	gkScalar m_fps;
 
 public:
 
-	gkParticleConverter(const gkResourceNameString& groupName="") : m_groupName(groupName) {}
+	gkParticleConverter(const gkResourceNameString& groupName="", gkScalar fps=24.f) : m_groupName(groupName), m_fps(fps) {}
 	~gkParticleConverter() {}
 
 	void convertParticle(Blender::ParticleSettings* pt);

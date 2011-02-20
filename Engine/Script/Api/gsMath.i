@@ -27,25 +27,26 @@
 %{
 #include "gsMath.h"
 %}
+%include "gsMacros.i"
 
-%rename(Quaternion)   gsQuaternion;
-%rename(Ray)          gsRay;
-%rename(Vector3)      gsVector3;
-
-%rename(Vec3Negate)   gsVec3Negate;
-%rename(Vec3AddVec3)  gsVec3AddVec3;
-%rename(Vec3SubVec3)  gsVec3SubVec3;
-%rename(Vec3MulVec3)  gsVec3MulVec3;
-%rename(Vec3Mulf)     gsVec3Mulf;
-%rename(Vec3DivVec3)  gsVec3DivVec3;
-%rename(Vec3Divf)     gsVec3Divf;
-%rename(QuatNegate)   gsQuatNegate;
-%rename(QuatAddQuat)  gsQuatAddQuat;
-%rename(QuatSubQuat)  gsQuatSubQuat;
-%rename(QuatMulQuat)  gsQuatMulQuat;
-%rename(QuatMulf)     gsQuatMulf;
-%rename(QuatMulVec3)  gsQuatMulVec3;
-
+GS_SCRIPT_NAME(Quaternion)      
+GS_SCRIPT_NAME(Ray)             
+GS_SCRIPT_NAME(Vector3)         
+		     
+GS_SCRIPT_NAME(Vec3Negate)      
+GS_SCRIPT_NAME(Vec3AddVec3)     
+GS_SCRIPT_NAME(Vec3SubVec3)     
+GS_SCRIPT_NAME(Vec3MulVec3)     
+GS_SCRIPT_NAME(Vec3Mulf)        
+GS_SCRIPT_NAME(Vec3DivVec3)     
+GS_SCRIPT_NAME(Vec3Divf)        
+GS_SCRIPT_NAME(QuatNegate)      
+GS_SCRIPT_NAME(QuatAddQuat)     
+GS_SCRIPT_NAME(QuatSubQuat)     
+GS_SCRIPT_NAME(QuatMulQuat)     
+GS_SCRIPT_NAME(QuatMulf)        
+GS_SCRIPT_NAME(QuatMulVec3)     
+GS_SCRIPT_NAME(Vec3RotationTo) 
 
 %include "gsMath.h"
 

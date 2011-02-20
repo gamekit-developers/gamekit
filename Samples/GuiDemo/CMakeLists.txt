@@ -20,7 +20,7 @@ set(FONT_TMPL
 	fonts/Delicious_Roman.otf
 )
 
-#generate font file to inl file, turn on OGREKIT_COMPLIE_SWIG build option.
+#generate font file to inl file, turn on OGREKIT_COMPILE_SWIG build option.
 #add_templates(1 GEN_TEMPLATES_OUT fonts/uifonts.inl ${FONT_TMPL})
 
 set(DEMO_SRC

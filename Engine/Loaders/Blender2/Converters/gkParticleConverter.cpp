@@ -47,13 +47,11 @@ void gkParticleConverter::convertParticle(Blender::ParticleSettings* pt)
 
 	pp.m_name = GKB_IDNAME(pt);
 
-	const int fps = 24; //scene fps
-
 	pp.m_emitfrom = pt->from;
 	pp.m_amount = pt->totpart;
-	pp.m_lifetime = pt->lifetime/fps; 
-	pp.m_start = pt->sta/fps;
-	pp.m_end = pt->end/fps;
+	pp.m_lifetime = pt->lifetime/m_fps; 
+	pp.m_start = pt->sta/m_fps;
+	pp.m_end = pt->end/m_fps;
 	pp.m_random = pt->randlife;
 	pp.m_jitter = pt->jitfac;
 

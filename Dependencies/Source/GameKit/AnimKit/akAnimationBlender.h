@@ -105,6 +105,7 @@ public:
 	~akAnimationBlender();
 
 	void push(akAnimationPlayer* action, const akScalar& frames, int mode = AK_ACT_END, int priority = 0);
+	void remove(akAnimationPlayer* action);
 
 	void evaluate(akScalar delta);
 

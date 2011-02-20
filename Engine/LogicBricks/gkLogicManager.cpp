@@ -87,6 +87,8 @@ void gkLogicManager::clear(void)
 	m_cin.clear();
 	m_ain.clear();
 	m_aout.clear();
+
+	m_updateBricks.clear();
 }
 
 
@@ -351,6 +353,10 @@ void gkLogicManager::update(gkScalar delta)
 	}
 
 	clearActuators();
+
+	BrickSet::Iterator iter(m_updateBricks);
+	while (iter.hasMoreElements())
+		iter.getNext()->update();
 }
 
 

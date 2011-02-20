@@ -74,6 +74,8 @@ public:
 	static gkScalar getStepRate();
 	static gkScalar getTickRate();
 
+	unsigned long getCurTime(); //return ms, updated per frame
+
 	gkScene* getActiveScene(void);
 
 	void registerActiveScene(gkScene* scene);

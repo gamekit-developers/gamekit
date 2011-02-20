@@ -81,6 +81,7 @@ protected:
 	ManualResourceLoaderList	m_loaders;			// Ogre Loaders
 	const gkString				m_name;				// Current file path.
 	const gkString				m_group;			// resource group
+	float						m_animFps;			
 	bParse::bBlenderFile*		m_file;				// bParse File Pointer
 	Scenes						m_scenes;			// All Scenes
 	gkScene*					m_activeScene;		// Main scene found during parse.

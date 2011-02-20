@@ -4003,6 +4003,40 @@ fail:
 }
 
 
+static int _wrap_Vec3RotationTo(lua_State* L) {
+  int SWIG_arg = 0;
+  gsVector3 *arg1 = 0 ;
+  gsVector3 *arg2 = 0 ;
+  gsQuaternion result;
+  
+  SWIG_check_num_args("gsVec3RotationTo",2,2)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("gsVec3RotationTo",1,"gsVector3 const &");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("gsVec3RotationTo",2,"gsVector3 const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vec3RotationTo",1,SWIGTYPE_p_gsVector3);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_gsVector3,0))){
+    SWIG_fail_ptr("Vec3RotationTo",2,SWIGTYPE_p_gsVector3);
+  }
+  
+  result = gsVec3RotationTo((gsVector3 const &)*arg1,(gsVector3 const &)*arg2);
+  {
+    gsQuaternion * resultptr = new gsQuaternion((const gsQuaternion &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_gsQuaternion,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_new_ObjectList__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
   gsArray< gsGameObject,gkGameObject > *result = 0 ;
@@ -24057,6 +24091,7 @@ static const struct luaL_reg swig_commands[] = {
     { "QuatMulQuat", _wrap_QuatMulQuat},
     { "QuatMulf", _wrap_QuatMulf},
     { "QuatMulVec3", _wrap_QuatMulVec3},
+    { "Vec3RotationTo", _wrap_Vec3RotationTo},
     { "getActiveScene", _wrap_getActiveScene},
     { "DebugPrint", _wrap_DebugPrint},
     { "getCurrentController", _wrap_getCurrentController},
