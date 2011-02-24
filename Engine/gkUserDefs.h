@@ -52,6 +52,7 @@ public:
 	int                     framingType;        // crop/letterbox/extend. Used when window is larger then requested
 	gkString                resources;          // resources to load
 	bool                    blendermat;         // convert meshes using blender materials
+	bool					matblending;		// Eanable material blending mode
 	bool                    grabInput;          // hide & grab the mouse
 	bool                    debugFps;           // show fps and profiling information
 	bool                    debugPhysics;       // enable / disable physics debugging

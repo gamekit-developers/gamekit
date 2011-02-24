@@ -56,6 +56,7 @@ gkUserDefs::gkUserDefs()
 	framingType(gkViewport::FRAMING_EXTEND),
 	resources(""),
 	blendermat(true),
+	matblending(false),
 	grabInput(true),
 	debugFps(false),
 	debugPhysics(false),
@@ -223,6 +224,11 @@ void gkUserDefs::parseString(const gkString& key, const gkString& val)
 		blendermat = Ogre::StringConverter::parseBool(val);
 		return;
 	}
+	if (KeyEq("matblending"))
+	{
+		matblending = Ogre::StringConverter::parseBool(val);
+		return;
+	}	
 	if (KeyEq("buildinstances"))
 	{
 		buildStaticGeometry = Ogre::StringConverter::parseBool(val);

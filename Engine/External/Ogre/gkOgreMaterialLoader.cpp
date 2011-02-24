@@ -28,6 +28,8 @@
 #include "gkScene.h"
 #include "gkOgreMaterialLoader.h"
 #include "gkOgreSkyBoxGradient.h"
+#include "gkEngine.h"
+#include "gkUserDefs.h"
 #include "OgreMeshManager.h"
 #include "OgreMaterial.h"
 #include "OgreMaterialManager.h"
@@ -70,7 +72,7 @@ void gkMaterialLoader::loadSubMeshMaterial(gkSubMesh* mesh, const gkString& grou
 	if (!oma.isNull())
 		return;
 
-	oma = Ogre::MaterialManager::getSingleton().create(gma.m_name, group);//GK_BUILTIN_GROUP);
+	oma = Ogre::MaterialManager::getSingleton().create(gma.m_name, group);
 
 	if (gma.m_mode & gkMaterialProperties::MA_INVISIBLE)
 	{
@@ -115,12 +117,79 @@ void gkMaterialLoader::loadSubMeshMaterial(gkSubMesh* mesh, const gkString& grou
 
 	Ogre::Pass* pass = oma->getTechnique(0)->getPass(0);
 
+	bool matBlending = gkEngine::getSingleton().getUserDefs().matblending;
+
+	if (matBlending && (gma.m_mode & gkMaterialProperties::MA_HASRAMPBLEND))
+	{
+		using namespace Ogre;
+
+		switch (gma.m_rblend)
+		{
+		case GK_BT_MULTIPLY:			
+			pass->setSceneBlending(SBT_MODULATE);			
+			break;
+		case GK_BT_SUBTRACT:			
+			pass->setSceneBlending(SBF_ONE_MINUS_SOURCE_COLOUR, SBF_ONE);
+			break;
+		case GK_BT_DARKEN:
+			pass->setSceneBlendingOperation(SBO_MIN);
+			pass->setSceneBlending(SBF_ONE, SBF_ONE);
+			break;
+		case GK_BT_LIGHTEN:
+			pass->setSceneBlendingOperation(SBO_MAX);
+			pass->setSceneBlending(SBF_ONE, SBF_ONE);
+			break;
+		case GK_BT_SCREEN:			
+			pass->setSceneBlending(SBF_ONE_MINUS_DEST_COLOUR, SBF_ONE);
+			break;
+		case GK_BT_ADDITIVE:
+			pass->setSceneBlending(SBT_ADD);
+			break;
+		case GK_BT_MIXTURE:
+		default:
+			pass->setSceneBlending(SBF_ONE, SBF_ZERO);
+			break;
+		}
+	}
+
 	for (int i = 0; i < gma.m_totaltex; ++i)
 	{
-		gkTexureProperties& gte = gma.m_textures[i];
-		Ogre::TextureUnitState* otus = pass->createTextureUnitState(gte.m_name.c_str(), gte.m_layer);
-		otus->setColourOperation(Ogre::LBO_MODULATE);
+		using namespace Ogre;
+
+		gkTextureProperties& gte = gma.m_textures[i];
+		Ogre::TextureUnitState* otus = pass->createTextureUnitState(gte.m_name, gte.m_layer);
+
+		LayerBlendOperationEx op = LBX_MODULATE;
+
+		switch (gte.m_blend)
+		{
+		case GK_BT_ADDITIVE:
+			op = LBX_ADD;
+			break;
+
+		case GK_BT_SUBTRACT:			
+			op = LBX_SUBTRACT;
+			break;
+
+		case GK_BT_DARKEN:	
+		case GK_BT_LIGHTEN:	
+		case GK_BT_SCREEN:
+		case GK_BT_COLOR:
+			//break; TODO: support more mode
+
+		case GK_BT_MULTIPLY:
+		case GK_BT_MIXTURE:
+		default:
+			op = LBX_MODULATE;
+			break;
+		}
+
+		if (i == 0)
+			otus->setColourOperationEx(op, LBS_DIFFUSE, LBS_TEXTURE);		
+		else
+			otus->setColourOperationEx(op);
 	}
+
 
 	if (gma.m_mode & gkMaterialProperties::MA_ALPHABLEND)
 	{

@@ -84,7 +84,8 @@ int OgreKit::setup(int argc, char** argv)
 		TCLAP::ValueArg<bool>			fullscreen_arg("f", "fullscreen", "Enable fullscreen mode.", false, m_prefs.fullscreen, "bool");
 		TCLAP::ValueArg<std::string>	framingType_arg("", "framingtype", "Set viewport framing type. (extend, crop, letterbox)", false, "", "string");
 		TCLAP::ValueArg<std::string>	resources_arg("", "resources", "Set resouces.", false, m_prefs.resources, "string");
-		TCLAP::ValueArg<bool>			blendermat_arg("", "blendmat", "Use Blender matrix.", false, m_prefs.blendermat, "bool");
+		TCLAP::ValueArg<bool>			blendermat_arg("", "blendmat", "Convert meshes using blender materials.", false, m_prefs.blendermat, "bool");
+		TCLAP::ValueArg<bool>			matblending_arg("", "matblending", "Enable material pass blending mode.", false, m_prefs.blendermat, "bool");		
 		TCLAP::ValueArg<bool>			grapInput_arg("g", "grabinput", "Grap mouse input.", false, m_prefs.grabInput, "bool");
 		TCLAP::ValueArg<bool>			debugFps_arg("d", "debugfps", "Display debug fps.", false, m_prefs.debugFps, "bool");
 		TCLAP::ValueArg<bool>			debugPhysics_arg("p", "debugphysics", "Display debug physics.", false, m_prefs.debugPhysics, "bool");
@@ -111,6 +112,8 @@ int OgreKit::setup(int argc, char** argv)
 		cmdl.add(wintitle_arg);
 		cmdl.add(fullscreen_arg);
 		cmdl.add(framingType_arg);
+		cmdl.add(blendermat_arg);
+		cmdl.add(matblending_arg);
 		cmdl.add(grapInput_arg);
 		cmdl.add(debugFps_arg);
 		cmdl.add(debugPhysics_arg);	
@@ -154,11 +157,11 @@ int OgreKit::setup(int argc, char** argv)
 		m_prefs.framingType = gkUserDefs::getViewportFramingType(framingType_arg.getValue());
 		m_prefs.resources = resources_arg.getValue();
 		m_prefs.blendermat = blendermat_arg.getValue();
+		m_prefs.matblending = matblending_arg.getValue();
 		m_prefs.grabInput = grapInput_arg.getValue();
 		m_prefs.debugFps = debugFps_arg.getValue();
 		m_prefs.debugPhysics = debugPhysics_arg.getValue();
 		m_prefs.debugPhysicsAabb = debugPhysicsAabb_arg.getValue();
-		m_prefs.enableshadows = enableshadows_arg.getValue();
 		m_prefs.buildStaticGeometry = buildStaticGeometry_arg.getValue();
 		m_prefs.useBulletDbvt = useBulletDbvt_arg.getValue();
 		m_prefs.showDebugProps = showDebugProps_arg.getValue();

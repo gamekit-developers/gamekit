@@ -41,7 +41,7 @@ properties_game.WORLD_PT_game_physics.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_game.PHYSICS_PT_game_physics.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_game.PHYSICS_PT_game_collision_bounds.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 del properties_game
-    
+
 
 import properties_particle
 properties_particle.PARTICLE_PT_context_particles.COMPAT_ENGINES.add('GAMEKIT_RENDER')
@@ -148,6 +148,8 @@ properties_data_lamp.DATA_PT_sunsky.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_data_lamp.LAMP_MT_sunsky_presets.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 del properties_data_lamp
 
+
+
 # Base class for ou panels
 class RenderButtonsPanel():
     bl_space_type = 'PROPERTIES'
@@ -200,6 +202,7 @@ class RENDER_PT_gamekit(RenderButtonsPanel, bpy.types.Panel):
         col.label(text="General::")
         col.prop(gks, "gk_render_system", text="")
         col.prop(gks, "gk_grab_input")
+        col.prop(gks, "gk_matblending")
         col.prop(gks, "gk_verbose")
         
         #col = split.column()
@@ -300,6 +303,11 @@ def addProperties():
                     name="Grab input",
                     description="Grab mouse and keyboard event (cause other app to be unusable while game is runing).",
                     default=True)
+
+    GamekitSettings.gk_matblending = bpy.props.BoolProperty(
+                    name="Material blending",
+                    description="Enable material blending mode by ramp blend.",
+                    default=False)
 
     GamekitSettings.gk_verbose = bpy.props.BoolProperty(
                     name="Verbose",

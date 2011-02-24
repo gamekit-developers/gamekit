@@ -35,17 +35,21 @@
 #define GK_MAX_TEXTURE 18
 class gkMesh;
 
-class gkTexureProperties
+enum gkBlendType
+{
+	GK_BT_MIXTURE,
+	GK_BT_MULTIPLY,
+	GK_BT_ADDITIVE,
+	GK_BT_SUBTRACT,
+	GK_BT_SCREEN,
+	GK_BT_DARKEN,
+	GK_BT_LIGHTEN,
+	GK_BT_COLOR
+};
+
+class gkTextureProperties
 {
 public:
-
-	enum Blend
-	{
-		BM_MIXTURE,
-		BM_MULTIPLY,
-		BM_ADDITIVE,
-		BM_SUBTRACT
-	};
 
 	enum Mode
 	{
@@ -60,6 +64,13 @@ public:
 		TM_NORMAL       = (1 << 8)
 	};
 
+	enum TexMode
+	{
+		TX_NEGATIVE		= (1 << 0),
+		TX_STENCIL		= (1 << 1),
+		TX_RGBTOINTEN	= (1 << 2)
+	};
+
 
 	enum Type
 	{
@@ -69,14 +80,15 @@ public:
 
 public:
 
-	gkTexureProperties()
+	gkTextureProperties()
 		:   m_name(),
 		    m_image(),
 		    m_color(1.f, 1.f, 1.f),
 		    m_layer(0),
 		    m_type(IMT_IMAGE),
-		    m_blend(BM_MULTIPLY),
+		    m_blend(GK_BT_MIXTURE),
 		    m_mode(0),
+			m_texmode(0),
 		    m_mix(1.f)
 	{
 	}
@@ -89,6 +101,7 @@ public:
 	int         m_type;
 	int         m_blend;
 	int         m_mode;
+	int			m_texmode;
 	gkScalar    m_mix;
 };
 
@@ -107,7 +120,8 @@ public:
 		MA_TWOSIDE          = (1 << 5),
 		MA_ALPHABLEND       = (1 << 6),
 		MA_ADDITIVEBLEND    = (1 << 7),
-		MA_HASFACETEX       = (1 << 8)
+		MA_HASFACETEX       = (1 << 8),
+		MA_HASRAMPBLEND		= (1 << 9)
 	};
 
 
@@ -115,6 +129,7 @@ public:
 	gkMaterialProperties()
 		:   m_name(),
 		    m_mode(MA_RECEIVESHADOWS | MA_LIGHTINGENABLED | MA_DEPTHWRITE),
+			m_rblend(GK_BT_MIXTURE),
 		    m_diffuse(1.f, 1.f, 1.f, 1.f),
 		    m_specular(0.f, 0.f, 0.f, 0.f),
 		    m_hardness(0.f),
@@ -130,6 +145,7 @@ public:
 
 	gkString                m_name;
 	unsigned int            m_mode;
+	int						m_rblend;
 	gkColor                 m_diffuse;
 	gkColor                 m_specular;
 	gkScalar                m_hardness;
@@ -140,9 +156,7 @@ public:
 	gkScalar                m_alpha;
 	gkScalar                m_depthOffset;
 	int                     m_totaltex;
-	gkTexureProperties      m_textures[GK_MAX_TEXTURE];
-
-
+	gkTextureProperties     m_textures[GK_MAX_TEXTURE];
 };
 
 

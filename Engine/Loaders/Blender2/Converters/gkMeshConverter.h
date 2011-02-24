@@ -56,7 +56,8 @@ public:
 	void convert(void);
 
 	static Blender::Material* getMaterial(Blender::Object* ob, int index);
-
+	static int getTexBlendType(int blend);
+	static int getRampBlendType(int blend);
 private:
 
 	typedef utArray<int>                                AssignmentIndexList;

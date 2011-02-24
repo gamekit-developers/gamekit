@@ -291,7 +291,7 @@ void gkBlenderMeshConverter::convertTextureFace(gkMaterialProperties& gma, gkMes
 			if (imas[i] != 0 && PtrSaftyCheck(imas[i]))
 			{
 				Blender::Image* ima = imas[i];
-				gkTexureProperties& gte = gma.m_textures[gma.m_totaltex++];
+				gkTextureProperties& gte = gma.m_textures[gma.m_totaltex++];
 				gte.m_layer = i;
 				gte.m_image = gte.m_name = GKB_IDNAME(ima);
 			}
@@ -299,6 +299,39 @@ void gkBlenderMeshConverter::convertTextureFace(gkMaterialProperties& gma, gkMes
 	}
 }
 
+int gkBlenderMeshConverter::getRampBlendType(int blend)
+{
+	switch (blend)
+	{
+	case MA_RAMP_BLEND:   return GK_BT_MIXTURE;	
+	case MA_RAMP_ADD:     return GK_BT_ADDITIVE;	
+	case MA_RAMP_SUB:     return GK_BT_SUBTRACT;	
+	case MA_RAMP_SCREEN:  return GK_BT_SCREEN;	
+	case MA_RAMP_DARK:	  return GK_BT_DARKEN;	
+	case MA_RAMP_LIGHT:	  return GK_BT_LIGHTEN;	
+	case MA_RAMP_COLOR:   return GK_BT_COLOR;		
+	default:              break;
+	}
+
+	return GK_BT_MULTIPLY;	
+}
+
+int gkBlenderMeshConverter::getTexBlendType(int blend)
+{
+	switch (blend)
+	{
+	case MTEX_BLEND:      return GK_BT_MIXTURE;	
+	case MTEX_ADD:        return GK_BT_ADDITIVE;	
+	case MTEX_SUB:        return GK_BT_SUBTRACT;	
+	case MTEX_SCREEN:	  return GK_BT_SCREEN;	
+	case MTEX_DARK:		  return GK_BT_DARKEN;	
+	case MTEX_LIGHT:	  return GK_BT_LIGHTEN;	
+	case MTEX_BLEND_VAL:  return GK_BT_COLOR;		
+	default:              break;
+	}
+
+	return GK_BT_MULTIPLY;	
+}
 
 void gkBlenderMeshConverter::convertMaterial(Blender::Material* bma, gkMaterialProperties& gma, gkMeshHashKey& hk)
 {
@@ -313,12 +346,14 @@ void gkBlenderMeshConverter::convertMaterial(Blender::Material* bma, gkMaterialP
 	gma.m_alpha         = bma->alpha;
 	gma.m_diffuse       = gkColor(bma->r, bma->g, bma->b);
 	gma.m_specular      = gkColor(bma->specr, bma->specg, bma->specb);
+	gma.m_rblend		= getRampBlendType(bma->rampblend_col);
 
 	if (bma->mode & MA_ZTRA)        gma.m_mode |= gkMaterialProperties::MA_DEPTHWRITE;
 	if (bma->mode & MA_SHADOW)      gma.m_mode |= gkMaterialProperties::MA_RECEIVESHADOWS;
 	if (bma->mode & MA_WIRE)        gma.m_mode |= gkMaterialProperties::MA_WIREFRAME;
 	if (!(bma->mode & MA_SHLESS))   gma.m_mode |= gkMaterialProperties::MA_LIGHTINGENABLED;
 	if (bma->alpha <= 0.f)          gma.m_mode |= gkMaterialProperties::MA_INVISIBLE;
+	if (bma->mode & MA_RAMP_COL)	gma.m_mode |= gkMaterialProperties::MA_HASRAMPBLEND;
 
 
 	// textures
@@ -339,24 +374,26 @@ void gkBlenderMeshConverter::convertMaterial(Blender::Material* bma, gkMaterialP
 				if (!ima)
 					continue;
 
-				gkTexureProperties& gte = gma.m_textures[gma.m_totaltex++];
+				gkTextureProperties& gte = gma.m_textures[gma.m_totaltex++];
 				gte.m_image = gte.m_name = GKB_IDNAME(ima);
 
 				if (mtex->texflag & MTEX_STENCIL)
-					gte.m_mode |= gkTexureProperties::TM_SPLAT;
+				{
+					gte.m_mode |= gkTextureProperties::TM_SPLAT;
+					gte.m_texmode |= gkTextureProperties::TX_STENCIL;
+				}
+				if (mtex->texflag & MTEX_NEGATIVE)
+					gte.m_texmode |= gkTextureProperties::TX_NEGATIVE;
+				if (mtex->texflag &  MTEX_RGBTOINT)
+					gte.m_texmode |= gkTextureProperties::TX_RGBTOINTEN;
+
 				if (mtex->mapto & MAP_ALPHA)
 				{
-					gte.m_mode |= gkTexureProperties::TM_ALPHA;
+					gte.m_mode |= gkTextureProperties::TM_ALPHA;
 					gma.m_mode |= gkMaterialProperties::MA_ALPHABLEND;
-				}
+				}								
 
-				switch (mtex->blendtype)
-				{
-				case MTEX_BLEND:    gte.m_blend = gkTexureProperties::BM_MIXTURE;   break;
-				case MTEX_ADD:      gte.m_blend = gkTexureProperties::BM_ADDITIVE;  break;
-				case MTEX_SUB:      gte.m_blend = gkTexureProperties::BM_SUBTRACT;  break;
-				default:            gte.m_blend = gkTexureProperties::BM_MULTIPLY;  break;
-				}
+				gte.m_blend = getTexBlendType(mtex->blendtype);				
 
 				gte.m_layer = findTextureLayer(mtex);
 				gte.m_mix   = mtex->colfac;
