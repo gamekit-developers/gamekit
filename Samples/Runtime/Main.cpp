@@ -85,7 +85,7 @@ int OgreKit::setup(int argc, char** argv)
 		TCLAP::ValueArg<std::string>	framingType_arg("", "framingtype", "Set viewport framing type. (extend, crop, letterbox)", false, "", "string");
 		TCLAP::ValueArg<std::string>	resources_arg("", "resources", "Set resouces.", false, m_prefs.resources, "string");
 		TCLAP::ValueArg<bool>			blendermat_arg("", "blendmat", "Convert meshes using blender materials.", false, m_prefs.blendermat, "bool");
-		TCLAP::ValueArg<bool>			matblending_arg("", "matblending", "Enable material pass blending mode.", false, m_prefs.blendermat, "bool");		
+		TCLAP::ValueArg<bool>			matblending_arg("", "matblending", "Enable material pass blending mode.", false, m_prefs.matblending, "bool");		
 		TCLAP::ValueArg<bool>			grapInput_arg("g", "grabinput", "Grap mouse input.", false, m_prefs.grabInput, "bool");
 		TCLAP::ValueArg<bool>			debugFps_arg("d", "debugfps", "Display debug fps.", false, m_prefs.debugFps, "bool");
 		TCLAP::ValueArg<bool>			debugPhysics_arg("p", "debugphysics", "Display debug physics.", false, m_prefs.debugPhysics, "bool");
