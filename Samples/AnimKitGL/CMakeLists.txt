@@ -3,6 +3,15 @@ cmake_minimum_required(VERSION 2.6)
 
 set(TargetName AppAnimKitGL)
 
+
+if (APPLE)
+	include_directories(${OGRELITE_SOURCE_DIR}/OgreMain/include/OSX)
+	SET(EXETYPE MACOSX_BUNDLE)
+	SET_SOURCE_FILES_PROPERTIES(MainMenu.nib  PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
+	SET_SOURCE_FILES_PROPERTIES(Blu.blend PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
+	SET (NibFile MainMenu.nib)
+endif()
+
 set(AKGL_SRC
 	Main.cpp
 	akEntity.cpp

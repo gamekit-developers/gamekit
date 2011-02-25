@@ -28,10 +28,17 @@
 #ifdef WIN32
 #include <Windows.h>
 #include <GL/glut.h>
+#elif defined(__APPLE__)
+#include <GLUT/glut.h>
 #else
 #include <GL/glut.h>
 #endif
-#include "GL/gl.h"
+
+#ifdef __APPLE__
+#include <OpenGL/gl.h>
+#else
+#include <GL/gl.h>
+#endif
 
 #include "akEntity.h"
 #include "akMesh.h"

@@ -2,6 +2,8 @@
 #ifdef WIN32
 #include <Windows.h>
 #include <GL/glut.h>
+#elif defined(__APPLE__)
+#include <GLUT/glut.h>
 #else
 #include <GL/glut.h>
 #endif
