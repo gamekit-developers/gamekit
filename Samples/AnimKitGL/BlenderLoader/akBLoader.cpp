@@ -181,7 +181,13 @@ int buildBoneTree(akSkeleton* skel, akSkeletonPose* bindPose, unsigned int idx, 
 	
 	akJoint* joint = skel->getJoint(idx);
 	joint->m_name = bone->name;
-	Matrix4& mat = (Matrix4&)bone->arm_mat;
+	
+	float* bmat = (float*)bone->arm_mat; 
+	Matrix4 mat(Vector4(bmat[4*0+0], bmat[4*0+1], bmat[4*0+2], bmat[4*0+3]),
+				Vector4(bmat[4*1+0], bmat[4*1+1], bmat[4*1+2], bmat[4*1+3]),
+				Vector4(bmat[4*2+0], bmat[4*2+1], bmat[4*2+2], bmat[4*2+3]),
+				Vector4(bmat[4*3+0], bmat[4*3+1], bmat[4*3+2], bmat[4*3+3]));
+				
 	//joint->m_inverseBindPose = inverse(mat);
 	akTransformState* jp = bindPose->getJointPose(idx);
 	*jp = akTransformState(mat);
@@ -357,7 +363,13 @@ void akBLoader::convertMeshObject(Blender::Object *bobj)
 	akEntity* entity = new akEntity();
 	m_demo->addEntity(AKB_IDNAME(bobj), entity);
 	
-	Matrix4& mat = (Matrix4&)bobj->obmat;
+	float* bmat = (float*)bobj->obmat; 
+	Matrix4 mat(Vector4(bmat[4*0+0], bmat[4*0+1], bmat[4*0+2], bmat[4*0+3]),
+				Vector4(bmat[4*1+0], bmat[4*1+1], bmat[4*1+2], bmat[4*1+3]),
+				Vector4(bmat[4*2+0], bmat[4*2+1], bmat[4*2+2], bmat[4*2+3]),
+				Vector4(bmat[4*3+0], bmat[4*3+1], bmat[4*3+2], bmat[4*3+3]));
+				
+				
 	akTransformState trans(mat);
 	entity->setTransformState(trans);
 	
@@ -393,8 +405,13 @@ void akBLoader::convertCameraObject(Blender::Object *bobj)
 
 	Blender::Camera* bcam =  (Blender::Camera*)bobj->data;
 	akCamera* camera = m_demo->getCamera();
-	
-	camera->m_transform = akTransformState((Matrix4&)bobj->obmat);
+	float* bmat = (float*)bobj->obmat; 
+	Matrix4 mat(Vector4(bmat[4*0+0], bmat[4*0+1], bmat[4*0+2], bmat[4*0+3]),
+				Vector4(bmat[4*1+0], bmat[4*1+1], bmat[4*1+2], bmat[4*1+3]),
+				Vector4(bmat[4*2+0], bmat[4*2+1], bmat[4*2+2], bmat[4*2+3]),
+				Vector4(bmat[4*3+0], bmat[4*3+1], bmat[4*3+2], bmat[4*3+3]));
+				
+	camera->m_transform = akTransformState(mat);
 	camera->m_clipStart = bcam->clipsta;
 	camera->m_clipEnd = bcam->clipend;
 	camera->m_fov = 360.0f * atanf(16.0f / bcam->lens) / akPi; //TODO fovx to fovy

@@ -105,6 +105,16 @@ UT_ASSERTCOMP(sizeof(void *) == 4, VOID_IS_4);
 #  define UT_INLINE    inline
 #endif
 
+#ifdef _MSC_VER
+#define UT_ALIGN16_ATRIB __declspec(align(16))
+#define UT_ALIGN16_START __declspec(align(16))
+#define UT_ALIGN16_END
+#else
+#define UT_ALIGN16_ATRIB __attribute__ ((aligned(16)))
+#define UT_ALIGN16_START
+#define UT_ALIGN16_END __attribute__ ((aligned(16)))
+#endif
+
 // Integer types
 typedef long            UTlong;
 typedef unsigned long   UTulong;
