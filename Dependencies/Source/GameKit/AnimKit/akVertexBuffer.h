@@ -102,7 +102,7 @@ public:
 
 private:
 	UTuint32               m_verticesNumber;
-	utList<struct Element> m_elements;
+	utList<Element> m_elements;
 	
 public:
 	akVertexBuffer();

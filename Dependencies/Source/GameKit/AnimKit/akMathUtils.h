@@ -33,11 +33,11 @@
 #include "utCommon.h"
 
 
-#ifdef WIN32
-#include "vectormathlibrary/include/vectormath/SSE/cpp/vectormath_aos.h"
-#else
+//#ifdef WIN32
+//#include "vectormathlibrary/include/vectormath/SSE/cpp/vectormath_aos.h"
+//#else
 #include "vectormathlibrary/include/vectormath/scalar/cpp/vectormath_aos.h"
-#endif
+//#endif
 using namespace Vectormath::Aos;
 
 
