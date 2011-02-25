@@ -25,13 +25,20 @@
 -------------------------------------------------------------------------------
 */
 
+#ifdef WIN32
+#include <Windows.h>
+#include <GL/glut.h>
+#else
+#include <GL/glut.h>
+#endif
+#include "GL/gl.h"
+
 #include "akEntity.h"
 #include "akMesh.h"
 #include "akSkeleton.h"
 #include "akSkeletonPose.h"
 //#include "akGeometryDeformer.h"
 
-#include "GL/gl.h"
 
 akEntity::akEntity() : m_mesh(0), m_skeleton(0), m_pose(0), m_matrixPalette(0)
 {
