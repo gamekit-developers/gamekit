@@ -83,8 +83,8 @@
 #include "AI/gkSteeringWander.h"
 #endif
 
-#include "Animation/gkAnimation.h"
-#include "Animation/gkAnimationManager.h"
+//#include "Animation/gkAnimation.h"
+//#include "Animation/gkAnimationManager.h"
 
 #include "Constraints/gkConstraint.h"
 #include "Constraints/gkConstraintManager.h"

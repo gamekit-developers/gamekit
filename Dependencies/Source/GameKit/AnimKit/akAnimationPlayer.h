@@ -28,49 +28,111 @@
 #ifndef AKANIMATIONPLAYER_H
 #define AKANIMATIONPLAYER_H
 
-#include "akAnimation.h"
+#include "akCommon.h"
 #include "akMathUtils.h"
 
+
+/// A player is linked to an animation clip and contains temporal
+/// information specific to a single object that can play the animation clip.
+/// This permit having several players paying the same clip et the same time
+/// but at a different positon in this clip and apply the results to different objects.
 class akAnimationPlayer
 {
+public:
+	enum Mode {
+		///Reset loop when done.
+		AK_ACT_LOOP    = (1 << 0),
+		///Play till the end and stop.
+		AK_ACT_END     = (1 << 1)
+	};
+
 protected:
-	akAnimation*         m_action;
-	akScalar             m_evalTime, m_weight;
-	bool                 m_enabled;
-	int                  m_mode;
+	akAnimationClip*     m_clip;
+	akScalar             m_length;
+	akScalar             m_evalTime;
 	akScalar             m_speedfactor;
+	akScalar             m_weight;
+	int                  m_mode;
+	bool                 m_enabled;
+
 
 public:
 	akAnimationPlayer();
-	akAnimationPlayer(akAnimation* resource);
+	akAnimationPlayer(akAnimationClip* clip);
 	~akAnimationPlayer() {}
-
-	UT_INLINE akScalar         getTimePosition(void) const { return m_evalTime; }
-	UT_INLINE akScalar         getWeight(void) const       { return m_weight; }
-	UT_INLINE int              getMode(void) const         { return m_mode; }
-	UT_INLINE akScalar         getSpeedFactor(void) const  { return m_speedfactor; }
-	UT_INLINE akScalar         getLength(void) const       { return m_action? m_action->getLength() : 0;}
-
-	UT_INLINE void             setMode(int v)              { m_mode = v; }
-	UT_INLINE void             setAnimation(akAnimation* v){ m_action = v; }
-	UT_INLINE void             setSpeedFactor(akScalar v)  { m_speedfactor = v; }
-
-	UT_INLINE void             enable(bool v)              { m_enabled = v; }
-	UT_INLINE bool             isEnabled(void) const       { return m_enabled; }
-	UT_INLINE bool             isDone(void) const          { return !m_enabled || m_evalTime >= getLength(); }
-
-	void setBlendFrames(akScalar v);
-	void setTimePosition(akScalar v);
-	void setWeight(akScalar w);
-
-	void evaluate(akScalar tick);
-	void reset(void);
 	
-private:
-	virtual void evaluateImpl(akScalar time) = 0;
+	void setAnimationClip(akAnimationClip* v);
+	void setTimePosition(akScalar v);
+	void setUniformTimePosition(akScalar v);
+	
+	akScalar getUniformTimePosition(void) const;
+
+	void stepTime(akScalar tick);
+	void reset(void);
+
+	void evaluate(akSkeletonPose* pose) const;
+	void evaluate(akTransformState* pose) const;
+	
+	UT_INLINE akScalar getTimePosition(void) const 
+	{
+		return m_evalTime;
+	}
+	
+	UT_INLINE int              getMode(void) const         
+	{
+		return m_mode;
+	}
+	
+	UT_INLINE akScalar         getSpeedFactor(void) const  
+	{
+		return m_speedfactor;
+	}
+	
+	UT_INLINE akScalar         getLength(void) const       
+	{
+		return m_length;
+	}
+	
+	UT_INLINE akScalar         getWeight(void) const       
+	{
+		return m_weight;
+	}
+	
+	UT_INLINE bool             isEnabled(void) const       
+	{
+		return m_enabled;
+	}
+	
+	UT_INLINE void             setMode(Mode v)                      
+	{
+		m_mode = v;
+	}
+	
+	UT_INLINE void             setSpeedFactor(akScalar v)          
+	{
+		m_speedfactor = v; 
+	}
+	
+	UT_INLINE void             setLength(akScalar v)                
+	{
+		m_length = v; 
+	}
+	
+	UT_INLINE void             setEnabled(bool v)
+	{
+		m_enabled = v;
+	}
+	
+	UT_INLINE void             setWeight(akScalar v)
+	{
+		m_weight = v;
+	}
+	
+	UT_INLINE bool             isDone(void) const
+	{
+		return m_evalTime >= m_length; 
+	}
 
 };
-
-
 
 #endif // AKANIMATIONPLAYER_H

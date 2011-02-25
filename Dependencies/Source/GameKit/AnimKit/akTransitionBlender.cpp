@@ -24,25 +24,24 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "akAnimationBlender.h"
+#include "akTransitionBlender.h"
 #include "akAnimationPlayer.h"
 
 
-akAnimationBlend::akAnimationBlend()
+akTransitionBlend::akTransitionBlend()
 	:    m_priority(0),
 	     m_way(0),
-	     m_mode(AK_ACT_LOOP),
+	     m_mode(akAnimationPlayer::AK_ACT_LOOP),
 	     m_blend(0),
 	     m_frames(0),
 	     m_time(0.f),
 	     m_base(0),
 	     m_enabled(true)
-
 {
 }
 
 
-akScalar akAnimationBlend::getLength(void) const
+akScalar akTransitionBlend::getLength(void) const
 {
 	if (m_base)
 		return m_base->getLength();
@@ -50,7 +49,7 @@ akScalar akAnimationBlend::getLength(void) const
 }
 
 
-void akAnimationBlend::setBlendFrames(akScalar frames)
+void akTransitionBlend::setBlendFrames(akScalar frames)
 {
 	if (frames <= 0.001f)
 		frames = 1;
@@ -59,20 +58,20 @@ void akAnimationBlend::setBlendFrames(akScalar frames)
 
 
 
-void akAnimationBlend::enable(bool v)
+void akTransitionBlend::enable(bool v)
 {
 	m_enabled = v;
 
-	if (m_base) m_base->enable(m_enabled);
+	if (m_base) m_base->setEnabled(m_enabled);
 }
 
 
-bool akAnimationBlend::evaluate(akScalar delta)
+bool akTransitionBlend::evaluate(akScalar delta)
 {
 	if (!m_enabled || !m_base)
 		return true;
 
-	if (m_mode == AK_ACT_LOOP)
+	if (m_mode == akAnimationPlayer::AK_ACT_LOOP)
 	{
 		if (m_time >= getLength())
 			m_time = 0.f;
@@ -89,24 +88,23 @@ bool akAnimationBlend::evaluate(akScalar delta)
 	if (m_way != AB_NONE)
 	{
 		m_blend = akClampf(m_blend + m_frames, 0.f, 1.f);
-		m_base->setWeight(m_way == akAnimationBlend::AB_IN ? m_blend : 1.f - m_blend);
+		m_base->setWeight(m_way == akTransitionBlend::AB_IN ? m_blend : 1.f - m_blend);
 	}
 	else
 		m_base->setWeight(1.f);
 	
 	// Apply objects
-	//m_base->setTimePosition(m_time);
-	//m_base->evaluate(0.f);
-	m_base->evaluate(delta);
+	m_base->setTimePosition(m_time);
+	//m_base->evaluate();
 	
 	
-	return m_way == akAnimationBlend::AB_OUT ? (1.f - m_blend) <= 0.f : false;
+	return m_way == akTransitionBlend::AB_OUT ? (1.f - m_blend) <= 0.f : false;
 }
 
 
 
 
-void akAnimationBlend::reset(void)
+void akTransitionBlend::reset(void)
 {
 	m_blend = 1.f;
 	m_time  = 0.f;
@@ -117,26 +115,26 @@ void akAnimationBlend::reset(void)
 
 
 
-akAnimationBlender::akAnimationBlender()
+akTransitionBlender::akTransitionBlender()
 	:    m_max(2)
 {
 }
 
 
-akAnimationBlender::~akAnimationBlender()
+akTransitionBlender::~akTransitionBlender()
 {
 }
 
 
-bool akAnimationBlendSort(const akAnimationBlend& a, const akAnimationBlend& b)
+bool akTransitionBlendSort(const akTransitionBlend& a, const akTransitionBlend& b)
 {
 	return a.getPriority() > b.getPriority();
 }
 
 
-void akAnimationBlender::push(akAnimationPlayer* action, const akScalar& frames, int mode, int priority)
+void akTransitionBlender::push(akAnimationPlayer* action, const akScalar& frames, int mode, int priority)
 {
-	akAnimationBlend act;
+	akTransitionBlend act;
 	act.setAnimationPlayer(action);
 
 	if (m_stack.find(act) == UT_NPOS)
@@ -151,7 +149,7 @@ void akAnimationBlender::push(akAnimationPlayer* action, const akScalar& frames,
 
 
 
-void akAnimationBlender::pushStack(akAnimationBlend& blend)
+void akTransitionBlender::pushStack(akTransitionBlend& blend)
 {
 	if (m_stack.size() >= m_max)
 	{
@@ -161,19 +159,11 @@ void akAnimationBlender::pushStack(akAnimationBlend& blend)
 	m_stack.push_back(blend);
 
 	if (blend.getPriority() > 0 && m_stack.size() > 1)
-		m_stack.sort(akAnimationBlendSort);
+		m_stack.sort(akTransitionBlendSort);
 }
 
 
-void akAnimationBlender::remove(akAnimationPlayer* action)
-{
-	akAnimationBlend act;
-	act.setAnimationPlayer(action);
-
-	m_stack.erase(m_stack.find(act));
-}
-
-void akAnimationBlender::evaluate(akScalar delta)
+void akTransitionBlender::evaluate(akScalar delta)
 {
 	if (!m_stack.empty())
 	{
@@ -189,19 +179,19 @@ void akAnimationBlender::evaluate(akScalar delta)
 
 		while (i < s)
 		{
-			akAnimationBlend& ab = p[i];
+			akTransitionBlend& ab = p[i];
 			if (s == 1)
 			{
-				ab.setMode(AK_ACT_LOOP);
-				ab.setDirection(akAnimationBlend::AB_NONE);
+				ab.setMode(akAnimationPlayer::AK_ACT_LOOP);
+				ab.setDirection(akTransitionBlend::AB_NONE);
 			}
 			else
 			{
-				ab.setMode(AK_ACT_END);
+				ab.setMode(akAnimationPlayer::AK_ACT_END);
 				if (i == 0)
-					ab.setDirection(akAnimationBlend::AB_OUT);
+					ab.setDirection(akTransitionBlend::AB_OUT);
 				else
-					ab.setDirection(akAnimationBlend::AB_IN);
+					ab.setDirection(akTransitionBlend::AB_IN);
 			}
 			if (ab.evaluate(delta))
 				done.push_back(ab);
@@ -230,7 +220,7 @@ void akAnimationBlender::evaluate(akScalar delta)
 		{
 			done.clear();
 			if (m_stack.size() > 1)
-				m_stack.sort(akAnimationBlendSort);
+				m_stack.sort(akTransitionBlendSort);
 		}
 
 	}

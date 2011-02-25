@@ -1595,14 +1595,14 @@ private:
 
 
 
-UT_INLINE UThash gkHash(int v)
+UT_INLINE UThash utHash(int v)
 {
 	utIntHashKey hk(v);
 	return hk.hash();
 }
 
 
-UT_INLINE UThash gkHash(const char *v)
+UT_INLINE UThash utHash(const char *v)
 {
 	utCharHashKey hk(v);
 	return hk.hash();
@@ -1610,7 +1610,7 @@ UT_INLINE UThash gkHash(const char *v)
 
 
 
-UT_INLINE UThash gkHash(void *v)
+UT_INLINE UThash utHash(void *v)
 {
 	utPointerHashKey hk(v);
 	return hk.hash();
@@ -1665,7 +1665,7 @@ public:
 		UT_INLINE UThash hash(void) const
 		{
 			if (m_cache != UT_NPOS) return m_cache;
-			m_cache = gkHash(m_key);
+			m_cache = utHash(m_key);
 			return m_cache;
 
 		}

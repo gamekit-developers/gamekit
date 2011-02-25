@@ -1390,13 +1390,13 @@ bool gsGameObject::hasContact(const gkString& object)
 
 void gsGameObject::playAnimation(const gkString& name, float blend)
 {
-	if (m_object)
-	{
-		if (get()->getAnimationPlayer(name) == 0)
-			get()->addAnimation(name);
+//	if (m_object)
+//	{
+//		if (get()->getAnimationPlayer(name) == 0)
+//			get()->addAnimation(name);
 
-		get()->playAnimation(name, blend);
-	}
+//		get()->playAnimation(name, blend);
+//	}
 }
 
 

@@ -206,36 +206,36 @@ void gkCharacterNode::update_state(gkScalar tick)
 
 void gkCharacterNode::update_animation(STATE previousTickState)
 {
-	if (m_currentStateData->m_state != previousTickState)
-	{
-		SET_SOCKET_VALUE(ANIM_HAS_REACHED_END, false);
-		SET_SOCKET_VALUE(ANIM_NOT_HAS_REACHED_END, true);
-		SET_SOCKET_VALUE(ANIM_TIME_POSITION, 0);
-		//gkLogMessage(m_currentStateData->m_state << ":" << m_currentStateData->m_animName);
-	}
+//	if (m_currentStateData->m_state != previousTickState)
+//	{
+//		SET_SOCKET_VALUE(ANIM_HAS_REACHED_END, false);
+//		SET_SOCKET_VALUE(ANIM_NOT_HAS_REACHED_END, true);
+//		SET_SOCKET_VALUE(ANIM_TIME_POSITION, 0);
+//		//gkLogMessage(m_currentStateData->m_state << ":" << m_currentStateData->m_animName);
+//	}
 
-	if (!GET_SOCKET_VALUE(ANIM_HAS_REACHED_END))
-	{
-		m_ent->playAnimation(m_currentStateData->m_animName, GET_SOCKET_VALUE(ANIM_BLEND_FRAMES));
+//	if (!GET_SOCKET_VALUE(ANIM_HAS_REACHED_END))
+//	{
+//		m_ent->playAnimation(m_currentStateData->m_animName, GET_SOCKET_VALUE(ANIM_BLEND_FRAMES));
 
-		gkAnimationPlayer* pAct = m_ent->getAnimationPlayer(m_currentStateData->m_animName);
+//		gkAnimationPlayer* pAct = m_ent->getAnimationPlayer(m_currentStateData->m_animName);
 
-		GK_ASSERT(pAct);
+//		GK_ASSERT(pAct);
 
-		gkScalar time = pAct->getTimePosition();
+//		gkScalar time = pAct->getTimePosition();
 
-		SET_SOCKET_VALUE(ANIM_TIME_POSITION, time);
+//		SET_SOCKET_VALUE(ANIM_TIME_POSITION, time);
 
-		if (time >= pAct->getLength())
-		{
-			SET_SOCKET_VALUE(ANIM_HAS_REACHED_END, true);
-			SET_SOCKET_VALUE(ANIM_NOT_HAS_REACHED_END, false);
-		}
-	}
-	else if (m_currentStateData->m_loop)
-	{
-		m_ent->playAnimation(m_currentStateData->m_animName, GET_SOCKET_VALUE(ANIM_BLEND_FRAMES));
-	}
+//		if (time >= pAct->getLength())
+//		{
+//			SET_SOCKET_VALUE(ANIM_HAS_REACHED_END, true);
+//			SET_SOCKET_VALUE(ANIM_NOT_HAS_REACHED_END, false);
+//		}
+//	}
+//	else if (m_currentStateData->m_loop)
+//	{
+//		m_ent->playAnimation(m_currentStateData->m_animName, GET_SOCKET_VALUE(ANIM_BLEND_FRAMES));
+//	}
 }
 
 void gkCharacterNode::notifyState(int state)

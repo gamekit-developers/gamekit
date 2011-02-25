@@ -148,21 +148,21 @@ MomoLogic::MomoLogic(gkGameObject* obj, SceneLogic* scene)
 	m_kickTestNode = m_tree->createNode<gkRayTestNode>();
 	m_cameraNode = m_tree->createNode<gkCameraNode>();
 
-	m_obj->getChildEntity()->addAnimation(animation::CARRY);
-	m_obj->getChildEntity()->addAnimation(animation::CATCH);
-	m_obj->getChildEntity()->addAnimation(animation::THROW_WITH);
-	m_obj->getChildEntity()->addAnimation(animation::WALK);
-	m_obj->getChildEntity()->addAnimation(animation::RUN);
-	m_obj->getChildEntity()->addAnimation(animation::RUN_FASTER);
-	m_obj->getChildEntity()->addAnimation(animation::WALK_BACK);
-	m_obj->getChildEntity()->addAnimation(animation::IDLE_NASTY);
-	m_obj->getChildEntity()->addAnimation(animation::IDLE_CAPOEIRA);
-	m_obj->getChildEntity()->addAnimation(animation::FALL);
-	m_obj->getChildEntity()->addAnimation(animation::FALL_UP);
-	m_obj->getChildEntity()->addAnimation(animation::KICK);
-	m_obj->getChildEntity()->addAnimation(animation::JUMP);
-	m_obj->getChildEntity()->addAnimation(animation::GLIDE);
-	m_obj->getChildEntity()->addAnimation(animation::LAND);
+//	m_obj->getChildEntity()->addAnimation(animation::CARRY);
+//	m_obj->getChildEntity()->addAnimation(animation::CATCH);
+//	m_obj->getChildEntity()->addAnimation(animation::THROW_WITH);
+//	m_obj->getChildEntity()->addAnimation(animation::WALK);
+//	m_obj->getChildEntity()->addAnimation(animation::RUN);
+//	m_obj->getChildEntity()->addAnimation(animation::RUN_FASTER);
+//	m_obj->getChildEntity()->addAnimation(animation::WALK_BACK);
+//	m_obj->getChildEntity()->addAnimation(animation::IDLE_NASTY);
+//	m_obj->getChildEntity()->addAnimation(animation::IDLE_CAPOEIRA);
+//	m_obj->getChildEntity()->addAnimation(animation::FALL);
+//	m_obj->getChildEntity()->addAnimation(animation::FALL_UP);
+//	m_obj->getChildEntity()->addAnimation(animation::KICK);
+//	m_obj->getChildEntity()->addAnimation(animation::JUMP);
+//	m_obj->getChildEntity()->addAnimation(animation::GLIDE);
+//	m_obj->getChildEntity()->addAnimation(animation::LAND);
 
 	m_characterNode = m_tree->createNode<gkCharacterNode>();
 	m_characterNode->setObj(m_obj);

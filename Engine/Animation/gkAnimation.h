@@ -39,7 +39,7 @@
 //#include "akAnimationSequence.h"
 //#include "akAnimationPlayer.h"
 
-typedef akAnimationBlender gkAnimationBlender;
+//typedef akAnimationBlender gkAnimationBlender;
 //typedef akAnimation gkAnimation;
 
 class gkAnimation : public gkResource
@@ -64,14 +64,14 @@ public:
 	UT_INLINE akScalar         getLength(void) const       { return m_animation.getLength(); }
 	UT_INLINE void             setLength(akScalar v)       { m_animation.setLength(v); }
 	
-	UT_INLINE akKeyedAnimation::Channels::ConstPointer getChannels(void) const    { return m_animation.getChannels(); }
+	UT_INLINE akAnimationClip::Channels::ConstPointer getChannels(void) const    { return m_animation.getChannels(); }
 	UT_INLINE int                                      getNumChannels(void) const { return m_animation.getNumChannels(); }
 	
 	UT_INLINE void                addChannel(akAnimationChannel* chan) { m_animation.addChannel(chan); }
 	UT_INLINE akAnimationChannel* getChannel(const utString& name)     { return m_animation.getChannel(name); }
 	
 private:
-	akKeyedAnimation m_animation;
+	akAnimationClip m_animation;
 };
 
 
@@ -110,7 +110,7 @@ public:
 	GK_INLINE void             setObject(gkGameObject * v) { m_object = v; }
 	
 private:
-	virtual void evaluateImpl(gkScalar time) { m_action->evaluate(time, m_weight, m_object); }
+	virtual void evaluateImpl(gkScalar time) { m_clip->evaluate(time, m_weight, m_object); }
 };
 
 

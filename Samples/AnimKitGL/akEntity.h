@@ -25,32 +25,82 @@
 -------------------------------------------------------------------------------
 */
 
-#ifndef AKKEYEDANIMATION_H
-#define AKKEYEDANIMATION_H
+#ifndef AKENTITY_H
+#define AKENTITY_H
 
-#include "akAnimation.h"
+#include "akCommon.h"
+#include "akTransformState.h"
+#include "akAnimationPlayer.h"
+#include "akAnimationPlayerSet.h"
 
-
-class akKeyedAnimation : public akAnimation
+class akEntity
 {
 public:
-	typedef utArray<akAnimationChannel*> Channels;
+	akEntity();
+	~akEntity();
 	
-protected:
-	Channels             m_channels;
+	void draw(void);
+	
+	void setSkeleton(akSkeleton* skel);
+	
+	
+	void setMesh(akMesh* mesh)
+	{
+		m_mesh = mesh;
+	}
+	
+	UT_INLINE akTransformState getTransform(void)
+	{
+		return m_transform;
+	}
+	
+	UT_INLINE void setTransformState(const akTransformState& v)
+	{
+		m_transform = v;
+	}
+	
+	UT_INLINE akSkeletonPose* getPose(void)
+	{
+		return m_pose;
+	}
+	
+	UT_INLINE akMesh* getMesh(void)
+	{
+		return m_mesh;
+	}
+	
+	UT_INLINE akAnimationPlayerSet* getAnimationPlayers(void)
+	{
+		return &m_players;
+	}
+	
+	UT_INLINE bool isMeshDeformed(void)
+	{
+		return m_skeleton? true:false;
+	}
+	
+	UT_INLINE bool isPositionAnimated(void)
+	{
+		return true;
+	}
+	
+	UT_INLINE Matrix4* getPalette(void)
+	{
+		return m_matrixPalette;
+	}
 
-public:
-	akKeyedAnimation();
-	virtual ~akKeyedAnimation();
-
-	UT_INLINE Channels::ConstPointer getChannels(void) const    { return m_channels.ptr(); }
-	UT_INLINE int                    getNumChannels(void) const { return(int)m_channels.size(); }
+private:
+	// object's world transform
+	akTransformState m_transform;
 	
-	void addChannel(akAnimationChannel* chan);
-	akAnimationChannel* getChannel(const utString& name);
+	// pointers to shared data (resources)
+	akMesh*     m_mesh;
+	akSkeleton* m_skeleton;
 	
-	virtual void evaluate(const akScalar& time, const akScalar& weight, void* object) const;
+	// per object anim data
+	akAnimationPlayerSet m_players;
+	akSkeletonPose*      m_pose;
+	Matrix4*             m_matrixPalette;
 };
 
-
-#endif // AKKEYEDANIMATION_H
+#endif // AKENTITY_H

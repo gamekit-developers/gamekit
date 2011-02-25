@@ -159,22 +159,22 @@ gkGameObject* gkEntity::clone(const gkString& name)
 
 void gkEntity::_resetPose(void)
 {
-	if (m_skeleton)
-	{
-		if (!m_entityProps->m_startPose.empty())
-		{
-			gkAnimationPlayer* act = getAnimationPlayer(m_entityProps->m_startPose);
+//	if (m_skeleton)
+//	{
+//		if (!m_entityProps->m_startPose.empty())
+//		{
+//			gkAnimationPlayer* act = getAnimationPlayer(m_entityProps->m_startPose);
 			
-			if(!act)
-				act = addAnimation(m_entityProps->m_startPose);
+//			if(!act)
+//				act = addAnimation(m_entityProps->m_startPose);
 			
-			if (act)
-			{
-				act->setTimePosition(0);
-				act->evaluate(0.0f);
-			}
-		}
-	}
+//			if (act)
+//			{
+//				act->setTimePosition(0);
+//				act->update(0.0f);
+//			}
+//		}
+//	}
 }
 
 

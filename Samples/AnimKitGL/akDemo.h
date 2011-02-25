@@ -3,9 +3,9 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 Charlie C.
+    Copyright (c) 2006-2010 Xavier T.
 
-    Contributor(s): Xavier T.
+    Contributor(s): none yet.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -24,37 +24,29 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _akAnimation_h_
-#define _akAnimation_h_
 
-#include "utCommon.h"
-#include "utString.h"
+#ifndef AKDEMO_H
+#define AKDEMO_H
 
-#include "akCommon.h"
-#include "akMathUtils.h"
+#include "akDemoBase.h"
 
-
-
-class akAnimation
+class akDemo : public akDemoBase
 {
-protected:
-	akScalar m_length;
+
 	
 public:
-	akAnimation() : m_length(0) {}
-	virtual ~akAnimation() {}
+	akDemo();
+	~akDemo();
 	
-	UT_INLINE akScalar         getLength(void) const       { return m_length; }
-	UT_INLINE void             setLength(akScalar v)       { m_length = v; }
 	
-	virtual void evaluate(const akScalar& time, const akScalar& weight, void* object) const = 0;
-
+	virtual void init(void);
+	
+	virtual void step(akScalar time);
+	
+private:
+	
+	
+	
 };
 
-
-
-
-
-
-
-#endif//_akAnimation_h_
+#endif // AKDEMO_H

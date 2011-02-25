@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Xavier T.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -24,16 +24,18 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _akAnimationBlender_h_
-#define _akAnimationBlender_h_
+
+#ifndef AKTRANSITIONBLENDER_H
+#define AKTRANSITIONBLENDER_H
 
 #include "akCommon.h"
 #include "akMathUtils.h"
+#include "akAnimationPlayer.h"
 
 #include "utTypes.h"
 
 ///Animation blend item, for overall blending / switching between actions
-class akAnimationBlend
+class akTransitionBlend
 {
 public:
 
@@ -44,10 +46,20 @@ public:
 		AB_OUT
 	};
 
+private:
+
+	int m_priority, m_way, m_mode;
+	akScalar m_blend, m_frames;
+	akScalar m_time;
+
+
+	akAnimationPlayer* m_base;
+	bool m_enabled;
+	
 public:
 
-	akAnimationBlend();
-	~akAnimationBlend() {}
+	akTransitionBlend();
+	~akTransitionBlend() {}
 
 
 	int      getMode(void) const         {return m_mode;}
@@ -76,17 +88,7 @@ public:
 	void reset(void);
 
 
-	bool operator == (const akAnimationBlend& rhs) const { return m_base == rhs.m_base;}
-
-private:
-
-	int m_priority, m_way, m_mode;
-	akScalar m_blend, m_frames;
-	akScalar m_time;
-
-
-	akAnimationPlayer* m_base;
-	bool m_enabled;
+	bool operator == (const akTransitionBlend& rhs) const { return m_base == rhs.m_base;}
 };
 
 
@@ -94,34 +96,39 @@ private:
 
 ///Pushes prioritized animation player onto a stack for changing and
 ///blending between a chain of Animation
-class akAnimationBlender
+class akTransitionBlender
 {
 public:
-	typedef utArray<akAnimationBlend> Stack;
+	typedef utArray<akTransitionBlend> Stack;
 
 public:
 
-	akAnimationBlender();
-	~akAnimationBlender();
+	akTransitionBlender();
+	~akTransitionBlender();
 
-	void push(akAnimationPlayer* action, const akScalar& frames, int mode = AK_ACT_END, int priority = 0);
-	void remove(akAnimationPlayer* action);
+	void push(akAnimationPlayer* action, const akScalar& frames, int mode = akAnimationPlayer::AK_ACT_END, int priority = 0);
 
 	void evaluate(akScalar delta);
 
 
-	void   setMaximumAnimations(UTsize v)    {m_max = v;}
-	UTsize getMaximumAnimation(void) const  {return m_max;}
+	UT_INLINE void   setMaximumAnimations(UTsize v)
+	{
+		m_max = v;
+	}
+	
+	UT_INLINE UTsize getMaximumAnimation(void) const
+	{
+		return m_max;
+	}
 
 
 
 private:
 
-	void pushStack(akAnimationBlend& blend);
+	void pushStack(akTransitionBlend& blend);
 
 	Stack  m_stack;
 	UTsize m_max;
 };
 
-
-#endif//_akAnimationBlender_h_
+#endif // AKTRANSITIONBLENDER_H

@@ -5,7 +5,7 @@
 
     Copyright (c) 2006-2010 Charlie C.
 
-    Contributor(s): none yet.
+    Contributor(s): Xavier T.
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -24,21 +24,23 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "akAnimation.h"
+
 #include "akAnimationChannel.h"
+#include "akTransformState.h"
+#include "akSkeleton.h"
+#include "akSkeletonPose.h"
+#include "akEuler.h"
+#include "akPoseBlender.h"
 
 
-akAnimationChannel::akAnimationChannel(const utString& name, akAnimation* parent)
-	:    m_name(name), m_action(parent)
+akAnimationChannel::akAnimationChannel(Type type, const utString& name)
+	:    m_name(name), m_type(type), m_isEulerRotation(false)
 {
 }
 
-
-
-
 akAnimationChannel::~akAnimationChannel()
 {
-	akBezierSpline** splines = m_splines.ptr();
+	akAnimationCurve** splines = m_splines.ptr();
 	int len = getNumSplines(), i = 0;
 	while (i < len)
 		delete splines[i++];
@@ -46,7 +48,7 @@ akAnimationChannel::~akAnimationChannel()
 
 
 
-void akAnimationChannel::addSpline(akBezierSpline* spline)
+void akAnimationChannel::addSpline(akAnimationCurve* spline)
 {
 	if (m_splines.empty())
 		m_splines.reserve(16);
@@ -56,9 +58,9 @@ void akAnimationChannel::addSpline(akBezierSpline* spline)
 
 
 
-const akBezierSpline** akAnimationChannel::getSplines(void) const
+const akAnimationCurve** akAnimationChannel::getSplines(void) const
 {
-	return (const akBezierSpline**)m_splines.ptr();
+	return (const akAnimationCurve**)m_splines.ptr();
 }
 
 
@@ -70,7 +72,55 @@ int akAnimationChannel::getNumSplines(void) const
 
 
 
-void akAnimationChannel::evaluate(const akScalar& time, const akScalar& delta, const akScalar& weight, void* object) const
+void akAnimationChannel::evaluate(akTransformState& transform, akScalar time, akScalar weight, akScalar delta) const
 {
-	evaluateImpl(time, delta, weight, object);
+	const akAnimationCurve** splines = getSplines();
+	int len = getNumSplines();
+
+	akTransformState channel;
+	channel.rot = Quat::identity();
+	channel.loc = Vector3(0.f, 0.f, 0.f);
+	channel.scale = Vector3(1.f, 1.f, 1.f);
+
+	akEuler euler(0,0,0);
+	
+	for (int i=0; i<len; i++)
+	{
+		float eval = splines[i]->evaluate(time, delta);
+
+		switch (splines[i]->getCode())
+		{
+		case akAnimationCurve::SC_LOC_X: { channel.loc.setX(eval); break; }
+		case akAnimationCurve::SC_LOC_Y: { channel.loc.setY(eval); break; }
+		case akAnimationCurve::SC_LOC_Z: { channel.loc.setZ(eval); break; }
+		case akAnimationCurve::SC_SCL_X: { channel.scale.setX(eval); break; }
+		case akAnimationCurve::SC_SCL_Y: { channel.scale.setY(eval); break; }
+		case akAnimationCurve::SC_SCL_Z: { channel.scale.setZ(eval); break; }
+		case akAnimationCurve::SC_ROT_QUAT_X: { channel.rot.setX(eval); break; }
+		case akAnimationCurve::SC_ROT_QUAT_Y: { channel.rot.setY(eval); break; }
+		case akAnimationCurve::SC_ROT_QUAT_Z: { channel.rot.setZ(eval); break; }
+		case akAnimationCurve::SC_ROT_QUAT_W: { channel.rot.setW(eval); break; }
+		case akAnimationCurve::SC_ROT_EULER_X: { euler.x = eval; break; }
+		case akAnimationCurve::SC_ROT_EULER_Y: { euler.y = eval; break; }
+		case akAnimationCurve::SC_ROT_EULER_Z: { euler.z = eval; break; }
+		}
+	}
+
+	if(m_isEulerRotation)
+		channel.rot = euler.toQuaternion();
+	else
+	{
+		if ( akFuzzy(norm(channel.rot)) )
+			channel.rot = Quat::identity();
+		else
+			normalize(channel.rot);
+	}
+	
+	UT_ASSERT(!channel.loc.isNaN());
+	UT_ASSERT(!channel.rot.isNaN());
+	UT_ASSERT(!channel.scl.isNaN());
+	
+	akPoseBlender::blendJoint(akPoseBlender::PB_BM_ADD, akPoseBlender::PB_RM_LERP,
+								weight, transform, channel, transform );
 }
+

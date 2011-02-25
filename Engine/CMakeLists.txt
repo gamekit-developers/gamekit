@@ -218,27 +218,27 @@ endif()
 # Animation Files
 # ---------------------------------------------------------
 
-set(Animation_SOURCE
-	# ----- Source -----
-	Animation/gkAnimation.cpp
-	Animation/gkAnimationManager.cpp
-)
+#set(Animation_SOURCE
+#	# ----- Source -----
+#	Animation/gkAnimation.cpp
+#	Animation/gkAnimationManager.cpp
+#)
 
 
-set(Animation_HEADER
-	# ----- Headers -----
-	Animation/gkAnimation.h
-	Animation/gkAnimationDefs.h
-	Animation/gkAnimationManager.h
-)
+#set(Animation_HEADER
+#	# ----- Headers -----
+#	Animation/gkAnimation.h
+#	Animation/gkAnimationDefs.h
+#	Animation/gkAnimationManager.h
+#)
 
-if(APPLE)
-	source_group(Animation FILES ${Animation_HEADER}  ${Animation_SOURCE})
+#if(APPLE)
+#	source_group(Animation FILES ${Animation_HEADER}  ${Animation_SOURCE})
 
-else()
-	source_group(Animation\\Header FILES ${Animation_HEADER})
-	source_group(Animation\\Source FILES ${Animation_SOURCE})
-endif()
+#else()
+#	source_group(Animation\\Header FILES ${Animation_HEADER})
+#	source_group(Animation\\Source FILES ${Animation_SOURCE})
+#endif()
 
 
 # ---------------------------------------------------------

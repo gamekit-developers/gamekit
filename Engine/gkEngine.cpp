@@ -55,7 +55,7 @@
 #include "gkGroupManager.h"
 #include "gkGameObjectManager.h"
 #include "gkResourceGroupManager.h"
-#include "gkAnimationManager.h"
+//#include "gkAnimationManager.h"
 #include "gkParticleManager.h"
 
 #ifdef OGREKIT_USE_NNODE
@@ -241,7 +241,7 @@ void gkEngine::initialize()
 	new gkGameObjectManager();
 
 
-	new gkAnimationManager();
+//	new gkAnimationManager();
 
 #ifdef OGREKIT_USE_LUA
 	new gkLuaManager();
@@ -337,7 +337,7 @@ void gkEngine::finalize()
 	delete gkMeshManager::getSingletonPtr();
 	delete gkSkeletonManager::getSingletonPtr();
 	delete gkParticleManager::getSingletonPtr();
-	delete gkAnimationManager::getSingletonPtr();
+//	delete gkAnimationManager::getSingletonPtr();
 
 
 #ifdef OGREKIT_USE_LUA

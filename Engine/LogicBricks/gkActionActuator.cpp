@@ -31,7 +31,7 @@
 #include "gkGameObject.h"
 #include "gkSkeleton.h"
 #include "gkEntity.h"
-#include "gkAnimationManager.h"
+//#include "gkAnimationManager.h"
 #include "gkLogicManager.h"
 #include "gkLogicLink.h"
 
@@ -80,30 +80,30 @@ gkLogicBrick* gkActionActuator::clone(gkLogicLink* link, gkGameObject* dest)
 
 void gkActionActuator::doInit(void)
 {
-	m_action = m_object->getAnimationPlayer(m_startAct);
+//	m_action = m_object->getAnimationPlayer(m_startAct);
 	
-	if (!m_action)
-	{
-		gkAnimation* res = gkAnimationManager::getSingleton().getAnimation(gkResourceName(m_startAct, getObjectGroupName()));
-		if(res)
-			m_action = m_object->addAnimation(res, m_startAct);
-	}
+//	if (!m_action)
+//	{
+//		gkAnimation* res = gkAnimationManager::getSingleton().getAnimation(gkResourceName(m_startAct, getObjectGroupName()));
+//		if(res)
+//			m_action = m_object->addAnimation(res, m_startAct);
+//	}
 	
-	if (m_action)
-	{
-		if (m_start > m_end)
-		{
-			m_start = 0;
-			m_end = m_action->getLength();
-		}
+//	if (m_action)
+//	{
+//		if (m_start > m_end)
+//		{
+//			m_start = 0;
+//			m_end = m_action->getLength();
+//		}
 
-		//if (m_mode == AA_PLAY)
-			m_action->setMode(AK_ACT_END);
-		//else
-		//	m_action->setMode(AK_ACT_LOOP);
-	}
+//		//if (m_mode == AA_PLAY)
+//			m_action->setMode(AK_ACT_END);
+//		//else
+//		//	m_action->setMode(AK_ACT_LOOP);
+//	}
 	
-	resetAction();
+//	resetAction();
 }
 
 
@@ -120,47 +120,47 @@ gkScalar gkActionActuator::getElapsedTime(void)
 
 void gkActionActuator::resetAction(bool exceptTimer)
 {
-	if (!exceptTimer)
-		resetTimer();
+//	if (!exceptTimer)
+//		resetTimer();
 	
-	if (m_action)
-		m_action->setTimePosition(m_start);	
+//	if (m_action)
+//		m_action->setTimePosition(m_start);	
 
-	DEBUG_PRINT("reset: %s\n", m_startAct.c_str());
+//	DEBUG_PRINT("reset: %s\n", m_startAct.c_str());
 }
 
 void gkActionActuator::playAction(void)
 {
-	GK_ASSERT(m_action);
+//	GK_ASSERT(m_action);
 
-	DEBUG_PRINT("play: %s %d %d\n", m_startAct.c_str(), m_link->getState(), m_ignorePulseOn);
+//	DEBUG_PRINT("play: %s %d %d\n", m_startAct.c_str(), m_link->getState(), m_ignorePulseOn);
 
-	if (m_mode != AA_LOOP_STOP)
-		resetAction();
+//	if (m_mode != AA_LOOP_STOP)
+//		resetAction();
 
-	m_isPlaying = true;
-	m_object->playAnimation(m_action, m_blend);
-	m_state = m_link->getState();
+//	m_isPlaying = true;
+//	m_object->playAnimation(m_action, m_blend);
+//	m_state = m_link->getState();
 
-	if (isPulseOn() && m_mode != AA_LOOP_STOP) //ignore on until next off
-		m_ignorePulseOn = true;
+//	if (isPulseOn() && m_mode != AA_LOOP_STOP) //ignore on until next off
+//		m_ignorePulseOn = true;
 
-	gkLogicManager::getSingleton().requestUpdate(this);
+//	gkLogicManager::getSingleton().requestUpdate(this);
 }
 
 void gkActionActuator::stopAction(void)
 {
-	m_isPlaying = false;
-	m_object->stopAnimation(m_action);	
+//	m_isPlaying = false;
+//	m_object->stopAnimation(m_action);	
 
-	DEBUG_PRINT("stop: %s %d\n", m_startAct.c_str(), m_ignorePulseOn);
+//	DEBUG_PRINT("stop: %s %d\n", m_startAct.c_str(), m_ignorePulseOn);
 
-	gkLogicManager::getSingleton().removeUpdate(this);
+//	gkLogicManager::getSingleton().removeUpdate(this);
 }
 
 bool gkActionActuator::isActionEnd(void)
 {
-	return m_action ? m_action->getTimePosition() >= m_action->getLength() : false;
+//	return m_action ? m_action->getTimePosition() >= m_action->getLength() : false;
 }
 
 
@@ -226,39 +226,39 @@ void gkActionActuator::update(void)
 
 void gkActionActuator::execute(void)
 {
-	if (!m_isInit)
-	{
-		m_isInit = true;
-		doInit();
-	}
+//	if (!m_isInit)
+//	{
+//		m_isInit = true;
+//		doInit();
+//	}
 
-	if (!m_action) 
-		return;
+//	if (!m_action) 
+//		return;
 
-	if (isPulseOff())
-	{
-		m_ignorePulseOn = false;
-	}
-	else
-	{		
-		if (m_mode == AA_LOOP_STOP)
-		{
-			if (!m_isPlaying)
-				playAction();
-		}
-		else //if (m_mode == AA_PLAY || m_mode == AA_LOOP_END)
-		{
-			if (!m_ignorePulseOn)
-			{
-				if (!m_isPlaying || m_reset)
-					playAction();
-			}		
-		}
-	}
+//	if (isPulseOff())
+//	{
+//		m_ignorePulseOn = false;
+//	}
+//	else
+//	{		
+//		if (m_mode == AA_LOOP_STOP)
+//		{
+//			if (!m_isPlaying)
+//				playAction();
+//		}
+//		else //if (m_mode == AA_PLAY || m_mode == AA_LOOP_END)
+//		{
+//			if (!m_ignorePulseOn)
+//			{
+//				if (!m_isPlaying || m_reset)
+//					playAction();
+//			}		
+//		}
+//	}
 
 
-	if (m_isPlaying)
-		m_object->playAnimation(m_action, m_blend);
+//	if (m_isPlaying)
+//		m_object->playAnimation(m_action, m_blend);
 
 }
 

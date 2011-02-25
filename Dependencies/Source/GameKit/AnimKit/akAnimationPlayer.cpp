@@ -26,88 +26,93 @@
 */
 
 #include "akAnimationPlayer.h"
-#include "akAnimationSequence.h"
+#include "akAnimationClip.h"
 
 
 akAnimationPlayer::akAnimationPlayer()
-	:	m_action(0),
-	    m_evalTime(0.f),
-	     m_weight(1.0),
-	     m_enabled(true),
-	     m_mode(AK_ACT_LOOP),
-	     m_speedfactor(1.0f)
+	:	m_clip(0),
+		m_evalTime(0.f),
+		m_mode(AK_ACT_END),
+		m_speedfactor(1.0f),
+		m_enabled(false),
+		m_weight(0.0),
+		m_length(0.0)
 {
 }
 
-akAnimationPlayer::akAnimationPlayer(akAnimation* resource)
-	:	m_action(resource),
-	    m_evalTime(0.f),
-	     m_weight(1.0),
-	     m_enabled(true),
-	     m_mode(AK_ACT_LOOP),
-	     m_speedfactor(1.0f)
+akAnimationPlayer::akAnimationPlayer(akAnimationClip* clip)
+	:	m_clip(clip),
+		m_evalTime(0.f),
+		m_mode(AK_ACT_END),
+		m_speedfactor(1.0f),
+		m_enabled(false),
+		m_weight(0.0)
 {
+	m_length = clip->getLength();
+}
+
+void akAnimationPlayer::setAnimationClip(akAnimationClip *v)
+{
+	m_clip = v;
+	m_length = m_clip->getLength();
 }
 
 void akAnimationPlayer::setTimePosition(akScalar v)
 {
-	if (m_enabled && m_action)
-	{
-		m_evalTime = akClampf(v, 0.f, m_action->getLength());
-	}
+	m_evalTime = akClampf(v, 0.f, m_length);
+	
 }
 
-
-
-void akAnimationPlayer::setWeight(akScalar w)
+void akAnimationPlayer::setUniformTimePosition(akScalar v)
 {
-	if (m_enabled)
-	{
-		m_weight = akClampf(w, 0, 1);
-	}
+	setTimePosition( v*m_length );
 }
 
-
-
-void akAnimationPlayer::evaluate(akScalar tick)
+akScalar akAnimationPlayer::getUniformTimePosition(void) const
 {
-	if (!m_enabled || !m_action)
+	return m_evalTime/m_length;
+}
+
+void akAnimationPlayer::stepTime(akScalar tick)
+{
+	if (!m_enabled || !m_clip)
 		return;
 	
-	akScalar end = m_action->getLength();
 	akScalar dt = m_speedfactor * tick;
 	
+	m_evalTime += dt;
+
 	if (m_mode & AK_ACT_LOOP)
 	{
-		if (m_evalTime <= 0.f)
-			m_evalTime = 0.f;
-		if (m_evalTime >= end)
-			m_evalTime = 0.f;
+		while (m_evalTime >= m_length)
+			m_evalTime -= m_length;
 	}
 	else
 	{
-		if (m_evalTime <= 0.f)
-			m_evalTime = 0.f;
-
-		if (m_evalTime + dt >= end)
-			m_evalTime = end - dt;
+		if (m_evalTime >= m_length)
+			m_evalTime = m_length;
 	}
-
-	m_evalTime += dt;
-
-	akScalar time = m_evalTime;
-	if (m_mode & AK_ACT_INVERSE)
-		time = end - m_evalTime;
-
-	evaluateImpl(time);
-	
-	
 }
 
 
 void akAnimationPlayer::reset(void)
 {
 	m_evalTime = 0.f;
-//	m_weight = 1.f;
-//	m_enabled = false;
 }
+
+void akAnimationPlayer::evaluate(akSkeletonPose *pose) const
+{
+	if (m_enabled && m_clip)
+	{
+		m_clip->evaluate(pose, m_evalTime, m_weight, getUniformTimePosition());
+	}
+}
+
+void akAnimationPlayer::evaluate(akTransformState *pose) const
+{
+	if (m_enabled && m_clip)
+	{
+		m_clip->evaluate(pose, m_evalTime, m_weight, getUniformTimePosition());
+	}
+}
+

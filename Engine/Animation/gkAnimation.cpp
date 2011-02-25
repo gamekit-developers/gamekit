@@ -45,7 +45,7 @@ void gkTransformChannel::evaluateImpl(const gkScalar& time, const gkScalar& delt
 	if(!object || (weight <= 0.f))
 		return;
 
-	const akBezierSpline** splines = getSplines();
+	const akAnimationCurve** splines = getSplines();
 	int len = getNumSplines(), i = 0, nvrt;
 
 	// clear previous channel
@@ -56,7 +56,7 @@ void gkTransformChannel::evaluateImpl(const gkScalar& time, const gkScalar& delt
 	
 	while (i < len)
 	{
-		const akBezierSpline* spline = splines[i++];
+		const akAnimationCurve* spline = splines[i++];
 
 		nvrt = spline->getNumVerts();
 		const akBezierVertex* verts = spline->getVerts();

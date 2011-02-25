@@ -13,6 +13,9 @@ macro (configure_gamekit ROOT)
 	set(GAMEKIT_ANIMKIT_TARGET				AnimKit)
 	set(GAMEKIT_ANIMKIT_PATH				${ROOT}/GameKit/AnimKit)
 
+	set(GAMEKIT_SHAPEKIT_TARGET				ShapeKit)
+	set(GAMEKIT_SHAPEKIT_PATH				${ROOT}/GameKit/ShapeKit)
+
 	set(GAMEKIT_SERIALIZE_BLENDER_TARGET	BulletFileLoader BlenderSerialize)
 
 endmacro(configure_gamekit)

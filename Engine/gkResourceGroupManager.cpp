@@ -30,7 +30,7 @@
 #include "gkLogger.h"
 #include "gkGroupManager.h"
 #include "gkTextManager.h"
-#include "gkAnimationManager.h"
+//#include "gkAnimationManager.h"
 #include "gkMeshManager.h"
 #include "gkSkeletonManager.h"
 #include "gkGameObjectManager.h"
@@ -102,7 +102,7 @@ void gkResourceGroupManager::destroyResourceGroup(const gkResourceNameString& gr
 	gkTextManager::getSingleton().destroyGroup(group);
 	gkMeshManager::getSingleton().destroyGroup(group);
 	gkSkeletonManager::getSingleton().destroyGroup(group);
-	gkAnimationManager::getSingleton().destroyGroup(group);
+//	gkAnimationManager::getSingleton().destroyGroup(group);
 
 #ifdef OGREKIT_OPENAL_SOUND
 	gkSoundManager::getSingleton().stopAllSounds();
@@ -135,7 +135,7 @@ void gkResourceGroupManager::destroyAllResourceGroup(void)
 	gkLuaManager::getSingleton().destroyAll();
 #endif
 
-	gkAnimationManager::getSingleton().destroyAll();
+//	gkAnimationManager::getSingleton().destroyAll();
 
 }
 

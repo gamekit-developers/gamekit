@@ -1418,25 +1418,24 @@ void gkScene::removeAnimationUpdate(gkGameObject* obj)
 }
 
 
-
-void gkScene::updateObjectsAnimations(const gkScalar tick)
-{
-	gkScalar animtick = tick;
+//void gkScene::updateObjectsAnimations(const gkScalar tick)
+//{
+//	gkScalar animtick = tick;
 	
-	// avoid huge step in animations while debugging
-	if (animtick > 0.1f)
-		animtick = 0.016667f;
+//	// avoid huge step in animations while debugging
+//	if (animtick > 0.1f)
+//		animtick = 0.016667f;
 	
-	if (!m_updateAnimObjects.empty())
-	{
-		gkGameObjectSet::Iterator it = m_updateAnimObjects.iterator();
-		while (it.hasMoreElements())
-			it.getNext()->updateAnimationBlender(animtick);
+//	if (!m_updateAnimObjects.empty())
+//	{
+//		gkGameObjectSet::Iterator it = m_updateAnimObjects.iterator();
+//		while (it.hasMoreElements())
+//			it.getNext()->updateAnimationBlender(animtick);
 
-		m_endObjects.clear(true);
-	}
+//		m_endObjects.clear(true);
+//	}
 
-}
+//}
 
 
 
@@ -1502,7 +1501,7 @@ void gkScene::update(gkScalar tickRate)
 	if (m_updateFlags & UF_ANIMATIONS)
 	{
 		gkStats::getSingleton().startClock();
-		updateObjectsAnimations(tickRate);
+//		updateObjectsAnimations(tickRate);
 		gkStats::getSingleton().stopAnimationsClock();
 	}
 

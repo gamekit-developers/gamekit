@@ -25,16 +25,17 @@
 -------------------------------------------------------------------------------
 */
 
-#include "akKeyedAnimation.h"
+#include "akAnimationClip.h"
 #include "akAnimationChannel.h"
+#include "akSkeleton.h"
+#include "akSkeletonPose.h"
 
-akKeyedAnimation::akKeyedAnimation()
-	:	akAnimation()
+akAnimationClip::akAnimationClip()
 {
 }
 
 
-akKeyedAnimation::~akKeyedAnimation()
+akAnimationClip::~akAnimationClip()
 {
 	akAnimationChannel** ptr = m_channels.ptr();
 	int len = getNumChannels(), i;
@@ -43,25 +44,44 @@ akKeyedAnimation::~akKeyedAnimation()
 }
 
 
-void akKeyedAnimation::evaluate(const akScalar& time, const akScalar& weight, void* object) const
+void akAnimationClip::evaluate(akSkeletonPose* pose, akScalar time, akScalar weight, akScalar delta) const
 {
-	akScalar delta = time / m_length;
-
 	akAnimationChannel* const* ptr = m_channels.ptr();
-	int len = getNumChannels(), i = 0;
-	while (i < len)
-		ptr[i++]->evaluate(time, delta, weight, object);
+	int len = getNumChannels();
+	
+	for(int i=0; i<len; i++)
+	{
+		if(ptr[i]->getType() == akAnimationChannel::AC_BONE)
+		{
+			akTransformState* jpose = pose->getByName(ptr[i]->getName());
+			if (jpose)
+				ptr[i]->evaluate(*jpose, time, weight, delta);
+		}
+	}
 }
 
+void akAnimationClip::evaluate(akTransformState* pose, akScalar time, akScalar weight, akScalar delta) const
+{
+	akAnimationChannel* const* ptr = m_channels.ptr();
+	int len = getNumChannels();
+	
+	for(int i=0; i<len; i++)
+	{
+		if(ptr[i]->getType() == akAnimationChannel::AC_TRANSFORM)
+		{
+			ptr[i]->evaluate(*pose, time, weight, delta);
+		}
+	}
+}
 
-void akKeyedAnimation::addChannel(akAnimationChannel* chan)
+void akAnimationClip::addChannel(akAnimationChannel* chan)
 {
 	UT_ASSERT(chan);
 	m_channels.push_back(chan);
 }
 
 
-akAnimationChannel* akKeyedAnimation::getChannel(const utString& name)
+akAnimationChannel* akAnimationClip::getChannel(const utString& name)
 {
 	for (UTsize i = 0; i < m_channels.size(); i++)
 	{
@@ -71,5 +91,5 @@ akAnimationChannel* akKeyedAnimation::getChannel(const utString& name)
 			return chan;
 		}
 	}
-	return NULL;
+	return 0;
 }

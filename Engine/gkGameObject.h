@@ -32,7 +32,7 @@
 #include "gkTransformState.h"
 #include "gkSerialize.h"
 
-#include "Animation/gkAnimation.h"
+//#include "Animation/gkAnimation.h"
 
 class gkGameObject : public gkInstancedObject
 {
@@ -68,7 +68,7 @@ public:
 
 	typedef utArray<Notifier*> Notifications;
 
-	typedef utHashTable<gkHashedString, gkAnimationPlayer*>  Animations;
+//	typedef utHashTable<gkHashedString, gkAnimationPlayer*>  Animation;
 
 public:
 
@@ -263,23 +263,23 @@ public:
 
 
 	// animation
-	gkAnimationPlayer*     addAnimation(const gkHashedString& name);
-	gkAnimationPlayer*     addAnimation(gkAnimation* action, const gkHashedString& playername);
-	gkAnimationPlayer*     getAnimationPlayer(const gkHashedString& name);
-	void                   playAnimation(const gkString& act, gkScalar blend, int mode = AK_ACT_END, int priority = 0);
-	void                   playAnimation(gkAnimationPlayer* act, gkScalar blend, int mode = AK_ACT_END, int priority = 0);
-	void                   updateAnimationBlender(const gkScalar tick);
-	gkAnimationBlender&    getAnimationBlender(void);
-	GK_INLINE bool         hasAnimationBlender(void) { return m_actionBlender != 0; }
+//	gkAnimationPlayer*     addAnimation(const gkHashedString& name);
+//	gkAnimationPlayer*     addAnimation(gkAnimation* action, const gkHashedString& playername);
+//	gkAnimationPlayer*     getAnimationPlayer(const gkHashedString& name);
+//	void                   playAnimation(const gkString& act, gkScalar blend, int mode = AK_ACT_END, int priority = 0);
+//	void                   playAnimation(gkAnimationPlayer* act, gkScalar blend, int mode = AK_ACT_END, int priority = 0);
+//	void                   updateAnimationBlender(const gkScalar tick);
+//	gkAnimationBlender&    getAnimationBlender(void);
+//	GK_INLINE bool         hasAnimationBlender(void) { return m_actionBlender != 0; }
 	
-	void                   stopAnimation(const gkString& act);
-	void                   stopAnimation(gkAnimationPlayer* act);
+//	void                   stopAnimation(const gkString& act);
+//	void                   stopAnimation(gkAnimationPlayer* act);
 
-	void                   pauseAnimations(void);
-	void                   resumeAnimations(void);
+//	void                   pauseAnimations(void);
+//	void                   resumeAnimations(void);
 
-	GK_INLINE const Animations& getAnimations(void) { return m_actions; }
-	void getAnimationNames(utArray<gkHashedString>& names);
+//	GK_INLINE const Animations& getAnimations(void) { return m_actions; }
+//	void getAnimationNames(utArray<gkHashedString>& names);
 
 
 
@@ -337,8 +337,8 @@ protected:
 	LifeSpan                    m_life;
 
 
-	gkAnimationBlender*         m_actionBlender;
-	Animations                  m_actions;
+//	gkAnimationBlender*         m_actionBlender;
+//	Animation                   m_actions;
 
 
 	virtual void createInstanceImpl(void);

@@ -25,17 +25,34 @@
 -------------------------------------------------------------------------------
 */
 
-#ifndef ANIMKIT_H
-#define ANIMKIT_H
+#ifndef AKANIMATIONLOADER_H
+#define AKANIMATIONLOADER_H
 
 
-#include "akAnimation.h"
-#include "akAnimationBlender.h"
-#include "akAnimationChannel.h"
-#include "akAnimationPlayer.h"
-#include "akAnimationSequence.h"
-#include "akKeyedAnimation.h"
-#include "akBezierSpline.h"
+#include "fbtBlend.h"
+#include "akMathUtils.h"
 
+#include "../akDemo.h"
 
-#endif // ANIMKIT_H
+class akAnimationLoader
+{
+public:
+
+	akAnimationLoader(akDemo* demo) : m_demo(demo) {}
+	~akAnimationLoader() {}
+
+	void convertAction(Blender::bAction* action, bool pre25compat, akScalar animfps);
+	void convertActions(fbtList actions, bool pre25compat, akScalar animfps);
+
+	void convertObject(class akEntity* obj, Blender::Object* bobj, bool pre25compat, akScalar animfps);
+	
+	
+private:
+	akDemo* m_demo;
+	
+	akAnimationClip * convertObjectIpoToAnimation(Blender::Ipo *bipo, akScalar animfps);
+	void convertAction24(Blender::bAction *action, akScalar animfps);
+	void convertAction25(Blender::bAction *action, akScalar animfps);
+	void convert25AnimData(akEntity *obj, Blender::AnimData *adt, akScalar animfps);
+};
+#endif // AKANIMATIONLOADER_H

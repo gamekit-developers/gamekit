@@ -28,23 +28,19 @@
 #define _akCommon_h_
 
 
-enum akAnimationEvalMode
-{
-	///Reset loop when done.
-	AK_ACT_LOOP    = (1 << 0),
-	///Play till the end and stop.
-	AK_ACT_END     = (1 << 1),
-	///Invert frames
-	AK_ACT_INVERSE = (1 << 2)
-};
-
-class akAnimation;
-class akAnimationBlender;
 class akAnimationChannel;
+class akAnimationClip;
+class akAnimationCurve;
 class akAnimationPlayer;
-class akAnimationSequence;
-class akBezierSpline;
-class akKeyedAnimation;
+class akAnimationPlayerSet;
+class akEuler;
+class akJoint;
+class akMesh;
+class akSkeleton;
+class akSkeletonPose;
+class akSubMesh;
+class akTransformState;
+class akVertexBuffer;
 
 
 #endif//_akCommon_h_
