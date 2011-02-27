@@ -32,9 +32,6 @@ THE SOFTWARE.
 #include "OgreRenderSystem.h"
 #include "OgreD3D11Device.h"
 #include "OgreD3D11Mappings.h"
-#include "OgreFixedFuncState.h"
-#include "OgreHlslFixedFuncEmuShaderGenerator.h"
-#include "OgreFixedFuncEmuShaderManager.h"
 
 namespace Ogre 
 {
@@ -55,7 +52,7 @@ namespace Ogre
 		{
 			DT_HARDWARE, // GPU based
 			DT_SOFTWARE, // microsoft original (slow) software driver
-			DT_WARP // microsoft new (faster) software driver
+			DT_WARP // microsoft new (faster) software driver - (Windows Advanced Rasterization Platform) - http://msdn.microsoft.com/en-us/library/dd285359.aspx
 
 		};
 
@@ -110,12 +107,6 @@ namespace Ogre
 
 		size_t mLastVertexSourceCount;
 
-		FixedFuncState mFixedFuncState;
-		FixedFuncPrograms::FixedFuncProgramsParameters mFixedFuncProgramsParameters;
-		Hlsl4FixedFuncEmuShaderGenerator mHlslFixedFuncEmuShaderGenerator;
-		FixedFuncEmuShaderManager	mFixedFuncEmuShaderManager;
-
-
 		/// Internal method for populating the capabilities structure
 		RenderSystemCapabilities* createRenderSystemCapabilities() const;
 		/** See RenderSystem definition */
@@ -150,7 +141,6 @@ namespace Ogre
 		D3D11HLSLProgram* mBoundVertexProgram;
 		D3D11HLSLProgram* mBoundFragmentProgram;
 		D3D11HLSLProgram* mBoundGeometryProgram;
-
 
 		ID3D11BlendState * mBoundBlendState;
 		ID3D11RasterizerState * mBoundRasterizer;
@@ -197,7 +187,8 @@ namespace Ogre
 		SecondaryWindowList mSecondaryWindows;
 
 		bool mBasicStatesInitialised;
-
+		
+		bool mRenderSystemWasInited;
 
 		IDXGIFactory1*	mpDXGIFactory;
 	protected:
@@ -205,8 +196,12 @@ namespace Ogre
 	public:
 		// constructor
 		D3D11RenderSystem( HINSTANCE hInstance );
+
 		// destructor
 		~D3D11RenderSystem();
+
+
+		void initRenderSystem();
 
 		virtual void initConfigOptions(void);
 
@@ -225,6 +220,17 @@ namespace Ogre
 
 		/// @copydoc RenderSystem::createMultiRenderTarget
 		virtual MultiRenderTarget * createMultiRenderTarget(const String & name);
+
+		virtual DepthBuffer* _createDepthBufferFor( RenderTarget *renderTarget );
+
+		/**
+		 * This function is meant to add Depth Buffers to the pool that aren't released when the DepthBuffer
+		 * is deleted. This is specially usefull to put the Depth Buffer created along with the window's
+		 * back buffer into the pool. All depth buffers introduced with this method go to POOL_DEFAULT
+		 */
+		DepthBuffer* _addManualDepthBuffer( ID3D11DepthStencilView *depthSurface,
+											uint32 width, uint32 height, uint32 fsaa, uint32 fsaaQuality );
+
 
 		const String& getName(void) const;
 		// Low-level overridden members
@@ -248,6 +254,9 @@ namespace Ogre
 		virtual String getErrorDescription(long errorNumber) const;
 
 		// Low-level overridden members, mainly for internal use
+		D3D11HLSLProgram* _getBoundVertexProgram() const;
+		D3D11HLSLProgram* _getBoundFragmentProgram() const;
+		D3D11HLSLProgram* _getBoundGeometryProgram() const;
         void _useLights(const LightList& lights, unsigned short limit);
 		void _setWorldMatrix( const Matrix4 &m );
 		void _setViewMatrix( const Matrix4 &m );
@@ -277,6 +286,7 @@ namespace Ogre
 		void _setCullingMode( CullingMode mode );
 		void _setDepthBufferParams( bool depthTest = true, bool depthWrite = true, CompareFunction depthFunction = CMPF_LESS_EQUAL );
 		void _setDepthBufferCheckEnabled( bool enabled = true );
+		bool _getDepthBufferCheckEnabled( void );
 		void _setColourBufferWriteEnabled(bool red, bool green, bool blue, bool alpha);
 		void _setDepthBufferWriteEnabled(bool enabled = true);
 		void _setDepthBufferFunction( CompareFunction func = CMPF_LESS_EQUAL );
@@ -296,6 +306,7 @@ namespace Ogre
         void _setTextureUnitFiltering(size_t unit, FilterType ftype, FilterOptions filter);
 		void _setTextureLayerAnisotropy(size_t unit, unsigned int maxAnisotropy);
 		void setVertexDeclaration(VertexDeclaration* decl);
+		void setVertexDeclaration(VertexDeclaration* decl, VertexBufferBinding* binding);
 		void setVertexBufferBinding(VertexBufferBinding* binding);
         void _render(const RenderOperation& op);
         /** See

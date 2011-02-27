@@ -44,7 +44,9 @@ namespace Ogre {
         : HardwareBuffer(usage, useSystemMemory, useShadowBuffer), 
 		  mMgr(mgr),
           mNumVertices(numVertices),
-          mVertexSize(vertexSize)
+          mVertexSize(vertexSize),
+          mIsInstanceData(false),
+		  mInstanceDataStepRate(1)
     {
         // Calculate the size of the vertices
         mSizeInBytes = mVertexSize * numVertices;
@@ -70,6 +72,50 @@ namespace Ogre {
         }
     }
     //-----------------------------------------------------------------------------
+    bool HardwareVertexBuffer::checkIfVertexInstanceDataIsSupported()
+    {
+    	// Use the current render system
+    	RenderSystem* rs = Root::getSingleton().getRenderSystem();
+
+    	// Check if the supported  
+    	return rs->getCapabilities()->hasCapability(RSC_VERTEX_BUFFER_INSTANCE_DATA);
+    }
+    //-----------------------------------------------------------------------------
+    void HardwareVertexBuffer::setIsInstanceData( const bool val )
+    {
+        if (val && !checkIfVertexInstanceDataIsSupported())
+        {
+            OGRE_EXCEPT(Exception::ERR_RENDERINGAPI_ERROR, 
+                "vertex instance data is not supported by the render system.", 
+                "HardwareVertexBuffer::checkIfInstanceDataSupported");
+        }
+        else
+        {
+        	mIsInstanceData = val;  
+        }
+    }
+	//-----------------------------------------------------------------------------
+	size_t HardwareVertexBuffer::getInstanceDataStepRate() const
+	{
+		return mInstanceDataStepRate;
+	}
+	//-----------------------------------------------------------------------------
+	void HardwareVertexBuffer::setInstanceDataStepRate( const size_t val )
+	{
+        if (val > 0)
+        {
+			mInstanceDataStepRate = val;
+        }
+		else
+		{
+            OGRE_EXCEPT(Exception::ERR_RENDERINGAPI_ERROR, 
+                "Instance data step rate must be bigger then 0.", 
+                "HardwareVertexBuffer::setInstanceDataStepRate");
+		}
+	}
+	//-----------------------------------------------------------------------------
+	// VertexElement
+	//-----------------------------------------------------------------------------
     VertexElement::VertexElement(unsigned short source, size_t offset, 
         VertexElementType theType, VertexElementSemantic semantic, unsigned short index)
         : mSource(source), mOffset(offset), mType(theType), 
@@ -309,11 +355,11 @@ namespace Ogre {
 
     }
     //-----------------------------------------------------------------------------
-    const VertexElement* VertexDeclaration::getElement(unsigned short index)
+    const VertexElement* VertexDeclaration::getElement(unsigned short index) const
     {
         assert(index < mElementList.size() && "Index out of bounds");
 
-        VertexElementList::iterator i = mElementList.begin();
+        VertexElementList::const_iterator i = mElementList.begin();
         for (unsigned short n = 0; n < index; ++n)
             ++i;
 
@@ -360,7 +406,7 @@ namespace Ogre {
     }
     //-----------------------------------------------------------------------------
 	const VertexElement* VertexDeclaration::findElementBySemantic(
-		VertexElementSemantic sem, unsigned short index)
+		VertexElementSemantic sem, unsigned short index) const
 	{
 		VertexElementList::const_iterator ei, eiend;
 		eiend = mElementList.end();
@@ -378,7 +424,7 @@ namespace Ogre {
 	}
 	//-----------------------------------------------------------------------------
 	VertexDeclaration::VertexElementList VertexDeclaration::findElementsBySource(
-		unsigned short source)
+		unsigned short source) const
 	{
 		VertexElementList retList;
 		VertexElementList::const_iterator ei, eiend;
@@ -395,7 +441,7 @@ namespace Ogre {
 	}
 
 	//-----------------------------------------------------------------------------
-	size_t VertexDeclaration::getVertexSize(unsigned short source)
+	size_t VertexDeclaration::getVertexSize(unsigned short source) const
 	{
 		VertexElementList::const_iterator i, iend;
 		iend = mElementList.end();
@@ -412,7 +458,7 @@ namespace Ogre {
 		return sz;
 	}
     //-----------------------------------------------------------------------------
-    VertexDeclaration* VertexDeclaration::clone(HardwareBufferManagerBase* mgr)
+    VertexDeclaration* VertexDeclaration::clone(HardwareBufferManagerBase* mgr) const
     {
 		HardwareBufferManagerBase* pManager = mgr ? mgr : HardwareBufferManager::getSingletonPtr(); 
         VertexDeclaration* ret = pManager->createVertexDeclaration();
@@ -489,7 +535,7 @@ namespace Ogre {
     }
     //-----------------------------------------------------------------------
     VertexDeclaration* VertexDeclaration::getAutoOrganisedDeclaration(
-		bool skeletalAnimation, bool vertexAnimation)
+		bool skeletalAnimation, bool vertexAnimation, bool vertexAnimationNormals) const
     {
         VertexDeclaration* newDecl = this->clone();
         // Set all sources to the same buffer (for now)
@@ -517,15 +563,16 @@ namespace Ogre {
             switch (elem.getSemantic())
             {
             case VES_POSITION:
-                // For morph animation, we need positions on their own
-                splitWithPrev = vertexAnimation;
-                splitWithNext = vertexAnimation;
+                // Split positions if vertex animated with only positions
+				// group with normals otherwise
+				splitWithPrev = false;
+                splitWithNext = vertexAnimation && !vertexAnimationNormals;
                 break;
             case VES_NORMAL:
-                // Normals can't sharing with blend weights/indices
+                // Normals can't share with blend weights/indices
                 splitWithPrev = (prevSemantic == VES_BLEND_WEIGHTS || prevSemantic == VES_BLEND_INDICES);
                 // All animated meshes have to split after normal
-                splitWithNext = (skeletalAnimation || vertexAnimation);
+                splitWithNext = (skeletalAnimation || (vertexAnimation && vertexAnimationNormals));
                 break;
             case VES_BLEND_WEIGHTS:
                 // Blend weights/indices can be sharing with their own buffer only
@@ -535,11 +582,15 @@ namespace Ogre {
                 // Blend weights/indices can be sharing with their own buffer only
                 splitWithNext = true;
                 break;
+			default:
             case VES_DIFFUSE:
             case VES_SPECULAR:
             case VES_TEXTURE_COORDINATES:
             case VES_BINORMAL:
             case VES_TANGENT:
+				// Make sure position is separate if animated & there were no normals
+				splitWithPrev = prevSemantic == VES_POSITION && 
+					(skeletalAnimation || vertexAnimation);
                 break;
             }
 
@@ -584,6 +635,21 @@ namespace Ogre {
         }
         return ret;
     }
+    //-----------------------------------------------------------------------------
+	unsigned short VertexDeclaration::getNextFreeTextureCoordinate() const
+	{
+		unsigned short texCoord = 0;
+		for (VertexElementList::const_iterator i = mElementList.begin(); 
+			 i != mElementList.end(); ++i)
+		{
+			const VertexElement& el = *i;
+			if (el.getSemantic() == VES_TEXTURE_COORDINATES)
+			{
+				++texCoord;
+			}
+		}
+		return texCoord;
+	}
     //-----------------------------------------------------------------------------
 	VertexBufferBinding::VertexBufferBinding() : mHighIndex(0)
 	{
@@ -672,6 +738,20 @@ namespace Ogre {
 
         mBindingMap.swap(newBindingMap);
         mHighIndex = targetIndex;
+    }
+    //-----------------------------------------------------------------------------
+    bool VertexBufferBinding::getHasInstanceData() const
+    {
+		VertexBufferBinding::VertexBufferBindingMap::const_iterator i, iend;
+		iend = mBindingMap.end();
+		for (i = mBindingMap.begin(); i != iend; ++i)
+		{
+			if ( i->second->getIsInstanceData() )
+            {
+                return true;
+            }
+        }
+        return false;
     }
     //-----------------------------------------------------------------------------
     HardwareVertexBufferSharedPtr::HardwareVertexBufferSharedPtr(HardwareVertexBuffer* buf)

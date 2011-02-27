@@ -47,15 +47,13 @@ namespace Ogre
 
         initialiaseDispatchTables();
     }
+	
+	//-----------------------------------------------------------------------
+	static void write(const RenderSystemCapabilities* caps, String name, std::ostream &file)
+	{
+		using namespace std;
 
-    //-----------------------------------------------------------------------
-    void RenderSystemCapabilitiesSerializer::writeScript(const RenderSystemCapabilities* caps, String name, String filename)
-    {
-        using namespace std;
-
-		ofstream file(filename.c_str());
-
-        file << "render_system_capabilities \"" << name << "\"" << endl;
+		file << "render_system_capabilities \"" << name << "\"" << endl;
         file << "{" << endl;
 
         file << "\t" << "render_system_name " << caps->getRenderSystemName() << endl;
@@ -64,7 +62,7 @@ namespace Ogre
 
 		file << "\t" << "device_name " << caps->getDeviceName() << endl;
 		const DriverVersion& driverVer = caps->getDriverVersion();
-		file << "\t" << "driver_version " << driverVer.toString();
+		file << "\t" << "driver_version " << driverVer.toString() << endl;
 		file << "\t" << "vendor " << caps->vendorToString(caps->getVendor());
 
 		file << endl;
@@ -142,9 +140,31 @@ namespace Ogre
         file << endl;
 
         file << "}" << endl;
+	}
+
+    //-----------------------------------------------------------------------
+    void RenderSystemCapabilitiesSerializer::writeScript(const RenderSystemCapabilities* caps, String name, String filename)
+    {
+        using namespace std;
+
+		ofstream file(filename.c_str());
+
+        write(caps, name, file);
 
         file.close();
     }
+	
+	//-----------------------------------------------------------------------
+	String RenderSystemCapabilitiesSerializer::writeString(const RenderSystemCapabilities* caps, String name)
+	{
+		using namespace std;
+		
+		stringstream stream;
+		
+		write(caps, name, stream);
+		
+		return stream.str();
+	}
 
     //-----------------------------------------------------------------------
     void RenderSystemCapabilitiesSerializer::parseScript(DataStreamPtr& stream)

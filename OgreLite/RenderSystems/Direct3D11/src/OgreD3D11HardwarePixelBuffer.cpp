@@ -48,7 +48,8 @@ namespace Ogre {
 		mParentTexture(parentTexture),
 		mDevice(device),
 		mSubresourceIndex(subresourceIndex),
-		mFace(face)
+		mFace(face),
+		mDataForStaticUsageLock(0)
 	{
 		if(mUsage & TU_RENDERTARGET)
 		{
@@ -76,6 +77,11 @@ namespace Ogre {
 			if(mSliceTRT[zoffset])
 				Root::getSingleton().getRenderSystem()->destroyRenderTarget(mSliceTRT[zoffset]->getName());
 		}
+
+		if (mDataForStaticUsageLock != NULL)
+		{
+			SAFE_DELETE_ARRAY(mDataForStaticUsageLock) ;
+		}
 	}
 	//-----------------------------------------------------------------------------  
 	// Util functions to convert a D3D locked box to a pixel box
@@ -101,11 +107,14 @@ namespace Ogre {
 		D3D11_MAP  flags = D3D11_MAP_WRITE_DISCARD ;
 		switch(options)
 		{
+		case HBL_NO_OVERWRITE:
+			flags = D3D11_MAP_WRITE_NO_OVERWRITE;
+			break;
+		case HBL_NORMAL:
+			flags = D3D11_MAP_WRITE_DISCARD;
+			break;
 		case HBL_DISCARD:
-			// D3D only likes D3DLOCK_DISCARD if you created the texture with D3DUSAGE_DYNAMIC
-			// debug runtime flags this up, could cause problems on some drivers
-			if (mUsage & HBU_DYNAMIC)
-				flags = D3D11_MAP_WRITE_DISCARD;
+			flags = D3D11_MAP_WRITE_DISCARD;
 			break;
 		case HBL_READ_ONLY:
 			flags = D3D11_MAP_READ;
@@ -114,81 +123,162 @@ namespace Ogre {
 			break;
 		};
 
-		mDevice.clearStoredErrorMessages();
+		if (mUsage & HBU_DYNAMIC)
+		{
+			mDevice.clearStoredErrorMessages();
 
-		D3D11_MAPPED_SUBRESOURCE pMappedResource;
-		pMappedResource.pData = NULL;
+			D3D11_MAPPED_SUBRESOURCE pMappedResource;
+			pMappedResource.pData = NULL;
 
-		// TODO - check return values here
-		switch(mParentTexture->getTextureType()) {
-		case TEX_TYPE_1D:
-			{
+			// TODO - check return values here
+			switch(mParentTexture->getTextureType()) {
+			case TEX_TYPE_1D:
+				{
 
-				mDevice.GetImmediateContext()->Map(mParentTexture->GetTex1D(), static_cast<UINT>(mSubresourceIndex), flags, 0, &pMappedResource);
-				rval.data = pMappedResource.pData;
-				if (mDevice.isError())
-				{
-					String errorDescription = mDevice.getErrorDescription();
-					OGRE_EXCEPT(Exception::ERR_RENDERINGAPI_ERROR, 
-						"D3D11 device cannot map 1D texture\nError Description:" + errorDescription,
-						"D3D11HardwarePixelBuffer::lockImpl");
+					mDevice.GetImmediateContext()->Map(mParentTexture->GetTex1D(), static_cast<UINT>(mSubresourceIndex), flags, 0, &pMappedResource);
+					rval.data = pMappedResource.pData;
+					if (mDevice.isError())
+					{
+						String errorDescription = mDevice.getErrorDescription();
+						OGRE_EXCEPT(Exception::ERR_RENDERINGAPI_ERROR, 
+							"D3D11 device cannot map 1D texture\nError Description:" + errorDescription,
+							"D3D11HardwarePixelBuffer::lockImpl");
+					}
 				}
-			}
-			break;
-		case TEX_TYPE_CUBE_MAP:
-		case TEX_TYPE_2D:
-			{
-				mDevice.GetImmediateContext()->Map(mParentTexture->GetTex2D(), static_cast<UINT>(mSubresourceIndex), flags, 0, &pMappedResource);
-				rval.data = pMappedResource.pData;
-				if (mDevice.isError())
+				break;
+			case TEX_TYPE_CUBE_MAP:
+			case TEX_TYPE_2D:
+			case TEX_TYPE_2D_ARRAY:
 				{
-					String errorDescription = mDevice.getErrorDescription();
-					OGRE_EXCEPT(Exception::ERR_RENDERINGAPI_ERROR, 
-						"D3D11 device cannot map 1D texture\nError Description:" + errorDescription,
-						"D3D11HardwarePixelBuffer::lockImpl");
+					mDevice.GetImmediateContext()->Map(
+							mParentTexture->GetTex2D(), 
+							D3D11CalcSubresource(static_cast<UINT>(mSubresourceIndex), mFace, mParentTexture->getNumMipmaps()), 
+							flags, 
+							0, 
+							&pMappedResource);
+					rval.data = pMappedResource.pData;
+					if (mDevice.isError())
+					{
+						String errorDescription = mDevice.getErrorDescription();
+						OGRE_EXCEPT(Exception::ERR_RENDERINGAPI_ERROR, 
+							"D3D11 device cannot map 1D texture\nError Description:" + errorDescription,
+							"D3D11HardwarePixelBuffer::lockImpl");
+					}
 				}
-			}
-			break;
-		case TEX_TYPE_3D:
-			{
-				mDevice.GetImmediateContext()->Map(mParentTexture->GetTex2D(), static_cast<UINT>(mSubresourceIndex), flags, 0, &pMappedResource);
-				rval.data = pMappedResource.pData;
-				if (mDevice.isError())
+				break;
+			case TEX_TYPE_3D:
 				{
-					String errorDescription = mDevice.getErrorDescription();
-					OGRE_EXCEPT(Exception::ERR_RENDERINGAPI_ERROR, 
-						"D3D11 device cannot map 1D texture\nError Description:" + errorDescription,
-						"D3D11HardwarePixelBuffer::lockImpl");
+					mDevice.GetImmediateContext()->Map(mParentTexture->GetTex3D(), static_cast<UINT>(mSubresourceIndex), flags, 0, &pMappedResource);
+					rval.data = pMappedResource.pData;
+					if (mDevice.isError())
+					{
+						String errorDescription = mDevice.getErrorDescription();
+						OGRE_EXCEPT(Exception::ERR_RENDERINGAPI_ERROR, 
+							"D3D11 device cannot map 1D texture\nError Description:" + errorDescription,
+							"D3D11HardwarePixelBuffer::lockImpl");
+					}
 				}
+				break;
 			}
-			break;
+
 		}
-
-
-
+		else
+		{
+			// for static usage just alloc
+			size_t sizeOfImage = rval.getConsecutiveSize();
+			mDataForStaticUsageLock = new int8[sizeOfImage];
+			rval.data = mDataForStaticUsageLock;
+		}
 
 		return rval;
 	}
 	//-----------------------------------------------------------------------------  
 	void D3D11HardwarePixelBuffer::unlockImpl(void)
 	{
-		switch(mParentTexture->getTextureType()) {
-		case TEX_TYPE_1D:
-			{
-				mDevice.GetImmediateContext()->Unmap(mParentTexture->GetTex1D(), mSubresourceIndex);
+		if (mUsage & HBU_DYNAMIC)
+		{
+			switch(mParentTexture->getTextureType()) {
+			case TEX_TYPE_1D:
+				{
+					mDevice.GetImmediateContext()->Unmap(mParentTexture->GetTex1D(), mSubresourceIndex);
+				}
+				break;
+			case TEX_TYPE_CUBE_MAP:
+			case TEX_TYPE_2D:
+			case TEX_TYPE_2D_ARRAY:
+				{
+					mDevice.GetImmediateContext()->Unmap(mParentTexture->GetTex2D(), 
+					D3D11CalcSubresource(static_cast<UINT>(mSubresourceIndex), mFace, mParentTexture->getNumMipmaps()));
+				}
+				break;
+			case TEX_TYPE_3D:
+				{
+					mDevice.GetImmediateContext()->Unmap(mParentTexture->GetTex3D(), mSubresourceIndex);
+				}
+				break;
 			}
-			break;
-		case TEX_TYPE_CUBE_MAP:
-		case TEX_TYPE_2D:
-			{
-				mDevice.GetImmediateContext()->Unmap(mParentTexture->GetTex2D(), mSubresourceIndex);
+		}
+		else
+		{
+			const Image::Box dstBox;
+			D3D11_BOX dstBoxDx11 = OgreImageBoxToDx11Box(dstBox);
+
+			switch(mParentTexture->getTextureType()) {
+			case TEX_TYPE_1D:
+				{
+
+					mDevice.GetImmediateContext()->UpdateSubresource(
+						mParentTexture->GetTex1D(), 
+						static_cast<UINT>(mSubresourceIndex),
+						&dstBoxDx11, 
+						mDataForStaticUsageLock, 0, 0);
+					if (mDevice.isError())
+					{
+						String errorDescription = mDevice.getErrorDescription();
+						OGRE_EXCEPT(Exception::ERR_RENDERINGAPI_ERROR, 
+							"D3D11 device cannot map 1D texture\nError Description:" + errorDescription,
+							"D3D11HardwarePixelBuffer::lockImpl");
+					}
+				}
+				break;
+			case TEX_TYPE_CUBE_MAP:
+			case TEX_TYPE_2D:
+			case TEX_TYPE_2D_ARRAY:
+				{
+					mDevice.GetImmediateContext()->UpdateSubresource(
+						mParentTexture->GetTex2D(), 
+						D3D11CalcSubresource(static_cast<UINT>(mSubresourceIndex), mFace, mParentTexture->getNumMipmaps()),
+						&dstBoxDx11, 
+						mDataForStaticUsageLock, 0, 0);
+
+					if (mDevice.isError())
+					{
+						String errorDescription = mDevice.getErrorDescription();
+						OGRE_EXCEPT(Exception::ERR_RENDERINGAPI_ERROR, 
+							"D3D11 device cannot map 1D texture\nError Description:" + errorDescription,
+							"D3D11HardwarePixelBuffer::lockImpl");
+					}
+				}
+				break;
+			case TEX_TYPE_3D:
+				{
+					mDevice.GetImmediateContext()->UpdateSubresource(
+						mParentTexture->GetTex3D(), 
+						static_cast<UINT>(mSubresourceIndex),
+						&dstBoxDx11, 
+						mDataForStaticUsageLock, 0, 0);
+					if (mDevice.isError())
+					{
+						String errorDescription = mDevice.getErrorDescription();
+						OGRE_EXCEPT(Exception::ERR_RENDERINGAPI_ERROR, 
+							"D3D11 device cannot map 1D texture\nError Description:" + errorDescription,
+							"D3D11HardwarePixelBuffer::lockImpl");
+					}
+				}
+				break;
 			}
-			break;
-		case TEX_TYPE_3D:
-			{
-				mDevice.GetImmediateContext()->Unmap(mParentTexture->GetTex3D(), mSubresourceIndex);
-			}
-			break;
+
+			SAFE_DELETE_ARRAY(mDataForStaticUsageLock) ;
 		}
 	}
 
@@ -251,10 +341,11 @@ namespace Ogre {
 			break;
 		case TEX_TYPE_CUBE_MAP:
 		case TEX_TYPE_2D:
+		case TEX_TYPE_2D_ARRAY:
 			{
 				mDevice.GetImmediateContext()->CopySubresourceRegion(
 					mParentTexture->GetTex2D(), 
-					static_cast<UINT>(mSubresourceIndex),
+					D3D11CalcSubresource(static_cast<UINT>(mSubresourceIndex), mFace, mParentTexture->getNumMipmaps()),
 					static_cast<UINT>(dstBox.left),
 					static_cast<UINT>(dstBox.top),
 					mFace,
@@ -273,12 +364,12 @@ namespace Ogre {
 		case TEX_TYPE_3D:
 			{
 				mDevice.GetImmediateContext()->CopySubresourceRegion(
-					mParentTexture->GetTex2D(), 
+					mParentTexture->GetTex3D(), 
 					static_cast<UINT>(mSubresourceIndex),
 					static_cast<UINT>(dstBox.left),
 					static_cast<UINT>(dstBox.top),
 					static_cast<UINT>(dstBox.front),
-					rsrcDx11->mParentTexture->GetTex2D(),
+					rsrcDx11->mParentTexture->GetTex3D(),
 					static_cast<UINT>(rsrcDx11->mSubresourceIndex),
 					&srcBoxDx11);
 				if (mDevice.isError())
@@ -364,14 +455,15 @@ namespace Ogre {
 			break;
 		case TEX_TYPE_CUBE_MAP:
 		case TEX_TYPE_2D:
+		case TEX_TYPE_2D_ARRAY:
 			{
 				mDevice.GetImmediateContext()->UpdateSubresource( 
 					mParentTexture->GetTex2D(), 
-					static_cast<UINT>(mSubresourceIndex),
+					D3D11CalcSubresource(static_cast<UINT>(mSubresourceIndex), mFace, mParentTexture->getNumMipmaps()),
 					&dstBoxDx11,
 					converted.data,
 					d3dRowPitch,
-					mFace );
+					0 );
 				if (mDevice.isError())
 				{
 					String errorDescription = mDevice.getErrorDescription();
@@ -384,7 +476,7 @@ namespace Ogre {
 		case TEX_TYPE_3D:
 			{
 				mDevice.GetImmediateContext()->UpdateSubresource( 
-					mParentTexture->GetTex2D(), 
+					mParentTexture->GetTex3D(), 
 					static_cast<UINT>(mSubresourceIndex),
 					&dstBoxDx11,
 					converted.data,
@@ -564,5 +656,10 @@ namespace Ogre {
 	size_t D3D11HardwarePixelBuffer::getSubresourceIndex() const
 	{
 		return mSubresourceIndex;
+	}
+	//-----------------------------------------------------------------------------    
+	size_t D3D11HardwarePixelBuffer::getFace() const
+	{
+		return mFace;
 	}
 };

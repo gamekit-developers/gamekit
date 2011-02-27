@@ -73,6 +73,13 @@ namespace Ogre {
 			String doGet(const void* target) const;
 			void doSet(void* target, const String& val);
 		};
+		/// Command object for setting backwards compatibility
+		class CmdEnableBackwardsCompatibility : public ParamCommand
+		{
+		public:
+			String doGet(const void* target) const;
+			void doSet(void* target, const String& val);
+		};
 
 	protected:
 
@@ -80,6 +87,8 @@ namespace Ogre {
 		static CmdTarget msCmdTarget;
 		static CmdPreprocessorDefines msCmdPreprocessorDefines;
 		static CmdColumnMajorMatrices msCmdColumnMajorMatrices;
+		static CmdEnableBackwardsCompatibility msCmdEnableBackwardsCompatibility;
+		
 
 		/** Internal method for creating an appropriate low-level program from this
 		high-level program, must be implemented by subclasses. */
@@ -98,6 +107,7 @@ namespace Ogre {
 		String mEntryPoint;
 		String mPreprocessorDefines;
 		bool mColumnMajorMatrices;
+		bool mEnableBackwardsCompatibility;
 
 		bool mErrorsInCompile;
 		ID3D10Blob * mpMicroCode;
@@ -123,6 +133,7 @@ namespace Ogre {
 			bool isFloat;
 			size_t physicalIndex;
 			void * src;
+			String name;
 
 			D3D11_SHADER_VARIABLE_DESC var;
 		};
@@ -132,6 +143,9 @@ namespace Ogre {
 		ShaderVars mShaderVars;
 
 		void createConstantBuffer(const UINT ByteWidth);
+		void analizeMicrocode();
+		void getMicrocodeFromCache(void);
+		void compileMicrocode(void);
 	public:
 		D3D11HLSLProgram(ResourceManager* creator, const String& name, ResourceHandle handle,
 			const String& group, bool isManual, ManualResourceLoader* loader, D3D11Device & device);
@@ -153,6 +167,10 @@ namespace Ogre {
 		void setColumnMajorMatrices(bool columnMajor) { mColumnMajorMatrices = columnMajor; }
 		/** Gets whether matrix packed in column-major order. */
 		bool getColumnMajorMatrices(void) const { return mColumnMajorMatrices; }
+		/** Sets whether backwards compatibility is enabled. */ 
+		void setEnableBackwardsCompatibility(bool enableBackwardsCompatibility) { mEnableBackwardsCompatibility = enableBackwardsCompatibility; }
+		/** Gets whether backwards compatibility is enabled. */
+		bool getEnableBackwardsCompatibility(void) const { return mEnableBackwardsCompatibility; }
 		/// Overridden from GpuProgram
 		bool isSupported(void) const;
 		/// Overridden from GpuProgram
@@ -177,7 +195,6 @@ namespace Ogre {
 		void loadFromSource(void);
 
 		D3D11VertexDeclaration & getInputVertexDeclaration() { return mInputVertexDeclaration; }
-
 	};
 }
 

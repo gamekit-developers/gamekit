@@ -134,10 +134,6 @@ CompositorChain *CompositorManager::getCompositorChain(Viewport *vp)
     Chains::iterator i=mChains.find(vp);
     if(i != mChains.end())
     {
-		// Make sure we have the right viewport
-		// It's possible that this chain may have outlived a viewport and another
-		// viewport was created at the same physical address, meaning we find it again but the viewport is gone
-		i->second->_notifyViewport(vp);
         return i->second;
     }
     else
@@ -253,6 +249,10 @@ void CompositorManager::_reconstructAllCompositorResources()
 			}
 		}
 	}
+
+	//UVs are lost, and will never be reconstructed unless we do them again, now
+	if( mRectangle )
+		mRectangle->setDefaultUVs();
 
 	for (InstVec::iterator i = instancesToReenable.begin(); i != instancesToReenable.end(); ++i)
 	{
@@ -509,6 +509,19 @@ void CompositorManager::registerCompositorLogic(const String& name, CompositorLo
 	mCompositorLogics[name] = logic;
 }
 //---------------------------------------------------------------------
+void CompositorManager::unregisterCompositorLogic(const String& name)
+{
+	CompositorLogicMap::iterator itor = mCompositorLogics.find(name);
+	if( itor == mCompositorLogics.end() )
+	{
+		OGRE_EXCEPT(Exception::ERR_ITEM_NOT_FOUND,
+			"Compositor logic '" + name + "' not registered.",
+			"CompositorManager::unregisterCompositorLogic");
+	}
+
+	mCompositorLogics.erase( itor );
+}
+//---------------------------------------------------------------------
 CompositorLogic* CompositorManager::getCompositorLogic(const String& name)
 {
 	CompositorLogicMap::iterator it = mCompositorLogics.find(name);
@@ -548,24 +561,6 @@ CustomCompositionPass* CompositorManager::getCustomCompositionPass(const String&
 			"CompositorManager::getCustomCompositionPass");
 	}
 	return it->second;
-}
-//---------------------------------------------------------------------
-void CompositorManager::_relocateChain( Viewport* sourceVP, Viewport* destVP )
-{
-	if (sourceVP != destVP)
-	{
-		CompositorChain *chain = getCompositorChain(sourceVP);
-		Ogre::RenderTarget *srcTarget = sourceVP->getTarget();
-		Ogre::RenderTarget *dstTarget = destVP->getTarget();
-		if (srcTarget != dstTarget)
-		{
-			srcTarget->removeListener(chain);
-			dstTarget->addListener(chain);
-		}
-		chain->_notifyViewport(destVP);
-		mChains.erase(sourceVP);
-		mChains[destVP] = chain;
-	}
 }
 //-----------------------------------------------------------------------
 }

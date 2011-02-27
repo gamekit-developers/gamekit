@@ -52,7 +52,7 @@ THE SOFTWARE.
 #endif
 
 // Color order is actually RGB on iPhone
-#if OGRE_PLATFORM == OGRE_PLATFORM_IPHONE
+#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
 #define FREEIMAGE_COLORORDER FREEIMAGE_COLORORDER_RGB
 #endif
 
@@ -484,7 +484,19 @@ namespace Ogre {
 			// Perform any colour conversions for RGB
 			else if (bpp < 8 || colourType == FIC_PALETTE || colourType == FIC_CMYK)
 			{
-				FIBITMAP* newBitmap = FreeImage_ConvertTo24Bits(fiBitmap);
+				FIBITMAP* newBitmap =  NULL;	
+				if (FreeImage_IsTransparent(fiBitmap))
+				{
+					// convert to 32 bit to preserve the transparency 
+					// (the alpha byte will be 0 if pixel is transparent)
+					newBitmap = FreeImage_ConvertTo32Bits(fiBitmap);
+				}
+				else
+				{
+					// no transparency - only 3 bytes are needed
+					newBitmap = FreeImage_ConvertTo24Bits(fiBitmap);
+				}
+
 				// free old bitmap and replace
 				FreeImage_Unload(fiBitmap);
 				fiBitmap = newBitmap;

@@ -53,6 +53,7 @@ Torus Knot Software Ltd.
 #include "OgreCamera.h"
 #include "OgreInstancedGeometry.h"
 #include "OgreLodListener.h"
+#include "OgreInstanceManager.h"
 #include "OgreRenderSystem.h"
 namespace Ogre {
 	/** \addtogroup Core
@@ -391,6 +392,9 @@ namespace Ogre {
 		typedef map<String, InstancedGeometry* >::type InstancedGeometryList;
 		InstancedGeometryList mInstancedGeometryList;
 
+		typedef map<String, InstanceManager*>::type InstanceManagerMap;
+		InstanceManagerMap	mInstanceManagerMap;
+
         typedef map<String, SceneNode*>::type SceneNodeList;
 
         /** Central list of SceneNodes - for easy memory management.
@@ -549,7 +553,7 @@ namespace Ogre {
             ensure that objects are rendered solid black.
             This method will usually return the standard solid black pass for
             all fixed function passes, but will merge in a vertex program
-            and fudge the AutpoParamDataSource to set black lighting for
+            and fudge the AutoParamDataSource to set black lighting for
             passes with vertex programs. 
         */
         virtual const Pass* deriveShadowCasterPass(const Pass* pass);
@@ -765,6 +769,12 @@ namespace Ogre {
         virtual void ensureShadowTexturesCreated();
         /// Internal method for destroying shadow textures (texture-based shadows)
         virtual void destroyShadowTextures(void);
+
+		typedef vector<InstanceManager*>::type		InstanceManagerVec;
+		InstanceManagerVec mDirtyInstanceManagers;
+
+		/** Updates all instance managaers with dirty instance batches. @See _addDirtyInstanceManager */
+		void updateDirtyInstanceManagers(void);
         
 	public:
 		/// Method for preparing shadow textures ready for use in a regular render
@@ -824,9 +834,11 @@ namespace Ogre {
 		Pass* mShadowTextureCustomCasterPass;
 		Pass* mShadowTextureCustomReceiverPass;
 		String mShadowTextureCustomCasterVertexProgram;
+		String mShadowTextureCustomCasterFragmentProgram;
 		String mShadowTextureCustomReceiverVertexProgram;
 		String mShadowTextureCustomReceiverFragmentProgram;
 		GpuProgramParametersSharedPtr mShadowTextureCustomCasterVPParams;
+		GpuProgramParametersSharedPtr mShadowTextureCustomCasterFPParams;
 		GpuProgramParametersSharedPtr mShadowTextureCustomReceiverVPParams;
 		GpuProgramParametersSharedPtr mShadowTextureCustomReceiverFPParams;
 
@@ -2746,9 +2758,10 @@ namespace Ogre {
 			number of shadow textures setting
 		@param width, height The dimensions of the texture
 		@param format The pixel format of the texture
+		@param depthBufferPoolId The pool # it should query the depth buffers from
 		*/
 		virtual void setShadowTextureConfig(size_t shadowIndex, unsigned short width, 
-			unsigned short height, PixelFormat format);
+			unsigned short height, PixelFormat format, uint16 depthBufferPoolId=1);
 		/** Set the detailed configuration for a shadow texture.
 		@param shadowIndex The index of the texture to configure, must be < the
 			number of shadow textures setting
@@ -2807,7 +2820,7 @@ namespace Ogre {
 			complex form.
         */
         virtual void setShadowTextureSettings(unsigned short size, unsigned short count, 
-			PixelFormat fmt = PF_X8R8G8B8);
+			PixelFormat fmt = PF_X8R8G8B8, uint16 depthBufferPoolId=1);
 
 		/** Get a reference to the shadow texture currently in use at the given index.
 		@note
@@ -3079,6 +3092,84 @@ namespace Ogre {
 		/** Remove & destroy all InstancedGeometry instances. */
 		virtual void destroyAllInstancedGeometry(void);
 
+		/** Creates an InstanceManager interface to create & manipulate instanced entities
+			You need to call this function at least once before start calling createInstancedEntity
+			to build up an instance based on the given mesh.
+		@remarks
+			Instancing is a way of batching up geometry into a much more 
+			efficient form, but with some limitations, and still be able to move & animate it.
+			Please @see InstanceManager class documentation for full information.
+		@param customName Custom name for referencing. Must be unique
+		@param meshName The mesh name the instances will be based upon
+		@param groupName The resource name where the mesh lives
+		@param Technique to use, which may be shader based, or hardware based.
+		@param numInstancesPerBatch Suggested number of instances per batch. The actual number
+		may end up being lower if the technique doesn't support having so many. It can't be zero
+		@param flags @See InstanceManagerFlags
+		@param InstanceManager only supports using one submesh from the base mesh. This parameter
+		says which submesh to pick (must be <= Mesh::getNumSubMeshes())
+		@returns The new InstanceManager instance
+		*/
+		virtual InstanceManager* createInstanceManager( const String &customName, const String &meshName,
+														const String &groupName,
+														InstanceManager::InstancingTechnique technique,
+														size_t numInstancesPerBatch, uint16 flags=0,
+														unsigned short subMeshIdx=0 );
+
+		/** Destroys an InstanceManager <b>if</b> it was created with createInstanceManager()
+		@remarks
+			Be sure you don't have any InstancedEntity referenced somewhere which was created with
+			this manager, since it will become a dangling pointer.
+		@param customName Name of the manager to remove
+		*/
+		virtual void destroyInstanceManager( const String &name );
+		virtual void destroyInstanceManager( InstanceManager *instanceManager );
+
+		virtual void destroyAllInstanceManagers(void);
+
+		/** @See InstanceManager::getMaxOrBestNumInstancesPerBatch
+		@remarks
+			If you've already created an InstanceManager, you can call it's
+			getMaxOrBestNumInstancesPerBatch() function directly.
+			Another (not recomended) way to know if the technique is unsupported is by creating
+			an InstanceManager and use createInstancedEntity, which will return null pointer.
+			The input parameter "numInstancesPerBatch" is a suggested value when using IM_VTFBESTFIT
+			flag (in that case it should be non-zero)
+		@returns
+			The ideal (or maximum, depending on flags) number of instances per batch for
+			the given technique. Zero if technique is unsupported or errors were spotted
+		*/
+		virtual size_t getNumInstancesPerBatch( const String &meshName, const String &groupName,
+												const String &materialName,
+												InstanceManager::InstancingTechnique technique,
+												size_t numInstancesPerBatch, uint16 flags=0,
+												unsigned short subMeshIdx=0 );
+
+		/** Creates an InstancedEntity based on an existing InstanceManager (@see createInstanceManager)
+		@remarks
+			* Return value may be null if the InstanceManger technique isn't supported
+			* Try to keep the number of entities with different materials <b>to a minimum</b>
+			* For more information @see InstancedManager @see InstancedBatch, @see InstancedEntity
+			* Alternatively you can call InstancedManager::createInstanceEntity using the returned
+			pointer from createInstanceManager
+		@param materialName Material name 
+		@param managerName Name of the instance manager
+		@returns An InstancedEntity ready to be attached to a SceneNode
+		*/
+		virtual InstancedEntity* createInstancedEntity( const String &materialName,
+														const String &managerName );
+
+		/** Removes an InstancedEntity, @see SceneManager::createInstancedEntity &
+			@see InstanceBatch::removeInstancedEntity
+		@param instancedEntity Instance to remove
+		*/
+		virtual void destroyInstancedEntity( InstancedEntity *instancedEntity );
+
+		/** Called by an InstanceManager when it has at least one InstanceBatch that needs their bounds
+			to be updated for proper culling
+			@param dirtyManager The manager with dirty batches to update
+		*/
+		void _addDirtyInstanceManager( InstanceManager *dirtyManager );
 
 		/** Create a movable object of the type specified.
 		@remarks

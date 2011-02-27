@@ -41,9 +41,14 @@ set (HEADER_FILES
   include/OgreShaderCGProgramWriter.h
   include/OgreShaderGLSLProgramProcessor.h
   include/OgreShaderGLSLProgramWriter.h
+  include/OgreShaderGLSLESProgramProcessor.h
+  include/OgreShaderGLSLESProgramWriter.h
   include/OgreShaderProgramWriterManager.h
   include/OgreShaderHLSLProgramProcessor.h
   include/OgreShaderHLSLProgramWriter.h
+  include/OgreShaderExLayeredBlending.h
+  include/OgreShaderExHardwareSkinning.h
+  include/OgreShaderExTextureAtlasSampler.h
 )
 
 set (SOURCE_FILES
@@ -73,10 +78,16 @@ set (SOURCE_FILES
   src/OgreShaderCGProgramWriter.cpp
   src/OgreShaderGLSLProgramProcessor.cpp
   src/OgreShaderGLSLProgramWriter.cpp
+  src/OgreShaderGLSLESProgramProcessor.cpp
+  src/OgreShaderGLSLESProgramWriter.cpp
   src/OgreShaderProgramWriterManager.cpp
   src/OgreShaderHLSLProgramProcessor.cpp
   src/OgreShaderHLSLProgramWriter.cpp
+  src/OgreShaderExLayeredBlending.cpp
+  src/OgreShaderExHardwareSkinning.cpp
+  src/OgreShaderExTextureAtlasSampler.cpp
 )
+
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
@@ -86,7 +97,7 @@ target_link_libraries(OgreRTShaderSystem OgreMain)
 
 ogre_config_component(OgreRTShaderSystem)
 
-if (APPLE AND NOT OGRE_BUILD_PLATFORM_IPHONE)
+if (APPLE AND NOT OGRE_BUILD_PLATFORM_APPLE_IOS)
     # Set the INSTALL_PATH so that Components can be installed in the application package
     set_target_properties(OgreRTShaderSystem
        PROPERTIES BUILD_WITH_INSTALL_RPATH 1

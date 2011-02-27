@@ -107,36 +107,60 @@ namespace Ogre
 			return;
 		}
 
-		this->_loadTex();
+		// Make sure streams prepared.
+		if (mLoadedStreams.isNull())
+		{
+			prepareImpl();
+		}
 
+		// Set reading positions of loaded streams to the beginning.
+		for (uint i = 0; i < mLoadedStreams->size(); ++i)
+		{
+			MemoryDataStreamPtr curDataStream = (*mLoadedStreams)[i];
+
+			curDataStream->seek(0);
+		}
+
+		// only copy is on the stack so well-behaved if exception thrown
+		LoadedStreams loadedStreams = mLoadedStreams;
+
+		this->_loadTex(loadedStreams);
+
+	}
+	//---------------------------------------------------------------------
+	void D3D11Texture::freeInternalResources(void)
+	{
+		freeInternalResourcesImpl();
 	}
 	//---------------------------------------------------------------------
 	void D3D11Texture::freeInternalResourcesImpl()
 	{
 		SAFE_RELEASE(mpTex);
+        SAFE_RELEASE(mpShaderResourceView);
 		SAFE_RELEASE(mp1DTex);
 		SAFE_RELEASE(mp2DTex);
 		SAFE_RELEASE(mp3DTex);
 	}
 	//---------------------------------------------------------------------
-	void D3D11Texture::_loadTex()
+	void D3D11Texture::_loadTex(LoadedStreams & loadedStreams)
 	{
 		size_t pos = mName.find_last_of(".");
 		String ext = mName.substr(pos+1);
 		String baseName = mName.substr(0, pos);
-		if(this->getTextureType() == TEX_TYPE_CUBE_MAP)
+		if((getSourceFileType() != "dds") && (this->getTextureType() == TEX_TYPE_CUBE_MAP))
 		{
 			// Load from 6 separate files
 			// Use OGRE its own codecs
-		//	String baseName;
-		//	size_t pos = mName.find_last_of(".");
+			//	String baseName;
+			//	size_t pos = mName.find_last_of(".");
 			
-		//	if ( pos != String::npos )
+			//	if ( pos != String::npos )
 		//		ext = mName.substr(pos+1);
 			vector<Image>::type images(6);
 			ConstImagePtrList imagePtrs;
 			static const String suffixes[6] = {"_rt", "_lf", "_up", "_dn", "_fr", "_bk"};
 
+            assert(loadedStreams->size()==6);
 			for(size_t i = 0; i < 6; i++)
 			{
 				String fullName = baseName + suffixes[i];
@@ -145,11 +169,9 @@ namespace Ogre
 
 				// find & load resource data intro stream to allow resource
 				// group changes if required
-				DataStreamPtr dstream = 
-					ResourceGroupManager::getSingleton().openResource(
-					fullName, mGroup, true, this);
+				DataStreamPtr stream((*loadedStreams)[i]);
 
-				images[i].load(dstream, ext);
+				images[i].load(stream, ext);
 
 				size_t imageMips = images[i].getNumMipmaps();
 
@@ -166,25 +188,10 @@ namespace Ogre
 		}
 		else
 		{
-			Image img;
-			DataStreamPtr dstream ;
-			// find & load resource data intro stream to allow resource
-			// group changes if required
-			if(ResourceGroupManager::getSingleton().resourceExists(mGroup,mName))
-			{
-				dstream = 
-					ResourceGroupManager::getSingleton().openResource(
-					mName, mGroup, true, this);
-			}
-			else
-			{
-				LogManager::getSingleton().logMessage("D3D11 : File "+mName+ " doesn't Exist ,Loading Missing.png instead ");
-				mName="Missing.png";
-				dstream =
-					ResourceGroupManager::getSingleton().openResource(
-					mName, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, true, this);
-			}
+            assert(loadedStreams->size()==1);
 
+			Image img;
+			DataStreamPtr dstream((*loadedStreams)[0]);
 		
 			if(ext=="dds")
 			{
@@ -244,6 +251,7 @@ namespace Ogre
 			break;
 		case TEX_TYPE_2D:
 		case TEX_TYPE_CUBE_MAP:
+		case TEX_TYPE_2D_ARRAY:
 			this->_create2DTex();
 			break;
 		case TEX_TYPE_3D:
@@ -350,7 +358,7 @@ namespace Ogre
 		if (mNumRequestedMipmaps == MIP_UNLIMITED)
 		{
 			numMips = 0;
-			mNumMipmaps = 0; // TODO - get this value from the created texture
+			mNumMipmaps = 0; // Will get this value from the created texture
 		}
 		else
 		{
@@ -361,7 +369,7 @@ namespace Ogre
 		desc.Width			= static_cast<UINT>(mSrcWidth);
 		desc.Height			= static_cast<UINT>(mSrcHeight);
 		desc.MipLevels		= numMips;
-		desc.ArraySize		= 1;
+		desc.ArraySize		= mDepth == 0 ? 1 : mDepth;
 		desc.Format			= d3dPF;
 		DXGI_SAMPLE_DESC sampleDesc;
 		sampleDesc.Count = 1;
@@ -407,8 +415,6 @@ namespace Ogre
 		}
 
 
-
-
 		// create the texture
 		hr = mDevice->CreateTexture2D(	
 			&desc,
@@ -422,6 +428,13 @@ namespace Ogre
 			OGRE_EXCEPT(Exception::ERR_RENDERINGAPI_ERROR,
 				"Error creating texture\nError Description:" + errorDescription, 
 				"D3D11Texture::_create2DTex" );
+		}
+
+		if(mNumMipmaps == 0)
+		{
+			D3D11_TEXTURE2D_DESC texDesc;
+			mp2DTex->GetDesc(&texDesc);
+			mNumMipmaps = texDesc.MipLevels; 		
 		}
 
 		// set the base texture we'll use in the render system
@@ -589,6 +602,12 @@ namespace Ogre
 			else
 				LogManager::getSingleton().logMessage("D3D11 : Loading 2D Texture, image name : '" + this->getName() + "' with " + StringConverter::toString(mNumMipmaps) + " mip map levels");
 			break;
+		case TEX_TYPE_2D_ARRAY:
+			if (mUsage & TU_RENDERTARGET)
+				LogManager::getSingleton().logMessage("D3D11 : Creating 2D array RenderTarget, name : '" + this->getName() + "' with " + StringConverter::toString(mNumMipmaps) + " mip map levels");
+			else
+				LogManager::getSingleton().logMessage("D3D11 : Loading 2D Texture array, image name : '" + this->getName() + "' with " + StringConverter::toString(mNumMipmaps) + " mip map levels");
+			break;
 		case TEX_TYPE_3D:
 			if (mUsage & TU_RENDERTARGET)
 				LogManager::getSingleton().logMessage("D3D11 : Creating 3D RenderTarget, name : '" + this->getName() + "' with " + StringConverter::toString(mNumMipmaps) + " mip map levels");
@@ -620,7 +639,7 @@ namespace Ogre
 	void D3D11Texture::_createSurfaceList(void)
 	{
 		unsigned int bufusage;
-		if ((mUsage & TU_DYNAMIC) && mDynamicTextures)
+		if ((mUsage & TU_DYNAMIC))
 		{
 			bufusage = HardwareBuffer::HBU_DYNAMIC;
 		}
@@ -753,6 +772,124 @@ namespace Ogre
 		return mSRVDesc;
 	}
 	//---------------------------------------------------------------------
+	void D3D11Texture::prepareImpl( void )
+	{
+		if (mUsage & TU_RENDERTARGET || isManuallyLoaded())
+		{
+			return;
+		}
+
+		D3D11_DEVICE_ACCESS_CRITICAL_SECTION
+		
+        LoadedStreams loadedStreams;
+
+		// prepare load based on tex.type
+		switch (getTextureType())
+		{
+		case TEX_TYPE_1D:
+		case TEX_TYPE_2D:
+		case TEX_TYPE_2D_ARRAY:
+			loadedStreams = _prepareNormTex();
+			break;
+		case TEX_TYPE_3D:
+			loadedStreams = _prepareVolumeTex();
+			break;
+		case TEX_TYPE_CUBE_MAP:
+			loadedStreams = _prepareCubeTex();
+			break;
+		default:
+			OGRE_EXCEPT( Exception::ERR_INTERNAL_ERROR, "Unknown texture type", "D3D11Texture::prepareImpl" );
+		}
+
+		mLoadedStreams = loadedStreams;		
+	}
+	//---------------------------------------------------------------------
+	D3D11Texture::LoadedStreams D3D11Texture::_prepareCubeTex()
+	{
+		assert(getTextureType() == TEX_TYPE_CUBE_MAP);
+
+        LoadedStreams loadedStreams = LoadedStreams(OGRE_NEW_T (vector<MemoryDataStreamPtr>::type, MEMCATEGORY_GENERAL), SPFM_DELETE_T );
+        // DDS load?
+		if (getSourceFileType() == "dds")
+		{
+            // find & load resource data
+			DataStreamPtr dstream = 
+				ResourceGroupManager::getSingleton().openResource(
+					mName, mGroup, true, this);
+            loadedStreams->push_back(MemoryDataStreamPtr(OGRE_NEW MemoryDataStream(dstream)));
+        }
+        else
+        {
+			// Load from 6 separate files
+			// Use OGRE its own codecs
+			String baseName, ext;
+			size_t pos = mName.find_last_of(".");
+			baseName = mName.substr(0, pos);
+			if ( pos != String::npos )
+				ext = mName.substr(pos+1);
+			static const String suffixes[6] = {"_rt", "_lf", "_up", "_dn", "_fr", "_bk"};
+
+			for(size_t i = 0; i < 6; i++)
+			{
+				String fullName = baseName + suffixes[i];
+				if (!ext.empty())
+					fullName = fullName + "." + ext;
+
+            	// find & load resource data intro stream to allow resource
+				// group changes if required
+				DataStreamPtr dstream = 
+					ResourceGroupManager::getSingleton().openResource(
+						fullName, mGroup, true, this);
+
+                loadedStreams->push_back(MemoryDataStreamPtr(OGRE_NEW MemoryDataStream(dstream)));
+			}
+        }
+
+        return loadedStreams;
+	}
+	//---------------------------------------------------------------------
+	D3D11Texture::LoadedStreams D3D11Texture::_prepareVolumeTex()
+	{
+		assert(getTextureType() == TEX_TYPE_3D);
+
+		// find & load resource data
+		DataStreamPtr dstream = 
+			ResourceGroupManager::getSingleton().openResource(
+				mName, mGroup, true, this);
+
+        LoadedStreams loadedStreams = LoadedStreams(OGRE_NEW_T (vector<MemoryDataStreamPtr>::type, MEMCATEGORY_GENERAL), SPFM_DELETE_T);
+        loadedStreams->push_back(MemoryDataStreamPtr(OGRE_NEW MemoryDataStream(dstream)));
+        return loadedStreams;
+    }
+	//---------------------------------------------------------------------
+	D3D11Texture::LoadedStreams D3D11Texture::_prepareNormTex()
+	{
+		assert(getTextureType() == TEX_TYPE_1D || getTextureType() == TEX_TYPE_2D || getTextureType() == TEX_TYPE_2D_ARRAY);
+
+		// find & load resource data
+		DataStreamPtr dstream = 
+			ResourceGroupManager::getSingleton().openResource(
+				mName, mGroup, true, this);
+
+        LoadedStreams loadedStreams = LoadedStreams(OGRE_NEW_T (vector<MemoryDataStreamPtr>::type, MEMCATEGORY_GENERAL), SPFM_DELETE_T);
+        loadedStreams->push_back(MemoryDataStreamPtr(OGRE_NEW MemoryDataStream(dstream)));
+        return loadedStreams;
+	}
+	//---------------------------------------------------------------------
+	void D3D11Texture::unprepareImpl( void )
+	{
+		if (mUsage & TU_RENDERTARGET || isManuallyLoaded())
+		{
+			return;
+		}   
+	}
+	//---------------------------------------------------------------------
+	void D3D11Texture::postLoadImpl()
+	{
+		D3D11_DEVICE_ACCESS_CRITICAL_SECTION
+		mLoadedStreams.setNull();	
+	}
+	//---------------------------------------------------------------------
 	// D3D11RenderTexture
 	//---------------------------------------------------------------------
 	void D3D11RenderTexture::rebind( D3D11HardwarePixelBuffer *buffer )
@@ -775,16 +912,22 @@ namespace Ogre
 			break;
 		case D3D11_SRV_DIMENSION_TEXTURE1D:
 			RTVDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE1D;
-				break;
+			break;
 		case D3D11_SRV_DIMENSION_TEXTURE1DARRAY:
 			RTVDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE1DARRAY;
-				break;
+			break;
+		case D3D11_SRV_DIMENSION_TEXTURECUBE:
+			RTVDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
+			RTVDesc.Texture2DArray.FirstArraySlice = buffer->getFace();
+			RTVDesc.Texture2DArray.ArraySize = 1;
+			RTVDesc.Texture2DArray.MipSlice = 0;
+			break;
 		case D3D11_SRV_DIMENSION_TEXTURE2D:
 			RTVDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-				break;
+			break;
 		case D3D11_SRV_DIMENSION_TEXTURE2DARRAY:
 			RTVDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
-				break;
+			break;
 		case D3D11_SRV_DIMENSION_TEXTURE2DMS:
 			RTVDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DMS;
 			break;
@@ -797,7 +940,6 @@ namespace Ogre
 		default:
 			assert(false);
 		}
-		RTVDesc.Texture2D.MipSlice = static_cast<uint>(buffer->getSubresourceIndex());
 		HRESULT hr = mDevice->CreateRenderTargetView( pBackBuffer, &RTVDesc, &mRenderTargetView );
 
 		if (FAILED(hr) || mDevice.isError())
@@ -806,46 +948,6 @@ namespace Ogre
 			OGRE_EXCEPT(Exception::ERR_RENDERINGAPI_ERROR, "Error creating Render Target View\nError Description:" + errorDescription, 
 				"D3D11RenderTexture::rebind" );
 		}
-		// Create depth stencil texture
-		ID3D11Texture2D* pDepthStencil = NULL;
-		D3D11_TEXTURE2D_DESC descDepth;
-
-		descDepth.Width = mWidth;
-		descDepth.Height = mHeight;
-		descDepth.MipLevels = 1;
-		descDepth.ArraySize = 1;
-		descDepth.Format = DXGI_FORMAT_R32_TYPELESS;
-		descDepth.SampleDesc.Count = 1;
-		descDepth.SampleDesc.Quality = 0;
-		descDepth.Usage = D3D11_USAGE_DEFAULT;
-		descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-		descDepth.CPUAccessFlags = 0;
-		descDepth.MiscFlags = 0;
-
-		hr = mDevice->CreateTexture2D( &descDepth, NULL, &pDepthStencil );
-		if( FAILED(hr) || mDevice.isError())
-		{
-			String errorDescription = mDevice.getErrorDescription(hr);
-			OGRE_EXCEPT(Exception::ERR_RENDERINGAPI_ERROR, 
-				"Unable to create depth texture\nError Description:" + errorDescription,
-				"D3D11RenderTexture::rebind");
-		}
-
-		// Create the depth stencil view
-		D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
-		descDSV.Format = DXGI_FORMAT_D32_FLOAT;
-		descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-		descDSV.Texture2D.MipSlice = 0;
-		hr = mDevice->CreateDepthStencilView( pDepthStencil, &descDSV, &mDepthStencilView );
-		SAFE_RELEASE( pDepthStencil );
-		if( FAILED(hr) )
-		{
-			String errorDescription = mDevice.getErrorDescription();
-			OGRE_EXCEPT(Exception::ERR_RENDERINGAPI_ERROR, 
-				"Unable to create depth stencil view\nError Description:" + errorDescription,
-				"D3D11RenderTexture::rebind");
-		}
-
 	}
 	//---------------------------------------------------------------------
 	void D3D11RenderTexture::getCustomAttribute( const String& name, void *pData )
@@ -871,14 +973,7 @@ namespace Ogre
 		{
 			*static_cast<ID3D11RenderTargetView**>(pData) = mRenderTargetView;
 			return;
-		}		
-		else if(name == "ID3D11DepthStencilView")
-		{
-			*static_cast<ID3D11DepthStencilView**>(pData) = mDepthStencilView;
-			return;
 		}
-
-
 	}
 	//---------------------------------------------------------------------
 	D3D11RenderTexture::D3D11RenderTexture( const String &name, D3D11HardwarePixelBuffer *buffer,  D3D11Device & device ) : mDevice(device),

@@ -140,6 +140,9 @@ namespace Ogre {
 	protected:
 		void setClipPlanesImpl(const PlaneList& clipPlanes);
 		bool activateGLTextureUnit(size_t unit);
+        void bindVertexElementToGpu( const VertexElement &elem, HardwareVertexBufferSharedPtr vertexBuffer,
+                const size_t vertexStart, 
+                vector<GLuint>::type &attribsBound, vector<GLuint>::type &instanceAttribsBound );
     public:
         // Default constructor / destructor
         GLRenderSystem();
@@ -206,6 +209,12 @@ namespace Ogre {
 		bool _createRenderWindows(const RenderWindowDescriptionList& renderWindowDescriptions, 
 			RenderWindowList& createdWindows);
 
+		/// @copydoc RenderSystem::_createDepthBufferFor
+		DepthBuffer* _createDepthBufferFor( RenderTarget *renderTarget );
+
+		/// Mimics D3D9RenderSystem::_getDepthStencilFormatFor, if no FBO RTT manager, outputs GL_NONE
+		void _getDepthStencilFormatFor( GLenum internalColourFormat, GLenum *depthFormat,
+										GLenum *stencilFormat );
 		
 		/// @copydoc RenderSystem::createMultiRenderTarget
 		virtual MultiRenderTarget * createMultiRenderTarget(const String & name); 
@@ -434,6 +443,7 @@ namespace Ogre {
           RenderSystem
          */
         void _render(const RenderOperation& op);
+
         /** See
           RenderSystem
          */

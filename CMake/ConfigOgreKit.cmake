@@ -57,8 +57,9 @@ macro (configure_ogrekit ROOT OGREPATH)
 	set(OGREKIT_TINYXML_TARGET TinyXml)
 	set(OGREKIT_OPTS_TARGET opts)
 	
-	set(OGRE_BINARY_DIR ${OGREPATH}/Bin)
-	set(OGRE_TEMPLATES_DIR ${ROOT}/CMake/Templates)
+	#set(OGRE_BINARY_DIR ${OGREPATH}/Bin)
+	#set(OGRE_TEMPLATES_DIR ${ROOT}/CMake/Templates)
+	set(OGRE_TEMPLATES_DIR ${OGREPATH}/CMake/Templates)
 	set(OGRELITE_SOURCE_DIR ${OGREPATH})
     set(OGREKIT_DEP_DIR ${ROOT}/Dependencies/Source)
 	set(OGREKIT_SAMPLES_DIR ${ROOT}/Samples)
@@ -98,7 +99,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 
 
 	if (APPLE)
-		if (OGRE_BUILD_PLATFORM_IPHONE)
+		if (OGREKIT_BUILD_IPHONE)
 			option(OGREKIT_USE_COCOA "Use Cocoa" ON)
 			set(OGREKIT_PLATFORM ${OGREPATH}/OgreMain/include/IPhone )
 		else()
@@ -175,7 +176,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 	endif()
 
 	if (OGREKIT_BUILD_IPHONE)
-		set(OGRE_BUILD_PLATFORM_IPHONE TRUE)
+		set(OGRE_BUILD_PLATFORM_APPLE_IOS TRUE)
 	endif()
 	
 	if (OGREKIT_COMPILE_OGRE_COMPONENTS)
@@ -187,7 +188,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 
 	#copy from ogre3d build
 	# Set up iPhone overrides.
-	if (OGRE_BUILD_PLATFORM_IPHONE)
+	if (OGREKIT_BUILD_IPHONE)
 		include_directories("${OGREPATH}/OgreMain/include/iPhone")
 	
 		# Set build variables
@@ -196,7 +197,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 		set(CMAKE_EXE_LINKER_FLAGS "-framework Foundation -framework CoreGraphics -framework QuartzCore -framework UIKit")
 		set(XCODE_ATTRIBUTE_SDKROOT iphoneos)
 		set(OGRE_BUILD_RENDERSYSTEM_GLES TRUE CACHE BOOL "Forcing OpenGL ES RenderSystem for iPhone" FORCE)
-		set(OGRE_STATIC TRUE CACHE BOOL "Forcing static build for iPhone" FORCE)
+		#set(OGRE_STATIC TRUE CACHE BOOL "Forcing static build for iPhone" FORCE)
 		set(MACOSX_BUNDLE_GUI_IDENTIFIER "com.yourcompany.\${PRODUCT_NAME:rfc1034identifier}")
 		set(OGRE_CONFIG_ENABLE_VIEWPORT_ORIENTATIONMODE TRUE CACHE BOOL "Forcing viewport orientation support for iPhone" FORCE)
 	

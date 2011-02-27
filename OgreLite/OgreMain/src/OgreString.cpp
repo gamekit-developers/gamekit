@@ -67,7 +67,7 @@ namespace Ogre {
     }
 
     //-----------------------------------------------------------------------
-    StringVector StringUtil::split( const String& str, const String& delims, unsigned int maxSplits)
+    StringVector StringUtil::split( const String& str, const String& delims, unsigned int maxSplits, bool preserveDelims)
     {
         StringVector ret;
         // Pre-allocate some space for performance
@@ -96,6 +96,24 @@ namespace Ogre {
             {
                 // Copy up to delimiter
                 ret.push_back( str.substr(start, pos - start) );
+
+                if(preserveDelims)
+                {
+                    // Sometimes there could be more than one delimiter in a row.
+                    // Loop until we don't find any more delims
+                    size_t delimStart = pos, delimPos;
+                    delimPos = str.find_first_not_of(delims, delimStart);
+                    if (delimPos == String::npos)
+                    {
+                        // Copy the rest of the string
+                        ret.push_back( str.substr(delimStart) );
+                    }
+                    else
+                    {
+                        ret.push_back( str.substr(delimStart, delimPos - delimStart) );
+                    }
+                }
+
                 start = pos + 1;
             }
             // parse up to next real data

@@ -26,14 +26,25 @@ THE SOFTWARE.
 */
 #include "OgreShaderProgramWriter.h"
 
+#if OGRE_PLATFORM == OGRE_PLATFORM_ANDROID
+#	define ENDL "\n"
+#else
+#	define ENDL std::endl
+#endif
 
 namespace Ogre {
 namespace RTShader {
 
 //-----------------------------------------------------------------------
-void ProgramWriter::writeProgramTitle(std::ostream& os, Program* program)
+void ProgramWriter::writeProgramTitle(
+#if OGRE_PLATFORM == OGRE_PLATFORM_ANDROID
+	StringSerialiser& os,
+#else
+	std::ostream &os,
+#endif
+	Program* program)
 {
-	os << "//-----------------------------------------------------------------------------" << std::endl;
+	os << "//-----------------------------------------------------------------------------" << ENDL;
 	os << "// Program Type: ";
 	switch(program->getType())
 	{
@@ -49,26 +60,38 @@ void ProgramWriter::writeProgramTitle(std::ostream& os, Program* program)
 	default:
 		break;
 	}
-	os << std::endl;
-	os << "// Language: " <<  getTargetLanguage() << std::endl;
-	os << "// Created by Ogre RT Shader Generator. All rights reserved." << std::endl;
-	os << "//-----------------------------------------------------------------------------" << std::endl;
+	os << ENDL;
+	os << "// Language: " <<  getTargetLanguage() << ENDL;
+	os << "// Created by Ogre RT Shader Generator. All rights reserved." << ENDL;
+	os << "//-----------------------------------------------------------------------------" << ENDL;
 }
 
 //-----------------------------------------------------------------------
-void ProgramWriter::writeUniformParametersTitle(std::ostream& os, Program* program)
+void ProgramWriter::writeUniformParametersTitle(
+#if OGRE_PLATFORM == OGRE_PLATFORM_ANDROID
+	StringSerialiser& os,
+#else
+	std::ostream &os,
+#endif
+	Program* program)
 {
-	os << "//-----------------------------------------------------------------------------" << std::endl;
-	os << "//                         GLOBAL PARAMETERS" << std::endl;
-	os << "//-----------------------------------------------------------------------------" << std::endl;
+	os << "//-----------------------------------------------------------------------------" << ENDL;
+	os << "//                         GLOBAL PARAMETERS" << ENDL;
+	os << "//-----------------------------------------------------------------------------" << ENDL;
 }
 //-----------------------------------------------------------------------
-void ProgramWriter::writeFunctionTitle(std::ostream& os, Function* function)
+void ProgramWriter::writeFunctionTitle(
+#if OGRE_PLATFORM == OGRE_PLATFORM_ANDROID
+	StringSerialiser& os,
+#else
+	std::ostream &os,
+#endif 
+	Function* function)
 {
-	os << "//-----------------------------------------------------------------------------" << std::endl;
-	os << "// Function Name: " <<  function->getName() << std::endl;
-	os << "// Function Desc: " <<  function->getDescription() << std::endl;
-	os << "//-----------------------------------------------------------------------------" << std::endl;
+	os << "//-----------------------------------------------------------------------------" << ENDL;
+	os << "// Function Name: " <<  function->getName() << ENDL;
+	os << "// Function Desc: " <<  function->getDescription() << ENDL;
+	os << "//-----------------------------------------------------------------------------" << ENDL;
 }
 
 }

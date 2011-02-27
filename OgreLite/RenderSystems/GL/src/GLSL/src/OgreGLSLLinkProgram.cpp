@@ -33,6 +33,7 @@ THE SOFTWARE.
 #include "OgreGLSLProgram.h"
 #include "OgreGLSLLinkProgramManager.h"
 #include "OgreException.h"
+#include "OgreGpuProgramManager.h"
 
 namespace Ogre {
 
@@ -113,31 +114,8 @@ namespace Ogre {
 		, mFragmentProgram(fragmentProgram)
 		, mUniformRefsBuilt(false)
         , mLinked(false)
-
+		, mTriedToLinkAndFailed(false)
 	{
-			//checkForGLSLError( "GLSLLinkProgram::GLSLLinkProgram", "Error prior to Creating GLSL Program Object", 0);
-		    glGetError(); //Clean up the error. Otherwise will flood log.
-		    mGLHandle = glCreateProgramObjectARB();
-			checkForGLSLError( "GLSLLinkProgram::GLSLLinkProgram", "Error Creating GLSL Program Object", 0 );
-
-
-			// tell shaders to attach themselves to the LinkProgram
-			// let the shaders do the attaching since they may have several children to attach
-			if (mVertexProgram)
-			{
-				mVertexProgram->getGLSLProgram()->attachToProgramObject(mGLHandle);
-				setSkeletalAnimationIncluded(mVertexProgram->isSkeletalAnimationIncluded());
-			}
-			if (mGeometryProgram)
-			{
-				mGeometryProgram->getGLSLProgram()->attachToProgramObject(mGLHandle);
-				//Don't set adjacency flag. We handle it internally and expose "false"
-			}
-			if (mFragmentProgram)
-			{
-				mFragmentProgram->getGLSLProgram()->attachToProgramObject(mGLHandle);
-			}
-
 	}
 
 	//-----------------------------------------------------------------------
@@ -150,99 +128,63 @@ namespace Ogre {
 	//-----------------------------------------------------------------------
 	void GLSLLinkProgram::activate(void)
 	{
-		if (!mLinked)
-		{
-			if (mVertexProgram)
+		if (!mLinked && !mTriedToLinkAndFailed)
+		{			
+			glGetError(); //Clean up the error. Otherwise will flood log.
+			mGLHandle = glCreateProgramObjectARB();
+			checkForGLSLError( "GLSLLinkProgram::activate", "Error Creating GLSL Program Object", 0 );
+
+			if ( GpuProgramManager::getSingleton().canGetCompiledShaderBuffer() &&
+				 GpuProgramManager::getSingleton().isMicrocodeAvailableInCache(getCombinedName()) )
 			{
-				// Some drivers (e.g. OS X on nvidia) incorrectly determine the attribute binding automatically
-				// and end up aliasing existing built-ins. So avoid! 
-				// Bind all used attribs - not all possible ones otherwise we'll get 
-				// lots of warnings in the log, and also may end up aliasing names used
-				// as varyings by accident
-				// Because we can't ask GL whether an attribute is used in the shader
-				// until it is linked (chicken and egg!) we have to parse the source
-				
-				size_t numAttribs = sizeof(msCustomAttributes)/sizeof(CustomAttribute);
-				const String& vpSource = mVertexProgram->getGLSLProgram()->getSource();
-				for (size_t i = 0; i < numAttribs; ++i)
-				{
-					const CustomAttribute& a = msCustomAttributes[i];
-					
-					// we're looking for either: 
-					//   attribute vec<n> <semantic_name>
-					//   in vec<n> <semantic_name>
-					// The latter is recommended in GLSL 1.3 onwards 
-					// be slightly flexible about formatting
-					String::size_type pos = vpSource.find(a.name);
-					if (pos != String::npos)
-					{
-						String::size_type startpos = vpSource.find("attribute", pos < 20 ? 0 : pos-20);
-						if (startpos == String::npos)
-							startpos = vpSource.find("in", pos-20);
-						if (startpos != String::npos && startpos < pos)
-						{
-							// final check 
-							String expr = vpSource.substr(startpos, pos + a.name.length() - startpos);
-							StringVector vec = StringUtil::split(expr);
-							if ((vec[0] == "in" || vec[0] == "attribute") && vec[2] == a.name)
-								glBindAttribLocationARB(mGLHandle, a.attrib, a.name.c_str());
-						}
-
-					}
-				}
+				getMicrocodeFromCache();
 			}
-
-			if (mGeometryProgram)
+			else
 			{
-				RenderOperation::OperationType inputOperationType = mGeometryProgram->getGLSLProgram()->getInputOperationType();
-				glProgramParameteriEXT(mGLHandle,GL_GEOMETRY_INPUT_TYPE_EXT,
-					getGLGeometryInputPrimitiveType(inputOperationType, mGeometryProgram->isAdjacencyInfoRequired()));
-				
-				RenderOperation::OperationType outputOperationType = mGeometryProgram->getGLSLProgram()->getOutputOperationType();
-				switch (outputOperationType)
-				{
-				case RenderOperation::OT_POINT_LIST:
-				case RenderOperation::OT_LINE_STRIP:
-				case RenderOperation::OT_TRIANGLE_STRIP:
-                case RenderOperation::OT_LINE_LIST:
-                case RenderOperation::OT_TRIANGLE_LIST:
-                case RenderOperation::OT_TRIANGLE_FAN:
-					break;
-				
-				}
-				glProgramParameteriEXT(mGLHandle,GL_GEOMETRY_OUTPUT_TYPE_EXT,
-					getGLGeometryOutputPrimitiveType(outputOperationType));
+				compileAndLink();
 
-				glProgramParameteriEXT(mGLHandle,GL_GEOMETRY_VERTICES_OUT_EXT,
-					mGeometryProgram->getGLSLProgram()->getMaxOutputVertices());
 			}
-
-			glLinkProgramARB( mGLHandle );
-			glGetObjectParameterivARB( mGLHandle, GL_OBJECT_LINK_STATUS_ARB, &mLinked );
-			// force logging and raise exception if not linked
-			checkForGLSLError( "GLSLLinkProgram::Activate",
-				"Error linking GLSL Program Object : ", mGLHandle, !mLinked, !mLinked );
-			if(mLinked)
-			{
-				logObjectInfo( String("GLSL link result : "), mGLHandle );
-				buildGLUniformReferences();
-				extractAttributes();
-			}
-
+			buildGLUniformReferences();
+			extractAttributes();
 		}
-
 		if (mLinked)
 		{
 			checkForGLSLError( "GLSLLinkProgram::Activate",
 				"Error prior to using GLSL Program Object : ", mGLHandle, false, false);
 
-		    glUseProgramObjectARB( mGLHandle );
+			glUseProgramObjectARB( mGLHandle );
 
 			checkForGLSLError( "GLSLLinkProgram::Activate",
 				"Error using GLSL Program Object : ", mGLHandle, false, false);
-		}
+        }
 	}
+    //-----------------------------------------------------------------------
+    void GLSLLinkProgram::getMicrocodeFromCache(void)
+    {
+		GpuProgramManager::Microcode cacheMicrocode = 
+			GpuProgramManager::getSingleton().getMicrocodeFromCache(getCombinedName());
+		
+		GLenum binaryFormat = *((GLenum *)(cacheMicrocode->getPtr()));
+		uint8 * programBuffer = cacheMicrocode->getPtr() + sizeof(GLenum);
+		size_t sizeOfBuffer = cacheMicrocode->size() - sizeof(GLenum);
+		glProgramBinary(mGLHandle, 
+						binaryFormat, 
+						programBuffer,
+						sizeOfBuffer
+						);
 
+		GLint   success = 0;
+        glGetProgramiv(mGLHandle, GL_LINK_STATUS, &success);
+        if (!success)
+        {
+            //
+            // Something must have changed since the program binaries
+            // were cached away.  Fallback to source shader loading path,
+            // and then retrieve and cache new program binaries once again.
+            //
+			compileAndLink();
+        }
+	}
 	//-----------------------------------------------------------------------
 	void GLSLLinkProgram::extractAttributes(void)
 	{
@@ -429,8 +371,6 @@ namespace Ogre {
   
   		} // end for
 	}
-
-
 	//-----------------------------------------------------------------------
 	void GLSLLinkProgram::updatePassIterationUniforms(GpuProgramParametersSharedPtr params)
 	{
@@ -455,4 +395,174 @@ namespace Ogre {
 		}
 
     }
+	//-----------------------------------------------------------------------
+	Ogre::String GLSLLinkProgram::getCombinedName()
+	{
+		String name;
+		if (mVertexProgram)
+		{
+			name += "Vertex Program:" ;
+			name += mVertexProgram->getName();
+		}
+		if (mFragmentProgram)
+		{
+			name += " Fragment Program:" ;
+			name += mFragmentProgram->getName();
+		}
+		if (mGeometryProgram)
+		{
+			name += " Geometry Program:" ;
+			name += mGeometryProgram->getName();
+		}
+		return name;
+	}
+	//-----------------------------------------------------------------------
+	void GLSLLinkProgram::compileAndLink()
+	{
+		if (mVertexProgram)
+		{
+			// compile and attach Vertex Program
+			if (!mVertexProgram->getGLSLProgram()->compile(true))
+			{
+				// todo error
+				return;
+			}
+			mVertexProgram->getGLSLProgram()->attachToProgramObject(mGLHandle);
+			setSkeletalAnimationIncluded(mVertexProgram->isSkeletalAnimationIncluded());
+
+			// Some drivers (e.g. OS X on nvidia) incorrectly determine the attribute binding automatically
+
+			// and end up aliasing existing built-ins. So avoid! 
+			// Bind all used attribs - not all possible ones otherwise we'll get 
+			// lots of warnings in the log, and also may end up aliasing names used
+			// as varyings by accident
+			// Because we can't ask GL whether an attribute is used in the shader
+			// until it is linked (chicken and egg!) we have to parse the source
+
+			size_t numAttribs = sizeof(msCustomAttributes)/sizeof(CustomAttribute);
+			const String& vpSource = mVertexProgram->getGLSLProgram()->getSource();
+			for (size_t i = 0; i < numAttribs; ++i)
+			{
+				const CustomAttribute& a = msCustomAttributes[i];
+
+				// we're looking for either: 
+				//   attribute vec<n> <semantic_name>
+				//   in vec<n> <semantic_name>
+				// The latter is recommended in GLSL 1.3 onwards 
+				// be slightly flexible about formatting
+				String::size_type pos = vpSource.find(a.name);
+				if (pos != String::npos)
+				{
+					String::size_type startpos = vpSource.find("attribute", pos < 20 ? 0 : pos-20);
+					if (startpos == String::npos)
+						startpos = vpSource.find("in", pos-20);
+					if (startpos != String::npos && startpos < pos)
+					{
+						// final check 
+						String expr = vpSource.substr(startpos, pos + a.name.length() - startpos);
+						StringVector vec = StringUtil::split(expr);
+						if ((vec[0] == "in" || vec[0] == "attribute") && vec[2] == a.name)
+							glBindAttribLocationARB(mGLHandle, a.attrib, a.name.c_str());
+					}
+
+				}
+			}
+		}
+
+		if (mGeometryProgram)
+		{
+			// compile and attach Geometry Program
+			if (!mGeometryProgram->getGLSLProgram()->compile(true))
+			{
+				// todo error
+				return;
+			}
+
+			mGeometryProgram->getGLSLProgram()->attachToProgramObject(mGLHandle);
+
+			//Don't set adjacency flag. We handle it internally and expose "false"
+
+			RenderOperation::OperationType inputOperationType = mGeometryProgram->getGLSLProgram()->getInputOperationType();
+			glProgramParameteriEXT(mGLHandle,GL_GEOMETRY_INPUT_TYPE_EXT,
+				getGLGeometryInputPrimitiveType(inputOperationType, mGeometryProgram->isAdjacencyInfoRequired()));
+
+			RenderOperation::OperationType outputOperationType = mGeometryProgram->getGLSLProgram()->getOutputOperationType();
+			switch (outputOperationType)
+			{
+			case RenderOperation::OT_POINT_LIST:
+			case RenderOperation::OT_LINE_STRIP:
+			case RenderOperation::OT_TRIANGLE_STRIP:
+			case RenderOperation::OT_LINE_LIST:
+			case RenderOperation::OT_TRIANGLE_LIST:
+			case RenderOperation::OT_TRIANGLE_FAN:
+				break;
+
+			}
+			glProgramParameteriEXT(mGLHandle,GL_GEOMETRY_OUTPUT_TYPE_EXT,
+				getGLGeometryOutputPrimitiveType(outputOperationType));
+
+			glProgramParameteriEXT(mGLHandle,GL_GEOMETRY_VERTICES_OUT_EXT,
+				mGeometryProgram->getGLSLProgram()->getMaxOutputVertices());
+		}
+
+		if (mFragmentProgram)
+		{
+			// compile and attach Fragment Program
+			if (!mFragmentProgram->getGLSLProgram()->compile(true))
+			{
+				// todo error
+				return;
+			}		
+			mFragmentProgram->getGLSLProgram()->attachToProgramObject(mGLHandle);
+		}
+
+		
+		// now the link
+
+		glLinkProgramARB( mGLHandle );
+		glGetObjectParameterivARB( mGLHandle, GL_OBJECT_LINK_STATUS_ARB, &mLinked );
+		mTriedToLinkAndFailed = !mLinked;
+
+		// force logging and raise exception if not linked
+		checkForGLSLError( "GLSLLinkProgram::compileAndLink",
+			"Error linking GLSL Program Object : ", mGLHandle, !mLinked, !mLinked );
+		
+		if(mLinked)
+		{
+			logObjectInfo(  getCombinedName() + String(" GLSL link result : "), mGLHandle );
+		}
+
+		if (mLinked)
+		{
+			if ( GpuProgramManager::getSingleton().getSaveMicrocodesToCache() )
+			{
+				// add to the microcode to the cache
+				String name;
+				name = getCombinedName();
+
+				// get buffer size
+				GLint binaryLength = 0;
+				glGetProgramiv(mGLHandle, GL_PROGRAM_BINARY_LENGTH, &binaryLength);
+
+				// turns out we need this param when loading
+				// it will be the first bytes of the array in the microcode
+				GLenum binaryFormat = 0; 
+
+                // create microcode
+                GpuProgramManager::Microcode newMicrocode = 
+                    GpuProgramManager::getSingleton().createMicrocode(binaryLength + sizeof(GLenum));
+
+        		// get binary
+				uint8 * programBuffer = newMicrocode->getPtr() + sizeof(GLenum);
+				glGetProgramBinary(mGLHandle, binaryLength, NULL, &binaryFormat, programBuffer);
+
+                // save binary format
+				memcpy(newMicrocode->getPtr(), &binaryFormat, sizeof(GLenum));
+
+        		// add to the microcode to the cache
+				GpuProgramManager::getSingleton().addMicrocodeToCache(name, newMicrocode);
+			}
+		}
+	}
+	//-----------------------------------------------------------------------
 } // namespace Ogre

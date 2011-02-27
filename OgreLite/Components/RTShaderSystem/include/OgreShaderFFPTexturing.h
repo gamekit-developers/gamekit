@@ -46,9 +46,9 @@ namespace RTShader {
 
 /** Texturing sub render state implementation of the Fixed Function Pipeline.
 Implements texture coordinate processing:
-@see http://msdn.microsoft.com/en-us/library/ee422494.aspx
+@see http://msdn.microsoft.com/en-us/library/bb206247.aspx
 Implements texture blending operation:
-@see http://msdn.microsoft.com/en-us/library/ee422488.aspx
+@see http://msdn.microsoft.com/en-us/library/bb206241.aspx
 Derives from SubRenderState class.
 */
 class _OgreRTSSExport FFPTexturing : public SubRenderState
@@ -83,7 +83,7 @@ public:
 	/** 
 	@see SubRenderState::preAddToRenderState.
 	*/
-	virtual bool			preAddToRenderState		(RenderState* renderState, Pass* srcPass, Pass* dstPass);
+	virtual bool			preAddToRenderState		(const RenderState* renderState, Pass* srcPass, Pass* dstPass);
 
 	static String Type;
 
@@ -169,7 +169,13 @@ protected:
 	*/
 	bool					addPSFunctionInvocations(TextureUnitParams* textureUnitParams, Function* psMain, int& internalCounter);
 
-	void					addPSArgumentInvocations(Function* psMain, 
+	/** 
+	Adds the fragment shader code which samples the texel color in the texture
+	*/
+	virtual void					addPSSampleTexelInvocation(TextureUnitParams* textureUnitParams, Function* psMain, 
+		const ParameterPtr& texel, int groupOrder, int& internalCounter);
+
+	virtual void					addPSArgumentInvocations(Function* psMain, 
 													 ParameterPtr arg,
 													 ParameterPtr texel,
 													 int samplerIndex,
@@ -180,7 +186,7 @@ protected:
 													 const int groupOrder, 
 													 int& internalCounter);
 
-	void					addPSBlendInvocations(Function* psMain, 
+	virtual void					addPSBlendInvocations(Function* psMain, 
 												ParameterPtr arg1,
 												ParameterPtr arg2,
 												ParameterPtr texel,
@@ -230,7 +236,7 @@ public:
 	/** 
 	@see SubRenderStateFactory::createInstance.
 	*/
-	virtual SubRenderState*	createInstance		(ScriptCompiler* compiler, PropertyAbstractNode* prop, Pass* pass);
+	virtual SubRenderState*	createInstance		(ScriptCompiler* compiler, PropertyAbstractNode* prop, Pass* pass, SGScriptTranslator* translator);
 
 	/** 
 	@see SubRenderStateFactory::writeInstance.

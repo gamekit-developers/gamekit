@@ -46,6 +46,7 @@ THE SOFTWARE.
 #include "OgreExternalTextureSourceManager.h"
 #include "OgreLodStrategyManager.h"
 #include "OgreDistanceLodStrategy.h"
+#include "OgreDepthBuffer.h"
 
 namespace Ogre{
 	
@@ -122,12 +123,17 @@ namespace Ogre{
 	{
 		if(node->type != ANT_ATOM)
 			return false;
+		
 		AtomAbstractNode *atom = (AtomAbstractNode*)node.get();
-		if(!Ogre::StringConverter::isNumber(atom->value))
-			return false;
-		StringStream stream;
-		stream << atom->value;
-		stream >> *result;
+#if OGRE_DOUBLE_PRECISION == 0
+		int n = sscanf(atom->value.c_str(), "%f", result);
+#else
+		int n = sscanf(atom->value.c_str(), "%lf", result);
+#endif
+		
+		if(n == 0 || n == EOF)
+			return false; // Conversion failed
+		
 		return true;
 	}
 	//-------------------------------------------------------------------------
@@ -135,12 +141,12 @@ namespace Ogre{
 	{
 		if(node->type != ANT_ATOM)
 			return false;
+		
 		AtomAbstractNode *atom = (AtomAbstractNode*)node.get();
-		if(!Ogre::StringConverter::isNumber(atom->value))
-			return false;
-		StringStream stream;
-		stream << atom->value;
-		stream >> *result;
+		int n = sscanf(atom->value.c_str(), "%f", result);
+		if(n == 0 || n == EOF)
+			return false; // Conversion failed
+			
 		return true;
 	}
 	//-------------------------------------------------------------------------
@@ -148,12 +154,12 @@ namespace Ogre{
 	{
 		if(node->type != ANT_ATOM)
 			return false;
+		
 		AtomAbstractNode *atom = (AtomAbstractNode*)node.get();
-		if(!Ogre::StringConverter::isNumber(atom->value))
-			return false;
-		StringStream stream;
-		stream << atom->value;
-		stream >> *result;
+		int n = sscanf(atom->value.c_str(), "%d", result);
+		if(n == 0 || n == EOF)
+			return false; // Conversion failed
+			
 		return true;
 	}
 	//-------------------------------------------------------------------------
@@ -161,12 +167,12 @@ namespace Ogre{
 	{
 		if(node->type != ANT_ATOM)
 			return false;
+		
 		AtomAbstractNode *atom = (AtomAbstractNode*)node.get();
-		if(!Ogre::StringConverter::isNumber(atom->value))
-			return false;
-		StringStream stream;
-		stream << atom->value;
-		stream >> *result;
+		int n = sscanf(atom->value.c_str(), "%u", result);
+		if(n == 0 || n == EOF)
+			return false; // Conversion failed
+			
 		return true;
 	}
 	//-------------------------------------------------------------------------
@@ -2000,6 +2006,21 @@ namespace Ogre{
 								prop->values.front()->getValue() + " is not a valid integer");
 					}
 					break;
+				case ID_LIGHT_MASK:
+					if(prop->values.empty())
+					{
+						compiler->addError(ScriptCompiler::CE_STRINGEXPECTED, prop->file, prop->line);
+					}
+					else
+					{
+						uint32 val = 0;
+						if(getUInt(prop->values.front(), &val))
+							mPass->setLightMask(static_cast<unsigned short>(val));
+						else
+							compiler->addError(ScriptCompiler::CE_INVALIDPARAMETERS, prop->file, prop->line,
+								prop->values.front()->getValue() + " is not a valid integer");
+					}
+					break;
 				case ID_ITERATION:
 					if(prop->values.empty())
 					{
@@ -2325,6 +2346,9 @@ namespace Ogre{
 				case ID_SHADOW_CASTER_VERTEX_PROGRAM_REF:
 					translateShadowCasterVertexProgramRef(compiler, child);
 					break;
+				case ID_SHADOW_CASTER_FRAGMENT_PROGRAM_REF:
+					translateShadowCasterFragmentProgramRef(compiler, child);
+					break;
 				case ID_SHADOW_RECEIVER_VERTEX_PROGRAM_REF:
 					translateShadowReceiverVertexProgramRef(compiler, child);
 					break;
@@ -2438,6 +2462,32 @@ namespace Ogre{
 		if(pass->getShadowCasterVertexProgram()->isSupported())
 		{
 			GpuProgramParametersSharedPtr params = pass->getShadowCasterVertexProgramParameters();
+			GpuProgramTranslator::translateProgramParameters(compiler, params, node);
+		}
+	}
+	//-------------------------------------------------------------------------
+	void PassTranslator::translateShadowCasterFragmentProgramRef(ScriptCompiler *compiler, ObjectAbstractNode *node)
+	{
+		if(node->name.empty())
+		{
+			compiler->addError(ScriptCompiler::CE_OBJECTNAMEEXPECTED, node->file, node->line);
+			return;
+		}
+
+		ProcessResourceNameScriptCompilerEvent evt(ProcessResourceNameScriptCompilerEvent::GPU_PROGRAM, node->name);
+		compiler->_fireEvent(&evt, 0);
+
+		if (GpuProgramManager::getSingleton().getByName(evt.mName).isNull())
+		{
+			compiler->addError(ScriptCompiler::CE_REFERENCETOANONEXISTINGOBJECT, node->file, node->line);
+			return;
+		}
+
+		Pass *pass = any_cast<Pass*>(node->parent->context);
+		pass->setShadowCasterFragmentProgram(evt.mName);
+		if(pass->getShadowCasterFragmentProgram()->isSupported())
+		{
+			GpuProgramParametersSharedPtr params = pass->getShadowCasterFragmentProgramParameters();
 			GpuProgramTranslator::translateProgramParameters(compiler, params, node);
 		}
 	}
@@ -5224,6 +5274,7 @@ namespace Ogre{
 						bool pooled = false;
 						bool hwGammaWrite = false;
 						bool fsaa = true;
+						uint16 depthBufferId = DepthBuffer::POOL_DEFAULT;
 						CompositionTechnique::TextureScope scope = CompositionTechnique::TS_LOCAL;
 						Ogre::PixelFormatList formats;
 
@@ -5253,6 +5304,7 @@ namespace Ogre{
 									bool *pSetFlag;
 									size_t *pSize;
 									float *pFactor;
+
 									if (atom->id == ID_TARGET_WIDTH_SCALED)
 									{
 										pSetFlag = &widthSet;
@@ -5302,6 +5354,25 @@ namespace Ogre{
 							case ID_NO_FSAA:
 								fsaa = false;
 								break;
+							case ID_DEPTH_POOL:
+								{
+									// advance to next to get the ID
+									it = getNodeAt(prop->values, static_cast<int>(atomIndex++));
+									if(prop->values.end() == it || (*it)->type != ANT_ATOM)
+									{
+										compiler->addError(ScriptCompiler::CE_INVALIDPARAMETERS, prop->file, prop->line);
+										return;
+									}
+									atom = (AtomAbstractNode*)(*it).get();
+									if (!StringConverter::isNumber(atom->value))
+									{
+										compiler->addError(ScriptCompiler::CE_INVALIDPARAMETERS, prop->file, prop->line);
+										return;
+									}
+
+									depthBufferId = StringConverter::parseInt(atom->value);
+								}
+								break;
 							default:
 								if (StringConverter::isNumber(atom->value))
 								{
@@ -5350,8 +5421,9 @@ namespace Ogre{
 						def->widthFactor = widthFactor;
 						def->heightFactor = heightFactor;
 						def->formatList = formats;
-						def->hwGammaWrite = hwGammaWrite;
 						def->fsaa = fsaa;
+						def->hwGammaWrite = hwGammaWrite;
+						def->depthBufferId = depthBufferId;
 						def->pooled = pooled;
 						def->scope = scope;
 					}

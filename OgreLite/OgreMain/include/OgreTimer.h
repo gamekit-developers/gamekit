@@ -36,10 +36,14 @@ THE SOFTWARE.
 # include "WIN32/OgreTimerImp.h"
 #elif (OGRE_PLATFORM == OGRE_PLATFORM_LINUX) || (OGRE_PLATFORM == OGRE_PLATFORM_SYMBIAN)
 # include "GLX/OgreTimerImp.h"
+#elif OGRE_PLATFORM == OGRE_PLATFORM_TEGRA2
+# include "Tegra2/OgreTimerImp.h"
 #elif OGRE_PLATFORM == OGRE_PLATFORM_APPLE
 # include "OSX/OgreTimerImp.h"
-#elif OGRE_PLATFORM == OGRE_PLATFORM_IPHONE
+#elif OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
 # include "iPhone/OgreTimerImp.h"
+#elif OGRE_PLATFORM == OGRE_PLATFORM_ANDROID
+# include "Android/OgreTimerImp.h"
 #endif
 
 #endif

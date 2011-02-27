@@ -365,13 +365,14 @@ namespace Ogre
 		// Allows early bail-out through the listener
 		if(mListener && !mListener->postConversion(this, ast))
 			return mErrors.empty();
-
+		
 		// Translate the nodes
 		for(AbstractNodeList::iterator i = ast->begin(); i != ast->end(); ++i)
 		{
 			//logAST(0, *i);
 			if((*i)->type == ANT_OBJECT && reinterpret_cast<ObjectAbstractNode*>((*i).get())->abstract)
 				continue;
+			//LogManager::getSingleton().logMessage(reinterpret_cast<ObjectAbstractNode*>((*i).get())->name);
 			ScriptTranslator *translator = ScriptCompilerManager::getSingleton().getTranslator(*i);
 			if(translator)
 				translator->translate(this, *i);
@@ -999,6 +1000,7 @@ namespace Ogre
 		mIds["geometry_program_ref"] = ID_GEOMETRY_PROGRAM_REF;
 		mIds["fragment_program_ref"] = ID_FRAGMENT_PROGRAM_REF;
 		mIds["shadow_caster_vertex_program_ref"] = ID_SHADOW_CASTER_VERTEX_PROGRAM_REF;
+		mIds["shadow_caster_fragment_program_ref"] = ID_SHADOW_CASTER_FRAGMENT_PROGRAM_REF;
 		mIds["shadow_receiver_vertex_program_ref"] = ID_SHADOW_RECEIVER_VERTEX_PROGRAM_REF;
 		mIds["shadow_receiver_fragment_program_ref"] = ID_SHADOW_RECEIVER_FRAGMENT_PROGRAM_REF;
 
@@ -1104,6 +1106,7 @@ namespace Ogre
 			mIds["point"] = ID_POINT;
 			mIds["spot"] = ID_SPOT;
 			mIds["directional"] = ID_DIRECTIONAL;
+		mIds["light_mask"] = ID_LIGHT_MASK;
 		mIds["point_size"] = ID_POINT_SIZE;
 		mIds["point_sprites"] = ID_POINT_SPRITES;
 		mIds["point_size_min"] = ID_POINT_SIZE_MIN;
@@ -1217,6 +1220,7 @@ namespace Ogre
 			mIds["pooled"] = ID_POOLED;
 			//mIds["gamma"] = ID_GAMMA; - already registered
 			mIds["no_fsaa"] = ID_NO_FSAA;
+			mIds["depth_pool"] = ID_DEPTH_POOL;
 
 		mIds["texture_ref"] = ID_TEXTURE_REF;
 		mIds["local_scope"] = ID_SCOPE_LOCAL;

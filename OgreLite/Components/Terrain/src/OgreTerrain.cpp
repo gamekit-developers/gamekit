@@ -47,6 +47,7 @@ THE SOFTWARE.
 #include "OgreTerrainMaterialGeneratorA.h"
 #include "OgreMaterialManager.h"
 #include "OgreHardwareBufferManager.h"
+#include "OgreDeflate.h"
 
 
 #if OGRE_COMPILER == OGRE_COMPILER_MSVC
@@ -106,6 +107,7 @@ namespace Ogre
 		, mCompositeMapDiffuse(ColourValue::White)
 		, mCompositeMapDistance(4000)
 		, mResourceGroup(ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME)
+		, mUseVertexCompressionWhenAvailable(true)
 	{
 	}
 	//---------------------------------------------------------------------
@@ -252,7 +254,9 @@ namespace Ogre
 	void Terrain::save(const String& filename)
 	{
 		DataStreamPtr stream = Root::getSingleton().createFileStream(filename, _getDerivedResourceGroup(), true);
-		StreamSerialiser ser(stream);
+		// Compress
+		DataStreamPtr compressStream(OGRE_NEW DeflateStream(filename, stream));
+		StreamSerialiser ser(compressStream);
 		save(ser);
 	}
 	//---------------------------------------------------------------------
@@ -567,8 +571,15 @@ namespace Ogre
 	{
 		DataStreamPtr stream = Root::getSingleton().openFileStream(filename, 
 			_getDerivedResourceGroup());
-		StreamSerialiser ser(stream);
+		
+		// uncompress
+		// Note DeflateStream automatically falls back on reading the underlying
+		// stream direct if it's not actually compressed so this will still work
+		// with uncompressed streams
+		DataStreamPtr uncompressStream(OGRE_NEW DeflateStream(filename, stream));
+		StreamSerialiser ser(uncompressStream);
 		return prepare(ser);
+
 	}
 	//---------------------------------------------------------------------
 	bool Terrain::prepare(StreamSerialiser& stream)
@@ -1393,6 +1404,45 @@ namespace Ogre
 			break;
 		};
 
+	}
+	//---------------------------------------------------------------------
+	void Terrain::getPointTransform(Matrix4* outXform) const
+	{
+		*outXform = Matrix4::ZERO;
+		switch(mAlign)
+		{
+			case ALIGN_X_Z:
+				//outpos->y = height (z)
+				(*outXform)[1][2] = 1.0f;
+				//outpos->x = x * mScale + mBase;
+				(*outXform)[0][0] = mScale;
+				(*outXform)[0][3] = mBase;
+				//outpos->z = y * -mScale - mBase;
+				(*outXform)[2][1] = -mScale;
+				(*outXform)[2][3] = -mBase;
+				break;
+			case ALIGN_Y_Z:
+				//outpos->x = height;
+				(*outXform)[0][2] = 1.0f;
+				//outpos->z = x * -mScale - mBase;
+				(*outXform)[2][0] = -mScale;
+				(*outXform)[2][3] = -mBase;
+				//outpos->y = y * mScale + mBase;
+				(*outXform)[1][1] = mScale;
+				(*outXform)[1][3] = mBase;
+				break;
+			case ALIGN_X_Y:
+				//outpos->z = height;
+				(*outXform)[2][2] = 1.0f; // strictly already the case, but..
+				//outpos->x = x * mScale + mBase;
+				(*outXform)[0][0] = mScale;
+				(*outXform)[0][3] = mBase;
+				//outpos->y = y * mScale + mBase;
+				(*outXform)[1][1] = mScale;
+				(*outXform)[1][3] = mBase;
+				break;
+		};
+		(*outXform)[3][3] = 1.0f;
 	}
 	//---------------------------------------------------------------------
 	void Terrain::getVector(const Vector3& inVec, Vector3* outVec)
@@ -2908,6 +2958,12 @@ namespace Ogre
 
 	}
 	//---------------------------------------------------------------------
+	bool Terrain::_getUseVertexCompression() const
+	{
+		return mMaterialGenerator->isVertexCompressionSupported() &&
+			TerrainGlobalOptions::getSingleton().getUseVertexCompressionWhenAvailable();
+	}
+	//---------------------------------------------------------------------
 	bool Terrain::canHandleRequest(const WorkQueue::Request* req, const WorkQueue* srcQ)
 	{
 		DerivedDataRequest ddr = any_cast<DerivedDataRequest>(req->getData());
@@ -4074,12 +4130,20 @@ namespace Ogre
 	size_t Terrain::getPositionBufVertexSize() const
 	{
 		size_t sz = 0;
-		// float3 position
-		// TODO we can compress this when shaders in use if we use parametric positioning
-		sz += sizeof(float) * 3;
-		// float2 uv
-		// TODO we can omit these where shaders are being used & calculate
-		sz += sizeof(float) * 2;
+		if (_getUseVertexCompression())
+		{
+			// short2 position
+			sz += sizeof(short) * 2;
+			// float1 height
+			sz += sizeof(float);
+		}
+		else
+		{
+			// float3 position
+			sz += sizeof(float) * 3;
+			// float2 uv
+			sz += sizeof(float) * 2;
+		}
 
 		return sz;
 
@@ -4245,6 +4309,85 @@ namespace Ogre
 			return base + vdatasize * skirtNum + col;
 		}
 
+	}
+	//---------------------------------------------------------------------
+	void Terrain::setWorldSize(Real newWorldSize)
+	{
+		if(mWorldSize != newWorldSize)
+		{
+			waitForDerivedProcesses();
+
+			mWorldSize = newWorldSize;
+
+			updateBaseScale();
+
+			deriveUVMultipliers();
+
+			mMaterialParamsDirty = true;
+
+			if(mIsLoaded)
+			{
+				Rect dRect(0, 0, mSize, mSize);
+				dirtyRect(dRect);
+				update();
+			}
+
+			mModified = true;
+		}
+	}
+	//---------------------------------------------------------------------
+	void Terrain::setSize(uint16 newSize)
+	{
+		if(mSize != newSize)
+		{
+			waitForDerivedProcesses();
+
+			size_t numVertices = newSize * newSize;
+
+			PixelBox src(mSize, mSize, 1, Ogre::PF_FLOAT32_R, (void*)getHeightData());
+
+			float* tmpData = OGRE_ALLOC_T(float, numVertices, MEMCATEGORY_GENERAL);
+
+			PixelBox dst(newSize, newSize, 1, Ogre::PF_FLOAT32_R, tmpData);
+
+			Image::scale(src, dst, Image::FILTER_BILINEAR);
+
+			freeCPUResources();
+
+			mSize = newSize;
+
+			determineLodLevels();
+
+			updateBaseScale();
+
+			deriveUVMultipliers();
+
+			mMaterialParamsDirty = true;
+
+			mHeightData = tmpData;
+			mDeltaData = OGRE_ALLOC_T(float, numVertices, MEMCATEGORY_GEOMETRY);
+			memset(mDeltaData, 0, sizeof(float) * numVertices);
+
+			mQuadTree = OGRE_NEW TerrainQuadTreeNode(this, 0, 0, 0, mSize, mNumLodLevels - 1, 0, 0);
+			mQuadTree->prepare();
+
+			// calculate entire terrain
+			Rect rect;
+			rect.top = 0; rect.bottom = mSize;
+			rect.left = 0; rect.right = mSize;
+			calculateHeightDeltas(rect);
+			finaliseHeightDeltas(rect, true);
+
+			distributeVertexData();
+
+			if(mIsLoaded)
+			{
+				if (mQuadTree)
+					mQuadTree->load();
+			}
+
+			mModified = true;
+		}
 	}
 	//---------------------------------------------------------------------
 	//---------------------------------------------------------------------

@@ -39,6 +39,7 @@ THE SOFTWARE.
 #include "OgreException.h"
 #include "OgreRenderTarget.h"
 #include "OgreRenderWindow.h"
+#include "OgreDepthBuffer.h"
 #include "OgreMeshManager.h"
 #include "OgreMaterial.h"
 #include "OgreTimer.h"
@@ -63,8 +64,16 @@ namespace Ogre {
         , mInvertVertexWinding(false)
         , mDisabledTexUnitsFrom(0)
         , mCurrentPassIterationCount(0)
+		, mCurrentPassIterationNum(0)
 		, mDerivedDepthBias(false)
-        , mVertexProgramBound(false)
+		, mDerivedDepthBiasBase(0.0f)
+		, mDerivedDepthBiasMultiplier(0.0f)
+        , mDerivedDepthBiasSlopeScale(0.0f)
+        , mGlobalInstanceVertexBufferVertexDeclaration(NULL)
+        , mGlobalNumberOfInstances(1)
+#ifdef RTSHADER_SYSTEM_BUILD_CORE_SHADERS
+		, mEnableFixedPipeline(true)
+#endif
 		, mGeometryProgramBound(false)
         , mFragmentProgramBound(false)
 		, mClipPlanesDirty(true)
@@ -74,6 +83,7 @@ namespace Ogre {
 		, mTexProjRelative(false)
 		, mTexProjRelativeOrigin(Vector3::ZERO)
     {
+        mEventNames.push_back("RenderSystemCapabilitiesCreated");
     }
 
     //-----------------------------------------------------------------------
@@ -151,6 +161,13 @@ namespace Ogre {
 	//---------------------------------------------------------------------------------------------
 	void RenderSystem::useCustomRenderSystemCapabilities(RenderSystemCapabilities* capabilities)
 	{
+    if (mRealCapabilities != 0)
+    {
+      OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, 
+          "Custom render capabilities must be set before the RenderSystem is initialised.",
+          "RenderSystem::useCustomRenderSystemCapabilities");
+    }
+
 		mCurrentCapabilities = capabilities;
 		mUseCustomCapabilities = true;
 	}
@@ -446,6 +463,31 @@ namespace Ogre {
         _setTextureUnitFiltering(unit, FT_MAG, magFilter);
         _setTextureUnitFiltering(unit, FT_MIP, mipFilter);
     }
+	//---------------------------------------------------------------------
+	void RenderSystem::_cleanupDepthBuffers( bool bCleanManualBuffers )
+	{
+		DepthBufferMap::iterator itMap = mDepthBufferPool.begin();
+		DepthBufferMap::iterator enMap = mDepthBufferPool.end();
+
+		while( itMap != enMap )
+		{
+			DepthBufferVec::const_iterator itor = itMap->second.begin();
+			DepthBufferVec::const_iterator end  = itMap->second.end();
+
+			while( itor != end )
+			{
+				if( bCleanManualBuffers || !(*itor)->isManual() )
+					delete *itor;
+				++itor;
+			}
+
+			itMap->second.clear();
+
+			++itMap;
+		}
+
+		mDepthBufferPool.clear();
+	}
     //-----------------------------------------------------------------------
     CullingMode RenderSystem::_getCullingMode(void) const
     {
@@ -456,6 +498,53 @@ namespace Ogre {
     {
         return mVSync;
     }
+    //-----------------------------------------------------------------------
+#ifdef RTSHADER_SYSTEM_BUILD_CORE_SHADERS
+    bool RenderSystem::getFixedPipelineEnabled(void) const
+    {
+        return mEnableFixedPipeline;
+    }
+    //-----------------------------------------------------------------------
+    void RenderSystem::setFixedPipelineEnabled(bool enabled)
+    {
+        mEnableFixedPipeline = enabled;
+    }
+#endif
+    //-----------------------------------------------------------------------
+	void RenderSystem::setDepthBufferFor( RenderTarget *renderTarget )
+	{
+		uint16 poolId = renderTarget->getDepthBufferPool();
+		if( poolId == DepthBuffer::POOL_NO_DEPTH )
+			return; //RenderTarget explicitly requested no depth buffer
+
+		//Find a depth buffer in the pool
+		DepthBufferVec::const_iterator itor = mDepthBufferPool[poolId].begin();
+		DepthBufferVec::const_iterator end  = mDepthBufferPool[poolId].end();
+
+		bool bAttached = false;
+		while( itor != end && !bAttached )
+			bAttached = renderTarget->attachDepthBuffer( *itor++ );
+
+		//Not found yet? Create a new one!
+		if( !bAttached )
+		{
+			DepthBuffer *newDepthBuffer = _createDepthBufferFor( renderTarget );
+
+			if( newDepthBuffer )
+			{
+				newDepthBuffer->_setPoolId( poolId );
+				mDepthBufferPool[poolId].push_back( newDepthBuffer );
+
+				bAttached = renderTarget->attachDepthBuffer( newDepthBuffer );
+
+				assert( bAttached && "A new DepthBuffer for a RenderTarget was created, but after creation"
+									 "it says it's incompatible with that RT" );
+			}
+			else
+				LogManager::getSingleton().logMessage( "WARNING: Couldn't create a suited DepthBuffer"
+													   "for RT: " + renderTarget->getName() );
+		}
+	}
     //-----------------------------------------------------------------------
     void RenderSystem::setWaitForVerticalBlank(bool enabled)
     {
@@ -480,6 +569,8 @@ namespace Ogre {
 			OGRE_DELETE *i;
 		}
 		mHwOcclusionQueries.clear();
+
+		_cleanupDepthBuffers();
 
         // Remove all the render targets.
 		// (destroy primary target last since others may depend on it)
@@ -543,6 +634,8 @@ namespace Ogre {
         else
             val = op.vertexData->vertexCount;
 
+		 val *= op.numberOfInstances;
+
         // account for a pass having multiple iterations
         if (mCurrentPassIterationCount > 1)
             val *= mCurrentPassIterationCount;
@@ -551,11 +644,11 @@ namespace Ogre {
         switch(op.operationType)
         {
 		case RenderOperation::OT_TRIANGLE_LIST:
-            mFaceCount += val / 3;
+            mFaceCount += (val / 3);
             break;
         case RenderOperation::OT_TRIANGLE_STRIP:
         case RenderOperation::OT_TRIANGLE_FAN:
-            mFaceCount += val - 2;
+            mFaceCount += (val - 2);
             break;
 	    case RenderOperation::OT_POINT_LIST:
 	    case RenderOperation::OT_LINE_LIST:
@@ -563,7 +656,7 @@ namespace Ogre {
 	        break;
 	    }
 
-        mVertexCount += op.vertexData->vertexCount;
+        mVertexCount += op.vertexData->vertexCount * op.numberOfInstances;
         mBatchCount += mCurrentPassIterationCount;
 
 		// sort out clip planes
@@ -759,6 +852,58 @@ namespace Ogre {
 		_beginFrame();
 		delete context;
 	}
+	//---------------------------------------------------------------------
+	const String& RenderSystem::_getDefaultViewportMaterialScheme( void ) const
+	{
+#ifdef RTSHADER_SYSTEM_BUILD_CORE_SHADERS	
+		if ( !(getCapabilities()->hasCapability(Ogre::RSC_FIXED_FUNCTION)) )
+		{
+			// I am returning the exact value for now - I don't want to add dependency for the RTSS just for one string  
+			static const String ShaderGeneratorDefaultScheme = "ShaderGeneratorDefaultScheme";
+			return ShaderGeneratorDefaultScheme;
+		}
+		else
+#endif
+		{
+			return MaterialManager::DEFAULT_SCHEME_NAME;
+		}
+	}
+	//---------------------------------------------------------------------
+    Ogre::HardwareVertexBufferSharedPtr RenderSystem::getGlobalInstanceVertexBuffer() const
+    {
+        return mGlobalInstanceVertexBuffer;
+    }
+	//---------------------------------------------------------------------
+    void RenderSystem::setGlobalInstanceVertexBuffer( const HardwareVertexBufferSharedPtr val )
+    {
+        if ( !val.isNull() && !val->getIsInstanceData() )
+        {
+            OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, 
+                        "A none instance data vertex buffer was set to be the global instance vertex buffer.",
+                        "RenderSystem::setGlobalInstanceVertexBuffer");
+        }
+        mGlobalInstanceVertexBuffer = val;
+    }
+	//---------------------------------------------------------------------
+    size_t RenderSystem::getGlobalNumberOfInstances() const
+    {
+        return mGlobalNumberOfInstances;
+    }
+	//---------------------------------------------------------------------
+    void RenderSystem::setGlobalNumberOfInstances( const size_t val )
+    {
+        mGlobalNumberOfInstances = val;
+    }
 
+    VertexDeclaration* RenderSystem::getGlobalInstanceVertexBufferVertexDeclaration() const
+    {
+        return mGlobalInstanceVertexBufferVertexDeclaration;
+    }
+    //---------------------------------------------------------------------
+    void RenderSystem::setGlobalInstanceVertexBufferVertexDeclaration( VertexDeclaration* val )
+    {
+        mGlobalInstanceVertexBufferVertexDeclaration = val;
+    }
+    //---------------------------------------------------------------------
 }
 

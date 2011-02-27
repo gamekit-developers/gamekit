@@ -73,6 +73,9 @@ namespace Ogre
 		mIsExternalGLControl = false;
 		mClosed = false;
 		mActive = false;
+		mHidden = false;
+		mVSync = false;
+		mVSyncInterval = 1;
 	}
 	
 	//-------------------------------------------------------------------------------------------------//
@@ -110,6 +113,7 @@ namespace Ogre
 		uint samples = 0;
 		short frequency = 0;
 		bool vsync = false;
+		bool hidden = false;
 		unsigned int vsyncInterval = 1;
 		int gamma = 0;
 		::GLXContext glxContext = 0;
@@ -154,6 +158,9 @@ namespace Ogre
 			
 			if((opt = miscParams->find("vsync")) != end) 
 				vsync = StringConverter::parseBool(opt->second);
+
+			if((opt = miscParams->find("hidden")) != end)
+				hidden = StringConverter::parseBool(opt->second);
 
 			if((opt = miscParams->find("vsyncInterval")) != end) 
 				vsyncInterval = StringConverter::parseUnsignedInt(opt->second);
@@ -396,32 +403,20 @@ namespace Ogre
 			
 			glxDrawable = mWindow;
 			
-			XMapWindow(xDisplay, mWindow);
-			
-			if (mIsFullScreen)
-			{
-				switchFullScreen (true);
-			}
+			// setHidden takes care of mapping or unmapping the window
+			// and also calls setFullScreen if appropriate.
+			setHidden(hidden);
 			XFlush(xDisplay);
 			
 			WindowEventUtilities::_addRenderWindow(this);
 		}
 		
-    mContext = new GLXContext(mGLSupport, fbConfig, glxDrawable, glxContext);
+		mContext = new GLXContext(mGLSupport, fbConfig, glxDrawable, glxContext);
 		
-		::GLXDrawable oldDrawable = glXGetCurrentDrawable();
-		::GLXContext  oldContext  = glXGetCurrentContext();
-		
-		mContext->setCurrent();
-		
-		if (! mIsExternalGLControl && GLXEW_SGI_swap_control)
-		{
-			glXSwapIntervalSGI (vsync ? vsyncInterval : 0);
-		}
-		
-		mContext->endCurrent();
-		
-		glXMakeCurrent (mGLSupport->getGLDisplay(), oldDrawable, oldContext);
+		// apply vsync settings. call setVSyncInterval first to avoid 
+		// setting vsync more than once.
+		setVSyncInterval(vsyncInterval);
+		setVSyncEnabled(vsync);
 		
 		int fbConfigID;
 		
@@ -513,6 +508,70 @@ namespace Ogre
 		mVisible = visible;
 	}
 	
+	//-------------------------------------------------------------------------------------------------//
+	void GLXWindow::setHidden(bool hidden)
+	{
+		mHidden = hidden;
+		// ignore for external windows as these should handle
+		// this externally
+		if (mIsExternal)
+			return;
+
+		if (hidden)
+		{
+			XUnmapWindow(mGLSupport->getXDisplay(), mWindow);
+		}
+		else
+		{
+			XMapWindow(mGLSupport->getXDisplay(), mWindow);
+			if (mIsFullScreen)
+			{
+				switchFullScreen(true);
+			}
+		}
+	}
+
+	//-------------------------------------------------------------------------------------------------//
+	void GLXWindow::setVSyncInterval(unsigned int interval)
+	{
+		mVSyncInterval = interval;
+		if (mVSync)
+			setVSyncEnabled(true);
+	}
+
+	//-------------------------------------------------------------------------------------------------//
+	void GLXWindow::setVSyncEnabled(bool vsync)
+	{
+		mVSync = vsync;
+		// we need to make our context current to set vsync
+		// store previous context to restore when finished.
+		::GLXDrawable oldDrawable = glXGetCurrentDrawable();
+		::GLXContext  oldContext  = glXGetCurrentContext();
+		
+		mContext->setCurrent();
+		
+		if (! mIsExternalGLControl && GLXEW_SGI_swap_control)
+		{
+			glXSwapIntervalSGI (vsync ? mVSyncInterval : 0);
+		}
+		
+		mContext->endCurrent();
+		
+		glXMakeCurrent (mGLSupport->getGLDisplay(), oldDrawable, oldContext);
+	}
+
+	//-------------------------------------------------------------------------------------------------//
+	bool GLXWindow::isVSyncEnabled() const
+	{
+		return mVSync;
+	}
+
+	//-------------------------------------------------------------------------------------------------//
+	unsigned int GLXWindow::getVSyncInterval() const
+	{
+		return mVSyncInterval;
+	}
+
 	//-------------------------------------------------------------------------------------------------//
 	void GLXWindow::reposition(int left, int top)
 	{

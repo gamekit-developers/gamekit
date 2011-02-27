@@ -105,10 +105,8 @@ namespace Ogre {
             Real totalAnimationLength = mParent->getLength();
             assert(totalAnimationLength > 0.0f && "Invalid animation length!");
 
-            while (timePos > totalAnimationLength && totalAnimationLength > 0.0f)
-            {
-                timePos -= totalAnimationLength;
-            }
+            if( timePos > totalAnimationLength && totalAnimationLength > 0.0f )
+				timePos = fmod( timePos, totalAnimationLength );
 
             // No global keyframe index, need to search with local keyframes.
             KeyFrame timeKey(0, timePos);
@@ -506,9 +504,12 @@ namespace Ogre {
 		Vector3 scale = kf.getScale();
 		// Not sure how to modify scale for cumulative anims... leave it alone
 		//scale = ((Vector3::UNIT_SCALE - kf.getScale()) * weight) + Vector3::UNIT_SCALE;
-		if (scl != 1.0f && scale != Vector3::UNIT_SCALE)
+		if (scale != Vector3::UNIT_SCALE)
 		{
-			scale = Vector3::UNIT_SCALE + (scale - Vector3::UNIT_SCALE) * scl;
+            if (scl != 1.0f)
+                scale = Vector3::UNIT_SCALE + (scale - Vector3::UNIT_SCALE) * scl;
+            else if (weight != 1.0f)
+                scale = Vector3::UNIT_SCALE + (scale - Vector3::UNIT_SCALE) * weight;
 		}
 		node->scale(scale);
 
@@ -679,14 +680,17 @@ namespace Ogre {
 	//--------------------------------------------------------------------------
 	VertexAnimationTrack::VertexAnimationTrack(Animation* parent,
 		unsigned short handle, VertexAnimationType animType)
-		: AnimationTrack(parent, handle), mAnimationType(animType)
+		: AnimationTrack(parent, handle)
+		, mAnimationType(animType)
 	{
 	}
 	//--------------------------------------------------------------------------
 	VertexAnimationTrack::VertexAnimationTrack(Animation* parent, unsigned short handle,
 		VertexAnimationType animType, VertexData* targetData, TargetMode target)
-		: AnimationTrack(parent, handle), mAnimationType(animType),
-		mTargetVertexData(targetData), mTargetMode(target)
+		: AnimationTrack(parent, handle)
+		, mAnimationType(animType)
+		, mTargetVertexData(targetData)
+		, mTargetMode(target)
 	{
 	}
 	//--------------------------------------------------------------------------
@@ -710,6 +714,36 @@ namespace Ogre {
 				"VertexAnimationTrack::createVertexPoseKeyFrame");
 		}
 		return static_cast<VertexPoseKeyFrame*>(createKeyFrame(timePos));
+	}
+	//--------------------------------------------------------------------------
+	bool VertexAnimationTrack::getVertexAnimationIncludesNormals() const
+	{
+		if (mAnimationType == VAT_NONE)
+			return false;
+		
+		if (mAnimationType == VAT_MORPH)
+		{
+			bool normals = false;
+			for (KeyFrameList::const_iterator i = mKeyFrames.begin(); i != mKeyFrames.end(); ++i)
+			{
+				VertexMorphKeyFrame* kf = static_cast<VertexMorphKeyFrame*>(*i);
+				bool thisnorm = kf->getVertexBuffer()->getVertexSize() > 12;
+				if (i == mKeyFrames.begin())
+					normals = thisnorm;
+				else
+					// Only support normals if ALL keyframes include them
+					normals = normals && thisnorm;
+
+			}
+			return normals;
+		}
+		else 
+		{
+			// needs to derive from Mesh::PoseList, can't tell here
+			return false;
+		}
+
+				
 	}
 	//--------------------------------------------------------------------------
 	void VertexAnimationTrack::apply(const TimeIndex& timeIndex, Real weight, Real scale)
@@ -741,7 +775,7 @@ namespace Ogre {
 					"Haven't set up hardware vertex animation elements!");
 
 				// no use for TempBlendedBufferInfo here btw
-				// NB we assume that position buffer is unshared
+				// NB we assume that position buffer is unshared, except for normals
 				// VertexDeclaration::getAutoOrganisedDeclaration should see to that
 				const VertexElement* posElem =
 					data->vertexDeclaration->findElementBySemantic(VES_POSITION);
@@ -750,7 +784,7 @@ namespace Ogre {
 					posElem->getSource(), vkf1->getVertexBuffer());
 				// Set keyframe2 data as derived
 				data->vertexBufferBinding->setBinding(
-					data->hwAnimationDataList[0].targetVertexElement->getSource(),
+					data->hwAnimationDataList[0].targetBufferIndex,
 					vkf2->getVertexBuffer());
 				// save T for use later
 				data->hwAnimationDataList[0].parametric = t;
@@ -848,8 +882,8 @@ namespace Ogre {
 			{
 				VertexData::HardwareAnimationData& animData = data->hwAnimationDataList[hwIndex];
 				data->vertexBufferBinding->setBinding(
-					animData.targetVertexElement->getSource(),
-					pose->_getHardwareVertexBuffer(data->vertexCount));
+					animData.targetBufferIndex,
+					pose->_getHardwareVertexBuffer(data));
 				// save final influence in parametric
 				animData.parametric = influence;
 
@@ -859,7 +893,7 @@ namespace Ogre {
 		else
 		{
 			// Software
-			Mesh::softwareVertexPoseBlend(influence, pose->getVertexOffsets(), data);
+			Mesh::softwareVertexPoseBlend(influence, pose->getVertexOffsets(), pose->getNormals(), data);
 		}
 
 	}

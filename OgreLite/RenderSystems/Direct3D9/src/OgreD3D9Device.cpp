@@ -89,7 +89,7 @@ namespace Ogre
 
 		if (it == mMapRenderWindowToResoruces.end())
 		{
-			RenderWindowResources* renderWindowResources = new RenderWindowResources;
+			RenderWindowResources* renderWindowResources = OGRE_NEW_T(RenderWindowResources, MEMCATEGORY_RENDERSYS);
 
 			memset(renderWindowResources, 0, sizeof(RenderWindowResources));						
 			renderWindowResources->adapterOrdinalInGroupIndex = 0;					
@@ -121,7 +121,7 @@ namespace Ogre
 
 			releaseRenderWindowResources(renderWindowResources);
 
-			SAFE_DELETE(renderWindowResources);
+			OGRE_DELETE_T(renderWindowResources, RenderWindowResources, MEMCATEGORY_RENDERSYS);
 			
 			mMapRenderWindowToResoruces.erase(it);		
 		}
@@ -205,9 +205,6 @@ namespace Ogre
 		if (mpDevice != NULL)
 		{
 			D3D9RenderSystem* renderSystem = static_cast<D3D9RenderSystem*>(Root::getSingleton().getRenderSystem());
-
-			// Clean up depth stencil surfaces
-			renderSystem->_cleanupDepthStencils(mpDevice);	
 
 			RenderWindowToResorucesIterator it = mMapRenderWindowToResoruces.begin();
 
@@ -309,7 +306,11 @@ namespace Ogre
 	{	
 		// Lock access to rendering device.
 		D3D9RenderSystem::getResourceManager()->lockDeviceAccess();
-		
+
+		//Remove _all_ depth buffers created by this device
+		D3D9RenderSystem* renderSystem = static_cast<D3D9RenderSystem*>(Root::getSingleton().getRenderSystem());
+		renderSystem->_cleanupDepthBuffers( mpDevice );
+
 		release();
 		
 		RenderWindowToResorucesIterator it = mMapRenderWindowToResoruces.begin();
@@ -319,7 +320,7 @@ namespace Ogre
 			if (it->first->getWindowHandle() == msSharedFocusWindow)
 				setSharedWindowHandle(NULL);
 
-			SAFE_DELETE(it->second);
+			OGRE_DELETE(it->second);
 			++it;
 		}
 		mMapRenderWindowToResoruces.clear();
@@ -327,7 +328,12 @@ namespace Ogre
 		// Reset dynamic attributes.		
 		mFocusWindow			= NULL;		
 		mD3D9DeviceCapsValid	= false;
-		SAFE_DELETE_ARRAY(mPresentationParams);
+
+		if (mPresentationParams != NULL)
+		{
+			OGRE_FREE (mPresentationParams, MEMCATEGORY_RENDERSYS);
+			mPresentationParams = NULL;
+		}		
 		mPresentationParamsCount = 0;
 
 		// Notify the device manager on this instance destruction.	
@@ -386,7 +392,7 @@ namespace Ogre
 
 
 		// Cleanup depth stencils surfaces.
-		renderSystem->_cleanupDepthStencils(mpDevice);
+		renderSystem->_cleanupDepthBuffers();
 
 		updatePresentationParameters();
 
@@ -476,6 +482,15 @@ namespace Ogre
 	}
 
 	//---------------------------------------------------------------------
+	bool D3D9Device::isFullScreen() const
+	{		
+		if (mPresentationParamsCount > 0 && mPresentationParams[0].Windowed == FALSE)
+			return true;
+				
+		return false;
+	}
+
+	//---------------------------------------------------------------------
 	const D3DCAPS9& D3D9Device::getD3D9DeviceCaps() const
 	{
 		if (mD3D9DeviceCapsValid == false)
@@ -511,12 +526,16 @@ namespace Ogre
 	void D3D9Device::updatePresentationParameters()
 	{		
 		// Clear old presentation parameters.
-		SAFE_DELETE_ARRAY(mPresentationParams);
+		if (mPresentationParams != NULL)
+		{
+			OGRE_FREE (mPresentationParams, MEMCATEGORY_RENDERSYS);
+			mPresentationParams = NULL;
+		}	
 		mPresentationParamsCount = 0;		
 
 		if (mMapRenderWindowToResoruces.size() > 0)
 		{
-			mPresentationParams = new D3DPRESENT_PARAMETERS[mMapRenderWindowToResoruces.size()];
+			mPresentationParams = OGRE_ALLOC_T(D3DPRESENT_PARAMETERS, mMapRenderWindowToResoruces.size(), MEMCATEGORY_RENDERSYS);
 
 			RenderWindowToResorucesIterator it = mMapRenderWindowToResoruces.begin();
 
@@ -777,6 +796,13 @@ namespace Ogre
 	//---------------------------------------------------------------------
 	void D3D9Device::releaseRenderWindowResources(RenderWindowResources* renderWindowResources)
 	{
+		if( renderWindowResources->depthBuffer )
+		{
+			D3D9RenderSystem* renderSystem = static_cast<D3D9RenderSystem*>
+													(Root::getSingleton().getRenderSystem());
+			renderSystem->_cleanupDepthBuffers( renderWindowResources->depthBuffer );
+		}
+
 		SAFE_RELEASE(renderWindowResources->backBuffer);
 		SAFE_RELEASE(renderWindowResources->depthBuffer);
 		SAFE_RELEASE(renderWindowResources->swapChain);
@@ -1087,6 +1113,20 @@ namespace Ogre
 					mpDevice->SetDepthStencilSurface(renderWindowResources->depthBuffer);
 				}
 			}
+
+			if (renderWindowResources->depthBuffer)
+			{
+				//Tell the RS we have a depth buffer we created it needs to add to the default pool
+				D3D9RenderSystem* renderSystem = static_cast<D3D9RenderSystem*>(Root::getSingleton().getRenderSystem());
+				DepthBuffer *depthBuf = renderSystem->_addManualDepthBuffer( mpDevice, renderWindowResources->depthBuffer );
+
+				//Don't forget we want this window to use _this_ depth buffer
+				renderWindow->attachDepthBuffer( depthBuf );
+			}
+			else
+			{
+				LogManager::getSingleton().logMessage("D3D9 : WARNING - Depth buffer could not be acquired.");
+			}
 		}
 
 		renderWindowResources->acquired = true; 
@@ -1173,13 +1213,20 @@ namespace Ogre
 				it = mMapRenderWindowToResoruces.begin();
 				while (it != mMapRenderWindowToResoruces.end())			
 				{
+					//This "if" handles the common case of a single device
 					if (it->first->getWindowHandle() == mCreationParams.hFocusWindow)
 					{
 						deviceFocusWindow = it->first;
 						it->second->presentParametersIndex = nextPresParamIndex;
 						++nextPresParamIndex;
 						break;
-					}					
+					}
+					//This "if" handles multiple devices when a shared window is used
+					if ((it->second->presentParametersIndex == 0) && (it->second->acquired == true))
+					{
+						deviceFocusWindow = it->first;
+						++nextPresParamIndex;
+					}
 					++it;
 				}
 			}

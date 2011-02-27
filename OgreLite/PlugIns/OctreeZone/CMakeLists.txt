@@ -10,30 +10,17 @@
 # Configure OctreeZone SceneManager build
 
 set (HEADER_FILES
-  include/OgreHeightmapTerrainZonePageSource.h
   include/OgreOctreeZone.h
   include/OgreOctreeZoneOctree.h
   include/OgreOctreeZonePlugin.h
   include/OgreOctreeZonePrerequisites.h
-  include/OgreTerrainVertexProgram.h
-  include/OgreTerrainZone.h
-  include/OgreTerrainZonePage.h
-  include/OgreTerrainZonePageSource.h
-  include/OgreTerrainZonePrerequisites.h
-  include/OgreTerrainZoneRenderable.h
 )
 
 set (SOURCE_FILES
-  src/OgreHeightmapTerrainZonePageSource.cpp
   src/OgreOctreeZone.cpp
   src/OgreOctreeZoneDll.cpp
   src/OgreOctreeZoneOctree.cpp
   src/OgreOctreeZonePlugin.cpp
-  src/OgreTerrainVertexProgram.cpp
-  src/OgreTerrainZone.cpp
-  src/OgreTerrainZonePage.cpp
-  src/OgreTerrainZonePageSource.cpp
-  src/OgreTerrainZoneRenderable.cpp
 )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -55,7 +42,7 @@ if (UNIX)
   )
 endif ()
 
-if (APPLE AND NOT OGRE_BUILD_PLATFORM_IPHONE)
+if (APPLE AND NOT OGRE_BUILD_PLATFORM_APPLE_IOS)
     # Set the INSTALL_PATH so that Plugins can be installed in the application package
     set_target_properties(Plugin_OctreeZone
        PROPERTIES BUILD_WITH_INSTALL_RPATH 1

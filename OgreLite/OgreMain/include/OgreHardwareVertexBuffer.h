@@ -48,22 +48,33 @@ namespace Ogre {
     {
 	    protected:
 
-			HardwareBufferManagerBase* mMgr;
+		    HardwareBufferManagerBase* mMgr;
 		    size_t mNumVertices;
-            size_t mVertexSize;
+		    size_t mVertexSize;
+		    bool mIsInstanceData;
+			size_t mInstanceDataStepRate;			
+		    /// Checks if vertex instance data is supported by the render system
+		    virtual bool checkIfVertexInstanceDataIsSupported();
 
 	    public:
 		    /// Should be called by HardwareBufferManager
 		    HardwareVertexBuffer(HardwareBufferManagerBase* mgr, size_t vertexSize, size_t numVertices,
-                HardwareBuffer::Usage usage, bool useSystemMemory, bool useShadowBuffer);
-            ~HardwareVertexBuffer();
-			/// Return the manager of this buffer, if any
-			HardwareBufferManagerBase* getManager() const { return mMgr; }
-            /// Gets the size in bytes of a single vertex in this buffer
-            size_t getVertexSize(void) const { return mVertexSize; }
-            /// Get the number of vertices in this buffer
-            size_t getNumVertices(void) const { return mNumVertices; }
-
+		        HardwareBuffer::Usage usage, bool useSystemMemory, bool useShadowBuffer);
+		    ~HardwareVertexBuffer();
+		    /// Return the manager of this buffer, if any
+		    HardwareBufferManagerBase* getManager() const { return mMgr; }
+		    /// Gets the size in bytes of a single vertex in this buffer
+		    size_t getVertexSize(void) const { return mVertexSize; }
+		    /// Get the number of vertices in this buffer
+		    size_t getNumVertices(void) const { return mNumVertices; }
+		    /// Get if this vertex buffer is an "instance data" buffer (per instance)
+		    bool getIsInstanceData() const { return mIsInstanceData; }
+		    /// Set if this vertex buffer is an "instance data" buffer (per instance)
+		    void setIsInstanceData(const bool val);
+			/// Get the number of instances to draw using the same per-instance data before advancing in the buffer by one element.
+			size_t getInstanceDataStepRate() const;
+			/// Set the number of instances to draw using the same per-instance data before advancing in the buffer by one element.
+			void setInstanceDataStepRate(const size_t val);
 
 
 		    // NB subclasses should override lock, unlock, readData, writeData
@@ -99,8 +110,9 @@ namespace Ogre {
         /// Binormal (Y axis if normal is Z)
         VES_BINORMAL = 8,
         /// Tangent (X axis if normal is Z)
-        VES_TANGENT = 9
-
+        VES_TANGENT = 9,
+        /// The  number of VertexElementSemantic elements (note - the first value VES_POSITION is 1) 
+        VES_COUNT = 9,
 	};
 
     /// Vertex element type, used to identify the base types of the vertex contents
@@ -317,11 +329,11 @@ namespace Ogre {
         virtual ~VertexDeclaration();
 
         /** Get the number of elements in the declaration. */
-        size_t getElementCount(void) { return mElementList.size(); }
+        size_t getElementCount(void) const { return mElementList.size(); }
         /** Gets read-only access to the list of vertex elements. */
         const VertexElementList& getElements(void) const;
         /** Get a single element. */
-        const VertexElement* getElement(unsigned short index);
+        const VertexElement* getElement(unsigned short index) const;
 
         /** Sorts the elements in this list to be compatible with the maximum
             number of rendering APIs / graphics cards.
@@ -354,9 +366,10 @@ namespace Ogre {
         @param skeletalAnimation Whether this vertex data is going to be
 			skeletally animated
 		@param vertexAnimation Whether this vertex data is going to be vertex animated
+		@param vertexAnimationNormals Whether vertex data animation is going to include normals animation
         */
         VertexDeclaration* getAutoOrganisedDeclaration(bool skeletalAnimation,
-			bool vertexAnimation);
+			bool vertexAnimation, bool vertexAnimationNormals) const;
 
         /** Gets the index of the highest source value referenced by this declaration. */
         unsigned short getMaxSource(void) const;
@@ -422,7 +435,7 @@ namespace Ogre {
         @remarks
             If the element is not found, this method returns null.
 		*/
-		virtual const VertexElement* findElementBySemantic(VertexElementSemantic sem, unsigned short index = 0);
+		virtual const VertexElement* findElementBySemantic(VertexElementSemantic sem, unsigned short index = 0) const;
 		/** Based on the current elements, gets the size of the vertex for a given buffer source.
 		@param source The buffer binding index for which to get the vertex size.
 		*/
@@ -432,16 +445,21 @@ namespace Ogre {
 			Note that the list of elements is returned by value therefore is separate from
 			the declaration as soon as this method returns.
 		*/
-		virtual VertexElementList findElementsBySource(unsigned short source);
+		virtual VertexElementList findElementsBySource(unsigned short source) const;
 
 		/** Gets the vertex size defined by this declaration for a given source. */
-        virtual size_t getVertexSize(unsigned short source);
+        virtual size_t getVertexSize(unsigned short source) const;
+		
+		/** Return the index of the next free texture coordinate set which may be added
+			to this declaration.
+		*/
+		virtual unsigned short getNextFreeTextureCoordinate() const;
 
         /** Clones this declaration. 
 		@param mgr Optional HardwareBufferManager to use for creating the clone
 			(if null, use the current default).
 		*/
-        virtual VertexDeclaration* clone(HardwareBufferManagerBase* mgr = 0);
+        virtual VertexDeclaration* clone(HardwareBufferManagerBase* mgr = 0) const;
 
         inline bool operator== (const VertexDeclaration& rhs) const
         {
@@ -547,6 +565,9 @@ namespace Ogre {
             before fill-in.
         */
         virtual void closeGaps(BindingIndexMap& bindingIndexMap);
+
+        /// returns true if has an element that is instance data
+        virtual bool getHasInstanceData() const;
 
 
 	};

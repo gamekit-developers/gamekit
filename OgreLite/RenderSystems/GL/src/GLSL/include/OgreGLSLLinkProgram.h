@@ -70,6 +70,8 @@ namespace Ogre {
 		GLhandleARB mGLHandle;
 		/// flag indicating that the program object has been successfully linked
 		GLint		mLinked;
+		/// Flag indicating that the program object has tried to link and failed
+		bool		mTriedToLinkAndFailed;
 		/// flag indicating skeletal animation is being performed
 		bool mSkeletalAnimation;
 
@@ -93,9 +95,11 @@ namespace Ogre {
 
 		static CustomAttribute msCustomAttributes[];
 
-
-		
-
+		String getCombinedName();		
+		/// Compiles and links the the vertex and fragment programs
+		void compileAndLink();
+		/// Get the the binary data of a program from the microcode cache
+		void getMicrocodeFromCache();
 	public:
 		/// constructor should only be used by GLSLLinkProgramManager
 		GLSLLinkProgram(GLSLGpuProgram* vertexProgram, GLSLGpuProgram* geometryProgram, GLSLGpuProgram* fragmentProgram);
@@ -105,6 +109,7 @@ namespace Ogre {
 
 		*/
 		void activate(void);
+
 		/** updates program object uniforms using data from GpuProgramParamters.
 		normally called by GLSLGpuProgram::bindParameters() just before rendering occurs.
 		*/

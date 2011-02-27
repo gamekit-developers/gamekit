@@ -54,10 +54,10 @@ THE SOFTWARE
 namespace Ogre {
     // Define ogre version
     #define OGRE_VERSION_MAJOR 1
-    #define OGRE_VERSION_MINOR 7
-    #define OGRE_VERSION_PATCH 2
-	#define OGRE_VERSION_SUFFIX ""
-    #define OGRE_VERSION_NAME "Cthugha"
+    #define OGRE_VERSION_MINOR 8
+    #define OGRE_VERSION_PATCH 0
+	#define OGRE_VERSION_SUFFIX "unstable"
+    #define OGRE_VERSION_NAME "Byatis"
 
     #define OGRE_VERSION    ((OGRE_VERSION_MAJOR << 16) | (OGRE_VERSION_MINOR << 8) | OGRE_VERSION_PATCH)
 
@@ -101,13 +101,15 @@ namespace Ogre {
     #   endif
     #endif
 
+    #define OGRE_DEFINE_STATIC_LOCAL(type, name, arguments) \
+        static type& name = *new type arguments
+
     /** In order to avoid finger-aches :)
     */
     typedef unsigned char uchar;
     typedef unsigned short ushort;
     typedef unsigned int uint;
 	typedef unsigned long ulong;
-
 
 	// Useful threading defines
 #include "Threading/OgreThreadDefines.h"
@@ -140,6 +142,7 @@ namespace Ogre {
     template <typename T> class ControllerValue;
 	class DefaultWorkQueue;
     class Degree;
+	class DepthBuffer;
     class DynLib;
     class DynLibManager;
     class EdgeData;
@@ -168,6 +171,13 @@ namespace Ogre {
 	class HighLevelGpuProgramManager;
 	class HighLevelGpuProgramFactory;
     class IndexData;
+	class InstanceBatch;
+	class InstanceBatchHW;
+	class InstanceBatchHW_VTF;
+	class InstanceBatchShader;
+	class InstanceBatchVTF;
+	class InstanceManager;
+	class InstancedEntity;
     class IntersectionSceneQuery;
     class IntersectionSceneQueryListener;
     class Image;
@@ -450,7 +460,7 @@ namespace Ogre
 
 }
 
-//for stl containter
+//for stl container
 namespace Ogre
 { 
 	template <typename T, typename A = STLAllocator<T, GeneralAllocPolicy> > 
@@ -458,8 +468,12 @@ namespace Ogre
 	{ 
 #if OGRE_CONTAINERS_USE_CUSTOM_MEMORY_ALLOCATOR
 	   typedef typename std::deque<T, A> type;    
+	   typedef typename std::deque<T, A>::iterator iterator;
+	   typedef typename std::deque<T, A>::const_iterator const_iterator;
 #else
-		typedef typename std::deque<T> type;    
+		typedef typename std::deque<T> type;
+		typedef typename std::deque<T>::iterator iterator;
+		typedef typename std::deque<T>::const_iterator const_iterator;
 #endif
 	}; 
 
@@ -467,9 +481,13 @@ namespace Ogre
 	struct vector 
 	{ 
 #if OGRE_CONTAINERS_USE_CUSTOM_MEMORY_ALLOCATOR
-		typedef typename std::vector<T, A> type;    
+		typedef typename std::vector<T, A> type;
+		typedef typename std::vector<T, A>::iterator iterator;
+		typedef typename std::vector<T, A>::const_iterator const_iterator;
 #else
-		typedef typename std::vector<T> type;    
+		typedef typename std::vector<T> type;
+		typedef typename std::vector<T>::iterator iterator;
+		typedef typename std::vector<T>::const_iterator const_iterator;
 #endif
 	}; 
 
@@ -477,9 +495,13 @@ namespace Ogre
 	struct list 
 	{ 
 #if OGRE_CONTAINERS_USE_CUSTOM_MEMORY_ALLOCATOR
-	   typedef typename std::list<T, A> type;    
+	   typedef typename std::list<T, A> type;
+	   typedef typename std::list<T, A>::iterator iterator;
+	   typedef typename std::list<T, A>::const_iterator const_iterator;
 #else
-		typedef typename std::list<T> type;    
+		typedef typename std::list<T> type;
+		typedef typename std::list<T>::iterator iterator;
+		typedef typename std::list<T>::const_iterator const_iterator;
 #endif
 	}; 
 
@@ -487,9 +509,13 @@ namespace Ogre
 	struct set 
 	{ 
 #if OGRE_CONTAINERS_USE_CUSTOM_MEMORY_ALLOCATOR
-	   typedef typename std::set<T, P, A> type;    
+	   typedef typename std::set<T, P, A> type;
+	   typedef typename std::set<T, P, A>::iterator iterator;
+	   typedef typename std::set<T, P, A>::const_iterator const_iterator;
 #else
-		typedef typename std::set<T, P> type;    
+		typedef typename std::set<T, P> type;
+		typedef typename std::set<T, P>::iterator iterator;
+		typedef typename std::set<T, P>::const_iterator const_iterator;
 #endif
 	}; 
 
@@ -497,9 +523,13 @@ namespace Ogre
 	struct map 
 	{ 
 #if OGRE_CONTAINERS_USE_CUSTOM_MEMORY_ALLOCATOR
-	   typedef typename std::map<K, V, P, A> type; 
+	   typedef typename std::map<K, V, P, A> type;
+	   typedef typename std::map<K, V, P, A>::iterator iterator;
+	   typedef typename std::map<K, V, P, A>::const_iterator const_iterator;
 #else
-		typedef typename std::map<K, V, P> type; 
+		typedef typename std::map<K, V, P> type;
+		typedef typename std::map<K, V, P>::iterator iterator;
+		typedef typename std::map<K, V, P>::const_iterator const_iterator;
 #endif
 	}; 
 
@@ -507,9 +537,13 @@ namespace Ogre
 	struct multimap 
 	{ 
 #if OGRE_CONTAINERS_USE_CUSTOM_MEMORY_ALLOCATOR
-		typedef typename std::multimap<K, V, P, A> type; 
+		typedef typename std::multimap<K, V, P, A> type;
+		typedef typename std::multimap<K, V, P, A>::iterator iterator;
+		typedef typename std::multimap<K, V, P, A>::const_iterator const_iterator;
 #else
-		typedef typename std::multimap<K, V, P> type; 
+		typedef typename std::multimap<K, V, P> type;
+		typedef typename std::multimap<K, V, P>::iterator iterator;
+		typedef typename std::multimap<K, V, P>::const_iterator const_iterator;
 #endif
 	}; 
 

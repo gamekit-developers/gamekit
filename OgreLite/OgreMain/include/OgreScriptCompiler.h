@@ -187,7 +187,8 @@ namespace Ogre
 	class _OgreExport ScriptCompiler : public ScriptCompilerAlloc
 	{
 	public: // Externally accessible types
-		typedef map<String,uint32>::type IdMap;
+		//typedef map<String,uint32>::type IdMap;
+		typedef HashMap<String,uint32> IdMap;
 
 		// The container for errors
 		struct Error : public ScriptCompilerAlloc
@@ -582,6 +583,7 @@ namespace Ogre
 		ID_GEOMETRY_PROGRAM_REF,
 		ID_FRAGMENT_PROGRAM_REF,
 		ID_SHADOW_CASTER_VERTEX_PROGRAM_REF,
+		ID_SHADOW_CASTER_FRAGMENT_PROGRAM_REF,
 		ID_SHADOW_RECEIVER_VERTEX_PROGRAM_REF,
 		ID_SHADOW_RECEIVER_FRAGMENT_PROGRAM_REF,
 		ID_SHADOW_CASTER_MATERIAL,
@@ -685,6 +687,7 @@ namespace Ogre
 			ID_POINT,
 			ID_SPOT,
 			ID_DIRECTIONAL,
+		ID_LIGHT_MASK,
 		ID_POINT_SIZE,
 		ID_POINT_SPRITES,
 		ID_POINT_SIZE_ATTENUATION,
@@ -797,6 +800,7 @@ namespace Ogre
 			ID_POOLED,
 			//ID_GAMMA, - already registered for material
 			ID_NO_FSAA,
+			ID_DEPTH_POOL,
 			ID_ONLY_INITIAL,
 			ID_VISIBILITY_MASK,
 			ID_LOD_BIAS,

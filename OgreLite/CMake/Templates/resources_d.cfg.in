@@ -1,0 +1,31 @@
+# Resources required by the sample browser and most samples.
+[Essential]
+Zip=@OGRE_MEDIA_DIR_DBG@/packs/SdkTrays.zip
+FileSystem=@OGRE_MEDIA_DIR_DBG@/thumbnails
+
+# Common sample resources needed by many of the samples.
+# Rarely used resources should be separately loaded by the
+# samples which require them.
+[Popular]
+FileSystem=@OGRE_MEDIA_DIR_DBG@/fonts
+FileSystem=@OGRE_MEDIA_DIR_DBG@/materials/programs
+FileSystem=@OGRE_MEDIA_DIR_DBG@/materials/scripts
+FileSystem=@OGRE_MEDIA_DIR_DBG@/materials/textures
+FileSystem=@OGRE_MEDIA_DIR_DBG@/materials/textures/nvidia
+FileSystem=@OGRE_MEDIA_DIR_DBG@/models
+FileSystem=@OGRE_MEDIA_DIR_DBG@/particle
+FileSystem=@OGRE_MEDIA_DIR_DBG@/DeferredShadingMedia
+FileSystem=@OGRE_MEDIA_DIR_DBG@/PCZAppMedia
+FileSystem=@OGRE_MEDIA_DIR_DBG@/RTShaderLib
+FileSystem=@OGRE_MEDIA_DIR_DBG@/RTShaderLib/materials
+Zip=@OGRE_MEDIA_DIR_DBG@/packs/cubemap.zip
+Zip=@OGRE_MEDIA_DIR_DBG@/packs/cubemapsJS.zip
+Zip=@OGRE_MEDIA_DIR_DBG@/packs/dragon.zip
+Zip=@OGRE_MEDIA_DIR_DBG@/packs/fresneldemo.zip
+Zip=@OGRE_MEDIA_DIR_DBG@/packs/ogretestmap.zip
+Zip=@OGRE_MEDIA_DIR_DBG@/packs/ogredance.zip
+Zip=@OGRE_MEDIA_DIR_DBG@/packs/Sinbad.zip
+Zip=@OGRE_MEDIA_DIR_DBG@/packs/skybox.zip
+
+[General]
+FileSystem=@OGRE_MEDIA_DIR_DBG@
