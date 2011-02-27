@@ -62,8 +62,7 @@ namespace Ogre {
     {
 		// Destroy all remaining instances
 		// Really should have shutdown and unregistered by now, but catch here in case
-		Instances instancesCopy = mInstances;
-		for (Instances::iterator i = instancesCopy.begin(); i != instancesCopy.end(); ++i)
+		for (Instances::iterator i = mInstances.begin(); i != mInstances.end(); ++i)
 		{
 			// destroy instances
 			for(Factories::iterator f = mFactories.begin(); f != mFactories.end(); ++f)
@@ -71,7 +70,6 @@ namespace Ogre {
 				if ((*f)->getMetaData().typeName == i->second->getTypeName())
 				{
 					(*f)->destroyInstance(i->second);
-					mInstances.erase(i->first);
 					break;
 				}
 			}

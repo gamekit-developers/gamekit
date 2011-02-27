@@ -47,11 +47,6 @@ namespace Ogre {
 
 		/// Override needed to deal with multisample buffers
 		virtual void swapBuffers(bool waitForVSync = true);
-
-		/// Override so we can attach the depth buffer to the FBO
-		virtual bool attachDepthBuffer( DepthBuffer *depthBuffer );
-		virtual void detachDepthBuffer();
-		virtual void _detachDepthBuffer();
     protected:
         GLESFrameBufferObject mFB;
     };

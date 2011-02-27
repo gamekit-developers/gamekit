@@ -103,7 +103,6 @@ namespace Ogre {
 			mRenderOp.operationType = RenderOperation::OT_TRIANGLE_LIST;
 			mRenderOp.useIndexes = false;
 			mRenderOp.vertexData->vertexStart = 0;
-            mRenderOp.useGlobalInstancingVertexBufferIsAvailable = false;
 			// Vertex buffer will be created in checkMemoryAllocation
 
 			checkMemoryAllocation( DEFAULT_INITIAL_CHARS );

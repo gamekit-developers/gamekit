@@ -45,18 +45,6 @@ namespace RTShader {
 *  @{
 */
 
-#define SGX_LIB_NORMALMAPLIGHTING					"SGXLib_NormalMapLighting"
-#define SGX_FUNC_CONSTRUCT_TBNMATRIX				"SGX_ConstructTBNMatrix"
-#define SGX_FUNC_TRANSFORMNORMAL					"SGX_TransformNormal"
-#define SGX_FUNC_TRANSFORMPOSITION					"SGX_TransformPosition"
-#define SGX_FUNC_FETCHNORMAL						"SGX_FetchNormal"
-#define SGX_FUNC_LIGHT_DIRECTIONAL_DIFFUSE			"SGX_Light_Directional_Diffuse"
-#define SGX_FUNC_LIGHT_DIRECTIONAL_DIFFUSESPECULAR	"SGX_Light_Directional_DiffuseSpecular"
-#define SGX_FUNC_LIGHT_POINT_DIFFUSE				"SGX_Light_Point_Diffuse"
-#define SGX_FUNC_LIGHT_POINT_DIFFUSESPECULAR		"SGX_Light_Point_DiffuseSpecular"
-#define SGX_FUNC_LIGHT_SPOT_DIFFUSE					"SGX_Light_Spot_Diffuse"
-#define SGX_FUNC_LIGHT_SPOT_DIFFUSESPECULAR			"SGX_Light_Spot_DiffuseSpecular"
-
 /** Normal Map Lighting extension sub render state implementation.
 Derives from SubRenderState class.
 */
@@ -92,7 +80,7 @@ public:
 	/** 
 	@see SubRenderState::preAddToRenderState.
 	*/
-	virtual bool			preAddToRenderState		(const RenderState* renderState, Pass* srcPass, Pass* dstPass);
+	virtual bool			preAddToRenderState		(RenderState* renderState, Pass* srcPass, Pass* dstPass);
 
 	/** 
 	Set the index of the input vertex shader texture coordinate set 
@@ -362,7 +350,7 @@ public:
 	/** 
 	@see SubRenderStateFactory::createInstance.
 	*/
-	virtual SubRenderState*	createInstance		(ScriptCompiler* compiler, PropertyAbstractNode* prop, Pass* pass, SGScriptTranslator* translator);
+	virtual SubRenderState*	createInstance		(ScriptCompiler* compiler, PropertyAbstractNode* prop, Pass* pass);
 
 	/** 
 	@see SubRenderStateFactory::writeInstance.

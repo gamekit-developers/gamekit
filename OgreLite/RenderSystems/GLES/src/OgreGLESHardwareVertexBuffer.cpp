@@ -115,7 +115,7 @@ namespace Ogre {
                         "GLESHardwareVertexBuffer::lock");
         }
 
-#if defined(GL_GLEXT_PROTOTYPES)
+#if GL_OES_mapbuffer
         if (!retPtr)
 		{
 			// Use glMapBuffer
@@ -168,7 +168,7 @@ namespace Ogre {
         }
         else
         {
-#if defined(GL_GLEXT_PROTOTYPES)
+#if GL_OES_mapbuffer
 			glBindBuffer(GL_ARRAY_BUFFER, mBufferId);
             
 			if(!glUnmapBufferOES( GL_ARRAY_BUFFER ))

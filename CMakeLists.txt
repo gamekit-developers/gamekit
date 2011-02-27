@@ -8,10 +8,6 @@ cmake_minimum_required(VERSION 2.6)
 project(OGREKIT)
 SET(OGREKIT 1.0)
 
-set(OGRE_SOURCE_DIR ${OGREKIT_SOURCE_DIR}/OgreLite)
-set(OGRE_BINARY_DIR ${OGREKIT_BINARY_DIR})
-set(OGRE_STATIC TRUE)
-
 if(COMMAND cmake_policy)
    cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
@@ -27,10 +23,6 @@ set(CMAKE_MODULE_PATH
     ${OGREKIT_SOURCE_DIR}/CMake/Utils
     ${OGREKIT_SOURCE_DIR}/CMake/Packages
     ${OGREKIT_SOURCE_DIR}/CMake/Templates
-	${OGRE_SOURCE_DIR}/CMake
-    ${OGRE_SOURCE_DIR}/CMake/Utils
-    ${OGRE_SOURCE_DIR}/CMake/Packages
-    ${OGRE_SOURCE_DIR}/CMake/Templates
     )
 include(CMakeDependentOption)
 include(CheckCXXCompilerFlag)
@@ -40,7 +32,7 @@ include(ConfigIPhone)
 
 
 configure_gamekit(${OGREKIT_SOURCE_DIR}/Dependencies/Source)
-configure_ogrekit(${OGREKIT_SOURCE_DIR} ${OGRE_SOURCE_DIR})
+configure_ogrekit(${OGREKIT_SOURCE_DIR} ${OGREKIT_SOURCE_DIR}/OgreLite)
 
 set(OGREKIT_BULLET_LIBS BulletDynamics BulletCollision BulletSoftBody LinearMath)
 set(OGREKIT_BULLET_INCLUDE ${OGREKIT_SOURCE_DIR}/bullet/src)

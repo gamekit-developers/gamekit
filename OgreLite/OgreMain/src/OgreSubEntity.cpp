@@ -422,8 +422,6 @@ namespace Ogre {
 			!mVertexAnimationAppliedThisFrame &&
 			(!hardwareAnimation || mSubMesh->getVertexAnimationType() == VAT_MORPH))
 		{
-			// Note, VES_POSITION is specified here but if normals are included in animation
-			// then these will be re-bound too (buffers must be shared)
 			const VertexElement* srcPosElem = 
 				mSubMesh->vertexData->vertexDeclaration->findElementBySemantic(VES_POSITION);
 			HardwareVertexBufferSharedPtr srcBuf = 
@@ -435,7 +433,7 @@ namespace Ogre {
 				mSoftwareVertexAnimVertexData->vertexDeclaration->findElementBySemantic(VES_POSITION);
 			mSoftwareVertexAnimVertexData->vertexBufferBinding->setBinding(
 				destPosElem->getSource(), srcBuf);
-			
+
 		}
 
 		// rebind any missing hardware pose buffers

@@ -51,21 +51,11 @@ namespace Ogre {
 		//GetClientRect(mNativeDisplay, &windowRect);
 		mNativeDisplay = getNativeDisplay();
 		mGLDisplay = getGLDisplay();
-
-		// Video mode possibilities
-		DEVMODE DevMode;
-		DevMode.dmSize = sizeof(DEVMODE);
-		for (DWORD i = 0; EnumDisplaySettings(NULL, i, &DevMode); ++i)
-		{
-			if (DevMode.dmBitsPerPel < 16)
-				continue;
-
-			mCurrentMode.first.first = DevMode.dmPelsWidth; 
-			mCurrentMode.first.second = DevMode.dmPelsHeight; 
-			mCurrentMode.second = 0;
-			mOriginalMode = mCurrentMode;
-			mVideoModes.push_back(mCurrentMode);
-		}
+		mCurrentMode.first.first = 555; // todo
+		mCurrentMode.first.second = 555; // todo
+		mCurrentMode.second = 0;
+		mOriginalMode = mCurrentMode;
+		mVideoModes.push_back(mCurrentMode);
 
 		EGLConfig *glConfigs;
 		int config, nConfigs = 0;

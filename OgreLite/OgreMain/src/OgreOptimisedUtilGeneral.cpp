@@ -62,9 +62,7 @@ namespace Ogre {
             Real t,
             const float *srcPos1, const float *srcPos2,
             float *dstPos,
-			size_t pos1VSize, size_t pos2VSize, size_t dstVSize, 
-            size_t numVertices,
-			bool morphNormals);
+            size_t numVertices);
 
         /// @copydoc OptimisedUtil::concatenateAffineMatrices
         virtual void concatenateAffineMatrices(
@@ -265,15 +263,8 @@ namespace Ogre {
         Real t,
         const float *pSrc1, const float *pSrc2,
         float *pDst,
-		size_t pos1VSize, size_t pos2VSize, size_t dstVSize,
-        size_t numVertices,
-		bool morphNormals)
+        size_t numVertices)
     {
-		size_t src1Skip = pos1VSize/sizeof(float) - 3 - (morphNormals ? 3 : 0);
-		size_t src2Skip = pos2VSize/sizeof(float) - 3 - (morphNormals ? 3 : 0);
-		size_t dstSkip = dstVSize/sizeof(float) - 3 - (morphNormals ? 3 : 0);
-		
-		Vector3 nlerpNormal;
         for (size_t i = 0; i < numVertices; ++i)
         {
             // x
@@ -285,28 +276,6 @@ namespace Ogre {
             // z
             *pDst++ = *pSrc1 + t * (*pSrc2 - *pSrc1) ;
             ++pSrc1; ++pSrc2;
-			
-			if (morphNormals)
-			{
-				// normals must be in the same buffer as pos
-				// perform an nlerp
-				// we don't have enough information for a spherical interp
-				nlerpNormal.x = *pSrc1 + t * (*pSrc2 - *pSrc1);
-				++pSrc1; ++pSrc2;
-				nlerpNormal.y = *pSrc1 + t * (*pSrc2 - *pSrc1);
-				++pSrc1; ++pSrc2;
-				nlerpNormal.z = *pSrc1 + t * (*pSrc2 - *pSrc1);
-				++pSrc1; ++pSrc2;
-				nlerpNormal.normalise();
-				*pDst++ = nlerpNormal.x;
-				*pDst++ = nlerpNormal.y;				
-				*pDst++ = nlerpNormal.z;				
-			}
-			
-			pSrc1 += src1Skip;
-			pSrc2 += src2Skip;
-			pDst += dstSkip;
-			
         }
     }
     //---------------------------------------------------------------------

@@ -652,8 +652,8 @@ namespace Ogre {
 
 		if (PixelUtil::isCompressed(sourceFormat))
 		{
-			if (Root::getSingleton().getRenderSystem() == NULL ||
-				Root::getSingleton().getRenderSystem()->getCapabilities()->hasCapability(RSC_TEXTURE_COMPRESSION_DXT) == false)
+			if (!Root::getSingleton().getRenderSystem()->getCapabilities()
+				->hasCapability(RSC_TEXTURE_COMPRESSION_DXT))
 			{
 				// We'll need to decompress
 				decompressDXT = true;

@@ -119,13 +119,10 @@ ParameterPtr Function::resolveInputParameter(Parameter::Semantic semantic,
 		break;
 			
 	case Parameter::SPS_BLEND_WEIGHTS:			
-		assert(type == GCT_FLOAT4);
-		param = ParameterFactory::createInWeights(index);
-		break;
-			
 	case Parameter::SPS_BLEND_INDICES:
-		assert(type == GCT_FLOAT4);
-		param = ParameterFactory::createInIndices(index);
+		OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, 
+					"Can not resolve parameter - semantic: " + StringConverter::toString(semantic) + " - index: " + StringConverter::toString(index) + " since support in it is not implemented yet. Function <" + getName() + ">", 			
+					"Function::resolveInputParameter" );
 		break;
 			
 	case Parameter::SPS_NORMAL:
@@ -456,7 +453,7 @@ ParameterPtr Function::getParameterByContent(const ShaderParameterList& paramete
 
 
 //-----------------------------------------------------------------------------
-void Function::addAtomInstance(FunctionAtom* atomInstance)
+void Function::addAtomInstace(FunctionAtom* atomInstance)
 {
 	mAtomInstances.push_back(atomInstance);
 }

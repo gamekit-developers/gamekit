@@ -251,8 +251,7 @@ protected:
 	MergeCombinationList	mParamMergeCombinations;		// Merging combinations defs.
 	int						mMaxTexCoordSlots;				// Maximum texcoord slots.
 	int						mMaxTexCoordFloats;				// Maximum texcoord floats count.
-    std::map<Function *, String *>  mFunctionMap;           // Map between function signatures and source code
-
+	
 };
 
 

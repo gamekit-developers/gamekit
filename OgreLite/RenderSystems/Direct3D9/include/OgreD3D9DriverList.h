@@ -33,7 +33,7 @@ THE SOFTWARE.
 
 namespace Ogre 
 {
-	class _OgreD3D9Export D3D9DriverList : public ResourceAlloc
+	class _OgreD3D9Export D3D9DriverList
 	{
 	private:
 		vector<D3D9Driver>::type mDriverList;

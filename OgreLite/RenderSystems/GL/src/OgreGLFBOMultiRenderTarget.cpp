@@ -89,25 +89,4 @@ namespace Ogre {
             *static_cast<GLFrameBufferObject **>(pData) = &fbo;
         }
 	}
-	//-----------------------------------------------------------------------------
-	bool GLFBOMultiRenderTarget::attachDepthBuffer( DepthBuffer *depthBuffer )
-	{
-		bool result;
-		if( (result = MultiRenderTarget::attachDepthBuffer( depthBuffer )) )
-			fbo.attachDepthBuffer( depthBuffer );
-
-		return result;
-	}
-	//-----------------------------------------------------------------------------
-	void GLFBOMultiRenderTarget::detachDepthBuffer()
-	{
-		fbo.detachDepthBuffer();
-		MultiRenderTarget::detachDepthBuffer();
-	}
-	//-----------------------------------------------------------------------------
-	void GLFBOMultiRenderTarget::_detachDepthBuffer()
-	{
-		fbo.detachDepthBuffer();
-		MultiRenderTarget::_detachDepthBuffer();
-	}
 }

@@ -92,10 +92,8 @@ namespace Ogre {
             @param
                 maxSplits The maximum number of splits to perform (0 for unlimited splits). If this
                 parameters is > 0, the splitting process will stop after this many splits, left to right.
-            @param
-                preserveDelims Flag to determine if delimiters should be saved as substrings
         */
-		static vector<String>::type split( const String& str, const String& delims = "\t\n ", unsigned int maxSplits = 0, bool preserveDelims = false);
+		static vector< String >::type split( const String& str, const String& delims = "\t\n ", unsigned int maxSplits = 0);
 
 		/** Returns a StringVector that contains all the substrings delimited
             by the characters in the passed <code>delims</code> argument, 
@@ -109,7 +107,7 @@ namespace Ogre {
                 maxSplits The maximum number of splits to perform (0 for unlimited splits). If this
                 parameters is > 0, the splitting process will stop after this many splits, left to right.
         */
-		static vector<String>::type tokenise( const String& str, const String& delims = "\t\n ", const String& doubleDelims = "\"", unsigned int maxSplits = 0);
+		static vector< String >::type tokenise( const String& str, const String& delims = "\t\n ", const String& doubleDelims = "\"", unsigned int maxSplits = 0);
 
 		/** Lower-cases all the characters in the string.
         */

@@ -247,6 +247,7 @@ namespace Ogre {
 		*/
 		void notifyResized();
 
+
 		/** Get Chain that this instance is part of
         */
         CompositorChain *getChain();
@@ -348,10 +349,7 @@ namespace Ogre {
 		*/
 		void deriveTextureRenderTargetOptions(const String& texname, 
 			bool *hwGammaWrite, uint *fsaa, String* fsaaHint);
-
-		/// Notify this instance that the primary viewport's camera has changed.
-		void notifyCameraChanged(Camera* camera);
-
+        
         friend class CompositorChain;
     };
 	/** @} */

@@ -58,7 +58,7 @@ namespace Ogre {
             archive, for file naming
         */
         void findFiles(const String& pattern, bool recursive, bool dirs,
-            StringVector* simpleList, FileInfoList* detailList) const;
+            StringVector* simpleList, FileInfoList* detailList);
 
 		OGRE_AUTO_MUTEX
     public:
@@ -94,7 +94,7 @@ namespace Ogre {
 
         /// @copydoc Archive::findFileInfo
         FileInfoListPtr findFileInfo(const String& pattern, bool recursive = true,
-            bool dirs = false) const;
+            bool dirs = false);
 
         /// @copydoc Archive::exists
         bool exists(const String& filename);

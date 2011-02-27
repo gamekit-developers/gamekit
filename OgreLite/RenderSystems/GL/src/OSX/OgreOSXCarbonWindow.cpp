@@ -42,7 +42,6 @@ namespace Ogre
         mIsFullScreen = false;
         mContext = NULL;
         mColourDepth = 32;
-        mVSync = false;
     }
 
     //-------------------------------------------------------------------------------------------------//
@@ -60,41 +59,39 @@ namespace Ogre
         size_t fsaa_samples = 0;
         int left = 0;
         int top = 0;
-        bool vsync = false;
-        bool hidden = false;
         int depth = 32;
 
         if( miscParams )
         {
             NameValuePairList::const_iterator opt(NULL);
-            NameValuePairList::const_iterator end = miscParams->end();
-
+            
             // Full screen anti aliasing
-            if((opt = miscParams->find("FSAA")) != end) 
+            opt = miscParams->find( "FSAA" );
+            if( opt != miscParams->end() )
                 fsaa_samples = StringConverter::parseUnsignedInt( opt->second );
 
-            if((opt = miscParams->find("left")) != end) 
+            opt = miscParams->find( "left" );
+            if( opt != miscParams->end() )
                 left = StringConverter::parseUnsignedInt( opt->second );
 
-            if((opt = miscParams->find("top")) != end) 
+            opt = miscParams->find( "top" );
+            if( opt != miscParams->end() )
                 top = StringConverter::parseUnsignedInt( opt->second );
 
-            if((opt = miscParams->find("title")) != end) 
+            opt = miscParams->find( "title" );
+            if( opt != miscParams->end() )
                 title = opt->second;
 
-            if((opt = miscParams->find("vsync")) != end) 
-                vsync = StringConverter::parseBool(opt->second);
-
-            if((opt = miscParams->find("hidden")) != end) 
-                hidden = StringConverter::parseBool(opt->second);
-
-            if((opt = miscParams->find("depthBuffer")) != end) 
+            opt = miscParams->find( "depthBuffer" );
+            if( opt != miscParams->end() )
                 hasDepthBuffer = StringConverter::parseBool( opt->second );
             
-            if((opt = miscParams->find("colourDepth")) != end) 
+            opt = miscParams->find( "colourDepth" );
+            if( opt != miscParams->end() )
                 depth = StringConverter::parseUnsignedInt( opt->second );
 
-            if((opt = miscParams->find("Full Screen")) != end) 
+            opt = miscParams->find( "Full Screen" );
+            if( opt != miscParams->end() )
                 fullScreen = StringConverter::parseBool( opt->second );
         }
         
@@ -133,12 +130,7 @@ namespace Ogre
                 mContext = mCarbonContext;
             }
         }
-
-        // apply vsync settings. call setVSyncInterval first to avoid 
-		// setting vsync more than once.
-        setVSyncEnabled(vsync);
-
-        setHidden(hidden);
+        
         mName = name;
         mWidth = width;
         mHeight = height;
@@ -262,12 +254,9 @@ namespace Ogre
         HIViewGetBounds(mView, &viewBounds);
 
         // Display and select our window
-        if(!mHidden && mVisible)
-        {
-            ShowWindow(mWindow);
-            SelectWindow(mWindow);
-        }
-
+        ShowWindow(mWindow);
+        SelectWindow(mWindow);
+        
         // Add our window to the window event listener class
         WindowEventUtilities::_addRenderWindow(this);
     }
@@ -366,52 +355,7 @@ namespace Ogre
     {
         return mClosed;
     }
-
-    //-------------------------------------------------------------------------------------------------//
-    void OSXCarbonWindow::setHidden(bool hidden)
-    {
-        mHidden = hidden;
-        if (!mIsExternal)
-        {
-            if (hidden)
-                HideWindow(mWindow);
-            else
-                ShowWindow(mWindow);
-        }
-    }
-
-    //-------------------------------------------------------------------------------------------------//
-	void OSXCarbonWindow::setVSyncEnabled(bool vsync)
-	{
-        mVSync = vsync;
-        mContext->setCurrent();
-
-        CGLContextObj share = NULL;
-        aglGetCGLContext(mAGLContext, (void**)&share);
-
-        GLint vsyncInterval = mVSync ? 1 : 0;
-        aglSetInteger(mAGLContext, AGL_SWAP_INTERVAL, &vsyncInterval);
-
-        mContext->endCurrent();
     
-        if(!mIsFullScreen)
-        {
-            if(mAGLContext != aglGetCurrentContext())
-                aglSetCurrentContext(mAGLContext);
-        }
-        else
-        {
-            if(share != CGLGetCurrentContext())
-                CGLSetCurrentContext(share);
-        }
-	}
-
-    //-------------------------------------------------------------------------------------------------//
-	bool OSXCarbonWindow::isVSyncEnabled() const
-	{
-        return mVSync;
-	}
-
     //-------------------------------------------------------------------------------------------------//
     void OSXCarbonWindow::reposition(int left, int top)
     {

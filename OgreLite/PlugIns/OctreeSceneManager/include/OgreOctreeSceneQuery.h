@@ -36,7 +36,7 @@ email                : janders@users.sf.net
 #ifndef OCTREESCENEQUERY_H
 #define OCTREESCENEQUERY_H
 
-#include "OgreOctreePrerequisites.h"
+#include "OgreTerrainPrerequisites.h"
 #include <OgreSceneManager.h>
 
 

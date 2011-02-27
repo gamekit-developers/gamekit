@@ -93,7 +93,7 @@ THE SOFTWARE.
 
 #include "OgreWindowEventUtilities.h"
 
-#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
+#if OGRE_PLATFORM == OGRE_PLATFORM_IPHONE
 #  include "macUtils.h"
 #endif
 #if OGRE_NO_PVRTC_CODEC == 0
@@ -125,8 +125,6 @@ namespace Ogre {
 	  , mRemoveQueueStructuresOnClear(false)
 	  , mNextMovableObjectTypeFlag(1)
 	  , mIsInitialised(false)
-	  , mIsBlendIndicesGpuRedundant(true)
-	  , mIsBlendWeightsGpuRedundant(true)
     {
         // superclass will do singleton checking
         String msg;
@@ -228,8 +226,6 @@ namespace Ogre {
 #if OGRE_NO_ZIP_ARCHIVE == 0
         mZipArchiveFactory = OGRE_NEW ZipArchiveFactory();
         ArchiveManager::getSingleton().addArchiveFactory( mZipArchiveFactory );
-        mEmbeddedZipArchiveFactory = OGRE_NEW EmbeddedZipArchiveFactory();
-        ArchiveManager::getSingleton().addArchiveFactory( mEmbeddedZipArchiveFactory );
 #endif
 #if OGRE_NO_DDS_CODEC == 0
 		// Register image codecs
@@ -318,7 +314,6 @@ namespace Ogre {
         OGRE_DELETE mArchiveManager;
 #if OGRE_NO_ZIP_ARCHIVE == 0
         OGRE_DELETE mZipArchiveFactory;
-        OGRE_DELETE mEmbeddedZipArchiveFactory;
 #endif
         OGRE_DELETE mFileSystemArchiveFactory;
         OGRE_DELETE mSkeletonManager;
@@ -366,7 +361,7 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     void Root::saveConfig(void)
     {
-#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
+#if OGRE_PLATFORM == OGRE_PLATFORM_IPHONE
         // Check the Documents directory within the application sandbox
         Ogre::String outBaseName, extension, configFileName;
         Ogre::StringUtil::splitFilename(mConfigFileName, outBaseName, extension);
@@ -413,7 +408,7 @@ namespace Ogre {
     //-----------------------------------------------------------------------
     bool Root::restoreConfig(void)
     {
-#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
+#if OGRE_PLATFORM == OGRE_PLATFORM_IPHONE
         // Read the config from Documents first(user config) if it exists on iPhone.
         // If it doesn't exist or is invalid then use mConfigFileName
 
@@ -1034,7 +1029,16 @@ namespace Ogre {
         pluginDir = cfg.getSetting("PluginFolder"); // Ignored on Mac OS X, uses Resources/ directory
         pluginList = cfg.getMultiSetting("Plugin");
 
-        if (!pluginDir.empty() && *pluginDir.rbegin() != '/' && *pluginDir.rbegin() != '\\')
+#if OGRE_PLATFORM != OGRE_PLATFORM_APPLE && OGRE_PLATFORM != OGRE_PLATFORM_IPHONE
+		if (pluginDir.empty())
+		{
+			// User didn't specify plugins folder, try current one
+			pluginDir = ".";
+		}
+#endif
+
+        char last_char = pluginDir[pluginDir.length()-1];
+        if (last_char != '/' && last_char != '\\')
         {
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
             pluginDir += "\\";

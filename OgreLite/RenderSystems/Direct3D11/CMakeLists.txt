@@ -10,7 +10,6 @@
 # Configure Direct3D11 RenderSystem build
 
 set (HEADER_FILES
-  include/OgreD3D11DepthBuffer.h
   include/OgreD3D11Device.h
   include/OgreD3D11Driver.h
   include/OgreD3D11DriverList.h
@@ -36,10 +35,13 @@ set (HEADER_FILES
   include/OgreD3D11VertexDeclaration.h
   include/OgreD3D11VideoMode.h
   include/OgreD3D11VideoModeList.h
+  include/OgreFixedFuncEmuShaderGenerator.h
+  include/OgreFixedFuncEmuShaderManager.h
+  include/OgreFixedFuncState.h
+  include/OgreHlslFixedFuncEmuShaderGenerator.h
 )
 
 set (SOURCE_FILES
-  src/OgreD3D11DepthBuffer.cpp
   src/OgreD3D11Device.cpp
   src/OgreD3D11Driver.cpp
   src/OgreD3D11DriverList.cpp
@@ -65,6 +67,11 @@ set (SOURCE_FILES
   src/OgreD3D11VertexDeclaration.cpp
   src/OgreD3D11VideoMode.cpp
   src/OgreD3D11VideoModeList.cpp
+  src/OgreFixedFuncEmuShaderGenerator.cpp
+  src/OgreFixedFuncEmuShaderManager.cpp
+  src/OgreFixedFuncState.cpp
+  src/OgreHlslFixedFuncEmuShaderGenerator.cpp
+
 )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include ${DirectX_INCLUDE_DIR})

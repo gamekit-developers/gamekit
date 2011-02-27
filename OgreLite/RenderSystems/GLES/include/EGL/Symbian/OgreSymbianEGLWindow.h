@@ -30,14 +30,12 @@ THE SOFTWARE.
 #ifndef __SymbianEGLWindow_H__
 #define __SymbianEGLWindow_H__
 
-#include <coecntrl.h>
 #include "OgreEGLWindow.h"
 
 namespace Ogre {
     class _OgrePrivate SymbianEGLWindow : public EGLWindow
     {
 	protected:
-		CCoeControl *  mNativeControl;
 
 		virtual EGLContext * createEGLContext() const;
 		virtual void getLeftAndTopFromNativeWindow(int & left, int & top, uint width, uint height);
@@ -54,8 +52,6 @@ namespace Ogre {
 
 		void create(const String& name, unsigned int width, unsigned int height,
 		                        bool fullScreen, const NameValuePairList *miscParams);
-
-		void getCustomAttribute( const String& name, void *pData );
 
 
     };

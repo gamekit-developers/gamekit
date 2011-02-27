@@ -325,8 +325,6 @@ namespace Ogre {
 		virtual ~GpuNamedConstantsSerializer();
 		void exportNamedConstants(const GpuNamedConstants* pConsts, const String& filename,
 			Endian endianMode = ENDIAN_NATIVE);
-		void exportNamedConstants(const GpuNamedConstants* pConsts, DataStreamPtr stream,
-			Endian endianMode = ENDIAN_NATIVE);
 		void importNamedConstants(DataStreamPtr& stream, GpuNamedConstants* pDest);
 	};
 

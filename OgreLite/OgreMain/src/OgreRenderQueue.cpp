@@ -37,7 +37,6 @@ THE SOFTWARE.
 #include "OgreSceneManager.h"
 #include "OgreMovableObject.h"
 #include "OgreCamera.h"
-#include "OgreSceneManagerEnumerator.h"
 
 
 namespace Ogre {
@@ -128,24 +127,12 @@ namespace Ogre {
     void RenderQueue::clear(bool destroyPassMaps)
     {
         // Clear the queues
-        SceneManagerEnumerator::SceneManagerIterator scnIt =
-            SceneManagerEnumerator::getSingleton().getSceneManagerIterator();
-
-        // Note: We clear dirty passes from all RenderQueues in all 
-        // SceneManagers, because the following recalculation of pass hashes
-        // also considers all RenderQueues and could become inconsistent, otherwise.
-        while (scnIt.hasMoreElements())
+        RenderQueueGroupMap::iterator i, iend;
+        i = mGroups.begin();
+        iend = mGroups.end();
+        for (; i != iend; ++i)
         {
-            SceneManager* sceneMgr = scnIt.getNext();
-            RenderQueue* queue = sceneMgr->getRenderQueue();
-
-            RenderQueueGroupMap::iterator i, iend;
-            i = queue->mGroups.begin();
-            iend = queue->mGroups.end();
-            for (; i != iend; ++i)
-            {
-                i->second->clear(destroyPassMaps);
-            }
+            i->second->clear(destroyPassMaps);
         }
 
         // Now trigger the pending pass updates
@@ -298,29 +285,29 @@ namespace Ogre {
 		bool onlyShadowCasters, 
 		VisibleObjectsBoundsInfo* visibleBounds)
 	{
-		mo->_notifyCurrentCamera(cam);
-		if (mo->isVisible())
-		{
-			bool receiveShadows = getQueueGroup(mo->getRenderQueueGroup())->getShadowsEnabled()
-				&& mo->getReceivesShadows();
+		bool receiveShadows = getQueueGroup(mo->getRenderQueueGroup())->getShadowsEnabled()
+			&& mo->getReceivesShadows();
 
-			if (!onlyShadowCasters || mo->getCastShadows())
+		mo->_notifyCurrentCamera(cam);
+		if ( mo->isVisible() &&
+			(!onlyShadowCasters || mo->getCastShadows()))
+		{
+			mo -> _updateRenderQueue( this );
+
+			if (visibleBounds)
 			{
-				mo -> _updateRenderQueue( this );
-				if (visibleBounds)
-				{
-					visibleBounds->merge(mo->getWorldBoundingBox(true), 
-						mo->getWorldBoundingSphere(true), cam, 
-						receiveShadows);
-				}
+				visibleBounds->merge(mo->getWorldBoundingBox(true), 
+					mo->getWorldBoundingSphere(true), cam, 
+					receiveShadows);
 			}
-			// not shadow caster, receiver only?
-			else if (onlyShadowCasters && !mo->getCastShadows() && 
-				receiveShadows)
-			{
-				visibleBounds->mergeNonRenderedButInFrustum(mo->getWorldBoundingBox(true), 
-					mo->getWorldBoundingSphere(true), cam);
-			}
+		}
+		// not shadow caster, receiver only?
+		else if (mo->isVisible() &&
+			onlyShadowCasters && !mo->getCastShadows() && 
+			receiveShadows)
+		{
+			visibleBounds->mergeNonRenderedButInFrustum(mo->getWorldBoundingBox(true), 
+				mo->getWorldBoundingSphere(true), cam);
 		}
 
 	}

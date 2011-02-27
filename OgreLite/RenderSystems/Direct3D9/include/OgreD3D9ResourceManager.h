@@ -50,7 +50,7 @@ namespace Ogre {
 		RCP_CREATE_ON_ALL_DEVICES
 	};
 	
-	class _OgreD3D9Export D3D9ResourceManager : public ResourceAlloc
+	class _OgreD3D9Export D3D9ResourceManager
 	{
 
 	// Interface.
@@ -81,17 +81,7 @@ namespace Ogre {
 
 		void						setCreationPolicy	(D3D9ResourceCreationPolicy creationPolicy);
 		D3D9ResourceCreationPolicy	getCreationPolicy	() const;
-
-		/** 
-			Set/Get automatic hardware buffers management.
-			This has affect only when multiple devices involved during the runtime.
-			When enabled, an explicit system memory backup is created for buffers with no read caps - so in case of device swaps
-			the content of the buffers can be restored from this copy.
-			The default is false in order to reduce system memory consumption.
-		*/
-		void						setAutoHardwareBufferManagement(bool autoManagement) { mAutoHardwareBufferManagement = autoManagement; }
-		bool						getAutoHardwareBufferManagement() const { return mAutoHardwareBufferManagement; }
-
+		
 	// Friends.
 	protected:
 		friend class D3D9Resource;
@@ -117,7 +107,6 @@ namespace Ogre {
 		ResourceContainer			mResources;
 		D3D9ResourceCreationPolicy	mResourceCreationPolicy;
 		long						mDeviceAccessLockCount;		
-		bool						mAutoHardwareBufferManagement;
 	};
 }
 

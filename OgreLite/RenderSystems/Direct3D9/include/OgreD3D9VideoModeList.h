@@ -34,7 +34,7 @@ THE SOFTWARE.
 
 namespace Ogre 
 {
-	class _OgreD3D9Export D3D9VideoModeList : public RenderSysAlloc
+	class _OgreD3D9Export D3D9VideoModeList
 	{
 	private:
 		D3D9Driver* mpDriver;

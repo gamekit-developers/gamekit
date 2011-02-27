@@ -86,7 +86,7 @@ bool FFPTransform::createCpuSubPrograms(ProgramSet* programSet)
 	transformFunc->pushOperand(positionIn, Operand::OPS_IN);
 	transformFunc->pushOperand(positionOut, Operand::OPS_OUT);
 
-	vsEntry->addAtomInstance(transformFunc);
+	vsEntry->addAtomInstace(transformFunc);
 
 	return true;
 }
@@ -106,7 +106,7 @@ const String& FFPTransformFactory::getType() const
 
 //-----------------------------------------------------------------------
 SubRenderState*	FFPTransformFactory::createInstance(ScriptCompiler* compiler, 
-												   PropertyAbstractNode* prop, Pass* pass, SGScriptTranslator* translator)
+												   PropertyAbstractNode* prop, Pass* pass)
 {
 	if (prop->name == "transform_stage")
 	{

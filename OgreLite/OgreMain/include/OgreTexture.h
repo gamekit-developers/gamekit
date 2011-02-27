@@ -73,9 +73,7 @@ namespace Ogre {
         /// 3D volume texture, used in combination with 3D texture coordinates
         TEX_TYPE_3D = 3,
         /// 3D cube map, used in combination with 3D texture coordinates
-        TEX_TYPE_CUBE_MAP = 4,
-        /// 2D texture array
-        TEX_TYPE_2D_ARRAY = 5
+        TEX_TYPE_CUBE_MAP = 4
     };
 
 	/** Enum identifying special mipmap numbers

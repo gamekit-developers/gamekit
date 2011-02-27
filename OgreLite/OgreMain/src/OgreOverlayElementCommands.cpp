@@ -29,7 +29,6 @@ THE SOFTWARE.
 #include "OgreOverlayElementCommands.h"
 #include "OgreOverlayElement.h"
 #include "OgreStringConverter.h"
-#include "OgreLogManager.h"
 
 
 namespace Ogre {
@@ -44,8 +43,7 @@ namespace Ogre {
         }
         void CmdLeft::doSet(void* target, const String& val)
         {
-			Real r = StringConverter::parseReal(val);
-            static_cast<OverlayElement*>(target)->setLeft(r);
+            static_cast<OverlayElement*>(target)->setLeft(StringConverter::parseReal(val));
         }
         //-----------------------------------------------------------------------
         String CmdTop::doGet(const void* target) const
@@ -55,8 +53,7 @@ namespace Ogre {
         }
         void CmdTop::doSet(void* target, const String& val)
         {
-			Real r = StringConverter::parseReal(val);
-            static_cast<OverlayElement*>(target)->setTop(r);
+            static_cast<OverlayElement*>(target)->setTop(StringConverter::parseReal(val));
         }
         //-----------------------------------------------------------------------
         String CmdWidth::doGet(const void* target) const
@@ -66,8 +63,7 @@ namespace Ogre {
         }
         void CmdWidth::doSet(void* target, const String& val)
         {
-			Real r = StringConverter::parseReal(val);
-            static_cast<OverlayElement*>(target)->setWidth(r);
+            static_cast<OverlayElement*>(target)->setWidth(StringConverter::parseReal(val));
         }
         //-----------------------------------------------------------------------
         String CmdHeight::doGet(const void* target) const
@@ -77,8 +73,7 @@ namespace Ogre {
         }
         void CmdHeight::doSet(void* target, const String& val)
         {
-			Real r = StringConverter::parseReal(val);
-            static_cast<OverlayElement*>(target)->setHeight(r);
+            static_cast<OverlayElement*>(target)->setHeight(StringConverter::parseReal(val));
         }
         //-----------------------------------------------------------------------
         String CmdMaterial::doGet(const void* target) const

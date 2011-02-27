@@ -89,6 +89,7 @@ namespace Ogre {
 
 		mWindow = 0;
 		mClosed = false;		
+		mIsDepthBuffered = true;
 		mColourDepth = mIsFullScreen? 32 : GetDeviceCaps(GetDC(0), BITSPIXEL);
 		HWND parent = 0;
 		bool vsync = false;

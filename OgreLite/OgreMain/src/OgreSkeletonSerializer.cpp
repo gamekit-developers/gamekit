@@ -55,31 +55,19 @@ namespace Ogre {
     SkeletonSerializer::~SkeletonSerializer()
     {
     }
-	//---------------------------------------------------------------------
-	void SkeletonSerializer::exportSkeleton(const Skeleton* pSkeleton, 
-		const String& filename, Endian endianMode)
-	{
-		std::fstream *f = OGRE_NEW_T(std::fstream, MEMCATEGORY_GENERAL)();
-		f->open(filename.c_str(), std::ios::binary | std::ios::out);
-		DataStreamPtr stream(OGRE_NEW FileStreamDataStream(f));
-
-		exportSkeleton(pSkeleton, stream, endianMode);
-
-		stream->close();
-	}
     //---------------------------------------------------------------------
     void SkeletonSerializer::exportSkeleton(const Skeleton* pSkeleton, 
-		DataStreamPtr stream, Endian endianMode)
+		const String& filename, Endian endianMode)
     {
 		// Decide on endian mode
 		determineEndianness(endianMode);
 
         String msg;
-        mStream = stream;
-		if (!stream->isWriteable())
+        mpfFile = fopen(filename.c_str(), "wb");
+		if (!mpfFile)
 		{
 			OGRE_EXCEPT(Exception::ERR_CANNOT_WRITE_TO_FILE,
-				"Unable to write to stream " + stream->getName(),
+				"Unable to open file " + filename + " for writing",
 				"SkeletonSerializer::exportSkeleton");
 		}
 
@@ -111,7 +99,9 @@ namespace Ogre {
 		{
 			const LinkedSkeletonAnimationSource& link = linkIt.getNext();
 			writeSkeletonAnimationLink(pSkeleton, link);
-		}       
+		}
+
+        fclose(mpfFile);
 
     }
     //---------------------------------------------------------------------

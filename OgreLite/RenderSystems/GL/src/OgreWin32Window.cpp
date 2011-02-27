@@ -40,7 +40,6 @@ THE SOFTWARE.
 #include "OgreWin32Context.h"
 #include "OgreWindowEventUtilities.h"
 #include "OgreGLPixelFormat.h"
-#include "OgreDepthBuffer.h"
 
 namespace Ogre {
 
@@ -58,14 +57,9 @@ namespace Ogre {
 		mIsExternalGLContext = false;
 		mSizing = false;
 		mClosed = false;
-		mHidden = false;
-		mVSync = false;
-		mVSyncInterval = 1;
 		mDisplayFrequency = 0;
 		mActive = false;
 		mDeviceName = NULL;
-		mWindowedWinStyle = 0;
-		mFullscreenWinStyle = 0;
 	}
 
 	Win32Window::~Win32Window()
@@ -95,17 +89,17 @@ namespace Ogre {
 		mIsFullScreen = fullScreen;
 		mClosed = false;		
 		mDisplayFrequency = 0;
-		mDepthBufferPoolId = DepthBuffer::POOL_DEFAULT;
+		mIsDepthBuffered = true;
 		mColourDepth = mIsFullScreen? 32 : GetDeviceCaps(GetDC(0), BITSPIXEL);
 		int left = -1; // Defaults to screen center
 		int top = -1; // Defaults to screen center
 		HWND parent = 0;
 		String title = name;
-		bool hidden = false;
+		bool vsync = false;
+		unsigned int vsyncInterval = 1;
 		String border;
 		bool outerSize = false;
 		bool hwGamma = false;
-		bool enableDoubleClick = false;
 		int monitorIndex = -1;
 		HMONITOR hMonitor = NULL;
 
@@ -125,19 +119,13 @@ namespace Ogre {
 				top = StringConverter::parseInt(opt->second);
 
 			if ((opt = miscParams->find("depthBuffer")) != end)
-			{
-				mDepthBufferPoolId = StringConverter::parseBool(opt->second) ?
-												DepthBuffer::POOL_DEFAULT : DepthBuffer::POOL_NO_DEPTH;
-			}
+				mIsDepthBuffered = StringConverter::parseBool(opt->second);
 
 			if ((opt = miscParams->find("vsync")) != end)
-				mVSync = StringConverter::parseBool(opt->second);
-
-			if ((opt = miscParams->find("hidden")) != end)
-				hidden = StringConverter::parseBool(opt->second);
+				vsync = StringConverter::parseBool(opt->second);
 
 			if ((opt = miscParams->find("vsyncInterval")) != end)
-				mVSyncInterval = StringConverter::parseUnsignedInt(opt->second);
+				vsyncInterval = StringConverter::parseUnsignedInt(opt->second);
 
 			if ((opt = miscParams->find("FSAA")) != end)
 				mFSAA = StringConverter::parseUnsignedInt(opt->second);
@@ -202,16 +190,12 @@ namespace Ogre {
 			
 			// monitor handle
 			if ((opt = miscParams->find("monitorHandle")) != end)
-				hMonitor = (HMONITOR)StringConverter::parseInt(opt->second);
-
-			// enable double click messages
-			if ((opt = miscParams->find("enableDoubleClick")) != end)
-				enableDoubleClick = StringConverter::parseBool(opt->second);
-
+				hMonitor = (HMONITOR)StringConverter::parseInt(opt->second);			
 		}
 
 		if (!mIsExternal)
-		{			
+		{
+			DWORD		  dwStyle = WS_VISIBLE | WS_CLIPCHILDREN;
 			DWORD		  dwStyleEx = 0;					
 			MONITORINFOEX monitorInfoEx;
 			RECT		  rc;
@@ -238,27 +222,7 @@ namespace Ogre {
 			size_t devNameLen = strlen(monitorInfoEx.szDevice);
 			mDeviceName = new char[devNameLen + 1];
 
-			strcpy(mDeviceName, monitorInfoEx.szDevice);
-
-			// Update window style flags.
-			mFullscreenWinStyle = (hidden ? 0 : WS_VISIBLE) | WS_CLIPCHILDREN | WS_POPUP;
-			mWindowedWinStyle   = (hidden ? 0 : WS_VISIBLE) | WS_CLIPCHILDREN;
-			
-			if (parent)
-			{
-				mWindowedWinStyle |= WS_CHILD;
-			}
-			else
-			{
-				if (border == "none")
-					mWindowedWinStyle |= WS_POPUP;
-				else if (border == "fixed")
-					mWindowedWinStyle |= WS_OVERLAPPED | WS_BORDER | WS_CAPTION |
-					WS_SYSMENU | WS_MINIMIZEBOX;
-				else
-					mWindowedWinStyle |= WS_OVERLAPPEDWINDOW;
-
-			}
+			strcpy(mDeviceName, monitorInfoEx.szDevice);			
 
 
 			// No specified top left -> Center the window in the middle of the monitor
@@ -296,13 +260,29 @@ namespace Ogre {
 			mLeft = left;
 
 			if (mIsFullScreen)
-			{				
+			{
+				dwStyle |= WS_POPUP;
 				dwStyleEx |= WS_EX_TOPMOST;
 				mTop = monitorInfoEx.rcMonitor.top;
 				mLeft = monitorInfoEx.rcMonitor.left;											
 			}
 			else
-			{
+			{				
+				if (parent)
+				{
+					dwStyle |= WS_CHILD;
+				}
+				else
+				{
+					if (border == "none")
+						dwStyle |= WS_POPUP;
+					else if (border == "fixed")
+						dwStyle |= WS_OVERLAPPED | WS_BORDER | WS_CAPTION |
+						WS_SYSMENU | WS_MINIMIZEBOX;
+					else
+						dwStyle |= WS_OVERLAPPEDWINDOW;
+				}
+
 				int screenw = GetSystemMetrics(SM_CXSCREEN);
 				int screenh = GetSystemMetrics(SM_CYSCREEN);
 
@@ -311,7 +291,7 @@ namespace Ogre {
 					// Calculate window dimensions required
 					// to get the requested client area
 					SetRect(&rc, 0, 0, mWidth, mHeight);
-					AdjustWindowRect(&rc, getWindowStyle(fullScreen), false);
+					AdjustWindowRect(&rc, dwStyle, false);
 					mWidth = rc.right - rc.left;
 					mHeight = rc.bottom - rc.top;
 
@@ -329,13 +309,9 @@ namespace Ogre {
 						mHeight = monitorInfoEx.rcWork.bottom - mTop;		
 				}			
 			}
- 
-			UINT classStyle = CS_OWNDC;
-			if (enableDoubleClick)
-				classStyle |= CS_DBLCLKS;
 
 			// register class and create window
-			WNDCLASS wc = { classStyle, WindowEventUtilities::_WndProc, 0, 0, hInst,
+			WNDCLASS wc = { CS_OWNDC, WindowEventUtilities::_WndProc, 0, 0, hInst,
 				LoadIcon(NULL, IDI_APPLICATION), LoadCursor(NULL, IDC_ARROW),
 				(HBRUSH)GetStockObject(BLACK_BRUSH), NULL, "OgreGLWindow" };
 			RegisterClass(&wc);
@@ -367,7 +343,7 @@ namespace Ogre {
 
 			// Pass pointer to self as WM_CREATE parameter
 			mHWnd = CreateWindowEx(dwStyleEx, "OgreGLWindow", title.c_str(),
-				getWindowStyle(fullScreen), mLeft, mTop, mWidth, mHeight, parent, 0, hInst, this);
+				dwStyle, mLeft, mTop, mWidth, mHeight, parent, 0, hInst, this);
 
 			WindowEventUtilities::_addRenderWindow(this);
 
@@ -449,7 +425,7 @@ namespace Ogre {
 			PFNWGLSWAPINTERVALEXTPROC _wglSwapIntervalEXT = 
 				(PFNWGLSWAPINTERVALEXTPROC)wglGetProcAddress("wglSwapIntervalEXT");
 			if (_wglSwapIntervalEXT)
-				_wglSwapIntervalEXT(mVSync? mVSyncInterval : 0);
+				_wglSwapIntervalEXT(vsync? vsyncInterval : 0);
 		}
 
         if (old_context && old_context != mGlrc)
@@ -467,7 +443,6 @@ namespace Ogre {
 		mContext = new Win32Context(mHDC, mGlrc);
 
 		mActive = true;
-		setHidden(hidden);
 	}
 
 	void Win32Window::adjustWindow(unsigned int clientWidth, unsigned int clientHeight, 
@@ -476,7 +451,7 @@ namespace Ogre {
 		// NB only call this for non full screen
 		RECT rc;
 		SetRect(&rc, 0, 0, clientWidth, clientHeight);
-		AdjustWindowRect(&rc, getWindowStyle(mIsFullScreen), false);
+		AdjustWindowRect(&rc, WS_VISIBLE | WS_CLIPCHILDREN | WS_OVERLAPPEDWINDOW, false);
 		*winWidth = rc.right - rc.left;
 		*winHeight = rc.bottom - rc.top;
 
@@ -505,10 +480,12 @@ namespace Ogre {
 		if (mIsFullScreen != fullScreen || width != mWidth || height != mHeight)
 		{
 			mIsFullScreen = fullScreen;
-			
+			DWORD dwStyle = WS_VISIBLE | WS_CLIPCHILDREN;
+
 			if (mIsFullScreen)
 			{
-				
+				dwStyle |= WS_POPUP;
+
 				DEVMODE displayDeviceMode;
 
 				memset(&displayDeviceMode, 0, sizeof(displayDeviceMode));
@@ -565,7 +542,7 @@ namespace Ogre {
 				mTop = monitorInfo.rcMonitor.top;
 				mLeft = monitorInfo.rcMonitor.left;
 
-				SetWindowLong(mHWnd, GWL_STYLE, getWindowStyle(mIsFullScreen));
+				SetWindowLong(mHWnd, GWL_STYLE, dwStyle);
 				SetWindowPos(mHWnd, HWND_TOPMOST, mLeft, mTop, width, height,
 					SWP_NOACTIVATE);
 				mWidth = width;
@@ -574,7 +551,9 @@ namespace Ogre {
 
 			}
 			else
-			{				
+			{
+				dwStyle |= WS_OVERLAPPEDWINDOW;
+
 				// drop out of fullscreen
 				ChangeDisplaySettingsEx(mDeviceName, NULL, NULL, 0, NULL);
 
@@ -582,7 +561,7 @@ namespace Ogre {
 				unsigned int winWidth, winHeight;
 				adjustWindow(width, height, &winWidth, &winHeight);
 
-				// deal with centering when switching down to smaller resolution
+				// deal with centreing when switching down to smaller resolution
 
 				HMONITOR hMonitor = MonitorFromWindow(mHWnd, MONITOR_DEFAULTTONEAREST);
 				MONITORINFO monitorInfo;
@@ -597,7 +576,7 @@ namespace Ogre {
 				int left = screenw > winWidth ? ((screenw - winWidth) / 2) : 0;
 				int top = screenh > winHeight ? ((screenh - winHeight) / 2) : 0;
 
-				SetWindowLong(mHWnd, GWL_STYLE, getWindowStyle(mIsFullScreen));
+				SetWindowLong(mHWnd, GWL_STYLE, dwStyle);
 				SetWindowPos(mHWnd, HWND_NOTOPMOST, left, top, winWidth, winHeight,
 					SWP_DRAWFRAME | SWP_FRAMECHANGED | SWP_NOACTIVATE);
 				mWidth = width;
@@ -669,60 +648,6 @@ namespace Ogre {
 		return mClosed;
 	}
 
-	void Win32Window::setHidden(bool hidden)
-	{
-		mHidden = hidden;
-		if (!mIsExternal)
-		{
-			if (hidden)
-				ShowWindow(mHWnd, SW_HIDE);
-			else
-				ShowWindow(mHWnd, SW_SHOWNORMAL);
-		}
-	}
-
-	void Win32Window::setVSyncEnabled(bool vsync)
-	{
-		mVSync = vsync;
-		HDC old_hdc = wglGetCurrentDC();
-		HGLRC old_context = wglGetCurrentContext();
-		if (!wglMakeCurrent(mHDC, mGlrc))
-			OGRE_EXCEPT(Exception::ERR_RENDERINGAPI_ERROR, "wglMakeCurrent", "Win32Window::setVSyncEnabled");
-
-		// Do not change vsync if the external window has the OpenGL control
-		if (!mIsExternalGLControl) {
-			// Don't use wglew as if this is the first window, we won't have initialised yet
-			PFNWGLSWAPINTERVALEXTPROC _wglSwapIntervalEXT = 
-				(PFNWGLSWAPINTERVALEXTPROC)wglGetProcAddress("wglSwapIntervalEXT");
-			if (_wglSwapIntervalEXT)
-				_wglSwapIntervalEXT(mVSync? mVSyncInterval : 0);
-		}
-
-        if (old_context && old_context != mGlrc)
-        {
-            // Restore old context
-		    if (!wglMakeCurrent(old_hdc, old_context))
-			    OGRE_EXCEPT(Exception::ERR_RENDERINGAPI_ERROR, "wglMakeCurrent() failed", "Win32Window::setVSyncEnabled");
-		}
-	}
-
-	void Win32Window::setVSyncInterval(unsigned int interval)
-	{
-		mVSyncInterval = interval;
-		if (mVSync)
-			setVSyncEnabled(true);
-	}
-
-	bool Win32Window::isVSyncEnabled() const
-	{
-		return mVSync;
-	}
-
-	unsigned int Win32Window::getVSyncInterval() const
-	{
-		return mVSyncInterval;
-	}
-
 	void Win32Window::reposition(int left, int top)
 	{
 		if (mHWnd && !mIsFullScreen)
@@ -737,7 +662,7 @@ namespace Ogre {
 		if (mHWnd && !mIsFullScreen)
 		{
 			RECT rc = { 0, 0, width, height };
-			AdjustWindowRect(&rc, getWindowStyle(mIsFullScreen), false);
+			AdjustWindowRect(&rc, GetWindowLong(mHWnd, GWL_STYLE), false);
 			width = rc.right - rc.left;
 			height = rc.bottom - rc.top;
 			SetWindowPos(mHWnd, 0, 0, 0, width, height,
@@ -750,55 +675,26 @@ namespace Ogre {
 		if (!mHWnd || IsIconic(mHWnd))
 			return;
 
-		updateWindowRect();		
-	}
-
-
-	void Win32Window::updateWindowRect()
-	{
 		RECT rc;
-		BOOL result;
-
-		// Update top left parameters
-		result = GetWindowRect(mHWnd, &rc);
-		if (result == FALSE)
-		{
-			mTop = 0;
-			mLeft = 0;
-			mWidth = 0;
-			mHeight = 0;
-			return;
-		}
-
+		// top and left represent outer window position
+		GetWindowRect(mHWnd, &rc);
 		mTop = rc.top;
 		mLeft = rc.left;
-
 		// width and height represent drawable area only
-		result = GetClientRect(mHWnd, &rc);
-		if (result == FALSE)
-		{
-			mTop = 0;
-			mLeft = 0;
-			mWidth = 0;
-			mHeight = 0;
+		GetClientRect(mHWnd, &rc);
+
+		if (mWidth == rc.right && mHeight == rc.bottom)
 			return;
-		}
-		unsigned int width = rc.right - rc.left;
-		unsigned int height = rc.bottom - rc.top;
 
-		// Case window resized.
-		if (width != mWidth || height != mHeight)
-		{
-			mWidth  = rc.right - rc.left;
-			mHeight = rc.bottom - rc.top;
+		mWidth = rc.right - rc.left;
+		mHeight = rc.bottom - rc.top;
 
-			// Notify viewports of resize
-			ViewportList::iterator it = mViewportList.begin();
-			while( it != mViewportList.end() )
-				(*it++).second->_updateDimensions();			
-		}
+		// Notify viewports of resize
+		ViewportList::iterator it, itend;
+		itend = mViewportList.end();
+		for( it = mViewportList.begin(); it != itend; ++it )
+			(*it).second->_updateDimensions();
 	}
-
 
 	void Win32Window::swapBuffers(bool waitForVSync)
 	{

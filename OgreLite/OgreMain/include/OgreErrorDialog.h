@@ -42,16 +42,12 @@ THE SOFTWARE.
 # include "WIN32/OgreErrorDialogImp.h"
 #elif OGRE_PLATFORM == OGRE_PLATFORM_LINUX
 # include "GLX/OgreErrorDialogImp.h"
-#elif OGRE_PLATFORM == OGRE_PLATFORM_TEGRA2
-# include "Tegra2/OgreErrorDialogImp.h"
 #elif OGRE_PLATFORM == OGRE_PLATFORM_APPLE
 # include "OSX/OgreErrorDialogImp.h"
-#elif OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
+#elif OGRE_PLATFORM == OGRE_PLATFORM_IPHONE
 # include "iPhone/OgreErrorDialogImp.h"
 #elif OGRE_PLATFORM == OGRE_PLATFORM_SYMBIAN
 # include "Symbian/OgreErrorDialogImp.h"
-#elif OGRE_PLATFORM == OGRE_PLATFORM_ANDROID
-# include "Android/OgreErrorDialogImp.h"
 #endif
 
 #endif

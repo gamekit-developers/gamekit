@@ -69,7 +69,6 @@ namespace Ogre
 			void updateParams(const MaterialPtr& mat, const Terrain* terrain);
 			void updateParamsForCompositeMap(const MaterialPtr& mat, const Terrain* terrain);
 			void requestOptions(Terrain* terrain);
-			bool isVertexCompressionSupported() const;
 
 			/** Whether to support normal mapping per layer in the shader (default true). 
 			*/
@@ -145,7 +144,6 @@ namespace Ogre
 
 			/// Internal
 			bool _isSM3Available() const { return mSM3Available; }
-			bool _isSM4Available() const { return mSM4Available; }
 		
 		protected:
 
@@ -230,20 +228,6 @@ namespace Ogre
 				void generateFpFooter(const SM2Profile* prof, const Terrain* terrain, TechniqueType tt, StringUtil::StrStreamType& outStream) {}
 			};
 
-            /// Utility class to help with generating shaders for GLSL ES.
-			class ShaderHelperGLSLES : public ShaderHelper
-			{
-			protected:
-				HighLevelGpuProgramPtr createVertexProgram(const SM2Profile* prof, const Terrain* terrain, TechniqueType tt);
-				HighLevelGpuProgramPtr createFragmentProgram(const SM2Profile* prof, const Terrain* terrain, TechniqueType tt);
-				void generateVpHeader(const SM2Profile* prof, const Terrain* terrain, TechniqueType tt, StringUtil::StrStreamType& outStream) {}
-				void generateFpHeader(const SM2Profile* prof, const Terrain* terrain, TechniqueType tt, StringUtil::StrStreamType& outStream) {}
-				void generateVpLayer(const SM2Profile* prof, const Terrain* terrain, TechniqueType tt, uint layer, StringUtil::StrStreamType& outStream) {}
-				void generateFpLayer(const SM2Profile* prof, const Terrain* terrain, TechniqueType tt, uint layer, StringUtil::StrStreamType& outStream) {}
-				void generateVpFooter(const SM2Profile* prof, const Terrain* terrain, TechniqueType tt, StringUtil::StrStreamType& outStream) {}
-				void generateFpFooter(const SM2Profile* prof, const Terrain* terrain, TechniqueType tt, StringUtil::StrStreamType& outStream) {}
-			};
-
 			ShaderHelper* mShaderGen;
 			bool mLayerNormalMappingEnabled;
 			bool mLayerParallaxMappingEnabled;
@@ -256,7 +240,6 @@ namespace Ogre
 			bool mDepthShadows;
 			bool mLowLodShadows;
 			bool mSM3Available;
-			bool mSM4Available;
 
 			bool isShadowingEnabled(TechniqueType tt, const Terrain* terrain) const;
 

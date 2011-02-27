@@ -77,7 +77,7 @@ namespace Ogre
 		{
 			TextureResources* textureResource = it->second;
 			
-			OGRE_DELETE_T(textureResource, TextureResources, MEMCATEGORY_RENDERSYS);
+			SAFE_DELETE(textureResource);
 			++it;
 		}		
 		mMapDeviceToTextureResources.clear();
@@ -294,7 +294,7 @@ namespace Ogre
 	{
 		assert(getTextureType() == TEX_TYPE_CUBE_MAP);
 
-        LoadedStreams loadedStreams = LoadedStreams(OGRE_NEW_T (vector<MemoryDataStreamPtr>::type, MEMCATEGORY_GENERAL), SPFM_DELETE_T );
+        LoadedStreams loadedStreams = LoadedStreams(new vector<MemoryDataStreamPtr>::type());
         // DDS load?
 		if (getSourceFileType() == "dds")
 		{
@@ -302,7 +302,7 @@ namespace Ogre
 			DataStreamPtr dstream = 
 				ResourceGroupManager::getSingleton().openResource(
 					mName, mGroup, true, this);
-            loadedStreams->push_back(MemoryDataStreamPtr(OGRE_NEW MemoryDataStream(dstream)));
+            loadedStreams->push_back(MemoryDataStreamPtr(new MemoryDataStream(dstream)));
         }
         else
         {
@@ -327,7 +327,7 @@ namespace Ogre
 					ResourceGroupManager::getSingleton().openResource(
 						fullName, mGroup, true, this);
 
-                loadedStreams->push_back(MemoryDataStreamPtr(OGRE_NEW MemoryDataStream(dstream)));
+                loadedStreams->push_back(MemoryDataStreamPtr(new MemoryDataStream(dstream)));
 			}
         }
 
@@ -343,8 +343,8 @@ namespace Ogre
 			ResourceGroupManager::getSingleton().openResource(
 				mName, mGroup, true, this);
 
-        LoadedStreams loadedStreams = LoadedStreams(OGRE_NEW_T (vector<MemoryDataStreamPtr>::type, MEMCATEGORY_GENERAL), SPFM_DELETE_T);
-        loadedStreams->push_back(MemoryDataStreamPtr(OGRE_NEW MemoryDataStream(dstream)));
+        LoadedStreams loadedStreams = LoadedStreams(new vector<MemoryDataStreamPtr>::type());
+        loadedStreams->push_back(MemoryDataStreamPtr(new MemoryDataStream(dstream)));
         return loadedStreams;
     }
 	/****************************************************************************************/
@@ -357,8 +357,8 @@ namespace Ogre
 			ResourceGroupManager::getSingleton().openResource(
 				mName, mGroup, true, this);
 
-        LoadedStreams loadedStreams = LoadedStreams(OGRE_NEW_T (vector<MemoryDataStreamPtr>::type, MEMCATEGORY_GENERAL), SPFM_DELETE_T);
-        loadedStreams->push_back(MemoryDataStreamPtr(OGRE_NEW MemoryDataStream(dstream)));
+        LoadedStreams loadedStreams = LoadedStreams(new vector<MemoryDataStreamPtr>::type());
+        loadedStreams->push_back(MemoryDataStreamPtr(new MemoryDataStream(dstream)));
         return loadedStreams;
 	}
 	/****************************************************************************************/
@@ -415,7 +415,7 @@ namespace Ogre
 	{
 		assert(mMapDeviceToTextureResources.find(d3d9Device) == mMapDeviceToTextureResources.end());
 
-		TextureResources* textureResources = OGRE_NEW_T(TextureResources, MEMCATEGORY_RENDERSYS);
+		TextureResources* textureResources = new TextureResources;
 
 		textureResources->pNormTex		= NULL;
 		textureResources->pCubeTex		= NULL;
@@ -506,22 +506,7 @@ namespace Ogre
 				numMips = 1;
 			}
 
-			// Check dynamic textures
-			if (mUsage & TU_DYNAMIC)
-			{
-				D3DFORMAT d3dPF = _chooseD3DFormat(d3d9Device);
-				if (_canUseDynamicTextures(d3d9Device, usage, D3DRTYPE_TEXTURE, d3dPF))
-				{
-					usage |= D3DUSAGE_DYNAMIC;
-					mDynamicTextures = true;
-				}
-				else
-				{
-					mDynamicTextures = false;
-				}
-			}
-
-			// Determine D3D pool to use
+            // Determine D3D pool to use
             D3DPOOL pool;
             if (useDefaultPool())
             {
@@ -640,22 +625,7 @@ namespace Ogre
 				numMips = 1;
 			}
 
-			// Check dynamic textures
-			if (mUsage & TU_DYNAMIC)
-			{
-				D3DFORMAT d3dPF = _chooseD3DFormat(d3d9Device);
-				if (_canUseDynamicTextures(d3d9Device, usage, D3DRTYPE_TEXTURE, d3dPF))
-				{
-					usage |= D3DUSAGE_DYNAMIC;
-					mDynamicTextures = true;
-				}
-				else
-				{
-					mDynamicTextures = false;
-				}
-			}
-			
-			// Determine D3D pool to use
+            // Determine D3D pool to use
             D3DPOOL pool;
             if (useDefaultPool())
             {
@@ -799,21 +769,6 @@ namespace Ogre
 				numMips = 1;
 			}
 
-			// Check dynamic textures
-			if (mUsage & TU_DYNAMIC)
-			{
-				D3DFORMAT d3dPF = _chooseD3DFormat(d3d9Device);
-				if (_canUseDynamicTextures(d3d9Device, usage, D3DRTYPE_VOLUMETEXTURE, d3dPF))
-				{
-					usage |= D3DUSAGE_DYNAMIC;
-					mDynamicTextures = true;
-				}
-				else
-				{
-					mDynamicTextures = false;
-				}
-			}
-
             // Determine D3D pool to use
             D3DPOOL pool;
             if (useDefaultPool())
@@ -836,14 +791,11 @@ namespace Ogre
 
 			HRESULT hr;
 
-			UINT autoWidthHeight = Root::getSingleton().getRenderSystem()->getCapabilities()->hasCapability(RSC_NON_POWER_OF_2_TEXTURES) ? 
-				D3DX_DEFAULT_NONPOW2 : D3DX_DEFAULT;
-
 			hr = D3DXCreateTextureFromFileInMemoryEx(
 				d3d9Device,
 				(*loadedStreams)[0]->getPtr(),
 				static_cast<UINT>((*loadedStreams)[0]->size()),
-				autoWidthHeight, autoWidthHeight, // dims
+				D3DX_DEFAULT, D3DX_DEFAULT, // dims
 				numMips,
 				usage,
 				D3DFMT_UNKNOWN,
@@ -1745,7 +1697,7 @@ namespace Ogre
 			{
 				for(size_t mip=0; mip<=mNumMipmaps; ++mip)
 				{
-					buffer = OGRE_NEW D3D9HardwarePixelBuffer((HardwareBuffer::Usage)bufusage, this);
+					buffer = new D3D9HardwarePixelBuffer((HardwareBuffer::Usage)bufusage, this);
 					mSurfaceList.push_back(HardwarePixelBufferSharedPtr(buffer));
 				}
 			}
@@ -1899,8 +1851,8 @@ namespace Ogre
 			// after device reset.
 			freeTextureResources(d3d9Device, textureResource);
 
-			OGRE_DELETE_T(textureResource, TextureResources, MEMCATEGORY_RENDERSYS);
-			
+			SAFE_DELETE(textureResource);
+
 			mMapDeviceToTextureResources.erase(it);
 
 			LogManager::getSingleton().logMessage("Released D3D9 texture: " + mName);	

@@ -109,7 +109,6 @@ namespace Ogre {
 			// No indexes & issue as a strip
 			mRenderOp.useIndexes = false;
 			mRenderOp.operationType = RenderOperation::OT_TRIANGLE_STRIP;
-            mRenderOp.useGlobalInstancingVertexBufferIsAvailable = false;
 
 			mInitialised = true;
 		}

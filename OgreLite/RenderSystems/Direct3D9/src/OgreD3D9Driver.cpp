@@ -63,11 +63,7 @@ namespace Ogre
 
 	D3D9Driver::~D3D9Driver()
 	{
-		if (mpVideoModeList != NULL)
-		{
-			OGRE_DELETE mpVideoModeList;
-			mpVideoModeList = NULL;
-		}
+		SAFE_DELETE( mpVideoModeList );		
 	}
 
 	String D3D9Driver::DriverName() const
@@ -88,7 +84,7 @@ namespace Ogre
 	D3D9VideoModeList* D3D9Driver::getVideoModeList()
 	{
 		if( !mpVideoModeList )
-			mpVideoModeList = OGRE_NEW D3D9VideoModeList( this );
+			mpVideoModeList = new D3D9VideoModeList( this );
 
 		return mpVideoModeList;
 	}	

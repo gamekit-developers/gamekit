@@ -210,7 +210,7 @@ namespace Ogre {
     {
     //no endian flipping for 1-byte bools
     //XXX Nasty Hack to convert to 1-byte bools
-#	if OGRE_PLATFORM == OGRE_PLATFORM_APPLE || OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
+#	if OGRE_PLATFORM == OGRE_PLATFORM_APPLE || OGRE_PLATFORM == OGRE_PLATFORM_IPHONE
         char * pCharToWrite = (char *)malloc(sizeof(char) * count);
         for(unsigned int i = 0; i < count; i++)
         {
@@ -229,16 +229,14 @@ namespace Ogre {
     //---------------------------------------------------------------------
     void Serializer::writeData(const void* const buf, size_t size, size_t count)
     {
-		mStream->write(buf, size * count);
+        fwrite((void* const)buf, size, count, mpfFile);
     }
     //---------------------------------------------------------------------
     void Serializer::writeString(const String& string)
     {
-		// Old, backwards compatible way - \n terminated
-		mStream->write(string.c_str(), string.length());
-		// Write terminating newline char
-		char terminator = '\n';
-		mStream->write(&terminator, 1);
+        fputs(string.c_str(), mpfFile);
+        // Write terminating newline char
+        fputc('\n', mpfFile);
     }
     //---------------------------------------------------------------------
     void Serializer::readFileHeader(DataStreamPtr& stream)
@@ -280,7 +278,7 @@ namespace Ogre {
     void Serializer::readBools(DataStreamPtr& stream, bool* pDest, size_t count)
     {
         //XXX Nasty Hack to convert 1 byte bools to 4 byte bools
-#	if OGRE_PLATFORM == OGRE_PLATFORM_APPLE || OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
+#	if OGRE_PLATFORM == OGRE_PLATFORM_APPLE || OGRE_PLATFORM == OGRE_PLATFORM_IPHONE
         char * pTemp = (char *)malloc(1*count); // to hold 1-byte bools
         stream->read(pTemp, 1 * count);
         for(unsigned int i = 0; i < count; i++)

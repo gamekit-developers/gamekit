@@ -839,10 +839,6 @@ namespace Ogre
 		@note This point is relative to Terrain::getPosition
 		*/
 		void getPoint(long x, long y, float height, Vector3* outpos);
-		/** Get a transform which converts Vector4(xindex, yindex, height, 1) into 
-			an object-space position including scalings and alignment.
-		*/
-		void getPointTransform(Matrix4* outXform) const;
 		/** Translate a vector from world space to local terrain space based on the alignment options.
 		@param inVec The vector in basis space, where x/y represents the 
 		terrain plane and z represents the up vector
@@ -954,21 +950,12 @@ namespace Ogre
 		Alignment getAlignment() const;
 		/// Get the size of the terrain in vertices along one side
 		uint16 getSize() const;
-		/** Set the size of terrain in vertices along one side. 
-		@note The existing height data will be bilinear filtered to fill the new size
-		@param newSize the new size of the terrain
-		*/
-        void setSize(uint16 newSize);
 		/// Get the maximum size in vertices along one side of a batch 
 		uint16 getMaxBatchSize() const;
 		/// Get the minimum size in vertices along one side of a batch 
 		uint16 getMinBatchSize() const;
 		/// Get the size of the terrain in world units
 		Real getWorldSize() const;
-		/** Set the world size of terrain. 
-		@param newWorldSize the new world size of the terrain
-		*/
-        void setWorldSize(Real newWorldSize);
 
 		/** Get the number of layers in this terrain. */
 		uint8 getLayerCount() const { return static_cast<uint8>(mLayers.size()); }
@@ -1503,9 +1490,6 @@ namespace Ogre
 		*/
 		void _setCompositeMapRequired(bool compositeMap);
 
-		/// Whether we're using vertex compression or not
-		bool _getUseVertexCompression() const; 
-		
 		/// WorkQueue::RequestHandler override
 		bool canHandleRequest(const WorkQueue::Request* req, const WorkQueue* srcQ);
 		/// WorkQueue::RequestHandler override
@@ -1848,7 +1832,6 @@ namespace Ogre
 		ColourValue mCompositeMapDiffuse;
 		Real mCompositeMapDistance;
 		String mResourceGroup;
-		bool mUseVertexCompressionWhenAvailable;
 
 	public:
 		TerrainGlobalOptions();
@@ -2014,20 +1997,6 @@ namespace Ogre
 		/** Get the default resource group to use to load / save terrains.
 		*/
 		const String& getDefaultResourceGroup() { return mResourceGroup; }
-		
-		/** Get whether to allow vertex compression to be used when the material
-			generator states that it supports it.
-		*/
-		bool getUseVertexCompressionWhenAvailable() const { return mUseVertexCompressionWhenAvailable; }
-
-		/** Set whether to allow vertex compression to be used when the material
-		 generator states that it supports it.
-		 @note You should only call this before creating any terrain instances. 
-		 The default is true, so if a material generator supports compressed vertices, 
-		 and so does the hardware (this basically means shader support), they will be used).
-		 However you can disable this in an emergency if required.
-		 */
-		void setUseVertexCompressionWhenAvailable(bool enable) { mUseVertexCompressionWhenAvailable = enable; }
 
 		/** Override standard Singleton retrieval.
 		@remarks

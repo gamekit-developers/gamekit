@@ -63,12 +63,12 @@ namespace Ogre {
 
         if (paramIt->second == "vertex_program")
         {
-            return OGRE_NEW D3D9GpuVertexProgram(this, name, handle, group, 
+            return new D3D9GpuVertexProgram(this, name, handle, group, 
                 isManual, loader);
         }
         else
         {
-            return OGRE_NEW D3D9GpuFragmentProgram(this, name, handle, group, 
+            return new D3D9GpuFragmentProgram(this, name, handle, group, 
                 isManual, loader);
         }
     }
@@ -79,12 +79,12 @@ namespace Ogre {
     {
         if (gptype == GPT_VERTEX_PROGRAM)
         {
-            return OGRE_NEW D3D9GpuVertexProgram(this, name, handle, group, 
+            return new D3D9GpuVertexProgram(this, name, handle, group, 
                 isManual, loader);
         }
         else
         {
-            return OGRE_NEW D3D9GpuFragmentProgram(this, name, handle, group, 
+            return new D3D9GpuFragmentProgram(this, name, handle, group, 
                 isManual, loader);
         }
     }

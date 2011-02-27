@@ -56,7 +56,7 @@ namespace Ogre
 		/// Grid is in the Y/Z plane
 		G2D_Y_Z = 2
 	};
-	/** Specialisation of PageStrategyData for Grid2DPageStrategy.
+	/** Specialisation of PageStrategyData for GridPageStrategy.
 	@remarks
 		Structurally this data defines with a grid of pages, with the logical 
 		origin in the middle of the entire grid.
@@ -115,7 +115,6 @@ namespace Ogre
 		</tr>
 		</table>
 
-    @sa Grid3DPageStrategyData
 	*/
 	class _OgrePagingExport Grid2DPageStrategyData : public PageStrategyData
 	{

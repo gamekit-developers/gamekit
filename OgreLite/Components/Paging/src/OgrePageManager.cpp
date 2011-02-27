@@ -36,7 +36,6 @@ THE SOFTWARE.
 #include "OgrePagedWorldSection.h"
 #include "OgrePagedWorld.h"
 #include "OgreGrid2DPageStrategy.h"
-#include "OgreGrid3DPageStrategy.h"
 #include "OgreSimplePageContentCollection.h"
 #include "OgreStreamSerialiser.h"
 #include "OgreRoot.h"
@@ -52,7 +51,6 @@ namespace Ogre
 		, mDebugDisplayLvl(0)
 		, mPagingEnabled(true)
 		, mGrid2DPageStrategy(0)
-		, mGrid3DPageStrategy(0)
 		, mSimpleCollectionFactory(0)
 	{
 
@@ -71,7 +69,6 @@ namespace Ogre
 	{
 		Root::getSingleton().removeFrameListener(&mEventRouter);
 
-		OGRE_DELETE mGrid3DPageStrategy;
 		OGRE_DELETE mGrid2DPageStrategy;
 		OGRE_DELETE mSimpleCollectionFactory;
 	}
@@ -81,8 +78,6 @@ namespace Ogre
 		mGrid2DPageStrategy = OGRE_NEW Grid2DPageStrategy(this);
 		addStrategy(mGrid2DPageStrategy);
 
-		mGrid3DPageStrategy = OGRE_NEW Grid3DPageStrategy(this);
-		addStrategy(mGrid3DPageStrategy);
 	}
 	//---------------------------------------------------------------------
 	void PageManager::createStandardContentFactories()

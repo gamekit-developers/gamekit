@@ -39,6 +39,7 @@ Code Style Update	 :
 
 #include <OgrePlugin.h>
 #include "OgreOctreeZone.h"
+#include "OgreTerrainZone.h"
 
 namespace Ogre
 {
@@ -65,6 +66,8 @@ namespace Ogre
 		void uninstall();
 	protected:
 		OctreeZoneFactory* mOctreeZoneFactory;
+		TerrainZoneFactory* mTerrainZoneFactory;
+		TerrainZonePageSourceListenerManager* mTerrainZonePSListenerManager;
 
 	};
 }

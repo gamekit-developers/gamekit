@@ -58,14 +58,9 @@ void OSXGLSupport::addConfig( void )
 	ConfigOption optFullScreen;
 	ConfigOption optVideoMode;
 	ConfigOption optBitDepth;
-	ConfigOption optFSAA;
+    ConfigOption optFSAA;
 	ConfigOption optRTTMode;
     ConfigOption optMacAPI;
-	ConfigOption optHiddenWindow;
-	ConfigOption optVsync;
-#ifdef RTSHADER_SYSTEM_BUILD_CORE_SHADERS
-	ConfigOption optEnableFixedPipeline;
-#endif
 
 	// FS setting possiblities
 	optFullScreen.name = "Full Screen";
@@ -74,47 +69,14 @@ void OSXGLSupport::addConfig( void )
 	optFullScreen.currentValue = "No";
 	optFullScreen.immutable = false;
 
-    // Hidden window setting possiblities
-	optHiddenWindow.name = "hidden";
-	optHiddenWindow.possibleValues.push_back( "Yes" );
-	optHiddenWindow.possibleValues.push_back( "No" );
-	optHiddenWindow.currentValue = "No";
-	optHiddenWindow.immutable = false;
-
-    // FS setting possiblities
-	optVsync.name = "vsync";
-	optVsync.possibleValues.push_back( "Yes" );
-	optVsync.possibleValues.push_back( "No" );
-	optVsync.currentValue = "No";
-	optVsync.immutable = false;
-
 	optBitDepth.name = "Colour Depth";
 	optBitDepth.possibleValues.push_back( "32" );
 	optBitDepth.possibleValues.push_back( "16" );
 	optBitDepth.currentValue = "32";
 	optBitDepth.immutable = false;
 
-    optRTTMode.name = "RTT Preferred Mode";
-	optRTTMode.possibleValues.push_back( "FBO" );
-	optRTTMode.possibleValues.push_back( "PBuffer" );
-	optRTTMode.possibleValues.push_back( "Copy" );
-	optRTTMode.currentValue = "FBO";
-	optRTTMode.immutable = false;
-
-#ifdef RTSHADER_SYSTEM_BUILD_CORE_SHADERS
-		optEnableFixedPipeline.name = "Fixed Pipeline Enabled";
-		optEnableFixedPipeline.possibleValues.push_back( "Yes" );
-		optEnableFixedPipeline.possibleValues.push_back( "No" );
-		optEnableFixedPipeline.currentValue = "Yes";
-		optEnableFixedPipeline.immutable = false;
-#endif
-
     mOptions[ optFullScreen.name ] = optFullScreen;
 	mOptions[ optBitDepth.name ] = optBitDepth;
-
-#ifdef RTSHADER_SYSTEM_BUILD_CORE_SHADERS
-		mOptions[optEnableFixedPipeline.name] = optEnableFixedPipeline;
-#endif
 
 	CGLRendererInfoObj rend;
 
@@ -277,12 +239,10 @@ void OSXGLSupport::addConfig( void )
     optMacAPI.immutable = false;
 
     mOptions[optMacAPI.name] = optMacAPI;
-	mOptions[optFullScreen.name] = optFullScreen;
+    mOptions[optFullScreen.name] = optFullScreen;
 	mOptions[optVideoMode.name] = optVideoMode;
     mOptions[optFSAA.name] = optFSAA;
 	mOptions[optRTTMode.name] = optRTTMode;
-	mOptions[optHiddenWindow.name] = optHiddenWindow;
-	mOptions[optVsync.name] = optVsync;
 }
 
 String OSXGLSupport::validateConfig( void )
@@ -318,30 +278,6 @@ RenderWindow* OSXGLSupport::createWindow( bool autoCreateWindow, GLRenderSystem*
 			winOptions[ "FSAA" ] = opt->second.currentValue;
         }
 
-        opt = mOptions.find( "hidden" );
-        if( opt != mOptions.end() )
-        {
-            winOptions[ "hidden" ] = opt->second.currentValue;
-        }
-
-        opt = mOptions.find( "vsync" );
-        if( opt != mOptions.end() )
-        {
-            winOptions[ "vsync" ] = opt->second.currentValue;
-        }
-
-        opt = mOptions.find( "sRGB Gamma Conversion" );
-        if( opt != mOptions.end() )
-            winOptions["gamma"] = opt->second.currentValue;
-
-#ifdef RTSHADER_SYSTEM_BUILD_CORE_SHADERS
-			opt = mOptions.find("Fixed Pipeline Enabled");
-			if (opt == mOptions.end())
-				OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS, "Can't find Fixed Pipeline enabled options!", "Win32GLSupport::createWindow");
-			bool enableFixedPipeline = (opt->second.currentValue == "Yes");
-			renderSystem->setFixedPipelineEnabled(enableFixedPipeline);
-#endif
-
 		return renderSystem->_createRenderWindow( windowTitle, w, h, fullscreen, &winOptions );
 	}
 	else
@@ -360,12 +296,13 @@ RenderWindow* OSXGLSupport::newWindow( const String &name, unsigned int width, u
 	
 	if(miscParams)
 	{
-        NameValuePairList::const_iterator opt(NULL);
-        
-        // First we must determine if this is a Carbon or a Cocoa window
-        // that we wish to create
-        opt = miscParams->find("macAPI");
-        if(opt != miscParams->end() && opt->second == "cocoa")
+		ConfigOptionMap::const_iterator opt(NULL);
+
+		// First we must determine if this is a Carbon or a Cocoa window
+		// that we wish to create
+		opt = mOptions.find("macAPI");
+        String m = opt->second.currentValue;
+		if(opt != mOptions.end() && opt->second.currentValue == "cocoa")
 		{
 			// Our user wants a Cocoa compatible system
 			mAPI = "cocoa";

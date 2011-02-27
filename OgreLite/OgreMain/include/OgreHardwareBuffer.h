@@ -30,7 +30,6 @@ THE SOFTWARE.
 
 // Precompiler options
 #include "OgrePrerequisites.h"
-#include "OgreException.h"
 
 namespace Ogre {
 
@@ -181,15 +180,8 @@ namespace Ogre {
 		    virtual void* lock(size_t offset, size_t length, LockOptions options)
             {
                 assert(!isLocked() && "Cannot lock this buffer, it is already locked!");
-
-				void* ret = NULL;
-				if ((length + offset) > mSizeInBytes)
-				{
-					OGRE_EXCEPT(Exception::ERR_INVALIDPARAMS,
-						"Lock request out of bounds.",
-						"HardwareBuffer::lock");
-				}
-				else if (mUseShadowBuffer)
+                void* ret;
+				if (mUseShadowBuffer)
                 {
 					if (options != HBL_READ_ONLY)
 					{

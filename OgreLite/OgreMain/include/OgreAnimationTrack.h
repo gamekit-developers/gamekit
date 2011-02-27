@@ -491,9 +491,6 @@ namespace Ogre
 
 		/** Get the type of vertex animation we're performing. */
 		VertexAnimationType getAnimationType(void) const { return mAnimationType; }
-		
-		/** Whether the vertex animation (if present) includes normals */
-		bool getVertexAnimationIncludesNormals() const;
 
 		/** Creates a new morph KeyFrame and adds it to this animation at the given time index.
 		@remarks

@@ -142,10 +142,6 @@ namespace Ogre {
 			techniques.
 		*/
 		void registerCompositorLogic(const String& name, CompositorLogic* logic);
-
-		/** Removes a listener for compositor logic registered with registerCompositorLogic
-		*/
-		void unregisterCompositorLogic(const String& name);
 		
 		/** Get a compositor logic by its name
 		*/
@@ -158,6 +154,13 @@ namespace Ogre {
 		/** Get a custom composition pass by its name 
 		*/
 		CustomCompositionPass* getCustomCompositionPass(const String& name);
+
+		/**
+		Relocates a compositor chain from one viewport to another
+		@param sourceVP The viewport to take the chain from
+		@param destVP The viewport to connect the chain to
+		*/
+		void _relocateChain(Viewport* sourceVP, Viewport* destVP);
 
 		/** Override standard Singleton retrieval.
 		@remarks

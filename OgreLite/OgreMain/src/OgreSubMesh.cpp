@@ -43,7 +43,6 @@ namespace Ogre {
         , mMatInitialised(false)
         , mBoneAssignmentsOutOfDate(false)
 		, mVertexAnimationType(VAT_NONE)
-		, mVertexAnimationIncludesNormals(false)
 		, mBuildEdgesEnabled(true)
     {
 		indexData = OGRE_NEW IndexData();

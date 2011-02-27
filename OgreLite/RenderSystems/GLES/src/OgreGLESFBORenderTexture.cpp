@@ -61,56 +61,34 @@ namespace Ogre {
 	{
 		mFB.swapBuffers();
 	}
+   
+/// Size of probe texture
+#define PROBE_SIZE 16
 
-    //-----------------------------------------------------------------------------
-	bool GLESFBORenderTexture::attachDepthBuffer( DepthBuffer *depthBuffer )
-	{
-		bool result;
-		if( result = GLESRenderTexture::attachDepthBuffer( depthBuffer ) )
-			mFB.attachDepthBuffer( depthBuffer );
+/// Stencil and depth formats to be tried
+static const GLenum stencilFormats[] =
+{
+    GL_NONE,                    // No stencil
+    GL_STENCIL_INDEX8_OES
+};
+static const size_t stencilBits[] =
+{
+    0, 8
+};
+#define STENCILFORMAT_COUNT (sizeof(stencilFormats)/sizeof(GLenum))
 
-		return result;
-	}
-	//-----------------------------------------------------------------------------
-	void GLESFBORenderTexture::detachDepthBuffer()
-	{
-		mFB.detachDepthBuffer();
-		GLESRenderTexture::detachDepthBuffer();
-	}
-	//-----------------------------------------------------------------------------
-	void GLESFBORenderTexture::_detachDepthBuffer()
-	{
-		mFB.detachDepthBuffer();
-		GLESRenderTexture::_detachDepthBuffer();
-	}
-
-    /// Size of probe texture
-    #define PROBE_SIZE 16
-
-    /// Stencil and depth formats to be tried
-    static const GLenum stencilFormats[] =
-    {
-        GL_NONE,                    // No stencil
-        GL_STENCIL_INDEX8_OES
-    };
-    static const size_t stencilBits[] =
-    {
-        0, 8
-    };
-    #define STENCILFORMAT_COUNT (sizeof(stencilFormats)/sizeof(GLenum))
-
-    static const GLenum depthFormats[] =
-    {
-        GL_NONE,
-        GL_DEPTH_COMPONENT16_OES,
-        GL_DEPTH_COMPONENT24_OES,   // Prefer 24 bit depth
-        GL_DEPTH24_STENCIL8_OES     // packed depth / stencil
-    };
-    static const size_t depthBits[] =
-    {
-        0,16,24,24
-    };
-    #define DEPTHFORMAT_COUNT (sizeof(depthFormats)/sizeof(GLenum))
+static const GLenum depthFormats[] =
+{
+    GL_NONE,
+    GL_DEPTH_COMPONENT16_OES,
+    GL_DEPTH_COMPONENT24_OES,   // Prefer 24 bit depth
+    GL_DEPTH24_STENCIL8_OES     // packed depth / stencil
+};
+static const size_t depthBits[] =
+{
+    0,16,24,24
+};
+#define DEPTHFORMAT_COUNT (sizeof(depthFormats)/sizeof(GLenum))
 
 	GLESFBOManager::GLESFBOManager() 
 		: mTempFBO(0)
@@ -399,7 +377,7 @@ namespace Ogre {
             fbo->bind();
         else
             // Old style context (window/pbuffer) or copying render texture
-#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
+#if OGRE_PLATFORM == OGRE_PLATFORM_IPHONE
             // The screen buffer is 1 on iPhone
             glBindFramebufferOES(GL_FRAMEBUFFER_OES, 1);
 #else

@@ -50,7 +50,6 @@ namespace Ogre {
         mRenderOp.vertexData->vertexStart = 0; 
         mRenderOp.operationType = RenderOperation::OT_TRIANGLE_STRIP; 
         mRenderOp.useIndexes = false; 
-        mRenderOp.useGlobalInstancingVertexBufferIsAvailable = false;
 
         VertexDeclaration* decl = mRenderOp.vertexData->vertexDeclaration;
         VertexBufferBinding* bind = mRenderOp.vertexData->vertexBufferBinding;
@@ -111,7 +110,17 @@ namespace Ogre {
             bind->setBinding(TEXCOORD_BINDING, tvbuf);
 
             // Set up basic tex coordinates
-            setDefaultUVs();
+            float* pTex = static_cast<float*>(
+                tvbuf->lock(HardwareBuffer::HBL_DISCARD));
+            *pTex++ = 0.0f;
+            *pTex++ = 0.0f;
+            *pTex++ = 0.0f;
+            *pTex++ = 1.0f;
+            *pTex++ = 1.0f;
+            *pTex++ = 0.0f;
+            *pTex++ = 1.0f;
+            *pTex++ = 1.0f;
+            tvbuf->unlock();
         }
 
         // set basic white material
@@ -178,36 +187,6 @@ namespace Ogre {
         *pFloat++ = bottomRight.z;
 
         vbuf->unlock();
-	}
-
-	void Rectangle2D::setUVs( const Ogre::Vector2 &topLeft, const Ogre::Vector2 &bottomLeft,
-								const Ogre::Vector2 &topRight, const Ogre::Vector2 &bottomRight)
-	{
-		if( mRenderOp.vertexData->vertexDeclaration->getElementCount() <= TEXCOORD_BINDING )
-			return; //Vertex data wasn't built with UV buffer
-
-		HardwareVertexBufferSharedPtr vbuf = 
-            mRenderOp.vertexData->vertexBufferBinding->getBuffer(TEXCOORD_BINDING);
-        float* pFloat = static_cast<float*>(vbuf->lock(HardwareBuffer::HBL_DISCARD));
-
-        *pFloat++ = topLeft.x;
-        *pFloat++ = topLeft.y;
-
-        *pFloat++ = bottomLeft.x;
-        *pFloat++ = bottomLeft.y;
-
-        *pFloat++ = topRight.x;
-        *pFloat++ = topRight.y;
-
-        *pFloat++ = bottomRight.x;
-        *pFloat++ = bottomRight.y;
-
-        vbuf->unlock();
-	}
-
-	void Rectangle2D::setDefaultUVs()
-	{
-		setUVs( Vector2::ZERO, Vector2::UNIT_Y, Vector2::UNIT_X, Vector2::UNIT_SCALE );
 	}
 
     // Override this method to prevent parent transforms (rotation,translation,scale)

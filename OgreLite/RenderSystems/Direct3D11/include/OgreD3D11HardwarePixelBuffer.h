@@ -49,9 +49,6 @@ namespace Ogre {
 		D3D11Texture * mParentTexture;
 		size_t mSubresourceIndex;
 
-		// if the usage is static - alloc at lock then use device UpdateSubresource when unlock and free memory
-		int8 * mDataForStaticUsageLock; 
-
 		size_t mFace;
 
 		D3D11_BOX OgreImageBoxToDx11Box(const Image::Box &inBox) const;
@@ -87,15 +84,11 @@ namespace Ogre {
 		/// Notify TextureBuffer of destruction of render target
 		virtual void _clearSliceRTT(size_t zoffset)
 		{
-			if (mSliceTRT.size() > zoffset)
-			{
-				mSliceTRT[zoffset] = 0;
-			}
+			mSliceTRT[zoffset] = 0;
 		}
 
 		D3D11Texture * getParentTexture() const;
 		size_t getSubresourceIndex() const;
-		size_t getFace() const;
 	};
 };
 #endif

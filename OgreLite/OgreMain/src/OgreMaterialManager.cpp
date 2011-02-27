@@ -259,13 +259,10 @@ namespace Ogre {
     //-----------------------------------------------------------------------
 	void MaterialManager::setActiveScheme(const String& schemeName)
 	{
-		if (mActiveSchemeName != schemeName)
-		{	
-			// Allow the creation of new scheme indexes on demand
-			// even if they're not specified in any Technique
-			mActiveSchemeIndex = _getSchemeIndex(schemeName);
-			mActiveSchemeName = schemeName;
-		}
+		// Allow the creation of new scheme indexes on demand
+		// even if they're not specified in any Technique
+		mActiveSchemeIndex = _getSchemeIndex(schemeName);
+		mActiveSchemeName = schemeName;
 	}
     //-----------------------------------------------------------------------
 	void MaterialManager::addListener(Listener* l, const Ogre::String& schemeName)

@@ -58,29 +58,26 @@ public:
 	/** Resolve uniform auto constant parameter with associated real data of this program.
 	@param autoType The auto type of the desired parameter.	
 	@param data The data to associate with the auto parameter.
-	@param size number of elements in the parameter.	
 	Return parameter instance in case of that resolve operation succeeded.	
 	*/
-	UniformParameterPtr		resolveAutoParameterReal	(GpuProgramParameters::AutoConstantType autoType, Real data, size_t size = 0);
+	UniformParameterPtr		resolveAutoParameterReal	(GpuProgramParameters::AutoConstantType autoType, Real data);
 
 	/** Resolve uniform auto constant parameter with associated int data of this program.
 	@param autoType The auto type of the desired parameter.	
 	@param data The data to associate with the auto parameter.
-	@param size number of elements in the parameter.	
 	Return parameter instance in case of that resolve operation succeeded.	
 	*/
-	UniformParameterPtr		resolveAutoParameterInt		(GpuProgramParameters::AutoConstantType autoType, size_t data, size_t size = 0);
+	UniformParameterPtr		resolveAutoParameterInt		(GpuProgramParameters::AutoConstantType autoType, size_t data);
 
 	/** Resolve uniform parameter of this program.
 	@param type The type of the desired parameter.
 	@param index The index of the desired parameter.
 	@param suggestedName The suggested name for the parameter in case new one should be create.	
 	@param variability How this parameter varies (bitwise combination of GpuProgramVariability).
-	@param size number of elements in the parameter.	
 	Return parameter instance in case of that resolve operation succeeded.
 	@remarks Pass -1 as index parameter to create a new parameter with the desired type and index.
 	*/
-	UniformParameterPtr		resolveParameter			(GpuConstantType type, int index, uint16 variability, const String& suggestedName, size_t size = 0);
+	UniformParameterPtr		resolveParameter			(GpuConstantType type, int index, uint16 variability, const String& suggestedName);
 	
 	/** Get parameter by a given name.	
 	@param name The name of the parameter to search for.
@@ -144,16 +141,6 @@ public:
 	const String&				getDependency				(unsigned int index) const;
 	
 
-	/** Sets whether a vertex program includes the required instructions
-        to perform skeletal animation. 
-    */
- 	void setSkeletalAnimationIncluded(bool value) { mSkeletalAnimation = value; }
- 
-	/** Returns whether a vertex program includes the required instructions
-        to perform skeletal animation. 
-    */
-    bool getSkeletalAnimationIncluded() const { return mSkeletalAnimation; }
-
 // Protected methods.
 protected:
 
@@ -185,7 +172,7 @@ protected:
 	ShaderFunctionList				mFunctions;					// Function list.
 	Function*						mEntryPointFunction;		// Entry point function for this program.	
 	StringVector					mDependencies;				// Program dependencies.
-	bool							mSkeletalAnimation;			// Skeletal animation calculation
+
 private:
 	friend class ProgramManager;
 };

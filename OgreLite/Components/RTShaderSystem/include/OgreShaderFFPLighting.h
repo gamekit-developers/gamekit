@@ -47,7 +47,7 @@ namespace RTShader {
 */
 
 /** Lighting sub render state implementation of the Fixed Function Pipeline.
-@see http://msdn.microsoft.com/en-us/library/bb147178.aspx
+@see http://msdn.microsoft.com/en-us/library/ee422035.aspx
 Derives from SubRenderState class.
 */
 class _OgreRTSSExport FFPLighting : public SubRenderState
@@ -82,7 +82,7 @@ public:
 	/** 
 	@see SubRenderState::preAddToRenderState.
 	*/
-	virtual bool			preAddToRenderState		(const RenderState* renderState, Pass* srcPass, Pass* dstPass);
+	virtual bool			preAddToRenderState		(RenderState* renderState, Pass* srcPass, Pass* dstPass);
 
 
 	static String Type;
@@ -213,7 +213,7 @@ public:
 	/** 
 	@see SubRenderStateFactory::createInstance.
 	*/
-	virtual SubRenderState*	createInstance		(ScriptCompiler* compiler, PropertyAbstractNode* prop, Pass* pass, SGScriptTranslator* translator);
+	virtual SubRenderState*	createInstance		(ScriptCompiler* compiler, PropertyAbstractNode* prop, Pass* pass);
 
 	/** 
 	@see SubRenderStateFactory::writeInstance.

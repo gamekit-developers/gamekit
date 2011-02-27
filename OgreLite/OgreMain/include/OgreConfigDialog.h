@@ -42,16 +42,12 @@ THE SOFTWARE.
 # include "WIN32/OgreConfigDialogImp.h"
 #elif OGRE_PLATFORM == OGRE_PLATFORM_LINUX
 # include "GLX/OgreConfigDialogImp.h"
-#elif OGRE_PLATFORM == OGRE_PLATFORM_TEGRA2
-# include "Tegra2/OgreConfigDialogImp.h"
 #elif OGRE_PLATFORM == OGRE_PLATFORM_APPLE
 # include "OSX/OgreConfigDialogImp.h"
-#elif OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
+#elif OGRE_PLATFORM == OGRE_PLATFORM_IPHONE
 # include "iPhone/OgreConfigDialogImp.h"
 #elif OGRE_PLATFORM == OGRE_PLATFORM_SYMBIAN
 # include "Symbian/OgreConfigDialogImp.h"
-#elif OGRE_PLATFORM == OGRE_PLATFORM_ANDROID
-# include "Android/OgreConfigDialogImp.h"
 #endif
 
 #endif

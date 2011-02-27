@@ -45,6 +45,11 @@ THE SOFTWARE.
 namespace Ogre {
 namespace RTShader {
 
+#define SGX_LIB_INTEGRATEDPSSM						"SGXLib_IntegratedPSSM"
+#define SGX_FUNC_COMPUTE_SHADOW_COLOUR3				"SGX_ComputeShadowFactor_PSSM3"
+#define SGX_FUNC_APPLYSHADOWFACTOR_DIFFUSE			"SGX_ApplyShadowFactor_Diffuse"
+#define SGX_FUNC_MODULATE_SCALAR					"SGX_ModulateScalar"
+
 /************************************************************************/
 /*                                                                      */
 /************************************************************************/
@@ -80,7 +85,7 @@ void IntegratedPSSM3::updateGpuProgramsParams(Renderable* rend, Pass* pass,
 	while(it != mShadowTextureParamsList.end())
 	{						
 		it->mWorldViewProjMatrix->setGpuParameter(source->getTextureWorldViewProjMatrix(shadowIndex));				
-		it->mInvTextureSize->setGpuParameter(source->getInverseTextureSize(it->mTextureSamplerIndex));
+		it->mInvTextureSize->setGpuParameter(source->getInverseTextureSize(shadowIndex));
 		
 		++it;
 		++shadowIndex;
@@ -116,7 +121,7 @@ void IntegratedPSSM3::copyFrom(const SubRenderState& rhs)
 }
 
 //-----------------------------------------------------------------------
-bool IntegratedPSSM3::preAddToRenderState(const RenderState* renderState, 
+bool IntegratedPSSM3::preAddToRenderState(RenderState* renderState, 
 										 Pass* srcPass, Pass* dstPass)
 {
 	if (srcPass->getLightingEnabled() == false ||
@@ -313,7 +318,7 @@ bool IntegratedPSSM3::addVSInvocation(Function* vsMain, const int groupOrder, in
 	curFuncInvocation = OGRE_NEW FunctionInvocation(FFP_FUNC_ASSIGN, groupOrder, internalCounter++); 								
 	curFuncInvocation->pushOperand(mVSOutPos, Operand::OPS_IN, Operand::OPM_Z);	
 	curFuncInvocation->pushOperand(mVSOutDepth, Operand::OPS_OUT);	
-	vsMain->addAtomInstance(curFuncInvocation);	
+	vsMain->addAtomInstace(curFuncInvocation);	
 
 
 	// Compute world space position.	
@@ -325,7 +330,7 @@ bool IntegratedPSSM3::addVSInvocation(Function* vsMain, const int groupOrder, in
 		curFuncInvocation->pushOperand(it->mWorldViewProjMatrix, Operand::OPS_IN);	
 		curFuncInvocation->pushOperand(mVSInPos, Operand::OPS_IN);
 		curFuncInvocation->pushOperand(it->mVSOutLightPosition, Operand::OPS_OUT);	
-		vsMain->addAtomInstance(curFuncInvocation);	
+		vsMain->addAtomInstace(curFuncInvocation);	
 
 		++it;
 	}
@@ -357,7 +362,7 @@ bool IntegratedPSSM3::addPSInvocation(Program* psProgram, const int groupOrder, 
  	curFuncInvocation->pushOperand(splitParams1.mInvTextureSize, Operand::OPS_IN);	
  	curFuncInvocation->pushOperand(splitParams2.mInvTextureSize, Operand::OPS_IN);
 	curFuncInvocation->pushOperand(mPSLocalShadowFactor, Operand::OPS_OUT);	
-	psMain->addAtomInstance(curFuncInvocation);	
+	psMain->addAtomInstace(curFuncInvocation);	
 	
 	// Apply shadow factor on diffuse colour.
 	curFuncInvocation = OGRE_NEW FunctionInvocation(SGX_FUNC_APPLYSHADOWFACTOR_DIFFUSE, groupOrder, internalCounter++); 								
@@ -365,20 +370,20 @@ bool IntegratedPSSM3::addPSInvocation(Program* psProgram, const int groupOrder, 
 	curFuncInvocation->pushOperand(mPSDiffuse, Operand::OPS_IN);	
 	curFuncInvocation->pushOperand(mPSLocalShadowFactor, Operand::OPS_IN);	
 	curFuncInvocation->pushOperand(mPSDiffuse, Operand::OPS_OUT);	
-	psMain->addAtomInstance(curFuncInvocation);	
+	psMain->addAtomInstace(curFuncInvocation);	
 
 	// Apply shadow factor on specular colour.
 	curFuncInvocation = OGRE_NEW FunctionInvocation(SGX_FUNC_MODULATE_SCALAR, groupOrder, internalCounter++); 								
 	curFuncInvocation->pushOperand(mPSLocalShadowFactor, Operand::OPS_IN);		
 	curFuncInvocation->pushOperand(mPSSpecualr, Operand::OPS_IN);	
 	curFuncInvocation->pushOperand(mPSSpecualr, Operand::OPS_OUT);		
-	psMain->addAtomInstance(curFuncInvocation);
+	psMain->addAtomInstace(curFuncInvocation);
 
 	// Assign the local diffuse to output diffuse.
 	curFuncInvocation = OGRE_NEW FunctionInvocation(FFP_FUNC_ASSIGN, groupOrder, internalCounter++); 								
 	curFuncInvocation->pushOperand(mPSDiffuse, Operand::OPS_IN);	
 	curFuncInvocation->pushOperand(mPSOutDiffuse, Operand::OPS_OUT);	
-	psMain->addAtomInstance(curFuncInvocation);
+	psMain->addAtomInstace(curFuncInvocation);
 
 	return true;
 }
@@ -393,7 +398,7 @@ const String& IntegratedPSSM3Factory::getType() const
 
 //-----------------------------------------------------------------------
 SubRenderState*	IntegratedPSSM3Factory::createInstance(ScriptCompiler* compiler, 
-													  PropertyAbstractNode* prop, Pass* pass, SGScriptTranslator* translator)
+													  PropertyAbstractNode* prop, Pass* pass)
 {
 	if (prop->name == "integrated_pssm4")
 	{		

@@ -31,6 +31,7 @@ THE SOFTWARE.
 #include "OgreCompositorInstance.h"
 #include "OgreCompositionTargetPass.h"
 #include "OgreCompositionPass.h"
+#include "OgreViewport.h"
 #include "OgreCamera.h"
 #include "OgreRenderTarget.h"
 #include "OgreLogManager.h"
@@ -46,9 +47,8 @@ CompositorChain::CompositorChain(Viewport *vp):
     mDirty(true),
 	mAnyCompositorsEnabled(false)
 {
-	assert(vp);
-	mOldClearEveryFrameBuffers = vp->getClearBuffers();
-	vp->addListener(this);
+	mOldClearEveryFrameBuffers = mViewport->getClearBuffers();
+    assert(mViewport);
 }
 //-----------------------------------------------------------------------
 CompositorChain::~CompositorChain()
@@ -62,7 +62,6 @@ void CompositorChain::destroyResources(void)
 
 	if (mViewport)
 	{
-		mViewport->removeListener(this);
 		removeAllCompositors();
 		/// Destroy "original scene" compositor instance
 		if (mOriginalScene)
@@ -225,11 +224,12 @@ void CompositorChain::preRenderTargetUpdate(const RenderTargetEvent& evt)
 	/// target Rendertarget will not yet have been set as current. 
 	/// ( RenderSystem::setViewport(...) ) if it would have been, the rendering
 	/// order would be screwed up and problems would arise with copying rendertextures.
-	Camera *cam = mViewport->getCamera();
-	if (cam)
+    Camera *cam = mViewport->getCamera();
+	if (!cam)
 	{
-		cam->getSceneManager()->_setActiveCompositorChain(this);
+		return;
 	}
+	cam->getSceneManager()->_setActiveCompositorChain(this);
 
     /// Iterate over compiled state
     CompositorInstance::CompiledState::iterator i;
@@ -266,7 +266,6 @@ void CompositorChain::preViewportUpdate(const RenderTargetViewportEvent& evt)
 	CompositionTargetPass* passParent = pass->getParent();
 	if (pass->getClearBuffers() != mViewport->getClearBuffers() ||
 		pass->getClearColour() != mViewport->getBackgroundColour() ||
-		pass->getClearDepth() != mViewport->getDepthClear() ||
 		passParent->getVisibilityMask() != mViewport->getVisibilityMask() ||
 		passParent->getMaterialScheme() != mViewport->getMaterialScheme() ||
 		passParent->getShadowsEnabled() != mViewport->getShadowsEnabled())
@@ -274,7 +273,6 @@ void CompositorChain::preViewportUpdate(const RenderTargetViewportEvent& evt)
 		// recompile if viewport settings are different
 		pass->setClearBuffers(mViewport->getClearBuffers());
 		pass->setClearColour(mViewport->getBackgroundColour());
-		pass->setClearDepth(mViewport->getDepthClear());
 		passParent->setVisibilityMask(mViewport->getVisibilityMask());
 		passParent->setMaterialScheme(mViewport->getMaterialScheme());
 		passParent->setShadowsEnabled(mViewport->getShadowsEnabled());
@@ -291,25 +289,21 @@ void CompositorChain::preViewportUpdate(const RenderTargetViewportEvent& evt)
 //-----------------------------------------------------------------------
 void CompositorChain::preTargetOperation(CompositorInstance::TargetOperation &op, Viewport *vp, Camera *cam)
 {
-	if (cam)
-	{
-		SceneManager *sm = cam->getSceneManager();
-		/// Set up render target listener
-		mOurListener.setOperation(&op, sm, sm->getDestinationRenderSystem());
-		mOurListener.notifyViewport(vp);
-		/// Register it
-		sm->addRenderQueueListener(&mOurListener);
-		/// Set visiblity mask
-		mOldVisibilityMask = sm->getVisibilityMask();
-		sm->setVisibilityMask(op.visibilityMask);
-		/// Set whether we find visibles
-		mOldFindVisibleObjects = sm->getFindVisibleObjects();
-		sm->setFindVisibleObjects(op.findVisibleObjects);
-		/// Set LOD bias level
-		mOldLodBias = cam->getLodBias();
-		cam->setLodBias(cam->getLodBias() * op.lodBias);
-	}
-
+    SceneManager *sm = cam->getSceneManager();
+	/// Set up render target listener
+	mOurListener.setOperation(&op, sm, sm->getDestinationRenderSystem());
+	mOurListener.notifyViewport(vp);
+	/// Register it
+	sm->addRenderQueueListener(&mOurListener);
+	/// Set visiblity mask
+	mOldVisibilityMask = sm->getVisibilityMask();
+	sm->setVisibilityMask(op.visibilityMask);
+	/// Set whether we find visibles
+	mOldFindVisibleObjects = sm->getFindVisibleObjects();
+	sm->setFindVisibleObjects(op.findVisibleObjects);
+    /// Set LOD bias level
+    mOldLodBias = cam->getLodBias();
+    cam->setLodBias(cam->getLodBias() * op.lodBias);
 	/// Set material scheme 
 	mOldMaterialScheme = vp->getMaterialScheme();
 	vp->setMaterialScheme(op.materialScheme);
@@ -324,17 +318,13 @@ void CompositorChain::preTargetOperation(CompositorInstance::TargetOperation &op
 //-----------------------------------------------------------------------
 void CompositorChain::postTargetOperation(CompositorInstance::TargetOperation &op, Viewport *vp, Camera *cam)
 {
-	if (cam)
-	{
-		SceneManager *sm = cam->getSceneManager();
-		/// Unregister our listener
-		sm->removeRenderQueueListener(&mOurListener);
-		/// Restore default scene and camera settings
-		sm->setVisibilityMask(mOldVisibilityMask);
-		sm->setFindVisibleObjects(mOldFindVisibleObjects);
-		cam->setLodBias(mOldLodBias);
-	}
-
+    SceneManager *sm = cam->getSceneManager();
+	/// Unregister our listener
+	sm->removeRenderQueueListener(&mOurListener);
+	/// Restore default scene and camera settings
+	sm->setVisibilityMask(mOldVisibilityMask);
+	sm->setFindVisibleObjects(mOldFindVisibleObjects);
+    cam->setLodBias(mOldLodBias);
 	vp->setMaterialScheme(mOldMaterialScheme);
 	vp->setShadowsEnabled(mOldShadowsEnabled);
 }
@@ -346,32 +336,22 @@ void CompositorChain::postViewportUpdate(const RenderTargetViewportEvent& evt)
         return;
 
 	Camera *cam = mViewport->getCamera();
-	postTargetOperation(mOutputOperation, mViewport, cam);
-}
-//-----------------------------------------------------------------------
-void CompositorChain::viewportCameraChanged(Viewport* viewport)
-{
-	Camera* camera = viewport->getCamera();
-	size_t count = mInstances.size();
-	for (size_t i = 0; i < count; ++i)
+	if (cam)
 	{
-		mInstances[i]->notifyCameraChanged(camera);
+		postTargetOperation(mOutputOperation, mViewport, cam);
 	}
 }
 //-----------------------------------------------------------------------
-void CompositorChain::viewportDimensionsChanged(Viewport* viewport)
+void CompositorChain::viewportRemoved(const RenderTargetViewportEvent& evt)
 {
-	size_t count = mInstances.size();
-	for (size_t i = 0; i < count; ++i)
+	// check this is the viewport we're attached to (multi-viewport targets)
+	if (evt.source == mViewport) 
 	{
-		mInstances[i]->notifyResized();
+		// this chain is now orphaned
+		// can't delete it since held from outside, but release all resources being used
+		destroyResources();
 	}
-}
-//-----------------------------------------------------------------------
-void CompositorChain::viewportDestroyed(Viewport* viewport)
-{
-	// this chain is now orphaned. tell compositor manager to delete it.
-	CompositorManager::getSingleton().removeCompositorChain(viewport);
+
 }
 //-----------------------------------------------------------------------
 void CompositorChain::clearCompiledState()
@@ -406,7 +386,6 @@ void CompositorChain::_compile()
 	CompositionPass* pass = mOriginalScene->getTechnique()->getOutputTargetPass()->getPass(0);
 	pass->setClearBuffers(mViewport->getClearBuffers());
 	pass->setClearColour(mViewport->getBackgroundColour());
-	pass->setClearDepth(mViewport->getDepthClear());
     for(Instances::iterator i=mInstances.begin(); i!=mInstances.end(); ++i)
     {
         if((*i)->getEnabled())
@@ -459,6 +438,11 @@ void CompositorChain::_markDirty()
 Viewport *CompositorChain::getViewport()
 {
     return mViewport;
+}
+//---------------------------------------------------------------------
+void CompositorChain::_notifyViewport(Viewport* vp)
+{
+	mViewport = vp;
 }
 //-----------------------------------------------------------------------
 void CompositorChain::RQListener::renderQueueStarted(uint8 id, 

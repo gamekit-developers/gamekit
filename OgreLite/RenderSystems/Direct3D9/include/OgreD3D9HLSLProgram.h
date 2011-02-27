@@ -116,7 +116,7 @@ namespace Ogre {
         void buildConstantDefinitions() const;
 
         // Recursive utility method for buildParamNameMap
-        void processParamElement(LPD3DXCONSTANTTABLE pConstTable, D3DXHANDLE parent, String prefix, unsigned int index);
+        void processParamElement(D3DXHANDLE parent, String prefix, unsigned int index) const;
 		void populateDef(D3DXCONSTANT_DESC& d3dDesc, GpuConstantDefinition& def) const;
 
         String mTarget;
@@ -125,9 +125,7 @@ namespace Ogre {
         bool mColumnMajorMatrices;
 
         LPD3DXBUFFER mpMicroCode;
-
-		GpuConstantDefinitionMap mParametersMap;
-		size_t mParametersMapSizeAsBuffer;
+        LPD3DXCONSTANTTABLE mpConstTable;
 
 	public:
 		LPD3DXBUFFER getMicroCode();
@@ -151,12 +149,7 @@ namespace Ogre {
 	protected:
 		OptimisationLevel mOptimisationLevel;
 
-        /** Gets the microcode from the microcode cache. */
-		void getMicrocodeFromCache(void);
-        /** Compiles the microcode from the program source. */
-		void compileMicrocode(void);
-		void addMicrocodeToCache();
-	public:
+    public:
         D3D9HLSLProgram(ResourceManager* creator, const String& name, ResourceHandle handle,
             const String& group, bool isManual, ManualResourceLoader* loader);
         ~D3D9HLSLProgram();
@@ -191,7 +184,7 @@ namespace Ogre {
         GpuProgramParametersSharedPtr createParameters(void);
         /// Overridden from GpuProgram
         const String& getLanguage(void) const;
-	};
+    };
 }
 
 #endif

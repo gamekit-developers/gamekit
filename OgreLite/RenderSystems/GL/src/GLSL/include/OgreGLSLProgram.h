@@ -117,9 +117,6 @@ namespace Ogre {
 		virtual void setMaxOutputVertices(int maxOutputVertices) 
 		{ mMaxOutputVertices = maxOutputVertices; }
 
-		/// compile source into shader object
-		bool compile( const bool checkErrors = true);
-
 		/// Command object for setting macro defines
 		class CmdPreprocessorDefines : public ParamCommand
 		{
@@ -173,6 +170,8 @@ namespace Ogre {
         void populateParameterNames(GpuProgramParametersSharedPtr params);
         /// Populate the passed parameters with name->index map, must be overridden
         void buildConstantDefinitions() const;
+		/// compile source into shader object
+		bool compile( const bool checkErrors = true);
 
 	private:
 		/// GL handle for shader object

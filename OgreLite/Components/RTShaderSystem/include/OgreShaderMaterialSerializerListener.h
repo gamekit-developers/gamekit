@@ -68,12 +68,6 @@ public:
 	virtual void passEventRaised(MaterialSerializer* ser, 
 		MaterialSerializer::SerializeEvent event, bool& skip, const Pass* tech);
 
-	/** 
-	@see MaterialSerializer::Listener::textureUnitStateEventRaised
-	*/
-	virtual void textureUnitStateEventRaised(MaterialSerializer* ser, 
-		MaterialSerializer::SerializeEvent event, bool& skip, const TextureUnitState* textureUnit);
-  
 // Types.
 protected:
 	typedef vector<ShaderGenerator::SGPass*>::type	SGPassList;

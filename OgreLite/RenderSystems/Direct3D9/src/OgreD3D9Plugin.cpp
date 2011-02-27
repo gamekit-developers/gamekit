@@ -56,7 +56,7 @@ namespace Ogre
 		HINSTANCE hInst = GetModuleHandle( "RenderSystem_Direct3D9.dll" );
 #  endif
 #endif
-		mRenderSystem = OGRE_NEW D3D9RenderSystem( hInst );
+		mRenderSystem = new D3D9RenderSystem( hInst );
 		// Register the render system
 		Root::getSingleton().addRenderSystem( mRenderSystem );
 	}
@@ -73,11 +73,8 @@ namespace Ogre
 	//---------------------------------------------------------------------
 	void D3D9Plugin::uninstall()
 	{
-		if (mRenderSystem != NULL)
-		{
-			OGRE_DELETE mRenderSystem;
-			mRenderSystem = NULL;
-		}				
+		delete mRenderSystem;
+		mRenderSystem = 0;
 	}
 
 

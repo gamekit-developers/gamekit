@@ -67,22 +67,6 @@ namespace Ogre {
     //-----------------------------------------------------------------------
 	void GLSLProgram::loadFromSource(void)
 	{
-		// we want to compile only if we need to link - else it is a waste of CPU
-	}
-    
-    //---------------------------------------------------------------------------
-	bool GLSLProgram::compile(const bool checkErrors)
-	{
-		if (mCompiled == 1)
-		{
-			return true;
-		}
-
-		if (checkErrors)
-        {
-            logObjectInfo("GLSL compiling: " + mName, mGLHandle);
-        }
-
 		// only create a shader object if glsl is supported
 		if (isSupported())
 		{
@@ -167,8 +151,8 @@ namespace Ogre {
 		if (!out || !out_size)
 			// Failed to preprocess, break out
 			OGRE_EXCEPT (Exception::ERR_RENDERINGAPI_ERROR,
-			"Failed to preprocess shader " + mName,
-			__FUNCTION__);
+						 "Failed to preprocess shader " + mName,
+						 __FUNCTION__);
 
 		mSource = String (out, out_size);
 		if (out < src || out > src + src_len)
@@ -183,6 +167,16 @@ namespace Ogre {
 			checkForGLSLError( "GLSLProgram::loadFromSource", "Cannot load GLSL high-level shader source : " + mName, 0 );
 		}
 
+		compile();
+	}
+    
+    //---------------------------------------------------------------------------
+	bool GLSLProgram::compile(const bool checkErrors)
+	{
+        if (checkErrors)
+        {
+            logObjectInfo("GLSL compiling: " + mName, mGLHandle);
+        }
 
 		glCompileShaderARB(mGLHandle);
 		// check for compile errors
@@ -260,12 +254,9 @@ namespace Ogre {
     GLSLProgram::GLSLProgram(ResourceManager* creator, 
         const String& name, ResourceHandle handle,
         const String& group, bool isManual, ManualResourceLoader* loader)
-        : HighLevelGpuProgram(creator, name, handle, group, isManual, loader)
-		, mInputOperationType(RenderOperation::OT_TRIANGLE_LIST)
-        , mOutputOperationType(RenderOperation::OT_TRIANGLE_LIST)
-		, mMaxOutputVertices(3)
-		, mGLHandle(0)
-		, mCompiled(0)
+        : HighLevelGpuProgram(creator, name, handle, group, isManual, loader),
+            mInputOperationType(RenderOperation::OT_TRIANGLE_LIST),
+            mOutputOperationType(RenderOperation::OT_TRIANGLE_LIST), mMaxOutputVertices(3)
     {
 		// add parameter command "attach" to the material serializer dictionary
         if (createParamDictionary("GLSLProgram"))

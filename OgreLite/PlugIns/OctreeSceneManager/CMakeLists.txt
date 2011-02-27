@@ -10,16 +10,23 @@
 # Configure Octree SceneManager build
 
 set (HEADER_FILES
+  include/OgreHeightmapTerrainPageSource.h
   include/OgreOctree.h
   include/OgreOctreeCamera.h
   include/OgreOctreeNode.h
   include/OgreOctreePlugin.h
-  include/OgreOctreePrerequisites.h
   include/OgreOctreeSceneManager.h
   include/OgreOctreeSceneQuery.h
+  include/OgreTerrainPage.h
+  include/OgreTerrainPageSource.h
+  include/OgreTerrainPrerequisites.h
+  include/OgreTerrainRenderable.h
+  include/OgreTerrainSceneManager.h
+  include/OgreTerrainVertexProgram.h
 )
 
 set (SOURCE_FILES
+  src/OgreHeightmapTerrainPageSource.cpp
   src/OgreOctree.cpp
   src/OgreOctreeCamera.cpp
   src/OgreOctreeNode.cpp
@@ -27,6 +34,11 @@ set (SOURCE_FILES
   src/OgreOctreeSceneManager.cpp
   src/OgreOctreeSceneManagerDll.cpp
   src/OgreOctreeSceneQuery.cpp
+  src/OgreTerrainPage.cpp
+  src/OgreTerrainPageSource.cpp
+  src/OgreTerrainRenderable.cpp
+  src/OgreTerrainSceneManager.cpp
+  src/OgreTerrainVertexProgram.cpp
 )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -36,11 +48,11 @@ add_library(Plugin_OctreeSceneManager ${OGRE_LIB_TYPE} ${HEADER_FILES} ${SOURCE_
 target_link_libraries(Plugin_OctreeSceneManager OgreMain)
 if (NOT OGRE_STATIC)
   set_target_properties(Plugin_OctreeSceneManager PROPERTIES
-    COMPILE_DEFINITIONS OGRE_OCTREEPLUGIN_EXPORTS
+    COMPILE_DEFINITIONS OGRE_TERRAINPLUGIN_EXPORTS
   ) 
 endif ()
 
-if (APPLE AND NOT OGRE_BUILD_PLATFORM_APPLE_IOS)
+if (APPLE AND NOT OGRE_BUILD_PLATFORM_IPHONE)
     # Set the INSTALL_PATH so that Plugins can be installed in the application package
     set_target_properties(Plugin_OctreeSceneManager
        PROPERTIES BUILD_WITH_INSTALL_RPATH 1

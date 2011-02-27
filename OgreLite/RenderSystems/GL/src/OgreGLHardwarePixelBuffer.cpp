@@ -221,7 +221,7 @@ GLTextureBuffer::GLTextureBuffer(const String &baseName, GLenum target, GLuint i
 	mHeight = value;
 	
 	// Get depth
-	if(target != GL_TEXTURE_3D && target !=  GL_TEXTURE_2D_ARRAY)
+	if(target != GL_TEXTURE_3D)
 		value = 1; // Depth always 1 for non-3D textures
 	else
 		glGetTexLevelParameteriv(mFaceTarget, level, GL_TEXTURE_DEPTH, &value);
@@ -346,12 +346,11 @@ void GLTextureBuffer::upload(const PixelBox &data, const Image::Box &dest)
 				}
 				break;
 			case GL_TEXTURE_3D:
-			case GL_TEXTURE_2D_ARRAY:
 				// some systems (e.g. old Apple) don't like compressed subimage calls
 				// so prefer non-sub versions
 				if (dest.left == 0 && dest.top == 0 && dest.front == 0)
 				{
-					glCompressedTexImage3DARB(mTarget, mLevel,
+					glCompressedTexImage3DARB(GL_TEXTURE_3D, mLevel,
 						format,
 						dest.getWidth(),
 						dest.getHeight(),
@@ -362,7 +361,7 @@ void GLTextureBuffer::upload(const PixelBox &data, const Image::Box &dest)
 				}
 				else
 				{			
-					glCompressedTexSubImage3DARB(mTarget, mLevel, 
+					glCompressedTexSubImage3DARB(GL_TEXTURE_3D, mLevel, 
 						dest.left, dest.top, dest.front,
 						dest.getWidth(), dest.getHeight(), dest.getDepth(),
 						format, data.getConsecutiveSize(),
@@ -401,7 +400,6 @@ void GLTextureBuffer::upload(const PixelBox &data, const Image::Box &dest)
 				data.data);
 			break;		
 		case GL_TEXTURE_3D:
-		case GL_TEXTURE_2D_ARRAY:
 			/* Requires GLU 1.3 which is harder to come by than cards doing hardware mipmapping
 				Most 3D textures don't need mipmaps?
 			gluBuild3DMipmaps(
@@ -411,7 +409,7 @@ void GLTextureBuffer::upload(const PixelBox &data, const Image::Box &dest)
 				data.data);
 			*/
 			glTexImage3D(
-				mTarget, 0, components, 
+				GL_TEXTURE_3D, 0, components, 
 				dest.getWidth(), dest.getHeight(), dest.getDepth(), 0, 
 				GLPixelUtil::getGLOriginFormat(data.format), GLPixelUtil::getGLOriginDataType(data.format),
 				data.data );
@@ -447,9 +445,8 @@ void GLTextureBuffer::upload(const PixelBox &data, const Image::Box &dest)
 					data.data);
 				break;
 			case GL_TEXTURE_3D:
-    		case GL_TEXTURE_2D_ARRAY:
 				glTexSubImage3D(
-					mTarget, mLevel, 
+					GL_TEXTURE_3D, mLevel, 
 					dest.left, dest.top, dest.front,
 					dest.getWidth(), dest.getHeight(), dest.getDepth(),
 					GLPixelUtil::getGLOriginFormat(data.format), GLPixelUtil::getGLOriginDataType(data.format),
@@ -522,7 +519,6 @@ void GLTextureBuffer::bindToFramebuffer(GLenum attachment, size_t zoffset)
                             mFaceTarget, mTextureID, mLevel);
         break;
     case GL_TEXTURE_3D:
-	case GL_TEXTURE_2D_ARRAY:
         glFramebufferTexture3DEXT(GL_FRAMEBUFFER_EXT, attachment,
                             mFaceTarget, mTextureID, mLevel, zoffset);
         break;
@@ -542,7 +538,6 @@ void GLTextureBuffer::copyFromFramebuffer(size_t zoffset)
         glCopyTexSubImage2D(mFaceTarget, mLevel, 0, 0, 0, 0, mWidth, mHeight);
         break;
     case GL_TEXTURE_3D:
-	case GL_TEXTURE_2D_ARRAY:
         glCopyTexSubImage3D(mFaceTarget, mLevel, 0, 0, zoffset, 0, 0, mWidth, mHeight);
         break;
     }
@@ -558,8 +553,7 @@ void GLTextureBuffer::blit(const HardwarePixelBufferSharedPtr &src, const Image:
 	// This does not sem to work for RTTs after the first update
 	// I have no idea why! For the moment, disable 
     if(GLEW_EXT_framebuffer_object && (src->getUsage() & TU_RENDERTARGET) == 0 &&
-        (srct->mTarget==GL_TEXTURE_1D||srct->mTarget==GL_TEXTURE_2D
-         ||srct->mTarget==GL_TEXTURE_3D)&&mTarget!=GL_TEXTURE_2D_ARRAY)
+        (srct->mTarget==GL_TEXTURE_1D||srct->mTarget==GL_TEXTURE_2D||srct->mTarget==GL_TEXTURE_3D))
     {
         blitFromTexture(srct, srcBox, dstBox);
     }
@@ -744,7 +738,6 @@ void GLTextureBuffer::blitFromTexture(GLTextureBuffer *src, const Image::Box &sr
                     0, 0, dstBox.getWidth(), dstBox.getHeight());
                 break;
             case GL_TEXTURE_3D:
-    		case GL_TEXTURE_2D_ARRAY:
                 glCopyTexSubImage3D(mFaceTarget, mLevel, 
                     dstBox.left, dstBox.top, slice, 
                     0, 0, dstBox.getWidth(), dstBox.getHeight());
@@ -842,7 +835,7 @@ void GLTextureBuffer::blitFromMemory(const PixelBox &src_orig, const Image::Box 
     glTexParameteri(target, GL_GENERATE_MIPMAP, GL_TRUE );
     
     /// Allocate texture memory
-    if(target == GL_TEXTURE_3D || target == GL_TEXTURE_2D_ARRAY)
+    if(target == GL_TEXTURE_3D)
         glTexImage3D(target, 0, format, width, height, depth, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
     else
         glTexImage2D(target, 0, format, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);

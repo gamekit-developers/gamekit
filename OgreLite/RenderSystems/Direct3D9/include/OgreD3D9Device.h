@@ -39,7 +39,7 @@ namespace Ogre {
 	/** High level interface of Direct3D9 Device.
 	Provide useful methods for device handling.
 	*/
-	class _OgreD3D9Export D3D9Device : public ResourceAlloc
+	class _OgreD3D9Export D3D9Device
 	{
 
 	// Interface.
@@ -59,7 +59,6 @@ namespace Ogre {
 		D3DDEVTYPE				getDeviceType			() const;
 		bool					isMultihead				() const;					
 		bool					isAutoDepthStencil		() const;
-		bool					isFullScreen			() const;
 		
 		const D3DCAPS9&			getD3D9DeviceCaps		() const;
 		D3DFORMAT				getBackBufferFormat		() const;

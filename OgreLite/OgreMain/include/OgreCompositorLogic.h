@@ -59,6 +59,7 @@ namespace Ogre {
         */
 		virtual void compositorInstanceDestroyed(CompositorInstance* destroyedInstance) {}
 
+	protected:
 		virtual ~CompositorLogic() {}
 	};
 	/** @} */

@@ -37,7 +37,7 @@ THE SOFTWARE.
 #include "OgrePageContentCollectionFactory.h"
 #include "OgrePageContentCollection.h"
 
-#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
+#if OGRE_PLATFORM == OGRE_PLATFORM_IPHONE
     #include "macUtils.h"
 #endif
 
@@ -452,7 +452,7 @@ namespace Ogre
 
 		str	<< std::setw(8) << std::setfill('0') << std::hex << mID << ".page";
 
-#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
+#if OGRE_PLATFORM == OGRE_PLATFORM_IPHONE
         // For the iPhone we need to prefix the file name with the path to the Caches folder
         String cacheStr(Ogre::macCachePath() + str.str());
         return cacheStr;

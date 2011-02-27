@@ -51,7 +51,7 @@ THE SOFTWARE.
 #	define OGRE_NEW_FIX_FOR_WIN32 OGRE_NEW
 #endif
 
-#if (OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS)
+#if (OGRE_PLATFORM == OGRE_PLATFORM_IPHONE)
 #   include <OpenGLES/ES1/gl.h>
 #   include <OpenGLES/ES1/glext.h>
 #   ifdef __OBJC__
@@ -128,11 +128,6 @@ extern PFNGLUNMAPBUFFEROESPROC glUnmapBufferOES;
 #    define _OgreGLESExport
 #endif
 
-#if OGRE_COMPILER == OGRE_COMPILER_MSVC
-#define __PRETTY_FUNCTION__ __FUNCTION__
-#endif
-
-
 #define DEBUG_(text) \
     {\
         fprintf(stderr, "%s:%d: %s\n", __FUNCTION__, __LINE__, text); \
@@ -151,7 +146,6 @@ extern PFNGLUNMAPBUFFEROESPROC glUnmapBufferOES;
 #else
     #define GL_CHECK_ERROR {}
 #endif
-
 
 #if ENABLE_GL_CHECK
     #define EGL_CHECK_ERROR \

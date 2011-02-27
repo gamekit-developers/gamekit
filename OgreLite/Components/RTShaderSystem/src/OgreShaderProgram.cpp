@@ -36,7 +36,6 @@ Program::Program(GpuProgramType type)
 {
 	mType				= type;
 	mEntryPointFunction = NULL;
-	mSkeletalAnimation	= false;
 }
 
 //-----------------------------------------------------------------------------
@@ -104,7 +103,7 @@ void Program::removeParameter(UniformParameterPtr parameter)
 
 //-----------------------------------------------------------------------------
 UniformParameterPtr Program::resolveAutoParameterReal(GpuProgramParameters::AutoConstantType autoType, 
-												Real data, size_t size)
+												Real data)
 {
 	UniformParameterPtr param;
 
@@ -115,13 +114,12 @@ UniformParameterPtr Program::resolveAutoParameterReal(GpuProgramParameters::Auto
 		if (param->isAutoConstantRealParameter() &&
 			param->getAutoConstantRealData() == data)
 		{
-			param->setSize(std::max(size, param->getSize()));
 			return param;
 		}
 	}
 	
 	// Create new parameter.
-	param = UniformParameterPtr(OGRE_NEW UniformParameter(autoType, data, size));
+	param = UniformParameterPtr(OGRE_NEW UniformParameter(autoType, data));
 	addParameter(param);
 
 	return param;
@@ -129,7 +127,7 @@ UniformParameterPtr Program::resolveAutoParameterReal(GpuProgramParameters::Auto
 
 //-----------------------------------------------------------------------------
 UniformParameterPtr Program::resolveAutoParameterInt(GpuProgramParameters::AutoConstantType autoType, 
-										   size_t data, size_t size)
+										   size_t data)
 {
 	UniformParameterPtr param;
 
@@ -140,13 +138,12 @@ UniformParameterPtr Program::resolveAutoParameterInt(GpuProgramParameters::AutoC
 		if (param->isAutoConstantIntParameter() &&
 			param->getAutoConstantIntData() == data)
 		{
-			param->setSize(std::max(size, param->getSize()));
 			return param;
 		}
 	}
 
 	// Create new parameter.
-	param = UniformParameterPtr(OGRE_NEW UniformParameter(autoType, data, size));
+	param = UniformParameterPtr(OGRE_NEW UniformParameter(autoType, data));
 	addParameter(param);
 
 	return param;
@@ -155,8 +152,7 @@ UniformParameterPtr Program::resolveAutoParameterInt(GpuProgramParameters::AutoC
 //-----------------------------------------------------------------------------
 UniformParameterPtr Program::resolveParameter(GpuConstantType type, 
 									int index, uint16 variability,
-									const String& suggestedName,
-									size_t size)
+									const String& suggestedName)
 {
 	UniformParameterPtr param;
 
@@ -187,7 +183,7 @@ UniformParameterPtr Program::resolveParameter(GpuConstantType type,
 	}
 	
 	// Create new parameter.
-	param = ParameterFactory::createUniform(type, index, variability, suggestedName, size);
+	param = ParameterFactory::createUniform(type, index, variability, suggestedName);
 	addParameter(param);
 
 	return param;

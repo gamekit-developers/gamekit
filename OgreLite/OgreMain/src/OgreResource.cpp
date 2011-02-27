@@ -344,14 +344,14 @@ namespace Ogre
 	void Resource::addListener(Resource::Listener* lis)
 	{
 		OGRE_LOCK_MUTEX(mListenerListMutex)
-		mListenerList.insert(lis);
+		mListenerList.push_back(lis);
 	}
 	//-----------------------------------------------------------------------
 	void Resource::removeListener(Resource::Listener* lis)
 	{
 		// O(n) but not called very often
 		OGRE_LOCK_MUTEX(mListenerListMutex)
-		mListenerList.erase(lis);
+		mListenerList.remove(lis);
 	}
 	//-----------------------------------------------------------------------
 	void Resource::_fireLoadingComplete(bool wasBackgroundLoaded)

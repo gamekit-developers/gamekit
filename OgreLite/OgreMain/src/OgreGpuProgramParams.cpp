@@ -260,27 +260,15 @@ namespace Ogre
 	void GpuNamedConstantsSerializer::exportNamedConstants(
 		const GpuNamedConstants* pConsts, const String& filename, Endian endianMode)
 	{
-		std::fstream *f = OGRE_NEW_T(std::fstream, MEMCATEGORY_GENERAL)();
-		f->open(filename.c_str(), std::ios::binary | std::ios::out);
-		DataStreamPtr stream(OGRE_NEW FileStreamDataStream(f));
-
-		exportNamedConstants(pConsts, stream, endianMode);
-
-		stream->close();
-	}
-	//---------------------------------------------------------------------
-	void GpuNamedConstantsSerializer::exportNamedConstants(
-		const GpuNamedConstants* pConsts, DataStreamPtr stream, Endian endianMode)
-	{
 		// Decide on endian mode
 		determineEndianness(endianMode);
 
 		String msg;
-		mStream =stream;
-		if (!stream->isWriteable())
+		mpfFile = fopen(filename.c_str(), "wb");
+		if (!mpfFile)
 		{
 			OGRE_EXCEPT(Exception::ERR_CANNOT_WRITE_TO_FILE,
-				"Unable to write to stream " + stream->getName(),
+				"Unable to open file " + filename + " for writing",
 				"GpuNamedConstantsSerializer::exportSkeleton");
 		}
 
@@ -305,6 +293,8 @@ namespace Ogre
 			writeInts(((uint32*)&def.elementSize), 1);
 			writeInts(((uint32*)&def.arraySize), 1);		
 		}
+
+		fclose(mpfFile);
 
 	}
 	//---------------------------------------------------------------------
@@ -1462,8 +1452,7 @@ namespace Ogre
 
 		GpuLogicalIndexUse* indexUse = _getFloatConstantLogicalIndexUse(index, sz, deriveVariability(acType));
 
-        if(indexUse)
-            _setRawAutoConstant(indexUse->physicalIndex, acType, extraInfo, indexUse->variability, sz);
+		_setRawAutoConstant(indexUse->physicalIndex, acType, extraInfo, indexUse->variability, sz);
 	}
 	//-----------------------------------------------------------------------------
 	void GpuProgramParameters::_setRawAutoConstant(size_t physicalIndex, 

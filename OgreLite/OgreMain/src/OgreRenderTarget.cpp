@@ -35,18 +35,15 @@ THE SOFTWARE.
 #include "OgreRenderTargetListener.h"
 #include "OgreRoot.h"
 #include "OgreRenderSystem.h"
-#include "OgreDepthBuffer.h"
 
 namespace Ogre {
 
     RenderTarget::RenderTarget()
-		: mPriority(OGRE_DEFAULT_RT_GROUP)
-		, mDepthBufferPoolId(DepthBuffer::POOL_DEFAULT)
-		, mDepthBuffer(0)
-		, mActive(true)
-		, mAutoUpdate(true)
-		, mHwGamma(false)
-		, mFSAA(0)
+		:mPriority(OGRE_DEFAULT_RT_GROUP),
+		mActive(true),
+		mAutoUpdate(true),
+		mHwGamma(false), 
+		mFSAA(0)
     {
         mTimer = Root::getSingleton().getTimer();
         resetStatistics();
@@ -61,9 +58,6 @@ namespace Ogre {
             fireViewportRemoved(i->second);
             OGRE_DELETE (*i).second;
         }
-
-		//DepthBuffer keeps track of us, avoid a dangling pointer
-		detachDepthBuffer();
 
 
         // Write closing message
@@ -100,53 +94,6 @@ namespace Ogre {
     {
         return mColourDepth;
     }
-	//-----------------------------------------------------------------------
-	void RenderTarget::setDepthBufferPool( uint16 poolId )
-	{
-		if( mDepthBufferPoolId != poolId )
-		{
-			mDepthBufferPoolId = poolId;
-			detachDepthBuffer();
-		}
-	}
-	//-----------------------------------------------------------------------
-	uint16 RenderTarget::getDepthBufferPool() const
-	{
-		return mDepthBufferPoolId;
-	}
-	//-----------------------------------------------------------------------
-	DepthBuffer* RenderTarget::getDepthBuffer() const
-	{
-		return mDepthBuffer;
-	}
-	//-----------------------------------------------------------------------
-	bool RenderTarget::attachDepthBuffer( DepthBuffer *depthBuffer )
-	{
-		bool retVal = false;
-
-		if( (retVal = depthBuffer->isCompatible( this )) )
-		{
-			detachDepthBuffer();
-			mDepthBuffer = depthBuffer;
-			mDepthBuffer->_notifyRenderTargetAttached( this );
-		}
-
-		return retVal;
-	}
-	//-----------------------------------------------------------------------
-	void RenderTarget::detachDepthBuffer()
-	{
-		if( mDepthBuffer )
-		{
-			mDepthBuffer->_notifyRenderTargetDetached( this );
-			mDepthBuffer = 0;
-		}
-	}
-	//-----------------------------------------------------------------------
-	void RenderTarget::_detachDepthBuffer()
-	{
-		mDepthBuffer = 0;
-	}
 
     void RenderTarget::updateImpl(void)
     {
@@ -221,7 +168,7 @@ namespace Ogre {
 
     Viewport* RenderTarget::addViewport(Camera* cam, int ZOrder, float left, float top ,
         float width , float height)
-    {		
+    {
         // Check no existing viewport with this Z-order
         ViewportList::iterator it = mViewportList.find(ZOrder);
 
@@ -447,23 +394,6 @@ namespace Ogre {
         while (index--)
             ++i;
         return i->second;
-    }
-	//-----------------------------------------------------------------------
-    Viewport* RenderTarget::getViewportByZOrder(int ZOrder)
-    {
-		ViewportList::iterator i = mViewportList.find(ZOrder);
-		if(i == mViewportList.end())
-		{
-			OGRE_EXCEPT(Exception::ERR_ITEM_NOT_FOUND,"No viewport with given zorder : "
-				+ StringConverter::toString(ZOrder), "RenderTarget::getViewportByZOrder");
-		}
-        return i->second;
-    }
-	//-----------------------------------------------------------------------
-    bool RenderTarget::hasViewportWithZOrder(int ZOrder)
-    {
-		ViewportList::iterator i = mViewportList.find(ZOrder);
-		return i != mViewportList.end();
     }
     //-----------------------------------------------------------------------
     bool RenderTarget::isActive() const

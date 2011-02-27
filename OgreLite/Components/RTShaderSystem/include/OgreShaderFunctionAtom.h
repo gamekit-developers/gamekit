@@ -70,7 +70,7 @@ public:
 // Attributes.
 protected:
 	int			mGroupExecutionOrder;		// The owner group execution order.	
-	int			mInternalExecutionOrder;		// The execution order within the group.		
+	int			mInteralExecutionOrder;		// The execution order within the group.		
 };
 
 /** A class that represents a function operand (its the combination of a parameter the in/out semantic and the used fields)
@@ -105,7 +105,7 @@ public:
 	@param opSemantic The in/out semantic of the parameter.
 	@param opMask The field mask of the parameter.
 	*/
-	Operand(ParameterPtr parameter, Operand::OpSemantic opSemantic, int opMask = Operand::OPM_ALL, ushort indirectionLevel = 0);
+	Operand(ParameterPtr parameter, Operand::OpSemantic opSemantic, int opMask = Operand::OPM_ALL);
 
 	/** Copy constructor */
 	Operand(const Operand& rhs);
@@ -130,13 +130,6 @@ public:
 	/** Returns the operand semantic (do we read/write or both with the parameter). */
 	OpSemantic			getSemantic		()	const { return mSemantic; }
 
-	/** Returns the level of indirection. 
-	The greater the indirection level the more the parameter needs to be nested in brackets.
-	For example given 4 parameters x1...x4 with the indirections levels 0,1,1,2 
-	respectivly. The parameters should form the following string: x1[x2][x3[x4]].
-	*/
-	ushort				getIndirectionLevel()	const { return mIndirectionLevel; }
-
 	/** Returns the parameter name and the usage mask like this 'color.xyz' */
 	String				toString		()	const;
 
@@ -150,10 +143,9 @@ public:
 	static GpuConstantType		getGpuConstantType	(int mask);
 
 protected:
-	ParameterPtr	mParameter;			/// The parameter being carried by the operand
-	OpSemantic		mSemantic;			/// Tells if the parameter is of type input,output or both
-	int				mMask;				/// Which part of the parameter should be passed (x,y,z,w)
-	ushort			mIndirectionLevel;  /// The level of indirection. @see getIndirectionLevel
+	ParameterPtr	mParameter;
+	OpSemantic		mSemantic;
+	int				mMask;
 };
 
 /** A class that represents function invocation code from shader based program function.
@@ -172,18 +164,16 @@ public:
 	*/
 	FunctionInvocation(const String& functionName, int groupOrder, int internalOrder, String returnType = "void");
 
-    /** Copy constructor */
-	FunctionInvocation(const FunctionInvocation& rhs);
-
 	/** 
 	@see FunctionAtom::writeSourceCode
 	*/
 	virtual void			writeSourceCode	(std::ostream& os, const String& targetLanguage) const;
 
+
 	/** 
 	@see FunctionAtom::getFunctionAtomType
 	*/
-	virtual const String&	getFunctionAtomType () { return Type; }
+	virtual const String&	getFunctionAtomType			() { return Type; }
 
 	/** Get a list of parameters this function invocation will use in the function call as arguments. */
 	OperandVector&			getOperandList	() { return mOperands; }
@@ -192,40 +182,14 @@ public:
 	@param parameter A function parameter.
 	@param opSemantic The in/out semantic of the parameter.
 	@param opMask The field mask of the parameter.
-	@param indirectionLevel The level of nesting inside brackets
 	*/
-	void					pushOperand(ParameterPtr parameter, Operand::OpSemantic opSemantic, int opMask = Operand::OPM_ALL, int indirectionLevel = 0);
+	void					pushOperand(ParameterPtr parameter, Operand::OpSemantic opSemantic, int opMask = Operand::OPM_ALL);
 
 	/** Return the function name */
-	const String&			getFunctionName	() const { return mFunctionName; }
+	const String&			getFunctionName	() const {return mFunctionName; }
 
 	/** Return the return type */
-	const String&			getReturnType	() const { return mReturnType; }
-
-    /** Determines if the current object is equal to the compared one. */
-    bool operator == ( const FunctionInvocation& rhs ) const;
-
-    /** Determines if the current object is not equal to the compared one. */
-    bool operator != ( const FunctionInvocation& rhs ) const;
-
-    /** Determines if the current object is less than the compared one. */
-    bool operator <  ( const FunctionInvocation& rhs ) const;
-
-    /** Comparator function to be used for sorting.
-        Implemented as a struct to make it easier for the compiler to inline
-    */
-    struct FunctionInvocationLessThan
-    {
-        bool operator ()(FunctionInvocation const& lhs, FunctionInvocation const& rhs) const;
-    };
-
-    /** Comparator function to be used for comparisons.
-        Implemented as a struct to make it easier for the compiler to inline
-    */
-    struct FunctionInvocationCompare
-    {
-        bool operator ()(FunctionInvocation const& lhs, FunctionInvocation const& rhs) const;
-    };
+	const String&			getReturnType	() const {return mReturnType; }
 
 	/// The type of this class.
 	static String Type;
@@ -248,3 +212,4 @@ typedef FunctionAtomInstanceList::const_iterator	FunctionAtomInstanceConstIterat
 }
 
 #endif
+

@@ -130,41 +130,6 @@ namespace Ogre
         virtual void setVisible(bool visible)
         { (void)visible; }
 
-		/** Indicates whether the window was set to hidden (not displayed)
-		*/
-		virtual bool isHidden(void) const { return false; }
-
-		/** Hide (or show) the window. If called with hidden=true, this
-			will make the window completely invisible to the user.
-		@remarks
-			Setting a window to hidden is useful to create a dummy primary
-			RenderWindow hidden from the user so that you can create and
-			recreate your actual RenderWindows without having to recreate
-			all your resources.
-		*/
-		virtual void setHidden(bool hidden)
-		{ (void)hidden; }
-
-		/** Enable or disable vertical sync for the RenderWindow.
-		*/
-		virtual void setVSyncEnabled(bool vsync)
-		{ (void)vsync; }
-
-		/** Indicates whether vertical sync is actived for the window.
-		*/
-		virtual bool isVSyncEnabled() const { return false; }
-
-		/** Set the vertical sync interval. This indicates the number of vertical retraces to wait for
-		  	before swapping buffers. A value of 1 is the default.
-		*/
-		virtual void setVSyncInterval(unsigned int interval)
-		{ (void)interval; }
-
-		/** Returns the vertical sync interval. 
-		*/
-		virtual unsigned int getVSyncInterval() const { return 1; }
-	    
-
         /** Overridden from RenderTarget, flags invisible windows as inactive
         */
         virtual bool isActive(void) const { return mActive && isVisible(); }

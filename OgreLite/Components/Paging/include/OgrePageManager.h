@@ -470,7 +470,6 @@ namespace Ogre
 		bool mPagingEnabled;
 
 		Grid2DPageStrategy* mGrid2DPageStrategy;
-		Grid3DPageStrategy* mGrid3DPageStrategy;
 		SimplePageContentCollectionFactory* mSimpleCollectionFactory;
 	};
 

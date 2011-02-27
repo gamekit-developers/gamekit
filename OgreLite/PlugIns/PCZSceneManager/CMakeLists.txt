@@ -60,7 +60,7 @@ if (NOT OGRE_STATIC)
   ) 
 endif ()
 
-if (APPLE AND NOT OGRE_BUILD_PLATFORM_APPLE_IOS)
+if (APPLE AND NOT OGRE_BUILD_PLATFORM_IPHONE)
     # Set the INSTALL_PATH so that Plugins can be installed in the application package
     set_target_properties(Plugin_PCZSceneManager
        PROPERTIES BUILD_WITH_INSTALL_RPATH 1

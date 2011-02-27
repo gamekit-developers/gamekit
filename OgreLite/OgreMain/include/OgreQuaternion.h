@@ -52,17 +52,14 @@ namespace Ogre {
     class _OgreExport Quaternion
     {
     public:
-		/// Default constructor, initializes to identity rotation (aka 0°)
-		inline Quaternion ()
-			: w(1), x(0), y(0), z(0)
+        inline Quaternion (
+            Real fW = 1.0,
+            Real fX = 0.0, Real fY = 0.0, Real fZ = 0.0)
 		{
-		}
-		/// Construct from an explicit list of values
-		inline Quaternion (
-			Real fW,
-			Real fX, Real fY, Real fZ)
-			: w(fW), x(fX), y(fY), z(fZ)
-		{
+			w = fW;
+			x = fX;
+			y = fY;
+			z = fZ;
 		}
         /// Construct a quaternion from a rotation matrix
         inline Quaternion(const Matrix3& rot)

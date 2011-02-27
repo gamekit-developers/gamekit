@@ -100,11 +100,6 @@ namespace Ogre
 		terrain->_setCompositeMapRequired(mCompositeMapEnabled);
 	}
 	//---------------------------------------------------------------------
-	bool TerrainMaterialGeneratorA::SM2Profile::isVertexCompressionSupported() const
-	{
-		return true;
-	}
-	//---------------------------------------------------------------------
 	void TerrainMaterialGeneratorA::SM2Profile::setLayerNormalMappingEnabled(bool enabled)
 	{
 		if (enabled != mLayerNormalMappingEnabled)
@@ -246,7 +241,7 @@ namespace Ogre
 		// Automatically disable normal & parallax mapping if card cannot handle it
 		// We do this rather than having a specific technique for it since it's simpler
 		GpuProgramManager& gmgr = GpuProgramManager::getSingleton();
-		if (!gmgr.isSyntaxSupported("ps_4_0") && !gmgr.isSyntaxSupported("ps_3_0") && !gmgr.isSyntaxSupported("ps_2_x")
+		if (!gmgr.isSyntaxSupported("ps_3_0") && !gmgr.isSyntaxSupported("ps_2_x")
 			&& !gmgr.isSyntaxSupported("fp40") && !gmgr.isSyntaxSupported("arbfp1"))
 		{
 			setLayerNormalMappingEnabled(false);
@@ -317,14 +312,11 @@ namespace Ogre
 			if (hmgr.isLanguageSupported("cg"))
 				mShaderGen = OGRE_NEW ShaderHelperCg();
 			else if (hmgr.isLanguageSupported("hlsl") &&
-				((check2x && gmgr.isSyntaxSupported("ps_4_0")) ||
-				(check2x && gmgr.isSyntaxSupported("ps_2_x")) ||
+				((check2x && gmgr.isSyntaxSupported("ps_2_x")) ||
 				(!check2x && gmgr.isSyntaxSupported("ps_2_0"))))
 				mShaderGen = OGRE_NEW ShaderHelperHLSL();
 			else if (hmgr.isLanguageSupported("glsl"))
 				mShaderGen = OGRE_NEW ShaderHelperGLSL();
-			else if (hmgr.isLanguageSupported("glsles"))
-				mShaderGen = OGRE_NEW ShaderHelperGLSLES();
 			else
 			{
 				// todo
@@ -332,7 +324,6 @@ namespace Ogre
 
 			// check SM3 features
 			mSM3Available = GpuProgramManager::getSingleton().isSyntaxSupported("ps_3_0");
-			mSM4Available = GpuProgramManager::getSingleton().isSyntaxSupported("ps_4_0");
 
 		}
 		HighLevelGpuProgramPtr vprog = mShaderGen->generateVertexProgram(this, terrain, tt);
@@ -538,15 +529,7 @@ namespace Ogre
 			}
 		}
 
-		if (terrain->_getUseVertexCompression() && tt != RENDER_COMPOSITE_MAP)
-		{
-			Matrix4 posIndexToObjectSpace;
-			terrain->getPointTransform(&posIndexToObjectSpace);
-			params->setNamedConstant("posIndexToObjectSpace", posIndexToObjectSpace);
-		}
 
-		
-		
 	}
 	//---------------------------------------------------------------------
 	void TerrainMaterialGeneratorA::SM2Profile::ShaderHelper::defaultFpParams(
@@ -635,13 +618,7 @@ namespace Ogre
 				terrain->getLayerUVMultiplier(i * 4 + 2), 
 				terrain->getLayerUVMultiplier(i * 4 + 3) 
 				);
-			params->setNamedConstant("uvMul_" + StringConverter::toString(i), uvMul);
-		}
-		
-		if (terrain->_getUseVertexCompression() && tt != RENDER_COMPOSITE_MAP)
-		{
-			Real baseUVScale = 1.0f / (terrain->getSize() - 1);
-			params->setNamedConstant("baseUVScale", baseUVScale);
+			params->setNamedConstant("uvMul" + StringConverter::toString(i), uvMul);
 		}
 
 	}
@@ -735,7 +712,7 @@ namespace Ogre
 			ret->unload();
 		}
 
-		ret->setParameter("profiles", "vs_4_0 vs_3_0 vs_2_0 arbvp1");
+		ret->setParameter("profiles", "vs_3_0 vs_2_0 arbvp1");
 		ret->setParameter("entry_point", "main_vp");
 
 		return ret;
@@ -761,9 +738,9 @@ namespace Ogre
 		}
 		
 		if(prof->isLayerNormalMappingEnabled() || prof->isLayerParallaxMappingEnabled())
-			ret->setParameter("profiles", "ps_4_0 ps_3_0 ps_2_x fp40 arbfp1");
+			ret->setParameter("profiles", "ps_3_0 ps_2_x fp40 arbfp1");
 		else
-			ret->setParameter("profiles", "ps_4_0 ps_3_0 ps_2_0 fp30 arbfp1");
+			ret->setParameter("profiles", "ps_3_0 ps_2_0 fp30 arbfp1");
 		ret->setParameter("entry_point", "main_fp");
 
 		return ret;
@@ -774,21 +751,9 @@ namespace Ogre
 		const SM2Profile* prof, const Terrain* terrain, TechniqueType tt, StringUtil::StrStreamType& outStream)
 	{
 		outStream << 
-			"void main_vp(\n";
-		bool compression = terrain->_getUseVertexCompression() && tt != RENDER_COMPOSITE_MAP;
-		if (compression)
-		{
-			outStream << 
-				"float2 posIndex : POSITION,\n"
-				"float height  : TEXCOORD0,\n";
-		}
-		else
-		{
-			outStream <<
-				"float4 pos : POSITION,\n"
-				"float2 uv  : TEXCOORD0,\n";
-
-		}
+			"void main_vp(\n"
+			"float4 pos : POSITION,\n"
+			"float2 uv  : TEXCOORD0,\n";
 		if (tt != RENDER_COMPOSITE_MAP)
 			outStream << "float2 delta  : TEXCOORD1,\n"; // lodDelta, lodThreshold
 
@@ -797,12 +762,6 @@ namespace Ogre
 			"uniform float4x4 viewProjMatrix,\n"
 			"uniform float2   lodMorph,\n"; // morph amount, morph LOD target
 
-		if (compression)
-		{
-			outStream << 
-				"uniform float4x4   posIndexToObjectSpace,\n"
-				"uniform float    baseUVScale,\n";
-		}
 		// uv multipliers
 		uint maxLayers = prof->getMaxLayers(terrain);
 		uint numLayers = std::min(maxLayers, static_cast<uint>(terrain->getLayerCount()));
@@ -810,7 +769,7 @@ namespace Ogre
 		if (numLayers % 4)
 			++numUVMultipliers;
 		for (uint i = 0; i < numUVMultipliers; ++i)
-			outStream << "uniform float4 uvMul_" << i << ", \n";
+			outStream << "uniform float4 uvMul" << i << ", \n";
 
 		outStream <<
 			"out float4 oPos : POSITION,\n"
@@ -861,15 +820,7 @@ namespace Ogre
 
 		outStream <<
 			")\n"
-			"{\n";
-		if (compression)
-		{
-			outStream <<
-				"	float4 pos;\n"
-				"	pos = mul(posIndexToObjectSpace, float4(posIndex, height, 1));\n"
-				"   float2 uv = float2(posIndex.x * baseUVScale, 1.0 - (posIndex.y * baseUVScale));\n";
-		}
-		outStream <<
+			"{\n"
 			"	float4 worldPos = mul(worldMatrix, pos);\n"
 			"	oPosObj = pos;\n";
 
@@ -920,9 +871,9 @@ namespace Ogre
 				uint uvMulIdx = layer / 4;
 
 				outStream <<
-					"	oUV" << i << ".xy = " << " uv.xy * uvMul_" << uvMulIdx << "." << getChannel(layer) << ";\n";
+					"	oUV" << i << ".xy = " << " uv.xy * uvMul" << uvMulIdx << "." << getChannel(layer) << ";\n";
 				outStream <<
-					"	oUV" << i << ".zw = " << " uv.xy * uvMul_" << uvMulIdx << "." << getChannel(layer+1) << ";\n";
+					"	oUV" << i << ".zw = " << " uv.xy * uvMul" << uvMulIdx << "." << getChannel(layer+1) << ";\n";
 				
 			}
 
@@ -949,7 +900,6 @@ namespace Ogre
 
 		outStream << 
 			"float4 main_fp(\n"
-			"float4 vertexPos : POSITION,\n"
 			"float4 position : TEXCOORD0,\n";
 
 		uint texCoordSet = 1;
@@ -1605,9 +1555,7 @@ namespace Ogre
 			ret->unload();
 		}
 
-		if (prof->_isSM4Available())
-			ret->setParameter("target", "vs_4_0");
-		else if (prof->_isSM3Available())
+		if (prof->_isSM3Available())
 			ret->setParameter("target", "vs_3_0");
 		else
 			ret->setParameter("target", "vs_2_0");
@@ -1636,9 +1584,7 @@ namespace Ogre
 			ret->unload();
 		}
 
-		if (prof->_isSM4Available())
-			ret->setParameter("target", "ps_4_0");
-		else if (prof->_isSM3Available())
+		if (prof->_isSM3Available())
 			ret->setParameter("target", "ps_3_0");
 		else
 			ret->setParameter("target", "ps_2_x");
@@ -1705,63 +1651,6 @@ namespace Ogre
 		return ret;
 
 	}
-	//---------------------------------------------------------------------
-	//---------------------------------------------------------------------
-	HighLevelGpuProgramPtr
-	TerrainMaterialGeneratorA::SM2Profile::ShaderHelperGLSLES::createVertexProgram(
-		const SM2Profile* prof, const Terrain* terrain, TechniqueType tt)
-	{
-		HighLevelGpuProgramManager& mgr = HighLevelGpuProgramManager::getSingleton();
-		String progName = getVertexProgramName(prof, terrain, tt);
 
-		switch(tt)
-		{
-		case HIGH_LOD:
-			progName += "/hlod";
-			break;
-		case LOW_LOD:
-			progName += "/llod";
-			break;
-		case RENDER_COMPOSITE_MAP:
-			progName += "/comp";
-			break;
-		}
-
-		HighLevelGpuProgramPtr ret = mgr.getByName(progName);
-		if (ret.isNull())
-		{
-			ret = mgr.createProgram(progName, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, 
-				"glsles", GPT_VERTEX_PROGRAM);
-		}
-		else
-		{
-			ret->unload();
-		}
-
-		return ret;
-
-	}
-	//---------------------------------------------------------------------
-	HighLevelGpuProgramPtr
-		TerrainMaterialGeneratorA::SM2Profile::ShaderHelperGLSLES::createFragmentProgram(
-			const SM2Profile* prof, const Terrain* terrain, TechniqueType tt)
-	{
-		HighLevelGpuProgramManager& mgr = HighLevelGpuProgramManager::getSingleton();
-		String progName = getFragmentProgramName(prof, terrain, tt);
-
-		HighLevelGpuProgramPtr ret = mgr.getByName(progName);
-		if (ret.isNull())
-		{
-			ret = mgr.createProgram(progName, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, 
-				"glsles", GPT_FRAGMENT_PROGRAM);
-		}
-		else
-		{
-			ret->unload();
-		}
-
-		return ret;
-
-	}
 
 }

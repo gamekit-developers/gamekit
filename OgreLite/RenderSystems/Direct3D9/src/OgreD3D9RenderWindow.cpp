@@ -37,7 +37,6 @@ THE SOFTWARE.
 #include "OgreRoot.h"
 #include "OgreWindowEventUtilities.h"
 #include "OgreD3D9DeviceManager.h"
-#include "OgreDepthBuffer.h"
 
 namespace Ogre
 {
@@ -50,13 +49,10 @@ namespace Ogre
 		mHWnd = 0;
 		mActive = false;		
 		mClosed = false;
-		mHidden = false;
 		mSwitchingFullscreen = false;
 		mDisplayFrequency = 0;
 		mDeviceValid = false;
 		mUseNVPerfHUD = false;
-		mWindowedWinStyle = 0;
-		mFullscreenWinStyle = 0;
 	}
 
 	D3D9RenderWindow::~D3D9RenderWindow()
@@ -86,9 +82,7 @@ namespace Ogre
 		mUseNVPerfHUD = false;
 		size_t fsaaSamples = 0;
 		String fsaaHint;
-		bool enableDoubleClick = false;
 		int monitorIndex = -1;	//Default by detecting the adapter from left / top position
-		
 
 		if(miscParams)
 		{
@@ -118,10 +112,6 @@ namespace Ogre
 			opt = miscParams->find("vsync");
 			if(opt != miscParams->end())
 				mVSync = StringConverter::parseBool(opt->second);
-			// hidden	[parseBool]
-			opt = miscParams->find("hidden");
-			if(opt != miscParams->end())
-				mHidden = StringConverter::parseBool(opt->second);
 			// vsyncInterval	[parseUnsignedInt]
 			opt = miscParams->find("vsyncInterval");
 			if(opt != miscParams->end())
@@ -170,16 +160,8 @@ namespace Ogre
 			opt = miscParams->find("monitorIndex");
 			if(opt != miscParams->end())
 				monitorIndex = StringConverter::parseInt(opt->second);
-			opt = miscParams->find("show");
-			if(opt != miscParams->end())
-				mHidden = !StringConverter::parseBool(opt->second);
-			// enable double click messages
-			opt = miscParams->find("enableDoubleClick");
-			if(opt != miscParams->end())
-				enableDoubleClick = StringConverter::parseBool(opt->second);
 
 		}
-		mIsFullScreen = fullScreen;
 
 		// Destroy current window if any
 		if( mHWnd )
@@ -187,10 +169,12 @@ namespace Ogre
 
 		if (!externalHandle)
 		{
+			DWORD		dwStyle = WS_VISIBLE | WS_CLIPCHILDREN;
 			DWORD		dwStyleEx = 0;
 			HMONITOR    hMonitor = NULL;		
 			MONITORINFO monitorInfo;
 			RECT		rc;
+
 
 			// If we specified which adapter we want to use - find it's monitor.
 			if (monitorIndex != -1)
@@ -226,31 +210,7 @@ namespace Ogre
 			monitorInfo.cbSize = sizeof(MONITORINFO);
 			GetMonitorInfo(hMonitor, &monitorInfo);
 
-			// Update window style flags.
-			mFullscreenWinStyle = WS_CLIPCHILDREN | WS_POPUP;
-			mWindowedWinStyle   = WS_CLIPCHILDREN;
 
-			if (!mHidden)
-			{
-				mFullscreenWinStyle |= WS_VISIBLE;
-				mWindowedWinStyle |= WS_VISIBLE;
-			}
-
-			if (parentHWnd)
-			{
-				mWindowedWinStyle |= WS_CHILD;
-			}
-			else
-			{
-				if (border == "none")
-					mWindowedWinStyle |= WS_POPUP;
-				else if (border == "fixed")
-					mWindowedWinStyle |= WS_OVERLAPPED | WS_BORDER | WS_CAPTION |
-					WS_SYSMENU | WS_MINIMIZEBOX;
-				else
-					mWindowedWinStyle |= WS_OVERLAPPEDWINDOW;
-			}
-					
 			unsigned int winWidth, winHeight;
 			winWidth = width;
 			winHeight = height;
@@ -289,20 +249,36 @@ namespace Ogre
 
 			if (fullScreen)
 			{
-				dwStyleEx |= WS_EX_TOPMOST;				
+				dwStyleEx |= WS_EX_TOPMOST;
+				dwStyle |= WS_POPUP;
 				mTop = monitorInfo.rcMonitor.top;
 				mLeft = monitorInfo.rcMonitor.left;		
 			}
 			else
-			{				
-                adjustWindow(width, height, &winWidth, &winHeight);
+			{
+				if (parentHWnd)
+				{
+					dwStyle |= WS_CHILD;
+				}
+				else
+				{
+					if (border == "none")
+						dwStyle |= WS_POPUP;
+					else if (border == "fixed")
+						dwStyle |= WS_OVERLAPPED | WS_BORDER | WS_CAPTION |
+						WS_SYSMENU | WS_MINIMIZEBOX;
+					else
+						dwStyle |= WS_OVERLAPPEDWINDOW;
+				}
+
+				adjustWindow(width, height, dwStyle, &winWidth, &winHeight);
 
 				if (!outerSize)
 				{
 					// Calculate window dimensions required
 					// to get the requested client area
 					SetRect(&rc, 0, 0, mWidth, mHeight);
-					AdjustWindowRect(&rc, getWindowStyle(fullScreen), false);
+					AdjustWindowRect(&rc, dwStyle, false);
 					mWidth = rc.right - rc.left;
 					mHeight = rc.bottom - rc.top;
 
@@ -321,14 +297,10 @@ namespace Ogre
 				}
 			}
 			
-			UINT classStyle = 0;
-			if (enableDoubleClick)
-				classStyle |= CS_DBLCLKS;
-
 
 			// Register the window class
 			// NB allow 4 bytes of window data for D3D9RenderWindow pointer
-			WNDCLASS wc = { classStyle, WindowEventUtilities::_WndProc, 0, 0, hInst,
+			WNDCLASS wc = { 0, WindowEventUtilities::_WndProc, 0, 0, hInst,
 				LoadIcon(0, IDI_APPLICATION), LoadCursor(NULL, IDC_ARROW),
 				(HBRUSH)GetStockObject(BLACK_BRUSH), 0, "OgreD3D9Wnd" };
 			RegisterClass(&wc);
@@ -336,8 +308,9 @@ namespace Ogre
 			// Create our main window
 			// Pass pointer to self
 			mIsExternal = false;
-			mHWnd = CreateWindowEx(dwStyleEx, "OgreD3D9Wnd", title.c_str(), getWindowStyle(fullScreen),
+			mHWnd = CreateWindowEx(dwStyleEx, "OgreD3D9Wnd", title.c_str(), dwStyle,
 				mLeft, mTop, winWidth, winHeight, parentHWnd, 0, hInst, this);
+			mStyle = dwStyle;
 
 			WindowEventUtilities::_addRenderWindow(this);
 		}
@@ -358,8 +331,8 @@ namespace Ogre
 		mHeight = rc.bottom;
 
 		mName = name;
-		mDepthBufferPoolId = depthBuffer ? DepthBuffer::POOL_DEFAULT : DepthBuffer::POOL_NO_DEPTH;
-		mDepthBuffer = 0;
+		mIsDepthBuffered = depthBuffer;
+		mIsFullScreen = fullScreen;
 		mColourDepth = colourDepth;
 
 		LogManager::getSingleton().stream()
@@ -369,7 +342,6 @@ namespace Ogre
 									
 		mActive = true;
 		mClosed = false;
-		setHidden(mHidden);
 	}
 
 	void D3D9RenderWindow::setFullscreen(bool fullScreen, unsigned int width, unsigned int height)
@@ -379,6 +351,8 @@ namespace Ogre
 			if (fullScreen != mIsFullScreen)
 				mSwitchingFullscreen = true;
 
+			mStyle = WS_VISIBLE | WS_CLIPCHILDREN;
+
 			bool oldFullscreen = mIsFullScreen;
 			mIsFullScreen = fullScreen;
 			mWidth = mDesiredWidth = width;
@@ -386,6 +360,8 @@ namespace Ogre
 
 			if (fullScreen)
 			{
+				mStyle |= WS_POPUP;
+				
 				// Get the nearest monitor to this window.
 				HMONITOR hMonitor = MonitorFromWindow(mHWnd, MONITOR_DEFAULTTONEAREST);
 
@@ -410,48 +386,42 @@ namespace Ogre
 				{
 					SetWindowPos(mHWnd, HWND_TOPMOST, mLeft, mTop, width, height, SWP_NOACTIVATE);
 					//MoveWindow(mHWnd, mLeft, mTop, mWidth, mHeight, FALSE);
-					SetWindowLong(mHWnd, GWL_STYLE, getWindowStyle(mIsFullScreen));
+					SetWindowLong(mHWnd, GWL_STYLE, mStyle);
 					SetWindowPos(mHWnd, 0, 0,0, 0,0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 				}
 			}
 			else
 			{
+				mStyle |= WS_OVERLAPPEDWINDOW;
 				// Calculate window dimensions required
 				// to get the requested client area
 				unsigned int winWidth, winHeight;
-				winWidth = mWidth;
-				winHeight = mHeight;
-				
-				adjustWindow(mWidth, mHeight, &winWidth, &winHeight);
+				adjustWindow(mWidth, mHeight, mStyle, &winWidth, &winHeight);
 
-				SetWindowLong(mHWnd, GWL_STYLE, getWindowStyle(mIsFullScreen));
+				SetWindowLong(mHWnd, GWL_STYLE, mStyle);
 				SetWindowPos(mHWnd, HWND_NOTOPMOST, 0, 0, winWidth, winHeight,
 					SWP_DRAWFRAME | SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOACTIVATE);
 				// Note that we also set the position in the restoreLostDevice method
 				// via _finishSwitchingFullScreen
-
-				// Update the current rect.
-				updateWindowRect();
 			}
-								
+						
 			// Have to release & trigger device reset
 			// NB don't use windowMovedOrResized since Win32 doesn't know
 			// about the size change yet				
 			mDevice->invalidate(this);
 			// Notify viewports of resize
 			ViewportList::iterator it = mViewportList.begin();
-			while( it != mViewportList.end() )
-				(*it++).second->_updateDimensions();	
+			while(it != mViewportList.end()) (*it++).second->_updateDimensions();
 		}
 	} 
 
 	void D3D9RenderWindow::adjustWindow(unsigned int clientWidth, unsigned int clientHeight, 
-		unsigned int* winWidth, unsigned int* winHeight)
+		DWORD style, unsigned int* winWidth, unsigned int* winHeight)
 	{
 		// NB only call this for non full screen
 		RECT rc;
 		SetRect(&rc, 0, 0, clientWidth, clientHeight);
-		AdjustWindowRect(&rc, getWindowStyle(mIsFullScreen), false);
+		AdjustWindowRect(&rc, style, false);
 		*winWidth = rc.right - rc.left;
 		*winHeight = rc.bottom - rc.top;
 
@@ -485,20 +455,15 @@ namespace Ogre
 			SetWindowRgn(mHWnd, hRgn, FALSE);
 		}
 		else
-		{			
+		{
 			// When switching back to windowed mode, need to reset window size 
 			// after device has been restored
 			// We may have had a resize event which polluted our desired sizes
-			if (mWidth != mDesiredWidth ||
-				mHeight != mDesiredHeight)
-			{
-				mWidth = mDesiredWidth;
-				mHeight = mDesiredHeight;				
-			}
 			unsigned int winWidth, winHeight;
-			adjustWindow(mWidth, mHeight, &winWidth, &winHeight);
+			adjustWindow(mDesiredWidth, mDesiredHeight, mStyle, &winWidth, &winHeight);
 
-			// deal with centering when switching down to smaller resolution
+			// deal with centreing when switching down to smaller resolution
+
 			HMONITOR hMonitor = MonitorFromWindow(mHWnd, MONITOR_DEFAULTTONEAREST);
 			MONITORINFO monitorInfo;
 			memset(&monitorInfo, 0, sizeof(MONITORINFO));
@@ -514,7 +479,16 @@ namespace Ogre
 			SetWindowPos(mHWnd, HWND_NOTOPMOST, left, top, winWidth, winHeight,
 				SWP_DRAWFRAME | SWP_FRAMECHANGED | SWP_NOACTIVATE);
 
-			updateWindowRect();
+			if (mWidth != mDesiredWidth ||
+				mHeight != mDesiredHeight)
+			{
+				mWidth = mDesiredWidth;
+				mHeight = mDesiredHeight;
+				// Notify viewports of resize
+				ViewportList::iterator it = mViewportList.begin();
+				while( it != mViewportList.end() )
+					(*it++).second->_updateDimensions();			
+			}
 		}
 		mSwitchingFullscreen = false;
 	}
@@ -534,7 +508,7 @@ namespace Ogre
 		presentParams->SwapEffect				= D3DSWAPEFFECT_DISCARD;
 		// triple buffer if VSync is on
 		presentParams->BackBufferCount			= mVSync ? 2 : 1;
-		presentParams->EnableAutoDepthStencil	= (mDepthBufferPoolId != DepthBuffer::POOL_NO_DEPTH);
+		presentParams->EnableAutoDepthStencil	= mIsDepthBuffered;
 		presentParams->hDeviceWindow			= mHWnd;
 		presentParams->BackBufferWidth			= mWidth;
 		presentParams->BackBufferHeight			= mHeight;
@@ -692,46 +666,6 @@ namespace Ogre
 		return (mHWnd && !IsIconic(mHWnd));
 	}
 
-	void D3D9RenderWindow::setHidden(bool hidden)
-	{
-		mHidden = hidden;
-		if (!mIsExternal)
-		{
-			if (hidden)
-				ShowWindow(mHWnd, SW_HIDE);
-			else
-				ShowWindow(mHWnd, SW_SHOWNORMAL);
-		}
-	}
-
-	void D3D9RenderWindow::setVSyncEnabled(bool vsync)
-	{
-		mVSync = vsync;
-		if (!mIsExternal)
-		{
-			// we need to reset the device with new vsync params
-			// invalidate the window to trigger this
-			mDevice->invalidate(this);
-		}
-	}
-
-	bool D3D9RenderWindow::isVSyncEnabled() const
-	{
-		return mVSync;
-	}
-
-	void D3D9RenderWindow::setVSyncInterval(unsigned int interval)
-	{
-		mVSyncInterval = interval;
-		if (mVSync)
-			setVSyncEnabled(true);
-	}
-
-	unsigned int D3D9RenderWindow::getVSyncInterval() const
-	{
-		return mVSyncInterval;
-	}
-
 	void D3D9RenderWindow::reposition(int top, int left)
 	{
 		if (mHWnd && !mIsFullScreen)
@@ -746,7 +680,7 @@ namespace Ogre
 		if (mHWnd && !mIsFullScreen)
 		{
 			unsigned int winWidth, winHeight;
-			adjustWindow(width, height, &winWidth, &winHeight);
+			adjustWindow(width, height, mStyle, &winWidth, &winHeight);
 			SetWindowPos(mHWnd, 0, 0, 0, winWidth, winHeight,
 				SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
 		}
@@ -898,7 +832,7 @@ namespace Ogre
 	//-----------------------------------------------------------------------------
 	bool D3D9RenderWindow::isDepthBuffered() const
 	{
-		return (mDepthBufferPoolId != DepthBuffer::POOL_NO_DEPTH);
+		return mIsDepthBuffered;
 	}
 
 	//-----------------------------------------------------------------------------
