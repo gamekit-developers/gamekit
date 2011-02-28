@@ -44,7 +44,7 @@ public:
 	{
 	}
 
-	UT_INLINE akEuler(const Vector3& v)
+	UT_INLINE akEuler(const akVector3& v)
 		:       x(v.getX()), y(v.getY()), z(v.getZ())
 	{
 	}
@@ -54,33 +54,33 @@ public:
 	{
 	}
 
-	UT_INLINE akEuler(const Quat& q)
+	UT_INLINE akEuler(const akQuat& q)
 	{
-		Matrix3 matr(q);		
+		akMatrix3 matr(q);		
 		fromMatrix3(matr);
 	}
 
-	UT_INLINE akEuler(const Matrix3& v)
+	UT_INLINE akEuler(const akMatrix3& v)
 	{
 		fromMatrix3(v);
 	}
 	
-	UT_INLINE Vector3 toVector3(void) const
+	UT_INLINE akVector3 toVector3(void) const
 	{
-		return Vector3(x, y, z);
+		return akVector3(x, y, z);
 	}
 	
-	UT_INLINE Quat toQuaternion(void) const
+	UT_INLINE akQuat toQuaternion(void) const
 	{
-		return Quat(toMatrix3());
+		return akQuat(toMatrix3());
 	}
 
-	UT_INLINE Matrix3 toMatrix3(void) const
+	UT_INLINE akMatrix3 toMatrix3(void) const
 	{		
-		return Matrix3::rotationZYX(Vector3(x,y,z));
+		return akMatrix3::rotationZYX(akVector3(x,y,z));
 	}
 	
-	UT_INLINE void fromMatrix3(const Matrix3& v)
+	UT_INLINE void fromMatrix3(const akMatrix3& v)
 	{
 		// rot =  cy*cz           cz*sx*sy-cx*sz  cx*cz*sy+sx*sz
 		//        cy*sz           cx*cz+sx*sy*sz -cz*sx+cx*sy*sz

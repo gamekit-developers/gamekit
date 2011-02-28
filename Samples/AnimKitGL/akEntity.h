@@ -84,7 +84,7 @@ public:
 		return true;
 	}
 	
-	UT_INLINE Matrix4* getPalette(void)
+	UT_INLINE akMatrix4* getPalette(void)
 	{
 		return m_matrixPalette;
 	}
@@ -100,7 +100,7 @@ private:
 	// per object anim data
 	akAnimationPlayerSet m_players;
 	akSkeletonPose*      m_pose;
-	Matrix4*             m_matrixPalette;
+	akMatrix4*             m_matrixPalette;
 };
 
 #endif // AKENTITY_H

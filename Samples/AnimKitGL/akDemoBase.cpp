@@ -241,7 +241,7 @@ void akDemoBase::render()
 	gluPerspective(m_camera.m_fov, (float)m_windowx/m_windowy, m_camera.m_clipStart, m_camera.m_clipEnd);
 	
 	glMatrixMode(GL_MODELVIEW);
-	Matrix4 cam_inv_m = inverse(m_camera.m_transform.toMatrix());
+	akMatrix4 cam_inv_m = inverse(m_camera.m_transform.toMatrix());
 	glLoadMatrixf((GLfloat*)&cam_inv_m);
 
 	// world origin axes

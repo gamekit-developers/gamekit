@@ -33,13 +33,24 @@
 #include "utCommon.h"
 
 
-//#ifdef WIN32
-//#include "vectormathlibrary/include/vectormath/SSE/cpp/vectormath_aos.h"
-//#else
-#include "vectormathlibrary/include/vectormath/scalar/cpp/vectormath_aos.h"
-//#endif
-using namespace Vectormath::Aos;
+#if defined (_WIN32)
+#else
+#define AK_USE_SSE
+#endif
 
+#ifdef AK_USE_SSE
+#include "vectormath/sse/vectormath_aos.h"
+#else
+#include "vectormath/scalar/vectormath_aos.h"
+#endif
+
+typedef Vectormath::Aos::Vector3    akVector3;
+typedef Vectormath::Aos::Vector4    akVector4;
+typedef Vectormath::Aos::Quat       akQuat;
+typedef Vectormath::Aos::Matrix3    akMatrix3;
+typedef Vectormath::Aos::Matrix4    akMatrix4;
+typedef Vectormath::Aos::Transform3 akTransform3;
+typedef Vectormath::Aos::Point3     akPoint3;
 
 #if ANIMKIY_DOUBLE_PRECISION == 1
 	typedef double akScalar;

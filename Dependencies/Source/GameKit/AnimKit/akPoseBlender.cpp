@@ -58,7 +58,7 @@ void akPoseBlender::blendJoint(BlendMode bmode, RotMode rmode, akScalar weight, 
 	case PB_BM_SUB:
 		out.loc = a.loc - b.loc * weight;
 		
-		Quat invrot = conj(b.rot);
+		akQuat invrot = conj(b.rot);
 		
 		if(rmode==PB_RM_SLERP)
 			out.rot = slerp(weight, a.rot, a.rot*invrot);

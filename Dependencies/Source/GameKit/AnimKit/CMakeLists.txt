@@ -37,8 +37,8 @@ set(ANIMKIT_HDR
 	akTransitionBlender.h
 	akVertexBuffer.h
 	
-	vectormathlibrary/include/vectormath/scalar/cpp/vectormath_aos.h
-	vectormathlibrary/include/vectormath/SSE/cpp/vectormath_aos.h
+	vectormath/scalar/vectormath_aos.h
+	vectormath/sse/vectormath_aos.h
 )
 
 include_directories(${GAMEKIT_UTILS_PATH})

@@ -160,9 +160,9 @@ void akSkeletonPose::setIdentity(void)
 }
 
 
-void akSkeletonPose::fillMatrixPalette(Matrix4 *palette) const
+void akSkeletonPose::fillMatrixPalette(akMatrix4 *palette) const
 {
-	const Matrix4* inversebp = m_skeleton->getInverseBindPose();
+	const akMatrix4* inversebp = m_skeleton->getInverseBindPose();
 	
 	for(int i=0; i<getNumJoints(); i++)
 	{

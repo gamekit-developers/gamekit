@@ -61,7 +61,7 @@ private:
 	void convertMeshObject(Blender::Object *bobj);
 	void convertMesh(Blender::Mesh* bme);
 	void convertSkeleton(Blender::bArmature* bskel);
-	void convertTriangle(unsigned int firstIndex, Vector3* positions, int* oldIndices, Blender::MVert* bverts, int idx1, int idx2, int idx3);
+	void convertTriangle(unsigned int firstIndex, akVector3* positions, int* oldIndices, Blender::MVert* bverts, int idx1, int idx2, int idx3);
 	void convertMeshSkinning(akMesh* mesh, Blender::Object* bobj, akSkeleton* skel);
 	
 	void removeMeshTempData(akMesh *mesh);

@@ -74,7 +74,7 @@ public:
 	/// Will fill the pallet with the inverse binding pose of the skeleton multiplied by the bone pose.
 	/// If the pose is in model space than the palette can be used to transform vertex/object attached to bones
 	/// You can also process the palette afterward to include world transformation.
-	void fillMatrixPalette(Matrix4* palette)const ;
+	void fillMatrixPalette(akMatrix4* palette)const ;
 	
 	
 	UT_INLINE int getSpace(void)

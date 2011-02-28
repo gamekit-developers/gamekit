@@ -29,22 +29,22 @@
 
 void akGeometryDeformer::vertexSkinning(
 	const UTsize vtxCount,
-	const Matrix4* matrices,
+	const akMatrix4* matrices,
 	const float *         weights, UTsize weightsStride,
 	const unsigned char * index,   UTsize indexStride,
-	const Vector3 *         vtxSrc,  UTsize vtxSrcStride,
-	Vector3 *               vtxDst,  UTsize vtxDstStride,
-	const Vector3 *         normSrc, UTsize normSrcStride,
-	Vector3 *               normDst, UTsize normDstStride,
+	const akVector3 *         vtxSrc,  UTsize vtxSrcStride,
+	akVector3 *               vtxDst,  UTsize vtxDstStride,
+	const akVector3 *         normSrc, UTsize normSrcStride,
+	akVector3 *               normDst, UTsize normDstStride,
 	const unsigned char weightsPerVtx)
 {
 	//loop trough all vertices
 	for(unsigned int i=0; i<vtxCount; i++)
 	{
-		Vector4 outpos(0.f);
-		Vector3 outnorm(0.f);
+		akVector4 outpos(0.f);
+		akVector3 outnorm(0.f);
 		
-		const Vector4 pos(vtxSrc[0], 1.f);
+		const akVector4 pos(vtxSrc[0], 1.f);
 		
 		for(unsigned char j=0; j<weightsPerVtx; j++)
 		{
@@ -52,13 +52,13 @@ void akGeometryDeformer::vertexSkinning(
 			
 			if(weight)
 			{
-				const Matrix4& mat = matrices[index[j]];
+				const akMatrix4& mat = matrices[index[j]];
 								
 				outpos += mat * pos * weight;
 				
 				if(normSrc)
 				{
-					const Vector3 norm(normSrc[0]);
+					const akVector3 norm(normSrc[0]);
 					outnorm += mat.getUpper3x3() * norm * weight;
 				}
 			}

@@ -70,7 +70,7 @@ void akEntity::setSkeleton(akSkeleton *skel)
 	
 	if(m_matrixPalette)
 		delete[] m_matrixPalette;
-	m_matrixPalette = new Matrix4[m_skeleton->getNumJoints()];
+	m_matrixPalette = new akMatrix4[m_skeleton->getNumJoints()];
 }
 
 
@@ -78,14 +78,14 @@ void akEntity::draw(void)
 {
 	glPushMatrix();
 	
-	Matrix4 mat = m_transform.toMatrix();
+	akMatrix4 mat = m_transform.toMatrix();
 	glMultMatrixf((GLfloat*)&mat);
 	
 	if(m_mesh)
 	{
 		int j, tot;
 		unsigned int stride;
-		Vector3* positions;
+		akVector3* positions;
 		
 		for(j=0; j< m_mesh->getNumSubMeshes(); j++)
 		{
@@ -130,7 +130,7 @@ void akEntity::draw(void)
 			glPushMatrix();
 			
 			akTransformState* jointpose = m_pose->getJointPose(i);
-			Matrix4 mat = jointpose->toMatrix();
+			akMatrix4 mat = jointpose->toMatrix();
 			glMultMatrixf((GLfloat*)&mat);
 	
 			glBegin(GL_LINES);

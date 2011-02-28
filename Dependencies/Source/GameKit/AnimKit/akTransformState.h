@@ -34,46 +34,46 @@
 class akTransformState
 {
 public:
-	Quat    rot;
-	Vector3 loc;
-	Vector3 scale;
+	akQuat    rot;
+	akVector3 loc;
+	akVector3 scale;
 	
 public:
-	akTransformState(const Vector3& oloc = Vector3(0,0,0),
-					 const Quat&    orot = Quat::identity(),
-					 const Vector3& oscl = Vector3(1,1,1))
+	akTransformState(const akVector3& oloc = akVector3(0,0,0),
+					 const akQuat&    orot = akQuat::identity(),
+					 const akVector3& oscl = akVector3(1,1,1))
 	{
 		rot = orot;
 		loc = oloc;
 		scale = oscl;
 	}
 	
-	akTransformState(const Matrix4& mat)
+	akTransformState(const akMatrix4& mat)
 	{
 		loc = mat.getTranslation();
 		
-		Matrix3 m3 = mat.getUpper3x3();
+		akMatrix3 m3 = mat.getUpper3x3();
 		
-		rot = Quat(m3);
+		rot = akQuat(m3);
 		if(norm(rot)==0)
-			rot = Quat::identity();
+			rot = akQuat::identity();
 		
-		Matrix4 mrot = Matrix4(rot, Vector3(0,0,0));
-		Matrix4 T = mat*mrot;
+		akMatrix4 mrot = akMatrix4(rot, akVector3(0,0,0));
+		akMatrix4 T = mat*mrot;
 		
-		scale = Vector3(T[0][0], T[1][1], T[2][2]);
+		scale = akVector3(T[0][0], T[1][1], T[2][2]);
 	}
 	
-	UT_INLINE Matrix4 toMatrix(void) const
+	UT_INLINE akMatrix4 toMatrix(void) const
 	{
-		Transform3 t3(rot, loc);
+		akTransform3 t3(rot, loc);
 		appendScale(t3, scale);
-		return Matrix4(t3);
+		return akMatrix4(t3);
 	}
 	
 	UT_INLINE static akTransformState identity()
 	{
-		return akTransformState(Vector3(0,0,0), Quat::identity(), Vector3(1,1,1));
+		return akTransformState(akVector3(0,0,0), akQuat::identity(), akVector3(1,1,1));
 	}
 	
 	UT_INLINE const akTransformState& operator= (const akTransformState& o)

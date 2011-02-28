@@ -97,7 +97,7 @@ bool akSkeleton::setBindingPose(akSkeletonPose *pose)
 		m_localBindPose = new akSkeletonPose(*pose);
 		m_localBindPose->toLocalSpace(m_localBindPose);
 		
-		m_inverseBindPose = new Matrix4[m_numJoints];
+		m_inverseBindPose = new akMatrix4[m_numJoints];
 		
 		for(int i=0; i<m_numJoints; i++)
 		{

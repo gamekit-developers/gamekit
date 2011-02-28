@@ -100,7 +100,7 @@ void akDemo::step(akScalar time)
 		if(object->isMeshDeformed())
 		{
 			akSkeletonPose* pose;
-			Matrix4* palette;
+			akMatrix4* palette;
 			
 			pose = object->getPose();
 			
@@ -122,7 +122,7 @@ void akDemo::step(akScalar time)
 				
 				UTuint8 *indices;
 				float *weights;
-				Vector3 *posin, *posout;
+				akVector3 *posin, *posout;
 				unsigned int indicess, weightss, posins, posouts;
 				
 				

@@ -63,7 +63,7 @@ private:
 	
 	akSkeletonPose* m_localBindPose;
 	akSkeletonPose* m_modelBindPose;
-	Matrix4*        m_inverseBindPose;
+	akMatrix4*      m_inverseBindPose;
 	
 public:
 	akSkeleton(UTuint32 numJoints);
@@ -91,7 +91,7 @@ public:
 		return m_modelBindPose;
 	}
 	
-	UT_INLINE Matrix4* getInverseBindPose()
+	UT_INLINE akMatrix4* getInverseBindPose()
 	{
 		return m_inverseBindPose;
 	}

@@ -46,11 +46,11 @@ akBLoader::akBLoader(akDemo* demo)
 	m_demo = demo;
 }
 
-void akBLoader::convertTriangle(unsigned int firstIndex, Vector3* positions, int* oldIndices, Blender::MVert* bverts, int idx1, int idx2, int idx3)
+void akBLoader::convertTriangle(unsigned int firstIndex, akVector3* positions, int* oldIndices, Blender::MVert* bverts, int idx1, int idx2, int idx3)
 {
-	positions[firstIndex] = Vector3(bverts[idx1].co[0], bverts[idx1].co[1], bverts[idx1].co[2]);
-	positions[firstIndex+1] = Vector3(bverts[idx2].co[0], bverts[idx2].co[1], bverts[idx2].co[2]);
-	positions[firstIndex+2] = Vector3(bverts[idx3].co[0], bverts[idx3].co[1], bverts[idx3].co[2]);
+	positions[firstIndex] = akVector3(bverts[idx1].co[0], bverts[idx1].co[1], bverts[idx1].co[2]);
+	positions[firstIndex+1] = akVector3(bverts[idx2].co[0], bverts[idx2].co[1], bverts[idx2].co[2]);
+	positions[firstIndex+2] = akVector3(bverts[idx3].co[0], bverts[idx3].co[1], bverts[idx3].co[2]);
 	oldIndices[firstIndex] = idx1;
 	oldIndices[firstIndex+1] = idx2;
 	oldIndices[firstIndex+2] = idx3;
@@ -106,7 +106,7 @@ void akBLoader::convertMesh(Blender::Mesh *me)
 
 	akVertexBuffer* vbuf = smesh->getVertexBuffer();
 	unsigned int stride;
-	Vector3* positions;
+	akVector3* positions;
 	
 	vbuf->getElement(akVertexBuffer::VB_DU_POSITION, akVertexBuffer::VB_DT_3FLOAT32, 1, (void**)&positions, &stride);
 
@@ -130,10 +130,10 @@ void akBLoader::convertMesh(Blender::Mesh *me)
 		if (isQuad)
 		{
 
-			Vector3 e0, e1;
+			akVector3 e0, e1;
 
-			e0 = (Vector3(mvert[curface.v1].co[0], mvert[curface.v1].co[1], mvert[curface.v1].co[2]) - Vector3(mvert[curface.v2].co[0], mvert[curface.v2].co[1], mvert[curface.v2].co[2]));
-			e1 = (Vector3(mvert[curface.v3].co[0], mvert[curface.v3].co[1], mvert[curface.v3].co[2]) - Vector3(mvert[curface.v4].co[0], mvert[curface.v4].co[1], mvert[curface.v4].co[2]));
+			e0 = (akVector3(mvert[curface.v1].co[0], mvert[curface.v1].co[1], mvert[curface.v1].co[2]) - akVector3(mvert[curface.v2].co[0], mvert[curface.v2].co[1], mvert[curface.v2].co[2]));
+			e1 = (akVector3(mvert[curface.v3].co[0], mvert[curface.v3].co[1], mvert[curface.v3].co[2]) - akVector3(mvert[curface.v4].co[0], mvert[curface.v4].co[1], mvert[curface.v4].co[2]));
 			
 			if (lengthSqr(e0) <lengthSqr(e1))
 			{
@@ -183,10 +183,10 @@ int buildBoneTree(akSkeleton* skel, akSkeletonPose* bindPose, unsigned int idx, 
 	joint->m_name = bone->name;
 	
 	float* bmat = (float*)bone->arm_mat; 
-	Matrix4 mat(Vector4(bmat[4*0+0], bmat[4*0+1], bmat[4*0+2], bmat[4*0+3]),
-				Vector4(bmat[4*1+0], bmat[4*1+1], bmat[4*1+2], bmat[4*1+3]),
-				Vector4(bmat[4*2+0], bmat[4*2+1], bmat[4*2+2], bmat[4*2+3]),
-				Vector4(bmat[4*3+0], bmat[4*3+1], bmat[4*3+2], bmat[4*3+3]));
+	akMatrix4 mat(akVector4(bmat[4*0+0], bmat[4*0+1], bmat[4*0+2], bmat[4*0+3]),
+				akVector4(bmat[4*1+0], bmat[4*1+1], bmat[4*1+2], bmat[4*1+3]),
+				akVector4(bmat[4*2+0], bmat[4*2+1], bmat[4*2+2], bmat[4*2+3]),
+				akVector4(bmat[4*3+0], bmat[4*3+1], bmat[4*3+2], bmat[4*3+3]));
 				
 	//joint->m_inverseBindPose = inverse(mat);
 	akTransformState* jp = bindPose->getJointPose(idx);
@@ -364,10 +364,10 @@ void akBLoader::convertMeshObject(Blender::Object *bobj)
 	m_demo->addEntity(AKB_IDNAME(bobj), entity);
 	
 	float* bmat = (float*)bobj->obmat; 
-	Matrix4 mat(Vector4(bmat[4*0+0], bmat[4*0+1], bmat[4*0+2], bmat[4*0+3]),
-				Vector4(bmat[4*1+0], bmat[4*1+1], bmat[4*1+2], bmat[4*1+3]),
-				Vector4(bmat[4*2+0], bmat[4*2+1], bmat[4*2+2], bmat[4*2+3]),
-				Vector4(bmat[4*3+0], bmat[4*3+1], bmat[4*3+2], bmat[4*3+3]));
+	akMatrix4 mat(akVector4(bmat[4*0+0], bmat[4*0+1], bmat[4*0+2], bmat[4*0+3]),
+				akVector4(bmat[4*1+0], bmat[4*1+1], bmat[4*1+2], bmat[4*1+3]),
+				akVector4(bmat[4*2+0], bmat[4*2+1], bmat[4*2+2], bmat[4*2+3]),
+				akVector4(bmat[4*3+0], bmat[4*3+1], bmat[4*3+2], bmat[4*3+3]));
 				
 				
 	akTransformState trans(mat);
@@ -406,10 +406,10 @@ void akBLoader::convertCameraObject(Blender::Object *bobj)
 	Blender::Camera* bcam =  (Blender::Camera*)bobj->data;
 	akCamera* camera = m_demo->getCamera();
 	float* bmat = (float*)bobj->obmat; 
-	Matrix4 mat(Vector4(bmat[4*0+0], bmat[4*0+1], bmat[4*0+2], bmat[4*0+3]),
-				Vector4(bmat[4*1+0], bmat[4*1+1], bmat[4*1+2], bmat[4*1+3]),
-				Vector4(bmat[4*2+0], bmat[4*2+1], bmat[4*2+2], bmat[4*2+3]),
-				Vector4(bmat[4*3+0], bmat[4*3+1], bmat[4*3+2], bmat[4*3+3]));
+	akMatrix4 mat(akVector4(bmat[4*0+0], bmat[4*0+1], bmat[4*0+2], bmat[4*0+3]),
+				akVector4(bmat[4*1+0], bmat[4*1+1], bmat[4*1+2], bmat[4*1+3]),
+				akVector4(bmat[4*2+0], bmat[4*2+1], bmat[4*2+2], bmat[4*2+3]),
+				akVector4(bmat[4*3+0], bmat[4*3+1], bmat[4*3+2], bmat[4*3+3]));
 				
 	camera->m_transform = akTransformState(mat);
 	camera->m_clipStart = bcam->clipsta;

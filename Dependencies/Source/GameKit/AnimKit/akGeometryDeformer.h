@@ -49,13 +49,13 @@ public:
 	/// normDst          Vertex normals output (optional)
 	/// weightsPerVertex Maximum number of  bones that deform a single vertex (often 4)
 	static void vertexSkinning(const UTsize vtxCount,
-	                                const Matrix4* matrices,
+	                                const akMatrix4* matrices,
 	                                const float* weights,       const UTsize weightsStride,
 	                                const unsigned char* indices, const UTsize indicesStride,
-	                                const Vector3* vtxSrc,        const UTsize vtxSrcStride,
-	                                Vector3* vtxDst,              const UTsize vtxDstStride,
-	                                const Vector3* normSrc =0,    const UTsize normSrcStride =0,
-	                                Vector3* normDst =0,          const UTsize normDstStride =0,
+	                                const akVector3* vtxSrc,        const UTsize vtxSrcStride,
+	                                akVector3* vtxDst,              const UTsize vtxDstStride,
+	                                const akVector3* normSrc =0,    const UTsize normSrcStride =0,
+	                                akVector3* normDst =0,          const UTsize normDstStride =0,
 	                                const unsigned char weightsPerVtx = 4);
 	
 	

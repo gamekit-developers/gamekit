@@ -33,11 +33,11 @@ akSubMesh::akSubMesh(UTuint32 numVertices) : m_boneIndices(0), m_boneWeights(0),
 {
 	m_vertexBuffer.setVerticesNumber(numVertices);
 	
-	m_positions = new Vector3[numVertices];
-	m_vertexBuffer.addElement(akVertexBuffer::VB_DU_POSITION, akVertexBuffer::VB_DT_3FLOAT32, sizeof(Vector3), m_positions);
+	m_positions = new akVector3[numVertices];
+	m_vertexBuffer.addElement(akVertexBuffer::VB_DU_POSITION, akVertexBuffer::VB_DT_3FLOAT32, sizeof(akVector3), m_positions);
 	
-	m_normals = new Vector3[numVertices];
-	m_vertexBuffer.addElement(akVertexBuffer::VB_DU_NORMAL, akVertexBuffer::VB_DT_3FLOAT32, sizeof(Vector3), m_normals);
+	m_normals = new akVector3[numVertices];
+	m_vertexBuffer.addElement(akVertexBuffer::VB_DU_NORMAL, akVertexBuffer::VB_DT_3FLOAT32, sizeof(akVector3), m_normals);
 
 }
 
@@ -74,8 +74,8 @@ void akSubMesh::addSecondPositionBuffer(void)
 {
 	if(!m_positions2)
 	{
-		m_positions2 = new Vector3[m_vertexBuffer.getVerticesNumber()];
-		m_vertexBuffer.addElement(akVertexBuffer::VB_DU_POSITION, akVertexBuffer::VB_DT_3FLOAT32, sizeof(Vector3), m_positions2);
+		m_positions2 = new akVector3[m_vertexBuffer.getVerticesNumber()];
+		m_vertexBuffer.addElement(akVertexBuffer::VB_DU_POSITION, akVertexBuffer::VB_DT_3FLOAT32, sizeof(akVector3), m_positions2);
 	}
 }
 

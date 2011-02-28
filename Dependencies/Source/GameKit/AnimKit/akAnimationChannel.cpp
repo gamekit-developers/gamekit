@@ -78,9 +78,9 @@ void akAnimationChannel::evaluate(akTransformState& transform, akScalar time, ak
 	int len = getNumSplines();
 
 	akTransformState channel;
-	channel.rot = Quat::identity();
-	channel.loc = Vector3(0.f, 0.f, 0.f);
-	channel.scale = Vector3(1.f, 1.f, 1.f);
+	channel.rot = akQuat::identity();
+	channel.loc = akVector3(0.f, 0.f, 0.f);
+	channel.scale = akVector3(1.f, 1.f, 1.f);
 
 	akEuler euler(0,0,0);
 	
@@ -111,7 +111,7 @@ void akAnimationChannel::evaluate(akTransformState& transform, akScalar time, ak
 	else
 	{
 		if ( akFuzzy(norm(channel.rot)) )
-			channel.rot = Quat::identity();
+			channel.rot = akQuat::identity();
 		else
 			normalize(channel.rot);
 	}

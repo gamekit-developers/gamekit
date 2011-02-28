@@ -40,11 +40,11 @@ class akSubMesh
 {
 private:
 	akVertexBuffer m_vertexBuffer;
-	Vector3*       m_positions;
-	Vector3*       m_normals;
+	akVector3*       m_positions;
+	akVector3*       m_normals;
 	UTuint8*       m_boneIndices;
 	float*         m_boneWeights;
-	Vector3*       m_positions2;
+	akVector3*       m_positions2;
 
 public:
 	
