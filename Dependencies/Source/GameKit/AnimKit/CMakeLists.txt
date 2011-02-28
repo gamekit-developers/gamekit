@@ -38,7 +38,18 @@ set(ANIMKIT_HDR
 	akVertexBuffer.h
 	
 	vectormath/scalar/vectormath_aos.h
+	vectormath/scalar/quat_aos.h
+	vectormath/scalar/vec_aos.h
+	vectormath/scalar/mat_aos.h
+	vectormath/scalar/boolInVec.h
+	vectormath/scalar/floatInVec.h
+	
 	vectormath/sse/vectormath_aos.h
+	vectormath/sse/quat_aos.h
+	vectormath/sse/vec_aos.h
+	vectormath/sse/mat_aos.h
+	vectormath/sse/boolInVec.h
+	vectormath/sse/floatInVec.h
 )
 
 include_directories(${GAMEKIT_UTILS_PATH})
