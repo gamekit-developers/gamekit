@@ -104,9 +104,9 @@ macro (configure_ogrekit ROOT OGREPATH)
 		else()
 			set(OGREKIT_PLATFORM ${OGREPATH}/OgreMain/include/OSX )
 		endif()
-	  else (APPLE)
+    else (APPLE)
 		if (UNIX)
-		set(OGREKIT_PLATFORM ${OGREPATH}/OgreMain/include/GLX )
+		  set(OGREKIT_PLATFORM ${OGREPATH}/OgreMain/include/GLX )
 		else (UNIX)
 		  if (WIN32)
 		set(OGREKIT_PLATFORM ${OGREPATH}/OgreMain/include/WIN32 )
@@ -197,7 +197,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 		set(CMAKE_EXE_LINKER_FLAGS "-framework Foundation -framework CoreGraphics -framework QuartzCore -framework UIKit")
 		set(XCODE_ATTRIBUTE_SDKROOT iphoneos)
 		set(OGRE_BUILD_RENDERSYSTEM_GLES TRUE CACHE BOOL "Forcing OpenGL ES RenderSystem for iPhone" FORCE)
-		set(OGRE_STATIC TRUE CACHE BOOL "Forcing static build for iPhone" FORCE)
+		#set(OGRE_STATIC TRUE CACHE BOOL "Forcing static build for iPhone" FORCE)
 		set(MACOSX_BUNDLE_GUI_IDENTIFIER "com.yourcompany.\${PRODUCT_NAME:rfc1034identifier}")
 		set(OGRE_CONFIG_ENABLE_VIEWPORT_ORIENTATIONMODE TRUE CACHE BOOL "Forcing viewport orientation support for iPhone" FORCE)
 	
@@ -216,6 +216,13 @@ macro (configure_ogrekit ROOT OGREPATH)
 			set(OGRE_SET_DISABLE_VIEWPORT_ORIENTATIONMODE 1)
 		endif()
 	
+		set(OGRE_BUILD_RENDERSYSTEM_GL CACHE BOOL "Forcing remove OpenGL RenderSystem for iPhone" FORCE)
+		set(OGRE_BUILD_RENDERSYSTEM_GLES TRUE CACHE BOOL "Forcing use OpenGLES RenderSystem for iPhone" FORCE)
+					
+		set(OGREKIT_USE_COCOA  TRUE CACHE BOOL "Forcing use COCOA for iPhone" FORCE)
+		set(OGREKIT_BUILD_GLRS   CACHE BOOL "Forcing remove GLRS for iPhone"   FORCE)
+		set(OGREKIT_BUILD_GLESRS TRUE   CACHE BOOL "Forcing GLESRS for iPhone"   FORCE)
+
 	elseif (APPLE)
 	
 		# Set 10.4 as the base SDK by default
@@ -235,7 +242,13 @@ macro (configure_ogrekit ROOT OGREPATH)
 		# Make sure that the OpenGL render system is selected for non-iPhone Apple builds
 		set(OGRE_BUILD_RENDERSYSTEM_GL TRUE)
 		set(OGRE_BUILD_RENDERSYSTEM_GLES FALSE)
-	
+		
+		set(OGRE_BUILD_RENDERSYSTEM_GL TRUE CACHE BOOL "Forcing use OpenGL RenderSystem for OS X" FORCE)
+		set(OGRE_BUILD_RENDERSYSTEM_GLES CACHE BOOL "Forcing remove OpenGLES RenderSystem for OS X" FORCE)
+			
+		set(OGREKIT_BUILD_GLRS   TRUE CACHE BOOL "Forcing GLRS for OS X"   FORCE)
+		set(OGREKIT_BUILD_GLESRS FALSE CACHE BOOL "Forcing remove GLESRS for OSX "   FORCE)
+
 	endif ()
 
 
@@ -359,13 +372,6 @@ macro (configure_ogrekit ROOT OGREPATH)
 			set(OGREKIT_DX9RS_INCLUDE          ${OGREPATH}/RenderSystems/Direct3D9/include)
 		endif()
 
-		if (DirectX_FOUND AND OGREKIT_BUILD_D3D10RS)
-			set(OGRE_BUILD_RENDERSYSTEM_D3D10 TRUE)
-			set(OGREKIT_D3D10_LIBS            RenderSystem_Direct3D10)
-			set(OGREKIT_D3D10_ROOT            ${OGREPATH}/RenderSystems/Direct3D10)
-			set(OGREKIT_DX10RS_INCLUDE        ${OGREPATH}/RenderSystems/Direct3D10/include)
-		endif()
-
 
 		if (DirectX_FOUND AND OGREKIT_BUILD_D3D11RS)
 			set(OGRE_BUILD_RENDERSYSTEM_D3D11  TRUE)
@@ -377,18 +383,6 @@ macro (configure_ogrekit ROOT OGREPATH)
 
 	endif()
 	
-	if (0)
-		# disable until support is added  
-		option(OGREKIT_BUILD_CG	 "Enable the CG plugin" ON)
-
-		if (OGREKIT_BUILD_CG)
-			set(OGRE_BUILD_PLUGIN_CG       TRUE)
-			set(OGREKIT_CG_LIBS            Plugin_CgProgramManager)
-			set(OGREKIT_CG_ROOT            ${OGREPATH}/PlugIns/CgProgramManager)
-			set(OGREKIT_CG_INCLUDE         ${OGREPATH}/PlugIns/CgProgramManager/include)
-		endif()
-
-	endif()
 
 	set(OGREKIT_OGRE_LIBS 
 		OgreMain 
@@ -396,7 +390,6 @@ macro (configure_ogrekit ROOT OGREPATH)
 		${OGREKIT_FREETYPE_TARGET} 
 		${OGREKIT_GLRS_LIBS}
 		${OGREKIT_D3D9_LIBS}
-		${OGREKIT_D3D10_LIBS}
 		${OGREKIT_D3D11_LIBS}		
 		${GAMEKIT_SERIALIZE_BLENDER_TARGET}
 		${GAMEKIT_SERIALIZE_BULLET_TARGET}
@@ -434,12 +427,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 	#Check Build Settings
 	if (APPLE)
 		if (OGREKIT_BUILD_IPHONE)
-			set(OGRE_BUILD_RENDERSYSTEM_GL CACHE BOOL "Forcing remove OpenGL RenderSystem for iPhone" FORCE)
-			set(OGRE_BUILD_RENDERSYSTEM_GLES TRUE CACHE BOOL "Forcing use OpenGLES RenderSystem for iPhone" FORCE)
 						
-			set(OGREKIT_BUILD_CG   CACHE BOOL "Forcing remove CG for iPhone"   FORCE)
-			set(OGREKIT_USE_COCOA  TRUE CACHE BOOL "Forcing use COCOA for iPhone" FORCE)
-			
 			if (OGREKIT_BUILD_GLRS)
 				message(SEND_ERROR "Turn OFF OGREKIT_BUILD_GLRS Option for iPhone")
 			endif()
@@ -452,8 +440,6 @@ macro (configure_ogrekit ROOT OGREPATH)
 	  		endif()
 	  
 		else()
-			set(OGRE_BUILD_RENDERSYSTEM_GL TRUE CACHE BOOL "Forcing use OpenGL RenderSystem for OS X" FORCE)
-			set(OGRE_BUILD_RENDERSYSTEM_GLES CACHE BOOL "Forcing remove OpenGLES RenderSystem for OS X" FORCE)
 			
 			if (NOT OGREKIT_BUILD_GLRS)
 				message(SEND_ERROR "Turn ON OGREKIT_BUILD_GLRS Option for OS X")
@@ -514,18 +500,6 @@ macro(configure_rendersystem)
 			
 	endif()
 	
-	if (OGREKIT_BUILD_D3D10RS AND DirectX_D3D10_FOUND)
-		
-		include_directories(
-			${OGREKIT_D3D10_ROOT}/include
-		)
-		
-		link_libraries(
-			${OGREKIT_D3D10_LIBS} 
-			${DirectX_D3D10_LIBRARIES}
-		)
-			
-	endif()
 
 	if (OGREKIT_BUILD_D3D11RS AND DirectX_D3D11_FOUND)
 		
@@ -540,18 +514,5 @@ macro(configure_rendersystem)
 
 	endif()
 	
-	if (0)
-		add_definitions(-DOGREKIT_CG)
-		
-		include_directories(
-			${OGREKIT_CG_ROOT}/include
-		)
-
-		link_libraries(
-			${OGREKIT_CG_LIBS} 
-			${Cg_LIBRARY_REL}
-		)
-
-	endif()
 endmacro(configure_rendersystem)
 
