@@ -52,7 +52,7 @@ public:
 
 	time_t  getModifiedTime (const Ogre::String &filename) { return 0; }
 
-	Ogre::FileInfoListPtr findFileInfo(const Ogre::String& pattern, bool recursive = true, bool dirs = false);
+	Ogre::FileInfoListPtr findFileInfo(const Ogre::String& pattern, bool recursive = true, bool dirs = false) const;
 
 	bool exists(const Ogre::String& filename);
 };

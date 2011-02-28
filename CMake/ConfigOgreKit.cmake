@@ -176,6 +176,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 
 	if (OGREKIT_BUILD_IPHONE)
 		set(OGRE_BUILD_PLATFORM_IPHONE TRUE)
+		set(OGRE_BUILD_PLATFORM_APPLE_IOS TRUE)
 	endif()
 	
 	if (OGREKIT_COMPILE_OGRE_COMPONENTS)
@@ -187,7 +188,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 
 	#copy from ogre3d build
 	# Set up iPhone overrides.
-	if (OGRE_BUILD_PLATFORM_IPHONE)
+	if (OGREKIT_BUILD_IPHONE)
 		include_directories("${OGREPATH}/OgreMain/include/iPhone")
 	
 		# Set build variables
