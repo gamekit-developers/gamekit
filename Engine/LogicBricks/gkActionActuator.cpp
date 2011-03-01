@@ -161,6 +161,7 @@ void gkActionActuator::stopAction(void)
 bool gkActionActuator::isActionEnd(void)
 {
 //	return m_action ? m_action->getTimePosition() >= m_action->getLength() : false;
+	return false;
 }
 
 
