@@ -35,6 +35,8 @@
 #include "akMathUtils.h"
 #include "akTransformState.h"
 
+#include "btAlignedObjectArray.h"
+
 /// A skeleton pose is linked to a skeleton and contains a transformation state for each bone
 class akSkeletonPose
 {
@@ -46,8 +48,7 @@ public:
 		SP_BINDING_SPACE, // coord sys = binding pose
 	};
 	
-	typedef utArray<akTransformState> JointPoses;
-	typedef utArray<akTransformState>::Iterator JointPoseIterator;
+	typedef btAlignedObjectArray<akTransformState> JointPoses;
 
 private:
 	int         m_space;
@@ -74,7 +75,7 @@ public:
 	/// Will fill the pallet with the inverse binding pose of the skeleton multiplied by the bone pose.
 	/// If the pose is in model space than the palette can be used to transform vertex/object attached to bones
 	/// You can also process the palette afterward to include world transformation.
-	void fillMatrixPalette(akMatrix4* palette)const ;
+	void fillMatrixPalette(btAlignedObjectArray<akMatrix4> &palette)const ;
 	
 	
 	UT_INLINE int getSpace(void)

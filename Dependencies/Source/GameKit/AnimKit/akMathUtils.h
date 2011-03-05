@@ -34,6 +34,7 @@
 
 
 #if defined (_WIN32)
+#define AK_USE_SSE
 #else
 #define AK_USE_SSE
 #endif

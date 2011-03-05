@@ -32,6 +32,7 @@
 
 #include "akMathUtils.h"
 
+#include "btAlignedObjectArray.h"
 
 /// Simple utility to deform mesh geometry
 class akGeometryDeformer
@@ -49,7 +50,7 @@ public:
 	/// normDst          Vertex normals output (optional)
 	/// weightsPerVertex Maximum number of  bones that deform a single vertex (often 4)
 	static void vertexSkinning(const UTsize vtxCount,
-	                                const akMatrix4* matrices,
+									const btAlignedObjectArray<akMatrix4> &matrices,
 	                                const float* weights,       const UTsize weightsStride,
 	                                const unsigned char* indices, const UTsize indicesStride,
 	                                const akVector3* vtxSrc,        const UTsize vtxSrcStride,

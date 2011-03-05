@@ -33,8 +33,24 @@
 #include "akAnimationPlayer.h"
 #include "akAnimationPlayerSet.h"
 
+#include "btAlignedAllocator.h"
+#include "btAlignedObjectArray.h"
+
 class akEntity
 {
+private:
+	// object's world transform
+	akTransformState m_transform;
+	
+	// pointers to shared data (resources)
+	akMesh*     m_mesh;
+	akSkeleton* m_skeleton;
+	
+	// per object anim data
+	akAnimationPlayerSet            m_players;
+	akSkeletonPose*                 m_pose;
+	btAlignedObjectArray<akMatrix4> m_matrixPalette;
+
 public:
 	akEntity();
 	~akEntity();
@@ -84,23 +100,12 @@ public:
 		return true;
 	}
 	
-	UT_INLINE akMatrix4* getPalette(void)
+	UT_INLINE btAlignedObjectArray<akMatrix4>& getPalette(void)
 	{
 		return m_matrixPalette;
 	}
 
-private:
-	// object's world transform
-	akTransformState m_transform;
-	
-	// pointers to shared data (resources)
-	akMesh*     m_mesh;
-	akSkeleton* m_skeleton;
-	
-	// per object anim data
-	akAnimationPlayerSet m_players;
-	akSkeletonPose*      m_pose;
-	akMatrix4*             m_matrixPalette;
+	BT_DECLARE_ALIGNED_ALLOCATOR();
 };
 
 #endif // AKENTITY_H

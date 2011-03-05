@@ -100,7 +100,6 @@ void akDemo::step(akScalar time)
 		if(object->isMeshDeformed())
 		{
 			akSkeletonPose* pose;
-			akMatrix4* palette;
 			
 			pose = object->getPose();
 			
@@ -111,7 +110,7 @@ void akDemo::step(akScalar time)
 			pose->toModelSpace(pose);
 			
 			// get matrix pallete for the pose
-			palette = object->getPalette();
+			btAlignedObjectArray<akMatrix4> &palette = object->getPalette();
 			pose->fillMatrixPalette(palette);
 			
 			akMesh* mesh = object->getMesh();

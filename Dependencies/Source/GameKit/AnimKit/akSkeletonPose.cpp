@@ -160,13 +160,11 @@ void akSkeletonPose::setIdentity(void)
 }
 
 
-void akSkeletonPose::fillMatrixPalette(akMatrix4 *palette) const
+void akSkeletonPose::fillMatrixPalette(btAlignedObjectArray<akMatrix4> &palette) const
 {
-	const akMatrix4* inversebp = m_skeleton->getInverseBindPose();
-	
 	for(int i=0; i<getNumJoints(); i++)
 	{
-		palette[i] = m_jointPoses[i].toMatrix() * inversebp[i];
+		palette[i] = m_jointPoses[i].toMatrix() * m_skeleton->getJointInverseBindPose(i);
 	}
 }
 

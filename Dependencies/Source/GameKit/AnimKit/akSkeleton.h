@@ -35,6 +35,8 @@
 #include "akCommon.h"
 #include "akMathUtils.h"
 
+#include "btAlignedObjectArray.h"
+
 #define AK_JOINT_NO_PARENT 0xFF
 
 /// Base componemt of a skeleton
@@ -63,7 +65,7 @@ private:
 	
 	akSkeletonPose* m_localBindPose;
 	akSkeletonPose* m_modelBindPose;
-	akMatrix4*      m_inverseBindPose;
+	btAlignedObjectArray<akMatrix4>      m_inverseBindPose;
 	
 public:
 	akSkeleton(UTuint32 numJoints);
@@ -91,9 +93,9 @@ public:
 		return m_modelBindPose;
 	}
 	
-	UT_INLINE akMatrix4* getInverseBindPose()
+	UT_INLINE akMatrix4& getJointInverseBindPose(UTuint8 i)
 	{
-		return m_inverseBindPose;
+		return m_inverseBindPose[i];
 	}
 };
 

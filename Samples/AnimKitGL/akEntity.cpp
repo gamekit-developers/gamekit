@@ -47,7 +47,7 @@
 //#include "akGeometryDeformer.h"
 
 
-akEntity::akEntity() : m_mesh(0), m_skeleton(0), m_pose(0), m_matrixPalette(0)
+akEntity::akEntity() : m_mesh(0), m_skeleton(0), m_pose(0)
 {
 }
 
@@ -56,8 +56,8 @@ akEntity::~akEntity()
 	if(m_pose)
 		delete m_pose;
 	
-	if(m_matrixPalette)
-		delete[] m_matrixPalette;
+	if(m_matrixPalette.size()>0)
+		m_matrixPalette.clear();
 }
 
 void akEntity::setSkeleton(akSkeleton *skel)
@@ -68,9 +68,9 @@ void akEntity::setSkeleton(akSkeleton *skel)
 		delete m_pose;
 	m_pose = new akSkeletonPose(m_skeleton, akSkeletonPose::SP_BINDING_SPACE);
 	
-	if(m_matrixPalette)
-		delete[] m_matrixPalette;
-	m_matrixPalette = new akMatrix4[m_skeleton->getNumJoints()];
+	if(m_matrixPalette.size()>0)
+		m_matrixPalette.clear();
+	m_matrixPalette.reserve(m_skeleton->getNumJoints());
 }
 
 

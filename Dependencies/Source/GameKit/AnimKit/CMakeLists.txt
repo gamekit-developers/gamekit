@@ -17,6 +17,8 @@ set(ANIMKIT_SRC
 	akSkeletonPose.cpp
 	akTransitionBlender.cpp
 	akVertexBuffer.cpp
+	
+	btAlignedAllocator.cpp
 )
 
 set(ANIMKIT_HDR
@@ -37,6 +39,9 @@ set(ANIMKIT_HDR
 	akTransitionBlender.h
 	akVertexBuffer.h
 	
+	btAlignedAllocator.h
+	btAlignedObjectArray.h
+	
 	vectormath/scalar/vectormath_aos.h
 	vectormath/scalar/quat_aos.h
 	vectormath/scalar/vec_aos.h
@@ -50,6 +55,7 @@ set(ANIMKIT_HDR
 	vectormath/sse/mat_aos.h
 	vectormath/sse/boolInVec.h
 	vectormath/sse/floatInVec.h
+	vectormath/sse/vecidx_aos.h
 )
 
 include_directories(${GAMEKIT_UTILS_PATH})

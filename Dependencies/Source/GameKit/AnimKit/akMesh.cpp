@@ -28,15 +28,18 @@
 #include "akMesh.h"
 #include "akMathUtils.h"
 
+#include "btAlignedAllocator.h"
 
 akSubMesh::akSubMesh(UTuint32 numVertices) : m_boneIndices(0), m_boneWeights(0), m_positions2(0)
 {
 	m_vertexBuffer.setVerticesNumber(numVertices);
 	
-	m_positions = new akVector3[numVertices];
+//	m_positions = new akVector3[numVertices];
+	m_positions = (akVector3*) btAlignedAlloc(numVertices*sizeof(akVector3), 16);
 	m_vertexBuffer.addElement(akVertexBuffer::VB_DU_POSITION, akVertexBuffer::VB_DT_3FLOAT32, sizeof(akVector3), m_positions);
 	
-	m_normals = new akVector3[numVertices];
+//	m_normals = new akVector3[numVertices];
+	m_normals = (akVector3*) btAlignedAlloc(numVertices*sizeof(akVector3), 16);
 	m_vertexBuffer.addElement(akVertexBuffer::VB_DU_NORMAL, akVertexBuffer::VB_DT_3FLOAT32, sizeof(akVector3), m_normals);
 
 }
@@ -44,17 +47,26 @@ akSubMesh::akSubMesh(UTuint32 numVertices) : m_boneIndices(0), m_boneWeights(0),
 
 akSubMesh::~akSubMesh()
 {
-	delete[] m_positions;
-	delete[] m_normals;
+//	delete[] m_positions;
+//	delete[] m_normals;
 	
+//	if(m_boneIndices)
+//		delete[] m_boneIndices;
+	
+//	if(m_boneWeights)
+//		delete[] m_boneWeights;
+	
+//	if(m_positions2)
+//		delete[] m_positions2;
+
+	btAlignedFree(m_positions);
+	btAlignedFree(m_normals);
 	if(m_boneIndices)
-		delete[] m_boneIndices;
-	
+		btAlignedFree(m_boneIndices);
 	if(m_boneWeights)
-		delete[] m_boneWeights;
-	
+		btAlignedFree(m_boneWeights);
 	if(m_positions2)
-		delete[] m_positions2;
+		btAlignedFree(m_positions2);
 }
 
 
@@ -62,10 +74,12 @@ void akSubMesh::addSkinningDataBuffer(void)
 {
 	if(!m_boneIndices && !m_boneWeights)
 	{
-		m_boneIndices = new UTuint8[4 * m_vertexBuffer.getVerticesNumber()];
+//		m_boneIndices = new UTuint8[4 * m_vertexBuffer.getVerticesNumber()];
+		m_boneIndices = (UTuint8*) btAlignedAlloc( 4 * m_vertexBuffer.getVerticesNumber() * sizeof(UTuint8), 16);
 		m_vertexBuffer.addElement(akVertexBuffer::VB_DU_BONE_IDX, akVertexBuffer::VB_DT_4UINT8, 4*sizeof(UTuint8), m_boneIndices);
 		
-		m_boneWeights = new float[4 * m_vertexBuffer.getVerticesNumber()];
+//		m_boneWeights = new float[4 * m_vertexBuffer.getVerticesNumber()];
+		m_boneWeights = (float*) btAlignedAlloc(4 * m_vertexBuffer.getVerticesNumber() * sizeof(float), 16);
 		m_vertexBuffer.addElement(akVertexBuffer::VB_DU_BONE_WEIGHT, akVertexBuffer::VB_DT_4FLOAT32, 4*sizeof(float), m_boneWeights);
 	}
 }
@@ -74,7 +88,8 @@ void akSubMesh::addSecondPositionBuffer(void)
 {
 	if(!m_positions2)
 	{
-		m_positions2 = new akVector3[m_vertexBuffer.getVerticesNumber()];
+//		m_positions2 = new akVector3[m_vertexBuffer.getVerticesNumber()];
+		m_positions2 = (akVector3*) btAlignedAlloc(m_vertexBuffer.getVerticesNumber() * sizeof(akVector3), 16);
 		m_vertexBuffer.addElement(akVertexBuffer::VB_DU_POSITION, akVertexBuffer::VB_DT_3FLOAT32, sizeof(akVector3), m_positions2);
 	}
 }

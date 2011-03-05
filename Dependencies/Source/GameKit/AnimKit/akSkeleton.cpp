@@ -28,7 +28,7 @@
 #include "akSkeleton.h"
 #include "akSkeletonPose.h"
 
-akSkeleton::akSkeleton(UTuint32 numJoints) : m_numJoints(numJoints), m_localBindPose(0), m_modelBindPose(0), m_inverseBindPose(0)
+akSkeleton::akSkeleton(UTuint32 numJoints) : m_numJoints(numJoints), m_localBindPose(0), m_modelBindPose(0)
 {
 	m_joints = new akJoint[numJoints];
 	
@@ -47,8 +47,8 @@ akSkeleton::~akSkeleton()
 	if(m_modelBindPose)
 		delete m_modelBindPose;
 		
-	if(m_inverseBindPose)
-		delete[] m_inverseBindPose;
+	if(m_inverseBindPose.size()>0)
+		m_inverseBindPose.clear();
 }
 
 int akSkeleton::getIndex(const utHashedString &name) const
@@ -88,8 +88,8 @@ bool akSkeleton::setBindingPose(akSkeletonPose *pose)
 			delete m_localBindPose;
 		if(m_modelBindPose)
 			delete m_modelBindPose;
-		if(m_inverseBindPose)
-			delete[] m_inverseBindPose;
+		if(m_inverseBindPose.size()>0)
+			m_inverseBindPose.clear();
 		
 		pose->toModelSpace(pose);
 		
@@ -97,7 +97,7 @@ bool akSkeleton::setBindingPose(akSkeletonPose *pose)
 		m_localBindPose = new akSkeletonPose(*pose);
 		m_localBindPose->toLocalSpace(m_localBindPose);
 		
-		m_inverseBindPose = new akMatrix4[m_numJoints];
+		m_inverseBindPose.reserve(m_numJoints);
 		
 		for(int i=0; i<m_numJoints; i++)
 		{

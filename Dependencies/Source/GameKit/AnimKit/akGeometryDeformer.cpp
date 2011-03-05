@@ -27,9 +27,10 @@
 
 #include "akGeometryDeformer.h"
 
+
 void akGeometryDeformer::vertexSkinning(
 	const UTsize vtxCount,
-	const akMatrix4* matrices,
+	const btAlignedObjectArray<akMatrix4>& matrices,
 	const float *         weights, UTsize weightsStride,
 	const unsigned char * index,   UTsize indexStride,
 	const akVector3 *         vtxSrc,  UTsize vtxSrcStride,

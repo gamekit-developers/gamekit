@@ -42,9 +42,9 @@ class akSkeleton;
 
 namespace Blender
 {
-class Object;
-class Mesh;
-class bArmature;
+struct Object;
+struct Mesh;
+struct bArmature;
 }
 
 class akBLoader

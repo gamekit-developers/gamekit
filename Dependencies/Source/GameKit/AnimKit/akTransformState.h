@@ -31,7 +31,9 @@
 #include "utCommon.h"
 #include "akMathUtils.h"
 
-class akTransformState
+#include "btAlignedAllocator.h"
+
+UT_ATTRIBUTE_ALIGNED_CLASS16(class) akTransformState
 {
 public:
 	akQuat    rot;
@@ -84,6 +86,7 @@ public:
 		return *this;
 	}
 	
+	BT_DECLARE_ALIGNED_ALLOCATOR();
 };
 
 #endif // AKTRANSFORMSTATE_H
