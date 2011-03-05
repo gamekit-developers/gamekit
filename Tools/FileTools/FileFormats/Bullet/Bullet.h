@@ -2,7 +2,9 @@
 #define _Bullet_h_
 // Generated from a Bullet(277) file.
 
-
+/** \addtogroup Bullet
+*  @{
+*/
 
 struct btRigidBodyData;
 struct PointerArray;
@@ -551,5 +553,7 @@ typedef struct btSliderConstraintData
 	int                             m_useLinearReferenceFrameA;
 	int                             m_useOffsetForConstraintFrame;
 } btSliderConstraintData;
+
+/** @}*/
 
 #endif//_Bullet_h_

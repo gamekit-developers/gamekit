@@ -30,6 +30,9 @@
 #include "fbtConfig.h"
 #endif
 
+/** \addtogroup FBT
+*  @{
+*/
 
 #if (defined(DEBUG) || defined(_DEBUG)) && FBT_USE_DEBUG_ASSERTS == 1
 # include <assert.h> // Keep this the only std include in headers
@@ -1453,5 +1456,5 @@ protected:
 	mutable FBThash     m_hash;
 };
 
-
+/** @}*/
 #endif//_fbtTypes_h_

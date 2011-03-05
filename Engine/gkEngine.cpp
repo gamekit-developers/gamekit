@@ -81,19 +81,14 @@ using namespace Ogre;
 
 
 // shorthand
-#define gkEnginePrivate             gkEngine::Private
-#define ENGINE_TICKS_PER_SECOND     gkScalar(60)
+#define gkOgreEnginePrivate			gkEngine::Private
+#define ENGINE_TICKS_PER_SECOND		gkScalar(60)
 
 // tick states
 gkScalar gkEngine::m_tickRate = ENGINE_TICKS_PER_SECOND;
 
 
-
-
-
-
-
-class gkEnginePrivate : public FrameListener, public gkTickState
+class gkOgreEnginePrivate : public FrameListener, public gkTickState
 {
 public:
 	Private(gkEngine* par)
@@ -105,7 +100,8 @@ public:
 		        debugPage(0),
 		        debugFps(0),
 				archive_factory(0),
-				timer(0)
+				timer(0),
+				root(0)
 
 	{
 		timer = new btClock();
@@ -156,13 +152,12 @@ public:
 
 
 gkEngine::gkEngine(gkUserDefs* oth)
-	:       m_root(0),
-	        m_window(0),
-	        m_initialized(false),
-	        m_ownsDefs(oth != 0),
-	        m_running(false)
+	:	m_window(0),
+		m_initialized(false),
+		m_ownsDefs(oth != 0),
+		m_running(false)
 {
-	m_private = new gkEnginePrivate(this);
+	m_private = new gkOgreEnginePrivate(this);
 	if (oth != 0)
 		m_defs = oth;
 	else
@@ -205,20 +200,21 @@ void gkEngine::initialize()
 		return;
 	}
 
-	m_root = new Root("", "");
-	m_private->plugin_factory->createRenderSystem(m_root, defs.rendersystem);
-	m_private->plugin_factory->createParticleSystem(m_root);
+	Root* root = new Root("", "");
+	m_private->root = root;
+	m_private->plugin_factory->createRenderSystem(root, defs.rendersystem);
+	m_private->plugin_factory->createParticleSystem(root);
 	m_private->archive_factory->addArchiveFactory();	
 
-	const RenderSystemList& renderers = m_root->getAvailableRenderers();
+	const RenderSystemList& renderers = root->getAvailableRenderers();
 	if (renderers.empty())
 	{
 		gkPrintf("No rendersystems present\n");
 		return;
 	}
-	m_root->setRenderSystem(renderers[0]);
+	root->setRenderSystem(renderers[0]);
 
-	m_root->initialise(false);
+	root->initialise(false);
 
 	m_private->windowsystem = new gkWindowSystem();
 	
@@ -360,10 +356,9 @@ void gkEngine::finalize()
 	delete m_private->debugFps;
 	delete m_private->debugPage;
 	delete m_private->debug;
-	delete m_root;
+	delete m_private->root;
 	delete m_private;
 
-	m_root = 0;
 	m_initialized = false;
 }
 
@@ -546,10 +541,9 @@ bool gkEngine::initializeStepLoop(void)
 
 
 	// setup timer
-	m_root->clearEventTimes();
-	m_root->getRenderSystem()->_initRenderTargets();
-	m_root->addFrameListener(m_private);
-	m_private->root = m_root;
+	m_private->root->clearEventTimes();
+	m_private->root->getRenderSystem()->_initRenderTargets();
+	m_private->root->addFrameListener(m_private);
 	m_private->reset();
 
 	m_running = true;
@@ -565,7 +559,7 @@ bool gkEngine::stepOneFrame(void)
 	gkWindowSystem* sys = m_private->windowsystem;
 	sys->process();
 
-	if (!m_root->renderOneFrame())
+	if (!m_private->root->renderOneFrame())
 		return false;
 
 	return !sys->exitRequest();
@@ -574,7 +568,7 @@ bool gkEngine::stepOneFrame(void)
 
 void gkEngine::finalizeStepLoop(void)
 {
-	m_root->removeFrameListener(m_private);
+	m_private->root->removeFrameListener(m_private);
 	m_running = false;
 }
 
@@ -583,7 +577,7 @@ unsigned long gkEngine::getCurTime()
 	return m_private->curTime;
 }
 
-bool gkEnginePrivate::frameStarted(const FrameEvent& evt)
+bool gkOgreEnginePrivate::frameStarted(const FrameEvent& evt)
 {
 	gkStats::getSingleton().startClock();
 
@@ -592,7 +586,7 @@ bool gkEnginePrivate::frameStarted(const FrameEvent& evt)
 
 
 
-bool gkEnginePrivate::frameRenderingQueued(const FrameEvent& evt)
+bool gkOgreEnginePrivate::frameRenderingQueued(const FrameEvent& evt)
 {
 	gkStats::getSingleton().stopRenderClock();
 
@@ -608,7 +602,7 @@ bool gkEnginePrivate::frameRenderingQueued(const FrameEvent& evt)
 
 
 
-bool gkEnginePrivate::frameEnded(const FrameEvent& evt)
+bool gkOgreEnginePrivate::frameEnded(const FrameEvent& evt)
 {
 	gkStats::getSingleton().stopBufSwapLodClock();
 	gkStats::getSingleton().nextFrame();
@@ -619,7 +613,7 @@ bool gkEnginePrivate::frameEnded(const FrameEvent& evt)
 
 
 
-void gkEnginePrivate::beginTickImpl(void)
+void gkOgreEnginePrivate::beginTickImpl(void)
 {
 	GK_ASSERT(!scenes.empty());
 
@@ -631,7 +625,7 @@ void gkEnginePrivate::beginTickImpl(void)
 
 
 
-void gkEnginePrivate::endTickImpl(void)
+void gkOgreEnginePrivate::endTickImpl(void)
 {
 	if (debugPage && debugPage->isShown())
 		debugPage->draw();
@@ -643,7 +637,7 @@ void gkEnginePrivate::endTickImpl(void)
 
 
 
-void gkEnginePrivate::tickImpl(gkScalar dt)
+void gkOgreEnginePrivate::tickImpl(gkScalar dt)
 {
 	// Proccess one full game tick
 	GK_ASSERT(windowsystem && !scenes.empty() && engine);

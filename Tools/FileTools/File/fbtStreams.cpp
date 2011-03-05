@@ -63,7 +63,7 @@ void fbtFileStream::open(const char* p, fbtStream::StreamMode mode)
 	m_file = p;
 	m_handle = fopen(m_file.c_str(), fm);
 
-	if (mode & fbtStream::SM_READ)
+	if (m_handle && (mode & fbtStream::SM_READ))
 	{
 		FILE *fp = (FILE*)m_handle;
 

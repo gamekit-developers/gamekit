@@ -28,6 +28,9 @@
 
 #include "fbtTypes.h"
 
+/** \addtogroup FBT
+*  @{
+*/
 
 #define FBT_MAGIC 4
 
@@ -196,5 +199,5 @@ private:
 };
 
 
-
+/** @}*/
 #endif//_fbtTables_h_

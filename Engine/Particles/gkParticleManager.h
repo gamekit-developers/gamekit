@@ -32,16 +32,16 @@
 #include "utSingleton.h"
 
 class gkParticleResource;
-class gkEmitterFactory;
-class gkAffectorFactory;
-class gkParticleRendererFactory;
+class gkOgreEmitterFactory;
+class gkOgreAffectorFactory;
+class gkOgreParticleRendererFactory;
 
 class gkParticleManager : public gkResourceManager, utSingleton<gkParticleManager>
 {
 protected:
-	gkEmitterFactory* m_emitterFactory;
-	gkAffectorFactory* m_affectorFactory;
-	gkParticleRendererFactory* m_rendererFactory;
+	class Private;
+	Private*                m_private;
+	friend class Private;
 
 public:
 	gkParticleManager();

@@ -46,6 +46,7 @@
 #include <wx/dataview.h>
 #include <wx/filename.h>
 #include <wx/stc/stc.h>
+#include <wx/textdlg.h>
 
 #include "Resource/system-search.xpm"
 
@@ -102,6 +103,11 @@ BEGIN_EVENT_TABLE( fbtMainFrame, wxFrame )
 
 	EVT_TREE_ITEM_ACTIVATED(FBT_WINDOW_FBT,     fbtMainFrame::chunkActivated)
 
+	EVT_TREE_ITEM_MENU(FBT_WINDOW_FBT,			fbtMainFrame::chunkItemMenu)
+	EVT_MENU(FBT_CHUNK_FIND,					fbtMainFrame::chunkFind)
+	EVT_MENU(FBT_CHUNK_SHOW_ONLY,				fbtMainFrame::chunkShowOnly)
+	EVT_MENU(FBT_CHUNK_HIDE,					fbtMainFrame::chunkHide)
+	EVT_MENU(FBT_CHUNK_UNHIDE_ALL,				fbtMainFrame::chunkUnhideAll)
 END_EVENT_TABLE()
 
 
@@ -184,7 +190,6 @@ fbtMainFrame::~fbtMainFrame()
 	m_auiManager->UnInit();
 	delete m_auiManager;
 }
-
 
 void fbtMainFrame::loadDataView(wxChoicebook* parent, int i)
 {
@@ -1641,4 +1646,88 @@ void fbtMainFrame::gtcEvent(wxCommandEvent& evt)
 
 	fbtPrintf("\tDone..\n");
 
+}
+
+
+
+void fbtMainFrame::chunkItemMenu(wxTreeEvent& evt)
+{
+	if (!m_file) return;
+
+    wxTreeItemId itemId = evt.GetItem();
+
+	wxMenu menu;
+	menu.Append(FBT_CHUNK_FIND, "&Find");
+    menu.Append(FBT_CHUNK_SHOW_ONLY, "&Show Only");
+    menu.Append(FBT_CHUNK_HIDE, "&Hide");
+	menu.Append(FBT_CHUNK_UNHIDE_ALL, "&UnhideAll");
+
+    m_chunkExplorer->PopupMenu(&menu, evt.GetPoint()); 
+}
+
+void fbtMainFrame::chunkFind(wxCommandEvent& evt)
+{
+	wxString name = wxGetTextFromUser("Enter a chunk name to find", "Find Chunk", "", this);
+	if (!name.IsEmpty())
+		chunkFindOrDelete(name, false, true);
+}
+
+void fbtMainFrame::chunkShowOnly(wxCommandEvent& evt)
+{
+	chunkFindOrDelete("", false);
+}
+
+void fbtMainFrame::chunkFindOrDelete(const wxString& name, bool matchDelete, bool findOnly)
+{
+	wxTreeCtrl* tree = m_chunkExplorer;
+	wxTreeItemId root = tree->GetRootItem();
+
+	wxString text = name;
+	if (text.IsEmpty())
+	{
+		wxTreeItemId item = tree->GetFocusedItem();
+		if (!item.IsOk() || item == root) return;
+
+		text = tree->GetItemText(item);
+	}
+	
+	wxTreeItemIdValue cookie;
+	wxTreeItemId child = tree->GetFirstChild(root, cookie);
+	while (child.IsOk())
+	{
+		wxTreeItemId prev = child;
+		child = tree->GetNextChild(root, cookie);		
+		bool match = tree->GetItemText(prev).IsSameAs(text, false);
+
+		if (findOnly)
+		{
+			if (match)
+			{
+				tree->SelectItem(prev);
+				return;
+			}
+		}
+		else
+		{
+			if (matchDelete)
+			{
+				if (match) tree->Delete(prev);	
+			}
+			else
+			{	
+				if (!match) tree->Delete(prev);
+			}
+		}
+	}
+}
+
+void fbtMainFrame::chunkHide(wxCommandEvent& evt)
+{	
+	chunkFindOrDelete("", true);
+}
+
+void fbtMainFrame::chunkUnhideAll(wxCommandEvent& evt)
+{
+	m_chunkExplorer->DeleteAllItems();
+	populateChunks(m_file->getChunks());
 }

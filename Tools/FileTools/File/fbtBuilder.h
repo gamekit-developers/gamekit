@@ -29,6 +29,10 @@
 #include "fbtTypes.h"
 #include "fbtTables.h"
 
+/** \addtogroup FBT
+*  @{
+*/
+
 typedef fbtFixedString<272>         fbtPath;
 typedef fbtFixedString<fbtMaxID>    fbtId;
 typedef int                         fbtArraySlots[FBT_ARRAY_SLOTS];
@@ -162,6 +166,6 @@ private:
 
 };
 
-
+/** @}*/
 
 #endif//_fbtBuilder_h_

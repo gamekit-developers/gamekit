@@ -33,8 +33,8 @@ class gkBone;
 
 namespace Blender
 {
-class Bone;
-class bArmature;
+struct Bone;
+struct bArmature;
 }
 
 

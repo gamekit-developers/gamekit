@@ -31,6 +31,8 @@
 #include "gkGameObject.h"
 #include "gkSerialize.h"
 
+class gkParticleResource;
+
 class gkParticleObject : public gkGameObject
 {
 public:
@@ -39,17 +41,12 @@ public:
 
 	GK_INLINE gkParticleSystemProperties& getParticleProperties() { return m_particleProps; }
 
-	GK_INLINE Ogre::ParticleSystem* getParticleSystem() { return m_psys; }
-	void setMaterialName(const gkString& material);
+	gkParticleResource* getParticleResource();
+
+	virtual void setMaterialName(const gkString& material) = 0;
 
 protected:
-	Ogre::ParticleSystem* m_psys;
 	gkParticleSystemProperties m_particleProps;
-
-	virtual gkGameObject* clone(const gkString& name);
-
-	virtual void createInstanceImpl();
-	virtual void destroyInstanceImpl();
 };
 
 #endif//_gkParticleObject_h_

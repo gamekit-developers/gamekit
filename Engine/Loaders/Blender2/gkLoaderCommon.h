@@ -32,20 +32,20 @@
 // utility for consistency
 #define GKB_IDNAME(x) ((x) && (x)->id.name[0] != '0' ? (x)->id.name + 2 : "")
 
-namespace bParse
-{
-class bBlenderFile;
-}
+//namespace bParse
+//{
+//class bBlenderFile;
+//}
 
 namespace Blender
 {
-class Scene;
-class Object;
-class Mesh;
-class Material;
-class Image;
-class MTex;
-class TextLine;
+struct Scene;
+struct Object;
+struct Mesh;
+struct Material;
+struct Image;
+struct MTex;
+struct TextLine;
 }
 
 namespace Ogre

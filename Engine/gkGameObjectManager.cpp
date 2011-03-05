@@ -30,7 +30,7 @@
 #include "gkEntity.h"
 #include "gkLight.h"
 #include "gkSkeleton.h"
-#include "gkParticleObject.h"
+#include "Ogre/gkOgreParticleObject.h"
 
 
 gkGameObjectManager::gkGameObjectManager()
@@ -131,7 +131,7 @@ gkResource* gkGameObjectManager::createImpl(const gkResourceName& name, const gk
 	case GK_CAMERA:    return new gkCamera(this, name, handle);
 	case GK_ENTITY:    return new gkEntity(this, name, handle);
 	case GK_SKELETON:  return new gkSkeleton(this, name, handle);
-	case GK_PARTICLES: return new gkParticleObject(this, name, handle);
+	case GK_PARTICLES: return new gkOgreParticleObject(this, name, handle);
 	}
 	return new gkGameObject(this, name, handle);
 }

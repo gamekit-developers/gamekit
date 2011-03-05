@@ -31,7 +31,7 @@
 #include "gkUserDefs.h"
 #include "gkUtils.h"
 #include "gkResourceGroupManager.h"
-#include "bBlenderFile.h"
+//#include "bBlenderFile.h"
 #include "Blender.h"
 
 
@@ -164,7 +164,7 @@ gkBlendFile* gkBlendLoader::loadAndCatch(const gkString& fname, int options, con
 
 	gkResourceGroupManager::getSingleton().createResourceGroup(groupName, inGlolbalPool);
 
-	bParse::bLog::detail = gkEngine::getSingleton().getUserDefs().verbose ? 1 : 0;
+	//bParse::bLog::detail = gkEngine::getSingleton().getUserDefs().verbose ? 1 : 0;
 
 	m_activeFile = new gkBlendFile(fname, groupName);
 

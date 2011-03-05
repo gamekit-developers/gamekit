@@ -32,12 +32,7 @@
 #include "gkParticleManager.h"
 #include "gkParticleObject.h"
 #include "gkUtils.h"
-#include "LinearMath/btMinMax.h"
-
-#include "OgreRoot.h"
-#include "OgreParticleSystem.h"
-#include "OgreParticleEmitter.h"
-
+#include "Ogre/gkOgreParticleResource.h"
 
 using namespace Ogre;
 
@@ -112,17 +107,10 @@ gkParticleNode::ParticleObject::ParticleObject(gkParticleObject* parObj)
 {
 	GK_ASSERT(m_parObj);
 
-	Ogre::ParticleSystem* psys = m_parObj->getParticleSystem();
-	GK_ASSERT(psys);
+	gkOgreParticleResource* resource = static_cast<gkOgreParticleResource*>(m_parObj->getParticleResource()); //TOOD:change to gkParticleResource
 
-	unsigned short n = psys->getNumEmitters();
-
-	for (unsigned short i = 0; i < n; i++)
-	{
-		m_timeToLive = gkMax(m_timeToLive, psys->getEmitter(i)->getTimeToLive());
-	}
-
-	m_timeToLive *= 1000;
+	if (resource)
+		m_timeToLive *= resource->getMaxTimeToLiveOfEmitters() * 1000;
 
 	m_timer.reset();
 }

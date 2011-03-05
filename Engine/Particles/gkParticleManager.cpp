@@ -29,9 +29,10 @@
 #include "gkSerialize.h"
 #include "gkParticleManager.h"
 #include "gkParticleResource.h"
-#include "gkParticleAffector.h"
-#include "gkParticleEmitter.h"
-#include "gkParticleRenderer.h"
+#include "Ogre/gkOgreParticleAffector.h"
+#include "Ogre/gkOgreParticleEmitter.h"
+#include "Ogre/gkOgreParticleRenderer.h"
+#include "Ogre/gkOgreParticleResource.h"
 #include "gkLogger.h"
 #include "User/gkParticleTemplates.inl"
 
@@ -42,95 +43,130 @@
 
 //TODO: experiment with a bullet based particle system
 
+#define gkOgreParticleManager gkParticleManager::Private
+
+class gkOgreParticleManager
+{
+public:
+	gkOgreEmitterFactory*			m_emitterFactory;
+	gkOgreAffectorFactory*			m_affectorFactory;
+	gkOgreParticleRendererFactory*	m_rendererFactory;
+
+	Private()
+	{
+		m_emitterFactory  = new gkOgreEmitterFactory();
+		m_affectorFactory = new gkOgreAffectorFactory();
+		m_rendererFactory = new gkOgreParticleRendererFactory();
+
+		Ogre::ParticleSystemManager::getSingleton().addEmitterFactory(m_emitterFactory);
+		Ogre::ParticleSystemManager::getSingleton().addAffectorFactory(m_affectorFactory);
+		Ogre::ParticleSystemManager::getSingleton().addRendererFactory(m_rendererFactory);
+	}
+
+	virtual ~Private()
+	{
+		delete m_emitterFactory;  m_emitterFactory  = 0;
+		delete m_affectorFactory; m_affectorFactory = 0;
+		delete m_rendererFactory; m_rendererFactory = 0;
+
+		Ogre::ParticleSystemManager::getSingleton().removeAllTemplates();
+	}
+
+	void initialize(void)
+	{
+		try
+		{
+			const gkString imgName = HALO_IMAGE_NAME;
+
+			Ogre::DataStreamPtr stream(OGRE_NEW Ogre::MemoryDataStream((void*)(FLARE_ALPHA_64), FLARE_ALPHA_64_SIZE));
+			Ogre::Image img;
+			img.load(stream);
+			Ogre::TextureManager::getSingleton().loadImage(imgName, GK_BUILTIN_GROUP, img);
+
+			Ogre::MaterialPtr mat = Ogre::MaterialManager::getSingleton().create(DEFAULT_HALO_MAT, GK_BUILTIN_GROUP);
+			Ogre::Pass *pass = mat->getTechnique(0)->getPass(0);
+
+			pass->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
+			pass->setAlphaRejectSettings(Ogre::CMPF_GREATER_EQUAL, 150);
+			pass->setDepthWriteEnabled(false);
+			Ogre::TextureUnitState* tu = pass->createTextureUnitState(imgName);		
+		}
+		catch(Ogre::Exception& e)
+		{
+			gkLogMessage("gkParticleManager: " << e.getDescription());
+		}
+	}
+
+	gkString createOrRetrieveHaloMaterial(const gkString& baseMatName)
+	{
+		gkString matName = DEFAULT_HALO_MAT;
+
+		try
+		{
+			gkString haloMatName = baseMatName + ".halo";
+			Ogre::MaterialManager& mmgr = Ogre::MaterialManager::getSingleton();
+		
+			if (mmgr.resourceExists(haloMatName))
+				matName = haloMatName;
+			else
+			{
+				Ogre::MaterialPtr baseMat = mmgr.getByName(baseMatName);
+				if (!baseMat.isNull())
+				{
+					Ogre::MaterialPtr mat = mmgr.create(haloMatName, baseMat->getGroup());
+					baseMat->copyDetailsTo(mat);
+					Ogre::Pass *pass = mat->getTechnique(0)->getPass(0);
+
+					pass->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
+					pass->setAlphaRejectSettings(Ogre::CMPF_GREATER_EQUAL, 150);
+					pass->setDepthWriteEnabled(false);
+					Ogre::TextureUnitState* tu = pass->createTextureUnitState(HALO_IMAGE_NAME);	
+
+					matName = haloMatName;
+				}
+			}		
+		}
+		catch(Ogre::Exception& e)
+		{
+			gkLogMessage("gkParticleManager: " << e.getDescription());
+		}
+		return matName;
+	}
+
+	gkOgreParticleResource* createParticle(gkResourceManager* manager, const gkResourceName& name, const gkResourceHandle& handle)
+	{
+		return new gkOgreParticleResource(manager, name, handle);
+	}
+};
+
+//--
 
 gkParticleManager::gkParticleManager()
 	:    gkResourceManager("ParticleManager", "Particles")
 {
-	m_emitterFactory = new gkEmitterFactory();
-	m_affectorFactory = new gkAffectorFactory();
-	m_rendererFactory = new gkParticleRendererFactory();
-
-	Ogre::ParticleSystemManager::getSingleton().addEmitterFactory(m_emitterFactory);
-	Ogre::ParticleSystemManager::getSingleton().addAffectorFactory(m_affectorFactory);
-	Ogre::ParticleSystemManager::getSingleton().addRendererFactory(m_rendererFactory);
+	m_private = new gkOgreParticleManager;
 }
 
 gkParticleManager::~gkParticleManager()
 {
 	destroyAll();
 
-	Ogre::ParticleSystemManager::getSingleton().removeAllTemplates();
-	
-
-	delete m_emitterFactory;  m_emitterFactory  = 0;
-	delete m_affectorFactory; m_affectorFactory = 0;
-	delete m_rendererFactory; m_rendererFactory = 0;
+	delete m_private; m_private = 0;
 }
 
 void gkParticleManager::initialize(void)
 {
-	try
-	{
-		const gkString imgName = HALO_IMAGE_NAME;
-
-		Ogre::DataStreamPtr stream(OGRE_NEW Ogre::MemoryDataStream((void*)(FLARE_ALPHA_64), FLARE_ALPHA_64_SIZE));
-		Ogre::Image img;
-		img.load(stream);
-		Ogre::TextureManager::getSingleton().loadImage(imgName, GK_BUILTIN_GROUP, img);
-
-		Ogre::MaterialPtr mat = Ogre::MaterialManager::getSingleton().create(DEFAULT_HALO_MAT, GK_BUILTIN_GROUP);
-		Ogre::Pass *pass = mat->getTechnique(0)->getPass(0);
-
-		pass->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
-		pass->setAlphaRejectSettings(Ogre::CMPF_GREATER_EQUAL, 150);
-		pass->setDepthWriteEnabled(false);
-		Ogre::TextureUnitState* tu = pass->createTextureUnitState(imgName);		
-	}
-	catch(Ogre::Exception& e)
-	{
-		gkLogMessage("gkParticleManager: " << e.getDescription());
-	}
+	m_private->initialize();
 }
 
 gkString gkParticleManager::createOrRetrieveHaloMaterial(const gkString& baseMatName)
 {
-	gkString matName = DEFAULT_HALO_MAT;
-
-	try
-	{
-		gkString haloMatName = baseMatName + ".halo";
-		Ogre::MaterialManager& mmgr = Ogre::MaterialManager::getSingleton();
-		
-		if (mmgr.resourceExists(haloMatName))
-			matName = haloMatName;
-		else
-		{
-			Ogre::MaterialPtr baseMat = mmgr.getByName(baseMatName);
-			if (!baseMat.isNull())
-			{
-				Ogre::MaterialPtr mat = mmgr.create(haloMatName, baseMat->getGroup());
-				baseMat->copyDetailsTo(mat);
-				Ogre::Pass *pass = mat->getTechnique(0)->getPass(0);
-
-				pass->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
-				pass->setAlphaRejectSettings(Ogre::CMPF_GREATER_EQUAL, 150);
-				pass->setDepthWriteEnabled(false);
-				Ogre::TextureUnitState* tu = pass->createTextureUnitState(HALO_IMAGE_NAME);	
-
-				matName = haloMatName;
-			}
-		}		
-	}
-	catch(Ogre::Exception& e)
-	{
-		gkLogMessage("gkParticleManager: " << e.getDescription());
-	}
-	return matName;
+	return m_private->createOrRetrieveHaloMaterial(baseMatName);
 }
 
 gkResource* gkParticleManager::createImpl(const gkResourceName& name, const gkResourceHandle& handle)
 {
-	return new gkParticleResource(this, name, handle);
+	return m_private->createParticle(this, name, handle);	
 }
 
 gkParticleResource* gkParticleManager::createParticle(const gkResourceName& name, gkParticleSettingsProperties& pp)

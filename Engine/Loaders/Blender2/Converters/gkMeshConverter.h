@@ -33,13 +33,13 @@
 
 namespace Blender
 {
-class Object;
-class Mesh;
-class MDeformVert;
-class Material;
-class Image;
-class MCol;
-class MTex;
+struct Object;
+struct Mesh;
+struct MDeformVert;
+struct Material;
+struct Image;
+struct MCol;
+struct MTex;
 }
 
 class gkBlendFile;

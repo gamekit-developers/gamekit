@@ -248,11 +248,15 @@ endif()
 set(Particles_SOURCE
 	# ----- Source -----
 	Particles/gkParticleObject.cpp
-	Particles/gkParticleResource.cpp
-	Particles/gkParticleAffector.cpp
-	Particles/gkParticleEmitter.cpp
-	Particles/gkParticleRenderer.cpp
+	Particles/gkParticleResource.cpp	
 	Particles/gkParticleManager.cpp
+
+	# Ogre particle implementation
+	Particles/Ogre/gkOgreParticleObject.cpp
+	Particles/Ogre/gkOgreParticleResource.cpp
+	Particles/Ogre/gkOgreParticleAffector.cpp
+	Particles/Ogre/gkOgreParticleEmitter.cpp
+	Particles/Ogre/gkOgreParticleRenderer.cpp
 )
 
 
@@ -260,10 +264,14 @@ set(Particles_HEADER
 	# ----- Headers -----
 	Particles/gkParticleObject.h
 	Particles/gkParticleResource.h
-	Particles/gkParticleAffector.h
-	Particles/gkParticleEmitter.h
-	Particles/gkParticleRenderer.h
 	Particles/gkParticleManager.h
+
+	# Ogre particle implementation
+	Particles/Ogre/gkOgreParticleObject.h
+	Particles/Ogre/gkOgreParticleResource.h
+	Particles/Ogre/gkOgreParticleAffector.h
+	Particles/Ogre/gkOgreParticleEmitter.h
+	Particles/Ogre/gkOgreParticleRenderer.h
 )
 
 if(APPLE)

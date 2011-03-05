@@ -22,6 +22,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 	endif()
 
 	set(OGREKIT_INSTALL_PREFIX ${ROOT}/Bin)
+	set(OGREKIT_USE_FILETOOLS TRUE)
 	
 	option(OGREKIT_USE_LUA					"Use Lua script bindings" ON)
 	option(OGREKIT_COMPILE_SWIG				"Enable compile time SWIG generation."  OFF)
@@ -35,7 +36,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 	option(OGREKIT_DISABLE_ZIP				"Disable external .zip resource loading" ON)
 	option(OGREKIT_USE_STATIC_FREEIMAGE		"Compile and link statically FreeImage and all its plugins" ON)	
 	option(OGREKIT_ENABLE_UNITTESTS			"Enable / Disable UnitTests" OFF)
-	option(OGREKIT_USE_FILETOOLS			"Compile FBT file format utilities" OFF)
+	#option(OGREKIT_USE_FILETOOLS			"Compile FBT file format utilities" ON)
 	option(OGREKIT_COMPILE_TINYXML			"Enable / Disable TinyXml builds" OFF)
 	option(OGREKIT_COMPILE_LIBROCKET		"Enable / Disalbe libRocket builds" OFF)
 	option(OGREKIT_GENERATE_BUILTIN_RES		"Generate build-in resources" OFF)
@@ -44,7 +45,25 @@ macro (configure_ogrekit ROOT OGREPATH)
 	option(OGREKIT_COMPILE_OPENSTEER		"Enable / Disable OpenSterr build" OFF)
 	option(OGREKIT_USE_NNODE				"Use Logic Node(It's Nodal Logic, not Blender LogicBrick)" OFF)
 	option(OGREKIT_COMPILE_OGRE_COMPONENTS	"Eanble compile additional Ogre components (RTShader, Terrain, Paging, ... etc)" OFF)
+	option(OGERKIT_USE_RTSHADER_SYSTEM		"Eanble shader system instead of fixed piped functions." OFF)
 	option(OGREKIT_COMPILE_OPTS				"Enable / Disable Opts builds" OFF)
+	
+	if (APPLE)
+		option(OGREKIT_BUILD_IPHONE	"Build GameKit on IPhone SDK"	OFF)
+	endif()
+	
+	if (OGERKIT_USE_RTSHADER_SYSTEM)
+		set(OGRE_BUILD_COMPONENT_RTSHADERSYSTEM TRUE)
+		set(RTSHADER_SYSTEM_BUILD_CORE_SHADERS 1)
+		set(RTSHADER_SYSTEM_BUILD_EXT_SHADERS 1)	
+	endif()	
+	
+	if (OGREKIT_COMPILE_OGRE_COMPONENTS)
+		option(OGRE_BUILD_COMPONENT_PAGING "Build Ogre Paging Compoment" ON)
+		option(OGRE_BUILD_COMPONENT_TERRAIN "Build Ogre Terrain Compoment" ON)
+		#option(OGRE_BUILD_COMPONENT_RTSHADERSYSTEM "Build Ogre RTShaderSystem Compoment" OFF)
+		option(OGRE_BUILD_COMPONENT_PROPERTY "Build Ogre Property Compoment(Required boost)" OFF)
+	endif()
 	
 	set(OGREKIT_ZZIP_TARGET ZZipLib)
 	set(OGREKIT_FREETYPE_TARGET freetype)
@@ -73,28 +92,28 @@ macro (configure_ogrekit ROOT OGREPATH)
 		if(ZLIB_FOUND)
 			set(OGREKIT_ZLIB_TARGET	${ZLIB_LIBRARY})
 			set(OGREKIT_FREEIMAGE_INCLUDE	${ZLIB_INCLUDE_DIR})
-		else(ZLIB_FOUND)
+		else()
 			message("Zlib not found.")
 			message("Package is mandatory, please install it or enable static FreeImage compilation.")
-		endif(ZLIB_FOUND)
+		endif()
 		
 		
 		if(FreeImage_FOUND)
 			set(OGREKIT_FREEIMAGE_TARGET	${FreeImage_LIBRARY})	
 			set(OGREKIT_FREEIMAGE_INCLUDE	${FreeImage_INCLUDE_DIR})
-		else(FreeImage_FOUND)
+		else()
 			message("FreeImage not found")
 			message("Package is mandatory, please install it or enable static FreeImage compilation.")
-		endif(FreeImage_FOUND)
+		endif()
 		
-	else(NOT OGREKIT_USE_STATIC_FREEIMAGE)
+	else()
 	
 		set(OGREKIT_ZLIB_TARGET	ZLib)
 		set(OGREKIT_FREEIMAGE_TARGET FreeImage)
 		set(OGREKIT_ZLIB_INCLUDE ${OGREKIT_DEP_DIR}/FreeImage/ZLib)
 		set(OGREKIT_FREEIMAGE_INCLUDE ${OGREKIT_DEP_DIR}/FreeImage)        
 		
-	endif(NOT OGREKIT_USE_STATIC_FREEIMAGE)
+	endif()
 
 
 	if (APPLE)
@@ -155,7 +174,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 	endif()
 
 	if (SAMPLES_INSPECTOR)	
-		set(OGREKIT_USE_FILETOOLS   TRUE CACHE BOOL "Forcing File Utils" FORCE)
+		#set(OGREKIT_USE_FILETOOLS   TRUE CACHE BOOL "Forcing File Utils" FORCE)
 	endif()
 
 	if (WIN32 AND (SAMPLES_EMBEDDEMO OR SAMPLES_LUA_EDITOR))
@@ -170,25 +189,12 @@ macro (configure_ogrekit ROOT OGREPATH)
 		set(OGREKIT_COMPILE_TCL TRUE CACHE BOOL "Forcing TCL"  FORCE)
 	endif()
 
-	if (APPLE)
-		option(OGREKIT_BUILD_IPHONE	"Build GameKit on IPhone SDK"	OFF)
-	endif()
-
 	if (OGREKIT_BUILD_IPHONE)
-		set(OGRE_BUILD_PLATFORM_IPHONE TRUE)
+		set(OGRE_BUILD_PLATFORM_IPHONE TRUE) #TODO: replace to OGRE_BUILD_PLATFORM_IPHONE
 		set(OGRE_BUILD_PLATFORM_APPLE_IOS TRUE)
-	endif()
-	
-	if (OGREKIT_COMPILE_OGRE_COMPONENTS)
-		option(OGRE_BUILD_COMPONENT_PAGING "Build Ogre Paging Compoment" ON)
-		option(OGRE_BUILD_COMPONENT_TERRAIN "Build Ogre Terrain Compoment" ON)
-		option(OGRE_BUILD_COMPONENT_RTSHADERSYSTEM "Build Ogre RTShaderSystem Compoment" OFF)
-		option(OGRE_BUILD_COMPONENT_PROPERTY "Build Ogre Property Compoment(Required boost)" OFF)
-	endif()
-
-	#copy from ogre3d build
-	# Set up iPhone overrides.
-	if (OGREKIT_BUILD_IPHONE)
+		
+		#copy from ogre3d build
+		# Set up iPhone overrides.
 		include_directories("${OGREPATH}/OgreMain/include/iPhone")
 	
 		# Set build variables
@@ -264,7 +270,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 	set(OGREKIT_FREETYPE_INCLUDE ${OGREKIT_DEP_DIR}/FreeType/include)
 	set(OGREKIT_ZZIP_INCLUDE ${OGREKIT_DEP_DIR}/ZZipLib)
 	set(OGREKIT_OIS_INCLUDE ${OGREKIT_DEP_DIR}/OIS/include)
-	set(OGREKIT_OGRE_INCLUDE ${OGREPATH}/OgreMain/include ${OGREKIT_BINARY_DIR}/Settings ${OGREKIT_PLATFORM})
+	set(OGREKIT_OGRE_INCLUDE ${OGREPATH}/OgreMain/include ${OGREKIT_BINARY_DIR}/Settings ${OGREKIT_PLATFORM})	
 	set(OGREKIT_LUA_INCLUDE ${OGREKIT_DEP_DIR}/Lua/lua)
 	set(OGREKIT_OGGVORBIS_INCLUDE ${OGREKIT_DEP_DIR}/Codecs/include)
 	
@@ -279,10 +285,11 @@ macro (configure_ogrekit ROOT OGREPATH)
 		${OGREKIT_FREETYPE_INCLUDE}
 		${OGREKIT_ZLIB_INCLUDE}
 		${OGREKIT_OIS_INCLUDE}		
-		${GAMEKIT_SERIALIZE_BULLET}
-		${GAMEKIT_SERIALIZE_BLENDER}
+		#${GAMEKIT_SERIALIZE_BULLET}
+		#${GAMEKIT_SERIALIZE_BLENDER}
 		${GAMEKIT_UTILS_PATH}
 		${GAMEKIT_ANIMKIT_PATH}
+		${GAMEKIT_FBT_INCLUDE}
 	)
 
 	
@@ -361,7 +368,6 @@ macro (configure_ogrekit ROOT OGREPATH)
 
 		if (DirectX_FOUND)
 			option(OGREKIT_BUILD_D3D9RS	 "Enable the Direct3D 9 render system" ON)
-			option(OGREKIT_BUILD_D3D10RS "Enable the Direct3D 10 render system" OFF)
 			option(OGREKIT_BUILD_D3D11RS "Enable the Direct3D 11 render system" OFF)
 		endif()
 
@@ -391,13 +397,19 @@ macro (configure_ogrekit ROOT OGREPATH)
 		${OGREKIT_GLRS_LIBS}
 		${OGREKIT_D3D9_LIBS}
 		${OGREKIT_D3D11_LIBS}		
-		${GAMEKIT_SERIALIZE_BLENDER_TARGET}
-		${GAMEKIT_SERIALIZE_BULLET_TARGET}
+		#${GAMEKIT_SERIALIZE_BLENDER_TARGET}
+		#${GAMEKIT_SERIALIZE_BULLET_TARGET}
 		${GAMEKIT_UTILS_TARGET}
 		${OGREKIT_OIS_TARGET}
 		${OGREKIT_ZLIB_TARGET}
 		${GAMEKIT_ANIMKIT_TARGET}
-		)
+		${GAMEKIT_FBT_LIBS}
+	)
+
+	if (OGERKIT_USE_RTSHADER_SYSTEM)
+		list(APPEND OGREKIT_OGRE_LIBS		OgreRTShaderSystem)
+		list(APPEND OGREKIT_OGRE_INCLUDE	${OGREPATH}/Components/RTShaderSystem/include)
+	endif()
 
 	if (OGREKIT_OPENAL_SOUND)
 		list(APPEND OGREKIT_OGRE_LIBS	${OGREKIT_OPENAL_LIBRARY} ${OGREKIT_OGGVORBIS_TARGET})
@@ -447,6 +459,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 			if (OGREKIT_BUILD_GLESRS)
 				message(SEND_ERROR "Turn OFF OGREKIT_BUILD_GLESRS Option for OS X")
 			endif()
+
 		endif()
 	endif(APPLE)
  

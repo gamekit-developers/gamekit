@@ -90,8 +90,6 @@ private:
 	Private*                m_private;
 	friend class Private;
 
-
-	Ogre::Root*             m_root;
 	gkWindow*				m_window;
 	bool                    m_initialized;
 	bool                    m_ownsDefs;
