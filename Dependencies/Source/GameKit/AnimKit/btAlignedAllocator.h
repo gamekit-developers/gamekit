@@ -29,7 +29,9 @@ subject to the following restrictions:
 Start of the modif of the original file
 I just moved the interesting bit of btScalar in here,
 Included utcommon for UT_INLINE
+Included stddef.h for size_t on Linux
 */
+#include <stddef.h>
 
 //#include "btScalar"
 #if (defined (_WIN32) && (_MSC_VER) && _MSC_VER >= 1400)
