@@ -48,7 +48,6 @@ public:
 	/// vtxDts           Vertex position output
 	/// normSrc          Vertex normals input (optional)
 	/// normDst          Vertex normals output (optional)
-	/// weightsPerVertex Maximum number of  bones that deform a single vertex (often 4)
 	static void vertexSkinning(const UTsize vtxCount,
 									const btAlignedObjectArray<akMatrix4> &matrices,
 	                                const float* weights,       const UTsize weightsStride,

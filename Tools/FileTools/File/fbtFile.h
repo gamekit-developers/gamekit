@@ -28,13 +28,12 @@
 
 #include "fbtTypes.h"
 
+/** \addtogroup FBT
+*  @{
+*/
+
 class fbtStream;
 class fbtBinTables;
-
-
-
-
-
 
 
 class fbtFile
@@ -200,5 +199,5 @@ private:
 	int link(void);
 };
 
-
+/** @}*/
 #endif//_fbtFile_h_

@@ -74,34 +74,34 @@ int OgreKit::setup(int argc, char** argv)
 
 		//cfg arguments
 
-		TCLAP::ValueArg<std::string>	rendersystem_arg("r", "rendersystem", "Set rendering system. (gl, d3d9, d3d10, d3d11)", false, "", "string"); //default GL
-		TCLAP::ValueArg<std::string>	viewportOrientation_arg("", "viewportorientation", "Set viewport orientation.", false, m_prefs.viewportOrientation, "string"); 
-		TCLAP::ValueArg<std::string>	log_arg("", "log", "Set log file name.", false, m_prefs.log, "string"); 
-		TCLAP::ValueArg<bool>			verbose_arg("v", "verbose", "Enable verbose log.", false, m_prefs.verbose, "bool");
-		TCLAP::ValueArg<int>			winsize_x_arg("", "width", "Set window width.", false, winsize_x, "int");
-		TCLAP::ValueArg<int>			winsize_y_arg("", "height", "Set window height.", false, winsize_y, "int");
-		TCLAP::ValueArg<std::string>	wintitle_arg("", "wintitle", "Set window title.", false, m_prefs.wintitle, "string"); 
-		TCLAP::ValueArg<bool>			fullscreen_arg("f", "fullscreen", "Enable fullscreen mode.", false, m_prefs.fullscreen, "bool");
-		TCLAP::ValueArg<std::string>	framingType_arg("", "framingtype", "Set viewport framing type. (extend, crop, letterbox)", false, "", "string");
-		TCLAP::ValueArg<std::string>	resources_arg("", "resources", "Set resouces.", false, m_prefs.resources, "string");
-		TCLAP::ValueArg<bool>			blendermat_arg("", "blendmat", "Convert meshes using blender materials.", false, m_prefs.blendermat, "bool");
-		TCLAP::ValueArg<bool>			matblending_arg("", "matblending", "Enable material pass blending mode.", false, m_prefs.matblending, "bool");		
-		TCLAP::ValueArg<bool>			grapInput_arg("g", "grabinput", "Grap mouse input.", false, m_prefs.grabInput, "bool");
-		TCLAP::ValueArg<bool>			debugFps_arg("d", "debugfps", "Display debug fps.", false, m_prefs.debugFps, "bool");
-		TCLAP::ValueArg<bool>			debugPhysics_arg("p", "debugphysics", "Display debug physics.", false, m_prefs.debugPhysics, "bool");
-		TCLAP::ValueArg<bool>			debugPhysicsAabb_arg("a", "debugphysicsaabb", "Display debug physics aabb.", false, m_prefs.debugPhysicsAabb, "bool");
-		TCLAP::ValueArg<bool>			buildStaticGeometry_arg("", "buildinstances", "Build Static Geometry.", false, m_prefs.buildStaticGeometry, "bool");
-		TCLAP::ValueArg<bool>			useBulletDbvt_arg("", "frustumculling", "Enable view frustum culling by dbvt.", false, m_prefs.useBulletDbvt, "bool");
-		TCLAP::ValueArg<bool>			showDebugProps_arg("", "showdebugprops", "Show debug props.", false, m_prefs.showDebugProps, "bool");
-		TCLAP::ValueArg<bool>			debugSounds_arg("", "debugsounds", "Debug sounds.", false, m_prefs.debugSounds, "bool");
-		TCLAP::ValueArg<bool>			disableSound_arg("s", "disablesound", "Disable sounds.", false, m_prefs.disableSound, "bool");
-		TCLAP::ValueArg<bool>			fsaa_arg("", "fsaa", "Enable fsaa.", false, m_prefs.fsaa, "bool");
-		TCLAP::ValueArg<int>			fsaaSamples_arg("", "fsaasSamples", "Set fsaa samples.", false, m_prefs.fsaaSamples, "int");
-		TCLAP::ValueArg<bool>			enableshadows_arg("", "enableshadows", "Enable Shadows.", false, m_prefs.enableshadows, "bool");
-		TCLAP::ValueArg<int>			defaultMipMap_arg("", "defaultmipMap", "Set default mipMap.", false, m_prefs.defaultMipMap, "int");
-		TCLAP::ValueArg<std::string>	shadowtechnique_arg("", "shadowtechnique", "Set shadow technique.", false, m_prefs.shadowtechnique, "string"); 
-		TCLAP::ValueArg<std::string>	colourshadow_arg("", "colourshadow", "Set shadow colour.", false, "", "string"); 
-		TCLAP::ValueArg<float>			fardistanceshadow_arg("", "fardistanceshadow", "Set far distance shadow.", false, m_prefs.fardistanceshadow, "float"); 
+		TCLAP::ValueArg<std::string>	rendersystem_arg		("r", "rendersystem",			"Set rendering system. (gl, d3d9, d3d10, d3d11)", false, "", "string"); //default GL
+		TCLAP::ValueArg<std::string>	viewportOrientation_arg	("",  "viewportorientation",	"Set viewport orientation.", false, m_prefs.viewportOrientation, "string"); 
+		TCLAP::ValueArg<std::string>	log_arg					("",  "log",					"Set log file name.", false, m_prefs.log, "string"); 
+		TCLAP::ValueArg<bool>			verbose_arg				("v", "verbose",				"Enable verbose log.", false, m_prefs.verbose, "bool");
+		TCLAP::ValueArg<int>			winsize_x_arg			("",  "width",					"Set window width.", false, winsize_x, "int");
+		TCLAP::ValueArg<int>			winsize_y_arg			("",  "height",					"Set window height.", false, winsize_y, "int");
+		TCLAP::ValueArg<std::string>	wintitle_arg			("",  "wintitle",				"Set window title.", false, m_prefs.wintitle, "string"); 
+		TCLAP::ValueArg<bool>			fullscreen_arg			("f", "fullscreen",				"Enable fullscreen mode.", false, m_prefs.fullscreen, "bool");
+		TCLAP::ValueArg<std::string>	framingType_arg			("",  "framingtype",			"Set viewport framing type. (extend, crop, letterbox)", false, "", "string");
+		TCLAP::ValueArg<std::string>	resources_arg			("",  "resources",				"Set resouces.", false, m_prefs.resources, "string");
+		TCLAP::ValueArg<bool>			blendermat_arg			("",  "blendmat",				"Convert meshes using blender materials.", false, m_prefs.blendermat, "bool");
+		TCLAP::ValueArg<bool>			matblending_arg			("",  "matblending",			"Enable material pass blending mode.", false, m_prefs.matblending, "bool");		
+		TCLAP::ValueArg<bool>			grapInput_arg			("g", "grabinput",				"Grap mouse input.", false, m_prefs.grabInput, "bool");
+		TCLAP::ValueArg<bool>			debugFps_arg			("d", "debugfps",				"Display debug fps.", false, m_prefs.debugFps, "bool");
+		TCLAP::ValueArg<bool>			debugPhysics_arg		("p", "debugphysics",			"Display debug physics.", false, m_prefs.debugPhysics, "bool");
+		TCLAP::ValueArg<bool>			debugPhysicsAabb_arg	("a", "debugphysicsaabb",		"Display debug physics aabb.", false, m_prefs.debugPhysicsAabb, "bool");
+		TCLAP::ValueArg<bool>			buildStaticGeometry_arg	("",  "buildinstances",			"Build Static Geometry.", false, m_prefs.buildStaticGeometry, "bool");
+		TCLAP::ValueArg<bool>			useBulletDbvt_arg		("",  "frustumculling",			"Enable view frustum culling by dbvt.", false, m_prefs.useBulletDbvt, "bool");
+		TCLAP::ValueArg<bool>			showDebugProps_arg		("t", "showdebugprops",			"Show debug props.", false, m_prefs.showDebugProps, "bool");
+		TCLAP::ValueArg<bool>			debugSounds_arg			("",  "debugsounds",			"Debug sounds.", false, m_prefs.debugSounds, "bool");
+		TCLAP::ValueArg<bool>			disableSound_arg		("s", "disablesound",			"Disable sounds.", false, m_prefs.disableSound, "bool");
+		TCLAP::ValueArg<bool>			fsaa_arg				("",  "fsaa",					"Enable fsaa.", false, m_prefs.fsaa, "bool");
+		TCLAP::ValueArg<int>			fsaaSamples_arg			("",  "fsaasSamples",			"Set fsaa samples.", false, m_prefs.fsaaSamples, "int");
+		TCLAP::ValueArg<bool>			enableshadows_arg		("",  "enableshadows",			"Enable Shadows.", false, m_prefs.enableshadows, "bool");
+		TCLAP::ValueArg<int>			defaultMipMap_arg		("",  "defaultmipMap",			"Set default mipMap.", false, m_prefs.defaultMipMap, "int");
+		TCLAP::ValueArg<std::string>	shadowtechnique_arg		("",  "shadowtechnique",		"Set shadow technique.", false, m_prefs.shadowtechnique, "string"); 
+		TCLAP::ValueArg<std::string>	colourshadow_arg		("",  "colourshadow",			"Set shadow colour.", false, "", "string"); 
+		TCLAP::ValueArg<float>			fardistanceshadow_arg	("",  "fardistanceshadow",		"Set far distance shadow.", false, m_prefs.fardistanceshadow, "float"); 
 
 		cmdl.add(rendersystem_arg);
 		cmdl.add(viewportOrientation_arg);
@@ -112,6 +112,7 @@ int OgreKit::setup(int argc, char** argv)
 		cmdl.add(wintitle_arg);
 		cmdl.add(fullscreen_arg);
 		cmdl.add(framingType_arg);
+		cmdl.add(resources_arg);
 		cmdl.add(blendermat_arg);
 		cmdl.add(matblending_arg);
 		cmdl.add(grapInput_arg);
@@ -128,8 +129,8 @@ int OgreKit::setup(int argc, char** argv)
 		cmdl.add(enableshadows_arg);
 		cmdl.add(defaultMipMap_arg);
 		cmdl.add(shadowtechnique_arg);
-		cmdl.add(fardistanceshadow_arg);
 		cmdl.add(colourshadow_arg);
+		cmdl.add(fardistanceshadow_arg);		
 
 		//input file arguments
 		
@@ -141,42 +142,42 @@ int OgreKit::setup(int argc, char** argv)
 
 		cmdl.parse( argc, argv );
 
-		cfgfname = cfgfname_arg.getValue();
-		m_blend = bfname_arg.getValue();
+		cfgfname						= cfgfname_arg.getValue();
+		m_blend							= bfname_arg.getValue();
 
-		m_prefs.rendersystem = gkUserDefs::getOgreRenderSystem(rendersystem_arg.getValue());
-		m_prefs.viewportOrientation = viewportOrientation_arg.getValue();
-		//m_prefs.sceneManager = sceneManager_arg.getValue();
-		m_prefs.log = log_arg.getValue();
-		m_prefs.verbose = verbose_arg.getValue();
+		m_prefs.rendersystem			= gkUserDefs::getOgreRenderSystem(rendersystem_arg.getValue());
+		m_prefs.viewportOrientation		= viewportOrientation_arg.getValue();
+		//m_prefs.sceneManager			= sceneManager_arg.getValue();
+		m_prefs.log						= log_arg.getValue();
+		m_prefs.verbose					= verbose_arg.getValue();
 
-		m_prefs.winsize = gkVector2(winsize_x_arg.getValue(), winsize_y_arg.getValue());
-		m_prefs.wintitle = wintitle_arg.getValue();
+		m_prefs.winsize					= gkVector2(winsize_x_arg.getValue(), winsize_y_arg.getValue());
+		m_prefs.wintitle				= wintitle_arg.getValue();
 
-		m_prefs.fullscreen = fullscreen_arg.getValue();
-		m_prefs.framingType = gkUserDefs::getViewportFramingType(framingType_arg.getValue());
-		m_prefs.resources = resources_arg.getValue();
-		m_prefs.blendermat = blendermat_arg.getValue();
-		m_prefs.matblending = matblending_arg.getValue();
-		m_prefs.grabInput = grapInput_arg.getValue();
-		m_prefs.debugFps = debugFps_arg.getValue();
-		m_prefs.debugPhysics = debugPhysics_arg.getValue();
-		m_prefs.debugPhysicsAabb = debugPhysicsAabb_arg.getValue();
-		m_prefs.buildStaticGeometry = buildStaticGeometry_arg.getValue();
-		m_prefs.useBulletDbvt = useBulletDbvt_arg.getValue();
-		m_prefs.showDebugProps = showDebugProps_arg.getValue();
-		m_prefs.debugSounds = debugSounds_arg.getValue();
-		m_prefs.disableSound = disableSound_arg.getValue();
+		m_prefs.fullscreen				= fullscreen_arg.getValue();
+		m_prefs.framingType				= gkUserDefs::getViewportFramingType(framingType_arg.getValue());
+		m_prefs.resources				= resources_arg.getValue();
+		m_prefs.blendermat				= blendermat_arg.getValue();
+		m_prefs.matblending				= matblending_arg.getValue();
+		m_prefs.grabInput				= grapInput_arg.getValue();
+		m_prefs.debugFps				= debugFps_arg.getValue();
+		m_prefs.debugPhysics			= debugPhysics_arg.getValue();
+		m_prefs.debugPhysicsAabb		= debugPhysicsAabb_arg.getValue();
+		m_prefs.buildStaticGeometry		= buildStaticGeometry_arg.getValue();
+		m_prefs.useBulletDbvt			= useBulletDbvt_arg.getValue();
+		m_prefs.showDebugProps			= showDebugProps_arg.getValue();
+		m_prefs.debugSounds				= debugSounds_arg.getValue();
+		m_prefs.disableSound			= disableSound_arg.getValue();
 
-		m_prefs.fsaa = fsaa_arg.getValue();
-		m_prefs.fsaaSamples = fsaaSamples_arg.getValue();
-		m_prefs.enableshadows = enableshadows_arg.getValue();
-		m_prefs.defaultMipMap = defaultMipMap_arg.getValue();
-		m_prefs.shadowtechnique = shadowtechnique_arg.getValue();
-		m_prefs.fardistanceshadow = fardistanceshadow_arg.getValue();				
+		m_prefs.fsaa					= fsaa_arg.getValue();
+		m_prefs.fsaaSamples				= fsaaSamples_arg.getValue();
+		m_prefs.enableshadows			= enableshadows_arg.getValue();
+		m_prefs.defaultMipMap			= defaultMipMap_arg.getValue();
+		m_prefs.shadowtechnique			= shadowtechnique_arg.getValue();
+		m_prefs.fardistanceshadow		= fardistanceshadow_arg.getValue();				
 
 		if (colourshadow_arg.isSet())
-			m_prefs.colourshadow = Ogre::StringConverter::parseColourValue(colourshadow_arg.getValue());
+			m_prefs.colourshadow		= Ogre::StringConverter::parseColourValue(colourshadow_arg.getValue());
 
 #ifdef __APPLE__
 		if (m_blend.find("-psn") != gkString::npos)

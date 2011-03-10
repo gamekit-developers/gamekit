@@ -26,20 +26,12 @@
 */
 
 #include "gkCommon.h"
-#include "gkScene.h"
 #include "gkParticleObject.h"
-#include "gkParticleRenderer.h"
 #include "gkParticleResource.h"
 #include "gkParticleManager.h"
-#include "gkLogger.h"
-
-#include "OgreSceneManager.h"
-#include "OgreParticleSystemManager.h"
-
 
 gkParticleObject::gkParticleObject(gkInstancedManager* creator, const gkResourceName& name, const gkResourceHandle& handle)
-	:	gkGameObject(creator, name, handle, GK_PARTICLES),
-		m_psys(0)
+	:	gkGameObject(creator, name, handle, GK_PARTICLES)
 {
 }
 
@@ -47,78 +39,10 @@ gkParticleObject::~gkParticleObject()
 {
 }
 
-void gkParticleObject::createInstanceImpl()
+gkParticleResource* gkParticleObject::getParticleResource()
 {
-	gkGameObject::createInstanceImpl();
+	if (m_particleProps.m_settings.empty())
+		return 0;
 
-	GK_ASSERT(!m_psys);
-
-	try
-	{
-		Ogre::SceneManager* manager = m_scene->getManager();
-
-		const gkString& pname = m_particleProps.m_settings;
-		
-		m_psys = manager->createParticleSystem(getName(), m_particleProps.m_settings);
-		if (m_psys)
-		{
-			m_psys->setUserAny(Ogre::Any(this));
-			m_node->attachObject(m_psys);
-
-			gkParticleResource* resource = gkParticleManager::getSingleton().getByName<gkParticleResource>(
-				gkResourceName(pname, getGroupName()));
-
-			if (resource && resource->isTemplateOwner())
-			{
-				m_psys->setRenderer(gkParticleRenderer::NAME);
-		
-				if (resource->getParticleProperties().m_render == gkParticleSettingsProperties::R_HALO)
-					m_psys->setMaterialName(gkParticleManager::getSingleton().createOrRetrieveHaloMaterial(m_particleProps.m_material));
-				else
-					m_psys->setMaterialName(m_particleProps.m_material);
-			} //else create by .particle script
-		}
-	}
-	catch (Ogre::Exception& e)
-	{
-		gkLogMessage("gkParticleObject: " << e.getDescription());
-	}
-}
-
-void gkParticleObject::destroyInstanceImpl()
-{
-	if (m_psys)
-	{
-		Ogre::SceneManager* manager = m_scene->getManager();
-
-		if (!m_scene->isBeingDestroyed())
-		{
-			if (m_node)
-				m_node->detachObject(m_psys);
-
-			manager->destroyParticleSystem(m_psys);
-			m_psys = 0;
-		}
-	}
-
-	gkGameObject::destroyInstanceImpl();
-}
-
-
-gkGameObject* gkParticleObject::clone(const gkString& name)
-{
-	gkParticleObject* cl = new gkParticleObject(getInstanceCreator(), name, -1);
-
-	cl->m_particleProps = m_particleProps;
-
-	gkGameObject::cloneImpl(cl);
-	return cl;
-}
-
-void gkParticleObject::setMaterialName(const gkString& material)
-{
-	GK_ASSERT(m_psys);
-	if (!m_psys) return;
-	
-	m_psys->setMaterialName(material);	
+	return gkParticleManager::getSingleton().getByName<gkParticleResource>(m_particleProps.m_settings);
 }

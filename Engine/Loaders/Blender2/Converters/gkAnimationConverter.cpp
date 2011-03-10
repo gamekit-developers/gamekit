@@ -462,13 +462,14 @@ void gkAnimationLoader::convertAction(Blender::bAction* action, bool pre25compat
 }
 
 
-void gkAnimationLoader::convertActions(bParse::bListBasePtr* actions, bool pre25compat, gkScalar animfps)
+void gkAnimationLoader::convertActions(fbtList* actions, bool pre25compat, gkScalar animfps)
 {
-//	for (int i = 0; i < actions->size(); ++i)
-//	{
-//		Blender::bAction* bact = (Blender::bAction*)actions->at(i);
-//		convertAction(bact, pre25compat, animfps);
-//	}
+	Blender::bAction* bact = (Blender::bAction*)actions->first;
+	while (bact)
+	{		 
+		convertAction(bact, pre25compat, animfps);
+		bact = (Blender::bAction*)bact->id.next;
+	}
 }
 
 

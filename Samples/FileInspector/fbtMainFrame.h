@@ -110,6 +110,13 @@ private:
 	void populateChunks(fbtList& chunks);
 	void populate(fbtBinTables* table, int index);
 	void unpopulate(void);
+    
+	void chunkItemMenu(wxTreeEvent& evt);
+	void chunkFind(wxCommandEvent& evt);
+	void chunkShowOnly(wxCommandEvent& evt);
+	void chunkHide(wxCommandEvent& evt);
+	void chunkUnhideAll(wxCommandEvent& evt);
+	void chunkFindOrDelete(const wxString& name, bool matchDelete, bool findOnly = false);
 
 
 	void saveProject(const wxString& path);

@@ -33,6 +33,7 @@
 #include "gkLogger.h"
 #include "OgreOverlay.h"
 #include "OgreOverlayElement.h"
+#include "OgreOverlayContainer.h"
 #include "OgreOverlayManager.h"
 
 
@@ -47,7 +48,9 @@ gkHUD::gkHUD(gkResourceManager* creator, const gkResourceName& name, const gkRes
 gkHUD::~gkHUD()
 {
 	if (m_overlay)
+	{
 		m_overlay->clear();
+	}
 
 	ChildNodes::Iterator it = m_children.iterator();
 	while (it.hasMoreElements())
@@ -116,10 +119,16 @@ void gkHUD::newImpl(void)
 
 			while (elements.hasMoreElements())
 			{
-				Ogre::OverlayElement* ele = (Ogre::OverlayElement*)elements.getNext();
+				Ogre::OverlayContainer* cont = elements.getNext();
 
-				gkHUDElement* hele = new gkHUDElement(ele->getName());
-				addChild(hele);
+				Ogre::OverlayContainer::ChildIterator childs = cont->getChildIterator();
+
+				while (childs.hasMoreElements())
+				{
+					Ogre::OverlayElement* elm = childs.getNext();
+					gkHUDElement* hele = new gkHUDElement(elm->getName());
+					addChild(hele);
+				}
 			}
 
 		}

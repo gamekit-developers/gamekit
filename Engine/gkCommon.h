@@ -139,8 +139,8 @@ class gkObjectChannel;
 
 class gkParticleObject;
 class gkParticleManager;
-class gkParticleAffector;
-class gkParticleEmitter;
+class gkOgreParticleAffector;
+class gkOgreParticleEmitter;
 
 // Common types
 typedef utHashTable<gkHashedString, gkGameObject*>	gkGameObjectHashMap;

@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 2.6)
 project(UnitTestLuaEditor)
 
 
-set(OGREKIT_USE_FILETOOLS TRUE CACHE BOOL "Forcing FileTools" FORCE)
+#set(OGREKIT_USE_FILETOOLS TRUE CACHE BOOL "Forcing FileTools" FORCE)
 
 
 set(APP_DATA_DIR TestData)

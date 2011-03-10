@@ -7,6 +7,7 @@ cmake_minimum_required(VERSION 2.6)
 
 project(OGREKIT)
 SET(OGREKIT 1.0)
+set(OGRE_STATIC TRUE)
 
 if(COMMAND cmake_policy)
    cmake_policy(SET CMP0003 NEW)
@@ -32,7 +33,7 @@ include(ConfigIPhone)
 
 
 configure_gamekit(${OGREKIT_SOURCE_DIR}/Dependencies/Source)
-configure_ogrekit(${OGREKIT_SOURCE_DIR} ${OGREKIT_SOURCE_DIR}/OgreLite)
+configure_ogrekit(${OGREKIT_SOURCE_DIR} ${OGREKIT_SOURCE_DIR}/Ogre-1.8)
 
 set(OGREKIT_BULLET_LIBS BulletDynamics BulletCollision BulletSoftBody LinearMath)
 set(OGREKIT_BULLET_INCLUDE ${OGREKIT_SOURCE_DIR}/bullet/src)
@@ -83,16 +84,17 @@ set(OGREKIT_LIB OgreKitCore ${OGREKIT_OGRE_LIBS})
 
 subdirs(bullet)
 subdirs(Dependencies)
-subdirs(OgreLite)
+subdirs(Ogre-1.8)
 subdirs(Engine)
+subdirs(Tools/FileTools)
 
 if (OGREKIT_COMPILE_WXWIDGETS)
 	subdirs(${OGREKIT_SOURCE_DIR}/${WX_VERSION})
 endif()
 
-if (OGREKIT_USE_FILETOOLS)
-	subdirs(${OGREKIT_SOURCE_DIR}/Tools/FileTools)
-endif()
+#if (OGREKIT_USE_FILETOOLS)
+	
+#endif()
 
 subdirs(Samples)
 

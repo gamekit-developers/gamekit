@@ -26,6 +26,11 @@
 #ifndef _fbtConfig_h_
 #define _fbtConfig_h_
 
+
+/** \addtogroup FBT
+*  @{
+*/
+
 // global config settings
 
 #define fbtDEBUG        1           // Traceback detail
@@ -36,5 +41,6 @@
 #define FBT_TYPE_LEN_VALIDATE   1   // Write a validation file (use MakeFBT.cmake->ADD_FBT_VALIDATOR to add a self validating build)
 #define FBT_ARRAY_SLOTS         2   // Maximum dimensional array, eg: (int m_member[..][..] -> [FBT_ARRAY_SLOTS])
 
+/** @}*/
 
 #endif//_fbtConfig_h_

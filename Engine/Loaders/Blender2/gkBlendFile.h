@@ -31,6 +31,7 @@
 #include "gkInstancedObject.h"
 #include "OgreResourceGroupManager.h"
 
+class fbtBlend;
 
 class gkBlendFile
 {
@@ -57,7 +58,8 @@ public:
 	///Internal manual loader registration (used mainly for Blender image to Ogre Texture ).
 	void _registerLoader(Ogre::ManualResourceLoader* loader)  {m_loaders.push_back(loader);}
 
-	bParse::bBlenderFile* _getInternalFile(void) {GK_ASSERT(m_file); return m_file;}
+//	bParse::bBlenderFile* _getInternalFile(void) {GK_ASSERT(m_file); return m_file;}
+	fbtBlend* _getInternalFile(void) {GK_ASSERT(m_file); return m_file;}
 
 	///Access to the original group name. Used for placing created resources in the same group.
 	GK_INLINE const gkString& getResourceGroup(void) {return m_group;}
@@ -82,7 +84,8 @@ protected:
 	const gkString				m_name;				// Current file path.
 	const gkString				m_group;			// resource group
 	float						m_animFps;			
-	bParse::bBlenderFile*		m_file;				// bParse File Pointer
+	//bParse::bBlenderFile*		m_file;				// bParse File Pointer
+	fbtBlend*					m_file;
 	Scenes						m_scenes;			// All Scenes
 	gkScene*					m_activeScene;		// Main scene found during parse.
 	ImageTextureHashMap			m_imageLookup;

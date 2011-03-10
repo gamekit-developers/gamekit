@@ -66,3 +66,7 @@ endif()
 if (FBT_BLEND_STRIP)
 	subdirs(Strip)
 endif()
+
+if (OGREKIT_HEADER_GENERATOR)
+	subdirs(Headers)
+endif()

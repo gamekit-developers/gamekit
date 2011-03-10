@@ -31,6 +31,17 @@ link_libraries(
 set(HiddenCMakeLists ../CMakeLists.txt)
 source_group(ParentCMakeLists FILES ${HiddenCMakeLists})
 
+if (WIN32)
+	set(PLAT_RESOURCE Win32/app.rc)
+	set(RESOURCE )	
+	set_source_files_properties(${RESOURCE} PROPERTIES HEADER_FILE_ONLY 1)
+	source_group(Content\\Resources FILES ${PLAT_RESOURCE} ${RESOURCE})
+
+	list(APPEND SRC ${PLAT_RESOURCE})
+endif()
+
+
+
 
 if (APPLE)
 
@@ -45,7 +56,6 @@ if (APPLE)
 else ()
 
 	add_executable(AppOgreKit ${SRC} ${HiddenCMakeLists})
-	
 	
 	IF (NOT INTERNAL_CREATE_DISTRIBUTABLE_MSVC_PROJECTFILES)
 		ADD_CUSTOM_COMMAND(

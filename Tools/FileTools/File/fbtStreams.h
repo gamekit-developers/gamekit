@@ -29,6 +29,9 @@
 
 #include "fbtTypes.h"
 
+/** \addtogroup FBT
+*  @{
+*/
 
 class fbtStream
 {
@@ -180,5 +183,5 @@ protected:
 	int              m_mode;
 };
 
-
+/** @}*/
 #endif//_fbtStreams_h_

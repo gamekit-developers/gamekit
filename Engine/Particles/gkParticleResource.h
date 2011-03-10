@@ -39,16 +39,11 @@ public:
 
 	GK_INLINE gkParticleSettingsProperties& getParticleProperties() { return m_particleProps; }
 
-	Ogre::ParticleSystem* createParticle(const gkParticleSettingsProperties& props);
-	Ogre::ParticleSystem* createParticle(); //use .particle script template
+	virtual void createParticle(const gkParticleSettingsProperties& props) = 0;
+	virtual void createParticle() {}; //use particle script template
 
-	GK_INLINE Ogre::ParticleSystem* getParticleSystem() { return m_psys; }
-
-	GK_INLINE bool isTemplateOwner() const { return m_isTemplateOwner; }
 protected:
-	Ogre::ParticleSystem* m_psys;
 	gkParticleSettingsProperties m_particleProps;
-	bool m_isTemplateOwner;
 };
 
 #endif//_gkParticleResource_h_

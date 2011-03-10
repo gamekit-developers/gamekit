@@ -89,6 +89,11 @@ enum FBTEventID
 	FBT_WINDOW_VIZ,
 	FBT_WINDOW_CHK,
 
+	// Insp Popup Menu
+	FBT_CHUNK_FIND,
+	FBT_CHUNK_SHOW_ONLY,
+	FBT_CHUNK_HIDE,
+	FBT_CHUNK_UNHIDE_ALL
 };
 
 #define fbtNoteStyle wxAUI_NB_TOP            | wxAUI_NB_TAB_MOVE          | \

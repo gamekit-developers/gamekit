@@ -25,8 +25,8 @@
 -------------------------------------------------------------------------------
 */
 #include "Blender.h"
-#include "bBlenderFile.h"
-#include "bMain.h"
+//#include "bBlenderFile.h"
+//#include "bMain.h"
 
 #include "gkBlenderDefines.h"
 #include "gkBlenderSceneConverter.h"
@@ -211,11 +211,10 @@ void gkBlenderSceneConverter::convertGroups(utArray<Blender::Object*> &groups)
 	// This is a complete list of groups & containing objects.
 	// The gkGameObjectGroup is a containter, the gkGameObjectGroupInstance
 	// is where the object should be added / removed from the scene.
-
-	bParse::bListBasePtr* lbp = m_file->_getInternalFile()->getMain()->getGroup();
-	for (int i = 0; i < lbp->size(); ++i)
+	
+	for (Blender::Group* bgrp = (Blender::Group*)m_file->_getInternalFile()->m_group.first; bgrp != 0; 
+		bgrp = (Blender::Group*)bgrp->id.next)
 	{
-		Blender::Group* bgrp = (Blender::Group*)lbp->at(i);
 
 		const gkResourceName groupName(GKB_IDNAME(bgrp), m_groupName);
 
@@ -684,9 +683,9 @@ void gkBlenderSceneConverter::convertObjectLogic(gkGameObject* gobj, Blender::Ob
 void gkBlenderSceneConverter::convertObjectAnimations(gkGameObject* gobj, Blender::Object* bobj, gkScalar animfps)
 {
 	gkAnimationLoader anims(m_groupName);
-	bParse::bMain* mp = m_file->_getInternalFile()->getMain();
+	int version = m_file->_getInternalFile()->getVersion();
 
-	anims.convertObject(gobj, bobj, mp->getVersion() <= 249, animfps);
+	anims.convertObject(gobj, bobj, version <= 249, animfps);
 }
 
 

@@ -29,7 +29,7 @@
 #ifndef _gkParticleConverter_h_
 #define _gkParticleConverter_h_
 
-#include "bCommon.h"
+//#include "bCommon.h"
 #include "Blender.h"
 #include "gkCommon.h"
 

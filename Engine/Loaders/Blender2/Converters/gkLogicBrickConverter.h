@@ -32,9 +32,9 @@
 
 namespace Blender
 {
-class bController;
-class bActuator;
-class Object;
+struct bController;
+struct bActuator;
+struct Object;
 }
 
 class gkLogicSensor;

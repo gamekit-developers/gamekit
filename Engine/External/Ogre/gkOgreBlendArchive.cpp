@@ -86,7 +86,7 @@ StringVectorPtr gkBlendArchive::find(const String& pattern, bool recursive, bool
 	return StringVectorPtr(new StringVector());
 }
 
-FileInfoListPtr gkBlendArchive::findFileInfo(const String& pattern, bool recursive, bool dirs)
+FileInfoListPtr gkBlendArchive::findFileInfo(const String& pattern, bool recursive, bool dirs) const
 {
 	return FileInfoListPtr(new FileInfoList());
 }
