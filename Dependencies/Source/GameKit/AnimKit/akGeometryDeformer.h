@@ -56,8 +56,7 @@ public:
 	                                const akVector3* vtxSrc,        const UTsize vtxSrcStride,
 	                                akVector3* vtxDst,              const UTsize vtxDstStride,
 	                                const akVector3* normSrc =0,    const UTsize normSrcStride =0,
-	                                akVector3* normDst =0,          const UTsize normDstStride =0,
-	                                const unsigned char weightsPerVtx = 4);
+	                                akVector3* normDst =0,          const UTsize normDstStride =0);
 	
 	
 	

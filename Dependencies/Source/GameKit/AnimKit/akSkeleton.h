@@ -47,11 +47,7 @@ public:
 	UTuint8        m_parentId;
 	
 	akJoint() : m_parentId(AK_JOINT_NO_PARENT) {}
-}
-#ifdef __GNUC__
-__attribute__ ((aligned(16)))
-#endif
-;
+};
 
 
 /// A skeleton is an articulated armature used to deforme a mesh.

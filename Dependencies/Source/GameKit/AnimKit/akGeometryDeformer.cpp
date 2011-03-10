@@ -36,51 +36,43 @@ void akGeometryDeformer::vertexSkinning(
 	const akVector3 *         vtxSrc,  UTsize vtxSrcStride,
 	akVector3 *               vtxDst,  UTsize vtxDstStride,
 	const akVector3 *         normSrc, UTsize normSrcStride,
-	akVector3 *               normDst, UTsize normDstStride,
-	const unsigned char weightsPerVtx)
+	akVector3 *               normDst, UTsize normDstStride)
 {
 	//loop trough all vertices
 	for(unsigned int i=0; i<vtxCount; i++)
 	{
 		akVector4 outpos(0.f);
-		akVector3 outnorm(0.f);
+		akVector4 outnorm(0.f);
 		
 		const akVector4 pos(vtxSrc[0], 1.f);
 		
-		for(unsigned char j=0; j<weightsPerVtx; j++)
-		{
-			float weight = weights[j];
-			
-			if(weight)
-			{
-				const akMatrix4& mat = matrices[index[j]];
-								
-				outpos += mat * pos * weight;
-				
-				if(normSrc)
-				{
-					const akVector3 norm(normSrc[0]);
-					outnorm += mat.getUpper3x3() * norm * weight;
-				}
-			}
-		}
+		if (weights[0]) outpos = matrices[index[0]] * pos * weights[0];
+		if (weights[1]) outpos += matrices[index[1]] * pos * weights[1];
+		if (weights[2]) outpos += matrices[index[2]] * pos * weights[2];
+		if (weights[3]) outpos += matrices[index[3]] * pos * weights[3];
 		
-		// Update destination buffer(s) and advance pointers
 		vtxDst[0] = outpos.getXYZ();
-		
-		advancePointer(weights, weightsStride);
-		advancePointer(index, indexStride);
-		advancePointer(vtxSrc, vtxSrcStride);
-		advancePointer(vtxDst, vtxDstStride);
 		
 		if(normSrc)
 		{
+			const akVector4 norm(normSrc[0], 1.0f);
+			
+			if (weights[0]) outnorm = matrices[index[0]] * norm * weights[0];
+			if (weights[1]) outnorm += matrices[index[1]] * norm * weights[1];
+			if (weights[2]) outnorm += matrices[index[2]] * norm * weights[2];
+			if (weights[3]) outnorm += matrices[index[3]] * norm * weights[3];
+			
 			normalize(outnorm);
 			
-			normDst[0] = outnorm;
+			normDst[0] = outnorm.getXYZ();
 			
 			advancePointer(normSrc, normSrcStride);
 			advancePointer(normDst, normDstStride);
 		}
+
+		advancePointer(weights, weightsStride);
+		advancePointer(index, indexStride);
+		advancePointer(vtxSrc, vtxSrcStride);
+		advancePointer(vtxDst, vtxDstStride);
 	}
 }
