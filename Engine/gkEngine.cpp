@@ -24,11 +24,6 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "OgreRoot.h"
-#include "OgreConfigFile.h"
-#include "OgreRenderSystem.h"
-#include "OgreStringConverter.h"
-#include "OgreFrameListener.h"
 
 #include "gkEngine.h"
 #include "gkWindowSystem.h"
@@ -75,6 +70,14 @@
 #endif
 
 #include "External/Ogre/gkOgreBlendArchive.h"
+
+
+#include "OgreRoot.h"
+#include "OgreConfigFile.h"
+#include "OgreRenderSystem.h"
+#include "OgreStringConverter.h"
+#include "OgreFrameListener.h"
+#include "OgreOverlayManager.h"
 
 
 using namespace Ogre;
@@ -297,7 +300,7 @@ void gkEngine::initializeWindow(void)
 
 void gkEngine::finalize()
 {
-	if (!m_initialized) return;
+	if (!m_initialized) return;	
 
 #ifdef OGREKIT_OPENAL_SOUND
 	gkSoundManager::getSingleton().stopAllSounds();
@@ -348,6 +351,8 @@ void gkEngine::finalize()
 #ifdef OGREKIT_OPENAL_SOUND
 	delete gkSoundManager::getSingletonPtr();
 #endif
+
+
 
 	delete gkBlendLoader::getSingletonPtr();
 	delete gkResourceGroupManager::getSingletonPtr();
