@@ -95,7 +95,7 @@ class gkOgreEnginePrivate : public FrameListener, public gkTickState
 {
 public:
 	Private(gkEngine* par)
-		:       gkTickState((int)ENGINE_TICKS_PER_SECOND),
+		:       gkTickState(par->getTickRate()),
 		        engine(par),
 		        windowsystem(0),
 		        curScene(0),
@@ -451,14 +451,14 @@ void gkEngine::removeDebugProperty(gkVariable* prop)
 
 gkScalar gkEngine::getStepRate(void)
 {
-	return gkScalar(1.0) / ENGINE_TICKS_PER_SECOND;
+	return gkScalar(1.0) / m_tickRate;
 }
 
 
 
 gkScalar gkEngine::getTickRate(void)
 {
-	return ENGINE_TICKS_PER_SECOND;
+	return m_tickRate;
 }
 
 
