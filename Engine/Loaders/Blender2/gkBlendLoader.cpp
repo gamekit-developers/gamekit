@@ -101,7 +101,7 @@ void gkBlendLoader::unloadGroup(const gkString& group)
 	{
 		if (m_files[i]->getResourceGroup() == group)
 		{
-			gkString group = m_files[i]->getResourceGroup();
+			gkString resgroup = m_files[i]->getResourceGroup();
 			delete m_files[i]; m_files[i] = 0;
 		}
 		else

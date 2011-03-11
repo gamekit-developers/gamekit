@@ -183,7 +183,7 @@ bool gkWindow::createWindow(gkWindowSystem* sys, const gkUserDefs& prefs)
 
 		m_sys = sys;
 
-		int winsizex, winsizey;
+		int winsizex = 0, winsizey = 0;
 
 		m_requestedWidth = (int)(prefs.winsize.x + 0.5f);
 		m_requestedHeight = (int)(prefs.winsize.y + 0.5f);

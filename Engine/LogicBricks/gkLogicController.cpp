@@ -51,13 +51,9 @@ void gkLogicController::_execute(void)
 {
 	if (m_listener)
 	{
-		if (m_listener->m_mode = gkLogicBrick::Listener::OVERIDE)
-			m_listener->executeEvent(this);
-		else
-		{
-			if (m_listener->executeEvent(this))
-				execute();
-		}
+		if (m_listener->executeEvent(this) && 
+				m_listener->m_mode != gkLogicBrick::Listener::OVERIDE)
+			execute();
 	}
 	else
 		execute();

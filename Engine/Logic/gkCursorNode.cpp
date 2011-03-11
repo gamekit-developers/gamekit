@@ -121,18 +121,18 @@ void gkCursorNode::update(Real tick)
 		m_panelElement->setMaterialName(GET_SOCKET_VALUE(MATERIAL_NAME));
 	}
 
-	gkScalar width = GET_SOCKET_VALUE(WIDTH);
+	gkScalar prevWidth = GET_SOCKET_VALUE(WIDTH);
 
-	if (m_panelElement->getWidth() != width)
+	if (m_panelElement->getWidth() != prevWidth)
 	{
-		m_panelElement->setWidth(width);
+		m_panelElement->setWidth(prevWidth);
 	}
 
-	gkScalar height = GET_SOCKET_VALUE(HEIGHT);
+	gkScalar prevHeight = GET_SOCKET_VALUE(HEIGHT);
 
-	if (m_panelElement->getHeight() != height)
+	if (m_panelElement->getHeight() != prevHeight)
 	{
-		m_panelElement->setHeight(height);
+		m_panelElement->setHeight(prevHeight);
 	}
 
 	m_panelContainer->setPosition(GET_SOCKET_VALUE(X), GET_SOCKET_VALUE(Y));

@@ -60,8 +60,10 @@ const gkString gkPath::SEPERATOR = "/";
 void gkGetCurrentDir(gkString& buf)
 {
 	char buffer[240];
-	getcwd(buffer, 240);
-	buf = gkString(buffer);
+	if(getcwd(buffer, 240) != NULL)
+		buf = gkString(buffer);
+	else
+		buf = gkString("");
 }
 
 

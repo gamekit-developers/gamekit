@@ -408,10 +408,10 @@ void gkEngine::loadResources(const gkString& name)
 
 		while (cit.hasMoreElements())
 		{
-			gkString name = cit.peekNextKey();
+			gkString elementname = cit.peekNextKey();
 			ConfigFile::SettingsMultiMap* ptr = cit.getNext();
 			for (ConfigFile::SettingsMultiMap::iterator dit = ptr->begin(); dit != ptr->end(); ++dit)
-				resourceManager->addResourceLocation(dit->second, dit->first, name);
+				resourceManager->addResourceLocation(dit->second, dit->first, elementname);
 		}
 		ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 	}

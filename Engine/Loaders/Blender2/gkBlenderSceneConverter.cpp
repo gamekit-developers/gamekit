@@ -431,9 +431,9 @@ void gkBlenderSceneConverter::convertObjectParticles(gkGameObject* gobj, Blender
 			props.m_seed = ps->seed;
 			props.m_settings = pname;
 						
-			gkGameObjectProperties& gprops = pobj->getProperties();
-			gprops.m_parent = gobj->getName();
-			gprops.m_transform = gobj->getProperties().m_transform;
+			gkGameObjectProperties& gparticleprops = pobj->getProperties();
+			gparticleprops.m_parent = gobj->getName();
+			gparticleprops.m_transform = gobj->getProperties().m_transform;
 
 			props.m_material = "<gkBuiltin/Halo>";
 
