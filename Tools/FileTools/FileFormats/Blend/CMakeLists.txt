@@ -33,6 +33,10 @@ set(bfBlend_SRC
     Blender.h
 )
 
+if (OGREKIT_BUILD_IPHONE)
+    list(APPEND bfBlend_SRC Generated/bfBlender.cpp) #use manually generated 32bit DNA file from Blender.h
+else()
+    add_fbt(bfBlender Blender.h)
+endif()
 
-add_fbt(bfBlender Blender.h)
 add_library(bfBlend ${bfBlend_SRC} ${bfBlender})

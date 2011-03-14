@@ -54,10 +54,13 @@ endif()
 #add_definitions(-DFBT_USE_DEBUG_ASSERTS=0)
 
 
-subdirs(Compiler)
 subdirs(File)
 subdirs(FileFormats/Blend)
+
+if (NOT OGREKIT_BUILD_IPHONE)
+subdirs(Compiler)
 subdirs(FileFormats/Bullet)
+endif()
 
 if (FBT_USE_BLEND_TEST)
 	subdirs(FileTest)
