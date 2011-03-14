@@ -30,6 +30,9 @@
 #include "fbtConfig.h"
 #endif
 
+#include <string.h> //memcmp
+
+
 /** \addtogroup FBT
 *  @{
 */

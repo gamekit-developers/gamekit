@@ -26,10 +26,10 @@ TEST(TEST_CASE_NAME, testStringFormat)
 
 	gkString slong = utStringFormat("%s", longString);
 
-#ifdef __APPLE__
-	longString[1023] = 0;  //NOTE: OSX vnsprintf's bufsize include null('\0'), othersize don't include.
-#else
+#ifdef _MSC_VER
 	longString[1024] = 0;
+#else	
+	longString[1023] = 0;  //NOTE: gcc vnsprintf's bufsize include null('\0').
 #endif
 	//printf("%s", slong.c_str());
 	EXPECT_STREQ(slong.c_str(), longString);

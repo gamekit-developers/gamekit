@@ -24,8 +24,19 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+#include "gkPath.h"
+
 #include <sys/stat.h>
 #include <stdio.h>
+#include <limits.h>
+
+#if OGRE_PLATFORM == OGRE_PLATFORM_LINUX
+#include <linux/limits.h>
+#endif
+
+#ifndef PATH_MAX
+#define PATH_MAX 240
+#endif
 
 #ifndef S_ISREG
 # define S_ISREG(x) (((x) & S_IFMT) == S_IFREG)
@@ -34,17 +45,12 @@
 # define S_ISDIR(x) (((x) & S_IFMT) == S_IFDIR)
 #endif
 
-#include "gkPath.h"
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
 # include <direct.h>
 #else
 # include <unistd.h>
 #endif
-
-using namespace Ogre;
-
-
 
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
@@ -53,14 +59,13 @@ const gkString gkPath::SEPERATOR = "\\";
 const gkString gkPath::SEPERATOR = "/";
 #endif
 
-
-
+using namespace Ogre;
 
 
 void gkGetCurrentDir(gkString& buf)
 {
-	char buffer[240];
-	if(getcwd(buffer, 240) != NULL)
+	char buffer[PATH_MAX];
+	if(getcwd(buffer, sizeof(buffer)) != NULL)
 		buf = gkString(buffer);
 	else
 		buf = gkString("");

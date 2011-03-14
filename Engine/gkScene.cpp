@@ -1195,7 +1195,7 @@ void gkScene::notifyInstanceCreated(gkGameObject* gobj)
 
 	if (gobj->getType() == GK_CAMERA)
 		m_cameras.insert(gobj->getCamera());
-	if (gobj->getType() == GK_LIGHT)
+	else if (gobj->getType() == GK_LIGHT)
 		m_lights.insert(gobj->getLight());
 }
 
@@ -1222,7 +1222,7 @@ void gkScene::notifyInstanceDestroyed(gkGameObject* gobj)
 	{
 		if (gobj->getType() == GK_CAMERA)
 			m_cameras.erase(gobj->getCamera());
-		if (gobj->getType() == GK_LIGHT)
+		else if (gobj->getType() == GK_LIGHT)
 			m_lights.erase(gobj->getLight());
 	}
 

@@ -363,7 +363,7 @@ public:
 
 	fbtStruct* find(const fbtCharHashKey& kvp);
 	//fbtStruct* find(fbtStruct* strc, const FBTuint32& idx, const FBTuint32& dp, const FBTuint64& kvp);
-	fbtStruct* fbtLinkCompiler::find(fbtStruct* strc, fbtStruct* member, bool isPointer);
+	fbtStruct* find(fbtStruct* strc, fbtStruct* member, bool isPointer);
 	int        link(void);
 
 	bool isIntType(FBTuint32 k);
