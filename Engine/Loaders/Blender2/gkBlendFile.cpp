@@ -131,6 +131,9 @@ void gkBlendFile::loadActive(void)
 	Blender::FileGlobal* fg = m_file->m_fg;
 	if (fg)
 	{		
+		if (!fg->curscene)
+			fg->curscene = (Blender::Scene*)m_file->m_scene.first;
+
 		if (fg->curscene)
 			m_animFps = fg->curscene->r.frs_sec / fg->curscene->r.frs_sec_base;
 

@@ -46,7 +46,7 @@ class wxChoicebook;
 class fbtProjectTree;
 class fbtTextFile;
 class fbtChunkCtrl;
-
+class fbtStruct;
 
 class fbtMainFrame : public wxFrame
 {
@@ -108,7 +108,7 @@ private:
 
 
 	void populateChunks(fbtList& chunks);
-	void populate(fbtBinTables* table, int index);
+	void populate(fbtBinTables* table, int index, fbtBinTables* linkTable=0);
 	void unpopulate(void);
     
 	void chunkItemMenu(wxTreeEvent& evt);
@@ -118,6 +118,20 @@ private:
 	void chunkUnhideAll(wxCommandEvent& evt);
 	void chunkFindOrDelete(const wxString& name, bool matchDelete, bool findOnly = false);
 
+	void findMemTable(wxCommandEvent& evt);
+	void findFileTable(wxCommandEvent& evt);
+	void findTableItem(const wxString& text, int ictrl, int sel);
+
+	void dumpMemTable(wxCommandEvent& evt);
+	void dumpFileTable(wxCommandEvent& evt);
+	void dumpTableItem(int ictrl, int sel);
+	void dumpTableStruct(fbtStruct* strc, int depth, fbtBinTables* table, fbtBinTables* linkTable);
+
+	void clearLog(wxCommandEvent& evt);
+
+	void log(const wxString& msg);
+	void clearLog();
+	void alert(const wxString& msg);
 
 	void saveProject(const wxString& path);
 	void buildProject(void);
@@ -155,14 +169,16 @@ private:
 	wxTreeItemId            m_client;
 
 
-	wxChoicebook* m_mpBook;
-	wxChoicebook* m_fpBook;
-	wxChoicebook* m_cpBook;
+	wxChoicebook*           m_mpBook;
+	wxChoicebook*           m_fpBook;
+	wxChoicebook*           m_cpBook;
 
-	wxDataViewListCtrl* m_name[3];
-	wxDataViewListCtrl* m_type[3];
-	wxDataViewListCtrl* m_strc[3];
+	wxDataViewListCtrl*     m_name[3];
+	wxDataViewListCtrl*     m_type[3];
+	wxDataViewListCtrl*     m_strc[3];
 
+	wxTextCtrl*             m_mpTextCtrl;
+	wxTextCtrl*             m_fpTextCtrl;
 
 	fbtFile* m_file;
 	fbtDebugger::Reporter m_hook;

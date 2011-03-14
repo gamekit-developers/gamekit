@@ -70,7 +70,7 @@ struct fbtChunk
 
 
 fbtFile::fbtFile(const char* uid)
-	:   m_version(-1), m_fileHeader(0), m_uhid(uid),
+	:   m_version(-1), m_fileHeader(0), m_uhid(uid), m_aluhid(0),
 	    m_memory(0), m_file(0), m_curFile(0)
 {
 }
@@ -170,7 +170,7 @@ int fbtFile::parseHeader(fbtStream* stream)
 	m_header.resize(12);
 	stream->read(m_header.ptr(), 12);
 
-	if (!fbtCharNEq(m_header.c_str(), m_uhid, 7))
+	if (!fbtCharNEq(m_header.c_str(), m_uhid, 7) && !fbtCharNEq(m_header.c_str(), m_aluhid, 7))
 	{
 		fbtPrintf("Unknown header ID '%s'\n", m_header.c_str());
 		return FS_INV_HEADER_STR;
@@ -362,10 +362,28 @@ public:
 	fbtBinTables* m_fp;
 
 	fbtStruct* find(const fbtCharHashKey& kvp);
-	fbtStruct* find(fbtStruct* strc, const FBTuint32& idx, const FBTuint32& dp, const FBTuint64& kvp);
+	//fbtStruct* find(fbtStruct* strc, const FBTuint32& idx, const FBTuint32& dp, const FBTuint64& kvp);
+	fbtStruct* fbtLinkCompiler::find(fbtStruct* strc, fbtStruct* member, bool isPointer);
 	int        link(void);
 
+	bool isIntType(FBTuint32 k);
 };
+
+bool fbtLinkCompiler::isIntType(FBTuint32 k)
+{
+	static FBTuint32 charT   = fbtCharHashKey("char").hash();
+	static FBTuint32 ucharT  = fbtCharHashKey("uchar").hash();
+	static FBTuint32 shortT  = fbtCharHashKey("short").hash();
+	static FBTuint32 ushortT = fbtCharHashKey("ushort").hash();
+	static FBTuint32 intT    = fbtCharHashKey("int").hash();
+	static FBTuint32 longT   = fbtCharHashKey("long").hash();
+	static FBTuint32 ulongT  = fbtCharHashKey("ulong").hash();
+
+	return k == intT   ||
+		   k == charT  || k == ucharT  ||
+		   k == shortT || k == ushortT ||   
+		   k == longT  || k == ulongT;
+}
 
 
 fbtStruct* fbtLinkCompiler::find(const fbtCharHashKey& kvp)
@@ -377,20 +395,30 @@ fbtStruct* fbtLinkCompiler::find(const fbtCharHashKey& kvp)
 }
 
 
-fbtStruct* fbtLinkCompiler::find(fbtStruct* strc, const FBTuint32& idx, const FBTuint32& dp, const FBTuint64& kvp)
+//fbtStruct* fbtLinkCompiler::find(fbtStruct* strc, const FBTuint32& idx, const FBTuint32& dp, const FBTuint64& kvp)
+fbtStruct* fbtLinkCompiler::find(fbtStruct* strc, fbtStruct* member, bool isPointer)
 {
-	fbtStruct::Array::Pointer md = strc->m_members.ptr();
+	fbtStruct::Members::Pointer md = strc->m_members.ptr();
 	FBTsizeType i, s = strc->m_members.size();
+
+	//const FBTuint32& idx = member->m_nr;
+	//const FBTuint32& dp = member->m_dp;
+	const fbtKey64& kvp = member->m_val;
 
 	for (i = 0; i < s; i++)
 	{
 		fbtStruct* strc2 = &md[i];
 
-		if (strc2->m_nr == idx && strc2->m_dp == dp)
+		if (strc2->m_nr == member->m_nr &&
+			strc2->m_dp ==  member->m_dp)
 		{
-
-			if (strc2->m_val.k64 == kvp)
-				return strc2;
+			if (strc2->m_val.k32[1] == kvp.k32[1]) //base name
+			{
+				if ((strc2->m_val.k32[0] == member->m_val.k32[0] ||
+					(!isPointer && isIntType(strc2->m_val.k32[0]) && isIntType(kvp.k32[0]))) &&
+					strc2->m_keyChain.equal(member->m_keyChain))
+					return strc2;
+			}
 		}
 	}
 
@@ -402,11 +430,11 @@ int fbtLinkCompiler::link(void)
 	fbtBinTables::OffsM::Pointer md = m_mp->m_offs.ptr();
 	fbtBinTables::OffsM::Pointer fd = m_fp->m_offs.ptr();
 
-	FBTsizeType i, s = m_mp->m_offs.size(), i2, s2;
-	fbtStruct::Array::Pointer p2;
+	FBTsizeType i, i2; //, s2;
+	fbtStruct::Members::Pointer p2;
 
 
-	for (i = 0; i < s; ++i)
+	for (i = 0; i < m_mp->m_offs.size(); ++i)
 	{
 		fbtStruct* strc = md[i];
 		strc->m_link = find(m_mp->m_type[strc->m_key.k16[0]].m_name);
@@ -416,20 +444,24 @@ int fbtLinkCompiler::link(void)
 			strc->m_link->m_link = strc;
 
 		p2 = strc->m_members.ptr();
-		s2 = strc->m_members.size();
+		//s2 = strc->m_members.size();
 
-
-		for (i2 = 0; i2 < s2; ++i2)
+		//fbtPrintf("+%-3d %s\n", i, m_mp->getStructType(strc));
+		for (i2 = 0; i2 < strc->m_members.size(); ++i2)
 		{
-			fbtStruct* strc2 = &p2[i2];
+			fbtStruct* member = &strc->m_members[i2];
+			//fbtPrintf("  %3d %s %s\n", i2, m_mp->getStructType(strc2), m_mp->getStructName(strc2));
 
-			FBT_ASSERT(!strc2->m_link);
-			strc2->m_flag |= strc->m_link ? 0 : fbtStruct::MISSING;
+			FBT_ASSERT(!member->m_link);
+			member->m_flag |= strc->m_link ? 0 : fbtStruct::MISSING;
 
-			if (!(strc2->m_flag & fbtStruct::MISSING))
+			if (!(member->m_flag & fbtStruct::MISSING))
 			{
-				strc2->m_link = find(strc->m_link, strc2->m_nr, strc2->m_dp, strc2->m_val.k64);
-				if (strc2->m_link) strc2->m_link->m_link = strc2;
+				FBT_ASSERT(member->m_key.k16[1] < m_mp->m_nameNr);
+				bool isPointer = m_mp->m_name[member->m_key.k16[1]].m_ptrCount > 0;
+				//strc2->m_link = find(strc->m_link, strc2->m_nr, strc2->m_dp, strc2->m_val.k64);
+				member->m_link = find(strc->m_link, member, isPointer);
+				if (member->m_link) member->m_link->m_link = member;
 			}
 		}
 
@@ -444,7 +476,7 @@ int fbtFile::link(void)
 	fbtBinTables::OffsM::Pointer md = m_memory->m_offs.ptr();
 	fbtBinTables::OffsM::Pointer fd = m_file->m_offs.ptr();
 	FBTsizeType s2, i2, a2, n;
-	fbtStruct::Array::Pointer p2;
+	fbtStruct::Members::Pointer p2;
 	FBTsize mlen, malen, total, pi;
 
 	char* dst, *src;

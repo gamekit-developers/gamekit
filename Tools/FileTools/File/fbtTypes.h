@@ -559,6 +559,13 @@ public:
 		for (FBTsizeType i = 0; i < size; i++) dst[i] = src[i];
 	}
 
+	FBT_INLINE bool equal(const fbtArray<T> &rhs)
+	{
+		if (rhs.size() != size()) return false;
+		if (empty()) return true;
+		return fbtMemcmp(m_data, rhs.m_data, sizeof(T)*m_size) == 0;
+	}
+
 protected:
 
 	void _sort(bool (*cmp)(const T& a, const T& b), int lo, int hi)

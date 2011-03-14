@@ -28,7 +28,14 @@
 #include "fbtPlatformHeaders.h"
 
 
+FBTsizeType fbtStruct::getUnlinkedMemberCount()
+{
+	FBTsizeType count = 0;
+	for (FBTsizeType i = 0; i < m_members.size(); i++)
+		if (!m_members[i].m_link) count++;
 
+	return count;
+}
 
 
 fbtBinTables::fbtBinTables()
@@ -163,6 +170,8 @@ bool fbtBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 			}
 		}
 		++cp;
+
+		//fbtPrintf("%d %d: %s %s %u %u\n", m_nameNr, m_base.size(), name.m_name, bn.c_str(), name.m_nameId, bn.hash());
 
 		m_name[m_nameNr++] = name;
 		m_base.push_back(bn.hash());
@@ -329,7 +338,8 @@ bool fbtBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 }
 
 
-void fbtBinTables::compile(FBTtype i, FBTtype nr, fbtStruct* off, FBTuint32& cof, FBTuint32& depth)
+void fbtBinTables::compile(FBTtype i, FBTtype nr, fbtStruct* off, FBTuint32& cof, FBTuint32 depth, fbtStruct::Keys& keys)
+//void fbtBinTables::compile(FBTtype i, FBTtype nr, fbtStruct* off, FBTuint32& cof, FBTuint32 depth)
 {
 	FBTuint32 e, l, a, oof, ol;
 	FBTuint16 f = m_strc[0][0];
@@ -340,11 +350,14 @@ void fbtBinTables::compile(FBTtype i, FBTtype nr, fbtStruct* off, FBTuint32& cof
 		return;
 	}
 
+
 	for (a = 0; a < nr; ++a)
 	{
 		// Only calculate offsets on recursive structs
 		// This saves undeded buffers
 		FBTtype* strc = m_strc[i];
+	
+
 
 		oof = cof;
 		ol = m_tlen[strc[0]];
@@ -356,15 +369,23 @@ void fbtBinTables::compile(FBTtype i, FBTtype nr, fbtStruct* off, FBTuint32& cof
 		{
 			if (strc[0] >= f && m_name[strc[1]].m_ptrCount == 0)
 			{
-				depth ++;
-				compile(m_type[strc[0]].m_strcId, m_name[strc[1]].m_arraySize, off, cof, depth);
+				//depth++; //TODO:
+
+				fbtKey64 k = {m_type[strc[0]].m_typeId, m_name[strc[1]].m_nameId};
+				keys.push_back(k);
+
+				compile(m_type[strc[0]].m_strcId, m_name[strc[1]].m_arraySize, off, cof, depth+1, keys);
+				//depth--;
+
+				keys.pop_back();
 			}
 			else
-				putMember(strc, off, a, cof, depth);
+				putMember(strc, off, a, cof, depth, keys);
 		}
 
 		if ((cof - oof) != ol)
 			fbtPrintf("Build ==> invalid offset (%i)(%i:%i)\n", a, (cof - oof), ol);
+	
 	}
 }
 
@@ -382,46 +403,50 @@ void fbtBinTables::compile(void)
 	}
 
 	FBTuint32 i, cof = 0, depth;
-	FBTuint16 f = m_strc[0][0], e, l;
+	FBTuint16 f = m_strc[0][0], e, memberCount;
 
-
+	fbtStruct::Keys emptyKeys;
 	for (i = 0; i < m_strcNr; i++)
 	{
 		FBTtype* strc = m_strc[i];
 
-
+		FBTtype strcType = strc[0];
 
 		depth = 0;
 		cof = 0;
 		fbtStruct* off = new fbtStruct;
-		off->m_key.k16[0] = strc[0];
+		off->m_key.k16[0] = strcType;
 		off->m_key.k16[1] = 0;
-		off->m_val.k32[0] = m_type[strc[0]].m_typeId;
+		off->m_val.k32[0] = m_type[strcType].m_typeId;
 		off->m_val.k32[1] = 0; // no name
 		off->m_nr         = 0;
 		off->m_dp         = 0;
 		off->m_off        = cof;
-		off->m_len        = m_tlen[strc[0]];
+		off->m_len        = m_tlen[strcType];
 		off->m_strcId     = i;
 		off->m_link       = 0;
 		off->m_flag       = fbtStruct::CAN_LINK;
 
 		m_offs.push_back(off);
 
-		l = strc[1];
+		memberCount = strc[1];
 
 		strc += 2;
 		off->m_members.reserve(fbtMaxMember);
 
-		for (e = 0; e < l; ++e, strc += 2)
+		for (e = 0; e < memberCount; ++e, strc += 2)
 		{
-			if (strc[0] >= f && m_name[strc[1]].m_ptrCount == 0)
+			if (strc[0] >= f && m_name[strc[1]].m_ptrCount == 0) //strc[0]:member_type, strc[1]:member_name
 			{
-				depth++;
-				compile(m_type[strc[0]].m_strcId, m_name[strc[1]].m_arraySize, off, cof, depth);
+				//depth++;
+				fbtStruct::Keys keys;
+				fbtKey64 k = {m_type[strc[0]].m_typeId, m_name[strc[1]].m_nameId};
+				keys.push_back(k);
+				compile(m_type[strc[0]].m_strcId, m_name[strc[1]].m_arraySize, off, cof, depth+1, keys);				
 			}
 			else
-				putMember(strc, off, 0, cof, depth);
+				//putMember(strc, off, 0, cof, depth);
+				putMember(strc, off, 0, cof, 0, emptyKeys);
 		}
 
 		if (cof != off->m_len)
@@ -433,7 +458,8 @@ void fbtBinTables::compile(void)
 	}
 }
 
-void fbtBinTables::putMember(FBTtype* cp, fbtStruct* off, FBTtype nr, FBTuint32& cof, FBTuint32& depth)
+//void fbtBinTables::putMember(FBTtype* cp, fbtStruct* off, FBTtype nr, FBTuint32& cof, FBTuint32& depth)
+void fbtBinTables::putMember(FBTtype* cp, fbtStruct* off, FBTtype nr, FBTuint32& cof, FBTuint32 depth, fbtStruct::Keys& keys)
 {
 	fbtStruct nof;
 	nof.m_key.k16[0] = cp[0];
@@ -447,8 +473,14 @@ void fbtBinTables::putMember(FBTtype* cp, fbtStruct* off, FBTtype nr, FBTuint32&
 	nof.m_link       = 0;
 	nof.m_flag       = fbtStruct::CAN_LINK;
 	nof.m_len        = (m_name[cp[1]].m_ptrCount ? m_ptr : m_tlen[cp[0]]) * m_name[cp[1]].m_arraySize;
+	nof.m_keyChain   = keys;
 	off->m_members.push_back(nof);
 	cof += nof.m_len;
+
+#ifdef _DEBUG
+	//fbtPrintf("%s %s\n", getStructType(off), getStructName(off));
+	//fbtPrintf("\t%s %s nr:%d cof:%d depth:%d\n", getStructType(&nof), getStructName(&nof), nr, cof, depth);
+#endif
 }
 
 
@@ -458,4 +490,26 @@ FBTtype fbtBinTables::findTypeId(const fbtCharHashKey &cp)
 	if (pos != FBT_NPOS)
 		return m_typeFinder.at(pos).m_strcId;
 	return -1;
+}
+
+const char* fbtBinTables::getStructType(const fbtStruct* strc)
+{
+	
+	//return strc ? m_type[strc->m_key.k16[0]].m_name : "";
+
+	FBTuint32 k = strc ? strc->m_key.k16[0] : (FBTuint32)-1;	
+	return  (k >= m_typeNr) ? "" : m_type[k].m_name;
+}
+
+const char* fbtBinTables::getStructName(const fbtStruct* strc)
+{	
+	FBTuint32 k = strc ? strc->m_key.k16[1] : (FBTuint32)-1;	
+	return  (k >= m_nameNr) ? "" : m_name[k].m_name;
+}
+
+const char* fbtBinTables::getOwnerStructName(const fbtStruct* strc)
+{
+	//cp0 = mp->m_type[mp->m_strc[c->m_strcId][0]].m_name;
+	FBTuint32 k = strc ? strc->m_strcId : (FBTuint32)-1;
+	return (k >= m_strcNr || *m_strc[k] >= m_typeNr) ? "" : m_type[*m_strc[k]].m_name;
 }
