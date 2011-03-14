@@ -35,7 +35,6 @@
 
 // float normal from short
 #define VEC3CPN(a, b) {a.x= (b[0]/32767.f); a.y= (b[1]/32767.f); a.z= (b[2]/32767.f);}
-#define PtrSaftyCheck(x) (x != 0)
 
 
 static void gkLoaderUtils_getLayers(
@@ -288,7 +287,7 @@ void gkBlenderMeshConverter::convertTextureFace(gkMaterialProperties& gma, gkMes
 		gma.m_totaltex = 0;
 		for (int i = 0; i < 8; i++)
 		{
-			if (imas[i] != 0 && PtrSaftyCheck(imas[i]))
+			if (imas[i] != 0)
 			{
 				Blender::Image* ima = imas[i];
 				gkTextureProperties& gte = gma.m_textures[gma.m_totaltex++];
@@ -363,7 +362,7 @@ void gkBlenderMeshConverter::convertMaterial(Blender::Material* bma, gkMaterialP
 
 		for (int i = 0; i < MAX_MTEX; i++)
 		{
-			if (!PtrSaftyCheck(bma->mtex[i]) || !bma->mtex[i] || !bma->mtex[i]->tex)
+			if (!bma->mtex[i] || !bma->mtex[i]->tex)
 				continue;
 
 			if (bma->mtex[i]->tex->type == TEX_IMAGE)
