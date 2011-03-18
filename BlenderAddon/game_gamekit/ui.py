@@ -34,9 +34,9 @@ properties_game.RENDER_PT_game_player.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_game.RENDER_PT_game_shading.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_game.RENDER_PT_game_sound.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 #properties_game.RENDER_PT_game_stereo.COMPAT_ENGINES.add('GAMEKIT_RENDER')
-properties_game.WORLD_PT_game_context_world.COMPAT_ENGINES.add('GAMEKIT_RENDER')
-properties_game.WORLD_PT_game_world.COMPAT_ENGINES.add('GAMEKIT_RENDER')
-properties_game.WORLD_PT_game_mist.COMPAT_ENGINES.add('GAMEKIT_RENDER')
+#properties_game.WORLD_PT_game_context_world.COMPAT_ENGINES.add('GAMEKIT_RENDER')
+#properties_game.WORLD_PT_game_world.COMPAT_ENGINES.add('GAMEKIT_RENDER')
+#properties_game.WORLD_PT_game_mist.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_game.WORLD_PT_game_physics.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_game.PHYSICS_PT_game_physics.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_game.PHYSICS_PT_game_collision_bounds.COMPAT_ENGINES.add('GAMEKIT_RENDER')
@@ -148,7 +148,58 @@ properties_data_lamp.DATA_PT_sunsky.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_data_lamp.LAMP_MT_sunsky_presets.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 del properties_data_lamp
 
+import properties_world
 
+
+class WORLD_PT_world(properties_world.WorldButtonsPanel, bpy.types.Panel):
+    bl_label = "World"
+    COMPAT_ENGINES = {'GAMEKIT_RENDER'}
+
+    def draw(self, context):
+        layout = self.layout
+        world = context.world
+
+        row = layout.row()
+        row.prop(world, "use_sky_paper")
+        row.prop(world, "use_sky_blend")
+        row.prop(world, "use_sky_real")
+
+        row = layout.row()
+        row.column().prop(world, "horizon_color")
+        col = row.column()
+        col.prop(world, "zenith_color")
+        col.active = world.use_sky_blend
+        row.column().prop(world, "ambient_color")
+
+
+
+class WORLD_PT_mist(properties_world.WorldButtonsPanel, bpy.types.Panel):
+    bl_label = "Mist"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'GAMEKIT_RENDER'}
+
+    def draw_header(self, context):
+        world = context.world
+
+        self.layout.prop(world.mist_settings, "use_mist", text="")
+
+    def draw(self, context):
+        layout = self.layout
+        world = context.world
+
+        layout.active = world.mist_settings.use_mist
+
+        split = layout.split()
+
+        col = split.column()
+        col.prop(world.mist_settings, "intensity", slider=True)
+        col.prop(world.mist_settings, "start")
+
+        col = split.column()
+        col.prop(world.mist_settings, "depth")
+        col.prop(world.mist_settings, "height")
+
+        layout.prop(world.mist_settings, "falloff")
 
 # Base class for ou panels
 class RenderButtonsPanel():

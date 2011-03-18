@@ -97,7 +97,7 @@ class GamekitExportStartupFileOperator(bpy.types.Operator):
             cfg.set('blendermat', "True")
         else:
             cfg.set('blendermat', "False")
-		cfg.set('matblending', str(gks.gk_matblending))
+        cfg.set('matblending', str(gks.gk_matblending))
         cfg.set('buildinstances', str(gks.gk_build_instances))
         cfg.set('frustrumculling', str(gks.gk_frustrum_culling))
         cfg.set('showdebugprops', str(gdata.show_debug_properties))
