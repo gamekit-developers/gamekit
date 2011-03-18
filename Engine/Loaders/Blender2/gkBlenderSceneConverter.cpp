@@ -740,10 +740,14 @@ void gkBlenderSceneConverter::convertObjectLamp(gkGameObject* gobj, Blender::Obj
 	if (la->type != LA_LOCAL)
 		props.m_type = la->type == LA_SPOT ? gkLightProperties::LI_SPOT : gkLightProperties::LI_DIR;
 
-	props.m_casts   = true;
+	
 	props.m_spot.y  = la->spotsize > 128 ? 128 : la->spotsize;
 	props.m_spot.x  = gkMax(gkRadian(la->spotblend).valueDegrees(), props.m_spot.y);
 	props.m_falloff = 128.f * la->spotblend;
+
+	props.m_casts = (la->type != LA_HEMI && 
+		((la->mode & LA_SHAD_RAY) ||
+		 (la->type == LA_SPOT && (la->mode & LA_SHAD_BUF))));		
 }
 
 
