@@ -171,6 +171,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 	
 	if (SAMPLES_LUA_EDITOR)
 		set(OGREKIT_COMPILE_TINYXML TRUE CACHE BOOL "Forcing TinyXml" FORCE)
+		set(SAMPLES_LUARUNTIME TRUE CACHE BOOL "Forcing LuaRuntime" FORCE)
 	endif()
 
 	if (SAMPLES_INSPECTOR)	

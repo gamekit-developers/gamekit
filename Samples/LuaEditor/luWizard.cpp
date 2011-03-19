@@ -288,6 +288,6 @@ void luNewProjWizard::OnWizardFinished(wxWizardEvent& event)
 	}
 	else
 	{
-		alertDlg("Error - Can't create new project to \n" + m_page2->getProjFileName());
+		alertDlg("Error - Can't create new project to \nSee error message in LogWindow." + m_page2->getProjFileName());
 	}
 }
