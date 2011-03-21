@@ -93,7 +93,7 @@ class GamekitExportStartupFileOperator(bpy.types.Operator):
         cfg.set('fullscreen', str(gdata.show_fullscreen))
         cfg.set('animspeed', str(scene.render.fps))
         cfg.set('startframe', str(gks.gk_start_frame))
-        if gdata.material_mode == 'MULTITEXTURE':
+        if gdata.material_mode != 'TEXTURE_FACE':
             cfg.set('blendermat', "True")
         else:
             cfg.set('blendermat', "False")
