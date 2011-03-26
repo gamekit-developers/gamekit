@@ -251,6 +251,7 @@ gsUserDefs::gsUserDefs(gkUserDefs* defs)
 	PROP_INSERT_S("winTitle",           wintitle);
 	PROP_INSERT_B("fullScreen",         fullscreen);
 	PROP_INSERT_B("blenderMat",         blendermat);
+	PROP_INSERT_B("matblending",		matblending);
 	PROP_INSERT_B("grabInput",          grabInput);
 	PROP_INSERT_B("debugFps",           debugFps);
 	PROP_INSERT_B("debugPhysics",       debugPhysics);

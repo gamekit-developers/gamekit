@@ -37,6 +37,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 	option(OGREKIT_USE_STATIC_FREEIMAGE		"Compile and link statically FreeImage and all its plugins" ON)	
 	option(OGREKIT_ENABLE_UNITTESTS			"Enable / Disable UnitTests" OFF)
 	#option(OGREKIT_USE_FILETOOLS			"Compile FBT file format utilities" ON)
+	#option(OGREKIT_USE_BPARSE				"Compile bParse file format utilities" OFF) #FBT alternative 
 	option(OGREKIT_COMPILE_TINYXML			"Enable / Disable TinyXml builds" OFF)
 	option(OGREKIT_COMPILE_LIBROCKET		"Enable / Disalbe libRocket builds" OFF)
 	option(OGREKIT_GENERATE_BUILTIN_RES		"Generate build-in resources" OFF)
@@ -45,18 +46,25 @@ macro (configure_ogrekit ROOT OGREPATH)
 	option(OGREKIT_COMPILE_OPENSTEER		"Enable / Disable OpenSterr build" OFF)
 	option(OGREKIT_USE_NNODE				"Use Logic Node(It's Nodal Logic, not Blender LogicBrick)" OFF)
 	option(OGREKIT_COMPILE_OGRE_COMPONENTS	"Eanble compile additional Ogre components (RTShader, Terrain, Paging, ... etc)" OFF)
-	option(OGERKIT_USE_RTSHADER_SYSTEM		"Eanble shader system instead of fixed piped functions." OFF)
+	option(OGREKIT_USE_RTSHADER_SYSTEM		"Eanble shader system instead of fixed piped functions." OFF)
 	option(OGREKIT_COMPILE_OPTS				"Enable / Disable Opts builds" OFF)
 	
 	if (APPLE)
-		option(OGREKIT_BUILD_IPHONE	"Build GameKit on IPhone SDK"	OFF)
+		option(OGREKIT_BUILD_IPHONE	"Build GameKit on iOS SDK"	OFF)
 	endif()
+
+	option(OGREKIT_BUILD_ANDROID	"Build GameKit on Android SDK"	OFF)
 	
-	if (OGERKIT_USE_RTSHADER_SYSTEM)
+	if (OGREKIT_USE_RTSHADER_SYSTEM)
 		set(OGRE_BUILD_COMPONENT_RTSHADERSYSTEM TRUE)
 		set(RTSHADER_SYSTEM_BUILD_CORE_SHADERS 1)
-		set(RTSHADER_SYSTEM_BUILD_EXT_SHADERS 1)	
+		set(RTSHADER_SYSTEM_BUILD_EXT_SHADERS 1)		
+		set(OGREKIT_DISABLE_ZIP CACHE BOOL "Forcing ZZLib" FORCE)
 	endif()	
+	
+	if (OGREKIT_BUILD_ANDROID OR OGREKIT_BUILD_IPHONE)
+		set(OGREKIT_BUILD_MOBILE 1)
+	endif()
 	
 	if (OGREKIT_COMPILE_OGRE_COMPONENTS)
 		option(OGRE_BUILD_COMPONENT_PAGING "Build Ogre Paging Compoment" ON)
@@ -81,6 +89,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 	set(OGRELITE_SOURCE_DIR ${OGREPATH})
     set(OGREKIT_DEP_DIR ${ROOT}/Dependencies/Source)
 	set(OGREKIT_SAMPLES_DIR ${ROOT}/Samples)
+	set(OGREKIT_ANDROID_DEP_DIR ${ROOT}/Dependencies/Android)
 	
 	include(OgreConfigTargets)
 	include(DependenciesOgreKit)
@@ -189,8 +198,23 @@ macro (configure_ogrekit ROOT OGREPATH)
 	if (OGREKIT_COMPILE_SWIG OR OGREKIT_GENERATE_BUILTIN_RES)
 		set(OGREKIT_COMPILE_TCL TRUE CACHE BOOL "Forcing TCL"  FORCE)
 	endif()
+		
 
-	if (OGREKIT_BUILD_IPHONE)
+	if (OGREKIT_BUILD_ANDROID)
+	
+		set(OGRE_BUILD_PLATFORM_ANDROID TRUE)
+		set(OGRE_BUILD_RENDERSYSTEM_GL CACHE BOOL "Forcing remove OpenGL RenderSystem for Android" FORCE)
+		set(OGRE_BUILD_RENDERSYSTEM_GLES CACHE BOOL "Forcing remove OpenGLES RenderSystem for Android" FORCE)
+		set(OGRE_BUILD_RENDERSYSTEM_GLES2 TRUE CACHE BOOL "Forcing OpenGLES2 RenderSystem for Android" FORCE)
+
+		set(OGREKIT_BUILD_GLES2RS TRUE CACHE BOOL "Forcing OpenGLES2" FORCE)
+		set(OGREKIT_USE_RTSHADER_SYSTEM TRUE CACHE BOOL "Forcing RTShaderSystem for Android" FORCE)
+		
+		
+		#message(${OPENGLES2_gl_LIBRARY})
+		
+	elseif (OGREKIT_BUILD_IPHONE)
+	
 		set(OGRE_BUILD_PLATFORM_IPHONE TRUE) #TODO: replace to OGRE_BUILD_PLATFORM_IPHONE
 		set(OGRE_BUILD_PLATFORM_APPLE_IOS TRUE)
 		
@@ -297,7 +321,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 	set(OGREKIT_LIBROCKET_INCLUDE ${OGREKIT_DEP_DIR}/libRocket/Include)
 	set(OGREKIT_LIBROCKET_LIBS RocketCore RocketControls RocketDebugger)
 
-	if (WIN32)
+	if (WIN32 AND NOT OGREKIT_BUILD_ANDROID)
 		# Use static library. No SDK needed at build time.
 		# Must have OpenAL32.dll installed on the system 
 		# In order to use OpenAL sound.
@@ -364,6 +388,15 @@ macro (configure_ogrekit ROOT OGREPATH)
 		set(OGREKIT_GLRS_INCLUDE         ${OGREPATH}/RenderSystems/GL/include)
 	endif()
 
+	if (OPENGLES2_FOUND AND OGREKIT_BUILD_GLES2RS)
+		
+		set(OGRE_BUILD_RENDERSYSTEM_GLES2  TRUE)
+		set(OGREKIT_GLES2RS_LIBS           RenderSystem_GLES2)
+		set(OGREKIT_GLES2RS_ROOT           ${OGREPATH}/RenderSystems/GLES2)
+		set(OGREKIT_GLES2RS_INCLUDE        ${OGREPATH}/RenderSystems/GLES2/include)
+		set(OGREKIT_RTSHADERSYSTEM_INCLUDE ${OGREPATH}/Components/RTShaderSystem/include)
+		set(OGREKIT_GLRS_INCLUDE           ${OGREPATH}/RenderSystems/GL/include)
+	endif()
 
 	if (WIN32 AND OGREKIT_MINGW_DIRECT3D)
 
@@ -407,7 +440,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 		${GAMEKIT_FBT_LIBS}
 	)
 
-	if (OGERKIT_USE_RTSHADER_SYSTEM)
+	if (OGREKIT_USE_RTSHADER_SYSTEM)
 		list(APPEND OGREKIT_OGRE_LIBS		OgreRTShaderSystem)
 		list(APPEND OGREKIT_OGRE_INCLUDE	${OGREPATH}/Components/RTShaderSystem/include)
 	endif()
@@ -501,6 +534,18 @@ macro(configure_rendersystem)
 		
 	endif()
 
+	if (OGRE_BUILD_RENDERSYSTEM_GLES2)
+		
+		include_directories(
+			${OGREKIT_GLES2RS_ROOT}/include
+			${OGREKIT_RTSHADERSYSTEM_INCLUDE}
+		)
+	
+		link_libraries(
+			${OGREKIT_GLES2RS_LIBS} 
+		)
+		
+	endif()
 	if (OGREKIT_BUILD_D3D9RS)
 
 		include_directories(

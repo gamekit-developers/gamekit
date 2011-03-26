@@ -121,7 +121,16 @@ bool gkBlendFile::parse(int opts, const gkString& scene)
 	return true;
 }
 
+void gkBlendFile::readCurSceneInfo(Blender::Scene* scene)
+{
+	if (!scene) return;
 
+	m_animFps = scene->r.frs_sec / scene->r.frs_sec_base;
+
+	gkUserDefs& defs = gkEngine::getSingleton().getUserDefs();
+	defs.animFps = m_animFps;
+	defs.rtss = (scene->gm.matmode == GAME_MAT_GLSL);
+}
 
 
 void gkBlendFile::loadActive(void)
@@ -134,11 +143,9 @@ void gkBlendFile::loadActive(void)
 		if (!fg->curscene)
 			fg->curscene = (Blender::Scene*)m_file->m_scene.first;
 
-		if (fg->curscene)
-			m_animFps = fg->curscene->r.frs_sec / fg->curscene->r.frs_sec_base;
+		Blender::Scene* sc = fg->curscene;
 
-		gkEngine::getSingleton().getUserDefs().animFps = m_animFps;
-
+		readCurSceneInfo(sc);
 
 		buildAllTextures();
 		buildAllFonts();
@@ -148,8 +155,7 @@ void gkBlendFile::loadActive(void)
 		buildAllParticles();
 
 		// parse & build
-		Blender::Scene* sc = (Blender::Scene*)fg->curscene;
-		if (sc != 0)
+		if (sc)
 		{
 			gkBlenderSceneConverter conv(this, sc);
 			conv.convert();
@@ -169,10 +175,10 @@ void gkBlendFile::createInstances(void)
 	GK_ASSERT(m_file);
 
 	Blender::FileGlobal* fg = m_file->m_fg;
-	if (fg && fg->curscene)
-		gkEngine::getSingleton().getUserDefs().animFps = fg->curscene->r.frs_sec / fg->curscene->r.frs_sec_base;
 
-	m_animFps = gkEngine::getSingleton().getUserDefs().animFps;
+	Blender::Scene* curscene = fg ? fg->curscene : 0;
+
+	readCurSceneInfo(curscene);
 
 	// Load / convert all
 	buildAllTextures();
@@ -201,10 +207,10 @@ void gkBlendFile::createInstances(void)
 	}
 
 
-	if (fg && fg->curscene)
+	if (curscene)
 	{
 		// Grab the main scene
-		m_activeScene = (gkScene*) gkSceneManager::getSingleton().getByName(gkResourceName(GKB_IDNAME(fg->curscene), m_group));
+		m_activeScene = (gkScene*) gkSceneManager::getSingleton().getByName(gkResourceName(GKB_IDNAME(curscene), m_group));
 	}
 
 	if (m_activeScene == 0 && !m_scenes.empty())

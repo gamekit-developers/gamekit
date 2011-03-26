@@ -98,10 +98,12 @@ int OgreKit::setup(int argc, char** argv)
 		TCLAP::ValueArg<bool>			fsaa_arg				("",  "fsaa",					"Enable fsaa.", false, m_prefs.fsaa, "bool");
 		TCLAP::ValueArg<int>			fsaaSamples_arg			("",  "fsaasSamples",			"Set fsaa samples.", false, m_prefs.fsaaSamples, "int");
 		TCLAP::ValueArg<bool>			enableshadows_arg		("",  "enableshadows",			"Enable Shadows.", false, m_prefs.enableshadows, "bool");
-		TCLAP::ValueArg<int>			defaultMipMap_arg		("",  "defaultmipMap",			"Set default mipMap.", false, m_prefs.defaultMipMap, "int");
+		TCLAP::ValueArg<int>			defaultMipMap_arg		("",  "defaultmipmap",			"Set default mipMap.", false, m_prefs.defaultMipMap, "int");
 		TCLAP::ValueArg<std::string>	shadowtechnique_arg		("",  "shadowtechnique",		"Set shadow technique.", false, m_prefs.shadowtechnique, "string"); 
 		TCLAP::ValueArg<std::string>	colourshadow_arg		("",  "colourshadow",			"Set shadow colour.", false, "", "string"); 
 		TCLAP::ValueArg<float>			fardistanceshadow_arg	("",  "fardistanceshadow",		"Set far distance shadow.", false, m_prefs.fardistanceshadow, "float"); 
+		TCLAP::ValueArg<std::string>	shaderCachePath_arg		("",  "shadercachepath",		"RTShaderSystem cache file path.", false, m_prefs.shaderCachePath, "string"); 
+		
 
 		cmdl.add(rendersystem_arg);
 		cmdl.add(viewportOrientation_arg);
@@ -130,7 +132,8 @@ int OgreKit::setup(int argc, char** argv)
 		cmdl.add(defaultMipMap_arg);
 		cmdl.add(shadowtechnique_arg);
 		cmdl.add(colourshadow_arg);
-		cmdl.add(fardistanceshadow_arg);		
+		cmdl.add(fardistanceshadow_arg);
+		cmdl.add(shaderCachePath_arg);
 
 		//input file arguments
 		
@@ -174,7 +177,8 @@ int OgreKit::setup(int argc, char** argv)
 		m_prefs.enableshadows			= enableshadows_arg.getValue();
 		m_prefs.defaultMipMap			= defaultMipMap_arg.getValue();
 		m_prefs.shadowtechnique			= shadowtechnique_arg.getValue();
-		m_prefs.fardistanceshadow		= fardistanceshadow_arg.getValue();				
+		m_prefs.fardistanceshadow		= fardistanceshadow_arg.getValue();	
+		m_prefs.shaderCachePath			= shaderCachePath_arg.getValue();
 
 		if (colourshadow_arg.isSet())
 			m_prefs.colourshadow		= Ogre::StringConverter::parseColourValue(colourshadow_arg.getValue());

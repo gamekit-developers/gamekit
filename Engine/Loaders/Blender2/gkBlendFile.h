@@ -80,6 +80,8 @@ protected:
 	void loadActive(void);
 	void createInstances(void);
 
+	void readCurSceneInfo(Blender::Scene* scene);
+
 	ManualResourceLoaderList	m_loaders;			// Ogre Loaders
 	const gkString				m_name;				// Current file path.
 	const gkString				m_group;			// resource group

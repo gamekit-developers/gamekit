@@ -35,6 +35,10 @@
 #include "OgreGLESPlugin.h"
 #endif
 
+#ifdef OGRE_BUILD_RENDERSYSTEM_GLES2
+#include "OgreGLES2Plugin.h"
+#endif
+
 #ifdef OGREKIT_BUILD_D3D9RS
 #include "OgreD3D9Plugin.h"
 #endif
@@ -69,6 +73,9 @@ OgreRenderSystem gkFindRenderSystem(OgreRenderSystem wanted)
 #endif
 #ifdef OGRE_BUILD_RENDERSYSTEM_GLES
 	return OGRE_RS_GLES;
+#endif
+#ifdef OGRE_BUILD_RENDERSYSTEM_GLES2
+	return OGRE_RS_GLES2;
 #endif
 	return OGRE_RS_UNKNOWN;
 }
@@ -125,6 +132,12 @@ void gkRenderFactoryPrivate::createRenderSystem(Ogre::Root* r, OgreRenderSystem 
 	case OGRE_RS_GLES:
 #ifdef OGRE_BUILD_RENDERSYSTEM_GLES
 		m_renderSystem = new Ogre::GLESPlugin();
+		r->installPlugin(m_renderSystem);
+#endif
+		break;
+	case OGRE_RS_GLES2:
+#ifdef OGRE_BUILD_RENDERSYSTEM_GLES2
+		m_renderSystem = new Ogre::GLES2Plugin();
 		r->installPlugin(m_renderSystem);
 #endif
 		break;

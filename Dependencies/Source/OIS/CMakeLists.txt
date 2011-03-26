@@ -31,6 +31,7 @@ set(OIS_HDR
 	include/OISMultiTouch.h
 	include/OISObject.h
 	include/OISPrereqs.h
+	include/OISLog.h
 	${CMAKE_CURRENT_BINARY_DIR}/OISSettings.h
 )
 
@@ -114,9 +115,14 @@ if (APPLE)
 	if (IOKit_FOUND)
 		link_libraries(${IOKit_LIBRARIES})
 	endif()
-else ()
-
-	if (UNIX) 
+elseif (UNIX)
+	if (OGREKIT_BUILD_ANDROID)
+		set(OIS_PLAT
+			include/android/AndroidInputManager.h
+			
+			src/android/AndroidInputManager.cpp
+		)   
+	else () 		
 		set(OIS_PLAT 
 			include/linux/EventHelpers.h
 			include/linux/LinuxForceFeedback.h

@@ -24,10 +24,7 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "OgreRenderWindow.h"
-#include "OgreRoot.h"
-#include "OgreWindowEventUtilities.h"
-#include "OIS.h"
+#include "gkCommon.h"
 #include "gkWindowSystem.h"
 #include "gkLogger.h"
 #include "gkUserDefs.h"
@@ -36,8 +33,17 @@
 #include "gkScene.h"
 #include "gkWindow.h"
 
+#include "OgreRenderWindow.h"
+#include "OgreRoot.h"
+#include "OgreWindowEventUtilities.h"
+#include "OIS.h"
+
 #ifdef OGREKIT_BUILD_IPHONE
 #include "gkWindowIOS.h"
+#endif
+
+#ifdef OGREKIT_BUILD_ANDROID
+#include "gkWindowAndroid.h"
 #endif
 
 
@@ -67,6 +73,8 @@ gkWindow* gkWindowSystem::createWindow(const gkUserDefs& prefs)
 {
 #ifdef OGREKIT_BUILD_IPHONE
 	gkWindow* window = new gkWindowIOS();
+#elif defined(OGREKIT_BUILD_ANDROID)
+	gkWindow* window = new gkWindowAndroid();
 #else
 	gkWindow* window = new gkWindow();
 #endif

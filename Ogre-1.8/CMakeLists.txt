@@ -24,6 +24,9 @@ else()
 	set(OGRE_CONFIG_ENABLE_ZIP TRUE)
 endif()
 
+if (OGREKIT_BUILD_ANDROID)
+	add_definitions(-DNO_MALLINFO=1) #disable nedmalloc struct mallinfo declaration
+endif()
 
 
 if (CMAKE_COMPILER_IS_GNUCXX)

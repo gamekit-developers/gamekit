@@ -25,12 +25,6 @@
 -------------------------------------------------------------------------------
 */
 
-
-
-#include "OgreRenderWindow.h"
-#include "OgreRoot.h"
-#include "OgreWindowEventUtilities.h"
-#include "OIS.h"
 #include "gkWindowSystem.h"
 #include "gkLogger.h"
 #include "gkUserDefs.h"
@@ -38,59 +32,38 @@
 #include "gkEngine.h"
 #include "gkScene.h"
 #include "gkWindowSystem.h"
-#include "gkWindowSystemPrivate.h"
+#include "gkWindow.h"
+#include "gkWindowAndroid.h"
 
+#include "OgreRenderWindow.h"
+#include "OgreRoot.h"
+#include "OgreWindowEventUtilities.h"
+#include "OIS.h"
 
-#include "gkWindowSystemPrivateIOS.h"
-
-
-@implementation gkGestureView
-
-- (BOOL)canBecomeFirstResponder
-{
-	return YES;
-}
-
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event 
-{
-	[self.nextResponder touchesBegan:event];
-}
-
-@end
-
-gkWindowSystemPrivateIOS::gkWindowSystemPrivateIOS()
-:	m_touch(0),
-	m_gestureView(0)
+gkWindowAndroid::gkWindowAndroid()
+	:	m_itouch(0)
 {
 }
 
 
-gkWindowSystemPrivateIOS::~gkWindowSystemPrivateIOS()
+gkWindowAndroid::~gkWindowAndroid()
 {
-	[m_gestureView release];
-
 	if (m_input)
 	{
-		if (m_touch)
-			m_input->destroyInputObject(m_touch);
+		if (m_itouch)
+			m_input->destroyInputObject(m_itouch);
 
-		m_touch = 0;
+		m_itouch = 0;
 	}
 }
 
-bool gkWindowSystemPrivateIOS::setup(gkWindowSystem* sys, const gkUserDefs& prefs)
+bool gkWindowAndroid::setupInput(const gkUserDefs& prefs)
 {
-	if (!sys || m_sys) 
-		return false;
-
-	m_sys = sys;
-
 	// OIS
 	try
 	{
-		size_t handle;
-		m_sys->m_window->getCustomAttribute("WINDOW", &handle);
-
+		size_t handle = getWindowHandle();
+		if (handle == 0) return false;
 
 		OIS::ParamList params;
 
@@ -98,15 +71,12 @@ bool gkWindowSystemPrivateIOS::setup(gkWindowSystem* sys, const gkUserDefs& pref
 		m_input = OIS::InputManager::createInputSystem(params);
 		m_input->enableAddOnFactory(OIS::InputManager::AddOn_All);
 
-		m_gestureView = [[gkGestureView alloc] init];
 
-		[[[UIApplication sharedApplication] keyWindow] addSubview: m_gestureView];
+		m_ikeyboard = (OIS::Keyboard*)m_input->createInputObject(OIS::OISKeyboard, true);  GK_ASSERT(m_ikeyboard);
+		m_ikeyboard->setEventCallback(this);
 
-		[m_gestureView becomeFirstResponder];
-
-		m_touch = (OIS::MultiTouch*)m_input->createInputObject(OIS::OISMultiTouch, true);
-		GK_ASSERT(m_touch);
-		m_touch->setEventCallback(this);
+		m_itouch = (OIS::MultiTouch*)m_input->createInputObject(OIS::OISMultiTouch, true); GK_ASSERT(m_itouch);
+		m_itouch->setEventCallback(this);
 	}
 	catch (OIS::Exception& e)
 	{
@@ -117,30 +87,30 @@ bool gkWindowSystemPrivateIOS::setup(gkWindowSystem* sys, const gkUserDefs& pref
 	return true;
 }
 
-void gkWindowSystemPrivateIOS::dispatch(void)
+void gkWindowAndroid::dispatch(void)
 {
-	GK_ASSERT(m_touch);
+	//GK_ASSERT(m_itouch);
 
-	m_touch->capture();    //OIS don't thing, currently. so instead use a previous saved touch event
+	//m_itouch->capture();    //OIS don't thing, currently. so instead use a previous saved touch event
 
-	if (m_sys->m_mouse.buttons[gkMouse::Left] != GK_Pressed)
-		m_sys->m_mouse.moved = false;
+	if (m_mouse.buttons[gkMouse::Left] != GK_Pressed)
+		m_mouse.moved = false;
 }
 
-void gkWindowSystemPrivateIOS::process(void)
+void gkWindowAndroid::process(void)
 {
-	[m_gestureView becomeFirstResponder];
+	//[m_gestureView becomeFirstResponder];
 
-	gkWindowSystemPrivate::process();
+	gkWindow::process();
 }
 
 
 //copied from ogre3d samplebrowser
-void gkWindowSystemPrivateIOS::transformInputState(OIS::MultiTouchState& state)
+void gkWindowAndroid::transformInputState(OIS::MultiTouchState& state)
 {
-	GK_ASSERT(m_sys->m_window && m_sys->m_window->getViewport(0));
+	GK_ASSERT(m_rwindow && m_rwindow->getViewport(0));
 
-	Ogre::Viewport* viewport = m_sys->m_window->getViewport(0);
+	Ogre::Viewport* viewport = m_rwindow->getViewport(0);
 
 	int w = viewport->getActualWidth();
 	int h = viewport->getActualHeight();
@@ -174,15 +144,15 @@ void gkWindowSystemPrivateIOS::transformInputState(OIS::MultiTouchState& state)
 	}
 }
 
-bool gkWindowSystemPrivateIOS::touchPressed(const OIS::MultiTouchEvent& arg)
+bool gkWindowAndroid::touchPressed(const OIS::MultiTouchEvent& arg)
 {
-	gkMouse& data = m_sys->m_mouse;
+	gkMouse& data = m_mouse;
 
 	data.buttons[gkMouse::Left] = GK_Pressed;
 
-	if (!m_sys->m_listeners.empty())
+	if (!m_listeners.empty())
 	{
-		gkWindowSystem::Listener* node = m_sys->m_listeners.begin();
+		gkWindowSystem::Listener* node = m_listeners.begin();
 		while (node)
 		{
 			node->mousePressed(data);
@@ -193,15 +163,15 @@ bool gkWindowSystemPrivateIOS::touchPressed(const OIS::MultiTouchEvent& arg)
 	return true;
 }
 
-bool gkWindowSystemPrivateIOS::touchReleased(const OIS::MultiTouchEvent& arg)
+bool gkWindowAndroid::touchReleased(const OIS::MultiTouchEvent& arg)
 {
-	gkMouse& data = m_sys->m_mouse;
+	gkMouse& data = m_mouse;
 
 	data.buttons[gkMouse::Left] = GK_Released;
 
-	if (!m_sys->m_listeners.empty())
+	if (!m_listeners.empty())
 	{
-		gkWindowSystem::Listener* node = m_sys->m_listeners.begin();
+		gkWindowSystem::Listener* node = m_listeners.begin();
 		while (node)
 		{
 			node->mousePressed(data);
@@ -212,9 +182,9 @@ bool gkWindowSystemPrivateIOS::touchReleased(const OIS::MultiTouchEvent& arg)
 	return true;
 }
 
-bool gkWindowSystemPrivateIOS::touchMoved(const OIS::MultiTouchEvent& arg)
+bool gkWindowAndroid::touchMoved(const OIS::MultiTouchEvent& arg)
 {
-	gkMouse& data = m_sys->m_mouse;
+	gkMouse& data = m_mouse;
 	OIS::MultiTouchState state = arg.state;;
 
 	transformInputState(state);
@@ -227,9 +197,9 @@ bool gkWindowSystemPrivateIOS::touchMoved(const OIS::MultiTouchEvent& arg)
 
 	data.wheelDelta = 0;
 
-	if (!m_sys->m_listeners.empty())
+	if (!m_listeners.empty())
 	{
-		gkWindowSystem::Listener* node = m_sys->m_listeners.begin();
+		gkWindowSystem::Listener* node = m_listeners.begin();
 		while (node)
 		{
 			node->mouseMoved(data);
@@ -240,7 +210,7 @@ bool gkWindowSystemPrivateIOS::touchMoved(const OIS::MultiTouchEvent& arg)
 	return true;
 }
 
-bool gkWindowSystemPrivateIOS::touchCancelled(const OIS::MultiTouchEvent& arg)
+bool gkWindowAndroid::touchCancelled(const OIS::MultiTouchEvent& arg)
 {
 	return true;
 }

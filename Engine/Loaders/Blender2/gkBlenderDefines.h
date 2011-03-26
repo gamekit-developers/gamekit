@@ -1712,6 +1712,9 @@
 #define WOPHY_DYNAMO                             3
 #define WOPHY_ODE                                4
 #define WOPHY_BULLET                             5
+#define GAME_MAT_TEXFACE	                     0
+#define GAME_MAT_MULTITEX	                     1
+#define GAME_MAT_GLSL		                     2
 #define VP_COLINDEX                              1
 #define VP_AREA                                  2
 #define VP_SOFT                                  4

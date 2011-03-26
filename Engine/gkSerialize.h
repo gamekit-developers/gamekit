@@ -68,7 +68,8 @@ public:
 	{
 		TX_NEGATIVE		= (1 << 0),
 		TX_STENCIL		= (1 << 1),
-		TX_RGBTOINTEN	= (1 << 2)
+		TX_RGBTOINTEN	= (1 << 2),
+		TX_OBJ_SPACE	= (1 << 3)
 	};
 
 
@@ -89,7 +90,12 @@ public:
 		    m_blend(GK_BT_MIXTURE),
 		    m_mode(0),
 			m_texmode(0),
-		    m_mix(1.f)
+		    m_mix(1.f),
+			m_normalFactor(0),
+			m_diffuseColorFactor(0),
+			m_diffuseAlpahFactor(0),
+			m_speculaColorFactor(0),
+			m_speculaHardFactor(0)
 	{
 	}
 
@@ -103,6 +109,11 @@ public:
 	int         m_mode;
 	int			m_texmode;
 	gkScalar    m_mix;
+	gkScalar    m_normalFactor;
+	gkScalar    m_diffuseColorFactor;
+	gkScalar    m_diffuseAlpahFactor;
+	gkScalar    m_speculaColorFactor;
+	gkScalar    m_speculaHardFactor;
 };
 
 

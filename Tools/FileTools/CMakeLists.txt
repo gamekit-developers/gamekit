@@ -57,7 +57,7 @@ endif()
 subdirs(File)
 subdirs(FileFormats/Blend)
 
-if (NOT OGREKIT_BUILD_IPHONE)
+if (NOT OGREKIT_BUILD_IPHONE AND NOT OGREKIT_BUILD_ANDROID)
 subdirs(Compiler)
 subdirs(FileFormats/Bullet)
 endif()

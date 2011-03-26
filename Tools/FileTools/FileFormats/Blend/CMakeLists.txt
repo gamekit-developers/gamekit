@@ -33,7 +33,7 @@ set(bfBlend_SRC
     Blender.h
 )
 
-if (OGREKIT_BUILD_IPHONE)
+if (OGREKIT_BUILD_IPHONE OR OGREKIT_BUILD_ANDROID)
     list(APPEND bfBlend_SRC Generated/bfBlender.cpp) #use manually generated 32bit DNA file from Blender.h
 else()
     add_fbt(bfBlender Blender.h)

@@ -390,12 +390,29 @@ void gkBlenderMeshConverter::convertMaterial(Blender::Material* bma, gkMaterialP
 				{
 					gte.m_mode |= gkTextureProperties::TM_ALPHA;
 					gma.m_mode |= gkMaterialProperties::MA_ALPHABLEND;
-				}								
+				}
+				if ((mtex->mapto & MAP_NORM) || (mtex->maptoneg & MAP_NORM))
+					gte.m_mode |= gkTextureProperties::TM_NORMAL;
+				if ((mtex->mapto & MAP_SPEC) || (mtex->maptoneg & MAP_SPEC))
+					gte.m_mode |= gkTextureProperties::TM_SPECULAR;
+				if ((mtex->mapto & MAP_REF)  || (mtex->maptoneg & MAP_REF))
+					gte.m_mode |= gkTextureProperties::TM_REFRACTION;
+				if ((mtex->mapto & MAP_EMIT) || (mtex->maptoneg & MAP_EMIT))
+					gte.m_mode |= gkTextureProperties::TM_EMMISIVE;
+
+				if (mtex->normapspace == MTEX_NSPACE_OBJECT) //else set to tagent space.
+					gte.m_texmode |= gkTextureProperties::TX_OBJ_SPACE;
 
 				gte.m_blend = getTexBlendType(mtex->blendtype);				
 
 				gte.m_layer = findTextureLayer(mtex);
-				gte.m_mix   = mtex->colfac;
+				gte.m_mix   = mtex->colfac;				
+
+				gte.m_normalFactor = mtex->norfac;
+				gte.m_diffuseColorFactor = mtex->colfac;
+				gte.m_diffuseAlpahFactor = mtex->alphafac;
+				gte.m_speculaColorFactor = mtex->colspecfac;
+				gte.m_speculaHardFactor = mtex->hardfac;
 			}
 		}
 	}

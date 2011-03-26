@@ -80,10 +80,24 @@ set(GLSLES_FILES
 )
 endif (OGRE_CG_SUPPORT_FOR_GLES2)
 	
-	
-
 # Add system specific settings
-if (WIN32)
+if (OGREKIT_BUILD_ANDROID)
+#message("ANDROID" ${OPENGLES2_gl_LIBRARY})
+  set(PLATFORM_HEADERS
+    include/Android/OgreAndroidGLContext.h
+    include/Android/OgreAndroidGLSupport.h
+    include/Android/OgreAndroidWindow.h
+    include/Android/OgreGLES2Util.h
+  )
+  set(PLATFORM_SOURCES
+    src/Android/OgreAndroidGLContext.cpp
+    src/Android/OgreAndroidGLSupport.cpp
+    src/Android/OgreAndroidWindow.cpp
+  )
+  include_directories(src/Android include/Android)
+  set(PLATFORM_HEADER_INSTALL "Android")
+  set(PLATFORM_LIBS "OgreRTShaderSystem")
+elseif (WIN32)	
   set(PLATFORM_HEADERS 
     include/EGL/WIN32/OgreWin32EGLContext.h
     include/EGL/WIN32/OgreWin32EGLSupport.h
@@ -164,11 +178,17 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/include/EAGL
   ${CMAKE_CURRENT_SOURCE_DIR}/src/GLSLES/include
   ${CMAKE_SOURCE_DIR}/Components/RTShaderSystem/include
-  ${OPENGLES2_INCLUDE_DIR} ${EGL_INCLUDE_DIR}
+  ${OPENGLES2_INCLUDE_DIR}
 )
+if (NOT OGREKIT_BUILD_ANDROID)
+  include_directories(
+    ${EGL_INCLUDE_DIR}
+  )
+  target_link_libraries(RenderSystem_GLES2 ${EGL_LIBRARIES}) 
+endif()
 
 add_library(RenderSystem_GLES2 ${OGRE_LIB_TYPE} ${HEADER_FILES} ${SOURCE_FILES} ${GLSLES_FILES} ${PLATFORM_HEADERS} ${PLATFORM_SOURCES})
-target_link_libraries(RenderSystem_GLES2 OgreMain ${OPENGLES2_LIBRARIES} ${EGL_LIBRARIES} ${PLATFORM_LIBS})
+target_link_libraries(RenderSystem_GLES2 OgreMain ${OPENGLES2_LIBRARIES} ${PLATFORM_LIBS})
 
 if (NOT OGRE_STATIC)
   set_target_properties(RenderSystem_GLES2 PROPERTIES

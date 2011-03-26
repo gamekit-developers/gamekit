@@ -74,25 +74,32 @@ set (SOURCE_FILES
   src/OgreShaderScriptTranslator.cpp
   src/OgreShaderMaterialSerializerListener.cpp
   src/OgreShaderProgramProcessor.cpp
-  src/OgreShaderCGProgramProcessor.cpp
-  src/OgreShaderCGProgramWriter.cpp
-  src/OgreShaderGLSLProgramProcessor.cpp
-  src/OgreShaderGLSLProgramWriter.cpp
+  
   src/OgreShaderGLSLESProgramProcessor.cpp
   src/OgreShaderGLSLESProgramWriter.cpp
   src/OgreShaderProgramWriterManager.cpp
-  src/OgreShaderHLSLProgramProcessor.cpp
-  src/OgreShaderHLSLProgramWriter.cpp
   src/OgreShaderExLayeredBlending.cpp
   src/OgreShaderExHardwareSkinning.cpp
   src/OgreShaderExTextureAtlasSampler.cpp
 )
 
+if (NOT OGREKIT_BUILD_ANDROID)
+  list(APPEND SOURCE_FILES
+    src/OgreShaderGLSLProgramProcessor.cpp
+    src/OgreShaderGLSLProgramWriter.cpp  
+    src/OgreShaderCGProgramProcessor.cpp
+    src/OgreShaderCGProgramWriter.cpp
+    src/OgreShaderHLSLProgramProcessor.cpp
+    src/OgreShaderHLSLProgramWriter.cpp
+  )
+endif()  
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 add_library(OgreRTShaderSystem ${OGRE_COMP_LIB_TYPE} ${HEADER_FILES} ${SOURCE_FILES})
+if(NOT OGREKIT_BUILD_ANDROID)
 set_target_properties(OgreRTShaderSystem PROPERTIES VERSION ${OGRE_SOVERSION})
+endif()
 target_link_libraries(OgreRTShaderSystem OgreMain)
 
 ogre_config_component(OgreRTShaderSystem)

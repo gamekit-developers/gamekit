@@ -107,12 +107,12 @@ namespace Ogre {
 #   else
 #       define OGRE_PLATFORM OGRE_PLATFORM_APPLE
 #   endif
+#elif defined(__ANDROID__)
+#	define OGRE_PLATFORM OGRE_PLATFORM_ANDROID
 #elif defined(linux) && defined(__arm__)
 // TODO: This is NOT the correct way to detect the Tegra 2 platform but it works for now.
 // It doesn't appear that GCC defines any platform specific macros.
 #   define OGRE_PLATFORM OGRE_PLATFORM_TEGRA2
-#elif defined(__ANDROID__)
-#	define OGRE_PLATFORM OGRE_PLATFORM_ANDROID
 #else
 #   define OGRE_PLATFORM OGRE_PLATFORM_LINUX
 #endif

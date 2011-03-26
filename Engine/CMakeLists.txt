@@ -121,6 +121,11 @@ if (OGREKIT_BUILD_IPHONE)
 	list(APPEND Core_SOURCE iOS/gkWindowIOS.mm)
 endif()
 
+if (OGREKIT_BUILD_ANDROID)
+	list(APPEND Core_HEADER Android/gkWindowAndroid.h)
+	list(APPEND Core_SOURCE Android/gkWindowAndroid.cpp)
+endif()
+
 if(APPLE)
 	source_group(Core FILES ${Core_HEADER} ${Core_SOURCE})
 else()
@@ -872,8 +877,15 @@ if (OGREKIT_GENERATE_BUILTIN_RES)
 	add_templates(1 GEN_PARTICLE_OUT User/gkParticleTemplates.inl ${PARTICLE_TMPL})
 	LIST(APPEND Resources_FILES	${GEN_PARTICLE_OUT})
 	
-	#font, etc...
+	#rtshader
+	set(RTSHADER_TMPL
+		User/RTShaderLib.zip
+	)
+	add_templates(1 GEN_RTSHADER_OUT User/gkRTShaderTemplates.inl ${RTSHADER_TMPL})
+	LIST(APPEND Resources_FILES	${GEN_RTSHADER_OUT})
 	
+	#font, etc...
+
 	source_group(Resources FILES ${Resources_FILES})			
 
 endif()
@@ -893,9 +905,13 @@ if(OGREKIT_USE_COCOA)
 endif()
 
 if (OGREKIT_BUILD_IPHONE)
-	set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/gkWindowSystem.cpp PROPERTIES COMPILE_FLAGS "-x objective-c++")
+	set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/gkWindowSystem.cpp   PROPERTIES COMPILE_FLAGS "-x objective-c++")
 	set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/Thread/gkSyncObj.cpp PROPERTIES COMPILE_FLAGS "-x objective-c++")
 	include_directories(./iOS)
+endif()
+
+if (OGREKIT_BUILD_ANDROID)
+	include_directories(./Android)
 endif()
 
 

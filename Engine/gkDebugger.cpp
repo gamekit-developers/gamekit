@@ -52,10 +52,12 @@ gkDebugger::gkDebugger(gkScene* parent)
 	    m_bbmax(-GK_INFINITY, -GK_INFINITY, -GK_INFINITY),
 	    m_bufSize(0),
 	    m_flags(0),
-		m_d3dColor(gkEngine::getSingleton().getUserDefs().rendersystem != OGRE_RS_GL)
+		m_d3dColor(false)
 {
 	growBuffer(128);
 	m_lineBuf.reserve(128);
+
+	m_d3dColor = gkEngine::getSingleton().getUserDefs().isD3DRenderSystem();
 }
 
 

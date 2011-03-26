@@ -14,7 +14,7 @@ include(MacroLogFeature)
 #######################################################################
 
 # Find X11
-if (UNIX) 
+if (UNIX AND NOT OGREKIT_BUILD_ANDROID) 
 	## TEST THIS
 	find_package(X11)
 	macro_log_feature(X11_FOUND "X11" "X Window system" "http://www.x.org" TRUE "" "")
@@ -29,10 +29,24 @@ endif ()
 find_package(OpenGL)
 macro_log_feature(OPENGL_FOUND "OpenGL" "Support for the OpenGL render system" "http://www.opengl.org/" FALSE "" "")
 
+if(OGREKIT_BUILD_ANDROID)
+	# Find OpenGLES
+	find_package(OpenGLES)
+	macro_log_feature(OPENGLES_FOUND "OpenGLES" "Support for the OpenGLES render system" "" FALSE "" "")
+
+	# Find OpenGLES2
+	find_package(OpenGLES2)
+	macro_log_feature(OPENGLES2_FOUND "OpenGLES2" "Support for the OpenGLES2 render system" "" FALSE "" "")
+endif()
+
 if (APPLE)
 	# Find OpenGLES
 	find_package(OpenGLES)
 	macro_log_feature(OPENGLES_FOUND "OpenGLES" "Support for the OpenGLES render system" "" FALSE "" "")
+
+	# Find OpenGLES2
+	find_package(OpenGLES2)
+	macro_log_feature(OPENGLES2_FOUND "OpenGLES2" "Support for the OpenGLES2 render system" "" FALSE "" "")
 endif()
 # else Disabled, untill further testing
 
@@ -81,7 +95,7 @@ endif()
 # Display results, terminate if anything required is missing
 MACRO_DISPLAY_FEATURE_LOG()
 
-if (NOT OGREKIT_BUILD_IPHONE)
+if (NOT OGREKIT_BUILD_IPHONE AND NOT OGREKIT_BUILD_ANDROID)
 	# Add library and include paths from the dependencies
 	include_directories(
 		${OPENGL_INCLUDE_DIRS}
