@@ -31,7 +31,7 @@
 
 #include "OgreKit.h"
 #include "Ogre.h"
-#include "Android/AndroidInputManager.h"
+#include "android/AndroidInputManager.h"
 
 #define LOG_TAG    "ogrekit"
 #define LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)

@@ -25,10 +25,6 @@ if (UNIX AND NOT OGREKIT_BUILD_ANDROID)
 endif ()
 
 
-# Find OpenGL
-find_package(OpenGL)
-macro_log_feature(OPENGL_FOUND "OpenGL" "Support for the OpenGL render system" "http://www.opengl.org/" FALSE "" "")
-
 if(OGREKIT_BUILD_ANDROID)
 	# Find OpenGLES
 	find_package(OpenGLES)
@@ -37,6 +33,10 @@ if(OGREKIT_BUILD_ANDROID)
 	# Find OpenGLES2
 	find_package(OpenGLES2)
 	macro_log_feature(OPENGLES2_FOUND "OpenGLES2" "Support for the OpenGLES2 render system" "" FALSE "" "")
+else()
+	# Find OpenGL
+	find_package(OpenGL)
+	macro_log_feature(OPENGL_FOUND "OpenGL" "Support for the OpenGL render system" "http://www.opengl.org/" FALSE "" "")
 endif()
 
 if (APPLE)
@@ -61,13 +61,12 @@ endif()
 # find_package(Cg)
 # macro_log_feature(Cg_FOUND "cg" "C for graphics shader language" "http://developer.nvidia.com/object/cg_toolkit.html" FALSE "" "")
 
-if(NOT WIN32)
+if(NOT WIN32 AND NOT OGREKIT_BUILD_ANDROID)
 	# Use static loader On win32 platforms 
 
 	# Find OpenAL
 	include(FindOpenAL)
 	macro_log_feature(OPENAL_FOUND "OpenAL" "Support for the OpenAL sound system" "http://connect.creativelabs.com/openal/default.aspx" FALSE "" "")
-
 endif()
 
 if(NOT OGREKIT_USE_STATIC_FREEIMAGE)

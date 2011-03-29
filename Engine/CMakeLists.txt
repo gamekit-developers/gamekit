@@ -897,7 +897,7 @@ endif()
 # ---------------------------------------------------------
 
 if (APPLE)
-  include_directories( ${OGRELITE_SOURCE_DIR}/OgreMain/include/OSX )
+	include_directories( ${OGRELITE_SOURCE_DIR}/OgreMain/include/OSX )
 endif ()
 
 if(OGREKIT_USE_COCOA)

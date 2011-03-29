@@ -87,7 +87,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 	set(OGRE_BINARY_DIR ${OGREPATH}/Bin)
 	set(OGRE_TEMPLATES_DIR ${ROOT}/CMake/Templates)
 	set(OGRELITE_SOURCE_DIR ${OGREPATH})
-    set(OGREKIT_DEP_DIR ${ROOT}/Dependencies/Source)
+	set(OGREKIT_DEP_DIR ${ROOT}/Dependencies/Source)
 	set(OGREKIT_SAMPLES_DIR ${ROOT}/Samples)
 	set(OGREKIT_ANDROID_DEP_DIR ${ROOT}/Dependencies/Android)
 	
@@ -132,13 +132,13 @@ macro (configure_ogrekit ROOT OGREPATH)
 		else()
 			set(OGREKIT_PLATFORM ${OGREPATH}/OgreMain/include/OSX )
 		endif()
-    else (APPLE)
+	else (APPLE)
 		if (UNIX)
-		  set(OGREKIT_PLATFORM ${OGREPATH}/OgreMain/include/GLX )
+			set(OGREKIT_PLATFORM ${OGREPATH}/OgreMain/include/GLX )
 		else (UNIX)
-		  if (WIN32)
-		set(OGREKIT_PLATFORM ${OGREPATH}/OgreMain/include/WIN32 )
-		  endif (WIN32)
+			if (WIN32)
+				set(OGREKIT_PLATFORM ${OGREPATH}/OgreMain/include/WIN32 )
+			endif (WIN32)
 		endif (UNIX)
 	endif (APPLE)
 	
@@ -150,7 +150,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 	option(SAMPLES_EMBEDDEMO      "Build Samples/EmbedDemo"     OFF)
 	option(SAMPLES_INSPECTOR      "Build Samples/FileInspector" OFF)
 	option(SAMPLES_GUIDEMO        "Build Samples/GuiDemo"       OFF)
-    option(SAMPLES_LUA_EDITOR     "Build Samples/LuaEditor"     OFF)
+	option(SAMPLES_LUA_EDITOR     "Build Samples/LuaEditor"     OFF)
 	option(SAMPLES_LUARUNTIME     "Build Samples/LuaRuntime"    OFF)
 	
 	if (SAMPLES_LOGICDEMO OR SAMPLES_VEHICLEDEMO)		
@@ -207,15 +207,19 @@ macro (configure_ogrekit ROOT OGREPATH)
 		set(OGRE_BUILD_RENDERSYSTEM_GLES CACHE BOOL "Forcing remove OpenGLES RenderSystem for Android" FORCE)
 		set(OGRE_BUILD_RENDERSYSTEM_GLES2 TRUE CACHE BOOL "Forcing OpenGLES2 RenderSystem for Android" FORCE)
 
+		set(OGREKIT_OPENAL_SOUND   CACHE BOOL "Forcing remove OpenAL"   FORCE)
+
+		set(OGREKIT_BUILD_GLRS   CACHE BOOL "Forcing remove GL"   FORCE)
+		set(OGREKIT_BUILD_GLESRS  CACHE BOOL "Forcing remove GLES"   FORCE)
 		set(OGREKIT_BUILD_GLES2RS TRUE CACHE BOOL "Forcing OpenGLES2" FORCE)
 		set(OGREKIT_USE_RTSHADER_SYSTEM TRUE CACHE BOOL "Forcing RTShaderSystem for Android" FORCE)
 		
 		
-		#message(${OPENGLES2_gl_LIBRARY})
+		#message(${OGREKIT_BUILD_GLRS} "---" ${OGREKIT_BUILD_GLESRS} " --- " ${OPENGLES2_gl_LIBRARY})
 		
 	elseif (OGREKIT_BUILD_IPHONE)
 	
-		set(OGRE_BUILD_PLATFORM_IPHONE TRUE) #TODO: replace to OGRE_BUILD_PLATFORM_IPHONE
+		set(OGRE_BUILD_PLATFORM_IPHONE TRUE) #TODO: replace to OGRE_BUILD_APPLE_IOS 
 		set(OGRE_BUILD_PLATFORM_APPLE_IOS TRUE)
 		
 		#copy from ogre3d build
