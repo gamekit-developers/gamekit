@@ -1,7 +1,7 @@
 subdirs(Serialize)
-if (OGREKIT_HEADER_GENERATOR)
-	subdirs(Headers)
-endif()
+#if (OGREKIT_HEADER_GENERATOR)
+#	subdirs(Headers)
+#endif()
 
 #subdirs(TestLoader)
 

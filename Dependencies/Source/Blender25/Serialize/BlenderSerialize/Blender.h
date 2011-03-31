@@ -1,6 +1,6 @@
 #ifndef _Blender_h_
 #define _Blender_h_
-// Generated from a Blender(253) file.
+// Generated from a Blender(256) file.
 
 #ifdef near
 #undef near
@@ -9,541 +9,466 @@
 #undef far
 #endif
 
+#ifdef rad2
+#undef rad2
+#endif
 
 namespace Blender {
-class Link;
-class LinkData;
-class ListBase;
-class vec2s;
-class vec2f;
-class vec2i;
-class vec2d;
-class vec3i;
-class vec3f;
-class vec3d;
-class vec4i;
-class vec4f;
-class vec4d;
-class rcti;
-class rctf;
-class IDPropertyData;
-class IDProperty;
-class ID;
-class Library;
-class PreviewImage;
-class IpoDriver;
-class IpoCurve;
-class Ipo;
-class KeyBlock;
-class Key;
-class TextLine;
-class TextMarker;
-class Text;
-class PackedFile;
-class Camera;
-class ImageUser;
-class Image;
-class MTex;
-class PluginTex;
-class CBData;
-class ColorBand;
-class EnvMap;
-class PointDensity;
-class VoxelData;
-class Tex;
-class TexMapping;
-class Lamp;
-class Wave;
-class VolumeSettings;
-class Material;
-class VFont;
-class MetaElem;
-class MetaBall;
-class BezTriple;
-class BPoint;
-class Nurb;
-class CharInfo;
-class TextBox;
-class Curve;
-class Mesh;
-class TFace;
-class MFace;
-class MEdge;
-class MDeformWeight;
-class MDeformVert;
-class MVert;
-class MCol;
-class MTexPoly;
-class MLoopUV;
-class MLoopCol;
-class MSticky;
-class MSelect;
-class MTFace;
-class MFloatProperty;
-class MIntProperty;
-class MStringProperty;
-class OrigSpaceFace;
-class MDisps;
-class MultiresCol;
-class MultiresColFace;
-class MultiresFace;
-class MultiresEdge;
-class MultiresLevel;
-class Multires;
-class PartialVisibility;
-class ModifierData;
-class SubsurfModifierData;
-class LatticeModifierData;
-class CurveModifierData;
-class BuildModifierData;
-class MaskModifierData;
-class ArrayModifierData;
-class MirrorModifierData;
-class EdgeSplitModifierData;
-class BevelModifierData;
-class BMeshModifierData;
-class SmokeModifierData;
-class DisplaceModifierData;
-class UVProjectModifierData;
-class DecimateModifierData;
-class SmoothModifierData;
-class CastModifierData;
-class WaveModifierData;
-class ArmatureModifierData;
-class HookModifierData;
-class SoftbodyModifierData;
-class ClothModifierData;
-class CollisionModifierData;
-class SurfaceModifierData;
-class BooleanModifierData;
-class MDefInfluence;
-class MDefCell;
-class MeshDeformModifierData;
-class ParticleSystemModifierData;
-class ParticleInstanceModifierData;
-class ExplodeModifierData;
-class MultiresModifierData;
-class FluidsimModifierData;
-class ShrinkwrapModifierData;
-class SimpleDeformModifierData;
-class ShapeKeyModifierData;
-class SolidifyModifierData;
-class ScrewModifierData;
-class Lattice;
-class bDeformGroup;
-class BoundBox;
-class Object;
-class ObHook;
-class DupliObject;
-class PartDeflect;
-class EffectorWeights;
-class PTCacheMem;
-class PointCache;
-class SBVertex;
-class BulletSoftBody;
-class SoftBody;
-class FluidsimSettings;
-class World;
-class Base;
-class AviCodecData;
-class QuicktimeCodecData;
-class QuicktimeCodecSettings;
-class FFMpegCodecData;
-class AudioData;
-class SceneRenderLayer;
-class RenderData;
-class RenderProfile;
-class GameDome;
-class GameFraming;
-class GameData;
-class TimeMarker;
-class Paint;
-class ImagePaintSettings;
-class ParticleBrushData;
-class ParticleEditSettings;
-class TransformOrientation;
-class Sculpt;
-class VPaint;
-class ToolSettings;
-class bStats;
-class UnitSettings;
-class PhysicsSettings;
-class Scene;
-class BGpic;
-class RegionView3D;
-class View3D;
-class View2D;
-class SpaceLink;
-class SpaceInfo;
-class SpaceIpo;
-class SpaceButs;
-class SpaceSeq;
-class FileSelectParams;
-class SpaceFile;
-class SpaceOops;
-class SpaceImage;
-class SpaceNla;
-class SpaceText;
-class Script;
-class SpaceScript;
-class SpaceTimeCache;
-class SpaceTime;
-class SpaceNode;
-class SpaceLogic;
-class SpaceImaSel;
-class ConsoleLine;
-class SpaceConsole;
-class SpaceUserPref;
-class uiFont;
-class uiFontStyle;
-class uiStyle;
-class uiWidgetColors;
-class uiWidgetStateColors;
-class ThemeUI;
-class ThemeSpace;
-class ThemeWireColor;
-class bTheme;
-class bAddon;
-class SolidLight;
-class UserDef;
-class bScreen;
-class ScrVert;
-class ScrEdge;
-class Panel;
-class ScrArea;
-class ARegion;
-class FileGlobal;
-class StripElem;
-class TStripElem;
-class StripCrop;
-class StripTransform;
-class StripColorBalance;
-class StripProxy;
-class Strip;
-class PluginSeq;
-class Sequence;
-class MetaStack;
-class Editing;
-class WipeVars;
-class GlowVars;
-class TransformVars;
-class SolidColorVars;
-class SpeedControlVars;
-class Effect;
-class BuildEff;
-class PartEff;
-class WaveEff;
-class TreeStoreElem;
-class TreeStore;
-class bProperty;
-class bNearSensor;
-class bMouseSensor;
-class bTouchSensor;
-class bKeyboardSensor;
-class bPropertySensor;
-class bActuatorSensor;
-class bDelaySensor;
-class bCollisionSensor;
-class bRadarSensor;
-class bRandomSensor;
-class bRaySensor;
-class bArmatureSensor;
-class bMessageSensor;
-class bSensor;
-class bJoystickSensor;
-class bExpressionCont;
-class bPythonCont;
-class bController;
-class bAddObjectActuator;
-class bActionActuator;
-class bSoundActuator;
-class bEditObjectActuator;
-class bSceneActuator;
-class bPropertyActuator;
-class bObjectActuator;
-class bIpoActuator;
-class bCameraActuator;
-class bConstraintActuator;
-class bGroupActuator;
-class bRandomActuator;
-class bMessageActuator;
-class bGameActuator;
-class bVisibilityActuator;
-class bTwoDFilterActuator;
-class bParentActuator;
-class bStateActuator;
-class bArmatureActuator;
-class bActuator;
-class Sound3D;
-class bSound;
-class SpaceSound;
-class GroupObject;
-class Group;
-class Bone;
-class bArmature;
-class bMotionPathVert;
-class bMotionPath;
-class bAnimVizSettings;
-class bPoseChannel;
-class bPose;
-class bIKParam;
-class bItasc;
-class bActionGroup;
-class bAction;
-class bDopeSheet;
-class SpaceAction;
-class bActionChannel;
-class bConstraintChannel;
-class bConstraint;
-class bConstraintTarget;
-class bPythonConstraint;
-class bKinematicConstraint;
-class bSplineIKConstraint;
-class bTrackToConstraint;
-class bRotateLikeConstraint;
-class bLocateLikeConstraint;
-class bSizeLikeConstraint;
-class bSameVolumeConstraint;
-class bTransLikeConstraint;
-class bMinMaxConstraint;
-class bActionConstraint;
-class bLockTrackConstraint;
-class bDampTrackConstraint;
-class bFollowPathConstraint;
-class bStretchToConstraint;
-class bRigidBodyJointConstraint;
-class bClampToConstraint;
-class bChildOfConstraint;
-class bTransformConstraint;
-class bPivotConstraint;
-class bLocLimitConstraint;
-class bRotLimitConstraint;
-class bSizeLimitConstraint;
-class bDistLimitConstraint;
-class bShrinkwrapConstraint;
-class bActionModifier;
-class bActionStrip;
-class bNodeStack;
-class bNodeSocket;
-class bNode;
-class bNodeLink;
-class bNodeTree;
-class NodeImageAnim;
-class NodeBlurData;
-class NodeDBlurData;
-class NodeBilateralBlurData;
-class NodeHueSat;
-class NodeImageFile;
-class NodeChroma;
-class NodeTwoXYs;
-class NodeTwoFloats;
-class NodeGeometry;
-class NodeVertexCol;
-class NodeDefocus;
-class NodeScriptDict;
-class NodeGlare;
-class NodeTonemap;
-class NodeLensDist;
-class NodeColorBalance;
-class NodeColorspill;
-class TexNodeOutput;
-class CurveMapPoint;
-class CurveMap;
-class CurveMapping;
-class Histogram;
-class Scopes;
-class BrushClone;
-class Brush;
-class CustomDataLayer;
-class CustomDataExternal;
-class CustomData;
-class HairKey;
-class ParticleKey;
-class BoidParticle;
-class ChildParticle;
-class ParticleTarget;
-class ParticleDupliWeight;
-class ParticleData;
-class SPHFluidSettings;
-class ParticleSettings;
-class ParticleSystem;
-class ClothSimSettings;
-class ClothCollSettings;
-class bGPDspoint;
-class bGPDstroke;
-class bGPDframe;
-class bGPDlayer;
-class bGPdata;
-class Report;
-class ReportList;
-class ReportTimerInfo;
-class wmWindowManager;
-class wmWindow;
-class wmKeyMapItem;
-class wmKeyMap;
-class wmKeyConfig;
-class wmOperator;
-class FModifier;
-class FMod_Generator;
-class FMod_FunctionGenerator;
-class FCM_EnvelopeData;
-class FMod_Envelope;
-class FMod_Cycles;
-class FMod_Python;
-class FMod_Limits;
-class FMod_Noise;
-class FMod_Stepped;
-class DriverTarget;
-class DriverVar;
-class ChannelDriver;
-class FPoint;
-class FCurve;
-class AnimMapPair;
-class AnimMapper;
-class NlaStrip;
-class NlaTrack;
-class KS_Path;
-class KeyingSet;
-class AnimOverride;
-class AnimData;
-class IdAdtTemplate;
-class BoidRule;
-class BoidRuleGoalAvoid;
-class BoidRuleAvoidCollision;
-class BoidRuleFollowLeader;
-class BoidRuleAverageSpeed;
-class BoidRuleFight;
-class BoidData;
-class BoidState;
-class BoidSettings;
-class SmokeDomainSettings;
-class SmokeFlowSettings;
-class SmokeCollSettings;
+/** \addtogroup Blender
+*  @{
+*/
+
+struct Link;
+struct LinkData;
+struct ListBase;
+struct vec2s;
+struct vec2f;
+struct rcti;
+struct rctf;
+struct IDPropertyData;
+struct IDProperty;
+struct ID;
+struct Library;
+struct PreviewImage;
+struct IpoDriver;
+struct IpoCurve;
+struct Ipo;
+struct KeyBlock;
+struct Key;
+struct TextLine;
+struct TextMarker;
+struct Text;
+struct PackedFile;
+struct Camera;
+struct ImageUser;
+struct Image;
+struct MTex;
+struct PluginTex;
+struct CBData;
+struct ColorBand;
+struct EnvMap;
+struct PointDensity;
+struct VoxelData;
+struct Tex;
+struct TexMapping;
+struct Lamp;
+struct VolumeSettings;
+struct Material;
+struct VFont;
+struct MetaElem;
+struct MetaBall;
+struct BezTriple;
+struct BPoint;
+struct Nurb;
+struct CharInfo;
+struct TextBox;
+struct EditNurb;
+struct Curve;
+struct Mesh;
+struct TFace;
+struct MFace;
+struct MEdge;
+struct MDeformWeight;
+struct MDeformVert;
+struct MVert;
+struct MCol;
+struct MTexPoly;
+struct MLoopUV;
+struct MLoopCol;
+struct MSticky;
+struct MSelect;
+struct MTFace;
+struct MFloatProperty;
+struct MIntProperty;
+struct MStringProperty;
+struct OrigSpaceFace;
+struct MDisps;
+struct MultiresCol;
+struct MultiresColFace;
+struct MultiresFace;
+struct MultiresEdge;
+struct MultiresLevel;
+struct Multires;
+struct PartialVisibility;
+struct ModifierData;
+struct SubsurfModifierData;
+struct LatticeModifierData;
+struct CurveModifierData;
+struct BuildModifierData;
+struct MaskModifierData;
+struct ArrayModifierData;
+struct MirrorModifierData;
+struct EdgeSplitModifierData;
+struct BevelModifierData;
+struct BMeshModifierData;
+struct SmokeModifierData;
+struct DisplaceModifierData;
+struct UVProjectModifierData;
+struct DecimateModifierData;
+struct SmoothModifierData;
+struct CastModifierData;
+struct WaveModifierData;
+struct ArmatureModifierData;
+struct HookModifierData;
+struct SoftbodyModifierData;
+struct ClothModifierData;
+struct CollisionModifierData;
+struct SurfaceModifierData;
+struct BooleanModifierData;
+struct MDefInfluence;
+struct MDefCell;
+struct MeshDeformModifierData;
+struct ParticleSystemModifierData;
+struct ParticleInstanceModifierData;
+struct ExplodeModifierData;
+struct MultiresModifierData;
+struct FluidsimModifierData;
+struct ShrinkwrapModifierData;
+struct SimpleDeformModifierData;
+struct ShapeKeyModifierData;
+struct SolidifyModifierData;
+struct ScrewModifierData;
+struct EditLatt;
+struct Lattice;
+struct bDeformGroup;
+struct BoundBox;
+struct Object;
+struct ObHook;
+struct DupliObject;
+struct PartDeflect;
+struct EffectorWeights;
+struct PTCacheExtra;
+struct PTCacheMem;
+struct PointCache;
+struct SBVertex;
+struct BulletSoftBody;
+struct SoftBody;
+struct FluidsimSettings;
+struct World;
+struct Base;
+struct AviCodecData;
+struct QuicktimeCodecData;
+struct QuicktimeCodecSettings;
+struct FFMpegCodecData;
+struct AudioData;
+struct SceneRenderLayer;
+struct RenderData;
+struct RenderProfile;
+struct GameDome;
+struct GameFraming;
+struct GameData;
+struct TimeMarker;
+struct Paint;
+struct ImagePaintSettings;
+struct ParticleBrushData;
+struct ParticleEditSettings;
+struct TransformOrientation;
+struct Sculpt;
+struct VPaint;
+struct ToolSettings;
+struct bStats;
+struct UnitSettings;
+struct PhysicsSettings;
+struct Scene;
+struct BGpic;
+struct RegionView3D;
+struct View3D;
+struct View2D;
+struct SpaceLink;
+struct SpaceInfo;
+struct SpaceIpo;
+struct SpaceButs;
+struct SpaceSeq;
+struct FileSelectParams;
+struct SpaceFile;
+struct SpaceOops;
+struct SpaceImage;
+struct SpaceNla;
+struct SpaceText;
+struct Script;
+struct SpaceScript;
+struct SpaceTimeCache;
+struct SpaceTime;
+struct SpaceNode;
+struct SpaceLogic;
+struct SpaceImaSel;
+struct ConsoleLine;
+struct SpaceConsole;
+struct SpaceUserPref;
+struct SpaceSound;
+struct uiFont;
+struct uiFontStyle;
+struct uiStyle;
+struct uiWidgetColors;
+struct uiWidgetStateColors;
+struct ThemeUI;
+struct ThemeSpace;
+struct ThemeWireColor;
+struct bTheme;
+struct bAddon;
+struct SolidLight;
+struct UserDef;
+struct bScreen;
+struct ScrVert;
+struct ScrEdge;
+struct Panel;
+struct ScrArea;
+struct ARegion;
+struct FileGlobal;
+struct StripElem;
+struct StripCrop;
+struct StripTransform;
+struct StripColorBalance;
+struct StripProxy;
+struct Strip;
+struct PluginSeq;
+struct Sequence;
+struct MetaStack;
+struct Editing;
+struct WipeVars;
+struct GlowVars;
+struct TransformVars;
+struct SolidColorVars;
+struct SpeedControlVars;
+struct Effect;
+struct BuildEff;
+struct PartEff;
+struct WaveEff;
+struct TreeStoreElem;
+struct TreeStore;
+struct bProperty;
+struct bNearSensor;
+struct bMouseSensor;
+struct bTouchSensor;
+struct bKeyboardSensor;
+struct bPropertySensor;
+struct bActuatorSensor;
+struct bDelaySensor;
+struct bCollisionSensor;
+struct bRadarSensor;
+struct bRandomSensor;
+struct bRaySensor;
+struct bArmatureSensor;
+struct bMessageSensor;
+struct bSensor;
+struct bJoystickSensor;
+struct bExpressionCont;
+struct bPythonCont;
+struct bController;
+struct bAddObjectActuator;
+struct bActionActuator;
+struct Sound3D;
+struct bSoundActuator;
+struct bEditObjectActuator;
+struct bSceneActuator;
+struct bPropertyActuator;
+struct bObjectActuator;
+struct bIpoActuator;
+struct bCameraActuator;
+struct bConstraintActuator;
+struct bGroupActuator;
+struct bRandomActuator;
+struct bMessageActuator;
+struct bGameActuator;
+struct bVisibilityActuator;
+struct bTwoDFilterActuator;
+struct bParentActuator;
+struct bStateActuator;
+struct bArmatureActuator;
+struct bActuator;
+struct bSound;
+struct GroupObject;
+struct Group;
+struct Bone;
+struct bArmature;
+struct bMotionPathVert;
+struct bMotionPath;
+struct bAnimVizSettings;
+struct bPoseChannel;
+struct bPose;
+struct bIKParam;
+struct bItasc;
+struct bActionGroup;
+struct bAction;
+struct bDopeSheet;
+struct SpaceAction;
+struct bActionChannel;
+struct bConstraintChannel;
+struct bConstraint;
+struct bConstraintTarget;
+struct bPythonConstraint;
+struct bKinematicConstraint;
+struct bSplineIKConstraint;
+struct bTrackToConstraint;
+struct bRotateLikeConstraint;
+struct bLocateLikeConstraint;
+struct bSizeLikeConstraint;
+struct bSameVolumeConstraint;
+struct bTransLikeConstraint;
+struct bMinMaxConstraint;
+struct bActionConstraint;
+struct bLockTrackConstraint;
+struct bDampTrackConstraint;
+struct bFollowPathConstraint;
+struct bStretchToConstraint;
+struct bRigidBodyJointConstraint;
+struct bClampToConstraint;
+struct bChildOfConstraint;
+struct bTransformConstraint;
+struct bPivotConstraint;
+struct bLocLimitConstraint;
+struct bRotLimitConstraint;
+struct bSizeLimitConstraint;
+struct bDistLimitConstraint;
+struct bShrinkwrapConstraint;
+struct bActionModifier;
+struct bActionStrip;
+struct bNodeStack;
+struct bNodeSocket;
+struct bNode;
+struct bNodeLink;
+struct bNodeTree;
+struct NodeImageAnim;
+struct NodeBlurData;
+struct NodeDBlurData;
+struct NodeBilateralBlurData;
+struct NodeHueSat;
+struct NodeImageFile;
+struct NodeChroma;
+struct NodeTwoXYs;
+struct NodeTwoFloats;
+struct NodeGeometry;
+struct NodeVertexCol;
+struct NodeDefocus;
+struct NodeScriptDict;
+struct NodeGlare;
+struct NodeTonemap;
+struct NodeLensDist;
+struct NodeColorBalance;
+struct NodeColorspill;
+struct TexNodeOutput;
+struct CurveMapPoint;
+struct CurveMap;
+struct CurveMapping;
+struct Histogram;
+struct Scopes;
+struct BrushClone;
+struct Brush;
+struct CustomDataLayer;
+struct CustomDataExternal;
+struct CustomData;
+struct HairKey;
+struct ParticleKey;
+struct BoidParticle;
+struct ChildParticle;
+struct ParticleTarget;
+struct ParticleDupliWeight;
+struct ParticleData;
+struct SPHFluidSettings;
+struct ParticleSettings;
+struct ParticleSystem;
+struct ClothSimSettings;
+struct ClothCollSettings;
+struct bGPDspoint;
+struct bGPDstroke;
+struct bGPDframe;
+struct bGPDlayer;
+struct bGPdata;
+struct ReportList;
+struct wmWindowManager;
+struct wmWindow;
+struct wmKeyMapItem;
+struct wmKeyMap;
+struct wmKeyConfig;
+struct wmOperator;
+struct FModifier;
+struct FMod_Generator;
+struct FMod_FunctionGenerator;
+struct FCM_EnvelopeData;
+struct FMod_Envelope;
+struct FMod_Cycles;
+struct FMod_Python;
+struct FMod_Limits;
+struct FMod_Noise;
+struct FMod_Stepped;
+struct DriverTarget;
+struct DriverVar;
+struct ChannelDriver;
+struct FPoint;
+struct FCurve;
+struct AnimMapPair;
+struct AnimMapper;
+struct NlaStrip;
+struct NlaTrack;
+struct KS_Path;
+struct KeyingSet;
+struct AnimOverride;
+struct AnimData;
+struct IdAdtTemplate;
+struct BoidRule;
+struct BoidRuleGoalAvoid;
+struct BoidRuleAvoidCollision;
+struct BoidRuleFollowLeader;
+struct BoidRuleAverageSpeed;
+struct BoidRuleFight;
+struct BoidData;
+struct BoidState;
+struct BoidSettings;
+struct SmokeDomainSettings;
+struct SmokeFlowSettings;
+struct SmokeCollSettings;
 
 
 
-class Link
+struct Link
 {
-public:
     Link *next;
     Link *prev;
 };
 
-class LinkData
+struct LinkData
 {
-public:
     LinkData *next;
     LinkData *prev;
     void *data;
 };
 
-class ListBase
+struct ListBase
 {
-public:
     void *first;
     void *last;
 };
 
-class vec2s
+struct vec2s
 {
-public:
     short x;
     short y;
 };
 
-class vec2f
+struct vec2f
 {
-public:
     float x;
     float y;
 };
 
-class vec2i
+struct rcti
 {
-public:
-    int x;
-    int y;
-};
-
-class vec2d
-{
-public:
-    double x;
-    double y;
-};
-
-class vec3i
-{
-public:
-    int x;
-    int y;
-    int z;
-};
-
-class vec3f
-{
-public:
-    float x;
-    float y;
-    float z;
-};
-
-class vec3d
-{
-public:
-    double x;
-    double y;
-    double z;
-};
-
-class vec4i
-{
-public:
-    int x;
-    int y;
-    int z;
-    int w;
-};
-
-class vec4f
-{
-public:
-    float x;
-    float y;
-    float z;
-    float w;
-};
-
-class vec4d
-{
-public:
-    double x;
-    double y;
-    double z;
-    double w;
-};
-
-class rcti
-{
-public:
     int xmin;
     int xmax;
     int ymin;
     int ymax;
 };
 
-class rctf
+struct rctf
 {
-public:
     float xmin;
     float xmax;
     float ymin;
     float ymax;
 };
 
-class ID
+struct ID
 {
-public:
     void *next;
     void *prev;
     ID *newid;
@@ -555,9 +480,8 @@ public:
     IDProperty *properties;
 };
 
-class PreviewImage
+struct PreviewImage
 {
-public:
     int w[2];
     int h[2];
     short changed[2];
@@ -565,9 +489,8 @@ public:
     int *rect[2];
 };
 
-class IpoDriver
+struct IpoDriver
 {
-public:
     Object *ob;
     short blocktype;
     short adrcode;
@@ -576,9 +499,8 @@ public:
     char name[128];
 };
 
-class KeyBlock
+struct KeyBlock
 {
-public:
     KeyBlock *next;
     KeyBlock *prev;
     float pos;
@@ -597,9 +519,8 @@ public:
     float slidermax;
 };
 
-class TextLine
+struct TextLine
 {
-public:
     TextLine *next;
     TextLine *prev;
     char *line;
@@ -608,9 +529,8 @@ public:
     int blen;
 };
 
-class TextMarker
+struct TextMarker
 {
-public:
     TextMarker *next;
     TextMarker *prev;
     int lineno;
@@ -623,35 +543,33 @@ public:
     char pad[4];
 };
 
-class PackedFile
+struct PackedFile
 {
-public:
     int size;
     int seek;
     void *data;
 };
 
-class ImageUser
+struct ImageUser
 {
-public:
+    Scene *scene;
     int framenr;
     int frames;
     int offset;
     int sfra;
-    short fie_ima;
-    short cycl;
-    short flag;
-    short ok;
+    char fie_ima;
+    char cycl;
+    char ok;
+    char pad;
     short multi_index;
     short layer;
     short pass;
-    short menunr;
-    Scene *scene;
+    short flag;
+    int pad2;
 };
 
-class MTex
+struct MTex
 {
-public:
     short texco;
     short mapto;
     short maptoneg;
@@ -717,9 +635,8 @@ public:
     float blendfac;
 };
 
-class PluginTex
+struct PluginTex
 {
-public:
     char name[160];
     void *handle;
     char *pname;
@@ -737,9 +654,8 @@ public:
     int pad;
 };
 
-class CBData
+struct CBData
 {
-public:
     float r;
     float g;
     float b;
@@ -748,9 +664,8 @@ public:
     int cur;
 };
 
-class EnvMap
+struct EnvMap
 {
-public:
     Object *object;
     Image *ima;
     void *cube[6];
@@ -770,9 +685,8 @@ public:
     short lastsize;
 };
 
-class PointDensity
+struct PointDensity
 {
-public:
     short flag;
     short falloff_type;
     float falloff_softness;
@@ -797,9 +711,8 @@ public:
     ColorBand *coba;
 };
 
-class VoxelData
+struct VoxelData
 {
-public:
     int resol[3];
     int interp_type;
     short file_format;
@@ -815,9 +728,8 @@ public:
     int ok;
 };
 
-class TexMapping
+struct TexMapping
 {
-public:
     float loc[3];
     float rot[3];
     float size[3];
@@ -828,9 +740,8 @@ public:
     Object *ob;
 };
 
-class VolumeSettings
+struct VolumeSettings
 {
-public:
     float density;
     float emission;
     float scattering;
@@ -851,9 +762,8 @@ public:
     float ms_spread;
 };
 
-class MetaElem
+struct MetaElem
 {
-public:
     MetaElem *next;
     MetaElem *prev;
     BoundBox *bb;
@@ -882,9 +792,8 @@ public:
     float *imat;
 };
 
-class BezTriple
+struct BezTriple
 {
-public:
     float vec[3][3];
     float alfa;
     float weight;
@@ -898,9 +807,8 @@ public:
     char hide;
 };
 
-class BPoint
+struct BPoint
 {
-public:
     float vec[4];
     float alfa;
     float weight;
@@ -910,9 +818,8 @@ public:
     float pad;
 };
 
-class Nurb
+struct Nurb
 {
-public:
     Nurb *next;
     Nurb *prev;
     short type;
@@ -936,9 +843,8 @@ public:
     int charidx;
 };
 
-class CharInfo
+struct CharInfo
 {
-public:
     short kern;
     short mat_nr;
     char flag;
@@ -946,18 +852,16 @@ public:
     short pad2;
 };
 
-class TextBox
+struct TextBox
 {
-public:
     float x;
     float y;
     float w;
     float h;
 };
 
-class TFace
+struct TFace
 {
-public:
     void *tpage;
     float uv[4][2];
     int col[4];
@@ -968,9 +872,8 @@ public:
     short unwrap;
 };
 
-class MFace
+struct MFace
 {
-public:
     int v1;
     int v2;
     int v3;
@@ -980,9 +883,8 @@ public:
     char flag;
 };
 
-class MEdge
+struct MEdge
 {
-public:
     int v1;
     int v2;
     char crease;
@@ -990,24 +892,21 @@ public:
     short flag;
 };
 
-class MDeformWeight
+struct MDeformWeight
 {
-public:
     int def_nr;
     float weight;
 };
 
-class MDeformVert
+struct MDeformVert
 {
-public:
     MDeformWeight *dw;
     int totweight;
     int flag;
 };
 
-class MVert
+struct MVert
 {
-public:
     float co[3];
     short no[3];
     short mat_nr;
@@ -1016,18 +915,16 @@ public:
     char pad[2];
 };
 
-class MCol
+struct MCol
 {
-public:
     char a;
     char r;
     char g;
     char b;
 };
 
-class MTexPoly
+struct MTexPoly
 {
-public:
     Image *tpage;
     char flag;
     char transp;
@@ -1036,15 +933,13 @@ public:
     short unwrap;
 };
 
-class MLoopUV
+struct MLoopUV
 {
-public:
     float uv[2];
 };
 
-class MLoopCol
+struct MLoopCol
 {
-public:
     char a;
     char r;
     char g;
@@ -1052,22 +947,19 @@ public:
     int pad;
 };
 
-class MSticky
+struct MSticky
 {
-public:
     float co[2];
 };
 
-class MSelect
+struct MSelect
 {
-public:
     int index;
     int type;
 };
 
-class MTFace
+struct MTFace
 {
-public:
     float uv[4][2];
     Image *tpage;
     char flag;
@@ -1077,50 +969,43 @@ public:
     short unwrap;
 };
 
-class MFloatProperty
+struct MFloatProperty
 {
-public:
     float f;
 };
 
-class MIntProperty
+struct MIntProperty
 {
-public:
     int i;
 };
 
-class MStringProperty
+struct MStringProperty
 {
-public:
     char s[256];
 };
 
-class OrigSpaceFace
+struct OrigSpaceFace
 {
-public:
     float uv[4][2];
 };
 
-class MDisps
+struct MDisps
 {
-public:
     int totdisp;
     char pad[4];
     float (*disps)();
 };
 
-class MultiresCol
+struct MultiresCol
 {
-public:
     float a;
     float r;
     float g;
     float b;
 };
 
-class MultiresFace
+struct MultiresFace
 {
-public:
     int v[4];
     int mid;
     char flag;
@@ -1128,16 +1013,14 @@ public:
     char pad[2];
 };
 
-class MultiresEdge
+struct MultiresEdge
 {
-public:
     int v[2];
     int mid;
 };
 
-class MultiresLevel
+struct MultiresLevel
 {
-public:
     MultiresLevel *next;
     MultiresLevel *prev;
     MultiresFace *faces;
@@ -1150,9 +1033,8 @@ public:
     MVert *verts;
 };
 
-class PartialVisibility
+struct PartialVisibility
 {
-public:
     int *vert_map;
     int *edge_map;
     MFace *old_faces;
@@ -1163,9 +1045,8 @@ public:
     int pad;
 };
 
-class ModifierData
+struct ModifierData
 {
-public:
     ModifierData *next;
     ModifierData *prev;
     int type;
@@ -1177,39 +1058,41 @@ public:
     char *error;
 };
 
-class MDefInfluence
+struct MDefInfluence
 {
-public:
     int vertex;
     float weight;
 };
 
-class MDefCell
+struct MDefCell
 {
-public:
     int offset;
     int totinfluence;
 };
 
-class bDeformGroup
+struct EditLatt
 {
-public:
+    Lattice *latt;
+    int shapenr;
+    char pad[4];
+};
+
+struct bDeformGroup
+{
     bDeformGroup *next;
     bDeformGroup *prev;
     char name[32];
 };
 
-class BoundBox
+struct BoundBox
 {
-public:
     float vec[8][3];
     int flag;
     int pad;
 };
 
-class ObHook
+struct ObHook
 {
-public:
     ObHook *next;
     ObHook *prev;
     Object *parent;
@@ -1226,9 +1109,8 @@ public:
     float force;
 };
 
-class DupliObject
+struct DupliObject
 {
-public:
     DupliObject *next;
     DupliObject *prev;
     Object *ob;
@@ -1243,9 +1125,8 @@ public:
     float uv[2];
 };
 
-class PartDeflect
+struct PartDeflect
 {
-public:
     int flag;
     short deflect;
     short forcefield;
@@ -1288,9 +1169,8 @@ public:
     int seed;
 };
 
-class EffectorWeights
+struct EffectorWeights
 {
-public:
     Group *group;
     float weight[13];
     float global_gravity;
@@ -1298,29 +1178,24 @@ public:
     short rt[3];
 };
 
-class PTCacheMem
+struct PTCacheExtra
 {
-public:
-    PTCacheMem *next;
-    PTCacheMem *prev;
-    int frame;
-    int totpoint;
-    int data_types;
+    PTCacheExtra *next;
+    PTCacheExtra *prev;
+    int type;
     int flag;
-    int *index_array;
-    void *data[8];
-    void *cur[8];
+    int totdata;
+    int datasize;
+    void *data;
 };
 
-class SBVertex
+struct SBVertex
 {
-public:
     float vec[4];
 };
 
-class BulletSoftBody
+struct BulletSoftBody
 {
-public:
     int flag;
     float linStiff;
     float angStiff;
@@ -1353,9 +1228,8 @@ public:
     float margin;
 };
 
-class FluidsimSettings
+struct FluidsimSettings
 {
-public:
     FluidsimModifierData *fmd;
     short type;
     short show_advancedoptions;
@@ -1409,9 +1283,8 @@ public:
     int lastgoodframe;
 };
 
-class Base
+struct Base
 {
-public:
     Base *next;
     Base *prev;
     int lay;
@@ -1422,9 +1295,8 @@ public:
     Object *object;
 };
 
-class AviCodecData
+struct AviCodecData
 {
-public:
     void *lpFormat;
     void *lpParms;
     int cbFormat;
@@ -1440,9 +1312,8 @@ public:
     char avicodecname[128];
 };
 
-class QuicktimeCodecData
+struct QuicktimeCodecData
 {
-public:
     void *cdParms;
     void *pad;
     int cdSize;
@@ -1450,9 +1321,8 @@ public:
     char qtcodecname[128];
 };
 
-class QuicktimeCodecSettings
+struct QuicktimeCodecSettings
 {
-public:
     int codecType;
     int codecSpatialQuality;
     int codec;
@@ -1472,9 +1342,8 @@ public:
     int pad1;
 };
 
-class FFMpegCodecData
+struct FFMpegCodecData
 {
-public:
     int type;
     int codec;
     int audio_codec;
@@ -1492,9 +1361,8 @@ public:
     IDProperty *properties;
 };
 
-class AudioData
+struct AudioData
 {
-public:
     int mixrate;
     float main;
     float speed_of_sound;
@@ -1504,9 +1372,8 @@ public:
     short pad;
 };
 
-class SceneRenderLayer
+struct SceneRenderLayer
 {
-public:
     SceneRenderLayer *next;
     SceneRenderLayer *prev;
     char name[32];
@@ -1520,9 +1387,8 @@ public:
     int pass_xor;
 };
 
-class RenderProfile
+struct RenderProfile
 {
-public:
     RenderProfile *next;
     RenderProfile *prev;
     char name[32];
@@ -1534,9 +1400,8 @@ public:
     float pad2;
 };
 
-class GameDome
+struct GameDome
 {
-public:
     short res;
     short mode;
     short angle;
@@ -1546,9 +1411,8 @@ public:
     Text *warptext;
 };
 
-class GameFraming
+struct GameFraming
 {
-public:
     float col[3];
     char type;
     char pad1;
@@ -1556,9 +1420,8 @@ public:
     char pad3;
 };
 
-class TimeMarker
+struct TimeMarker
 {
-public:
     TimeMarker *next;
     TimeMarker *prev;
     int frame;
@@ -1567,20 +1430,16 @@ public:
     Object *camera;
 };
 
-class Paint
+struct Paint
 {
-public:
-    Brush **brushes;
-    int active_brush_index;
-    int brush_count;
+    Brush *brush;
     void *paint_cursor;
     char paint_cursor_col[4];
     int flags;
 };
 
-class ParticleBrushData
+struct ParticleBrushData
 {
-public:
     short size;
     short step;
     short invert;
@@ -1589,18 +1448,16 @@ public:
     float strength;
 };
 
-class TransformOrientation
+struct TransformOrientation
 {
-public:
     TransformOrientation *next;
     TransformOrientation *prev;
     char name[36];
     float mat[3][3];
 };
 
-class bStats
+struct bStats
 {
-public:
     int totobj;
     int totlamp;
     int totobjsel;
@@ -1611,26 +1468,24 @@ public:
     int totface;
 };
 
-class UnitSettings
+struct UnitSettings
 {
-public:
     float scale_length;
-    short system;
+    char system;
+    char system_rotation;
     short flag;
 };
 
-class PhysicsSettings
+struct PhysicsSettings
 {
-public:
     float gravity[3];
     int flag;
     int quick_cache_step;
     int rt;
 };
 
-class RegionView3D
+struct RegionView3D
 {
-public:
     float winmat[4][4];
     float viewmat[4][4];
     float viewinv[4][4];
@@ -1647,9 +1502,8 @@ public:
     float pixsize;
     float ofs[3];
     short camzoom;
-    short viewbut;
     short twdrawflag;
-    short pad;
+    int pad;
     short rflag;
     short viewlock;
     short persp;
@@ -1672,13 +1526,14 @@ public:
     float padf;
 };
 
-class FileSelectParams
+struct FileSelectParams
 {
-public:
-    char title[24];
+    char title[32];
     char dir[240];
     char file[80];
     char renamefile[80];
+    char renameedit[80];
+    char filter_glob[64];
     short type;
     short flag;
     short sort;
@@ -1692,23 +1547,15 @@ public:
     char fp_str[8];
 };
 
-class SpaceTimeCache
+struct SpaceTimeCache
 {
-public:
     SpaceTimeCache *next;
     SpaceTimeCache *prev;
-    int type;
-    int flag;
     float *array;
-    int len;
-    int startframe;
-    int endframe;
-    int ok;
 };
 
-class ConsoleLine
+struct ConsoleLine
 {
-public:
     ConsoleLine *next;
     ConsoleLine *prev;
     int len_alloc;
@@ -1718,9 +1565,8 @@ public:
     int type;
 };
 
-class uiFont
+struct uiFont
 {
-public:
     uiFont *next;
     uiFont *prev;
     char filename[256];
@@ -1730,9 +1576,8 @@ public:
     short pad;
 };
 
-class uiFontStyle
+struct uiFontStyle
 {
-public:
     short uifont_id;
     short points;
     short kerning;
@@ -1747,9 +1592,8 @@ public:
     float shadowcolor;
 };
 
-class uiWidgetColors
+struct uiWidgetColors
 {
-public:
     char outline[4];
     char inner[4];
     char inner_sel[4];
@@ -1762,9 +1606,8 @@ public:
     short alpha_check;
 };
 
-class uiWidgetStateColors
+struct uiWidgetStateColors
 {
-public:
     char inner_anim[4];
     char inner_anim_sel[4];
     char inner_key[4];
@@ -1775,9 +1618,8 @@ public:
     float pad;
 };
 
-class ThemeSpace
+struct ThemeSpace
 {
-public:
     char back[4];
     char title[4];
     char text[4];
@@ -1820,6 +1662,10 @@ public:
     char face[4];
     char face_select[4];
     char face_dot[4];
+    char extra_edge_len[4];
+    char extra_face_angle[4];
+    char extra_face_area[4];
+    char pad3[4];
     char normal[4];
     char vertex_normal[4];
     char bone_solid[4];
@@ -1872,9 +1718,8 @@ public:
     char preview_back[4];
 };
 
-class ThemeWireColor
+struct ThemeWireColor
 {
-public:
     char solid[4];
     char select[4];
     char active[4];
@@ -1882,17 +1727,15 @@ public:
     short pad;
 };
 
-class bAddon
+struct bAddon
 {
-public:
     bAddon *next;
     bAddon *prev;
     char module[64];
 };
 
-class SolidLight
+struct SolidLight
 {
-public:
     int flag;
     int pad;
     float col[4];
@@ -1900,9 +1743,8 @@ public:
     float vec[4];
 };
 
-class ScrEdge
+struct ScrEdge
 {
-public:
     ScrEdge *next;
     ScrEdge *prev;
     ScrVert *v1;
@@ -1912,9 +1754,8 @@ public:
     int pad;
 };
 
-class Panel
+struct Panel
 {
-public:
     Panel *next;
     Panel *prev;
     void *type;
@@ -1942,9 +1783,8 @@ public:
     char list_search[64];
 };
 
-class FileGlobal
+struct FileGlobal
 {
-public:
     char subvstr[4];
     short subversion;
     short pads;
@@ -1956,47 +1796,34 @@ public:
     Scene *curscene;
     int fileflags;
     int globalf;
+    int revision;
+    int pad;
     char filename[240];
 };
 
-class StripElem
+struct StripElem
 {
-public:
     char name[80];
+    int orig_width;
+    int orig_height;
 };
 
-class TStripElem
+struct StripCrop
 {
-public:
-    void *ibuf;
-    void *ibuf_comp;
-    TStripElem *se1;
-    TStripElem *se2;
-    TStripElem *se3;
-    short ok;
-    short flag;
-    int nr;
-};
-
-class StripCrop
-{
-public:
     int top;
     int bottom;
     int left;
     int right;
 };
 
-class StripTransform
+struct StripTransform
 {
-public:
     int xofs;
     int yofs;
 };
 
-class StripColorBalance
+struct StripColorBalance
 {
-public:
     float lift[3];
     float gamma[3];
     float gain[3];
@@ -2004,9 +1831,8 @@ public:
     int pad;
 };
 
-class StripProxy
+struct StripProxy
 {
-public:
     char dir[160];
     char file[80];
     void *anim;
@@ -2015,9 +1841,8 @@ public:
     int pad;
 };
 
-class Strip
+struct Strip
 {
-public:
     Strip *next;
     Strip *prev;
     int rt;
@@ -2028,22 +1853,14 @@ public:
     int endstill;
     StripElem *stripdata;
     char dir[160];
-    int orx;
-    int ory;
     StripProxy *proxy;
     StripCrop *crop;
     StripTransform *transform;
     StripColorBalance *color_balance;
-    TStripElem *tstripdata;
-    TStripElem *tstripdata_startstill;
-    TStripElem *tstripdata_endstill;
-    void *ibuf_startstill;
-    void *ibuf_endstill;
 };
 
-class PluginSeq
+struct PluginSeq
 {
-public:
     char name[256];
     void *handle;
     char *pname;
@@ -2058,27 +1875,24 @@ public:
     void (*callback)();
 };
 
-class MetaStack
+struct MetaStack
 {
-public:
     MetaStack *next;
     MetaStack *prev;
     ListBase *oldbasep;
     Sequence *parseq;
 };
 
-class WipeVars
+struct WipeVars
 {
-public:
     float edgeWidth;
     float angle;
     short forward;
     short wipetype;
 };
 
-class GlowVars
+struct GlowVars
 {
-public:
     float fMini;
     float fClamp;
     float fBoost;
@@ -2087,9 +1901,8 @@ public:
     int bNoComp;
 };
 
-class TransformVars
+struct TransformVars
 {
-public:
     float ScalexIni;
     float ScaleyIni;
     float ScalexFin;
@@ -2105,16 +1918,14 @@ public:
     int uniform_scale;
 };
 
-class SolidColorVars
+struct SolidColorVars
 {
-public:
     float col[3];
     float pad;
 };
 
-class SpeedControlVars
+struct SpeedControlVars
 {
-public:
     float *frameMap;
     float globalSpeed;
     int flags;
@@ -2122,9 +1933,8 @@ public:
     int lastValidFrame;
 };
 
-class Effect
+struct Effect
 {
-public:
     Effect *next;
     Effect *prev;
     short type;
@@ -2133,9 +1943,8 @@ public:
     short rt;
 };
 
-class BuildEff
+struct BuildEff
 {
-public:
     BuildEff *next;
     BuildEff *prev;
     short type;
@@ -2146,9 +1955,8 @@ public:
     float sfra;
 };
 
-class PartEff
+struct PartEff
 {
-public:
     PartEff *next;
     PartEff *prev;
     short type;
@@ -2196,9 +2004,8 @@ public:
     Group *group;
 };
 
-class WaveEff
+struct WaveEff
 {
-public:
     WaveEff *next;
     WaveEff *prev;
     short type;
@@ -2217,9 +2024,8 @@ public:
     float lifetime;
 };
 
-class TreeStoreElem
+struct TreeStoreElem
 {
-public:
     short type;
     short nr;
     short flag;
@@ -2227,17 +2033,15 @@ public:
     ID *id;
 };
 
-class TreeStore
+struct TreeStore
 {
-public:
     int totelem;
     int usedelem;
     TreeStoreElem *data;
 };
 
-class bProperty
+struct bProperty
 {
-public:
     bProperty *next;
     bProperty *prev;
     char name[32];
@@ -2247,9 +2051,8 @@ public:
     void *poin;
 };
 
-class bNearSensor
+struct bNearSensor
 {
-public:
     char name[32];
     float dist;
     float resetdist;
@@ -2257,27 +2060,24 @@ public:
     int pad;
 };
 
-class bMouseSensor
+struct bMouseSensor
 {
-public:
     short type;
     short flag;
     short pad1;
     short pad2;
 };
 
-class bTouchSensor
+struct bTouchSensor
 {
-public:
     char name[32];
     Material *ma;
     float dist;
     float pad;
 };
 
-class bKeyboardSensor
+struct bKeyboardSensor
 {
-public:
     short key;
     short qual;
     short type;
@@ -2286,9 +2086,8 @@ public:
     char toggleName[32];
 };
 
-class bPropertySensor
+struct bPropertySensor
 {
-public:
     int type;
     int pad;
     char name[32];
@@ -2296,26 +2095,23 @@ public:
     char maxvalue[32];
 };
 
-class bActuatorSensor
+struct bActuatorSensor
 {
-public:
     int type;
     int pad;
     char name[32];
 };
 
-class bDelaySensor
+struct bDelaySensor
 {
-public:
     short delay;
     short duration;
     short flag;
     short pad;
 };
 
-class bCollisionSensor
+struct bCollisionSensor
 {
-public:
     char name[32];
     char materialName[32];
     short damptimer;
@@ -2324,9 +2120,8 @@ public:
     short pad2;
 };
 
-class bRadarSensor
+struct bRadarSensor
 {
-public:
     char name[32];
     float angle;
     float range;
@@ -2334,17 +2129,15 @@ public:
     short axis;
 };
 
-class bRandomSensor
+struct bRandomSensor
 {
-public:
     char name[32];
     int seed;
     int delay;
 };
 
-class bRaySensor
+struct bRaySensor
 {
-public:
     char name[32];
     float range;
     char propname[32];
@@ -2354,26 +2147,23 @@ public:
     int axisflag;
 };
 
-class bArmatureSensor
+struct bArmatureSensor
 {
-public:
     char posechannel[32];
     char constraint[32];
     int type;
     float value;
 };
 
-class bMessageSensor
+struct bMessageSensor
 {
-public:
     Object *fromObject;
     char subject[32];
     char body[32];
 };
 
-class bSensor
+struct bSensor
 {
-public:
     bSensor *next;
     bSensor *prev;
     short type;
@@ -2394,9 +2184,8 @@ public:
     short pad;
 };
 
-class bJoystickSensor
+struct bJoystickSensor
 {
-public:
     char name[32];
     char type;
     char joyindex;
@@ -2410,24 +2199,21 @@ public:
     int precision;
 };
 
-class bExpressionCont
+struct bExpressionCont
 {
-public:
     char str[128];
 };
 
-class bPythonCont
+struct bPythonCont
 {
-public:
     Text *text;
     char module[64];
     int mode;
     int flag;
 };
 
-class bController
+struct bController
 {
-public:
     bController *next;
     bController *prev;
     bController *mynew;
@@ -2448,17 +2234,15 @@ public:
     int state_mask;
 };
 
-class bAddObjectActuator
+struct bAddObjectActuator
 {
-public:
     int time;
     int pad;
     Object *ob;
 };
 
-class bActionActuator
+struct bActionActuator
 {
-public:
     bAction *act;
     short type;
     short flag;
@@ -2473,9 +2257,20 @@ public:
     float stridelength;
 };
 
-class bEditObjectActuator
+struct Sound3D
 {
-public:
+    float min_gain;
+    float max_gain;
+    float reference_distance;
+    float max_distance;
+    float rolloff_factor;
+    float cone_inner_angle;
+    float cone_outer_angle;
+    float cone_outer_gain;
+};
+
+struct bEditObjectActuator
+{
     int time;
     short type;
     short flag;
@@ -2489,9 +2284,8 @@ public:
     short dyn_operation;
 };
 
-class bSceneActuator
+struct bSceneActuator
 {
-public:
     short type;
     short pad1;
     int pad;
@@ -2499,9 +2293,8 @@ public:
     Object *camera;
 };
 
-class bPropertyActuator
+struct bPropertyActuator
 {
-public:
     int pad;
     int type;
     char name[32];
@@ -2509,9 +2302,8 @@ public:
     Object *ob;
 };
 
-class bObjectActuator
+struct bObjectActuator
 {
-public:
     short flag;
     short type;
     short otype;
@@ -2527,9 +2319,8 @@ public:
     Object *reference;
 };
 
-class bIpoActuator
+struct bIpoActuator
 {
-public:
     short flag;
     short type;
     int sta;
@@ -2542,9 +2333,8 @@ public:
     short pad4;
 };
 
-class bCameraActuator
+struct bCameraActuator
 {
-public:
     Object *ob;
     float height;
     float min;
@@ -2555,9 +2345,8 @@ public:
     float pad2;
 };
 
-class bConstraintActuator
+struct bConstraintActuator
 {
-public:
     short type;
     short mode;
     short flag;
@@ -2572,9 +2361,8 @@ public:
     char matprop[32];
 };
 
-class bGroupActuator
+struct bGroupActuator
 {
-public:
     short flag;
     short type;
     int sta;
@@ -2586,9 +2374,8 @@ public:
     short butend;
 };
 
-class bRandomActuator
+struct bRandomActuator
 {
-public:
     int seed;
     int distribution;
     int int_arg_1;
@@ -2598,9 +2385,8 @@ public:
     char propname[32];
 };
 
-class bMessageActuator
+struct bMessageActuator
 {
-public:
     char toPropName[32];
     Object *toObject;
     char subject[32];
@@ -2610,9 +2396,8 @@ public:
     char body[32];
 };
 
-class bGameActuator
+struct bGameActuator
 {
-public:
     short flag;
     short type;
     int sta;
@@ -2621,15 +2406,13 @@ public:
     char loadaniname[64];
 };
 
-class bVisibilityActuator
+struct bVisibilityActuator
 {
-public:
     int flag;
 };
 
-class bTwoDFilterActuator
+struct bTwoDFilterActuator
 {
-public:
     char pad[4];
     short type;
     short flag;
@@ -2638,25 +2421,22 @@ public:
     Text *text;
 };
 
-class bParentActuator
+struct bParentActuator
 {
-public:
     char pad[2];
     short flag;
     int type;
     Object *ob;
 };
 
-class bStateActuator
+struct bStateActuator
 {
-public:
     int type;
     int mask;
 };
 
-class bArmatureActuator
+struct bArmatureActuator
 {
-public:
     char posechannel[32];
     char constraint[32];
     int type;
@@ -2665,9 +2445,8 @@ public:
     Object *subtarget;
 };
 
-class bActuator
+struct bActuator
 {
-public:
     bActuator *next;
     bActuator *prev;
     bActuator *mynew;
@@ -2680,22 +2459,8 @@ public:
     Object *ob;
 };
 
-class Sound3D
+struct GroupObject
 {
-public:
-    float min_gain;
-    float max_gain;
-    float reference_distance;
-    float max_distance;
-    float rolloff_factor;
-    float cone_inner_angle;
-    float cone_outer_angle;
-    float cone_outer_gain;
-};
-
-class GroupObject
-{
-public:
     GroupObject *next;
     GroupObject *prev;
     Object *ob;
@@ -2704,16 +2469,14 @@ public:
     int pad;
 };
 
-class bMotionPathVert
+struct bMotionPathVert
 {
-public:
     float co[3];
     int flag;
 };
 
-class bMotionPath
+struct bMotionPath
 {
-public:
     bMotionPathVert *points;
     int length;
     int start_frame;
@@ -2721,9 +2484,8 @@ public:
     int flag;
 };
 
-class bAnimVizSettings
+struct bAnimVizSettings
 {
-public:
     int ghost_sf;
     int ghost_ef;
     int ghost_bc;
@@ -2742,15 +2504,13 @@ public:
     int path_ac;
 };
 
-class bIKParam
+struct bIKParam
 {
-public:
     int iksolver;
 };
 
-class bItasc
+struct bItasc
 {
-public:
     int iksolver;
     float precision;
     short numiter;
@@ -2765,9 +2525,8 @@ public:
     float dampeps;
 };
 
-class bConstraintChannel
+struct bConstraintChannel
 {
-public:
     bConstraintChannel *next;
     bConstraintChannel *prev;
     Ipo *ipo;
@@ -2775,9 +2534,8 @@ public:
     char name[30];
 };
 
-class bConstraint
+struct bConstraint
 {
-public:
     bConstraint *next;
     bConstraint *prev;
     void *data;
@@ -2794,9 +2552,8 @@ public:
     float rot_error;
 };
 
-class bConstraintTarget
+struct bConstraintTarget
 {
-public:
     bConstraintTarget *next;
     bConstraintTarget *prev;
     Object *tar;
@@ -2808,9 +2565,8 @@ public:
     short rotOrder;
 };
 
-class bKinematicConstraint
+struct bKinematicConstraint
 {
-public:
     Object *tar;
     short iterations;
     short flag;
@@ -2828,9 +2584,8 @@ public:
     float dist;
 };
 
-class bSplineIKConstraint
+struct bSplineIKConstraint
 {
-public:
     Object *tar;
     float *points;
     short numpoints;
@@ -2839,9 +2594,8 @@ public:
     short xzScaleMode;
 };
 
-class bTrackToConstraint
+struct bTrackToConstraint
 {
-public:
     Object *tar;
     int reserved1;
     int reserved2;
@@ -2850,50 +2604,44 @@ public:
     char subtarget[32];
 };
 
-class bRotateLikeConstraint
+struct bRotateLikeConstraint
 {
-public:
     Object *tar;
     int flag;
     int reserved1;
     char subtarget[32];
 };
 
-class bLocateLikeConstraint
+struct bLocateLikeConstraint
 {
-public:
     Object *tar;
     int flag;
     int reserved1;
     char subtarget[32];
 };
 
-class bSizeLikeConstraint
+struct bSizeLikeConstraint
 {
-public:
     Object *tar;
     int flag;
     int reserved1;
     char subtarget[32];
 };
 
-class bSameVolumeConstraint
+struct bSameVolumeConstraint
 {
-public:
     int flag;
     float volume;
 };
 
-class bTransLikeConstraint
+struct bTransLikeConstraint
 {
-public:
     Object *tar;
     char subtarget[32];
 };
 
-class bMinMaxConstraint
+struct bMinMaxConstraint
 {
-public:
     Object *tar;
     int minmaxflag;
     float offset;
@@ -2906,9 +2654,8 @@ public:
     char subtarget[32];
 };
 
-class bActionConstraint
+struct bActionConstraint
 {
-public:
     Object *tar;
     short type;
     short local;
@@ -2921,27 +2668,24 @@ public:
     char subtarget[32];
 };
 
-class bLockTrackConstraint
+struct bLockTrackConstraint
 {
-public:
     Object *tar;
     int trackflag;
     int lockflag;
     char subtarget[32];
 };
 
-class bDampTrackConstraint
+struct bDampTrackConstraint
 {
-public:
     Object *tar;
     int trackflag;
     int pad;
     char subtarget[32];
 };
 
-class bFollowPathConstraint
+struct bFollowPathConstraint
 {
-public:
     Object *tar;
     float offset;
     float offset_fac;
@@ -2950,9 +2694,8 @@ public:
     short upflag;
 };
 
-class bStretchToConstraint
+struct bStretchToConstraint
 {
-public:
     Object *tar;
     int volmode;
     int plane;
@@ -2961,9 +2704,8 @@ public:
     char subtarget[32];
 };
 
-class bRigidBodyJointConstraint
+struct bRigidBodyJointConstraint
 {
-public:
     Object *tar;
     Object *child;
     int type;
@@ -2982,17 +2724,15 @@ public:
     short pad2;
 };
 
-class bClampToConstraint
+struct bClampToConstraint
 {
-public:
     Object *tar;
     int flag;
     int flag2;
 };
 
-class bChildOfConstraint
+struct bChildOfConstraint
 {
-public:
     Object *tar;
     int flag;
     int pad;
@@ -3000,9 +2740,8 @@ public:
     char subtarget[32];
 };
 
-class bTransformConstraint
+struct bTransformConstraint
 {
-public:
     Object *tar;
     char subtarget[32];
     short from;
@@ -3015,9 +2754,8 @@ public:
     float to_max[3];
 };
 
-class bPivotConstraint
+struct bPivotConstraint
 {
-public:
     Object *tar;
     char subtarget[32];
     float offset[3];
@@ -3025,9 +2763,8 @@ public:
     short flag;
 };
 
-class bLocLimitConstraint
+struct bLocLimitConstraint
 {
-public:
     float xmin;
     float xmax;
     float ymin;
@@ -3038,9 +2775,8 @@ public:
     short flag2;
 };
 
-class bRotLimitConstraint
+struct bRotLimitConstraint
 {
-public:
     float xmin;
     float xmax;
     float ymin;
@@ -3051,9 +2787,8 @@ public:
     short flag2;
 };
 
-class bSizeLimitConstraint
+struct bSizeLimitConstraint
 {
-public:
     float xmin;
     float xmax;
     float ymin;
@@ -3064,9 +2799,8 @@ public:
     short flag2;
 };
 
-class bDistLimitConstraint
+struct bDistLimitConstraint
 {
-public:
     Object *tar;
     char subtarget[32];
     float dist;
@@ -3076,9 +2810,8 @@ public:
     int pad;
 };
 
-class bShrinkwrapConstraint
+struct bShrinkwrapConstraint
 {
-public:
     Object *target;
     float dist;
     short shrinkType;
@@ -3086,9 +2819,8 @@ public:
     char pad[9];
 };
 
-class bActionModifier
+struct bActionModifier
 {
-public:
     bActionModifier *next;
     bActionModifier *prev;
     short type;
@@ -3101,9 +2833,8 @@ public:
     Object *ob;
 };
 
-class bNodeStack
+struct bNodeStack
 {
-public:
     float vec[4];
     float min;
     float max;
@@ -3114,9 +2845,8 @@ public:
     short sockettype;
 };
 
-class bNodeLink
+struct bNodeLink
 {
-public:
     bNodeLink *next;
     bNodeLink *prev;
     bNode *fromnode;
@@ -3127,9 +2857,8 @@ public:
     int pad;
 };
 
-class NodeImageAnim
+struct NodeImageAnim
 {
-public:
     int frames;
     int sfra;
     int nr;
@@ -3138,9 +2867,8 @@ public:
     short pad;
 };
 
-class NodeBlurData
+struct NodeBlurData
 {
-public:
     short sizex;
     short sizey;
     short samples;
@@ -3159,9 +2887,8 @@ public:
     int image_in_height;
 };
 
-class NodeDBlurData
+struct NodeDBlurData
 {
-public:
     float center_x;
     float center_y;
     float distance;
@@ -3173,26 +2900,23 @@ public:
     char pad;
 };
 
-class NodeBilateralBlurData
+struct NodeBilateralBlurData
 {
-public:
     float sigma_color;
     float sigma_space;
     short iter;
     short pad;
 };
 
-class NodeHueSat
+struct NodeHueSat
 {
-public:
     float hue;
     float sat;
     float val;
 };
 
-class NodeImageFile
+struct NodeImageFile
 {
-public:
     char name[256];
     short imtype;
     short subimtype;
@@ -3202,9 +2926,8 @@ public:
     int efra;
 };
 
-class NodeChroma
+struct NodeChroma
 {
-public:
     float t1;
     float t2;
     float t3;
@@ -3216,38 +2939,37 @@ public:
     short channel;
 };
 
-class NodeTwoXYs
+struct NodeTwoXYs
 {
-public:
     short x1;
     short x2;
     short y1;
     short y2;
+    float fac_x1;
+    float fac_x2;
+    float fac_y1;
+    float fac_y2;
 };
 
-class NodeTwoFloats
+struct NodeTwoFloats
 {
-public:
     float x;
     float y;
 };
 
-class NodeGeometry
+struct NodeGeometry
 {
-public:
     char uvname[32];
     char colname[32];
 };
 
-class NodeVertexCol
+struct NodeVertexCol
 {
-public:
     char name[32];
 };
 
-class NodeDefocus
+struct NodeDefocus
 {
-public:
     char bktype;
     char rotation;
     char preview;
@@ -3260,16 +2982,14 @@ public:
     float scale;
 };
 
-class NodeScriptDict
+struct NodeScriptDict
 {
-public:
     void *dict;
     void *node;
 };
 
-class NodeGlare
+struct NodeGlare
 {
-public:
     char quality;
     char type;
     char iter;
@@ -3283,9 +3003,8 @@ public:
     float fade;
 };
 
-class NodeTonemap
+struct NodeTonemap
 {
-public:
     float key;
     float offset;
     float gamma;
@@ -3296,18 +3015,16 @@ public:
     int type;
 };
 
-class NodeLensDist
+struct NodeLensDist
 {
-public:
     short jit;
     short proj;
     short fit;
     short pad;
 };
 
-class NodeColorBalance
+struct NodeColorBalance
 {
-public:
     float slope[3];
     float offset[3];
     float power[3];
@@ -3315,11 +3032,11 @@ public:
     float gamma[3];
     float gain[3];
     float lift_lgg[3];
+    float gamma_inv[3];
 };
 
-class NodeColorspill
+struct NodeColorspill
 {
-public:
     short limchan;
     short unspill;
     float limscale;
@@ -3328,24 +3045,21 @@ public:
     float uspillb;
 };
 
-class TexNodeOutput
+struct TexNodeOutput
 {
-public:
     char name[32];
 };
 
-class CurveMapPoint
+struct CurveMapPoint
 {
-public:
     float x;
     float y;
     short flag;
     short shorty;
 };
 
-class CurveMap
+struct CurveMap
 {
-public:
     short totpoint;
     short flag;
     float range;
@@ -3358,9 +3072,8 @@ public:
     CurveMapPoint *premultable;
 };
 
-class Histogram
+struct Histogram
 {
-public:
     int channels;
     int x_resolution;
     float data_r[256];
@@ -3373,18 +3086,16 @@ public:
     int height;
 };
 
-class BrushClone
+struct BrushClone
 {
-public:
     Image *image;
     float offset[2];
     float alpha;
     float pad;
 };
 
-class CustomDataLayer
+struct CustomDataLayer
 {
-public:
     int type;
     int offset;
     int flag;
@@ -3397,15 +3108,13 @@ public:
     void *data;
 };
 
-class CustomDataExternal
+struct CustomDataExternal
 {
-public:
     char filename[240];
 };
 
-class CustomData
+struct CustomData
 {
-public:
     CustomDataLayer *layers;
     int totlayer;
     int maxlayer;
@@ -3415,9 +3124,8 @@ public:
     CustomDataExternal *external;
 };
 
-class HairKey
+struct HairKey
 {
-public:
     float co[3];
     float time;
     float weight;
@@ -3425,9 +3133,8 @@ public:
     short pad;
 };
 
-class ParticleKey
+struct ParticleKey
 {
-public:
     float co[3];
     float vel[3];
     float rot[4];
@@ -3435,9 +3142,8 @@ public:
     float time;
 };
 
-class ChildParticle
+struct ChildParticle
 {
-public:
     int num;
     int parent;
     int pa[4];
@@ -3447,9 +3153,8 @@ public:
     float rt;
 };
 
-class ParticleTarget
+struct ParticleTarget
 {
-public:
     ParticleTarget *next;
     ParticleTarget *prev;
     Object *ob;
@@ -3460,9 +3165,8 @@ public:
     float duration;
 };
 
-class ParticleDupliWeight
+struct ParticleDupliWeight
 {
-public:
     ParticleDupliWeight *next;
     ParticleDupliWeight *prev;
     Object *ob;
@@ -3471,9 +3175,8 @@ public:
     short rt[2];
 };
 
-class SPHFluidSettings
+struct SPHFluidSettings
 {
-public:
     float spring_k;
     float radius;
     float rest_length;
@@ -3485,9 +3188,8 @@ public:
     float buoyancy;
 };
 
-class ClothSimSettings
+struct ClothSimSettings
 {
-public:
     void *cache;
     float mingoal;
     float Cdis;
@@ -3527,9 +3229,8 @@ public:
     EffectorWeights *effector_weights;
 };
 
-class ClothCollSettings
+struct ClothCollSettings
 {
-public:
     void *collision_list;
     float epsilon;
     float self_friction;
@@ -3541,18 +3242,16 @@ public:
     Group *group;
 };
 
-class bGPDspoint
+struct bGPDspoint
 {
-public:
     float x;
     float y;
     float z;
     float pressure;
 };
 
-class bGPDstroke
+struct bGPDstroke
 {
-public:
     bGPDstroke *next;
     bGPDstroke *prev;
     bGPDspoint *points;
@@ -3561,29 +3260,8 @@ public:
     short flag;
 };
 
-class Report
+struct wmKeyMapItem
 {
-public:
-    Report *next;
-    Report *prev;
-    short type;
-    short flag;
-    int len;
-    char *typestr;
-    char *message;
-};
-
-class ReportTimerInfo
-{
-public:
-    float col[3];
-    float greyscale;
-    float widthfac;
-};
-
-class wmKeyMapItem
-{
-public:
     wmKeyMapItem *next;
     wmKeyMapItem *prev;
     char idname[64];
@@ -3603,9 +3281,8 @@ public:
     void *ptr;
 };
 
-class FModifier
+struct FModifier
 {
-public:
     FModifier *next;
     FModifier *prev;
     void *data;
@@ -3616,9 +3293,8 @@ public:
     float influence;
 };
 
-class FMod_Generator
+struct FMod_Generator
 {
-public:
     float *coefficients;
     int arraysize;
     int poly_order;
@@ -3626,9 +3302,8 @@ public:
     int flag;
 };
 
-class FMod_FunctionGenerator
+struct FMod_FunctionGenerator
 {
-public:
     float amplitude;
     float phase_multiplier;
     float phase_offset;
@@ -3637,9 +3312,8 @@ public:
     int flag;
 };
 
-class FCM_EnvelopeData
+struct FCM_EnvelopeData
 {
-public:
     float min;
     float max;
     float time;
@@ -3647,9 +3321,8 @@ public:
     short f2;
 };
 
-class FMod_Envelope
+struct FMod_Envelope
 {
-public:
     FCM_EnvelopeData *data;
     int totvert;
     float midval;
@@ -3657,25 +3330,22 @@ public:
     float max;
 };
 
-class FMod_Cycles
+struct FMod_Cycles
 {
-public:
     short before_mode;
     short after_mode;
     short before_cycles;
     short after_cycles;
 };
 
-class FMod_Python
+struct FMod_Python
 {
-public:
     Text *script;
     IDProperty *prop;
 };
 
-class FMod_Noise
+struct FMod_Noise
 {
-public:
     float size;
     float strength;
     float phase;
@@ -3684,9 +3354,8 @@ public:
     short modification;
 };
 
-class FMod_Stepped
+struct FMod_Stepped
 {
-public:
     float step_size;
     float offset;
     float start_frame;
@@ -3694,9 +3363,8 @@ public:
     int flag;
 };
 
-class DriverTarget
+struct DriverTarget
 {
-public:
     ID *id;
     char *rna_path;
     char pchan_name[32];
@@ -3705,24 +3373,21 @@ public:
     int idtype;
 };
 
-class FPoint
+struct FPoint
 {
-public:
     float vec[2];
     int flag;
     int pad;
 };
 
-class AnimMapPair
+struct AnimMapPair
 {
-public:
     char from[128];
     char to[128];
 };
 
-class KS_Path
+struct KS_Path
 {
-public:
     KS_Path *next;
     KS_Path *prev;
     ID *id;
@@ -3736,9 +3401,8 @@ public:
     short keyingflag;
 };
 
-class AnimOverride
+struct AnimOverride
 {
-public:
     AnimOverride *next;
     AnimOverride *prev;
     char *rna_path;
@@ -3746,9 +3410,8 @@ public:
     float value;
 };
 
-class BoidRule
+struct BoidRule
 {
-public:
     BoidRule *next;
     BoidRule *prev;
     int type;
@@ -3756,34 +3419,32 @@ public:
     char name[32];
 };
 
-class BoidData
+struct BoidData
 {
-public:
     float health;
     float acc[3];
     short state_id;
     short mode;
 };
 
-class SmokeFlowSettings
+struct SmokeFlowSettings
 {
-public:
     SmokeModifierData *smd;
     ParticleSystem *psys;
     float density;
     float temp;
-    float velocity[3];
+    float velocity[2];
+    float vel_multi;
     float vgrp_heat_scale[2];
     short vgroup_flow;
     short vgroup_density;
     short vgroup_heat;
     short type;
-    int pad;
+    int flags;
 };
 
-class SmokeCollSettings
+struct SmokeCollSettings
 {
-public:
     SmokeModifierData *smd;
     void *bvhtree;
     void *dm;
@@ -3799,18 +3460,16 @@ public:
     int pad2;
 };
 
-class IDPropertyData
+struct IDPropertyData
 {
-public:
     void *pointer;
     ListBase group;
     int val;
     int val2;
 };
 
-class IDProperty
+struct IDProperty
 {
-public:
     IDProperty *next;
     IDProperty *prev;
     char type;
@@ -3823,9 +3482,8 @@ public:
     int totallen;
 };
 
-class Library
+struct Library
 {
-public:
     ID id;
     ID *idblock;
     void *filedata;
@@ -3836,9 +3494,8 @@ public:
     Library *parent;
 };
 
-class IpoCurve
+struct IpoCurve
 {
-public:
     IpoCurve *next;
     IpoCurve *prev;
     BPoint *bp;
@@ -3862,9 +3519,8 @@ public:
     IpoDriver *driver;
 };
 
-class Ipo
+struct Ipo
 {
-public:
     ID id;
     ListBase curve;
     rctf cur;
@@ -3874,9 +3530,8 @@ public:
     short pad;
 };
 
-class Key
+struct Key
 {
-public:
     ID id;
     AnimData *adt;
     KeyBlock *refkey;
@@ -3892,9 +3547,8 @@ public:
     short flag;
 };
 
-class Text
+struct Text
 {
-public:
     ID id;
     char *name;
     int flags;
@@ -3912,9 +3566,8 @@ public:
     double mtime;
 };
 
-class Camera
+struct Camera
 {
-public:
     ID id;
     AnimData *adt;
     short type;
@@ -3932,9 +3585,8 @@ public:
     Object *dof_ob;
 };
 
-class Image
+struct Image
 {
-public:
     ID id;
     char name[240];
     ListBase ibufs;
@@ -3969,9 +3621,8 @@ public:
     float aspy;
 };
 
-class ColorBand
+struct ColorBand
 {
-public:
     short flag;
     short tot;
     short cur;
@@ -3979,9 +3630,8 @@ public:
     CBData data[32];
 };
 
-class Tex
+struct Tex
 {
-public:
     ID id;
     AnimData *adt;
     float noisesize;
@@ -4047,9 +3697,8 @@ public:
     char pad[7];
 };
 
-class Lamp
+struct Lamp
 {
-public:
     ID id;
     AnimData *adt;
     short type;
@@ -4124,16 +3773,8 @@ public:
     PreviewImage *preview;
 };
 
-class Wave
+struct Material
 {
-public:
-    ID id;
-    Ipo *ipo;
-};
-
-class Material
-{
-public:
     ID id;
     AnimData *adt;
     short material_type;
@@ -4260,18 +3901,16 @@ public:
     ListBase gpumaterial;
 };
 
-class VFont
+struct VFont
 {
-public:
     ID id;
     char name[256];
     void *data;
     PackedFile *packedfile;
 };
 
-class MetaBall
+struct MetaBall
 {
-public:
     ID id;
     AnimData *adt;
     BoundBox *bb;
@@ -4294,15 +3933,22 @@ public:
     MetaElem *lastelem;
 };
 
-class Curve
+struct EditNurb
 {
-public:
+    ListBase nurbs;
+    void *keyindex;
+    int shapenr;
+    char pad[4];
+};
+
+struct Curve
+{
     ID id;
     AnimData *adt;
     BoundBox *bb;
     ListBase nurb;
     ListBase disp;
-    ListBase *editnurb;
+    EditNurb *editnurb;
     Object *bevobj;
     Object *taperobj;
     Object *textoncurve;
@@ -4318,10 +3964,10 @@ public:
     short pad1;
     short drawflag;
     short twist_mode;
-    short pad[2];
     float twist_smooth;
     float smallcaps_scale;
-    short pathlen;
+    int pathlen;
+    short pad;
     short totcol;
     short flag;
     short bevresol;
@@ -4367,9 +4013,8 @@ public:
     CharInfo curinfo;
 };
 
-class Mesh
+struct Mesh
 {
-public:
     ID id;
     AnimData *adt;
     BoundBox *bb;
@@ -4413,15 +4058,13 @@ public:
     PartialVisibility *pv;
 };
 
-class MultiresColFace
+struct MultiresColFace
 {
-public:
     MultiresCol col[4];
 };
 
-class Multires
+struct Multires
 {
-public:
     ListBase levels;
     MVert *verts;
     char level_count;
@@ -4438,9 +4081,8 @@ public:
     char *edge_creases;
 };
 
-class SubsurfModifierData
+struct SubsurfModifierData
 {
-public:
     ModifierData modifier;
     short subdivType;
     short levels;
@@ -4450,17 +4092,15 @@ public:
     void *mCache;
 };
 
-class LatticeModifierData
+struct LatticeModifierData
 {
-public:
     ModifierData modifier;
     Object *object;
     char name[32];
 };
 
-class CurveModifierData
+struct CurveModifierData
 {
-public:
     ModifierData modifier;
     Object *object;
     char name[32];
@@ -4468,9 +4108,8 @@ public:
     char pad[6];
 };
 
-class BuildModifierData
+struct BuildModifierData
 {
-public:
     ModifierData modifier;
     float start;
     float length;
@@ -4478,9 +4117,8 @@ public:
     int seed;
 };
 
-class MaskModifierData
+struct MaskModifierData
 {
-public:
     ModifierData modifier;
     Object *ob_arm;
     char vgroup[32];
@@ -4488,9 +4126,8 @@ public:
     int flag;
 };
 
-class ArrayModifierData
+struct ArrayModifierData
 {
-public:
     ModifierData modifier;
     Object *start_cap;
     Object *end_cap;
@@ -4506,9 +4143,8 @@ public:
     int count;
 };
 
-class MirrorModifierData
+struct MirrorModifierData
 {
-public:
     ModifierData modifier;
     short axis;
     short flag;
@@ -4516,17 +4152,15 @@ public:
     Object *mirror_ob;
 };
 
-class EdgeSplitModifierData
+struct EdgeSplitModifierData
 {
-public:
     ModifierData modifier;
     float split_angle;
     int flags;
 };
 
-class BevelModifierData
+struct BevelModifierData
 {
-public:
     ModifierData modifier;
     float value;
     int res;
@@ -4539,17 +4173,15 @@ public:
     char defgrp_name[32];
 };
 
-class BMeshModifierData
+struct BMeshModifierData
 {
-public:
     ModifierData modifier;
     float pad;
     int type;
 };
 
-class SmokeModifierData
+struct SmokeModifierData
 {
-public:
     ModifierData modifier;
     SmokeDomainSettings *domain;
     SmokeFlowSettings *flow;
@@ -4558,9 +4190,8 @@ public:
     int type;
 };
 
-class DisplaceModifierData
+struct DisplaceModifierData
 {
-public:
     ModifierData modifier;
     Tex *texture;
     float strength;
@@ -4574,9 +4205,8 @@ public:
     int pad;
 };
 
-class UVProjectModifierData
+struct UVProjectModifierData
 {
-public:
     ModifierData modifier;
     Object *projectors[10];
     Image *image;
@@ -4591,17 +4221,15 @@ public:
     int pad;
 };
 
-class DecimateModifierData
+struct DecimateModifierData
 {
-public:
     ModifierData modifier;
     float percent;
     int faceCount;
 };
 
-class SmoothModifierData
+struct SmoothModifierData
 {
-public:
     ModifierData modifier;
     float fac;
     char defgrp_name[32];
@@ -4609,9 +4237,8 @@ public:
     short repeat;
 };
 
-class CastModifierData
+struct CastModifierData
 {
-public:
     ModifierData modifier;
     Object *object;
     float fac;
@@ -4622,9 +4249,8 @@ public:
     short type;
 };
 
-class WaveModifierData
+struct WaveModifierData
 {
-public:
     ModifierData modifier;
     Object *objectcenter;
     char defgrp_name[32];
@@ -4648,9 +4274,8 @@ public:
     float pad1;
 };
 
-class ArmatureModifierData
+struct ArmatureModifierData
 {
-public:
     ModifierData modifier;
     short deformflag;
     short multi;
@@ -4660,9 +4285,8 @@ public:
     char defgrp_name[32];
 };
 
-class HookModifierData
+struct HookModifierData
 {
-public:
     ModifierData modifier;
     Object *object;
     char subtarget[32];
@@ -4675,15 +4299,13 @@ public:
     char name[32];
 };
 
-class SoftbodyModifierData
+struct SoftbodyModifierData
 {
-public:
     ModifierData modifier;
 };
 
-class ClothModifierData
+struct ClothModifierData
 {
-public:
     ModifierData modifier;
     Scene *scene;
     void *clothObject;
@@ -4693,9 +4315,8 @@ public:
     ListBase ptcaches;
 };
 
-class CollisionModifierData
+struct CollisionModifierData
 {
-public:
     ModifierData modifier;
     MVert *x;
     MVert *xnew;
@@ -4711,9 +4332,8 @@ public:
     void *bvhtree;
 };
 
-class SurfaceModifierData
+struct SurfaceModifierData
 {
-public:
     ModifierData modifier;
     MVert *x;
     MVert *v;
@@ -4723,18 +4343,16 @@ public:
     int numverts;
 };
 
-class BooleanModifierData
+struct BooleanModifierData
 {
-public:
     ModifierData modifier;
     Object *object;
     int operation;
     int pad;
 };
 
-class MeshDeformModifierData
+struct MeshDeformModifierData
 {
-public:
     ModifierData modifier;
     Object *object;
     char defgrp_name[32];
@@ -4761,9 +4379,8 @@ public:
     void (*bindfunc)();
 };
 
-class ParticleSystemModifierData
+struct ParticleSystemModifierData
 {
-public:
     ModifierData modifier;
     ParticleSystem *psys;
     void *dm;
@@ -4774,9 +4391,8 @@ public:
     short rt;
 };
 
-class ParticleInstanceModifierData
+struct ParticleInstanceModifierData
 {
-public:
     ModifierData modifier;
     Object *ob;
     short psys;
@@ -4787,9 +4403,8 @@ public:
     float random_position;
 };
 
-class ExplodeModifierData
+struct ExplodeModifierData
 {
-public:
     ModifierData modifier;
     int *facepa;
     short flag;
@@ -4797,9 +4412,8 @@ public:
     float protect;
 };
 
-class MultiresModifierData
+struct MultiresModifierData
 {
-public:
     ModifierData modifier;
     char lvl;
     char sculptlvl;
@@ -4810,17 +4424,15 @@ public:
     char pad[2];
 };
 
-class FluidsimModifierData
+struct FluidsimModifierData
 {
-public:
     ModifierData modifier;
     FluidsimSettings *fss;
     PointCache *point_cache;
 };
 
-class ShrinkwrapModifierData
+struct ShrinkwrapModifierData
 {
-public:
     ModifierData modifier;
     Object *target;
     Object *auxTarget;
@@ -4833,9 +4445,8 @@ public:
     char pad[6];
 };
 
-class SimpleDeformModifierData
+struct SimpleDeformModifierData
 {
-public:
     ModifierData modifier;
     Object *origin;
     char vgroup_name[32];
@@ -4847,15 +4458,13 @@ public:
     char pad;
 };
 
-class ShapeKeyModifierData
+struct ShapeKeyModifierData
 {
-public:
     ModifierData modifier;
 };
 
-class SolidifyModifierData
+struct SolidifyModifierData
 {
-public:
     ModifierData modifier;
     char defgrp_name[32];
     float offset;
@@ -4866,9 +4475,8 @@ public:
     int flag;
 };
 
-class ScrewModifierData
+struct ScrewModifierData
 {
-public:
     ModifierData modifier;
     Object *ob_axis;
     int steps;
@@ -4880,10 +4488,10 @@ public:
     short flag;
 };
 
-class Lattice
+struct Lattice
 {
-public:
     ID id;
+    AnimData *adt;
     short pntsu;
     short pntsv;
     short pntsw;
@@ -4895,7 +4503,7 @@ public:
     char typeu;
     char typev;
     char typew;
-    char type;
+    char pad3;
     int pad;
     float fu;
     float fv;
@@ -4910,12 +4518,11 @@ public:
     char vgroup[32];
     float *latticedata;
     float latmat[4][4];
-    Lattice *editlatt;
+    EditLatt *editlatt;
 };
 
-class Object
+struct Object
 {
-public:
     ID id;
     AnimData *adt;
     void *sculpt;
@@ -5044,9 +4651,22 @@ public:
     ListBase *duplilist;
 };
 
-class PointCache
+struct PTCacheMem
 {
-public:
+    PTCacheMem *next;
+    PTCacheMem *prev;
+    int frame;
+    int totpoint;
+    int data_types;
+    int flag;
+    int *index_array;
+    void *data[8];
+    void *cur[8];
+    ListBase extradata;
+};
+
+struct PointCache
+{
     PointCache *next;
     PointCache *prev;
     int flag;
@@ -5058,19 +4678,20 @@ public:
     int last_exact;
     int totpoint;
     int index;
-    int rt;
+    short compression;
+    short rt;
     char name[64];
     char prev_name[64];
     char info[64];
     char path[240];
+    char *cached_frames;
     ListBase mem_cache;
     void *edit;
     void (*free_edit)();
 };
 
-class SoftBody
+struct SoftBody
 {
-public:
     int totpoint;
     int totspring;
     void *bpoint;
@@ -5127,9 +4748,8 @@ public:
     char pad4[4];
 };
 
-class World
+struct World
 {
-public:
     ID id;
     AnimData *adt;
     short colormodel;
@@ -5208,9 +4828,8 @@ public:
     PreviewImage *preview;
 };
 
-class RenderData
+struct RenderData
 {
-public:
     AviCodecData *avicodecdata;
     QuicktimeCodecData *qtcodecdata;
     QuicktimeCodecSettings qtcodecsettings;
@@ -5236,8 +4855,7 @@ public:
     short freqplay;
     short depth;
     short attrib;
-    short rt2;
-    short frame_step;
+    int frame_step;
     short stereomode;
     short dimensionspreset;
     short filtertype;
@@ -5324,9 +4942,8 @@ public:
     char engine[32];
 };
 
-class GameData
+struct GameData
 {
-public:
     float gravity;
     float activityBoxRadius;
     short mode;
@@ -5357,9 +4974,8 @@ public:
     float pad1;
 };
 
-class ImagePaintSettings
+struct ImagePaintSettings
 {
-public:
     Paint paint;
     short flag;
     short pad;
@@ -5370,9 +4986,8 @@ public:
     void *paintcursor;
 };
 
-class ParticleEditSettings
+struct ParticleEditSettings
 {
-public:
     short flag;
     short totrekey;
     short totaddkey;
@@ -5389,9 +5004,8 @@ public:
     Object *object;
 };
 
-class Sculpt
+struct Sculpt
 {
-public:
     Paint paint;
     int flags;
     int radial_symm[3];
@@ -5408,9 +5022,8 @@ public:
     int pad;
 };
 
-class VPaint
+struct VPaint
 {
-public:
     Paint paint;
     short flag;
     short pad;
@@ -5420,9 +5033,8 @@ public:
     void *paintcursor;
 };
 
-class ToolSettings
+struct ToolSettings
 {
-public:
     VPaint *vpaint;
     VPaint *wpaint;
     Sculpt *sculpt;
@@ -5450,7 +5062,8 @@ public:
     short uvcalc_flag;
     short uv_flag;
     short uv_selectmode;
-    short uv_pad[2];
+    short uv_pad;
+    short gpencil_flags;
     short autoik_chainlen;
     ImagePaintSettings imapaint;
     ParticleEditSettings particle;
@@ -5495,19 +5108,23 @@ public:
     short snap_target;
     short proportional;
     short prop_mode;
+    char proportional_objects;
+    char pad[3];
     int auto_normalize;
-    int intpad;
+    short sculpt_paint_settings;
+    short pad1;
+    int sculpt_paint_unified_size;
+    float sculpt_paint_unified_unprojected_radius;
+    float sculpt_paint_unified_alpha;
 };
 
-class Scene
+struct Scene
 {
-public:
     ID id;
     AnimData *adt;
     Object *camera;
     World *world;
     Scene *set;
-    Image *ima;
     ListBase base;
     Base *basact;
     Object *obedit;
@@ -5517,7 +5134,7 @@ public:
     float twmax[3];
     int lay;
     int layact;
-    int pad1;
+    int customdata_mask;
     short flag;
     short use_nodes;
     bNodeTree *nodetree;
@@ -5530,12 +5147,13 @@ public:
     ListBase transform_spaces;
     void *sound_scene;
     void *sound_scene_handle;
+    void *sound_scrub_handle;
     void *fps_info;
     void *theDag;
     short dagisvalid;
     short dagflags;
     short recalc;
-    short jumpframe;
+    short pad6;
     int pad5;
     int active_keyingset;
     ListBase keyingsets;
@@ -5546,9 +5164,8 @@ public:
     PhysicsSettings physics_settings;
 };
 
-class BGpic
+struct BGpic
 {
-public:
     BGpic *next;
     BGpic *prev;
     Image *ima;
@@ -5562,9 +5179,8 @@ public:
     float pad2;
 };
 
-class View3D
+struct View3D
 {
-public:
     SpaceLink *next;
     SpaceLink *prev;
     ListBase regionbase;
@@ -5586,7 +5202,7 @@ public:
     int lay;
     int layact;
     short drawtype;
-    short pad2;
+    short ob_centre_cursor;
     short scenelock;
     short around;
     short pad3;
@@ -5596,7 +5212,6 @@ public:
     float lens;
     float grid;
     float gridview;
-    float padf;
     float near;
     float far;
     float ofs[3];
@@ -5611,8 +5226,9 @@ public:
     short twmode;
     short twflag;
     short twdrawflag;
-    int customdata_mask;
-    ListBase afterdraw;
+    ListBase afterdraw_transp;
+    ListBase afterdraw_xray;
+    ListBase afterdraw_xraytransp;
     short zbuf;
     short transp;
     short xray;
@@ -5622,9 +5238,8 @@ public:
     bGPdata *gpd;
 };
 
-class View2D
+struct View2D
 {
-public:
     rctf tot;
     rctf cur;
     rcti vert;
@@ -5651,9 +5266,8 @@ public:
     int tab_cur;
 };
 
-class SpaceLink
+struct SpaceLink
 {
-public:
     SpaceLink *next;
     SpaceLink *prev;
     ListBase regionbase;
@@ -5662,22 +5276,20 @@ public:
     short blockhandler[8];
 };
 
-class SpaceInfo
+struct SpaceInfo
 {
-public:
     SpaceLink *next;
     SpaceLink *prev;
     ListBase regionbase;
     int spacetype;
     float blockscale;
     short blockhandler[8];
-    bScreen *screen;
-    Scene *scene;
+    char rpt_mask;
+    char pad[7];
 };
 
-class SpaceIpo
+struct SpaceIpo
 {
-public:
     SpaceLink *next;
     SpaceLink *prev;
     ListBase regionbase;
@@ -5694,9 +5306,8 @@ public:
     int around;
 };
 
-class SpaceButs
+struct SpaceButs
 {
-public:
     SpaceLink *next;
     SpaceLink *prev;
     ListBase regionbase;
@@ -5719,9 +5330,8 @@ public:
     ID *pinid;
 };
 
-class SpaceSeq
+struct SpaceSeq
 {
-public:
     SpaceLink *next;
     SpaceLink *prev;
     ListBase regionbase;
@@ -5742,9 +5352,8 @@ public:
     bGPdata *gpd;
 };
 
-class SpaceFile
+struct SpaceFile
 {
-public:
     SpaceLink *next;
     SpaceLink *prev;
     ListBase regionbase;
@@ -5763,9 +5372,8 @@ public:
     short pad2;
 };
 
-class SpaceOops
+struct SpaceOops
 {
-public:
     SpaceLink *next;
     SpaceLink *prev;
     ListBase regionbase;
@@ -5777,17 +5385,14 @@ public:
     TreeStore *treestore;
     char search_string[32];
     TreeStoreElem search_tse;
-    int search_flags;
-    int do_;
     short flag;
     short outlinevis;
     short storeflag;
-    short pad;
+    short search_flags;
 };
 
-class Scopes
+struct Scopes
 {
-public:
     int ok;
     int sample_full;
     int sample_lines;
@@ -5808,46 +5413,38 @@ public:
     int pad;
 };
 
-class SpaceImage
+
+struct SpaceImage
 {
-public:
     SpaceLink *next;
     SpaceLink *prev;
     ListBase regionbase;
     int spacetype;
-    float blockscale;
-    short blockhandler[8];
+    int flag;
     Image *image;
     ImageUser iuser;
     CurveMapping *cumap;
-    short menunr;
-    short imanr;
-    short pad2;
-    short curtile;
-    int flag;
-    short imtypenr;
-    short lock;
-    short pin;
-    short pad3;
-    char dt_uv;
-    char sticky;
-    char dt_uvstretch;
-    char around;
+    Scopes scopes;
+    Histogram sample_line_hist;
+    bGPdata *gpd;
     float cursor[2];
     float xof;
     float yof;
     float zoom;
-    float pad4;
     float centx;
     float centy;
-    bGPdata *gpd;
-    Scopes scopes;
-    Histogram sample_line_hist;
+    short curtile;
+    short imtypenr;
+    short lock;
+    short pin;
+    char dt_uv;
+    char sticky;
+    char dt_uvstretch;
+    char around;
 };
 
-class SpaceNla
+struct SpaceNla
 {
-public:
     SpaceLink *next;
     SpaceLink *prev;
     ListBase regionbase;
@@ -5861,9 +5458,8 @@ public:
     View2D v2d;
 };
 
-class SpaceText
+struct SpaceText
 {
-public:
     SpaceLink *next;
     SpaceLink *prev;
     ListBase regionbase;
@@ -5881,7 +5477,8 @@ public:
     int left;
     int showlinenrs;
     int tabnumber;
-    int showsyntax;
+    short showsyntax;
+    short line_hlight;
     short overwrite;
     short live_edit;
     float pix_per_line;
@@ -5891,11 +5488,11 @@ public:
     int doplugins;
     char findstr[256];
     char replacestr[256];
+    void *drawcache;
 };
 
-class Script
+struct Script
 {
-public:
     ID id;
     void *py_draw;
     void *py_event;
@@ -5908,9 +5505,8 @@ public:
     char scriptarg[256];
 };
 
-class SpaceScript
+struct SpaceScript
 {
-public:
     SpaceLink *next;
     SpaceLink *prev;
     ListBase regionbase;
@@ -5923,9 +5519,8 @@ public:
     void *but_refs;
 };
 
-class SpaceTime
+struct SpaceTime
 {
-public:
     SpaceLink *next;
     SpaceLink *prev;
     ListBase regionbase;
@@ -5939,9 +5534,8 @@ public:
     int redraws;
 };
 
-class SpaceNode
+struct SpaceNode
 {
-public:
     SpaceLink *next;
     SpaceLink *prev;
     ListBase regionbase;
@@ -5969,9 +5563,8 @@ public:
     bGPdata *gpd;
 };
 
-class SpaceLogic
+struct SpaceLogic
 {
-public:
     SpaceLink *next;
     SpaceLink *prev;
     ListBase regionbase;
@@ -5984,9 +5577,8 @@ public:
     bGPdata *gpd;
 };
 
-class SpaceImaSel
+struct SpaceImaSel
 {
-public:
     SpaceLink *next;
     SpaceLink *prev;
     ListBase regionbase;
@@ -6031,19 +5623,16 @@ public:
     void *img;
 };
 
-class SpaceConsole
+struct SpaceConsole
 {
-public:
     SpaceLink *next;
     SpaceLink *prev;
     ListBase regionbase;
     int spacetype;
     float blockscale;
     short blockhandler[8];
-    int type;
-    int rpt_mask;
-    int flag;
     int lheight;
+    int pad;
     ListBase scrollback;
     ListBase history;
     char prompt[256];
@@ -6052,9 +5641,8 @@ public:
     int sel_end;
 };
 
-class SpaceUserPref
+struct SpaceUserPref
 {
-public:
     SpaceLink *next;
     SpaceLink *prev;
     ListBase regionbase;
@@ -6063,9 +5651,27 @@ public:
     char filter[64];
 };
 
-class uiStyle
+struct SpaceSound
 {
-public:
+    SpaceLink *next;
+    SpaceLink *prev;
+    ListBase regionbase;
+    int spacetype;
+    float blockscale;
+    ScrArea *area;
+    View2D v2d;
+    bSound *sound;
+    short mode;
+    short sndnr;
+    short xof;
+    short yof;
+    short flag;
+    short lock;
+    int pad2;
+};
+
+struct uiStyle
+{
     uiStyle *next;
     uiStyle *prev;
     char name[64];
@@ -6086,9 +5692,8 @@ public:
     short pad[1];
 };
 
-class ThemeUI
+struct ThemeUI
 {
-public:
     uiWidgetColors wcol_regular;
     uiWidgetColors wcol_tool;
     uiWidgetColors wcol_text;
@@ -6109,9 +5714,8 @@ public:
     char iconfile[80];
 };
 
-class bTheme
+struct bTheme
 {
-public:
     bTheme *next;
     bTheme *prev;
     char name[32];
@@ -6139,9 +5743,8 @@ public:
     int pad;
 };
 
-class UserDef
+struct UserDef
 {
-public:
     int flag;
     int dupflag;
     int savetime;
@@ -6192,7 +5795,6 @@ public:
     short tb_leftmouse;
     short tb_rightmouse;
     SolidLight light[3];
-    short sculpt_paint_settings;
     short tw_hotspot;
     short tw_flag;
     short tw_handlesize;
@@ -6200,6 +5802,7 @@ public:
     short textimeout;
     short texcollectrate;
     short wmdrawmethod;
+    short dragthreshold;
     int memcachelimit;
     int prefetchframes;
     short frameserverport;
@@ -6218,23 +5821,24 @@ public:
     short keyhandles_new;
     short scrcastfps;
     short scrcastwait;
-    short propwidth;
+    short pad8;
     short pad[3];
     char versemaster[160];
     char verseuser[160];
     float glalphaclip;
     short autokey_mode;
     short autokey_flag;
+    short text_render;
+    short pad9;
+    float pad10;
     ColorBand coba_weight;
-    int sculpt_paint_unified_size;
-    float sculpt_paint_unified_unprojected_radius;
-    float sculpt_paint_unified_alpha;
     float sculpt_paint_overlay_col[3];
+    int pad3;
+    char author[80];
 };
 
-class bScreen
+struct bScreen
 {
-public:
     ID id;
     ListBase vertbase;
     ListBase edgebase;
@@ -6243,6 +5847,7 @@ public:
     Scene *scene;
     Scene *newscene;
     short full;
+    short temp;
     short winid;
     short do_draw;
     short do_refresh;
@@ -6252,15 +5857,14 @@ public:
     short swap;
     short mainwin;
     short subwinactive;
-    int pad2;
+    short pad;
     void *animtimer;
     void *context;
     short handler[8];
 };
 
-class ScrVert
+struct ScrVert
 {
-public:
     ScrVert *next;
     ScrVert *prev;
     ScrVert *newv;
@@ -6268,9 +5872,8 @@ public:
     int flag;
 };
 
-class ScrArea
+struct ScrArea
 {
-public:
     ScrArea *next;
     ScrArea *prev;
     ScrVert *v1;
@@ -6295,9 +5898,8 @@ public:
     ListBase actionzones;
 };
 
-class ARegion
+struct ARegion
 {
-public:
     ARegion *next;
     ARegion *prev;
     View2D v2d;
@@ -6324,9 +5926,8 @@ public:
     void *regiondata;
 };
 
-class Sequence
+struct Sequence
 {
-public:
     Sequence *next;
     Sequence *prev;
     void *tmp;
@@ -6377,9 +5978,8 @@ public:
     float blend_opacity;
 };
 
-class Editing
+struct Editing
 {
-public:
     ListBase *seqbasep;
     ListBase seqbase;
     ListBase metastack;
@@ -6393,9 +5993,8 @@ public:
     rctf over_border;
 };
 
-class bSoundActuator
+struct bSoundActuator
 {
-public:
     short flag;
     short sndnr;
     int pad1;
@@ -6411,9 +6010,8 @@ public:
     short pad6[1];
 };
 
-class bSound
+struct bSound
 {
-public:
     ID id;
     char name[240];
     PackedFile *packedfile;
@@ -6432,38 +6030,16 @@ public:
     void *playback_handle;
 };
 
-class SpaceSound
+struct Group
 {
-public:
-    SpaceLink *next;
-    SpaceLink *prev;
-    ListBase regionbase;
-    int spacetype;
-    float blockscale;
-    ScrArea *area;
-    View2D v2d;
-    bSound *sound;
-    short mode;
-    short sndnr;
-    short xof;
-    short yof;
-    short flag;
-    short lock;
-    int pad2;
-};
-
-class Group
-{
-public:
     ID id;
     ListBase gobject;
     int layer;
     float dupli_ofs[3];
 };
 
-class Bone
+struct Bone
 {
-public:
     Bone *next;
     Bone *prev;
     IDProperty *prop;
@@ -6493,9 +6069,8 @@ public:
     short pad[3];
 };
 
-class bArmature
+struct bArmature
 {
-public:
     ID id;
     AnimData *adt;
     ListBase bonebase;
@@ -6508,7 +6083,7 @@ public:
     int drawtype;
     short deformflag;
     short pathflag;
-    int pad;
+    int layer_used;
     int layer;
     int layer_protected;
     short ghostep;
@@ -6523,9 +6098,8 @@ public:
     int pathac;
 };
 
-class bPoseChannel
+struct bPoseChannel
 {
-public:
     bPoseChannel *next;
     bPoseChannel *prev;
     IDProperty *prop;
@@ -6544,9 +6118,9 @@ public:
     bPoseChannel *parent;
     bPoseChannel *child;
     ListBase iktree;
-    void *b_bone_mats;
-    void *dual_quat;
-    void *b_bone_dual_quats;
+    bMotionPath *mpath;
+    Object *custom;
+    bPoseChannel *custom_tx;
     float loc[3];
     float size[3];
     float eul[3];
@@ -6567,14 +6141,10 @@ public:
     float ikrotweight;
     float iklinweight;
     float *path;
-    bMotionPath *mpath;
-    Object *custom;
-    bPoseChannel *custom_tx;
 };
 
-class bPose
+struct bPose
 {
-public:
     ListBase chanbase;
     void *chanhash;
     short flag;
@@ -6591,9 +6161,8 @@ public:
     char proxy_act_bone[32];
 };
 
-class bActionGroup
+struct bActionGroup
 {
-public:
     bActionGroup *next;
     bActionGroup *prev;
     ListBase channels;
@@ -6603,9 +6172,8 @@ public:
     ThemeWireColor cs;
 };
 
-class bAction
+struct bAction
 {
-public:
     ID id;
     ListBase curves;
     ListBase chanbase;
@@ -6615,9 +6183,8 @@ public:
     int active_marker;
 };
 
-class bDopeSheet
+struct bDopeSheet
 {
-public:
     ID *source;
     ListBase chanbase;
     Group *filter_grp;
@@ -6625,9 +6192,8 @@ public:
     int flag;
 };
 
-class SpaceAction
+struct SpaceAction
 {
-public:
     SpaceLink *next;
     SpaceLink *prev;
     ListBase regionbase;
@@ -6643,9 +6209,8 @@ public:
     float timeslide;
 };
 
-class bActionChannel
+struct bActionChannel
 {
-public:
     bActionChannel *next;
     bActionChannel *prev;
     bActionGroup *grp;
@@ -6656,9 +6221,8 @@ public:
     int temp;
 };
 
-class bPythonConstraint
+struct bPythonConstraint
 {
-public:
     Text *text;
     IDProperty *prop;
     int flag;
@@ -6668,9 +6232,8 @@ public:
     char subtarget[32];
 };
 
-class bActionStrip
+struct bActionStrip
 {
-public:
     bActionStrip *next;
     bActionStrip *prev;
     short flag;
@@ -6695,9 +6258,8 @@ public:
     ListBase modifiers;
 };
 
-class bNodeSocket
+struct bNodeSocket
 {
-public:
     bNodeSocket *next;
     bNodeSocket *prev;
     bNodeSocket *new_sock;
@@ -6718,9 +6280,8 @@ public:
     bNodeLink *link;
 };
 
-class bNode
+struct bNode
 {
-public:
     bNode *next;
     bNode *prev;
     bNode *new_node;
@@ -6756,9 +6317,8 @@ public:
     void *typeinfo;
 };
 
-class bNodeTree
+struct bNodeTree
 {
-public:
     ID id;
     AnimData *adt;
     bGPdata *gpd;
@@ -6783,9 +6343,8 @@ public:
     void *sdh;
 };
 
-class CurveMapping
+struct CurveMapping
 {
-public:
     int flag;
     int cur;
     int preset;
@@ -6799,21 +6358,20 @@ public:
     float sample[3];
 };
 
-class Brush
+struct Brush
 {
-public:
     ID id;
     BrushClone clone;
     CurveMapping *curve;
     MTex mtex;
     void *icon_imbuf;
-    char icon;
-    char pad2[7];
     PreviewImage *preview;
     char icon_filepath[240];
+    int icon_mode;
+    int pad;
     float normal_weight;
     short blend;
-    short pad;
+    short ob_mode;
     int size;
     int flag;
     float jitter;
@@ -6839,9 +6397,8 @@ public:
     float sub_col[3];
 };
 
-class BoidParticle
+struct BoidParticle
 {
-public:
     Object *ground;
     BoidData data;
     float gravity[3];
@@ -6849,9 +6406,8 @@ public:
     float rt;
 };
 
-class ParticleData
+struct ParticleData
 {
-public:
     ParticleKey state;
     ParticleKey prev_state;
     HairKey *hair;
@@ -6871,9 +6427,8 @@ public:
     short alive;
 };
 
-class ParticleSettings
+struct ParticleSettings
 {
-public:
     ID id;
     AnimData *adt;
     BoidSettings *boids;
@@ -6987,9 +6542,8 @@ public:
     PartDeflect *pd2;
 };
 
-class ParticleSystem
+struct ParticleSystem
 {
-public:
     ParticleSystem *next;
     ParticleSystem *prev;
     ParticleSettings *part;
@@ -7036,9 +6590,8 @@ public:
     float *frand;
 };
 
-class bGPDframe
+struct bGPDframe
 {
-public:
     bGPDframe *next;
     bGPDframe *prev;
     ListBase strokes;
@@ -7046,9 +6599,8 @@ public:
     int flag;
 };
 
-class bGPDlayer
+struct bGPDlayer
 {
-public:
     bGPDlayer *next;
     bGPDlayer *prev;
     ListBase frames;
@@ -7060,9 +6612,8 @@ public:
     char info[128];
 };
 
-class bGPdata
+struct bGPdata
 {
-public:
     ID id;
     ListBase layers;
     int flag;
@@ -7071,9 +6622,8 @@ public:
     void *sbuffer;
 };
 
-class ReportList
+struct ReportList
 {
-public:
     ListBase list;
     int printlevel;
     int storelevel;
@@ -7082,9 +6632,8 @@ public:
     void *reporttimer;
 };
 
-class wmWindowManager
+struct wmWindowManager
 {
-public:
     ID id;
     wmWindow *windrawable;
     wmWindow *winactive;
@@ -7104,9 +6653,8 @@ public:
     void *autosavetimer;
 };
 
-class wmWindow
+struct wmWindow
 {
-public:
     wmWindow *next;
     wmWindow *prev;
     void *ghostwin;
@@ -7140,9 +6688,8 @@ public:
     ListBase gesture;
 };
 
-class wmKeyMap
+struct wmKeyMap
 {
-public:
     wmKeyMap *next;
     wmKeyMap *prev;
     ListBase items;
@@ -7155,9 +6702,8 @@ public:
     void *modal_items;
 };
 
-class wmKeyConfig
+struct wmKeyConfig
 {
-public:
     wmKeyConfig *next;
     wmKeyConfig *prev;
     char idname[64];
@@ -7167,9 +6713,8 @@ public:
     int flag;
 };
 
-class wmOperator
+struct wmOperator
 {
-public:
     wmOperator *next;
     wmOperator *prev;
     char idname[64];
@@ -7186,17 +6731,15 @@ public:
     short pad[3];
 };
 
-class FMod_Limits
+struct FMod_Limits
 {
-public:
     rctf rect;
     int flag;
     int pad;
 };
 
-class DriverVar
+struct DriverVar
 {
-public:
     DriverVar *next;
     DriverVar *prev;
     char name[64];
@@ -7206,9 +6749,8 @@ public:
     float curval;
 };
 
-class ChannelDriver
+struct ChannelDriver
 {
-public:
     ListBase variables;
     char expression[256];
     void *expr_comp;
@@ -7218,9 +6760,8 @@ public:
     int flag;
 };
 
-class FCurve
+struct FCurve
 {
-public:
     FCurve *next;
     FCurve *prev;
     bActionGroup *grp;
@@ -7238,18 +6779,16 @@ public:
     float color[3];
 };
 
-class AnimMapper
+struct AnimMapper
 {
-public:
     AnimMapper *next;
     AnimMapper *prev;
     bAction *target;
     ListBase mappings;
 };
 
-class NlaStrip
+struct NlaStrip
 {
-public:
     NlaStrip *next;
     NlaStrip *prev;
     ListBase strips;
@@ -7276,9 +6815,8 @@ public:
     int pad2;
 };
 
-class NlaTrack
+struct NlaTrack
 {
-public:
     NlaTrack *next;
     NlaTrack *prev;
     ListBase strips;
@@ -7287,9 +6825,8 @@ public:
     char name[64];
 };
 
-class KeyingSet
+struct KeyingSet
 {
-public:
     KeyingSet *next;
     KeyingSet *prev;
     ListBase paths;
@@ -7300,9 +6837,8 @@ public:
     int active_path;
 };
 
-class AnimData
+struct AnimData
 {
-public:
     bAction *action;
     bAction *tmpact;
     AnimMapper *remap;
@@ -7317,16 +6853,14 @@ public:
     float act_influence;
 };
 
-class IdAdtTemplate
+struct IdAdtTemplate
 {
-public:
     ID id;
     AnimData *adt;
 };
 
-class BoidRuleGoalAvoid
+struct BoidRuleGoalAvoid
 {
-public:
     BoidRule rule;
     Object *ob;
     int options;
@@ -7335,17 +6869,15 @@ public:
     int channels;
 };
 
-class BoidRuleAvoidCollision
+struct BoidRuleAvoidCollision
 {
-public:
     BoidRule rule;
     int options;
     float look_ahead;
 };
 
-class BoidRuleFollowLeader
+struct BoidRuleFollowLeader
 {
-public:
     BoidRule rule;
     Object *ob;
     float loc[3];
@@ -7356,9 +6888,8 @@ public:
     int queue_size;
 };
 
-class BoidRuleAverageSpeed
+struct BoidRuleAverageSpeed
 {
-public:
     BoidRule rule;
     float wander;
     float level;
@@ -7366,17 +6897,15 @@ public:
     float rt;
 };
 
-class BoidRuleFight
+struct BoidRuleFight
 {
-public:
     BoidRule rule;
     float distance;
     float flee_distance;
 };
 
-class BoidState
+struct BoidState
 {
-public:
     BoidState *next;
     BoidState *prev;
     ListBase rules;
@@ -7393,15 +6922,14 @@ public:
     float falloff;
 };
 
-class BoidSettings
+struct BoidSettings
 {
-public:
     int options;
     int last_state_id;
     float landing_smoothness;
-    float rt;
-    float banking;
     float height;
+    float banking;
+    float pitch;
     float health;
     float aggression;
     float strength;
@@ -7421,9 +6949,8 @@ public:
     ListBase states;
 };
 
-class SmokeDomainSettings
+struct SmokeDomainSettings
 {
-public:
     SmokeModifierData *smd;
     void *fluid;
     Group *fluid_group;
@@ -7460,7 +6987,12 @@ public:
     PointCache *point_cache[2];
     ListBase ptcaches[2];
     EffectorWeights *effector_weights;
+    int border_collisions;
+    float time_scale;
+    float vorticity;
+    int pad2;
 };
-
+/** @}*/
 }
+
 #endif//_Blender_h_

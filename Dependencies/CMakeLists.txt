@@ -1,14 +1,19 @@
 # ---------------------------------------------------------
 cmake_minimum_required(VERSION 2.6)
 
-
-
 project(Dependencies)
 SET(Dependencies 1.0)
-#subdirs(Source/Blender25)
+
 subdirs(Source/GameKit/Utils)
 subdirs(Source/GameKit/AnimKit)
 
+if (OGREKIT_USE_BPARSE)
+	subdirs(Source/Blender25)
+endif()
+
+if (OGREKIT_HEADER_GENERATOR)
+	subdirs(Source/Blender25/Headers)
+endif()
 
 include(NoWarn)
 subdirs(Source/OIS)

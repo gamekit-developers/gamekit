@@ -22,7 +22,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 	endif()
 
 	set(OGREKIT_INSTALL_PREFIX ${ROOT}/Bin)
-	set(OGREKIT_USE_FILETOOLS TRUE)
+	#set(OGREKIT_USE_FILETOOLS TRUE)
 	
 	option(OGREKIT_USE_LUA					"Use Lua script bindings" ON)
 	option(OGREKIT_COMPILE_SWIG				"Enable compile time SWIG generation."  OFF)
@@ -37,7 +37,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 	option(OGREKIT_USE_STATIC_FREEIMAGE		"Compile and link statically FreeImage and all its plugins" ON)	
 	option(OGREKIT_ENABLE_UNITTESTS			"Enable / Disable UnitTests" OFF)
 	#option(OGREKIT_USE_FILETOOLS			"Compile FBT file format utilities" ON)
-	#option(OGREKIT_USE_BPARSE				"Compile bParse file format utilities" OFF) #FBT alternative 
+	option(OGREKIT_USE_BPARSE				"Compile bParse file format utilities" OFF) #FBT alternative 
 	option(OGREKIT_COMPILE_TINYXML			"Enable / Disable TinyXml builds" OFF)
 	option(OGREKIT_COMPILE_LIBROCKET		"Enable / Disalbe libRocket builds" OFF)
 	option(OGREKIT_GENERATE_BUILTIN_RES		"Generate build-in resources" OFF)
@@ -184,7 +184,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 	endif()
 
 	if (SAMPLES_INSPECTOR)	
-		#set(OGREKIT_USE_FILETOOLS   TRUE CACHE BOOL "Forcing File Utils" FORCE)
+		set(OGREKIT_USE_FILETOOLS   TRUE CACHE BOOL "Forcing File Utils" FORCE)
 	endif()
 
 	if (WIN32 AND (SAMPLES_EMBEDDEMO OR SAMPLES_LUA_EDITOR))
@@ -313,13 +313,21 @@ macro (configure_ogrekit ROOT OGREPATH)
 #		${OGREKIT_FREEIMAGE_INCLUDE} Conflicts with OpenSteer includes and needed by Ogre, not OgreKit
 		${OGREKIT_FREETYPE_INCLUDE}
 		${OGREKIT_ZLIB_INCLUDE}
-		${OGREKIT_OIS_INCLUDE}		
-		#${GAMEKIT_SERIALIZE_BULLET}
-		#${GAMEKIT_SERIALIZE_BLENDER}
+		${OGREKIT_OIS_INCLUDE}				
 		${GAMEKIT_UTILS_PATH}
-		${GAMEKIT_ANIMKIT_PATH}
-		${GAMEKIT_FBT_INCLUDE}
+		${GAMEKIT_ANIMKIT_PATH}		
 	)
+	
+	if (OGREKIT_USE_BPARSE)
+		list(APPEND OGREKIT_DEP_INCLUDE
+			${GAMEKIT_SERIALIZE_BULLET}
+			${GAMEKIT_SERIALIZE_BLENDER}
+		)
+	else()
+		list(APPEND OGREKIT_DEP_INCLUDE
+			${GAMEKIT_FBT_INCLUDE}
+		)
+	endif()
 
 	
 	set(OGREKIT_LIBROCKET_INCLUDE ${OGREKIT_DEP_DIR}/libRocket/Include)
@@ -435,14 +443,22 @@ macro (configure_ogrekit ROOT OGREPATH)
 		${OGREKIT_GLRS_LIBS}
 		${OGREKIT_D3D9_LIBS}
 		${OGREKIT_D3D11_LIBS}		
-		#${GAMEKIT_SERIALIZE_BLENDER_TARGET}
-		#${GAMEKIT_SERIALIZE_BULLET_TARGET}
 		${GAMEKIT_UTILS_TARGET}
 		${OGREKIT_OIS_TARGET}
 		${OGREKIT_ZLIB_TARGET}
-		${GAMEKIT_ANIMKIT_TARGET}
-		${GAMEKIT_FBT_LIBS}
+		${GAMEKIT_ANIMKIT_TARGET}		
 	)
+	
+	if (OGREKIT_USE_BPARSE)
+		list(APPEND OGREKIT_OGRE_LIBS
+			${GAMEKIT_SERIALIZE_BLENDER_TARGET}
+			${GAMEKIT_SERIALIZE_BULLET_TARGET}
+		)
+	else()
+		list(APPEND OGREKIT_OGRE_LIBS
+			${GAMEKIT_FBT_LIBS}
+		)
+	endif()
 
 	if (OGREKIT_USE_RTSHADER_SYSTEM)
 		list(APPEND OGREKIT_OGRE_LIBS		OgreRTShaderSystem)
@@ -474,6 +490,9 @@ macro (configure_ogrekit ROOT OGREPATH)
 		list(APPEND OGREKIT_DEP_INCLUDE ${OGREKIT_OPENSTEER_INCLUDE})
 	endif()
 		
+	configure_file(${CMAKE_SOURCE_DIR}/CMake/Templates/OgreKitSettings.in ${CMAKE_BINARY_DIR}/Engine/gkSettings.h)
+	include_directories(${CMAKE_BINARY_DIR}/Engine)
+		
 	#Check Build Settings
 	if (APPLE)
 		if (OGREKIT_BUILD_IPHONE)
@@ -500,9 +519,6 @@ macro (configure_ogrekit ROOT OGREPATH)
 
 		endif()
 	endif(APPLE)
- 
-	configure_file(${CMAKE_SOURCE_DIR}/CMake/Templates/OgreKitSettings.in ${CMAKE_BINARY_DIR}/Engine/gkSettings.h)
-	include_directories(${CMAKE_BINARY_DIR}/Engine)
 
 endmacro(configure_ogrekit)
 
@@ -550,6 +566,7 @@ macro(configure_rendersystem)
 		)
 		
 	endif()
+	
 	if (OGREKIT_BUILD_D3D9RS)
 
 		include_directories(

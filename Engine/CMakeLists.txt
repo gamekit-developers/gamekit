@@ -468,11 +468,12 @@ endif()
 # BlendFile Loaders
 # ---------------------------------------------------------
 set(Blend_SOURCE
-	# ----- Public Source -----
+	# ----- Public Source -----	
 	Loaders/Blender2/gkBlendFile.cpp
+	Loaders/Blender2/gkBlendInternalFile.cpp
 	Loaders/Blender2/gkBlendLoader.cpp
 	Loaders/Blender2/gkTextureLoader.cpp
-	Loaders/Blender2/gkBlenderSceneConverter.cpp
+	Loaders/Blender2/gkBlenderSceneConverter.cpp	
 	Loaders/Blender2/Converters/gkAnimationConverter.cpp
 	Loaders/Blender2/Converters/gkLogicBrickConverter.cpp
 	Loaders/Blender2/Converters/gkMeshConverter.cpp
@@ -481,8 +482,9 @@ set(Blend_SOURCE
 )
 
 set(Blend_HEADER
-	# ----- Public Headers -----
+	# ----- Public Headers -----	
 	Loaders/Blender2/gkBlendFile.h
+	Loaders/Blender2/gkBlendInternalFile.h
 	Loaders/Blender2/gkBlendLoader.h
 	Loaders/Blender2/gkLoaderCommon.h
 	Loaders/Blender2/gkBlenderDefines.h

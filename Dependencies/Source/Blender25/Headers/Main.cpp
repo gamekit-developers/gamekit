@@ -23,6 +23,8 @@ subject to the following restrictions:
 #include <string.h>
 
 
+#define ADD_DOXYGEN_COMMENTS	1
+#define WRITE_DNA_FILE			1
 
 typedef std::string hgString;
 
@@ -264,7 +266,7 @@ void dumpClass(FILE *fp, DNA *dna, short *strc, int max0, int max1, int index)
 
 
 
-    fprintf(fp, "class %s\n{\npublic:\n", type.c_str());
+    fprintf(fp, "struct %s\n{\n", type.c_str());
 
     int padding = 0;
 
@@ -327,7 +329,7 @@ void dumpForwards(FILE *fp, DNA *dna)
         short *sp = dna->getStruct(i);
 
         hgString type = dna->getType(sp[0]);
-        fprintf(fp, "class %s;\n", type.c_str());
+        fprintf(fp, "struct %s;\n", type.c_str());
     }
     fprintf(fp, "\n\n\n");
 }
@@ -514,15 +516,31 @@ int main(int argc, char **argv)
             }
 
             fprintf(bfp, "\n\n");
+
             fprintf(bfp, "namespace %s {\n", specname);
 
+#if ADD_DOXYGEN_COMMENTS
+			fprintf(bfp, "/** \\addtogroup %s\n"
+				"*  @{\n"
+				"*/\n\n",
+				specname
+			);
+#endif
             dumpStructs(bfp, dna);
 
+#if ADD_DOXYGEN_COMMENTS
+			fprintf(bfp, "/** @}*/\n");            
+#endif
+
             fprintf(bfp, "}\n");
-            fprintf(bfp, "#endif//_%s_h_\n", specname);
+
+			fprintf(bfp, "#endif//_%s_h_\n", specname);
+
             fclose(bfp);
         }
 
+
+#if WRITE_DNA_FILE
         char name[32];
         sprintf(name, "dna_%i_%s.cpp", version, (is64Bit ? "64" : "32"));
 
@@ -546,7 +564,7 @@ int main(int argc, char **argv)
             fprintf(bfp, "int DNAlen%s=sizeof(DNAstr%s);\n", (is64Bit ? "64" : ""), (is64Bit ? "64" : ""));
             fclose(bfp);
         }
-
+#endif
 
         delete dna;
     }

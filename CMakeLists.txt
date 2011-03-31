@@ -86,7 +86,10 @@ subdirs(bullet)
 subdirs(Dependencies)
 subdirs(Ogre-1.8)
 subdirs(Engine)
-subdirs(Tools/FileTools)
+
+if (NOT OGREKIT_USE_BPARSE OR OGREKIT_USE_FILETOOLS)
+	subdirs(Tools/FileTools)
+endif()
 
 if (OGREKIT_COMPILE_WXWIDGETS)
 	subdirs(${OGREKIT_SOURCE_DIR}/${WX_VERSION})

@@ -25,8 +25,6 @@
 -------------------------------------------------------------------------------
 */
 #include "Blender.h"
-//#include "bBlenderFile.h"
-//#include "bMain.h"
 
 #include "gkBlenderDefines.h"
 #include "gkBlenderSceneConverter.h"
@@ -212,9 +210,14 @@ void gkBlenderSceneConverter::convertGroups(utArray<Blender::Object*> &groups)
 	// The gkGameObjectGroup is a containter, the gkGameObjectGroupInstance
 	// is where the object should be added / removed from the scene.
 	
-	for (Blender::Group* bgrp = (Blender::Group*)m_file->_getInternalFile()->m_group.first; bgrp != 0; 
-		bgrp = (Blender::Group*)bgrp->id.next)
+	//	for (Blender::Group* bgrp = (Blender::Group*)m_file->_getInternalFile()->m_group.first; bgrp != 0; 
+	//	bgrp = (Blender::Group*)bgrp->id.next)
+
+	gkBlendListIterator iter = m_file->_getInternalFile()->getGroupList();
+	while (iter.hasMoreElements())
 	{
+		Blender::Group* bgrp = (Blender::Group*)iter.getNext();
+
 
 		const gkResourceName groupName(GKB_IDNAME(bgrp), m_groupName);
 

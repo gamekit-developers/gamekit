@@ -32,10 +32,12 @@
 // utility for consistency
 #define GKB_IDNAME(x) ((x) && (x)->id.name[0] != '0' ? (x)->id.name + 2 : "")
 
-//namespace bParse
-//{
-//class bBlenderFile;
-//}
+#if OGREKIT_USE_BPARSE
+namespace bParse
+{
+class bBlenderFile;
+}
+#endif
 
 namespace Blender
 {
@@ -54,5 +56,6 @@ class ManualResourceLoader;
 }
 
 class gkBlendFile;
+class gkBlendInternalFile;
 
 #endif//_gkLoaderCommon_h_
