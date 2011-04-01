@@ -397,7 +397,8 @@ void gkBlendFile::buildAllActions(void)
 {
 	gkAnimationLoader anims(m_group);
 		
-	anims.convertActions(m_file->getActionList(), m_file->getVersion() <= 249, m_animFps);
+    gkBlendListIterator iter = m_file->getActionList();
+	anims.convertActions(iter, m_file->getVersion() <= 249, m_animFps);
 }
 
 
