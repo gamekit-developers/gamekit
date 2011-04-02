@@ -25,10 +25,11 @@
 import bpy
 from bpy.props import *
 import os
-from game_gamekit import config
+from . import config
 
 # Use some of the existing buttons.
-import properties_game
+#import properties_game
+from bl_ui import properties_game
 properties_game.RENDER_PT_game_player.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 #properties_game.RENDER_PT_game_performance.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_game.RENDER_PT_game_shading.COMPAT_ENGINES.add('GAMEKIT_RENDER')
@@ -43,7 +44,7 @@ properties_game.PHYSICS_PT_game_collision_bounds.COMPAT_ENGINES.add('GAMEKIT_REN
 del properties_game
 
 
-import properties_particle
+from bl_ui import properties_particle
 properties_particle.PARTICLE_PT_context_particles.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_particle.PARTICLE_PT_emission.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_particle.PARTICLE_PT_velocity.COMPAT_ENGINES.add('GAMEKIT_RENDER')
@@ -58,7 +59,7 @@ properties_particle.PARTICLE_PT_force_fields.COMPAT_ENGINES.add('GAMEKIT_RENDER'
 #properties_particle.PARTICLE_PT_vertexgroups.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 del properties_particle
     
-import properties_material
+from bl_ui import properties_material
 properties_material.MATERIAL_PT_context_material.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_material.MATERIAL_PT_custom_props.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_material.MATERIAL_PT_diffuse.COMPAT_ENGINES.add('GAMEKIT_RENDER')
@@ -83,7 +84,7 @@ properties_material.MATERIAL_PT_transp_game.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 #properties_material.MATERIAL_PT_volume_transp.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 del properties_material
 
-import properties_data_mesh
+from bl_ui import properties_data_mesh
 properties_data_mesh.DATA_PT_context_mesh.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_data_mesh.DATA_PT_custom_props_mesh.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_data_mesh.DATA_PT_normals.COMPAT_ENGINES.add('GAMEKIT_RENDER')
@@ -97,7 +98,7 @@ properties_data_mesh.MESH_MT_shape_key_specials.COMPAT_ENGINES.add('GAMEKIT_REND
 properties_data_mesh.MESH_MT_vertex_group_specials.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 del properties_data_mesh
  
-import properties_texture
+from bl_ui import properties_texture
 properties_texture.TEXTURE_MT_envmap_specials.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_texture.TEXTURE_MT_specials.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_texture.TEXTURE_PT_blend.COMPAT_ENGINES.add('GAMEKIT_RENDER')
@@ -128,14 +129,14 @@ properties_texture.TextureSlotPanel.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 #properties_texture.TextureTypePanel.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 del properties_texture
 
-import properties_data_camera
+from bl_ui import properties_data_camera
 properties_data_camera.DATA_PT_camera.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_data_camera.DATA_PT_camera_display.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_data_camera.DATA_PT_context_camera.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_data_camera.DATA_PT_custom_props_camera.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 del properties_data_camera
 
-import properties_data_lamp
+from bl_ui import properties_data_lamp
 properties_data_lamp.DATA_PT_area.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_data_lamp.DATA_PT_context_lamp.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_data_lamp.DATA_PT_custom_props_lamp.COMPAT_ENGINES.add('GAMEKIT_RENDER')
@@ -148,7 +149,7 @@ properties_data_lamp.DATA_PT_sunsky.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 properties_data_lamp.LAMP_MT_sunsky_presets.COMPAT_ENGINES.add('GAMEKIT_RENDER')
 del properties_data_lamp
 
-import properties_world
+from bl_ui import properties_world
 
 
 class WORLD_PT_world(properties_world.WorldButtonsPanel, bpy.types.Panel):
@@ -305,10 +306,34 @@ class RENDER_PT_gamekit_performance(RenderButtonsPanel, bpy.types.Panel):
 
 
 # Setting for this addon
-class GamekitSettings(bpy.types.IDPropertyGroup):
+class GamekitSettings(bpy.types.PropertyGroup):
     pass  
+    
 
+# Declare gamekit as a render engine
+class GamekitRender(bpy.types.RenderEngine):
+    bl_idname = 'GAMEKIT_RENDER'
+    bl_label = "Gamekit"
+    #We do not implement the render function because Gamekit 
+    #is not really a render engine.
+    
+
+def remProperties():
+    # bpy.types.Scene.RemoveProperty("gamekit")
+    bpy.utils.unregister_class(GamekitRender)
+    bpy.utils.unregister_class(GamekitSettings)    
+    
 def addProperties():
+    bpy.utils.register_class(WORLD_PT_world)
+    bpy.utils.register_class(WORLD_PT_mist)
+
+    bpy.utils.register_class(RENDER_PT_gamekit)
+    bpy.utils.register_class(RENDER_PT_gamekit_runtime)
+    bpy.utils.register_class(RENDER_PT_gamekit_performance)
+
+    bpy.utils.register_class(GamekitRender)
+    bpy.utils.register_class(GamekitSettings)    
+    
     #bpy.types.Scene.PointerProperty(attr="gamekit", type=GamekitSettings, name="Gamekit", description="Gamekit Settings")
     bpy.types.Scene.gamekit = bpy.props.PointerProperty(type=GamekitSettings, name="Gamekit", description="Gamekit Settings")
     

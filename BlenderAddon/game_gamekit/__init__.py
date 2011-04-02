@@ -24,35 +24,47 @@
 
 
 
-bl_addon_info = {
+bl_info = {
     'name': 'Gamekit Engine',
     'author': 'Xavier Thomas (xat)',
     'version': (0,0,601),
-    'api': 31845,
-    'blender': (2, 5, 3),
+    'api': 35899,
+    'blender': (2, 5, 7),
     'location': 'Info Window > Render Engine > Gamekit',
     'description': 'Launch game using the fine gamekit engine',
     'wiki_url': 'http://wiki.blender.org/index.php/Extensions:2.5/Py/Scripts/Gamekit_Engine',
     'tracker_url': 'https://projects.blender.org/tracker/index.php?func=detail&aid=23378&group_id=153&atid=514',
     'category': 'Game Engine'}
 
-try:
-    init_data
+if "bpy" in locals():
+    import imp
+    #if "operators" in locals():
+    imp.reload(operators)
+    imp.reload(ui)
+else:
+    from . import operators
+    from . import ui
 
-    reload(operators)
-    reload(ui)
-except:
-    from game_gamekit import operators
-    from game_gamekit import ui
 
-init_data = True
+#init_data = True
+
+import bpy
 
 def register():
+    #bpy.utils.register_module(__name__)
+    
+    bpy.utils.register_class(operators.GamekitExportStartupFileOperator)
+    bpy.utils.register_class(operators.GamekitStartGameOperator)
+
     ui.addProperties()
 
-def unregister():
-    import bpy
-    bpy.types.Scene.RemoveProperty("gamekit")
+def unregister():   
+    #bpy.utils.unregister_module(__name__)
+    
+    bpy.utils.unregister_class(operators.GamekitExportStartupFileOperator)
+    bpy.utils.unregister_class(operators.GamekitStartGameOperator)
+    
+    ui.remProperties()
 
 if __name__ == "__main__":
     register()

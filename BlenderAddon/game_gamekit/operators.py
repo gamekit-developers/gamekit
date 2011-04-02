@@ -27,7 +27,7 @@ from bpy.props import *
 import os
 import subprocess
 import shlex
-from game_gamekit import config
+from . import config
 
 def touch(fname):
     if os.path.exists(fname):
@@ -56,10 +56,11 @@ def assure_temp_dir(dir):
     
 # Declare gamekit as a render engine
 class GamekitRender(bpy.types.RenderEngine):
-    bl_idname = 'GAMEKIT_RENDER'
-    bl_label = "Gamekit"
+    #bl_idname = 'GAMEKIT_RENDER'
+    #bl_label = "Gamekit"
     #We do not implement the render function because Gamekit 
     #is not really a render engine.
+    pass
 
 # Export startup config fo gamekit
 class GamekitExportStartupFileOperator(bpy.types.Operator):
