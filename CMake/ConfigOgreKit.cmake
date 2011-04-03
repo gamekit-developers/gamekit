@@ -241,7 +241,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 		if(VERSION STRLESS "2.8.1")
 			set(CMAKE_OSX_ARCHITECTURES $(ARCHS_STANDARD_32_BIT))
 		else()
-			set(CMAKE_OSX_ARCHITECTURES "armv6;armv7;")
+			set(CMAKE_OSX_ARCHITECTURES "armv6;armv7;i386")
 		endif()
 	
 		add_definitions(-fno-regmove)

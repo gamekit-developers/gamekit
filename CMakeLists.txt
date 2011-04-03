@@ -46,6 +46,11 @@ endif()
 
 
 
+if (APPLE AND ${XCODE_VERSION} STRGREATER "4.0.0")
+    set(CMAKE_XCODE_ATTRIBUTE_GCC_VERSION "4.2")
+endif()
+
+
 IF(MSVC)
 
 	#We statically link to reduce dependancies
