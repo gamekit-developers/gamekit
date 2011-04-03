@@ -37,8 +37,8 @@ macro (configure_ogrekit ROOT OGREPATH)
 	option(OGREKIT_USE_STATIC_FREEIMAGE		"Compile and link statically FreeImage and all its plugins" ON)	
 	option(OGREKIT_ENABLE_UNITTESTS			"Enable / Disable UnitTests" OFF)
 	#option(OGREKIT_USE_FILETOOLS			"Compile FBT file format utilities" ON)
-	option(OGREKIT_USE_BPARSE				"Compile bParse file format utilities" OFF) #FBT alternative 
-	option(OGREKIT_COMPILE_TINYXML			"Enable / Disable TinyXml builds" ON)
+	option(OGREKIT_USE_BPARSE				"Compile bParse file format utilities" ON) #FBT alternative 
+	option(OGREKIT_COMPILE_TINYXML			"Enable / Disable TinyXml builds" OFF)
 	option(OGREKIT_COMPILE_LIBROCKET		"Enable / Disalbe libRocket builds" OFF)
 	option(OGREKIT_GENERATE_BUILTIN_RES		"Generate build-in resources" OFF)
 	option(OGREKIT_COMPILE_TCL				"Compile TemplateGenerator" OFF)
