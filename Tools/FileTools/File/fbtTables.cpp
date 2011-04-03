@@ -339,7 +339,6 @@ bool fbtBinTables::read(const void* ptr, const FBTsize& len, bool swap)
 
 
 void fbtBinTables::compile(FBTtype i, FBTtype nr, fbtStruct* off, FBTuint32& cof, FBTuint32 depth, fbtStruct::Keys& keys)
-//void fbtBinTables::compile(FBTtype i, FBTtype nr, fbtStruct* off, FBTuint32& cof, FBTuint32 depth)
 {
 	FBTuint32 e, l, a, oof, ol;
 	FBTuint16 f = m_strc[0][0];
@@ -356,8 +355,6 @@ void fbtBinTables::compile(FBTtype i, FBTtype nr, fbtStruct* off, FBTuint32& cof
 		// Only calculate offsets on recursive structs
 		// This saves undeded buffers
 		FBTtype* strc = m_strc[i];
-	
-
 
 		oof = cof;
 		ol = m_tlen[strc[0]];
@@ -369,13 +366,10 @@ void fbtBinTables::compile(FBTtype i, FBTtype nr, fbtStruct* off, FBTuint32& cof
 		{
 			if (strc[0] >= f && m_name[strc[1]].m_ptrCount == 0)
 			{
-				//depth++; //TODO:
-
 				fbtKey64 k = {m_type[strc[0]].m_typeId, m_name[strc[1]].m_nameId};
 				keys.push_back(k);
 
 				compile(m_type[strc[0]].m_strcId, m_name[strc[1]].m_arraySize, off, cof, depth+1, keys);
-				//depth--;
 
 				keys.pop_back();
 			}
@@ -438,14 +432,12 @@ void fbtBinTables::compile(void)
 		{
 			if (strc[0] >= f && m_name[strc[1]].m_ptrCount == 0) //strc[0]:member_type, strc[1]:member_name
 			{
-				//depth++;
 				fbtStruct::Keys keys;
 				fbtKey64 k = {m_type[strc[0]].m_typeId, m_name[strc[1]].m_nameId};
 				keys.push_back(k);
 				compile(m_type[strc[0]].m_strcId, m_name[strc[1]].m_arraySize, off, cof, depth+1, keys);				
 			}
 			else
-				//putMember(strc, off, 0, cof, depth);
 				putMember(strc, off, 0, cof, 0, emptyKeys);
 		}
 
@@ -458,7 +450,6 @@ void fbtBinTables::compile(void)
 	}
 }
 
-//void fbtBinTables::putMember(FBTtype* cp, fbtStruct* off, FBTtype nr, FBTuint32& cof, FBTuint32& depth)
 void fbtBinTables::putMember(FBTtype* cp, fbtStruct* off, FBTtype nr, FBTuint32& cof, FBTuint32 depth, fbtStruct::Keys& keys)
 {
 	fbtStruct nof;

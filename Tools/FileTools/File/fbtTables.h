@@ -107,6 +107,7 @@ public:
 		MISSING     = (1 << 0),
 		MISALIGNED  = (1 << 1),
 		SKIP        = (1 << 2),
+		NEED_CAST	= (1 << 3)
 	};
 
 
@@ -200,10 +201,8 @@ private:
 
 	TypeFinder m_typeFinder;
 
-	//void putMember(FBTtype* cp, fbtStruct* off, FBTtype nr, FBTuint32& cof, FBTuint32& depth);
 	void putMember(FBTtype* cp, fbtStruct* off, FBTtype nr, FBTuint32& cof, FBTuint32 depth, fbtStruct::Keys& keys);
 	void compile(FBTtype i, FBTtype nr, fbtStruct* off, FBTuint32& cof, FBTuint32 depth, fbtStruct::Keys& keys);
-	//void compile(FBTtype i, FBTtype nr, fbtStruct* off, FBTuint32& cof, FBTuint32 depth);
 	void compile(void);
 	bool sikp(const FBTuint32& type);
 

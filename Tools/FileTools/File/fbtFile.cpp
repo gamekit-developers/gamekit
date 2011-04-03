@@ -354,6 +354,11 @@ int fbtFile::parseStreamImpl(fbtStream* stream)
 }
 
 
+class fbtPrimType
+{
+public:
+
+};
 
 class fbtLinkCompiler
 {
@@ -362,28 +367,10 @@ public:
 	fbtBinTables* m_fp;
 
 	fbtStruct* find(const fbtCharHashKey& kvp);
-	//fbtStruct* find(fbtStruct* strc, const FBTuint32& idx, const FBTuint32& dp, const FBTuint64& kvp);
-	fbtStruct* find(fbtStruct* strc, fbtStruct* member, bool isPointer);
+	fbtStruct* find(fbtStruct* strc, fbtStruct* member, bool isPointer, bool& needCast);
 	int        link(void);
-
-	bool isIntType(FBTuint32 k);
 };
 
-bool fbtLinkCompiler::isIntType(FBTuint32 k)
-{
-	static FBTuint32 charT   = fbtCharHashKey("char").hash();
-	static FBTuint32 ucharT  = fbtCharHashKey("uchar").hash();
-	static FBTuint32 shortT  = fbtCharHashKey("short").hash();
-	static FBTuint32 ushortT = fbtCharHashKey("ushort").hash();
-	static FBTuint32 intT    = fbtCharHashKey("int").hash();
-	static FBTuint32 longT   = fbtCharHashKey("long").hash();
-	static FBTuint32 ulongT  = fbtCharHashKey("ulong").hash();
-
-	return k == intT   ||
-		   k == charT  || k == ucharT  ||
-		   k == shortT || k == ushortT ||   
-		   k == longT  || k == ulongT;
-}
 
 
 fbtStruct* fbtLinkCompiler::find(const fbtCharHashKey& kvp)
@@ -395,32 +382,43 @@ fbtStruct* fbtLinkCompiler::find(const fbtCharHashKey& kvp)
 }
 
 
-//fbtStruct* fbtLinkCompiler::find(fbtStruct* strc, const FBTuint32& idx, const FBTuint32& dp, const FBTuint64& kvp)
-fbtStruct* fbtLinkCompiler::find(fbtStruct* strc, fbtStruct* member, bool isPointer)
+fbtStruct* fbtLinkCompiler::find(fbtStruct* strc, fbtStruct* member, bool isPointer, bool& needCast)
 {
 	fbtStruct::Members::Pointer md = strc->m_members.ptr();
 	FBTsizeType i, s = strc->m_members.size();
 
-	//const FBTuint32& idx = member->m_nr;
-	//const FBTuint32& dp = member->m_dp;
-	const fbtKey64& kvp = member->m_val;
+	FBTuint32 k1 = member->m_val.k32[0];
 
 	for (i = 0; i < s; i++)
 	{
 		fbtStruct* strc2 = &md[i];
 
-		if (strc2->m_nr == member->m_nr &&
-			strc2->m_dp ==  member->m_dp)
+		if (strc2->m_nr == member->m_nr && strc2->m_dp ==  member->m_dp)
 		{
-			if (strc2->m_val.k32[1] == kvp.k32[1]) //base name
-			{
-				if ((strc2->m_val.k32[0] == member->m_val.k32[0] ||
-					(!isPointer && isIntType(strc2->m_val.k32[0]) && isIntType(kvp.k32[0]))) &&
-					strc2->m_keyChain.equal(member->m_keyChain))
+			if (strc2->m_val.k32[1] == member->m_val.k32[1]) //base name
+			{				
+				if (!strc2->m_keyChain.equal(member->m_keyChain))
+					continue;
+
+				FBTuint32 k2 = strc2->m_val.k32[0];
+				if (k1 == k2)
 					return strc2;
+
+				if (isPointer)
+					continue;
+
+				if (fbtIsIntType(k1) && fbtIsIntType(k2))
+					return strc2;
+
+				if (fbtIsNumberType(k1) && fbtIsNumberType(k2))
+				{
+					needCast = true;
+					return strc2;
+				}
 			}
 		}
 	}
+
 
 	return 0;
 }
@@ -430,7 +428,7 @@ int fbtLinkCompiler::link(void)
 	fbtBinTables::OffsM::Pointer md = m_mp->m_offs.ptr();
 	fbtBinTables::OffsM::Pointer fd = m_fp->m_offs.ptr();
 
-	FBTsizeType i, i2; //, s2;
+	FBTsizeType i, i2; 
 	fbtStruct::Members::Pointer p2;
 
 
@@ -439,12 +437,10 @@ int fbtLinkCompiler::link(void)
 		fbtStruct* strc = md[i];
 		strc->m_link = find(m_mp->m_type[strc->m_key.k16[0]].m_name);
 
-
 		if (strc->m_link)
 			strc->m_link->m_link = strc;
 
 		p2 = strc->m_members.ptr();
-		//s2 = strc->m_members.size();
 
 		//fbtPrintf("+%-3d %s\n", i, m_mp->getStructType(strc));
 		for (i2 = 0; i2 < strc->m_members.size(); ++i2)
@@ -459,15 +455,66 @@ int fbtLinkCompiler::link(void)
 			{
 				FBT_ASSERT(member->m_key.k16[1] < m_mp->m_nameNr);
 				bool isPointer = m_mp->m_name[member->m_key.k16[1]].m_ptrCount > 0;
-				//strc2->m_link = find(strc->m_link, strc2->m_nr, strc2->m_dp, strc2->m_val.k64);
-				member->m_link = find(strc->m_link, member, isPointer);
-				if (member->m_link) member->m_link->m_link = member;
+				bool needCast = false;
+				member->m_link = find(strc->m_link, member, isPointer, needCast);
+				if (member->m_link)
+				{
+					member->m_link->m_link = member;
+					if (needCast)
+					{
+						member->m_flag |= fbtStruct::NEED_CAST;
+						member->m_link->m_flag |= fbtStruct::NEED_CAST;
+					}
+				}
 			}
 		}
 
 	}
 
 	return fbtFile::FS_OK;
+}
+
+void castValue(FBTsize* srcPtr, FBTsize* dstPtr, FBT_PRIM_TYPE srctp, FBT_PRIM_TYPE dsttp, FBTsize malen)
+{
+#define GET_V(value, current, type, cast, ptr, match) \
+	if (current == type) \
+	{ \
+		value = (*(cast*)ptr); \
+		ptr += sizeof(cast); \
+		if (++match >= 2) continue; \
+	}
+
+#define SET_V(value, current, type, cast, ptr, match) \
+	if (current == type) \
+	{ \
+		(*(cast*)ptr) = (cast)value; \
+		ptr += sizeof(cast); \
+		if (++match >= 2) continue; \
+	}
+
+	double value = 0.0;
+
+	FBTsizeType i;
+	for (i = 0; i < malen; i++)
+	{
+		int match = 0;
+		GET_V(value, srctp, FBT_PRIM_CHAR,    char,            srcPtr, match);
+		SET_V(value, dsttp, FBT_PRIM_CHAR,    char,            dstPtr, match);
+		GET_V(value, srctp, FBT_PRIM_SHORT,   short,           srcPtr, match);
+		SET_V(value, dsttp, FBT_PRIM_SHORT,   short,           dstPtr, match);
+		GET_V(value, srctp, FBT_PRIM_USHORT,  unsigned short,  srcPtr, match);
+		SET_V(value, dsttp, FBT_PRIM_USHORT,  unsigned short,  dstPtr, match);
+		GET_V(value, srctp, FBT_PRIM_INT,     int,             srcPtr, match);
+		SET_V(value, dsttp, FBT_PRIM_INT,     int,             dstPtr, match);
+		GET_V(value, srctp, FBT_PRIM_LONG,    int,             srcPtr, match);
+		SET_V(value, dsttp, FBT_PRIM_LONG,    int,             dstPtr, match);
+		GET_V(value, srctp, FBT_PRIM_FLOAT,   float,           srcPtr, match);
+		SET_V(value, dsttp, FBT_PRIM_FLOAT,   float,           dstPtr, match);
+		GET_V(value, srctp, FBT_PRIM_DOUBLE,  double,          srcPtr, match);
+		SET_V(value, dsttp, FBT_PRIM_DOUBLE,  double,          dstPtr, match);
+	}
+#undef GET_V
+#undef SET_V
 }
 
 
@@ -482,6 +529,8 @@ int fbtFile::link(void)
 	char* dst, *src;
 	FBTsize* dstPtr, *srcPtr;
 
+	bool needSwap = (m_fileHeader & FH_ENDIAN_SWAP) != 0;
+
 	FBThash hk = fbtCharHashKey("Link").hash();
 
 
@@ -491,13 +540,11 @@ int fbtFile::link(void)
 		if (node->m_chunk.m_typeid > m_file->m_strcNr || !( fd[node->m_chunk.m_typeid]->m_link))
 			continue;
 
-
 		fbtStruct* fs, *ms;
 		fs = fd[node->m_chunk.m_typeid];
 		ms = fs->m_link;
 
 		node->m_newTypeId = ms->m_strcId;
-
 
 		if (m_memory->m_type[ms->m_key.k16[0]].m_typeId == hk)
 		{
@@ -570,26 +617,26 @@ int fbtFile::link(void)
 
 			for (i2 = 0; i2 < s2; ++i2)
 			{
-				fbtStruct* scs = &p2[i2];
-				fbtStruct* sos = scs->m_link;
+				fbtStruct* dstStrc = &p2[i2];
+				fbtStruct* srcStrc = dstStrc->m_link;
 
 				// If it's missing we can safely skip this block
-				if (!sos)
+				if (!srcStrc)
 					continue;
 
 
-				dstPtr = reinterpret_cast<FBTsize*>(dst + scs->m_off);
-				srcPtr = reinterpret_cast<FBTsize*>(src + sos->m_off);
+				dstPtr = reinterpret_cast<FBTsize*>(dst + dstStrc->m_off);
+				srcPtr = reinterpret_cast<FBTsize*>(src + srcStrc->m_off);
 
 
 
-				const fbtName& nameD = m_memory->m_name[scs->m_key.k16[1]];
-				const fbtName& nameS = m_file->m_name[sos->m_key.k16[1]];
+				const fbtName& nameD = m_memory->m_name[dstStrc->m_key.k16[1]];
+				const fbtName& nameS = m_file->m_name[srcStrc->m_key.k16[1]];
 
 
 
 				// Take the minimum length of any array.
-				mlen = scs->m_len > sos->m_len ? sos->m_len : scs->m_len;
+				mlen = dstStrc->m_len > srcStrc->m_len ? srcStrc->m_len : dstStrc->m_len;
 
 
 				if (nameD.m_ptrCount > 0)
@@ -650,33 +697,51 @@ int fbtFile::link(void)
 				}
 				else
 				{
-					fbtMemcpy(dstPtr, srcPtr, mlen);
+					bool needCast = (dstStrc->m_flag & fbtStruct::NEED_CAST) != 0;
 
-					if (m_fileHeader & FH_ENDIAN_SWAP)
+					FBTsize* tmpPtr = dstPtr;
+					FBTsize  tmpLen = mlen;
+					FBTsize  tmpALen = 0;
+					FBT_PRIM_TYPE stp = FBT_PRIM_UNKNOWN, dtp  = FBT_PRIM_UNKNOWN;
+
+					if (needCast || needSwap)
 					{
-						char* cp = (char*)dstPtr;
+						stp = fbtGetPrimType(srcStrc->m_val.k32[0]);
+						dtp = fbtGetPrimType(dstStrc->m_val.k32[0]);
+
+						FBT_ASSERT(fbtIsNumberType(stp) && fbtIsNumberType(dtp) && stp != dtp);
+					}
+
+					if (needCast)
+					{
+						//printf("need cast: %s %s\n", m_memory->getStructName(dstStrc), m_memory->getStructType(dstStrc));
+						tmpLen = srcStrc->m_len;
+						tmpPtr = (FBTsize*)fbtMalloc(tmpLen);						
+					}
+
+					fbtMemcpy(tmpPtr, srcPtr, tmpLen);
+
+					if (needSwap)
+					{
+						char* cp = (char*)tmpPtr;
 
 						malen = nameD.m_arraySize > nameS.m_arraySize ? nameS.m_arraySize : nameD.m_arraySize;
-						int swapId = m_memory->m_tlen[scs->m_key.k16[0]];
+						tmpALen = needCast ? nameS.m_arraySize : malen;	
 
-						if (swapId == 2 || swapId == 3)
-						{
-							FBTuint16* sp = (FBTuint16*)cp;
-							for (a2 = 0; a2 < malen; ++a2)
-							{
-								*sp = fbtSwap16(*sp);
-								++sp;
-							}
-						}
-						else if (swapId > 3 && swapId < m_memory->m_strc[0][0])
-						{
-							FBTuint32* ip = (FBTuint32*)cp;
-							for (a2 = 0; a2 < malen; ++a2)
-							{
-								*ip = fbtSwap32(*ip);
-								++ip;
-							}
-						}
+						if (stp == FBT_PRIM_SHORT || stp == FBT_PRIM_USHORT) 
+							fbtSwap16((FBTuint16*)cp, tmpALen);							
+						else if (stp >= FBT_PRIM_INT && stp <= FBT_PRIM_FLOAT) 
+							fbtSwap32((FBTuint32*)cp, tmpALen);
+						else if (stp == FBT_PRIM_DOUBLE)
+							fbtSwap64((FBTuint64*)cp, tmpALen);
+					}
+					
+					if (needCast)
+					{						
+						castValue(srcPtr, dstPtr, stp, dtp, malen);
+
+						fbtFree(tmpPtr);
+						tmpPtr = 0;
 					}
 				}
 			}

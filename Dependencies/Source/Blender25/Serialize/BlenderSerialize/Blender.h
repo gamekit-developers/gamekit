@@ -9,9 +9,6 @@
 #undef far
 #endif
 
-#ifdef rad2
-#undef rad2
-#endif
 
 namespace Blender {
 /** \addtogroup Blender
@@ -325,6 +322,7 @@ struct bActionModifier;
 struct bActionStrip;
 struct bNodeStack;
 struct bNodeSocket;
+struct bNodePreview;
 struct bNode;
 struct bNodeLink;
 struct bNodeTree;
@@ -360,6 +358,7 @@ struct CustomData;
 struct HairKey;
 struct ParticleKey;
 struct BoidParticle;
+struct ParticleSpring;
 struct ChildParticle;
 struct ParticleTarget;
 struct ParticleDupliWeight;
@@ -622,13 +621,15 @@ struct MTex
     float timefac;
     float lengthfac;
     float clumpfac;
+    float dampfac;
     float kinkfac;
     float roughfac;
     float padensfac;
+    float gravityfac;
     float lifefac;
     float sizefac;
     float ivelfac;
-    float pvelfac;
+    float fieldfac;
     float shadowfac;
     float zenupfac;
     float zendownfac;
@@ -909,10 +910,8 @@ struct MVert
 {
     float co[3];
     short no[3];
-    short mat_nr;
     char flag;
     char bweight;
-    char pad[2];
 };
 
 struct MCol
@@ -1183,9 +1182,7 @@ struct PTCacheExtra
     PTCacheExtra *next;
     PTCacheExtra *prev;
     int type;
-    int flag;
     int totdata;
-    int datasize;
     void *data;
 };
 
@@ -1514,7 +1511,6 @@ struct RegionView3D
     bGPdata *gpd;
     RegionView3D *localvd;
     void *ri;
-    void *retopo_view_data;
     void *depths;
     void *sms;
     void *smooth_timer;
@@ -1534,16 +1530,15 @@ struct FileSelectParams
     char renamefile[80];
     char renameedit[80];
     char filter_glob[64];
+    int active_file;
+    int sel_first;
+    int sel_last;
     short type;
     short flag;
     short sort;
     short display;
     short filter;
-    short active_bookmark;
-    int active_file;
-    int selstate;
     short f_fp;
-    short pad;
     char fp_str[8];
 };
 
@@ -1695,8 +1690,9 @@ struct ThemeSpace
     char console_error[4];
     char console_cursor[4];
     char vertex_size;
+    char outline_width;
     char facedot_size;
-    char bpad[2];
+    char bpad;
     char syntaxl[4];
     char syntaxn[4];
     char syntaxb[4];
@@ -2246,8 +2242,8 @@ struct bActionActuator
     bAction *act;
     short type;
     short flag;
-    int sta;
-    int end;
+    float sta;
+    float end;
     char name[32];
     char frameProp[32];
     short blendin;
@@ -2323,8 +2319,8 @@ struct bIpoActuator
 {
     short flag;
     short type;
-    int sta;
-    int end;
+    float sta;
+    float end;
     char name[32];
     char frameProp[32];
     short pad1;
@@ -2465,8 +2461,8 @@ struct GroupObject
     GroupObject *prev;
     Object *ob;
     void *lampren;
-    int recalc;
-    int pad;
+    short recalc;
+    char pad[6];
 };
 
 struct bMotionPathVert
@@ -2845,6 +2841,14 @@ struct bNodeStack
     short sockettype;
 };
 
+struct bNodePreview
+{
+    char *rect;
+    short xsize;
+    short ysize;
+    int pad;
+};
+
 struct bNodeLink
 {
     bNodeLink *next;
@@ -2875,14 +2879,14 @@ struct NodeBlurData
     short maxspeed;
     short minspeed;
     short relative;
+    short aspect;
+    short curved;
     float fac;
     float percentx;
     float percenty;
     short filtertype;
     char bokeh;
     char gamma;
-    short curved;
-    short pad;
     int image_in_width;
     int image_in_height;
 };
@@ -3142,6 +3146,13 @@ struct ParticleKey
     float time;
 };
 
+struct ParticleSpring
+{
+    float rest_length;
+    int particle_index[2];
+    int delete_flag;
+};
+
 struct ChildParticle
 {
     int num;
@@ -3177,15 +3188,21 @@ struct ParticleDupliWeight
 
 struct SPHFluidSettings
 {
-    float spring_k;
     float radius;
+    float spring_k;
     float rest_length;
+    float plasticity_constant;
+    float yield_ratio;
+    float plasticity_balance;
+    float yield_balance;
     float viscosity_omega;
     float viscosity_beta;
     float stiffness_k;
     float stiffness_knear;
     float rest_density;
     float buoyancy;
+    int flag;
+    int spring_frames;
 };
 
 struct ClothSimSettings
@@ -3897,7 +3914,8 @@ struct Material
     short sss_flag;
     short sss_preset;
     int mapto_textured;
-    int pad4;
+    short shadowonly_flag;
+    short pad;
     ListBase gpumaterial;
 };
 
@@ -4327,8 +4345,8 @@ struct CollisionModifierData
     MFace *mfaces;
     int numverts;
     int numfaces;
-    float time;
-    float pad;
+    float time_x;
+    float time_xnew;
     void *bvhtree;
 };
 
@@ -4410,6 +4428,7 @@ struct ExplodeModifierData
     short flag;
     short vgroup;
     float protect;
+    char uvname[32];
 };
 
 struct MultiresModifierData
@@ -4473,6 +4492,9 @@ struct SolidifyModifierData
     float crease_outer;
     float crease_rim;
     int flag;
+    short mat_ofs;
+    short mat_ofs_rim;
+    int pad;
 };
 
 struct ScrewModifierData
@@ -4575,6 +4597,7 @@ struct Object
     float parentinv[4][4];
     float constinv[4][4];
     float imat[4][4];
+    float imat_ren[4][4];
     int lay;
     short flag;
     short colbits;
@@ -4659,7 +4682,6 @@ struct PTCacheMem
     int totpoint;
     int data_types;
     int flag;
-    int *index_array;
     void *data[8];
     void *cur[8];
     ListBase extradata;
@@ -5103,7 +5125,8 @@ struct ToolSettings
     char skgen_side_string[8];
     char skgen_num_string[8];
     char edge_mode;
-    short snap_mode;
+    char edge_mode_live_unwrap;
+    char snap_mode;
     short snap_flag;
     short snap_target;
     short proportional;
@@ -5134,7 +5157,9 @@ struct Scene
     float twmax[3];
     int lay;
     int layact;
+    int lay_updated;
     int customdata_mask;
+    int customdata_mask_modal;
     short flag;
     short use_nodes;
     bNodeTree *nodetree;
@@ -5322,8 +5347,9 @@ struct SpaceButs
     short re_align;
     short align;
     short preview;
+    short texture_context;
     char flag;
-    char pad[3];
+    char pad;
     void *path;
     int pathflag;
     int dataicon;
@@ -5391,6 +5417,7 @@ struct SpaceOops
     short search_flags;
 };
 
+
 struct Scopes
 {
     int ok;
@@ -5412,7 +5439,6 @@ struct Scopes
     int waveform_tot;
     int pad;
 };
-
 
 struct SpaceImage
 {
@@ -5488,6 +5514,8 @@ struct SpaceText
     int doplugins;
     char findstr[256];
     char replacestr[256];
+    short margin_column;
+    char pad[6];
     void *drawcache;
 };
 
@@ -5559,7 +5587,8 @@ struct SpaceNode
     bNodeTree *edittree;
     int treetype;
     short texfrom;
-    short pad;
+    short recalc;
+    ListBase linkdrag;
     bGPdata *gpd;
 };
 
@@ -5846,6 +5875,8 @@ struct bScreen
     ListBase regionbase;
     Scene *scene;
     Scene *newscene;
+    int redraws_flag;
+    int pad1;
     short full;
     short temp;
     short winid;
@@ -6054,6 +6085,7 @@ struct Bone
     float arm_head[3];
     float arm_tail[3];
     float arm_mat[4][4];
+    float arm_roll;
     float dist;
     float weight;
     float xwidth;
@@ -6066,7 +6098,7 @@ struct Bone
     float size[3];
     int layer;
     short segments;
-    short pad[3];
+    short pad[1];
 };
 
 struct bArmature
@@ -6148,7 +6180,9 @@ struct bPose
     ListBase chanbase;
     void *chanhash;
     short flag;
-    short proxy_layer;
+    short pad;
+    int proxy_layer;
+    int pad1;
     float ctime;
     float stride_offset[3];
     float cyclic_offset[3];
@@ -6268,15 +6302,16 @@ struct bNodeSocket
     short type;
     short flag;
     short limit;
+    short stack_type;
+    bNodeStack *stack_ptr;
     short stack_index;
-    short intern;
-    short stack_index_ext;
-    int pad1;
+    short pad1;
     float locx;
     float locy;
     int own_index;
+    bNodeSocket *groupsock;
     int to_index;
-    bNodeSocket *tosock;
+    int pad2;
     bNodeLink *link;
 };
 
@@ -6302,6 +6337,7 @@ struct bNode
     float locy;
     float width;
     float miniwidth;
+    char label[32];
     short custom1;
     short custom2;
     float custom3;
@@ -6312,7 +6348,7 @@ struct bNode
     rctf totr;
     rctf butr;
     rctf prvr;
-    void *preview;
+    bNodePreview *preview;
     void *block;
     void *typeinfo;
 };
@@ -6333,7 +6369,8 @@ struct bNodeTree
     int flag;
     int pad;
     ListBase alltypes;
-    void *owntype;
+    ListBase inputs;
+    ListBase outputs;
     int pad2[2];
     void (*progress)();
     void (*stats_draw)();
@@ -6358,6 +6395,7 @@ struct CurveMapping
     float sample[3];
 };
 
+
 struct Brush
 {
     ID id;
@@ -6367,8 +6405,6 @@ struct Brush
     void *icon_imbuf;
     PreviewImage *preview;
     char icon_filepath[240];
-    int icon_mode;
-    int pad;
     float normal_weight;
     short blend;
     short ob_mode;
@@ -6386,10 +6422,11 @@ struct Brush
     char sculpt_tool;
     char vertexpaint_tool;
     char imagepaint_tool;
-    char pad3;
+    char pad3[5];
     float autosmooth_factor;
     float crease_pinch_factor;
     float plane_trim;
+    float height;
     float texture_sample_bias;
     int texture_overlay_alpha;
     float unprojected_radius;
@@ -6435,9 +6472,11 @@ struct ParticleSettings
     SPHFluidSettings *fluid;
     EffectorWeights *effector_weights;
     int flag;
+    int rt;
     short type;
     short from;
     short distr;
+    short texact;
     short phystype;
     short rotmode;
     short avemode;
@@ -6448,6 +6487,7 @@ struct ParticleSettings
     short childtype;
     short ren_as;
     short subframes;
+    short draw_col;
     short draw_step;
     short ren_step;
     short hair_step;
@@ -6468,6 +6508,7 @@ struct ParticleSettings
     float bb_tilt;
     float bb_rand_tilt;
     float bb_offset[2];
+    float color_vec_max;
     short simplify_flag;
     short simplify_refsize;
     float simplify_rate;
@@ -6480,9 +6521,11 @@ struct ParticleSettings
     float timetweak;
     float jitfac;
     float eff_hair;
+    float grid_rand;
     int totpart;
     int userjit;
     int grid_res;
+    int effector_amount;
     float normfac;
     float obfac;
     float randfac;
@@ -6491,7 +6534,6 @@ struct ParticleSettings
     float tanphase;
     float reactfac;
     float ob_vel[3];
-    float rt;
     float avefac;
     float phasefac;
     float randrotfac;
@@ -6499,7 +6541,6 @@ struct ParticleSettings
     float mass;
     float size;
     float randsize;
-    float reactshape;
     float acc[3];
     float dragfac;
     float brownfac;
@@ -6517,6 +6558,8 @@ struct ParticleSettings
     float kink_amp;
     float kink_freq;
     float kink_shape;
+    float kink_flat;
+    float kink_amp_clump;
     float rough1;
     float rough1_size;
     float rough2;
@@ -6526,12 +6569,16 @@ struct ParticleSettings
     float rough_end_shape;
     float clength;
     float clength_thres;
+    float parting_fac;
+    float parting_min;
+    float parting_max;
     float branch_thres;
     float draw_line[2];
     float path_start;
     float path_end;
     int trail_count;
     int keyed_loops;
+    MTex *mtex[18];
     Group *dup_group;
     ListBase dupliweights;
     Group *eff_group;
@@ -6566,10 +6613,12 @@ struct ParticleSystem
     float imat[4][4];
     float cfra;
     float tree_frame;
+    float bvhtree_frame;
     int seed;
-    int rt;
+    int child_seed;
     int flag;
     int totpart;
+    int totunexist;
     int totchild;
     int totcached;
     int totchildcache;
@@ -6585,7 +6634,11 @@ struct ParticleSystem
     PointCache *pointcache;
     ListBase ptcaches;
     ListBase *effectors;
+    ParticleSpring *fluid_springs;
+    int tot_fluidsprings;
+    int alloc_fluidsprings;
     void *tree;
+    void *bvhtree;
     void *pdd;
     float *frand;
 };
@@ -6673,8 +6726,9 @@ struct wmWindow
     short active;
     short cursor;
     short lastcursor;
+    short modalcursor;
     short addmousemove;
-    short pad2[2];
+    short pad2;
     void *eventstate;
     void *curswin;
     void *tweak;
@@ -6992,7 +7046,7 @@ struct SmokeDomainSettings
     float vorticity;
     int pad2;
 };
+
 /** @}*/
 }
-
 #endif//_Blender_h_

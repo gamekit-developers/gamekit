@@ -277,6 +277,39 @@ FBT_INLINE FBTuint64 fbtSwap64(const FBTuint64& in)
 	return r;
 }
 
+
+FBT_INLINE void fbtSwap16(FBTuint16* sp, FBTsize malen)
+{
+	FBTsizeType a2;
+	for (a2 = 0; a2 < malen; ++a2)
+	{
+		*sp = fbtSwap16(*sp);
+		++sp;	
+	}	
+}
+
+FBT_INLINE void fbtSwap32(FBTuint32* ip, FBTsize malen)
+{	 
+	FBTsizeType a2;
+	for (a2 = 0; a2 < malen; ++a2)
+	{
+		*ip = fbtSwap32(*ip);
+		++ip;
+	}
+}
+
+
+FBT_INLINE void fbtSwap64(FBTuint64* dp, FBTsize malen)
+{	 
+	FBTsizeType a2;
+	for (a2 = 0; a2 < malen; ++a2)
+	{
+		*dp = fbtSwap64(*dp);
+		++dp;
+	}
+}
+
+
 FBT_INLINE FBTint64 fbtSwap64(const FBTint64& in)
 {
 	return fbtSwap64(static_cast<FBTuint64>(in));
@@ -1465,6 +1498,45 @@ protected:
 	FBTuint16           m_size;
 	mutable FBThash     m_hash;
 };
+
+
+enum FBT_PRIM_TYPE
+{
+	FBT_PRIM_CHAR,		// 0
+	FBT_PRIM_UCHAR,		// 1
+	FBT_PRIM_SHORT,		// 2
+	FBT_PRIM_USHORT,	// 3
+	FBT_PRIM_INT,		// 4
+	FBT_PRIM_LONG,		// 5
+	FBT_PRIM_ULONG,		// 6
+	FBT_PRIM_FLOAT,		// 7
+	FBT_PRIM_DOUBLE,	// 8
+	FBT_PRIM_VOID,		// 9
+	FBT_PRIM_UNKNOWN	// 10
+};
+
+FBT_PRIM_TYPE fbtGetPrimType(FBTuint32 typeKey);
+FBT_INLINE FBT_PRIM_TYPE fbtGetPrimType(const char* typeName)
+{
+	return fbtGetPrimType(fbtCharHashKey(typeName).hash());
+}
+FBT_INLINE bool fbtIsIntType(FBTuint32 typeKey)
+{
+	FBT_PRIM_TYPE tp = fbtGetPrimType(typeKey);
+	return tp < FBT_PRIM_FLOAT;
+}
+FBT_INLINE bool fbtIsFloatType(FBTuint32 typeKey)
+{
+	FBT_PRIM_TYPE tp = fbtGetPrimType(typeKey);
+	return tp == FBT_PRIM_FLOAT || tp == FBT_PRIM_DOUBLE;
+}
+FBT_INLINE bool fbtIsNumberType(FBTuint32 typeKey)
+{
+	FBT_PRIM_TYPE tp = fbtGetPrimType(typeKey);
+	return tp != FBT_PRIM_VOID && tp != FBT_PRIM_UNKNOWN;
+}
+
+
 
 /** @}*/
 #endif//_fbtTypes_h_
