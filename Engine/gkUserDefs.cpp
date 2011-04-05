@@ -39,12 +39,15 @@
 
 gkUserDefs::gkUserDefs()
 	:
-#ifdef OGREKIT_BUILD_IPHONE
-	rendersystem(OGRE_RS_GLES), //TODO: change to gles2
+#ifdef OGREKIT_BUILD_MOBILE
 	viewportOrientation("landscaperight"),
-#elif OGREKIT_BUILD_ANDROID
-	rendersystem(OGER_RS_GLES2),
-	viewportOrientation("landscaperight"),
+
+#ifdef OGRE_BUILD_RENDERSYSTEM_GLES2
+	rendersystem(OGRE_RS_GLES2),
+#else
+    rendersystem(OGRE_RS_GLES), 
+#endif
+
 #else
 	rendersystem(OGRE_RS_GL),
 	viewportOrientation(""),

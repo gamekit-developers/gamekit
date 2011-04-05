@@ -14,7 +14,7 @@ include(MacroLogFeature)
 #######################################################################
 
 # Find X11
-if (UNIX AND NOT OGREKIT_BUILD_ANDROID) 
+if (UNIX AND NOT OGREKIT_BUILD_MOBILE) 
 	## TEST THIS
 	find_package(X11)
 	macro_log_feature(X11_FOUND "X11" "X Window system" "http://www.x.org" TRUE "" "")
@@ -25,7 +25,7 @@ if (UNIX AND NOT OGREKIT_BUILD_ANDROID)
 endif ()
 
 
-if(OGREKIT_BUILD_ANDROID)
+if (OGREKIT_BUILD_MOBILE)
 	# Find OpenGLES
 	find_package(OpenGLES)
 	macro_log_feature(OPENGLES_FOUND "OpenGLES" "Support for the OpenGLES render system" "" FALSE "" "")
@@ -39,19 +39,9 @@ else()
 	macro_log_feature(OPENGL_FOUND "OpenGL" "Support for the OpenGL render system" "http://www.opengl.org/" FALSE "" "")
 endif()
 
-if (APPLE)
-	# Find OpenGLES
-	find_package(OpenGLES)
-	macro_log_feature(OPENGLES_FOUND "OpenGLES" "Support for the OpenGLES render system" "" FALSE "" "")
-
-	# Find OpenGLES2
-	find_package(OpenGLES2)
-	macro_log_feature(OPENGLES2_FOUND "OpenGLES2" "Support for the OpenGLES2 render system" "" FALSE "" "")
-endif()
-# else Disabled, untill further testing
 
 # Find DirectX
-if(WIN32)
+if (WIN32)
 	find_package(DirectX)
 	macro_log_feature(DirectX_FOUND "DirectX" "Support for the DirectX render system" "http://msdn.microsoft.com/en-us/directx/" FALSE "" "")
 endif()
@@ -77,6 +67,7 @@ if(NOT OGREKIT_USE_STATIC_FREEIMAGE)
 	macro_log_feature(ZLIB_FOUND "ZLib" "Support for the ZLib library" "http://www.zlib.net/" FALSE "" "")
 
 endif()
+
 #######################################################################
 # Apple-specific
 #######################################################################
@@ -94,7 +85,8 @@ endif()
 # Display results, terminate if anything required is missing
 MACRO_DISPLAY_FEATURE_LOG()
 
-if (NOT OGREKIT_BUILD_IPHONE AND NOT OGREKIT_BUILD_ANDROID)
+if (NOT OGREKIT_BUILD_MOBILE)
+
 	# Add library and include paths from the dependencies
 	include_directories(
 		${OPENGL_INCLUDE_DIRS}

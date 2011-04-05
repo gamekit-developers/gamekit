@@ -43,9 +43,6 @@
 #include "OgreD3D9Plugin.h"
 #endif
 
-#ifdef OGREKIT_BUILD_D3D10RS
-#include "OgreD3D10Plugin.h"
-#endif
 
 #ifdef OGREKIT_BUILD_D3D11RS
 #include "OgreD3D11Plugin.h"
@@ -58,9 +55,6 @@ OgreRenderSystem gkFindRenderSystem(OgreRenderSystem wanted)
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
 # ifdef OGREKIT_BUILD_D3D9RS
 	if (wanted == OGRE_RS_D3D9) return OGRE_RS_D3D9;
-# endif
-# ifdef OGREKIT_BUILD_D3D10RS
-	if (wanted == OGRE_RS_D3D10) return OGRE_RS_D3D10;
 # endif
 # ifdef OGREKIT_BUILD_D3D11RS
 	if (wanted == OGRE_RS_D3D11) return OGRE_RS_D3D11;
@@ -114,12 +108,6 @@ void gkRenderFactoryPrivate::createRenderSystem(Ogre::Root* r, OgreRenderSystem 
 	case OGRE_RS_D3D9:
 #ifdef OGREKIT_BUILD_D3D9RS
 		m_renderSystem = new Ogre::D3D9Plugin();
-		r->installPlugin(m_renderSystem);
-#endif
-		break;
-	case OGRE_RS_D3D10:
-#if OGREKIT_BUILD_D3D10RS
-		m_renderSystem = new Ogre::D3D10Plugin();
 		r->installPlugin(m_renderSystem);
 #endif
 		break;

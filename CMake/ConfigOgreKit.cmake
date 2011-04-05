@@ -55,16 +55,26 @@ macro (configure_ogrekit ROOT OGREPATH)
 
 	option(OGREKIT_BUILD_ANDROID	"Build GameKit on Android SDK"	OFF)
 	
+	if (OGREKIT_BUILD_ANDROID OR OGREKIT_BUILD_IPHONE)
+		set(OGREKIT_BUILD_MOBILE 1)
+	endif()
+	
 	if (OGREKIT_USE_RTSHADER_SYSTEM)
 		set(OGRE_BUILD_COMPONENT_RTSHADERSYSTEM TRUE)
 		set(RTSHADER_SYSTEM_BUILD_CORE_SHADERS 1)
 		set(RTSHADER_SYSTEM_BUILD_EXT_SHADERS 1)		
 		set(OGREKIT_DISABLE_ZIP CACHE BOOL "Forcing ZZLib" FORCE)
+		
+		if (OGREKIT_BUILD_MOBILE)
+		  message(STATUS "mobile rtshader")
+		  set(OGRE_BUILD_RENDERSYSTEM_GLES CACHE BOOL "Forcing OpenGLES" FORCE)
+		  set(OGRE_BUILD_RENDERSYSTEM_GLES2 TRUE CACHE BOOL "Forcing OpenGLES2" FORCE)
+		  
+		  set(OGREKIT_BUILD_GLESRS  CACHE BOOL "Forcing remove GLES"   FORCE)
+		  set(OGREKIT_BUILD_GLES2RS TRUE CACHE BOOL "Forcing OpenGLES2" FORCE)
+        endif()
 	endif()	
 	
-	if (OGREKIT_BUILD_ANDROID OR OGREKIT_BUILD_IPHONE)
-		set(OGREKIT_BUILD_MOBILE 1)
-	endif()
 	
 	if (OGREKIT_COMPILE_OGRE_COMPONENTS)
 		option(OGRE_BUILD_COMPONENT_PAGING "Build Ogre Paging Compoment" ON)
@@ -126,21 +136,23 @@ macro (configure_ogrekit ROOT OGREPATH)
 
 
 	if (APPLE)
+	
 		if (OGRE_BUILD_PLATFORM_IPHONE)
 			option(OGREKIT_USE_COCOA "Use Cocoa" ON)
 			set(OGREKIT_PLATFORM ${OGREPATH}/OgreMain/include/IPhone )
 		else()
 			set(OGREKIT_PLATFORM ${OGREPATH}/OgreMain/include/OSX )
 		endif()
-	else (APPLE)
+		
+	else()
+	
 		if (UNIX)
 			set(OGREKIT_PLATFORM ${OGREPATH}/OgreMain/include/GLX )
-		else (UNIX)
-			if (WIN32)
-				set(OGREKIT_PLATFORM ${OGREPATH}/OgreMain/include/WIN32 )
-			endif (WIN32)
-		endif (UNIX)
-	endif (APPLE)
+		elseif (WIN32)
+			set(OGREKIT_PLATFORM ${OGREPATH}/OgreMain/include/WIN32 )
+		endif()
+		
+	endif()
 	
 	option(SAMPLES_RUNTIME        "Build Samples/Runtime"       ON)
 	option(SAMPLES_LOGICDEMO      "Build Samples/LogicDemo"     OFF)
@@ -198,20 +210,22 @@ macro (configure_ogrekit ROOT OGREPATH)
 	if (OGREKIT_COMPILE_SWIG OR OGREKIT_GENERATE_BUILTIN_RES)
 		set(OGREKIT_COMPILE_TCL TRUE CACHE BOOL "Forcing TCL"  FORCE)
 	endif()
+	
+	if (OGREKIT_BUILD_MOBILE)
+	   set(OGREKIT_BUILD_GLRS    CACHE BOOL "Forcing remove GL"   FORCE)
+	endif()
 		
 
 	if (OGREKIT_BUILD_ANDROID)
 	
 		set(OGRE_BUILD_PLATFORM_ANDROID TRUE)
-		set(OGRE_BUILD_RENDERSYSTEM_GL CACHE BOOL "Forcing remove OpenGL RenderSystem for Android" FORCE)
-		set(OGRE_BUILD_RENDERSYSTEM_GLES CACHE BOOL "Forcing remove OpenGLES RenderSystem for Android" FORCE)
-		set(OGRE_BUILD_RENDERSYSTEM_GLES2 TRUE CACHE BOOL "Forcing OpenGLES2 RenderSystem for Android" FORCE)
 
 		set(OGREKIT_OPENAL_SOUND   CACHE BOOL "Forcing remove OpenAL"   FORCE)
-
-		set(OGREKIT_BUILD_GLRS   CACHE BOOL "Forcing remove GL"   FORCE)
-		set(OGREKIT_BUILD_GLESRS  CACHE BOOL "Forcing remove GLES"   FORCE)
-		set(OGREKIT_BUILD_GLES2RS TRUE CACHE BOOL "Forcing OpenGLES2" FORCE)
+		
+		set(OGREKIT_BUILD_GLRS    FALSE CACHE BOOL "Forcing GLRS"   FORCE)
+		set(OGREKIT_BUILD_GLESRS  FALSE CACHE BOOL "Forcing remove GLESRS"   FORCE)
+        set(OGREKIT_BUILD_GLES2RS TRUE  CACHE BOOL "Forcing remove GLES2RS"   FORCE)
+        
 		set(OGREKIT_USE_RTSHADER_SYSTEM TRUE CACHE BOOL "Forcing RTShaderSystem for Android" FORCE)
 		
 		
@@ -231,8 +245,6 @@ macro (configure_ogrekit ROOT OGREPATH)
 		set(CMAKE_OSX_DEPLOYMENT_TARGET "")
 		set(CMAKE_EXE_LINKER_FLAGS "-framework Foundation -framework CoreGraphics -framework QuartzCore -framework UIKit")
 		set(XCODE_ATTRIBUTE_SDKROOT iphoneos)
-		set(OGRE_BUILD_RENDERSYSTEM_GLES TRUE CACHE BOOL "Forcing OpenGL ES RenderSystem for iPhone" FORCE)
-		#set(OGRE_STATIC TRUE CACHE BOOL "Forcing static build for iPhone" FORCE)
 		set(MACOSX_BUNDLE_GUI_IDENTIFIER "com.yourcompany.\${PRODUCT_NAME:rfc1034identifier}")
 		set(OGRE_CONFIG_ENABLE_VIEWPORT_ORIENTATIONMODE TRUE CACHE BOOL "Forcing viewport orientation support for iPhone" FORCE)
 	
@@ -251,12 +263,12 @@ macro (configure_ogrekit ROOT OGREPATH)
 			set(OGRE_SET_DISABLE_VIEWPORT_ORIENTATIONMODE 1)
 		endif()
 	
-		set(OGRE_BUILD_RENDERSYSTEM_GL CACHE BOOL "Forcing remove OpenGL RenderSystem for iPhone" FORCE)
-		set(OGRE_BUILD_RENDERSYSTEM_GLES TRUE CACHE BOOL "Forcing use OpenGLES RenderSystem for iPhone" FORCE)
-					
-		set(OGREKIT_USE_COCOA  TRUE CACHE BOOL "Forcing use COCOA for iPhone" FORCE)
-		set(OGREKIT_BUILD_GLRS   CACHE BOOL "Forcing remove GLRS for iPhone"   FORCE)
-		set(OGREKIT_BUILD_GLESRS TRUE   CACHE BOOL "Forcing GLESRS for iPhone"   FORCE)
+		if (OGREKIT_BUILD_GLES2RS)
+			set(OGREKIT_BUILD_GLESRS FALSE CACHE BOOL "Forcing remove GLESRS"   FORCE)
+		else()
+			set(OGREKIT_BUILD_GLESRS TRUE CACHE BOOL "Forcing GLESRS"   FORCE)
+		endif()
+		
 
 	elseif (APPLE)
 	
@@ -275,15 +287,10 @@ macro (configure_ogrekit ROOT OGREPATH)
 		endif()
 	
 		# Make sure that the OpenGL render system is selected for non-iPhone Apple builds
-		set(OGRE_BUILD_RENDERSYSTEM_GL TRUE)
-		set(OGRE_BUILD_RENDERSYSTEM_GLES FALSE)
 		
-		set(OGRE_BUILD_RENDERSYSTEM_GL TRUE CACHE BOOL "Forcing use OpenGL RenderSystem for OS X" FORCE)
-		set(OGRE_BUILD_RENDERSYSTEM_GLES CACHE BOOL "Forcing remove OpenGLES RenderSystem for OS X" FORCE)
-			
-		set(OGREKIT_BUILD_GLRS   TRUE CACHE BOOL "Forcing GLRS for OS X"   FORCE)
-		set(OGREKIT_BUILD_GLESRS FALSE CACHE BOOL "Forcing remove GLESRS for OSX "   FORCE)
-
+		set(OGREKIT_BUILD_GLRS    TRUE  CACHE BOOL "Forcing GLRS"   FORCE)
+		set(OGREKIT_BUILD_GLESRS  FALSE CACHE BOOL "Forcing remove GLESRS"   FORCE)
+        set(OGREKIT_BUILD_GLES2RS FALSE CACHE BOOL "Forcing remove GLES2RS"   FORCE)
 	endif ()
 
 
@@ -380,9 +387,38 @@ macro (configure_ogrekit ROOT OGREPATH)
 		option(OGREKIT_BUILD_GLRS "Enable the OpenGL render system" ON)
 	endif()
 	
-	if (OPENGLES_FOUND AND OGREKIT_BUILD_IPHONE)
+	if (OPENGLES_FOUND)
 		option(OGREKIT_BUILD_GLESRS "Enable the OpenGLES system" ON)
 	endif()
+	
+    if (OPENGLES2_FOUND)
+		option(OGREKIT_BUILD_GLES2RS "Enable the OpenGLES2 system" ON)
+	endif()
+	
+	if (OGREKIT_BUILD_GLRS)
+	   set(OGRE_BUILD_RENDERSYSTEM_GL TRUE  CACHE BOOL "Forcing OpenGL RenderSystem" FORCE)
+	else()
+	   set(OGRE_BUILD_RENDERSYSTEM_GL FALSE CACHE BOOL "Forcing remove OpenGL RenderSystem" FORCE)
+	endif()
+	
+	if (OGREKIT_BUILD_GLESRS)
+	   set(OGRE_BUILD_RENDERSYSTEM_GLES TRUE  CACHE BOOL "Forcing OpenGLES RenderSystem" FORCE)
+	else()
+	   set(OGRE_BUILD_RENDERSYSTEM_GLES FALSE CACHE BOOL "Forcing remove OpenGLES RenderSystem" FORCE)
+	endif()
+	
+	if (OGREKIT_BUILD_GLES2RS)
+	   #set(OGRE_BUILD_RENDERSYSTEM_GLES2 TRUE)
+	   set(OGRE_BUILD_RENDERSYSTEM_GLES2 TRUE  CACHE BOOL "Forcing OpenGLES2 RenderSystem" FORCE)
+	else()
+	   set(OGRE_BUILD_RENDERSYSTEM_GLES2 FALSE CACHE BOOL "Forcing remove OpenGLES2 RenderSystem" FORCE)
+	endif()
+	
+	mark_as_advanced(
+	   OGRE_BUILD_RENDERSYSTEM_GL 
+	   OGRE_BUILD_RENDERSYSTEM_GLES 
+	   OGRE_BUILD_RENDERSYSTEM_GLES2
+	)
 
 	if (OPENGL_FOUND AND OGREKIT_BUILD_GLRS)
 		set(OGRE_BUILD_RENDERSYSTEM_GL  TRUE)
@@ -400,8 +436,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 		set(OGREKIT_GLRS_INCLUDE         ${OGREPATH}/RenderSystems/GL/include)
 	endif()
 
-	if (OPENGLES2_FOUND AND OGREKIT_BUILD_GLES2RS)
-		
+	if (OPENGLES2_FOUND AND OGREKIT_BUILD_GLES2RS)	
 		set(OGRE_BUILD_RENDERSYSTEM_GLES2  TRUE)
 		set(OGREKIT_GLES2RS_LIBS           RenderSystem_GLES2)
 		set(OGREKIT_GLES2RS_ROOT           ${OGREPATH}/RenderSystems/GLES2)
@@ -498,14 +533,14 @@ macro (configure_ogrekit ROOT OGREPATH)
 		if (OGREKIT_BUILD_IPHONE)
 						
 			if (OGREKIT_BUILD_GLRS)
-				message(SEND_ERROR "Turn OFF OGREKIT_BUILD_GLRS Option for iPhone")
+				message(SEND_ERROR "Turn OFF OGREKIT_BUILD_GLRS Option for iOS")
 			endif()
-			if (NOT OGREKIT_BUILD_GLESRS)
-				message(SEND_ERROR "Turn ON OGREKIT_BUILD_GLESRS Option for iPhone")
+			if (NOT OGREKIT_BUILD_GLESRS AND NOT OGREKIT_BUILD_GLES2RS)
+				message(SEND_ERROR "Turn ON OGREKIT_BUILD_GLESRS or OGREKIT_BUILD_GLES2RS Option for iOS")
 			endif()
 			
 			if(VERSION STRLESS "2.8.2")
-				message(ERROR "You should update the CMake 2.8.2 higher for iPhone build.")
+				message(ERROR "You should update the CMake 2.8.2 higher for iOS build.")
 	  		endif()
 	  
 		else()
@@ -513,8 +548,8 @@ macro (configure_ogrekit ROOT OGREPATH)
 			if (NOT OGREKIT_BUILD_GLRS)
 				message(SEND_ERROR "Turn ON OGREKIT_BUILD_GLRS Option for OS X")
 			endif()
-			if (OGREKIT_BUILD_GLESRS)
-				message(SEND_ERROR "Turn OFF OGREKIT_BUILD_GLESRS Option for OS X")
+			if (OGREKIT_BUILD_GLESRS OR OGREKIT_BUILD_GLESRS)
+				message(SEND_ERROR "Turn OFF OGREKIT_BUILD_GLESRS or OGREKIT_BUILD_GLES2RS Option for OS X")
 			endif()
 
 		endif()
@@ -564,6 +599,8 @@ macro(configure_rendersystem)
 		link_libraries(
 			${OGREKIT_GLES2RS_LIBS} 
 		)
+		
+		#message(STATUS "--------" ${OGREKIT_GLES2RS_LIBS} )
 		
 	endif()
 	
