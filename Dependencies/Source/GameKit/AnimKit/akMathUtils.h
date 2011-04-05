@@ -33,13 +33,18 @@
 #include "utCommon.h"
 
 
-#if defined (_WIN32)
-#define AK_USE_SSE
-#else
-#define AK_USE_SSE
+#if !defined(ANIMKIT_DOUBLE_PRECISION)
+	#ifdef ANIMKIT_USE_SSE_IF_AVAILABLE
+		#ifdef ANIMKIT_GCC_SUPPORT_SSE
+			#define ANIMKIT_USE_SSE
+		#elif (defined (_WIN32) && (_MSC_VER) && _MSC_VER >= 1400)
+			#define ANIMKIT_USE_SSE
+		#endif
+	#endif
 #endif
 
-#ifdef AK_USE_SSE
+
+#ifdef ANIMKIT_USE_SSE
 #include "vectormath/sse/vectormath_aos.h"
 #else
 #include "vectormath/scalar/vectormath_aos.h"
@@ -53,7 +58,7 @@ typedef Vectormath::Aos::Matrix4    akMatrix4;
 typedef Vectormath::Aos::Transform3 akTransform3;
 typedef Vectormath::Aos::Point3     akPoint3;
 
-#if ANIMKIY_DOUBLE_PRECISION == 1
+#ifdef ANIMKIT_DOUBLE_PRECISION
 	typedef double akScalar;
 	# define AK_EPSILON   DBL_EPSILON
 	# define AK_INFINITY  DBL_MAX

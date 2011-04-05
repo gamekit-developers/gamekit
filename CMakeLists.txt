@@ -30,10 +30,12 @@ include(CheckCXXCompilerFlag)
 include(ConfigOgreKit)
 include(ConfigGameKit)
 include(ConfigIPhone)
+include(ConfigAnimKit)
 
 
 configure_gamekit(${OGREKIT_SOURCE_DIR}/Dependencies/Source)
 configure_ogrekit(${OGREKIT_SOURCE_DIR} ${OGREKIT_SOURCE_DIR}/Ogre-1.8)
+configure_animkit()
 
 set(OGREKIT_BULLET_LIBS BulletDynamics BulletCollision BulletSoftBody LinearMath)
 set(OGREKIT_BULLET_INCLUDE ${OGREKIT_SOURCE_DIR}/bullet/src)

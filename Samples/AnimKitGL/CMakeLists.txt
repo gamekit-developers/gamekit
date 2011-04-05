@@ -46,6 +46,30 @@ if(WIN32)
 	source_group(Datafiles FILES ${DATA})
 endif()
 
+
+find_package(GLUT)
+#find_package(OpenGL)
+if(NOT GLUT_FOUND)
+	IF (MINGW)
+		MESSAGE ("GLUT NOT FOUND not found, trying to use MINGW glut32")
+		SET(GLUT_LIBRARIES glut32)
+		#TODO add better GLUT detection for MinGW
+		SET(GLUT_FOUND TRUE)
+	ENDIF (MINGW)
+	IF (MSVC)
+		SET(GLUT_FOUND TRUE)
+		IF (CMAKE_CL_64)
+			message("Win64 using Glut/glut64.lib")
+			SET(GLUT_LIBRARIES ${OGREKIT_SAMPLES_DIR}/Glut/glut64.lib)
+		ELSE(CMAKE_CL_64)
+			message("Win32 using Glut/glut32.lib")
+			SET(GLUT_LIBRARIES ${OGREKIT_SAMPLES_DIR}/Glut/glut32.lib)
+		ENDIF (CMAKE_CL_64)
+		set(GLUT_INCLUDE_DIR ${OGREKIT_SAMPLES_DIR}/Glut)
+	endif()
+endif()
+
+
 include_directories(${GLUT_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} ${GAMEKIT_ANIMKIT_PATH} ${GAMEKIT_UTILS_PATH} ${FBT_SOURCE_DIR}/File ${FBT_SOURCE_DIR}/FileFormats/Blend)
 
 link_libraries(${GLUT_LIBRARIES} ${OPENGL_LIBRARIES} ${GAMEKIT_ANIMKIT_TARGET} fbtFile bfBlend)
