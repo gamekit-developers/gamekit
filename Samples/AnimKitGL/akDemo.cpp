@@ -50,7 +50,7 @@ void akDemo::init(void)
 	akBLoader loader(this);
 	loader.loadFile("Blu.blend");
 	
-	for(int i=0; i<m_objects.size(); i++)
+	for(unsigned int i=0; i<m_objects.size(); i++)
 	{
 		akEntity* object = m_objects.at(i);
 		
@@ -81,7 +81,7 @@ void akDemo::init(void)
 
 void akDemo::step(akScalar time)
 {
-	int i;
+	unsigned int i;
 	for( i=0; i<m_objects.size(); i++)
 	{		
 		akEntity* object = m_objects.at(i);

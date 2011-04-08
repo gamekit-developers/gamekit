@@ -54,7 +54,7 @@ akDemoBase::akDemoBase() : m_frame(0), m_time(0), m_fpsLastTime(0), m_stepLastTi
 
 akDemoBase::~akDemoBase()
 {
-	int i;
+	unsigned int i;
 	
 	for( i=0; i<m_objects.size(); i++)
 	{
@@ -265,7 +265,7 @@ void akDemoBase::render()
 //	glEnd();
 	
 	// objects
-	int i;
+	unsigned int i;
 	for( i=0; i<m_objects.size(); i++)
 	{
 		m_objects.at(i)->draw();
