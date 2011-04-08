@@ -44,10 +44,12 @@
 #include "akSkeleton.h"
 #include "akAnimationClip.h"
 
+#include "btAlignedAllocator.h"
 
 akDemoBase::akDemoBase() : m_frame(0), m_time(0), m_fpsLastTime(0), m_stepLastTime(0), m_lastfps(0)
 {
-
+    //m_camera = new akCamera();
+    m_camera = (akCamera*) btAlignedAlloc(sizeof(akCamera), 16);
 }
 
 akDemoBase::~akDemoBase()
@@ -78,6 +80,9 @@ akDemoBase::~akDemoBase()
 	m_skeletons.clear();
 	m_animations.clear();
 	m_objects.clear();
+
+        //delete m_camera;
+        btAlignedFree(m_camera);
 }
 
 void akDemoBase::drawString(float x, float y, char *s)
@@ -238,10 +243,10 @@ void akDemoBase::render()
 	
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(m_camera.m_fov, (float)m_windowx/m_windowy, m_camera.m_clipStart, m_camera.m_clipEnd);
+        gluPerspective(m_camera->m_fov, (float)m_windowx/m_windowy, m_camera->m_clipStart, m_camera->m_clipEnd);
 	
 	glMatrixMode(GL_MODELVIEW);
-	akMatrix4 cam_inv_m = inverse(m_camera.m_transform.toMatrix());
+        akMatrix4 cam_inv_m = inverse(m_camera->m_transform.toMatrix());
 	glLoadMatrixf((GLfloat*)&cam_inv_m);
 
 	// world origin axes

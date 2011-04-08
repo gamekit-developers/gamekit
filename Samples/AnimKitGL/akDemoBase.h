@@ -91,7 +91,7 @@ public:
 	
 	UT_INLINE akCamera* getCamera(void)
 	{
-		return &m_camera;
+                return m_camera;
 	}
 	
 	virtual void init(void) =0;
@@ -108,7 +108,7 @@ protected:
 	Meshes         m_meshes;
 	Entities       m_objects;
 	
-	akCamera m_camera;
+        akCamera* m_camera;
 	
 };
 
