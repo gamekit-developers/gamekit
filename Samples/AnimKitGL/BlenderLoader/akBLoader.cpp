@@ -41,7 +41,7 @@
 
 #include "akAnimationLoader.h"
 
-#define BLENDER_ARM_DEF_QUATERNION (1<<2)  //f orm blender dna files
+#define BLENDER_ARM_DEF_QUATERNION (1<<2)  //form blender dna files
 
 akBLoader::akBLoader(akDemo* demo)
 {
@@ -396,7 +396,7 @@ void akBLoader::convertMeshObject(Blender::Object *bobj)
 		
 		convertMeshSkinning(mesh, bobj, skel);
 		
-		if(bskel->deformflag && BLENDER_ARM_DEF_QUATERNION)
+		if(bskel->deformflag & BLENDER_ARM_DEF_QUATERNION)
 			entity->setUseDualQuatSkinning(true);
 	}
 	
