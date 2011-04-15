@@ -1,9 +1,9 @@
 
 macro (configure_gamekit ROOT)
 
-	#set(GAMEKIT_SERIALIZE_BLENDER			${ROOT}/Blender25/Serialize/BlenderSerialize ${ROOT}/Blender25/Blender)
-	#set(GAMEKIT_SERIALIZE_BLENDER_HEADERS   ${ROOT}/Blender25/Serialize/BlenderSerialize)
-	#set(GAMEKIT_SERIALIZE_BULLET			${ROOT}/Blender25/Serialize/BulletFileLoader)
+	set(GAMEKIT_SERIALIZE_BLENDER			${ROOT}/Blender25/Serialize/BlenderSerialize ${ROOT}/Blender25/Blender)
+	set(GAMEKIT_SERIALIZE_BLENDER_HEADERS   ${ROOT}/Blender25/Serialize/BlenderSerialize)
+	set(GAMEKIT_SERIALIZE_BULLET			${ROOT}/Blender25/Serialize/BulletFileLoader)
 
 	set(GAMEKIT_FBT_INCLUDE
 		${FBT_SOURCE_DIR}/File 
@@ -26,7 +26,7 @@ macro (configure_gamekit ROOT)
 	set(GAMEKIT_ANIMKIT_TARGET				AnimKit)
 	set(GAMEKIT_ANIMKIT_PATH				${ROOT}/GameKit/AnimKit)
 
-	#set(GAMEKIT_SERIALIZE_BLENDER_TARGET	BulletFileLoader BlenderSerialize)
+	set(GAMEKIT_SERIALIZE_BLENDER_TARGET	BulletFileLoader BlenderSerialize)
 
 
 endmacro(configure_gamekit)

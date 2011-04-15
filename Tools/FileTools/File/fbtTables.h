@@ -75,8 +75,8 @@ typedef struct fbtName
 typedef struct fbtType
 {
 	char*           m_name;     // note: memory is in the raw table.
-	FBTuint32       m_typeId;
-	FBTuint32       m_strcId;
+	FBTuint32       m_typeId;	// fbtCharHashKey(typeName)
+	FBTuint32       m_strcId;	
 } fbtType;
 
 
@@ -98,13 +98,16 @@ typedef union fbtKey64
 class fbtStruct
 {
 public:
-	typedef fbtArray<fbtStruct> Array;
+	typedef fbtArray<fbtStruct> Members;
+	typedef fbtArray<fbtKey64>  Keys;
+	
 	enum Flag
 	{
 		CAN_LINK    = 0,
 		MISSING     = (1 << 0),
 		MISALIGNED  = (1 << 1),
 		SKIP        = (1 << 2),
+		NEED_CAST	= (1 << 3)
 	};
 
 
@@ -124,15 +127,18 @@ public:
 	~fbtStruct()    {}
 
 
-	fbtKey32        m_key;
-	fbtKey64        m_val;
-	FBTint32        m_off;
+	fbtKey32        m_key;		//k[0]: type, k[1]: name
+	fbtKey64        m_val;		//key hash value, k[0]: type hash id, k[1]: member(field) base name hash id or 0(struct)
+	FBTint32        m_off;		//offset
 	FBTint32        m_len;
-	FBTint32        m_nr, m_dp;
+	FBTint32        m_nr, m_dp; //nr: array index, dp: embeded depth
 	FBTint32        m_strcId;
 	FBTint32        m_flag;
-	Array           m_members;
-	fbtStruct*      m_link;
+	Members         m_members;
+	fbtStruct*      m_link;		//file/memory table struct link
+	Keys            m_keyChain; //parent key hash chain(0: type hash, 1: name hash), size() == m_dp
+
+	FBTsizeType     getUnlinkedMemberCount();
 };
 
 
@@ -168,6 +174,10 @@ public:
 
 	FBTtype findTypeId(const fbtCharHashKey &cp);
 
+	const char* getStructType(const fbtStruct* strc);
+	const char* getStructName(const fbtStruct* strc);
+	const char* getOwnerStructName(const fbtStruct* strc);
+
 
 	Names   m_name;
 	Types   m_type;
@@ -191,8 +201,8 @@ private:
 
 	TypeFinder m_typeFinder;
 
-	void putMember(FBTtype* cp, fbtStruct* off, FBTtype nr, FBTuint32& cof, FBTuint32& depth);
-	void compile(FBTtype i, FBTtype nr, fbtStruct* off, FBTuint32& cof, FBTuint32& depth);
+	void putMember(FBTtype* cp, fbtStruct* off, FBTtype nr, FBTuint32& cof, FBTuint32 depth, fbtStruct::Keys& keys);
+	void compile(FBTtype i, FBTtype nr, fbtStruct* off, FBTuint32& cof, FBTuint32 depth, fbtStruct::Keys& keys);
 	void compile(void);
 	bool sikp(const FBTuint32& type);
 

@@ -35,7 +35,9 @@
 #include "gkSkeletonManager.h"
 #include "gkGameObjectManager.h"
 #include "External/Ogre/gkOgreBlendArchive.h"
+
 #include "OgreResourceGroupManager.h"
+#include "OgreZip.h"
 
 #include "gkSceneManager.h"
 
@@ -47,6 +49,10 @@
 #include "Script/Lua/gkLuaManager.h"
 #endif
 
+#ifdef OGREKIT_USE_RTSHADER_SYSTEM
+#include "User/gkRTShaderTemplates.inl"
+#endif
+
 UT_IMPLEMENT_SINGLETON(gkResourceGroupManager)
 
 
@@ -56,6 +62,12 @@ gkResourceGroupManager::gkResourceGroupManager()
 	{
 		Ogre::ResourceGroupManager::getSingleton().addResourceLocation("",
 			gkBlendArchiveFactory::ARCHIVE_TYPE,  Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+#ifdef OGREKIT_USE_RTSHADER_SYSTEM
+		Ogre::EmbeddedZipArchiveFactory::addEmbbeddedFile("RTShaderLib.zip", RTSHADERLIB, RTSHADERLIB_SIZE, 0);
+		Ogre::ResourceGroupManager::getSingleton().addResourceLocation("RTShaderLib.zip",
+			"EmbeddedZip",  Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+#endif
+
 	}
 	catch (Ogre::Exception& e)
 	{

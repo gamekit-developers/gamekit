@@ -1,6 +1,8 @@
 # Adding options only to speed up build/dev time
 
-if (OGREKIT_BUILD_IPHONE)
+if (OGREKIT_BUILD_ANDROID)
+	subdirs(AndroidDemo)
+elseif (OGREKIT_BUILD_IPHONE)
 	subdirs(IPhoneDemo)
 else()
 

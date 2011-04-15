@@ -74,7 +74,7 @@ find_package(Freetype)
 macro_log_feature(FREETYPE_FOUND "freetype" "Portable font engine" "http://www.freetype.org" TRUE "" "")
 
 # Find X11
-if (UNIX)
+if (UNIX AND NOT OGRE_BUILD_PLATFORM_IPHONE AND OGREKIT_BUILD_ANDROID)
 	find_package(X11)
 	macro_log_feature(X11_FOUND "X11" "X Window system" "http://www.x.org" TRUE "" "")
 	macro_log_feature(X11_Xt_FOUND "Xt" "X Toolkit" "http://www.x.org" TRUE "" "")
@@ -97,8 +97,8 @@ find_package(OpenGLES)
 macro_log_feature(OPENGLES_FOUND "OpenGL ES" "Support for the OpenGL ES 1.x render system" "http://www.khronos.org/opengles/" FALSE "" "")
 
 # Find OpenGL ES 2.x
-#find_package(OpenGLES2)
-#macro_log_feature(OPENGLES2_FOUND "OpenGL ES 2" "Support for the OpenGL ES 2.x render system" "http://www.khronos.org/opengles/" FALSE "" "")
+find_package(OpenGLES2)
+macro_log_feature(OPENGLES2_FOUND "OpenGL ES 2" "Support for the OpenGL ES 2.x render system" "http://www.khronos.org/opengles/" FALSE "" "")
 
 # Find DirectX
 if(WIN32)
@@ -111,14 +111,14 @@ endif()
 #######################################################################
 
 # Find Cg
-if (NOT OGRE_BUILD_PLATFORM_IPHONE)
+if (NOT OGRE_BUILD_PLATFORM_IPHONE AND OGREKIT_BUILD_ANDROID)
   find_package(Cg)
   macro_log_feature(Cg_FOUND "cg" "C for graphics shader language" "http://developer.nvidia.com/object/cg_toolkit.html" FALSE "" "")
-endif (NOT OGRE_BUILD_PLATFORM_IPHONE)
+endif ()
 
 # Find Boost
 # Prefer static linking in all cases
-if (NOT OGRE_BUILD_PLATFORM_IPHONE)
+if (NOT OGRE_BUILD_PLATFORM_IPHONE AND OGREKIT_BUILD_ANDROID)
 	if (WIN32 OR APPLE)
 		set(Boost_USE_STATIC_LIBS TRUE)
 	else ()
@@ -139,7 +139,7 @@ if (NOT OGRE_BUILD_PLATFORM_IPHONE)
 	macro_log_feature(Boost_FOUND "boost" "Boost (general)" "http://boost.org" FALSE "" "")
 	macro_log_feature(Boost_THREAD_FOUND "boost-thread" "Used for threading support" "http://boost.org" FALSE "" "")
 	macro_log_feature(Boost_DATE_TIME_FOUND "boost-date_time" "Used for threading support" "http://boost.org" FALSE "" "")
-endif(NOT OGRE_BUILD_PLATFORM_IPHONE)
+endif()
 
 # POCO
 find_package(POCO)
@@ -203,6 +203,7 @@ include_directories(
 	${FREETYPE_INCLUDE_DIRS}
 	${OPENGL_INCLUDE_DIRS}
 	${OPENGLES_INCLUDE_DIRS}
+  ${OPENGLES2_INCLUDE_DIRS}
 	${OIS_INCLUDE_DIRS}
 	${Cg_INCLUDE_DIRS}
 	${X11_INCLUDE_DIR}
@@ -215,6 +216,7 @@ include_directories(
 link_directories(
 	${OPENGL_LIBRARY_DIRS}
 	${OPENGLES_LIBRARY_DIRS}
+    ${OPENGLES2_LIBRARY_DIRS}
 	${Cg_LIBRARY_DIRS}
 	${X11_LIBRARY_DIRS}
 	${DirectX_LIBRARY_DIRS}

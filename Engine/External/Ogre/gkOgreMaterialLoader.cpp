@@ -24,6 +24,7 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+#include "gkCommon.h"
 #include "gkMesh.h"
 #include "gkScene.h"
 #include "gkOgreMaterialLoader.h"
@@ -36,6 +37,10 @@
 #include "OgreTechnique.h"
 #include "OgrePass.h"
 #include "OgreSceneManager.h"
+
+#ifdef OGREKIT_USE_RTSHADER_SYSTEM
+#include "OgreRTShaderSystem.h"
+#endif
 
 gkSkyBoxGradient* gkMaterialLoader::loadSceneSkyMaterial(class gkScene* sc, const gkSceneMaterial& material)
 {
@@ -64,6 +69,8 @@ gkSkyBoxGradient* gkMaterialLoader::loadSceneSkyMaterial(class gkScene* sc, cons
 
 void gkMaterialLoader::loadSubMeshMaterial(gkSubMesh* mesh, const gkString& group)
 {
+	using namespace Ogre;
+
 	gkMaterialProperties& gma = mesh->getMaterial();
 	if (gma.m_name.empty())
 		gma.m_name = "<gkBuiltin/DefaultMaterial>";
@@ -121,8 +128,6 @@ void gkMaterialLoader::loadSubMeshMaterial(gkSubMesh* mesh, const gkString& grou
 
 	if (matBlending && (gma.m_mode & gkMaterialProperties::MA_HASRAMPBLEND))
 	{
-		using namespace Ogre;
-
 		switch (gma.m_rblend)
 		{
 		case GK_BT_MULTIPLY:			
@@ -152,11 +157,20 @@ void gkMaterialLoader::loadSubMeshMaterial(gkSubMesh* mesh, const gkString& grou
 		}
 	}
 
-	for (int i = 0; i < gma.m_totaltex; ++i)
-	{
-		using namespace Ogre;
+	bool hasNormap = false;
+	bool rtss = gkEngine::getSingleton().getUserDefs().rtss;
 
+	for (int i = 0; i < gma.m_totaltex; ++i)
+	{		
 		gkTextureProperties& gte = gma.m_textures[i];
+
+#ifdef OGREKIT_USE_RTSHADER_SYSTEM
+		if (gte.m_mode & gkTextureProperties::TM_NORMAL)
+		{
+			hasNormap = true;
+			continue;
+		}
+#endif
 		Ogre::TextureUnitState* otus = pass->createTextureUnitState(gte.m_name, gte.m_layer);
 
 		LayerBlendOperationEx op = LBX_MODULATE;
@@ -197,4 +211,48 @@ void gkMaterialLoader::loadSubMeshMaterial(gkSubMesh* mesh, const gkString& grou
 		pass->setAlphaRejectSettings(Ogre::CMPF_GREATER_EQUAL, 150);
 		pass->setDepthWriteEnabled(false);
 	}
+
+#ifdef OGREKIT_USE_RTSHADER_SYSTEM
+	
+	if (rtss)
+	{
+		//pass->setSpecular(ColourValue::Black);
+		//pass->setShininess(0.0);
+
+		RTShader::RenderState* rs = 0;
+		RTShader::ShaderGenerator* sg = Ogre::RTShader::ShaderGenerator::getSingletonPtr();
+		bool ok = sg->createShaderBasedTechnique(gma.m_name, group, 
+			Ogre::MaterialManager::DEFAULT_SCHEME_NAME, Ogre::RTShader::ShaderGenerator::DEFAULT_SCHEME_NAME);
+
+		if (ok && hasNormap)
+		{
+			rs = sg->getRenderState(RTShader::ShaderGenerator::DEFAULT_SCHEME_NAME, gma.m_name, 0);
+			rs->reset();
+
+			for (int i = 0; i < gma.m_totaltex; ++i)
+			{
+				gkTextureProperties& gte = gma.m_textures[i];
+
+				if (gte.m_mode & gkTextureProperties::TM_NORMAL)
+				{
+					GK_ASSERT(rs);
+
+					RTShader::SubRenderState* srs= sg->createSubRenderState(RTShader::NormalMapLighting::Type);
+				
+					RTShader::NormalMapLighting* nsrs = static_cast<RTShader::NormalMapLighting*>(srs);
+					if (gte.m_texmode & gkTextureProperties::TX_OBJ_SPACE)
+						nsrs->setNormalMapSpace(RTShader::NormalMapLighting::NMS_OBJECT);
+					else
+						nsrs->setNormalMapSpace(RTShader::NormalMapLighting::NMS_TANGENT);
+					nsrs->setNormalMapTextureName(gte.m_name);
+					//nsrs->setNormalFa
+
+					rs->addTemplateSubRenderState(srs);
+				}
+			}
+
+			sg->invalidateMaterial(RTShader::ShaderGenerator::DEFAULT_SCHEME_NAME, gma.m_name);
+		}
+	}
+#endif
 }

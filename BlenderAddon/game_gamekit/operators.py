@@ -27,7 +27,7 @@ from bpy.props import *
 import os
 import subprocess
 import shlex
-from game_gamekit import config
+from . import config
 
 def touch(fname):
     if os.path.exists(fname):
@@ -56,10 +56,11 @@ def assure_temp_dir(dir):
     
 # Declare gamekit as a render engine
 class GamekitRender(bpy.types.RenderEngine):
-    bl_idname = 'GAMEKIT_RENDER'
-    bl_label = "Gamekit"
+    #bl_idname = 'GAMEKIT_RENDER'
+    #bl_label = "Gamekit"
     #We do not implement the render function because Gamekit 
     #is not really a render engine.
+    pass
 
 # Export startup config fo gamekit
 class GamekitExportStartupFileOperator(bpy.types.Operator):
@@ -93,11 +94,11 @@ class GamekitExportStartupFileOperator(bpy.types.Operator):
         cfg.set('fullscreen', str(gdata.show_fullscreen))
         cfg.set('animspeed', str(scene.render.fps))
         cfg.set('startframe', str(gks.gk_start_frame))
-        if gdata.material_mode == 'MULTITEXTURE':
+        if gdata.material_mode != 'TEXTURE_FACE':
             cfg.set('blendermat', "True")
         else:
             cfg.set('blendermat', "False")
-		cfg.set('matblending', str(gks.gk_matblending))
+        cfg.set('matblending', str(gks.gk_matblending))
         cfg.set('buildinstances', str(gks.gk_build_instances))
         cfg.set('frustrumculling', str(gks.gk_frustrum_culling))
         cfg.set('showdebugprops', str(gdata.show_debug_properties))

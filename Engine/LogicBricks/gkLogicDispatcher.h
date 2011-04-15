@@ -43,7 +43,7 @@ public:
 protected:
 	SensorList m_sensors;
 
-	void doDispatch(SensorList& sens);
+	void doDispatch(SensorList& senslist);
 
 public:
 	gkAbstractDispatcher() {}

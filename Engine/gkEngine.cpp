@@ -79,6 +79,9 @@
 #include "OgreFrameListener.h"
 #include "OgreOverlayManager.h"
 
+#ifdef OGREKIT_USE_RTSHADER_SYSTEM
+#include "OgreRTShaderSystem.h"
+#endif
 
 using namespace Ogre;
 
@@ -95,7 +98,7 @@ class gkOgreEnginePrivate : public FrameListener, public gkTickState
 {
 public:
 	Private(gkEngine* par)
-		:       gkTickState((int)ENGINE_TICKS_PER_SECOND),
+		:       gkTickState(par->getTickRate()),
 		        engine(par),
 		        windowsystem(0),
 		        curScene(0),
@@ -254,6 +257,19 @@ void gkEngine::initialize()
 	new gkSoundManager();
 #endif
 
+#ifdef OGREKIT_USE_RTSHADER_SYSTEM
+	Ogre::RTShader::ShaderGenerator::initialize();
+	
+	gkString lang = getUserDefs().isD3DRenderSystem() ? "hlsl" : "glsl";
+#if defined(OGREKIT_BUILD_IPHONE) || defined(OGREKIT_BUILD_ANDROID)
+	lang = "glsles";
+#endif
+
+	Ogre::RTShader::ShaderGenerator::getSingleton().setTargetLanguage(lang);
+	if (!defs.shaderCachePath.empty())
+		Ogre::RTShader::ShaderGenerator::getSingleton().setShaderCachePath(defs.shaderCachePath);
+#endif
+
 	initializeWindow();
 
 	// create the builtin resource group
@@ -352,7 +368,10 @@ void gkEngine::finalize()
 	delete gkSoundManager::getSingletonPtr();
 #endif
 
-
+#ifdef OGREKIT_USE_RTSHADER_SYSTEM
+	Ogre::MaterialManager::getSingleton().setActiveScheme(Ogre::MaterialManager::DEFAULT_SCHEME_NAME);
+	Ogre::RTShader::ShaderGenerator::finalize();
+#endif
 
 	delete gkBlendLoader::getSingletonPtr();
 	delete gkResourceGroupManager::getSingletonPtr();
@@ -408,10 +427,10 @@ void gkEngine::loadResources(const gkString& name)
 
 		while (cit.hasMoreElements())
 		{
-			gkString name = cit.peekNextKey();
+			gkString elementname = cit.peekNextKey();
 			ConfigFile::SettingsMultiMap* ptr = cit.getNext();
 			for (ConfigFile::SettingsMultiMap::iterator dit = ptr->begin(); dit != ptr->end(); ++dit)
-				resourceManager->addResourceLocation(dit->second, dit->first, name);
+				resourceManager->addResourceLocation(dit->second, dit->first, elementname);
 		}
 		ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 	}
@@ -451,14 +470,14 @@ void gkEngine::removeDebugProperty(gkVariable* prop)
 
 gkScalar gkEngine::getStepRate(void)
 {
-	return gkScalar(1.0) / ENGINE_TICKS_PER_SECOND;
+	return gkScalar(1.0) / m_tickRate;
 }
 
 
 
 gkScalar gkEngine::getTickRate(void)
 {
-	return ENGINE_TICKS_PER_SECOND;
+	return m_tickRate;
 }
 
 

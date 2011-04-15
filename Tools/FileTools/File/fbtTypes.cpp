@@ -178,3 +178,33 @@ void fbtDebugger::errorIDE(const char* src, long line, const char* fmt, ...)
 #endif
 	}
 }
+
+FBT_PRIM_TYPE fbtGetPrimType(FBTuint32 typeKey)
+{
+	static FBTuint32 charT    = fbtCharHashKey("char").hash();
+	static FBTuint32 ucharT   = fbtCharHashKey("uchar").hash();
+	static FBTuint32 shortT   = fbtCharHashKey("short").hash();
+	static FBTuint32 ushortT  = fbtCharHashKey("ushort").hash();
+	static FBTuint32 intT     = fbtCharHashKey("int").hash();
+	static FBTuint32 longT    = fbtCharHashKey("long").hash();
+	static FBTuint32 ulongT   = fbtCharHashKey("ulong").hash();
+	static FBTuint32 floatT   = fbtCharHashKey("float").hash();
+	static FBTuint32 doubleT  = fbtCharHashKey("double").hash();
+	static FBTuint32 voidT    = fbtCharHashKey("void").hash();
+
+	if (typeKey == charT)	return FBT_PRIM_CHAR;
+	if (typeKey == ucharT)	return FBT_PRIM_UCHAR;
+	if (typeKey == shortT)	return FBT_PRIM_SHORT;
+	if (typeKey == ushortT)	return FBT_PRIM_USHORT;
+	if (typeKey == intT)	return FBT_PRIM_INT;
+	if (typeKey == longT)	return FBT_PRIM_LONG;
+	if (typeKey == ulongT)	return FBT_PRIM_ULONG;
+	if (typeKey == floatT)	return FBT_PRIM_FLOAT;
+	if (typeKey == doubleT)	return FBT_PRIM_DOUBLE;
+	if (typeKey == voidT)	return FBT_PRIM_VOID;
+
+	return FBT_PRIM_UNKNOWN;
+}
+
+
+

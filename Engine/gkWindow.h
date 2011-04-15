@@ -119,6 +119,7 @@ public:
 	int getKeyModifier();
 
 	GK_INLINE Ogre::RenderWindow* getRenderWindow() { return m_rwindow; }
+	GK_INLINE OIS::InputManager*  getInputManager() { return m_input;   }
 
 	gkViewport* addViewport(gkCamera* cam, int zorder=0);
 	void removeViewport(gkViewport* viewport);

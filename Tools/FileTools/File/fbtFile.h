@@ -173,6 +173,7 @@ protected:
 
 	// lookup name first 7 of 12
 	const char* m_uhid;
+	const char* m_aluhid; //alternative header string
 	fbtFixedString<12> m_header;
 
 

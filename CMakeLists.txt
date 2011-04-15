@@ -48,6 +48,13 @@ endif()
 
 
 
+if (APPLE)
+    if (${XCODE_VERSION} STRGREATER "4.0.0")
+        set(CMAKE_XCODE_ATTRIBUTE_GCC_VERSION "4.2")
+    endif()
+endif()
+
+
 IF(MSVC)
 
 	#We statically link to reduce dependancies
@@ -88,15 +95,14 @@ subdirs(bullet)
 subdirs(Dependencies)
 subdirs(Ogre-1.8)
 subdirs(Engine)
-subdirs(Tools/FileTools)
+
+if (NOT OGREKIT_USE_BPARSE OR OGREKIT_USE_FILETOOLS)
+	subdirs(Tools/FileTools)
+endif()
 
 if (OGREKIT_COMPILE_WXWIDGETS)
 	subdirs(${OGREKIT_SOURCE_DIR}/${WX_VERSION})
 endif()
-
-#if (OGREKIT_USE_FILETOOLS)
-	
-#endif()
 
 subdirs(Samples)
 

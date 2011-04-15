@@ -559,6 +559,29 @@ elseif (APPLE)
     set(PLATFORM_LIBS ${Carbon_LIBRARY_FWK} ${Cocoa_LIBRARY_FWK})
     set(PLATFORM_HEADER_INSTALL "OSX")
   endif ()
+elseif(OGREKIT_BUILD_ANDROID)
+    include_directories(include/Android)
+    set(PLATFORM_HEADER_FILES
+      include/Android/OgreConfigDialogImp.h
+      include/Android/OgreErrorDialogImp.h
+      include/Android/OgreTimerImp.h
+      include/OgreStringSerialiser.h
+    )
+    set(PLATFORM_SOURCE_FILES
+      src/Android/OgreConfigDialog.cpp
+      src/Android/OgreErrorDialog.cpp
+      src/Android/OgreTimer.cpp
+      src/OgreSearchOps.cpp
+      src/OgreStringSerialiser.cpp
+    )
+    set(PLATFORM_LIBS pthread dl)
+    set(PLATFORM_HEADER_INSTALL "Android")
+    # some platforms require explicit linking to libdl, see if it's available
+    find_library(DL_LIBRARY NAMES dl dlsym)
+    mark_as_advanced(DL_LIBRARY)
+    if (DL_LIBRARY)
+      list(APPEND PLATFORM_LIBS dl)
+    endif ()
 elseif (UNIX)
   if (OGRE_BUILD_PLATFORM_TEGRA2)
     include_directories("include/Tegra2")
@@ -707,7 +730,7 @@ if(WIN32 AND MSVC10 AND CMAKE_CL_64)
                         VERSION ${OGRE_SOVERSION}
                         LINK_FLAGS "/INCREMENTAL:NO"
                       )
-else()
+elseif(NOT OGREKIT_BUILD_ANDROID AND OGRE_SOVERSION)
   set_target_properties(OgreMain PROPERTIES VERSION ${OGRE_SOVERSION})
 endif()
 

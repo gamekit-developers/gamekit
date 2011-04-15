@@ -25,8 +25,6 @@
 -------------------------------------------------------------------------------
 */
 #include "Blender.h"
-//#include "bBlenderFile.h"
-//#include "bMain.h"
 
 #include "gkBlenderDefines.h"
 #include "gkBlenderSceneConverter.h"
@@ -212,9 +210,14 @@ void gkBlenderSceneConverter::convertGroups(utArray<Blender::Object*> &groups)
 	// The gkGameObjectGroup is a containter, the gkGameObjectGroupInstance
 	// is where the object should be added / removed from the scene.
 	
-	for (Blender::Group* bgrp = (Blender::Group*)m_file->_getInternalFile()->m_group.first; bgrp != 0; 
-		bgrp = (Blender::Group*)bgrp->id.next)
+	//	for (Blender::Group* bgrp = (Blender::Group*)m_file->_getInternalFile()->m_group.first; bgrp != 0; 
+	//	bgrp = (Blender::Group*)bgrp->id.next)
+
+	gkBlendListIterator iter = m_file->_getInternalFile()->getGroupList();
+	while (iter.hasMoreElements())
 	{
+		Blender::Group* bgrp = (Blender::Group*)iter.getNext();
+
 
 		const gkResourceName groupName(GKB_IDNAME(bgrp), m_groupName);
 
@@ -431,9 +434,9 @@ void gkBlenderSceneConverter::convertObjectParticles(gkGameObject* gobj, Blender
 			props.m_seed = ps->seed;
 			props.m_settings = pname;
 						
-			gkGameObjectProperties& gprops = pobj->getProperties();
-			gprops.m_parent = gobj->getName();
-			gprops.m_transform = gobj->getProperties().m_transform;
+			gkGameObjectProperties& gparticleprops = pobj->getProperties();
+			gparticleprops.m_parent = gobj->getName();
+			gparticleprops.m_transform = gobj->getProperties().m_transform;
 
 			props.m_material = "<gkBuiltin/Halo>";
 
@@ -740,10 +743,14 @@ void gkBlenderSceneConverter::convertObjectLamp(gkGameObject* gobj, Blender::Obj
 	if (la->type != LA_LOCAL)
 		props.m_type = la->type == LA_SPOT ? gkLightProperties::LI_SPOT : gkLightProperties::LI_DIR;
 
-	props.m_casts   = true;
+	
 	props.m_spot.y  = la->spotsize > 128 ? 128 : la->spotsize;
 	props.m_spot.x  = gkMax(gkRadian(la->spotblend).valueDegrees(), props.m_spot.y);
 	props.m_falloff = 128.f * la->spotblend;
+
+	props.m_casts = (la->type != LA_HEMI && 
+		((la->mode & LA_SHAD_RAY) ||
+		 (la->type == LA_SPOT && (la->mode & LA_SHAD_BUF))));		
 }
 
 

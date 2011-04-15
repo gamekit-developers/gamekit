@@ -32,11 +32,11 @@
 
 
 
-void gkAbstractDispatcher::doDispatch(SensorList& sens)
+void gkAbstractDispatcher::doDispatch(SensorList& senslist)
 {
-	if (!sens.empty())
+	if (!senslist.empty())
 	{
-		SensorList::Iterator it = sens.iterator();
+		SensorList::Iterator it = senslist.iterator();
 		while (it.hasMoreElements())
 		{
 			gkLogicSensor*   sens = it.getNext();

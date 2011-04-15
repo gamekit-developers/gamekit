@@ -27,9 +27,7 @@
 #ifndef _gkAnimationConverter_h_
 #define _gkAnimationConverter_h_
 
-//#include "bCommon.h"
-#include "Blender.h"
-#include "fbtBlend.h"
+#include "Loaders/Blender2/gkBlendInternalFile.h"
 #include "gkMathUtils.h"
 
 class gkAnimationLoader
@@ -47,7 +45,7 @@ public:
 	~gkAnimationLoader() {}
 
 	void convertAction(Blender::bAction* action, bool pre25compat, gkScalar animfps);
-	void convertActions(fbtList* actions, bool pre25compat, gkScalar animfps);
+	void convertActions(gkBlendListIterator& actions, bool pre25compat, gkScalar animfps);
 
 	void convertObject(class gkGameObject* obj, Blender::Object* bobj, bool pre25compat, gkScalar animfps);
 

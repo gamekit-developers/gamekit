@@ -24,9 +24,6 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "OgreException.h"
-#include "OgreConfigFile.h"
-#include "OgreStringConverter.h"
 
 #include "gkUserDefs.h"
 #include "gkLogger.h"
@@ -36,13 +33,21 @@
 #include "gkWindowSystem.h"
 #include "gkViewport.h"
 
-
+#include "OgreException.h"
+#include "OgreConfigFile.h"
+#include "OgreStringConverter.h"
 
 gkUserDefs::gkUserDefs()
 	:
-#ifdef OGREKIT_BUILD_IPHONE
-	rendersystem(OGRE_RS_GLES),
+#ifdef OGREKIT_BUILD_MOBILE
 	viewportOrientation("landscaperight"),
+
+#ifdef OGRE_BUILD_RENDERSYSTEM_GLES2
+	rendersystem(OGRE_RS_GLES2),
+#else
+    rendersystem(OGRE_RS_GLES), 
+#endif
+
 #else
 	rendersystem(OGRE_RS_GL),
 	viewportOrientation(""),
@@ -74,7 +79,9 @@ gkUserDefs::gkUserDefs()
 	fardistanceshadow(0),
 	defaultMipMap(5),
 	extWinhandle(""),
-	animFps(24.f)
+	animFps(24.f),
+	shaderCachePath(""),
+	rtss(false)
 {
 }
 
@@ -120,6 +127,11 @@ void gkUserDefs::load(const gkString& fname)
 	}
 }
 
+bool gkUserDefs::isD3DRenderSystem(OgreRenderSystem rs)
+{
+	return rs == OGRE_RS_D3D9 || rs == OGRE_RS_D3D10 || rs == OGRE_RS_D3D11;
+}
+
 OgreRenderSystem gkUserDefs::getOgreRenderSystem(const gkString& val)
 {
 	OgreRenderSystem rendersystem = OGRE_RS_GL;
@@ -160,7 +172,6 @@ void gkUserDefs::parseString(const gkString& key, const gkString& val)
 		viewportOrientation = val;
 		return;
 	}
-
 	if (KeyEq("log"))
 	{
 		log = val;
@@ -279,6 +290,11 @@ void gkUserDefs::parseString(const gkString& key, const gkString& val)
 		fsaa = Ogre::StringConverter::parseBool(val);
 		return;
 	}
+	if (KeyEq("rtss"))
+	{
+		rtss = Ogre::StringConverter::parseBool(val);
+		return;
+	}
 	if (KeyEq("fsaasamples"))
 	{
 		fsaaSamples = gkClamp<int>(Ogre::StringConverter::parseInt(val), 0, 16);
@@ -287,5 +303,13 @@ void gkUserDefs::parseString(const gkString& key, const gkString& val)
 	if (KeyEq("defaultmipmap"))
 	{
 		defaultMipMap = gkMax<int>(0, Ogre::StringConverter::parseInt(val));
+		return;
 	}
+	if (KeyEq("shaderCachePath"))
+	{
+		shaderCachePath = val;
+		return;
+	}
+
+#undef KeyEq
 }

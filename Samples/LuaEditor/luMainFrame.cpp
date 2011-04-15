@@ -147,14 +147,14 @@ BEGIN_EVENT_TABLE(luMainFrame, wxFrame)
 	// edit
     EVT_MENU(wxID_CLEAR,			luMainFrame::OnEdit)
     EVT_MENU(wxID_CUT,				luMainFrame::OnEdit)
-    EVT_MENU(wxID_COPY,			luMainFrame::OnEdit)
+    EVT_MENU(wxID_COPY,				luMainFrame::OnEdit)
     EVT_MENU(wxID_PASTE,			luMainFrame::OnEdit)
-    EVT_MENU(ID_CODE_INDENTINC,	luMainFrame::OnEdit)
-    EVT_MENU(ID_CODE_INDENTRED,	luMainFrame::OnEdit)
+    EVT_MENU(ID_CODE_INDENTINC,		luMainFrame::OnEdit)
+    EVT_MENU(ID_CODE_INDENTRED,		luMainFrame::OnEdit)
     EVT_MENU(wxID_SELECTALL,		luMainFrame::OnEdit)
     EVT_MENU(ID_CODE_SELECTLINE,	luMainFrame::OnEdit)
-    EVT_MENU(wxID_REDO,			luMainFrame::OnEdit)
-    EVT_MENU(wxID_UNDO,			luMainFrame::OnEdit)
+    EVT_MENU(wxID_REDO,				luMainFrame::OnEdit)
+    EVT_MENU(wxID_UNDO,				luMainFrame::OnEdit)
     // find
     EVT_MENU(wxID_FIND,            luMainFrame::OnEdit)
     EVT_MENU(ID_CODE_FINDNEXT,     luMainFrame::OnEdit)
@@ -1419,7 +1419,7 @@ void luMainFrame::OnRunRuntime(wxCommandEvent& WXUNUSED(event))
 	
 	wxString dirName = m_projFile->getProjDir();	
 	gkPrintf("Working Directory: %s", WX2GK(dirName).c_str());
-	wxString cmd = wxString::Format("%s -s %s -d %s -l %s", runtimePath, luaFile, dirName, m_runtimeLogFile->getFileName());
+	wxString cmd = wxString::Format("\"%s\" -s %s -d \"%s\" -l %s", runtimePath, luaFile, dirName, m_runtimeLogFile->getFileName());
 
 	wxString args;
 	args = wxGetTextFromUser(cmd + "\nEnter arguments to launch: ", "Execute Runtime", "");

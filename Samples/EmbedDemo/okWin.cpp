@@ -460,6 +460,8 @@ void okWindow::resetScene()
 {
 	if (!m_okApp) return;
 
+	delete m_okCam; m_okCam = NULL;
+
 	m_okApp->unloadAllScenes();
 
 	m_scene = m_okApp->createEmptyScene();

@@ -93,7 +93,7 @@ private:
 public:
 
 	gkLuaObject() : L(0), m_ref(-1), m_own(0) {}
-	gkLuaObject(lua_State* _L, int input) : L(_L), m_ref(-1), m_own(1) {ref(input);}
+	gkLuaObject(lua_State* inL, int input) : L(inL), m_ref(-1), m_own(1) {ref(input);}
 	gkLuaObject(const gkLuaObject& ob) : L(ob.L), m_ref(ob.m_ref), m_own(0) {}
 
 	~gkLuaObject() { unref(); }
@@ -170,7 +170,7 @@ private:
 	lua_State* L;
 	int m_top;
 public:
-	gkLuaState(lua_State* _L) : L(_L) { m_top = lua_gettop(L); }
+	gkLuaState(lua_State* inL) : L(inL) { m_top = lua_gettop(L); }
 	~gkLuaState() {lua_settop(L, m_top);}
 };
 

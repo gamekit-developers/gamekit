@@ -26,6 +26,7 @@
 */
 #include "gkCommon.h"
 #include "gkThread.h"
+#include "gkLogger.h"
 
 #ifdef WIN32
 #include <process.h>
@@ -51,6 +52,33 @@ void* gkThread::task(void* p)
 }
 #endif
 
+#if __ANDROID__
+//http://igourd.blogspot.com/2009/05/work-around-on-pthreadcancel-for.html
+void thread_exit_handler(int sig)
+{
+	//printf("this signal is %d \n", sig);
+	pthread_exit(0);
+}
+
+void setup_thread_exit_handler()
+{
+	static bool _inited = false;
+	if (_inited)
+		return;
+
+	_inited = true;
+
+	struct sigaction actions;
+	memset(&actions, 0, sizeof(actions));
+	sigemptyset(&actions.sa_mask);
+	actions.sa_flags = 0;
+	actions.sa_handler = thread_exit_handler;
+	int rc = sigaction(SIGUSR1,&actions,NULL);
+}
+
+#endif
+
+
 gkThread::gkThread(gkCall* call)
 	: m_call(call)
 {
@@ -70,12 +98,22 @@ gkThread::gkThread(gkCall* call)
 
 	GK_ASSERT(!failed);
 #endif
+
+#if __ANDROID__
+	setup_thread_exit_handler();
+#endif
 }
 
 gkThread::~gkThread()
 {
 #ifdef WIN32
 	CloseHandle(m_hChilThread);
+#elif __ANDROID__
+	int status = 0;
+	if ((status = pthread_kill(m_threadId, SIGUSR1)) != 0)
+	{
+		gkPrintf("Error cancelling thread id:%d error:%d", m_threadId, status);
+	}
 #else
 	pthread_cancel(m_threadId);
 #endif

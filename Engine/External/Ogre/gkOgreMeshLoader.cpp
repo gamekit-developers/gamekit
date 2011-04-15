@@ -275,8 +275,8 @@ void gkMeshLoader::loadResource(Ogre::Resource* res)
 
 	if (m_mesh->getSkeleton())
 	{
-		gkSkeletonResource* res = m_mesh->getSkeleton();
-		omesh->setSkeletonName(res->getResourceName().getName());
+		gkSkeletonResource* skelres = m_mesh->getSkeleton();
+		omesh->setSkeletonName(skelres->getResourceName().getName());
 	}
 
 

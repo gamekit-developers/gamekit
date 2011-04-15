@@ -462,13 +462,12 @@ void gkAnimationLoader::convertAction(Blender::bAction* action, bool pre25compat
 }
 
 
-void gkAnimationLoader::convertActions(fbtList* actions, bool pre25compat, gkScalar animfps)
+void gkAnimationLoader::convertActions(gkBlendListIterator& actions, bool pre25compat, gkScalar animfps)
 {
-	Blender::bAction* bact = (Blender::bAction*)actions->first;
-	while (bact)
-	{		 
+	while (actions.hasMoreElements())
+	{
+		Blender::bAction* bact = (Blender::bAction*)actions.getNext();
 		convertAction(bact, pre25compat, animfps);
-		bact = (Blender::bAction*)bact->id.next;
 	}
 }
 

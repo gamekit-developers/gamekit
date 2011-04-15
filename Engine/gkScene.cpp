@@ -76,6 +76,10 @@
 #include "External/Ogre/gkOgreSkyBoxGradient.h"
 #endif
 
+#ifdef OGREKIT_USE_RTSHADER_SYSTEM
+#include "OgreRTShaderSystem.h"
+#endif
+
 using namespace Ogre;
 
 #define DEFAULT_STARTUP_LUA_FILE		"OnInit.lua"
@@ -889,6 +893,10 @@ void gkScene::createInstanceImpl(void)
 	// to extract more detailed management information
 
 	m_manager = Root::getSingleton().createSceneManager(ST_GENERIC, m_name.getFullName());
+#if OGREKIT_USE_RTSHADER_SYSTEM
+	Ogre::RTShader::ShaderGenerator::getSingleton().addSceneManager(m_manager);
+#endif
+
 	m_skybox  = gkMaterialLoader::loadSceneSkyMaterial(this, m_baseProps.m_material);
 
 
@@ -1089,6 +1097,9 @@ void gkScene::destroyInstanceImpl(void)
 
 	if (m_manager)
 	{
+#if OGREKIT_USE_RTSHADER_SYSTEM
+		Ogre::RTShader::ShaderGenerator::getSingleton().removeSceneManager(m_manager);
+#endif
 		Ogre::Root::getSingleton().destroySceneManager(m_manager);
 		m_manager = 0;
 	}
@@ -1195,7 +1206,7 @@ void gkScene::notifyInstanceCreated(gkGameObject* gobj)
 
 	if (gobj->getType() == GK_CAMERA)
 		m_cameras.insert(gobj->getCamera());
-	if (gobj->getType() == GK_LIGHT)
+	else if (gobj->getType() == GK_LIGHT)
 		m_lights.insert(gobj->getLight());
 }
 
@@ -1222,7 +1233,7 @@ void gkScene::notifyInstanceDestroyed(gkGameObject* gobj)
 	{
 		if (gobj->getType() == GK_CAMERA)
 			m_cameras.erase(gobj->getCamera());
-		if (gobj->getType() == GK_LIGHT)
+		else if (gobj->getType() == GK_LIGHT)
 			m_lights.erase(gobj->getLight());
 	}
 

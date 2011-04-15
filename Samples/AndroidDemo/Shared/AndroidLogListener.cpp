@@ -3,9 +3,9 @@
     This file is part of OgreKit.
     http://gamekit.googlecode.com/
 
-    Copyright (c) 2006-2010 harkon.kr
+    Copyright (c) 2006-2010 zcube(JiSeop Moon).
 
-    Contributor(s): none yet.
+    Contributor(s): 
 -------------------------------------------------------------------------------
   This software is provided 'as-is', without any express or implied
   warranty. In no event will the authors be held liable for any damages
@@ -25,40 +25,29 @@
 -------------------------------------------------------------------------------
 */
 
-#ifndef _gkWindowSystemPrivateIOS_h_
-#define _gkWindowSystemPrivateIOS_h_
 
+#include "AndroidLogListener.h"
 
-#import <UIKit/UIKit.h>
+#include <android/log.h>
 
-@interface gkGestureView : UIView
+#define  LOG_TAG    "ogre"
+#define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
+#define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
+
+using namespace Ogre;
+
+AndroidLogListener::AndroidLogListener()
 {
 }
 
-@end
-
-// Internal interface
-class gkWindowSystemPrivateIOS : 
-	public gkWindowSystemPrivate,
-	public OIS::MultiTouchListener
+void AndroidLogListener::messageLogged(const String& message, LogMessageLevel lml, bool maskDebug, const String &logName)
 {
-public:
-	gkWindowSystemPrivateIOS();
-	virtual ~gkWindowSystemPrivateIOS();
-	
-	virtual bool setup(gkWindowSystem* sys, const gkUserDefs& prefs);
-	virtual void dispatch(void);
-	virtual void process(void);
-	
-	bool touchPressed(const OIS::MultiTouchEvent& arg);
-	bool touchReleased(const OIS::MultiTouchEvent& arg);
-	bool touchMoved(const OIS::MultiTouchEvent& arg);
-	bool touchCancelled(const OIS::MultiTouchEvent& arg);
-
-	void transformInputState(OIS::MultiTouchState& state);
-
-	OIS::MultiTouch*        m_touch;
-	gkGestureView*          m_gestureView;
-};
-
-#endif //_gkWindowSystemPrivateIOS_h_
+	if(lml < Ogre::LML_CRITICAL)
+	{
+		LOGI(message.c_str());
+	}
+	else
+	{
+		LOGE(message.c_str());
+	}
+}

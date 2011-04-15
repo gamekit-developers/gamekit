@@ -24,15 +24,18 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "btBulletDynamicsCommon.h"
 
 #include "gkDynamicsWorld.h"
 #include "gkPhysicsController.h"
 #include "gkEntity.h"
 #include "gkMesh.h"
+#include "gkCharacter.h"
+
 #include "OgreSceneNode.h"
 #include "OgreMovableObject.h"
 
+#include "btBulletDynamicsCommon.h"
+#include "BulletCollision/CollisionDispatch/btGhostObject.h"
 
 
 
@@ -439,10 +442,16 @@ void gkPhysicsController::suspend(bool v)
 
 
 		btRigidBody* body = btRigidBody::upcast(m_collisionObject);
+		btGhostObject* ghost = btGhostObject::upcast(m_collisionObject);
 		if (m_suspend)
 		{
 			if (body)
 				dyn->removeRigidBody(body);
+			else if (ghost)
+			{				
+				dyn->removeAction(static_cast<gkCharacter*>(this));
+				dyn->removeCollisionObject(m_collisionObject);
+			}
 			else
 				dyn->removeCollisionObject(m_collisionObject);
 		}
@@ -450,6 +459,11 @@ void gkPhysicsController::suspend(bool v)
 		{
 			if (body)
 				dyn->addRigidBody(body);
+			else if (ghost)
+			{
+				dyn->addCollisionObject(ghost, btBroadphaseProxy::CharacterFilter);
+				dyn->addAction(static_cast<gkCharacter*>(this));
+			}
 			else
 				dyn->addCollisionObject(m_collisionObject);
 		}

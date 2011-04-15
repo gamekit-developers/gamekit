@@ -35,6 +35,8 @@ restrictions:
 #  include "win32native/Win32NativeInputManager.h"
 #elif defined OIS_WIN32_PLATFORM
 #  include "win32/Win32InputManager.h"
+#elif defined OIS_ANDROID_PLATFORM
+#  include "android/AndroidInputManager.h"
 #elif defined OIS_LINUX_PLATFORM
 #  include "linux/LinuxInputManager.h"
 #elif defined OIS_APPLE_PLATFORM
@@ -52,6 +54,8 @@ restrictions:
 #if defined OIS_WIN32_WIIMOTE_SUPPORT
 #  include "win32/extras/WiiMote/OISWiiMoteFactoryCreator.h"
 #endif
+
+#include "OISLog.h"
 
 
 using namespace OIS;
@@ -115,6 +119,8 @@ InputManager* InputManager::createInputSystem( ParamList &paramList )
 	im = new Win32InputManager();
 #elif defined OIS_XBOX_PLATFORM
 	im = new XBoxInputManager();
+#elif defined OIS_ANDROID_PLATFORM
+	im = new AndroidInputManager();
 #elif defined OIS_LINUX_PLATFORM
 	im = new LinuxInputManager();
 #elif defined OIS_APPLE_PLATFORM
@@ -206,7 +212,9 @@ Object* InputManager::createInputObject( Type iType, bool bufferMode, const std:
 	}
 
 	if(!obj)
+	{
 		OIS_EXCEPT(E_InputDeviceNonExistant, "No devices match requested type.");
+	}
 
 	try
 	{	//Intialize device

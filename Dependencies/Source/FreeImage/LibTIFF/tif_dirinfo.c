@@ -878,3 +878,18 @@ _TIFFCreateAnonFieldInfo(TIFF *tif, ttag_t tag, TIFFDataType field_type)
 }
 
 /* vim: set ts=8 sts=8 sw=8 noet: */
+#ifdef __ANDROID__
+void *
+lfind(const void *key, const void *base, size_t *nmemb, size_t size,
+      int(*compar)(const void *, const void *))
+{
+	char *element, *end;
+
+	end = (char *)base + *nmemb * size;
+	for (element = (char *)base; element < end; element += size)
+		if (!compar(element, key))		/* key found */
+			return element;
+
+	return NULL;
+}
+#endif

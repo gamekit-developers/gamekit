@@ -24,11 +24,7 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-
-#include "OgreRenderWindow.h"
-#include "OgreRoot.h"
-#include "OgreWindowEventUtilities.h"
-#include "OIS.h"
+#include "gkCommon.h"
 #include "gkWindowSystem.h"
 #include "gkLogger.h"
 #include "gkUserDefs.h"
@@ -38,6 +34,22 @@
 #include "gkWindowSystem.h"
 #include "gkWindow.h"
 #include "gkViewport.h"
+
+#include "OgreRenderWindow.h"
+#include "OgreRoot.h"
+#include "OgreWindowEventUtilities.h"
+#include "OIS.h"
+
+#ifdef OGREKIT_USE_RTSHADER_SYSTEM
+#include "OgreRTShaderSystem.h"
+
+#ifndef RTSHADER_SYSTEM_BUILD_EXT_SHADERS
+#error "rtss ext undefined. try re-run cmake."
+#endif
+
+#endif
+
+
 
 using namespace Ogre;
 
@@ -183,7 +195,7 @@ bool gkWindow::createWindow(gkWindowSystem* sys, const gkUserDefs& prefs)
 
 		m_sys = sys;
 
-		int winsizex, winsizey;
+		int winsizex = 0, winsizey = 0;
 
 		m_requestedWidth = (int)(prefs.winsize.x + 0.5f);
 		m_requestedHeight = (int)(prefs.winsize.y + 0.5f);
@@ -292,6 +304,22 @@ gkViewport* gkWindow::addViewport(gkCamera* cam, int zorder)
 		viewport->setDimension(m_framingType);
 		m_viewports.push_back(viewport);
 
+#ifdef OGREKIT_USE_RTSHADER_SYSTEM
+
+		viewport->getViewport()->setMaterialScheme(Ogre::RTShader::ShaderGenerator::DEFAULT_SCHEME_NAME);
+
+		if (gkEngine::getSingleton().getUserDefs().rtss)
+		{
+			Ogre::RTShader::ShaderGenerator* sg = Ogre::RTShader::ShaderGenerator::getSingletonPtr();
+
+			//enable perpixel render
+			Ogre::RTShader::RenderState* schemRenderState = sg->getRenderState(Ogre::RTShader::ShaderGenerator::DEFAULT_SCHEME_NAME);
+			Ogre::RTShader::SubRenderState* perPixelLightModel = sg->createSubRenderState(Ogre::RTShader::PerPixelLighting::Type);
+			schemRenderState->addTemplateSubRenderState(perPixelLightModel);
+			sg->invalidateScheme(Ogre::RTShader::ShaderGenerator::DEFAULT_SCHEME_NAME);
+		}
+#endif
+
 		return viewport;
 	}
 	return 0;
@@ -311,8 +339,6 @@ void gkWindow::removeViewport(gkViewport* viewport)
 
 void gkWindow::dispatch(void)
 {
-	GK_ASSERT(m_mouse && m_keyboard);
-
 	m_mouse.moved = false;
 	m_mouse.wheelDelta = 0.f;
 	m_mouse.relative.x = 0.f;

@@ -24,15 +24,13 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+#include "gkCommon.h"
+
 #include "OgreException.h"
 #include "OgreTexture.h"
 #include "OgreTextureManager.h"
 
-//#include "bBlenderFile.h"
-//#include "bMain.h"
-#include "fbtBlend.h"
-#include "Blender.h"
-
+#include "gkBlendInternalFile.h"
 #include "gkBlendFile.h"
 #include "gkBlendLoader.h"
 #include "gkSceneManager.h"
@@ -46,15 +44,12 @@
 #include "gkBlenderSceneConverter.h"
 #include "gkTextureLoader.h"
 #include "gkPath.h"
-#include "gkUtils.h"
 #include "gkLogger.h"
 
 #include "gkTextManager.h"
 #include "gkTextFile.h"
 #include "gkEngine.h"
 #include "gkUserDefs.h"
-
-#include "gkCommon.h"
 
 #ifdef OGREKIT_OPENAL_SOUND
 # include "Sound/gkSoundManager.h"
@@ -97,13 +92,11 @@ gkBlendFile::~gkBlendFile()
 
 bool gkBlendFile::parse(int opts, const gkString& scene)
 {	
-	m_file = new fbtBlend();
-	int status = m_file->parse(m_name.c_str(), fbtFile::PM_COMPRESSED);
-	if (status != fbtFile::FS_OK)
+	m_file = new gkBlendInternalFile();
+	if (!m_file->parse(m_name))
 	{
 		delete m_file;
 		m_file = 0;
-		gkLogMessage("BlendFile: File " << m_name << " loading failed. code: " << status);
 		return false;
 	}
 
@@ -121,21 +114,31 @@ bool gkBlendFile::parse(int opts, const gkString& scene)
 	return true;
 }
 
+void gkBlendFile::readCurSceneInfo(Blender::Scene* scene)
+{
+	if (!scene) return;
 
+	m_animFps = scene->r.frs_sec / scene->r.frs_sec_base;
+
+	gkUserDefs& defs = gkEngine::getSingleton().getUserDefs();
+	defs.animFps = m_animFps;
+	defs.rtss = (scene->gm.matmode == GAME_MAT_GLSL);
+}
 
 
 void gkBlendFile::loadActive(void)
 {
 	// Load / convert only the active scene.
 
-	Blender::FileGlobal* fg = m_file->m_fg;
+	Blender::FileGlobal* fg = m_file->getFileGlobal();
 	if (fg)
 	{		
-		if (fg->curscene)
-			m_animFps = fg->curscene->r.frs_sec / fg->curscene->r.frs_sec_base;
+		if (!fg->curscene)
+			fg->curscene = m_file->getFirstScene();
 
-		gkEngine::getSingleton().getUserDefs().animFps = m_animFps;
+		Blender::Scene* sc = fg->curscene;
 
+		readCurSceneInfo(sc);
 
 		buildAllTextures();
 		buildAllFonts();
@@ -145,8 +148,7 @@ void gkBlendFile::loadActive(void)
 		buildAllParticles();
 
 		// parse & build
-		Blender::Scene* sc = (Blender::Scene*)fg->curscene;
-		if (sc != 0)
+		if (sc)
 		{
 			gkBlenderSceneConverter conv(this, sc);
 			conv.convert();
@@ -165,11 +167,11 @@ void gkBlendFile::createInstances(void)
 {
 	GK_ASSERT(m_file);
 
-	Blender::FileGlobal* fg = m_file->m_fg;
-	if (fg && fg->curscene)
-		gkEngine::getSingleton().getUserDefs().animFps = fg->curscene->r.frs_sec / fg->curscene->r.frs_sec_base;
+	Blender::FileGlobal* fg = m_file->getFileGlobal();
 
-	m_animFps = gkEngine::getSingleton().getUserDefs().animFps;
+	Blender::Scene* curscene = fg ? fg->curscene : 0;
+
+	readCurSceneInfo(curscene);
 
 	// Load / convert all
 	buildAllTextures();
@@ -179,10 +181,10 @@ void gkBlendFile::createInstances(void)
 	buildAllActions();
 	buildAllParticles();
 
-	Blender::Scene* sc = (Blender::Scene*)m_file->m_scene.first;
-
-	while (sc)
+	gkBlendListIterator iter = m_file->getSceneList();
+	while (iter.hasMoreElements())
 	{
+		Blender::Scene* sc = (Blender::Scene*)iter.getNext();
 
 		if (m_findScene.empty() || m_findScene == GKB_IDNAME(sc))
 		{			
@@ -193,15 +195,13 @@ void gkBlendFile::createInstances(void)
 			if (gks)
 				m_scenes.push_back(gks);
 		}
-
-		sc = (Blender::Scene*)sc->id.next;
 	}
 
 
-	if (fg && fg->curscene)
+	if (curscene)
 	{
 		// Grab the main scene
-		m_activeScene = (gkScene*) gkSceneManager::getSingleton().getByName(gkResourceName(GKB_IDNAME(fg->curscene), m_group));
+		m_activeScene = (gkScene*) gkSceneManager::getSingleton().getByName(gkResourceName(GKB_IDNAME(curscene), m_group));
 	}
 
 	if (m_activeScene == 0 && !m_scenes.empty())
@@ -232,10 +232,11 @@ void gkBlendFile::buildTextFiles(void)
 
 	gkTextManager& txtMgr = gkTextManager::getSingleton();
 
-	Blender::Text* txt = (Blender::Text*)m_file->m_text.first;
-
-	while (txt)
+	gkBlendListIterator iter = m_file->getTextList();
+	while (iter.hasMoreElements())
 	{
+		Blender::Text* txt = (Blender::Text*)iter.getNext();
+	
 		Blender::TextLine* tl = (Blender::TextLine*)txt->lines.first;
 
 		std::stringstream ss;
@@ -260,8 +261,6 @@ void gkBlendFile::buildTextFiles(void)
 			if (!m_hasBFont)
 				m_hasBFont = tf->getType() == gkTextManager::TT_BFONT;
 		}
-
-		txt = (Blender::Text*)txt->id.next;
 	}
 
 	txtMgr.parseScripts(m_group);
@@ -271,8 +270,10 @@ void gkBlendFile::buildTextFiles(void)
 
 void gkBlendFile::buildAllTextures(void)
 {
-	for (Blender::Image* ima = (Blender::Image*)m_file->m_image.first; ima != 0; ima = (Blender::Image*)ima->id.next)
+	gkBlendListIterator iter = m_file->getImageList();
+	while (iter.hasMoreElements())	
 	{
+		Blender::Image* ima = (Blender::Image*)iter.getNext();
 		// don't try & convert zero users
 		if (ima->id.us <= 0)
 			continue;
@@ -298,13 +299,12 @@ void gkBlendFile::buildAllParticles(void)
 {
 	gkParticleConverter conv(m_group, m_animFps);
 
-	Blender::ParticleSettings* ps = (Blender::ParticleSettings*)m_file->m_particle.first;
-	
-	while (ps)
-	{	
-		conv.convertParticle(ps);
+	gkBlendListIterator iter = m_file->getParticleList();
+	while (iter.hasMoreElements())	
+	{
+		Blender::ParticleSettings* ps = (Blender::ParticleSettings*)iter.getNext();
 
-		ps = (Blender::ParticleSettings*)ps->id.next;
+		conv.convertParticle(ps);
 	}
 }
 
@@ -316,8 +316,11 @@ void gkBlendFile::buildAllSounds(void)
 	if (!mgr->isValidContext())
 		return;
 	
-	for (Blender::bSound* sound = (Blender::bSound*)m_file->m_sound.first; sound != 0; sound = (Blender::bSound*)sound->id.next)
-	{		
+	gkBlendListIterator iter = m_file->getSoundList();
+	while (iter.hasMoreElements())	
+	{
+		Blender::bSound* sound = (Blender::bSound*)iter.getNext();
+
 		// skip zero users
 		if (sound->id.us <= 0)
 			continue;
@@ -373,8 +376,11 @@ void gkBlendFile::buildAllFonts(void)
 	
 	gkFontManager& fmgr = gkFontManager::getSingleton();
 
-	for (Blender::VFont* vf = (Blender::VFont*)m_file->m_vfont.first; vf != 0; vf = (Blender::VFont*)vf->id.next)
+	gkBlendListIterator iter = m_file->getVFontList();
+	while (iter.hasMoreElements())	
 	{
+		Blender::VFont* vf = (Blender::VFont*)iter.getNext();
+	
 		if (vf->id.us <= 0 || !vf->packedfile)
 			continue;
 
@@ -391,7 +397,8 @@ void gkBlendFile::buildAllActions(void)
 {
 	gkAnimationLoader anims(m_group);
 		
-	anims.convertActions(&m_file->m_action, m_file->getVersion() <= 249, m_animFps);
+    gkBlendListIterator iter = m_file->getActionList();
+	anims.convertActions(iter, m_file->getVersion() <= 249, m_animFps);
 }
 
 
@@ -401,18 +408,19 @@ void gkBlendFile::doVersionTests(void)
 	int version = m_file->getVersion();
 
 	
-	Blender::FileGlobal* fg = m_file->m_fg ;
+	Blender::FileGlobal* fg = m_file->getFileGlobal() ;
 
 	if (version <= 242 && fg && fg->curscene == 0)
 	{
-		fg->curscene = (Blender::Scene*)m_file->m_scene.first;
+		fg->curscene = m_file->getFirstScene();
 	}
 
 	if (version <= 249)
 	{
-		Blender::Object* ob = (Blender::Object*)m_file->m_object.first;
-		while (ob)
+		gkBlendListIterator iter = m_file->getObjectList();
+		while (iter.hasMoreElements())	
 		{
+			Blender::Object* ob = (Blender::Object*)iter.getNext();		
 
 			if (ob->gameflag & OB_DYNAMIC)
 				ob->body_type = ob->gameflag & OB_RIGID_BODY ? OB_BODY_TYPE_RIGID : OB_BODY_TYPE_DYNAMIC;
@@ -420,17 +428,16 @@ void gkBlendFile::doVersionTests(void)
 				ob->body_type = OB_BODY_TYPE_RIGID;
 			else
 				ob->body_type = OB_BODY_TYPE_STATIC;
-
-			ob = (Blender::Object*)ob->id.next;
 		}
 	}
 
 	if (version <= 250)
 	{
-		Blender::Object* ob = (Blender::Object*)m_file->m_object.first;
-		while (ob)
+		gkBlendListIterator iter = m_file->getObjectList();
+		while (iter.hasMoreElements())	
 		{
-
+			Blender::Object* ob = (Blender::Object*)iter.getNext();	
+		
 			for (Blender::bConstraint* bc = (Blender::bConstraint*)ob->constraints.first; bc; bc = bc->next)
 			{
 				// convert rotation types to radians
@@ -454,17 +461,16 @@ void gkBlendFile::doVersionTests(void)
 	{
 		m_hasBFont = false;
 	
-		Blender::Text* ob = (Blender::Text*)m_file->m_text.first;
-
-		while (ob)
-		{			
-			if (gkString(ob->id.name).find(".bfont"))
+		gkBlendListIterator iter = m_file->getTextList();
+		while (iter.hasMoreElements())
+		{
+			Blender::Text* txt = (Blender::Text*)iter.getNext();
+					
+			if (gkString(txt->id.name).find(".bfont"))
 			{
 				m_hasBFont = true;
 				break;
 			}
-
-			ob = (Blender::Text*)ob->id.next;
 		}
 	}
 }

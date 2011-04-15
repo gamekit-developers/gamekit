@@ -47,6 +47,10 @@
 #include <wx/filename.h>
 #include <wx/stc/stc.h>
 #include <wx/textdlg.h>
+#include <wx/toolbar.h> 
+#include <wx/button.h>
+#include <wx/msgdlg.h>
+#include <wx/artprov.h>
 
 #include "Resource/system-search.xpm"
 
@@ -70,6 +74,7 @@ BEGIN_EVENT_TABLE( fbtMainFrame, wxFrame )
 	EVT_MENU(wxID_PASTE,        fbtMainFrame::editTextEvent)
 	EVT_MENU(wxID_CLEAR,        fbtMainFrame::editTextEvent)
 	EVT_MENU(wxID_SELECTALL,    fbtMainFrame::editTextEvent)
+	EVT_MENU(FBT_CLEAR_LOG,		fbtMainFrame::clearLog)
 
 
 	EVT_MENU(FBT_WINDOW_PRJ_VIEW,   fbtMainFrame::projViewEvent)
@@ -108,6 +113,11 @@ BEGIN_EVENT_TABLE( fbtMainFrame, wxFrame )
 	EVT_MENU(FBT_CHUNK_SHOW_ONLY,				fbtMainFrame::chunkShowOnly)
 	EVT_MENU(FBT_CHUNK_HIDE,					fbtMainFrame::chunkHide)
 	EVT_MENU(FBT_CHUNK_UNHIDE_ALL,				fbtMainFrame::chunkUnhideAll)
+
+	EVT_MENU(FBT_MEM_TABLE_FIND,				fbtMainFrame::findMemTable)
+	EVT_MENU(FBT_FILE_TABLE_FIND,				fbtMainFrame::findFileTable)
+	EVT_MENU(FBT_MEM_TABLE_DUMP,				fbtMainFrame::dumpMemTable)
+	EVT_MENU(FBT_FILE_TABLE_DUMP,				fbtMainFrame::dumpFileTable)
 END_EVENT_TABLE()
 
 
@@ -153,7 +163,9 @@ fbtMainFrame::fbtMainFrame()
 	    m_mpBook(0),
 	    m_fpBook(0),
 	    m_cpBook(0),
-	    m_file(0)
+	    m_file(0),
+		m_mpTextCtrl(0),
+		m_fpTextCtrl(0)
 {
 	m_name[0] = m_name[1] = m_name[2] = 0;
 	m_type[0] = m_type[1] = m_type[2] = 0;
@@ -178,7 +190,7 @@ fbtMainFrame::fbtMainFrame()
 	loadMenus();
 
 
-	Maximize();
+	//Maximize();
 }
 
 
@@ -198,24 +210,31 @@ void fbtMainFrame::loadDataView(wxChoicebook* parent, int i)
 	m_name[i]->AppendTextColumn(wxT("Name"), fbtDataViewText);
 	m_name[i]->AppendTextColumn(wxT("Pointer Count"), fbtDataViewSmall);
 	m_name[i]->AppendTextColumn(wxT("Array Size"), fbtDataViewSmall);
-
+	m_name[i]->AppendTextColumn(wxT("Name Id"), fbtDataViewSmall);
+	m_name[i]->AppendTextColumn(wxT("Base Id"), fbtDataViewSmall);
 
 	parent->AddPage(m_name[i], wxT("Name"));
+
+	//--
 
 	m_type[i] = new wxDataViewListCtrl(parent, -1);
 	m_type[i]->AppendTextColumn(wxT("Id"), fbtDataViewSmall);
 	m_type[i]->AppendTextColumn(wxT("Name"), fbtDataViewText);
 	m_type[i]->AppendTextColumn(wxT("Struct Id"), fbtDataViewSmall);
 	m_type[i]->AppendTextColumn(wxT("Sizeof"), fbtDataViewSmall);
-
+	m_type[i]->AppendTextColumn(wxT("Type Id"), fbtDataViewSmall);
 
 	parent->AddPage(m_type[i], wxT("Type"));
+
+	//--
 
 	m_strc[i] = new wxDataViewListCtrl(parent, -1);
 	m_strc[i]->AppendTextColumn(wxT("Id"),              fbtDataViewSmall);
 	m_strc[i]->AppendTextColumn(wxT("Name"),            fbtDataViewText);
 	m_strc[i]->AppendTextColumn(wxT("Member Count"),    fbtDataViewSmall);
 	m_strc[i]->AppendTextColumn(wxT("Sizeof"),          fbtDataViewSmall);
+	m_strc[i]->AppendTextColumn(wxT("Linked"),			fbtDataViewSmall);
+	m_strc[i]->AppendTextColumn(wxT("Unlinked Member"),	fbtDataViewSmall);
 
 	parent->AddPage(m_strc[i], wxT("Structure"));
 }
@@ -229,16 +248,53 @@ void fbtMainFrame::loadWindows(void)
 
 	m_chunkExplorer->AssignImageList(fbtMakeInspectorImageList());
 
-	m_mpBook = new wxChoicebook(this, -1, wxDefaultPosition, wxSize(250, 200));
-	loadDataView(m_mpBook, 0);
+	//--
+	wxPanel* mpPanel = new wxPanel(this, -1, wxDefaultPosition, wxSize(250, 200));
+	wxBoxSizer* mpSizer = new wxBoxSizer(wxVERTICAL);
 
-	m_fpBook = new wxChoicebook(this, -1, wxDefaultPosition, wxSize(250, 200));
+	wxToolBar* mpToolbar = new wxToolBar(mpPanel, -1 , wxDefaultPosition, wxDefaultSize, wxTB_HORIZONTAL); 
+	//mpToolbar->AddSeparator();
+	m_mpTextCtrl = new wxTextCtrl(mpToolbar, -1, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
+	mpToolbar->AddControl(m_mpTextCtrl);
+	mpToolbar->AddTool(FBT_MEM_TABLE_FIND, wxT("Search"),  wxArtProvider::GetBitmap(wxART_FIND, wxART_OTHER, wxSize(16,16)));
+	mpToolbar->AddTool(FBT_MEM_TABLE_DUMP, wxT("Dump"),  wxArtProvider::GetBitmap(wxART_INFORMATION, wxART_OTHER, wxSize(16,16)));
+	mpToolbar->Realize();
+
+	mpSizer->Add( mpToolbar, 0, wxEXPAND, 0);
+	mpSizer->AddSpacer(4);
+
+	m_mpBook = new wxChoicebook(mpPanel, -1, wxDefaultPosition, wxSize(250, 200));
+	loadDataView(m_mpBook, 0);
+	mpSizer->Add(m_mpBook, 1, wxEXPAND | wxALL, 0);
+	mpPanel->SetSizer(mpSizer);
+	mpPanel->Layout();
+
+	//--
+	wxPanel* fpPanel = new wxPanel(this, -1, wxDefaultPosition, wxSize(250, 200));
+	wxBoxSizer* fpSizer = new wxBoxSizer(wxVERTICAL);
+
+	wxToolBar* fpToolbar = new wxToolBar(fpPanel, -1 , wxDefaultPosition, wxDefaultSize, wxTB_HORIZONTAL); 
+	m_fpTextCtrl = new wxTextCtrl(fpToolbar, -1, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
+	fpToolbar->AddControl(m_fpTextCtrl);
+	fpToolbar->AddTool(FBT_FILE_TABLE_FIND, wxT("Search"),  wxArtProvider::GetBitmap(wxART_FIND, wxART_OTHER, wxSize(16,16)));
+	fpToolbar->AddTool(FBT_FILE_TABLE_DUMP, wxT("Dump"),  wxArtProvider::GetBitmap(wxART_INFORMATION, wxART_OTHER, wxSize(16,16)));
+	fpToolbar->Realize();
+
+	fpSizer->Add(fpToolbar, 0, wxEXPAND, 0);
+	fpSizer->AddSpacer(4);
+
+	m_fpBook = new wxChoicebook(fpPanel, -1, wxDefaultPosition, wxSize(250, 200));
 	loadDataView(m_fpBook, 1);
+	fpSizer->Add(m_fpBook, 1, wxEXPAND | wxALL, 0);
+	fpPanel->SetSizer(fpSizer);
+	fpPanel->Layout();
+
+	//--
 
 	inf = wxAuiPaneInfo().Caption(wxT("Inspector")).Right().Layer(FBT_ISP_LAYER).Name(wxT("FBTE")).Hide();
-	m_fbtBook->AddPage(m_chunkExplorer, wxT("Explorer"));
-	m_fbtBook->AddPage(m_mpBook, wxT("Memory Tables"));
-	m_fbtBook->AddPage(m_fpBook, wxT("File Tables"));
+	m_fbtBook->AddPage(m_chunkExplorer, wxT("Explorer"));	
+	m_fbtBook->AddPage(mpPanel, wxT("Memory Tables"));
+	m_fbtBook->AddPage(fpPanel, wxT("File Tables"));
 	m_auiManager->AddPane(m_fbtBook, inf);
 
 
@@ -331,6 +387,8 @@ void fbtMainFrame::loadMenus(void)
 	item = iter->Append(wxID_CLEAR, wxT("Delete\tDel"));
 	iter->AppendSeparator();
 	item = iter->Append(wxID_SELECTALL, wxT("Select All\tCtrl+A"));
+	iter->AppendSeparator();
+	item = iter->Append(FBT_CLEAR_LOG, wxT("Clear Log"));
 	menubar->Append(iter, wxT("Edit"));
 
 
@@ -523,7 +581,7 @@ void fbtMainFrame::openFBTEvent(wxCommandEvent& evt)
 	                 "Open FBT compatible file",
 	                 wxEmptyString,
 	                 wxEmptyString,
-	                 "FBT compatible (*.blend;*.bullet;*.ntree;*.insp)|*.blend;*.bullet;*.ntree;*.insp",
+	                 "FBT compatible (*.blend;*.bullet;*.ntree;*.insp;*.strip)|*.blend;*.bullet;*.ntree;*.insp;*.strip",
 	                 wxFD_OPEN);
 
 
@@ -1271,7 +1329,7 @@ void fbtMainFrame::loadMainFile(const wxString& path)
 	if (m_file)
 		unpopulate();
 
-	if (path.find(".blend") != -1)
+	if (path.find(".blend") != -1 || path.Find(".strip") != -1)
 		m_file = new fbtBlend();
 	else if (path.find(".insp") != -1) // inspect inspector :p
 		m_file = new fbtInspectorFile();
@@ -1285,8 +1343,8 @@ void fbtMainFrame::loadMainFile(const wxString& path)
 
 	if (m_file->parse(path.c_str(), fbtFile::PM_COMPRESSED) == fbtFile::FS_OK)
 	{
-		populate(m_file->getMemoryTable(), 0);
-		populate(m_file->getFileTable(), 1);
+		populate(m_file->getMemoryTable(), 0, m_file->getFileTable());
+		populate(m_file->getFileTable(), 1, m_file->getMemoryTable());
 		// build chunk window
 		populateChunks(m_file->getChunks());
 
@@ -1320,7 +1378,7 @@ void fbtMainFrame::notifyFileModified(fbtTextFile* tf)
 
 
 
-void fbtMainFrame::populate(fbtBinTables* table, int index)
+void fbtMainFrame::populate(fbtBinTables* table, int index, fbtBinTables* linkTable)
 {
 	FBTtype i;
 
@@ -1337,6 +1395,8 @@ void fbtMainFrame::populate(fbtBinTables* table, int index)
 		data.push_back( wxVariant(wxString(name.m_name)) );
 		data.push_back( wxVariant(name.m_ptrCount).MakeString() );
 		data.push_back( wxVariant(name.m_arraySize).MakeString() );
+		data.push_back( wxVariant((wxULongLong)name.m_nameId).MakeString() );
+		data.push_back( wxVariant((wxULongLong)table->m_base[i]).MakeString() );
 		m_name[index]->AppendItem( data );
 
 	}
@@ -1350,6 +1410,7 @@ void fbtMainFrame::populate(fbtBinTables* table, int index)
 		data.push_back( wxVariant(wxString(type.m_name)) );
 		data.push_back( wxVariant((int)type.m_strcId).MakeString() );
 		data.push_back( wxVariant((int)table->m_tlen[i]).MakeString() );
+		data.push_back( wxVariant((wxULongLong)type.m_typeId).MakeString() );
 		m_type[index]->AppendItem( data );
 
 	}
@@ -1359,12 +1420,26 @@ void fbtMainFrame::populate(fbtBinTables* table, int index)
 	{
 		FBTtype* type = table->m_strc[i];
 
+		fbtStruct* strc = table->m_offs[i];
+		wxASSERT(strc);
+
 
 		wxVector<wxVariant> data;
 		data.push_back( wxVariant((int)i).MakeString() );
 		data.push_back( wxVariant(wxString(table->m_type[type[0]].m_name)));
 		data.push_back( wxVariant((int)type[1]).MakeString() );
 		data.push_back( wxVariant((int)table->m_tlen[type[0]]).MakeString() );
+		
+		if (linkTable && strc->m_link)
+		{
+			data.push_back( wxVariant(wxString::Format("%d (%s)",
+				strc->m_link->m_strcId, linkTable->getStructType(strc->m_link))));
+		}
+		else
+			data.push_back( wxVariant(""));
+
+		data.push_back ( wxVariant((int)strc->getUnlinkedMemberCount()).MakeString() );
+
 		m_strc[index]->AppendItem( data );
 
 	}
@@ -1516,6 +1591,40 @@ void fbtMainFrame::editLabelEnd(wxTreeEvent& evt)
 
 void fbtMainFrame::genCppHeader(wxCommandEvent& evt)
 {
+	if (!m_file) return;
+
+	fbtBinTables* table = m_file->getFileTable();
+
+
+	clearLog();
+	for (size_t i = 0; i < table->m_offs.size(); i++)
+	{
+		fbtStruct* strc = table->m_offs[i];
+		log(wxString::Format(
+			"struct %s\n" 
+			"{\n"
+			,
+			table->getStructType(strc)
+			)
+		);
+
+		for (size_t k = 0; k < strc->m_members.size(); k++)
+		{
+			fbtStruct* member = &strc->m_members[k];
+			log(wxString::Format(
+				"\t%s %s;\n"
+				,
+				table->getStructType(member),
+				table->getStructName(member)
+				)
+			);
+		}
+
+		log(wxString::Format(
+			"};\n\n"
+			));
+	}
+
 }
 
 
@@ -1574,7 +1683,7 @@ void fbtMainFrame::gtcEvent(wxCommandEvent& evt)
 			continue;
 
 		char* cp0 = mp->m_type[a->m_key.k16[0]].m_name;
-		dest.writef("<li><a href=\"#%s\">%s</a></li>\n", cp0, cp0);
+		dest.writef("<li><a href=\"#%s\">%s</a> (%d)</li>\n", cp0, cp0, i);
 	}
 	dest.writef("</ul>\n");
 
@@ -1589,52 +1698,47 @@ void fbtMainFrame::gtcEvent(wxCommandEvent& evt)
 		if (!b)
 			continue;
 
+		const char* cp0 = mp->getStructType(a);//mp->m_type[a->m_key.k16[0]].m_name;
+		const char* cp1 = fp->getStructType(b);//fp->m_type[b->m_key.k16[0]].m_name;
 
-
-
-		char* cp0 = mp->m_type[a->m_key.k16[0]].m_name;
-		char* cp1 = fp->m_type[b->m_key.k16[0]].m_name;
-
-
-		dest.writef("<center><h2>%s</h2></center>\n", cp0);
+		dest.writef("<center><h2>%s (%d)</h2></center>\n", cp0, i);
 		dest.writef("<a id=\"%s\"/>\n", cp0);
 
 		dest.writef("<table><tr><td>File</td><td>(<b>%s</b>)</td><td><i>To</i></td><td>Memory</td><td>(<b>%s</b>)</td></tr></table>\n", cp1, cp0);
 		dest.writef("<table>\n");
 
-		fbtStruct::Array::Pointer mbp = a->m_members.ptr();
-		FBTsizeType s = a->m_members.size(), i;
-
-
+		fbtStruct::Members::Pointer mbp = a->m_members.ptr();
+		
 		int ml = 0,  fl = 0;
 
-		for (i = 0; i < s; i++)
+		for (FBTsizeType i = 0; i < a->m_members.size(); i++)
 		{
 			c = &mbp[i];
 			d = c->m_link;
-			char* cpMN = mp->m_name[c->m_key.k16[1]].m_name;
+			//char* cpMN = mp->m_name[c->m_key.k16[1]].m_name;
+			const char* cpMN = mp->getStructName(c);
 
-			cp0 = mp->m_type[mp->m_strc[c->m_strcId][0]].m_name;
-
-
+			//cp0 = mp->m_type[mp->m_strc[c->m_strcId][0]].m_name;
+			cp0 = mp->getOwnerStructName(c);
 
 			if (!d)
 			{
 				ml += c->m_len;
 
 
-				dest.writef("<tr><td>(M(&nbsp;&nbsp;%s&nbsp;&nbsp;)</td><td>+</td><td>%i)"
+				dest.writef("<tr><td>%d</td><td>(M(&nbsp;&nbsp;%s&nbsp;&nbsp;)</td><td>+</td><td>%i)"
 				            "</td><td><i>&nbsp;&nbsp;%s&nbsp;&nbsp;</i></td><td>=</td><td>&nbsp;&nbsp;0&nbsp;&nbsp;"
-				            "</td><td></td><td>Not in file tables.</td></tr>\n", cp0, c->m_off, cpMN);
+				            "</td><td></td><td>Not in file tables.</td></tr>\n", i, cp0, c->m_off, cpMN);
 				continue;
 			}
 
 
-			char* cpFN = fp->m_name[d->m_key.k16[1]].m_name;
+			//char* cpFN = fp->m_name[d->m_key.k16[1]].m_name;
+			const char* cpFN = fp->getStructName(d);
 
-			dest.writef("<tr><td>(M(&nbsp;&nbsp;%s&nbsp;&nbsp;)</td><td>+</td><td>%i)</td><td>"
+			dest.writef("<tr><td>%d</td><td>(M(&nbsp;&nbsp;%s&nbsp;&nbsp;)</td><td>+</td><td>%i)</td><td>"
 			            "<i>&nbsp;&nbsp;%s&nbsp;&nbsp;</i></td><td>=</td><td>F(&nbsp;&nbsp;%s&nbsp;&nbsp;)"
-			            "</td><td>+</td><td>%i</td></tr>\n", cp0, c->m_off, cpMN, cp1, d->m_off);
+			            "</td><td>+</td><td>%i</td></tr>\n", i, cp0, c->m_off, cpMN, cp1, d->m_off);
 			ml += c->m_len;
 		}
 
@@ -1648,6 +1752,25 @@ void fbtMainFrame::gtcEvent(wxCommandEvent& evt)
 
 }
 
+
+void fbtMainFrame::alert(const wxString& msg)
+{	
+	//wxLogMessage(msg);
+	wxMessageDialog dlg(this, msg, "Error", wxOK | wxICON_ERROR);
+	dlg.ShowModal();
+}
+
+void fbtMainFrame::log(const wxString& msg)
+{
+	if (m_logWindow)
+		m_logWindow->AppendText(msg);
+}
+
+void fbtMainFrame::clearLog()
+{
+	if (m_logWindow)
+		m_logWindow->Clear();
+}
 
 
 void fbtMainFrame::chunkItemMenu(wxTreeEvent& evt)
@@ -1730,4 +1853,215 @@ void fbtMainFrame::chunkUnhideAll(wxCommandEvent& evt)
 {
 	m_chunkExplorer->DeleteAllItems();
 	populateChunks(m_file->getChunks());
+}
+
+
+void fbtMainFrame::findMemTable(wxCommandEvent& evt)
+{	
+	wxString text = m_mpTextCtrl->GetValue();
+		
+	findTableItem(text, 0, m_mpBook->GetSelection());
+}
+
+void fbtMainFrame::findFileTable(wxCommandEvent& evt)
+{
+	wxString text = m_fpTextCtrl->GetValue();
+		
+	findTableItem(text, 1, m_fpBook->GetSelection());
+}
+
+void fbtMainFrame::findTableItem(const wxString& text, int ictrl, int sel)
+{
+	if (text.IsEmpty() || ictrl > 2) return;
+
+	wxDataViewListCtrl* ctrl = m_name[ictrl];
+	if (sel == 1) ctrl = m_type[ictrl];
+	else if (sel == 2) ctrl = m_strc[ictrl];
+
+	wxDataViewItem sitem = ctrl->GetSelection();
+	const wxDataViewListStore* store = ctrl->GetStore();
+
+	unsigned int start = 0, end = store->GetCount();
+	if (sitem.IsOk())
+	{
+		start = store->GetRow(sitem) + 1;
+		ctrl->Unselect(sitem);
+	}
+
+	
+	for (int t = 0; t < 2; t++)
+	{
+		for (unsigned int i = start; i < end; i++)
+		{		
+			if (ctrl->GetTextValue(i, 1).StartsWith(text))
+			{
+				wxDataViewItem item = store->GetItem(i);
+				ctrl->Select(item);
+				ctrl->EnsureVisible(item);
+				ctrl->SetFocus();
+				return;
+			}
+		}
+
+		end = start+1;
+		start = 0;
+	}
+
+	alert("Not found");
+}
+
+void fbtMainFrame::dumpTableItem(int ictrl, int sel)
+{
+	if (ictrl > 2 && !m_file) return;
+
+	wxDataViewListCtrl* ctrl = m_name[ictrl];
+	if (sel == 1) ctrl = m_type[ictrl];
+	else if (sel == 2) ctrl = m_strc[ictrl];
+
+	wxDataViewItem sitem = ctrl->GetSelection();
+	const wxDataViewListStore* store = ctrl->GetStore();
+
+	if (!sitem.IsOk()) return;
+
+	unsigned long id = 0;
+	wxString strId = ctrl->GetTextValue(store->GetRow(sitem), 0);
+	strId.ToULong(&id);
+
+	fbtBinTables* table  = (ictrl == 0) ? m_file->getMemoryTable() : m_file->getFileTable();
+	fbtBinTables* linkTable = (ictrl == 1) ? m_file->getMemoryTable() : m_file->getFileTable();
+
+	m_logWindow->Clear();
+	if (sel == 0)
+	{
+		if (id >= table->m_nameNr)
+			return;
+		
+		fbtName* name = &table->m_name[id];
+		log(wxString::Format(
+			"id: %d\n"
+			"name: %s\n"
+			"loc: %d\n"
+			"nameId: %u\n"
+			"ptrCount: %d\n"
+			"numSlots: %d\n"
+			"isFptr: %d\n"
+			"arraySize: %d\n",
+			id,
+			name->m_name,
+			name->m_loc,
+			name->m_nameId,
+			name->m_ptrCount,
+			name->m_numSlots,
+			name->m_isFptr,
+			name->m_arraySize
+			)
+		);
+
+		for (int i = 0; i < name->m_arraySize; i++)
+			m_logWindow->AppendText(wxString::Format(" [%2d] %d\n", i, name->m_slots[i]));
+	}
+	else if (sel == 2)
+	{
+		if (id >= table->m_strcNr)
+			return;
+
+		fbtStruct* strc = table->m_offs[id];
+		
+		dumpTableStruct(strc, 0, table, linkTable);
+	}
+}
+
+void fbtMainFrame::dumpTableStruct(fbtStruct* strc, int depth, fbtBinTables* table, fbtBinTables* linkTable)
+{
+	wxASSERT(strc && table && linkTable);
+	fbtName& name = depth == 0 ? table->m_name[strc->m_key.k16[0]] : table->m_name[strc->m_key.k16[1]];
+	log(wxString::Format("========= %d ==========\n", depth));
+	log(wxString::Format(
+			//"id: %d\n"
+			"type: %s name: %s\n"
+			"key: %u  k16(%d, %d)  //(type,name)\n"
+			"val: %llu k32(%u, %u) //(type hash,basename hash)\n"
+			"pointer:%d array:%d\n"
+			"off: %u\n"
+			"len: %u\n"
+			"nr: %u\n"
+			"dp: %u\n"
+			"strcId: %u\n"
+			"flag: 0x%x\n"
+			"members: %d\n",
+			//id,
+			table->getStructType(strc), depth == 0 ? "" : table->getStructName(strc),
+			strc->m_key.k32, strc->m_key.k16[0], strc->m_key.k16[1], 
+			strc->m_val.k64, strc->m_val.k32[0], strc->m_val.k32[1], 
+			name.m_ptrCount, name.m_arraySize,
+			strc->m_off,
+			strc->m_len,
+			strc->m_nr,
+			strc->m_dp,
+			strc->m_strcId,
+			strc->m_flag,
+			strc->m_members.size()
+		)
+	);
+
+	if (strc->m_link)
+	{
+		log(wxString::Format("--------- link --------\n"));
+		fbtStruct* org = strc;
+		strc = strc->m_link;
+		fbtName& name = depth == 0 ? linkTable->m_name[strc->m_key.k16[0]] : linkTable->m_name[strc->m_key.k16[1]];
+		log(wxString::Format(
+			//"id: %d\n"
+			"  type: %s name: %s\n"			
+			"  key: %u  k16(%d, %d)\n"
+			"  val: %llu k32(%u, %u)\n"
+			"  pointer:%d array:%d\n"
+			"  off: %u\n"
+			"  len: %u\n"
+			"  nr: %u\n"
+			"  dp: %u\n"
+			"  strcId: %u\n"
+			"  flag: 0x%x\n"
+			"  members: %d\n",
+			//id,
+			linkTable->getStructType(strc), depth == 0 ? "" : linkTable->getStructName(strc),
+			strc->m_key.k32, strc->m_key.k16[0], strc->m_key.k16[1], 
+			strc->m_val.k64, strc->m_val.k32[0], strc->m_val.k32[1], 
+			name.m_ptrCount, name.m_arraySize,
+			strc->m_off,
+			strc->m_len,
+			strc->m_nr,
+			strc->m_dp,
+			strc->m_strcId,
+			strc->m_flag,
+			strc->m_members.size()
+			)
+		);
+		strc = org;
+	}
+	else
+	{
+		log("unlinked structure\n");
+	}
+
+	for (size_t i = 0; i < strc->m_members.size(); i++)
+	{
+		dumpTableStruct(&strc->m_members[i], depth+1, table, linkTable);
+	}
+}
+
+
+void fbtMainFrame::dumpMemTable(wxCommandEvent& evt)
+{
+	dumpTableItem(0, m_mpBook->GetSelection());
+}
+
+void fbtMainFrame::dumpFileTable(wxCommandEvent& evt)
+{
+	dumpTableItem(1, m_fpBook->GetSelection());
+}
+
+void fbtMainFrame::clearLog(wxCommandEvent& evt)
+{
+	m_logWindow->Clear();
 }

@@ -24,10 +24,7 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include "OgreRenderWindow.h"
-#include "OgreRoot.h"
-#include "OgreWindowEventUtilities.h"
-#include "OIS.h"
+
 #include "gkWindowSystem.h"
 #include "gkLogger.h"
 #include "gkUserDefs.h"
@@ -37,6 +34,11 @@
 #include "gkWindowSystem.h"
 #include "gkWindow.h"
 #include "gkWindowIOS.h"
+
+#include "OgreRenderWindow.h"
+#include "OgreRoot.h"
+#include "OgreWindowEventUtilities.h"
+#include "OIS.h"
 
 @implementation gkGestureView
 

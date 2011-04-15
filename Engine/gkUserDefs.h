@@ -66,6 +66,7 @@ public:
 	int                     fsaaSamples;        // Anti aliasing samples.
 	bool                    enableshadows;
 	int                     defaultMipMap;      // Number of mipmaps to generate per texture (default 5)
+	gkString				shaderCachePath;	// RTShaderSystem cache file path
 
 	gkString                shadowtechnique;
 	gkColor                 colourshadow;
@@ -73,8 +74,12 @@ public:
 
 	gkString                extWinhandle;       // External Window Handle
 	gkScalar				animFps;			// Default animation fps
+	bool					rtss;				// Enable RTShadingSystem
+
+	GK_INLINE bool			isD3DRenderSystem() { return isD3DRenderSystem(rendersystem); }
 
 	static OgreRenderSystem getOgreRenderSystem(const gkString& val);
+	static bool isD3DRenderSystem(OgreRenderSystem rs);
 	static int getViewportFramingType(const gkString& val);
 };
 
