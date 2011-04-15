@@ -47,9 +47,11 @@ private:
 	akSkeleton* m_skeleton;
 	
 	// per object anim data
-	akAnimationPlayerSet            m_players;
-	akSkeletonPose*                 m_pose;
-	btAlignedObjectArray<akMatrix4> m_matrixPalette;
+	akAnimationPlayerSet             m_players;
+	akSkeletonPose*                  m_pose;
+	btAlignedObjectArray<akMatrix4>  m_matrixPalette;
+	btAlignedObjectArray<akDualQuat> m_dualquatPalette;
+	bool                             m_useDualQuatSkinning;
 
 public:
 	akEntity();
@@ -95,16 +97,31 @@ public:
 		return m_skeleton? true:false;
 	}
 	
+	UT_INLINE bool getUseDualQuatSkinning(void)
+	{
+		return m_useDualQuatSkinning;
+	}
+	
+	UT_INLINE void setUseDualQuatSkinning(const bool v)
+	{
+		m_useDualQuatSkinning = v;
+	}
+	
 	UT_INLINE bool isPositionAnimated(void)
 	{
 		return true;
 	}
 	
-	UT_INLINE btAlignedObjectArray<akMatrix4>& getPalette(void)
+	UT_INLINE btAlignedObjectArray<akMatrix4>& getMatrixPalette(void)
 	{
 		return m_matrixPalette;
 	}
 
+	UT_INLINE btAlignedObjectArray<akDualQuat>& getDualQuatPalette(void)
+	{
+		return m_dualquatPalette;
+	}
+	
 	BT_DECLARE_ALIGNED_ALLOCATOR();
 };
 

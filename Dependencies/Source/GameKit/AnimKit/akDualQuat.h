@@ -25,73 +25,55 @@
 -------------------------------------------------------------------------------
 */
 
-#ifndef AKTRANSFORMSTATE_H
-#define AKTRANSFORMSTATE_H
+#ifndef AKDUALQUAT_H
+#define AKDUALQUAT_H
 
-#include "utCommon.h"
 #include "akMathUtils.h"
 
-#include "btAlignedAllocator.h"
-
-UT_ATTRIBUTE_ALIGNED_CLASS16(class) akTransformState
+UT_ATTRIBUTE_ALIGNED_CLASS16(class) akDualQuat
 {
 public:
-	akQuat    rot;
-	akVector3 loc;
-	akVector3 scale;
+	akQuat nondual;
+	akQuat dual;
+
+	akDualQuat();
+	akDualQuat(akQuat nd, akQuat d) : nondual(nd), dual(d) {};
+	akDualQuat(akQuat rot, akVector3 trans);
 	
-public:
-	akTransformState(const akVector3& oloc = akVector3(0,0,0),
-					 const akQuat&    orot = akQuat::identity(),
-					 const akVector3& oscl = akVector3(1,1,1))
+	inline const akDualQuat operator +( akDualQuat v ) const
 	{
-		rot = orot;
-		loc = oloc;
-		scale = oscl;
-	}
+		return akDualQuat(nondual+v.nondual, dual+v.dual);
+	};
 	
-	akTransformState(const akMatrix4& mat)
+	inline const akDualQuat operator *( const float v ) const
 	{
-		loc = mat.getTranslation();
-		
-		akMatrix3 m3 = mat.getUpper3x3();
-		
-		rot = akQuat(m3);
-		if(norm(rot)==0)
-			rot = akQuat::identity();
-		
-		akMatrix4 mrot = akMatrix4(rot, akVector3(0,0,0));
-		akMatrix4 T = mat*mrot;
-		
-		scale = akVector3(T[0][0], T[1][1], T[2][2]);
-	}
+		return akDualQuat(nondual*v, dual*v);
+	};
 	
-	UT_INLINE akTransform3 toTransform3(void) const
+	inline const akDualQuat operator /( const float v ) const
 	{
-		akTransform3 t3(rot, loc);
-		appendScale(t3, scale);
-		return t3;
-	}
+		return akDualQuat(nondual/v, dual/v);
+	};
 	
-	UT_INLINE akMatrix4 toMatrix(void) const
+	inline akDualQuat & operator +=( const akDualQuat & v )
 	{
-		return akMatrix4(toTransform3());
-	}
-	
-	UT_INLINE static akTransformState identity()
-	{
-		return akTransformState(akVector3(0,0,0), akQuat::identity(), akVector3(1,1,1));
-	}
-	
-	UT_INLINE const akTransformState& operator= (const akTransformState& o)
-	{
-		rot = o.rot;
-		loc = o.loc;
-		scale = o.scale;
+		*this = *this + v;
 		return *this;
-	}
+	};
 	
-	BT_DECLARE_ALIGNED_ALLOCATOR();
+	inline akDualQuat & operator *=( const float & v )
+	{
+		*this = *this * v;
+		return *this;
+	};
+	
+	inline akDualQuat & operator /=( const float & v )
+	{
+		*this = *this / v;
+		return *this;
+	};
+	
+	akTransform3 toTransform3(void) const;
 };
 
-#endif // AKTRANSFORMSTATE_H
+#endif // AKDUALQUAT_H

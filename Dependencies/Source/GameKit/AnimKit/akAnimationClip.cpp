@@ -41,6 +41,8 @@ akAnimationClip::~akAnimationClip()
 	int len = getNumChannels(), i;
 	for (i = 0; i < len; ++i)
 		delete ptr[i];
+	
+	m_channels.clear();
 }
 
 

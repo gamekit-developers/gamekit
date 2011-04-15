@@ -77,6 +77,8 @@ public:
 	/// You can also process the palette afterward to include world transformation.
 	void fillMatrixPalette(btAlignedObjectArray<akMatrix4> &palette)const ;
 	
+	void fillDualQuatPalette(btAlignedObjectArray<akDualQuat> &palette,
+							btAlignedObjectArray<akMatrix4> &mpalette)const ;
 	
 	UT_INLINE int getSpace(void)
 	{

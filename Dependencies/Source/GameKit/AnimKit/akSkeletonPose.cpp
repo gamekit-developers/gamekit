@@ -29,6 +29,7 @@
 
 #include "akSkeleton.h"
 #include "akTransformState.h"
+#include "akDualQuat.h"
 
 akSkeletonPose::akSkeletonPose(akSkeleton* skel, int space) : m_skeleton(skel), m_space(space)
 {
@@ -166,5 +167,34 @@ void akSkeletonPose::fillMatrixPalette(btAlignedObjectArray<akMatrix4> &palette)
 	{
 		palette[i] = m_jointPoses[i].toMatrix() * m_skeleton->getJointInverseBindPose(i);
 	}
+}
+
+void akSkeletonPose::fillDualQuatPalette(btAlignedObjectArray<akDualQuat> &dqpalette,
+										btAlignedObjectArray<akMatrix4> &mpalette) const
+{
+	for(int i=0; i<getNumJoints(); i++)
+	{
+		akTransformState ts(m_jointPoses[i].toMatrix() * m_skeleton->getJointInverseBindPose(i));
+		akDualQuat dq(ts.rot, ts.loc);
+		akMatrix4 m = akMatrix4::identity();
+		appendScale(m, ts.scale);
+		dqpalette[i] = dq;
+		mpalette[i] = m;
+	}
+	
+	// antipodality
+	for(int i=1; i<getNumJoints(); i++)
+	{
+		UTuint8 pid = m_skeleton->getJoint(i)->m_parentId;
+		if(pid != AK_JOINT_NO_PARENT)
+		{
+			akDualQuat& dq(dqpalette[i]);
+			akDualQuat& dqp(dqpalette[pid]);
+			
+			if( dot(dqp.nondual, dq.nondual) < 0 )
+				dq *= -1.0;
+		}
+	}
+	
 }
 

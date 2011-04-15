@@ -44,6 +44,8 @@ akAnimationChannel::~akAnimationChannel()
 	int len = getNumSplines(), i = 0;
 	while (i < len)
 		delete splines[i++];
+	
+	m_splines.clear();
 }
 
 

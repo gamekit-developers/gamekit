@@ -107,7 +107,10 @@ UT_INLINE bool akEq(const akScalar& v)
 }
 
 template <class T>
-UT_INLINE static void advancePointer(T*& ptr, UTsize offset) { ptr = (T*)((char*)(ptr) + offset); }
+UT_INLINE static void advancePointer(T*& ptr, UTsize offset)
+{
+	ptr = (T*)((char*)(ptr) + offset);
+}
 
 
 #endif // AKMATHUTILS_H

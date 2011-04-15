@@ -41,6 +41,8 @@
 
 #include "akAnimationLoader.h"
 
+#define BLENDER_ARM_DEF_QUATERNION (1<<2)  //f orm blender dna files
+
 akBLoader::akBLoader(akDemo* demo)
 {
 	m_demo = demo;
@@ -58,6 +60,9 @@ void akBLoader::convertTriangle(unsigned int firstIndex, akVector3* positions, i
 
 void akBLoader::removeMeshTempData(akMesh* mesh)
 {
+	if(!mesh)
+		return;
+	
 	for (int i=0; i<mesh->getNumSubMeshes(); i++)
 	{
 		akSubMesh* smesh = mesh->getSubMesh(i);
@@ -380,7 +385,7 @@ void akBLoader::convertMeshObject(Blender::Object *bobj)
 	akMesh* mesh = m_demo->getMesh(AKB_IDNAME(bmesh));
 	entity->setMesh(mesh);
 	
-	if(bobj->parent != 0 && bobj->parent->type == OB_ARMATURE)
+	if(mesh && bobj->parent != 0 && bobj->parent->type == OB_ARMATURE)
 	{
 		Blender::bArmature* bskel = (Blender::bArmature*)bobj->parent->data;
 		if(!m_demo->getSkeleton(AKB_IDNAME(bskel)))
@@ -389,9 +394,10 @@ void akBLoader::convertMeshObject(Blender::Object *bobj)
 		akSkeleton* skel = m_demo->getSkeleton(AKB_IDNAME(bskel));
 		entity->setSkeleton(skel);
 		
-		// skining weights
-		
 		convertMeshSkinning(mesh, bobj, skel);
+		
+		if(bskel->deformflag && BLENDER_ARM_DEF_QUATERNION)
+			entity->setUseDualQuatSkinning(true);
 	}
 	
 	removeMeshTempData(mesh);

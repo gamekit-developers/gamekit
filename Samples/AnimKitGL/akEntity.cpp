@@ -44,10 +44,10 @@
 #include "akMesh.h"
 #include "akSkeleton.h"
 #include "akSkeletonPose.h"
-//#include "akGeometryDeformer.h"
+#include "akDualQuat.h"
 
 
-akEntity::akEntity() : m_mesh(0), m_skeleton(0), m_pose(0)
+akEntity::akEntity() : m_mesh(0), m_skeleton(0), m_pose(0), m_useDualQuatSkinning(false)
 {
 }
 
@@ -58,6 +58,9 @@ akEntity::~akEntity()
 	
 	if(m_matrixPalette.size()>0)
 		m_matrixPalette.clear();
+	
+	if(m_dualquatPalette.size()>0)
+		m_dualquatPalette.clear();
 }
 
 void akEntity::setSkeleton(akSkeleton *skel)
@@ -71,6 +74,12 @@ void akEntity::setSkeleton(akSkeleton *skel)
 	if(m_matrixPalette.size()>0)
 		m_matrixPalette.clear();
 	m_matrixPalette.reserve(m_skeleton->getNumJoints());
+	m_matrixPalette.resize(m_skeleton->getNumJoints());
+	
+	if(m_dualquatPalette.size()>0)
+		m_dualquatPalette.clear();
+	m_dualquatPalette.reserve(m_skeleton->getNumJoints());
+	m_dualquatPalette.resize(m_skeleton->getNumJoints());
 }
 
 

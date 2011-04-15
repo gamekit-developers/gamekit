@@ -91,7 +91,7 @@ void akDemo::step(akScalar time)
 	
 		if(object->isPositionAnimated())
 		{
-			// evaluate the animation clip values for the object worlkd position
+			// evaluate the animation clip values for the object world position
 			akTransformState transform = akTransformState::identity();
 			object->getAnimationPlayers()->evaluate(&transform);
 			object->setTransformState(transform);
@@ -109,9 +109,20 @@ void akDemo::step(akScalar time)
 			pose->setSpace(akSkeletonPose::SP_BINDING_SPACE);
 			pose->toModelSpace(pose);
 			
-			// get matrix pallete for the pose
-			btAlignedObjectArray<akMatrix4> &palette = object->getPalette();
-			pose->fillMatrixPalette(palette);
+
+			
+			btAlignedObjectArray<akDualQuat> &dqpalette = object->getDualQuatPalette();
+			btAlignedObjectArray<akMatrix4> &mpalette = object->getMatrixPalette();
+				
+			if(object->getUseDualQuatSkinning())
+			{
+				// get dualquat and matrix pallete for the pose
+				pose->fillDualQuatPalette(dqpalette, mpalette);
+			}
+			else {
+				// get matrix pallete for the pose
+				pose->fillMatrixPalette(mpalette);
+			}
 			
 			akMesh* mesh = object->getMesh();
 			for (int i=0; i<mesh->getNumSubMeshes(); i++)
@@ -133,14 +144,47 @@ void akDemo::step(akScalar time)
 				
 				
 				// apply vertex skinning
-				akGeometryDeformer::vertexSkinning(vbuf->getVerticesNumber(), palette,
-													weights, weightss,
-													indices, indicess,
-													posin, posins,
-													posout, posouts);
-				
+				if(object->getUseDualQuatSkinning())
+				{
+//					akGeometryDeformer::DLBSkinning(vbuf->getVerticesNumber(), dqpalette, mpalette,
+//														weights, weightss,
+//														indices, indicess,
+//														posin, posins,
+//														posout, posouts);
+
+					akGeometryDeformer::DLBSkinningFast(vbuf->getVerticesNumber(), dqpalette, mpalette,
+														weights, weightss,
+														indices, indicess,
+														posin, posins,
+														posout, posouts);
+	
+//					akGeometryDeformer::DLBSkinningMoreFast(vbuf->getVerticesNumber(), dqpalette, mpalette,
+//														weights, weightss,
+//														indices, indicess,
+//														posin, posins,
+//														posout, posouts);
+	
+//					akGeometryDeformer::DLBSkinningAntipodality(vbuf->getVerticesNumber(), dqpalette, mpalette,
+//														weights, weightss,
+//														indices, indicess,
+//														posin, posins,
+//														posout, posouts);
+				}
+				else
+				{
+//					akGeometryDeformer::LBSkinning(vbuf->getVerticesNumber(), mpalette,
+//														weights, weightss,
+//														indices, indicess,
+//														posin, posins,
+//														posout, posouts);
+
+					akGeometryDeformer::LBSkinningFast(vbuf->getVerticesNumber(), mpalette,
+														weights, weightss,
+														indices, indicess,
+														posin, posins,
+														posout, posouts);
+				}
 			}
-			
 		}
 	}
 }

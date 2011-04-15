@@ -17,13 +17,13 @@ else(ANIMKIT_DOUBLE_PRECISION)
 	
 		add_definitions(-DANIMKIT_USE_SSE_IF_AVAILABLE)
 		
-		if(CMAKE_COMPILER_IS_GNUCXX)
-                        check_cxx_compiler_flag(-msse2 ANIMKIT_GCC_SUPPORT_SSE)
+		if(CMAKE_COMPILER_IS_GNUCXX OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang") )
+			check_cxx_compiler_flag(-msse2 ANIMKIT_GCC_SUPPORT_SSE)
 			if(ANIMKIT_GCC_SUPPORT_SSE)
-                                add_definitions(-msse2)
+				add_definitions(-msse2)
 				add_definitions(-DANIMKIT_GCC_SUPPORT_SSE)
 			endif(ANIMKIT_GCC_SUPPORT_SSE)
-		endif(CMAKE_COMPILER_IS_GNUCXX)
+		endif(CMAKE_COMPILER_IS_GNUCXX OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang") )
 		
 	endif(ANIMKIT_USE_SSE_IF_AVAILABLE)
 	

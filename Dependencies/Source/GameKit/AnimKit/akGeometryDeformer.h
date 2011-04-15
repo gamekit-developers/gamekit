@@ -28,10 +28,9 @@
 #ifndef AKGEOMETRYDEFORMER_H
 #define AKGEOMETRYDEFORMER_H
 
+#include "akCommon.h"
 #include "utTypes.h"
-
 #include "akMathUtils.h"
-
 #include "btAlignedObjectArray.h"
 
 /// Simple utility to deform mesh geometry
@@ -39,16 +38,55 @@ class akGeometryDeformer
 {
 public:
 
-	/// Does the heavy calcution for vertex skinning
+	/// Apply vertex skinning to a vertex buffer using linear interpolation of matrices.
 	/// vtxcount         Number of vertex to deform
 	/// matrices         Matrix palette ( minimum length == number of bone in the skeleton)
-	/// weights          Weights (minimum lenght == number of vertex * weightsPerVertex
-	/// indices          Bones indices (minimum lenght == number of vertex * weightsPerVertex
+	/// weights          Weights (minimum length == number of vertex * 4
+	/// indices          Bones indices (minimum length == number of vertex * 4
 	/// vtxSrc           Vertex position input
 	/// vtxDts           Vertex position output
 	/// normSrc          Vertex normals input (optional)
 	/// normDst          Vertex normals output (optional)
-	static void vertexSkinning(const UTsize vtxCount,
+	static void LBSkinning(const UTsize vtxCount,
+									const btAlignedObjectArray<akMatrix4> &matrices,
+	                                const float* weights,        const UTsize weightsStride,
+	                                const UTuint8* indices,      const UTsize indicesStride,
+	                                const akVector3* vtxSrc,     const UTsize vtxSrcStride,
+	                                akVector3* vtxDst,           const UTsize vtxDstStride,
+	                                const akVector3* normSrc =0, const UTsize normSrcStride =0,
+	                                akVector3* normDst =0,       const UTsize normDstStride =0);
+
+
+	/// Apply vertex skinning to a vertex buffer using linear interpolation of matrices.
+	/// Does not support non uniform scaling.
+	static void LBSkinningFast(const UTsize vtxCount,
+									const btAlignedObjectArray<akMatrix4> &matrices,
+	                                const float* weights,        const UTsize weightsStride,
+	                                const UTuint8* indices,      const UTsize indicesStride,
+	                                const akVector3* vtxSrc,     const UTsize vtxSrcStride,
+	                                akVector3* vtxDst,           const UTsize vtxDstStride,
+	                                const akVector3* normSrc =0, const UTsize normSrcStride =0,
+	                                akVector3* normDst =0,       const UTsize normDstStride =0);
+
+
+	/// Apply vertex skinning to a vertex buffer using linear interpolation of dual quaternion.
+	/// This avoid many of the volume shrinking artifacts.
+	static void DLBSkinning(const UTsize vtxCount,
+									const btAlignedObjectArray<akDualQuat>& dquats, 
+									const btAlignedObjectArray<akMatrix4> &matrices,
+	                                const float* weights,        const UTsize weightsStride,
+	                                const UTuint8* indices,      const UTsize indicesStride,
+	                                const akVector3* vtxSrc,     const UTsize vtxSrcStride,
+	                                akVector3* vtxDst,           const UTsize vtxDstStride,
+	                                const akVector3* normSrc =0, const UTsize normSrcStride =0,
+	                                akVector3* normDst =0,       const UTsize normDstStride =0);
+
+
+	/// Apply vertex skinning to a vertex buffer using linear interpolation of dual quaternion.
+	/// This avoid many of the volume shrinking artifacts.
+	/// Does not support non uniform scaling.
+	static void DLBSkinningFast(const UTsize vtxCount,
+									const btAlignedObjectArray<akDualQuat>& dquats, 
 									const btAlignedObjectArray<akMatrix4> &matrices,
 	                                const float* weights,       const UTsize weightsStride,
 	                                const unsigned char* indices, const UTsize indicesStride,
@@ -57,8 +95,33 @@ public:
 	                                const akVector3* normSrc =0,    const UTsize normSrcStride =0,
 	                                akVector3* normDst =0,          const UTsize normDstStride =0);
 	
-	
-	
+	/// Apply vertex skinning to a vertex buffer using linear interpolation of dual quaternion.
+	/// This avoid many of the volume shrinking artifacts.
+	/// Support rigid transformation only (rotation and translation but no scaling/shear).
+	static void DLBSkinningMoreFast(const UTsize vtxCount,
+									const btAlignedObjectArray<akDualQuat>& dquats, 
+									const btAlignedObjectArray<akMatrix4> &matrices,
+									const float* weights,       const UTsize weightsStride,
+									const unsigned char* indices, const UTsize indicesStride,
+									const akVector3* vtxSrc,        const UTsize vtxSrcStride,
+									akVector3* vtxDst,              const UTsize vtxDstStride,
+									const akVector3* normSrc =0,    const UTsize normSrcStride =0,
+									akVector3* normDst =0,          const UTsize normDstStride =0);
+
+	/// Apply vertex skinning to a vertex buffer using linear interpolation of dual quaternion.
+	/// This avoid many of the volume shrinking artifacts.
+	/// This function solves antipodality per vertex, it is more robust (specially in the cases 
+	/// where bones rotates more than 180º relatively to its parent) but less efficient.
+	/// Support rigid transformation only (rotation and translation but no scaling/shear).
+	static void DLBSkinningAntipodality(const UTsize vtxCount, 
+									const btAlignedObjectArray<akDualQuat>& dquats, 
+									const btAlignedObjectArray<akMatrix4> &matrices, 
+									const float *weights, const UTsize weightsStride, 
+									const UTuint8 *indices, const UTsize indicesStride, 
+									const akVector3 *vtxSrc, const UTsize vtxSrcStride, 
+									akVector3 *vtxDst, const UTsize vtxDstStride, 
+									const akVector3 *normSrc =0, const UTsize normSrcStride =0, 
+									akVector3 *normDst =0, const UTsize normDstStride =0);
 };
 
 #endif // AKGEOMETRYDEFORMER_H

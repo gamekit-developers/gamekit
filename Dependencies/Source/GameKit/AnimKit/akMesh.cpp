@@ -106,6 +106,7 @@ akMesh::~akMesh()
 	{
 		delete m_submeshes[i];
 	}
+	m_submeshes.clear();
 }
 
 void akMesh::addSubMesh(akSubMesh* smesh)

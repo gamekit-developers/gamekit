@@ -33,6 +33,7 @@ class akAnimationClip;
 class akAnimationCurve;
 class akAnimationPlayer;
 class akAnimationPlayerSet;
+class akDualQuat;
 class akEuler;
 class akJoint;
 class akMesh;

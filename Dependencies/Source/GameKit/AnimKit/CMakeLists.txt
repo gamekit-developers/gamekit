@@ -10,6 +10,7 @@ set(ANIMKIT_SRC
 	akAnimationCurve.cpp
 	akAnimationPlayer.cpp
 	akAnimationPlayerSet.cpp
+	akDualQuat.cpp
 	akGeometryDeformer.cpp
 	akMesh.cpp
 	akPoseBlender.cpp
@@ -27,6 +28,7 @@ set(ANIMKIT_HDR
 	akAnimationCurve.h
 	akAnimationPlayer.h
 	akAnimationPlayerSet.h
+	akDualQuat.h
 	akCommon.h
 	akEuler.h
 	akGeometryDeformer.h
