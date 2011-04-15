@@ -72,8 +72,6 @@ public:
 		*this = *this / v;
 		return *this;
 	};
-	
-	akTransform3 toTransform3(void) const;
 };
 
 #endif // AKDUALQUAT_H
