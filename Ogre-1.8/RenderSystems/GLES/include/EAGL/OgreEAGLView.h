@@ -1,7 +1,7 @@
 /*
 -----------------------------------------------------------------------------
 This source file is part of OGRE
-(Object-oriented Graphics Rendering Engine)
+    (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
 Copyright (c) 2000-2009 Torus Knot Software Ltd
@@ -26,26 +26,25 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#ifndef __OSXCocoaView_H__
-#define __OSXCocoaView_H__
+#ifndef __EAGLView_H__
+#define __EAGLView_H__
 
-#include "../OgreRenderWindow.h"
-#include <Cocoa/Cocoa.h>
+#include "OgreString.h"
 
-@interface OgreView : NSView
-{
-	Ogre::RenderWindow *window;
+using namespace Ogre;
+
+#ifdef __OBJC__
+
+#import <UIKit/UIKit.h>
+
+@interface EAGLView : UIView {
+    String mWindowName;
 }
 
-- (id)initWithFrame:(NSRect)f;
-- (id)initWithGLOSXWindow:(Ogre::RenderWindow*)w;
-
-- (void)setOgreWindow:(Ogre::RenderWindow*)w;
-- (Ogre::RenderWindow*)ogreWindow;
-
-- (void)setFrameSize:(NSSize)s;
+@property (assign) String mWindowName;
 
 @end
 
 #endif
 
+#endif

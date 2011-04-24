@@ -2178,6 +2178,8 @@ MeshPtr SceneManager::createSkydomePlane(
 //-----------------------------------------------------------------------
 void SceneManager::_updateSceneGraph(Camera* cam)
 {
+	firePreUpdateSceneGraph(cam);
+
 	// Process queued needUpdate calls 
 	Node::processQueuedUpdates();
 
@@ -2187,7 +2189,7 @@ void SceneManager::_updateSceneGraph(Camera* cam)
     //   certain scene graph branches
     getRootSceneNode()->_update(true, false);
 
-
+	firePostUpdateSceneGraph(cam);
 }
 //-----------------------------------------------------------------------
 void SceneManager::_findVisibleObjects(
@@ -4092,6 +4094,29 @@ void SceneManager::fireShadowTexturesPreReceiver(Light* light, Frustum* f)
         (*i)->shadowTextureReceiverPreViewProj(light, f);
     }
 }
+//---------------------------------------------------------------------
+void SceneManager::firePreUpdateSceneGraph(Camera* camera)
+{
+	ListenerList::iterator i, iend;
+
+	iend = mListeners.end();
+	for (i = mListeners.begin(); i != iend; ++i)
+	{
+		(*i)->preUpdateSceneGraph(this, camera);
+	}
+}
+//---------------------------------------------------------------------
+void SceneManager::firePostUpdateSceneGraph(Camera* camera)
+{
+	ListenerList::iterator i, iend;
+
+	iend = mListeners.end();
+	for (i = mListeners.begin(); i != iend; ++i)
+	{
+		(*i)->postUpdateSceneGraph(this, camera);
+	}
+}
+
 //---------------------------------------------------------------------
 void SceneManager::firePreFindVisibleObjects(Viewport* v)
 {
@@ -6475,6 +6500,20 @@ InstanceManager* SceneManager::createInstanceManager( const String &customName, 
 	return retVal;
 }
 //---------------------------------------------------------------------
+InstanceManager* SceneManager::getInstanceManager( const String &managerName ) const
+{
+	InstanceManagerMap::const_iterator itor = mInstanceManagerMap.find(managerName);
+
+	if (itor == mInstanceManagerMap.end())
+	{
+		OGRE_EXCEPT(Exception::ERR_ITEM_NOT_FOUND, 
+				"InstancedManager with name '" + managerName + "' not found", 
+				"SceneManager::getInstanceManager");
+	}
+
+	return itor->second;
+}
+//---------------------------------------------------------------------
 void SceneManager::destroyInstanceManager( const String &name )
 {
 	InstanceManagerMap::iterator i = mInstanceManagerMap.find(name);
@@ -6542,16 +6581,35 @@ void SceneManager::_addDirtyInstanceManager( InstanceManager *dirtyManager )
 //---------------------------------------------------------------------
 void SceneManager::updateDirtyInstanceManagers(void)
 {
-	InstanceManagerVec::const_iterator itor = mDirtyInstanceManagers.begin();
-	InstanceManagerVec::const_iterator end  = mDirtyInstanceManagers.end();
-
-	while( itor != end )
-	{
-		(*itor)->_updateDirtyBatches();
-		++itor;
-	}
-
+	//Copy all dirty mgrs to a temporary buffer to iterate through them. We need this because
+	//if two InstancedEntities from different managers belong to the same SceneNode, one of the
+	//managers may have been tagged as dirty while the other wasn't, and _addDirtyInstanceManager
+	//will get called while iterating through them. The "while" loop will update all mgrs until
+	//no one is dirty anymore (i.e. A makes B aware it's dirty, B makes C aware it's dirty)
+	//mDirtyInstanceMgrsTmp isn't a local variable to prevent allocs & deallocs every frame.
+	mDirtyInstanceMgrsTmp.insert( mDirtyInstanceMgrsTmp.end(), mDirtyInstanceManagers.begin(),
+									mDirtyInstanceManagers.end() );
 	mDirtyInstanceManagers.clear();
+
+	while( !mDirtyInstanceMgrsTmp.empty() )
+	{
+		InstanceManagerVec::const_iterator itor = mDirtyInstanceMgrsTmp.begin();
+		InstanceManagerVec::const_iterator end  = mDirtyInstanceMgrsTmp.end();
+
+		while( itor != end )
+		{
+			(*itor)->_updateDirtyBatches();
+			++itor;
+		}
+
+		//Clear temp buffer
+		mDirtyInstanceMgrsTmp.clear();
+
+		//Do it again?
+		mDirtyInstanceMgrsTmp.insert( mDirtyInstanceMgrsTmp.end(), mDirtyInstanceManagers.begin(),
+									mDirtyInstanceManagers.end() );
+		mDirtyInstanceManagers.clear();
+	}
 }
 //---------------------------------------------------------------------
 AxisAlignedBoxSceneQuery* 
@@ -7072,6 +7130,11 @@ void SceneManager::bindGpuProgram(GpuProgram* prog)
 	mLastLightHashGpuProgram = 1;
 	mGpuParamsDirty = (uint16)GPV_ALL;
 	mDestRenderSystem->bindGpuProgram(prog);
+}
+//---------------------------------------------------------------------
+void SceneManager::_markGpuParamsDirty(uint16 mask)
+{
+	mGpuParamsDirty |= mask;
 }
 //---------------------------------------------------------------------
 void SceneManager::updateGpuProgramParameters(const Pass* pass)

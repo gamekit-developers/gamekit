@@ -80,6 +80,8 @@ set(GLSLES_FILES
 )
 endif (OGRE_CG_SUPPORT_FOR_GLES2)
 	
+	
+
 # Add system specific settings
 if (OGREKIT_BUILD_ANDROID)
 #message("ANDROID" ${OPENGLES2_gl_LIBRARY})
@@ -126,11 +128,15 @@ elseif (APPLE)
   set(PLATFORM_HEADERS 
     include/EAGL/OgreEAGLES2Context.h
     include/EAGL/OgreEAGL2Support.h
+    include/EAGL/OgreEAGL2View.h
+    include/EAGL/OgreEAGL2ViewController.h
     include/EAGL/OgreEAGL2Window.h
     include/EAGL/OgreGLES2Util.h
   )
   set(PLATFORM_SOURCES
     src/EAGL/OgreEAGL2Support.mm
+    src/EAGL/OgreEAGL2View.mm
+    src/EAGL/OgreEAGL2ViewController.mm
     src/EAGL/OgreEAGL2Window.mm
     src/EAGL/OgreEAGLES2Context.mm
   )
@@ -172,6 +178,8 @@ endif ()
 # Add support for the RT Shader System
 add_definitions(-DUSE_RTSHADER_SYSTEM)
 
+message( STATUS "---" ${EGL_INCLUDE_DIR} "---"  ${OPENGLES2_INCLUDE_DIR} "---" ${EGL_LIBRARIES} "----" ${OPENGLES2_LIBRARY_PATH})
+
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/include
   ${CMAKE_CURRENT_SOURCE_DIR}/include/EGL
@@ -180,15 +188,23 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/Components/RTShaderSystem/include
   ${OPENGLES2_INCLUDE_DIR}
 )
+
+add_library(RenderSystem_GLES2 ${OGRE_LIB_TYPE} ${HEADER_FILES} ${SOURCE_FILES} ${GLSLES_FILES} ${PLATFORM_HEADERS} ${PLATFORM_SOURCES})
+target_link_libraries(RenderSystem_GLES2 OgreMain ${OPENGLES2_LIBRARIES} ${PLATFORM_LIBS})
+
 if (NOT OGREKIT_BUILD_ANDROID)
   include_directories(
     ${EGL_INCLUDE_DIR}
   )
+  message(STATUS ${EGL_LIBRARIES})
   target_link_libraries(RenderSystem_GLES2 ${EGL_LIBRARIES}) 
 endif()
 
-add_library(RenderSystem_GLES2 ${OGRE_LIB_TYPE} ${HEADER_FILES} ${SOURCE_FILES} ${GLSLES_FILES} ${PLATFORM_HEADERS} ${PLATFORM_SOURCES})
-target_link_libraries(RenderSystem_GLES2 OgreMain ${OPENGLES2_LIBRARIES} ${PLATFORM_LIBS})
+if (MSVC)
+  add_definitions(-DGL_OES_mapbuffer=0 -DGL_OES_get_program_binary=0)
+endif()
+
+
 
 if (NOT OGRE_STATIC)
   set_target_properties(RenderSystem_GLES2 PROPERTIES

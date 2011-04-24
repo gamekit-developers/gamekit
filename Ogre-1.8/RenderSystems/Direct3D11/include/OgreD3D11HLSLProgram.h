@@ -34,6 +34,8 @@ THE SOFTWARE.
 
 
 namespace Ogre {
+	typedef vector<byte>::type MicroCode;
+
 	/** Specialization of HighLevelGpuProgram to provide support for D3D11 
 	High-Level Shader Language (HLSL).
 	@remarks
@@ -110,7 +112,7 @@ namespace Ogre {
 		bool mEnableBackwardsCompatibility;
 
 		bool mErrorsInCompile;
-		ID3D10Blob * mpMicroCode;
+		MicroCode mpMicroCode;
 		ID3D11Buffer* mConstantBuffer;
 		
 		D3D11Device & mDevice;
@@ -159,6 +161,7 @@ namespace Ogre {
 		void setTarget(const String& target);
 		/** Gets the shader target to compile down to, e.g. 'vs_1_1'. */
 		const String& getTarget(void) const { return mTarget; }
+
 		/** Sets the preprocessor defines use to compile the program. */
 		void setPreprocessorDefines(const String& defines) { mPreprocessorDefines = defines; }
 		/** Sets the preprocessor defines use to compile the program. */
@@ -182,7 +185,7 @@ namespace Ogre {
 		ID3D11VertexShader* getVertexShader(void) const;
 		ID3D11PixelShader* getPixelShader(void) const; 
 		ID3D11GeometryShader* getGeometryShader(void) const; 
-		ID3D10Blob * getMicroCode(void) const;  
+		const MicroCode &  getMicroCode(void) const;  
 
 		ID3D11Buffer* getConstantBuffer(GpuProgramParametersSharedPtr params, uint16 variabilityMask);
 
@@ -195,6 +198,15 @@ namespace Ogre {
 		void loadFromSource(void);
 
 		D3D11VertexDeclaration & getInputVertexDeclaration() { return mInputVertexDeclaration; }
+
+		void reinterpretGSForStreamOut(void);
+		bool mReinterpretingGS;
+
+		unsigned int getNumInputs(void)const {return mShaderDesc.InputParameters;}
+		unsigned int getNumOutputs(void)const {return mShaderDesc.OutputParameters;}
+
+		D3D11_SIGNATURE_PARAMETER_DESC getInputParamDesc(unsigned int index) const;
+		D3D11_SIGNATURE_PARAMETER_DESC getOutputParamDesc(unsigned int index) const;	
 	};
 }
 

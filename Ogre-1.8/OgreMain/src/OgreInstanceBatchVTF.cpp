@@ -50,8 +50,8 @@ namespace Ogre
 				InstanceBatch( creator, meshReference, material, instancesPerBatch,
 								indexToBoneMap, batchName ),
 				m_numWorldMatrices( instancesPerBatch ),
-				m_maxFloatsPerLine( std::numeric_limits<size_t>::max() ),
-				m_widthFloatsPadding( 0 )
+				m_widthFloatsPadding( 0 ),
+				m_maxFloatsPerLine( std::numeric_limits<size_t>::max() )
 	{
 		cloneMaterial( m_material );
 	}
@@ -243,8 +243,6 @@ namespace Ogre
 		InstancedEntityVec::const_iterator itor = m_instancedEntities.begin();
 		InstancedEntityVec::const_iterator end  = m_instancedEntities.end();
 
-		size_t currentPixel = 0; //Resets on each line
-
 		while( itor != end )
 		{
 			pDest += (*itor)->getTransforms3x4( pDest );
@@ -300,7 +298,6 @@ namespace Ogre
 
 		thisVertexData->vertexStart = 0;
 		thisVertexData->vertexCount = baseVertexData->vertexCount * m_instancesPerBatch;
-		m_renderOperation.numberOfInstances = m_instancesPerBatch;
 
 		HardwareBufferManager::getSingleton().destroyVertexDeclaration( thisVertexData->vertexDeclaration );
 		thisVertexData->vertexDeclaration = baseVertexData->vertexDeclaration->clone();
@@ -479,7 +476,6 @@ namespace Ogre
 			{
 				const size_t instancesPerBatch = std::min( retVal, m_instancesPerBatch );
 				//Do the same as in createVertexTexture()
-				const size_t numBones = std::max<size_t>( 1, baseSubMesh->blendIndexToBoneIndexMap.size() );
 				const size_t numWorldMatrices = instancesPerBatch * numBones;
 
 				size_t texWidth  = std::min<size_t>( numWorldMatrices * 3, c_maxTexWidth );

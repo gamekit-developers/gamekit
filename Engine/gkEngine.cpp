@@ -219,8 +219,12 @@ void gkEngine::initialize()
 		return;
 	}
 	root->setRenderSystem(renderers[0]);
+#if defined(_MSC_VER) && defined(OGRE_BUILD_RENDERSYSTEM_GLES2)
+	renderers[0]->setConfigOption("RTT Preferred Mode", "Copy"); //angleproject gles2
+#endif
 
 	root->initialise(false);
+
 
 	m_private->windowsystem = new gkWindowSystem();
 	
@@ -257,20 +261,15 @@ void gkEngine::initialize()
 	new gkSoundManager();
 #endif
 
-#ifdef OGREKIT_USE_RTSHADER_SYSTEM
-	Ogre::RTShader::ShaderGenerator::initialize();
-	
-	gkString lang = getUserDefs().isD3DRenderSystem() ? "hlsl" : "glsl";
-#if defined(OGREKIT_BUILD_IPHONE) || defined(OGREKIT_BUILD_ANDROID)
-	lang = "glsles";
-#endif
-
-	Ogre::RTShader::ShaderGenerator::getSingleton().setTargetLanguage(lang);
-	if (!defs.shaderCachePath.empty())
-		Ogre::RTShader::ShaderGenerator::getSingleton().setShaderCachePath(defs.shaderCachePath);
-#endif
-
 	initializeWindow();
+
+
+#ifdef OGREKIT_USE_RTSHADER_SYSTEM	
+	defs.hasFixedCapability = renderers[0]->getCapabilities()->hasCapability(Ogre::RSC_FIXED_FUNCTION);
+
+	gkResourceGroupManager::getSingleton().initRTShaderSystem(
+		m_private->plugin_factory->getShaderLanguage(), defs.shaderCachePath, defs.hasFixedCapability);
+#endif
 
 	// create the builtin resource group
 	gkResourceGroupManager::getSingleton().createResourceGroup(GK_BUILTIN_GROUP);

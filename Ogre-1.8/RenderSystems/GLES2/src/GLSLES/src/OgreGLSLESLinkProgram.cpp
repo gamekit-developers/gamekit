@@ -31,6 +31,7 @@ THE SOFTWARE.
 #include "OgreGLSLESGpuProgram.h"
 #include "OgreGLSLESProgram.h"
 #include "OgreGLSLESLinkProgramManager.h"
+#include "OgreGLES2RenderSystem.h"
 #include "OgreStringVector.h"
 #include "OgreLogManager.h"
 #include "OgreGpuProgramManager.h"
@@ -100,6 +101,17 @@ namespace Ogre {
 			}
 			else
 			{
+                // check CmdParams for each shader type to see if we should optimize
+                String paramStr = mVertexProgram->getGLSLProgram()->getParameter("use_optimiser");
+                if((paramStr == "true") || paramStr.empty())
+                {
+                    GLSLESLinkProgramManager::getSingleton().optimiseShaderSource(mVertexProgram);
+                }
+                paramStr = mFragmentProgram->getGLSLProgram()->getParameter("use_optimiser");
+                if((paramStr == "true") || paramStr.empty())
+                {
+                    GLSLESLinkProgramManager::getSingleton().optimiseShaderSource(mFragmentProgram);
+                }
 				compileAndLink();
 			}
 
@@ -131,18 +143,20 @@ namespace Ogre {
 		// get size of binary
 		cacheMicrocode->read(&binaryFormat, sizeof(GLenum));
 
+#if GL_OES_get_program_binary
         GLint binaryLength = cacheMicrocode->size() - sizeof(GLenum);
 
-#if GL_OES_get_program_binary
-		// load binary
+        // load binary
 		glProgramBinaryOES( mGLHandle, 
 							binaryFormat, 
 							cacheMicrocode->getPtr(),
 							binaryLength
 			);
+        GL_CHECK_ERROR;
 #endif
 		GLint   success = 0;
 		glGetProgramiv(mGLHandle, GL_LINK_STATUS, &success);
+    GL_CHECK_ERROR;
 		if (!success)
 		{
 			//
@@ -180,7 +194,7 @@ namespace Ogre {
 		// the link
 		glLinkProgram( mGLHandle );
 		GL_CHECK_ERROR
-			glGetProgramiv( mGLHandle, GL_LINK_STATUS, &mLinked );
+        glGetProgramiv( mGLHandle, GL_LINK_STATUS, &mLinked );
 		GL_CHECK_ERROR
 	
 		mTriedToLinkAndFailed = !mLinked;
@@ -198,6 +212,7 @@ namespace Ogre {
 				GLint binaryLength = 0;
 #if GL_OES_get_program_binary
 				glGetProgramiv(mGLHandle, GL_PROGRAM_BINARY_LENGTH_OES, &binaryLength);
+                GL_CHECK_ERROR;
 #endif
 
                 // create microcode
@@ -207,6 +222,7 @@ namespace Ogre {
 #if GL_OES_get_program_binary
 				// get binary
 				glGetProgramBinaryOES(mGLHandle, binaryLength, NULL, (GLenum *)newMicrocode->getPtr(), newMicrocode->getPtr() + sizeof(GLenum));
+                GL_CHECK_ERROR;
 #endif
 
         		// add to the microcode to the cache
@@ -251,11 +267,13 @@ namespace Ogre {
 		{
 			const char * attString = getAttributeSemanticString(semantic);
 			GLint attrib = glGetAttribLocation(mGLHandle, attString);
+            GL_CHECK_ERROR;
 
 			// sadly position is a special case 
 			if (attrib == NOT_FOUND_CUSTOM_ATTRIBUTES_INDEX && semantic == VES_POSITION)
 			{
 				attrib = glGetAttribLocation(mGLHandle, "position");
+            GL_CHECK_ERROR;
 			}
 
 			// for uv and other case the index is a part of the name
@@ -263,6 +281,7 @@ namespace Ogre {
 			{
 				String attStringWithSemantic = String(attString) + StringConverter::toString(index);
 				attrib = glGetAttribLocation(mGLHandle, attStringWithSemantic.c_str());
+            GL_CHECK_ERROR;
 			}
 
 			// update mCustomAttributesIndexes with the index we found (or didn't find) 

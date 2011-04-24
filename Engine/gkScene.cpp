@@ -1166,14 +1166,11 @@ void gkScene::setShadows()
 {
 	gkUserDefs& defs = gkEngine::getSingleton().getUserDefs();
 
-	if (defs.enableshadows)
+	if (defs.enableshadows && defs.hasFixedCapability)
 	{
 		Ogre::ShadowTechnique shadowTechnique = ::ParseShadowTechnique(defs.shadowtechnique);
-
 		m_manager->setShadowTechnique(shadowTechnique);
-
 		m_manager->setShadowColour(defs.colourshadow);
-
 		m_manager->setShadowFarDistance(defs.fardistanceshadow);
 	}
 }

@@ -58,9 +58,11 @@ public:
 
 	void createRenderSystem(Ogre::Root*, OgreRenderSystem);
 	void createParticleSystem(Ogre::Root*);
+	gkString getShaderLanguage() { return m_shaderLang; }
 private:
 	Ogre::Plugin* m_renderSystem;
 	Ogre::Plugin* m_particleSystem;
+	gkString m_shaderLang;
 };
 
 

@@ -3623,7 +3623,7 @@ namespace Ogre
 			fireMaterialEvent(MSE_WRITE_BEGIN, skipWriting, pMat.get());
 
             // Write LOD information
-            Material::LodValueIterator valueIt = pMat->getLodValueIterator();
+            Material::LodValueIterator valueIt = pMat->getUserLodValueIterator();
             // Skip zero value
             if (valueIt.hasMoreElements())
                 valueIt.getNext();
@@ -5058,6 +5058,7 @@ namespace Ogre
 
 		// float params
 		GpuLogicalBufferStructPtr floatLogical = params->getFloatLogicalBufferStruct();
+        if( !floatLogical.isNull() )
 		{
 			OGRE_LOCK_MUTEX(floatLogical->mutex)
 
@@ -5085,6 +5086,7 @@ namespace Ogre
 
 		// int params
 		GpuLogicalBufferStructPtr intLogical = params->getIntLogicalBufferStruct();
+        if( !intLogical.isNull() )
 		{
 			OGRE_LOCK_MUTEX(intLogical->mutex)
 

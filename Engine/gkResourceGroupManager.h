@@ -31,10 +31,13 @@
 #include "gkCommon.h"
 #include "utSingleton.h"
 
+class gkMaterialLoader;
+
 class gkResourceGroupManager : public utSingleton<gkResourceGroupManager>
 {
 protected:
 	utArray<gkResourceNameString> m_groups;
+	gkMaterialLoader* m_materialLoader;
 
 public:
 	gkResourceGroupManager();	
@@ -45,6 +48,8 @@ public:
 	void clearResourceGroup(const gkResourceNameString& group);
 	bool existResourceGroup(const gkResourceNameString& group);
 	void destroyAllResourceGroup(void);
+
+	bool initRTShaderSystem(const gkString& shaderLang, const gkString& shaderCachePath, bool hasFixedCapability);
 
 	GK_INLINE const utArray<gkResourceNameString> getResourceGroupList() { return m_groups; }
 

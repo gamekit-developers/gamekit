@@ -42,6 +42,10 @@ endif()
 
 # Find DirectX
 if (WIN32)
+    # Find OpenGLES2
+	find_package(OpenGLES2)
+	macro_log_feature(OPENGLES2_FOUND "OpenGLES2" "Support for the OpenGLES2 render system" "" FALSE "" "")
+    
 	find_package(DirectX)
 	macro_log_feature(DirectX_FOUND "DirectX" "Support for the DirectX render system" "http://msdn.microsoft.com/en-us/directx/" FALSE "" "")
 endif()

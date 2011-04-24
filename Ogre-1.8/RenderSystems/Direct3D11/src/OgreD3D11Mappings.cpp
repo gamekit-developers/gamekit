@@ -494,7 +494,7 @@ namespace Ogre
 		case VET_COLOUR:
 		case VET_COLOUR_ABGR:
 		case VET_COLOUR_ARGB:
-			return DXGI_FORMAT_R32_UINT;
+			return DXGI_FORMAT_R8G8B8A8_UNORM;
 			break;
 		case VET_FLOAT1:
 			return DXGI_FORMAT_R32_FLOAT;
@@ -583,7 +583,7 @@ namespace Ogre
 			break;
 		}
 		// to keep compiler happy
-		return "POSITION";
+		return "";
 	}
 	//---------------------------------------------------------------------
 	void D3D11Mappings::get(const ColourValue& inColour, float * outColour )

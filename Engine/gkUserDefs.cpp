@@ -81,7 +81,8 @@ gkUserDefs::gkUserDefs()
 	extWinhandle(""),
 	animFps(24.f),
 	shaderCachePath(""),
-	rtss(false)
+	rtss(false),
+	hasFixedCapability(true)
 {
 }
 

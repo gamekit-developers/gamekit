@@ -28,14 +28,22 @@
 #define _gkOgreMaterialLoader_h_
 
 #include "gkString.h"
+#include "utSingleton.h"
+#include "OgreMaterialManager.h"
 
-class gkMaterialLoader
+class gkMaterialLoader : public Ogre::MaterialManager::Listener
 {
 public:
+	gkMaterialLoader();
+	~gkMaterialLoader();
 
 	static class gkSkyBoxGradient* loadSceneSkyMaterial(class gkScene* sc, const class gkSceneMaterial& material);
 	static void loadSubMeshMaterial(class gkSubMesh* mesh, const gkString& group);
 
+	static Ogre::MaterialPtr createRTSSMaterial(const gkString& matName, bool enableLight=true);
+
+	virtual Ogre::Technique* handleSchemeNotFound(unsigned short schemeIndex, const Ogre::String& schemeName, 
+				Ogre::Material* originalMaterial, unsigned short lodIndex, const Ogre::Renderable* rend);
 };
 
 #endif//_gkOgreMaterialLoader_h_

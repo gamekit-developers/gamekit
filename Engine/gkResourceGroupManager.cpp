@@ -35,9 +35,11 @@
 #include "gkSkeletonManager.h"
 #include "gkGameObjectManager.h"
 #include "External/Ogre/gkOgreBlendArchive.h"
+#include "External/Ogre/gkOgreMaterialLoader.h"
 
 #include "OgreResourceGroupManager.h"
 #include "OgreZip.h"
+#include "OgreRoot.h"
 
 #include "gkSceneManager.h"
 
@@ -50,6 +52,8 @@
 #endif
 
 #ifdef OGREKIT_USE_RTSHADER_SYSTEM
+#include "OgreRTShaderSystem.h"
+
 #include "User/gkRTShaderTemplates.inl"
 #endif
 
@@ -57,6 +61,7 @@ UT_IMPLEMENT_SINGLETON(gkResourceGroupManager)
 
 
 gkResourceGroupManager::gkResourceGroupManager()
+	:	m_materialLoader(0)
 {
 	try
 	{
@@ -66,6 +71,7 @@ gkResourceGroupManager::gkResourceGroupManager()
 		Ogre::EmbeddedZipArchiveFactory::addEmbbeddedFile("RTShaderLib.zip", RTSHADERLIB, RTSHADERLIB_SIZE, 0);
 		Ogre::ResourceGroupManager::getSingleton().addResourceLocation("RTShaderLib.zip",
 			"EmbeddedZip",  Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+
 #endif
 
 	}
@@ -79,6 +85,8 @@ gkResourceGroupManager::~gkResourceGroupManager()
 {
 	Ogre::ResourceGroupManager::getSingleton().removeResourceLocation("",
 		Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+
+	delete m_materialLoader; 
 }
 
 bool gkResourceGroupManager::createResourceGroup(const gkResourceNameString& group, bool inGlobalPool)
@@ -161,4 +169,38 @@ void gkResourceGroupManager::clearResourceGroup(const gkResourceNameString& grou
 {
 	if (existResourceGroup(group))
 		Ogre::ResourceGroupManager::getSingleton().clearResourceGroup(group.str());
+}
+
+#ifdef OGREKIT_USE_RTSHADER_SYSTEM
+
+#endif
+
+bool gkResourceGroupManager::initRTShaderSystem(const gkString& shaderLang, const gkString& shaderCachePath, bool hasFixedCapability)
+{
+#ifdef OGREKIT_USE_RTSHADER_SYSTEM
+	GK_ASSERT( m_materialLoader == 0);
+
+	m_materialLoader = new gkMaterialLoader();
+
+	Ogre::RTShader::ShaderGenerator::initialize();
+	
+	Ogre::RTShader::ShaderGenerator::getSingleton().setTargetLanguage(shaderLang);
+	if (!shaderCachePath.empty())
+		Ogre::RTShader::ShaderGenerator::getSingleton().setShaderCachePath(shaderCachePath);
+
+	Ogre::RTShader::ShaderGenerator* shaderGenerator = Ogre::RTShader::ShaderGenerator::getSingletonPtr();
+	GK_ASSERT(shaderGenerator);
+
+	if (!hasFixedCapability)
+	{
+		gkMaterialLoader::createRTSSMaterial("BaseWhite");
+		gkMaterialLoader::createRTSSMaterial("BaseWhiteNoLighting", false);
+		gkMaterialLoader::createRTSSMaterial("World", false);
+	}
+	return true;
+
+#else
+	return false;
+#endif
+
 }

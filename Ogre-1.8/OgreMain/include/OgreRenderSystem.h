@@ -385,10 +385,10 @@ namespace Ogre
 			<td>macAPICocoaUseNSView</td>
 			<td>bool "true" or "false"</td>
 			<td>"false"</td>
-			<td>On the Mac platform the most diffused method to embed ogre in a custom application is to use the IntefaceBuilder
+			<td>On the Mac platform the most diffused method to embed OGRE in a custom application is to use Interface Builder
 				and add to the interface an instance of OgreView.
 				The pointer to this instance is then used as "externalWindowHandle".
-				However, there are cases where you are NOT using the Interface Builder and you get the Cocoa NSView* of an existing interface.
+				However, there are cases where you are NOT using Interface Builder and you get the Cocoa NSView* of an existing interface.
 				For example, this is happens when you want to render into a Java/AWT interface.
 				In short, by setting this flag to "true" the Ogre::Root::createRenderWindow interprets the "externalWindowHandle" as a NSView*
 				instead of an OgreView*. See OgreOSXCocoaView.h/mm.
@@ -1239,10 +1239,6 @@ namespace Ogre
 		if _updateAllRenderTargets was called with a 'false' parameter. */
 		virtual void _swapAllRenderTargetBuffers(bool waitForVsync = true);
 
-		/** Gets whether or not vertex windings set should be inverted; this can be important
-		for rendering reflections. */
-		virtual bool getInvertVertexWinding(void);
-
 		/** Sets whether or not vertex windings set should be inverted; this can be important
 		for rendering reflections. */
 		virtual void setInvertVertexWinding(bool invert);
@@ -1250,7 +1246,7 @@ namespace Ogre
 		/** Indicates whether or not the vertex windings set will be inverted for the current render (e.g. reflections)
 		@see RenderSystem::setInvertVertexWinding
 		*/
-		virtual bool getVertexWindingInverted(void) const;
+		virtual bool getInvertVertexWinding(void) const;
 
 		/** Sets the 'scissor region' ie the region of the target in which rendering can take place.
 		@remarks

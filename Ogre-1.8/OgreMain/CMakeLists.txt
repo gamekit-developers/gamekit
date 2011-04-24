@@ -233,6 +233,7 @@ set (HEADER_FILES
   include/OgreSkeletonInstance.h
   include/OgreSkeletonManager.h
   include/OgreSkeletonSerializer.h
+  include/OgreSmallVector.h
   include/OgreSphere.h
   include/OgreSpotShadowFadePng.h
   include/OgreStableHeaders.h
@@ -438,6 +439,7 @@ set (SOURCE_FILES
   src/OgreSkeletonInstance.cpp
   src/OgreSkeletonManager.cpp
   src/OgreSkeletonSerializer.cpp
+  src/OgreSmallVector.cpp
   src/OgreStaticGeometry.cpp
   src/OgreStreamSerialiser.cpp
   src/OgreString.cpp
@@ -538,7 +540,6 @@ elseif (APPLE)
       include/OSX/OgreConfigDialogImp.h
       include/OSX/OgreErrorDialogImp.h
       include/OSX/OgreTimerImp.h
-      include/OSX/OgreOSXCocoaView.h
 	  include/OgreZip.h
     )
     set(PLATFORM_SOURCE_FILES
@@ -546,7 +547,6 @@ elseif (APPLE)
       src/OSX/OgreErrorDialog.mm
       src/OSX/OgreTimer.cpp
       src/OSX/macUtils.cpp
-      src/OSX/OgreOSXCocoaView.mm
       src/OgreSearchOps.cpp
 	  include/OSX/ogrelogo.png
     )
@@ -613,7 +613,7 @@ elseif (UNIX)
       src/GLX/OgreTimer.cpp
       src/OgreSearchOps.cpp
     )
-    set(PLATFORM_LIBS ${X11_LIBRARIES} ${X11_Xt_LIB} ${XAW_LIBRARY} pthread dl)
+    set(PLATFORM_LIBS ${X11_LIBRARIES} ${X11_Xt_LIB} ${XAW_LIBRARY} pthread)
     set(PLATFORM_HEADER_INSTALL "GLX")
     # some platforms require explicit linking to libdl, see if it's available
     find_library(DL_LIBRARY NAMES dl dlsym)
@@ -719,6 +719,9 @@ if (OGRE_CONFIG_ENABLE_ZIP)
   list(APPEND LIBRARIES "${OGREKIT_ZZIP_TARGET}")
   list(APPEND LIBRARIES "${OGREKIT_ZLIB_TARGET}")
 endif ()
+
+list(APPEND LIBRARIES "${GLSL_Optimizer_LIBRARIES}")
+list(APPEND LIBRARIES "${HLSL2GLSL_LIBRARIES}")
 
 set (TARGET_LINK_FLAGS "")
 

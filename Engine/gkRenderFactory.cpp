@@ -77,7 +77,7 @@ OgreRenderSystem gkFindRenderSystem(OgreRenderSystem wanted)
 
 
 gkRenderFactoryPrivate::gkRenderFactoryPrivate() :
-	m_renderSystem(0), m_particleSystem(0)
+	m_renderSystem(0), m_particleSystem(0), m_shaderLang()
 {
 }
 
@@ -109,34 +109,40 @@ void gkRenderFactoryPrivate::createRenderSystem(Ogre::Root* r, OgreRenderSystem 
 #ifdef OGREKIT_BUILD_D3D9RS
 		m_renderSystem = new Ogre::D3D9Plugin();
 		r->installPlugin(m_renderSystem);
+		m_shaderLang = "hlsl";
 #endif
 		break;
 	case OGRE_RS_D3D11:
 #ifdef OGREKIT_BUILD_D3D11RS
 		m_renderSystem = new Ogre::D3D11Plugin();
 		r->installPlugin(m_renderSystem);
+		m_shaderLang = "hlsl";
 #endif
 		break;
 	case OGRE_RS_GLES:
 #ifdef OGRE_BUILD_RENDERSYSTEM_GLES
 		m_renderSystem = new Ogre::GLESPlugin();
 		r->installPlugin(m_renderSystem);
+		m_shaderLang = "";
 #endif
 		break;
 	case OGRE_RS_GLES2:
 #ifdef OGRE_BUILD_RENDERSYSTEM_GLES2
 		m_renderSystem = new Ogre::GLES2Plugin();
 		r->installPlugin(m_renderSystem);
+		m_shaderLang = "glsles";
 #endif
 		break;
 	case OGRE_RS_GL:
 #ifdef OGRE_BUILD_RENDERSYSTEM_GL
 		m_renderSystem = new Ogre::GLPlugin();
 		r->installPlugin(m_renderSystem);
+		m_shaderLang = "glsl";
 #endif
 		break;
 	case OGRE_RS_UNKNOWN:
 	default:
+		m_shaderLang = "";
 		break;
 	}
 

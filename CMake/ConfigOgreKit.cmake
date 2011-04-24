@@ -392,7 +392,13 @@ macro (configure_ogrekit ROOT OGREPATH)
 	endif()
 	
     if (OPENGLES2_FOUND)
-		option(OGREKIT_BUILD_GLES2RS "Enable the OpenGLES2 system" ON)
+        if (MSVC)
+            option(OGREKIT_BUILD_GLES2RS "Enable the OpenGLES2 system" OFF)
+        else()
+            option(OGREKIT_BUILD_GLES2RS "Enable the OpenGLES2 system" ON)
+        endif()
+        
+        #mark_as_advanced(OGREKIT_BUILD_GLES2RS)
 	endif()
 	
 	if (OGREKIT_BUILD_GLRS)
@@ -475,14 +481,14 @@ macro (configure_ogrekit ROOT OGREPATH)
 		OgreMain 
 		${OGREKIT_FREEIMAGE_TARGET} 
 		${OGREKIT_FREETYPE_TARGET} 
-		${OGREKIT_GLRS_LIBS}
+		${OGREKIT_GLRS_LIBS}        
 		${OGREKIT_D3D9_LIBS}
 		${OGREKIT_D3D11_LIBS}		
 		${GAMEKIT_UTILS_TARGET}
 		${OGREKIT_OIS_TARGET}
 		${OGREKIT_ZLIB_TARGET}
-		${GAMEKIT_ANIMKIT_TARGET}		
-	)
+		${GAMEKIT_ANIMKIT_TARGET}        
+	)    
 	
 	if (OGREKIT_USE_BPARSE)
 		list(APPEND OGREKIT_OGRE_LIBS
@@ -599,6 +605,13 @@ macro(configure_rendersystem)
 		link_libraries(
 			${OGREKIT_GLES2RS_LIBS} 
 		)
+        
+        if (MSVC)
+            include_directories(${OPENGLES2_INCLUDE_DIR})
+            #link_directories(${OPENGLES2_LIBRARY_PATH})
+            list(APPEND OGREKIT_OGRE_LIBS ${OPENGLES_gl_LIBRARY})
+            message(STATUS ${OGREKIT_OGRE_LIBS})
+        endif()
 		
 		#message(STATUS "--------" ${OGREKIT_GLES2RS_LIBS} )
 		

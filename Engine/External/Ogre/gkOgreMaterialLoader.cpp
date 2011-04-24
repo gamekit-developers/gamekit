@@ -37,13 +37,109 @@
 #include "OgreTechnique.h"
 #include "OgrePass.h"
 #include "OgreSceneManager.h"
+#include "OgreRoot.h"
 
 #ifdef OGREKIT_USE_RTSHADER_SYSTEM
 #include "OgreRTShaderSystem.h"
+#include "OgreShaderGenerator.h"
 #endif
+
+gkMaterialLoader::gkMaterialLoader()
+{
+#ifdef OGREKIT_USE_RTSHADER_SYSTEM
+	Ogre::MaterialManager::getSingleton().addListener(this);
+#endif
+}
+
+gkMaterialLoader::~gkMaterialLoader()
+{
+#ifdef OGREKIT_USE_RTSHADER_SYSTEM
+	Ogre::MaterialManager::getSingleton().removeListener(this);
+#endif
+}
+
+Ogre::MaterialPtr gkMaterialLoader::createRTSSMaterial(const gkString& matName, bool enableLight)
+{
+#ifdef OGREKIT_USE_RTSHADER_SYSTEM
+	Ogre::RTShader::ShaderGenerator* shaderGenerator = Ogre::RTShader::ShaderGenerator::getSingletonPtr();
+	GK_ASSERT(shaderGenerator);
+
+	Ogre::MaterialPtr material = Ogre::MaterialManager::getSingleton().getByName(matName, 
+			Ogre::ResourceGroupManager::INTERNAL_RESOURCE_GROUP_NAME);
+
+	if (material.isNull())
+	{
+		material = Ogre::MaterialManager::getSingleton().create(matName,
+			Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+	}
+	
+	material->setLightingEnabled(enableLight);
+
+	shaderGenerator->createShaderBasedTechnique(matName, 
+		Ogre::MaterialManager::DEFAULT_SCHEME_NAME, Ogre::RTShader::ShaderGenerator::DEFAULT_SCHEME_NAME);	
+	shaderGenerator->validateMaterial(Ogre::RTShader::ShaderGenerator::DEFAULT_SCHEME_NAME, matName);
+	material->getTechnique(0)->getPass(0)->setVertexProgram(
+		material->getTechnique(1)->getPass(0)->getVertexProgram()->getName());
+	material->getTechnique(0)->getPass(0)->setFragmentProgram(
+		material->getTechnique(1)->getPass(0)->getFragmentProgram()->getName());
+
+	GK_ASSERT(!material->getTechnique(0)->getPass(0)->getVertexProgram().isNull());
+	GK_ASSERT(!material->getTechnique(0)->getPass(0)->getFragmentProgram().isNull());
+
+	return material;
+#else
+	return Ogre::MaterialPtr();
+#endif
+}
+
+
+//copied from ogre sample browser
+Ogre::Technique* gkMaterialLoader::handleSchemeNotFound(unsigned short schemeIndex, const Ogre::String& schemeName, 
+	Ogre::Material* originalMaterial, unsigned short lodIndex, const Ogre::Renderable* rend)
+{	
+#ifdef OGREKIT_USE_RTSHADER_SYSTEM
+	Ogre::RTShader::ShaderGenerator* shaderGenerator = Ogre::RTShader::ShaderGenerator::getSingletonPtr();
+	GK_ASSERT(shaderGenerator);
+
+	Ogre::Technique* generatedTech = 0;
+
+	if (schemeName == Ogre::RTShader::ShaderGenerator::DEFAULT_SCHEME_NAME)
+	{
+		bool techniqueCreated;
+
+		techniqueCreated = shaderGenerator->createShaderBasedTechnique(
+			originalMaterial->getName(), Ogre::MaterialManager::DEFAULT_SCHEME_NAME, schemeName);	
+
+		if (techniqueCreated)
+		{
+			shaderGenerator->validateMaterial(schemeName, originalMaterial->getName());
+				
+			Ogre::Material::TechniqueIterator itTech = originalMaterial->getTechniqueIterator();
+
+			while (itTech.hasMoreElements())
+			{
+				Ogre::Technique* curTech = itTech.getNext();
+
+				if (curTech->getSchemeName() == schemeName)
+				{
+					generatedTech = curTech;
+					break;
+				}
+			}				
+		}
+	}
+
+	return generatedTech;
+#else
+	return 0;
+#endif
+}
+
 
 gkSkyBoxGradient* gkMaterialLoader::loadSceneSkyMaterial(class gkScene* sc, const gkSceneMaterial& material)
 {
+	//return 0;
+
 	//skybox material should be exist in the global resource pool.
 	//multiple skybox materials don't working in multi window/scene.
 	gkString groupName = sc->getGroupName(); //GK_BUILTIN_GROUP; //

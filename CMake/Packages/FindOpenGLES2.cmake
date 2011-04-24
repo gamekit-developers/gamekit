@@ -31,7 +31,17 @@ IF (WIN32)
       SET (OPENGLES2_gl_LIBRARY import32 CACHE STRING "OpenGL ES 2.x library for win32")
     ELSE(BORLAND)
 	  #MS compiler - todo - fix the following line:
-      SET (OPENGLES_gl_LIBRARY ${OGRE_SOURCE_DIR}/Dependencies/lib/release/libGLESv2.lib CACHE STRING "OpenGL ES 2.x library for win32")
+      #SET (OPENGLES_gl_LIBRARY ${OGRE_SOURCE_DIR}/Dependencies/lib/release/libGLESv2.lib CACHE STRING "OpenGL ES 2.x library for win32")
+      #manual setting
+      #SET (DEFAULT_OPENGLES_gl_LIBRARY libEGL libGLESv2) 
+      SET (DEFAULT_OPENGLES2_INCLUDE_DIR ${OGREKIT_SOURCE_DIR}/Dependencies/Win32/gles2/include)
+      SET (DEFAULT_OPENGLES2_LIBRARY_PATH ${OGREKIT_SOURCE_DIR}/Dependencies/Win32/gles2/lib)
+      SET (OPENGLES_gl_LIBRARY   ${DEFAULT_OPENGLES2_LIBRARY_PATH}/libGLESv2.lib) #${DEFAULT_OPENGLES_gl_LIBRARY} CACHE STRING "OpenGL ES 2.x library for win32")
+      #SET (EGL_LIBRARIES ${DEFAULT_OPENGLES2_LIBRARY_PATH}/libEGL.lib)
+      SET (OPENGLES2_LIBRARIES ${DEFAULT_OPENGLES2_LIBRARY_PATH}/libGLESv2.lib
+        ${DEFAULT_OPENGLES2_LIBRARY_PATH}/libEGL.lib)
+      SET (OPENGLES2_INCLUDE_DIR ${DEFAULT_OPENGLES2_INCLUDE_DIR} CACHE STRING "OpenGL ES 2.x headers for win32")
+      SET (OPENGLES2_LIBRARY_PATH ${DEFAULT_OPENGLES2_LIBRARY_PATH} CACHE STRING "OpenGL ES 2.x library path for win32")
     ENDIF(BORLAND)
 
   ENDIF (CYGWIN)
@@ -122,6 +132,13 @@ ELSE ()
   ENDIF(OPENGLES2_gl_LIBRARY AND EGL_egl_LIBRARY)
 
 ENDIF ()
+
+if (MSVC)
+  if (NOT OPENGLES2_LIBRARIES)
+    #message(STATUS "not found")
+    #set(OPENGLES2_FOUND "")
+  endif()
+endif ()
 
 
 MARK_AS_ADVANCED(

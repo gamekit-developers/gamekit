@@ -127,8 +127,11 @@ extern PFNGLGETTEXLEVELPARAMETERiVNVPROC glGetTexLevelParameterivNV;
         fprintf(stderr, "%s:%d: %s\n", __FUNCTION__, __LINE__, text); \
     }
 
-#define ENABLE_GL_CHECK 0
+#define ENABLE_GL_CHECK 1
 #if ENABLE_GL_CHECK
+#ifdef _MSC_VER
+#define __PRETTY_FUNCTION__ __FUNCTION__
+#endif
 #define GL_CHECK_ERROR \
     { \
         int e = glGetError(); \

@@ -75,6 +75,7 @@ public:
 	gkString                extWinhandle;       // External Window Handle
 	gkScalar				animFps;			// Default animation fps
 	bool					rtss;				// Enable RTShadingSystem
+	bool					hasFixedCapability; // Renderer supports fixed-function pipeline
 
 	GK_INLINE bool			isD3DRenderSystem() { return isD3DRenderSystem(rendersystem); }
 

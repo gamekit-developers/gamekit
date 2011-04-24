@@ -26,83 +26,26 @@ THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
 
-#include "OgreOSXCocoaView.h"
+#ifndef __EAGL2View_H__
+#define __EAGL2View_H__
 
-@implementation OgreView
+#include "OgreString.h"
 
-- (id)initWithFrame:(NSRect)f
-{
-	if((self = [super initWithFrame:f]))
-    {
-        NSApplicationLoad();
-        
-        window = 0;
-    }
-	return self;
+using namespace Ogre;
+
+#ifdef __OBJC__
+
+#import <UIKit/UIKit.h>
+
+
+@interface EAGL2View : UIView {
+    String mWindowName;
 }
 
-- (id)initWithGLOSXWindow:(Ogre::RenderWindow*)w
-{
-	if((self = [super initWithFrame:NSMakeRect(0, 0, w->getWidth(), w->getHeight())]))
-    {
-        window = w;
-    }
-	return self;
-}
-
-- (void)setOgreWindow:(Ogre::RenderWindow*)w
-{
-	window = w;
-}
-
-- (Ogre::RenderWindow*)ogreWindow
-{
-	return window;
-}
-
-- (void)setFrameSize:(NSSize)s
-{
-	[super setFrameSize:s];
-    if (window)
-        window->windowMovedOrResized();
-}
-
-- (void)drawRect:(NSRect)r
-{
-	if(window)
-		window->update();
-}
-
-- (BOOL)acceptsFirstResponder
-{
-    return YES;
-}
-
-- (BOOL)canBecomeKeyView
-{
-    return YES;
-}
-
-#pragma mark Mouse Event Handling
-- (void)mouseDown:(NSEvent *)theEvent {
-    [super mouseDown:theEvent];
-}
-
-- (void)mouseUp:(NSEvent *)theEvent {
-    [super mouseUp:theEvent];
-}
-
-- (void)mouseDragged:(NSEvent *)theEvent {
-    [super mouseDragged:theEvent];
-}
-
-#pragma mark Keyboard Event Handling
-//- (void)keyDown:(NSEvent *)theEvent {
-//    [self interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
-//}
-//
-//- (void)keyUp:(NSEvent *)theEvent {
-//    [self interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
-//}
+@property (assign) String mWindowName;
 
 @end
+
+#endif
+
+#endif

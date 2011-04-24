@@ -58,10 +58,125 @@ namespace Ogre {
 			String errorDescription = mDevice.getErrorDescription(hr);
 			OGRE_EXCEPT(Exception::ERR_RENDERINGAPI_ERROR, 
 				"D3D11 device Cannot create constant buffer.\nError Description:" + errorDescription,
-				"D3D11HLSLProgram::createConstantBuffer");
+				"D3D11HLSLProgram::createConstantBuffer");  
+		}
+	}
+
+    class HLSLIncludeHandler : public ID3D10Include
+	{
+	public:
+		HLSLIncludeHandler(Resource* sourceProgram) 
+			: mProgram(sourceProgram) {}
+		~HLSLIncludeHandler() {}
+
+		STDMETHOD(Open)(D3D10_INCLUDE_TYPE IncludeType,
+			LPCSTR pFileName,
+			LPCVOID pParentData,
+			LPCVOID *ppData,
+			UINT *pByteLen
+			)
+		{
+			// find & load source code
+			DataStreamPtr stream = 
+				ResourceGroupManager::getSingleton().openResource(
+				String(pFileName), mProgram->getGroup(), true, mProgram);
+
+			String source = stream->getAsString();
+			// copy into separate c-string
+			// Note - must NOT copy the null terminator, otherwise this will terminate
+			// the entire program string!
+			*pByteLen = static_cast<UINT>(source.length());
+			char* pChar = new char[*pByteLen];
+			memcpy(pChar, source.c_str(), *pByteLen);
+			*ppData = pChar;
+
+			return S_OK;
 		}
 
-	}
+		STDMETHOD(Close)(LPCVOID pData)
+		{
+			char* pChar = (char*)pData;
+			delete [] pChar;
+			return S_OK;
+		}
+	protected:
+		Resource* mProgram;
+	};
+
+	static void getDefines(vector<D3D10_SHADER_MACRO>::type& defines, const String& definesString)
+	{
+		// Populate preprocessor defines
+		String stringBuffer = definesString;
+
+		defines.clear();
+
+		if (stringBuffer.empty())
+			return;
+
+		// Split preprocessor defines and build up macro array
+		D3D10_SHADER_MACRO macro;
+		String::size_type pos = 0;
+		while (pos != String::npos)
+		{
+			macro.Name = &stringBuffer[pos];
+			macro.Definition = 0;
+
+			String::size_type start_pos=pos;
+
+			// Find delims
+			pos = stringBuffer.find_first_of(";,=", pos);
+
+			if(start_pos==pos)
+			{
+				if(pos==stringBuffer.length())
+				{
+					break;
+				}
+				pos++;
+				continue;
+			}
+
+			if (pos != String::npos)
+			{
+				// Check definition part
+				if (stringBuffer[pos] == '=')
+				{
+					// Setup null character for macro name
+					stringBuffer[pos++] = '\0';
+					macro.Definition = &stringBuffer[pos];
+					pos = stringBuffer.find_first_of(";,", pos);
+				}
+				else
+				{
+					// No definition part, define as "1"
+					macro.Definition = "1";
+				}
+
+				if (pos != String::npos)
+				{
+					// Setup null character for macro name or definition
+					stringBuffer[pos++] = '\0';
+				}
+			}
+			else
+			{
+				macro.Definition = "1";
+			}
+			if(strlen(macro.Name)>0)
+			{
+				defines.push_back(macro);
+			}
+			else
+			{
+				break;
+			}
+		}
+
+		// Add NULL terminator
+		macro.Name = 0;
+		macro.Definition = 0;
+			defines.push_back(macro);
+    }		
     //-----------------------------------------------------------------------
     void D3D11HLSLProgram::loadFromSource(void)
     {
@@ -80,151 +195,25 @@ namespace Ogre {
 		GpuProgramManager::Microcode cacheMicrocode = 
 			GpuProgramManager::getSingleton().getMicrocodeFromCache(mName);
 		
-		HRESULT hr=D3D10CreateBlob(cacheMicrocode->size(), &mpMicroCode); 
-
-		if(mpMicroCode)
-		{
-			cacheMicrocode->read(mpMicroCode->GetBufferPointer(), cacheMicrocode->size());
-		}
+		mpMicroCode.resize(cacheMicrocode->size());
+		cacheMicrocode->read(&mpMicroCode[0], cacheMicrocode->size());
 		
 		analizeMicrocode();
 	}
     //-----------------------------------------------------------------------
     void D3D11HLSLProgram::compileMicrocode(void)
 	{
-		class HLSLIncludeHandler : public ID3D10Include
-		{
-		public:
-			HLSLIncludeHandler(Resource* sourceProgram) 
-				: mProgram(sourceProgram) {}
-			~HLSLIncludeHandler() {}
-
-			STDMETHOD(Open)(D3D10_INCLUDE_TYPE IncludeType,
-				LPCSTR pFileName,
-				LPCVOID pParentData,
-				LPCVOID *ppData,
-				UINT *pByteLen
-				)
-			{
-				// find & load source code
-				DataStreamPtr stream = 
-					ResourceGroupManager::getSingleton().openResource(
-					String(pFileName), mProgram->getGroup(), true, mProgram);
-
-				String source = stream->getAsString();
-				// copy into separate c-string
-				// Note - must NOT copy the null terminator, otherwise this will terminate
-				// the entire program string!
-				*pByteLen = static_cast<UINT>(source.length());
-				char* pChar = new char[*pByteLen];
-				memcpy(pChar, source.c_str(), *pByteLen);
-				*ppData = pChar;
-
-				return S_OK;
-			}
-
-			STDMETHOD(Close)(LPCVOID pData)
-			{
-				char* pChar = (char*)pData;
-				delete [] pChar;
-				return S_OK;
-			}
-		protected:
-			Resource* mProgram;
-
-
-		};
-
 		// include handler
 		HLSLIncludeHandler includeHandler(this);
 
 		ID3D10Blob * errors = 0;
 
-		/*String profile; // Instruction set to be used when generating code. Possible values: "vs_4_0", "ps_4_0", or "gs_4_0".
-		switch(mType)
-		{
-		case GPT_VERTEX_PROGRAM:
-			profile = "vs_4_0";
-			break;
-		case GPT_FRAGMENT_PROGRAM:
-			profile = "ps_4_0";
-			break;
-		}*/
-
-		// Populate preprocessor defines
-        String stringBuffer;
-
-        vector<D3D10_SHADER_MACRO>::type defines;
         const D3D10_SHADER_MACRO* pDefines = 0;
-        if (!mPreprocessorDefines.empty())
-        {
-            stringBuffer = mPreprocessorDefines;
-
-            // Split preprocessor defines and build up macro array
-            D3D10_SHADER_MACRO macro;
-            String::size_type pos = 0;
-            while (pos != String::npos)
-            {
-                macro.Name = &stringBuffer[pos];
-                macro.Definition = 0;
-
-				String::size_type start_pos=pos;
-
-                // Find delims
-                pos = stringBuffer.find_first_of(";,=", pos);
-
-				if(start_pos==pos)
-				{
-					if(pos==stringBuffer.length())
-					{
-						break;
-					}
-					pos++;
-					continue;
-				}
-
-                if (pos != String::npos)
-                {
-                    // Check definition part
-                    if (stringBuffer[pos] == '=')
-                    {
-                        // Setup null character for macro name
-                        stringBuffer[pos++] = '\0';
-                        macro.Definition = &stringBuffer[pos];
-                        pos = stringBuffer.find_first_of(";,", pos);
-                    }
-                    else
-                    {
-                        // No definition part, define as "1"
-                        macro.Definition = "1";
-                    }
-
-                    if (pos != String::npos)
-                    {
-                        // Setup null character for macro name or definition
-                        stringBuffer[pos++] = '\0';
-                    }
-                }
-				else
-				{
-					macro.Definition = "1";
-				}
-				if(strlen(macro.Name)>0)
-				{
-					defines.push_back(macro);
-				}
-				else
-				{
-					break;
-				}
-            }
-
-            // Add NULL terminator
-            macro.Name = 0;
-            macro.Definition = 0;
-            defines.push_back(macro);
-
-            pDefines = &defines[0];
+        vector<D3D10_SHADER_MACRO>::type defines;
+		getDefines(defines, mPreprocessorDefines);
+        if (!defines.empty())
+        { 
+			pDefines = &defines[0];
         }
 
 		UINT compileFlags=0;
@@ -234,12 +223,20 @@ namespace Ogre {
 		#endif
 		
 		if (mColumnMajorMatrices)
+        {
             compileFlags |= D3D10_SHADER_PACK_MATRIX_COLUMN_MAJOR;
+        }
         else
+        {
             compileFlags |= D3D10_SHADER_PACK_MATRIX_ROW_MAJOR;
+        }
 
 		if (mEnableBackwardsCompatibility)
+        {
 			compileFlags |= D3D10_SHADER_ENABLE_BACKWARDS_COMPATIBILITY;
+        }
+
+		ID3D10Blob * pMicroCode;
 
 		HRESULT hr = D3DX11CompileFromMemory(
 			mSource.c_str(),	// [in] Pointer to the shader in memory. 
@@ -252,41 +249,19 @@ namespace Ogre {
 			compileFlags,				// [in] Effect compile flags - no D3D11_SHADER_ENABLE_BACKWARDS_COMPATIBILITY at the first try...
 			NULL,				// [in] Effect compile flags
 			NULL,				// [in] A pointer to a thread pump interface (see ID3DX11ThreadPump Interface). Use NULL to specify that this function should not return until it is completed. 
-			&mpMicroCode,		// [out] A pointer to an ID3D10Blob Interface which contains the compiled shader, as well as any embedded debug and symbol-table information. 
+			&pMicroCode,		// [out] A pointer to an ID3D10Blob Interface which contains the compiled shader, as well as any embedded debug and symbol-table information. 
 			&errors,			// [out] A pointer to an ID3D10Blob Interface which contains a listing of errors and warnings that occured during compilation. These errors and warnings are identical to the the debug output from a debugger.
 			NULL				// [out] A pointer to the return value. May be NULL. If pPump is not NULL, then pHResult must be a valid memory location until the asynchronous execution completes. 
 			);
-
-		/*if (FAILED(hr)) // if fails - try with backwards compatibility flag
-		{
-			compileFlags|=D3D10_SHADER_ENABLE_BACKWARDS_COMPATIBILITY;
-			hr = D3DX11CompileFromMemory(
-				mSource.c_str(),	// [in] Pointer to the shader in memory. 
-				mSource.size(),		// [in] Size of the shader in memory.  
-				NULL,				// [in] The name of the file that contains the shader code. 
-				pDefines,			// [in] Optional. Pointer to a NULL-terminated array of macro definitions. See D3D10_SHADER_MACRO. If not used, set this to NULL. 
-				&includeHandler,	// [in] Optional. Pointer to an ID3D11Include Interface interface for handling include files. Setting this to NULL will cause a compile error if a shader contains a #include. 
-				mEntryPoint.c_str(), // [in] Name of the shader-entrypoint function where shader execution begins. 
-				mTarget.c_str(),			// [in] A string that specifies the shader model; can be any profile in shader model 2, shader model 3, or shader model 4. 
-				compileFlags,				// [in] Effect compile flags - D3D11_SHADER_ENABLE_BACKWARDS_COMPATIBILITY enables older shaders to compile to 4_0 targets
-				NULL,				// [in] Effect compile flags
-				NULL,				// [in] A pointer to a thread pump interface (see ID3DX11ThreadPump Interface). Use NULL to specify that this function should not return until it is completed. 
-				&mpMicroCode,		// [out] A pointer to an ID3D10Blob Interface which contains the compiled shader, as well as any embedded debug and symbol-table information. 
-				&errors,			// [out] A pointer to an ID3D10Blob Interface which contains a listing of errors and warnings that occured during compilation. These errors and warnings are identical to the the debug output from a debugger.
-				NULL				// [out] A pointer to the return value. May be NULL. If pPump is not NULL, then pHResult must be a valid memory location until the asynchronous execution completes. 
-				);
-
-		}*/
-
 
 #if 0 // this is how you disassemble
 		LPCSTR commentString = NULL;
 		ID3D10Blob* pIDisassembly = NULL;
 		char* pDisassembly = NULL;
-		if( mpMicroCode )
+		if( pMicroCode )
 		{
-			D3D11DisassembleShader( (UINT*) mpMicroCode->GetBufferPointer(), 
-				mpMicroCode->GetBufferSize(), TRUE, commentString, &pIDisassembly );
+			D3D11DisassembleShader( (UINT*) &mpMicroCode[0], 
+				pMicroCode->GetBufferSize(), TRUE, commentString, &pIDisassembly );
 		}
 
 		const char* assemblyCode =  static_cast<const char*>(pIDisassembly->GetBufferPointer());
@@ -302,14 +277,18 @@ namespace Ogre {
 		}
 		else
 		{
+			mpMicroCode.resize(pMicroCode->GetBufferSize());
+			memcpy(&mpMicroCode[0], pMicroCode->GetBufferPointer(), pMicroCode->GetBufferSize());
+			SAFE_RELEASE(pMicroCode);
+
 			if ( GpuProgramManager::getSingleton().getSaveMicrocodesToCache() )
 			{
 		        // create microcode
 		        GpuProgramManager::Microcode newMicrocode = 
-                    GpuProgramManager::getSingleton().createMicrocode(mpMicroCode->GetBufferSize());
+                    GpuProgramManager::getSingleton().createMicrocode(mpMicroCode.size());
 
         		// save microcode
-				newMicrocode->write(mpMicroCode->GetBufferPointer(), mpMicroCode->GetBufferSize());
+				newMicrocode->write(&mpMicroCode[0], mpMicroCode.size());
 
         		// add to the microcode to the cache
 				GpuProgramManager::getSingleton().addMicrocodeToCache(mName, newMicrocode);
@@ -321,9 +300,9 @@ namespace Ogre {
 	//-----------------------------------------------------------------------
 	void D3D11HLSLProgram::analizeMicrocode()
 	{
-		SIZE_T BytecodeLength = mpMicroCode->GetBufferSize();
+		SIZE_T BytecodeLength = mpMicroCode.size();
 
-		HRESULT hr = D3DReflect( (void*) mpMicroCode->GetBufferPointer(), BytecodeLength,
+		HRESULT hr = D3DReflect( (void*) &mpMicroCode[0], BytecodeLength,
 			IID_ID3D11ShaderReflection, // can't do __uuidof(ID3D11ShaderReflection) here...
 			(void**) &mpIShaderReflection );
 
@@ -437,29 +416,15 @@ namespace Ogre {
 	{
 		// Create a low-level program, give it the same name as us
 		mAssemblerProgram =GpuProgramPtr(dynamic_cast<GpuProgram*>(this));
-		/*
-		GpuProgramManager::getSingleton().createProgramFromString(
-		mName, 
-		mGroup,
-		"",// dummy source, since we'll be using microcode
-		mType, 
-		mTarget);
-		//        static_cast<D3D11GpuProgram*>(mAssemblerProgram.get())->setExternalMicrocode(mpMicroCode);*/
-
 	}
 	//-----------------------------------------------------------------------
 	void D3D11HLSLProgram::unloadHighLevelImpl(void)
 	{
-		SAFE_RELEASE(mpMicroCode);
         SAFE_RELEASE(mpVertexShader);
         SAFE_RELEASE(mpPixelShader);
         SAFE_RELEASE(mpGeometryShader);
         SAFE_RELEASE(mpIShaderReflection);
         SAFE_RELEASE(mConstantBuffer);
-
-
-		//        SAFE_RELEASE(mpConstTable);
-
 	}
 
 	//-----------------------------------------------------------------------
@@ -685,14 +650,10 @@ namespace Ogre {
 		ResourceHandle handle, const String& group, bool isManual, 
 		ManualResourceLoader* loader, D3D11Device & device)
 		: HighLevelGpuProgram(creator, name, handle, group, isManual, loader)
-		, mpMicroCode(NULL), mErrorsInCompile(false), mConstantBuffer(NULL), mDevice(device), 
+		, mErrorsInCompile(false), mConstantBuffer(NULL), mDevice(device), 
 		mpIShaderReflection(NULL), mShaderReflectionConstantBuffer(NULL), mpVertexShader(NULL)//, mpConstTable(NULL)
 		,mpPixelShader(NULL),mpGeometryShader(NULL),mColumnMajorMatrices(true), mEnableBackwardsCompatibility(false), mInputVertexDeclaration(device)
 	{
-		if ("Hatch_ps_hlsl" == name)
-		{
-			mpMicroCode = NULL;
-		}
 		ZeroMemory(&mConstantBufferDesc, sizeof(mConstantBufferDesc)) ;
 		ZeroMemory(&mShaderDesc, sizeof(mShaderDesc)) ;
 
@@ -830,8 +791,8 @@ namespace Ogre {
 		{
 			// Create the shader
 			HRESULT hr = mDevice->CreateVertexShader( 
-				static_cast<DWORD*>(mpMicroCode->GetBufferPointer()),
-				mpMicroCode->GetBufferSize(),
+				&mpMicroCode[0],
+				mpMicroCode.size(),
 				NULL,
 				&mpVertexShader);
 
@@ -860,8 +821,8 @@ namespace Ogre {
 		{
 			// Create the shader
 			HRESULT hr = mDevice->CreatePixelShader( 
-				static_cast<DWORD*>(mpMicroCode->GetBufferPointer()), 
-				mpMicroCode->GetBufferSize(),
+				&mpMicroCode[0], 
+				mpMicroCode.size(),
 				NULL,
 				&mpPixelShader);
 
@@ -880,17 +841,99 @@ namespace Ogre {
 		}
 	}
 
+    void D3D11HLSLProgram::reinterpretGSForStreamOut(void)
+	{
+		assert(mpGeometryShader);
+		unloadHighLevel();
+		mReinterpretingGS = true;
+		loadHighLevel();
+		mReinterpretingGS = false;
+	}
+
+	D3D11_SIGNATURE_PARAMETER_DESC D3D11HLSLProgram::getInputParamDesc(unsigned int index) const
+	{
+		assert(index<mShaderDesc.InputParameters);
+		D3D11_SIGNATURE_PARAMETER_DESC desc;
+		mpIShaderReflection->GetInputParameterDesc(index, &desc);
+		return desc;
+	}
+	D3D11_SIGNATURE_PARAMETER_DESC D3D11HLSLProgram::getOutputParamDesc(unsigned int index) const
+	{
+		assert(index<mShaderDesc.OutputParameters);
+		D3D11_SIGNATURE_PARAMETER_DESC desc;
+		mpIShaderReflection->GetOutputParameterDesc(index, &desc);
+		return desc;
+	}
+
+	static unsigned int getComponentCount(BYTE mask)
+	{
+		unsigned int compCount = 0;
+		if (mask&1)
+			++compCount;
+		if (mask&2)
+			++compCount;
+		if (mask&4)
+			++compCount;
+		if (mask&8)
+			++compCount;
+		return compCount;
+	}
+
 	//-----------------------------------------------------------------------
 	void D3D11HLSLProgram::CreateGeometryShader()
 	{
 		if (isSupported())
 		{
-			// Create the shader
-			HRESULT hr = mDevice->CreateGeometryShader( 
-				static_cast<DWORD*>(mpMicroCode->GetBufferPointer()), 
-				mpMicroCode->GetBufferSize(),
-				NULL,
-				&mpGeometryShader);
+			HRESULT hr;
+			if (mReinterpretingGS)
+			{
+				D3D11_SO_DECLARATION_ENTRY* soDeclarations = new D3D11_SO_DECLARATION_ENTRY[mShaderDesc.OutputParameters];
+				int totalComp = 0;
+				for(unsigned int i = 0; i < getNumOutputs(); ++i)
+				{
+					D3D11_SIGNATURE_PARAMETER_DESC pDesc = getOutputParamDesc(i);
+
+					soDeclarations[i].Stream = 0;
+					soDeclarations[i].SemanticName = pDesc.SemanticName;
+					soDeclarations[i].SemanticIndex= pDesc.SemanticIndex;
+
+					int compCount = getComponentCount(pDesc.Mask);
+					soDeclarations[i].StartComponent = 0;
+					soDeclarations[i].ComponentCount = compCount;
+					soDeclarations[i].OutputSlot = 0;
+
+					totalComp += compCount;
+				}
+
+				// Create the shader
+				UINT bufferStrides[1];
+				bufferStrides[0] = totalComp*sizeof(float);
+				hr = mDevice->CreateGeometryShaderWithStreamOutput( 
+					&mpMicroCode[0], 
+					mpMicroCode.size(),
+					soDeclarations,
+					mShaderDesc.OutputParameters,
+
+					bufferStrides,
+					1,
+
+					0,
+					NULL,
+					&mpGeometryShader);
+
+			//	delete [] soDeclarations;
+
+			}
+			else
+			{
+				// Create the shader
+				hr = mDevice->CreateGeometryShader( 
+                    &mpMicroCode[0], 
+                    mpMicroCode.size(),
+					NULL,
+					&mpGeometryShader);
+			}
+
 
 			assert(mpGeometryShader);
 
@@ -990,9 +1033,9 @@ namespace Ogre {
 	}
 
 	//-----------------------------------------------------------------------------
-	ID3D10Blob* D3D11HLSLProgram::getMicroCode(void) const 
+	const MicroCode & D3D11HLSLProgram::getMicroCode(void) const 
 	{ 
-		assert(mpMicroCode);
+		assert(mpMicroCode.size() > 0);
 		return mpMicroCode; 
 	}
 
