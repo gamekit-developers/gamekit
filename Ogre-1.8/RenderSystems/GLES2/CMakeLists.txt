@@ -178,7 +178,7 @@ endif ()
 # Add support for the RT Shader System
 add_definitions(-DUSE_RTSHADER_SYSTEM)
 
-message( STATUS "---" ${EGL_INCLUDE_DIR} "---"  ${OPENGLES2_INCLUDE_DIR} "---" ${EGL_LIBRARIES} "----" ${OPENGLES2_LIBRARY_PATH})
+#message( STATUS "---" ${EGL_INCLUDE_DIR} "---"  ${OPENGLES2_INCLUDE_DIR} "---" ${EGL_LIBRARIES} "----" ${OPENGLES2_LIBRARY_PATH})
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -196,7 +196,7 @@ if (NOT OGREKIT_BUILD_ANDROID)
   include_directories(
     ${EGL_INCLUDE_DIR}
   )
-  message(STATUS ${EGL_LIBRARIES})
+  #message(STATUS ${EGL_LIBRARIES})
   target_link_libraries(RenderSystem_GLES2 ${EGL_LIBRARIES}) 
 endif()
 
