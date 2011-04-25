@@ -24,22 +24,32 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#include <jni.h>
+//#include <jni.h>
 #include <stdlib.h>
 #include "AndroidLogListener.h"
-#include <android/log.h>
+//#include <android/log.h>
 
 #include "OgreKit.h"
 #include "Ogre.h"
 #include "android/AndroidInputManager.h"
 
 #define LOG_TAG    "ogrekit"
-#define LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
-#define LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
-#define LOG_FOOT   LOGI("%s %d", __FUNCTION__, __LINE__)
+#define LOGI(...)  printf(__VA_ARGS__)//__android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
+#define LOGE(...)  printf(__VA_ARGS__)//__android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
+#define LOG_FOOT   printf("%s %d\n", __FUNCTION__, __LINE__)
+
+typedef void JNIEnv;
+typedef void JavaVM;
+typedef bool jboolean;
+typedef void* jobject;
+typedef float jfloat;
+typedef int jint;
+typedef char* jstring;
+#define JNI_FALSE false
+#define JNI_TRUE true
 
 
-const gkString gkDefaultBlend   = "/sdcard/momo_ogre_i.blend";
+const gkString gkDefaultBlend   = "momo_ogre_i.blend";
 const gkString gkDefaultConfig  = "/sdcard/OgreKitStartup.cfg";
 
 
@@ -57,11 +67,10 @@ public:
 	bool init(const gkString& blend);
 
 	void keyReleased(const gkKeyboard& key, const gkScanCode& sc);
-
-	void injectKey(int action, int uniChar, int keyCode) { if (m_input) m_input->injectKey(action, uniChar, keyCode); }
-	void injectTouch(int action, float x, float y) { if (m_input) m_input->injectTouch(action, x, y); }
-	void setOffsets(int x, int y) { if (m_input) m_input->setOffsets(x,y); }
-	void setWindowSize(int w, int h) { if (m_input) m_input->setWindowSize(w,h); }
+	void injectKey(int action, int uniChar, int keyCode) {}// if (m_input) m_input->injectKey(action, uniChar, keyCode); }
+	void injectTouch(int action, float x, float y) {} // if (m_input) m_input->injectTouch(action, x, y); }
+	void setOffsets(int x, int y) {} // if (m_input) m_input->setOffsets(x,y); }
+	void setWindowSize(int w, int h) {} // if (m_input) m_input->setWindowSize(w,h); }
 private:
 
 	bool setup(void);
@@ -135,8 +144,7 @@ bool OgreKit::setup(void)
 	// add input hooks
 	gkWindow* win = gkWindowSystem::getSingleton().getMainWindow();
 	m_input = static_cast<OIS::AndroidInputManager*>(win->getInputManager());
-
-    LOG_FOOT;
+	LOG_FOOT;
 
 
 	return true;
@@ -153,12 +161,14 @@ jboolean init(JNIEnv* env, jobject thiz, jstring arg)
 	
 
 	gkString file = gkDefaultBlend;
+#if 0
 	const char* str = env->GetStringUTFChars(arg, 0);
 	if (str) 
 	{
 		file = str;
 		env->ReleaseStringUTFChars(arg, str);	
 	}
+#endif
 
 	LOGI("****** %s ******", file.c_str());
 
@@ -177,7 +187,7 @@ jboolean init(JNIEnv* env, jobject thiz, jstring arg)
 		return JNI_FALSE;
 	}
 
-    LOG_FOOT;
+	LOG_FOOT;
 
 	gkEngine::getSingleton().initializeStepLoop();
 
@@ -201,7 +211,7 @@ jboolean render(JNIEnv* env, jobject thiz, jint drawWidth, jint drawHeight, jboo
 	}
 	
 	if (gkEngine::getSingleton().stepOneFrame())
-	return JNI_TRUE;
+		return JNI_TRUE;
 	else
 		return JNI_FALSE;
 }
@@ -238,6 +248,7 @@ void setOffsets(JNIEnv* env, jobject thiz, jint x, jint y)
 	okit.setOffsets(x,y);
 }
 
+#if 0
 jint JNI_OnLoad(JavaVM* vm, void* reserved)
 {
     JNIEnv *env;
@@ -288,3 +299,15 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
 
     return JNI_VERSION_1_4;
 }
+
+#else
+void main()
+{
+	init(0,0,0);
+	while(render(0,0,0,0,0))
+	{		
+	}
+	cleanup(0);
+}
+
+#endif

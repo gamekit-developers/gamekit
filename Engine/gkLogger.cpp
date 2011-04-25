@@ -72,7 +72,6 @@ void gkPrintf(const char* fmt, ...)
 				printf("%s\n", GK_ConsoleBuffer);
 			else
 				printf("%s", GK_ConsoleBuffer);
-
 		}
 	}
 }

@@ -6,6 +6,10 @@ elseif (OGREKIT_BUILD_IPHONE)
 	subdirs(IPhoneDemo)
 else()
 
+if (SAMPLES_ANDROIDTEST)
+    subdirs(AndroidDemo/Test)
+endif()
+
 if (SAMPLES_RUNTIME)
 	subdirs(Runtime)
 endif()

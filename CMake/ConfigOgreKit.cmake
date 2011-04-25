@@ -168,6 +168,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 	option(SAMPLES_GUIDEMO        "Build Samples/GuiDemo"       OFF)
 	option(SAMPLES_LUA_EDITOR     "Build Samples/LuaEditor"     OFF)
 	option(SAMPLES_LUARUNTIME     "Build Samples/LuaRuntime"    OFF)
+    option(SAMPLES_ANDROIDTEST    "Build Samples/Android/Test"  OFF)
 	
 	if (SAMPLES_LOGICDEMO OR SAMPLES_VEHICLEDEMO)		
 		set(OGREKIT_USE_NNODE TRUE CACHE BOOL "Forcing Logic Node" FORCE)		
