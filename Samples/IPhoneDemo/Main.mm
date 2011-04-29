@@ -26,6 +26,7 @@
 */
 
 #import <UIKit/UIKit.h>
+#import <QuartzCore/QuartzCore.h>
 #include "OgreKit.h"
 
 
@@ -38,7 +39,6 @@ const gkString gkDefaultConfig  = "OgreKitStartup.cfg";
 
 
 
-// ----------------------------------------------------------------------------
 class OgreKit : public gkCoreApplication, public gkWindowSystem::Listener
 {
 public:
@@ -76,14 +76,12 @@ public:
 };
 
 
-// ----------------------------------------------------------------------------
 OgreKit::OgreKit()
     :   m_blend(gkDefaultBlend), m_scene(0)
 {
 }
 
 
-// ----------------------------------------------------------------------------
 bool OgreKit::init()
 {
     gkString cfgfname;
@@ -115,8 +113,6 @@ bool OgreKit::init()
 }
 
 
-
-// ----------------------------------------------------------------------------
 bool OgreKit::setup(void)
 {
 	gkBlendFile *blend = gkBlendLoader::getSingleton().loadFile(gkUtils::getFile(m_blend), gkBlendLoader::LO_ALL_SCENES);
@@ -154,9 +150,10 @@ int main(int argc, char **argv)
 //copy from ogre3d samplebrowser
 @interface AppDelegate : NSObject <UIApplicationDelegate>
 {
-    NSTimer *mTimer;
+    NSTimer *m_timer;
     OgreKit m_okit;
 
+	bool m_inited;
     id m_displayLink;
     NSDate* m_date;
     NSTimeInterval m_lastFrameTime;
@@ -164,7 +161,7 @@ int main(int argc, char **argv)
 
 }
 
-- (void)go;
+- (void)initApp;
 
 @property (retain) NSTimer *m_timer;
 @property (nonatomic) NSTimeInterval m_lastFrameTime;
@@ -190,14 +187,17 @@ int main(int argc, char **argv)
     }
 }
 
-- (void)go 
+- (void)initApp
 {
 	
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
 	
-    try {
+    try 
+	{
 		m_okit.initializeStepLoop();
-    } catch( Ogre::Exception& e ) {
+    } 
+	catch( Ogre::Exception& e ) 
+	{
         gkPrintf("An exception has occurred: %s", e.getFullDescription().c_str());
 	}
 		
@@ -229,6 +229,7 @@ int main(int argc, char **argv)
 	[[UIApplication sharedApplication] setStatusBarHidden:YES];
 	
 	m_displayLinkSupported = false;
+	m_inited = false;
 	m_lastFrameTime = 1;
 	m_displayLink = nil;
 	m_timer = nil;
@@ -242,23 +243,30 @@ int main(int argc, char **argv)
 		m_displayLinkSupported = TRUE;
 #endif
 	
-	[self go];
+	//[self initApp];
+	[self performSelector:@selector(initApp) withObject:nil afterDelay:0];
 }
 
 - (void)stepOneFrame:(id)sender
 {
+	if (!m_inited)
+	{
+		//[self initApp];
+		m_inited = true;
+	}
+	
 	if (m_displayLinkSupported)
 	{
 		// NSTimerInterval is a simple typedef for double
 		NSTimeInterval currentFrameTime = -[m_date timeIntervalSinceNow];
-		NSTimeInterval differenceInSeconds = currentFrameTime - m_lastFrameTime;
+		//NSTimeInterval differenceInSeconds = currentFrameTime - m_lastFrameTime;
 		m_lastFrameTime = currentFrameTime;
 		
 		m_okit.stepOneFrame();
 	}
 	else
 	{	
-		float t = (float)[m_timer timeInterval];
+		//float t = (float)[m_timer timeInterval];
 		m_okit.stepOneFrame();
 	}
 }
