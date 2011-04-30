@@ -36,7 +36,6 @@ set(Core_SOURCE
 	gkTextFile.cpp
 	gkTickState.cpp
 	gkTextManager.cpp
-	gkTickState.cpp
 	gkRenderFactory.cpp
 	gkResource.cpp
 	gkResourceManager.cpp
@@ -646,8 +645,6 @@ if (OGREKIT_COMPILE_SWIG AND SWIG_FOUND)
 
 
 	set(Script_SOURCE
-		${Script_TMPL}
-		${SWIG_API2_OUTPUT_LUA}
 		Script/Lua/gkLuaManager.cpp
 		Script/Lua/gkLuaScript.cpp
 		Script/Lua/gkLuaUtils.cpp
@@ -665,6 +662,11 @@ if (OGREKIT_COMPILE_SWIG AND SWIG_FOUND)
 		Script/Api/gsSound.cpp
 		Script/Api/gsThread.cpp
 		Script/Api/gsUtils.cpp
+		
+		SEPARATE
+
+		${Script_TMPL}
+		${SWIG_API2_OUTPUT_LUA}
 	)
 
 	if(APPLE)
@@ -735,9 +737,7 @@ else()
 		Script/Api/Class.lua
 	)
 
-	set(Script_SOURCE
-		${Script_TMPL}
-		Script/Api/Generated/OgreKitLua.cpp
+	set(Script_SOURCE		
 		Script/Lua/gkLuaManager.cpp
 		Script/Lua/gkLuaScript.cpp
 		Script/Lua/gkLuaUtils.cpp
@@ -755,6 +755,11 @@ else()
 		Script/Api/gsSound.cpp
 		Script/Api/gsThread.cpp
 		Script/Api/gsUtils.cpp
+		
+		SEPARATE
+		
+		${Script_TMPL}
+		Script/Api/Generated/OgreKitLua.cpp
 	)
 	
 	if(APPLE)
@@ -964,15 +969,14 @@ if (OGREKIT_OPENAL_SOUND AND OPENAL_FOUND)
 	set(Extra_SOURCE ${Sound_SOURCE} ${Sound_HEADER} )
 endif()
 
-add_library(OgreKitCore STATIC
+ogrekit_add_library(OgreKitCore STATIC
 			${Core_SOURCE}       ${Core_HEADER}
 			${Logic_SOURCE}      ${Logic_HEADER}
 			${Blend_SOURCE}      ${Blend_HEADER}
 			${AI_SOURCE}         ${AI_HEADER}
 			${Animation_SOURCE}  ${Animation_HEADER}
 			${Constraint_SOURCE} ${Constraint_HEADER}
-			${Physics_SOURCE}    ${Physics_HEADER}
-			${Script_SOURCE}     ${Script_HEADER}
+			${Physics_SOURCE}    ${Physics_HEADER}			
 			${Network_SOURCE}    ${Network_HEADER}
 			${NLogic_SOURCE}     ${NLogic_HEADER}
 			${Thread_SOURCE}     ${Thread_HEADER}
@@ -981,6 +985,7 @@ add_library(OgreKitCore STATIC
 			${HiddenDepenCMakeLists}
 			${Extra_SOURCE}
 			${Resources_FILES}
+			${Script_SOURCE}     ${Script_HEADER}
 	)
 
 config_target_if_iphone_build(OgreKitCore TRUE)

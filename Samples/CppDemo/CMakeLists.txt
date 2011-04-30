@@ -98,7 +98,7 @@ link_libraries(
 
 if (APPLE)
 
-	add_executable(
+	ogrekit_add_executable(
 		${TargetName} 
 		MACOSX_BUNDLE
 		MainMenu.nib
@@ -107,7 +107,7 @@ if (APPLE)
 
 else ()
 
-	add_executable(${TargetName} ${SRC})
+	ogrekit_add_executable(${TargetName} ${SRC})
 	
 	
 	IF (NOT INTERNAL_CREATE_DISTRIBUTABLE_MSVC_PROJECTFILES)

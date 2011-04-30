@@ -65,12 +65,12 @@ enum gsTransformSpace
 
 enum gsGameObjectTypes
 {
-	OB_UNKNOWN = 0,
-	OB_CAMERA,
-	OB_LIGHT,
-	OB_ENTITY,
-	OB_EMPTY,
-	OB_SKELETON,
+	OBT_UNKNOWN = 0,
+	OBT_CAMERA,
+	OBT_LIGHT,
+	OBT_ENTITY,
+	OBT_EMPTY,
+	OBT_SKELETON,
 };
 
 

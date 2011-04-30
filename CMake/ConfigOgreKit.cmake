@@ -48,6 +48,20 @@ macro (configure_ogrekit ROOT OGREPATH)
 	option(OGREKIT_COMPILE_OGRE_COMPONENTS	"Eanble compile additional Ogre components (RTShader, Terrain, Paging, ... etc)" OFF)
 	option(OGREKIT_USE_RTSHADER_SYSTEM		"Eanble shader system instead of fixed piped functions." OFF)
 	option(OGREKIT_COMPILE_OPTS				"Enable / Disable Opts builds" OFF)
+	option(OGREKIT_UNITY_BUILD				"Enable / Dsiable Unity builds for OgreKit" OFF)	
+	#set(OGREKIT_UNITY_FILES_PER_UNIT "20" CACHE STRING "Number of files per compilation unit in Unity build.")
+	
+	option(OGRE_UNITY_BUILD				"Enable / Dsiable Unity builds for Ogre" OFF)
+	set(OGRE_UNITY_FILES_PER_UNIT "40" CACHE STRING "Number of files per compilation unit in Unity build.")
+
+	# if (OGREKIT_UNITY_BUILD)
+		# set(OGRE_UNITY_BUILD TRUE CACHE BOOL "" FORCE)
+		# set(OGRE_UNITY_FILES_PER_UNIT ${OGREKIT_UNITY_FILES_PER_UNIT} CACHE STRING "")
+
+		# mark_as_advanced(OGRE_UNITY_BUILD OGRE_UNITY_FILES_PER_UNIT)
+	# else()
+		# set(OGRE_UNITY_BUILD FALSE CACHE BOOL "" FORCE)
+	# endif()	
 	
 	if (APPLE)
 		option(OGREKIT_BUILD_IPHONE	"Build GameKit on iOS SDK"	OFF)

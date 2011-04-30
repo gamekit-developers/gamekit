@@ -2543,7 +2543,7 @@
 #define ENV_STATIC                               0
 #define ENV_ANIM                                 1
 #define ENV_LOAD                                 2
-#define ENV_NORMAL                               1
+//#define ENV_NORMAL                               1 //conflick with OgreTextureUnitState.h
 #define ENV_OSA                                  2
 #define TXT_OFFSET                               35
 #define TXT_TABSIZE                              4

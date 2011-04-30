@@ -307,7 +307,7 @@ void Win32JoyStick::capture()
         {
             int value = (int)inputState.Gamepad.bLeftTrigger * 128;
             if (value > 0)
-                value = min(value + 128, 32767);
+                value = std::min(value + 128, 32767);
             mState.mAxes[4].rel = value - mState.mAxes[4].abs;
             mState.mAxes[4].abs = value;
             axisMoved[4] = mState.mAxes[4].rel != 0;
@@ -322,7 +322,7 @@ void Win32JoyStick::capture()
         {
             int value = (int)inputState.Gamepad.bRightTrigger * 128;
             if (value > 0)
-                value = min(value + 128, 32767);
+                value = std::min(value + 128, 32767);
             mState.mAxes[5].rel = value - mState.mAxes[5].abs;
             mState.mAxes[5].abs = value;
             axisMoved[5] = mState.mAxes[5].rel != 0;

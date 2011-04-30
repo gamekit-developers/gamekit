@@ -74,7 +74,7 @@ namespace Ogre
 			++itor;
 		}
 
-		//Free the shared RenderOperation since it's our responsability
+		//Free the shared RenderOperation since it's our responsibility
 		if( m_sharedRenderOperation.vertexData )
 			OGRE_DELETE m_sharedRenderOperation.vertexData;
 		if( m_sharedRenderOperation.indexData )
@@ -210,6 +210,8 @@ namespace Ogre
 					StringConverter::toString(m_instancingTechnique),
 					"InstanceBatch::buildNewBatch()");
 		}
+
+		batch->_notifyManager( m_sceneManager );
 
 
 		if( !firstTime )

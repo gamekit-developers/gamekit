@@ -3,6 +3,12 @@ cmake_minimum_required(VERSION 2.6.2)
 #set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS TRUE)
 #cmake_policy(SET CMP0003 NEW)
 
+# CMake 2.8.2 has a bug that creates unusable Xcode projects when using ARCHS_STANDARD_32_BIT
+# to specify both armv6 and armv7.
+if(OGRE_BUILD_PLATFORM_APPLE_IOS AND (CMAKE_VERSION VERSION_EQUAL 2.8.2) AND (CMAKE_GENERATOR STREQUAL "Xcode"))
+	message(FATAL_ERROR "CMake 2.8.2 cannot create compatible Xcode projects for iOS, please download the latest version or an older release from http://www.cmake.org/files/")
+endif()
+
 project(OgreLite)
 include(PrecompiledHeader)
 

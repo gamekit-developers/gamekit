@@ -25,10 +25,13 @@
 
 set(File_SRC
     fbtFile.cpp
-    fbtTables.cpp
-    fbtBuilder.cpp
+    fbtTables.cpp    
     fbtTypes.cpp
     fbtStreams.cpp
+	
+	SEPARATE
+
+	fbtBuilder.cpp
 )
 
 set(File_HDR
@@ -49,4 +52,4 @@ if (FBT_USE_ZLIB)
     link_libraries(${FBT_ZLIB_LIBRARY})
 endif()
 
-add_library(fbtFile ${File_SRC} ${File_HDR} ${fbtScanner})
+ogrekit_add_library(fbtFile ${File_SRC} ${File_HDR} ${fbtScanner})

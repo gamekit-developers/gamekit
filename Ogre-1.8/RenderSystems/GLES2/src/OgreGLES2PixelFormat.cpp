@@ -321,20 +321,12 @@ namespace Ogre  {
                                       PixelFormat format)
     {
         size_t count = 0;
-
-        do {
-            if (width > 1)
+        if((width > 0) && (height > 0))
             {
-                width = width / 2;
-            }
-            if (height > 1)
-            {
-                height = height / 2;
-            }
-            if (depth > 1)
-            {
-                depth = depth / 2;
-            }
+            do {
+                if(width>1)		width = width/2;
+                if(height>1)	height = height/2;
+                if(depth>1)		depth = depth/2;
             /*
             NOT needed, compressed formats will have mipmaps up to 1x1
             if(PixelUtil::isValidExtent(width, height, depth, format))
@@ -342,9 +334,10 @@ namespace Ogre  {
             else
                 break;
             */
+                
             count++;
         } while (!(width == 1 && height == 1 && depth == 1));
-
+        }		
         return count;
     }
 	//-----------------------------------------------------------------------------

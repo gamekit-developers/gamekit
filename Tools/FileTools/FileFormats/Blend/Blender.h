@@ -763,6 +763,10 @@ struct VolumeSettings
     float ms_spread;
 };
 
+#ifdef rad2
+#undef rad2
+#endif
+
 struct MetaElem
 {
     MetaElem *next;

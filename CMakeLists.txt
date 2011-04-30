@@ -16,6 +16,7 @@ endif(COMMAND cmake_policy)
 if (MSVC)
 	add_definitions( -D_CRT_SECURE_NO_WARNINGS )
 	add_definitions( -D_CRT_SECURE_NO_DEPRECATE )
+	add_definitions( -DNOMINMAX)
 endif()
 
 # ---------------------------------------------------------
@@ -30,6 +31,7 @@ include(CheckCXXCompilerFlag)
 include(ConfigOgreKit)
 include(ConfigGameKit)
 include(ConfigIPhone)
+include(OgreAddTargets)
 
 
 configure_gamekit(${OGREKIT_SOURCE_DIR}/Dependencies/Source)

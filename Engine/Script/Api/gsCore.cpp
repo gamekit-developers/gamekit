@@ -1012,7 +1012,7 @@ gsGameObjectTypes gsGameObject::getType(void)
 {
 	if (m_object)
 		return (gsGameObjectTypes)cast<gkGameObject>()->getType();
-	return OB_UNKNOWN;
+	return OBT_UNKNOWN;
 }
 
 

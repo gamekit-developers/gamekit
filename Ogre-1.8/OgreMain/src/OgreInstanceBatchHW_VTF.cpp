@@ -41,8 +41,8 @@ THE SOFTWARE.
 
 namespace Ogre
 {
-	static const uint16 c_maxTexWidth	= 4096;
-	static const uint16 c_maxTexHeight	= 4096;
+	static const uint16 c_maxTexWidthHW	= 4096;
+	static const uint16 c_maxTexHeightHW	= 4096;
 
 	InstanceBatchHW_VTF::InstanceBatchHW_VTF( 
 		InstanceManager *creator, MeshPtr &meshReference, 
@@ -220,15 +220,15 @@ namespace Ogre
 			//TODO: Check PF_FLOAT32_RGBA is supported (should be, since it was the 1st one)
 			const size_t numBones = std::max<size_t>( 1, baseSubMesh->blendIndexToBoneIndexMap.size() );
 
-			const size_t maxUsableWidth = c_maxTexWidth - (c_maxTexWidth % (numBones * 3));
+			const size_t maxUsableWidth = c_maxTexWidthHW - (c_maxTexWidthHW % (numBones * 3));
 
 			//See InstanceBatchHW::calculateMaxNumInstances for the 65535
-			retVal = std::min<size_t>( 65535, maxUsableWidth * c_maxTexHeight / 3 / numBones );
+			retVal = std::min<size_t>( 65535, maxUsableWidth * c_maxTexHeightHW / 3 / numBones );
 
 			if( flags & IM_VTFBESTFIT )
 			{
 				const size_t instancesPerBatch = std::min( retVal, m_instancesPerBatch );
-				//Do the same as in createVertexTexture(), but changing c_maxTexWidth for maxUsableWidth
+				//Do the same as in createVertexTexture(), but changing c_maxTexWidthHW for maxUsableWidth
 				const size_t numWorldMatrices = instancesPerBatch * numBones;
 
 				size_t texWidth  = std::min<size_t>( numWorldMatrices * 3, maxUsableWidth );
@@ -271,6 +271,9 @@ namespace Ogre
 					m_dirtyAnimation |= (*itor)->_updateAnimation();
 
 				const size_t floatsWritten = (*itor)->getTransforms3x4( pDest );
+
+				if( mManager->getCameraRelativeRendering() )
+					makeMatrixCameraRelative3x4( pDest, floatsWritten );
 
 				pDest		 += floatsWritten;
 				currentPixel += floatsWritten;
@@ -327,6 +330,13 @@ namespace Ogre
 		}
 		else
 		{
+			if( mManager->getCameraRelativeRendering() )
+			{
+				OGRE_EXCEPT(Exception::ERR_INVALID_STATE, "Camera-relative rendering is incompatible"
+					" with Instancing's static batches. Disable at least one of them",
+					"InstanceBatch::_updateRenderQueue");
+			}
+
 			//Don't update when we're static
 			if( m_renderOperation.numberOfInstances )
 				queue->addRenderable( this );

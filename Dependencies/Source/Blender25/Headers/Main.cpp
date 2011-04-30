@@ -513,6 +513,9 @@ int main(int argc, char **argv)
                 fprintf(bfp, "#ifdef far\n");
                 fprintf(bfp, "#undef far\n");
                 fprintf(bfp, "#endif\n");
+				fprintf(bfp, "#ifdef rad2\n");
+				fprintf(bfp, "#undef rad2\n");
+				fprintf(bfp, "#endif\n");
             }
 
             fprintf(bfp, "\n\n");
