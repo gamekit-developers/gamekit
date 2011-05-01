@@ -48,11 +48,17 @@ set(Core_SOURCE
 	gkStats.cpp
 	gkUserDefs.cpp
 	gkUtils.cpp
+	#gkWindowSystem.cpp
+	#gkWindow.cpp
+	#gkViewport.cpp
+	gkVariable.cpp
+)
+
+set(Core_SOURCE_2
 	gkWindowSystem.cpp
 	gkWindow.cpp
 	gkViewport.cpp
-	gkVariable.cpp
-)
+)	
 
 set(Core_HEADER
 	# ----- Headers -----
@@ -126,10 +132,10 @@ if (OGREKIT_BUILD_ANDROID)
 endif()
 
 if(APPLE)
-	source_group(Core FILES ${Core_HEADER} ${Core_SOURCE})
+	source_group(Core FILES ${Core_HEADER} ${Core_SOURCE} ${Core_SOURCE_2})
 else()
 	source_group(Core\\Header FILES ${Core_HEADER})
-	source_group(Core\\Source FILES ${Core_SOURCE})
+	source_group(Core\\Source FILES ${Core_SOURCE} ${Core_SOURCE_2})
 endif()
 
 # ---------------------------------------------------------
@@ -193,7 +199,6 @@ set(Thread_SOURCE
 	Thread/gkActiveObject.cpp
 	Thread/gkCriticalSection.cpp
 	Thread/gkPtrRef.cpp
-	Thread/gkSyncObj.cpp
 	Thread/gkThread.cpp
 )
 
@@ -209,12 +214,16 @@ set(Thread_HEADER
 	Thread/gkThread.h
 )
 
+set(Thread_SOURCE_2
+	Thread/gkSyncObj.cpp
+)
+
 if(APPLE)
-	source_group(Thread FILES ${Thread_HEADER} ${Thread_SOURCE})
+	source_group(Thread FILES ${Thread_HEADER} ${Thread_SOURCE} ${Thread_SOURCE_2})
 
 else()
 	source_group(Thread\\Header FILES ${Thread_HEADER})
-	source_group(Thread\\Source FILES ${Thread_SOURCE})
+	source_group(Thread\\Source FILES ${Thread_SOURCE} ${Thread_SOURCE_2})
 endif()
 
 
@@ -662,9 +671,10 @@ if (OGREKIT_COMPILE_SWIG AND SWIG_FOUND)
 		Script/Api/gsSound.cpp
 		Script/Api/gsThread.cpp
 		Script/Api/gsUtils.cpp
-		
-		SEPARATE
 
+	)
+	
+	set(Script_SOURCE_2
 		${Script_TMPL}
 		${SWIG_API2_OUTPUT_LUA}
 	)
@@ -673,12 +683,12 @@ if (OGREKIT_COMPILE_SWIG AND SWIG_FOUND)
 		source_group(Script/uiltin    FILES ${Script_TMPL})
 		source_group(Script/Includes  FILES ${SWIG_INPUT} ${Script_INC})
 		source_group(Script/Header    FILES ${Script_HEADER})
-		source_group(Script/Source    FILES ${Script_SOURCE})
+		source_group(Script/Source    FILES ${Script_SOURCE} ${Script_SOURCE_2})
 	else()
 		source_group(Script\\Builtin   FILES ${Script_TMPL})
 		source_group(Script\\Includes  FILES ${SWIG_INPUT} ${Script_INC})
 		source_group(Script\\Header    FILES ${Script_HEADER})
-		source_group(Script\\Source    FILES ${Script_SOURCE})
+		source_group(Script\\Source    FILES ${Script_SOURCE} ${Script_SOURCE_2})
 	endif()
 
 
@@ -755,9 +765,9 @@ else()
 		Script/Api/gsSound.cpp
 		Script/Api/gsThread.cpp
 		Script/Api/gsUtils.cpp
-		
-		SEPARATE
-		
+	)
+	
+	set(Script_SOURCE_2
 		${Script_TMPL}
 		Script/Api/Generated/OgreKitLua.cpp
 	)
@@ -766,12 +776,12 @@ else()
 		source_group(Script/Builtin   FILES ${Script_TMPL})
 		source_group(Script/Include   FILES ${Script_INC})
 		source_group(Script/Header    FILES ${Script_HEADER})
-		source_group(Script/Source    FILES ${Script_SOURCE})
+		source_group(Script/Source    FILES ${Script_SOURCE} ${Script_SOURCE_2})
 	else()
 		source_group(Script\\Builtin   FILES ${Script_TMPL})
 		source_group(Script\\Include   FILES ${Script_INC})
 		source_group(Script\\Header    FILES ${Script_HEADER})
-		source_group(Script\\Source    FILES ${Script_SOURCE})
+		source_group(Script\\Source    FILES ${Script_SOURCE} ${Script_SOURCE_2})
 	endif()
 
 endif()
@@ -986,6 +996,12 @@ ogrekit_add_library(OgreKitCore STATIC
 			${Extra_SOURCE}
 			${Resources_FILES}
 			${Script_SOURCE}     ${Script_HEADER}
+			
+			SEPARATE
+			
+			${Core_SOURCE_2}
+			${Script_SOURCE_2}
+			${Thread_SOURCE_2} 
 	)
 
 config_target_if_iphone_build(OgreKitCore TRUE)
