@@ -80,7 +80,7 @@
 #include "OgreRTShaderSystem.h"
 #endif
 
-using namespace Ogre;
+//using namespace Ogre;
 
 #define DEFAULT_STARTUP_LUA_FILE		"OnInit.lua"
 
@@ -621,7 +621,7 @@ void gkScene::setMainCamera(gkCamera* cam)
 
 	m_startCam = cam;
 
-	Camera* main = m_startCam->getCamera();
+	Ogre::Camera* main = m_startCam->getCamera();
 	GK_ASSERT(main);
 
 
@@ -892,7 +892,7 @@ void gkScene::createInstanceImpl(void)
 	// generic for now, but later scene properties will be used
 	// to extract more detailed management information
 
-	m_manager = Root::getSingleton().createSceneManager(ST_GENERIC, m_name.getFullName());
+	m_manager = Ogre::Root::getSingleton().createSceneManager(Ogre::ST_GENERIC, m_name.getFullName());
 #if OGREKIT_USE_RTSHADER_SYSTEM
 	Ogre::RTShader::ShaderGenerator::getSingleton().addSceneManager(m_manager);
 #endif

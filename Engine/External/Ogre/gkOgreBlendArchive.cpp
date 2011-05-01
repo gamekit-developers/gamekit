@@ -30,9 +30,9 @@
 #include "gkLogger.h"
 #include "External/Ogre/gkOgreBlendArchive.h"
 
-using namespace Ogre;
+//using namespace Ogre;
 
-gkBlendArchive::gkBlendArchive(const String& name, const String& archType )
+gkBlendArchive::gkBlendArchive(const Ogre::String& name, const Ogre::String& archType )
 	: Archive(name, archType)
 {
 }
@@ -50,7 +50,7 @@ void gkBlendArchive::unload()
 {
 }
 
-DataStreamPtr gkBlendArchive::open(const String& filename, bool readOnly) const
+Ogre::DataStreamPtr gkBlendArchive::open(const Ogre::String& filename, bool readOnly) const
 {
 	//TODO: support other type, if need
 	gkTextFile* tf = gkTextManager::getSingletonPtr() ? 
@@ -58,7 +58,7 @@ DataStreamPtr gkBlendArchive::open(const String& filename, bool readOnly) const
 
 	if (!tf) 
 	{
-		return DataStreamPtr();
+		return Ogre::DataStreamPtr();
 	}
 
 	const gkString& buf = tf->getText();
@@ -70,46 +70,46 @@ DataStreamPtr gkBlendArchive::open(const String& filename, bool readOnly) const
 	return memStream;
 }
 
-StringVectorPtr gkBlendArchive::list(bool recursive, bool dirs)
+Ogre::StringVectorPtr gkBlendArchive::list(bool recursive, bool dirs)
 {
 	// directory change requires locking due to saved returns
-	return StringVectorPtr(new StringVector());
+	return Ogre::StringVectorPtr(new Ogre::StringVector());
 }
 
-FileInfoListPtr gkBlendArchive::listFileInfo(bool recursive, bool dirs)
+Ogre::FileInfoListPtr gkBlendArchive::listFileInfo(bool recursive, bool dirs)
 {
-	return FileInfoListPtr(new FileInfoList());
+	return Ogre::FileInfoListPtr(new Ogre::FileInfoList());
 }
 
-StringVectorPtr gkBlendArchive::find(const String& pattern, bool recursive, bool dirs)
+Ogre::StringVectorPtr gkBlendArchive::find(const Ogre::String& pattern, bool recursive, bool dirs)
 {
-	return StringVectorPtr(new StringVector());
+	return Ogre::StringVectorPtr(new Ogre::StringVector());
 }
 
-FileInfoListPtr gkBlendArchive::findFileInfo(const String& pattern, bool recursive, bool dirs) const
+Ogre::FileInfoListPtr gkBlendArchive::findFileInfo(const Ogre::String& pattern, bool recursive, bool dirs) const
 {
-	return FileInfoListPtr(new FileInfoList());
+	return Ogre::FileInfoListPtr(new Ogre::FileInfoList());
 }
 
-bool gkBlendArchive::exists(const String& filename)
+bool gkBlendArchive::exists(const Ogre::String& filename)
 {
 	return gkTextManager::getSingleton().exists(filename);
 }
 
 //--
 
-const String gkBlendArchiveFactory::ARCHIVE_TYPE = "BLEND";
+const Ogre::String gkBlendArchiveFactory::ARCHIVE_TYPE = "BLEND";
 
 gkBlendArchiveFactory::~gkBlendArchiveFactory() 
 {
 }
 
-Archive *gkBlendArchiveFactory::createInstance(const String& name ) 
+Ogre::Archive *gkBlendArchiveFactory::createInstance(const Ogre::String& name ) 
 {
 	return new gkBlendArchive(name, ARCHIVE_TYPE);
 }
 
-void gkBlendArchiveFactory::destroyInstance(Archive* arch) 
+void gkBlendArchiveFactory::destroyInstance(Ogre::Archive* arch) 
 { 
 	delete arch; 
 }

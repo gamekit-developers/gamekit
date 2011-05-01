@@ -38,7 +38,7 @@
 
 #include "LinearMath/btQuickprof.h"
 
-using namespace Ogre;
+//using namespace Ogre;
 
 bool gkUtils::IS_LUA_PACKAGE = false;
 

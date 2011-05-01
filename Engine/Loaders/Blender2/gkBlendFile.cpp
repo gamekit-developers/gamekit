@@ -61,7 +61,7 @@
 #include "gkFont.h"
 #endif
 
-using namespace Ogre;
+//using namespace Ogre;
 
 
 

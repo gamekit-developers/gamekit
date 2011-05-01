@@ -47,7 +47,7 @@
 #endif
 
 
-using namespace Ogre;
+//using namespace Ogre;
 
 UT_IMPLEMENT_SINGLETON(gkWindowSystem);
 

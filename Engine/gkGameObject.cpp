@@ -53,7 +53,7 @@
 
 #include "gkAnimationManager.h"
 
-using namespace Ogre;
+//using namespace Ogre;
 
 
 
@@ -166,8 +166,8 @@ void gkGameObject::cloneImpl(gkGameObject* clob)
 
 void gkGameObject::createInstanceImpl(void)
 {
-	SceneManager* manager = m_scene->getManager();
-	SceneNode* parentNode = 0;
+	Ogre::SceneManager* manager = m_scene->getManager();
+	Ogre::SceneNode* parentNode = 0;
 
 
 	if (!m_scene->isBeingCreated())
@@ -253,7 +253,7 @@ void gkGameObject::postDestroyInstanceImpl(void)
 
 void gkGameObject::destroyInstanceImpl(void)
 {
-	SceneManager* manager = m_scene->getManager();
+	Ogre::SceneManager* manager = m_scene->getManager();
 
 
 	if (!m_scene->isBeingDestroyed())
@@ -630,7 +630,7 @@ void gkGameObject::rotate(const gkQuaternion& dq, int tspace)
 
 	if (m_node != 0)
 	{
-		m_node->rotate(dq, (Node::TransformSpace)tspace);
+		m_node->rotate(dq, (Ogre::Node::TransformSpace)tspace);
 		notifyUpdate();
 
 		// update the rigid body state
@@ -654,7 +654,7 @@ void gkGameObject::yaw(const gkRadian& v, int tspace)
 
 	if (m_node != 0)
 	{
-		m_node->yaw(v, (Node::TransformSpace)tspace);
+		m_node->yaw(v, (Ogre::Node::TransformSpace)tspace);
 		notifyUpdate();
 
 		// update the rigid body state
@@ -678,7 +678,7 @@ void gkGameObject::pitch(const gkRadian& v, int tspace )
 
 	if (m_node != 0)
 	{
-		m_node->pitch(v, (Node::TransformSpace)tspace);
+		m_node->pitch(v, (Ogre::Node::TransformSpace)tspace);
 		notifyUpdate();
 
 		// update the rigid body state
@@ -702,7 +702,7 @@ void gkGameObject::roll(const gkRadian& v, int tspace)
 
 	if (m_node != 0)
 	{
-		m_node->roll(v, (Node::TransformSpace)tspace);
+		m_node->roll(v, (Ogre::Node::TransformSpace)tspace);
 		notifyUpdate();
 
 		// update the rigid body state
@@ -726,7 +726,7 @@ void gkGameObject::translate(const gkVector3& dloc, int tspace)
 
 	if (m_node != 0)
 	{
-		m_node->translate(dloc, (Node::TransformSpace)tspace);
+		m_node->translate(dloc, (Ogre::Node::TransformSpace)tspace);
 		notifyUpdate();
 
 		// update the rigid body state

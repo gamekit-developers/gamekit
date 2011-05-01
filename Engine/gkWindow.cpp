@@ -51,7 +51,7 @@
 
 
 
-using namespace Ogre;
+//using namespace Ogre;
 
 gkWindow::gkWindow() 
 	:	m_sys(0),
@@ -71,7 +71,7 @@ gkWindow::~gkWindow()
 {
 	if (m_rwindow)
 	{				
-		WindowEventUtilities::removeWindowEventListener(m_rwindow, this);
+		Ogre::WindowEventUtilities::removeWindowEventListener(m_rwindow, this);
 	}
 
 	UTsize i;
@@ -148,7 +148,7 @@ bool gkWindow::setupInput(const gkUserDefs& prefs)
 #endif
 		}
 
-		params.insert(std::make_pair("WINDOW", StringConverter::toString(handle)));
+		params.insert(std::make_pair("WINDOW", Ogre::StringConverter::toString(handle)));
 		m_input = OIS::InputManager::createInputSystem(params);
 		m_input->enableAddOnFactory(OIS::InputManager::AddOn_All);
 
@@ -216,7 +216,7 @@ bool gkWindow::createWindow(gkWindowSystem* sys, const gkUserDefs& prefs)
 
 		if (prefs.fullscreen)
 		{
-			Ogre::RenderSystem* rsys = Root::getSingleton().getRenderSystem();
+			Ogre::RenderSystem* rsys = Ogre::Root::getSingleton().getRenderSystem();
 			Ogre::ConfigOptionMap options = rsys->getConfigOptions();
 			Ogre::ConfigOption modeOption = options["Video Mode"];
 			bool found = false;
@@ -258,7 +258,7 @@ bool gkWindow::createWindow(gkWindowSystem* sys, const gkUserDefs& prefs)
 			winsizey = m_requestedHeight;
 		}
 
-		m_rwindow = Root::getSingleton().createRenderWindow(prefs.wintitle,
+		m_rwindow = Ogre::Root::getSingleton().createRenderWindow(prefs.wintitle,
 				   winsizex, winsizey, prefs.fullscreen, &params);
 		m_rwindow->setActive(true);
 
@@ -272,7 +272,7 @@ bool gkWindow::createWindow(gkWindowSystem* sys, const gkUserDefs& prefs)
 			return false;
 		}
 
-		WindowEventUtilities::addWindowEventListener(m_rwindow, this);
+		Ogre::WindowEventUtilities::addWindowEventListener(m_rwindow, this);
 
 	}
 	catch (OIS::Exception& e)
@@ -298,7 +298,7 @@ gkViewport* gkWindow::addViewport(gkCamera* cam, int zorder)
 {	
 	if (m_rwindow)
 	{
-		Viewport* vp =  m_rwindow->addViewport(cam->getCamera(), zorder); GK_ASSERT(vp);
+		Ogre::Viewport* vp =  m_rwindow->addViewport(cam->getCamera(), zorder); GK_ASSERT(vp);
 
 		gkViewport* viewport = new gkViewport(this, vp);
 		viewport->setDimension(m_framingType);
@@ -358,7 +358,7 @@ void gkWindow::dispatch(void)
 void gkWindow::process(void)
 {
 	if (!m_useExternalWindow)
-		WindowEventUtilities::messagePump();
+		Ogre::WindowEventUtilities::messagePump();
 }
 
 void gkWindow::clearStates(void)
@@ -566,16 +566,16 @@ bool gkWindow::axisMoved(const OIS::JoyStickEvent& arg, int axis)
 	return true;
 }
 
-void gkWindow::windowResized(RenderWindow* rw)
+void gkWindow::windowResized(Ogre::RenderWindow* rw)
 {
 	UTsize i;
 	for (i = 0; i < m_viewports.size(); ++i)
 	{
 		m_viewports[i]->setDimension(m_viewports[i]->getFraming());
-		Viewport* vp = m_viewports[i]->getViewport();
+		Ogre::Viewport* vp = m_viewports[i]->getViewport();
 
 		// We assume all viewports are "main" vieport
-		Camera* cam = vp->getCamera();
+		Ogre::Camera* cam = vp->getCamera();
 		cam->setAspectRatio(gkScalar(vp->getActualWidth()) / gkScalar(vp->getActualHeight()));
 
 		const OIS::MouseState& state = m_imouse->getMouseState();
@@ -598,7 +598,7 @@ void gkWindow::windowResized(RenderWindow* rw)
 }
 
 
-void gkWindow::windowClosed(RenderWindow* rw)
+void gkWindow::windowClosed(Ogre::RenderWindow* rw)
 {
 	GK_ASSERT(m_sys);
 	if (m_sys->getMainWindow() == this)

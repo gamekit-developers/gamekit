@@ -49,15 +49,15 @@ set(Core_SOURCE
 	gkUserDefs.cpp
 	gkUtils.cpp
 	#gkWindowSystem.cpp
-	#gkWindow.cpp
-	#gkViewport.cpp
+	gkWindow.cpp
+	gkViewport.cpp
 	gkVariable.cpp
 )
 
 set(Core_SOURCE_2
 	gkWindowSystem.cpp
-	gkWindow.cpp
-	gkViewport.cpp
+	#gkWindow.cpp
+	#gkViewport.cpp
 )	
 
 set(Core_HEADER

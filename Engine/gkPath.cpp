@@ -59,7 +59,7 @@ const gkString gkPath::SEPERATOR = "\\";
 const gkString gkPath::SEPERATOR = "/";
 #endif
 
-using namespace Ogre;
+//using namespace Ogre;
 
 
 void gkGetCurrentDir(gkString& buf)
@@ -106,7 +106,7 @@ gkString gkPath::getAbsPath(void) const
 	if (!exists())
 	{
 		// cannot get path
-		return StringUtil::BLANK;
+		return Ogre::StringUtil::BLANK;
 	}
 
 	if (isAbs())
@@ -206,7 +206,7 @@ gkString gkPath::base(void) const
 	split(arr);
 
 	if (arr.empty())
-		return StringUtil::BLANK;
+		return Ogre::StringUtil::BLANK;
 	return arr.at(arr.size() - 1);
 }
 
@@ -217,28 +217,28 @@ gkString gkPath::extension(void) const
 	gkString bn = base();
 
 	if (bn.empty())
-		return StringUtil::BLANK;
+		return Ogre::StringUtil::BLANK;
 
 	gkStringVector arr;
 	utStringUtils::split(arr, bn, ".");
 	if (arr.empty())
-		return StringUtil::BLANK;
+		return Ogre::StringUtil::BLANK;
 	return gkString(".") + arr.at(arr.size() - 1);
 }
 
 
 void gkPath::normalize(void) const
 {
-	StringUtil::replaceAll(m_path, "\\\\", "/");
+	Ogre::StringUtil::replaceAll(m_path, "\\\\", "/");
 }
 
 
 void gkPath::normalizePlatform(void) const
 {
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
-	StringUtil::replaceAll(m_path, "/", "\\");
+	Ogre::StringUtil::replaceAll(m_path, "/", "\\");
 #else
-	StringUtil::replaceAll(m_path, "\\\\", "/");
+	Ogre::StringUtil::replaceAll(m_path, "\\\\", "/");
 #endif
 }
 
@@ -261,7 +261,9 @@ bool gkPath::isAbs(void) const
 gkString gkPath::getBundlePath(void) const
 {
 #ifdef __APPLE__
+#ifndef MAXPATHLEN
 #define MAXPATHLEN 512
+#endif
 	CFURLRef bundleURL;
 	CFStringRef pathStr;
 	static char path[MAXPATHLEN];

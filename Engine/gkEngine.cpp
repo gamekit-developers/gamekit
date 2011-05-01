@@ -83,7 +83,7 @@
 #include "OgreRTShaderSystem.h"
 #endif
 
-using namespace Ogre;
+//using namespace Ogre;
 
 
 // shorthand
@@ -94,7 +94,7 @@ using namespace Ogre;
 gkScalar gkEngine::m_tickRate = ENGINE_TICKS_PER_SECOND;
 
 
-class gkOgreEnginePrivate : public FrameListener, public gkTickState
+class gkOgreEnginePrivate : public Ogre::FrameListener, public gkTickState
 {
 public:
 	Private(gkEngine* par)
@@ -132,9 +132,9 @@ public:
 	void endTickImpl(void);
 
 
-	bool frameStarted(const FrameEvent& evt);
-	bool frameRenderingQueued(const FrameEvent& evt);
-	bool frameEnded(const FrameEvent& evt);
+	bool frameStarted(const Ogre::FrameEvent& evt);
+	bool frameRenderingQueued(const Ogre::FrameEvent& evt);
+	bool frameEnded(const Ogre::FrameEvent& evt);
 
 	gkEngine*                   engine;
 	gkWindowSystem*             windowsystem;       // current window system
@@ -206,13 +206,13 @@ void gkEngine::initialize()
 		return;
 	}
 
-	Root* root = new Root("", "");
+	Ogre::Root* root = new Ogre::Root("", "");
 	m_private->root = root;
 	m_private->plugin_factory->createRenderSystem(root, defs.rendersystem);
 	m_private->plugin_factory->createParticleSystem(root);
 	m_private->archive_factory->addArchiveFactory();	
 
-	const RenderSystemList& renderers = root->getAvailableRenderers();
+	const Ogre::RenderSystemList& renderers = root->getAvailableRenderers();
 	if (renderers.empty())
 	{
 		gkPrintf("No rendersystems present\n");
@@ -418,22 +418,22 @@ void gkEngine::loadResources(const gkString& name)
 
 	try
 	{
-		ConfigFile fp;
+		Ogre::ConfigFile fp;
 		fp.load(name);
 
-		ResourceGroupManager* resourceManager = ResourceGroupManager::getSingletonPtr();
-		ConfigFile::SectionIterator cit = fp.getSectionIterator();
+		Ogre::ResourceGroupManager* resourceManager = Ogre::ResourceGroupManager::getSingletonPtr();
+		Ogre::ConfigFile::SectionIterator cit = fp.getSectionIterator();
 
 		while (cit.hasMoreElements())
 		{
 			gkString elementname = cit.peekNextKey();
-			ConfigFile::SettingsMultiMap* ptr = cit.getNext();
-			for (ConfigFile::SettingsMultiMap::iterator dit = ptr->begin(); dit != ptr->end(); ++dit)
+			Ogre::ConfigFile::SettingsMultiMap* ptr = cit.getNext();
+			for (Ogre::ConfigFile::SettingsMultiMap::iterator dit = ptr->begin(); dit != ptr->end(); ++dit)
 				resourceManager->addResourceLocation(dit->second, dit->first, elementname);
 		}
-		ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
+		Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 	}
-	catch (Exception& e)
+	catch (Ogre::Exception& e)
 	{
 		gkLogMessage("Engine: Failed to load resource file!\n" << e.getDescription());
 	}
@@ -600,7 +600,7 @@ unsigned long gkEngine::getCurTime()
 	return m_private->curTime;
 }
 
-bool gkOgreEnginePrivate::frameStarted(const FrameEvent& evt)
+bool gkOgreEnginePrivate::frameStarted(const Ogre::FrameEvent& evt)
 {
 	gkStats::getSingleton().startClock();
 
@@ -609,7 +609,7 @@ bool gkOgreEnginePrivate::frameStarted(const FrameEvent& evt)
 
 
 
-bool gkOgreEnginePrivate::frameRenderingQueued(const FrameEvent& evt)
+bool gkOgreEnginePrivate::frameRenderingQueued(const Ogre::FrameEvent& evt)
 {
 	gkStats::getSingleton().stopRenderClock();
 
@@ -625,7 +625,7 @@ bool gkOgreEnginePrivate::frameRenderingQueued(const FrameEvent& evt)
 
 
 
-bool gkOgreEnginePrivate::frameEnded(const FrameEvent& evt)
+bool gkOgreEnginePrivate::frameEnded(const Ogre::FrameEvent& evt)
 {
 	gkStats::getSingleton().stopBufSwapLodClock();
 	gkStats::getSingleton().nextFrame();
