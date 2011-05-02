@@ -15,4 +15,5 @@ ENDIF(COMMAND cmake_policy)
    
 
 
-SUBDIRS( src/BulletSoftBody src/BulletCollision src/BulletDynamics src/LinearMath )
+SUBDIRS( #src/BulletSoftBody 
+	src/BulletCollision src/BulletDynamics src/LinearMath )

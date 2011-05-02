@@ -954,7 +954,7 @@ include_directories(
 #Reconfigure external Bullet libraries ${OGREKIT_BULLET_LIBS} before link 
 config_target_if_iphone_build(BulletDynamics TRUE)
 config_target_if_iphone_build(BulletCollision TRUE)
-config_target_if_iphone_build(BulletSoftBody TRUE)
+#config_target_if_iphone_build(BulletSoftBody TRUE)
 config_target_if_iphone_build(LinearMath TRUE)
 
 link_libraries(
