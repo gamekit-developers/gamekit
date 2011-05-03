@@ -29,7 +29,7 @@ subdirs(ZLib)
 
 # ---------------------------------------------------------
 # FreeImage	SubDir
-set(fi_SRCS
+set(fi_CORE_SRCS
 	FreeImage/BitmapAccess.cpp
 	FreeImage/CacheFile.cpp
 	FreeImage/ColorLookup.cpp
@@ -50,9 +50,66 @@ set(fi_SRCS
 	FreeImage/MemoryIO.cpp
 	FreeImage/MultiPage.cpp
 	FreeImage/NNQuantizer.cpp
-	FreeImage/PSDParser.cpp
+	#FreeImage/PSDParser.cpp
 	FreeImage/PixelAccess.cpp
 	FreeImage/Plugin.cpp
+	#FreeImage/PluginBMP.cpp
+	#FreeImage/PluginCUT.cpp
+	#FreeImage/PluginDDS.cpp
+	#FreeImage/PluginEXR.cpp
+	#FreeImage/PluginG3.cpp
+	#FreeImage/PluginGIF.cpp
+	#FreeImage/PluginHDR.cpp
+	#FreeImage/PluginICO.cpp
+	#FreeImage/PluginIFF.cpp
+	#FreeImage/PluginJ2K.cpp
+	#FreeImage/PluginJP2.cpp
+	FreeImage/PluginJPEG.cpp
+	#FreeImage/PluginKOALA.cpp
+	#FreeImage/PluginMNG.cpp
+	#FreeImage/PluginPCD.cpp
+	#FreeImage/PluginPCX.cpp
+	#FreeImage/PluginPFM.cpp
+	#FreeImage/PluginPICT.cpp
+	FreeImage/PluginPNG.cpp
+	#FreeImage/PluginPNM.cpp
+	#FreeImage/PluginPSD.cpp
+	#FreeImage/PluginRAS.cpp
+	#FreeImage/PluginRAW.cpp
+	#FreeImage/PluginSGI.cpp
+	FreeImage/PluginTARGA.cpp
+	#FreeImage/PluginTIFF.cpp
+	#FreeImage/PluginWBMP.cpp
+	#FreeImage/PluginXBM.cpp
+	#FreeImage/PluginXPM.cpp
+	#FreeImage/TIFFLogLuv.cpp
+	#FreeImage/ToneMapping.cpp
+	#FreeImage/WuQuantizer.cpp
+	FreeImage/ZLibInterface.cpp
+	#FreeImage/tmoColorConvert.cpp
+	#FreeImage/tmoDrago03.cpp
+	#FreeImage/tmoFattal02.cpp
+	#FreeImage/tmoReinhard05.cpp
+)
+
+set(fi_CORE_HDRS
+	CacheFile.h
+	FreeImage.h
+	FreeImageIO.h
+	Plugin.h
+	Quantizers.h
+)	
+
+set(fi_OTHER_HDRS	
+	ToneMapping.h
+	Utilities.h
+	DeprecationManager/DeprecationMgr.h
+	FreeImage/PSDParser.h
+)	
+
+set(fi_OTHER_SRCS
+	FreeImage/PSDParser.cpp
+	
 	FreeImage/PluginBMP.cpp
 	FreeImage/PluginCUT.cpp
 	FreeImage/PluginDDS.cpp
@@ -64,20 +121,20 @@ set(fi_SRCS
 	FreeImage/PluginIFF.cpp
 	FreeImage/PluginJ2K.cpp
 	FreeImage/PluginJP2.cpp
-	FreeImage/PluginJPEG.cpp
+	
 	FreeImage/PluginKOALA.cpp
 	FreeImage/PluginMNG.cpp
 	FreeImage/PluginPCD.cpp
 	FreeImage/PluginPCX.cpp
 	FreeImage/PluginPFM.cpp
 	FreeImage/PluginPICT.cpp
-	FreeImage/PluginPNG.cpp
+	
 	FreeImage/PluginPNM.cpp
 	FreeImage/PluginPSD.cpp
 	FreeImage/PluginRAS.cpp
 	FreeImage/PluginRAW.cpp
 	FreeImage/PluginSGI.cpp
-	FreeImage/PluginTARGA.cpp
+	#FreeImage/PluginTARGA.cpp
 	FreeImage/PluginTIFF.cpp
 	FreeImage/PluginWBMP.cpp
 	FreeImage/PluginXBM.cpp
@@ -85,12 +142,23 @@ set(fi_SRCS
 	FreeImage/TIFFLogLuv.cpp
 	FreeImage/ToneMapping.cpp
 	FreeImage/WuQuantizer.cpp
-	FreeImage/ZLibInterface.cpp
+	
 	FreeImage/tmoColorConvert.cpp
 	FreeImage/tmoDrago03.cpp
 	FreeImage/tmoFattal02.cpp
 	FreeImage/tmoReinhard05.cpp
 )
+
+if (APPLE)
+	source_group(FreeImageCore  FILES ${fi_CORE_SRCS} ${fi_CORE_HDRS})
+	source_group(FreeImageOther FILES ${fi_OTHER_SRCS} ${fi_OTHER_HDRS})
+else()
+	source_group(FreeImage\\Core\\Source FILES ${fi_CORE_SRCS})
+	source_group(FreeImage\\Core\\Header FILES ${fi_CORE_HDRS})
+	source_group(FreeImage\\Other\\Source FILES ${fi_OTHER_SRCS})
+	source_group(FreeImage\\Other\\Header FILES ${fi_OTHER_HDRS})
+endif()
+
 
 # ---------------------------------------------------------
 # FreeImageToolKit SubDir
@@ -114,8 +182,32 @@ set(fitk_HDRS
 	FreeImageToolkit/Resize.h
 )
 
+if (APPLE)
+	source_group(ToolKit FILES ${fitk_SRCS} ${fitk_HDRS})
+else()
+	source_group(ToolKit\\Source FILES ${fitk_SRCS})
+	source_group(ToolKit\\Header FILES ${fitk_HDRS})
+endif()	
+
 # ---------------------------------------------------------
 # LibJPEG SubDir
+
+set(fi_LibJPEG_HDRS
+	LibJPEG/cderror.h
+	LibJPEG/cdjpeg.h
+	LibJPEG/jchuff.h
+	LibJPEG/jconfig.h
+	LibJPEG/jdct.h
+	LibJPEG/jdhuff.h
+	LibJPEG/jerror.h
+	LibJPEG/jinclude.h
+	LibJPEG/jmemsys.h
+	LibJPEG/jmorecfg.h
+	LibJPEG/jpegint.h
+	LibJPEG/jpeglib.h
+	LibJPEG/jversion.h
+	LibJPEG/transupp.h
+)	
 
 set(fi_LibJPEG_SRCS
 	#LibJPEG/cdjpeg.c
@@ -185,10 +277,14 @@ set(fi_LibJPEG_SRCS
 	LibJPEG/wrrle.c
 	LibJPEG/wrtarga.c
 )
+
 if (APPLE)
-	set(fi_LibJPEG_PLAT
-	)
-endif (APPLE)
+	source_group(LibJPEG FILES ${fi_LibJPEG_SRCS} ${fi_LibJPEG_HDRS})
+else()
+	source_group(LibJPEG\\Source FILES ${fi_LibJPEG_SRCS})
+	source_group(LibJPEG\\Header FILES ${fi_LibJPEG_HDRS})
+endif()	
+
 
 # ---------------------------------------------------------
 # LibMNG SubDir
@@ -238,6 +334,13 @@ set(fi_LibMNG_HDRS
 	LibMNG/libmng_zlib.h
 )
 
+if (APPLE)
+	source_group(LibMNG FILES ${fi_LibMNG_SRCS} ${fi_LibMNG_HDRS})
+else()
+	source_group(LibMNG\\Source FILES ${fi_LibMNG_SRCS})
+	source_group(LibMNG\\Header FILES ${fi_LibMNG_HDRS})
+endif()	
+
 # ---------------------------------------------------------
 # LibOpenJPEG SubDir
 set(fi_LibOpenJPEG_SRCS	
@@ -286,6 +389,12 @@ set(fi_LibOpenJPEG_HDRS
 	LibOpenJPEG/tgt.h
 )
 
+if (APPLE)
+	source_group(LibOpenJPEG FILES ${fi_LibOpenJPEG_SRCS} ${fi_LibOpenJPEG_HDRS})
+else()	
+	source_group(LibOpenJPEG\\Source FILES ${fi_LibOpenJPEG_SRCS})
+	source_group(LibOpenJPEG\\Header FILES ${fi_LibOpenJPEG_HDRS})
+endif()	
 
 # ---------------------------------------------------------
 # LibPNG SubDir
@@ -313,6 +422,13 @@ set(fi_LibPNG_HDRS
 	LibPNG/png.h
 	LibPNG/pngconf.h
 )
+
+if (APPLE)
+	source_group(LibPNG FILES ${fi_LibPNG_SRCS} ${fi_LibPNG_HDRS})
+else()
+	source_group(LibPNG\\Source FILES ${fi_LibPNG_SRCS})
+	source_group(LibPNG\\Header FILES ${fi_LibPNG_HDRS})
+endif()	
 
 # ---------------------------------------------------------
 # LibTIFF SubDir
@@ -355,9 +471,33 @@ set(fi_LibTIFF_SRCS
 	LibTIFF/tif_write.c
 	LibTIFF/tif_zip.c)
 
-set(fi_LibTIFF_HDRS	
+#set(fi_LibTIFF_HDRS	
+#	LibTIFF/tiff.h
+#	)
+	
+set(fi_LibTIFF_HDRS
+	LibTIFF/t4.h
 	LibTIFF/tiff.h
-	)
+	LibTIFF/tiffconf.vc.h
+	LibTIFF/tiffconf.wince.h
+	LibTIFF/tiffio.h
+	LibTIFF/tiffiop.h
+	LibTIFF/tiffvers.h
+	LibTIFF/tif_config.h
+	LibTIFF/tif_config.vc.h
+	LibTIFF/tif_config.wince.h
+	LibTIFF/tif_dir.h
+	LibTIFF/tif_fax3.h
+	LibTIFF/tif_predict.h
+	LibTIFF/uvcode.h
+)	
+
+if (APPLE)
+	source_group(LibTIFF FILES ${fi_LibTIFF_SRCS} ${fi_LibTIFF_HDRS})
+else()
+	source_group(LibTIFF\\Source FILES ${fi_LibTIFF_SRCS})
+	source_group(LibTIFF\\Header FILES ${fi_LibTIFF_HDRS})
+endif()	
 
 # ---------------------------------------------------------
 # Metadata SubDir
@@ -377,16 +517,44 @@ set(fi_Metadata_HDRS
 	Metadata/FreeImageTag.h
 )
 
+if (APPLE)
+	source_group(FreeImage/Metadata FILES ${fi_Metadata_SRCS} ${fi_Metadata_HDRS})
+else()
+	source_group(FreeImage\\Metadata\\Source FILES ${fi_Metadata_SRCS})
+	source_group(FreeImage\\Metadata\\Header FILES ${fi_Metadata_HDRS})
+endif()	
+
 # ---------------------------------------------------------
 # LibRawLite SubDir
 
-set(fi_rawlite_SRCS 
+set(fi_LibRawLite_SRCS 
 	LibRawLite/src/libraw_cxx.cpp
 	LibRawLite/src/libraw_c_api.cpp
 	LibRawLite/internal/dcraw_common.cpp
 	LibRawLite/internal/dcraw_fileio.cpp
 	)
 
+
+set(fi_LibRawLite_HDRS
+	LibRawLite/internal/defines.h
+	LibRawLite/internal/libraw_internal_funcs.h
+	LibRawLite/internal/var_defines.h
+	LibRawLite/libraw/libraw.h
+	LibRawLite/libraw/libraw_alloc.h
+	LibRawLite/libraw/libraw_const.h
+	LibRawLite/libraw/libraw_datastream.h
+	LibRawLite/libraw/libraw_internal.h
+	LibRawLite/libraw/libraw_types.h
+	LibRawLite/libraw/libraw_version.h
+)	
+
+if (APPLE)
+	source_group(LibRawLite FILES ${fi_LibRawLite_SRCS} ${fi_LibRawLite_HDRS})
+else()	
+	source_group(LibRawLite\\Source FILES ${fi_LibRawLite_SRCS})
+	source_group(LibRawLite\\Header FILES ${fi_LibRawLite_HDRS})
+endif()	
+	
 
 # ---------------------------------------------------------
 # OpenEXR SubDir
@@ -397,6 +565,13 @@ set(fi_half_HDRS
 	OpenEXR/Half/halfFunction.h
 	OpenEXR/Half/halfLimits.h
 )
+
+if (APPLE)
+	source_group(OpenEXR/Half FILES ${fi_half_SRCS} ${fi_half_HDRS})
+else()	
+	source_group(OpenEXR\\Half\\Source FILES ${fi_half_SRCS})
+	source_group(OpenEXR\\Half\\Header FILES ${fi_half_HDRS})
+endif()	
 
 set(fi_Iex_SRCS
 	OpenEXR/Iex/IexBaseExc.cpp
@@ -411,6 +586,13 @@ set(fi_Iex_HDRS
 	OpenEXR/Iex/IexMathExc.h
 	OpenEXR/Iex/IexThrowErrnoExc.h
 )
+
+if (APPLE)
+	source_group(OpenEXR/Iex FILES ${fi_Iex_SRCS} ${fi_Iex_HDRS})
+else()	
+	source_group(OpenEXR\\Iex\\Source FILES ${fi_Iex_SRCS})
+	source_group(OpenEXR\\Iex\\Header FILES ${fi_Iex_HDRS})
+endif()	
 
 set(fi_IlmImf_SRCS
 	OpenEXR/IlmImf/ImfAttribute.cpp
@@ -543,11 +725,16 @@ set(fi_IlmImf_HDRS
 	#OpenEXR/IlmImf/b44ExpLogTable.h
 )
 
-
+if (APPLE)
+	source_group(OpenEXR/IlmImf FILES ${fi_IlmImf_SRCS} ${fi_IlmImf_HDRS})
+else()	
+	source_group(OpenEXR\\IlmImf\\Source FILES ${fi_IlmImf_SRCS})
+	source_group(OpenEXR\\IlmImf\\Header FILES ${fi_IlmImf_HDRS})
+endif()	
 
 set(fi_IlmThread_SRCS
-		OpenEXR/IlmThread/IlmThreadPool.cpp
-		)
+	OpenEXR/IlmThread/IlmThreadPool.cpp
+)
 
 if (WIN32)
 	set(fi_IlmThread_SRCS_PLAT
@@ -573,6 +760,14 @@ set(fi_IlmThread_HDRS
 	OpenEXR/IlmThread/IlmThreadPool.h
 	OpenEXR/IlmThread/IlmThreadSemaphore.h
 )
+
+if (APPLE)
+	source_group(OpenEXR/IlmThread FILES ${fi_IlmThread_SRCS} ${fi_IlmThread_HDRS} ${fi_IlmThread_SRCS_PLAT})
+else()	
+	source_group(OpenEXR\\IlmThread\\Source FILES ${fi_IlmThread_SRCS})
+	source_group(OpenEXR\\IlmThread\\Source\\Win32 FILES ${fi_IlmThread_SRCS_PLAT})
+	source_group(OpenEXR\\IlmThread\\Header FILES ${fi_IlmThread_HDRS})
+endif()	
 
 set(fi_Imath_SRCS 
 	OpenEXR/Imath/ImathBox.cpp
@@ -615,6 +810,12 @@ set(fi_Imath_HDRS
 	OpenEXR/Imath/ImathVecAlgo.h
 )
 
+if (APPLE)
+	source_group(OpenEXR/Imath FILES ${fi_Imath_SRCS} ${fi_Imath_HDRS})
+else()	
+	source_group(OpenEXR\\Imath\\Source FILES ${fi_Imath_SRCS})
+	source_group(OpenEXR\\Imath\\Header FILES ${fi_Imath_HDRS})
+endif()	
 
 
 
@@ -626,33 +827,53 @@ if (WIN32)
 endif(WIN32)
 
 # ---------------------------------------------------------
-set(ALLSOURCE
-	${fi_SRCS}
-	${fitk_SRCS}
-	${fitk_HDRS}
-	${fi_LibJPEG_SRCS}
-	${fi_LibJPEG_PLAT}
-	${fi_LibMNG_SRCS}
-	${fi_LibOpenJPEG_SRCS}
-	${fi_LibPNG_SRCS}
-	${fi_LibTIFF_PLAT}
-	${fi_LibTIFF_SRCS}
-	${fi_Metadata_SRCS}
-	${fi_Metadata_HDRS}
-	${fi_half_SRCS}	
-	${fi_half_HDRS}
-	${fi_Iex_SRCS}
-	${fi_Iex_HDRS}
-	${fi_IlmImf_SRCS}
-	${fi_IlmImf_HDRS}
-	${fi_Imath_SRCS}
-	${fi_Imath_HDRS}
-	${fi_IlmThread_SRCS}
-	${fi_IlmThread_HDRS}
-	${fi_IlmThread_SRCS_PLAT}
-	## ${fi_rawlite_SRCS}
-	)
+set(CORE_SOURCE
+	${fi_CORE_SRCS}			${fi_CORE_HDRS}
+	
+	${fi_LibJPEG_SRCS}		${fi_LibJPEG_HDRS}
+	${fi_LibOpenJPEG_SRCS}	${fi_LibOpenJPEG_HDRS}
+	${fi_LibPNG_SRCS}		${fi_LibPNG_HDRS}
+	
+	${fi_Metadata_SRCS}		${fi_Metadata_HDRS}
+	${fitk_SRCS}			${fitk_HDRS}
+)
 
-add_library(${OGREKIT_FREEIMAGE_TARGET}	${ALLSOURCE})
+set(OTHER_SOURCE
+	${fi_OTHER_SRCS}		${fi_OTHER_HDRS}
+	${fi_LibTIFF_SRCS}		${fi_LibTIFF_HDRS}
+	
+	#${fi_LibJPEG_SRCS}
+	#${fi_LibJPEG_PLAT}
+	${fi_LibMNG_SRCS}		${fi_LibMNG_HDRS}
+	#${fi_LibOpenJPEG_SRCS}
+	#${fi_LibPNG_SRCS}
+	
+	
+	
+	
+	
+	# ${fi_rLibRawLite_SRCS} ${fi_LibRawLite_HDRS}
+)
+	
+set(EXR_SOURCE
+	${fi_half_SRCS}			${fi_half_HDRS}	
+	${fi_Iex_SRCS}			${fi_Iex_HDRS}	
+	${fi_IlmImf_SRCS}		${fi_IlmImf_HDRS}
+	${fi_Imath_SRCS} 		${fi_Imath_HDRS}
+	
+	${fi_IlmThread_SRCS}	${fi_IlmThread_HDRS}	${fi_IlmThread_SRCS_PLAT}
+)	
+	
+set(ALL_SOURCE	${CORE_SOURCE})
+
+	
+if (OGREKIT_MINIMAL_FREEIMAGE_CODEC)
+	add_definitions(-DOGREKIT_MINIMAL_FREEIMAGE_CODEC=1)
+else()
+	list(APPEND ALL_SOURCE ${OTHER_SOURCE})
+	list(APPEND ALL_SOURCE ${EXR_SOURCE})
+endif()	
+
+add_library(${OGREKIT_FREEIMAGE_TARGET}	${ALL_SOURCE})
 
 config_target_if_iphone_build(${OGREKIT_FREEIMAGE_TARGET} TRUE)
