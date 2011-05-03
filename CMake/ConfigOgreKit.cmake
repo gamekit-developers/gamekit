@@ -35,7 +35,7 @@ macro (configure_ogrekit ROOT OGREPATH)
 	option(OGREKIT_UPDATE_FBT_DOCS			"Update FBT API documentation(Requires doxygen)." OFF)
 	option(OGREKIT_DISABLE_ZIP				"Disable external .zip resource loading" ON)
 	option(OGREKIT_USE_STATIC_FREEIMAGE		"Compile and link statically FreeImage and all its plugins" ON)	
-	option(OGREKIT_MINIMAL_FREEIMAGE_CODEC	"Compile minimal FreeImage Codec(PNG/JPEN)" ON)
+	option(OGREKIT_MINIMAL_FREEIMAGE_CODEC	"Compile minimal FreeImage Codec(PNG/JPNG/TGA)" OFF)
 	option(OGREKIT_ENABLE_UNITTESTS			"Enable / Disable UnitTests" OFF)
 	#option(OGREKIT_USE_FILETOOLS			"Compile FBT file format utilities" ON)
 	option(OGREKIT_USE_BPARSE				"Compile bParse file format utilities" ON) #FBT alternative 
