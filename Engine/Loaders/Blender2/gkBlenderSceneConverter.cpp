@@ -408,6 +408,7 @@ void gkBlenderSceneConverter::convertObjectProperties(gkGameObject* gobj, Blende
 
 void gkBlenderSceneConverter::convertObjectParticles(gkGameObject* gobj, Blender::Object* bobj)
 {	
+#ifdef OGREKIT_USE_PARTICLE
 	for (Blender::ParticleSystem* ps = (Blender::ParticleSystem*)bobj->particlesystem.first; ps; ps = ps->next)
 	{
 		gkString name = ps->name;
@@ -457,6 +458,7 @@ void gkBlenderSceneConverter::convertObjectParticles(gkGameObject* gobj, Blender
 			}
 		}
 	}
+#endif
 }
 
 void gkBlenderSceneConverter::convertObjectConstraints(gkGameObject* gobj, Blender::Object* bobj)

@@ -151,6 +151,8 @@ void gkRenderFactoryPrivate::createRenderSystem(Ogre::Root* r, OgreRenderSystem 
 
 void gkRenderFactoryPrivate::createParticleSystem(Ogre::Root* r)
 {
+#ifdef OGREKIT_USE_PARTICLE
 	m_particleSystem = new Ogre::ParticleFXPlugin();
 	r->installPlugin(m_particleSystem);
+#endif
 }

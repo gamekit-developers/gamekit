@@ -242,7 +242,9 @@ void gkEngine::initialize()
 	new gkMessageManager();
 	new gkMeshManager();
 	new gkSkeletonManager();
+#ifdef OGREKIT_USE_PARTICLE
 	new gkParticleManager();
+#endif
 	new gkGroupManager();
 	new gkGameObjectManager();
 
@@ -273,9 +275,9 @@ void gkEngine::initialize()
 
 	// create the builtin resource group
 	gkResourceGroupManager::getSingleton().createResourceGroup(GK_BUILTIN_GROUP);
-
+#ifdef OGREKIT_USE_PARTICLE
 	gkParticleManager::getSingleton().initialize();
-
+#endif
 	// debug info
 	m_private->debug = new gkDebugScreen();
 	m_private->debug->initialize();
@@ -350,7 +352,9 @@ void gkEngine::finalize()
 	delete gkMessageManager::getSingletonPtr();
 	delete gkMeshManager::getSingletonPtr();
 	delete gkSkeletonManager::getSingletonPtr();
+#ifdef OGREKIT_USE_PARTICLE
 	delete gkParticleManager::getSingletonPtr();
+#endif
 	delete gkAnimationManager::getSingletonPtr();
 
 

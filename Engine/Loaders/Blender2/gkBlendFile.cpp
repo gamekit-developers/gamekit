@@ -297,6 +297,7 @@ void gkBlendFile::buildAllTextures(void)
 
 void gkBlendFile::buildAllParticles(void)
 {
+#ifdef OGREKIT_USE_PARTICLE
 	gkParticleConverter conv(m_group, m_animFps);
 
 	gkBlendListIterator iter = m_file->getParticleList();
@@ -306,6 +307,7 @@ void gkBlendFile::buildAllParticles(void)
 
 		conv.convertParticle(ps);
 	}
+#endif
 }
 
 void gkBlendFile::buildAllSounds(void)

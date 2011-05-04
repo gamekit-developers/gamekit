@@ -24,6 +24,7 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
+#include "gkSettings.h"
 #include "gkGameObjectManager.h"
 #include "gkGameObject.h"
 #include "gkCamera.h"
@@ -131,7 +132,9 @@ gkResource* gkGameObjectManager::createImpl(const gkResourceName& name, const gk
 	case GK_CAMERA:    return new gkCamera(this, name, handle);
 	case GK_ENTITY:    return new gkEntity(this, name, handle);
 	case GK_SKELETON:  return new gkSkeleton(this, name, handle);
+#ifdef OGREKIT_USE_PARTICLE
 	case GK_PARTICLES: return new gkOgreParticleObject(this, name, handle);
+#endif
 	}
 	return new gkGameObject(this, name, handle);
 }

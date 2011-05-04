@@ -258,6 +258,8 @@ endif()
 # Particles Files
 # ---------------------------------------------------------
 
+if(OGREKIT_USE_PARTICLE)
+
 set(Particles_SOURCE
 	# ----- Source -----
 	Particles/gkParticleObject.cpp
@@ -295,6 +297,7 @@ else()
 	source_group(Particles\\Source FILES ${Particles_SOURCE})
 endif()
 
+endif()
 
 # ---------------------------------------------------------
 # Logic Nodes
@@ -485,8 +488,7 @@ set(Blend_SOURCE
 	Loaders/Blender2/Converters/gkAnimationConverter.cpp
 	Loaders/Blender2/Converters/gkLogicBrickConverter.cpp
 	Loaders/Blender2/Converters/gkMeshConverter.cpp
-	Loaders/Blender2/Converters/gkSkeletonConverter.cpp
-	Loaders/Blender2/Converters/gkParticleConverter.cpp
+	Loaders/Blender2/Converters/gkSkeletonConverter.cpp	
 )
 
 set(Blend_HEADER
@@ -501,9 +503,13 @@ set(Blend_HEADER
 	Loaders/Blender2/Converters/gkAnimationConverter.h
 	Loaders/Blender2/Converters/gkLogicBrickConverter.h
 	Loaders/Blender2/Converters/gkMeshConverter.h
-	Loaders/Blender2/Converters/gkSkeletonConverter.h
-	Loaders/Blender2/Converters/gkParticleConverter.h
+	Loaders/Blender2/Converters/gkSkeletonConverter.h	
 )
+
+if(OGREKIT_USE_PARTICLE)
+	list(APPEND Blend_SOURCE Loaders/Blender2/Converters/gkParticleConverter.cpp)
+	list(APPEND Blend_HEADER Loaders/Blender2/Converters/gkParticleConverter.h)
+endif()
 
 if(APPLE)
 	source_group(Blender FILES  ${Blend_HEADER} ${Blend_SOURCE})
@@ -959,9 +965,13 @@ config_target_if_iphone_build(LinearMath TRUE)
 
 link_libraries(
 	${OGREKIT_OGRE_LIBS}
-	Plugin_ParticleFX
+	#Plugin_ParticleFX
 	${OGREKIT_BULLET_LIBS}
 	)
+	
+if (OGREKIT_USE_PARTICLE)
+	link_libraries(Plugin_ParticleFX)
+endif()
 
 link_directories(${OGRE_LIBDIR})
 include_directories(${OGREKIT_BULLET_INCLUDE})
