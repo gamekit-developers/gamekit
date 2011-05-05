@@ -24,8 +24,8 @@
   3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------
 */
-#ifndef _gkSkeletonLoader_h_
-#define _gkSkeletonLoader_h_
+#ifndef _gkSkeletonConverter_h_
+#define _gkSkeletonConverter_h_
 
 class gkSkeletonResource;
 class gkBone;
@@ -39,10 +39,10 @@ struct bArmature;
 
 
 
-class gkSkeletonLoader
+class gkSkeletonConverter
 {
 public:
-	gkSkeletonLoader() : m_skeleton(0), m_armature(0) {}
+	gkSkeletonConverter() : m_skeleton(0), m_armature(0) {}
 
 	void buildBoneTree(Blender::Bone* cur, Blender::Bone* prev, gkBone* parent);
 
@@ -52,4 +52,4 @@ public:
 
 
 
-#endif//_gkSkeletonLoader_h_
+#endif//_gkSkeletonConverter_h_

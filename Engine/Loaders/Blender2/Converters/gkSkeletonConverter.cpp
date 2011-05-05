@@ -29,7 +29,7 @@
 #include "Blender.h"
 
 
-void gkSkeletonLoader::buildBoneTree(Blender::Bone* cur, Blender::Bone* prev, gkBone* parent)
+void gkSkeletonConverter::buildBoneTree(Blender::Bone* cur, Blender::Bone* prev, gkBone* parent)
 {
 	// This is the normal resposition
 	GK_ASSERT(cur);

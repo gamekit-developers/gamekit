@@ -805,7 +805,7 @@ void gkBlenderSceneConverter::convertObjectSkeleton(gkSkeletonResource* sobj, Bl
 {
 	GK_ASSERT(sobj && bobj->data);
 
-	gkSkeletonLoader loader;
+	gkSkeletonConverter loader;
 
 
 	loader.m_armature = static_cast<Blender::bArmature*>(bobj->data);
