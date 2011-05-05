@@ -37,9 +37,11 @@ include(OgreAddTargets)
 configure_gamekit(${OGREKIT_SOURCE_DIR}/Dependencies/Source)
 configure_ogrekit(${OGREKIT_SOURCE_DIR} ${OGREKIT_SOURCE_DIR}/Ogre-1.8)
 
-set(OGREKIT_BULLET_LIBS #BulletSoftBody
-	BulletDynamics BulletCollision  LinearMath)
+set(OGREKIT_BULLET_LIBS BulletDynamics BulletCollision  LinearMath)	
 set(OGREKIT_BULLET_INCLUDE ${OGREKIT_SOURCE_DIR}/bullet/src)
+if (OGREKIT_COMPILE_SOFTBODY)
+	list(APPEND OGREKIT_BULLET_LIBS BulletSoftBody)
+endif()
 
 if (NOT APPLE AND OGREKIT_COMPILE_WXWIDGETS)
 	include(wxSetup)

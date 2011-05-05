@@ -15,5 +15,8 @@ ENDIF(COMMAND cmake_policy)
    
 
 
-SUBDIRS( #src/BulletSoftBody 
-	src/BulletCollision src/BulletDynamics src/LinearMath )
+SUBDIRS(src/BulletCollision src/BulletDynamics src/LinearMath )
+
+if (OGREKIT_COMPILE_SOFTBODY)
+	SUBDIRS(src/BulletSoftBody)
+endif()
