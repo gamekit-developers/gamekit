@@ -43,7 +43,7 @@ class OgreKit : public gkCoreApplication, public gkWindowSystem::Listener
 {
 public:
     gkString    m_blend;
-    gkScene    *m_scene;
+    gkScene*	m_scene;
 	
 public:
     OgreKit();
@@ -91,9 +91,13 @@ bool OgreKit::init()
 	
 	//960x640, 480x320
 
+#if 0
 	m_prefs.winsize.x        = 320;
     m_prefs.winsize.y        = 480;
-
+#else
+	m_prefs.winsize.y        = 320;
+    m_prefs.winsize.x        = 480;
+#endif
 	
 #if USE_VIEWPORT_LANDSCAPE
 	m_prefs.viewportOrientation = "landscaperight";
@@ -147,13 +151,12 @@ int main(int argc, char **argv)
 	return retVal;
 }
 
-//copy from ogre3d samplebrowser
+//copied from ogre3d samplebrowser
 @interface AppDelegate : NSObject <UIApplicationDelegate>
 {
     NSTimer *m_timer;
     OgreKit m_okit;
 
-	bool m_inited;
     id m_displayLink;
     NSDate* m_date;
     NSTimeInterval m_lastFrameTime;
@@ -196,7 +199,7 @@ int main(int argc, char **argv)
 	{
 		m_okit.initializeStepLoop();
     } 
-	catch( Ogre::Exception& e ) 
+	catch (Ogre::Exception& e) 
 	{
         gkPrintf("An exception has occurred: %s", e.getFullDescription().c_str());
 	}
@@ -229,7 +232,6 @@ int main(int argc, char **argv)
 	[[UIApplication sharedApplication] setStatusBarHidden:YES];
 	
 	m_displayLinkSupported = false;
-	m_inited = false;
 	m_lastFrameTime = 1;
 	m_displayLink = nil;
 	m_timer = nil;
@@ -243,18 +245,11 @@ int main(int argc, char **argv)
 		m_displayLinkSupported = TRUE;
 #endif
 	
-	//[self initApp];
 	[self performSelector:@selector(initApp) withObject:nil afterDelay:0];
 }
 
 - (void)stepOneFrame:(id)sender
-{
-	if (!m_inited)
-	{
-		//[self initApp];
-		m_inited = true;
-	}
-	
+{	
 	if (m_displayLinkSupported)
 	{
 		// NSTimerInterval is a simple typedef for double

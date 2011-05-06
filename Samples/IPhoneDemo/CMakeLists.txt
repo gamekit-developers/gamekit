@@ -7,12 +7,17 @@ include_directories(${OGRELITE_SOURCE_DIR}/OgreMain/include/OSX)
 SET(EXETYPE MACOSX_BUNDLE)
 SET_SOURCE_FILES_PROPERTIES(MainMenu.nib    PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
 SET_SOURCE_FILES_PROPERTIES(momo_ogre_i.blend PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
+SET_SOURCE_FILES_PROPERTIES(icon.png PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
+SET_SOURCE_FILES_PROPERTIES(icon@2x.png PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
+SET_SOURCE_FILES_PROPERTIES(icon-72.png PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
+
 SET(NibFile MainMenu.nib)
 
 
 set(SRC 
 	momo_ogre_i.blend
-	Main.mm)
+	Main.mm
+)
 
 include_directories(
 	${OGREKIT_INCLUDE}
@@ -29,9 +34,11 @@ source_group(ParentCMakeLists FILES ${HiddenCMakeLists})
 
 
 add_executable(
-	IPhoneDemo 
-	MACOSX_BUNDLE
+	IPhoneDemo MACOSX_BUNDLE
 	MainMenu.nib
+	icon.png
+	icon@2x.png
+	icon-72.png
 	${SRC} 
 	${HiddenCMakeLists}
 	)
