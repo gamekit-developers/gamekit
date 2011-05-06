@@ -91,7 +91,7 @@ bool OgreKit::init()
 	
 	//960x640, 480x320
 
-#if 0
+#if 1
 	m_prefs.winsize.x        = 320;
     m_prefs.winsize.y        = 480;
 #else
