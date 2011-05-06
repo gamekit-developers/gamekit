@@ -60,14 +60,15 @@ using namespace Ogre;
     // Change the viewport orientation based upon the current device orientation.
     // Note: This only operates on the main viewport, usually the main view.
 
+    [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
     UIDeviceOrientation deviceOrientation = [UIDevice currentDevice].orientation;
+    [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
 
     // Return if the orientation is not a valid interface orientation(face up, face down)
     if(!UIDeviceOrientationIsValidInterfaceOrientation(deviceOrientation))
         return;
 
     // Get the window using the name that we saved
-    RenderSystem *sys = Root::getSingleton().getRenderSystem();
     RenderWindow *window = static_cast<RenderWindow *>(Root::getSingleton().getRenderSystem()->getRenderTarget(mWindowName));
 
     if(window != NULL)

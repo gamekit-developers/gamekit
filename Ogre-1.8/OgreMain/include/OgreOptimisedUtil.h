@@ -28,8 +28,6 @@ THE SOFTWARE.
 #ifndef __OptimisedUtil_H__
 #define __OptimisedUtil_H__
 
-//#include <cstddef>
-
 #include "OgrePrerequisites.h"
 #include "OgreEdgeListBuilder.h"
 

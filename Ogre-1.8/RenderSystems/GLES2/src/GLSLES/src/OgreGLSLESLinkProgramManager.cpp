@@ -68,10 +68,8 @@ namespace Ogre {
 		mTypeEnumMap.insert(StringToEnumMap::value_type("mat3", GL_FLOAT_MAT3));
 		mTypeEnumMap.insert(StringToEnumMap::value_type("mat4", GL_FLOAT_MAT4));
         
-#if USE_GLSL_OPTIMIZER
+#ifdef OGRE_USE_GLES2_GLSL_OPTIMISER
         mGLSLOptimiserContext = glslopt_initialize(true);
-#else
-		mGLSLOptimiserContext = NULL;
 #endif
 	}
 
@@ -84,7 +82,7 @@ namespace Ogre {
 		{
 			OGRE_DELETE currentProgram->second;
 		}
-#if USE_GLSL_OPTIMIZER
+#ifdef OGRE_USE_GLES2_GLSL_OPTIMISER
         if(mGLSLOptimiserContext)
         {
             glslopt_cleanup(mGLSLOptimiserContext);
@@ -249,9 +247,9 @@ namespace Ogre {
 		return false;
 	}
 
+#ifdef OGRE_USE_GLES2_GLSL_OPTIMISER
     void GLSLESLinkProgramManager::optimiseShaderSource(GLSLESGpuProgram* gpuProgram)
     {
-#if USE_GLSL_OPTIMIZER
         if(!gpuProgram->getGLSLProgram()->getIsOptimised())
         {
             GpuProgramType gpuType = gpuProgram->getType();
@@ -285,8 +283,8 @@ namespace Ogre {
             }
             glslopt_shader_delete(shader);
         }
-#endif
     }
+#endif
 
 	//---------------------------------------------------------------------
 	void GLSLESLinkProgramManager::extractUniforms(GLuint programObject, 
