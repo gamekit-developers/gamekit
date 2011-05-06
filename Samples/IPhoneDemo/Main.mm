@@ -91,13 +91,10 @@ bool OgreKit::init()
 	
 	//960x640, 480x320
 
-#if 1
+
 	m_prefs.winsize.x        = 320;
     m_prefs.winsize.y        = 480;
-#else
-	m_prefs.winsize.y        = 320;
-    m_prefs.winsize.x        = 480;
-#endif
+
 	
 #if USE_VIEWPORT_LANDSCAPE
 	m_prefs.viewportOrientation = "landscaperight";
